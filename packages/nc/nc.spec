@@ -1,9 +1,9 @@
-# $Id: Owl/packages/nc/nc.spec,v 1.5 2003/10/30 21:15:47 solar Exp $
+# $Id: Owl/packages/nc/nc.spec,v 1.6 2004/07/20 22:31:53 mci Exp $
 
 Summary: Reads and writes data across network connections using TCP or UDP.
 Name: nc
 Version: 3.2
-Release: owl2
+Release: owl3
 License: BSD
 Group: Applications/Internet
 Source: nc-%version-20021213.tar.bz2
@@ -44,6 +44,10 @@ install -m 644 usr.bin/nc/nc.1 $RPM_BUILD_ROOT%_mandir/man1/
 %_mandir/man1/nc.1*
 
 %changelog
+* Wed Jul 21 2004 Michail Litvak <mci@owl.openwall.com> 3.2-owl3
+- Updated -owl-fixes. Fixed bug with handling POLLERR event in
+poll()'s loop.
+
 * Fri Jan 24 2003 Michail Litvak <mci@owl.openwall.com> 3.2-owl2
 - Updated -owl-fixes. Initialize len argument before accept(),
   handle accept()'s errors.

@@ -1,6 +1,6 @@
 diff -urN --show-c-function nc-3.2-owl-linux/usr.bin/nc/netcat.c nc-3.2-owl-fixes/usr.bin/nc/netcat.c
 --- nc-3.2-owl-linux/usr.bin/nc/netcat.c	Fri Jan 24 01:13:33 2003
-+++ nc-3.2-owl-fixes/usr.bin/nc/netcat.c	Fri Jan 24 01:14:13 2003
++++ nc-3.2-owl-fixes/usr.bin/nc/netcat.c	Tue Jul 20 01:03:19 2004
 @@ -277,16 +277,19 @@ main(int argc, char *argv[])
  				rv = recvfrom(s, buf, sizeof(buf), MSG_PEEK,
  				    (struct sockaddr *)&z, &len);
@@ -224,6 +224,15 @@ diff -urN --show-c-function nc-3.2-owl-linux/usr.bin/nc/netcat.c nc-3.2-owl-fixe
  	return (s);
  }
  
+@@ -571,7 +586,7 @@ readwrite(int nfd)
+ 		if (n == 0)
+ 			return;
+ 
+-		if (pfd[0].revents & POLLIN) {
++		if (pfd[0].revents & (POLLIN | POLLERR)) {
+ 			if ((n = read(nfd, buf, sizeof(buf))) < 0)
+ 				return;
+ 			else if (n == 0) {
 @@ -694,23 +709,20 @@ build_ports(char *p)
  	}
  }
