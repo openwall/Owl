@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.12 2004/01/04 23:01:55 mci Exp $
+# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.13 2004/01/04 23:24:59 mci Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
@@ -58,7 +58,7 @@ cd $RPM_BUILD_ROOT
 
 chmod 700 sbin/*logd
 
-mkdir -p etc/{rc.d/init.d,logrotate.d}
+mkdir -p etc/{rc.d/init.d,logrotate.d,sysconfig}
 install -m 644 $RPM_SOURCE_DIR/syslog.conf etc/syslog.conf
 install -m 755 $RPM_SOURCE_DIR/syslog.init etc/rc.d/init.d/syslog
 install -m 644 $RPM_SOURCE_DIR/syslog.logrotate etc/logrotate.d/syslog
