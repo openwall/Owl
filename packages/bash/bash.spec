@@ -1,9 +1,9 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.6 2001/01/12 22:43:08 solar Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.7 2001/10/23 13:03:54 mci Exp $
 
-Version: 	2.04
+Version: 	2.05
 Name: 		bash
 Summary: 	The GNU Bourne Again shell (bash) version %{version}.
-Release: 	12owl
+Release: 	1owl
 Group: 		System Environment/Shells
 Copyright: 	GPL
 Source0:	ftp://ftp.gnu.org/gnu/bash/bash-%{version}.tar.gz
@@ -11,14 +11,24 @@ Source1: 	ftp://ftp.gnu.org/gnu/bash/bash-doc-%{version}.tar.gz
 Source2: 	dot-bashrc
 Source3: 	dot-bash_profile
 Source4: 	dot-bash_logout
-Patch0: 	bash-2.03-rh-paths.diff
-Patch1: 	bash-2.02-rh-security.diff
-Patch2: 	bash-2.03-rh-profile.diff
-Patch3: 	bash-2.04-rh-requires.diff
-Patch4: 	bash-2.04-rh-bash1_compat.diff
-Patch5: 	bash-2.04-rh-shellfunc.diff
-Patch6:		bash-2.04-owl-glibc-build-hack.diff
-Patch7:		bash-2.04-owl-tmp.diff
+Patch0:		bash-2.03-rh-paths.diff
+Patch1:		bash-2.04-rh-bash1_compat.diff
+Patch2:		bash-2.04-rh-shellfunc.diff
+Patch3:		bash-2.05-rh-profile.diff
+Patch4:		bash-2.05-rh-requires.diff
+Patch5:		bash-2.05-rh-security.diff
+Patch6:		bash-2.05-alt-bashbug.diff
+Patch7:		bash-2.05-alt-man.diff
+Patch8:		bash-2.05-alt-nostrcoll.diff
+Patch9:		bash-2.05-deb-64bit.diff
+Patch10:	bash-2.05-deb-gnusource.diff
+Patch11:	bash-2.05-deb-misc.diff
+Patch12:	bash-2.05-deb-printcmd.diff
+Patch13:	bash-2.05-deb-privmode.diff
+Patch14:	bash-2.05-deb-random.diff
+Patch15:	bash-2.05-deb-vxman.diff
+Patch16:	bash-2.05-owl-glibc-build-hack.diff
+Patch17:	bash-2.05-owl-tmp.diff
 Prefix: 	%{_prefix}
 Requires: 	mktemp
 Provides: 	bash2
@@ -38,7 +48,7 @@ package.
 
 %package doc
 Group: Documentation
-Summary: Documentation for the GNU Bourne Again shell (bash) version 2.03.
+Summary: Documentation for the GNU Bourne Again shell (bash) version %{version}.
 Obsoletes: bash2-doc
 
 %description doc
@@ -47,19 +57,41 @@ Again shell version %{version}.
 
 %prep
 %setup -q -a 1
-%patch0 -p1 -b .paths
-%patch1 -p1 -b .security
-%patch2 -p1 -b .profile
-%patch3 -p1 -b .requires
-%patch4 -p1 -b .compat
-%patch5 -p1 -b .shellfunc
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1
+%patch17 -p1
+
 echo %{version} > _distribution
 echo %{release} | sed -e "s/[A-Za-z]//g" > _patchlevel
 
 %build
-%configure
+autoconf
+%configure \
+        --enable-alias \
+        --enable-help-builtin \
+        --enable-history \
+        --enable-job-control \
+        --enable-restricted \
+        --enable-readline \
+        --with-curses \
+        --enable-extended-glob \
+        --enable-dparen-arithmetic \
+        --with-installed-readline
 make
 
 %install
@@ -67,16 +99,15 @@ rm -rf $RPM_BUILD_ROOT
 
 %makeinstall
 
-# Take out irritating ^H's from the documentation
-chmod u+w doc/*
-for i in `ls --color=no doc/` ; \
-	do cat doc/$i > $i ; \
-	cat $i | perl -p -e 's/.//g' > doc/$i ; \
-	rm $i ; \
-	done
+mkdir -p $RPM_BUILD_ROOT/bin
+mv $RPM_BUILD_ROOT%_bindir/%name $RPM_BUILD_ROOT/bin/%name
+ln -s %name $RPM_BUILD_ROOT/bin/sh
+ln -s %name $RPM_BUILD_ROOT/bin/bash2
+
+bzip2 -9 doc/*.ps
 
 # make manpages for bash builtins as per suggestion in DOC/README
-cd doc
+pushd doc
 sed -e '
 /^\.SH NAME/, /\\- bash built-in commands, see \\fBbash\\fR(1)$/{
 /^\.SH NAME/d
@@ -87,10 +118,6 @@ b
 }
 d
 ' builtins.1 > man.pages
-for i in echo pwd test kill; do
-  perl -pi -e "s,$i,,g" man.pages
-  perl -pi -e "s,  , ,g" man.pages
-done
 
 install -c -m 644 builtins.1 ${RPM_BUILD_ROOT}%{_mandir}/man1/builtins.1
 
@@ -98,28 +125,15 @@ for i in `cat man.pages` ; do
   echo .so man1/builtins.1 > ${RPM_BUILD_ROOT}%{_mandir}/man1/$i.1
 done
 
-# now turn man.pages into a filelist for the man subpackage
-cat man.pages | tr -s ' ' '\n' | sed '
-1i\
-%defattr(0644,root,root,0755)
-s:^:%{_mandir}/man1/:
-s/$/.1*/
-' > ../man.pages
+popd
 
-cd $RPM_BUILD_ROOT
+# Those conflicts with real manpages
+rm -f ${RPM_BUILD_ROOT}%{_mandir}/man1/{echo,export,pwd,test,kill}.1
 
-mkdir ./bin
-mv ./usr/bin/bash ./bin
-ln -sf bash ./bin/bash2
-ln -sf bash ./bin/sh
-strip ./bin/* || :
-gzip -9nf .%{_infodir}/bash.info
-rm -f .%{_infodir}/dir
-
-mkdir -p ./etc/skel
-install -c -m 644 %{SOURCE2} ./etc/skel/.bashrc
-install -c -m 644 %{SOURCE3} ./etc/skel/.bash_profile
-install -c -m 644 %{SOURCE4} ./etc/skel/.bash_logout
+mkdir -p $RPM_BUILD_ROOT/etc/skel
+install -c -m 644 %{SOURCE2} $RPM_BUILD_ROOT/etc/skel/.bashrc
+install -c -m 644 %{SOURCE3} $RPM_BUILD_ROOT/etc/skel/.bash_profile
+install -c -m 644 %{SOURCE4} $RPM_BUILD_ROOT/etc/skel/.bash_logout
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -127,50 +141,71 @@ rm -rf $RPM_BUILD_ROOT
 # ***** bash doesn't use install-info. It's always listed in %{_infodir}/dir
 # to prevent prereq loops
 
-%triggerin -- libtermcap
+%post
+
+HASBASH2=""
+HASBASH=""
+HASSH=""
+
 if [ ! -f /etc/shells ]; then
-	echo "/bin/sh" >> /etc/shells
-	echo "/bin/bash" >> /etc/shells
-	echo "/bin/bash2" >> /etc/shells
-elif [ -x /bin/grep ]; then
-	grep '^/bin/sh$' /etc/shells &> /dev/null || \
-		echo "/bin/sh" >> /etc/shells
-	grep '^/bin/bash$' /etc/shells &> /dev/null || \
-		echo "/bin/bash" >> /etc/shells
-	grep '^/bin/bash2$' /etc/shells &> /dev/null || \
-		echo "/bin/bash2" >> /etc/shells
+        > /etc/shells
 fi
 
-%preun
-if [ "$1" = 0 -a -x /bin/grep ]; then
-	grep -vE '^/bin/sh$|^/bin/bash$|^/bin/bash2$' \
-		/etc/shells > /etc/shells.bash-un
-	mv /etc/shells.bash-un /etc/shells
-	test -s /etc/shells || rm /etc/shells
+(while read line ; do
+        if [ $line = /bin/bash ]; then
+                HASBASH=1
+        elif [ $line = /bin/sh ]; then
+                HASSH=1
+        elif [ $line = /bin/bash2 ]; then
+                HASBASH2=1
+        fi
+ done
+
+ if [ -z "$HASBASH2" ]; then
+        echo "/bin/bash2" >> /etc/shells
+ fi
+ if [ -z "$HASBASH" ]; then
+        echo "/bin/bash" >> /etc/shells
+ fi
+ if [ -z "$HASSH" ]; then
+        echo "/bin/sh" >> /etc/shells
+fi) < /etc/shells
+
+%postun
+if [ "$1" = 0 ]; then
+    grep -v '^/bin/bash2$' < /etc/shells | \
+        grep -v '^/bin/bash$' | \
+        grep -v '^/bin/sh$' > /etc/shells.new
+    mv /etc/shells.new /etc/shells
 fi
 
-%files -f man.pages
+find examples -type f -print0 |xargs -r0 chmod -x
+
+%files
 %defattr(-,root,root)
+%config(noreplace) /etc/skel/.b*
 %doc CHANGES COMPAT NEWS NOTES CWRU/POSIX.NOTES
 %doc doc/FAQ doc/INTRO doc/article.ms
 %doc examples/bashdb/ examples/functions/ examples/misc/
 %doc examples/scripts.noah/ examples/scripts.v2/ examples/scripts/
 %doc examples/startup-files/
-%config /etc/skel
 /bin/sh
 /bin/bash
 /bin/bash2
-%{_infodir}/bash.info.gz
-%{_mandir}/man1/bash.1*
-%{_mandir}/man1/builtins.1*
+%{_infodir}/bash.info*
+%{_mandir}/man1/*
 %{_prefix}/bin/bashbug
-%{_mandir}/man1/bashbug.1*
 
 %files doc
 %defattr(-,root,root)
-%doc doc/*.ps doc/*.0 doc/*.html doc/article.txt
+%doc doc/*.ps* doc/*.0 doc/*.html doc/article.txt
 
 %changelog
+* Tue Oct 23 2001 Michail Litvak <mci@owl.openwall.com>
+- 2.05
+- Many patches from Debian, Alt-linux
+- some spec rework
+
 * Sat Jan 13 2001 Solar Designer <solar@owl.openwall.com>
 - One more temporary file handling fix for the history editor, as reported
 by Marcus Meissner of Caldera.

@@ -1,6 +1,6 @@
---- bash-2.02-orig/parse.y	Wed Mar 25 18:16:23 1998
-+++ bash-2.02/parse.y	Sun Apr 19 16:46:34 1998
-@@ -923,7 +923,7 @@
+--- bash-2.05/parse.y.orig	Tue Mar 27 18:06:12 2001
++++ bash-2.05/parse.y	Tue Oct 23 00:34:38 2001
+@@ -963,7 +963,7 @@
  
  #if defined (READLINE)
  char *current_readline_prompt = (char *)NULL;

@@ -1,5 +1,5 @@
---- bash-2.04-beta5/builtins/mkbuiltins.c.requires	Thu Aug  5 12:42:54 1999
-+++ bash-2.04-beta5/builtins/mkbuiltins.c	Sun Mar 19 14:14:17 2000
+--- bash-2.05/builtins/mkbuiltins.c.orig	Thu Feb 15 00:06:45 2001
++++ bash-2.05/builtins/mkbuiltins.c	Tue Oct 23 01:01:33 2001
 @@ -51,8 +51,13 @@
  #define whitespace(c) (((c) == ' ') || ((c) == '\t'))
  
@@ -68,9 +68,9 @@
  }
  
  #if !defined (HAVE_RENAME)
---- bash-2.04-beta5/doc/bash.1.requires	Tue Jan 11 19:36:49 2000
-+++ bash-2.04-beta5/doc/bash.1	Sun Mar 19 14:14:17 2000
-@@ -196,6 +196,12 @@
+--- bash-2.05/doc/bash.1.orig	Mon Mar  5 21:41:30 2001
++++ bash-2.05/doc/bash.1	Tue Oct 23 01:01:33 2001
+@@ -200,6 +200,12 @@
  .B "RESTRICTED SHELL"
  below).
  .TP
@@ -83,9 +83,9 @@
  .B \-\-verbose
  Equivalent to  \fB\-v\fP.
  .TP
---- bash-2.04-beta5/doc/bashref.texi.requires	Wed Jan 12 16:18:50 2000
-+++ bash-2.04-beta5/doc/bashref.texi	Sun Mar 19 14:14:17 2000
-@@ -4333,6 +4333,13 @@
+--- bash-2.05/doc/bashref.texi.orig	Wed Mar 28 22:49:52 2001
++++ bash-2.05/doc/bashref.texi	Tue Oct 23 01:01:34 2001
+@@ -4375,6 +4375,13 @@
  @item --restricted
  Make the shell a restricted shell (@pxref{The Restricted Shell}).
  
@@ -97,10 +97,10 @@
 +dependencies may be missed.
 +
  @item --verbose
- Equivalent to @samp{-v}.  Print shell input lines as they're read.
+ Equivalent to @option{-v}.  Print shell input lines as they're read.
  
---- bash-2.04-beta5/builtins.h.requires	Thu Aug  5 11:18:12 1999
-+++ bash-2.04-beta5/builtins.h	Sun Mar 19 14:14:17 2000
+--- bash-2.05/builtins.h.orig	Thu Aug  5 14:18:12 1999
++++ bash-2.05/builtins.h	Tue Oct 23 01:01:34 2001
 @@ -40,6 +40,7 @@
  #define STATIC_BUILTIN  0x4	/* This builtin is not dynamically loaded. */
  #define SPECIAL_BUILTIN 0x8	/* This is a Posix `special' builtin. */
@@ -109,9 +109,9 @@
  
  /* The thing that we build the array of builtins out of. */
  struct builtin {
---- bash-2.04-beta5/make_cmd.c.requires	Thu Aug  5 11:21:23 1999
-+++ bash-2.04-beta5/make_cmd.c	Sun Mar 19 14:17:34 2000
-@@ -41,6 +41,9 @@
+--- bash-2.05/make_cmd.c.orig	Wed Feb 14 23:54:04 2001
++++ bash-2.05/make_cmd.c	Tue Oct 23 01:01:34 2001
+@@ -42,6 +42,9 @@
  #include "subst.h"
  #include "input.h"
  #include "externs.h"
@@ -121,7 +121,7 @@
  
  #if defined (JOB_CONTROL)
  #include "jobs.h"
-@@ -49,7 +52,10 @@
+@@ -50,7 +53,10 @@
  extern int line_number, current_command_line_count;
  extern int disallow_filename_globbing;
  extern int last_command_exit_value;
@@ -132,7 +132,7 @@
  
  WORD_DESC *
  make_bare_word (string)
-@@ -696,6 +702,36 @@
+@@ -697,6 +703,36 @@
    return (make_command (cm_subshell, (SIMPLE_COM *)temp));
  }
  
@@ -169,7 +169,7 @@
  /* Reverse the word list and redirection list in the simple command
     has just been parsed.  It seems simpler to do this here the one
     time then by any other method that I can think of. */
-@@ -712,6 +748,35 @@
+@@ -713,6 +749,35 @@
        command->value.Simple->redirects =
  	REVERSE_LIST (command->value.Simple->redirects, REDIRECT *);
      }
@@ -205,8 +205,8 @@
  
    return (command);
  }
---- bash-2.04-beta5/shell.c.requires	Fri Nov 19 19:58:15 1999
-+++ bash-2.04-beta5/shell.c	Sun Mar 19 14:14:17 2000
+--- bash-2.05/shell.c.orig	Tue Mar 27 17:25:51 2001
++++ bash-2.05/shell.c	Tue Oct 23 01:01:34 2001
 @@ -163,6 +163,9 @@
  /* The name of the .(shell)rc file. */
  static char *bashrc_file = "~/.bashrc";
@@ -217,7 +217,7 @@
  /* Non-zero means to act more like the Bourne shell on startup. */
  static int act_like_sh;
  
-@@ -208,6 +211,7 @@
+@@ -209,6 +212,7 @@
    { "norc", Int, &no_rc, (char **)0x0 },
    { "posix", Int, &posixly_correct, (char **)0x0 },
    { "rcfile", Charp, (int *)0x0, &bashrc_file },
@@ -225,7 +225,7 @@
  #if defined (RESTRICTED_SHELL)
    { "restricted", Int, &restricted, (char **)0x0 },
  #endif
-@@ -393,6 +397,12 @@
+@@ -397,6 +401,12 @@
  
    if (dump_translatable_strings)
      read_but_dont_execute = 1;

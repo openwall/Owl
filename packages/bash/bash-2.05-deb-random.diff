@@ -1,0 +1,73 @@
+--- bash-2.05/configure.in.orig	Tue Jan 23 19:57:24 2001
++++ bash-2.05/configure.in	Mon Oct 22 16:26:36 2001
+@@ -480,6 +480,9 @@
+ 		siginterrupt memmove ttyname gethostbyname getservbyname \
+ 		inet_aton strpbrk setvbuf pathconf)
+ 
++dnl checks for random functions
++AC_CHECK_FUNCS(random srandom)
++
+ dnl checks for locale functions
+ AC_CHECK_HEADERS(libintl.h)
+ AC_CHECK_FUNCS(gettext textdomain bindtextdomain)
+--- bash-2.05/config.h.in.orig	Mon Oct  2 16:44:22 2000
++++ bash-2.05/config.h.in	Mon Oct 22 16:26:36 2001
+@@ -462,6 +462,9 @@
+ /* Define if you have the putenv function.  */
+ #undef HAVE_PUTENV
+ 
++/* Define if you have the random function.  */
++#undef HAVE_RANDOM
++
+ /* Define if you have the readlink function. */
+ #undef HAVE_READLINK
+ 
+@@ -524,6 +527,9 @@
+ 
+ /* Define if you have the strsignal function or macro. */
+ #undef HAVE_STRSIGNAL
++
++/* Define if you have the srandom function.  */
++#undef HAVE_SRANDOM
+ 
+ /* Define if you have the sysconf function. */
+ #undef HAVE_SYSCONF
+--- bash-2.05/variables.c.orig	Wed Feb 21 20:47:11 2001
++++ bash-2.05/variables.c	Mon Oct 22 16:26:36 2001
+@@ -1015,16 +1015,21 @@
+ static unsigned long rseed = 1;
+ static unsigned long last_random_value;
+ 
+-/* A linear congruential random number generator based on the ANSI
+-   C standard.  This one isn't very good (the values are alternately
++/* Use the random number genrator provided by the standard C library,
++   else use a linear congruential random number generator based on the
++   ANSI C standard.  This one isn't very good (the values are alternately
+    odd and even, for example), but a more complicated one is overkill.  */
+ 
+ /* Returns a pseudo-random number between 0 and 32767. */
+ static int
+ brand ()
+ {
++#if defined(HAVE_RANDOM)
++  return (unsigned int) (labs(random()) & 32767);
++#else
+   rseed = rseed * 1103515245 + 12345;
+   return ((unsigned int)(rseed & 32767));	/* was % 32768 */
++#endif
+ }
+ 
+ /* Set the random number generator seed to SEED. */
+@@ -1032,8 +1037,12 @@
+ sbrand (seed)
+      int seed;
+ {
++#if defined(HAVE_SRANDOM)
++  srandom(seed);
++#else
+   rseed = seed;
+   last_random_value = 0;
++#endif
+ }
+ 
+ static SHELL_VAR *

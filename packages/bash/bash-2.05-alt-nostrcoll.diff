@@ -1,0 +1,42 @@
+--- bash-2.05/lib/glob/fnmatch.c	Fri Mar 16 21:24:27 2001
++++ bash-2.04/lib/glob/fnmatch.c	Thu Sep 23 00:31:02 1999
+@@ -68,14 +68,18 @@
+ #define STREQN(a, b, n) ((a)[0] == (b)[0] && strncmp(a, b, n) == 0)
+ #endif
+ 
+-/* We use strcoll(3) for range comparisons in bracket expressions,
+-   even though it can have unwanted side effects in locales
++/* We don't use strcoll(3) for range comparisons in bracket expressions,
++   even if we have it, since it can have unwanted side effects in locales
+    other than POSIX or US.  For instance, in the de locale, [A-Z] matches
+-   all characters. */
++   all characters.  So, for ranges we use ASCII collation, and for
++   collating symbol equivalence we use strcoll().  The casts to int are
++   to handle tests that use unsigned chars. */
++
++#define rangecmp(c1, c2)	((int)(c1) - (int)(c2))
+ 
+ #if defined (HAVE_STRCOLL)
+ /* Helper function for collating symbol equivalence. */
+-static int rangecmp (c1, c2)
++static int rangecmp2 (c1, c2)
+      int c1, c2;
+ {
+   static char s1[2] = { ' ', '\0' };
+@@ -97,14 +101,14 @@
+   return (c1 - c2);
+ }
+ #else /* !HAVE_STRCOLL */
+-#  define rangecmp(c1, c2)	((int)(c1) - (int)(c2))
++#  define rangecmp2(c1, c2)	((int)(c1) - (int)(c2))
+ #endif /* !HAVE_STRCOLL */
+ 
+ #if defined (HAVE_STRCOLL)
+ static int collequiv (c1, c2)
+      int c1, c2;
+ {
+-  return (rangecmp (c1, c2) == 0);
++  return (rangecmp2 (c1, c2) == 0);
+ }
+ #else
+ #  define collequiv(c1, c2)	((c1) == (c2))

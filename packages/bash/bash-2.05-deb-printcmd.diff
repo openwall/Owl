@@ -1,0 +1,11 @@
+--- bash-2.05/print_cmd.c.orig	Tue Apr  3 22:05:26 2001
++++ bash-2.05/print_cmd.c	Mon Oct 22 16:47:30 2001
+@@ -805,7 +805,7 @@
+      FUNCTION_DEF *func;
+ {
+   COMMAND *cmdcopy;
+-  REDIRECT *func_redirects;
++  REDIRECT *func_redirects = NULL;
+ 
+   cprintf ("function %s () \n", func->name->word);
+   add_unwind_protect (reset_locals, 0);

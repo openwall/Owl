@@ -1,0 +1,65 @@
+--- bash-2.05/aclocal.m4.orig	Tue Nov 21 17:42:10 2000
++++ bash-2.05/aclocal.m4	Mon Oct 22 16:04:38 2001
+@@ -443,6 +443,20 @@
+ fi
+ ])
+ 
++dnl If we're using GNU libc, we need to define _GNU_SOURCE to get
++dnl things like strsignal().
++AC_DEFUN(BASH_HAVE_GLIBC,
++[AC_MSG_CHECKING([for GNU libc])
++AC_CACHE_VAL(bash_cv_have_glibc,
++[AC_TRY_LINK([],
++[int x = __glibc__;],
++ bash_cv_have_glibc=yes, bash_cv_have_glibc=yes)])
++AC_MSG_RESULT($bash_cv_have_glibc)
++if test $bash_cv_have_glibc = yes; then
++AC_DEFINE(HAVE_GLIBC)
++fi
++])
++
+ AC_DEFUN(BASH_FUNC_STRSIGNAL,
+ [AC_MSG_CHECKING([for the existence of strsignal])
+ AC_CACHE_VAL(bash_cv_have_strsignal,
+--- bash-2.05/config-bot.h.orig	Wed Feb  7 20:27:59 2001
++++ bash-2.05/config-bot.h	Mon Oct 22 16:04:38 2001
+@@ -78,3 +78,7 @@
+ #  undef PPROMPT
+ #  define PPROMPT "$ "
+ #endif
++
++#if defined (HAVE_GLIBC)
++#  define _GNU_SOURCE
++#endif
+--- bash-2.05/config.h.in.orig	Mon Oct  2 16:44:22 2000
++++ bash-2.05/config.h.in	Mon Oct 22 16:04:39 2001
+@@ -522,6 +522,9 @@
+ /* Define if you have the strtoul function. */
+ #undef HAVE_STRTOUL
+ 
++/* Define if you have GNU libc. */
++#undef HAVE_GLIBC
++
+ /* Define if you have the strsignal function or macro. */
+ #undef HAVE_STRSIGNAL
+ 
+--- bash-2.05/configure.in.orig	Tue Jan 23 19:57:24 2001
++++ bash-2.05/configure.in	Mon Oct 22 16:04:39 2001
+@@ -612,6 +612,7 @@
+ BASH_STRUCT_TIMEVAL
+ 
+ dnl presence and behavior of C library functions
++BASH_HAVE_GLIBC
+ BASH_FUNC_STRSIGNAL
+ BASH_FUNC_OPENDIR_CHECK
+ BASH_FUNC_PRINTF
+--- bash-2.05/jobs.c.orig	Mon Mar 26 21:08:24 2001
++++ bash-2.05/jobs.c	Mon Oct 22 16:04:39 2001
+@@ -26,6 +26,7 @@
+ #include "bashtypes.h"
+ #include "trap.h"
+ #include <stdio.h>
++#include <string.h>
+ #include <signal.h>
+ #include <errno.h>
+ 

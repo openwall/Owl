@@ -1,0 +1,15 @@
+--- bash-2.05/doc/bash.1.orig	Mon Mar  5 21:41:30 2001
++++ bash-2.05/doc/bash.1	Tue Oct 23 01:25:31 2001
+@@ -105,6 +105,12 @@
+ This option allows the positional parameters to be set
+ when invoking an interactive shell.
+ .TP
++.B \-v
++Print shell input lines as they are read.
++.TP
++.B \-x
++Print commands and their arguments as they are executed.
++.TP
+ .B \-D
+ A list of all double-quoted strings preceded by \fB$\fP
+ is printed on the standard ouput.

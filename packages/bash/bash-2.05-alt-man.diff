@@ -1,0 +1,2530 @@
+--- bash-2.05/doc/builtins.1~	Tue Nov 30 00:30:13 1999
++++ bash-2.05/doc/builtins.1	Fri Apr 20 19:13:17 2001
+@@ -1,6 +1,6 @@
+ .\" This is a hack to force bash builtins into the whatis database
+ .\" and to get the list of builtins to come up with the man command.
+-.TH BASH_BUILTINS 1 "1996 Mar 20" GNU
++.TH BASH_BUILTINS 1 "2001 Mar 5" "GNU Bash-2.05"
+ .SH NAME
+ bash, :, ., alias, bg, bind, break, builtin, case, cd, command,
+ continue, declare, dirs, disown, echo, enable, eval, exec, exit,
+@@ -8,8 +8,2516 @@
+ let, local, logout, popd, pushd, pwd, read, readonly, return, set,
+ shift, shopt, source, suspend, test, times, trap, type, typeset,
+ ulimit, umask, unalias, unset, until, wait, while \- bash built-in commands, see \fBbash\fR(1)
+-.SH BASH BUILTIN COMMANDS
+-.nr zZ 1
+-.so bash.1
++.SH "SHELL BUILTIN COMMANDS"
++.\" start of bash_builtins
++.zZ
++.PP
++Unless otherwise noted, each builtin command documented in this
++section as accepting options preceded by
++.B \-
++accepts
++.B \-\-
++to signify the end of the options.
++.sp .5
++.PD 0
++.TP
++\fB:\fP [\fIarguments\fP]
++.PD
++No effect; the command does nothing beyond expanding
++.I arguments
++and performing any specified
++redirections.  A zero exit code is returned.
++.TP
++.PD 0
++\fB .\| \fP \fIfilename\fP [\fIarguments\fP]
++.TP
++\fBsource\fP \fIfilename\fP [\fIarguments\fP]
++.PD
++Read and execute commands from
++.I filename
++in the current
++shell environment and return the exit status of the last command
++executed from
++.IR filename .
++If
++.I filename
++does not contain a slash, file names in
++.SM
++.B PATH
++are used to find the directory containing
++.IR filename .
++The file searched for in
++.SM
++.B PATH
++need not be executable.
++When \fBbash\fP is not in \fIposix mode\fP, the current directory is
++searched if no file is found in
++.SM
++.BR PATH .
++If the
++.B sourcepath
++option to the
++.B shopt
++builtin command is turned off, the
++.SM
++.B PATH
++is not searched.
++If any \fIarguments\fP are supplied, they become the positional
++parameters when \fIfilename\fP is executed.  Otherwise the positional
++parameters are unchanged.
++The return status is the status of the last command exited within
++the script (0 if no commands are executed), and false if
++.I filename
++is not found or cannot be read.
++.TP
++\fBalias\fP [\fB\-p\fP] [\fIname\fP[=\fIvalue\fP] ...]
++\fBAlias\fP with no arguments or with the
++.B \-p
++option prints the list of aliases in the form
++\fBalias\fP \fIname\fP=\fIvalue\fP on standard output.
++When arguments are supplied, an alias is defined for
++each \fIname\fP whose \fIvalue\fP is given.
++A trailing space in  \fIvalue\fP causes the next word to be
++checked for alias substitution when the alias is expanded.
++For each \fIname\fP in the argument list for which no \fIvalue\fP
++is supplied, the name and value of the alias is printed.
++\fBAlias\fP returns true unless a \fIname\fP is given for which
++no alias has been defined.
++.TP
++\fBbg\fP [\fIjobspec\fP]
++Resume the suspended job \fIjobspec\fP in the background, as if it
++had been started with
++.BR & .
++If \fIjobspec\fP is not present, the shell's notion of the
++\fIcurrent job\fP is used.
++.B bg
++.I jobspec
++returns 0 unless run when job control is disabled or, when run with
++job control enabled, if \fIjobspec\fP was not found or started without
++job control.
++.TP
++.PD 0
++\fBbind\fP [\fB\-m\fP \fIkeymap\fP] [\fB\-lpsvPSV\fP]
++.TP
++\fBbind\fP [\fB\-m\fP \fIkeymap\fP] [\fB\-q\fP \fIfunction\fP] [\fB\-u\fP \fIfunction\fP] [\fB\-r\fP \fIkeyseq\fP]
++.TP
++\fBbind\fP [\fB\-m\fP \fIkeymap\fP] \fB\-f\fP \fIfilename\fP
++.TP
++\fBbind\fP [\fB\-m\fP \fIkeymap\fP] \fB\-x\fP \fIkeyseq\fP:\fIshell\-command\fP
++.TP
++\fBbind\fP [\fB\-m\fP \fIkeymap\fP] \fIkeyseq\fP:\fIfunction\-name\fP
++.PD
++Display current
++.B readline
++key and function bindings, or bind a key sequence to a
++.B readline
++function or macro.  The binding syntax accepted is identical to that of
++.IR .inputrc ,
++but each binding must be passed as a separate argument;
++e.g., '"\eC\-x\eC\-r": re\-read\-init\-file'.  Options, if supplied, have the
++following meanings:
++.RS
++.PD 0
++.TP
++.B \-m \fIkeymap\fP
++Use
++.I keymap
++as the keymap to be affected by the subsequent bindings.
++Acceptable
++.I keymap
++names are
++\fIemacs, emacs\-standard, emacs\-meta, emacs\-ctlx, vi,
++vi\-move, vi\-command\fP, and
++.IR vi\-insert .
++\fIvi\fP is equivalent to \fIvi\-command\fP; \fIemacs\fP is
++equivalent to \fIemacs\-standard\fP.
++.TP
++.B \-l
++List the names of all \fBreadline\fP functions.
++.TP
++.B \-p
++Display \fBreadline\fP function names and bindings in such a way
++that they can be re-read.
++.TP
++.B \-P
++List current \fBreadline\fP function names and bindings.
++.TP
++.B \-v
++Display \fBreadline\fP variable names and values in such a way that they
++can be re-read.
++.TP
++.B \-V
++List current \fBreadline\fP variable names and values.
++.TP
++.B \-s
++Display \fBreadline\fP key sequences bound to macros and the strings
++they output in such a way that they can be re-read.
++.TP
++.B \-S
++Display \fBreadline\fP key sequences bound to macros and the strings
++they output.
++.TP
++.B \-f \fIfilename\fP
++Read key bindings from \fIfilename\fP.
++.TP
++.B \-q \fIfunction\fP
++Query about which keys invoke the named \fIfunction\fP.
++.TP
++.B \-u \fIfunction\fP
++Unbind all keys bound to the named \fIfunction\fP.
++.TP
++.B \-r \fIkeyseq\fP
++Remove any current binding for \fIkeyseq\fP.
++.TP
++.B \-x \fIkeyseq\fP:\fIshell\-command\fP
++Cause \fIshell\-command\fP to be executed whenever \fIkeyseq\fP is
++entered.
++.PD
++.PP
++The return value is 0 unless an unrecognized option is given or an
++error occurred.
++.RE
++.TP
++\fBbreak\fP [\fIn\fP]
++Exit from within a
++.BR for ,
++.BR while ,
++.BR until ,
++or
++.B select
++loop.  If \fIn\fP is specified, break \fIn\fP levels.
++.I n
++must be \(>= 1.  If
++.I n
++is greater than the number of enclosing loops, all enclosing loops
++are exited.  The return value is 0 unless the shell is not executing
++a loop when
++.B break
++is executed.
++.TP
++\fBbuiltin\fP \fIshell\-builtin\fP [\fIarguments\fP]
++Execute the specified shell builtin, passing it
++.IR arguments ,
++and return its exit status.
++This is useful when defining a
++function whose name is the same as a shell builtin,
++retaining the functionality of the builtin within the function.
++The \fBcd\fP builtin is commonly redefined this way.
++The return status is false if
++.I shell\-builtin
++is not a shell builtin command.
++.TP
++\fBcd\fP [\fB\-LP\fP] [\fIdir\fP]
++Change the current directory to \fIdir\fP.  The variable
++.SM
++.B HOME
++is the
++default
++.IR dir .
++The variable
++.SM
++.B CDPATH
++defines the search path for the directory containing
++.IR dir .
++Alternative directory names in
++.SM
++.B CDPATH
++are separated by a colon (:).  A null directory name in
++.SM
++.B CDPATH
++is the same as the current directory, i.e., ``\fB.\fP''.  If
++.I dir
++begins with a slash (/),
++then
++.SM
++.B CDPATH
++is not used. The
++.B \-P
++option says to use the physical directory structure instead of
++following symbolic links (see also the
++.B \-P
++option to the
++.B set
++builtin command); the
++.B \-L
++option forces symbolic links to be followed.  An argument of
++.B \-
++is equivalent to
++.SM
++.BR $OLDPWD .
++The return value is true if the directory was successfully changed;
++false otherwise.
++.TP
++\fBcommand\fP [\fB\-pVv\fP] \fIcommand\fP [\fIarg\fP ...]
++Run
++.I command
++with
++.I args
++suppressing the normal shell function lookup. Only builtin
++commands or commands found in the
++.SM
++.B PATH
++are executed.  If the
++.B \-p
++option is given, the search for
++.I command
++is performed using a default value for
++.B PATH
++that is guaranteed to find all of the standard utilities.
++If either the
++.B \-V
++or
++.B \-v
++option is supplied, a description of
++.I command
++is printed.  The
++.B \-v
++option causes a single word indicating the command or file name
++used to invoke
++.I command
++to be displayed; the
++.B \-V
++option produces a more verbose description.
++If the
++.B \-V
++or
++.B \-v
++option is supplied, the exit status is 0 if
++.I command
++was found, and 1 if not.  If neither option is supplied and
++an error occurred or
++.I command
++cannot be found, the exit status is 127.  Otherwise, the exit status of the
++.B command
++builtin is the exit status of
++.IR command .
++.TP
++\fBcompgen\fP [\fIoption\fP] [\fIword\fP]
++Generate possible completion matches for \fIword\fP according to
++the \fIoption\fPs, which may be any option accepted by the
++.B complete
++builtin with the exception of \fB\-p\fP and \fB\-r\fP, and write
++the matches to the standard output.
++When using the \fB\-F\fP or \fB\-C\fP options, the various shell variables
++set by the programmable completion facilities, while available, will not
++have useful values.
++.sp 1
++The matches will be generated in the same way as if the programmable
++completion code had generated them directly from a completion specification
++with the same flags.
++If \fIword\fP is specified, only those completions matching \fIword\fP
++will be displayed.
++.sp 1
++The return value is true unless an invalid option is supplied, or no
++matches were generated.
++.TP
++.PD 0
++\fBcomplete\fP [\fB\-abcdefjkvu\fP] [\fB\-o\fP \fIcomp-option\fP] [\fB\-A\fP \fIaction\fP] [\fB\-G\fP \fIglobpat\fP] [\fB\-W\fP \fIwordlist\fP] [\fB\-P\fP \fIprefix\fP] [\fB\-S\fP \fIsuffix\fP]
++.br
++[\fB\-X\fP \fIfilterpat\fP] [\fB\-F\fP \fIfunction\fP] [\fB\-C\fP \fIcommand\fP] \fIname\fP [\fIname ...\fP]
++.TP
++\fBcomplete\fP \fB\-pr\fP [\fIname\fP ...]
++.PD
++Specify how arguments to each \fIname\fP should be completed.
++If the \fB\-p\fP option is supplied, or if no options are supplied,
++existing completion specifications are printed in a way that allows
++them to be reused as input.
++The \fB\-r\fP option removes a completion specification for
++each \fIname\fP, or, if no \fIname\fPs are supplied, all
++completion specifications.
++.sp 1
++The process of applying these completion specifications when word completion
++is attempted is described above under \fBProgrammable Completion\fP.
++.sp 1
++Other options, if specified, have the following meanings.
++The arguments to the \fB\-G\fP, \fB\-W\fP, and \fB\-X\fP options
++(and, if necessary, the \fB\-P\fP and \fB\-S\fP options)
++should be quoted to protect them from expansion before the
++.B complete
++builtin is invoked.
++.RS
++.PD 0
++.TP 8
++\fB\-o\fP \fIcomp-option\fP
++The \fIcomp-option\fP controls several aspects of the compspec's behavior
++beyond the simple generation of completions.
++\fIcomp-option\fP may be one of:
++.RS
++.TP 8
++.B default
++Use readline's default completion if the compspec generates no matches.
++.TP 8
++.B dirnames
++Perform directory name completion if the compspec generates no matches.
++.TP 8
++.B filenames
++Tell readline that the compspec generates filenames, so it can perform any
++filename\-specific processing (like adding a slash to directory names or
++suppressing trailing spaces).  Intended to be used with shell functions.
++.RE
++.TP 8
++\fB\-A\fP \fIaction\fP
++The \fIaction\fP may be one of the following to generate a list of possible
++completions:
++.RS
++.TP 8
++.B alias
++Alias names.  May also be specified as \fB\-a\fP.
++.TP 8
++.B arrayvar
++Array variable names.
++.TP 8
++.B binding
++\fBReadline\fP key binding names.
++.TP 8
++.B builtin
++Names of shell builtin commands.  May also be specified as \fB\-b\fP.
++.TP 8
++.B command
++Command names.  May also be specified as \fB\-c\fP.
++.TP 8
++.B directory
++Directory names.  May also be specified as \fB\-d\fP.
++.TP 8
++.B disabled
++Names of disabled shell builtins.
++.TP 8
++.B enabled
++Names of enabled shell builtins.
++.TP 8
++.B export
++Names of exported shell variables.  May also be specified as \fB\-e\fP.
++.TP 8
++.B file
++File names.  May also be specified as \fB\-f\fP.
++.TP 8
++.B function
++Names of shell functions.
++.TP 8
++.B helptopic
++Help topics as accepted by the \fBhelp\fP builtin.
++.TP 8
++.B hostname
++Hostnames, as taken from the file specified by the
++.SM
++.B HOSTFILE
++shell variable.
++.TP 8
++.B job
++Job names, if job control is active.  May also be specified as \fB\-j\fP.
++.TP 8
++.B keyword
++Shell reserved words.  May also be specified as \fB\-k\fP.
++.TP 8
++.B running
++Names of running jobs, if job control is active.
++.TP 8
++.B setopt
++Valid arguments for the \fB\-o\fP option to the \fBset\fP builtin.
++.TP 8
++.B shopt
++Shell option names as accepted by the \fBshopt\fP builtin.
++.TP 8
++.B signal
++Signal names.
++.TP 8
++.B stopped
++Names of stopped jobs, if job control is active.
++.TP 8
++.B user
++User names.  May also be specified as \fB\-u\fP.
++.TP 8
++.B variable
++Names of all shell variables.  May also be specified as \fB\-v\fP.
++.RE
++.TP 8
++\fB\-G\fP \fIglobpat\fP
++The filename expansion pattern \fIglobpat\fP is expanded to generate
++the possible completions.
++.TP 8
++\fB\-W\fP \fIwordlist\fP
++The \fIwordlist\fP is split using the characters in the
++.SM
++.B IFS
++special variable as delimiters, and each resultant word is expanded.
++The possible completions are the members of the resultant list which
++match the word being completed.
++.TP 8
++\fB\-C\fP \fIcommand\fP
++\fIcommand\fP is executed in a subshell environment, and its output is
++used as the possible completions.
++.TP 8
++\fB\-F\fP \fIfunction\fP
++The shell function \fIfunction\fP is executed in the current shell
++environment.
++When it finishes, the possible completions are retrieved from the value
++of the
++.SM
++.B COMPREPLY
++array variable.
++.TP 8
++\fB\-X\fP \fIfilterpat\fP
++\fIfilterpat\fP is a pattern as used for filename expansion.
++It is applied to the list of possible completions generated by the
++preceding options and arguments, and each completion matching
++\fIfilterpat\fP is removed from the list.
++A leading \fB!\fP in \fIfilterpat\fP negates the pattern; in this
++case, any completion not matching \fIfilterpat\fP is removed.
++.TP 8
++\fB\-P\fP \fIprefix\fP
++\fIprefix\fP is added at the beginning of each possible completion
++after all other options have been applied.
++.TP 8
++\fB\-S\fP \fIsuffix\fP
++\fIsuffix\fP is appended to each possible completion
++after all other options have been applied.
++.PD
++.PP
++The return value is true unless an invalid option is supplied, an option
++other than \fB\-p\fP or \fB\-r\fP is supplied without a \fIname\fP
++argument, an attempt is made to remove a completion specification for
++a \fIname\fP for which no specification exists, or
++an error occurs adding a completion specification.
++.RE
++.TP
++\fBcontinue\fP [\fIn\fP]
++Resume the next iteration of the enclosing
++.BR for ,
++.BR while ,
++.BR until ,
++or
++.B select
++loop.
++If
++.I n
++is specified, resume at the \fIn\fPth enclosing loop.
++.I n
++must be \(>= 1.  If
++.I n
++is greater than the number of enclosing loops, the last enclosing loop
++(the ``top-level'' loop) is resumed.  The return value is 0 unless the
++shell is not executing a loop when
++.B continue
++is executed.
++.TP
++.PD 0
++\fBdeclare\fP [\fB\-afFirx\fP] [\fB\-p\fP] [\fIname\fP[=\fIvalue\fP]]
++.TP
++\fBtypeset\fP [\fB\-afFirx\fP] [\fB\-p\fP] [\fIname\fP[=\fIvalue\fP]]
++.PD
++Declare variables and/or give them attributes.
++If no \fIname\fPs are given then display the values of variables.
++The
++.B \-p
++option will display the attributes and values of each
++.IR name .
++When
++.B \-p
++is used, additional options are ignored.
++The
++.B \-F
++option inhibits the display of function definitions; only the
++function name and attributes are printed.
++The
++.B \-F
++option implies
++.BR \-f .
++The following options can
++be used to restrict output to variables with the specified attribute or
++to give variables attributes:
++.RS
++.PD 0
++.TP
++.B \-a
++Each \fIname\fP is an array variable (see
++.B Arrays
++above).
++.TP
++.B \-f
++Use function names only.
++.TP
++.B \-i
++The variable is treated as an integer; arithmetic evaluation (see
++.SM
++.B "ARITHMETIC EVALUATION" ") "
++is performed when the variable is assigned a value.
++.TP
++.B \-r
++Make \fIname\fPs readonly.  These names cannot then be assigned values
++by subsequent assignment statements or unset.
++.TP
++.B \-x
++Mark \fIname\fPs for export to subsequent commands via the environment.
++.PD
++.PP
++Using `+' instead of `\-'
++turns off the attribute instead, with the exception that \fB+a\fP
++may not be used to destroy an array variable.  When used in a function,
++makes each
++\fIname\fP local, as with the 
++.B local
++command.  The return value is 0 unless an invalid option is encountered,
++an attempt is made to define a function using
++.if n ``\-f foo=bar'',
++.if t \f(CW\-f foo=bar\fP,
++an attempt is made to assign a value to a readonly variable,
++an attempt is made to assign a value to an array variable without
++using the compound assignment syntax (see
++.B Arrays
++above), one of the \fInames\fP is not a valid shell variable name,
++an attempt is made to turn off readonly status for a readonly variable,
++an attempt is made to turn off array status for an array variable,
++or an attempt is made to display a non-existent function with \fB\-f\fP.
++.RE
++.TP
++.B dirs [\fB\-clpv\fP] [+\fIn\fP] [\-\fIn\fP]
++Without options, displays the list of currently remembered directories.
++The default display is on a single line with directory names separated
++by spaces.
++Directories are added to the list with the 
++.B pushd
++command; the
++.B popd
++command removes entries from the list.
++.RS
++.PD 0
++.TP
++\fB+\fP\fIn\fP
++Displays the \fIn\fPth entry counting from the left of the list
++shown by
++.B dirs
++when invoked without options, starting with zero.
++.TP
++\fB\-\fP\fIn\fP
++Displays the \fIn\fPth entry counting from the right of the list
++shown by
++.B dirs
++when invoked without options, starting with zero.
++.TP
++.B \-c
++Clears the directory stack by deleting all of the entries.
++.TP
++.B \-l
++Produces a longer listing; the default listing format uses a 
++tilde to denote the home directory.
++.TP
++.B \-p
++Print the directory stack with one entry per line.
++.TP
++.B \-v
++Print the directory stack with one entry per line,
++prefixing each entry with its index in the stack.
++.PD
++.PP
++The return value is 0 unless an
++invalid option is supplied or \fIn\fP indexes beyond the end
++of the directory stack.
++.RE
++.TP
++\fBdisown\fP [\fB\-ar\fP] [\fB\-h\fP] [\fIjobspec\fP ...]
++Without options, each
++.I jobspec
++is removed from the table of active jobs.
++If the \fB\-h\fP option is given, each
++.I jobspec
++is not removed from the table, but is marked so that
++.SM
++.B SIGHUP
++is not sent to the job if the shell receives a
++.SM
++.BR SIGHUP .
++If no
++.I jobspec
++is present, and neither the
++.B \-a
++nor the
++.B \-r
++option is supplied, the \fIcurrent job\fP is used.
++If no
++.I jobspec
++is supplied, the
++.B \-a
++option means to remove or mark all jobs; the
++.B \-r
++option without a
++.I jobspec
++argument restricts operation to running jobs.
++The return value is 0 unless a
++.I jobspec
++does not specify a valid job.
++.TP
++\fBecho\fP [\fB\-neE\fP] [\fIarg\fP ...]
++Output the \fIarg\fPs, separated by spaces, followed by a newline.
++The return status is always 0.
++If \fB\-n\fP is specified, the trailing newline is
++suppressed.  If the \fB\-e\fP option is given, interpretation of
++the following backslash-escaped characters is enabled.  The
++.B \-E
++option disables the interpretation of these escape characters,
++even on systems where they are interpreted by default.
++The \fBxpg_echo\fP shell option may be used to
++dynamically determine whether or not \fBecho\fP expands these
++escape characters by default.
++.B echo
++does not interpret
++.B \-\-
++to mean the end of options.
++.B echo
++interprets the following escape sequences:
++.RS
++.PD 0
++.TP
++.B \ea
++alert (bell)
++.TP
++.B \eb
++backspace
++.TP
++.B \ec
++suppress trailing newline
++.TP
++.B \ee
++an escape character
++.TP
++.B \ef
++form feed
++.TP
++.B \en
++new line
++.TP
++.B \er
++carriage return
++.TP
++.B \et
++horizontal tab
++.TP
++.B \ev
++vertical tab
++.TP
++.B \e\e
++backslash
++.TP
++.B \e\fInnn\fP
++the character whose ASCII code is the octal value \fInnn\fP
++(one to three digits)
++.TP
++.B \ex\fInnn\fP
++the character whose ASCII code is the hexadecimal value \fInnn\fP
++(one to three digits)
++.PD
++.RE
++.TP
++\fBenable\fP [\fB\-adnps\fP] [\fB\-f\fP \fIfilename\fP] [\fIname\fP ...]
++Enable and disable builtin shell commands.
++Disabling a builtin allows a disk command which has the same name
++as a shell builtin to be executed without specifying a full pathname,
++even though the shell normally searches for builtins before disk commands.
++If \fB\-n\fP is used, each \fIname\fP
++is disabled; otherwise,
++\fInames\fP are enabled.  For example, to use the
++.B test
++binary found via the
++.SM
++.B PATH
++instead of the shell builtin version, run
++.if t \f(CWenable -n test\fP.
++.if n ``enable -n test''.
++The
++.B \-f
++option means to load the new builtin command
++.I name
++from shared object
++.IR filename ,
++on systems that support dynamic loading.  The
++.B \-d
++option will delete a builtin previously loaded with
++.BR \-f .
++If no \fIname\fP arguments are given, or if the
++.B \-p
++option is supplied, a list of shell builtins is printed.
++With no other option arguments, the list consists of all enabled
++shell builtins.
++If \fB\-n\fP is supplied, only disabled builtins are printed.
++If \fB\-a\fP is supplied, the list printed includes all builtins, with an
++indication of whether or not each is enabled.
++If \fB\-s\fP is supplied, the output is restricted to the POSIX
++\fIspecial\fP builtins.
++The return value is 0 unless a
++.I name
++is not a shell builtin or there is an error loading a new builtin
++from a shared object.
++.TP
++\fBeval\fP [\fIarg\fP ...]
++The \fIarg\fPs are read and concatenated together into a single
++command.  This command is then read and executed by the shell, and
++its exit status is returned as the value of
++.BR eval .
++If there are no
++.IR args ,
++or only null arguments,
++.B eval
++returns 0.
++.TP
++\fBexec\fP [\fB\-cl\fP] [\fB\-a\fP \fIname\fP] [\fIcommand\fP [\fIarguments\fP]]
++If
++.I command
++is specified, it replaces the shell.
++No new process is created.  The
++.I arguments
++become the arguments to \fIcommand\fP.
++If the
++.B \-l
++option is supplied,
++the shell places a dash at the beginning of the zeroth arg passed to 
++.IR command .
++This is what
++.IR login (1)
++does.  The
++.B \-c
++option causes
++.I command
++to be executed with an empty environment.  If
++.B \-a
++is supplied, the shell passes
++.I name
++as the zeroth argument to the executed command.  If
++.I command
++cannot be executed for some reason, a non-interactive shell exits,
++unless the shell option
++.B execfail
++is enabled, in which case it returns failure.
++An interactive shell returns failure if the file cannot be executed.
++If
++.I command
++is not specified, any redirections take effect in the current shell,
++and the return status is 0.  If there is a redirection error, the
++return status is 1.
++.TP
++\fBexit\fP [\fIn\fP]
++Cause the shell to exit
++with a status of \fIn\fP.  If
++.I n
++is omitted, the exit status
++is that of the last command executed.
++A trap on
++.SM
++.B EXIT
++is executed before the shell terminates.
++.TP
++.PD 0
++\fBexport\fP [\fB\-fn\fP\^] [\fIname\fP[=\fIword\fP]] ...
++.TP
++.B export \-p
++.PD
++The supplied
++.I names
++are marked for automatic export to the environment of
++subsequently executed commands.  If the 
++.B \-f
++option is given,
++the 
++.I names
++refer to functions.
++If no
++.I names
++are given, or if the
++.B \-p
++option is supplied, a list
++of all names that are exported in this shell is printed.
++The
++.B \-n
++option causes the export property to be removed from the
++named variables.
++.B export
++returns an exit status of 0 unless an invalid option is
++encountered,
++one of the \fInames\fP is not a valid shell variable name, or
++.B \-f
++is supplied with a
++.I name
++that is not a function.
++.TP
++.PD 0
++\fBfc\fP [\fB\-e\fP \fIename\fP] [\fB\-nlr\fP] [\fIfirst\fP] [\fIlast\fP]
++.TP
++\fBfc\fP \fB\-s\fP [\fIpat\fP=\fIrep\fP] [\fIcmd\fP]
++.PD
++Fix Command.  In the first form, a range of commands from
++.I first
++to
++.I last
++is selected from the history list.
++.I First
++and
++.I last
++may be specified as a string (to locate the last command beginning
++with that string) or as a number (an index into the history list,
++where a negative number is used as an offset from the current
++command number).  If 
++.I last
++is not specified it is set to
++the current command for listing (so that
++.if n ``fc \-l \-10''
++.if t \f(CWfc \-l \-10\fP
++prints the last 10 commands) and to
++.I first
++otherwise.
++If
++.I first
++is not specified it is set to the previous
++command for editing and \-16 for listing.
++.sp 1
++The
++.B \-n
++option suppresses
++the command numbers when listing.  The
++.B \-r
++option reverses the order of
++the commands.  If the
++.B \-l
++option is given,
++the commands are listed on
++standard output.  Otherwise, the editor given by
++.I ename
++is invoked
++on a file containing those commands.  If
++.I ename
++is not given, the
++value of the
++.SM
++.B FCEDIT
++variable is used, and
++the value of
++.SM
++.B EDITOR
++if
++.SM
++.B FCEDIT
++is not set.  If neither variable is set,
++.FN vi
++is used.  When editing is complete, the edited commands are
++echoed and executed.
++.sp 1
++In the second form, \fIcommand\fP is re-executed after each instance
++of \fIpat\fP is replaced by \fIrep\fP.
++A useful alias to use with this is
++.if n ``r=fc -s'',
++.if t \f(CWr='fc \-s'\fP,
++so that typing
++.if n ``r cc''
++.if t \f(CWr cc\fP
++runs the last command beginning with
++.if n ``cc''
++.if t \f(CWcc\fP
++and typing
++.if n ``r''
++.if t \f(CWr\fP
++re-executes the last command.
++.sp 1
++If the first form is used, the return value is 0 unless an invalid
++option is encountered or
++.I first
++or
++.I last
++specify history lines out of range.
++If the
++.B \-e
++option is supplied, the return value is the value of the last
++command executed or failure if an error occurs with the temporary
++file of commands.  If the second form is used, the return status
++is that of the command re-executed, unless
++.I cmd
++does not specify a valid history line, in which case
++.B fc
++returns failure.
++.TP
++\fBfg\fP [\fIjobspec\fP]
++Resume
++.I jobspec
++in the foreground, and make it the current job.
++If
++.I jobspec
++is not present, the shell's notion of the \fIcurrent job\fP is used.
++The return value is that of the command placed into the foreground,
++or failure if run when job control is disabled or, when run with
++job control enabled, if
++.I jobspec
++does not specify a valid job or
++.I jobspec
++specifies a job that was started without job control.
++.TP
++\fBgetopts\fP \fIoptstring\fP \fIname\fP [\fIargs\fP]
++.B getopts
++is used by shell procedures to parse positional parameters.
++.I optstring
++contains the option characters to be recognized; if a character
++is followed by a colon, the option is expected to have an
++argument, which should be separated from it by white space.
++The colon and question mark characters may not be used as
++option characters.
++Each time it is invoked,
++.B getopts
++places the next option in the shell variable
++.IR name ,
++initializing
++.I name
++if it does not exist,
++and the index of the next argument to be processed into the
++variable
++.SM
++.BR OPTIND .
++.SM
++.B OPTIND
++is initialized to 1 each time the shell or a shell script
++is invoked.  When an option requires an argument,
++.B getopts
++places that argument into the variable
++.SM
++.BR OPTARG .
++The shell does not reset
++.SM
++.B OPTIND
++automatically; it must be manually reset between multiple
++calls to
++.B getopts
++within the same shell invocation if a new set of parameters
++is to be used.
++.sp 1
++When the end of options is encountered, \fBgetopts\fP exits with a
++return value greater than zero.
++\fBOPTIND\fP is set to the index of the first non-option argument,
++and \fBname\fP is set to ?.
++.sp 1
++.B getopts
++normally parses the positional parameters, but if more arguments are
++given in
++.IR args ,
++.B getopts
++parses those instead.
++.sp 1
++.B getopts
++can report errors in two ways.  If the first character of
++.I optstring
++is a colon,
++.I silent
++error reporting is used.  In normal operation diagnostic messages
++are printed when invalid options or missing option arguments are
++encountered.
++If the variable
++.SM
++.B OPTERR
++is set to 0, no error messages will be displayed, even if the first
++character of 
++.I optstring
++is not a colon.
++.sp 1
++If an invalid option is seen,
++.B getopts
++places ? into
++.I name
++and, if not silent,
++prints an error message and unsets
++.SM
++.BR OPTARG .
++If
++.B getopts
++is silent,
++the option character found is placed in
++.SM
++.B OPTARG
++and no diagnostic message is printed.
++.sp 1
++If a required argument is not found, and
++.B getopts
++is not silent,
++a question mark (\^\fB?\fP\^) is placed in
++.IR name ,
++.B OPTARG
++is unset, and a diagnostic message is printed.
++If
++.B getopts
++is silent, then a colon (\^\fB:\fP\^) is placed in
++.I name
++and
++.SM
++.B OPTARG
++is set to the option character found.
++.sp 1
++.B getopts
++returns true if an option, specified or unspecified, is found.
++It returns false if the end of options is encountered or an
++error occurs.
++.TP
++\fBhash\fP [\fB\-r\fP] [\fB\-p\fP \fIfilename\fP] [\fIname\fP]
++For each
++.IR name ,
++the full file name of the command is determined by searching
++the directories in
++.B $PATH
++and remembered.
++If the
++.B \-p
++option is supplied, no path search is performed, and
++.I filename
++is used as the full file name of the command.
++The
++.B \-r
++option causes the shell to forget all
++remembered locations.  If no arguments are given, information
++about remembered commands is printed.
++The return status is true unless a
++.I name
++is not found or an invalid option is supplied.
++.TP
++\fBhelp\fP [\fB\-s\fP] [\fIpattern\fP]
++Display helpful information about builtin commands.  If
++.I pattern
++is specified,
++.B help
++gives detailed help on all commands matching
++.IR pattern ;
++otherwise help for all the builtins and shell control structures
++is printed.
++The \fB\-s\fP option restricts the information displayed to a short
++usage synopsis.
++The return status is 0 unless no command matches
++.IR pattern .
++.TP
++.PD 0
++\fBhistory [\fIn\fP]
++.TP
++\fBhistory\fP \fB\-c\fP
++.TP
++\fBhistory \-d\fP \fIoffset\fP
++.TP
++\fBhistory\fP \fB\-anrw\fP [\fIfilename\fP]
++.TP
++\fBhistory\fP \fB\-p\fP \fIarg\fP [\fIarg ...\fP]
++.TP
++\fBhistory\fP \fB\-s\fP \fIarg\fP [\fIarg ...\fP]
++.PD
++With no options, display the command
++history list with line numbers.  Lines listed
++with a 
++.B *
++have been modified.  An argument of
++.I n
++lists only the last
++.I n
++lines.  If \fIfilename\fP is supplied, it is used as the
++name of the history file; if not, the value of
++.SM
++.B HISTFILE
++is used.  Options, if supplied, have the following meanings:
++.RS
++.PD 0
++.TP
++.B \-c
++Clear the history list by deleting all the entries.
++.TP
++\fB\-d\fP \fIoffset\fP
++Delete the history entry at position \fIoffset\fP.
++.TP
++.B \-a
++Append the ``new'' history lines (history lines entered since the
++beginning of the current \fBbash\fP session) to the history file.
++.TP
++.B \-n
++Read the history lines not already read from the history
++file into the current history list.  These are lines
++appended to the history file since the beginning of the
++current \fBbash\fP session.
++.TP
++.B \-r
++Read the contents of the history file
++and use them as the current history.
++.TP
++.B \-w
++Write the current history to the history file, overwriting the
++history file's contents.
++.TP
++.B \-p
++Perform history substitution on the following \fIargs\fP and display
++the result on the standard output.
++Does not store the results in the history list.
++Each \fIarg\fP must be quoted to disable normal history expansion.
++.TP
++.B \-s
++Store the
++.I args
++in the history list as a single entry.  The last command in the
++history list is removed before the
++.I args
++are added.
++.PD
++.PP
++The return value is 0 unless an invalid option is encountered, an
++error occurs while reading or writing the history file, an invalid
++\fIoffset\fP is supplied as an argument to \fB\-d\fP, or the
++history expansion supplied as an argument to \fB\-p\fP fails.
++.RE
++.TP
++.PD 0
++\fBjobs\fP [\fB\-lnprs\fP] [ \fIjobspec\fP ... ]
++.TP
++\fBjobs\fP \fB\-x\fP \fIcommand\fP [ \fIargs\fP ... ]
++.PD
++The first form lists the active jobs.  The options have the following
++meanings:
++.RS
++.PD 0
++.TP
++.B \-l
++List process IDs
++in addition to the normal information.
++.TP
++.B \-p
++List only the process ID of the job's process group
++leader.
++.TP
++.B \-n
++Display information only about jobs that have changed status since
++the user was last notified of their status.
++.TP
++.B \-r
++Restrict output to running jobs.
++.TP
++.B \-s
++Restrict output to stopped jobs.
++.PD
++.PP
++If
++.I jobspec
++is given, output is restricted to information about that job.
++The return status is 0 unless an invalid option is encountered
++or an invalid
++.I jobspec
++is supplied.
++.PP
++If the
++.B \-x
++option is supplied,
++.B jobs
++replaces any
++.I jobspec
++found in
++.I command
++or
++.I args
++with the corresponding process group ID, and executes
++.I command
++passing it
++.IR args ,
++returning its exit status.
++.RE
++.TP
++.PD 0
++\fBkill\fP [\fB\-s\fP \fIsigspec\fP | \fB\-n\fP \fIsignum\fP | \fB\-\fP\fIsigspec\fP] [\fIpid\fP | \fIjobspec\fP] ...
++.TP
++\fBkill\fP \fB\-l\fP [\fIsigspec\fP | \fIexit_status\fP]
++.PD
++Send the signal named by
++.I sigspec
++or
++.I signum
++to the processes named by
++.I pid
++or
++.IR jobspec .
++.I sigspec
++is either a signal name such as
++.SM
++.B SIGKILL
++or a signal number;
++.I signum
++is a signal number.  If
++.I sigspec
++is a signal name, the name may be
++given with or without the
++.SM
++.B SIG
++prefix.
++If
++.I sigspec
++is not present, then
++.SM
++.B SIGTERM
++is assumed.
++An argument of
++.B \-l
++lists the signal names.
++If any arguments are supplied when
++.B \-l
++is given, the names of the signals corresponding to the arguments are
++listed, and the return status is 0.
++The \fIexit_status\fP argument to
++.B \-l
++is a number specifying either a signal number or the exit status of
++a process terminated by a signal.
++.B kill
++returns true if at least one signal was successfully sent, or false
++if an error occurs or an invalid option is encountered.
++.TP
++\fBlet\fP \fIarg\fP [\fIarg\fP ...]
++Each
++.I arg
++is an arithmetic expression to be evaluated (see
++.SM
++.BR "ARITHMETIC EVALUATION" ).
++If the last
++.I arg
++evaluates to 0,
++.B let
++returns 1; 0 is returned otherwise.
++.TP
++\fBlocal\fP [\fIoption\fP] [\fIname\fP[=\fIvalue\fP] ...]
++For each argument, a local variable named
++.I name 
++is created, and assigned
++.IR value .
++The \fIoption\fP can be any of the options accepted by \fBdeclare\fP.
++When
++.B local
++is used within a function, it causes the variable
++.I name
++to have a visible scope restricted to that function and its children.
++With no operands,
++.B local
++writes a list of local variables to the standard output.  It is
++an error to use
++.B local
++when not within a function.  The return status is 0 unless
++.B local
++is used outside a function, an invalid
++.I name
++is supplied, or
++\fIname\fP is a readonly variable.
++.TP
++.B logout
++Exit a login shell.
++.TP
++\fBpopd\fP [\-\fBn\fP] [+\fIn\fP] [\-\fIn\fP]
++Removes entries from the directory stack.  With no arguments,
++removes the top directory from the stack, and performs a
++.B cd
++to the new top directory.
++Arguments, if supplied, have the following meanings:
++.RS
++.PD 0
++.TP
++\fB+\fP\fIn\fP
++Removes the \fIn\fPth entry counting from the left of the list
++shown by
++.BR dirs ,
++starting with zero.  For example:
++.if n ``popd +0''
++.if t \f(CWpopd +0\fP
++removes the first directory,
++.if n ``popd +1''
++.if t \f(CWpopd +1\fP
++the second.
++.TP
++\fB\-\fP\fIn\fP
++Removes the \fIn\fPth entry counting from the right of the list
++shown by
++.BR dirs ,
++starting with zero.  For example:
++.if n ``popd -0''
++.if t \f(CWpopd -0\fP
++removes the last directory,
++.if n ``popd -1''
++.if t \f(CWpopd -1\fP
++the next to last.
++.TP
++.B \-n
++Suppresses the normal change of directory when removing directories
++from the stack, so that only the stack is manipulated.
++.PD
++.PP
++If the
++.B popd
++command is successful, a 
++.B dirs
++is performed as well, and the return status is 0.
++.B popd
++returns false if an invalid option is encountered, the directory stack
++is empty, a non-existent directory stack entry is specified, or the
++directory change fails.
++.RE
++.TP
++\fBprintf\fP \fIformat\fP [\fIarguments\fP]
++Write the formatted \fIarguments\fP to the standard output under the
++control of the \fIformat\fP.
++The \fIformat\fP is a character string which contains three types of objects:
++plain characters, which are simply copied to standard output, character
++escape sequences, which are converted and copied to the standard output, and
++format specifications, each of which causes printing of the next successive
++\fIargument\fP.
++In addition to the standard \fIprintf\fP(1) formats, %b causes
++\fBprintf\fP to expand backslash escape sequences in the corresponding
++\fIargument\fP, and %q causes \fBprintf\fP to output the corresponding
++\fIargument\fP in a format that can be reused as shell input.
++.sp 1
++The \fIformat\fP is reused as necessary to consume all of the \fIarguments\fP.
++If the \fIformat\fP requires more \fIarguments\fP than are supplied, the
++extra format specifications behave as if a zero value or null string, as
++appropriate, had been supplied.  The return value is zero on success,
++non-zero on failure.
++.TP
++.PD 0
++\fBpushd\fP [\fB\-n\fP] [\fIdir\fP]
++.TP
++\fBpushd\fP [\fB\-n\fP] [+\fIn\fP] [\-\fIn\fP]
++.PD
++Adds a directory to the top of the directory stack, or rotates
++the stack, making the new top of the stack the current working
++directory.  With no arguments, exchanges the top two directories
++and returns 0, unless the directory stack is empty.
++Arguments, if supplied, have the following meanings:
++.RS
++.PD 0
++.TP
++\fB+\fP\fIn\fP
++Rotates the stack so that the \fIn\fPth directory
++(counting from the left of the list shown by
++.BR dirs ,
++starting with zero)
++is at the top.
++.TP
++\fB\-\fP\fIn\fP
++Rotates the stack so that the \fIn\fPth directory
++(counting from the right of the list shown by
++.BR dirs ,
++starting with zero) is at the top.
++.TP
++.B \-n
++Suppresses the normal change of directory when adding directories
++to the stack, so that only the stack is manipulated.
++.TP
++.I dir
++Adds
++.I dir
++to the directory stack at the top, making it the
++new current working directory.
++.PD
++.PP
++If the
++.B pushd
++command is successful, a 
++.B dirs
++is performed as well.
++If the first form is used,
++.B pushd
++returns 0 unless the cd to
++.I dir
++fails.  With the second form,
++.B pushd
++returns 0 unless the directory stack is empty,
++a non-existent directory stack element is specified,
++or the directory change to the specified new current directory
++fails.
++.RE
++.TP
++\fBpwd\fP [\fB\-LP\fP]
++Print the absolute pathname of the current working directory.
++The pathname printed contains no symbolic links if the
++.B \-P
++option is supplied or the 
++.B \-o physical
++option to the
++.B set
++builtin command is enabled.
++If the
++.B \-L
++option is used, the pathname printed may contain symbolic links.
++The return status is 0 unless an error occurs while
++reading the name of the current directory or an
++invalid option is supplied.
++.TP
++\fBread\fP [\fB\-ers\fP] [\fB\-t\fP \fItimeout\fP] [\fB\-a\fP \fIaname\fP] [\fB\-p\fP \fIprompt\fP] [\fB\-n\fP \fInchars\fP] [\fB\-d\fP \fIdelim\fP] [\fIname\fP ...]
++One line is read from the standard input, and the first word
++is assigned to the first
++.IR name ,
++the second word to the second
++.IR name ,
++and so on, with leftover words and their intervening separators assigned
++to the last
++.IR name .
++If there are fewer words read from the standard input than names,
++the remaining names are assigned empty values.
++The characters in 
++.SM
++.B IFS
++are used to split the line into words.
++The backslash character (\fB\e\fP) may be used to remove any special
++meaning for the next character read and for line continuation.
++Options, if supplied, have the following meanings:
++.RS
++.PD 0
++.TP
++.B \-a \fIaname\fP
++The words are assigned to sequential indices
++of the array variable
++.IR aname ,
++starting at 0.
++.I aname
++is unset before any new values are assigned.
++Other \fIname\fP arguments are ignored.
++.TP
++.B \-d \fIdelim\fP
++The first character of \fIdelim\fP is used to terminate the input line,
++rather than newline.
++.TP
++.B \-e
++If the standard input
++is coming from a terminal,
++.B readline
++(see
++.SM
++.B READLINE
++above) is used to obtain the line.
++.TP
++.B \-n \fInchars\fP
++\fBread\fP returns after reading \fInchars\fP characters rather than
++waiting for a complete line of input.
++.TP
++.B \-p \fIprompt\fP
++Display \fIprompt\fP, without a
++trailing newline, before attempting to read any input.  The prompt
++is displayed only if input is coming from a terminal.
++.TP
++.B \-r
++Backslash does not act as an escape character.
++The backslash is considered to be part of the line.
++In particular, a backslash-newline pair may not be used as a line
++continuation.
++.TP
++.B \-s
++Silent mode.  If input is coming from a terminal, characters are
++not echoed.
++.TP
++.B \-t \fItimeout\fP
++Cause \fBread\fP to time out and return failure if a complete line of
++input is not read within \fItimeout\fP seconds.
++This option has no effect if \fBread\fP is not reading input from the
++terminal or a pipe.
++.PD
++.PP
++If no
++.I names
++are supplied, the line read is assigned to the variable
++.SM
++.BR REPLY .
++The return code is zero, unless end-of-file is encountered or \fBread\fP
++times out.
++.RE
++.TP
++\fBreadonly\fP [\fB\-apf\fP] [\fIname\fP ...]
++.PD
++The given
++\fInames\fP are marked readonly; the values of these
++.I names
++may not be changed by subsequent assignment.
++If the
++.B \-f
++option is supplied, the functions corresponding to the
++\fInames\fP are so
++marked.
++The
++.B \-a
++option restricts the variables to arrays.
++If no
++.I name
++arguments are given, or if the
++.B \-p
++option is supplied, a list of all readonly names is printed.
++The
++.B \-p
++option causes output to be displayed in a format that
++may be reused as input.
++The return status is 0 unless an invalid option is encountered,
++one of the
++.I names
++is not a valid shell variable name, or
++.B \-f
++is supplied with a
++.I name
++that is not a function.
++.TP
++\fBreturn\fP [\fIn\fP]
++Causes a function to exit with the return value specified by
++.IR n .
++If 
++.I n
++is omitted, the return status is that of the last command
++executed in the function body.  If used outside a function,
++but during execution of a script by the 
++.B .
++(\fBsource\fP) command, it causes the shell to stop executing
++that script and return either
++.I n
++or the exit status of the last command executed within the
++script as the exit status of the script.  If used outside a
++function and not during execution of a script by \fB.\fP\^,
++the return status is false.
++.TP
++\fBset\fP [\fB\-\-abefhkmnptuvxBCHP\fP] [\fB\-o\fP \fIoption\fP] [\fIarg\fP ...]
++Without options, the name and value of each shell variable are displayed
++in a format that can be reused as input.
++The output is sorted according to the current locale.
++When options are specified, they set or unset shell attributes.
++Any arguments remaining after the options are processed are treated
++as values for the positional parameters and are assigned, in order, to 
++.BR $1 ,
++.BR $2 ,
++.B ...
++.BR $\fIn\fP .
++Options, if specified, have the following meanings:
++.RS
++.PD 0
++.TP 8
++.B \-a
++Automatically mark variables and functions which are modified or created
++for export to the environment of subsequent commands.
++.TP 8
++.B \-b
++Report the status of terminated background jobs
++immediately, rather than before the next primary prompt.  This is
++effective only when job control is enabled.
++.TP 8
++.B \-e
++Exit immediately if a \fIsimple command\fP (see
++.SM
++.B SHELL GRAMMAR
++above) exits with a non-zero status.  The shell does not exit if the
++command that fails is part of an
++.I until
++or
++.I while
++loop,
++part of an
++.I if
++statement, part of a
++.B &&
++or
++.B \(bv\(bv
++list, or if the command's return value is
++being inverted via
++.BR ! .
++.TP 8
++.B \-f
++Disable pathname expansion.
++.TP 8 
++.B \-h
++Remember the location of commands as they are looked up for execution.
++This is enabled by default.
++.TP 8
++.B \-k
++All arguments in the form of assignment statements
++are placed in the environment for a command, not just
++those that precede the command name.
++.TP 8
++.B \-m
++Monitor mode.  Job control is enabled.  This option is on
++by default for interactive shells on systems that support
++it (see
++.SM
++.B JOB CONTROL
++above).  Background processes run in a separate process
++group and a line containing their exit status is printed
++upon their completion.
++.TP 8
++.B \-n
++Read commands but do not execute them.  This may be used to 
++check a shell script for syntax errors.  This is ignored by
++interactive shells.
++.TP 8
++.B \-o \fIoption\-name\fP
++The \fIoption\-name\fP can be one of the following:
++.RS
++.TP 8
++.B allexport
++Same as
++.BR \-a .
++.TP 8
++.B braceexpand
++Same as
++.BR \-B .
++.TP 8
++.B emacs
++Use an emacs-style command line editing interface.  This is enabled
++by default when the shell is interactive, unless the shell is started
++with the
++.B \-\-noediting
++option.
++.TP 8
++.B errexit
++Same as
++.BR \-e .
++.TP 8
++.B hashall
++Same as
++.BR \-h .
++.TP 8
++.B histexpand
++Same as
++.BR \-H .
++.TP 8
++.B history
++Enable command history, as described above under
++.SM
++.BR HISTORY .
++This option is on by default in interactive shells.
++.TP 8
++.B ignoreeof
++The effect is as if the shell command
++.if t \f(CWIGNOREEOF=10\fP
++.if n ``IGNOREEOF=10''
++had been executed
++(see
++.B Shell Variables
++above).
++.TP 8
++.B keyword
++Same as
++.BR \-k .
++.TP 8
++.B monitor
++Same as
++.BR \-m .
++.TP 8
++.B noclobber
++Same as
++.BR \-C .
++.TP 8
++.B noexec
++Same as
++.BR \-n .
++.TP 8
++.B noglob
++Same as
++.BR \-f .
++.TP 8
++.B notify
++Same as
++.BR \-b .
++.TP 8
++.B nounset
++Same as
++.BR \-u .
++.TP 8
++.B onecmd
++Same as
++.BR \-t .
++.TP 8
++.B physical
++Same as
++.BR \-P .
++.TP 8
++.B posix
++Change the behavior of
++.B bash
++where the default operation differs
++from the POSIX 1003.2 standard to match the standard (\fIposix mode\fP).
++.TP 8
++.B privileged
++Same as
++.BR \-p .
++.TP 8
++.B verbose
++Same as
++.BR \-v .
++.TP 8
++.B vi
++Use a vi-style command line editing interface.
++.TP 8
++.B xtrace
++Same as
++.BR \-x .
++.sp .5
++.PP
++If
++.B \-o
++is supplied with no \fIoption\-name\fP, the values of the current options are
++printed.
++If
++.B +o
++is supplied with no \fIoption\-name\fP, a series of
++.B set
++commands to recreate the current option settings is displayed on
++the standard output.
++.RE
++.TP 8
++.B \-p
++Turn on
++.I privileged
++mode.  In this mode, the
++.SM
++.B $ENV
++and
++.SM
++.B $BASH_ENV
++files are not processed, shell functions are not inherited from the
++environment, and the
++.SM
++.B SHELLOPTS
++variable, if it appears in the environment, is ignored.
++If the shell is started with the effective user (group) id not equal to the
++real user (group) id, and the \fB\-p\fP option is not supplied, these actions
++are taken and the effective user id is set to the real user id.
++If the \fB\-p\fP option is supplied at startup, the effective user id is
++not reset.
++Turning this option off causes the effective user
++and group ids to be set to the real user and group ids.
++.TP 8
++.B \-t
++Exit after reading and executing one command.
++.TP 8
++.B \-u
++Treat unset variables as an error when performing
++parameter expansion.  If expansion is attempted on an
++unset variable, the shell prints an error message, and,
++if not interactive, exits with a non-zero status.
++.TP 8
++.B \-v
++Print shell input lines as they are read.
++.TP 8
++.B \-x
++After expanding each \fIsimple command\fP,
++display the expanded value of
++.SM
++.BR PS4 ,
++followed by the command and its expanded arguments.
++.TP 8
++.B \-B
++The shell performs brace expansion (see
++.B Brace Expansion
++above).  This is on by default.
++.TP 8
++.B \-C
++If set,
++.B bash
++does not overwrite an existing file with the
++.BR > ,
++.BR >& ,
++and
++.B <>
++redirection operators.  This may be overridden when 
++creating output files by using the redirection operator
++.B >|
++instead of
++.BR > .
++.TP 8
++.B \-H
++Enable
++.B !
++style history substitution.  This option is on by
++default when the shell is interactive.
++.TP 8
++.B \-P
++If set, the shell does not follow symbolic links when executing
++commands such as
++.B cd
++that change the current working directory.  It uses the
++physical directory structure instead.  By default,
++.B bash
++follows the logical chain of directories when performing commands
++which change the current directory.
++.TP 8
++.B \-\-
++If no arguments follow this option, then the positional parameters are
++unset.  Otherwise, the positional parameters are set to the
++\fIarg\fPs, even if some of them begin with a
++.BR \- .
++.TP 8
++.B \-
++Signal the end of options, cause all remaining \fIarg\fPs to be
++assigned to the positional parameters.  The
++.B \-x
++and
++.B \-v
++options are turned off.
++If there are no \fIarg\fPs,
++the positional parameters remain unchanged.
++.PD
++.PP
++The options are off by default unless otherwise noted.
++Using + rather than \- causes these options to be turned off.
++The options can also be specified as arguments to an invocation of
++the shell.
++The current set of options may be found in
++.BR $\- .
++The return status is always true unless an invalid option is encountered.
++.RE
++.TP
++\fBshift\fP [\fIn\fP]
++The positional parameters from \fIn\fP+1 ... are renamed to
++.B $1
++.B ....
++Parameters represented by the numbers \fB$#\fP
++down to \fB$#\fP\-\fIn\fP+1 are unset.
++.I n
++must be a non-negative number less than or equal to \fB$#\fP.
++If
++.I n
++is 0, no parameters are changed.
++If
++.I n 
++is not given, it is assumed to be 1.
++If
++.I n
++is greater than \fB$#\fP, the positional parameters are not changed.
++The return status is greater than zero if
++.I n
++is greater than
++.B $#
++or less than zero; otherwise 0.
++.TP
++\fBshopt\fP [\fB\-pqsu\fP] [\fB\-o\fP] [\fIoptname\fP ...]
++Toggle the values of variables controlling optional shell behavior.
++With no options, or with the
++.B \-p
++option, a list of all settable options is displayed, with
++an indication of whether or not each is set.
++The \fB\-p\fP option causes output to be displayed in a form that
++may be reused as input.
++Other options have the following meanings:
++.RS
++.PD 0
++.TP
++.B \-s
++Enable (set) each \fIoptname\fP.
++.TP
++.B \-u
++Disable (unset) each \fIoptname\fP.
++.TP
++.B \-q
++Suppresses normal output (quiet mode); the return status indicates
++whether the \fIoptname\fP is set or unset.
++If multiple \fIoptname\fP arguments are given with
++.BR \-q ,
++the return status is zero if all \fIoptnames\fP are enabled; non-zero
++otherwise.
++.TP
++.B \-o
++Restricts the values of \fIoptname\fP to be those defined for the
++.B \-o
++option to the
++.B set
++builtin.
++.PD
++.PP
++If either
++.B \-s
++or
++.B \-u
++is used with no \fIoptname\fP arguments, the display is limited to
++those options which are set or unset, respectively.
++Unless otherwise noted, the \fBshopt\fP options are disabled (unset)
++by default.
++.PP
++The return status when listing options is zero if all \fIoptnames\fP
++are enabled, non-zero otherwise.  When setting or unsetting options,
++the return status is zero unless an \fIoptname\fP is not a valid shell
++option.
++.PP
++The list of \fBshopt\fP options is:
++.if t .sp .5v
++.if n .sp 1v
++.PD 0
++.TP 8
++.B cdable_vars
++If set, an argument to the
++.B cd
++builtin command that
++is not a directory is assumed to be the name of a variable whose
++value is the directory to change to.
++.TP 8
++.B cdspell
++If set, minor errors in the spelling of a directory component in a
++.B cd
++command will be corrected.
++The errors checked for are transposed characters,
++a missing character, and one character too many.
++If a correction is found, the corrected file name is printed,
++and the command proceeds.
++This option is only used by interactive shells.
++.TP 8
++.B checkhash
++If set, \fBbash\fP checks that a command found in the hash
++table exists before trying to execute it.  If a hashed command no
++longer exists, a normal path search is performed.
++.TP 8
++.B checkwinsize
++If set, \fBbash\fP checks the window size after each command
++and every time variables
++.SM
++.B LINES
++and
++.SM
++.BR COLUMNS
++are used, updating values of these variables if necessary.
++.TP 8
++.B cmdhist
++If set,
++.B bash
++attempts to save all lines of a multiple-line
++command in the same history entry.  This allows
++easy re-editing of multi-line commands.
++.TP 8
++.B dotglob
++If set, 
++.B bash
++includes filenames beginning with a `.' in the results of pathname
++expansion.
++.TP 8
++.B execfail
++If set, a non-interactive shell will not exit if
++it cannot execute the file specified as an argument to the
++.B exec
++builtin command.  An interactive shell does not exit if
++.B exec
++fails.
++.TP 8
++.B expand_aliases
++If set, aliases are expanded as described above under
++.SM
++.BR ALIASES .
++This option is enabled by default for interactive shells.
++.TP 8
++.B extglob
++If set, the extended pattern matching features described above under
++\fBPathname Expansion\fP are enabled.
++.TP 8
++.B histappend
++If set, the history list is appended to the file named by the value
++of the
++.B HISTFILE
++variable when the shell exits, rather than overwriting the file.
++.TP 8
++.B histreedit
++If set, and
++.B readline
++is being used, a user is given the opportunity to re-edit a
++failed history substitution.
++.TP 8
++.B histverify
++If set, and 
++.B readline
++is being used, the results of history substitution are not immediately
++passed to the shell parser.  Instead, the resulting line is loaded into
++the \fBreadline\fP editing buffer, allowing further modification.
++.TP 8
++.B hostcomplete
++If set, and
++.B readline
++is being used, \fBbash\fP will attempt to perform hostname completion when a
++word containing a \fB@\fP is being completed (see
++.B Completing
++under
++.SM
++.B READLINE
++above).
++This is enabled by default.
++.TP 8
++.B huponexit
++If set, \fBbash\fP will send
++.SM
++.B SIGHUP
++to all jobs when an interactive login shell exits.
++.TP 8
++.B interactive_comments
++If set, allow a word beginning with
++.B #
++to cause that word and all remaining characters on that
++line to be ignored in an interactive shell (see
++.SM
++.B COMMENTS
++above).  This option is enabled by default.
++.TP 8
++.B lithist
++If set, and the
++.B cmdhist
++option is enabled, multi-line commands are saved to the history with
++embedded newlines rather than using semicolon separators where possible.
++.TP 8
++.B mailwarn
++If set, and a file that \fBbash\fP is checking for mail has been  
++accessed since the last time it was checked, the message ``The mail in
++\fImailfile\fP has been read'' is displayed.
++.TP 8
++.B no_empty_cmd_completion
++If set, and
++.B readline
++is being used,
++.B bash
++will not attempt to search the \fBPATH\fP for possible completions when
++completion is attempted on an empty line.
++.TP 8
++.B nocaseglob
++If set,
++.B bash
++matches filenames in a case\-insensitive fashion when performing pathname
++expansion (see
++.B Pathname Expansion
++above).
++.TP 8
++.B nullglob
++If set,
++.B bash
++allows patterns which match no
++files (see
++.B Pathname Expansion
++above)
++to expand to a null string, rather than themselves.
++.TP 8
++.B progcomp
++If set, the programmable completion facilities (see
++\fBProgrammable Completion\fP above) are enabled.
++This option is enabled by default.
++.TP 8
++.B promptvars
++If set, prompt strings undergo variable and parameter expansion after
++being expanded as described in
++.SM
++.B PROMPTING
++above.  This option is enabled by default.
++.TP 8
++.B restricted_shell
++The shell sets this option if it is started in restricted mode (see
++.SM
++.B "RESTRICTED SHELL"
++below).
++The value may not be changed.
++This is not reset when the startup files are executed, allowing
++the startup files to discover whether or not a shell is restricted.
++.TP 8
++.B shift_verbose
++If set, the
++.B shift
++builtin prints an error message when the shift count exceeds the
++number of positional parameters.
++.TP 8
++.B sourcepath
++If set, the
++\fBsource\fP (\fB.\fP) builtin uses the value of
++.SM
++.B PATH
++to find the directory containing the file supplied as an argument.
++This option is enabled by default.
++.TP 8
++.B xpg_echo
++If set, the \fBecho\fP builtin expands backslash-escape sequences
++by default.
++.RE
++.TP
++\fBsuspend\fP [\fB\-f\fP]
++Suspend the execution of this shell until it receives a
++.SM
++.B SIGCONT
++signal.  The
++.B \-f
++option says not to complain if this is 
++a login shell; just suspend anyway.  The return status is 0 unless
++the shell is a login shell and
++.B \-f
++is not supplied, or if job control is not enabled.
++.TP
++.PD 0
++\fBtest\fP \fIexpr\fP
++.TP
++\fB[\fP \fIexpr\fP \fB]\fP
++Return a status of 0 or 1 depending on
++the evaluation of the conditional expression
++.IR expr .
++Each operator and operand must be a separate argument.
++Expressions are composed of the primaries described above under
++.SM
++.BR "CONDITIONAL EXPRESSIONS" .
++.if t .sp 0.5
++.if n .sp 1
++Expressions may be combined using the following operators, listed
++in decreasing order of precedence.
++.RS
++.PD 0
++.TP
++.B ! \fIexpr\fP
++True if
++.I expr
++is false.
++.TP
++.B ( \fIexpr\fP )
++Returns the value of \fIexpr\fP.
++This may be used to override the normal precedence of operators.
++.TP
++\fIexpr1\fP \-\fBa\fP \fIexpr2\fP
++True if both
++.I expr1
++and
++.I expr2
++are true.
++.TP
++\fIexpr1\fP \-\fBo\fP \fIexpr2\fP
++True if either
++.I expr1
++or
++.I expr2
++is true.
++.PD
++.PP
++\fBtest\fP and \fB[\fP evaluate conditional
++expressions using a set of rules based on the number of arguments.
++.if t .sp 0.5
++.if n .sp 1
++.PD 0
++.TP
++0 arguments
++The expression is false.
++.TP
++1 argument
++The expression is true if and only if the argument is not null.
++.TP
++2 arguments
++If the first argument is \fB!\fP, the expression is true if and
++only if the second argument is null.
++If the first argument is one of the unary conditional operators listed above
++under
++.SM
++.BR "CONDITIONAL EXPRESSIONS" ,
++the expression is true if the unary test is true.
++If the first argument is not a valid unary conditional operator, the expression
++is false.
++.TP
++3 arguments
++If the second argument is one of the binary conditional operators listed above
++under
++.SM
++.BR "CONDITIONAL EXPRESSIONS" ,
++the result of the expression is the result of the binary test using
++the first and third arguments as operands.
++If the first argument is \fB!\fP, the value is the negation of
++the two-argument test using the second and third arguments.
++If the first argument is exactly \fB(\fP and the third argument is
++exactly \fB)\fP, the result is the one-argument test of the second
++argument.
++Otherwise, the expression is false.
++The \fB\-a\fP and \fB\-o\fP operators are considered binary operators
++in this case.  
++.TP
++4 arguments
++If the first argument is \fB!\fP, the result is the negation of
++the three-argument expression composed of the remaining arguments.
++Otherwise, the expression is parsed and evaluated according to 
++precedence using the rules listed above.
++.TP
++5 or more arguments
++The expression is parsed and evaluated according to precedence
++using the rules listed above.
++.RE
++.PD
++.TP
++.B times
++Print the accumulated user and system times for the shell and
++for processes run from the shell.  The return status is 0.
++.TP
++\fBtrap\fP [\fB\-lp\fP] [\fIarg\fP] [\fIsigspec\fP ...]
++The command
++.I arg
++is to be read and executed when the shell receives
++signal(s)
++.IR sigspec .
++If
++.I arg
++is absent or
++.BR \- ,
++all specified signals are
++reset to their original values (the values they had
++upon entrance to the shell).
++If 
++.I arg
++is the null string the signal specified by each
++.I sigspec
++is ignored by the shell and by the commands it invokes.
++If
++.I arg
++is not present and
++.B \-p
++has been supplied, then the trap commands associated with each
++.I sigspec
++are displayed.
++If no arguments are supplied or if only
++.B \-p
++is given,
++.B trap
++prints the list of commands associated with each signal number.
++Each
++.I sigspec
++is either
++a signal name defined in <\fIsignal.h\fP>, or a signal number.
++If a
++.I sigspec
++is
++.SM
++.B EXIT
++(0) the command
++.I arg
++is executed on exit from the shell.  If a
++.I sigspec
++is
++.SM
++.BR DEBUG ,
++the command
++.I arg
++is executed after every \fIsimple command\fP (see
++.SM
++.B SHELL GRAMMAR
++above).
++The
++.B \-l
++option causes the shell to print a list of signal names and
++their corresponding numbers.
++Signals ignored upon entry to the shell cannot be trapped or reset.
++Trapped signals are reset to their original values in a child
++process when it is created.
++The return status is false if any
++.I sigspec
++is invalid; otherwise
++.B trap
++returns true.
++.TP
++\fBtype\fP [\fB\-atp\fP] \fIname\fP [\fIname\fP ...]
++With no options, 
++indicate how each
++.I name
++would be interpreted if used as a command name.
++If the
++.B \-t
++option is used,
++.B type
++prints a string which is one of
++.IR alias ,
++.IR keyword ,
++.IR function ,
++.IR builtin ,
++or
++.I file 
++if
++.I name
++is an alias, shell reserved word, function, builtin, or disk file,
++respectively.
++If the
++.I name
++is not found, then nothing is printed, and an exit status of false
++is returned.
++If the
++.B \-p
++option is used,
++.B type
++either returns the name of the disk file
++that would be executed if
++.I name
++were specified as a command name,
++or nothing if
++.if t \f(CWtype -t name\fP
++.if n ``type -t name''
++would not return
++.IR file .
++If a command is hashed,
++.B \-p
++prints the hashed value, not necessarily the file that appears
++first in 
++.SM
++.BR PATH .
++If the
++.B \-a
++option is used, 
++.B type
++prints all of the places that contain
++an executable named 
++.IR name .
++This includes aliases and functions,
++if and only if the 
++.B \-p
++option is not also used.
++The table of hashed commands is not consulted
++when using
++.BR \-a .
++.B type
++returns true if any of the arguments are found, false if
++none are found.
++.TP
++\fBulimit\fP [\fB\-SHacdflmnpstuv\fP [\fIlimit\fP]]
++Provides control over the resources available to the shell and to
++processes started by it, on systems that allow such control.  The
++value of
++.I limit
++can be a number in the unit specified for the resource, or the
++value
++.BR unlimited .
++The \fB\-H\fP and \fB\-S\fP options specify that the hard or soft limit is
++set for the given resource.  A hard limit cannot be increased once it
++is set; a soft limit may be increased up to the value of the hard limit.
++If neither \fB\-H\fP nor \fB\-S\fP is specified, both the soft and hard
++limits are set.
++If
++.I limit
++is omitted, the current value of the soft limit of the resource is
++printed, unless the \fB\-H\fP option is given.  When more than one
++resource is specified, the limit name and unit are printed before the value.
++Other options are interpreted as follows:
++.RS
++.PD 0
++.TP
++.B \-a
++All current limits are reported
++.TP
++.B \-c
++The maximum size of core files created
++.TP
++.B \-d
++The maximum size of a process's data segment
++.TP
++.B \-f
++The maximum size of files created by the shell
++.TP
++.B \-l
++The maximum size that may be locked into memory
++.TP
++.B \-m
++The maximum resident set size
++.TP
++.B \-n
++The maximum number of open file descriptors (most systems do not
++allow this value to be set)
++.TP
++.B \-p
++The pipe size in 512-byte blocks (this may not be set)
++.TP
++.B \-s
++The maximum stack size
++.TP
++.B \-t
++The maximum amount of cpu time in seconds
++.TP
++.B \-u
++The maximum number of processes available to a single user
++.TP
++.B \-v
++The maximum amount of virtual memory available to the shell
++.PD
++.PP
++If
++.I limit
++is given, it is the new value of the specified resource (the
++.B \-a
++option is display only).
++If no option is given, then
++.B \-f
++is assumed.  Values are in 1024-byte increments, except for
++.BR \-t ,
++which is in seconds,
++.BR \-p ,
++which is in units of 512-byte blocks,
++and
++.B \-n
++and
++.BR \-u ,
++which are unscaled values.  The return status is 0
++unless an invalid option is encountered, a non-numeric argument
++other than \fBunlimited\fP is supplied as \fIlimit\fP, or an
++error occurs while setting a new limit.
++.RE
++.TP
++\fBumask\fP [\fB\-p\fP] [\fB\-S\fP] [\fImode\fP]
++The user file-creation mask is set to 
++.IR mode .
++If
++.I mode
++begins with a digit, it
++is interpreted as an octal number; otherwise
++it is interpreted as a symbolic mode mask similar
++to that accepted by
++.IR chmod (1).
++If
++.I mode
++is omitted, the current value of the mask is printed.
++The
++.B \-S
++option causes the mask to be printed in symbolic form; the
++default output is an octal number.
++If the
++.B \-p
++option is supplied, and
++.I mode
++is omitted, the output is in a form that may be reused as input.
++The return status is 0 if the mode was successfully changed or if
++no \fImode\fP argument was supplied, and false otherwise.
++.TP
++\fBunalias\fP [\-\fBa\fP] [\fIname\fP ...]
++Remove each \fIname\fP from the list of defined aliases.  If
++.B \-a
++is supplied, all alias definitions are removed.  The return
++value is true unless a supplied
++.I name
++is not a defined alias.
++.TP
++\fBunset\fP [\-\fBfv\fP] [\fIname\fP ...]
++For each
++.IR name ,
++remove the corresponding variable or function.
++If no options are supplied, or the
++.B \-v
++option is given, each
++.I name
++refers to a shell variable.
++Read-only variables may not be unset.
++If
++.B \-f
++is specifed, 
++each
++.I name
++refers to a shell function, and the function definition
++is removed.
++Each unset variable or function is removed from the environment
++passed to subsequent commands.
++If any of
++.SM
++.BR RANDOM ,
++.SM
++.BR SECONDS ,
++.SM
++.BR LINENO ,
++.SM
++.BR ROWS ,
++.SM
++.BR COLUMNS ,
++.SM
++.BR HISTCMD ,
++.SM
++.BR FUNCNAME ,
++.SM
++.BR GROUPS ,
++or
++.SM
++.B DIRSTACK
++are unset, they lose their special properties, even if they are
++subsequently reset.  The exit status is true unless a
++.I name
++does not exist or is readonly.
++.TP
++\fBwait\fP [\fIn\fP]
++Wait for the specified process and return its termination
++status.
++.I n
++may be a process
++ID or a job specification; if a job spec is given, all processes
++in that job's pipeline are waited for.  If
++.I n
++is not given, all currently active child processes
++are waited for, and the return status is zero.  If
++.I n
++specifies a non-existent process or job, the return status is
++127.  Otherwise, the return status is the exit status of the last
++process or job waited for.
+ .SH SEE ALSO
+ bash(1), sh(1)

@@ -1,10 +1,9 @@
-diff -ur bash-2.04.orig/variables.c bash-2.04/variables.c
---- bash-2.04.orig/variables.c	Tue Mar 14 19:36:18 2000
-+++ bash-2.04/variables.c	Thu Sep  7 05:03:34 2000
-@@ -2438,7 +2438,7 @@
+--- bash-2.05/variables.c.orig	Wed Feb 21 20:47:11 2001
++++ bash-2.05/variables.c	Tue Oct 23 00:50:16 2001
+@@ -2536,7 +2536,7 @@
      {
        if (*s == '=')
-         break;
+ 	break;
 -      if (legal_variable_char (*s) == 0)
 +      if (legal_variable_char (*s) == 0 && *s != '-')
  	{

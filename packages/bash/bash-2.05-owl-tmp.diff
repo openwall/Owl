@@ -1,0 +1,148 @@
+--- bash-2.05/builtins/fc.def.orig	Sun Oct 21 22:58:35 2001
++++ bash-2.05/builtins/fc.def	Mon Oct 22 00:32:21 2001
+@@ -63,6 +63,7 @@
+ #endif
+ 
+ #include <stdio.h>
++#include <stdlib.h>
+ 
+ #include "../bashansi.h"
+ #include <errno.h>
+@@ -326,8 +327,24 @@
+     stream = stdout;
+   else
+     {
++      char *tmpdir;
++      int fd;
++
+       numbering = 0;
+-      stream = sh_mktmpfp ("bash-fc", MT_USERANDOM|MT_USETMPDIR, &fn);
++      tmpdir = getenv("TMPDIR");
++      if (!tmpdir) tmpdir = "/tmp";
++      fn = (char *)xmalloc (strlen (tmpdir) + 13);
++      sprintf (fn, "%s/bash.XXXXXX", tmpdir);
++
++      fd = mkstemp(fn);
++      if (fd == -1)
++        {
++          builtin_error ("cannot create temp file %s", fn);
++          free (fn);
++          return (EXECUTION_FAILURE);
++        }
++      stream = fdopen (fd, "w");
++
+       if (stream == 0)
+ 	{
+ 	  builtin_error ("cannot open temp file %s", fn ? fn : "");
+@@ -387,6 +404,8 @@
+   retval = fc_execute_file (fn);
+ 
+   run_unwind_frame ("fc builtin");
++
++  free (fn);
+ 
+   return (retval);
+ }
+--- bash-2.05/lib/malloc/malloc.c.orig	Thu Feb 15 00:01:50 2001
++++ bash-2.05/lib/malloc/malloc.c	Mon Oct 22 01:14:21 2001
+@@ -954,7 +954,8 @@
+   _print_malloc_stats (s, stderr);
+ }
+ 
+-#define TRACEROOT "/var/tmp/maltrace/trace."
++/* This is actually never used in bash. */
++#define TRACEROOT "/var/run/maltrace/trace."
+ extern char *inttostr ();
+ 
+ void
+--- bash-2.05/redir.c.orig	Mon Oct 22 00:34:15 2001
++++ bash-2.05/redir.c	Mon Oct 22 01:02:12 2001
+@@ -24,6 +24,7 @@
+ #endif /* _AIX && RISC6000 && !__GNUC__ */
+ 
+ #include <stdio.h>
++#include <stdlib.h>
+ #include "bashtypes.h"
+ #ifndef _MINIX
+ #  include <sys/file.h>
+@@ -302,16 +303,22 @@
+ here_document_to_fd (redirectee)
+      WORD_DESC *redirectee;
+ {
+-  char *filename;
++  char *tmpdir, *filename;
+   int r, fd, fd2;
+   static int fnum = 0;
+ 
+-  fd = sh_mktmpfd ("sh-thd", MT_USERANDOM, &filename);
++  tmpdir = getenv("TMPDIR");
++  if (!tmpdir) tmpdir = "/tmp";
++  filename = (char *)xmalloc (strlen (tmpdir) + 13);
++  sprintf (filename, "%s/bash.XXXXXX", tmpdir);
++  fd = mkstemp (filename);
+ 
+   /* If we failed for some reason other than the file existing, abort */
+   if (fd < 0)
+     {
++      r = errno;
+       FREE (filename);
++      errno = r;
+       return (fd);
+     }
+ 
+--- bash-2.05/subst.c.orig	Mon Oct 22 01:05:02 2001
++++ bash-2.05/subst.c	Mon Oct 22 01:10:39 2001
+@@ -3053,14 +3053,28 @@
+ static char *
+ make_named_pipe ()
+ {
+-  char *tname;
++  char *tmpdir, *tname;
+ 
+-  tname = sh_mktmpname ("sh-np", MT_USERANDOM);
+-  if (mkfifo (tname, 0600) < 0)
++  tmpdir = getenv("TMPDIR");
++  if (!tmpdir) tmpdir = "/tmp";
++  tname = (char *)xmalloc (strlen (tmpdir) + 13);
++
++  do
+     {
+-      free (tname);
+-      return ((char *)NULL);
+-    }
++      sprintf (tname, "%s/bash.XXXXXX", tmpdir);
++      if (!mktemp (tname) || !tname[0])
++       {
++         free (tname);
++         return ((char *)NULL);
++       }
++      if (mkfifo (tname, 0600) < 0)
++       {
++         if (errno == EEXIST) continue;
++         free (tname);
++         return ((char *)NULL);
++       }
++      break;
++    } while (1);
+ 
+   add_fifo_list (tname);
+   return (tname);
+--- bash-2.05/error.c.orig	Mon Mar 26 18:36:07 2001
++++ bash-2.05/error.c	Mon Oct 22 01:14:07 2001
+@@ -464,6 +464,7 @@
+ 
+ /* A trace function for silent debugging -- doesn't require a control
+    terminal. */
++/* Unused. */
+ void
+ #if defined (PREFER_STDARG)
+ trace (const char *format, ...)
+@@ -477,7 +478,7 @@
+   static FILE *tracefp = (FILE *)NULL;
+ 
+   if (tracefp == NULL)
+-    tracefp = fopen("/tmp/bash-trace.log", "a+");
++    tracefp = fopen("/var/run/bash-trace.log", "a+");
+ 
+   if (tracefp == NULL)
+     tracefp = stderr;

@@ -1,0 +1,99 @@
+--- bash-2.05/support/bashbug.sh.orig	Wed Mar 28 16:19:45 2001
++++ bash-2.05/support/bashbug.sh	Tue Oct 23 00:31:34 2001
+@@ -21,18 +21,12 @@
+ PATH=/bin:/usr/bin:/usr/local/bin:$PATH
+ export PATH
+ 
+-# If the OS supplies a program to make temp files with semi-random names,
+-# use it.
+-TEMP=/tmp/bbug.$$
+-for d in /bin /usr/bin /usr/local/bin ; do
+-	if [ -x $d/mktemp ]; then
+-		TEMP=`$d/mktemp -t bbug ` ; break;
+-	elif [ -x $d/tempfile ]; then
+-		TEMP=` $d/tempfile --prefix bbug --mode 600 `; break
+-	fi
+-done
++PROG="${0##*/}"
++: "${TMPDIR:=$HOME/tmp}"
++TMPFILE1="$(mktemp "$TMPDIR/$PROG.XXXXXX")"
++TMPFILE2="$(mktemp "$TMPDIR/$PROG.XXXXXX")"
+ 
+-USAGE="Usage: $0 [--help] [--version] [bug-report-email-address]"
++USAGE="Usage: $PROG [--help] [--version] [bug-report-email-address]"
+ VERSTR="GNU bashbug, version ${RELEASE}.${PATCHLEVEL}-${RELSTATUS}"
+ 
+ do_help= do_version=
+@@ -42,7 +36,7 @@
+ 	--help)		shift ; do_help=y ;;
+ 	--version)	shift ; do_version=y ;;
+ 	--)		shift ; break ;;
+-	-*)		echo "bashbug: ${1}: invalid option" >&2
++	-*)		echo "$PROG: ${1}: invalid option" >&2
+ 			echo "$USAGE" >& 2
+ 			exit 2 ;;
+ 	*)		break ;;
+@@ -130,8 +124,8 @@
+ 
+ : ${USER=${LOGNAME-`whoami`}}
+ 
+-trap 'rm -f $TEMP $TEMP.x; exit 1' 1 2 3 13 15
+-trap 'rm -f $TEMP $TEMP.x' 0
++trap 'rm -f $TMPFILE1 $TMPFILE2; exit 1' 1 2 3 13 15
++trap 'rm -f $TMPFILE1 $TMPFILE2' 0
+ 
+ UN=
+ if (uname) >/dev/null 2>&1; then
+@@ -149,10 +143,7 @@
+ 	SMARGS="$BUGADDR"
+ fi
+ 
+-# this is raceable
+-rm -f $TEMP
+-
+-cat > $TEMP <<EOF
++cat > $TMPFILE1 <<EOF
+ From: ${USER}
+ To: ${BUGADDR}
+ Subject: [50 character or so descriptive subject here (for reference)]
+@@ -181,14 +172,12 @@
+ 	fix for the problem, don't include this section.]
+ EOF
+ 
+-# this is still raceable
+-rm -f $TEMP.x
+-cp $TEMP $TEMP.x
+-chmod u+w $TEMP
++cp $TMPFILE1 $TMPFILE2
++chmod u+w $TMPFILE1
+ 
+ trap '' 2		# ignore interrupts while in editor
+ 
+-until $EDITOR $TEMP; do
++until $EDITOR $TMPFILE1; do
+ 	echo "$0: editor \`$EDITOR' exited with nonzero status."
+ 	echo "$0: Perhaps it was interrupted."
+ 	echo "$0: Type \`y' to give up, and lose your bug report;"
+@@ -201,9 +190,9 @@
+ 	esac
+ done
+ 
+-trap 'rm -f $TEMP $TEMP.x; exit 1' 2	# restore trap on SIGINT
++trap 'rm -f $TMPFILE1 $TMPFILE2; exit 1' 2	# restore trap on SIGINT
+ 
+-if cmp -s $TEMP $TEMP.x
++if cmp -s $TMPFILE1 $TMPFILE2
+ then
+ 	echo "File not changed, no bug report submitted."
+ 	exit
+@@ -215,8 +204,8 @@
+ [Nn]*)	exit 0 ;;
+ esac
+ 
+-${RMAIL} $SMARGS < $TEMP || {
+-	cat $TEMP >> $HOME/dead.bashbug
++${RMAIL} $SMARGS < $TMPFILE1 || {
++	cat $TMPFILE1 >> $HOME/dead.bashbug
+ 	echo "$0: mail failed: report saved in $HOME/dead.bashbug" >&2
+ }
+ 
