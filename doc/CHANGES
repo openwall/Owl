@@ -21,11 +21,15 @@ vulnerable OpenSSH client.  If successful, this could let one execute
 arbitrary code in the context of the remote server or client process.
 
 2002/03/03	kernel
-SECURITY FIX	Severity: medium, local, active
+SECURITY FIX	Severity: medium to high, local to remote, active
 Updated to Linux 2.2.20-ow2.  This fixes an x86-specific vulnerability
 in the Linux kernel discovered by Stephan Springl where local users
 could abuse a binary compatibility interface (lcall) to kill processes
-not belonging to them (including system processes).
+not belonging to them (including system processes).  Additionally, a
+kernel instance of the zlib double-free vulnerability is now fixed.
+Fortunately, the affected parts of the Linux kernel (Deflate
+compression support for PPP and the experimental Deflate compression
+extension to IrDA) are normally not used by the Owl userland.
 
 2002/02/15	Package: lilo
 Updated to 22.1.
@@ -38,6 +42,25 @@ the same problem with glibc upgrades by linking /sbin/init statically.
 Combined with the swapoff(2) fix in Linux 2.2.20-ow1+, this completes
 the changes needed for system shutdown to work cleanly after a "make
 installworld" over the running system.
+
+2002/02/11	Packages: zlib, rpm, texinfo
+SECURITY FIX	Severity: high, remote, active
+There was a vulnerability in the zlib data compression library which,
+on certain invalid input to decompression, could cause segments of
+dynamically allocated memory to be deallocated twice (a double-free
+bug).  The second attempt at deallocation would incorrectly treat what
+may happen to be user-supplied input as data structures internal to
+the dynamic memory implementation.  As a result, the worst case impact
+is ability to execute arbitrary code within the context of the process
+doing decompression via carefully crafted invalid "compressed" input.
+On Owl, the zlib vulnerability affected the following packages: gnupg,
+openssh, rpm, texinfo, and any third-party software which may use the
+library.  Of these, the rpm and texinfo packages contain binaries
+statically linked against zlib and thus needed a rebuild.  They now
+have a build dependency on the corrected version of zlib introduced.
+OpenSSH could potentially allow for an active remote attack resulting
+in a root compromise.  If only SSH protocol version 1 is allowed in
+the OpenSSH server, this is reduced to a local attack.
 
 2002/01/24 -
 2002/02/08	Owl/doc/CONVENTIONS;
@@ -574,4 +597,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.71 2002/03/05 16:50:29 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.72 2002/03/07 19:24:12 solar Exp $
