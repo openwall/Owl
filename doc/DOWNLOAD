@@ -1,8 +1,14 @@
-Owl is currently available from the following official mirrors:
+The Owl homepage is:
+
+http://www.openwall.com/Owl/
+
+Owl can be downloaded from the following official mirrors:
 
 ftp://ftp.ca.openwall.com/pub/Owl/	(Canada)
 ftp://ftp.pl.openwall.com/pub/Owl/	(Poland)
 ftp://ftp.ru.openwall.com/pub/Owl/	(Russia)
+ftp://ftp.ua.openwall.com/pub/Owl/	(Ukraine)
+ftp://ftp.cz.openwall.com/pub/Owl/	(Czech Republic)
 ftp://ftp.wiretapped.net/pub/Owl/	(Australia)
 
 There's a subdirectory for each Owl release or branch, with the
@@ -10,9 +16,19 @@ following contents:
 
 native.tar.gz		CVS tree (build specifications and patches)
 sources			source tree (original tarballs, etc)
-Owl.mtree		mtree(8) specification of the above
 kernel			kernel sources and recommended patches
+Owl.mtree		mtree(8) specification of the above
 i386, sparc, sparcv9	Owl binary packages
+
+Some of the subdirectories may use symlinks to files common to several
+Owl branches.  Thus, to download just one Owl branch you may need to
+tell your FTP client to dereference symlinks.  With lftp (which is a
+part of Owl), use the "mirror -L" command.
+
+The mtree(8) specifications for Owl releases are PGP signed.  The
+corresponding PGP public key is available from:
+
+http://www.openwall.com/signatures/
 
 You will always need the CVS tree, -- even if you choose to install
 binary packages only.  In order to (re-)build Owl from source, you'll
@@ -21,4 +37,4 @@ need both the CVS and the source trees.
 More documentation (including BUILD and INSTALL) is available in the
 CVS tree, under Owl/doc/.
 
-$Id: Owl/doc/DOWNLOAD,v 1.4 2001/05/11 08:50:25 solar Exp $
+$Id: Owl/doc/DOWNLOAD,v 1.4.2.1 2001/06/23 09:54:55 solar Exp $

@@ -1,0 +1,136 @@
+	"Owl", -- une plate-forme serveur à la sécurité améliorée.
+
+"Owl" (ou "Openwall GNU/*/Linux"; merci de noter que seul le "O" est en
+majuscules dans tous les cas) est un système d'exploitation à la sécurité
+améliorée avec Linux et des logiciels GNU en tant que coeur, compatible avec
+les autres distributions majeures de GNU/*/Linux. Il est destiné comme
+plate-forme de serveur. Et, bien sûr, il est libre et gratuit.
+
+
+	Fonctionnalités.
+
+Alors que nous préférons la qualité à l'ensemble des fonctionnalités, Owl
+offre vraiment plusieurs fonctionnalités en plus de juste essayer d'être
+plus sécurisé.
+
+Bien sûr, Owl peut être utilisé pour installer tout logiciel qui est
+généralement disponible pour les systèmes GNU/*/Linux. Il offre quelques
+compatibilités (lire ci-dessous) pour les packages de logiciels trouvés dans
+ou développés pour les autres distributions Linux majeures, telles que Linux
+Red Hat.
+
+De plus, étant une plate-forme pour serveurs, Owl inclura un ensemble
+grandissant de services Internet intégrés. Seulement quelques uns sont
+disponibles avec l'avant-première, mais c'est le premier secteur sur lequel
+nous travaillerons.
+
+Owl inclus un environnement de compilation complet pour re-compiler le
+système entier depuis les sources avec une simple commande ("make
+buildworld") (Ceci est expliqué avec plus de détails ci-dessous.)
+
+Owl supporte plusieurs architectures (actuellement x86 et SPARC), ceci vous
+laissant l'utiliser dans plus de cas et nous aidant à capturer certains
+types de bogues logiciels plus tôt, améliorant ainsi la fiabilité des
+packages Owl.
+
+
+	Sécurité.
+
+Owl combine plusieurs approches pour réduire le nombre et/ou l'impact de
+défauts dans ses composants logiciels et l'impact de défauts dans les
+logiciels de tierces parties que quelqu'un pourrait installer sur le
+système.
+
+La principale approche utilisée est la revue proactive de code source pour
+plusieurs types de vulnérabilités logicielles. Toutefois, à cause d'une
+grande quantité de code, il y a un certain niveau d'"importance" pour un
+composant logiciel ou une partie à être audité. Actuellement, seuls les
+morceaux de code qui sont typiquement exécutés avec des privilèges
+supérieurs à ceux d'un simple utilisateur et/ou qui traitent typiquement des
+données obtenues au travers du réseau sont audités avant que le composant
+logiciel correspondant soit inclus. Ceci couvre les suites de codes
+pertinentes dans beaucoup des bibliothèques système, tous les programmes
+SUID/SGID, tous les démons et services réseau. D'autres logiciels peuvent
+être audités quand ils font déjà partie de Owl. Les problèmes potentiels
+trouvés durant l'audit sont fixés ou, dans quelques cas pathologiques,
+peuvent empêcher le composant logiciel d'être inclus. En général, la qualité
+du code et la gestion des privilèges sont toujours considérés quand il y a
+un choix entre les mises en oeuvre d'une fonctionnalité. Pendant que le
+projet évolue, beaucoup des composants logiciels seront remplacés avec
+certains à nous.
+
+Packagés pour Owl, les composants logiciels sont configurés ou, quand
+nécessaire, modifiés afin de fournir des défauts sûrs, d'appliquer le
+principe de moindre privilège, et d'introduire la séparation des privilèges.
+L'utilisation de défauts sûrs, où les fonctionnalités optionnelles et
+potentiellement dangereuses ont besoin d'être activées de façon explicite,
+nous laisse auditer les morceaux de code utilisés dans la configuration par
+défaut d'une façon plus minutieuse. Des facilités système supplémentaires
+d'administration ("owl-control") sont fournies pour gérer les
+fonctionnalités système tels que les binaires SUID/SGID optionnels
+indépendamment de l'installation des packages correspondant. Tout package
+Owl aura la situation de ses audits documentés pour permettre les
+estimations de risques.
+
+Alors que la revue de code est la façon préférée de s'occuper des
+vulnérabilités logicielles, elle ne peut être appliquée dans tous les cas.
+Typiquement quand des logiciels non-sécurisés de tierces parties sont
+installés sur un système autrement sécurisé, "le jeu" est perdu. La seule
+chose qu'un système d'exploitation peut garantir est que les accès non
+autorisés potentiels soient limités aux privilèges accordés au logiciel en
+question. Toutefois, dans les années récentes, plusieurs approches ont été
+développées qui réduisent la probabilité et/ou peuvent réduire l'impact
+d'attaques réelles efficaces sur des logiciels non-sécurisés de tierces
+parties. Owl utilisera quelques unes de ces approches de "durcissement" dans
+diverses parties du système.
+
+Owl utilise de la cryptographie "forte" dans ses composants coeur, et inclut
+déjà quelques capacités d'applications de politique de sécurité
+(vérification proactive des mots de passe avec "pam_passwdqc", expiration de
+mots de passe et de comptes, contrôle d'accès basé sur les adresses réseau)
+et de vérification d'intégrité ("mtree"). C'est l'un de nos buts de fournir
+un large intervalle d'outils de sécurité avec Owl, disponibles pour
+utilisation "dès l'installation".
+
+
+	L'environnement de compilation et la gestion de packages.
+
+Contrairement à la plupart des autres "distributions Linux", Owl inclut un
+environnement complet de compilation capable de re-compiler le système
+complet depuis les sources avec une simple commande ("make buildworld").
+Toutefois, la mise en oeuvre de "make buildworld" sur Owl est très
+différente de ce qui est disponible avec *BSD. Il est en fait plus similaire
+aux ports/packages *BSD, couvrant l'intégrite de l'espace utilisateur Owl
+(c.-a-d. tout sauf le noyau Linux).
+
+Le code source de l'espace utilisateur de Owl consiste en deux
+arborescences, où chaque package Owl peut être partagé entre les deux
+arborescences. Une arborescence source consiste en les archives originales
+telles que distribuées par le mainteneur du composant logiciel
+correspondant. L'autre arborescence, que nous stockons dans un serveur CVS,
+possède les spécifications de compilation, patches, et autres ajouts aux
+packages spécifiques à Owl. Quelques packages ont été développés comme
+partie de Owl, et ainsi existent entièrement dans le serveur CVS.
+
+Basés sur les deux arborescences sources, les packages binaires sont
+compilés. Ils peuvent être installés (avec "make installworld") pour mettre
+à jour le système lui-même ou pour créer une nouvelle installation Owl (la
+valeur ROOT=), ou ils peuvent être transférés au travers du réseau et
+installés ailleurs.
+
+Nous utilisons RPM pour les packages binaires, puisque cela permet un
+support raisonnable des dépendances en installant des packages depuis ou
+destinés à un Linux Red Hat et plusieurs autres distributions, sur un
+système Owl.
+
+
+	Compatibilité.
+
+Exceptés quelques cas où cela rentre en conflit avec nos buts les plus
+importants, Owl essaye d'être compatible aux niveaux binaires et packages
+avec plusieurs autres distributions majeures de GNU/*/Linux. En particulier,
+dans la plupart des cas il sera possible d'installer des applications
+packagées pour une version récente de Linux Red Hat (actuellement, ceci
+s'applique à Linux Red Hat 6.x) sur Owl.
+
+$Id: Owl/doc/fr/CONCEPTS,v 1.2.2.1 2001/06/23 09:54:55 solar Exp $

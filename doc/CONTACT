@@ -1,0 +1,18 @@
+The Owl homepage is:
+
+http://www.openwall.com/Owl/
+
+There's a mailing list where you can share your experience with Owl
+and ask questions.  To subscribe, send an empty message to
+<owl-users-subscribe@lists.openwall.com>.  The list archives are
+available on MARC:
+
+http://marc.theaimsgroup.com/?l=owl-users
+
+In addition to the owl-users list, you have the option to direct your
+comments regarding Owl to us privately via <feedback@owl.openwall.com>.
+
+Please report potential security issues to <security@owl.openwall.com>
+and non-security bugs to <bugs@owl.openwall.com>.
+
+$Id: Owl/doc/CONTACT,v 1.1.2.1 2001/06/23 09:54:55 solar Exp $
