@@ -13,10 +13,22 @@ change logs for the packages themselves.
 	Changes made between Owl 1.1 and Owl-current.
 
 2004/04/18	kernel; Package: owl-cdrom
-Updated to Linux 2.4.26-ow1.  The kernel image on Owl CDs will now
-include the Broadcom Tigon3 Gigabit Ethernet driver and the BusLogic
-SCSI controller driver, but will not include support for IrDA (had to
-drop it to make room for the extra device drivers).
+SECURITY FIX	Severity: high, local, active
+Updated to Linux 2.4.26-ow1.  Linux 2.4.26 (and thus 2.4.26-ow1) fixes
+an integer overflow vulnerability in processing of the MCAST_MSFILTER
+socket option discovered by Paul Starzetz.  When properly exploited,
+the bug would lead to a local root compromise.  Also included in this
+kernel release is a fix for the ext3/XFS information leak discovered
+by Solar Designer and a number of other relatively minor fixes.  As it
+relates to Owl, the kernel image on Owl CDs will now include the
+Broadcom Tigon3 Gigabit Ethernet driver and the BusLogic SCSI
+controller driver, but will not include support for IrDA (had to drop
+it to make room for the extra device drivers).
+References:
+http://www.isec.pl/vulnerabilities/isec-0015-msfilter.txt
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0424
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0177
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0133
 
 2004/04/14	Package: cvs
 SECURITY FIX	Severity: high, remote, passive
@@ -102,4 +114,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.25 2004/04/18 04:55:40 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.26 2004/04/22 23:53:36 solar Exp $
