@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/sshd_config,v 1.10 2002/06/27 12:45:49 solar Exp $
+# $Id: Owl/packages/openssh/sshd_config,v 1.11 2003/04/08 02:18:27 solar Exp $
 
 # This is the sshd server system-wide configuration file.  See
 # sshd_config(5) for more information.
@@ -28,7 +28,7 @@
 
 # Authentication:
 
-#LoginGraceTime 600
+#LoginGraceTime 120
 #PermitRootLogin yes
 #StrictModes yes
 
@@ -63,6 +63,7 @@ X11Forwarding yes
 #KeepAlive yes
 #UseLogin no
 #UsePrivilegeSeparation yes
+#PermitUserEnvironment no
 #Compression yes
 
 #MaxStartups 10

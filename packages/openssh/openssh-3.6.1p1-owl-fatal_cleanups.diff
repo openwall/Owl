@@ -1,0 +1,34 @@
+diff -ur openssh-3.6.1p1.orig/auth-pam.c openssh-3.6.1p1/auth-pam.c
+--- openssh-3.6.1p1.orig/auth-pam.c	Wed Jan 22 07:42:26 2003
++++ openssh-3.6.1p1/auth-pam.c	Tue Apr  8 01:47:00 2003
+@@ -179,7 +179,7 @@
+ {
+ 	int pam_retval = PAM_SUCCESS;
+ 
+-	if (__pamh && session_opened) {
++	if (__pamh && getpid() == session_opened) {
+ 		pam_retval = pam_close_session(__pamh, 0);
+ 		if (pam_retval != PAM_SUCCESS)
+ 			log("Cannot close PAM session[%d]: %.200s",
+@@ -290,7 +290,7 @@
+ 		fatal("PAM session setup failed[%d]: %.200s",
+ 		    pam_retval, PAM_STRERROR(__pamh, pam_retval));
+ 
+-	session_opened = 1;
++	session_opened = getpid();
+ }
+ 
+ /* Set PAM credentials */
+diff -ur openssh-3.6.1p1.orig/session.c openssh-3.6.1p1/session.c
+--- openssh-3.6.1p1.orig/session.c	Fri Mar 21 04:18:09 2003
++++ openssh-3.6.1p1/session.c	Tue Apr  8 01:57:26 2003
+@@ -1650,7 +1650,9 @@
+ 	 * Add a cleanup function to clear the utmp entry and record logout
+ 	 * time in case we call fatal() (e.g., the connection gets closed).
+ 	 */
++	fatal_remove_cleanup((void (*) (void *)) packet_close, NULL);
+ 	fatal_add_cleanup(session_pty_cleanup, (void *)s);
++	fatal_add_cleanup((void (*) (void *)) packet_close, NULL);
+ 	if (!use_privsep)
+ 		pty_setowner(s->pw, s->tty);
+ 

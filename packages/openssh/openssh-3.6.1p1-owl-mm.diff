@@ -1,0 +1,302 @@
+diff -ur openssh-3.6.1p1.orig/config.h.in openssh-3.6.1p1/config.h.in
+--- openssh-3.6.1p1.orig/config.h.in	Tue Apr  1 11:57:29 2003
++++ openssh-3.6.1p1/config.h.in	Mon Apr  7 21:08:16 2003
+@@ -723,6 +723,9 @@
+ /* Define to 1 if you have the <shadow.h> header file. */
+ #undef HAVE_SHADOW_H
+ 
++/* Define to 1 if you have the `shmget' function. */
++#undef HAVE_SHMGET
++
+ /* Define to 1 if you have the `sigaction' function. */
+ #undef HAVE_SIGACTION
+ 
+@@ -800,6 +803,9 @@
+ 
+ /* Define to 1 if you have the <sys/select.h> header file. */
+ #undef HAVE_SYS_SELECT_H
++
++/* Define to 1 if you have the <sys/shm.h> header file. */
++#undef HAVE_SYS_SHM_H
+ 
+ /* Define to 1 if you have the <sys/stat.h> header file. */
+ #undef HAVE_SYS_STAT_H
+diff -ur openssh-3.6.1p1.orig/configure openssh-3.6.1p1/configure
+--- openssh-3.6.1p1.orig/configure	Tue Apr  1 11:57:28 2003
++++ openssh-3.6.1p1/configure	Mon Apr  7 21:09:54 2003
+@@ -5061,7 +5061,7 @@
+ 	netinet/in_systm.h paths.h pty.h readpassphrase.h \
+ 	rpc/types.h security/pam_appl.h shadow.h stddef.h stdint.h \
+ 	strings.h sys/bitypes.h sys/bsdtty.h sys/cdefs.h \
+-	sys/mman.h sys/pstat.h sys/select.h sys/stat.h \
++	sys/mman.h sys/pstat.h sys/select.h sys/shm.h sys/stat.h \
+ 	sys/stropts.h sys/sysmacros.h sys/time.h sys/timers.h \
+ 	sys/un.h time.h tmpdir.h ttyent.h usersec.h \
+ 	util.h utime.h utmp.h utmpx.h
+@@ -6825,7 +6825,7 @@
+ 	mkdtemp mmap ngetaddrinfo nsleep ogetaddrinfo openpty pstat \
+ 	readpassphrase realpath recvmsg rresvport_af sendmsg setdtablesize \
+ 	setegid setenv seteuid setgroups setlogin setpcred setproctitle \
+-	setresgid setreuid setrlimit setsid setvbuf sigaction sigvec \
++	setresgid setreuid setrlimit setsid setvbuf shmget sigaction sigvec \
+ 	snprintf socketpair strerror strlcat strlcpy strmode strnvis \
+ 	sysconf tcgetpgrp truncate utimes vhangup vsnprintf waitpid \
+ 
+diff -ur openssh-3.6.1p1.orig/configure.ac openssh-3.6.1p1/configure.ac
+--- openssh-3.6.1p1.orig/configure.ac	Fri Mar 21 01:18:09 2003
++++ openssh-3.6.1p1/configure.ac	Mon Apr  7 20:59:30 2003
+@@ -390,7 +390,7 @@
+ 	netinet/in_systm.h paths.h pty.h readpassphrase.h \
+ 	rpc/types.h security/pam_appl.h shadow.h stddef.h stdint.h \
+ 	strings.h sys/bitypes.h sys/bsdtty.h sys/cdefs.h \
+-	sys/mman.h sys/pstat.h sys/select.h sys/stat.h \
++	sys/mman.h sys/pstat.h sys/select.h sys/shm.h sys/stat.h \
+ 	sys/stropts.h sys/sysmacros.h sys/time.h sys/timers.h \
+ 	sys/un.h time.h tmpdir.h ttyent.h usersec.h \
+ 	util.h utime.h utmp.h utmpx.h)
+@@ -612,7 +612,7 @@
+ 	mkdtemp mmap ngetaddrinfo nsleep ogetaddrinfo openpty pstat \
+ 	readpassphrase realpath recvmsg rresvport_af sendmsg setdtablesize \
+ 	setegid setenv seteuid setgroups setlogin setpcred setproctitle \
+-	setresgid setreuid setrlimit setsid setvbuf sigaction sigvec \
++	setresgid setreuid setrlimit setsid setvbuf shmget sigaction sigvec \
+ 	snprintf socketpair strerror strlcat strlcpy strmode strnvis \
+ 	sysconf tcgetpgrp truncate utimes vhangup vsnprintf waitpid \
+ )
+diff -ur openssh-3.6.1p1.orig/monitor_mm.c openssh-3.6.1p1/monitor_mm.c
+--- openssh-3.6.1p1.orig/monitor_mm.c	Tue Aug 20 18:36:26 2002
++++ openssh-3.6.1p1/monitor_mm.c	Mon Apr  7 20:56:37 2003
+@@ -92,9 +92,8 @@
+ 	 */
+ 	mm->mmalloc = mmalloc;
+ 
++	/* xmmap() calls fatal() on failure. */
+ 	address = xmmap(size);
+-	if (address == MAP_FAILED)
+-		fatal("mmap(%lu): %s", (u_long)size, strerror(errno));
+ 
+ 	mm->address = address;
+ 	mm->size = size;
+@@ -124,6 +123,27 @@
+ 	}
+ }
+ 
++/* Zeroes out the written-to pages in an address space area */
++
++static void
++mm_clean(void *address, size_t size)
++{
++	u_char *ptr = (u_char *)address;
++	u_char *end = (u_char *)address + size;
++	u_long *ptr_l;
++	u_long *end_l;
++
++	while (((u_long)ptr % sizeof(u_long)) && ptr < end)
++		if (*ptr++) *(ptr - 1) = 0;
++	ptr_l = (u_long *)ptr;
++	end_l = (u_long *)end - 1;
++	while (ptr_l <= end_l)
++		if (*ptr_l++) *(ptr_l - 1) = 0;
++	ptr = (u_char *)ptr_l;
++	while (ptr < end)
++		if (*ptr++) *(ptr - 1) = 0;
++}
++
+ /* Destroys a memory mapped area */
+ 
+ void
+@@ -132,14 +152,11 @@
+ 	mm_freelist(mm->mmalloc, &mm->rb_free);
+ 	mm_freelist(mm->mmalloc, &mm->rb_allocated);
+ 
+-#ifdef HAVE_MMAP
+-	if (munmap(mm->address, mm->size) == -1)
+-		fatal("munmap(%p, %lu): %s", mm->address, (u_long)mm->size,
+-		    strerror(errno));
+-#else
+-	fatal("%s: UsePrivilegeSeparation=yes and Compression=yes not supported",
+-	    __func__);
+-#endif
++	mm_clean(mm->address, mm->size);
++
++	/* xmunmap() calls fatal() on failure. */
++	xmunmap(mm->address, mm->size);
++
+ 	if (mm->mmalloc == NULL)
+ 		xfree(mm);
+ 	else
+@@ -180,8 +197,12 @@
+ 	if (mms == NULL)
+ 		return (NULL);
+ 
++#if 0
+ 	/* Debug */
+ 	memset(mms->address, 0xd0, size);
++#else
++	mm_clean(mms->address, size);
++#endif
+ 
+ 	tmp = mm_make_entry(mm, &mm->rb_allocated, mms->address, size);
+ 
+@@ -212,8 +233,12 @@
+ 	if (mms == NULL)
+ 		fatal("mm_free(%p): can not find %p", mm, address);
+ 
++#if 0
+ 	/* Debug */
+ 	memset(mms->address, 0xd0, mms->size);
++#else
++	mm_clean(mms->address, mms->size);
++#endif
+ 
+ 	/* Remove from allocated list and insert in free list */
+ 	RB_REMOVE(mmtree, &mm->rb_allocated, mms);
+@@ -343,4 +368,7 @@
+ 		fatal("mm_memvalid: end < address: %p < %p", end, address);
+ 	if (end > (void *)((u_char *)mm->address + mm->size))
+ 		fatal("mm_memvalid: address too large: %p", address);
++	/* Redundant on most platforms */
++	if (size > mm->size)
++		fatal("mm_memvalid: size too large: %lu", (u_long)size);
+ }
+diff -ur openssh-3.6.1p1.orig/openbsd-compat/xmmap.c openssh-3.6.1p1/openbsd-compat/xmmap.c
+--- openssh-3.6.1p1.orig/openbsd-compat/xmmap.c	Mon Jul 22 16:20:30 2002
++++ openssh-3.6.1p1/openbsd-compat/xmmap.c	Mon Apr  7 21:03:24 2003
+@@ -25,6 +25,9 @@
+ #ifdef HAVE_SYS_MMAN_H
+ #include <sys/mman.h>
+ #endif
++#ifdef HAVE_SYS_SHM_H
++#include <sys/shm.h>
++#endif
+ 
+ #include "log.h"
+ 
+@@ -36,15 +39,61 @@
+ # ifdef MAP_ANON
+ 	address = mmap(NULL, size, PROT_WRITE|PROT_READ, MAP_ANON|MAP_SHARED,
+ 	    -1, 0);
++	if (address != MAP_FAILED)
++		return address;
++# endif
++
++	{
++		int fd;
++
++		fd = open("/dev/zero", O_RDWR);
++		if (fd == -1)
++			fatal("open: /dev/zero: %s", strerror(errno));
++		address = mmap(NULL, size, PROT_WRITE|PROT_READ, MAP_SHARED,
++		    fd, 0);
++		close(fd);
++		if (address != MAP_FAILED)
++			return address;
++	}
++#endif /* HAVE_MMAP */
++
++#ifdef HAVE_SHMGET
++	{
++		int shmid;
++
++		shmid = shmget(IPC_PRIVATE, size, IPC_CREAT|S_IRUSR|S_IWUSR);
++# ifdef HAVE_MMAP
++		if (shmid != -1) {
++			address = shmat(shmid, NULL, 0);
++			shmctl(shmid, IPC_RMID, NULL);
++			if (address != MAP_FAILED)
++				return address;
++		}
+ # else
+-	address = mmap(NULL, size, PROT_WRITE|PROT_READ, MAP_SHARED,
+-	    open("/dev/zero", O_RDWR), 0);
++		if (shmid == -1)
++			fatal("shmget(%lu): %s",
++				(u_long)size, strerror(errno));
++		else {
++			int save_errno;
++
++			address = shmat(shmid, NULL, 0);
++			save_errno = errno;
++			shmctl(shmid, IPC_RMID, NULL);
++			if (address != MAP_FAILED)
++				return address;
++			fatal("shmat(%lu): %s",
++				(u_long)size, strerror(save_errno));
++		}
+ # endif
++	}
++#endif /* HAVE_SHMGET */
+ 
++#ifdef HAVE_MMAP
+ #define MM_SWAP_TEMPLATE "/var/run/sshd.mm.XXXXXXXX"
+-	if (address == MAP_FAILED) {
++	{
+ 		char tmpname[sizeof(MM_SWAP_TEMPLATE)] = MM_SWAP_TEMPLATE;
+ 		int tmpfd;
++		int save_errno;
+ 
+ 		tmpfd = mkstemp(tmpname);
+ 		if (tmpfd == -1)
+@@ -54,14 +103,39 @@
+ 		ftruncate(tmpfd, size);
+ 		address = mmap(NULL, size, PROT_WRITE|PROT_READ, MAP_SHARED,
+ 		    tmpfd, 0);
++		save_errno = errno;
+ 		close(tmpfd);
++		if (address != MAP_FAILED)
++			return address;
++		fatal("mmap(%lu): %s", (u_long)size, strerror(save_errno));
+ 	}
++#endif /* HAVE_MMAP */
+ 
+-	return (address);
+-#else
++#if !defined(HAVE_MMAP) && !defined(HAVE_SHMGET)
+ 	fatal("%s: UsePrivilegeSeparation=yes and Compression=yes not supported",
+ 	    __func__);
+-#endif /* HAVE_MMAP */
++#endif
+ 
++	/* NOTREACHED */
++	return MAP_FAILED;
+ }
+ 
++void xmunmap(void *address, size_t size)
++{
++#if defined(HAVE_MMAP) && defined(HAVE_SHMGET)
++	int shmdt_retval = shmdt(address);
++	if (munmap(address, size) == -1 && shmdt_retval == -1)
++		fatal("munmap(%p, %lu): %s",
++			address, (u_long)size, strerror(errno));
++#elif defined(HAVE_MMAP)
++	if (munmap(address, size) == -1)
++		fatal("munmap(%p, %lu): %s",
++			address, (u_long)size, strerror(errno));
++#elif defined(HAVE_SHMGET)
++	if (shmdt(address) == -1)
++		fatal("shmdt(%p): %s", address, strerror(errno));
++#else
++	fatal("%s: UsePrivilegeSeparation=yes and Compression=yes not supported",
++	    __func__);
++#endif
++}
+diff -ur openssh-3.6.1p1.orig/openbsd-compat/xmmap.h openssh-3.6.1p1/openbsd-compat/xmmap.h
+--- openssh-3.6.1p1.orig/openbsd-compat/xmmap.h	Tue Jul 23 00:03:34 2002
++++ openssh-3.6.1p1/openbsd-compat/xmmap.h	Mon Apr  7 20:35:40 2003
+@@ -21,3 +21,4 @@
+  */
+ 
+ void *xmmap(size_t size);
++void xmunmap(void *address, size_t size);
+diff -ur openssh-3.6.1p1.orig/servconf.c openssh-3.6.1p1/servconf.c
+--- openssh-3.6.1p1.orig/servconf.c	Mon Feb 24 01:04:34 2003
++++ openssh-3.6.1p1/servconf.c	Mon Apr  7 21:03:44 2003
+@@ -260,7 +260,7 @@
+ 	if (use_privsep == -1)
+ 		use_privsep = 1;
+ 
+-#ifndef HAVE_MMAP
++#if !defined(HAVE_MMAP) && !defined(HAVE_SHMGET)
+ 	if (use_privsep && options->compression == 1) {
+ 		error("This platform does not support both privilege "
+ 		    "separation and compression");

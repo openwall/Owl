@@ -1,0 +1,69 @@
+diff -ur openssh-3.6.1p1.orig/auth.c openssh-3.6.1p1/auth.c
+--- openssh-3.6.1p1.orig/auth.c	Sat Jan 18 05:24:06 2003
++++ openssh-3.6.1p1/auth.c	Tue Apr  8 02:02:07 2003
+@@ -262,8 +262,9 @@
+ 	authlog("%s %s for %s%.100s from %.200s port %d%s",
+ 	    authmsg,
+ 	    method,
+-	    authctxt->valid ? "" : "illegal user ",
+-	    authctxt->user,
++	    !authctxt->valid ? "UNKNOWN USER" :
++	    (authctxt->pw->pw_uid == 0 ? "ROOT USER " : ""),
++	    authctxt->valid ? authctxt->user : "",
+ 	    get_remote_ipaddr(),
+ 	    get_remote_port(),
+ 	    info);
+@@ -494,8 +495,7 @@
+ 
+ 	pw = getpwnam(user);
+ 	if (pw == NULL) {
+-		log("Illegal user %.100s from %.100s",
+-		    user, get_remote_ipaddr());
++		log("Unknown username from %.100s", get_remote_ipaddr());
+ #ifdef WITH_AIXAUTHENTICATE
+ 		loginfailed(user,
+ 		    get_canonical_hostname(options.verify_reverse_mapping),
+diff -ur openssh-3.6.1p1.orig/auth1.c openssh-3.6.1p1/auth1.c
+--- openssh-3.6.1p1.orig/auth1.c	Mon Feb 24 00:59:27 2003
++++ openssh-3.6.1p1/auth1.c	Tue Apr  8 02:00:45 2003
+@@ -400,7 +400,7 @@
+ 	else
+ 		debug("do_authentication: illegal user %s", user);
+ 
+-	setproctitle("%s%s", authctxt->pw ? user : "unknown",
++	setproctitle("%s%s", authctxt->pw ? user : "UNKNOWN USER",
+ 	    use_privsep ? " [net]" : "");
+ 
+ #ifdef USE_PAM
+diff -ur openssh-3.6.1p1.orig/auth2.c openssh-3.6.1p1/auth2.c
+--- openssh-3.6.1p1.orig/auth2.c	Mon Feb 24 00:59:27 2003
++++ openssh-3.6.1p1/auth2.c	Tue Apr  8 02:00:45 2003
+@@ -160,12 +160,14 @@
+ 			PRIVSEP(start_pam(authctxt->pw->pw_name));
+ #endif
+ 		} else {
+-			log("input_userauth_request: illegal user %s", user);
++			debug2("input_userauth_request: illegal user %s", user);
++			authctxt->pw = NULL;
++			authctxt->valid = 0;
+ #ifdef USE_PAM
+ 			PRIVSEP(start_pam("NOUSER"));
+ #endif
+ 		}
+-		setproctitle("%s%s", authctxt->pw ? user : "unknown",
++		setproctitle("%s%s", authctxt->pw ? user : "UNKNOWN USER",
+ 		    use_privsep ? " [net]" : "");
+ 		authctxt->user = xstrdup(user);
+ 		authctxt->service = xstrdup(service);
+diff -ur openssh-3.6.1p1.orig/monitor.c openssh-3.6.1p1/monitor.c
+--- openssh-3.6.1p1.orig/monitor.c	Tue Apr  1 11:43:39 2003
++++ openssh-3.6.1p1/monitor.c	Tue Apr  8 02:00:45 2003
+@@ -517,7 +517,7 @@
+ 	pwent = getpwnamallow(login);
+ 
+ 	authctxt->user = xstrdup(login);
+-	setproctitle("%s [priv]", pwent ? login : "unknown");
++	setproctitle("%s [priv]", pwent ? login : "UNKNOWN USER");
+ 	xfree(login);
+ 
+ 	buffer_clear(m);

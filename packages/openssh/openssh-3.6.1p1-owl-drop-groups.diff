@@ -1,0 +1,46 @@
+diff -ur openssh-3.6.1p1.orig/sshd.c openssh-3.6.1p1/sshd.c
+--- openssh-3.6.1p1.orig/sshd.c	Mon Mar 10 00:38:10 2003
++++ openssh-3.6.1p1/sshd.c	Mon Apr  7 14:35:30 2003
+@@ -533,7 +533,7 @@
+ privsep_preauth_child(void)
+ {
+ 	u_int32_t rnd[256];
+-	gid_t gidset[1];
++	gid_t gidset[2];
+ 	struct passwd *pw;
+ 	int i;
+ 
+@@ -564,12 +564,12 @@
+ 	debug3("privsep user:group %u:%u", (u_int)pw->pw_uid,
+ 	    (u_int)pw->pw_gid);
+ #if 0
+-	/* XXX not ready, to heavy after chroot */
++	/* XXX not ready, too heavy after chroot */
+ 	do_setusercontext(pw);
+ #else
+-	gidset[0] = pw->pw_gid;
++	gidset[0] = gidset[1] = pw->pw_gid;
+ 	if (setgid(pw->pw_gid) < 0)
+-		fatal("setgid failed for %u", pw->pw_gid );
++		fatal("setgid failed for %u", pw->pw_gid);
+ 	if (setgroups(1, gidset) < 0)
+ 		fatal("setgroups: %.100s", strerror(errno));
+ 	permanently_set_uid(pw);
+@@ -1081,8 +1081,15 @@
+ 	 * to create a file, and we can't control the code in every 
+ 	 * module which might be used).
+ 	 */
+-	if (setgroups(0, NULL) < 0)
+-		debug("setgroups() failed: %.200s", strerror(errno));
++	if (geteuid() == 0 && setgroups(0, NULL) != 0)
++#ifndef USE_PAM
++	/*
++	 * We can ignore the lack of support for having no supplementary
++	 * groups at all if don't use PAM.
++	 */
++		if (errno != EINVAL)
++#endif
++			fatal("setgroups: %.200s", strerror(errno));
+ 
+ 	/* Initialize the log (it is reinitialized below in case we forked). */
+ 	if (debug_flag && !inetd_flag)

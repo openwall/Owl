@@ -1,6 +1,6 @@
-diff -ur openssh-3.4p1.orig/entropy.c openssh-3.4p1/entropy.c
---- openssh-3.4p1.orig/entropy.c	Sun Jun  9 23:41:48 2002
-+++ openssh-3.4p1/entropy.c	Sat Jun 29 21:18:47 2002
+diff -ur openssh-3.6.1p1.orig/entropy.c openssh-3.6.1p1/entropy.c
+--- openssh-3.6.1p1.orig/entropy.c	Sun Jun  9 19:41:48 2002
++++ openssh-3.6.1p1/entropy.c	Mon Apr  7 19:29:13 2003
 @@ -138,9 +138,9 @@
  {
  	/*

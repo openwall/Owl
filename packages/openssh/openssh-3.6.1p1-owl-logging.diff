@@ -1,7 +1,7 @@
-diff -ur openssh-3.4p1.orig/auth-pam.c openssh-3.4p1/auth-pam.c
---- openssh-3.4p1.orig/auth-pam.c	Wed May  8 06:27:56 2002
-+++ openssh-3.4p1/auth-pam.c	Sat Jul  6 22:27:59 2002
-@@ -75,6 +75,7 @@
+diff -ur openssh-3.6.1p1.orig/auth-pam.c openssh-3.6.1p1/auth-pam.c
+--- openssh-3.6.1p1.orig/auth-pam.c	Wed Jan 22 04:42:26 2003
++++ openssh-3.6.1p1/auth-pam.c	Mon Apr  7 21:18:21 2003
+@@ -79,6 +79,7 @@
  int do_pam_authenticate(int flags)
  {
  	int retval = pam_authenticate(__pamh, flags);
@@ -9,7 +9,7 @@ diff -ur openssh-3.4p1.orig/auth-pam.c openssh-3.4p1/auth-pam.c
  	was_authenticated = (retval == PAM_SUCCESS);
  	return retval;
  }
-@@ -179,6 +180,7 @@
+@@ -181,6 +182,7 @@
  
  	if (__pamh && session_opened) {
  		pam_retval = pam_close_session(__pamh, 0);
@@ -17,7 +17,7 @@ diff -ur openssh-3.4p1.orig/auth-pam.c openssh-3.4p1/auth-pam.c
  		if (pam_retval != PAM_SUCCESS)
  			log("Cannot close PAM session[%d]: %.200s",
  			    pam_retval, PAM_STRERROR(__pamh, pam_retval));
-@@ -186,6 +188,7 @@
+@@ -188,6 +190,7 @@
  
  	if (__pamh && creds_set) {
  		pam_retval = pam_setcred(__pamh, PAM_DELETE_CRED);
@@ -25,7 +25,7 @@ diff -ur openssh-3.4p1.orig/auth-pam.c openssh-3.4p1/auth-pam.c
  		if (pam_retval != PAM_SUCCESS)
  			debug("Cannot delete credentials[%d]: %.200s", 
  			    pam_retval, PAM_STRERROR(__pamh, pam_retval));
-@@ -249,6 +252,7 @@
+@@ -243,6 +246,7 @@
  	}
  
  	pam_retval = pam_acct_mgmt(__pamh, 0);
@@ -33,7 +33,7 @@ diff -ur openssh-3.4p1.orig/auth-pam.c openssh-3.4p1/auth-pam.c
  	debug2("pam_acct_mgmt() = %d", pam_retval);
  	switch (pam_retval) {
  		case PAM_SUCCESS:
-@@ -287,6 +291,7 @@
+@@ -286,6 +290,7 @@
  	}
  
  	pam_retval = pam_open_session(__pamh, 0);
@@ -41,7 +41,7 @@ diff -ur openssh-3.4p1.orig/auth-pam.c openssh-3.4p1/auth-pam.c
  	if (pam_retval != PAM_SUCCESS)
  		fatal("PAM session setup failed[%d]: %.200s",
  		    pam_retval, PAM_STRERROR(__pamh, pam_retval));
-@@ -307,6 +312,7 @@
+@@ -306,6 +311,7 @@
  	debug("PAM establishing creds");
  	pam_retval = pam_setcred(__pamh, 
  	    init ? PAM_ESTABLISH_CRED : PAM_REINITIALIZE_CRED);
@@ -49,17 +49,17 @@ diff -ur openssh-3.4p1.orig/auth-pam.c openssh-3.4p1/auth-pam.c
  	if (pam_retval != PAM_SUCCESS) {
  		if (was_authenticated)
  			fatal("PAM setcred failed[%d]: %.200s",
-@@ -339,6 +345,7 @@
- 	if (password_change_required) {
+@@ -341,6 +347,7 @@
+ 			    " with privilege separation");
  		pamstate = OTHER;
  		pam_retval = pam_chauthtok(__pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
 +		log_reinit();
  		if (pam_retval != PAM_SUCCESS)
  			fatal("PAM pam_chauthtok failed[%d]: %.200s",
  			    pam_retval, PAM_STRERROR(__pamh, pam_retval));
-diff -ur openssh-3.4p1.orig/entropy.c openssh-3.4p1/entropy.c
---- openssh-3.4p1.orig/entropy.c	Sun Jun  9 23:41:48 2002
-+++ openssh-3.4p1/entropy.c	Sat Jun 29 20:36:17 2002
+diff -ur openssh-3.6.1p1.orig/entropy.c openssh-3.6.1p1/entropy.c
+--- openssh-3.6.1p1.orig/entropy.c	Sun Jun  9 19:41:48 2002
++++ openssh-3.6.1p1/entropy.c	Sat Jun 29 16:36:17 2002
 @@ -93,7 +93,8 @@
  			    original_uid, strerror(errno));
  			_exit(1);
@@ -70,10 +70,10 @@ diff -ur openssh-3.4p1.orig/entropy.c openssh-3.4p1/entropy.c
  		execl(SSH_RAND_HELPER, "ssh-rand-helper", NULL);
  		fprintf(stderr, "(rand child) Couldn't exec '%s': %s\n", 
  		    SSH_RAND_HELPER, strerror(errno));
-diff -ur openssh-3.4p1.orig/log.c openssh-3.4p1/log.c
---- openssh-3.4p1.orig/log.c	Tue Feb 26 20:52:15 2002
-+++ openssh-3.4p1/log.c	Sat Jun 29 20:34:00 2002
-@@ -241,6 +241,15 @@
+diff -ur openssh-3.6.1p1.orig/log.c openssh-3.6.1p1/log.c
+--- openssh-3.6.1p1.orig/log.c	Tue Jan 14 11:22:43 2003
++++ openssh-3.6.1p1/log.c	Mon Apr  7 21:20:02 2003
+@@ -262,6 +262,15 @@
   */
  
  void
@@ -89,7 +89,7 @@ diff -ur openssh-3.4p1.orig/log.c openssh-3.4p1/log.c
  log_init(char *av0, LogLevel level, SyslogFacility facility, int on_stderr)
  {
  	argv0 = av0;
-@@ -311,6 +320,15 @@
+@@ -332,6 +341,15 @@
  		    (int) facility);
  		exit(1);
  	}
@@ -105,18 +105,18 @@ diff -ur openssh-3.4p1.orig/log.c openssh-3.4p1/log.c
  }
  
  #define MSGBUFSIZ 1024
-@@ -369,8 +387,6 @@
+@@ -393,8 +411,6 @@
  	if (log_on_stderr) {
- 		fprintf(stderr, "%s\r\n", msgbuf);
+ 		fprintf(stderr, "%s\r\n", fmtbuf);
  	} else {
 -		openlog(argv0 ? argv0 : __progname, LOG_PID, log_facility);
- 		syslog(pri, "%.500s", msgbuf);
+ 		syslog(pri, "%.500s", fmtbuf);
 -		closelog();
  	}
  }
-diff -ur openssh-3.4p1.orig/log.h openssh-3.4p1/log.h
---- openssh-3.4p1.orig/log.h	Thu Jun  6 23:51:06 2002
-+++ openssh-3.4p1/log.h	Sat Jun 29 20:35:24 2002
+diff -ur openssh-3.6.1p1.orig/log.h openssh-3.6.1p1/log.h
+--- openssh-3.6.1p1.orig/log.h	Tue Jul 23 21:01:57 2002
++++ openssh-3.6.1p1/log.h	Mon Apr  7 21:18:21 2003
 @@ -49,6 +49,8 @@
  }       LogLevel;
  
@@ -126,10 +126,10 @@ diff -ur openssh-3.4p1.orig/log.h openssh-3.4p1/log.h
  
  SyslogFacility	log_facility_number(char *);
  LogLevel log_level_number(char *);
-diff -ur openssh-3.4p1.orig/monitor.c openssh-3.4p1/monitor.c
---- openssh-3.4p1.orig/monitor.c	Wed Jun 26 17:27:11 2002
-+++ openssh-3.4p1/monitor.c	Sat Jun 29 21:01:38 2002
-@@ -279,8 +279,6 @@
+diff -ur openssh-3.6.1p1.orig/monitor.c openssh-3.6.1p1/monitor.c
+--- openssh-3.6.1p1.orig/monitor.c	Tue Apr  1 11:43:39 2003
++++ openssh-3.6.1p1/monitor.c	Mon Apr  7 21:18:21 2003
+@@ -292,8 +292,6 @@
  		}
  
  		if (ent->flags & MON_AUTHDECIDE) {
@@ -138,9 +138,30 @@ diff -ur openssh-3.4p1.orig/monitor.c openssh-3.4p1/monitor.c
  			if (!authenticated)
  				authctxt->failures++;
  		}
-diff -ur openssh-3.4p1.orig/readpass.c openssh-3.4p1/readpass.c
---- openssh-3.4p1.orig/readpass.c	Wed Mar 27 20:28:47 2002
-+++ openssh-3.4p1/readpass.c	Sat Jun 29 20:37:06 2002
+diff -ur openssh-3.6.1p1.orig/openbsd-compat/bsd-cray.c openssh-3.6.1p1/openbsd-compat/bsd-cray.c
+--- openssh-3.6.1p1.orig/openbsd-compat/bsd-cray.c	Thu Sep 26 00:38:51 2002
++++ openssh-3.6.1p1/openbsd-compat/bsd-cray.c	Mon Apr  7 21:26:05 2003
+@@ -287,6 +287,7 @@
+ 		     if (ttyname(0) != NULL) {
+ 		     /* Force a password change */
+ 		         printf("Your password has expired; Choose a new one.\n");
++		         log_done();
+ 		         execl("/bin/passwd", "passwd", username, 0);
+ 		         exit(9);
+ 		     }
+@@ -724,7 +725,9 @@
+ 		return;
+ 
+ 	if ((child = fork()) == 0) {
++		log_done();
+ 		execl(CLEANTMPCMD, CLEANTMPCMD, login, jtmp, (char *)NULL);
++		log_reinit();
+ 		fatal("cray_delete_tmpdir: execl of CLEANTMPCMD failed");
+ 	}
+ 
+diff -ur openssh-3.6.1p1.orig/readpass.c openssh-3.6.1p1/readpass.c
+--- openssh-3.6.1p1.orig/readpass.c	Fri Jan 24 00:36:23 2003
++++ openssh-3.6.1p1/readpass.c	Mon Apr  7 21:18:21 2003
 @@ -58,7 +58,9 @@
  		close(p[0]);
  		if (dup2(p[1], STDOUT_FILENO) < 0)
@@ -151,10 +172,10 @@ diff -ur openssh-3.4p1.orig/readpass.c openssh-3.4p1/readpass.c
  		fatal("ssh_askpass: exec(%s): %s", askpass, strerror(errno));
  	}
  	close(p[1]);
-diff -ur openssh-3.4p1.orig/scp.c openssh-3.4p1/scp.c
---- openssh-3.4p1.orig/scp.c	Fri Jun 21 04:41:52 2002
-+++ openssh-3.4p1/scp.c	Sat Jun 29 20:38:16 2002
-@@ -174,6 +174,7 @@
+diff -ur openssh-3.6.1p1.orig/scp.c openssh-3.6.1p1/scp.c
+--- openssh-3.6.1p1.orig/scp.c	Fri Mar 21 00:55:32 2003
++++ openssh-3.6.1p1/scp.c	Mon Apr  7 21:18:21 2003
+@@ -163,6 +163,7 @@
  		addargs(&args, "%s", host);
  		addargs(&args, "%s", cmd);
  
@@ -162,20 +183,20 @@ diff -ur openssh-3.4p1.orig/scp.c openssh-3.4p1/scp.c
  		execvp(ssh_program, args.list);
  		perror(ssh_program);
  		exit(1);
-diff -ur openssh-3.4p1.orig/session.c openssh-3.4p1/session.c
---- openssh-3.4p1.orig/session.c	Wed Jun 26 17:51:06 2002
-+++ openssh-3.4p1/session.c	Sat Jul  6 22:21:36 2002
-@@ -471,7 +471,7 @@
- 	/* Fork the child. */
- 	if ((pid = fork()) == 0) {
+diff -ur openssh-3.6.1p1.orig/session.c openssh-3.6.1p1/session.c
+--- openssh-3.6.1p1.orig/session.c	Fri Mar 21 01:18:09 2003
++++ openssh-3.6.1p1/session.c	Mon Apr  7 21:18:21 2003
+@@ -468,7 +468,7 @@
+ 		fatal_remove_all_cleanups();
+ 
  		/* Child.  Reinitialize the log since the pid has changed. */
 -		log_init(__progname, options.log_level, options.log_facility, log_stderr);
 +		log_reinit();
  
  		/*
  		 * Create a new session and process group since the 4.4BSD
-@@ -587,7 +587,7 @@
- 	if ((pid = fork()) == 0) {
+@@ -592,7 +592,7 @@
+ 		fatal_remove_all_cleanups();
  
  		/* Child.  Reinitialize the log because the pid has changed. */
 -		log_init(__progname, options.log_level, options.log_facility, log_stderr);
@@ -183,7 +204,7 @@ diff -ur openssh-3.4p1.orig/session.c openssh-3.4p1/session.c
  		/* Close the master side of the pseudo tty. */
  		close(ptyfd);
  
-@@ -1225,6 +1225,7 @@
+@@ -1273,6 +1273,7 @@
  {
  	/* Launch login(1). */
  
@@ -191,7 +212,7 @@ diff -ur openssh-3.4p1.orig/session.c openssh-3.4p1/session.c
  	execl(LOGIN_PROGRAM, "login", "-h", hostname,
  #ifdef xxxLOGIN_NEEDS_TERM
  		    (s->term ? s->term : "unknown"),
-@@ -1391,6 +1392,8 @@
+@@ -1448,6 +1449,8 @@
  			exit(1);
  		}
  
@@ -200,7 +221,7 @@ diff -ur openssh-3.4p1.orig/session.c openssh-3.4p1/session.c
  		/* Execute the shell. */
  		argv[0] = argv0;
  		argv[1] = NULL;
-@@ -1400,6 +1403,9 @@
+@@ -1457,6 +1460,9 @@
  		perror(shell);
  		exit(1);
  	}
@@ -210,10 +231,10 @@ diff -ur openssh-3.4p1.orig/session.c openssh-3.4p1/session.c
  	/*
  	 * Execute the command using the user's shell.  This uses the -c
  	 * option to execute the command.
-diff -ur openssh-3.4p1.orig/sftp-int.c openssh-3.4p1/sftp-int.c
---- openssh-3.4p1.orig/sftp-int.c	Mon Jun 24 01:27:19 2002
-+++ openssh-3.4p1/sftp-int.c	Sat Jun 29 20:44:53 2002
-@@ -167,9 +167,11 @@
+diff -ur openssh-3.6.1p1.orig/sftp-int.c openssh-3.6.1p1/sftp-int.c
+--- openssh-3.6.1p1.orig/sftp-int.c	Mon Mar 10 00:21:18 2003
++++ openssh-3.6.1p1/sftp-int.c	Mon Apr  7 21:18:21 2003
+@@ -172,9 +172,11 @@
  		/* XXX: child has pipe fds to ssh subproc open - issue? */
  		if (args) {
  			debug3("Executing %s -c \"%s\"", shell, args);
@@ -225,10 +246,10 @@ diff -ur openssh-3.4p1.orig/sftp-int.c openssh-3.4p1/sftp-int.c
  			execl(shell, shell, (char *)NULL);
  		}
  		fprintf(stderr, "Couldn't execute \"%s\": %s\n", shell,
-diff -ur openssh-3.4p1.orig/sftp.c openssh-3.4p1/sftp.c
---- openssh-3.4p1.orig/sftp.c	Mon Jun 24 01:27:19 2002
-+++ openssh-3.4p1/sftp.c	Sat Jun 29 20:44:26 2002
-@@ -84,6 +84,7 @@
+diff -ur openssh-3.6.1p1.orig/sftp.c openssh-3.6.1p1/sftp.c
+--- openssh-3.6.1p1.orig/sftp.c	Fri Jan 10 10:43:25 2003
++++ openssh-3.6.1p1/sftp.c	Mon Apr  7 21:18:21 2003
+@@ -86,6 +86,7 @@
  		close(*out);
  		close(c_in);
  		close(c_out);
@@ -236,10 +257,10 @@ diff -ur openssh-3.4p1.orig/sftp.c openssh-3.4p1/sftp.c
  		execv(path, args);
  		fprintf(stderr, "exec: %s: %s\n", path, strerror(errno));
  		exit(1);
-diff -ur openssh-3.4p1.orig/ssh-agent.c openssh-3.4p1/ssh-agent.c
---- openssh-3.4p1.orig/ssh-agent.c	Wed Jun 26 03:19:13 2002
-+++ openssh-3.4p1/ssh-agent.c	Sat Jun 29 20:45:37 2002
-@@ -1091,6 +1091,7 @@
+diff -ur openssh-3.6.1p1.orig/ssh-agent.c openssh-3.6.1p1/ssh-agent.c
+--- openssh-3.6.1p1.orig/ssh-agent.c	Sat Mar 15 00:37:09 2003
++++ openssh-3.6.1p1/ssh-agent.c	Mon Apr  7 21:18:21 2003
+@@ -1159,6 +1159,7 @@
  			perror("setenv");
  			exit(1);
  		}
@@ -247,10 +268,10 @@ diff -ur openssh-3.4p1.orig/ssh-agent.c openssh-3.4p1/ssh-agent.c
  		execvp(av[0], av);
  		perror(av[0]);
  		exit(1);
-diff -ur openssh-3.4p1.orig/ssh-rand-helper.c openssh-3.4p1/ssh-rand-helper.c
---- openssh-3.4p1.orig/ssh-rand-helper.c	Sun Jun  9 23:41:49 2002
-+++ openssh-3.4p1/ssh-rand-helper.c	Sat Jun 29 20:48:36 2002
-@@ -313,7 +313,9 @@
+diff -ur openssh-3.6.1p1.orig/ssh-rand-helper.c openssh-3.6.1p1/ssh-rand-helper.c
+--- openssh-3.6.1p1.orig/ssh-rand-helper.c	Mon Mar 17 05:13:53 2003
++++ openssh-3.6.1p1/ssh-rand-helper.c	Mon Apr  7 21:18:21 2003
+@@ -312,7 +312,9 @@
  			close(p[1]);
  			close(devnull);
  
@@ -260,10 +281,10 @@ diff -ur openssh-3.4p1.orig/ssh-rand-helper.c openssh-3.4p1/ssh-rand-helper.c
  
  			debug("(child) Couldn't exec '%s': %s", 
  			    src->cmdstring, strerror(errno));
-diff -ur openssh-3.4p1.orig/sshconnect.c openssh-3.4p1/sshconnect.c
---- openssh-3.4p1.orig/sshconnect.c	Mon Jun 24 01:23:20 2002
-+++ openssh-3.4p1/sshconnect.c	Sat Jun 29 20:47:40 2002
-@@ -127,6 +127,8 @@
+diff -ur openssh-3.6.1p1.orig/sshconnect.c openssh-3.6.1p1/sshconnect.c
+--- openssh-3.6.1p1.orig/sshconnect.c	Mon Dec 23 02:06:20 2002
++++ openssh-3.6.1p1/sshconnect.c	Mon Apr  7 21:18:21 2003
+@@ -126,6 +126,8 @@
  		/* Cannot be 1 because pin allocated two descriptors. */
  		close(pout[1]);
  
@@ -272,9 +293,9 @@ diff -ur openssh-3.4p1.orig/sshconnect.c openssh-3.4p1/sshconnect.c
  		/* Stderr is left as it is so that error messages get
  		   printed on the user's terminal. */
  		argv[0] = _PATH_BSHELL;
-diff -ur openssh-3.4p1.orig/sshconnect2.c openssh-3.4p1/sshconnect2.c
---- openssh-3.4p1.orig/sshconnect2.c	Mon Jun 24 01:23:21 2002
-+++ openssh-3.4p1/sshconnect2.c	Sat Jun 29 20:46:29 2002
+diff -ur openssh-3.6.1p1.orig/sshconnect2.c openssh-3.6.1p1/sshconnect2.c
+--- openssh-3.6.1p1.orig/sshconnect2.c	Tue Apr  1 11:43:40 2003
++++ openssh-3.6.1p1/sshconnect2.c	Mon Apr  7 21:18:21 2003
 @@ -937,7 +937,9 @@
  			fatal("ssh_keysign: dup2: %s", strerror(errno));
  		close(from[1]);
@@ -285,9 +306,9 @@ diff -ur openssh-3.4p1.orig/sshconnect2.c openssh-3.4p1/sshconnect2.c
  		fatal("ssh_keysign: exec(%s): %s", _PATH_SSH_KEY_SIGN,
  		    strerror(errno));
  	}
-diff -ur openssh-3.4p1.orig/sshd.c openssh-3.4p1/sshd.c
---- openssh-3.4p1.orig/sshd.c	Wed Jun 26 03:24:19 2002
-+++ openssh-3.4p1/sshd.c	Sat Jul  6 22:21:36 2002
+diff -ur openssh-3.6.1p1.orig/sshd.c openssh-3.6.1p1/sshd.c
+--- openssh-3.6.1p1.orig/sshd.c	Mon Mar 10 00:38:10 2003
++++ openssh-3.6.1p1/sshd.c	Mon Apr  7 21:18:21 2003
 @@ -261,7 +261,9 @@
  	log("Received SIGHUP; restarting.");
  	close_listen_socks();
@@ -298,7 +319,7 @@ diff -ur openssh-3.4p1.orig/sshd.c openssh-3.4p1/sshd.c
  	log("RESTART FAILED: av[0]='%.100s', error: %.100s.", saved_argv[0],
  	    strerror(errno));
  	exit(1);
-@@ -1081,7 +1083,7 @@
+@@ -1111,7 +1113,7 @@
  #endif /* TIOCNOTTY */
  	}
  	/* Reinitialize the log (because of the fork above). */
@@ -307,7 +328,7 @@ diff -ur openssh-3.4p1.orig/sshd.c openssh-3.4p1/sshd.c
  
  	/* Initialize the random number generator. */
  	arc4random_stir();
-@@ -1335,7 +1337,7 @@
+@@ -1360,7 +1362,7 @@
  						close_listen_socks();
  						sock_in = newsock;
  						sock_out = newsock;

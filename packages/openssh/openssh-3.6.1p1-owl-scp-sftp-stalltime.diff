@@ -1,0 +1,12 @@
+diff -ur openssh-3.6.1p1.orig/progressmeter.c openssh-3.6.1p1/progressmeter.c
+--- openssh-3.6.1p1.orig/progressmeter.c	Wed Mar 19 23:08:06 2003
++++ openssh-3.6.1p1/progressmeter.c	Mon Apr  7 19:35:47 2003
+@@ -70,7 +70,7 @@
+ #include "progressmeter.h"
+ 
+ /* Number of seconds before xfer considered "stalled". */
+-#define STALLTIME	5
++#define STALLTIME	60
+ /* alarm() interval for updating progress meter. */
+ #define PROGRESSTIME	1
+ 

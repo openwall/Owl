@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.53 2002/12/19 19:22:54 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.54 2003/04/08 02:18:27 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
-Version: 3.4p1
-Release: owl7
+Version: 3.6.1p1
+Release: owl1
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -13,17 +13,17 @@ Source2: sshd.init
 Source3: ssh_config
 Source4: sshd_config
 Source5: sftp.control
-Patch0: openssh-3.4p1-owl-warnings.diff
-Patch1: openssh-3.4p1-owl-hide-unknown.diff
-Patch2: openssh-3.4p1-owl-always-auth.diff
-Patch3: openssh-3.4p1-owl-pam_userpass.diff
-Patch4: openssh-3.4p1-owl-drop-groups.diff
-Patch5: openssh-3.4p1-owl-openssl-version-check.diff
-Patch6: openssh-3.4p1-owl-scp-stalltime.diff
-Patch7: openssh-3.4p1-owl-mm.diff
-Patch8: openssh-3.4p1-owl-password-changing.diff
-Patch9: openssh-3.4p1-owl-logging.diff
-Patch10: openssh-3.4p1-owl-fatal_cleanups.diff
+Patch0: openssh-3.6.1p1-owl-warnings.diff
+Patch1: openssh-3.6.1p1-owl-hide-unknown.diff
+Patch2: openssh-3.6.1p1-owl-pam_userpass.diff
+Patch3: openssh-3.6.1p1-owl-fatal_cleanups.diff
+Patch4: openssh-3.6.1p1-owl-drop-groups.diff
+Patch5: openssh-3.6.1p1-owl-logging.diff
+Patch6: openssh-3.6.1p1-owl-mm.diff
+Patch7: openssh-3.6.1p1-owl-password-changing.diff
+Patch8: openssh-3.6.1p1-owl-openssl-version-check.diff
+Patch9: openssh-3.6.1p1-owl-scp-sftp-stalltime.diff
+Patch10: openssh-3.6.1p1-owl-ssh-agent-dumpable.diff
 PreReq: openssl >= 0.9.6b-1owl
 PreReq: openssl < 0.9.7
 Requires: pam >= 0.75-owl16
@@ -223,6 +223,11 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Tue Apr 08 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p1-owl1
+- Updated to 3.6.1p1.
+- Make ssh-agent protect itself by setting prctl(PR_SET_DUMPABLE, 0) on
+Linux 2.4+.
+
 * Thu Dec 19 2002 Solar Designer <solar@owl.openwall.com>
 - New release number for linking against tcp_wrappers with Steve Grubb's
 error handling fix.
