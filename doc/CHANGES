@@ -5,6 +5,18 @@ remains fixed; it's only the stable branch which has these changes.
 
 	Changes made between Owl 0.1-prerelease and Owl 0.1-stable.
 
+2001/09/03	Package: groff
+SECURITY FIX	Severity: none to high, remote, active
+zen-parse has demonstrated a security problem with format string
+processing in the plot command of pic(1) when groff is used with LPRng
+on Red Hat Linux.  While Owl doesn't (yet?) include a print server,
+our groff package did have the unfortunate pic(1) property and did
+provide a print filter for use on potentially untrusted input by a
+third-party print server package one could install.  This has now been
+corrected.  A patch by Sebastian Krahmer of SuSE Security Team has
+been applied to pic(1) to restrict the format string processing.  The
+print filter has been dropped from the package.
+
 2001/07/30	Package: pam
 RELIABILITY FIX: Fixed a double-free bug in pam_pwdb which caused it
 to segfault after successful password changes in some cases.  The bug
@@ -201,4 +213,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp@hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.2.2.8 2001/07/30 02:39:35 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.2.2.9 2001/09/03 06:45:30 solar Exp $

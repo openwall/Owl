@@ -1,27 +1,27 @@
-# $Id: Owl/packages/groff/groff.spec,v 1.10 2001/05/06 14:00:45 solar Exp $
+# $Id: Owl/packages/groff/groff.spec,v 1.10.2.1 2001/09/03 06:45:30 solar Exp $
 
 %define BUILD_USE_X	'no'
 %define BUILD_CURRENT	'no'
 
 Summary: A document formatting system.
-Name: 		groff
-Version: 	1.17
-Release: 	2owl
-Copyright: 	GPL
-Group: 		System Environment/Base
-Source0: 	ftp://ftp.gnu.org/gnu/groff/groff-%{version}.tar.gz
+Name: groff
+Version: 1.17
+Release: 3owl
+License: GPL
+Group: System Environment/Base
+Source0: ftp://ftp.gnu.org/gnu/groff/groff-%{version}.tar.gz
 %if "%{BUILD_CURRENT}"=="'yes'"
-Source1:	ftp://ftp.ffii.org/pub/groff/devel/groff-%{version}-current.diff.gz
+Source1: ftp://ftp.ffii.org/pub/groff/devel/groff-%{version}-current.diff.gz
 %endif
-Source2: 	troff-to-ps.fpi
-Source3: 	README.A4
-Patch0:		groff-1.17-cvs-20010421-indxbib-nasty-typo.diff
-Patch1:		groff-1.16.1-owl-man.diff
-Patch2:		groff-1.17-owl-latin1-shc-hack.diff
-Patch3:		groff-1.17-owl-pre-grohtml-tmp.diff
-Requires: 	mktemp
-Buildroot:      /var/rpm-buildroot/%{name}-root
-Obsoletes: 	groff-tools
+Source2: README.A4
+Patch0: groff-1.17-cvs-20010421-indxbib-nasty-typo.diff
+Patch1: groff-1.16.1-owl-man.diff
+Patch2: groff-1.17-owl-latin1-shc-hack.diff
+Patch3: groff-1.17-owl-pre-grohtml-tmp.diff
+Patch4: groff-1.17.2-suse-pic-format.diff
+Requires: mktemp
+Buildroot: /var/rpm-buildroot/%{name}-root
+Obsoletes: groff-tools
 
 %description
 groff is a document formatting system.  groff takes standard text and
@@ -29,10 +29,7 @@ formatting commands as input and produces formatted output.  The
 created documents can be shown on a display or printed on a printer.
 groff's formatting commands allow you to specify font type and size,
 bold type, italic type, the number and size of columns on a page, and
-more.
-
-You should install groff if you want to use it as a document
-formatting system.  groff is also used to format man pages.
+more.  groff is also used to format man pages.
 
 %if "%{BUILD_USE_X}"=="'yes'"
 If you are going to use groff with the X Window System, you'll also
@@ -47,8 +44,8 @@ Group: Applications/Publishing
 The groff-perl package contains the parts of the groff text processor
 package that require Perl.  These include the afmtodit font processor
 for creating PostScript font files, the grog utility that can be used
-to automatically determine groff command-line options, and the
-troff-to-ps print filter.
+to automatically determine groff command-line options, and the mmroff
+reference preprocessor.
 
 %if "%{BUILD_USE_X}"=="'yes'"
 %package gxditview
@@ -73,7 +70,8 @@ zcat %{SOURCE1} | patch -p1 -l
 %patch1 -p0
 %patch2 -p1
 %patch3 -p1
-install -m 644 %{SOURCE3} .
+%patch4 -p1
+install -m 644 %{SOURCE2} .
 
 %build
 %if "%{BUILD_USE_X}"=="'yes'"
@@ -132,9 +130,6 @@ ln -s tbl.1.gz gtbl.1.gz
 ln -s troff.1.gz gtroff.1.gz
 popd
 
-mkdir -p ${RPM_BUILD_ROOT}%{_prefix}/share/rhs/rhs-printfilters
-install -m 755 %{SOURCE2} ${RPM_BUILD_ROOT}%{_prefix}/share/rhs/rhs-printfilters
-
 find ${RPM_BUILD_ROOT}%{_prefix}/bin ${RPM_BUILD_ROOT}%{_mandir} \
 	-type f -o -type l | \
 	grep -Ev 'afmtodit|grog|mdoc\.samples|mmroff' | \
@@ -156,7 +151,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man1/afmtodit.*
 %{_mandir}/man1/grog.*
 %{_mandir}/man7/mmroff*
-%{_prefix}/share/rhs/*/*
 
 %if "%{BUILD_USE_X}"=="'yes'"
 %files gxditview
@@ -166,6 +160,13 @@ rm -rf ${RPM_BUILD_ROOT}
 %endif
 
 %changelog
+* Mon Sep 03 2001 Solar Designer <solar@owl.openwall.com>
+- Added Sebastian Krahmer's patch for the pic(1) plot command's "format
+feature" which zen-parse has demonstrated to be a security problem when
+groff is used with LPRng on Red Hat Linux.
+- Dropped troff-to-ps.fpi which offered groff for use by print servers and
+on untrusted input.
+
 * Sun May 06 2001 Solar Designer <solar@owl.openwall.com>
 - README.A4 updates (mention grops -g and a4.tmac).
 
