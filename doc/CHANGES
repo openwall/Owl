@@ -12,6 +12,9 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/10/05	Package: newt
+Dropped newt from Owl, it's a Red Hat'ism that we never made use of.
+
 2002/10/04	Package: owl-setup
 Support for LILO boot loader configuration.
 
@@ -976,4 +979,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.139 2002/10/05 16:38:09 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.140 2002/10/05 17:23:09 solar Exp $
