@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.83 2005/01/20 06:33:27 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.84 2005/01/20 09:35:03 galaxy Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -465,7 +465,7 @@ to deal with.
 locales. BUILD_LOCALES support is incomplete yet, we will divide our glibc
 into functional sub-packages soon and generation of locales package will be
 controled through BUILD_LOCALES macro.
-- Added rpmgen-cpp patch to avoid hardcoding of path to cpp binary. This
+- Added rpcgen-cpp patch to avoid hardcoding of path to cpp binary. This
 patch also replaces execv() to execvp() to search for cpp binary in PATH.
 - Cleaned up the spec.
 
