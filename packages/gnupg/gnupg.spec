@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gnupg/gnupg.spec,v 1.1 2000/10/25 19:56:35 kad Exp $
+# $Id: Owl/packages/gnupg/gnupg.spec,v 1.2 2000/10/25 20:03:30 kad Exp $
 
 Summary: 	A GNU utility for secure communication and data storage.
 Name: 		gnupg
@@ -30,6 +30,7 @@ only IDEA for symmetric-key encryption, which is patented worldwide).
 %patch3 -p1 -b .strlen
 
 %build
+unset LINGUAS || :
 %configure --enable-shared
 make
 
