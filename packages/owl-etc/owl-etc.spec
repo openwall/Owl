@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.41 2003/05/23 02:50:53 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.42 2003/05/26 23:08:22 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
-Version: 0.25
+Version: 0.26
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -25,9 +25,12 @@ Source50: csh.login
 Source51: csh.cshrc
 Obsoletes: setup
 Provides: setup
+AutoReq: false
 BuildRequires: fileutils >= 4.0.27
 BuildArchitectures: noarch
 BuildRoot: /override/%{name}-%{version}
+
+%define shadow_initial_sha1 a5af9c9eb142e14dc94cf79d791fbc04ec733a21
 
 %description
 Initial set of configuration files to be placed into /etc.
@@ -42,6 +45,24 @@ cp -rL $RPM_SOURCE_DIR/* etc/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%triggerin -- tcb
+# Determine whether the current /etc/shadow matches the initial version
+# as provided by this package.
+if [ -e /etc/shadow.rpmnew ]; then
+	SHADOW_INITIAL=no
+elif [ "`sha1sum < /etc/shadow`" = "%{shadow_initial_sha1}  -" ]; then
+	SHADOW_INITIAL=yes
+else
+	SHADOW_INITIAL=no
+fi
+
+# Updating an install that uses tcb?
+if [ $SHADOW_INITIAL = yes -a -d /etc/tcb ]; then
+	rm /etc/shadow
+fi
+
+rm -f /etc/{passwd,shadow,group}.rpmnew
 
 %files
 %defattr(644,root,root)
@@ -67,6 +88,13 @@ rm -rf $RPM_BUILD_ROOT
 %ghost /var/log/lastlog
 
 %changelog
+* Tue May 27 2003 Solar Designer <solar@owl.openwall.com> 0.26-owl1
+- When updating an install that uses tcb, don't install the initial
+/etc/shadow (rm it on a trigger).
+- Don't install /etc/{passwd,shadow,group}.rpmnew files (rm -f them),
+the post-install scripts of our other packages take care of creating
+any additional pseudo-users.
+
 * Fri May 23 2003 Solar Designer <solar@owl.openwall.com> 0.25-owl1
 - Moved /etc/nsswitch.conf from glibc to owl-etc package.
 
