@@ -1,4 +1,5 @@
 #!/bin/sh
+# $Id: Owl/packages/console-tools/Attic/keytable.init,v 1.2 2000/12/15 01:55:17 solar Exp $
 #
 # Load keytable
 #
@@ -7,63 +8,37 @@
 # run after networking and NFS mounts are up.
 #
 # chkconfig: 2345 75 05
-# description: This package loads the selected keyboard map as set in \
-#   /etc/sysconfig/keyboard.  This can be selected using the kbdconfig \
-#   utility.  You should leave this enabled for most machines.
+# description: \
+#	This package loads the selected keyboard map as set in \
+#	/etc/sysconfig/keyboard.
 # config: /etc/sysconfig/keyboard
 
-[ -f /etc/sysconfig/keyboard ] || exit 0
+test -f /etc/sysconfig/keyboard -a -f /usr/bin/loadkeys || exit 0
 
-[ -f /usr/bin/loadkeys ] || exit 0
-
-RETVAL=$?
-
-start() {
-		# Load the proper keymap
-		echo -n "Loading keymap: "
-		. /etc/sysconfig/keyboard
-		if [ "${KEYTABLE:-bogus}" != "bogus" ]; then
-		# Specify VT0 in case we use a serial console
-			loadkeys $KEYTABLE < /dev/tty0 > /dev/tty0
-			RETVAL=$?
-		fi
-		if [ -x /sbin/setsysfont ]; then
-			echo -n "Loading system font: "
-			/sbin/setsysfont
-		fi
-		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/keytable
-}
-
-stop() {
-	rm -f /var/lock/subsys/keytable
-}
-
-restart() {
-	$0 start
-	RETVAL=$?
-}
-
-status() {
-	echo "No status available for this package"
-	exit 0
-}
+RETVAL=0
 
 case "$1" in
-	start)
-		start
-		;;
-	stop)
-		stop
-		;;
-	restart|reload)
-		restart
-		;;
-	status)
-		status
-		;;
-	*)
-		echo "Usage: keytable {start|stop|restart|reload|condrestart|status}"
-		exit 1
+start|restart|reload)
+	# Load the proper keymap
+	echo "Loading keymap"
+	. /etc/sysconfig/keyboard
+	if [ "${KEYTABLE:-bogus}" != "bogus" ]; then
+	# Specify VT0 in case we use a serial console
+		loadkeys $KEYTABLE < /dev/tty0 > /dev/tty0
+		RETVAL=$?
+	fi
+	if [ -x /sbin/setsysfont ]; then
+		echo "Loading system font"
+		/sbin/setsysfont
+	fi
+	;;
+status)
+	echo "No status available for this package"
+	;;
+*)
+	echo "Usage: keytable {start|stop|restart|reload|status}"
+	exit 1
+	;;
 esac
 
 exit $RETVAL
