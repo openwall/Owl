@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mutt/mutt.spec,v 1.5 2003/03/24 14:07:18 jhuuskon Exp $
+# $Id: Owl/packages/mutt/mutt.spec,v 1.6 2003/03/26 22:25:32 solar Exp $
 
 Summary: A feature-rich text-based mail user agent.
 Name: mutt
@@ -76,7 +76,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Sun Mar 23 2003 Jarno Huuskonen <jhuuskon@owl.openwall.com>
 - 1.4.1
- 
+
 * Mon Jan 20 2003 Solar Designer <solar@owl.openwall.com>
 - Improved the package description.
 - Require the proper version of mktemp for our muttbug/flea patch.

@@ -7,7 +7,7 @@ diff -ur mutt-1.4.1.orig/attach.c mutt-1.4.1/attach.c
    rfc1524_mailcap_lookup(a, type, entry, 0);
 -  rfc1524_expand_filename(entry->nametemplate, a->filename, 
 -			  tempfile, sizeof(tempfile));
-+  rfc1524_expand_tofile(entry->nametemplate, a->filename, 
++  rfc1524_expand_tofile(entry->nametemplate, a->filename,
 +			  tempfile, sizeof(tempfile), &fpout, "w");
    
    rfc1524_free_entry(&entry);
@@ -205,7 +205,7 @@ diff -ur mutt-1.4.1.orig/attach.c mutt-1.4.1/attach.c
  
      rc = mutt_do_pager (descrip, pagerfile,
  			M_PAGER_ATTACHMENT | (is_message ? M_PAGER_MESSAGE : 0), &info);
-+    /* mutt_do_pager mutt_unlinks pagerfile. Don't do it twice */ 
++    /* mutt_do_pager mutt_unlinks pagerfile, don't do it twice */
 +    pagerfile[0] = '\0';
    }
    else
@@ -323,7 +323,7 @@ diff -ur mutt-1.4.1.orig/attach.c mutt-1.4.1/attach.c
 -	return (-1);
 -      }
 +    STATE s;
-+      
++
 +    memset (&s, 0, sizeof (s));
 +    if ((s.fpout = tmpf) == NULL)
 +    {
@@ -332,7 +332,7 @@ diff -ur mutt-1.4.1.orig/attach.c mutt-1.4.1/attach.c
 +    }
 +    fseek ((s.fpin = fp), m->offset, 0);
 +    mutt_decode_attachment (m, &s);
-+      
++
 +    if (fclose (s.fpout) != 0)
 +    {
 +      mutt_perror ("fclose");
@@ -461,7 +461,7 @@ diff -ur mutt-1.4.1.orig/attach.c mutt-1.4.1/attach.c
 +    FILE *tmpf;
      int rc = 0;
 -    
-+    int unlink_newfile = 0; 
++    int unlink_newfile = 0;
      ifp = NULL;
      fpout = NULL;
 -    
@@ -556,7 +556,7 @@ diff -ur mutt-1.4.1.orig/handler.c mutt-1.4.1/handler.c
 +    rfc1524_free_entry(&entry);
 +    return;
 +  }
-+  
++
    if (entry->command)
    {
      strfcpy (command, entry->command, sizeof (command));
@@ -572,7 +572,7 @@ diff -ur mutt-1.4.1.orig/handler.c mutt-1.4.1/handler.c
 -      return;
 -    }
 -    
-+   
++
      mutt_copy_bytes (s->fpin, fpin, a->length);
  
      if(!piped)
@@ -1102,7 +1102,7 @@ diff -ur mutt-1.4.1.orig/pgp.c mutt-1.4.1/pgp.c
 -      mutt_mktemp (tempfile);
 -      if (pgp_write_signed (a, s, tempfile) == 0)
 +      FILE *tmpf = NULL;
-+    
++
 +      tmpf = mutt_mktempfile (tempfile, sizeof (tempfile), "w");
 +      if (pgp_write_signed (a, s, tmpf) == 0)
        {
@@ -1410,7 +1410,7 @@ diff -ur mutt-1.4.1.orig/protos.h mutt-1.4.1/protos.h
  int mutt_parse_unhook (BUFFER *, BUFFER *, unsigned long, BUFFER *);
  int mutt_pattern_func (int, char *);
 -int mutt_pipe_attachment (FILE *, BODY *, const char *, char *); 
-+int mutt_pipe_attachment (FILE *, BODY *, const char *, FILE *); 
++int mutt_pipe_attachment (FILE *, BODY *, const char *, FILE *);
  int mutt_print_attachment (FILE *, BODY *);
  int mutt_query_complete (char *, size_t);
  int mutt_save_attachment (FILE *, BODY *, char *, int, HEADER *);
@@ -1564,14 +1564,14 @@ diff -ur mutt-1.4.1.orig/rfc1524.c mutt-1.4.1/rfc1524.c
  }
  
 +int rfc1524_expand_filename (char *nametemplate,
-+			     char *oldfile, 
++			     char *oldfile,
 +			     char *newfile,
 +			     size_t nflen)
 +{
 +  return rfc1524_expand_tofile (nametemplate, oldfile, newfile, nflen,
 +		  NULL, NULL);
 +}	
-+ 
++
  /* If rfc1524_expand_command() is used on a recv'd message, then
   * the filename doesn't exist yet, but if its used while sending a message,
   * then we need to rename the existing file.
@@ -1631,7 +1631,7 @@ diff -ur mutt-1.4.1.orig/sendlib.c mutt-1.4.1/sendlib.c
      {
 -      mutt_mktemp (buff);
 -      if ((s.fpout = safe_fopen (buff, "w")) == NULL) 
-+      if ((s.fpout = mutt_mktempfile (buff, sizeof (buff), "w")) == NULL) 
++      if ((s.fpout = mutt_mktempfile (buff, sizeof (buff), "w")) == NULL)
        {
 -	mutt_perror ("fopen");
 +	mutt_perror ("mutt_mktempfile");
@@ -1720,7 +1720,7 @@ diff -ur mutt-1.4.1.orig/sendlib.c mutt-1.4.1/sendlib.c
  
      _exit (st);
    }
-+  
++
 +  if (SendmailWait >= 0 && tmpf)
 +    fclose (tmpf);
  
