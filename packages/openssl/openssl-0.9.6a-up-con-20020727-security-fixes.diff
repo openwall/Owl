@@ -1,0 +1,484 @@
+diff -ur openssl-0.9.6a-orig/CHANGES openssl-0.9.6a/CHANGES
+--- openssl-0.9.6a-orig/CHANGES	Thu Apr  5 17:07:47 2001
++++ openssl-0.9.6a/CHANGES	Tue Jul 30 10:35:53 2002
+@@ -2,6 +2,34 @@
+  OpenSSL CHANGES
+  _______________
+ 
++Changes in security patch
++
++Research Projects Agency (DARPA) and Air Force Research Laboratory,
++Air Force Materiel Command, USAF, under agreement number
++F30602-01-2-0537.
++
++  *) Add various sanity checks to asn1_get_length() to reject
++     the ASN1 length bytes if they exceed sizeof(long), will appear
++     negative or the content length exceeds the length of the
++     supplied buffer.
++     [Steve Henson, Adi Stav <stav@mercury.co.il>, James Yonan <jim@ntlp.com>]
++
++  *) Assertions for various potential buffer overflows, not known to
++     happen in practice.
++     [Ben Laurie (CHATS)]
++
++  *) Various temporary buffers to hold ASCII versions of integers were
++     too small for 64 bit platforms. (CAN-2002-0655)
++     [Matthew Byng-Maddick <mbm@aldigital.co.uk> and Ben Laurie (CHATS)>
++
++  *) Remote buffer overflow in SSL3 protocol - an attacker could
++     supply an oversized session ID to a client. (CAN-2002-0656)
++     [Ben Laurie (CHATS)]
++
++  *) Remote buffer overflow in SSL2 protocol - an attacker could
++     supply an oversized client master key. (CAN-2002-0656)
++     [Ben Laurie (CHATS)]
++
+  Changes between 0.9.6 and 0.9.6a  [5 Apr 2001]
+ 
+   *) Fix a couple of memory leaks in PKCS7_dataDecode()
+@@ -3809,4 +3837,3 @@
+   *) A minor bug in ssl/s3_clnt.c where there would always be 4 0 
+      bytes sent in the client random.
+      [Edward Bishop <ebishop@spyglass.com>]
+-
+diff -ur openssl-0.9.6a-orig/crypto/asn1/asn1_lib.c openssl-0.9.6a/crypto/asn1/asn1_lib.c
+--- openssl-0.9.6a-orig/crypto/asn1/asn1_lib.c	Thu Apr  5 17:10:04 2001
++++ openssl-0.9.6a/crypto/asn1/asn1_lib.c	Tue Jul 30 10:22:47 2002
+@@ -124,15 +124,13 @@
+ 		(int)(omax+ *pp));
+ 
+ #endif
+-#if 0
+-	if ((p+ *plength) > (omax+ *pp))
++	if (*plength > (omax - (*pp - p)))
+ 		{
+ 		ASN1err(ASN1_F_ASN1_GET_OBJECT,ASN1_R_TOO_LONG);
+ 		/* Set this so that even if things are not long enough
+ 		 * the values are set correctly */
+ 		ret|=0x80;
+ 		}
+-#endif
+ 	*pp=p;
+ 	return(ret|inf);
+ err:
+@@ -159,6 +157,8 @@
+ 		i= *p&0x7f;
+ 		if (*(p++) & 0x80)
+ 			{
++			if (i > sizeof(long))
++				return 0;
+ 			if (max-- == 0) return(0);
+ 			while (i-- > 0)
+ 				{
+@@ -170,6 +170,8 @@
+ 		else
+ 			ret=i;
+ 		}
++	if (ret < 0)
++		return 0;
+ 	*pp=p;
+ 	*rl=ret;
+ 	return(1);
+@@ -407,7 +409,7 @@
+ 
+ void asn1_add_error(unsigned char *address, int offset)
+ 	{
+-	char buf1[16],buf2[16];
++	char buf1[DECIMAL_SIZE(address)+1],buf2[DECIMAL_SIZE(offset)+1];
+ 
+ 	sprintf(buf1,"%lu",(unsigned long)address);
+ 	sprintf(buf2,"%d",offset);
+diff -ur openssl-0.9.6a-orig/crypto/conf/conf_def.c openssl-0.9.6a/crypto/conf/conf_def.c
+--- openssl-0.9.6a-orig/crypto/conf/conf_def.c	Thu Apr  5 17:11:05 2001
++++ openssl-0.9.6a/crypto/conf/conf_def.c	Tue Jul 30 10:22:47 2002
+@@ -67,6 +67,7 @@
+ #include "conf_def.h"
+ #include <openssl/buffer.h>
+ #include <openssl/err.h>
++#include "cryptlib.h"
+ 
+ static char *eat_ws(CONF *conf, char *p);
+ static char *eat_alpha_numeric(CONF *conf, char *p);
+@@ -180,12 +181,12 @@
+ static int def_load(CONF *conf, BIO *in, long *line)
+ 	{
+ #define BUFSIZE	512
+-	char btmp[16];
+ 	int bufnum=0,i,ii;
+ 	BUF_MEM *buff=NULL;
+ 	char *s,*p,*end;
+ 	int again,n;
+ 	long eline=0;
++	char btmp[DECIMAL_SIZE(eline)+1];
+ 	CONF_VALUE *v=NULL,*tv;
+ 	CONF_VALUE *sv=NULL;
+ 	char *section=NULL,*buf;
+diff -ur openssl-0.9.6a-orig/crypto/cryptlib.c openssl-0.9.6a/crypto/cryptlib.c
+--- openssl-0.9.6a-orig/crypto/cryptlib.c	Thu Apr  5 17:09:28 2001
++++ openssl-0.9.6a/crypto/cryptlib.c	Tue Jul 30 10:22:47 2002
+@@ -488,3 +488,11 @@
+ #endif
+ 
+ #endif
++
++void OpenSSLDie(const char *file,int line,const char *assertion)
++    {
++    fprintf(stderr,"%s(%d): OpenSSL internal error, assertion failed: %s\n",
++	    file,line,assertion);
++    abort();
++    }
++
+diff -ur openssl-0.9.6a-orig/crypto/cryptlib.h openssl-0.9.6a/crypto/cryptlib.h
+--- openssl-0.9.6a-orig/crypto/cryptlib.h	Mon Sep 11 09:42:03 2000
++++ openssl-0.9.6a/crypto/cryptlib.h	Tue Jul 30 10:22:47 2002
+@@ -89,6 +89,14 @@
+ #define X509_CERT_DIR_EVP        "SSL_CERT_DIR"
+ #define X509_CERT_FILE_EVP       "SSL_CERT_FILE"
+ 
++/* size of string represenations */
++#define DECIMAL_SIZE(type)     ((sizeof(type)*8+2)/3+1)
++#define HEX_SIZE(type)         ((sizeof(type)*2)
++
++/* die if we have to */
++void OpenSSLDie(const char *file,int line,const char *assertion);
++#define die(e)	((e) ? (void)0 : OpenSSLDie(__FILE__, __LINE__, #e))
++
+ #ifdef  __cplusplus
+ }
+ #endif
+diff -ur openssl-0.9.6a-orig/crypto/objects/obj_dat.c openssl-0.9.6a/crypto/objects/obj_dat.c
+--- openssl-0.9.6a-orig/crypto/objects/obj_dat.c	Thu Apr  5 17:12:16 2001
++++ openssl-0.9.6a/crypto/objects/obj_dat.c	Tue Jul 30 10:22:47 2002
+@@ -428,7 +428,7 @@
+ 	unsigned long l;
+ 	unsigned char *p;
+ 	const char *s;
+-	char tbuf[32];
++	char tbuf[DECIMAL_SIZE(i)+DECIMAL_SIZE(l)+2];
+ 
+ 	if (buf_len <= 0) return(0);
+ 
+diff -ur openssl-0.9.6a-orig/include/openssl/ssl.h openssl-0.9.6a/include/openssl/ssl.h
+--- openssl-0.9.6a-orig/include/openssl/ssl.h	Thu Apr  5 17:15:00 2001
++++ openssl-0.9.6a/include/openssl/ssl.h	Tue Jul 30 10:23:10 2002
+@@ -1418,6 +1418,7 @@
+ #define SSL_R_INVALID_COMMAND				 280
+ #define SSL_R_INVALID_PURPOSE				 278
+ #define SSL_R_INVALID_TRUST				 279
++#define SSL_R_KEY_ARG_TOO_LONG				 1112
+ #define SSL_R_LENGTH_MISMATCH				 159
+ #define SSL_R_LENGTH_TOO_SHORT				 160
+ #define SSL_R_LIBRARY_BUG				 274
+@@ -1485,6 +1486,7 @@
+ #define SSL_R_SHORT_READ				 219
+ #define SSL_R_SIGNATURE_FOR_NON_SIGNING_CERTIFICATE	 220
+ #define SSL_R_SSL23_DOING_SESSION_ID_REUSE		 221
++#define SSL_R_SSL3_SESSION_ID_TOO_LONG			 1113
+ #define SSL_R_SSL3_SESSION_ID_TOO_SHORT			 222
+ #define SSL_R_SSLV3_ALERT_BAD_CERTIFICATE		 1042
+ #define SSL_R_SSLV3_ALERT_BAD_RECORD_MAC		 1020
+diff -ur openssl-0.9.6a-orig/ssl/s2_clnt.c openssl-0.9.6a/ssl/s2_clnt.c
+--- openssl-0.9.6a-orig/ssl/s2_clnt.c	Thu Apr  5 17:14:48 2001
++++ openssl-0.9.6a/ssl/s2_clnt.c	Tue Jul 30 10:23:10 2002
+@@ -63,6 +63,7 @@
+ #include <openssl/buffer.h>
+ #include <openssl/objects.h>
+ #include <openssl/evp.h>
++#include "cryptlib.h"
+ 
+ static SSL_METHOD *ssl2_get_client_method(int ver);
+ static int get_server_finished(SSL *s);
+@@ -458,6 +459,7 @@
+ 		}
+ 		
+ 	s->s2->conn_id_length=s->s2->tmp.conn_id_length;
++	die(s->s2->conn_id_length <= sizeof s->s2->conn_id);
+ 	memcpy(s->s2->conn_id,p,s->s2->tmp.conn_id_length);
+ 	return(1);
+ 	}
+@@ -559,6 +561,7 @@
+ 		/* make key_arg data */
+ 		i=EVP_CIPHER_iv_length(c);
+ 		sess->key_arg_length=i;
++		die(i <= SSL_MAX_KEY_ARG_LENGTH);
+ 		if (i > 0) RAND_pseudo_bytes(sess->key_arg,i);
+ 
+ 		/* make a master key */
+@@ -566,6 +569,7 @@
+ 		sess->master_key_length=i;
+ 		if (i > 0)
+ 			{
++			die(i <= sizeof sess->master_key);
+ 			if (RAND_bytes(sess->master_key,i) <= 0)
+ 				{
+ 				ssl2_return_error(s,SSL2_PE_UNDEFINED_ERROR);
+@@ -609,6 +613,7 @@
+ 		d+=enc;
+ 		karg=sess->key_arg_length;	
+ 		s2n(karg,p); /* key arg size */
++		die(karg <= sizeof sess->key_arg);
+ 		memcpy(d,sess->key_arg,(unsigned int)karg);
+ 		d+=karg;
+ 
+@@ -629,6 +634,7 @@
+ 		{
+ 		p=(unsigned char *)s->init_buf->data;
+ 		*(p++)=SSL2_MT_CLIENT_FINISHED;
++		die(s->s2->conn_id_length <= sizeof s->s2->conn_id);
+ 		memcpy(p,s->s2->conn_id,(unsigned int)s->s2->conn_id_length);
+ 
+ 		s->state=SSL2_ST_SEND_CLIENT_FINISHED_B;
+@@ -878,6 +884,8 @@
+ 		{
+ 		if (!(s->options & SSL_OP_MICROSOFT_SESS_ID_BUG))
+ 			{
++			die(s->session->session_id_length
++			    <= sizeof s->session->session_id);
+ 			if (memcmp(buf,s->session->session_id,
+ 				(unsigned int)s->session->session_id_length) != 0)
+ 				{
+diff -ur openssl-0.9.6a-orig/ssl/s2_lib.c openssl-0.9.6a/ssl/s2_lib.c
+--- openssl-0.9.6a-orig/ssl/s2_lib.c	Thu Apr  5 17:14:49 2001
++++ openssl-0.9.6a/ssl/s2_lib.c	Tue Jul 30 10:23:10 2002
+@@ -62,6 +62,7 @@
+ #include <openssl/rsa.h>
+ #include <openssl/objects.h>
+ #include <openssl/md5.h>
++#include "cryptlib.h"
+ 
+ static long ssl2_default_timeout(void );
+ const char *ssl2_version_str="SSLv2" OPENSSL_VERSION_PTEXT;
+@@ -425,10 +426,14 @@
+ #endif
+ 
+ 	km=s->s2->key_material;
++ 	die(s->s2->key_material_length <= sizeof s->s2->key_material);
+ 	for (i=0; i<s->s2->key_material_length; i+=MD5_DIGEST_LENGTH)
+ 		{
+ 		MD5_Init(&ctx);
+ 
++ 		die(s->session->master_key_length >= 0
++ 		    && s->session->master_key_length
++ 		    < sizeof s->session->master_key);
+ 		MD5_Update(&ctx,s->session->master_key,s->session->master_key_length);
+ 		MD5_Update(&ctx,&c,1);
+ 		c++;
+@@ -463,6 +468,7 @@
+ /*	state=s->rwstate;*/
+ 	error=s->error;
+ 	s->error=0;
++	die(error >= 0 && error <= 3);
+ 	i=ssl2_write(s,&(buf[3-error]),error);
+ /*	if (i == error) s->rwstate=state; */
+ 
+diff -ur openssl-0.9.6a-orig/ssl/s2_srvr.c openssl-0.9.6a/ssl/s2_srvr.c
+--- openssl-0.9.6a-orig/ssl/s2_srvr.c	Thu Apr  5 17:14:51 2001
++++ openssl-0.9.6a/ssl/s2_srvr.c	Tue Jul 30 10:23:10 2002
+@@ -63,6 +63,7 @@
+ #include <openssl/rand.h>
+ #include <openssl/objects.h>
+ #include <openssl/evp.h>
++#include "cryptlib.h"
+ 
+ static SSL_METHOD *ssl2_get_server_method(int ver);
+ static int get_client_master_key(SSL *s);
+@@ -361,12 +362,19 @@
+ 		n2s(p,i); s->s2->tmp.clear=i;
+ 		n2s(p,i); s->s2->tmp.enc=i;
+ 		n2s(p,i); s->session->key_arg_length=i;
++		if(s->session->key_arg_length > SSL_MAX_KEY_ARG_LENGTH)
++		{
++			SSLerr(SSL_F_GET_CLIENT_MASTER_KEY,
++			SSL_R_KEY_ARG_TOO_LONG);
++			return -1;
++		}
+ 		s->state=SSL2_ST_GET_CLIENT_MASTER_KEY_B;
+ 		s->init_num=0;
+ 		}
+ 
+ 	/* SSL2_ST_GET_CLIENT_MASTER_KEY_B */
+ 	p=(unsigned char *)s->init_buf->data;
++	die(s->init_buf->length >= SSL2_MAX_RECORD_LENGTH_3_BYTE_HEADER);
+ 	keya=s->session->key_arg_length;
+ 	n=s->s2->tmp.clear+s->s2->tmp.enc+keya - s->init_num;
+ 	i=ssl2_read(s,(char *)&(p[s->init_num]),n);
+@@ -439,6 +447,7 @@
+ #endif
+ 
+ 	if (is_export) i+=s->s2->tmp.clear;
++	die(i <= SSL_MAX_MASTER_KEY_LENGTH);
+ 	s->session->master_key_length=i;
+ 	memcpy(s->session->master_key,p,(unsigned int)i);
+ 	return(1);
+@@ -579,6 +588,7 @@
+ 	p+=s->s2->tmp.session_id_length;
+ 
+ 	/* challenge */
++	die(s->s2->challenge_length <= sizeof s->s2->challenge);
+ 	memcpy(s->s2->challenge,p,(unsigned int)s->s2->challenge_length);
+ 	return(1);
+ mem_err:
+@@ -729,7 +739,8 @@
+ 		}
+ 
+ 	/* SSL2_ST_GET_CLIENT_FINISHED_B */
+-	i=ssl2_read(s,(char *)&(p[s->init_num]),s->s2->conn_id_length-s->init_num);
++	die(s->s2->conn_id_length <= sizeof s->s2->conn_id);
++	i = ssl2_read(s, (char *) &(p[s->init_num]), s->s2->conn_id_length - s->init_num);
+ 	if (i < (int)s->s2->conn_id_length-s->init_num)
+ 		{
+ 		return(ssl2_part_read(s,SSL_F_GET_CLIENT_FINISHED,i));
+@@ -751,6 +762,7 @@
+ 		{
+ 		p=(unsigned char *)s->init_buf->data;
+ 		*(p++)=SSL2_MT_SERVER_VERIFY;
++		die(s->s2->challenge_length <= sizeof s->s2->challenge);
+ 		memcpy(p,s->s2->challenge,(unsigned int)s->s2->challenge_length);
+ 		/* p+=s->s2->challenge_length; */
+ 
+@@ -770,6 +782,8 @@
+ 		p=(unsigned char *)s->init_buf->data;
+ 		*(p++)=SSL2_MT_SERVER_FINISHED;
+ 
++		die(s->session->session_id_length
++		    <= sizeof s->session->session_id);
+ 		memcpy(p,s->session->session_id,
+ 			(unsigned int)s->session->session_id_length);
+ 		/* p+=s->session->session_id_length; */
+diff -ur openssl-0.9.6a-orig/ssl/s3_clnt.c openssl-0.9.6a/ssl/s3_clnt.c
+--- openssl-0.9.6a-orig/ssl/s3_clnt.c	Thu Apr  5 17:14:53 2001
++++ openssl-0.9.6a/ssl/s3_clnt.c	Tue Jul 30 10:23:10 2002
+@@ -64,6 +64,7 @@
+ #include <openssl/sha.h>
+ #include <openssl/evp.h>
+ #include "ssl_locl.h"
++#include "cryptlib.h"
+ 
+ static SSL_METHOD *ssl3_get_client_method(int ver);
+ static int ssl3_client_hello(SSL *s);
+@@ -492,6 +493,7 @@
+ 		*(p++)=i;
+ 		if (i != 0)
+ 			{
++			die(i <= sizeof s->session->session_id);
+ 			memcpy(p,s->session->session_id,i);
+ 			p+=i;
+ 			}
+@@ -572,6 +574,14 @@
+ 
+ 	/* get the session-id */
+ 	j= *(p++);
++
++       if(j > sizeof s->session->session_id)
++               {
++               al=SSL_AD_ILLEGAL_PARAMETER;
++               SSLerr(SSL_F_SSL3_GET_SERVER_HELLO,
++                      SSL_R_SSL3_SESSION_ID_TOO_LONG);
++               goto f_err;
++               }
+ 
+ 	if ((j != 0) && (j != SSL3_SESSION_ID_SIZE))
+ 		{
+diff -ur openssl-0.9.6a-orig/ssl/s3_srvr.c openssl-0.9.6a/ssl/s3_srvr.c
+--- openssl-0.9.6a-orig/ssl/s3_srvr.c	Thu Apr  5 17:14:59 2001
++++ openssl-0.9.6a/ssl/s3_srvr.c	Tue Jul 30 10:23:10 2002
+@@ -69,6 +69,7 @@
+ #include <openssl/evp.h>
+ #include <openssl/x509.h>
+ #include "ssl_locl.h"
++#include "cryptlib.h"
+ 
+ static SSL_METHOD *ssl3_get_server_method(int ver);
+ static int ssl3_get_client_hello(SSL *s);
+@@ -863,6 +864,7 @@
+ 			s->session->session_id_length=0;
+ 
+ 		sl=s->session->session_id_length;
++		die(sl <= sizeof s->session->session_id);
+ 		*(p++)=sl;
+ 		memcpy(p,s->session->session_id,sl);
+ 		p+=sl;
+diff -ur openssl-0.9.6a-orig/ssl/ssl.h openssl-0.9.6a/ssl/ssl.h
+--- openssl-0.9.6a-orig/ssl/ssl.h	Thu Apr  5 17:15:00 2001
++++ openssl-0.9.6a/ssl/ssl.h	Tue Jul 30 10:23:10 2002
+@@ -1418,6 +1418,7 @@
+ #define SSL_R_INVALID_COMMAND				 280
+ #define SSL_R_INVALID_PURPOSE				 278
+ #define SSL_R_INVALID_TRUST				 279
++#define SSL_R_KEY_ARG_TOO_LONG				 1112
+ #define SSL_R_LENGTH_MISMATCH				 159
+ #define SSL_R_LENGTH_TOO_SHORT				 160
+ #define SSL_R_LIBRARY_BUG				 274
+@@ -1485,6 +1486,7 @@
+ #define SSL_R_SHORT_READ				 219
+ #define SSL_R_SIGNATURE_FOR_NON_SIGNING_CERTIFICATE	 220
+ #define SSL_R_SSL23_DOING_SESSION_ID_REUSE		 221
++#define SSL_R_SSL3_SESSION_ID_TOO_LONG			 1113
+ #define SSL_R_SSL3_SESSION_ID_TOO_SHORT			 222
+ #define SSL_R_SSLV3_ALERT_BAD_CERTIFICATE		 1042
+ #define SSL_R_SSLV3_ALERT_BAD_RECORD_MAC		 1020
+diff -ur openssl-0.9.6a-orig/ssl/ssl_asn1.c openssl-0.9.6a/ssl/ssl_asn1.c
+--- openssl-0.9.6a-orig/ssl/ssl_asn1.c	Thu Apr  5 17:15:01 2001
++++ openssl-0.9.6a/ssl/ssl_asn1.c	Tue Jul 30 10:23:10 2002
+@@ -62,6 +62,7 @@
+ #include <openssl/objects.h>
+ #include <openssl/x509.h>
+ #include "ssl_locl.h"
++#include "cryptlib.h"
+ 
+ typedef struct ssl_session_asn1_st
+ 	{
+@@ -275,6 +276,7 @@
+ 		os.length=i;
+ 
+ 	ret->session_id_length=os.length;
++	die(os.length <= sizeof ret->session_id);
+ 	memcpy(ret->session_id,os.data,os.length);
+ 
+ 	M_ASN1_D2I_get(osp,d2i_ASN1_OCTET_STRING);
+diff -ur openssl-0.9.6a-orig/ssl/ssl_err.c openssl-0.9.6a/ssl/ssl_err.c
+--- openssl-0.9.6a-orig/ssl/ssl_err.c	Thu Apr  5 17:15:04 2001
++++ openssl-0.9.6a/ssl/ssl_err.c	Tue Jul 30 10:23:10 2002
+@@ -1,6 +1,6 @@
+ /* ssl/ssl_err.c */
+ /* ====================================================================
+- * Copyright (c) 1999 The OpenSSL Project.  All rights reserved.
++ * Copyright (c) 1999-2002 The OpenSSL Project.  All rights reserved.
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -273,6 +273,7 @@
+ {SSL_R_INVALID_COMMAND                   ,"invalid command"},
+ {SSL_R_INVALID_PURPOSE                   ,"invalid purpose"},
+ {SSL_R_INVALID_TRUST                     ,"invalid trust"},
++{SSL_R_KEY_ARG_TOO_LONG                  ,"key arg too long"},
+ {SSL_R_LENGTH_MISMATCH                   ,"length mismatch"},
+ {SSL_R_LENGTH_TOO_SHORT                  ,"length too short"},
+ {SSL_R_LIBRARY_BUG                       ,"library bug"},
+@@ -340,6 +341,7 @@
+ {SSL_R_SHORT_READ                        ,"short read"},
+ {SSL_R_SIGNATURE_FOR_NON_SIGNING_CERTIFICATE,"signature for non signing certificate"},
+ {SSL_R_SSL23_DOING_SESSION_ID_REUSE      ,"ssl23 doing session id reuse"},
++{SSL_R_SSL3_SESSION_ID_TOO_LONG          ,"ssl3 session id too long"},
+ {SSL_R_SSL3_SESSION_ID_TOO_SHORT         ,"ssl3 session id too short"},
+ {SSL_R_SSLV3_ALERT_BAD_CERTIFICATE       ,"sslv3 alert bad certificate"},
+ {SSL_R_SSLV3_ALERT_BAD_RECORD_MAC        ,"sslv3 alert bad record mac"},
+diff -ur openssl-0.9.6a-orig/ssl/ssl_sess.c openssl-0.9.6a/ssl/ssl_sess.c
+--- openssl-0.9.6a-orig/ssl/ssl_sess.c	Thu Apr  5 17:15:07 2001
++++ openssl-0.9.6a/ssl/ssl_sess.c	Tue Jul 30 10:23:10 2002
+@@ -60,6 +60,7 @@
+ #include <openssl/lhash.h>
+ #include <openssl/rand.h>
+ #include "ssl_locl.h"
++#include "cryptlib.h"
+ 
+ static void SSL_SESSION_list_remove(SSL_CTX *ctx, SSL_SESSION *s);
+ static void SSL_SESSION_list_add(SSL_CTX *ctx,SSL_SESSION *s);
+@@ -199,6 +200,7 @@
+ 		ss->session_id_length=0;
+ 		}
+ 
++	die(s->sid_ctx_length <= sizeof ss->sid_ctx);
+ 	memcpy(ss->sid_ctx,s->sid_ctx,s->sid_ctx_length);
+ 	ss->sid_ctx_length=s->sid_ctx_length;
+ 	s->session=ss;

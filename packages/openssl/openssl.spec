@@ -1,10 +1,10 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.10.2.1 2001/07/06 05:24:36 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.10.2.2 2002/07/31 00:07:31 solar Exp $
 
 %define libmaj 0
 %define libmin 9
 %define librel 6
 %define librev a
-Release: 2owl
+Release: 3owl
 
 %define openssldir /var/ssl
 
@@ -15,7 +15,8 @@ Source0: ftp://ftp.openssl.org/source/%{name}-%{version}.tar.gz
 Patch0: openssl-0.9.5a-rh-config-path.diff
 Patch1: openssl-0.9.5a-owl-crypt.diff
 Patch2: openssl-0.9.6a-owl-glibc-enable_secure.diff
-Patch3: openssl-0.9.6a-openssl-prng.diff
+Patch3: openssl-0.9.6a-up-prng.diff
+Patch4: openssl-0.9.6a-up-con-20020727-security-fixes.diff
 Copyright: Freely distributable
 Group: System Environment/Libraries
 Provides: SSL
@@ -67,6 +68,7 @@ static libraries and header files required when developing applications.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 %define CONFIG_FLAGS shared -DSSL_ALLOW_ADH --prefix=/usr
@@ -160,6 +162,15 @@ ldconfig
 ldconfig
 
 %changelog
+* Wed Jul 31 2001 Solar Designer <solar@owl.openwall.com>
+- Applied the official patch with 4 security fixes to problems discovered
+by Ben Laurie and others of A.L. Digital Ltd and The Bunker under DARPA's
+CHATS program, by consultants at Neohapsis, and by Adi Stav and James Yonan.
+The patch has been prepared by Ben Laurie and Dr. Stephen Henson, with one
+of the fixes partly based on a version by Adi Stav, and back-ported to
+OpenSSL 0.9.6a by Ademar de Souza Reis Jr. of Conectiva.
+- Renamed the PRNG patch to fit our new conventions.
+
 * Fri Jul 06 2001 Solar Designer <solar@owl.openwall.com>
 - Applied patches provided by the OpenSSL team to correct a PRNG
 weakness which under unusual circumstances could allow an attacker to
