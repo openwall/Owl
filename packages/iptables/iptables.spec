@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iptables/iptables.spec,v 1.16 2005/01/20 03:58:18 solar Exp $
+# $Id: Owl/packages/iptables/iptables.spec,v 1.17 2005/01/20 06:01:32 solar Exp $
 
 %define BUILD_STATIC 0
 %define BUILD_IPV6 0
@@ -23,6 +23,7 @@ iptables-based IP packet filtering rules in the Linux kernel.
 
 iptables-based filtering is used on Linux 2.4.x and newer kernels.
 
+%if %BUILD_IPV6
 %package -n iptables6
 Summary: Tools for managing Netfilter/iptables packet filtering (IPv6).
 Group: System Environment/Base
@@ -36,6 +37,7 @@ iptables-based IP packet filtering rules in the Linux kernel.  This is an
 IPv6 version of iptables.
 
 iptables-based filtering is used on Linux 2.4.x and newer kernels.
+%endif
 
 %prep
 %setup -q
