@@ -1,9 +1,9 @@
-# $Id: Owl/packages/john/john.spec,v 1.3 2002/04/11 19:31:46 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.4 2002/04/26 09:48:48 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
 Version: 1.6.31.2
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.openwall.com/pub/projects/john/john-%{version}.tar.gz
@@ -48,7 +48,7 @@ make linux-ppc CFLAGS='%cflags'
 mkdir -p $RPM_BUILD_ROOT{%_bindir,%_datadir/john}
 install -m 700 run/john $RPM_BUILD_ROOT%_bindir/
 cp -a run/un* $RPM_BUILD_ROOT%_bindir/
-%if with_cpu_fallback
+%if %with_cpu_fallback
 mkdir -p $RPM_BUILD_ROOT%_libexecdir/john
 install -m 700 run/john-* $RPM_BUILD_ROOT%_libexecdir/john/
 %endif
@@ -66,7 +66,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc doc/*
 %attr(750,root,wheel) %_bindir/john
 %_bindir/un*
-%if with_cpu_fallback
+%if %with_cpu_fallback
 %dir %_libexecdir/john
 %attr(750,root,wheel) %_libexecdir/john/*
 %endif
@@ -76,6 +76,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Fri Apr 26 2002 Solar Designer <solar@owl.openwall.com>
+- Check for with_cpu_fallback correctly (unbreak builds on non-x86).
+
 * Thu Apr 11 2002 Solar Designer <solar@owl.openwall.com>
 - On x86, always build the MMX binary, with a run-time fallback to the
 non-MMX one if necessary.
