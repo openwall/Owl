@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.3 2002/02/04 13:30:47 mci Exp $
+# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.4 2002/02/04 16:43:33 solar Exp $
 
 Summary: Tools for managing Linux kernel packet filtering capabilities.
 Name: ipchains
@@ -36,17 +36,18 @@ make COPTS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{sbin,%{_mandir}/man{4,8}}
+mkdir -p $RPM_BUILD_ROOT/sbin
+mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man{4,8}
 
-make install SBIN=$RPM_BUILD_ROOT/sbin MANDIR=$RPM_BUILD_ROOT/%{_mandir}
+make install SBIN=$RPM_BUILD_ROOT/sbin MANDIR=${RPM_BUILD_ROOT}%{_mandir}
 pushd ipchains-scripts-1.1.2
 cp ipchains-restore ipchains-save $RPM_BUILD_ROOT/sbin/
 cp ipfwadm-wrapper $RPM_BUILD_ROOT/sbin/ipfwadm
-ln -sf ipfwadm $RPM_BUILD_ROOT/sbin/ipfwadm-wrapper
-cp *.8 $RPM_BUILD_ROOT/%{_mandir}/man8/
+ln -s ipfwadm $RPM_BUILD_ROOT/sbin/ipfwadm-wrapper
+cp *.8 ${RPM_BUILD_ROOT}%{_mandir}/man8/
 popd
 
-install -d -m 755 $RPM_BUILD_ROOT/etc/rc.d/init.d
+mkdir -m 755 $RPM_BUILD_ROOT/etc/rc.d/init.d
 install -m 755 $RPM_SOURCE_DIR/ipchains.init \
 	$RPM_BUILD_ROOT/etc/rc.d/init.d/ipchains
 
