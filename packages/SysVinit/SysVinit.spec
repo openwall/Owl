@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.21 2004/11/23 22:40:44 mci Exp $
+# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.22 2005/01/12 15:36:56 galaxy Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
 Version: 2.85
-Release: owl4
+Release: owl5
 License: GPL
 Group: System Environment/Base
 Source: ftp://ftp.cistron.nl/pub/people/miquels/sysvinit/sysvinit-%version.tar.gz
@@ -17,6 +17,7 @@ Patch6: sysvinit-2.85-owl-mount-proc.diff
 Patch7: sysvinit-2.85-owl-typos.diff
 Patch8: sysvinit-2.85-rh-alt-owl-pidof.diff
 Patch9: sysvinit-2.85-rh-alt-owl-shutdown-log.diff
+Patch10: sysvinit-2.85-owl-multiline-string-fix.diff
 Requires: /sbin/sulogin
 BuildRoot: /override/%name-%version
 
@@ -40,22 +41,23 @@ rm man/sulogin.8
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 %{expand:%%define optflags %optflags -Wall -D_GNU_SOURCE}
 
 %build
-make -C src CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-s -static" init
-make -C src CFLAGS="$RPM_OPT_FLAGS" DISTRO=Owl
-make -C src CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-s -lutil" bootlogd
+%__make -C src CC="%__cc" CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-static" init
+%__make -C src CC="%__cc" CFLAGS="$RPM_OPT_FLAGS" DISTRO=Owl
+%__make -C src CC="%__cc" CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-lutil" bootlogd
 cd contrib
-gcc start-stop-daemon.c -o start-stop-daemon -s $RPM_OPT_FLAGS
+%__cc start-stop-daemon.c -o start-stop-daemon -s $RPM_OPT_FLAGS
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot/{dev,sbin,usr/bin,%_mandir/man{1,5,8}}
-mkdir -p %buildroot/usr/include
+mkdir -p %buildroot/{dev,sbin,%_bindir,%_mandir/man{1,5,8}}
+mkdir -p %buildroot%_includedir
 
-make -C src install \
+%__make -C src install \
 	DISTRO=Owl \
 	ROOT=%buildroot \
 	MANDIR=%_mandir \
@@ -111,14 +113,20 @@ fi
 /sbin/pidof
 /sbin/runlevel
 /sbin/start-stop-daemon
-/usr/bin/last
-/usr/bin/lastb
-/usr/bin/mesg
-%attr(0700,root,tty) /usr/bin/wall
+%_bindir/last
+%_bindir/lastb
+%_bindir/mesg
+%attr(0700,root,tty) %_bindir/wall
 %attr(0644,root,root) %_mandir/man*/*
 %attr(0600,root,root) /dev/initctl
 
 %changelog
+* Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.85-owl5
+- Cleaned up the spec.
+- Removed "-s" from LDFLAGS since we are using brp- scripts.
+- Using %__cc macros to specify C compiler.
+- Fixed multiline string in the start-stop-daemon.c to satisfy GCC 3.4.3.
+
 * Sun Apr 27 2003 Solar Designer <solar@owl.openwall.com> 2.85-owl4
 - Wrote a new implementation of sulogin which is now packaged separately,
 so don't package sulogin here.
