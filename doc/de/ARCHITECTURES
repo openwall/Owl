@@ -11,8 +11,8 @@ verwenden.
 
 Auf vielen Architekturen unterstützt Owl verschiedene Versionen.
 Pakete, die für die neuste Version deiner Architektur erstellt wurden,
-erzielen normalerweise nur einen geringen Geschwindigkeitszuwachs 
-(zwischen einem und fünf Prozent bei normalen Aufgaben). Wie auch 
+erzielen normalerweise nur einen geringen Geschwindigkeitszuwachs
+(zwischen einem und fünf Prozent bei normalen Aufgaben). Wie auch
 immer, das ist der Preis dafür: Du könntest die Pakete nicht auf
 einer älteren Maschine kopieren und dort installieren. Im schlechtesten
 Fall könntest du nicht mal Pakete (oder ausführbare Dateien) für die
@@ -25,16 +25,16 @@ Es gibt zwei Lösungen für dieses Problem: Du könntest nur Pakete der
 ältesten Version der Architektur verwenden oder du könntest die
 Entwicklungs-Bibilotheken für die alte Architektur-Version installieren,
 aber trotzdem Pakete benutzen, die für die aktuelle Hardware erstellt
-worden sind. Es ist klar das die erste Lösung praktischer ist, obwohl 
+worden sind. Es ist klar das die erste Lösung praktischer ist, obwohl
 sie nicht die best mögliche Geschwindigkeit bietet.
 
-Pakete die für eine ältere Version der Architektur erstellt worden 
+Pakete die für eine ältere Version der Architektur erstellt worden
 sind, können zudem an aktuelle CPU's angepasst werden ohne die Zusätze
 für die alte Version zu verlieren. Das ist das System, wie die
 Pakete in Owl erstellt werden.
 
 
-	Einstellen der Architektur
+	Einstellen der Architektur.
 
 Die Architektur kann mittels der ARCHITECTURE= Zeile in der Datei
 buildworld.conf eingestellt werden. Die Zeile ist optional und
@@ -46,12 +46,12 @@ Rechners, auf dem alles kompiliert wird, zu erstellen. Das gleiche
 gilt für eine neuere CPU-Version als die des Rechners.
 
 
-	x86, auch bekannt als IA32
+	x86, auch bekannt als IA32.
 
 Zwei Version sind standardmässig definert: i386 und i686. Die für i386
 erstellten Pakete laufen auch auf einem i686 und auf neueren CPU's. Die
 i386 Pakete als auch die für i686 sind für den i686 optimiert, allerdings
-benutzen die i686 Pakete Instruktionen, die nur für diese neue 
+benutzen die i686 Pakete Instruktionen, die nur für diese neue
 CPU-Version verfügbar sind.
 
 Es ist empfehlenswert die i386 Pakete zu verwenden, da der Geschwindigkeits-
@@ -65,8 +65,8 @@ Die sparc Version braucht mindestens eine SPARC V8 und die Pakete
 sind für die UltraSPARC optimiert. Die sparcv9 Pakete laufen momentan
 nur auf einer Ultra oder höher.
 
-Die Geschwindigkeitsgewinne mit sparcv9 sind minimal (zwischem einem 
-und zwei Prozent, ausser speziellen Funktionen in glibc und OpenSSL, 
+Die Geschwindigkeitsgewinne mit sparcv9 sind minimal (zwischem einem
+und zwei Prozent, ausser speziellen Funktionen in glibc und OpenSSL,
 wo SPARC V9 optimierte Versionen bereit gestellt werden).
 
 sparc64 wird im Moment noch nicht unterstützt (die glibc Version muss
@@ -78,9 +78,11 @@ software zu erstellen, obwohl man einen sparc64 Kernel benutzt.
 
 Zwei Architektur Versionen sind standardmässig enthalten: alpha
 und alphaev56. Egal welche du nimmst, beide benutzen die BWX Er-
-weiterungen und Instruktions-Scheduling. Pakete, die für alpha 
-erstellt worden sind, sind für ältere EV4 Prozessoren (21064, 21066) 
-optimiert. Die Pakete für alphaev56 sind für EV56/PCA56 Prozessoren 
-(21164A, 21164PC) optimiert. Auf dem EV5 (21164) kannst du auch die 
-alpha Pakete nutzen. Auf einem EV6+ (21264, 21264A) benutze bitte 
+weiterungen und Instruktions-Scheduling. Pakete, die für alpha
+erstellt worden sind, sind für ältere EV4 Prozessoren (21064, 21066)
+optimiert. Die Pakete für alphaev56 sind für EV56/PCA56 Prozessoren
+(21164A, 21164PC) optimiert. Auf dem EV5 (21164) kannst du auch die
+alpha Pakete nutzen. Auf einem EV6+ (21264, 21264A) benutze bitte
 die alphaev56 Pakete.
+
+$Id: Owl/doc/de/ARCHITECTURES,v 1.2 2002/06/12 23:24:03 solar Exp $

@@ -44,22 +44,22 @@ setzen.
 
 	BuildRoot: /override/%{name}-%{version}
 
-Unsere Arbeitsumgebung wird diesen Tag trotzdem überschreiben, aber 
+Unsere Arbeitsumgebung wird diesen Tag trotzdem überschreiben, aber
 er wird viele daran erinnern den BuildRoot Tag zu überschreiben, wenn
 sie manuell Pakete erstellen, besonders in nicht-Owl Umgebungen.
 
 5. Verschiedene Tag's und Einstellungen kannst du mit einem einzelnen
-Leerzeichen setzen. Benutze Kommata, gefolgt von einem Leerzeichen um 
+Leerzeichen setzen. Benutze Kommata, gefolgt von einem Leerzeichen um
 verschiedene Abhängigkeits-Einträge zu trennen. Aufzählungen mit einem
 Punkt abschliessen. In beiden Fällen, Aufzählung und %description (wie
-auch bei anderer Dokumentation), vermeide es die Befehle gross zu 
+auch bei anderer Dokumentation), vermeide es die Befehle gross zu
 schreiben, selbst wenn es das erste Wort im Satz ist. Es sei den die
 gross geschriebene Form ist der offizielle Name der Software. Um Sätze
 zu trennen, benutze zwei Leerzeichen.
 
 6. Unsere Arbeitsumgebung setzt die optimierenden C/C++ compiler flags
 in %optflag. Dort werden sie so gesetzt, dass sie für einzelne Programme
-optimal sind und nicht zu viele Warnungen produzieren. Wenn du 
+optimal sind und nicht zu viele Warnungen produzieren. Wenn du
 Bibilotheken übersetzt kannst du andere flags benutzen, indem du die
 folgenden zwei Zeilen genau über der %build Sektion platzierst:
 
@@ -84,7 +84,7 @@ fügen:
 
 	%{expand:%%define optflags %optflags -Wall}
 
-7. Subshells während des Erstellens, pre/post-install/uninstall und 
+7. Subshells während des Erstellens, pre/post-install/uninstall und
 sonstige Scripts sind zu vermeiden, da sich in ihnen potentielle Fehler
 verstecken können. Wenn du eine Subshell verwenden willst um kurz-
 zeitig das Verzeichnis zu wechseln, nimm pushd und popd stattdessen.
@@ -95,7 +95,7 @@ die Kommandos der Subshell manuell in der Elternshell eingibst.
 in Scripts einzurücken.
 
 9. Um numerische Werte zu vergleichen, benutze -eq (gilt besonders
-für das $1 Argument, was RPM zu den Scripts weiterleitet. Das $1 nicht 
+für das $1 Argument, was RPM zu den Scripts weiterleitet. Das $1 nicht
 in Anführungszeichen setzen).
 
 10. In %changelog das Datum eintragen. Zwei Zeichen für den Tag, evtl.
@@ -117,7 +117,7 @@ Distrubutionen bestehen, schreibe alle, geordnet nach der Relevanz,
 in ORIGIN. Für Patches, die als ein Teil von Owl entwickelt wurden,
 setze ORIGIN auf "owl". Wenn der Patch von einer anderen Distribution
 stammt, aber signifikante Änderungen vorgenommen wurden, sollte ORIGIN
-zusätzlich "-owl-" enthalten (das zeigt an, das auftretende Fehler 
+zusätzlich "-owl-" enthalten (das zeigt an, das auftretende Fehler
 unser Problem sind). Wenn ein Patch aus einem CVS Archiv entnommen
 wurde, sollte ORIGIN auf "cvs" gesetzt werden. Zusätzlich sollte WHAT
 auf das koresspondierende Datum (JJJJMMDD) gesetzt werden.
@@ -129,9 +129,9 @@ bound		- bound checking (Speicher- oder Zahlenüberlauf)
 config		- Nur für Patches der Konfiguration (compile- oder Laufzeit)
 doc		- Nur für Dokumentation's Patches
 fixes		- Sicherheitspatches, Zuverlässigkeit
-format		- Zeichenketten fixes im printf Stil 
+format		- Zeichenketten fixes im printf Stil
 		  (nicht nur Sicherheitsrelevante)
-install-no-root	- Änderungen an "make install" oder ähnliches als 
+install-no-root	- Änderungen an "make install" oder ähnliches als
 		  nicht-root
 linux		- Änderungen, damit portierte Software auf Linux
 		  läuft
@@ -143,13 +143,13 @@ warnings	- Veränderungen an den Kompiler-Warnungen
 Dies bedeutet NICHT das du deine Modifikationen so veränderst, dass
 sie in eine dieser Kategorien passen. Meistens ist es vorteilhaft
 bestimmte Sachen anders zu machen. Dies bedeutet nur, falls du einen
-Patch hast, der in eine dieser Kategorien passt, ihn auch passend 
+Patch hast, der in eine dieser Kategorien passt, ihn auch passend
 benennst (zum Beispiel "tmp" und nicht "mkstemp").
 
 
 	C-Quelltext Formatierung.
 
-Wenn du Teile von C-Code entwickelst oder importierst, die weiterhin 
+Wenn du Teile von C-Code entwickelst oder importierst, die weiterhin
 als Teil von Owl gepflegt werden sollen, solltest du ident(1) einmalig
 mit den folgenden Optionen benutzen:
 
@@ -157,3 +157,5 @@ mit den folgenden Optionen benutzen:
 
 Das entspricht nicht ganz unserem bevorzugten Code-Stil und wird
 deswegen bei Quelltexten in Owl noch nicht eingesetzt.
+
+$Id: Owl/doc/de/CONVENTIONS,v 1.2 2002/06/12 23:24:03 solar Exp $

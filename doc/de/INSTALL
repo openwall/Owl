@@ -41,7 +41,7 @@ weiter unten fort.
 
 	Benutzen einer existierenden Linux-Installation.
 
-Eine vernünftige Linux-Installation sollte diverse GNU-Tools und 
+Eine vernünftige Linux-Installation sollte diverse GNU-Tools und
 rpm2cpio zur Verfügung stellen. Es ist nicht notwendig, dass die
 Distribution das RPM Format verwendet.
 
@@ -50,7 +50,7 @@ vor. Danach kannst du mit den allgemeinen Installationshinweisen
 weitermachen.
 
 
-	Allgemeine Installationshinweise
+	Allgemeine Installationshinweise.
 
 Mit fdisk(8) kannst du deine Platte für Owl nach deinem Belieben
 partitionieren. Leg mit mkfs(8) ein neues Dateisystem an, mit mkswap(8)
@@ -58,11 +58,11 @@ eine Swap-Partition und mounte das neue Dateisystem mittels mount(8)
 unter /owl. Selbstverständlich auch alle anderen Dateisysteme an
 ihrem bestimmten Platz unter /owl. Um Owl nun zu installieren, wechsle
 in das /usr/src/world Verzeichnis und tippe:
-	
+
 	make installworld && make setup
 
 Sollten Probleme während des "installworld" Vorgangs auftreten (achte
-auf "Failed" Ausgaben), korrigiere die Ursache und starte das 
+auf "Failed" Ausgaben), korrigiere die Ursache und starte das
 Kommando noch mal neu.
 
 Wenn die Owl-Benutzersoftware installiert ist, musst du nur noch einen
@@ -72,3 +72,5 @@ dass du den installierst, der mit Owl mitgeliefert wird.
 Du kannst nun den boot loader konfigurieren, der unter Owl verfügbar
 ist (LILO oder SILO, kommt auf die Architektur an), oder einen
 bereits installierten (falls vorhanden) verwenden.
+
+$Id: Owl/doc/de/INSTALL,v 1.2 2002/06/12 23:24:03 solar Exp $

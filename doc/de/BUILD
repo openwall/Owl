@@ -1,5 +1,5 @@
-Dies sind Hinweise um die Owl Arbeitsumgebung zu benutzen. Wir nehmen 
-an, dass du die Datei CONCEPTS gelesen hast; wenn nicht, lese sie 
+Dies sind Hinweise um die Owl Arbeitsumgebung zu benutzen. Wir nehmen
+an, dass du die Datei CONCEPTS gelesen hast; wenn nicht, lese sie
 bitte bevor du hier weiterliest.
 
 
@@ -25,9 +25,9 @@ einen symbolischen Link zur Makefile.
 Um aus den Quellen zu übersetzen, erstelle das "sources" Verzeichnis
 ebenfalls in /usr/src/world.
 
-Wenn du noch nicht auf einem Owl-System arbeitest und Binärpakete 
-installieren willst, erstelle /usr/src/world/RPMS und plaziere die 
-Pakete für deine Architektur dort. Beachte, dass du das CVS Archiv 
+Wenn du noch nicht auf einem Owl-System arbeitest und Binärpakete
+installieren willst, erstelle /usr/src/world/RPMS und plaziere die
+Pakete für deine Architektur dort. Beachte, dass du das CVS Archiv
 auch für die Installation von Binärpaketen brauchst.
 
 
@@ -44,12 +44,12 @@ reichendem Auslagerungsspeicher, aber lass es);
 Mindestens 160 MB virtuellen Speicher wenn du auf einer Alpha
 übersetzt.
 
-Zwischen einer und fünf Stunden CPU Zeit auf einem modernen System 
+Zwischen einer und fünf Stunden CPU Zeit auf einem modernen System
 (zur Zeit).
 
 Natürlich solltest du alles auf Owl übersetzten. Es ist zwar möglich
-alles auf einem anderen GNU/*/Linux System zu machen, aber man muss 
-etwas tricksen um das System zu einem Owl zu machen. Das ganze geht 
+alles auf einem anderen GNU/*/Linux System zu machen, aber man muss
+etwas tricksen um das System zu einem Owl zu machen. Das ganze geht
 mit mehreren Iterationen von "make buildworld" und "make installworld".
 
 Hier einige Übersetzungszeiten (Stunden:Minuten), damit du weist
@@ -101,7 +101,7 @@ die Pakete nach /owl installiert.
 "make installworld" sollte als root ausgeführt werden.
 
 Momentan ist es möglich eine existierende Red Hat Linux 6.x Installation
-in ein Owl mittels "make installworld" und einiger Handbuchhilfe zu 
+in ein Owl mittels "make installworld" und einiger Handbuchhilfe zu
 konvertieren. Bevor du das versuchst, sei dir sicher, dass du alles in
 der Datei installorder.conf gelesen und verstanden hast. Im speziellen
 sollte dein Kernel während der Konvertierung kein RPM Paket mehr sein.
@@ -114,5 +114,7 @@ und alle Binärpakete, die von diesem Quelltext-Paket erstellt worden
 sind. Danach tippe "make buildworld".
 
 Wir betrachten das Übersetzen von SRPM's und das Fehlen des automatischen
-Lösens der Abhängigkeiten als Bug in der Arbeitsumgebung. Wir werden das 
+Lösens der Abhängigkeiten als Bug in der Arbeitsumgebung. Wir werden das
 eventuell fixen.
+
+$Id: Owl/doc/de/BUILD,v 1.2 2002/06/12 23:24:03 solar Exp $

@@ -1,4 +1,4 @@
-	"Owl", -- eine sicherheitsoptimierte Server-Plattform
+	"Owl", -- eine sicherheitsoptimierte Server-Plattform.
 
 "Owl" (oder "Openwall GNU/*/Linux"; bitte beachtet, dass das "O" in
 jedem Fall gross geschrieben wird) ist ein auf Sicherheit optimiertes
@@ -14,17 +14,17 @@ einiges für die Sicherheit bereit. Owl versucht nicht nur sicher
 zu sein.
 
 Einer der Vorteile von Owl ist, dass es als Basis für die Installation
-jeglicher Software, die für GNU/*/Linux verfügbar ist, genutzt 
+jeglicher Software, die für GNU/*/Linux verfügbar ist, genutzt
 werden kann. Owl bietet einige Kompatibilität (siehe unten) für
 Software-Pakete von anderen grossen Linux Distributionen, wie zum
 Beispiel Red Hat Linux.
 
 Zusätzlich beinhaltet Owl eine wachsende Zahl von Internet Diensten
-für Server-Plattformen. Bisher sind erst einige mit dem prerelease 
+für Server-Plattformen. Bisher sind erst einige mit dem prerelease
 verfügbar, aber dies ist einer der primären Bereiche an dem wir arbeiten.
 
 Mit Owl ist es möglich das komplette System aus den Quellen neu
-zu kompilieren. Und das ganze mit einem einzigen Befehl 
+zu kompilieren. Und das ganze mit einem einzigen Befehl
 ("make buildworld"). (Das ganze wird unten detaillierter erklärt.)
 
 Owl unterstützt mehrere Architekturen (momentan x86 und SPARC). Dies
@@ -34,24 +34,24 @@ es uns hilft Software-Fehler früher zu erkennen.
 
 	Sicherheit.
 
-Owl kombiniert verschiedene Versuche die Anzahl der Schwächen in 
+Owl kombiniert verschiedene Versuche die Anzahl der Schwächen in
 seinen Softwarekomponenten und denen von Dritt-Anbietern, die auf
 dem System installiert werden könnten, zu reduzieren.
 
-Der primäre Versuch Sicherheit zu gewährleisten besteht darin, den 
-Quelltext nach bestimmten Klassen von Sicherheitslücken zu 
-durchsuchen. Wegen der riesigen Menge des Quelltextes gibt es ein 
-bestimmtes Mass an "Wichtigkeit" von Software oder Teilen davon. 
-Momentan werden nur Quelltextteile geprüft, die mit besonderen 
-Privilegien arbeiten oder die mit dem Netzwerk kommunizieren. Dies 
-beinhaltet relevanten Code in den meisten Systembibilotheken, allen 
-SUID/SGID Programmen, allen Dämonen und Netzwerkdiensten. Alles 
-andere wird, wenn es ein Teil von Owl ist, eventuell geprüft. 
-Potentielle Probleme die während des Prüfens gefunden werden, 
-werden meistens gelöst oder führen in einigen Fällen zum Ausschluss 
-der Software aus Owl. Bei der Implementierung von Features wird 
-in den meisten Fällen zwischen diesem und der Codequalität plus 
-Sicherheit abgewogen. Je mehr das Projekt wächst, desto mehr 
+Der primäre Versuch Sicherheit zu gewährleisten besteht darin, den
+Quelltext nach bestimmten Klassen von Sicherheitslücken zu
+durchsuchen. Wegen der riesigen Menge des Quelltextes gibt es ein
+bestimmtes Mass an "Wichtigkeit" von Software oder Teilen davon.
+Momentan werden nur Quelltextteile geprüft, die mit besonderen
+Privilegien arbeiten oder die mit dem Netzwerk kommunizieren. Dies
+beinhaltet relevanten Code in den meisten Systembibilotheken, allen
+SUID/SGID Programmen, allen Dämonen und Netzwerkdiensten. Alles
+andere wird, wenn es ein Teil von Owl ist, eventuell geprüft.
+Potentielle Probleme die während des Prüfens gefunden werden,
+werden meistens gelöst oder führen in einigen Fällen zum Ausschluss
+der Software aus Owl. Bei der Implementierung von Features wird
+in den meisten Fällen zwischen diesem und der Codequalität plus
+Sicherheit abgewogen. Je mehr das Projekt wächst, desto mehr
 Softwarekomponenten werden durch unsere eigenen ersetzt.
 
 Wenn Pakete für Owl erstellt werden, wird die Software so konfiguriert,
@@ -65,14 +65,13 @@ Binärpakete zur Verfügung gestellt. Diese sind unabhängig von
 der Paketinstallation. Da jedes Owl-Paket seinen Überprüfungsstatus
 dokumentiert, kann man abwägen, ob man es benutzt oder nicht.
 
-
-Obwohl die Überprüfung des Quelltextes der bevorzugte Weg ist, um 
+Obwohl die Überprüfung des Quelltextes der bevorzugte Weg ist, um
 mit Softwarefehlern umzugehen, kann es nicht in allen Fällen
 angewandt werden. Wenn unsichere Dritt-Software auf ein sonst
 sicheres System installiert wird, ist "das Spiel" verloren. Das
 einzige was ein Betriebssystem garantieren kann, ist das der
 mögliche unauthorisierte Zugriff auf die von der Software
-bereitgestellten Privilegien limitiert bleibt. Wie auch immer, 
+bereitgestellten Privilegien limitiert bleibt. Wie auch immer,
 in den letzten Jahren wurden einige Versuche unternommen um die
 erfolgreichen Attacken auf unsichere Dritt-Software einzudämmen.
 Owl wird einige von diesen "Versuchen" in verschiedenen Teilen
@@ -80,9 +79,9 @@ des Systems benutzen.
 
 Owl benutzt "starke" Kryptographie in den Kern-Komponenten und
 enthält einige sicherheitssteigernde Regeln (aktives Überprüfen
-des Passwortes mit "pam_passwdqc", Ablaufen des Passwortes und 
+des Passwortes mit "pam_passwdqc", Ablaufen des Passwortes und
 des Kontos, Adressbasierte Zugriffskontrolle des Netzwerkes) und
-das Überprüfen der Integrität ("mtree"). Es ist eines unserer 
+das Überprüfen der Integrität ("mtree"). Es ist eines unserer
 Ziele, eine grosse Palette von Sicherheits-Tools zur Verfügung
 zu stellen, die auch "out of the box" benutzt werden können.
 
@@ -91,7 +90,7 @@ zu stellen, die auch "out of the box" benutzt werden können.
 
 Im Gegensatz zu anderen "Linux Distributionen" enthält Owl eine
 komplette Arbeitsumgebung um das komplette System aus den Quelltexten
-neu zu kompilieren. Und das ganze mit einem einzigen Kommando ("make 
+neu zu kompilieren. Und das ganze mit einem einzigen Kommando ("make
 buildworld"). Wie auch immer, die Implementation des "make buildworld"
 unter Owl ist komplett anders als die von *BSD. Es ist eigentlich
 mehr mit den *BSD ports/packages vergleichbar, da sie die komplette
@@ -122,8 +121,10 @@ oder einem anderem System auf ein Owl-System installiert werden.
 	Kompatibiliät.
 
 Ausser einigen Ausnahmen, wo dieses Ziel mit unseren wichtigeren
-Zielen kollidiert, versucht Owl Binär- und Paketkompatibel mit 
+Zielen kollidiert, versucht Owl Binär- und Paketkompatibel mit
 diversen grossen GNU/*/Linux Distributionen zu sein. In den meisten
 Fällen ist es möglich eine Applikation, die für eine aktuelle Red
 Hat Version erstellt worden ist, zu installieren (Momentan gilt dies
 für Red Hat 6.x).
+
+$Id: Owl/doc/de/CONCEPTS,v 1.2 2002/06/12 23:24:03 solar Exp $
