@@ -1,8 +1,8 @@
-# $Id: Owl/packages/tcb/tcb/tcb.spec,v 1.18 2002/10/24 05:13:43 solar Exp $
+# $Id: Owl/packages/tcb/tcb/tcb.spec,v 1.19 2002/10/29 23:28:33 solar Exp $
 
 Summary: Libraries and tools implementing the tcb password shadowing scheme.
 Name: tcb
-Version: 0.9.8.1
+Version: 0.9.8.2
 Release: owl1
 License: BSD or GPL
 Group: System Environment/Base
@@ -81,6 +81,10 @@ rmdir /sbin/chkpwd.d
 /usr/lib/libtcb.so
 
 %changelog
+* Wed Oct 30 2002 Solar Designer <solar@owl.openwall.com>
+- In tcb_convert.8, noted that /etc/shadow backups need to be removed as
+well, with /etc/shadow- as the particular example.
+
 * Thu Oct 24 2002 Solar Designer <solar@owl.openwall.com>
 - Cleaned up the recent changes.
 
