@@ -1,0 +1,104 @@
+#!/bin/sh
+# $Id: Owl/packages/owl-startup/rc.sysinit,v 1.1 2000/11/28 22:48:33 solar Exp $
+
+# Set the initial default search path for use by startup scripts.
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+
+# Use a safe umask and don't do coredumps.
+umask 077
+ulimit -c 0
+
+# Set the system time from the hardware clock.
+. /etc/init.d/clock
+
+# Enable swapping.
+swapon -a
+
+# Load the basic networking configuration.
+NETWORKING=no
+HOSTNAME=
+test -f /etc/sysconfig/network && . /etc/sysconfig/network
+test -n "$HOSTNAME" || HOSTNAME=localhost
+
+# Set the hostname and the NIS domain name.
+echo "Setting hostname to $HOSTNAME"
+hostname "$HOSTNAME"
+if [ -n "$NISDOMAIN" ]; then
+	echo "Setting NIS domain name to $NISDOMAIN"
+	domainname "$NISDOMAIN"
+fi
+
+# See if the root filesystem is mounted read-only, and skip the fsck
+# and the remount if not.
+READWRITE=no
+echo -n "Testing filesystem status: "
+if echo -n 2> /dev/null >> /readwrite; then
+	test -s /readwrite || rm -f /readwrite
+	READWRITE=yes
+	echo "read-write filesystem"
+	echo
+	echo "For filesystem checking to work properly, your system must"
+	echo "initially mount the root partition as read-only."
+	echo
+	echo "Please, use the \"read-only\" kernel option."
+	sleep 10
+	echo
+else
+	echo "read-only filesystem"
+fi
+
+# Check the integrity of all filesystems.
+echo "Checking filesystems"
+if [ "$READWRITE" = "no" ]; then
+	fsck -A -aTC
+else
+# ...except for the root filesystem, which is mounted read-write.
+	fsck -R -aTC
+fi
+STATUS=$?
+
+if [ $STATUS -gt 1 ]; then
+	echo
+	echo "The filesystem check reported serious problems."
+	echo
+	echo "You now have the opportunity to enter a shell and run fsck"
+	echo "manually; the system will reboot when you leave the shell."
+	echo
+	export PS1="(Repair filesystem)# "
+	sulogin
+	echo "Unmounting filesystems"
+	umount -a
+	mount -n -o remount,ro /
+	echo "Automatic reboot in progress"
+	reboot -f
+fi
+
+echo "Remounting root filesystem in read-write mode"
+mount -n -o remount,rw /
+
+# Enter / into mtab.
+> /etc/mtab
+mount -f /
+
+# Mount all local filesystems, including procfs.
+echo "Mounting local filesystems"
+mount -a -t nonfs,smbfs,ncpfs
+
+# Update quotas if fsck corrected any filesystem errors.
+if [ $STATUS -eq 1 -a -x /sbin/quotacheck ]; then
+	echo "Checking filesystem quotas"
+	quotacheck -v -a
+fi
+
+# Turn on the quotas.
+if [ -x /sbin/quotaon ]; then
+	echo "Turning on quotas for local filesystems"
+	quotaon -a
+fi
+
+# Remove stale PID files, possibly create utmp and wtmp, reset utmp.
+rm -f /var/run/*.pid /var/lock/subsys/*
+test -e /var/run/utmp || install -m 664 -o root -g utmp /dev/null /var/run/utmp
+test -e /var/log/wtmp || install -m 664 -o root -g utmp /dev/null /var/log/wtmp
+> /var/run/utmp
+test -e /var/run/utmpx && > /var/run/utmpx

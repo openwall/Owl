@@ -1,0 +1,19 @@
+#!/bin/sh
+# $Id: Owl/packages/owl-startup/clock,v 1.1 2000/11/28 22:48:33 solar Exp $
+
+# Setup some sane defaults.
+UTC=true
+ARC=false
+SRM=false
+test "`uname -m`" = "alpha" && ARC=true
+
+test -f /etc/sysconfig/clock && . /etc/sysconfig/clock
+
+FLAGS=""
+test "$UTC" = "true" -o "$UTC" = "yes" && FLAGS="$FLAGS -u"
+test "$ARC" = "true" -o "$ARC" = "yes" && FLAGS="$FLAGS -A"
+test "$SRM" = "true" -o "$SRM" = "yes" && FLAGS="$FLAGS -S"
+
+echo -n "Setting the system time: "
+/sbin/hwclock --hctosys $FLAGS
+date

@@ -1,0 +1,92 @@
+#!/bin/sh
+# $Id: Owl/packages/owl-startup/rc,v 1.1 2000/11/28 22:48:33 solar Exp $
+#
+# This file is responsible for starting/stopping services when the
+# runlevel changes.
+#
+# Original authors:
+#		Miquel van Smoorenburg <miquels@cistron.nl>
+#		Bruce Perens <Bruce@Pixar.com>
+#
+
+# Un-comment the following for debugging.
+# debug=echo
+
+#
+# Start script or program.
+#
+startup()
+{
+	case "$1" in
+	*.rpm*)
+		;;
+	*.sh)
+		$debug sh "$@"
+		;;
+	*)
+		$debug "$@"
+		;;
+	esac
+}
+
+# Set the initial default search path for use by startup scripts.
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+
+# Ignore CTRL-C only in this shell, so we can interrupt subprocesses.
+trap ":" INT QUIT TSTP
+
+# Now find out what the current and what the previous runlevel are.
+runlevel="$RUNLEVEL"
+# Get first argument.  Set new runlevel to this argument.
+test -n "$1" && runlevel="$1"
+if [ -z "$runlevel" ]; then
+	echo "Usage: $0 <runlevel>" >&2
+	exit 1
+fi
+previous="$PREVLEVEL"
+test -n "$previous" || previous=N
+export runlevel previous
+
+# Is there an rc directory for this new runlevel?
+if [ -d "/etc/rc$runlevel.d" ]; then
+	# First, run the KILL scripts.
+	if [ "$previous" != N ]; then
+		for i in /etc/rc$runlevel.d/K[0-9][0-9]*; do
+			# Check if the script is there.
+			test -f $i || continue
+
+			# Stop the service.
+			startup $i stop
+		done
+	fi
+
+	# Now run the START scripts for this runlevel.
+	for i in /etc/rc$runlevel.d/S*; do
+		# Check if the script is there.
+		test -f $i || continue
+
+		if [ "$previous" != N ]; then
+			#
+			# Find start script in previous runlevel and
+			# stop script in this runlevel.
+			#
+			suffix=${i#/etc/rc$runlevel.d/S[0-9][0-9]}
+			stop=/etc/rc$runlevel.d/K[0-9][0-9]$suffix
+			previous_start=/etc/rc$previous.d/S[0-9][0-9]$suffix
+			#
+			# If there is a start script in the previous level
+			# and _no_ stop script in this level, we don't
+			# have to re-start the service.
+			#
+			test -f $previous_start -a ! -f $stop && continue
+		fi
+		case "$runlevel" in
+		0|6)
+			startup $i stop
+			;;
+		*)
+			startup $i start
+			;;
+		esac
+	done
+fi

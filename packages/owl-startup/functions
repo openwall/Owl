@@ -1,0 +1,246 @@
+# $Id: Owl/packages/owl-startup/functions,v 1.1 2000/11/28 22:48:33 solar Exp $
+#
+# Functions defined in this file are used by many /etc/init.d scripts;
+# they offer some limited Red Hat compatibility.
+
+# Export our version number to the scripts.
+OWL_STARTUP_VERSION=1
+
+# Do they recognize us?  Try to be more Red Hat compatible if not.
+OWL_STARTUP_ENABLE=0
+
+# We don't really support anything else, but scripts might check this.
+BOOTUP=verbose
+
+# The scripts may be run manually so we have to set this here.
+PATH=/bin:/sbin:/usr/bin:/usr/sbin
+
+# Emulate which(1) internally to bash.
+function absolute()
+{
+	local TYPE WHICH
+
+	TYPE="`type "$1"`"
+	WHICH="${TYPE##"$1" is }"
+
+	test "$WHICH" != "${WHICH##/}" || return 1
+
+	echo "$WHICH"
+}
+
+# These versions of daemon(), killproc(), and status() are implemented in
+# terms of start-stop-daemon.  This prevents most of the matching process
+# name tricks that were possible on Red Hat systems.
+
+function daemon()
+{
+	local WHICH BASENAME USER NICE STATUS
+
+# Process options.
+	USER=
+	NICE=0
+	while [ "$1" != "${1##-}" -o "$1" != "${1##+}" ]; do
+		case "$1" in
+		--user)
+			shift
+			USER="$1"
+			shift
+			;;
+		-*|+*)
+			NICE="$1"
+			shift
+			;;
+		esac
+	done
+
+# We need the absolute pathname.
+	WHICH="`absolute "$1"`" || return 1
+
+# Announce the action.
+	BASENAME="`basename "$1"`" || return 1
+	if [ "$OWL_STARTUP_ENABLE" -ge 1 ]; then
+		echo "Starting $BASENAME"
+	fi
+
+# Disable coredumps (this is probably redundant).
+	ulimit -c 0
+
+# Actually start the daemon.
+	shift
+	if [ -z "$USER" ]; then
+		start-stop-daemon --start \
+			--exec "$WHICH" --startas /bin/nice -- \
+			-n "$NICE" "$WHICH" $*
+	else
+		start-stop-daemon --start \
+			--exec "$WHICH" --user "$USER" --startas /bin/nice -- \
+			-n "$NICE" su "$USER" -c "\"$WHICH\" $*"
+	fi
+	STATUS=$?
+
+	if [ "$OWL_STARTUP_ENABLE" -eq 0 -a $STATUS -eq 0 ]; then
+		echo -n " $BASENAME"
+	fi
+
+	return $STATUS
+}
+
+function killproc()
+{
+	local WHICH BASENAME SIGNAL DEFAULT PIDFILE FLAGS STATUS
+
+	test $# -eq 1 -o $# -eq 2 || return 1
+
+# We need the absolute pathname for /proc/*/exe checks.
+	WHICH="`absolute "$1"`" || return 1
+
+# start-stop-daemon wants a signal number.
+	SIGNAL="`kill -l TERM`"
+	DEFAULT=true
+	case "$2" in
+	'')
+		;;
+	-[0-9]*)
+		SIGNAL="${2##-}"
+		DEFAULT=false
+		;;
+	-*)
+		SIGNAL="${2##-}"
+		SIGNAL="`kill -l "$SIGNAL"`"
+		DEFAULT=false
+		;;
+	*)
+		return 1
+		;;
+	esac
+
+# Try to guess the PID file.
+	BASENAME="`basename "$1"`" || return 1
+	PIDFILE="/var/run/$BASENAME.pid"
+	test -r "$PIDFILE" || PIDFILE=
+
+# Announce the action.
+	if [ "$OWL_STARTUP_ENABLE" -ge 1 ]; then
+		echo "Stopping $BASENAME"
+	fi
+
+# Actually tell the daemon to stop.
+	if [ -n "$PIDFILE" ]; then
+		FLAGS="--stop --exec $WHICH --pidfile $PIDFILE"
+	else
+		FLAGS="--stop --exec $WHICH"
+	fi
+	start-stop-daemon $FLAGS --signal "$SIGNAL"
+	STATUS=$?
+
+# We really want to be sure the daemon is dead, unless we're sending a
+# custom signal.
+	if [ "$DEFAULT" = "true" -a $STATUS -eq 0 ]; then
+		usleep 100000
+		if start-stop-daemon $FLAGS --test > /dev/null; then
+			sleep 1
+			SIGNAL="`kill -l KILL`"
+			start-stop-daemon $FLAGS --signal "$SIGNAL" > /dev/null
+		fi
+		test -n "$PIDFILE" && rm -f "$PIDFILE"
+	fi
+
+	if [ "$OWL_STARTUP_ENABLE" -eq 0 -a $STATUS -eq 0 ]; then
+		echo -n " $BASENAME"
+	fi
+
+	return $STATUS
+}
+
+function status()
+{
+	local WHICH BASENAME PIDFILE
+
+	test $# -eq 1 || return 1
+
+# We need the absolute pathname for /proc/*/exe checks.
+	WHICH="`absolute "$1"`" || return 1
+
+# Try to guess the PID file.
+	BASENAME="`basename "$1"`" || return 1
+	PIDFILE="/var/run/$BASENAME.pid"
+	test -r "$PIDFILE" || PIDFILE=
+
+# Actually determine the status.
+	if [ -n "$PIDFILE" ]; then
+		start-stop-daemon --stop --test \
+			--exec "$WHICH" --pidfile "$PIDFILE" > /dev/null
+	else
+		start-stop-daemon --stop --test \
+			--exec "$WHICH" > /dev/null
+	fi
+
+# Report it.
+	if [ $? -eq 0 ]; then
+		echo "$BASENAME is running"
+		return 0
+	fi
+
+	if [ -n "$PIDFILE" ]; then
+		echo "$BASENAME is dead, but stale PID file exists"
+		return 1
+	fi
+
+	if [ -f /var/lock/subsys/$1 ]; then
+		echo "$BASENAME is dead, but subsystem is locked"
+		return 2
+	fi
+
+	echo "$BASENAME is stopped"
+	return 3
+}
+
+# This function is inherently unreliable and is provided for Red Hat
+# compatibility only.
+function pidofproc()
+{
+	local PID
+
+	test $# -eq 1 || return 1
+
+	if [ -r "/var/run/$1.pid" ]; then
+		PID="`head -1 "/var/run/$1.pid"`"
+		if [ -n "$PID" ]; then
+			echo "$PID"
+			return 0
+		fi
+	fi
+
+	PID="`pidof -o $$ -o "$PPID" -x "$1"`"
+	test -n "$PID" || return 1
+	echo "$PID"
+}
+
+# More compatibility functions.  These were introduced in Red Hat 6.0.
+
+function success()
+{
+	return 0
+}
+
+function failure()
+{
+	return 1
+}
+
+function passed()
+{
+	return 0
+}
+
+function action()
+{
+	local STATUS
+
+	echo -n "$1 "
+	shift
+	$*
+	STATUS=$?
+	echo
+	return $STATUS
+}

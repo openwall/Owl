@@ -1,0 +1,46 @@
+#!/bin/sh
+# $Id: Owl/packages/owl-startup/halt,v 1.1 2000/11/28 22:48:33 solar Exp $
+#
+# This file is based on several Debian scripts by Miquel van Smoorenburg.
+#
+
+# See how we were called.
+MESSAGE=
+COMMAND="halt"
+case "$0" in
+*reboot)
+	MESSAGE="Rebooting... "
+	COMMAND="reboot"
+esac
+
+# Kill all processes.
+echo "Sending all processes the TERM signal"
+killall5 "-`kill -l TERM`"
+sleep 5
+echo "Sending all processes the KILL signal"
+killall5 "-`kill -l KILL`"
+
+# Write a reboot record to /var/log/wtmp before unmounting.
+halt -w
+
+echo "Turning off swap"
+swapoff -a
+
+if [ -x /sbin/accton ]; then
+	echo "Turning off process accounting"
+	/sbin/accton
+fi
+
+if [ -x /sbin/quotaoff ]; then
+	echo "Turning off quotas"
+	/sbin/quotaoff -a
+fi
+
+echo "Unmounting filesystems"
+umount -f -a -r
+
+echo "Remounting root filesystem read-only"
+mount -n -o remount,ro /
+
+echo -n "$MESSAGE"
+$COMMAND -d -f -i
