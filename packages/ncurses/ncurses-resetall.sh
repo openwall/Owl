@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# xterm codes can be found here: 
+# xterm codes can be found here:
 # http://babayaga.math.fu-berlin.de/~rxvt/refer/refer.html
 if [ "$TERM" = xterm -o "$TERM" = xterm-color -o \
     "$TERM" = kterm -o "$TERM" = rxvt ]; then
