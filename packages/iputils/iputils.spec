@@ -1,9 +1,9 @@
-# $Id: Owl/packages/iputils/iputils.spec,v 1.7 2002/06/03 01:21:22 solar Exp $
+# $Id: Owl/packages/iputils/iputils.spec,v 1.8 2002/11/03 01:47:28 solar Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
 Version: ss020124
-Release: owl1
+Release: owl2
 License: mostly BSD, some GPL
 Group: Applications/Internet
 Source0: ftp://ftp.inr.ac.ru/ip-routing/%{name}-%{version}.tar.gz
@@ -13,7 +13,7 @@ Source3: ping.control
 Patch0: iputils-ss020124-rh-owl-cache-reverse-lookups.diff
 Patch1: iputils-ss020124-owl-warnings.diff
 Patch2: bonding-0.2-owl-ioctl.diff
-Requires: owl-control < 2.0
+Requires: owl-control >= 0.4, owl-control < 2.0
 Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
 
@@ -63,6 +63,16 @@ install -m 700 $RPM_SOURCE_DIR/ping.control \
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%pre
+if [ $1 -ge 2 ]; then
+	/usr/sbin/control-dump ping
+fi
+
+%post
+if [ $1 -ge 2 ]; then
+	/usr/sbin/control-restore ping
+fi
+
 %files
 %defattr(-,root,root)
 %doc RELNOTES bonding*/README.ifenslave
@@ -79,6 +89,9 @@ rm -rf $RPM_BUILD_ROOT
 /etc/control.d/facilities/ping
 
 %changelog
+* Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
+- Dump/restore the owl-control setting for ping on package upgrades.
+
 * Mon Jun 03 2002 Solar Designer <solar@owl.openwall.com>
 - Patched ifenslave to use the SIOCBOND* ioctl's instead of the obsolete
 BOND_* ones when building with Linux 2.4+ kernel headers.
