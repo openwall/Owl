@@ -17,7 +17,7 @@ URL:            http://gcc.gnu.org
 Group:		Development/Languages
 Source0:	ftp://ftp.gnu.org/pub/gnu/gcc/gcc-%{GCC_VERSION}.tar.gz
 Source1:	libstdc++-compat.tar.bz2
-Patch:		gcc-2.95.2-rh-warn.patch
+Patch:		gcc-2.95.2-rh-warn.diff
 Packager:       <kad@openwall.com>
 Distribution:   Owl
 BuildRoot:      /var/rpm-buildroot/%{name}-root
