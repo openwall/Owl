@@ -1,4 +1,4 @@
-# $Id: Owl/packages/nmap/nmap.spec,v 1.2 2003/10/11 19:54:07 solar Exp $
+# $Id: Owl/packages/nmap/nmap.spec,v 1.3 2003/10/11 20:04:51 solar Exp $
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
@@ -16,12 +16,11 @@ BuildRoot: /override/%{name}-%{version}
 %description
 Nmap is an utility for network exploration or security auditing.  It
 supports ping scanning (determine which hosts are up), many port
-scanning techniques (determine what services the hosts are offering),
-and TCP/IP fingerprinting (remote host operating system
-identification).  Nmap also offers flexible target and port
-specification, decoy scanning, determination of TCP sequence numbers
-predictability characteristics, Sun RPC scanning, reverse-identd
-scanning, and more.
+scanning techniques, version detection (determine service protocols
+and application versions listening behind ports), and TCP/IP
+fingerprinting (remote host OS or device identification).  Nmap also
+offers flexible target and port specification, decoy/stealth scanning,
+Sun RPC scanning, and more.
 
 %prep
 %setup -q
