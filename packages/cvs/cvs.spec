@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cvs/cvs.spec,v 1.11 2003/05/01 19:42:41 solar Exp $
+# $Id: Owl/packages/cvs/cvs.spec,v 1.12 2003/05/01 21:04:58 solar Exp $
 
 Summary: A version control system.
 Name: cvs
@@ -34,6 +34,21 @@ directory, CVS provides version control for a hierarchical collection
 of directories consisting of revision controlled files.  These
 directories and files can then be combined together to form a software
 release.
+
+%package doc
+Summary: Additional documentation for CVS.
+Group: Documentation
+
+%description doc
+Additional documentation for the Concurrent Versions System (CVS).
+
+%package contrib
+Summary: Contributed scripts for CVS.
+Group: Development/Tools
+Requires: mktemp >= 1:1.3.1
+
+%description contrib
+Additional scripts for the Concurrent Versions System (CVS).
 
 %prep
 %setup -q
@@ -80,11 +95,18 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS BUGS FAQ MINOR-BUGS NEWS PROJECTS TODO README
-%doc doc/RCSFILES doc/*.ps.gz
-%{_bindir}/*
+%{_bindir}/cvs*
 %{_mandir}/*/*
 %{_infodir}/*.info*
+
+%files doc
+%defattr(-,root,root)
+%doc AUTHORS BUGS FAQ MINOR-BUGS NEWS PROJECTS TODO README
+%doc doc/RCSFILES doc/*.ps.gz
+
+%files contrib
+%defattr(-,root,root)
+%{_bindir}/rcs2log
 %{_datadir}/cvs
 
 %changelog
@@ -94,6 +116,7 @@ package itself because it won't be needed for most uses; the scripts will
 need to be moved to a subpackage).
 - Don't let the cvsbug script unlink one of its temporary files and then
 re-use its name.
+- Moved the documentation and contributed scripts into subpackages.
 
 * Thu May 01 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl1
 - Re-worked the temporary file handling patch to make it actually do what
