@@ -118,7 +118,7 @@ diff -ur cvs-1.11.5.orig/TODO cvs-1.11.5/TODO
  
 diff -ur cvs-1.11.5.orig/configure cvs-1.11.5/configure
 --- cvs-1.11.5.orig/configure	Thu Jan 16 21:36:48 2003
-+++ cvs-1.11.5/configure	Mon Apr 28 19:40:10 2003
++++ cvs-1.11.5/configure	Thu May  1 20:01:32 2003
 @@ -6200,21 +6200,7 @@
    echo $ECHO_N "(cached) $ECHO_C" >&6
  else
@@ -186,7 +186,7 @@ diff -ur cvs-1.11.5.orig/configure cvs-1.11.5/configure
 -   echo "$me: cannot create a temporary directory in $TMPDIR" >&2
 -   { (exit 1); exit 1; }
 -}
-+tmp="`mktemp -dt cs.XXXXXXXXXX`" || exit 1
++tmp="`mktemp -dt cs.XXXXXXXXXX`" || exit
  
  _ACEOF
  
@@ -242,7 +242,7 @@ diff -ur cvs-1.11.5.orig/contrib/commit_prep.in cvs-1.11.5/contrib/commit_prep.i
  # Patterns to find $Log keywords in files
 diff -ur cvs-1.11.5.orig/contrib/cvs2vendor.sh cvs-1.11.5/contrib/cvs2vendor.sh
 --- cvs-1.11.5.orig/contrib/cvs2vendor.sh	Wed Feb 12 15:34:55 1997
-+++ cvs-1.11.5/contrib/cvs2vendor.sh	Sun Apr 27 12:49:20 2003
++++ cvs-1.11.5/contrib/cvs2vendor.sh	Thu May  1 20:04:19 2003
 @@ -36,11 +36,12 @@
  tsrcdir=$1
  tdstdir=$2
@@ -256,8 +256,8 @@ diff -ur cvs-1.11.5.orig/contrib/cvs2vendor.sh cvs-1.11.5/contrib/cvs2vendor.sh
 +commentfile=
 +trap 'rm -f -- "$revfile" "$commentfile"' EXIT
 +trap 'trap - EXIT ; rm -f -- "$revfile" "$commentfile"; exit 1' HUP INT QUIT TERM
-+revfile="`mktemp -t cvs2vendor_rev.XXXXXXXXXX`" || exit
-+commentfile="`mktemp -t cvs2vendor_comment.XXXXXXXXXX`" || exit
++revfile="`mktemp -t cvs2vendor.rev.XXXXXXXXXX`" || exit
++commentfile="`mktemp -t cvs2vendor.comment.XXXXXXXXXX`" || exit
  
  srcdirs=`cd $tsrcdir && find . -type d -print | sed 's~^\.[/]*~~'`
  
@@ -612,7 +612,7 @@ diff -ur cvs-1.11.5.orig/man/cvsbug.8 cvs-1.11.5/man/cvsbug.8
  .B INSTALL
 diff -ur cvs-1.11.5.orig/src/cvsbug.in cvs-1.11.5/src/cvsbug.in
 --- cvs-1.11.5.orig/src/cvsbug.in	Mon Apr 29 04:45:47 2002
-+++ cvs-1.11.5/src/cvsbug.in	Thu May  1 19:34:22 2003
++++ cvs-1.11.5/src/cvsbug.in	Thu May  1 20:02:49 2003
 @@ -83,11 +83,18 @@
  
  #
@@ -630,9 +630,9 @@ diff -ur cvs-1.11.5.orig/src/cvsbug.in cvs-1.11.5/src/cvsbug.in
 +REF=
 +trap 'rm -f -- "$TEMP" "$BAD" "$REF"; exit $xs' EXIT
 +trap 'trap - EXIT; rm -f -- "$TEMP" "$BAD" "$REF"; exit 1' HUP INT QUIT TERM
-+TEMP="`mktemp -t p.XXXXXXXXXX`"
-+BAD="`mktemp -t pbad.XXXXXXXXXX`"
-+REF="`mktemp -t pf.XXXXXXXXXX`"
++TEMP="`mktemp -t cvsbug.p.XXXXXXXXXX`" || exit
++BAD="`mktemp -t cvsbug.pbad.XXXXXXXXXX`" || exit
++REF="`mktemp -t cvsbug.pf.XXXXXXXXXX`" || exit
  
  if [ -z "$LOGNAME" -a -n "$USER" ]; then
    LOGNAME=$USER
