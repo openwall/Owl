@@ -1,22 +1,21 @@
-# $Id: Owl/packages/modutils/modutils.spec,v 1.6 2000/11/21 08:23:56 solar Exp $
+# $Id: Owl/packages/modutils/modutils.spec,v 1.7 2000/11/22 17:46:26 solar Exp $
 
 Summary: 	Kernel module utilities.
 Name: 		modutils
-Version: 	2.3.20
-Release: 	2owl
+Version: 	2.3.21
+Release: 	1owl
 Copyright: 	GPL
 Group: 		System Environment/Kernel
 Source0: 	ftp://ftp.kernel.org/pub/linux/utils/kernel/modutils/v2.3/modutils-%{version}.tar.gz
 Patch0: 	modutils-2.3.17-owl-alias.diff
 Patch1:		modutils-2.3.17-rh-systemmap.diff
-Patch2:		modutils-2.3.20-con-modprobe-typo.diff
 Exclusiveos: 	Linux
 Buildroot: 	/var/rpm-buildroot/%{name}-%{version}
 Prereq: 	/sbin/chkconfig
 Obsoletes: 	modules
 
 %description
-The modutils packages includes the various programs neeed for automatic
+The modutils package includes the various programs needed for automatic
 loading and unloading of modules under 2.2 and later kernels as well as
 other module management programs.  Examples of loaded and unloaded
 modules are device drivers and filesystems, as well as some other things.
@@ -25,7 +24,6 @@ modules are device drivers and filesystems, as well as some other things.
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 %build
 # To build kernel 2.0.x compatible modutils, change the compat-2-0 and
@@ -72,6 +70,9 @@ fi
 #%config /etc/rc.d/init.d/kerneld
 
 %changelog
+* Wed Nov 22 2000 Solar Designer <solar@owl.openwall.com>
+- v2.3.21
+
 * Tue Nov 21 2000 Solar Designer <solar@owl.openwall.com>
 - Added a patch by Andreas Hasenack of Conectiva to fix a typo in the
 recent security fix to modprobe.c.
