@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.41 2002/08/27 18:29:20 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.42 2002/10/01 00:16:18 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -6,7 +6,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
 %define crypt_bf_version 0.4.4
-Release: owl27
+Release: owl28
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%{version}.tar.gz
@@ -34,6 +34,7 @@ Patch13: glibc-2.1.3-owl-alt-asprintf-error-handling.diff
 Patch14: glibc-2.1.3-openbsd-freebsd-owl-fts.diff
 Patch15: glibc-2.1.3-owl-calloc-bound.diff
 Patch16: glibc-2.1.3-owl-xdr_array-bound.diff
+Patch17: glibc-2.1.3-owl-resolv-QFIXEDSZ-underfills.diff
 Patch20: glibc-2.1.3-rh-libnoversion.diff
 Patch21: glibc-2.1.3-rh-paths.diff
 Patch22: glibc-2.1.3-rh-linuxthreads.diff
@@ -51,6 +52,7 @@ Patch33: glibc-2.1.3-rh-syslog.diff
 Patch40: glibc-2.1.3-bcl-cyr-locale.diff
 Patch41: glibc-2.1.3-mdk-fix-ucontext.diff
 Patch42: glibc-2.1.3-vine-compat-resolv.diff
+Patch43: glibc-2.1.3-suse-resolv-response-length.diff
 Patch50: glibc-2.1.3-cvs-20000827-locale.diff
 Patch51: glibc-2.1.3-cvs-20000824-unsetenv.diff
 Patch52: glibc-2.1.3-cvs-20000824-md5-align-clean.diff
@@ -135,6 +137,7 @@ cp $RPM_SOURCE_DIR/crypt_freesec.[ch] crypt/sysdeps/unix/
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
+%patch17 -p1
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
@@ -152,6 +155,7 @@ cp $RPM_SOURCE_DIR/crypt_freesec.[ch] crypt/sysdeps/unix/
 %patch40 -p1
 %patch41 -p1
 %patch42 -p1
+%patch43 -p1
 %patch50 -p1
 %patch51 -p1
 cd md5-crypt
@@ -315,6 +319,15 @@ fi
 %endif
 
 %changelog
+* Tue Oct 01 2002 Solar Designer <solar@owl.openwall.com>
+- Avoid read buffer overruns in glibc itself and applications that
+naively assume the length returned by res_* is always less than or equal
+to the answer buffer size (CERT VU#738331, CVE CAN-2002-1146), by
+truncating the answer in res_send(3); the patch is by Olaf Kirch of SuSE.
+- Avoid some potential reads beyond end of undersized DNS responses by
+making sure they're at least HFIXEDSZ+QFIXEDSZ in size; pointed out by
+Dmitry V. Levin of ALT Linux.
+
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
 - Deal with info dir entries such that the menu looks pretty.
 
