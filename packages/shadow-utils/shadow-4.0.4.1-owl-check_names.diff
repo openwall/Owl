@@ -1,0 +1,34 @@
+diff -uNrp shadow-4.0.4.1/libmisc/chkname.c shadow-4.0.4.1.owl-check-names/libmisc/chkname.c
+--- shadow-4.0.4.1/libmisc/chkname.c	2003-05-12 05:29:14 +0000
++++ shadow-4.0.4.1.owl-check-names/libmisc/chkname.c	2004-02-28 23:05:00 +0000
+@@ -36,6 +36,7 @@ static int good_name (const char *name)
+ 
+ int check_user_name (const char *name)
+ {
++#if 0
+ #if HAVE_UTMPX_H
+ 	struct utmpx ut;
+ #else
+@@ -47,6 +48,9 @@ int check_user_name (const char *name)
+ 	 * handle (usually max 8 characters).
+ 	 */
+ 	if (strlen (name) > sizeof (ut.ut_user))
++#else
++	if (strlen(name) > 8)
++#endif
+ 		return 0;
+ 
+ 	return good_name (name);
+@@ -55,10 +59,9 @@ int check_user_name (const char *name)
+ int check_group_name (const char *name)
+ {
+ 	/*
+-	 * Arbitrary limit for group names - max 16
+-	 * characters (same as on HP-UX 10).
++	 * Arbitrary limit for group names - max 8 characters.
+ 	 */
+-	if (strlen (name) > 16)
++	if (strlen (name) > 8)
+ 		return 0;
+ 
+ 	return good_name (name);

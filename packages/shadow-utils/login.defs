@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/login.defs,v 1.9 2003/05/29 01:17:55 solar Exp $
+# $Id: Owl/packages/shadow-utils/login.defs,v 1.10 2004/09/10 07:31:15 galaxy Exp $
 #
 # Please refer to login.defs(5) for more information on this file, the
 # parameters which may be defined here and the corresponding programs.

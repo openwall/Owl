@@ -1,5 +1,5 @@
 #%PAM-1.0
-# $Id: Owl/packages/shadow-utils/user-group-mod.pam,v 1.1 2001/11/12 01:47:45 solar Exp $
+# $Id: Owl/packages/shadow-utils/user-group-mod.pam,v 1.2 2004/09/10 07:31:15 galaxy Exp $
 auth       required	/lib/security/pam_rootok.so
 account    required	/lib/security/pam_permit.so
 password   required	/lib/security/pam_permit.so

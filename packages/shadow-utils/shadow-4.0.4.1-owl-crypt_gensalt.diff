@@ -1,21 +1,22 @@
-diff -ur shadow-4.0.0-owl-man/lib/getdef.c shadow-4.0.0/lib/getdef.c
---- shadow-4.0.0-owl-man/lib/getdef.c	Sat Aug 26 22:27:17 2000
-+++ shadow-4.0.0/lib/getdef.c	Sun Nov 11 09:45:52 2001
-@@ -62,6 +62,8 @@
+diff -uNrp shadow-4.0.4.1/lib/getdef.c shadow-4.0.4.1.owl-crypt_gensalt/lib/getdef.c
+--- shadow-4.0.4.1/lib/getdef.c	2003-05-12 02:40:08 +0000
++++ shadow-4.0.4.1.owl-crypt_gensalt/lib/getdef.c	2004-02-28 23:10:38 +0000
+@@ -62,6 +62,8 @@ static struct itemdef def_table[] = {
  	{ "CONSOLE_GROUPS",		NULL },
  	{ "CRACKLIB_DICTPATH",		NULL },
  	{ "CREATE_HOME",		NULL },
 +	{ "CRYPT_PREFIX",		NULL },
 +	{ "CRYPT_ROUNDS",		NULL },
  	{ "DEFAULT_HOME",		NULL },
- 	{ "DIALUPS_CHECK_ENAB",		NULL },
  	{ "ENVIRON_FILE",		NULL },
-diff -ur shadow-4.0.0-owl-man/libmisc/salt.c shadow-4.0.0/libmisc/salt.c
---- shadow-4.0.0-owl-man/libmisc/salt.c	Mon Dec  8 02:27:09 1997
-+++ shadow-4.0.0/libmisc/salt.c	Sun Nov 11 09:45:52 2001
-@@ -1,5 +1,76 @@
+ 	{ "ENV_HZ",			NULL },
+diff -uNrp shadow-4.0.4.1/libmisc/salt.c shadow-4.0.4.1.owl-crypt_gensalt/libmisc/salt.c
+--- shadow-4.0.4.1/libmisc/salt.c	2003-04-22 10:59:22 +0000
++++ shadow-4.0.4.1.owl-crypt_gensalt/libmisc/salt.c	2004-02-28 23:10:38 +0000
+@@ -1,6 +1,76 @@
  /*
   * salt.c - generate a random salt string for crypt()
+- *
 + */
 +
 +#define _OW_SOURCE
@@ -87,38 +88,32 @@ diff -ur shadow-4.0.0-owl-man/libmisc/salt.c shadow-4.0.0/libmisc/salt.c
 +
 +#if 0
 +/*
-  *
   * Written by Marek Michalkiewicz <marekm@i17linuxb.ists.pwr.wroc.pl>,
   * public domain.
-@@ -67,4 +138,5 @@
- 	result[2] = '\0';
+  */
+@@ -62,3 +132,4 @@ char *crypt_make_salt (void)
  	return result;
  }
-+#endif
  #endif
-diff -ur shadow-4.0.0-owl-man/man/login.defs.5 shadow-4.0.0/man/login.defs.5
---- shadow-4.0.0-owl-man/man/login.defs.5	Sun Nov 11 07:55:52 2001
-+++ shadow-4.0.0/man/login.defs.5	Sun Nov 11 09:46:18 2001
-@@ -27,12 +27,15 @@
++#endif
+diff -uNrp shadow-4.0.4.1/man/login.defs.5 shadow-4.0.4.1.owl-crypt_gensalt/man/login.defs.5
+--- shadow-4.0.4.1/man/login.defs.5	2003-05-01 18:17:39 +0000
++++ shadow-4.0.4.1.owl-crypt_gensalt/man/login.defs.5	2004-02-28 23:10:38 +0000
+@@ -27,7 +27,10 @@
  .\"
- .\"	$Id: login.defs.5,v 1.7 2000/08/26 18:27:17 marekm Exp $
- .\"
-+.\" 2001/11/11	Solar Designer <solar@owl.openwall.com>
-+.\" Documented CRYPT_PREFIX and CRYPT_ROUNDS.
-+.\"
- .\" 2001/06/15	Solar Designer <solar@owl.openwall.com>
- .\" Removed the descriptions of most parameters as only a small subset is
- .\" actually used on Owl, corrected those which remain, and wrote whatever
- .\" was missing.
+ .\"	$Id: login.defs.5,v 1.12 2003/05/01 18:17:39 kloczek Exp $
  .\"
 -.TH LOGIN.DEFS 5
++.\" 2001/11/11 Solar Designer <solar@owl.openwall.com>
++.\" Documented CRYPT_PREFIX and CRYPT_ROUNDS.
++.\"
 +.TH LOGIN.DEFS 5 "11 November 2001"
  .SH NAME
  /etc/login.defs \- shadow password suite configuration
  .SH DESCRIPTION
-@@ -91,6 +94,15 @@
+@@ -72,6 +80,15 @@ installing chfn SUID.
  This defines whether useradd should create home directories for users by
- default.  This option is OR'ed with the -m flag on useradd command line.
+ default. This option is OR'ed with the \fI-m\fR flag on useradd command line.
  .\"
 +.IP "CRYPT_PREFIX (string)"
 +.IP "CRYPT_ROUNDS (number)"
@@ -131,8 +126,8 @@ diff -ur shadow-4.0.0-owl-man/man/login.defs.5 shadow-4.0.0/man/login.defs.5
 +.\"
  .IP "GID_MAX (number)"
  .IP "GID_MIN (number)"
- Range of group IDs to choose from for the
-@@ -144,6 +156,8 @@
+ Range of group IDs to choose from for the fBuseradd\fR and \fBgroupadd\fR
+@@ -120,6 +137,8 @@ suite use which parameters.
  CHFN_AUTH CHFN_RESTRICT
  .IP chsh 12
  CHFN_AUTH
@@ -141,7 +136,7 @@ diff -ur shadow-4.0.0-owl-man/man/login.defs.5 shadow-4.0.0/man/login.defs.5
  .IP groupadd 12
  GID_MAX GID_MIN
  .IP newusers 12
-@@ -175,9 +189,11 @@
+@@ -149,9 +168,11 @@ and
  .BR su (1).
  Please refer to the corresponding PAM configuration files instead.
  .SH SEE ALSO

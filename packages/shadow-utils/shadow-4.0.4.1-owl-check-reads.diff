@@ -1,7 +1,7 @@
-diff -ur shadow-4.0.0.orig/lib/commonio.c shadow-4.0.0/lib/commonio.c
---- shadow-4.0.0.orig/lib/commonio.c	Fri Sep  7 19:35:57 2001
-+++ shadow-4.0.0/lib/commonio.c	Sun Nov 11 04:22:16 2001
-@@ -167,12 +167,13 @@
+diff -uNrp shadow-4.0.4.1/lib/commonio.c shadow-4.0.4.1.owl-check-reads/lib/commonio.c
+--- shadow-4.0.4.1/lib/commonio.c	2003-05-12 06:12:06 +0000
++++ shadow-4.0.4.1.owl-check-reads/lib/commonio.c	2004-02-28 00:30:24 +0000
+@@ -168,12 +168,13 @@ create_backup(const char *backup, FILE *
  		return -1;
  
  	/* TODO: faster copy, not one-char-at-a-time.  --marekm */
@@ -21,7 +21,7 @@ diff -ur shadow-4.0.0.orig/lib/commonio.c shadow-4.0.0/lib/commonio.c
  		fclose(bkfp);
  		return -1;
  	}
-@@ -435,6 +436,7 @@
+@@ -408,6 +409,7 @@ commonio_open(struct commonio_db *db, in
  	void *eptr;
  	int flags = mode;
  	int buflen;
@@ -29,7 +29,7 @@ diff -ur shadow-4.0.0.orig/lib/commonio.c shadow-4.0.0/lib/commonio.c
  
  	mode &= ~O_CREAT;
  
-@@ -468,7 +470,7 @@
+@@ -441,7 +443,7 @@ commonio_open(struct commonio_db *db, in
  	buflen = BUFLEN;
  	buf = (char *) malloc(buflen);
  	if (!buf)
@@ -38,7 +38,7 @@ diff -ur shadow-4.0.0.orig/lib/commonio.c shadow-4.0.0/lib/commonio.c
  
  	while (db->ops->fgets(buf, buflen, db->fp)) {
  		while (!(cp = strrchr(buf, '\n')) && !feof(db->fp)) {
-@@ -507,8 +509,12 @@
+@@ -480,8 +482,12 @@ commonio_open(struct commonio_db *db, in
  		add_one_entry(db, p);
  	}
  
@@ -52,7 +52,7 @@ diff -ur shadow-4.0.0.orig/lib/commonio.c shadow-4.0.0/lib/commonio.c
  	return 1;
  
  cleanup_entry:
-@@ -518,11 +524,14 @@
+@@ -491,11 +497,14 @@ cleanup_line:
  	free(line);
  cleanup_buf:
  	free(buf);
@@ -69,10 +69,10 @@ diff -ur shadow-4.0.0.orig/lib/commonio.c shadow-4.0.0/lib/commonio.c
  	return 0;
  }
  
-diff -ur shadow-4.0.0.orig/lib/getdef.c shadow-4.0.0/lib/getdef.c
---- shadow-4.0.0.orig/lib/getdef.c	Sat Aug 26 22:27:17 2000
-+++ shadow-4.0.0/lib/getdef.c	Sun Nov 11 04:38:02 2001
-@@ -35,6 +35,7 @@
+diff -uNrp shadow-4.0.4.1/lib/getdef.c shadow-4.0.4.1.owl-check-reads/lib/getdef.c
+--- shadow-4.0.4.1/lib/getdef.c	2003-05-12 02:40:08 +0000
++++ shadow-4.0.4.1.owl-check-reads/lib/getdef.c	2004-02-28 00:30:24 +0000
+@@ -35,6 +35,7 @@ RCSID("$Id: getdef.c,v 1.18 2003/05/12 0
  #include "prototypes.h"
  #include "defines.h"
  #include <stdio.h>
@@ -80,7 +80,7 @@ diff -ur shadow-4.0.0.orig/lib/getdef.c shadow-4.0.0/lib/getdef.c
  #include <ctype.h>
  #include "getdef.h"
  
-@@ -328,7 +329,7 @@
+@@ -349,7 +350,7 @@ def_load(void)
  	if ((fp = fopen(def_fname, "r")) == NULL) {
  		SYSLOG((LOG_CRIT, "cannot open login definitions %s [%m]",
  			def_fname));
@@ -89,7 +89,7 @@ diff -ur shadow-4.0.0.orig/lib/getdef.c shadow-4.0.0/lib/getdef.c
  	}
  
  	/*
-@@ -371,6 +372,13 @@
+@@ -392,6 +393,13 @@ def_load(void)
  		 */
  		putdef_str(name, value);
  	}
@@ -103,25 +103,27 @@ diff -ur shadow-4.0.0.orig/lib/getdef.c shadow-4.0.0/lib/getdef.c
  	(void) fclose(fp);
  }
  
-diff -ur shadow-4.0.0.orig/src/vipw.c shadow-4.0.0/src/vipw.c
---- shadow-4.0.0.orig/src/vipw.c	Sat Aug 26 22:27:19 2000
-+++ shadow-4.0.0/src/vipw.c	Sun Nov 11 04:20:40 2001
-@@ -64,12 +64,13 @@
-   umask(mask);
-   if (!bkfp) return -1;
+diff -uNrp shadow-4.0.4.1/src/vipw.c shadow-4.0.4.1.owl-check-reads/src/vipw.c
+--- shadow-4.0.4.1/src/vipw.c	2003-06-19 18:11:01 +0000
++++ shadow-4.0.4.1.owl-check-reads/src/vipw.c	2004-02-28 00:31:27 +0000
+@@ -62,13 +62,13 @@ create_backup_file (FILE * fp, const cha
+ 	if (!bkfp)
+ 		return -1;
  
--  rewind(fp);
--  while ((c = getc(fp)) != EOF) {
--    if (putc(c, bkfp) == EOF) break;
--  }
-+  c = 0;
-+  if (fseek(fp, 0, SEEK_SET) == 0)
-+    while ((c = getc(fp)) != EOF) {
-+      if (putc(c, bkfp) == EOF) break;
-+    }
- 
--  if (c != EOF || fflush(bkfp)) {
-+  if (c != EOF || ferror(fp) || fflush(bkfp)) {
-     fclose(bkfp);
-     unlink(backup);
-     return -1;
+-	rewind (fp);
+-	while ((c = getc (fp)) != EOF) {
+-		if (putc (c, bkfp) == EOF)
+-			break;
+-	}
+-
+-	if (c != EOF || fflush (bkfp)) {
++	c = 0;
++	if (fseek(fp, 0, SEEK_SET) == 0)
++		while ((c = getc(fp)) != EOF) {
++			if (putc(c, bkfp) == EOF)
++				break;
++		}
++	if (c != EOF || ferror(fp) || fflush(bkfp)) {
+ 		fclose (bkfp);
+ 		unlink (backup);
+ 		return -1;

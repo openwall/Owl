@@ -1,7 +1,7 @@
-diff -ur shadow-4.0.0.orig/src/useradd.c shadow-4.0.0/src/useradd.c
---- shadow-4.0.0.orig/src/useradd.c	Fri Sep  7 19:12:54 2001
-+++ shadow-4.0.0/src/useradd.c	Fri Nov  2 04:08:42 2001
-@@ -1660,6 +1660,41 @@
+diff -uNrp shadow-4.0.4.1-rh-owl-redhat/src/useradd.c shadow-4.0.4.1-owl-create-mailbox/src/useradd.c
+--- shadow-4.0.4.1-rh-owl-redhat/src/useradd.c	2004-02-28 14:58:46 +0000
++++ shadow-4.0.4.1-owl-create-mailbox/src/useradd.c	2004-02-28 15:35:59 +0000
+@@ -1728,6 +1728,41 @@ static void create_home (void)
  	}
  }
  
@@ -42,12 +42,12 @@ diff -ur shadow-4.0.0.orig/src/useradd.c shadow-4.0.0/src/useradd.c
 +
  #ifdef USE_PAM
  static struct pam_conv conv = {
-     misc_conv,
-@@ -1797,6 +1832,7 @@
+ 	misc_conv,
+@@ -1904,6 +1939,7 @@ int main (int argc, char **argv)
  
  	if (mflg) {
  		create_home ();
 +		create_mailbox ();
  		copy_tree (def_template, user_home, user_id, user_gid, 1);
- 	} else if (getdef_str("CREATE_HOME")) {
- 		/*
+ 	}
+ 

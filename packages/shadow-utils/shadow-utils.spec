@@ -1,9 +1,9 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.36 2004/06/09 21:27:22 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.37 2004/09/10 07:31:15 galaxy Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
-Version: 4.0.0
-Release: owl16
+Version: 4.0.4.1
+Release: owl1
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -18,30 +18,28 @@ Source7: chfn.control
 Source8: chsh.control
 Source9: gpasswd.control
 Source10: newgrp.control
-Patch0: shadow-4.0.0-owl-warnings.diff
-Patch1: shadow-4.0.0-owl-check-reads.diff
-Patch2: shadow-4.0.0-owl-usermod-unlock.diff
-Patch3: shadow-4.0.0-owl-tmp.diff
-Patch4: shadow-4.0.0-owl-pam-auth.diff
-Patch5: shadow-4.0.0-owl-chage-drop-priv.diff
-Patch6: shadow-4.0.0-owl-chage-ro-no-lock.diff
-Patch7: shadow-4.0.0-owl-useradd-usermod-usage.diff
-Patch8: shadow-4.0.0-owl-pam_chauthtok.diff
-Patch10: shadow-4.0.0-rh-owl-redhat.diff
-Patch20: shadow-4.0.0-owl-man.diff
-Patch21: shadow-4.0.0-owl-check_names.diff
-Patch22: shadow-4.0.0-owl-create-mailbox.diff
-Patch23: shadow-4.0.0-owl-restrict-locale.diff
-Patch24: shadow-4.0.0-owl-crypt_gensalt.diff
-Patch25: shadow-4.0.0-owl-newgrp.diff
-Patch26: shadow-4.0.0-owl-automake.diff
-Patch30: shadow-4.0.0-owl-tcb.diff
-Patch31: shadow-4.0.0-alt-user_groups.diff
+Patch1: shadow-4.0.4.1-owl-check-reads.diff
+Patch2: shadow-4.0.4.1-owl-usermod-unlock.diff
+Patch3: shadow-4.0.4.1-owl-tmp.diff
+Patch4: shadow-4.0.4.1-owl-pam-auth.diff
+Patch5: shadow-4.0.4.1-owl-chage-drop-priv.diff
+Patch6: shadow-4.0.4.1-owl-chage-ro-no-lock.diff
+Patch7: shadow-4.0.4.1-owl-userdel-path_prefix.diff
+Patch8: shadow-4.0.4.1-owl-pam_chauthtok.diff
+Patch10: shadow-4.0.4.1-rh-owl-redhat.diff
+Patch20: shadow-4.0.4.1-owl-man.diff
+Patch21: shadow-4.0.4.1-owl-check_names.diff
+Patch22: shadow-4.0.4.1-owl-create-mailbox.diff
+Patch23: shadow-4.0.4.1-owl-restrict-locale.diff
+Patch24: shadow-4.0.4.1-owl-crypt_gensalt.diff
+Patch25: shadow-4.0.4.1-owl-newgrp.diff
+Patch30: shadow-4.0.4.1-owl-tcb.diff
 Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: pam, tcb >= 0.9.8, pam_userpass >= 0.5
-BuildRequires: libtool, gettext, automake, autoconf
+BuildRequires: libtool, gettext = 0.14.1, automake, autoconf
 BuildRequires: glibc-crypt_blowfish-devel
 BuildRequires: pam-devel, pam_userpass-devel, tcb-devel
+BuildRequires: cvs
 BuildRoot: /override/%name-%version
 
 %description
@@ -51,7 +49,6 @@ shadow password files.
 
 %prep
 %setup -q -n shadow-%version
-%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -67,9 +64,9 @@ shadow password files.
 %patch23 -p1
 %patch24 -p1
 %patch25 -p1
-%patch26 -p1
 %patch30 -p1
-%patch31 -p1
+
+find . -name "*.orig" -delete
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -77,35 +74,44 @@ shadow password files.
 unset LINGUAS || :
 find lib libmisc src -name '*.c' -print > po/POTFILES.in
 libtoolize --copy --force
-aclocal
-gettextize -f
+autopoint -f
+aclocal -I m4
 automake -a
 autoheader
 autoconf
-CFLAGS="$RPM_OPT_FLAGS -DEXTRA_CHECK_HOME_DIR" ./configure \
-	--prefix=/usr \
+CFLAGS="$RPM_OPT_FLAGS -DEXTRA_CHECK_HOME_DIR -DSHADOWTCB -D_GNU_SOURCE" \
+%configure \
 	--disable-desrpc --disable-shared \
 	--with-libcrypt --with-libpam --without-libcrack
-make
+%__make
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make install prefix=$RPM_BUILD_ROOT/usr \
-	exec_prefix=$RPM_BUILD_ROOT \
-	mandir=$RPM_BUILD_ROOT%_mandir
-chmod -R -s $RPM_BUILD_ROOT
+rm -rf %buildroot
+%makeinstall
+chmod -R -s %buildroot
 
-cd $RPM_BUILD_ROOT
-ln -s useradd usr/sbin/adduser
-ln -s vipw usr/sbin/vigr
-echo ".so man8/vipw.8" > $RPM_BUILD_ROOT%_mandir/man8/vigr.8
+# copy shadow.3 as it is in EXTRA_DIST and not installed by default
+install -p -m 644 $RPM_BUILD_DIR/shadow-%version/man/shadow.3 \
+	%buildroot%_mandir/man3/
 
-mkdir -p -m 700 etc/default
-install -m 600 $RPM_SOURCE_DIR/login.defs etc/login.defs
-install -m 600 $RPM_SOURCE_DIR/useradd.default etc/default/useradd
+# move symlinks to correct locations
+mv %buildroot%_bindir/vigr %buildroot%_sbindir/
 
-mkdir -p etc/pam.d
-pushd etc/pam.d
+ln -s useradd %buildroot%_sbindir/adduser
+
+# Fix man pages (XXX: should be moved to owl-man patch)
+echo ".so newgrp.1" > %buildroot%_mandir/man1/sg.1
+echo ".so pwconv.8" > %buildroot%_mandir/man8/grpconv.8
+echo ".so pwconv.8" > %buildroot%_mandir/man8/grpunconv.8
+echo ".so vipw.8" > %buildroot%_mandir/man8/vigr.8
+
+mkdir -p -m 700 %buildroot%_sysconfdir/default
+install -m 600 $RPM_SOURCE_DIR/login.defs %buildroot%_sysconfdir/
+install -m 600 $RPM_SOURCE_DIR/useradd.default \
+	%buildroot%_sysconfdir/default/useradd
+
+mkdir -p %buildroot%_sysconfdir/pam.d
+pushd %buildroot%_sysconfdir/pam.d
 install -m 600 $RPM_SOURCE_DIR/user-group-mod.pam user-group-mod
 ln -s user-group-mod groupadd
 ln -s user-group-mod groupdel
@@ -122,8 +128,8 @@ ln -s chpasswd-newusers chpasswd
 ln -s chpasswd-newusers newusers
 popd
 
-mkdir -p etc/control.d/facilities
-cd etc/control.d/facilities
+mkdir -p %buildroot%_sysconfdir/control.d/facilities
+cd %buildroot%_sysconfdir/control.d/facilities
 
 install -m 700 $RPM_SOURCE_DIR/chage.control chage
 install -m 700 $RPM_SOURCE_DIR/chfn.control chfn
@@ -137,24 +143,24 @@ if [ $1 -ge 2 ]; then
 fi
 
 %post
-grep -q ^shadow: /etc/group || groupadd -g 42 shadow
-if grep -q '^shadow:[^:]*:42:' /etc/group; then
-	chgrp -f shadow /etc/shadow && chmod 440 /etc/shadow || :
-	chgrp shadow /etc/login.defs && chmod 640 /etc/login.defs
-	chgrp shadow /etc/pam.d/chage-chfn-chsh && \
-		chmod 640 /etc/pam.d/chage-chfn-chsh
+grep -q ^shadow: %_sysconfdir/group || groupadd -g 42 shadow
+if grep -q '^shadow:[^:]*:42:' %_sysconfdir/group; then
+	chgrp -f shadow %_sysconfdir/shadow && chmod 440 %_sysconfdir/shadow || :
+	chgrp shadow %_sysconfdir/login.defs && chmod 640 %_sysconfdir/login.defs
+	chgrp shadow %_sysconfdir/pam.d/chage-chfn-chsh && \
+		chmod 640 %_sysconfdir/pam.d/chage-chfn-chsh
 fi
-grep -q ^auth: /etc/group || groupadd -g 164 auth
+grep -q ^auth: %_sysconfdir/group || groupadd -g 164 auth
 if [ $1 -ge 2 ]; then
 	/usr/sbin/control-restore chage chfn chsh gpasswd newgrp
 fi
 
 %files
 %defattr(-,root,root)
-%doc README NEWS ChangeLog doc/ANNOUNCE doc/LICENSE
-%dir /etc/default
-%attr(0644,root,root) %config(noreplace) /etc/login.defs
-%attr(0600,root,root) %config(noreplace) /etc/default/useradd
+%doc README NEWS ChangeLog doc/HOWTO
+%dir %_sysconfdir/default
+%attr(0644,root,root) %config(noreplace) %_sysconfdir/login.defs
+%attr(0600,root,root) %config(noreplace) %_sysconfdir/default/useradd
 %_sbindir/adduser
 %attr(0700,root,root) %_sbindir/user*
 %attr(0700,root,root) %_sbindir/group*
@@ -191,15 +197,54 @@ fi
 %_mandir/man8/*conv.8*
 %_mandir/man8/lastlog.8*
 %_mandir/man8/vi*.8*
-/usr/share/locale/*/*/shadow.mo
-%config(noreplace) /etc/pam.d/*
-/etc/control.d/facilities/*
+%_datadir/locale/*/*/shadow.mo
+%config(noreplace) %_sysconfdir/pam.d/*
+%_sysconfdir/control.d/facilities/*
+# excludes
+%exclude %_bindir/expiry
+%exclude %_bindir/faillog
+%exclude %_bindir/groups
+%exclude %_bindir/login
+%exclude %_bindir/passwd
+%exclude %_bindir/su
+%exclude %_libdir
+%exclude %_sbindir/logoutd
+%exclude %_sbindir/mkpasswd
+%exclude %_mandir/man1/expiry*
+%exclude %_mandir/man1/groups*
+%exclude %_mandir/man1/id*
+%exclude %_mandir/man1/login*
+%exclude %_mandir/man1/passwd*
+%exclude %_mandir/man1/su*
+%exclude %_mandir/man5/faillog*
+%exclude %_mandir/man5/limits*
+%exclude %_mandir/man5/login.access*
+%exclude %_mandir/man5/passwd*
+%exclude %_mandir/man5/porttime*
+%exclude %_mandir/man5/suauth*
+%exclude %_mandir/man8/faillog*
+%exclude %_mandir/man8/logoutd*
+%exclude %_mandir/man8/mkpasswd*
 
 %changelog
-* Mon May 31 2004 Solar Designer <solar@owl.openwall.com> 2:4.0.0-owl16
-- Properly check the return value from pam_chauthtok() in
+* Fri Jun 11 2004 Michail Litvak <mci@owl.openwall.com> 4.0.4.1-owl1
+- Originally by solar@ in Owl-current:
+Properly check the return value from pam_chauthtok() in
 libmisc/pwdcheck.c: passwd_check() that is used by chfn and chsh commands.
 Thanks to Steve Grubb and Martin Schulze.
+
+* Thu Mar 19 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.0.4.1-owl0.3
+- Removed gettext patch, we are using autopoint now
+- Changed patch number for userdel-path_prefix
+
+* Thu Mar 18 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.0.4.1-owl0.2
+- Fixed a bug in path_prefix() in userdel
+- Fixed a typo in tcb patch
+
+* Fri Feb 27 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.0.4.1-owl0.1
+- Updated to the new version
+- All patches were regenerated
+- Spec file was adopted for RPM4
 
 * Thu Feb 12 2004 Michail Litvak <mci@owl.openwall.com> 2:4.0.0-owl15
 - Use RPM macros instead of explicit paths.
