@@ -1,9 +1,9 @@
-# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.10 2003/10/30 09:00:26 solar Exp $
+# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.11 2004/03/12 18:16:54 solar Exp $
 
 Summary: A basic system library for accessing the termcap database.
 Name: libtermcap
 Version: 2.0.8
-Release: owl5
+Release: owl6
 License: LGPL
 Group: System Environment/Libraries
 Source: ftp://sunsite.unc.edu/pub/Linux/GCC/termcap-2.0.8.tar.gz
@@ -15,6 +15,7 @@ Patch4: termcap-2.0.8-rh-fix-tc.diff
 Patch5: termcap-2.0.8-rh-glibc-2.1.diff
 Patch6: termcap-2.0.8-rh-ignore-p.diff
 Patch7: termcap-2.0.8-rh-xref.diff
+Patch8: termcap-2.0.8-rh-glibc-2.2.diff
 PreReq: /sbin/ldconfig
 Requires: /etc/termcap
 BuildRequires: texinfo
@@ -48,9 +49,10 @@ developing programs which will access the termcap database.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 %build
-make CFLAGS="$RPM_OPT_FLAGS -I."
+%__make CFLAGS="$RPM_OPT_FLAGS -I."
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -58,7 +60,7 @@ mkdir -p $RPM_BUILD_ROOT/{usr/lib,usr/include,etc,lib}
 mkdir -p $RPM_BUILD_ROOT%_infodir
 
 export PATH=/sbin:$PATH
-make prefix=$RPM_BUILD_ROOT/usr install
+%makeinstall
 
 install -m 644 termcap.info* $RPM_BUILD_ROOT%_infodir/
 
@@ -93,6 +95,9 @@ fi
 /usr/include/termcap.h
 
 %changelog
+* Fri Feb 27 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.0.8-owl6
+- Patched to compile properly under glibc 2.3.2
+
 * Sat Oct 25 2003 Solar Designer <solar@owl.openwall.com> 2.0.8-owl5
 - Make the /usr/lib/libtermcap.so symlink relative.
 

@@ -1,0 +1,12 @@
+diff -ur termcap-2.0.8.orig/tparam.c termcap-2.0.8/tparam.c
+--- termcap-2.0.8.orig/tparam.c      Sun Jun 18 18:44:04 2000
++++ termcap-2.0.8/tparam.c      Sun Jun 18 18:44:12 2000
+@@ -24,7 +24,7 @@
+ #undef STDC_HEADERS
+ #define STDC_HEADERS
+ #define HAVE_UNISTD_H
+-#if defined(HAVE_STRING_H) || defined(STDC_HEADERS)
++#if defined(HAVE_STRING_H) || defined(STDC_HEADERS) && 0
+ #define bcopy(s, d, n) memcpy ((d), (s), (n))
+ #endif
+ #endif
