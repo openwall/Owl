@@ -15,6 +15,15 @@ for the packages themselves.
 2002/04/02	Package: vsftpd
 Updated to 1.0.2pre3, made use of the new option to hide numeric ID's.
 
+2002/04/01 -
+2002/04/02	Packages: iproute2, owl-cdrom, owl-startup,
+		pam_mktemp, pam_userpass, traceroute
+Applied modifications to better support Alpha in the distribution as a
+whole.  Marked owl-cdrom x86-specific because at this stage it really
+is.  /proc is now mounted early as needed for hwclock(8) and glibc's
+I/O port access routines.  traceroute(8) should no longer do unaligned
+accesses on 64-bit architectures.
+
 2002/03/30	Package: stmpclean
 New package: a safe temporary directory cleaner.  Modifications have
 been applied for extra safety and to provide tmpwatch emulation.
@@ -645,4 +654,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.81 2002/04/02 10:31:12 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.82 2002/04/02 11:45:42 solar Exp $
