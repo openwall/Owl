@@ -12,6 +12,11 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.0 and Owl-current.
 
+2003/04/17	Packages: tcb, openssh, popa3d, screen, shadow-utils,
+		SimplePAMApps, vsftpd
+pam_tcb now implements proper fake salt creation for non-existent or
+password-less accounts to reduce timing leaks.
+
 2003/04/17	Packages: console-tools, kbd, man-pages, owl-setup
 console-tools has been replaced with kbd.
 
@@ -281,4 +286,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.45 2003/04/17 13:04:20 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.46 2003/04/17 14:18:51 solar Exp $
