@@ -452,7 +452,7 @@ static int mailbox_write(char *buffer)
 		if (!block) break;
 		if (block < 0) return 1;
 
-		if (write(mailbox_fd, buffer, block) != block) return 1;
+		if (write_loop(mailbox_fd, buffer, block) != block) return 1;
 
 		if (trunc) {
 			if ((new += block) < block) trunc = 0;
