@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.41 2004/01/18 11:36:14 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.42 2004/01/18 13:26:11 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -151,6 +151,7 @@ fi
 %changelog
 * Sun Jan 18 2004 Solar Designer <solar@owl.openwall.com> 0.22-owl1
 - Added /sbin/service script for Red Hat Linux compatibility.
+- Set net.ipv4.tcp_timestamps = 0.
 - Use _mandir RPM macro.
 
 * Sun Apr 27 2003 Solar Designer <solar@owl.openwall.com> 0.21-owl1
