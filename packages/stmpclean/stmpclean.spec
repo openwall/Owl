@@ -1,14 +1,15 @@
-# $Id: Owl/packages/stmpclean/stmpclean.spec,v 1.4 2002/04/24 23:49:16 solar Exp $
+# $Id: Owl/packages/stmpclean/stmpclean.spec,v 1.5 2003/06/11 22:23:09 solar Exp $
 
 Summary: A safe temporary directory cleaner.
 Name: stmpclean
-Version: 0.1
-Release: owl3
+Version: 0.3
+Release: owl1
 License: BSD
 Group: System Environment/Base
-Source0: ftp://ftp.mccme.ru/users/shalunov/stmpclean-%{version}.tar.gz
+URL: http://www.internet2.edu/~shalunov/stmpclean/
+Source0: http://www.internet2.edu/~shalunov/stmpclean/%{name}-%{version}.tar.gz
 Source1: stmpclean.cron
-Patch0: stmpclean-0.1-owl-fixes.diff
+Patch0: stmpclean-0.3-owl-fixes.diff
 PreReq: /etc/cron.daily
 Provides: tmpwatch
 Obsoletes: tmpwatch
@@ -38,13 +39,16 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%doc README
+%doc README FAQ
 %{_sbindir}/*
 %{_mandir}/*
 /etc/cron.daily/stmpclean
 
 %changelog
-* Thu Apr 25 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Jun 12 2003 Solar Designer <solar@owl.openwall.com> 0.3-owl1
+- Updated to 0.3 which will refuse to process relative pathnames.
+
+* Thu Apr 25 2002 Solar Designer <solar@owl.openwall.com> 0.1-owl3
 - Dereference symlinks for directories specified on the command line.
 - Install the binary mode 700 as it's not usable by regular users.
 

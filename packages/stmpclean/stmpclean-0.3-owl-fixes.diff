@@ -1,9 +1,9 @@
-diff -urN stmpclean-0.1.orig/Makefile stmpclean-0.1/Makefile
---- stmpclean-0.1.orig/Makefile	Wed Aug  4 22:30:02 1999
-+++ stmpclean-0.1/Makefile	Sun Mar 31 07:57:39 2002
+diff -urpN stmpclean-0.3.orig/Makefile stmpclean-0.3/Makefile
+--- stmpclean-0.3.orig/Makefile	Fri Mar 21 21:58:00 2003
++++ stmpclean-0.3/Makefile	Wed Jun 11 20:32:26 2003
 @@ -2,24 +2,29 @@
  # Written by Stanislav Shalunov.
- # $Id: Makefile,v 1.4 1999/08/04 18:30:02 shalunov Exp $
+ # $Id: Makefile,v 1.6 2003/03/21 21:58:00 shalunov Exp $
  
 -PREFIX=/usr/local
 -BINDIR=$(PREFIX)/sbin
@@ -24,8 +24,8 @@ diff -urN stmpclean-0.1.orig/Makefile stmpclean-0.1/Makefile
 -install:	all
 -	if [ ! -d $(BINDIR) ] ; then mkdir -p -m 0755 $(BINDIR); fi
 -	if [ ! -d $(MANDIR) ] ; then mkdir -p -m 0755 $(MANDIR); fi
--	install -c -o root -g wheel -m 0555 stmpclean $(BINDIR)
--	install -c -o root -g wheel -m 0444 stmpclean.8 $(MANDIR)
+-	install -c -o 0 -g 0 -m 0555 stmpclean $(BINDIR)/
+-	install -c -o 0 -g 0 -m 0444 stmpclean.8 $(MANDIR)/
 +install:	stmpclean
 +	mkdir -p -m 755 $(DESTDIR)$(SBINDIR) $(DESTDIR)$(MANDIR)/man8
 +	install -m 700 stmpclean $(DESTDIR)$(SBINDIR)/
@@ -36,28 +36,43 @@ diff -urN stmpclean-0.1.orig/Makefile stmpclean-0.1/Makefile
 +	$(CC) $(CFLAGS) -c stmpclean.c
  
  stmpclean:	stmpclean.o
--	$(CC) -o stmpclean stmpclean.o
+-	$(CC) -o stmpclean stmpclean.o && strip stmpclean
 +	$(LD) $(LDFLAGS) -o stmpclean stmpclean.o
  
  stmpclean.0:	stmpclean.8
  	nroff -mandoc stmpclean.8 > stmpclean.0
-diff -urN stmpclean-0.1.orig/stmpclean.8 stmpclean-0.1/stmpclean.8
---- stmpclean-0.1.orig/stmpclean.8	Wed Aug  4 21:12:34 1999
-+++ stmpclean-0.1/stmpclean.8	Sun Mar 31 07:46:15 2002
-@@ -12,7 +12,7 @@
+diff -urpN stmpclean-0.3.orig/stmpclean.8 stmpclean-0.3/stmpclean.8
+--- stmpclean-0.3.orig/stmpclean.8	Fri Mar 21 21:44:09 2003
++++ stmpclean-0.3/stmpclean.8	Wed Jun 11 21:40:54 2003
+@@ -4,7 +4,9 @@
  .\"
- .\"	$Id: stmpclean.8,v 1.1 1999/08/04 17:12:34 shalunov Exp $
+ .\"	$Id: stmpclean.8,v 1.6 2003/03/21 21:44:09 shalunov Exp $
  .\"
 -.Dd August 1999
-+.Dd March 2002
++.\" Last updated on 2003/06/11 by Solar Designer <solar@owl.openwall.com>
++.\"
++.Dd June 2003
  .Dt STMPCLEAN 8
  .Os
  .Sh NAME
-@@ -80,12 +80,13 @@
- as
- .Bl -tag -width example
- .It Li "stmpclean /tmp /var/tmp"
-+.El
+@@ -85,21 +87,21 @@ as
+ .Pp
+ In FreeBSD
+ .Nm
+-invokation should be placed into the file
++invocation should be placed into the file
+ .Pa /etc/periodic/daily/110.clean-tmps .
+ In other versions of BSD it should go into the
+ .Pa /etc/daily
+ script.
+-In Linux, check if you have
+-.Pa /etc/periodic ,
+-and if not, you can just run it from cron; usually you'd have to edit
+-.Pa /etc/crontab .
++On LSB-compliant Linux distributions, the invocation of
++.Nm
++may be placed in a script under
++.Pa /etc/cron.daily .
  .Sh SEE ALSO
  .Xr cron 8
  .Sh BUGS
@@ -68,28 +83,30 @@ diff -urN stmpclean-0.1.orig/stmpclean.8 stmpclean-0.1/stmpclean.8
  changes and it looks new to
  .Nm
  when it examines it later (if the directory became empty).  Thus,
-diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
---- stmpclean-0.1.orig/stmpclean.c	Wed Aug  4 19:48:39 1999
-+++ stmpclean-0.1/stmpclean.c	Thu Apr 25 03:35:20 2002
-@@ -1,7 +1,7 @@
- /* stmpclean.c -- remove old files from a world-writable directory.
--   
-+
-    Copyright (C)  1999, Stanislav Shalunov.
--   
-+
-    Redistribution and use in source and binary forms, standalone or as
-    a part of a larger product, are permitted provided that the above
-    copyright notice and this paragraph are duplicated in all such
-@@ -17,6 +17,7 @@
-         "$Id: stmpclean.c,v 1.3 1999/08/04 15:48:39 shalunov Exp $";
+diff -urpN stmpclean-0.3.orig/stmpclean.c stmpclean-0.3/stmpclean.c
+--- stmpclean-0.3.orig/stmpclean.c	Tue Jun 10 19:07:45 2003
++++ stmpclean-0.3/stmpclean.c	Wed Jun 11 21:36:53 2003
+@@ -1,9 +1,9 @@
+ /*
+  * stmpclean.c -- remove old files from a world-writable directory.
+  * Written by Stanislav Shalunov, http://www.internet2.edu/~shalunov/
+- * 
++ *
+  * Copyright (C)  1999, Stanislav Shalunov.
+- * 
++ *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+  * are met:
+@@ -42,6 +42,7 @@ static const char rcsid[] =
+ "$Id: stmpclean.c,v 1.13 2003/06/10 19:07:45 shalunov Exp $";
  #endif
  
 +#define _GNU_SOURCE
  #include <sys/types.h>
  #include <sys/time.h>
  #include <sys/resource.h>
-@@ -31,7 +32,16 @@
+@@ -56,7 +57,16 @@ static const char rcsid[] =
  #include <fcntl.h>
  #include <dirent.h>
  #include <time.h>
@@ -104,9 +121,9 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
 +#define O_NOFOLLOW 0
 +#endif
  
- /* How deep to descend into directories?  Won't go any deeper than
-    MAX_DEPTH levels.  */
-@@ -42,20 +52,27 @@
+ /*
+  * How deep to descend into directories?  Won't go any deeper than MAX_DEPTH
+@@ -69,13 +79,15 @@ static const char rcsid[] =
  #define SECONDS_IN_A_DAY    (SECONDS_IN_AN_HOUR * 24)
  #define SECONDS_IN_A_WEEK   (SECONDS_IN_A_DAY * 7)
  
@@ -115,7 +132,7 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  		strcpy(cwd, "/FULL/PATH/TOO/LONG");}
  
 +/* Are we emulating tmpwatch? */
-+static int	am_tmpwatch;
++static int      am_tmpwatch;
  /* Time at the start of the program, in seconds since beginning of epoch. */
  static time_t   now;
 -/* Minimum age (mtime) of a file or empty directory to be deleted. */
@@ -124,6 +141,8 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
 +static int      minage;
  /* Current working directory is used for logging purposes only. */
  static char     cwd[MAXPATHLEN];
+ /* Flag: be verbose? */
+@@ -83,8 +95,13 @@ static int      verbose = 0;
  
  /* Print usage message, exit with a failure. */
  void
@@ -138,21 +157,21 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  	fprintf(stderr,
  		"Usage: stmpclean [-t <timespec>] dir1 [dir2 [dir3]...]]\n\n"
  		"Where time specification <timespec> is a string like 1w\n"
-@@ -66,9 +83,10 @@
- 	exit(1);
+@@ -96,9 +113,10 @@ usage()
  }
  
--/* Parse time specification (a la sendmail queue time), return its
--   value in seconds, or -1 if the spec is invalid.
--  
-+/* Parse time specification (a la sendmail queue time or number of hours
-+   when doing tmpwatch emulation), return its value in seconds, or -1 if
-+   the spec is invalid.
-+
-    Side effects: Modifies contents of timespec.  */
+ /*
+- * Parse time specification (a la sendmail queue time), return its value in
+- * seconds, or -1 if the spec is invalid.
+- * 
++ * Parse time specification (a la sendmail queue time or number of hours
++ * when doing tmpwatch emulation), return its value in seconds, or -1 if
++ * the spec is invalid.
++ *
+  * Side effects: Modifies contents of timespec.
+  */
  int
- parse_time(timespec)
-@@ -76,14 +94,16 @@
+@@ -107,14 +125,16 @@ parse_time(timespec)
  {
  	char           *p, *q;
  	char            symbol;
@@ -172,16 +191,16 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  		symbol = *q;
  		*q = 0;
  		num = atoi(p);
-@@ -92,6 +112,8 @@
- 		   again anyway.  I didn't want to have strdup()s here
- 		   all around, did you?  */
+@@ -124,6 +144,8 @@ parse_time(timespec)
+ 		 * didn't want to have strdup()s here all around, did you?
+ 		 */
  		*q = symbol;
 +		if (am_tmpwatch && symbol)
 +			return -1;
  		switch (symbol) {
  		case 'w':
  			multiple = SECONDS_IN_A_WEEK;
-@@ -99,6 +121,11 @@
+@@ -131,6 +153,11 @@ parse_time(timespec)
  		case 'd':
  			multiple = SECONDS_IN_A_DAY;
  			break;
@@ -193,7 +212,7 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  		case 'h':
  			multiple = SECONDS_IN_AN_HOUR;
  			break;
-@@ -111,8 +138,11 @@
+@@ -143,8 +170,11 @@ parse_time(timespec)
  		default:
  			return -1;
  		}
@@ -207,26 +226,35 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  			return -1;
  		p = q + 1;
  	}
-@@ -125,7 +155,12 @@
+@@ -157,14 +187,18 @@ setecreds(uid, gid)
  	uid_t           uid;
  	gid_t           gid;
  {
--	if ((setegid(gid) == -1) || (seteuid(uid) == -1)) {
 +	gid_t groups[2];
 +
 +	groups[0] = groups[1] = gid;
-+	if ((uid && setgroups(1, groups))
-+	    || setegid(gid) || seteuid(uid)
-+	    || (!uid && setgroups(1, groups))) {
- 		syslog(LOG_ERR, "cannot set EUID/EGID to %d/%d, exiting",
- 		       uid, gid);
- 		exit(1);
-@@ -160,11 +195,11 @@
+ 	if (geteuid()) {
+-		if ((seteuid(uid) == -1) || (setegid(gid) == -1)) {
++		if (seteuid(uid) || setegid(gid) ||
++		    (uid == 0 && setgroups(1, groups))) {
+ 			syslog(LOG_ERR, "cannot set EUID/EGID to %d/%d, exiting",
+ 			       uid, gid);
+ 			exit(1);
+ 		}
+ 	} else {
+-		if ((setegid(gid) == -1) || (seteuid(uid) == -1)) {
++		if (setgroups(1, groups) || setegid(gid) || seteuid(uid)) {
+ 			syslog(LOG_ERR, "cannot set EUID/EGID to %d/%d, exiting",
+ 			       uid, gid);
+ 			exit(1);
+@@ -201,13 +235,13 @@ isemptydir(dir)
  }
  
- /* Recursively clean directory DIR, descending no deeper than
--   MAX_DEPTH.  Exit with a failure if a race condition is detected.  */
-+   DEPTH.  Exit with a failure if a race condition is detected.  */
+ /*
+- * Recursively clean directory DIR, descending no deeper than MAX_DEPTH.
++ * Recursively clean directory DIR, descending no deeper than DEPTH.
+  * Exit with a failure if a race condition is detected.
+  */
  void
 -clean_dir(dir, depth)
 +clean_dir(dir, depth, specified)
@@ -236,7 +264,7 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  {
  	struct stat     st, st_after;
  	int             dir_fd, dot_dot_fd;
-@@ -181,7 +216,9 @@
+@@ -224,7 +258,9 @@ clean_dir(dir, depth)
  		       "reached maximum depth (%d)", dir, cwd, MAX_DEPTH);
  		return;
  	}
@@ -247,7 +275,7 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  		GETCWD;
  		syslog(LOG_ERR, "RACE?: lstat(\"%s\") in %s failed: %m, "
  		       "exiting", dir, cwd);
-@@ -193,8 +230,11 @@
+@@ -236,8 +272,11 @@ clean_dir(dir, depth)
  		       dir, cwd);
  		exit(1);
  	}
@@ -260,17 +288,17 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  		GETCWD;
  		syslog(LOG_ERR,
  		       "RACE?: cannot open(\"%s\"): %m (lstat was OK), "
-@@ -219,7 +259,8 @@
- 	}
- 	/* We'll chdir up later once done with recursive descend.
- 	   Hence the name. */
+@@ -264,7 +303,8 @@ clean_dir(dir, depth)
+ 	 * We'll chdir up later once done with recursive descend. Hence the
+ 	 * name.
+ 	 */
 -	dot_dot_fd = open(".", O_RDONLY);
 +	dot_dot_fd = open(".",
 +		O_RDONLY | O_NONBLOCK | O_DIRECTORY | O_NOFOLLOW);
  	if (dot_dot_fd == -1) {
  		GETCWD;
  		syslog(LOG_ERR, "open(\".\") in %s: %m, exiting", cwd);
-@@ -258,11 +299,18 @@
+@@ -303,11 +343,18 @@ clean_dir(dir, depth)
  			/* Looking at a directory. */
  			if (isemptydir(dp->d_name)) {
  				/* Looking at an empty directory. */
@@ -291,7 +319,7 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  						GETCWD;
  						syslog(LOG_ERR, "RACE?: rmdir"
  						       "(\"%s\") in %s: %m, "
-@@ -273,18 +321,23 @@
+@@ -323,16 +370,16 @@ clean_dir(dir, depth)
  					setecreds(0, 0);
  				}
  			} else {
@@ -300,14 +328,20 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  				 * Looking at a non-empty directory. Clean it
  				 * recursively (call ourselves).
  				 */
--				clean_dir(dp->d_name, depth-1);
-+				clean_dir(dp->d_name, depth-1, 0);
+-				clean_dir(dp->d_name, depth - 1);
++				clean_dir(dp->d_name, depth - 1, 0);
  			}
  		} else {
  			/* Looking at a non-directory. */
--			if (now - st.st_mtime > minage && st.st_uid) {
-+			if (now - st.st_atime > minage && st.st_uid) {
- 				/* Old non-root owned non-directory. */
+-			if ((now - st.st_mtime > minage)
+-			    && (now - st.st_ctime > minage)
++			if ((now - st.st_atime > minage)
+ 			    && st.st_uid
+ 			    && (st.st_nlink == 1)
+ 			    && (((st.st_mode & S_IFMT) == S_IFREG)
+@@ -342,7 +389,11 @@ clean_dir(dir, depth)
+ 				 * symlink.
+ 				 */
  				setecreds(st.st_uid, st.st_gid);
 -				if (unlink(dp->d_name) == -1) {
 +				if (unlink(dp->d_name) == -1
@@ -318,13 +352,13 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  					GETCWD;
  					syslog(LOG_ERR, "RACE?: unlink(\"%s\")"
  					       "in %s: %m, exiting",
-@@ -315,15 +368,27 @@
+@@ -377,15 +428,27 @@ main(argc, argv)
  	/* By default, delete files older than three days. */
  	extern char    *optarg;
  	extern int      optind;
-+	char	       *me;
++	char           *me;
  	int             c, i;
- 	struct rlimit	rlp;
+ 	struct rlimit   rlp;
  
  	if (argc <= 0)
  		usage();
@@ -337,8 +371,8 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
 +	am_tmpwatch = !strcmp(basename(me), "tmpwatch");
  	openlog("stmpclean", LOG_PID | LOG_CONS | LOG_PERROR, LOG_DAEMON);
  	minage = SECONDS_IN_A_DAY * 3;
--	while ((c = getopt(argc, argv, "t:")) != -1)
-+	while ((c = getopt(argc, argv, am_tmpwatch ? "uaf" : "t:")) != -1)
+-	while ((c = getopt(argc, argv, "vt:")) != -1)
++	while ((c = getopt(argc, argv, am_tmpwatch ? "uafv" : "vt:")) != -1)
  		switch (c) {
 +		case 'u':
 +		case 'a':
@@ -347,7 +381,7 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  		case 't':
  			minage = parse_time(optarg);
  			if (minage == -1)
-@@ -334,8 +399,14 @@
+@@ -399,8 +462,14 @@ main(argc, argv)
  		}
  	argc -= optind;
  	argv += optind;
@@ -360,20 +394,20 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
 +		if (minage == -1)
 +			usage();
 +	}
- 	/* For logging niceties in case one of the directories on the
- 	   command line is bad.  */
- 	chdir("/");
-@@ -348,7 +419,7 @@
- 		exit(1);
- 	}
+ 	/*
+ 	 * For logging niceties in case one of the directories on the command
+ 	 * line is bad.
+@@ -422,7 +491,7 @@ main(argc, argv)
+ 			exit(1);
+ 		}
  	for (i = 0; i < argc; i++)
 -		clean_dir(argv[i], MAX_DEPTH);
 +		clean_dir(argv[i], MAX_DEPTH, 1);
  	exit(0);
  	/* NOTREACHED */
  }
-diff -urN stmpclean-0.1.orig/tmpwatch.8 stmpclean-0.1/tmpwatch.8
---- stmpclean-0.1.orig/tmpwatch.8	Thu Jan  1 03:00:00 1970
-+++ stmpclean-0.1/tmpwatch.8	Sat Mar 30 03:24:51 2002
+diff -urpN stmpclean-0.3.orig/tmpwatch.8 stmpclean-0.3/tmpwatch.8
+--- stmpclean-0.3.orig/tmpwatch.8	Thu Jan  1 00:00:00 1970
++++ stmpclean-0.3/tmpwatch.8	Sat Mar 30 00:24:51 2002
 @@ -0,0 +1 @@
 +.so man8/stmpclean.8
