@@ -1,6 +1,6 @@
-diff -urN screen-3.9.9.orig/Makefile.in screen-3.9.9/Makefile.in
---- screen-3.9.9.orig/Makefile.in	Fri May 25 18:50:54 2001
-+++ screen-3.9.9/Makefile.in	Sun Oct  7 13:28:47 2001
+diff -urN screen-3.9.10.orig/Makefile.in screen-3.9.10/Makefile.in
+--- screen-3.9.10.orig/Makefile.in	Tue Sep  4 18:26:21 2001
++++ screen-3.9.10/Makefile.in	Sun May 19 06:03:42 2002
 @@ -52,12 +52,12 @@
  
  CFILES=	screen.c ansi.c fileio.c mark.c misc.c resize.c socket.c \
@@ -16,9 +16,9 @@ diff -urN screen-3.9.9.orig/Makefile.in screen-3.9.9/Makefile.in
  	kmapdef.o acls.o braille.o braille_tsi.o logfile.o layer.o \
  	sched.o teln.o nethack.o utf8.o
  
-diff -urN screen-3.9.9.orig/_pam_userpass.h screen-3.9.9/_pam_userpass.h
---- screen-3.9.9.orig/_pam_userpass.h	Thu Jan  1 03:00:00 1970
-+++ screen-3.9.9/_pam_userpass.h	Sun Oct  7 13:28:47 2001
+diff -urN screen-3.9.10.orig/_pam_userpass.h screen-3.9.10/_pam_userpass.h
+--- screen-3.9.10.orig/_pam_userpass.h	Thu Jan  1 03:00:00 1970
++++ screen-3.9.10/_pam_userpass.h	Sun May 19 06:03:42 2002
 @@ -0,0 +1,12 @@
 +#ifndef __PAM_USERPASS_H
 +#define __PAM_USERPASS_H
@@ -32,9 +32,9 @@ diff -urN screen-3.9.9.orig/_pam_userpass.h screen-3.9.9/_pam_userpass.h
 +#define USERPASS_USER_FIXED		3
 +
 +#endif
-diff -urN screen-3.9.9.orig/appl_userpass.c screen-3.9.9/appl_userpass.c
---- screen-3.9.9.orig/appl_userpass.c	Thu Jan  1 03:00:00 1970
-+++ screen-3.9.9/appl_userpass.c	Sun Oct  7 13:23:48 2001
+diff -urN screen-3.9.10.orig/appl_userpass.c screen-3.9.10/appl_userpass.c
+--- screen-3.9.10.orig/appl_userpass.c	Thu Jan  1 03:00:00 1970
++++ screen-3.9.10/appl_userpass.c	Sun May 19 06:03:42 2002
 @@ -0,0 +1,59 @@
 +#include <string.h>
 +#include <stdlib.h>
@@ -95,9 +95,9 @@ diff -urN screen-3.9.9.orig/appl_userpass.c screen-3.9.9/appl_userpass.c
 +
 +	return PAM_SUCCESS;
 +}
-diff -urN screen-3.9.9.orig/attacher.c screen-3.9.9/attacher.c
---- screen-3.9.9.orig/attacher.c	Sat Apr 28 17:26:42 2001
-+++ screen-3.9.9/attacher.c	Sun Oct  7 13:28:47 2001
+diff -urN screen-3.9.10.orig/attacher.c screen-3.9.10/attacher.c
+--- screen-3.9.10.orig/attacher.c	Sat Apr 28 17:26:42 2001
++++ screen-3.9.10/attacher.c	Sun May 19 06:59:28 2002
 @@ -33,6 +33,9 @@
  #include "screen.h"
  #include "extern.h"
@@ -108,7 +108,16 @@ diff -urN screen-3.9.9.orig/attacher.c screen-3.9.9/attacher.c
  #include <pwd.h>
  
  static sigret_t AttacherSigInt __P(SIGPROTOARG);
-@@ -720,40 +723,20 @@
+@@ -52,7 +55,7 @@
+ static sigret_t AttachSigCont __P(SIGPROTOARG);
+ #endif
+ 
+-extern int real_uid, real_gid, eff_uid, eff_gid;
++extern int real_uid, real_gid, eff_uid, eff_gid, init_eff_gid;
+ extern char *SockName, *SockMatch, SockPath[];
+ extern struct passwd *ppp;
+ extern char *attach_tty, *attach_term, *LoginName, *preselect;
+@@ -720,40 +723,19 @@
      }
  }				/* LockTerminal */
  
@@ -117,7 +126,6 @@ diff -urN screen-3.9.9.orig/attacher.c screen-3.9.9/attacher.c
 +    &pam_userpass_conv,
 +    &userpass
 +};
-+
 +
  /* -- original copyright by Luigi Cannelloni 1985 (luigi@faui70.UUCP) -- */
  static void
@@ -158,7 +166,7 @@ diff -urN screen-3.9.9.orig/attacher.c screen-3.9.9/attacher.c
  
    debug("screen_builtin_lck looking in gcos field\n");
    strncpy(fullname, ppp->pw_gecos, sizeof(fullname) - 9);
-@@ -782,16 +765,28 @@
+@@ -782,16 +764,32 @@
            AttacherFinit(SIGARG);
            /* NOTREACHED */
          }
@@ -180,11 +188,15 @@ diff -urN screen-3.9.9.orig/attacher.c screen-3.9.9/attacher.c
 +
 +      if (status == PAM_SUCCESS)
 +	{
++	  /* Let the PAM modules make use of our SGID privileges. */
++	  xsetegid(init_eff_gid);
 +	  if ((status = pam_authenticate(pamh, 0)) != PAM_SUCCESS)
 +            {
++	       xsetegid(real_gid);
 +	       pam_end(pamh, status);
 +	       continue;
 +	    }
++	  xsetegid(real_gid);
 +
 +	  status = pam_end(pamh, PAM_SUCCESS);
 +	  if (status == PAM_SUCCESS)
@@ -197,21 +209,21 @@ diff -urN screen-3.9.9.orig/attacher.c screen-3.9.9/attacher.c
        debug("screen_builtin_lck: NO!!!!!\n");
      }
    debug("password ok.\n");
-diff -urN screen-3.9.9.orig/configure.in screen-3.9.9/configure.in
---- screen-3.9.9.orig/configure.in	Thu May 17 21:00:19 2001
-+++ screen-3.9.9/configure.in	Sun Oct  7 13:28:47 2001
+diff -urN screen-3.9.10.orig/configure.in screen-3.9.10/configure.in
+--- screen-3.9.10.orig/configure.in	Thu May 17 21:00:19 2001
++++ screen-3.9.10/configure.in	Sun May 19 06:06:26 2002
 @@ -1080,6 +1080,8 @@
  )
  fi
  
-+AC_CHECK_LIB(pam, pam_start, LIBS="$LIBS -lpam -ldl",AC_MSG_ERROR(PAM required!))
++AC_CHECK_LIB(pam, pam_start, LIBS="$LIBS -lpam -ldl", AC_MSG_ERROR(PAM required!))
 +
  dnl AC_CHECK_HEADER(shadow.h, AC_DEFINE(SHADOWPW))
  AC_CHECKING(getspnam)
  AC_TRY_LINK([#include <shadow.h>], [getspnam("x");],AC_DEFINE(SHADOWPW))
-diff -urN screen-3.9.9.orig/pam_userpass.h screen-3.9.9/pam_userpass.h
---- screen-3.9.9.orig/pam_userpass.h	Thu Jan  1 03:00:00 1970
-+++ screen-3.9.9/pam_userpass.h	Sun Oct  7 13:28:47 2001
+diff -urN screen-3.9.10.orig/pam_userpass.h screen-3.9.10/pam_userpass.h
+--- screen-3.9.10.orig/pam_userpass.h	Thu Jan  1 03:00:00 1970
++++ screen-3.9.10/pam_userpass.h	Tue Apr  2 00:11:26 2002
 @@ -0,0 +1,14 @@
 +#ifndef _PAM_USERPASS_H
 +#define _PAM_USERPASS_H
@@ -219,11 +231,32 @@ diff -urN screen-3.9.9.orig/pam_userpass.h screen-3.9.9/pam_userpass.h
 +#include <security/pam_appl.h>
 +
 +typedef struct {
-+	char *user;
-+	char *pass;
++	const char *user;
++	const char *pass;
 +} pam_userpass_t;
 +
 +extern int pam_userpass_conv(int num_msg, const struct pam_message **msg,
 +	struct pam_response **resp, void *appdata_ptr);
 +
 +#endif
+diff -urN screen-3.9.10.orig/screen.c screen-3.9.10/screen.c
+--- screen-3.9.10.orig/screen.c	Tue Sep  4 17:14:51 2001
++++ screen-3.9.10/screen.c	Sun May 19 06:57:53 2002
+@@ -203,7 +203,7 @@
+ 
+ char HostName[MAXSTR];
+ int MasterPid;
+-int real_uid, real_gid, eff_uid, eff_gid;
++int real_uid, real_gid, eff_uid, eff_gid, init_eff_gid;
+ int default_startup;
+ int ZombieKey_destroy, ZombieKey_resurrect;
+ char *preselect = NULL;		/* only used in Attach() */
+@@ -729,7 +729,7 @@
+   real_uid = getuid();
+   real_gid = getgid();
+   eff_uid = geteuid();
+-  eff_gid = getegid();
++  init_eff_gid = eff_gid = getegid();
+   if (eff_uid != real_uid)
+     {		
+       /* if running with s-bit, we must install a special signal

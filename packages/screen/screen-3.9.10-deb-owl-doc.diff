@@ -1,5 +1,6 @@
---- screen-3.9.9/doc/screen.1.orig	Fri May 25 17:39:19 2001
-+++ screen-3.9.9/doc/screen.1	Tue Jun 12 17:13:25 2001
+diff -ur screen-3.9.10.orig/doc/screen.1 screen-3.9.10/doc/screen.1
+--- screen-3.9.10.orig/doc/screen.1	Fri May 25 18:39:19 2001
++++ screen-3.9.10/doc/screen.1	Sun May 19 07:16:54 2002
 @@ -101,7 +101,7 @@
  The above example would start the emacs editor (editing prog.c) and switch
  to its window.
@@ -110,8 +111,9 @@
  .I screen
  is killed with SIGKILL.
  This will cause some programs (like "w" or "rwho")
---- screen-3.9.9/doc/screen.texinfo.orig	Fri May 25 17:40:02 2001
-+++ screen-3.9.9/doc/screen.texinfo	Tue Jun 12 17:21:31 2001
+diff -ur screen-3.9.10.orig/doc/screen.texinfo screen-3.9.10/doc/screen.texinfo
+--- screen-3.9.10.orig/doc/screen.texinfo	Fri May 25 18:40:02 2001
++++ screen-3.9.10/doc/screen.texinfo	Sun May 19 07:16:54 2002
 @@ -438,7 +438,7 @@
  @cindex screenrc
  When @code{screen} is invoked, it executes initialization commands from

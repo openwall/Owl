@@ -1,5 +1,6 @@
---- screen-3.9.9/doc/screen.1.orig	Fri May 25 17:39:19 2001
-+++ screen-3.9.9/doc/screen.1	Wed Jun 13 01:07:13 2001
+diff -ur screen-3.9.10.orig/doc/screen.1 screen-3.9.10/doc/screen.1
+--- screen-3.9.10.orig/doc/screen.1	Fri May 25 18:39:19 2001
++++ screen-3.9.10/doc/screen.1	Sun May 19 07:20:00 2002
 @@ -478,7 +478,7 @@
  Show the number (and title) of the current window.
  .IP "\fBC-a backspace\fP"
@@ -18,8 +19,9 @@
  Kill all windows and terminate
  .IR screen .
  .IP "\fBC-a :\fP	(colon)"
---- screen-3.9.9/doc/screen.texinfo.orig	Fri May 25 17:40:02 2001
-+++ screen-3.9.9/doc/screen.texinfo	Wed Jun 13 01:07:13 2001
+diff -ur screen-3.9.10.orig/doc/screen.texinfo screen-3.9.10/doc/screen.texinfo
+--- screen-3.9.10.orig/doc/screen.texinfo	Fri May 25 18:40:02 2001
++++ screen-3.9.10/doc/screen.texinfo	Sun May 19 07:20:00 2002
 @@ -724,7 +724,7 @@
  (help)@*
  Show key bindings.  @xref{Help}.

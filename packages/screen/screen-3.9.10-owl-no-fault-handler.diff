@@ -1,0 +1,45 @@
+diff -ur screen-3.9.10.pam/screen.c screen-3.9.10/screen.c
+--- screen-3.9.10.pam/screen.c	Sun May 19 07:23:08 2002
++++ screen-3.9.10/screen.c	Sun May 19 07:24:24 2002
+@@ -136,7 +136,9 @@
+ static void  SigChldHandler __P((void));
+ static sigret_t SigChld __P(SIGPROTOARG);
+ static sigret_t SigInt __P(SIGPROTOARG);
++#if 0
+ static sigret_t CoreDump __P(SIGPROTOARG);
++#endif
+ static sigret_t FinitHandler __P(SIGPROTOARG);
+ static void  DoWait __P((void));
+ static void  serv_read_fn __P((struct event *, char *));
+@@ -730,6 +732,7 @@
+   real_gid = getgid();
+   eff_uid = geteuid();
+   init_eff_gid = eff_gid = getegid();
++#if 0
+   if (eff_uid != real_uid)
+     {		
+       /* if running with s-bit, we must install a special signal
+@@ -741,6 +744,7 @@
+ #endif /* SIGBUS */
+       signal(SIGSEGV, CoreDump);
+     }
++#endif
+ 
+   /* make the write() calls return -1 on all errors */
+ #ifdef SIGXFSZ
+@@ -1446,6 +1450,7 @@
+   SIGRETURN;
+ }
+ 
++#if 0
+ static sigret_t
+ CoreDump SIGDEFARG
+ {
+@@ -1484,6 +1489,7 @@
+ #endif /* SHADOWPW  && !DEBUG */
+   SIGRETURN;
+ }
++#endif
+ 
+ static void
+ DoWait()

@@ -1,0 +1,68 @@
+diff -ur screen-3.9.10.orig/fileio.c screen-3.9.10/fileio.c
+--- screen-3.9.10.orig/fileio.c	Thu May  3 18:43:24 2001
++++ screen-3.9.10/fileio.c	Sun May 19 07:15:02 2002
+@@ -377,7 +377,7 @@
+ 	  fnbuf[sizeof(fnbuf) - 1] = 0;
+ 	  fn = fnbuf;
+ 	}
+-      public = !strcmp(fn, DEFAULT_BUFFERFILE);
++      public = !strcmp(fn, bufferfile);
+ # ifdef HAVE_LSTAT
+       exists = !lstat(fn, &stb);
+       if (public && exists && (S_ISLNK(stb.st_mode) || stb.st_nlink > 1))
+diff -ur screen-3.9.10.orig/process.c screen-3.9.10/process.c
+--- screen-3.9.10.orig/process.c	Tue Sep  4 18:16:08 2001
++++ screen-3.9.10/process.c	Sun May 19 07:15:02 2002
+@@ -2019,7 +2019,7 @@
+ #ifdef COPY_PASTE
+     case RC_BUFFERFILE:
+       if (*args == 0)
+-	BufferFile = SaveStr(DEFAULT_BUFFERFILE);
++	BufferFile = SaveStr(bufferfile);
+       else if (ParseSaveStr(act, &BufferFile))
+         break;
+       if (msgok)
+diff -ur screen-3.9.10.orig/screen.c screen-3.9.10/screen.c
+--- screen-3.9.10.orig/screen.c	Tue Sep  4 17:14:51 2001
++++ screen-3.9.10/screen.c	Sun May 19 07:15:27 2002
+@@ -107,6 +107,7 @@
+ FILE *dfp;
+ #endif
+ 
++char bufferfile[MAXPATHLEN];
+ 
+ extern char *blank, *null, Term[], screenterm[], **environ, Termcap[];
+ int force_vt = 1;
+@@ -426,9 +427,6 @@
+   logtstamp_string = SaveStr("-- %n:%t -- time-stamp -- %M/%d/%y %c:%s --\n");
+   hstatusstring = SaveStr("%h");
+   captionstring = SaveStr("%3n %t");
+-#ifdef COPY_PASTE
+-  BufferFile = SaveStr(DEFAULT_BUFFERFILE);
+-#endif
+   ShellProg = NULL;
+ #ifdef POW_DETACH
+   PowDetachString = 0;
+@@ -878,6 +876,11 @@
+       DebugTTY(&attach_Mode);
+ #endif /* DEBUG */
+     }
++
++#ifdef COPY_PASTE
++    snprintf(bufferfile, sizeof(bufferfile), "%s/.screen-exchange", home);
++    BufferFile = SaveStr(bufferfile);
++#endif
+ 
+ #ifdef _MODE_T
+   oumask = umask(0);		/* well, unsigned never fails? jw. */
+diff -ur screen-3.9.10.orig/screen.h screen-3.9.10/screen.h
+--- screen-3.9.10.orig/screen.h	Sat Apr 28 17:26:43 2001
++++ screen-3.9.10/screen.h	Sun May 19 07:15:02 2002
+@@ -44,6 +44,7 @@
+ #include "layer.h"
+ #include "term.h"
+ 
++extern char bufferfile[MAXPATHLEN];
+ 
+ #ifdef DEBUG
+ # define STATIC		/* a function that the debugger should see */
