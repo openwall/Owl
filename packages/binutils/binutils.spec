@@ -1,14 +1,19 @@
-# $Id: Owl/packages/binutils/binutils.spec,v 1.3 2000/11/17 04:12:05 solar Exp $
+# $Id: Owl/packages/binutils/binutils.spec,v 1.4 2001/01/17 23:52:24 solar Exp $
+
+%define BUILD_HJL	'yes'
 
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.10
-Release: 2owl
+Version: 2.10.1.0.4
+Release: 1owl
 Copyright: GPL
 Group: Development/Tools
-URL: http://sourceware.cygnus.com/binutils
-#Source: ftp://ftp.valinux.com/pub/support/hjl/binutils/binutils-%{version}.tar.gz
+URL: http://sources.redhat.com/binutils/
+%if "%{BUILD_HJL}"=="'yes'"
+Source: ftp://ftp.valinux.com/pub/support/hjl/binutils/binutils-%{version}.tar.gz
+%else
 Source: ftp://ftp.gnu.org/pub/gnu/binutils/binutils-%{version}.tar.gz
+%endif
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 ExcludeArch: ia64
 
@@ -21,8 +26,7 @@ generating an index for the contents of an archive), size (for listing
 the section sizes of an object or archive file), strings (for listing
 printable strings from files), strip (for discarding symbols), c++filt
 (a filter for demangling encoded C++ symbols), addr2line (for converting
-addresses to file and line), and nlmconv (for converting object code into
-an NLM). 
+addresses to file and line).
 
 Install binutils if you need to perform any of these types of actions on
 binary files.  Most programmers will want to install binutils.
@@ -40,7 +44,9 @@ ADDITIONAL_TARGETS="--enable-targets=sparc64-linux"
 %define _target_platform sparc-%{_vendor}-%{_target_os}
 %endif
 %endif
-
+%if "%{BUILD_HJL}"=="'yes'"
+%define __libtoolize echo --
+%endif
 %configure --enable-shared $ADDITIONAL_TARGETS
 make tooldir=%{_prefix}usr all info
 
@@ -48,9 +54,11 @@ make tooldir=%{_prefix}usr all info
 rm -rf ${RPM_BUILD_ROOT}
 mkdir -p ${RPM_BUILD_ROOT}%{_prefix}
 %makeinstall
-make prefix=${RPM_BUILD_ROOT}%{_prefix} infodir=${RPM_BUILD_ROOT}%{_infodir} install-info
+make prefix=${RPM_BUILD_ROOT}%{_prefix} infodir=${RPM_BUILD_ROOT}%{_infodir} \
+	install-info
 strip ${RPM_BUILD_ROOT}%{_prefix}/bin/*
-gzip -q9f ${RPM_BUILD_ROOT}%{_infodir}/*.info*
+gzip -9nf ${RPM_BUILD_ROOT}%{_infodir}/*.info*
+rm ${RPM_BUILD_ROOT}%{_mandir}/man1/nlmconv.1
 
 install -m 644 include/libiberty.h ${RPM_BUILD_ROOT}%{_prefix}/include
 
@@ -73,7 +81,7 @@ rm -rf ${RPM_BUILD_ROOT}
 /sbin/install-info --info-dir=%{_infodir} %{_infodir}/standards.info.gz
 
 %preun
-if [ $1 = 0 ] ;then
+if [ $1 -eq 0 ]; then
   /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/as.info.gz
   /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/bfd.info.gz
   /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/binutils.info.gz
@@ -95,6 +103,10 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Thu Jan 18 2001 Solar Designer <solar@owl.openwall.com>
+- 2.10.1.0.4 (due to the temporary file handling fix in objdump that is
+not in the 2.10.1 release).
+
 * Fri Nov 17 2000 Solar Designer <solar@owl.openwall.com>
 - --enable-targets=sparc64-linux for sparcv9 as well as plain sparc.
 - Pass plain sparc- target to configure when building for sparcv9, to
