@@ -1,11 +1,11 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.10 2000/09/08 18:27:25 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.11 2000/11/17 08:02:34 solar Exp $
 
 %define BUILD_PROFILE	'no'
 
 Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
-Release: 7owl
+Release: 8owl
 Copyright: LGPL
 Group: System Environment/Libraries
 Source0: glibc-2.1.3.tar.gz
@@ -123,6 +123,10 @@ need to install the glibc-profile program.
 %patch23 -p1
 cd md5-crypt
 %patch24 -p2
+cd ..
+%ifarch sparcv9
+echo 'ASFLAGS-.os += -Wa,-Av8plusa' >> sysdeps/sparc/sparc32/elf/Makefile
+%endif
 
 %build
 rm -rf build-$RPM_ARCH-linux
@@ -130,11 +134,11 @@ mkdir build-$RPM_ARCH-linux
 cd build-$RPM_ARCH-linux
 %if "%{BUILD_PROFILE}"=="'yes'"
 CFLAGS="-g $RPM_OPT_FLAGS" ../configure --prefix=/usr \
-	--enable-add-ons=yes \
+	--enable-add-ons=yes --without-cvs \
 	%_target_platform
 %else
 CFLAGS="-g $RPM_OPT_FLAGS" ../configure --prefix=/usr \
-	--enable-add-ons=yes --disable-profile \
+	--enable-add-ons=yes --without-cvs --disable-profile \
 	%_target_platform
 %endif
 make MAKE='make -s'
@@ -267,6 +271,9 @@ rm -f *.filelist*
 %endif
 
 %changelog
+* Fri Nov 17 2000 Solar Designer <solar@owl.openwall.com>
+- 'ASFLAGS-.os += -Wa,-Av8plusa' for sparcv9.
+
 * Thu Sep 07 2000 Solar Designer <solar@owl.openwall.com>
 - Added %optflags_lib support and %_target_platform to configure.
 
