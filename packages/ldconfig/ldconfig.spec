@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ldconfig/Attic/ldconfig.spec,v 1.7 2002/02/07 18:07:46 solar Exp $
+# $Id: Owl/packages/ldconfig/Attic/ldconfig.spec,v 1.8 2002/02/12 22:40:33 solar Exp $
 
 %define reldate 1999-07-31
 
@@ -44,7 +44,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %doc README
 /sbin/ldconfig
-%attr(600,root,root) %ghost /etc/ld.so.conf
+%ghost %attr(600,root,root) /etc/ld.so.conf
 
 %changelog
 * Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com>
