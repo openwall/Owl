@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.50 2003/09/09 07:24:36 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.51 2003/09/09 07:27:28 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
@@ -30,7 +30,7 @@ BuildRequires: fileutils >= 4.0.27, rpm >= 3.0.6-owl8
 BuildArchitectures: noarch
 BuildRoot: /override/%{name}-%{version}
 
-%define shadow_initial_sha1 a5af9c9eb142e14dc94cf79d791fbc04ec733a21
+%define shadow_initial_sha1 857c0fc514f6e6e81b97a7e18461e0ac5a81e00f
 
 %description
 Initial set of configuration files to be placed into /etc.
