@@ -1,4 +1,4 @@
-# $Id: Owl/packages/psmisc/psmisc.spec,v 1.10 2005/02/21 02:03:00 solar Exp $
+# $Id: Owl/packages/psmisc/psmisc.spec,v 1.11 2005/02/21 02:07:19 solar Exp $
 
 Summary: Utilities for managing processes on your system.
 Name: psmisc
@@ -32,8 +32,12 @@ of processes that are using specified files or filesystems.
 %install
 rm -rf %buildroot
 %makeinstall
-mv %buildroot%_bindir/fuser %buildroot/sbin/
+
 %find_lang %name
+
+cd %buildroot
+mkdir sbin
+mv .%_bindir/fuser sbin/
 
 %files -f %name.lang
 %defattr(-,root,root)
