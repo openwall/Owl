@@ -221,7 +221,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
 +		;;
 +	pts)
 +		if [ "$opt_d" ]; then
-+			rmdir -f pts
++			test -d pts && rmdir pts
 +		else
 +			mkdir -p -m 755 pts
 +		fi
