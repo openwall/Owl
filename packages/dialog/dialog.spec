@@ -1,16 +1,16 @@
-# $Id: Owl/packages/dialog/dialog.spec,v 1.9 2002/01/24 17:35:34 solar Exp $
+# $Id: Owl/packages/dialog/dialog.spec,v 1.10 2003/01/09 23:23:21 mci Exp $
 
 Summary: A utility for creating TTY dialog boxes.
 Name: dialog
-Version: 0.9a
-%define original_date 20010527
-Release: owl9
+Version: 0.9b
+%define original_date 20020814
+Release: owl1
 License: GPL
 Group: Applications/System
 Source: ftp://dickey.his.com/dialog/%{name}-%{version}-%{original_date}.tgz
-Patch0: dialog-0.9a-owl-pwdbox.diff
-Patch1: dialog-0.9a-alt-locale.diff
-Patch2: dialog-0.9a-owl-fselect.diff
+Patch0: dialog-0.9b-owl-pwdbox.diff
+Patch1: dialog-0.9b-owl-warnings.diff
+Patch2: dialog-0.9b-alt-locale.diff
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -32,8 +32,8 @@ The following types of boxes are at your disposal:
   tail             Allows viewing the end of files (tail) that auto updates
   background tail  Similar to tail but runs in the background.
   calendar         A calendar box displays month, day and year in
-		   separately adjustable windows
-  timebox	   A dialog is displayed which allows you to select
+                   separately adjustable windows
+  timebox	       A dialog is displayed which allows you to select
                    hour, minute and second.
 
 %prep
@@ -63,6 +63,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dialog.*
 
 %changelog
+* Fri Jan 10 2003 Michail Litvak <mci@owl.openwall.com>
+- Update to new version (0.9b-20020814).
+- Patch to fix warning on build.
+- Dropped -owl-fselect.diff.
+
 * Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 - Build with -Wall (no warnings).

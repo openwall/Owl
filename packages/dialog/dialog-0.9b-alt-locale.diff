@@ -1,5 +1,5 @@
---- dialog-0.9a-20010527/po/ru.po.orig	Sat Oct 28 02:08:37 2000
-+++ dialog-0.9a-20010527/po/ru.po	Sat Jun  9 15:34:14 2001
+--- dialog-0.9b-20020814/po/ru.po.orig	Sat Oct 28 02:08:37 2000
++++ dialog-0.9b-20020814/po/ru.po	Thu Jan  9 23:37:01 2003
 @@ -4,6 +4,14 @@
  #, fuzzy
  msgid ""
