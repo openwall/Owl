@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-startup/functions,v 1.8 2002/12/12 16:36:07 solar Exp $
+# $Id: Owl/packages/owl-startup/functions,v 1.9 2002/12/12 16:45:06 solar Exp $
 #
 # Functions defined in this file are used by many /etc/rc.d/init.d scripts;
 # they offer some limited Red Hat compatibility.
@@ -295,18 +295,22 @@ function pidofproc()
 
 function echo_success()
 {
+	return 0
 }
 
 function echo_failure()
 {
+	return 1
 }
 
 function echo_passed()
 {
+	return 1
 }
 
 function echo_warning()
 {
+	return 1
 }
 
 function success()
@@ -316,12 +320,12 @@ function success()
 
 function failure()
 {
-	return 1
+	return $?
 }
 
 function passed()
 {
-	return 0
+	return $?
 }
 
 function warning()
