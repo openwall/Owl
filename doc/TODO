@@ -180,6 +180,7 @@ field widths.
 	gnupg.
 
 [PRIORITY: medium]
+[ASSIGNED: mci@]
 Keep it to latest release.
 
 
@@ -528,4 +529,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.49 2004/11/20 15:25:44 solar Exp $
+$Id: Owl/doc/TODO,v 1.50 2004/11/21 12:36:14 solar Exp $
