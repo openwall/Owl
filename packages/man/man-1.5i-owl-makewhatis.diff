@@ -1,23 +1,38 @@
 diff -ur man-1.5i.orig/src/makewhatis.sh man-1.5i/src/makewhatis.sh
 --- man-1.5i.orig/src/makewhatis.sh	Mon Mar 19 19:15:24 2001
-+++ man-1.5i/src/makewhatis.sh	Fri May 18 09:52:23 2001
-@@ -3,6 +3,7 @@
++++ man-1.5i/src/makewhatis.sh	Fri May 18 10:13:09 2001
+@@ -3,6 +3,8 @@
  # Created: Sun Jun 14 10:49:37 1992
  # Revised: Sat Jan  8 14:12:37 1994 by faith@cs.unc.edu
  # Revised: Sat Mar 23 17:56:18 1996 by micheal@actrix.gen.nz
 +# Revised: Thu Aug 10 02:17:50 2000 by solar@owl.openwall.com
++# Revised: Fri May 18 10:11:26 2001 by solar@owl.openwall.com
  # Copyright 1992, 1993, 1994 Rickard E. Faith (faith@cs.unc.edu)
  # May be freely distributed and modified as long as copyright is retained.
  #
-@@ -25,6 +26,7 @@
+@@ -25,6 +27,8 @@
  # 971012 - replaced "test -z" - it doesnt work on SunOS 4.1.3_U1.
  # 980710 - be more careful with TMPFILE
  # 000323 - do not change PATH, better treatment of catpages - Bryan Henderson
 +# 000810 - solar: use mktemp, keep whatis files consistent while running.
++# 010518 - solar: /usr/share/man is optional
  #
  # Note for Slackware users: "makewhatis -v -w -c" will work.
  #
-@@ -38,24 +40,11 @@
+@@ -32,30 +36,22 @@
+ 
+ program=`basename $0`
+ 
+-DEFMANPATH=/usr/man:/usr/share/man
+-DEFCATPATH=/usr/man/preformat:/usr/man:/usr/share/man
++DEFMANPATH=/usr/man
++DEFCATPATH=/usr/man/preformat:/usr/man
++
++if [ -d /usr/share/man ]; then
++	DEFMANPATH="${DEFMANPATH}:/usr/share/man"
++	DEFCATPATH="${DEFCATPATH}:/usr/share/man"
++fi
+ 
  # AWK=/usr/bin/gawk
  AWK=%gawk%
  
@@ -46,7 +61,7 @@ diff -ur man-1.5i.orig/src/makewhatis.sh man-1.5i/src/makewhatis.sh
  
  topath=manpath
  
-@@ -118,7 +107,7 @@
+@@ -118,7 +114,7 @@
  fi
  catpath=`echo ${catpath} | tr : ' '`
  
@@ -55,7 +70,7 @@ diff -ur man-1.5i.orig/src/makewhatis.sh man-1.5i/src/makewhatis.sh
  # then only update - we might visit the same directory twice
  if [ x$update = x ]; then
     for pages in man cat
-@@ -126,7 +115,7 @@
+@@ -126,7 +122,7 @@
        eval path="\$$pages"path
        for mandir in $path
        do
@@ -64,7 +79,7 @@ diff -ur man-1.5i.orig/src/makewhatis.sh man-1.5i/src/makewhatis.sh
        done
     done
  fi
-@@ -140,7 +129,7 @@
+@@ -140,7 +136,7 @@
       if [ x$verbose != x ]; then
  	echo "about to enter $mandir" > /dev/tty
       fi
@@ -73,7 +88,7 @@ diff -ur man-1.5i.orig/src/makewhatis.sh man-1.5i/src/makewhatis.sh
  	if [ x$verbose != x ]; then
  	   echo skipping $mandir - we did it already > /dev/tty
  	fi
-@@ -358,14 +347,12 @@
+@@ -358,14 +354,12 @@
         then
  	 cat ${mandir1}/whatis >> $TMPFILE
         fi
