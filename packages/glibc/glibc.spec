@@ -1,21 +1,22 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.73 2005/01/14 17:31:56 galaxy Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.74 2005/01/14 21:39:23 galaxy Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
 %define BUILD_LOCALES_UTF8 0
 
+%define basevers 2.3.3
 %define snapshot 200406160000
 
 Summary: The GNU libc libraries.
 Name: glibc
-Version: 2.3.3
+Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 0.4.6
-Release: owl1%{?snapshot:.%snapshot}
+Release: owl1
 License: LGPL
 Group: System Environment/Libraries
-Source0: glibc-%version%{?snapshot:-%snapshot}.tar.bz2
+Source0: glibc-%basevers%{?snapshot:-%snapshot}.tar.bz2
 %if %{?snapshot:0}%{!?snapshot:1}
-Source1: glibc-linuxthreads-%version.tar.bz2
+Source1: glibc-linuxthreads-%basevers.tar.bz2
 %endif
 Source2: crypt_blowfish-%crypt_bf_version.tar.gz
 Source3: crypt_freesec.c
@@ -148,7 +149,7 @@ compatibility package with necessary binaries of old libdb libraries.
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 
 %prep
-%setup -q %{!?snapshot:-a 1} -a 2 -n %name-%version%{?snapshot:-%snapshot}
+%setup -q %{!?snapshot:-a 1} -a 2 -n %name-%basevers%{?snapshot:-%snapshot}
 
 # CVS
 # set errno to EINVAL and return -1 if cpuset is wrongly set.
@@ -193,7 +194,7 @@ compatibility package with necessary binaries of old libdb libraries.
 
 # Owl
 echo "Applying crypt_blowfish patch:"
-patch -p1 -s < crypt_blowfish-%crypt_bf_version/glibc-%version-crypt.diff
+patch -p1 -s < crypt_blowfish-%crypt_bf_version/glibc-%basevers-crypt.diff
 mv crypt/{crypt.h,gnu-crypt.h}
 mv crypt_blowfish-%crypt_bf_version/*.[chS] crypt/
 cp %_sourcedir/crypt_freesec.[ch] crypt/
@@ -254,8 +255,8 @@ exit 0
 EOF
 chmod +x find_requires.sh
 
-%define __find_provides %_builddir/%name-%version%{?snapshot:-%snapshot}/find_provides.sh
-%define __find_requires %_builddir/%name-%version%{?snapshot:-%snapshot}/find_requires.sh
+%define __find_provides %_builddir/%name-%basevers%{?snapshot:-%snapshot}/find_provides.sh
+%define __find_requires %_builddir/%name-%basevers%{?snapshot:-%snapshot}/find_requires.sh
 
 %if %BUILD_LOCALES
 mv localedata/SUPPORTED localedata/SUPPORTED.ALL
