@@ -1,0 +1,11 @@
+#!/bin/sh
+# $Id: Owl/packages/vixie-cron/crontab.control,v 1.1 2000/08/19 10:25:50 solar Exp $
+
+. /etc/control.d/functions
+
+BINARY=/usr/bin/crontab
+
+new_fmode public 4711 root root
+new_fmode restricted 700 root root
+
+control_fmode "$BINARY" "$*" || exit 1
