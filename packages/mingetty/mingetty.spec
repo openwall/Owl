@@ -1,10 +1,10 @@
-# $Id: Owl/packages/mingetty/mingetty.spec,v 1.5 2002/02/04 10:26:26 solar Exp $
+# $Id: Owl/packages/mingetty/mingetty.spec,v 1.6 2002/02/04 10:28:40 solar Exp $
 
 Summary: A compact getty program for virtual consoles only.
 Name: mingetty
 Version: 0.9.4
-License: GPL
 Release: owl13
+License: GPL
 Group: System Environment/Base
 Source0: ftp://jurix.jura.uni-sb.de/pub/linux/source/system/daemons/mingetty-0.9.4.tar.gz
 Patch0: mingetty-0.9.4-suse.diff
