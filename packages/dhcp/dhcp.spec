@@ -1,11 +1,11 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.23 2003/10/30 08:39:20 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.24 2004/02/11 10:10:24 mci Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
 Summary: Dynamic Host Configuration Protocol (DHCP) distribution.
 Name: dhcp
 Version: 3.0pl2
-Release: owl5
+Release: owl6
 License: ISC License
 Group: System Environment/Daemons
 URL: http://www.isc.org/products/DHCP/
@@ -86,7 +86,11 @@ make CC=gcc DEBUG=
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/etc/{rc.d/init.d}
-make install DESTDIR=$RPM_BUILD_ROOT MANDIR=%_mandir
+make install DESTDIR=$RPM_BUILD_ROOT \
+	ADMMANDIR=%_mandir/man8 \
+	FFMANDIR=%_mandir/man5 \
+	LIBMANDIR=%_mandir/man3 \
+	USRMANDIR=%_mandir/man1
 
 cd $RPM_BUILD_ROOT
 
@@ -168,6 +172,9 @@ fi
 %_mandir/man8/dhcrelay.8*
 
 %changelog
+* Mon Feb 09 2004 Michail Litvak <mci@owl.openwall.com> 3.0pl2-owl6
+- Use rpm macros instead just paths.
+
 * Sun Oct 12 2003 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl5
 - Require /var/empty in server and relay subpackages (from Maxim Timofeyev).
 
