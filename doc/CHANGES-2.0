@@ -12,14 +12,20 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2004/05/18 -
 2004/06/09	Package: cvs
 SECURITY FIX	Severity: none to high, remote, active
-Added back-ports of further CVS server security fixes to
-CAN-2004-0414, CAN-2004-0416, CAN-2004-0417, CAN-2004-0418, and to
-some minor bugs which didn't appear to deserve CVE names.  Thanks to
+Added back-ports of fixes for multiple CVS server vulnerabilities,
+some of which are known to be exploitable allowing for a malicious
+client to execute arbitrary code within the CVS server.  Thanks to
 Stefan Esser, Sebastian Krahmer, and Derek Robert Price for finding
-and fixing these.
+and fixing these bugs.  Despite these fixes, it should not be assumed
+that CVS server provides any security against a malicious client.  If
+required, any restrictions on the actions CVS server is allowed to
+perform should be imposed at the OS level.
 References:
+http://security.e-matters.de/advisories/072004.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0396
 http://security.e-matters.de/advisories/092004.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0414
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0416
@@ -40,21 +46,6 @@ scanlogd and the libraries that it uses.
 2004/05/19	Packages: tcp_wrappers, openssh, xinetd
 Added a patch to tcp_wrappers to also build a shared version of the
 libwrap library.
-
-2004/05/18	Package: cvs
-SECURITY FIX	Severity: none to high, remote, active
-Added a back-port of the fix for the CVS server heap-based buffer
-overflow vulnerability in processing of malformed "Entry" lines in
-combination with "Is-modified" and "Unchanged" discovered by Stefan
-Esser.  The vulnerability is known to be exploitable allowing for a
-malicious client to execute arbitrary code within the CVS server.
-Despite this fix, it should not be assumed that CVS server provides
-any security against a malicious client.  If required, any
-restrictions on the actions CVS server is allowed to perform should be
-imposed at the OS level.
-References:
-http://security.e-matters.de/advisories/072004.html
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0396
 
 2004/05/14	Packages: ncurses, procps
 Updated ncurses to 5.4 with official patches up to 20040508.
@@ -164,4 +155,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.36 2004/06/09 20:36:30 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.37 2004/06/09 21:11:01 solar Exp $
