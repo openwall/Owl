@@ -1,4 +1,4 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.20 2004/09/10 07:16:15 galaxy Exp $
+# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.21 2004/11/23 22:40:44 mci Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
@@ -51,22 +51,22 @@ cd contrib
 gcc start-stop-daemon.c -o start-stop-daemon -s $RPM_OPT_FLAGS
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{dev,sbin,usr/bin,%_mandir/man{1,5,8}}
-mkdir -p $RPM_BUILD_ROOT/usr/include
+rm -rf %buildroot
+mkdir -p %buildroot/{dev,sbin,usr/bin,%_mandir/man{1,5,8}}
+mkdir -p %buildroot/usr/include
 
 make -C src install \
 	DISTRO=Owl \
-	ROOT=$RPM_BUILD_ROOT \
+	ROOT=%buildroot \
 	MANDIR=%_mandir \
 	BIN_OWNER=`id -nu` \
 	BIN_GROUP=`id -ng`
 
-install -m 700 src/bootlogd $RPM_BUILD_ROOT/sbin/
-install -m 700 contrib/start-stop-daemon $RPM_BUILD_ROOT/sbin/
+install -m 700 src/bootlogd %buildroot/sbin/
+install -m 700 contrib/start-stop-daemon %buildroot/sbin/
 
-mkfifo -m 600 $RPM_BUILD_ROOT/dev/initctl
-ln -sf killall5 $RPM_BUILD_ROOT/sbin/pidof
+mkfifo -m 600 %buildroot/dev/initctl
+ln -sf killall5 %buildroot/sbin/pidof
 
 # XXX: (GM): Remove unpackaged files (check later)
 rm %buildroot%_includedir/initreq.h

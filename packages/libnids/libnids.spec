@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libnids/libnids.spec,v 1.13 2004/08/16 02:13:45 solar Exp $
+# $Id: Owl/packages/libnids/libnids.spec,v 1.14 2004/11/23 22:40:46 mci Exp $
 
 Summary: NIDS E-component.
 Name: libnids
@@ -37,9 +37,9 @@ autoconf
 %__make
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
-%__make install install_prefix=$RPM_BUILD_ROOT
+%__make install install_prefix=%buildroot
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/textutils/Attic/textutils.spec,v 1.13 2004/11/02 04:09:39 solar Exp $
+# $Id: Owl/packages/textutils/Attic/textutils.spec,v 1.14 2004/11/23 22:40:49 mci Exp $
 
 # The texinfo documentation for fileutils, sh-utils, and textutils is
 # currently provided by fileutils.
@@ -37,10 +37,10 @@ export ac_cv_sys_long_file_names=yes \
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 %makeinstall
 
-cd $RPM_BUILD_ROOT
+cd %buildroot
 mkdir bin
 mv .%_bindir/{cat,cut,sort} bin/
 ln -s ../../bin/cut .%_bindir/

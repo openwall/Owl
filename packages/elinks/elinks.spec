@@ -1,4 +1,4 @@
-# $Id: Owl/packages/elinks/elinks.spec,v 1.14 2004/11/02 04:30:21 solar Exp $
+# $Id: Owl/packages/elinks/elinks.spec,v 1.15 2004/11/23 22:40:45 mci Exp $
 
 Summary: Lynx-like text WWW browser with many features.
 Name: elinks
@@ -54,10 +54,10 @@ export ac_cv_header_expat_h=no \
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT
+rm -rf %buildroot
+make install DESTDIR=%buildroot
 
-pushd $RPM_BUILD_ROOT
+pushd %buildroot
 ln -sf elinks .%_bindir/links
 ln -s elinks.1 .%_mandir/man1/links.1
 popd

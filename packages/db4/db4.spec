@@ -1,4 +1,4 @@
-# $Id: Owl/packages/db4/db4.spec,v 1.3 2004/09/11 00:15:30 solar Exp $
+# $Id: Owl/packages/db4/db4.spec,v 1.4 2004/11/23 22:40:45 mci Exp $
 
 %define __soversion	4.0
 %define _libdb_a	libdb-%__soversion.a
@@ -88,15 +88,15 @@ make libdb=%_libdb_a libcxx=%_libcxx_a LIBSO_LIBS='$(LIBS)'
 popd
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
-mkdir -p $RPM_BUILD_ROOT{/lib,%_libdir,%_includedir/db4}
+mkdir -p %buildroot{/lib,%_libdir,%_includedir/db4}
 
 %makeinstall -C dist libdb=%_libdb_a libcxx=%_libcxx_a
 
-chmod +x $RPM_BUILD_ROOT%_libdir/*.so*
+chmod +x %buildroot%_libdir/*.so*
 
-pushd $RPM_BUILD_ROOT
+pushd %buildroot
 # Relocate main shared library from %_libdir/ to /lib/.
 mv .%_libdir/%_libdb_so ./lib/
 for f in .%_libdir/libdb{,-{*,%__soversion}}.so; do
@@ -111,10 +111,10 @@ done
 popd
 
 # Eliminate installed docs.
-rm -rf $RPM_BUILD_ROOT%_prefix/docs
+rm -rf %buildroot%_prefix/docs
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dev86/dev86.spec,v 1.13 2004/03/12 18:09:53 solar Exp $
+# $Id: Owl/packages/dev86/dev86.spec,v 1.14 2004/11/23 22:40:45 mci Exp $
 
 Summary: A real mode 80x86 assembler and linker.
 Name: dev86
@@ -45,20 +45,20 @@ quit
 !FooBar!
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
-make DIST=$RPM_BUILD_ROOT MANDIR=%_mandir ELKSSRC=. install
+make DIST=%buildroot MANDIR=%_mandir ELKSSRC=. install
 
-install -m 755 -s $RPM_BUILD_ROOT/lib/elksemu $RPM_BUILD_ROOT%_bindir
-rm -rf $RPM_BUILD_ROOT/lib/
+install -m 755 -s %buildroot/lib/elksemu %buildroot%_bindir
+rm -rf %buildroot/lib/
 
-pushd $RPM_BUILD_ROOT/usr/bin
+pushd %buildroot/usr/bin
 rm -f nm86 size86
 ln -s objdump86 nm86
 ln -s objdump86 size86
 
 # Move header files out of /usr/include and into /usr/lib/bcc/include
-mv $RPM_BUILD_ROOT/usr/include $RPM_BUILD_ROOT%_libdir/bcc/
+mv %buildroot/usr/include %buildroot%_libdir/bcc/
 popd
 
 mv bootblocks/README README.bootblocks

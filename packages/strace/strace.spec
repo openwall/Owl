@@ -1,4 +1,4 @@
-# $Id: Owl/packages/strace/strace.spec,v 1.11 2004/09/10 07:31:56 galaxy Exp $
+# $Id: Owl/packages/strace/strace.spec,v 1.12 2004/11/23 22:40:49 mci Exp $
 
 Summary: Tracks and displays system calls associated with a running process.
 Name: strace
@@ -46,10 +46,10 @@ commands do.
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%_mandir/man1
-mkdir -p $RPM_BUILD_ROOT%_prefix/bin
-%makeinstall man1dir=$RPM_BUILD_ROOT%_mandir/man1
+rm -rf %buildroot
+mkdir -p %buildroot%_mandir/man1
+mkdir -p %buildroot%_prefix/bin
+%makeinstall man1dir=%buildroot%_mandir/man1
 
 %files
 %defattr(-,root,root)

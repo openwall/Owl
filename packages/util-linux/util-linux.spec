@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.26 2004/09/10 07:32:53 galaxy Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.27 2004/11/23 22:40:49 mci Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -77,17 +77,17 @@ unset LINGUAS || :
 make RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
-make install DESTDIR=$RPM_BUILD_ROOT MAN_DIR=%_mandir INFO_DIR=%_infodir
+make install DESTDIR=%buildroot MAN_DIR=%_mandir INFO_DIR=%_infodir
 
-ln -sf hwclock $RPM_BUILD_ROOT/sbin/clock
+ln -sf hwclock %buildroot/sbin/clock
 
 # We do not want dependencies on csh
-chmod 644 $RPM_BUILD_ROOT/usr/share/misc/getopt/*
+chmod 644 %buildroot/usr/share/misc/getopt/*
 
-mkdir -p $RPM_BUILD_ROOT/etc/control.d/facilities
-cd $RPM_BUILD_ROOT/etc/control.d/facilities
+mkdir -p %buildroot/etc/control.d/facilities
+cd %buildroot/etc/control.d/facilities
 
 install -m 700 $RPM_SOURCE_DIR/mount.control mount
 install -m 700 $RPM_SOURCE_DIR/write.control write

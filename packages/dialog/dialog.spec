@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dialog/dialog.spec,v 1.13 2003/10/29 18:51:10 solar Exp $
+# $Id: Owl/packages/dialog/dialog.spec,v 1.14 2004/11/23 22:40:45 mci Exp $
 
 Summary: A utility for creating TTY dialog boxes.
 Name: dialog
@@ -53,7 +53,7 @@ The following types of boxes are at your disposal:
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 %makeinstall
 
 %files

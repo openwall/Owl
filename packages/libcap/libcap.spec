@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libcap/libcap.spec,v 1.8 2004/09/10 07:24:06 galaxy Exp $
+# $Id: Owl/packages/libcap/libcap.spec,v 1.9 2004/11/23 22:40:46 mci Exp $
 
 Summary: Library for getting and setting POSIX.1e capabilities.
 Name: libcap
@@ -56,8 +56,8 @@ install -p -m 644 $RPM_SOURCE_DIR/capfaq-0.2.txt .
 make COPTFLAG="$RPM_OPT_FLAGS -D_GNU_SOURCE" DEBUG= LDFLAGS= WARNINGS=
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make install FAKEROOT=$RPM_BUILD_ROOT MANDIR=$RPM_BUILD_ROOT%_mandir
+rm -rf %buildroot
+make install FAKEROOT=%buildroot MANDIR=%buildroot%_mandir
 
 # XXX: (GM): Remove unpackaged files (check later)
 rm %buildroot%_mandir/man2/capget.2*

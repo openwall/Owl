@@ -1,4 +1,4 @@
-# $Id: Owl/packages/m4/m4.spec,v 1.12 2004/11/02 03:17:53 solar Exp $
+# $Id: Owl/packages/m4/m4.spec,v 1.13 2004/11/23 22:40:47 mci Exp $
 
 Summary: The GNU macro processor.
 Name: m4
@@ -38,7 +38,7 @@ export ac_cv_func_mkstemp=yes \
 make CFLAGS="$RPM_OPT_FLAGS" LDFLAGS=-s
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 %makeinstall INSTALL_DATA="install -c -m 644"
 
 %post

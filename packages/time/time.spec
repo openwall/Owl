@@ -1,4 +1,4 @@
-# $Id: Owl/packages/time/time.spec,v 1.4 2003/10/30 21:15:49 solar Exp $
+# $Id: Owl/packages/time/time.spec,v 1.5 2004/11/23 22:40:49 mci Exp $
 
 Summary: A GNU utility for monitoring a program's use of system resources.
 Name: time
@@ -30,11 +30,11 @@ results.  time can help developers optimize their programs.
 make LDFLAGS=-s
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 %makeinstall
 
-mkdir -p $RPM_BUILD_ROOT%_mandir/man1
-install -m 644 $RPM_SOURCE_DIR/time.1 $RPM_BUILD_ROOT%_mandir/man1/
+mkdir -p %buildroot%_mandir/man1
+install -m 644 $RPM_SOURCE_DIR/time.1 %buildroot%_mandir/man1/
 
 %post
 /sbin/install-info %_infodir/time.info.gz %_infodir/dir \

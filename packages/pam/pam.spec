@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.33 2004/03/12 18:50:11 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.34 2004/11/23 22:40:47 mci Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
@@ -90,34 +90,34 @@ CFLAGS="$RPM_OPT_FLAGS -fPIC" \
 	--infodir=%_infodir \
 	--mandir=%_mandir \
 	--enable-static-libpam \
-	--enable-fakeroot=$RPM_BUILD_ROOT
+	--enable-fakeroot=%buildroot
 # List things to make explicitly to not make doc (corrupting the
 # pre-compiled docs if we don't have the tools).
 make modules libpam libpamc libpam_misc
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 make install THINGSTOMAKE='modules libpam libpamc libpam_misc'
 
-mkdir -p $RPM_BUILD_ROOT/etc/security
-install -m 644 modules/pam_chroot/chroot.conf $RPM_BUILD_ROOT/etc/security/
+mkdir -p %buildroot/etc/security
+install -m 644 modules/pam_chroot/chroot.conf %buildroot/etc/security/
 
-mkdir -p $RPM_BUILD_ROOT%_libdir
-mv $RPM_BUILD_ROOT/lib/*.a $RPM_BUILD_ROOT%_libdir/
+mkdir -p %buildroot%_libdir
+mv %buildroot/lib/*.a %buildroot%_libdir/
 
 # Move .so to %_libdir to make life easier
 for link in libpam libpamc libpam_misc; do
-	rm $RPM_BUILD_ROOT/lib/$link.so
-	ln -sf /lib/$link.so.%version $RPM_BUILD_ROOT%_libdir/$link.so
+	rm %buildroot/lib/$link.so
+	ln -sf /lib/$link.so.%version %buildroot%_libdir/$link.so
 done
 
-mkdir -m 755 $RPM_BUILD_ROOT/etc/pam.d
-install -m 644 other.pamd $RPM_BUILD_ROOT/etc/pam.d/other
+mkdir -m 755 %buildroot/etc/pam.d
+install -m 644 other.pamd %buildroot/etc/pam.d/other
 
-mkdir -p $RPM_BUILD_ROOT%_mandir/man{3,5,8}
-install -m 644 doc/man/*.3 $RPM_BUILD_ROOT%_mandir/man3/
-install -m 644 doc/man/*.5 $RPM_BUILD_ROOT%_mandir/man5/
-install -m 644 doc/man/*.8 $RPM_BUILD_ROOT%_mandir/man8/
+mkdir -p %buildroot%_mandir/man{3,5,8}
+install -m 644 doc/man/*.3 %buildroot%_mandir/man3/
+install -m 644 doc/man/*.5 %buildroot%_mandir/man5/
+install -m 644 doc/man/*.8 %buildroot%_mandir/man8/
 
 rm -f doc/ps/missfont.log
 gzip -9nf doc/ps/*.ps

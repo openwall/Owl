@@ -1,4 +1,4 @@
-# $Id: Owl/packages/quota/quota.spec,v 1.19 2004/09/10 07:29:20 galaxy Exp $
+# $Id: Owl/packages/quota/quota.spec,v 1.20 2004/11/23 22:40:49 mci Exp $
 
 Summary: System administration tools for monitoring users' disk usage.
 Name: quota
@@ -33,17 +33,17 @@ and limiting users' and or groups' disk usage, per filesystem.
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
-mkdir -p $RPM_BUILD_ROOT{%_bindir,/sbin,%_sbindir,%_mandir/man{1,2,3,8}}
+mkdir -p %buildroot{%_bindir,/sbin,%_sbindir,%_mandir/man{1,2,3,8}}
 
 %makeinstall
 
 # Move some utilities to traditional place.
-mv $RPM_BUILD_ROOT%_sbindir/{convertquota,quotaon,quotaoff,quotacheck} \
-	$RPM_BUILD_ROOT/sbin/
+mv %buildroot%_sbindir/{convertquota,quotaon,quotaoff,quotacheck} \
+	%buildroot/sbin/
 
-chmod -R u+w $RPM_BUILD_ROOT/
+chmod -R u+w %buildroot/
 
 # XXX: (GM): Remove unpackaged files (check later)
 rm %buildroot/etc/quotagrpadmins

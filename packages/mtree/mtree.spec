@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mtree/mtree.spec,v 1.7 2003/10/30 21:15:46 solar Exp $
+# $Id: Owl/packages/mtree/mtree.spec,v 1.8 2004/11/23 22:40:47 mci Exp $
 
 Summary: Map a directory hierarchy.
 Name: mtree
@@ -27,10 +27,10 @@ missing from either the file hierarchy or the specification.
 CFLAGS="-c $RPM_OPT_FLAGS" make
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT{%_sbindir,%_mandir/man8}
-install -m 755 usr.sbin/mtree/mtree $RPM_BUILD_ROOT%_sbindir/
-install -m 644 usr.sbin/mtree/mtree.8 $RPM_BUILD_ROOT%_mandir/man8/
+rm -rf %buildroot
+mkdir -p %buildroot{%_sbindir,%_mandir/man8}
+install -m 755 usr.sbin/mtree/mtree %buildroot%_sbindir/
+install -m 644 usr.sbin/mtree/mtree.8 %buildroot%_mandir/man8/
 
 %files
 %defattr(-,root,root)

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/logrotate/logrotate.spec,v 1.8 2003/10/30 09:00:26 solar Exp $
+# $Id: Owl/packages/logrotate/logrotate.spec,v 1.9 2004/11/23 22:40:47 mci Exp $
 
 Summary: Rotates, compresses, removes and mails system log files.
 Name: logrotate
@@ -34,12 +34,12 @@ logrotate runs as a daily cron job.
 make CC=gcc RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
 
 %install
-make PREFIX=$RPM_BUILD_ROOT MANDIR=%_mandir install
-mkdir -p $RPM_BUILD_ROOT/etc/{logrotate.d,cron.daily}
-mkdir -p $RPM_BUILD_ROOT/var/lib/logrotate
+make PREFIX=%buildroot MANDIR=%_mandir install
+mkdir -p %buildroot/etc/{logrotate.d,cron.daily}
+mkdir -p %buildroot/var/lib/logrotate
 
-install -m 600 examples/logrotate-default $RPM_BUILD_ROOT/etc/logrotate.conf
-install -m 700 examples/logrotate.cron $RPM_BUILD_ROOT/etc/cron.daily/logrotate
+install -m 600 examples/logrotate-default %buildroot/etc/logrotate.conf
+install -m 700 examples/logrotate.cron %buildroot/etc/cron.daily/logrotate
 
 %post
 if [ -f /var/lib/logrotate.status ]; then

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.24 2004/09/11 00:39:27 solar Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.25 2004/11/23 22:40:45 mci Exp $
 
 Version: 2.05
 Name: bash
@@ -100,22 +100,22 @@ make \
 	HISTORY_LIB="-Wl,-Bstatic -lhistory -Wl,-Bdynamic"
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
 %makeinstall
 
-mkdir -p $RPM_BUILD_ROOT/bin
-mv $RPM_BUILD_ROOT%_bindir/bash $RPM_BUILD_ROOT/bin/
-ln -s bash $RPM_BUILD_ROOT/bin/sh
-ln -s bash $RPM_BUILD_ROOT/bin/bash2
+mkdir -p %buildroot/bin
+mv %buildroot%_bindir/bash %buildroot/bin/
+ln -s bash %buildroot/bin/sh
+ln -s bash %buildroot/bin/bash2
 
-ln -s bash.1 $RPM_BUILD_ROOT%_mandir/man1/sh.1
-ln -s bash.1 $RPM_BUILD_ROOT%_mandir/man1/bash2.1
+ln -s bash.1 %buildroot%_mandir/man1/sh.1
+ln -s bash.1 %buildroot%_mandir/man1/bash2.1
 
 cd doc
 gzip -9nf *.{ps,txt}
 
-install -m 644 builtins.1 $RPM_BUILD_ROOT%_mandir/man1/builtins.1
+install -m 644 builtins.1 %buildroot%_mandir/man1/builtins.1
 
 # Make manpages for bash builtins as per suggestion in doc/README
 sed -e '
@@ -129,10 +129,10 @@ b
 d
 ' builtins.1 > man.pages
 for c in `cat man.pages`; do
-	ln -s builtins.1 $RPM_BUILD_ROOT%_mandir/man1/$c.1
+	ln -s builtins.1 %buildroot%_mandir/man1/$c.1
 done
 
-cd $RPM_BUILD_ROOT
+cd %buildroot
 # These conflict with real manpages
 rm .%_mandir/man1/{echo,pwd,test,kill}.1
 

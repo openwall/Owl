@@ -1,4 +1,4 @@
-# $Id: Owl/packages/file/file.spec,v 1.9 2004/03/12 18:13:03 solar Exp $
+# $Id: Owl/packages/file/file.spec,v 1.10 2004/11/23 22:40:45 mci Exp $
 
 Summary: A utility for determining file types.
 Name: file
@@ -46,10 +46,10 @@ autoreconf -f
 make LDFLAGS=-s
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%_bindir
-mkdir -p $RPM_BUILD_ROOT%_mandir/man{1,5}
-mkdir -p $RPM_BUILD_ROOT%_datadir
+rm -rf %buildroot
+mkdir -p %buildroot%_bindir
+mkdir -p %buildroot%_mandir/man{1,5}
+mkdir -p %buildroot%_datadir
 
 %makeinstall
 

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/prtconf/prtconf.spec,v 1.3 2003/10/30 21:15:48 solar Exp $
+# $Id: Owl/packages/prtconf/prtconf.spec,v 1.4 2004/11/23 22:40:49 mci Exp $
 
 Summary: Utilities to dump and modify SPARC OpenPROM.
 Name: prtconf
@@ -22,12 +22,12 @@ changing OpenPROM options.
 make CFLAGS="$RPM_OPT_FLAGS"
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT{%_sbindir,%_mandir/man8}
-install -m 755 prtconf $RPM_BUILD_ROOT%_sbindir/
-install -m 755 eeprom $RPM_BUILD_ROOT%_sbindir/
-install -m 644 prtconf.8 $RPM_BUILD_ROOT%_mandir/man8/
-install -m 644 eeprom.8 $RPM_BUILD_ROOT%_mandir/man8/
+rm -rf %buildroot
+mkdir -p %buildroot{%_sbindir,%_mandir/man8}
+install -m 755 prtconf %buildroot%_sbindir/
+install -m 755 eeprom %buildroot%_sbindir/
+install -m 644 prtconf.8 %buildroot%_mandir/man8/
+install -m 644 eeprom.8 %buildroot%_mandir/man8/
 
 gzip -9n examples/*
 

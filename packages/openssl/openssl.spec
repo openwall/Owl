@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.41 2004/11/02 04:53:17 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.42 2004/11/23 22:40:47 mci Exp $
 
 %define soversion 4
 
@@ -100,37 +100,37 @@ LD_LIBRARY_PATH=`pwd` make rehash
 LD_LIBRARY_PATH=`pwd` make test
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make install MANDIR=%_mandir INSTALL_PREFIX="$RPM_BUILD_ROOT"
+rm -rf %buildroot
+make install MANDIR=%_mandir INSTALL_PREFIX="%buildroot"
 
 # Fail if the openssl binary is statically linked against OpenSSL at this
 # stage (which could happen if "make install" caused anything to rebuild).
-LD_LIBRARY_PATH=`pwd` ldd $RPM_BUILD_ROOT/usr/bin/openssl | tee openssl.libs
+LD_LIBRARY_PATH=`pwd` ldd %buildroot/usr/bin/openssl | tee openssl.libs
 grep -qw libssl openssl.libs
 grep -qw libcrypto openssl.libs
 
 %define solibbase %(echo %version | sed 's/[[:alpha:]]//g')
 
-mkdir -p $RPM_BUILD_ROOT/%_lib
-mv $RPM_BUILD_ROOT/usr/lib/lib*.so.%solibbase $RPM_BUILD_ROOT/%_lib/
-rename so.%solibbase so.%version $RPM_BUILD_ROOT/%_lib/*.so.%solibbase
-for lib in $RPM_BUILD_ROOT/%_lib/*.so.%version; do
+mkdir -p %buildroot/%_lib
+mv %buildroot/usr/lib/lib*.so.%solibbase %buildroot/%_lib/
+rename so.%solibbase so.%version %buildroot/%_lib/*.so.%solibbase
+for lib in %buildroot/%_lib/*.so.%version; do
 	chmod 755 $lib
-	ln -sf ../../%_lib/`basename $lib` $RPM_BUILD_ROOT%_libdir/`basename ${lib} .%version`
-	ln -sf ../../%_lib/`basename $lib` $RPM_BUILD_ROOT%_libdir/`basename ${lib} .%version`.%soversion
+	ln -sf ../../%_lib/`basename $lib` %buildroot%_libdir/`basename ${lib} .%version`
+	ln -sf ../../%_lib/`basename $lib` %buildroot%_libdir/`basename ${lib} .%version`.%soversion
 done
 
 # Rename man pages
-mv $RPM_BUILD_ROOT%_mandir/man1/{,ssl}passwd.1
-mv $RPM_BUILD_ROOT%_mandir/man3/{,ssl}err.3
-mv $RPM_BUILD_ROOT%_mandir/man3/{,ssl}rand.3
+mv %buildroot%_mandir/man1/{,ssl}passwd.1
+mv %buildroot%_mandir/man3/{,ssl}err.3
+mv %buildroot%_mandir/man3/{,ssl}rand.3
 # This one already exists as des_modes.7
-rm $RPM_BUILD_ROOT%_mandir/man7/"Modes of DES.7"
+rm %buildroot%_mandir/man7/"Modes of DES.7"
 
 # Make backwards-compatibility symlink to ssleay
-ln -s openssl $RPM_BUILD_ROOT/usr/bin/ssleay
+ln -s openssl %buildroot/usr/bin/ssleay
 
-mv $RPM_BUILD_ROOT%_datadir/ssl/misc/CA{.sh,}
+mv %buildroot%_datadir/ssl/misc/CA{.sh,}
 
 # This script is obsolete and insecure.
 rm %buildroot%_datadir/ssl/misc/der_chop

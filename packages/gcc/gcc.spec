@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.33 2004/11/02 02:58:32 solar Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.34 2004/11/23 22:40:45 mci Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -360,33 +360,33 @@ mkdir -p rpm-doc/ada
 %endif
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
 cd obj-%_target_platform
-%__make	DESTDIR=$RPM_BUILD_ROOT install
+%__make	DESTDIR=%buildroot install
 
-FULLVER=`$RPM_BUILD_ROOT%_bindir/%_target_platform-gcc -dumpversion`
-FULLPATH=$(dirname $RPM_BUILD_ROOT%_libdir/gcc-lib/%_target_platform/$FULLVER/cc1)
+FULLVER=`%buildroot%_bindir/%_target_platform-gcc -dumpversion`
+FULLPATH=$(dirname %buildroot%_libdir/gcc-lib/%_target_platform/$FULLVER/cc1)
 
 # Fix some things.
-ln -s gcc $RPM_BUILD_ROOT%_bindir/cc
-echo ".so gcc.1" > $RPM_BUILD_ROOT%_mandir/man1/cc.1
+ln -s gcc %buildroot%_bindir/cc
+echo ".so gcc.1" > %buildroot%_mandir/man1/cc.1
 
 %if %BUILD_GXX
-echo ".so g++.1" > $RPM_BUILD_ROOT%_mandir/man1/c++.1
+echo ".so g++.1" > %buildroot%_mandir/man1/c++.1
 %endif
 
 %if %BUILD_G77
-ln -s g77 $RPM_BUILD_ROOT%_bindir/f77
-echo ".so g77.1" > $RPM_BUILD_ROOT%_mandir/man1/f77.1
+ln -s g77 %buildroot%_bindir/f77
+echo ".so g77.1" > %buildroot%_mandir/man1/f77.1
 %endif
 
-mkdir -p $RPM_BUILD_ROOT/lib
-ln -s ../${FULLPATH##$RPM_BUILD_ROOT/}/cpp0 $RPM_BUILD_ROOT/lib/cpp
+mkdir -p %buildroot/lib
+ln -s ../${FULLPATH##%buildroot/}/cpp0 %buildroot/lib/cpp
 
 %if %BUILD_CXX_COMPAT
 %ifarch %ix86
-cp -d --preserve=timestamps ../compat/i386/* $RPM_BUILD_ROOT%_libdir/
+cp -d --preserve=timestamps ../compat/i386/* %buildroot%_libdir/
 %endif
 %endif
 
@@ -394,21 +394,21 @@ cd ..
 echo '%defattr(-,root,root)' > gcc-fixinc-filelist
 # First, we make a directory list and prepend each directory with properly
 # attributes...
-find $RPM_BUILD_ROOT%_libdir/gcc-lib/%_target_platform/%version/include \
+find %buildroot%_libdir/gcc-lib/%_target_platform/%version/include \
 	-type d -print | \
-	sed "s#^$RPM_BUILD_ROOT#%dir %attr(0755,root,root) #g" | \
+	sed "s|^%buildroot|%dir %attr(0755,root,root) |g" | \
 	egrep -v '^((objc)|(exception)|(typeinfo)|(new(\.h)?))$' >> \
 		gcc-fixinc-filelist
 # Second, we just create a filelist (assuming default attributes)
-find $RPM_BUILD_ROOT%_libdir/gcc-lib/%_target_platform/%version/include \
+find %buildroot%_libdir/gcc-lib/%_target_platform/%version/include \
 	-type f -print | \
-	sed "s#^$RPM_BUILD_ROOT##g" | \
+	sed "s,^%buildroot,,g" | \
 	egrep -v '^((objc)|(exception)|(typeinfo)|(new(\.h)?))$' >> \
 		gcc-fixinc-filelist
 
 # Remove unpackaged files
-rm $RPM_BUILD_ROOT%_bindir/c++filt
-rm $RPM_BUILD_ROOT%_libdir/libiberty.a
+rm %buildroot%_bindir/c++filt
+rm %buildroot%_libdir/libiberty.a
 
 # XXX: (GM): Remove unpackaged files (check later)
 rm %buildroot%_datadir/locale/de/LC_MESSAGES/libstdc++.mo

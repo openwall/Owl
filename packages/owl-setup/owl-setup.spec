@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.24 2003/10/30 21:15:47 solar Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.25 2004/11/23 22:40:47 mci Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -35,16 +35,16 @@ chmod 644 README
 make CFLAGS="$RPM_OPT_FLAGS -Wall"
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{etc/pam.d,usr/lib/owl-setup,usr/sbin}
-install -m 600 $RPM_SOURCE_DIR/owl-setup.conf $RPM_BUILD_ROOT/etc/
-install -m 700 passwdlg $RPM_BUILD_ROOT/usr/lib/owl-setup/
-install -m 600 $RPM_SOURCE_DIR/setup.pam $RPM_BUILD_ROOT/etc/pam.d/setup
-install -m 700 $RPM_SOURCE_DIR/owl-setup $RPM_BUILD_ROOT/usr/lib/owl-setup/
-install -m 700 $RPM_SOURCE_DIR/mkfstab $RPM_BUILD_ROOT/usr/lib/owl-setup/
-install -m 700 $RPM_SOURCE_DIR/netcfg $RPM_BUILD_ROOT/usr/lib/owl-setup/
-install -m 644 $RPM_SOURCE_DIR/README $RPM_BUILD_ROOT/usr/lib/owl-setup/
-ln -s ../../usr/lib/owl-setup/owl-setup $RPM_BUILD_ROOT/usr/sbin/setup
+rm -rf %buildroot
+mkdir -p %buildroot/{etc/pam.d,usr/lib/owl-setup,usr/sbin}
+install -m 600 $RPM_SOURCE_DIR/owl-setup.conf %buildroot/etc/
+install -m 700 passwdlg %buildroot/usr/lib/owl-setup/
+install -m 600 $RPM_SOURCE_DIR/setup.pam %buildroot/etc/pam.d/setup
+install -m 700 $RPM_SOURCE_DIR/owl-setup %buildroot/usr/lib/owl-setup/
+install -m 700 $RPM_SOURCE_DIR/mkfstab %buildroot/usr/lib/owl-setup/
+install -m 700 $RPM_SOURCE_DIR/netcfg %buildroot/usr/lib/owl-setup/
+install -m 644 $RPM_SOURCE_DIR/README %buildroot/usr/lib/owl-setup/
+ln -s ../../usr/lib/owl-setup/owl-setup %buildroot/usr/sbin/setup
 
 %files
 %defattr(-,root,root)

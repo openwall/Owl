@@ -1,4 +1,4 @@
-# $Id: Owl/packages/termcap/termcap.spec,v 1.3 2003/10/30 21:15:49 solar Exp $
+# $Id: Owl/packages/termcap/termcap.spec,v 1.4 2004/11/23 22:40:49 mci Exp $
 
 Summary: The terminal feature database used by certain applications.
 Name: termcap
@@ -18,8 +18,8 @@ access various features of terminals (the bell, colors, and graphics,
 etc.).
 
 %prep
-mkdir -p $RPM_BUILD_ROOT/etc
-zcat $RPM_SOURCE_DIR/termtypes.tc.gz > $RPM_BUILD_ROOT/etc/termcap
+mkdir -p %buildroot/etc
+zcat $RPM_SOURCE_DIR/termtypes.tc.gz > %buildroot/etc/termcap
 
 %files
 %config %attr(0644,root,root) /etc/termcap

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/make/make.spec,v 1.9 2004/09/26 04:04:16 solar Exp $
+# $Id: Owl/packages/make/make.spec,v 1.10 2004/11/23 22:40:47 mci Exp $
 
 Summary: A GNU tool which simplifies the build process for users.
 Name: make
@@ -26,10 +26,10 @@ export ac_cv_func_mkstemp=yes \
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
 %makeinstall
-ln -sf make $RPM_BUILD_ROOT%_bindir/gmake
+ln -sf make %buildroot%_bindir/gmake
 
 # Remove unpackaged files
 rm %buildroot%_infodir/dir
@@ -57,7 +57,7 @@ fi
 - Do package locale files.
 
 * Sun Sep 19 2004 Andreas Ericsson <exon@owl.openwall.com> 3.80-owl1
-- Corrected rm-args for removing $RPM_BUILD_ROOT in %install.
+- Corrected rm-args for removing %buildroot in %install.
 - Upgraded to latest version.
 
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 3.79.1-owl4

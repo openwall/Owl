@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tcsh/tcsh.spec,v 1.11 2004/11/02 04:08:29 solar Exp $
+# $Id: Owl/packages/tcsh/tcsh.spec,v 1.12 2004/11/23 22:40:49 mci Exp $
 
 Summary: An enhanced version of csh, the C shell.
 Name: tcsh
@@ -73,16 +73,16 @@ test -x %__perl && %__perl tcsh.man2html tcsh.man || :
 make -C nls catalogs
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
-install -m 755 -D -s tcsh $RPM_BUILD_ROOT%_bindir/tcsh
-install -m 644 -D tcsh.man $RPM_BUILD_ROOT%_mandir/man1/tcsh.1
-ln -sf tcsh $RPM_BUILD_ROOT%_bindir/csh
-ln -sf tcsh.1 $RPM_BUILD_ROOT%_mandir/man1/csh.1
+install -m 755 -D -s tcsh %buildroot%_bindir/tcsh
+install -m 644 -D tcsh.man %buildroot%_mandir/man1/tcsh.1
+ln -sf tcsh %buildroot%_bindir/csh
+ln -sf tcsh.1 %buildroot%_mandir/man1/csh.1
 nroff -me eight-bit.me > eight-bit.txt
 
 while read lang charset language; do
-	dest=$RPM_BUILD_ROOT%_datadir/locale/$lang/LC_MESSAGES
+	dest=%buildroot%_datadir/locale/$lang/LC_MESSAGES
 	if test -f tcsh.$language.cat; then
 		mkdir -p $dest
 		install -m 644 tcsh.$language.cat $dest/tcsh

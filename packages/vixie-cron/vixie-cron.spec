@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.25 2004/11/02 04:12:23 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.26 2004/11/23 22:40:49 mci Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
@@ -37,26 +37,26 @@ make -C usr.sbin/cron CFLAGS="-c -I. -I../../include $RPM_OPT_FLAGS" \
 	-f ../../usr.bin/crontab/Makefile
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/usr/{bin,sbin}
-mkdir -p $RPM_BUILD_ROOT%_mandir/man{1,5,8}
-mkdir -p -m 700 $RPM_BUILD_ROOT/var/spool/cron
-mkdir -p -m 755 $RPM_BUILD_ROOT/etc/cron.d
+rm -rf %buildroot
+mkdir -p %buildroot/usr/{bin,sbin}
+mkdir -p %buildroot%_mandir/man{1,5,8}
+mkdir -p -m 700 %buildroot/var/spool/cron
+mkdir -p -m 755 %buildroot/etc/cron.d
 
-install -m 700 usr.sbin/cron/crontab $RPM_BUILD_ROOT/usr/bin/
-install -m 700 usr.sbin/cron/crond $RPM_BUILD_ROOT/usr/sbin/
+install -m 700 usr.sbin/cron/crontab %buildroot/usr/bin/
+install -m 700 usr.sbin/cron/crond %buildroot/usr/sbin/
 
-install -m 644 usr.sbin/cron/crontab.1 $RPM_BUILD_ROOT%_mandir/man1/
-install -m 644 usr.sbin/cron/crontab.5 $RPM_BUILD_ROOT%_mandir/man5/
-install -m 644 usr.sbin/cron/cron.8 $RPM_BUILD_ROOT%_mandir/man8/
-ln -s cron.8 $RPM_BUILD_ROOT%_mandir/man8/crond.8
+install -m 644 usr.sbin/cron/crontab.1 %buildroot%_mandir/man1/
+install -m 644 usr.sbin/cron/crontab.5 %buildroot%_mandir/man5/
+install -m 644 usr.sbin/cron/cron.8 %buildroot%_mandir/man8/
+ln -s cron.8 %buildroot%_mandir/man8/crond.8
 
 install -m 700 -D $RPM_SOURCE_DIR/vixie-cron.init \
-	$RPM_BUILD_ROOT/etc/rc.d/init.d/crond
+	%buildroot/etc/rc.d/init.d/crond
 
-mkdir -p $RPM_BUILD_ROOT/etc/control.d/facilities
+mkdir -p %buildroot/etc/control.d/facilities
 install -m 700 $RPM_SOURCE_DIR/crontab.control \
-	$RPM_BUILD_ROOT/etc/control.d/facilities/crontab
+	%buildroot/etc/control.d/facilities/crontab
 
 %pre
 grep -q ^crontab: /etc/group || groupadd -g 160 crontab

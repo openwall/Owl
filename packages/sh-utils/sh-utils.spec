@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sh-utils/Attic/sh-utils.spec,v 1.11 2004/11/02 03:55:54 solar Exp $
+# $Id: Owl/packages/sh-utils/Attic/sh-utils.spec,v 1.12 2004/11/23 22:40:49 mci Exp $
 
 # The texinfo documentation for fileutils, sh-utils, and textutils is
 # currently provided by fileutils.
@@ -66,10 +66,10 @@ rm doc/sh-utils.info
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 %makeinstall
 
-cd $RPM_BUILD_ROOT
+cd %buildroot
 mkdir bin
 for i in basename date echo false nice pwd sleep stty true uname env; do
 	mv .%_bindir/$i bin/

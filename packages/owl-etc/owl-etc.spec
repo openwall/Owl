@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.57 2004/11/02 03:45:53 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.58 2004/11/23 22:40:47 mci Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
@@ -36,9 +36,9 @@ BuildRoot: /override/%name-%version
 Initial set of configuration files to be placed into /etc.
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{etc/profile.d,var/log}
-cd $RPM_BUILD_ROOT
+rm -rf %buildroot
+mkdir -p %buildroot/{etc/profile.d,var/log}
+cd %buildroot
 touch etc/motd var/log/lastlog
 install -p $RPM_SOURCE_DIR/{passwd,shadow,group,fstab} etc/
 install -p $RPM_SOURCE_DIR/{securetty,shells,host.conf,nsswitch.conf} etc/

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/groff/groff.spec,v 1.15 2003/10/29 19:22:05 solar Exp $
+# $Id: Owl/packages/groff/groff.spec,v 1.16 2004/11/23 22:40:46 mci Exp $
 
 %define BUILD_USE_X 0
 %define BUILD_CURRENT 0
@@ -86,23 +86,23 @@ xmkmf && make
 %endif
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
 %if %BUILD_USE_X
 PATH=$PATH:%_prefix/X11R6/bin
 %endif
 
-mkdir -p $RPM_BUILD_ROOT%_prefix
+mkdir -p %buildroot%_prefix
 
 %makeinstall
 
 %if %BUILD_USE_X
 cd src/xditview
-%makeinstall DESTDIR=$RPM_BUILD_ROOT
+%makeinstall DESTDIR=%buildroot
 cd ../..
 %endif
 
-pushd $RPM_BUILD_ROOT%_prefix/bin
+pushd %buildroot%_prefix/bin
 ln -s troff gtroff
 ln -s tbl gtbl
 ln -s pic gpic
@@ -115,7 +115,7 @@ ln -s soelim gsoelim
 ln -s nroff gnroff
 popd
 
-pushd $RPM_BUILD_ROOT%_mandir/man1
+pushd %buildroot%_mandir/man1
 ln -s eqn.1 geqn.1
 ln -s indxbib.1 gindxbib.1
 ln -s lookbib.1 glookbib.1
@@ -127,7 +127,7 @@ ln -s tbl.1 gtbl.1
 ln -s troff.1 gtroff.1
 popd
 
-find $RPM_BUILD_ROOT%_prefix/bin $RPM_BUILD_ROOT%_mandir \
+find %buildroot%_prefix/bin %buildroot%_mandir \
 	-type f -o -type l | \
 	grep -Ev 'afmtodit|grog|mdoc\.samples|mmroff' | \
 	sed -e "s|${RPM_BUILD_ROOT}||g" -e "s|\.[0-9]|\.*|g" > groff-files

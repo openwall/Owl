@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gnupg/gnupg.spec,v 1.24 2004/09/10 07:23:50 galaxy Exp $
+# $Id: Owl/packages/gnupg/gnupg.spec,v 1.25 2004/11/23 22:40:45 mci Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
@@ -42,10 +42,10 @@ unset LINGUAS || :
 make
 
 %install
-mkdir -p $RPM_BUILD_ROOT%_libdir/%name
+mkdir -p %buildroot%_libdir/%name
 %makeinstall transform=
 sed 's,\.\./g[0-9\.]*/,,g' tools/lspgpot > lspgpot
-install -m 755 lspgpot $RPM_BUILD_ROOT%_bindir/lspgpot
+install -m 755 lspgpot %buildroot%_bindir/lspgpot
 
 # XXX: (GM): Remove unpackaged files (check later)
 rm %buildroot%_bindir/gpgsplit

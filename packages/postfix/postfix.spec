@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.21 2004/11/07 19:00:31 mci Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.22 2004/11/23 22:40:49 mci Exp $
 
 Summary: Postfix mail system.
 Name: postfix
@@ -45,7 +45,7 @@ compatible enough to not upset your users.
 %patch10 -p1
 %patch20 -p1
 
-sed -i  -e 's,^install_root=/,install_root=$RPM_BUILD_ROOT,' \
+sed -i  -e 's,^install_root=/,install_root=%buildroot,' \
 	-e 's,^setgid=no,setgid=postdrop,' \
 	-e 's,^manpages=/usr/local/man,manpages=%_mandir,' INSTALL.sh
 
@@ -53,8 +53,8 @@ sed -i  -e 's,^install_root=/,install_root=$RPM_BUILD_ROOT,' \
 make OPT="$RPM_OPT_FLAGS"
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT
+rm -rf %buildroot
+mkdir -p %buildroot
 
 yes '' | {
 	function chowngrp()
@@ -66,7 +66,7 @@ yes '' | {
 		mode=$1
 		while shift; do
 			echo "$1 $mode" |
-			sed -n "s,^$RPM_BUILD_ROOT,,p" >> $list
+			sed -n "s,^%buildroot,,p" >> $list
 		done
 	}
 
@@ -87,7 +87,7 @@ yes '' | {
 
 test -f flag.0
 
-pushd $RPM_BUILD_ROOT
+pushd %buildroot
 
 rm etc/postfix/{install.cf,postfix-script-{diff,*sgid}}
 
@@ -134,15 +134,15 @@ while read filename; do
 	fi
 done < filelist.plain >> filelist
 
-find $RPM_BUILD_ROOT -type d |
-	sed "s,^$RPM_BUILD_ROOT,," |
+find %buildroot -type d |
+	sed "s,^%buildroot,," |
 	sort |
 	comm -23 - filelist.plain |
 	grep '/postfix$' |
 	sed 's,^,%dir ,' >> filelist
 
-find $RPM_BUILD_ROOT ! -type d |
-	sed "s,^$RPM_BUILD_ROOT,," |
+find %buildroot ! -type d |
+	sed "s,^%buildroot,," |
 	sort |
 	comm -23 - filelist.plain |
 	sed -e 's,^/etc,%config &,' -e 's,%_mandir/\(.*\)$,%_mandir/\1*,' >> filelist

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libutempter/libutempter.spec,v 1.5 2003/10/30 09:00:26 solar Exp $
+# $Id: Owl/packages/libutempter/libutempter.spec,v 1.6 2004/11/23 22:40:46 mci Exp $
 
 Summary: A privileged helper for utmp/wtmp updates.
 Name: libutempter
@@ -37,9 +37,9 @@ software.
 make CC=gcc libexecdir="%_libexecdir"
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make install DESTDIR="$RPM_BUILD_ROOT" libexecdir="%_libexecdir"
-strip $RPM_BUILD_ROOT%_libexecdir/utempter/*
+rm -rf %buildroot
+make install DESTDIR="%buildroot" libexecdir="%_libexecdir"
+strip %buildroot%_libexecdir/utempter/*
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig

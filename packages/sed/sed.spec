@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sed/sed.spec,v 1.9 2004/11/02 03:54:11 solar Exp $
+# $Id: Owl/packages/sed/sed.spec,v 1.10 2004/11/23 22:40:49 mci Exp $
 
 Summary: A GNU stream text editor.
 Name: sed
@@ -30,11 +30,11 @@ rm doc/sed.info
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
 %makeinstall
 
-cd $RPM_BUILD_ROOT
+cd %buildroot
 mv .%_bindir bin
 
 # Remove unpackaged files

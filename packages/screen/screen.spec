@@ -1,4 +1,4 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.31 2004/11/02 03:53:17 solar Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.32 2004/11/23 22:40:49 mci Exp $
 
 Summary: A screen manager that supports multiple sessions on one terminal.
 Name: screen
@@ -58,20 +58,20 @@ rm doc/screen.info*
 make CFLAGS="$RPM_OPT_FLAGS"
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/etc/pam.d
+rm -rf %buildroot
+mkdir -p %buildroot/etc/pam.d
 
-make install DESTDIR=$RPM_BUILD_ROOT
+make install DESTDIR=%buildroot
 
-pushd $RPM_BUILD_ROOT
+pushd %buildroot
 rm -f .%_bindir/screen.old .%_bindir/screen
 mv .%_bindir/screen-%version .%_bindir/screen
 popd
 
-install -m 644 etc/etcscreenrc $RPM_BUILD_ROOT/etc/screenrc
-install -m 644 $RPM_SOURCE_DIR/screen.pam $RPM_BUILD_ROOT/etc/pam.d/screen
+install -m 644 etc/etcscreenrc %buildroot/etc/screenrc
+install -m 644 $RPM_SOURCE_DIR/screen.pam %buildroot/etc/pam.d/screen
 
-mkdir -p $RPM_BUILD_ROOT%_libexecdir/screen
+mkdir -p %buildroot%_libexecdir/screen
 
 # Remove unpackaged files
 rm %buildroot%_infodir/dir

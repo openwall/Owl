@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libnet/libnet.spec,v 1.8 2004/02/15 23:24:11 mci Exp $
+# $Id: Owl/packages/libnet/libnet.spec,v 1.9 2004/11/23 22:40:46 mci Exp $
 
 Summary: "libpwrite" Network Routine Library.
 Name: libnet
@@ -45,16 +45,16 @@ autoconf
 %__make CFLAGS="$RPM_OPT_FLAGS"
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
 %__make install \
-	DESTDIR=$RPM_BUILD_ROOT \
+	DESTDIR=%buildroot \
 	MAN_PREFIX=%_mandir/man3
 
-pushd $RPM_BUILD_ROOT%_libdir
+pushd %buildroot%_libdir
 ln -sf libnet.so.*.* libnet.so
 popd
-ln -sf libnet.so $RPM_BUILD_ROOT%_libdir/libpwrite
+ln -sf libnet.so %buildroot%_libdir/libpwrite
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig

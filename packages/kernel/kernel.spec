@@ -1,4 +1,4 @@
-# $Id: Owl/packages/kernel/kernel.spec,v 1.14 2004/03/13 12:58:41 solar Exp $
+# $Id: Owl/packages/kernel/kernel.spec,v 1.15 2004/11/23 22:40:46 mci Exp $
 
 Summary: Fake Linux kernel package for Red Hat Linux compatibility.
 Name: kernel
@@ -34,9 +34,9 @@ provides only the symlinks to Linux kernel header files, not the actual
 files.
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/usr/include
-cd $RPM_BUILD_ROOT
+rm -rf %buildroot
+mkdir -p %buildroot/usr/include
+cd %buildroot
 ln -s /usr/src/linux/include/linux usr/include/linux
 %ifarch sparc sparcv9
 ln -s /usr/src/linux/include/asm-sparc usr/include/asm-sparc

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bzip2/bzip2.spec,v 1.15 2004/02/11 21:42:23 solar Exp $
+# $Id: Owl/packages/bzip2/bzip2.spec,v 1.16 2004/11/23 22:40:45 mci Exp $
 
 Summary: A file compression utility.
 Name: bzip2
@@ -48,13 +48,13 @@ rm *.o
 make CFLAGS="$RPM_OPT_FLAGS -D_FILE_OFFSET_BITS=64"
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
-make install PREFIX=$RPM_BUILD_ROOT/usr MANDIR=$RPM_BUILD_ROOT%_mandir
-make -f Makefile-libbz2_so install PREFIX=$RPM_BUILD_ROOT/usr
+make install PREFIX=%buildroot/usr MANDIR=%buildroot%_mandir
+make -f Makefile-libbz2_so install PREFIX=%buildroot/usr
 
 # Hack!
-ln -s libbz2.so.%version $RPM_BUILD_ROOT%_libdir/libbz2.so.0
+ln -s libbz2.so.%version %buildroot%_libdir/libbz2.so.0
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig

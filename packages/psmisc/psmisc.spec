@@ -1,4 +1,4 @@
-# $Id: Owl/packages/psmisc/psmisc.spec,v 1.5 2003/10/30 21:15:48 solar Exp $
+# $Id: Owl/packages/psmisc/psmisc.spec,v 1.6 2004/11/23 22:40:49 mci Exp $
 
 Summary: Utilities for managing processes on your system.
 Name: psmisc
@@ -28,9 +28,9 @@ of processes that are using specified files or filesystems.
 CFLAGS="$RPM_OPT_FLAGS" make
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 make install \
-	DESTDIR=$RPM_BUILD_ROOT \
+	DESTDIR=%buildroot \
 	EBINDIR=/sbin BINDIR=%_bindir MANDIR=%_mandir
 
 %files

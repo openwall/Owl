@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.25 2004/11/02 03:48:33 solar Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.26 2004/11/23 22:40:49 mci Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -144,7 +144,7 @@ chmod +x filter_depends.sh
 %define __find_requires	%_builddir/%name-%version/filter_depends.sh
 
 %build
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 %_buildshell Configure \
 	-des \
 	-O \
@@ -154,7 +154,7 @@ rm -rf $RPM_BUILD_ROOT
 	-Doptimize="$RPM_OPT_FLAGS" \
 	-Dcc='%__cc' \
 	-Dcccdlflags='-fPIC' \
-	-Dinstallprefix=$RPM_BUILD_ROOT%_prefix \
+	-Dinstallprefix=%buildroot%_prefix \
 	-Dprefix=%_prefix \
 	-Darchname=%_arch-%_os \
 	-Dvendorprefix=%_prefix \
@@ -194,10 +194,10 @@ rm -rf $RPM_BUILD_ROOT
 #%__make test
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 %__make install
-%__mkdir_p $RPM_BUILD_ROOT%_bindir
-%__install -m 755 utils/pl2pm $RPM_BUILD_ROOT%_bindir/
+%__mkdir_p %buildroot%_bindir
+%__install -m 755 utils/pl2pm %buildroot%_bindir/
 
 %if %BUILD_PH
 # Generate *.ph files with a trick.  Is this sick or what?
@@ -246,11 +246,11 @@ EOF
 # Don't leak information specific to the build system.
 # "-f" here because compile.ph appeared here only when we have
 # compiled kernel source tree in system.
-rm -f $RPM_BUILD_ROOT%_libdir/perl5/%version/%_arch-%_os%thread_arch/linux/compile.ph
+rm -f %buildroot%_libdir/perl5/%version/%_arch-%_os%thread_arch/linux/compile.ph
 
 # Fix the rest of the stuff
-find $RPM_BUILD_ROOT%_libdir/perl* -name .packlist -o -name perllocal.pod | \
-	xargs ./perl -i -p -e "s|$RPM_BUILD_ROOT||g;" $packlist
+find %buildroot%_libdir/perl* -name .packlist -o -name perllocal.pod | \
+	xargs ./perl -i -p -e "s|%buildroot||g;" $packlist
 
 %files
 %defattr(-,root,root)

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/findutils/findutils.spec,v 1.8 2004/09/10 07:22:48 galaxy Exp $
+# $Id: Owl/packages/findutils/findutils.spec,v 1.9 2004/11/23 22:40:45 mci Exp $
 
 Summary: The GNU versions of find utilities (find and xargs).
 Name: findutils
@@ -38,7 +38,7 @@ rm doc/find.info
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 %makeinstall
 
 # XXX: (GM): Remove unpackaged files (check later)

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iputils/iputils.spec,v 1.17 2003/11/21 23:21:31 mci Exp $
+# $Id: Owl/packages/iputils/iputils.spec,v 1.18 2004/11/23 22:40:46 mci Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
@@ -40,26 +40,26 @@ make \
 gcc $RPM_OPT_FLAGS -s bonding-0.2/ifenslave.c -o bonding-0.2/ifenslave
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
-mkdir -p $RPM_BUILD_ROOT%_sbindir
-mkdir -p $RPM_BUILD_ROOT/{bin,sbin}
+mkdir -p %buildroot%_sbindir
+mkdir -p %buildroot/{bin,sbin}
 install -m 755 arping clockdiff ping6 tracepath tracepath6 traceroute6 \
-	$RPM_BUILD_ROOT%_sbindir/
-install -m 755 rdisc $RPM_BUILD_ROOT%_sbindir/rdiscd
-install -m 700 ping $RPM_BUILD_ROOT/bin/
-install -m 755 bonding-0.2/ifenslave $RPM_BUILD_ROOT/sbin/
+	%buildroot%_sbindir/
+install -m 755 rdisc %buildroot%_sbindir/rdiscd
+install -m 700 ping %buildroot/bin/
+install -m 755 bonding-0.2/ifenslave %buildroot/sbin/
 
-mkdir -p $RPM_BUILD_ROOT%_mandir/man8
+mkdir -p %buildroot%_mandir/man8
 install -m 644 doc/{arping,clockdiff,ping,tracepath,traceroute6}.8 \
-	$RPM_BUILD_ROOT%_mandir/man8/
+	%buildroot%_mandir/man8/
 
 sed 's/rdisc/rdiscd/' \
-	< doc/rdisc.8 > $RPM_BUILD_ROOT%_mandir/man8/rdiscd.8
+	< doc/rdisc.8 > %buildroot%_mandir/man8/rdiscd.8
 
-mkdir -p $RPM_BUILD_ROOT/etc/control.d/facilities
+mkdir -p %buildroot/etc/control.d/facilities
 install -m 700 $RPM_SOURCE_DIR/ping.control \
-	$RPM_BUILD_ROOT/etc/control.d/facilities/ping
+	%buildroot/etc/control.d/facilities/ping
 
 %pre
 if [ $1 -ge 2 ]; then

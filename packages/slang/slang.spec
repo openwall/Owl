@@ -1,4 +1,4 @@
-# $Id: Owl/packages/slang/Attic/slang.spec,v 1.11 2004/11/02 04:03:23 solar Exp $
+# $Id: Owl/packages/slang/Attic/slang.spec,v 1.12 2004/11/23 22:40:49 mci Exp $
 
 Summary: The shared library for the S-Lang extension language.
 Name: slang
@@ -47,12 +47,12 @@ export ac_cv_func_snprintf=yes ac_cv_func_vsnprintf=yes \
 make elf all
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/usr/include/slang
+rm -rf %buildroot
+mkdir -p %buildroot/usr/include/slang
 
 %makeinstall \
-	install_lib_dir=$RPM_BUILD_ROOT%_libdir \
-	install_include_dir=$RPM_BUILD_ROOT%_includedir/slang install-elf
+	install_lib_dir=%buildroot%_libdir \
+	install_include_dir=%buildroot%_includedir/slang install-elf
 
 # XXX: (GM): Remove unpackaged files (check later).
 # Some of these are installed with doc/ in the build directory, but a

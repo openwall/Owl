@@ -1,4 +1,4 @@
-# $Id: Owl/packages/zlib/zlib.spec,v 1.8 2003/10/30 21:15:50 solar Exp $
+# $Id: Owl/packages/zlib/zlib.spec,v 1.9 2004/11/23 22:40:50 mci Exp $
 
 Summary: The zlib compression and decompression library.
 Name: zlib
@@ -47,18 +47,18 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%_prefix
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%_prefix
+rm -rf %buildroot
+mkdir -p %buildroot%_prefix
 
 CFLAGS="$RPM_OPT_FLAGS" ./configure --shared --prefix=%_prefix
-make install prefix=$RPM_BUILD_ROOT%_prefix
+make install prefix=%buildroot%_prefix
 
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%_prefix
-make install prefix=$RPM_BUILD_ROOT%_prefix
+make install prefix=%buildroot%_prefix
 
-install -m 644 zutil.h $RPM_BUILD_ROOT%_includedir/
-mkdir -p $RPM_BUILD_ROOT%_mandir/man3
-install -m 644 zlib.3 $RPM_BUILD_ROOT%_mandir/man3/
+install -m 644 zutil.h %buildroot%_includedir/
+mkdir -p %buildroot%_mandir/man3
+install -m 644 zlib.3 %buildroot%_mandir/man3/
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig

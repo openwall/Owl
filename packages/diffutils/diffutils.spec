@@ -1,4 +1,4 @@
-# $Id: Owl/packages/diffutils/diffutils.spec,v 1.9 2003/10/29 19:00:47 solar Exp $
+# $Id: Owl/packages/diffutils/diffutils.spec,v 1.10 2004/11/23 22:40:45 mci Exp $
 
 Summary: A GNU collection of diff utilities.
 Name: diffutils
@@ -37,10 +37,10 @@ autoconf
 make PR_PROGRAM=%_bindir/pr
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 %makeinstall
 
-cd $RPM_BUILD_ROOT
+cd %buildroot
 mkdir -p .%_mandir/man1
 for manpage in cmp.1 diff3.1 sdiff.1; do
 	install -m 644 $RPM_SOURCE_DIR/$manpage .%_mandir/man1/

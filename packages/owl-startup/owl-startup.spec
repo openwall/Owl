@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.44 2004/09/10 07:28:27 galaxy Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.45 2004/11/23 22:40:47 mci Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -39,30 +39,30 @@ system down cleanly.
 make -C src CFLAGS="$RPM_OPT_FLAGS" usleep ipcalc
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
-mkdir -p $RPM_BUILD_ROOT/etc/{rc.d/{rc{0,1,2,3,4,5,6}.d,init.d},profile.d}
-mkdir -p $RPM_BUILD_ROOT/etc/sysconfig/network-scripts
-mkdir -p $RPM_BUILD_ROOT/{bin,sbin,var/{log,run}}
-mkdir -p $RPM_BUILD_ROOT%_mandir/man1
+mkdir -p %buildroot/etc/{rc.d/{rc{0,1,2,3,4,5,6}.d,init.d},profile.d}
+mkdir -p %buildroot/etc/sysconfig/network-scripts
+mkdir -p %buildroot/{bin,sbin,var/{log,run}}
+mkdir -p %buildroot%_mandir/man1
 
-install -m 755 src/{usleep,ipcalc} $RPM_BUILD_ROOT/bin/
-install -m 644 src/{usleep.1,ipcalc.1} $RPM_BUILD_ROOT%_mandir/man1/
+install -m 755 src/{usleep,ipcalc} %buildroot/bin/
+install -m 644 src/{usleep.1,ipcalc.1} %buildroot%_mandir/man1/
 
-install -m 755 lang.*sh $RPM_BUILD_ROOT/etc/profile.d/
+install -m 755 lang.*sh %buildroot/etc/profile.d/
 install -m 700 rc.d/init.d/{random,network,netfs} \
-	$RPM_BUILD_ROOT/etc/rc.d/init.d/
+	%buildroot/etc/rc.d/init.d/
 install -m 700 sysconfig/network-scripts/* \
-	$RPM_BUILD_ROOT/etc/sysconfig/network-scripts/
-mv $RPM_BUILD_ROOT/etc/sysconfig/network-scripts/if{up,down} \
-	$RPM_BUILD_ROOT/sbin/
+	%buildroot/etc/sysconfig/network-scripts/
+mv %buildroot/etc/sysconfig/network-scripts/if{up,down} \
+	%buildroot/sbin/
 # Can't have relative symlinks out of /etc as it's moved under /ram on CDs
-ln -s /sbin/if{up,down} $RPM_BUILD_ROOT/etc/sysconfig/network-scripts/
+ln -s /sbin/if{up,down} %buildroot/etc/sysconfig/network-scripts/
 
 mkdir redhat
 mv sysconfig.txt sysvinitfiles redhat/
 
-cd $RPM_BUILD_ROOT
+cd %buildroot
 
 install -m 600 $RPM_SOURCE_DIR/inittab etc/
 install -m 700 $RPM_SOURCE_DIR/rc.sysinit etc/rc.d/

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cvs/cvs.spec,v 1.24 2004/09/11 00:19:58 solar Exp $
+# $Id: Owl/packages/cvs/cvs.spec,v 1.25 2004/11/23 22:40:45 mci Exp $
 
 Summary: A version control system.
 Name: cvs
@@ -74,11 +74,11 @@ make LDFLAGS=-s
 gzip -9nf doc/*.ps
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
 %makeinstall
 
-cd $RPM_BUILD_ROOT
+cd %buildroot
 find .%_datadir/cvs -type f -print0 | xargs -r0 chmod -x --
 chmod 755 .%_datadir/cvs/contrib/rcs2log
 

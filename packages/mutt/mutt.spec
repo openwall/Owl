@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mutt/mutt.spec,v 1.12 2004/09/10 07:26:39 galaxy Exp $
+# $Id: Owl/packages/mutt/mutt.spec,v 1.13 2004/11/23 22:40:47 mci Exp $
 
 Summary: A feature-rich text-based mail user agent.
 Name: mutt
@@ -44,15 +44,15 @@ CFLAGS="$RPM_OPT_FLAGS" ./prepare --prefix=%_prefix \
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 %makeinstall \
-	sharedir=$RPM_BUILD_ROOT/etc \
-	sysconfdir=$RPM_BUILD_ROOT/etc \
-	docdir=$RPM_BUILD_ROOT%_docdir/mutt-%version \
+	sharedir=%buildroot/etc \
+	sysconfdir=%buildroot/etc \
+	docdir=%buildroot%_docdir/mutt-%version \
 	install
 
 # We like GPG here.
-cat contrib/gpg.rc $RPM_SOURCE_DIR/Muttrc-color >> $RPM_BUILD_ROOT/etc/Muttrc
+cat contrib/gpg.rc $RPM_SOURCE_DIR/Muttrc-color >> %buildroot/etc/Muttrc
 
 # XXX: (GM): Remove unpackaged files (check later)
 rm %buildroot/etc/mime.types

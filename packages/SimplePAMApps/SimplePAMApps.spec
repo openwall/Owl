@@ -1,4 +1,4 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.33 2004/02/08 20:25:32 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.34 2004/11/23 22:40:44 mci Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
@@ -43,26 +43,26 @@ CFLAGS="$RPM_OPT_FLAGS -Wall" ./configure --without-pniam --without-pwdb
 make
 
 %install
-mkdir -p $RPM_BUILD_ROOT/bin
-install -m 700 pamapps/{login/login,su/su} $RPM_BUILD_ROOT/bin/
+mkdir -p %buildroot/bin
+install -m 700 pamapps/{login/login,su/su} %buildroot/bin/
 
-mkdir -p $RPM_BUILD_ROOT/usr/bin
-install -m 700 pamapps/passwd/passwd $RPM_BUILD_ROOT/usr/bin/
+mkdir -p %buildroot/usr/bin
+install -m 700 pamapps/passwd/passwd %buildroot/usr/bin/
 
-mkdir -p $RPM_BUILD_ROOT%_mandir/man1
+mkdir -p %buildroot%_mandir/man1
 install -m 644 pamapps/{login/login.1,su/su.1,passwd/passwd.1} \
-	$RPM_BUILD_ROOT%_mandir/man1/
+	%buildroot%_mandir/man1/
 
-mkdir -p $RPM_BUILD_ROOT/etc/pam.d
-install -m 600 $RPM_SOURCE_DIR/login.pam $RPM_BUILD_ROOT/etc/pam.d/login
-install -m 600 $RPM_SOURCE_DIR/su.pam $RPM_BUILD_ROOT/etc/pam.d/su
-install -m 600 $RPM_SOURCE_DIR/passwd.pam $RPM_BUILD_ROOT/etc/pam.d/passwd
+mkdir -p %buildroot/etc/pam.d
+install -m 600 $RPM_SOURCE_DIR/login.pam %buildroot/etc/pam.d/login
+install -m 600 $RPM_SOURCE_DIR/su.pam %buildroot/etc/pam.d/su
+install -m 600 $RPM_SOURCE_DIR/passwd.pam %buildroot/etc/pam.d/passwd
 
-mkdir -p $RPM_BUILD_ROOT/etc/control.d/facilities
+mkdir -p %buildroot/etc/control.d/facilities
 install -m 700 $RPM_SOURCE_DIR/su.control \
-	$RPM_BUILD_ROOT/etc/control.d/facilities/su
+	%buildroot/etc/control.d/facilities/su
 install -m 700 $RPM_SOURCE_DIR/passwd.control \
-	$RPM_BUILD_ROOT/etc/control.d/facilities/passwd
+	%buildroot/etc/control.d/facilities/passwd
 
 %pre
 if [ $1 -ge 2 ]; then

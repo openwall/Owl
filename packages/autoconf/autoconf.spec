@@ -1,4 +1,4 @@
-# $Id: Owl/packages/autoconf/autoconf.spec,v 1.9 2004/11/02 02:29:36 solar Exp $
+# $Id: Owl/packages/autoconf/autoconf.spec,v 1.10 2004/11/23 22:40:44 mci Exp $
 
 Summary: A GNU tool for automatically configuring source code.
 Name: autoconf
@@ -33,8 +33,8 @@ portable and configurable software.
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%_infodir
+rm -rf %buildroot
+mkdir -p %buildroot%_infodir
 
 %makeinstall
 

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/procmail/procmail.spec,v 1.6 2003/10/30 21:15:47 solar Exp $
+# $Id: Owl/packages/procmail/procmail.spec,v 1.7 2004/11/23 22:40:49 mci Exp $
 
 Summary: The procmail mail processing program.
 Name: procmail
@@ -30,12 +30,12 @@ make \
 	CFLAGS0="$RPM_OPT_FLAGS -Wall -Wno-comment -Wno-parentheses"
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT{%_bindir,%_mandir/man{1,5}}
+rm -rf %buildroot
+mkdir -p %buildroot{%_bindir,%_mandir/man{1,5}}
 
 make install \
-	BASENAME=$RPM_BUILD_ROOT%_prefix \
-	MANDIR=$RPM_BUILD_ROOT%_mandir
+	BASENAME=%buildroot%_prefix \
+	MANDIR=%buildroot%_mandir
 
 %files
 %defattr(-,root,root)

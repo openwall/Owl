@@ -1,4 +1,4 @@
-# $Id: Owl/packages/modutils/modutils.spec,v 1.18 2004/11/05 01:57:28 solar Exp $
+# $Id: Owl/packages/modutils/modutils.spec,v 1.19 2004/11/23 22:40:47 mci Exp $
 
 Summary: Kernel module utilities.
 Name: modutils
@@ -44,9 +44,9 @@ modules are device drivers and filesystems, as well as some other things.
 make dep all
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/sbin
-%makeinstall sbindir=$RPM_BUILD_ROOT/sbin
+rm -rf %buildroot
+mkdir -p %buildroot/sbin
+%makeinstall sbindir=%buildroot/sbin
 
 %post
 if [ -x /etc/rc.d/init.d/kerneld ]; then

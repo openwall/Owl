@@ -1,4 +1,4 @@
-# $Id: Owl/packages/chkconfig/chkconfig.spec,v 1.8 2004/09/11 00:09:54 solar Exp $
+# $Id: Owl/packages/chkconfig/chkconfig.spec,v 1.9 2004/11/23 22:40:45 mci Exp $
 
 %define BUILD_NTSYSV 0
 %define INSTALL_ALTERNATIVES 0
@@ -50,14 +50,14 @@ LIBMHACK=-lm
 make RPM_OPT_FLAGS="$RPM_OPT_FLAGS" LIBMHACK=$LIBMHACK
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make instroot=$RPM_BUILD_ROOT MANDIR=%_mandir install
+rm -rf %buildroot
+make instroot=%buildroot MANDIR=%_mandir install
 
-mkdir -p $RPM_BUILD_ROOT/etc/rc.d/init.d
-ln -s rc.d/init.d $RPM_BUILD_ROOT/etc/init.d
+mkdir -p %buildroot/etc/rc.d/init.d
+ln -s rc.d/init.d %buildroot/etc/init.d
 for n in 0 1 2 3 4 5 6; do
-	mkdir -p $RPM_BUILD_ROOT/etc/rc.d/rc${n}.d
-	ln -s rc.d/rc${n}.d $RPM_BUILD_ROOT/etc/rc${n}.d
+	mkdir -p %buildroot/etc/rc.d/rc${n}.d
+	ln -s rc.d/rc${n}.d %buildroot/etc/rc${n}.d
 done
 
 # Remove unpackaged files

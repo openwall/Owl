@@ -1,4 +1,4 @@
-# $Id: Owl/packages/procps/Attic/procps.spec,v 1.15 2004/09/10 07:29:08 galaxy Exp $
+# $Id: Owl/packages/procps/Attic/procps.spec,v 1.16 2004/11/23 22:40:49 mci Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
@@ -35,10 +35,10 @@ top, pgrep, pkill, uptime, vmstat, w, and watch.
 make CC="gcc $RPM_OPT_FLAGS" LDFLAGS=-s
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT{/bin,/lib,/sbin,/usr/{bin,X11R6/bin},%_mandir/{man1,man5,man8}}
-make DESTDIR=$RPM_BUILD_ROOT MANDIR=%_mandir OWNERGROUP= install
-chmod 755 $RPM_BUILD_ROOT/{lib,bin,sbin,usr/bin}/*
+rm -rf %buildroot
+mkdir -p %buildroot{/bin,/lib,/sbin,/usr/{bin,X11R6/bin},%_mandir/{man1,man5,man8}}
+make DESTDIR=%buildroot MANDIR=%_mandir OWNERGROUP= install
+chmod 755 %buildroot/{lib,bin,sbin,usr/bin}/*
 
 # XXX: (GM): Remove unpackaged files (check later)
 rm %buildroot/usr/X11R6/bin/XConsole

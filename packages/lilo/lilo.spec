@@ -1,4 +1,4 @@
-# $Id: Owl/packages/lilo/lilo.spec,v 1.12 2004/09/10 07:24:51 galaxy Exp $
+# $Id: Owl/packages/lilo/lilo.spec,v 1.13 2004/11/23 22:40:47 mci Exp $
 
 Summary: The boot loader for Linux and other operating systems.
 Name: lilo
@@ -36,11 +36,11 @@ make CC=gcc OPT="$RPM_OPT_FLAGS -Wall"
 gcc $RPM_OPT_FLAGS -Wall -s -o keytab-lilo $RPM_SOURCE_DIR/keytab-lilo.c
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/usr/bin
-mkdir -p $RPM_BUILD_ROOT%_mandir
-make install ROOT=$RPM_BUILD_ROOT MAN_DIR=%_mandir
-install -m 755 keytab-lilo $RPM_BUILD_ROOT/usr/bin/
+rm -rf %buildroot
+mkdir -p %buildroot/usr/bin
+mkdir -p %buildroot%_mandir
+make install ROOT=%buildroot MAN_DIR=%_mandir
+install -m 755 keytab-lilo %buildroot/usr/bin/
 
 # XXX: (GM): Remove unpackaged files (check later)
 rm %buildroot/boot/mbr.b

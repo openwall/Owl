@@ -1,4 +1,4 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.29 2004/05/19 12:42:35 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.30 2004/11/23 22:40:50 mci Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
@@ -56,12 +56,12 @@ export ac_cv_header_DNSServiceDiscovery_DNSServiceDiscovery_h=no \
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/etc/{rc.d/init.d,xinetd.d}
+rm -rf %buildroot
+mkdir -p %buildroot/etc/{rc.d/init.d,xinetd.d}
 %makeinstall \
-	DAEMONDIR=$RPM_BUILD_ROOT%_sbindir MANDIR=$RPM_BUILD_ROOT%_mandir
+	DAEMONDIR=%buildroot%_sbindir MANDIR=%buildroot%_mandir
 
-cd $RPM_BUILD_ROOT
+cd %buildroot
 
 install -m 755 $RPM_SOURCE_DIR/xinetd.init etc/rc.d/init.d/xinetd
 install -m 644 $RPM_SOURCE_DIR/xinetd.conf etc/

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.13 2003/11/02 13:25:51 solar Exp $
+# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.14 2004/11/23 22:40:48 mci Exp $
 
 Summary: Pluggable private /tmp space support for interactive (shell) sessions.
 Name: pam_mktemp
@@ -22,8 +22,8 @@ or account management.
 make CFLAGS="-Wall -fPIC -DLINUX_PAM $RPM_OPT_FLAGS"
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT
+rm -rf %buildroot
+make install DESTDIR=%buildroot
 
 %post
 mkdir -p -m 711 /tmp/.private

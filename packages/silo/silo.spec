@@ -1,4 +1,4 @@
-# $Id: Owl/packages/silo/silo.spec,v 1.8 2003/10/30 21:15:48 solar Exp $
+# $Id: Owl/packages/silo/silo.spec,v 1.9 2004/11/23 22:40:49 mci Exp $
 
 Summary: Sparc Improved boot LOader.
 Name: silo
@@ -26,8 +26,8 @@ boot block and can be configured to boot Linux, Solaris and SunOS.
 make CFLAGS="$RPM_OPT_FLAGS -Wall -I. -I../include"
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT MANDIR=%_mandir
+rm -rf %buildroot
+make install DESTDIR=%buildroot MANDIR=%_mandir
 
 %post
 test -f /etc/silo.conf -a "$SILO_INSTALL" = "yes" && /sbin/silo $SILO_FLAGS || :

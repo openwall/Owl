@@ -1,4 +1,4 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.22 2004/07/20 21:25:24 mci Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.23 2004/11/23 22:40:44 mci Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
@@ -40,29 +40,29 @@ touch texinfo.tex
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/etc/{rc.d/init.d,logrotate.d}
-mkdir -p $RPM_BUILD_ROOT{/sbin,%_bindir,%_sbindir,%_mandir}
-mkdir -p $RPM_BUILD_ROOT%_var/account
+rm -rf %buildroot
+mkdir -p %buildroot/etc/{rc.d/init.d,logrotate.d}
+mkdir -p %buildroot{/sbin,%_bindir,%_sbindir,%_mandir}
+mkdir -p %buildroot%_var/account
 %makeinstall
-install -m 644 $RPM_SOURCE_DIR/dump-acct.8 $RPM_BUILD_ROOT%_mandir/man8/
-install -m 644 $RPM_SOURCE_DIR/dump-utmp.8 $RPM_BUILD_ROOT%_mandir/man8/
-install -m 755 $RPM_SOURCE_DIR/acct.init $RPM_BUILD_ROOT/etc/rc.d/init.d/acct
+install -m 644 $RPM_SOURCE_DIR/dump-acct.8 %buildroot%_mandir/man8/
+install -m 644 $RPM_SOURCE_DIR/dump-utmp.8 %buildroot%_mandir/man8/
+install -m 755 $RPM_SOURCE_DIR/acct.init %buildroot/etc/rc.d/init.d/acct
 install -m 644 $RPM_SOURCE_DIR/acct.logrotate \
-	$RPM_BUILD_ROOT/etc/logrotate.d/acct
+	%buildroot/etc/logrotate.d/acct
 
 # Move accton to /sbin -- leave historical symlink
-mv $RPM_BUILD_ROOT%_sbindir/accton $RPM_BUILD_ROOT/sbin/accton
-ln -s ../../sbin/accton $RPM_BUILD_ROOT%_sbindir/accton
+mv %buildroot%_sbindir/accton %buildroot/sbin/accton
+ln -s ../../sbin/accton %buildroot%_sbindir/accton
 
 # Because of the last command conflicting with the one from SysVinit
-mv $RPM_BUILD_ROOT/usr/bin/last $RPM_BUILD_ROOT/usr/bin/last-acct
-mv $RPM_BUILD_ROOT%_mandir/man1/last.1 \
-	$RPM_BUILD_ROOT%_mandir/man1/last-acct.1
+mv %buildroot/usr/bin/last %buildroot/usr/bin/last-acct
+mv %buildroot%_mandir/man1/last.1 \
+	%buildroot%_mandir/man1/last-acct.1
 
-touch $RPM_BUILD_ROOT%_var/account/pacct
-touch $RPM_BUILD_ROOT%_var/account/usracct
-touch $RPM_BUILD_ROOT%_var/account/savacct
+touch %buildroot%_var/account/pacct
+touch %buildroot%_var/account/usracct
+touch %buildroot%_var/account/savacct
 
 %post
 # We need this hack to get rid of an old, incorrect accounting info entry

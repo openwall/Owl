@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.15 2004/04/18 01:40:37 solar Exp $
+# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.16 2004/11/23 22:40:49 mci Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
@@ -51,12 +51,12 @@ places according to a configuration file.
 make CFLAGS="$RPM_OPT_FLAGS -Wall -DSYSV -D_FILE_OFFSET_BITS=64"
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT{%_mandir/man{5,8},/sbin}
+rm -rf %buildroot
+mkdir -p %buildroot{%_mandir/man{5,8},/sbin}
 
-%makeinstall TOPDIR=$RPM_BUILD_ROOT MANDIR=$RPM_BUILD_ROOT%_mandir
+%makeinstall TOPDIR=%buildroot MANDIR=%buildroot%_mandir
 
-cd $RPM_BUILD_ROOT
+cd %buildroot
 
 chmod 700 sbin/*logd
 

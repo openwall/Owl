@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pwdb/Attic/pwdb.spec,v 1.8 2003/10/30 21:15:48 solar Exp $
+# $Id: Owl/packages/pwdb/Attic/pwdb.spec,v 1.9 2004/11/23 22:40:49 mci Exp $
 
 Summary: The password database library.
 Name: pwdb
@@ -49,15 +49,15 @@ chmod -R g-s .
 make RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{etc,lib,usr/include/pwdb}
+rm -rf %buildroot
+mkdir -p %buildroot/{etc,lib,usr/include/pwdb}
 
 make install \
-	INCLUDED=$RPM_BUILD_ROOT/usr/include/pwdb \
-	LIBDIR=$RPM_BUILD_ROOT/lib \
+	INCLUDED=%buildroot/usr/include/pwdb \
+	LIBDIR=%buildroot/lib \
 	LDCONFIG=':'
 
-install -m 644 conf/pwdb.conf $RPM_BUILD_ROOT/etc/pwdb.conf
+install -m 644 conf/pwdb.conf %buildroot/etc/pwdb.conf
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig

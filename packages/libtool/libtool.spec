@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libtool/libtool.spec,v 1.9 2004/09/10 07:24:38 galaxy Exp $
+# $Id: Owl/packages/libtool/libtool.spec,v 1.10 2004/11/23 22:40:46 mci Exp $
 
 Summary: The GNU Libtool, which simplifies the use of shared libraries.
 Name: libtool
@@ -50,8 +50,8 @@ make
 # make check
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%_prefix
+rm -rf %buildroot
+mkdir -p %buildroot%_prefix
 
 %makeinstall
 

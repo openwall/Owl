@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cpio/cpio.spec,v 1.13 2003/11/03 12:27:29 solar Exp $
+# $Id: Owl/packages/cpio/cpio.spec,v 1.14 2004/11/23 22:40:45 mci Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
@@ -61,16 +61,16 @@ rm cpio.info
 make LDFLAGS=-s
 
 %install
-rm -rf $RPM_BUILD_ROOT
-%makeinstall bindir=$RPM_BUILD_ROOT/bin mandir=$RPM_BUILD_ROOT%_mandir/
+rm -rf %buildroot
+%makeinstall bindir=%buildroot/bin mandir=%buildroot%_mandir/
 
-mkdir -p $RPM_BUILD_ROOT%_mandir/man8/
-install -m 644 rmt.8 $RPM_BUILD_ROOT%_mandir/man8/
+mkdir -p %buildroot%_mandir/man8/
+install -m 644 rmt.8 %buildroot%_mandir/man8/
 
-mkdir -p $RPM_BUILD_ROOT/{etc,sbin}
+mkdir -p %buildroot/{etc,sbin}
 # Can't have relative symlinks out of /etc as it's moved under /ram on CDs
-ln -s /usr/libexec/rmt $RPM_BUILD_ROOT/etc/
-ln -s ../usr/libexec/rmt $RPM_BUILD_ROOT/sbin/
+ln -s /usr/libexec/rmt %buildroot/etc/
+ln -s ../usr/libexec/rmt %buildroot/sbin/
 
 %post
 /sbin/install-info %_infodir/cpio.info.gz %_infodir/dir

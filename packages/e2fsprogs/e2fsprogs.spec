@@ -1,4 +1,4 @@
-# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.17 2004/11/02 02:46:51 solar Exp $
+# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.18 2004/11/23 22:40:45 mci Exp $
 
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
@@ -60,8 +60,8 @@ autoconf
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make install install-libs DESTDIR="$RPM_BUILD_ROOT" \
+rm -rf %buildroot
+make install install-libs DESTDIR="%buildroot" \
 	root_sbindir=/sbin root_libdir=/lib
 
 # XXX: (GM): Remove unpackaged files (check later)

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bison/bison.spec,v 1.15 2004/09/11 00:45:23 solar Exp $
+# $Id: Owl/packages/bison/bison.spec,v 1.16 2004/11/23 22:40:45 mci Exp $
 
 Summary: A GNU general-purpose parser generator.
 Name: bison
@@ -33,8 +33,8 @@ to be very proficient in C programming to be able to program with Bison.
 make LDFLAGS=-s
 
 %install
-rm -rf $RPM_BUILD_ROOT
-%makeinstall datadir=$RPM_BUILD_ROOT%_libdir
+rm -rf %buildroot
+%makeinstall datadir=%buildroot%_libdir
 
 %post
 /sbin/install-info %_infodir/bison.info.gz %_infodir/dir \

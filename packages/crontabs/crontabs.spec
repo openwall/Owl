@@ -1,4 +1,4 @@
-# $Id: Owl/packages/crontabs/crontabs.spec,v 1.8 2003/10/29 22:00:31 solar Exp $
+# $Id: Owl/packages/crontabs/crontabs.spec,v 1.9 2004/11/23 22:40:45 mci Exp $
 
 Summary: System crontab files used to schedule the execution of programs.
 Name: crontabs
@@ -38,14 +38,14 @@ installed on your system.
 gcc run-parts.c -o run-parts $RPM_OPT_FLAGS -Wall -s
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/etc/cron.{hourly,daily,weekly,monthly}
-mkdir -p $RPM_BUILD_ROOT/usr/bin
-mkdir -p $RPM_BUILD_ROOT%_mandir/man8/
+rm -rf %buildroot
+mkdir -p %buildroot/etc/cron.{hourly,daily,weekly,monthly}
+mkdir -p %buildroot/usr/bin
+mkdir -p %buildroot%_mandir/man8/
 
-install -m 644 $RPM_SOURCE_DIR/crontab $RPM_BUILD_ROOT/etc/
-install -m 755 run-parts $RPM_BUILD_ROOT/usr/bin/
-install -m 644 run-parts.8 $RPM_BUILD_ROOT%_mandir/man8/
+install -m 644 $RPM_SOURCE_DIR/crontab %buildroot/etc/
+install -m 755 run-parts %buildroot/usr/bin/
+install -m 644 run-parts.8 %buildroot%_mandir/man8/
 
 %files
 %defattr(-,root,root)

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/diffstat/diffstat.spec,v 1.7 2003/10/29 18:51:10 solar Exp $
+# $Id: Owl/packages/diffstat/diffstat.spec,v 1.8 2004/11/23 22:40:45 mci Exp $
 
 Summary: A utility which provides statistics based on the output of diff.
 Name: diffstat
@@ -24,7 +24,7 @@ to provide a summary of the changes in large, complex patch files.
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 %makeinstall
 
 %files

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.41 2004/07/22 18:52:16 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.42 2004/11/23 22:40:49 mci Exp $
 
 Summary: Post Office Protocol (POP3) server.
 Name: popa3d
@@ -30,17 +30,17 @@ make CFLAGS="-Wall $RPM_OPT_FLAGS -DHAVE_PROGNAME" \
 	LIBS="-lpam -lpam_userpass"
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
-make install DESTDIR=$RPM_BUILD_ROOT SBINDIR=%_sbindir MANDIR=%_mandir
+make install DESTDIR=%buildroot SBINDIR=%_sbindir MANDIR=%_mandir
 
-mkdir -p $RPM_BUILD_ROOT/etc/{pam.d,rc.d/init.d,xinetd.d}
+mkdir -p %buildroot/etc/{pam.d,rc.d/init.d,xinetd.d}
 install -m 600 $RPM_SOURCE_DIR/popa3d.pam \
-	$RPM_BUILD_ROOT/etc/pam.d/popa3d
+	%buildroot/etc/pam.d/popa3d
 install -m 700 $RPM_SOURCE_DIR/popa3d.init \
-	$RPM_BUILD_ROOT/etc/rc.d/init.d/popa3d
+	%buildroot/etc/rc.d/init.d/popa3d
 install -m 600 $RPM_SOURCE_DIR/popa3d.xinetd \
-	$RPM_BUILD_ROOT/etc/xinetd.d/popa3d
+	%buildroot/etc/xinetd.d/popa3d
 
 %pre
 grep -q ^popa3d: /etc/group || groupadd -g 184 popa3d

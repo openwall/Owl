@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.11 2004/03/12 18:16:54 solar Exp $
+# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.12 2004/11/23 22:40:46 mci Exp $
 
 Summary: A basic system library for accessing the termcap database.
 Name: libtermcap
@@ -55,16 +55,16 @@ developing programs which will access the termcap database.
 %__make CFLAGS="$RPM_OPT_FLAGS -I."
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{usr/lib,usr/include,etc,lib}
-mkdir -p $RPM_BUILD_ROOT%_infodir
+rm -rf %buildroot
+mkdir -p %buildroot/{usr/lib,usr/include,etc,lib}
+mkdir -p %buildroot%_infodir
 
 export PATH=/sbin:$PATH
 %makeinstall
 
-install -m 644 termcap.info* $RPM_BUILD_ROOT%_infodir/
+install -m 644 termcap.info* %buildroot%_infodir/
 
-cd $RPM_BUILD_ROOT
+cd %buildroot
 mv usr/lib/libtermcap.so* lib/
 ln -sf libtermcap.so.2.0.8 lib/libtermcap.so.2
 ln -sf ../../lib/libtermcap.so.2.0.8 usr/lib/libtermcap.so

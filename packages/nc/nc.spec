@@ -1,4 +1,4 @@
-# $Id: Owl/packages/nc/nc.spec,v 1.6 2004/07/20 22:31:53 mci Exp $
+# $Id: Owl/packages/nc/nc.spec,v 1.7 2004/11/23 22:40:47 mci Exp $
 
 Summary: Reads and writes data across network connections using TCP or UDP.
 Name: nc
@@ -31,12 +31,12 @@ built-in capabilities.
 CFLAGS="-c $RPM_OPT_FLAGS" make
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%_bindir
-mkdir -p $RPM_BUILD_ROOT%_mandir/man1
+rm -rf %buildroot
+mkdir -p %buildroot%_bindir
+mkdir -p %buildroot%_mandir/man1
 
-install -m 755 usr.bin/nc/nc $RPM_BUILD_ROOT%_bindir/
-install -m 644 usr.bin/nc/nc.1 $RPM_BUILD_ROOT%_mandir/man1/
+install -m 755 usr.bin/nc/nc %buildroot%_bindir/
+install -m 644 usr.bin/nc/nc.1 %buildroot%_mandir/man1/
 
 %files
 %defattr(-,root,root)

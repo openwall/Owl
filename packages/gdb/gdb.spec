@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gdb/gdb.spec,v 1.16 2004/09/10 07:23:05 galaxy Exp $
+# $Id: Owl/packages/gdb/gdb.spec,v 1.17 2004/11/23 22:40:45 mci Exp $
 
 Summary: A GNU source-level debugger for C, C++ and Fortran.
 Name: gdb
@@ -45,7 +45,7 @@ make
 make info
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
 make install install-info \
 	prefix=%_prefix \
@@ -54,13 +54,13 @@ make install install-info \
 	libdir=%_libdir \
 	infodir=%_infodir \
 	mandir=%_mandir \
-	DESTDIR=$RPM_BUILD_ROOT
+	DESTDIR=%buildroot
 
 # These are part of binutils
-rm $RPM_BUILD_ROOT%_infodir/bfd*
-rm $RPM_BUILD_ROOT%_infodir/standard*
-rm -r $RPM_BUILD_ROOT/usr/include/
-rm -r $RPM_BUILD_ROOT/usr/lib/lib{bfd*,opcodes*}
+rm %buildroot%_infodir/bfd*
+rm %buildroot%_infodir/standard*
+rm -r %buildroot/usr/include/
+rm -r %buildroot/usr/lib/lib{bfd*,opcodes*}
 
 # XXX: (GM): Remove unpackaged files (check later)
 rm %buildroot%_libdir/libiberty.a

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.74 2004/11/03 05:12:21 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.75 2004/11/23 22:40:47 mci Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
@@ -139,18 +139,18 @@ make deattack.o CFLAGS="$RPM_OPT_FLAGS -mcpu=ev5 -Wall"
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT
+rm -rf %buildroot
+make install DESTDIR=%buildroot
 
-install -d $RPM_BUILD_ROOT/etc/pam.d
-install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
-install -m 600 $RPM_SOURCE_DIR/sshd.pam $RPM_BUILD_ROOT/etc/pam.d/sshd
-install -m 700 $RPM_SOURCE_DIR/sshd.init $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
-install -m 644 $RPM_SOURCE_DIR/ssh_config $RPM_BUILD_ROOT/etc/ssh/
-install -m 600 $RPM_SOURCE_DIR/sshd_config $RPM_BUILD_ROOT/etc/ssh/
-mkdir -p $RPM_BUILD_ROOT/etc/control.d/facilities
+install -d %buildroot/etc/pam.d
+install -d %buildroot/etc/rc.d/init.d
+install -m 600 $RPM_SOURCE_DIR/sshd.pam %buildroot/etc/pam.d/sshd
+install -m 700 $RPM_SOURCE_DIR/sshd.init %buildroot/etc/rc.d/init.d/sshd
+install -m 644 $RPM_SOURCE_DIR/ssh_config %buildroot/etc/ssh/
+install -m 600 $RPM_SOURCE_DIR/sshd_config %buildroot/etc/ssh/
+mkdir -p %buildroot/etc/control.d/facilities
 install -m 700 $RPM_SOURCE_DIR/sftp.control \
-	$RPM_BUILD_ROOT/etc/control.d/facilities/sftp
+	%buildroot/etc/control.d/facilities/sftp
 
 # XXX: (GM): Remove unpackaged files (check later)
 rm %buildroot%_datadir/Ssh.bin

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.27 2004/11/02 02:42:57 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.28 2004/11/23 22:40:45 mci Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -86,25 +86,25 @@ subnet.  The DHCP relay takes care of this for the client.
 make CC=gcc DEBUG=
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/etc/{rc.d/init.d}
-make install DESTDIR=$RPM_BUILD_ROOT \
+rm -rf %buildroot
+mkdir -p %buildroot/etc/{rc.d/init.d}
+make install DESTDIR=%buildroot \
 	ADMMANDIR=%_mandir/man8 \
 	FFMANDIR=%_mandir/man5 \
 	LIBMANDIR=%_mandir/man3 \
 	USRMANDIR=%_mandir/man1
 
-cd $RPM_BUILD_ROOT
+cd %buildroot
 
-mkdir -p $RPM_BUILD_ROOT/etc/{rc.d/init.d,sysconfig}
-mkdir -p $RPM_BUILD_ROOT/var/lib/dhcp/{dhcpd,dhclient}/state
+mkdir -p %buildroot/etc/{rc.d/init.d,sysconfig}
+mkdir -p %buildroot/var/lib/dhcp/{dhcpd,dhclient}/state
 
-install -m 700 $RPM_SOURCE_DIR/dhcpd.init $RPM_BUILD_ROOT/etc/rc.d/init.d/dhcpd
+install -m 700 $RPM_SOURCE_DIR/dhcpd.init %buildroot/etc/rc.d/init.d/dhcpd
 
-touch $RPM_BUILD_ROOT/var/lib/dhcp/dhcpd/state/dhcpd.leases
-touch $RPM_BUILD_ROOT/var/lib/dhcp/dhclient/state/dhclient.leases
+touch %buildroot/var/lib/dhcp/dhcpd/state/dhcpd.leases
+touch %buildroot/var/lib/dhcp/dhclient/state/dhclient.leases
 
-cat <<EOF > $RPM_BUILD_ROOT/etc/sysconfig/dhcpd
+cat <<EOF > %buildroot/etc/sysconfig/dhcpd
 # Additional command line options here
 DHCPDARGS=
 EOF

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gawk/gawk.spec,v 1.12 2004/09/10 07:22:50 galaxy Exp $
+# $Id: Owl/packages/gawk/gawk.spec,v 1.13 2004/11/23 22:40:45 mci Exp $
 
 %define BUILD_PROFILE 0
 
@@ -49,22 +49,22 @@ popd
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
-%makeinstall bindir=$RPM_BUILD_ROOT/bin \
-	mandir=$RPM_BUILD_ROOT%_mandir \
-	libexecdir=$RPM_BUILD_ROOT%_libexecdir/awk \
-	datadir=$RPM_BUILD_ROOT%_datadir/awk
+rm -rf %buildroot
+%makeinstall bindir=%buildroot/bin \
+	mandir=%buildroot%_mandir \
+	libexecdir=%buildroot%_libexecdir/awk \
+	datadir=%buildroot%_datadir/awk
 
 gzip -9n doc/*.ps
 
-cd $RPM_BUILD_ROOT
+cd %buildroot
 rm -f .%_infodir/dir
 mkdir -p .%_prefix/bin
 ln -sf gawk.1.gz .%_mandir/man1/awk.1.gz
 cd bin
 ln -sf ../../bin/gawk ../usr/bin/awk
 ln -sf ../../bin/gawk ../usr/bin/gawk
-mv $RPM_BUILD_ROOT/bin/pgawk $RPM_BUILD_ROOT/usr/bin/
+mv %buildroot/bin/pgawk %buildroot/usr/bin/
 
 # XXX: (GM): Remove unpackaged files (check later)
 rm %buildroot/bin/gawk-3.1.1

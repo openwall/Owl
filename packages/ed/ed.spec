@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ed/ed.spec,v 1.16 2004/11/02 02:48:49 solar Exp $
+# $Id: Owl/packages/ed/ed.spec,v 1.17 2004/11/23 22:40:45 mci Exp $
 
 Summary: The GNU line editor.
 Name: ed
@@ -39,7 +39,7 @@ export ac_cv_func_sigsetjmp=yes
 make LDFLAGS=-s
 
 %install
-%makeinstall bindir=$RPM_BUILD_ROOT/bin mandir=$RPM_BUILD_ROOT%_mandir/man1
+%makeinstall bindir=%buildroot/bin mandir=%buildroot%_mandir/man1
 
 %post
 /sbin/install-info %_infodir/ed.info.gz %_infodir/dir \

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.17 2004/02/17 00:31:58 mci Exp $
+# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.18 2004/11/23 22:40:47 mci Exp $
 
 Summary: Initial directory hierarchy.
 Name: owl-hier
@@ -19,11 +19,11 @@ This package contains the initial directory hierarchy for Owl, and
 its corresponding mtree specification.
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT
+rm -rf %buildroot
+mkdir -p %buildroot
 
 # Create the directory hierarchy
-cd $RPM_BUILD_ROOT
+cd %buildroot
 sed \
 	-e "s/\(uname=\)root /\1`id -un` /" \
 	-e "s/\(uname=\)root$/\1`id -un`/" \
@@ -41,11 +41,11 @@ install -m 600 $RPM_SOURCE_DIR/base etc/mtree/
 
 # Build the filelist
 cd $RPM_BUILD_DIR
-find $RPM_BUILD_ROOT -type d | sed \
-	-e "s,^$RPM_BUILD_ROOT,," \
+find %buildroot -type d | sed \
+	-e "s,^%buildroot,," \
 	-e 's,^,%dir ,' > filelist.mtree
-find $RPM_BUILD_ROOT -type f -o -type l | sed \
-	-e "s,^$RPM_BUILD_ROOT,," \
+find %buildroot -type f -o -type l | sed \
+	-e "s,^%buildroot,," \
 	-e 's,^.*/etc,%config &,' >> filelist.mtree
 
 # Specify some entries manually to set user/group when building as non-root

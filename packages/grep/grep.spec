@@ -1,4 +1,4 @@
-# $Id: Owl/packages/grep/grep.spec,v 1.9 2004/11/02 03:10:03 solar Exp $
+# $Id: Owl/packages/grep/grep.spec,v 1.10 2004/11/23 22:40:45 mci Exp $
 
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
@@ -30,13 +30,13 @@ unset LINGUAS || :
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 %makeinstall \
 	LDFLAGS=-s \
-	prefix=$RPM_BUILD_ROOT%_prefix exec_prefix=$RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/bin
-mv $RPM_BUILD_ROOT%_prefix/bin/* $RPM_BUILD_ROOT/bin/
-rm -rf $RPM_BUILD_ROOT%_prefix/bin
+	prefix=%buildroot%_prefix exec_prefix=%buildroot
+mkdir -p %buildroot/bin
+mv %buildroot%_prefix/bin/* %buildroot/bin/
+rm -rf %buildroot%_prefix/bin
 
 # Remove unpackaged files
 rm %buildroot%_infodir/dir

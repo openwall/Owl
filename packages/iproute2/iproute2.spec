@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iproute2/iproute2.spec,v 1.15 2004/04/18 02:22:07 solar Exp $
+# $Id: Owl/packages/iproute2/iproute2.spec,v 1.16 2004/11/23 22:40:46 mci Exp $
 
 %define ver 2.4.7
 %define snapshot ss020116
@@ -53,23 +53,23 @@ make \
 	CCOPTS="$RPM_OPT_FLAGS -D_GNU_SOURCE"
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
-mkdir -p $RPM_BUILD_ROOT{/sbin,%_sbindir,/etc/iproute2,%_mandir/man8}
+mkdir -p %buildroot{/sbin,%_sbindir,/etc/iproute2,%_mandir/man8}
 
-install -m 755 ip/{ip,ifcfg,rtmon} tc/tc $RPM_BUILD_ROOT/sbin/
-install -m 755 misc/{ifstat,nstat,rtacct,rtstat,ss} $RPM_BUILD_ROOT%_sbindir/
-install -m 644 etc/iproute2/* $RPM_BUILD_ROOT/etc/iproute2/
-install -m 644 $RPM_SOURCE_DIR/ip.8 $RPM_BUILD_ROOT%_mandir/man8/
-install -m 644 $RPM_SOURCE_DIR/tc.8 $RPM_BUILD_ROOT%_mandir/man8/
-install -m 644 $RPM_SOURCE_DIR/tc-htb.8 $RPM_BUILD_ROOT%_mandir/man8/
-install -m 644 $RPM_SOURCE_DIR/tc-pbfifo.8 $RPM_BUILD_ROOT%_mandir/man8/
-install -m 644 $RPM_SOURCE_DIR/tc-pfifo_fast.8 $RPM_BUILD_ROOT%_mandir/man8/
-install -m 644 $RPM_SOURCE_DIR/tc-prio.8 $RPM_BUILD_ROOT%_mandir/man8/
-install -m 644 $RPM_SOURCE_DIR/tc-red.8 $RPM_BUILD_ROOT%_mandir/man8/
-install -m 644 $RPM_SOURCE_DIR/tc-sfq.8 $RPM_BUILD_ROOT%_mandir/man8/
-install -m 644 $RPM_SOURCE_DIR/tc-tbf.8 $RPM_BUILD_ROOT%_mandir/man8/
-install -m 644 $RPM_SOURCE_DIR/tc-cbq.8 $RPM_BUILD_ROOT%_mandir/man8/
+install -m 755 ip/{ip,ifcfg,rtmon} tc/tc %buildroot/sbin/
+install -m 755 misc/{ifstat,nstat,rtacct,rtstat,ss} %buildroot%_sbindir/
+install -m 644 etc/iproute2/* %buildroot/etc/iproute2/
+install -m 644 $RPM_SOURCE_DIR/ip.8 %buildroot%_mandir/man8/
+install -m 644 $RPM_SOURCE_DIR/tc.8 %buildroot%_mandir/man8/
+install -m 644 $RPM_SOURCE_DIR/tc-htb.8 %buildroot%_mandir/man8/
+install -m 644 $RPM_SOURCE_DIR/tc-pbfifo.8 %buildroot%_mandir/man8/
+install -m 644 $RPM_SOURCE_DIR/tc-pfifo_fast.8 %buildroot%_mandir/man8/
+install -m 644 $RPM_SOURCE_DIR/tc-prio.8 %buildroot%_mandir/man8/
+install -m 644 $RPM_SOURCE_DIR/tc-red.8 %buildroot%_mandir/man8/
+install -m 644 $RPM_SOURCE_DIR/tc-sfq.8 %buildroot%_mandir/man8/
+install -m 644 $RPM_SOURCE_DIR/tc-tbf.8 %buildroot%_mandir/man8/
+install -m 644 $RPM_SOURCE_DIR/tc-cbq.8 %buildroot%_mandir/man8/
 
 gzip -9nf iproute2-ps/*.ps
 

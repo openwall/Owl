@@ -1,4 +1,4 @@
-# $Id: Owl/packages/net-tools/net-tools.spec,v 1.6 2004/09/10 07:26:46 galaxy Exp $
+# $Id: Owl/packages/net-tools/net-tools.spec,v 1.7 2004/11/23 22:40:47 mci Exp $
 
 Summary: The basic tools for setting up networking.
 Name: net-tools
@@ -27,11 +27,11 @@ cp $RPM_SOURCE_DIR/net-tools-1.57-config.make config.make
 make COPTS="$RPM_OPT_FLAGS -D_GNU_SOURCE -Wall"
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{bin,sbin}
-mkdir -p $RPM_BUILD_ROOT%_mandir/man{1,5,8}
+rm -rf %buildroot
+mkdir -p %buildroot/{bin,sbin}
+mkdir -p %buildroot%_mandir/man{1,5,8}
 
-make BASEDIR=$RPM_BUILD_ROOT mandir=%_mandir install
+make BASEDIR=%buildroot mandir=%_mandir install
 
 # XXX: (GM): Remove unpackaged files (check later)
 rm %buildroot%_datadir/locale/cs/LC_MESSAGES/net-tools.mo

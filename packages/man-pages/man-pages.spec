@@ -1,4 +1,4 @@
-# $Id: Owl/packages/man-pages/man-pages.spec,v 1.16 2003/10/30 21:15:46 solar Exp $
+# $Id: Owl/packages/man-pages/man-pages.spec,v 1.17 2004/11/23 22:40:47 mci Exp $
 
 Summary: Manual (man) pages from the Linux Documentation Project.
 Name: man-pages
@@ -85,14 +85,14 @@ rm -fv man5/nscd.conf.5
 rm -fv man8/nscd.8
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
-mkdir -p $RPM_BUILD_ROOT%_mandir
+mkdir -p %buildroot%_mandir
 for n in 1 2 3 4 5 6 7 8; do
-	mkdir $RPM_BUILD_ROOT%_mandir/man$n
+	mkdir %buildroot%_mandir/man$n
 done
 for n in man?/*; do
-	cp -a $n $RPM_BUILD_ROOT%_mandir/$n
+	cp -a $n %buildroot%_mandir/$n
 done
 
 %files

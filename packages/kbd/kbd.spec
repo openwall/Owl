@@ -1,4 +1,4 @@
-# $Id: Owl/packages/kbd/kbd.spec,v 1.9 2004/01/16 10:13:31 mci Exp $
+# $Id: Owl/packages/kbd/kbd.spec,v 1.10 2004/11/23 22:40:46 mci Exp $
 
 Summary: Tools for configuring the console.
 Name: kbd
@@ -38,7 +38,7 @@ and font files.
 %patch5 -p1
 
 %build
-./configure --prefix=$RPM_BUILD_ROOT \
+./configure --prefix=%buildroot \
 	--datadir=/lib/kbd \
 	--mandir=%_mandir \
 	--disable-nls
@@ -46,15 +46,15 @@ and font files.
 make CFLAGS="$RPM_OPT_FLAGS" LDFLAGS=-s DATA_DIR=/lib/kbd
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
-make install BINDIR=$RPM_BUILD_ROOT%_bindir
+make install BINDIR=%buildroot%_bindir
 
 # Obsolete
-rm -fv $RPM_BUILD_ROOT%_bindir/resizecons
-rm -fv $RPM_BUILD_ROOT%_mandir/man8/resizecons.8*
+rm -fv %buildroot%_bindir/resizecons
+rm -fv %buildroot%_mandir/man8/resizecons.8*
 
-cd $RPM_BUILD_ROOT
+cd %buildroot
 for binary in setfont dumpkeys kbd_mode unicode_start unicode_stop; do
 	mv .%_bindir/$binary bin/
 done

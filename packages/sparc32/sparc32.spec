@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sparc32/Attic/sparc32.spec,v 1.6 2003/10/30 21:15:49 solar Exp $
+# $Id: Owl/packages/sparc32/Attic/sparc32.spec,v 1.7 2004/11/23 22:40:49 mci Exp $
 
 Summary: A SPARC32 compilation environment.
 Name: sparc32
@@ -25,9 +25,9 @@ returns sparc, so one can create 32-bit SPARC programs.
 gcc $RPM_OPT_FLAGS sparc32.c -s -o sparc32
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/usr/{bin,man/man8}
-make install PREFIX=$RPM_BUILD_ROOT
+rm -rf %buildroot
+mkdir -p %buildroot/usr/{bin,man/man8}
+make install PREFIX=%buildroot
 
 %files
 %defattr(-,root,root)

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gzip/gzip.spec,v 1.13 2004/11/02 03:11:10 solar Exp $
+# $Id: Owl/packages/gzip/gzip.spec,v 1.14 2004/11/23 22:40:46 mci Exp $
 
 Summary: The GNU data compression program.
 Name: gzip
@@ -35,21 +35,21 @@ make
 make gzip.info
 
 %install
-rm -rf $RPM_BUILD_ROOT
-%makeinstall bindir=$RPM_BUILD_ROOT/bin gzip.info
-mkdir -p $RPM_BUILD_ROOT/usr/bin
-ln -sf ../../bin/gzip $RPM_BUILD_ROOT/usr/bin/gzip
-ln -sf ../../bin/gunzip $RPM_BUILD_ROOT/usr/bin/gunzip
+rm -rf %buildroot
+%makeinstall bindir=%buildroot/bin gzip.info
+mkdir -p %buildroot/usr/bin
+ln -sf ../../bin/gzip %buildroot/usr/bin/gzip
+ln -sf ../../bin/gunzip %buildroot/usr/bin/gunzip
 
 for i in zcmp zegrep zforce zless znew gzexe zdiff zfgrep zgrep zmore; do
-	mv $RPM_BUILD_ROOT/bin/$i $RPM_BUILD_ROOT/usr/bin/$i
+	mv %buildroot/bin/$i %buildroot/usr/bin/$i
 done
 
-cat > $RPM_BUILD_ROOT/usr/bin/zless <<EOF
+cat > %buildroot/usr/bin/zless <<EOF
 #!/bin/sh
 /bin/zcat "\$@" | /usr/bin/less
 EOF
-chmod 755 $RPM_BUILD_ROOT/usr/bin/zless
+chmod 755 %buildroot/usr/bin/zless
 
 # Remove unpackaged files
 rm %buildroot%_infodir/dir

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mingetty/mingetty.spec,v 1.8 2003/12/18 00:07:16 mci Exp $
+# $Id: Owl/packages/mingetty/mingetty.spec,v 1.9 2004/11/23 22:40:47 mci Exp $
 
 Summary: A compact getty program for virtual consoles only.
 Name: mingetty
@@ -30,12 +30,12 @@ needed for serial lines (you may use the mgetty program in that case).
 make CFLAGS="-D_GNU_SOURCE -Wall $RPM_OPT_FLAGS"
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/sbin
-mkdir -p $RPM_BUILD_ROOT%_mandir/man8
+rm -rf %buildroot
+mkdir -p %buildroot/sbin
+mkdir -p %buildroot%_mandir/man8
 
-install -m 755 mingetty $RPM_BUILD_ROOT/sbin/
-install -m 644 mingetty.8 $RPM_BUILD_ROOT%_mandir/man8/
+install -m 755 mingetty %buildroot/sbin/
+install -m 644 mingetty.8 %buildroot%_mandir/man8/
 
 %files
 %defattr(-,root,root)

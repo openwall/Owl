@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.13 2004/11/02 04:13:35 solar Exp $
+# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.14 2004/11/23 22:40:49 mci Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
@@ -40,18 +40,18 @@ install -p -m 644 $RPM_SOURCE_DIR/vsftpd.eps.gz .
 make CFLAGS="$RPM_OPT_FLAGS -Wall" LIBS="-lcap -lpam -lpam_userpass"
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{usr/sbin,etc/{pam.d,xinetd.d,logrotate.d}}
-mkdir -p $RPM_BUILD_ROOT%_mandir/man{5,8}
-install -m 700 vsftpd $RPM_BUILD_ROOT/usr/sbin/
-install -m 600 vsftpd.conf $RPM_BUILD_ROOT/etc/
-install -m 644 vsftpd.conf.5 $RPM_BUILD_ROOT%_mandir/man5/
-install -m 644 vsftpd.8 $RPM_BUILD_ROOT%_mandir/man8/
+rm -rf %buildroot
+mkdir -p %buildroot/{usr/sbin,etc/{pam.d,xinetd.d,logrotate.d}}
+mkdir -p %buildroot%_mandir/man{5,8}
+install -m 700 vsftpd %buildroot/usr/sbin/
+install -m 600 vsftpd.conf %buildroot/etc/
+install -m 644 vsftpd.conf.5 %buildroot%_mandir/man5/
+install -m 644 vsftpd.8 %buildroot%_mandir/man8/
 cd $RPM_SOURCE_DIR
-install -m 600 vsftpd.pam $RPM_BUILD_ROOT/etc/pam.d/vsftpd
-install -m 600 vsftpd.xinetd $RPM_BUILD_ROOT/etc/xinetd.d/vsftpd
-install -m 600 vsftpd.logrotate $RPM_BUILD_ROOT/etc/logrotate.d/vsftpd
-touch $RPM_BUILD_ROOT/etc/ftpusers
+install -m 600 vsftpd.pam %buildroot/etc/pam.d/vsftpd
+install -m 600 vsftpd.xinetd %buildroot/etc/xinetd.d/vsftpd
+install -m 600 vsftpd.logrotate %buildroot/etc/logrotate.d/vsftpd
+touch %buildroot/etc/ftpusers
 
 %pre
 grep -q ^vsftpd: /etc/group || groupadd -g 187 vsftpd

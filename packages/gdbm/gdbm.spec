@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gdbm/gdbm.spec,v 1.10 2004/07/20 21:59:22 mci Exp $
+# $Id: Owl/packages/gdbm/gdbm.spec,v 1.11 2004/11/23 22:40:45 mci Exp $
 
 Summary: A GNU set of database routines which use extensible hashing.
 Name: gdbm
@@ -48,11 +48,11 @@ autoreconf
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
 %makeinstall install-compat
 
-cd $RPM_BUILD_ROOT
+cd %buildroot
 
 # Fix devel package whackyness
 sed -i "s,^\(libdir=\).*$,\1'%_libdir'," .%_libdir/libgdbm.la

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/netlist/Attic/netlist.spec,v 1.7 2003/10/30 21:15:47 solar Exp $
+# $Id: Owl/packages/netlist/Attic/netlist.spec,v 1.8 2004/11/23 22:40:47 mci Exp $
 
 Summary: A program to list active Internet connections and sockets.
 Name: netlist
@@ -28,8 +28,8 @@ LICENSE for information on this and other licensing conditions.
 make CFLAGS="-c -Wall $RPM_OPT_FLAGS"
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT BINDIR=%_bindir MANDIR=%_mandir
+rm -rf %buildroot
+make install DESTDIR=%buildroot BINDIR=%_bindir MANDIR=%_mandir
 
 %post
 grep -q '^proc:[^:]*:110:' /etc/group && \

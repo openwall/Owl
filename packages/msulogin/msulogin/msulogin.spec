@@ -1,4 +1,4 @@
-# $Id: Owl/packages/msulogin/msulogin/msulogin.spec,v 1.3 2003/10/30 08:45:15 solar Exp $
+# $Id: Owl/packages/msulogin/msulogin/msulogin.spec,v 1.4 2004/11/23 22:40:47 mci Exp $
 
 Summary: The single user mode login program (sulogin).
 Name: msulogin
@@ -23,8 +23,8 @@ sulogin, this one supports having multiple root accounts on a system.
 make CFLAGS="-c -Wall $RPM_OPT_FLAGS"
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT MANDIR=%_mandir
+rm -rf %buildroot
+make install DESTDIR=%buildroot MANDIR=%_mandir
 
 %files
 %defattr(-,root,root)

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/readline/readline.spec,v 1.18 2004/09/10 07:29:33 galaxy Exp $
+# $Id: Owl/packages/readline/readline.spec,v 1.19 2004/11/23 22:40:49 mci Exp $
 
 %define compat_list 3 3.0 4.0 4.1 4.2
 
@@ -62,17 +62,17 @@ rm doc/{history,readline,rluserman}.info
 make all shared documentation CFLAGS="$RPM_OPT_FLAGS -D_GNU_SOURCE"
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%_libdir
+rm -rf %buildroot
+mkdir -p %buildroot%_libdir
 
 %makeinstall install install-shared
 
-mkdir -p $RPM_BUILD_ROOT%_docdir/examples
-install -m 644 examples/* $RPM_BUILD_ROOT%_docdir/examples
+mkdir -p %buildroot%_docdir/examples
+install -m 644 examples/* %buildroot%_docdir/examples
 
-chmod 755 $RPM_BUILD_ROOT%_prefix/lib/*.so*
+chmod 755 %buildroot%_prefix/lib/*.so*
 
-cd $RPM_BUILD_ROOT
+cd %buildroot
 ln -sf libreadline.so.%version .%_libdir/libreadline.so
 ln -sf libhistory.so.%version .%_libdir/libhistory.so
 ln -sf libreadline.so.%version \
@@ -81,9 +81,9 @@ ln -sf libhistory.so.%version \
 	.%_libdir/libhistory.so.`echo %version | sed 's^\..*^^g'`
 
 for n in %name history; do
-	t=`objdump -p "$RPM_BUILD_ROOT%_libdir/lib$n.so" | awk '/SONAME/ {print $2}'`
+	t=`objdump -p "%buildroot%_libdir/lib$n.so" | awk '/SONAME/ {print $2}'`
 	for v in %compat_list; do
-		ln -s "$t" "$RPM_BUILD_ROOT%_libdir/lib$n.so.$v"
+		ln -s "$t" "%buildroot%_libdir/lib$n.so.$v"
 	done
 done
 

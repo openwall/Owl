@@ -1,4 +1,4 @@
-# $Id: Owl/packages/automake/automake.spec,v 1.9 2004/11/02 02:32:02 solar Exp $
+# $Id: Owl/packages/automake/automake.spec,v 1.10 2004/11/23 22:40:45 mci Exp $
 
 %define api_version 1.8
 
@@ -30,10 +30,10 @@ template files.
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 %makeinstall
 
-mkdir -p $RPM_BUILD_ROOT%_datadir/aclocal
+mkdir -p %buildroot%_datadir/aclocal
 
 # Remove unpackaged files
 rm %buildroot%_infodir/dir

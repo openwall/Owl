@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libpcap/libpcap.spec,v 1.13 2004/02/19 16:24:45 mci Exp $
+# $Id: Owl/packages/libpcap/libpcap.spec,v 1.14 2004/11/23 22:40:46 mci Exp $
 
 Summary: Network packet capture library.
 Name: libpcap
@@ -45,14 +45,14 @@ Header files and development documentation for libpcap.
 %__make
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT{%_libdir,%_mandir/man3}
+rm -rf %buildroot
+mkdir -p %buildroot{%_libdir,%_mandir/man3}
 
 %__make install \
-	DESTDIR=$RPM_BUILD_ROOT
+	DESTDIR=%buildroot
 
-mkdir -p $RPM_BUILD_ROOT%_includedir/net
-ln -s ../pcap-bpf.h $RPM_BUILD_ROOT%_includedir/net/bpf.h
+mkdir -p %buildroot%_includedir/net
+ln -s ../pcap-bpf.h %buildroot%_includedir/net/bpf.h
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/nmap/nmap.spec,v 1.5 2003/10/30 21:15:47 solar Exp $
+# $Id: Owl/packages/nmap/nmap.spec,v 1.6 2004/11/23 22:40:47 mci Exp $
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
@@ -38,9 +38,9 @@ rm -r libpcap-possiblymodified
 make LIBS='-lm -lssl -lcrypto -lpcap -lcap -lnbase -lnsock libpcre/libpcre.a'
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
-%makeinstall nmapdatadir=$RPM_BUILD_ROOT%_datadir/%name
+%makeinstall nmapdatadir=%buildroot%_datadir/%name
 
 %pre
 grep -q ^nmap: /etc/group || groupadd -g 189 nmap

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mailx/mailx.spec,v 1.5 2004/02/12 00:59:33 mci Exp $
+# $Id: Owl/packages/mailx/mailx.spec,v 1.6 2004/11/23 22:40:47 mci Exp $
 
 Summary: The /bin/mail program for sending e-mail messages.
 Name: mailx
@@ -25,9 +25,9 @@ make CFLAGS="$RPM_OPT_FLAGS -c -Wall -Dlint"
 make -C USD.doc
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT{/bin,/etc,/usr/share/misc,%_mandir/man1}
-make -C usr.bin/mail install DESTDIR=$RPM_BUILD_ROOT MANDIR=%_mandir
+rm -rf %buildroot
+mkdir -p %buildroot{/bin,/etc,/usr/share/misc,%_mandir/man1}
+make -C usr.bin/mail install DESTDIR=%buildroot MANDIR=%_mandir
 
 %files
 %defattr(-,root,root)

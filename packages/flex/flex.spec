@@ -1,4 +1,4 @@
-# $Id: Owl/packages/flex/flex.spec,v 1.9 2003/10/29 19:08:28 solar Exp $
+# $Id: Owl/packages/flex/flex.spec,v 1.10 2004/11/23 22:40:45 mci Exp $
 
 Summary: A tool for creating scanners (text pattern recognizers).
 Name: flex
@@ -33,19 +33,19 @@ autoconf
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
-%makeinstall mandir=$RPM_BUILD_ROOT%_mandir/man1
+%makeinstall mandir=%buildroot%_mandir/man1
 
-pushd $RPM_BUILD_ROOT
+pushd %buildroot
 ln -sf flex .%_prefix/bin/lex
 ln -s flex.1 .%_mandir/man1/lex.1
 ln -s flex.1 .%_mandir/man1/flex++.1
 ln -s libfl.a .%_prefix/lib/libl.a
 popd
 
-mkdir $RPM_BUILD_ROOT%_infodir
-install -m 644 MISC/texinfo/flex.info $RPM_BUILD_ROOT%_infodir/
+mkdir %buildroot%_infodir
+install -m 644 MISC/texinfo/flex.info %buildroot%_infodir/
 
 %post
 /sbin/install-info %_infodir/flex.info.gz %_infodir/dir \

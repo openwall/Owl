@@ -1,4 +1,4 @@
-# $Id: Owl/packages/telnet/telnet.spec,v 1.5 2003/10/30 21:15:49 solar Exp $
+# $Id: Owl/packages/telnet/telnet.spec,v 1.6 2004/11/23 22:40:49 mci Exp $
 
 Summary: The client program for the telnet remote login protocol.
 Name: telnet
@@ -43,19 +43,19 @@ will support remote logins into the host machine.
 CFLAGS="-c $RPM_OPT_FLAGS" make
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%_bindir
-mkdir -p $RPM_BUILD_ROOT/usr/libexec
-mkdir -p $RPM_BUILD_ROOT%_mandir/man{1,8}
+rm -rf %buildroot
+mkdir -p %buildroot%_bindir
+mkdir -p %buildroot/usr/libexec
+mkdir -p %buildroot%_mandir/man{1,8}
 
-install -m 755 usr.bin/telnet/telnet $RPM_BUILD_ROOT%_bindir/
-install -m 644 usr.bin/telnet/telnet.1 $RPM_BUILD_ROOT%_mandir/man1/
-install -m 700 libexec/telnetd/telnetd $RPM_BUILD_ROOT/usr/libexec/
-install -m 644 libexec/telnetd/telnetd.8 $RPM_BUILD_ROOT%_mandir/man8/
+install -m 755 usr.bin/telnet/telnet %buildroot%_bindir/
+install -m 644 usr.bin/telnet/telnet.1 %buildroot%_mandir/man1/
+install -m 700 libexec/telnetd/telnetd %buildroot/usr/libexec/
+install -m 644 libexec/telnetd/telnetd.8 %buildroot%_mandir/man8/
 
-mkdir -p $RPM_BUILD_ROOT/etc/xinetd.d
+mkdir -p %buildroot/etc/xinetd.d
 install -m 600 $RPM_SOURCE_DIR/telnetd.xinetd \
-	$RPM_BUILD_ROOT/etc/xinetd.d/telnetd
+	%buildroot/etc/xinetd.d/telnetd
 
 %pre server
 grep -q ^telnetd: /etc/group || groupadd -g 186 telnetd

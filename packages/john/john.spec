@@ -1,4 +1,4 @@
-# $Id: Owl/packages/john/john.spec,v 1.38 2004/11/09 17:06:32 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.39 2004/11/23 22:40:46 mci Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -46,15 +46,15 @@ make linux-ppc CFLAGS='%cflags'
 %endif
 
 %install
-mkdir -p $RPM_BUILD_ROOT{%_bindir,%_datadir/john}
-install -m 700 run/john $RPM_BUILD_ROOT%_bindir/
-cp -a run/un* $RPM_BUILD_ROOT%_bindir/
+mkdir -p %buildroot{%_bindir,%_datadir/john}
+install -m 700 run/john %buildroot%_bindir/
+cp -a run/un* %buildroot%_bindir/
 %if %with_cpu_fallback
-mkdir -p $RPM_BUILD_ROOT%_libexecdir/john
-install -m 700 run/john-* $RPM_BUILD_ROOT%_libexecdir/john/
+mkdir -p %buildroot%_libexecdir/john
+install -m 700 run/john-* %buildroot%_libexecdir/john/
 %endif
 install -m 644 run/{john.conf,password.lst} john-1.6/run/*.chr \
-	$RPM_BUILD_ROOT%_datadir/john/
+	%buildroot%_datadir/john/
 install -m 644 -p run/mailer doc/
 mkdir doc/john-1.6
 cp -a john-1.6/doc/* doc/john-1.6/

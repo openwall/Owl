@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iptables/iptables.spec,v 1.10 2004/09/10 07:24:02 galaxy Exp $
+# $Id: Owl/packages/iptables/iptables.spec,v 1.11 2004/11/23 22:40:46 mci Exp $
 
 Summary: Tools for managing Netfilter/iptables packet filtering rules.
 Name: iptables
@@ -30,11 +30,11 @@ make iptables-save iptables-restore all \
 
 %install
 make install \
-	DESTDIR=$RPM_BUILD_ROOT \
+	DESTDIR=%buildroot \
 	LIBDIR=/%_lib BINDIR=/sbin MANDIR=%_mandir
-mkdir -p $RPM_BUILD_ROOT/etc/rc.d/init.d
+mkdir -p %buildroot/etc/rc.d/init.d
 install -m 755 $RPM_SOURCE_DIR/iptables.init \
-	$RPM_BUILD_ROOT/etc/rc.d/init.d/iptables
+	%buildroot/etc/rc.d/init.d/iptables
 
 # XXX: (GM): Remove unpackaged files (check later)
 rm %buildroot/lib/iptables/libip6t_HL.so

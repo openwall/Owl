@@ -1,4 +1,4 @@
-# $Id: Owl/packages/stmpclean/stmpclean.spec,v 1.9 2004/11/08 21:12:13 mci Exp $
+# $Id: Owl/packages/stmpclean/stmpclean.spec,v 1.10 2004/11/23 22:40:49 mci Exp $
 
 Summary: A safe temporary directory cleaner.
 Name: stmpclean
@@ -28,9 +28,9 @@ such as /tmp where old files tend to accumulate.
 make CFLAGS="$RPM_OPT_FLAGS -Wall" stmpclean
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT SBINDIR=%_sbindir MANDIR=%_mandir
-cd $RPM_BUILD_ROOT
+rm -rf %buildroot
+make install DESTDIR=%buildroot SBINDIR=%_sbindir MANDIR=%_mandir
+cd %buildroot
 mkdir -p etc/cron.daily
 install -m 700 $RPM_SOURCE_DIR/stmpclean.cron etc/cron.daily/stmpclean
 

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.11 2003/10/29 19:27:21 solar Exp $
+# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.12 2004/11/23 22:40:46 mci Exp $
 
 Summary: Tools for managing ipchains packet filtering rules.
 Name: ipchains
@@ -39,21 +39,21 @@ make clean
 make COPTS="$RPM_OPT_FLAGS"
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/sbin
-mkdir -p $RPM_BUILD_ROOT%_mandir/man{4,8}
+rm -rf %buildroot
+mkdir -p %buildroot/sbin
+mkdir -p %buildroot%_mandir/man{4,8}
 
-make install SBIN=$RPM_BUILD_ROOT/sbin MANDIR=$RPM_BUILD_ROOT%_mandir
+make install SBIN=%buildroot/sbin MANDIR=%buildroot%_mandir
 pushd ipchains-scripts-1.1.2
-cp ipchains-restore ipchains-save $RPM_BUILD_ROOT/sbin/
-cp ipfwadm-wrapper $RPM_BUILD_ROOT/sbin/ipfwadm
-ln -s ipfwadm $RPM_BUILD_ROOT/sbin/ipfwadm-wrapper
-cp *.8 $RPM_BUILD_ROOT%_mandir/man8/
+cp ipchains-restore ipchains-save %buildroot/sbin/
+cp ipfwadm-wrapper %buildroot/sbin/ipfwadm
+ln -s ipfwadm %buildroot/sbin/ipfwadm-wrapper
+cp *.8 %buildroot%_mandir/man8/
 popd
 
-mkdir -p $RPM_BUILD_ROOT/etc/rc.d/init.d
+mkdir -p %buildroot/etc/rc.d/init.d
 install -m 755 $RPM_SOURCE_DIR/ipchains.init \
-	$RPM_BUILD_ROOT/etc/rc.d/init.d/ipchains
+	%buildroot/etc/rc.d/init.d/ipchains
 
 gzip -9nf ipchains-quickref.ps
 

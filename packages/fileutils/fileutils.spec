@@ -1,4 +1,4 @@
-# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.16 2004/11/02 02:54:47 solar Exp $
+# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.17 2004/11/23 22:40:45 mci Exp $
 
 # The texinfo documentation for fileutils, sh-utils, and textutils is
 # currently provided by fileutils.
@@ -69,10 +69,10 @@ unset LINGUAS || :
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 %makeinstall
 
-cd $RPM_BUILD_ROOT
+cd %buildroot
 
 mkdir -p .%_prefix/bin
 for i in dir dircolors du install mkfifo shred vdir; do

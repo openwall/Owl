@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ncurses/ncurses.spec,v 1.24 2004/11/02 03:26:05 solar Exp $
+# $Id: Owl/packages/ncurses/ncurses.spec,v 1.25 2004/11/23 22:40:47 mci Exp $
 
 %define major 5
 %define oldmajor 4
@@ -114,37 +114,37 @@ rm -f c++/demo
 %endif
 
 # Let's run test-suite
-TERMINFO=$RPM_BUILD_ROOT%_datadir/terminfo %__make -C test
+TERMINFO=%buildroot%_datadir/terminfo %__make -C test
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 %makeinstall \
-	includedir=$RPM_BUILD_ROOT%_includedir/%name \
-	ticdir=$RPM_BUILD_ROOT%_datadir/terminfo
+	includedir=%buildroot%_includedir/%name \
+	ticdir=%buildroot%_datadir/terminfo
 
 # Clean up after make install - tack man page lands into the wrong place
-mv $RPM_BUILD_ROOT%_mandir/tack.1* $RPM_BUILD_ROOT%_mandir/man1/
+mv %buildroot%_mandir/tack.1* %buildroot%_mandir/man1/
 
-ln -s ../l/linux $RPM_BUILD_ROOT%_datadir/terminfo/c/console
-ln -s ncurses/curses.h $RPM_BUILD_ROOT%_includedir/ncurses.h
+ln -s ../l/linux %buildroot%_datadir/terminfo/c/console
+ln -s ncurses/curses.h %buildroot%_includedir/ncurses.h
 for I in curses unctrl eti form menu panel term; do
-	ln -s ncurses/$I.h $RPM_BUILD_ROOT%_includedir/$I.h
+	ln -s ncurses/$I.h %buildroot%_includedir/$I.h
 done
 
 %ifarch sparc sparcv9 sparc64
 # XXX (GM): Warning: I cannot test if this block is necessary for current
 # version of ncurses.
 install -m 644 $RPM_SOURCE_DIR/ncurses-linux \
-	$RPM_BUILD_ROOT%_datadir/terminfo/l/linux
+	%buildroot%_datadir/terminfo/l/linux
 install -m 644 $RPM_SOURCE_DIR/ncurses-linux-m \
-	$RPM_BUILD_ROOT%_datadir/terminfo/l/linux-m
+	%buildroot%_datadir/terminfo/l/linux-m
 %endif
 
 %if %BUILD_CXX
 # Install C++ shared library
-install -p -m 755 lib/libncurses++.so.%version $RPM_BUILD_ROOT%_libdir/
-ln -s libncurses++.so.%version $RPM_BUILD_ROOT%_libdir/libncurses++.so.5
-ln -s libncurses++.so.5 $RPM_BUILD_ROOT%_libdir/libncurses++.so
+install -p -m 755 lib/libncurses++.so.%version %buildroot%_libdir/
+ln -s libncurses++.so.%version %buildroot%_libdir/libncurses++.so.5
+ln -s libncurses++.so.5 %buildroot%_libdir/libncurses++.so
 
 # Prepare C++ doc directory
 mkdir -p rpm-doc/c++
@@ -155,13 +155,13 @@ install -p -m 644 c++/{NEWS,PROBLEMS,README-first} rpm-doc/c++/
 
 # the resetall script
 install -m 755 $RPM_SOURCE_DIR/ncurses-resetall.sh \
-	$RPM_BUILD_ROOT%_bindir/resetall
+	%buildroot%_bindir/resetall
 
 # compat links
-ln -s libform.so.%version $RPM_BUILD_ROOT/usr/lib/libform.so.%oldmajor
-ln -s libmenu.so.%version $RPM_BUILD_ROOT/usr/lib/libmenu.so.%oldmajor
-ln -s libncurses.so.%version $RPM_BUILD_ROOT/usr/lib/libncurses.so.%oldmajor
-ln -s libpanel.so.%version $RPM_BUILD_ROOT/usr/lib/libpanel.so.%oldmajor
+ln -s libform.so.%version %buildroot/usr/lib/libform.so.%oldmajor
+ln -s libmenu.so.%version %buildroot/usr/lib/libmenu.so.%oldmajor
+ln -s libncurses.so.%version %buildroot/usr/lib/libncurses.so.%oldmajor
+ln -s libpanel.so.%version %buildroot/usr/lib/libpanel.so.%oldmajor
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig

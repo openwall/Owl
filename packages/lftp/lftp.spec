@@ -1,4 +1,4 @@
-# $Id: Owl/packages/lftp/lftp.spec,v 1.22 2004/02/20 02:18:39 mci Exp $
+# $Id: Owl/packages/lftp/lftp.spec,v 1.23 2004/11/23 22:40:46 mci Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
@@ -51,12 +51,12 @@ unset LINGUAS || :
 make CFLAGS="$RPM_OPT_FLAGS"
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make install-strip DESTDIR=$RPM_BUILD_ROOT
+rm -rf %buildroot
+make install-strip DESTDIR=%buildroot
 
-find $RPM_BUILD_ROOT%_libdir/%name/ -type f -name \*.la -print -delete
+find %buildroot%_libdir/%name/ -type f -name \*.la -print -delete
 
-install -m 644 $RPM_SOURCE_DIR/lftpget.1 $RPM_BUILD_ROOT%_mandir/man1/
+install -m 644 $RPM_SOURCE_DIR/lftpget.1 %buildroot%_mandir/man1/
 
 %post
 if [ ! -e /usr/bin/ftp -a ! -e %_mandir/man1/ftp.1.gz ]; then

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bc/bc.spec,v 1.9 2004/09/11 00:45:23 solar Exp $
+# $Id: Owl/packages/bc/bc.spec,v 1.10 2004/11/23 22:40:45 mci Exp $
 
 Summary: GNU's bc (a numeric processing language) and dc (a calculator).
 Name: bc
@@ -33,7 +33,7 @@ makeinfo
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
 %makeinstall
 

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/elftoaout/elftoaout.spec,v 1.7 2003/10/29 19:04:58 solar Exp $
+# $Id: Owl/packages/elftoaout/elftoaout.spec,v 1.8 2004/11/23 22:40:45 mci Exp $
 
 Summary: A utility for converting ELF binaries to a.out binaries.
 Name: elftoaout
@@ -24,13 +24,13 @@ elftoaout is also used to build the SPARC boot loader (SILO).
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
-mkdir -p $RPM_BUILD_ROOT/usr/bin
-install -m 755 -s elftoaout $RPM_BUILD_ROOT/usr/bin/
+mkdir -p %buildroot/usr/bin
+install -m 755 -s elftoaout %buildroot/usr/bin/
 
-mkdir -p $RPM_BUILD_ROOT%_mandir/man1
-install -m 644 elftoaout.1 $RPM_BUILD_ROOT%_mandir/man1/
+mkdir -p %buildroot%_mandir/man1
+install -m 644 elftoaout.1 %buildroot%_mandir/man1/
 
 %files
 %defattr(-,root,root)
