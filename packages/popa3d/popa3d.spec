@@ -1,8 +1,8 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.4 2001/06/19 20:43:09 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.5 2001/09/02 08:51:02 solar Exp $
 
 Summary: A tiny POP3 server with security as its primary design goal
 Name: popa3d
-Version: 0.4.9.1
+Version: 0.4.9.2
 Release: 1owl
 Copyright: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
@@ -22,7 +22,7 @@ popa3d is a tiny POP3 server with security as its primary design goal.
 %patch0 -p1
 
 %build
-make CFLAGS="-c -Wall $RPM_OPT_FLAGS" LDFLAGS="-s -lcrypt -lpam"
+make CFLAGS="-c -Wall $RPM_OPT_FLAGS" LIBS="-lpam"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -65,6 +65,9 @@ fi
 %doc DESIGN LICENSE
 
 %changelog
+* Sun Sep 02 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 0.4.9.2.
+
 * Wed Jun 20 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 0.4.9.1 (finally replaced the GNU MD5 routines to relax
 the license for the entire package, solve certain portability issues,
