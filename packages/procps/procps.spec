@@ -1,9 +1,9 @@
-# $Id: Owl/packages/procps/Attic/procps.spec,v 1.12 2004/02/12 01:28:49 mci Exp $
+# $Id: Owl/packages/procps/Attic/procps.spec,v 1.13 2004/05/14 01:54:36 galaxy Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
 Version: 2.0.7
-Release: owl5
+Release: owl6
 License: GPL and LGPL
 Group: System Environment/Base
 URL: http://procps.sf.net
@@ -13,6 +13,7 @@ Patch1: procps-2.0.7-owl-locale.diff
 Patch2: procps-2.0.7-owl-meminfo-fixes.diff
 Patch3: procps-2.0.7-owl-no-catman-cleanup.diff
 Patch4: procps-2.0.7-owl-top-ticks.diff
+Patch5:  procps-2.0.7-owl-top-include.diff
 PreReq: /sbin/ldconfig
 BuildRoot: /override/%name-%version
 
@@ -28,6 +29,7 @@ top, pgrep, pkill, uptime, vmstat, w, and watch.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 make CC="gcc $RPM_OPT_FLAGS" LDFLAGS=-s
@@ -76,6 +78,10 @@ chmod 755 $RPM_BUILD_ROOT/{lib,bin,sbin,usr/bin}/*
 %_mandir/man8/sysctl.8*
 
 %changelog
+* Fri May 14 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.0.7-owl6
+- Changed order of included headers in top to flawlessly build against
+ncurses 5.4
+
 * Thu Feb 12 2004 Michail Litvak <mci@owl.openwall.com> 2.0.7-owl5
 - Use RPM macros instead of explicit paths.
 
