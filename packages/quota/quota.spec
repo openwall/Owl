@@ -1,15 +1,16 @@
-# $Id: Owl/packages/quota/quota.spec,v 1.13 2002/02/05 15:33:42 solar Exp $
+# $Id: Owl/packages/quota/quota.spec,v 1.14 2002/04/21 01:49:06 solar Exp $
 
 Summary: System administration tools for monitoring users' disk usage.
 Name: quota
 Version: 2.00
-Release: owl6
+Release: owl7
 License: BSD
 Group: System Environment/Base
 Source: ftp://ftp.cistron.nl/pub/people/mvw/quota/%{name}-%{version}.tar.gz
 Patch0: quota-2.00-pld-owl-man.diff
 Patch1: quota-2.00-owl-install-no-root.diff
 Patch2: quota-2.00-owl-tmp.diff
+Patch3: quota-2.00-owl-vitmp.diff
 BuildRequires: e2fsprogs-devel
 BuildRoot: /override/%{name}-%{version}
 
@@ -22,6 +23,7 @@ and limiting users' and or groups' disk usage, per filesystem.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 %configure
@@ -60,6 +62,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/setquota.8*
 
 %changelog
+* Sun Apr 21 2002 Solar Designer <solar@owl.openwall.com>
+- Use /usr/libexec/vitmp in edquota(8).
+
 * Tue Feb 05 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 
