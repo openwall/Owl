@@ -1,12 +1,12 @@
-# $Id: Owl/packages/pwdb/Attic/pwdb.spec,v 1.3 2001/04/08 15:16:53 solar Exp $
+# $Id: Owl/packages/pwdb/Attic/pwdb.spec,v 1.4 2001/06/18 02:09:38 solar Exp $
 
 Summary: The password database library.
 Name: pwdb
-Version: 0.61
-Release: 3owl
+Version: 0.61.1
+Release: 1owl
 Copyright: GPL or BSD
 Group: System Environment/Base
-Source: pwdb-%{PACKAGE_VERSION}.tar.gz
+Source: pwdb-%{version}.tar.gz
 Patch0: pwdb-0.61-owl-fgets.diff
 Patch1: pwdb-0.61-owl-clean.diff
 Patch2: pwdb-0.61-owl-backup.diff
@@ -66,9 +66,12 @@ rm -rf $RPM_BUILD_ROOT
 /usr/include/pwdb
 /lib/libpwdb.a
 /lib/libpwdb.so
-/lib/libpwdb.so.%{PACKAGE_VERSION}
+/lib/libpwdb.so.%{version}
 
 %changelog
+* Mon Jun 18 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 0.61.1, which adds some header files.
+
 * Sun Apr 08 2001 Solar Designer <solar@owl.openwall.com>
 - Included a patch for memory leaks reported to libpwdb developers by
 Koni <mhw6@cornell.edu>.
