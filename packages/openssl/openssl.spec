@@ -1,16 +1,15 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.27 2002/09/24 23:09:14 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.28 2002/11/15 09:55:11 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
 Version: 0.9.6g
-Release: owl2
+Release: owl3
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
 Source: ftp://ftp.openssl.org/source/%{name}-%{version}.tar.gz
 Patch0: openssl-0.9.6e-owl-crypt.diff
 Patch1: openssl-0.9.6a-owl-glibc-enable_secure.diff
-Patch2: openssl-0.9.6d-owl-Makefile.diff
 Patch10: openssl-0.9.6e-up-20020429-read-errors.diff
 PreReq: /sbin/ldconfig
 Provides: SSL
@@ -64,7 +63,6 @@ touch -r objects.pl *.h
 popd
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 %patch10 -p0
 
 %define openssldir /var/ssl
@@ -102,7 +100,7 @@ perl -pi -e "s/-O.(?: -fomit-frame-pointer)?(?: -m.86)?/${RPM_OPT_FLAGS}/" \
 # DIRS= crypto ssl rsaref $(SHLIB_MARK) apps test tools
 # all: clean-shared Makefile.ssl sub_all
 make Makefile.ssl
-make sub_all DIRS="crypto ssl rsaref"
+make sub_all DIRS="crypto ssl"
 LD_LIBRARY_PATH=`pwd` make sub_all DIRS="apps test tools"
 
 if [ ! -x /usr/bin/bc ]; then
@@ -125,10 +123,6 @@ grep -qw libcrypto openssl.libs
 mv $RPM_BUILD_ROOT%{_mandir}/man1/{,ssl}passwd.1
 mv $RPM_BUILD_ROOT%{_mandir}/man3/{,ssl}err.3
 mv $RPM_BUILD_ROOT%{_mandir}/man3/{,ssl}rand.3
-
-# Install RSAref stuff
-install -m 644 rsaref/rsaref.h $RPM_BUILD_ROOT/usr/include/openssl
-install -m 644 libRSAglue.a $RPM_BUILD_ROOT/usr/lib
 
 # Make backwards-compatibility symlink to ssleay
 ln -s openssl $RPM_BUILD_ROOT/usr/bin/ssleay
@@ -163,6 +157,11 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0644,root,root) %{_mandir}/man3/*
 
 %changelog
+* Fri Nov 15 2002 Solar Designer <solar@owl.openwall.com>
+- Dropped the patch removing -Wl,-Bsymbolic which is no longer needed with
+0.9.6g and/or after dropping the explicit "make build-shared".
+- Dropped RSAref stuff.
+
 * Wed Sep 25 2002 Solar Designer <solar@owl.openwall.com>
 - Don't do an explicit "make build-shared", it's not needed and could only
 cause harm (link libssl against libcrypto statically), but luckily didn't;
