@@ -25,7 +25,7 @@ Owl includes a complete build environment capable to re-build the
 entire system from source with one simple command ("make buildworld").
 (This is explained in more detail below.)
 
-Owl supports multiple architectures (currently x86 and sparc), as this
+Owl supports multiple architectures (currently x86 and SPARC), as this
 lets you use it in more cases and helps us catch certain classes of
 software bugs earlier, thus improving the reliability of Owl packages.
 
@@ -108,4 +108,14 @@ We're using RPM for the binary packages, as that allows for reasonable
 dependency handling when installing packages from or intended for Red
 Hat Linux and several other distributions, on an Owl system.
 
-$Id: Owl/doc/CONCEPTS,v 1.3 2000/12/23 08:24:47 solar Exp $
+
+	Compatibility.
+
+Except for a few cases where this conflicts with our more important
+goals, Owl tries to be binary- and package- compatible with several
+other major distributions of GNU/*/Linux.  In particular, in most
+cases it will be possible to install applications packaged for a
+recent version of Red Hat Linux (currently, this applies to Red Hat
+Linux 6.x) on Owl.
+
+$Id: Owl/doc/CONCEPTS,v 1.4 2000/12/24 03:44:00 solar Exp $
