@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.36 2002/02/06 22:07:22 mci Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.37 2002/05/19 04:03:20 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
-Version: 0.21
+Version: 0.22
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -65,6 +65,9 @@ rm -rf $RPM_BUILD_ROOT
 %ghost /var/log/lastlog
 
 %changelog
+* Sun May 19 2002 Solar Designer <solar@owl.openwall.com>
+- screen group.
+
 * Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions.
 
