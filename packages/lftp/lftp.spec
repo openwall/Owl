@@ -1,9 +1,9 @@
-# $Id: Owl/packages/lftp/lftp.spec,v 1.2 2001/03/19 23:07:55 mci Exp $
+# $Id: Owl/packages/lftp/lftp.spec,v 1.3 2001/03/19 23:38:48 mci Exp $
 
 Summary: sophisticated command line file transfer program
 Name: lftp
 Version: 2.3.8
-Release: 2owl
+Release: 3owl
 Copyright: GPL
 Source0: ftp://ftp.yars.free.net/pub/software/unix/net/ftp/client/lftp/%{name}-%{version}.tar.gz
 Source1: lftpget.1
@@ -54,9 +54,7 @@ tools for downloading files.
 %build
 
 # Make sure that all message catalogs are built
-if [ $LINGUAS ]; then
-	unset LINGUAS
-fi
+unset LINGUAS || :
 
 %define __libtoolize true
 %configure --with-modules --with-ssl --mandir=%{_mandir}
@@ -65,10 +63,10 @@ make CFLAGS="$RPM_OPT_FLAGS"
 %install
 rm -rf %{buildroot}
 make install-strip DESTDIR=%{buildroot}
-install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/usr/man/man1/ 
+install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/usr/man/man1/
 
 %clean
-rm -rf $RPM_BUILD_ROOT 
+rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
@@ -82,6 +80,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Mon Mar 19 2001 Michail Litvak <mci@owl.openwall.com>
-- reworked spec from author's package 
+- reworked spec from author's package
 - imported patches from Debian
-- patch to work tidy with address from DNS
+- add patch to check length of address returned from DNS 
