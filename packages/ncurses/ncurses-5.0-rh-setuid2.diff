@@ -1,0 +1,14 @@
+--- ncurses-5.0/ncurses/tinfo/read_termcap.c.orig	Tue Jan 11 18:15:07 2000
++++ ncurses-5.0/ncurses/tinfo/read_termcap.c	Tue Jan 11 18:17:27 2000
+@@ -1020,7 +1020,10 @@
+ 	for (i = 0; i < filecount; i++) {
+ 
+ 	    T(("Looking for %s in %s", tn, termpaths[i]));
+-	    if ((fp = fopen(termpaths[i], "r")) != (FILE *) 0) {
++	    if ((_nc_access(termpaths[i], R_OK) < 0)
++	        || (fp = fopen(termpaths[i], "r")) == (FILE *)0) {
++		T(("Could not open %s (error %d)", termpaths[i], errno));
++	    } else {
+ 		_nc_set_source(termpaths[i]);
+ 
+ 		/*

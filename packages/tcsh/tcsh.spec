@@ -1,0 +1,149 @@
+# $Id: Owl/packages/tcsh/tcsh.spec,v 1.1 2000/10/25 19:08:14 kad Exp $
+
+%define	_bindir	/bin
+
+Summary: 	An enhanced version of csh, the C shell.
+Name: 		tcsh
+Version: 	6.09
+Release: 	6owl
+Copyright: 	distributable
+Group: 		System Environment/Shells
+Source: 	ftp://ftp.astron.com/pub/tcsh/tcsh-%{version}.tar.gz
+Patch0: 	tcsh-6.07.09-rh-utmp.diff
+Patch1: 	tcsh-6.09.00-rh-termios_hack.diff
+Patch2: 	tcsh-6.08.00-rh-security.diff
+Patch3: 	tcsh-6.09.00-rh-strcoll.diff
+Patch4: 	tcsh-6.09.00-rh-locale.diff
+Provides: 	csh = %{version}
+Prereq: 	fileutils grep
+URL: 		http://www.primate.wisc.edu/software/csh-tcsh-book/
+Buildroot: 	/var/rpm-buildroot/%{name}-root
+
+%description
+Tcsh is an enhanced but completely compatible version of csh, the C
+shell.  Tcsh is a command language interpreter which can be used both
+as an interactive login shell and as a shell script command processor.
+Tcsh includes a command line editor, programmable word completion,
+spelling correction, a history mechanism, job control and a C language
+like syntax.
+
+%prep
+%setup -q -n %{name}-%{version}.00
+%patch0 -p1 -b .getutent
+%patch1 -p1 -b .termios
+%patch2 -p1 -b .security
+%patch3 -p1 -b .strcoll
+%patch4 -p1 -b .locale
+
+%build
+
+%configure
+make LIBES="-lnsl -ltermcap -lcrypt" all catalogs
+
+%install
+rm -rf ${RPM_BUILD_ROOT}
+mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man1 ${RPM_BUILD_ROOT}%{_bindir}
+install -m 755 -s tcsh ${RPM_BUILD_ROOT}%{_bindir}/tcsh
+install -m 644 tcsh.man ${RPM_BUILD_ROOT}%{_mandir}/man1/tcsh.1
+ln -sf tcsh ${RPM_BUILD_ROOT}%{_bindir}/csh
+nroff -me eight-bit.me > eight-bit.txt
+
+for i in de es fr gr_GR it ja_JP.eucJP
+do
+    mkdir -p ${RPM_BUILD_ROOT}%{_datadir}/locale/$i/LC_MESSAGES
+done
+install -m 644 tcsh.german.cat ${RPM_BUILD_ROOT}%{_datadir}/locale/de/LC_MESSAGES/tcsh
+install -m 644 tcsh.spanish.cat ${RPM_BUILD_ROOT}%{_datadir}/locale/es/LC_MESSAGES/tcsh
+install -m 644 tcsh.french.cat ${RPM_BUILD_ROOT}%{_datadir}/locale/fr/LC_MESSAGES/tcsh
+install -m 644 tcsh.greek.cat ${RPM_BUILD_ROOT}%{_datadir}/locale/gr_GR/LC_MESSAGES/tcsh
+install -m 644 tcsh.italian.cat ${RPM_BUILD_ROOT}%{_datadir}/locale/it/LC_MESSAGES/tcsh
+install -m 644 tcsh.ja.cat ${RPM_BUILD_ROOT}%{_datadir}/locale/ja_JP.eucJP/LC_MESSAGES/tcsh
+
+%clean
+rm -rf ${RPM_BUILD_ROOT}
+
+%post
+if [ ! -f /etc/shells ]; then
+    echo "%{_bindir}/tcsh" >> /etc/shells
+    echo "%{_bindir}/csh" >> /etc/shells
+else
+    grep '^%{_bindir}/tcsh$' /etc/shells > /dev/null || echo "%{_bindir}/tcsh" >> /etc/shells
+    grep '^%{_bindir}/csh$' /etc/shells > /dev/null || echo "%{_bindir}/csh" >> /etc/shells
+fi
+
+%postun
+if [ ! -x %{_bindir}/tcsh ]; then
+    grep -v '^%{_bindir}/tcsh$' /etc/shells | grep -v '^%{_bindir}/csh$'> /etc/shells.rpm
+    mv /etc/shells.rpm /etc/shells
+fi
+
+%files
+%defattr(-,root,root)
+%doc NewThings FAQ eight-bit.txt complete.tcsh
+%{_bindir}/tcsh
+%{_bindir}/csh
+%{_mandir}/man1/tcsh.*
+%{_datadir}/locale/*/LC_MESSAGES/tcsh*
+
+%changelog
+* Sun Sep 24 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- import from RH
+
+* Wed Jul 12 2000 Prospector <bugzilla@redhat.com>
+- automatic rebuild
+
+* Thu Jun 15 2000 Jeff Johnson <jbj@redhat.com>
+- FHS packaging.
+- add locale support (#10345).
+
+* Tue Mar  7 2000 Jeff Johnson <jbj@redhat.com>
+- rebuild for sparc baud rates > 38400.
+
+* Mon Jan 31 2000 Cristian Gafton <gafton@redhat.com>
+- rebuild to fix dependencies
+
+* Thu Jan 27 2000 Jeff Johnson <jbj@redhat.com>
+- append entries to spanking new /etc/shells.
+
+* Mon Jan 10 2000 Jeff Johnson <jbj@redhat.com>
+- update to 6.09.
+- fix strcoll oddness (#6000, #6244, #6398).
+
+* Sat Sep 25 1999 Michael K. Johnson <johnsonm@redhat.com>
+- fix $shell by using --bindir
+
+* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com> 
+- auto rebuild in the new build environment (release 5)
+
+* Wed Feb 24 1999 Cristian Gafton <gafton@redhat.com>
+- patch for using PATH_MAX instead of some silly internal #defines for
+  variables that handle filenames.
+
+* Fri Nov  6 1998 Jeff Johnson <jbj@redhat.com>
+- update to 6.08.00.
+
+* Fri Oct 02 1998 Cristian Gafton <gafton@redhat.com>
+- upgraded to 6.07.09 from the freebsd
+- security fix
+
+* Wed Aug  5 1998 Jeff Johnson <jbj@redhat.com>
+- use -ltermcap so that /bin/tcsh can be used in single user mode w/o /usr.
+- update url's
+
+* Mon Apr 27 1998 Prospector System <bugs@redhat.com>
+- translations modified for de, fr, tr
+
+* Thu Oct 21 1997 Cristian Gafton <gafton@redhat.com>
+- updated to 6.07; added BuildRoot
+- cleaned up the spec file; fixed source url
+
+* Wed Sep 03 1997 Erik Troan <ewt@redhat.com>
+- added termios hacks for new glibc
+- added /bin/csh to file list
+
+* Fri Jun 13 1997 Erik Troan <ewt@redhat.com>
+- built against glibc
+
+* Fri Feb 07 1997 Erik Troan <ewt@redhat.com>
+ - Provides csh, adds and removes /bin/csh from /etc/shells if csh package
+isn't installed.

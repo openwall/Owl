@@ -1,0 +1,13 @@
+--- gnupg-1.0.3/doc/gpg.1.typos	Wed Sep  6 10:38:47 2000
++++ gnupg-1.0.3/doc/gpg.1	Tue Oct 10 12:07:50 2000
+@@ -112,8 +112,8 @@
+ and the remaining files are the signed stuff. 
+ .IP "--verify-files [\fBfiles\fR]" 10 
+ This is a special version of the --verify command which does not work with 
+-detached signatures.  The command expects the files to bee verified either 
+-on the commandline or reads the filenames from stdin;  each anem muts be on 
++detached signatures.  The command expects the files to be verified either 
++on the command line or reads the filenames from stdin;  each name must be on 
+ separate line. The command is intended for quick checking of many files. 
+ .IP "--list-keys [\fBnames\fR]" 10 
+ .IP "--list-public-keys [\fBnames\fR]" 10 

@@ -1,0 +1,18 @@
+--- gnupg-1.0.2/g10/g10.c	Tue Aug 15 17:34:17 2000
++++ gnupg-1.0.2/g10/g10.c	Tue Aug 15 17:38:35 2000
+@@ -478,14 +478,9 @@
+     set_gettext_file( PACKAGE );
+   #else
+   #ifdef ENABLE_NLS
+-    #ifdef HAVE_LC_MESSAGES
+-       setlocale( LC_TIME, "" );
+-       setlocale( LC_MESSAGES, "" );
+-    #else
+-       setlocale( LC_ALL, "" );
+-    #endif
+     bindtextdomain( PACKAGE, G10_LOCALEDIR );
+     textdomain( PACKAGE );
++    setlocale( LC_ALL, "" );
+   #endif
+   #endif
+ }

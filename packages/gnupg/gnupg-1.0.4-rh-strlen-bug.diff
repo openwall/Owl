@@ -1,0 +1,11 @@
+--- gnupg-1.0.4/g10/openfile.c	Thu Oct 19 17:24:09 2000
++++ gnupg-1.0.4/g10/openfile.c	Thu Oct 19 17:25:58 2000
+@@ -329,7 +329,7 @@
+ 
+     if ( ( *defhome == '~'
+            && ( strlen(fname) >= strlen (defhome+1)
+-                && !strcmp(fname+strlen(defhome+1)-strlen(defhome+1),
++                && !strcmp(fname+strlen(fname)-strlen(defhome+1),
+                            defhome+1 ) ))
+          || ( *defhome != '~'
+               && !compare_filenames( fname, defhome ) )

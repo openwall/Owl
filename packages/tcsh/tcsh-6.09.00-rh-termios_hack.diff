@@ -1,0 +1,33 @@
+--- tcsh-6.09.00/sh.h.termios	Sun Oct 25 10:10:16 1998
++++ tcsh-6.09.00/sh.h	Mon Jan 10 15:38:40 2000
+@@ -204,6 +204,8 @@
+ # define DEV_DEV_COMPARE(x,y)   ((x) == (y))
+ #endif /* DEV_DEV_COMPARE */
+ 
++#define POSIX
++
+ #ifdef _SEQUENT_
+ # include <sys/procstats.h>
+ #endif /* _SEQUENT_ */
+@@ -249,12 +251,10 @@
+ #  else
+ #   include <termio.h>
+ #  endif /* _UWIN */
+-#  if SYSVREL > 3
+ #   undef TIOCGLTC	/* we don't need those, since POSIX has them */
+ #   undef TIOCSLTC
+ #   undef CSWTCH
+ #   define CSWTCH _POSIX_VDISABLE	/* So job control works */
+-#  endif /* SYSVREL > 3 */
+ # endif /* POSIX */
+ #endif /* WINNT */
+ 
+@@ -312,6 +312,8 @@
+ #if !((defined(SUNOS4) || defined(_MINIX) /* || defined(DECOSF1) */) && defined(TERMIO))
+ # if !defined(COHERENT) && !defined(_VMS_POSIX) && !defined(WINNT)
+ #  include <sys/ioctl.h>
++#  undef TIOCGLTC	/* we don't need those, since POSIX has them */
++#  undef TIOCSLTC
+ # endif
+ #endif 
+ 

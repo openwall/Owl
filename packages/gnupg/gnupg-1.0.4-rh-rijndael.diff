@@ -1,0 +1,12 @@
+--- gnupg-1.0.4/g10/misc.c	Fri Oct 13 10:39:17 2000
++++ gnupg-1.0.4/g10/misc.c.rijndael	Wed Oct 18 11:46:36 2000
+@@ -224,6 +224,9 @@
+ 	     || algo == CIPHER_ALGO_CAST5
+ 	     || algo == CIPHER_ALGO_BLOWFISH
+ 	     || algo == CIPHER_ALGO_TWOFISH
++	     || algo == CIPHER_ALGO_RIJNDAEL
++	     || algo == CIPHER_ALGO_RIJNDAEL192
++	     || algo == CIPHER_ALGO_RIJNDAEL256
+ 	   )
+ 	;
+     else {

@@ -1,0 +1,11 @@
+--- ncurses-5.0/dist.mk.oldmajor	Wed Dec 22 17:53:09 1999
++++ ncurses-5.0/dist.mk	Wed Dec 22 17:53:20 1999
+@@ -8,7 +8,7 @@
+ SHELL = /bin/sh
+ 
+ # These define the major/minor/patch versions of ncurses.
+-NCURSES_MAJOR = 5
++NCURSES_MAJOR = 4
+ NCURSES_MINOR = 2
+ NCURSES_PATCH = 20001021
+ 
