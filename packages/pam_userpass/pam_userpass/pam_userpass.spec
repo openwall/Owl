@@ -1,8 +1,8 @@
-# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.13 2003/10/30 08:45:15 solar Exp $
+# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.14 2003/11/02 14:21:14 solar Exp $
 
 Summary: Pluggable authentication module for USER/PASS-style protocols.
 Name: pam_userpass
-Version: 0.9
+Version: 0.9.1
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
@@ -23,14 +23,14 @@ Group: Development/Libraries
 Requires: %name = %version-%release, pam-devel
 
 %description devel
-This package contains development libraries and header files
-required for building pam_userpass-aware applications.
+This package contains development libraries and header files required
+for building pam_userpass-aware applications.
 
 %prep
 %setup -q
 
 %build
-make CFLAGS="-c -Wall -fPIC -Iinclude $RPM_OPT_FLAGS"
+make CFLAGS="-Wall -fPIC $RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -52,6 +52,10 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %_includedir/security/*
 
 %changelog
+* Sun Nov 02 2003 Solar Designer <solar@owl.openwall.com> 0.9.1-owl1
+- Use "install -c" (makes a difference on some non-Linux systems).
+- Moved the "-c" out of CFLAGS.
+
 * Wed Apr 02 2003 Dmitry V. Levin <ldv@owl.openwall.com> 0.9-owl1
 - Added libpam_userpass library, in shared and static forms.
 - Packaged development libraries and header files in separate

@@ -1,15 +1,19 @@
 CC = gcc
+LD = $(CC)
+AR = ar
 RM = rm -f
 MKDIR = mkdir -p
-INSTALL = install
+INSTALL = install -c
 LN_S = ln -sf
-CFLAGS = -c -O2 -Wall -fPIC -Iinclude
+ifndef CFLAGS
+CFLAGS = -Wall -O2 -fPIC
+endif
+CFLAGS += -Iinclude
 LDFLAGS = -s
-LIBS = -lpam
-LINK = $(CC) $(LDFLAGS)
-LINK_SHARED = $(LINK) -shared
-AR = ar
 ARFLAGS = rv
+LIBS = -lpam
+LINK = $(LD) $(LDFLAGS)
+LINK_SHARED = $(LINK) -shared
 
 TITLE = pam_userpass
 LIBPAMSHARED = $(TITLE).so
@@ -29,7 +33,7 @@ DESTDIR =
 .SUFFIXES: .c .o
 
 .c.o:
-	$(CC) $(CFLAGS) $*.c
+	$(CC) $(CFLAGS) -c $*.c
 
 all: $(LIBPAMSHARED) $(LIBAPPLSTATIC) example_userpass
 
