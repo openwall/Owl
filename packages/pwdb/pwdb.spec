@@ -1,9 +1,9 @@
-# $Id: Owl/packages/pwdb/Attic/pwdb.spec,v 1.2 2000/09/03 15:02:36 solar Exp $
+# $Id: Owl/packages/pwdb/Attic/pwdb.spec,v 1.3 2001/04/08 15:16:53 solar Exp $
 
 Summary: The password database library.
 Name: pwdb
 Version: 0.61
-Release: 2owl
+Release: 3owl
 Copyright: GPL or BSD
 Group: System Environment/Base
 Source: pwdb-%{PACKAGE_VERSION}.tar.gz
@@ -12,13 +12,14 @@ Patch1: pwdb-0.61-owl-clean.diff
 Patch2: pwdb-0.61-owl-backup.diff
 Patch3: pwdb-0.61-owl-sprintf.diff
 Patch4: pwdb-0.61-owl-sp_flag.diff
+Patch5: pwdb-0.61-koni-owl-memory-leaks.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 
 %description
 The pwdb package contains libpwdb, the password database library.
-Libpwdb is a library which implements a generic user information
-database.  Libpwdb was specifically designed to work with Linux's PAM
-(Pluggable Authentication Modules).  Libpwdb allows configurable
+libpwdb is a library which implements a generic user information
+database.  libpwdb was specifically designed to work with Linux-PAM
+(Pluggable Authentication Modules).  libpwdb allows configurable
 access to and management of security tools like /etc/passwd,
 /etc/shadow and network authentication systems including NIS and
 Radius.
@@ -30,6 +31,7 @@ Radius.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 rm default.defs
 ln -s defs/redhat.defs default.defs
 # checking out of the CVS sometimes preserves the setgid bit on
@@ -67,6 +69,10 @@ rm -rf $RPM_BUILD_ROOT
 /lib/libpwdb.so.%{PACKAGE_VERSION}
 
 %changelog
+* Sun Apr 08 2001 Solar Designer <solar@owl.openwall.com>
+- Included a patch for memory leaks reported to libpwdb developers by
+Koni <mhw6@cornell.edu>.
+
 * Sun Sep 03 2000 Solar Designer <solar@owl.openwall.com>
 - Initialize sp_flag (a reserved field) in _pwdb_shadow_replace().
 
