@@ -19,8 +19,8 @@ vulnerability in the brk(2) system call discovered by Andrew Morton
 which allowed user-space processes to access the kernel's data
 structures and thus gain root access.  Linux 2.2.x kernels are not
 affected.  The Linux 2.4.22-ow1 kernel image used in Owl-current ISO
-images and CDs dated 2003/10/21 through 2003/11/03 did contain the
-additional brk(2) fix and thus is not affected.  However that fix is
+images and CDs dated 2003/10/20 through 2003/11/03 did contain the
+additional brk(2) fix and thus is not affected.  However, that fix is
 not a part of the published Linux 2.4.22-ow1 source code patch meaning
 that custom builds of Linux 2.4.22-ow1 are affected and need to be
 upgraded to 2.4.23-ow1.  Additionally, this update of the kernel patch
@@ -503,4 +503,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.93 2003/12/01 22:51:10 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.94 2003/12/01 23:05:53 solar Exp $
