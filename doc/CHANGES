@@ -12,6 +12,10 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/11/04	Package: pam_passwdqc
+Updated to 0.4 which permits for stacking of more than one instance of
+the module (no statics).
+
 2001/11/03	kernel
 SECURITY FIX	Severity: none to medium, remote, active
 Updated to Linux 2.2.20-ow1.  Compared to our previous recommended
@@ -391,4 +395,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.39 2001/11/03 05:03:36 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.40 2001/11/04 00:56:57 solar Exp $
