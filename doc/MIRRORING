@@ -3,9 +3,9 @@ maintain an Owl mirror, official or not.
 
 Currently, we especially need official mirrors in Canada and Japan.
 
-Before you setup a mirror, please e-mail mirrors@owl.openwall.com such
-that we have your contact address in case of a technical problem or a
-significant change in the setup requirements outlined below.
+Before you setup a mirror, please e-mail <mirrors@owl.openwall.com>
+such that we have your contact address in case of a technical problem
+or a significant change in the setup requirements outlined below.
 
 The known to work way to do Owl mirrors from the primary feed
 (ftp.feed.openwall.com) is to use lftp 2.3.8, preferably the Owl
@@ -44,4 +44,4 @@ offer other, potentially dangerous, public services.  (Well, if you
 install Owl and use just the services that are a part of Owl, that
 would still be fine.)  As an exception, it may host other FTP content.
 
-$Id: Owl/doc/MIRRORING,v 1.1 2002/11/07 04:39:41 solar Exp $
+$Id: Owl/doc/MIRRORING,v 1.2 2002/11/07 04:45:10 solar Exp $
