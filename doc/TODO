@@ -407,9 +407,6 @@ version, only one such subtree will be dumped.
 
 	rpm.
 
-[PRIORITY: high]
-Should be able to convert rpm 3.0.6's database to 4.2's db3 format.
-
 [PRIORITY: medium]
 Audit and correct rpm's temporary file handling and its support for
 package signature checking.
@@ -525,4 +522,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.41 2004/09/28 01:15:54 solar Exp $
+$Id: Owl/doc/TODO,v 1.42 2004/11/03 05:42:27 solar Exp $
