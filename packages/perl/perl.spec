@@ -1,10 +1,10 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.4 2000/09/06 18:30:24 kad Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.5 2000/09/18 11:17:56 kad Exp $
 
 Summary: 	The Perl programming language.
 Name: 		perl
 %define 	perlver 5.6.0
 Version: 	%{perlver}
-Release: 	8owl
+Release: 	9owl
 Copyright: 	GPL
 Group: 		Development/Languages
 Source0:	ftp://ftp.perl.org/pub/perl/CPAN/src/perl-%{perlver}.tar.gz
@@ -81,6 +81,7 @@ find . -name \*.orig -exec rm -fv {} \;
 %build
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
+        -Dcc='%{__cc}' \
 	-Dcccdlflags='-fPIC' \
 	-Dinstallprefix=$RPM_BUILD_ROOT%{_prefix} \
 	-Dprefix=%{_prefix} \
@@ -93,6 +94,7 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Di_db \
 	-Di_ndbm \
 	-Di_gdbm \
+	-Di_shadow \
 	-Dman3ext=3pm \
 	-Uuselargefiles
 make -f Makefile
@@ -173,6 +175,10 @@ chmod 400 $RPM_BUILD_ROOT%{_prefix}/bin/suidperl
 %{_mandir}/*/*
 
 %changelog
+* Mon Sep 18 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- specify cc=%{__cc}; continue to let cpp sort itself out
+- switch shadow support on (RH bug #8646)
+
 * Wed Sep  6 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - no mail in suidperl
 
