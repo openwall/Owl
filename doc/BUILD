@@ -86,6 +86,9 @@ packages will be installed into /owl.
 
 Currently, it is possible to convert an existing Red Hat Linux 6.x
 installation into Owl with "make installworld" and some manual help.
+Be sure to read and understand all of installorder.conf before you try
+this.  In particular, your kernel should be no longer a part of an RPM
+package by the time you convert the system into Owl.
 
 
 	Re-building individual packages.
@@ -98,4 +101,4 @@ We do consider the building of SRPM's and the lack of automatic build
 dependency handling for re-builds to be bugs in the build environment.
 We will eventually fix these.
 
-$Id: Owl/doc/BUILD,v 1.4 2001/01/19 16:20:54 solar Exp $
+$Id: Owl/doc/BUILD,v 1.5 2001/01/19 17:02:41 solar Exp $
