@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ncurses/ncurses.spec,v 1.21 2004/05/14 01:30:25 galaxy Exp $
+# $Id: Owl/packages/ncurses/ncurses.spec,v 1.22 2004/05/14 01:43:29 galaxy Exp $
 
 %define major 5
 %define oldmajor 4
@@ -179,6 +179,7 @@ ln -s libpanel.so.%version $RPM_BUILD_ROOT/usr/lib/libpanel.so.%oldmajor
 %_mandir/man1/*
 %_mandir/man5/*
 %_mandir/man7/*
+%_libdir/terminfo
 
 %files devel
 %defattr(-,root,root)
@@ -198,6 +199,7 @@ ln -s libpanel.so.%version $RPM_BUILD_ROOT/usr/lib/libpanel.so.%oldmajor
 %changelog
 * Fri May 14 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 5.4-owl0.4
 - Updated patch-set from official site
+- Added %_libdir/terminfo symbolic link into filelist
 
 * Wed Mar 17 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 5.4-owl0.3
 - Removed unneeded libraries strip -- it will be done by brp- scripts
