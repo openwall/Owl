@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.10 2000/11/15 09:04:05 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.11 2000/12/20 00:02:04 solar Exp $
 
 Summary: Simple PAM-based Applications
 Name: SimplePAMApps
 Version: 0.60
-Release: 8owl
+Release: 9owl
 Copyright: BSD or GNU GPL
 Group: Utilities/System
 Source0: SimplePAMApps-0.60.tar.gz
@@ -85,6 +85,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc README CHANGELOG* NOTES.su Discussions
 
 %changelog
+* Wed Dec 20 2000 Solar Designer <solar@owl.openwall.com>
+- Use pam_mktemp.
+
 * Sun Oct 29 2000 Solar Designer <solar@owl.openwall.com>
 - su: don't require that the tty can be determined when started by root.
 - su: don't require that getlogin() works to set PAM_RUSER.
