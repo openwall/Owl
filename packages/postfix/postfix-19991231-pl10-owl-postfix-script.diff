@@ -1,6 +1,6 @@
 diff -ur postfix-19991231-pl10.orig/conf/postfix-script-sgid postfix-19991231-pl10/conf/postfix-script-sgid
 --- postfix-19991231-pl10.orig/conf/postfix-script-sgid	Fri Dec 17 22:12:45 1999
-+++ postfix-19991231-pl10/conf/postfix-script-sgid	Wed Nov 22 17:58:05 2000
++++ postfix-19991231-pl10/conf/postfix-script-sgid	Mon Dec  4 21:25:40 2000
 @@ -177,36 +177,30 @@
  
  	test -d maildrop || {
@@ -48,21 +48,22 @@ diff -ur postfix-19991231-pl10.orig/conf/postfix-script-sgid postfix-19991231-pl
  	}
  	find `ls -d $queue_directory/* | \
  	    egrep '/(incoming|active|defer|deferred|bounce|saved|corrupt|public|private)$'` \
-@@ -229,6 +223,17 @@
- 	done
- 
- 	$command_directory/postsuper || exit 1
+@@ -226,6 +220,18 @@
+ 			cmp -s $path /$path || 
+ 			    $WARN $queue_directory/$path and /$path differ
+ 		done
++	done
 +
 +	# Update the chroot jail
 +	mkdir -m 755 -p ${queue_directory}/{etc,lib}
 +	for src in /etc/{localtime,resolv.conf,host.conf,hosts,services} \
 +	    /lib/libnss_dns{-2.*.so,.so.2}; do
++		test -e "$src" || continue
 +		dst="${queue_directory}${src}"
 +		cmp -s "$src" "$dst" && continue
 +		$WARN "updating $dst"
 +		cp -a "$src" "${dst}.tmp"
 +		mv -f "${dst}.tmp" "$dst"
-+	done
+ 	done
  
- 	find corrupt -type f -exec $WARN damaged message: {} \;
- 
+ 	$command_directory/postsuper || exit 1

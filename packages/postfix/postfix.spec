@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.4 2000/12/01 19:02:34 solar Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.5 2000/12/04 18:32:39 solar Exp $
 
 Summary: Postfix mail system
 Name: postfix
@@ -7,7 +7,7 @@ Name: postfix
 %define original_version %{original_date}-%{original_pl}
 %define package_version %{original_date}_%{original_pl}
 Version: %{package_version}
-Release: 4owl
+Release: 5owl
 Copyright: IBM Public License
 Group: System Environment/Daemons
 Source0: ftp://ftp.sunet.se/pub/unix/mail/postfix/official/%{name}-%{original_version}.tar.gz
@@ -175,6 +175,10 @@ fi
 %files -f filelist
 
 %changelog
+* Mon Dec 04 2000 Solar Designer <solar@owl.openwall.com>
+- Ignore missing source files when updating the chroot jail (this may
+happen during system installation).
+
 * Fri Dec 01 2000 Solar Designer <solar@owl.openwall.com>
 - Simplified postfix.init for use with owl-startup.
 - Restart on package upgrades.
