@@ -1,15 +1,14 @@
-# $Id: Owl/packages/libnids/libnids.spec,v 1.7 2002/12/17 16:21:45 solar Exp $
+# $Id: Owl/packages/libnids/libnids.spec,v 1.8 2003/10/18 14:42:37 solar Exp $
 
 Summary: NIDS E-component.
 Name: libnids
-Version: 1.17
-Release: owl2
+Version: 1.18
+Release: owl1
 Epoch: 1
 License: GPL
 Group: System Environment/Libraries
-URL: http://www.packetfactory.net/Projects/Libnids/
-Source: http://www.packetfactory.net/Projects/Libnids/dist/%{name}-%{version}.tar.gz
-Patch0: libnids-1.17-owl-soname.diff
+URL: http://libnids.sourceforge.net
+Source: %{name}-%{version}.tar.gz
 PreReq: /sbin/ldconfig
 BuildRequires: autoconf, libpcap-devel, libnet-devel
 BuildRoot: /override/%{name}-%{version}
@@ -17,20 +16,19 @@ BuildRoot: /override/%{name}-%{version}
 %description
 libnids is an implementation of an E-component of Network Intrusion
 Detection System.  It emulates the IP stack of Linux 2.0.x.  libnids
-offers IP defragmentation, TCP stream assembly and TCP port scan
+offers IP defragmentation, TCP stream assembly, and TCP port scan
 detection.
 
 %package devel
-Summary: Header files and development documentation for libnids.
+Summary: Development libraries, header files, and documentation for libnids.
 Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 
 %description devel
-Header files and development documentation for libnids.
+Development libraries, header files, and documentation for libnids.
 
 %prep
 %setup -q
-%patch0 -p1
 
 %build
 autoconf
@@ -62,7 +60,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/lib*.a
 
 %changelog
-* Tue Dec 17 2002 Rafal Wojtczuk <nergal@owl.openwall.com>
+* Wed Oct 15 2003 Rafal Wojtczuk <nergal@owl.openwall.com> 1.18-owl1
+- updated to 1.18
+
+* Tue Dec 17 2002 Rafal Wojtczuk <nergal@owl.openwall.com> 1.17-owl2
 - switched soname to libnids.1.xx because of binary incompatibility between
 versions
 
