@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.61 2004/09/30 01:12:45 galaxy Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.62 2004/09/30 09:39:09 galaxy Exp $
 
 %define BUILD_PROFILE 0
 
@@ -92,17 +92,12 @@ libraries included in the glibc package).
 
 %package compat-fake
 Summary: Fake package to help upgrade glibc from 2.1.3 to 2.3+
-Name: glibc-compat-libdb
 Version: 2.3.2
-Release: owl0.fake
-License: GPL
 Group: System Environment/Libraries
-AutoReqProv: false
 Provides: libdb.so.2
 Provides: libdb.so.2(GLIBC_2.0)
 Provides: libdb.so.3
 Provides: libdb.so.3(GLIBC_2.1)
-BuildArch: noarch
 
 %description compat-fake
 This package solves the problem with upgrading glibc 2.1.3 -based Owl to
