@@ -12,6 +12,9 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/03/13	Package: zlib
+Updated to 1.1.4.
+
 2002/03/13	Package: logrotate
 Updated to 3.6.2.
 
@@ -601,4 +604,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.74 2002/03/13 02:27:27 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.75 2002/03/13 04:04:44 solar Exp $
