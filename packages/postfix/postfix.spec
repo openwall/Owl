@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.5 2000/12/04 18:32:39 solar Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.6 2000/12/24 09:17:11 solar Exp $
 
 Summary: Postfix mail system
 Name: postfix
@@ -7,7 +7,7 @@ Name: postfix
 %define original_version %{original_date}-%{original_pl}
 %define package_version %{original_date}_%{original_pl}
 Version: %{package_version}
-Release: 5owl
+Release: 6owl
 Copyright: IBM Public License
 Group: System Environment/Daemons
 Source0: ftp://ftp.sunet.se/pub/unix/mail/postfix/official/%{name}-%{original_version}.tar.gz
@@ -22,6 +22,7 @@ Patch11: postfix-19991231-pl10-owl-config.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Provides: MTA smtpd smtpdaemon
 Conflicts: sendmail
+Obsoletes: sendmail-cf, sendmail-doc
 Requires: owl-control >= 0.2, owl-control < 2.0
 Prereq: /sbin/chkconfig, /dev/null, grep, shadow-utils
 
@@ -175,6 +176,9 @@ fi
 %files -f filelist
 
 %changelog
+* Sun Dec 24 2000 Solar Designer <solar@owl.openwall.com>
+- Obsoletes: sendmail-cf, sendmail-doc
+
 * Mon Dec 04 2000 Solar Designer <solar@owl.openwall.com>
 - Ignore missing source files when updating the chroot jail (this may
 happen during system installation).
