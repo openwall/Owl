@@ -1,4 +1,4 @@
-# $Id: Owl/packages/elinks/elinks.spec,v 1.3 2004/01/25 12:32:32 solar Exp $
+# $Id: Owl/packages/elinks/elinks.spec,v 1.4 2004/01/25 12:44:23 solar Exp $
 
 Summary: Lynx-like text WWW browser with many features.
 Name: elinks
@@ -10,6 +10,7 @@ URL: http://elinks.or.cz
 Source: http://elinks.or.cz/download/%name-%version.tar.bz2
 Patch0: elinks-0.9.0-owl-tmp.diff
 Patch1: elinks-0.9.0-owl-vitmp.diff
+Patch2: elinks-0.9.0-owl-no-xterm-title.diff
 Requires: gpm, zlib, bzip2, openssl
 Obsoletes: links
 BuildRequires: gpm-devel, zlib-devel, bzip2-devel, openssl-devel
@@ -31,6 +32,7 @@ It is in no way associated with Twibright Labs and their Links version.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 %configure \
@@ -58,6 +60,10 @@ make install DESTDIR=$RPM_BUILD_ROOT
 * Sun Jan 25 2004 Solar Designer <solar@owl.openwall.com> 0.9.0-owl2
 - Use vitmp in textarea_edit().
 - Minor corrections to the temporary file handling patch.
+- Do not set xterm window title (it wasn't getting reset when Elinks is
+exited, the URL wasn't sanitized before being used as a part of a terminal
+escape sequence, and some xterm's and window managers are known to have
+vulnerabilities exploitable via the window title string).
 - Enable/disable the use of external libraries explicitly, do not depend
 on what libraries might happen to be installed on the build system.
 - Obsoletes: links
