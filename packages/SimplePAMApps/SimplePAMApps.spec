@@ -1,13 +1,15 @@
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.2 2000/07/16 14:10:02 solar Exp $
+
 Summary: Simple PAM-based Applications
 Name: SimplePAMApps
 Version: 0.60
-Release: 1owl
+Release: 2owl
 Copyright: BSD or GNU GPL
 Group: Utilities/System
 Source0: SimplePAMApps-0.60.tar.gz
-Source1: login
-Source2: su
-Source3: passwd
+Source1: login.pam
+Source2: su.pam
+Source3: passwd.pam
 Patch0: SimplePAMApps-0.60-owl-passwd-strerror.diff
 Patch1: SimplePAMApps-0.60-owl-login.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
