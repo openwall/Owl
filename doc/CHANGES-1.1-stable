@@ -6,11 +6,16 @@ only the stable branch which has these changes.
 	Changes made between Owl 1.1 and Owl 1.1-stable.
 
 2004/06/19	kernel
-SECURITY FIX	Severity: high, local, active
+SECURITY FIX	Severity: low to high, local, active
 Updated to Linux 2.4.26-ow2.  This fixes multiple security-related
 bugs in the Linux kernel (those discovered by Al Viro using "Sparse",
 fsave/frstor local DoS on x86, infoleak in the e1000 driver, and some
 others) as well as two non-security bugs in the -ow patch itself.
+Which of these bugs affect a particular build of the Linux kernel
+depends on what drivers are compiled in (or loaded as modules).  For
+the default kernels on Owl CDs, it's only the Intel PRO/1000 Gigabit
+Ethernet driver (e1000) which has a vulnerability allowing for more
+than a DoS attack fixed with this update.
 References:
 http://marc.theaimsgroup.com/?l=openwall-announce&m=108763826328168
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0495
@@ -129,4 +134,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 2004/01/15	Owl/doc/DOWNLOAD, Owl/doc/*/DOWNLOAD, Owl/doc/fr/CREDITS
 Sync'ed with the minor post-release updates made in Owl-current.
 
-$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.14 2004/06/19 13:22:33 solar Exp $
+$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.15 2004/06/19 13:49:56 solar Exp $
