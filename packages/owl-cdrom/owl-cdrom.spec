@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.11 2002/08/22 03:59:40 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.12 2002/08/22 04:09:37 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
@@ -87,6 +87,7 @@ fi
 %changelog
 * Thu Aug 22 2002 Solar Designer <solar@owl.openwall.com>
 - Added a "welcome" script to introduce the user to directory locations.
+- Updated .config for Linux 2.2.21-ow1.
 
 * Sat Jun 22 2002 Solar Designer <solar@owl.openwall.com>
 - Style change with plural form of abbreviations (CD-ROM's -> CD-ROMs).
