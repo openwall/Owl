@@ -1,21 +1,15 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.12 2001/07/06 05:50:57 solar Exp $
-
-%define libmaj 0
-%define libmin 9
-%define librel 6
-%define librev a
-Release: 2owl
+# $Id: Owl/packages/openssl/openssl.spec,v 1.13 2001/07/11 02:03:16 solar Exp $
 
 %define openssldir /var/ssl
 
 Summary: Secure Sockets Layer and cryptography libraries and tools
 Name: openssl
-Version: %{libmaj}.%{libmin}.%{librel}%{librev}
+Version: 0.9.6b
+Release: 1owl
 Source0: ftp://ftp.openssl.org/source/%{name}-%{version}.tar.gz
 Patch0: openssl-0.9.5a-rh-config-path.diff
 Patch1: openssl-0.9.5a-owl-crypt.diff
 Patch2: openssl-0.9.6a-owl-glibc-enable_secure.diff
-Patch3: openssl-0.9.6a-openssl-prng.diff
 Copyright: Freely distributable
 Group: System Environment/Libraries
 Provides: SSL
@@ -66,7 +60,6 @@ static libraries and header files required when developing applications.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 
 %build
 %define CONFIG_FLAGS shared -DSSL_ALLOW_ADH --prefix=/usr
@@ -96,7 +89,7 @@ perl -pi -e "s/-O.(?: -fomit-frame-pointer)?(?: -m.86)?/${RPM_OPT_FLAGS}/;" \
 %endif
 
 # Check these against the DIRS= line and "all" target in top-level Makefile
-# when updating to a new version of OpenSSL; with 0.9.6a the Makefile says:
+# when updating to a new version of OpenSSL; with 0.9.6b the Makefile says:
 # DIRS= crypto ssl rsaref $(SHLIB_MARK) apps test tools
 # all: clean-shared Makefile.ssl sub_all
 make Makefile.ssl
@@ -122,8 +115,8 @@ mv $RPM_BUILD_ROOT%{_mandir}/man3/rand.3 \
 gzip -9nf $RPM_BUILD_ROOT/usr/man/man*/*
 
 # Install RSAref stuff
-install -m644 rsaref/rsaref.h $RPM_BUILD_ROOT/usr/include/openssl
-install -m644 libRSAglue.a $RPM_BUILD_ROOT/usr/lib
+install -m 644 rsaref/rsaref.h $RPM_BUILD_ROOT/usr/include/openssl
+install -m 644 libRSAglue.a $RPM_BUILD_ROOT/usr/lib
 
 # Make backwards-compatibility symlink to ssleay
 ln -s /usr/bin/openssl $RPM_BUILD_ROOT/usr/bin/ssleay
@@ -151,7 +144,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0644,root,root,0755)
 %attr(0644,root,root) /usr/lib/*.a
 %attr(0644,root,root) /usr/include/openssl/*
-%attr(0644,root,root) /usr/man/man[3]/*
+%attr(0644,root,root) /usr/man/man3/*
 
 %post
 ldconfig
@@ -160,6 +153,9 @@ ldconfig
 ldconfig
 
 %changelog
+* Wed Jul 11 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 0.9.6b.
+
 * Fri Jul 06 2001 Solar Designer <solar@owl.openwall.com>
 - Applied patches provided by the OpenSSL team to correct a PRNG
 weakness which under unusual circumstances could allow an attacker to

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.24 2001/06/14 21:05:24 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.25 2001/07/11 02:03:16 solar Exp $
 
 Summary: OpenSSH free Secure Shell (SSH) implementation
 Name: openssh
 Version: 2.9p1
-Release: 3owl
+Release: 4owl
 URL: http://www.openssh.com/
 Source0: ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-%{version}.tar.gz
 Source1: sshd.pam
@@ -21,8 +21,8 @@ Group: Applications/Internet
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Obsoletes: ssh
 Requires: pam_mktemp
-PreReq: openssl >= 0.9.6a-1owl
-BuildPreReq: openssl-devel >= 0.9.6a-1owl
+PreReq: openssl >= 0.9.6b-1owl
+BuildPreReq: openssl-devel >= 0.9.6b-1owl
 BuildPreReq: pam >= 0.72-8owl
 BuildPreReq: perl
 BuildPreReq: zlib-devel
@@ -184,6 +184,9 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Wed Jul 11 2001 Solar Designer <solar@owl.openwall.com>
+- New release number for upgrades after building against OpenSSL 0.9.6b.
+
 * Fri Jun 15 2001 Solar Designer <solar@owl.openwall.com>
 - Prevent additional timing leaks with null passwords (when allowed),
 updated patch from Rafal Wojtczuk <nergal@owl.openwall.com>.

@@ -12,6 +12,9 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/07/11	Packages: openssl, openssh
+Updated to OpenSSL 0.9.6b.
+
 2001/07/10	Package: tar
 RELIABILITY FIX: There was a bug which caused tar to loop endlessly on
 a read error when verifying archives (this affected both -W, --verify,
@@ -235,4 +238,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp@hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.9 2001/07/10 12:57:55 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.10 2001/07/11 02:03:16 solar Exp $
