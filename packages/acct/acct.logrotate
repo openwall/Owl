@@ -1,16 +1,14 @@
 /var/account/pacct {
 prerotate
 	touch /var/account/pacct.tmp
-	chown root.root /var/account/pacct.tmp
-	chmod 600 /var/account/pacct.tmp
-        /sbin/accton /var/account/pacct.tmp
+	chmod 600 /var/account/pacct.tmp && /sbin/accton /var/account/pacct.tmp
 endscript
 	rotate 8
 	compress
 	delaycompress
-        notifempty
+	notifempty
 	daily
 postrotate
-        mv /var/account/pacct.tmp /var/account/pacct
+	test ! -e /var/account/pacct && mv /var/account/pacct.tmp /var/account/pacct
 endscript
 }

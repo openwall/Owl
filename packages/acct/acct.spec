@@ -1,9 +1,9 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.2 2001/04/09 06:34:59 mci Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.3 2001/04/11 11:34:28 mci Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
 Version: 6.3.5
-Release: 2owl
+Release: 3owl
 Copyright: GPL
 Group: Applications/System
 Source0: ftp://ftp.red-bean.com/pub/noel/%{name}-%{version}.tar.gz
@@ -68,16 +68,14 @@ grep -v '* accounting: (psacct)' < /etc/info-dir > /etc/info-dir.new
 mv -f /etc/info-dir.new /etc/info-dir
 /sbin/install-info %{_infodir}/accounting.info.gz %{_infodir}/dir --entry="* accounting: (accounting).            The GNU Process Accounting Suite."
 
-for f in %{_var}/account/pacct \
-	 %{_var}/account/usracct \
-	 %{_var}/account/savacct ; do
-        test -e $f && continue || :
-        touch $f
-        chown root.root $f && chmod 600 $f
+for f in %{_var}/account/{pacct,usracct,savacct}; do
+	test -e $f && continue || :
+	touch $f
+	chown root.root $f && chmod 600 $f
 done
 
 %preun
-if [ "$1" -eq 0 ]; then
+if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %{_infodir}/accounting.info.gz %{_infodir}/dir --entry="* accounting: (accounting).            The GNU Process Accounting Suite."
 fi
 
@@ -87,7 +85,7 @@ fi
 %ghost %attr(0600,root,root) /var/account/pacct
 %ghost %attr(0600,root,root) /var/account/usracct
 %ghost %attr(0600,root,root) /var/account/savacct
-%attr(0644,root,root)   %config(noreplace) /etc/logrotate.d/*
+%attr(0644,root,root) %config(noreplace) /etc/logrotate.d/*
 %config /etc/rc.d/init.d/acct
 /sbin/accton
 %{_sbindir}/*
@@ -96,9 +94,14 @@ fi
 %{_infodir}/*
 
 %changelog
+* Mon Wed 11 2002 Michail Litvak <mci@owl.openwall.com>
+- added chkconfig support in init script
+- improved logrotate config
+- more cleanups...
+
 * Mon Apr 08 2001 Michail Litvak <mci@owl.openwall.com>
 - spec cleanups
-- acct.logrotate and acct.init was rewrited
+- acct.logrotate and acct.init was rewritten
 - Obsoletes: psacct
 - Use %ghost for /var/account/*
 
