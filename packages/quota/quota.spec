@@ -1,4 +1,4 @@
-# $Id: Owl/packages/quota/quota.spec,v 1.2 2001/06/25 07:36:29 mci Exp $
+# $Id: Owl/packages/quota/quota.spec,v 1.3 2001/06/25 07:41:19 mci Exp $
 
 Name: quota
 Summary: System administration tools for monitoring users' disk usage.
@@ -59,7 +59,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man8/setquota.8*
 
 %changelog
-* Sun Mon 25 2001 Michail Litvak <mci@owl.openwall.com>
+* Mon Jun 25 2001 Michail Litvak <mci@owl.openwall.com>
 - some spec cleanups
 
 * Sun Jun 24 2001 Michail Litvak <mci@owl.openwall.com>
