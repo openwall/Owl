@@ -1,0 +1,132 @@
+.TH POPA3D 8 "28 October 2001" "Openwall Project" "System Administration"
+.SH NAME
+popa3d \- Post Office Protocol server
+.SH SYNOPSIS
+.B popa3d
+.RB [ -D ]
+.SH DESCRIPTION
+.B popa3d
+is a Post Office Protocol version 3 (POP3) server.
+.PP
+A POP3 server operates on local mailboxes on behalf of its remote
+users.
+Users can connect at any time to check their mailbox and fetch the
+mail that has accumulated.
+The advantage of this "pull" approach is that any user with a simple
+POP3-capable mail reader program can receive mail, eschewing the need
+for a full-fledged Mail Transfer Agent (MTA) and a permanent network
+connection.
+.PP
+Note that POP3 can only be used to retrieve mail, not to send it.
+To send mail, the SMTP protocol is commonly used.
+.PP
+For access to a mailbox through POP3, the username must be in the
+password database.  Additionally,
+.B popa3d
+does not permit null passwords and will refuse to serve mail for root
+(UID 0) users.
+.SH OPTIONS
+.TP
+.B -D
+Standalone server mode.
+In this mode,
+.B popa3d
+will become a daemon, accepting connections on the pop3 port (110/tcp)
+and forking child processes to handle them.
+This has lower overhead than starting
+.B popa3d
+from an inetd equivalent (which
+.B popa3d
+assumes by default) and is thus useful on busy servers to reduce load.
+In this mode
+.B popa3d
+also does quite a few checks to significantly reduce the impact of
+connection flood attacks.
+.SH COMMANDS
+A normal POP3 session progresses through three states: AUTHORIZATION,
+TRANSACTION, and UPDATE.
+.PP
+After the TCP connection opens, the client must authenticate itself
+to the server during the AUTHORIZATION state.
+The following commands are supported in the AUTHORIZATION state (all
+command names are case-insensitive).
+.TP
+.BI USER " name"
+Authenticate as user
+.IR name .
+.TP
+.BI PASS " string"
+Authenticate using password
+.IR string .
+.TP
+.B QUIT
+Quit; do not enter UPDATE state.
+.PP
+When authorization is successful, the server enters the TRANSACTION
+state.
+The client can now list and retrieve messages or mark messages for
+deletion.
+The following commands are supported in the TRANSACTION state.
+.TP
+.BI DELE " msg"
+Mark message for deletion.
+.TP
+.B LAST
+Show highest message number accessed (obsolete).
+.TP
+\fBLIST\fR [\fImsg\fR]
+List message number and size.
+.TP
+.B NOOP
+Do nothing.
+.TP
+.B QUIT
+Quit; enter UPDATE state.
+.TP
+.BI RETR " msg"
+Retrieve message.
+.TP
+.B RSET
+Clear deletion marks.
+.TP
+.B STAT
+Return total number of messages and total size.
+.TP
+.BI TOP " msg n"
+Show top
+.I n
+lines of message body.
+.TP
+\fBUIDL\fR [\fImsg\fR]
+List message number and digest.
+.PP
+When the client issues the
+.B QUIT
+command in the TRANSACTION state, the server enters the UPDATE state.
+All messages that were marked for deletion are now removed.
+The server then closes the connection.
+.SH BUGS
+POP3 transmits passwords in plaintext and thus, if you care about
+the security of your individual user accounts, should only be used
+either in trusted networks or tunneled over encrypted channels.
+.PP
+There exist extensions to the protocol that are supposed to fix this
+problem.
+.B popa3d
+does not support them yet, partly because this isn't going to fully
+fix the problem.  In fact, APOP and the weaker defined SASL mechanisms
+such as CRAM-MD5 may potentially be even less secure than transmission
+of plaintext passwords because of the requirement that plaintext
+equivalents be stored on the server.
+.SH AUTHORS
+Solar Designer <solar@openwall.com>
+.PP
+This manual page is based heavily on the one Camiel Dobbelaar wrote
+for OpenBSD.
+.SH SEE ALSO
+Official Internet Protocol Standard
+.IR "STD 53" ,
+also known as
+.IR "RFC 1939" .
+.PP
+http://www.openwall.com/popa3d/

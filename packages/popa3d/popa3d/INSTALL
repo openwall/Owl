@@ -1,0 +1,42 @@
+	Installing popa3d.
+
+1. Read the comments in params.h and edit the #define's to suit your
+needs:
+
+	$ vi params.h
+
+2. Possibly edit the Makefile (uncomment "-lcrypt" for Linux with
+glibc, FreeBSD or NetBSD, uncomment "-lpam" if you will use PAM):
+
+	$ vi Makefile
+
+3. Build popa3d:
+
+	$ make
+
+4. Create a non-privileged popa3d user, like this (or using whatever
+other user management commands your system has):
+
+	# groupadd popa3d
+	# useradd -g popa3d -d /dev/null -s /dev/null popa3d
+
+5. Create an empty directory for popa3d to chroot to (unless your
+system provides a directory intended for this purpose already):
+
+	# mkdir -m 755 /var/empty
+
+6. Install the popa3d binary and the man page under /usr/local:
+
+	# make install
+
+7. Edit your /etc/inetd.conf to use popa3d.  The line should look like
+this:
+
+	pop3 stream tcp nowait root /usr/sbin/tcpd /usr/local/sbin/popa3d
+
+Note: when started via an inetd clone, the logging of connections is
+left up to that inetd clone or TCP wrappers.
+
+8. Restart inetd by sending it a SIGHUP:
+
+	# kill -HUP `cat /var/run/inetd.pid`
