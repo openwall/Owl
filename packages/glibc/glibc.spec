@@ -1,9 +1,11 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.4 2000/07/14 08:10:03 kad Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.5 2000/08/06 02:24:42 solar Exp $
+
+%define BUILD_PROFILE	'no'
 
 Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
-Release: 3owl
+Release: 4owl
 Copyright: LGPL
 Group: System Environment/Libraries
 Source0: glibc-2.1.3.tar.gz
@@ -15,23 +17,24 @@ Patch0: glibc-2.1.3-owl-dl-open.diff
 Patch1: glibc-2.1.3-owl-malloc-check.diff
 Patch2: glibc-2.1.3-owl-res_randomid.diff
 Patch3: glibc-2.1.3-owl-blowfish.diff
-Patch4: glibc-2.1.3-rh-libnoversion.diff
-Patch5: glibc-2.1.3-rh-paths.diff
-Patch6: glibc-2.1.3-rh-linuxthreads.diff
-Patch7: glibc-2.1.3-rh-nis-malloc.diff
-Patch8: glibc-2.1.3-rh-c-type.diff
-Patch9: glibc-2.1.3-rh-cppfix.diff
-Patch10: glibc-2.1.3-rh-db2-closedir.diff
-Patch11: glibc-2.1.3-rh-glob.diff
-Patch12: glibc-2.1.3-rh-localedata.diff
-Patch13: glibc-2.1.3-rh-yp_xdr.diff
-Patch14: glibc-2.1.3-rh-makeconfig.diff
-Patch15: glibc-2.1.3-bcl-cyr-locale.diff
-Patch16: glibc-2.1.3-mdk-fix-ucontext.diff
-Patch17: glibc-2.1.3-mdk-ldd.diff
-Patch18: glibc-2.1.3-rh-time.diff
-Patch19: glibc-2.1.3-rh-timezone.diff
-Patch20: glibc-2.1.3-rh-syslog.diff
+Patch4: glibc-2.1.3-owl-freesec-hack.diff
+Patch5: glibc-2.1.3-rh-libnoversion.diff
+Patch6: glibc-2.1.3-rh-paths.diff
+Patch7: glibc-2.1.3-rh-linuxthreads.diff
+Patch8: glibc-2.1.3-rh-nis-malloc.diff
+Patch9: glibc-2.1.3-rh-c-type.diff
+Patch10: glibc-2.1.3-rh-cppfix.diff
+Patch11: glibc-2.1.3-rh-db2-closedir.diff
+Patch12: glibc-2.1.3-rh-glob.diff
+Patch13: glibc-2.1.3-rh-localedata.diff
+Patch14: glibc-2.1.3-rh-yp_xdr.diff
+Patch15: glibc-2.1.3-rh-makeconfig.diff
+Patch16: glibc-2.1.3-bcl-cyr-locale.diff
+Patch17: glibc-2.1.3-mdk-fix-ucontext.diff
+Patch18: glibc-2.1.3-mdk-ldd.diff
+Patch19: glibc-2.1.3-rh-time.diff
+Patch20: glibc-2.1.3-rh-timezone.diff
+Patch21: glibc-2.1.3-rh-syslog.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Autoreq: false
 %ifarch alpha
@@ -68,6 +71,7 @@ executables.
 Install glibc-devel if you are going to develop programs which will
 use the standard C libraries.
 
+%if "%{BUILD_PROFILE}"=="'yes'"
 %package profile
 Summary: The GNU libc libraries, including support for gprof profiling.
 Group: Development/Libraries
@@ -83,6 +87,7 @@ libraries included in the glibc package).
 
 If you are going to use the gprof program to profile a program, you'll
 need to install the glibc-profile program.
+%endif
 
 %prep
 %setup -q -a 1 -a 2 -a 4
@@ -107,12 +112,18 @@ need to install the glibc-profile program.
 %patch18 -p1
 %patch19 -p1
 %patch20 -p1
+%patch21 -p1
 
 %build
 rm -rf build-$RPM_ARCH-linux
 mkdir build-$RPM_ARCH-linux ; cd build-$RPM_ARCH-linux
+%if "%{BUILD_PROFILE}"=="'yes'"
 CFLAGS="-g $RPM_OPT_FLAGS" ../configure --prefix=/usr \
-	--enable-add-ons=yes %{_target_cpu}-redhat-linux
+	--enable-add-ons=yes
+%else
+CFLAGS="-g $RPM_OPT_FLAGS" ../configure --prefix=/usr \
+	--enable-add-ons=yes --disable-profile
+%endif
 make MAKE='make -s'
 
 %install
@@ -167,7 +178,10 @@ sed "s|^$RPM_BUILD_ROOT||" < rpm.filelist.in |
 	grep -v '^%config /etc/nsswitch.conf' | \
 	sort > rpm.filelist
 
+%if "%{BUILD_PROFILE}"=="'yes'"
 grep '/usr/lib/lib.*_p\.a' < rpm.filelist > profile.filelist
+%endif
+
 egrep "(/usr/include)|(/usr/info)" < rpm.filelist | 
 	grep -v /usr/info/dir > devel.filelist
 
@@ -234,18 +248,26 @@ rm -f *.filelist*
 %files -f devel.filelist devel
 %defattr(-,root,root)
 
+%if "%{BUILD_PROFILE}"=="'yes'"
 %files -f profile.filelist profile
 %defattr(-,root,root)
+%endif
 
 %changelog
-* Fri Jul 14 2000 Alexandr D. Kanevskiy <kad@openwall.com>
+* Sun Aug 06 2000 Solar Designer <solar@owl.openwall.com>
+- Added FreeSec (as a patch) to support extended/new-style/BSDI password
+hashes in crypt(3) (but not in the reentrant versions; this is a hack).
+- The building of profiling libraries is now optional and disabled by
+default.
+
+* Fri Jul 14 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import syslog fix from RH
 - import time fix from RH
 - import timezone fixes from RH
 - import ldd patch to handle non-executable shared objects. (mdk)
 - import ucontext.h patch from mdk
 
-* Wed Jul 12 2000 Alexandr D. Kanevskiy <kad@openwall.com>
+* Wed Jul 12 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - paths patch from RH
 - import libNoVersion from RH
 - import xdr_ypall patch (RH bug id #249)
@@ -254,7 +276,7 @@ rm -f *.filelist*
 - import some little fixes from RH
 - import cp1251 locales from BCL
 
-* Sun Jun 18 2000 Solar Designer <solar@false.com>
+* Sun Jun 18 2000 Solar Designer <solar@owl.openwall.com>
 - import this spec from RH, and make it use the original glibc 2.1.3
-  code with Owl patches only; libNoVersion and other RH hacks may be
-  added at a later stage.
+code with Owl patches only; libNoVersion and other RH hacks may be added
+at a later stage.
