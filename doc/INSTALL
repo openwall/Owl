@@ -83,4 +83,7 @@ You may choose to configure the boot loader available with Owl (LILO
 or SILO, depending on the architecture), or you may use a boot loader
 already installed on the system (if any).
 
-$Id: Owl/doc/INSTALL,v 1.12 2004/11/02 22:45:34 solar Exp $
+Once the installation is complete, make sure to manually unmount the
+filesystems with umount(8) prior to rebooting the system.
+
+$Id: Owl/doc/INSTALL,v 1.13 2005/03/06 00:14:33 solar Exp $
