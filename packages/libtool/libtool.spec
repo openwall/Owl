@@ -1,9 +1,9 @@
-# $Id: Owl/packages/libtool/libtool.spec,v 1.1 2000/08/09 00:51:27 kad Exp $
+# $Id: Owl/packages/libtool/libtool.spec,v 1.2 2001/05/06 14:57:42 solar Exp $
 
 Summary: The GNU libtool, which simplifies the use of shared libraries.
 Name: 		libtool
 Version: 	1.3.5
-Release: 	8owl
+Release: 	9owl
 Copyright: 	GPL
 Group: 		Development/Tools
 Source: 	ftp://ftp.gnu.org/gnu/libtool/libtool-%{version}.tar.gz
@@ -18,7 +18,7 @@ Buildroot:      /var/rpm-buildroot/%{name}-root
 %description
 The libtool package contains the GNU libtool, a set of shell scripts
 which automatically configure UNIX and UNIX-like architectures to
-generically build shared libraries.  Libtool provides a consistent,
+generically build shared libraries.  libtool provides a consistent,
 portable interface which simplifies the process of using shared
 libraries.
 
@@ -49,7 +49,7 @@ provide the dynamic loading library
 # define libtoolize to true, in case configure calls it
 %define __libtoolize /bin/true
 %configure
-						
+
 make -k -C doc
 make
 
@@ -62,16 +62,17 @@ mkdir -p ${RPM_BUILD_ROOT}%{_prefix}
 
 cp install-sh missing mkinstalldirs demo
 
-{ cd ${RPM_BUILD_ROOT}
-  gzip -9nf .%{_infodir}/*.info*
+chmod -R u=rwX,go=rX demo
+
+cd ${RPM_BUILD_ROOT}
+gzip -9nf .%{_infodir}/*.info*
 # XXX remove zero length file
-  rm -f .%{_datadir}/libtool/libltdl/stamp-h.in
+rm -f .%{_datadir}/libtool/libltdl/stamp-h.in
 # XXX forcibly break hardlinks
-  mv .%{_datadir}/libtool/libltdl .%{_datadir}/libtool/libltdl-X
-  mkdir .%{_prefix}/share/libtool/libltdl
-  cp .%{_datadir}/libtool/libltdl-X/* .%{_datadir}/libtool/libltdl
-  rm -rf .%{_prefix}/share/libtool/libltdl-X
-}
+mv .%{_datadir}/libtool/libltdl .%{_datadir}/libtool/libltdl-X
+mkdir .%{_prefix}/share/libtool/libltdl
+cp .%{_datadir}/libtool/libltdl-X/* .%{_datadir}/libtool/libltdl
+rm -rf .%{_prefix}/share/libtool/libltdl-X
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
@@ -79,7 +80,8 @@ rm -rf ${RPM_BUILD_ROOT}
 %post
 /sbin/install-info %{_infodir}/libtool.info.gz %{_infodir}/dir
 # XXX hack alert
-cd %{_defaultdocdir}/libtool-%{version}/demo || cd %{_prefix}/doc/libtool-%{version}/demo || exit 0
+cd %{_defaultdocdir}/libtool-%{version}/demo ||cd %{_prefix}/doc/libtool-%{version}/demo || exit 0
+umask 022
 libtoolize --copy --force
 aclocal
 autoheader
@@ -87,8 +89,11 @@ automake
 autoconf
 
 %preun
-if [ "$1" = 0 ]; then
-    /sbin/install-info --delete %{_infodir}/libtool.info.gz %{_infodir}/dir
+if [ $1 -eq 0 ]; then
+	/sbin/install-info --delete %{_infodir}/libtool.info.gz %{_infodir}/dir
+# XXX hack alert
+	cd %{_defaultdocdir}/libtool-%{version}/demo || cd %{_prefix}/doc/libtool-%{version}/demo || exit 0
+	rm -f config.{guess,h.in,sub} lt{config,main.sh}
 fi
 
 %files
@@ -108,7 +113,10 @@ fi
 %{_libdir}/libltdl.so.*
 
 %changelog
-* Sun Aug  6 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun May 06 2001 Solar Designer <solar@owl.openwall.com>
+- Ensure proper permissions on demo (installed as documentation).
+
+* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import from RH
 
 * Thu Jul 13 2000 Elliot Lee <sopwith@redhat.com>
@@ -162,7 +170,7 @@ fi
 - disable the --cache-file passing to ltconfig; this breaks the older
   ltconfig scripts found around.
 
-* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com> 
+* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com>
 - auto rebuild in the new build environment (release 2)
 
 * Fri Mar 19 1999 Jeff Johnson <jbj@redhat.com>
