@@ -9,8 +9,8 @@ or a significant change in the setup requirements outlined below.
 
 The known to work way to do Owl mirrors from the primary feed
 (ftp.feed.openwall.com) is to use lftp, preferably the Owl package.
-(Certain versions of lftp contain a known problem, but 2.6.6 will
-work.)
+(Certain older versions of lftp contain a known problem, but 2.6.x and
+probably newer ones will work right.)
 
 It is important that passive mode FTP is used.  lftp does default to
 passive mode, but other mirroring programs may differ.
@@ -18,8 +18,7 @@ passive mode, but other mirroring programs may differ.
 Create a separate pseudo-user to do the mirroring as, let it update
 the proper public FTP area, and setup a cron job like this:
 
-05 6 * * *	umask 022 && cd /home/ftp && /usr/bin/lftp -c 'o ftp.openwall.com && mirror pub -v --delete --exclude Owl --include presentations/Owl &' &> /dev/null
-15 6 * * *	umask 022 && cd /home/ftp/pub && /usr/bin/lftp -c 'o ftp.feed.openwall.com/pub/ && mirror Owl -v --delete &' &> /dev/null
+05 6 * * *	umask 022 && cd /home/ftp && lftp -c 'o ftp.feed.openwall.com && mirror -ev pub &' &> /dev/null
 
 Activity will be logged into ~mirror/.lftp/log.  We suggest that you
 do nightly updates, trying to ensure it is night time in at least one
@@ -44,4 +43,4 @@ offer other, potentially dangerous, public services.  (Well, if you
 install Owl and use just the services that are a part of Owl, that
 would still be fine.)  As an exception, it may host other FTP content.
 
-$Id: Owl/doc/MIRRORING,v 1.4 2003/06/01 23:28:14 solar Exp $
+$Id: Owl/doc/MIRRORING,v 1.5 2004/01/30 23:39:02 solar Exp $
