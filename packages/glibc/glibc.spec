@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.87 2005/03/03 02:35:14 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.88 2005/03/06 02:06:54 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -11,7 +11,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 0.4.7
-Release: owl4
+Release: owl5
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%basevers%{?snapshot:-%snapshot}.tar.bz2
@@ -320,10 +320,9 @@ ln -s libbsd-compat.a %buildroot%_libdir/libbsd.a
 # Relocate shared libraries used by catchsegv, memusage and xtrace
 mv %buildroot/lib/lib{memusage,pcprofile,SegFault}.so %buildroot%_libdir/
 
-# Replace the symlink with the actual file.  It will need to be replaced
-# when our setup program is run anyway, but doing it here is safer.
+# Replace the symlink with the file for our default timezone - use UTC
 rm %buildroot/etc/localtime
-cp -a %buildroot%_datadir/zoneinfo/Factory %buildroot/etc/localtime
+cp -a %buildroot%_datadir/zoneinfo/UTC %buildroot/etc/localtime
 
 # Create default ldconfig configuration file
 echo "include /etc/ld.so.conf.d/*.conf" > %buildroot/etc/ld.so.conf
@@ -453,6 +452,11 @@ fi
 %files compat-fake
 
 %changelog
+* Sun Mar 06 2005 Solar Designer <solar@owl.openwall.com> 2.3.3.2004061600-owl5
+- Use UTC for our default timezone, Factory is just too ugly ("Local time
+zone must be set--see zic manual page" - hardly an informative message for
+an end-user - and it comes up while booting off the CD).
+
 * Thu Mar 03 2005 Solar Designer <solar@owl.openwall.com> 2.3.3.2004061600-owl4
 - Place strlc*() into libc_nonshared.a such that no programs become dependent
 on the presence of these extensions in the shared library.
