@@ -1,9 +1,9 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.26 2003/09/04 23:44:55 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.27 2003/09/12 03:59:55 solar Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
 Version: 2.3.12
-Release: owl2
+Release: owl3
 License: BSD with minor restrictions
 Group: System Environment/Daemons
 URL: http://www.xinetd.org
@@ -20,6 +20,7 @@ Source9: xinetd-chargen
 Source10: xinetd-uchargen
 Patch0: xinetd-2.3.12-owl-fixes.diff
 Patch1: xinetd-2.3.12-cvs-20030815-success_log_options.diff
+Patch2: xinetd-2.3.12-cvs-20030903-Smorefds.diff
 PreReq: /sbin/chkconfig
 Provides: inetd
 Obsoletes: inetd
@@ -44,6 +45,7 @@ limits on the number of servers that can be started, among other things.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %{expand:%%define optflags %optflags -Wall -W -Wno-unused -Wno-switch}
 
@@ -108,6 +110,10 @@ fi
 %{_mandir}/*/*
 
 %changelog
+* Fri Sep 12 2003 Solar Designer <solar@owl.openwall.com> 2.3.12-owl3
+- Another fix from the CVS (originally submitted by Red Hat):
+Occasionally, Smorefds didn't allocate more fds as expected.
+
 * Fri Sep 05 2003 Solar Designer <solar@owl.openwall.com> 2.3.12-owl2
 - Back-ported a fix from the CVS, thanks to Steve Grubb:
 Add NULL entry to success_log_options to properly end the nvlist.

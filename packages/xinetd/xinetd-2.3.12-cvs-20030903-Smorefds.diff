@@ -1,0 +1,26 @@
+steveg      03/09/03 06:24:33
+
+Modified:    libs/src/sio siosup.c
+Log:
+Occasionally, Smorefds didn't allocate more fds as expected
+
+Revision  Changes    Path
+1.8       +1 -1      xinetd/libs/src/sio/siosup.c
+
+Index: siosup.c
+===================================================================
+RCS file: /cvs/xinetd/xinetd/libs/src/sio/siosup.c,v
+retrieving revision 1.7
+retrieving revision 1.8
+diff -u -r1.7 -r1.8
+--- xinetd/libs/src/sio/siosup.c  13 Jul 2003 17:41:51 -0000      1.7
++++ xinetd/libs/src/sio/siosup.c  3 Sep 2003 13:24:33 -0000       1.8
+@@ -861,7 +861,7 @@
+    int n_fds = 4; /* Let's bump 4 at a time for hysteresis */
+ 
+    /* If the fd is out of range of the proposed size, make n_fds big enough */
+-   if (fd > (__sio_n_descriptors+n_fds))
++   if (fd >= (__sio_n_descriptors+n_fds))
+       n_fds += fd - __sio_n_descriptors;
+ 
+ #ifdef HAVE_MMAP
