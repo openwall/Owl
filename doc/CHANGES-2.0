@@ -12,6 +12,20 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2004/06/09	Package: cvs
+SECURITY FIX	Severity: none to high, remote, active
+Added back-ports of further CVS server security fixes to
+CAN-2004-0414, CAN-2004-0416, CAN-2004-0417, CAN-2004-0418, and to
+some minor bugs which didn't appear to deserve CVE names.  Thanks to
+Stefan Esser, Sebastian Krahmer, and Derek Robert Price for finding
+and fixing these.
+References:
+http://security.e-matters.de/advisories/092004.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0414
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0416
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0417
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0418
+
 2004/06/07	Package: openssh
 SECURITY FIX	Severity: high, remote, passive
 Fixed directory traversal vulnerability in scp which allowed malicious
@@ -150,4 +164,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.35 2004/06/07 01:07:41 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.36 2004/06/09 20:36:30 solar Exp $
