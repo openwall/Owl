@@ -1,0 +1,41 @@
+#
+#	>>>>>>>>>>      The program "newaliases" must be run after
+#	>> NOTE >>      this file is updated for any changes to
+#	>>>>>>>>>>      show through to Postfix.
+#
+
+# Basic system aliases -- these MUST be present
+MAILER-DAEMON:	postmaster
+postmaster:	root
+
+# General redirections for pseudo accounts
+bin:		root
+daemon:		root
+adm:		root
+lp:		root
+mail:		root
+news:		root
+uucp:		postmaster
+games:		root
+ftp:		root
+nobody:		root
+
+# Operations addresses recommended by RFC 2142
+abuse:		postmaster
+noc:		root
+security:	root
+# Specific Internet services
+hostmaster:	root
+usenet:		news
+webmaster:	root
+www:		webmaster
+
+postfix:	postmaster
+postdrop:	postmaster
+postman:	postmaster
+
+# Person who should get root's mail -- CHANGE THIS
+#root:		you
+
+# Put your local aliases here.
+

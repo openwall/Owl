@@ -1,0 +1,28 @@
+--- postfix-19991231-pl10/INSTALL.sh.orig	Thu Apr 13 21:22:33 2000
++++ postfix-19991231-pl10/INSTALL.sh	Sat Nov 18 23:12:55 2000
+@@ -100,22 +100,22 @@
+  *) n=; c='\c';;
+ esac
+ 
+ # Default settings. Most are clobbered by remembered settings.
+ 
+-install_root=/
++install_root=$RPM_BUILD_ROOT
+ tempdir=`pwd`
+ config_directory=/etc/postfix
+ daemon_directory=/usr/libexec/postfix
+ command_directory=/usr/sbin
+ queue_directory=/var/spool/postfix
+ sendmail_path=/usr/sbin/sendmail
+ newaliases_path=/usr/bin/newaliases
+ mailq_path=/usr/bin/mailq
+ mail_owner=postfix
+-setgid=no
+-manpages=/usr/local/man
++setgid=postdrop
++manpages=/usr/man
+ 
+ # Find out the location of configuration files.
+ 
+ for name in install_root tempdir config_directory
+ do
