@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.64 2003/10/20 04:59:21 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.65 2003/10/22 08:33:03 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl4
+Release: owl5
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -165,13 +165,13 @@ fi
 
 %post server
 if [ ! -f /etc/ssh/ssh_host_key -o ! -s /etc/ssh/ssh_host_key ]; then
-	/usr/bin/ssh-keygen -t rsa1 -f /etc/ssh/ssh_host_key -N '' >&2
+	/usr/bin/ssh-keygen -t rsa1 -f /etc/ssh/ssh_host_key -N '' -C rsa1 >&2
 fi
 if [ ! -f /etc/ssh/ssh_host_dsa_key -o ! -s /etc/ssh/ssh_host_dsa_key ]; then
-	/usr/bin/ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N '' >&2
+	/usr/bin/ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N '' -C dsa >&2
 fi
 if [ ! -f /etc/ssh/ssh_host_rsa_key -o ! -s /etc/ssh/ssh_host_rsa_key ]; then
-	/usr/bin/ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' >&2
+	/usr/bin/ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' -C rsa >&2
 fi
 if [ $1 -ge 2 ]; then
 	/usr/sbin/control-restore sftp
@@ -233,6 +233,11 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Wed Oct 22 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl5
+- Set comments in SSH host keys to key type instead of to hostname as the
+latter would leak the hostname when doing chrooted installs for other
+systems.
+
 * Mon Oct 20 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl4
 - Check the validity of sshd_config and host keys with "sshd -t" before
 proceeding with a restart or reload.
