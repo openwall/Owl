@@ -1,0 +1,30 @@
+--- tcsh-6.10.01/nls/finnish/set14.orig	Sat Jan 15 00:57:32 2000
++++ tcsh-6.10.01/nls/finnish/set14	Fri Jul  6 15:42:36 2001
+@@ -2,5 +2,5 @@
+ $ sh.file.c
+ $set 14 
+ 1 \nAuts!! Liian monta %s!!\n
+-3 nimeä käyttäjätietokannassa
++2 nimeä käyttäjätietokannassa
+ 3 tiedostoa
+--- tcsh-6.10.01/sh.func.c.orig	Fri Jul  6 15:46:00 2001
++++ tcsh-6.10.01/sh.func.c	Fri Jul  6 15:47:46 2001
+@@ -1247,7 +1247,7 @@
+     Char *var;
+ {
+     static Char *locale_vars[] = {
+-	STRLANG,	STRLC_CTYPE,	STRLC_NUMERIC,	STRLC_TIME,
++	STRLANG,	STRLC_ALL,	STRLC_CTYPE,	STRLC_NUMERIC,	STRLC_TIME,
+ 	STRLC_COLLATE,	STRLC_MESSAGES,	STRLC_MONETARY, 0
+     };
+     register Char **v;
+--- tcsh-6.10.01/tc.const.c.orig	Fri Jul  6 15:46:00 2001
++++ tcsh-6.10.01/tc.const.c	Fri Jul  6 15:48:59 2001
+@@ -387,6 +387,7 @@
+ Char STRshlvl[]		= { 's', 'h', 'l', 'v', 'l', '\0' };
+ Char STRKSHLVL[]	= { 'S', 'H', 'L', 'V', 'L', '\0' };
+ Char STRLANG[]		= { 'L', 'A', 'N', 'G', '\0' };
++Char STRLC_ALL[]        = { 'L', 'C', '_', 'A', 'L', 'L','\0' };
+ Char STRLC_CTYPE[]	= { 'L', 'C', '_', 'C', 'T', 'Y', 'P', 'E' ,'\0' };
+ Char STRLC_NUMERIC[]	= { 'L', 'C', '_', 'N', 'U', 'M', 'E', 'R', 'I',
+ 			    'C', '\0' };

@@ -1,11 +1,11 @@
-# $Id: Owl/packages/tcsh/tcsh.spec,v 1.6 2001/06/20 13:16:39 mci Exp $
+# $Id: Owl/packages/tcsh/tcsh.spec,v 1.7 2001/07/06 20:32:56 mci Exp $
 
 %define	_bindir	/bin
 
 Summary: 	An enhanced version of csh, the C shell.
 Name: 		tcsh
 Version: 	6.10.01
-Release: 	1owl
+Release: 	2owl
 Copyright: 	BSD
 Group: 		System Environment/Shells
 Source: 	ftp://ftp.fujitsu.co.jp/pub/misc/shells/tcsh/%{name}-%{version}.tgz
@@ -13,6 +13,11 @@ Patch0:		tcsh-6.10.00-rh-utmp.diff
 Patch1: 	tcsh-6.09.00-rh-termios_hack.diff
 Patch2: 	tcsh-6.09.00-rh-locale.diff
 Patch3:		tcsh-6.10.00-suse-owl-shtmp.diff
+Patch4:		tcsh-6.10.01-deb-format.diff
+Patch5:		tcsh-6.10.01-deb-config.diff
+Patch6:		tcsh-6.10.01-deb-locale.diff
+Patch7:		tcsh-6.10.01-deb-man.diff
+Patch8:		tcsh-6.10.01-deb-time.diff
 Provides: 	csh = %{version}
 Prereq: 	fileutils grep
 URL: 		http://www.primate.wisc.edu/software/csh-tcsh-book/
@@ -32,6 +37,11 @@ like syntax.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
 
 %build
 %configure
@@ -80,6 +90,9 @@ fi
 %{_datadir}/locale/*/LC_MESSAGES/tcsh*
 
 %changelog
+* Fri Jul 06 2001 Michail Litvak <mci@owl.openwall.com>
+- added some patches from Debian (format bug, etc.)
+
 * Wed Jun 20 2001 Michail Litvak <mci@owl.openwall.com>
 - updated to 6.10.01
 - some spec cleanups

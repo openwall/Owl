@@ -1,0 +1,10 @@
+--- tcsh-6.10.01/sh.h.orig	Sun Mar 18 21:06:29 2001
++++ tcsh-6.10.01/sh.h	Fri Jul  6 17:43:33 2001
+@@ -222,6 +222,7 @@
+ #include <sys/stat.h>
+ 
+ #if defined(BSDTIMES) || defined(BSDLIMIT)
++# include <time.h>
+ # include <sys/time.h>
+ # if SYSVREL>3 && !defined(SCO) && !defined(sgi) && !defined(SNI) && !defined(sun) && !(defined(__alpha) && defined(__osf__)) && !defined(_SX) && !defined(__MVS__)
+ #  include "/usr/ucbinclude/sys/resource.h"
