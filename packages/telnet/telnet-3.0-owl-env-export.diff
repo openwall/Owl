@@ -1,0 +1,110 @@
+diff -urp telnet-3.0.orig/usr.bin/telnet/commands.c telnet-3.0-owl-env/usr.bin/telnet/commands.c
+--- telnet-3.0.orig/usr.bin/telnet/commands.c	Mon Sep  3 05:28:51 2001
++++ telnet-3.0-owl-env/usr.bin/telnet/commands.c	Thu Mar 17 12:44:47 2005
+@@ -1624,7 +1624,10 @@ struct env_lst {
+ 	struct env_lst *prev;	/* pointer to previous structure */
+ 	unsigned char *var;	/* pointer to variable name */
+ 	unsigned char *value;	/* pointer to variable value */
+-	int export;		/* 1 -> export with default list of variables */
++	int export;		/* whether and how to export this variable: */
++/* 0: don't permit export */
++/* 1: export with default list of variables */
++/* 2: export if explicitly requested by the server only */
+ 	int welldefined;	/* A well defined variable */
+ };
+ 
+@@ -1696,6 +1699,8 @@ env_init()
+ 		env_define((unsigned char *)"USER", ep->value);
+ 		env_unexport((unsigned char *)"USER");
+ 	}
++	if ((ep = env_find("TERM")))
++		ep->export = 2;
+ 	env_export((unsigned char *)"DISPLAY");
+ 	env_export((unsigned char *)"PRINTER");
+ 	env_export((unsigned char *)"XAUTHORITY");
+@@ -1801,7 +1806,7 @@ env_list()
+ 	register struct env_lst *ep;
+ 
+ 	for (ep = envlisthead.next; ep; ep = ep->next) {
+-		printf("%c %-20s %s\r\n", ep->export ? '*' : ' ',
++		printf("%c %-20s %s\r\n", " *+"[ep->export],
+ 					ep->var, ep->value);
+ 	}
+ }
+@@ -1809,6 +1814,7 @@ env_list()
+ 	unsigned char *
+ env_default(init, welldefined)
+ 	int init;
++	int welldefined;
+ {
+ 	static struct env_lst *nep = NULL;
+ 
+@@ -1818,7 +1824,7 @@ env_default(init, welldefined)
+ 	}
+ 	if (nep) {
+ 		while ((nep = nep->next)) {
+-			if (nep->export && (nep->welldefined == welldefined))
++			if (nep->export == 1 && nep->welldefined == welldefined)
+ 				return(nep->var);
+ 		}
+ 	}
+@@ -1831,7 +1837,7 @@ env_getvalue(var)
+ {
+ 	register struct env_lst *ep;
+ 
+-	if ((ep = env_find(var)))
++	if ((ep = env_find(var)) && ep->export)
+ 		return(ep->value);
+ 	return(NULL);
+ }
+diff -urp telnet-3.0.orig/usr.bin/telnet/telnet.1 telnet-3.0-owl-env/usr.bin/telnet/telnet.1
+--- telnet-3.0.orig/usr.bin/telnet/telnet.1	Sat Jun 23 22:14:27 2001
++++ telnet-3.0-owl-env/usr.bin/telnet/telnet.1	Thu Mar 17 12:57:26 2005
+@@ -436,11 +436,12 @@ command is used to manipulate the
+ variables that may be sent through the
+ .Dv TELNET ENVIRON
+ option.
+-The initial set of variables is taken from the users
++The initial set of variables is taken from the user's
+ environment, with only the
+-.Ev DISPLAY
++.Ev DISPLAY ,
++.Ev PRINTER ,
+ and
+-.Ev PRINTER
++.Ev XAUTHORITY
+ variables being exported by default.
+ The
+ .Ev USER
+@@ -449,7 +450,10 @@ variable is also exported if the
+ or
+ .Fl l
+ options are used.
+-.br
++Additionally, the value of the
++.Ev TERM
++variable is by default available to be queried by the server.
++.Pp
+ Valid arguments for the
+ .Ic environ
+ command are:
+@@ -475,14 +479,16 @@ to be exported to the remote side.
+ .It Ic unexport Ar variable
+ Mark the variable
+ .Ar variable
+-to not be exported unless
+-explicitly asked for by the remote side.
++to not be exported.
+ .It Ic list
+ List the current set of environment variables.
+ Those marked with a
+ .Cm *
+ will be sent automatically,
+-other variables will only be sent if explicitly requested.
++those marked with a
++.Cm +
++will only be sent if explicitly requested by the server,
++and others won't be revealed to the server even if requested.
+ .It Ic \&?
+ Prints out help information for the
+ .Ic environ

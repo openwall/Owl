@@ -1,0 +1,87 @@
+diff -urp telnet-3.0.orig/usr.bin/telnet/telnet.c telnet-3.0-bound/usr.bin/telnet/telnet.c
+--- telnet-3.0.orig/usr.bin/telnet/telnet.c	Sat Nov  3 00:07:53 2001
++++ telnet-3.0-bound/usr.bin/telnet/telnet.c	Thu Mar 17 04:15:47 2005
+@@ -1332,7 +1332,7 @@ slc_check()
+ }
+ 
+ 
+-unsigned char slc_reply[128];
++unsigned char slc_reply[SUBBUFSIZE * 2];
+ unsigned char *slc_replyp;
+ 
+ 	void
+@@ -1351,6 +1351,8 @@ slc_add_reply(func, flags, value)
+ 	unsigned char flags;
+ 	cc_t value;
+ {
++	if (slc_replyp > &slc_reply[sizeof(slc_reply) - 6 - 2])
++		return;
+ 	if ((*slc_replyp++ = func) == IAC)
+ 		*slc_replyp++ = IAC;
+ 	if ((*slc_replyp++ = flags) == IAC)
+@@ -1364,6 +1366,8 @@ slc_end_reply()
+ {
+     register int len;
+ 
++    if (slc_replyp > &slc_reply[sizeof(slc_reply) - 2])
++	return;
+     *slc_replyp++ = IAC;
+     *slc_replyp++ = SE;
+     len = slc_replyp - slc_reply;
+@@ -1483,8 +1487,8 @@ env_opt(buf, len)
+ 	}
+ }
+ 
+-#define	OPT_REPLY_SIZE	256
+-unsigned char *opt_reply;
++#define	OPT_REPLY_SIZE	(2 * SUBBUFSIZE)
++unsigned char *opt_reply = NULL;
+ unsigned char *opt_replyp;
+ unsigned char *opt_replyend;
+ 
+@@ -1543,11 +1547,14 @@ env_opt_add(ep)
+ 		return;
+ 	}
+ 	vp = env_getvalue(ep);
+-	if (opt_replyp + (vp ? strlen((char *)vp) : 0) +
+-				strlen((char *)ep) + 6 > opt_replyend)
++	if (opt_replyp + (vp ? 2 * strlen((char *)vp) : 0) +
++				2 * strlen((char *)ep) + 6 > opt_replyend)
+ 	{
+ 		register int len;
+ 		unsigned char *p;
++		/* XXX: this modifies global variables making them
++		 * inconsistent with the actual memory allocation for a
++		 * short moment. */
+ 		opt_replyend += OPT_REPLY_SIZE;
+ 		len = opt_replyend - opt_reply;
+ 		p = (unsigned char *)realloc(opt_reply, len);
+@@ -1573,6 +1580,8 @@ env_opt_add(ep)
+ 		*opt_replyp++ = ENV_USERVAR;
+ 	for (;;) {
+ 		while ((c = *ep++)) {
++			if (opt_replyp + (2 + 2) > opt_replyend)
++				return;
+ 			switch(c&0xff) {
+ 			case IAC:
+ 				*opt_replyp++ = IAC;
+@@ -1587,6 +1596,8 @@ env_opt_add(ep)
+ 			*opt_replyp++ = c;
+ 		}
+ 		if ((ep = vp)) {
++			if (opt_replyp + (1 + 2 + 2) > opt_replyend)
++				return;
+ #ifdef	OLD_ENVIRON
+ 			if (telopt_environ == TELOPT_OLD_ENVIRON)
+ 				*opt_replyp++ = old_env_value;
+@@ -1618,7 +1629,9 @@ env_opt_end(emptyok)
+ {
+ 	register int len;
+ 
+-	len = opt_replyp - opt_reply + 2;
++	if (opt_replyp + 2 > opt_replyend)
++		return;
++	len = opt_replyp + 2 - opt_reply;
+ 	if (emptyok || len > 6) {
+ 		*opt_replyp++ = IAC;
+ 		*opt_replyp++ = SE;
