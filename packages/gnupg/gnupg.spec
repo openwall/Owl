@@ -1,8 +1,8 @@
-# $Id: Owl/packages/gnupg/gnupg.spec,v 1.5 2001/05/27 11:14:13 kad Exp $
+# $Id: Owl/packages/gnupg/gnupg.spec,v 1.6 2001/05/30 02:10:38 solar Exp $
 
 Summary: 	A GNU utility for secure communication and data storage.
 Name: 		gnupg
-Version:	1.0.5
+Version:	1.0.6
 Release: 	1owl
 Copyright:	GPL
 Group: 		Applications/Cryptography
@@ -58,6 +58,9 @@ strip $RPM_BUILD_ROOT/usr/lib/gnupg/*
 %{_mandir}/man1/gpgv.*
 
 %changelog
+* Wed May 30 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 1.0.6.
+
 * Sun May 27 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - upgraded to 1.0.5
 
