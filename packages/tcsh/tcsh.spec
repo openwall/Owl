@@ -1,11 +1,11 @@
-# $Id: Owl/packages/tcsh/tcsh.spec,v 1.3 2000/12/14 20:43:02 kad Exp $
+# $Id: Owl/packages/tcsh/tcsh.spec,v 1.4 2000/12/15 05:08:15 solar Exp $
 
 %define	_bindir	/bin
 
 Summary: 	An enhanced version of csh, the C shell.
 Name: 		tcsh
 Version: 	6.10
-Release: 	1owl
+Release: 	2owl
 Copyright: 	distributable
 Group: 		System Environment/Shells
 Source: 	ftp://ftp.astron.com/pub/tcsh/tcsh-%{version}.tar.gz
@@ -85,7 +85,11 @@ fi
 %{_datadir}/locale/*/LC_MESSAGES/tcsh*
 
 %changelog
-* Sat Dec  9 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Fri Dec 15 2000 Solar Designer <solar@owl.openwall.com>
+- Updated the mkstemp() patch to actually be correct for 6.10.00 (which
+already includes a more portable, but worse fix for the same problem).
+
+* Sat Dec 09 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - 6.10
 - security update
 

@@ -1,41 +1,24 @@
---- tcsh-6.10.00/sh.c.orig	Sun Nov 12 01:03:35 2000
-+++ tcsh-6.10.00/sh.c	Sun Dec  8 16:35:13 2000
-@@ -35,6 +35,7 @@
-  * SUCH DAMAGE.
-  */
- #define EXTERN	/* Intern */
-+#include <features.h>
- #include "sh.h"
- 
- #ifndef lint
-@@ -717,7 +718,16 @@
+diff -ur tcsh-6.10.00.orig/sh.c tcsh-6.10.00/sh.c
+--- tcsh-6.10.00.orig/sh.c	Sun Nov 12 02:03:35 2000
++++ tcsh-6.10.00/sh.c	Fri Dec 15 07:46:10 2000
+@@ -717,7 +717,12 @@
  	shtemp = Strspl(SAVE(strtmp2), doldol);	/* For << */
      }
  #else /* !WINNT_NATIVE */
-+#if defined(__GLIBC__) && __GLIBC__ >= 2
+-    shtemp = Strspl(STRtmpsh, doldol);	/* For << */
 +    {
 +       char *tmpdir = getenv ("TMPDIR");
 +       if (!tmpdir)
 +           tmpdir = "/tmp";
 +       shtemp = Strspl(SAVE(tmpdir), SAVE("/sh.XXXXXX")); /* For << */
 +    }
-+#else
-     shtemp = Strspl(STRtmpsh, doldol);	/* For << */
-+#endif /* __GLIBC__ */
  #endif /* WINNT_NATIVE */
  
      /*
---- tcsh-6.10.00/sh.dol.c.orig	Sun Nov 19 22:50:43 2000
-+++ tcsh-6.10.00/sh.dol.c	Sun Dec  8 16:37:37 2000
-@@ -34,6 +34,7 @@
-  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-  * SUCH DAMAGE.
-  */
-+#include <features.h>
- #include "sh.h"
- 
- RCSID("$Id: sh.dol.c,v 3.45 2000/11/19 20:50:43 christos Exp $")
-@@ -1020,7 +1021,7 @@
+diff -ur tcsh-6.10.00.orig/sh.dol.c tcsh-6.10.00/sh.dol.c
+--- tcsh-6.10.00.orig/sh.dol.c	Sun Nov 19 23:50:43 2000
++++ tcsh-6.10.00/sh.dol.c	Fri Dec 15 08:04:12 2000
+@@ -1020,45 +1020,27 @@
      int c;
      Char   *Dv[2];
      Char    obuf[BUFSIZE], lbuf[BUFSIZE], mbuf[BUFSIZE];
@@ -44,34 +27,54 @@
      register Char *lbp, *obp, *mbp;
      Char  **vp;
      bool    quoted;
-@@ -1031,11 +1032,23 @@
- again:
- #endif /* WINNT_NATIVE */
+-    char   *tmp;
+-#ifndef WINNT_NATIVE
+-    struct timeval tv;
++    char   *tmp, *dot;
+ 
+-again:
+-#endif /* WINNT_NATIVE */
      tmp = short2str(shtemp);
-+#if defined(__GLIBC__) && __GLIBC__ >= 2
-+    {
-+       char *dot = strrchr(tmp, '.');
-+       if (!dot)
-+           stderror(ERR_NAME | ERR_NOMATCH);
-+       strcpy(dot, ".XXXXXX");
-+    }
+-#ifndef O_CREAT
+-# define O_CREAT 0
+-    if (creat(tmp, 0600) < 0)
++    dot = strrchr(tmp, '.');
++    if (!dot)
++	stderror(ERR_NAME | ERR_NOMATCH);
++    strcpy(dot, ".XXXXXX");
 +
 +    if ((fd = mkstemp(tmp)) < 0)
-+       stderror(ERR_SYSTEM, tmp, strerror(errno));
-+#else
- #ifndef O_CREAT
- # define O_CREAT 0
--    if (creat(tmp, 0600) < 0)
-+    if ((fd = creat(tmp, 0600)) < 0)
  	stderror(ERR_SYSTEM, tmp, strerror(errno));
- #endif
-+#endif /* __GLIBC__ */
-     (void) close(0);
- #ifndef O_TEMPORARY
- # define O_TEMPORARY 0
-@@ -1190,4 +1203,5 @@
- 	if (pargv)
- 	    blkfree(pargv), pargv = 0;
+-#endif
+-    (void) close(0);
+-#ifndef O_TEMPORARY
+-# define O_TEMPORARY 0
+-#endif
+-#ifndef O_EXCL
+-# define O_EXCL 0
+-#endif
+-    if (open(tmp, O_RDWR|O_CREAT|O_EXCL|O_TEMPORARY) == -1) {
+-	int oerrno = errno;
+-#ifndef WINNT_NATIVE
+-	if (errno == EEXIST) {
+-	    if (unlink(tmp) == -1) {
+-		(void) gettimeofday(&tv, NULL);
+-		shtemp = Strspl(STRtmpsh, putn((((int)tv.tv_sec) ^ 
+-		    ((int)tv.tv_usec) ^ ((int)getpid())) & 0x00ffffff));
+-	    }
+-	    goto again;
+-	}
+-#endif /* WINNT_NATIVE */
+-	(void) unlink(tmp);
+-	errno = oerrno;
+- 	stderror(ERR_SYSTEM, tmp, strerror(errno));
++
++    if (fd != 0) {
++	if (dup2(fd, 0) < 0)
++	    stderror(ERR_SYSTEM, "dup2", strerror(errno));
++	(void) close(fd);
      }
-+    close(fd);
- }
++
+     (void) unlink(tmp);		/* 0 0 inode! */
+     Dv[0] = term;
+     Dv[1] = NULL;
