@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vim/vim.spec,v 1.10 2002/04/21 01:19:59 solar Exp $
+# $Id: Owl/packages/vim/vim.spec,v 1.11 2002/04/24 23:11:34 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -12,20 +12,23 @@ Name: vim
 %define patchlevel 18
 %define vimdir vim%{major}%{minor}%{alpha}
 Version: %{major}.%{minor}%{?patchlevel:.%patchlevel}
-Release: owl1
+Release: owl2
 License: Charityware
 Group: Applications/Editors
 Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%{major}.%{minor}%{alpha}.tar.bz2
 Source1: vim-%{major}.%{minor}-%{version}.bz2
 Source2: vitmp.c
-Source3: vimrc
-Source4: gvim.desktop
-Source5: README
+Source3: vitmp.1
+Source4: vimrc
+Source5: gvim.desktop
+Source6: README
 Patch0: vim-6.1-rh-owl-vim-not-vi.diff
 Patch1: vim-6.1-rh-paths.diff
 Patch2: vim-6.1-rh-fix-keys.diff
 Patch3: vim-6.1-rh-owl-xxd-locale.diff
 Patch4: vim-6.1-rh-owl-spec-syntax.diff
+Patch5: vim-6.1-owl-tmp.diff
+Requires: mktemp >= 1:1.3.1
 BuildRequires: perl
 %if %BUILD_USE_GPM
 BuildRequires: gpm-devel
@@ -111,6 +114,8 @@ test ! -e failed
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
+rm src/auto/configure
 install -m 644 $RPM_SOURCE_DIR/README .
 
 %if %BUILD_USE_GPM
@@ -127,6 +132,7 @@ install -m 644 $RPM_SOURCE_DIR/README .
 
 %build
 cd src
+autoconf
 
 %if %BUILD_USE_X
 export ac_cv_func_mkstemp=yes \
@@ -137,7 +143,7 @@ export ac_cv_func_mkstemp=yes \
 	--exec-prefix=/usr/X11R6 \
 	--enable-xim --enable-multibyte \
 	--enable-fontset %{pythonflag} %{gpmflag}
-make VIMRUNTIMEDIR=/usr/share/vim/%{vimdir}
+make VIMRUNTIMEDIR=/usr/share/vim/%{vimdir} COMPILEDBY=build@%{buildhost}
 mv vim gvim
 make clean
 %endif
@@ -150,7 +156,7 @@ export ac_cv_func_mkstemp=yes \
 	--with-x=no --enable-gui=no \
 	--exec-prefix=/usr --enable-multibyte \
 	--enable-fontset %{pythonflag} %{gpmflag}
-make VIMRUNTIMEDIR=/usr/share/vim/%{vimdir}
+make VIMRUNTIMEDIR=/usr/share/vim/%{vimdir} COMPILEDBY=build@%{buildhost}
 mv vim vim-enhanced
 make clean
 
@@ -162,13 +168,13 @@ export ac_cv_func_mkstemp=yes \
 	--with-x=no --enable-gui=no \
 	--with-tlib=termcap --disable-gpm \
 	--exec-prefix=/
-make VIMRUNTIMEDIR=/usr/share/vim/%{vimdir}
+make VIMRUNTIMEDIR=/usr/share/vim/%{vimdir} COMPILEDBY=build@%{buildhost}
 
 gcc $RPM_OPT_FLAGS -Wall -s $RPM_SOURCE_DIR/vitmp.c -o vitmp
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT{/bin,/usr/{bin,share/vim},%{_libexecdir}}
+mkdir -p $RPM_BUILD_ROOT{/bin,/usr/{bin,share/vim}}
 %if %BUILD_USE_X
 mkdir -p $RPM_BUILD_ROOT/usr/X11R6/bin
 %endif
@@ -181,7 +187,9 @@ install -m 755 vim-enhanced $RPM_BUILD_ROOT/usr/bin/vim
 %if %BUILD_USE_X
 install -m 755 gvim $RPM_BUILD_ROOT/usr/X11R6/bin/
 %endif
-install -m 755 vitmp $RPM_BUILD_ROOT%{_libexecdir}/
+
+install -m 755 vitmp $RPM_BUILD_ROOT/bin/
+install -m 644 $RPM_SOURCE_DIR/vitmp.1 $RPM_BUILD_ROOT%{_mandir}/man1/
 
 pushd $RPM_BUILD_ROOT
 mv bin/vim bin/vi
@@ -245,7 +253,8 @@ rm -rf $RPM_BUILD_ROOT
 /bin/view
 /bin/rvi
 /bin/rview
-%{_libexecdir}/vitmp
+/bin/vitmp
+%{_mandir}/man1/vitmp.*
 
 %files enhanced
 %defattr(-,root,root)
@@ -271,6 +280,11 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Thu Apr 25 2002 Solar Designer <solar@owl.openwall.com>
+- vitmp moved from /usr/libexec to /bin and now has a man page.
+- Additional temporary file handling fixes to vim and its scripts (but not
+the documentation yet).
+
 * Fri Apr 19 2002 Solar Designer <solar@owl.openwall.com>
 - Updated to 6.1 patchlevel 18, reviewing the patches in Rawhide and taking
 those pieces which make sense.

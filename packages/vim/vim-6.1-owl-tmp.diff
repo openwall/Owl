@@ -1,0 +1,59 @@
+diff -ur vim61.orig/src/configure.in vim61/src/configure.in
+--- vim61.orig/src/configure.in	Sat Mar  9 20:29:18 2002
++++ vim61/src/configure.in	Wed Apr 24 23:08:32 2002
+@@ -331,7 +331,7 @@
+ 	dnl    see what the interpreter is built from
+ 	AC_CACHE_VAL(vi_cv_path_python_plibs,
+ 	[
+-	    tmp_mkf="/tmp/Makefile-conf$$"
++	    tmp_mkf="`pwd`/Makefile-conf$$"
+ 	    cat ${PYTHON_CONFDIR}/Makefile - <<'eof' >${tmp_mkf}
+ __:
+ 	@echo "python_MODLIBS='$(MODLIBS)'"
+diff -ur vim61.orig/src/fileio.c vim61/src/fileio.c
+--- vim61.orig/src/fileio.c	Wed Mar 20 00:34:17 2002
++++ vim61/src/fileio.c	Wed Apr 24 23:00:14 2002
+@@ -2658,25 +2658,17 @@
+ 		/*
+ 		 * Check if we can create a file and set the owner/group to
+ 		 * the ones from the original file.
+-		 * First find a file name that doesn't exist yet (use some
+-		 * arbitrary numbers).
+ 		 */
+-		STRCPY(IObuff, fname);
+-		for (i = 4913; ; i += 123)
+-		{
+-		    sprintf((char *)gettail(IObuff), "%d", i);
+-		    if (mch_stat((char *)IObuff, &st) < 0)
+-			break;
+-		}
+-		fd = mch_open((char *)IObuff, O_CREAT|O_WRONLY|O_EXCL, perm);
+-		close(fd);
++		sprintf((char *)IObuff, "%s.XXXXXX", fname);
++		fd = mkstemp((char *)IObuff);
+ 		if (fd < 0)	/* can't write in directory */
+ 		    backup_copy = TRUE;
+ 		else
+ 		{
+ # ifdef UNIX
+-		    chown((char *)IObuff, st_old.st_uid, st_old.st_gid);
+-		    (void)mch_setperm(IObuff, perm);
++		    if (fchown(fd, st_old.st_uid, st_old.st_gid) == 0)
++			fchmod(fd, perm);
++		    close(fd);
+ 		    if (mch_stat((char *)IObuff, &st) < 0
+ 			    || st.st_uid != st_old.st_uid
+ 			    || st.st_gid != st_old.st_gid
+diff -ur vim61.orig/src/vimtutor vim61/src/vimtutor
+--- vim61.orig/src/vimtutor	Wed Mar 13 12:04:11 2002
++++ vim61/src/vimtutor	Wed Apr 24 23:10:40 2002
+@@ -11,8 +11,7 @@
+ export xx
+ 
+ # Use Vim to copy the tutor, it knows the value of $VIMRUNTIME
+-tmp="${TMPDIR-/tmp}"
+-TUTORCOPY=`mktemp $tmp/tutorXXXXXX || tempfile -p tutor || echo $tmp/tutor$$`
++TUTORCOPY="`mktemp -t vimtutor.XXXXXXXXXX`" || exit
+ export TUTORCOPY
+ 
+ # remove the copy of the tutor on exit
