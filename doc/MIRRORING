@@ -1,0 +1,47 @@
+These are the instructions for those who would like to setup and
+maintain an Owl mirror, official or not.
+
+Currently, we especially need official mirrors in Canada and Japan.
+
+Before you setup a mirror, please e-mail mirrors@owl.openwall.com such
+that we have your contact address in case of a technical problem or a
+significant change in the setup requirements outlined below.
+
+The known to work way to do Owl mirrors from the primary feed
+(ftp.feed.openwall.com) is to use lftp 2.3.8, preferably the Owl
+package.  (Later versions of lftp contain a known problem, it's being
+dealt with.)
+
+It is important that passive mode FTP is used.  lftp does default to
+passive mode, but other mirroring programs may differ.
+
+Create a separate pseudo-user to do the mirroring as, let it update
+the proper public FTP area, and setup a cron job like this:
+
+05 6 * * *	umask 022 && cd /home/ftp && /usr/bin/lftp -c 'o ftp.openwall.com && mirror pub -v --delete --exclude Owl &' &> /dev/null
+15 6 * * *	umask 022 && cd /home/ftp/pub && /usr/bin/lftp -c 'o ftp.feed.openwall.com/pub/ && mirror Owl -v --delete &' &> /dev/null
+
+Activity will be logged into ~mirror/.lftp/log.  We suggest that you
+do nightly updates, trying to ensure it is night time in at least one
+of the timezones (of the source or destination).
+
+For FTP server, vsftpd is highly recommended.  Again, it's preferable
+that you use the Owl package of vsftpd.  In fact, if you just install
+Owl on the box it'd be perfect.
+
+It is preferable that you use the same directory structure as on the
+ftp*.*.openwall.com mirrors, then we will be able to assign such a
+name to it as well.  This means that you will need to allocate an
+IP address for this mirror if you also host other FTP content.
+
+You may advertise the organization hosting the mirror in the one-line
+FTP server's greeting, like this:
+
+220 ftp.openwall.com - hosted by DataForce ISP - http://www.openwall.com/DF/
+
+For an official mirror, it's highly desired that the machine doesn't
+offer other, potentially dangerous, public services.  (Well, if you
+install Owl and use just the services that are a part of Owl, that
+would still be fine.)  As an exception, it may host other FTP content.
+
+$Id: Owl/doc/MIRRORING,v 1.1 2002/11/07 04:39:41 solar Exp $
