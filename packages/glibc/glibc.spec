@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.38 2002/08/04 02:35:54 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.39 2002/08/06 13:28:31 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -6,7 +6,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
 %define crypt_bf_version 0.4.4
-Release: owl25
+Release: owl26
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%{version}.tar.gz
@@ -80,9 +80,9 @@ national language (locale) support and timezone databases.
 %package devel
 Summary: Header and object files for development using standard C libraries.
 Group: Development/Libraries
-Conflicts: texinfo < 3.11
 PreReq: /sbin/install-info
 Requires: kernel-headers >= 2.2.1
+Conflicts: texinfo < 3.11
 AutoReq: true
 
 %description devel
@@ -97,6 +97,7 @@ executables.
 %package profile
 Summary: The GNU libc libraries, including support for gprof profiling.
 Group: Development/Libraries
+Requires: glibc = %{version}-%{release}
 
 %description profile
 The glibc-profile package includes the GNU libc libraries and support
@@ -313,6 +314,10 @@ fi
 %endif
 
 %changelog
+* Tue Aug 06 2002 Solar Designer <solar@owl.openwall.com>
+- Updated the recent calloc(3) patch to conform to POSIX-2001 wrt the
+behavior on elsize == 0.  Pointed out by Sebastian Krahmer of SuSE.
+
 * Sun Aug 04 2002 Solar Designer <solar@owl.openwall.com>
 - Made the FreeSec code reentrant, adjusted crypt*(3) wrappers and the
 manual page accordingly.
