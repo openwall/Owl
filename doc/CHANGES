@@ -12,6 +12,17 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/05/19	Packages: screen, pam, tcb, utempter, owl-etc
+RELIABILITY FIX: Grant screen(1) access to both chkpwd and utempter
+helpers such that screen session (un)locking works in our default
+install.  Previously, locked screen sessions couldn't be unlocked by
+the user because of screen not being able to possess and make use of
+the privilege of validating the user's password.
+
+2002/05/17 -
+2002/05/19	Package: gnupg
+Updated to 1.0.7.
+
 2002/05/14	Package: findutils
 Updated to 4.1.7.
 
@@ -682,4 +693,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.88 2002/05/14 08:01:36 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.89 2002/05/19 04:15:50 solar Exp $
