@@ -1,4 +1,4 @@
-# $Id: Owl/packages/slang/Attic/slang.spec,v 1.1 2000/12/14 20:43:02 kad Exp $
+# $Id: Owl/packages/slang/Attic/slang.spec,v 1.2 2000/12/14 23:12:47 solar Exp $
 
 %define version 1.4.2
 
@@ -71,7 +71,7 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Thu Dec 14 2000 Alexandr D. Kanevkiy <kad@owl.openwall.com>
+* Thu Dec 14 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import from RH
 
 * Tue Aug 29 2000 Bill Nottingham <notting@redhat.com>
