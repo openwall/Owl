@@ -156,7 +156,7 @@ diff -urpN dhcp-3.0pl2.orig/server/dhcpd.8 dhcp-3.0pl2/server/dhcpd.8
 +]
 +[
 +.B -j
-+.I chroot-dir 
++.I chroot-dir
 +]
 +[
  .I if0
