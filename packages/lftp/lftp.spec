@@ -1,4 +1,4 @@
-# $Id: Owl/packages/lftp/lftp.spec,v 1.10 2002/02/04 17:19:16 solar Exp $
+# $Id: Owl/packages/lftp/lftp.spec,v 1.11 2002/02/06 15:01:10 solar Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
@@ -52,7 +52,7 @@ tools for downloading files.
 # Make sure that all message catalogs are built
 unset LINGUAS || :
 
-%define __libtoolize true
+%define __libtoolize echo --
 %configure --with-modules --with-ssl
 make CFLAGS="$RPM_OPT_FLAGS"
 
