@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.3 2000/07/27 00:12:00 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.4 2000/07/27 00:23:09 solar Exp $
 
 Summary: Initial set of configuration files
 Name: owl-etc
@@ -29,7 +29,8 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/etc/profile.d
 touch $RPM_BUILD_ROOT/etc/motd
 # Hack, don't want to list all sources
-cp -a $RPM_SOURCE_DIR/* $RPM_BUILD_ROOT/etc
+ls -la $RPM_SOURCE_DIR/
+cp -r $RPM_SOURCE_DIR/* $RPM_BUILD_ROOT/etc
 
 %clean
 rm -rf $RPM_BUILD_ROOT
