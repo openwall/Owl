@@ -1,35 +1,37 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.8 2001/09/11 11:03:50 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.9 2001/10/28 01:56:12 solar Exp $
 
-Summary: A tiny POP3 server with security as its primary design goal
+Summary: Post Office Protocol server.
 Name: popa3d
-Version: 0.4.9.4
+Version: 0.5
 Release: 1owl
-Copyright: relaxed BSD and (L)GPL-compatible
+License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
 Source0: ftp://ftp.openwall.com/pub/projects/popa3d/popa3d-%{version}.tar.gz
-Source1: popa3d.pam
-Source2: popa3d.init
-Source3: popa3d.xinetd
-Patch0: popa3d-0.4.9.3-owl-params.diff
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
-Requires: /usr/share/empty, pam_userpass, xinetd
+Source1: params.h
+Source2: popa3d.pam
+Source3: popa3d.init
+Source4: popa3d.xinetd
+Buildroot: /override/%{name}-%{version}
+Requires: /var/empty, pam_userpass, xinetd
 Prereq: /sbin/chkconfig, /dev/null, grep, shadow-utils
 
 %description
-popa3d is a tiny POP3 server with security as its primary design goal.
+popa3d is a tiny Post Office Protocol version 3 (POP3) server with
+security as its primary design goal.
 
 %prep
 %setup -q
-%patch0 -p1
+cp $RPM_SOURCE_DIR/params.h params.h
 
 %build
 make CFLAGS="-c -Wall $RPM_OPT_FLAGS -DHAVE_PROGNAME" LIBS="-lpam"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{usr/sbin,etc/{pam.d,rc.d/init.d,xinetd.d}}
 
-install -m 700 popa3d $RPM_BUILD_ROOT/usr/sbin/
+make install DESTDIR=$RPM_BUILD_ROOT SBINDIR=%_sbindir MANDIR=%_mandir
+
+mkdir -p $RPM_BUILD_ROOT/etc/{pam.d,rc.d/init.d,xinetd.d}
 install -m 600 $RPM_SOURCE_DIR/popa3d.pam \
 	$RPM_BUILD_ROOT/etc/pam.d/popa3d
 install -m 700 $RPM_SOURCE_DIR/popa3d.init \
@@ -62,13 +64,17 @@ fi
 
 %files
 %defattr(-,root,root)
-/usr/sbin/popa3d
+%_sbindir/popa3d
+%_mandir/man8/popa3d.8*
 %config(noreplace) /etc/pam.d/popa3d
 %config /etc/rc.d/init.d/popa3d
 %config /etc/xinetd.d/popa3d
 %doc DESIGN LICENSE
 
 %changelog
+* Sun Oct 28 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 0.5 which adds a popa3d(8) man page.
+
 * Tue Sep 11 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 0.4.9.4 (fixed two bugs introduced with 0.4.9.2 and 0.4.9.3).
 

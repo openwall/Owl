@@ -12,6 +12,9 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/10/28	Package: popa3d
+Updated to 0.5 which adds a popa3d(8) man page.
+
 2001/10/24 -
 2001/10/27	Package: bash
 Updated to 2.05 with many additional fixes.
@@ -377,4 +380,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.37 2001/10/27 17:42:46 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.38 2001/10/28 01:56:12 solar Exp $
