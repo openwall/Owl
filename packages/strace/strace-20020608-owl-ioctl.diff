@@ -1,6 +1,6 @@
-diff -ur strace-20020528.orig/defs.h strace-20020528-owl-ioctl/defs.h
---- strace-20020528.orig/defs.h	Thu May 30 04:48:52 2002
-+++ strace-20020528-owl-ioctl/defs.h	Thu May 30 05:17:02 2002
+diff -ur strace-20020608.orig/defs.h strace-20020608/defs.h
+--- strace-20020608.orig/defs.h	Thu May 30 04:48:52 2002
++++ strace-20020608/defs.h	Sat Jun  8 06:19:13 2002
 @@ -417,7 +417,8 @@
  extern int internal_wait P((struct tcb *));
  extern int internal_exit P((struct tcb *));
@@ -11,9 +11,9 @@ diff -ur strace-20020528.orig/defs.h strace-20020528-owl-ioctl/defs.h
  extern int ioctl_decode P((struct tcb *, long, long));
  extern int term_ioctl P((struct tcb *, long, long));
  extern int sock_ioctl P((struct tcb *, long, long));
-diff -ur strace-20020528.orig/io.c strace-20020528-owl-ioctl/io.c
---- strace-20020528.orig/io.c	Thu May 30 04:48:52 2002
-+++ strace-20020528-owl-ioctl/io.c	Thu May 30 05:27:28 2002
+diff -ur strace-20020608.orig/io.c strace-20020608/io.c
+--- strace-20020608.orig/io.c	Thu May 30 04:48:52 2002
++++ strace-20020608/io.c	Sat Jun  8 06:19:13 2002
 @@ -320,14 +320,16 @@
  sys_ioctl(tcp)
  struct tcb *tcp;
@@ -36,9 +36,9 @@ diff -ur strace-20020528.orig/io.c strace-20020528-owl-ioctl/io.c
  			tprintf("%#lx", tcp->u_arg[1]);
  		ioctl_decode(tcp, tcp->u_arg[1], tcp->u_arg[2]);
  	}
-diff -ur strace-20020528.orig/ioctl.c strace-20020528-owl-ioctl/ioctl.c
---- strace-20020528.orig/ioctl.c	Sun Aug 19 16:06:50 2001
-+++ strace-20020528-owl-ioctl/ioctl.c	Thu May 30 05:14:55 2002
+diff -ur strace-20020608.orig/ioctl.c strace-20020608/ioctl.c
+--- strace-20020608.orig/ioctl.c	Sun Aug 19 16:06:50 2001
++++ strace-20020608/ioctl.c	Sat Jun  8 06:19:13 2002
 @@ -78,7 +78,7 @@
  	return (code1 > code2) ? 1 : (code1 < code2) ? -1 : 0;
  }
@@ -74,9 +74,9 @@ diff -ur strace-20020528.orig/ioctl.c strace-20020528-owl-ioctl/ioctl.c
  }
  
  int
-diff -ur strace-20020528.orig/stream.c strace-20020528-owl-ioctl/stream.c
---- strace-20020528.orig/stream.c	Thu May 30 04:48:52 2002
-+++ strace-20020528-owl-ioctl/stream.c	Thu May 30 05:27:43 2002
+diff -ur strace-20020608.orig/stream.c strace-20020608/stream.c
+--- strace-20020608.orig/stream.c	Thu May 30 04:48:52 2002
++++ strace-20020608/stream.c	Sat Jun  8 06:19:13 2002
 @@ -923,7 +923,7 @@
  int arg;
  {
