@@ -12,6 +12,16 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/01/24 -
+2002/02/07	Owl/doc/CONVENTIONS;
+		Owl/build/buildworld.sh, Owl/build/installworld.sh;
+		Owl/packages/*
+Defined and moved to new package version numbering conventions which
+should let us better support multiple branches.  At the same time any
+previously specified conventions have been actually enforced for old
+packages, heavy cleanups applied to all of the RPM spec files, and
+lots of minor improvements to the packages have been made.
+
 2002/02/07	Package: iproute2
 New package: enhanced IP routing configuration tools.
 
@@ -537,4 +547,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.64 2002/02/07 20:32:47 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.65 2002/02/07 21:35:17 solar Exp $
