@@ -1,11 +1,11 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.5 2001/01/06 09:03:25 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.6 2001/05/29 21:18:18 solar Exp $
 
 %define NEED_PYTHON 'no'
 
 Summary: 	A secure replacement for inetd.
 Name: 		xinetd
 Version: 	2.1.8.9pre13
-Release: 	4owl
+Release: 	5owl
 License: 	Distributable (BSD-like)
 Group: 		System Environment/Daemons
 Source: 	http://www.xinetd.org/xinetd-%{version}.tar.gz
@@ -21,6 +21,7 @@ Source9: 	xinetd-uecho
 Source10: 	xinetd-chargen
 Source11: 	xinetd-uchargen
 Patch0: 	xinetd-2.1.8.9pre10-rh-skipjunkfiles.diff
+Patch1:		xinetd-2.1.8.9pre13-owl-umask.diff
 Provides: 	inetd
 Prereq: 	/sbin/chkconfig /etc/init.d
 BuildRequires: 	tcp_wrappers
@@ -45,6 +46,7 @@ limits on the number of servers that can be started, among other things.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 autoconf
@@ -111,6 +113,9 @@ fi
 %config /etc/xinetd.d/*
 
 %changelog
+* Wed May 30 2001 Solar Designer <solar@owl.openwall.com>
+- Ensure the umask is no less restrictive than 022.
+
 * Sat Jan 06 2001 Solar Designer <solar@owl.openwall.com>
 - Corrected the use of "--" in the startup script.
 
