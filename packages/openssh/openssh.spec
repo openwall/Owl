@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.70.2.1 2004/06/07 05:52:28 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.70.2.2 2004/06/07 05:54:55 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
@@ -36,7 +36,7 @@ BuildRequires: openssl-devel
 BuildRequires: pam-devel, pam_userpass-devel
 BuildRequires: perl
 BuildRequires: zlib-devel
-BuildRequires: tcp_wrappers >= 7.6-owl3.2
+BuildRequires: tcp_wrappers >= 7.6-owl2
 BuildRoot: /override/%name-%version
 
 %description
@@ -79,7 +79,7 @@ Summary: The OpenSSH server daemon.
 Group: System Environment/Daemons
 PreReq: %name = %version-%release
 PreReq: /sbin/chkconfig, grep, shadow-utils, /dev/urandom
-Requires: tcp_wrappers >= 7.6-owl3.2
+Requires: tcp_wrappers >= 7.6-owl2
 Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: /var/empty, tcb, pam_userpass, pam_mktemp
 Obsoletes: ssh-server
