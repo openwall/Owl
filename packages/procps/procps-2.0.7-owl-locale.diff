@@ -1,0 +1,69 @@
+diff -ur procps-2.0.7.orig/proc/sysinfo.c procps-2.0.7/proc/sysinfo.c
+--- procps-2.0.7.orig/proc/sysinfo.c	Mon Jul 10 23:36:13 2000
++++ procps-2.0.7/proc/sysinfo.c	Sat Dec  2 05:04:12 2000
+@@ -13,6 +13,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <ctype.h>
++#include <locale.h>
+ 
+ #include <unistd.h>
+ #include <fcntl.h>
+@@ -58,13 +59,29 @@
+ 
+ #define SET_IF_DESIRED(x,y)  if(x) *(x) = (y)	/* evals 'x' twice */
+ 
++#define C_sscanf(s, format, args...) \
++({ \
++	int retval; \
++	char *locale; \
++\
++	locale = setlocale(LC_ALL, NULL); \
++	if (locale) { \
++		locale = strcpy(alloca(strlen(locale) + 1), locale); \
++		setlocale(LC_ALL, "C"); \
++	} \
++	retval = sscanf((s), (format) , ## args); \
++	if (locale) \
++		setlocale(LC_ALL, locale); \
++\
++	retval; \
++})
+ 
+ /***********************************************************************/
+ int uptime(double *uptime_secs, double *idle_secs) {
+     double up=0, idle=0;
+ 
+     FILE_TO_BUF(UPTIME_FILE,uptime_fd);
+-    if (sscanf(buf, "%lf %lf", &up, &idle) < 2) {
++    if (C_sscanf(buf, "%lf %lf", &up, &idle) < 2) {
+ 	fprintf(stderr, "bad data in " UPTIME_FILE "\n");
+ 	return 0;
+     }
+@@ -109,7 +126,7 @@
+   unsigned long jiffies, h;
+   int i = 0;
+   do{
+-    FILE_TO_BUF(UPTIME_FILE,uptime_fd);  sscanf(buf, "%lf", &up_1);
++    FILE_TO_BUF(UPTIME_FILE,uptime_fd); C_sscanf(buf, "%lf", &up_1);
+     /* uptime(&up_1, NULL); */
+     FILE_TO_BUF(STAT_FILE,stat_fd);
+     /* If we are SMP, then the first line is the sum of jiffies by all CPUs */
+@@ -118,7 +135,7 @@
+     sscanf(buf, "cpu %lu %lu %lu %lu\n%n",
+ 	   &user_j, &nice_j, &sys_j, &other_j, &i);
+     sscanf(buf+i, "cpu0 %lu %lu %lu %lu", &user_j, &nice_j, &sys_j, &other_j);
+-    FILE_TO_BUF(UPTIME_FILE,uptime_fd);  sscanf(buf, "%lf", &up_2);
++    FILE_TO_BUF(UPTIME_FILE,uptime_fd); C_sscanf(buf, "%lf", &up_2);
+     /* uptime(&up_2, NULL); */
+   } while((long)( (up_2-up_1)*1000.0/up_1 )); /* want under 0.1% error */
+   jiffies = user_j + nice_j + sys_j + other_j;
+@@ -173,7 +190,7 @@
+     double avg_1=0, avg_5=0, avg_15=0;
+     
+     FILE_TO_BUF(LOADAVG_FILE,loadavg_fd);
+-    if (sscanf(buf, "%lf %lf %lf", &avg_1, &avg_5, &avg_15) < 3) {
++    if (C_sscanf(buf, "%lf %lf %lf", &avg_1, &avg_5, &avg_15) < 3) {
+ 	fprintf(stderr, "bad data in " LOADAVG_FILE "\n");
+ 	exit(1);
+     }
