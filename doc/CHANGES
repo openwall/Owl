@@ -12,6 +12,12 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/10/22	kernel
+RELIABILITY FIX: Updated to Linux 2.2.19-ow4 which fixes a symbol
+export issue introduced with 2.2.19-ow3 and moves the support for ELF
+executables which use an a.out format interpreter (dynamic linker)
+into a separate configuration option (disabled by default).
+
 2001/10/18	kernel
 SECURITY FIX	Severity: low to high, local, active
 A new revision of the Openwall Linux kernel patch, 2.2.19-ow3, is now
@@ -367,4 +373,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.35 2001/10/18 10:58:29 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.36 2001/10/22 15:01:41 solar Exp $
