@@ -1,9 +1,9 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.5 2000/10/28 16:03:19 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.6 2000/12/01 16:35:19 solar Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron)
 Name: vixie-cron
 Version: 3.0.2.7
-Release: 5owl
+Release: 6owl
 Copyright: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%{version}.tar.gz
@@ -96,6 +96,9 @@ fi
 /etc/control.d/facilities/crontab
 
 %changelog
+* Fri Dec 01 2000 Solar Designer <solar@owl.openwall.com>
+- Adjusted vixie-cron.init for owl-startup.
+
 * Sat Oct 28 2000 Solar Designer <solar@owl.openwall.com>
 - Added "|| :" to the test in %post, as it should return success to RPM.
 

@@ -1,12 +1,13 @@
-#! /bin/sh
+#!/bin/sh
+# $Id: Owl/packages/vixie-cron/vixie-cron.init,v 1.2 2000/12/01 16:35:19 solar Exp $
 #
-# crond          Start/Stop the cron clock daemon.
+# crond          Start/Stop the cron daemon.
 #
 # chkconfig: 2345 40 60
-# description: cron is a standard UNIX program that runs user-specified \
-#              programs at periodic scheduled times. vixie cron adds a \
-#              number of features to the basic UNIX cron, including better \
-#              security and more powerful configuration options.
+# description: \
+#	cron is a standard UNIX daemon that runs specified programs at \
+#	scheduled times.  This is Paul Vixie's implementation of cron, \
+#	with significant modifications.
 # processname: crond
 # config: /etc/crontab
 # pidfile: /var/run/crond.pid
@@ -14,40 +15,29 @@
 # Source function library.
 . /etc/rc.d/init.d/functions
 
-RETVAL=0
+OWL_STARTUP_ENABLE=1
 
 # See how we were called.
 case "$1" in
-  start)
-	echo -n "Starting cron daemon: "
+start)
 	daemon crond
-	RETVAL=$?
-	echo
-	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/crond
 	;;
-  stop)
-	echo -n "Stopping cron daemon: "
+stop)
 	killproc crond
-	RETVAL=$?
-	echo
-	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/crond
 	;;
-  status)
+status)
 	status crond
-	RETVAL=$?
 	;;
-  restart)
-  	$0 stop
+restart)
+	$0 stop
 	$0 start
-	RETVAL=$?
 	;;
-  reload)
-	kill -HUP `cat /var/run/crond.pid`
-	RETVAL=$?
+reload)
+	killproc crond -HUP
 	;;
-  *)
+*)
 	echo "Usage: crond {start|stop|status|restart}"
 	exit 1
 esac
 
-exit $RETVAL
+exit $?
