@@ -134,7 +134,7 @@ diff -ur telnet-3.0-owl-no-mini_inetd/libexec/telnetd/sys_term.c telnet-3.0-owl-
  	/* if we authenticated via K5, try and join the PAG */
 diff -ur telnet-3.0-owl-no-mini_inetd/libexec/telnetd/telnetd.c telnet-3.0-owl-drop-root/libexec/telnetd/telnetd.c
 --- telnet-3.0-owl-no-mini_inetd/libexec/telnetd/telnetd.c	Sun Nov 25 04:46:07 2001
-+++ telnet-3.0-owl-drop-root/libexec/telnetd/telnetd.c	Sun Nov 25 04:49:58 2001
++++ telnet-3.0-owl-drop-root/libexec/telnetd/telnetd.c	Sun Nov 25 06:56:20 2001
 @@ -37,6 +37,8 @@
  #include <fcntl.h>
  #include <syslog.h>
@@ -201,10 +201,11 @@ diff -ur telnet-3.0-owl-no-mini_inetd/libexec/telnetd/telnetd.c telnet-3.0-owl-d
  
      /*
       * Find an available pty to use.
-@@ -816,6 +845,20 @@
-     auth_encrypt_init(host_name, remote_host_name, "TELNETD", 1);
+@@ -817,6 +846,21 @@
  #endif
  
+     init_env();
++
 +    if (pipe(channel))
 +	fatalperror(-1, "pipe");
 +
@@ -219,10 +220,10 @@ diff -ur telnet-3.0-owl-no-mini_inetd/libexec/telnetd/telnetd.c telnet-3.0-owl-d
 +    if (!slavef)
 +	fatalperror(-1, "fdopen");
 +
-     init_env();
      /*
       * get terminal type.
-@@ -838,7 +881,7 @@
+      */
+@@ -838,7 +882,7 @@
  #ifdef PARENT_DOES_UTMP
  	      remote_utmp_name,
  #endif
@@ -231,7 +232,7 @@ diff -ur telnet-3.0-owl-no-mini_inetd/libexec/telnetd/telnetd.c telnet-3.0-owl-d
      /*NOTREACHED*/
  }  /* end of doit */
  
-@@ -850,7 +893,10 @@
+@@ -850,7 +894,10 @@
      char buf[128];
      char *p;
  
@@ -243,7 +244,7 @@ diff -ur telnet-3.0-owl-no-mini_inetd/libexec/telnetd/telnetd.c telnet-3.0-owl-d
      if (f) {
  	while (fgets(buf, sizeof(buf) - 1, f)) {
  	    p = strchr(buf, '\n');
-@@ -859,6 +905,21 @@
+@@ -859,6 +906,21 @@
  	    writenet((unsigned char *)buf, strlen(buf));
  	}
  	fclose(f);
@@ -265,7 +266,7 @@ diff -ur telnet-3.0-owl-no-mini_inetd/libexec/telnetd/telnetd.c telnet-3.0-owl-d
      }
  }
  
-@@ -871,7 +932,8 @@
+@@ -871,7 +933,8 @@
  #ifdef PARENT_DOES_UTMP
  	  const char *utmp_host,
  #endif
@@ -275,15 +276,16 @@ diff -ur telnet-3.0-owl-no-mini_inetd/libexec/telnetd/telnetd.c telnet-3.0-owl-d
  {
      int on = 1;
  #ifdef HAVE_CGETENT
-@@ -880,7 +942,6 @@
+@@ -880,8 +943,6 @@
      char *buf;
  #endif
      int nfd;
 -    int startslave_called = 0;
-     time_t timeout;
+-    time_t timeout;
  
      /*
-@@ -1068,23 +1129,22 @@
+      * Initialize the slc mapping table.
+@@ -1068,23 +1129,21 @@
  	output_data("td: Entering processing loop\r\n");
      });
  
@@ -299,7 +301,7 @@ diff -ur telnet-3.0-owl-no-mini_inetd/libexec/telnetd/telnetd.c telnet-3.0-owl-d
 +
  
      nfd = ((f > p) ? f : p) + 1;
-     timeout = time(NULL) + 5;
+-    timeout = time(NULL) + 5;
      for (;;) {
  	fd_set ibits, obits, xbits;
  	int c;
