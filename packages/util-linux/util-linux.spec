@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.24 2003/11/06 22:55:45 mci Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.25 2003/11/09 19:11:59 solar Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -17,7 +17,9 @@ Patch0: util-linux-2.11z-owl-MCONFIG.diff
 Patch1: util-linux-2.11z-owl-Makefile.diff
 Patch2: util-linux-2.11z-owl-write.diff
 Patch3: util-linux-2.11z-owl-mtab-umask.diff
-Patch20: util-linux-2.11z-crypto-v3.diff.bz2
+%if %BUILD_CRYPTO
+Patch10: util-linux-2.11z-crypto-v3.diff.bz2
+%endif
 PreReq: /sbin/install-info
 PreReq: owl-control >= 0.4, owl-control < 2.0
 Obsoletes: fdisk, tunelp
@@ -66,7 +68,7 @@ to query the status of a loop device.
 %patch2 -p1
 %patch3 -p1
 %if %BUILD_CRYPTO
-%patch20 -p1
+%patch10 -p1
 %endif
 
 %build
