@@ -44,4 +44,5 @@ xntpd:x:185:
 telnetd:x:186:
 vsftpd:x:187:
 dhcp:x:188:
+nmap:x:189:
 scanlogd:x:199:

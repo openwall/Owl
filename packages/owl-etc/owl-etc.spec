@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.53 2003/10/24 00:23:16 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.54 2003/10/26 17:42:36 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
-Version: 0.28
+Version: 0.29
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -30,7 +30,7 @@ BuildRequires: fileutils >= 4.0.27, rpm >= 3.0.6-owl8
 BuildArchitectures: noarch
 BuildRoot: /override/%{name}-%{version}
 
-%define shadow_initial_sha1 f6a26fb5f102aff1934c7a9e1ef4b3e0aae49857
+%define shadow_initial_sha1 87b2b95772ae5ae8de701a850fd0e468592ae1c4
 
 %description
 Initial set of configuration files to be placed into /etc.
@@ -159,6 +159,9 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 %ghost /var/log/lastlog
 
 %changelog
+* Sun Oct 26 2003 Solar Designer <solar@owl.openwall.com> 0.29-owl1
+- nmap user/group.
+
 * Tue Sep 09 2003 Solar Designer <solar@owl.openwall.com> 0.28-owl1
 - dhcp user/group.
 
