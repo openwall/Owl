@@ -1,6 +1,13 @@
-# $Id: Owl/packages/bash/profile,v 1.1 2000/07/27 00:03:52 solar Exp $
+# $Id: Owl/packages/bash/profile,v 1.2 2001/02/04 23:03:44 solar Exp $
+
+# It is recommended that this file be left unchanged to permit for upgrades,
+# and any local additions go into /etc/profile.d/local.sh.
 
 PATH=/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin
+
+if [ -x /usr/X11R6/bin/xterm ]; then
+	PATH=$PATH:/usr/X11R6/bin
+fi
 
 ulimit -c 0
 umask 077
@@ -11,13 +18,12 @@ MAIL="/var/spool/mail/$USER"
 
 HOSTNAME=`/bin/hostname`
 HISTSIZE=1000
-HISTFILE=/dev/null
 
 if [ -z "$INPUTRC" -a ! -f "$HOME/.inputrc" ]; then
 	INPUTRC=/etc/inputrc
 fi
 
-export PATH USER LOGNAME MAIL HOSTNAME HISTSIZE HISTFILE INPUTRC
+export PATH USER LOGNAME MAIL HOSTNAME HISTSIZE INPUTRC
 
 for i in /etc/profile.d/*.sh ; do
 	if [ -x $i ]; then
@@ -26,3 +32,7 @@ for i in /etc/profile.d/*.sh ; do
 done
 
 unset i
+
+if [ -f /etc/bashrc -a ! -f "$HOME/.bashrc" ]; then
+	. /etc/bashrc
+fi
