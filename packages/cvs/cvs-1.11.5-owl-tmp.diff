@@ -612,7 +612,7 @@ diff -ur cvs-1.11.5.orig/man/cvsbug.8 cvs-1.11.5/man/cvsbug.8
  .B INSTALL
 diff -ur cvs-1.11.5.orig/src/cvsbug.in cvs-1.11.5/src/cvsbug.in
 --- cvs-1.11.5.orig/src/cvsbug.in	Mon Apr 29 04:45:47 2002
-+++ cvs-1.11.5/src/cvsbug.in	Sun Apr 27 12:48:05 2003
++++ cvs-1.11.5/src/cvsbug.in	Thu May  1 19:34:22 2003
 @@ -83,11 +83,18 @@
  
  #
@@ -636,7 +636,22 @@ diff -ur cvs-1.11.5.orig/src/cvsbug.in cvs-1.11.5/src/cvsbug.in
  
  if [ -z "$LOGNAME" -a -n "$USER" ]; then
    LOGNAME=$USER
-@@ -263,11 +270,6 @@
+@@ -108,14 +115,12 @@
+     /usr/bin/ypcat passwd 2>/dev/null | cat - /etc/passwd | grep "^$LOGNAME:" |
+       cut -f5 -d':' | sed -e 's/,.*//' > $TEMP
+     ORIGINATOR="`cat $TEMP`"
+-    rm -f $TEMP
+   fi
+ fi
+ 
+ if [ "$ORIGINATOR" = "" ]; then
+   grep "^$LOGNAME:" /etc/passwd | cut -f5 -d':' | sed -e 's/,.*//' > $TEMP
+   ORIGINATOR="`cat $TEMP`"
+-  rm -f $TEMP
+ fi
+ 
+ if [ -n "$ORGANIZATION" ]; then
+@@ -263,11 +268,6 @@
  DESCRIPTION_C='<precise description of the problem (multiple lines)>'
  HOW_TO_REPEAT_C='<code/input/activities to reproduce the problem (multiple lines)>'
  FIX_C='<how to correct or work around the problem, if known (multiple lines)>'

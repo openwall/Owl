@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cvs/cvs.spec,v 1.10 2003/05/01 15:36:18 solar Exp $
+# $Id: Owl/packages/cvs/cvs.spec,v 1.11 2003/05/01 19:42:41 solar Exp $
 
 Summary: A version control system.
 Name: cvs
@@ -92,6 +92,8 @@ fi
 - BuildRequires: mktemp >= 1:1.3.1 (but don't yet require mktemp for the
 package itself because it won't be needed for most uses; the scripts will
 need to be moved to a subpackage).
+- Don't let the cvsbug script unlink one of its temporary files and then
+re-use its name.
 
 * Thu May 01 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl1
 - Re-worked the temporary file handling patch to make it actually do what
