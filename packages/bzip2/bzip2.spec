@@ -1,4 +1,6 @@
-# $Id: Owl/packages/bzip2/bzip2.spec,v 1.2 2000/11/29 12:34:34 kad Exp $
+# $Id: Owl/packages/bzip2/bzip2.spec,v 1.3 2000/11/29 12:36:11 kad Exp $
+
+%define 	bz2libver	1.0.0
 
 Summary: 	A file compression utility.
 Name: 		bzip2
@@ -62,7 +64,7 @@ cp %SOURCE1 ${RPM_BUILD_ROOT}%{_bindir}
 chmod 0755 ${RPM_BUILD_ROOT}%{_bindir}/bzgrep
 
 # Hack!
-ln -s libbz2.so.1.0.0 ${RPM_BUILD_ROOT}%{_libdir}/libbz2.so.0
+ln -s libbz2.so.%{bz2libver} ${RPM_BUILD_ROOT}%{_libdir}/libbz2.so.0
 
 %post -p /sbin/ldconfig
 
