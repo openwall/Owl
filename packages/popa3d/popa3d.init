@@ -1,0 +1,40 @@
+#!/bin/sh
+# $Id: Owl/packages/popa3d/popa3d.init,v 1.1 2000/12/06 12:04:02 solar Exp $
+#
+# chkconfig: 2345 50 50
+# description: \
+#	popa3d is a small POP3 server with security as its primary \
+#	design goal.
+# processname: popa3d
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+OWL_STARTUP_ENABLE=1
+
+case "$1" in
+start)
+	if [ "0$OWL_STARTUP_VERSION" -ge 1 ]; then
+		daemon popa3d
+	else
+# Red Hat's implementation of daemon() would get confused by multiple
+# popa3d processes.
+		/usr/sbin/popa3d
+	fi
+	;;
+stop)
+	killproc popa3d
+	;;
+restart)
+	$0 stop
+	$0 start
+	;;
+status)
+	status popa3d
+	;;
+*)
+	echo "Usage: popa3d {start|stop|restart|status}"
+	exit 1
+esac
+
+exit $?

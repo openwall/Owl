@@ -1,0 +1,5 @@
+#%PAM-1.0
+# $Id: Owl/packages/popa3d/popa3d.pam,v 1.1 2000/12/06 12:04:02 solar Exp $
+auth       required     /lib/security/pam_userpass.so
+auth       required     /lib/security/pam_pwdb.so shadow use_first_pass
+account    required     /lib/security/pam_pwdb.so
