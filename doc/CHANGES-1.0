@@ -60,11 +60,9 @@ obtained from untrusted sources.  Be very careful with what input you
 pass it and what user you run it as.
 References:
 http://marc.theaimsgroup.com/?l=bugtraq&m=99496364810666
-http://mail.gnu.org/pipermail/bug-gnu-utils/2002-May/000827.html
 http://marc.theaimsgroup.com/?l=bugtraq&m=103314336129887
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2001-1267
 http://marc.theaimsgroup.com/?l=bugtraq&m=90674255917321
-https://listman.redhat.com/pipermail/roswell-list/2001-August/001286.html
 
 2002/09/19 -
 2002/09/28	Package: xinetd
@@ -994,4 +992,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/CHANGES-1.0,v 1.4 2002/10/14 20:34:53 solar Exp $
+$Id: Owl/doc/CHANGES-1.0,v 1.5 2004/05/10 18:44:38 solar Exp $
