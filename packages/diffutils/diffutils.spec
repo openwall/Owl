@@ -1,9 +1,9 @@
-# $Id: Owl/packages/diffutils/diffutils.spec,v 1.2 2001/01/03 08:00:16 solar Exp $
+# $Id: Owl/packages/diffutils/diffutils.spec,v 1.3 2001/01/04 06:28:51 solar Exp $
 
 Summary: A GNU collection of diff utilities.
 Name: 		diffutils
 Version: 	2.7
-Release: 	22owl
+Release: 	23owl
 Group: 		Applications/Text
 URL: 		http://www.gnu.org/software/diffutils/diffutils.html
 Source: 	ftp://ftp.gnu.org/gnu/diffutils/diffutils-%{version}.tar.gz
