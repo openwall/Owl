@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.18 2002/11/03 03:27:52 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.19 2002/11/03 03:34:03 solar Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -108,12 +108,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %pre
 if [ $1 -ge 2 ]; then
-	/usr/sbin/control-dump mount write
+	/usr/sbin/control-dump write
 fi
 
 %post
 if [ $1 -ge 2 ]; then
-	/usr/sbin/control-restore mount write
+	/usr/sbin/control-restore write
 else
 	/usr/sbin/control write public
 fi
@@ -125,6 +125,18 @@ if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %{_infodir}/ipc.info.gz %{_infodir}/dir \
 		--entry="* ipc: (ipc).                                   System V IPC."
 fi
+
+%if %BUILD_MOUNT
+%pre mount
+if [ $1 -ge 2 ]; then
+	/usr/sbin/control-dump mount
+fi
+
+%post mount
+if [ $1 -ge 2 ]; then
+	/usr/sbin/control-restore mount
+fi
+%endif
 
 %files
 %defattr(-,root,root)
