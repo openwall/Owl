@@ -1,0 +1,159 @@
+Diese Datei erklärt einige der Konvetionen, die eingehalten werden sollten,
+wenn man das Projekt unterstützen will.
+
+
+	RPM Spezifikations-Dateien.
+
+Unsere Konventionen für RPM Spezifikations-Dateien sind denen von Red Hat
+ähnlich, aber ein paar Unterschiede existieren für Owl-Pakete.
+
+1. Beginne die spec Datei mit einem Kommentar, der das CVS Schlüssel-
+wort Id enthält, gefolgt von einer Leerzeile.
+
+2. Die bevorzugten Tag-Namen (sofern ein Synonym existiert) und die
+Reihenfolge der Tags ist:
+Summary, Name, Version, Release, Epoch, License, Group, URL,
+Source*, Patch*, PreReq, Requires, Conflicts, Provides, Obsoletes,
+Auto*, Prefix, BuildRequires, BuildArchitectures, ExcludeArch,
+ExclusiveArch, BuildRoot. Andere Tags benutzen wir (momentan) nicht.
+
+3. Release-Nummer für Owl-Pakete sind von folgender Form:
+
+	owlREVISION
+
+oder wenn du für eine alpha/beta/prerelease Version eines bestimmten
+Softwarestückes packst und der Versions-Tag auf die kommende Version
+gesetzt ist:
+
+	owl0.REVISION
+
+oder wenn du eine ältere Sparte von Owl updatest:
+
+	BRANCH_POINT_RELEASE.BRANCH.REVISION
+
+wobei REVISION eine Owl spezifische Paket-Revisions Nummer ist, die
+nach jedem Update inkrementiert wird. BRANCH_POINT_RELEASE ist die
+Zeichenkette, die das Erstellungsdatum der Sparte enthält. BRANCH
+ist die Spartennummer (ist "0.1" für Owl 0.1-stable).
+
+Wenn du auf eine neue Version updatest, solltest du REVISION auf 1
+zurücksetzten und für ältere Sparten BRANCH_POINT_RELEASE auf "owl0"
+setzen.
+
+4. Der korrekte BuildRoot Tag für ein Owl-Paket ist:
+
+	BuildRoot: /override/%{name}-%{version}
+
+Unsere Arbeitsumgebung wird diesen Tag trotzdem überschreiben, aber 
+er wird viele daran erinnern den BuildRoot Tag zu überschreiben, wenn
+sie manuell Pakete erstellen, besonders in nicht-Owl Umgebungen.
+
+5. Verschiedene Tag's und Einstellungen kannst du mit einem einzelnen
+Leerzeichen setzen. Benutze Kommata, gefolgt von einem Leerzeichen um 
+verschiedene Abhängigkeits-Einträge zu trennen. Aufzählungen mit einem
+Punkt abschliessen. In beiden Fällen, Aufzählung und %description (wie
+auch bei anderer Dokumentation), vermeide es die Befehle gross zu 
+schreiben, selbst wenn es das erste Wort im Satz ist. Es sei den die
+gross geschriebene Form ist der offizielle Name der Software. Um Sätze
+zu trennen, benutze zwei Leerzeichen.
+
+6. Unsere Arbeitsumgebung setzt die optimierenden C/C++ compiler flags
+in %optflag. Dort werden sie so gesetzt, dass sie für einzelne Programme
+optimal sind und nicht zu viele Warnungen produzieren. Wenn du 
+Bibilotheken übersetzt kannst du andere flags benutzen, indem du die
+folgenden zwei Zeilen genau über der %build Sektion platzierst:
+
+	# Use optflags_lib for this package if defined.
+	%{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
+
+Dies wird eine Optimierung ausschalten die verhindert, dass man die
+Programme, die gegen diese Bibilothek gelinkt werden, debuggen kann
+(selbst wenn die Programme selber korrekt zum debuggen übersetzt worden
+sind). Auf dem x86 wird zusätzlich ein korrektes Stack-Verhalten für
+effizientere Gleitkomma- und MMX-Operationen gewährleistet. (Wir sind
+nur wegen der Dritt-Software so freundlich. Wir haben, bei der Software
+die Teil von Owl ist, keinen grossen Anteil an Fliesskomma Arithmetik.
+Deswegen brauchen wir kein korrekteres Stack Verhalten, wenn wir unsere
+Software übersetzen.)
+
+Es wird auch empfohlen, dass du die Quelltexte sauber genug machst, damit
+keine einzige Kompilerwarnung erscheint, wenn man mit "gcc -Wall" über-
+setzt. Wenn du das gemacht hast, ist der richtige Weg um die -Wall
+Option zu übergeben, einfach folgende Zeile vor der %build Sektion ein-
+fügen:
+
+	%{expand:%%define optflags %optflags -Wall}
+
+7. Subshells während des Erstellens, pre/post-install/uninstall und 
+sonstige Scripts sind zu vermeiden, da sich in ihnen potentielle Fehler
+verstecken können. Wenn du eine Subshell verwenden willst um kurz-
+zeitig das Verzeichnis zu wechseln, nimm pushd und popd stattdessen.
+Wenn du wirklich eine Subshell verwenden musst, empfehlen wir das du
+die Kommandos der Subshell manuell in der Elternshell eingibst.
+
+8. Benutze Tabulatoren um Anweisungsblöcke oder umgebrochene Zeilen
+in Scripts einzurücken.
+
+9. Um numerische Werte zu vergleichen, benutze -eq (gilt besonders
+für das $1 Argument, was RPM zu den Scripts weiterleitet. Das $1 nicht 
+in Anführungszeichen setzen).
+
+10. In %changelog das Datum eintragen. Zwei Zeichen für den Tag, evtl.
+mit einer führenden Null.
+
+
+	Namen der Patch-Dateien.
+
+Benutze den folgenden Syntax für Patch-Dateinamen:
+
+	NAME-VERSION-ORIGIN-WHAT.diff
+
+wobei NAME und VERSION selbiges vom Paket sind, ORIGIN ist eine Ab-
+kürzung der Distribution, von der der Patch stammt und WHAT ist eine
+Beschreibung was der Patch macht oder wofür er ist.
+
+Sollte ein einziger Patch aus mehreren Stücken von verschiedenen
+Distrubutionen bestehen, schreibe alle, geordnet nach der Relevanz,
+in ORIGIN. Für Patches, die als ein Teil von Owl entwickelt wurden,
+setze ORIGIN auf "owl". Wenn der Patch von einer anderen Distribution
+stammt, aber signifikante Änderungen vorgenommen wurden, sollte ORIGIN
+zusätzlich "-owl-" enthalten (das zeigt an, das auftretende Fehler 
+unser Problem sind). Wenn ein Patch aus einem CVS Archiv entnommen
+wurde, sollte ORIGIN auf "cvs" gesetzt werden. Zusätzlich sollte WHAT
+auf das koresspondierende Datum (JJJJMMDD) gesetzt werden.
+
+Hier ein paar gebräuchliche WHAT's zum benutzen:
+
+Makefile	- Nur für Makefile* Patches (Grossschreibung)
+bound		- bound checking (Speicher- oder Zahlenüberlauf)
+config		- Nur für Patches der Konfiguration (compile- oder Laufzeit)
+doc		- Nur für Dokumentation's Patches
+fixes		- Sicherheitspatches, Zuverlässigkeit
+format		- Zeichenketten fixes im printf Stil 
+		  (nicht nur Sicherheitsrelevante)
+install-no-root	- Änderungen an "make install" oder ähnliches als 
+		  nicht-root
+linux		- Änderungen, damit portierte Software auf Linux
+		  läuft
+man		- Nur für Manual-Seiten Patches
+tmp		- Patches die mit temporären Dateien arbeiten
+vitmp		- Patches die vitmp(1) Unterstützung hinzufügen
+warnings	- Veränderungen an den Kompiler-Warnungen
+
+Dies bedeutet NICHT das du deine Modifikationen so veränderst, dass
+sie in eine dieser Kategorien passen. Meistens ist es vorteilhaft
+bestimmte Sachen anders zu machen. Dies bedeutet nur, falls du einen
+Patch hast, der in eine dieser Kategorien passt, ihn auch passend 
+benennst (zum Beispiel "tmp" und nicht "mkstemp").
+
+
+	C-Quelltext Formatierung.
+
+Wenn du Teile von C-Code entwickelst oder importierst, die weiterhin 
+als Teil von Owl gepflegt werden sollen, solltest du ident(1) einmalig
+mit den folgenden Optionen benutzen:
+
+	indent -kr -i8 -nlp -nbbo -l79 -lc79
+
+Das entspricht nicht ganz unserem bevorzugten Code-Stil und wird
+deswegen bei Quelltexten in Owl noch nicht eingesetzt.
