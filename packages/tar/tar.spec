@@ -1,9 +1,9 @@
-# $Id: Owl/packages/tar/tar.spec,v 1.3.2.1 2001/07/10 13:11:06 solar Exp $
+# $Id: Owl/packages/tar/tar.spec,v 1.3.2.2 2001/07/10 13:16:05 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: 		tar
 Version:	1.13.17
-Release: 	7owl
+Release: 	8owl
 Copyright: 	GPL
 Group: 		Applications/Archiving
 Source: 	ftp://alpha.gnu.org/pub/gnu/tar/tar-%{version}.tar.gz
