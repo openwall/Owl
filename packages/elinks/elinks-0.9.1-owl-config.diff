@@ -1,0 +1,11 @@
+--- elinks-0.9.1/feature.h.orig	Thu Jan  1 16:34:41 2004
++++ elinks-0.9.1/feature.h	Wed Jan 28 00:30:30 2004
+@@ -48,7 +48,7 @@
+  *
+  * Default: disabled */
+ 
+-/* #define CONFIG_LEDS */
++#define CONFIG_LEDS
+ 
+ 
+ /*** Bookmarks

@@ -1,7 +1,6 @@
-diff -urp elinks-0.9.0.orig/src/sched/download.c elinks-0.9.0/src/sched/download.c
---- elinks-0.9.0.orig/src/sched/download.c	Mon Dec 22 02:15:02 2003
-+++ elinks-0.9.0/src/sched/download.c	Sun Jan 25 11:03:21 2004
-@@ -536,23 +536,22 @@ create_download_file_do(struct terminal 
+--- elinks-0.9.1/src/sched/download.c.orig	Sat Jan 17 07:57:11 2004
++++ elinks-0.9.1/src/sched/download.c	Tue Jan 27 23:59:51 2004
+@@ -536,23 +536,22 @@
  	unsigned char *wd;
  	int h = -1;
  	int saved_errno;
@@ -35,7 +34,7 @@ diff -urp elinks-0.9.0.orig/src/sched/download.c elinks-0.9.0/src/sched/download
  	saved_errno = errno; /* Saved in case of ... --Zas */
  
  	if (wd) {
-@@ -600,38 +599,6 @@ finish:
+@@ -600,38 +599,6 @@
  }
  
  
@@ -74,7 +73,7 @@ diff -urp elinks-0.9.0.orig/src/sched/download.c elinks-0.9.0/src/sched/download
  unsigned char *
  subst_file(unsigned char *prog, unsigned char *file)
  {
-@@ -788,9 +755,15 @@ continue_download(void *data, unsigned c
+@@ -792,9 +759,15 @@
  	}
  
  	if (tq->prog) {
@@ -93,7 +92,7 @@ diff -urp elinks-0.9.0.orig/src/sched/download.c elinks-0.9.0/src/sched/download
  			mem_free(codw_hop);
  			tp_cancel(tq);
  			return;
-@@ -832,9 +805,9 @@ continue_download_do(struct terminal *te
+@@ -836,9 +809,9 @@
  	file_download->ses = codw_hop->tq->ses;
  
  	if (codw_hop->tq->prog) {
@@ -105,7 +104,7 @@ diff -urp elinks-0.9.0.orig/src/sched/download.c elinks-0.9.0/src/sched/download
  		mem_free(codw_hop->tq->prog);
  		codw_hop->tq->prog = NULL;
  	}
-@@ -854,7 +827,7 @@ continue_download_do(struct terminal *te
+@@ -861,7 +834,7 @@
  
  cancel:
  	tp_cancel(codw_hop->tq);
@@ -114,10 +113,9 @@ diff -urp elinks-0.9.0.orig/src/sched/download.c elinks-0.9.0/src/sched/download
  	if (file_download) {
  		if (file_download->url) mem_free(file_download->url);
  		mem_free(file_download);
-diff -urp elinks-0.9.0.orig/src/viewer/text/textarea.c elinks-0.9.0/src/viewer/text/textarea.c
---- elinks-0.9.0.orig/src/viewer/text/textarea.c	Mon Dec 22 09:53:29 2003
-+++ elinks-0.9.0/src/viewer/text/textarea.c	Sun Jan 25 10:50:38 2004
-@@ -287,12 +287,10 @@ textarea_edit(int op, struct terminal *t
+--- elinks-0.9.1/src/viewer/text/textarea.c.orig	Thu Jan  1 07:16:49 2004
++++ elinks-0.9.1/src/viewer/text/textarea.c	Tue Jan 27 23:59:51 2004
+@@ -287,12 +287,10 @@
  		int h;
  
  		tmpdir = getenv("TMPDIR");

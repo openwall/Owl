@@ -1,19 +1,21 @@
-# $Id: Owl/packages/elinks/elinks.spec,v 1.6 2004/01/25 16:06:15 solar Exp $
+# $Id: Owl/packages/elinks/elinks.spec,v 1.7 2004/01/28 01:06:46 mci Exp $
 
 Summary: Lynx-like text WWW browser with many features.
 Name: elinks
-Version: 0.9.0
-Release: owl2
+Version: 0.9.1
+Release: owl1
 License: GPL
 Group: Applications/Internet
 URL: http://elinks.or.cz
 Source: http://elinks.or.cz/download/%name-%version.tar.bz2
-Patch0: elinks-0.9.0-owl-tmp.diff
-Patch1: elinks-0.9.0-owl-vitmp.diff
-Patch2: elinks-0.9.0-owl-no-xterm-title.diff
-Patch3: elinks-0.9.0-owl-external-programs.diff
-Patch10: elinks-0.9.0-owl-man.diff
+Patch0: elinks-0.9.1-owl-config.diff
+Patch1: elinks-0.9.1-owl-tmp.diff
+Patch2: elinks-0.9.1-owl-vitmp.diff
+Patch3: elinks-0.9.1-owl-no-xterm-title.diff
+Patch4: elinks-0.9.1-owl-external-programs.diff
+Patch10: elinks-0.9.1-owl-man.diff
 Requires: gpm, zlib, bzip2, openssl
+Provides: links
 Obsoletes: links
 BuildRequires: gpm-devel, zlib-devel, bzip2-devel, openssl-devel
 BuildRoot: /override/%name-%version
@@ -36,20 +38,24 @@ It is in no way associated with Twibright Labs and their Links version.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 %patch10 -p1
 
 %build
 %configure \
 	--with-gpm --with-zlib --with-bzlib --with-openssl \
 	--without-xbel --without-guile --without-lua --without-gnutls \
-	--without-x \
-	--enable-ipv6 --enable-leds \
-	--disable-smb
+	--without-x --enable-ipv6
 make
 
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
+
+pushd $RPM_BUILD_ROOT
+ln -sf elinks .%_bindir/links
+ln -s elinks.1 .%_mandir/man1/links.1
+popd
 
 %find_lang %name
 
@@ -58,9 +64,15 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %doc AUTHORS BUGS NEWS README SITES THANKS TODO
 %doc doc/bookmarks.txt doc/feedback.txt doc/mailcap.html doc/mime.html
 %_bindir/%name
+%_bindir/links
 %_mandir/man?/*
 
 %changelog
+* Wed Jan 28 2004 Michail Litvak <mci@owl.openwall.com> 0.9.1-owl1
+- 0.9.1
+- Regenerated patches.
+- Provide symlinks links -> elinks, links.1 -> elinks.1
+
 * Sun Jan 25 2004 Solar Designer <solar@owl.openwall.com> 0.9.0-owl2
 - Use vitmp in textarea_edit().
 - Minor corrections to the temporary file handling patch.

@@ -1,0 +1,18 @@
+--- elinks-0.9.1/src/osdep/osdep.c.orig	Thu Jan  1 15:54:38 2004
++++ elinks-0.9.1/src/osdep/osdep.c	Tue Jan 27 23:56:23 2004
+@@ -284,6 +284,7 @@
+ void
+ set_window_title(unsigned char *title)
+ {
++#if 0
+ 	unsigned char *s;
+ 	int xsize, ysize;
+ 	register int j = 0;
+@@ -329,6 +330,7 @@
+ 	fflush(stdout);
+ 
+ 	mem_free(s);
++#endif
+ }
+ 
+ #ifdef HAVE_X11
