@@ -1,0 +1,39 @@
+L'installation de Owl est actuellement plus compliquée que nous aimerions
+qu'elle soit. Ceci va changer avec les versions futures.
+
+A cette étape, Owl n'inclut pas ses propres disques de démarrage et ses
+outils d'administration. Ainsi, vous avez besoin de démarrer dans quelque
+autre système Linux pour installer Owl. Cet autre système a besoin d'offrir
+quelques outils GNU et RPM (la version 3.0.5 est recommandée, les plus
+anciennes peuvent ne pas fonctionner), mais il n'a pas besoin d'utiliser RPM
+comme son gestionnaire de packages. Vous n'avez pas vraiment besoin
+d'installer d'abord cet autre système : son CD de démarrage peut être
+suffisant, à condition que vous puissiez monter un système de fichiers avec
+les packages binaires Owl et l'arborescence CVS.
+
+Une fois que vous obtenez un système Linux démarré, la première chose dont
+vous avez besoin de faire est de préparer la configuration usuelle de
+/usr/src/world, comme expliqué dans COMPILATION. Puis, le partitionnement de
+vos disques pour Owl est souhaité, mkfs, mkswap, et le montage des nouveaux
+systèmes de fichiers sous /owl (le défaut, tel que configuré dans le fichier
+installworld.conf). Pour installer effectivement Owl, changez de répertoire
+vers /usr/src/world et tapez :
+
+	make installworld && make setup
+
+S'il y a un problème durant l'étape "installworld" (regardez les lignes
+"Failed"), corrigez leurs causes et re-exécutez la commande.
+
+Une fois que l'espace utilisateur Owl est installé, vous avez aussi besoin
+d'installer un noyau. Actuellement, ceci nécessite d'être un noyau Linux
+2.2, et nous recommandons que vous compiliez la version disponible avec Owl.
+
+Vous pouvez choisir de configurer le chargeur de démarrage avec Owl (LILO ou
+SILO, dépendant de l'architecture), ou vous pouvez utiliser un chargeur de
+démarrage déjà installé sur le système (s'il y en a un). Si vous avez déjà
+un système Linux 2.2 installé, vous pouvez utiliser son chargeur de
+démarrage et même son noyau, en ajoutant simplement une entrée avec une
+valeur différente de root= (fixez à la valeur du périphérique avec le
+système de fichiers racine de Owl).
+
+$Id: Owl/doc/fr/INSTALL,v 1.1 2001/05/15 04:25:15 solar Exp $
