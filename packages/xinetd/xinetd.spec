@@ -1,12 +1,12 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.15 2002/02/07 01:47:15 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.16 2002/08/10 21:31:25 solar Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
-Version: 2.3.3
-Release: owl2
+Version: 2.3.6
+Release: owl1
 License: BSD with minor restrictions
 Group: System Environment/Daemons
-URL: http://www.xinetd.org/
+URL: http://www.xinetd.org
 Source0: http://www.xinetd.org/xinetd-%{version}.tar.gz
 Source1: xinetd.init
 Source2: xinetd.conf
@@ -18,8 +18,8 @@ Source7: xinetd-echo
 Source8: xinetd-uecho
 Source9: xinetd-chargen
 Source10: xinetd-uchargen
-Patch0: xinetd-2.3.3-owl-pidfile.diff
-PreReq: /sbin/chkconfig /etc/rc.d/init.d
+Patch0: xinetd-2.3.6-owl-fixes.diff
+PreReq: /sbin/chkconfig
 Provides: inetd
 Obsoletes: inetd
 BuildRequires: tcp_wrappers
@@ -53,7 +53,7 @@ make
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/etc/{rc.d/init.d,xinetd.d}
 %makeinstall \
-	DAEMONDIR=$RPM_BUILD_ROOT/usr/sbin MANDIR=$RPM_BUILD_ROOT/%{_mandir}
+	DAEMONDIR=$RPM_BUILD_ROOT/usr/sbin MANDIR=$RPM_BUILD_ROOT%{_mandir}
 
 cd $RPM_BUILD_ROOT
 
@@ -68,9 +68,7 @@ install -m 644 $RPM_SOURCE_DIR/xinetd-uecho etc/xinetd.d/echo-udp
 install -m 644 $RPM_SOURCE_DIR/xinetd-chargen etc/xinetd.d/chargen
 install -m 644 $RPM_SOURCE_DIR/xinetd-uchargen etc/xinetd.d/chargen-udp
 
-rm ./%{_mandir}/man8/itox*
-rm usr/sbin/itox
-rm usr/sbin/xconv.pl
+rm usr/sbin/{itox,xconv.pl} .%{_mandir}/man8/{itox,xconv.pl}.8*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -107,6 +105,12 @@ fi
 %config /etc/xinetd.d/*
 
 %changelog
+* Sun Aug 11 2002 Solar Designer <solar@owl.openwall.com>
+- Updated to 2.3.6 adding fixes or workarounds for issues introduced after
+2.3.3 including the signal pipe leak into child processes (a security hole
+with 2.3.4+).
+- Made xinetd also unlink its PID file when exiting on reload.
+
 * Sat Feb 02 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 - Dropped the unused xinetd-inetdconvert.

@@ -1,0 +1,531 @@
+diff -ur xinetd-2.3.6.orig/libs/src/portable/difftime.c xinetd-2.3.6/libs/src/portable/difftime.c
+--- xinetd-2.3.6.orig/libs/src/portable/difftime.c	Thu Feb 28 05:27:20 2002
++++ xinetd-2.3.6/libs/src/portable/difftime.c	Fri Aug  9 19:58:57 2002
+@@ -4,6 +4,6 @@
+ 
+ double difftime( time_t a, time_t b)
+ {
+-	return(a-b);
++	return (double)a - (double)b;
+ }
+ #endif
+diff -ur xinetd-2.3.6.orig/libs/src/sio/sprint.c xinetd-2.3.6/libs/src/sio/sprint.c
+--- xinetd-2.3.6.orig/libs/src/sio/sprint.c	Mon Aug  5 15:59:22 2002
++++ xinetd-2.3.6/libs/src/sio/sprint.c	Fri Aug  9 19:54:17 2002
+@@ -658,7 +658,8 @@
+ 				 * we print "%p" to indicate that we don't handle "%p".
+ 				 */
+ 				case 'p':
+-					ui_num = (u_wide_int)va_arg( ap, char * ) ;
++					/* Assume that pointers are of same size as "unsigned long" */
++					ui_num = (u_wide_int)(unsigned long)va_arg( ap, char * ) ;
+ 
+ 					if ( sizeof( char * ) <= sizeof( u_wide_int ) )
+ 						s = conv_p2( ui_num, 4, 'x', 
+diff -ur xinetd-2.3.6.orig/libs/src/xlog/util.c xinetd-2.3.6/libs/src/xlog/util.c
+--- xinetd-2.3.6.orig/libs/src/xlog/util.c	Thu Feb 28 05:27:20 2002
++++ xinetd-2.3.6/libs/src/xlog/util.c	Fri Aug  9 19:59:19 2002
+@@ -21,7 +21,7 @@
+ {
+ 	int i;
+ 
+-	for ( i = 0 ; i < len ; i++ )
++	for ( i = 0 ; i < len-1 ; i++ )
+ 		if ( (buf[i] == '%') && (buf[i+1] == 'm') )
+ 			return( i ) ;
+ 	return( -1 ) ;
+diff -ur xinetd-2.3.6.orig/xinetd/CHANGELOG xinetd-2.3.6/xinetd/CHANGELOG
+--- xinetd-2.3.6.orig/xinetd/CHANGELOG	Mon Aug  5 16:10:44 2002
++++ xinetd-2.3.6/xinetd/CHANGELOG	Sun Aug 11 01:22:12 2002
+@@ -611,7 +611,7 @@
+ 		dust along the way, since the event loop hasn't started
+ 		by the time the conf parser started.  It was never built
+ 		anyway, so not a big loss.
+-	Made xinetd unlink it's pidfile properly.
++	Made xinetd unlink its pidfile properly.
+ 		- Solar Designer
+ 	Enabled loadavg support for Darwin.
+ 	Remove the exit when user or group is specified and xinetd is not root.
+@@ -698,7 +698,7 @@
+ 		no services running. 
+ 	Update the access_times parser to disable service if there is a parse 
+ 		error. Also corrected ti_add too. -Steve Grubb
+-        Updated all parsers to propogate errors so service will be 
++        Updated all parsers to propagate errors so service will be 
+ 		disabled. -Steve Grubb
+ 	Updated internal services to check the signal pipe 
+ 		periodically. -Steve Grubb
+@@ -732,4 +732,9 @@
+                 reduces xinetd's normal memory footprint (~760KB). -Rob Braun
+         Work around bugs in Mac OS X's getrlimit/setrlimit which causes them
+                 to be almost unusable. -Rob Braun
+- 
++2.3.6-owl1
++	Added fixes or workarounds for issues introduced after 2.3.3
++		including the signal pipe leak into child processes (a
++		security hole). -Solar Designer
++	Made xinetd unlink its pidfile when there turns out to be no
++		services configured on reload. -Solar Designer
+diff -ur xinetd-2.3.6.orig/xinetd/addr.c xinetd-2.3.6/xinetd/addr.c
+--- xinetd-2.3.6.orig/xinetd/addr.c	Tue Jul 30 15:28:26 2002
++++ xinetd-2.3.6/xinetd/addr.c	Fri Aug  9 20:01:06 2002
+@@ -263,20 +263,16 @@
+  * Verify's an address has more than numbers & dots. 
+  * Returns 0 if numbers & dots, 1 otherwise.
+  */
+-static int check_hostname( const char *addr)
++static int check_hostname( const char *addr )
+ {
+-   int all_nums = 0;
+-   int i, len = strlen( addr );
++   int i;
+ 
+-   for (i=0; i < len; ++i)
++   for (i = 0; addr[i]; ++i)
+    {
+       if ( !isdigit(addr[i]) && (addr[i] != '.') )
+-      {
+-         all_nums = 1;
+-	 break;
+-      }
++         return 1;
+    }
+-   return all_nums;
++   return 0;
+ }
+ 
+ 
+diff -ur xinetd-2.3.6.orig/xinetd/child.c xinetd-2.3.6/xinetd/child.c
+--- xinetd-2.3.6.orig/xinetd/child.c	Wed Jul  3 17:17:00 2002
++++ xinetd-2.3.6/xinetd/child.c	Sun Aug 11 01:12:03 2002
+@@ -269,11 +269,22 @@
+    struct service          *sp  = SERVER_SERVICE( serp ) ;
+    connection_s            *cp  = SERVER_CONNECTION( serp ) ;
+    struct service_config   *scp = SVC_CONF( sp ) ;
++   const char *func = "child_process" ;
++
++   if (signals_pending[0] >= 0)
++   {
++      if (close(signals_pending[0]) || close(signals_pending[1]))
++      {
++         msg(LOG_ERR, func, "Failed to close the signal pipe: %m");
++         _exit(1);
++      }
++      signals_pending[0] = -1;
++   }
+ 
+ #ifdef DEBUG_SERVER
+    if ( debug.on )
+    {
+-      msg( LOG_DEBUG, "child_process", "Process %d is sleeping", getpid() ) ;
++      msg( LOG_DEBUG, func, "Process %d is sleeping", getpid() ) ;
+       sleep( 10 ) ;
+    }
+ #endif
+@@ -329,7 +340,7 @@
+ 
+          strx_sprint(buff, sizeof(buff)-1, "REMOTE_HOST=%s", conn_addrstr(cp));
+          if( env_addstr(SC_ENV(scp)->env_handle, buff) != ENV_OK ) {
+-            msg( LOG_ERR, "child_process", "Error adding REMOTE_HOST variable for %s: %m", SC_NAME(scp) );
++            msg( LOG_ERR, func, "Error adding REMOTE_HOST variable for %s: %m", SC_NAME(scp) );
+             _exit( 1 ) ;
+          }
+ #endif
+diff -ur xinetd-2.3.6.orig/xinetd/confparse.c xinetd-2.3.6/xinetd/confparse.c
+--- xinetd-2.3.6.orig/xinetd/confparse.c	Wed Jul 31 07:03:17 2002
++++ xinetd-2.3.6/xinetd/confparse.c	Fri Aug  9 19:48:23 2002
+@@ -192,7 +192,7 @@
+          M_SET(scp->sc_xflags, SF_IPV6);
+       else
+       {
+-	  if ( SA(scp->sc_bind_addr)->ai_family == AF_INET )
++	  if ( SA(scp->sc_bind_addr)->sa_family == AF_INET )
+              M_SET(scp->sc_xflags, SF_IPV4);
+ 	  else
+              M_SET(scp->sc_xflags, SF_IPV6);
+diff -ur xinetd-2.3.6.orig/xinetd/ident.c xinetd-2.3.6/xinetd/ident.c
+--- xinetd-2.3.6.orig/xinetd/ident.c	Wed Jul  3 17:25:29 2002
++++ xinetd-2.3.6/xinetd/ident.c	Fri Aug  9 20:00:11 2002
+@@ -68,6 +68,11 @@
+    char               *p ;
+    const char         *func = "log_remote_user" ;
+ 
++   /* Make gcc happy about the longjmp clobbering these variables;
++    * in reality, we just don't care. */
++   (void *) &local_port;
++   (void *) &remote_port;
++
+    if ( timeout && signal( SIGALRM, sigalrm_handler ) == SIG_ERR )
+    {
+       msg( LOG_ERR, func, "signal: %m" ) ;
+diff -ur xinetd-2.3.6.orig/xinetd/log.h xinetd-2.3.6/xinetd/log.h
+--- xinetd-2.3.6.orig/xinetd/log.h	Wed Jul  3 17:17:00 2002
++++ xinetd-2.3.6/xinetd/log.h	Fri Aug  9 19:49:38 2002
+@@ -53,8 +53,8 @@
+ #define LOG_GET_TYPE( lp )           (lp)->l_type
+ #define LOG_SET_TYPE( lp, type )     (lp)->l_type = (type)
+ 
+-#define LOG_FILELOG( lp )            (&(lp)->l_fl)
+-#define LOG_SYSLOG( lp )             (&(lp)->l_sl)
++#define LOG_GET_FILELOG( lp )        (&(lp)->l_fl)
++#define LOG_GET_SYSLOG( lp )         (&(lp)->l_sl)
+ 
+ char *xaddrname(const union xsockaddr *inaddr);
+ uint16_t xaddrport(const union xsockaddr *inaddr);
+diff -ur xinetd-2.3.6.orig/xinetd/logctl.c xinetd-2.3.6/xinetd/logctl.c
+--- xinetd-2.3.6.orig/xinetd/logctl.c	Wed Jul  3 17:17:00 2002
++++ xinetd-2.3.6/xinetd/logctl.c	Fri Aug  9 19:51:25 2002
+@@ -93,7 +93,8 @@
+ 
+       case L_SYSLOG:
+          xh = xlog_create( XLOG_SYSLOG, sid, XLOG_NOFLAGS, 
+-                  LOG_SYSLOG( lp )->sl_facility, LOG_SYSLOG( lp )->sl_level ) ;
++                  LOG_GET_SYSLOG( lp )->sl_facility,
++                  LOG_GET_SYSLOG( lp )->sl_level ) ;
+          if ( xh == NULL )
+          {
+             msg( LOG_ERR, func, "failed to create a log for service %s", sid ) ;
+@@ -108,7 +109,7 @@
+           *         it will be opened as many times.
+           *         Furthermore, size control will not be accurate.
+           */
+-         xh = start_filelog( sid, LOG_FILELOG( lp ) ) ;
++         xh = start_filelog( sid, LOG_GET_FILELOG( lp ) ) ;
+          if ( xh == NULL )
+             return( FAILED ) ;
+          (void) xlog_control( xh, XLOG_CALLBACK, log_in_error, (void *)sp ) ;
+@@ -121,7 +122,7 @@
+             else
+             {
+                xh = start_filelog( "default", 
+-                              LOG_FILELOG( SC_LOG( DEFAULTS( ps ) ) ) ) ;
++                              LOG_GET_FILELOG( SC_LOG( DEFAULTS( ps ) ) ) ) ;
+                if ( xh == NULL )
+                {
+                   DEFAULT_LOG_ERROR( ps ) = TRUE ;
+diff -ur xinetd-2.3.6.orig/xinetd/main.c xinetd-2.3.6/xinetd/main.c
+--- xinetd-2.3.6.orig/xinetd/main.c	Thu Jul  4 17:33:08 2002
++++ xinetd-2.3.6/xinetd/main.c	Sun Aug 11 00:56:59 2002
+@@ -14,7 +14,6 @@
+ #include <errno.h>
+ #include <syslog.h>
+ #include <unistd.h>
+-#include <sys/ioctl.h>
+ 
+ #include "main.h"
+ #include "init.h"
+@@ -35,7 +34,7 @@
+ struct program_state ps ;
+ struct debug debug ;
+ char program_version[] = XINETD_VERSION ;
+-int signals_pending[2];
++int signals_pending[2] = {-1, -1} ;
+ 
+ /*
+  * This is where the story starts...
+diff -ur xinetd-2.3.6.orig/xinetd/parse.c xinetd-2.3.6/xinetd/parse.c
+--- xinetd-2.3.6.orig/xinetd/parse.c	Tue Jul  2 22:41:22 2002
++++ xinetd-2.3.6/xinetd/parse.c	Fri Aug  9 20:03:34 2002
+@@ -602,7 +602,7 @@
+    }
+    /* We are in the default section and an error was detected. At
+     * this point, we should terminate since whatever attribute 
+-    * was trying to be specified cannot be propogated.
++    * was trying to be specified cannot be propagated.
+     */
+    else if ( !debug.on )
+    {
+diff -ur xinetd-2.3.6.orig/xinetd/parsers.c xinetd-2.3.6/xinetd/parsers.c
+--- xinetd-2.3.6.orig/xinetd/parsers.c	Fri Jul 12 06:28:22 2002
++++ xinetd-2.3.6/xinetd/parsers.c	Fri Aug  9 19:50:29 2002
+@@ -902,13 +902,13 @@
+ 
+    if ( EQ( type, "FILE" ) )
+    {
+-      if ( parse_filelog( LOG_FILELOG( lp ), values ) == FAILED )
++      if ( parse_filelog( LOG_GET_FILELOG( lp ), values ) == FAILED )
+          return( FAILED ) ;
+       lp->l_type = L_FILE ;
+    }
+    else if ( EQ( type, "SYSLOG" ) )
+    {
+-      if ( parse_syslog( LOG_SYSLOG( lp ), values ) == FAILED )
++      if ( parse_syslog( LOG_GET_SYSLOG( lp ), values ) == FAILED )
+          return( FAILED ) ;
+       lp->l_type = L_SYSLOG ;
+    }
+diff -ur xinetd-2.3.6.orig/xinetd/reconfig.c xinetd-2.3.6/xinetd/reconfig.c
+--- xinetd-2.3.6.orig/xinetd/reconfig.c	Sun Jul 21 23:15:37 2002
++++ xinetd-2.3.6/xinetd/reconfig.c	Fri Aug  9 20:45:14 2002
+@@ -13,6 +13,7 @@
+ #include <signal.h>
+ #include <memory.h>
+ #include <stdlib.h>
++#include <unistd.h>
+ #include <netinet/in.h>
+ #ifndef NO_RPC
+  #ifdef HAVE_RPC_PMAP_CLNT_H
+@@ -164,6 +165,9 @@
+       if ( ps.rws.available_services == 0 )
+       {
+          msg( LOG_CRIT, func, "No available services. Exiting" );
++         if ( ps.ros.pid_file ) {
++            unlink(ps.ros.pid_file);
++         }
+          exit( 1 ) ;
+       }
+    }
+diff -ur xinetd-2.3.6.orig/xinetd/sconf.c xinetd-2.3.6/xinetd/sconf.c
+--- xinetd-2.3.6.orig/xinetd/sconf.c	Wed Jul 31 06:56:47 2002
++++ xinetd-2.3.6/xinetd/sconf.c	Fri Aug  9 19:50:44 2002
+@@ -82,7 +82,7 @@
+          free( *pp ) ;
+       free( (char *) scp->sc_server_argv ) ;
+    }
+-   COND_FREE( LOG_FILELOG( SC_LOG( scp ) )->fl_filename ) ;
++   COND_FREE( LOG_GET_FILELOG( SC_LOG( scp ) )->fl_filename ) ;
+ 
+    if ( scp->sc_access_times != NULL )
+    {
+@@ -185,7 +185,7 @@
+          break ;
+ 
+       case L_FILE:
+-         flp = LOG_FILELOG( lp ) ;
++         flp = LOG_GET_FILELOG( lp ) ;
+          tabprint( fd, tab_level, "Logging to file: %s", flp->fl_filename ) ;
+ 
+          if ( FILELOG_SIZE_CONTROL( flp ) )
+diff -ur xinetd-2.3.6.orig/xinetd/service.c xinetd-2.3.6/xinetd/service.c
+--- xinetd-2.3.6.orig/xinetd/service.c	Sat Jul 27 16:06:25 2002
++++ xinetd-2.3.6/xinetd/service.c	Fri Aug  9 20:16:53 2002
+@@ -568,8 +568,7 @@
+          return(-1);
+       }
+ 
+-      bzero(tmpbuf, TMPSIZE);
+-      while( (retval = read(bannerfd, tmpbuf, TMPSIZE)) ) {
++      while( (retval = read(bannerfd, tmpbuf, sizeof(tmpbuf))) ) {
+          if (retval == -1)
+          {
+             if (errno == EINTR)
+@@ -580,11 +579,8 @@
+                break;
+             }
+          }
+-         write(cp->co_descriptor, tmpbuf, retval);
+-         if( retval < TMPSIZE )
+-            break;
+-
+-         bzero(tmpbuf, TMPSIZE);
++         Swrite(cp->co_descriptor, tmpbuf, retval);
++         Sflush(cp->co_descriptor);
+       }
+ 
+       close(bannerfd);
+@@ -612,7 +608,6 @@
+          return(-1);
+       }
+ 
+-      memset(tmpbuf, 0, sizeof(tmpbuf));
+       while( (retval = read(bannerfd, tmpbuf, sizeof(tmpbuf))) ) {
+          if (retval == -1)
+          {
+@@ -624,13 +619,8 @@
+                break;
+             }
+          }
+-         write(cp->co_descriptor, tmpbuf, retval);
+-
+-         if( retval < sizeof(tmpbuf) ) {
+-            close(bannerfd);
+-            return(0);
+-         }
+-         memset(tmpbuf, 0, sizeof(tmpbuf));
++         Swrite(cp->co_descriptor, tmpbuf, retval);
++         Sflush(cp->co_descriptor);
+       }
+ 
+       close(bannerfd);
+@@ -649,14 +639,13 @@
+       char tmpbuf[TMPSIZE];
+       int retval;
+       int bannerfd = open(scp->sc_banner_success, O_RDONLY);
+-   
++
+       if( bannerfd < 0 ) {
+          msg( LOG_ERR, func, "service = %s, open of banner %s failed", SVC_ID( sp ), scp->sc_banner_success);
+          return(-1);
+       }
+-   
+-      bzero(tmpbuf, TMPSIZE);
+-      while( (retval = read(bannerfd, tmpbuf, TMPSIZE)) ) {
++
++      while( (retval = read(bannerfd, tmpbuf, sizeof(tmpbuf))) ) {
+          if (retval == -1)
+          {
+             if (errno == EINTR)
+@@ -667,11 +656,8 @@
+                break;
+             }
+          }
+-         write(cp->co_descriptor, tmpbuf, retval);
+-
+-         if( retval < TMPSIZE )
+-            break;
+-         bzero(tmpbuf, TMPSIZE);
++         Swrite(cp->co_descriptor, tmpbuf, retval);
++         Sflush(cp->co_descriptor);
+       }
+ 
+       close(bannerfd);
+diff -ur xinetd-2.3.6.orig/xinetd/signals.c xinetd-2.3.6/xinetd/signals.c
+--- xinetd-2.3.6.orig/xinetd/signals.c	Wed Apr  3 17:20:06 2002
++++ xinetd-2.3.6/xinetd/signals.c	Sun Aug 11 01:12:43 2002
+@@ -17,6 +17,7 @@
+ #include <errno.h>
+ #include <string.h>
+ #include <unistd.h>
++#include <fcntl.h>
+ #include <time.h>
+ #include <sys/ioctl.h>
+ #ifdef HAVE_SYS_FILIO_H
+@@ -239,7 +240,9 @@
+ 
+    sigemptyset( &reset_sigs ) ;
+ 
+-   if ( pipe(signals_pending) != 0 ) {
++   if ( pipe(signals_pending) ||
++        fcntl(signals_pending[0], F_SETFD, FD_CLOEXEC) ||
++        fcntl(signals_pending[1], F_SETFD, FD_CLOEXEC) ) {
+       msg( LOG_CRIT, func, "Failed to create signal pipe: %m" );
+       return( FAILED );
+    }
+@@ -405,12 +408,20 @@
+ 
+ 
+ /*
+- * The job of this function is to write the signal recieved to the 
++ * The job of this function is to write the signal received to the
+  * pipe of pending signals, which is in the main select loop.
+  */
+ static void my_handler( int sig )
+ {
++#if NSIG < 256
++   unsigned char sig_byte;
++   if (sig >= 256) return;
++   sig_byte = sig;
++   write(signals_pending[1], &sig_byte, 1);
++#else
++   /* XXX: should loop on partial writes */
+    write(signals_pending[1], &sig, sizeof(int));
++#endif
+ }
+ 
+ 
+@@ -441,26 +452,34 @@
+ 
+ void check_pipe(void)
+ {
+-   int i, tmp;
++   int i;
++#if NSIG < 256
++   unsigned char sig;
++#else
++   int sig;
++#endif
+    const char *func = "check_pipe";
+ 
+    if( ioctl(signals_pending[0], FIONREAD, &i) != 0 ) {
+       msg(LOG_ERR, func, "Can't get the number of pending signals: %m");
+       return;
+    }
++#if NSIG >= 256
+    i /= sizeof(int);
++#endif
+ 
+    while( --i >= 0 ) {
+-      if( read(signals_pending[0], &tmp, sizeof(int)) != sizeof(int) ) {
++      /* XXX: should loop on partial reads */
++      if( read(signals_pending[0], &sig, sizeof(sig)) != sizeof(sig) ) {
+          msg(LOG_ERR, func, "Error retrieving pending signal: %m");
+          return;
+       }
+ 
+       if( debug.on ) {
+-         msg(LOG_DEBUG, func, "Got signal %s", sig_name(tmp));
++         msg(LOG_DEBUG, func, "Got signal %s", sig_name(sig));
+       }
+ 
+-      switch(tmp) {
++      switch(sig) {
+          case SERVER_EXIT_SIG:       child_exit();           break;
+          case RECONFIG_HARD_SIG:     hard_reconfig();        break;
+          case OLD_RECONFIG_HARD_SIG: hard_reconfig();        break;
+diff -ur xinetd-2.3.6.orig/xinetd/time.c xinetd-2.3.6/xinetd/time.c
+--- xinetd-2.3.6.orig/xinetd/time.c	Sun Apr 21 22:24:57 2002
++++ xinetd-2.3.6/xinetd/time.c	Fri Aug  9 20:36:11 2002
+@@ -99,23 +99,26 @@
+    int                  minutes ;
+    int                  min_start ;
+    int                  min_end ;
+-   int                  r = 0 ;
++   int                  p, r = 0 ;
+    const char          *func = "add_interval" ;
+ 
+    while (interval_str[r] == ' ')
+ 	   r++;		/* Eat white space */
+-   if ( ( r += get_num( &hours, 0, 23, interval_str+r, ':' ) ) == -1 )
++   if ( ( p = get_num( &hours, 0, 23, interval_str+r, ':' ) ) == -1 )
+       return( FAILED ) ;
++   r += p;
+    r++;			/* Get past : */
+-   if ( ( r += get_num( &minutes, 0, 59, interval_str+r, '-' ) ) == -1 )
++   if ( ( p = get_num( &minutes, 0, 59, interval_str+r, '-' ) ) == -1 )
+       return( FAILED ) ;
+    min_start = hours * 60 + minutes ;
+ 
++   r += p;
+    r++;			/* Get past - */
+-   if ( ( r += get_num( &hours, 0, 23, interval_str+r, ':' ) ) == -1 )
++   if ( ( p = get_num( &hours, 0, 23, interval_str+r, ':' ) ) == -1 )
+       return( FAILED ) ;
++   r += p;
+    r++;			/* Get past : */
+-   if ( ( r += get_num( &minutes, 0, 59, interval_str+r, NUL ) ) == -1 )
++   if ( get_num( &minutes, 0, 59, interval_str+r, NUL ) == -1 )
+       return( FAILED ) ;
+    min_end = hours * 60 + minutes ;
+    if ( min_start >= min_end )
+diff -ur xinetd-2.3.6.orig/xinetd/util.c xinetd-2.3.6/xinetd/util.c
+--- xinetd-2.3.6.orig/xinetd/util.c	Sun Jun 23 03:09:14 2002
++++ xinetd-2.3.6/xinetd/util.c	Fri Aug  9 20:37:48 2002
+@@ -50,12 +50,12 @@
+ 
+ const struct name_value *nv_find_value( const struct name_value nv_array[], const char *name )
+ {
+-   int i;
++   const struct name_value *nvp ;
+ 
+-   for ( i = 0 ; nv_array[i].name ; i++ )
++   for ( nvp = nv_array ; nvp->name ; nvp++ )
+    {
+-      if ( EQ( name, nv_array[i].name ) )
+-         return( &nv_array[i] ) ;
++      if ( EQ( name, nvp->name ) )
++         return( nvp ) ;
+    }
+    return( NULL ) ;
+ }
+diff -ur xinetd-2.3.6.orig/xinetd/xinetd.man xinetd-2.3.6/xinetd/xinetd.man
+--- xinetd-2.3.6.orig/xinetd/xinetd.man	Thu Feb 28 09:08:43 2002
++++ xinetd-2.3.6/xinetd/xinetd.man	Fri Aug  9 20:38:33 2002
+@@ -116,7 +116,7 @@
+ .B SIGHUP
+ causes a hard reconfiguration, which means that \fBxinetd\fP re-reads 
+ the configuration file and terminates the servers for services that 
+-are no longer available are. Access control is performed again on 
++are no longer available. Access control is performed again on 
+ running servers by checking the remote location, access times and 
+ server instances. If the number of server instances is lowered, some 
+ arbitrarily picked servers will be killed to satisfy the limit; this 
