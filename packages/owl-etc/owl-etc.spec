@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.5 2000/07/27 00:25:10 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.6 2000/08/20 07:59:21 solar Exp $
 
 Summary: Initial set of configuration files
 Name: owl-etc
-Version: 0.0
+Version: 0.1
 Release: 1owl
 Copyright: public domain
 Group: System Environment/Base
@@ -52,5 +52,8 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(755,root,root) /etc/profile.d
 
 %changelog
+* Sun Aug 20 2000 Solar Designer <solar@owl.openwall.com>
+- crontab user/group.
+
 * Thu Jul 27 2000 Solar Designer <solar@owl.openwall.com>
 - Initial version.
