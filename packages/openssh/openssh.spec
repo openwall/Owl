@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.60 2003/06/02 02:09:10 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.61 2003/07/21 21:19:23 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl1
+Release: owl2
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -25,6 +25,7 @@ Patch8: openssh-3.6.1p1-owl-password-changing.diff
 Patch9: openssh-3.6.1p1-owl-openssl-version-check.diff
 Patch10: openssh-3.6.1p1-owl-scp-sftp-stalltime.diff
 Patch11: openssh-3.6.1p1-owl-ssh-agent-dumpable.diff
+Patch12: openssh-3.6.1p2-cvs-20030603-UseDNS.diff
 PreReq: openssl < 0.9.7
 Requires: pam >= 0.75-owl16
 Obsoletes: ssh
@@ -108,6 +109,7 @@ rm -r autom4te.cache
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
+%patch12 -p1
 
 %define _sysconfdir /etc/ssh
 %{expand:%%define _datadir %{_datadir}/ssh}
@@ -224,6 +226,11 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Mon Jul 21 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl2
+- Included a change from the CVS to deprecate VerifyReverseMapping and
+replace it with a new option, UseDNS.  This should solve the client
+address restriction circumvention attack discovered by Mike Harding.
+
 * Mon Jun 02 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl1
 - Updated to 3.6.1p2.
 - When we know we're going to fail authentication for reasons external

@@ -1,0 +1,438 @@
+Index: openssh/ChangeLog
+diff -u openssh/ChangeLog:1.2648.2.1 openssh/ChangeLog:1.2765 (edited)
+--- openssh/ChangeLog:1.2648.2.1	Tue Apr 29 11:12:07 2003
++++ openssh/ChangeLog	Tue Jun  3 02:25:48 2003
+@@ -1,3 +1,16 @@
++20030603
++ - (djm) OpenBSD CVS Sync
++   - markus@cvs.openbsd.org 2003/06/02 09:17:34
++     [auth2-hostbased.c auth.c auth-options.c auth-rhosts.c auth-rh-rsa.c]
++     [canohost.c monitor.c servconf.c servconf.h session.c sshd_config]
++     [sshd_config.5]
++     deprecate VerifyReverseMapping since it's dangerous if combined
++     with IP based access control as noted by Mike Harding; replace with
++     a UseDNS option, UseDNS is on by default and includes the
++     VerifyReverseMapping check; with itojun@, provos@, jakob@ and deraadt@
++     ok deraadt@, djm@
++ - (djm) Fix portable-specific uses of verify_reverse_mapping too
++
+ 20030429
+  - (djm) Add back radix.o (used by AFS support), after it went missing from
+    Makefile many moons ago
+@@ -1303,3 +1316,4 @@
+      ok provos@
+
+ $Id: ChangeLog,v 1.2648.2.1 2003/04/29 09:12:07 djm Exp $
++$Id: ChangeLog,v 1.2765 2003/06/03 00:25:48 djm Exp $ (last change only)
+Index: openssh/auth-options.c
+diff -u openssh/auth-options.c:1.24 openssh/auth-options.c:1.26
+--- openssh/auth-options.c:1.24	Wed Apr  9 12:59:48 2003
++++ openssh/auth-options.c	Tue Jun  3 02:25:48 2003
+@@ -10,7 +10,7 @@
+  */
+ 
+ #include "includes.h"
+-RCSID("$OpenBSD: auth-options.c,v 1.26 2002/07/30 17:03:55 markus Exp $");
++RCSID("$OpenBSD: auth-options.c,v 1.28 2003/06/02 09:17:34 markus Exp $");
+ 
+ #include "xmalloc.h"
+ #include "match.h"
+@@ -173,7 +173,7 @@
+ 		if (strncasecmp(opts, cp, strlen(cp)) == 0) {
+ 			const char *remote_ip = get_remote_ipaddr();
+ 			const char *remote_host = get_canonical_hostname(
+-			    options.verify_reverse_mapping);
++			    options.use_dns);
+ 			char *patterns = xmalloc(strlen(opts) + 1);
+ 
+ 			opts += strlen(cp);
+Index: openssh/auth-rh-rsa.c
+diff -u openssh/auth-rh-rsa.c:1.31 openssh/auth-rh-rsa.c:1.33
+--- openssh/auth-rh-rsa.c:1.31	Wed Apr  9 12:59:48 2003
++++ openssh/auth-rh-rsa.c	Tue Jun  3 02:25:48 2003
+@@ -13,7 +13,7 @@
+  */
+ 
+ #include "includes.h"
+-RCSID("$OpenBSD: auth-rh-rsa.c,v 1.34 2002/03/25 09:25:06 markus Exp $");
++RCSID("$OpenBSD: auth-rh-rsa.c,v 1.36 2003/06/02 09:17:34 markus Exp $");
+ 
+ #include "packet.h"
+ #include "uidswap.h"
+@@ -63,7 +63,7 @@
+ 	    client_host_key->rsa == NULL)
+ 		return 0;
+ 
+-	chost = (char *)get_canonical_hostname(options.verify_reverse_mapping);
++	chost = (char *)get_canonical_hostname(options.use_dns);
+ 	debug("Rhosts RSA authentication: canonical host %.900s", chost);
+ 
+ 	if (!PRIVSEP(auth_rhosts_rsa_key_allowed(pw, cuser, chost, client_host_key))) {
+Index: openssh/auth-rhosts.c
+diff -u openssh/auth-rhosts.c:1.25 openssh/auth-rhosts.c:1.26
+--- openssh/auth-rhosts.c:1.25	Sun May 18 12:53:10 2003
++++ openssh/auth-rhosts.c	Tue Jun  3 02:25:48 2003
+@@ -156,7 +156,7 @@
+ {
+ 	const char *hostname, *ipaddr;
+ 
+-	hostname = get_canonical_hostname(options.verify_reverse_mapping);
++	hostname = get_canonical_hostname(options.use_dns);
+ 	ipaddr = get_remote_ipaddr();
+ 	return auth_rhosts2(pw, client_user, hostname, ipaddr);
+ }
+Index: openssh/auth.c
+diff -u openssh/auth.c:1.72 openssh/auth.c:1.73
+--- openssh/auth.c:1.72	Wed May 14 07:11:48 2003
++++ openssh/auth.c	Tue Jun  3 02:25:48 2003
+@@ -141,7 +141,7 @@
+ 	}
+ 
+ 	if (options.num_deny_users > 0 || options.num_allow_users > 0) {
+-		hostname = get_canonical_hostname(options.verify_reverse_mapping);
++		hostname = get_canonical_hostname(options.use_dns);
+ 		ipaddr = get_remote_ipaddr();
+ 	}
+ 
+Index: openssh/auth2-hostbased.c
+diff -u openssh/auth2-hostbased.c:1.3 openssh/auth2-hostbased.c:1.4
+--- openssh/auth2-hostbased.c:1.3	Wed May 14 05:40:07 2003
++++ openssh/auth2-hostbased.c	Tue Jun  3 02:25:48 2003
+@@ -136,7 +136,7 @@
+ 	HostStatus host_status;
+ 	int len;
+ 
+-	resolvedname = get_canonical_hostname(options.verify_reverse_mapping);
++	resolvedname = get_canonical_hostname(options.use_dns);
+ 	ipaddr = get_remote_ipaddr();
+ 
+ 	debug2("userauth_hostbased: chost %s resolvedname %s ipaddr %s",
+Index: openssh/auth-passwd.c
+diff -u openssh/auth-passwd.c:1.53 openssh/auth-passwd.c:1.54
+--- openssh/auth-passwd.c:1.53	Sat May 10 11:28:02 2003
++++ openssh/auth-passwd.c	Tue Jun  3 02:25:48 2003
+@@ -144,22 +144,24 @@
+ 		HANDLE hToken = cygwin_logon_user(pw, password);
+ 
+ 		if (hToken == INVALID_HANDLE_VALUE)
+-			return 0;
++			return (0);
+ 		cygwin_set_impersonation_token(hToken);
+-		return 1;
++		return (1);
+ 	}
+ # endif
+ # ifdef WITH_AIXAUTHENTICATE
+ 	authsuccess = (authenticate(pw->pw_name,password,&reenter,&authmsg) == 0);
+ 
+-	if (authsuccess)
++	if (authsuccess) {
+ 	        /* We don't have a pty yet, so just label the line as "ssh" */
+ 	        if (loginsuccess(authctxt->user,
+-			get_canonical_hostname(options.verify_reverse_mapping),
+-			"ssh", &aixloginmsg) < 0)
+-				aixloginmsg = NULL;
++		    get_canonical_hostname(options.use_dns),
++		    "ssh", &aixloginmsg) < 0) {
++			aixloginmsg = NULL;
++		}
++	}
+ 
+-	return(authsuccess);
++	return (authsuccess);
+ # endif
+ # ifdef KRB4
+ 	if (options.kerberos_authentication == 1) {
+Index: openssh/auth-pam.c
+diff -u openssh/auth-pam.c:1.63 openssh/auth-pam.c:1.64 (edited)
+--- openssh/auth-pam.c:1.63	Mon Jun  2 03:04:39 2003
++++ openssh/auth-pam.c	Tue Jun  3 02:25:48 2003
+@@ -381,3 +381,3 @@
+ 
+-	rhost = get_remote_name_or_ip(utmp_len, options.verify_reverse_mapping);
++	rhost = get_remote_name_or_ip(utmp_len, options.use_dns);
+ 	debug("PAM setting rhost to \"%.200s\"", rhost);
+Index: openssh/canohost.c
+diff -u openssh/canohost.c:1.34 openssh/canohost.c:1.38 (edited)
+--- openssh/canohost.c:1.34	Wed Apr  9 12:59:48 2003
++++ openssh/canohost.c	Thu Jun  5 01:52:42 2003
+@@ -12,7 +12,7 @@
+  */
+ 
+ #include "includes.h"
+-RCSID("$OpenBSD: canohost.c,v 1.35 2002/11/26 02:38:54 stevesk Exp $");
++RCSID("$OpenBSD: canohost.c,v 1.37 2003/06/02 09:17:34 markus Exp $");
+ 
+ #include "packet.h"
+ #include "xmalloc.h"
+@@ -27,7 +27,7 @@
+  */
+ 
+ static char *
+-get_remote_hostname(int socket, int verify_reverse_mapping)
++get_remote_hostname(int socket, int use_dns)
+ {
+ 	struct sockaddr_storage from;
+ 	int i;
+@@ -72,6 +72,9 @@
+ 	    NULL, 0, NI_NUMERICHOST) != 0)
+ 		fatal("get_remote_hostname: getnameinfo NI_NUMERICHOST failed");
+ 
++	if (!use_dns)
++		return xstrdup(ntop);
++
+ 	if (from.ss_family == AF_INET)
+ 		check_ip_options(socket, ntop);
+ 
+@@ -80,14 +83,24 @@
+ 	if (getnameinfo((struct sockaddr *)&from, fromlen, name, sizeof(name),
+ 	    NULL, 0, NI_NAMEREQD) != 0) {
+ 		/* Host name not found.  Use ip address. */
+-#if 0
+-		log("Could not reverse map address %.100s.", ntop);
+-#endif
+ 		return xstrdup(ntop);
+ 	}
+ 
+-	/* Got host name. */
+-	name[sizeof(name) - 1] = '\0';
++	/*
++	 * if reverse lookup result looks like a numeric hostname,
++	 * someone is trying to trick us by PTR record like following:
++	 *	1.1.1.10.in-addr.arpa.	IN PTR	2.3.4.5
++	 */
++	memset(&hints, 0, sizeof(hints));
++	hints.ai_socktype = SOCK_DGRAM;	/*dummy*/
++	hints.ai_flags = AI_NUMERICHOST;
++	if (getaddrinfo(name, "0", &hints, &ai) == 0) {
++		log("Nasty PTR record \"%s\" is set up for %s, ignoring",
++		    name, ntop);
++		freeaddrinfo(ai);
++		return xstrdup(ntop);
++	}
++
+ 	/*
+ 	 * Convert it to all lowercase (which is expected by the rest
+ 	 * of this software).
+@@ -95,9 +108,6 @@
+ 	for (i = 0; name[i]; i++)
+ 		if (isupper(name[i]))
+ 			name[i] = tolower(name[i]);
+-
+-	if (!verify_reverse_mapping)
+-		return xstrdup(name);
+ 	/*
+ 	 * Map it back to an IP address and check that the given
+ 	 * address actually is an address of this host.  This is
+@@ -180,14 +190,14 @@
+  */
+ 
+ const char *
+-get_canonical_hostname(int verify_reverse_mapping)
++get_canonical_hostname(int use_dns)
+ {
+ 	static char *canonical_host_name = NULL;
+-	static int verify_reverse_mapping_done = 0;
++	static int use_dns_done = 0;
+ 
+ 	/* Check if we have previously retrieved name with same option. */
+ 	if (canonical_host_name != NULL) {
+-		if (verify_reverse_mapping_done != verify_reverse_mapping)
++		if (use_dns_done != use_dns)
+ 			xfree(canonical_host_name);
+ 		else
+ 			return canonical_host_name;
+@@ -196,11 +206,11 @@
+ 	/* Get the real hostname if socket; otherwise return UNKNOWN. */
+ 	if (packet_connection_is_on_socket())
+ 		canonical_host_name = get_remote_hostname(
+-		    packet_get_connection_in(), verify_reverse_mapping);
++		    packet_get_connection_in(), use_dns);
+ 	else
+ 		canonical_host_name = xstrdup("UNKNOWN");
+ 
+-	verify_reverse_mapping_done = verify_reverse_mapping;
++	use_dns_done = use_dns;
+ 	return canonical_host_name;
+ }
+ 
+@@ -294,11 +304,11 @@
+ }
+ 
+ const char *
+-get_remote_name_or_ip(u_int utmp_len, int verify_reverse_mapping)
++get_remote_name_or_ip(u_int utmp_len, int use_dns)
+ {
+ 	static const char *remote = "";
+ 	if (utmp_len > 0)
+-		remote = get_canonical_hostname(verify_reverse_mapping);
++		remote = get_canonical_hostname(use_dns);
+ 	if (utmp_len == 0 || strlen(remote) > utmp_len)
+ 		remote = get_remote_ipaddr();
+ 	return remote;
+Index: openssh/monitor.c
+diff -u openssh/monitor.c:1.47 openssh/monitor.c:1.48
+--- openssh/monitor.c:1.47	Sun May 25 06:38:33 2003
++++ openssh/monitor.c	Tue Jun  3 02:25:48 2003
+@@ -1157,7 +1157,7 @@
+ 	}
+ 	/* Record that there was a login on that tty from the remote host. */
+ 	record_login(s->pid, s->tty, pw->pw_name, pw->pw_uid,
+-	    get_remote_name_or_ip(utmp_len, options.verify_reverse_mapping),
++	    get_remote_name_or_ip(utmp_len, options.use_dns),
+ 	    (struct sockaddr *)&from, fromlen);
+ }
+ 
+Index: openssh/servconf.c
+diff -u openssh/servconf.c:1.106 openssh/servconf.c:1.107
+--- openssh/servconf.c:1.106	Fri May 16 03:42:35 2003
++++ openssh/servconf.c	Tue Jun  3 02:25:48 2003
+@@ -116,7 +116,7 @@
+ 	options->max_startups_rate = -1;
+ 	options->max_startups = -1;
+ 	options->banner = NULL;
+-	options->verify_reverse_mapping = -1;
++	options->use_dns = -1;
+ 	options->client_alive_interval = -1;
+ 	options->client_alive_count_max = -1;
+ 	options->authorized_keys_file = NULL;
+@@ -232,8 +232,8 @@
+ 		options->max_startups_rate = 100;		/* 100% */
+ 	if (options->max_startups_begin == -1)
+ 		options->max_startups_begin = options->max_startups;
+-	if (options->verify_reverse_mapping == -1)
+-		options->verify_reverse_mapping = 0;
++	if (options->use_dns == -1)
++		options->use_dns = 1;
+ 	if (options->client_alive_interval == -1)
+ 		options->client_alive_interval = 0;
+ 	if (options->client_alive_count_max == -1)
+@@ -282,7 +282,7 @@
+ 	sAllowUsers, sDenyUsers, sAllowGroups, sDenyGroups,
+ 	sIgnoreUserKnownHosts, sCiphers, sMacs, sProtocol, sPidFile,
+ 	sGatewayPorts, sPubkeyAuthentication, sXAuthLocation, sSubsystem, sMaxStartups,
+-	sBanner, sVerifyReverseMapping, sHostbasedAuthentication,
++	sBanner, sUseDNS, sHostbasedAuthentication,
+ 	sHostbasedUsesNameFromPacketOnly, sClientAliveInterval,
+ 	sClientAliveCountMax, sAuthorizedKeysFile, sAuthorizedKeysFile2,
+ 	sUsePrivilegeSeparation,
+@@ -366,8 +366,9 @@
+ 	{ "subsystem", sSubsystem },
+ 	{ "maxstartups", sMaxStartups },
+ 	{ "banner", sBanner },
+-	{ "verifyreversemapping", sVerifyReverseMapping },
+-	{ "reversemappingcheck", sVerifyReverseMapping },
++	{ "usedns", sUseDNS },
++	{ "verifyreversemapping", sDeprecated },
++	{ "reversemappingcheck", sDeprecated },
+ 	{ "clientaliveinterval", sClientAliveInterval },
+ 	{ "clientalivecountmax", sClientAliveCountMax },
+ 	{ "authorizedkeysfile", sAuthorizedKeysFile },
+@@ -723,8 +724,8 @@
+ 		intptr = &options->gateway_ports;
+ 		goto parse_flag;
+ 
+-	case sVerifyReverseMapping:
+-		intptr = &options->verify_reverse_mapping;
++	case sUseDNS:
++		intptr = &options->use_dns;
+ 		goto parse_flag;
+ 
+ 	case sLogFacility:
+Index: openssh/servconf.h
+diff -u openssh/servconf.h:1.52 openssh/servconf.h:1.53
+--- openssh/servconf.h:1.52	Thu May 15 04:05:29 2003
++++ openssh/servconf.h	Tue Jun  3 02:25:48 2003
+@@ -112,7 +112,7 @@
+ 	int	max_startups_rate;
+ 	int	max_startups;
+ 	char   *banner;			/* SSH-2 banner message */
+-	int	verify_reverse_mapping;	/* cross-check ip and dns */
++	int	use_dns;
+ 	int	client_alive_interval;	/*
+ 					 * poke the client this often to
+ 					 * see if it's still there
+Index: openssh/session.c
+diff -u openssh/session.c:1.237 openssh/session.c:1.238
+--- openssh/session.c:1.237	Thu May 15 02:20:14 2003
++++ openssh/session.c	Tue Jun  3 02:25:48 2003
+@@ -694,7 +694,7 @@
+ 	}
+ 
+ 	record_utmp_only(pid, s->tty, s->pw->pw_name,
+-	    get_remote_name_or_ip(utmp_len, options.verify_reverse_mapping),
++	    get_remote_name_or_ip(utmp_len, options.use_dns),
+ 	    (struct sockaddr *)&from, fromlen);
+ }
+ #endif
+@@ -749,7 +749,7 @@
+ 	if (!use_privsep)
+ 		record_login(pid, s->tty, pw->pw_name, pw->pw_uid,
+ 		    get_remote_name_or_ip(utmp_len,
+-		    options.verify_reverse_mapping),
++		    options.use_dns),
+ 		    (struct sockaddr *)&from, fromlen);
+ 
+ #ifdef USE_PAM
+@@ -1353,7 +1353,7 @@
+ 	/* we have to stash the hostname before we close our socket. */
+ 	if (options.use_login)
+ 		hostname = get_remote_name_or_ip(utmp_len,
+-		    options.verify_reverse_mapping);
++		    options.use_dns);
+ 	/*
+ 	 * Close the connection descriptors; note that this is the child, and
+ 	 * the server will still have the socket open, and it is important
+Index: openssh/sshd_config
+diff -u openssh/sshd_config:1.57 openssh/sshd_config:1.58
+--- openssh/sshd_config:1.57	Fri May 16 04:00:44 2003
++++ openssh/sshd_config	Tue Jun  3 02:25:48 2003
+@@ -1,4 +1,4 @@
+-#	$OpenBSD: sshd_config,v 1.59 2002/09/25 11:17:16 markus Exp $
++#	$OpenBSD: sshd_config,v 1.60 2003/06/02 09:17:34 markus Exp $
+ 
+ # This is the sshd server system-wide configuration file.  See
+ # sshd_config(5) for more information.
+@@ -88,7 +88,7 @@
+ #MaxStartups 10
+ # no default banner path
+ #Banner /some/path
+-#VerifyReverseMapping no
++#UseDNS yes
+ 
+ # override default of no subsystems
+ Subsystem	sftp	/usr/libexec/sftp-server
+Index: openssh/sshd_config.5
+diff -u openssh/sshd_config.5:1.18 openssh/sshd_config.5:1.19
+--- openssh/sshd_config.5:1.18	Fri May 23 10:44:23 2003
++++ openssh/sshd_config.5	Tue Jun  3 02:25:48 2003
+@@ -585,6 +585,14 @@
+ The possible values are: DAEMON, USER, AUTH, LOCAL0, LOCAL1, LOCAL2,
+ LOCAL3, LOCAL4, LOCAL5, LOCAL6, LOCAL7.
+ The default is AUTH.
++.It Cm UseDNS
++Specifies whether
++.Nm sshd
++should lookup the remote host name and check that
++the resolved host name for the remote IP address maps back to the
++very same IP address.
++The default is
++.Dq yes .
+ .It Cm UseLogin
+ Specifies whether
+ .Xr login 1
+@@ -622,14 +630,6 @@
+ escalation by containing any corruption within the unprivileged processes.
+ The default is
+ .Dq yes .
+-.It Cm VerifyReverseMapping
+-Specifies whether
+-.Nm sshd
+-should try to verify the remote host name and check that
+-the resolved host name for the remote IP address maps back to the
+-very same IP address.
+-The default is
+-.Dq no .
+ .It Cm X11DisplayOffset
+ Specifies the first display number available for
+ .Nm sshd Ns 's
