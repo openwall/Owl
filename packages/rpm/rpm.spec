@@ -1,42 +1,25 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.19 2002/02/07 01:47:15 solar Exp $
-%define        _noVersionedDependencies        1
-
-# XXX legacy requires './' payload prefix to be omitted from rpm packages.
-%define        _noPayloadPrefix        1
-%define        __prefix        /usr
-#%{expand:%%define __share %(if [ -d %{__prefix}/share/man ]; then echo /share ; else echo %%{nil} ; fi)}
-%define        __share %{nil}
-%define        __mandir        %{__prefix}%{__share}/man
-
-
-%define NEED_PYTHON 'no'
-%define version 3.0.6
+# $Id: Owl/packages/rpm/rpm.spec,v 1.20 2002/02/07 17:12:13 solar Exp $
 
 Summary: The Red Hat package management system.
-Name: 		rpm
-Version: 	%{version}
-Release: 	1owl
-Group: 		System Environment/Base
-Source: 	ftp://ftp.rpm.org/pub/rpm/dist/rpm-3.0.x/rpm-%{version}.tar.gz
-Patch0:		rpm-3.0.6-owl-topdir.diff
-Patch1:		rpm-3.0.5-owl-bash2.diff
-Patch2:		rpm-3.0.5-owl-vendor.diff
-Patch3:		rpm-3.0.5-owl-closeall.diff
-Patch4:		rpm-3.0.5-owl-includes.diff
-Patch5:		rpm-3.0.5-owl-gendiff.diff
-Copyright: 	GPL
-Conflicts: 	patch < 2.5
-%ifos linux
-# XXX the libio interface is incompatible in glibc-2.2
-Conflicts:      glibc >= 2.1.90
-Prereq: 	gawk fileutils textutils sh-utils mktemp
-BuildRequires: 	bzip2 >= 0.9.0c-2
-Requires: 	popt, bzip2 >= 0.9.0c-2
-%endif
-%if "%{NEED_PYTHON}"=="'yes'"
-BuildRequires: 	python-devel >= 1.5.2
-%endif
-BuildRoot: 	/var/rpm-buildroot/%{name}-root
+Name: rpm
+Version: 3.0.6
+Release: owl1
+License: GPL
+Group: System Environment/Base
+Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-3.0.x/rpm-%{version}.tar.gz
+Patch0: rpm-3.0.6-owl-topdir.diff
+Patch1: rpm-3.0.5-owl-bash2.diff
+Patch2: rpm-3.0.5-owl-vendor.diff
+Patch3: rpm-3.0.5-owl-closeall.diff
+Patch4: rpm-3.0.5-owl-includes.diff
+Patch5: rpm-3.0.5-owl-gendiff.diff
+PreReq: gawk, fileutils, textutils, sh-utils, mktemp
+Requires: popt, bzip2 >= 0.9.0c-2
+Conflicts: patch < 2.5
+# XXX the libio interface is incompatible in glibc 2.2
+Conflicts: glibc >= 2.1.90
+BuildRequires: bzip2 >= 0.9.0c-2
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The RPM Package Manager (RPM) is a powerful command line driven
@@ -48,62 +31,39 @@ the package like its version, a description, etc.
 %package devel
 Summary: Development files for applications which will manipulate RPM packages.
 Group: Development/Libraries
-Requires: rpm = %{version}, popt
+Requires: rpm = %{version}-%{release}, popt
 
 %description devel
 This package contains the RPM C library and header files.  These
 development files will simplify the process of writing programs which
-manipulate RPM packages and databases. These files are intended to
+manipulate RPM packages and databases.  These files are intended to
 simplify the process of creating graphical package managers or any
 other tools that need an intimate knowledge of RPM packages in order
 to function.
 
-This package should be installed if you want to develop programs that
-will manipulate RPM packages and databases.
-
 %package build
 Summary: Scripts and executable programs used to build packages.
 Group: Development/Tools
-Requires: rpm = %{version}
+Requires: rpm = %{version}-%{release}
 
 %description build
 This package contains scripts and executable programs that are used to
 build packages using RPM.
 
-%if "%{NEED_PYTHON}"=="'yes'"
-%package python
-Summary: Python bindings for apps which will manipulate RPM packages.
-Group: Development/Libraries
-BuildRequires: popt >= 1.5
-Requires: popt >= 1.5
-Requires: python >= 1.5.2
-
-%description python
-The rpm-python package contains a module which permits applications
-written in the Python programming language to use the interface
-supplied by RPM (RPM Package Manager) libraries.
-
-This package should be installed if you want to develop Python
-programs that will manipulate RPM packages and databases.
-%endif
-
 %package -n popt
-Summary: A C library for parsing command line parameters.
-Group: Development/Libraries
+Summary: A C library for parsing command line arguments.
 Version: 1.5.1
+Group: Development/Libraries
 
 %description -n popt
-Popt is a C library for parsing command line parameters.  Popt was
+popt is a C library for parsing command line arguments.  popt was
 heavily influenced by the getopt() and getopt_long() functions, but it
-improves on them by allowing more powerful argument expansion.  Popt
+improves on them by allowing more powerful argument expansion.  popt
 can parse arbitrary argv[] style arrays and automatically set
-variables based on command line arguments.  Popt allows command line
+variables based on command line arguments.  popt allows command line
 arguments to be aliased via configuration files and includes utility
 functions for parsing arbitrary strings into argv[] arrays using
 shell-like rules.
-
-Install popt if you're a C programmer and you'd like to use its
-capabilities.
 
 %prep
 %setup -q
@@ -114,72 +74,57 @@ capabilities.
 %patch4 -p1
 %patch5 -p1
 
+%define _noVersionedDependencies 1
+
+# XXX legacy requires './' payload prefix to be omitted from RPM packages.
+%define _noPayloadPrefix 1
+%define __prefix /usr
+
+# Not yet.
+#%define __share /share
+%define __share %{nil}
+
+%define __mandir %{__prefix}%{__share}/man
+
 %build
+unset LINGUAS || :
 autoconf
 automake
-unset LINGUAS || :
-CFLAGS="$RPM_OPT_FLAGS" \
-    ./configure \
-    --prefix=%{__prefix} \
-    --sysconfdir=/etc \
-    --localstatedir=/var \
-    --infodir='${prefix}%{__share}/info' \
-    --mandir='${prefix}%{__share}/man' \
-    --build=%{_arch}-unknown-linux
+CFLAGS="$RPM_OPT_FLAGS" ./configure \
+	--prefix=%{__prefix} \
+	--sysconfdir=/etc \
+	--localstatedir=/var \
+	--infodir='${prefix}%{__share}/info' \
+	--mandir='${prefix}%{__share}/man' \
+	--build=%{_arch}-unknown-linux
 make
-%if "%{NEED_PYTHON}"=="'yes'"
-make -C python
-%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
 make DESTDIR="$RPM_BUILD_ROOT" install
-%if "%{NEED_PYTHON}"=="'yes'"
-make DESTDIR="$RPM_BUILD_ROOT" install -C python
-%endif
-%ifos linux
 mkdir -p $RPM_BUILD_ROOT/etc/rpm
-%endif
-
-{ cd $RPM_BUILD_ROOT
-  strip ./bin/rpm
-  strip .%{__prefix}/bin/rpm2cpio
-  strip .%{__prefix}/lib/rpm/rpmputtext .%{__prefix}/lib/rpm/rpmgettext
-}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %post
 /bin/rpm --initdb
-%ifos linux
-if [ ! -e /etc/rpm/macros -a -e /etc/rpmrc -a -f %{__prefix}/lib/rpm/convertrpmrc.sh ]
-then
-	sh %{__prefix}/lib/rpm/convertrpmrc.sh > /dev/null 2>&1
+if [ ! -e /etc/rpm/macros -a -e /etc/rpmrc -a -f %{__prefix}/lib/rpm/convertrpmrc.sh ]; then
+	sh %{__prefix}/lib/rpm/convertrpmrc.sh &> /dev/null
 fi
-%endif
 
-%ifos linux
 %post devel -p /sbin/ldconfig
 %postun devel -p /sbin/ldconfig
 
 %post -n popt -p /sbin/ldconfig
 %postun -n popt -p /sbin/ldconfig
-%endif
-
-%if "%{NEED_PYTHON}"=="'yes'"
-%post python -p /sbin/ldconfig
-%postun python -p /sbin/ldconfig
-%endif
 
 %files
 %defattr(-,root,root)
 %doc RPM-PGP-KEY RPM-GPG-KEY CHANGES GROUPS doc/manual/*
 /bin/rpm
-%ifos linux
 %dir /etc/rpm
-%endif
 %{__prefix}/bin/rpm2cpio
 %{__prefix}/bin/gendiff
 %{__prefix}/lib/librpm.so.*
@@ -200,10 +145,10 @@ fi
 %{__prefix}/lib/rpm/vpkg-provides.sh
 %{__prefix}/lib/rpm/vpkg-provides2.sh
 
-%ifarch i386 i486 i586 i686
-%{__prefix}/lib/rpm/i[3456]86*
+%ifarch %ix86
+%{__prefix}/lib/rpm/i*86*
 %endif
-%ifarch alpha
+%ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
 %{__prefix}/lib/rpm/alpha*
 %endif
 %ifarch sparc sparcv9 sparc64
@@ -216,7 +161,7 @@ fi
 %{__prefix}/lib/rpm/ppc*
 %endif
 
-#disabled
+# Disabled.
 #%dir %{__prefix}/src/RPM
 #%dir %{__prefix}/src/RPM/BUILD
 #%dir %{__prefix}/src/RPM/SPECS
@@ -224,6 +169,7 @@ fi
 #%dir %{__prefix}/src/RPM/SRPMS
 #%dir %{__prefix}/src/RPM/RPMS
 #%{__prefix}/src/RPM/RPMS/*
+
 %{__prefix}/*/locale/*/LC_MESSAGES/rpm.mo
 %{__mandir}/man[18]/*.[18]*
 %lang(pl) %{__mandir}/pl/man[18]/*.[18]*
@@ -250,12 +196,6 @@ fi
 %{__prefix}/lib/rpm/rpmputtext
 %{__prefix}/lib/rpm/u_pkg.sh
 
-%if "%{NEED_PYTHON}"=="'yes'"
-%files python
-%defattr(-,root,root)
-%{__prefix}/lib/python1.5/site-packages/rpmmodule.so
-%endif
-
 %files devel
 %defattr(-,root,root)
 %{__prefix}/include/rpm
@@ -279,6 +219,9 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Tue Jun 12 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - update to 3.0.6 release
 
@@ -308,43 +251,3 @@ sparc64 kernel).
 * Thu Jul 20 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import from official RPM team test rpm.
 - disable Python module
-
-* Sun Jul 16 2000 Jeff Johnson <jbj@redhat.com>
-- remove (unused) RPMTAG_CAPABILITY.
-- remove (legacy) use of RPMTAG_{OBSOLETES,PROVIDES} internally.
-- remove (legacy) support for version 1 packaging.
-- remove (legacy) support for converting gdbm databases.
-- eliminate unused headerGz{Read,Write}.
-- support for rpmlib(...) internal feature dependencies.
-- display rpmlib provides when invoked with --showrc.
-- fix: compare versions if doing --freshen.
-
-* Tue Jul 11 2000 Jeff Johnson <jbj@redhat.com>
-- identify package when install scriptlet fails (#12448).
-
-* Sun Jul  9 2000 Jeff Johnson <jbj@redhat.com>
-- fix: payload compression tag not nul terminated.
-
-* Thu Jun 22 2000 Jeff Johnson <jbj@redhat.com>
-- internalize --freshen (Gordon Messmer <yinyang@eburg.com>).
-- support for separate source/binary compression policy.
-- support for bzip payloads.
-
-* Wed Jun 21 2000 Jeff Johnson <jbj@redhat.com>
-- fix: don't expand macros in false branch of %if (kasal@suse.cz).
-- fix: macro expansion problem and clean up (#11484) (kasal@suse.cz).
-- uname on i370 has s390 as arch (#11456).
-- python: initdb binding (Dan Burcaw <dburcaw@terraplex.com>).
-
-* Tue Jun 20 2000 Jeff Johnson <jbj@redhat.com>
-- handle version 4 packaging as input.
-- builds against bzip2 1.0
-- fix: resurrect symlink unique'ifying property of finger prints.
-- fix: broken glob test with empty build directory (Geoff Keating).
-- fix: create per-platform directories correctly.
-- update brp-* scripts from rpm-4.0, enable in per-platform config.
-- alpha: add -mieee to default optflags.
-- add RPMTAG_OPTFLAGS, configured optflags when package was built.
-- add RPMTAG_DISTURL for rpmfind-like tools (content unknown yet).
-- teach brp-compress about /usr/info and /usr/share/info as well.
-- update macros.in from rpm-4.0 (w/o dbi configuration).
