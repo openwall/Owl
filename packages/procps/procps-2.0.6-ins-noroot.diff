@@ -1,0 +1,14 @@
+--- procps-2.0.6/Makefile.norootinst	Thu Feb 17 12:15:54 2000
++++ procps-2.0.6/Makefile	Thu Feb 17 12:19:52 2000
+@@ -64,9 +64,9 @@
+ all: $(BUILD)
+ 
+ # INSTALL PROGRAMS + DOCS
+-install: $(patsubst %,install_%,$(BUILD) $(XSCPT) $(MAN1) $(MAN8))
++install: $(patsubst %,install_%,$(BUILD) $(MAN1) $(MAN8))
+ ifeq ($(SHARED),1)
+-	install --owner 0 --group 0 --mode a=rx $(LIB_TGT) $(SHLIBDIR)
++	install --mode a=rx $(LIB_TGT) $(SHLIBDIR)
+ endif
+ 
+ # INSTALL LIBRARIES + HEADERS (OPTIONAL)
