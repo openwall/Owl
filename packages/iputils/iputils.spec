@@ -1,17 +1,17 @@
-# $Id: Owl/packages/iputils/iputils.spec,v 1.3 2002/02/04 16:49:08 solar Exp $
+# $Id: Owl/packages/iputils/iputils.spec,v 1.4 2002/05/30 11:23:21 mci Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
-Version: ss001110
+Version: ss020124
 Release: owl1
 License: mostly BSD, some GPL
 Group: Applications/Internet
 Source0: ftp://ftp.inr.ac.ru/ip-routing/%{name}-%{version}.tar.gz
-Source1: bonding-0.2.tar.bz2
-Source2: ping.control
-Patch0: iputils-ss001110-rh-owl-doc.diff
-Patch1: iputils-ss001110-rh-owl-cache-reverse-lookups.diff
-Patch2: iputils-ss001110-owl-warnings.diff
+Source1: iputils-ss020124-doc.tar.bz2 
+Source2: bonding-0.2.tar.bz2
+Source3: ping.control
+Patch0: iputils-ss020124-rh-owl-cache-reverse-lookups.diff
+Patch1: iputils-ss020124-owl-warnings.diff
 Requires: owl-control < 2.0
 Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
@@ -23,18 +23,17 @@ protocol ECHO_REQUEST packets to a specified network host and can tell
 you if that machine is alive and receiving network traffic.
 
 %prep
-%setup -q -n %{name} -a 1
+%setup -q -n %{name} -a 1 -a 2
 mv -f bonding-0.2/README bonding-0.2/README.ifenslave
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 %build
 mv rdisc.c rdisc.c.orig
 sed 's/in\.rdiscd/rdiscd/' < rdisc.c.orig > rdisc.c
 mv Makefile Makefile.orig
-sed "s/-O2 -Wall -g/$RPM_OPT_FLAGS -Wall/" < Makefile.orig > Makefile
-make IPV4_TARGETS="tracepath ping clockdiff rdisc arping" # no tftpd
+make CCOPTS="-D_GNU_SOURCE $RPM_OPT_FLAGS -Wall" \
+	IPV4_TARGETS="tracepath ping clockdiff rdisc arping" # no tftpd
 gcc $RPM_OPT_FLAGS -Wall -s bonding-0.2/ifenslave.c -o bonding-0.2/ifenslave
 
 %install
@@ -49,10 +48,11 @@ install -m 700 ping $RPM_BUILD_ROOT/bin/
 install -m 755 bonding-0.2/ifenslave $RPM_BUILD_ROOT/sbin/
 
 mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man8
-install -m 644 {arping,clockdiff,ping,tracepath}.8 \
+install -m 644 iputils-doc/{arping,clockdiff,ping,tracepath,traceroute6}.8 \
 	${RPM_BUILD_ROOT}%{_mandir}/man8/
-sed 's/in\.rdisc/rdiscd/' \
-	< in.rdisc.8c > ${RPM_BUILD_ROOT}%{_mandir}/man8/rdiscd.8
+
+sed 's/rdisc/rdiscd/' \
+	< iputils-doc/rdisc.8 > ${RPM_BUILD_ROOT}%{_mandir}/man8/rdiscd.8
 
 mkdir -p $RPM_BUILD_ROOT/etc/control.d/facilities
 install -m 700 $RPM_SOURCE_DIR/ping.control \
@@ -63,7 +63,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%doc README RELNOTES bonding*/README.ifenslave
+%doc RELNOTES bonding*/README.ifenslave
 %{_sbindir}/arping
 %{_sbindir}/clockdiff
 %attr(4711,root,root) /bin/ping
@@ -77,6 +77,10 @@ rm -rf $RPM_BUILD_ROOT
 /etc/control.d/facilities/ping
 
 %changelog
+* Wed May 30 2002 Michail Litvak <mci@owl.openwall.com>
+- ss020124
+- include man pages precompiled from sgml sources
+
 * Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions
 
