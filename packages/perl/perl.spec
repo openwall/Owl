@@ -1,14 +1,18 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.9 2002/07/16 16:18:56 solar Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.10 2002/07/16 18:54:04 solar Exp $
+
+%define BUILD_PH 1
+%define BUILD_PH_ALL 0
 
 Summary: The Perl programming language.
 Name: perl
 Version: 5.6.0
-Release: owl9.2
+Release: owl9.4
 Epoch: 1
 License: GPL
 Group: Development/Languages
 Source0: ftp://ftp.perl.org/pub/CPAN/src/perl-%{version}.tar.gz
 Source1: ftp://ftp.perl.org/pub/CPAN/modules/by-module/Digest/Digest-MD5-2.09.tar.gz
+Source2: ftp://ftp.perl.org/pub/CPAN/modules/by-module/File/File-Temp-0.12.tar.gz
 Patch0: perl-5.6.0-rh-install-man.diff
 Patch1: perl-5.6.0-rh-fhs.diff
 Patch2: perl-5.6.0-rh-buildroot.diff
@@ -58,6 +62,7 @@ touch makeaperl.SH
 
 mkdir modules
 tar xzf %SOURCE1 -C modules
+tar xzf %SOURCE2 -C modules
 
 %patch0 -p1
 %patch1 -p1
@@ -114,6 +119,7 @@ make install
 mkdir -p ${RPM_BUILD_ROOT}%{_bindir}
 install -m 755 utils/pl2pm ${RPM_BUILD_ROOT}%{_bindir}/
 
+%if %BUILD_PH
 # Generate *.ph files with a trick.  Is this sick or what?
 #
 # It is non-obvious whether there's any need to process this many header
@@ -125,11 +131,16 @@ install -m 755 utils/pl2pm ${RPM_BUILD_ROOT}%{_bindir}/
 # package build at all.
 #
 make all -f - <<EOF
+%if %BUILD_PH_ALL
 PKGS	= \$(shell rpm -qa | sed -n 's/\(^.*-devel\)-[0-9.]\+-owl[0-9]\+\$$/\1/p' | sort) \
 	  binutils popt pwdb
-STDH	= \$(filter %{_includedir}/%%.h, \$(shell rpm -q --queryformat '[%%{FILENAMES}\n]' \$(PKGS); echo %{_includedir}/{linux,asm*,scsi}/*.h))
+STDH	= \$(filter %{_includedir}/%%.h, \$(shell rpm -ql \$(PKGS); echo %{_includedir}/{linux,asm*,scsi}/*.h))
+%else
+PKGS	= glibc-devel
+STDH	= \$(filter %{_includedir}/%%.h, \$(shell rpm -ql \$(PKGS); echo %{_includedir}/{linux,asm*}/*.h))
+%endif
 GCCDIR	= \$(shell gcc --print-file-name include)
-GCCH	= \$(filter \$(GCCDIR)/%%, \$(shell rpm -q --queryformat '[%%{FILEMODES} %%{FILENAMES}\n]' gcc | grep -v ^4 | awk '{print $NF}'))
+GCCH	= \$(filter \$(GCCDIR)/%%.h, \$(shell rpm -ql gcc))
 
 PERLLIB = \$(RPM_BUILD_ROOT)%{_libdir}/perl5/%{version}
 PERL	= PERL5LIB=\$(PERLLIB) \$(RPM_BUILD_ROOT)%{_bindir}/perl
@@ -144,15 +155,15 @@ std-headers: \$(STDH)
 	cd %{_includedir} && \$(H2PH) \$(STDH:%{_includedir}/%%=%%)
 
 gcc-headers: \$(GCCH)
-	cd \$(GCCDIR) && \$(H2PH) \$(GCCH:\$(GCCDIR)/%%=%%) || true
+	cd \$(GCCDIR) && \$(H2PH) \$(GCCH:\$(GCCDIR)/%%=%%)
 
 fix-config: \$(PHDIR)/Config.pm
 	\$(PERL) -i -p -e "s|\$(RPM_BUILD_ROOT)||g;" \$<
-
 EOF
 
 # Don't leak information specific to the build system
 rm ${RPM_BUILD_ROOT}%{_libdir}/perl5/%{version}/%{_arch}-linux/linux/compile.ph
+%endif
 
 # Now pay attention to the extra modules
 MainDir=`pwd`
@@ -178,6 +189,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/*/*
 
 %changelog
+* Tue Jul 16 2002 Solar Designer <solar@owl.openwall.com>
+- Package File::Temp as needed for the modified perldoc.
+- Only generate *.ph files out of gcc, glibc and kernel headers (but not
+SCSI ones) by default.
+
 * Sun Jul 14 2002 Solar Designer <solar@owl.openwall.com>
 - Corrected the temporary file handling in perldoc (patch from ALT Linux)
 and Configure.
