@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.30 2002/06/12 00:55:34 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.31 2002/06/12 07:36:04 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -21,34 +21,38 @@ Patch1: glibc-2.1.3-owl-dl-open.diff
 Patch2: glibc-2.1.3-owl-sanitize-env.diff
 Patch3: glibc-2.1.3-owl-res_randomid.diff
 Patch4: glibc-2.1.3-owl-iscntrl.diff
-Patch5: glibc-2.1.3-openbsd-freebsd-owl-fts.diff
-Patch6: glibc-2.1.3-owl-quota.diff
-Patch7: glibc-2.1.3-owl-syslog-ident.diff
-Patch8: glibc-2.1.3-owl-alt-asprintf-error-handling.diff
-Patch10: glibc-2.1.3-rh-libnoversion.diff
-Patch11: glibc-2.1.3-rh-paths.diff
-Patch12: glibc-2.1.3-rh-linuxthreads.diff
-Patch13: glibc-2.1.3-rh-nis-malloc.diff
-Patch14: glibc-2.1.3-rh-c-type.diff
-Patch15: glibc-2.1.3-rh-cppfix.diff
-Patch16: glibc-2.1.3-rh-db2-closedir.diff
-Patch17: glibc-2.1.3-rh-glob.diff
-Patch18: glibc-2.1.3-rh-localedata.diff
-Patch19: glibc-2.1.3-rh-yp_xdr.diff
-Patch20: glibc-2.1.3-rh-makeconfig.diff
-Patch21: glibc-2.1.3-rh-time.diff
-Patch22: glibc-2.1.3-rh-timezone.diff
-Patch23: glibc-2.1.3-rh-syslog.diff
-Patch30: glibc-2.1.3-bcl-cyr-locale.diff
-Patch31: glibc-2.1.3-mdk-fix-ucontext.diff
-Patch32: glibc-2.1.3-mdk-ldd.diff
-Patch40: glibc-2.1.3-cvs-20000827-locale.diff
-Patch41: glibc-2.1.3-cvs-20000824-unsetenv.diff
-Patch42: glibc-2.1.3-cvs-20000824-md5-align-clean.diff
-Patch43: glibc-2.1.3-cvs-20000926-tmp-warnings.diff
-Patch44: glibc-2.1.3-cvs-20010109-dl.diff
-Patch45: glibc-2.1.3-cvs-20000929-alpha-reloc.diff
-Patch46: glibc-2.1.3-cvs-20011129-glob.diff
+Patch5: glibc-2.1.3-owl-quota.diff
+Patch6: glibc-2.1.3-owl-ldd.diff
+Patch7: glibc-2.1.3-owl-tmp.diff
+Patch8: glibc-2.1.3-owl-vitmp.diff
+Patch9: glibc-2.1.3-owl-glibcbug-COMMAND.diff
+Patch10: glibc-2.1.3-owl-syslog-ident.diff
+Patch11: glibc-2.1.3-mjt-owl-syslog-timestamp.diff
+Patch12: glibc-2.1.3-owl-alt-asprintf-error-handling.diff
+Patch13: glibc-2.1.3-openbsd-freebsd-owl-fts.diff
+Patch20: glibc-2.1.3-rh-libnoversion.diff
+Patch21: glibc-2.1.3-rh-paths.diff
+Patch22: glibc-2.1.3-rh-linuxthreads.diff
+Patch23: glibc-2.1.3-rh-nis-malloc.diff
+Patch24: glibc-2.1.3-rh-c-type.diff
+Patch25: glibc-2.1.3-rh-cppfix.diff
+Patch26: glibc-2.1.3-rh-db2-closedir.diff
+Patch27: glibc-2.1.3-rh-glob.diff
+Patch28: glibc-2.1.3-rh-localedata.diff
+Patch29: glibc-2.1.3-rh-yp_xdr.diff
+Patch30: glibc-2.1.3-rh-makeconfig.diff
+Patch31: glibc-2.1.3-rh-time.diff
+Patch32: glibc-2.1.3-rh-timezone.diff
+Patch33: glibc-2.1.3-rh-syslog.diff
+Patch40: glibc-2.1.3-bcl-cyr-locale.diff
+Patch41: glibc-2.1.3-mdk-fix-ucontext.diff
+Patch50: glibc-2.1.3-cvs-20000827-locale.diff
+Patch51: glibc-2.1.3-cvs-20000824-unsetenv.diff
+Patch52: glibc-2.1.3-cvs-20000824-md5-align-clean.diff
+Patch53: glibc-2.1.3-cvs-20000926-tmp-warnings.diff
+Patch54: glibc-2.1.3-cvs-20010109-dl.diff
+Patch55: glibc-2.1.3-cvs-20000929-alpha-reloc.diff
+Patch56: glibc-2.1.3-cvs-20011129-glob.diff
 PreReq: /sbin/ldconfig
 %ifarch alpha
 Provides: ld.so.2
@@ -116,32 +120,36 @@ cp $RPM_SOURCE_DIR/crypt_freesec.c crypt/sysdeps/unix/
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
-%patch14 -p1
-%patch15 -p1
-%patch16 -p1
-%patch17 -p1
-%patch18 -p1
-%patch19 -p1
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
 %patch23 -p1
+%patch24 -p1
+%patch25 -p1
+%patch26 -p1
+%patch27 -p1
+%patch28 -p1
+%patch29 -p1
 %patch30 -p1
 %patch31 -p1
 %patch32 -p1
+%patch33 -p1
 %patch40 -p1
 %patch41 -p1
+%patch50 -p1
+%patch51 -p1
 cd md5-crypt
-%patch42 -p2
+%patch52 -p2
 cd ..
-%patch43 -p1
-%patch44 -p1
-%patch45 -p1
-%patch46 -p1
+%patch53 -p1
+%patch54 -p1
+%patch55 -p1
+%patch56 -p1
 %ifarch sparcv9
 echo 'ASFLAGS-.os += -Wa,-Av8plusa' >> sysdeps/sparc/sparc32/elf/Makefile
 %endif
@@ -295,6 +303,18 @@ fi
 
 %changelog
 * Wed Jun 12 2002 Solar Designer <solar@owl.openwall.com>
+- ldd(1) will no longer try to invoke programs directly, even when it
+seems like that would work.  The dynamic linker will be invoked as a
+program instead.  This makes a difference when the program is SGID and
+is being ldd'ed by root.  If the program was executed directly, glibc
+would detect its SGID status and drop LD_* variables, resulting in the
+program being actually started rather than ldd'ed.  Thanks to Dmitry
+V. Levin of ALT Linux for suggesting this solution.
+- Use ctime_r() instead of strftime_r() in syslog(3) so that month names
+will not depend on current locale settings.  The patch is originally by
+Michael Tokarev, with modifications to apply to our glibc.
+- glibcbug: use mktemp(1) in a fail-close way, let it use $TMPDIR, default
+to vitmp(1) for the editor.
 - crypt_blowfish-0.4.3 (documentation updates, a check to produce better
 code for PA-RISC).
 

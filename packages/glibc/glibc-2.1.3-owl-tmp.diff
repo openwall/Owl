@@ -1,0 +1,137 @@
+--- glibc-2.1.3/glibcbug.in.orig	Mon Aug 30 23:16:08 1999
++++ glibc-2.1.3/glibcbug.in	Wed Jun 12 10:48:56 2002
+@@ -23,18 +23,14 @@
+ BUILD_STATIC_NSS="@static_nss@"
+ STDIO="@stdio@"
+ 
+-TEMP=`mktemp -q /tmp/glibcbugXXXXXX 2>/dev/null`
+-if test $? -ne 0; then
+-  TEMP=/tmp/glibcbug.$$
+-  echo > $TEMP
+-  chmod 600 $TEMP
+-fi
+-TEMPx=`mktemp -q /tmp/glibcbugXXXXXX 2>/dev/null`
+-if test $? -ne 0; then
+-  TEMPx=/tmp/glibcbug.$$.x
+-  echo > $TEMPx
+-  chmod 600 $TEMPx
+-fi
++TEMP="`mktemp -t glibcbug.XXXXXXXXXX`" || exit 1
++TEMPx="`mktemp -t glibcbug.XXXXXXXXXX`" || {
++  rm -f "$TEMP"
++  exit 1
++}
++
++trap 'rm -f "$TEMP" "$TEMPx"; exit 1' HUP INT PIPE TERM
++trap 'rm -f "$TEMP" "$TEMPx"' EXIT
+ 
+ if test "$RELEASE" = "stable"; then
+   BUGGLIBC="bugs@gnu.org"
+@@ -48,10 +44,6 @@
+ 
+ : ${USER=${LOGNAME-`whoami`}}
+ 
+-trap 'rm -f $TEMP $TEMPx; exit 1' 1 2 3 13 15
+-trap 'rm -f $TEMP $TEMPx' 0
+-
+-
+ # How to read the passwd database.
+ PASSWD="cat /etc/passwd"
+ 
+@@ -78,8 +70,8 @@
+ else
+   # Must use temp file due to incompatibilities in quoting behavior
+   # and to protect shell metacharacters in the expansion of $LOGNAME
+-  $PASSWD | grep "^$LOGNAME:" | awk -F: '{print $5}' | sed -e 's/,.*//' > $TEMP
+-  ORIGINATOR="`cat $TEMP`"
++  $PASSWD | grep "^$LOGNAME:" | awk -F: '{print $5}' | sed -e 's/,.*//' > "$TEMP"
++  ORIGINATOR="`cat "$TEMP"`"
+ fi
+ 
+ if [ -n "$ORGANIZATION" ]; then
+@@ -129,7 +121,7 @@
+ FIX_C='<how to correct or work around the problem, if known (multiple lines)>'
+ 
+ 
+-cat > $TEMP <<EOF
++cat > "$TEMP" <<EOF
+ SEND-PR: -*- send-pr -*-
+ SEND-PR: Lines starting with \`SEND-PR' will be removed automatically, as
+ SEND-PR: will all comments (text enclosed in \`<' and \`>').
+@@ -178,12 +170,12 @@
+ 	$FIX_C
+ EOF
+ 
+-chmod u+w $TEMP
+-cp $TEMP $TEMPx
++chmod u+w "$TEMP"
++cp "$TEMP" "$TEMPx"
+ 
+-eval $EDIT $TEMP
++eval $EDIT "$TEMP"
+ 
+-if cmp -s $TEMP $TEMPx; then
++if cmp -s "$TEMP" "$TEMPx"; then
+ 	echo "File not changed, no bug report submitted."
+ 	exit 1
+ fi
+@@ -212,7 +204,7 @@
+   # 1) Severity
+   #
+   PATTERN=">Severity:"
+-  SEVERITY=`eval sed -n -e "\"$SED_CMD\"" $TEMP`
++  SEVERITY=`eval sed -n -e "\"$SED_CMD\"" "$TEMP"`
+   case "$SEVERITY" in
+     ""|non-critical|serious|critical) CNT=`expr $CNT + 1` ;;
+     *)  echo "$COMMAND: \`$SEVERITY' is not a valid value for \`Severity'."
+@@ -221,7 +213,7 @@
+   # 2) Priority
+   #
+   PATTERN=">Priority:"
+-  PRIORITY=`eval sed -n -e "\"$SED_CMD\"" $TEMP`
++  PRIORITY=`eval sed -n -e "\"$SED_CMD\"" "$TEMP"`
+   case "$PRIORITY" in
+     ""|low|medium|high) CNT=`expr $CNT + 1` ;;
+     *)  echo "$COMMAND: \`$PRIORITY' is not a valid value for \`Priority'."
+@@ -230,7 +222,7 @@
+   # 3) Class
+   #
+   PATTERN=">Class:"
+-  CLASS=`eval sed -n -e "\"$SED_CMD\"" $TEMP`
++  CLASS=`eval sed -n -e "\"$SED_CMD\"" "$TEMP"`
+   case "$CLASS" in
+     ""|sw-bug|doc-bug|change-request|support) CNT=`expr $CNT + 1` ;;
+     *)  echo "$COMMAND: \`$CLASS' is not a valid value for \`Class'."
+@@ -245,11 +237,11 @@
+     case "$input" in
+       a*)
+ 	echo "$COMMAND: problem report saved in $HOME/dead.glibcbug."
+-	cat $TEMP >> $HOME/dead.glibcbug
++	cat "$TEMP" >> $HOME/dead.glibcbug
+         xs=1; exit
+         ;;
+       e*)
+-        eval $EDIT $TEMP
++        eval $EDIT "$TEMP"
+         continue 2
+         ;;
+       s*)
+@@ -276,15 +268,15 @@
+ /^>Description:/,/^>[A-Za-z-]*:/s;$DESCRIPTION_C;;
+ /^>How-To-Repeat:/,/^>[A-Za-z-]*:/s;$HOW_TO_REPEAT_C;;
+ /^>Fix:/,/^>[A-Za-z-]*:/s;$FIX_C;;
+-" $TEMP > $TEMPx
++" "$TEMP" > "$TEMPx"
+ 
+-if $MAIL_AGENT < $TEMPx; then
++if $MAIL_AGENT < "$TEMPx"; then
+   echo "$COMMAND: problem report sent"
+   xs=0; exit
+ else
+   echo "$COMMAND: mysterious mail failure, report not sent."
+   echo "$COMMAND: problem report saved in $HOME/dead.glibcbug."
+-  cat $TEMP >> $HOME/dead.glibcbug
++  cat "$TEMP" >> $HOME/dead.glibcbug
+ fi
+ 
+ exit 0

@@ -1,0 +1,68 @@
+diff -ur glibc-2.1.3-owl-syslog-ident/misc/syslog.c glibc-2.1.3/misc/syslog.c
+--- glibc-2.1.3-owl-syslog-ident/misc/syslog.c	Wed Jun 12 09:33:27 2002
++++ glibc-2.1.3/misc/syslog.c	Wed Jun 12 09:43:16 2002
+@@ -58,11 +58,6 @@
+ #include <varargs.h>
+ #endif
+ 
+-#ifdef USE_IN_LIBIO
+-# include <libio/iolibio.h>
+-# define ftell(s) _IO_ftell (s)
+-#endif
+-
+ static int	LogType = SOCK_DGRAM;	/* type of socket connection */
+ static int	LogFile = -1;		/* fd for log */
+ static int	connected;		/* have done connect */
+@@ -159,17 +154,17 @@
+ 	register const char *fmt;
+ 	va_list ap;
+ {
+-	struct tm now_tm;
+ 	time_t now;
+ 	int fd;
+ 	FILE *f;
+ 	char *buf = 0;
+ 	size_t bufsize = 0;
+-	size_t prioff, msgoff;
++	size_t msgoff;
+  	struct sigaction action, oldaction;
+ 	struct sigaction *oldaction_ptr = NULL;
+  	int sigpipe;
+ 	int saved_errno = errno;
++	char ctimebuf[26];
+ 
+ #define	INTERNALLOG	LOG_ERR|LOG_CONS|LOG_PERROR|LOG_PID
+ 	/* Check for invalid bits. */
+@@ -189,18 +184,21 @@
+ 
+ 	/* Build the message in a memory-buffer stream.  */
+ 	f = open_memstream (&buf, &bufsize);
+-	prioff = fprintf (f, "<%d>", pri);
++	/*
++	 * XXX: syslogd may know better what the current time is.
++	 * User program may be running chrooted w/o proper localtime
++	 * description, or a user may prefer their own timezone.  syslogd
++	 * is able to construct timestamp if there is no timestamp given
++	 * in a message.  So it may be waay better to NOT construct ANY
++	 * timestamp here and allow syslogd to figure out proper time
++	 * for us.  When working with local syslogd (and it IS local
++	 * since we're using either /dev/log or localhost), message
++	 * should be picked up by syslogd very shortly.  And at least
++	 * timestamps in system logs will be in chronological order...
++	 * -- mjt.
++	 */
+ 	(void) time (&now);
+-#ifdef USE_IN_LIBIO
+-        f->_IO_write_ptr += strftime (f->_IO_write_ptr,
+-                                      f->_IO_write_end - f->_IO_write_ptr,
+-                                      "%h %e %T ",
+-				      __localtime_r (&now, &now_tm));
+-#else
+-	f->__bufp += strftime (f->__bufp, f->__put_limit - f->__bufp,
+-			       "%h %e %T ", __localtime_r (&now, &now_tm));
+-#endif
+-	msgoff = ftell (f);
++	msgoff = fprintf (f, "<%d>%.15s ", pri, ctime_r(&now, ctimebuf) + 4);
+ 
+ 	/* Protect against multiple users.  */
+ 	__libc_cleanup_region_start (
