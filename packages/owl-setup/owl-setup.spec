@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.9 2001/09/30 15:01:25 mci Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.10 2001/10/08 21:44:21 mci Exp $
 
 Summary: Owl configuration tool
 Name: owl-setup
-Version: 0.5
+Version: 0.6
 Release: 1owl
 Copyright: mostly public domain, passwdlg is under GPL
 Group: System Environment/Base
@@ -58,6 +58,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc README
 
 %changelog
+* Tue Oct 09 2001 Michail Litvak <mci@owl.openwall.com>
+- configure network interface and gateway separately
+
 * Sun Sep 30 2001 Michail Litvak <mci@owl.openwall.com>
 - don't check gateway presense for network=yes
 - don't write localhost with non local IP to /etc/hosts

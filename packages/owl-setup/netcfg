@@ -94,17 +94,17 @@ function set_dns
 ##
 #  Set params for network device
 #
-#  Set variables: IPADDR, NETMASK, NETWORK, BROADCAST, GATEWAYDEV, GATEWAY
+#  Set variables: IPADDR, NETMASK, NETWORK, BROADCAST, NETDEV
 ##
 function config_eth
 {
     local tmp_ip
 
-    test -n "$GATEWAYDEV" || GATEWAYDEV=eth0
+    test -n "$NETDEV" || NETDEV=eth0
     $DIALOG --backtitle "$TITLE" \
 	    --title 'Network configuration' \
-	    --clear --inputbox 'Gateway device' 0 0 "$GATEWAYDEV" 2> $dlgresult || return
-    GATEWAYDEV="`cat $dlgresult`"
+	    --clear --inputbox 'Network device' 0 0 "$NETDEV" 2> $dlgresult || return
+    DEV="`cat $dlgresult`"
 
     input_ip 'Local IP address' "$IPADDR" || return
     tmp_ip="`cat $dlgresult`"
@@ -126,8 +126,37 @@ function config_eth
     input_ip 'Broadcast address' "$BROADCAST" || return
     BROADCAST="`cat $dlgresult`"
 
-    input_ip 'Gateway address' "$GATEWAY" || return
-    GATEWAY="`cat $dlgresult`"
+}
+
+##
+# Configure gateway
+#
+# Set variables: GATEWAYDEV, GATEWAY
+##
+function config_gw
+{
+
+   if [ -z "$NETDEV" ]; then
+	$DIALOG --backtitle "$TITLE"\
+		--title 'Error'\
+		--msgbox "No configured network interfaces found" 0 0
+	return
+   else
+	$DIALOG --backtitle "$TITLE"\
+		--title 'Gateway configuration'\
+		--yesno "Use $NETDEV as gateway interface ?" 0 0
+
+	if [ $? -ne 1 ]; then
+   	     GATEWAYDEV=$NETDEV
+
+	     input_ip 'Gateway address' "$GATEWAY" || return
+   	     GATEWAY="`cat $dlgresult`"
+	else
+	     GATEWAYDEV=''
+	     GATEWAY=''
+	fi
+   fi
+
 }
 
 ##
@@ -170,18 +199,18 @@ function write_network_yes
 NETWORKING=yes
 FORWARD_IPV4=false
 HOSTNAME=$HOSTNAME
-DOMAINNAME=$DOMAIN
-GATEWAY=$GATEWAY
-GATEWAYDEV=$GATEWAYDEV" > "$1"
+DOMAINNAME=$DOMAIN" > "$1"
+[ -z $GATEWAY ] || echo "GATEWAY=$GATEWAY" >> "$1"
+[ -z $GATEWAYDEV ] || echo "GATEWAYDEV=$GATEWAYDEV" >> "$1"
 
 # ifcfg-
     echo "\
-DEVICE=$GATEWAYDEV
+DEVICE=$NETDEV
 IPADDR=$IPADDR
 NETMASK=$NETMASK
 NETWORK=$NETWORK
 BROADCAST=$BROADCAST
-ONBOOT=yes" > $NET_SCRIPTS_PATH/ifcfg-$GATEWAYDEV
+ONBOOT=yes" > $NET_SCRIPTS_PATH/ifcfg-$NETDEV
 
 }
 
@@ -226,7 +255,7 @@ function gen_netcfg
 
     # network
     if [ -n "$IPADDR"     -a\
-	 -n "$GATEWAYDEV" -a\
+	 -n "$NETDEV" 	  -a\
 	 -n "$NETMASK"    -a\
 	 -n "$BROADCAST"  -a\
 	 -n "$NETWORK" ];
@@ -259,6 +288,7 @@ while :; do
             Hostname 'Set hostname' \
             DNS      'Set DNS servers (resolv.conf)' \
             Network  'Network device setup' \
+	    Gateway  'Gateway setup' \
 	    Save     'Write settings' \
             Exit     'Exit without saving' 2> $dlgresult || exit
 
@@ -275,6 +305,10 @@ while :; do
 
         Network)
             config_eth
+        ;;
+
+        Gateway)
+            config_gw
         ;;
 
 	Save)
