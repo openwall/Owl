@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.10 2001/05/27 09:37:47 kad Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.11 2001/06/15 04:30:35 solar Exp $
 
 %define BUILD_CHSH_CHFN	'yes'
 %define BUILD_VIPW_VIGR	'yes'
@@ -6,7 +6,7 @@
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 19990827
-Release: 15owl
+Release: 16owl
 Serial: 1
 Source0: ftp://ftp.ists.pwr.wroc.pl/pub/linux/shadow/shadow-%{version}.tar.gz
 Source1: login.defs
@@ -120,6 +120,7 @@ grep -q '^shadow:[^:]*:42:' /etc/group && \
 /usr/man/man1/chage.1*
 /usr/man/man1/gpasswd.1*
 /usr/man/man3/shadow.3*
+/usr/man/man5/login.defs.5*
 /usr/man/man5/shadow.5*
 /usr/man/man8/adduser.8*
 /usr/man/man8/group*.8*
@@ -152,6 +153,11 @@ grep -q '^shadow:[^:]*:42:' /etc/group && \
 %endif
 
 %changelog
+* Fri Jun 15 2001 Solar Designer <solar@owl.openwall.com>
+- Rewrote most of the login.defs(5) man page and enabled its packaging.
+- Added more defaults to /etc/login.defs, added a reference to login.defs(5).
+- Fixed a bug in the lastlog(8) man page reported by Jarno Huuskonen.
+
 * Sun May 27 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - enable EXTRA_CHECK_HOME_DIR for userdel
 
