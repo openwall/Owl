@@ -7,6 +7,7 @@ http://www.openwall.com/Owl/
 
 Owl доступна на следующих официальных зеркалах:
 
+ftp://mirror.sg.depaul.edu/pub/security/openwall.com/Owl/	(США)
 ftp://ftp1.msk.ru.openwall.com/pub/Owl/	(Россия - Москва)
 ftp://ftp2.msk.ru.openwall.com/pub/Owl/	(Россия - Москва)
 ftp://ftp.spb.ru.openwall.com/pub/Owl/	(Россия - Санкт-Петербург)
@@ -65,4 +66,4 @@ CVSROOT=anoncvs@anoncvs.owl.openwall.com:/cvs
 использовать сжатие при любом способе доступа - обычно посредством
 указания опции -z3 для CVS или включив сжатие в настройках SSH-клиента.
 
-$Id: Owl/doc/ru/DOWNLOAD,v 1.14 2004/04/22 17:49:18 solar Exp $
+$Id: Owl/doc/ru/DOWNLOAD,v 1.15 2004/05/21 00:47:03 solar Exp $

@@ -7,6 +7,7 @@ our project by doing so.
 
 Owl can be downloaded from the following official mirrors:
 
+ftp://mirror.sg.depaul.edu/pub/security/openwall.com/Owl/	(USA)
 ftp://ftp1.msk.ru.openwall.com/pub/Owl/	(Moscow, Russia)
 ftp://ftp2.msk.ru.openwall.com/pub/Owl/	(Moscow, Russia)
 ftp://ftp.spb.ru.openwall.com/pub/Owl/	(St. Petersburg, Russia)
@@ -65,4 +66,4 @@ compression with either method of access to the anonymous CVS server,
 typically by specifying the -z3 option to CVS and/or "Compression yes"
 in the SSH client's configuration file.
 
-$Id: Owl/doc/DOWNLOAD,v 1.26 2004/04/22 17:49:18 solar Exp $
+$Id: Owl/doc/DOWNLOAD,v 1.27 2004/05/21 00:47:03 solar Exp $
