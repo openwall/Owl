@@ -1,10 +1,10 @@
-# $Id: Owl/packages/owl-startup/functions,v 1.1 2000/11/28 22:48:33 solar Exp $
+# $Id: Owl/packages/owl-startup/functions,v 1.2 2000/12/01 18:19:55 solar Exp $
 #
 # Functions defined in this file are used by many /etc/init.d scripts;
 # they offer some limited Red Hat compatibility.
 
 # Export our version number to the scripts.
-OWL_STARTUP_VERSION=1
+OWL_STARTUP_VERSION=2
 
 # Do they recognize us?  Try to be more Red Hat compatible if not.
 OWL_STARTUP_ENABLE=0
@@ -18,11 +18,9 @@ PATH=/bin:/sbin:/usr/bin:/usr/sbin
 # Emulate which(1) internally to bash.
 function absolute()
 {
-	local TYPE WHICH
+	local WHICH
 
-	TYPE="`type "$1"`"
-	WHICH="${TYPE##"$1" is }"
-
+	WHICH="`type -p "$1"`" || return 1
 	test "$WHICH" != "${WHICH##/}" || return 1
 
 	echo "$WHICH"
@@ -121,7 +119,11 @@ function killproc()
 
 # Announce the action.
 	if [ "$OWL_STARTUP_ENABLE" -ge 1 ]; then
-		echo "Stopping $BASENAME"
+		if [ "$DEFAULT" = "true" ]; then
+			echo "Stopping $BASENAME"
+		else
+			echo "Sending `kill -l "$SIGNAL"` to $BASENAME"
+		fi
 	fi
 
 # Actually tell the daemon to stop.

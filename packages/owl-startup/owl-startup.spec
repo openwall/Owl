@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.1 2000/11/28 22:50:10 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.2 2000/12/01 18:19:55 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.1
+Version: 0.2
 Release: 1owl
 Copyright: GPL
 Group: System Environment/Base
@@ -107,5 +107,8 @@ rm -rf $RPM_BUILD_ROOT
 %doc redhat
 
 %changelog
+* Fri Dec 01 2000 Solar Designer <solar@owl.openwall.com>
+- Correctly report non-default signals in killproc().
+
 * Wed Nov 29 2000 Solar Designer <solar@owl.openwall.com>
 - Initial version, still uses a lot from RH initscripts.
