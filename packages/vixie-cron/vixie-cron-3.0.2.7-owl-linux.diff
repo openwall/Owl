@@ -79,7 +79,7 @@ diff -urN vixie-cron-3.0.2.7.orig/usr.sbin/cron/closeall.c vixie-cron-3.0.2.7.li
 +		max = NR_OPEN;
 +#endif
 +
-+	for (fd = 3; fd < NR_OPEN; fd++) {
++	for (fd = 3; fd < max; fd++) {
 +		if (close(fd) && errno != EBADF)
 +			return -1;
 +	}
