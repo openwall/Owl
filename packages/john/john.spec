@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.27 2003/10/29 19:27:21 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.28 2003/11/16 01:50:49 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.36.5
+Version: 1.6.36.6
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -74,6 +74,10 @@ cp -a john-1.6/doc/* doc/john-1.6/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Sun Nov 16 2003 Solar Designer <solar@owl.openwall.com> 1.6.36.6-owl1
+- When generating a new charset file, first do a self-test of the specified
+CHARSET_* parameters to ensure they don't cause a 64-bit integer overflow.
+
 * Sat Oct 25 2003 Solar Designer <solar@owl.openwall.com> 1.6.36.5-owl1
 - In x86 assembly code, detect and choose optimal existing code version for
 Centaur Technology processors (IDT Winchip to VIA C3 and beyond).
