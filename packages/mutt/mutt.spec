@@ -1,9 +1,9 @@
-# $Id: Owl/packages/mutt/mutt.spec,v 1.3 2003/01/20 12:44:07 solar Exp $
+# $Id: Owl/packages/mutt/mutt.spec,v 1.4 2003/01/20 19:53:53 solar Exp $
 
-Summary: A text mode mail user agent.
+Summary: A feature-rich text-based mail user agent.
 Name: mutt
 Version: 1.4
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Internet
 URL: http://www.mutt.org
@@ -12,13 +12,17 @@ Source1: Muttrc-color
 Patch0: mutt-1.4-owl-no-sgid.diff
 Patch1: mutt-1.4-owl-muttbug-tmp.diff
 Patch2: mutt-1.4-owl-tmp.diff
+Requires: mktemp >= 1:1.3.1
 Conflicts: mutt-us
 Provides: mutt-i
 BuildRoot: /override/%{name}-%{version}
 
 %description
-Mutt is a text-mode mail user agent.  Mutt supports color, threading,
-arbitrary key remapping, and a lot of customization.
+Mutt is a feature-rich text-based mail user agent.  Mutt supports local
+and remote mail spools (POP3 and IMAP, including with SSL), MIME, OpenPGP
+(PGP/MIME) with GnuPG and PGP, colored display, threading, and a lot of
+customization including arbitrary message headers, key remapping, colors,
+and more.
 
 %prep
 %setup -q
@@ -71,6 +75,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Mon Jan 20 2003 Solar Designer <solar@owl.openwall.com>
+- Improved the package description.
+- Require the proper version of mktemp for our muttbug/flea patch.
 - Initial commit into Owl.
 
 * Wed Jan 15 2003 Jarno Huuskonen <jhuuskon@owl.openwall.com>
