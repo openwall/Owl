@@ -27,6 +27,10 @@ which C header files to process during package build by default.  The
 package will now try to no longer include information specific to the
 build system's last kernel compile.
 
+2002/07/15	Package: gawk
+Updated to 3.1.1 and switched to using Paul Eggert's patch to igawk
+which makes it not use temporary files at all.
+
 2002/07/13	Package: texinfo
 Updated to 4.2 with an additional temporary file handling fix to
 texi2dvi.
@@ -823,4 +827,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.111 2002/07/18 07:35:34 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.112 2002/07/18 07:49:32 solar Exp $
