@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.44 2004/12/26 13:58:48 galaxy Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.45 2004/12/27 00:08:38 galaxy Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -51,7 +51,7 @@ Patch25: rpm-4.2-owl-db-open.diff
 Patch26: rpm-4.2-owl-rpmdb-pthread.diff
 Patch27: rpm-4.2-owl-db1-addon.diff
 Patch28: rpm-4.2-owl-fix-configure.diff
-Patch29: rpm-4.2-owl-chroot_ugid.diff
+Patch29: rpm-4.2-owl-chroot-ugid.diff
 
 PreReq: /sbin/ldconfig
 PreReq: sh-utils, fileutils, mktemp, gawk
@@ -454,7 +454,7 @@ fi
 
 %changelog
 * Sun Dec 26 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl2
-- Applied chroot_ugid patch to not rely on host OS provided NSS modules.
+- Applied chroot-ugid patch to not rely on host OS provided NSS modules.
 
 * Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 4.2-owl1
 - Corrected the long text messages for consistency with owl-etc.
