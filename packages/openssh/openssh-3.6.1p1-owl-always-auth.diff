@@ -1,0 +1,113 @@
+diff -ur openssh-3.6.1p1.orig/auth-pam.c openssh-3.6.1p1/auth-pam.c
+--- openssh-3.6.1p1.orig/auth-pam.c	Wed Jan 22 04:42:26 2003
++++ openssh-3.6.1p1/auth-pam.c	Fri Apr 18 10:55:29 2003
+@@ -201,7 +201,7 @@
+ 	}
+ }
+ 
+-/* Attempt password authentation using PAM */
++/* Attempt password authentication using PAM */
+ int auth_pam_password(Authctxt *authctxt, const char *password)
+ {
+ 	extern ServerOptions options;
+@@ -215,13 +215,13 @@
+ 	pamstate = INITIAL_LOGIN;
+ 	pam_retval = do_pam_authenticate(
+ 	    options.permit_empty_passwd == 0 ? PAM_DISALLOW_NULL_AUTHTOK : 0);
+-	if (pam_retval == PAM_SUCCESS) {
+-		debug("PAM Password authentication accepted for "
+-		    "user \"%.100s\"", pw->pw_name);
++	if (pam_retval == PAM_SUCCESS && pw) {
++		debug("PAM password authentication accepted for "
++		    "%.100s", pw->pw_name);
+ 		return 1;
+ 	} else {
+-		debug("PAM Password authentication for \"%.100s\" "
+-		    "failed[%d]: %s", pw->pw_name, pam_retval, 
++		debug("PAM password authentication failed for "
++		    "%.100s: %s", pw ? pw->pw_name : "an illegal user",
+ 		    PAM_STRERROR(__pamh, pam_retval));
+ 		return 0;
+ 	}
+diff -ur openssh-3.6.1p1.orig/auth-passwd.c openssh-3.6.1p1/auth-passwd.c
+--- openssh-3.6.1p1.orig/auth-passwd.c	Wed Jan 29 23:20:57 2003
++++ openssh-3.6.1p1/auth-passwd.c	Fri Apr 18 11:39:03 2003
+@@ -93,6 +93,7 @@
+ auth_password(Authctxt *authctxt, const char *password)
+ {
+ 	struct passwd * pw = authctxt->pw;
++	int ok = authctxt->valid;
+ #if !defined(USE_PAM) && !defined(HAVE_OSF_SIA)
+ 	char *encrypted_password;
+ 	char *pw_password;
+@@ -115,19 +116,23 @@
+ 
+ 	/* deny if no user. */
+ 	if (pw == NULL)
+-		return 0;
++		ok = 0;
+ #ifndef HAVE_CYGWIN
+-       if (pw->pw_uid == 0 && options.permit_root_login != PERMIT_YES)
+-		return 0;
++	if (pw && pw->pw_uid == 0 && options.permit_root_login != PERMIT_YES)
++		ok = 0;
+ #endif
+ 	if (*password == '\0' && options.permit_empty_passwd == 0)
+-		return 0;
++		ok = 0;
+ 
+ #if defined(USE_PAM)
+-	return auth_pam_password(authctxt, password);
++	return auth_pam_password(authctxt, password) && ok;
+ #elif defined(HAVE_OSF_SIA)
++	if (!ok)
++		return 0;
+ 	return auth_sia_password(authctxt, password);
+ #else
++	if (!ok)
++		return 0;
+ # ifdef KRB5
+ 	if (options.kerberos_authentication == 1) {
+ 		int ret = auth_krb5_password(authctxt, password);
+diff -ur openssh-3.6.1p1.orig/auth2-none.c openssh-3.6.1p1/auth2-none.c
+--- openssh-3.6.1p1.orig/auth2-none.c	Thu Jul  4 00:06:16 2002
++++ openssh-3.6.1p1/auth2-none.c	Fri Apr 18 11:35:39 2003
+@@ -100,7 +100,7 @@
+ 	if (check_nt_auth(1, authctxt->pw) == 0)
+ 		return(0);
+ #endif
+-	return (authctxt->valid ? PRIVSEP(auth_password(authctxt, "")) : 0);
++	return PRIVSEP(auth_password(authctxt, "")) && authctxt->valid;
+ }
+ 
+ Authmethod method_none = {
+diff -ur openssh-3.6.1p1.orig/auth2-passwd.c openssh-3.6.1p1/auth2-passwd.c
+--- openssh-3.6.1p1.orig/auth2-passwd.c	Thu Jun  6 20:27:56 2002
++++ openssh-3.6.1p1/auth2-passwd.c	Fri Apr 18 11:38:08 2003
+@@ -47,11 +47,11 @@
+ 		log("password change not supported");
+ 	password = packet_get_string(&len);
+ 	packet_check_eom();
+-	if (authctxt->valid &&
++	if (PRIVSEP(auth_password(authctxt, password)) == 1 && authctxt->valid
+ #ifdef HAVE_CYGWIN
+-	    check_nt_auth(1, authctxt->pw) &&
++	    && check_nt_auth(1, authctxt->pw)
+ #endif
+-	    PRIVSEP(auth_password(authctxt, password)) == 1)
++	    )
+ 		authenticated = 1;
+ 	memset(password, 0, len);
+ 	xfree(password);
+diff -ur openssh-3.6.1p1.orig/monitor.c openssh-3.6.1p1/monitor.c
+--- openssh-3.6.1p1.orig/monitor.c	Tue Apr  1 11:43:39 2003
++++ openssh-3.6.1p1/monitor.c	Fri Apr 18 11:33:47 2003
+@@ -606,7 +606,7 @@
+ 	passwd = buffer_get_string(m, &plen);
+ 	/* Only authenticate if the context is valid */
+ 	authenticated = options.password_authentication &&
+-	    authctxt->valid && auth_password(authctxt, passwd);
++	    auth_password(authctxt, passwd) && authctxt->valid;
+ 	memset(passwd, 0, strlen(passwd));
+ 	xfree(passwd);
+ 

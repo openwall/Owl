@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.57 2003/04/17 14:12:59 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.58 2003/04/18 12:09:24 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
@@ -15,15 +15,16 @@ Source4: sshd_config
 Source5: sftp.control
 Patch0: openssh-3.6.1p1-owl-warnings.diff
 Patch1: openssh-3.6.1p1-owl-hide-unknown.diff
-Patch2: openssh-3.6.1p1-owl-pam_userpass.diff
-Patch3: openssh-3.6.1p1-owl-fatal_cleanups.diff
-Patch4: openssh-3.6.1p1-owl-drop-groups.diff
-Patch5: openssh-3.6.1p1-owl-logging.diff
-Patch6: openssh-3.6.1p1-owl-mm.diff
-Patch7: openssh-3.6.1p1-owl-password-changing.diff
-Patch8: openssh-3.6.1p1-owl-openssl-version-check.diff
-Patch9: openssh-3.6.1p1-owl-scp-sftp-stalltime.diff
-Patch10: openssh-3.6.1p1-owl-ssh-agent-dumpable.diff
+Patch2: openssh-3.6.1p1-owl-always-auth.diff
+Patch3: openssh-3.6.1p1-owl-pam_userpass.diff
+Patch4: openssh-3.6.1p1-owl-fatal_cleanups.diff
+Patch5: openssh-3.6.1p1-owl-drop-groups.diff
+Patch6: openssh-3.6.1p1-owl-logging.diff
+Patch7: openssh-3.6.1p1-owl-mm.diff
+Patch8: openssh-3.6.1p1-owl-password-changing.diff
+Patch9: openssh-3.6.1p1-owl-openssl-version-check.diff
+Patch10: openssh-3.6.1p1-owl-scp-sftp-stalltime.diff
+Patch11: openssh-3.6.1p1-owl-ssh-agent-dumpable.diff
 PreReq: openssl >= 0.9.6b-1owl
 PreReq: openssl < 0.9.7
 Requires: pam >= 0.75-owl16
@@ -107,6 +108,7 @@ rm -r autom4te-*.cache
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 
 %define _sysconfdir /etc/ssh
 %{expand:%%define _datadir %{_datadir}/ssh}
@@ -223,7 +225,11 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
-* Thu Apr 17 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p1-owl3
+* Fri Apr 18 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p1-owl3
+- Added back the now more complete patch to always run PAM with password
+authentication, even for non-existent or not allowed usernames.
+- Tell pam_tcb to not log failed authentication attempts when a blank
+password is tried (blank_nolog) as this is attempted automatically.
 - Pass prefix= and count= to pam_tcb also for authentication such that it
 can use this information to reduce timing leaks.
 
