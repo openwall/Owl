@@ -493,8 +493,8 @@ diff -ur cvs-1.11.5.orig/contrib/rcs2sccs.sh cvs-1.11.5/contrib/rcs2sccs.sh
  cat > $sedfile << EOF
 diff -ur cvs-1.11.5.orig/contrib/sccs2rcs.in cvs-1.11.5/contrib/sccs2rcs.in
 --- cvs-1.11.5.orig/contrib/sccs2rcs.in	Tue Oct 16 19:24:04 2001
-+++ cvs-1.11.5/contrib/sccs2rcs.in	Mon Apr 28 19:13:05 2003
-@@ -78,18 +78,18 @@
++++ cvs-1.11.5/contrib/sccs2rcs.in	Tue Apr 29 00:47:17 2003
+@@ -78,18 +78,19 @@
  
  sccs clean
  
@@ -508,6 +508,7 @@ diff -ur cvs-1.11.5.orig/contrib/sccs2rcs.in cvs-1.11.5/contrib/sccs2rcs.in
 +sccs2rcsdir=
 +trap 'rm -rf -- "$sccs2rcsdir"' EXIT
 +trap 'trap - EXIT; rm -rf -- "$sccs2rcsdir"; exit 1' HUP INT QUIT TERM
++sccs2rcsdir="`mktemp -td sccs2rcs.XXXXXXXXXX`" || exit
 +logfile="$sccs2rcsdir/log"
 +tmpfile="$sccs2rcsdir/tmp"
 +emptyfile="$sccs2rcsdir/empty"
