@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.31 2003/10/29 16:11:44 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.32 2003/10/29 16:29:10 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
@@ -7,7 +7,7 @@ Release: owl13
 Epoch: 2
 License: BSD
 Group: System Environment/Base
-Source0: ftp://ftp.pld.org.pl/software/shadow/shadow-%{version}.tar.bz2
+Source0: ftp://ftp.pld.org.pl/software/shadow/shadow-%version.tar.bz2
 Source1: login.defs
 Source2: useradd.default
 Source3: user-group-mod.pam
@@ -41,7 +41,7 @@ Requires: pam, tcb >= 0.9.8, pam_userpass >= 0.5
 BuildRequires: libtool, gettext, automake, autoconf
 BuildRequires: glibc-crypt_blowfish-devel
 BuildRequires: pam-devel, pam_userpass-devel, tcb-devel
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The shadow-utils package includes the tools necessary for manipulating
@@ -49,7 +49,7 @@ local user and group databases.  It supports both traditional and tcb
 shadow password files.
 
 %prep
-%setup -q -n shadow-%{version}
+%setup -q -n shadow-%version
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1

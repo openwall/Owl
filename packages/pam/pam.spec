@@ -1,14 +1,14 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.30 2003/10/29 16:10:59 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.31 2003/10/29 16:28:17 solar Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
 Version: 0.75
 Release: owl21
-%define rh_version %{version}-10
+%define rh_version %version-10
 License: GPL or BSD
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
-Source0: pam-redhat-%{rh_version}.tar.bz2
+Source0: pam-redhat-%rh_version.tar.bz2
 Source1: pam_listfile.c
 Patch0: pam-0.75-owl-tmp.diff
 Patch1: pam-0.75-owl-pam_get_user-cache-failures.diff
@@ -28,7 +28,7 @@ Requires: glibc-crypt_blowfish, pwdb >= 0.61-1owl
 # Just to make sure noone misses pam_unix, which is now provided by tcb
 Requires: tcb >= 0.9.5
 BuildRequires: glibc-crypt_blowfish-devel
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 Linux-PAM (Pluggable Authentication Modules for Linux) is a suite of
@@ -39,7 +39,7 @@ those applications.
 %package devel
 Summary: Libraries and header files for developing applications with PAM.
 Group: Development/Libraries
-Requires: %{name} = %{version}-%{release}
+Requires: %name = %version-%release
 
 %description devel
 This package contains static Linux-PAM libraries and header files used
@@ -86,9 +86,9 @@ autoconf
 CFLAGS="$RPM_OPT_FLAGS -fPIC" \
 ./configure \
 	--prefix=/ \
-	--sysconfdir=%{_sysconfdir} \
-	--infodir=%{_infodir} \
-	--mandir=%{_mandir} \
+	--sysconfdir=%_sysconfdir \
+	--infodir=%_infodir \
+	--mandir=%_mandir \
 	--enable-static-libpam \
 	--enable-fakeroot=$RPM_BUILD_ROOT
 # List things to make explicitly to not make doc (corrupting the
@@ -101,16 +101,16 @@ make install THINGSTOMAKE='modules libpam libpamc libpam_misc'
 
 install -m 644 modules/pam_chroot/chroot.conf $RPM_BUILD_ROOT/etc/security/
 
-mkdir -p $RPM_BUILD_ROOT/%{_libdir}
-mv $RPM_BUILD_ROOT/lib/*.a $RPM_BUILD_ROOT/%{_libdir}/
+mkdir -p $RPM_BUILD_ROOT/%_libdir
+mv $RPM_BUILD_ROOT/lib/*.a $RPM_BUILD_ROOT/%_libdir/
 
 mkdir -m 755 $RPM_BUILD_ROOT/etc/pam.d
 install -m 644 other.pamd $RPM_BUILD_ROOT/etc/pam.d/other
 
-mkdir -p $RPM_BUILD_ROOT%{_mandir}/man{3,5,8}
-install -m 644 doc/man/*.3 $RPM_BUILD_ROOT%{_mandir}/man3/
-install -m 644 doc/man/*.5 $RPM_BUILD_ROOT%{_mandir}/man5/
-install -m 644 doc/man/*.8 $RPM_BUILD_ROOT%{_mandir}/man8/
+mkdir -p $RPM_BUILD_ROOT%_mandir/man{3,5,8}
+install -m 644 doc/man/*.3 $RPM_BUILD_ROOT%_mandir/man3/
+install -m 644 doc/man/*.5 $RPM_BUILD_ROOT%_mandir/man5/
+install -m 644 doc/man/*.8 $RPM_BUILD_ROOT%_mandir/man8/
 
 rm -f doc/ps/missfont.log
 gzip -9nf doc/ps/*.ps
@@ -121,10 +121,10 @@ rm -rf $RPM_BUILD_ROOT
 
 %triggerin -- shadow-utils
 grep -q '^shadow:[^:]*:42:' /etc/group && \
-	chgrp shadow %{_libexecdir}/chkpwd/pwdb_chkpwd && \
-	chmod 2711 %{_libexecdir}/chkpwd/pwdb_chkpwd
+	chgrp shadow %_libexecdir/chkpwd/pwdb_chkpwd && \
+	chmod 2711 %_libexecdir/chkpwd/pwdb_chkpwd
 grep -q ^chkpwd: /etc/group || groupadd -g 163 chkpwd
-chgrp chkpwd %{_libexecdir}/chkpwd && chmod 710 %{_libexecdir}/chkpwd
+chgrp chkpwd %_libexecdir/chkpwd && chmod 710 %_libexecdir/chkpwd
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -142,8 +142,8 @@ chgrp chkpwd %{_libexecdir}/chkpwd && chmod 710 %{_libexecdir}/chkpwd
 /lib/libpamc.so.*
 /lib/libpam_misc.so.*
 
-%attr(700,root,root) %dir %{_libexecdir}/chkpwd
-%attr(700,root,root) %{_libexecdir}/chkpwd/pwdb_chkpwd
+%attr(700,root,root) %dir %_libexecdir/chkpwd
+%attr(700,root,root) %_libexecdir/chkpwd/pwdb_chkpwd
 
 /sbin/pam_tally
 
@@ -188,19 +188,19 @@ chgrp chkpwd %{_libexecdir}/chkpwd && chmod 710 %{_libexecdir}/chkpwd
 %attr(644,root,root) %config(noreplace) /etc/security/pam_env.conf
 %attr(640,root,wheel) %config(noreplace) /etc/security/time.conf
 
-%{_mandir}/man5/*
-%{_mandir}/man8/*
+%_mandir/man5/*
+%_mandir/man8/*
 
 %files devel
 %defattr(-,root,root)
 /lib/libpam.so
 /lib/libpamc.so
 /lib/libpam_misc.so
-%{_libdir}/libpam.a
-%{_libdir}/libpamc.a
-%{_libdir}/libpam_misc.a
+%_libdir/libpam.a
+%_libdir/libpamc.a
+%_libdir/libpam_misc.a
 /usr/include/security/
-%{_mandir}/man3/*
+%_mandir/man3/*
 
 %files doc
 %defattr(-,root,root)

@@ -40,7 +40,7 @@ older branches, BRANCH_POINT_RELEASE set to "owl0".
 
 4. The correct BuildRoot tag for an Owl package is:
 
-	BuildRoot: /override/%{name}-%{version}
+	BuildRoot: /override/%name-%version
 
 Our build environment will override the BuildRoot regardless of this
 tag, but setting it in this way will remind people to override the
@@ -203,4 +203,4 @@ Requires: mktemp >= 1:1.3.1
 As usual, use Requires, PreReq, and/or BuildRequires depending on
 where in the package the uses of mktemp occur.
 
-$Id: Owl/doc/CONVENTIONS,v 1.16 2003/05/01 15:55:49 solar Exp $
+$Id: Owl/doc/CONVENTIONS,v 1.17 2003/10/29 16:35:25 solar Exp $

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.53 2003/10/29 16:13:44 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.54 2003/10/29 16:26:40 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -9,11 +9,11 @@ Version: 2.1.3
 Release: owl36
 License: LGPL
 Group: System Environment/Libraries
-Source0: glibc-%{version}.tar.gz
-Source1: glibc-linuxthreads-%{version}.tar.gz
+Source0: glibc-%version.tar.gz
+Source1: glibc-linuxthreads-%version.tar.gz
 Source2: glibc-crypt-2.1.tar.gz
-Source3: glibc-compat-%{version}.tar.gz
-Source4: crypt_blowfish-%{crypt_bf_version}.tar.gz
+Source3: glibc-compat-%version.tar.gz
+Source4: crypt_blowfish-%crypt_bf_version.tar.gz
 Source5: crypt_freesec.c
 Source6: crypt_freesec.h
 Patch0: glibc-2.1.3-owl-crypt_freesec.diff
@@ -69,9 +69,9 @@ Requires: /etc/nsswitch.conf
 %ifarch alpha
 Provides: ld.so.2
 %endif
-Provides: glibc-crypt_blowfish = %{crypt_bf_version}
+Provides: glibc-crypt_blowfish = %crypt_bf_version
 AutoReq: false
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The glibc package contains standard libraries which are used by
@@ -88,7 +88,7 @@ Summary: Header and object files for development using standard C libraries.
 Group: Development/Libraries
 PreReq: /sbin/install-info
 Requires: kernel-headers >= 2.2.1
-Provides: glibc-crypt_blowfish-devel = %{crypt_bf_version}
+Provides: glibc-crypt_blowfish-devel = %crypt_bf_version
 Conflicts: texinfo < 3.11
 AutoReq: true
 
@@ -104,7 +104,7 @@ executables.
 %package profile
 Summary: The GNU libc libraries, including support for gprof profiling.
 Group: Development/Libraries
-Requires: glibc = %{version}-%{release}
+Requires: glibc = %version-%release
 
 %description profile
 The glibc-profile package includes the GNU libc libraries and support
@@ -121,9 +121,9 @@ libraries included in the glibc package).
 
 %prep
 %setup -q -a 1 -a 2 -a 3 -a 4
-patch -p1 < crypt_blowfish-%{crypt_bf_version}/glibc-%{version}-crypt.diff
+patch -p1 < crypt_blowfish-%crypt_bf_version/glibc-%version-crypt.diff
 mv crypt/sysdeps/unix/{crypt.h,gnu-crypt.h}
-mv crypt_blowfish-%{crypt_bf_version}/*.[chS] crypt/sysdeps/unix/
+mv crypt_blowfish-%crypt_bf_version/*.[chS] crypt/sysdeps/unix/
 cp $RPM_SOURCE_DIR/crypt_freesec.[ch] crypt/sysdeps/unix/
 %patch0 -p1
 %patch1 -p1
@@ -207,8 +207,8 @@ popd
 mkdir -p $RPM_BUILD_ROOT/usr/man/man3
 make -C linuxthreads/man
 install -m 0644 linuxthreads/man/*.3thr $RPM_BUILD_ROOT/usr/man/man3
-make -C crypt_blowfish-%{crypt_bf_version} man
-install -m 0644 crypt_blowfish-%{crypt_bf_version}/*.3 \
+make -C crypt_blowfish-%crypt_bf_version man
+install -m 0644 crypt_blowfish-%crypt_bf_version/*.3 \
 	$RPM_BUILD_ROOT/usr/man/man3
 
 # Have to compress them explicitly for the filelists we build
@@ -287,9 +287,9 @@ cp db2/mutex/README documentation/README.db2.mutex
 cp timezone/README documentation/README.timezone
 cp ChangeLog* documentation
 gzip -9nf documentation/ChangeLog*
-mkdir documentation/crypt_blowfish-%{crypt_bf_version}
-cp crypt_blowfish-%{crypt_bf_version}/{README,LINKS,PERFORMANCE} \
-	documentation/crypt_blowfish-%{crypt_bf_version}
+mkdir documentation/crypt_blowfish-%crypt_bf_version
+cp crypt_blowfish-%crypt_bf_version/{README,LINKS,PERFORMANCE} \
+	documentation/crypt_blowfish-%crypt_bf_version
 
 %clean
 rm -rf $RPM_BUILD_ROOT
