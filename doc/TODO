@@ -271,6 +271,13 @@ Package it, fixing the various temporary file handling issues and
 considering enhancements from VVV (http://mutt.org.ua).
 
 
+	nmap.
+
+[PRIORITY: low]
+Package it, link against libpcap dynamically.  Patch our libpcap with
+the timeout fix found in nmap's modified version.
+
+
 	openssh.
 
 [PRIORITY: medium]
@@ -614,4 +621,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.9 2002/12/29 21:40:01 solar Exp $
+$Id: Owl/doc/TODO,v 1.10 2002/12/30 21:54:57 solar Exp $
