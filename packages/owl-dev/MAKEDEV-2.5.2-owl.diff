@@ -1,0 +1,251 @@
+diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
+--- MAKEDEV-2.5.2.orig/MAKEDEV	Thu Mar  2 01:16:37 2000
++++ MAKEDEV-2.5.2/MAKEDEV	Sat Jul 29 05:05:35 2000
+@@ -1,6 +1,11 @@
+ #!/bin/bash -
+ 
+-RCSID='$Id: MAKEDEV 2.3 1997/09/29 19:03:13 johnsonm Exp $'
++VERSION='MAKEDEV 2.5.2-1owl (unofficial, see the source for details)'
++
++# This version of MAKEDEV is based on work of many people.  The script was
++# initially written by Nick Holloway, and then maintained by Michael K.
++# Johnson and later by Nalin Dahyabhai of Red Hat.  Finally, it has been
++# modified for Owl.
+ 
+ #---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#
+ # Customisation:
+@@ -10,24 +15,25 @@
+ # system, and you may change the permissions to suit your preference.  These
+ # lines _must_ be of the format "user group perm".
+ 
+- public="  root sys    666"
+-private="  root sys    600"
+- system="  root sys    660"
+-   kmem="  root kmem   660"
+-    tty="  root tty    666"
+-   cons="  root tty    622"	# 622 for console?
+-    vcs="  root sys    600"
++ pub_rw="  root root   666"
++ pub_ro="  root root   644"
++private="  root root   600"
++ system="  root root   600"
++   kmem="  root kmem   640"
++    tty="  root tty    600"	# should become 620 after login, but not now
++   cons="  root tty    600"
++    vcs="  root root   600"
+ dialout="  root uucp   660"
+-  mouse="  root sys    666"
+-printer="  root daemon 660"
++  mouse="  root root   600"
++printer="  root root   600"	# should allow group access once lpd is smarter
+  floppy="  root floppy 660"
+    disk="  root disk   660"
+-   scsi="  root sys    600"
++   scsi="  root root   600"
+   cdrom="  root disk   660"
+    tape="  root disk   660"
+-  audio="  root sys    666"
+-  ibcs2="  root sys    666"
+-scanner="  root sys    666"
++  audio="  root root   600"
++  ibcs2="  root root   600"
++scanner="  root root   600"
+ 
+ MAXVT=8
+ 
+@@ -38,6 +44,9 @@
+ opt_v=
+ opt_d=
+ opt_n=
++opt_p=
++opt_V=
++opt_touch=
+ 
+ while [ $# -ge 1 ]
+ do
+@@ -46,7 +55,11 @@
+ 		-v)	shift; opt_v=1 ;;
+ 		-d)	shift; opt_d=1 ;;
+ 		-n)	shift; opt_n=1; opt_v=1 ;;
+-		-V)	shift; opt_V=1 ;;
++		-p)	shift; opt_p=1 ;;
++		-V|--version|--help)
++			shift; opt_V=1 ;;
++		--touch)
++			shift; opt_touch=1 ;;
+ 		-*)	echo "$0: unknown flag \"$1\"" >&2; exit 1 ;;
+ 		*)	break ;;
+ 	esac
+@@ -54,11 +67,11 @@
+ 
+ if [ "$opt_V" ]
+ then
+-	echo "$RCSID"
++	echo "$VERSION"
+ 	exit 0
+ fi
+ 
+-opts="${opt_n:+-n} ${opt_v:+-v} ${opt_d:+-d}"
++opts="${opt_n:+-n} ${opt_p:+-p} ${opt_v:+-v} ${opt_d:+-d} ${opt_touch:+--touch}"
+ 
+ #---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#
+ 
+@@ -75,10 +88,23 @@
+ 			rm -f $1
+ 		else
+ 			rm -f $1-
+-			mknod $1- $2 $3 $4 &&
+-			chown $5:$6 $1- &&
+-			chmod $7 $1- &&
+-			mv $1- $1
++			if [ "$opt_touch" ]
++			then
++				touch $1- &&
++				chmod $7 $1- &&
++				mv $1- $1 || {
++					rm -f $1-
++					exit 1
++				}
++			else
++				mknod $1- $2 $3 $4 &&
++				chown $5:$6 $1- &&
++				chmod $7 $1- &&
++				mv $1- $1 || {
++					rm -f $1-
++					exit 1
++				}
++			fi
+ 		fi
+ 	fi
+ }
+@@ -146,9 +172,9 @@
+ #---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#
+ 
+ devices=
+-if [ ! -f $procfs/devices ]
++if [ "$opt_p" -o ! -f $procfs/devices ]
+ then
+-	echo "$0: warning: can't read $procfs/devices" >&2
++	test "$opt_p" || echo "$0: warning: can't read $procfs/devices" >&2
+ else
+ 	exec 3<$procfs/devices
+ 	while read major device <&3
+@@ -202,7 +228,6 @@
+ 			sound)		echo audio ;;
+ 			logiscan)	echo logiscan ;;
+ 			ac4096)		echo ac4096 ;;
+-			hw)	echo helloworld ;;
+ 			sbpcd | sbpcd[123])	echo $1 ;;
+ 			joystick)	echo js ;;
+ 			apm_bios)	echo apm ;;
+@@ -222,44 +247,49 @@
+ do
+ 	case $arg in
+ 	generic)
+-		$0 $opts std
+-		$0 $opts fd
+-		$0 $opts fd0 fd1
+-		$0 $opts hda hdb
+-		$0 $opts xda xdb
+-		$0 $opts sda sdb sdc sdd
+-		$0 $opts pty
+-		$0 $opts console
+-		$0 $opts ttyS0 ttyS1 ttyS2 ttyS3
+-		$0 $opts busmice
+-		$0 $opts lp
+-		$0 $opts par
++		$0 $opts std || exit 1
++		$0 $opts fd || exit 1
++		$0 $opts fd0 fd1 || exit 1
++		$0 $opts hda hdb || exit 1
++		$0 $opts xda xdb || exit 1
++		$0 $opts sda sdb sdc sdd || exit 1
++		$0 $opts pty || exit 1
++		$0 $opts console || exit 1
++		$0 $opts ttyS0 ttyS1 ttyS2 ttyS3 || exit 1
++		$0 $opts busmice || exit 1
++		$0 $opts lp || exit 1
++		$0 $opts par || exit 1
+ 		;;
+ 	local)
+-		$0.local $opts
++		$0.local $opts || exit 1
+ 		;;
+ 	std)
+ 		makedev mem     c 1 1 $kmem
+ 		makedev kmem    c 1 2 $kmem
+-		makedev null    c 1 3 $public
++		makedev null    c 1 3 $pub_rw
+ 		makedev port    c 1 4 $kmem
+-		makedev zero    c 1 5 $public
++		makedev zero    c 1 5 $pub_rw
+ 		symlink core    $procfs/kcore
+-		makedev full    c 1 7 $public
+-		makedev random  c 1 8 $public
+-		makedev urandom c 1 9 $public
+-		$0 ram
++		makedev full    c 1 7 $pub_rw
++		makedev random  c 1 8 $pub_ro
++		makedev urandom c 1 9 $pub_ro
++		$0 $opts ram || exit 1
+ 		makedev tty  c 5 0 $tty
+ 		;;
+ 	ram)
+ 		for i in 0 1 2 3 4 5 6 7 ; do
+ 			makedev ram$i  b 1 $i $disk
+ 		done
+-		ln -sf ram0 ram
++		if [ "$opt_d" ]
++		then
++			rm -f ram
++		else
++			ln -sf ram0 ram
++		fi
+ 		makedev initrd b 1 250 $disk
+ 		;;
+ 	console)
+-		major=`Major vcs`	# not fatal
++		major=`Major vcs 7`
+ 		# console
+ 		makedev tty0 c 4 0 $cons
+ 		makedev console c 5 1 $cons
+@@ -302,7 +332,7 @@
+ 		do
+ 			ptysufs="$ptysufs pty$i"
+ 		done
+-		$0 $opts $ptysufs
++		$0 $opts $ptysufs || exit 1
+ 		;;
+ 	cyclades|ttyC)
+ 		major1=`Major ttyC 19` || continue
+@@ -585,7 +615,7 @@
+ 		makedev ${arg}H1600 b $major `math $base + 124` $floppy
+ 		;;
+ 	hd[a-b])
+-		major=`Major ide0` || major=`Major hd 3` || continue
++		major=`Major ide0 3` || continue
+ 		unit=`suffix $arg hd`
+ 		base=`index ab $unit`
+ 		base=`math $base \* 64`
+@@ -1042,10 +1072,6 @@
+ 		major=`Major dcf` || continue
+ 		makedev $arg c $major 0 $system
+ 		;;
+-	helloworld)
+-		major=`Major hw` || continue
+-		makedev helloworld c $major 0 $public
+-		;;
+ 	update)
+ 		if [ ! "$devices" ]
+ 		then
+@@ -1080,8 +1106,8 @@
+ 			exec 3<&-
+ 		fi
+ 		create="$create "`cvt $devs`
+-		[ "$delete" != "" ] && $0 $opts -d $delete
+-		[ "$create" != " " ] && $0 $opts $create
++		[ "$delete" != "" ] && $0 $opts -d $delete || exit 1
++		[ "$create" != " " ] && $0 $opts $create || exit 1
+ 		[ "$opt_n" ] && continue
+ 		for device in $devices
+ 		do
