@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iputils/iputils.spec,v 1.13 2003/10/21 18:32:29 mci Exp $
+# $Id: Owl/packages/iputils/iputils.spec,v 1.14 2003/10/22 00:08:25 solar Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
@@ -31,11 +31,13 @@ mv -f bonding-0.2/README bonding-0.2/README.ifenslave
 %patch2 -p1
 %patch3 -p0
 
+%{expand:%%define optflags %optflags -Wall}
+
 %build
 make \
-	CCOPT="-D_GNU_SOURCE $RPM_OPT_FLAGS -Wall" \
+	CCOPT="-D_GNU_SOURCE $RPM_OPT_FLAGS" \
 	IPV4_TARGETS="tracepath ping clockdiff rdisc arping" # no tftpd, rarpd
-gcc $RPM_OPT_FLAGS -Wall -s bonding-0.2/ifenslave.c -o bonding-0.2/ifenslave
+gcc $RPM_OPT_FLAGS -s bonding-0.2/ifenslave.c -o bonding-0.2/ifenslave
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -90,11 +92,11 @@ fi
 /etc/control.d/facilities/ping
 
 %changelog
-* Thu Oct 21 2003 Michail Litvak <mci@owl.openwall.com> 020927-owl2
+* Thu Oct 21 2003 Michail Litvak <mci@owl.openwall.com> ss020927-owl2
 - reduce -owl-socketbits.diff to include only sockaddr_storage
 difinition, because previous version broke tracepath.
 
-* Thu Oct 16 2003 Michail Litvak <mci@owl.openwall.com> 020927-owl1
+* Thu Oct 16 2003 Michail Litvak <mci@owl.openwall.com> ss020927-owl1
 - ss020927
 - Fixed building with kernel >= 2.4.22.
 - Source archive now contains precompiled man pages, so don't include
