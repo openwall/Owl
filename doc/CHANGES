@@ -12,6 +12,17 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/07/21 -
+2002/07/28	Packages: pam_passwdqc, pam
+Imported the pam_passwdqc(8) manual page back from FreeBSD with minor
+corrections to it and the README, also moving the pam.d and pam.conf
+pages to section 5 where they belong.
+
+2002/07/23	Package: gawk
+Moved profiling gawk (pgawk) into separate subpackage (gawk-profile),
+not built or installed by default.  The PostScript documentation is
+now installed compressed.
+
 2002/07/14 -
 2002/07/18	Package: perl
 SECURITY FIX	Severity: low, local, passive
@@ -827,4 +838,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.112 2002/07/18 07:49:32 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.113 2002/07/27 23:47:24 solar Exp $
