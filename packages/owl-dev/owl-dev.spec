@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.5 2001/02/04 22:22:35 solar Exp $
+# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.6 2001/03/04 19:25:59 solar Exp $
 
 Summary: Initial set of device files and MAKEDEV, a script to manage them
 Name: owl-dev
-Version: 0.4
+Version: 0.5
 Release: 1owl
 Copyright: public domain
 Group: System Environment/Base
@@ -54,6 +54,9 @@ cd /dev
 %files -f filelist
 
 %changelog
+* Sun Mar 04 2001 Solar Designer <solar@owl.openwall.com>
+- USB printers and mice.
+
 * Mon Feb 05 2001 Solar Designer <solar@owl.openwall.com>
 - Create devices of more categories by default (st, scd, sg, md, loop, audio).
 

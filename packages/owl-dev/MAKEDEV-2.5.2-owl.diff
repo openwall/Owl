@@ -1,6 +1,6 @@
 diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
 --- MAKEDEV-2.5.2.orig/MAKEDEV	Thu Mar  2 01:16:37 2000
-+++ MAKEDEV-2.5.2/MAKEDEV	Mon Feb  5 01:17:58 2001
++++ MAKEDEV-2.5.2/MAKEDEV	Sun Mar  4 22:07:18 2001
 @@ -1,6 +1,11 @@
  #!/bin/bash -
  
@@ -139,7 +139,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  			sbpcd | sbpcd[123])	echo $1 ;;
  			joystick)	echo js ;;
  			apm_bios)	echo apm ;;
-@@ -222,44 +248,56 @@
+@@ -222,44 +248,57 @@
  do
  	case $arg in
  	generic)
@@ -174,6 +174,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
 +		$0 $opts lp || exit 1
 +		$0 $opts par || exit 1
 +		$0 $opts audio || exit 1
++		$0 $opts usb || exit 1
  		;;
  	local)
 -		$0.local $opts
@@ -218,7 +219,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		# console
  		makedev tty0 c 4 0 $cons
  		makedev console c 5 1 $cons
-@@ -302,7 +340,15 @@
+@@ -302,7 +341,15 @@
  		do
  			ptysufs="$ptysufs pty$i"
  		done
@@ -235,7 +236,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		;;
  	cyclades|ttyC)
  		major1=`Major ttyC 19` || continue
-@@ -531,9 +577,11 @@
+@@ -531,9 +578,11 @@
  		major=`Major mouse 10` || continue
  		makedev logimouse c $major 0 $mouse
  		makedev psmouse   c $major 1 $mouse
@@ -247,7 +248,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		;;
  	js)
  		major=`Major Joystick` || continue
-@@ -585,12 +633,12 @@
+@@ -585,12 +634,12 @@
  		makedev ${arg}H1600 b $major `math $base + 124` $floppy
  		;;
  	hd[a-b])
@@ -262,7 +263,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		do
  			makedev hd$unit$part b $major `math $base + $part` $disk
  		done
-@@ -601,7 +649,7 @@
+@@ -601,7 +650,7 @@
  		base=`index cd $unit`
  		base=`math $base \* 64`
  		makedev hd$unit b $major $base $disk
@@ -271,7 +272,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		do
  			makedev hd$unit$part b $major `expr $base + $part` $disk
  		done
-@@ -612,7 +660,7 @@
+@@ -612,7 +661,7 @@
  		base=`index ef $unit`
  		base=`math $base \* 64`
  		makedev hd$unit b $major $base $disk
@@ -280,7 +281,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		do
  			makedev hd$unit$part b $major `expr $base + $part` $disk
  		done
-@@ -623,7 +671,7 @@
+@@ -623,7 +672,7 @@
  		base=`index gh $unit`
  		base=`math $base \* 64`
  		makedev hd$unit b $major $base $disk
@@ -289,7 +290,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		do
  			makedev hd$unit$part b $major `expr $base + $part` $disk
  		done
-@@ -649,7 +697,7 @@
+@@ -649,7 +698,7 @@
  		base=`index abcd $unit`
  		base=`math $base \* 64`
  		makedev xd$unit b $major $base $disk
@@ -298,7 +299,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		do
  			makedev xd$unit$part b $major `expr $base + $part` $disk
  		done
-@@ -665,7 +713,7 @@
+@@ -665,7 +714,7 @@
                          base=`math $base \- 256`
                  fi
  		makedev sd$unit b $major $base $disk
@@ -307,7 +308,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		do
  			minor=`expr $base + $part`
  			makedev sd$unit$part b $major $minor $disk
-@@ -758,14 +806,14 @@
+@@ -758,14 +807,14 @@
  		done
  		;;
  	loop)
@@ -324,18 +325,29 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		for part in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
  		do
  			makedev md$part b $major $part $disk
-@@ -1042,10 +1090,6 @@
+@@ -1042,9 +1091,18 @@
  		major=`Major dcf` || continue
  		makedev $arg c $major 0 $system
  		;;
 -	helloworld)
 -		major=`Major hw` || continue
 -		makedev helloworld c $major 0 $public
--		;;
++	usb)
++		major=`Major usb 180`
++		if [ "$opt_d" ]; then
++			test -d usb && rmdir usb
++		else
++			mkdir -p -m 755 usb
++		fi
++		for i in 0 1 2 3 # up to 15
++		do
++			makedev usb/lp$i    c $major $i $printer
++			makedev usb/mouse$i c $major `math $i + 16` $mouse
++		done
+ 		;;
  	update)
  		if [ ! "$devices" ]
- 		then
-@@ -1080,8 +1124,8 @@
+@@ -1080,8 +1138,8 @@
  			exec 3<&-
  		fi
  		create="$create "`cvt $devs`
