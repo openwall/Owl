@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libnids/libnids.spec,v 1.10 2004/02/17 00:03:40 solar Exp $
+# $Id: Owl/packages/libnids/libnids.spec,v 1.11 2004/02/17 00:07:50 solar Exp $
 
 Summary: NIDS E-component.
 Name: libnids
@@ -9,7 +9,7 @@ License: GPL
 Group: System Environment/Libraries
 URL: http://libnids.sourceforge.net
 Source: %name-%version.tar.gz
-Patch0: libnids-1.18-snax-prism-patch.diff
+Patch0: libnids-1.18-snax-prism.diff
 PreReq: /sbin/ldconfig
 BuildRequires: autoconf, libpcap-devel, libnet-devel
 BuildRoot: /override/%name-%version
