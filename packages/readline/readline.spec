@@ -1,4 +1,4 @@
-# $Id: Owl/packages/readline/readline.spec,v 1.11 2002/08/27 18:35:34 solar Exp $
+# $Id: Owl/packages/readline/readline.spec,v 1.12 2002/08/27 19:30:44 solar Exp $
 
 Summary: A library for editing typed in command lines.
 Name: readline
@@ -83,7 +83,6 @@ rm -rf $RPM_BUILD_ROOT
 /sbin/ldconfig
 /sbin/install-info %{_infodir}/history.info.gz %{_infodir}/dir
 /sbin/install-info %{_infodir}/readline.info.gz %{_infodir}/dir
-/sbin/install-info %{_infodir}/rluserman.info.gz %{_infodir}/dir
 
 %postun -p /sbin/ldconfig
 
@@ -92,8 +91,6 @@ if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %{_infodir}/history.info.gz \
 		%{_infodir}/dir
 	/sbin/install-info --delete %{_infodir}/readline.info.gz \
-		%{_infodir}/dir
-	/sbin/install-info --delete %{_infodir}/rluserman.info.gz \
 		%{_infodir}/dir
 fi
 
@@ -111,9 +108,6 @@ fi
 %doc %{_docdir}/examples/*
 
 %changelog
-* Tue Aug 27 2002 Solar Designer <solar@owl.openwall.com>
-- Do register rluserman.info into the info directory.
-
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
 - Deal with info dir entries such that the menu looks pretty.
 
