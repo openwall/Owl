@@ -409,15 +409,10 @@ version, only one such subtree will be dumped.
 
 	rpm.
 
-[PRIORITY: high]
-[ASSIGNED: galaxy@]
-Solve the segfault when installing "fileutils sh-utils textutils" with
-14-character long(?!) --root paths.  Solve spurious dependencies on
-libcrypto.so.0.9.6 and libssl.so.0.9.6 when upgrading to new OpenSSL
-_and_ to all SSL-dependent packages already re-built against the new
-OpenSSL.  Solve spurious "cannot open Providename index using db3"
-with fresh installs, "db4 error(16) from dbenv->remove: Device or
-resource busy" with updates.
+[PRIORITY: N/A]
+Reproduce and solve the segfault when installing "fileutils sh-utils
+textutils" with certain --root paths.  We're no longer able to
+reproduce this, although the bug is likely still there.
 
 [PRIORITY: medium]
 Audit and correct rpm's temporary file handling and its support for
@@ -529,4 +524,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.50 2004/11/21 12:36:14 solar Exp $
+$Id: Owl/doc/TODO,v 1.51 2005/01/14 22:25:55 solar Exp $
