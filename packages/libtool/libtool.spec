@@ -1,9 +1,9 @@
-# $Id: Owl/packages/libtool/libtool.spec,v 1.6 2002/08/26 16:43:48 mci Exp $
+# $Id: Owl/packages/libtool/libtool.spec,v 1.7 2003/10/22 07:30:16 solar Exp $
 
 Summary: The GNU Libtool, which simplifies the use of shared libraries.
 Name: libtool
 Version: 1.3.5
-Release: owl10
+Release: owl11
 License: GPL
 Group: Development/Tools
 Source: ftp://ftp.gnu.org/gnu/libtool/libtool-%{version}.tar.gz
@@ -11,6 +11,7 @@ Patch0: libtool-1.2f-rh-cache.diff
 Patch1: libtool-1.3.5-rh-mktemp.diff
 Patch2: libtool-1.3.5-rh-nonneg.diff
 Patch3: libtool-1.3.5-owl-info.diff
+Patch4: libtool-1.3.5-owl-buildhost.diff
 PreReq: /sbin/install-info, autoconf, automake, m4, perl
 Requires: libtool-libs = %{version}-%{release}, mktemp
 Prefix: %{_prefix}
@@ -35,6 +36,7 @@ shared libraries.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 rm doc/libtool.info
@@ -104,7 +106,10 @@ fi
 %{_libdir}/libltdl.so.*
 
 %changelog
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Wed Oct 22 2003 Solar Designer <solar@owl.openwall.com> 1.3.5-owl11
+- Prevent build host name leaks into the generated libtool script.
+
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1.3.5-owl10
 - Deal with info dir entries such that the menu looks pretty.
 
 * Tue Feb 05 2002 Michail Litvak <mci@owl.openwall.com>
