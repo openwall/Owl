@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ncurses/ncurses.spec,v 1.9 2000/12/10 02:31:08 solar Exp $
+# $Id: Owl/packages/ncurses/ncurses.spec,v 1.10 2000/12/24 10:20:43 solar Exp $
 
 %define 	major		5
 %define 	oldmajor	4
@@ -6,7 +6,7 @@
 Summary: 	A CRT screen handling and optimization package.
 Name: 		ncurses
 Version: 	5.2
-Release: 	5owl
+Release: 	6owl
 Copyright: 	distributable
 Group: 		System Environment/Libraries
 URL: 		http://dickey.his.com/ncurses/ncurses.html
@@ -30,6 +30,7 @@ discontinued 4.4BSD classic curses library.
 %package devel
 Summary: The development files for applications which use ncurses.
 Group: Development/Libraries
+Autoreq: false
 Requires: ncurses = %{PACKAGE_VERSION}
 
 %description devel
@@ -41,13 +42,13 @@ which will use ncurses.
 
 
 %package compat
-Summary: Ncurses compatibility for ncurses 4.x
+Summary: ncurses compatibility for ncurses 4.x
 Group: System Environment/Libraries
 Requires: ncurses = %{PACKAGE_VERSION}
 Provides: libform.so.%{oldmajor} libmenu.so.%{oldmajor} libncurses.so.%{oldmajor} libpanel.so.%{oldmajor}
 
 %description compat
-This ncurses package provides compatiblity libraries for packages
+This ncurses package provides compatibility libraries for packages
 built against Red Hat Linux 6.2.
 
 # Use %optflags_lib for this package if defined.
@@ -130,6 +131,9 @@ ln -s libpanel.so.%{version} $RPM_BUILD_ROOT/usr/lib/libpanel.so.%{oldmajor}
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Sun Dec 24 2000 Solar Designer <solar@owl.openwall.com>
+- Autoreq: false for the -devel package to install before perl.
+
 * Sun Dec 10 2000 Solar Designer <solar@owl.openwall.com>
 - Removed the last remaining RH (security) patch which is now redundant
 and had a race, anyway.
