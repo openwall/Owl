@@ -1,9 +1,9 @@
-# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.9 2003/07/31 22:24:51 solar Exp $
+# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.10 2003/08/10 01:09:10 solar Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
 Version: 1.4.1
-Release: owl4
+Release: owl5
 License: BSD for syslogd and GPL for klogd
 Group: System Environment/Daemons
 URL: http://www.infodrom.org/projects/sysklogd/
@@ -45,7 +45,7 @@ places according to a configuration file.
 %patch9 -p1
 
 %build
-make CFLAGS="$RPM_OPT_FLAGS -Wall -DSYSV"
+make CFLAGS="$RPM_OPT_FLAGS -Wall -DSYSV -D_FILE_OFFSET_BITS=64"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -106,6 +106,9 @@ fi
 %_mandir/*/*
 
 %changelog
+* Sun Aug 10 2003 Solar Designer <solar@owl.openwall.com> 1.4.1-owl5
+- Build with LFS (thanks to Dmitry V. Levin).
+
 * Fri Aug 01 2003 Solar Designer <solar@owl.openwall.com> 1.4.1-owl4
 - Added URL.
 
