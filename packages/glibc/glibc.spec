@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.40 2002/08/26 16:07:56 mci Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.41 2002/08/27 18:29:20 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -167,7 +167,7 @@ echo 'ASFLAGS-.os += -Wa,-Av8plusa' >> sysdeps/sparc/sparc32/elf/Makefile
 %endif
 
 %build
-rm manual/{stdio,libc}.info
+rm manual/libc.info*
 rm -rf build-$RPM_ARCH-linux
 mkdir build-$RPM_ARCH-linux
 cd build-$RPM_ARCH-linux
