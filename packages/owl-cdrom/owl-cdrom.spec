@@ -1,10 +1,10 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.1 2001/07/27 20:17:22 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.2 2001/07/28 16:22:04 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROM's.
 Name: owl-cdrom
 Version: 0.0
-Release: 1owl
-Copyright: GPL
+Release: 2owl
+License: GPL
 Group: System Environment/Base
 Source0: rc.ramdisk
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
@@ -22,6 +22,12 @@ cd $RPM_BUILD_ROOT
 touch .Owl-CD-ROM
 install -m 700 $RPM_SOURCE_DIR/rc.ramdisk etc/rc.d/
 ln -s ../rom/{dev,etc,home,root,tmp,var} ram/
+
+%pre
+if [ "$CDROM" != "yes" ]; then
+	echo "Please set CDROM=yes if you know what you're doing"
+	exit 1
+fi
 
 %post
 set -e
@@ -57,5 +63,8 @@ rm -rf $RPM_BUILD_ROOT
 /ram
 
 %changelog
+* Sat Jul 28 2001 Solar Designer <solar@owl.openwall.com>
+- Require CDROM=yes such that this package isn't installed by mistake.
+
 * Fri Jul 27 2001 Solar Designer <solar@owl.openwall.com>
 - Initial version.
