@@ -27,7 +27,12 @@ BuildRoot for manual builds of the package, especially on non-Owl.
 
 4. Separate tag names and values you set them to with a single space
 character.  Use commas (also followed by a space) to separate items in
-dependency lists.
+dependency lists.  Do terminate Summary lines with a dot.  In both
+Summary and %description (as well as in any other documentation),
+avoid capitalizing the names of commands, even if they happen to be
+the first word in a sentence, unless the capitalized form is the
+official name for the software in question.  Use double spaces to
+separate sentences.
 
 5. Our build environment sets the C/C++ compiler optimization flags in
 %optflags in a way that is optimal for compiling standalone programs
@@ -117,4 +122,4 @@ options:
 This does not exactly match our preferred coding style and thus isn't
 to be used on sources already in Owl.
 
-$Id: Owl/doc/CONVENTIONS,v 1.4 2001/12/08 00:36:50 solar Exp $
+$Id: Owl/doc/CONVENTIONS,v 1.5 2001/12/20 21:47:21 solar Exp $
