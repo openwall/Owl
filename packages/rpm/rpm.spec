@@ -1,9 +1,9 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.27 2003/05/14 23:59:14 solar Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.28 2003/05/15 00:25:39 solar Exp $
 
 Summary: The Red Hat package management system.
 Name: rpm
 Version: 3.0.6
-Release: owl6
+Release: owl7
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-3.0.x/rpm-%{version}.tar.gz
@@ -17,9 +17,10 @@ Patch4: rpm-3.0.5-owl-includes.diff
 Patch5: rpm-3.0.5-owl-gendiff.diff
 Patch6: rpm-3.0.6-owl-buildhost.diff
 Patch7: rpm-3.0.6-owl-macros.diff
-Patch8: rpm-3.0.6-alt-owl-autodeps-symbol-versioning.diff
-Patch9: rpm-3.0.6-owl-popt-sgid.diff
-Patch10: rpm-3.0.6-owl-rpmrc.diff
+Patch8: rpm-3.0.6-owl-popt-sgid.diff
+Patch9: rpm-3.0.6-alt-owl-autodeps-symbol-versioning.diff
+Patch10: rpm-3.0.6-alt-rpmio-gzclose.diff
+Patch20: rpm-3.0.6-owl-rpmrc.diff
 PreReq: /sbin/ldconfig
 PreReq: gawk, fileutils, textutils, sh-utils, mktemp
 Requires: popt, bzip2 >= 0.9.0c-2
@@ -92,6 +93,7 @@ EOF
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch20 -p1
 
 %define _noVersionedDependencies 1
 
@@ -238,6 +240,9 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Thu May 15 2003 Solar Designer <solar@owl.openwall.com> 3.0.6-owl7
+- Don't call gzerror() after gzclose(), patch from Dmitry V. Levin.
+
 * Wed Apr 30 2003 Solar Designer <solar@owl.openwall.com> 3.0.6-owl6
 - In popt, handle uses from SGID apps in the same way as from SUID ones.
 

@@ -1,0 +1,13 @@
+diff -urp rpm-3.0.6.orig/lib/rpmio.c rpm-3.0.6/lib/rpmio.c
+--- rpm-3.0.6.orig/lib/rpmio.c	Thu Jul 20 04:10:14 2000
++++ rpm-3.0.6/lib/rpmio.c	Thu May 15 00:16:04 2003
+@@ -2309,7 +2309,8 @@ static int gzdClose( /*@only@*/ void * c
+     if (fd) {
+ DBGIO(fd, (stderr, "==>\tgzdClose(%p) zerror %d %s\n", cookie, rc, fdbg(fd)));
+ 	if (rc < 0) {
+-	    fd->errcookie = gzerror(gzfile, &rc);
++	    /* gzfile is not available after gzclose() */
++	    fd->errcookie = "gzclose error";
+ 	    if (rc == Z_ERRNO) {
+ 		fd->syserrno = errno;
+ 		fd->errcookie = strerror(fd->syserrno);
