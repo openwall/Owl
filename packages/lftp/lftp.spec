@@ -1,4 +1,4 @@
-# $Id: Owl/packages/lftp/lftp.spec,v 1.5 2001/03/23 00:46:24 solar Exp $
+# $Id: Owl/packages/lftp/lftp.spec,v 1.6 2001/03/23 01:04:46 solar Exp $
 
 Summary: sophisticated command line file transfer program
 Name: lftp
@@ -67,11 +67,17 @@ install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/usr/man/man1/
 rm -rf $RPM_BUILD_ROOT
 
 %post
-test -e /usr/bin/ftp || ln -s lftp /usr/bin/ftp
+if [ ! -e /usr/bin/ftp -a ! -e /usr/man/man1/ftp.1.gz ]; then
+	ln -s lftp /usr/bin/ftp
+	ln -s lftp.1.gz /usr/man/man1/ftp.1.gz
+fi
 
 %preun
-if [ $1 -eq 0 -a -L /usr/bin/ftp ]; then
-	rm /usr/bin/ftp
+if [ $1 -eq 0 -a -L /usr/bin/ftp -a -L /usr/man/man1/ftp.1.gz ]; then
+	if cmp -s /usr/bin/ftp /usr/bin/lftp; then
+		rm /usr/bin/ftp
+		rm /usr/man/man1/ftp.1.gz
+	fi
 fi
 
 %files
