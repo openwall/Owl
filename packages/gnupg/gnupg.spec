@@ -1,15 +1,14 @@
-# $Id: Owl/packages/gnupg/gnupg.spec,v 1.25 2004/11/23 22:40:45 mci Exp $
+# $Id: Owl/packages/gnupg/gnupg.spec,v 1.26 2004/12/02 23:58:29 mci Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
-Version: 1.2.2
-Release: owl3
+Version: 1.2.6
+Release: owl1
 License: GPL
 Group: Applications/Cryptography
 URL: http://www.gnupg.org
 Source: ftp://ftp.gnupg.org/GnuPG/gnupg/%name-%version.tar.bz2
 Patch0: gnupg-1.2.2-fw-secret-key-checks.diff
-Patch1: gnupg-1.2.2-ds-no-elgamal.diff
 PreReq: /sbin/install-info
 Provides: gpg, openpgp
 BuildRequires: zlib-devel, bison, texinfo
@@ -31,12 +30,10 @@ all:
 install:
 EOF
 %patch0 -p1
-%patch1 -p1
 
 %build
 unset LINGUAS || :
 %configure \
-	--with-included-gettext \
 	--with-static-rnd=linux \
 	--with-mailprog=/usr/sbin/sendmail
 make
@@ -46,13 +43,6 @@ mkdir -p %buildroot%_libdir/%name
 %makeinstall transform=
 sed 's,\.\./g[0-9\.]*/,,g' tools/lspgpot > lspgpot
 install -m 755 lspgpot %buildroot%_bindir/lspgpot
-
-# XXX: (GM): Remove unpackaged files (check later)
-rm %buildroot%_bindir/gpgsplit
-rm %buildroot%_datadir/gnupg/FAQ
-rm %buildroot%_datadir/gnupg/faq.html
-rm %buildroot%_infodir/dir
-rm %buildroot%_datadir/locale/locale.alias
 
 %post
 /sbin/install-info %_infodir/gpg.info.gz %_infodir/dir \
@@ -76,6 +66,7 @@ fi
 
 %_bindir/gpg
 %_bindir/gpgv
+%_bindir/gpgsplit
 %_bindir/lspgpot
 %_datadir/locale/*/*/*
 %_libdir/%name
@@ -87,8 +78,16 @@ fi
 %_libexecdir/*
 %dir %_datadir/gnupg
 %config(noreplace) %_datadir/gnupg/options.skel
+%exclude %_datadir/gnupg/FAQ
+%exclude %_datadir/gnupg/faq.html
+%exclude %_infodir/dir
 
 %changelog
+* Fri Dec 03 2004 Michail Litvak <mci@owl.openwall.com> 1.2.6-owl1
+- 1.2.6
+- Dropped patch which was included into upstream.
+- Package gpgsplit tool.
+
 * Sat Nov 29 2003 Michail Litvak <mci@owl.openwall.com> 1.2.2-owl3
 - Added patch by David Shaw to disable the ability to create signatures
 using the ElGamal sign+encrypt (type 20) keys as well as to remove
