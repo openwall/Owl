@@ -5,9 +5,9 @@
  }
  
 +/*
-+ *  Taken from John The Ripper by Solar Designer
++ *  Taken from John the Ripper by Solar Designer
 + */
-+  
++
 +int write_loop(int fd, char *buffer, int count)
 +{
 +  int offset, block;
