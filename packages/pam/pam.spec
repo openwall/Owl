@@ -1,9 +1,9 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.27 2002/08/22 00:43:31 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.28 2003/07/22 10:53:28 solar Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
 Version: 0.75
-Release: owl18
+Release: owl19
 %define rh_version %{version}-10
 License: GPL or BSD
 Group: System Environment/Base
@@ -21,6 +21,7 @@ Patch12: pam-0.75-owl-pam_lastlog.diff
 Patch13: pam-0.75-owl-pam_securetty.diff
 Patch14: pam-0.75-owl-pam_limits.diff
 Patch15: pam-0.75-owl-pam_motd.diff
+Patch16: pam-0.75-owl-pam_wheel.diff
 Patch20: pam-0.75-owl-no-cracklib.diff
 PreReq: /sbin/ldconfig
 Requires: glibc-crypt_blowfish, pwdb >= 0.61-1owl
@@ -73,6 +74,7 @@ ln -s ../../../libpam_misc/pam_misc.h libpam/include/security/pam_misc.h
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
+%patch16 -p1
 %patch20 -p1
 mkdir modules/READMEs
 for f in modules/pam_*/README; do
@@ -207,7 +209,10 @@ chgrp chkpwd %{_libexecdir}/chkpwd && chmod 710 %{_libexecdir}/chkpwd
 %doc doc/specs/rfc86.0.txt
 
 %changelog
-* Thu Aug 22 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Jul 22 2003 Solar Designer <solar@owl.openwall.com> 0.75-owl19
+- Patched pam_wheel to never rely on getlogin(3).
+
+* Thu Aug 22 2002 Solar Designer <solar@owl.openwall.com> 0.75-owl18
 - Patched pam_motd to behave on errors.
 
 * Sun Jul 28 2002 Solar Designer <solar@owl.openwall.com>
