@@ -1,11 +1,11 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.13 2001/02/28 09:20:58 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.14 2001/03/18 01:34:02 solar Exp $
 
 # Version of OpenSSH
 %define oversion 2.5.1p1
 Summary: OpenSSH free Secure Shell (SSH) implementation
 Name: openssh
 Version: %{oversion}
-Release: 1owl
+Release: 2owl
 URL: http://www.openssh.com/
 Source0: http://violet.ibs.com.au/openssh/files/openssh-%{oversion}.tar.gz
 Source1: sshd.pam
@@ -16,6 +16,7 @@ Patch0: openssh-2.5.1p1-owl-hide-unknown.diff
 Patch1: openssh-2.5.1p1-owl-always-auth.diff
 Patch2: openssh-2.5.1p1-owl-pam_chauthtok-no-loop.diff
 Patch3: openssh-2.5.1p1-owl-pam_userpass.diff
+Patch4: openssh-2.5.1p1-owl-scp-stalltime.diff
 Copyright: BSD
 Group: Applications/Internet
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
@@ -90,6 +91,7 @@ clients to connect to your host.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" LIBS="-lcrypt -lpam -lpam_misc" ./configure \
@@ -177,6 +179,11 @@ fi
 %attr(0700,root,root) %config /etc/rc.d/init.d/sshd
 
 %changelog
+* Sun Mar 18 2001 Solar Designer <solar@owl.openwall.com>
+- Increased the STALLTIME for scp from 5 to 60 seconds (needed for large
+windows and slow links).
+- scp will now calculate ETA without account for possible stall time.
+
 * Wed Feb 28 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 2.5.1p1.
 - Updated the don't-log-unknown-users and pam_userpass patches.
