@@ -1,4 +1,4 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.4 2000/08/23 16:02:30 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.5 2000/09/16 12:53:22 solar Exp $
 
 Summary: Simple PAM-based Applications
 Name: SimplePAMApps
@@ -32,8 +32,8 @@ make check
 
 %build
 touch conf/.ignore_age
-./configure
-make COPTFLAGS="$RPM_OPT_FLAGS -Wall" WANT_PWDB=no
+CFLAGS="$RPM_OPT_FLAGS -Wall" ./configure
+make
 
 %install
 mkdir -p $RPM_BUILD_ROOT/bin
@@ -80,6 +80,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc README CHANGELOG* NOTES.su Discussions
 
 %changelog
+* Sat Sep 16 2000 Solar Designer <solar@owl.openwall.com>
+- Use RPM_OPT_FLAGS correctly.
+
 * Wed Aug 23 2000 Solar Designer <solar@owl.openwall.com>
 - %config(noreplace) for /etc/pam.d files.
 
