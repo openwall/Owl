@@ -1,11 +1,11 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.26 2004/09/10 07:21:51 galaxy Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.27 2004/11/02 02:42:57 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
 Summary: Dynamic Host Configuration Protocol (DHCP) distribution.
 Name: dhcp
 Version: 3.0pl2
-Release: owl7
+Release: owl8
 License: ISC License
 Group: System Environment/Daemons
 URL: http://www.isc.org/products/DHCP/
@@ -109,10 +109,10 @@ cat <<EOF > $RPM_BUILD_ROOT/etc/sysconfig/dhcpd
 DHCPDARGS=
 EOF
 
-# XXX: (GM): Remove unpackaged files (check later)
-rm %buildroot/sbin/dhclient
-rm %buildroot/sbin/dhclient-script
+# Remove unpackaged files
 rm %buildroot%_bindir/omshell
+rm %buildroot%_mandir/man3/omapi.3*
+rm %buildroot%_mandir/man3/omshell.3*
 rm %buildroot/usr/local/include/dhcpctl.h
 rm %buildroot/usr/local/include/isc-dhcp/boolean.h
 rm %buildroot/usr/local/include/isc-dhcp/dst.h
@@ -126,13 +126,15 @@ rm %buildroot/usr/local/include/omapip/buffer.h
 rm %buildroot/usr/local/include/omapip/omapip.h
 rm %buildroot/usr/local/lib/libdhcpctl.a
 rm %buildroot/usr/local/lib/libomapi.a
-rm %buildroot%_mandir/man3/omapi.3*
-rm %buildroot%_mandir/man3/omshell.3*
+%if !%BUILD_DHCP_CLIENT
+rm %buildroot/sbin/dhclient
+rm %buildroot/sbin/dhclient-script
 rm %buildroot%_mandir/man5/dhclient.conf.5*
 rm %buildroot%_mandir/man5/dhclient.leases.5*
-rm %buildroot%_mandir/man8/dhclient-script.8*
 rm %buildroot%_mandir/man8/dhclient.8*
+rm %buildroot%_mandir/man8/dhclient-script.8*
 rm %buildroot/var/lib/dhcp/dhclient/state/dhclient.leases
+%endif
 
 %pre
 grep -q ^dhcp: /etc/group || groupadd -g 188 dhcp
@@ -198,6 +200,9 @@ fi
 %_mandir/man8/dhcrelay.8*
 
 %changelog
+* Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl8
+- Remove unpackaged files.
+
 * Sun Jun 13 2004 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl7
 - Added a bounds checking patch covering sprintf() calls with "%s" format
 specifier and non-constant strings and forcing the use of snprintf() and

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gpm/gpm.spec,v 1.16 2004/09/10 07:23:53 galaxy Exp $
+# $Id: Owl/packages/gpm/gpm.spec,v 1.17 2004/11/02 03:09:15 solar Exp $
 
 # This defines the library version that this package builds.
 %define LIBVER 1.18.0
@@ -7,7 +7,7 @@
 Summary: A mouse server for the Linux console.
 Name: gpm
 Version: 1.19.6
-Release: owl3
+Release: owl4
 License: GPL
 Group: System Environment/Daemons
 Source0: ftp://arcana.linux.it/pub/gpm/%name-%version.tar.bz2
@@ -82,13 +82,15 @@ ln -sf libgpm.so.%LIBVER .%_libdir/libgpm.so
 mkdir -p .%_sysconfdir/rc.d/init.d
 install -m 755 $RPM_SOURCE_DIR/gpm.init .%_sysconfdir/rc.d/init.d/gpm
 
-# XXX: (GM): Remove unpackaged files (check later)
-rm %buildroot/etc/gpm-root.conf
+# Remove unpackaged files
 rm %buildroot%_bindir/disable-paste
-rm %buildroot%_sbindir/gpm-root
-rm %buildroot%_mandir/man1/gpm-root.1*
 rm %buildroot%_mandir/man1/mouse-test.1*
 rm %buildroot%_mandir/man7/gpm-types.7*
+%if !%BUILD_GPM_ROOT
+rm %buildroot%_sysconfdir/gpm-root.conf
+rm %buildroot%_sbindir/gpm-root
+rm %buildroot%_mandir/man1/gpm-root.1*
+%endif
 
 %pre
 rm -f /var/run/gpm.restart
@@ -142,6 +144,9 @@ fi
 %endif
 
 %changelog
+* Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 1.19.6-owl4
+- Remove unpackaged files.
+
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1.19.6-owl3
 - Deal with info dir entries such that the menu looks pretty.
 
