@@ -1,14 +1,13 @@
-# $Id: Owl/packages/man/man.spec,v 1.1 2000/08/09 23:22:26 solar Exp $
+# $Id: Owl/packages/man/man.spec,v 1.2 2001/05/18 06:00:05 solar Exp $
 
 Summary: A set of documentation tools: man, apropos and whatis.
 Name: man
-Version: 1.5h1
+Version: 1.5i
 Release: 1owl
 Copyright: GPL
 Group: System Environment/Base
-Source0: ftp://ftp.win.tue.nl/pub/linux/utils/man/man-%{version}.tar.gz
-Patch0: man-1.5h1-rh-owl-buildroot.diff
-Patch1: man-1.5h1-owl-makewhatis.diff
+Source: ftp://ftp.win.tue.nl/pub/linux-local/utils/man/man-%{version}.tar.gz
+Patch0: man-1.5i-owl-makewhatis.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: groff, mktemp
 
@@ -26,7 +25,6 @@ primary way to find documentation on a Linux system.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 
 %build
 ./configure -default +fsstnd
@@ -94,6 +92,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0775,root,man) %dir /var/catman/X11R6/cat[123456789n]
 
 %changelog
+* Fri May 18 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 1.5i.
+- Corrected the Source URL.
+
 * Thu Aug 10 2000 Solar Designer <solar@owl.openwall.com>
 - Imported this spec file from RH, simplified it.
 - Non-SGID installation as there's still no good solution for the man page
