@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.20 2002/05/23 08:22:28 mci Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.21 2002/05/29 02:09:13 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
 Version: 0.9.6d
-Release: owl2
+Release: owl3
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
@@ -11,7 +11,8 @@ Source: ftp://ftp.openssl.org/source/%{name}-%{version}.tar.gz
 Patch0: openssl-0.9.6d-owl-crypt.diff
 Patch1: openssl-0.9.6a-owl-glibc-enable_secure.diff
 Patch2: openssl-0.9.6d-owl-Makefile.diff
-Patch3: openssl-0.9.6d-ben-read-errors.diff
+Patch3: openssl-0.9.6d-owl-sparc-shared.diff
+Patch10: openssl-0.9.6d-ben-read-errors.diff
 PreReq: /sbin/ldconfig
 Provides: SSL
 BuildRequires: perl
@@ -65,13 +66,14 @@ popd
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p0
+%patch3 -p1
+%patch10 -p0
 
 %define openssldir /var/ssl
 %define opensslflags shared -DSSL_ALLOW_ADH --prefix=/usr
 
 %build
-perl -pi -e "s/-O.(?: -fomit-frame-pointer)?(?: -m.86)?/${RPM_OPT_FLAGS}/;" \
+perl -pi -e "s/-O.(?: -fomit-frame-pointer)?(?: -m.86)?/${RPM_OPT_FLAGS}/" \
 	Configure
 
 %ifarch %ix86
@@ -147,7 +149,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc doc
 
 %attr(0755,root,root) /usr/bin/*
-%attr(0755,root,root) /usr/lib/*.so*
+%attr(0755,root,root) /usr/lib/*.so.*
 %attr(0755,root,root) %{openssldir}/misc/*
 %attr(0644,root,root) /usr/man/man[157]/*
 
@@ -160,10 +162,15 @@ rm -rf $RPM_BUILD_ROOT
 %files devel
 %defattr(0644,root,root,0755)
 %attr(0644,root,root) /usr/lib/*.a
+%attr(0755,root,root) /usr/lib/*.so
 %attr(0644,root,root) /usr/include/openssl/*
 %attr(0644,root,root) /usr/man/man3/*
 
 %changelog
+* Wed May 29 2002 Solar Designer <solar@owl.openwall.com>
+- Made shared library builds work on SPARC (again).
+- Moved the .so symlinks to devel subpackage.
+
 * Sun May 12 2002 Solar Designer <solar@owl.openwall.com>
 - Updated to 0.9.6d.
 - Added a patch by Ben Laurie for "openssl dgst" to behave on read errors.
