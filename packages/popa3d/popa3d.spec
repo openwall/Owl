@@ -1,4 +1,4 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.24 2002/09/08 08:00:10 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.25 2002/09/08 08:59:54 solar Exp $
 
 Summary: Post Office Protocol (POP3) server.
 Name: popa3d
@@ -74,6 +74,8 @@ fi
 %changelog
 * Sun Sep 08 2002 Solar Designer <solar@owl.openwall.com>
 - Avoid non-ANSI/ISO C constructs.
+- Deal with file sizes beyond what will fit in unsigned long reasonably,
+avoid unnecessary lseek() and ftruncate() calls.
 
 * Fri Aug 02 2002 Solar Designer <solar@owl.openwall.com>
 - Use unsigned integer types where integer overflows are possible and

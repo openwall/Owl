@@ -414,6 +414,7 @@ static int mailbox_write(char *buffer)
 	unsigned long old, new;
 	unsigned long size;
 	int block;
+	int trunc;
 
 	msg = db.head;
 	old = new = 0;
@@ -443,19 +444,23 @@ static int mailbox_write(char *buffer)
 	} while ((msg = msg->next));
 
 	old = mailbox_size;
+	trunc = new < old;
+	if (lseek(mailbox_fd, old, SEEK_SET) < 0) return 1;
+	if (lseek(mailbox_fd, new, SEEK_SET) < 0) return 1;
 	while (1) {
-		if (lseek(mailbox_fd, old, SEEK_SET) < 0) return 1;
 		block = read(mailbox_fd, buffer, FILE_BUFFER_SIZE);
 		if (!block) break;
 		if (block < 0) return 1;
 
-		if (lseek(mailbox_fd, new, SEEK_SET) < 0) return 1;
 		if (write(mailbox_fd, buffer, block) != block) return 1;
 
-		old += block; new += block;
+		if (trunc) {
+			if ((new += block) < block) trunc = 0;
+			if (new >= old) trunc = 0;
+		}
 	}
 
-	if (ftruncate(mailbox_fd, new)) return 1;
+	if (trunc && ftruncate(mailbox_fd, new)) return 1;
 
 	return fsync(mailbox_fd);
 }
