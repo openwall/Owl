@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.7 2002/02/06 22:38:06 mci Exp $
+# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.8 2002/02/07 01:43:43 solar Exp $
 
 Summary: Pluggable authentication module for USER/PASS-style protocols.
 Name: pam_userpass
@@ -7,7 +7,6 @@ Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
 Source: pam_userpass-%{version}.tar.gz
-BuildRequires: pam >= 0.72-owl8
 BuildRoot: /override/%{name}-%{version}
 
 %description

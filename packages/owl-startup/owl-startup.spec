@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.23 2002/02/06 22:29:59 mci Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.24 2002/02/07 01:19:23 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -53,7 +53,7 @@ mv $RPM_BUILD_ROOT/etc/sysconfig/network-scripts/if{up,down} \
 ln -s /sbin/if{up,down} $RPM_BUILD_ROOT/etc/sysconfig/network-scripts/
 
 mkdir redhat
-mv sysconfig.txt sysvinitfiles redhat
+mv sysconfig.txt sysvinitfiles redhat/
 
 cd $RPM_BUILD_ROOT
 

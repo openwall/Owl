@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.12 2002/02/06 22:20:44 mci Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.13 2002/02/07 01:19:23 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -23,8 +23,8 @@ BuildRoot: /override/%{name}-%{version}
 
 %description
 This is a configuration tool to initially setup fstab, networking,
-root password, and timezone.  This is temporary solution and will be
-replaced with a more consistent and reliable tool in the future.
+root password, and timezone.  This is a temporary solution and will
+be replaced with a more consistent and reliable tool in the future.
 
 %prep
 %setup -n owl-setup -c -T
@@ -38,12 +38,12 @@ make CFLAGS="$RPM_OPT_FLAGS -Wall"
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/{etc/pam.d,usr/lib/owl-setup,usr/sbin}
 install -m 600 $RPM_SOURCE_DIR/owl-setup.conf $RPM_BUILD_ROOT/etc/
-install -m 700 passwdlg $RPM_BUILD_ROOT/usr/lib/owl-setup
+install -m 700 passwdlg $RPM_BUILD_ROOT/usr/lib/owl-setup/
 install -m 600 $RPM_SOURCE_DIR/setup.pam $RPM_BUILD_ROOT/etc/pam.d/setup
-install -m 700 $RPM_SOURCE_DIR/owl-setup $RPM_BUILD_ROOT/usr/lib/owl-setup
-install -m 700 $RPM_SOURCE_DIR/mkfstab $RPM_BUILD_ROOT/usr/lib/owl-setup
-install -m 700 $RPM_SOURCE_DIR/netcfg $RPM_BUILD_ROOT/usr/lib/owl-setup
-install -m 644 $RPM_SOURCE_DIR/README $RPM_BUILD_ROOT/usr/lib/owl-setup
+install -m 700 $RPM_SOURCE_DIR/owl-setup $RPM_BUILD_ROOT/usr/lib/owl-setup/
+install -m 700 $RPM_SOURCE_DIR/mkfstab $RPM_BUILD_ROOT/usr/lib/owl-setup/
+install -m 700 $RPM_SOURCE_DIR/netcfg $RPM_BUILD_ROOT/usr/lib/owl-setup/
+install -m 644 $RPM_SOURCE_DIR/README $RPM_BUILD_ROOT/usr/lib/owl-setup/
 ln -s /usr/lib/owl-setup/owl-setup $RPM_BUILD_ROOT/usr/sbin/setup
 
 %clean

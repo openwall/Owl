@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.10 2002/02/06 22:14:48 mci Exp $
+# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.11 2002/02/07 01:19:23 solar Exp $
 
 Summary: Initial directory hierarchy.
 Name: owl-hier
@@ -36,8 +36,7 @@ ln -s ../X11R6/bin usr/bin/X11
 ln -s ../X11R6/lib/X11 usr/lib/X11
 ln -s log var/adm
 ln -s spool/mail var/mail
-cp $RPM_SOURCE_DIR/special etc/mtree
-chmod 600 etc/mtree/special
+install -m 600 $RPM_SOURCE_DIR/special etc/mtree/
 
 # Build the filelist
 cd $RPM_BUILD_DIR

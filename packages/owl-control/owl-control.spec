@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-control/owl-control.spec,v 1.4 2002/02/06 22:01:52 mci Exp $
+# $Id: Owl/packages/owl-control/owl-control.spec,v 1.5 2002/02/07 01:19:23 solar Exp $
 
 Summary: A set of scripts to control installed system facilities.
 Name: owl-control
@@ -11,7 +11,7 @@ Source1: functions
 Requires: /bin/sh, /dev/null, sh-utils, fileutils, findutils
 Requires: sed, grep, mktemp
 BuildArchitectures: noarch
-Buildroot: /override/%{name}-%{version}
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The scripts included in this package provide a common interface to
@@ -24,8 +24,8 @@ from package installation.
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/{etc/control.d/facilities,usr/sbin}
-cp $RPM_SOURCE_DIR/control $RPM_BUILD_ROOT/etc
-cp $RPM_SOURCE_DIR/functions $RPM_BUILD_ROOT/etc/control.d
+cp $RPM_SOURCE_DIR/control $RPM_BUILD_ROOT/etc/
+cp $RPM_SOURCE_DIR/functions $RPM_BUILD_ROOT/etc/control.d/
 ln -s /etc/control $RPM_BUILD_ROOT/usr/sbin/control
 
 %clean

@@ -1,6 +1,4 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.15 2002/02/06 21:39:00 mci Exp $
-
-%define openssldir /var/ssl
+# $Id: Owl/packages/openssl/openssl.spec,v 1.16 2002/02/07 01:19:23 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
@@ -35,9 +33,9 @@ This package contains the base OpenSSL cryptography and SSL/TLS
 libraries and tools.
 
 %package devel
-Summary: Secure Sockets Layer and cryptography static libraries and headers
+Summary: Secure Sockets Layer and cryptography static libraries and headers.
 Group: Development/Libraries
-Requires: openssl
+Requires: openssl = %{version}-%{release}
 
 %description devel
 The OpenSSL Project is a collaborative effort to develop a robust,
@@ -62,9 +60,10 @@ libraries and header files required when developing applications.
 %patch1 -p1
 %patch2 -p1
 
-%build
+%define openssldir /var/ssl
 %define CONFIG_FLAGS shared -DSSL_ALLOW_ADH --prefix=/usr
 
+%build
 perl -pi -e "s/-O.(?: -fomit-frame-pointer)?(?: -m.86)?/${RPM_OPT_FLAGS}/;" \
 	Configure
 
@@ -192,47 +191,9 @@ binary compatibility).
 - Rename the passwd and rand manpages differently (this is still a hack).
 
 * Sun Jul 09 2000 Solar Designer <solar@owl.openwall.com>
+- Imported Damien Miller's spec file.
 - Added two patches from Trustix and, more importantly, a patch to avoid
 exporting crypt() as a symbol (which used to override the weak alias for
 crypt(3), while applications generally want the libcrypt version).  crypt
 defined here is now a #define, so is only available when the appropriate
 OpenSSL header is included.
-
-* Sun Feb 27 2000 Damien Miller <djm@mindrot.org>
-- Merged patches to spec
-- Updated to 0.9.5beta2 (now with manpages)
-* Sat Feb  5 2000 Michal Jaegermann <michal@harddata.com>
-- added 'linux-alpha' to configuration
-- fixed nasty absolute links
-* Tue Jan 25 2000 Bennett Todd <bet@rahul.net>
-- Added -DSSL_ALLOW_ADH, bumped Release to 4
-* Thu Oct 14 1999 Damien Miller <djm@mindrot.org>
-- Set default permissions
-- Removed documentation from devel sub-package
-* Thu Sep 30 1999 Damien Miller <djm@mindrot.org>
-- Added "make test" stage
-- GPG signed
-* Tue Sep 10 1999 Damien Miller <damien@ibs.com.au>
-- Updated to version 0.9.4
-* Tue May 25 1999 Damien Miller <damien@ibs.com.au>
-- Updated to version 0.9.3
-- Added attributes for all files
-- Paramatised openssl directory
-* Sat Mar 20 1999 Carlo M. Arenas Belon <carenas@jmconsultores.com.pe>
-- Added "official" bnrec patch and taking other out
-- making a link from ssleay to openssl binary
-- putting all changelog together on SPEC file
-* Fri Mar  5 1999 Henri Gomez <gomez@slib.fr>
-- Added bnrec patch
-* Tue Dec 29 1998 Jonathan Ruano <kobalt@james.encomix.es>
-- minimum spec and patches changes for openssl
-- modified for openssl sources
-* Sat Aug  8 1998 Khimenko Victor <khim@sch57.msk.ru>
-- shared library creating process honours $RPM_OPT_FLAGS
-- shared libarry supports threads (as well as static library)
-* Wed Jul 22 1998 Khimenko Victor <khim@sch57.msk.ru>
-- building of shared library completely reworked
-* Tue Jul 21 1998 Khimenko Victor <khim@sch57.msk.ru>
-- RPM is BuildRoot'ed
-* Tue Feb 10 1998 Khimenko Victor <khim@sch57.msk.ru>
-- all stuff is moved out of /usr/local

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/patch/patch.spec,v 1.3 2002/02/06 22:41:22 mci Exp $
+# $Id: Owl/packages/patch/patch.spec,v 1.4 2002/02/07 01:43:43 solar Exp $
 
 Summary: The GNU patch command, for modifying/upgrading files.
 Name: patch
@@ -58,5 +58,5 @@ rm -rf $RPM_BUILD_ROOT
 - added patch to fix default backup extension
 
 * Tue Nov 17 2000 Michail Litvak <mci@owl.openwall.com>
-- import from RH and Mandrake 
+- import from RH and Mandrake
 - sigsegv patch from MDK, stderr from RH

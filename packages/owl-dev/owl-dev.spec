@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.11 2002/02/06 22:05:23 mci Exp $
+# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.12 2002/02/07 01:19:23 solar Exp $
 
 Summary: Initial set of device files and MAKEDEV, a script to manage them.
 Name: owl-dev
@@ -28,7 +28,7 @@ initial set of device files to be placed into /dev.  It also provides
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/dev
-install -m 700 MAKEDEV $RPM_BUILD_ROOT/dev
+install -m 700 MAKEDEV $RPM_BUILD_ROOT/dev/
 
 # Create regular files with the proper names and permissions (not device
 # files, yet).  This idea (but not the implementation) is taken from iNs.
