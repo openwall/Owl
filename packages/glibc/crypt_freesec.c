@@ -2,7 +2,8 @@
  * This version is derived from the original implementation of FreeSec
  * (release 1.1) by David Burren.  I've reviewed the changes made in
  * OpenBSD (as of 2.7) and modified the original code in a similar way
- * where applicable.  Other changes have been made, as well -- SD.
+ * where applicable.  I've also made it reentrant and did a number of
+ * other changes -- SD.
  */
 
 /*
@@ -19,7 +20,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 4. Neither the name of the author nor the names of other contributors
+ * 3. Neither the name of the author nor the names of other contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -35,7 +36,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	$Id: Owl/packages/glibc/crypt_freesec.c,v 1.2 2002/07/04 19:20:38 solar Exp $
+ *	$Id: Owl/packages/glibc/crypt_freesec.c,v 1.3 2002/08/04 02:35:54 solar Exp $
  *
  * This is an original implementation of the DES and the crypt(3) interfaces
  * by David Burren <davidb@werj.com.au>.
@@ -64,6 +65,8 @@
 #include <stdio.h>
 #endif
 
+#include "crypt_freesec.h"
+
 #define _PASSWORD_EFMT1 '_'
 
 static u_char	IP[64] = {
@@ -73,8 +76,6 @@ static u_char	IP[64] = {
 	61, 53, 45, 37, 29, 21, 13,  5, 63, 55, 47, 39, 31, 23, 15,  7
 };
 
-static u_char	inv_key_perm[64];
-static u_char	u_key_perm[56];
 static u_char	key_perm[56] = {
 	57, 49, 41, 33, 25, 17,  9,  1, 58, 50, 42, 34, 26, 18,
 	10,  2, 59, 51, 43, 35, 27, 19, 11,  3, 60, 52, 44, 36,
@@ -86,7 +87,6 @@ static u_char	key_shifts[16] = {
 	1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1
 };
 
-static u_char	inv_comp_perm[56];
 static u_char	comp_perm[48] = {
 	14, 17, 11, 24,  1,  5,  3, 28, 15,  6, 21, 10,
 	23, 19, 12,  4, 26,  8, 16,  7, 27, 20, 13,  2,
@@ -98,7 +98,6 @@ static u_char	comp_perm[48] = {
  *	No E box is used, as it's replaced by some ANDs, shifts, and ORs.
  */
 
-static u_char	u_sbox[8][64];
 static u_char	sbox[8][64] = {
 	{
 		14,  4, 13,  1,  2, 15, 11,  8,  3, 10,  6, 12,  5,  9,  0,  7,
@@ -150,7 +149,6 @@ static u_char	sbox[8][64] = {
 	}
 };
 
-static u_char	un_pbox[32];
 static u_char	pbox[32] = {
 	16,  7, 20, 21, 29, 12, 28, 17,  1, 15, 23, 26,  5, 18, 31, 10,
 	 2,  8, 24, 14, 32, 27,  3,  9, 19, 13, 30,  6, 22, 11,  4, 25
@@ -170,25 +168,17 @@ static u_int32_t bits32[32] =
 
 static u_char	bits8[8] = { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
 
-static u_int32_t saltbits;
-static u_int32_t old_salt;
-static u_int32_t *bits28, *bits24;
-static u_char init_perm[64], final_perm[64];
-static u_int32_t en_keysl[16], en_keysr[16];
-static u_int32_t de_keysl[16], de_keysr[16];
-static int des_initialised = 0;
+static u_char	ascii64[] =
+	 "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+/*	  0000000000111111111122222222223333333333444444444455555555556666 */
+/*	  0123456789012345678901234567890123456789012345678901234567890123 */
+
 static u_char m_sbox[4][4096];
 static u_int32_t psbox[4][256];
 static u_int32_t ip_maskl[8][256], ip_maskr[8][256];
 static u_int32_t fp_maskl[8][256], fp_maskr[8][256];
 static u_int32_t key_perm_maskl[8][128], key_perm_maskr[8][128];
 static u_int32_t comp_maskl[8][128], comp_maskr[8][128];
-static u_int32_t old_rawkey0, old_rawkey1;
-
-static u_char	ascii64[] =
-	 "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-/*	  0000000000111111111122222222223333333333444444444455555555556666 */
-/*	  0123456789012345678901234567890123456789012345678901234567890123 */
 
 static inline int
 ascii_to_bin(char ch)
@@ -208,15 +198,19 @@ ascii_to_bin(char ch)
 	return(0);
 }
 
-static void
-des_init(void)
+void
+_crypt_extended_init(void)
 {
 	int i, j, b, k, inbit, obit;
 	u_int32_t *p, *il, *ir, *fl, *fr;
+	u_int32_t *bits28, *bits24;
+	u_char inv_key_perm[64];
+	u_char u_key_perm[56];
+	u_char inv_comp_perm[56];
+	u_char init_perm[64], final_perm[64];
+	u_char u_sbox[8][64];
+	u_char un_pbox[32];
 
-	old_rawkey0 = old_rawkey1 = 0;
-	saltbits = 0;
-	old_salt = 0;
 	bits24 = (bits28 = bits32 + 4) + 4;
 
 	/*
@@ -334,19 +328,27 @@ des_init(void)
 					*p |= bits32[un_pbox[8 * b + j]];
 			}
 		}
-
-	des_initialised = 1;
 }
 
 static void
-setup_salt(u_int32_t salt)
+des_init_local(struct _crypt_extended_data *data)
 {
-	u_int32_t	obit, saltbit;
+	data->old_rawkey0 = data->old_rawkey1 = 0;
+	data->saltbits = 0;
+	data->old_salt = 0;
+
+	data->initialized = 1;
+}
+
+static void
+setup_salt(u_int32_t salt, struct _crypt_extended_data *data)
+{
+	u_int32_t	obit, saltbit, saltbits;
 	int	i;
 
-	if (salt == old_salt)
+	if (salt == data->old_salt)
 		return;
-	old_salt = salt;
+	data->old_salt = salt;
 
 	saltbits = 0;
 	saltbit = 1;
@@ -357,10 +359,11 @@ setup_salt(u_int32_t salt)
 		saltbit <<= 1;
 		obit >>= 1;
 	}
+	data->saltbits = saltbits;
 }
 
 static int
-des_setkey(const char *key)
+des_setkey(const char *key, struct _crypt_extended_data *data)
 {
 	u_int32_t	k0, k1, rawkey0, rawkey1;
 	int	shifts, round;
@@ -377,8 +380,8 @@ des_setkey(const char *key)
 		((u_int32_t)(u_char)key[4] << 24);
 
 	if ((rawkey0 | rawkey1)
-	    && rawkey0 == old_rawkey0
-	    && rawkey1 == old_rawkey1) {
+	    && rawkey0 == data->old_rawkey0
+	    && rawkey1 == data->old_rawkey1) {
 		/*
 		 * Already setup for this key.
 		 * This optimisation fails on a zero key (which is weak and
@@ -387,8 +390,8 @@ des_setkey(const char *key)
 		 */
 		return(0);
 	}
-	old_rawkey0 = rawkey0;
-	old_rawkey1 = rawkey1;
+	data->old_rawkey0 = rawkey0;
+	data->old_rawkey1 = rawkey1;
 
 	/*
 	 *	Do key permutation and split into two 28-bit subkeys.
@@ -421,8 +424,8 @@ des_setkey(const char *key)
 		t0 = (k0 << shifts) | (k0 >> (28 - shifts));
 		t1 = (k1 << shifts) | (k1 >> (28 - shifts));
 
-		de_keysl[15 - round] =
-		en_keysl[round] = comp_maskl[0][(t0 >> 21) & 0x7f]
+		data->de_keysl[15 - round] =
+		data->en_keysl[round] = comp_maskl[0][(t0 >> 21) & 0x7f]
 				| comp_maskl[1][(t0 >> 14) & 0x7f]
 				| comp_maskl[2][(t0 >> 7) & 0x7f]
 				| comp_maskl[3][t0 & 0x7f]
@@ -431,8 +434,8 @@ des_setkey(const char *key)
 				| comp_maskl[6][(t1 >> 7) & 0x7f]
 				| comp_maskl[7][t1 & 0x7f];
 
-		de_keysr[15 - round] =
-		en_keysr[round] = comp_maskr[0][(t0 >> 21) & 0x7f]
+		data->de_keysr[15 - round] =
+		data->en_keysr[round] = comp_maskr[0][(t0 >> 21) & 0x7f]
 				| comp_maskr[1][(t0 >> 14) & 0x7f]
 				| comp_maskr[2][(t0 >> 7) & 0x7f]
 				| comp_maskr[3][t0 & 0x7f]
@@ -446,13 +449,13 @@ des_setkey(const char *key)
 
 static int
 do_des(u_int32_t l_in, u_int32_t r_in, u_int32_t *l_out, u_int32_t *r_out,
-	int count)
+	int count, struct _crypt_extended_data *data)
 {
 	/*
 	 *	l_in, r_in, l_out, and r_out are in pseudo-"big-endian" format.
 	 */
 	u_int32_t	l, r, *kl, *kr, *kl1, *kr1;
-	u_int32_t	f, r48l, r48r;
+	u_int32_t	f, r48l, r48r, saltbits;
 	int	round;
 
 	if (count == 0) {
@@ -461,15 +464,15 @@ do_des(u_int32_t l_in, u_int32_t r_in, u_int32_t *l_out, u_int32_t *r_out,
 		/*
 		 * Encrypting
 		 */
-		kl1 = en_keysl;
-		kr1 = en_keysr;
+		kl1 = data->en_keysl;
+		kr1 = data->en_keysr;
 	} else {
 		/*
 		 * Decrypting
 		 */
 		count = -count;
-		kl1 = de_keysl;
-		kr1 = de_keysr;
+		kl1 = data->de_keysl;
+		kr1 = data->de_keysr;
 	}
 
 	/*
@@ -492,6 +495,7 @@ do_des(u_int32_t l_in, u_int32_t r_in, u_int32_t *l_out, u_int32_t *r_out,
 	  | ip_maskr[6][(r_in >> 8) & 0xff]
 	  | ip_maskr[7][r_in & 0xff];
 
+	saltbits = data->saltbits;
 	while (count--) {
 		/*
 		 * Do each round.
@@ -562,12 +566,13 @@ do_des(u_int32_t l_in, u_int32_t r_in, u_int32_t *l_out, u_int32_t *r_out,
 }
 
 static int
-des_cipher(const char *in, char *out, u_int32_t salt, int count)
+des_cipher(const char *in, char *out, u_int32_t salt, int count,
+	struct _crypt_extended_data *data)
 {
 	u_int32_t	l_out, r_out, rawl, rawr;
 	int	retval;
 
-	setup_salt(salt);
+	setup_salt(salt, data);
 
 	rawl =
 		(u_int32_t)(u_char)in[3] |
@@ -580,7 +585,7 @@ des_cipher(const char *in, char *out, u_int32_t salt, int count)
 		((u_int32_t)(u_char)in[5] << 16) |
 		((u_int32_t)(u_char)in[4] << 24);
 
-	retval = do_des(rawl, rawr, &l_out, &r_out, count);
+	retval = do_des(rawl, rawr, &l_out, &r_out, count, data);
 
 	out[0] = l_out >> 24;
 	out[1] = l_out >> 16;
@@ -595,15 +600,15 @@ des_cipher(const char *in, char *out, u_int32_t salt, int count)
 }
 
 char *
-_crypt_extended(const char *key, const char *setting)
+_crypt_extended_r(const char *key, const char *setting,
+	struct _crypt_extended_data *data)
 {
 	int		i;
 	u_int32_t	count, salt, l, r0, r1, keybuf[2];
 	u_char		*p, *q;
-	static u_char	output[21];
 
-	if (!des_initialised)
-		des_init();
+	if (!data->initialized)
+		des_init_local(data);
 
 	/*
 	 * Copy the key, shifting each character up by one bit
@@ -614,7 +619,7 @@ _crypt_extended(const char *key, const char *setting)
 		if ((*q++ = *key << 1))
 			key++;
 	}
-	if (des_setkey((u_char *) keybuf))
+	if (des_setkey((u_char *) keybuf, data))
 		return(NULL);
 
 	if (*setting == _PASSWORD_EFMT1) {
@@ -633,7 +638,8 @@ _crypt_extended(const char *key, const char *setting)
 			/*
 			 * Encrypt the key with itself.
 			 */
-			if (des_cipher((u_char*)keybuf, (u_char*)keybuf, 0, 1))
+			if (des_cipher((u_char *) keybuf, (u_char *) keybuf,
+			    0, 1, data))
 				return(NULL);
 			/*
 			 * And XOR with the next 8 characters of the key.
@@ -642,10 +648,10 @@ _crypt_extended(const char *key, const char *setting)
 			while (q - (u_char *) keybuf < sizeof(keybuf) && *key)
 				*q++ ^= *key++ << 1;
 
-			if (des_setkey((u_char *) keybuf))
+			if (des_setkey((u_char *) keybuf, data))
 				return(NULL);
 		}
-		strncpy(output, setting, 9);
+		strncpy(data->output, setting, 9);
 		/*
 		 * Double check that we weren't given a short setting.
 		 * If we were, the above code will probably have created
@@ -653,8 +659,8 @@ _crypt_extended(const char *key, const char *setting)
 		 * Just make sure the output string doesn't have an extra
 		 * NUL in it.
 		 */
-		output[9] = '\0';
-		p = output + strlen(output);
+		data->output[9] = '\0';
+		p = (u_char *) data->output + strlen(data->output);
 	} else {
 		/*
 		 * "old"-style:
@@ -666,21 +672,21 @@ _crypt_extended(const char *key, const char *setting)
 		salt = (ascii_to_bin(setting[1]) << 6)
 		     |  ascii_to_bin(setting[0]);
 
-		output[0] = setting[0];
+		data->output[0] = setting[0];
 		/*
 		 * If the encrypted password that the salt was extracted from
 		 * is only 1 character long, the salt will be corrupted.  We
 		 * need to ensure that the output string doesn't have an extra
 		 * NUL in it!
 		 */
-		output[1] = setting[1] ? setting[1] : output[0];
-		p = output + 2;
+		data->output[1] = setting[1] ? setting[1] : data->output[0];
+		p = (u_char *) data->output + 2;
 	}
-	setup_salt(salt);
+	setup_salt(salt, data);
 	/*
 	 * Do it.
 	 */
-	if (do_des(0, 0, &r0, &r1, count))
+	if (do_des(0, 0, &r0, &r1, count, data))
 		return(NULL);
 	/*
 	 * Now encode the result...
@@ -703,10 +709,24 @@ _crypt_extended(const char *key, const char *setting)
 	*p++ = ascii64[l & 0x3f];
 	*p = 0;
 
-	return(output);
+	return(data->output);
 }
 
 #ifdef TEST
+static char *
+_crypt_extended(const char *key, const char *setting)
+{
+	static int initialized = 0;
+	static struct _crypt_extended_data data;
+
+	if (!initialized) {
+		_crypt_extended_init();
+		initialized = 1;
+		data.initialized = 0;
+	}
+	return _crypt_extended_r(key, setting, &data);
+}
+
 #define crypt _crypt_extended
 
 static struct {

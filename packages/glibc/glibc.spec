@@ -1,12 +1,12 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.37 2002/08/01 06:12:29 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.38 2002/08/04 02:35:54 solar Exp $
 
 %define BUILD_PROFILE 0
 
 Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
-%define crypt_bf_version 0.4.3
-Release: owl24
+%define crypt_bf_version 0.4.4
+Release: owl25
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%{version}.tar.gz
@@ -16,7 +16,8 @@ Source3: nsswitch.conf
 Source4: glibc-compat-%{version}.tar.gz
 Source5: crypt_blowfish-%{crypt_bf_version}.tar.gz
 Source6: crypt_freesec.c
-Patch0: glibc-2.1.3-owl-freesec-hack.diff
+Source7: crypt_freesec.h
+Patch0: glibc-2.1.3-owl-crypt_freesec.diff
 Patch1: glibc-2.1.3-owl-dl-open.diff
 Patch2: glibc-2.1.3-owl-sanitize-env.diff
 Patch3: glibc-2.1.3-owl-res_randomid.diff
@@ -115,7 +116,7 @@ libraries included in the glibc package).
 patch -p1 < crypt_blowfish-%{crypt_bf_version}/glibc-%{version}-crypt.diff
 mv crypt/sysdeps/unix/{crypt.h,gnu-crypt.h}
 mv crypt_blowfish-%{crypt_bf_version}/*.[chS] crypt/sysdeps/unix/
-cp $RPM_SOURCE_DIR/crypt_freesec.c crypt/sysdeps/unix/
+cp $RPM_SOURCE_DIR/crypt_freesec.[ch] crypt/sysdeps/unix/
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -312,6 +313,10 @@ fi
 %endif
 
 %changelog
+* Sun Aug 04 2002 Solar Designer <solar@owl.openwall.com>
+- Made the FreeSec code reentrant, adjusted crypt*(3) wrappers and the
+manual page accordingly.
+
 * Thu Aug 01 2002 Solar Designer <solar@owl.openwall.com>
 - Patched two potential integer overflows (and thus buffer overflows) in
 calloc(3) and xdr_array (the latter discovered by ISS X-Force).
