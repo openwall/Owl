@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.45 2004/11/23 22:40:47 mci Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.46 2005/01/12 16:43:00 galaxy Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
 Version: 0.23
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 Source0: initscripts-5.00.tar.gz
@@ -36,73 +36,73 @@ system down cleanly.
 %patch -p1
 
 %build
-make -C src CFLAGS="$RPM_OPT_FLAGS" usleep ipcalc
+%__make -C src CC="%__cc" CFLAGS="$RPM_OPT_FLAGS" usleep ipcalc
 
 %install
 rm -rf %buildroot
 
-mkdir -p %buildroot/etc/{rc.d/{rc{0,1,2,3,4,5,6}.d,init.d},profile.d}
-mkdir -p %buildroot/etc/sysconfig/network-scripts
-mkdir -p %buildroot/{bin,sbin,var/{log,run}}
+mkdir -p %buildroot%_sysconfdir/{rc.d/{rc{0,1,2,3,4,5,6}.d,init.d},profile.d}
+mkdir -p %buildroot%_sysconfdir/sysconfig/network-scripts
+mkdir -p %buildroot/{bin,sbin,%_var/{log,run}}
 mkdir -p %buildroot%_mandir/man1
 
 install -m 755 src/{usleep,ipcalc} %buildroot/bin/
 install -m 644 src/{usleep.1,ipcalc.1} %buildroot%_mandir/man1/
 
-install -m 755 lang.*sh %buildroot/etc/profile.d/
+install -m 755 lang.*sh %buildroot%_sysconfdir/profile.d/
 install -m 700 rc.d/init.d/{random,network,netfs} \
-	%buildroot/etc/rc.d/init.d/
+	%buildroot%_sysconfdir/rc.d/init.d/
 install -m 700 sysconfig/network-scripts/* \
-	%buildroot/etc/sysconfig/network-scripts/
-mv %buildroot/etc/sysconfig/network-scripts/if{up,down} \
+	%buildroot%_sysconfdir/sysconfig/network-scripts/
+mv %buildroot%_sysconfdir/sysconfig/network-scripts/if{up,down} \
 	%buildroot/sbin/
 # Can't have relative symlinks out of /etc as it's moved under /ram on CDs
-ln -s /sbin/if{up,down} %buildroot/etc/sysconfig/network-scripts/
+ln -s /sbin/if{up,down} %buildroot%_sysconfdir/sysconfig/network-scripts/
 
 mkdir redhat
 mv sysconfig.txt sysvinitfiles redhat/
 
 cd %buildroot
 
-install -m 600 $RPM_SOURCE_DIR/inittab etc/
-install -m 700 $RPM_SOURCE_DIR/rc.sysinit etc/rc.d/
-install -m 700 $RPM_SOURCE_DIR/rc etc/rc.d/
-install -m 644 $RPM_SOURCE_DIR/functions etc/rc.d/init.d/
-install -m 700 $RPM_SOURCE_DIR/{halt,single,clock} etc/rc.d/init.d/
+install -m 600 $RPM_SOURCE_DIR/inittab .%_sysconfdir/
+install -m 700 $RPM_SOURCE_DIR/rc.sysinit .%_sysconfdir/rc.d/
+install -m 700 $RPM_SOURCE_DIR/rc .%_sysconfdir/rc.d/
+install -m 644 $RPM_SOURCE_DIR/functions .%_sysconfdir/rc.d/init.d/
+install -m 700 $RPM_SOURCE_DIR/{halt,single,clock} .%_sysconfdir/rc.d/init.d/
 install -m 755 $RPM_SOURCE_DIR/service sbin/
-install -m 700 /dev/null etc/rc.d/rc.local
-install -m 600 $RPM_SOURCE_DIR/sysctl.conf etc/
+install -m 700 /dev/null .%_sysconfdir/rc.d/rc.local
+install -m 600 $RPM_SOURCE_DIR/sysctl.conf .%_sysconfdir/
 
-ln -s ../init.d/halt etc/rc.d/rc0.d/S01halt
-ln -s ../init.d/halt etc/rc.d/rc6.d/S01reboot
+ln -s ../init.d/halt .%_sysconfdir/rc.d/rc0.d/S01halt
+ln -s ../init.d/halt .%_sysconfdir/rc.d/rc6.d/S01reboot
 
-ln -s ../init.d/single etc/rc.d/rc1.d/S99single
+ln -s ../init.d/single .%_sysconfdir/rc.d/rc1.d/S99single
 
-ln -s ../rc.local etc/rc.d/rc2.d/S99local
-ln -s ../rc.local etc/rc.d/rc3.d/S99local
-ln -s ../rc.local etc/rc.d/rc5.d/S99local
+ln -s ../rc.local .%_sysconfdir/rc.d/rc2.d/S99local
+ln -s ../rc.local .%_sysconfdir/rc.d/rc3.d/S99local
+ln -s ../rc.local .%_sysconfdir/rc.d/rc5.d/S99local
 
-touch var/log/wtmp var/run/utmp
+touch .%_var/log/wtmp .%_var/run/utmp
 
-mkdir -p var/run/netreport
+mkdir -p .%_var/run/netreport
 
 # XXX: (GM): Remove unpackaged files (check later)
-rm %buildroot/etc/sysconfig/network-scripts/ifdown-aliases
-rm %buildroot/etc/sysconfig/network-scripts/ifdown-ppp
-rm %buildroot/etc/sysconfig/network-scripts/ifdown-sl
-rm %buildroot/etc/sysconfig/network-scripts/ifup-ipx
-rm %buildroot/etc/sysconfig/network-scripts/ifup-plip
-rm %buildroot/etc/sysconfig/network-scripts/ifup-ppp
-rm %buildroot/etc/sysconfig/network-scripts/ifup-sl
+rm %buildroot%_sysconfdir/sysconfig/network-scripts/ifdown-aliases
+rm %buildroot%_sysconfdir/sysconfig/network-scripts/ifdown-ppp
+rm %buildroot%_sysconfdir/sysconfig/network-scripts/ifdown-sl
+rm %buildroot%_sysconfdir/sysconfig/network-scripts/ifup-ipx
+rm %buildroot%_sysconfdir/sysconfig/network-scripts/ifup-plip
+rm %buildroot%_sysconfdir/sysconfig/network-scripts/ifup-ppp
+rm %buildroot%_sysconfdir/sysconfig/network-scripts/ifup-sl
 
 %post
-f=/var/log/lastlog
+f=%_var/log/lastlog
 if [ ! -e $f ]; then
 	touch $f
 	chown root:root $f && chmod 644 $f
 fi
 
-for f in /var/log/wtmp /var/run/utmp; do
+for f in %_var/log/wtmp %_var/run/utmp; do
 	test -e $f && continue || :
 	touch $f
 	chown root:utmp $f && chmod 664 $f
@@ -121,45 +121,49 @@ fi
 
 %files
 %defattr(-,root,root)
-%config /etc/inittab
-%config /etc/rc.d/rc.sysinit
-%config /etc/rc.d/rc
-/etc/rc.d/init.d/functions
-%config /etc/rc.d/init.d/halt
-%config /etc/rc.d/init.d/single
-%config /etc/rc.d/init.d/clock
-%dir /etc/rc.d
-%dir /etc/rc.d/rc*.d
-%dir /etc/rc.d/init.d
-%config(missingok) /etc/rc.d/rc*.d/*
-%config(missingok) /etc/rc.d/init.d/random
-%config(missingok) /etc/rc.d/init.d/network
-%config(missingok) /etc/rc.d/init.d/netfs
-%config(noreplace) /etc/rc.d/rc.local
-%config(noreplace) /etc/sysctl.conf
-%config /etc/profile.d/lang.*
-%dir /etc/sysconfig/network-scripts
-%config /etc/sysconfig/network-scripts/ifcfg-lo
-%config /etc/sysconfig/network-scripts/ifdown
-%config /etc/sysconfig/network-scripts/ifdown-post
-%config /etc/sysconfig/network-scripts/ifup
-%config /etc/sysconfig/network-scripts/ifup-aliases
-%config /etc/sysconfig/network-scripts/ifup-post
-%config /etc/sysconfig/network-scripts/ifup-routes
-%config /etc/sysconfig/network-scripts/network-functions
+%config %_sysconfdir/inittab
+%config %_sysconfdir/rc.d/rc.sysinit
+%config %_sysconfdir/rc.d/rc
+%_sysconfdir/rc.d/init.d/functions
+%config %_sysconfdir/rc.d/init.d/halt
+%config %_sysconfdir/rc.d/init.d/single
+%config %_sysconfdir/rc.d/init.d/clock
+%dir %_sysconfdir/rc.d
+%dir %_sysconfdir/rc.d/rc*.d
+%dir %_sysconfdir/rc.d/init.d
+%config(missingok) %_sysconfdir/rc.d/rc*.d/*
+%config(missingok) %_sysconfdir/rc.d/init.d/random
+%config(missingok) %_sysconfdir/rc.d/init.d/network
+%config(missingok) %_sysconfdir/rc.d/init.d/netfs
+%config(noreplace) %_sysconfdir/rc.d/rc.local
+%config(noreplace) %_sysconfdir/sysctl.conf
+%config %_sysconfdir/profile.d/lang.*
+%dir %_sysconfdir/sysconfig/network-scripts
+%config %_sysconfdir/sysconfig/network-scripts/ifcfg-lo
+%config %_sysconfdir/sysconfig/network-scripts/ifdown
+%config %_sysconfdir/sysconfig/network-scripts/ifdown-post
+%config %_sysconfdir/sysconfig/network-scripts/ifup
+%config %_sysconfdir/sysconfig/network-scripts/ifup-aliases
+%config %_sysconfdir/sysconfig/network-scripts/ifup-post
+%config %_sysconfdir/sysconfig/network-scripts/ifup-routes
+%config %_sysconfdir/sysconfig/network-scripts/network-functions
 %config /sbin/ifdown
 %config /sbin/ifup
-%dir /var/run/netreport
+%dir %_var/run/netreport
 /sbin/service
 /bin/usleep
 /bin/ipcalc
 %_mandir/man1/usleep.1*
 %_mandir/man1/ipcalc.1*
-%ghost %attr(0664,root,utmp) /var/log/wtmp
-%ghost %attr(0664,root,utmp) /var/run/utmp
+%ghost %attr(0664,root,utmp) %_var/log/wtmp
+%ghost %attr(0664,root,utmp) %_var/run/utmp
 %doc redhat
 
 %changelog
+* Mon Jan 10 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.23-owl2
+- Made use of %__cc and %__make macros.
+- Cleaned up the spec.
+
 * Sat Feb 07 2004 Solar Designer <solar@owl.openwall.com> 0.23-owl1
 - Added a patch by Berend-Jan Wever to make ifup and ifdown scripts use
 dhclient instead of pump when BOOTPROTO=dhcp is requested; please note that
