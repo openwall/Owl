@@ -45,10 +45,24 @@ all: $(PROJ)
 popa3d: $(OBJS)
 	$(LD) $(LDFLAGS) $(OBJS) $(LIBS) -o popa3d
 
+auth_pam.o: params.h
+auth_passwd.o: params.h
+auth_shadow.o: params.h
+database.o: params.h database.h
+mailbox.o: params.h misc.h protocol.h database.h md5/md5.h
+misc.o: params.h
+pop_auth.o: params.h misc.h protocol.h pop_auth.h virtual.h
+pop_root.o: params.h protocol.h pop_auth.h pop_trans.h virtual.h
+pop_trans.o: params.h protocol.h database.h mailbox.h
+protocol.o: params.h misc.h protocol.h
+standalone.o: params.h
+startup.o: params.h
+virtual.o: params.h misc.h
+
 md5/md5.o: md5/md5.c md5/md5.h
 	$(CC) $(CFLAGS) -c md5/md5.c -o md5/md5.o
 
-.c.o: params.h
+.c.o:
 	$(CC) $(CFLAGS) -c $*.c
 
 install: $(PROJ)
