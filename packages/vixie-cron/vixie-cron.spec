@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.32 2005/03/14 04:49:59 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.33 2005/03/14 04:56:53 solar Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
@@ -48,26 +48,18 @@ done
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot{%_bindir,%_sbindir}
-mkdir -p %buildroot%_mandir/man{1,5,8}
 mkdir -p -m 700 %buildroot/var/spool/{cron,at}
 mkdir -p -m 755 %buildroot/etc/cron.d
+for dir in usr.sbin/cron usr.bin/crontab usr.bin/at; do
+	%makeinstall -C $dir .CURDIR=. DESTDIR=%buildroot
+done
 
-install -m 700 usr.sbin/cron/crond %buildroot%_sbindir/
-install -m 700 usr.bin/crontab/crontab %buildroot%_bindir/
-install -m 700 usr.bin/at/at %buildroot%_bindir/
 pushd %buildroot%_bindir
 ln -s at atq
 ln -s at atrm
 ln -s at batch
 popd
 
-install -m 644 usr.sbin/cron/crontab.1 %buildroot%_mandir/man1/
-install -m 644 usr.sbin/cron/crontab.5 %buildroot%_mandir/man5/
-install -m 644 usr.sbin/cron/cron.8 %buildroot%_mandir/man8/
-install -m 644 usr.bin/at/at.1 %buildroot%_mandir/man1/
-install -m 644 usr.bin/at/atq.1 %buildroot%_mandir/man1/
-install -m 644 usr.bin/at/atrm.1 %buildroot%_mandir/man1/
 ln -s cron.8 %buildroot%_mandir/man8/crond.8
 ln -s at.1 %buildroot%_mandir/man1/batch.1
 
