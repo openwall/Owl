@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dev86/dev86.spec,v 1.1 2000/11/27 11:33:00 kad Exp $
+# $Id: Owl/packages/dev86/dev86.spec,v 1.2 2000/11/27 16:33:39 solar Exp $
 
 # http://www.cix.co.uk/~mayday/Dev86src-0.15.4.tar.gz
 
@@ -14,11 +14,11 @@ Patch1: 	dev86-0.14-rh-nobcc.diff
 Patch2: 	dev86-0.15-rh-bccpaths.diff
 BuildRoot:      /var/rpm-buildroot/%{name}-root
 Obsoletes: 	bin86
-ExclusiveArch: 	i386
+ExclusiveArch: 	%ix86
 
 %description
 The dev86 package provides an assembler and linker for real mode 80x86
-instructions. You'll need to have this package installed in order to
+instructions.  You'll need to have this package installed in order to
 build programs that run in real mode, including LILO and the kernel's
 bootstrapping code, from their sources.
 
