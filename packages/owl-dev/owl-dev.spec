@@ -1,15 +1,16 @@
-# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.6 2001/03/04 19:25:59 solar Exp $
+# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.7 2001/04/08 16:55:32 solar Exp $
 
 Summary: Initial set of device files and MAKEDEV, a script to manage them
 Name: owl-dev
 Version: 0.5
-Release: 1owl
+Release: 2owl
 Copyright: public domain
 Group: System Environment/Base
 Source: MAKEDEV-2.5.2.tar.gz
 Patch: MAKEDEV-2.5.2-owl.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: owl-etc fileutils sh-utils
+Obsoletes: MAKEDEV dev
 BuildArchitectures: noarch
 
 %description
@@ -54,6 +55,9 @@ cd /dev
 %files -f filelist
 
 %changelog
+* Sun Apr 08 2001 Solar Designer <solar@owl.openwall.com>
+- Obsoletes: MAKEDEV dev
+
 * Sun Mar 04 2001 Solar Designer <solar@owl.openwall.com>
 - USB printers and mice.
 
