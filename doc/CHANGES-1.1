@@ -12,6 +12,11 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.0 and Owl-current.
 
+2003/06/02	Package: openssh
+Updated to 3.6.1p2.  When we know we're going to fail authentication
+for reasons external to PAM, pass there a hopefully incorrect password
+to have it behave the same for correct and incorrect passwords.
+
 2003/06/02	Package: lftp
 Updated to 2.6.6.
 
@@ -331,4 +336,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.57 2003/06/01 23:11:51 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.58 2003/06/02 02:12:50 solar Exp $
