@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-control/functions,v 1.6 2002/11/03 02:57:27 solar Exp $
+# $Id: Owl/packages/owl-control/functions,v 1.7 2003/10/24 00:01:45 solar Exp $
 
 function define()
 {
@@ -26,7 +26,7 @@ function new_fmode()
 {
 	register "$1"
 	define NAME_TO_FMODE "$1" "$2"
-	define NAME_TO_OWNER "$1" "$3.$4"
+	define NAME_TO_OWNER "$1" "$3:$4"
 	define FMODE_OWNER_TO_NAME "$2_$3_$4" "$1"
 }
 

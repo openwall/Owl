@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/owl-cdrom/rc.ramdisk,v 1.4 2001/10/02 23:12:33 solar Exp $
+# $Id: Owl/packages/owl-cdrom/rc.ramdisk,v 1.5 2003/10/24 00:01:45 solar Exp $
 
 echo "Setting up a RAM disk"
 
@@ -20,7 +20,7 @@ sed 's,^,/ram/dev/,' < /rom/etc/securetty > /ram/etc/securetty
 
 if [ -e /rom/world/Makefile ]; then
 	mkdir -m 750 /ram/world
-	chown build. /ram/world
+	chown build: /ram/world
 	ln -s /rom/world/* /ram/world/
 fi
 

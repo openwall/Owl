@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.36 2003/04/27 03:05:25 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.37 2003/10/24 00:01:45 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -87,13 +87,13 @@ rm -rf $RPM_BUILD_ROOT
 f=/var/log/lastlog
 if [ ! -e $f ]; then
 	touch $f
-	chown root.root $f && chmod 644 $f
+	chown root:root $f && chmod 644 $f
 fi
 
 for f in /var/log/wtmp /var/run/utmp; do
 	test -e $f && continue || :
 	touch $f
-	chown root.utmp $f && chmod 664 $f
+	chown root:utmp $f && chmod 664 $f
 done
 
 /sbin/chkconfig --add random

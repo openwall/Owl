@@ -1,4 +1,4 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.18 2003/05/05 02:33:40 solar Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.19 2003/10/24 00:01:45 solar Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
@@ -88,7 +88,7 @@ fi
 for f in %{_var}/account/{pacct,usracct,savacct}; do
 	test -e $f && continue || :
 	touch $f
-	chown root.root $f
+	chown root:root $f
 	chmod 600 $f
 done
 

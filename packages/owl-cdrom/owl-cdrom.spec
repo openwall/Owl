@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.18 2003/10/21 08:24:55 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.19 2003/10/24 00:01:45 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
@@ -45,7 +45,7 @@ fi
 set -e
 
 chmod 755 /
-chown root.root /
+chown root:root /
 
 for DIR in dev etc home root tmp var; do
 	test -d /$DIR -a ! -e /rom/$DIR
