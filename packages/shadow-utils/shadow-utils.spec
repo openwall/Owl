@@ -1,9 +1,9 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.17 2002/02/06 19:16:24 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.18 2002/07/21 14:47:44 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.0
-Release: owl3
+Release: owl4
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -181,6 +181,9 @@ grep -q ^auth: /etc/group || groupadd -g 164 auth
 /etc/control.d/facilities/*
 
 %changelog
+* Sun Jul 21 2002 Solar Designer <solar@owl.openwall.com>
+- Made "chage -l" drop its saved GID too.
+
 * Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 

@@ -1,11 +1,27 @@
 diff -ur shadow-4.0.0.orig/src/chage.c shadow-4.0.0/src/chage.c
 --- shadow-4.0.0.orig/src/chage.c	Mon Oct  9 22:39:50 2000
-+++ shadow-4.0.0/src/chage.c	Fri Nov  2 02:16:02 2001
-@@ -603,6 +603,12 @@
++++ shadow-4.0.0/src/chage.c	Sun Jul 21 18:39:07 2002
+@@ -400,6 +400,7 @@
+ 	char	new_age[5];
+ #endif
+ 	uid_t ruid;
++	gid_t rgid;
+ 	const struct passwd *pw;
+ 	struct passwd pwent;
+ 	char	name[BUFSIZ];
+@@ -415,6 +416,7 @@
+ 	textdomain(PACKAGE);
+ 
+ 	ruid = getuid();
++	rgid = getgid();
+ 	amroot = (ruid == 0);
+ 
+ 	/*
+@@ -603,6 +605,12 @@
  		exit(1);
  	}
  
-+	if (lflg && (setgid(getgid()) || setuid(ruid))) {
++	if (lflg && (setregid(rgid, rgid) || setreuid(ruid, ruid))) {
 +		fprintf(stderr, "%s: failed to drop privileges (%s)\n",
 +			Prog, strerror(errno));
 +		exit(1);
@@ -14,12 +30,18 @@ diff -ur shadow-4.0.0.orig/src/chage.c shadow-4.0.0/src/chage.c
  	sp = spw_locate(argv[optind]);
  
  	/*
-@@ -897,6 +903,12 @@
+@@ -895,8 +903,18 @@
+ main(int argc, char **argv)
+ {
  	char	*Prog;
++	uid_t ruid;
++	gid_t rgid;
  
  	Prog = Basename(argv[0]);
 +
-+	if (setgid(getgid()) || setuid(getuid())) {
++	ruid = getuid();
++	rgid = getgid();
++	if (setregid(rgid, rgid) || setreuid(ruid, ruid)) {
 +		fprintf(stderr, "%s: failed to drop privileges (%s)\n",
 +			Prog, strerror(errno));
 +		exit(1);
