@@ -197,7 +197,6 @@ function write_network_yes
 {
     echo "\
 NETWORKING=yes
-FORWARD_IPV4=false
 HOSTNAME=$HOSTNAME
 DOMAINNAME=$DOMAIN" > "$1"
 [ -z $GATEWAY ] || echo "GATEWAY=$GATEWAY" >> "$1"

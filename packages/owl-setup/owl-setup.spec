@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.14 2002/03/18 01:24:28 solar Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.15 2002/05/23 06:39:51 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 0.7
+Version: 0.8
 Release: owl1
 License: mostly public domain, passwdlg is under GPL
 Group: System Environment/Base
@@ -58,6 +58,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/sbin/setup
 
 %changelog
+* Thu May 23 2002 Solar Designer <solar@owl.openwall.com>
+- No longer set the obsolete FORWARD_IPV4 option.
+
 * Mon Mar 18 2002 Solar Designer <solar@owl.openwall.com>
 - Fixed a typo in netcfg introduced with a recent update which prevented
 the line with primary hostname from being actually written to /etc/hosts.
