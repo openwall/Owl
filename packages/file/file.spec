@@ -1,4 +1,4 @@
-# $Id: Owl/packages/file/file.spec,v 1.6 2003/04/29 14:40:03 mci Exp $
+# $Id: Owl/packages/file/file.spec,v 1.7 2003/04/29 16:00:37 solar Exp $
 
 Summary: A utility for determining file types.
 Name: file
@@ -63,8 +63,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man*/*
 
 %changelog
-* Tue Apr 29 2003 Michail Litvak <mci@owl.openwall.com>
-- Patch to remove annoing message: "Using regular magic file..."
+* Tue Apr 29 2003 Michail Litvak <mci@owl.openwall.com> 3.41-owl2
+- Patch to remove annoying message: "Using regular magic file..."
 
 * Fri Mar 07 2003 Michail Litvak <mci@owl.openwall.com>
 - 3.41
