@@ -12,6 +12,10 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/05/30 -
+2002/06/03	Package: iputils
+Updated to ss020124.
+
 2002/05/25 -
 2002/05/27	Package: popa3d
 Added two interoperability fixes.  Please refer to change log for the
@@ -705,4 +709,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.91 2002/05/27 16:10:37 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.92 2002/06/03 15:01:00 solar Exp $
