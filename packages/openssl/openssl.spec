@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.5 2000/10/28 23:17:14 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.6 2000/10/28 23:30:49 solar Exp $
 
 %define libmaj 0
 %define libmin 9
@@ -83,7 +83,7 @@ make linux-shared
 LD_LIBRARY_PATH=`pwd` make
 LD_LIBRARY_PATH=`pwd` make rehash
 if [ ! -x /usr/bin/bc ]; then
-	perl -pi -e 's/^test_bn:/^test_bn_unused:/' test/Makefile.ssl
+	perl -pi -e 's/^test_bn:/test_bn_unused:/' test/Makefile.ssl
 	echo 'test_bn:' >> test/Makefile.ssl
 fi
 LD_LIBRARY_PATH=`pwd` make test
