@@ -271,7 +271,7 @@ cat >gcc-filelist <<EOF
 %{GCC_PREFIX}/bin/unprotoize
 %{GCC_PREFIX}/bin/gcov
 %{GCC_PREFIX}/bin/%{_target_platform}-gcc
-%{GCC_PREFIX}/man/man1/gcc.1
+%{GCC_PREFIX}/man/man1/gcc.1*
 %{GCC_PREFIX}/info/gcc*
 %dir %{GCC_PREFIX}/lib/gcc-lib
 %dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}
