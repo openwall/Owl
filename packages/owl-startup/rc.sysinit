@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/owl-startup/rc.sysinit,v 1.7 2001/11/05 11:01:24 solar Exp $
+# $Id: Owl/packages/owl-startup/rc.sysinit,v 1.8 2001/11/22 04:42:48 solar Exp $
 
 # Set the initial default search path for use by startup scripts.
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
@@ -52,15 +52,24 @@ else
 	echo "read-only filesystem"
 fi
 
-# Check the integrity of all filesystems.
-echo "Checking filesystems"
-if [ "$READWRITE" = "no" ]; then
-	fsck -A -aTC
-else
+# Check the integrity of all filesystems unless requested not to.
+if [ ! -f /fastboot -o -e /forcefsck ]; then
+	echo "Checking filesystems"
+	if [ -e /forcefsck ]; then
+		FSCKOPTS=-f
+	else
+		FSCKOPTS=
+	fi
+	if [ "$READWRITE" = "no" ]; then
+		fsck -A -aTC $FSCKOPTS
+	else
 # ...except for the root filesystem, which is mounted read-write.
-	fsck -R -aTC
+		fsck -R -aTC $FSCKOPTS
+	fi
+	STATUS=$?
+else
+	STATUS=0
 fi
-STATUS=$?
 
 if [ $STATUS -gt 1 ]; then
 	echo
@@ -86,6 +95,8 @@ if [ ! -e /.Owl-CD-ROM ]; then
 fi
 # Enter / into mtab.
 mount -f /
+
+rm -f /fastboot /forcefsck
 
 # Mount all local filesystems, including procfs.
 echo "Mounting local filesystems"

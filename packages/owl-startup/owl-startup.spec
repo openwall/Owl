@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.20 2001/11/05 11:01:24 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.21 2001/11/22 04:42:48 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.9
+Version: 0.10
 Release: 1owl
 License: GPL
 Group: System Environment/Base
@@ -14,13 +14,13 @@ Source4: functions
 Source5: halt
 Source6: single
 Source7: clock
-Provides: initscripts
-Obsoletes: initscripts
 PreReq: /sbin/chkconfig
 Requires: SysVinit, /sbin/start-stop-daemon
 Requires: bash >= 2.0, sh-utils
 Requires: mingetty, e2fsprogs >= 1.15, util-linux, net-tools
 Requires: gawk, sed, mktemp
+Provides: initscripts
+Obsoletes: initscripts
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -142,6 +142,14 @@ rm -rf $RPM_BUILD_ROOT
 %doc redhat
 
 %changelog
+* Thu Nov 22 2001 Solar Designer <solar@owl.openwall.com>
+- /etc/init.d/halt will now call halt(8) as poweroff (which will fall back
+to plain halt if the kernel doesn't have power management support compiled
+in); thanks to Piotr Synowiec for reporting the problem and to Miquel van
+Smoorenburg for explaining how this approach is in fact in accordance with
+the documentation.
+- Support /fastboot and /forcefsck which shutdown(8) may create.
+
 * Mon Nov 05 2001 Solar Designer <solar@owl.openwall.com>
 - /etc/init.d -> /etc/rc.d/init.d for consistency.
 
