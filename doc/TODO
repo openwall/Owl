@@ -158,6 +158,11 @@ Update to 3.2.1+ and deal with whatever this will break.
 Once gcc is updated, update to 2.3.1+ with all the related auditing,
 porting, and fixing.
 
+[PRIORITY: medium]
+Develop safe log-and-exit function for use by the dlmalloc unlink()
+macro's sanity check.  It will need to connect to /dev/log and write
+there directly, without utilizing syslog(3).
+
 [PRIORITY: low]
 Make mkstemp(3) and friends produce unpredictable filenames (not just
 unique).
@@ -545,4 +550,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.31 2004/01/15 05:17:30 solar Exp $
+$Id: Owl/doc/TODO,v 1.32 2004/01/16 19:10:52 solar Exp $
