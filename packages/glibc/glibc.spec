@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.80 2005/01/20 05:26:59 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.81 2005/01/20 05:33:59 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -11,7 +11,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 0.4.6
-Release: owl1
+Release: owl2
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%basevers%{?snapshot:-%snapshot}.tar.bz2
@@ -449,6 +449,9 @@ fi
 %files compat-fake
 
 %changelog
+* Thu Jan 20 2005 Solar Designer <solar@owl.openwall.com> 2.3.3.2004061600-owl2
+- Many post-update corrections.
+
 * Sun Jun 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.3.2004061600-owl1
 - Removed commented out block in %%post.
 
