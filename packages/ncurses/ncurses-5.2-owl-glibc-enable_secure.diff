@@ -1,0 +1,23 @@
+diff -ur ncurses-5.2.orig/ncurses/tinfo/access.c ncurses-5.2/ncurses/tinfo/access.c
+--- ncurses-5.2.orig/ncurses/tinfo/access.c	Sun Oct  8 05:25:06 2000
++++ ncurses-5.2/ncurses/tinfo/access.c	Thu Oct 26 21:43:11 2000
+@@ -30,6 +30,9 @@
+  *  Author: Thomas E. Dickey <dickey@clark.net> 1998,2000                   *
+  ****************************************************************************/
+ 
++#define _GNU_SOURCE
++#include <unistd.h>
++
+ #include <curses.priv.h>
+ #include <tic.h>
+ 
+@@ -89,6 +92,8 @@
+      || getgid() != getegid())
+ 	return FALSE;
+ #endif
+-    return getuid() != 0;	/* ...finally, disallow root */
++    if (__libc_enable_secure)
++	return FALSE;
++    return getuid() != 0 && geteuid() != 0;	/* ...finally, disallow root */
+ }
+ #endif
