@@ -1,24 +1,24 @@
-# $Id: Owl/build/Makefile,v 1.6 2000/12/28 17:19:39 solar Exp $
+# $Id: Owl/build/Makefile,v 1.7 2001/05/11 08:50:25 solar Exp $
 
 default: buildworld
 
 checkout:
-	mkdir -p checkout
-	cd checkout && cvs co Owl
+	mkdir -p native
+	cd native && cvs co Owl
 
 symlinks:
-	test -d checkout/Owl/build || $(MAKE) checkout
-	ln -sf checkout/Owl/build/.rpm* .
-	ln -s checkout/Owl/build/*.conf . 2> /dev/null || :
+	test -d native/Owl/build || $(MAKE) checkout
+	ln -sf native/Owl/build/.rpm* .
+	ln -s native/Owl/build/*.conf . 2> /dev/null || :
 
 buildworld: symlinks
-	checkout/Owl/build/buildworld.sh
+	native/Owl/build/buildworld.sh
 
 installworld: symlinks
-	checkout/Owl/build/installworld.sh
+	native/Owl/build/installworld.sh
 
 setup: symlinks
-	checkout/Owl/build/setup.sh
+	native/Owl/build/setup.sh
 
 clean:
 	test -d SRPMS && rm -f SRPMS/* || :

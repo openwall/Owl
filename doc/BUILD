@@ -17,8 +17,8 @@ there.  Otherwise, you need to create the directory, add pseudo-user
 the owner of the directory.
 
 Place the CVS tree into /usr/src/world.  Currently, this is done by
-extracting checkout.tar.gz available via the FTP sites.  You will get
-the "checkout" directory, and a Makefile symlink.
+extracting native.tar.gz available via the FTP sites.  You will get
+the "native" directory, and a Makefile symlink.
 
 For actually building from source, place the "sources" directory in
 /usr/src/world as well.
@@ -76,8 +76,8 @@ flavor of the build host's architecture (see ARCHITECTURES) and the
 build will attempt to use up to two processors.
 
 buildworld.conf (as well as other *.conf's) may be edited by copying
-it from checkout/Owl/build into /usr/src/world.  You need to remove
-the symlink first, if one has previously been created for you.
+it from native/Owl/build into /usr/src/world.  You need to remove the
+symlink first, if one has previously been created for you.
 
 All packages are built with whatever versions of libraries and build
 tools are installed on the system.  Multiple iterations of buildworld
@@ -112,4 +112,4 @@ We do consider the building of SRPM's and the lack of automatic build
 dependency handling for re-builds to be bugs in the build environment.
 We will eventually fix these.
 
-$Id: Owl/doc/BUILD,v 1.8 2001/04/17 04:49:46 solar Exp $
+$Id: Owl/doc/BUILD,v 1.9 2001/05/11 08:50:25 solar Exp $

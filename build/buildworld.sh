@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.10 2001/04/14 01:25:24 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.11 2001/05/11 08:50:25 solar Exp $
 
 REPOSITORY=Owl
 PACKAGES=$REPOSITORY/packages
@@ -32,7 +32,7 @@ function build_native()
 		xargs -n 1 -i sh -c 'rpm2cpio {} | cpio -i 2>/dev/null'
 	ln -sf $SOURCES/$PACKAGES/$PACKAGE/* .
 	rm -f '*' || :
-	ln -sf $CHECKOUT/$PACKAGES/$PACKAGE/* .
+	ln -sf $NATIVE/$PACKAGES/$PACKAGE/* .
 	$TIME $PERSONALITY rpm -ba $PACKAGE.spec \
 		$TARGET \
 		--define "buildarch $BUILDARCH" \
@@ -116,7 +116,7 @@ function builder()
 
 	cd $HOME/native-work || exit 1
 
-	ls $CHECKOUT/$PACKAGES/ | grep -v '^CVS$' |
+	ls $NATIVE/$PACKAGES/ | grep -v '^CVS$' |
 	while read PACKAGE; do
 		mkdir .$PACKAGE &> /dev/null || continue
 		touch .$PACKAGE/$NUMBER
