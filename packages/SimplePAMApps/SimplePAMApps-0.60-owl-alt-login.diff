@@ -1,6 +1,6 @@
-diff -ur SimplePAMApps-0.60.orig/Discussions SimplePAMApps-0.60/Discussions
---- SimplePAMApps-0.60.orig/Discussions	Sun Mar 28 12:15:58 1999
-+++ SimplePAMApps-0.60/Discussions	Mon Nov 19 07:49:43 2001
+diff -urp SimplePAMApps-0.60.orig/Discussions SimplePAMApps-0.60/Discussions
+--- SimplePAMApps-0.60.orig/Discussions	Sun Mar 28 08:15:58 1999
++++ SimplePAMApps-0.60/Discussions	Mon Nov 19 04:49:43 2001
 @@ -9,6 +9,10 @@
     login command line.  People haven't agreed how to solve the problem.  I
     need to think more.
@@ -12,10 +12,85 @@ diff -ur SimplePAMApps-0.60.orig/Discussions SimplePAMApps-0.60/Discussions
  3. Somebody (I don't remember who) stated that `su' had to provide a protection
     against brute force attacks on user passwords.  The issue needs more
     discussion.  Such a protection makes a sense only if all ways for brute
-diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapps/login/login.c
---- SimplePAMApps-0.60.orig/pamapps/login/login.c	Sun Mar 28 12:17:11 1999
-+++ SimplePAMApps-0.60/pamapps/login/login.c	Mon Nov 19 07:50:27 2001
-@@ -35,6 +35,7 @@
+diff -urp SimplePAMApps-0.60.orig/pamapps/login/login.1 SimplePAMApps-0.60/pamapps/login/login.1
+--- SimplePAMApps-0.60.orig/pamapps/login/login.1	Fri Jun 12 17:11:03 1998
++++ SimplePAMApps-0.60/pamapps/login/login.1	Tue Apr 15 12:46:44 2003
+@@ -8,7 +8,8 @@
+ login \- start an interactive session on the system
+ 
+ .SH SYNOPSIS
+-.B login [-p] [-h hostname] [-f] [--] [username]
++.B login
++[\fB-p\fR] [\fB-h \fIhostname\fR] [\fB-f\fR] [\fB--\fR] [\fIusername\fR]
+ .sp 2
+ .SH DESCRIPTION
+ The
+@@ -61,52 +62,6 @@ proceeding. Such updates are performed b
+ module(s).
+ 
+ .sp
+-A simple entry in the
+-.B /etc/pam.conf
+-configuration file for this service would be:
+-.br
+-  
+-.br
+- #
+-.br
+- # login service, most management service is provided
+-.br
+- # by pwdb, however securetty prevents root from
+-.br
+- # login in on an insecure terminal. Cracklib is used
+-.br
+- # to ensure that the user's new password is strong.
+-.br
+- #
+-.br
+- login auth requisite pam_securetty.so
+-.br
+- login auth required pam_pwdb.so
+-.br
+- login account required  pam_pwdb.so
+-.br
+- login password required pam_cracklib.so retry=2
+- login password required pam_pwdb.so use_authtok
+-.br
+- login session required  pam_pwdb.so
+-.br
+- #
+-
+-.sp
+-(To generate the equivalent
+-.B /etc/pam.d/login
+-file, you should simply remove the first field ("login") from the
+-above example.)
+-Note,
+-.BR account ", "
+-.BR auth ", "
+-.BR password
+-and
+-.BR session
+-module-types are all required for this application to function
+-correctly.
+-
+-.sp
+ For continuity of service, the administrator might wish to make the
+ .BR su "(1)"
+ and
+@@ -124,7 +79,7 @@ The arguments passed to
+ are generally used by other applications, and have the following
+ meanings:
+ .TP
+-.BR username
++.IR username
+ The prospective name of the user requesting services on the system.
+ .sp
+ .TP
+diff -urp SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapps/login/login.c
+--- SimplePAMApps-0.60.orig/pamapps/login/login.c	Sun Mar 28 08:17:11 1999
++++ SimplePAMApps-0.60/pamapps/login/login.c	Tue Apr 15 09:02:39 2003
+@@ -35,6 +35,7 @@ static const char rcsid[] =
  #include <termios.h>
  #include <unistd.h>
  #include <signal.h>
@@ -23,7 +98,7 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  /* should be in above(?): */ extern int vhangup(void);
  
  #include <security/pam_appl.h>
-@@ -58,10 +59,10 @@
+@@ -58,15 +59,15 @@ static const char rcsid[] =
  #define DEFAULT_SHELL             "/bin/sh"
  
  #define LOGIN_WARNING_TIMEOUT     65
@@ -36,7 +111,13 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  
  #define MAX_LOGIN                 3  /* largest tolerated delay */
  #define SLEEP_AFTER_MAX_LOGIN     5  /* failed login => delay before retry */
-@@ -78,6 +79,9 @@
+ 
+-#define GOODBYE_MESSAGE           ""  /* make "" for no message */
++#undef GOODBYE_MESSAGE
+ #define GOODBYE_DELAY             1  /* time to display good-bye */
+ 
+ #define SERIOUS_ABORT_DELAY       3600                    /* yes, an hour! */
+@@ -78,6 +79,9 @@ static const char rcsid[] =
  				      * care that MIN_DELAY*2^MAX_LOGIN
  				      * is not too large for (int) */
  
@@ -46,7 +127,7 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  
  #define LOGIN_STATE_ARGS_PARSED		2
  #define LOGIN_STATE_TERMINAL_OBTAINED	3
-@@ -92,7 +96,9 @@
+@@ -92,7 +96,9 @@ static const char rcsid[] =
  /* internal strings and flags */
  
  #define DEFAULT_HOME              "/"
@@ -57,7 +138,7 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  
  /* for login session - after login */
  #define TERMINAL_PERMS            (S_IRUSR|S_IWUSR | S_IWGRP)
-@@ -117,11 +123,24 @@
+@@ -117,11 +123,24 @@ static const char *terminal_name=NULL;
  static int login_flags=0;
  static const char *login_remote_host="localhost";
  static const char *login_remote_user="[system]";
@@ -84,7 +165,7 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  /*
   * set up the conversation timeout facilities.
   */
-@@ -146,7 +165,7 @@
+@@ -146,7 +165,7 @@ static void set_timeout(int set)
   *  This function is to be used in cases of programmer error.
   */
  
@@ -93,7 +174,7 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  {
      if (pamh != NULL)
          (void) pam_end(pamh, PAM_ABORT);
-@@ -155,19 +174,11 @@
+@@ -155,25 +174,17 @@ static void serious_abort(const char *s)
  #endif
  
      (void) fprintf (stderr, "Login internal error: please seek help!\n");
@@ -113,7 +194,14 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
      exit(1);	
  }
  
-@@ -222,25 +233,15 @@
+ static int login_authenticate_user(void)
+ {
+-    int delay, retval ,logins;
++    int delay, retval, logins;
+ 
+     /*
+      *  This is the main authentication loop.
+@@ -222,25 +233,15 @@ static int login_authenticate_user(void)
  	    return PAM_PERM_DENIED;
  	}
  
@@ -142,7 +230,7 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  	/* reset the login prompt */
  	retval = pam_set_item(pamh, PAM_USER_PROMPT, user_prompt);
  
-@@ -274,32 +275,15 @@
+@@ -274,32 +275,15 @@ static void login_invoke_shell(const cha
       * take lose root privilege.
       */
  
@@ -181,7 +269,7 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  	 */
  
  	D(("what is their shell?"));
-@@ -308,7 +292,7 @@
+@@ -308,10 +292,13 @@ static void login_invoke_shell(const cha
  	{
  	    delay = STANDARD_DELAY;
  	    pam_retval = PAM_BUF_ERR;
@@ -190,7 +278,13 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  	    break;
  	}
  
-@@ -325,7 +309,7 @@
++	retval = pam_misc_setenv(pamh, "SHELL", shell_args[0], 0);
++	D(("pam_misc_setenv: SHELL=%s: retval=%d", shell_args[0], retval));
++
+ 	/*
+ 	 * Just before we shutdown PAM, we copy the PAM-environment to local
+ 	 * memory. (The parent process retains the PAM-environment so it can
+@@ -325,7 +312,7 @@ static void login_invoke_shell(const cha
  	if (shell_env == NULL) 
  	{
  	    delay = STANDARD_DELAY;
@@ -199,16 +293,19 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  	    break;
  	}
  
-@@ -347,7 +331,7 @@
+@@ -345,9 +332,9 @@ static void login_invoke_shell(const cha
+ 	user = NULL;                            /* user's name not valid now */
+ 	if (retval != PAM_SUCCESS) 
  	{
- 	    delay =STANDARD_DELAY;
+-	    delay =STANDARD_DELAY;
++	    delay = STANDARD_DELAY;
  	    pam_retval = retval;
 -	    (void) fprintf (stderr, "login failed to release authenticator");
 +	    log("login failed to release authenticator");
  	    break;
  	}
  
-@@ -357,8 +341,7 @@
+@@ -357,8 +344,7 @@ static void login_invoke_shell(const cha
  	if (gr == NULL) 
  	{
  	    delay = STANDARD_DELAY;
@@ -218,7 +315,7 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  	    break;
  	}
  
-@@ -368,7 +351,8 @@
+@@ -368,7 +354,8 @@ static void login_invoke_shell(const cha
  		|| chmod(terminal_name, TERMINAL_PERMS)) 
  	{
  	    delay = STANDARD_DELAY;
@@ -228,7 +325,7 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  	    break;
  	}
  
-@@ -377,13 +361,20 @@
+@@ -377,13 +364,20 @@ static void login_invoke_shell(const cha
  	while ( pwdb_end() == PWDB_SUCCESS );            /* forget all */
  #endif
  
@@ -251,7 +348,7 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  	}
  
  	/* finally we invoke the user's preferred shell */
-@@ -408,7 +399,7 @@
+@@ -408,7 +402,7 @@ static void login_invoke_shell(const cha
   * main program; login top-level skeleton
   */
  
@@ -260,7 +357,7 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  {
      static const char *shell=NULL;
      int retval=LOGIN_FALSE, status;
-@@ -424,8 +415,14 @@
+@@ -424,8 +418,14 @@ void main(int argc, const char **argv)
       */
  
      parse_args(argc, argv, &user, &login_remote_host, &login_flags);
@@ -275,7 +372,7 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
      do
      {
  	/*
-@@ -441,7 +438,7 @@
+@@ -441,7 +441,7 @@ void main(int argc, const char **argv)
  	{
  	    delay = 10;
  	    pam_retval = PAM_SUCCESS;
@@ -284,7 +381,7 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  	    err_descr = "terminal error";
  	    break;
  	}
-@@ -452,14 +449,13 @@
+@@ -452,14 +452,13 @@ void main(int argc, const char **argv)
  	 */
  
  #ifdef HAVE_PWDB
@@ -301,7 +398,7 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  	    err_descr = "start error";
              break;
  	}
-@@ -472,8 +468,7 @@
+@@ -472,8 +471,7 @@ void main(int argc, const char **argv)
  	{
  	    delay = 60;
  	    pam_retval = retval;
@@ -311,7 +408,7 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  	    err_descr = "start error";
  	    break;
  	}
-@@ -507,9 +502,8 @@
+@@ -507,9 +505,8 @@ void main(int argc, const char **argv)
  	{
  	    delay = 60;
  	    pam_retval = retval;
@@ -322,7 +419,7 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  	    break;
  	}
  	state = LOGIN_STATE_ENV_INITIALIZED;
-@@ -564,14 +558,9 @@
+@@ -564,14 +561,9 @@ void main(int argc, const char **argv)
  	    set_timeout(LOGIN_TRUE);
  	    retval = pam_chauthtok(pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
  
@@ -339,7 +436,7 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  	    }
  	}
  
-@@ -583,9 +572,8 @@
+@@ -583,9 +575,8 @@ void main(int argc, const char **argv)
  	{
  	    delay = STANDARD_DELAY;
  	    pam_retval = retval;
@@ -350,7 +447,7 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  	    break;
  	}
  	state = LOGIN_STATE_AUTHEN_SUCCESS;
-@@ -603,9 +591,8 @@
+@@ -603,9 +594,8 @@ void main(int argc, const char **argv)
  	{
  	    delay = STANDARD_DELAY;
  	    pam_retval = retval;
@@ -361,7 +458,7 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  	    break;
  	}
  	state = LOGIN_STATE_SESSION_OPENED;
-@@ -651,7 +638,13 @@
+@@ -651,7 +641,13 @@ void main(int argc, const char **argv)
  	    login_invoke_shell(shell, uid);                    /* never returns */
  
  	    D(("this should not have returned"));
@@ -376,7 +473,7 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  	}
  
  	retval = utmp_open_session(pamh, getpid(), &place, &err_descr);
-@@ -659,13 +652,13 @@
+@@ -659,13 +655,13 @@ void main(int argc, const char **argv)
  	{
  	    delay = 60;
  	    pam_retval = PAM_ABORT;
@@ -392,7 +489,7 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  	    err_descr = NULL;
  	}
  	state = LOGIN_STATE_UTMP_OPENED;
-@@ -690,13 +683,13 @@
+@@ -690,13 +686,13 @@ void main(int argc, const char **argv)
  	    {
  		delay = 60;
  		pam_retval = PAM_ABORT;
@@ -408,7 +505,7 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  		err_descr = NULL;
  	    }
  	}
-@@ -706,7 +699,8 @@
+@@ -706,7 +702,8 @@ void main(int argc, const char **argv)
  	{
  	    retval = pam_setcred(pamh, PAM_DELETE_CRED);
  	    if (retval != PAM_SUCCESS) 
@@ -418,21 +515,30 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  	}
  
  	if (state >= LOGIN_STATE_SESSION_OPENED)
-@@ -733,13 +727,14 @@
+@@ -731,15 +728,18 @@ void main(int argc, const char **argv)
+     while (pwdb_end() == PWDB_SUCCESS);
+ #endif
  
-     /* delay - to read the message */
- 
+-    /* delay - to read the message */
+-
 -    if (err_descr != NULL)
 -	(void) fprintf (stderr, "%s: %s\n", place, err_descr);
 -    else
+-	(void) fprintf (stderr, "%s\n", GOODBYE_MESSAGE); 
 +    if (err_descr != NULL) {
 +	log("%s: %s", place, err_descr);
 +	return retcode;
-+    } else
- 	(void) fprintf (stderr, "%s\n", GOODBYE_MESSAGE); 
++    }
++#ifdef GOODBYE_MESSAGE
++    else {
++	(void) fprintf (stderr, "%s\n", GOODBYE_MESSAGE);
  
-     /*Give time to read the goodbye message*/
-     (void) sleep(delay);
+-    /*Give time to read the goodbye message*/
+-    (void) sleep(delay);
++	/* Give time to read the goodbye message */
++	(void) sleep(delay);
++    }
++#endif
  
 -    exit (retcode);
 +    return retcode;

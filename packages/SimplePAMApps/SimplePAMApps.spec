@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.26 2002/11/03 05:53:14 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.27 2003/04/15 13:03:14 solar Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
 Version: 0.60
-Release: owl17
+Release: owl18
 License: BSD or GPL
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
@@ -13,10 +13,12 @@ Source2: su.pam
 Source3: passwd.pam
 Source4: su.control
 Source5: passwd.control
-Patch0: SimplePAMApps-0.60-owl-login.diff
+Patch0: SimplePAMApps-0.60-owl-alt-login.diff
 Patch1: SimplePAMApps-0.60-owl-passwd.diff
-Patch2: SimplePAMApps-0.60-owl-su.diff
-Patch3: SimplePAMApps-0.60-owl-ut_id.diff
+Patch2: SimplePAMApps-0.60-owl-alt-su.diff
+Patch3: SimplePAMApps-0.60-owl-login-su-ut_id.diff
+Patch4: SimplePAMApps-0.60-alt-owl-login-su-env.diff
+Patch5: SimplePAMApps-0.60-alt-login-su-strip-argv0.diff
 PreReq: owl-control >= 0.4, owl-control < 2.0
 Requires: tcb, pam_passwdqc >= 0.2, pam_mktemp
 Obsoletes: passwd
@@ -32,6 +34,8 @@ includes "login", "su", and "passwd".
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
+%patch5 -p1
 
 %build
 touch conf/.ignore_age
@@ -45,9 +49,9 @@ install -m 700 pamapps/{login/login,su/su} $RPM_BUILD_ROOT/bin/
 mkdir -p $RPM_BUILD_ROOT/usr/bin
 install -m 700 pamapps/passwd/passwd $RPM_BUILD_ROOT/usr/bin/
 
-mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man1
+mkdir -p $RPM_BUILD_ROOT%{_mandir}/man1
 install -m 644 pamapps/{login/login.1,su/su.1,passwd/passwd.1} \
-	${RPM_BUILD_ROOT}%{_mandir}/man1/
+	$RPM_BUILD_ROOT%{_mandir}/man1/
 
 mkdir -p $RPM_BUILD_ROOT/etc/pam.d
 install -m 600 $RPM_SOURCE_DIR/login.pam $RPM_BUILD_ROOT/etc/pam.d/login
@@ -87,6 +91,10 @@ fi
 /etc/control.d/facilities/*
 
 %changelog
+* Tue Apr 15 2003 Solar Designer <solar@owl.openwall.com> 0.60-owl18
+- Imported ALT Linux patches, most importantly replacing command line parsing
+in su, -- should now better match the behavior of other implementations.
+
 * Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
 - Dump/restore the owl-control settings for passwd and su on package upgrades.
 - Support "traditional" and "tcb" settings for permissions on /usr/bin/passwd
