@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mtree/mtree.spec,v 1.11 2005/01/14 03:27:52 galaxy Exp $
+# $Id: Owl/packages/mtree/mtree.spec,v 1.12 2005/01/20 04:03:00 solar Exp $
 
 Summary: Map a directory hierarchy.
 Name: mtree
@@ -42,8 +42,7 @@ install -m 644 usr.sbin/mtree/mtree.8 %buildroot%_mandir/man8/
 %changelog
 * Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.1-owl3
 - Made use of %__cc macro
-- Added gcc343-fixes patch to deal with "label at end of compound statment"
-issue.
+- Added a patch to deal with "label at end of compound statement" issue.
 
 * Sun Dec 25 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 3.1-owl2
 - Bumped up release to satisfy dependency resolver (fix for openssl
