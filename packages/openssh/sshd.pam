@@ -1,10 +1,9 @@
 #%PAM-1.0
-# $Id: Owl/packages/openssh/sshd.pam,v 1.3 2000/07/12 02:56:00 solar Exp $
+# $Id: Owl/packages/openssh/sshd.pam,v 1.4 2000/07/16 14:15:11 solar Exp $
 auth       required     /lib/security/pam_userpass.so
 auth       required     /lib/security/pam_pwdb.so shadow nodelay use_first_pass
 auth       required     /lib/security/pam_nologin.so
 account    required     /lib/security/pam_pwdb.so
-password   required     /lib/security/pam_passwdqc.so
-password   required     /lib/security/pam_pwdb.so shadow use_authtok prefix=$2a$ count=8
+password   required     /lib/security/pam_deny.so
 session    required     /lib/security/pam_pwdb.so
 session    required     /lib/security/pam_limits.so
