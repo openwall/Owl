@@ -1,16 +1,15 @@
-# $Id: Owl/packages/dialog/dialog.spec,v 1.5 2001/06/10 07:16:43 mci Exp $
+# $Id: Owl/packages/dialog/dialog.spec,v 1.6 2001/06/11 21:03:18 mci Exp $
 
 Summary: A utility for creating TTY dialog boxes.
 Name: dialog
 Version: 0.9a
 %define original_date	20010527
-Release: 7owl
+Release: 8owl
 Copyright: GPL
 Group: Applications/System
 Source: ftp://dickey.his.com/dialog/%{name}-%{version}-%{original_date}.tgz
 Patch0: dialog-0.9a-owl-pwdbox.diff
 Patch1: dialog-0.9a-alt-locale.diff
-Patch2: dialog-0.9a-alt-tmpdir.diff
 BuildRoot: /var/rpm-buildroot/%{name}-root
 
 %description
@@ -41,7 +40,6 @@ The following types of boxes are at your disposal:
 %setup -q -n %{name}-%{version}-%{original_date}
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 %build
 %configure --enable-nls
@@ -62,6 +60,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dialog.*
 
 %changelog
+* Tue Jun 12 2001 Michail Litvak <mci@owl.openwall.com>
+- remove alt-tmpdir patch
+
 * Sun Jun 10 2001 Michail Litvak <mci@owl.openwall.com>
 - Updated to new version
 - imported patches from ALT Linux
