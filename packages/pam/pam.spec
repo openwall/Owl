@@ -1,22 +1,24 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.16 2001/10/07 11:05:26 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.17 2001/11/15 04:45:06 solar Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
 Version: 0.75
-Release: 11owl
+Release: 12owl
 License: GPL or BSD
 Group: System Environment/Base
+URL: http://www.kernel.org/pub/linux/libs/pam/
 Source0: pam-redhat-%{version}-10.tar.bz2
 Source1: pam_listfile.c
-Patch0: pam-0.75-owl-pam_pwdb.diff
-Patch1: pam-0.75-owl-pam_chroot.diff
-Patch2: pam-0.75-owl-no-cracklib.diff
-Patch3: pam-0.75-alt-read_string.diff
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
+Patch0: pam-0.75-owl-tmp.diff
+Patch1: pam-0.75-owl-pam_pwdb.diff
+Patch2: pam-0.75-owl-pam_chroot.diff
+Patch3: pam-0.75-owl-no-cracklib.diff
+Patch4: pam-0.75-alt-read_string.diff
 BuildRequires: glibc-devel >= 2.1.3-13owl
-Requires: glibc >= 2.1.3-13owl
-Requires: pwdb >= 0.61-1owl
-URL: http://www.kernel.org/pub/linux/libs/pam/
+Requires: glibc >= 2.1.3-13owl, pwdb >= 0.61-1owl
+# Just to make sure noone misses pam_unix, which is now provided by tcb
+Requires: tcb >= 0.9.5
+BuildRoot: /override/%{name}-%{version}
  
 %description
 Linux-PAM (Pluggable Authentication Modules for Linux) is a suite of
@@ -25,16 +27,15 @@ PAM-aware applications authenticate users, without having to recompile
 those applications.
 
 %package devel
-Requires: %{name} = %{version}-%{release}
 Summary: Libraries and header files for developing applications with PAM.
 Group: Development/Libraries
+Requires: %{name} = %{version}-%{release}
 
 %description devel
 This package contains static Linux-PAM libraries and header files used
 for building both PAM-aware applications and PAM modules.
 
 %package doc
-Requires: %{name} = %{version}-%{release}
 Summary: The Linux-PAM documentation.
 Group: Documentation
 
@@ -47,14 +48,15 @@ PostScript formats.
 
 %prep
 %setup -q
-rm -rf modules/pam_{console,cracklib}
-rm -f modules/pam_pwdb/{md5*,bigcrypt.*}
+rm -r modules/pam_{console,cracklib,unix}
+rm modules/pam_pwdb/{md5*,bigcrypt.*}
 cp $RPM_SOURCE_DIR/pam_listfile.c modules/pam_listfile/
 ln -s ../../../libpam_misc/pam_misc.h libpam/include/security/pam_misc.h
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 mkdir modules/READMEs
 for f in modules/pam_*/README; do
 	d="${f%/*}"
@@ -157,11 +159,6 @@ grep ^chkpwd: /etc/group &>/dev/null || groupadd -g 163 chkpwd
 /lib/security/pam_stress.so
 /lib/security/pam_tally.so
 /lib/security/pam_time.so
-/lib/security/pam_unix.so
-/lib/security/pam_unix_acct.so
-/lib/security/pam_unix_auth.so
-/lib/security/pam_unix_passwd.so
-/lib/security/pam_unix_session.so
 /lib/security/pam_userdb.so
 /lib/security/pam_warn.so
 /lib/security/pam_wheel.so
@@ -179,6 +176,7 @@ grep ^chkpwd: /etc/group &>/dev/null || groupadd -g 163 chkpwd
 %{_mandir}/man8/*
 
 %files devel
+%defattr(-,root,root)
 /lib/libpam.so
 /lib/libpamc.so
 /lib/libpam_misc.so
@@ -189,10 +187,16 @@ grep ^chkpwd: /etc/group &>/dev/null || groupadd -g 163 chkpwd
 %{_mandir}/man3/*
 
 %files doc
+%defattr(-,root,root)
 %doc doc/{html,ps,txts}
 %doc doc/specs/rfc86.0.txt
 
 %changelog
+* Thu Nov 15 2001 Solar Designer <solar@owl.openwall.com>
+- No longer build pam_unix, the tcb package will provide compatibility
+symlinks instead.
+- /tmp fixes in the documentation (don't suggest bad practices).
+
 * Sun Oct 07 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to Red Hat's 0.75-10 plus our usual patches.
 - Replaced pam_listfile with Michael Tokarev's implementation (see
