@@ -1,3 +1,5 @@
+# $Id: Owl/packages/mingetty/mingetty.spec,v 1.3 2000/09/25 19:11:56 solar Exp $
+
 Summary: A compact getty program for virtual consoles only.
 Name: mingetty
 Version: 0.9.4
