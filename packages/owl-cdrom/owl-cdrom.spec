@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.10 2002/08/22 03:54:11 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.11 2002/08/22 03:59:40 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
@@ -21,7 +21,7 @@ startup scripts needed for Owl bootable CD-ROMs.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{etc/rc.d,boot,rom,ram,owl}
+mkdir -p $RPM_BUILD_ROOT/{etc/{rc,profile}.d,boot,rom,ram,owl}
 
 cd $RPM_BUILD_ROOT
 touch .Owl-CD-ROM
