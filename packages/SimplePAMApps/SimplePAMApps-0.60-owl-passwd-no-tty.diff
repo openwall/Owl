@@ -1,0 +1,41 @@
+diff -ur SimplePAMApps-0.60.orig/pamapps/passwd/passwd.c SimplePAMApps-0.60/pamapps/passwd/passwd.c
+--- SimplePAMApps-0.60.orig/pamapps/passwd/passwd.c	Thu Feb 18 15:29:43 1999
++++ SimplePAMApps-0.60/pamapps/passwd/passwd.c	Mon Mar 19 05:00:25 2001
+@@ -81,27 +81,23 @@
+     }
+ 
+     if (user == NULL) {
+-#ifndef HAVE_PWDB
+ 	struct passwd *pwent;
+-#endif /* HAVE_PWDB */
+-	if ((user = getlogin()) == NULL) {
+-	    fprintf(stderr, "passwd: cannot retrieve user's name\n");
+-	    exit(1);
+-	}
+-#ifndef HAVE_PWDB
+-	/* attempt to patch over libc's inability to handle longer that
+-	   fixed length login names from the utmp file */
+ 
+-	if ((pwent = getpwnam(user)) == NULL
+-	    || (pwent = getpwuid(getuid())) == NULL
+-	    || !(pwent->pw_name
+-		 && !strncmp(pwent->pw_name, user, strlen(user)))) {
++	if ((user = getlogin()))
++	    pwent = getpwnam(user);
++	else
++	    pwent = getpwuid(getuid());
++
++	if ((!user && isatty(0))
++	    || !pwent
++	    || !pwent->pw_name
++	    || pwent->pw_uid != getuid()
++	    || (user && strcmp(pwent->pw_name, user) != 0)) {
+ 	    fprintf(stderr, "passwd: cannot retrieve user's name\n");
+ 	    exit(1);
+ 	} else {
+ 	    user = pwent->pw_name;
+ 	}
+-#endif /* HAVE_PWDB */
+     }
+ 
+     /* here we know whose passwords are to be changed and whether
