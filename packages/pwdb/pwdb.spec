@@ -1,9 +1,9 @@
-# $Id: Owl/packages/pwdb/Attic/pwdb.spec,v 1.4 2001/06/18 02:09:38 solar Exp $
+# $Id: Owl/packages/pwdb/Attic/pwdb.spec,v 1.5 2001/07/30 02:21:27 solar Exp $
 
 Summary: The password database library.
 Name: pwdb
 Version: 0.61.1
-Release: 1owl
+Release: 2owl
 Copyright: GPL or BSD
 Group: System Environment/Base
 Source: pwdb-%{version}.tar.gz
@@ -23,6 +23,9 @@ database.  libpwdb was specifically designed to work with Linux-PAM
 access to and management of security tools like /etc/passwd,
 /etc/shadow and network authentication systems including NIS and
 Radius.
+
+# Use optflags_lib for this package if defined.
+%{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 
 %prep
 %setup -q -c
@@ -69,6 +72,9 @@ rm -rf $RPM_BUILD_ROOT
 /lib/libpwdb.so.%{version}
 
 %changelog
+* Mon Jul 30 2001 Solar Designer <solar@owl.openwall.com>
+- optflags_lib support.
+
 * Mon Jun 18 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 0.61.1, which adds some header files.
 
