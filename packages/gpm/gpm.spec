@@ -1,8 +1,8 @@
-# $Id: Owl/packages/gpm/gpm.spec,v 1.9 2002/02/03 21:31:40 mci Exp $
+# $Id: Owl/packages/gpm/gpm.spec,v 1.10 2002/02/04 06:50:08 solar Exp $
 
 # this defines the library version that this package builds.
-%define	LIBVER		1.18.0
-%define BUILD_GPM_ROOT	'no'
+%define	LIBVER 1.18.0
+%define BUILD_GPM_ROOT 0
 
 Summary: A mouse server for the Linux console.
 Name: gpm
@@ -10,7 +10,7 @@ Version: 1.19.6
 Release: owl2
 License: GPL
 Group: System Environment/Daemons
-Source0: ftp://arcana.linux.it/pub/%{name}-%{version}.tar.bz2
+Source0: ftp://arcana.linux.it/pub/gpm/%{name}-%{version}.tar.bz2
 Source1: gpm.init
 Patch0: gpm-1.19.6-rh-no-ps.diff
 Patch1: gpm-1.19.6-rh-owl-socket-mode.diff
@@ -37,7 +37,7 @@ Requires: %{name} = %{version}-%{release}
 The gpm-devel package contains the libraries and header files needed
 for the development of mouse driven programs for the console.
 
-%if "%{BUILD_GPM_ROOT}"=="'yes'"
+%if %BUILD_GPM_ROOT
 %package root
 Summary: A mouse server add-on which draws pop-up menus on the console.
 Group: System Environment/Daemons
@@ -103,7 +103,7 @@ rm -f /var/run/gpm.restart
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info %{_infodir}/gpm.info.gz --delete %{_infodir}/dir
+	/sbin/install-info --delete %{_infodir}/gpm.info.gz %{_infodir}/dir
 	/etc/rc.d/init.d/gpm stop || :
 	/sbin/chkconfig --del gpm
 fi
@@ -126,7 +126,7 @@ fi
 %{_libdir}/libgpm.a
 %{_libdir}/libgpm.so
 
-%if "%{BUILD_GPM_ROOT}"=="'yes'"
+%if %BUILD_GPM_ROOT
 %files root
 %defattr(-,root,root)
 %config %{_sysconfdir}/gpm-root.conf
