@@ -1,14 +1,15 @@
-# $Id: Owl/packages/zlib/zlib.spec,v 1.3 2002/02/07 18:07:47 solar Exp $
+# $Id: Owl/packages/zlib/zlib.spec,v 1.4 2002/02/11 15:37:15 solar Exp $
 
 Summary: The zlib compression and decompression library.
 Name: zlib
 Version: 1.1.3
-Release: owl11
+Release: owl12
 License: BSD
 Group: System Environment/Libraries
-URL: http://www.info-zip.org/pub/infozip/zlib/
+URL: http://www.gzip.org/zlib/
 Source: ftp://ftp.info-zip.org/pub/infozip/zlib/zlib-%{version}.tar.gz
 Patch0: zlib-1.1.3-rh-glibc.diff
+Patch1: zlib-1.1.3-mark-inflate-error-handling.diff
 PreReq: /sbin/ldconfig
 Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
@@ -34,6 +35,7 @@ library.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" ./configure --shared --prefix=%{_prefix}
@@ -76,6 +78,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man3/zlib.3*
 
 %changelog
+* Mon Feb 11 2002 Solar Designer <solar@owl.openwall.com>
+- Error handling fixes for inflate from Mark Adler.
+
 * Sat Feb 02 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 
