@@ -1,4 +1,4 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.4 2001/04/11 11:56:25 mci Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.5 2001/04/11 12:06:28 mci Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
@@ -94,7 +94,7 @@ fi
 %{_infodir}/*
 
 %changelog
-* Mon Wed 11 2001 Michail Litvak <mci@owl.openwall.com>
+* Wed 11 2001 Michail Litvak <mci@owl.openwall.com>
 - added chkconfig support in init script
 - improved logrotate config
 - more cleanups...
