@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.23 2001/06/11 02:29:29 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.24 2001/06/14 21:05:24 solar Exp $
 
 Summary: OpenSSH free Secure Shell (SSH) implementation
 Name: openssh
 Version: 2.9p1
-Release: 2owl
+Release: 3owl
 URL: http://www.openssh.com/
 Source0: ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-%{version}.tar.gz
 Source1: sshd.pam
@@ -184,6 +184,10 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Fri Jun 15 2001 Solar Designer <solar@owl.openwall.com>
+- Prevent additional timing leaks with null passwords (when allowed),
+updated patch from Rafal Wojtczuk <nergal@owl.openwall.com>.
+
 * Mon Jun 11 2001 Solar Designer <solar@owl.openwall.com>
 - Switch credentials when cleaning up temporary files and sockets to fix
 the vulnerability reported by zen-parse@gmx.net on Bugtraq; the patch is
