@@ -19,6 +19,7 @@ sources			l'arbre des sources (archives originales, etc)
 kernel			les sources du noyau et les patches recommandés
 Owl.mtree		les spécifications mtree(8) pour ci-dessus
 i386, sparc, sparcv9	les packages binaires Owl
+iso			ISO-9660 images of Owl CD's
 
 Quelques uns des sous-répertoires peuvent utiliser des liens symboliques
 vers des fichiers communs à plusieurs branches Owl. Ainsi, pour télécharger
@@ -38,4 +39,4 @@ depuis les sources, vous aurez besoin des deux arbres CVS et sources.
 Plus de documentations (incluant BUILD et INSTALL) sont accessibles dans
 l'arbre CVS, dans Owl/doc/.
 
-$Id: Owl/doc/fr/DOWNLOAD,v 1.2 2001/06/29 13:23:41 solar Exp $
+$Id: Owl/doc/fr/DOWNLOAD,v 1.3 2002/02/07 07:42:40 solar Exp $
