@@ -1,0 +1,20 @@
+diff -ur logrotate-3.5.2.orig/logrotate.h logrotate-3.5.2/logrotate.h
+--- logrotate-3.5.2.orig/logrotate.h	Sun Jul 23 20:13:05 2000
++++ logrotate-3.5.2/logrotate.h	Mon Jun  4 04:43:49 2001
+@@ -14,14 +14,14 @@
+ #define LOG_FLAG_SHAREDSCRIPTS	(1 << 7)
+ 
+ #define DEFAULT_MAIL_COMMAND "/bin/mail -s"
+-#define COMPRESS_COMMAND "gzip -9"
++#define COMPRESS_COMMAND "gzip"
+ #define COMPRESS_EXT ".gz"
+ #define UNCOMPRESS_PIPE "gunzip"
+ 
+ #define NO_FORCE_ROTATE 0
+ #define FORCE_ROTATE    1
+ 
+-#define STATEFILE "/var/lib/logrotate.status"
++#define STATEFILE "/var/lib/logrotate/status"
+ 
+ typedef struct {
+     char * pattern;
