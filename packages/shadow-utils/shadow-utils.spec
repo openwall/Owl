@@ -1,9 +1,9 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.35 2004/02/12 02:28:19 mci Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.36 2004/06/09 21:27:22 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.0
-Release: owl15
+Release: owl16
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -26,6 +26,7 @@ Patch4: shadow-4.0.0-owl-pam-auth.diff
 Patch5: shadow-4.0.0-owl-chage-drop-priv.diff
 Patch6: shadow-4.0.0-owl-chage-ro-no-lock.diff
 Patch7: shadow-4.0.0-owl-useradd-usermod-usage.diff
+Patch8: shadow-4.0.0-owl-pam_chauthtok.diff
 Patch10: shadow-4.0.0-rh-owl-redhat.diff
 Patch20: shadow-4.0.0-owl-man.diff
 Patch21: shadow-4.0.0-owl-check_names.diff
@@ -58,6 +59,7 @@ shadow password files.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 %patch10 -p1
 %patch20 -p1
 %patch21 -p1
@@ -194,6 +196,11 @@ fi
 /etc/control.d/facilities/*
 
 %changelog
+* Mon May 31 2004 Solar Designer <solar@owl.openwall.com> 2:4.0.0-owl16
+- Properly check the return value from pam_chauthtok() in
+libmisc/pwdcheck.c: passwd_check() that is used by chfn and chsh commands.
+Thanks to Steve Grubb and Martin Schulze.
+
 * Thu Feb 12 2004 Michail Litvak <mci@owl.openwall.com> 2:4.0.0-owl15
 - Use RPM macros instead of explicit paths.
 
