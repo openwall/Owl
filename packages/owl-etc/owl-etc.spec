@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.38 2002/06/23 16:00:07 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.39 2002/08/22 01:39:29 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
 Version: 0.23
-Release: owl1
+Release: owl2
 License: public domain
 Group: System Environment/Base
 Source0: passwd
@@ -48,8 +48,8 @@ rm -rf $RPM_BUILD_ROOT
 %verify(not md5 size mtime) %config(noreplace) %attr(400,root,root) /etc/shadow
 %verify(not md5 size mtime) %config(noreplace) /etc/group
 %verify(not md5 size mtime) %config(noreplace) %attr(644,root,root) /etc/fstab
-%attr(600,root,root) /etc/securetty
-%config /etc/shells
+%config(noreplace) %attr(600,root,root) /etc/securetty
+%config(noreplace) /etc/shells
 %config(noreplace) /etc/host.conf
 %config /etc/protocols
 %config /etc/services
@@ -60,11 +60,14 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/inputrc
 %config(noreplace) /etc/csh.login
 %config(noreplace) /etc/csh.cshrc
-%config /etc/motd
+%config(noreplace) /etc/motd
 %dir %attr(755,root,root) /etc/profile.d
 %ghost /var/log/lastlog
 
 %changelog
+* Thu Aug 22 2002 Solar Designer <solar@owl.openwall.com>
+- Made more files noreplace.
+
 * Sun Jun 23 2002 Solar Designer <solar@owl.openwall.com>
 - sshd user/group.
 
