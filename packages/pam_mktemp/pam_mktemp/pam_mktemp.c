@@ -39,6 +39,8 @@ static int ext2fs_chflags(const char *name, int set, int reset)
 		return -1;
 
 	if (ioctl(fd, EXT2_IOC_GETFLAGS, &flags)) {
+		if (errno == ENOTTY) /* "Inappropriate ioctl for device" */
+			errno = EOPNOTSUPP;
 		close(fd);
 		return -1;
 	}
@@ -48,7 +50,8 @@ static int ext2fs_chflags(const char *name, int set, int reset)
 
 	retval = ioctl(fd, EXT2_IOC_SETFLAGS, &flags);
 
-	close(fd);
+	if (close(fd))
+		retval = -1;
 	return retval;
 }
 #else
@@ -124,7 +127,8 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
  * anything in the directory or rename/unlink it and we can play safely.
  */
 
-	if (ext2fs_chflags(PRIVATE_PREFIX, EXT2_APPEND_FL, 0))
+	if (ext2fs_chflags(PRIVATE_PREFIX, EXT2_APPEND_FL, 0) &&
+	    errno != EOPNOTSUPP)
 		return PAM_SESSION_ERR;
 
 	userdir = alloca(strlen(PRIVATE_PREFIX) + strlen(user) + 2);
@@ -138,7 +142,7 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 
 	/* Don't let the append-only flag get inherited from the parent
 	 * directory. */
-	if (ext2fs_chflags(userdir, 0, EXT2_APPEND_FL))
+	if (ext2fs_chflags(userdir, 0, EXT2_APPEND_FL) && errno != EOPNOTSUPP)
 		return PAM_SESSION_ERR;
 
 	if (usergroups) {
