@@ -1,15 +1,16 @@
-# $Id: Owl/packages/less/less.spec,v 1.2 2000/08/23 15:20:25 kad Exp $
+# $Id: Owl/packages/less/less.spec,v 1.3 2000/09/03 19:02:52 kad Exp $
 
 Summary: A text file browser similar to more, but better.
 Name: 		less
 Version: 	358
-Release: 	2owl
+Release: 	3owl
 License: 	GPL
 Group: 		Applications/Text
 Source: 	ftp://ftp.gnu.org/pub/gnu/less/%{name}-%{version}.tar.gz
 Source1: 	lesspipe.sh
 Source2: 	less.sh
 Source3: 	less.csh
+Patch:		less-358-owl-popen.diff
 URL: 		http://www.flash.net/~marknu/less/
 Buildroot: 	/var/rpm-buildroot/%{name}-root
 
@@ -25,6 +26,7 @@ files, and you'll use it frequently.
 
 %prep
 %setup -q
+%patch -p1
 
 %build
 %configure
@@ -49,6 +51,9 @@ install -c -m 755 %{SOURCE3} $RPM_BUILD_ROOT/etc/profile.d
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Sun Sep  3 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- use popen
+
 * Wed Aug 23 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - lesspipe fixes
 

@@ -1,0 +1,63 @@
+diff -urN less-358.orig/filename.c less-358/filename.c
+--- less-358.orig/filename.c	Sun Jul  9 03:26:44 2000
++++ less-358/filename.c	Sun Sep  3 21:49:52 2000
+@@ -514,53 +514,12 @@
+ {
+ 	FILE *fd;
+ 
+-#if HAVE_SHELL
+-	char *shell;
+-
+-	shell = lgetenv("SHELL");
+-	if (shell != NULL && *shell != '\0')
+-	{
+-		char *scmd;
+-		char *esccmd;
+-
+-		/*
+-		 * Try to escape any metacharacters in the command.
+-		 * If we can't do that, just put the command in quotes.
+-		 * (But that doesn't work well if the command itself 
+-		 * contains quotes.)
+-		 */
+-		if ((esccmd = esc_metachars(cmd)) == NULL)
+-		{
+-			/*
+-			 * Cannot escape the metacharacters, so use quotes.
+-			 * Read the output of <$SHELL -c "cmd">.
+-			 */
+-			scmd = (char *) ecalloc(strlen(shell) + strlen(cmd) + 7,
+-						sizeof(char));
+-			sprintf(scmd, "%s -c \"%s\"", shell, cmd);
+-		} else
+-		{
+-			/*
+-			 * Read the output of <$SHELL -c cmd>.  
+-			 * No quotes; use the escaped cmd.
+-			 */
+-			scmd = (char *) ecalloc(strlen(shell) + strlen(esccmd) + 5,
+-						sizeof(char));
+-			sprintf(scmd, "%s -c %s", shell, esccmd);
+-			free(esccmd);
+-		}
+-		fd = popen(scmd, "r");
+-		free(scmd);
+-	} else
+-#endif
+-	{
+-		fd = popen(cmd, "r");
+-		/*
+-		 * Redirection in `popen' might have messed with the
+-		 * standard devices.  Restore binary input mode.
+-		 */
+-		SET_BINARY(0);
+-	}
++	fd = popen(cmd, "r");
++	/*
++	 * Redirection in `popen' might have messed with the
++	 * standard devices.  Restore binary input mode.
++	 */
++	SET_BINARY(0);
+ 	return (fd);
+ }
+ 

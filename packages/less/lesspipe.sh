@@ -22,6 +22,14 @@ lesspipe() {
    if [ -n "$FILE" ]; then
      groff -s -p -t -e -Tascii -mandoc "$1"
    fi ;;
+  *.1.gz|*.2.gz|*.3.gz|*.4.gz|*.5.gz|*.7.gz|*.8.gz|*.9.gz|*.n.gz|*.man.gz)
+    if gunzip -c "$1" |file - | grep troff &>/dev/null; then
+       gunzip -c "$1" |groff -s -p -t -e -Tlatin1 -mandoc -
+    fi ;;
+  *.1.bz2|*.2.bz2|*.3.bz2|*.4.bz2|*.5.bz2|*.7.bz2|*.8.bz2|*.9.bz2|*.n.bz2|*.man.bz2)
+    if bunzip2 -c "$1" |file - |grep troff &>/dev/null; then
+       bunzip2 -c "$1" |groff -s -p -t -e -Tlatin1 -mandoc -
+    fi ;;
   esac
 }
 
