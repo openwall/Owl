@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.26 2002/06/22 08:07:43 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.27 2002/06/22 08:24:16 solar Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -182,7 +182,11 @@ function builder()
 		test -n "$SPEC" || continue
 		mkdir .${SOURCE} &> /dev/null || continue
 		touch .${SOURCE}/$NUMBER
-		if built $SPEC $SOURCE; then
+		if [ -n "$PACKAGE" ]; then
+			if [ "$SOURCE" = "$PACKAGE" ]; then
+				build_native $NUMBER $SOURCE
+			fi
+		elif built $SPEC $SOURCE; then
 			log "#$NUMBER: Skipping $SOURCE"
 		else
 			build_native $NUMBER $SOURCE
@@ -199,6 +203,13 @@ function builder()
 		mkdir .${SOURCE} &> /dev/null || continue
 		cd .${SOURCE} || exit 1
 		touch $NUMBER
+		if [ -n "$PACKAGE" ]; then
+			cd $HOME/foreign-work || exit 1
+			if [ "$SOURCE" = "$PACKAGE" ]; then
+				build_foreign $NUMBER $SOURCE
+			fi
+			continue
+		fi
 		rpm2cpio $FOREIGN/${SOURCE}.src.rpm | cpio -i --quiet '*.spec'
 		cd $HOME/foreign-work || exit 1
 		SPEC=$HOME/foreign-work/.${SOURCE}/*.spec
