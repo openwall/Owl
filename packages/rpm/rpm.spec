@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.40 2004/12/09 00:33:40 galaxy Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.41 2004/12/09 20:06:07 solar Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -324,7 +324,7 @@ The old RPM database (db1 format) was found.  Unfortunately, we cannot
 automatically convert this database during installation of this
 package due to a "chicken and egg" problem.  To convert old RPM database
 to the new database format extract "rpmd" binary from this package and
-run "rpmd --rebuild" manually.
+run "rpmd --rebuilddb" manually.
 EOF
 		exit 1
 	fi
@@ -456,6 +456,7 @@ fi
 * Wed Dec 08 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl2
 - Fixed a bug with not doing chroot() before resolving name to uid using
 getpwnam() [psm_process-chroot patch]
+
 * Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 4.2-owl1
 - Corrected the long text messages for consistency with owl-etc.
 - Set Release to -owl1 such that we can make this public.
