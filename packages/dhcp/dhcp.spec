@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.8 2003/09/10 21:33:19 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.9 2003/09/10 21:46:39 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -138,6 +138,7 @@ fi
 %{_mandir}/man5/dhclient.leases.5*
 %{_mandir}/man8/dhclient.8*
 %{_mandir}/man8/dhclient-script.8*
+# XXX: wrong
 %attr(0660,root,dhcpd) %config /var/lib/dhcp/state/dhclient.leases
 %endif
 
@@ -151,7 +152,7 @@ fi
 %{_mandir}/man8/dhcpd.8*
 %attr(0750,root,dhcpd) %dir /var/lib/dhcp
 %attr(1770,root,dhcpd) %dir /var/lib/dhcp/state
-%attr(0660,root,dhcpd) %config /var/lib/dhcp/state/dhcpd.leases
+%attr(0600,dhcpd,dhcpd) %config /var/lib/dhcp/state/dhcpd.leases
 
 %files relay
 %defattr(-,root,root)
