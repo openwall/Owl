@@ -1,11 +1,11 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.20 2002/03/01 20:10:15 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.21 2002/03/24 19:01:43 solar Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
 Version: 0.60
-Release: owl14
+Release: owl15
 License: BSD or GPL
-Group: Utilities/System
+Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
 Source0: SimplePAMApps-0.60.tar.gz
 Source1: login.pam
@@ -75,6 +75,9 @@ rm -rf $RPM_BUILD_ROOT
 /etc/control.d/facilities/*
 
 %changelog
+* Sun Mar 24 2002 Solar Designer <solar@owl.openwall.com>
+- Group: System Environment/Base
+
 * Fri Mar 01 2002 Solar Designer <solar@owl.openwall.com>
 - Pick the best match utmp entry to replace when ut_id's don't match; if
 that was the case, leave ut_id at what it was in utmp such that the entry

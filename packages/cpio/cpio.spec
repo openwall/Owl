@@ -1,26 +1,26 @@
-# $Id: Owl/packages/cpio/cpio.spec,v 1.7 2002/01/24 17:16:53 solar Exp $
+# $Id: Owl/packages/cpio/cpio.spec,v 1.8 2002/03/24 19:01:43 solar Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
 Version: 2.4.2
-Release: owl24
+Release: owl25
 License: GPL
-Group: Archiving/Backup
+Group: Applications/Archiving
 Source: ftp://ftp.gnu.org/gnu/cpio-%{version}.tar.gz
-Patch1: cpio-2.4.2-deb-cpio.diff
-Patch2: cpio-2.4.2-deb-mt_scsi.diff
-Patch3: cpio-2.4.2-deb-rmt.diff
-Patch4: cpio-2.4.2-deb-glibc21.diff
-Patch5: cpio-2.4.2-deb-cpio_man.diff
-Patch6: cpio-2.4.2-deb-cpio_info.diff
-Patch7: cpio-2.4.2-deb-mt_man.diff
-Patch8: cpio-2.4.2-deb-rmt_man.diff
-Patch9: cpio-2.4.2-rh-fhs.diff
-Patch10: cpio-2.4.2-rh-glibc.diff
-Patch11: cpio-2.4.2-rh-man.diff
-Patch12: cpio-2.4.2-rh-mtime.diff
-Patch13: cpio-2.4.2-rh-svr4compat.diff
-Patch14: cpio-2.4.2-rh-lchown.diff
+Patch0: cpio-2.4.2-deb-cpio.diff
+Patch1: cpio-2.4.2-deb-mt_scsi.diff
+Patch2: cpio-2.4.2-deb-rmt.diff
+Patch3: cpio-2.4.2-deb-glibc21.diff
+Patch4: cpio-2.4.2-deb-cpio_man.diff
+Patch5: cpio-2.4.2-deb-cpio_info.diff
+Patch6: cpio-2.4.2-deb-mt_man.diff
+Patch7: cpio-2.4.2-deb-rmt_man.diff
+Patch8: cpio-2.4.2-rh-fhs.diff
+Patch9: cpio-2.4.2-rh-glibc.diff
+Patch10: cpio-2.4.2-rh-man.diff
+Patch11: cpio-2.4.2-rh-mtime.diff
+Patch12: cpio-2.4.2-rh-svr4compat.diff
+Patch13: cpio-2.4.2-rh-lchown.diff
 PreReq: /sbin/install-info
 Provides: mt-st, rmt
 Prefix: %{_prefix}
@@ -40,6 +40,7 @@ and can read archives created on machines with a different byte-order.
 
 %prep
 %setup -q
+%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -53,7 +54,6 @@ and can read archives created on machines with a different byte-order.
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
-%patch14 -p1
 
 %build
 %configure
@@ -94,6 +94,9 @@ fi
 %{_mandir}/man8/rmt.8*
 
 %changelog
+* Sun Mar 24 2002 Solar Designer <solar@owl.openwall.com>
+- Group: Applications/Archiving (be the same as tar).
+
 * Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 
