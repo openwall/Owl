@@ -1,0 +1,259 @@
+--- acct-6.3.5/sa.c.orig	Mon Mar 23 08:06:34 1998
++++ acct-6.3.5/sa.c	Wed Mar 20 23:28:48 2002
+@@ -21,6 +21,8 @@
+ 
+ #include "config.h"
+ 
++#define ACETIME_AHZ
++
+ /* AIX requires this to be the first thing in the file.  */
+ #ifdef __GNUC__
+ # define alloca __builtin_alloca
+@@ -238,7 +240,7 @@
+ 
+ /* prototypes */
+ 
+-void main PARAMS((int, char *[]));
++int main PARAMS((int, char *[]));
+ void give_usage PARAMS((void));
+ void write_savacct_file PARAMS((char *));
+ void write_usracct_file PARAMS((char *));
+@@ -262,7 +264,7 @@
+ 
+ /* code */
+ 
+-void
++int
+ main (int argc, char *argv[])
+ {
+   int c;
+@@ -1129,17 +1131,6 @@
+ # endif
+ #endif
+ 
+-#ifdef HAVE_ACETIME
+-# ifdef ACETIME_COMPT
+-      double et = comp_t_2_double (rec->ac_etime);
+-# else
+-      double et = (double) rec->ac_etime;
+-# endif
+-# ifdef ACETIME_AHZ
+-      et /= (double) ahz;
+-# endif
+-#endif
+-
+ #ifdef HAVE_ACIO
+ # ifdef ACIO_COMPT
+       double di = comp_t_2_double (rec->ac_io) / (double) ahz;
+@@ -1153,6 +1144,17 @@
+       double mu = PAGES_TO_KB (comp_t_2_double (rec->ac_mem));
+ # else
+       double mu = PAGES_TO_KB (rec->ac_mem);
++# endif
++#endif
++
++#ifdef HAVE_ACETIME
++# ifdef ACETIME_COMPT
++      double et = comp_t_2_double (rec->ac_etime);
++# else
++      double et = (double) rec->ac_etime;
++# endif
++# ifdef ACETIME_AHZ
++      et /= (double) ahz;
+ # endif
+ #endif
+ 
+--- acct-6.3.5/sa.8.orig	Fri Mar 22 22:29:43 2002
++++ acct-6.3.5/sa.8	Fri Mar 22 22:30:30 2002
+@@ -180,10 +180,10 @@
+ The output fields are labeled as follows:
+ .TP
+ .I cpu
+- sum of system and user time in cpu seconds
++ sum of system and user time in seconds
+ .TP
+ .I re
+- "real time" in cpu seconds
++ "real time" in seconds
+ .TP
+ .I k
+  cpu-time averaged core usage, in 1k units
+@@ -198,14 +198,14 @@
+  cpu storage integral (kilo-core seconds)
+ .TP
+ .I u
+- user cpu time in cpu seconds
++ user cpu time in seconds
+ .TP
+ .I s
+- system time in cpu seconds
++ system time in seconds
+ .LP
+ Note that these column titles do not appear in the first row of the
+ table, but after each numeric entry (as units of measurement) in every
+-row.  For example, you might see `79.29re', meaning 79.29 cpu seconds
++row.  For example, you might see `79.29re', meaning 79.29 seconds
+ of "real time".
+ .LP
+ An asterisk will appear after the name of commands that forked but didn't call 
+--- acct-6.3.5/lastcomm.c.orig	Wed Mar 20 23:22:21 2002
++++ acct-6.3.5/lastcomm.c	Fri Mar 22 22:25:21 2002
+@@ -81,7 +81,7 @@
+ 
+ /* protos */
+ 
+-void main PARAMS((int, char *[]));
++int main PARAMS((int, char *[]));
+ void give_usage PARAMS((void));
+ void parse_entries PARAMS((void));
+ char *devname PARAMS((long));
+@@ -91,7 +91,7 @@
+ 
+ /* code */
+ 
+-void
++int
+ main (int argc, char *argv[])
+ {
+   int c;
+@@ -296,6 +296,7 @@
+ 	  double ut = (double) rec->ac_utime;
+ 	  double st = (double) rec->ac_stime;
+ #endif
++	  time_t tmp = rec->ac_btime;
+ 	  
+ 	  /* Make sure there are no unprintable characters in the
+              command name string. */
+@@ -352,7 +353,7 @@
+ 	  printf (" %-8.8s %-8.8s %6.2f secs %-16.16s\n",
+ 		  this_uid, this_dev,
+ 		  ((ut + st) / (double) ahz),
+-		  ctime (&rec->ac_btime));
++		  ctime (&tmp));
+ 	}
+     }
+ }
+--- acct-6.3.5/dump-utmp.c.orig	Wed Mar 20 23:27:08 2002
++++ acct-6.3.5/dump-utmp.c	Wed Mar 20 23:27:30 2002
+@@ -20,7 +20,7 @@
+ 				   records or the file-reading
+ 				   algorithms. */
+ 
+-void main PARAMS((int argc, char *argv[]));
++int main PARAMS((int argc, char *argv[]));
+ 
+ static
+ void
+@@ -33,7 +33,7 @@
+ }
+ 
+ 
+-void
++int
+ main (int argc, char *argv[])
+ {
+   int c;
+--- acct-6.3.5/dump-acct.c.orig	Wed Mar 20 23:27:42 2002
++++ acct-6.3.5/dump-acct.c	Wed Mar 20 23:27:57 2002
+@@ -20,7 +20,7 @@
+ 				   records or the file-reading
+ 				   algorithms. */
+ 
+-void main PARAMS((int argc, char *argv[]));
++int main PARAMS((int argc, char *argv[]));
+ 
+ static
+ void
+@@ -33,7 +33,7 @@
+ }
+ 
+ 
+-void
++int
+ main (int argc, char *argv[])
+ {
+   int c;
+--- acct-6.3.5/accton.c.orig	Wed Mar 20 23:28:13 2002
++++ acct-6.3.5/accton.c	Wed Mar 20 23:28:29 2002
+@@ -41,7 +41,7 @@
+ 
+ /* protos */
+ 
+-void main PARAMS((int argc, char *argv[]));
++int main PARAMS((int argc, char *argv[]));
+ void usage PARAMS((void));
+ 
+ 
+@@ -57,7 +57,7 @@
+   print_acct_file_location ();
+ }
+ 
+-void
++int
+ main (int argc, char *argv[])
+ {
+   int c;
+--- acct-6.3.5/ac.c.orig	Tue Oct 14 03:28:36 1997
++++ acct-6.3.5/ac.c	Wed Mar 20 23:20:41 2002
+@@ -152,7 +152,7 @@
+ 
+ /* prototypes */
+ 
+-void main PARAMS((int, char *[]));
++int main PARAMS((int, char *[]));
+ void give_usage PARAMS((void));
+ void do_statistics PARAMS((char *));
+ void log_in PARAMS((struct utmp *));
+@@ -168,7 +168,7 @@
+ 
+ /* code */
+ 
+-void
++int
+ main (int argc, char *argv[])
+ {
+   int c;
+--- acct-6.3.5/last.c.orig	Mon Mar 23 07:37:06 1998
++++ acct-6.3.5/last.c	Wed Mar 20 23:21:34 2002
+@@ -172,7 +172,7 @@
+ 
+ /* code */
+ 
+-void
++int
+ main (int argc, char *argv[])
+ {
+   int c;
+--- acct-6.3.5/accounting.info.orig	Fri Mar 22 22:31:40 2002
++++ acct-6.3.5/accounting.info	Fri Mar 22 22:32:14 2002
+@@ -702,10 +702,10 @@
+    The output fields are labeled as follows:
+ 
+ `cpu'
+-     sum of system and user time in cpu seconds
++     sum of system and user time in seconds
+ 
+ `re'
+-     "real time" in cpu seconds
++     "real time" in seconds
+ 
+ `k'
+      cpu-time averaged core usage, in 1k units
+@@ -720,14 +720,14 @@
+      cpu storage integral (kilo-core seconds)
+ 
+ `u'
+-     user cpu time in cpu seconds
++     user cpu time in seconds
+ 
+ `s'
+-     system time in cpu seconds
++     system time in seconds
+ 
+    Note that these column titles do not appear in the first row of the
+ table, but after each numeric entry (as units of measurement) in every
+-row.  For example, you might see `79.29re', meaning 79.29 cpu seconds
++row.  For example, you might see `79.29re', meaning 79.29 seconds
+ of "real time."
+ 
+    An asterisk will appear after the name of commands that forked but

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.10 2002/01/24 11:55:34 solar Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.11 2002/03/22 20:51:01 mci Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
 Version: 6.3.5
-Release: owl6
+Release: owl7
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.red-bean.com/pub/noel/%{name}-%{version}.tar.gz
@@ -11,6 +11,7 @@ Source1: dump-acct.8
 Source2: dump-utmp.8
 Source3: acct.logrotate
 Source4: acct.init
+Patch: acct-6.3.5-owl-fixes.diff
 PreReq: /sbin/install-info
 Provides: psacct
 Obsoletes: psacct
@@ -26,6 +27,9 @@ summarizes information about previously executed commands.
 
 %prep
 %setup -q
+%patch -p1
+
+%{expand:%%define optflags %optflags -Wall}
 
 %build
 autoconf
@@ -93,6 +97,11 @@ fi
 %{_infodir}/*
 
 %changelog
+* Fri Mar 22 2002 Michail Litvak <mci@owl.openwall.com>
+- fix sa to display real time in seconds not cpu seconds,
+  also fix man and info pages
+- fixes to build with -Wall cleanly
+
 * Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 
