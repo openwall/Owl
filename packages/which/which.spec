@@ -1,15 +1,14 @@
-# $Id: Owl/packages/which/which.spec,v 1.2 2000/11/19 10:46:49 mci Exp $
+# $Id: Owl/packages/which/which.spec,v 1.3 2000/11/19 21:04:50 mci Exp $
 
 Summary: Displays where a particular program in your path is located.
 Name: which
 Version: 2.12
-Release: 1owl
+Release: 2owl
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.gnu.org/gnu/which/%{name}-%{version}.tar.gz
 Source1: which-2.sh
 Source2: which-2.csh
-Patch0: which-2.12-mdk-null_to_0.diff 
 Prefix: %{_prefix}
 Buildroot: /var/rpm-buildroot/%{name}-root
 
@@ -19,7 +18,6 @@ the specified program is in your PATH.
 
 %prep
 %setup -q
-%patch0 -p1
 
 %build
 %configure
@@ -44,6 +42,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/*/*
 
 %changelog
+* Sun Nov 19 2000 Michail Litvak <mci@owl.openwall.com>
+- removed patch from MDK
+
 * Sun Nov 19 2000 Michail Litvak <mci@owl.openwall.com>
 - update to 2.12
 - imported patch from MDK
