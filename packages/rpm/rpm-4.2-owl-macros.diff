@@ -35,6 +35,15 @@ diff -uNrp rpm-4.2.orig/macros.in rpm-4.2/macros.in
  
  #
  # Path to scripts to autogenerate package dependencies,
+@@ -449,7 +449,7 @@ package or when debugging this package.\
+ 
+ # Use a CDB database model for concurrent access.
+ # XXX Add "private" here for legacy interoperation transiting to glibc+nptl.
+-%__dbi_cdb			create cdb mpool mp_mmapsize=16Mb mp_size=1Mb
++%__dbi_cdb			cdb mpool mp_mmapsize=16Mb mp_size=1Mb
+ 
+ %__dbi_other			%{?_tmppath:tmpdir=%{_tmppath}} %{?__dbi_cdb}
+ 
 @@ -698,14 +698,14 @@ package or when debugging this package.\
  #	Note: These values are specific to my machine, and most certainly
  #	are incorrect for any non-redhat.com machine. The macros are

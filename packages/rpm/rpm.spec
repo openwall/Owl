@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.34 2004/09/10 07:29:54 galaxy Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.35 2004/09/30 00:43:47 galaxy Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -11,7 +11,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl0.17
+Release: owl0.18
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -49,6 +49,8 @@ Patch23: rpm-4.2-owl-drop-tests.diff
 Patch24: rpm-4.2-owl-transaction-obsoletes-fix.diff
 Patch25: rpm-4.2-owl-db-open.diff
 Patch26: rpm-4.2-owl-rpmdb-pthread.diff
+Patch27: rpm-4.2-owl-db1-addon.diff
+Patch28: rpm-4.2-owl-fix-configure.diff
 
 PreReq: /sbin/ldconfig
 PreReq: sh-utils, fileutils, mktemp, gawk
@@ -150,6 +152,8 @@ rm -r tests
 %patch24 -p1
 %patch25 -p1
 %patch26 -p1
+%patch27 -p1
+%patch28 -p1
 
 # Prepare libelf archive and save it with headers to the tools subdirectory
 pushd elfutils
@@ -285,21 +289,54 @@ done
 
 %pre
 if [ -f /var/lib/rpm/packages.rpm ]; then
-	echo 'Sorry, but you have unsupported (db1) format of the RPM database'
-	echo 'under /var/lib/rpm.  Please upgrade to RPM version 4.0.4 first'
-	echo 'and do "rpm --rebuilddb", after that you can try installing this'
-	echo 'package again.'
-	exit 1
+	if [ -f /var/lib/rpm/Packages ]; then
+		echo "
+You have both
+/var/lib/rpm/packages.rpm     db1 format installed package headers
+/var/lib/rpm/Packages         db3 format installed package headers
+
+"
+		if [ /var/lib/rpm/Packages -ot /var/lib/rpm/packages.rpm ]; then
+			echo "
+/var/lib/rpm/Packages is older than /var/lib/packages.rpm. We cannot
+decide which of these databases is actual. Please, remove (or at least
+rename) one of those files, and re-install this package.
+"
+			exit 1
+		fi
+
+		echo "
+/var/lib/rpm/Packages is newer than /var/lib/packages.rpm, perhaps you
+converted db1 format database to db3 format some time ago and forgot
+to remove old files. You can safely remove /var/lib/rpm/*.rpm after
+this package will be installed.
+"
+	else
+		echo "
+The old RPM database (db1 format) was found. Unfortunately, we cannot
+automatically convert this database during installation of this
+package due 'chicken and egg' problem. To convert old RPM database to
+the new database format extract 'rpmd' binary from this package and
+run 'rpmd --rebuild' manually
+"
+		exit 1
+	fi
 fi
 
 %post
 /sbin/ldconfig
 
-# XXX: (GM): Implement an upgrade procedure
-/bin/rpm --initdb
 if [ ! -e %__sysconfdir/rpm/macros -a -e %__sysconfdir/rpmrc -a -f %__libdir/rpm/convertrpmrc.sh ]; then
 	sh %__libdir/rpm/convertrpmrc.sh &> /dev/null
 fi
+
+# ToDo: (GM): It is good to run 'rpmd --rebuilddb' after upgrading rpm, but
+# it is not so trivial. Rebuild process have to start _after_ this package
+# installed, so we will have to hack the installation process. One way to
+# do this thing can be looked in ALTLinux's rpm.spec, they fire special
+# helper, which waits for main RPM process exit and runs specified program
+# For now, we assume that 'make installword' (Owl installation and upgrade
+# procedure) does all dirty work for us :)
 
 %postun -p /sbin/ldconfig
 
@@ -408,6 +445,12 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Wed Sep 29 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl0.18
+- Added db1 format support into rpmdb
+- Fixed configure.ac to use proper AC_CONFIG_HEADERS syntax
+- Removed "create" from __dbi_cdb definition in macros.in, because it breaks upgrade logic
+- Modified %%pre section to be more friendly to end-user
+
 * Mon May 05 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl0.17
 - Finally fixed the problem with db environment opens inside & outside chroot.
 

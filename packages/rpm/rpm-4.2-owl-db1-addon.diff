@@ -1,0 +1,1364 @@
+diff -puNr rpm-4.2.orig/rpmdb/db1.c rpm-4.2/rpmdb/db1.c
+--- rpm-4.2.orig/rpmdb/db1.c	1970-01-01 03:00:00 +0300
++++ rpm-4.2/rpmdb/db1.c	2004-09-29 05:38:53 +0400
+@@ -0,0 +1,649 @@
++/*@-type@*/ /* FIX: shrug */
++/** \ingroup db1
++ * \file rpmdb/db1.c
++ */
++
++#include "system.h"
++
++/*@unused@*/ static int _debug = 1; /* XXX if < 0 debugging, > 0 unusual error returns */
++
++#define	_mymemset(_a, _b, _c)
++
++#include <rpmio_internal.h>
++#include <rpmlib.h>
++#include <rpmmacro.h>	/* XXX rpmGenPath */
++#include <rpmurl.h>	/* XXX urlGetPath */
++
++#include "falloc.h"
++#include "misc.h"
++
++#include "rpmdb.h"
++#include "legacy.h"
++
++/* XXX must follow rpmdb.h */
++#undef  DB_VERSION_MAJOR
++#define	DB_VERSION_MAJOR	1
++#undef  DB_VERSION_MINOR
++#define	DB_VERSION_MINOR	85
++#undef  DB_VERSION_PATCH
++#define	DB_VERSION_PATCH	0
++
++#include "debug.h"
++
++/*@access Header@*/		/* XXX compared with NULL */
++/*@access rpmdb@*/
++/*@access dbiIndex@*/
++/*@access dbiIndexSet@*/
++/*@-onlytrans@*/
++
++#ifdef	DYING
++/* XXX remap DB3 types back into DB1 types */
++static inline DBTYPE db3_to_dbtype(int dbitype)
++{
++    switch(dbitype) {
++    case 1:	return DB_BTREE;
++    case 2:	return DB_HASH;
++    case 3:	return DB_RECNO;
++    case 4:	return DB_HASH;		/* XXX W2DO? */
++    case 5:	return DB_HASH;		/* XXX W2DO? */
++    }
++    /*@notreached@*/ return DB_HASH;
++}
++
++/*@-shadow@*/
++static /*@observer@*/ char * db_strerror(int error)
++/*@=shadow@*/
++{
++    if (error == 0)
++	return ("Successful return: 0");
++    if (error > 0)
++	return (strerror(error));
++
++    switch (error) {
++    default:
++      {
++	/*
++	 * !!!
++	 * Room for a 64-bit number + slop.  This buffer is only used
++	 * if we're given an unknown error, which should never happen.
++	 * Note, however, we're no longer thread-safe if it does.
++	 */
++	static char ebuf[40];
++	char * t = ebuf;
++
++	*t = '\0';
++	t = stpcpy(t, "Unknown error: ");
++	sprintf(t, "%d", error);
++	return(ebuf);
++      }
++    }
++    /*@notreached@*/
++}
++
++static int cvtdberr(dbiIndex dbi, const char * msg, int error, int printit)
++	/*@*/
++{
++    int rc = 0;
++
++    if (error == 0)
++	rc = 0;
++    else if (error < 0)
++	rc = errno;
++    else if (error > 0)
++	rc = -1;
++
++    if (printit && rc) {
++	if (msg)
++	    rpmError(RPMERR_DBERR, _("db%d error(%d) from %s: %s\n"),
++		dbi->dbi_api, rc, msg, db_strerror(error));
++	else
++	    rpmError(RPMERR_DBERR, _("db%d error(%d): %s\n"),
++		dbi->dbi_api, rc, db_strerror(error));
++    }
++
++    return rc;
++}
++#endif	/* DYING */
++
++extern struct _dbiVec db1vec;
++
++static int db1sync(dbiIndex dbi, /*@unused@*/ unsigned int flags)
++	/*@globals fileSystem @*/
++	/*@modifies fileSystem @*/
++{
++    int rc = 0;
++
++    if (dbi->dbi_db) {
++	if (dbi->dbi_rpmtag == RPMDBI_PACKAGES) {
++	    FD_t pkgs = (FD_t)dbi->dbi_db;
++	    int fdno = Fileno(pkgs);
++	    if (fdno >= 0 && (rc = fsync(fdno)) != 0)
++		rc = errno;
++	}
++#ifdef	DYING
++	else {
++	    DB * db = dbi->dbi_db;
++	    rc = db->sync(db, flags);
++	    rc = cvtdberr(dbi, "db->sync", rc, _debug);
++	}
++#endif
++    }
++
++    return rc;
++}
++
++static int db1associate(dbiIndex dbi, dbiIndex dbisecondary,
++	int (*callback) (DB *, const DBT *, const DBT *, DBT *),
++	unsigned int flags)
++{
++    return EINVAL; /* XXX: (GM): We do not implemet this */
++}
++
++static int db1join(dbiIndex dbi, DBC ** curslist, /*@out@*/ DBC ** dbcp,
++	unsigned int flags)
++{
++    return EINVAL; /* XXX: (GM): We do not implemet this */
++}
++
++/*@null@*/ static void * doGetRecord(dbiIndex dbi, unsigned int offset)
++	/*@globals fileSystem @*/
++	/*@modifies dbi, fileSystem @*/
++{
++    FD_t pkgs = (FD_t)dbi->dbi_db;
++    void * uh = NULL;
++    Header h = NULL;
++    const char ** fileNames;
++    int fileCount = 0;
++    int lasto = 0;
++    int i;
++
++retry:
++    if (offset >= fadGetFileSize(pkgs))
++	goto exit;
++
++    (void)Fseek(pkgs, offset, SEEK_SET);
++
++    h = headerRead(pkgs, HEADER_MAGIC_NO);
++
++    /* let's sanity check this record a bit, otherwise just skip it */
++    if (h != NULL &&
++	!(	headerIsEntry(h, RPMTAG_NAME) &&
++		headerIsEntry(h, RPMTAG_VERSION) &&
++		headerIsEntry(h, RPMTAG_RELEASE) &&
++		headerIsEntry(h, RPMTAG_BUILDTIME)))
++    {
++	h = headerFree(h);
++    }
++
++    if (h == NULL) {
++	/* XXX HACK: try to reconnect broken chain. */
++	if (lasto == 0) {
++	    rpmMessage(RPMMESS_WARNING,
++  _("Broken package chain at offset %d(0x%08x), attempting to reconnect ...\n"),
++			(int) offset, offset);
++	    lasto = (offset ? offset : -1);
++	    offset = fadNextOffset(pkgs, offset);
++	    if (offset > 0)
++		goto retry;
++	}
++	goto exit;
++    }
++
++    if (lasto) {
++	rpmMessage(RPMMESS_WARNING,
++		_("Reconnecting broken chain at offset %d(0x%08x).\n"),
++		(int) offset, offset);
++	dbi->dbi_lastoffset = offset;
++    }
++
++    /* Retrofit "Provide: name = EVR" for binary packages. */
++    providePackageNVR(h);
++
++    /*
++     * The RPM used to build much of RH 5.1 could produce packages whose
++     * file lists did not have leading /'s. Now is a good time to fix that.
++     */
++
++    /*
++     * If this tag isn't present, either no files are in the package or
++     * we're dealing with a package that has just the compressed file name
++     * list.
++     */
++    if (!headerGetEntryMinMemory(h, RPMTAG_OLDFILENAMES, NULL, 
++			   (const void **) &fileNames, &fileCount))
++	goto exit;
++
++    for (i = 0; i < fileCount; i++) 
++	if (*fileNames[i] != '/') break;
++
++    if (i == fileCount) {
++	free(fileNames);
++    } else {	/* bad header -- let's clean it up */
++	const char ** newFileNames = alloca(sizeof(*newFileNames) * fileCount);
++	for (i = 0; i < fileCount; i++) {
++	    char * newFileName = alloca(strlen(fileNames[i]) + 2);
++	    if (*fileNames[i] != '/') {
++		newFileName[0] = '/';
++		newFileName[1] = '\0';
++	    } else
++		newFileName[0] = '\0';
++	    strcat(newFileName, fileNames[i]);
++	    newFileNames[i] = newFileName;
++	}
++
++	free(fileNames);
++
++	(void) headerModifyEntry(h, RPMTAG_OLDFILENAMES, RPM_STRING_ARRAY_TYPE, 
++			  newFileNames, fileCount);
++    }
++
++    /*
++     * The file list was moved to a more compressed format which not
++     * only saves memory (nice), but gives fingerprinting a nice, fat
++     * speed boost (very nice). Go ahead and convert old headers to
++     * the new style (this is a noop for new headers).
++     */
++    compressFilelist(h);
++
++exit:
++    /*@-branchstate@*/
++    if (h != NULL) {
++	uh = headerUnload(h);
++	h = headerFree(h);
++    }
++    /*@=branchstate@*/
++    return uh;
++}
++
++static int db1copen(/*@unused@*/ dbiIndex dbi, /*@null@*/ DB_TXN * txnid,
++		/*@unused@*/ DBC ** dbcp, unsigned int flags)
++	/*@modifies *dbcp @*/
++{
++    /* XXX per-iterator cursors need to be set to non-NULL. */
++    if (flags)
++	*dbcp = (DBC *)-1;
++    return 0;
++}
++
++static int db1cclose(dbiIndex dbi,
++		/*@unused@*/ DBC * dbcursor, /*@unused@*/ unsigned int flags)
++	/*@modifies dbi @*/
++{
++    dbi->dbi_lastoffset = 0;
++    return 0;
++}
++
++static int db1cdup(dbiIndex dbi, DBC * dbcursor, DBC ** dbcp,
++	unsigned int flags)
++{
++    return 1; /* XXX: (GM): We do not implemet this */
++}
++
++/*@-compmempass@*/
++static int db1cget(dbiIndex dbi, /*@unused@*/ DBC * dbcursor,
++		/*@null@*/ DBT * key,
++		/*@null@*/ DBT * data, 
++		/*@unused@*/ unsigned int flags)
++	/*@globals fileSystem @*/
++	/*@modifies dbi, *keyp, *keylen, *datap, *datalen, fileSystem @*/
++{
++    int rc = 0;
++
++    if (dbi == NULL)
++	return EFAULT;
++
++    if (dbi->dbi_rpmtag == RPMDBI_PACKAGES) {
++	FD_t pkgs = (FD_t)dbi->dbi_db;
++	unsigned int offset;
++	unsigned int newSize;
++
++	if (key->data == NULL) {	/* XXX simulated DB_NEXT */
++	    if (dbi->dbi_lastoffset == 0) {
++		dbi->dbi_lastoffset = fadFirstOffset(pkgs);
++	    } else {
++		dbi->dbi_lastoffset = fadNextOffset(pkgs, dbi->dbi_lastoffset);
++	    }
++	    /*@-immediatetrans@*/
++	    key->data = &dbi->dbi_lastoffset;
++	    /*@=immediatetrans@*/
++	    key->size = sizeof(dbi->dbi_lastoffset);
++
++	    /* Catch end-of-chain conditions. */
++	    if (dbi->dbi_lastoffset == 0)
++		goto bail;
++	}
++
++	memcpy(&offset, key->data, sizeof(offset));
++	/* XXX hack to pass sizeof header to fadAlloc */
++	newSize = data->size;
++
++	if (offset == 0) {	/* XXX simulated offset 0 record */
++	    offset = fadAlloc(pkgs, newSize);
++	    if (offset == 0)
++		return ENOMEM;
++	    offset--;	/* XXX hack: caller will increment */
++	    /* XXX hack: return offset as data, free in db1cput */
++	    data->data = xmalloc(sizeof(offset));
++	    memcpy(data->data, &offset, sizeof(offset));
++	    data->size = sizeof(offset);
++	} else {		/* XXX simulated retrieval */
++	    data->data = doGetRecord(dbi, offset);
++	    data->size = 0;	/* XXX WRONG */
++	}
++    }
++#ifdef	DYING
++    else {
++	DB * db;
++	int _printit;
++
++	if ((db = dbi->dbi_db) == NULL)
++	    return EFAULT;
++
++	if (key.data == NULL) {
++	    rc = db->seq(db, &key, &data, (dbi->dbi_lastoffset++ ? R_NEXT : R_FIRST));
++	    _printit = (rc == 1 ? 0 : _debug);
++	    rc = cvtdberr(dbi, "db->seq", rc, _printit);
++	} else {
++	    rc = db->get(db, &key, &data, 0);
++	    _printit = (rc == 1 ? 0 : _debug);
++	    rc = cvtdberr(dbi, "db1cget", rc, _printit);
++	}
++    }
++#else
++    else
++	rc = EINVAL;
++#endif
++
++bail:
++
++    /*@-nullstate@*/
++    return rc;
++    /*@=nullstate@*/
++}
++/*@=compmempass@*/
++
++static int db1cpget(dbiIndex dbi, /*@unused@*/ DBC * dbcursor,
++		/*@null@*/ DBT * key, DBT * pkey,
++		/*@null@*/ DBT * data, 
++		/*@unused@*/ unsigned int flags)
++{
++    return EINVAL; /* XXX: (GM): We do not implemet this */
++}
++
++static int db1cdel(dbiIndex dbi, /*@unused@*/ DBC * dbcursor, DBT * key, DBT * data,
++		/*@unused@*/ unsigned int flags)
++	/*@globals fileSystem @*/
++	/*@modifies dbi, fileSystem @*/
++{
++    int rc = 0;
++
++    if (dbi->dbi_rpmtag == RPMDBI_PACKAGES) {
++	FD_t pkgs = (FD_t)dbi->dbi_db;
++	unsigned int offset;
++	memcpy(&offset, key->data, sizeof(offset));
++	fadFree(pkgs, offset);
++    }
++#ifdef	DYING
++    else {
++	DB * db = dbi->dbi_db;
++
++	if (db)
++	    rc = db->del(db, &key, 0);
++	rc = cvtdberr(dbi, "db->del", rc, _debug);
++    }
++#else
++    else
++	rc = EINVAL;
++#endif
++
++    return rc;
++}
++
++static int db1cput(dbiIndex dbi, /*@unused@*/ DBC * dbcursor,
++		DBT * key,
++		DBT * data,
++		/*@unused@*/ unsigned int flags)
++	/*@globals fileSystem @*/
++	/*@modifies dbi, datap, fileSystem @*/
++{
++    int rc = 0;
++
++    if (dbi->dbi_rpmtag == RPMDBI_PACKAGES) {
++	FD_t pkgs = (FD_t)dbi->dbi_db;
++	unsigned int offset;
++
++	memcpy(&offset, key->data, sizeof(offset));
++
++	if (offset == 0) {	/* XXX simulated offset 0 record */
++	    /* XXX hack: return offset as data, free in db1cput */
++	    if (data->size == sizeof(offset))
++		/*@-unqualifiedtrans@*/ free(data->data); /*@=unqualifiedtrans@*/
++	} else {		/* XXX simulated DB_KEYLAST */
++	    Header h = headerLoad(data->data);
++	    int newSize = headerSizeof(h, HEADER_MAGIC_NO);
++
++	    (void)Fseek(pkgs, offset, SEEK_SET);
++            fdSetContentLength(pkgs, newSize);
++            rc = headerWrite(pkgs, h, HEADER_MAGIC_NO);
++            fdSetContentLength(pkgs, -1);
++	    if (rc)
++		rc = EIO;
++	    h = headerFree(h);
++	}
++    }
++#ifdef	DYING
++    else {
++	DB * db = dbi->dbi_db;
++
++	if (db)
++	    rc = db->put(db, &key, &data, 0);
++	rc = cvtdberr(dbi, "db->put", rc, _debug);
++    }
++#else
++    else
++	rc = EINVAL;
++#endif
++
++    return rc;
++}
++
++static int db1ccount(/*@unused@*/ dbiIndex dbi, /*@unused@*/ DBC * dbcursor,
++		/*@unused@*/ /*@out@*/ unsigned int * countp,
++		/*@unused@*/ unsigned int flags)
++	/*@*/
++{
++    return EINVAL;
++}
++
++static int db1byteswapped(/*@unused@*/dbiIndex dbi)
++	/*@*/
++{
++    return 0;
++}
++
++static int db1stat(/*@unused@*/ dbiIndex dbi, /*@unused@*/ unsigned int flags)
++	/*@*/
++{
++    return EINVAL;
++}
++
++static unsigned char *db1basename(rpmTag rpmtag)
++{
++    char * base = NULL;
++    /*@-branchstate@*/
++    switch (rpmtag) {
++    case RPMDBI_PACKAGES:       base = "packages.rpm";          break;
++    case RPMTAG_NAME:           base = "nameindex.rpm";         break;
++    case RPMTAG_BASENAMES:      base = "fileindex.rpm";         break;          
++    case RPMTAG_GROUP:          base = "groupindex.rpm";        break;          
++    case RPMTAG_REQUIRENAME:    base = "requiredby.rpm";        break;          
++    case RPMTAG_PROVIDENAME:    base = "providesindex.rpm";     break;          
++    case RPMTAG_CONFLICTNAME:   base = "conflictsindex.rpm";    break;          
++    case RPMTAG_TRIGGERNAME:    base = "triggerindex.rpm";      break;          
++    default:
++      { const char * tn = tagName(rpmtag);                                      
++        base = alloca( strlen(tn) + sizeof(".idx") + 1 );                       
++        (void) stpcpy( stpcpy(base, tn), ".idx");                               
++      } break;                                                                  
++    }                                                                           
++    /*@=branchstate@*/                                                          
++    return xstrdup(base);
++}
++
++static int db1close(/*@only@*/ dbiIndex dbi, /*@unused@*/ unsigned int flags)
++	/*@globals rpmGlobalMacroContext,
++		fileSystem @*/
++	/*@modifies dbi, rpmGlobalMacroContext, fileSystem @*/
++{
++    rpmdb rpmdb = dbi->dbi_rpmdb;
++    const char * base = db1basename(dbi->dbi_rpmtag);
++    const char * urlfn = rpmGenPath(rpmdb->db_root, rpmdb->db_home, base);
++    const char * fn;
++    int rc = 0;
++
++    (void) urlPath(urlfn, &fn);
++
++    /*@-branchstate@*/
++    if (dbi->dbi_db) {
++	if (dbi->dbi_rpmtag == RPMDBI_PACKAGES) {
++	    FD_t pkgs = (FD_t)dbi->dbi_db;
++	    rc = Fclose(pkgs);
++	}
++#ifdef	DYING
++	else {
++	    DB * db = dbi->dbi_db;
++	    rc = db->close(db);
++	    rc = cvtdberr(dbi, "db->close", rc, _debug);
++	}
++#else
++	else
++	    rc = EINVAL;
++#endif
++	dbi->dbi_db = NULL;
++    }
++    /*@=branchstate@*/
++
++    rpmMessage(RPMMESS_DEBUG, _("closed  db file        %s\n"), urlfn);
++    /* Remove temporary databases */
++    if (dbi->dbi_temporary) {
++	rpmMessage(RPMMESS_DEBUG, _("removed db file        %s\n"), urlfn);
++	(void) unlink(fn);
++    }
++
++    dbi = db3Free(dbi);
++    base = _free(base);
++    urlfn = _free(urlfn);
++    return rc;
++}
++
++static int db1open(/*@keep@*/ rpmdb rpmdb, rpmTag rpmtag,
++	/*@out@*/ dbiIndex * dbip)
++	/*@globals rpmGlobalMacroContext,
++		fileSystem @*/
++	/*@modifies *dbip, rpmGlobalMacroContext, fileSystem @*/
++{
++    /*@-nestedextern@*/
++    extern struct _dbiVec db1vec;
++    /*@=nestedextern@*/
++    const char * base = NULL;
++    const char * urlfn = NULL;
++    const char * fn = NULL;
++    dbiIndex dbi = NULL;
++    int rc = 0;
++
++    if (dbip)
++	*dbip = NULL;
++    if ((dbi = db3New(rpmdb, rpmtag)) == NULL)
++	return EFAULT;
++    dbi->dbi_api = DB_VERSION_MAJOR;
++
++    base = db1basename(rpmtag);
++    urlfn = rpmGenPath(rpmdb->db_root, rpmdb->db_home, base);
++    (void) urlPath(urlfn, &fn);
++    if (!(fn && *fn != '\0')) {
++	rpmError(RPMERR_DBOPEN, _("bad db file %s\n"), urlfn);
++	rc = EFAULT;
++	goto exit;
++    }
++
++    rpmMessage(RPMMESS_DEBUG, _("opening db file        %s mode 0x%x\n"),
++		urlfn, dbi->dbi_mode);
++
++    if (dbi->dbi_rpmtag == RPMDBI_PACKAGES) {
++	FD_t pkgs;
++
++	pkgs = fadOpen(fn, dbi->dbi_mode, dbi->dbi_perms);
++	if (Ferror(pkgs)) {
++	    rc = errno;		/* XXX check errno validity */
++	    goto exit;
++	}
++
++	/* XXX HACK: fcntl lock if db3 (DB_INIT_CDB | DB_INIT_LOCK) specified */
++	if (dbi->dbi_lockdbfd || (dbi->dbi_eflags & 0x30)) {
++	    struct flock l;
++
++	    l.l_whence = 0;
++	    l.l_start = 0;
++	    l.l_len = 0;
++	    l.l_type = (dbi->dbi_mode & O_RDWR) ? F_WRLCK : F_RDLCK;
++
++	    if (Fcntl(pkgs, F_SETLK, (void *) &l)) {
++		rc = errno;	/* XXX check errno validity */
++		rpmError(RPMERR_FLOCK, _("cannot get %s lock on database\n"),
++		    ((dbi->dbi_mode & O_RDWR) ? _("exclusive") : _("shared")));
++		goto exit;
++	    }
++	}
++
++	/* XXX: (GM): This is a dirty hack, but we assume that DB structure
++         *            much larger than FD_t one :)
++         */
++	dbi->dbi_db = pkgs;
++    }
++#ifdef	DYING
++    else {
++	void * dbopeninfo = NULL;
++	int dbimode = dbi->dbi_mode;
++
++	if (dbi->dbi_temporary)
++	    dbimode |= (O_CREAT | O_RDWR);
++
++	dbi->dbi_db = dbopen(fn, dbimode, dbi->dbi_perms,
++		db3_to_dbtype(dbi->dbi_type), dbopeninfo);
++	if (dbi->dbi_db == NULL) rc = errno;
++    }
++#else
++    else
++	rc = EINVAL;
++#endif
++
++exit:
++    if (rc == 0 && dbi->dbi_db != NULL && dbip) {
++	dbi->dbi_vec = &db1vec;
++	if (dbip) *dbip = dbi;
++    } else
++	(void) db1close(dbi, 0);
++
++    base = _free(base);
++    urlfn = _free(urlfn);
++
++    return rc;
++}
++/*@=onlytrans@*/
++
++/** \ingroup db1
++ */
++/*@-exportheadervar@*/
++/*@observer@*/ /*@unchecked@*/
++struct _dbiVec db1vec = {
++    DB_VERSION_MAJOR, DB_VERSION_MINOR, DB_VERSION_PATCH,
++    db1open,
++ db1close,
++ db1sync,
++ db1associate,
++ db1join,
++    db1copen, db1cclose, db1cdup, db1cdel, db1cget, db1cpget, db1cput, db1ccount,
++    db1byteswapped, db1stat
++};
++/*@=exportheadervar@*/
++/*@=type@*/
+diff -puNr rpm-4.2.orig/rpmdb/falloc.c rpm-4.2/rpmdb/falloc.c
+--- rpm-4.2.orig/rpmdb/falloc.c	1970-01-01 03:00:00 +0300
++++ rpm-4.2/rpmdb/falloc.c	2004-09-29 04:51:10 +0400
+@@ -0,0 +1,523 @@
++/** \ingroup rpmio db1
++ * \file rpmdb/falloc.c
++ * 
++ * The entire file space is thus divided into blocks with a "struct fablock"
++ * at the header of each. The size fields doubly link this block list.
++ *
++ * There is an additional free list weaved through the block list, which 
++ * keeps new allocations fast.
++ *
++ * Much of this was inspired by Knuth vol 1.
++ *
++ */
++
++#include "system.h"
++#include <rpmio_internal.h>
++#include <rpmmessages.h>
++#include <rpmerr.h>
++#include "falloc.h"
++#include "debug.h"
++
++/** \ingroup db1
++ */
++#define FA_MAGIC      0x02050920
++
++struct faFileHeader {
++    unsigned int magic;
++    unsigned int firstFree;
++};
++
++struct faHeader {
++    unsigned int size;				
++    unsigned int freeNext; /* offset of the next free block, 0 if none */
++    unsigned int freePrev; 
++    unsigned int isFree;
++
++    /* note that the u16's appear last for alignment/space reasons */
++};
++
++struct faFooter {
++    unsigned int size;
++    unsigned int isFree; 
++} ;
++
++/* =============================================================== */
++/*@-nullassign@*/
++static struct FDIO_s fadio_s = {
++  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
++  fadOpen, NULL, NULL,	NULL, NULL, NULL, NULL, NULL, NULL
++};
++/*@=nullassign@*/
++FDIO_t fadio = /*@-compmempass@*/ &fadio_s /*@=compmempass@*/ ;
++/* =============================================================== */
++
++/**
++ * pread(2) clone.
++ */
++static
++ssize_t Pread(FD_t fd, void * buf, size_t count, _libio_off_t offset)
++	/*@globals fileSystem @*/
++	/*@modifies fd, *buf, fileSystem @*/
++{
++    if (Fseek(fd, offset, SEEK_SET) < 0)
++	return -1;
++    /*@-sizeoftype@*/
++    return Fread(buf, sizeof(char), count, fd);
++    /*@=sizeoftype@*/
++}
++
++/**
++ * pwrite(2) clone.
++ */
++static
++ssize_t Pwrite(FD_t fd, const void * buf, size_t count, _libio_off_t offset)
++	/*@globals fileSystem @*/
++	/*@modifies fd, fileSystem @*/
++{
++    if (Fseek(fd, offset, SEEK_SET) < 0)
++	return -1;
++    /*@-sizeoftype@*/
++    return Fwrite(buf, sizeof(char), count, fd);
++    /*@=sizeoftype@*/
++}
++
++/* flags are the same as for open(2) - NULL returned on error */
++FD_t fadOpen(const char * path, int flags, mode_t perms)
++{
++    struct faFileHeader newHdr;
++    FD_t fd;
++
++    if (flags & O_WRONLY)
++	return NULL;
++
++    /*@-type@*/ /* FIX: cast? */
++    fd = ufdio->_open(path, flags, perms);
++    /*@=type@*/
++    if (Ferror(fd))
++	/* XXX Fstrerror */
++	return NULL;
++
++    /*@-modobserver -observertrans -mods @*/
++    memcpy(fadio, fdio, sizeof(*fadio));
++    fadio->_open = fadOpen;
++    /*@=modobserver =observertrans =mods @*/
++
++    fdSetIo(fd, fadio);
++    fadSetFirstFree(fd, 0);
++    fadSetFileSize(fd, Fseek(fd, 0, SEEK_END));
++
++    /* is this file brand new? */
++    if (fadGetFileSize(fd) == 0) {
++	newHdr.magic = FA_MAGIC;
++	newHdr.firstFree = 0;
++	/*@-sizeoftype@*/
++	if (Fwrite(&newHdr, sizeof(char), sizeof(newHdr), fd) != sizeof(newHdr)) {
++	    (void) Fclose(fd);
++	    return NULL;
++	}
++	/*@=sizeoftype@*/
++	fadSetFirstFree(fd, 0);
++	fadSetFileSize(fd, sizeof(newHdr));
++    } else {
++	memset(&newHdr, 0, sizeof(newHdr));
++	if (Pread(fd, &newHdr, sizeof(newHdr), 0) != sizeof(newHdr)) {
++	    (void) Fclose(fd);
++	    return NULL;
++	}
++	if (newHdr.magic != FA_MAGIC) {
++	    (void) Fclose(fd);
++	    return NULL;
++	}
++	fadSetFirstFree(fd, newHdr.firstFree);
++	fadSetFileSize(fd, Fseek(fd, 0, SEEK_END));
++
++	if (fadGetFileSize(fd) < 0) {
++	    (void) Fclose(fd);
++	    return NULL;
++	}
++    }
++
++    /*@-refcounttrans@*/ return fd /*@=refcounttrans@*/ ;
++}
++
++/* returns 0 on failure */
++unsigned int fadAlloc(FD_t fd, unsigned int size)
++{
++    unsigned int nextFreeBlock;
++    unsigned int newBlockOffset;
++    unsigned int footerOffset;
++    int failed = 0;
++    struct faFileHeader faHeader;
++    struct faHeader header, origHeader;
++    struct faHeader * restoreHeader = NULL;
++    struct faHeader nextFreeHeader, origNextFreeHeader;
++    struct faHeader * restoreNextHeader = NULL;
++    struct faHeader prevFreeHeader, origPrevFreeHeader;
++    struct faHeader * restorePrevHeader = NULL;
++    struct faFooter footer, origFooter;
++    struct faFooter * restoreFooter = NULL;
++    int updateHeader = 0;
++
++    memset(&header, 0, sizeof(header));
++
++    /* our internal idea of size includes overhead */
++    /*@-sizeoftype@*/
++    size += sizeof(struct faHeader) + sizeof(struct faFooter);
++    /*@=sizeoftype@*/
++
++    /* Make sure they are allocing multiples of 64 bytes. It'll keep
++       things less fragmented that way */
++    (size % 64) ? size += (64 - (size % 64)) : 0;
++
++    /* find a block via first fit - see Knuth vol 1 for why */
++    /* XXX this could be optimized a bit still */
++
++    nextFreeBlock = fadGetFirstFree(fd);
++    newBlockOffset = 0;
++
++    while (nextFreeBlock && !newBlockOffset) {
++	if (Pread(fd, &header, sizeof(header), nextFreeBlock) != sizeof(header)) return 0;
++
++/* XXX W2DO? exit(EXIT_FAILURE) forces the user to discover rpm --rebuilddb */
++	if (!header.isFree) {
++	    rpmError(RPMERR_FREELIST, _("free list corrupt (%u)- please run\n"
++			"\t\"rpm --rebuilddb\"\n"
++			"More information is available from http://www.rpm.org "
++			"or the rpm-list@redhat.com mailing list\n"
++			"if \"rpm --rebuilddb\" fails to correct the problem.\n"),
++			nextFreeBlock);
++
++	    exit(EXIT_FAILURE);
++	    /*@notreached@*/
++	}
++
++	if (header.size >= size) {
++	    newBlockOffset = nextFreeBlock;
++	} else {
++	    nextFreeBlock = header.freeNext;
++	}
++    }
++
++    if (newBlockOffset) {
++	/* header should still be good from the search */
++	origHeader = header;
++
++	footerOffset = newBlockOffset + header.size - sizeof(footer);
++
++	if (Pread(fd, &footer, sizeof(footer), footerOffset) != sizeof(footer)) 
++	    return 0;
++	origFooter = footer;
++
++	/* should we split this block into two? */
++	/* XXX implement fragment creation here */
++
++	footer.isFree = header.isFree = 0;
++
++	/* remove it from the free list before */
++	if (newBlockOffset == fadGetFirstFree(fd)) {
++	    faHeader.magic = FA_MAGIC;
++	    faHeader.firstFree = header.freeNext;
++	    fadSetFirstFree(fd, header.freeNext);
++	    updateHeader = 1;
++	} else {
++	    if (Pread(fd, &prevFreeHeader, sizeof(prevFreeHeader),
++			header.freePrev) != sizeof(prevFreeHeader)) 
++		return 0;
++	    origPrevFreeHeader = prevFreeHeader;
++
++	    prevFreeHeader.freeNext = header.freeNext;
++	}
++
++	/* and after */
++	if (header.freeNext) {
++	    if (Pread(fd, &nextFreeHeader, sizeof(nextFreeHeader),
++			header.freeNext) != sizeof(nextFreeHeader)) 
++		return 0;
++	    origNextFreeHeader = nextFreeHeader;
++
++	    nextFreeHeader.freePrev = header.freePrev;
++	}
++
++	/* if any of these fail, try and restore everything before leaving */
++	if (updateHeader) {
++	    if (Pwrite(fd, &faHeader, sizeof(faHeader), 0) !=
++			     sizeof(faHeader)) 
++		return 0;
++	} else {
++	    if (Pwrite(fd, &prevFreeHeader, sizeof(prevFreeHeader),
++			header.freePrev) != sizeof(prevFreeHeader))
++		return 0;
++	    restorePrevHeader = &origPrevFreeHeader;
++	}
++
++	if (header.freeNext) {
++	    if (Pwrite(fd, &nextFreeHeader, sizeof(nextFreeHeader),
++			header.freeNext) != sizeof(nextFreeHeader))
++		return 0;
++
++	    restoreNextHeader = &origNextFreeHeader;
++	}
++
++	if (!failed) {
++	    if (Pwrite(fd, &header, sizeof(header), newBlockOffset) !=
++			 sizeof(header)) {
++		failed = 1;
++		restoreHeader = &origHeader;
++	    }
++	}
++
++	if (!failed) {
++	    if (Pwrite(fd, &footer, sizeof(footer),
++			footerOffset) != sizeof(footer)) {
++		failed = 1;
++		restoreFooter = &origFooter;
++	    }
++	}
++
++	if (failed) {
++	    if (updateHeader) {
++		faHeader.firstFree = newBlockOffset;
++		fadSetFirstFree(fd, newBlockOffset);
++	        (void)Pwrite(fd, &faHeader, sizeof(faHeader), 0);
++	    } 
++
++	    if (restorePrevHeader)
++	    	(void)Pwrite(fd, restorePrevHeader, sizeof(*restorePrevHeader),
++				header.freePrev);
++
++	    if (restoreNextHeader)
++	    	(void)Pwrite(fd, restoreNextHeader, sizeof(*restoreNextHeader),
++				header.freeNext);
++
++	    if (restoreHeader)
++	    	(void)Pwrite(fd, restoreHeader, sizeof(header),
++				newBlockOffset);
++
++	    if (restoreFooter)
++	    	(void)Pwrite(fd, restoreFooter, sizeof(footer),
++				footerOffset);
++
++	    return 0;
++	}
++    } else {
++	char * space;
++
++	/* make a new block */
++	newBlockOffset = fadGetFileSize(fd);
++	footerOffset = newBlockOffset + size - sizeof(footer);
++
++	space = alloca(size);
++	if (space == NULL) return 0;
++	memset(space, 0, size);
++
++	footer.isFree = header.isFree = 0;
++	footer.size = header.size = size;
++	header.freePrev = header.freeNext = 0;
++
++	/* reserve all space up front */
++	/* XXX TODO: check max. no. of bytes to write */
++	if (Pwrite(fd, space, size, newBlockOffset) != size)
++	    return 0;
++
++	if (Pwrite(fd, &header, sizeof(header), newBlockOffset) != sizeof(header))
++	    return 0;
++
++	if (Pwrite(fd, &footer, sizeof(footer), footerOffset) != sizeof(footer))
++	    return 0;
++
++	fadSetFileSize(fd, fadGetFileSize(fd) + size);
++    }
++    
++    return newBlockOffset + sizeof(header); 
++}
++
++void fadFree(FD_t fd, unsigned int offset)
++{
++    struct faHeader header;
++    struct faFooter footer;
++    int footerOffset;
++    int prevFreeOffset, nextFreeOffset;
++    struct faHeader prevFreeHeader, nextFreeHeader;
++    struct faFileHeader faHeader;
++
++    /* any errors cause this to die, and thus result in lost space in the
++       database. which is at least better then corruption */
++
++    offset -= sizeof(header);
++
++    /* find out where in the (sorted) free list to put this */
++    prevFreeOffset = fadGetFirstFree(fd);
++
++    if (!prevFreeOffset || (prevFreeOffset > offset)) {
++	nextFreeOffset = fadGetFirstFree(fd);
++	prevFreeOffset = 0;
++    } else {
++	memset(&prevFreeHeader, 0, sizeof(prevFreeHeader));
++	if (Pread(fd, &prevFreeHeader, sizeof(prevFreeHeader),
++			prevFreeOffset) != sizeof(prevFreeHeader))
++	    return;
++
++	while (prevFreeHeader.freeNext && prevFreeHeader.freeNext < offset) {
++	    prevFreeOffset = prevFreeHeader.freeNext;
++	    if (Pread(fd, &prevFreeHeader, sizeof(prevFreeHeader),
++			prevFreeOffset) != sizeof(prevFreeHeader))
++		return;
++	} 
++
++	nextFreeOffset = prevFreeHeader.freeNext;
++    }
++
++    if (nextFreeOffset) {
++	memset(&nextFreeHeader, 0, sizeof(nextFreeHeader));
++	if (Pread(fd, &nextFreeHeader, sizeof(nextFreeHeader),
++			nextFreeOffset) != sizeof(nextFreeHeader))
++	    return;
++    }
++
++    memset(&header, 0, sizeof(header));
++    if (Pread(fd, &header, sizeof(header), offset) != sizeof(header))
++	return;
++
++    footerOffset = offset + header.size - sizeof(footer);
++
++    memset(&footer, 0, sizeof(footer));
++    if (Pread(fd, &footer, sizeof(footer), footerOffset) != sizeof(footer))
++	return;
++
++    header.isFree = 1;
++    header.freeNext = nextFreeOffset;
++    header.freePrev = prevFreeOffset;
++    footer.isFree = 1;
++
++    /* XXX TODO: set max. no. of bytes to write */
++    (void)Pwrite(fd, &header, sizeof(header), offset);
++
++    (void)Pwrite(fd, &footer, sizeof(footer), footerOffset);
++
++    if (nextFreeOffset) {
++	nextFreeHeader.freePrev = offset;
++	if (Pwrite(fd, &nextFreeHeader, sizeof(nextFreeHeader),
++			nextFreeOffset) != sizeof(nextFreeHeader))
++	    return;
++    }
++
++    if (prevFreeOffset) {
++	prevFreeHeader.freeNext = offset;
++	if (Pwrite(fd, &prevFreeHeader, sizeof(prevFreeHeader),
++			prevFreeOffset) != sizeof(prevFreeHeader))
++	    return;
++    } else {
++	fadSetFirstFree(fd, offset);
++
++	faHeader.magic = FA_MAGIC;
++	faHeader.firstFree = fadGetFirstFree(fd);
++
++	/* XXX TODO: set max. no. of bytes to write */
++	if (Pwrite(fd, &faHeader, sizeof(faHeader), 0) != sizeof(faHeader))
++	    return;
++    }
++}
++
++static int fadSanity(FD_t fd, int offset, const struct faHeader * fh, int printit)
++	/*@*/
++{
++    int rc = 0;
++
++    /*@-sizeoftype@*/
++    /* Check size range and alignment. */
++    if (!(fh->size > 0 && fh->size <= 0x00200000 && (fh->size & 0x3f) == 0))
++	rc |= 0x1;
++
++    /* Check forward link range, alignment and offset. */
++    if (fh->freeNext &&
++	!(	fh->freeNext > sizeof(struct faFileHeader) &&
++		fh->freeNext < fadGetFileSize(fd) &&
++		(fh->freeNext & 0x3f) == sizeof(struct faFileHeader)) )
++	rc |= 0x2;
++
++    /* Check backward link range, alignment and offset. */
++    if (fh->freePrev &&
++	!(	fh->freePrev > sizeof(struct faFileHeader) &&
++		fh->freePrev < fadGetFileSize(fd) &&
++		(fh->freePrev & 0x3f) == sizeof(struct faFileHeader)) )
++	rc |= 0x4;
++    /*@=sizeoftype@*/
++
++    /* Check that only the isFree bit is (possibly) set. */
++    if (fh->isFree & ~1)
++	rc |= 0x8;
++
++    if (printit && rc) {
++	rpmMessage(RPMMESS_DEBUG,
++    "offset %d(0x%08x) rc %d: size 0x%08x next %d(0x%08x) prev %d(0x%08x) isFree 0x%08x\n",
++		offset, (unsigned) offset, rc,
++		(unsigned) fh->size,
++		(int) fh->freeNext, fh->freeNext,
++		(int) fh->freePrev, fh->freePrev,
++		(unsigned) fh->isFree);
++    }
++    return rc;
++}
++
++int fadFirstOffset(FD_t fd)
++{
++    return fadNextOffset(fd, 0);
++}
++
++int fadNextOffset(FD_t fd, unsigned int lastoff)
++{
++    struct faHeader header;
++    int offset;
++
++    /*@-sizeoftype@*/
++    offset = (lastoff)
++	? (lastoff - sizeof(header))
++	: sizeof(struct faFileHeader);
++    /*@=sizeoftype@*/
++
++    if (offset >= fadGetFileSize(fd))
++	return 0;
++
++    memset(&header, 0, sizeof(header));
++    if (Pread(fd, &header, sizeof(header), offset) != sizeof(header))
++	return 0;
++
++    if (!lastoff && header.isFree == 0)
++	return (offset + sizeof(header));
++
++    /*
++     * XXX Try to reconnect at next record found. This isn't perfect
++     * XXX but handles many common db1 corruption problems.
++     */
++    if (fadSanity(fd, offset, &header, 0)) {
++	struct faHeader myheader;
++	int o = offset;
++
++	memset(&myheader, 0, sizeof(myheader));
++	do {
++	    o += 0x40;	/* XXX allocation chunks are padded to 64b */
++	    if (o >= fadGetFileSize(fd))
++		return 0;
++	    if (Pread(fd, &myheader, sizeof(myheader), o) != sizeof(header))
++		return 0;
++	} while (fadSanity(fd, o, &myheader, 0));
++	return (o + sizeof(header));
++    }
++
++    do {
++	offset += header.size;
++	if (offset >= fadGetFileSize(fd))
++	    return 0;
++
++	if (Pread(fd, &header, sizeof(header), offset) != sizeof(header))
++	    return 0;
++
++    } while (header.isFree == 1);
++
++    /* Sanity check this to make sure we're not going in loops */
++    offset += sizeof(header);
++    if (offset <= lastoff)
++	return 0;	/* XXX used to return -1 */
++
++    return offset;
++}
+diff -puNr rpm-4.2.orig/rpmdb/falloc.h rpm-4.2/rpmdb/falloc.h
+--- rpm-4.2.orig/rpmdb/falloc.h	1970-01-01 03:00:00 +0300
++++ rpm-4.2/rpmdb/falloc.h	2004-09-29 04:51:10 +0400
+@@ -0,0 +1,84 @@
++#ifndef H_FALLOC
++#define H_FALLOC
++
++/** \ingroup db1
++ * \file rpmdb/falloc.h
++ * File space allocation routines.
++ *
++ * Best fit allocation is used, free blocks are compacted. Minimal
++ * fragmentation is more important then speed. This uses 32 bit
++ * offsets on all platforms and should be byte order independent.
++ */
++
++/*@access FD_t@*/
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#include <rpmio_internal.h>
++
++/*@unused@*/ static inline long int fadGetFileSize(FD_t fd) /*@*/ {
++    return fd->fileSize;
++}
++
++/*@unused@*/ static inline void fadSetFileSize(FD_t fd, long int fileSize)
++	/*@modifies fd @*/
++{
++    fd->fileSize = fileSize;
++}
++
++/*@unused@*/ static inline unsigned int fadGetFirstFree(FD_t fd) /*@*/ {
++    return fd->firstFree;
++}
++
++/*@unused@*/ static inline void fadSetFirstFree(FD_t fd, unsigned int firstFree)
++	/*@modifies fd @*/
++{
++    fd->firstFree = firstFree;
++}
++
++/** \ingroup db1
++ */
++/*@null@*/ FD_t	fadOpen(const char * path, int flags, mode_t perms)
++	/*@globals fileSystem @*/
++	/*@modifies fileSystem @*/;
++
++/** \ingroup db1
++ * @param fd		file handle
++ * @param size
++ * @return		0 on failure
++ */
++unsigned int fadAlloc(FD_t fd, unsigned int size)
++	/*@globals fileSystem @*/
++	/*@modifies fd, fileSystem @*/;
++
++/** \ingroup db1
++ * @param fd		file handle
++ * @param offset
++ */
++void fadFree(FD_t fd, unsigned int offset)
++	/*@globals fileSystem @*/
++	/*@modifies fd, fileSystem @*/;
++
++/** \ingroup db1
++ * @param fd		file handle
++ */
++int fadFirstOffset(FD_t fd)
++	/*@globals fileSystem @*/
++	/*@modifies fd, fileSystem @*/;
++
++/** \ingroup db1
++ * @param fd		file handle
++ * @param lastoff
++ * @return		next offset, 0 to terminate
++ */
++int fadNextOffset(FD_t fd, unsigned int lastoff)
++	/*@globals fileSystem @*/
++	/*@modifies fd, fileSystem @*/;
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif	/* H_FALLOC */
+diff -puNr rpm-4.2.orig/rpmdb/Makefile.am rpm-4.2/rpmdb/Makefile.am
+--- rpm-4.2.orig/rpmdb/Makefile.am	2003-03-07 00:59:16 +0300
++++ rpm-4.2/rpmdb/Makefile.am	2004-09-29 06:03:20 +0400
+@@ -13,7 +13,7 @@ INCLUDES = -I. \
+ 	@WITH_LIBELF_INCLUDE@ \
+ 	@INCPATH@
+ 
+-EXTRA_DIST = db3.c
++EXTRA_DIST = db3.c db1.c falloc.c
+ 
+ EXTRA_PROGRAMS = tjfn
+ 
+@@ -23,7 +23,7 @@ tjfn_LDADD = librpmdb.la
+ 
+ pkgincdir = $(pkgincludedir)
+ pkginc_HEADERS = db.h header.h hdrinline.h rpmdb.h rpmhash.h
+-noinst_HEADERS = fprint.h header_internal.h legacy.h
++noinst_HEADERS = fprint.h header_internal.h legacy.h falloc.h
+ 
+ pkgbindir = @RPMCONFIGDIR@
+ pkgbin_PROGRAMS = \
+@@ -43,7 +43,7 @@ LDFLAGS = -L$(DESTDIR)$(usrlibdir)
+ usrlibdir = $(libdir)@MARK64@
+ usrlib_LTLIBRARIES = librpmdb.la
+ librpmdb_la_SOURCES = \
+-	dbconfig.c fprint.c \
++	dbconfig.c fprint.c falloc.c \
+ 	hdrNVR.c header.c header_internal.c legacy.c merge.c \
+ 	poptDB.c rpmhash.c rpmdb.c \
+ 	tagname.c tagtbl.c
+@@ -52,11 +52,11 @@ librpmdb_la_LDFLAGS = -release @VERSION@
+ 	$(top_builddir)/popt/libpopt.la \
+ 	@WITH_LIBELF_LIB@ \
+ 	@libdb3@
+-librpmdb_la_LIBADD = $(DBLIBOBJS) $(DB3LOBJS)
+-librpmdb_la_DEPENDENCIES = $(DBLIBOBJS) .created
++librpmdb_la_LIBADD = $(DBLIBOBJS) $(DB3LOBJS) db1.lo
++librpmdb_la_DEPENDENCIES = $(DBLIBOBJS) db1.lo .created
+ 
+ # XXX make sure that db.h symlink is generated
+-dbconfig.c db3.c: db.h
++dbconfig.c db3.c db1.c: db.h
+ 
+ tagtbl.c: Makefile.am $(top_srcdir)/lib/rpmlib.h 
+ 	@echo '/*@-bounds@*/' > $@
+@@ -76,6 +76,9 @@ tagtbl.c: Makefile.am $(top_srcdir)/lib/
+ 	@echo 'const int rpmTagTableSize = sizeof(rpmTagTbl) / sizeof(rpmTagTbl[0]) - 1;' >> $@
+ 	@echo '/*@=bounds@*/' >> $@
+ 
++falloc.lo: falloc.c $(top_srcdir)/system.h $(top_srcdir)/rpmio/rpmio.h falloc.h
++	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
++
+ db.h:
+ 	@ln -sf ../$(WITH_DB_SUBDIR)/db.h $@
+ 
+@@ -181,3 +184,6 @@ lint:
+ 
+ tdbi: librpmdb.la tdbi.o
+ 	$(LINK) -all-static $@.o $< $(mylibpaths) $(mylibs) $(LIBS)
++
++tfalloc: librpmdb.la tfalloc.o
++	$(LINK) -all-static $@.o $< $(mylibs) $(LIBS)
+diff -puNr rpm-4.2.orig/rpmdb/rpmdb.c rpm-4.2/rpmdb/rpmdb.c
+--- rpm-4.2.orig/rpmdb/rpmdb.c	2003-03-14 18:08:08 +0300
++++ rpm-4.2/rpmdb/rpmdb.c	2004-09-29 05:37:28 +0400
+@@ -224,7 +224,8 @@ static void dbiTagsInit(void)
+ }
+ 
+ /*@-redecl@*/
+-#define	DB1vec		NULL
++extern struct _dbiVec db1vec;
++#define	DB1vec		&db1vec
+ #define	DB2vec		NULL
+ 
+ /*@-exportheadervar -declundef @*/
+@@ -3713,7 +3713,7 @@ int rpmdbRebuild(const char * prefix, rp
+     }
+     dbpath = rootdbpath = rpmGetPath(prefix, tfn, NULL);
+     if (!(prefix[0] == '/' && prefix[1] == '\0'))
+-	dbpath += strlen(prefix);
++	dbpath += strlen(prefix) - 1; /* rpmts.c adds ending slash */
+     tfn = _free(tfn);
+ 
+     /*@-nullpass@*/
+diff -puNr rpm-4.2.orig/rpmdb/rpmdb.h rpm-4.2/rpmdb/rpmdb.h
+--- rpm-4.2.orig/rpmdb/rpmdb.h	2002-10-18 20:18:50 +0400
++++ rpm-4.2/rpmdb/rpmdb.h	2004-09-29 04:51:10 +0400
+@@ -376,6 +376,8 @@ struct _dbiIndex {
+     rpmTag dbi_rpmtag;		/*!< rpm tag used for index */
+     int	dbi_jlen;		/*!< size of join key */
+ 
++    unsigned int dbi_lastoffset;/*!< db1 with falloc.c needs this */
++
+ /*@only@*//*@null@*/
+     DB * dbi_db;		/*!< Berkeley DB * handle */
+ /*@only@*//*@null@*/

@@ -1,0 +1,13 @@
+--- rpm-4.2.orig/configure.ac	Wed Sep 29 01:32:02 2004
++++ rpm-4.2/configure.ac	Wed Sep 29 01:33:19 2004
+@@ -7,9 +7,8 @@ dnl it, why check it?
+ AC_INIT(rpmqv.c)
+ AC_CANONICAL_SYSTEM
+ AC_PREREQ(2.12)         dnl Minimum Autoconf version required.
+-AC_CONFIG_HEADERS
++AC_CONFIG_HEADERS([config.h])
+ AM_INIT_AUTOMAKE(rpm, 4.2)
+-AM_CONFIG_HEADER(config.h)
+ 
+ dnl XXX AM_MAINTAINER_MODE
+ 
