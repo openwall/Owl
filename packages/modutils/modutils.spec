@@ -1,4 +1,4 @@
-# $Id: Owl/packages/modutils/modutils.spec,v 1.14 2002/06/12 20:39:29 solar Exp $
+# $Id: Owl/packages/modutils/modutils.spec,v 1.15 2002/06/12 21:13:57 solar Exp $
 
 Summary: Kernel module utilities.
 Name: modutils
@@ -34,7 +34,11 @@ modules are device drivers and filesystems, as well as some other things.
 %ifarch sparcv9
 %define _target_platform sparc-%{_vendor}-%{_target_os}
 %endif
-%configure --disable-compat-2-0 --disable-kerneld --exec_prefix=/
+# Build a statically-linked version of insmod (and symlinks to it) to
+# satisfy Red Hat's mkinitrd.
+%configure \
+	--exec_prefix=/ \
+	--disable-compat-2-0 --disable-kerneld --enable-insmod-static
 make dep all
 
 %install
