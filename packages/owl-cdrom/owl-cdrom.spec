@@ -1,16 +1,17 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.9 2002/06/22 08:58:36 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.10 2002/08/22 03:54:11 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 0.3
-Release: owl3
+Version: 0.4
+Release: owl1
 License: public domain
 Group: System Environment/Base
 Source0: rc.ramdisk
-Source1: lilo.conf
-Source2: dot-config
-Source3: floppy.update
-Requires: owl-startup >= 0.8-owl1
+Source1: welcome-cdrom.sh
+Source10: lilo.conf
+Source11: dot-config
+Source12: floppy.update
+Requires: owl-startup >= 0.15-owl1
 ExclusiveArch: %ix86
 BuildRoot: /override/%{name}-%{version}
 
@@ -25,6 +26,7 @@ mkdir -p $RPM_BUILD_ROOT/{etc/rc.d,boot,rom,ram,owl}
 cd $RPM_BUILD_ROOT
 touch .Owl-CD-ROM
 install -m 700 $RPM_SOURCE_DIR/rc.ramdisk etc/rc.d/
+install -m 755 $RPM_SOURCE_DIR/welcome-cdrom.sh etc/profile.d/
 install -m 600 $RPM_SOURCE_DIR/lilo.conf etc/
 install -m 600 $RPM_SOURCE_DIR/dot-config boot/.config
 install -m 700 $RPM_SOURCE_DIR/floppy.update boot/
@@ -74,6 +76,7 @@ fi
 %defattr(-,root,root)
 /.Owl-CD-ROM
 %config /etc/rc.d/rc.ramdisk
+%config /etc/profile.d/welcome-cdrom.sh
 %config /etc/lilo.conf
 %config /boot/.config
 /boot/floppy.update
@@ -82,6 +85,9 @@ fi
 %dir /owl
 
 %changelog
+* Thu Aug 22 2002 Solar Designer <solar@owl.openwall.com>
+- Added a "welcome" script to introduce the user to directory locations.
+
 * Sat Jun 22 2002 Solar Designer <solar@owl.openwall.com>
 - Style change with plural form of abbreviations (CD-ROM's -> CD-ROMs).
 

@@ -12,6 +12,10 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/08/22	Packages: owl-cdrom, owl-startup
+Added a "welcome" script to introduce the user to directory locations
+on the CDs.
+
 2002/08/22	Packages: SimplePAMApps, pam
 Patched pam_motd to behave on errors and configured it for login(1).
 
@@ -912,4 +916,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.127 2002/08/22 00:42:18 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.128 2002/08/22 03:54:11 solar Exp $
