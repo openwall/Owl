@@ -1,4 +1,4 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.11 2001/06/13 08:51:15 mci Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.12 2001/06/13 08:56:42 mci Exp $
 
 Summary: A screen manager that supports multiple logins on one terminal.
 Name: screen
@@ -44,6 +44,7 @@ support multiple logins on one terminal.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 %build
 
