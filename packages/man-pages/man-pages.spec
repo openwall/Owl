@@ -1,9 +1,9 @@
-# $Id: Owl/packages/man-pages/man-pages.spec,v 1.14 2002/07/30 23:13:31 solar Exp $
+# $Id: Owl/packages/man-pages/man-pages.spec,v 1.15 2003/04/17 12:57:11 solar Exp $
 
 Summary: Manual (man) pages from the Linux Documentation Project.
 Name: man-pages
 Version: 1.52
-Release: owl2
+Release: owl3
 License: distributable
 Group: Documentation
 Source0: ftp://ftp.win.tue.nl/pub/linux-local/manpages/man-pages-%{version}.tar.gz
@@ -70,9 +70,6 @@ rm -fv man2/quotactl.2
 # Part of glibc (crypt_blowfish)
 rm -fv man3/crypt.3
 
-# Part of console-tools
-rm -fv man4/console.4
-
 # Part of bind-utils
 rm -fv man5/resolver.5
 rm -fv man5/resolv.conf.5
@@ -107,6 +104,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man*/*
 
 %changelog
+* Thu Apr 17 2003 Solar Designer <solar@owl.openwall.com>
+- console-tools has been replaced with kbd, so let's package console(4)
+from here now.
+
 * Tue Jul 30 2002 Michail Litvak <mci@owl.openwall.com>
 - 1.52
 - Obsolete patches removed
