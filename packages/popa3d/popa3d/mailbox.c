@@ -53,10 +53,11 @@ static int db_compare(struct db_message *msg)
 #ifdef __GNUC__
 inline
 #endif
-static int linecmp(char *s1, int n1, char *s2, int n2)
+static int eq(char *s1, int n1, char *s2, int n2)
 {
-	if (s1[0] != s2[0] || n1 < n2) return 1;
-	return memcmp(s1, s2, n2);
+	if (n1 < n2) return 0;
+	if (!memcmp(s1, s2, n2)) return 1;
+	return !strncasecmp(s1, s2, n2);
 }
 
 /*
@@ -78,7 +79,8 @@ static int mailbox_parse(int init)
 	char *current, *next, *line;		/* Line pointers */
 	int block, saved, extra, length;	/* Internal block sizes */
 	int done, start, end;			/* Various boolean flags: */
-	int blank, header, body, fixed;		/* the state information */
+	int blank, header, body;		/* the state information */
+	int fixed, received;			/* ...and more of it */
 
 	if (fstat(mailbox_fd, &stat)) return 1;
 
@@ -118,7 +120,8 @@ static int mailbox_parse(int init)
 	blank = 1;	/* Assume we've seen a blank line: look for "From " */
 	header = 0;	/* Not in message headers, */
 	body = 0;	/* and not in message body */
-	fixed = 0;	/* Not in a "fixed" part of a message */
+	fixed = 0;	/* Not in a "fixed" part of a message, */
+	received = 0;	/* and haven't got a Received: header yet */
 
 /*
  * The main loop. Its first part extracts the line fragments, while the
@@ -215,7 +218,9 @@ static int mailbox_parse(int init)
 
 /* Check for a new message if we've just seen a blank line */
 		if (blank && start)
-		if (!linecmp(line, length, "From ", 5)) {
+		if (line[0] == 'F' && length >= 5 &&
+		    line[1] == 'r' && line[2] == 'o' && line[3] == 'm' &&
+		    line[4] == ' ') {
 /* Process the previous one first, if exists */
 			if (offset) {
 				if (!header && !body) break;
@@ -229,6 +234,7 @@ static int mailbox_parse(int init)
 			msg.data_offset = 0;
 			MD5_Init(&hash);
 			header = 1; body = 0;
+			fixed = received = 0;
 			continue;
 		}
 
@@ -246,27 +252,53 @@ static int mailbox_parse(int init)
 /* If we see LF at start of line, then this is a blank line :-) */
 		blank = start && line[0] == '\n';
 
+/* The rest of actions in this loop are for header lines only */
+		if (!header) continue;
+
 /* Blank line in headers means start of the message body */
-		if (header && blank) {
+		if (blank) {
 			header = 0; body = 1;
-			fixed = 0;
+			continue;
 		}
 
 /* Some header lines are known to remain fixed over MUA runs */
-		if (header && start)
+		if (start)
 		switch (line[0]) {
 		case '\t':
 		case ' ':
-			/* Inherit "fixed" from the previous line */
+/* Inherit "fixed" from the previous line */
 			break;
+
+		case 'R':
+		case 'r':
+/* One Received: header from the local MTA should be sufficient */
+			fixed = !received &&
+				(received = eq(line, length, "Received:", 9));
+			break;
+
+		case 'D':
+		case 'd':
+			fixed = eq(line, length, "Delivered-To:", 13) ||
+				(!received && eq(line, length, "Date:", 5));
+			break;
+
+		case 'M':
+		case 'm':
+			fixed = !received &&
+				eq(line, length, "Message-ID:", 11);
+			break;
+
+#if 0
+		case 'X':
+/* Let the local delivery agent help generate unique ID's but don't blindly
+ * trust this header alone as it could just as easily come from the remote. */
+			fixed = eq(line, length, "X-Delivery-ID:", 14);
+			break;
+#endif
 
 		default:
 			fixed = 0;
-			if (!linecmp(line, length, "Received:", 9) ||
-			    !linecmp(line, length, "Date:", 5) ||
-			    !linecmp(line, length, "Message-Id:", 11) ||
-			    !linecmp(line, length, "Subject:", 8))
-				fixed = 1;
+			continue;
 		}
 
 /* We can hash all fragments of those lines, for UIDL */
