@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.37 2004/11/02 01:41:33 solar Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.38 2004/11/03 05:35:58 solar Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -308,10 +308,10 @@ EOF
 		fi
 
 		cat << EOF
-/var/lib/rpm/Packages is newer than /var/lib/rpm/packages.rpm, perhaps you
-converted db1 format database to db3 format some time ago and forgot to
-remove old files.  If this is the case, then you can safely remove
-/var/lib/rpm/*.rpm after this package is installed.
+/var/lib/rpm/Packages is newer than /var/lib/rpm/packages.rpm, perhaps
+we've converted db1 format database to db3 format and then proceeded to
+use the db3 one.  You'll need to remove the db1 format database files
+(/var/lib/rpm/*.rpm) once installation completes.
 
 Install will continue in 10 seconds...
 EOF
