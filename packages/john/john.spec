@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.14 2003/01/15 03:05:55 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.15 2003/01/24 04:02:33 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.32.5
+Version: 1.6.33
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -76,6 +76,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Fri Jan 24 2003 Solar Designer <solar@owl.openwall.com>
+- Added a 64-bit Solaris SPARC make target (recent gcc only for now).
+
 * Wed Jan 15 2003 Solar Designer <solar@owl.openwall.com>
 - Split the 64-bit MIPS target into two such that it is possible to have
 64-bit builds which do or don't require at least an R10K CPU.
