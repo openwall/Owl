@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.45 2002/07/06 19:03:25 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.46 2002/07/06 21:19:09 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.4p1
-Release: owl1.7
+Release: owl1.8
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -27,7 +27,7 @@ Patch10: openssh-3.4p1-owl-fatal_cleanups.diff
 PreReq: openssl >= 0.9.6b-1owl
 PreReq: openssl < 0.9.7
 PreReq: /sbin/chkconfig, grep, shadow-utils
-Requires: /var/empty, tcb, pam_userpass, pam_mktemp
+Requires: /var/empty, pam >= 0.75-owl16, tcb, pam_userpass, pam_mktemp
 Obsoletes: ssh
 BuildRequires: openssl-devel >= 0.9.6b-1owl
 BuildRequires: pam-devel
@@ -221,6 +221,8 @@ fi
 * Sat Jul 06 2002 Solar Designer <solar@owl.openwall.com>
 - Re-initialize logging after calls into PAM module stacks, make use of
 log_reinit() where the original code needed that kind of functionality.
+- Stack pam_limits for account management, not session setup, such that
+its configuration file doesn't need to be world-readable with privsep.
 
 * Fri Jul 05 2002 Solar Designer <solar@owl.openwall.com>
 - Re-enable the password changing code (disabled in 3.3p1 and 3.4p1) for
