@@ -1,0 +1,222 @@
+--- readelf.c.org	Sun Aug  1 01:21:19 1999
++++ readelf.c	Fri Sep  8 13:00:07 2000
+@@ -5,45 +5,21 @@
+ #include <string.h>
+ #include <sys/stat.h>
+ #include <sys/mman.h>
+-#include <linux/elf.h>
+-#include "../config.h"
+-#include "readelf.h"
++#include <elf.h>
+ #include <sys/types.h>
+ 
+ void warn(const char *fmt, ...);
+ char *xstrdup(const char *);
+ 
+-struct needed_tab
+-{
+-  const char *soname;
+-  int type;
+-};
+-
+-struct needed_tab needed_tab[] = {
+-  { "libc.so.5",    LIB_ELF_LIBC5 },
+-  { "libm.so.5",    LIB_ELF_LIBC5 },
+-  { "libdl.so.1",   LIB_ELF_LIBC5 },
+-  { "libc.so.6",    LIB_ELF_LIBC6 },
+-  { "libm.so.6",    LIB_ELF_LIBC6 },
+-  { "libdl.so.2",   LIB_ELF_LIBC6 },
+-  { NULL,           LIB_ELF }
+-};
+ #endif
+ 
+-#ifdef _LIBC
+ static
+-#endif
+ char *
+ readsoname(const char *name, FILE *infile,
+ 	   int expected_type, int *type, const char *e_ident)
+ {
+-#ifdef _LIBC
+     const ElfW(Ehdr) *epnt;
+     const ElfW(Phdr) *ppnt;
+-#else
+-    const struct elfhdr *epnt;
+-    const struct elf_phdr *ppnt;
+-#endif
+     int i, j;
+     char *header;
+     unsigned int dynamic_addr = 0;
+@@ -51,11 +27,7 @@
+     int strtab_val = 0;
+     int needed_val;
+     int loadaddr = -1;
+-#ifdef _LIBC
+     const ElfW(Dyn) *dpnt;
+-#else
+-    const struct dynamic *dpnt;
+-#endif
+     struct stat st;
+     char *needed;
+     char *soname = NULL;
+@@ -75,19 +47,11 @@
+     if (header == (caddr_t)-1)
+ 	return NULL;
+ 
+-#ifdef _LIBC
+     epnt = (const ElfW(Ehdr) *)header;
+-#else
+-    epnt = (const struct elfhdr *)header;
+-#endif
+     if ((char *)(epnt+1) > (char *)(header + st.st_size))
+ 	goto skip;
+ 
+-#ifdef _LIBC
+     ppnt = (const ElfW(Phdr) *)&header[epnt->e_phoff];
+-#else
+-    ppnt = (const struct elf_phdr *)&header[epnt->e_phoff];
+-#endif
+     if ((char *)ppnt < (char *)header ||
+ 	(char *)(ppnt+epnt->e_phnum) > (char *)(header + st.st_size))
+ 	goto skip;
+@@ -105,13 +69,8 @@
+ 	    ppnt++;
+ 	};
+     
+-#ifdef _LIBC
+     dpnt = (const ElfW(Dyn) *) &header[dynamic_addr];
+     dynamic_size = dynamic_size / sizeof(const ElfW(Dyn));
+-#else
+-    dpnt = (const struct dynamic *) &header[dynamic_addr];
+-    dynamic_size = dynamic_size / sizeof(const struct dynamic);
+-#endif
+     if ((char *)dpnt < (char *)header ||
+ 	(char *)(dpnt+dynamic_size) > (char *)(header + st.st_size))
+ 	goto skip;
+@@ -126,11 +85,7 @@
+     if (!strtab_val)
+ 	goto skip;
+ 
+-#ifdef _LIBC
+     dpnt = (const ElfW(Dyn) *) &header[dynamic_addr];
+-#else
+-    dpnt = (const struct dynamic *) &header[dynamic_addr];
+-#endif
+     while (dpnt->d_tag != DT_NULL)
+ 	{
+ 	    if (dpnt->d_tag == DT_SONAME || dpnt->d_tag == DT_NEEDED)
+--- ldconfig.c.org	Fri Sep  8 12:54:35 2000
++++ ldconfig.c	Fri Sep  8 12:57:34 2000
+@@ -34,23 +34,15 @@
+ #include <dirent.h>
+ #include <unistd.h>
+ #include <a.out.h>
+-#ifdef _LIBC
+ #include <link.h>
+-#else
+-#include <linux/elf.h>
+-#endif
++#include <elf.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
+ #include <sys/mman.h>
+ #include <errno.h>
+ 
+-#ifdef _LIBC
+ static char *readsoname(const char *name, FILE *file, int expected_type,
+ 			int *type, const char *e_ident);
+-#else
+-#include "../config.h"
+-#include "readelf.h"
+-#endif
+ 
+ #ifndef VERSION
+ #define VERSION "1999-07-31"
+@@ -80,7 +72,6 @@
+ #define LDSO_CACHE_VER_LEN (sizeof LDSO_CACHE_VER -1)
+ #endif
+ 
+-#ifdef _LIBC
+ typedef struct
+ {
+   char magic	[LDSO_CACHE_MAGIC_LEN];
+@@ -95,8 +86,6 @@
+   int liboffset;
+ } libentry_t;
+ 
+-#endif
+-
+ #ifndef DIR_SEP
+ #define DIR_SEP ":, \t\n"
+ #endif
+@@ -119,13 +108,9 @@
+ #endif
+ 
+ #ifdef __GNUC__
+-#ifdef _LIBC
+ static
+-#endif
+ void warn(const char *fmt, ...) __attribute__ ((format (printf, 1, 2)));
+-#ifdef _LIBC
+ static
+-#endif
+ void error(const char *fmt, ...) __attribute__ ((format (printf, 1, 2)));
+ #endif
+ 
+@@ -158,9 +143,7 @@
+ static void cache_dolib(const char *dir, const char *so, int libtype);
+ static void cache_write(void);
+ 
+-#ifdef _LIBC
+ static
+-#endif
+ void warn(const char *fmt, ...)
+ {
+     va_list ap;
+@@ -180,9 +163,7 @@
+     return;
+ }
+ 
+-#ifdef _LIBC
+ static
+-#endif
+ void error(const char *fmt, ...)
+ {
+     va_list ap;
+@@ -237,11 +218,7 @@
+     char *cp, *cp2;
+     FILE *file;
+     struct exec exec;
+-#ifdef _LIBC
+     const ElfW(Ehdr) *elf_hdr;
+-#else
+-    const struct elfhdr *elf_hdr;
+-#endif
+     struct stat statbuf;
+     char buff[4096];
+ 
+@@ -285,11 +262,7 @@
+ 		    warn("can't read header from %s, skipping", buff);
+ 		else if (N_MAGIC(exec) != ZMAGIC && N_MAGIC(exec) != QMAGIC)
+ 		{
+-#ifdef _LIBC
+ 		    elf_hdr = (const ElfW(Ehdr) *) &exec;
+-#else
+-		    elf_hdr = (const struct elfhdr *) &exec;
+-#endif
+ 		    if (elf_hdr->e_ident[0] != 0x7f ||
+ 			strncmp(&elf_hdr->e_ident[1], "ELF",3) != 0)
+ 		    {
+@@ -966,7 +939,6 @@
+     munmap (c,st.st_size);
+ }
+ 
+-#ifdef _LIBC
+ struct needed_tab
+ {
+   const char *soname;
+@@ -1024,4 +996,3 @@
+ #include "readelf.c"
+ 
+ #endif /* ! __sparc__ */
+-#endif

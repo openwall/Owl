@@ -1,0 +1,49 @@
+--- ldconfig.c.noglibc	Fri Sep  8 13:10:28 2000
++++ ldconfig.c	Fri Sep  8 13:10:37 2000
+@@ -581,6 +581,34 @@
+     return res;
+ }
+ 
++void usage(void)
++{
++    fprintf(stderr,
++	    "ldconfig - update shared library symlinks\n"
++	    "\n"
++	    "usage: ldconfig [-DvqnNX] [-f conf] [-C cache] [-r root] dir ...\n"
++	    "       ldconfig -l [-Dv] lib ...\n"
++	    "       ldconfig -p\n"
++	    "\t-D:\t\tdebug mode, don't update links\n"
++	    "\t-v:\t\tverbose mode, print things as we go\n"
++	    "\t-q:\t\tquiet mode, don't print warnings\n"
++	    "\t-n:\t\tdon't process standard directories\n"
++	    "\t-N:\t\tdon't update the library cache\n"
++	    "\t-X:\t\tdon't update the library links\n"
++	    "\t-l:\t\tlibrary mode, manually link libraries\n"
++	    "\t-p:\t\tprint the current library cache\n"
++	    "\t-f conf :\tuse conf instead of %s\n"
++	    "\t-C cache:\tuse cache instead of %s\n"
++	    "\t-r root :\tfirst, do a chroot to the indicated directory\n"
++	    "\tdir ... :\tdirectories to process\n"
++	    "\tlib ... :\tlibraries to link\n"
++	    "\n"
++	    "Copyright 1994-1996 David Engel and Mitch D'Souza\n",
++	    LDSO_CONF, LDSO_CACHE
++	    );
++    exit(EXIT_FATAL);
++}
++
+ int main(int argc, char **argv)
+ {
+     int i, c;
+@@ -639,10 +667,7 @@
+ 	    chroot_dir = optarg;
+ 	    break;
+ 	default:
+-	    fprintf(stderr, "usage: %s [-DvnNX] [-f conf] [-C cache] [-r root] dir ...\n", prog);
+-	    fprintf(stderr, "       %s -l [-Dv] lib ...\n", prog);
+-	    fprintf(stderr, "       %s -p\n", prog);
+-	    exit(EXIT_FATAL);
++	    usage();
+ 	    break;
+ 
+ 	/* THE REST OF THESE ARE UNDOCUMENTED AND MAY BE REMOVED
