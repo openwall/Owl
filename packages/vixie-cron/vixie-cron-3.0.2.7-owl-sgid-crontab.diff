@@ -1,0 +1,110 @@
+diff -ur vixie-cron-3.0.2.7.linux/usr.sbin/cron/crontab.c vixie-cron-3.0.2.7/usr.sbin/cron/crontab.c
+--- vixie-cron-3.0.2.7.linux/usr.sbin/cron/crontab.c	Sun Aug 20 06:30:25 2000
++++ vixie-cron-3.0.2.7/usr.sbin/cron/crontab.c	Sun Aug 20 06:30:02 2000
+@@ -104,7 +104,6 @@
+ 	setlinebuf(stderr);
+ #endif
+ 	parse_args(argc, argv);		/* sets many globals, opens a file */
+-	set_cron_uid();
+ 	set_cron_cwd();
+ 	if (!allowed(User)) {
+ 		fprintf(stderr,
+@@ -426,6 +425,10 @@
+ 		goto fatal;
+ 	case 0:
+ 		/* child */
++		if (setgid(getgid()) < 0) {
++			perror("setgid(getgid())");
++			exit(ERROR_EXIT);
++		}
+ 		if (setuid(getuid()) < 0) {
+ 			perror("setuid(getuid())");
+ 			exit(ERROR_EXIT);
+@@ -534,6 +537,7 @@
+ 	int	ch, eof, fd;
+ 	int	error = 0;
+ 	entry	*e;
++	uid_t	file_owner;
+ 	time_t	now = time(NULL);
+ 	char	**envp = env_init();
+ 
+@@ -618,10 +622,12 @@
+ 		goto done;
+ 	}
+ 
++	file_owner = (getgid() == getegid()) ? ROOT_UID : pw->pw_uid;
++
+ #ifdef HAS_FCHOWN
+-	if (fchown(fileno(tmp), ROOT_UID, -1) < OK)
++	if (fchown(fileno(tmp), file_owner, -1) < OK)
+ #else
+-	if (chown(TempFilename, ROOT_UID, -1) < OK)
++	if (chown(TempFilename, file_owner, -1) < OK)
+ #endif
+ 	{
+ 		perror("chown");
+diff -ur vixie-cron-3.0.2.7.linux/usr.sbin/cron/database.c vixie-cron-3.0.2.7/usr.sbin/cron/database.c
+--- vixie-cron-3.0.2.7.linux/usr.sbin/cron/database.c	Sat Aug 19 11:49:06 2000
++++ vixie-cron-3.0.2.7/usr.sbin/cron/database.c	Sun Aug 20 05:14:49 2000
+@@ -24,7 +24,9 @@
+ 
+ 
+ #include "cron.h"
++#define __USE_GNU
+ #include <fcntl.h>
++#undef __USE_GNU
+ #include <sys/stat.h>
+ #include <sys/file.h>
+ 
+@@ -212,7 +214,7 @@
+ 		goto next_crontab;
+ 	}
+ 
+-	if ((crontab_fd = open(tabname, O_RDONLY, 0)) < OK) {
++	if ((crontab_fd = open(tabname, O_RDONLY | O_NOFOLLOW, 0)) < OK) {
+ 		/* crontab not accessible?
+ 		 */
+ 		log_it(fname, getpid(), "CAN'T OPEN", tabname);
+@@ -221,6 +223,13 @@
+ 
+ 	if (fstat(crontab_fd, statbuf) < OK) {
+ 		log_it(fname, getpid(), "FSTAT FAILED", tabname);
++		goto next_crontab;
++	}
++
++	if (pw &&
++	    statbuf->st_uid != pw->pw_uid &&
++	    statbuf->st_uid != ROOT_UID) {
++		log_it(fname, getpid(), "WRONG FILE OWNER", tabname);
+ 		goto next_crontab;
+ 	}
+ 
+diff -ur vixie-cron-3.0.2.7.linux/usr.sbin/cron/misc.c vixie-cron-3.0.2.7/usr.sbin/cron/misc.c
+--- vixie-cron-3.0.2.7.linux/usr.sbin/cron/misc.c	Sun Aug 20 06:44:10 2000
++++ vixie-cron-3.0.2.7/usr.sbin/cron/misc.c	Sun Aug 20 06:44:18 2000
+@@ -686,10 +686,21 @@
+ 
+ 
+ #ifdef HAVE_SAVED_UIDS
+-static uid_t save_euid;
+-int swap_uids() { save_euid = geteuid(); return seteuid(getuid()); }
+-int swap_uids_back() { return seteuid(save_euid); }
++static uid_t save_euid, save_egid;
++int swap_uids()
++{
++	save_euid = geteuid(); save_egid = getegid();
++	return (setegid(getgid()) || seteuid(getuid())) ? -1 : 0;
++}
++int swap_uids_back()
++{
++	return (setegid(save_egid) || seteuid(save_euid)) ? -1 : 0;
++}
+ #else /*HAVE_SAVED_UIDS*/
+-int swap_uids() { return setreuid(geteuid(), getuid()); }
++int swap_uids()
++{
++	return (setregid(getegid(), getgid()) || setreuid(geteuid(), getuid()))
++		? -1 : 0;
++}
+ int swap_uids_back() { return swap_uids(); }
+ #endif /*HAVE_SAVED_UIDS*/

@@ -1,6 +1,6 @@
-diff -ur vixie-cron-3.0.2.7.orig/usr.bin/crontab/Makefile vixie-cron-3.0.2.7/usr.bin/crontab/Makefile
+diff -ur vixie-cron-3.0.2.7.orig/usr.bin/crontab/Makefile vixie-cron-3.0.2.7.linux/usr.bin/crontab/Makefile
 --- vixie-cron-3.0.2.7.orig/usr.bin/crontab/Makefile	Tue Sep 15 03:56:46 1998
-+++ vixie-cron-3.0.2.7/usr.bin/crontab/Makefile	Sat Aug 19 11:57:49 2000
++++ vixie-cron-3.0.2.7.linux/usr.bin/crontab/Makefile	Sat Aug 19 11:57:49 2000
 @@ -2,11 +2,19 @@
  
  PROG=	crontab
@@ -26,9 +26,9 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.bin/crontab/Makefile vixie-cron-3.0.2.7/usr
 +
 +clean:
 +	$(RM) $(PROG) $(SRCS:.c=.o)
-diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/Makefile vixie-cron-3.0.2.7/usr.sbin/cron/Makefile
+diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/Makefile vixie-cron-3.0.2.7.linux/usr.sbin/cron/Makefile
 --- vixie-cron-3.0.2.7.orig/usr.sbin/cron/Makefile	Mon Sep 22 23:34:09 1997
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/Makefile	Sat Aug 19 11:57:31 2000
++++ vixie-cron-3.0.2.7.linux/usr.sbin/cron/Makefile	Sat Aug 19 11:57:31 2000
 @@ -1,9 +1,21 @@
  #	$OpenBSD: Makefile,v 1.2 1997/09/21 11:43:33 deraadt Exp $
  
@@ -54,9 +54,9 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/Makefile vixie-cron-3.0.2.7/usr.s
 +
 +clean:
 +	$(RM) $(PROG) $(SRCS:.c=.o)
-diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/compat.c vixie-cron-3.0.2.7/usr.sbin/cron/compat.c
+diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/compat.c vixie-cron-3.0.2.7.linux/usr.sbin/cron/compat.c
 --- vixie-cron-3.0.2.7.orig/usr.sbin/cron/compat.c	Sat Nov  2 02:27:28 1996
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/compat.c	Sat Aug 19 10:53:31 2000
++++ vixie-cron-3.0.2.7.linux/usr.sbin/cron/compat.c	Sat Aug 19 10:53:31 2000
 @@ -76,7 +76,7 @@
  		return sys_errlist[error];
  	}
@@ -66,9 +66,9 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/compat.c vixie-cron-3.0.2.7/usr.s
  	return buf;
  }
  #endif
-diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/compat.h vixie-cron-3.0.2.7/usr.sbin/cron/compat.h
+diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/compat.h vixie-cron-3.0.2.7.linux/usr.sbin/cron/compat.h
 --- vixie-cron-3.0.2.7.orig/usr.sbin/cron/compat.h	Wed Oct 18 11:47:30 1995
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/compat.h	Sat Aug 19 10:26:58 2000
++++ vixie-cron-3.0.2.7.linux/usr.sbin/cron/compat.h	Sat Aug 19 10:26:58 2000
 @@ -106,11 +106,11 @@
  # define NEED_GETDTABLESIZE
  #endif
@@ -83,9 +83,9 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/compat.h vixie-cron-3.0.2.7/usr.s
  # define USE_SIGCHLD
  #endif
  
-diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/config.h vixie-cron-3.0.2.7/usr.sbin/cron/config.h
+diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/config.h vixie-cron-3.0.2.7.linux/usr.sbin/cron/config.h
 --- vixie-cron-3.0.2.7.orig/usr.sbin/cron/config.h	Fri Sep  3 07:05:12 1999
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/config.h	Sat Aug 19 09:44:58 2000
++++ vixie-cron-3.0.2.7.linux/usr.sbin/cron/config.h	Sat Aug 19 09:44:58 2000
 @@ -29,7 +29,7 @@
   */
  
@@ -95,9 +95,9 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/config.h vixie-cron-3.0.2.7/usr.s
  #endif
  
  			/*
-diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/cron.8 vixie-cron-3.0.2.7/usr.sbin/cron/cron.8
+diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/cron.8 vixie-cron-3.0.2.7.linux/usr.sbin/cron/cron.8
 --- vixie-cron-3.0.2.7.orig/usr.sbin/cron/cron.8	Tue Mar 21 03:56:25 2000
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/cron.8	Sat Aug 19 10:29:43 2000
++++ vixie-cron-3.0.2.7.linux/usr.sbin/cron/cron.8	Sat Aug 19 10:29:43 2000
 @@ -36,7 +36,7 @@
  .Pp
  .Nm
@@ -107,9 +107,9 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/cron.8 vixie-cron-3.0.2.7/usr.sbi
  for
  .Xr crontab 5
  files which are named after accounts in
-diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/cron.c vixie-cron-3.0.2.7/usr.sbin/cron/cron.c
+diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/cron.c vixie-cron-3.0.2.7.linux/usr.sbin/cron/cron.c
 --- vixie-cron-3.0.2.7.orig/usr.sbin/cron/cron.c	Wed Jun 30 17:50:12 1999
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/cron.c	Sat Aug 19 13:44:16 2000
++++ vixie-cron-3.0.2.7.linux/usr.sbin/cron/cron.c	Sat Aug 19 13:44:16 2000
 @@ -46,11 +46,17 @@
  
  static void
@@ -144,10 +144,18 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/cron.c vixie-cron-3.0.2.7/usr.sbi
  }
  
  
-diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/cron.h vixie-cron-3.0.2.7/usr.sbin/cron/cron.h
+diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/cron.h vixie-cron-3.0.2.7.linux/usr.sbin/cron/cron.h
 --- vixie-cron-3.0.2.7.orig/usr.sbin/cron/cron.h	Fri Sep  3 07:05:12 1999
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/cron.h	Sat Aug 19 13:46:49 2000
-@@ -259,6 +259,7 @@
++++ vixie-cron-3.0.2.7.linux/usr.sbin/cron/cron.h	Sun Aug 20 05:30:37 2000
+@@ -211,6 +211,7 @@
+ 		get_char __P((FILE *)),
+ 		get_string __P((char *, int, FILE *, char *)),
+ 		swap_uids __P((void)),
++		swap_uids_back __P((void)),
+ 		load_env __P((char *, FILE *)),
+ 		cron_pclose __P((FILE *)),
+ 		strcmp_until __P((char *, char *, int)),
+@@ -259,6 +260,7 @@
  	};
  
  char	*ProgramName;
@@ -155,7 +163,7 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/cron.h vixie-cron-3.0.2.7/usr.sbi
  int	LineNumber;
  time_t	StartTime;
  time_min timeRunning;
-@@ -278,7 +279,8 @@
+@@ -278,7 +280,8 @@
  extern	char	*copyright[],
  		*MonthNames[],
  		*DowNames[],
@@ -165,9 +173,9 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/cron.h vixie-cron-3.0.2.7/usr.sbi
  extern	int	LineNumber;
  extern	time_t	StartTime;
  extern  time_min timeRunning;
-diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/crontab.1 vixie-cron-3.0.2.7/usr.sbin/cron/crontab.1
+diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/crontab.1 vixie-cron-3.0.2.7.linux/usr.sbin/cron/crontab.1
 --- vixie-cron-3.0.2.7.orig/usr.sbin/cron/crontab.1	Wed Mar 29 22:16:44 2000
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/crontab.1	Sat Aug 19 10:31:55 2000
++++ vixie-cron-3.0.2.7.linux/usr.sbin/cron/crontab.1	Sat Aug 19 10:31:55 2000
 @@ -43,21 +43,21 @@
  Each user can have their own
  .Xr crontab 5 ,
@@ -212,9 +220,9 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/crontab.1 vixie-cron-3.0.2.7/usr.
  directory of individual crontabs
  .El
  .Sh SEE ALSO
-diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/crontab.5 vixie-cron-3.0.2.7/usr.sbin/cron/crontab.5
+diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/crontab.5 vixie-cron-3.0.2.7.linux/usr.sbin/cron/crontab.5
 --- vixie-cron-3.0.2.7.orig/usr.sbin/cron/crontab.5	Sat Apr 15 23:40:11 2000
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/crontab.5	Sat Aug 19 10:32:32 2000
++++ vixie-cron-3.0.2.7.linux/usr.sbin/cron/crontab.5	Sat Aug 19 10:32:32 2000
 @@ -37,7 +37,7 @@
  .Pf ( Pa /etc/crontab )
  and each user may have their own
@@ -224,9 +232,9 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/crontab.5 vixie-cron-3.0.2.7/usr.
  Commands in any given
  .Nm
  will be
-diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/crontab.c vixie-cron-3.0.2.7/usr.sbin/cron/crontab.c
+diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/crontab.c vixie-cron-3.0.2.7.linux/usr.sbin/cron/crontab.c
 --- vixie-cron-3.0.2.7.orig/usr.sbin/cron/crontab.c	Sun Jan 16 00:24:17 2000
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/crontab.c	Sat Aug 19 13:44:38 2000
++++ vixie-cron-3.0.2.7.linux/usr.sbin/cron/crontab.c	Sun Aug 20 06:30:25 2000
 @@ -15,9 +15,7 @@
   * Paul Vixie          <paul@vix.com>          uunet!decwrl!vixie!paul
   */
@@ -265,6 +273,15 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/crontab.c vixie-cron-3.0.2.7/usr.
  #else
  char *getoptarg = "u:ler";
  #endif
+@@ -242,7 +243,7 @@
+ 				perror(Filename);
+ 				exit(ERROR_EXIT);
+ 			}
+-			if (swap_uids() < OK) {
++			if (swap_uids_back() < OK) {
+ 				perror("swapping uids back");
+ 				exit(ERROR_EXIT);
+ 			}
 @@ -261,7 +262,9 @@
  	int	ch;
  
@@ -315,8 +332,14 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/crontab.c vixie-cron-3.0.2.7/usr.
  	for (x = 0;  x < NHEADER_LINES;  x++) {
  		ch = get_char(f);
  		if (EOF == ch)
-@@ -426,12 +434,12 @@
- 			perror("chdir(/tmp)");
+@@ -422,16 +430,16 @@
+ 			perror("setuid(getuid())");
+ 			exit(ERROR_EXIT);
+ 		}
+-		if (chdir("/tmp") < 0) {
+-			perror("chdir(/tmp)");
++		if (chdir("/") < 0) {
++			perror("chdir(\"/\")");
  			exit(ERROR_EXIT);
  		}
 -		if (strlen(editor) + strlen(Filename) + 2 >= MAX_TEMPSTR) {
@@ -335,7 +358,7 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/crontab.c vixie-cron-3.0.2.7/usr.
  	}
  
 -	TempFilename = strdup(__CONCAT(SPOOL_DIR,"tmp.XXXXXXXXXX"));
-+	TempFilename = strdup(__CONCAT(SPOOL_DIR,"tmp.XXXXXX"));
++	TempFilename = strdup(__CONCAT(SPOOL_DIR,"/tmp.XXXXXX"));
  	if (TempFilename == NULL) {
  		fprintf(stderr, "%s: Cannot allocate memory.\n", ProgramName);
  		return (-2);
@@ -350,9 +373,9 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/crontab.c vixie-cron-3.0.2.7/usr.
  		fprintf(stderr, "%s: error renaming %s to %s\n",
  			ProgramName, TempFilename, n);
  		perror("rename");
-diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/database.c vixie-cron-3.0.2.7/usr.sbin/cron/database.c
+diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/database.c vixie-cron-3.0.2.7.linux/usr.sbin/cron/database.c
 --- vixie-cron-3.0.2.7.orig/usr.sbin/cron/database.c	Fri Jan 23 01:55:55 1998
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/database.c	Sat Aug 19 11:49:06 2000
++++ vixie-cron-3.0.2.7.linux/usr.sbin/cron/database.c	Sat Aug 19 11:49:06 2000
 @@ -112,8 +112,10 @@
  		if (dp->d_name[0] == '.')
  			continue;
@@ -365,9 +388,9 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/database.c vixie-cron-3.0.2.7/usr
  
  		process_crontab(fname, fname, tabname,
  				&statbuf, &new_db, old_db);
-diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/do_command.c vixie-cron-3.0.2.7/usr.sbin/cron/do_command.c
+diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/do_command.c vixie-cron-3.0.2.7.linux/usr.sbin/cron/do_command.c
 --- vixie-cron-3.0.2.7.orig/usr.sbin/cron/do_command.c	Fri Sep  3 07:05:13 1999
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/do_command.c	Sat Aug 19 11:55:26 2000
++++ vixie-cron-3.0.2.7.linux/usr.sbin/cron/do_command.c	Sat Aug 19 11:55:26 2000
 @@ -29,6 +29,8 @@
  # include <syslog.h>
  #endif
@@ -412,9 +435,9 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/do_command.c vixie-cron-3.0.2.7/u
  			"mailed %d byte%s of output but got status 0x%04x\n",
  					bytes, (bytes==1)?"":"s",
  					status);
-diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/entry.c vixie-cron-3.0.2.7/usr.sbin/cron/entry.c
+diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/entry.c vixie-cron-3.0.2.7.linux/usr.sbin/cron/entry.c
 --- vixie-cron-3.0.2.7.orig/usr.sbin/cron/entry.c	Tue Mar 21 03:56:25 2000
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/entry.c	Sat Aug 19 11:38:34 2000
++++ vixie-cron-3.0.2.7.linux/usr.sbin/cron/entry.c	Sat Aug 19 11:38:34 2000
 @@ -302,7 +302,7 @@
  		ecode = e_none;
  		goto eof;
@@ -424,9 +447,9 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/entry.c vixie-cron-3.0.2.7/usr.sb
  	snprintf(envstr, sizeof envstr, "%s=%s", "USER", pw->pw_name);
  	if ((tenvp = env_set(e->envp, envstr))) {
  		e->envp = tenvp;
-diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/env.c vixie-cron-3.0.2.7/usr.sbin/cron/env.c
+diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/env.c vixie-cron-3.0.2.7.linux/usr.sbin/cron/env.c
 --- vixie-cron-3.0.2.7.orig/usr.sbin/cron/env.c	Mon Mar 30 23:17:52 1998
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/env.c	Sat Aug 19 11:21:44 2000
++++ vixie-cron-3.0.2.7.linux/usr.sbin/cron/env.c	Sat Aug 19 11:21:44 2000
 @@ -149,7 +149,9 @@
  	Debug(DPARS, ("load_env, read <%s>\n", envstr))
  
@@ -456,10 +479,46 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/env.c vixie-cron-3.0.2.7/usr.sbin
  	Debug(DPARS, ("load_env, <%s> <%s> -> <%s>\n", name, val, envstr))
  	return (TRUE);
  }
-diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/misc.c vixie-cron-3.0.2.7/usr.sbin/cron/misc.c
+diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/misc.c vixie-cron-3.0.2.7.linux/usr.sbin/cron/misc.c
 --- vixie-cron-3.0.2.7.orig/usr.sbin/cron/misc.c	Sat Aug  7 01:30:16 1999
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/misc.c	Sat Aug 19 13:45:18 2000
-@@ -263,8 +263,9 @@
++++ vixie-cron-3.0.2.7.linux/usr.sbin/cron/misc.c	Sun Aug 20 06:44:10 2000
+@@ -194,6 +194,7 @@
+ 
+ 	/* first check for CRONDIR ("/var/cron" or some such)
+ 	 */
++#if 0
+ 	if (stat(CRONDIR, &sb) < OK && errno == ENOENT) {
+ 		perror(CRONDIR);
+ 		if (OK == mkdir(CRONDIR, 0700)) {
+@@ -210,6 +211,7 @@
+ 			CRONDIR);
+ 		exit(ERROR_EXIT);
+ 	}
++#endif
+ 	if (chdir(CRONDIR) < OK) {
+ 		fprintf(stderr, "cannot chdir(%s), bailing out.\n", CRONDIR);
+ 		perror(CRONDIR);
+@@ -218,6 +220,11 @@
+ 
+ 	/* CRONDIR okay (now==CWD), now look at SPOOL_DIR ("tabs" or some such)
+ 	 */
++	if (stat(SPOOL_DIR, &sb)) {
++		perror(SPOOL_DIR);
++		exit(ERROR_EXIT);
++	}
++#if 0
+ 	if (stat(SPOOL_DIR, &sb) < OK && errno == ENOENT) {
+ 		perror(SPOOL_DIR);
+ 		if (OK == mkdir(SPOOL_DIR, 0700)) {
+@@ -229,6 +236,7 @@
+ 			exit(ERROR_EXIT);
+ 		}
+ 	}
++#endif
+ 	if (!(sb.st_mode & S_IFDIR)) {
+ 		fprintf(stderr, "'%s' is not a directory, bailing out.\n",
+ 			SPOOL_DIR);
+@@ -263,8 +271,9 @@
  		char	buf[MAX_TEMPSTR];
  		int	fd, otherpid;
  
@@ -471,7 +530,79 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/misc.c vixie-cron-3.0.2.7/usr.sbi
  		    || (NULL == (fp = fdopen(fd, "r+")))
  		    ) {
  			snprintf(buf, sizeof buf, "can't open or create %s: %s",
-@@ -462,9 +463,10 @@
+@@ -396,24 +405,31 @@
+ }
+ 
+ 
+-/* int in_file(char *string, FILE *file)
++/* int in_file(char *string, FILE *file, int error)
+  *	return TRUE if one of the lines in file matches string exactly,
+- *	FALSE otherwise.
++ *	FALSE if no lines match, and error on error.
+  */
+ static int
+-in_file(string, file)
++in_file(string, file, error)
+ 	char *string;
+ 	FILE *file;
++	int error;
+ {
+ 	char line[MAX_TEMPSTR];
+ 
+-	rewind(file);
++	if (fseek(file, 0, SEEK_SET))
++		return error;
+ 	while (fgets(line, MAX_TEMPSTR, file)) {
+-		if (line[0] != '\0')
++		if (line[0] != '\0') {
++			if (line[strlen(line) - 1] != '\n')
++				return error;
+ 			line[strlen(line)-1] = '\0';
++		}
+ 		if (0 == strcmp(line, string))
+ 			return TRUE;
+ 	}
++	if (ferror(file))
++		return error;
+ 	return FALSE;
+ }
+ 
+@@ -429,23 +445,32 @@
+ {
+ 	static int	init = FALSE;
+ 	static FILE	*allow, *deny;
++	static int	allow_error, deny_error;
+ 
+ 	if (!init) {
+ 		init = TRUE;
+ #if defined(ALLOW_FILE) && defined(DENY_FILE)
+ 		allow = fopen(ALLOW_FILE, "r");
++		allow_error = !allow && errno != ENOENT;
+ 		deny = fopen(DENY_FILE, "r");
++		deny_error = !deny && errno != ENOENT;
+ 		Debug(DMISC, ("allow/deny enabled, %d/%d\n", !!allow, !!deny))
+ #else
+ 		allow = NULL;
++		allow_error = 0;
+ 		deny = NULL;
++		deny_error = 0;
+ #endif
+ 	}
+ 
++	if (allow_error)
++		return FALSE;
+ 	if (allow)
+-		return (in_file(username, allow));
++		return (in_file(username, allow, FALSE));
++	if (deny_error)
++		return FALSE;
+ 	if (deny)
+-		return (!in_file(username, deny));
++		return (!in_file(username, deny, TRUE));
+ 
+ #if defined(ALLOW_ONLY_ROOT)
+ 	return (strcmp(username, ROOT_USER) == 0);
+@@ -462,9 +487,10 @@
  	char	*event;
  	char	*detail;
  {
@@ -483,7 +614,7 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/misc.c vixie-cron-3.0.2.7/usr.sbi
  	TIME_T			now = time((TIME_T) 0);
  	register struct tm	*t = localtime(&now);
  #endif /*LOG_FILE*/
-@@ -476,10 +478,11 @@
+@@ -476,10 +502,11 @@
  #if defined(LOG_FILE)
  	/* we assume that MAX_TEMPSTR will hold the date, time, &punctuation.
  	 */
@@ -493,11 +624,11 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/misc.c vixie-cron-3.0.2.7/usr.sbi
  		     + strlen(detail)
 -		     + MAX_TEMPSTR);
 +		     + MAX_TEMPSTR));
-+	if (!msg) return; /* Return silently, as we can't log, anyway */
++	if (!msg) return; /* Return silently, as we can't log anyway */
  
  	if (LogFD < OK) {
  		LogFD = open(LOG_FILE, O_WRONLY|O_APPEND|O_CREAT, 0600);
-@@ -492,16 +495,16 @@
+@@ -492,16 +519,16 @@
  		}
  	}
  
@@ -517,7 +648,7 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/misc.c vixie-cron-3.0.2.7/usr.sbi
  	 */
  	if (LogFD < OK || write(LogFD, msg, strlen(msg)) < OK) {
  		if (LogFD >= OK)
-@@ -515,15 +518,7 @@
+@@ -515,15 +542,7 @@
  
  #if defined(SYSLOG)
  	if (!syslog_open) {
@@ -534,7 +665,7 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/misc.c vixie-cron-3.0.2.7/usr.sbi
  		syslog_open = TRUE;		/* assume openlog success */
  	}
  
-@@ -605,7 +600,7 @@
+@@ -605,7 +624,7 @@
  			*dst++ = '^';
  			*dst++ = '?';
  		} else {			/* parity character */
@@ -543,9 +674,9 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/misc.c vixie-cron-3.0.2.7/usr.sbi
  			dst += 4;
  		}
  	}
-diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/pathnames.h vixie-cron-3.0.2.7/usr.sbin/cron/pathnames.h
+diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/pathnames.h vixie-cron-3.0.2.7.linux/usr.sbin/cron/pathnames.h
 --- vixie-cron-3.0.2.7.orig/usr.sbin/cron/pathnames.h	Mon Mar 30 23:17:52 1998
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/pathnames.h	Sat Aug 19 11:24:52 2000
++++ vixie-cron-3.0.2.7.linux/usr.sbin/cron/pathnames.h	Sat Aug 19 11:24:52 2000
 @@ -26,9 +26,9 @@
  #ifndef CRONDIR
  			/* CRONDIR is where crond(8) and crontab(1) both chdir
@@ -587,9 +718,9 @@ diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/pathnames.h vixie-cron-3.0.2.7/us
  
  			/* 4.3BSD-style crontab */
  #define SYSCRONTAB	"/etc/crontab"
-diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/popen.c vixie-cron-3.0.2.7/usr.sbin/cron/popen.c
+diff -ur vixie-cron-3.0.2.7.orig/usr.sbin/cron/popen.c vixie-cron-3.0.2.7.linux/usr.sbin/cron/popen.c
 --- vixie-cron-3.0.2.7.orig/usr.sbin/cron/popen.c	Fri Sep  3 07:05:13 1999
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/popen.c	Sat Aug 19 11:57:02 2000
++++ vixie-cron-3.0.2.7.linux/usr.sbin/cron/popen.c	Sat Aug 19 11:57:02 2000
 @@ -23,7 +23,7 @@
   * globbing stuff since we don't need it.  also execvp instead of execv.
   */
