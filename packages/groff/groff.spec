@@ -1,4 +1,4 @@
-# $Id: Owl/packages/groff/groff.spec,v 1.3 2000/11/21 10:39:35 solar Exp $
+# $Id: Owl/packages/groff/groff.spec,v 1.4 2000/11/21 11:59:40 solar Exp $
 
 %define BUILD_USE_X	'no'
 %define BUILD_CURRENT	'yes'
@@ -16,6 +16,7 @@ Source1:	ftp://ftp.ffii.org/pub/groff/devel/groff-%{version}-current.diff.gz
 Source2: 	troff-to-ps.fpi
 Source3: 	README.A4
 Patch0:		groff-1.16.1-owl-man.diff
+Patch1:		groff-1.16.1-current-owl-mso-hpf.diff
 Requires: 	mktemp
 Buildroot:      /var/rpm-buildroot/%{name}-root
 Obsoletes: 	groff-tools
@@ -64,6 +65,9 @@ also need to install the groff package and the X Window System.
 zcat %{SOURCE1} | patch -p1 -l
 %endif
 %patch0 -p0
+%if "%{BUILD_CURRENT}"=="'yes'"
+%patch1 -p1
+%endif
 cp %{SOURCE3} .
 
 %build
@@ -161,8 +165,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %changelog
 * Tue Nov 21 2000 Solar Designer <solar@owl.openwall.com>
-- Patch to -current which now includes fixes for the current directory
+- Update to -current which now includes fixes for the current directory
 problem described in the ISS X-Force advisory.
+- Restrict .mso and hpf in a similar way (patch for -current).
 - Dropped the RH safer patch for .so (source) as it is non-obvious whether
 this needed fixing, and the patch wasn't a complete fix anyway (it trusted
 files under the cwd and had races).

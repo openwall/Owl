@@ -1,0 +1,32 @@
+--- groff-1.16.1/src/roff/troff/input.cc.orig	Tue Nov 21 14:36:25 2000
++++ groff-1.16.1/src/roff/troff/input.cc	Tue Nov 21 14:47:30 2000
+@@ -5691,6 +5691,8 @@
+     while (!tok.newline() && !tok.eof())
+       tok.next();
+     char *path;
++    // restrict path for security reasons
++    mac_path = &safer_macro_path;
+     FILE *fp = mac_path->open_file(nm.contents(), &path);
+     // .mso doesn't (and cannot) go through open_mac_file, so we
+     // need to do it here manually: If we have tmac.FOOBAR, try
+@@ -5721,6 +5723,7 @@
+     }
+     else
+       error("can't find macro file `%1'", nm.contents());
++    mac_path = &macro_path;
+     tok.next();
+   }
+ }
+--- groff-1.16.1/src/roff/troff/env.cc.orig	Tue Nov 21 14:36:25 2000
++++ groff-1.16.1/src/roff/troff/env.cc	Tue Nov 21 14:24:43 2000
+@@ -3113,7 +3113,10 @@
+   int num[WORD_MAX+1];
+   errno = 0;
+   char *path = 0;
++  // restrict path for security reasons
++  mac_path = &safer_macro_path;
+   FILE *fp = mac_path->open_file(name, &path);
++  mac_path = &macro_path;
+   if (fp == 0) {
+     error("can't find hyphenation patterns file `%1'", name);
+     return;
