@@ -1,0 +1,23 @@
+--- console-tools-0.3.3/screenfonttools/Makefile.in.rootpart	Wed Sep 22 22:41:40 1999
++++ console-tools-0.3.3/screenfonttools/Makefile.in	Fri Nov  5 21:56:25 1999
+@@ -139,7 +139,7 @@
+ LIBS = @LIBS@
+ consolechars_SOURCES = consolechars.c
+ consolechars_OBJECTS =  consolechars.o
+-consolechars_LDADD = $(LDADD)
++consolechars_LDADD = ../lib/ctlocal/libctlocal.a ../lib/console/.libs/libconsole.a ../lib/ctutils/.libs/libctutils.a ../lib/cfont/.libs/libcfont.a ../lib/generic/.libs/libctgeneric.a
+ consolechars_DEPENDENCIES =  ../lib/ctlocal/libctlocal.a \
+ ../lib/ctutils/libctutils.la ../lib/cfont/libcfont.la \
+ ../lib/console/libconsole.la ../lib/generic/libctgeneric.la
+--- console-tools-0.3.3/kbdtools/Makefile.in.rootpart	Wed Sep 22 22:41:38 1999
++++ console-tools-0.3.3/kbdtools/Makefile.in	Fri Nov  5 21:55:38 1999
+@@ -129,7 +129,8 @@
+ LDADD = ../lib/ctlocal/libctlocal.a ../lib/console/libconsole.la 	../lib/cfont/libcfont.la 	../lib/ctutils/libctutils.la ../lib/generic/libctgeneric.la
+ 
+ 
+-loadkeys_LDADD = $(LDADD) @LEXLIB@
++loadkeys_LDADD = ../lib/generic/.libs/libctgeneric.a ../lib/cfont/.libs/libcfont.a ../lib/ctlocal/libctlocal.a \
++ ../lib/ctutils/.libs/libctutils.a ../lib/console/.libs/libconsole.a @LEXLIB@
+ 
+ bin_SCRIPTS = mk_modmap
+ 

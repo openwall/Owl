@@ -1,20 +1,18 @@
-# $Id: Owl/packages/tcsh/tcsh.spec,v 1.2 2000/11/04 00:08:27 solar Exp $
+# $Id: Owl/packages/tcsh/tcsh.spec,v 1.3 2000/12/14 20:43:02 kad Exp $
 
 %define	_bindir	/bin
 
 Summary: 	An enhanced version of csh, the C shell.
 Name: 		tcsh
-Version: 	6.09
-Release: 	7owl
+Version: 	6.10
+Release: 	1owl
 Copyright: 	distributable
 Group: 		System Environment/Shells
 Source: 	ftp://ftp.astron.com/pub/tcsh/tcsh-%{version}.tar.gz
-Patch0: 	tcsh-6.07.09-rh-utmp.diff
+Patch0:		tcsh-6.10.00-rh-utmp.diff
 Patch1: 	tcsh-6.09.00-rh-termios_hack.diff
-Patch2: 	tcsh-6.08.00-rh-security.diff
-Patch3: 	tcsh-6.09.00-rh-strcoll.diff
-Patch4: 	tcsh-6.09.00-rh-locale.diff
-Patch5:		tcsh-6.09.00-suse-owl-shtmp.diff
+Patch2: 	tcsh-6.09.00-rh-locale.diff
+Patch3:		tcsh-6.10.00-suse-owl-shtmp.diff
 Provides: 	csh = %{version}
 Prereq: 	fileutils grep
 URL: 		http://www.primate.wisc.edu/software/csh-tcsh-book/
@@ -34,13 +32,12 @@ like syntax.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
-%patch5 -p1
 
 %build
 
 %configure
 make LIBES="-lnsl -ltermcap -lcrypt" all catalogs
+%{__perl} tcsh.man2html
 
 %install
 rm -rf ${RPM_BUILD_ROOT}
@@ -50,7 +47,7 @@ install -m 644 tcsh.man ${RPM_BUILD_ROOT}%{_mandir}/man1/tcsh.1
 ln -sf tcsh ${RPM_BUILD_ROOT}%{_bindir}/csh
 nroff -me eight-bit.me > eight-bit.txt
 
-for i in de es fr gr_GR it ja_JP.eucJP
+for i in de es fr gr_GR it ja
 do
     mkdir -p ${RPM_BUILD_ROOT}%{_datadir}/locale/$i/LC_MESSAGES
 done
@@ -59,7 +56,7 @@ install -m 644 tcsh.spanish.cat ${RPM_BUILD_ROOT}%{_datadir}/locale/es/LC_MESSAG
 install -m 644 tcsh.french.cat ${RPM_BUILD_ROOT}%{_datadir}/locale/fr/LC_MESSAGES/tcsh
 install -m 644 tcsh.greek.cat ${RPM_BUILD_ROOT}%{_datadir}/locale/gr_GR/LC_MESSAGES/tcsh
 install -m 644 tcsh.italian.cat ${RPM_BUILD_ROOT}%{_datadir}/locale/it/LC_MESSAGES/tcsh
-install -m 644 tcsh.ja.cat ${RPM_BUILD_ROOT}%{_datadir}/locale/ja_JP.eucJP/LC_MESSAGES/tcsh
+install -m 644 tcsh.ja.cat ${RPM_BUILD_ROOT}%{_datadir}/locale/ja/LC_MESSAGES/tcsh
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
@@ -81,13 +78,17 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc NewThings FAQ eight-bit.txt complete.tcsh
+%doc NewThings FAQ eight-bit.txt complete.tcsh Fixes tcsh.html
 %{_bindir}/tcsh
 %{_bindir}/csh
-%{_mandir}/man1/tcsh.*
+%{_mandir}/*/*
 %{_datadir}/locale/*/LC_MESSAGES/tcsh*
 
 %changelog
+* Sat Dec  9 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- 6.10
+- security update
+
 * Sat Nov 04 2000 Solar Designer <solar@owl.openwall.com>
 - Added a patch by Dr. Werner Fink <werner@suse.de> (and slightly modified)
 for the unsafe /tmp access reported on Bugtraq by proton.

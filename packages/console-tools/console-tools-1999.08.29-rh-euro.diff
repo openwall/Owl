@@ -1,0 +1,581 @@
+diff -urN console-data-1999.04.15-orig/doc/fonts/README.ucw console-data-1999.04.15/doc/fonts/README.ucw
+--- console-data-1999.04.15-orig/doc/fonts/README.ucw	Thu Jan  1 01:00:00 1970
++++ console-data-1999.04.15/doc/fonts/README.ucw	Thu Jun  3 15:20:20 1999
+@@ -0,0 +1,18 @@
++ucw fonts contain:
++
++- complet latin-2 charset
++- partly latin-1 charset
++- partly IBM and VT100 graphic symbols
++
++latin2-ucw.scrnmap and latin2-ucw.uni were saved from font by setfont
++
++usage:
++	TERM=linux
++	setfont ucw16.psf -m latin2-ucw.scrnmap -u latin2-ucw.uni
++or
++	consolechars -f ucw16.psf -m latin2-ucw.scrnmap -u latin2-ucw.uni
++and
++	echo -ne "\033(K"
++
++url:
++ftp://atrey.karlin.mff.cuni.cz/pub/local/mj/ucw-cs-1.1.tar.gz
+diff -urN console-data-1999.04.15-orig/keymaps/i386/azerty/be2-latin1.kmap console-data-1999.04.15/keymaps/i386/azerty/be2-latin1.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/azerty/be2-latin1.kmap	Thu Apr 15 03:15:56 1999
++++ console-data-1999.04.15/keymaps/i386/azerty/be2-latin1.kmap	Thu Jun  3 15:02:38 1999
+@@ -1,12 +1,12 @@
+ #From srtxg@habcnx.interpac.be Wed Apr 26 07:21:00 1995
+ #
+-#I've seen some (minor) differences between be-latin1.map and my own keyboard,
++#I've seen some (minor) differences between be-latin1.kmap and my own keyboard,
+ #so I send you the modified keymap.
+ #(the differences are twosuperior and threesuperior added(keycode 41), grave at
+ #the correct place(43), and changed the ^ on the numbers row (7) to have the
+ #same behaviour than in ms-dos)
+ 
+-# be-latin1.map modified by Pablo Saratxaga <srtxg@f2219.n293.z2.fidonet.org>
++# be-latin1.kmap modified by Pablo Saratxaga <srtxg@f2219.n293.z2.fidonet.org>
+ include "be-latin1.kmap"
+ 
+ 	altgr keycode 7 = asciicircum
+@@ -14,7 +14,7 @@
+ keycode  43 = mu  sterling  dead_grave
+ 	alt keycode 43 = Meta_grave
+ 
+-# be-latin1.map has here:
++# be-latin1.kmap has here:
+ # altgr keycode 7 = dead_circumflex
+ # keycode  41 = mu         sterling                dead_grave
+ # keycode  43 = <absent>
+diff -urN console-data-1999.04.15-orig/keymaps/i386/azerty/fr-pc.kmap console-data-1999.04.15/keymaps/i386/azerty/fr-pc.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/azerty/fr-pc.kmap	Thu Apr 15 03:15:56 1999
++++ console-data-1999.04.15/keymaps/i386/azerty/fr-pc.kmap	Thu Jun  3 15:02:38 1999
+@@ -1,4 +1,4 @@
+-# fr-pc.map for French PC keyboard (non-US 102 keys)
++# fr-pc.kmap for French PC keyboard (non-US 102 keys)
+ #
+ #  1997-3-5
+ #  Seak, Teng-Fong <seak@drfc.cad.cea.fr>
+diff -urN console-data-1999.04.15-orig/keymaps/i386/azerty/wangbe.kmap console-data-1999.04.15/keymaps/i386/azerty/wangbe.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/azerty/wangbe.kmap	Thu Apr 15 03:15:56 1999
++++ console-data-1999.04.15/keymaps/i386/azerty/wangbe.kmap	Thu Jun  3 15:02:38 1999
+@@ -1,4 +1,4 @@
+-# azerty.map with modified numeric key assignements
++# azerty.kmap with modified numeric key assignements
+ # to fit an azerty wang belgium keyboard
+ # Servaas Vandenberghe, servaas.vandenberghe@esat.kuleuven.ac.be - 1997.
+ 
+diff -urN console-data-1999.04.15-orig/keymaps/i386/dvorak/dvorak-l.kmap console-data-1999.04.15/keymaps/i386/dvorak/dvorak-l.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/dvorak/dvorak-l.kmap	Thu Apr 15 03:15:55 1999
++++ console-data-1999.04.15/keymaps/i386/dvorak/dvorak-l.kmap	Thu Jun  3 15:02:37 1999
+@@ -1,4 +1,4 @@
+-! dvorak-l.map - Left single-handed Dvorak keyboard layout
++! dvorak-l.kmap - Left single-handed Dvorak keyboard layout
+ ! Derived from a file that was
+ !  Copyright (C) 1996 Dominik Kubla, <dominik@debian.org>
+ !
+diff -urN console-data-1999.04.15-orig/keymaps/i386/dvorak/dvorak-r.kmap console-data-1999.04.15/keymaps/i386/dvorak/dvorak-r.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/dvorak/dvorak-r.kmap	Thu Apr 15 03:15:55 1999
++++ console-data-1999.04.15/keymaps/i386/dvorak/dvorak-r.kmap	Thu Jun  3 15:02:37 1999
+@@ -1,4 +1,4 @@
+-! dvorak-r.map - Right single-handed Dvorak keyboard layout
++! dvorak-r.kmap - Right single-handed Dvorak keyboard layout
+ ! Derived from a file that was
+ !  Copyright (C) 1996 Dominik Kubla, <dominik@debian.org>
+ !
+diff -urN console-data-1999.04.15-orig/keymaps/i386/include/azerty-layout.inc console-data-1999.04.15/keymaps/i386/include/azerty-layout.inc
+--- console-data-1999.04.15-orig/keymaps/i386/include/azerty-layout.inc	Thu Apr 15 03:15:59 1999
++++ console-data-1999.04.15/keymaps/i386/include/azerty-layout.inc	Thu Jun  3 15:02:38 1999
+@@ -28,3 +28,6 @@
+ keycode 48 = b
+ keycode 49 = n
+ #
++include "euro"
++#include "windowkeys"
++include "compose"
+diff -urN console-data-1999.04.15-orig/keymaps/i386/include/compose.inc console-data-1999.04.15/keymaps/i386/include/compose.inc
+--- console-data-1999.04.15-orig/keymaps/i386/include/compose.inc	Thu Jan  1 01:00:00 1970
++++ console-data-1999.04.15/keymaps/i386/include/compose.inc	Thu Jun  3 15:02:39 1999
+@@ -0,0 +1,9 @@
++# We map the PrintScreen key (useless) and Alt+AltGr to the Compose key...
++# A really useful thing not found on normal keyboards. :/
++#
++# (c) 1999 Bernhard Rosenkr‰nzer <bero@mandrakesoft.com>
++
++keycode  99 = Compose
++keycode 100 = AltGr
++        alt     keycode 100 = Compose
++
+diff -urN console-data-1999.04.15-orig/keymaps/i386/include/linux-with-alt-and-altgr.inc console-data-1999.04.15/keymaps/i386/include/linux-with-alt-and-altgr.inc
+--- console-data-1999.04.15-orig/keymaps/i386/include/linux-with-alt-and-altgr.inc	Thu Apr 15 03:15:59 1999
++++ console-data-1999.04.15/keymaps/i386/include/linux-with-alt-and-altgr.inc	Thu Jun  3 20:13:22 1999
+@@ -9,7 +9,7 @@
+ control altgr keycode 111 = Boot
+ 
+ # Hex keypad keys (for giving a Unicode value in 4 hex digits)
+-# Follow lt.map and assign Hex_A .. Hex_F to keypad border.
++# Follow lt.kmap and assign Hex_A .. Hex_F to keypad border.
+ altgr keycode  55 = Hex_C
+ altgr keycode  69 = Hex_A
+ altgr keycode  71 = Hex_7
+@@ -26,3 +26,5 @@
+ altgr keycode  82 = Hex_0
+ altgr keycode  96 = Hex_F
+ altgr keycode  98 = Hex_B
++
++include "compose"
+diff -urN console-data-1999.04.15-orig/keymaps/i386/include/qwerty-layout.inc console-data-1999.04.15/keymaps/i386/include/qwerty-layout.inc
+--- console-data-1999.04.15-orig/keymaps/i386/include/qwerty-layout.inc	Thu Apr 15 03:16:00 1999
++++ console-data-1999.04.15/keymaps/i386/include/qwerty-layout.inc	Thu Jun  3 15:02:38 1999
+@@ -28,3 +28,6 @@
+ keycode 49 = n
+ keycode 50 = m
+ #
++include "euro"
++#include "windowkeys"
++include "compose"
+diff -urN console-data-1999.04.15-orig/keymaps/i386/include/qwertz-layout.inc console-data-1999.04.15/keymaps/i386/include/qwertz-layout.inc
+--- console-data-1999.04.15-orig/keymaps/i386/include/qwertz-layout.inc	Thu Apr 15 03:16:00 1999
++++ console-data-1999.04.15/keymaps/i386/include/qwertz-layout.inc	Thu Jun  3 15:02:39 1999
+@@ -28,3 +28,6 @@
+ keycode 49 = n
+ keycode 50 = m
+ #
++include "euro"
++#include "windowkeys"
++include "compose"
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/bg.kmap console-data-1999.04.15/keymaps/i386/qwerty/bg.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/bg.kmap	Thu Apr 15 03:15:52 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/bg.kmap	Thu Jun  3 15:02:33 1999
+@@ -1,5 +1,5 @@
+-# Bulgarian Cyrillic keyboard.map. "Cyrillic" mode is toggled by
+-# Right_Ctrl key and shifted by AltGr key.  Eugene Crosser's `ru.map'
++# Bulgarian Cyrillic keyboard.kmap. "Cyrillic" mode is toggled by
++# Right_Ctrl key and shifted by AltGr key.  Eugene Crosser's `ru.kmap'
+ # was used as a template.  Note that this is a "phonetic" keyboard,
+ # not a `BDS' one!						--L.Georgiev
+ 
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/br-abnt2.kmap console-data-1999.04.15/keymaps/i386/qwerty/br-abnt2.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/br-abnt2.kmap	Thu Apr 15 03:15:52 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/br-abnt2.kmap	Thu Jun  3 15:02:33 1999
+@@ -1,4 +1,4 @@
+-# br-abnt2.map
++# br-abnt2.kmap
+ # Mapa para teclados ABNT2
+ # Antonio Dias <accdias@sst.com.br>
+ #
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/fi-latin1.kmap console-data-1999.04.15/keymaps/i386/qwerty/fi-latin1.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/fi-latin1.kmap	Thu Apr 15 03:15:53 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/fi-latin1.kmap	Thu Jun  3 15:02:34 1999
+@@ -1,4 +1,4 @@
+-# fi-latin1.map: Finnish keymap
++# fi-latin1.kmap: Finnish keymap
+ # Changes by Johan MyrÈen <jem@iki.fi> 1997-08-19
+ 
+ charset "iso-8859-1"
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/gr.kmap console-data-1999.04.15/keymaps/i386/qwerty/gr.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/gr.kmap	Thu Apr 15 03:15:53 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/gr.kmap	Thu Jun  3 15:02:34 1999
+@@ -1,5 +1,5 @@
+ # v0.95 Sat Jun 21 21:49:26 EET 1997. Replaces: v0.90 Tue Apr  5 17:20:51 1994
+-# This is the improved greek map, (file gr.map), for linux kbd.
++# This is the improved greek map, (file gr.kmap), for linux kbd.
+ # The compose combinations are back in, and better mode switch keys.
+ #
+ # Use:
+@@ -14,7 +14,7 @@
+ #
+ # For bugs/remarks, send mail to sarantos@ics.forth.gr
+ # You can get updated versions from
+-# http://www.ics.forth.gr/~sarantos/gr.map
++# http://www.ics.forth.gr/~sarantos/gr.kmap
+ #
+ # This is an iso-8859-7 mapping. Use together with "setfont iso07.*"
+ # activated by sending Esc ( K to the console.
+@@ -27,7 +27,7 @@
+ # The definitions are divided into 6 parts.
+ 
+ #
+-# Part one: The full us map (us.map, from 14 Mar 1994),
++# Part one: The full us map (us.kmap, from 14 Mar 1994),
+ # without the (empty) keycodes for 125, 126 and 127.
+ # The strings are appended at the end.
+ #
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/is-latin1.kmap console-data-1999.04.15/keymaps/i386/qwerty/is-latin1.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/is-latin1.kmap	Thu Apr 15 03:15:53 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/is-latin1.kmap	Thu Jun  3 15:02:34 1999
+@@ -1,7 +1,7 @@
+ # This mainly follows
+-#  is-latin1.map: Icelandic keyboard for Latin 1 character set
++#  is-latin1.kmap: Icelandic keyboard for Latin 1 character set
+ #  Kristjan Jonsson (kj@raunvis.hi.is)
+-# but also has some features of "ice-latin1.map' as submitted
++# but also has some features of "ice-latin1.kmap' as submitted
+ # by Einar Indridason (einari@rhi.hi.is)
+ #
+ # Where the two maps differed, the version of the latter map
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/it.kmap console-data-1999.04.15/keymaps/i386/qwerty/it.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/it.kmap	Thu Apr 15 03:15:53 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/it.kmap	Thu Jun  3 15:02:34 1999
+@@ -1,6 +1,6 @@
+ # Italian keymap with emacs enhancements
+ #     Beta version Mon May  2 19:57:25 WET DST 1994
+-# Available for anon. ftp at cnuce_arch.cnr.it:/pub/Linux-local/kbd/it.map
++# Available for anon. ftp at cnuce_arch.cnr.it:/pub/Linux-local/kbd/it.kmap
+ #
+ # Based on all other keymaps available in Slackware-1.2.0.
+ #
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/jp106.kmap console-data-1999.04.15/keymaps/i386/qwerty/jp106.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/jp106.kmap	Thu Apr 15 03:15:53 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/jp106.kmap	Thu Jun  3 15:02:34 1999
+@@ -1,4 +1,4 @@
+-# jp106.map : Japanese 106 keyboard keymap
++# jp106.kmap : Japanese 106 keyboard keymap
+ #
+ # Date: Tue, 20 Aug 1996 16:15:31 +0900
+ # From: Hideya Hane <wing@aries.bekkoame.or.jp>
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/lt.kmap console-data-1999.04.15/keymaps/i386/qwerty/lt.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/lt.kmap	Thu Apr 15 03:15:53 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/lt.kmap	Thu Jun  3 15:02:35 1999
+@@ -6,7 +6,7 @@
+ #     Lithuanian key-map for PC	 101/102 keyboard in Unicode mode. V1.03.
+ # Comments & bug reports to: Riƒçardas ƒåepas <rch@pub.osf.lt>
+ #     Usage:
+-#	kbd_mode -u; loadkeys lt.map; setfont LatArCyrHeb* -m vga2iso
++#	kbd_mode -u; loadkeys lt.kmap; setfont LatArCyrHeb* -m vga2iso
+ # `vga2iso' map is  for non-Unicode mode to get proper ISO 8859-4 font maping.
+ #
+ #     BUGS: Caps-Lock doesn't work  properly for Unicode characters. Use
+@@ -71,7 +71,7 @@
+ #	       "\e[c": forward-word
+ #	       "\e\C-?": kill-word
+ # 4) Add to /etc/init.d/boot ( this startup file may be other for you system):
+-#	 kbd_mode -u; loadkeys lt.map
++#	 kbd_mode -u; loadkeys lt.kmap
+ # loadkeys affects all virtual consoles.
+ #
+ #      Control+BackSpace   is  Delete	and  Control+Delete   is  Remove
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/lt.l4.kmap console-data-1999.04.15/keymaps/i386/qwerty/lt.l4.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/lt.l4.kmap	Thu Apr 15 03:15:53 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/lt.l4.kmap	Thu Jun  3 15:02:35 1999
+@@ -1,8 +1,8 @@
+ #encoding: UTF-8
+ #     Lithuanian key-map for PC 101/102 keyboard in ISO 8859-4 mode. V1.0.
+ # Comments & bug reports to: Riƒçardas ƒåepas <rch@pub.osf.lt>
+-# Load after loading lt.map. See lt.map for more info.
+-# Usage: kbd_mode -a; loadkeys lt.map lt.l4.map; setfont lat4u* -m vga2iso
++# Load after loading lt.kmap. See lt.map for more info.
++# Usage: kbd_mode -a; loadkeys lt.kmap lt.l4.map; setfont lat4u* -m vga2iso
+ 
+ charset "iso-8859-4"
+ 
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/mk.kmap console-data-1999.04.15/keymaps/i386/qwerty/mk.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/mk.kmap	Thu Apr 15 03:15:53 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/mk.kmap	Thu Jun  3 15:02:35 1999
+@@ -11,7 +11,7 @@
+ #	setfont iso05.f14
+ #	loadunimap iso05.uni
+ #	kbd_mode -u
+-#	loadkeys mk.map
++#	loadkeys mk.kmap
+ # so
+ #	echo -e '\033%G'
+ # se ovozmozhuva prikaz na kirilichni simboli na terminalot, shto nekogash
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/no-latin1.kmap console-data-1999.04.15/keymaps/i386/qwerty/no-latin1.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/no-latin1.kmap	Thu Apr 15 03:15:54 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/no-latin1.kmap	Thu Jun  3 15:02:35 1999
+@@ -1,4 +1,4 @@
+-# /usr/lib/kbd/keymaps/i386/qwerty/no-latin1.map
++# /usr/lib/kbd/keymaps/i386/qwerty/no-latin1.kmap
+ #
+ # Send comments to Kjetil T. Homme <kjetilho@ifi.uio.no>
+ include "linux-with-alt-and-altgr"
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/pc110.kmap console-data-1999.04.15/keymaps/i386/qwerty/pc110.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/pc110.kmap	Thu Apr 15 03:15:54 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/pc110.kmap	Thu Jun  3 15:02:35 1999
+@@ -1,4 +1,4 @@
+-# pc110.map
++# pc110.kmap
+ # Japanese/English keyboard on IBM PC110 Palm Top
+ # The strange japanese key next to '1' is mapped to ESC
+ # Those on either side of the space bar are mapped to SPACE
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/pt-latin1.kmap console-data-1999.04.15/keymaps/i386/qwerty/pt-latin1.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/pt-latin1.kmap	Thu Apr 15 03:15:54 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/pt-latin1.kmap	Thu Jun  3 15:02:35 1999
+@@ -1,4 +1,4 @@
+-# Derived from pt.map by lacyp@unicorn.it.wsu.edu
++# Derived from pt.kmap by lacyp@unicorn.it.wsu.edu
+ # This is good for my `Tatung' keyboard - aeb, 970222.
+ #
+ # With fixes for keycode 43 from pmmm@camoes.rnl.ist.utl.pt, 980626.
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/ro.kmap console-data-1999.04.15/keymaps/i386/qwerty/ro.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/ro.kmap	Thu Apr 15 03:15:54 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/ro.kmap	Thu Jun  3 15:02:35 1999
+@@ -1,4 +1,4 @@
+-# us.map
++# us.kmap
+ charset "iso-8859-2"
+ keymaps 0-6,8-9,12
+ alt_is_meta
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/ru-cp1251.kmap console-data-1999.04.15/keymaps/i386/qwerty/ru-cp1251.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/ru-cp1251.kmap	Thu Apr 15 03:15:54 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/ru-cp1251.kmap	Thu Jun  3 15:02:35 1999
+@@ -1,4 +1,4 @@
+-! Russian CP1251 Cyrillic keyboard.map. "Cyrillic" mode is toggled by
++! Russian CP1251 Cyrillic keyboard.kmap. "Cyrillic" mode is toggled by
+ ! Right_Ctrl key and shifted by AltGr key.
+ ! 4-Mar-98 Andrew Aksyonov andraks@geocities.com
+ keymaps 0-4,6,8,10,12
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/ru-yawerty.kmap console-data-1999.04.15/keymaps/i386/qwerty/ru-yawerty.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/ru-yawerty.kmap	Thu Apr 15 03:15:54 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/ru-yawerty.kmap	Thu Jun  3 15:02:35 1999
+@@ -11,7 +11,7 @@
+ #
+ # Mode is switched by the right alt key.
+ #
+-# This map is derived from Alexey Vovenko's ru1.map.
++# This map is derived from Alexey Vovenko's ru1.kmap.
+ #
+ 
+ strings as usual
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/ru.kmap console-data-1999.04.15/keymaps/i386/qwerty/ru.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/ru.kmap	Thu Apr 15 03:15:54 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/ru.kmap	Thu Jun  3 15:02:36 1999
+@@ -1,4 +1,4 @@
+-! Russian Cyrillic keyboard.map. "Cyrillic" mode is toggled by
++! Russian Cyrillic keyboard.kmap. "Cyrillic" mode is toggled by
+ ! Right_Ctrl key and shifted by AltGr key.
+ keymaps 0-4,6,8,10,12
+ strings as usual
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/ru1.kmap console-data-1999.04.15/keymaps/i386/qwerty/ru1.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/ru1.kmap	Thu Apr 15 03:15:54 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/ru1.kmap	Thu Jun  3 15:02:36 1999
+@@ -1,5 +1,5 @@
+ # Here is the more or less complete list of differences between my keymap
+-# (ru1.map) and Eugene Crosser's (ru.map):
++# (ru1.kmap) and Eugene Crosser's (ru.map):
+ #
+ # 1. The Backspace key sends \127 code in my version and ^H in Crosser's.
+ # 2. Control-Enter sends ^J code vs. ^M
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/ru2.kmap console-data-1999.04.15/keymaps/i386/qwerty/ru2.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/ru2.kmap	Thu Apr 15 03:15:54 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/ru2.kmap	Thu Jun  3 15:02:36 1999
+@@ -1,14 +1,14 @@
+ ! Date: Tue, 7 Jun 1994 10:06:20 +1000 (EST)
+ ! From: Alexandre Krioutchkov <A.Kriouctchkov@st.nepean.uws.edu.au>
+ !
+-! ru.map and ru1.map are keyboard maps for KOI-8 (sometimes called
++! ru.kmap and ru1.map are keyboard maps for KOI-8 (sometimes called
+ ! main coding). Most of the people, who used Russian in MS-DOS,
+ ! work with an alternative coding. I'm not sure, but it seems to me
+ ! in WordPerfect 5.1 Russian, Ukrainian, Byelorussian language extension
+ ! it's code page 899. (Note: there is also another coding for MS-Windows).
+ ! Fonts for Russian alternative coding you can find in Cyr_a8x{8,14,16}.
+ !
+-! Russian Alternative Cyrillic keyboard.map. "Cyrillic" mode is toggled by
++! Russian Alternative Cyrillic keyboard.kmap. "Cyrillic" mode is toggled by
+ ! Right Alt key. 18-Apr-94 Alexandre Krioutchkov alexk@st.nepean.uws.edu.au
+ strings as usual
+ 
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/ru3.kmap console-data-1999.04.15/keymaps/i386/qwerty/ru3.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/ru3.kmap	Thu Apr 15 03:15:54 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/ru3.kmap	Thu Jun  3 15:02:36 1999
+@@ -1,6 +1,6 @@
+-# ru3.map is a Russian keymap for a 102 key keyboard, prepared by 
++# ru3.kmap is a Russian keymap for a 102 key keyboard, prepared by 
+ # IPLabs Linux Team (www.iplabs.ru/Linux   and  www.logic.ru)
+-# from (ru1.map) by Eugene Crosser's (ru.map):
++# from (ru1.kmap) by Eugene Crosser's (ru.map):
+ # by Alexey Vovenko <vovenko@ixwin.ihep.su>.
+ # 
+ # CapsLock is used to change rus/lat, while Shift+CapsLock is used to 
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/ru4.kmap console-data-1999.04.15/keymaps/i386/qwerty/ru4.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/ru4.kmap	Thu Apr 15 03:15:54 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/ru4.kmap	Thu Jun  3 15:02:36 1999
+@@ -1,6 +1,6 @@
+-# ru4.map is a Russian keymap for a ms(105 keys) keyboard, prepared by 
++# ru4.kmap is a Russian keymap for a ms(105 keys) keyboard, prepared by 
+ # IPLabs Linux Team (www.iplabs.ru/Linux   and  www.logic.ru)
+-# from (ru1.map) by Eugene Crosser's (ru.map):
++# from (ru1.kmap) by Eugene Crosser's (ru.map):
+ # by Alexey Vovenko <vovenko@ixwin.ihep.su>.
+ # 
+ # CapsLock is used to change rus/lat, while Shift+CapsLock is used to 
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/ru_win.kmap console-data-1999.04.15/keymaps/i386/qwerty/ru_win.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/ru_win.kmap	Thu Apr 15 03:15:54 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/ru_win.kmap	Thu Jun  3 15:02:36 1999
+@@ -1,8 +1,8 @@
+-! $Header: /home/abel/cvs/src/misc/cyr/ru_win.map,v 1.1 1998/03/05 23:05:32 abel Exp $
++! $Header: /home/abel/cvs/src/misc/cyr/ru_win.kmap,v 1.1 1998/03/05 23:05:32 abel Exp $
+ !
+-! Russian cp1251 (Windows Cyrillic) keyboard.map. 
++! Russian cp1251 (Windows Cyrillic) keyboard.kmap. 
+ !
+-! Adapted from ru.map by Alexander L. Belikoff (abel@bfr.co.il)
++! Adapted from ru.kmap by Alexander L. Belikoff (abel@bfr.co.il)
+ !
+ ! "Cyrillic" mode is toggled by Right_Ctrl key and shifted by AltGr key.
+ 
+@@ -324,4 +324,4 @@
+ string	F26 =	""
+ 
+ 
+-! end of $Source: /home/abel/cvs/src/misc/cyr/ru_win.map,v $
++! end of $Source: /home/abel/cvs/src/misc/cyr/ru_win.kmap,v $
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/sk-prog-qwerty.kmap console-data-1999.04.15/keymaps/i386/qwerty/sk-prog-qwerty.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/sk-prog-qwerty.kmap	Thu Apr 15 03:15:55 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/sk-prog-qwerty.kmap	Thu Jun  3 15:02:36 1999
+@@ -16,7 +16,7 @@
+ # podla klasickej klavesovej mapy. Pridal som aj zopar includov,
+ # ale neviem, ci nieco upravia.
+ #
+-# Tento subor bol vytvoreny zo suboru cz-lat2.map, ktory
++# Tento subor bol vytvoreny zo suboru cz-lat2.kmap, ktory
+ # napisal Jan Kasprzak (kas@ics.muni.cz).
+ #
+ charset "iso-8859-2"
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/sk-prog.kmap console-data-1999.04.15/keymaps/i386/qwerty/sk-prog.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/sk-prog.kmap	Thu Apr 15 03:15:55 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/sk-prog.kmap	Thu Jun  3 15:02:36 1999
+@@ -11,7 +11,7 @@
+ # "Ù" a "‰" mozete dostat tak, ze pred danym pismenom stlacite
+ # klaves makcena.
+ #
+-# Tento subor bol vytvoreny zo suboru cz-lat2.map, ktory
++# Tento subor bol vytvoreny zo suboru cz-lat2.kmap, ktory
+ # napisal Jan Kasprzak (kas@ics.muni.cz).
+ #
+ charset "iso-8859-2"
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/sk-qwerty.kmap console-data-1999.04.15/keymaps/i386/qwerty/sk-qwerty.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/sk-qwerty.kmap	Thu Apr 15 03:15:55 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/sk-qwerty.kmap	Thu Jun  3 15:02:36 1999
+@@ -17,7 +17,7 @@
+ # podla klasickej klavesovej mapy. Pridal som aj zopar includov,
+ # ale neviem, ci nieco upravia.
+ #
+-# Tento subor bol vytvoreny zo suboru cz-lat2.map, ktory
++# Tento subor bol vytvoreny zo suboru cz-lat2.kmap, ktory
+ # napisal Jan Kasprzak (kas@ics.muni.cz).
+ #
+ charset "iso-8859-2"
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/tralt.kmap console-data-1999.04.15/keymaps/i386/qwerty/tralt.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/tralt.kmap	Thu Apr 15 03:15:55 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/tralt.kmap	Thu Jun  3 15:02:36 1999
+@@ -1,4 +1,4 @@
+-# tr.map
++# tr.kmap
+ # -cagri@tubitak.gov.tr
+ charset "iso-8859-9"
+ include "linux-with-alt-and-altgr"
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/uk.kmap console-data-1999.04.15/keymaps/i386/qwerty/uk.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/uk.kmap	Thu Apr 15 03:15:55 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/uk.kmap	Thu Jun  3 15:02:37 1999
+@@ -1,4 +1,4 @@
+-# uk.map
++# uk.kmap
+ # From bam@wcl-l.bham.ac.uk Fri May  2 20:20:59 1997
+ # reduced number of keymaps, adapted to alt_is_meta - aeb
+ #
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwerty/us.kmap console-data-1999.04.15/keymaps/i386/qwerty/us.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwerty/us.kmap	Thu Apr 15 03:15:55 1999
++++ console-data-1999.04.15/keymaps/i386/qwerty/us.kmap	Thu Jun  3 15:02:37 1999
+@@ -1,4 +1,4 @@
+-# us.map
++# us.kmap
+ keymaps 0-2,4-6,8-9,12
+ alt_is_meta
+ include "qwerty-layout"
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwertz/de-latin1-nodeadkeys.kmap console-data-1999.04.15/keymaps/i386/qwertz/de-latin1-nodeadkeys.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwertz/de-latin1-nodeadkeys.kmap	Thu Apr 15 03:15:50 1999
++++ console-data-1999.04.15/keymaps/i386/qwertz/de-latin1-nodeadkeys.kmap	Thu Jun  3 15:02:33 1999
+@@ -1,4 +1,4 @@
+-# de-latin1-nodeadkeys.map: German keymap
++# de-latin1-nodeadkeys.kmap: German keymap
+ # Due to Olaf Flebbe (flebbe@pluto.tat.physik.uni-tuebingen.de)
+ 
+ include "de-latin1.kmap"
+@@ -8,7 +8,7 @@
+ keycode  27 = plus             asterisk         asciitilde
+ keycode  41 = asciicircum      degree
+ 
+-# corresponding keys in de-latin1.map:
++# corresponding keys in de-latin1.kmap:
+ # keycode  13 = dead_acute       dead_grave
+ # keycode  27 = plus             asterisk         dead_tilde
+ # keycode  41 = dead_circumflex  degree
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwertz/de-latin1.kmap console-data-1999.04.15/keymaps/i386/qwertz/de-latin1.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwertz/de-latin1.kmap	Thu Apr 15 03:15:50 1999
++++ console-data-1999.04.15/keymaps/i386/qwertz/de-latin1.kmap	Thu Jun  3 15:02:33 1999
+@@ -1,5 +1,5 @@
+-# de-latin1.map: German keymap
+-# (Renamed from gr-latin1.map, since it is not a Greek map.)
++# de-latin1.kmap: German keymap
++# (Renamed from gr-latin1.kmap, since it is not a Greek map.)
+ # Some changes due to Olaf Flebbe (flebbe@pluto.tat.physik.uni-tuebingen.de)
+ # More changes by Jochen Hein <jochen.hein@delphi.central.de>.
+ 
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwertz/de.kmap console-data-1999.04.15/keymaps/i386/qwertz/de.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwertz/de.kmap	Thu Apr 15 03:15:50 1999
++++ console-data-1999.04.15/keymaps/i386/qwertz/de.kmap	Thu Jun  3 15:02:33 1999
+@@ -1,5 +1,5 @@
+-# de.map: German keymap
+-# (Renamed from gr.map, since it is not a Greek map.)
++# de.kmap: German keymap
++# (Renamed from gr.kmap, since it is not a Greek map.)
+ # Some changes due to Olaf Flebbe (flebbe@pluto.tat.physik.uni-tuebingen.de)
+ # More changes by Jochen Hein <jochen.hein@delphi.central.de>.
+ 
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwertz/fr_CH-latin1.kmap console-data-1999.04.15/keymaps/i386/qwertz/fr_CH-latin1.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwertz/fr_CH-latin1.kmap	Thu Apr 15 03:15:50 1999
++++ console-data-1999.04.15/keymaps/i386/qwertz/fr_CH-latin1.kmap	Thu Jun  3 15:02:33 1999
+@@ -1,4 +1,4 @@
+-# This used to be sf-latin1.map
++# This used to be sf-latin1.kmap
+ # Renamed because too many Fins thought this was for them.
+ keymaps 0-2,4-6,8,12
+ include "qwertz-layout"
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwertz/fr_CH.kmap console-data-1999.04.15/keymaps/i386/qwertz/fr_CH.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwertz/fr_CH.kmap	Thu Apr 15 03:15:50 1999
++++ console-data-1999.04.15/keymaps/i386/qwertz/fr_CH.kmap	Thu Jun  3 15:02:33 1999
+@@ -1,4 +1,4 @@
+-# This used to be sf-latin1.map
++# This used to be sf-latin1.kmap
+ # Renamed because too many Fins thought this was for them.
+ keymaps 0-2,4-6,8,12
+ include "qwertz-layout"
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwertz/sk-prog-qwertz.kmap console-data-1999.04.15/keymaps/i386/qwertz/sk-prog-qwertz.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwertz/sk-prog-qwertz.kmap	Thu Apr 15 03:15:51 1999
++++ console-data-1999.04.15/keymaps/i386/qwertz/sk-prog-qwertz.kmap	Thu Jun  3 15:02:33 1999
+@@ -16,7 +16,7 @@
+ # podla klasickej klavesovej mapy. Pridal som aj zopar includov,
+ # ale neviem, ci nieco upravia.
+ #
+-# Tento subor bol vytvoreny zo suboru cz-lat2.map, ktory
++# Tento subor bol vytvoreny zo suboru cz-lat2.kmap, ktory
+ # napisal Jan Kasprzak (kas@ics.muni.cz).
+ #
+ charset "iso-8859-2"
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwertz/sk-qwertz.kmap console-data-1999.04.15/keymaps/i386/qwertz/sk-qwertz.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwertz/sk-qwertz.kmap	Thu Apr 15 03:15:51 1999
++++ console-data-1999.04.15/keymaps/i386/qwertz/sk-qwertz.kmap	Thu Jun  3 15:02:33 1999
+@@ -17,7 +17,7 @@
+ # podla klasickej klavesovej mapy. Pridal som aj zopar includov,
+ # ale neviem, ci nieco upravia.
+ #
+-# Tento subor bol vytvoreny zo suboru cz-lat2.map, ktory
++# Tento subor bol vytvoreny zo suboru cz-lat2.kmap, ktory
+ # napisal Jan Kasprzak (kas@ics.muni.cz).
+ #
+ charset "iso-8859-2"
+diff -urN console-data-1999.04.15-orig/keymaps/i386/qwertz/sr.kmap console-data-1999.04.15/keymaps/i386/qwertz/sr.kmap
+--- console-data-1999.04.15-orig/keymaps/i386/qwertz/sr.kmap	Thu Apr 15 03:15:52 1999
++++ console-data-1999.04.15/keymaps/i386/qwertz/sr.kmap	Thu Jun  3 15:02:33 1999
+@@ -3,7 +3,7 @@
+ #
+ # Following is the Serbian keytable. It is based on Slovenian
+ # keyboard table made by Primoz Peterlin (see file
+-# 'slovene.map.gz' in the same directory). There are also additional
++# 'slovene.kmap.gz' in the same directory). There are also additional
+ # comments.
+ #
+ keymaps 0-2,4-6,8,10,12

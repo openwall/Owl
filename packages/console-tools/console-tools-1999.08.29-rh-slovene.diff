@@ -1,0 +1,11 @@
+--- console-tools-0.3.3/console-data-1999.08.29/keymaps/i386/qwertz/slovene.kmap.bug9630	Wed Aug  9 11:10:13 2000
++++ console-tools-0.3.3/console-data-1999.08.29/keymaps/i386/qwertz/slovene.kmap	Wed Aug  9 11:11:04 2000
+@@ -6,7 +6,7 @@
+ # fonts have misplaced Rcaron at 0xEB in place of ediaeresis
+ # (actually, I have only checked lat2-16).
+ #
+-charset "iso-8859-2"
++charset "iso-8859-1"
+ keymaps 0-2,4-6,8,10,12
+ include "qwertz-layout"
+ 	altgr keycode 16 = backslash

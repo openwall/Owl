@@ -1,0 +1,229 @@
+#!/usr/bin/python
+#
+# A helper program to convert from an existing inetd.conf to
+# individual files in /etc/xinetd.d (specifyable)
+#
+# This program is Copyright 2000 Red Hat, Inc. and is GPLed
+#
+# teg@redhat.com
+
+import re
+import string
+import os
+import sys
+
+class InetdFile:
+
+    # Intialize a inetd file, with the name of the file
+    # as the argument
+
+    def __init__(self,filename):
+        self.filename=filename
+        file=open(filename,"r")
+        self.lines=file.readlines()
+        file.close()
+        # matches a service line in /etc/inetd.conf
+        
+        self.groupuser=re.compile(r"(\w+)\.(\w+)")
+
+    # converts a a specified service given to a separate file in the
+    # directory given
+
+    def writeServiceFile(self,directory,service):
+        content=self.convertService(service)
+        if(not content):
+            raise "No such service"
+        file=open(directory+"/"+service,"w")
+        file.write(content)
+        file.close()
+
+    # convert a service by name - return a string with configuration
+    # info for xinetd if present, None otherwise
+
+    def convertService(self,service):
+        for line in self.lines:
+            try:
+                parts=string.split(line)
+                if(parts[0]==service):
+                    return self.makeService(line)
+            except:
+                junk=0 # Need to do something
+        return None            
+
+    # Return a list of enabled services
+
+    def returnEnabledServices(self):
+        services={}
+        for line in self.lines:
+            try:
+                parts=string.split(line)
+                if(parts[0][0]!="#"):
+                   services[parts[0]]=1
+            except:
+                junk=0 # Need to do something
+        return services
+
+    # Returns a string containing the xinetd.d/ equivalent of a line
+    # in inetd.conf - None if inactive or the line does not pass a
+    # simple check
+
+    def makeService(self,line):
+        parts=string.split(line)
+        if(len(parts)<6): # Not a configuration line
+            return None
+        elif(parts[0][0]=="#"): # commented out
+            return None
+        if(parts[5]=="internal"): # don't convert internal services
+            return None
+
+        # Handle tcpd and /usr/sbin/tcpd - no longer
+        # necesarry, as we ship with tcp_wrapper support
+        # included
+
+        if((parts[5]=="tcpd") or (parts[5]=="/usr/sbin/tcpd")):
+            parts[5:]=parts[6:]
+
+        # Write the file
+
+        res="# Converted by inetdconvert\n"
+        res=res+"service "+parts[0]+"\n{\n"
+        res=res+"\tsocket_type\t\t= "+parts[1]+"\n"
+        res=res+"\tprotocol\t\t= "+parts[2]+"\n"
+
+        # Don't wait on tcp 
+        
+        if( (parts[3]=="nowait") or (parts[2] == "tcp")):
+            res=res+"\twait\t\t\t= no\n"
+        else:
+            res=res+"\twait\t\t\t= yes\n"
+        hits2=self.groupuser.match(parts[4])
+        if(hits2):
+            res=res+"\tuser\t\t\t= "+hits2.group(1)+"\n"
+            res=res+"\tgroup\t\t\t= "+hits2.group(2)+"\n"
+        else:
+            res=res+"\tuser\t\t\t= "+parts[4]+"\n"
+        res=res+"\tserver\t\t\t= "+parts[5]+"\n"
+        args=""
+
+                
+        for i in range(6,len(parts)):
+            args=args+parts[i]+" "
+        if(args!=""):
+            res=res+"\tserver_args\t\t= "+args+"\n"
+        res=res+"\tdisable\t\t\t= no\n}\n"
+        return res
+
+# A class for a xinetd service file (for a single service)
+# Doesn't do anything but return the name of the service
+
+class XinetdFile:
+    def __init__(self,filename):
+        self.filename=filename
+        file=open(filename,"r")
+        self.service=None
+        line=" "
+        while line:
+            line=file.readline()
+            parts=string.split(line)
+            if((len(parts)>=2) and (parts[0]=="service")):
+                self.service=parts[1]
+                break
+        file.close()
+
+    def getService(self):
+        return self.service
+    
+# A class for a directory of xinetd service files
+# Doesn't do anything but return the name of the services
+        
+class XinetdServices:
+    def __init__(self,directory):
+        self.directory=directory
+
+    def findServices(self):
+        files=os.listdir(self.directory)
+        services={}
+        for file in files:
+            xf=XinetdFile(self.directory+"/"+file)
+            services[xf.getService()]=1
+        return services
+            
+# Converts a service from the requested inetd configuration file to an
+# xinetd service file in the requested directory Note: It will
+# overwrite an existing file with same name
+
+def convertService(inetdfile,directory,service):
+    ifile=InetdFile(inetdfile)
+    ifile.writeServiceFile(directory,service)
+
+# Converts all services from the requested inetd configuration files,
+# except those already enabled in the same directory
+# Note - doesn't handle multiple names on same service 
+
+def convertRemaining(inetdfile,directory):
+    ifile=InetdFile(inetdfile)
+    existingservices=XinetdServices(directory)
+    xinetdservices=existingservices.findServices()
+    inetdservices=ifile.returnEnabledServices()
+    for service in inetdservices.keys():
+        if(not xinetdservices.has_key(service)):
+            try:
+                ifile.writeServiceFile(directory,service)
+                print "Converting %s " % (service)
+
+            except:
+                print "Skipping %s" % (service)
+                
+        else:
+            print service+" is already present"
+    
+
+# Prints a help message
+
+def printHelp():
+        print """
+inetdconvert version 0.2 - Copyright (C) 2000 Red Hat Software
+
+This may be freely redistributed under the terms of the GNU Public License.
+
+usage:  inetdconvert <-h|--help>
+                     Display this help message
+        inetdconvert <<-d|--directory> directory> <--inetdfile file>  service
+                     Converts the service "service" - this must
+                     match an entry in /etc/inetd.conf and will create a file
+                     in /etc/xinetd.d by default, alternatively in "directory".
+                     The service will be read from  /etc/inetd.conf
+        inetdconvert <<-d|--directory> directory> <--inetdfile file>
+                     --convertremaining  Converts all nonconverted services
+"""
+
+
+
+if __name__ == "__main__":
+    argv=sys.argv
+    directory="/etc/xinetd.d"
+    inetdfile="/etc/inetd.conf"
+    if(("-h" in argv) or ("--help" in argv) or (len(argv)==1)):
+        printHelp()
+        sys.exit(0)
+    if("-d" in argv):
+        directory=argv[argv.index("-d")+1]
+        argv.remove("-d")
+        argv.remove(directory)
+    elif ("--directory" in argv):
+        directory=argv[argv.index("--directory")+1]
+        argv.remove("--directory")
+        argv.remove(directory)
+    if("--inetdfile" in argv):
+        inetdfile=argv[argv.index("--inetdfile")+1]
+        argv.remove("--inetdfile")
+        argv.remove(inetdfile)
+    if("--convertremaining" in argv):
+        convertRemaining(inetdfile,directory)
+        sys.exit(0)
+    if(len(argv) < 2):
+        printHelp()
+        sys.exit(1)
+    convertService(inetdfile,directory,argv[1])
+    sys.exit(0)
+

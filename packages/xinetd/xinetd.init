@@ -1,0 +1,112 @@
+#! /bin/sh
+#
+# xinetd        This starts and stops xinetd.
+#
+# chkconfig: 345 56 50
+# description: xinetd is a powerful replacement for inetd. \
+#	       xinetd has access control machanisms, extensive \
+#              logging capabilities, the ability to make services \
+#              available based on time, and can place \
+#              limits on the number of servers that can be started, \
+#              among other things.
+#
+# processname: /usr/sbin/xinetd
+# config: /etc/sysconfig/network
+# config: /etc/xinetd.conf
+# pidfile: /var/run/xinetd.pid
+
+PATH=/sbin:/bin:/usr/bin:/usr/sbin
+
+# Source function library.
+. /etc/init.d/functions
+
+# Get config.
+test -f /etc/sysconfig/network && . /etc/sysconfig/network
+
+# Check that networking is up.
+[ ${NETWORKING} = "yes" ] || exit 0
+
+[ -f /usr/sbin/xinetd ] || exit 1
+[ -f /etc/xinetd.conf ] || exit 1
+
+RETVAL=0
+
+OWL_STARTUP_ENABLE=1
+
+start(){
+    if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
+        daemon --expect-user root xinetd -- -stayalive -reuse -pidfile /var/run/xinetd.pid
+        RETVAL=$?
+    else
+        echo -n "Starting xinetd: "
+        daemon xinetd -stayalive -reuse -pidfile /var/run/xinetd.pid
+        RETVAL=$?
+        echo
+        touch /var/lock/subsys/xinetd
+    fi
+    return $RETVAL
+}
+
+stop(){
+    if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
+	killproc --pidfile /var/run/xinetd.pid --expect-user root xinetd
+        RETVAL=$?
+    else
+        echo -n "Stopping xinetd: "
+	killproc xinetd
+        echo
+        rm -f /var/lock/subsys/xinetd
+    fi
+    return $RETVAL
+}
+
+reload(){
+    if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
+	killproc --pidfile /var/run/xinetd.pid --expect-user root -USR2 xinetd 
+        RETVAL=$?
+    else
+	echo -n "Reloading configuration: "	
+	killproc xinetd -USR2
+	RETVAL=$?
+	echo
+    fi
+    return $RETVAL
+}
+
+restart(){
+    stop
+    start
+}
+
+condrestart(){
+    [ -e /var/lock/subsys/xinetd ] && restart
+    return 0
+}
+
+
+# See how we were called.
+case "$1" in
+    start)
+	start
+	;;
+    stop)
+	stop
+	;;
+    status)
+	status xinetd
+	;;
+    restart)
+	restart
+	;;
+    reload)
+	reload
+	;;
+    condrestart)
+	condrestart
+	;;
+    *)
+	echo "Usage: xinetd {start|stop|status|restart|condrestart|reload}"
+	RETVAL=1
+esac
+
+exit $RETVAL

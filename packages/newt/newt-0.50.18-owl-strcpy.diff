@@ -1,0 +1,11 @@
+--- newt-0.50.18/form.c.owl	Thu Dec 14 22:30:02 2000
++++ newt-0.50.18/form.c	Thu Dec 14 22:30:18 2000
+@@ -201,7 +201,7 @@
+           char *t = ttyname(0); /* stdin */
+           if (!t) t = ttyname(1); /* stdout */
+           if (!t) goto err;
+-          strcpy(tty,t);
++          strncpy(tty,t,sizeof(tty));
+           if (strncmp(tty,"/dev/tty",8) || !isdigit(tty[8]))
+             goto err;
+           conn->vc=atoi(tty+8);

@@ -1,0 +1,26 @@
+--- console-tools-0.3.3/console-data-1999.08.29/keymaps/sun/sunkeymap.kmap.fixdel	Tue Feb 29 11:05:12 2000
++++ console-tools-0.3.3/console-data-1999.08.29/keymaps/sun/sunkeymap.kmap	Tue Feb 29 11:00:46 2000
+@@ -160,9 +160,7 @@
+ keycode 0x41 = bracketright    braceright      asciitilde
+        control keycode                         0x41 = Control_bracketright
+        alt     keycode                         0x41 = Meta_bracketright
+-keycode 0x42 = Delete          Delete
+-       control keycode                         0x42 = BackSpace
+-       alt     keycode                         0x43 = Meta_Delete
++keycode 0x42 = Remove          Remove
+        control alt     keycode                 0x42 = Boot
+ keycode 0x43 = Compose
+ keycode 0x44 = KP_7
+--- console-tools-0.3.3/console-data-1999.08.29/keymaps/sun/sunt5-de-latin1.kmap.fixdel	Tue Feb 29 11:05:28 2000
++++ console-tools-0.3.3/console-data-1999.08.29/keymaps/sun/sunt5-de-latin1.kmap	Tue Feb 29 11:06:14 2000
+@@ -148,8 +148,8 @@
+        alt     keycode  64 = Meta_bracketleft
+ keycode  65 = plus     asterisk       asciitilde       Control_bracketright
+        alt     keycode  65 = Meta_bracketright
+-keycode  66 = Delete           Delete
+-       control keycode  66 = BackSpace
++keycode  66 = Remove           Remove
++       control alt     keycode  66 = Boot
+ keycode  67 = Compose
+        alt     keycode  67 = Meta_Delete
+ keycode  68 = KP_7

@@ -1,0 +1,26 @@
+--- vim-4.2/src/term.c.sopwith	Sun Jun 16 14:02:56 1996
++++ vim-4.2/src/term.c	Sun Jul  7 19:37:05 1996
+@@ -30,7 +30,8 @@
+ 
+ #ifdef HAVE_TGETENT
+ # ifdef HAVE_TERMCAP_H
+-#  include <termcap.h>
++#include <termios.h>
++#include <termcap.h>
+ # endif
+ 
+ /*
+@@ -96,9 +97,11 @@
+  */
+ # ifndef HAVE_OSPEED
+ #  ifdef OSPEED_EXTERN
+-extern short ospeed;
++/* extern short ospeed; */
++extern speed_t ospeed;
+ #   else
+-short ospeed;
++/* short ospeed; */
++speed_t ospeed;
+ #   endif
+ # endif
+ # ifndef HAVE_UP_BC_PC

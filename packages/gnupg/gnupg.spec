@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gnupg/gnupg.spec,v 1.2 2000/10/25 20:03:30 kad Exp $
+# $Id: Owl/packages/gnupg/gnupg.spec,v 1.3 2000/12/14 20:43:02 kad Exp $
 
 Summary: 	A GNU utility for secure communication and data storage.
 Name: 		gnupg
@@ -11,6 +11,7 @@ Patch0: 	gnupg-1.0.2-rh-locale.diff
 Patch1: 	gnupg-1.0.3-rh-spell.diff
 Patch2: 	gnupg-1.0.4-rh-rijndael.diff
 Patch3: 	gnupg-1.0.4-rh-strlen-bug.diff
+Patch4:		gnupg-1.0.4-owl-security.diff
 URL: 		http://www.gnupg.org/
 Provides: 	gpg openpgp
 BuildRoot: 	/var/rpm-buildroot/%{name}-root
@@ -58,6 +59,9 @@ install -m755 lspgpot $RPM_BUILD_ROOT%{_bindir}/lspgpot
 %{_mandir}/man1/gpgv.*
 
 %changelog
+* Thu Dec 14 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- detached signatures security fix
+
 * Wed Oct 25 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import from RH
 
