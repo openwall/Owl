@@ -1,0 +1,11 @@
+diff -ur modutils-2.4.16.orig/genksyms/parse.y modutils-2.4.16/genksyms/parse.y
+--- modutils-2.4.16.orig/genksyms/parse.y	Fri Mar  1 03:39:06 2002
++++ modutils-2.4.16/genksyms/parse.y	Thu Jun 13 01:17:50 2002
+@@ -167,6 +167,7 @@
+ decl_specifier_seq_opt:
+ 	/* empty */				{ decl_spec = NULL; }
+ 	| decl_specifier_seq
++	;
+ 
+ decl_specifier_seq:
+ 	decl_specifier				{ decl_spec = *$1; }

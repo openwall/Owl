@@ -1,4 +1,4 @@
-# $Id: Owl/packages/modutils/modutils.spec,v 1.15 2002/06/12 21:13:57 solar Exp $
+# $Id: Owl/packages/modutils/modutils.spec,v 1.16 2002/06/12 21:24:14 solar Exp $
 
 Summary: Kernel module utilities.
 Name: modutils
@@ -11,6 +11,7 @@ Patch0: modutils-2.4.16-alt-GPL.diff
 Patch1: modutils-2.4.16-alt-modprobe-bL.diff
 Patch2: modutils-2.4.16-alt-owl-aliases.diff
 Patch3: modutils-2.4.16-rh-owl-syms.diff
+Patch4: modutils-2.4.16-owl-warnings.diff
 PreReq: /sbin/chkconfig
 Obsoletes: modules
 BuildRoot: /override/%{name}-%{version}
@@ -27,6 +28,7 @@ modules are device drivers and filesystems, as well as some other things.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
