@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.9 2000/11/23 15:46:32 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.10 2000/11/23 15:54:46 solar Exp $
 
 Summary: Initial set of configuration files
 Name: owl-etc
@@ -20,7 +20,7 @@ Source10: csh.login
 Source11: csh.cshrc
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 BuildArchitectures: noarch
-BuildReq: fileutils >= 4.0.27
+BuildRequires: fileutils >= 4.0.27
 
 %description
 Initial set of configuration files to be placed into /etc.
