@@ -12,6 +12,9 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/03/17	Package: openssh
+Updated to 3.1p1.
+
 2002/03/15	Package: dev86
 Updated to 0.16.0.
 
@@ -607,4 +610,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.76 2002/03/15 18:12:52 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.77 2002/03/16 23:22:33 solar Exp $
