@@ -16,9 +16,9 @@ there.  Otherwise, you need to create the directory, add pseudo-user
 "build", preferably with UID 151 and GID 150 ("sources"), and make it
 the owner of the directory.
 
-Place the CVS tree into /usr/src/world.  Currently, this is done by
-extracting native.tar.gz available via the FTP sites.  You will get
-the "native" directory, and a Makefile symlink.
+Place the CVS tree into /usr/src/world.  The easiest way to do it is
+by extracting native.tar.gz available via the FTP mirrors.  You will
+get the "native" directory, and a Makefile symlink.
 
 For actually building from source, place the "sources" directory in
 /usr/src/world as well.
@@ -111,4 +111,4 @@ where "name" is the name of the source package.  For foreign packages
 (SRPMs) built with the Owl build environment you also need to include
 the version number part in "name".
 
-$Id: Owl/doc/BUILD,v 1.16 2002/06/22 08:39:34 solar Exp $
+$Id: Owl/doc/BUILD,v 1.17 2002/07/12 04:49:32 solar Exp $
