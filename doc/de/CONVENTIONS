@@ -126,10 +126,11 @@ Hier ein paar gebräuchliche WHATs zum benutzen:
 Makefile	- Nur für Makefile* Patches (Grossschreibung)
 bound		- bound checking (Speicher- oder Zahlenüberlauf)
 config		- Nur für Patches der Konfiguration (compile- oder Laufzeit)
-doc		- Nur für Dokumentation's Patches
+doc		- Nur für Dokumentations Patches
 fixes		- Sicherheitspatches, Zuverlässigkeit
 format		- Zeichenketten fixes im printf Stil
 		  (nicht nur Sicherheitsrelevante)
+info		- Nur für texinfo Dokumentations Patches
 install-no-root	- Änderungen an "make install" oder ähnliches als
 		  nicht-root
 linux		- Änderungen, damit portierte Software auf Linux
@@ -157,4 +158,4 @@ mit den folgenden Optionen benutzen:
 Das entspricht nicht ganz unserem bevorzugten Code-Stil und wird
 deswegen bei Quelltexten in Owl noch nicht eingesetzt.
 
-$Id: Owl/doc/de/CONVENTIONS,v 1.4 2002/06/22 15:02:23 schmidt Exp $
+$Id: Owl/doc/de/CONVENTIONS,v 1.5 2002/07/07 06:46:35 schmidt Exp $
