@@ -1,20 +1,14 @@
-# $Id: Owl/packages/gdb/gdb.spec,v 1.13 2004/02/20 02:00:42 mci Exp $
+# $Id: Owl/packages/gdb/gdb.spec,v 1.14 2004/07/09 23:18:21 mci Exp $
 
 Summary: A GNU source-level debugger for C, C++ and Fortran.
 Name: gdb
-Version: 5.0
-Release: owl10
+Version: 6.1.1
+Release: owl1
 License: GPL
 Group: Development/Debuggers
 Source: ftp://sourceware.cygnus.com/pub/gdb/releases/gdb-%version.tar.bz2
-Patch0: gdb-5.0-pld-procfs.diff
-Patch1: gdb-5.0-pld-info.diff
-Patch2: gdb-5.0-pld-gettext.diff
-Patch3: gdb-5.0-pld-ncurses.diff
-Patch4: gdb-5.0-pld-owl-readline.diff
-Patch5: gdb-5.0-rh-symchanges.diff
-Patch6: gdb-5.0-owl-warnings.diff
-Patch7: gdb-5.0-owl-info.diff
+Patch0: gdb-6.1.1-deb-owl-readline.diff
+Patch1: gdb-6.1.1-owl-info.diff
 PreReq: /sbin/install-info
 BuildRequires: ncurses-devel >= 5.0
 BuildRequires: readline-devel >= 4.3
@@ -30,31 +24,21 @@ supported compiler, such as those from the GNU Compiler Collection.
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
 
 %build
 rm gdb/doc/{gdb,stabs,gdbint}.info
 rm mmalloc/mmalloc.info
-pushd gdb
-aclocal
-autoconf
-popd
 
-export ac_cv_func_vfork_works=no \
-%configure \
+export ac_cv_func_vfork_works=no
+./configure \
+	--prefix=%_prefix \
+	--sysconfdir=%_sysconfdir \
+	--mandir=%_mandir \
+	--infodir=%_infodir \
 	--enable-nls \
 	--without-included-gettext \
 	--enable-gdbmi \
-	--with-cpu=%_target_cpu \
-%ifnarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
-	--with-mmalloc \
-%endif
-	--with-mmap
+	%_target_platform
 
 make
 make info
@@ -63,19 +47,19 @@ make info
 rm -rf $RPM_BUILD_ROOT
 
 make install install-info \
-	prefix=$RPM_BUILD_ROOT%_prefix \
-	bindir=$RPM_BUILD_ROOT%_bindir \
-	includedir=$RPM_BUILD_ROOT%_includedir \
-	libdir=$RPM_BUILD_ROOT%_libdir \
-	infodir=$RPM_BUILD_ROOT%_infodir \
-	mandir=$RPM_BUILD_ROOT%_mandir \
+	prefix=%_prefix \
+	bindir=%_bindir \
+	includedir=%_includedir \
+	libdir=%_libdir \
+	infodir=%_infodir \
+	mandir=%_mandir \
 	DESTDIR=$RPM_BUILD_ROOT
 
 # These are part of binutils
-rm -f $RPM_BUILD_ROOT%_infodir/bfd*
-rm -f $RPM_BUILD_ROOT%_infodir/standard*
-rm -rf $RPM_BUILD_ROOT/usr/include/
-rm -rf $RPM_BUILD_ROOT/usr/lib/lib{bfd*,opcodes*}
+rm $RPM_BUILD_ROOT%_infodir/bfd*
+rm $RPM_BUILD_ROOT%_infodir/standard*
+rm -r $RPM_BUILD_ROOT/usr/include/
+rm -r $RPM_BUILD_ROOT/usr/lib/lib{bfd*,opcodes*}
 
 %post
 /sbin/install-info %_infodir/gdb.info %_infodir/dir
@@ -94,7 +78,7 @@ fi
 %files
 %defattr(-,root,root)
 %doc COPYING COPYING.LIB README gdb/NEWS
-/usr/bin/*
+%_bindir/*
 %_mandir/*/*
 %_infodir/gdb.info*
 %_infodir/gdbint.info*
@@ -102,6 +86,16 @@ fi
 %_infodir/mmalloc.info*
 
 %changelog
+* Thu Jul 08 2004 Michail Litvak <mci@owl.openwall.com> 6.1.1-owl1
+- 6.1.1
+
+* Tue Mar 09 2004 Michail Litvak <mci@owl.openwall.com> 6.0-owl0.1
+- 6.0
+
+* Thu Feb 26 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 5.0-owl10.1
+- Disabled autoconf and other regeneration programs due to conflict
+with new autotools.
+
 * Fri Feb 20 2004 Michail Litvak <mci@owl.openwall.com> 5.0-owl10
 - Fixed building with new readline 4.3.
 
