@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.40 2004/11/11 19:00:55 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.41 2004/11/11 19:04:26 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
@@ -18,16 +18,16 @@ Source7: chfn.control
 Source8: chsh.control
 Source9: gpasswd.control
 Source10: newgrp.control
-Patch1: shadow-4.0.4.1-owl-check-reads.diff
-Patch2: shadow-4.0.4.1-owl-usermod-unlock.diff
-Patch3: shadow-4.0.4.1-owl-tmp.diff
-Patch4: shadow-4.0.4.1-owl-pam-auth.diff
-Patch5: shadow-4.0.4.1-owl-chage-drop-priv.diff
-Patch6: shadow-4.0.4.1-owl-chage-ro-no-lock.diff
-Patch7: shadow-4.0.4.1-owl-userdel-path_prefix.diff
-Patch8: shadow-4.0.4.1-owl-pam_chauthtok.diff
-Patch9: shadow-4.0.4.1-owl-usermod-update-lstchg.diff
-Patch10: shadow-4.0.4.1-owl-usergroupname_max.diff
+Patch0: shadow-4.0.4.1-owl-check-reads.diff
+Patch1: shadow-4.0.4.1-owl-usermod-unlock.diff
+Patch2: shadow-4.0.4.1-owl-tmp.diff
+Patch3: shadow-4.0.4.1-owl-pam-auth.diff
+Patch4: shadow-4.0.4.1-owl-chage-drop-priv.diff
+Patch5: shadow-4.0.4.1-owl-chage-ro-no-lock.diff
+Patch6: shadow-4.0.4.1-owl-userdel-path_prefix.diff
+Patch7: shadow-4.0.4.1-owl-pam_chauthtok.diff
+Patch8: shadow-4.0.4.1-owl-usermod-update-lstchg.diff
+Patch9: shadow-4.0.4.1-owl-usergroupname_max.diff
 Patch19: shadow-4.0.4.1-rh-owl-redhat.diff
 Patch20: shadow-4.0.4.1-owl-man.diff
 Patch21: shadow-4.0.4.1-owl-create-mailbox.diff
@@ -50,6 +50,7 @@ shadow password files.
 
 %prep
 %setup -q -n shadow-%version
+%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -59,7 +60,6 @@ shadow password files.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
-%patch10 -p1
 %patch19 -p1
 %patch20 -p1
 %patch21 -p1
@@ -68,7 +68,7 @@ shadow password files.
 %patch24 -p1
 %patch30 -p1
 
-find . -name "*.orig" -delete
+find . -name '*.orig' -delete
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -102,10 +102,10 @@ mv %buildroot%_bindir/vigr %buildroot%_sbindir/
 ln -s useradd %buildroot%_sbindir/adduser
 
 # Fix man pages (XXX: should be moved to owl-man patch)
-echo ".so newgrp.1" > %buildroot%_mandir/man1/sg.1
-echo ".so pwconv.8" > %buildroot%_mandir/man8/grpconv.8
-echo ".so pwconv.8" > %buildroot%_mandir/man8/grpunconv.8
-echo ".so vipw.8" > %buildroot%_mandir/man8/vigr.8
+echo '.so newgrp.1' > %buildroot%_mandir/man1/sg.1
+echo '.so pwconv.8' > %buildroot%_mandir/man8/grpconv.8
+echo '.so pwconv.8' > %buildroot%_mandir/man8/grpunconv.8
+echo '.so vipw.8' > %buildroot%_mandir/man8/vigr.8
 
 mkdir -p -m 700 %buildroot%_sysconfdir/default
 install -m 600 $RPM_SOURCE_DIR/login.defs %buildroot%_sysconfdir/
