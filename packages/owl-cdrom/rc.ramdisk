@@ -1,0 +1,18 @@
+#!/bin/sh
+# $Id: Owl/packages/owl-cdrom/rc.ramdisk,v 1.1 2001/07/27 20:17:22 solar Exp $
+
+echo "Setting up a RAM disk"
+
+/sbin/mke2fs -q -b 1024 -m 0 /dev/ram0
+mount -n /dev/ram0 /ram
+
+tar cf - -C /rom \
+    --exclude ./var/lib \
+    --exclude ./etc/termcap \
+    . |
+	tar xf - -C /ram
+
+ln -s /rom/var/lib /ram/var/
+ln -s /rom/etc/termcap /ram/etc/
+
+sed 's,^,/ram/dev/,' < /rom/etc/securetty > /ram/etc/securetty
