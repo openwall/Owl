@@ -132,18 +132,7 @@ Package a tool to trap unaligned accesses on Alpha.
 Update to latest release.
 
 
-	gcc.
-
-[PRIORITY: medium]
-[ASSIGNED: galaxy@, solar@]
-Update to 3.4+ and deal with whatever this will break.
-
-
 	glibc.
-
-[PRIORITY: medium]
-[ASSIGNED: galaxy@, solar@]
-Update to 2.3.3.
 
 [PRIORITY: medium]
 Develop safe log-and-exit function for use by the dlmalloc unlink()
@@ -519,4 +508,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.52 2005/01/14 23:31:18 solar Exp $
+$Id: Owl/doc/TODO,v 1.53 2005/01/18 12:59:21 solar Exp $
