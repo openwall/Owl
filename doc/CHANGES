@@ -5,6 +5,15 @@ remains fixed; it's only the stable branch which has these changes.
 
 	Changes made between Owl 0.1-prerelease and Owl 0.1-stable.
 
+2001/07/06	Package: openssl
+SECURITY FIX	Severity: none to medium, remote, passive to active
+Applied patches provided by the OpenSSL team to correct a PRNG
+weakness which under unusual circumstances could allow an attacker to
+determine internal state of the PRNG and thus to predict future PRNG
+output.  This problem has been discovered and reported to the OpenSSL
+team by Markku-Juhani O. Saarinen.  No applications are known to be
+affected at this time.
+
 (2001/05/29 - 2001/06/29)
 2001/06/29	Package: xinetd
 SECURITY FIX	Severity: none to high, remote, active
@@ -171,4 +180,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp@hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.2.2.4 2001/06/29 21:16:57 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.2.2.5 2001/07/06 05:24:36 solar Exp $
