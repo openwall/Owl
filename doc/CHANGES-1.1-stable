@@ -5,6 +5,21 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 1.1 and Owl 1.1-stable.
 
+(2004/04/18)
+2004/04/22	kernel
+SECURITY FIX	Severity: high, local, active
+Updated to Linux 2.4.26-ow1.  Linux 2.4.26 (and thus 2.4.26-ow1) fixes
+an integer overflow vulnerability in processing of the MCAST_MSFILTER
+socket option discovered by Paul Starzetz.  When properly exploited,
+the bug would lead to a local root compromise.  Also included in this
+kernel release is a fix for the ext3/XFS information leak discovered
+by Solar Designer and a number of other relatively minor fixes.
+References:
+http://www.isec.pl/vulnerabilities/isec-0015-msfilter.txt
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0424
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0177
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0133
+
 (2004/04/14)
 2004/04/14	Package: cvs
 SECURITY FIX	Severity: high, remote, passive
@@ -66,4 +81,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 2004/01/15	Owl/doc/DOWNLOAD, Owl/doc/*/DOWNLOAD, Owl/doc/fr/CREDITS
 Sync'ed with the minor post-release updates made in Owl-current.
 
-$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.7 2004/04/18 01:12:08 solar Exp $
+$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.8 2004/04/23 00:02:41 solar Exp $
