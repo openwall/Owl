@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/openssh/sshd.init,v 1.4 2001/05/06 23:51:18 solar Exp $
+# $Id: Owl/packages/openssh/sshd.init,v 1.5 2003/10/20 04:59:21 solar Exp $
 #
 # chkconfig: 2345 55 25
 # description: \
@@ -42,10 +42,12 @@ status)
 	status --pidfile /var/run/sshd.pid --expect-user root sshd
 	;;
 restart)
+	sshd -t || exit
 	$0 stop
 	$0 start
 	;;
 reload)
+	sshd -t || exit
 	if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
 		killproc --pidfile /var/run/sshd.pid --expect-user root \
 			-HUP sshd

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.63 2003/09/17 07:46:52 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.64 2003/10/20 04:59:21 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl3
+Release: owl4
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -155,8 +155,11 @@ grep -q ^sshd: /etc/group || groupadd -g 74 sshd
 grep -q ^sshd: /etc/passwd || useradd -g sshd -u 74 -d / -s /bin/false -M sshd
 rm -f /var/run/sshd.restart
 if [ $1 -ge 2 ]; then
-	/etc/rc.d/init.d/sshd status && touch /var/run/sshd.restart || :
-	/etc/rc.d/init.d/sshd stop || :
+# XXX: "sshd -t" invoked at this point only validates the old configuration.
+	if /usr/sbin/sshd -t; then
+		/etc/rc.d/init.d/sshd status && touch /var/run/sshd.restart || :
+		/etc/rc.d/init.d/sshd stop || :
+	fi
 	/usr/sbin/control-dump sftp
 fi
 
@@ -230,6 +233,10 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Mon Oct 20 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl4
+- Check the validity of sshd_config and host keys with "sshd -t" before
+proceeding with a restart or reload.
+
 * Wed Sep 17 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl3
 - Included the buffer and channels memory reallocation fixes from:
 http://www.openssh.com/txt/buffer.adv (2nd revision).
