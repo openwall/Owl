@@ -1,9 +1,9 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.24 2002/12/17 16:09:04 solar Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.25 2003/01/17 01:24:29 solar Exp $
 
 Summary: The Red Hat package management system.
 Name: rpm
 Version: 3.0.6
-Release: owl3
+Release: owl4
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-3.0.x/rpm-%{version}.tar.gz
@@ -16,7 +16,8 @@ Patch3: rpm-3.0.5-owl-closeall.diff
 Patch4: rpm-3.0.5-owl-includes.diff
 Patch5: rpm-3.0.5-owl-gendiff.diff
 Patch6: rpm-3.0.6-owl-buildhost.diff
-Patch7: rpm-3.0.6-owl-rpmrc.diff
+Patch7: rpm-3.0.6-alt-owl-autodeps-symbol-versioning.diff
+Patch10: rpm-3.0.6-owl-rpmrc.diff
 PreReq: /sbin/ldconfig
 PreReq: gawk, fileutils, textutils, sh-utils, mktemp
 Requires: popt, bzip2 >= 0.9.0c-2
@@ -86,6 +87,7 @@ EOF
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch10 -p1
 
 %define _noVersionedDependencies 1
 
@@ -232,6 +234,10 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Fri Jan 17 2003 Solar Designer <solar@owl.openwall.com>
+- In find-requires, support symbol versioning with package dependencies
+for libraries other than glibc (from Dmitry V. Levin of ALT Linux).
+
 * Tue Dec 17 2002 Solar Designer <solar@owl.openwall.com>
 - Added rpminit, a script to create private RPM package build directories,
 and its man page.
