@@ -1,8 +1,8 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.7 2001/09/08 21:47:01 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.8 2001/09/11 11:03:50 solar Exp $
 
 Summary: A tiny POP3 server with security as its primary design goal
 Name: popa3d
-Version: 0.4.9.3
+Version: 0.4.9.4
 Release: 1owl
 Copyright: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
@@ -69,6 +69,9 @@ fi
 %doc DESIGN LICENSE
 
 %changelog
+* Tue Sep 11 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 0.4.9.4 (fixed two bugs introduced with 0.4.9.2 and 0.4.9.3).
+
 * Sun Sep 09 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 0.4.9.3.
 - The same popa3d binary may now be run as a standalone server as well as
