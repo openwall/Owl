@@ -536,12 +536,6 @@ someone who gained group utmp access may extend it to root).  This has
 been done in ALT Linux, should import their patch.
 
 
-	tcb.
-
-[PRIORITY: medium]
-Reduce timing leaks in pam_tcb.
-
-
 	telnet.
 
 [PRIORITY: low]
@@ -600,4 +594,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.17 2003/04/17 12:57:57 solar Exp $
+$Id: Owl/doc/TODO,v 1.18 2003/04/17 14:25:54 solar Exp $
