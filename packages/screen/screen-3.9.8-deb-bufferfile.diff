@@ -1,0 +1,69 @@
+--- screen-3.9.8/screen.h.orig	Sun Jul  9 23:15:16 2000
++++ screen-3.9.8/screen.h	Thu Mar  1 19:46:27 2001
+@@ -44,6 +44,7 @@
+ #include "layer.h"
+ #include "term.h"
+ 
++extern char bufferfile[MAXPATHLEN];
+ 
+ #ifdef DEBUG
+ # define STATIC		/* a function that the debugger should see */
+--- screen-3.9.8/screen.c.orig	Fri Sep  1 15:29:36 2000
++++ screen-3.9.8/screen.c	Thu Mar  1 19:46:27 2001
+@@ -103,6 +103,7 @@
+ FILE *dfp;
+ #endif
+ 
++char bufferfile[MAXPATHLEN];
+ 
+ extern char *blank, *null, Term[], screenterm[], **environ, Termcap[];
+ int force_vt = 1;
+@@ -260,7 +261,7 @@
+ char *name;
+ struct passwd *ppp;
+ {
+-  int n;
++  int n, len;
+ #ifdef SHADOWPW
+   struct spwd *sss = NULL;
+   static char *spw = NULL;
+@@ -421,9 +422,6 @@
+   logtstamp_string = SaveStr("-- %n:%t -- time-stamp -- %M/%d/%y %c:%s --\n");
+   hstatusstring = SaveStr("%h");
+   captionstring = SaveStr("%3n %t");
+-#ifdef COPY_PASTE
+-  BufferFile = SaveStr(DEFAULT_BUFFERFILE);
+-#endif
+   ShellProg = NULL;
+ #ifdef POW_DETACH
+   PowDetachString = 0;
+@@ -840,6 +838,7 @@
+ #endif /* DEBUG */
+     }
+   
++  snprintf(bufferfile,sizeof(bufferfile),"%s/.screen-exchange", home);
+ #ifdef _MODE_T
+   oumask = umask(0);		/* well, unsigned never fails? jw. */
+ #else
+--- screen-3.9.8/fileio.c.orig	Sun Jul  2 20:30:37 2000
++++ screen-3.9.8/fileio.c	Thu Mar  1 19:46:27 2001
+@@ -364,7 +364,7 @@
+     case DUMP_EXCHANGE:
+       strncpy(fn, BufferFile, sizeof(fn) - 1);
+       fn[sizeof(fn) - 1] = 0;
+-      public = !strcmp(fn, DEFAULT_BUFFERFILE);
++      public = !strcmp(fn, bufferfile);
+ # ifdef HAVE_LSTAT
+       exists = !lstat(fn, &stb);
+       if (public && exists && (S_ISLNK(stb.st_mode) || stb.st_nlink > 1))
+--- screen-3.9.8/process.c.orig	Fri Sep  1 15:30:39 2000
++++ screen-3.9.8/process.c	Thu Mar  1 19:46:27 2001
+@@ -1944,7 +1944,7 @@
+ #ifdef COPY_PASTE
+     case RC_BUFFERFILE:
+       if (*args == 0)
+-	BufferFile = SaveStr(DEFAULT_BUFFERFILE);
++	BufferFile = SaveStr(bufferfile);
+       else if (ParseSaveStr(act, &BufferFile))
+         break;
+       if (msgok)

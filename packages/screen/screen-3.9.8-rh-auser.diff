@@ -1,0 +1,587 @@
+--- ./acls.h.jbj	Sun Jul  2 19:33:31 2000
++++ ./acls.h	Mon Oct  2 12:17:05 2000
+@@ -45,7 +45,7 @@
+  */
+ struct usergroup
+ {
+-  struct user *u;	/* the user who borrows us his rights */
++  struct auser *u;	/* the user who borrows us his rights */
+   struct usergroup *next;
+ };
+ #endif /* MULTIUSER */
+@@ -59,9 +59,9 @@
+  * users is the User entry of the session owner (creator)
+  * and anchors all other users. Add/Delete users there.
+  */
+-typedef struct user
++typedef struct auser
+ {
+-  struct user *u_next;		/* continue the main user list */
++  struct auser *u_next;		/* continue the main user list */
+   char u_name[20+1];		/* login name how he showed up */
+   char *u_password;		/* his password (may be NullStr). */
+   int  u_checkpassword;		/* nonzero if this u_password is valid */
+@@ -80,4 +80,3 @@
+ } User;
+ 
+ extern int DefaultEsc, DefaultMetaEsc;
+-
+--- ./extern.h.jbj	Mon Jul 10 12:00:45 2000
++++ ./extern.h	Mon Oct  2 12:17:05 2000
+@@ -68,7 +68,7 @@
+ extern void  RcLine __P((char *));
+ extern FILE *secfopen __P((char *, char *));
+ extern int   secopen __P((char *, int, int));
+-extern void  WriteFile __P((struct user *, int));
++extern void  WriteFile __P((struct auser *, int));
+ extern char *ReadFile __P((char *, int *));
+ extern void  KillBuffers __P((void));
+ extern int   printpipe __P((struct win *, char *));
+@@ -176,7 +176,7 @@
+ extern void  KillWindow __P((struct win *));
+ extern void  SetForeWindow __P((struct win *));
+ extern int   Parse __P((char *, char **));
+-extern int   ParseEscape __P((struct user *, char *));
++extern int   ParseEscape __P((struct auser *, char *));
+ extern void  DoScreen __P((char *, char **));
+ extern int   IsNumColon __P((char *, int, char *, int));
+ extern void  ShowWindows __P((int));
+@@ -353,21 +353,21 @@
+ 
+ /* acl.c */
+ #ifdef MULTIUSER
+-extern int   AclCheckPermWin __P((struct user *, int, struct win *));
+-extern int   AclCheckPermCmd __P((struct user *, int, struct comm *));
+-extern int   AclSetPerm __P((struct user *, struct user *, char *, char *));
+-extern int   AclUmask __P((struct user *, char *, char **));
+-extern int   UsersAcl __P((struct user *, int, char **));
++extern int   AclCheckPermWin __P((struct auser *, int, struct win *));
++extern int   AclCheckPermCmd __P((struct auser *, int, struct comm *));
++extern int   AclSetPerm __P((struct auser *, struct auser *, char *, char *));
++extern int   AclUmask __P((struct auser *, char *, char **));
++extern int   UsersAcl __P((struct auser *, int, char **));
+ extern void  AclWinSwap __P((int, int));
+-extern int   NewWindowAcl __P((struct win *, struct user *));
++extern int   NewWindowAcl __P((struct win *, struct auser *));
+ extern void  FreeWindowAcl __P((struct win *));
+-extern char *DoSu __P((struct user **, char *, char *, char *));
++extern char *DoSu __P((struct auser **, char *, char *, char *));
+ extern int   AclLinkUser __P((char *, char *));
+ #endif /* MULTIUSER */
+-extern int   UserFreeCopyBuffer __P((struct user *));
+-extern struct user **FindUserPtr __P((char *));
+-extern int   UserAdd __P((char *, char *, struct user **));
+-extern int   UserDel __P((char *, struct user **));
++extern int   UserFreeCopyBuffer __P((struct auser *));
++extern struct auser **FindUserPtr __P((char *));
++extern int   UserAdd __P((char *, char *, struct auser **));
++extern int   UserDel __P((char *, struct auser **));
+ 
+ 
+ /* braile.c */
+--- ./acls.c.jbj	Sun Jul  2 19:30:09 2000
++++ ./acls.c	Mon Oct  2 12:17:05 2000
+@@ -57,7 +57,7 @@
+ extern char NullStr[];
+ extern char SockPath[];
+ extern struct display *display, *displays;
+-struct user *users;
++struct auser *users;
+ 
+ #ifdef MULTIUSER
+ int maxusercount = 0;	/* used in process.c: RC_MONITOR, RC_SILENCE */
+@@ -89,11 +89,11 @@
+  */
+ 
+ static int GrowBitfield __P((AclBits *, int, int, int));
+-static struct usergroup **FindGroupPtr __P((struct usergroup **, struct user *, int));
+-static int AclSetPermCmd __P((struct user *, char *, struct comm *));
+-static int AclSetPermWin __P((struct user *, struct user *, char *, struct win *));
+-static int UserAcl __P((struct user *, struct user **, int, char **));
+-static int UserAclCopy __P((struct user **, struct user **));
++static struct usergroup **FindGroupPtr __P((struct usergroup **, struct auser *, int));
++static int AclSetPermCmd __P((struct auser *, char *, struct comm *));
++static int AclSetPermWin __P((struct auser *, struct auser *, char *, struct win *));
++static int UserAcl __P((struct auser *, struct auser **, int, char **));
++static int UserAclCopy __P((struct auser **, struct auser **));
+ 
+ 
+ static int
+@@ -124,11 +124,11 @@
+  * Returns an nonzero Address. Its contents is either a User-ptr, 
+  * or NULL which may be replaced by a User-ptr to create the entry.
+  */
+-struct user **
++struct auser **
+ FindUserPtr(name)
+ char *name;
+ {
+-  struct user **u;
++  struct auser **u;
+ 
+   for (u = &users; *u; u = &(*u)->u_next)
+     if (!strcmp((*u)->u_name, name))
+@@ -153,7 +153,7 @@
+ int
+ UserAdd(name, pass, up)
+ char *name, *pass;
+-struct user **up;
++struct auser **up;
+ {
+ #ifdef MULTIUSER
+   int j;
+@@ -168,7 +168,7 @@
+       return 1;		/* he is already there */
+     }
+   if (strcmp("none", name))	/* "none" is a reserved word */
+-    *up = (struct user *)calloc(1, sizeof(struct user));
++    *up = (struct auser *)calloc(1, sizeof(struct auser));
+   if (!*up)
+     return -1;		/* he still does not exist */
+ #ifdef COPY_PASTE
+@@ -197,7 +197,7 @@
+     {
+       int j;
+       struct win *w;
+-      struct user *u;
++      struct auser *u;
+ 
+       debug2("growing all bitfields %d += %d\n", maxusercount, USER_CHUNK);
+       /* the bitfields are full, grow a chunk */
+@@ -305,7 +305,7 @@
+ int 
+ UserSetPass(name, pass, up)
+ char *name, *pass;
+-struct user **up;
++struct auser **up;
+ {
+   if (!up)
+     up = FindUserPtr(name);
+@@ -326,9 +326,9 @@
+ int 
+ UserDel(name, up)
+ char *name;
+-struct user **up;
++struct auser **up;
+ {
+-  struct user *u;
++  struct auser *u;
+ #ifdef MULTIUSER
+   int i;
+ #endif
+@@ -401,7 +401,7 @@
+  */
+ int
+ UserFreeCopyBuffer(u)
+-struct user *u;
++struct auser *u;
+ {
+   struct win *w;
+   struct paster *pa;
+@@ -432,7 +432,7 @@
+ static struct usergroup **
+ FindGroupPtr(gp, u, recursive)
+ struct usergroup **gp;
+-struct user *u;
++struct auser *u;
+ int recursive;
+ {
+   struct usergroup **g;
+@@ -459,7 +459,7 @@
+ AclLinkUser(from, to)
+ char *from, *to;
+ {
+-  struct user **u1, **u2;
++  struct auser **u1, **u2;
+   struct usergroup **g;
+ 
+   if (!*(u1 = FindUserPtr(from)) && UserAdd(from, NULL, u1))
+@@ -486,10 +486,10 @@
+  */
+ char *
+ DoSu(up, name, pw1, pw2)
+-struct user **up;
++struct auser **up;
+ char *name, *pw1, *pw2;
+ {
+-  struct user *u;
++  struct auser *u;
+   int sorry = 0;
+ 
+   if (!(u = *FindUserPtr(name)))
+@@ -598,7 +598,7 @@
+ int
+ NewWindowAcl(w, u)
+ struct win *w;
+-struct user *u;
++struct auser *u;
+ {
+   int i, j;
+ 
+@@ -648,7 +648,7 @@
+  */
+ static int
+ AclSetPermCmd(u, mode, cmd)
+-struct user *u;
++struct auser *u;
+ char *mode;
+ struct comm *cmd;
+ {
+@@ -693,7 +693,7 @@
+  */
+ static int
+ AclSetPermWin(uu, u, mode, win)
+-struct user *u, *uu;
++struct auser *u, *uu;
+ char *mode;
+ struct win *win;
+ {
+@@ -793,7 +793,7 @@
+  */
+ int
+ AclSetPerm(uu, u, mode, s)
+-struct user *uu, *u;
++struct auser *uu, *u;
+ char *mode, *s;
+ {
+   struct win *w;
+@@ -813,7 +813,7 @@
+ 	    AclSetPermWin(uu, u, mode, (struct win *)1);
+ 	  else				/* .. or all windows */
+ 	    for (w = windows; w; w = w->w_next)
+-	      AclSetPermWin((struct user *)0, u, mode, w);
++	      AclSetPermWin((struct auser *)0, u, mode, w);
+ 	  s++;
+ 	  break;
+ 	case '?':
+@@ -832,7 +832,7 @@
+ 	  if ((i = FindCommnr(s)) != RC_ILLEGAL)
+ 	    AclSetPermCmd(u, mode, &comms[i]);
+ 	  else if (((i = WindowByNoN(s)) >= 0) && wtab[i])
+-	    AclSetPermWin((struct user *)0, u, mode, wtab[i]);
++	    AclSetPermWin((struct auser *)0, u, mode, wtab[i]);
+ 	  else
+ 	    /* checking group name */
+ 	    return -1;
+@@ -857,7 +857,7 @@
+  */
+ static int
+ UserAcl(uu, u, argc, argv)
+-struct user *uu, **u;
++struct auser *uu, **u;
+ int argc;
+ char **argv;
+ {
+@@ -889,7 +889,7 @@
+ 
+ static int
+ UserAclCopy(to_up, from_up)
+-struct user **to_up, **from_up;
++struct auser **to_up, **from_up;
+ {
+   struct win *w;
+   int i, j, to_id, from_id;
+@@ -944,13 +944,13 @@
+  */
+ int
+ UsersAcl(uu, argc, argv)
+-struct user *uu;
++struct auser *uu;
+ int argc;
+ char **argv;
+ {
+   char *s;
+   int r;
+-  struct user **cf_u = NULL;
++  struct auser **cf_u = NULL;
+ 
+   if (argc == 1)
+     {
+@@ -968,7 +968,7 @@
+ 
+   if (argv[0][0] == '*' && argv[0][1] == '\0')
+     {
+-      struct user **u;
++      struct auser **u;
+   
+       debug("all users acls.\n");
+       for (u = &users; *u; u = &(*u)->u_next)
+@@ -1005,7 +1005,7 @@
+  */
+ int 
+ AclUmask(u, str, errp)
+-struct user *u;
++struct auser *u;
+ char *str;
+ char **errp;
+ {
+@@ -1054,11 +1054,11 @@
+   debug2("AclWinSwap(%d, %d) NOP.\n", a, b);
+ }
+ 
+-struct user *EffectiveAclUser = NULL;	/* hook for AT command permission */
++struct auser *EffectiveAclUser = NULL;	/* hook for AT command permission */
+ 
+ int 
+ AclCheckPermWin(u, mode, w)
+-struct user *u;
++struct auser *u;
+ int mode;
+ struct win *w;
+ {
+@@ -1077,7 +1077,7 @@
+   if (!ok)
+     {
+       struct usergroup **g = &u->u_group;
+-      struct user *saved_eff = EffectiveAclUser;
++      struct auser *saved_eff = EffectiveAclUser;
+ 
+       EffectiveAclUser = NULL;
+       while (*g)
+@@ -1096,7 +1096,7 @@
+ 
+ int 
+ AclCheckPermCmd(u, mode, c)
+-struct user *u;
++struct auser *u;
+ int mode;
+ struct comm *c;
+ {
+@@ -1114,7 +1114,7 @@
+   if (!ok)
+     {
+       struct usergroup **g = &u->u_group;
+-      struct user *saved_eff = EffectiveAclUser;
++      struct auser *saved_eff = EffectiveAclUser;
+ 
+       EffectiveAclUser = NULL;
+       while (*g)
+--- ./display.c.jbj	Sun Jul  9 23:04:56 2000
++++ ./display.c	Mon Oct  2 12:17:05 2000
+@@ -190,7 +190,7 @@
+ int fd, pid;
+ struct mode *Mode;
+ {
+-  struct user **u;
++  struct auser **u;
+   struct baud_values *b;
+ 
+   if (!*(u = FindUserPtr(uname)) && UserAdd(uname, (char *)0, u))
+--- ./display.h.jbj	Sun Jul  2 19:33:51 2000
++++ ./display.h	Mon Oct  2 12:17:05 2000
+@@ -75,7 +75,7 @@
+ struct display
+ {
+   struct display *d_next;	/* linked list */
+-  struct user *d_user;		/* user who owns that display */
++  struct auser *d_user;		/* user who owns that display */
+   struct canvas *d_cvlist;	/* the canvases of this display */
+   struct canvas *d_forecv;	/* current input focus */
+   void (*d_processinput) __P((char *, int));
+--- ./fileio.c.jbj	Sun Jul  2 19:30:37 2000
++++ ./fileio.c	Mon Oct  2 12:17:05 2000
+@@ -282,8 +282,8 @@
+ {
+   char *args[MAXARGS], *buf;
+ #ifdef MULTIUSER
+-  extern struct user *EffectiveAclUser;	/* acl.c */
+-  extern struct user *users;		/* acl.c */
++  extern struct auser *EffectiveAclUser;	/* acl.c */
++  extern struct auser *users;		/* acl.c */
+ #endif
+ 
+   if (display)
+@@ -316,7 +316,7 @@
+  */
+ void
+ WriteFile(user, dump)
+-struct user *user;
++struct auser *user;
+ int dump;
+ {
+   /* dump==0:	create .termcap,
+--- ./mark.c.jbj	Sun Jul  9 22:03:29 2000
++++ ./mark.c	Mon Oct  2 12:17:05 2000
+@@ -523,7 +523,7 @@
+   int newcopylen = 0, od;
+   int in_mark;
+   int rep_cnt;
+-  struct user *md_user;
++  struct auser *md_user;
+ 
+ /*
+   char *extrap = 0, extrabuf[100];
+--- ./mark.h.jbj	Sun Jul  2 19:34:12 2000
++++ ./mark.h	Mon Oct  2 12:17:05 2000
+@@ -25,7 +25,7 @@
+ struct markdata
+ {
+   struct win *md_window;/* pointer to window we are working on */
+-  struct user *md_user;	/* The user who brought us up */
++  struct auser *md_user;	/* The user who brought us up */
+   int	cx, cy;		/* cursor Position in WIN coords*/
+   int	x1, y1;		/* first mark in WIN coords */
+   int	second;		/* first mark dropped flag */
+--- ./process.c.jbj	Fri Sep  1 14:30:39 2000
++++ ./process.c	Mon Oct  2 12:20:07 2000
+@@ -86,7 +86,7 @@
+ extern char *BufferFile, *PowDetachString;
+ #endif
+ #ifdef MULTIUSER
+-extern struct user *EffectiveAclUser;	/* acl.c */
++extern struct auser *EffectiveAclUser;	/* acl.c */
+ #endif
+ extern struct term term[];      /* terminal capabilities */
+ #ifdef MAPKEYS
+@@ -120,7 +120,7 @@
+ static void InputSetenv __P((char *));
+ static void InputAKA __P((void));
+ #ifdef MULTIUSER
+-static int  InputSu __P((struct win *, struct user **, char *));
++static int  InputSu __P((struct win *, struct auser **, char *));
+ static void su_fin __P((char *, int, char *));
+ #endif
+ static void AKAfin __P((char *, int, char *));
+@@ -149,7 +149,7 @@
+ extern struct layer *flayer;
+ extern struct display *display, *displays;
+ extern struct win *fore, *console_window, *windows;
+-extern struct user *users;
++extern struct auser *users;
+ 
+ extern char screenterm[], HostName[], version[];
+ extern struct NewWindow nwin_undef, nwin_default;
+@@ -855,7 +855,7 @@
+   char *s;
+   char ch;
+   struct display *odisplay = display;
+-  struct user *user;
++  struct auser *user;
+ 
+   user = display ? D_user : users;
+   if (nr == RC_ILLEGAL)
+@@ -1097,7 +1097,7 @@
+ 	case '*':		/* user */
+ 	  {
+ 	    struct display *nd;
+-	    struct user *u;
++	    struct auser *u;
+ 
+ 	    if (!n)
+ 	      u = D_user;
+@@ -2648,7 +2648,7 @@
+ 	    }
+ 	  else				/* remove all groups from user */
+ 	    {
+-	      struct user *u;
++	      struct auser *u;
+ 	      struct usergroup *g;
+ 
+ 	      if (!(u = *FindUserPtr(args[0])))
+@@ -2664,7 +2664,7 @@
+ 	{
+ 	  char buf[256], *p = buf;
+ 	  int ngroups = 0;
+-	  struct user *u;
++	  struct auser *u;
+ 	  struct usergroup *g;
+ 
+ 	  if (!(u = *FindUserPtr(args[0])))
+@@ -3124,7 +3124,7 @@
+ 
+ int 
+ ParseEscape(u, p)
+-struct user *u;
++struct auser *u;
+ char *p;
+ {
+   unsigned char buf[2];
+@@ -4404,7 +4404,7 @@
+ #ifdef MULTIUSER
+ struct inputsu
+ {
+-  struct user **up;
++  struct auser **up;
+   char name[24];
+   char pw1[130];	/* FreeBSD crypts to 128 bytes */
+   char pw2[130];
+@@ -4445,7 +4445,7 @@
+ static int
+ InputSu(w, up, name)
+ struct win *w;
+-struct user **up;
++struct auser **up;
+ char *name;
+ {
+   struct inputsu *i;
+@@ -4470,7 +4470,7 @@
+ int len;
+ char *data;
+ {
+-  struct user *u = (struct user *)data;
++  struct auser *u = (struct auser *)data;
+ 
+   if (!*buf)
+     return;
+@@ -4490,7 +4490,7 @@
+ {
+   int st;
+   char salt[2];
+-  struct user *u = (struct user *)data;
++  struct auser *u = (struct auser *)data;
+ 
+   ASSERT(u);
+   if (!buf || strcmp(u->u_password, buf))
+--- ./screen.c.jbj	Fri Sep  1 14:29:36 2000
++++ ./screen.c	Mon Oct  2 12:17:05 2000
+@@ -108,7 +108,7 @@
+ int force_vt = 1;
+ int VBellWait, MsgWait, MsgMinWait, SilenceWait;
+ 
+-extern struct user *users;
++extern struct auser *users;
+ extern struct display *displays, *display; 
+ 
+ /* tty.c */
+@@ -1113,7 +1113,7 @@
+    * start detached. From now on we should not refer to 'LoginName'
+    * any more, use users->u_name instead.
+    */
+-  if (UserAdd(LoginName, (char *)0, (struct user **)0) < 0)
++  if (UserAdd(LoginName, (char *)0, (struct auser **)0) < 0)
+     Panic(0, "Could not create user info");
+   if (!detached)
+     {
+--- ./termcap.c.jbj	Wed Jul  5 14:33:30 2000
++++ ./termcap.c	Mon Oct  2 12:17:05 2000
+@@ -563,7 +563,7 @@
+       display = odisplay;
+       return;
+     }
+-  ParseEscape((struct user *)0, "^aa");
++  ParseEscape((struct auser *)0, "^aa");
+   if (odisplay->d_user->u_Esc == -1)
+     odisplay->d_user->u_Esc = DefaultEsc;
+   if (odisplay->d_user->u_MetaEsc == -1)
+--- ./window.c.jbj	Mon Jul 10 11:59:58 2000
++++ ./window.c	Mon Oct  2 12:17:05 2000
+@@ -520,7 +520,7 @@
+   int type;
+   char *TtyName;
+ #ifdef MULTIUSER
+-  extern struct user *users;
++  extern struct auser *users;
+ #endif
+ 
+   debug1("NewWindow: StartAt %d\n", newwin->StartAt);
+--- ./window.h.jbj	Wed Jul  5 14:45:21 2000
++++ ./window.h	Mon Oct  2 12:17:05 2000
+@@ -155,7 +155,7 @@
+ 
+ #ifdef MULTIUSER
+   int    w_wlock;		/* WLOCK_AUTO, WLOCK_OFF, WLOCK_ON */
+-  struct user *w_wlockuser;	/* NULL when unlocked or user who writes */
++  struct auser *w_wlockuser;	/* NULL when unlocked or user who writes */
+   AclBits w_userbits[ACL_BITS_PER_WIN];
+   AclBits w_lio_notify;		/* whom to tell when lastio+seconds < time() */
+   AclBits w_mon_notify;		/* whom to tell monitor statis */

@@ -1,0 +1,19 @@
+--- screen-3.9.5.orig/pty.c
++++ screen-3.9.5/pty.c
+@@ -242,11 +242,15 @@
+ {
+   register int f;
+   char *m, *ptsname();
+-  int unlockpt __P((int)), grantpt __P((int));
++  int unlockpt __P((int)), grantpt __P((int)), getpt __P((void));
+   sigret_t (*sigcld)__P(SIGPROTOARG);
+ 
++#ifdef HAVE_GETPT
++  if ((f = getpt()) == -1)
++#else
+   strcpy(PtyName, "/dev/ptmx");
+   if ((f = open(PtyName, O_RDWR | O_NOCTTY)) == -1)
++#endif
+     return -1;
+ 
+   /*

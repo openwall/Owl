@@ -1,0 +1,93 @@
+--- screen-3.9.8/etc/etcscreenrc.orig	Fri Sep  1 19:07:27 2000
++++ screen-3.9.8/etc/etcscreenrc	Sat Mar  3 17:42:13 2001
+@@ -1,6 +1,6 @@
+ #3.3
+ # This is a global screenrc file
+-# Install this file as /usr/local/etc/screenrc. See config.h
++# Install this file as /etc/screenrc. See config.h
+ #
+ # Flaws of termcap and standard settings are done here.
+ # Note: This file should not be shared between different hosts.
+--- screen-3.9.8/config.h.in.orig	Fri Sep  1 19:07:26 2000
++++ screen-3.9.8/config.h.in	Sat Mar  3 17:41:18 2001
+@@ -50,7 +50,7 @@
+  * Screen will name the subdirectories "S-$USER" (e.g /tmp/S-davison).
+  */
+ 
+-#undef SOCKDIR
++#define SOCKDIR "/var/run/screen"
+ 
+ /*
+  * Screen sources two startup files. First a global file with a path
+@@ -58,7 +58,7 @@
+  * Don't define this, if you don't want it.
+  */
+ #ifndef ETCSCREENRC
+-# define ETCSCREENRC "/usr/local/etc/screenrc"
++# define ETCSCREENRC "/etc/screenrc"
+ #endif
+ 
+ /*
+@@ -88,8 +88,8 @@
+  * Note, screen is unable to change mode or group of the pty if it
+  * is not installed with sufficient privilege. (e.g. set-uid-root)
+  */
+-#undef PTYMODE
+-#undef PTYGROUP
++#define PTYMODE 0620
++#define PTYGROUP 5
+ 
+ /*
+  * If screen is NOT installed set-uid root, screen can provide tty
+@@ -151,7 +151,7 @@
+ # define KANJI
+ #endif /* SIMPLESCREEN */
+ 
+-#undef BUILTIN_TELNET
++#define BUILTIN_TELNET 1
+ #undef RXVT_OSC
+ 
+ 
+@@ -564,6 +564,11 @@
+  * device and support the ptsname(), grantpt(), unlockpt() functions.
+  */
+ #undef HAVE_SVR4_PTYS
++
++/*
++ * define HAVE_GETPT if you have the getpt() function.
++ */
++#undef HAVE_GETPT
+ 
+ /* 
+  * define PTYRANGE0 and or PTYRANGE1 if you want to adapt screen
+--- screen-3.9.8/configure.in.orig	Sat Mar  3 17:51:06 2001
++++ screen-3.9.8/configure.in	Sat Mar  3 17:59:51 2001
+@@ -91,7 +91,7 @@
+     [
+ 	AC_MSG_RESULT(yes)
+ 	AC_MSG_CHECKING(for the socket dir)
+-	SOCKDIR="(eff_uid ? \"/tmp/uscreens\" : \"/tmp/screens\")"
++	SOCKDIR="\"/var/run/screen\""
+ 	AC_ARG_WITH(socket-dir, [  --with-socket-dir=path  where to put the per-user sockets], [ SOCKDIR="\"${withval}\"" ])
+ 	AC_MSG_RESULT(${SOCKDIR})
+ 	AC_DEFINE_UNQUOTED(SOCKDIR, $SOCKDIR)
+@@ -645,6 +647,7 @@
+ if test -c /dev/ptmx ; then
+ AC_TRY_LINK([],[ptsname(0);grantpt(0);unlockpt(0);],AC_DEFINE(HAVE_SVR4_PTYS))
+ fi
++AC_CHECK_FUNCS(getpt)
+ 
+ AC_CHECKING(for ptyranges)
+ if test -d /dev/ptym ; then
+@@ -1129,10 +1129,7 @@
+ 
+ AC_TRY_RUN(main(){exit(0);},,AC_MSG_ERROR(Can't run the compiler - internal error. Sorry.))
+ 
+-ETCSCREENRC="\"/usr/local/etc/screenrc\""
+-if test -n "$prefix"; then
+-ETCSCREENRC="\"$prefix/etc/screenrc\""
+-fi
++ETCSCREENRC="\"/etc/screenrc\""
+ AC_MSG_CHECKING(for the global screenrc file)
+ AC_ARG_WITH(sys-screenrc, [  --with-sys-screenrc=path  where to put the global screenrc file], [ ETCSCREENRC="\"${withval}\"" ])
+ AC_DEFINE_UNQUOTED(ETCSCREENRC,$ETCSCREENRC)

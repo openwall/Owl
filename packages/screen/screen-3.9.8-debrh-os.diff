@@ -1,0 +1,40 @@
+--- screen-3.9.8/os.h.orig	Wed Aug 30 15:00:10 2000
++++ screen-3.9.8/os.h	Thu Mar  1 21:18:43 2001
+@@ -82,6 +82,9 @@
+ #  undef strlen
+ # else /* NEWSOS */
+ #  include <strings.h>
++#  if defined(__GLIBC__) && (__GLIBC__ >= 2)
++#   include <string.h>
++#  endif
+ # endif /* NEWSOS */
+ #else /* SYSV */
+ # if defined(SVR4) || defined(NEWSOS)
+@@ -270,7 +273,7 @@
+ #  define pututline	pututxline
+ #  define setutent	setutxent
+ #  define endutent	endutxent
+-#  define ut_time	ut_xtime
++#  define ut_time	ut_tv.tv_sec
+ # else /* SVR4 */
+ #  include <utmp.h>
+ # endif /* SVR4 */
+@@ -291,7 +291,7 @@
+ #   ifdef _PATH_UTMP
+ #    define UTMPFILE	_PATH_UTMP
+ #   else
+-#    define UTMPFILE	"/etc/utmp"
++#    define UTMPFILE	"/var/run/utmp"
+ #   endif /* _PATH_UTMP */
+ #  endif
+ # endif
+--- screen-3.9.8/osdef.h.in	2000/10/01 15:50:10	1.1
++++ screen-3.9.8/osdef.h.in	2000/10/01 15:50:21
+@@ -96,7 +96,6 @@
+ extern int   setegid __P((int));
+ #endif
+ 
+-extern char *crypt __P((char *, char *));
+ extern int   putenv __P((char *));
+ 
+ extern int   tgetent __P((char *, char *));
