@@ -1,9 +1,9 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.30 2003/10/30 21:15:48 solar Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.31 2003/12/07 11:55:17 solar Exp $
 
 Summary: The Red Hat package management system.
 Name: rpm
 Version: 3.0.6
-Release: owl8
+Release: owl9
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-3.0.x/rpm-%version.tar.gz
@@ -19,9 +19,10 @@ Patch6: rpm-3.0.6-owl-buildhost.diff
 Patch7: rpm-3.0.6-owl-autoreq.diff
 Patch8: rpm-3.0.6-owl-macros.diff
 Patch9: rpm-3.0.6-owl-popt-sgid.diff
-Patch10: rpm-3.0.6-alt-owl-autodeps-symbol-versioning.diff
-Patch11: rpm-3.0.6-alt-rpmio-gzclose.diff
-Patch20: rpm-3.0.6-owl-rpmrc.diff
+Patch10: rpm-3.0.6-owl-tmp.diff
+Patch20: rpm-3.0.6-alt-owl-autodeps-symbol-versioning.diff
+Patch21: rpm-3.0.6-alt-rpmio-gzclose.diff
+Patch30: rpm-3.0.6-owl-rpmrc.diff
 PreReq: /sbin/ldconfig
 PreReq: gawk, fileutils, textutils, sh-utils, mktemp
 Requires: popt, bzip2 >= 0.9.0c-2
@@ -94,8 +95,9 @@ EOF
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
-%patch11 -p1
 %patch20 -p1
+%patch21 -p1
+%patch30 -p1
 
 %define _noVersionedDependencies 1
 
@@ -239,6 +241,10 @@ fi
 %__prefix/include/popt.h
 
 %changelog
+* Sun Dec 07 2003 Solar Designer <solar@owl.openwall.com> 3.0.6-owl9
+- Don't use a file under /tmp in installplatform script used during builds,
+spotted by (GalaxyMaster).
+
 * Tue May 27 2003 Solar Designer <solar@owl.openwall.com> 3.0.6-owl8
 - Obey AutoReq: false also for dependency on the shell with triggers.
 
