@@ -267,13 +267,6 @@ and fix that.
 Consider enhancements from VVV (http://mutt.org.ua).
 
 
-	nmap.
-
-[PRIORITY: low]
-Package it, link against libpcap dynamically.  Patch our libpcap with
-the timeout fix found in nmap's modified version.
-
-
 	openssh.
 
 [PRIORITY: medium]
@@ -580,4 +573,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.22 2003/05/01 14:43:25 solar Exp $
+$Id: Owl/doc/TODO,v 1.23 2003/06/02 05:37:07 solar Exp $
