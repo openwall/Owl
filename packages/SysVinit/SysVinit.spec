@@ -1,4 +1,4 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.1 2000/08/08 04:37:29 solar Exp $
+# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.2 2000/08/08 04:52:14 solar Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
@@ -51,13 +51,13 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0700,root,root)
 /sbin/halt
 /sbin/init
-/sbin/killall5
 /sbin/poweroff
 /sbin/reboot
 /sbin/shutdown
 /sbin/sulogin
 /sbin/telinit
 %defattr(0755,root,root)
+/sbin/killall5
 /sbin/pidof
 /sbin/runlevel
 /usr/bin/last
