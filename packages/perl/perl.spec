@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.21 2004/01/25 18:21:03 solar Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.22 2004/01/25 20:33:09 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -123,8 +123,8 @@ rm -rf $RPM_BUILD_ROOT
 	-Uuselargefiles
 %__make
 
-# Some of the tests create temporary files without due care, need to fix
-# them first.
+# Some of the tests might create temporary files without due care, some
+# others require network access.
 #%__make test
 
 %install
