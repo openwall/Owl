@@ -1,12 +1,21 @@
 diff -urp cvs-1.11.5.orig/src/root.c cvs-1.11.5/src/root.c
 --- cvs-1.11.5.orig/src/root.c	Fri Dec  6 19:10:28 2002
-+++ cvs-1.11.5/src/root.c	Mon Jun 23 14:16:27 2003
-@@ -571,6 +571,14 @@ parse_cvsroot (root_in)
++++ cvs-1.11.5/src/root.c	Sat Jun 28 13:23:51 2003
+@@ -13,6 +13,8 @@
+ #include "cvs.h"
+ #include "getline.h"
+ 
++extern char *canonicalize_file_name (const char *name);
++
+ /* Printable names for things in the current_parsed_root->method enum variable.
+    Watch out if the enum is changed in cvs.h! */
+ 
+@@ -571,6 +573,14 @@ parse_cvsroot (root_in)
  	    error (0, 0, "when using local access method.");
  	    goto error_exit;
  	}
 +	{
-+	    char *dir = realpath (newroot->directory, NULL); /* Assume glibc */
++	    char *dir = canonicalize_file_name (newroot->directory);
 +	    if (dir)
 +	    {
 +		free (newroot->directory);
@@ -16,24 +25,32 @@ diff -urp cvs-1.11.5.orig/src/root.c cvs-1.11.5/src/root.c
  	no_port = 1;
  	no_password = 1;
  	break;
-@@ -724,7 +732,8 @@ local_cvsroot (dir)
+@@ -724,7 +734,7 @@ local_cvsroot (dir)
  
      newroot->original = xstrdup(dir);
      newroot->method = local_method;
 -    newroot->directory = xstrdup(dir);
-+    /* Assume GNU C and glibc */
-+    newroot->directory = realpath (dir, NULL) ?: xstrdup(dir);
++    newroot->directory = canonicalize_file_name (dir) ?: xstrdup(dir);
  
      return newroot;
  }
 diff -urp cvs-1.11.5.orig/src/server.c cvs-1.11.5/src/server.c
 --- cvs-1.11.5.orig/src/server.c	Thu Jan 16 15:10:55 2003
-+++ cvs-1.11.5/src/server.c	Mon Jun 23 14:16:39 2003
-@@ -1151,6 +1151,14 @@ serve_directory (arg)
++++ cvs-1.11.5/src/server.c	Sat Jun 28 13:25:06 2003
+@@ -16,6 +16,8 @@
+ #include "getline.h"
+ #include "buffer.h"
+ 
++extern char *canonicalize_file_name (const char *name);
++
+ #if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
+ # ifdef HAVE_GSSAPI
+ /* This stuff isn't included solely with SERVER_SUPPORT since some of these
+@@ -1151,6 +1153,14 @@ serve_directory (arg)
      status = buf_read_line (buf_from_net, &repos, (int *) NULL);
      if (status == 0)
      {
-+	char *real_repos = realpath (repos, NULL); /* Assume glibc */
++	char *real_repos = canonicalize_file_name (repos);
 +
 +	if (real_repos)
 +	{

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cvs/cvs.spec,v 1.13 2003/06/23 14:24:36 solar Exp $
+# $Id: Owl/packages/cvs/cvs.spec,v 1.14 2003/06/28 13:35:57 solar Exp $
 
 Summary: A version control system.
 Name: cvs
@@ -110,11 +110,12 @@ fi
 %{_datadir}/cvs
 
 %changelog
-* Mon Jun 23 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl3
-- Updated the canonicalize patch to use realpath(3) instead of
-canonicalize_file_name() in order to not require _GNU_SOURCE and not
-get function prototype conflicts on certain other glibc functions that
-cvs overrides (this actually caused the package to not build on Alpha).
+* Sat Jun 28 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl3
+- Updated the canonicalize patch to avoid using _GNU_SOURCE and rather
+declare the prototype for canonicalize_file_name() explicitly.  With
+_GNU_SOURCE, we could get function prototype conflicts on certain other
+glibc functions that cvs overrides (this actually caused the package to
+not build on Alpha).
 
 * Thu May 01 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl2
 - BuildRequires: mktemp >= 1:1.3.1 (but don't yet require mktemp for the
