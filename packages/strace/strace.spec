@@ -1,21 +1,25 @@
-# $Id: Owl/packages/strace/strace.spec,v 1.6 2002/02/07 01:47:15 solar Exp $
+# $Id: Owl/packages/strace/strace.spec,v 1.7 2002/06/08 02:07:56 solar Exp $
 
 Summary: Tracks and displays system calls associated with a running process.
 Name: strace
-Version: 4.2
-Release: owl12
+Version: 4.4
+Release: owl1
 License: BSD
 Group: Development/Debuggers
-Source: http://www.liacs.nl/~wichert/strace/strace-%{version}.tar.gz
-Patch0: strace-4.1-rh-sparc.diff
-Patch1: strace-4.2-deb-lfs.diff
-Patch2: strace-4.2-owl-timex.diff
-Patch3: strace-4.2-rh-stat64.diff
-Patch4: strace-4.2-rh-putmsg.diff
-Patch5: strace-4.2-owl-printsock.diff
-Patch6: strace-4.2-owl-man.diff
+URL: http://www.liacs.nl/~wichert/strace/
+Source0: http://prdownloads.sourceforge.net/strace/strace_%{version}-1.tar.gz
+Source1: strace-%{version}-cvs-20020608.diff.bz2
+Patch0: strace-4.2-owl-man.diff
+Patch1: strace-20020608-owl-fixes.diff
+Patch2: strace-20020608-owl-ioctl.diff
+Patch3: strace-20020608-rh-detach.diff
 Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
+
+%package graph
+Summary: Processes strace output and displays a graph of invoked subprocesses.
+Group: Development/Debuggers
+Requires: strace = %{version}-%{release}
 
 %description
 The strace program intercepts and records the system calls invoked by
@@ -23,15 +27,21 @@ a running process.  strace can print a record of each system call, its
 arguments, and its return value.  strace is useful for diagnosing
 problems and debugging, as well as for instructional purposes.
 
+%description graph
+The strace-graph Perl script processes strace -f output and displays a
+graph of invoked subprocesses.  It is useful for finding out what complex
+commands do.
+
 %prep
 %setup -q
+{
+	bzcat %SOURCE1 || touch failed
+} | patch -p2
+test ! -e failed
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
 
 %build
 libtoolize --copy --force
@@ -58,7 +68,18 @@ rm -rf $RPM_BUILD_ROOT
 %{_prefix}/bin/strace
 %{_mandir}/man1/strace.1*
 
+%files graph
+%defattr(-,root,root)
+%{_prefix}/bin/strace-graph
+
 %changelog
+* Sat Jun 08 2002 Solar Designer <solar@owl.openwall.com>
+- Updated to today's CVS version (post-4.4) with an additional fix for
+displaying all possible ioctl names when there's more than one match,
+some build fixes, and a Red Hat Linux derived patch for detaches from
+multi-threaded programs.
+- Package strace-graph (in its own subpackage due to the Perl requirement).
+
 * Tue Feb 05 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 - Package most of the documentation.

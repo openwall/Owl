@@ -1,0 +1,180 @@
+diff -ur strace-20020528.orig/file.c strace-20020528-owl-fixes/file.c
+--- strace-20020528.orig/file.c	Thu May 30 04:48:52 2002
++++ strace-20020528-owl-fixes/file.c	Thu May 30 12:41:44 2002
+@@ -40,6 +40,7 @@
+ #include <linux/types.h>
+ #include <linux/dirent.h>
+ #undef dirent
++#undef dirent64
+ #else
+ #define kernel_dirent dirent
+ #endif
+@@ -630,6 +631,7 @@
+ }
+ #endif /* LINUXSPARC */
+ 
++#if defined(FREEBSD) || HAVE_ST_FLAGS
+ static struct xlat fileflags[] = {
+ #ifdef FREEBSD
+ 	{ UF_NODUMP,	"UF_NODUMP"	},
+@@ -651,6 +653,7 @@
+ #endif
+ 	{ 0,		NULL		},
+ };
++#endif
+ 
+ #ifdef FREEBSD
+ int
+@@ -721,7 +724,7 @@
+ #endif /* !HAVE_ST_RDEV */
+ 	    break;
+     default:
+-	    tprintf("st_size=%lu, ", statbuf->st_size);
++	    tprintf("st_size=%lu, ", (unsigned long)statbuf->st_size);
+ 	    break;
+     }
+     if (!abbrev(tcp)) {
+@@ -1921,7 +1924,7 @@
+ 		struct dirent64 *d = (struct dirent64 *) &buf[i];
+ #ifdef linux
+ 		if (!abbrev(tcp)) {
+-			tprintf("%s{d_ino=%lu, d_off=%lu, ",
++			tprintf("%s{d_ino=%lu, d_off=%llu, ",
+ 				i ? " " : "", d->d_ino, d->d_off);
+ 			tprintf("d_reclen=%u, d_name=\"%s\"}",
+ 				d->d_reclen, d->d_name);
+diff -ur strace-20020528.orig/linux/syscall.h strace-20020528-owl-fixes/linux/syscall.h
+--- strace-20020528.orig/linux/syscall.h	Thu May 30 04:48:52 2002
++++ strace-20020528-owl-fixes/linux/syscall.h	Thu May 30 12:41:44 2002
+@@ -83,7 +83,7 @@
+ int sys_rt_sigtimedwait(), sys_prctl(), sys_poll(), sys_vfork();
+ int sys_sendfile(), sys_old_mmap(), sys_stat64(), sys_lstat64(), sys_fstat64();
+ int sys_truncate64(), sys_ftruncate64(), sys_pivotroot();
+-int sys_getdents64, sys_clone2();
++int sys_getdents64(), sys_clone2();
+ 
+ 
+ /* sys_socketcall subcalls */
+diff -ur strace-20020528.orig/process.c strace-20020528-owl-fixes/process.c
+--- strace-20020528.orig/process.c	Thu May 30 04:48:52 2002
++++ strace-20020528-owl-fixes/process.c	Thu May 30 12:41:44 2002
+@@ -484,6 +484,7 @@
+ 	return 0;
+ }
+ 
++#ifdef SYS_vfork
+ int
+ change_syscall(tcp, new)
+ struct tcb *tcp;
+@@ -543,7 +544,9 @@
+ #endif /* LINUX */
+ 	return -1;
+ }
++#endif
+ 
++#if 0
+ int
+ setarg(tcp, argnum)
+ 	struct tcb *tcp;
+@@ -592,6 +595,7 @@
+ #endif
+ 	return 0;
+ }
++#endif
+ 
+ #ifdef SYS_clone
+ int
+diff -ur strace-20020528.orig/syscall.c strace-20020528-owl-fixes/syscall.c
+--- strace-20020528.orig/syscall.c	Thu May 30 04:48:52 2002
++++ strace-20020528-owl-fixes/syscall.c	Thu May 30 12:42:07 2002
+@@ -455,8 +455,7 @@
+ };
+ #endif /* FREEBSD */
+ 
+-#if !(defined(LINUX) && ( defined(ALPHA) || defined(MIPS) ))
+-
++#if defined(LINUX) && defined(SPARC)
+ const int socket_map [] = {
+ 	       /* SYS_SOCKET      */ 97,
+ 	       /* SYS_BIND        */ 104,
+@@ -477,7 +476,7 @@
+ 	       /* SYS_RECVMSG     */ 113
+ };
+ 
+-void
++static void
+ sparc_socket_decode (tcp)
+ struct tcb *tcp;
+ {
+@@ -498,7 +497,11 @@
+ 		addr += sizeof (arg);
+ 	}
+ }
++#endif
+ 
++#if defined(LINUX) && \
++    !defined (ALPHA) && !defined(SPARC) && !defined(MIPS) && !defined(HPPA) || \
++    defined(SVR4) || defined(FREEBSD) || defined(SUNOS4)
+ static void
+ decode_subcall(tcp, subcall, nsubcalls, style)
+ struct tcb *tcp;
+@@ -832,7 +835,7 @@
+ 			return -1;
+ 		case 0x91d02000:
+ 			/* SunOS syscall trap. (pers 1) */
+-			fprintf(stderr,"syscall: SunOS no support\n");
++			fprintf(stderr,"syscall: SunOS not supported\n");
+ 			return -1;
+ 		case 0x91d02008:
+ 			/* Solaris 2.x syscall trap. (per 2) */
+@@ -852,7 +855,7 @@
+ 				tcp->flags &= ~TCB_WAITEXECVE;
+ 				return 0;
+ 			}
+-			fprintf(stderr,"syscall: unknown syscall trap %08x %08x\n", trap, regs.r_pc);
++			fprintf(stderr,"syscall: unknown syscall trap %08lx %08x\n", trap, regs.r_pc);
+ 			return -1;
+ 		}
+ 
+@@ -949,7 +952,10 @@
+ struct tcb *tcp;
+ {
+ #ifndef USE_PROCFS
++#if defined(LINUX) && (defined(I386) || defined(S390) || defined(POWERPC) || \
++    defined(M68K) || defined(ARM) || defined(HPPA) || defined(IA64))
+ 	int pid = tcp->pid;
++#endif
+ #else /* USE_PROCFS */	
+ 	int scno = tcp->scno;
+ 
+@@ -1278,7 +1284,8 @@
+ int syscall_enter(tcp)
+ struct tcb *tcp;
+ {
+-#ifndef USE_PROCFS
++#if !defined(USE_PROCFS) && \
++    ((defined(LINUX) && !defined(SPARC)) || defined(SUNOS4))
+ 	int pid = tcp->pid;
+ #endif /* !USE_PROCFS */	
+ #ifdef LINUX
+@@ -1738,7 +1745,7 @@
+ 		decode_subcall(tcp, SYS_ipc_subcall,
+ 			SYS_ipc_nsubcalls, shift_style);
+ 		break;
+-#endif /* !ALPHA && !MIPS && !SPARC */
++#endif /* !ALPHA && !SPARC && !MIPS && !HPPA */
+ #ifdef SPARC
+ 	case SYS_socketcall:
+ 		sparc_socket_decode (tcp);
+diff -ur strace-20020528.orig/util.c strace-20020528-owl-fixes/util.c
+--- strace-20020528.orig/util.c	Thu May 30 04:48:52 2002
++++ strace-20020528-owl-fixes/util.c	Thu May 30 12:42:17 2002
+@@ -1040,7 +1040,7 @@
+ 		tprintf("[????????] ");
+ 		return;
+ 	}
+-	tprintf("[%08lx] ", regs.r_pc);
++	tprintf("[%08x] ", regs.r_pc);
+ #elif defined(HPPA)
+ 	long pc;
+ 
