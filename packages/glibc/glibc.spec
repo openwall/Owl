@@ -1,12 +1,12 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.18 2001/06/03 01:48:41 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.19 2001/06/03 03:03:35 solar Exp $
 
 %define BUILD_PROFILE	'no'
 
 Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
-%define crypt_bf_version 0.4
-Release: 14.1owl
+%define crypt_bf_version 0.4.1
+Release: 15owl
 Copyright: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%{version}.tar.gz
@@ -171,6 +171,11 @@ install -m 0644 linuxthreads/man/*.3thr $RPM_BUILD_ROOT/usr/man/man3
 install -m 0644 crypt_blowfish-%{crypt_bf_version}/*.3 \
 	$RPM_BUILD_ROOT/usr/man/man3
 gzip -9nvf $RPM_BUILD_ROOT/usr/man/man3/*
+for f in \
+    crypt_r crypt_rn crypt_ra \
+    crypt_gensalt crypt_gensalt_rn crypt_gensalt_ra; do
+	ln -s crypt.3.gz $RPM_BUILD_ROOT/usr/man/man3/${f}.3.gz
+done
 
 gzip -9nvf $RPM_BUILD_ROOT/usr/info/libc*
 
@@ -295,6 +300,7 @@ triggered by Nick Cleaton's report of yet another FTS vulnerability
 to FreeBSD, and a discussion with Kris Kennaway and Todd Miller.  It
 should no longer be possible to trick FTS into leaving the intended
 directory hierarchy, but DoS attacks on FTS itself remain possible.
+- Updated to crypt_blowfish-0.4.1 (man page fixes).
 
 * Thu May 10 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to crypt_blowfish-0.4 (release).
