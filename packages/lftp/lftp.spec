@@ -1,15 +1,16 @@
-# $Id: Owl/packages/lftp/lftp.spec,v 1.20 2003/12/12 20:54:01 mci Exp $
+# $Id: Owl/packages/lftp/lftp.spec,v 1.21 2003/12/16 10:39:17 solar Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
 Version: 2.6.10
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Internet
 URL: http://lftp.yar.ru
 Source0: ftp://ftp.yars.free.net/pub/software/unix/net/ftp/client/lftp/%name-%version.tar.bz2
 Source1: lftpget.1
 Patch0: lftp-2.6.9-owl-n-option.diff
+Patch1: lftp-2.6.10-rh-handle-malformed-http.diff
 Prefix: %_prefix
 BuildRequires: openssl-devel
 BuildRoot: /override/%name-%version
@@ -39,6 +40,7 @@ downloading files.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 # Make sure that all message catalogs are built
@@ -81,6 +83,10 @@ fi
 %_datadir/locale/*/*/*
 
 %changelog
+* Tue Dec 16 2003 Solar Designer <solar@owl.openwall.com> 2.6.10-owl2
+- Added a patch by Nalin Dahyabhai of Red Hat to handle malformed HTTP
+server responses gracefully.
+
 * Sat Dec 13 2003 Michail Litvak <mci@owl.openwall.com> 2.6.10-owl1
 - 2.6.10 (security fixes in html parsing code)
 
