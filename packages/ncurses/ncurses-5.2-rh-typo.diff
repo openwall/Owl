@@ -1,0 +1,11 @@
+--- ncurses-5.2/man/curs_deleteln.3x.typo	Thu Nov  2 13:28:05 2000
++++ ncurses-5.2/man/curs_deleteln.3x	Thu Nov  2 13:28:53 2000
+@@ -61,7 +61,7 @@
+ with the one under the cursor), and move the remaining lines up.  The bottom
+ \fIn\fR lines are cleared.  The current cursor position remains the same.
+ 
+-The \fBinsertln\fR and \fBinsertln\fR routines, insert a blank line above the
++The \fBinsertln\fR and \fBwinsertln\fR routines, insert a blank line above the
+ current line and the bottom line is lost.
+ .SH RETURN VALUE
+ All routines return the integer \fBERR\fR upon failure and an \fBOK\fR (SVr4
