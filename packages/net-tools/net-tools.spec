@@ -1,4 +1,4 @@
-# $Id: Owl/packages/net-tools/net-tools.spec,v 1.1 2000/08/09 00:51:27 kad Exp $
+# $Id: Owl/packages/net-tools/net-tools.spec,v 1.2 2000/09/07 21:42:41 solar Exp $
 
 Summary: The basic tools for setting up networking.
 Name: 		net-tools
@@ -24,7 +24,7 @@ cp %SOURCE1 ./config.h
 cp %SOURCE2 ./config.make
 
 %build
-make
+make COPTS="$RPM_OPT_FLAGS -D_GNU_SOURCE -Wall"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -68,6 +68,9 @@ rm -rf $RPM_BUILD_ROOT
 %lang(pt_BR)	%{_datadir}/locale/pt_BR/LC_MESSAGES/net-tools.mo
 
 %changelog
+* Thu Sep 07 2000 Solar Designer <solar@owl.openwall.com>
+- Use RPM_OPT_FLAGS.
+
 * Wed Aug 09 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import from RH
 - upgrade to 1.57
