@@ -12,6 +12,10 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.0 and Owl-current.
 
+2003/10/26	Packages: libcap, vsftpd
+New package: libcap, a library for dealing with POSIX.1e capabilities.
+vsftpd has been updated to 1.2.1pre1 and now uses libcap.
+
 2003/10/24	Packages: owl-cdrom, openssh;
 		Owl/build/{installworld.{sh,conf},installorder.conf}
 Support special installs for Owl bootable CDs with "MAKE_CDROM=yes" in
@@ -455,4 +459,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.83 2003/10/24 04:49:58 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.84 2003/10/26 13:41:01 solar Exp $

@@ -199,15 +199,6 @@ Update documentation and .chr files, release as 1.7.  (Lots of other
 items are in a separate non-public TODO list for just John.)
 
 
-	libcap, ntp.
-
-[PRIORITY: low]
-Package these.  Use CAEN Linux patches for both xntpd and ntpdate, use
-user xntpd, UID/GID 185 (already allocated).  Once the NTP stuff is
-done, possibly also let vsftpd make use of libcap instead of invoking
-the syscalls directly like it does now.
-
-
 	libnet, libnids, libpcap.
 
 [PRIORITY: low]
@@ -267,6 +258,13 @@ sure that everything works, the temporary files are dealt with safely
 [PRIORITY: low]
 [ASSIGNED: Jarno]
 Consider enhancements from VVV (http://mutt.org.ua).
+
+
+	ntp.
+
+[PRIORITY: low]
+Package xntp.  Use CAEN Linux patches for both xntpd and ntpdate, use
+user xntpd, UID/GID 185 (already allocated).
 
 
 	openssh.
@@ -573,4 +571,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.27 2003/10/20 01:38:58 solar Exp $
+$Id: Owl/doc/TODO,v 1.28 2003/10/26 13:41:01 solar Exp $
