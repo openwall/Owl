@@ -1,9 +1,9 @@
-# $Id: Owl/packages/elinks/elinks.spec,v 1.11 2004/02/01 05:51:19 solar Exp $
+# $Id: Owl/packages/elinks/elinks.spec,v 1.12 2004/02/06 00:04:04 mci Exp $
 
 Summary: Lynx-like text WWW browser with many features.
 Name: elinks
 Version: 0.9.1
-Release: owl3
+Release: owl4
 License: GPL
 Group: Applications/Internet
 URL: http://elinks.or.cz
@@ -73,6 +73,9 @@ popd
 %_mandir/man?/*
 
 %changelog
+* Fri Feb 06 2004 Michail Litvak <mci@owl.openwall.com> 0.9.1-owl4
+- Fix yet another bug in -owl-tmp patch (Thanks to Maxim Timofeyev).
+
 * Sun Feb 01 2004 Solar Designer <solar@owl.openwall.com> 0.9.1-owl3
 - Don't leak kernel version information (uname -srm) via User-Agent by
 default.

@@ -1,5 +1,5 @@
 --- elinks-0.9.1/src/sched/download.c.orig	Sat Jan 17 09:57:11 2004
-+++ elinks-0.9.1/src/sched/download.c	Sun Feb  1 00:52:35 2004
++++ elinks-0.9.1/src/sched/download.c	Fri Feb  6 01:24:22 2004
 @@ -536,23 +536,22 @@
  	unsigned char *wd;
  	int h = -1;
@@ -81,13 +81,23 @@
  };
  
  static void
-@@ -792,9 +758,15 @@
+@@ -782,6 +748,7 @@
+ {
+ 	struct tq *tq = data;
+ 	struct codw_hop *codw_hop;
++	unsigned char *prog = tq->prog;
+ 
+ 	if (!tq->url) return;
+ 
+@@ -791,10 +758,16 @@
+ 		return;
  	}
  
- 	if (tq->prog) {
+-	if (tq->prog) {
 -		/* FIXME: get_temp_name() calls tempnam(). --Zas */
 -		file = get_temp_name(tq->url);
 -		if (!file) {
++	if (prog) {
 +		unsigned char *tmpdir;
 +
 +		tmpdir = getenv("TMPDIR");
@@ -100,7 +110,7 @@
  			mem_free(codw_hop);
  			tp_cancel(tq);
  			return;
-@@ -802,12 +774,13 @@
+@@ -802,12 +775,13 @@
  	}
  
  	codw_hop->tq = tq;
@@ -109,13 +119,14 @@
  	kill_downloads_to_file(file);
  
  	create_download_file(tq->ses->tab->term, file, &codw_hop->real_file,
- 			     !!tq->prog, 0, continue_download_do, codw_hop);
+-			     !!tq->prog, 0, continue_download_do, codw_hop);
++			     !!prog, 0, continue_download_do, codw_hop);
 +
-+	if(file) mem_free(file);
++	if(file && prog) mem_free(file);
  }
  
  static void
-@@ -836,9 +809,8 @@
+@@ -836,9 +810,8 @@
  	file_download->ses = codw_hop->tq->ses;
  
  	if (codw_hop->tq->prog) {
@@ -126,7 +137,7 @@
  		mem_free(codw_hop->tq->prog);
  		codw_hop->tq->prog = NULL;
  	}
-@@ -861,7 +833,6 @@
+@@ -861,7 +834,6 @@
  
  cancel:
  	tp_cancel(codw_hop->tq);
