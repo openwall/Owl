@@ -1,21 +1,25 @@
 #!/bin/sh
-# $Id: Owl/packages/openssh/sftp.control,v 1.1 2001/05/06 23:51:18 solar Exp $
+# $Id: Owl/packages/openssh/sftp.control,v 1.2 2003/10/26 17:46:33 solar Exp $
 
 . /etc/control.d/functions
 
 CONFIG=/etc/ssh/sshd_config
 
-new_subst enabled \
+new_subst on \
 	'^Subsystem[[:space:]]+sftp[[:space:]]+/usr/libexec/ssh/sftp-server$' \
 	's,^#\(Subsystem[[:space:]]\+sftp[[:space:]]\+/usr/libexec/ssh/sftp-server\),\1,'
-new_subst disabled \
+new_subst off \
 	'^#Subsystem[[:space:]]+sftp[[:space:]]+/usr/libexec/ssh/sftp-server$' \
 	's,^\(Subsystem[[:space:]]\+sftp[[:space:]]\+/usr/libexec/ssh/sftp-server\),#\1,'
+
+# Backwards compatibility
+test "$*" = enabled && set - on
+test "$*" = disabled && set - off
 
 control_subst "$CONFIG" "$*" || exit 1
 
 case "$*" in
-enabled|disabled)
+on|off)
 	/etc/rc.d/init.d/sshd reload
 	;;
 esac
