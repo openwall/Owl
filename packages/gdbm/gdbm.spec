@@ -1,9 +1,9 @@
-# $Id: Owl/packages/gdbm/gdbm.spec,v 1.9 2004/07/01 12:34:42 solar Exp $
+# $Id: Owl/packages/gdbm/gdbm.spec,v 1.10 2004/07/20 21:59:22 mci Exp $
 
 Summary: A GNU set of database routines which use extensible hashing.
 Name: gdbm
 Version: 1.8.0
-Release: owl8
+Release: owl9
 License: GPL
 Group: System Environment/Libraries
 Source: ftp://ftp.gnu.org/gnu/gdbm/gdbm-%version.tar.gz
@@ -11,6 +11,7 @@ Patch0: gdbm-1.8.0-rh-header.diff
 Patch1: gdbm-1.8.0-rh-owl-Makefile.diff
 PreReq: /sbin/ldconfig
 Prefix: %_prefix
+BuildRequires: sed >= 4.0.9
 BuildRoot: /override/%name-%version
 
 %description
@@ -54,11 +55,7 @@ rm -rf $RPM_BUILD_ROOT
 cd $RPM_BUILD_ROOT
 
 # Fix devel package whackyness
-mv .%_libdir/libgdbm.la{,.orig}
-sed "s,^\(libdir=\).*$,\1'%_libdir'," \
-	< .%_libdir/libgdbm.la.orig \
-	> .%_libdir/libgdbm.la
-rm .%_libdir/libgdbm.la.orig
+sed -i "s,^\(libdir=\).*$,\1'%_libdir'," .%_libdir/libgdbm.la
 
 ln -sf gdbm/gdbm.h .%_oldincludedir/gdbm.h
 ln -sf libgdbm.so.2.0.0 .%_libdir/libgdbm.so
@@ -92,6 +89,9 @@ fi
 %_mandir/man3/*
 
 %changelog
+* Wed Jul 21 2004 Michail Litvak <mci@owl.openwall.com> 1.8.0-owl9
+- Use sed -i.
+
 * Thu Jul 01 2004 Solar Designer <solar@owl.openwall.com> 1.8.0-owl8
 - Fixed whacky libdir statement in libgdbm.la (patch from Andreas Ericsson
 with minor changes).
