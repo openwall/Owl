@@ -1,4 +1,4 @@
-# $Id: Owl/packages/chkconfig/chkconfig.spec,v 1.9 2004/11/23 22:40:45 mci Exp $
+# $Id: Owl/packages/chkconfig/chkconfig.spec,v 1.10 2005/01/12 15:44:43 galaxy Exp $
 
 %define BUILD_NTSYSV 0
 %define INSTALL_ALTERNATIVES 0
@@ -6,7 +6,7 @@
 Summary: A system tool for maintaining the /etc/rc.d/rc*.d hierarchy.
 Name: chkconfig
 Version: 1.3.9
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 Source: ftp://ftp.redhat.com/pub/redhat/code/chkconfig/%name-%version.tar.gz
@@ -47,17 +47,26 @@ LIBMHACK=-lm
 %endif
 %endif
 
-make RPM_OPT_FLAGS="$RPM_OPT_FLAGS" LIBMHACK=$LIBMHACK
+%__make \
+    CC="%__cc" \
+    CFLAGS="$RPM_OPT_FLAGS -D_GNU_SOURCE" \
+    LIBMHACK="$LIBMHACK" \
 
 %install
 rm -rf %buildroot
-make instroot=%buildroot MANDIR=%_mandir install
+%__make install \
+    instroot="%buildroot" \
+    BINDIR="/sbin" \
+    USRSBINDIR="%_sbindir" \
+    MANDIR="%_mandir" \
+    ALTDIR="%_var/%_lib/alternatives" \
+    ALTDATADIR="%_sysconfdir/alternatives"
 
-mkdir -p %buildroot/etc/rc.d/init.d
-ln -s rc.d/init.d %buildroot/etc/init.d
+mkdir -p %buildroot%_sysconfdir/rc.d/init.d
+ln -s rc.d/init.d %buildroot%_sysconfdir/init.d
 for n in 0 1 2 3 4 5 6; do
-	mkdir -p %buildroot/etc/rc.d/rc${n}.d
-	ln -s rc.d/rc${n}.d %buildroot/etc/rc${n}.d
+	mkdir -p %buildroot%_sysconfdir/rc.d/rc${n}.d
+	ln -s rc.d/rc${n}.d %buildroot%_sysconfdir/rc${n}.d
 done
 
 # Remove unpackaged files
@@ -74,15 +83,15 @@ rm %buildroot%_mandir/man8/ntsysv.8*
 %files -f %name.lang
 %defattr(-,root,root)
 /sbin/chkconfig
-/etc/init.d
-/etc/rc.d/init.d
-/etc/rc[0-6].d
-/etc/rc.d/rc[0-6].d
+%_sysconfdir/init.d
+%_sysconfdir/rc.d/init.d
+%_sysconfdir/rc[0-6].d
+%_sysconfdir/rc.d/rc[0-6].d
 %_mandir/*/chkconfig*
 
 %if %INSTALL_ALTERNATIVES
-%dir /etc/alternatives
-%dir /var/lib/alternatives
+%dir %_sysconfdir/alternatives
+%dir %_var/%_lib/alternatives
 %_sbindir/update-alternatives
 %_sbindir/alternatives
 %_mandir/*/alternatives*
@@ -91,11 +100,15 @@ rm %buildroot%_mandir/man8/ntsysv.8*
 %if %BUILD_NTSYSV
 %files -n ntsysv
 %defattr(-,root,root)
-/usr/sbin/ntsysv
+%_sbindir/ntsysv
 %_mandir/*/ntsysv.8*
 %endif
 
 %changelog
+* Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.3.9-owl2
+- Used %__cc macro and configured build more correctly.
+- Clean up the spec.
+
 * Fri Feb 06 2004 Michail Litvak <mci@owl.openwall.com> 1.3.9-owl1
 - 1.3.9
 
