@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ncurses/ncurses.spec,v 1.4 2000/11/06 04:09:48 solar Exp $
+# $Id: Owl/packages/ncurses/ncurses.spec,v 1.5 2000/11/08 05:51:47 solar Exp $
 
 %define 	major		5
 %define 	oldmajor	4
@@ -6,17 +6,19 @@
 Summary: 	A CRT screen handling and optimization package.
 Name: 		ncurses
 Version: 	5.2
-Release: 	3owl
+Release: 	4owl
 Copyright: 	distributable
 Group: 		System Environment/Libraries
 URL: 		http://dickey.his.com/ncurses/ncurses.html
 Source0: 	ftp://dickey.his.com/ncurses/ncurses-%{version}.tar.gz
-Source2: 	ncurses-linux
-Source3: 	ncurses-linux-m
-Source4: 	ncurses-resetall.sh
-Patch0:		ncurses-5.0-rh-setuid2.diff
-Patch1:		ncurses-5.2-owl-glibc-enable_secure.diff
-Patch2:		ncurses-5.2-owl-fixes.diff
+Source1: 	ncurses-linux
+Source2: 	ncurses-linux-m
+Source3: 	ncurses-resetall.sh
+Patch0:		ftp://dickey.his.com/ncurses/5.2/ncurses-5.2-20001028.patch.gz
+Patch1:		ftp://dickey.his.com/ncurses/5.2/ncurses-5.2-20001104.patch.gz
+Patch2:		ncurses-5.0-rh-setuid2.diff
+Patch3:		ncurses-5.2-owl-glibc-enable_secure.diff
+Patch4:		ncurses-5.2-owl-fixes.diff
 BuildRoot: 	/var/rpm-buildroot/%{name}-root
 
 %description
@@ -54,6 +56,8 @@ built against Red Hat Linux 6.2.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
+%patch4 -p1
 
 %build
 CFLAGS="%{optflags} -DPURE_TERMINFO"
@@ -61,7 +65,7 @@ CFLAGS="%{optflags} -DPURE_TERMINFO"
 %configure \
 	--with-normal --with-shared --without-debug --without-profile \
 	--without-cxx --without-ada \
-	--disable-root-environ
+	--disable-root-environ --with-ospeed=speed_t
 make
 
 %install
@@ -74,8 +78,8 @@ for I in curses unctrl eti form menu panel term; do
 done
 
 %ifarch sparc
-install -c -m644 %SOURCE2 $RPM_BUILD_ROOT/usr/share/terminfo/l/linux
-install -c -m644 %SOURCE3 $RPM_BUILD_ROOT/usr/share/terminfo/l/linux-m
+install -c -m 644 %{SOURCE1} $RPM_BUILD_ROOT/usr/share/terminfo/l/linux
+install -c -m 644 %{SOURCE2} $RPM_BUILD_ROOT/usr/share/terminfo/l/linux-m
 %endif
 
 strip -R .comment $RPM_BUILD_ROOT/usr/bin/* || :
@@ -83,7 +87,7 @@ strip -R .comment --strip-unneeded $RPM_BUILD_ROOT/usr/lib/*.so.[0-9].*
 make clean -C test
 
 # the resetall script
-install -c -m 755 %{SOURCE4} $RPM_BUILD_ROOT/usr/bin/resetall
+install -c -m 755 %{SOURCE3} $RPM_BUILD_ROOT/usr/bin/resetall
 
 # compat links
 ln -s libform.so.%{version} $RPM_BUILD_ROOT/usr/lib/libform.so.%{oldmajor}
@@ -124,6 +128,10 @@ ln -s libpanel.so.%{version} $RPM_BUILD_ROOT/usr/lib/libpanel.so.%{oldmajor}
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Wed Nov 08 2000 Solar Designer <solar@owl.openwall.com>
+- ncurses-5.2-20001104 patch which adds --with-ospeed and bugfixes.
+- --with-ospeed=speed_t for compatibility with libtermcap.
+
 * Mon Nov 06 2000 Solar Designer <solar@owl.openwall.com>
 - --disable-root-environ to enable the recent security fixes.
 - Added a patch to use glibc's __libc_enable_secure.
@@ -293,4 +301,3 @@ rm -rf $RPM_BUILD_ROOT
 
 * Tue Jul 08 1997 Erik Troan <ewt@redhat.com>
 - built against glibc, linked shared libs against -lc
-
