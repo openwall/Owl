@@ -12,6 +12,10 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/06/13	Owl/doc/de/*
+New files: German translations of the documentation, from Matthias
+Schmidt <schmidt at owl.openwall.com>.
+
 2002/06/10 -
 2002/06/13	Package: modutils
 Updated to 2.4.16.
@@ -744,6 +748,6 @@ we've released.  Thus, this isn't a security update.
 
 2001/05/15	Owl/doc/fr/*
 New files: French translations of the documentation, from Denis Ducamp
-<Denis.Ducamp at hsc.fr>.
+<Denis.Ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.100 2002/06/12 21:28:56 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.101 2002/06/13 00:50:28 solar Exp $
