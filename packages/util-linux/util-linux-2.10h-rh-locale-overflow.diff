@@ -1,0 +1,94 @@
+diff -ur util-linux-2.10h.orig/fdisk/fdisk.c util-linux-2.10h/fdisk/fdisk.c
+--- util-linux-2.10h.orig/fdisk/fdisk.c	Mon Mar 20 22:06:38 2000
++++ util-linux-2.10h/fdisk/fdisk.c	Thu Jul 13 11:05:22 2000
+@@ -130,7 +130,8 @@
+ 			})
+ 
+ 
+-#define LINE_LENGTH	80
++/* XXX PLEASE INTERNATIONALIZE ME PROPERLY */
++#define LINE_LENGTH	256
+ #define offset(b, n)	((struct partition *)((b) + 0x1be + \
+ 				(n) * sizeof(struct partition)))
+ #define sector(s)	((s) & 0x3f)
+@@ -284,19 +285,19 @@
+ "  ...\n");
+ 			break;
+ 		case unable_to_open:
+-			sprintf(error, _("Unable to open %s\n"), disk_device);
++			snprintf(error, sizeof(error), _("Unable to open %s\n"), disk_device);
+ 			break;
+ 		case unable_to_read:
+-			sprintf(error, _("Unable to read %s\n"), disk_device);
++			snprintf(error, sizeof(error), _("Unable to read %s\n"), disk_device);
+ 			break;
+ 		case unable_to_seek:
+-			sprintf(error, _("Unable to seek on %s\n"),disk_device);
++			snprintf(error, sizeof(error), _("Unable to seek on %s\n"),disk_device);
+ 			break;
+ 		case unable_to_write:
+-			sprintf(error, _("Unable to write %s\n"), disk_device);
++			snprintf(error, sizeof(error), _("Unable to write %s\n"), disk_device);
+ 			break;
+ 		case ioctl_error:
+-			sprintf(error, _("BLKGETSIZE ioctl failed on %s\n"),
++			snprintf(error, sizeof(error), _("BLKGETSIZE ioctl failed on %s\n"),
+ 				disk_device);
+ 			break;
+ 		case out_of_memory:
+@@ -1614,7 +1615,7 @@
+ 		for (i = 0; i < partitions; i++)
+ 			first[i] = (cround(first[i]) - 1) * units_per_sector;
+ 
+-	sprintf(mesg, _("First %s"), str_units(SINGULAR));
++	snprintf(mesg, sizeof (mesg), _("First %s"), str_units(SINGULAR));
+ 	do {
+ 		temp = start;
+ 		for (i = 0; i < partitions; i++) {
+@@ -1673,7 +1674,7 @@
+ 	if (cround(start) == cround(limit)) {
+ 		stop = limit;
+ 	} else {
+-		sprintf(mesg, _("Last %s or +size or +sizeM or +sizeK"),
++		snprintf(mesg, sizeof (mesg), _("Last %s or +size or +sizeM or +sizeK"),
+ 			str_units(SINGULAR));
+ 		stop = read_int(cround(start), cround(limit), cround(limit),
+ 				cround(start), mesg);
+@@ -1758,7 +1759,7 @@
+ 				"an extended partition first\n"));
+ 	} else {
+ 		char c, line[LINE_LENGTH];
+-		sprintf(line, _("Command action\n   %s\n   p   primary "
++		snprintf(line, sizeof (line), _("Command action\n   %s\n   p   primary "
+ 			"partition (1-4)\n"), extended_offset ?
+ 			_("l   logical (5 or over)") : _("e   extended"));
+ 		while (1)
+diff -ur util-linux-2.10h.orig/fdisk/fdiskbsdlabel.c util-linux-2.10h/fdisk/fdiskbsdlabel.c
+--- util-linux-2.10h.orig/fdisk/fdiskbsdlabel.c	Tue Mar 21 03:47:51 2000
++++ util-linux-2.10h/fdisk/fdiskbsdlabel.c	Thu Jul 13 11:07:06 2000
+@@ -272,14 +272,14 @@
+   end = xbsd_dlabel.d_secperunit - 1;
+ #endif
+ 
+-  sprintf (mesg, _("First %s"), str_units(SINGULAR));
++  snprintf (mesg, sizeof(mesg), _("First %s"), str_units(SINGULAR));
+   begin = read_int (bsd_cround (begin), bsd_cround (begin), bsd_cround (end),
+ 		    0, mesg);
+ 
+   if (display_in_cyl_units)
+     begin = (begin - 1) * xbsd_dlabel.d_secpercyl;
+ 
+-  sprintf (mesg, _("Last %s or +size or +sizeM or +sizeK"),
++  snprintf (mesg, sizeof(mesg), _("Last %s or +size or +sizeM or +sizeK"),
+ 	   str_units(SINGULAR));
+   end = read_int (bsd_cround (begin), bsd_cround (end), bsd_cround (end),
+ 		  bsd_cround (begin), mesg);
+@@ -587,7 +587,7 @@
+   char prompt[256];
+   char l;
+ 
+-  sprintf (prompt, _("Partition (a-%c): "), 'a' + max - 1);
++  snprintf (prompt, sizeof(prompt), _("Partition (a-%c): "), 'a' + max - 1);
+   do
+      l = tolower (read_char (prompt));
+   while (l < 'a' || l > 'a' + max - 1);
