@@ -1,10 +1,10 @@
-# $Id: Owl/build/Makefile,v 1.15.2.1 2003/12/19 19:15:31 solar Exp $
+# $Id: Owl/build/Makefile,v 1.15.2.2 2003/12/19 19:21:54 solar Exp $
 
 # The Owl branch to build and/or install, specified by its tag in the
 # CVS.  This should only be set to build and/or install a non-current
 # branch.
 #
-TAG=Owl-1_1-release
+TAG=Owl-1_1-stable
 
 MODULE=Owl
 BRANCH=$(if $(TAG),$(TAG),$(MODULE))
