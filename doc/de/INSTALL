@@ -76,4 +76,10 @@ Man kann nun den boot loader konfigurieren, der unter Owl verfügbar
 ist (LILO oder SILO, kommt auf die Architektur an), oder einen
 bereits installierten (falls vorhanden) verwenden.
 
-$Id: Owl/doc/de/INSTALL,v 1.6 2002/09/01 12:21:20 schmidt Exp $
+Das Übersetzen des Kernels und die Einrichtung des boot loaders muss
+in einer chroot-Umgebung im Verzeichnis des neu installierten User-
+land geschehen:
+
+	chroot /owl
+
+$Id: Owl/doc/de/INSTALL,v 1.7 2002/09/17 14:31:51 schmidt Exp $
