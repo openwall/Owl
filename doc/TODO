@@ -271,15 +271,6 @@ Package it, fixing the various temporary file handling issues and
 considering enhancements from VVV (http://mutt.org.ua).
 
 
-	nc (netcat).
-
-[PRIORITY: low]
-[ASSIGNED: mci@]
-Port it from OpenBSD, fixing various code paths taken on error.  Have
-it default to AF_INET (not AF_UNSPEC) until glibc gets fixed (see the
-reference in telnet.spec for more information on this problem).
-
-
 	openssh.
 
 [PRIORITY: medium]
@@ -623,4 +614,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.8 2002/12/25 17:53:39 solar Exp $
+$Id: Owl/doc/TODO,v 1.9 2002/12/29 21:40:01 solar Exp $
