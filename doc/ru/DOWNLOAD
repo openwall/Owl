@@ -1,0 +1,64 @@
+Домашняя страница Owl:
+
+http://www.openwall.com/Owl/
+
+Здесь вы можете заказать Owl на CD с доставкой по всему миру и тем самым
+поддержать этот проект.
+
+Owl доступна на следующих официальных зеркалах:
+
+ftp://ftp1.ru.openwall.com/pub/Owl/	(Россия)
+ftp://ftp2.ru.openwall.com/pub/Owl/	(Россия)
+ftp://ftp.pl.openwall.com/pub/Owl/	(Польша)
+ftp://ftp.ua.openwall.com/pub/Owl/	(Украина)
+ftp://ftp.cz.openwall.com/pub/Owl/	(Чешская Республика)
+ftp://gd.tuwien.ac.at/opsys/linux/Owl/	(Австрия)
+	http://gd.tuwien.ac.at/opsys/linux/Owl/
+	rsync://gd.tuwien.ac.at/opsys/linux/Owl/
+ftp://ftp.mathematik.uni-marburg.de/pub/mirror/openwall/Owl/	(Германия)
+ftp://ftp.ca.openwall.com/pub/Owl/	(Канада)
+ftp://ftp.wiretapped.net/pub/Owl/	(Австралия)
+
+Каждому релизу или ветке Owl соответствует отдельный каталог со
+следующим содержимым:
+
+native.tar.gz		дерево CVS (программы, обновления, build specs)
+sources			исходные тексты (оригинальные версии, без обновлений)
+kernel			исходные тексты ядра и рекомендуемые обновления
+Owl.mtree		спецификация mtree(8) для вышеуказанного
+i?86, sparc*, alpha*	готовые (бинарные) пакеты Owl
+iso			ISO-9660 образы компакт-дисков Owl
+
+В некоторых каталогах погут использоваться символьные ссылки на общие для
+разных веток файлы, поэтому для того, чтобы получить полную копию одной
+ветки, следует указать вашему FTP-клиенту "разыменовывать ссылки". При
+использовании lftp (входит в комплект Owl) используйте команду "mirror -L".
+
+Аутентичность описаний mtree(8) для Owl обеспечивается использованием
+электронных подписей (PGP). Открытый ключ для проверки доступен здесь:
+
+http://www.openwall.com/signatures/
+
+Вам обязательно понадобится дерево CVS - даже если вы собираетесь ставить
+только готовые бинарные пакеты. Для того, чтобы (пере-)собрать Owl из
+исходных текстов, вам потребуются и дерево CVS, и дерево source.
+
+Подробная документация (включающая в себя файлы BUILD и INSTALL) находится
+в дереве CVS (каталог Owl/doc/).
+
+CVS дерево Owl, помимо отдельных выпусков native.tar.gz на FTP, также
+доступно посредством анонимного CVS сервера: 
+
+CVSROOT=:pserver:anoncvs:anoncvs@anoncvs.owl.openwall.com:/cvs
+
+или посредством SSH с такими настройками: 
+
+CVS_RSH=ssh
+CVSROOT=anoncvs@anoncvs.owl.openwall.com:/cvs
+
+Пароль - "anoncvs", имя модуля для checkout - "Owl". Вы можете использовать
+сжатие при любом способе доступа - обычно посредством указания параметра
+-z3 для CVS или параметра -C для SSH клиента. 
+
+
+$Id: Owl/doc/ru/DOWNLOAD,v 1.1 2002/09/20 07:32:09 gremlin Exp $

@@ -1,0 +1,17 @@
+Домашняя страница Owl:
+
+http://www.openwall.com/Owl/
+
+Для обмена опытом по использованию Owl и обсуждения возникающих вопросов
+создан список рассылки. Чтобы подписаться, отправьте пустое сообщение по
+адресу owl-users-subscribe@lists.openwall.com. Архив списка доступен на MARC:
+http://marc.theaimsgroup.com/?l=owl-users
+
+В дополнение к списку рассылки owl-users, Вы можете адресовать свои комментарии
+непосредственно разработчикам по адресу <feedback at owl.openwall.com>.
+
+Сообщения о возможных проблемах, связанных с безопасностью, просим
+отправлять на <security at owl.openwall.com>, а об остальных ошибках -
+на <bugs at owl.openwall.com>.
+
+$Id: Owl/doc/ru/CONTACT,v 1.1 2002/09/20 07:32:09 gremlin Exp $
