@@ -1,4 +1,4 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.39 2003/11/16 21:59:14 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.40 2003/11/17 00:16:22 solar Exp $
 
 Summary: Post Office Protocol (POP3) server.
 Name: popa3d
@@ -26,7 +26,7 @@ security as its primary design goal.
 cp $RPM_SOURCE_DIR/params.h params.h
 
 %build
-make CFLAGS="-c -Wall $RPM_OPT_FLAGS -DHAVE_PROGNAME" \
+make CFLAGS="-Wall $RPM_OPT_FLAGS -DHAVE_PROGNAME" \
 	LIBS="-lpam -lpam_userpass"
 
 %install

@@ -2,8 +2,8 @@ CC = gcc
 LD = gcc
 RM = rm -f
 MKDIR = mkdir -p
-INSTALL = install
-CFLAGS = -c -Wall -O2 -fomit-frame-pointer
+INSTALL = install -c
+CFLAGS = -Wall -O2 -fomit-frame-pointer
 # You may use OpenSSL's MD5 routines instead of the ones supplied here
 #CFLAGS += -DHAVE_OPENSSL
 LDFLAGS = -s
@@ -46,10 +46,10 @@ popa3d: $(OBJS)
 	$(LD) $(LDFLAGS) $(OBJS) $(LIBS) -o popa3d
 
 md5/md5.o: md5/md5.c md5/md5.h
-	$(CC) $(CFLAGS) md5/md5.c -o md5/md5.o
+	$(CC) $(CFLAGS) -c md5/md5.c -o md5/md5.o
 
-.c.o:
-	$(CC) $(CFLAGS) $*.c
+.c.o: params.h
+	$(CC) $(CFLAGS) -c $*.c
 
 install: $(PROJ)
 	$(MKDIR) -m 755 $(DESTDIR)$(SBINDIR) $(DESTDIR)$(MANDIR)/man8
