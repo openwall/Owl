@@ -1,20 +1,18 @@
-# $Id: Owl/packages/libnids/libnids.spec,v 1.1 2001/04/17 03:38:46 solar Exp $
+# $Id: Owl/packages/libnids/libnids.spec,v 1.2 2002/02/04 15:39:12 mci Exp $
 
-Summary:	NIDS E-component
-Name:		libnids
-Version:	1.16
-Release:	1owl
-Epoch:		1
-License:	GPL
-Group:		Libraries
-Source0:	http://www.packetfactory.net/Projects/Libnids/dist/%{name}-%{version}.tar.gz
-Patch0:		%{name}-%{version}-pld-conf.diff
-Patch1:		%{name}-%{version}-owl-pcap062.diff
-URL:		http://www.packetfactory.net/Projects/Libnids/
-BuildRequires:	autoconf
-BuildRequires:	libpcap-devel
-BuildRequires:	libnet-devel
-BuildRoot:	/var/rpm-buildroot/%{name}-%{version}
+Summary: NIDS E-component
+Name: libnids
+Version: 1.16
+Release: owl1
+Epoch: 1
+License: GPL
+Group: Libraries
+Source: http://www.packetfactory.net/Projects/Libnids/dist/%{name}-%{version}.tar.gz
+URL: http://www.packetfactory.net/Projects/Libnids/
+Patch0: %{name}-%{version}-pld-conf.diff
+Patch1: %{name}-%{version}-owl-pcap062.diff
+BuildRequires: autoconf, libpcap-devel, libnet-devel
+BuildRoot: /override/%{name}-%{version}
 
 %description
 libnids is an implementation of an E-component of Network Intrusion
@@ -23,9 +21,9 @@ offers IP defragmentation, TCP stream assembly and TCP port scan
 detection.
 
 %package devel
-Summary:	Header files and development documentation for libnids
-Group:		Development/Libraries
-Requires:	%{name} = %{version}
+Summary: Header files and development documentation for libnids
+Group: Development/Libraries
+Requires: %{name} = %{version}
 
 %description devel
 Header files and development documentation for libnids.
@@ -66,6 +64,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/lib*.a
 
 %changelog
+* Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions
+
 * Tue Apr 17 2001 Solar Designer <solar@owl.openwall.com>
 - Minor spec file cleanups.
 
@@ -73,34 +74,3 @@ rm -rf $RPM_BUILD_ROOT
 - adapted pld specs
 - patch to enable usage of libpcap-0.6.2 "any" device
 - -Wl,-soname adjusted
-
-* Tue Dec 19 2000 PLD Team <pld-list@pld.org.pl>
-All persons listed below can be reached at <cvs_login>@pld.org.pl
-
-Revision 1.8  2000/12/19 02:45:51  kloczek
-- added autoconf to BuildRequires,
-- cosmetics in %install.
-
-Revision 1.7  2000/12/18 20:29:55  areq
-- updated to 1.16
-
-Revision 1.6  2000/11/20 17:55:26  misiek
-don't duplicate patches
-
-Revision 1.5  2000/11/20 17:24:27  baggins
-- release 3
-
-Revision 1.4  2000/11/20 17:24:10  baggins
-- added system-libs patch
-- lect configure find libpcap
-
-Revision 1.3  2000/11/20 12:51:36  baggins
-- release 2
-- let configure find libnet
-
-Revision 1.2  2000/11/02 12:17:14  kloczek
-- spec adapterized,
-- do not compress man pages.
-
-Revision 1.1  2000/11/02 09:05:52  misiek
-new spec

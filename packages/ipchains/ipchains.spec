@@ -1,9 +1,9 @@
-# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.2 2001/12/10 01:30:26 solar Exp $
+# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.3 2002/02/04 13:30:47 mci Exp $
 
 Summary: Tools for managing Linux kernel packet filtering capabilities.
 Name: ipchains
 Version: 1.3.10
-Release: 10owl
+Release: owl10
 License: GPL
 Group: System Environment/Base
 URL: http://netfilter.samba.org/ipchains/
@@ -59,7 +59,7 @@ rm -rf $RPM_BUILD_ROOT
 /sbin/chkconfig --add ipchains
 
 %preun
-if [ $1 -eq 0 ] ; then
+if [ $1 -eq 0 ]; then
 	/sbin/chkconfig --del ipchains
 fi
 
@@ -72,6 +72,9 @@ fi
 %{_mandir}/man*/*
 
 %changelog
+* Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions
+
 * Mon Dec 10 2001 Solar Designer <solar@owl.openwall.com>
 - More cleanups to the startup script.
 - Corrected the package description.

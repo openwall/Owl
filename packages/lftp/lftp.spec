@@ -1,10 +1,11 @@
-# $Id: Owl/packages/lftp/lftp.spec,v 1.7 2001/04/25 21:39:03 solar Exp $
+# $Id: Owl/packages/lftp/lftp.spec,v 1.8 2002/02/04 14:23:36 mci Exp $
 
 Summary: sophisticated command line file transfer program
 Name: lftp
 Version: 2.3.8
-Release: 6owl
-Copyright: GPL
+Release: owl6
+License: GPL
+Group: Applications/Internet
 Source0: ftp://ftp.yars.free.net/pub/software/unix/net/ftp/client/lftp/%{name}-%{version}.tar.bz2
 Source1: lftpget.1
 Patch0: lftp-2.3.8-deb-conf.diff
@@ -12,13 +13,12 @@ Patch1: lftp-2.3.8-deb-doc.diff
 Patch2: lftp-2.3.8-deb-makefile.diff
 Patch3: lftp-2.3.8-deb-po.diff
 Patch4: lftp-2.3.8-owl-addr.diff
-Group: Applications/Internet
-Prefix: %{_prefix}
-BuildRoot: /var/rpm-buildroot/%{name}-buildroot
 Requires: readline >= 4.1
 Requires: openssl >= 0.9.5a-1owl
+Prefix: %{_prefix}
 BuildPreReq: readline-devel
 BuildPreReq: openssl-devel
+BuildRoot: /override/%{name}-%{version}
 
 %description
 lftp is a file retrieving tool that supports FTP and HTTP protocols under
@@ -59,9 +59,9 @@ unset LINGUAS || :
 make CFLAGS="$RPM_OPT_FLAGS"
 
 %install
-rm -rf %{buildroot}
-make install-strip DESTDIR=%{buildroot}
-install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/usr/man/man1/
+rm -rf $RPM_BUILD_ROOT
+make install-strip DESTDIR=$RPM_BUILD_ROOT
+install -m 644 $RPM_SOURCE_DIR/lftpget.1 $RPM_BUILD_ROOT/usr/man/man1/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -91,6 +91,9 @@ fi
 %{_datadir}/locale/*/*/*
 
 %changelog
+* Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions
+
 * Thu Apr 26 2001 Solar Designer <solar@owl.openwall.com>
 - New release number for upgrades after building against OpenSSL 0.9.6a.
 

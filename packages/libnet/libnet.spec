@@ -1,18 +1,18 @@
-# $Id: Owl/packages/libnet/libnet.spec,v 1.2 2001/06/17 03:44:10 solar Exp $
+# $Id: Owl/packages/libnet/libnet.spec,v 1.3 2002/02/04 14:24:37 mci Exp $
 
-Summary:	"libpwrite" Network Routine Library
-Name:		libnet
-Version:	1.0.2a
-Release:	2owl
-Epoch:		1
-License:	BSD
-Group:		Libraries
-Source0:	http://www.packetfactory.net/libnet/dist/%{name}-%{version}.tar.gz
-Patch0:		libnet-1.0.2a-pld-shared.diff
-Patch1:		libnet-1.0.2a-owl-alpha-targets.diff
-URL:		http://www.packetfactory.net/libnet/
-BuildRequires:	libpcap-devel, autoconf
-BuildRoot:	/var/rpm-buildroot/%{name}-%{version}
+Summary: "libpwrite" Network Routine Library
+Name: libnet
+Version: 1.0.2a
+Release: owl2
+Epoch: 1
+License: BSD
+Group: Libraries
+URL: http://www.packetfactory.net/libnet/
+Source: http://www.packetfactory.net/libnet/dist/%{name}-%{version}.tar.gz
+Patch0: libnet-1.0.2a-pld-shared.diff
+Patch1: libnet-1.0.2a-owl-alpha-targets.diff
+BuildRequires: libpcap-devel, autoconf
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The Network Library provides a simple API for commonly used low-level
@@ -25,9 +25,9 @@ link layer as well as a host of supplementary and complementary
 functionality.
 
 %package devel
-Summary:	Header files and development documentation for libnet
-Group:		Development/Libraries
-Requires:	%{name} = %{version}
+Summary: Header files and development documentation for libnet
+Group: Development/Libraries
+Requires: %{name} = %{version}
 
 %description devel
 Header files and development documentation for libnet.
@@ -78,6 +78,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/lib*.a
 
 %changelog
+* Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions
+
 * Sun Jun 17 2001 Solar Designer <solar@owl.openwall.com>
 - Support alpha* targets other than plain alpha (don't even try to check
 for unaligned accesses when building for an Alpha).
@@ -88,21 +91,3 @@ for unaligned accesses when building for an Alpha).
 * Wed Apr 11 2001 Rafal Wojtczuk <nergal@owl.openwall.com>
 - adapted pld package to libnet version 1.0.2a
 - -Wl,-soname adjusted
-
-* Mon Nov 20 2000 PLD Team <pld-list@pld.org.pl>
-All persons listed below can be reached at <cvs_login>@pld.org.pl
-
-Revision 1.13  2000/11/20 17:02:41  baggins
-- release 3
-- fixed .so link
-
-Revision 1.12  2000/11/20 12:49:03  baggins
-- release 2
-- use RPM_OPT_FLAGS
-
-Revision 1.11  2000/11/02 13:38:17  kloczek
-- spec adapterized,
-- do not compress man pages.
-
-Revision 1.10  2000/11/02 08:33:31  misiek
-new spec

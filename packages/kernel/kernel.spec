@@ -1,25 +1,25 @@
-# $Id: Owl/packages/kernel/kernel.spec,v 1.7 2000/11/16 13:24:01 solar Exp $
+# $Id: Owl/packages/kernel/kernel.spec,v 1.8 2002/02/04 13:45:28 mci Exp $
 
 Summary: Fake Linux kernel package for RH compatibility
 Name: kernel
 Version: 2.2.999fake
-Release: 2owl
-Copyright: public domain
+Release: owl2
+License: public domain
 Group: System Environment/Base
-Source0: BuildASM-sparc.sh
-Prereq: basesystem
-ExclusiveOS: Linux
+Source: BuildASM-sparc.sh
+PreReq: basesystem
 %ifarch sparc sparcv9
 BuildArchitectures: %{_arch}
 %else
 BuildArchitectures: noarch
 %endif
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
+ExclusiveOS: Linux
+BuildRoot: /override/%{name}-%{version}
 
 %package headers
 Summary: Symlinks for the Linux kernel header files
 Group: Development/System
-Prereq: basesystem
+PreReq: basesystem
 
 %description
 This package exists for RH compatibility only.  It doesn't provide an
@@ -58,6 +58,9 @@ test -L /usr/include/asm && rm -f /usr/include/asm || :
 %endif
 
 %changelog
+* Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions
+
 * Thu Nov 16 2000 Solar Designer <solar@owl.openwall.com>
 - Imported the BuildASM script from RH to produce the magic headers
 needed to build 32-bit packages when a sparc64 kernel is installed.

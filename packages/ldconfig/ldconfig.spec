@@ -1,25 +1,24 @@
-# $Id: Owl/packages/ldconfig/Attic/ldconfig.spec,v 1.4 2000/11/30 20:02:19 solar Exp $
+# $Id: Owl/packages/ldconfig/Attic/ldconfig.spec,v 1.5 2002/02/04 13:48:13 mci Exp $
 
 %define reldate 1999-07-31
 
-Summary: 	Creates a shared library cache and maintains symlinks for ld.so.
-Name: 		ldconfig
-Version: 	1.9.10
-Release: 	2owl
-Copyright: 	GPL
-Group: 		System Environment/Base
-Source: 	ftp://ftp.valinux.com/pub/support/hjl/glibc/ldconfig-%{reldate}.tar.gz
-Exclusiveos: 	Linux
-Patch0: 	ldconfig-1.9.10-rh-help.diff
-Patch1: 	ldconfig-1.9.10-owl-not_in_glibc.diff
-Prereq: 	basesystem
-Buildroot: 	/var/rpm-buildroot/%{name}-root
+Summary: Creates a shared library cache and maintains symlinks for ld.so.
+Name: ldconfig
+Version: 1.9.10
+Release: owl2
+License: GPL
+Group: System Environment/Base
+Source: ftp://ftp.valinux.com/pub/support/hjl/glibc/ldconfig-%{reldate}.tar.gz
+Patch0: ldconfig-1.9.10-rh-help.diff
+Patch1: ldconfig-1.9.10-owl-not_in_glibc.diff
+PreReq: basesystem
+BuildRoot: /override/%{name}-%{version}
 
 %description
-Ldconfig is a basic system program which determines run-time link
-bindings between ld.so and shared libraries. Ldconfig scans a running
+ldconfig is a basic system program which determines run-time link
+bindings between ld.so and shared libraries.  ldconfig scans a running
 system and sets up the symbolic links that are used to load shared
-libraries properly. It also creates a cache (/etc/ld.so.cache) which
+libraries properly.  It also creates a cache (/etc/ld.so.cache) which
 speeds the loading of programs which use shared libraries.
 
 %prep
@@ -50,6 +49,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(600,root,root) %ghost /etc/ld.so.conf
 
 %changelog
+* Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions
+
 * Sat Oct 28 2000 Solar Designer <solar@owl.openwall.com>
 - Create an empty /etc/ld.so.conf, so that its permissions are set here.
 
