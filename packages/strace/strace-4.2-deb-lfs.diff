@@ -1,0 +1,121 @@
+--- strace-4.2.orig/aclocal.m4
++++ strace-4.2/aclocal.m4
+@@ -292,7 +292,7 @@
+ [AC_TRY_COMPILE([#include <asm/stat.h>],
+ [struct stat64 st;],
+ ac_cv_type_stat64=yes,
+-ac_cv_type_stat64no)])
++ac_cv_type_stat64=no)])
+ AC_MSG_RESULT($ac_cv_type_stat64)
+ if test "$ac_cv_type_stat64" = yes
+ then
+--- strace-4.2.orig/process.c
++++ strace-4.2/process.c
+@@ -49,11 +49,6 @@
+ #include <machine/reg.h>
+ #endif /* SUNOS4 */
+ 
+-#if HAVE_LINUX_PTRACE_H
+-#undef PTRACE_SYSCALL
+-#include <linux/ptrace.h>
+-#endif 
+-
+ #ifdef HAVE_SYS_REG_H
+ # include <sys/reg.h>
+ #ifndef PTRACE_PEEKUSR
+@@ -62,7 +57,11 @@
+ #ifndef PTRACE_POKEUSR
+ # define PTRACE_POKEUSR PTRACE_POKEUSER
+ #endif
++#elif defined(HAVE_LINUX_PTRACE_H)
++#undef PTRACE_SYSCALL
++#include <linux/ptrace.h>
+ #endif
++
+ 
+ #ifdef LINUX
+ #include <asm/posix_types.h>
+--- strace-4.2.orig/signal.c
++++ strace-4.2/signal.c
+@@ -43,11 +43,6 @@
+ #include <sys/ucontext.h>
+ #endif /* SVR4 */
+ 
+-#if HAVE_LINUX_PTRACE_H
+-#undef PTRACE_SYSCALL
+-#include <linux/ptrace.h>
+-#endif 
+-
+ #ifdef HAVE_SYS_REG_H
+ # include <sys/reg.h>
+ #ifndef PTRACE_PEEKUSR
+@@ -56,7 +51,11 @@
+ #ifndef PTRACE_POKEUSR
+ # define PTRACE_POKEUSR PTRACE_POKEUSER
+ #endif
++#elif defined(HAVE_LINUX_PTRACE_H)
++#undef PTRACE_SYSCALL
++#include <linux/ptrace.h>
+ #endif
++
+ 
+ #ifdef LINUX
+ 
+--- strace-4.2.orig/syscall.c
++++ strace-4.2/syscall.c
+@@ -46,17 +46,16 @@
+ #include <asm/reg.h>
+ #endif
+ 
+-#if HAVE_LINUX_PTRACE_H
+-#undef PTRACE_SYSCALL
+-#include <linux/ptrace.h>
+-#endif 
+-
+ #ifdef HAVE_SYS_REG_H
+ #include <sys/reg.h>
+ #ifndef PTRACE_PEEKUSR
+ # define PTRACE_PEEKUSR PTRACE_PEEKUSER
+ #endif
++#elif defined(HAVE_LINUX_PTRACE_H)
++#undef PTRACE_SYSCALL
++#include <linux/ptrace.h>
+ #endif
++
+ 
+ #ifndef SYS_ERRLIST_DECLARED
+ extern int sys_nerr;
+--- strace-4.2.orig/util.c
++++ strace-4.2/util.c
+@@ -44,17 +44,12 @@
+ #include <link.h>
+ #endif /* SUNOS4 */
+ 
+-#if defined(linux)
+-#include <linux/ptrace.h>
+-#endif 
+-
+ #ifdef HAVE_SYS_REG_H
+ #include <sys/reg.h>
+ # define PTRACE_PEEKUSR PTRACE_PEEKUSER
+-#endif
+-
+-#ifdef HAVE_SYS_PTRACE_H
+-#include <sys/ptrace.h>
++#elif defined(HAVE_LINUX_PTRACE_H)
++#undef PTRACE_SYSCALL
++#include <linux/ptrace.h>
+ #endif
+ 
+ #ifdef SUNOS4_KERNEL_ARCH_KLUDGE
+--- strace-4.2.orig/configure
++++ strace-4.2/configure
+@@ -2270,7 +2270,7 @@
+   echo "configure: failed program was:" >&5
+   cat conftest.$ac_ext >&5
+   rm -rf conftest*
+-  ac_cv_type_stat64no
++  ac_cv_type_stat64=no
+ fi
+ rm -f conftest*
+ fi

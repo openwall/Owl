@@ -1,0 +1,17 @@
+--- strace-4.2/stream.c.jj	Thu Dec 23 09:20:15 1999
++++ strace-4.2/stream.c	Wed May 24 11:26:40 2000
+@@ -34,13 +34,8 @@
+ 
+ #if defined(linux)
+ #include <sys/poll.h>
++#include <stropts.h>
+ 
+-#define RS_HIPRI 1
+-struct strbuf {
+-        int     maxlen;                 /* no. of bytes in buffer */
+-        int     len;                    /* no. of bytes returned */
+-        char    *buf;                   /* pointer to data */
+-};
+ #define MORECTL 1
+ #define MOREDATA 2
+ 
