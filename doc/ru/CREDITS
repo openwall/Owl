@@ -5,6 +5,7 @@ Alexandr D. Kanevskiy <kad@owl.openwall.com>
 Michail Litvak <mci@owl.openwall.com>
 Rafal Wojtczuk <nergal@owl.openwall.com>
 Jarno Huuskonen <jhuuskon@owl.openwall.com>
+Dmitry V. Levin <ldv@owl.openwall.com>
 
 Французский перевод:
 
@@ -20,4 +21,4 @@ Gremlin from Kremlin <gremlin@owl.openwall.com>
 
 Проект "Virtual Unix" предоставил начальное финансирование Owl.
 
-$Id: Owl/doc/ru/CREDITS,v 1.4 2003/01/20 13:06:15 solar Exp $
+$Id: Owl/doc/ru/CREDITS,v 1.5 2003/04/19 17:07:17 gremlin Exp $
