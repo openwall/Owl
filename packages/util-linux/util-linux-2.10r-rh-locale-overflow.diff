@@ -1,17 +1,17 @@
 diff -ur util-linux-2.10h.orig/fdisk/fdisk.c util-linux-2.10h/fdisk/fdisk.c
 --- util-linux-2.10h.orig/fdisk/fdisk.c	Mon Mar 20 22:06:38 2000
 +++ util-linux-2.10h/fdisk/fdisk.c	Thu Jul 13 11:05:22 2000
-@@ -130,7 +130,8 @@
+@@ -66,7 +66,8 @@
  			})
  
  
 -#define LINE_LENGTH	80
 +/* XXX PLEASE INTERNATIONALIZE ME PROPERLY */
-+#define LINE_LENGTH	256
- #define offset(b, n)	((struct partition *)((b) + 0x1be + \
++#define LINE_LENGTH   256
+ #define pt_offset(b, n)	((struct partition *)((b) + 0x1be + \
  				(n) * sizeof(struct partition)))
  #define sector(s)	((s) & 0x3f)
-@@ -284,19 +285,19 @@
+@@ -222,19 +223,19 @@
  "  ...\n");
  			break;
  		case unable_to_open:
@@ -36,7 +36,7 @@ diff -ur util-linux-2.10h.orig/fdisk/fdisk.c util-linux-2.10h/fdisk/fdisk.c
  				disk_device);
  			break;
  		case out_of_memory:
-@@ -1614,7 +1615,7 @@
+@@ -1641,7 +1642,7 @@
  		for (i = 0; i < partitions; i++)
  			first[i] = (cround(first[i]) - 1) * units_per_sector;
  
@@ -45,7 +45,7 @@ diff -ur util-linux-2.10h.orig/fdisk/fdisk.c util-linux-2.10h/fdisk/fdisk.c
  	do {
  		temp = start;
  		for (i = 0; i < partitions; i++) {
-@@ -1673,7 +1674,7 @@
+@@ -1700,7 +1701,7 @@
  	if (cround(start) == cround(limit)) {
  		stop = limit;
  	} else {
@@ -54,7 +54,7 @@ diff -ur util-linux-2.10h.orig/fdisk/fdisk.c util-linux-2.10h/fdisk/fdisk.c
  			str_units(SINGULAR));
  		stop = read_int(cround(start), cround(limit), cround(limit),
  				cround(start), mesg);
-@@ -1758,7 +1759,7 @@
+@@ -1787,7 +1788,7 @@
  				"an extended partition first\n"));
  	} else {
  		char c, line[LINE_LENGTH];

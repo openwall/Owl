@@ -38,17 +38,17 @@ diff -urN util-linux-2.10h.orig/login-utils/chfn.c util-linux-2.10h/login-utils/
 diff -urN util-linux-2.10h.orig/login-utils/chsh.c util-linux-2.10h/login-utils/chsh.c
 --- util-linux-2.10h.orig/login-utils/chsh.c	Tue Mar 21 02:17:55 2000
 +++ util-linux-2.10h/login-utils/chsh.c	Thu Jul 13 12:16:30 2000
-@@ -80,6 +80,9 @@
- extern int setpwnam P((struct passwd *pwd));
+@@ -73,6 +73,9 @@
+ 
  #define memzero(ptr, size) memset((char *) ptr, 0, size)
  
 +#define fixed_iscntrl(c) \
-+	(((c) & 0x7f) < 0x20 || (c) == 0x7f)
++   (((c) & 0x7f) < 0x20 || (c) == 0x7f)
 +
- int main (argc, argv)
-     int argc;
-     char *argv[];
-@@ -95,9 +98,12 @@
+ int
+ main (int argc, char *argv[]) {
+     char *cp, *shell, *oldshell;
+@@ -86,9 +89,12 @@
  #endif
  
      sanitize_env();
@@ -64,7 +64,7 @@ diff -urN util-linux-2.10h.orig/login-utils/chsh.c util-linux-2.10h/login-utils/
  
      /* whoami is the program name for error messages */
      whoami = argv[0];
-@@ -333,7 +339,7 @@
+@@ -324,7 +330,7 @@
  	    printf (_("%s: '%c' is not allowed.\n"), whoami, c);
  	    return (-1);
  	}

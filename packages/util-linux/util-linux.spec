@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.10 2000/12/29 07:47:52 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.11 2001/01/23 20:41:01 kad Exp $
 
 %define BUILD_MOUNT	'yes'
 %define BUILD_LOSETUP	'yes'
@@ -7,22 +7,21 @@
 
 Summary: A collection of basic system utilities.
 Name: util-linux
-Version: 2.10h
-Release: 8owl
+Version: 2.10r
+Release: 1owl
 Copyright: distributable
 Group: System Environment/Base
-Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%{version}.tar.gz
+Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%{version}.tar.bz2
 Source1: chsh-chfn.pam
 Source2: chsh-chfn.control
 Source3: mount.control
 Source4: newgrp.control
 Source5: write.control
 Patch0: util-linux-2.10h-owl-MCONFIG.diff
-Patch1: util-linux-2.10h-owl-Makefiles.diff
-Patch2: util-linux-2.10h-owl-restrict-locale.diff
-Patch3: util-linux-2.10h-owl-write.diff
-Patch4: util-linux-2.10h-owl-linux-2.2.18-hack.diff
-Patch5: util-linux-2.10h-rh-locale-overflow.diff
+Patch1: util-linux-2.10r-owl-Makefiles.diff
+Patch2: util-linux-2.10r-owl-restrict-locale.diff
+Patch3: util-linux-2.10r-owl-write.diff
+Patch4: util-linux-2.10r-rh-locale-overflow.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: owl-control < 2.0
 Obsoletes: fdisk tunelp
@@ -69,7 +68,6 @@ to query the status of a loop device.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
 
 %build
 unset LINGUAS || :
@@ -96,7 +94,7 @@ rm -f $RPM_BUILD_ROOT/sbin/clock
 ln -s hwclock $RPM_BUILD_ROOT/sbin/clock
 
 # We do not want dependencies on csh
-chmod 644 $RPM_BUILD_ROOT/usr/lib/getopt/*
+chmod 644 $RPM_BUILD_ROOT/usr/share/misc/getopt/*
 
 %if "%{BUILD_CHSH_CHFN}"=="'yes'"
 install -m 600 ${RPM_SOURCE_DIR}/chsh-chfn.pam $RPM_BUILD_ROOT/etc/pam.d/chsh
@@ -198,7 +196,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/man/man1/write.1*
 /usr/man/man1/getopt.1*
 
-/usr/lib/getopt
+/usr/share/misc/getopt
 
 /bin/dmesg
 
@@ -262,7 +260,7 @@ rm -rf $RPM_BUILD_ROOT
 
 /bin/more
 /usr/man/man1/more.1*
-/usr/lib/more.help
+/usr/share/misc/more.help
 
 %ifarch %ix86 alpha
 /usr/man/man8/fsck.minix.8*
@@ -315,6 +313,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Tue Jan 23 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- 2.10r
+
 * Fri Dec 29 2000 Solar Designer <solar@owl.openwall.com>
 - Dirty hack for builds with Linux 2.2.18 headers.
 

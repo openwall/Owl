@@ -1,0 +1,46 @@
+--- util-linux-2.10r.orig/misc-utils/write.c	Tue Mar 21 02:15:28 2000
++++ util-linux-2.10r/misc-utils/write.c	Wed Aug  2 21:09:43 2000
+@@ -79,9 +79,11 @@
+ 	int msgsok, myttyfd;
+ 	char tty[MAXPATHLEN], *mytty;
+ 
++#if 0
+ 	setlocale(LC_ALL, "");
+ 	bindtextdomain(PACKAGE, LOCALEDIR);
+ 	textdomain(PACKAGE);
++#endif
+ 
+ 	/* check that sender has write enabled */
+ 	if (isatty(fileno(stdin)))
+@@ -293,12 +297,13 @@
+ 	char path[MAXPATHLEN], host[MAXHOSTNAMELEN], line[512];
+ 
+ 	/* Determine our login name(s) before the we reopen() stdout */
+-	if ((pwd = getpwuid(myuid)) != NULL)
+-		pwuid = pwd->pw_name;
+-	else
+-		pwuid = "???";
+-	if ((login = getlogin()) == NULL)
+-		login = pwuid;
++	login = getlogin();
++        if (!(pwd = getpwuid(myuid))) {
++                perror("getpwuid");
++                exit(1);
++	}
++        if (!login)
++                login = pwd->pw_name;
+ 
+ 	if (strlen(tty) + 6 > sizeof(path))
+ 		exit(1);
+@@ -319,9 +324,9 @@
+ 	nows = ctime(&now);
+ 	nows[16] = '\0';
+ 	printf("\r\n\007\007\007");
+-	if (strcmp(login, pwuid))
++	if (strcmp(login, pwd->pw_name))
+ 		(void)printf(_("Message from %s@%s (as %s) on %s at %s ..."),
+-			     login, host, pwuid, mytty, nows + 11);
++			     login, host, pwd->pw_name, mytty, nows + 11);
+ 	else
+ 		(void)printf(_("Message from %s@%s on %s at %s ..."),
+ 			     login, host, mytty, nows + 11);

@@ -23,7 +23,7 @@ diff -ur util-linux-2.10h.orig/login-utils/Makefile util-linux-2.10h/login-utils
  
  install-putils: $(BIN.PUTILS) $(USRBIN.PUTILS) $(USRSBIN.PUTILS)
  	$(INSTALLDIR) $(BINDIR) $(USRBINDIR) $(USRSBINDIR)
--	$(INSTALLSUID) $(BIN.PUTILS) $(BINDIR)
+-	$(INSTALLBIN) $(BIN.PUTILS) $(BINDIR)
  	$(INSTALLSUID) $(USRBIN.PUTILS) $(USRBINDIR)
  	$(INSTALLBIN) $(USRSBIN.PUTILS) $(USRSBINDIR)
  	(cd $(USRSBINDIR); ln -sf vipw vigr)
