@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.12 2003/09/14 13:07:41 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.13 2003/09/14 13:16:12 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -91,7 +91,8 @@ mkdir -p $RPM_BUILD_ROOT/var/lib/dhcp/{dhcpd,dhcrelay,dhclient}/state
 install -m 700 $RPM_SOURCE_DIR/dhcpd.init $RPM_BUILD_ROOT/etc/rc.d/init.d/dhcpd
 install -m 644 $RPM_SOURCE_DIR/dhcpd.conf.sample $RPM_BUILD_ROOT/
 
-touch $RPM_BUILD_ROOT/var/lib/dhcp/{dhcpd,dhclient}/state/dhcpd.leases
+touch $RPM_BUILD_ROOT/var/lib/dhcp/dhcpd/state/dhcpd.leases
+touch $RPM_BUILD_ROOT/var/lib/dhcp/dhclient/state/dhclient.leases
 
 cat <<EOF > $RPM_BUILD_ROOT/etc/sysconfig/dhcpd
 # Additional command line options here
