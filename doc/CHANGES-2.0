@@ -15,8 +15,11 @@ change logs for the packages themselves.
 2004/01/14	Package: screen
 Updated to 4.0.2.
 
+2004/01/10	Package: john
+Corrected a segfault with --stdin introduced with John 1.6.34.2.
+
 2004/01/05	Package: sysklogd
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.2 2004/01/15 04:49:10 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.3 2004/01/15 05:08:57 solar Exp $
