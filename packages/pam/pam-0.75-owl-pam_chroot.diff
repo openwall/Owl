@@ -1,0 +1,51 @@
+diff -ur pam-0.75.orig/modules/pam_chroot/README pam-0.75/modules/pam_chroot/README
+--- pam-0.75.orig/modules/pam_chroot/README	Sun Oct  8 10:04:50 2000
++++ pam-0.75/modules/pam_chroot/README	Sun Oct  7 09:35:44 2001
+@@ -25,3 +25,6 @@
+ in order for it to work at all.  (This includes configuration and logging
+ files.)  If configured incorrectly, this module may potentially render the
+ service unusable and, under some circumstances, pose a security risk.
++
++In particular, the new root directory and all of its parent directories must
++not be writable by anyone but root.
+diff -ur pam-0.75.orig/modules/pam_chroot/chroot.conf pam-0.75/modules/pam_chroot/chroot.conf
+--- pam-0.75.orig/modules/pam_chroot/chroot.conf	Tue Oct  3 02:53:01 2000
++++ pam-0.75/modules/pam_chroot/chroot.conf	Sun Oct  7 09:29:57 2001
+@@ -1,4 +1,4 @@
+ # /etc/security/chroot.conf
+ # format:
+ # username_regex	chroot_dir
+-#matthew		/home/matthew
++#matthew		/home
+diff -ur pam-0.75.orig/modules/pam_chroot/pam_chroot.c pam-0.75/modules/pam_chroot/pam_chroot.c
+--- pam-0.75.orig/modules/pam_chroot/pam_chroot.c	Wed Jul  4 04:08:24 2001
++++ pam-0.75/modules/pam_chroot/pam_chroot.c	Sun Oct  7 09:42:47 2001
+@@ -19,6 +19,7 @@
+ #include <errno.h>
+ #include <ctype.h>
+ #include <limits.h>
++#include <sys/stat.h>
+ 
+ #define	CONFIG	"/etc/security/chroot.conf"
+ 
+@@ -102,6 +103,20 @@
+ 		regfree(&name_regex);
+ 
+ 		if(!err) {
++			struct stat st;
++
++			if (stat(dir, &st) == -1) {
++				syslog(LOG_ERR, "stat(%s) failed: %s",
++						dir, strerror(errno));
++				ret = onerr;
++			} else
++			/* Catch the most common misuse */
++			if (st.st_uid != 0 ||
++			    (st.st_mode & (S_IWGRP | S_IWOTH))) {
++				syslog(LOG_ERR, "%s is writable by non-root",
++						dir);
++				ret = onerr;
++			} else
+ 			if(chdir(dir) == -1) {
+ 				syslog(LOG_ERR, "chdir(%s) failed: %s",
+ 						dir, strerror(errno));

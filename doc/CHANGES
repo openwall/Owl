@@ -12,6 +12,14 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/10/07	Package: pam
+Updated to Red Hat's 0.75-10 plus our usual patches.  Replaced
+pam_listfile with Michael Tokarev's implementation (see
+http://archives.neohapsis.com/archives/pam-list/2000-12/0084.html).
+Patched the new pam_chroot to catch the most common misuses which
+would result in a security problem, updated its README and example
+configuration file to discourage such misuses.
+
 2001/10/06	Package: gpm
 Updated to 1.19.6 with some additional fixes.
 
@@ -326,4 +334,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp@hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.31 2001/10/06 01:34:58 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.32 2001/10/07 07:46:29 solar Exp $

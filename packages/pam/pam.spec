@@ -1,25 +1,23 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.14 2001/07/30 02:32:32 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.15 2001/10/07 07:46:29 solar Exp $
 
 Summary: A security tool which provides authentication for applications.
 Name: pam
-Version: 0.72
-Release: 14owl
-Copyright: GPL or BSD
+Version: 0.75
+Release: 10owl
+License: GPL or BSD
 Group: System Environment/Base
-Source0: pam-redhat-%{version}.tar.gz
-Source1: other.pamd
-Patch0: pam-0.72-owl-pam_pwdb-hack.diff
-Patch1: pam-0.72-owl-pam_pwdb-expiration.diff
-Patch2: pam-0.72-owl-pwdb_chkpwd.diff
-Patch3: pam-0.72-owl-no-cracklib.diff
-Patch4: pam-0.72-owl-install-no-root.diff
+Source0: pam-redhat-%{version}-10.tar.bz2
+Source1: pam_listfile.c
+Patch0: pam-0.75-owl-pam_pwdb.diff
+Patch1: pam-0.75-owl-pam_chroot.diff
+Patch2: pam-0.75-owl-no-cracklib.diff
+Patch3: pam-0.75-alt-read_string.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 BuildRequires: glibc-devel >= 2.1.3-13owl
 Requires: glibc >= 2.1.3-13owl
 Requires: pwdb >= 0.61-1owl
-Obsoletes: pamconfig
-Url: http://www.us.kernel.org/pub/linux/libs/pam/index.html
-
+URL: http://www.kernel.org/pub/linux/libs/pam/
+ 
 %description
 PAM (Pluggable Authentication Modules) is a system security tool
 which allows system administrators to set authentication policy
@@ -30,36 +28,44 @@ without having to recompile programs which do authentication.
 
 %prep
 %setup -q
-rm -rf modules/pam_console
+rm -rf modules/pam_{console,cracklib}
+rm -f modules/pam_pwdb/{md5*,bigcrypt.*}
+cp $RPM_SOURCE_DIR/pam_listfile.c modules/pam_listfile/
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
-ln -sf defs/redhat.defs default.defs
+for f in modules/pam_*/README; do
+	d="${f%/*}"
+	install -p -m 644 "$f" "doc/txts/README.${d##*/}"
+done
+autoconf
 
 %build
-touch .freezemake
-make RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
+CFLAGS="$RPM_OPT_FLAGS -fPIC" \
+./configure \
+	--prefix=/ \
+	--infodir=%{_infodir} \
+	--mandir=%{_mandir} \
+	--enable-static-libpam \
+	--enable-fakeroot=$RPM_BUILD_ROOT
+make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/lib/security
-mkdir -p $RPM_BUILD_ROOT/usr/{include/security,man/man3,man/man8}
-make install FAKEROOT=$RPM_BUILD_ROOT LDCONFIG=:
-test -f $RPM_BUILD_ROOT/lib/security/pam_deny.so || exit 1
-install -m 644 libpamc/include/security/pam_client.h $RPM_BUILD_ROOT/usr/include/security
+make install
+
+install -m 644 modules/pam_chroot/chroot.conf $RPM_BUILD_ROOT/etc/security/
 
 mkdir $RPM_BUILD_ROOT/sbin/chkpwd.d
-mv $RPM_BUILD_ROOT/sbin/*_chkpwd $RPM_BUILD_ROOT/sbin/chkpwd.d
+mv $RPM_BUILD_ROOT/sbin/*_chkpwd $RPM_BUILD_ROOT/sbin/chkpwd.d/
 ln -s /sbin/chkpwd.d/pwdb_chkpwd $RPM_BUILD_ROOT/sbin/pwdb_chkpwd
 
-install -d -m 755 $RPM_BUILD_ROOT/etc/pam.d
+mkdir -m 755 $RPM_BUILD_ROOT/etc/pam.d
 install -m 644 other.pamd $RPM_BUILD_ROOT/etc/pam.d/other
 
-install -m 644 doc/man/*.3 $RPM_BUILD_ROOT/usr/man/man3
-install -m 644 doc/man/*.8 $RPM_BUILD_ROOT/usr/man/man8
-gzip -9nf $RPM_BUILD_ROOT/usr/man/man[38]/*
+install -m 644 doc/man/*.3 $RPM_BUILD_ROOT%{_mandir}/man3/
+install -m 644 doc/man/*.8 $RPM_BUILD_ROOT%{_mandir}/man8/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -77,29 +83,82 @@ grep ^chkpwd: /etc/group &>/dev/null || groupadd -g 163 chkpwd
 %files
 %defattr(-,root,root)
 %dir /etc/pam.d
-%config /etc/pam.d/other
+%config(noreplace) /etc/pam.d/other
+#%config(noreplace) /etc/pam.d/system-auth
 %doc Copyright
-%doc doc/html doc/ps doc/txts
+%doc doc/{html,ps,txts}
 %doc doc/specs/rfc86.0.txt
-/lib/libpam.so.0.*
-/lib/libpam.so
-/lib/libpam_misc.so.0.*
-/lib/libpam_misc.so
-/lib/libpam_misc.a
-/usr/include/security/*.h
+/lib/libpam.so.*
+/lib/libpam_misc.so.*
+
 %attr(710,root,chkpwd) %dir /sbin/chkpwd.d/
 %attr(700,root,root) /sbin/chkpwd.d/pwdb_chkpwd
 /sbin/pwdb_chkpwd
-/lib/security
-%config /etc/security/access.conf
-%config /etc/security/time.conf
-%config /etc/security/group.conf
-%config /etc/security/limits.conf
-%config /etc/security/pam_env.conf
-/usr/man/man3/*
-/usr/man/man8/*
+
+/sbin/pam_tally
+
+%dir /lib/security
+/lib/security/pam_access.so
+/lib/security/pam_chroot.so
+/lib/security/pam_deny.so
+/lib/security/pam_env.so
+/lib/security/pam_filter.so
+/lib/security/pam_ftp.so
+/lib/security/pam_group.so
+/lib/security/pam_issue.so
+/lib/security/pam_lastlog.so
+/lib/security/pam_limits.so
+/lib/security/pam_listfile.so
+/lib/security/pam_localuser.so
+/lib/security/pam_mail.so
+/lib/security/pam_mkhomedir.so
+/lib/security/pam_motd.so
+/lib/security/pam_nologin.so
+/lib/security/pam_permit.so
+/lib/security/pam_pwdb.so
+/lib/security/pam_rhosts_auth.so
+/lib/security/pam_rootok.so
+/lib/security/pam_securetty.so
+/lib/security/pam_shells.so
+/lib/security/pam_stack.so
+/lib/security/pam_stress.so
+/lib/security/pam_tally.so
+/lib/security/pam_time.so
+/lib/security/pam_unix.so
+/lib/security/pam_unix_acct.so
+/lib/security/pam_unix_auth.so
+/lib/security/pam_unix_passwd.so
+/lib/security/pam_unix_session.so
+/lib/security/pam_userdb.so
+/lib/security/pam_warn.so
+/lib/security/pam_wheel.so
+/lib/security/pam_xauth.so
+/lib/security/pam_filter
+
+%dir /etc/security
+%attr(640,root,wheel) %config(noreplace) /etc/security/access.conf
+%attr(640,root,wheel) %config(noreplace) /etc/security/chroot.conf
+%attr(640,root,wheel) %config(noreplace) /etc/security/group.conf
+%attr(640,root,wheel) %config(noreplace) /etc/security/limits.conf
+%attr(644,root,root) %config(noreplace) /etc/security/pam_env.conf
+%attr(640,root,wheel) %config(noreplace) /etc/security/time.conf
+%{_mandir}/man8/*
+
+/lib/libpam.so
+/lib/libpam_misc.so
+/lib/libpam_misc.a
+/usr/include/security/
+%{_mandir}/man3/*
 
 %changelog
+* Sun Oct 07 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to Red Hat's 0.75-10 plus our usual patches.
+- Replaced pam_listfile with Michael Tokarev's implementation (see
+http://archives.neohapsis.com/archives/pam-list/2000-12/0084.html).
+- Patched the new pam_chroot to catch the most common misuses which would
+result in a security problem, updated its README and example configuration
+file to discourage such misuses.
+
 * Mon Jul 30 2001 Solar Designer <solar@owl.openwall.com>
 - Fixed a double-free bug in pam_pwdb which caused it to segfault after
 successful password changes in some cases.  The bug was specific to Owl.

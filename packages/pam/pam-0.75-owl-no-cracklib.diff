@@ -1,0 +1,100 @@
+diff -ur pam-0.75.orig/configure.in pam-0.75/configure.in
+--- pam-0.75.orig/configure.in	Mon Apr 23 22:14:19 2001
++++ pam-0.75/configure.in	Sun Oct  7 09:48:48 2001
+@@ -206,9 +206,6 @@
+ dnl Linux wants features.h in some of the source files.
+ AC_CHECK_HEADERS(features.h)
+ 
+-dnl For module/pam_cracklib
+-AC_CHECK_HEADERS(crypt.h)
+-
+ dnl For module/pam_userdb
+ AC_CHECK_HEADERS(ndbm.h db.h)
+ dnl I suspect the following two lines are a hack.
+@@ -220,29 +217,7 @@
+ 
+ dnl This following rule should be made conditional upon HAVE_LIBCRYPT
+ dnl being found.
+-
+-dnl Look for cracklib dictionary
+-AC_MSG_CHECKING(path to cracklib dictionary)
+-DICT_DIR_CANDIDATES="/usr/lib /usr/share/dict /usr/share/lib \
+-  /usr/local/lib /usr/local/share/lib"
+-DICT_FILE_CANDIDATES="pw_dict cracklib_dict"
+ CRACKLIB_DICTPATH=""
+-for d in $DICT_DIR_CANDIDATES ; do
+-      for f in $DICT_FILE_CANDIDATES ; do
+-              if test -r $d/$f.hwm ; then
+-                      CRACKLIB_DICTPATH=$d/$f
+-                      break 2
+-              elif test -r $d/dict/$f.hwm ; then
+-                      CRACKLIB_DICTPATH=$d/dict/$f
+-                      break 2
+-              fi
+-      done
+-done
+-if test -z "$CRACKLIB_DICTPATH" ; then
+-      AC_MSG_RESULT(none found)
+-else
+-      AC_MSG_RESULT($CRACKLIB_DICTPATH)
+-fi
+ AC_SUBST(CRACKLIB_DICTPATH)
+ 
+ dnl Set FLAGS, linker options etc. depending on C compiler.
+diff -ur pam-0.75.orig/modules/pam_unix/Makefile pam-0.75/modules/pam_unix/Makefile
+--- pam-0.75.orig/modules/pam_unix/Makefile	Mon Apr 23 22:14:19 2001
++++ pam-0.75/modules/pam_unix/Makefile	Sun Oct  7 09:51:53 2001
+@@ -10,21 +10,6 @@
+ # some options... uncomment to take effect
+ ########################################################################
+ 
+-# Unless someone wants to work out how to make this work with the new
+-# autoconf stuff, you should use a separate module for this type of thing
+-# pam_cracklib perhaps..?
+-# do you want cracklib?
+-#ifeq ($(HAVE_CRACKLIB),yes)
+-#USE_CRACKLIB=-D"USE_CRACKLIB"
+-#endif
+-
+-ifeq ($(shell if [ -f /usr/lib/cracklib_dict.hwm ]; then echo yes ; fi),yes)
+- CRACKLIB_DICTPATH=/usr/lib/cracklib_dict
+-else
+- CRACKLIB_DICTPATH=/usr/share/dict/cracklib_dict
+-endif
+-EXTRAS += -DCRACKLIB_DICTS=\"$(CRACKLIB_DICTPATH)\"
+-
+ # do you want to use lckpwdf?
+ ifeq ($(WITH_LCKPWDF),yes)
+ USE_LCKPWDF=-D"USE_LCKPWDF"
+@@ -48,13 +33,9 @@
+ 
+ ########################################################################
+ 
+-CFLAGS += $(USE_CRACKLIB) $(USE_LCKPWDF) $(NEED_LCKPWDF) $(EXTRAS)
++CFLAGS += $(USE_LCKPWDF) $(NEED_LCKPWDF) $(EXTRAS)
+ LDLIBS = $(EXTRALS) -lcrypt
+ 
+-ifdef USE_CRACKLIB
+-CRACKLIB = -lcrack
+-endif
+-
+ 
+ LIBOBJ = pam_unix_auth.o pam_unix_acct.o pam_unix_sess.o pam_unix_passwd.o \
+ 		support.o
+@@ -109,14 +90,14 @@
+ $(LIBOBJD): $(LIBSRC)
+ 
+ $(LIBSHARED):	$(LIBOBJD)
+-	$(LD_D) -o $@ $(LIBOBJD) $(PLUS) $(CRACKLIB) $(LDLIBS) $(LIBNSL) $(LIBCRYPT)
++	$(LD_D) -o $@ $(LIBOBJD) $(PLUS) $(LDLIBS) $(LIBNSL) $(LIBCRYPT)
+ endif
+ 
+ ifdef STATIC
+ $(LIBOBJS): $(LIBSRC)
+ 
+ $(LIBSTATIC): $(LIBOBJS)
+-	$(LD) -r -o $@ $(LIBOBJS) $(PLUS) $(CRACKLIB) $(LDLIBS) $(LIBNSL) $(LIBCRYPT)
++	$(LD) -r -o $@ $(LIBOBJS) $(PLUS) $(LDLIBS) $(LIBNSL) $(LIBCRYPT)
+ endif
+ 
+ $(CHKPWD): unix_chkpwd.o md5_good.o md5_broken.o \
