@@ -1,0 +1,12 @@
+diff -ur termcap-2.0.8.orig/termcap.c termcap-2.0.8/termcap.c
+--- termcap-2.0.8.orig/termcap.c	Tue Apr 16 07:23:23 1996
++++ termcap-2.0.8/termcap.c	Wed Aug  2 06:03:33 2000
+@@ -108,7 +108,7 @@
+ 		c = *s++ & 0x1f;
+ 
+ 	/* See if we want to translate. */
+-	if ((c & 0x7f) > 31)
++	if ((c & 0x7f) > 31 && c != ':')
+ 		*r++ = c;
+ 	else {
+ 		len = s - start;

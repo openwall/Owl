@@ -1,0 +1,12 @@
+diff -ur termcap-2.0.8.orig/termcap.c termcap-2.0.8/termcap.c
+--- termcap-2.0.8.orig/termcap.c	Tue Apr 16 07:23:23 1996
++++ termcap-2.0.8/termcap.c	Wed Aug  2 05:58:14 2000
+@@ -343,7 +343,7 @@
+   *tcp = NULL;
+ 
+   /* See if we have a TERMCAP environment variable. */
+-  if ((tc = getenv("TERMCAP")) != NULL) {
++  if ((tc = __secure_getenv("TERMCAP")) != NULL) {
+ 	if (*tc == '/')
+ 		tc_file = tc;
+ 	else {
