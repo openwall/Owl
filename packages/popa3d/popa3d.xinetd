@@ -1,0 +1,12 @@
+# default: off
+# description: A POP3 server
+
+service pop3
+{
+	socket_type	= stream
+	protocol	= tcp
+	user		= root
+	wait		= no
+	server		= /usr/sbin/popa3d
+	disable		= yes
+}
