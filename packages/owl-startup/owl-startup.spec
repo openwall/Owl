@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.11 2000/12/20 10:47:10 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.12 2000/12/20 18:59:29 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
 Version: 0.5
-Release: 1owl
+Release: 2owl
 Copyright: GPL
 Group: System Environment/Base
 Source0: initscripts-5.00.tar.gz
@@ -135,9 +135,15 @@ rm -rf $RPM_BUILD_ROOT
 /bin/ipcalc
 /usr/man/man1/usleep.1*
 /usr/man/man1/ipcalc.1*
+%ghost %attr(0664,root,utmp) /var/log/wtmp
+%ghost %attr(0664,root,utmp) /var/run/utmp
 %doc redhat
 
 %changelog
+* Wed Dec 20 2000 Solar Designer <solar@owl.openwall.com>
+- Provide wtmp and utmp as ghosts just so that they don't get removed
+when upgrading from Red Hat's "initscripts" package.
+
 * Thu Dec 07 2000 Solar Designer <solar@owl.openwall.com>
 - Added --pidfile and --expect-user to daemon(), killproc(), and status().
 - Added single and symlinked it as rc1.d/S99single.
