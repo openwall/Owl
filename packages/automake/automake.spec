@@ -1,4 +1,4 @@
-# $Id: Owl/packages/automake/automake.spec,v 1.5 2003/10/29 18:13:55 solar Exp $
+# $Id: Owl/packages/automake/automake.spec,v 1.6 2003/10/29 22:00:31 solar Exp $
 
 Summary: A GNU tool for automatically creating Makefiles.
 Name: automake
@@ -31,11 +31,7 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-
 %makeinstall
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/install-info %_infodir/automake.info.gz %_infodir/dir

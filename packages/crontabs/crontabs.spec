@@ -1,4 +1,4 @@
-# $Id: Owl/packages/crontabs/crontabs.spec,v 1.7 2003/10/29 18:40:33 solar Exp $
+# $Id: Owl/packages/crontabs/crontabs.spec,v 1.8 2003/10/29 22:00:31 solar Exp $
 
 Summary: System crontab files used to schedule the execution of programs.
 Name: crontabs
@@ -46,9 +46,6 @@ mkdir -p $RPM_BUILD_ROOT%_mandir/man8/
 install -m 644 $RPM_SOURCE_DIR/crontab $RPM_BUILD_ROOT/etc/
 install -m 755 run-parts $RPM_BUILD_ROOT/usr/bin/
 install -m 644 run-parts.8 $RPM_BUILD_ROOT%_mandir/man8/
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
