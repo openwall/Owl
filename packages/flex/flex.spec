@@ -1,4 +1,4 @@
-# $Id: Owl/packages/flex/flex.spec,v 1.5 2002/07/07 21:11:41 mci Exp $
+# $Id: Owl/packages/flex/flex.spec,v 1.6 2002/07/07 21:17:31 mci Exp $
 
 Summary: A tool for creating scanners (text pattern recognizers).
 Name: flex
@@ -44,8 +44,8 @@ ln -s flex.1 .%{_mandir}/man1/flex++.1
 ln -s libfl.a .%{_prefix}/lib/libl.a
 popd
 
-mkdir $RPM_BUILD_ROOT/%{_infodir}
-install -m 644 MISC/texinfo/flex.info $RPM_BUILD_ROOT/%{_infodir}
+mkdir ${RPM_BUILD_ROOT}%{_infodir}
+install -m 644 MISC/texinfo/flex.info ${RPM_BUILD_ROOT}%{_infodir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
