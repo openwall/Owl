@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tar/tar.spec,v 1.6 2002/08/05 15:47:34 mci Exp $
+# $Id: Owl/packages/tar/tar.spec,v 1.7 2002/08/05 16:34:34 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
@@ -37,35 +37,41 @@ backups.
 %patch5 -p1
 %patch6 -p1
 
+%{expand:%%define optflags %optflags -Wall -Dlint}
+
 %build
+rm doc/tar.info
 unset LINGUAS || :
 autoconf
 %configure --bindir=/bin --libexecdir=/sbin
-rm doc/tar.info*
 make LIBS=-lbsd
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
 make install \
-	prefix=${RPM_BUILD_ROOT}%{_prefix} \
-	bindir=${RPM_BUILD_ROOT}/bin \
-	libexecdir=${RPM_BUILD_ROOT}/sbin \
-	mandir=${RPM_BUILD_ROOT}%{_mandir} \
-	infodir=${RPM_BUILD_ROOT}%{_infodir}
+	prefix=$RPM_BUILD_ROOT%{_prefix} \
+	bindir=$RPM_BUILD_ROOT/bin \
+	libexecdir=$RPM_BUILD_ROOT/sbin \
+	mandir=$RPM_BUILD_ROOT%{_mandir} \
+	infodir=$RPM_BUILD_ROOT%{_infodir}
 ln -s tar $RPM_BUILD_ROOT/bin/gtar
 
-mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man1
-install -m 644 ${RPM_SOURCE_DIR}/tar.1 ${RPM_BUILD_ROOT}%{_mandir}/man1/
+mkdir -p $RPM_BUILD_ROOT%{_mandir}/man1
+install -m 644 $RPM_SOURCE_DIR/tar.1 $RPM_BUILD_ROOT%{_mandir}/man1/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %post
-grep '^Tar' %{_infodir}/dir &>/dev/null
-if [ $? -eq 0 ]; then
-	mv %{_infodir}/dir %{_infodir}/dir.orig
-	grep -v '^Tar' %{_infodir}/dir.orig > %{_infodir}/dir
+if grep -q '^Tar: ' %{_infodir}/dir; then
+	INFODIRFILE=%{_infodir}/dir
+	if test -L $INFODIRFILE; then
+		INFODIRFILE="`readlink $INFODIRFILE`"
+	fi
+	cp -p $INFODIRFILE $INFODIRFILE.rpmtmp &&
+	grep -v '^Tar: ' $INFODIRFILE > $INFODIRFILE.rpmtmp &&
+	mv $INFODIRFILE.rpmtmp $INFODIRFILE
 fi
 /sbin/install-info %{_infodir}/tar.info.gz %{_infodir}/dir
 
