@@ -5,7 +5,8 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 1.1 and Owl 1.1-stable.
 
-2004/11/23	kernel
+2004/11/23 -
+2004/11/28	kernel; Package: net-tools
 SECURITY FIX	Severity: low to high, local/remote, active/passive
 Updated to Linux 2.4.28-ow1.  Linux 2.4.28, and thus 2.4.28-ow1, fixes
 a number of security-related bugs, including the ELF loader
@@ -179,4 +180,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 2004/01/15	Owl/doc/DOWNLOAD, Owl/doc/*/DOWNLOAD, Owl/doc/fr/CREDITS
 Sync'ed with the minor post-release updates made in Owl-current.
 
-$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.19 2004/11/23 03:31:41 solar Exp $
+$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.20 2004/11/28 16:59:32 solar Exp $
