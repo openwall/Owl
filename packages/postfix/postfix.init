@@ -1,0 +1,70 @@
+#!/bin/sh
+#
+# postfix      This shell script takes care of starting and stopping
+#              postfix.
+#
+# chkconfig: 2345 80 30
+# description: Postfix is a Mail Transport Agent, which is the program \
+#              that moves mail from one machine to another.
+# processname: master
+# config: /etc/postfix/
+# pidfile: /var/spool/postfix/pid/master.pid
+
+# Hacked by jam 25 Feb 99.  Mostly s/sendmail/postfix/g :-)
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Check that networking is up.
+[ ${NETWORKING} = "no" ] && exit 0
+
+[ -f /usr/sbin/postfix ] || exit 0
+
+RETVAL=0
+
+# See how we were called.
+case "$1" in
+  start)
+	# Start daemons.
+	echo -n "Starting postfix: "
+	/usr/sbin/postfix start
+	RETVAL=$?
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/postfix
+	;;
+  stop)
+	# Stop daemons.
+	echo -n "Shutting down postfix: "
+	/usr/sbin/postfix stop
+	RETVAL=$?
+	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/postfix
+	echo
+	;;
+  restart)
+	$0 stop
+	$0 start
+	;;
+  reload)
+	/usr/sbin/postfix reload
+	exit $?
+	;;
+  abort)
+	/usr/sbin/postfix abort
+	exit $?
+	;;
+  flush)
+	/usr/sbin/postfix flush
+	exit $?
+	;;
+  check)
+	/usr/sbin/postfix check
+	exit $?
+	;;
+  *)
+	echo "Usage: postfix {start|stop|restart|reload|abort|flush|check}"
+	exit 1
+esac
+
+exit $RETVAL
