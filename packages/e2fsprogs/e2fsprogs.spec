@@ -1,15 +1,16 @@
-# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.2 2000/08/03 00:57:10 solar Exp $
+# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.3 2000/08/08 02:07:05 solar Exp $
 
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
 Version: 1.18
-Release: 6owl
+Release: 7owl
 Copyright: GPL
 Group: System Environment/Base
 Source: ftp://sunsite.unc.edu/pub/Linux/system/filesystems/ext2/e2fsprogs-%{version}.tar.gz
-Patch0: e2fsprogs-1.18-owl-lost+found-mode.diff
-Patch1: e2fsprogs-1.18-rh-debugfs-y2k.diff
-Patch2: e2fsprogs-1.18-rh-et.diff
+Patch0: ftp://ftp.cistron.nl/pub/people/miquels/misc/e2fsprogs-1.18-spinnerfix.diff
+Patch1: e2fsprogs-1.18-owl-lost+found-mode.diff
+Patch2: e2fsprogs-1.18-rh-debugfs-y2k.diff
+Patch3: e2fsprogs-1.18-rh-et.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Prereq: /sbin/ldconfig
 
@@ -46,6 +47,7 @@ also want to install e2fsprogs.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 autoconf
@@ -140,6 +142,10 @@ fi
 /usr/man/man3/com_err.3*
 
 %changelog
+* Tue Aug 08 2000 Solar Designer <solar@owl.openwall.com>
+- Added a patch by Miquel van Smoorenburg to fix the progress indicator
+in e2fsck.
+
 * Wed Aug 03 2000 Solar Designer <solar@owl.openwall.com>
 - Imported this spec file from RH.
 - Added a patch for the permissions on lost+found.
