@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gdbm/gdbm.spec,v 1.3 2002/02/03 17:20:54 solar Exp $
+# $Id: Owl/packages/gdbm/gdbm.spec,v 1.4 2002/02/03 21:09:55 mci Exp $
 
 Summary: A GNU set of database routines which use extensible hashing.
 Name: gdbm
@@ -8,8 +8,7 @@ License: GPL
 Group: System Environment/Libraries
 Source: ftp://ftp.gnu.org/pub/gnu/gdbm/gdbm-%{version}.tar.gz
 Patch0: gdbm-1.8.0-rh-header.diff
-Patch1: gdbm-1.8.0-rh-fhs.diff
-Patch2: gdbm-1.8.0-rh-cflags.diff
+Patch1: gdbm-1.8.0-rh-owl-Makefile.diff
 Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
 
@@ -35,7 +34,6 @@ necessary if you plan to do development using the gdbm database.
 %setup -q
 %patch0 -p 1
 %patch1 -p 1
-%patch2 -p 1
 
 %{expand:%%define optflags %optflags -Wall}
 %{expand:%%global _includedir %{_includedir}/gdbm}
@@ -91,7 +89,7 @@ fi
 * Fri Feb 01 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions
 - include text docs in binary package
-- patch to handle CFLAGS in Makefile
+- handle CFLAGS and fhs stuff in Makefile
 
 * Sun Aug 06 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import from RH
