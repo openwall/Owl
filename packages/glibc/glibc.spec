@@ -1,12 +1,12 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.22 2001/11/08 00:01:08 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.23 2001/12/14 19:32:22 solar Exp $
 
 %define BUILD_PROFILE 0
 
 Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
-%define crypt_bf_version 0.4.1
-Release: 18owl
+%define crypt_bf_version 0.4.2
+Release: 19owl
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%{version}.tar.gz
@@ -24,6 +24,7 @@ Patch4: glibc-2.1.3-owl-iscntrl.diff
 Patch5: glibc-2.1.3-openbsd-freebsd-owl-fts.diff
 Patch6: glibc-2.1.3-owl-quota.diff
 Patch7: glibc-2.1.3-owl-syslog-ident.diff
+Patch8: glibc-2.1.3-owl-alt-asprintf-error-handling.diff
 Patch10: glibc-2.1.3-rh-libnoversion.diff
 Patch11: glibc-2.1.3-rh-paths.diff
 Patch12: glibc-2.1.3-rh-linuxthreads.diff
@@ -47,6 +48,7 @@ Patch42: glibc-2.1.3-cvs-20000824-md5-align-clean.diff
 Patch43: glibc-2.1.3-cvs-20000926-tmp-warnings.diff
 Patch44: glibc-2.1.3-cvs-20010109-dl.diff
 Patch45: glibc-2.1.3-cvs-20000929-alpha-reloc.diff
+Patch46: glibc-2.1.3-cvs-20011129-glob.diff
 AutoReq: false
 %ifarch alpha
 Provides: ld.so.2
@@ -118,6 +120,7 @@ cp $RPM_SOURCE_DIR/crypt_freesec.c crypt/sysdeps/unix/
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
@@ -143,6 +146,7 @@ cd ..
 %patch43 -p1
 %patch44 -p1
 %patch45 -p1
+%patch46 -p1
 %ifarch sparcv9
 echo 'ASFLAGS-.os += -Wa,-Av8plusa' >> sysdeps/sparc/sparc32/elf/Makefile
 %endif
@@ -171,19 +175,15 @@ cd build-$RPM_ARCH-linux && \
     cd ..
 
 # the man pages for linuxthreads and crypt_blowfish require special attention
-make -C linuxthreads/man
 mkdir -p $RPM_BUILD_ROOT/usr/man/man3
+make -C linuxthreads/man
 install -m 0644 linuxthreads/man/*.3thr $RPM_BUILD_ROOT/usr/man/man3
+make -C crypt_blowfish-%{crypt_bf_version} man
 install -m 0644 crypt_blowfish-%{crypt_bf_version}/*.3 \
 	$RPM_BUILD_ROOT/usr/man/man3
-gzip -9nvf $RPM_BUILD_ROOT/usr/man/man3/*
-for f in \
-    crypt_r crypt_rn crypt_ra \
-    crypt_gensalt crypt_gensalt_rn crypt_gensalt_ra; do
-	ln -s crypt.3.gz $RPM_BUILD_ROOT/usr/man/man3/${f}.3.gz
-done
 
-gzip -9nvf $RPM_BUILD_ROOT/usr/info/libc*
+# Have to compress them explicitly for the filelists we build
+gzip -9nf $RPM_BUILD_ROOT/usr/{man/man3/*,info/libc*}
 
 ln -sf libbsd-compat.a $RPM_BUILD_ROOT/usr/lib/libbsd.a
 
@@ -299,6 +299,16 @@ rm -f *.filelist*
 %endif
 
 %changelog
+* Fri Dec 14 2001 Solar Designer <solar@owl.openwall.com>
+- Back-ported a glob(3) buffer overflow fix from the CVS; the bug has been
+discovered and an initial patch produced by Flavio Veloso of Magnux.
+- Applied fixes to vasprintf(3) (thus affecting asprintf(3) as well) to
+make it behave on errors, changed the semantics to match Todd Miller's
+implementation on *BSD, fixed uses of [v]asprintf(3) in glibc itself to
+handle possible errors.  Thanks to Dmitry V. Levin of ALT Linux for
+discovering and looking into these issues.
+- Updated to crypt_blowfish-0.4.2 (more man page fixes).
+
 * Thu Nov 08 2001 Solar Designer <solar@owl.openwall.com>
 - If syslog(3) is called by a SUID/SGID program without a preceding call to
 openlog(3), don't blindly trust __progname for the syslog ident.

@@ -1,0 +1,202 @@
+diff -ur glibc-2.1.3.orig/libio/vasprintf.c glibc-2.1.3/libio/vasprintf.c
+--- glibc-2.1.3.orig/libio/vasprintf.c	Wed Aug 20 07:40:07 1997
++++ glibc-2.1.3/libio/vasprintf.c	Fri Dec 14 20:47:01 2001
+@@ -45,7 +45,10 @@
+   int ret;
+   string = (char *) malloc (init_string_size);
+   if (string == NULL)
+-    return -1;
++    {
++      *result_ptr = NULL;
++      return -1;
++    }
+ #ifdef _IO_MTSAFE_IO
+   sf._sbf._f._lock = &lock;
+ #endif
+@@ -57,12 +60,20 @@
+   sf._s._free_buffer = (_IO_free_type) free;
+   ret = _IO_vfprintf ((_IO_FILE *) &sf, format, args);
+   if (ret < 0)
+-    return ret;
++    {
++      if (sf._sbf._f._IO_buf_base != NULL)
++	free (sf._sbf._f._IO_buf_base);
++      *result_ptr = NULL;
++      return ret;
++    }
+   *result_ptr = (char *) realloc (sf._sbf._f._IO_buf_base,
+ 				  (sf._sbf._f._IO_write_ptr
+ 				   - sf._sbf._f._IO_write_base) +1);
+   if (*result_ptr == NULL)
+-    *result_ptr = sf._sbf._f._IO_buf_base;
++    {
++      free (sf._sbf._f._IO_buf_base);
++      return -1;
++    }
+   (*result_ptr)[sf._sbf._f._IO_write_ptr-sf._sbf._f._IO_write_base] = '\0';
+   return ret;
+ }
+diff -ur glibc-2.1.3.orig/locale/programs/localedef.c glibc-2.1.3/locale/programs/localedef.c
+--- glibc-2.1.3.orig/locale/programs/localedef.c	Sun Mar 14 19:28:30 1999
++++ glibc-2.1.3/locale/programs/localedef.c	Fri Dec 14 21:49:19 2001
+@@ -133,6 +133,23 @@
+ static const char *normalize_codeset (const char *codeset, size_t name_len);
+ 
+ 
++static void
++__attribute__ ((format (printf, 2, 3)))
++xasprintf (char **string_ptr, const char *format, ...)
++{
++  va_list arg;
++  int done;
++
++  va_start (arg, format);
++  done = vasprintf (string_ptr, format, arg);
++  va_end (arg);
++
++  if (done < 0)
++    error (EXIT_FAILURE, 0, _("memory exhausted"));
++
++  return;
++}
++
+ int
+ main (int argc, char *argv[])
+ {
+@@ -174,6 +191,8 @@
+   /* The parameter describes the output path of the constructed files.
+      If the described files cannot be written return a NULL pointer.  */
+   output_path  = construct_output_path (argv[remaining]);
++  if (output_path == NULL)
++    error (4, errno, "construct_output_path");
+   cannot_write_why = errno;
+ 
+   /* Now that the parameters are processed we have to reset the local
+@@ -254,14 +273,14 @@
+ 	      int fd;
+ 	      struct stat st;
+ 
+-	      asprintf (&fname, LOCALEDIR "/%s/%s", act_add_locdef->name,
++	      xasprintf (&fname, LOCALEDIR "/%s/%s", act_add_locdef->name,
+ 			locale_names[cat]);
+ 	      fd = open (fname, O_RDONLY);
+ 	      if (fd == -1)
+ 		{
+ 		  free (fname);
+ 
+-		  asprintf (&fname, LOCALEDIR "/%s/%s/SYS_%s",
++		  xasprintf (&fname, LOCALEDIR "/%s/%s/SYS_%s",
+ 			    act_add_locdef->name, locale_names[cat],
+ 			    locale_names[cat]);
+ 
+@@ -378,7 +397,7 @@
+     {
+     case ARGP_KEY_HELP_EXTRA:
+       /* We print some extra information.  */
+-      asprintf (&cp, gettext ("\
++      xasprintf (&cp, gettext ("\
+ System's directory for character maps : %s\n\
+                        repertoire maps: %s\n\
+                        locale path    : %s\n\
+@@ -493,9 +512,9 @@
+ 	 the end of the function we need another byte for the trailing
+ 	 '/'.  */
+       if (normal == NULL)
+-	asprintf (&result, "%s/%s%c", LOCALEDIR, path, '\0');
++	xasprintf (&result, "%s/%s%c", LOCALEDIR, path, '\0');
+       else
+-	asprintf (&result, "%s/%.*s%s%s%c", LOCALEDIR, startp - path, path,
++	xasprintf (&result, "%s/%.*s%s%s%c", LOCALEDIR, startp - path, path,
+ 		  normal, endp, '\0');
+     }
+   else
+diff -ur glibc-2.1.3.orig/login/programs/error.c glibc-2.1.3/login/programs/error.c
+--- glibc-2.1.3.orig/login/programs/error.c	Mon Jun  2 06:33:59 1997
++++ glibc-2.1.3/login/programs/error.c	Fri Dec 14 21:03:56 2001
+@@ -49,6 +49,12 @@
+ 
+   if (forked)
+     {
++      if (buffer == NULL)
++	{
++	  syslog (LOG_ERR, "memory exhausted");
++	  status = 1;
++	}
++      else
+       if (errnum == 0)
+ 	syslog (LOG_ERR, "%s", buffer);
+       else
+@@ -56,6 +62,12 @@
+     }
+   else
+     {
++      if (buffer == NULL)
++	{
++	  fprintf (stderr, "memory exhausted\n");
++	  status = 1;
++	}
++      else
+       if (errnum == 0)
+ 	fprintf (stderr, "%s: %s\n", program_invocation_name, buffer);
+       else
+@@ -85,6 +97,12 @@
+ 
+   if (forked)
+     {
++      if (buffer == NULL)
++	{
++	  syslog (LOG_ERR, "memory exhausted");
++	  exit(1);
++	}
++      else
+       if (errnum == 0)
+ 	syslog (LOG_WARNING, "%s", buffer);
+       else
+@@ -92,6 +110,12 @@
+     }
+   else
+     {
++      if (buffer == NULL)
++	{
++	  printf ("%s: memory exhausted\n", program_invocation_name);
++	  exit(1);
++	}
++      else
+       if (errnum == 0)
+ 	printf ("%s: %s\n", program_invocation_name, buffer);
+       else
+diff -ur glibc-2.1.3.orig/login/programs/pt_chown.c glibc-2.1.3/login/programs/pt_chown.c
+--- glibc-2.1.3.orig/login/programs/pt_chown.c	Wed Mar 31 22:09:33 1999
++++ glibc-2.1.3/login/programs/pt_chown.c	Fri Dec 14 21:06:39 2001
+@@ -71,6 +71,7 @@
+   switch (key)
+     {
+     case ARGP_KEY_HELP_PRE_DOC:
++      /* XXX: possible allocation errors */
+       asprintf (&cp, gettext ("\
+ Set the owner, group and access permission of the slave pseudo\
+  terminal corresponding to the master pseudo terminal passed on\
+@@ -81,6 +82,7 @@
+       return cp;
+     case ARGP_KEY_HELP_EXTRA:
+       /* We print some extra information.  */
++      /* XXX: possible allocation errors */
+       asprintf (&cp, gettext ("\
+ The owner is set to the current user, the group is set to `%s',\
+  and the access permission is set to `%o'.\n\n\
+diff -ur glibc-2.1.3.orig/manual/stdio.texi glibc-2.1.3/manual/stdio.texi
+--- glibc-2.1.3.orig/manual/stdio.texi	Wed Feb 23 10:02:56 2000
++++ glibc-2.1.3/manual/stdio.texi	Fri Dec 14 21:16:49 2001
+@@ -1638,7 +1638,11 @@
+ Allocation}) to hold the output, instead of putting the output in a
+ buffer you allocate in advance.  The @var{ptr} argument should be the
+ address of a @code{char *} object, and @code{asprintf} stores a pointer
+-to the newly allocated string at that location.
++to the newly allocated string at that location.  Unlike the official
++glibc implementation of @code{asprintf}, this one has been modified to
++reset the pointer to NULL on any error.  This is also the behavior
++documented for @code{asprintf} on FreeBSD, NetBSD, and OpenBSD.  The
++official glibc @code{asprintf} leaves the pointer undefined on errors.
+ 
+ Here is how to use @code{asprintf} to get the same result as the
+ @code{snprintf} example, but more easily:
