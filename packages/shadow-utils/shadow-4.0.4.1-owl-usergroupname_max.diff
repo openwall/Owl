@@ -1,7 +1,7 @@
-diff -urpN shadow-4.0.4.1.orig/lib/getdef.c shadow-4.0.4.1/lib/getdef.c
---- shadow-4.0.4.1.orig/lib/getdef.c	Wed Sep 29 14:24:38 2004
-+++ shadow-4.0.4.1/lib/getdef.c	Wed Sep 29 14:13:38 2004
-@@ -78,6 +78,7 @@ static struct itemdef def_table[] = {
+diff -urp shadow-4.0.4.1.orig/lib/getdef.c shadow-4.0.4.1/lib/getdef.c
+--- shadow-4.0.4.1.orig/lib/getdef.c	Mon May 12 02:40:08 2003
++++ shadow-4.0.4.1/lib/getdef.c	Thu Nov 11 20:23:41 2004
+@@ -77,6 +77,7 @@ static struct itemdef def_table[] = {
  	{ "GETPASS_ASTERISKS",		NULL },
  	{ "GID_MAX",			NULL },
  	{ "GID_MIN",			NULL },
@@ -9,7 +9,7 @@ diff -urpN shadow-4.0.4.1.orig/lib/getdef.c shadow-4.0.4.1/lib/getdef.c
  	{ "HUSHLOGIN_FILE",		NULL },
  	{ "ISSUE_FILE",			NULL },
  	{ "KILLCHAR",			NULL },
-@@ -120,7 +121,8 @@ static struct itemdef def_table[] = {
+@@ -119,7 +120,8 @@ static struct itemdef def_table[] = {
  	{ "ULIMIT",			NULL },
  	{ "UMASK",			NULL },
  	{ "USERDEL_CMD",		NULL },
@@ -19,7 +19,7 @@ diff -urpN shadow-4.0.4.1.orig/lib/getdef.c shadow-4.0.4.1/lib/getdef.c
  };
  
  #ifndef LOGINDEFS
-diff -urpN shadow-4.0.4.1.orig/libmisc/chkname.c shadow-4.0.4.1/libmisc/chkname.c
+diff -urp shadow-4.0.4.1.orig/libmisc/chkname.c shadow-4.0.4.1/libmisc/chkname.c
 --- shadow-4.0.4.1.orig/libmisc/chkname.c	Mon May 12 05:29:14 2003
 +++ shadow-4.0.4.1/libmisc/chkname.c	Thu Sep 30 08:46:31 2004
 @@ -8,6 +8,7 @@
@@ -71,9 +71,9 @@ diff -urpN shadow-4.0.4.1.orig/libmisc/chkname.c shadow-4.0.4.1/libmisc/chkname.
  		return 0;
  
  	return good_name (name);
-diff -urpN shadow-4.0.4.1.orig/man/login.defs.5 shadow-4.0.4.1/man/login.defs.5
+diff -urp shadow-4.0.4.1.orig/man/login.defs.5 shadow-4.0.4.1/man/login.defs.5
 --- shadow-4.0.4.1.orig/man/login.defs.5	Thu May  1 18:17:39 2003
-+++ shadow-4.0.4.1/man/login.defs.5	Thu Sep 30 08:40:26 2004
++++ shadow-4.0.4.1/man/login.defs.5	Thu Nov 11 20:24:46 2004
 @@ -27,6 +27,9 @@
  .\"
  .\"	$Id: login.defs.5,v 1.12 2003/05/01 18:17:39 kloczek Exp $
@@ -107,15 +107,17 @@ diff -urpN shadow-4.0.4.1.orig/man/login.defs.5 shadow-4.0.4.1/man/login.defs.5
  .SH CROSS REFERENCE
  The following cross reference shows which programs in the shadow password
  suite use which parameters.
-@@ -122,6 +134,7 @@ CHFN_AUTH CHFN_RESTRICT
+@@ -122,6 +134,9 @@ CHFN_AUTH CHFN_RESTRICT
  CHFN_AUTH
  .IP groupadd 12
  GID_MAX GID_MIN
 +GROUPNAME_MAX
++.IP groupmod 12
++GROUPNAME_MAX
  .IP newusers 12
  PASS_MAX_DAYS PASS_MIN_DAYS PASS_WARN_AGE
  UMASK
-@@ -133,11 +146,13 @@ GID_MAX GID_MIN
+@@ -133,11 +148,13 @@ GID_MAX GID_MIN
  PASS_MAX_DAYS PASS_MIN_DAYS PASS_WARN_AGE
  UID_MAX UID_MIN
  UMASK
