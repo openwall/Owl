@@ -1,11 +1,11 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.28 2004/11/23 22:40:45 mci Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.29 2005/01/12 15:55:50 galaxy Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
 Summary: Dynamic Host Configuration Protocol (DHCP) distribution.
 Name: dhcp
 Version: 3.0pl2
-Release: owl8
+Release: owl9
 License: ISC License
 Group: System Environment/Daemons
 URL: http://www.isc.org/products/DHCP/
@@ -17,6 +17,7 @@ Patch1: dhcp-3.0pl2-owl-drop-root.diff
 Patch2: dhcp-3.0pl2-rh-owl-script.diff
 Patch3: dhcp-3.0pl2-owl-warnings.diff
 Patch4: dhcp-3.0pl2-owl-bound.diff
+Patch5: dhcp-3.0pl2-owl-gcc343-fixes.diff
 BuildRoot: /override/%name-%version
 
 %description
@@ -43,7 +44,7 @@ Summary: The ISC DHCP server daemon.
 Group: System Environment/Daemons
 PreReq: %name = %version-%release
 PreReq: /sbin/chkconfig
-Requires: /var/empty
+Requires: %_var/empty
 Obsoletes: dhcpd
 
 %description server
@@ -58,7 +59,7 @@ functionality, with certain restrictions.
 Summary: The ISC DHCP relay.
 Group: System Environment/Daemons
 PreReq: %name = %version-%release
-Requires: /var/empty
+Requires: %_var/empty
 
 %description relay
 DHCP relay is the Internet Software Consortium (ISC) relay agent for
@@ -74,6 +75,7 @@ subnet.  The DHCP relay takes care of this for the client.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %{expand:%%define optflags %optflags -Wall -Wno-unused}
 
@@ -82,29 +84,30 @@ subnet.  The DHCP relay takes care of this for the client.
 %endif
 
 %build
-./configure --copts "$RPM_OPT_FLAGS"
-make CC=gcc DEBUG=
+./configure --copts "$RPM_OPT_FLAGS -D_GNU_SOURCE"
+%__make CC="%__cc" DEBUG=
 
 %install
 rm -rf %buildroot
 mkdir -p %buildroot/etc/{rc.d/init.d}
-make install DESTDIR=%buildroot \
-	ADMMANDIR=%_mandir/man8 \
-	FFMANDIR=%_mandir/man5 \
-	LIBMANDIR=%_mandir/man3 \
-	USRMANDIR=%_mandir/man1
+%__make install \
+	DESTDIR="%buildroot" \
+	ADMMANDIR="%_mandir/man8" \
+	FFMANDIR="%_mandir/man5" \
+	LIBMANDIR="%_mandir/man3" \
+	USRMANDIR="%_mandir/man1"
 
 cd %buildroot
 
-mkdir -p %buildroot/etc/{rc.d/init.d,sysconfig}
-mkdir -p %buildroot/var/lib/dhcp/{dhcpd,dhclient}/state
+mkdir -p %buildroot%_sysconfdir/{rc.d/init.d,sysconfig}
+mkdir -p %buildroot%_var/lib/dhcp/{dhcpd,dhclient}/state
 
-install -m 700 $RPM_SOURCE_DIR/dhcpd.init %buildroot/etc/rc.d/init.d/dhcpd
+install -m 700 $RPM_SOURCE_DIR/dhcpd.init %buildroot%_sysconfdir/rc.d/init.d/dhcpd
 
-touch %buildroot/var/lib/dhcp/dhcpd/state/dhcpd.leases
-touch %buildroot/var/lib/dhcp/dhclient/state/dhclient.leases
+touch %buildroot%_var/lib/dhcp/dhcpd/state/dhcpd.leases
+touch %buildroot%_var/lib/dhcp/dhclient/state/dhclient.leases
 
-cat <<EOF > %buildroot/etc/sysconfig/dhcpd
+cat <<EOF > %buildroot%_sysconfdir/sysconfig/dhcpd
 # Additional command line options here
 DHCPDARGS=
 EOF
@@ -137,26 +140,26 @@ rm %buildroot/var/lib/dhcp/dhclient/state/dhclient.leases
 %endif
 
 %pre
-grep -q ^dhcp: /etc/group || groupadd -g 188 dhcp
-grep -q ^dhcp: /etc/passwd ||
+grep -q ^dhcp: %_sysconfdir/group || groupadd -g 188 dhcp
+grep -q ^dhcp: %_sysconfdir/passwd ||
 	useradd -g dhcp -u 188 -d / -s /bin/false -M dhcp
 
 %pre server
-rm -f /var/run/dhcp.restart
+rm -f %_var/run/dhcp.restart
 if [ $1 -ge 2 ]; then
-	/etc/rc.d/init.d/dhcpd status && touch /var/run/dhcp.restart || :
-	/etc/rc.d/init.d/dhcpd stop || :
+	%_sysconfdir/rc.d/init.d/dhcpd status && touch %_var/run/dhcp.restart || :
+	%_sysconfdir/rc.d/init.d/dhcpd stop || :
 fi
 
 %post server
-if [ -f /var/run/dhcp.restart ]; then
-	/etc/rc.d/init.d/dhcpd start
+if [ -f %_var/run/dhcp.restart ]; then
+	%_sysconfdir/rc.d/init.d/dhcpd start
 fi
-rm -f /var/run/dhcp.restart
+rm -f %_var/run/dhcp.restart
 
 %preun server
 if [ $1 -eq 0 ]; then
-	/etc/rc.d/init.d/dhcpd stop || :
+	%_sysconfdir/rc.d/init.d/dhcpd stop || :
 	/sbin/chkconfig --del dhcpd
 fi
 
@@ -177,29 +180,33 @@ fi
 %_mandir/man5/dhclient.leases.5*
 %_mandir/man8/dhclient.8*
 %_mandir/man8/dhclient-script.8*
-%attr(0700,root,dhcp) %dir /var/lib/dhcp/dhclient
-%attr(0700,root,dhcp) %dir /var/lib/dhcp/dhclient/state
-%attr(0600,root,dhcp) %config /var/lib/dhcp/dhclient/state/dhclient.leases
+%attr(0700,root,dhcp) %dir %_var/lib/dhcp/dhclient
+%attr(0700,root,dhcp) %dir %_var/lib/dhcp/dhclient/state
+%attr(0600,root,dhcp) %config %verify(not size md5 mtime) %_var/lib/dhcp/dhclient/state/dhclient.leases
 %endif
 
 %files server
 %defattr(-,root,root)
-%config /etc/sysconfig/dhcpd
-%config /etc/rc.d/init.d/dhcpd
-/usr/sbin/dhcpd
+%config %_sysconfdir/sysconfig/dhcpd
+%config %_sysconfdir/rc.d/init.d/dhcpd
+%_sbindir/dhcpd
 %_mandir/man5/dhcpd.conf.5*
 %_mandir/man5/dhcpd.leases.5*
 %_mandir/man8/dhcpd.8*
-%attr(0750,root,dhcp) %dir /var/lib/dhcp/dhcpd
-%attr(1770,root,dhcp) %dir /var/lib/dhcp/dhcpd/state
-%attr(0600,dhcp,dhcp) %config /var/lib/dhcp/dhcpd/state/dhcpd.leases
+%attr(0750,root,dhcp) %dir %_var/lib/dhcp/dhcpd
+%attr(1770,root,dhcp) %dir %_var/lib/dhcp/dhcpd/state
+%attr(0600,dhcp,dhcp) %config %verify(not size md5 mtime) /var/lib/dhcp/dhcpd/state/dhcpd.leases
 
 %files relay
 %defattr(-,root,root)
-/usr/sbin/dhcrelay
+%_sbindir/dhcrelay
 %_mandir/man8/dhcrelay.8*
 
 %changelog
+* Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.0pl2-owl9
+- Added gcc343-fixes patch to deal with gcc post-upgrade issues.
+- Cleaned up the spec.
+
 * Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl8
 - Remove unpackaged files.
 
