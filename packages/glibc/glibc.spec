@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.56 2003/10/30 08:39:20 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.57 2003/12/07 11:44:19 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -6,7 +6,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
 %define crypt_bf_version 0.4.5
-Release: owl36
+Release: owl37
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%version.tar.gz
@@ -319,6 +319,10 @@ fi
 %endif
 
 %changelog
+* Sun Dec 07 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl37
+- Allow tmpfile(3) to use $TMPDIR, thanks to the report and patch by
+(GalaxyMaster).  Certain other implementations are known to do the same.
+
 * Wed Oct 29 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl36
 - Added "Provides: glibc-crypt_blowfish-devel" tag to -devel subpackage.
 - Dropped the obsolete "Provides: glibc <= 2.1.3-19owl" tag which was
