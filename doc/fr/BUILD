@@ -14,7 +14,7 @@ pas sur un périphérique approprié (voir ci-dessous les besoins).
 
 En compilant nativement (c.-à-d. sur Owl), le répertoire est déjà là.
 Autrement, vous avez besoin de créer le répertoire, ajouter le pseudo
-utilisateur "build", de façon préférée avec l'UID 151 et le GID 150
+utilisateur "build", de préférence avec l'UID 151 et le GID 150
 ("sources"), et le rendre propriétaire du répertoire.
 
 Placez l'arborescence CVS dans /usr/src/world. La façon la plus simple pour
@@ -70,9 +70,9 @@ Owl.
 
 	(Re-)compilations natives.
 
-Vous avez besoin d'avoir un noyau Linux 2.2 configuré sans /usr/src/linux.
-En tant que l'utilisateur "build", changez de répertoire vers /usr/src/world
-et tapez :
+Vous avez besoin d'avoir un noyau Linux 2.2.x ou 2.4.x configuré sans
+/usr/src/linux. En tant que l'utilisateur "build", changez de répertoire
+vers /usr/src/world et tapez :
 
 	make clean && make buildworld
 
@@ -87,7 +87,7 @@ avez d'abord besoin de supprimer le lien symbolique, si un a été créé pour
 vous auparavant.
 
 Tous les paquets sont compilés avec les versions de bibliothèques et
-d'outils de compilation qui sont installés sur le système. Plusieurs
+d'outils de compilation qui sont installées sur le système. Plusieurs
 itérations de buildworld et installworld (deux sont suffisantes la plupart
 du temps) doivent être utilisées quand il y a eu des mises à jour
 significatives des paquets utilisés durant les compilations.
@@ -106,7 +106,7 @@ Actuellement, il est possible de convertir l'installation d'une Linux Red
 Hat 6.x existante en Owl avec "make installworld" et quelques aides
 manuelles. Assurez vous de lire et comprendre tout du fichier
 installorder.conf avant d'essayer ceci. En particulier, votre noyau ne
-devrait plus être une partie des paquets RPM au moment de la conversion du
+devrait plus faire partie des paquets RPM au moment de la conversion du
 système en Owl.
 
 
@@ -117,4 +117,4 @@ Les paquets individuels peuvent être compilés ou re-compilés avec
 étrangers (SRPMs) compilés avec l'environnement de compilation de Owl vous
 avez aussi besoin d'inclure dans "nom" la partie numéro de version.
 
-$Id: Owl/doc/fr/BUILD,v 1.7 2003/06/28 13:02:31 solar Exp $
+$Id: Owl/doc/fr/BUILD,v 1.8 2003/08/09 10:09:54 ducamp Exp $

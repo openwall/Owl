@@ -44,6 +44,10 @@ générique, ci-dessous.
 
 	Utiliser une installation Linux existante.
 
+Note : ces pré-requis ne sont pertinents que si vous choisissez de ne pas
+installer depuis un CD Owl pour quelle que raison que ce soit. La plupart
+des gens utilisent le CD et n'ont pas besoin de ceci.
+
 Une installation Linux adéquate a besoin d'offrir quelques outils GNU et
 rpm2cpio. Elle n'a pas à utiliser RPM comme son gestionnaire de paquets.
 
@@ -58,8 +62,9 @@ Utilisez fdisk(8) pour partitionner vos disques pour Owl comme désiré.
 Utilisez mkfs(8) et mkswap(8) pour créer les systèmes de fichiers et
 initialiser les fichiers d'échange. Utilisez mount(8) pour monter le nouveau
 système de fichiers racine sur /owl. Semblablement, montez tous les systèmes
-de fichiers supplémentaires sur leurs places appropriées sous /owl. Pour
-installer vraiment Owl, changez de répertoire vers /usr/src/world et tapez :
+de fichiers supplémentaires sur leurs emplacements appropriés sous /owl.
+Pour installer vraiment Owl, changez de répertoire vers /usr/src/world et
+tapez :
 
 	make installworld && make setup
 
@@ -67,15 +72,9 @@ S'il y a un problème durant l'étape "installworld" (regardez les lignes
 "Failed"), corrigez leurs causes et re-exécutez la commande.
 
 Une fois que l'espace utilisateur Owl est installé, vous avez aussi besoin
-d'installer un noyau. Actuellement, Owl supporte entièrement les noyaux
-Linux 2.2 et supporte de s'exécuter avec les noyaux 2.4 (mais afin de
-recompiler Owl avec "make buildworld" vous avez besoin de fournir les
-sources du noyau 2.2 comme expliqué dans BUILD). Nous recommandons que vous
-compiliez la version fournie avec Owl.
-
-Vous pouvez choisir de configurer le chargeur de démarrage avec Owl (LILO ou
-SILO, dépendant de l'architecture), ou vous pouvez utiliser un chargeur de
-démarrage déjà installé sur le système (s'il y en a un).
+d'installer un noyau et de configurer un chargeur de démarrage. Il est
+recommandé de compiler le noyau depuis les sources afin de mieux le
+paramétrer suivant vos besoins.
 
 Notez que la compilation du noyau et la configuration du gestionnaire de
 démarrage ont besoin d'être effectuées chrootées dans votre espace
@@ -83,4 +82,11 @@ utilisateur nouvellement installé.
 
 	chroot /owl
 
-$Id: Owl/doc/fr/INSTALL,v 1.5 2002/10/14 08:52:25 ducamp Exp $
+Actuellement, Owl supporte les noyaux Linux 2.2.x et 2.4.x. Nous
+recommandons que vous compiliez la version fournie avec Owl.
+
+Vous pouvez choisir de configurer le chargeur de démarrage disponible avec
+Owl (LILO ouSILO, dépendant de l'architecture), ou vous pouvez utiliser un
+chargeur de démarrage déjà installé sur le système (s'il y en a un).
+
+$Id: Owl/doc/fr/INSTALL,v 1.6 2003/08/09 10:09:54 ducamp Exp $
