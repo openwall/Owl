@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/ssh_config,v 1.1 2000/07/12 02:53:18 solar Exp $
+# $Id: Owl/packages/openssh/ssh_config,v 1.2 2000/08/04 03:00:39 solar Exp $
 
 # This is ssh client systemwide configuration file.  This file provides 
 # defaults for users, and the values can be changed in per-user configuration
@@ -21,7 +21,7 @@
 #   RhostsRSAAuthentication yes
 #   RSAAuthentication yes
 #   PasswordAuthentication yes
-#   FallBackToRsh yes
+#   FallBackToRsh no
 #   UseRsh no
 #   BatchMode no
 #   CheckHostIP yes
