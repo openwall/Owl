@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gpm/gpm.spec,v 1.2 2001/01/06 09:11:29 solar Exp $
+# $Id: Owl/packages/gpm/gpm.spec,v 1.3 2001/05/27 09:22:43 kad Exp $
 
 # this defines the library version that this package builds.
 %define 	LIBVER 1.18.0
@@ -6,7 +6,7 @@
 Summary:	A mouse server for the Linux console.
 Name: 	 	gpm
 Version:	1.19.3
-Release: 	6owl
+Release: 	6.1owl
 License: 	GPL
 Group: 		System Environment/Daemons
 Source0: 	ftp://ftp.systemy.it/pub/develop/%{name}-%{version}.tar.gz
@@ -59,7 +59,7 @@ CFLAGS="-D_GNU_SOURCE $RPM_OPT_FLAGS" \
 	lispdir=%{buildroot}%{_datadir}/emacs/site-lisp \
 	%configure
 rm gpm-root.c
-make
+make CFLAGS="" CPPFLAGS=""
 
 %install
 rm -rf %{buildroot}
@@ -140,6 +140,9 @@ fi
 %{_libdir}/libgpm.so
 
 %changelog
+* Sun May 27 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- hack to avoid double use of $RPM_OPT_FLAGS
+
 * Sat Jan 06 2001 Solar Designer <solar@owl.openwall.com>
 - Updated the patches for fail-closeness in many cases.
 - Re-generate gpm-root.c at build time, to avoid maintaining two patches.
