@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iputils/iputils.spec,v 1.14 2003/10/22 00:08:25 solar Exp $
+# $Id: Owl/packages/iputils/iputils.spec,v 1.15 2003/10/22 00:11:16 solar Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
@@ -92,7 +92,7 @@ fi
 /etc/control.d/facilities/ping
 
 %changelog
-* Thu Oct 21 2003 Michail Litvak <mci@owl.openwall.com> ss020927-owl2
+* Tue Oct 21 2003 Michail Litvak <mci@owl.openwall.com> ss020927-owl2
 - reduce -owl-socketbits.diff to include only sockaddr_storage
 difinition, because previous version broke tracepath.
 
