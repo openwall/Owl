@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/installworld.sh,v 1.18 2004/11/09 01:34:48 solar Exp $
+# $Id: Owl/build/installworld.sh,v 1.19 2004/12/08 03:21:00 galaxy Exp $
 
 . installworld.conf
 
@@ -146,6 +146,10 @@ else
 	log "Initializing RPM database"
 	mkdir -m 755 -p $ROOT/var/lib/rpm
 	$RPMD $RPM_FLAGS --root $ROOT --initdb || exit 1
+
+	# XXX: (GM): This is a hack. We are cloning empty database file
+	# Packages to Providename to shut our RPM during installation
+	cp -a $ROOT/var/lib/rpm/{Packages,Providename} || exit 1
 	NEED_FAKE=no
 fi
 
