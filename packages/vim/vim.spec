@@ -1,7 +1,4 @@
-# $Id: Owl/packages/vim/vim.spec,v 1.8 2002/02/03 00:18:04 solar Exp $
-
-%define alpha z
-%define vimversion vim60%{alpha}
+# $Id: Owl/packages/vim/vim.spec,v 1.9 2002/04/21 01:10:33 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -9,22 +6,26 @@
 
 Summary: The VIM editor.
 Name: vim
-Version: 6.0
-Release: owl0.26
+%define major 6
+%define minor 1
+%define alpha %{nil}
+%define patchlevel 18
+%define vimdir vim%{major}%{minor}%{alpha}
+Version: %{major}.%{minor}%{?patchlevel:.%patchlevel}
+Release: owl1
 License: Charityware
 Group: Applications/Editors
-Source0: ftp://ftp.vim.org/pub/vim/unreleased/unix/vim-%{version}%{alpha}-src.tar.bz2
-Source1: ftp://ftp.vim.org/pub/vim/unreleased/unix/vim-%{version}%{alpha}-rt.tar.bz2
-Source2: vimrc
-Source3: gvim.desktop
-Patch0: vim-4.2-rh-speed_t.diff
-Patch1: vim-5.1-rh-vimnotvi.diff
-Patch2: vim-5.6a-rh-perl-paths.diff
-Patch3: vim-6.0-rh-fixkeys.diff
-Patch4: vim-6.0-rh-specsyntax.diff
-Patch5: vim-6.0r-rh-nocrv.diff
-Patch6: vim-6.0t-rh-phphighlight.diff
-Patch7: vim-6.0v-rh-lilo.diff
+Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%{major}.%{minor}%{alpha}.tar.bz2
+Source1: vim-%{major}.%{minor}-%{version}.bz2
+Source2: vitmp.c
+Source3: vimrc
+Source4: gvim.desktop
+Source5: README
+Patch0: vim-6.1-rh-owl-vim-not-vi.diff
+Patch1: vim-6.1-rh-paths.diff
+Patch2: vim-6.1-rh-fix-keys.diff
+Patch3: vim-6.1-rh-owl-xxd-locale.diff
+Patch4: vim-6.1-rh-owl-spec-syntax.diff
 BuildRequires: perl
 %if %BUILD_USE_GPM
 BuildRequires: gpm-devel
@@ -100,19 +101,15 @@ with a graphical interface and mouse support.
 %endif
 
 %prep
-%setup -q -b 1 -n %{vimversion}
+%setup -q -n %{vimdir}
+bzcat %SOURCE1 || touch failed | patch -p0
+test ! -e failed
 %patch0 -p1
 %patch1 -p1
-# fix rogue dependencies from sample code
-chmod -x runtime/tools/mve.awk
 %patch2 -p1
-find . -name '*.paths' -print0 | xargs -r0 rm -f --
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-perl -pi -e 's,bin/nawk,bin/awk,g' runtime/tools/mve.awk
+install -m 644 $RPM_SOURCE_DIR/README .
 
 %if %BUILD_USE_GPM
 %define	gpmflag --enable-gpm
@@ -128,8 +125,6 @@ perl -pi -e 's,bin/nawk,bin/awk,g' runtime/tools/mve.awk
 
 %build
 cd src
-perl -pi -e "s,\\\$VIMRUNTIME,/usr/share/vim/%{vimversion},g" os_unix.h
-perl -pi -e "s,\\\$VIM,/usr/share/vim/%{vimversion}/macros,g" os_unix.h
 
 %if %BUILD_USE_X
 export ac_cv_func_mkstemp=yes \
@@ -140,7 +135,7 @@ export ac_cv_func_mkstemp=yes \
 	--exec-prefix=/usr/X11R6 \
 	--enable-xim --enable-multibyte \
 	--enable-fontset %{pythonflag} %{gpmflag}
-make
+make VIMRUNTIMEDIR=/usr/share/vim/%{vimdir}
 mv vim gvim
 make clean
 %endif
@@ -153,7 +148,7 @@ export ac_cv_func_mkstemp=yes \
 	--with-x=no --enable-gui=no \
 	--exec-prefix=/usr --enable-multibyte \
 	--enable-fontset %{pythonflag} %{gpmflag}
-make
+make VIMRUNTIMEDIR=/usr/share/vim/%{vimdir}
 mv vim vim-enhanced
 make clean
 
@@ -165,52 +160,63 @@ export ac_cv_func_mkstemp=yes \
 	--with-x=no --enable-gui=no \
 	--with-tlib=termcap --disable-gpm \
 	--exec-prefix=/
-make
+make VIMRUNTIMEDIR=/usr/share/vim/%{vimdir}
+
+gcc $RPM_OPT_FLAGS -Wall -s $RPM_SOURCE_DIR/vitmp.c -o vitmp
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/bin
-mkdir -p $RPM_BUILD_ROOT/usr/{bin,share/vim}
+mkdir -p $RPM_BUILD_ROOT{/bin,/usr/{bin,share/vim},%{_libexecdir}}
 %if %BUILD_USE_X
 mkdir -p $RPM_BUILD_ROOT/usr/X11R6/bin
 %endif
 
 cd src
-%makeinstall BINDIR=$RPM_BUILD_ROOT/bin DESTDIR=$RPM_BUILD_ROOT
+%makeinstall BINDIR=/bin DESTDIR=$RPM_BUILD_ROOT
 mv $RPM_BUILD_ROOT/bin/xxd $RPM_BUILD_ROOT/usr/bin/
 make installmacros DESTDIR=$RPM_BUILD_ROOT
-install -s -m 755 vim-enhanced $RPM_BUILD_ROOT/usr/bin/vim
+install -m 755 vim-enhanced $RPM_BUILD_ROOT/usr/bin/vim
 %if %BUILD_USE_X
-install -s -m 755 gvim $RPM_BUILD_ROOT/usr/X11R6/bin/
+install -m 755 gvim $RPM_BUILD_ROOT/usr/X11R6/bin/
 %endif
+install -m 755 vitmp $RPM_BUILD_ROOT%{_libexecdir}/
 
 pushd $RPM_BUILD_ROOT
 mv bin/vim bin/vi
+mv bin/vimtutor usr/bin/
 rm bin/rvim
 ln -sf vi bin/view
 ln -sf vi bin/ex
 ln -sf vi bin/rvi
 ln -sf vi bin/rview
 ln -sf vim usr/bin/ex
+ln -sf vim usr/bin/rvim
+ln -sf vim usr/bin/vimdiff
 perl -pi -e "s,$RPM_BUILD_ROOT,," .%{_mandir}/man1/{vim,vimtutor}.1
 rm .%{_mandir}/man1/rvim.1
 ln -sf vim.1 .%{_mandir}/man1/vi.1
 ln -sf vim.1 .%{_mandir}/man1/rvi.1
+ln -sf vim.1 .%{_mandir}/man1/rvim.1
+ln -sf vim.1 .%{_mandir}/man1/vimdiff.1
 
 %if %BUILD_USE_X
 ln -sf gvim usr/X11R6/bin/vimx
+ln -sf gvim usr/X11R6/bin/gview
+ln -sf gvim usr/X11R6/bin/gex
+ln -sf gvim usr/X11R6/bin/evim
 ln -sf vim.1 .%{_mandir}/man1/gvim.1
 ln -sf vim.1 .%{_mandir}/man1/vimx.1
-mkdir -p etc/X11/applnk/Utilities
-cp $RPM_SOURCE_DIR/gvim.desktop etc/X11/applnk/Utilities/
+ln -sf vim.1 .%{_mandir}/man1/gview.1
+ln -sf vim.1 .%{_mandir}/man1/gex.1
+ln -sf vim.1 .%{_mandir}/man1/evim.1
+mkdir -p etc/X11/applnk/Applications
+cp $RPM_SOURCE_DIR/gvim.desktop etc/X11/applnk/Applications/
 %endif
 
-install -m 644 $RPM_SOURCE_DIR/vimrc usr/share/vim/%{vimversion}/macros/
-ln -s vimrc usr/share/vim/%{vimversion}/macros/gvimrc
+install -m 644 $RPM_SOURCE_DIR/vimrc usr/share/vim/
 
 # Dependency cleanups
-chmod 644 $RPM_BUILD_ROOT/usr/share/vim/%{vimversion}/doc/vim2html.pl \
-	$RPM_BUILD_ROOT/usr/share/vim/%{vimversion}/tools/{*.pl,vim132}
+chmod 644 usr/share/vim/%{vimdir}/{doc/vim2html.pl,tools/{*.pl,vim132}}
 popd
 chmod 644 ../runtime/doc/vim2html.pl
 
@@ -219,17 +225,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %files common
 %defattr(-,root,root)
-%doc README*.txt runtime/macros/README.txt runtime/tools/README.txt
-%doc runtime/doc runtime/syntax runtime/termcap runtime/tutor
-%doc runtime/*.vim
-/bin/vimtutor
+%doc README
 /usr/bin/xxd
-
 /usr/share/vim
 %{_mandir}/man1/vim.*
-%{_mandir}/man1/vimtutor.*
-%{_mandir}/man1/ex.*
 %{_mandir}/man1/vi.*
+%{_mandir}/man1/ex.*
 %{_mandir}/man1/view.*
 %{_mandir}/man1/rvi.*
 %{_mandir}/man1/rview.*
@@ -237,28 +238,45 @@ rm -rf $RPM_BUILD_ROOT
 
 %files small
 %defattr(-,root,root)
-/bin/ex
 /bin/vi
+/bin/ex
 /bin/view
 /bin/rvi
 /bin/rview
+%{_libexecdir}/vitmp
 
 %files enhanced
 %defattr(-,root,root)
 /usr/bin/vim
 /usr/bin/ex
+/usr/bin/vimtutor
+%{_mandir}/man1/vimtutor.*
 
 %if %BUILD_USE_X
 %files X11
 %defattr(-,root,root)
-%config(missingok) /etc/X11/applnk/Utilities/gvim.desktop
+%config(missingok) /etc/X11/applnk/Applications/gvim.desktop
 /usr/X11R6/bin/gvim
 /usr/X11R6/bin/vimx
+/usr/X11R6/bin/gview
+/usr/X11R6/bin/gex
+/usr/X11R6/bin/evim
 %{_mandir}/man1/gvim.*
 %{_mandir}/man1/vimx.*
+%{_mandir}/man1/gview.*
+%{_mandir}/man1/gex.*
+%{_mandir}/man1/evim.*
 %endif
 
 %changelog
+* Fri Apr 19 2002 Solar Designer <solar@owl.openwall.com>
+- Updated to 6.1 patchlevel 18, reviewing the patches in Rawhide and taking
+those pieces which make sense.
+- No longer install a second copy of the documentation, refer to the runtime
+directory instead.
+- Provide a vitmp wrapper, to be used by crontab(1) and edquota(8); this is
+to make sure the file is overwritten in-place and no swap files are used.
+
 * Sat Feb 02 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 

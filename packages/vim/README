@@ -1,0 +1,3 @@
+The documentation on VIM (VIsual editor iMproved) is located under
+VIM's runtime directory (/usr/share/vim).  You probably want to read
+it from within VIM itself.

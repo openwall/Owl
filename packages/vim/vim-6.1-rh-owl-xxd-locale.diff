@@ -1,0 +1,47 @@
+diff -ur vim61.orig/src/xxd/xxd.c vim61/src/xxd/xxd.c
+--- vim61.orig/src/xxd/xxd.c	Mon Jul 16 12:11:02 2001
++++ vim61/src/xxd/xxd.c	Sun Apr 21 03:36:21 2002
+@@ -81,6 +81,7 @@
+ #if __MWERKS__ && !defined(BEBOX)
+ # include <unix.h>	/* for fdopen() on MAC */
+ #endif
++#include <locale.h>
+ 
+ /*  This corrects the problem of missing prototypes for certain functions
+  *  in some GNU installations (e.g. SunOS 4.1.x).
+@@ -425,6 +426,8 @@
+   char l[LLEN+1];
+   char *pname, *pp;
+ 
++  setlocale(LC_CTYPE, "");
++
+ #ifdef AMIGA
+   /* This program doesn't work when started from the Workbench */
+   if (argc == 0)
+@@ -643,7 +646,7 @@
+       if (fp != stdin)
+ 	{
+ 	  fprintf(fpo, "unsigned char %s", isdigit((int)argv[1][0]) ? "__" : "");
+-	  for (e = 0; (c = argv[1][e]) != 0; e++)
++	  for (e = 0; (c = (unsigned char)argv[1][e]) != 0; e++)
+ 	    putc(isalnum(c) ? c : '_', fpo);
+ 	  fputs("[] = {\n", fpo);
+ 	}
+@@ -662,7 +665,7 @@
+       if (fp != stdin)
+ 	{
+ 	  fprintf(fpo, "unsigned int %s", isdigit((int)argv[1][0]) ? "__" : "");
+-	  for (e = 0; (c = argv[1][e]) != 0; e++)
++	  for (e = 0; (c = (unsigned char)argv[1][e]) != 0; e++)
+ 	    putc(isalnum(c) ? c : '_', fpo);
+ 	  fprintf(fpo, "_len = %d;\n", p);
+ 	}
+@@ -726,7 +729,7 @@
+ #ifdef __MVS__
+ 	  (e >= 64)
+ #else
+-	  (e > 31 && e < 127)
++	  ((e > 31 && e < 127) || isalnum(e))
+ #endif
+ 	  ? e : '.';
+       if (e)

@@ -1,0 +1,14 @@
+diff -ur vim61.orig/src/option.c vim61/src/option.c
+--- vim61.orig/src/option.c	Sat Mar  9 18:17:30 2002
++++ vim61/src/option.c	Sun Apr 21 02:36:05 2002
+@@ -2371,8 +2371,8 @@
+     langmap_init();
+ #endif
+ 
+-    /* Be Vi compatible by default */
+-    p_cp = TRUE;
++    /* Don't be Vi compatible by default */
++    p_cp = FALSE;
+ 
+     /*
+      * Find default value for 'shell' option.
