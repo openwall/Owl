@@ -1,9 +1,9 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.3 2001/03/10 15:36:02 mci Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.4 2001/03/10 16:04:02 solar Exp $
 
 Summary: A screen manager that supports multiple logins on one terminal.
 Name: screen
 Version: 3.9.8
-Release: 5owl
+Release: 6owl
 Copyright: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%{version}.tar.gz
@@ -21,7 +21,6 @@ Prefix: %{_prefix}
 BuildRoot: /var/rpm-buildroot/%{name}-root
 Prereq: /sbin/install-info, pam_userpass, utempter
 BuildPreReq: pam >= 0.72-8owl
-
 
 %description
 The screen utility allows you to have multiple logins on just one
@@ -95,10 +94,13 @@ fi
 %config(noreplace) /etc/pam.d/screen
 
 %changelog
+* Sat Mar 10 2001 Solar Designer <solar@owl.openwall.com>
+- Don't require and link against libpam_misc.
+
 * Sat Mar 10 2001 Michail Litvak <mci@owl.openwall.com>
 - added patch to builtin telnet (bcopy->memmove)
 - spec, patches cleanups
- 
+
 * Thu Mar 08 2001 Michail Litvak <mci@owl.openwall.com>
 - Many patches removed and other reworked
 
@@ -125,7 +127,7 @@ fi
 - '^?' (backspace) to send '^H'.
 - Its an ugly fix for a termcap inheritance problem,
 - but it works, if anyone REALLY needs '^?' they can change it,
-- and I think we anger less people with this than the way it 
+- and I think we anger less people with this than the way it
 - currently behaves. (Read: vi and emacs work now)
 - POST NOTE (Aug 15): emacs is NOT happy with ^H, BUT screen thinks
 - that this is what backspace is supposed to do, so we don't change it.
@@ -188,7 +190,7 @@ fi
 * Fri Mar 26 1999 Erik Troan <ewt@redhat.com>
 - fixed unix98 pty support
 
-* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com> 
+* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com>
 - auto rebuild in the new build environment (release 3)
 
 * Thu Mar 11 1999 Bill Nottingham <notting@redhat.com>

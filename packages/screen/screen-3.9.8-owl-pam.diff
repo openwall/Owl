@@ -89,8 +89,8 @@
 @@ -33,6 +33,9 @@
  #include "screen.h"
  #include "extern.h"
- 
-+#include <security/pam_misc.h>
+
++#include <security/pam_appl.h>
 +#include "pam_userpass.h"
 +
  #include <pwd.h>
@@ -201,7 +201,7 @@
  )
  fi
  
-+AC_CHECK_LIB(pam, pam_start, LIBS="$LIBS -lpam -lpam_misc -ldl",AC_MSG_ERROR(pam required!))
++AC_CHECK_LIB(pam, pam_start, LIBS="$LIBS -lpam -ldl",AC_MSG_ERROR(PAM required!))
 +
  dnl AC_CHECK_HEADER(shadow.h, AC_DEFINE(SHADOWPW))
  AC_CHECKING(getspnam)
