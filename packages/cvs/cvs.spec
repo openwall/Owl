@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cvs/cvs.spec,v 1.8 2003/05/01 00:08:06 solar Exp $
+# $Id: Owl/packages/cvs/cvs.spec,v 1.9 2003/05/01 00:10:11 solar Exp $
 
 Summary: A version control system.
 Name: cvs
@@ -87,7 +87,7 @@ fi
 %{_datadir}/cvs
 
 %changelog
-* Thu May 01 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl0.6
+* Thu May 01 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl1
 - Re-worked the temporary file handling patch to make it actually do what
 it was supposed to and cover more scripts and the documentation.
 - Force configure to use /tmp for the default temporary file directory,
