@@ -1,0 +1,232 @@
+diff -urP less-358.orig/ch.c less-358/ch.c
+--- less-358.orig/ch.c	Sun Jul  9 04:26:43 2000
++++ less-358/ch.c	Mon Apr  9 06:59:40 2001
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "less.h"
++#include "ch.h"
+ #if MSDOS_COMPILER==WIN32C
+ #include <errno.h>
+ #include <windows.h>
+@@ -23,51 +24,6 @@
+ 
+ public int ignore_eoi;
+ 
+-/*
+- * Pool of buffers holding the most recently used blocks of the input file.
+- * The buffer pool is kept as a doubly-linked circular list,
+- * in order from most- to least-recently used.
+- * The circular list is anchored by the file state "thisfile".
+- */
+-#define LBUFSIZE	1024
+-struct buf {
+-	struct buf *next, *prev;  /* Must be first to match struct filestate */
+-	long block;
+-	unsigned int datasize;
+-	unsigned char data[LBUFSIZE];
+-};
+-
+-/*
+- * The file state is maintained in a filestate structure.
+- * A pointer to the filestate is kept in the ifile structure.
+- */
+-struct filestate {
+-	/* -- Following members must match struct buf */
+-	struct buf *buf_next, *buf_prev;
+-	long buf_block;
+-	/* -- End of struct buf copy */
+-	int file;
+-	int flags;
+-	POSITION fpos;
+-	int nbufs;
+-	long block;
+-	unsigned int offset;
+-	POSITION fsize;
+-};
+-
+-
+-#define	END_OF_CHAIN	((struct buf *)thisfile)
+-#define	ch_bufhead	thisfile->buf_next
+-#define	ch_buftail	thisfile->buf_prev
+-#define	ch_nbufs	thisfile->nbufs
+-#define	ch_block	thisfile->block
+-#define	ch_offset	thisfile->offset
+-#define	ch_fpos		thisfile->fpos
+-#define	ch_fsize	thisfile->fsize
+-#define	ch_flags	thisfile->flags
+-#define	ch_file		thisfile->file
+-
+-static struct filestate *thisfile;
+ static int ch_ungotchar = -1;
+ 
+ extern int autobuf;
+@@ -91,10 +47,6 @@
+  * than fch_get (the function), in the usual case 
+  * that the block desired is at the head of the chain.
+  */
+-#define	ch_get()   ((ch_block == ch_bufhead->block && \
+-		     ch_offset < ch_bufhead->datasize) ? \
+-			ch_bufhead->data[ch_offset] : fch_get())
+-	int
+ fch_get()
+ {
+ 	register struct buf *bp;
+@@ -487,11 +439,7 @@
+ 	register int c;
+ 
+ 	c = ch_get();
+-	if (c == EOI)
+-		return (EOI);
+-	if (ch_offset < LBUFSIZE-1)
+-		ch_offset++;
+-	else
++	if (c != EOI && ch_offset++ >= LBUFSIZE - 1)
+ 	{
+ 		ch_block ++;
+ 		ch_offset = 0;
+diff -urP less-358.orig/ch.h less-358/ch.h
+--- less-358.orig/ch.h	Thu Jan  1 03:00:00 1970
++++ less-358/ch.h	Mon Apr  9 06:41:01 2001
+@@ -0,0 +1,66 @@
++/*
++ * Copyright (C) 1984-2000  Mark Nudelman
++ *
++ * You may distribute under the terms of either the GNU General Public
++ * License or the Less License, as specified in the README file.
++ *
++ * For more information about less, or for information on how to 
++ * contact the author, see the README file.
++ */
++
++/*
++ * Pool of buffers holding the most recently used blocks of the input file.
++ * The buffer pool is kept as a doubly-linked circular list,
++ * in order from most- to least-recently used.
++ * The circular list is anchored by the file state "thisfile".
++ */
++#define LBUFSIZE	1024
++struct buf {
++	struct buf *next, *prev;  /* Must be first to match struct filestate */
++	long block;
++	unsigned int datasize;
++	unsigned char data[LBUFSIZE];
++};
++
++/*
++ * The file state is maintained in a filestate structure.
++ * A pointer to the filestate is kept in the ifile structure.
++ */
++struct filestate {
++	/* -- Following members must match struct buf */
++	struct buf *buf_next, *buf_prev;
++	long buf_block;
++	/* -- End of struct buf copy */
++	int file;
++	int flags;
++	POSITION fpos;
++	int nbufs;
++	long block;
++	unsigned int offset;
++	POSITION fsize;
++};
++
++
++#define	END_OF_CHAIN	((struct buf *)thisfile)
++#define	ch_bufhead	thisfile->buf_next
++#define	ch_buftail	thisfile->buf_prev
++#define	ch_nbufs	thisfile->nbufs
++#define	ch_block	thisfile->block
++#define	ch_offset	thisfile->offset
++#define	ch_fpos		thisfile->fpos
++#define	ch_fsize	thisfile->fsize
++#define	ch_flags	thisfile->flags
++#define	ch_file		thisfile->file
++
++public struct filestate *thisfile;
++
++
++/*
++ * Get the character pointed to by the read pointer.
++ * ch_get() is a macro which is more efficient to call
++ * than fch_get (the function), in the usual case 
++ * that the block desired is at the head of the chain.
++ */
++#define	ch_get()   ((ch_block == ch_bufhead->block && \
++		     ch_offset < ch_bufhead->datasize) ? \
++			ch_bufhead->data[ch_offset] : fch_get())
+diff -urP less-358.orig/line.c less-358/line.c
+--- less-358.orig/line.c	Sun Jul  9 04:26:46 2000
++++ less-358/line.c	Mon Apr  9 06:51:51 2001
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "less.h"
++#include "ch.h"
+ 
+ #define IS_CONT(c)  (((c) & 0xC0) == 0x80)
+ #define LINENUM_WIDTH   8       /* Chars to use for line number */
+@@ -634,24 +635,25 @@
+ 
+ 	for (;;)
+ 	{
+-		if (c == '\n' || c == EOI)
+-		{
+-			new_pos = ch_tell();
+-			break;
+-		}
+-		if (p >= &linebuf[sizeof(linebuf)-1])
+-		{
+-			/*
+-			 * Overflowed the input buffer.
+-			 * Pretend the line ended here.
+-			 * {{ The line buffer is supposed to be big
+-			 *    enough that this never happens. }}
+-			 */
+-			new_pos = ch_tell() - 1;
+-			break;
+-		}
++		if (c == '\n') break;
++		if (p >= &linebuf[sizeof(linebuf) - 1]) break;
+ 		*p++ = c;
+-		c = ch_forw_get();
++		c = ch_get();
++		if (c == EOI) break;
++		if (ch_offset++ < LBUFSIZE - 1) continue;
++		ch_block ++;
++		ch_offset = 0;
++	}
++	new_pos = ch_tell();
++	if (c != '\n' && c != EOI)
++	{
++		/*
++		 * Overflowed the input buffer.
++		 * Pretend the line ended here.
++		 * {{ The line buffer is supposed to be big
++		 *    enough that this never happens. }}
++		 */
++		new_pos--;
+ 	}
+ 	*p = '\0';
+ 	if (linep != NULL)
+diff -urP less-358.orig/search.c less-358/search.c
+--- less-358.orig/search.c	Sun Jul  9 04:26:47 2000
++++ less-358/search.c	Mon Apr  9 04:56:56 2001
+@@ -116,6 +116,17 @@
+ 	register char *dst;
+ 	register char *src;
+ 
++	if ((ops & (CVT_TO_LC | CVT_BS)) == CVT_BS)
++	for (src = osrc, dst = odst;  *src != '\0';  src++, dst++)
++	{
++		if (*src == '\b' && dst > odst)
++			/* Delete BS and preceding char. */
++			dst -= 2;
++		else 
++			/* Just copy. */
++			*dst = *src;
++	}
++	else
+ 	for (src = osrc, dst = odst;  *src != '\0';  src++, dst++)
+ 	{
+ 		if ((ops & CVT_TO_LC) && isupper((unsigned char) *src))

@@ -1,22 +1,23 @@
-# $Id: Owl/packages/less/less.spec,v 1.4 2000/10/19 16:43:05 solar Exp $
+# $Id: Owl/packages/less/less.spec,v 1.5 2001/04/09 03:14:43 solar Exp $
 
 Summary: A text file browser similar to more, but better.
 Name: 		less
 Version: 	358
-Release: 	4owl
+Release: 	5owl
 License: 	GPL
 Group: 		Applications/Text
-Source: 	ftp://ftp.gnu.org/pub/gnu/less/%{name}-%{version}.tar.gz
+Source0: 	ftp://ftp.gnu.org/pub/gnu/less/%{name}-%{version}.tar.gz
 Source1: 	lesspipe.sh
 Source2: 	less.sh
 Source3: 	less.csh
-Patch:		less-358-owl-popen.diff
+Patch0:		less-358-owl-popen.diff
+Patch1:		less-358-owl-optimize.diff
 URL: 		http://www.flash.net/~marknu/less/
 Buildroot: 	/var/rpm-buildroot/%{name}-root
 
 %description
 The less utility is a text file browser that resembles more, but has
-more capabilities.  Less allows you to move backwards in the file as
+more capabilities.  less allows you to move backwards in the file as
 well as forwards.  Since less doesn't have to read the entire input file
 before it starts, less starts up more quickly than text editors (for
 example, vi).
@@ -26,7 +27,8 @@ files, and you'll use it frequently.
 
 %prep
 %setup -q
-%patch -p1
+%patch0 -p1
+%patch1 -p1
 
 %build
 %configure
@@ -51,6 +53,10 @@ install -c -m 755 %{SOURCE3} $RPM_BUILD_ROOT/etc/profile.d
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Mon Apr 09 2001 Solar Designer <solar@owl.openwall.com>
+- Optimized line number calculation and forward searches, now 20 to 50%
+faster (but still a lot slower than wc and grep).
+
 * Thu Oct 19 2000 Solar Designer <solar@owl.openwall.com>
 - lesspipe.sh: "cd /" before running groff such that it can't be attacked
 when less is run with an untrusted current directory.
