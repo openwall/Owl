@@ -1,16 +1,16 @@
-# $Id: Owl/packages/scanlogd/Attic/scanlogd.spec,v 1.1 2001/07/12 01:54:57 solar Exp $
+# $Id: Owl/packages/scanlogd/Attic/scanlogd.spec,v 1.2 2002/02/07 01:56:03 solar Exp $
 
-Summary: A tool to detect and log TCP port scans
+Summary: A tool to detect and log TCP port scans.
 Name: scanlogd
 Version: 2.2
-Release: 1owl
+Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
 URL: http://www.openwall.com/scanlogd/
 Source0: ftp://ftp.openwall.com/pub/projects/scanlogd/scanlogd-%{version}.tar.gz
 Source1: scanlogd.init
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
-Prereq: /sbin/chkconfig, /dev/null, grep, shadow-utils
+PreReq: /sbin/chkconfig, /dev/null, grep, shadow-utils
+BuildRoot: /override/%{name}-%{version}
 
 %description
 scanlogd detects port scans and writes one line per scan via the syslog(3)
@@ -27,8 +27,8 @@ make linux CFLAGS="-c -Wall $RPM_OPT_FLAGS"
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/{%_sbindir,%_mandir/man8,etc/rc.d/init.d}
 
-install -m 700 scanlogd $RPM_BUILD_ROOT/%_sbindir
-install -m 644 scanlogd.8 $RPM_BUILD_ROOT/%_mandir/man8
+install -m 700 scanlogd $RPM_BUILD_ROOT/%_sbindir/
+install -m 644 scanlogd.8 $RPM_BUILD_ROOT/%_mandir/man8/
 install -m 700 $RPM_SOURCE_DIR/scanlogd.init \
 	$RPM_BUILD_ROOT/etc/rc.d/init.d/scanlogd
 
@@ -62,5 +62,8 @@ fi
 %config /etc/rc.d/init.d/scanlogd
 
 %changelog
+* Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Thu Jul 12 2001 Solar Designer <solar@owl.openwall.com>
 - Packaged scanlogd for Owl.
