@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.21 2001/11/22 04:42:48 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.22 2001/12/09 17:59:39 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.10
+Version: 0.11
 Release: 1owl
 License: GPL
 Group: System Environment/Base
@@ -142,6 +142,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc redhat
 
 %changelog
+* Sun Dec 09 2001 Solar Designer <solar@owl.openwall.com>
+- Support rc.modules, run depmod -a.
+
 * Thu Nov 22 2001 Solar Designer <solar@owl.openwall.com>
 - /etc/init.d/halt will now call halt(8) as poweroff (which will fall back
 to plain halt if the kernel doesn't have power management support compiled
