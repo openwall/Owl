@@ -1,4 +1,4 @@
-# $Id: Owl/packages/console-tools/Attic/console-tools.spec,v 1.4 2000/12/15 02:06:35 solar Exp $
+# $Id: Owl/packages/console-tools/Attic/console-tools.spec,v 1.5 2000/12/15 17:30:01 solar Exp $
 
 %define CTVER	0.3.3
 %define	CDVER	1999.08.29
@@ -12,7 +12,7 @@ Group: 		Applications/System
 Exclusiveos: 	Linux
 Copyright: 	GPL
 URL: 		http://www.altern.org/ydirson/en/lct/
-Source0: 	ftp://metalab.unc.edu/pub/Linux/system/keyboards/console-tools-%{CTVER}.tar.gz
+Source0: 	ftp://lct.sourceforge.net/pub/lct/dev/console-tools-%{CTVER}.tar.gz
 Source1: 	ftp://metalab.unc.edu/pub/Linux/system/keyboards/%{DATA}.tar.gz
 Source2:	keytable.init
 Source3: 	ftp://ftp.dementia.org/pub/linux/pc2sun.pl
