@@ -1,0 +1,43 @@
+diff -ur bzip2-1.0.2.orig/Makefile bzip2-1.0.2/Makefile
+--- bzip2-1.0.2.orig/Makefile	Sat Jan 26 02:34:53 2002
++++ bzip2-1.0.2/Makefile	Fri Feb  1 23:43:02 2002
+@@ -64,12 +64,10 @@
+ 	if ( test ! -d $(PREFIX)/man/man1 ) ; then mkdir -p $(PREFIX)/man/man1 ; fi
+ 	if ( test ! -d $(PREFIX)/include ) ; then mkdir -p $(PREFIX)/include ; fi
+ 	cp -f bzip2 $(PREFIX)/bin/bzip2
+-	cp -f bzip2 $(PREFIX)/bin/bunzip2
+-	cp -f bzip2 $(PREFIX)/bin/bzcat
++	ln $(PREFIX)/bin/bzip2 $(PREFIX)/bin/bunzip2
++	ln $(PREFIX)/bin/bzip2 $(PREFIX)/bin/bzcat
+ 	cp -f bzip2recover $(PREFIX)/bin/bzip2recover
+ 	chmod a+x $(PREFIX)/bin/bzip2
+-	chmod a+x $(PREFIX)/bin/bunzip2
+-	chmod a+x $(PREFIX)/bin/bzcat
+ 	chmod a+x $(PREFIX)/bin/bzip2recover
+ 	cp -f bzip2.1 $(PREFIX)/man/man1
+ 	chmod a+r $(PREFIX)/man/man1/bzip2.1
+diff -ur bzip2-1.0.2.orig/Makefile-libbz2_so bzip2-1.0.2/Makefile-libbz2_so
+--- bzip2-1.0.2.orig/Makefile-libbz2_so	Sun Dec 30 05:15:59 2001
++++ bzip2-1.0.2/Makefile-libbz2_so	Fri Feb  1 23:16:06 2002
+@@ -20,13 +20,15 @@
+       bzlib.o
+ 
+ all: $(OBJS)
+-	$(CC) -shared -Wl,-soname -Wl,libbz2.so.1.0 -o libbz2.so.1.0.2 $(OBJS)
+-	$(CC) $(CFLAGS) -o bzip2-shared bzip2.c libbz2.so.1.0.2
+-	rm -f libbz2.so.1.0
+-	ln -s libbz2.so.1.0.2 libbz2.so.1.0
++	$(CC) -shared -Wl,-soname -Wl,libbz2.so.1 -o libbz2.so.1.0.2 $(OBJS)
+ 
+-clean: 
+-	rm -f $(OBJS) bzip2.o libbz2.so.1.0.2 libbz2.so.1.0 bzip2-shared
++install: libbz2.so.1.0.2
++	install -m 755 libbz2.so.1.0.2 $(PREFIX)/lib/
++	ln -sf libbz2.so.1.0.2 $(PREFIX)/lib/libbz2.so.1
++	ln -sf libbz2.so.1 $(PREFIX)/lib/libbz2.so
++
++clean:
++	rm -f $(OBJS) bzip2.o libbz2.so.1.0.2 bzip2-shared
+ 
+ blocksort.o: blocksort.c
+ 	$(CC) $(CFLAGS) -c blocksort.c
