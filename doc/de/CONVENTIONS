@@ -119,7 +119,9 @@ stammt, aber signifikante Änderungen vorgenommen wurden, sollte ORIGIN
 zusätzlich "-owl-" enthalten (das zeigt an, dass auftretende Fehler
 unser Problem sind). Wenn ein Patch aus einem CVS Archiv entnommen
 wurde, sollte ORIGIN auf "cvs" gesetzt werden. Zusätzlich sollte WHAT
-auf das koresspondierende Datum (JJJJMMDD) gesetzt werden.
+auf das koresspondierende Datum (JJJJMMDD) gesetzt werden. Bei Patches
+von Maintainern die (noch?) nicht im primären CVS tree (sofern einer
+existiert) sind, könnte ORIGIN auf "up" gesetzt werden.
 
 Hier ein paar gebräuchliche WHATs zum benutzen:
 
@@ -158,4 +160,4 @@ mit den folgenden Optionen benutzen:
 Das entspricht nicht ganz unserem bevorzugten Code-Stil und wird
 deswegen bei Quelltexten in Owl noch nicht eingesetzt.
 
-$Id: Owl/doc/de/CONVENTIONS,v 1.5 2002/07/07 06:46:35 schmidt Exp $
+$Id: Owl/doc/de/CONVENTIONS,v 1.6 2002/07/29 22:24:26 schmidt Exp $
