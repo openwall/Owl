@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mutt/mutt.spec,v 1.9 2004/01/30 09:08:20 mci Exp $
+# $Id: Owl/packages/mutt/mutt.spec,v 1.10 2004/01/30 23:47:36 solar Exp $
 
 Summary: A feature-rich text-based mail user agent.
 Name: mutt
@@ -75,9 +75,9 @@ cat contrib/gpg.rc $RPM_SOURCE_DIR/Muttrc-color >> $RPM_BUILD_ROOT/etc/Muttrc
 
 %changelog
 * Fri Jan 30 2004 Michail Litvak <mci@owl.openwall.com> 1.4.1-owl3
-- Patch (from mutt's CVS) to fix mutt crash on some emails. This
-is occur when UTF-8 locale used on wide (more than ~120 columns)
-terminals, but Owl isn't affected with current glibc because
+- Patch (from Mutt's CVS) to fix Mutt crash on certain e-mails; this can
+occur when an UTF-8 locale is used on wide (more than ~120 columns)
+terminals, but Owl isn't affected with its current glibc because of the
 lack of UTF-8 locales support.
 
 * Mon Oct 20 2003 Solar Designer <solar@owl.openwall.com> 1.4.1-owl2
