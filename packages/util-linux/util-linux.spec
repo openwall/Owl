@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.9 2000/12/13 02:27:44 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.10 2000/12/29 07:47:52 solar Exp $
 
 %define BUILD_MOUNT	'yes'
 %define BUILD_LOSETUP	'yes'
@@ -8,7 +8,7 @@
 Summary: A collection of basic system utilities.
 Name: util-linux
 Version: 2.10h
-Release: 7owl
+Release: 8owl
 Copyright: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%{version}.tar.gz
@@ -21,7 +21,8 @@ Patch0: util-linux-2.10h-owl-MCONFIG.diff
 Patch1: util-linux-2.10h-owl-Makefiles.diff
 Patch2: util-linux-2.10h-owl-restrict-locale.diff
 Patch3: util-linux-2.10h-owl-write.diff
-Patch4: util-linux-2.10h-rh-locale-overflow.diff
+Patch4: util-linux-2.10h-owl-linux-2.2.18-hack.diff
+Patch5: util-linux-2.10h-rh-locale-overflow.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: owl-control < 2.0
 Obsoletes: fdisk tunelp
@@ -68,6 +69,7 @@ to query the status of a loop device.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 unset LINGUAS || :
@@ -313,6 +315,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Fri Dec 29 2000 Solar Designer <solar@owl.openwall.com>
+- Dirty hack for builds with Linux 2.2.18 headers.
+
 * Wed Dec 13 2000 Solar Designer <solar@owl.openwall.com>
 - i386 -> %ix86.
 
