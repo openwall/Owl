@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ed/ed.spec,v 1.10 2002/01/31 18:23:25 solar Exp $
+# $Id: Owl/packages/ed/ed.spec,v 1.11 2002/02/07 21:04:23 solar Exp $
 
 Summary: The GNU line editor.
 Name: ed
@@ -35,6 +35,9 @@ make LDFLAGS=-s
 %install
 %makeinstall bindir=$RPM_BUILD_ROOT/bin mandir=$RPM_BUILD_ROOT%{_mandir}/man1
 
+%clean
+rm -rf $RPM_BUILD_ROOT
+
 %post
 /sbin/install-info %{_infodir}/ed.info.gz %{_infodir}/dir \
 	--entry="* ed: (ed).                  The GNU Line Editor."
@@ -44,9 +47,6 @@ if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %{_infodir}/ed.info.gz %{_infodir}/dir \
 		--entry="* ed: (ed).                  The GNU Line Editor."
 fi
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)

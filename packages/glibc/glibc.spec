@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.26 2002/02/07 18:07:46 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.27 2002/02/07 21:04:23 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -261,6 +261,10 @@ mkdir documentation/crypt_blowfish-%{crypt_bf_version}
 cp crypt_blowfish-%{crypt_bf_version}/{README,LINKS,PERFORMANCE} \
 	documentation/crypt_blowfish-%{crypt_bf_version}
 
+%clean
+rm -rf $RPM_BUILD_ROOT
+rm -f *.filelist*
+
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
@@ -271,10 +275,6 @@ cp crypt_blowfish-%{crypt_bf_version}/{README,LINKS,PERFORMANCE} \
 if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete /usr/info/libc.info.gz /usr/info/dir
 fi
-
-%clean
-rm -rf $RPM_BUILD_ROOT
-rm -f *.filelist*
 
 %files -f rpm.filelist
 %defattr(-,root,root)

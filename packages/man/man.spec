@@ -1,4 +1,4 @@
-# $Id: Owl/packages/man/man.spec,v 1.4 2002/02/06 16:28:31 mci Exp $
+# $Id: Owl/packages/man/man.spec,v 1.5 2002/02/07 21:04:23 solar Exp $
 
 Summary: A set of documentation tools: man, apropos and whatis.
 Name: man
@@ -49,6 +49,9 @@ cd $RPM_BUILD_ROOT
 ln -s man usr/bin/manpath
 ln -s man.1.gz usr/man/man1/manpath.1.gz
 
+%clean
+rm -rf $RPM_BUILD_ROOT
+
 %preun
 # Clean up accumulated cat litter.
 rm -f /var/catman/cat[123456789n]/*
@@ -59,9 +62,6 @@ rm -f /var/catman/X11R6/cat[123456789n]/*
 rm -f /var/catman/cat[123456789n]/*
 rm -f /var/catman/local/cat[123456789n]/*
 rm -f /var/catman/X11/cat[123456789n]/*
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)

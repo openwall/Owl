@@ -1,4 +1,4 @@
-# $Id: Owl/packages/diffutils/diffutils.spec,v 1.4 2002/01/24 17:46:53 solar Exp $
+# $Id: Owl/packages/diffutils/diffutils.spec,v 1.5 2002/02/07 21:04:23 solar Exp $
 
 Summary: A GNU collection of diff utilities.
 Name: diffutils
@@ -47,6 +47,9 @@ for manpage in %{SOURCE1} %{SOURCE3} %{SOURCE4}; do
 	install -m 0644 ${manpage} .%{_mandir}/man1
 done
 
+%clean
+rm -rf $RPM_BUILD_ROOT
+
 %post
 /sbin/install-info %{_infodir}/diff.info.gz %{_infodir}/dir --entry="* diff: (diff).                 The GNU diff."
 
@@ -54,9 +57,6 @@ done
 if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %{_infodir}/diff.info.gz %{_infodir}/dir --entry="* diff: (diff).                 The GNU diff."
 fi
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)

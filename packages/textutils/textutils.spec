@@ -1,4 +1,4 @@
-# $Id: Owl/packages/textutils/Attic/textutils.spec,v 1.6 2002/02/04 08:34:57 solar Exp $
+# $Id: Owl/packages/textutils/Attic/textutils.spec,v 1.7 2002/02/07 21:04:23 solar Exp $
 
 Summary: A set of GNU text file modifying utilities.
 Name: textutils
@@ -36,6 +36,9 @@ make install DESTDIR=$RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/bin
 mv $RPM_BUILD_ROOT/usr/bin/{cat,sort} $RPM_BUILD_ROOT/bin/
 
+%clean
+rm -rf $RPM_BUILD_ROOT
+
 %post
 /sbin/install-info %{_infodir}/textutils.info.gz %{_infodir}/dir
 
@@ -44,9 +47,6 @@ if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete \
 		%{_infodir}/textutils.info.gz %{_infodir}/dir
 fi
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)

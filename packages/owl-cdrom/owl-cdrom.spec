@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.6 2002/02/06 21:59:22 mci Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.7 2002/02/07 21:04:23 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROM's.
 Name: owl-cdrom
@@ -28,6 +28,9 @@ install -m 600 $RPM_SOURCE_DIR/lilo.conf etc/
 install -m 600 $RPM_SOURCE_DIR/dot-config boot/.config
 install -m 700 $RPM_SOURCE_DIR/floppy.update boot/
 ln -s ../rom/{dev,etc,home,root,tmp,var,world} ram/
+
+%clean
+rm -rf $RPM_BUILD_ROOT
 
 %pre
 if [ "$CDROM" != "yes" ]; then
@@ -65,9 +68,6 @@ if [ $1 -eq 0 ]; then
 	rm /usr/src/world
 	mv /rom/world /usr/src/
 fi
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)

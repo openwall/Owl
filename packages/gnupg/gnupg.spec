@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gnupg/gnupg.spec,v 1.7 2002/02/03 21:20:05 mci Exp $
+# $Id: Owl/packages/gnupg/gnupg.spec,v 1.8 2002/02/07 21:04:23 solar Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
@@ -31,9 +31,6 @@ unset LINGUAS || :
 %configure --enable-shared
 make
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %install
 %makeinstall
 sed 's^\.\./g[0-9\.]*/^^g' tools/lspgpot > lspgpot
@@ -41,6 +38,9 @@ install -m 755 lspgpot $RPM_BUILD_ROOT%{_bindir}/lspgpot
 
 # Strip files otherwise not touched
 strip $RPM_BUILD_ROOT/usr/lib/gnupg/*
+
+%clean
+rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)

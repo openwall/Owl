@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.24 2002/02/07 01:19:23 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.25 2002/02/07 21:04:23 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -77,6 +77,9 @@ touch var/log/wtmp var/run/utmp
 
 mkdir -p var/run/netreport
 
+%clean
+rm -rf $RPM_BUILD_ROOT
+
 %post
 for f in /var/log/wtmp /var/run/utmp; do
 	test -e $f && continue || :
@@ -99,9 +102,6 @@ if [ $1 -eq 0 ]; then
 	/sbin/chkconfig --del network
 	/sbin/chkconfig --del netfs
 fi
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/findutils/findutils.spec,v 1.3 2002/02/01 15:28:39 solar Exp $
+# $Id: Owl/packages/findutils/findutils.spec,v 1.4 2002/02/07 21:04:23 solar Exp $
 
 Summary: The GNU versions of find utilities (find and xargs).
 Name: findutils
@@ -36,6 +36,9 @@ make
 rm -rf $RPM_BUILD_ROOT
 %makeinstall
 
+%clean
+rm -rf $RPM_BUILD_ROOT
+
 %post
 /sbin/install-info %{_infodir}/find.info.gz %{_infodir}/dir
 
@@ -43,9 +46,6 @@ rm -rf $RPM_BUILD_ROOT
 if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %{_infodir}/find.info.gz %{_infodir}/dir
 fi
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
