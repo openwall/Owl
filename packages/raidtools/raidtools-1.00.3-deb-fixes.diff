@@ -1,0 +1,207 @@
+--- raidtools-1.00.3/lsraid.c.orig	Wed Jan 15 08:58:25 2003
++++ raidtools-1.00.3/lsraid.c	Wed Sep 10 21:29:30 2003
+@@ -1031,7 +1031,7 @@
+ {
+     FILE *proc;
+     int major, minor, rc;
+-    char line[MAX_LINE_LENGTH], name[MAX_LINE_LENGTH];
++    char line[4096], name[4096];
+     struct stat stat_buf;
+ 
+     if (!ctxt || !ctxt->devtable)
+@@ -1045,14 +1045,14 @@
+     while (1)
+     {
+         rc = 0;
+-        if ((fgets(line, MAX_LINE_LENGTH, proc)) == NULL)
++        if ((fgets(line, 4096, proc)) == NULL)
+             break;
+ 
+         name[0] = 0;
+         major = minor = 0;
+ 
+         /* FIXME: I'm lazy.  Can this be overrun? */
+-        if (sscanf(line, "%d %d %*d %99[^ \t\n]",
++        if (sscanf(line, "%d %d %*d %4095[^ \t\n]",
+                    &major, &minor, name) < 3)
+             continue;
+ 
+--- raidtools-1.00.3/mkraid.c.orig	Wed Jan 15 08:58:25 2003
++++ raidtools-1.00.3/mkraid.c	Wed Sep 10 21:29:30 2003
+@@ -170,33 +170,32 @@
+ 
+     if (old_force_flag && (func == mkraid)) {
+ 	fprintf(stderr, 
+-
+-"
+- WARNING!
+-
+- NOTE: if you are recovering a double-disk error or some other failure mode
+- that made your array unrunnable but data is still intact then it's strongly
+- recommended to use the lsraid utility and to read the lsraid HOWTO.
+-
+- If your RAID array holds useful and not yet backed up data then --force
+- and the hot-add/hot-remove functionality should be used with extreme care!
+- If your /etc/raidtab file is not in sync with the real array configuration,
+- then --force might DESTROY ALL YOUR DATA. It's especially dangerous to use
+- -f if the array is in degraded mode.
+-
+- If your /etc/raidtab file matches the real layout of on-disk data then
+- recreating the array will not hurt your data, but be aware of the risks
+- of doing this anyway: freshly created RAID1 and RAID5 arrays do a full
+- resync of their mirror/parity blocks, which, if the raidtab is incorrect,
+- the resync will wipe out data irrecoverably. Also, if your array is in
+- degraded mode then the raidtab must match the degraded config exactly,
+- otherwise you'll get the same kind of data destruction during resync.
+- (see the failed-disk raidtab option.) You have been warned!
+-
+- [ If your array holds no data, or you have it all backed up, or if you
+- know precisely what you are doing and you still want to proceed then use
+- the --really-force (or -R) flag. ]
+-");
++""
++" WARNING!"
++""
++" NOTE: if you are recovering a double-disk error or some other failure mode"
++" that made your array unrunnable but data is still intact then it's strongly"
++" recommended to use the lsraid utility and to read the lsraid HOWTO."
++""
++" If your RAID array holds useful and not yet backed up data then --force"
++" and the hot-add/hot-remove functionality should be used with extreme care!"
++" If your /etc/raidtab file is not in sync with the real array configuration,"
++" then --force might DESTROY ALL YOUR DATA. It's especially dangerous to use"
++" -f if the array is in degraded mode."
++""
++" If your /etc/raidtab file matches the real layout of on-disk data then"
++" recreating the array will not hurt your data, but be aware of the risks"
++" of doing this anyway: freshly created RAID1 and RAID5 arrays do a full"
++" resync of their mirror/parity blocks, which, if the raidtab is incorrect,"
++" the resync will wipe out data irrecoverably. Also, if your array is in"
++" degraded mode then the raidtab must match the degraded config exactly,"
++" otherwise you'll get the same kind of data destruction during resync."
++" (see the failed-disk raidtab option.) You have been warned!"
++""
++" [ If your array holds no data, or you have it all backed up, or if you"
++" know precisely what you are doing and you still want to proceed then use"
++" the --really-force (or -R) flag. ]"
++"");
+ 	return EXIT_FAILURE;
+     }
+ 
+@@ -244,7 +243,7 @@
+     while (*args) {
+ 	for (p = cfg_head; p; p = p->next) {
+ 	    if (strcmp(p->md_name, *args)) continue;
+-	    if (check_active(cfg)) 
++	    if (check_active(p))
+ 		goto abort;
+ 	    if (force_flag) {
+ 		fprintf(stderr, "DESTROYING the contents of %s in 5 seconds, Ctrl-C if unsure!\n", *args);
+--- raidtools-1.00.3/parser.c.orig	Wed Jan 15 08:58:25 2003
++++ raidtools-1.00.3/parser.c	Wed Sep 10 21:29:30 2003
+@@ -68,6 +68,8 @@
+ 		}
+ 		strcpy(cfg->md_name, val_s);
+ 		cfg->array.param.nr_disks = 0;
++		/* Default chunk size value */
++		cfg->array.param.chunk_size = 4 * MD_BLK_SIZ;
+ 
+ 		last = cfg_head;
+ 		while (last && last->next) last = last->next;
+--- raidtools-1.00.3/raid_io.c.orig	Wed Jan 15 08:58:25 2003
++++ raidtools-1.00.3/raid_io.c	Wed Sep 10 21:29:30 2003
+@@ -8,7 +8,8 @@
+  * This source is covered by the GNU GPL, the same as all Linux kernel
+  * sources.
+  *
+- * 97-09-23: >4GB limit fix, Rob Hagopian <hagopiar@vuser.vu.union.edu>
++ * 1997-09-23: >4GB limit fix, Rob Hagopian <hagopiar@vuser.vu.union.edu>
++ * 2001-12-21: /proc/mount checking, Darik Horn <dajhorn at uwaterloo dot ca>
+  */
+ 
+ #include <sys/mount.h>		/* for BLKGETSIZE */
+@@ -274,7 +275,11 @@
+ 	/*
+ 	 * Check if the device is mounted
+ 	 */
+-	fp = setmntent("/etc/mtab", "r");
++	if (!(fp = setmntent("/etc/mtab", "r")) && !(fp = setmntent("/proc/mounts", "r"))) {
++		fprintf(stderr, "sanity_checks: unable to open both /etc/mtab and /proc/mounts\n");
++		return 1;
++	}
++
+ 	err = 0;
+ 	while ((mntinfo = getmntent(fp))) {
+ 	    if (!strcmp(mntinfo->mnt_fsname, name)) {
+@@ -523,6 +528,8 @@
+ 	if ((ch = strstr(p->md_name, "/md")) == NULL)
+ 		return 0;
+ 	strcpy(buffer, ch+1);
++	/* Add a space to distinguish between /dev/md1 and /dev/md10 */
++	strcat(buffer, " ");
+ 	if ((fp = fopen("/proc/mdstat", "r")) == NULL)
+ 		return 0;
+ 	while (1) {
+--- raidtools-1.00.3/raidlib.c.orig	Wed Jan 15 08:58:25 2003
++++ raidtools-1.00.3/raidlib.c	Wed Sep 10 21:29:30 2003
+@@ -461,10 +461,47 @@
+       {
+ 	struct stat s;
+ 
+-	stat (cfg->device_name[0], &s);
++	int level = cfg->array.param.level;
++	int i, lasterr = 0;
+ 
+ 	fd = open_or_die(cfg->md_name);
+-	if (do_mdstart (fd, cfg->md_name, s.st_rdev)) rc++;
++
++	/* If the array is level 1,4 or 5 and the first disk
++	* is disconnected we should try the next possible disk
++	* in the array until we find one which the kernel-code
++	* can read the superblock from.
++	*/
++
++	rc = 1;
++	if(level == 1 || level == 4 || level == 5) {
++		for(i = 0; rc && i < MD_SB_DISKS; i++) {
++			if(!cfg->device_name[i])
++				continue;
++	
++			stat (cfg->device_name[i], &s);
++			if (do_mdstart (fd, cfg->md_name, s.st_rdev))
++				lasterr = errno;
++			else
++				rc = 0;
++		}
++	} else {
++			stat (cfg->device_name[0], &s);
++			if (do_mdstart (fd, cfg->md_name, s.st_rdev))
++				lasterr = errno;
++			else
++				rc = 0;
++	}
++
++	if(rc) {
++		switch (lasterr) {
++		case EBUSY:
++			fprintf(stderr,"%s: already running\n",cfg->md_name);
++			break;
++		default:
++			perror (cfg->md_name);
++		}
++	}
++
+ 	break;
+       }
+ 
+--- raidtools-1.00.3/raidstart.c.orig	Wed Jan 15 08:58:25 2003
++++ raidtools-1.00.3/raidstart.c	Wed Sep 10 21:29:30 2003
+@@ -31,7 +31,7 @@
+ 
+ 
+ void usage(unsigned char *arg) {
+-    printf("usage: %s [--all] [--configfile] [--help] [--version] [-achv] </dev/md?>*\n", arg);
++    printf("usage: %s [--all] [--configfile] [--help] [--version] [-achv] </dev/md?>\n", arg);
+ }
+ 
+ int main (int argc, char *argv[]) {

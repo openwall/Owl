@@ -1,0 +1,127 @@
+--- raidtools-1.00.3/mkraid.8.orig	Wed Jan 15 08:58:25 2003
++++ raidtools-1.00.3/mkraid.8	Wed Sep 10 21:33:38 2003
+@@ -13,8 +13,9 @@
+ command line, and initializes those arrays.  \fBmkraid\fR works for
+ all types of RAID arrays (RAID1, RAID4, RAID5, LINEAR and RAID0).
+ 
+-Note that initializing RAID devices \fBdestroys all of the data on
+-the consituent devices\fR. 
++Note that initializing RAID devices \fBdestroys all of the data on all the
++constituent devices\fR, except those that are marked with 'failed-disk' in
++raidtab.
+ 
+ .SH OPTIONS
+ .IP "\fB-c\fP, \fB\-\-configfile\fP \fIfilename\fR"
+--- raidtools-1.00.3/raidstart.8.orig	Wed Jan 15 08:58:25 2003
++++ raidtools-1.00.3/raidstart.8	Wed Sep 10 21:33:38 2003
+@@ -8,7 +8,7 @@
+ [options] <raiddevice>*
+ 
+ .BI raidstop
+-[options] <raiddevice>*
++[options] <raiddevice>
+ 
+ .SH DESCRIPTION
+ RAID devices are virtual devices created from two or more real block
+@@ -28,7 +28,11 @@
+ 
+      http://ostenfeld.dk/~jakob/Software-RAID.HOWTO/
+ 
+-for new releases of the RAID driver check out:
++And for instruction for upgrading from a regular system to software raid:
++
++     http://www.tldp.org/HOWTO/Boot+Root+Raid+LILO.html
++
++For new releases of the RAID driver check out:
+ 
+      ftp://ftp.fi.kernel.org/pub/linux/daemons/raid/alpha
+ 
+--- raidtools-1.00.3/mdadd.8.orig	Wed Sep 10 21:33:38 2003
++++ raidtools-1.00.3/mdadd.8	Wed Sep 10 00:00:00 2003
+@@ -0,0 +1 @@
++.so man8/mdrun.8
+--- raidtools-1.00.3/mdop.8.orig	Wed Sep 10 21:33:38 2003
++++ raidtools-1.00.3/mdop.8	Wed Sep 10 00:00:00 2003
+@@ -0,0 +1 @@
++.so man8/mdrun.8
+--- raidtools-1.00.3/mdrun.8.orig	Wed Sep 10 21:33:38 2003
++++ raidtools-1.00.3/mdrun.8	Wed Sep 10 00:00:00 2003
+@@ -0,0 +1,23 @@
++.\" -*- nroff -*-
++.TH mdrun 8
++.SH NAME
++ckraid,  mdadd,  mdrun,  mdstop,  mdop \- obsolete
++
++.SH DESCRIPTION
++
++In earlier RAID versions, \fBckraid\fR, \fBmdadd\fR, \fBmdrun\fR,
++\fBmdstop\fR and \fBmdop\fR were commands for managing RAID devices.
++This work is now done by \fBraidstart\fR, \fBraidstop\fR, \fBraid0run\fR
++and the kernel.
++
++If kernel autostart is disabled, the \fBraidstart\fR command can be
++used to start persistant devices. Non-persistant linear/RAID0 devices
++should be started with \fBraid0run\fR. Stopping the arrays at shutdown
++isn't mandatory.
++
++Fixing arrays is now handled automaticly by the kernel, in the background.
++
++.SH SEE ALSO
++.IR raidtab (5),
++.IR raidstart (8),
++.IR mkraid (8)
+--- raidtools-1.00.3/mdstop.8.orig	Wed Sep 10 21:33:38 2003
++++ raidtools-1.00.3/mdstop.8	Wed Sep 10 00:00:00 2003
+@@ -0,0 +1 @@
++.so man8/mdrun.8
+--- raidtools-1.00.3/raidhotadd.8.orig	Wed Sep 10 21:33:38 2003
++++ raidtools-1.00.3/raidhotadd.8	Wed Sep 10 00:00:00 2003
+@@ -0,0 +1,21 @@
++.\" -*- nroff -*-
++.TH raidhotadd 8
++.SH NAME
++raidhotadd, raidhotremove - add and remove disks from arrays
++
++.SH SYNOPSIS
++.B raidhotadd
++[--all] [--configfile] [--help] [--version] [-achv] [\fIRAID-ARRAY\fR] [\fITARGET-DISK\fR]
++
++.B raidhotremove
++[--all] [--configfile] [--help] [--version] [-achv] [\fIRAID-ARRAY\fR] [\fITARGET-DISK\fR]
++
++.SH DESCRIPTION
++
++\fBraidhotadd\fR and \fBraidhotremove\fR can be used to add and remove
++disks from RAID-1, -4 and -5 arrays, while they are active.
++
++.SH SEE ALSO
++.IR raidtab (5),
++.IR raidstart (8),
++.IR mkraid (8)
+--- raidtools-1.00.3/raidhotgenerateerror.8.orig	Wed Sep 10 21:33:38 2003
++++ raidtools-1.00.3/raidhotgenerateerror.8	Wed Sep 10 00:00:00 2003
+@@ -0,0 +1,24 @@
++.\" -*- nroff -*-
++.TH raidhotgenerateerror 8
++.SH NAME
++raidhotgenerateerror - mark a disk faulty and remove it from a RAID array
++
++.SH SYNOPSIS
++.B raidhotgenerateerror
++[--all] [--configfile] [--help] [--version] [-achv] [\fIRAID-ARRAY\fR] [\fITARGET-DISK\fR]
++.B raidsetfaulty
++[--all] [--configfile] [--help] [--version] [-achv] [\fIRAID-ARRAY\fR] [\fITARGET-DISK\fR]
++
++.SH DESCRIPTION
++
++\fBraidsetfaulty\fR and \fBraidhotgenerateerror\fR mark an active disk
++faulty and thus remove it from the RAID array. This is of course dangerous:
++no array should stay in a 'faulty' state for a long time, a disk failure in
++that period of time is not recoverable and data might be lost.
++Nevertheless this utility is a useful extension of administration and
++hot-plug utilities.
++
++.SH SEE ALSO
++.IR raidtab (5),
++.IR raidstart (8),
++.IR mkraid (8)
