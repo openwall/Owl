@@ -1,9 +1,9 @@
-# $Id: Owl/packages/cvs/cvs.spec,v 1.9 2003/05/01 00:10:11 solar Exp $
+# $Id: Owl/packages/cvs/cvs.spec,v 1.10 2003/05/01 15:36:18 solar Exp $
 
 Summary: A version control system.
 Name: cvs
 Version: 1.11.5
-Release: owl1
+Release: owl2
 License: GPL
 Group: Development/Tools
 URL: http://www.cvshome.org
@@ -17,6 +17,7 @@ Patch5: cvs-1.11.5-owl-no-world-writables.diff
 Patch10: cvs-1.11.5-alt-mdk-owl-canonicalize.diff
 PreReq: /sbin/install-info
 Prefix: %{_prefix}
+BuildRequires: mktemp >= 1:1.3.1
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -87,6 +88,11 @@ fi
 %{_datadir}/cvs
 
 %changelog
+* Thu May 01 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl2
+- BuildRequires: mktemp >= 1:1.3.1 (but don't yet require mktemp for the
+package itself because it won't be needed for most uses; the scripts will
+need to be moved to a subpackage).
+
 * Thu May 01 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl1
 - Re-worked the temporary file handling patch to make it actually do what
 it was supposed to and cover more scripts and the documentation.
