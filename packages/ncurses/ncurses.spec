@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ncurses/ncurses.spec,v 1.8 2000/11/17 08:14:49 solar Exp $
+# $Id: Owl/packages/ncurses/ncurses.spec,v 1.9 2000/12/10 02:31:08 solar Exp $
 
 %define 	major		5
 %define 	oldmajor	4
@@ -6,7 +6,7 @@
 Summary: 	A CRT screen handling and optimization package.
 Name: 		ncurses
 Version: 	5.2
-Release: 	4owl
+Release: 	5owl
 Copyright: 	distributable
 Group: 		System Environment/Libraries
 URL: 		http://dickey.his.com/ncurses/ncurses.html
@@ -16,9 +16,8 @@ Source2: 	ncurses-linux-m
 Source3: 	ncurses-resetall.sh
 Patch0:		ftp://dickey.his.com/ncurses/5.2/ncurses-5.2-20001028.patch.gz
 Patch1:		ftp://dickey.his.com/ncurses/5.2/ncurses-5.2-20001104.patch.gz
-Patch2:		ncurses-5.0-rh-setuid2.diff
-Patch3:		ncurses-5.2-owl-glibc-enable_secure.diff
-Patch4:		ncurses-5.2-owl-fixes.diff
+Patch2:		ncurses-5.2-owl-glibc-enable_secure.diff
+Patch3:		ncurses-5.2-owl-fixes.diff
 BuildRoot: 	/var/rpm-buildroot/%{name}-root
 
 %description
@@ -60,7 +59,6 @@ built against Red Hat Linux 6.2.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
 
 %build
 CFLAGS="%{optflags} -DPURE_TERMINFO"
@@ -132,6 +130,10 @@ ln -s libpanel.so.%{version} $RPM_BUILD_ROOT/usr/lib/libpanel.so.%{oldmajor}
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Sun Dec 10 2000 Solar Designer <solar@owl.openwall.com>
+- Removed the last remaining RH (security) patch which is now redundant
+and had a race, anyway.
+
 * Wed Nov 08 2000 Solar Designer <solar@owl.openwall.com>
 - ncurses-5.2-20001104 patch which adds --with-ospeed and bugfixes.
 - --with-ospeed=speed_t for compatibility with libtermcap.
