@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.22 2002/02/04 17:13:23 solar Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.23 2002/02/07 09:36:58 solar Exp $
 
 %define GCC_PREFIX /usr
 %define CPP_PREFIX /lib
@@ -311,28 +311,28 @@ if [ $1 -eq 0 ]; then
 fi
 
 %post -n libstdc++
-if ! grep -q '^%{GCC_PREFIX}/lib$' /etc/ld.so.conf; then
+if ! grep -qs '^%{GCC_PREFIX}/lib$' /etc/ld.so.conf; then
 	echo %{GCC_PREFIX}/lib >> /etc/ld.so.conf
 fi
 /sbin/ldconfig
 
 %postun -n libstdc++
 if [ $1 -eq 0 ]; then
-	grep -v "%{GCC_PREFIX}/lib" /etc/ld.so.conf > /etc/ld.so.conf.new
+	grep -v "%{GCC_PREFIX}/lib" /etc/ld.so.conf > /etc/ld.so.conf.new &&
 	mv -f /etc/ld.so.conf.new /etc/ld.so.conf
 fi
 /sbin/ldconfig
 
 %ifarch %ix86
 %post -n libstdc++-compat
-if ! grep -q '^%{GCC_PREFIX}/lib$' /etc/ld.so.conf; then
+if ! grep -qs '^%{GCC_PREFIX}/lib$' /etc/ld.so.conf; then
 	echo %{GCC_PREFIX}/lib >>/etc/ld.so.conf
 fi
 /sbin/ldconfig
 
 %postun -n libstdc++-compat
 if [ $1 -eq 0 ]; then
-	grep -v "%{GCC_PREFIX}/lib" /etc/ld.so.conf > /etc/ld.so.conf.new
+	grep -v "%{GCC_PREFIX}/lib" /etc/ld.so.conf > /etc/ld.so.conf.new &&
 	mv -f /etc/ld.so.conf.new /etc/ld.so.conf
 fi
 /sbin/ldconfig
