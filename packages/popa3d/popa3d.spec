@@ -1,8 +1,8 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.20 2002/06/22 08:52:41 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.21 2002/06/30 16:30:08 solar Exp $
 
-Summary: Post Office Protocol server.
+Summary: Post Office Protocol (POP3) server.
 Name: popa3d
-Version: 0.5.1.3
+Version: 0.5.1.4
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
@@ -43,8 +43,8 @@ install -m 600 $RPM_SOURCE_DIR/popa3d.xinetd \
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-grep ^popa3d: /etc/group &> /dev/null || groupadd -g 184 popa3d
-grep ^popa3d: /etc/passwd &> /dev/null ||
+grep -q ^popa3d: /etc/group || groupadd -g 184 popa3d
+grep -q ^popa3d: /etc/passwd ||
 	useradd -g popa3d -u 184 -d / -s /bin/false -M popa3d
 rm -f /var/run/popa3d.restart
 if [ $1 -ge 2 ]; then
@@ -72,6 +72,10 @@ fi
 %doc DESIGN LICENSE
 
 %changelog
+* Sun Jun 30 2002 Solar Designer <solar@owl.openwall.com>
+- Mention "POP3" in ".SH NAME" in the man page such that "apropos POP3"
+will catch it, as suggested by Phil Pennock.
+
 * Sat Jun 22 2002 Solar Designer <solar@owl.openwall.com>
 - Style change with plural form of abbreviations (ID's -> IDs) in the
 documentation and source code comments.
