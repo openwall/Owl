@@ -36,7 +36,7 @@ vulnerable OpenSSH client.  If successful, this could let one execute
 arbitrary code in the context of the remote server or client process.
 
 2002/03/03	kernel
-SECURITY FIX	Severity: medium, local, active
+SECURITY FIX	Severity: medium to high, local to remote, active
 Updated to Linux 2.2.20-ow2.  This fixes an x86-specific vulnerability
 in the Linux kernel discovered by Stephan Springl where local users
 could abuse a binary compatibility interface (lcall) to kill processes
@@ -347,4 +347,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.2.2.21 2002/03/08 16:46:31 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.2.2.22 2002/03/09 03:00:43 solar Exp $
