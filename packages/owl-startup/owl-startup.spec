@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.26 2002/02/12 23:14:48 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.27 2002/04/01 19:26:21 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.12
+Version: 0.13
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -142,6 +142,11 @@ fi
 %doc redhat
 
 %changelog
+* Mon Apr 01 2002 Solar Designer <solar@owl.openwall.com>
+- Mount /proc early.  We currently need this on Alpha, for glibc's I/O
+port access routines to be able to determine system type (and thus the
+I/O base address) when used by hwclock(8) (yes, this is very hackish).
+
 * Wed Feb 13 2002 Solar Designer <solar@owl.openwall.com>
 - Remove the old init that might be left from possible package upgrades.
 Please refer to the comments in rc.sysinit and in the pre-install script
