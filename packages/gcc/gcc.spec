@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.11 2000/10/29 17:23:22 solar Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.12 2000/11/08 07:25:23 solar Exp $
 
 %define GCC_PREFIX /usr
 %define CPP_PREFIX /lib
@@ -12,16 +12,17 @@
 Summary:	Various compilers (C, C++, Objective-C, f77, ...)
 Name:		gcc
 Version:	%{GCC_VERSION}
-Release:	5owl
+Release:	6owl
 Serial:		1
 Copyright:	GPL
 URL:		http://gcc.gnu.org
 Group:		Development/Languages
 Source0:	ftp://ftp.gnu.org/pub/gnu/gcc/gcc-%{GCC_VERSION}.tar.gz
 Source1:	libstdc++-compat.tar.bz2
-Patch:		gcc-2.95.2-rh-warn.diff
+Patch0:		gcc-2.95.2-rh-warn.diff
 Patch1:		gcc-2.95.2-owl-disable-dvi.diff
 Patch2:		gcc-2.95.2-owl-texconfig-bug.diff
+Patch3:		gcc-2.95.2-owl-rth-array-1-alpha.diff
 Packager:	<kad@owl.openwall.com>
 Distribution:	Owl
 BuildRoot:	/var/rpm-buildroot/%{name}-root
@@ -157,12 +158,11 @@ being used in Europe, Brazil, Korea, and other places.
 
 
 %prep
-
 %setup -q -n gcc-%{GCC_VERSION} -a 1
-
-%patch -p1
+%patch0 -p1
 %patch1 -p0
 %patch2 -p1
+%patch3 -p1
 
 # Remove bison-generated files - we want bison 1.28'ish versions...
 for i in gcc/cp/parse gcc/c-parse gcc/cexp gcc/java/parse-scan gcc/java/parse gcc/objc/objc-parse; do
@@ -171,7 +171,7 @@ done
 
 # Remove unneeded languages.
     rm -f gcc/java/config-lang.in
-    
+
 %if "%{BUILD_OBJC}"!="'yes'"
     rm -f gcc/objc/config-lang.in
 %endif
@@ -506,6 +506,10 @@ fi
 %endif
 
 %changelog
+* Wed Nov 08 2000 Solar Designer <solar@owl.openwall.com>
+- Added a patch for copying of DECL_MODE in duplicate_decls(), by
+Richard Henderson (http://gcc.gnu.org/ml/gcc-patches/1999-11/msg00087.html).
+
 * Sun Oct 29 2000 Solar Designer <solar@owl.openwall.com>
 - libstdc++-compat is for x86 only, corrected the %ifarch's.
 
