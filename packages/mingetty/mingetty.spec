@@ -1,9 +1,9 @@
-# $Id: Owl/packages/mingetty/mingetty.spec,v 1.9 2004/11/23 22:40:47 mci Exp $
+# $Id: Owl/packages/mingetty/mingetty.spec,v 1.10 2005/01/12 16:33:19 galaxy Exp $
 
 Summary: A compact getty program for virtual consoles only.
 Name: mingetty
 Version: 0.9.4
-Release: owl14
+Release: owl15
 License: GPL
 Group: System Environment/Base
 Source0: ftp://jurix.jura.uni-sb.de/pub/linux/source/system/daemons/mingetty-0.9.4.tar.gz
@@ -27,7 +27,7 @@ needed for serial lines (you may use the mgetty program in that case).
 %patch3 -p1
 
 %build
-make CFLAGS="-D_GNU_SOURCE -Wall $RPM_OPT_FLAGS"
+%__make CC="%__cc" CFLAGS="-D_GNU_SOURCE -Wall $RPM_OPT_FLAGS"
 
 %install
 rm -rf %buildroot
@@ -44,6 +44,9 @@ install -m 644 mingetty.8 %buildroot%_mandir/man8/
 %_mandir/man8/mingetty.8*
 
 %changelog
+* Mon Jan 10 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.9.4-owl15
+- Made use of %__cc and %__make macros.
+
 * Thu Dec 18 2003 Michail Litvak <mci@owl.openwall.com> 0.9.4-owl14
 - Fix Y2K bug in -suse.diff (Thanks to Ilya Andreiv)
 
