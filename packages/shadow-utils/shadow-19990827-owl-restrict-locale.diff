@@ -1,0 +1,209 @@
+diff -ur shadow-19990827.redhat/libmisc/fields.c shadow-19990827/libmisc/fields.c
+--- shadow-19990827.redhat/libmisc/fields.c	Mon Dec  8 02:27:04 1997
++++ shadow-19990827/libmisc/fields.c	Sat Aug 26 15:42:42 2000
+@@ -37,6 +37,11 @@
+ #include <stdio.h>
+ #include "prototypes.h"
+ 
++#define fixed_iscntrl(c) \
++	(((c) & 0x7f) < 0x20 || (c) == 0x7f)
++
++#define MAX_FIELD_SIZE			0x80
++
+ /*
+  * valid_field - insure that a field contains all legal characters
+  *
+@@ -50,13 +55,14 @@
+ {
+ 	const char *cp;
+ 
+-	for (cp = field; *cp && isprint(*cp & 0x7F) && !strchr(illegal, *cp); cp++)
+-		;
++	for (cp = field; *cp; cp++)
++	if (iscntrl(*cp) || fixed_iscntrl(*cp) || strchr(illegal, *cp))
++		return -1;
+ 
+-	if (*cp)
++	if (cp - field > MAX_FIELD_SIZE)
+ 		return -1;
+-	else
+-		return 0;
++
++	return 0;
+ }
+ 
+ /*
+diff -ur shadow-19990827.redhat/src/chage.c shadow-19990827/src/chage.c
+--- shadow-19990827.redhat/src/chage.c	Fri Aug 27 23:02:51 1999
++++ shadow-19990827/src/chage.c	Sat Aug 26 15:38:00 2000
+@@ -377,9 +377,11 @@
+ 	char	name[BUFSIZ];
+ 
+ 	sanitize_env();
+-	setlocale(LC_ALL, "");
+-	bindtextdomain(PACKAGE, LOCALEDIR);
+-	textdomain(PACKAGE);
++	if (getuid() == 0) {
++		setlocale(LC_ALL, "");
++		bindtextdomain(PACKAGE, LOCALEDIR);
++		textdomain(PACKAGE);
++	}
+ 
+ 	/*
+ 	 * Get the program name so that error messages can use it.
+@@ -809,9 +811,12 @@
+ 
+ 	Prog = Basename(argv[0]);
+ 
+-	setlocale(LC_ALL, "");
+-	bindtextdomain(PACKAGE, LOCALEDIR);
+-	textdomain(PACKAGE);
++	sanitize_env();
++	if (getuid() == 0) {
++		setlocale(LC_ALL, "");
++		bindtextdomain(PACKAGE, LOCALEDIR);
++		textdomain(PACKAGE);
++	}
+ 
+ 	fprintf (stderr, _("%s: no aging information present\n"), Prog);
+ 	exit(1);
+diff -ur shadow-19990827.redhat/src/chfn.c shadow-19990827/src/chfn.c
+--- shadow-19990827.redhat/src/chfn.c	Fri Jul  9 22:02:43 1999
++++ shadow-19990827/src/chfn.c	Sat Aug 26 15:37:42 2000
+@@ -260,9 +260,11 @@
+ 	char *user;
+ 
+ 	sanitize_env();
+-	setlocale(LC_ALL, "");
+-	bindtextdomain(PACKAGE, LOCALEDIR);
+-	textdomain(PACKAGE);
++	if (getuid() == 0) {
++		setlocale(LC_ALL, "");
++		bindtextdomain(PACKAGE, LOCALEDIR);
++		textdomain(PACKAGE);
++	}
+ 
+ 	/*
+ 	 * This command behaves different for root and non-root
+diff -ur shadow-19990827.redhat/src/chsh.c shadow-19990827/src/chsh.c
+--- shadow-19990827.redhat/src/chsh.c	Fri Jul  9 22:02:43 1999
++++ shadow-19990827/src/chsh.c	Sat Aug 26 15:37:48 2000
+@@ -163,10 +163,11 @@
+ 	struct	passwd	pwent;		/* New password entry                */
+ 
+ 	sanitize_env();
+-
+-	setlocale(LC_ALL, "");
+-	bindtextdomain(PACKAGE, LOCALEDIR);
+-	textdomain(PACKAGE);
++	if (getuid() == 0) {
++		setlocale(LC_ALL, "");
++		bindtextdomain(PACKAGE, LOCALEDIR);
++		textdomain(PACKAGE);
++	}
+ 
+ 	/*
+ 	 * This command behaves different for root and non-root
+diff -ur shadow-19990827.redhat/src/gpasswd.c shadow-19990827/src/gpasswd.c
+--- shadow-19990827.redhat/src/gpasswd.c	Fri Aug 27 23:02:51 1999
++++ shadow-19990827/src/gpasswd.c	Sat Aug 26 15:44:38 2000
+@@ -210,9 +210,11 @@
+ 	char *members = NULL;
+ 
+ 	sanitize_env();
+-	setlocale(LC_ALL, "");
+-	bindtextdomain(PACKAGE, LOCALEDIR);
+-	textdomain(PACKAGE);
++	if (getuid() == 0) {
++		setlocale(LC_ALL, "");
++		bindtextdomain(PACKAGE, LOCALEDIR);
++		textdomain(PACKAGE);
++	}
+ 
+ 	/*
+ 	 * Make a note of whether or not this command was invoked
+diff -ur shadow-19990827.redhat/src/login.c shadow-19990827/src/login.c
+--- shadow-19990827.redhat/src/login.c	Fri Aug 27 23:02:51 1999
++++ shadow-19990827/src/login.c	Sat Aug 26 15:50:05 2000
+@@ -464,10 +464,11 @@
+ 	 */
+ 
+ 	sanitize_env();
+-
+-	setlocale(LC_ALL, "");
+-	bindtextdomain(PACKAGE, LOCALEDIR);
+-	textdomain(PACKAGE);
++	if (getuid() == 0) {
++		setlocale(LC_ALL, "");
++		bindtextdomain(PACKAGE, LOCALEDIR);
++		textdomain(PACKAGE);
++	}
+ 
+ 	initenv();
+ 
+diff -ur shadow-19990827.redhat/src/newgrp.c shadow-19990827/src/newgrp.c
+--- shadow-19990827.redhat/src/newgrp.c	Fri Aug 27 23:02:51 1999
++++ shadow-19990827/src/newgrp.c	Sat Aug 26 15:50:46 2000
+@@ -96,10 +96,11 @@
+ #endif
+ 
+ 	sanitize_env();
+-
+-	setlocale(LC_ALL, "");
+-	bindtextdomain(PACKAGE, LOCALEDIR);
+-	textdomain(PACKAGE);
++	if (getuid() == 0) {
++		setlocale(LC_ALL, "");
++		bindtextdomain(PACKAGE, LOCALEDIR);
++		textdomain(PACKAGE);
++	}
+                   
+ 	/*
+ 	 * save my name for error messages and save my real gid incase
+diff -ur shadow-19990827.redhat/src/passwd.c shadow-19990827/src/passwd.c
+--- shadow-19990827.redhat/src/passwd.c	Fri Aug 27 23:02:51 1999
++++ shadow-19990827/src/passwd.c	Sat Aug 26 15:52:54 2000
+@@ -1022,9 +1022,12 @@
+ #endif
+ #endif
+ 
+-	setlocale(LC_ALL, "");
+-	bindtextdomain(PACKAGE, LOCALEDIR);
+-	textdomain(PACKAGE);
++	sanitize_env();
++	if (getuid() == 0) {
++		setlocale(LC_ALL, "");
++		bindtextdomain(PACKAGE, LOCALEDIR);
++		textdomain(PACKAGE);
++	}
+ 
+ 	/*
+ 	 * The program behaves differently when executed by root
+@@ -1037,8 +1040,6 @@
+ 	 * prefix to most error messages.
+ 	 */
+ 	Prog = Basename(argv[0]);
+-
+-	sanitize_env();
+ 
+ 	openlog("passwd", LOG_PID|LOG_CONS|LOG_NOWAIT, LOG_AUTH);
+ 
+diff -ur shadow-19990827.redhat/src/su.c shadow-19990827/src/su.c
+--- shadow-19990827.redhat/src/su.c	Mon Jun  7 20:40:45 1999
++++ shadow-19990827/src/su.c	Sat Aug 26 15:53:50 2000
+@@ -186,10 +186,11 @@
+ #endif /* !USE_PAM */
+ 
+ 	sanitize_env();
+-
+-	setlocale(LC_ALL, "");
+-	bindtextdomain(PACKAGE, LOCALEDIR);
+-	textdomain(PACKAGE);
++	if (getuid() == 0) {
++		setlocale(LC_ALL, "");
++		bindtextdomain(PACKAGE, LOCALEDIR);
++		textdomain(PACKAGE);
++	}
+ 
+ 	/*
+ 	 * Get the program name.  The program name is used as a

@@ -1,0 +1,58 @@
+diff -ur shadow-19990827.redhat/man/newusers.8 shadow-19990827/man/newusers.8
+--- shadow-19990827.redhat/man/newusers.8	Mon Dec 28 23:35:17 1998
++++ shadow-19990827/man/newusers.8	Sat Aug 26 16:10:16 2000
+@@ -40,7 +40,7 @@
+ \fBpasswd\fR(5)) with the following exceptions.
+ .IP "\fIpw_passwd\fR" 10
+ This field will be encrypted and used as the new value
+-of the encrpted password.
++of the encrypted password.
+ .IP "\fIpw_age\fR"
+ This field will be ignored for shadow passwords if the user already
+ exists.
+diff -ur shadow-19990827.redhat/man/pwconv.8 shadow-19990827/man/pwconv.8
+--- shadow-19990827.redhat/man/pwconv.8	Sat Sep 12 19:38:24 1998
++++ shadow-19990827/man/pwconv.8	Sat Aug 26 14:36:43 2000
+@@ -59,5 +59,4 @@
+ .SH "SEE ALSO"
+ .BR login.defs (5),
+ .BR pwck (8),
+-.BR grpck (8),
+-.BR shadowconfig (8)
++.BR grpck (8)
+diff -ur shadow-19990827.redhat/man/useradd.8 shadow-19990827/man/useradd.8
+--- shadow-19990827.redhat/man/useradd.8	Sat Aug 26 13:04:52 2000
++++ shadow-19990827/man/useradd.8	Sat Aug 26 17:26:30 2000
+@@ -81,8 +81,11 @@
+ The new user account will be entered into the system files as needed,
+ the home directory will be created, and initial files copied, depending
+ on the command line options.
+-The version provided with Red Hat Linux will create a group for each 
+-user added to the system, unless \fB-n\fR option is given.
++This version of
++.B useradd
++will create a group for each
++user added to the system, unless \fB-n\fR option is given. This behavior
++was introduced by Red Hat Software.
+ The options which apply to the \fBuseradd\fR command are
+ .\" .IP "\fB-A {\fImethod\fR|\fBDEFAULT\fR},..."
+ .\" The value of the user's authentication method.
+@@ -112,7 +115,8 @@
+ The group name or number of the user's initial login group.
+ The group name must exist.  A group number must refer to an
+ already existing group.
+-The default group number is 1.
++The default group number is 1 or whatever is specified in
++\fI/etc/default/useradd\fR.
+ .IP "\fB-G \fIgroup,[...]\fR"
+ A list of supplementary groups which the user is also a member
+ of.
+@@ -138,7 +142,7 @@
+ .IP \fB-n\fR 
+ A group having the same name as the user being added to the system 
+ will be created by default. This option will turn off this Red Hat 
+-Linux specific behavior. 
++Linux-style behavior.
+ .IP \fB-r\fR 
+ This flag is used to create a system account. That is, an user with an 
+ UID lower than value of UID_MIN defined in \fI/etc/login.defs\fR. Note 

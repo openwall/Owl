@@ -1,0 +1,38 @@
+# $Id: Owl/packages/shadow-utils/login.defs,v 1.1 2000/08/26 15:00:13 solar Exp $
+
+#
+# Min/max values for automatic UID selection in useradd
+#
+UID_MIN			  500
+UID_MAX			60000
+
+#
+# Min/max values for automatic GID selection in groupadd
+#
+GID_MIN			  500
+GID_MAX			60000
+
+#
+# If defined, this command is run when removing a user.
+# It should remove any at/cron/print jobs etc. owned by
+# the user to be removed (passed as the first argument).
+#
+#USERDEL_CMD		/usr/local/sbin/userdel_local
+
+#
+# If useradd should create home directories for users by default.
+# This option is OR'ed with the -m flag on useradd command line.
+#
+CREATE_HOME		no
+
+#
+# Require authentication before chfn/chsh can make any changes.
+#
+CHFN_AUTH		yes
+
+#
+# Don't allow users to change their "real name" and other information
+# using chfn.  The most restrictive setting is better achieved by not
+# installing chfn SUID.
+#
+CHFN_RESTRICT		no
