@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.15 2000/11/27 10:52:42 kad Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.16 2000/11/29 23:16:34 kad Exp $
 
 # XXX legacy requires './' payload prefix to be omitted from rpm packages.
 %define        _noPayloadPrefix        1
@@ -12,7 +12,7 @@
 Summary: The Red Hat package management system.
 Name: 		rpm
 Version: 	%{version}
-Release: 	9.7.5owl
+Release: 	9.7.6owl
 Group: 		System Environment/Base
 Source: 	ftp://ftp.rpm.org/pub/rpm/dist/rpm-3.0.x/rpm-%{version}.tar.gz
 Patch0:		rpm-3.0.5-owl-topdir.diff
@@ -211,13 +211,14 @@ fi
 %{__prefix}/lib/rpm/ppc*
 %endif
 
-%dir %{__prefix}/src/RPM
-%dir %{__prefix}/src/RPM/BUILD
-%dir %{__prefix}/src/RPM/SPECS
-%dir %{__prefix}/src/RPM/SOURCES
-%dir %{__prefix}/src/RPM/SRPMS
-%dir %{__prefix}/src/RPM/RPMS
-%{__prefix}/src/RPM/RPMS/*
+#disabled
+#%dir %{__prefix}/src/RPM
+#%dir %{__prefix}/src/RPM/BUILD
+#%dir %{__prefix}/src/RPM/SPECS
+#%dir %{__prefix}/src/RPM/SOURCES
+#%dir %{__prefix}/src/RPM/SRPMS
+#%dir %{__prefix}/src/RPM/RPMS
+#%{__prefix}/src/RPM/RPMS/*
 %{__prefix}/*/locale/*/LC_MESSAGES/rpm.mo
 %{__prefix}%{__share}/man/man[18]/*.[18]*
 %lang(pl) %{__prefix}%{__share}/man/pl/man[18]/*.[18]*
@@ -272,6 +273,9 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Thu Nov 30 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- disable /usr/src/RPM for security reasons
+
 * Sun Nov 19 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - gendiff fix
 
