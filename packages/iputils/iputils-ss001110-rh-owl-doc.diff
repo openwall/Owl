@@ -1,0 +1,14 @@
+diff -ur iputils.orig/arping.c iputils/arping.c
+--- iputils.orig/arping.c	Tue Sep 26 21:01:43 2000
++++ iputils/arping.c	Tue Apr 10 05:31:47 2001
+@@ -61,8 +61,9 @@
+ void usage(void)
+ {
+ 	fprintf(stderr,
+- 		"Usage: arping [-fDUAV] [-c count] [-w timeout] [-I device] [-s source] destination\n"
++ 		"Usage: arping [-fqDUAV] [-c count] [-w timeout] [-I device] [-s source] destination\n"
+  		"  -f : quit on first reply\n"
++ 		"  -q : be quiet\n"
+ 		"  -D : duplicate address detection mode\n"
+ 		"  -U : Unsolicited ARP mode, update your neighbours\n"
+ 		"  -A : ARP answer mode, update your neighbours\n"

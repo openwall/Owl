@@ -1,0 +1,12 @@
+#!/bin/sh
+# $Id: Owl/packages/iputils/ping.control,v 1.1 2001/04/10 03:32:14 solar Exp $
+
+. /etc/control.d/functions
+
+BINARY=/bin/ping
+
+new_fmode public 4711 root root
+new_fmode wheelonly 4710 root wheel
+new_fmode restricted 700 root root
+
+control_fmode "$BINARY" "$*" || exit 1

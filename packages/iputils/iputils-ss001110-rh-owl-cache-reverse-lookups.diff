@@ -1,0 +1,29 @@
+diff -ur iputils.orig/ping.c iputils/ping.c
+--- iputils.orig/ping.c	Thu Nov  2 22:53:23 2000
++++ iputils/ping.c	Tue Apr 10 06:06:29 2001
+@@ -1597,7 +1597,13 @@
+ pr_addr(__u32 addr)
+ {
+ 	struct hostent *hp;
+-	static char buf[80];
++	static char buf[256 + 32];
++	static __u32 prevaddr;
++	static int cached = 0;
++
++	/* Return previous result if same input (avoid multiple lookups) */
++	if (cached && addr == prevaddr)
++		return(buf);
+ 
+ 	if ((options & F_NUMERIC) ||
+ 	    !(hp = gethostbyaddr((char *)&addr, 4, AF_INET)))
+@@ -1605,6 +1611,10 @@
+ 	else
+ 		snprintf(buf, sizeof(buf), "%s (%s)", hp->h_name,
+ 			 inet_ntoa(*(struct in_addr *)&addr));
++
++	prevaddr = addr;
++	cached = 1;
++
+ 	return(buf);
+ }
+ 
