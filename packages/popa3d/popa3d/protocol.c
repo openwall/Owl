@@ -168,7 +168,8 @@ int pop_get_int(char **params)
  * situations should set errno to 0, then call strtol(), then check errno." */
 		errno = 0;
 		value = strtol(param, &error, 10);
-		if (errno || !*param || *error || (long)(int)value != value)
+		if (errno || !*param || *error ||
+		    value < 0 || (long)(int)value != value)
 			return -1;
 
 		return (int)value;
