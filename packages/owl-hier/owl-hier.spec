@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.20 2005/01/14 03:27:52 galaxy Exp $
+# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.21 2005/01/20 04:42:01 solar Exp $
 
 Summary: Initial directory hierarchy.
 Name: owl-hier
@@ -70,10 +70,8 @@ comm -3 - filelist.remove >> filelist
 %files -f filelist
 
 %changelog
-* Mon Jan 10 2005 (GalaxyMaster) <galaxy@openwall.com> 0.8-owl2
-- Cleaned up the spec enforcing macros instead of hardcoded paths. This
-change allows configure this package more flexible for possible custom
-builds (for example, if user change %_bindir macro at buildworld process).
+* Mon Jan 10 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.8-owl2
+- Cleaned up the spec to use macros instead of hardcoded paths in some places.
 
 * Mon Feb 16 2004 Michail Litvak <mci@owl.openwall.com> 0.8-owl1
 - Add some directories for FHS 2.2 compatibility.
