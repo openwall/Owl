@@ -112,6 +112,7 @@ client (not easy).
 	fileutils, sh-utils, textutils.
 
 [PRIORITY: medium]
+[ASSIGNED: exon@]
 Update to coreutils (one package instead of three).
 
 Update DIR_COLORS from dircolors.hin.  In ls, dir, and vdir use
@@ -527,4 +528,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.48 2004/11/13 01:54:59 solar Exp $
+$Id: Owl/doc/TODO,v 1.49 2004/11/20 15:25:44 solar Exp $
