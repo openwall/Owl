@@ -288,13 +288,11 @@ static int mailbox_parse(int init)
 				eq(line, length, "Message-ID:", 11);
 			break;
 
-#if 0
 		case 'X':
 /* Let the local delivery agent help generate unique ID's but don't blindly
  * trust this header alone as it could just as easily come from the remote. */
 			fixed = eq(line, length, "X-Delivery-ID:", 14);
 			break;
-#endif
 
 		default:
 			fixed = 0;

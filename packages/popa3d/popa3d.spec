@@ -1,8 +1,8 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.14 2002/03/22 04:22:21 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.15 2002/04/01 21:28:40 solar Exp $
 
 Summary: Post Office Protocol server.
 Name: popa3d
-Version: 0.5.0.3
+Version: 0.5.0.4
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
@@ -72,6 +72,10 @@ fi
 %doc DESIGN LICENSE
 
 %changelog
+* Tue Apr 02 2002 Solar Designer <solar@owl.openwall.com>
+- Let the local delivery agent help generate unique ID's by setting the
+X-Delivery-ID: header.
+
 * Fri Mar 22 2002 Solar Designer <solar@owl.openwall.com>
 - Re-worked all of the UIDL calculation, adding support for multi-line
 headers and re-considering which headers to use.
