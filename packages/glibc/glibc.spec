@@ -1,11 +1,11 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.8 2000/09/01 12:53:12 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.9 2000/09/07 01:17:55 solar Exp $
 
 %define BUILD_PROFILE	'no'
 
 Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
-Release: 6owl
+Release: 7owl
 Copyright: LGPL
 Group: System Environment/Libraries
 Source0: glibc-2.1.3.tar.gz
@@ -124,12 +124,15 @@ cd md5-crypt
 %build
 rm -rf build-$RPM_ARCH-linux
 mkdir build-$RPM_ARCH-linux ; cd build-$RPM_ARCH-linux
+USE_OPT_FLAGS="%{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}"
 %if "%{BUILD_PROFILE}"=="'yes'"
-CFLAGS="-g $RPM_OPT_FLAGS" ../configure --prefix=/usr \
-	--enable-add-ons=yes
+CFLAGS="-g $USE_OPT_FLAGS" ../configure --prefix=/usr \
+	--enable-add-ons=yes \
+	%_target_platform
 %else
-CFLAGS="-g $RPM_OPT_FLAGS" ../configure --prefix=/usr \
-	--enable-add-ons=yes --disable-profile
+CFLAGS="-g $USE_OPT_FLAGS" ../configure --prefix=/usr \
+	--enable-add-ons=yes --disable-profile \
+	%_target_platform
 %endif
 make MAKE='make -s'
 
@@ -261,6 +264,9 @@ rm -f *.filelist*
 %endif
 
 %changelog
+* Thu Sep 07 2000 Solar Designer <solar@owl.openwall.com>
+- Added %optflags_lib support and %_target_platform to configure.
+
 * Fri Sep 01 2000 Solar Designer <solar@owl.openwall.com>
 - One more security fix (locale once again) from the CVS version.
 - Fixed a bug in crypt_gensalt*() reported by Michael Tokarev.
