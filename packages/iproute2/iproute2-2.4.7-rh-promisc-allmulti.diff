@@ -1,0 +1,36 @@
+--- iproute2/ip/iplink.c.foo	Wed Aug  8 22:44:59 2001
++++ iproute2/ip/iplink.c	Wed Aug  8 22:49:15 2001
+@@ -37,6 +37,8 @@
+ void iplink_usage(void)
+ {
+ 	fprintf(stderr, "Usage: ip link set DEVICE { up | down | arp { on | off } |\n");
++	fprintf(stderr, "	                     promisc { on | off } |\n");
++	fprintf(stderr, "	                     allmulti { on | off } |\n");
+ 	fprintf(stderr, "	                     dynamic { on | off } |\n");
+ 	fprintf(stderr, "	                     multicast { on | off } | txqueuelen PACKETS |\n");
+ 	fprintf(stderr, "	                     name NEWNAME |\n");
+@@ -307,6 +309,24 @@
+ 				flags |= IFF_NOARP;
+ 			} else
+ 				return on_off("noarp");
++		} else if (strcmp(*argv, "promisc") == 0) {
++			NEXT_ARG();
++			mask |= IFF_PROMISC;
++			if (strcmp(*argv, "on") == 0) {
++				flags |= IFF_PROMISC;
++			} else if (strcmp(*argv, "off") == 0) {
++				flags &= ~IFF_PROMISC;
++			} else
++				return on_off("promisc");
++		} else if (strcmp(*argv, "allmulti") == 0) {
++			NEXT_ARG();
++			mask |= IFF_ALLMULTI;
++			if (strcmp(*argv, "on") == 0) {
++				flags |= IFF_ALLMULTI;
++			} else if (strcmp(*argv, "off") == 0) {
++				flags &= ~IFF_ALLMULTI;
++			} else
++				return on_off("allmulti");
+ #ifdef IFF_DYNAMIC
+ 		} else if (matches(*argv, "dynamic") == 0) {
+ 			NEXT_ARG();
