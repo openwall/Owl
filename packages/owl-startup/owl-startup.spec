@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.33 2002/11/30 21:42:45 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.34 2002/12/08 15:26:53 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.18
+Version: 0.19
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -84,16 +84,17 @@ mkdir -p var/run/netreport
 rm -rf $RPM_BUILD_ROOT
 
 %post
+f=/var/log/lastlog
+if [ ! -e $f ]; then
+	touch $f
+	chown root.root $f && chmod 644 $f
+fi
+
 for f in /var/log/wtmp /var/run/utmp; do
 	test -e $f && continue || :
 	touch $f
 	chown root.utmp $f && chmod 664 $f
 done
-
-if [ ! -e /var/log/lastlog ]; then
-	touch /var/log/lastlog
-	chown root.root /var/log/lastlog && chmod 644 /var/log/lastlog
-fi
 
 /sbin/chkconfig --add random
 /sbin/chkconfig --add network
@@ -146,6 +147,10 @@ fi
 %doc redhat
 
 %changelog
+* Sun Dec 08 2002 Solar Designer <solar@owl.openwall.com>
+- Also create /var/log/lastlog in rc.sysinit, not just on package install
+(thanks to Oleg Lukashin).
+
 * Sun Dec 01 2002 Solar Designer <solar@owl.openwall.com>
 - Set net.ipv4.tcp_syncookies = 1.
 - Documented the security risk of having SYN cookies enabled with certain

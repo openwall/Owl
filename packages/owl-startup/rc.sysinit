@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/owl-startup/rc.sysinit,v 1.13 2002/04/01 19:26:21 solar Exp $
+# $Id: Owl/packages/owl-startup/rc.sysinit,v 1.14 2002/12/08 15:26:53 solar Exp $
 
 # Set the initial default search path for use by startup scripts.
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
@@ -139,8 +139,16 @@ fi
 # that /sbin/init is the working binary again.
 rm -f /sbin/.init-working
 
-# Remove stale PID files, possibly create utmp and wtmp, reset utmp.
+# Remove stale PID files and possible RHL subsystem locks (we don't use
+# them, but third-party packages might).
 rm -f /var/run/*.pid /var/lock/subsys/*
+
+# Possibly create lastlog, utmp and wtmp, reset utmp.
+f=/var/log/lastlog
+if [ ! -e $f ]; then
+	touch $f
+	chown root.root $f && chmod 644 $f
+fi
 for f in /var/log/wtmp /var/run/utmp; do
 	test -e $f && continue
 	touch $f
