@@ -1,22 +1,23 @@
-# $Id: Owl/packages/file/file.spec,v 1.5 2003/03/06 23:29:45 mci Exp $
+# $Id: Owl/packages/file/file.spec,v 1.6 2003/04/29 14:40:03 mci Exp $
 
 Summary: A utility for determining file types.
 Name: file
 Version: 3.41
-Release: owl1
+Release: owl2
 License: distributable
 Group: Applications/File
 URL: http://www.darwinsys.com/freeware/file.html
 Source0: ftp://ftp.astron.com/pub/file/file-%{version}.tar.gz
 Patch0: file-3.41-rh-ia64.diff
-Patch1: file-3.41-mdk-alt-zsh.patch
-Patch2: file-3.41-alt-doctype.patch
-Patch3: file-3.41-alt-mng.patch
+Patch1: file-3.41-mdk-alt-zsh.diff
+Patch2: file-3.41-alt-doctype.diff
+Patch3: file-3.41-alt-mng.diff
 Patch4: file-3.41-deb-compress.diff
 Patch5: file-3.41-deb-magic2mime.diff
 Patch6: file-3.41-deb-make.diff
 Patch7: file-3.41-deb-magic.diff
 Patch8: file-3.41-deb-owl-man.diff
+Patch9: file-3.41-deb-owl-apprentice.diff
 Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
 
@@ -37,6 +38,7 @@ different graphics formats.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 %build
 automake
@@ -61,7 +63,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man*/*
 
 %changelog
-* Fri Mar 07 2002 Michail Litvak <mci@owl.openwall.com>
+* Tue Apr 29 2003 Michail Litvak <mci@owl.openwall.com>
+- Patch to remove annoing message: "Using regular magic file..."
+
+* Fri Mar 07 2003 Michail Litvak <mci@owl.openwall.com>
 - 3.41
 - Patch updates
 
