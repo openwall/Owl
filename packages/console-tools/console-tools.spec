@@ -1,4 +1,4 @@
-# $Id: Owl/packages/console-tools/Attic/console-tools.spec,v 1.9 2000/12/18 17:01:12 kad Exp $
+# $Id: Owl/packages/console-tools/Attic/console-tools.spec,v 1.10 2001/03/31 09:12:53 solar Exp $
 
 %define CTVER	0.3.3
 %define	CDVER	1999.08.29
@@ -7,7 +7,7 @@
 Summary: 	Tools for configuring the console.
 Name: 		console-tools
 Version: 	19990829
-Release: 	27owl
+Release: 	28owl
 Group: 		Applications/System
 Exclusiveos: 	Linux
 Copyright: 	GPL
@@ -302,6 +302,9 @@ fi
 %{_mandir}/man8/*
 
 %changelog
+* Sat Mar 31 2001 Solar Designer <solar@owl.openwall.com>
+- setsysfont: pass multiple arguments to consolechars correctly.
+
 * Fri Dec 15 2000 Solar Designer <solar@owl.openwall.com>
 - More spec file and startup script cleanups.
 - sparcv9
