@@ -399,14 +399,14 @@ static int mailbox_changed(void)
 
 int mailbox_get(struct db_message *msg, int lines)
 {
-	int result;
+	int event;
 
 	if (mailbox_changed()) return POP_CRASH_SERVER;
 
 	if (lseek(mailbox_fd, msg->data_offset, SEEK_SET) < 0)
 		return POP_CRASH_SERVER;
-	if ((result = pop_reply_multiline(mailbox_fd, msg->data_size, lines)))
-		return result;
+	if ((event = pop_reply_multiline(mailbox_fd, msg->data_size, lines)))
+		return event;
 
 	if (mailbox_changed()) return POP_CRASH_SERVER;
 

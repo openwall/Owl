@@ -204,7 +204,7 @@ static int db_load(char *spool, char *mailbox)
 
 int do_pop_trans(char *spool, char *mailbox)
 {
-	int result;
+	int event;
 
 	if (!pop_sane()) return 1;
 
@@ -221,9 +221,9 @@ int do_pop_trans(char *spool, char *mailbox)
 		db.total_size, db.total_size == 1 ? "" : "s");
 
 	if (pop_reply_ok())
-		result = POP_CRASH_NETFAIL;
+		event = POP_CRASH_NETFAIL;
 	else
-	switch ((result = pop_handle_state(pop_trans_commands))) {
+	switch ((event = pop_handle_state(pop_trans_commands))) {
 	case POP_STATE:
 		if (mailbox_update()) {
 			if (db.flags & DB_STALE) break;
@@ -253,7 +253,7 @@ int do_pop_trans(char *spool, char *mailbox)
 	if (db.flags & DB_STALE)
 		syslog(SYSLOG_PRI_LO, "Another MUA active, giving up");
 	else
-	if (result == POP_CRASH_SERVER)
+	if (event == POP_CRASH_SERVER)
 		syslog(SYSLOG_PRI_ERROR,
 			"Server failure accessing %s/%s",
 			spool, mailbox);
