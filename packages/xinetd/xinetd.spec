@@ -1,8 +1,8 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.23 2003/04/16 06:26:58 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.24 2003/08/25 03:26:29 solar Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
-Version: 2.3.11
+Version: 2.3.12
 Release: owl1
 License: BSD with minor restrictions
 Group: System Environment/Daemons
@@ -18,8 +18,7 @@ Source7: xinetd-echo
 Source8: xinetd-uecho
 Source9: xinetd-chargen
 Source10: xinetd-uchargen
-Patch0: xinetd-2.3.11-owl-version.diff
-Patch1: xinetd-2.3.11-owl-write-size-paranoia.diff
+Patch0: xinetd-2.3.12-owl-fixes.diff
 PreReq: /sbin/chkconfig
 Provides: inetd
 Obsoletes: inetd
@@ -43,9 +42,8 @@ limits on the number of servers that can be started, among other things.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 
-%{expand:%%define optflags %optflags -Wall -Wno-unused -Wno-switch}
+%{expand:%%define optflags %optflags -Wall -W -Wno-unused -Wno-switch}
 
 %build
 export ac_cv_header_DNSServiceDiscovery_DNSServiceDiscovery_h=no \
@@ -100,7 +98,7 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc README AUDIT xinetd/CHANGELOG xinetd/COPYRIGHT xinetd/sample.conf
+%doc README AUDIT CHANGELOG COPYRIGHT xinetd/sample.conf
 %config(noreplace) /etc/xinetd.conf
 %config(noreplace) /etc/xinetd.d/*
 %config /etc/rc.d/init.d/xinetd
@@ -108,13 +106,16 @@ fi
 %{_mandir}/*/*
 
 %changelog
-* Wed Apr 16 2003 Solar Designer <solar@owl.openwall.com>
+* Mon Aug 25 2003 Solar Designer <solar@owl.openwall.com> 2.3.12-owl1
+- Updated to 2.3.12.
+
+* Wed Apr 16 2003 Solar Designer <solar@owl.openwall.com> 2.3.11-owl1
 - Updated to 2.3.11.
 
 * Mon Feb 24 2003 Michail Litvak <mci@owl.openwall.com>
-- TCPMUX parser updates. -Steve Grubb                                    
-- TCPMUX was causing core dumps due to changes made in 2.3.10's          
-  child_process(), reverted changes. -Philip Armstrong 
+- TCPMUX parser updates. -Steve Grubb
+- TCPMUX was causing core dumps due to changes made in 2.3.10's
+  child_process(), reverted changes. -Philip Armstrong
 - Fix from ALT Linux Team (fixed a bounds check in Sdone())
 
 * Sat Jan 18 2003 Solar Designer <solar@owl.openwall.com>
