@@ -7,8 +7,8 @@ dlgresult=''
 partbl=''
 fstype=''
 trap rm -f '$dlgresult $partbl $fstemp' EXIT HUP INT TERM
-dlgresult=`mktemp /tmp/owl-setup.XXXXXX` || exit 1
-partbl=`mktemp /tmp/owl-setup.XXXXXX` || exit 1
+dlgresult=`mktemp /var/run/owl-setup.XXXXXX` || exit 1
+partbl=`mktemp /var/run/owl-setup.XXXXXX` || exit 1
 fstemp=`mktemp $FSTAB.XXXXXX` || exit 1
 
 function type2fs

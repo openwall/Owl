@@ -8,7 +8,7 @@ MKFSTAB=$HOME/mkfstab
 
 tempfile=''
 f_keytable=''
-trap rm -f '$tempfile $f_keytable' EXIT HUP INT TERM
+trap 'rm -f $tempfile $f_keytable' EXIT HUP INT TERM
 tempfile=`mktemp /var/run/owl-setup.XXXXXX` || exit 1
 f_keytable=`mktemp $F_KEYTABLE.XXXXXX` || exit 1
 
