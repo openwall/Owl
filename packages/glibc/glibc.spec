@@ -1,12 +1,12 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.58 2003/12/08 05:24:00 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.59 2004/04/26 00:00:32 solar Exp $
 
 %define BUILD_PROFILE 0
 
 Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
-%define crypt_bf_version 0.4.5
-Release: owl38
+%define crypt_bf_version 0.4.6
+Release: owl39
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%version.tar.gz
@@ -321,6 +321,9 @@ fi
 %endif
 
 %changelog
+* Mon Apr 26 2004 Solar Designer <solar@owl.openwall.com> 2.1.3-owl39
+- crypt_blowfish 0.4.6 (for Owl, this is only a documentation update).
+
 * Mon Dec 08 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl38
 - Sanity check the forward and backward chunk pointers in dlmalloc's
 unlink() macro, thanks to Stefan Esser for the idea.
