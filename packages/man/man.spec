@@ -1,9 +1,9 @@
-# $Id: Owl/packages/man/man.spec,v 1.10 2003/10/30 21:15:46 solar Exp $
+# $Id: Owl/packages/man/man.spec,v 1.11 2004/07/20 22:11:47 mci Exp $
 
 Summary: A set of documentation tools: man, apropos and whatis.
 Name: man
 Version: 1.5l
-Release: owl2
+Release: owl3
 License: GPL
 Group: System Environment/Base
 Source: ftp://ftp.win.tue.nl/pub/linux-local/utils/man/man-%version.tar.gz
@@ -11,6 +11,7 @@ Patch0: man-1.5l-owl-makewhatis.diff
 Patch1: man-1.5l-owl-latin1.diff
 Patch2: man-1.5l-owl-bound.diff
 Requires: groff, mktemp >= 1:1.3.1, findutils >= 1:4.1.5-owl4
+BuildRequires: sed >= 4.0.9
 BuildRoot: /override/%name-%version
 
 %description
@@ -29,8 +30,7 @@ whatis searches its own database for a complete word.
 
 %build
 ./configure -default -fhs +fsstnd
-mv conf_script conf_script.orig
-sed 's,/usr/lib,/etc,' < conf_script.orig > conf_script
+sed -i 's,/usr/lib,/etc,' conf_script
 chmod u+x conf_script
 make CC="gcc $RPM_OPT_FLAGS -D_GNU_SOURCE"
 
@@ -81,6 +81,9 @@ find /var/catman/{,X11R6/,local/}cat[123456789n] -type f -delete
 %attr(0775,root,man) %dir /var/catman/local/cat[123456789n]
 
 %changelog
+* Wed Jul 21 2004 Michail Litvak <mci@owl.openwall.com> 1.5l-owl3
+- Use sed -i.
+
 * Fri Sep 05 2003 Solar Designer <solar@owl.openwall.com> 1.5l-owl2
 - Fixed the buffer overflow with MANPL discovered by KF from SNOSoft.
 

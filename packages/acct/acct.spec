@@ -1,9 +1,9 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.21 2004/03/12 18:07:24 solar Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.22 2004/07/20 21:25:24 mci Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
 Version: 6.3.5
-Release: owl12
+Release: owl13
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.red-bean.com/pub/noel/%name-%version.tar.gz
@@ -16,6 +16,7 @@ Patch1: acct-6.3.5-owl-devpts.diff
 PreReq: /sbin/install-info, grep
 Provides: psacct
 Obsoletes: psacct
+BuildRequires: sed >= 4.0.9
 BuildRoot: /override/%name-%version
 
 %description
@@ -34,9 +35,7 @@ rm accounting.info
 
 %build
 %configure
-sed -e 's,/\* #undef HAVE_LINUX_ACCT_H \*/,#define HAVE_LINUX_ACCT_H,' \
-	config.h > config.h.new
-mv -f config.h.new config.h
+sed -i 's,/\* #undef HAVE_LINUX_ACCT_H \*/,#define HAVE_LINUX_ACCT_H,' config.h
 touch texinfo.tex
 make
 
@@ -109,6 +108,9 @@ fi
 %_infodir/*
 
 %changelog
+* Wed Jul 21 2004 Michail Litvak <mci@owl.openwall.com> 6.3.5-owl13
+- Use sed -i.
+
 * Thu Feb 26 2004 Michail Litvak <mci@owl.openwall.com> 6.3.5-owl12
 - Don't call autoconf.
 
