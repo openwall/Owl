@@ -1,15 +1,17 @@
-# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.2 2000/07/27 00:33:22 solar Exp $
+# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.3 2000/12/20 18:52:12 solar Exp $
 
 Summary: Initial directory hierarchy
 Name: owl-hier
 Version: 0.0
-Release: 1owl
+Release: 2owl
 Copyright: public domain
 Group: System Environment/Base
 Source: special
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 BuildPreReq: mtree
 Requires: owl-etc
+Obsoletes: filesystem
+Provides: filesystem
 BuildArchitectures: noarch
 
 %description
@@ -70,5 +72,8 @@ rm -rf $RPM_BUILD_ROOT
 %files -f filelist
 
 %changelog
+* Wed Dec 20 2000 Solar Designer <solar@owl.openwall.com>
+- Obsoletes: and Provides: filesystem to permit for upgrades from RH.
+
 * Wed Jul 26 2000 Solar Designer <solar@owl.openwall.com>
 - Initial version.
