@@ -1,4 +1,4 @@
-# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.8 2002/08/05 08:05:14 solar Exp $
+# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.9 2002/08/05 08:33:17 solar Exp $
 
 # The texinfo documentation for fileutils, sh-utils, and textutils is
 # currently provided by fileutils.
@@ -85,6 +85,8 @@ rm -rf $RPM_BUILD_ROOT
 %pre
 /sbin/install-info --quiet --delete \
 	%{_infodir}/fileutils.info.gz %{_infodir}/dir
+/sbin/install-info --quiet --delete \
+	%{_infodir}/sh-utils.info.gz %{_infodir}/dir
 
 %post
 /sbin/install-info %{_infodir}/coreutils.info.gz %{_infodir}/dir
