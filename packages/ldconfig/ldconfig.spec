@@ -1,11 +1,11 @@
-# $Id: Owl/packages/ldconfig/Attic/ldconfig.spec,v 1.1 2000/09/10 08:34:46 kad Exp $
+# $Id: Owl/packages/ldconfig/Attic/ldconfig.spec,v 1.2 2000/10/28 02:02:52 solar Exp $
 
 %define reldate 1999-07-31
 
 Summary: 	Creates a shared library cache and maintains symlinks for ld.so.
 Name: 		ldconfig
 Version: 	1.9.10
-Release: 	1owl
+Release: 	2owl
 Copyright: 	GPL
 Group: 		System Environment/Base
 Source: 	ftp://ftp.valinux.com/pub/support/hjl/glibc/ldconfig-%{reldate}.tar.gz
@@ -32,8 +32,9 @@ rm -f ldconfig
 gcc -s -o ldconfig $RPM_OPT_FLAGS -static ldconfig.c
 
 %install
-mkdir -p $RPM_BUILD_ROOT/sbin
+mkdir -p $RPM_BUILD_ROOT/{sbin,etc}
 install -s -m 755 ldconfig $RPM_BUILD_ROOT/sbin/ldconfig
+touch $RPM_BUILD_ROOT/etc/ld.so.conf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -44,13 +45,16 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%doc    README
+%doc README
 /sbin/ldconfig
+%attr(600,root,root) %config(noreplace) /etc/ld.so.conf
 
 %changelog
+* Sat Oct 28 2000 Solar Designer <solar@owl.openwall.com>
+- Create an empty /etc/ld.so.conf, so that its permissions are set here.
+
 * Sun Sep 10 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import spec from RH
 - new release from HJL's site
 - import help patch from RH
 - not in glibc patch
-
