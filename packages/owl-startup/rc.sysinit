@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/owl-startup/rc.sysinit,v 1.9 2001/12/09 17:59:39 solar Exp $
+# $Id: Owl/packages/owl-startup/rc.sysinit,v 1.10 2001/12/09 18:41:58 solar Exp $
 
 # Set the initial default search path for use by startup scripts.
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
@@ -98,14 +98,13 @@ mount -f /
 
 rm -f /fastboot /forcefsck
 
-# Load modules, if any, unless requested not to
-if ! grep -wq nomodules /proc/cmdline; then
-	if [ -e /etc/rc.d/rc.modules ]; then
-		. /etc/rc.d/rc.modules
-	elif [ -x /sbin/depmod -a -d "/lib/modules/`uname -r`" ]; then
-		echo "Finding module dependencies"
-		depmod -a
-	fi
+# Load modules, if any
+if [ -x /sbin/depmod -a -d "/lib/modules/`uname -r`" ]; then
+	echo "Finding module dependencies"
+	depmod -a
+fi
+if [ -e /etc/rc.d/rc.modules ]; then
+	. /etc/rc.d/rc.modules
 fi
 
 # Mount all local filesystems, including procfs.
