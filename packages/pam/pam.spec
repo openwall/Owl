@@ -1,9 +1,9 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.6 2000/08/26 06:20:16 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.7 2000/08/26 06:41:48 solar Exp $
 
 Summary: A security tool which provides authentication for applications.
 Name: pam
 Version: 0.72
-Release: 10owl
+Release: 11owl
 Copyright: GPL or BSD
 Group: System Environment/Base
 Source0: pam-redhat-%{version}.tar.gz
@@ -24,6 +24,7 @@ without having to recompile programs which do authentication.
 
 %prep
 %setup -q
+rm -rf modules/pam_console
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -39,8 +40,6 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr/include/security
 mkdir -p $RPM_BUILD_ROOT/lib/security
 make install FAKEROOT=$RPM_BUILD_ROOT LDCONFIG=:
-rm -f $RPM_BUILD_ROOT/lib/security/pam_console.so
-rm -f $RPM_BUILD_ROOT/usr/man/man8/pam_console.8*
 install -m 644 libpamc/include/security/pam_client.h $RPM_BUILD_ROOT/usr/include/security
 install -d -m 755 $RPM_BUILD_ROOT/etc/pam.d
 install -m 644 other.pamd $RPM_BUILD_ROOT/etc/pam.d/other
@@ -78,10 +77,13 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/security/group.conf
 %config /etc/security/limits.conf
 %config /etc/security/pam_env.conf
-/usr/man/man5/*
 /usr/man/man8/*
 
 %changelog
+* Sat Aug 26 2000 Solar Designer <solar@owl.openwall.com>
+- Disabled building of pam_console entirely to avoid the dependency on glib.
+- Removed the (bogus?) dependency on initscripts from this spec file.
+
 * Tue Aug 08 2000 Solar Designer <solar@owl.openwall.com>
 - Removed pam_console and its related files.
 
