@@ -1,23 +1,23 @@
-# $Id: Owl/packages/mingetty/mingetty.spec,v 1.4 2000/11/23 19:12:30 solar Exp $
+# $Id: Owl/packages/mingetty/mingetty.spec,v 1.5 2002/02/04 10:26:26 solar Exp $
 
 Summary: A compact getty program for virtual consoles only.
 Name: mingetty
 Version: 0.9.4
-Copyright: GPL
-Release: 13owl
+License: GPL
+Release: owl13
 Group: System Environment/Base
 Source0: ftp://jurix.jura.uni-sb.de/pub/linux/source/system/daemons/mingetty-0.9.4.tar.gz
 Patch0: mingetty-0.9.4-suse.diff
 Patch1: mingetty-0.9.4-owl-bound.diff
 Patch2: mingetty-0.9.4-owl-logname.diff
 Patch3: mingetty-0.9.4-owl-syslog.diff
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
-Requires: SimplePAMApps >= 0.60-1owl
+Requires: SimplePAMApps >= 0.60-owl13
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The mingetty program is a lightweight, minimalist getty program for
-use only on virtual consoles.  Mingetty is not suitable for serial
-lines (you should use the mgetty program in that case).
+use only on virtual consoles.  mingetty lacks certain functionality
+needed for serial lines (you may use the mgetty program in that case).
 
 %prep
 %setup -q
@@ -31,11 +31,11 @@ make CFLAGS="-D_GNU_SOURCE -Wall $RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{sbin,usr/man/man8}
+mkdir -p $RPM_BUILD_ROOT/sbin
+mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man8
 
-install -m 0755 -s mingetty $RPM_BUILD_ROOT/sbin/
-install -m 0644 mingetty.8 $RPM_BUILD_ROOT/usr/man/man8/
-gzip -9nf $RPM_BUILD_ROOT/usr/man/man8/*
+install -m 755 mingetty $RPM_BUILD_ROOT/sbin/
+install -m 644 mingetty.8 ${RPM_BUILD_ROOT}%{_mandir}/man8/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -44,9 +44,12 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %doc ANNOUNCE COPYING CHANGES
 /sbin/mingetty
-/usr/man/man8/mingetty.*
+%{_mandir}/man8/mingetty.8*
 
 %changelog
+* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Mon Sep 25 2000 Solar Designer <solar@owl.openwall.com>
 - Replaced the error()/USE_SYSLOG code to fix a "format bug" reported by
 Jarno Huuskonen on security-audit.
