@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.21 2002/06/21 15:51:30 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.22 2002/06/22 07:00:04 solar Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -44,12 +44,22 @@ function spec()
 
 function binaries()
 {
-	local SPEC SOURCE
+	local SPEC SOURCE TOTAL SUB
 
 	SPEC=$1
 	SOURCE=$2
 
-	if grep -q '^%files[[:space:]]*$' $SPEC; then
+	TOTAL="`grep -cE '^%files([[:space:]]|$)' $SPEC`"
+	test $? -gt 1 && return 1
+	SUB="`grep -cEf - $SPEC << EOF
+^%files[[:space:]]+-n
+^%files[[:space:]].*[[:space:]]-n
+^%files[[:space:]]+[^[:space:]-]
+^%files[[:space:]].*[[:space:]][^[:space:]-][^[:space:]]*[[:space:]]+[^[:space:]-]
+EOF`"
+	test $? -gt 1 && return 1
+
+	if [ $TOTAL -gt $SUB ]; then
 		rpm -q --specfile $SPEC
 	else
 		rpm -q --specfile $SPEC | grep -v "^${SOURCE}-[^-]*-[^-]*\$"
