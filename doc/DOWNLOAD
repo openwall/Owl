@@ -16,9 +16,14 @@ following contents:
 
 native.tar.gz		CVS tree (build specifications and patches)
 sources			source tree (original tarballs, etc)
-Owl.mtree		mtree(8) specification of the above
 kernel			kernel sources and recommended patches
+Owl.mtree		mtree(8) specification of the above
 i386, sparc, sparcv9	Owl binary packages
+
+Some of the subdirectories may use symlinks to files common to several
+Owl branches.  Thus, to download just one Owl branch you may need to
+tell your FTP client to dereference symlinks.  With lftp (which is a
+part of Owl), use the "mirror -L" command.
 
 The mtree(8) specifications for Owl releases are PGP signed.  The
 corresponding PGP public key is available from:
@@ -32,4 +37,4 @@ need both the CVS and the source trees.
 More documentation (including BUILD and INSTALL) is available in the
 CVS tree, under Owl/doc/.
 
-$Id: Owl/doc/DOWNLOAD,v 1.5 2001/05/25 22:01:30 solar Exp $
+$Id: Owl/doc/DOWNLOAD,v 1.6 2001/06/23 09:48:56 solar Exp $
