@@ -9,6 +9,9 @@ ftp://ftp2.ru.openwall.com/pub/Owl/	(Russia, DataForce ISP)
 ftp://ftp.pl.openwall.com/pub/Owl/	(Poland)
 ftp://ftp.ua.openwall.com/pub/Owl/	(Ukraine)
 ftp://ftp.cz.openwall.com/pub/Owl/	(Czech Republic)
+ftp://gd.tuwien.ac.at/opsys/linux/Owl/	(Austria)
+	http://gd.tuwien.ac.at/opsys/linux/Owl/
+	rsync://gd.tuwien.ac.at/opsys/linux/Owl/
 ftp://ftp.ca.openwall.com/pub/Owl/	(Canada)
 ftp://ftp.wiretapped.net/pub/Owl/	(Australia)
 
@@ -39,4 +42,4 @@ need both the CVS and the source trees.
 More documentation (including BUILD and INSTALL) is available in the
 CVS tree, under Owl/doc/.
 
-$Id: Owl/doc/DOWNLOAD,v 1.9 2002/04/27 14:55:36 solar Exp $
+$Id: Owl/doc/DOWNLOAD,v 1.10 2002/05/08 15:38:27 solar Exp $
