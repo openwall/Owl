@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bc/bc.spec,v 1.1 2000/11/21 09:19:50 mci Exp $
+# $Id: Owl/packages/bc/bc.spec,v 1.2 2000/12/05 09:24:37 mci Exp $
 
 Summary: GNU's bc (a numeric processing language) and dc (a calculator).
 Name: bc
@@ -11,6 +11,7 @@ Patch0: bc-1.06-owl-no_info_dir.diff
 Prereq: /sbin/install-info grep
 Prefix: %{_prefix}
 Buildroot: /var/rpm-buildroot/%{name}-root
+BuildRequires: readline-devel
 
 %description
 The bc package includes bc and dc.  Bc is an arbitrary precision
