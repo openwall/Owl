@@ -1,9 +1,9 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.12 2001/10/27 17:30:57 solar Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.13 2002/01/24 14:44:14 solar Exp $
 
 Version: 2.05
 Name: bash
 Summary: The GNU Bourne-Again SHell (Bash).
-Release: 1owl
+Release: owl1
 Group: System Environment/Shells
 License: GPL
 Source0: ftp://ftp.gnu.org/gnu/bash/bash-%{version}.tar.gz
@@ -27,11 +27,11 @@ Patch33: bash-2.05-deb-random.diff
 Patch34: bash-2.05-deb-man.diff
 Patch40: bash-2.05-alt-fnmatch-disable-strcoll.diff
 Patch41: bash-2.05-alt-man.diff
-Prefix: %{_prefix}
 Requires: mktemp >= 1:1.3.1
 Provides: bash2
-Obsoletes: bash2 etcskel
-Buildroot: /override/%{name}-%{version}
+Obsoletes: bash2, etcskel
+Prefix: %{_prefix}
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The GNU Bourne Again shell (Bash) is a shell or command language
@@ -181,6 +181,9 @@ fi
 %doc doc/*.ps* doc/*.html doc/article.txt*
 
 %changelog
+* Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Sat Oct 27 2001 Solar Designer <solar@owl.openwall.com>
 - Applied many cleanups to bash sources to build with -Wall also fixing a
 few real bugs, disabling pieces of dead code, and commenting on likely
