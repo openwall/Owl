@@ -1,4 +1,4 @@
-# $Id: Owl/packages/file/file.spec,v 1.4 2003/03/06 23:26:26 mci Exp $
+# $Id: Owl/packages/file/file.spec,v 1.5 2003/03/06 23:29:45 mci Exp $
 
 Summary: A utility for determining file types.
 Name: file
@@ -32,6 +32,7 @@ different graphics formats.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
