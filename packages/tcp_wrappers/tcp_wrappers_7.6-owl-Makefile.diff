@@ -1,5 +1,6 @@
+diff -ur tcp_wrappers_7.6.orig/Makefile tcp_wrappers_7.6/Makefile
 --- tcp_wrappers_7.6.orig/Makefile	Fri Mar 21 21:27:21 1997
-+++ tcp_wrappers_7.6/Makefile	Mon Oct  2 06:14:44 2000
++++ tcp_wrappers_7.6/Makefile	Tue Oct  3 03:14:28 2000
 @@ -43,8 +43,8 @@
  # Ultrix 4.x SunOS 4.x ConvexOS 10.x Dynix/ptx
  #REAL_DAEMON_DIR=/usr/etc
@@ -86,6 +87,15 @@
  
  ########################################
  # Optional: turning off hostname lookups
+@@ -623,7 +624,7 @@
+ # In order to perform selective hostname lookups, disable paranoid
+ # mode (see previous section) and comment out the following definition.
+ 
+-HOSTNAME= -DALWAYS_HOSTNAME
++HOSTNAME= #-DALWAYS_HOSTNAME
+ 
+ #############################################
+ # Optional: Turning on host ADDRESS checking
 @@ -649,7 +650,7 @@
  # source-routed traffic in the kernel. Examples: 4.4BSD derivatives,
  # Solaris 2.x, and Linux. See your system documentation for details.
