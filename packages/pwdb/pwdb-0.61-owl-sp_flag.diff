@@ -1,0 +1,13 @@
+diff -ur pwdb-0.61.orig/libpwdb/pwdb/interface/shadow/user.c pwdb-0.61/libpwdb/pwdb/interface/shadow/user.c
+--- pwdb-0.61.orig/libpwdb/pwdb/interface/shadow/user.c	Wed Oct  7 00:58:43 1998
++++ pwdb-0.61/libpwdb/pwdb/interface/shadow/user.c	Sun Sep  3 18:56:58 2000
+@@ -349,6 +349,9 @@
+         /* not available in pwdb_entry */
+         spwent.sp_expire=spw->sp_expire;
+ 
++    /* RESERVED */
++	spwent.sp_flag = -1;
++
+     if (!__pwdb_spw_close()) {
+         pwdb_entry_user = _pwdb_delete_string(pwdb_entry_user);
+         spwent.sp_pwdp = _pwdb_delete_string(spwent.sp_pwdp);

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/pwdb/Attic/pwdb.spec,v 1.1 2000/08/07 03:00:36 solar Exp $
+# $Id: Owl/packages/pwdb/Attic/pwdb.spec,v 1.2 2000/09/03 15:02:36 solar Exp $
 
 Summary: The password database library.
 Name: pwdb
 Version: 0.61
-Release: 1owl
+Release: 2owl
 Copyright: GPL or BSD
 Group: System Environment/Base
 Source: pwdb-%{PACKAGE_VERSION}.tar.gz
@@ -11,6 +11,7 @@ Patch0: pwdb-0.61-owl-fgets.diff
 Patch1: pwdb-0.61-owl-clean.diff
 Patch2: pwdb-0.61-owl-backup.diff
 Patch3: pwdb-0.61-owl-sprintf.diff
+Patch4: pwdb-0.61-owl-sp_flag.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 
 %description
@@ -28,6 +29,7 @@ Radius.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 rm default.defs
 ln -s defs/redhat.defs default.defs
 # checking out of the CVS sometimes preserves the setgid bit on
@@ -65,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 /lib/libpwdb.so.%{PACKAGE_VERSION}
 
 %changelog
+* Sun Sep 03 2000 Solar Designer <solar@owl.openwall.com>
+- Initialize sp_flag (a reserved field) in _pwdb_shadow_replace().
+
 * Mon Aug 07 2000 Solar Designer <solar@owl.openwall.com>
 - Imported from RH, added four reliability/security patches; a lot of
 problems still remain in the code, we should stop using pam_pwdb soon.
