@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sed/sed.spec,v 1.1 2000/08/09 00:51:27 kad Exp $
+# $Id: Owl/packages/sed/sed.spec,v 1.2 2002/02/04 17:13:24 solar Exp $
 
 Summary: A GNU stream text editor.
 Name: 		sed
@@ -6,7 +6,7 @@ Version: 	3.02
 Release: 	8owl
 Copyright: 	GPL
 Group: 		Applications/Text
-Source0: 	ftp://ftp.gnu.org/pub/gnu/sed/sed-%{version}.tar.gz
+Source0: 	ftp://ftp.gnu.org/gnu/sed/sed-%{version}.tar.gz
 Prereq: 	/sbin/install-info
 Prefix: 	%{_prefix}
 Buildroot: 	/var/rpm-buildroot/%{name}-root

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/autoconf/autoconf.spec,v 1.2 2002/01/24 14:42:07 solar Exp $
+# $Id: Owl/packages/autoconf/autoconf.spec,v 1.3 2002/02/04 17:13:23 solar Exp $
 
 Summary: A GNU tool for automatically configuring source code.
 Name: autoconf
@@ -6,7 +6,7 @@ Version: 2.13
 Release: owl9
 License: GPL
 Group: Development/Tools
-Source: ftp://ftp.gnu.org/pub/gnu/autoconf/autoconf-%{version}.tar.gz
+Source: ftp://ftp.gnu.org/gnu/autoconf/autoconf-%{version}.tar.gz
 Patch0: autoconf-2.12-rh-race.diff
 Patch1: autoconf-2.13-rh-mawk.diff
 Patch2: autoconf-2.13-rh-notmp.diff

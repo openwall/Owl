@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sh-utils/Attic/sh-utils.spec,v 1.2 2000/07/26 22:36:48 solar Exp $
+# $Id: Owl/packages/sh-utils/Attic/sh-utils.spec,v 1.3 2002/02/04 17:13:24 solar Exp $
 
 Summary: A set of GNU utilities commonly used in shell scripts.
 Name: sh-utils
@@ -6,7 +6,7 @@ Version: 2.0
 Release: 2owl
 Copyright: GPL
 Group: System Environment/Shells
-Source: ftp://ftp.gnu.org/pub/gnu/sh-utils/sh-utils-%{version}.tar.gz
+Source: ftp://ftp.gnu.org/gnu/sh-utils/sh-utils-%{version}.tar.gz
 Patch0: sh-utils-2.0-owl-no-su-hostname.diff
 Patch1: sh-utils-2.0-owl-false.diff
 Patch2: sh-utils-2.0-rh-cest.diff

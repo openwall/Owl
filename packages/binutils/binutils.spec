@@ -1,4 +1,4 @@
-# $Id: Owl/packages/binutils/binutils.spec,v 1.5 2002/01/24 15:10:04 solar Exp $
+# $Id: Owl/packages/binutils/binutils.spec,v 1.6 2002/02/04 17:13:23 solar Exp $
 
 %define BUILD_HJL 1
 
@@ -12,7 +12,7 @@ URL: http://sources.redhat.com/binutils/
 %if %BUILD_HJL
 Source: ftp://ftp.valinux.com/pub/support/hjl/binutils/binutils-%{version}.tar.gz
 %else
-Source: ftp://ftp.gnu.org/pub/gnu/binutils/binutils-%{version}.tar.gz
+Source: ftp://ftp.gnu.org/gnu/binutils/binutils-%{version}.tar.gz
 %endif
 ExcludeArch: ia64
 BuildRoot: /override/%{name}-%{version}

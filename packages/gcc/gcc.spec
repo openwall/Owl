@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.21 2002/01/30 15:55:36 solar Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.22 2002/02/04 17:13:23 solar Exp $
 
 %define GCC_PREFIX /usr
 %define CPP_PREFIX /lib
@@ -17,7 +17,7 @@ Epoch: 1
 License: GPL
 Group: Development/Languages
 URL: http://gcc.gnu.org
-Source0: ftp://ftp.gnu.org/pub/gnu/gcc/gcc-%{GCC_VERSION}.tar.gz
+Source0: ftp://ftp.gnu.org/gnu/gcc/gcc-%{GCC_VERSION}.tar.gz
 Source1: libstdc++-compat.tar.bz2
 Patch0: gcc-2.95.3-rh-warn.diff
 Patch1: gcc-2.95.2-owl-disable-dvi.diff

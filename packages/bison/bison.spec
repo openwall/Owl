@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bison/bison.spec,v 1.7 2002/01/24 11:39:04 solar Exp $
+# $Id: Owl/packages/bison/bison.spec,v 1.8 2002/02/04 17:13:23 solar Exp $
 
 Summary: A GNU general-purpose parser generator.
 Name: bison
@@ -6,7 +6,7 @@ Version: 1.32
 Release: owl1
 License: GPL
 Group: Development/Tools
-Source: ftp://ftp.gnu.org/pub/gnu/bison/bison-%{version}.tar.bz2
+Source: ftp://ftp.gnu.org/gnu/bison/bison-%{version}.tar.bz2
 Patch0: bison-1.30-owl-tmp.diff
 PreReq: /sbin/install-info
 BuildRequires: mktemp >= 1:1.3.1

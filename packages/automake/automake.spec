@@ -1,4 +1,4 @@
-# $Id: Owl/packages/automake/automake.spec,v 1.2 2002/01/24 14:43:09 solar Exp $
+# $Id: Owl/packages/automake/automake.spec,v 1.3 2002/02/04 17:13:23 solar Exp $
 
 Summary: A GNU tool for automatically creating Makefiles.
 Name: automake
@@ -7,7 +7,7 @@ Release: owl8
 License: GPL
 Group: Development/Tools
 URL: http://sourceware.cygnus.com/automake/
-Source: ftp://ftp.gnu.org/pub/gnu/automake/automake-%{version}.tar.gz
+Source: ftp://ftp.gnu.org/gnu/automake/automake-%{version}.tar.gz
 Patch: automake-1.4-rh-copytosourcedir.diff
 PreReq: /sbin/install-info
 Requires: perl
