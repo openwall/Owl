@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vim/vim.spec,v 1.12 2002/04/25 18:20:33 solar Exp $
+# $Id: Owl/packages/vim/vim.spec,v 1.13 2003/03/14 23:35:54 mci Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -9,10 +9,10 @@ Name: vim
 %define major 6
 %define minor 1
 %define alpha %{nil}
-%define patchlevel 18
+%define patchlevel 386
 %define vimdir vim%{major}%{minor}%{alpha}
 Version: %{major}.%{minor}%{?patchlevel:.%patchlevel}
-Release: owl3
+Release: owl1
 License: Charityware
 Group: Applications/Editors
 Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%{major}.%{minor}%{alpha}.tar.bz2
@@ -285,6 +285,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Sat Mar 15 2003 Michail Litvak <mci@owl.openwall.com>
+- Updated to patchlevel 386
+
 * Thu Apr 25 2002 Solar Designer <solar@owl.openwall.com>
 - vitmp moved from /usr/libexec to /bin and now has a man page.
 - Additional temporary file handling fixes to vim and its scripts (but not
