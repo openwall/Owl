@@ -1,9 +1,9 @@
-# $Id: Owl/packages/diffstat/diffstat.spec,v 1.5 2003/01/12 16:19:17 solar Exp $
+# $Id: Owl/packages/diffstat/diffstat.spec,v 1.6 2003/01/15 15:11:08 mci Exp $
 
 Summary: A utility which provides statistics based on the output of diff.
 Name: diffstat
 Version: 1.32
-Release: owl1
+Release: owl2
 Group: Development/Tools
 License: distributable
 Source: ftp://dickey.his.com/diffstat/%{name}-%{version}.tgz
@@ -20,8 +20,8 @@ to provide a summary of the changes in large, complex patch files.
 %setup -q
 
 %build
-%configure
-make CFLAGS="$RPM_OPT_FLAGS -Wall"
+%configure --with-warnings
+make
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -37,6 +37,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/*/*
 
 %changelog
+* Wed Jan 15 2003 Michail Litvak <mci@owl.openwall.com>
+- Use configure --with-warnings instead our -Wall
+
 * Sun Jan 12 2003 Michail Litvak <mci@owl.openwall.com>
 - 1.32
 
