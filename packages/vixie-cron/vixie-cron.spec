@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.34 2005/03/14 05:04:16 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.35 2005/03/14 05:33:47 solar Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
@@ -75,6 +75,8 @@ install -m 700 $RPM_SOURCE_DIR/crontab.control \
 install -m 700 $RPM_SOURCE_DIR/at.control \
 	%buildroot/etc/control.d/facilities/at
 
+touch %buildroot/etc/{at,cron}.{allow,deny}
+
 %pre
 grep -q ^crontab: /etc/group || groupadd -g 160 crontab
 grep -q ^crontab: /etc/passwd ||
@@ -133,13 +135,16 @@ fi
 %config /etc/rc.d/init.d/crond
 /etc/control.d/facilities/crontab
 /etc/control.d/facilities/at
+%attr(640,root,crontab) %ghost /etc/*.allow
+%attr(640,root,crontab) %config(noreplace) /etc/*.deny
 
 %changelog
 * Mon Mar 14 2005 Solar Designer <solar@owl.openwall.com> 4.1.20040916-owl1
-- Assorted corrections and cleanups.
+- Applied many assorted corrections and cleanups.
 
 * Sun Feb 20 2005 Juan M. Bello Rivas <jmbr@owl.openwall.com> 4.1.20040916-owl0.1
-- Merged the changes by Jarno Huuskonen and by Dmitry V. Levin.
+- Updated to 4.1 as found in OpenBSD CVS snapshot dated 2004/09/16, with
+modifications by Jarno Huuskonen and Dmitry V. Levin.
 
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.0.2.7-owl19
 - Removed verify checks for crontab binary since we are controlling it
