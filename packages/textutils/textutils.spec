@@ -1,15 +1,15 @@
-# $Id: Owl/packages/textutils/Attic/textutils.spec,v 1.3 2000/10/25 19:06:41 kad Exp $
+# $Id: Owl/packages/textutils/Attic/textutils.spec,v 1.4 2001/01/06 14:41:11 solar Exp $
 
 Summary: A set of GNU text file modifying utilities.
 Name: 		textutils
-Version: 	2.0.8
+Version: 	2.0.11
 Release: 	1owl
 Copyright: 	GPL
 Group: 		Applications/Text
 Source: 	ftp://alpha.gnu.org/gnu/fetish/textutils-%{version}.tar.gz
+Patch0:		textutils-2.0.11-owl-tmp.diff
 Prereq: 	/sbin/install-info
 BuildPrereq: 	libtool
-Packager:       <kad@owl.openwall.com>
 BuildRoot:      /var/rpm-buildroot/%{name}-root
 
 %description
@@ -18,16 +18,17 @@ programs for splitting, joining, comparing and modifying files.
 
 %prep
 %setup -q
-%build
+%patch0 -p1
 
+%build
 unset LINGUAS || :
+export ac_cv_sys_long_file_names=yes \
 %configure
 make
 
 %install
 rm -rf ${RPM_BUILD_ROOT}
 
-#makeinstall
 make install DESTDIR=$RPM_BUILD_ROOT
 
 %ifos linux
@@ -39,13 +40,13 @@ make install DESTDIR=$RPM_BUILD_ROOT
 
 gzip -9nf $RPM_BUILD_ROOT/%{_infodir}/textutils*
 
-
 %post
 /sbin/install-info %{_infodir}/textutils.info.gz %{_infodir}/dir
 
 %preun
-if [ $1 = 0 ]; then
-   /sbin/install-info --delete %{_infodir}/textutils.info.gz %{_infodir}/dir
+if [ $1 -eq 0 ]; then
+	/sbin/install-info --delete \
+		%{_infodir}/textutils.info.gz %{_infodir}/dir
 fi
 
 %clean
@@ -63,6 +64,10 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/locale/*/*/*
 
 %changelog
+* Sat Jan 06 2001 Solar Designer <solar@owl.openwall.com>
+- 2.0.11
+- DoS attack fixes for tac and sort (O_EXCL -> mkstemp).
+
 * Wed Oct 25 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - 2.0.8 (+sha1sum)
 
