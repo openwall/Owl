@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.51 2003/08/02 05:10:51 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.52 2003/10/29 16:09:59 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -6,7 +6,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
 %define crypt_bf_version 0.4.5
-Release: owl35
+Release: owl36
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%{version}.tar.gz
@@ -69,7 +69,7 @@ Requires: /etc/nsswitch.conf
 %ifarch alpha
 Provides: ld.so.2
 %endif
-Provides: glibc-crypt_blowfish = %{crypt_bf_version}, glibc <= 2.1.3-19owl
+Provides: glibc-crypt_blowfish >= %{crypt_bf_version}
 AutoReq: false
 BuildRoot: /override/%{name}-%{version}
 
@@ -88,6 +88,7 @@ Summary: Header and object files for development using standard C libraries.
 Group: Development/Libraries
 PreReq: /sbin/install-info
 Requires: kernel-headers >= 2.2.1
+Provides: glibc-crypt_blowfish-devel >= %{crypt_bf_version}
 Conflicts: texinfo < 3.11
 AutoReq: true
 
@@ -322,6 +323,11 @@ fi
 %endif
 
 %changelog
+* Wed Oct 29 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl36
+- Added "Provides: glibc-crypt_blowfish-devel" tag to -devel subpackage.
+- Dropped the obsolete "Provides: glibc <= 2.1.3-19owl" tag which was
+needed during our transition to the new Release numbering scheme.
+
 * Sat Aug 02 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl35
 - Back-ported a fix from glibc CVS to pass the high and low 32 bits of
 file offsets into ftruncate64, truncate64, pread64, and pwrite64
