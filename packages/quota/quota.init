@@ -1,0 +1,44 @@
+#!/bin/sh
+# $Id: Owl/packages/quota/Attic/quota.init,v 1.1 2001/06/24 22:09:03 mci Exp $
+#
+# chkconfig: 345 35 65
+# description: \
+#	start/stop ifilesystem quota
+
+
+# names of binaries
+
+CHECK=/sbin/quotacheck
+ON=/sbin/quotaon
+OFF=/sbin/quotaoff
+
+FLAGS=-aug
+
+case "$1" in
+start)
+     	if [ -x $CHECK ]; then
+        	echo 'Checking quotas';
+		$CHECK $FLAGS
+  	fi 
+
+     	if [ -x $ON ]; then
+        	echo 'Turning on quotas.';
+        	$ON $FLAGS
+     	fi
+	;;
+stop)
+	echo  'Turning off quotas'
+	if [ -x $OFF ]; then
+		$OFF $FLAGS
+	fi
+	;;
+restart)
+	$0 stop
+	$0 start
+    	;;
+*)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?
