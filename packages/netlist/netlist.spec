@@ -1,3 +1,5 @@
+# $Id: Owl/packages/netlist/Attic/netlist.spec,v 1.2 2001/11/09 03:14:37 solar Exp $
+
 Summary: A program to list active Internet connections and sockets.
 Name: netlist
 Version: 2.0
