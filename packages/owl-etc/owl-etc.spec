@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.32 2001/11/01 01:34:29 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.33 2001/11/25 02:24:12 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
-Version: 0.18
+Version: 0.19
 Release: 1owl
 License: public domain
 Group: System Environment/Base
@@ -22,10 +22,10 @@ Source41: bashrc
 Source42: inputrc
 Source50: csh.login
 Source51: csh.cshrc
-BuildArchitectures: noarch
-BuildRequires: fileutils >= 4.0.27
 Obsoletes: setup
 Provides: setup
+BuildArchitectures: noarch
+BuildRequires: fileutils >= 4.0.27
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -65,6 +65,9 @@ rm -rf $RPM_BUILD_ROOT
 %ghost /var/log/lastlog
 
 %changelog
+* Sun Nov 25 2001 Solar Designer <solar@owl.openwall.com>
+- telnetd user/group.
+
 * Thu Nov 01 2001 Solar Designer <solar@owl.openwall.com>
 - audio, video and radio groups to manage access to devices.
 
