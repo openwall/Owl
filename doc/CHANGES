@@ -15,7 +15,7 @@ for the packages themselves.
 2001/09/09	Package: popa3d
 Updated to 0.4.9.3.  The same popa3d binary may now be run as a
 standalone server as well as via xinetd, an /etc/xinetd.d file is
-provided.
+provided.  Parts of the daemon code are now run in a chroot jail.
 
 2001/09/02	Package: groff
 SECURITY FIX	Severity: none to high, remote, active
@@ -294,4 +294,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp@hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.22 2001/09/08 21:32:51 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.23 2001/09/08 22:00:37 solar Exp $
