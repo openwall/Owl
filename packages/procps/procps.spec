@@ -1,4 +1,4 @@
-# $Id: Owl/packages/procps/Attic/procps.spec,v 1.13 2004/05/14 01:54:36 galaxy Exp $
+# $Id: Owl/packages/procps/Attic/procps.spec,v 1.14 2004/05/14 14:24:12 solar Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
@@ -13,7 +13,7 @@ Patch1: procps-2.0.7-owl-locale.diff
 Patch2: procps-2.0.7-owl-meminfo-fixes.diff
 Patch3: procps-2.0.7-owl-no-catman-cleanup.diff
 Patch4: procps-2.0.7-owl-top-ticks.diff
-Patch5:  procps-2.0.7-owl-top-include.diff
+Patch5: procps-2.0.7-owl-top-include.diff
 PreReq: /sbin/ldconfig
 BuildRoot: /override/%name-%version
 
