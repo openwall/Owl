@@ -1,0 +1,13 @@
+#!/bin/sh
+#
+# convert troff to Postscript
+#
+TMP_FILE=`mktemp /tmp/rhsprintfilter.XXXXXX` || exit 1
+cat > $TMP_FILE
+`grog -Tps -msafer $TMP_FILE`
+
+if [ -f "$TMP_FILE" ]; then
+      rm -f $TMP_FILE
+fi
+
+exit 0

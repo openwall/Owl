@@ -1,0 +1,16 @@
+--- gzip-1.2.4a/gzip.texi.dirinfo	Tue Feb  8 20:17:42 2000
++++ gzip-1.2.4a/gzip.texi	Tue Feb  8 20:19:13 2000
+@@ -7,6 +7,13 @@
+ @c %**end of header
+ 
+ @ifinfo
++
++@format
++START-INFO-DIR-ENTRY
++* gzip: (gzip).                 The GNU compression utility.
++END-INFO-DIR-ENTRY
++@end format
++
+ This file documents the the GNU @code{gzip} command for compressing files.
+ 
+ Copyright (C) 1992-1993 Jean-loup Gailly

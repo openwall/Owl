@@ -1,0 +1,13 @@
+http://sourceware.cygnus.com/cgi-bin/cvsweb.cgi/automake/automake.in.diff?r1=1.649&r2=1.650&cvsroot=automake
+================================================================================
+--- automake.in	Fri Feb  4 23:01:20 2000
++++ automake.in	Fri Feb  4 23:02:38 2000
+@@ -2367,7 +2367,7 @@
+ 	$output_rules .= "\t  d=\$(srcdir); \\\n";
+     }
+     $output_rules .= ("\t  if test -d \$\$d/\$\$file; then \\\n"
+-		      . "\t    cp -pr \$\$/\$\$file \$(distdir)/\$\$file; \\\n"
++		      . "\t    cp -pr \$\$d/\$\$file \$(distdir)/\$\$file; \\\n"
+ 		      . "\t  else \\\n"
+ 		      . "\t    test -f \$(distdir)/\$\$file \\\n"
+ 		      . "\t    || ln \$\$d/\$\$file \$(distdir)/\$\$file 2> /dev/null \\\n"

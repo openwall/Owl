@@ -1,13 +1,12 @@
-# $Id: Owl/packages/textutils/Attic/textutils.spec,v 1.1 2000/07/29 21:47:40 kad Exp $
+# $Id: Owl/packages/textutils/Attic/textutils.spec,v 1.2 2000/08/09 00:51:27 kad Exp $
 
 Summary: A set of GNU text file modifying utilities.
 Name: 		textutils
-Version: 	2.0e
-Release: 	6owl
+Version: 	2.0g
+Release: 	1owl
 Copyright: 	GPL
 Group: 		Applications/Text
 Source: 	ftp://alpha.gnu.org/gnu/fetish/textutils-%{version}.tar.gz
-Patch: 		textutils-2.0e-owl-buildroot.diff
 Prereq: 	/sbin/install-info
 BuildPrereq: 	libtool
 Packager:       <kad@owl.openwall.com>
@@ -19,7 +18,6 @@ programs for splitting, joining, comparing and modifying files.
 
 %prep
 %setup -q
-%patch -p1
 %build
 
 unset LINGUAS || :

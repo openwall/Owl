@@ -1,0 +1,56 @@
+--- gdbm-1.8.0/Makefile.in.fhs	Mon Jun  5 15:12:15 2000
++++ gdbm-1.8.0/Makefile.in	Mon Jun  5 15:16:34 2000
+@@ -14,10 +14,6 @@
+ INSTALL_PROGRAM = @INSTALL_PROGRAM@
+ INSTALL_DATA = @INSTALL_DATA@
+ 
+-# File ownership and group
+-BINOWN = bin
+-BINGRP = bin
+-
+ MAKEINFO = makeinfo
+ TEXI2DVI = texi2dvi
+ 
+@@ -33,8 +29,7 @@
+ # Common prefix for installation directories
+ prefix = /usr/local
+ exec_prefix = $(prefix)
+-binprefix = $(exec_prefix)
+-manprefix = $(prefix)
++mandir = $(prefix)/man
+ 
+ # Directory in which to put libgdbm.a.
+ libdir = $(exec_prefix)/lib
+@@ -42,7 +37,7 @@
+ includedir = $(prefix)/include
+ # Info and man directories.
+ infodir = $(prefix)/info
+-man3dir = $(prefix)/man/man3
++man3dir = $(mandir)/man3
+ manext = 3
+ 
+ #### End of system configuration section. ####
+@@ -122,18 +117,14 @@
+ install: libgdbm.la gdbm.h gdbm.info
+ 	$(srcdir)/mkinstalldirs $(libdir) $(includedir) $(man3dir) $(infodir)
+ 	$(LIBTOOL) install -c libgdbm.la $(libdir)/libgdbm.la
+-	$(INSTALL_DATA) -o $(BINOWN) -g $(BINGRP) gdbm.h $(includedir)/gdbm.h
+-	$(INSTALL_DATA) -o $(BINOWN) -g $(BINGRP) $(srcdir)/gdbm.3 \
+-		$(man3dir)/gdbm.3
+-	$(INSTALL_DATA) -o $(BINOWN) -g $(BINGRP) $(srcdir)/gdbm.info \
+-		$(infodir)/gdbm.info
++	$(INSTALL_DATA) gdbm.h $(includedir)/gdbm.h
++	$(INSTALL_DATA) $(srcdir)/gdbm.3 $(man3dir)/gdbm.3
++	$(INSTALL_DATA) $(srcdir)/gdbm.info $(infodir)/gdbm.info
+ 
+ install-compat:
+ 	$(srcdir)/mkinstalldirs $(includedir)
+-	$(INSTALL_DATA) -o $(BINOWN) -g $(BINGRP) $(srcdir)/dbm.h \
+-		$(includedir)/dbm.h
+-	$(INSTALL_DATA) -o $(BINOWN) -g $(BINGRP) $(srcdir)/ndbm.h \
+-		$(includedir)/ndbm.h
++	$(INSTALL_DATA) $(srcdir)/dbm.h $(includedir)/dbm.h
++	$(INSTALL_DATA) $(srcdir)/ndbm.h $(includedir)/ndbm.h
+ 
+ #libgdbm.a: $(OBJS) gdbm.h
+ #	rm -f libgdbm.a

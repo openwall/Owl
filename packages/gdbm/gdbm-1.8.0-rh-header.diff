@@ -1,0 +1,11 @@
+--- gdbm-1.8.0/gdbmopen.c.jbj	Tue Aug 10 10:57:38 1999
++++ gdbm-1.8.0/gdbmopen.c	Tue Aug 10 10:59:06 1999
+@@ -214,7 +214,7 @@
+ 	file_block_size = block_size;
+ 
+       /* Get space for the file header. */
+-      dbf->header = (gdbm_file_header *) malloc (file_block_size);
++      dbf->header = (gdbm_file_header *) calloc (1, file_block_size);
+       if (dbf->header == NULL)
+ 	{
+ 	  gdbm_close (dbf);

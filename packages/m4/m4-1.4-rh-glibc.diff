@@ -1,0 +1,11 @@
+--- m4-1.4/src/m4.c.ewt	Mon Jun  2 21:22:37 1997
++++ m4-1.4/src/m4.c	Mon Jun  2 21:22:41 1997
+@@ -19,7 +19,7 @@
+ #include "m4.h"
+ 
+ #include <getopt.h>
+-#include <sys/signal.h>
++#include <signal.h>
+ 
+ static void usage _((int));
+ 

@@ -1,0 +1,11 @@
+--- gzip-1.2.4/zforce.in.sopwith	Thu Feb  3 18:06:30 2000
++++ gzip-1.2.4/zforce.in	Thu Feb  3 18:07:37 2000
+@@ -25,7 +25,7 @@
+   test `expr "$i" : '.*[.-]gz$'` -eq 0 || continue
+   test `expr "$i" : '.*[.]t[ag]z$'` -eq 0 || continue
+ 
+-  if gzip -l < "$i" 2>/dev/null | grep '^defl' > /dev/null; then
++  if gzip -l < "$i" 2>/dev/null | grep '^compressed' > /dev/null; then
+ 
+     if test `expr "$i" : '^............'` -eq 12; then
+       new=`expr "$i" : '\(.*\)...$`.gz

@@ -1,0 +1,32 @@
+The postscript (and hplj) output drivers for groff lack support for printing
+on A4 paper. Setting up for A4 paper is not documented for groff.
+
+The following file could be supplied with the groff distribution to support
+the use of A4 paper (used in much of the world instead of the Letter format
+used widely in the US).  This is a modified version of
+	/usr/lib/groff/font/devps/DESC.
+I don't know the best way to set this up at install time.
+
+In my system, I have both files (DESC.a4 and DESC.letter) and a symlink from
+DESC to the correct one).  The modifications are to the "unitwidth" (reduced
+from 1000 to 970, and "paperlength" (increased from 792000 to 841888). The
+hplj output driver needs a similar fix, but the parameters are different.
+
+-Doug-
+
+Example devps/DESC (for A4):
+
+res 72000
+hor 1
+vert 1
+sizescale 1000
+unitwidth 970
+sizes 1000-10000000 0
+styles R I B BI
+family T
+fonts 9 0 0 0 0 0 SS S ZD ZDR
+tcommand
+postpro grops
+broken 7
+paperlength 841888
+print lpr       
