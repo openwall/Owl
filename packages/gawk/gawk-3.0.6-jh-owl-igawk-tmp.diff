@@ -1,13 +1,13 @@
 diff -ur gawk-3.0.6.orig/doc/gawk.texi gawk-3.0.6/doc/gawk.texi
 --- gawk-3.0.6.orig/doc/gawk.texi	Tue Aug  8 02:57:43 2000
-+++ gawk-3.0.6/doc/gawk.texi	Sun May 27 04:19:48 2001
++++ gawk-3.0.6/doc/gawk.texi	Sun May 27 04:30:53 2001
 @@ -16550,8 +16550,7 @@
  arranges to clean up any temporary files on program exit or upon an
  interrupt.
  
 -@c 2e: For the temp file handling, go with Darrel's ig=${TMP:-/tmp}/igs.$$
 -@c 2e: or something as similar as possible.
-+@c 2e: For the temporary file handling, use mktemp with ${TMPDIR:-/tmp}.
++@c 2e: For the temporary file handling, use mktemp with $@{TMPDIR:-/tmp@}.
  
  The next part loops through all the command line arguments.
  There are several cases of interest.
@@ -29,7 +29,7 @@ diff -ur gawk-3.0.6.orig/doc/gawk.texi gawk-3.0.6/doc/gawk.texi
  
  @item --version
  @itemx -Wversion
-@@ -16596,11 +16595,11 @@
+@@ -16596,16 +16595,11 @@
  or @samp{-Wsource}, were supplied, then the first non-option argument
  should be the @code{awk} program.  If there are no command line
  arguments left, @code{igawk} prints an error message and exits.
@@ -39,12 +39,17 @@ diff -ur gawk-3.0.6.orig/doc/gawk.texi gawk-3.0.6/doc/gawk.texi
  In any case, after the arguments have been processed,
 -@file{/tmp/ig.s.$$} contains the complete text of the original @code{awk}
 -program.
+-
+-The @samp{$$} in @code{sh} represents the current process ID number.
+-It is often used in shell programs to generate unique temporary file
+-names.  This allows multiple users to run @code{igawk} without worrying
+-that the temporary file names will clash.
 +the complete text of the original @code{awk} program
 +is contained in a temporary file.
  
- The @samp{$$} in @code{sh} represents the current process ID number.
- It is often used in shell programs to generate unique temporary file
-@@ -16620,13 +16619,25 @@
+ @cindex @code{sed} utility
+ Here's the program:
+@@ -16620,13 +16614,25 @@
  # Arnold Robbins, arnold@@gnu.org, Public Domain
  # July 1993
  
@@ -71,7 +76,7 @@ diff -ur gawk-3.0.6.orig/doc/gawk.texi gawk-3.0.6/doc/gawk.texi
  fi
  
  while [ $# -ne 0 ] # loop over arguments
-@@ -16643,28 +16654,28 @@
+@@ -16643,28 +16649,28 @@
  
      -[vF]*) opts="$opts '$1'" ;;
  
@@ -106,7 +111,7 @@ diff -ur gawk-3.0.6.orig/doc/gawk.texi gawk-3.0.6/doc/gawk.texi
              shift;;
  
      -?version)
-@@ -16679,19 +16690,19 @@
+@@ -16679,19 +16685,19 @@
      shift
  done
  
@@ -129,7 +134,7 @@ diff -ur gawk-3.0.6.orig/doc/gawk.texi gawk-3.0.6/doc/gawk.texi
  @c endfile
  @c @end group
  @end example
-@@ -16776,7 +16787,7 @@
+@@ -16776,7 +16782,7 @@
  @end group
  @end example
  
@@ -138,7 +143,7 @@ diff -ur gawk-3.0.6.orig/doc/gawk.texi gawk-3.0.6/doc/gawk.texi
  The main loop comes next.  Input lines are read in succession. Lines that
  do not start with @samp{@@include} are printed verbatim.
  
-@@ -16825,7 +16836,7 @@
+@@ -16825,7 +16831,7 @@
  @group
          close(input[stackptr])
      @}
@@ -147,7 +152,7 @@ diff -ur gawk-3.0.6.orig/doc/gawk.texi gawk-3.0.6/doc/gawk.texi
  @end group
  @c endfile
  @c @end group
-@@ -16852,7 +16863,7 @@
+@@ -16852,7 +16858,7 @@
  @example
  @c @group
  @c file eg/prog/igawk.sh
