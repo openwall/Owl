@@ -1,4 +1,4 @@
-# $Id: Owl/packages/kernel/kernel.spec,v 1.1 2000/10/28 18:27:17 solar Exp $
+# $Id: Owl/packages/kernel/kernel.spec,v 1.2 2000/10/28 18:28:59 solar Exp $
 
 Summary: Fake Linux kernel package for RH compatibility
 Name: kernel
@@ -32,6 +32,7 @@ ln -s /usr/src/linux/include/{linux,asm} usr/include/
 %files
 
 %files headers
+%defattr(-,root,root)
 /usr/include/linux
 /usr/include/asm
 
