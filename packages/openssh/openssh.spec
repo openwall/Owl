@@ -1,9 +1,11 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.21.2.3 2001/09/29 00:55:36 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.21.2.4 2001/12/12 20:19:53 solar Exp $
 
-Summary: The OpenSSH implementation of SSH.
+Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
-Version: 2.9.9p2
-Release: 0.0.1.2owl
+Version: 3.0.2p1
+Release: 0.0.1.1owl
+License: BSD
+Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
 Source0: ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-%{version}.tar.gz
 Source1: sshd.pam
@@ -11,38 +13,35 @@ Source2: sshd.init
 Source3: ssh_config
 Source4: sshd_config
 Source5: sftp.control
-Patch0: openssh-2.9.9p2-owl-hide-unknown.diff
-Patch1: openssh-2.9.9p2-owl-always-auth.diff
-Patch2: openssh-2.9.9p2-owl-pam_userpass.diff
-Patch3: openssh-2.9.9p2-owl-scp-stalltime.diff
-Patch4: openssh-2.9.9p2-owl-drop-groups.diff
-Patch5: openssh-2.9.9p2-owl-openssl-version-check.diff
-Patch6: openssh-2.9.9p2-cvs-20010928-fixes.diff
-License: BSD
-Group: Applications/Internet
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
-Obsoletes: ssh
+Patch0: openssh-3.0.2p1-owl-hide-unknown.diff
+Patch1: openssh-3.0.2p1-owl-always-auth.diff
+Patch2: openssh-3.0.2p1-owl-pam_userpass.diff
+Patch3: openssh-3.0.2p1-owl-scp-stalltime.diff
+Patch4: openssh-3.0.2p1-owl-drop-groups.diff
+Patch5: openssh-3.0.2p1-owl-openssl-version-check.diff
 Requires: pam_mktemp
 PreReq: openssl >= 0.9.6a-2owl
 PreReq: openssl < 0.9.7
-BuildPreReq: openssl-devel >= 0.9.6a-2owl
-BuildPreReq: pam >= 0.72-8owl
-BuildPreReq: perl
-BuildPreReq: zlib-devel
-BuildPreReq: tcp_wrappers
+Obsoletes: ssh
+BuildRequires: openssl-devel >= 0.9.6a-2owl
+BuildRequires: pam >= 0.72-8owl
+BuildRequires: perl
+BuildRequires: zlib-devel
+BuildRequires: tcp_wrappers
+BuildRoot: /override/%{name}-%{version}
 
 %package clients
 Summary: OpenSSH clients.
-Requires: openssh = %{version}-%{release}
 Group: Applications/Internet
+Requires: openssh = %{version}-%{release}
 Obsoletes: ssh-clients
 
 %package server
 Summary: The OpenSSH server daemon.
 Group: System Environment/Daemons
-Obsoletes: ssh-server
 PreReq: openssh = %{version}-%{release}
 PreReq: chkconfig >= 0.9, pam_userpass, /dev/urandom
+Obsoletes: ssh-server
 
 %description
 SSH (Secure Shell) is a program for logging into a remote machine and for
@@ -95,7 +94,6 @@ clients to connect to your host.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p3
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" LIBS="-lcrypt -lpam -lpam_misc" ./configure \
@@ -194,6 +192,10 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Wed Dec 12 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 3.0.2p1.
+- Updates to appl_userpass.c to support building against Linux-PAM 0.74+.
+
 * Sat Sep 29 2001 Solar Designer <solar@owl.openwall.com>
 - Include post-2.9.9 fixes from the CVS, most importantly to restore the
 order of reading for ~/.ssh/config and /etc/ssh_config.

@@ -5,6 +5,14 @@ remains fixed; it's only the stable branch which has these changes.
 
 	Changes made between Owl 0.1-prerelease and Owl 0.1-stable.
 
+2001/12/12	Package: openssh
+SECURITY FIX	Severity: none to high, local, active
+Updated to 3.0.2p1 which fixes a security problem with UseLogin where,
+if UseLogin is enabled in the sshd configuration, a local user could
+gain root access by passing arbitrary environment variable settings to
+login(1) via authorized_keys file options.  UseLogin has never been
+enabled on Owl by default and its use is discouraged.
+
 2001/11/03	kernel
 SECURITY FIX	Severity: none to medium, remote, active
 Updated to Linux 2.2.20-ow1.  Compared to our previous recommended
@@ -280,4 +288,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.2.2.14 2001/11/03 05:21:31 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.2.2.15 2001/12/12 20:19:53 solar Exp $
