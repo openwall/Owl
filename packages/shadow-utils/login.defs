@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/login.defs,v 1.10 2004/09/10 07:31:15 galaxy Exp $
+# $Id: Owl/packages/shadow-utils/login.defs,v 1.11 2004/11/11 20:09:00 solar Exp $
 #
 # Please refer to login.defs(5) for more information on this file, the
 # parameters which may be defined here and the corresponding programs.
@@ -94,3 +94,19 @@ TCB_AUTH_GROUP		yes
 # for information on why this may be needed.
 #
 TCB_SYMLINKS		no
+
+#
+# Maximum user and group name length.
+# For user names the limit is:
+#   8 <= limit (8 by default) <= utmp limit (usually 32 characters).
+# And for group names it is:
+#   8 <= limit (16 by default) <= 32
+# long user/group names are somewhat problematic.
+#
+# Some potential problems of long user or group names should be taken
+# into account: programs outputting usernames such as "last" and "ps"
+# have limited field widths.  Third-party Unix software may run into
+# problems too when faced with long usernames.
+#
+USERNAME_MAX		8
+GROUPNAME_MAX		16
