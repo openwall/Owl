@@ -1,8 +1,8 @@
-# $Id: Owl/packages/hdparm/hdparm.spec,v 1.12 2004/11/23 22:40:46 mci Exp $
+# $Id: Owl/packages/hdparm/hdparm.spec,v 1.13 2004/11/27 23:04:19 mci Exp $
 
 Summary: A utility for displaying and/or setting hard disk parameters.
 Name: hdparm
-Version: 5.3
+Version: 5.8
 Release: owl1
 License: BSD
 Group: Applications/System
@@ -36,6 +36,9 @@ install -m 644 hdparm.8 %buildroot%_mandir/man8/
 %_mandir/man8/hdparm.8*
 
 %changelog
+* Sun Nov 28 2004 Michail Litvak <mci@owl.openwall.com> 5.8-owl1
+- 5.8
+
 * Wed Jan 08 2003 Michail Litvak <mci@owl.openwall.com> 5.3-owl1
 - 5.3
 - Updated -warnings.diff.
