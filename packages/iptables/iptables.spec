@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iptables/iptables.spec,v 1.14 2005/01/14 16:45:14 galaxy Exp $
+# $Id: Owl/packages/iptables/iptables.spec,v 1.15 2005/01/14 17:34:50 galaxy Exp $
 
 %define BUILD_STATIC 0
 %define BUILD_IPV6 0
@@ -118,7 +118,7 @@ INSTALL.
 - Made use of %%__cc and %%__make macros.
 - Added iptables6 package and BUILD_IPV6 macro to control its building.
 This need to be revised to add %_sysconfig/etc/init.d/iptables6. NOTE:
-I've introduced dual owning of /lib/iptables directory by iptables
+I've introduced joint ownership of /lib/iptables directory by iptables
 and iptables6 packages. I think this is ok to share owning of some files
 or directories between several related packages which were built from
 one parent source package.
