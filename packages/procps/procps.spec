@@ -1,9 +1,9 @@
-# $Id: Owl/packages/procps/Attic/procps.spec,v 1.11 2004/01/17 17:35:45 solar Exp $
+# $Id: Owl/packages/procps/Attic/procps.spec,v 1.12 2004/02/12 01:28:49 mci Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
 Version: 2.0.7
-Release: owl4
+Release: owl5
 License: GPL and LGPL
 Group: System Environment/Base
 URL: http://procps.sf.net
@@ -34,8 +34,8 @@ make CC="gcc $RPM_OPT_FLAGS" LDFLAGS=-s
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{bin,lib,sbin,usr/{bin,X11R6/bin,man/{man1,man5,man8}}}
-make DESTDIR=$RPM_BUILD_ROOT OWNERGROUP= install
+mkdir -p $RPM_BUILD_ROOT{/bin,/lib,/sbin,/usr/{bin,X11R6/bin},%_mandir/{man1,man5,man8}}
+make DESTDIR=$RPM_BUILD_ROOT MANDIR=%_mandir OWNERGROUP= install
 chmod 755 $RPM_BUILD_ROOT/{lib,bin,sbin,usr/bin}/*
 
 %post -p /sbin/ldconfig
@@ -47,35 +47,38 @@ chmod 755 $RPM_BUILD_ROOT/{lib,bin,sbin,usr/bin}/*
 /lib/libproc.so.%version
 /bin/ps
 /sbin/sysctl
-/usr/bin/oldps
-/usr/bin/uptime
-/usr/bin/tload
-/usr/bin/free
-/usr/bin/w
-/usr/bin/top
-/usr/bin/vmstat
-/usr/bin/watch
-/usr/bin/skill
-/usr/bin/snice
-/usr/bin/pgrep
-/usr/bin/pkill
-/usr/man/man1/free.1*
-/usr/man/man1/ps.1*
-/usr/man/man1/oldps.1*
-/usr/man/man1/skill.1*
-/usr/man/man1/snice.1*
-/usr/man/man1/pgrep.1*
-/usr/man/man1/pkill.1*
-/usr/man/man1/tload.1*
-/usr/man/man1/top.1*
-/usr/man/man1/uptime.1*
-/usr/man/man1/w.1*
-/usr/man/man1/watch.1*
-/usr/man/man5/sysctl.conf.5*
-/usr/man/man8/vmstat.8*
-/usr/man/man8/sysctl.8*
+%_bindir/oldps
+%_bindir/uptime
+%_bindir/tload
+%_bindir/free
+%_bindir/w
+%_bindir/top
+%_bindir/vmstat
+%_bindir/watch
+%_bindir/skill
+%_bindir/snice
+%_bindir/pgrep
+%_bindir/pkill
+%_mandir/man1/free.1*
+%_mandir/man1/ps.1*
+%_mandir/man1/oldps.1*
+%_mandir/man1/skill.1*
+%_mandir/man1/snice.1*
+%_mandir/man1/pgrep.1*
+%_mandir/man1/pkill.1*
+%_mandir/man1/tload.1*
+%_mandir/man1/top.1*
+%_mandir/man1/uptime.1*
+%_mandir/man1/w.1*
+%_mandir/man1/watch.1*
+%_mandir/man5/sysctl.conf.5*
+%_mandir/man8/vmstat.8*
+%_mandir/man8/sysctl.8*
 
 %changelog
+* Thu Feb 12 2004 Michail Litvak <mci@owl.openwall.com> 2.0.7-owl5
+- Use RPM macros instead of explicit paths.
+
 * Sat Jan 17 2004 Solar Designer <solar@owl.openwall.com> 2.0.7-owl4
 - Handle ticks going backwards gracefully.
 
