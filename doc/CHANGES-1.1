@@ -12,6 +12,15 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.0 and Owl-current.
 
+2003/03/07	Package: file
+SECURITY FIX	Severity: medium to high, local, passive
+Updated to 3.41, which fixes a buffer overflow vulnerability in
+file(1).  The overflow could be triggered by an invalid ELF binary
+and, with a specially-crafted fake ELF binary, would result in
+execution of arbitrary code.
+Reference:
+http://www.idefense.com/advisory/03.04.03.txt
+
 2003/02/25	Package: zlib
 Corrected a potential buffer overflow in gzprintf(), thanks to Bugtraq
 postings by Crazy Einstein, Richard Kettlewell, and Carlo Marcelo
@@ -140,4 +149,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.27 2003/02/25 04:34:20 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.28 2003/03/07 00:30:00 solar Exp $
