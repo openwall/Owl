@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.4 2001/10/02 23:12:33 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.5 2001/11/25 23:52:48 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROM's.
 Name: owl-cdrom
-Version: 0.2
+Version: 0.3
 Release: 1owl
 License: public domain
 Group: System Environment/Base
@@ -10,8 +10,8 @@ Source0: rc.ramdisk
 Source1: lilo.conf
 Source2: dot-config
 Source3: floppy.update
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: owl-startup >= 0.8-1owl
+BuildRoot: /override/%{name}-%{version}
 
 %description
 This package applies directory hierarchy changes and provides additional
@@ -81,6 +81,9 @@ rm -rf $RPM_BUILD_ROOT
 %dir /owl
 
 %changelog
+* Mon Nov 26 2001 Solar Designer <solar@owl.openwall.com>
+- Updated .config for Linux 2.2.20-ow1.
+
 * Wed Oct 03 2001 Solar Designer <solar@owl.openwall.com>
 - Create an inode per 1024 bytes on the ramdisk or we would get out of
 inodes with a 4 MB ramdisk.
