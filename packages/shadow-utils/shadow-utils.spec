@@ -1,9 +1,9 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.22 2002/10/24 05:02:53 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.23 2002/11/03 02:13:10 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.0
-Release: owl6
+Release: owl7
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -35,7 +35,8 @@ Patch24: shadow-4.0.0-owl-crypt_gensalt.diff
 Patch25: shadow-4.0.0-owl-newgrp.diff
 Patch26: shadow-4.0.0-owl-automake.diff
 Patch30: shadow-4.0.0-owl-tcb.diff
-Requires: owl-control < 2.0, pam, tcb >= 0.9.8, pam_userpass >= 0.5
+Requires: owl-control >= 0.4, owl-control < 2.0
+Requires: pam, tcb >= 0.9.8, pam_userpass >= 0.5
 BuildRequires: libtool, gettext, automake, autoconf
 BuildRequires: pam-devel, tcb-devel
 BuildRoot: /override/%{name}-%{version}
@@ -126,6 +127,11 @@ install -m 700 $RPM_SOURCE_DIR/newgrp.control newgrp
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%pre
+if [ $1 -ge 2 ]; then
+	/usr/sbin/control-dump chage chfn chsh gpasswd newgrp
+fi
+
 %post
 grep -q ^shadow: /etc/group || groupadd -g 42 shadow
 if grep -q '^shadow:[^:]*:42:' /etc/group; then
@@ -135,6 +141,9 @@ if grep -q '^shadow:[^:]*:42:' /etc/group; then
 		chmod 640 /etc/pam.d/chage-chfn-chsh
 fi
 grep -q ^auth: /etc/group || groupadd -g 164 auth
+if [ $1 -ge 2 ]; then
+	/usr/sbin/control-restore chage chfn chsh gpasswd newgrp
+fi
 
 %files
 %defattr(-,root,root)
@@ -183,6 +192,10 @@ grep -q ^auth: /etc/group || groupadd -g 164 auth
 /etc/control.d/facilities/*
 
 %changelog
+* Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
+- Dump/restore the owl-control settings for chage, chfn, chsh, gpasswd,
+and newgrp on package upgrades.
+
 * Thu Oct 24 2002 Solar Designer <solar@owl.openwall.com>
 - Cleaned up the recent changes.
 - Corrected a newly introduced memory leak on an error path.
