@@ -9,7 +9,7 @@ diff -uNrp rpm-4.2.orig/gendiff rpm-4.2/gendiff
 -while read f; do
 -    U=-u
 +find "$1" \( -name "*$2" -o -name ".*$2" \) -print |
-+while read fin; do
++while read f; do
 +    U=-uNp
      [ "`basename $f`" = "ChangeLog$2" ] && U=-U0
 -#    diff ${U} $f `echo $f | sed s/$2\$//`

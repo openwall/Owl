@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.50 2005/04/01 23:08:43 solar Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.51 2005/04/01 23:21:56 solar Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -456,8 +456,9 @@ fi
 
 %changelog
 * Sat Apr 02 2005 Solar Designer <solar@owl.openwall.com> 4.2-owl6
-- Allow unpackaged files and missing docs by default, for building legacy
-third-party packages.
+- Allow unpackaged files and missing docs by default for building legacy
+third-party packages (our build environment overrides this for native ones).
+- gendiff bugfix.
 
 * Tue Mar 22 2005 Solar Designer <solar@owl.openwall.com> 4.2-owl5
 - Updated the default rpmrc to use -march/-mtune as required for gcc 3.4.3+
