@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.42 2004/12/19 15:21:23 galaxy Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.43 2004/12/19 15:24:27 galaxy Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -158,7 +158,6 @@ rm -r tests
 
 # Prepare libelf archive and save it with headers to the tools subdirectory
 pushd elfutils
-export CFLAGS="-O0 -Wall -g"
 export CFLAGS="${CFLAGS:-%optflags}"
 ./configure
 %__make AM_CFLAGS="$CFLAGS" -C libelf libelf.a
