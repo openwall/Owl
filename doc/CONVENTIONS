@@ -98,7 +98,9 @@ usual description of the patch.
 
 There're also some common WHAT's to use whenever applicable:
 
+bound		- bound checking (buffer and/or integer overflow fixes)
 fixes		- cumulative bug, reliability, and/or security patches
+format		- printf-style format string fixes (not only security)
 install-no-root	- changes to run "make install" or equivalent as non-root
 linux		- changes needed to build on Linux (for ported software)
 man		- man page patches only
@@ -122,4 +124,4 @@ options:
 This does not exactly match our preferred coding style and thus isn't
 to be used on sources already in Owl.
 
-$Id: Owl/doc/CONVENTIONS,v 1.5 2001/12/20 21:47:21 solar Exp $
+$Id: Owl/doc/CONVENTIONS,v 1.6 2001/12/20 23:41:58 solar Exp $
