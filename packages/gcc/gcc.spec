@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.6 2000/07/21 02:30:12 solar Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.7 2000/07/29 12:54:01 kad Exp $
 
 %define GCC_PREFIX /usr
 %define CPP_PREFIX /lib
@@ -12,7 +12,7 @@
 Summary:	Various compilers (C, C++, Objective-C, f77, ...)
 Name:		gcc
 Version:	%{GCC_VERSION}
-Release:	2owl
+Release:	3owl
 Serial:		1
 Copyright:	GPL
 URL:		http://gcc.gnu.org
@@ -155,18 +155,29 @@ being used in Europe, Brazil, Korea, and other places.
 
 
 %prep
-%setup -q -n gcc-%{GCC_VERSION}
 
-%setup -q -D -T -n gcc-%{GCC_VERSION}
+%setup -q -n gcc-%{GCC_VERSION} -a 1
+
 %patch -p1
-
-pwd
-bzip2 -cd %{SOURCE1} | tar xv
 
 # Remove bison-generated files - we want bison 1.28'ish versions...
 for i in gcc/cp/parse gcc/c-parse gcc/cexp gcc/java/parse-scan gcc/java/parse gcc/objc/objc-parse; do
     rm -f $i.c
 done
+
+# Remove unneeded languages.
+    rm -f gcc/java/config-lang.in
+    
+%if "%{BUILD_OBJC}"!="'yes'"
+    rm -f gcc/objc/config-lang.in
+%endif
+%if "%{BUILD_F77}"!="'yes'"
+    rm -f gcc/f/config-lang.in
+%endif
+%if "%{BUILD_CHILL}"!="'yes'"
+    rm -f gcc/ch/config-lang.in
+%endif
+
 
 %build
 rm -fr obj-%{_target_platform}
@@ -409,7 +420,6 @@ fi
 %{GCC_PREFIX}/lib/libstdc++.so.2.7.2.8
 %{GCC_PREFIX}/lib/libstdc++.so.2.8.0
 %{GCC_PREFIX}/lib/libstdc++-2-libc6.1-1-2.9.0.so
-%{GCC_PREFIX}/lib/libstdc++-libc6.1-1.so.2
 %{GCC_PREFIX}/lib/libstdc++.so.2.9.dummy
 %{GCC_PREFIX}/lib/libstdc++.so.2.9
 %endif
@@ -503,6 +513,10 @@ fi
 %endif
 
 %changelog
+* Sat Jul 29 2000 Alexandr D. Kanevskiy <kad@openwall.com>
+- spec cleanup.
+- duplicate file fix.
+
 * Sun Jul  9 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - Imported from RH.
 
