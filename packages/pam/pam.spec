@@ -1,9 +1,9 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.15 2001/10/07 07:46:29 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.16 2001/10/07 11:05:26 solar Exp $
 
-Summary: A security tool which provides authentication for applications.
+Summary: Pluggable Authentication Modules.
 Name: pam
 Version: 0.75
-Release: 10owl
+Release: 11owl
 License: GPL or BSD
 Group: System Environment/Base
 Source0: pam-redhat-%{version}-10.tar.bz2
@@ -19,9 +19,28 @@ Requires: pwdb >= 0.61-1owl
 URL: http://www.kernel.org/pub/linux/libs/pam/
  
 %description
-PAM (Pluggable Authentication Modules) is a system security tool
-which allows system administrators to set authentication policy
-without having to recompile programs which do authentication.
+Linux-PAM (Pluggable Authentication Modules for Linux) is a suite of
+libraries that enable the local system administrator to choose how
+PAM-aware applications authenticate users, without having to recompile
+those applications.
+
+%package devel
+Requires: %{name} = %{version}-%{release}
+Summary: Libraries and header files for developing applications with PAM.
+Group: Development/Libraries
+
+%description devel
+This package contains static Linux-PAM libraries and header files used
+for building both PAM-aware applications and PAM modules.
+
+%package doc
+Requires: %{name} = %{version}-%{release}
+Summary: The Linux-PAM documentation.
+Group: Documentation
+
+%description doc
+This package contains the main Linux-PAM documentation in text, HTML, and
+PostScript formats.
 
 # Use optflags_lib for this package if defined.
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
@@ -31,13 +50,15 @@ without having to recompile programs which do authentication.
 rm -rf modules/pam_{console,cracklib}
 rm -f modules/pam_pwdb/{md5*,bigcrypt.*}
 cp $RPM_SOURCE_DIR/pam_listfile.c modules/pam_listfile/
+ln -s ../../../libpam_misc/pam_misc.h libpam/include/security/pam_misc.h
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+mkdir modules/READMEs
 for f in modules/pam_*/README; do
 	d="${f%/*}"
-	install -p -m 644 "$f" "doc/txts/README.${d##*/}"
+	install -p -m 644 "$f" "modules/READMEs/README.${d##*/}"
 done
 autoconf
 
@@ -49,11 +70,13 @@ CFLAGS="$RPM_OPT_FLAGS -fPIC" \
 	--mandir=%{_mandir} \
 	--enable-static-libpam \
 	--enable-fakeroot=$RPM_BUILD_ROOT
-make
+# List things to make explicitly to not make doc (corrupting the
+# pre-compiled docs if we don't have the tools).
+make modules libpam libpamc libpam_misc
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make install
+make install THINGSTOMAKE='modules libpam libpamc libpam_misc'
 
 install -m 644 modules/pam_chroot/chroot.conf $RPM_BUILD_ROOT/etc/security/
 
@@ -61,11 +84,19 @@ mkdir $RPM_BUILD_ROOT/sbin/chkpwd.d
 mv $RPM_BUILD_ROOT/sbin/*_chkpwd $RPM_BUILD_ROOT/sbin/chkpwd.d/
 ln -s /sbin/chkpwd.d/pwdb_chkpwd $RPM_BUILD_ROOT/sbin/pwdb_chkpwd
 
+mkdir -p $RPM_BUILD_ROOT/%{_libdir}
+mv $RPM_BUILD_ROOT/lib/*.a $RPM_BUILD_ROOT/%{_libdir}/
+
 mkdir -m 755 $RPM_BUILD_ROOT/etc/pam.d
 install -m 644 other.pamd $RPM_BUILD_ROOT/etc/pam.d/other
 
+mkdir -p $RPM_BUILD_ROOT%{_mandir}/man{3,8}
 install -m 644 doc/man/*.3 $RPM_BUILD_ROOT%{_mandir}/man3/
 install -m 644 doc/man/*.8 $RPM_BUILD_ROOT%{_mandir}/man8/
+
+rm -f doc/ps/missfont.log
+gzip -9nf doc/ps/*.ps
+gzip -9nf doc/txts/*.txt
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -82,13 +113,15 @@ grep ^chkpwd: /etc/group &>/dev/null || groupadd -g 163 chkpwd
 
 %files
 %defattr(-,root,root)
+%doc Copyright
+%doc modules/READMEs/*
+
 %dir /etc/pam.d
 %config(noreplace) /etc/pam.d/other
 #%config(noreplace) /etc/pam.d/system-auth
-%doc Copyright
-%doc doc/{html,ps,txts}
-%doc doc/specs/rfc86.0.txt
+
 /lib/libpam.so.*
+/lib/libpamc.so.*
 /lib/libpam_misc.so.*
 
 %attr(710,root,chkpwd) %dir /sbin/chkpwd.d/
@@ -142,13 +175,22 @@ grep ^chkpwd: /etc/group &>/dev/null || groupadd -g 163 chkpwd
 %attr(640,root,wheel) %config(noreplace) /etc/security/limits.conf
 %attr(644,root,root) %config(noreplace) /etc/security/pam_env.conf
 %attr(640,root,wheel) %config(noreplace) /etc/security/time.conf
+
 %{_mandir}/man8/*
 
+%files devel
 /lib/libpam.so
+/lib/libpamc.so
 /lib/libpam_misc.so
-/lib/libpam_misc.a
+%{_libdir}/libpam.a
+%{_libdir}/libpamc.a
+%{_libdir}/libpam_misc.a
 /usr/include/security/
 %{_mandir}/man3/*
+
+%files doc
+%doc doc/{html,ps,txts}
+%doc doc/specs/rfc86.0.txt
 
 %changelog
 * Sun Oct 07 2001 Solar Designer <solar@owl.openwall.com>
@@ -158,6 +200,8 @@ http://archives.neohapsis.com/archives/pam-list/2000-12/0084.html).
 - Patched the new pam_chroot to catch the most common misuses which would
 result in a security problem, updated its README and example configuration
 file to discourage such misuses.
+- Moved development libraries and header files into a subpackage.
+- Moved the main Linux-PAM documentation into a documentation subpackage.
 
 * Mon Jul 30 2001 Solar Designer <solar@owl.openwall.com>
 - Fixed a double-free bug in pam_pwdb which caused it to segfault after
