@@ -17,7 +17,28 @@ Source*, Patch*, PreReq, Requires, Conflicts, Provides, Obsoletes,
 Auto*, Prefix, BuildRequires, BuildArchitectures, ExcludeArch,
 ExclusiveArch, BuildRoot.  Other tags we (currently) don't use.
 
-3. The correct BuildRoot tag for an Owl package is:
+3. Release numbers for native Owl packages are of the form:
+
+	owlREVISION
+
+or, when packaging an alpha/beta/prerelease version of a certain piece
+of software and the Version tag is set to the upcoming version number:
+
+	owl0.REVISION
+
+or, when updating an older branch of Owl:
+
+	BRANCH_POINT_RELEASE.BRANCH.REVISION
+
+where REVISION is an Owl-specific package revision number incremented
+after each update, BRANCH_POINT_RELEASE is the Release string as of
+when the branch was created, and BRANCH is the branch version (that
+is, "0.1" for Owl 0.1-stable).
+
+When updating to a new Version, REVISION should be reset to 1 and, for
+older branches, BRANCH_POINT_RELEASE set to "owl0".
+
+4. The correct BuildRoot tag for an Owl package is:
 
 	BuildRoot: /override/%{name}-%{version}
 
@@ -25,7 +46,7 @@ Our build environment will override the BuildRoot regardless of this
 tag, but setting it in this way will remind people to override the
 BuildRoot for manual builds of the package, especially on non-Owl.
 
-4. Separate tag names and values you set them to with a single space
+5. Separate tag names and values you set them to with a single space
 character.  Use commas (also followed by a space) to separate items in
 dependency lists.  Do terminate Summary lines with a dot.  In both
 Summary and %description (as well as in any other documentation),
@@ -34,7 +55,7 @@ the first word in a sentence, unless the capitalized form is the
 official name for the software in question.  Use double spaces to
 separate sentences.
 
-5. Our build environment sets the C/C++ compiler optimization flags in
+6. Our build environment sets the C/C++ compiler optimization flags in
 %optflags in a way that is optimal for compiling standalone programs
 and doesn't produce too much warnings with typical source files.  When
 building libraries, another set of optimization flags may be used by
@@ -61,18 +82,18 @@ placing the following line right before the %build section:
 
 	%{expand:%%define optflags %optflags -Wall}
 
-6. Subshells in build, pre/post-install/uninstall, and trigger scripts
+7. Subshells in build, pre/post-install/uninstall, and trigger scripts
 are to be avoided by all means as they mask possible errors.  If you
 intended to use a subshell to temporarily change current directory,
 use pushd and popd commands instead.  If you really must use a
 subshell, it is suggested that you propagate the status of commands it
 runs to the parent shell manually.
 
-7. Use tabs to indent conditional blocks and continuation lines in
+8. Use tabs to indent conditional blocks and continuation lines in
 scripts.
 
-8. Use -eq to compare numeric values (in particular, the $1 argument
-that RPM itself passes to the scripts).  Don't place the $1 in quotes.
+9. Use -eq to compare numeric values (in particular, the $1 argument
+that RPM itself passes to scripts, and don't place the $1 in quotes).
 
 
 	Patch file naming.
@@ -124,4 +145,4 @@ options:
 This does not exactly match our preferred coding style and thus isn't
 to be used on sources already in Owl.
 
-$Id: Owl/doc/CONVENTIONS,v 1.6 2001/12/20 23:41:58 solar Exp $
+$Id: Owl/doc/CONVENTIONS,v 1.7 2002/01/24 11:24:08 solar Exp $
