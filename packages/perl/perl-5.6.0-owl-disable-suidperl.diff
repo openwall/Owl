@@ -1,0 +1,24 @@
+diff -ur perl-5.6.0.orig/installperl perl-5.6.0/installperl
+--- perl-5.6.0.orig/installperl	Wed Mar  8 15:22:41 2000
++++ perl-5.6.0/installperl	Sun Jul 14 16:26:37 2002
+@@ -143,8 +143,6 @@
+ 
+ # Do some quick sanity checks.
+ 
+-if ($d_dosuid && $>) { die "You must run as root to install suidperl\n"; }
+-
+    $installbin		|| die "No installbin directory in config.sh\n";
+ -d $installbin		|| mkpath($installbin, 1, 0777);
+ -d $installbin		|| $nonono || die "$installbin is not a directory\n";
+@@ -223,8 +221,10 @@
+ 
+ safe_unlink("$installbin/s$perl_verbase$ver$exe_ext");
+ if ($d_dosuid) {
++# Install...
+     copy("suidperl$exe_ext", "$installbin/s$perl_verbase$ver$exe_ext");
+-    chmod(04711, "$installbin/s$perl_verbase$ver$exe_ext");
++# ...but don't enable it just yet.
++    chmod(0600, "$installbin/s$perl_verbase$ver$exe_ext");
+ }
+ 
+ # Install library files.

@@ -1,0 +1,35 @@
+diff -ur perl-5.6.0.orig/Configure perl-5.6.0/Configure
+--- perl-5.6.0.orig/Configure	Wed Mar 22 23:36:37 2000
++++ perl-5.6.0/Configure	Mon Jul 15 10:12:57 2002
+@@ -23,7 +23,7 @@
+ # Generated on Wed Mar 22 19:13:31 EET 2000 [metaconfig 3.0 PL70]
+ # (with additional metaconfig patches by perlbug@perl.com)
+ 
+-cat >/tmp/c1$$ <<EOF
++cat >c1$$ <<EOF
+ ARGGGHHHH!!!!!
+ 
+ SCO csh still thinks true is false.  Write to SCO today and tell them that next
+@@ -34,18 +34,18 @@
+ 
+ [End of diatribe. We now return you to your regularly scheduled programming...]
+ EOF
+-cat >/tmp/c2$$ <<EOF
++cat >c2$$ <<EOF
+ 
+ OOPS!  You naughty creature!  You didn't run Configure with sh!
+ I will attempt to remedy the situation by running sh for you...
+ EOF
+ 
+-true || cat /tmp/c1$$ /tmp/c2$$
++true || cat c1$$ c2$$
+ true || exec sh $0 $argv:q
+ 
+-(exit $?0) || cat /tmp/c2$$
++(exit $?0) || cat c2$$
+ (exit $?0) || exec sh $0 $argv:q
+-rm -f /tmp/c1$$ /tmp/c2$$
++rm -f c1$$ c2$$
+ 
+ : compute my invocation name
+ me=$0
