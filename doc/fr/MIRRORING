@@ -21,8 +21,7 @@ Créez un pseudo-utilisateur séparé en tant que qui faire la recopie, laissez
 le mettre à jour l'aire FTP publique comme il faut, et installez une tâche
 cron comme ceci :
 
-05 6 * * *	umask 022 && cd /home/ftp && /usr/bin/lftp -c 'o ftp.openwall.com && mirror pub -v --delete --exclude Owl --include presentations/Owl &' &> /dev/null
-15 6 * * *	umask 022 && cd /home/ftp/pub && /usr/bin/lftp -c 'o ftp.feed.openwall.com/pub/ && mirror Owl -v --delete &' &> /dev/null
+05 6 * * *	umask 022 && cd /home/ftp && lftp -c 'o ftp.feed.openwall.com && mirror -ev pub &' &> /dev/null
 
 L'activité sera journalisée dans ~mirror/.lftp/log. Nous vous suggérons que
 vous fassiez les mises à jours toutes les nuits, en essayant de vous assurer
@@ -49,4 +48,4 @@ installez Owl et n'utilisez que les services qui font partie de Owl, ce
 devrait toujours être bon.) Comme exception, il peut héberger d'autres
 contenus FTP.
 
-$Id: Owl/doc/fr/MIRRORING,v 1.1 2003/08/09 10:17:05 ducamp Exp $
+$Id: Owl/doc/fr/MIRRORING,v 1.2 2004/02/05 04:36:11 solar Exp $
