@@ -1,9 +1,9 @@
-# $Id: Owl/packages/procps/Attic/procps.spec,v 1.16 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/procps/Attic/procps.spec,v 1.17 2005/01/12 16:50:07 galaxy Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
 Version: 2.0.7
-Release: owl6
+Release: owl7
 License: GPL and LGPL
 Group: System Environment/Base
 URL: http://procps.sf.net
@@ -14,6 +14,7 @@ Patch2: procps-2.0.7-owl-meminfo-fixes.diff
 Patch3: procps-2.0.7-owl-no-catman-cleanup.diff
 Patch4: procps-2.0.7-owl-top-ticks.diff
 Patch5: procps-2.0.7-owl-top-include.diff
+Patch6: procps-2.0.7-owl-gcc343-fixes.diff
 PreReq: /sbin/ldconfig
 BuildRoot: /override/%name-%version
 
@@ -30,15 +31,25 @@ top, pgrep, pkill, uptime, vmstat, w, and watch.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
-make CC="gcc $RPM_OPT_FLAGS" LDFLAGS=-s
+%__make CC="%__cc" OPT="$RPM_OPT_FLAGS"
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot{/bin,/lib,/sbin,/usr/{bin,X11R6/bin},%_mandir/{man1,man5,man8}}
-make DESTDIR=%buildroot MANDIR=%_mandir OWNERGROUP= install
-chmod 755 %buildroot/{lib,bin,sbin,usr/bin}/*
+mkdir -p %buildroot{/bin,/%_lib,/sbin,%_bindir,/usr/X11R6/bin,%_mandir/{man1,man5,man8}}
+%__make install \
+    DESTDIR="%buildroot" \
+    MANDIR="%_mandir" \
+    USRBINDIR="%buildroot%_bindir" \
+    PROCDIR="%buildroot%_bindir" \
+    SHLIBDIR="%buildroot/%_lib" \
+    INSTALLBIN="install -m 0755" \
+    INSTALLSCT="install -m 0755" \
+    INSTALLMAN="install -m 0644" \
+    OWNERGROUP=""
+chmod 755 %buildroot/{%_lib,bin,sbin,%_bindir}/*
 
 # XXX: (GM): Remove unpackaged files (check later)
 rm %buildroot/usr/X11R6/bin/XConsole
@@ -51,7 +62,7 @@ rm %buildroot%_mandir/man1/kill.1*
 %files
 %defattr(-,root,root)
 %doc NEWS BUGS TODO
-/lib/libproc.so.%version
+/%_lib/libproc.so.%version
 /bin/ps
 /sbin/sysctl
 %_bindir/oldps
@@ -83,6 +94,10 @@ rm %buildroot%_mandir/man1/kill.1*
 %_mandir/man8/sysctl.8*
 
 %changelog
+* Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.0.7-owl7
+- Added gcc343-fixes patch to solve issues after gcc upgrade.
+- Cleaned up the spec.
+
 * Fri May 14 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.0.7-owl6
 - Changed order of included headers in top to flawlessly build against
 ncurses 5.4
