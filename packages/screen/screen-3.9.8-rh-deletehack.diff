@@ -1,0 +1,35 @@
+--- screen-3.9.8/etc/etcscreenrc.orig	Fri Sep  1 19:07:27 2000
++++ screen-3.9.8/etc/etcscreenrc	Mon Mar  5 16:40:08 2001
+@@ -94,6 +94,14 @@
+ bind 'O' login off
+ bind '}' history
+ 
++# Red Hat Hack^H^H^H^HPatch
++# This makes screen treat backspaces '^?' as
++# deletes. There should be a fix in the code
++# for the way termcap inheritance works,
++# but I dont know where to put it, and this works.
++bindkey -d -k kb stuff \010
++# /Red Hat Patch
++
+ # colon takes a parameter since screen-3.8.6
+ bind 'R' colon "screen -ln rlogin faui -8^b^b^b"
+ bind 'P' colon "^p"
+--- screen-3.9.8/etc/screenrc.orig	Fri Sep  1 19:07:27 2000
++++ screen-3.9.8/etc/screenrc	Mon Mar  5 16:40:20 2001
+@@ -124,6 +124,15 @@
+ register ] "\033:se ai\015a"
+ bind ^] paste [.]
+ 
++# Red Hat Hack^H^H^H^HPatch
++# This makes screen treat backspaces '^?' as
++# deletes. There should be a fix in the code
++# for the way termcap inheritance works,
++# but I dont know where to put it, and this works.
++bindkey -d -k kb stuff \010
++# /Red Hat Patch
++
++
+ ################
+ #
+ # default windows

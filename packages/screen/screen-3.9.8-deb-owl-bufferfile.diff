@@ -1,5 +1,5 @@
 --- screen-3.9.8/screen.h.orig	Sun Jul  9 23:15:16 2000
-+++ screen-3.9.8/screen.h	Thu Mar  1 19:46:27 2001
++++ screen-3.9.8/screen.h	Mon Mar  5 23:45:59 2001
 @@ -44,6 +44,7 @@
  #include "layer.h"
  #include "term.h"
@@ -9,7 +9,7 @@
  #ifdef DEBUG
  # define STATIC		/* a function that the debugger should see */
 --- screen-3.9.8/screen.c.orig	Fri Sep  1 15:29:36 2000
-+++ screen-3.9.8/screen.c	Thu Mar  1 19:46:27 2001
++++ screen-3.9.8/screen.c	Tue Mar  6 00:19:43 2001
 @@ -103,6 +103,7 @@
  FILE *dfp;
  #endif
@@ -37,16 +37,19 @@
    ShellProg = NULL;
  #ifdef POW_DETACH
    PowDetachString = 0;
-@@ -840,6 +838,7 @@
+@@ -839,6 +837,10 @@
+       DebugTTY(&attach_Mode);
  #endif /* DEBUG */
      }
-   
++#ifdef COPY_PASTE
 +  snprintf(bufferfile,sizeof(bufferfile),"%s/.screen-exchange", home);
++  BufferFile = SaveStr(bufferfile);
++#endif
+   
  #ifdef _MODE_T
    oumask = umask(0);		/* well, unsigned never fails? jw. */
- #else
 --- screen-3.9.8/fileio.c.orig	Sun Jul  2 20:30:37 2000
-+++ screen-3.9.8/fileio.c	Thu Mar  1 19:46:27 2001
++++ screen-3.9.8/fileio.c	Mon Mar  5 23:45:59 2001
 @@ -364,7 +364,7 @@
      case DUMP_EXCHANGE:
        strncpy(fn, BufferFile, sizeof(fn) - 1);
@@ -57,7 +60,7 @@
        exists = !lstat(fn, &stb);
        if (public && exists && (S_ISLNK(stb.st_mode) || stb.st_nlink > 1))
 --- screen-3.9.8/process.c.orig	Fri Sep  1 15:30:39 2000
-+++ screen-3.9.8/process.c	Thu Mar  1 19:46:27 2001
++++ screen-3.9.8/process.c	Mon Mar  5 23:45:59 2001
 @@ -1944,7 +1944,7 @@
  #ifdef COPY_PASTE
      case RC_BUFFERFILE:

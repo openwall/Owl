@@ -1,5 +1,5 @@
---- screen-3.9.5.orig/pty.c
-+++ screen-3.9.5/pty.c
+--- screen-3.9.8/pty.c.orig	Sun Jul  2 20:31:22 2000
++++ screen-3.9.8/pty.c	Mon Mar  5 16:34:20 2001
 @@ -242,11 +242,15 @@
  {
    register int f;

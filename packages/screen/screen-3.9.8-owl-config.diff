@@ -1,5 +1,5 @@
 --- screen-3.9.8/etc/etcscreenrc.orig	Fri Sep  1 19:07:27 2000
-+++ screen-3.9.8/etc/etcscreenrc	Sat Mar  3 17:42:13 2001
++++ screen-3.9.8/etc/etcscreenrc	Thu Mar  8 00:54:07 2001
 @@ -1,6 +1,6 @@
  #3.3
  # This is a global screenrc file
@@ -9,16 +9,7 @@
  # Flaws of termcap and standard settings are done here.
  # Note: This file should not be shared between different hosts.
 --- screen-3.9.8/config.h.in.orig	Fri Sep  1 19:07:26 2000
-+++ screen-3.9.8/config.h.in	Sat Mar  3 17:41:18 2001
-@@ -50,7 +50,7 @@
-  * Screen will name the subdirectories "S-$USER" (e.g /tmp/S-davison).
-  */
- 
--#undef SOCKDIR
-+#define SOCKDIR "/var/run/screen"
- 
- /*
-  * Screen sources two startup files. First a global file with a path
++++ screen-3.9.8/config.h.in	Thu Mar  8 00:58:31 2001
 @@ -58,7 +58,7 @@
   * Don't define this, if you don't want it.
   */
@@ -48,38 +39,35 @@
  #undef RXVT_OSC
  
  
-@@ -564,6 +564,11 @@
+@@ -563,7 +563,12 @@
+  * define HAVE_SVR4_PTYS if you have a /dev/ptmx character special
   * device and support the ptsname(), grantpt(), unlockpt() functions.
   */
- #undef HAVE_SVR4_PTYS
+-#undef HAVE_SVR4_PTYS
++#define HAVE_SVR4_PTYS 1
 +
 +/*
 + * define HAVE_GETPT if you have the getpt() function.
 + */
-+#undef HAVE_GETPT
++#define HAVE_GETPT 1
  
  /* 
   * define PTYRANGE0 and or PTYRANGE1 if you want to adapt screen
---- screen-3.9.8/configure.in.orig	Sat Mar  3 17:51:06 2001
-+++ screen-3.9.8/configure.in	Sat Mar  3 17:59:51 2001
-@@ -91,7 +91,7 @@
-     [
- 	AC_MSG_RESULT(yes)
- 	AC_MSG_CHECKING(for the socket dir)
--	SOCKDIR="(eff_uid ? \"/tmp/uscreens\" : \"/tmp/screens\")"
-+	SOCKDIR="\"/var/run/screen\""
- 	AC_ARG_WITH(socket-dir, [  --with-socket-dir=path  where to put the per-user sockets], [ SOCKDIR="\"${withval}\"" ])
- 	AC_MSG_RESULT(${SOCKDIR})
- 	AC_DEFINE_UNQUOTED(SOCKDIR, $SOCKDIR)
-@@ -645,6 +647,7 @@
- if test -c /dev/ptmx ; then
- AC_TRY_LINK([],[ptsname(0);grantpt(0);unlockpt(0);],AC_DEFINE(HAVE_SVR4_PTYS))
+--- screen-3.9.8/configure.in.orig	Wed Jun 14 17:04:17 2000
++++ screen-3.9.8/configure.in	Thu Mar  8 01:10:07 2001
+@@ -641,11 +641,6 @@
+ AC_DEFINE(HAVE_DEV_PTC)
  fi
-+AC_CHECK_FUNCS(getpt)
  
+-AC_CHECKING(for SVR4 ptys)
+-if test -c /dev/ptmx ; then
+-AC_TRY_LINK([],[ptsname(0);grantpt(0);unlockpt(0);],AC_DEFINE(HAVE_SVR4_PTYS))
+-fi
+-
  AC_CHECKING(for ptyranges)
  if test -d /dev/ptym ; then
-@@ -1129,10 +1129,7 @@
+ pdir='/dev/ptym'
+@@ -1129,10 +1124,7 @@
  
  AC_TRY_RUN(main(){exit(0);},,AC_MSG_ERROR(Can't run the compiler - internal error. Sorry.))
  

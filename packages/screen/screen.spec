@@ -1,24 +1,21 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.1 2001/03/03 23:32:48 mci Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.2 2001/03/08 00:01:36 mci Exp $
 
 Summary: A screen manager that supports multiple logins on one terminal.
 Name: screen
 Version: 3.9.8
-Release: 3owl
+Release: 4owl
 Copyright: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%{version}.tar.gz
-Source1: screen.pamd
-Patch0: screen-3.9.8-debrh-os.diff
-Patch1: screen-3.9.8-owl-misc.diff
+Source1: screen.pam
+Patch0: screen-3.9.8-deb-rh-os.diff
+Patch1: screen-3.9.8-owl-config.diff
 Patch2: screen-3.9.8-owl-pam.diff
-Patch3: screen-3.9.8-deb-bufferfile.diff
-Patch4: screen-3.9.8-rh-auser.diff
-Patch5: screen-3.9.8-deb-pty.diff
-Patch6: screen-3.9.8-deb-tiocpkt.diff
-Patch7: screen-3.9.8-deb-mans.diff
-Patch8: screen-3.9.4-rh-makeinfo.diff
-Patch9: screen-3.9.5-rh-deletehack.diff
-Patch10: screen-3.9.8-rh-docbug.diff
+Patch3: screen-3.9.8-deb-owl-bufferfile.diff
+Patch4: screen-3.9.8-deb-pty.diff
+Patch5: screen-3.9.8-deb-owl-mans.diff
+Patch6: screen-3.9.8-rh-deletehack.diff
+Patch7: screen-3.9.8-rh-docbug.diff
 Prefix: %{_prefix}
 BuildRoot: /var/rpm-buildroot/%{name}-root
 Prereq: /sbin/install-info, pam_userpass, utempter
@@ -40,21 +37,20 @@ support multiple logins on one terminal.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 %patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
 
 %build
 
 autoconf
-%configure --with-libpam
+%configure --disable-socket-dir
 
 rm doc/screen.info*
 
-make CFLAGS="$RPM_OPT_FLAGS -D_GNU_SOURCE"
+make CFLAGS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -72,7 +68,6 @@ install -c -m 0444 etc/etcscreenrc $RPM_BUILD_ROOT/etc/screenrc
 install -c -m 0644 etc/screenrc $RPM_BUILD_ROOT/etc/skel/.screenrc
 install -d $RPM_BUILD_ROOT/etc/pam.d
 install -m 600 %{SOURCE1} $RPM_BUILD_ROOT/etc/pam.d/screen
-install -d -m 0777 $RPM_BUILD_ROOT/var/run/screen
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -97,9 +92,10 @@ fi
 %config /etc/skel/.screenrc
 %attr(0644,root,root) %config(noreplace) /etc/pam.d/screen
 
-%attr(0777,root,root) %dir /var/run/screen/
-
 %changelog
+* Thu Mar 08 2001 Michail Litvak <mci@owl.openwall.com>
+- Many patches removed and other has reworked
+
 * Sat Mar 03 2001 Michail Litvak <mci@owl.openwall.com>
 - Added patches imported from Debian, RedHat
 - PAM support for screen locking over pam_userpass
