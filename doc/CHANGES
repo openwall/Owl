@@ -5,6 +5,21 @@ remains fixed; it's only the stable branch which has these changes.
 
 	Changes made between Owl 0.1-prerelease and Owl 0.1-stable.
 
+2001/11/03	kernel
+SECURITY FIX	Severity: none to medium, remote, active
+Updated to Linux 2.2.20-ow1.  Compared to our previous recommended
+kernel version/patch (2.2.19-ow3 or 2.2.19-ow4), Linux 2.2.20 adds a
+workaround for a vulnerability with certain packet filter setups and
+SYN cookies (http://cr.yp.to/syncookies.html) where the packet filter
+rules could be bypassed.  Additionally, 2.2.20-ow1 moves even more of
+the support for combined ELF/a.out setups (in particular, uselib(2)
+and its related a.out library loaders) under the configuration option
+introduced with 2.2.19-ow4.
+
+(2001/10/28)
+2001/11/03	Package: popa3d
+Updated to 0.5 which adds a popa3d(8) man page.
+
 2001/10/22	kernel
 RELIABILITY FIX: Updated to Linux 2.2.19-ow4 which fixes a symbol
 export issue introduced with 2.2.19-ow3 and moves the support for ELF
@@ -265,4 +280,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.2.2.13 2001/10/22 15:01:41 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.2.2.14 2001/11/03 05:21:31 solar Exp $
