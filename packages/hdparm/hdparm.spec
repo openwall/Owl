@@ -1,4 +1,4 @@
-# $Id: Owl/packages/hdparm/hdparm.spec,v 1.8 2002/11/05 01:08:37 solar Exp $
+# $Id: Owl/packages/hdparm/hdparm.spec,v 1.9 2002/11/05 01:14:57 solar Exp $
 
 Summary: A utility for displaying and/or setting hard disk parameters.
 Name: hdparm
@@ -34,11 +34,14 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%doc hdparm.lsm Changelog
+%doc hdparm.lsm Changelog README.acoustic
 /sbin/hdparm
 %{_mandir}/man8/hdparm.8*
 
 %changelog
+* Tue Nov 05 2002 Solar Designer <solar@owl.openwall.com>
+- Package README.acoustic.
+
 * Mon Nov 04 2002 Michail Litvak <mci@owl.openwall.com>
 - 5.2
 - Fixed building with -Wall
