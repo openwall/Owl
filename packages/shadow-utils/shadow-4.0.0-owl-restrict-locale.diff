@@ -1,6 +1,6 @@
-diff -ur shadow-19990827.redhat/libmisc/fields.c shadow-19990827/libmisc/fields.c
---- shadow-19990827.redhat/libmisc/fields.c	Mon Dec  8 02:27:04 1997
-+++ shadow-19990827/libmisc/fields.c	Sat Aug 26 15:42:42 2000
+diff -ur shadow-4.0.0.orig/libmisc/fields.c shadow-4.0.0/libmisc/fields.c
+--- shadow-4.0.0.orig/libmisc/fields.c	Mon Dec  8 02:27:04 1997
++++ shadow-4.0.0/libmisc/fields.c	Fri Nov  2 01:51:55 2001
 @@ -37,6 +37,11 @@
  #include <stdio.h>
  #include "prototypes.h"
@@ -33,11 +33,11 @@ diff -ur shadow-19990827.redhat/libmisc/fields.c shadow-19990827/libmisc/fields.
  }
  
  /*
-diff -ur shadow-19990827.redhat/src/chage.c shadow-19990827/src/chage.c
---- shadow-19990827.redhat/src/chage.c	Fri Aug 27 23:02:51 1999
-+++ shadow-19990827/src/chage.c	Sat Aug 26 15:38:00 2000
-@@ -377,9 +377,11 @@
- 	char	name[BUFSIZ];
+diff -ur shadow-4.0.0.orig/src/chage.c shadow-4.0.0/src/chage.c
+--- shadow-4.0.0.orig/src/chage.c	Mon Oct  9 22:39:50 2000
++++ shadow-4.0.0/src/chage.c	Fri Nov  2 01:51:55 2001
+@@ -410,9 +410,11 @@
+ #endif
  
  	sanitize_env();
 -	setlocale(LC_ALL, "");
@@ -49,9 +49,9 @@ diff -ur shadow-19990827.redhat/src/chage.c shadow-19990827/src/chage.c
 +		textdomain(PACKAGE);
 +	}
  
- 	/*
- 	 * Get the program name so that error messages can use it.
-@@ -809,9 +811,12 @@
+ 	ruid = getuid();
+ 	amroot = (ruid == 0);
+@@ -898,9 +900,12 @@
  
  	Prog = Basename(argv[0]);
  
@@ -67,10 +67,10 @@ diff -ur shadow-19990827.redhat/src/chage.c shadow-19990827/src/chage.c
  
  	fprintf (stderr, _("%s: no aging information present\n"), Prog);
  	exit(1);
-diff -ur shadow-19990827.redhat/src/chfn.c shadow-19990827/src/chfn.c
---- shadow-19990827.redhat/src/chfn.c	Fri Jul  9 22:02:43 1999
-+++ shadow-19990827/src/chfn.c	Sat Aug 26 15:37:42 2000
-@@ -260,9 +260,11 @@
+diff -ur shadow-4.0.0.orig/src/chfn.c shadow-4.0.0/src/chfn.c
+--- shadow-4.0.0.orig/src/chfn.c	Sat Sep  2 22:40:43 2000
++++ shadow-4.0.0/src/chfn.c	Fri Nov  2 01:51:55 2001
+@@ -259,9 +259,11 @@
  	char *user;
  
  	sanitize_env();
@@ -85,10 +85,10 @@ diff -ur shadow-19990827.redhat/src/chfn.c shadow-19990827/src/chfn.c
  
  	/*
  	 * This command behaves different for root and non-root
-diff -ur shadow-19990827.redhat/src/chsh.c shadow-19990827/src/chsh.c
---- shadow-19990827.redhat/src/chsh.c	Fri Jul  9 22:02:43 1999
-+++ shadow-19990827/src/chsh.c	Sat Aug 26 15:37:48 2000
-@@ -163,10 +163,11 @@
+diff -ur shadow-4.0.0.orig/src/chsh.c shadow-4.0.0/src/chsh.c
+--- shadow-4.0.0.orig/src/chsh.c	Sat Sep  2 22:40:43 2000
++++ shadow-4.0.0/src/chsh.c	Fri Nov  2 01:51:55 2001
+@@ -162,10 +162,11 @@
  	struct	passwd	pwent;		/* New password entry                */
  
  	sanitize_env();
@@ -104,10 +104,36 @@ diff -ur shadow-19990827.redhat/src/chsh.c shadow-19990827/src/chsh.c
  
  	/*
  	 * This command behaves different for root and non-root
-diff -ur shadow-19990827.redhat/src/gpasswd.c shadow-19990827/src/gpasswd.c
---- shadow-19990827.redhat/src/gpasswd.c	Fri Aug 27 23:02:51 1999
-+++ shadow-19990827/src/gpasswd.c	Sat Aug 26 15:44:38 2000
-@@ -210,9 +210,11 @@
+diff -ur shadow-4.0.0.orig/src/expiry.c shadow-4.0.0/src/expiry.c
+--- shadow-4.0.0.orig/src/expiry.c	Sat Aug 26 22:27:18 2000
++++ shadow-4.0.0/src/expiry.c	Fri Nov  2 02:01:04 2001
+@@ -103,6 +103,11 @@
+ 	char *Prog = argv[0];
+ 
+ 	sanitize_env();
++	if (getuid() == 0) {
++		setlocale(LC_ALL, "");
++		bindtextdomain(PACKAGE, LOCALEDIR);
++		textdomain(PACKAGE);
++	}
+ 
+ 	/* 
+ 	 * Start by disabling all of the keyboard signals.
+@@ -119,10 +124,6 @@
+ 	 * expiry takes one of two arguments.  The default action
+ 	 * is to give the usage message.
+ 	 */
+-
+-	setlocale(LC_ALL, "");
+-	bindtextdomain(PACKAGE, LOCALEDIR);
+-	textdomain(PACKAGE);
+ 
+ 	if (argc != 2 || (strcmp (argv[1], "-f")  && strcmp (argv[1], "-c")))
+ 		usage ();
+diff -ur shadow-4.0.0.orig/src/gpasswd.c shadow-4.0.0/src/gpasswd.c
+--- shadow-4.0.0.orig/src/gpasswd.c	Sat Sep  2 22:40:43 2000
++++ shadow-4.0.0/src/gpasswd.c	Fri Nov  2 01:51:55 2001
+@@ -208,9 +208,11 @@
  	char *members = NULL;
  
  	sanitize_env();
@@ -122,10 +148,10 @@ diff -ur shadow-19990827.redhat/src/gpasswd.c shadow-19990827/src/gpasswd.c
  
  	/*
  	 * Make a note of whether or not this command was invoked
-diff -ur shadow-19990827.redhat/src/login.c shadow-19990827/src/login.c
---- shadow-19990827.redhat/src/login.c	Fri Aug 27 23:02:51 1999
-+++ shadow-19990827/src/login.c	Sat Aug 26 15:50:05 2000
-@@ -464,10 +464,11 @@
+diff -ur shadow-4.0.0.orig/src/login.c shadow-4.0.0/src/login.c
+--- shadow-4.0.0.orig/src/login.c	Fri Jun 29 00:47:06 2001
++++ shadow-4.0.0/src/login.c	Fri Nov  2 01:51:55 2001
+@@ -467,10 +467,11 @@
  	 */
  
  	sanitize_env();
@@ -141,29 +167,30 @@ diff -ur shadow-19990827.redhat/src/login.c shadow-19990827/src/login.c
  
  	initenv();
  
-diff -ur shadow-19990827.redhat/src/newgrp.c shadow-19990827/src/newgrp.c
---- shadow-19990827.redhat/src/newgrp.c	Fri Aug 27 23:02:51 1999
-+++ shadow-19990827/src/newgrp.c	Sat Aug 26 15:50:46 2000
-@@ -96,10 +96,11 @@
+diff -ur shadow-4.0.0.orig/src/newgrp.c shadow-4.0.0/src/newgrp.c
+--- shadow-4.0.0.orig/src/newgrp.c	Sat Sep  1 08:19:16 2001
++++ shadow-4.0.0/src/newgrp.c	Fri Nov  2 01:51:55 2001
+@@ -100,10 +100,12 @@
+ 	sanitize_env();
  #endif
  
- 	sanitize_env();
--
 -	setlocale(LC_ALL, "");
 -	bindtextdomain(PACKAGE, LOCALEDIR);
 -	textdomain(PACKAGE);
-+	if (getuid() == 0) {
+-                  
++	if (getuid()==0) {
 +		setlocale(LC_ALL, "");
 +		bindtextdomain(PACKAGE, LOCALEDIR);
 +		textdomain(PACKAGE);
 +	}
-                   
++	           
  	/*
  	 * save my name for error messages and save my real gid incase
-diff -ur shadow-19990827.redhat/src/passwd.c shadow-19990827/src/passwd.c
---- shadow-19990827.redhat/src/passwd.c	Fri Aug 27 23:02:51 1999
-+++ shadow-19990827/src/passwd.c	Sat Aug 26 15:52:54 2000
-@@ -1022,9 +1022,12 @@
+ 	 * of errors.  if there is an error i have to exec a new login
+diff -ur shadow-4.0.0.orig/src/passwd.c shadow-4.0.0/src/passwd.c
+--- shadow-4.0.0.orig/src/passwd.c	Sat Sep  2 22:40:44 2000
++++ shadow-4.0.0/src/passwd.c	Fri Nov  2 01:51:55 2001
+@@ -1020,9 +1020,12 @@
  #endif
  #endif
  
@@ -179,19 +206,19 @@ diff -ur shadow-19990827.redhat/src/passwd.c shadow-19990827/src/passwd.c
  
  	/*
  	 * The program behaves differently when executed by root
-@@ -1037,8 +1040,6 @@
+@@ -1035,8 +1038,6 @@
  	 * prefix to most error messages.
  	 */
  	Prog = Basename(argv[0]);
 -
 -	sanitize_env();
  
- 	openlog("passwd", LOG_PID|LOG_CONS|LOG_NOWAIT, LOG_AUTH);
+ 	OPENLOG("passwd");
  
-diff -ur shadow-19990827.redhat/src/su.c shadow-19990827/src/su.c
---- shadow-19990827.redhat/src/su.c	Mon Jun  7 20:40:45 1999
-+++ shadow-19990827/src/su.c	Sat Aug 26 15:53:50 2000
-@@ -186,10 +186,11 @@
+diff -ur shadow-4.0.0.orig/src/su.c shadow-4.0.0/src/su.c
+--- shadow-4.0.0.orig/src/su.c	Fri Aug 24 03:09:31 2001
++++ shadow-4.0.0/src/su.c	Fri Nov  2 01:51:55 2001
+@@ -181,10 +181,11 @@
  #endif /* !USE_PAM */
  
  	sanitize_env();

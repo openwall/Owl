@@ -1,11 +1,12 @@
 #!/bin/sh
-# $Id: Owl/packages/shadow-utils/Attic/chsh-chfn.control,v 1.1 2000/08/26 14:59:30 solar Exp $
+# $Id: Owl/packages/shadow-utils/newgrp.control,v 1.1 2001/11/12 01:47:45 solar Exp $
 
 . /etc/control.d/functions
 
-BINARY=/usr/bin/chsh
+BINARY=/usr/bin/newgrp
 
 new_fmode public 4711 root root
+new_fmode wheelonly 4710 root wheel
 new_fmode restricted 700 root root
 
 control_fmode "$BINARY" "$*" || exit 1

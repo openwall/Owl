@@ -1,0 +1,533 @@
+diff -ur shadow-4.0.0.orig/src/chage.c shadow-4.0.0/src/chage.c
+--- shadow-4.0.0.orig/src/chage.c	Mon Oct  9 22:39:50 2000
++++ shadow-4.0.0/src/chage.c	Sun Nov 11 05:10:47 2001
+@@ -423,39 +423,8 @@
+ 
+ 	Prog = Basename(argv[0]);
+ 
+-#ifdef USE_PAM
+-	retval = PAM_SUCCESS;
+-
+-	pampw = getpwuid(getuid());
+-	if (pampw == NULL) {
+-		retval = PAM_USER_UNKNOWN;
+-	}
+-
+-	if (retval == PAM_SUCCESS) {
+-		retval = pam_start("chage", pampw->pw_name, &conv, &pamh);
+-	}
+-
+-	if (retval == PAM_SUCCESS) {
+-		retval = pam_authenticate(pamh, 0);
+-		if (retval != PAM_SUCCESS) {
+-			pam_end(pamh, retval);
+-		}
+-	}
+-
+-	if (retval == PAM_SUCCESS) {
+-		retval = pam_acct_mgmt(pamh, 0);
+-		if (retval != PAM_SUCCESS) {
+-			pam_end(pamh, retval);
+-		}
+-	}
+-
+-	if (retval != PAM_SUCCESS) {
+-		fprintf (stderr, _("%s: PAM authentication failed\n"), Prog);
+-		exit (1);
+-	}
+-#endif /* USE_PAM */
+-
+ 	OPENLOG("chage");
++
+ #ifdef	NDBM
+ #ifdef	SHADOWPWD
+ 	sp_dbm_mode = O_RDWR;
+@@ -549,6 +518,40 @@
+ 		closelog();
+ 		exit (1);
+ 	}
++
++#ifdef USE_PAM
++	retval = PAM_SUCCESS;
++
++	pampw = getpwuid(getuid());
++	if (pampw == NULL) {
++		retval = PAM_USER_UNKNOWN;
++	}
++
++	if (retval == PAM_SUCCESS) {
++		retval = pam_start("chage", pampw->pw_name, &conv, &pamh);
++	}
++
++	if (retval == PAM_SUCCESS) {
++		retval = pam_authenticate(pamh, 0);
++		if (retval != PAM_SUCCESS) {
++			pam_end(pamh, retval);
++		}
++	}
++
++	if (retval == PAM_SUCCESS) {
++		retval = pam_acct_mgmt(pamh, 0);
++		if (retval != PAM_SUCCESS) {
++			pam_end(pamh, retval);
++		}
++	}
++
++	if (retval != PAM_SUCCESS) {
++		fprintf (stderr, _("%s: PAM authentication failed\n"), Prog);
++		exit (1);
++	}
++
++	OPENLOG("chage");
++#endif /* USE_PAM */
+ 
+ 	/*
+ 	 * Lock and open the password file.  This loads all of the
+diff -ur shadow-4.0.0.orig/src/chpasswd.c shadow-4.0.0/src/chpasswd.c
+--- shadow-4.0.0.orig/src/chpasswd.c	Thu Jan 25 13:36:07 2001
++++ shadow-4.0.0/src/chpasswd.c	Sun Nov 11 05:36:38 2001
+@@ -109,6 +109,12 @@
+ 	bindtextdomain(PACKAGE, LOCALEDIR);
+ 	textdomain(PACKAGE);
+ 
++	/* XXX - use getopt() */
++	if (!(argc == 1 || (argc == 2 && !strcmp(argv[1], "-e"))))
++		usage();
++	if (argc == 2)
++		eflg = 1;
++
+ #ifdef USE_PAM
+ 	retval = PAM_SUCCESS;
+ 
+@@ -118,7 +124,7 @@
+ 	}
+ 
+ 	if (retval == PAM_SUCCESS) {
+-		retval = pam_start("shadow", pampw->pw_name, &conv, &pamh);
++		retval = pam_start("chpasswd", pampw->pw_name, &conv, &pamh);
+ 	}
+ 
+ 	if (retval == PAM_SUCCESS) {
+@@ -140,12 +146,6 @@
+ 		exit (1);
+ 	}
+ #endif /* USE_PAM */
+-
+-	/* XXX - use getopt() */
+-	if (!(argc == 1 || (argc == 2 && !strcmp(argv[1], "-e"))))
+-		usage();
+-	if (argc == 2)
+-		eflg = 1;
+ 
+ 	/*
+ 	 * Lock the password file and open it for reading.  This will
+diff -ur shadow-4.0.0.orig/src/dpasswd.c shadow-4.0.0/src/dpasswd.c
+--- shadow-4.0.0.orig/src/dpasswd.c	Sat Sep  2 22:40:43 2000
++++ shadow-4.0.0/src/dpasswd.c	Sun Nov 11 04:57:52 2001
+@@ -90,7 +90,7 @@
+ 	bindtextdomain(PACKAGE, LOCALEDIR);
+ 	textdomain(PACKAGE);
+ 
+-	OPENLOG(Prog);
++	OPENLOG("dpasswd");
+ 
+ 	while ((opt = getopt (argc, argv, "a:d:")) != EOF) {
+ 		switch (opt) {
+diff -ur shadow-4.0.0.orig/src/groupadd.c shadow-4.0.0/src/groupadd.c
+--- shadow-4.0.0.orig/src/groupadd.c	Mon Oct  9 23:02:20 2000
++++ shadow-4.0.0/src/groupadd.c	Sun Nov 11 05:36:52 2001
+@@ -506,6 +506,10 @@
+ 	bindtextdomain(PACKAGE, LOCALEDIR);
+ 	textdomain(PACKAGE);
+ 
++	OPENLOG("groupadd");
++
++	process_flags(argc, argv);
++
+ #ifdef USE_PAM
+ 	retval = PAM_SUCCESS;
+ 
+@@ -515,7 +519,7 @@
+ 	}
+ 
+ 	if (retval == PAM_SUCCESS) {
+-		retval = pam_start("shadow", pampw->pw_name, &conv, &pamh);
++		retval = pam_start("groupadd", pampw->pw_name, &conv, &pamh);
+ 	}
+ 
+ 	if (retval == PAM_SUCCESS) {
+@@ -536,9 +540,9 @@
+ 		fprintf (stderr, _("%s: PAM authentication failed\n"), Prog);
+ 		exit (1);
+ 	}
+-#endif /* USE_PAM */
+ 
+-	OPENLOG(Prog);
++	OPENLOG("groupadd");
++#endif /* USE_PAM */
+ 
+ #ifdef SHADOWGRP
+ 	is_shadow_grp = sgr_file_present();
+@@ -555,7 +559,6 @@
+ 	sg_dbm_mode = O_RDWR;
+ #endif	/* SHADOWGRP */
+ #endif	/* NDBM */
+-	process_flags(argc, argv);
+ 
+ 	/*
+ 	 * Start with a quick check to see if the group exists.
+diff -ur shadow-4.0.0.orig/src/groupdel.c shadow-4.0.0/src/groupdel.c
+--- shadow-4.0.0.orig/src/groupdel.c	Mon Oct  9 23:02:20 2000
++++ shadow-4.0.0/src/groupdel.c	Sun Nov 11 05:37:04 2001
+@@ -292,6 +292,11 @@
+ 	bindtextdomain(PACKAGE, LOCALEDIR);
+ 	textdomain(PACKAGE);
+ 
++	if (argc != 2)
++		usage ();
++
++	group_name = argv[1];
++
+ #ifdef USE_PAM
+ 	retval = PAM_SUCCESS;
+ 
+@@ -301,7 +306,7 @@
+ 	}
+ 
+ 	if (retval == PAM_SUCCESS) {
+-		retval = pam_start("shadow", pampw->pw_name, &conv, &pamh);
++		retval = pam_start("groupdel", pampw->pw_name, &conv, &pamh);
+ 	}
+ 
+ 	if (retval == PAM_SUCCESS) {
+@@ -324,12 +329,7 @@
+ 	}
+ #endif /* USE_PAM */
+ 
+-	if (argc != 2)
+-		usage ();
+-
+-	group_name = argv[1];
+-
+-	OPENLOG(Prog);
++	OPENLOG("groupdel");
+ 
+ #ifdef SHADOWGRP
+ 	is_shadow_grp = sgr_file_present();
+diff -ur shadow-4.0.0.orig/src/groupmod.c shadow-4.0.0/src/groupmod.c
+--- shadow-4.0.0.orig/src/groupmod.c	Mon Oct  9 23:02:20 2000
++++ shadow-4.0.0/src/groupmod.c	Sun Nov 11 05:37:17 2001
+@@ -492,6 +492,8 @@
+ 	bindtextdomain(PACKAGE, LOCALEDIR);
+ 	textdomain(PACKAGE);
+ 
++	process_flags (argc, argv);
++
+ #ifdef USE_PAM
+ 	retval = PAM_SUCCESS;
+ 
+@@ -501,7 +503,7 @@
+ 	}
+ 
+ 	if (retval == PAM_SUCCESS) {
+-		retval = pam_start("shadow", pampw->pw_name, &conv, &pamh);
++		retval = pam_start("groupmod", pampw->pw_name, &conv, &pamh);
+ 	}
+ 
+ 	if (retval == PAM_SUCCESS) {
+@@ -524,7 +526,7 @@
+ 	}
+ #endif /* USE_PAM */
+ 
+-	OPENLOG(Prog);
++	OPENLOG("groupmod");
+ 
+ #ifdef SHADOWGRP
+ 	is_shadow_grp = sgr_file_present();
+@@ -541,7 +543,6 @@
+ 	sg_dbm_mode = O_RDWR;
+ #endif	/* SHADOWGRP */
+ #endif	/* NDBM */
+-	process_flags (argc, argv);
+ 
+ 	/*
+ 	 * Start with a quick check to see if the group exists.
+diff -ur shadow-4.0.0.orig/src/grpck.c shadow-4.0.0/src/grpck.c
+--- shadow-4.0.0.orig/src/grpck.c	Fri Aug 24 02:47:47 2001
++++ shadow-4.0.0/src/grpck.c	Sun Nov 11 04:58:58 2001
+@@ -178,7 +178,7 @@
+ 	bindtextdomain(PACKAGE, LOCALEDIR);
+ 	textdomain(PACKAGE);
+ 
+-	OPENLOG(Prog);
++	OPENLOG("grpck");
+ 
+ 	/*
+ 	 * Parse the command line arguments
+diff -ur shadow-4.0.0.orig/src/logoutd.c shadow-4.0.0/src/logoutd.c
+--- shadow-4.0.0.orig/src/logoutd.c	Mon Aug  6 10:23:26 2001
++++ shadow-4.0.0/src/logoutd.c	Sun Nov 11 04:59:11 2001
+@@ -198,7 +198,7 @@
+ 
+ 	Prog = Basename(argv[0]);
+ 
+-	OPENLOG(Prog);
++	OPENLOG("logoutd");
+ 
+ 	/*
+ 	 * Scan the UTMP file once per minute looking for users that
+diff -ur shadow-4.0.0.orig/src/newusers.c shadow-4.0.0/src/newusers.c
+--- shadow-4.0.0.orig/src/newusers.c	Mon Oct  9 23:02:20 2000
++++ shadow-4.0.0/src/newusers.c	Sun Nov 11 05:37:37 2001
+@@ -359,6 +359,9 @@
+ 	bindtextdomain(PACKAGE, LOCALEDIR);
+ 	textdomain(PACKAGE);
+ 
++	if (argc > 1 && argv[1][0] == '-')
++		usage ();
++
+ #ifdef USE_PAM
+ 	retval = PAM_SUCCESS;
+ 
+@@ -368,7 +371,7 @@
+ 	}
+ 
+ 	if (retval == PAM_SUCCESS) {
+-		retval = pam_start("shadow", pampw->pw_name, &conv, &pamh);
++		retval = pam_start("newusers", pampw->pw_name, &conv, &pamh);
+ 	}
+ 
+ 	if (retval == PAM_SUCCESS) {
+@@ -390,9 +393,6 @@
+ 		exit (1);
+ 	}
+ #endif /* USE_PAM */
+-
+-	if (argc > 1 && argv[1][0] == '-')
+-		usage ();
+ 
+ 	if (argc == 2) {
+ 		if (! freopen (argv[1], "r", stdin)) {
+diff -ur shadow-4.0.0.orig/src/pwck.c shadow-4.0.0/src/pwck.c
+--- shadow-4.0.0.orig/src/pwck.c	Wed Aug 15 03:17:57 2001
++++ shadow-4.0.0/src/pwck.c	Sun Nov 11 04:59:53 2001
+@@ -159,7 +159,7 @@
+ 	bindtextdomain(PACKAGE, LOCALEDIR);
+ 	textdomain(PACKAGE);
+ 
+-	OPENLOG(Prog);
++	OPENLOG("pwck");
+ 
+ 	/*
+ 	 * Parse the command line arguments
+diff -ur shadow-4.0.0.orig/src/useradd.c shadow-4.0.0/src/useradd.c
+--- shadow-4.0.0.orig/src/useradd.c	Fri Sep  7 19:12:54 2001
++++ shadow-4.0.0/src/useradd.c	Sun Nov 11 05:33:12 2001
+@@ -1679,18 +1679,33 @@
+ 	struct passwd *pampw;
+ 	int retval;
+ #endif
++
+ 	/*
+ 	 * Get my name so that I can use it to report errors.
+ 	 */
+ 
+-	sys_ngroups=sysconf(_SC_NGROUPS_MAX);
+-	user_groups=malloc((1+sys_ngroups)*sizeof(char *));
+ 	Prog = Basename(argv[0]);
+ 
+ 	setlocale(LC_ALL, "");
+ 	bindtextdomain(PACKAGE, LOCALEDIR);
+ 	textdomain(PACKAGE);
+ 
++	OPENLOG("useradd");
++
++	sys_ngroups = sysconf(_SC_NGROUPS_MAX);
++	user_groups = malloc((1 + sys_ngroups) * sizeof(char *));
++
++#ifdef SHADOWPWD
++	is_shadow_pwd = spw_file_present();
++#endif
++#ifdef SHADOWGRP
++	is_shadow_grp = sgr_file_present();
++#endif
++
++	get_defaults();
++
++	process_flags(argc, argv);
++
+ #ifdef USE_PAM
+ 	retval = PAM_SUCCESS;
+ 
+@@ -1721,16 +1736,9 @@
+ 		fprintf (stderr, _("%s: PAM authentication failed\n"), Prog);
+ 		exit (1);
+ 	}
+-#endif /* USE_PAM */
+ 
+-	OPENLOG(Prog);
+-
+-#ifdef SHADOWPWD
+-	is_shadow_pwd = spw_file_present();
+-#endif
+-#ifdef SHADOWGRP
+-	is_shadow_grp = sgr_file_present();
+-#endif
++	OPENLOG("useradd");
++#endif /* USE_PAM */
+ 
+ 	/*
+ 	 * The open routines for the NDBM files don't use read-write
+@@ -1747,9 +1755,6 @@
+ 	sg_dbm_mode = O_RDWR;
+ #endif
+ #endif
+-	get_defaults();
+-
+-	process_flags(argc, argv);
+ 
+ 	/*
+ 	 * See if we are messing with the defaults file, or creating
+diff -ur shadow-4.0.0.orig/src/userdel.c shadow-4.0.0/src/userdel.c
+--- shadow-4.0.0.orig/src/userdel.c	Mon Oct  9 23:02:20 2000
++++ shadow-4.0.0/src/userdel.c	Sun Nov 11 05:37:56 2001
+@@ -708,6 +708,24 @@
+ 	bindtextdomain(PACKAGE, LOCALEDIR);
+ 	textdomain(PACKAGE);
+ 
++	while ((arg = getopt (argc, argv, "fr")) != EOF) {
++		switch (arg) {
++		case 'f':  /* force remove even if not owned by user */
++			fflg++;
++			break;
++		case 'r':  /* remove home dir and mailbox */
++			rflg++;
++			break;
++		default:
++			usage();
++		}
++	}
++	
++	if (optind + 1 != argc)
++		usage ();
++
++	user_name = argv[argc - 1];
++
+ #ifdef USE_PAM
+ 	retval = PAM_SUCCESS;
+ 
+@@ -717,7 +735,7 @@
+ 	}
+ 
+ 	if (retval == PAM_SUCCESS) {
+-		retval = pam_start("shadow", pampw->pw_name, &conv, &pamh);
++		retval = pam_start("userdel", pampw->pw_name, &conv, &pamh);
+ 	}
+ 
+ 	if (retval == PAM_SUCCESS) {
+@@ -740,7 +758,7 @@
+ 	}
+ #endif /* USE_PAM */
+ 
+-	OPENLOG(Prog);
++	OPENLOG("userdel");
+ 
+ #ifdef SHADOWPWD
+ 	is_shadow_pwd = spw_file_present();
+@@ -765,27 +783,10 @@
+ 	sg_dbm_mode = O_RDWR;
+ #endif
+ #endif
+-	while ((arg = getopt (argc, argv, "fr")) != EOF) {
+-		switch (arg) {
+-		case 'f':  /* force remove even if not owned by user */
+-			fflg++;
+-			break;
+-		case 'r':  /* remove home dir and mailbox */
+-			rflg++;
+-			break;
+-		default:
+-			usage();
+-		}
+-	}
+-	
+-	if (optind + 1 != argc)
+-		usage ();
+ 
+ 	/*
+ 	 * Start with a quick check to see if the user exists.
+ 	 */
+-
+-	user_name = argv[argc - 1];
+ 
+ 	if (! (pwd = getpwnam (user_name))) {
+ 		fprintf(stderr, _("%s: user %s does not exist\n"),
+diff -ur shadow-4.0.0.orig/src/usermod.c shadow-4.0.0/src/usermod.c
+--- shadow-4.0.0.orig/src/usermod.c	Sat Sep  1 08:19:16 2001
++++ shadow-4.0.0/src/usermod.c	Sun Nov 11 05:38:13 2001
+@@ -1646,8 +1646,6 @@
+ 	int retval;
+ #endif
+ 
+-	sys_ngroups=sysconf(_SC_NGROUPS_MAX);
+-	user_groups=malloc((1+sys_ngroups)*sizeof(char *));
+ 	/*
+ 	 * Get my name so that I can use it to report errors.
+ 	 */
+@@ -1657,6 +1655,20 @@
+ 	bindtextdomain(PACKAGE, LOCALEDIR);
+ 	textdomain(PACKAGE);
+ 
++	sys_ngroups = sysconf(_SC_NGROUPS_MAX);
++	user_groups = malloc((1 + sys_ngroups) * sizeof(char *));
++
++	OPENLOG("usermod");
++
++#ifdef SHADOWPWD
++	is_shadow_pwd = spw_file_present();
++#endif
++#ifdef SHADOWGRP
++	is_shadow_grp = sgr_file_present();
++#endif
++
++	process_flags (argc, argv);
++
+ #ifdef USE_PAM
+ 	retval = PAM_SUCCESS;
+ 
+@@ -1666,7 +1678,7 @@
+ 	}
+ 
+ 	if (retval == PAM_SUCCESS) {
+-		retval = pam_start("shadow", pampw->pw_name, &conv, &pamh);
++		retval = pam_start("usermod", pampw->pw_name, &conv, &pamh);
+ 	}
+ 
+ 	if (retval == PAM_SUCCESS) {
+@@ -1687,16 +1699,9 @@
+ 		fprintf (stderr, _("%s: PAM authentication failed\n"), Prog);
+ 		exit (1);
+ 	}
+-#endif /* USE_PAM */
+-
+-	OPENLOG(Prog);
+ 
+-#ifdef SHADOWPWD
+-	is_shadow_pwd = spw_file_present();
+-#endif
+-#ifdef SHADOWGRP
+-	is_shadow_grp = sgr_file_present();
+-#endif
++	OPENLOG("usermod");
++#endif /* USE_PAM */
+ 
+ 	/*
+ 	 * The open routines for the NDBM files don't use read-write
+@@ -1713,7 +1718,6 @@
+ 	sg_dbm_mode = O_RDWR;
+ #endif
+ #endif	/* NDBM */
+-	process_flags (argc, argv);
+ 
+ 	/*
+ 	 * Do the hard stuff - open the files, change the user entries,

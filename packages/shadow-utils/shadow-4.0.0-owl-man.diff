@@ -1,26 +1,176 @@
-diff -ur shadow-19990827.redhat/man/lastlog.8 shadow-19990827/man/lastlog.8
---- shadow-19990827.redhat/man/lastlog.8	Mon Dec 28 23:35:11 1998
-+++ shadow-19990827/man/lastlog.8	Fri Jun 15 06:04:09 2001
-@@ -34,7 +34,7 @@
- .SH SYNOPSIS
- .B lastlog
- .RB [ -u
--.IR uid ]
-+.IR login-name ]
- .RB [ -t
- .IR days ]
- .SH DESCRIPTION
-diff -ur shadow-19990827.redhat/man/login.defs.5 shadow-19990827/man/login.defs.5
---- shadow-19990827.redhat/man/login.defs.5	Mon Dec 28 23:35:13 1998
-+++ shadow-19990827/man/login.defs.5	Fri Jun 15 07:42:59 2001
-@@ -25,21 +25,26 @@
+diff -urN shadow-4.0.0.orig/man/Makefile.am shadow-4.0.0-owl-man/man/Makefile.am
+--- shadow-4.0.0.orig/man/Makefile.am	Sat Jun 16 06:35:46 2001
++++ shadow-4.0.0-owl-man/man/Makefile.am	Sun Nov 11 10:10:52 2001
+@@ -8,6 +8,7 @@
+ 	expiry.1 \
+ 	faillog.5 \
+ 	faillog.8 \
++	getspnam.3 \
+ 	gpasswd.1 \
+ 	groupadd.8 \
+ 	groupdel.8 \
+@@ -30,6 +31,8 @@
+ 	pwck.8 \
+ 	pwconv.8 \
+ 	pwunconv.8 \
++	sg.1 \
++	shadow.3 \
+ 	shadow.5 \
+ 	su.1 \
+ 	suauth.5 \
+@@ -40,6 +43,7 @@
+ 
+ EXTRA_DIST = $(man_MANS) \
+ 	dpasswd.8 \
++	getspnam.3 \
+ 	groups.1 \
+ 	id.1 \
+ 	pw_auth.3 \
+diff -urN shadow-4.0.0.orig/man/chpasswd.8 shadow-4.0.0-owl-man/man/chpasswd.8
+--- shadow-4.0.0.orig/man/chpasswd.8	Thu Jan 25 13:43:50 2001
++++ shadow-4.0.0-owl-man/man/chpasswd.8	Sun Nov 11 07:55:52 2001
+@@ -54,7 +54,7 @@
+ .SH SEE ALSO
+ .\" mkpasswd(8), passwd(1), useradd(1)
+ .BR passwd (1),
+-.BR useradd (8),
+-.BR newusers (8)
++.BR newusers (8),
++.BR useradd (8)
+ .SH AUTHOR
+ Julianne Frances Haugh (jockgrrl@ix.netcom.com)
+diff -urN shadow-4.0.0.orig/man/getspnam.3 shadow-4.0.0-owl-man/man/getspnam.3
+--- shadow-4.0.0.orig/man/getspnam.3	Thu Jan  1 03:00:00 1970
++++ shadow-4.0.0-owl-man/man/getspnam.3	Sun Nov 11 07:55:52 2001
+@@ -0,0 +1 @@
++.so shadow.3
+diff -urN shadow-4.0.0.orig/man/groupadd.8 shadow-4.0.0-owl-man/man/groupadd.8
+--- shadow-4.0.0.orig/man/groupadd.8	Sat Jan 27 05:55:52 2001
++++ shadow-4.0.0-owl-man/man/groupadd.8	Sun Nov 11 07:55:52 2001
+@@ -50,10 +50,10 @@
+ .SH SEE ALSO
+ .BR chfn (1),
+ .BR chsh (1),
++.BR passwd (1),
+ .BR useradd (8),
+ .BR userdel (8),
+ .BR usermod (8),
+-.BR passwd (1),
+ .BR groupdel (8),
+ .BR groupmod (8)
+ .SH AUTHOR
+diff -urN shadow-4.0.0.orig/man/groupdel.8 shadow-4.0.0-owl-man/man/groupdel.8
+--- shadow-4.0.0.orig/man/groupdel.8	Sat Jan 27 05:55:52 2001
++++ shadow-4.0.0-owl-man/man/groupdel.8	Sun Nov 11 07:55:52 2001
+@@ -47,10 +47,10 @@
+ .SH SEE ALSO
+ .BR chfn (1),
+ .BR chsh (1),
++.BR passwd (1),
+ .BR useradd (8),
+ .BR userdel (8),
+ .BR usermod (8),
+-.BR passwd (1),
+ .BR groupadd (8),
+ .BR groupmod (8)
+ .SH AUTHOR
+diff -urN shadow-4.0.0.orig/man/groupmod.8 shadow-4.0.0-owl-man/man/groupmod.8
+--- shadow-4.0.0.orig/man/groupmod.8	Sat Jan 27 05:55:52 2001
++++ shadow-4.0.0-owl-man/man/groupmod.8	Sun Nov 11 07:55:52 2001
+@@ -52,10 +52,10 @@
+ .SH SEE ALSO
+ .BR chfn (1),
+ .BR chsh (1),
++.BR passwd (1),
+ .BR useradd (8),
+ .BR userdel (8),
+ .BR usermod (8),
+-.BR passwd (1),
+ .BR groupadd (8),
+ .BR groupdel (8)
+ .SH AUTHOR
+diff -urN shadow-4.0.0.orig/man/groups.1 shadow-4.0.0-owl-man/man/groups.1
+--- shadow-4.0.0.orig/man/groups.1	Sat Jan 27 05:55:52 2001
++++ shadow-4.0.0-owl-man/man/groups.1	Sun Nov 11 07:55:52 2001
+@@ -44,8 +44,8 @@
+ /etc/group \- group information
+ .SH SEE ALSO
+ .BR newgrp (1),
+-.BR getuid (2),
+ .BR getgid (2),
+-.BR getgroups (2)
++.BR getgroups (2),
++.BR getuid (2)
+ .SH AUTHOR
+ Julianne Frances Haugh (jockgrrl@ix.netcom.com)
+diff -urN shadow-4.0.0.orig/man/grpck.8 shadow-4.0.0-owl-man/man/grpck.8
+--- shadow-4.0.0.orig/man/grpck.8	Wed Aug 15 03:17:54 2001
++++ shadow-4.0.0-owl-man/man/grpck.8	Sun Nov 11 07:55:52 2001
+@@ -80,10 +80,10 @@
+ .br
+ /etc/passwd \- user information
+ .SH SEE ALSO
+-.BR groupmod (8),
+ .BR group (5),
+ .BR passwd (5),
+-.BR shadow (5)
++.BR shadow (5),
++.BR groupmod (8)
+ .SH DIAGNOSTICS
+ The \fBgrpck\fR command exits with the following values:
+ .IP 0 5
+diff -urN shadow-4.0.0.orig/man/id.1 shadow-4.0.0-owl-man/man/id.1
+--- shadow-4.0.0.orig/man/id.1	Sat Jan 27 05:55:52 2001
++++ shadow-4.0.0-owl-man/man/id.1	Sun Nov 11 07:55:52 2001
+@@ -41,8 +41,8 @@
+ .br
+ /etc/group \- group information
+ .SH SEE ALSO
+-.BR getuid (2),
+ .BR getgid (2),
+-.BR getgroups (2)
++.BR getgroups (2),
++.BR getuid (2)
+ .SH AUTHOR
+ Julianne Frances Haugh (jockgrrl@ix.netcom.com)
+diff -urN shadow-4.0.0.orig/man/login.1 shadow-4.0.0-owl-man/man/login.1
+--- shadow-4.0.0.orig/man/login.1	Thu Jan 25 13:43:50 2001
++++ shadow-4.0.0-owl-man/man/login.1	Sun Nov 11 07:55:52 2001
+@@ -139,15 +139,14 @@
+ $HOME/.hushlogin \- suppress printing of system messages
+ .br
+ .SH SEE ALSO
+-.PP
+-.BR getty (8),
+ .BR mail (1),
+ .BR passwd (1),
+ .BR sh (1),
+ .BR su (1),
+-.BR login.defs (5),
+ .\" .BR d_passwd (5),
++.BR login.defs (5),
++.BR nologin (5),
+ .BR passwd (5),
+-.BR nologin (5)
++.BR getty (8)
+ .SH AUTHOR
+ Julianne Frances Haugh (jockgrrl@ix.netcom.com)
+diff -urN shadow-4.0.0.orig/man/login.defs.5 shadow-4.0.0-owl-man/man/login.defs.5
+--- shadow-4.0.0.orig/man/login.defs.5	Sat Jun 23 12:50:25 2001
++++ shadow-4.0.0-owl-man/man/login.defs.5	Sun Nov 11 07:55:52 2001
+@@ -1,4 +1,3 @@
+-.\"$Id: login.defs.5,v 1.10 2001/06/23 08:50:25 marekm Exp $
+ .\" Copyright 1991 - 1993, Julianne Frances Haugh and Chip Rosenthal
+ .\" All rights reserved.
+ .\"
+@@ -25,19 +24,27 @@
+ .\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  .\" SUCH DAMAGE.
- .\"
--.\"	$Id: login.defs.5,v 1.6 1998/12/28 20:35:13 marekm Exp $
-+.\"	$Id: login.defs.5,v 1.7 2000/08/26 18:27:17 marekm Exp $
- .\"
 -.TH LOGIN 5
++.\"
++.\"	$Id: login.defs.5,v 1.7 2000/08/26 18:27:17 marekm Exp $
++.\"
 +.\" 2001/06/15	Solar Designer <solar@owl.openwall.com>
 +.\" Removed the descriptions of most parameters as only a small subset is
 +.\" actually used on Owl, corrected those which remain, and wrote whatever
@@ -45,7 +195,7 @@ diff -ur shadow-19990827.redhat/man/login.defs.5 shadow-19990827/man/login.defs.
  lines are ignored.  Comments are introduced with a `#' pound sign and
  the pound sign must be the first non-white character of the line.
  .PP
-@@ -50,7 +55,7 @@
+@@ -48,7 +55,7 @@
  a ``no'' value.  Numbers (both regular and long) may be either decimal
  values, octal values (precede the value with ``0'') or hexadecimal
  values (precede the value with ``0x'').  The maximum value of the
@@ -54,7 +204,7 @@ diff -ur shadow-19990827.redhat/man/login.defs.5 shadow-19990827/man/login.defs.
  .PP
  The following configuration items are provided:
  .\"
-@@ -61,7 +66,7 @@
+@@ -59,7 +66,7 @@
  .B chfn
  and
  .B chsh
@@ -63,7 +213,7 @@ diff -ur shadow-19990827.redhat/man/login.defs.5 shadow-19990827/man/login.defs.
  run by the superuser.
  .\"
  .IP "CHFN_RESTRICT (string)"
-@@ -77,487 +82,105 @@
+@@ -75,496 +82,105 @@
  .IR w ,
  .IR h ,
  for Full name, Room number, Work phone, and Home phone, respectively.
@@ -72,6 +222,14 @@ diff -ur shadow-19990827.redhat/man/login.defs.5 shadow-19990827/man/login.defs.
  If not specified, only the superuser can make any changes.
 +The most restrictive setting is better achieved by not installing chfn SUID.
  .\"
+-.IP "CLOSE_SESSIONS (boolean)"
+-Enable pam_close_session() calling. When using normal (pam_unix.so)
+-session handling modules, this is not needed. However with modules
+-(such as kerberos or other persistent session models),
+-.B login
+-needs to fork and wait for the shell to exit, so that sessions can be
+-cleaned up.
+-.\"
 -.IP "CONSOLE (string)"
 -If specified, this definition provides for a restricted set of lines
 -on which root logins will be allowed.  An attempted root login which
@@ -127,7 +285,8 @@ diff -ur shadow-19990827.redhat/man/login.defs.5 shadow-19990827/man/login.defs.
 -.fi
 -.\"
 -.IP "ENVIRON_FILE (string)"
--XXX needs to be documented.
+-File containing a list of environment variables (one per line) to set
+-when logging in or su'ing.
 -.\"
 -.IP "ENV_HZ (string)"
 -This parameter specifies a value for an HZ environment parameter.
@@ -510,7 +669,8 @@ diff -ur shadow-19990827.redhat/man/login.defs.5 shadow-19990827/man/login.defs.
 -.ft R
 -.sp
 -.fi
--This information is used to initialize the TERM environment parameter.
+-This information is only used to initialize the TERM environment parameter
+-when it does not already exist.
 -A line starting with a ``#'' pound sign will be treated as a comment.
 -If this paramter is not specified, the file does not exist, or the terminal
 -line is not found in the file, then the TERM environment parameter will not
@@ -536,9 +696,8 @@ diff -ur shadow-19990827.redhat/man/login.defs.5 shadow-19990827/man/login.defs.
 +program.
  .\"
  .IP "UMASK (number)"
--The permission mask is initialized to this value.  If not specified,
--the permission mask will be initialized to zero.
-+The umask to use when creating user home directories.  The default is 077.
+ The permission mask is initialized to this value.  If not specified,
+ the permission mask will be initialized to 077.
  .\"
  .IP "USERDEL_CMD (string)"
 -XXX needs to be documented.
@@ -611,14 +770,77 @@ diff -ur shadow-19990827.redhat/man/login.defs.5 shadow-19990827/man/login.defs.
 +.BR shadow (5),
 +.BR pam (8)
  .SH AUTHORS
--Julianne Frances Haugh (jfh@bga.com)
-+Julianne Frances Haugh (jfh@austin.ibm.com)
+ Julianne Frances Haugh (jockgrrl@ix.netcom.com)
  .br
- Chip Rosenthal (chip@unicom.com)
-diff -ur shadow-19990827.redhat/man/newusers.8 shadow-19990827/man/newusers.8
---- shadow-19990827.redhat/man/newusers.8	Mon Dec 28 23:35:17 1998
-+++ shadow-19990827/man/newusers.8	Fri Jun 15 06:02:40 2001
-@@ -40,7 +40,7 @@
+diff -urN shadow-4.0.0.orig/man/mkpasswd.8 shadow-4.0.0-owl-man/man/mkpasswd.8
+--- shadow-4.0.0.orig/man/mkpasswd.8	Thu Jan 25 13:43:51 2001
++++ shadow-4.0.0-owl-man/man/mkpasswd.8	Sun Nov 11 07:55:52 2001
+@@ -72,8 +72,8 @@
+ .br
+ /etc/gshadow \- shadow group information
+ .SH SEE ALSO
+-.BR passwd (5),
+ .BR group (5),
++.BR passwd (5),
+ .BR shadow (5)
+ .SH AUTHOR
+ Julianne Frances Haugh (jockgrrl@ix.netcom.com)
+diff -urN shadow-4.0.0.orig/man/newgrp.1 shadow-4.0.0-owl-man/man/newgrp.1
+--- shadow-4.0.0.orig/man/newgrp.1	Sat Jan 27 05:55:52 2001
++++ shadow-4.0.0-owl-man/man/newgrp.1	Sun Nov 11 09:36:10 2001
+@@ -25,15 +25,15 @@
+ .\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ .\" SUCH DAMAGE.
+-.TH NEWGRP 1
++.TH NEWGRP 1 "11 November 2001"
+ .SH NAME
+-newgrp \- Change group ID
++newgrp \- log in to a new group
+ .br
+-sg \- Execute command as different group ID
++sg \- execute command as different group ID
+ .SH SYNOPSIS
+ \fBnewgrp\fR [\fB-\fR] [\fIgroup\fR]
+ .br
+-\fBnewgrp\fR [\fB-\fR]  [\fIgroup\fR [[\fB-c\fR] \fIcommand\fR]]
++\fBsg\fR [\fB-\fR] [\fIgroup\fR [[\fB-c\fR] \fIcommand\fR]]
+ .SH DESCRIPTION
+ \fBnewgrp\fR is used to change the current group ID during a login session.
+ If the optional \fB\-\fR flag is given, the user's environment
+@@ -48,20 +48,20 @@
+ password. The user will be denied access if the group password is empty and
+ the user is not listed as a member.
+ .PP
+-The \fBsg\fR command works similiar to \fBnewgrp\fR but does not replace the
+-user's shell, so upon exit from a \fBsg\fR command, you are returned to your
+-previous group ID. \fBsg\fR also accepts a command. The command will be
+-executed with the Bourne shell and must be enclosed in quotes.
+-.SH CAVEATS
+-This version of \fBnewgrp\fR has many compilation options,
+-only some of which may be in use at any particular site.
++The \fBsg\fR command works similiar to \fBnewgrp\fR but accepts a command.
++The command will be executed with the Bourne shell.  With most shells you
++may run \fBsg\fR from, you need to enclose multi-word commands in quotes.
++Another difference between \fBnewgrp\fR and \fBsg\fR is that some shells
++treat \fBnewgrp\fR specially, replacing themselves with a new instance of
++a shell that \fBnewgrp\fR creates.  This doesn't happen with \fBsg\fR, so
++upon exit from a \fBsg\fR command you are returned to your previous group ID.
+ .SH FILES
+ /etc/passwd \- user account information
+ .br
+ /etc/group \- group information
+ .SH SEE ALSO
+-.BR login (1),
+ .BR id (1),
++.BR login (1),
+ .BR su (1)
+ .SH AUTHOR
+ Julianne Frances Haugh (jockgrrl@ix.netcom.com)
+diff -urN shadow-4.0.0.orig/man/newusers.8 shadow-4.0.0-owl-man/man/newusers.8
+--- shadow-4.0.0.orig/man/newusers.8	Sat Jan 27 05:55:52 2001
++++ shadow-4.0.0-owl-man/man/newusers.8	Sun Nov 11 07:55:52 2001
+@@ -38,7 +38,7 @@
  \fBpasswd\fR(5)) with the following exceptions.
  .IP "\fIpw_passwd\fR" 10
  This field will be encrypted and used as the new value
@@ -627,34 +849,124 @@ diff -ur shadow-19990827.redhat/man/newusers.8 shadow-19990827/man/newusers.8
  .IP "\fIpw_age\fR"
  This field will be ignored for shadow passwords if the user already
  exists.
-diff -ur shadow-19990827.redhat/man/pwconv.8 shadow-19990827/man/pwconv.8
---- shadow-19990827.redhat/man/pwconv.8	Sat Sep 12 19:38:24 1998
-+++ shadow-19990827/man/pwconv.8	Fri Jun 15 06:02:40 2001
-@@ -59,5 +59,4 @@
+diff -urN shadow-4.0.0.orig/man/passwd.5 shadow-4.0.0-owl-man/man/passwd.5
+--- shadow-4.0.0.orig/man/passwd.5	Thu Jan 25 13:43:51 2001
++++ shadow-4.0.0-owl-man/man/passwd.5	Sun Nov 11 07:55:52 2001
+@@ -101,9 +101,9 @@
+ .BR login (1),
+ .BR passwd (1),
+ .BR su (1),
+-.BR sulogin (8),
+ .BR shadow (5),
+ .BR pwconv (8),
+-.BR pwunconv (8)
++.BR pwunconv (8),
++.BR sulogin (8)
+ .SH AUTHOR
+ Julianne Frances Haugh (jockgrrl@ix.netcom.com)
+diff -urN shadow-4.0.0.orig/man/pw_auth.3 shadow-4.0.0-owl-man/man/pw_auth.3
+--- shadow-4.0.0.orig/man/pw_auth.3	Thu Jan 25 13:43:51 2001
++++ shadow-4.0.0-owl-man/man/pw_auth.3	Sun Nov 11 07:55:52 2001
+@@ -152,6 +152,6 @@
+ .BR su (1),
+ .BR useradd (8),
+ .BR userdel (8),
+-usermod(8)
++.BR usermod (8)
+ .SH AUTHOR
+ Julianne Frances Haugh (jockgrrl@ix.netcom.com)
+diff -urN shadow-4.0.0.orig/man/pwauth.8 shadow-4.0.0-owl-man/man/pwauth.8
+--- shadow-4.0.0.orig/man/pwauth.8	Thu Jan 25 13:43:51 2001
++++ shadow-4.0.0-owl-man/man/pwauth.8	Sun Nov 11 07:55:52 2001
+@@ -57,9 +57,9 @@
+ .BR login (1),
+ .BR passwd (1),
+ .BR su (1),
++.BR pw_auth (3),
+ .BR useradd (8),
+ .BR userdel (8),
+-.BR usermod (8),
+-.BR pw_auth (3)
++.BR usermod (8)
+ .SH AUTHOR
+ Julianne Frances Haugh (jockgrrl@ix.netcom.com)
+diff -urN shadow-4.0.0.orig/man/pwck.8 shadow-4.0.0-owl-man/man/pwck.8
+--- shadow-4.0.0.orig/man/pwck.8	Wed Aug 15 03:17:55 2001
++++ shadow-4.0.0-owl-man/man/pwck.8	Sun Nov 11 07:55:52 2001
+@@ -86,10 +86,10 @@
+ .br
+ /etc/group \- group information
+ .SH SEE ALSO
+-.BR usermod (8),
+ .BR group (5),
+ .BR passwd (5),
+-.BR shadow (5)
++.BR shadow (5),
++.BR usermod (8)
+ .SH DIAGNOSTICS
+ The \fBpwck\fR command exits with the following values:
+ .IP 0 5
+diff -urN shadow-4.0.0.orig/man/pwconv.8 shadow-4.0.0-owl-man/man/pwconv.8
+--- shadow-4.0.0.orig/man/pwconv.8	Thu Jan 25 13:43:51 2001
++++ shadow-4.0.0-owl-man/man/pwconv.8	Sun Nov 11 07:55:52 2001
+@@ -58,6 +58,5 @@
+ such errors before converting to or from shadow passwords or groups.
  .SH "SEE ALSO"
  .BR login.defs (5),
- .BR pwck (8),
--.BR grpck (8),
+-.BR pwck (8),
+ .BR grpck (8),
 -.BR shadowconfig (8)
-+.BR grpck (8)
-diff -ur shadow-19990827.redhat/man/useradd.8 shadow-19990827/man/useradd.8
---- shadow-19990827.redhat/man/useradd.8	Fri Jun 15 06:00:23 2001
-+++ shadow-19990827/man/useradd.8	Fri Jun 15 06:02:40 2001
-@@ -81,8 +81,11 @@
- The new user account will be entered into the system files as needed,
- the home directory will be created, and initial files copied, depending
- on the command line options.
--The version provided with Red Hat Linux will create a group for each 
--user added to the system, unless \fB-n\fR option is given.
-+This version of
-+.B useradd
-+will create a group for each
-+user added to the system, unless \fB-n\fR option is given. This behavior
-+was introduced by Red Hat Software.
- The options which apply to the \fBuseradd\fR command are
- .\" .IP "\fB-A {\fImethod\fR|\fBDEFAULT\fR},..."
- .\" The value of the user's authentication method.
-@@ -112,7 +115,8 @@
++.BR pwck (8)
+diff -urN shadow-4.0.0.orig/man/sg.1 shadow-4.0.0-owl-man/man/sg.1
+--- shadow-4.0.0.orig/man/sg.1	Thu Jan  1 03:00:00 1970
++++ shadow-4.0.0-owl-man/man/sg.1	Sun Nov 11 09:42:07 2001
+@@ -0,0 +1 @@
++.so newgrp.1
+diff -urN shadow-4.0.0.orig/man/shadow.5 shadow-4.0.0-owl-man/man/shadow.5
+--- shadow-4.0.0.orig/man/shadow.5	Thu Jan 25 13:43:51 2001
++++ shadow-4.0.0-owl-man/man/shadow.5	Sun Nov 11 07:55:52 2001
+@@ -88,9 +88,9 @@
+ .BR login (1),
+ .BR passwd (1),
+ .BR su (1),
+-.BR sulogin (8),
+ .BR passwd (5),
+ .BR pwconv (8),
+-.BR pwunconv (8)
++.BR pwunconv (8),
++.BR sulogin (8)
+ .SH AUTHOR
+ Julianne Frances Haugh (jockgrrl@ix.netcom.com)
+diff -urN shadow-4.0.0.orig/man/su.1 shadow-4.0.0-owl-man/man/su.1
+--- shadow-4.0.0.orig/man/su.1	Sat Jan 27 05:55:52 2001
++++ shadow-4.0.0-owl-man/man/su.1	Sun Nov 11 07:55:52 2001
+@@ -68,7 +68,7 @@
+ .SH SEE ALSO
+ .BR login (1),
+ .BR sh (1),
+-.BR suauth (5),
+-.BR login.defs (5)
++.BR login.defs (5),
++.BR suauth (5)
+ .SH AUTHOR
+ Julianne Frances Haugh (jockgrrl@ix.netcom.com)
+diff -urN shadow-4.0.0.orig/man/sulogin.8 shadow-4.0.0-owl-man/man/sulogin.8
+--- shadow-4.0.0.orig/man/sulogin.8	Thu Jan 25 13:43:51 2001
++++ shadow-4.0.0-owl-man/man/sulogin.8	Sun Nov 11 07:55:52 2001
+@@ -80,7 +80,7 @@
+ /.profile \- initialization script for single user shell
+ .SH SEE ALSO
+ .BR login (1),
+-.BR init (8),
+-.BR sh (1)
++.BR sh (1),
++.BR init (8)
+ .SH AUTHOR
+ Julianne Frances Haugh (jockgrrl@ix.netcom.com)
+diff -urN shadow-4.0.0.orig/man/useradd.8 shadow-4.0.0-owl-man/man/useradd.8
+--- shadow-4.0.0.orig/man/useradd.8	Sat Jan 27 05:55:52 2001
++++ shadow-4.0.0-owl-man/man/useradd.8	Sun Nov 11 07:55:52 2001
+@@ -74,7 +74,8 @@
  The group name or number of the user's initial login group.
  The group name must exist.  A group number must refer to an
  already existing group.
@@ -664,12 +976,58 @@ diff -ur shadow-19990827.redhat/man/useradd.8 shadow-19990827/man/useradd.8
  .IP "\fB-G \fIgroup,[...]\fR"
  A list of supplementary groups which the user is also a member
  of.
-@@ -138,7 +142,7 @@
- .IP \fB-n\fR 
- A group having the same name as the user being added to the system 
- will be created by default. This option will turn off this Red Hat 
--Linux specific behavior. 
-+Linux-style behavior.
- .IP \fB-r\fR 
- This flag is used to create a system account. That is, an user with an 
- UID lower than value of UID_MIN defined in \fI/etc/login.defs\fR. Note 
+@@ -152,11 +153,11 @@
+ .SH SEE ALSO
+ .BR chfn (1),
+ .BR chsh (1),
++.BR passwd (1),
+ .BR crypt (3),
+ .BR groupadd (8),
+ .BR groupdel (8),
+ .BR groupmod (8),
+-.BR passwd (1),
+ .BR userdel (8),
+ .BR usermod (8)
+ .SH AUTHOR
+diff -urN shadow-4.0.0.orig/man/userdel.8 shadow-4.0.0-owl-man/man/userdel.8
+--- shadow-4.0.0.orig/man/userdel.8	Thu Jan 25 13:43:51 2001
++++ shadow-4.0.0-owl-man/man/userdel.8	Sun Nov 11 07:55:52 2001
+@@ -58,10 +58,10 @@
+ .SH SEE ALSO
+ .BR chfn (1),
+ .BR chsh (1),
++.BR passwd (1),
+ .BR groupadd (8),
+ .BR groupdel (8),
+ .BR groupmod (8),
+-.BR passwd (1),
+ .BR useradd (8),
+ .BR usermod (8)
+ .SH AUTHOR
+diff -urN shadow-4.0.0.orig/man/usermod.8 shadow-4.0.0-owl-man/man/usermod.8
+--- shadow-4.0.0.orig/man/usermod.8	Sat Jan 27 05:55:52 2001
++++ shadow-4.0.0-owl-man/man/usermod.8	Sun Nov 11 07:55:52 2001
+@@ -122,11 +122,11 @@
+ .SH SEE ALSO
+ .BR chfn (1),
+ .BR chsh (1),
++.BR passwd (1),
+ .BR crypt (3),
+ .BR groupadd (8),
+ .BR groupdel (8),
+ .BR groupmod (8),
+-.BR passwd (1),
+ .BR useradd (8),
+ .BR userdel (8)
+ .SH AUTHOR
+diff -urN shadow-4.0.0.orig/man/vipw.8 shadow-4.0.0-owl-man/man/vipw.8
+--- shadow-4.0.0.orig/man/vipw.8	Sat Jan 27 05:55:52 2001
++++ shadow-4.0.0-owl-man/man/vipw.8	Sun Nov 11 07:55:52 2001
+@@ -24,6 +24,6 @@
+ and finally the default editor,
+ .BR vi .
+ .SH "SEE ALSO"
+-.BR passwd (5),
+ .BR group (5),
++.BR passwd (5),
+ .BR shadow (5)

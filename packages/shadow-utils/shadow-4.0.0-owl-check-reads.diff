@@ -1,0 +1,127 @@
+diff -ur shadow-4.0.0.orig/lib/commonio.c shadow-4.0.0/lib/commonio.c
+--- shadow-4.0.0.orig/lib/commonio.c	Fri Sep  7 19:35:57 2001
++++ shadow-4.0.0/lib/commonio.c	Sun Nov 11 04:22:16 2001
+@@ -167,12 +167,13 @@
+ 		return -1;
+ 
+ 	/* TODO: faster copy, not one-char-at-a-time.  --marekm */
+-	rewind(fp);
+-	while ((c = getc(fp)) != EOF) {
+-		if (putc(c, bkfp) == EOF)
+-			break;
+-	}
+-	if (c != EOF || fflush(bkfp)) {
++	c = 0;
++	if (fseek(fp, 0, SEEK_SET) == 0)
++		while ((c = getc(fp)) != EOF) {
++			if (putc(c, bkfp) == EOF)
++				break;
++		}
++	if (c != EOF || ferror(fp) || fflush(bkfp)) {
+ 		fclose(bkfp);
+ 		return -1;
+ 	}
+@@ -435,6 +436,7 @@
+ 	void *eptr;
+ 	int flags = mode;
+ 	int buflen;
++	int saved_errno;
+ 
+ 	mode &= ~O_CREAT;
+ 
+@@ -468,7 +470,7 @@
+ 	buflen = BUFLEN;
+ 	buf = (char *) malloc(buflen);
+ 	if (!buf)
+-		goto cleanup;
++		goto cleanup_ENOMEM;
+ 
+ 	while (db->ops->fgets(buf, buflen, db->fp)) {
+ 		while (!(cp = strrchr(buf, '\n')) && !feof(db->fp)) {
+@@ -507,8 +509,12 @@
+ 		add_one_entry(db, p);
+ 	}
+ 
+-	db->isopen = 1;
+ 	free(buf);
++
++	if (ferror(db->fp))
++		goto cleanup_errno;
++
++	db->isopen = 1;
+ 	return 1;
+ 
+ cleanup_entry:
+@@ -518,11 +524,14 @@
+ 	free(line);
+ cleanup_buf:
+ 	free(buf);
+-cleanup:
++cleanup_ENOMEM:
++	errno = ENOMEM;
++cleanup_errno:
++	saved_errno = errno;
+ 	free_linked_list(db);
+ 	fclose(db->fp);
+ 	db->fp = NULL;
+-	errno = ENOMEM;
++	errno = saved_errno;
+ 	return 0;
+ }
+ 
+diff -ur shadow-4.0.0.orig/lib/getdef.c shadow-4.0.0/lib/getdef.c
+--- shadow-4.0.0.orig/lib/getdef.c	Sat Aug 26 22:27:17 2000
++++ shadow-4.0.0/lib/getdef.c	Sun Nov 11 04:38:02 2001
+@@ -35,6 +35,7 @@
+ #include "prototypes.h"
+ #include "defines.h"
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <ctype.h>
+ #include "getdef.h"
+ 
+@@ -328,7 +329,7 @@
+ 	if ((fp = fopen(def_fname, "r")) == NULL) {
+ 		SYSLOG((LOG_CRIT, "cannot open login definitions %s [%m]",
+ 			def_fname));
+-		return;
++		exit(1);
+ 	}
+ 
+ 	/*
+@@ -371,6 +372,13 @@
+ 		 */
+ 		putdef_str(name, value);
+ 	}
++
++	if (ferror(fp)) {
++		SYSLOG((LOG_CRIT, "cannot read login definitions %s [%m]",
++			def_fname));
++		exit(1);
++	}
++
+ 	(void) fclose(fp);
+ }
+ 
+diff -ur shadow-4.0.0.orig/src/vipw.c shadow-4.0.0/src/vipw.c
+--- shadow-4.0.0.orig/src/vipw.c	Sat Aug 26 22:27:19 2000
++++ shadow-4.0.0/src/vipw.c	Sun Nov 11 04:20:40 2001
+@@ -64,12 +64,13 @@
+   umask(mask);
+   if (!bkfp) return -1;
+ 
+-  rewind(fp);
+-  while ((c = getc(fp)) != EOF) {
+-    if (putc(c, bkfp) == EOF) break;
+-  }
++  c = 0;
++  if (fseek(fp, 0, SEEK_SET) == 0)
++    while ((c = getc(fp)) != EOF) {
++      if (putc(c, bkfp) == EOF) break;
++    }
+ 
+-  if (c != EOF || fflush(bkfp)) {
++  if (c != EOF || ferror(fp) || fflush(bkfp)) {
+     fclose(bkfp);
+     unlink(backup);
+     return -1;

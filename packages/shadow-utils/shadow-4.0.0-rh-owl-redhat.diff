@@ -1,16 +1,108 @@
-diff -ur shadow-19990827.orig/man/groupadd.8 shadow-19990827.redhat/man/groupadd.8
---- shadow-19990827.orig/man/groupadd.8	Mon Dec 28 23:35:05 1998
-+++ shadow-19990827.redhat/man/groupadd.8	Sat Aug 26 13:00:33 2000
-@@ -32,7 +32,7 @@
+diff -ur shadow-4.0.0-owl-warnings/configure.in shadow-4.0.0/configure.in
+--- shadow-4.0.0-owl-warnings/configure.in	Mon Aug  6 12:30:27 2001
++++ shadow-4.0.0/configure.in	Sun Nov 11 03:37:30 2001
+@@ -27,7 +27,7 @@
+ AC_HEADER_STDC
+ AC_HEADER_SYS_WAIT
+ 
+-AC_CHECK_HEADERS(fcntl.h limits.h unistd.h sys/time.h utmp.h utmpx.h \
++AC_CHECK_HEADERS(errno.h fcntl.h limits.h unistd.h sys/time.h utmp.h utmpx.h \
+ 	termios.h termio.h sgtty.h sys/ioctl.h syslog.h paths.h usersec.h \
+ 	utime.h ulimit.h sys/resource.h gshadow.h shadow.h lastlog.h \
+ 	rpc/key_prot.h)
+diff -ur shadow-4.0.0-owl-warnings/lib/defines.h shadow-4.0.0/lib/defines.h
+--- shadow-4.0.0-owl-warnings/lib/defines.h	Fri Jun 29 00:47:05 2001
++++ shadow-4.0.0/lib/defines.h	Sun Nov 11 03:37:30 2001
+@@ -43,6 +43,10 @@
+ # endif
+ #endif /* not STDC_HEADERS */
+ 
++#if HAVE_ERRNO_H
++# include <errno.h>
++#endif
++
+ /* Solaris 2.4 defines __SVR4, but not SVR4 -j. */
+ 
+ #ifdef __SVR4
+diff -ur shadow-4.0.0-owl-warnings/lib/prototypes.h shadow-4.0.0/lib/prototypes.h
+--- shadow-4.0.0-owl-warnings/lib/prototypes.h	Sat Aug 26 22:27:17 2000
++++ shadow-4.0.0/lib/prototypes.h	Sun Nov 11 03:37:30 2001
+@@ -55,7 +55,7 @@
+ extern int is_listed(const char *, const char *, int);
+ 
+ /* copydir.c */
+-extern int copy_tree(const char *, const char *, uid_t, gid_t);
++extern int copy_tree(const char *, const char *, uid_t, gid_t, int);
+ extern int remove_tree(const char *);
+ 
+ /* encrypt.c */
+diff -ur shadow-4.0.0-owl-warnings/libmisc/copydir.c shadow-4.0.0/libmisc/copydir.c
+--- shadow-4.0.0-owl-warnings/libmisc/copydir.c	Thu Jun 28 22:27:29 2001
++++ shadow-4.0.0/libmisc/copydir.c	Sun Nov 11 03:37:30 2001
+@@ -125,7 +125,8 @@
+  */
+ 
+ int
+-copy_tree(const char *src_root, const char *dst_root, uid_t uid, gid_t gid)
++copy_tree(const char *src_root, const char *dst_root, uid_t uid, gid_t gid,
++	  int preserve)
+ {
+ 	char	src_name[1024];
+ 	char	dst_name[1024];
+@@ -135,6 +136,7 @@
+ 	int	err = 0;
+ 	int	cnt;
+ 	int	set_orig = 0;
++	int	open_flags;
+ 	struct	DIRECT	*ent;
+ 	struct	stat	sb;
+ 	struct	link_name *lp;
+@@ -206,7 +208,7 @@
+ 			chown (dst_name, uid == (uid_t) -1 ? sb.st_uid:uid,
+ 				gid == (gid_t) -1 ? sb.st_gid:gid);
+ 
+-			if (copy_tree (src_name, dst_name, uid, gid)) {
++			if (copy_tree (src_name, dst_name, uid, gid, preserve)) {
+ 				err++;
+ 				break;
+ 			}
+@@ -293,14 +295,22 @@
+ 			err++;
+ 			break;
+ 		}
+-		if ((ofd = open (dst_name, O_WRONLY|O_CREAT|O_TRUNC, 0)) < 0 ||
++		open_flags = O_WRONLY | O_CREAT;
++		if (preserve)
++			open_flags |= O_EXCL;
++		if ((ofd = open (dst_name, open_flags, 0)) < 0 ||
+ 			chown (dst_name, uid == (uid_t) -1 ? sb.st_uid:uid,
+ 					gid == (gid_t) -1 ? sb.st_gid:gid) ||
+ 				chmod (dst_name, sb.st_mode & 07777)) {
++			if (preserve && (errno == EEXIST)) {
++				close (ifd);
++				continue;
++			}
+ 			close (ifd);
+ 			err++;
+ 			break;
+ 		}
++		ftruncate (ofd, 0);
+ 		while ((cnt = read (ifd, buf, sizeof buf)) > 0) {
+ 			if (write (ofd, buf, cnt) != cnt) {
+ 				cnt = -1;
+diff -ur shadow-4.0.0-owl-warnings/man/groupadd.8 shadow-4.0.0/man/groupadd.8
+--- shadow-4.0.0-owl-warnings/man/groupadd.8	Sat Jan 27 05:55:52 2001
++++ shadow-4.0.0/man/groupadd.8	Sun Nov 11 03:37:30 2001
+@@ -29,7 +29,7 @@
+ .SH NAME
  groupadd \- Create a new group
  .SH SYNOPSIS
- .B groupadd
--[\fB-g\fI gid \fR[\fB-o\fR]]
-+[\fB-g\fI gid \fR[\fB-o\fR]] [\fB-r\fR] [\fB-f\fR]
- .I group
+-\fBgroupadd\fR [\fB-g\fI gid \fR[\fB-o\fR]] \fIgroup\fR
++\fBgroupadd\fR [\fB-g\fI gid \fR[\fB-o\fR]] [\fB-r\fR] [\fB-f\fR] \fIgroup\fR
  .SH DESCRIPTION
  The \fBgroupadd\fR command
-@@ -44,9 +44,29 @@
+ creates a new group account using the values specified on the
+@@ -40,9 +40,29 @@
  The numerical value of the group's ID.
  This value must be unique, unless the \fB-o\fR option is used.
  The value must be non-negative.
@@ -21,149 +113,90 @@ diff -ur shadow-19990827.orig/man/groupadd.8 shadow-19990827.redhat/man/groupadd
 +Values between 0 and 499 are typically reserved for \fIsystem accounts\fR.
 +.IP \fB-r\fR
 +This flag instructs \fBgroupadd\fR to add a \fIsystem
-+account\fR. First available \fIgid\fR lower than 499 will be
++account\fR.  First available \fIgid\fR lower than 499 will be
 +automatically selected unless \fB-g\fR option is given also on the
 +command line.
 +.br
 +This is an option added by Red Hat Software.
 +.IP \fB-f\fR
-+This is \fIforce\fR flag. This will stop \fBgroupadd\fR exit with
++This is \fIforce\fR flag.  This will stop \fBgroupadd\fR exit with
 +error when the group about to be added already exists on the
-+system. If that is the case, the group won't be altered (or added
++system.  If that is the case, the group won't be altered (or added
 +again, for that matter).
 +.br
-+This option also modifies the way \fB-g\fR option works. When you
-+request a \fIgid\fR that it is not unique and you don't give \fB-o\fR
++This option also modifies the way \fB-g\fR option works.  When you
++request a \fIgid\fR that is not unique and you don't give \fB-o\fR
 +option too, the group creation will fall back to the standard behavior
-+(adding a group as neither \fB-g\fR or \fB-o\fR options were
++(adding a group as if neither \fB-g\fR nor \fB-o\fR options were
 +specified).
 +.br
 +This is an option added by Red Hat Software.
  .SH FILES
  /etc/group \- group account information
  .br
-diff -ur shadow-19990827.orig/man/shadowconfig.8 shadow-19990827.redhat/man/shadowconfig.8
---- shadow-19990827.orig/man/shadowconfig.8	Sat Sep 12 19:38:24 1998
-+++ shadow-19990827.redhat/man/shadowconfig.8	Sat Aug 26 13:00:33 2000
-@@ -19,6 +19,3 @@
- Turning shadow passwords on when they are already on, or off when they
- are already off, is harmless.
- 
--Read
--.I /usr/doc/passwd/README.debian.gz
--for a brief introduction to shadow passwords and related features.
-diff -ur shadow-19990827.orig/man/useradd.8 shadow-19990827.redhat/man/useradd.8
---- shadow-19990827.orig/man/useradd.8	Sun Mar  7 22:14:47 1999
-+++ shadow-19990827.redhat/man/useradd.8	Sat Aug 26 13:00:33 2000
-@@ -51,7 +51,7 @@
- .IR group [,...]]
+diff -ur shadow-4.0.0-owl-warnings/man/useradd.8 shadow-4.0.0/man/useradd.8
+--- shadow-4.0.0-owl-warnings/man/useradd.8	Sat Jan 27 05:55:52 2001
++++ shadow-4.0.0/man/useradd.8	Sun Nov 11 03:37:30 2001
+@@ -36,9 +36,9 @@
  .br
- .RB [ -m " [" -k
--.IR skeleton_dir ]]
-+.IR skeleton_dir ] " |" " " -M ]
- .RB [ -p
- .IR passwd ]
+ [\fB-g\fR \fIinitial_group\fR] [\fB-G\fR \fIgroup\fR[,...]]
  .br
-@@ -60,6 +60,8 @@
- .RB [ -u
- .IR uid " ["
- .BR -o ]]
-+.RB [ -n ] 
-+.RB [ -r ] 
- .I login
+-[\fB-m\fR [\fB-k\fR \fIskeleton_dir\fR]] [\fB-p\fR \fIpasswd\fR]
++[\fB-m\fR [\fB-k\fR \fIskeleton_dir\fR] | \fI-M\fR] [\fB-p\fR \fIpasswd\fR]
+ .br
+-[\fB-s\fR \fIshell\fR] [\fB-u\fR \fIuid\fR [\fB-o\fR]] \fIlogin\fR
++[\fB-s\fR \fIshell\fR] [\fB-u\fR \fIuid\fR [\fB-o\fR]] [\fI-n\fR] [\fI-r\fR]\fR \fIlogin\fR
  .TP 8
- .B useradd
-@@ -79,6 +81,8 @@
+ \fBuseradd\fR \fB-D\fR [\fB-g\fI default_group\fR] [\fB-b\fI default_home\fR]
+ .br
+@@ -53,6 +53,9 @@
  The new user account will be entered into the system files as needed,
  the home directory will be created, and initial files copied, depending
  on the command line options.
-+The version provided with Red Hat Linux will create a group for each 
++This version of \fBuseradd\fR will create a group for each
 +user added to the system, unless \fB-n\fR option is given.
- The options which apply to the \fBuseradd\fR command are
- .\" .IP "\fB-A {\fImethod\fR|\fBDEFAULT\fR},..."
- .\" The value of the user's authentication method.
-@@ -128,6 +132,21 @@
++This behavior was introduced by Red Hat Software.
+ The options which apply to the \fBuseradd\fR command are:
+ .IP "\fB-c \fIcomment\fR"
+ The new user's password file comment field.
+@@ -94,8 +97,23 @@
  option.
  The default is to not create the directory and to not copy any
  files.
-+.IP \fB-M\fR 
-+The user home directory will not be created, even if the system  
-+wide settings from \fI/etc/login.defs\fR is to create home dirs. 
-+.IP \fB-n\fR 
-+A group having the same name as the user being added to the system 
-+will be created by default. This option will turn off this Red Hat 
-+Linux specific behavior. 
-+.IP \fB-r\fR 
-+This flag is used to create a system account. That is, an user with an 
-+UID lower than value of UID_MIN defined in \fI/etc/login.defs\fR. Note 
-+that \fBuseradd\fR will not create a home directory for such an user, 
-+regardless of the default setting in \fI/etc/login.defs\fR. 
-+You have to specify \fB-m\fR option if you want a home directory  
-+for a system account to be created. 
-+This is an option added by Red Hat. 
++.IP \fB-M\fR
++The user home directory will not be created, even if the system-wide
++setting in \fI/etc/login.defs\fR is to create home directories.
++.IP \fB-n\fR
++A group having the same name as the user being added to the system
++will be created by default.
++This option will turn off this Red Hat Linux-style behavior.
++.IP \fB-r\fR
++This flag is used to create a system account.  That is, a user with an
++UID lower than value of UID_MIN defined in \fI/etc/login.defs\fR.  Note
++that \fBuseradd\fR will not create a home directory for such a user
++regardless of the setting in \fI/etc/login.defs\fR.
++You have to specify \fB-m\fR option if you want a home directory for a
++system account to be created.
++This is an option added by Red Hat Software.
  .IP "\fB-p \fIpasswd\fR"
- The encrypted password, as returned by \fBcrypt\fR(3).
+-The encrypted password, as returned by \fBcrypt\fR(3).
++The encrypted password as returned by \fBcrypt\fR(3).
  The default is to disable the account.
-@@ -170,19 +189,24 @@
- .SH NOTES
- The system administrator is responsible for placing the default
- user files in the \fI/etc/skel\fR directory.
+ .IP "\fB-s \fIshell\fR"
+ The name of the user's login shell.
+@@ -147,6 +165,8 @@
+ /etc/group \- group information
+ .br
+ /etc/default/useradd \- default information
 +.br
-+This version of useradd was modified by Red Hat to suit Red Hat 
-+user/group convention.
- .SH CAVEATS
- You may not add a user to an NIS group.
- This must be performed on the NIS server.
- .SH FILES
--/etc/passwd \- user account information
-+\fB/etc/passwd\fR \- user account information
-+.br
-+\fB/etc/shadow\fR \- secure user account information
++/etc/login.defs \- system-wide settings
  .br
--/etc/shadow \- secure user account information
-+\fB/etc/group\fR \- group information
- .br
--/etc/group \- group information
-+\fB/etc/default/useradd\fR \- default information
- .br
--/etc/default/useradd \- default information
-+\fB/etc/login.defs\fR \- system-wide settings
- .br
--/etc/skel \- directory containing default files
-+\fB/etc/skel\fR \- directory containing default files
+ /etc/skel \- directory containing default files
  .SH SEE ALSO
- .BR chfn (1),
- .BR chsh (1),
-diff -ur shadow-19990827.orig/man/usermod.8 shadow-19990827.redhat/man/usermod.8
---- shadow-19990827.orig/man/usermod.8	Sun Mar  7 22:14:48 1999
-+++ shadow-19990827.redhat/man/usermod.8	Sat Aug 26 13:01:01 2000
-@@ -61,6 +61,7 @@
- .RB [ -u
- .IR uid " ["
- .BR -o ]]
-+.RB [ -L | -U ]
- .I login
- .SH DESCRIPTION
- The \fBusermod\fR command modifies the system account files to reflect
-@@ -124,6 +125,14 @@
- tree rooted at the user's home directory will have the file user ID
- changed automatically.
- Files outside of the user's home directory must be altered manually.
-+.IP "\fB-L\fR"
-+Lock a user's password.
-+This puts a '!' in front of the encrypted password, effectively disabling
-+the password.  You can't use this option with \fI-p\fR or \fI-U\fR.
-+.IP "\fB-U\fR"
-+Unlock a user's password.
-+This removes the '!' in front of the encrypted password.
-+You can't use this option with \fI-p\fR or \fI-L\fR.
- .SH CAVEATS
- \fBusermod\fR will not allow you to change the name of a user who is
- logged in.
-diff -ur shadow-19990827.orig/src/groupadd.c shadow-19990827.redhat/src/groupadd.c
---- shadow-19990827.orig/src/groupadd.c	Mon Jun  7 20:40:45 1999
-+++ shadow-19990827.redhat/src/groupadd.c	Sat Aug 26 13:00:33 2000
-@@ -72,6 +72,10 @@
+diff -ur shadow-4.0.0-owl-warnings/src/groupadd.c shadow-4.0.0/src/groupadd.c
+--- shadow-4.0.0-owl-warnings/src/groupadd.c	Mon Oct  9 23:02:20 2000
++++ shadow-4.0.0/src/groupadd.c	Sun Nov 11 03:37:30 2001
+@@ -78,6 +78,10 @@
  static int oflg = 0; /* permit non-unique group ID to be specified with -g */
  static int gflg = 0; /* ID value for the new group */
  static int fflg = 0; /* if group already exists, do nothing and exit(0) */
@@ -174,7 +207,7 @@ diff -ur shadow-19990827.orig/src/groupadd.c shadow-19990827.redhat/src/groupadd
  
  #ifdef	NDBM
  extern	int	gr_dbm_mode;
-@@ -103,7 +107,7 @@
+@@ -108,7 +112,7 @@
  static void
  usage(void)
  {
@@ -183,7 +216,7 @@ diff -ur shadow-19990827.orig/src/groupadd.c shadow-19990827.redhat/src/groupadd
  	exit(E_USAGE);
  }
  
-@@ -228,8 +232,13 @@
+@@ -233,8 +237,13 @@
  	const struct group *grp;
  	gid_t gid_min, gid_max;
  
@@ -199,7 +232,7 @@ diff -ur shadow-19990827.orig/src/groupadd.c shadow-19990827.redhat/src/groupadd
  
  	/*
  	 * Start with some GID value if the user didn't provide us with
-@@ -339,7 +348,7 @@
+@@ -344,7 +353,7 @@
  	char *cp;
  	int arg;
  
@@ -208,7 +241,7 @@ diff -ur shadow-19990827.orig/src/groupadd.c shadow-19990827.redhat/src/groupadd
  		switch (arg) {
  		case 'g':
  			gflg++;
-@@ -384,7 +393,13 @@
+@@ -389,7 +398,13 @@
  			 */
  			fflg++;
  			break;
@@ -223,10 +256,10 @@ diff -ur shadow-19990827.orig/src/groupadd.c shadow-19990827.redhat/src/groupadd
  			usage();
  		}
  	}
-diff -ur shadow-19990827.orig/src/useradd.c shadow-19990827.redhat/src/useradd.c
---- shadow-19990827.orig/src/useradd.c	Mon Jun  7 20:40:45 1999
-+++ shadow-19990827.redhat/src/useradd.c	Sat Aug 26 13:00:49 2000
-@@ -75,7 +75,7 @@
+diff -ur shadow-4.0.0-owl-warnings/src/useradd.c shadow-4.0.0/src/useradd.c
+--- shadow-4.0.0-owl-warnings/src/useradd.c	Sun Nov 11 03:39:46 2001
++++ shadow-4.0.0/src/useradd.c	Sun Nov 11 03:40:04 2001
+@@ -81,7 +81,7 @@
  static gid_t def_group = 100;
  static const char *def_gname = "other";
  static const char *def_home = "/home";
@@ -235,7 +268,7 @@ diff -ur shadow-19990827.orig/src/useradd.c shadow-19990827.redhat/src/useradd.c
  static const char *def_template = SKEL_DIR;
  #ifdef SHADOWPWD
  static long def_inactive = -1;
-@@ -87,7 +87,7 @@
+@@ -93,7 +93,7 @@
  #define	VALID(s)	(strcspn (s, ":\n") == strlen (s))
  
  static const char *user_name = "";
@@ -244,23 +277,19 @@ diff -ur shadow-19990827.orig/src/useradd.c shadow-19990827.redhat/src/useradd.c
  static uid_t user_id;
  static gid_t user_gid;
  static const char *user_comment = "";
-@@ -115,10 +115,13 @@
- 	sflg = 0, /* shell program for new account */
- 	cflg = 0, /* comment (GECOS) field for new account */
- 	mflg = 0, /* create user's home directory if it doesn't exist */
--	kflg = 0, /* specify a directory to fill new user directory */
-+        Mflg = 0, /* do NOT create user's home directory no matter what */
-+        kflg = 0, /* specify a directory to fill new user directory */
+@@ -125,7 +125,10 @@
+ 	kflg = 0, /* specify a directory to fill new user directory */
  	fflg = 0, /* days until account with expired password is locked */
  	eflg = 0, /* days since 1970-01-01 when account is locked */
 -	Dflg = 0; /* set/show new user default values */
 +	Dflg = 0, /* set/show new user default values */
-+        nflg = 0, /* do not add a group for this user */
-+        rflg = 0; /* create a system account */
++	Mflg = 0, /* do NOT create user's home directory no matter what */
++	nflg = 0, /* do not add a group for this user */
++	rflg = 0; /* create a system account */
  
  #ifdef AUTH_METHODS
  static int Aflg = 0; /* specify authentication method for user */
-@@ -711,7 +714,7 @@
+@@ -727,7 +730,7 @@
  #ifdef AUTH_METHODS
  	fprintf(stderr, _("[-A program] "));
  #endif
@@ -269,7 +298,7 @@ diff -ur shadow-19990827.orig/src/useradd.c shadow-19990827.redhat/src/useradd.c
  
  	fprintf(stderr, _("       %s\t-D [-g group] [-b base] [-s shell]\n"),
  		Prog);
-@@ -807,31 +810,7 @@
+@@ -823,31 +826,8 @@
  	struct sgrp *nsgrp;
  #endif
  
@@ -298,11 +327,12 @@ diff -ur shadow-19990827.orig/src/useradd.c shadow-19990827.redhat/src/useradd.c
 -		fail_exit(E_GRP_UPDATE);
 -	}
 -#endif
-+	/* Locking and opening of the group files moved to open_files() --gafton */
++	/* Locking and opening of the group files moved to open_files()
++	 * --gafton */
  
  	/*
  	 * Scan through the entire group file looking for the groups that
-@@ -969,8 +948,13 @@
+@@ -985,8 +965,13 @@
  	const struct passwd *pwd;
  	uid_t uid_min, uid_max;
  
@@ -318,7 +348,7 @@ diff -ur shadow-19990827.orig/src/useradd.c shadow-19990827.redhat/src/useradd.c
  
  	/*
  	 * Start with some UID value if the user didn't provide us with
-@@ -1036,6 +1020,88 @@
+@@ -1052,6 +1037,88 @@
  	}
  }
  
@@ -407,7 +437,7 @@ diff -ur shadow-19990827.orig/src/useradd.c shadow-19990827.redhat/src/useradd.c
  #ifdef AUTH_METHODS
  /*
   * convert_auth - convert the argument list to a authentication list
-@@ -1126,9 +1192,9 @@
+@@ -1142,9 +1209,9 @@
  	char *cp;
  
  #ifdef SHADOWPWD
@@ -419,7 +449,7 @@ diff -ur shadow-19990827.orig/src/useradd.c shadow-19990827.redhat/src/useradd.c
  #endif
  	while ((arg = getopt(argc, argv, FLAGS)) != EOF) {
  #undef FLAGS
-@@ -1252,12 +1318,6 @@
+@@ -1268,12 +1335,6 @@
  		case 'm':
  			mflg++;
  			break;
@@ -432,23 +462,23 @@ diff -ur shadow-19990827.orig/src/useradd.c shadow-19990827.redhat/src/useradd.c
  		case 'o':
  			oflg++;
  			break;
-@@ -1302,6 +1362,15 @@
+@@ -1318,6 +1379,15 @@
  			user_id = get_number(optarg);
  			uflg++;
  			break;
++		case 'M':
++		    Mflg++;
++		    break;
 +		case 'n':
 +		    nflg++;
 +		    break;
 +		case 'r':
 +		    rflg++;
 +		    break;
-+		case 'M':
-+		    Mflg++;
-+		    break;
  		default:
  			usage();
  		}
-@@ -1312,9 +1381,12 @@
+@@ -1328,9 +1398,12 @@
  	 * Certain options are only valid in combination with others.
  	 * Check it here so that they can be specified in any order.
  	 */
@@ -456,13 +486,13 @@ diff -ur shadow-19990827.orig/src/useradd.c shadow-19990827.redhat/src/useradd.c
 +	if (kflg && !mflg)
  		usage();
  
-+	if (mflg && Mflg) /* the admin is not decided .. create or not ? */
++	if (mflg && Mflg) /* the admin hasn't decided to create or not? */
 +	    usage();
-+	
++
  	/*
  	 * Either -D or username is required.  Defaults can be set with -D
  	 * for the -b, -e, -f, -g, -s options only.
-@@ -1435,6 +1507,31 @@
+@@ -1451,6 +1524,31 @@
  		exit(E_PW_UPDATE);
  	}
  #endif
@@ -494,7 +524,7 @@ diff -ur shadow-19990827.orig/src/useradd.c shadow-19990827.redhat/src/useradd.c
  }
  
  
-@@ -1483,9 +1580,6 @@
+@@ -1499,9 +1597,6 @@
  	struct	spwd	spent;
  #endif
  
@@ -504,8 +534,8 @@ diff -ur shadow-19990827.orig/src/useradd.c shadow-19990827.redhat/src/useradd.c
  #ifdef AUTH_METHODS
  	if (Aflg) {
  		convert_auth(user_auth, auth_arg);
-@@ -1643,6 +1737,118 @@
- 	}
+@@ -1631,11 +1726,119 @@
+ 		grp_update();
  }
  
 +/* a fake something */
@@ -578,12 +608,11 @@ diff -ur shadow-19990827.orig/src/useradd.c shadow-19990827.redhat/src/useradd.c
 +		fprintf (stderr, "%s: error adding new group entry\n", Prog);
 +		fail_exit (10);
 +	}
-+#ifdef	NDBM
 +
++#ifdef	NDBM
 +	/*
 +	 * Update the DBM group file with the new entry as well.
 +	 */
-+
 +	if (gr_dbm_present() && ! gr_dbm_update (&grp)) {
 +		fprintf (stderr, "%s: cannot add new dbm group entry\n", Prog);
 +		fail_exit (10);
@@ -592,21 +621,18 @@ diff -ur shadow-19990827.orig/src/useradd.c shadow-19990827.redhat/src/useradd.c
 +#endif	/* NDBM */
 +
 +#ifdef	SHADOWGRP
-+
 +	/*
 +	 * Write out the new shadow group entries as well.
 +	 */
-+
 +	if (is_shadow_grp && ! sgr_update (&sgrp)) {
 +		fprintf (stderr, "%s: error adding new group entry\n", Prog);
 +		fail_exit (10);
 +	}
-+#ifdef	NDBM
 +
++#ifdef	NDBM
 +	/*
 +	 * Update the DBM group file with the new entry as well.
 +	 */
-+
 +	if (is_shadow_grp && sg_dbm_present() && ! sg_dbm_update (&sgrp)) {
 +		fprintf (stderr, "%s: cannot add new dbm group entry\n", Prog);
 +		fail_exit (10);
@@ -616,14 +642,33 @@ diff -ur shadow-19990827.orig/src/useradd.c shadow-19990827.redhat/src/useradd.c
 +#endif	/* SHADOWGRP */
 +	SYSLOG((LOG_INFO, "new group: name=%s, gid=%d\n",
 +		user_name, user_gid));
-+	/* we need to remeber we have to close the group file... */
++	/* we need to remember we have to close the group file... */
 +	do_grp_update++;
 +}
 +
  /*
-  * main - useradd command
+  * create_home - create the user's home directory
+  *
+  *	create_home() creates the user's home directory if it does not
+- *	already exist.  It will be created mode 755 owned by the user
++ *	already exist.  It will be created mode 700 owned by the user
+  *	with the user's default group.
   */
-@@ -1688,6 +1894,14 @@
+ 
+@@ -1650,11 +1853,7 @@
+ 			fail_exit(E_HOMEDIR);
+ 		}
+ 		chown (user_home, user_id, user_gid);
+-#if 1
+-		chmod(user_home, 0777 & ~getdef_num("UMASK", 077));
+-#else
+-		chmod (user_home, 0755);
+-#endif
++		chmod (user_home, 0777 & ~getdef_num ("UMASK", 077));
+ 		home_added++;
+ 	}
+ }
+@@ -1750,6 +1949,14 @@
  
  	process_flags(argc, argv);
  
@@ -638,7 +683,7 @@ diff -ur shadow-19990827.orig/src/useradd.c shadow-19990827.redhat/src/useradd.c
  	/*
  	 * See if we are messing with the defaults file, or creating
  	 * a new user.
-@@ -1706,8 +1920,25 @@
+@@ -1768,8 +1975,12 @@
  	 */
  
  	if (getpwnam(user_name)) {
@@ -648,23 +693,10 @@ diff -ur shadow-19990827.orig/src/useradd.c shadow-19990827.redhat/src/useradd.c
 +	    } else {
 +		exit(E_SUCCESS);
 +	    }
-+	}
-+
-+	/*
-+	 * Don't blindly overwrite a group when a user is added...
-+	 * If you already have a group username, and want to add the user
-+	 * to that group, use useradd -g username username.
-+	 * --bero
-+	 */
-+	if (! (nflg || gflg)) {
-+	    if (getgrnam(user_name)) {
-+                fprintf(stderr, _("%s: group %s exists - if you want to add this user to that group, use -g.\n"), Prog, user_name);
-+		exit(E_NAME_IN_USE);
-+	    }
  	}
  
  	/*
-@@ -1717,28 +1948,33 @@
+@@ -1792,27 +2003,23 @@
  
  	open_files ();
  
@@ -684,7 +716,7 @@ diff -ur shadow-19990827.orig/src/useradd.c shadow-19990827.redhat/src/useradd.c
  
  	if (mflg) {
  		create_home ();
- 		copy_tree (def_template, user_home, user_id, user_gid);
+-		copy_tree (def_template, user_home, user_id, user_gid);
 -	} else if (getdef_str("CREATE_HOME")) {
 -		/*
 -		 * RedHat added the CREATE_HOME option in login.defs in their
@@ -701,24 +733,14 @@ diff -ur shadow-19990827.orig/src/useradd.c shadow-19990827.redhat/src/useradd.c
 -		fprintf(stderr,
 -	_("%s: warning: CREATE_HOME not supported, please use -m instead.\n"),
 -			Prog);
--	}
-+	} /* Stupid warning removed for the innocent's protection */
-+	    /*
-+	     * The whole idea about breaking some stupid scripts by creating a new
-+	     * variable is crap - I could care less about the scripts. Historically
-+	     * adduser  type programs have always created the home directories and
-+	     * I don't  like the idea of providing a script when we can fix the binary
-+	     * itself. And if the scripts are using the right options to the useradd
-+	     * then they will not break. If not, they depend on unspecified behavior
-+	     * and they will break, but they were broken anyway to beging with --gafton
-+	     */
++		copy_tree (def_template, user_home, user_id, user_gid, 1);
+ 	}
  
  	close_files ();
- 	exit(E_SUCCESS);
-diff -ur shadow-19990827.orig/src/userdel.c shadow-19990827.redhat/src/userdel.c
---- shadow-19990827.orig/src/userdel.c	Mon Jun  7 20:40:45 1999
-+++ shadow-19990827.redhat/src/userdel.c	Sat Aug 26 13:00:33 2000
-@@ -59,7 +59,9 @@
+diff -ur shadow-4.0.0-owl-warnings/src/userdel.c shadow-4.0.0/src/userdel.c
+--- shadow-4.0.0-owl-warnings/src/userdel.c	Mon Oct  9 23:02:20 2000
++++ shadow-4.0.0/src/userdel.c	Sun Nov 11 03:37:30 2001
+@@ -65,7 +65,9 @@
  
  static char *user_name;
  static uid_t user_id;
@@ -728,7 +750,7 @@ diff -ur shadow-19990827.orig/src/userdel.c shadow-19990827.redhat/src/userdel.c
  
  static char	*Prog;
  static int fflg = 0, rflg = 0;
-@@ -248,6 +250,100 @@
+@@ -284,6 +286,93 @@
  #endif	/* SHADOWGRP */
  }
  
@@ -738,7 +760,7 @@ diff -ur shadow-19990827.orig/src/userdel.c shadow-19990827.redhat/src/userdel.c
 +static void
 +remove_group ()
 +{
-+	char	*glist_name;
++	char	**glist_name;
 +	struct	group	*gr;
 +	struct	passwd	*pwd;
 +#ifdef	NDBM
@@ -747,29 +769,26 @@ diff -ur shadow-19990827.orig/src/userdel.c shadow-19990827.redhat/src/userdel.c
 +
 +	if (user_group == NULL || user_name == NULL)
 +	    return;
-+	
-+	if (strcmp(user_name, user_group)) {
++
++	if (strcmp(user_name, user_group))
 +	    return;
-+	}
 +
 +	glist_name = NULL;
 +	gr = getgrnam(user_group);
 +	if (gr)
-+	    glist_name = *(gr->gr_mem);
-+	while (glist_name) {
-+	    while (glist_name && *glist_name) {
-+		if (strncmp(glist_name, user_name, 16)) {
++	    glist_name = gr->gr_mem;
++	if (glist_name)
++	while (*glist_name) {
++		if (strcmp(*glist_name, user_name))
 +		    return;
-+		}
 +		glist_name++;
-+	    }
 +	}
 +
 +	setpwent();
 +	while ((pwd = getpwent())) {
 +	    if (strcmp(pwd->pw_name, user_name) == 0)
 +		continue;
-+	    
++
 +	    if (pwd->pw_gid == user_gid) {
 +		return;
 +	    }
@@ -780,12 +799,11 @@ diff -ur shadow-19990827.orig/src/userdel.c shadow-19990827.redhat/src/userdel.c
 +	if (! gr_remove (user_group)) {
 +	    fprintf (stderr, "%s: error removing group entry\n", Prog);
 +	}
-+#ifdef	NDBM
 +
++#ifdef	NDBM
 +	/*
 +	 * Update the DBM group file
 +	 */
-+
 +	if (gr_dbm_present()) {
 +		if ((ogrp = getgrnam (user_group)) &&
 +				! gr_dbm_remove (ogrp)) {
@@ -797,21 +815,18 @@ diff -ur shadow-19990827.orig/src/userdel.c shadow-19990827.redhat/src/userdel.c
 +#endif	/* NDBM */
 +
 +#ifdef	SHADOWGRP
-+
 +	/*
 +	 * Delete the shadow group entries as well.
 +	 */
-+
 +	if (is_shadow_grp && ! sgr_remove (user_group)) {
 +		fprintf (stderr, "%s: error removing shadow group entry\n",
 +			Prog);
 +	}
-+#ifdef	NDBM
 +
++#ifdef	NDBM
 +	/*
 +	 * Update the DBM shadow group file
 +	 */
-+
 +	if (is_shadow_grp && sg_dbm_present()) {
 +		if (! sg_dbm_remove (user_group)) {
 +			fprintf (stderr,
@@ -829,7 +844,7 @@ diff -ur shadow-19990827.orig/src/userdel.c shadow-19990827.redhat/src/userdel.c
  /*
   * close_files - close all of the files that were opened
   *
-@@ -512,7 +608,8 @@
+@@ -548,7 +637,8 @@
  
  		fprintf(stderr, _("%s: user %s is currently logged in\n"),
  			Prog, name);
@@ -839,25 +854,25 @@ diff -ur shadow-19990827.orig/src/userdel.c shadow-19990827.redhat/src/userdel.c
  	}
  }
  
-@@ -647,6 +744,7 @@
+@@ -690,6 +780,7 @@
  main(int argc, char **argv)
  {
  	struct	passwd	*pwd;
 +	struct	group	*gr;
  	int	arg;
  	int	errors = 0;
- 
-@@ -736,6 +834,9 @@
+ #ifdef USE_PAM
+@@ -816,6 +907,9 @@
  #endif
  	user_id = pwd->pw_uid;
  	user_home = xstrdup(pwd->pw_dir);
 +	user_gid = pwd->pw_gid;
 +	gr = getgrgid(pwd->pw_gid);
-+	if (gr) user_group = xstrdup(gr->gr_name);
++	user_group = gr ? xstrdup(gr->gr_name) : NULL;
  
  	/*
  	 * Check to make certain the user isn't logged in.
-@@ -792,6 +893,9 @@
+@@ -872,6 +966,9 @@
  		}
  	}
  #endif
@@ -867,146 +882,15 @@ diff -ur shadow-19990827.orig/src/userdel.c shadow-19990827.redhat/src/userdel.c
  
  	if (rflg) {
  		if (remove_tree(user_home) || rmdir(user_home)) {
-diff -ur shadow-19990827.orig/src/usermod.c shadow-19990827.redhat/src/usermod.c
---- shadow-19990827.orig/src/usermod.c	Fri Jul  9 20:27:38 1999
-+++ shadow-19990827.redhat/src/usermod.c	Sat Aug 26 13:01:01 2000
-@@ -114,6 +114,8 @@
- 	fflg = 0, /* days until account with expired password is locked */
- 	eflg = 0, /* days since 1970-01-01 when account becomes expired */
- #endif
-+	Lflg = 0, /* lock the password */
-+	Uflg = 0, /* unlock the password */
- 	pflg = 0, /* new encrypted password */
- 	lflg = 0; /* new user name */
- 
-@@ -321,7 +323,7 @@
- #ifdef AUTH_METHODS
- 	fprintf(stderr, _("[-A {DEFAULT|program},... ] "));
- #endif
--	fprintf(stderr, _("[-p passwd] name\n"));
-+	fprintf(stderr, _("[-p passwd] [-L|-U] name\n"));
- 	exit(E_USAGE);
- }
- 
-@@ -343,6 +345,30 @@
- #ifdef SHADOWPWD
- 	if (!is_shadow_pwd)
- #endif
-+	if (Lflg && pwent->pw_passwd[0] != '!') {
-+		char *newpw = xmalloc(strlen(pwent->pw_passwd) + 2);
-+
-+		SYSLOG((LOG_INFO, "lock user `%s' password\n",
-+			pwent->pw_name));
-+		strcpy(newpw, "!");
-+		strcat(newpw, pwent->pw_passwd);
-+		pwent->pw_passwd = xstrdup(newpw);
-+	}
-+#ifdef SHADOWPWD
-+	if (!is_shadow_pwd)
-+#endif
-+	if (Uflg && pwent->pw_passwd[0] == '!') {
-+		int i;
-+
-+		SYSLOG((LOG_INFO, "unlock user `%s' password\n",
-+			pwent->pw_name));
-+		for (i = 0; pwent->pw_passwd[i + 1] != '\0'; i ++)
-+			pwent->pw_passwd[i] = pwent->pw_passwd[i + 1];
-+		pwent->pw_passwd[i] = '\0';
-+	}
-+#ifdef SHADOWPWD
-+	if (!is_shadow_pwd)
-+#endif
- 	if (pflg) {
- 		SYSLOG((LOG_INFO, "change user `%s' password\n",
- 			pwent->pw_name));
-@@ -400,6 +426,24 @@
- 			spent->sp_namp, spent->sp_expire, user_expire));
- 		spent->sp_expire = user_expire;
- 	}
-+	if (Lflg && spent->sp_pwdp[0] != '!') {
-+		char *newpw = xmalloc(strlen(spent->sp_pwdp) + 2);
-+
-+		SYSLOG((LOG_INFO, "lock user `%s' password\n",
-+			spent->sp_namp));
-+		strcpy(newpw, "!");
-+		strcat(newpw, spent->sp_pwdp);
-+		spent->sp_pwdp = xstrdup(newpw);
-+	}
-+	if (Uflg && spent->sp_pwdp[0] == '!') {
-+		int i;
-+
-+		SYSLOG((LOG_INFO, "unlock user `%s' password\n",
-+			spent->sp_namp));
-+		for (i = 0; spent->sp_pwdp[i + 1] != '\0'; i ++)
-+			spent->sp_pwdp[i] = spent->sp_pwdp[i + 1];
-+		spent->sp_pwdp[i] = '\0';
-+	}
- 	if (pflg) {
- 		SYSLOG((LOG_INFO, "change user `%s' password\n",
- 			spent->sp_namp));
-@@ -1006,9 +1050,9 @@
- 	}
- #endif
- #ifdef	SHADOWPWD
--#define FLAGS "A:u:og:G:d:s:c:mf:e:l:p:"
-+#define FLAGS "A:u:og:G:d:s:c:mf:e:l:p:LU"
- #else
--#define FLAGS "A:u:og:G:d:s:c:ml:p:"
-+#define FLAGS "A:u:og:G:d:s:c:ml:p:LU"
- #endif
- 	while ((arg = getopt(argc, argv, FLAGS)) != EOF) {
- #undef FLAGS
-@@ -1100,6 +1144,12 @@
- 
- 			user_newname = optarg;
- 			break;
-+		case 'L':
-+			if (Uflg || pflg)
-+				usage ();
-+
-+			Lflg++;
-+			break;
- 		case 'm':
- 			if (! dflg)
- 				usage ();
-@@ -1113,6 +1163,9 @@
- 			oflg++;
- 			break;
- 		case 'p':
-+			if (Lflg || Uflg)
-+				usage ();
-+
- 			user_pass = optarg;
- 			pflg++;
- 			break;
-@@ -1130,6 +1183,12 @@
- 			user_newid = get_number(optarg);
- 			uflg++;
- 			break;
-+		case 'U':
-+			if (Lflg && pflg)
-+				usage ();
-+
-+			Uflg++;
-+			break;
- 		default:
- 			usage ();
- 		}
-@@ -1346,7 +1405,7 @@
- 			pwent.pw_passwd = user_auth;
- 	}
- #endif  /* AUTH_METHODS */
--	if (lflg || uflg || gflg || cflg || dflg || sflg || Aflg || pflg) {
-+	if (lflg || uflg || gflg || cflg || dflg || sflg || Aflg || pflg || Lflg || Uflg) {
- 		if (! pw_update (&pwent)) {
- 			fprintf(stderr,
- 				_("%s: error changing password entry\n"),
-@@ -1378,7 +1437,7 @@
- #endif
- 	}
- #ifdef	SHADOWPWD
--	if (spwd && (lflg || eflg || fflg || Aflg || pflg)) {
-+	if (spwd && (lflg || eflg || fflg || Aflg || pflg || Lflg || Uflg)) {
- 		if (! spw_update (&spent)) {
- 			fprintf(stderr,
- 				_("%s: error adding new shadow password entry\n"),
+diff -ur shadow-4.0.0-owl-warnings/src/usermod.c shadow-4.0.0/src/usermod.c
+--- shadow-4.0.0-owl-warnings/src/usermod.c	Sat Sep  1 08:19:16 2001
++++ shadow-4.0.0/src/usermod.c	Sun Nov 11 03:37:30 2001
+@@ -1501,7 +1501,7 @@
+ 				}
+ 				if (copy_tree (user_home, user_newhome,
+ 						uflg ? user_newid:-1,
+-						gflg ? user_newgid:-1) == 0 &&
++						gflg ? user_newgid:-1, 0) == 0 &&
+ 					remove_tree (user_home) == 0 &&
+ 						rmdir (user_home) == 0)
+ 					return;

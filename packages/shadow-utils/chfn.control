@@ -1,12 +1,11 @@
 #!/bin/sh
-# $Id: Owl/packages/shadow-utils/gpasswd.control,v 1.2 2001/11/12 01:47:45 solar Exp $
+# $Id: Owl/packages/shadow-utils/chfn.control,v 1.1 2001/11/12 01:47:45 solar Exp $
 
 . /etc/control.d/functions
 
-BINARY=/usr/bin/gpasswd
+BINARY=/usr/bin/chfn
 
 new_fmode public 4711 root root
-new_fmode wheelonly 4710 root wheel
 new_fmode restricted 700 root root
 
 control_fmode "$BINARY" "$*" || exit 1

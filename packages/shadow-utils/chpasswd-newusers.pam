@@ -1,0 +1,7 @@
+#%PAM-1.0
+# $Id: Owl/packages/shadow-utils/chpasswd-newusers.pam,v 1.1 2001/11/12 01:47:45 solar Exp $
+auth       required	/lib/security/pam_rootok.so
+account    required	/lib/security/pam_permit.so
+password   required	/lib/security/pam_userpass.so
+password   required	/lib/security/pam_tcb.so use_authtok shadow prefix=$2a$ count=8
+session    required	/lib/security/pam_deny.so

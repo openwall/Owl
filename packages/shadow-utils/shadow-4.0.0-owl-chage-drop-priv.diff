@@ -1,0 +1,29 @@
+diff -ur shadow-4.0.0.orig/src/chage.c shadow-4.0.0/src/chage.c
+--- shadow-4.0.0.orig/src/chage.c	Mon Oct  9 22:39:50 2000
++++ shadow-4.0.0/src/chage.c	Fri Nov  2 02:16:02 2001
+@@ -603,6 +603,12 @@
+ 		exit(1);
+ 	}
+ 
++	if (lflg && (setgid(getgid()) || setuid(ruid))) {
++		fprintf(stderr, "%s: failed to drop privileges (%s)\n",
++			Prog, strerror(errno));
++		exit(1);
++	}
++
+ 	sp = spw_locate(argv[optind]);
+ 
+ 	/*
+@@ -897,6 +903,12 @@
+ 	char	*Prog;
+ 
+ 	Prog = Basename(argv[0]);
++
++	if (setgid(getgid()) || setuid(getuid())) {
++		fprintf(stderr, "%s: failed to drop privileges (%s)\n",
++			Prog, strerror(errno));
++		exit(1);
++	}
+ 
+ 	setlocale(LC_ALL, "");
+ 	bindtextdomain(PACKAGE, LOCALEDIR);

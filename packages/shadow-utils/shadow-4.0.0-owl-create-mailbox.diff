@@ -1,0 +1,53 @@
+diff -ur shadow-4.0.0.orig/src/useradd.c shadow-4.0.0/src/useradd.c
+--- shadow-4.0.0.orig/src/useradd.c	Fri Sep  7 19:12:54 2001
++++ shadow-4.0.0/src/useradd.c	Fri Nov  2 04:08:42 2001
+@@ -1660,6 +1660,41 @@
+ 	}
+ }
+ 
++static void
++create_mailbox(void)
++{
++	char *spool, *file;
++	int fd;
++	struct group *gr;
++	gid_t gid;
++	mode_t mode;
++
++	spool = getdef_str("MAIL_DIR") ?: "/var/mail";
++	file = alloca(strlen(spool) + strlen(user_name) + 2);
++	sprintf(file, "%s/%s", spool, user_name);
++	fd = open(file, O_CREAT | O_WRONLY | O_TRUNC | O_EXCL, 0);
++	if (fd < 0) {
++		perror("Creating mailbox");
++		return;
++	}
++
++	gr = getgrnam("mail");
++	if (!gr) {
++		fprintf(stderr, "Group \"mail\" not found, "
++			"creating the mailbox mode 0600.\n");
++		gid = user_gid;
++		mode = 0600;
++	} else {
++		gid = gr->gr_gid;
++		mode = 0660;
++	}
++
++	if (fchown(fd, user_id, gid) || fchmod(fd, mode))
++		perror("Setting mailbox permissions");
++
++	close(fd);
++}
++
+ #ifdef USE_PAM
+ static struct pam_conv conv = {
+     misc_conv,
+@@ -1797,6 +1832,7 @@
+ 
+ 	if (mflg) {
+ 		create_home ();
++		create_mailbox ();
+ 		copy_tree (def_template, user_home, user_id, user_gid, 1);
+ 	} else if (getdef_str("CREATE_HOME")) {
+ 		/*
