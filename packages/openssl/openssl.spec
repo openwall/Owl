@@ -23,17 +23,17 @@ Buildroot: /var/rpm-buildroot/%{name}-%{version}
 The OpenSSL Project is a collaborative effort to develop a robust,
 commercial-grade, fully featured, and Open Source toolkit implementing the
 Secure Sockets Layer (SSL v2/v3) and Transport Layer Security (TLS v1)
-protocols with full-strength cryptography world-wide. The project is
+protocols with full-strength cryptography world-wide.  The project is
 managed by a worldwide community of volunteers that use the Internet to
 communicate, plan, and develop the OpenSSL tookit and its related
-documentation. 
+documentation.
 
 OpenSSL is based on the excellent SSLeay library developed from Eric A.
 Young and Tim J. Hudson.  The OpenSSL toolkit is licensed under an
 Apache-style licence, which basically means that you are free to get and
-use it for commercial and non-commercial purposes. 
+use it for commercial and non-commercial purposes.
 
-This package contains the base OpenSSL cryptography and SSL/TLS 
+This package contains the base OpenSSL cryptography and SSL/TLS
 libraries and tools.
 
 %package devel
@@ -44,17 +44,17 @@ Requires: openssl
 The OpenSSL Project is a collaborative effort to develop a robust,
 commercial-grade, fully featured, and Open Source toolkit implementing the
 Secure Sockets Layer (SSL v2/v3) and Transport Layer Security (TLS v1)
-protocols with full-strength cryptography world-wide. The project is
+protocols with full-strength cryptography world-wide.  The project is
 managed by a worldwide community of volunteers that use the Internet to
 communicate, plan, and develop the OpenSSL tookit and its related
-documentation. 
+documentation.
 
 OpenSSL is based on the excellent SSLeay library developed from Eric A.
 Young and Tim J. Hudson.  The OpenSSL toolkit is licensed under an
 Apache-style licence, which basically means that you are free to get and
-use it for commercial and non-commercial purposes. 
+use it for commercial and non-commercial purposes.
 
-This package contains the the OpenSSL cryptography and SSL/TLS 
+This package contains the the OpenSSL cryptography and SSL/TLS
 static libraries and header files required when developing applications.
 
 %prep
@@ -63,8 +63,8 @@ static libraries and header files required when developing applications.
 %patch1 -p1
 %patch2 -p1
 
-%build 
-%define CONFIG_FLAGS -DSSL_ALLOW_ADH --prefix=/usr 
+%build
+%define CONFIG_FLAGS -DSSL_ALLOW_ADH --prefix=/usr
 
 perl util/perlpath.pl /usr/bin/perl
 
@@ -87,9 +87,10 @@ rm -rf $RPM_BUILD_ROOT
 make install MANDIR=/usr/man INSTALL_PREFIX="$RPM_BUILD_ROOT"
 
 # Rename manpages
-for x in $RPM_BUILD_ROOT/usr/man/man*/* 
-	do mv ${x} ${x}ssl
-done
+mv $RPM_BUILD_ROOT%{_mandir}/man1/passwd.1 \
+	$RPM_BUILD_ROOT%{_mandir}/man1/sslpasswd.1
+mv $RPM_BUILD_ROOT%{_mandir}/man3/rand.3 \
+	$RPM_BUILD_ROOT%{_mandir}/man3/sslrand.3
 gzip -9nf $RPM_BUILD_ROOT/usr/man/man*/*
 
 # Install RSAref stuff
@@ -102,18 +103,17 @@ ln -s /usr/bin/openssl $RPM_BUILD_ROOT/usr/bin/ssleay
 # Install shared libs
 install -m755 libcrypto.so.%{libmaj}.%{libmin}.%{librel} $RPM_BUILD_ROOT/usr/lib
 install -m755 libssl.so.%{libmaj}.%{libmin}.%{librel} $RPM_BUILD_ROOT/usr/lib
-(
-	cd $RPM_BUILD_ROOT/usr/lib
-	ln -s libcrypto.so.%{libmaj}.%{libmin}.%{librel} libcrypto.so.%{libmaj}
-	ln -s libcrypto.so.%{libmaj}.%{libmin}.%{librel} libcrypto.so
-	ln -s libssl.so.%{libmaj}.%{libmin}.%{librel} libssl.so.%{libmaj}
-	ln -s libssl.so.%{libmaj}.%{libmin}.%{librel} libssl.so
-)
+
+cd $RPM_BUILD_ROOT/usr/lib
+ln -s libcrypto.so.%{libmaj}.%{libmin}.%{librel} libcrypto.so.%{libmaj}
+ln -s libcrypto.so.%{libmaj}.%{libmin}.%{librel} libcrypto.so
+ln -s libssl.so.%{libmaj}.%{libmin}.%{librel} libssl.so.%{libmaj}
+ln -s libssl.so.%{libmaj}.%{libmin}.%{librel} libssl.so
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%files 
+%files
 %defattr(0644,root,root,0755)
 %doc CHANGES CHANGES.SSLeay LICENSE NEWS README
 %doc doc
@@ -123,7 +123,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0755,root,root) %{openssldir}/misc/*
 %attr(0644,root,root) /usr/man/man[157]/*
 
-%config %attr(0644,root,root) %{openssldir}/openssl.cnf 
+%config %attr(0644,root,root) %{openssldir}/openssl.cnf
 %dir %attr(0755,root,root) %{openssldir}/certs
 %dir %attr(0755,root,root) %{openssldir}/lib
 %dir %attr(0755,root,root) %{openssldir}/misc
@@ -142,6 +142,9 @@ ldconfig
 ldconfig
 
 %changelog
+* Mon Oct 02 2000 Solar Designer <solar@owl.openwall.com>
+- Rename the passwd and rand manpages differently (this is still a hack).
+
 * Sun Jul 09 2000 Solar Designer <solar@owl.openwall.com>
 - Added two patches from Trustix and, more importantly, a patch to avoid
 exporting crypt() as a symbol (which used to override the weak alias for
