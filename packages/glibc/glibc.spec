@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.52 2003/10/29 16:09:59 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.53 2003/10/29 16:13:44 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -69,7 +69,7 @@ Requires: /etc/nsswitch.conf
 %ifarch alpha
 Provides: ld.so.2
 %endif
-Provides: glibc-crypt_blowfish >= %{crypt_bf_version}
+Provides: glibc-crypt_blowfish = %{crypt_bf_version}
 AutoReq: false
 BuildRoot: /override/%{name}-%{version}
 
@@ -88,7 +88,7 @@ Summary: Header and object files for development using standard C libraries.
 Group: Development/Libraries
 PreReq: /sbin/install-info
 Requires: kernel-headers >= 2.2.1
-Provides: glibc-crypt_blowfish-devel >= %{crypt_bf_version}
+Provides: glibc-crypt_blowfish-devel = %{crypt_bf_version}
 Conflicts: texinfo < 3.11
 AutoReq: true
 
