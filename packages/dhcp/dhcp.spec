@@ -1,11 +1,11 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.23 2003/10/30 08:39:20 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.23.2.1 2004/06/26 19:25:38 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
 Summary: Dynamic Host Configuration Protocol (DHCP) distribution.
 Name: dhcp
 Version: 3.0pl2
-Release: owl5
+Release: owl7
 License: ISC License
 Group: System Environment/Daemons
 URL: http://www.isc.org/products/DHCP/
@@ -16,6 +16,7 @@ Patch0: dhcp-3.0pl2-owl-man.diff
 Patch1: dhcp-3.0pl2-owl-drop-root.diff
 Patch2: dhcp-3.0pl2-rh-owl-script.diff
 Patch3: dhcp-3.0pl2-owl-warnings.diff
+Patch4: dhcp-3.0pl2-owl-bound.diff
 BuildRoot: /override/%name-%version
 
 %description
@@ -26,7 +27,7 @@ DHCP protocol.
 %if %BUILD_DHCP_CLIENT
 %package client
 Summary: The ISC DHCP client.
-Group: System Enviroment/Base
+Group: System Environment/Base
 PreReq: %name = %version-%release
 Obsoletes: dhcpcd
 
@@ -72,6 +73,7 @@ subnet.  The DHCP relay takes care of this for the client.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %{expand:%%define optflags %optflags -Wall -Wno-unused}
 
@@ -86,7 +88,11 @@ make CC=gcc DEBUG=
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/etc/{rc.d/init.d}
-make install DESTDIR=$RPM_BUILD_ROOT MANDIR=%_mandir
+make install DESTDIR=$RPM_BUILD_ROOT \
+	ADMMANDIR=%_mandir/man8 \
+	FFMANDIR=%_mandir/man5 \
+	LIBMANDIR=%_mandir/man3 \
+	USRMANDIR=%_mandir/man1
 
 cd $RPM_BUILD_ROOT
 
@@ -168,6 +174,14 @@ fi
 %_mandir/man8/dhcrelay.8*
 
 %changelog
+* Sun Jun 13 2004 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl7
+- Added a bounds checking patch covering sprintf() calls with "%s" format
+specifier and non-constant strings and forcing the use of snprintf() and
+vsnprintf() in all places where that was previously supported.
+
+* Mon Feb 09 2004 Michail Litvak <mci@owl.openwall.com> 3.0pl2-owl6
+- Use RPM macros instead of explicit paths.
+
 * Sun Oct 12 2003 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl5
 - Require /var/empty in server and relay subpackages (from Maxim Timofeyev).
 
