@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-hier/Attic/special,v 1.2 2000/07/25 23:44:53 solar Exp $
+# $Id: Owl/packages/owl-hier/Attic/special,v 1.3 2000/09/04 17:28:51 solar Exp $
 
 # /
 /set type=file uname=root gname=root mode=0755
@@ -120,7 +120,7 @@ tmp		type=dir mode=01777
 
 # /usr
 usr		type=dir
-    tmp		type=link mode=0777 link=/var/tmp
+    tmp		type=link link=/var/tmp
 
 # /usr/X11R6
 X11R6		type=dir
