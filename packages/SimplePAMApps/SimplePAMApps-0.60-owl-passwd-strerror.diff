@@ -1,0 +1,20 @@
+diff -ur SimplePAMApps-0.60.orig/pamapps/passwd/passwd.c SimplePAMApps-0.60/pamapps/passwd/passwd.c
+--- SimplePAMApps-0.60.orig/pamapps/passwd/passwd.c	Thu Feb 18 15:29:43 1999
++++ SimplePAMApps-0.60/pamapps/passwd/passwd.c	Sun Jul  9 14:28:30 2000
+@@ -145,13 +145,13 @@
+ 	exit(0);
+     }
+ 
++    if (retval != PAM_SUCCESS)
++	fprintf(stderr, "passwd: %s\n", pam_strerror(pamh, retval));
++
+     if (pamh != NULL) {
+ 	(void) pam_end(pamh,PAM_SUCCESS);
+ 	pamh = NULL;
+     }
+-
+-    if (retval != PAM_SUCCESS)
+-	fprintf(stderr, "passwd: %s\n", pam_strerror(pamh, retval));
+ 
+     exit(1);
+ }
