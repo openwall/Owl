@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.57 2003/12/07 11:44:19 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.58 2003/12/08 05:24:00 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -6,7 +6,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
 %define crypt_bf_version 0.4.5
-Release: owl37
+Release: owl38
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%version.tar.gz
@@ -35,6 +35,7 @@ Patch15: glibc-2.1.3-owl-calloc-bound.diff
 Patch16: glibc-2.1.3-owl-xdr_array-bound.diff
 Patch17: glibc-2.1.3-owl-resolv-QFIXEDSZ-underfills.diff
 Patch18: glibc-2.1.3-owl-realpath-comments.diff
+Patch19: glibc-2.1.3-owl-malloc-unlink-sanity-check.diff
 Patch20: glibc-2.1.3-rh-libnoversion.diff
 Patch21: glibc-2.1.3-rh-paths.diff
 Patch22: glibc-2.1.3-rh-linuxthreads.diff
@@ -144,6 +145,7 @@ cp $RPM_SOURCE_DIR/crypt_freesec.[ch] crypt/sysdeps/unix/
 %patch16 -p1
 %patch17 -p1
 %patch18 -p1
+%patch19 -p1
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
@@ -319,6 +321,10 @@ fi
 %endif
 
 %changelog
+* Mon Dec 08 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl38
+- Sanity check the forward and backward chunk pointers in dlmalloc's
+unlink() macro, thanks to Stefan Esser for the idea.
+
 * Sun Dec 07 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl37
 - Allow tmpfile(3) to use $TMPDIR, thanks to the report and patch by
 (GalaxyMaster).  Certain other implementations are known to do the same.
