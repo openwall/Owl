@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.63 2004/11/02 01:11:23 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.64 2004/11/02 04:27:55 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -51,7 +51,7 @@ Linux system will not function.  The glibc package also contains
 national language (locale) support and timezone databases.
 
 %package utils
-Summary: The GNU libc misc utilities
+Summary: The GNU libc miscellaneous utilities.
 Group: System Environment/Base
 Requires: %name >= %version
 
@@ -91,7 +91,7 @@ libraries included in the glibc package).
 %endif
 
 %package compat-fake
-Summary: Fake package to help upgrade glibc from 2.1.3 to 2.3+
+Summary: Fake package to help upgrade glibc from 2.1.3 to 2.3+.
 Group: System Environment/Libraries
 Provides: libdb.so.2
 Provides: libdb.so.2(GLIBC_2.0)
