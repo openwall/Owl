@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.25 2003/04/12 15:36:40 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.26 2003/04/13 06:16:32 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
@@ -196,7 +196,7 @@ fi
 - Don't let %post fail if group shadow exists, but /etc/shadow doesn't
 (tcb is in use).
 
-* Mon Apr 07 2003 Dmitry V. Levin <ldv@altlinux.org> 2:4.0.0-owl8
+* Mon Apr 07 2003 Dmitry V. Levin <ldv@owl.openwall.com> 2:4.0.0-owl8
 - Updated pam_userpass support: build with libpam_userpass.
 
 * Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>

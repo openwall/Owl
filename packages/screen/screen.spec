@@ -1,4 +1,4 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.24 2003/04/12 13:32:14 solar Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.25 2003/04/13 06:16:31 solar Exp $
 
 Summary: A screen manager that supports multiple sessions on one terminal.
 Name: screen
@@ -119,10 +119,10 @@ fi
 %attr(710,root,screen) %dir %{_libexecdir}/screen
 
 %changelog
-* Mon Apr 07 2003 Dmitry V. Levin <ldv@altlinux.org> 3.9.10-owl6
+* Mon Apr 07 2003 Dmitry V. Levin <ldv@owl.openwall.com> 3.9.10-owl6
 - Updated pam_userpass support: build with libpam_userpass.
 
-* Wed Dec 25 2002 Dmitry V. Levin <ldv@altlinux.org> 3.9.10-owl5
+* Wed Dec 25 2002 Dmitry V. Levin <ldv@owl.openwall.com> 3.9.10-owl5
 - Migrated to libutempter.
 
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.55 2003/04/12 13:36:55 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.56 2003/04/13 06:16:31 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
@@ -223,7 +223,7 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
-* Tue Apr 08 2003 Dmitry V. Levin <ldv@altlinux.org> 3.6.1p1-owl2
+* Tue Apr 08 2003 Dmitry V. Levin <ldv@owl.openwall.com> 3.6.1p1-owl2
 - Updated pam_userpass support: build with libpam_userpass.
 
 * Tue Apr 08 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p1-owl1

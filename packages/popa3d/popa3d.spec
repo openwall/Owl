@@ -1,4 +1,4 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.34 2003/04/12 14:49:04 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.35 2003/04/13 06:16:31 solar Exp $
 
 Summary: Post Office Protocol (POP3) server.
 Name: popa3d
@@ -74,7 +74,7 @@ fi
 %doc CHANGES CONTACT DESIGN LICENSE
 
 %changelog
-* Mon Apr 07 2003 Dmitry V. Levin <ldv@altlinux.org> 0.6.3-owl1
+* Mon Apr 07 2003 Dmitry V. Levin <ldv@owl.openwall.com> 0.6.3-owl1
 - Updated pam_userpass support: build with libpam_userpass.
 
 * Mon Mar 10 2003 Solar Designer <solar@owl.openwall.com> 0.6.2-owl1

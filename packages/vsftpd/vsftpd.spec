@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.6 2003/04/12 14:08:08 solar Exp $
+# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.7 2003/04/13 06:16:32 solar Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
@@ -77,7 +77,7 @@ mkdir -m 755 /home/ftp &> /dev/null || :
 %{_mandir}/man8/vsftpd.8*
 
 %changelog
-* Thu Apr 03 2003 Dmitry V. Levin <ldv@altlinux.org> 1.0.2-owl0.2
+* Thu Apr 03 2003 Dmitry V. Levin <ldv@owl.openwall.com> 1.0.2-owl0.2
 - Updated pam_userpass support: build with libpam_userpass.
 
 * Tue Apr 02 2002 Solar Designer <solar@owl.openwall.com>

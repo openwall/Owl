@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.11 2003/04/12 13:11:14 solar Exp $
+# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.12 2003/04/13 06:16:31 solar Exp $
 
 Summary: Pluggable authentication module for USER/PASS-style protocols.
 Name: pam_userpass
@@ -55,7 +55,7 @@ rm -rf $RPM_BUILD_ROOT
 %_includedir/security/*
 
 %changelog
-* Wed Apr 02 2003 Dmitry V. Levin <ldv@altlinux.org> 0.9-owl1
+* Wed Apr 02 2003 Dmitry V. Levin <ldv@owl.openwall.com> 0.9-owl1
 - Added libpam_userpass library, in shared and static forms.
 - Packaged development libraries and header files in separate
 subpackage, pam_userpass-devel.
