@@ -1,9 +1,9 @@
-# $Id: Owl/packages/stmpclean/stmpclean.spec,v 1.3 2002/04/01 21:38:56 solar Exp $
+# $Id: Owl/packages/stmpclean/stmpclean.spec,v 1.4 2002/04/24 23:49:16 solar Exp $
 
 Summary: A safe temporary directory cleaner.
 Name: stmpclean
 Version: 0.1
-Release: owl2
+Release: owl3
 License: BSD
 Group: System Environment/Base
 Source0: ftp://ftp.mccme.ru/users/shalunov/stmpclean-%{version}.tar.gz
@@ -44,6 +44,10 @@ rm -rf $RPM_BUILD_ROOT
 /etc/cron.daily/stmpclean
 
 %changelog
+* Thu Apr 25 2002 Solar Designer <solar@owl.openwall.com>
+- Dereference symlinks for directories specified on the command line.
+- Install the binary mode 700 as it's not usable by regular users.
+
 * Sun Mar 31 2002 Solar Designer <solar@owl.openwall.com>
 - Corrected the tmpwatch emulation to accept the time in hours.
 

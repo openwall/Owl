@@ -28,7 +28,7 @@ diff -urN stmpclean-0.1.orig/Makefile stmpclean-0.1/Makefile
 -	install -c -o root -g wheel -m 0444 stmpclean.8 $(MANDIR)
 +install:	stmpclean
 +	mkdir -p -m 755 $(DESTDIR)$(SBINDIR) $(DESTDIR)$(MANDIR)/man8
-+	install -m 755 stmpclean $(DESTDIR)$(SBINDIR)/
++	install -m 700 stmpclean $(DESTDIR)$(SBINDIR)/
 +	ln -s stmpclean $(DESTDIR)$(SBINDIR)/tmpwatch
 +	install -m 644 stmpclean.8 tmpwatch.8 $(DESTDIR)$(MANDIR)/man8/
  
@@ -70,7 +70,7 @@ diff -urN stmpclean-0.1.orig/stmpclean.8 stmpclean-0.1/stmpclean.8
  when it examines it later (if the directory became empty).  Thus,
 diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
 --- stmpclean-0.1.orig/stmpclean.c	Wed Aug  4 19:48:39 1999
-+++ stmpclean-0.1/stmpclean.c	Sun Mar 31 08:12:08 2002
++++ stmpclean-0.1/stmpclean.c	Thu Apr 25 03:35:20 2002
 @@ -1,7 +1,7 @@
  /* stmpclean.c -- remove old files from a world-writable directory.
 -   
@@ -221,37 +221,46 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  		syslog(LOG_ERR, "cannot set EUID/EGID to %d/%d, exiting",
  		       uid, gid);
  		exit(1);
-@@ -160,7 +195,7 @@
+@@ -160,11 +195,11 @@
  }
  
  /* Recursively clean directory DIR, descending no deeper than
 -   MAX_DEPTH.  Exit with a failure if a race condition is detected.  */
 +   DEPTH.  Exit with a failure if a race condition is detected.  */
  void
- clean_dir(dir, depth)
+-clean_dir(dir, depth)
++clean_dir(dir, depth, specified)
  	char           *dir;
-@@ -182,6 +217,8 @@
+-	int             depth;
++	int             depth, specified;
+ {
+ 	struct stat     st, st_after;
+ 	int             dir_fd, dot_dot_fd;
+@@ -181,7 +216,9 @@
+ 		       "reached maximum depth (%d)", dir, cwd, MAX_DEPTH);
  		return;
  	}
- 	if (lstat(dir, &st) == -1) {
-+		if (errno == ENOENT && depth != MAX_DEPTH)
+-	if (lstat(dir, &st) == -1) {
++	if ((specified ? stat(dir, &st) : lstat(dir, &st)) == -1) {
++		if (errno == ENOENT && !specified)
 +			return;
  		GETCWD;
  		syslog(LOG_ERR, "RACE?: lstat(\"%s\") in %s failed: %m, "
  		       "exiting", dir, cwd);
-@@ -193,8 +230,10 @@
+@@ -193,8 +230,11 @@
  		       dir, cwd);
  		exit(1);
  	}
 -	dir_fd = open(dir, O_RDONLY);
-+	dir_fd = open(dir, O_RDONLY | O_NONBLOCK | O_DIRECTORY | O_NOFOLLOW);
++	dir_fd = open(dir, O_RDONLY | O_NONBLOCK | O_DIRECTORY |
++		(specified ? 0 : O_NOFOLLOW));
  	if (dir_fd == -1) {
 +		if (errno == ENOENT)
 +			return;
  		GETCWD;
  		syslog(LOG_ERR,
  		       "RACE?: cannot open(\"%s\"): %m (lstat was OK), "
-@@ -219,7 +258,8 @@
+@@ -219,7 +259,8 @@
  	}
  	/* We'll chdir up later once done with recursive descend.
  	   Hence the name. */
@@ -261,7 +270,7 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  	if (dot_dot_fd == -1) {
  		GETCWD;
  		syslog(LOG_ERR, "open(\".\") in %s: %m, exiting", cwd);
-@@ -258,11 +298,18 @@
+@@ -258,11 +299,18 @@
  			/* Looking at a directory. */
  			if (isemptydir(dp->d_name)) {
  				/* Looking at an empty directory. */
@@ -282,7 +291,7 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  						GETCWD;
  						syslog(LOG_ERR, "RACE?: rmdir"
  						       "(\"%s\") in %s: %m, "
-@@ -273,6 +320,7 @@
+@@ -273,18 +321,23 @@
  					setecreds(0, 0);
  				}
  			} else {
@@ -290,7 +299,9 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  				/*
  				 * Looking at a non-empty directory. Clean it
  				 * recursively (call ourselves).
-@@ -281,10 +329,14 @@
+ 				 */
+-				clean_dir(dp->d_name, depth-1);
++				clean_dir(dp->d_name, depth-1, 0);
  			}
  		} else {
  			/* Looking at a non-directory. */
@@ -307,7 +318,7 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  					GETCWD;
  					syslog(LOG_ERR, "RACE?: unlink(\"%s\")"
  					       "in %s: %m, exiting",
-@@ -315,15 +367,27 @@
+@@ -315,15 +368,27 @@
  	/* By default, delete files older than three days. */
  	extern char    *optarg;
  	extern int      optind;
@@ -336,7 +347,7 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  		case 't':
  			minage = parse_time(optarg);
  			if (minage == -1)
-@@ -334,8 +398,14 @@
+@@ -334,8 +399,14 @@
  		}
  	argc -= optind;
  	argv += optind;
@@ -352,6 +363,15 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  	/* For logging niceties in case one of the directories on the
  	   command line is bad.  */
  	chdir("/");
+@@ -348,7 +419,7 @@
+ 		exit(1);
+ 	}
+ 	for (i = 0; i < argc; i++)
+-		clean_dir(argv[i], MAX_DEPTH);
++		clean_dir(argv[i], MAX_DEPTH, 1);
+ 	exit(0);
+ 	/* NOTREACHED */
+ }
 diff -urN stmpclean-0.1.orig/tmpwatch.8 stmpclean-0.1/tmpwatch.8
 --- stmpclean-0.1.orig/tmpwatch.8	Thu Jan  1 03:00:00 1970
 +++ stmpclean-0.1/tmpwatch.8	Sat Mar 30 03:24:51 2002
