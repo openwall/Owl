@@ -1,15 +1,16 @@
-# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.2 2000/10/18 22:44:16 solar Exp $
+# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.3 2000/11/29 15:15:42 kad Exp $
 
 Summary: 	The GNU versions of common file management utilities.
 Name: 		fileutils
 Version: 	4.0.27
-Release: 	3owl
+Release: 	4owl
 License: 	GPL
 Group: 		Applications/File
 Source0: 	ftp://alpha.gnu.org/gnu/fetish/%{name}-%{version}.tar.gz
 Source1: 	DIR_COLORS
 Source2: 	colorls.sh
 Source3: 	colorls.csh
+Source4:	shred.1
 Patch0: 	fileutils-4.0-rh-spacedir.diff
 Patch1: 	fileutils-4.0-rh-samefile.diff
 Patch2: 	fileutils-4.0-rh-C-option.diff
@@ -80,6 +81,8 @@ install -c -m 644 %SOURCE1 ./etc
 install -c -m 755 %SOURCE2 ./etc/profile.d
 install -c -m 755 %SOURCE3 ./etc/profile.d
 
+install -c -m 644 %SOURCE4 $RPM_BUILD_ROOT/%{_mandir}/man1/
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -106,6 +109,9 @@ fi
 %{_prefix}/share/locale/*/*/*
 
 %changelog
+* Wed Nov 29 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- add warning to shred(1) man.
+
 * Thu Oct 19 2000 Solar Designer <solar@owl.openwall.com>
 - Fixed a bug in RH patch to mv (don't exit if lstat on a file fails).
 

@@ -1,11 +1,11 @@
-# $Id: Owl/packages/bzip2/bzip2.spec,v 1.3 2000/11/29 12:36:11 kad Exp $
+# $Id: Owl/packages/bzip2/bzip2.spec,v 1.4 2000/11/29 15:15:42 kad Exp $
 
 %define 	bz2libver	1.0.0
 
 Summary: 	A file compression utility.
 Name: 		bzip2
 Version: 	1.0.1
-Release: 	3owl
+Release: 	4owl
 Copyright: 	BSD
 Group:		Applications/File
 URL: 		http://sources.redhat.com/bzip2/
