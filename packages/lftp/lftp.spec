@@ -1,9 +1,9 @@
-# $Id: Owl/packages/lftp/lftp.spec,v 1.1 2001/03/19 22:57:05 mci Exp $
+# $Id: Owl/packages/lftp/lftp.spec,v 1.2 2001/03/19 23:07:55 mci Exp $
 
 Summary: sophisticated command line file transfer program
 Name: lftp
 Version: 2.3.8
-Release: 1owl
+Release: 2owl
 Copyright: GPL
 Source0: ftp://ftp.yars.free.net/pub/software/unix/net/ftp/client/lftp/%{name}-%{version}.tar.gz
 Source1: lftpget.1
@@ -49,6 +49,7 @@ tools for downloading files.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 
