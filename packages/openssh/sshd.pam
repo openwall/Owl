@@ -1,7 +1,7 @@
 #%PAM-1.0
-# $Id: Owl/packages/openssh/sshd.pam,v 1.9 2002/07/06 21:19:09 solar Exp $
+# $Id: Owl/packages/openssh/sshd.pam,v 1.10 2003/04/17 14:12:59 solar Exp $
 auth       required	/lib/security/pam_userpass.so
-auth       required	/lib/security/pam_tcb.so use_first_pass shadow fork nodelay
+auth       required	/lib/security/pam_tcb.so use_first_pass shadow fork nodelay prefix=$2a$ count=8
 auth       required	/lib/security/pam_nologin.so
 account    required	/lib/security/pam_tcb.so shadow fork
 account    required	/lib/security/pam_limits.so

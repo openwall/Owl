@@ -1,9 +1,9 @@
-# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.7 2003/04/13 06:16:32 solar Exp $
+# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.8 2003/04/17 14:12:59 solar Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
 Version: 1.0.2
-Release: owl0.2
+Release: owl0.3
 License: GPL
 Group: System Environment/Daemons
 # The primary site for releases is ftp://ferret.lmh.ox.ac.uk/pub/linux/
@@ -77,6 +77,10 @@ mkdir -m 755 /home/ftp &> /dev/null || :
 %{_mandir}/man8/vsftpd.8*
 
 %changelog
+* Thu Apr 17 2003 Solar Designer <solar@owl.openwall.com> 1.0.2-owl0.3
+- Pass prefix= and count= to pam_tcb also for authentication such that it
+can use this information to reduce timing leaks.
+
 * Thu Apr 03 2003 Dmitry V. Levin <ldv@owl.openwall.com> 1.0.2-owl0.2
 - Updated pam_userpass support: build with libpam_userpass.
 

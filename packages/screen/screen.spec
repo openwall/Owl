@@ -1,9 +1,9 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.25 2003/04/13 06:16:31 solar Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.26 2003/04/17 14:12:59 solar Exp $
 
 Summary: A screen manager that supports multiple sessions on one terminal.
 Name: screen
 Version: 3.9.10
-Release: owl6
+Release: owl7
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%{version}.tar.gz
@@ -119,6 +119,10 @@ fi
 %attr(710,root,screen) %dir %{_libexecdir}/screen
 
 %changelog
+* Thu Apr 17 2003 Solar Designer <solar@owl.openwall.com> 3.9.10-owl7
+- Pass prefix= and count= to pam_tcb also for authentication such that it
+can use this information to reduce timing leaks.
+
 * Mon Apr 07 2003 Dmitry V. Levin <ldv@owl.openwall.com> 3.9.10-owl6
 - Updated pam_userpass support: build with libpam_userpass.
 

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.35 2003/04/13 06:16:31 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.36 2003/04/17 14:12:59 solar Exp $
 
 Summary: Post Office Protocol (POP3) server.
 Name: popa3d
 Version: 0.6.3
-Release: owl1
+Release: owl2
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
 Source0: ftp://ftp.openwall.com/pub/projects/popa3d/popa3d-%{version}.tar.gz
@@ -74,6 +74,10 @@ fi
 %doc CHANGES CONTACT DESIGN LICENSE
 
 %changelog
+* Thu Apr 17 2003 Solar Designer <solar@owl.openwall.com> 0.6.3-owl2
+- Pass prefix= and count= to pam_tcb also for authentication such that it
+can use this information to reduce timing leaks.
+
 * Mon Apr 07 2003 Dmitry V. Levin <ldv@owl.openwall.com> 0.6.3-owl1
 - Updated pam_userpass support: build with libpam_userpass.
 

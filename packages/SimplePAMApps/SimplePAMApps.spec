@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.27 2003/04/15 13:03:14 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.28 2003/04/17 14:12:59 solar Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
 Version: 0.60
-Release: owl18
+Release: owl19
 License: BSD or GPL
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
@@ -91,6 +91,10 @@ fi
 /etc/control.d/facilities/*
 
 %changelog
+* Thu Apr 17 2003 Solar Designer <solar@owl.openwall.com> 0.60-owl19
+- Pass prefix= and count= to pam_tcb also for authentication such that it
+can use this information to reduce timing leaks.
+
 * Tue Apr 15 2003 Solar Designer <solar@owl.openwall.com> 0.60-owl18
 - Imported ALT Linux patches, most importantly replacing command line parsing
 in su, -- should now better match the behavior of other implementations.

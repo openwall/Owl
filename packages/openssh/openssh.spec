@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.56 2003/04/13 06:16:31 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.57 2003/04/17 14:12:59 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p1
-Release: owl2
+Release: owl3
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -223,6 +223,10 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Thu Apr 17 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p1-owl3
+- Pass prefix= and count= to pam_tcb also for authentication such that it
+can use this information to reduce timing leaks.
+
 * Tue Apr 08 2003 Dmitry V. Levin <ldv@owl.openwall.com> 3.6.1p1-owl2
 - Updated pam_userpass support: build with libpam_userpass.
 
