@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iptables/iptables.spec,v 1.3 2003/08/22 01:16:52 solar Exp $
+# $Id: Owl/packages/iptables/iptables.spec,v 1.4 2003/08/22 01:33:57 solar Exp $
 
 Summary: Tools for managing Netfilter/iptables packet filtering rules.
 Name: iptables
@@ -10,6 +10,7 @@ URL: http://www.netfilter.org
 Source0: http://www.netfilter.org/files/%{name}-%{version}.tar.bz2
 Source1: iptables.init
 PreReq: chkconfig
+Requires: fileutils, textutils, grep
 BuildRequires: kernel-headers >= 2.4.0
 BuildRoot: /override/%{name}-%{version}
 
