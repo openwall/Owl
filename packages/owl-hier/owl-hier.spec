@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.1 2000/07/25 23:39:47 solar Exp $
+# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.2 2000/07/27 00:33:22 solar Exp $
 
 Summary: Initial directory hierarchy
 Name: owl-hier
@@ -9,6 +9,7 @@ Group: System Environment/Base
 Source: special
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 BuildPreReq: mtree
+Requires: owl-etc
 BuildArchitectures: noarch
 
 %description
