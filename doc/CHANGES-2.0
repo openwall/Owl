@@ -1,0 +1,19 @@
+This file lists the major changes made between the last released
+version of Owl and Owl-current.  While some of the changes listed here
+may also be made to a stable branch, the complete lists of stable
+branch changes are included with those branches and as errata for the
+corresponding Owl releases only.
+
+This is very far from an exhaustive list of changes.  Small changes to
+individual packages won't be mentioned here unless they fix a security
+or a critical reliability problem.  They are, however, mentioned in
+change logs for the packages themselves.
+
+
+	Changes made between Owl 1.1 and Owl-current.
+
+2004/01/05	Package: sysklogd
+The startup script will now accept command-line options for syslogd
+and klogd specified in /etc/sysconfig/syslog.
+
+$Id: Owl/doc/CHANGES-2.0,v 1.1 2004/01/05 21:55:56 solar Exp $
