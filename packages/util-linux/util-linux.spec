@@ -1,17 +1,25 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.12 2001/01/28 06:11:05 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.13 2001/04/18 05:54:49 solar Exp $
 
 %define BUILD_MOUNT	'yes'
 %define BUILD_LOSETUP	'yes'
 %define BUILD_CHSH_CHFN	'no'
 %define BUILD_VIPW_VIGR	'no'
+%define BUILD_CRYPTO	'yes'
+
+%define base_version	2.10r
+%define crypto_version	2.2.18.3
 
 Summary: A collection of basic system utilities.
 Name: util-linux
-Version: 2.10r
-Release: 2owl
+%if "%{BUILD_CRYPTO}"=="'yes'"
+Version: %{base_version}.%{crypto_version}
+%else
+Version: %{base_version}
+%endif
+Release: 3owl
 Copyright: distributable
 Group: System Environment/Base
-Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%{version}.tar.bz2
+Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%{base_version}.tar.bz2
 Source1: chsh-chfn.pam
 Source2: chsh-chfn.control
 Source3: mount.control
@@ -21,7 +29,10 @@ Patch0: util-linux-2.10r-owl-MCONFIG.diff
 Patch1: util-linux-2.10r-owl-Makefiles.diff
 Patch2: util-linux-2.10r-owl-restrict-locale.diff
 Patch3: util-linux-2.10r-owl-write.diff
-Patch4: util-linux-2.10r-rh-locale-overflow.diff
+Patch4: util-linux-2.10r-owl-alpha-hwclock-usage.diff
+Patch5: util-linux-2.10r-rh-locale-overflow.diff
+Patch10: util-linux-2.10r-%{crypto_version}-int.diff
+Patch11: util-linux-2.10r-%{crypto_version}-int-owl-fixes.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: owl-control < 2.0
 Obsoletes: fdisk tunelp
@@ -62,12 +73,17 @@ to query the status of a loop device.
 %endif
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{base_version}
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
+%if "%{BUILD_CRYPTO}"=="'yes'"
+%patch10 -p1
+%patch11 -p1
+%endif
 
 %build
 unset LINGUAS || :
@@ -313,6 +329,12 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Wed Apr 18 2001 Solar Designer <solar@owl.openwall.com>
+- Added crypto code from the international kernel patch (2.2.18.3), with
+minor changes.
+- Corrected the Alpha-specific hwclock(8) usage information (the options
+are case-sensitive).
+
 * Sun Jan 28 2001 Solar Designer <solar@owl.openwall.com>
 - Reviewed the changes made in 2.10r, updated the write patch accordingly.
 - More improvements to the write patch (prompt/prefix with usernames).
