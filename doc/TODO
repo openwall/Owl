@@ -110,11 +110,9 @@ tar already.
 
 [PRIORITY: low]
 [ASSIGNED: Matthias, solar@]
-Package it.  The likely choice is latest ISC DHCP suite.  There should
-be client, server, and relay subpackages.  Both the server and the
-client should be modified to run as dedicated pseudo-users and in
-chroot jails, and the client should implement privilege separation
-(not easy).
+The DHCP client should be modified to run as a dedicated pseudo-user
+and in a chroot jail.  This requires privilege separation within the
+client (not easy).
 
 
 	fileutils, sh-utils, textutils.
@@ -564,4 +562,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.24 2003/09/06 21:21:39 solar Exp $
+$Id: Owl/doc/TODO,v 1.25 2003/09/09 07:21:38 solar Exp $
