@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.40 2003/11/03 12:27:29 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.41 2004/01/18 11:36:14 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.21
+Version: 0.22
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -14,7 +14,8 @@ Source4: functions
 Source5: halt
 Source6: single
 Source7: clock
-Source8: sysctl.conf
+Source8: service
+Source9: sysctl.conf
 PreReq: /sbin/chkconfig
 Requires: SysVinit, msulogin, /sbin/start-stop-daemon
 Requires: bash >= 2.0, sh-utils
@@ -40,10 +41,11 @@ rm -rf $RPM_BUILD_ROOT
 
 mkdir -p $RPM_BUILD_ROOT/etc/{rc.d/{rc{0,1,2,3,4,5,6}.d,init.d},profile.d}
 mkdir -p $RPM_BUILD_ROOT/etc/sysconfig/network-scripts
-mkdir -p $RPM_BUILD_ROOT/{bin,sbin,usr/man/man1,var/{log,run}}
+mkdir -p $RPM_BUILD_ROOT/{bin,sbin,var/{log,run}}
+mkdir -p $RPM_BUILD_ROOT%_mandir/man1
 
 install -m 755 src/{usleep,ipcalc} $RPM_BUILD_ROOT/bin/
-install -m 644 src/{usleep.1,ipcalc.1} $RPM_BUILD_ROOT/usr/man/man1/
+install -m 644 src/{usleep.1,ipcalc.1} $RPM_BUILD_ROOT%_mandir/man1/
 
 install -m 755 lang.*sh $RPM_BUILD_ROOT/etc/profile.d/
 install -m 700 rc.d/init.d/{random,network,netfs} \
@@ -65,6 +67,7 @@ install -m 700 $RPM_SOURCE_DIR/rc.sysinit etc/rc.d/
 install -m 700 $RPM_SOURCE_DIR/rc etc/rc.d/
 install -m 644 $RPM_SOURCE_DIR/functions etc/rc.d/init.d/
 install -m 700 $RPM_SOURCE_DIR/{halt,single,clock} etc/rc.d/init.d/
+install -m 755 $RPM_SOURCE_DIR/service sbin/
 install -m 700 /dev/null etc/rc.d/rc.local
 install -m 600 $RPM_SOURCE_DIR/sysctl.conf etc/
 
@@ -136,15 +139,20 @@ fi
 %config /sbin/ifdown
 %config /sbin/ifup
 %dir /var/run/netreport
+/sbin/service
 /bin/usleep
 /bin/ipcalc
-/usr/man/man1/usleep.1*
-/usr/man/man1/ipcalc.1*
+%_mandir/man1/usleep.1*
+%_mandir/man1/ipcalc.1*
 %ghost %attr(0664,root,utmp) /var/log/wtmp
 %ghost %attr(0664,root,utmp) /var/run/utmp
 %doc redhat
 
 %changelog
+* Sun Jan 18 2004 Solar Designer <solar@owl.openwall.com> 0.22-owl1
+- Added /sbin/service script for Red Hat Linux compatibility.
+- Use _mandir RPM macro.
+
 * Sun Apr 27 2003 Solar Designer <solar@owl.openwall.com> 0.21-owl1
 - In rc.sysinit, use msulogin's exit codes to determine if it failed to
 start a shell and not do the automatic reboot if so.
