@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.6 2001/03/10 18:59:54 kad Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.7 2001/03/10 19:16:19 solar Exp $
 
 %define BUILD_CHSH_CHFN	'yes'
 %define BUILD_VIPW_VIGR	'yes'
@@ -151,7 +151,7 @@ grep -q '^shadow:[^:]*:42:' /etc/group && \
 %endif
 
 %changelog
-* Sat Mar 10 2001 Alexandr D. Kanevskiy <kad@owl.openwall.ru>
+* Sat Mar 10 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - restrictions to username/groupname
 
 * Sat Feb 10 2001 Solar Designer <solar@owl.openwall.com>
