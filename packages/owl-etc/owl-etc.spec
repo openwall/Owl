@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.27 2001/03/28 08:42:44 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.28 2001/07/12 01:54:57 solar Exp $
 
 Summary: Initial set of configuration files
 Name: owl-etc
-Version: 0.13
+Version: 0.14
 Release: 1owl
 Copyright: public domain
 Group: System Environment/Base
@@ -65,6 +65,10 @@ rm -rf $RPM_BUILD_ROOT
 %ghost /var/log/lastlog
 
 %changelog
+* Thu Jul 12 2001 Solar Designer <solar@owl.openwall.com>
+- xntpd user/group.
+- scanlogd user/group.
+
 * Wed Mar 28 2001 Solar Designer <solar@owl.openwall.com>
 - Disable coredumps with the soft rlimit only.
 
