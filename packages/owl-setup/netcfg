@@ -155,7 +155,7 @@ Netmask:        $NETMASK
 Broadcast:      $BROADCAST
 "
     unset IFS
-    $DIALOG --backtitle "$TITLE" --title 'Network configuration' \
+    $DIALOG --cr-wrap --backtitle "$TITLE" --title 'Network configuration' \
             --yesno "$txt" 0 0
 }
 

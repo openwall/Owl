@@ -10,7 +10,7 @@ trap "rm -f $dlgresult $partbl $fstemp" EXIT HUP INT TERM
 
 function type2fs
 {
-    echo "`grep -Ei "$1[:,]|:$1" <<EOF | cut -d : -f2
+    echo "`grep -Ei "$1[:,]" <<EOF | cut -d : -f2
 82:swap
 83:ext2
 01,04,06:msdos
@@ -59,7 +59,7 @@ function parse
 
 function gen_fstab
 {
-    local i line dev fsid flags
+    local i line dev fsid fstype flags
 
     test -f $FSTAB &&
     while read line; do
@@ -78,7 +78,8 @@ function gen_fstab
                 else
                     flags='1 1'
                 fi
-                echo -e "$dev\t${mntpoint[$i]}\t\t\t`type2fs $fsid`\t${mntopt[$i]}\t\t$flags" >> $fstemp || exit 1
+		fstype=`type2fs $fsid`
+                echo -e "$dev\t${mntpoint[$i]}\t\t\t${fstype:-"$fsid"}\t${mntopt[$i]}\t\t$flags" >> $fstemp || exit 1
             fi
             ((i+=1))
         done

@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.4 2001/06/23 08:04:52 solar Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.5 2001/07/25 08:55:37 mci Exp $
 
 Summary: Owl configuration tool
 Name: owl-setup
-Version: 0.3
+Version: 0.4
 release: 1owl
 Copyright: mostly public domain, passwdlg is under GPL
 Group: System Environment/Base
@@ -58,6 +58,12 @@ rm -rf $RPM_BUILD_ROOT
 %doc README
 
 %changelog
+* Wed Jul 25 2001 Michail Litvak <mci@owl.openwall.com>
+- add --cr-wrap option in netcfg to fix broken
+  displaing (cause - changes in new dialog version)
+- fix bug in mkfstab, now possible add unlisted partitions
+  and propertly set its type
+
 * Sat Jun 23 2001 Solar Designer <solar@owl.openwall.com>
 - Grammar/spelling fix for a netcfg message.
 - Ensure the newly created /etc/resolv.conf and /etc/hosts are mode 644.
