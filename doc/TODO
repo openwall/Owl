@@ -388,14 +388,6 @@ Debian policy or both Postfix and procmail corrected.
 Update to 3.22+.
 
 
-	psmisc.
-
-[PRIORITY: low]
-pstree(1) should support procfs restrictions which effectively break
-the process tree into several accessible subtrees.  With our current
-version, only one such subtree will be dumped.
-
-
 	rpm.
 
 [PRIORITY: medium]
@@ -508,4 +500,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.53 2005/01/18 12:59:21 solar Exp $
+$Id: Owl/doc/TODO,v 1.54 2005/01/18 13:12:30 solar Exp $
