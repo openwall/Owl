@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.11 2001/10/27 15:49:13 solar Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.12 2001/10/27 17:30:57 solar Exp $
 
 Version: 2.05
 Name: bash
@@ -12,20 +12,21 @@ Source2: dot-bashrc
 Source3: dot-bash_profile
 Source4: dot-bash_logout
 Patch0: bash-2.05-cwru-fixes.diff
-Patch1: bash-2.05-owl-fixes.diff
-Patch2: bash-2.05-owl-tmp.diff
-Patch3: bash-2.05-owl-paths.diff
-Patch4: bash-2.04-rh-bash1_compat.diff
-Patch5: bash-2.04-rh-shellfunc.diff
-Patch6: bash-2.05-rh-requires.diff
-Patch7: bash-2.05-rh-profile.diff
-Patch8: bash-2.05-deb-64bit.diff
-Patch9: bash-2.05-deb-gnusource.diff
-Patch10: bash-2.05-deb-print_cmd.diff
-Patch11: bash-2.05-deb-random.diff
-Patch12: bash-2.05-deb-man.diff
-Patch13: bash-2.05-alt-fnmatch-disable-strcoll.diff
-Patch14: bash-2.05-alt-man.diff
+Patch10: bash-2.05-owl-fixes.diff
+Patch11: bash-2.05-owl-tmp.diff
+Patch12: bash-2.05-owl-paths.diff
+Patch20: bash-2.04-rh-bash1_compat.diff
+Patch21: bash-2.04-rh-shellfunc.diff
+Patch22: bash-2.05-rh-requires.diff
+Patch23: bash-2.05-rh-profile.diff
+Patch24: bash-2.05-rh-readline.diff
+Patch30: bash-2.05-deb-64bit.diff
+Patch31: bash-2.05-deb-gnusource.diff
+Patch32: bash-2.05-deb-print_cmd.diff
+Patch33: bash-2.05-deb-random.diff
+Patch34: bash-2.05-deb-man.diff
+Patch40: bash-2.05-alt-fnmatch-disable-strcoll.diff
+Patch41: bash-2.05-alt-man.diff
 Prefix: %{_prefix}
 Requires: mktemp >= 1:1.3.1
 Provides: bash2
@@ -52,20 +53,21 @@ Again shell version %{version}.
 %prep
 %setup -q -a 1
 %patch0 -p0
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
-%patch13 -p1
-%patch14 -p1
+%patch20 -p1
+%patch21 -p1
+%patch22 -p1
+%patch23 -p1
+%patch24 -p1
+%patch30 -p1
+%patch31 -p1
+%patch32 -p1
+%patch33 -p1
+%patch34 -p1
+%patch40 -p1
+%patch41 -p1
 
 echo %{version} > _distribution
 echo %{release} | sed -e "s/[A-Za-z]//g" > _patchlevel

@@ -1,0 +1,55 @@
+--- bash-2.05/lib/readline/readline.c.rl	Tue Apr 24 15:02:56 2001
++++ bash-2.05/lib/readline/readline.c	Tue Apr 24 15:04:34 2001
+@@ -1139,6 +1139,9 @@
+       else
+         rl_point -= count;
+     }
++  /* check for arithmetic overflow */
++  if (rl_point < 0)
++    rl_point = 0;
+   return 0;
+ }
+ 
+--- bash-2.05/lib/readline/terminal.c.rl	Tue Apr 24 15:02:32 2001
++++ bash-2.05/lib/readline/terminal.c	Tue Apr 24 15:02:43 2001
+@@ -297,7 +297,7 @@
+   { "im", &_rl_term_im },
+   { "kd", &_rl_term_kd },
+   { "kh", &_rl_term_kh },	/* home */
+-  { "kH", &_rl_term_kH },	/* end */
++  { "@7", &_rl_term_kH },	/* end */
+   { "kl", &_rl_term_kl },
+   { "kr", &_rl_term_kr },
+   { "ku", &_rl_term_ku },
+--- bash-2.05/lib/readline/util.c.strpbrk	Mon Oct  1 14:52:48 2001
++++ bash-2.05/lib/readline/util.c	Mon Oct  1 14:53:35 2001
+@@ -225,6 +225,7 @@
+   return ((char *)NULL);
+ }
+ 
++#ifndef HAVE_STRPBRK
+ /* Find the first occurrence in STRING1 of any character from STRING2.
+    Return a pointer to the character in STRING1. */
+ char *
+@@ -243,6 +244,7 @@
+     }
+   return ((char *)NULL);
+ }
++#endif
+ 
+ #if !defined (HAVE_STRCASECMP)
+ /* Compare at most COUNT characters from string1 to string2.  Case
+--- bash-2.05/lib/readline/rlprivate.h.strpbrk	Mon Oct  1 14:52:55 2001
++++ bash-2.05/lib/readline/rlprivate.h	Mon Oct  1 14:53:21 2001
+@@ -183,7 +183,11 @@
+ extern int rl_alphabetic __P((int));
+ extern int _rl_abort_internal __P((void));
+ extern char *_rl_strindex __P((const char *, const char *));
++#ifndef HAVE_STRPBRK
+ extern char *_rl_strpbrk __P((const char *, const char *));
++#else
++#define _rl_strpbrk(a,b) strpbrk(a,b)
++#endif
+ extern int _rl_qsort_string_compare __P((char **, char **));
+ extern int (_rl_uppercase_p) __P((int));
+ extern int (_rl_lowercase_p) __P((int));
