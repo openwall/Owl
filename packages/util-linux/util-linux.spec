@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.23 2003/10/30 21:15:49 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.24 2003/11/06 22:55:45 mci Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -6,25 +6,18 @@
 
 Summary: A collection of basic system utilities.
 Name: util-linux
-%define base_version 2.11z
-%define crypto_version 2.2.18.3
-%if %BUILD_CRYPTO
-Version: %base_version.%crypto_version
-%else
-Version: %base_version
-%endif
-Release: owl1
+Version: 2.11z
+Release: owl2
 License: distributable
 Group: System Environment/Base
-Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%base_version.tar.bz2
+Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%version.tar.bz2
 Source1: mount.control
 Source2: write.control
 Patch0: util-linux-2.11z-owl-MCONFIG.diff
 Patch1: util-linux-2.11z-owl-Makefile.diff
 Patch2: util-linux-2.11z-owl-write.diff
 Patch3: util-linux-2.11z-owl-mtab-umask.diff
-Patch20: util-linux-2.11z-%crypto_version-int.diff
-Patch21: util-linux-2.11z-%crypto_version-int-owl-fixes.diff
+Patch20: util-linux-2.11z-crypto-v3.diff.bz2
 PreReq: /sbin/install-info
 PreReq: owl-control >= 0.4, owl-control < 2.0
 Obsoletes: fdisk, tunelp
@@ -67,14 +60,13 @@ to query the status of a loop device.
 %endif
 
 %prep
-%setup -q -n %name-%base_version
+%setup -q
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %if %BUILD_CRYPTO
 %patch20 -p1
-%patch21 -p1
 %endif
 
 %build
@@ -306,6 +298,10 @@ fi
 %endif
 
 %changelog
+* Fri Nov 07 2003 Michail Litvak <mci@owl.openwall.com> 2.11z-owl2
+- Replaced crypto code from international crypto patch (2.2.18.3) to
+unified util-linux crypto patch by Jari Ruusu.
+
 * Tue Apr 14 2003 Michail Litvak <mci@owl.openwall.com> 2.11z.2.2.18.3-owl1
 - 2.11z
 - minor spec file cleanups.
