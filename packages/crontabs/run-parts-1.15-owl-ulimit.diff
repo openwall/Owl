@@ -1,0 +1,31 @@
+--- run-parts-1.15/run-parts.c.orig     Mon Jan  8 04:57:18 2001
++++ run-parts-1.15/run-parts.c  Thu May 10 18:35:56 2001
+@@ -69,7 +69,7 @@
+   --test          print script names which would run, but don't run them.
+   --verbose       print script names before running them.
+   --report        print script names if they produce output.
+-  --umask=UMASK   sets umask to UMASK (octal), default is 022.
++  --umask=UMASK   sets umask to UMASK (octal), default is 077.
+   --arg=ARGUMENT  pass ARGUMENT to scripts, use once for each argument.
+   --version       output version information and exit.
+   --help          display this help and exit.
+@@ -357,7 +383,7 @@
+ /* Process options */
+ int main (int argc, char *argv[])
+ {
+-  umask (022);
++  umask (077);
+   add_argument(0);
+   
+   for (;;) {
+--- run-parts-1.15/run-parts.8.orig	Wed May 16 18:07:06 2001
++++ run-parts-1.15/run-parts.8	Wed May 16 18:07:54 2001
+@@ -48,7 +48,7 @@
+ .I umask
+ before running the scripts.
+ .I umask
+-should be specified in octal.  By default the umask is set to 022.
++should be specified in octal.  By default the umask is set to 077.
+ .TP
+ .BI \-\-arg= argument
+ Pass

@@ -1,0 +1,53 @@
+--- run-parts-1.15/run-parts.c.orig	Mon Jan  8 04:57:18 2001
++++ run-parts-1.15/run-parts.c	Thu May 10 18:35:56 2001
+@@ -139,6 +139,32 @@
+   }
+ }
+ 
++/*
++ *  Taken from John The Ripper by Solar Designer
++ */
++  
++int write_loop(int fd, char *buffer, int count)
++{
++  int offset, block;
++
++  offset = 0;
++  while (count > 0) {
++    block = write(fd, &buffer[offset], count);
++
++/* If any write(2) fails, we consider that the entire write_loop() has
++ * failed to do its job, unless we were interrupted by a signal. */
++    if (block < 0) {
++      if (errno == EINTR) continue;
++        return block;
++    }
++
++    offset += block;
++    count -= block;
++  }
++
++/* Should be equal to the requested size, unless our kernel got crazy. */
++  return offset;
++}
+ 
+ /* We have to abort the select() call in run_part when we receive a
+  * SIGCHLD signal. We can't simply ignore it, so we do nothing.
+@@ -220,7 +246,7 @@
+ 	      fflush(stdout);
+ 	      printflag = 1;
+ 	    }
+-	    write(STDOUT_FILENO, buf, c);
++	    write_loop(STDOUT_FILENO, buf, c);
+ 	  }
+ 	  else if (c == 0) {
+ 	    close(pout[0]);
+@@ -235,7 +261,7 @@
+ 	      fflush(stderr);
+ 	      printflag = 1;
+ 	    }
+-	    write(STDERR_FILENO, buf, c);
++	    write_loop(STDERR_FILENO, buf, c);
+ 	  }
+ 	  else if (c == 0) {
+ 	    close(perr[0]);
