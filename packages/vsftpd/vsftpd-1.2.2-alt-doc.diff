@@ -1,0 +1,11 @@
+--- vsftpd-1.2.2.orig/vsftpd.conf.5	2004-04-20 23:51:37 +0000
++++ vsftpd-1.2.2/vsftpd.conf.5	2004-04-21 12:34:56 +0000
+@@ -336,7 +336,7 @@ session_support
+ processes and / or less privilege. NOTE - utmp and wtmp support is only
+ provided with PAM enabled builds.
+ 
+-Default: YES
++Default: NO
+ .TP
+ .B setproctitle_enable
+ If enabled, vsftpd will try and show session status information in the system

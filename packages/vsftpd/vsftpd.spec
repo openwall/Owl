@@ -1,9 +1,9 @@
-# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.11 2003/12/15 11:35:40 solar Exp $
+# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.12 2004/06/19 14:40:23 solar Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
 Version: 1.2.1
-Release: owl0.1
+Release: owl0.2
 License: GPL
 Group: System Environment/Daemons
 URL: http://vsftpd.beasts.org
@@ -16,6 +16,7 @@ Source4: vsftpd.logrotate
 Patch0: vsftpd-1.2.1pre1-owl-alt-defaults.diff
 Patch1: vsftpd-1.2.1pre1-owl-pam_userpass.diff
 Patch2: vsftpd-1.2.1pre1-owl-warnings.diff
+Patch3: vsftpd-1.2.2-alt-doc.diff
 Requires: xinetd, logrotate, pam_userpass, tcb, /var/empty
 Provides: ftpserver
 BuildRequires: pam-devel, pam_userpass-devel, libcap-devel
@@ -32,6 +33,7 @@ program has been carefully designed to be resilient to attack.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 install -p -m 644 $RPM_SOURCE_DIR/vsftpd.eps.gz .
 
 %build
@@ -79,6 +81,10 @@ mkdir -m 755 /home/ftp &> /dev/null || :
 %_mandir/man8/vsftpd.8*
 
 %changelog
+* Sat Jun 19 2004 Dmitry V. Levin <ldv@owl.openwall.com> 1.2.1-owl0.2
+- vsftpd.conf(5): note that session_support is disabled by default.
+- vsftpd.pamd: set proper session management entry.
+
 * Sun Oct 26 2003 Solar Designer <solar@owl.openwall.com> 1.2.1-owl0.1
 - Updated to 1.2.1pre1.
 - Let vsftpd use libcap now that we package it.

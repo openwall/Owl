@@ -1,5 +1,5 @@
 #%PAM-1.0
-# $Id: Owl/packages/vsftpd/vsftpd.pam,v 1.2 2003/04/17 14:12:59 solar Exp $
+# $Id: Owl/packages/vsftpd/vsftpd.pam,v 1.3 2004/06/19 14:40:23 solar Exp $
 auth       required	/lib/security/pam_userpass.so
 auth       required	/lib/security/pam_tcb.so use_first_pass shadow fork prefix=$2a$ count=8
 auth       required	/lib/security/pam_listfile.so item=user sense=deny file=/etc/ftpusers onerr=fail
@@ -7,4 +7,4 @@ auth       required	/lib/security/pam_shells.so
 auth       required	/lib/security/pam_nologin.so
 account    required	/lib/security/pam_tcb.so shadow fork
 password   required	/lib/security/pam_deny.so
-session    required	/lib/security/pam_deny.so
+session    required	/lib/security/pam_tcb.so
