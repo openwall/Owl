@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ed/ed.spec,v 1.7 2002/01/30 15:29:51 mci Exp $
+# $Id: Owl/packages/ed/ed.spec,v 1.8 2002/01/31 09:54:43 mci Exp $
 
 Summary: The GNU line editor.
 Name: ed
@@ -57,7 +57,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/*/*
 
 %changelog
-* Wed Jan 30 2002 Michail Litval <mci@owl.openwall.com>
+* Wed Jan 30 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions.
 
 * Thu Nov 23 2000 Michail Litvak <mci@owl.openwall.com>

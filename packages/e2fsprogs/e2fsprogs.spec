@@ -1,4 +1,4 @@
-# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.4 2002/01/30 10:14:45 mci Exp $
+# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.5 2002/01/31 09:54:43 mci Exp $
 
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
@@ -135,7 +135,7 @@ fi
 /usr/man/man3/com_err.3*
 
 %changelog
-* Wed Jan 30 2002 Michail Litval <mci@owl.openwall.com>
+* Wed Jan 30 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions.
 
 * Tue Aug 08 2000 Solar Designer <solar@owl.openwall.com>
