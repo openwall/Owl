@@ -1,0 +1,64 @@
+# $Id: Owl/packages/crontabs/crontabs.spec,v 1.1 2001/05/15 08:09:51 mci Exp $
+
+Summary: System crontab files used to schedule the execution of programs.
+Name: crontabs
+Version: 2.0
+Release: 1owl
+Copyright: GPL
+Group: System Environment/Base
+Source0: run-parts.tar.gz
+Source1: crontab
+Patch0: run-parts-owl-writeloop.diff
+BuildRoot: /var/rpm-buildroot/%{name}-%{version}
+
+%description
+This package contains the system crontab file and provides the
+following directories:
+
+/etc/cron.hourly
+/etc/cron.daily
+/etc/cron.weekly
+/etc/cron.monthly
+
+As these directory names say, the files within them are executed by
+cron on an hourly, daily, weekly, or monthly basis, respectively.
+
+The crontabs package handles a basic system function, so it should be
+installed on your system.
+
+%prep
+%setup -n run-parts
+%patch0 -p1
+
+%build
+make run-parts CFLAGS="$RPM_OPT_FLAGS -Wall"
+
+%install
+rm -rf $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT/etc/cron.{hourly,daily,weekly,monthly}
+mkdir -p $RPM_BUILD_ROOT/usr/bin
+mkdir -p $RPM_BUILD_ROOT%{_mandir}/man8/
+
+
+install -m 644 $RPM_SOURCE_DIR/crontab $RPM_BUILD_ROOT/etc/
+install -m 755 run-parts $RPM_BUILD_ROOT/usr/bin/
+install -m 644 run-parts.8 $RPM_BUILD_ROOT%{_mandir}/man8/
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%files
+%defattr(-,root,root)
+%config /etc/crontab
+/usr/bin/run-parts
+%{_mandir}/man8/*
+%dir /etc/cron.hourly
+%dir /etc/cron.daily
+%dir /etc/cron.weekly
+%dir /etc/cron.monthly
+
+%changelog
+* Thu May 15 2001 Michail Litvak <mci@owl.openwall.com>
+- basically imported from RH, but run-parts imported
+  from Debian (debianutils)
+- run-parts patched to use write_loop() instead of just write()
