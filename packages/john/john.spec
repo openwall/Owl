@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.36 2004/09/21 01:14:21 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.37 2004/11/09 13:17:19 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.37.2
+Version: 1.6.37.3
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -74,6 +74,10 @@ cp -a john-1.6/doc/* doc/john-1.6/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Tue Nov 09 2004 Solar Designer <solar@owl.openwall.com> 1.6.37.3-owl1
+- Properly report effective c/s rates in excess of 2**32 (now up to
+2**32 * 10**6), report large c/s rates in thousands or millions.
+
 * Sat Jun 19 2004 Solar Designer <solar@owl.openwall.com> 1.6.37.2-owl1
 - "N passwords cracked" -> "N password hashes cracked" because there can be
 multiple hashes per password with LM or double-length DES-based crypt(3).
