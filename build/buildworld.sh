@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.27 2002/06/22 08:24:16 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.28 2002/07/08 01:17:01 solar Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -252,12 +252,14 @@ function detect_proc()
 {
 	case "$ARCHITECTURE" in
 	sparc*)
-		PROCESSORS="`sed -n
-			's/^ncpus active[[:space:]]\+: \([0-9]\+\)$/\1/p'`"
+		PROCESSORS="`sed -n \
+			's/^ncpus active[[:space:]]\+: \([0-9]\+\)$/\1/p' \
+			/proc/cpuinfo`"
 		;;
 	alpha*)
-		PROCESSORS="`sed -n
-			's/^cpus detected[[:space:]]\+: \([0-9]\+\)$/\1/p'`"
+		PROCESSORS="`sed -n \
+			's/^cpus detected[[:space:]]\+: \([0-9]\+\)$/\1/p' \
+			/proc/cpuinfo`"
 		;;
 	*)
 		PROCESSORS="`grep -cw ^processor /proc/cpuinfo`"
