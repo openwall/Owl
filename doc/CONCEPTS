@@ -1,6 +1,39 @@
 "Owl" is a security-enhanced operating system with Linux and GNU
 software as its core, compatible with other major distributions of
-GNU/*/Linux-based systems.  It is intended as a server platform.
+GNU/*/Linux.  It is intended as a server platform.
+
+
+	Security.
+
+Owl combines several approaches to reduce the number and/or impact of
+flaws in its software components and in third-party software that one
+might install on the system.
+
+The primary approach used is proactive source code review for several
+classes of potential security problems.  However, because of the large
+amount of code, there's a certain level of "importance" for a software
+component or a part thereof to be audited.  Currently, only pieces of
+code which are typically run with privileges greater than those of a
+regular user and/or typically process data obtained over a network are
+audited before the corresponding software component is included.  This
+covers relevant code paths in many of the system libraries, all SUID/
+SGID programs, all daemons and network services.  Other software may
+be audited when it is already a part of Owl.  Potential problems found
+during the audit are fixed or, in some pathological cases, may prevent
+the software component from being included.  In general, code quality
+is always considered when there's a choice between implementations of
+a feature.
+
+While source code review is the preferred approach, not all software
+can be reviewed.  Typically, when insecure third-party software is
+installed on an otherwise secure system, "the game" is lost.  The only
+thing an operating system can guarantee is that potential unauthorized
+access would be limited to those privileges granted to the software in
+question.  However, in the recent years, a number of approaches were
+developed which reduce the likelihood and/or may reduce the impact of
+successful real-world attacks on insecure third-party software.  Owl
+will use some of those "hardening" approaches in various parts of the
+system.
 
 
 	The build environment and package management.
@@ -12,12 +45,13 @@ simple command ("make buildworld").  However, the implementation of
 *BSD.  It is in fact more similar to *BSD ports/packages, covering the
 entire Owl userland (that is, everything but the Linux kernel).
 
-The Owl userland source code consists of two source trees, where each
-Owl package is split between the two trees.  One source tree consists
-of original archives as distributed by the authors or maintainers of
-the corresponding software components.  The other tree, which we store
-in a CVS repository, has the build specifications, patches, and other
-Owl-specific additions to the packages.
+The Owl userland source code consists of two directory trees, where
+each Owl package may be split between the two trees.  One source tree
+consists of original archives as distributed by the maintainers of the
+corresponding software components.  The other tree, which we store in
+a CVS repository, has the build specifications, patches, and other
+Owl-specific additions to the packages.  Some packages were developed
+as a part of Owl, and thus exist entirely in the CVS repository.
 
 Based on the two source trees, binary packages are built.  They can be
 installed (with "make installworld") to update the system itself or to
@@ -28,4 +62,4 @@ We're using RPM for the binary packages, as that allows for reasonable
 dependency handling when installing packages from or intended for Red
 Hat Linux and several other distributions, on an Owl system.
 
-$Id: Owl/doc/CONCEPTS,v 1.1 2000/12/09 20:25:06 solar Exp $
+$Id: Owl/doc/CONCEPTS,v 1.2 2000/12/12 06:08:22 solar Exp $
