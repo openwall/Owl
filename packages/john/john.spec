@@ -1,4 +1,4 @@
-# $Id: Owl/packages/john/john.spec,v 1.35 2004/06/19 15:22:21 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.36 2004/09/21 01:14:21 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -82,8 +82,8 @@ multiple hashes per password with LM or double-length DES-based crypt(3).
 * Sun Jun 13 2004 Solar Designer <solar@owl.openwall.com> 1.6.37.1-owl1
 - Freeze the timestamps that are being logged for the duration of loading
 of password files; clock is reset to 0 or to the restore point when the
-actual cracking starts to ensure the reported c/s rate is not affected load
-time, but we don't want this clock reset to be seen in event logs.
+actual cracking starts to ensure the reported c/s rate is not affected by
+load time, but we don't want this clock reset to be seen in event logs.
 
 * Mon Feb 23 2004 Solar Designer <solar@owl.openwall.com> 1.6.37-owl1
 - Bumped the release to 1.6.37 to make it available separately from Owl.
