@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.7 2000/07/29 12:54:01 kad Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.8 2000/08/25 15:02:23 kad Exp $
 
 %define GCC_PREFIX /usr
 %define CPP_PREFIX /lib
@@ -12,7 +12,7 @@
 Summary:	Various compilers (C, C++, Objective-C, f77, ...)
 Name:		gcc
 Version:	%{GCC_VERSION}
-Release:	3owl
+Release:	4owl
 Serial:		1
 Copyright:	GPL
 URL:		http://gcc.gnu.org
@@ -202,13 +202,9 @@ CFLAGS="`echo $RPM_OPT_FLAGS|sed -e 's/-fno-rtti//g'` -fexceptions" \
 	--enable-shared --enable-threads=posix --enable-haifa \
 	--host=%{_target_platform}
 %endif
-numprocs=`cat /proc/cpuinfo | grep processor | wc | cut -c7`
-if [ "x$numprocs" = "x" -o "x$numprocs" = "x0" ]; then
-  numprocs=1
-fi
 touch ../gcc/c-gperf.h
 
-make -j$numprocs bootstrap-lean
+make bootstrap-lean
 
 # run the tests.
 # rpm seems to terminate when make -k check fails.
@@ -513,7 +509,10 @@ fi
 %endif
 
 %changelog
-* Sat Jul 29 2000 Alexandr D. Kanevskiy <kad@openwall.com>
+* Fri Aug 25 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- removed make -j
+
+* Sat Jul 29 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - spec cleanup.
 - duplicate file fix.
 
