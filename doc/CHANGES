@@ -13,7 +13,8 @@ for the packages themselves.
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
 2002/06/23	Packages: openssh, owl-etc
-Updated OpenSSH to 3.3p1 with privilege separation.
+Updated OpenSSH to 3.3p1 with privilege separation enabled by default
+and a patch to make it work on Linux 2.2 (as well as 2.4).
 
 2002/06/21 -
 2002/06/22	Owl/build/buildworld.{sh,conf}, Owl/build/Makefile,
@@ -765,4 +766,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.105 2002/06/23 17:02:38 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.106 2002/06/23 22:45:27 solar Exp $
