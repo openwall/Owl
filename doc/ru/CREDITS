@@ -29,6 +29,10 @@
 
 	Gremlin from Kremlin <gremlin@owl.openwall.com>
 
+Графика и разработка логотипа:
+
+	Gleb Todosov <gleb@owl.openwall.com>
+
 Проект "Virtual Unix" предоставил начальное финансирование Owl. Многие
 другие компании, организации и люди оказали нам помощь деньгами,
 оборудованием и различными важными для развития проекта услугами. Их
@@ -37,4 +41,4 @@
 
 	http://www.openwall.com/donations/
 
-$Id: Owl/doc/ru/CREDITS,v 1.8 2003/09/11 08:33:11 gremlin Exp $
+$Id: Owl/doc/ru/CREDITS,v 1.9 2003/11/16 07:47:47 gremlin Exp $
