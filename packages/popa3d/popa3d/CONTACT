@@ -1,0 +1,28 @@
+The popa3d homepage is:
+
+http://www.openwall.com/popa3d/
+
+There's a mailing list where you can share your experience with popa3d
+and ask questions.  To subscribe, send an empty message to
+<popa3d-users-subscribe@lists.openwall.com>.  The list archives are
+available on MARC:
+
+http://marc.theaimsgroup.com/?l=popa3d-users
+
+In addition to the popa3d-users list, you have the option to direct
+your comments regarding popa3d to the author privately at <solar at
+openwall.com>.
+
+Commercial support for popa3d is available from Openwall:
+
+http://www.openwall.com/services/
+
+We may help you install popa3d or even help you integrate it into an
+existing mail server and mail user database setup you might have.  The
+latter might be a combination of our free software development and
+consulting services.
+
+-- 
+Solar Designer <solar at openwall.com>
+
+$Id: Owl/packages/popa3d/popa3d/CONTACT,v 1.1 2003/03/10 01:20:34 solar Exp $
