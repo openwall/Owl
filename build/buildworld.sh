@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.1 2000/12/03 21:26:16 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.2 2000/12/10 00:15:52 solar Exp $
 
 REPOSITORY=Owl
 PACKAGES=$REPOSITORY/packages
@@ -155,6 +155,11 @@ function sanity_check()
 
 	check_includes || {
 		log "Unreadable kernel includes"
+		exit 1
+	}
+
+	test -r /usr/include/linux/version.h || {
+		log "No version.h (kernel never configured?)"
 		exit 1
 	}
 }
