@@ -1,39 +1,39 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.7 2001/10/23 13:03:54 mci Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.8 2001/10/23 14:28:29 mci Exp $
 
-Version: 	2.05
-Name: 		bash
-Summary: 	The GNU Bourne Again shell (bash) version %{version}.
-Release: 	1owl
-Group: 		System Environment/Shells
-Copyright: 	GPL
-Source0:	ftp://ftp.gnu.org/gnu/bash/bash-%{version}.tar.gz
-Source1: 	ftp://ftp.gnu.org/gnu/bash/bash-doc-%{version}.tar.gz
-Source2: 	dot-bashrc
-Source3: 	dot-bash_profile
-Source4: 	dot-bash_logout
-Patch0:		bash-2.03-rh-paths.diff
-Patch1:		bash-2.04-rh-bash1_compat.diff
-Patch2:		bash-2.04-rh-shellfunc.diff
-Patch3:		bash-2.05-rh-profile.diff
-Patch4:		bash-2.05-rh-requires.diff
-Patch5:		bash-2.05-rh-security.diff
-Patch6:		bash-2.05-alt-bashbug.diff
-Patch7:		bash-2.05-alt-man.diff
-Patch8:		bash-2.05-alt-nostrcoll.diff
-Patch9:		bash-2.05-deb-64bit.diff
-Patch10:	bash-2.05-deb-gnusource.diff
-Patch11:	bash-2.05-deb-misc.diff
-Patch12:	bash-2.05-deb-printcmd.diff
-Patch13:	bash-2.05-deb-privmode.diff
-Patch14:	bash-2.05-deb-random.diff
-Patch15:	bash-2.05-deb-vxman.diff
-Patch16:	bash-2.05-owl-glibc-build-hack.diff
-Patch17:	bash-2.05-owl-tmp.diff
-Prefix: 	%{_prefix}
-Requires: 	mktemp
-Provides: 	bash2
-Obsoletes:	bash2 etcskel
-BuildRoot: 	/var/rpm-buildroot/%{name}-root
+Version: 2.05
+Name:    bash
+Summary: The GNU Bourne Again shell (bash) version %{version}.
+Release: 1owl
+Group:   System Environment/Shells
+License: GPL
+Source0: ftp://ftp.gnu.org/gnu/bash/bash-%{version}.tar.gz
+Source1: ftp://ftp.gnu.org/gnu/bash/bash-doc-%{version}.tar.gz
+Source2: dot-bashrc
+Source3: dot-bash_profile
+Source4: dot-bash_logout
+Patch0:	 bash-2.03-rh-paths.diff
+Patch1:  bash-2.04-rh-bash1_compat.diff
+Patch2:  bash-2.04-rh-shellfunc.diff
+Patch3:  bash-2.05-rh-profile.diff
+Patch4:  bash-2.05-rh-requires.diff
+Patch5:  bash-2.05-rh-security.diff
+Patch6:  bash-2.05-alt-bashbug.diff
+Patch7:  bash-2.05-alt-man.diff
+Patch8:  bash-2.05-alt-nostrcoll.diff
+Patch9:  bash-2.05-deb-64bit.diff
+Patch10: bash-2.05-deb-gnusource.diff
+Patch11: bash-2.05-deb-misc.diff
+Patch12: bash-2.05-deb-printcmd.diff
+Patch13: bash-2.05-deb-privmode.diff
+Patch14: bash-2.05-deb-random.diff
+Patch15: bash-2.05-deb-vxman.diff
+Patch16: bash-2.05-owl-glibc-build-hack.diff
+Patch17: bash-2.05-owl-tmp.diff
+Prefix:	 %{_prefix}
+Requires: mktemp
+Provides: bash2
+Obsoletes: bash2 etcskel
+BuildRoot: /var/rpm-buildroot/%{name}-%{version}
 
 %description
 The GNU Bourne Again shell (Bash) is a shell or command language
@@ -104,7 +104,7 @@ mv $RPM_BUILD_ROOT%_bindir/%name $RPM_BUILD_ROOT/bin/%name
 ln -s %name $RPM_BUILD_ROOT/bin/sh
 ln -s %name $RPM_BUILD_ROOT/bin/bash2
 
-bzip2 -9 doc/*.ps
+gzip -9nf doc/*.ps
 
 # make manpages for bash builtins as per suggestion in DOC/README
 pushd doc
@@ -172,14 +172,14 @@ fi
 fi) < /etc/shells
 
 %postun
-if [ "$1" = 0 ]; then
-    grep -v '^/bin/bash2$' < /etc/shells | \
-        grep -v '^/bin/bash$' | \
-        grep -v '^/bin/sh$' > /etc/shells.new
-    mv /etc/shells.new /etc/shells
+if [ "$1" -eq 0 -a -x /bin/grep ]; then
+        grep -vE '^/bin/sh$|^/bin/bash$|^/bin/bash2$' \
+                /etc/shells > /etc/shells.bash-un
+        mv /etc/shells.bash-un /etc/shells
+        test -s /etc/shells || rm /etc/shells
 fi
 
-find examples -type f -print0 |xargs -r0 chmod -x
+find examples -type f -print0 | xargs -r0 chmod -x
 
 %files
 %defattr(-,root,root)
@@ -203,7 +203,7 @@ find examples -type f -print0 |xargs -r0 chmod -x
 %changelog
 * Tue Oct 23 2001 Michail Litvak <mci@owl.openwall.com>
 - 2.05
-- Many patches from Debian, Alt-linux
+- Many patches from Debian, ALT Linux
 - some spec rework
 
 * Sat Jan 13 2001 Solar Designer <solar@owl.openwall.com>
