@@ -1,0 +1,53 @@
+Dies sind Instruktionen für alle die einen offiziellen oder
+inoffiziellen Owl Spiegel-Server (mirror) aufsetzen und
+verwalten wollen.
+
+Aktuell brauchen wir offizielle mirrors in Japan und Kanada.
+
+Bevor man einen mirror aufsetzt, sollte man eine E-Mail an
+<mirrors@owl.openwall.com> schicken damit wir eine Kontakt-
+adresse haben, falls technische Probleme oder signifikante
+Änderungen der untenstehenden Voraussetzungen auftreten.
+
+Die bevorzugte Methode für einen Owl mirror vom primären
+feed (ftp.feed.openwall.com) aus ist lftp 2.3.8 zu benutzen,
+vorzugsweise das Owl-Paket. (Spätere Versionen besitzen
+einen bekannten Bug, an dem gearbeitet wird).
+
+Wichtig ist, dass passives FTP benutzt wird. lftp benutzt
+diesen Modus standardmässig, aber andere Programme eventuell
+nicht.
+
+Man sollte nun ein separaten pseudo-user anlegen, der den
+FTP Bereich mit einem cron-job dieser Art updatet:
+
+05 6 * * *      umask 022 && cd /home/ftp && /usr/bin/lftp -c 'o ftp.openwall.com && mirror pub -v --delete --exclude Owl &' &> /dev/null
+15 6 * * *      umask 022 && cd /home/ftp/pub && /usr/bin/lftp -c 'o ftp.feed.openwall.com/pub/ && mirror Owl -v --delete &' &> /dev/null
+
+Die Aktivitäten werden in ~mirror/.lftp/log geloggt. Wir
+empfehlen nächtliche Updates; zumindest sollte es Nacht in
+einer der Zeitzonen (des Empfängers oder Senders) sein.
+
+Als FTP-Server wird vsftpd empfohlen. Nochmals wird auf
+das entsprechende Owl-Paket von vsftpd verwiesen. Normalerweise
+sollte eine Owl-Installation perfekt sein.
+
+Es wird empfohlen die selbe Verzeichnis-Struktur wie die
+ftp*.*.openwall.com Server zu benutzen, um eventuell dann
+einen solchen Namen ebenfalls zu bekommen. Das bedeutet,
+dass eine IP-Adresse speziell für diesen mirror eingerichtet
+werden müsste, falls dieser Server noch anderen Inhalt
+hostet.
+
+Man könnte noch die Organisation, die den mirror hostet, in
+der FTP-Server Grusszeile einfügen, zum Beispiel:
+
+220 ftp.openwall.com - hosted by DataForce ISP - http://www.openwall.com/DF/
+
+Für einen offiziellen mirror ist es erwünscht, dass dieser
+keine anderen, möglicherweise gefährlichen Dienste anbietet.
+(Wenn man Owl installiert und die Dienste nutzt, die Teil
+von Owl sind, ist das in Ordnung). In Ausnahmen kann der
+Server andere Inhalte hosten.
+
+$Id: Owl/doc/de/MIRRORING,v 1.1 2002/12/29 21:01:59 schmidt Exp $
