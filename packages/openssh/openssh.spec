@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.21 2001/05/06 23:56:30 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.21.2.1 2001/06/23 14:04:50 solar Exp $
 
 Summary: OpenSSH free Secure Shell (SSH) implementation
 Name: openssh
 Version: 2.9p1
-Release: 1owl
+Release: 3owl
 URL: http://www.openssh.com/
 Source0: ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-%{version}.tar.gz
 Source1: sshd.pam
@@ -15,6 +15,7 @@ Patch0: openssh-2.9p1-owl-hide-unknown.diff
 Patch1: openssh-2.9p1-owl-always-auth.diff
 Patch2: openssh-2.9p1-owl-pam_userpass.diff
 Patch3: openssh-2.5.1p1-owl-scp-stalltime.diff
+Patch4: openssh-2.9p1-markus-owl-unlink.diff
 Copyright: BSD
 Group: Applications/Internet
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
@@ -88,6 +89,7 @@ clients to connect to your host.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" LIBS="-lcrypt -lpam -lpam_misc" ./configure \
@@ -182,6 +184,15 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Fri Jun 15 2001 Solar Designer <solar@owl.openwall.com>
+- Prevent additional timing leaks with null passwords (when allowed),
+updated patch from Rafal Wojtczuk <nergal@owl.openwall.com>.
+
+* Mon Jun 11 2001 Solar Designer <solar@owl.openwall.com>
+- Switch credentials when cleaning up temporary files and sockets to fix
+the vulnerability reported by zen-parse@gmx.net on Bugtraq; the patch is
+by Markus Friedl with a later OpenSSH CVS change added and two bugs fixed.
+
 * Sun May 06 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 2.9p1.
 - Added sftp.control.
