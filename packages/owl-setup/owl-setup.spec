@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.13 2002/02/07 01:19:23 solar Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.14 2002/03/18 01:24:28 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 0.6
-Release: owl2
+Version: 0.7
+Release: owl1
 License: mostly public domain, passwdlg is under GPL
 Group: System Environment/Base
 Source0: Makefile
@@ -51,14 +51,17 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
+%doc README
 %config /etc/pam.d/setup
 %config /etc/owl-setup.conf
-%dir %attr(755,root,root) /usr/lib/owl-setup
-/usr/lib/owl-setup/*
+/usr/lib/owl-setup
 /usr/sbin/setup
-%doc README
 
 %changelog
+* Mon Mar 18 2002 Solar Designer <solar@owl.openwall.com>
+- Fixed a typo in netcfg introduced with a recent update which prevented
+the line with primary hostname from being actually written to /etc/hosts.
+
 * Thu Feb 07 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions.
 
@@ -69,8 +72,8 @@ rm -rf $RPM_BUILD_ROOT
 - configure network interface and gateway separately
 
 * Sun Sep 30 2001 Michail Litvak <mci@owl.openwall.com>
-- don't check gateway presense for network=yes
-- don't write localhost with non local IP to /etc/hosts
+- don't check gateway presence for network=yes
+- don't write localhost with non-local IP to /etc/hosts
 
 * Wed Jul 25 2001 Michail Litvak <mci@owl.openwall.com>
 - add --cr-wrap option in netcfg to fix broken

@@ -248,7 +248,7 @@ function gen_netcfg
 
     # hosts
     echo -e "127.0.0.1\tlocalhost" > $f_hosts
-    [ -n "$IPADDR" -a -n "$HOSTNAME" -a "$HOSTNAME" != 'localhost'] &&
+    [ -n "$IPADDR" -a -n "$HOSTNAME" -a "$HOSTNAME" != 'localhost' ] &&
 	echo -e "$IPADDR\t$HOSTNAME" >> $f_hosts
     chmod 644 $f_hosts
     mv -f $f_hosts $F_HOSTS
