@@ -1,9 +1,9 @@
-# $Id: Owl/packages/elinks/elinks.spec,v 1.10 2004/02/01 00:12:33 mci Exp $
+# $Id: Owl/packages/elinks/elinks.spec,v 1.11 2004/02/01 05:51:19 solar Exp $
 
 Summary: Lynx-like text WWW browser with many features.
 Name: elinks
 Version: 0.9.1
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/Internet
 URL: http://elinks.or.cz
@@ -13,7 +13,8 @@ Patch1: elinks-0.9.1-owl-config-handling.diff
 Patch2: elinks-0.9.1-owl-tmp.diff
 Patch3: elinks-0.9.1-owl-vitmp.diff
 Patch4: elinks-0.9.1-owl-no-xterm-title.diff
-Patch5: elinks-0.9.1-owl-external-programs.diff
+Patch5: elinks-0.9.1-owl-no-uname-leak.diff
+Patch6: elinks-0.9.1-owl-external-programs.diff
 Patch10: elinks-0.9.1-owl-man.diff
 Requires: gpm, zlib, bzip2, openssl
 Provides: links
@@ -41,6 +42,7 @@ It is in no way associated with Twibright Labs and their Links version.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 %patch10 -p1
 
 %build
@@ -71,6 +73,10 @@ popd
 %_mandir/man?/*
 
 %changelog
+* Sun Feb 01 2004 Solar Designer <solar@owl.openwall.com> 0.9.1-owl3
+- Don't leak kernel version information (uname -srm) via User-Agent by
+default.
+
 * Sun Feb 01 2004 Michail Litvak <mci@owl.openwall.com> 0.9.1-owl2
 - Fix bug in -owl-tmp patch (Thanks to Alexey Tourbin for report).
 
