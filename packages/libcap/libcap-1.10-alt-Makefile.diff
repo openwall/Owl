@@ -1,0 +1,20 @@
+--- libcap-1.10/libcap/Makefile.orig	2003-11-06 20:54:27 +0300
++++ libcap-1.10/libcap/Makefile	2003-11-06 21:30:15 +0300
+@@ -32,7 +32,7 @@
+ LIBNAME=libcap.so
+ #
+ 
+-FILES=cap_alloc cap_proc cap_extint cap_flag cap_text cap_sys
++FILES=cap_alloc cap_proc cap_extint cap_flag cap_text
+ 
+ # for later when there is filesystem support for cap's:
+ #FILES += cap_file 
+@@ -61,7 +61,7 @@
+ 	ln -sf $(MAJLIBNAME) $(LIBNAME)
+ 
+ %.o: %.c $(INCLS)
+-	$(CC) $(CFLAGS) -c $< -o $@
++	$(CC) $(CFLAGS) -fPIC -c $< -o $@
+ 
+ install: all
+ 	mkdir -p -m 0755 $(INCDIR)/sys

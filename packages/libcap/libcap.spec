@@ -1,9 +1,9 @@
-# $Id: Owl/packages/libcap/libcap.spec,v 1.4 2003/10/30 09:00:25 solar Exp $
+# $Id: Owl/packages/libcap/libcap.spec,v 1.5 2003/11/10 00:00:19 solar Exp $
 
 Summary: Library for getting and setting POSIX.1e capabilities.
 Name: libcap
 Version: 1.10
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Libraries
 URL: http://www.kernel.org/pub/linux/libs/security/linux-privs/
@@ -14,6 +14,7 @@ Patch1: libcap-1.10-alt-bound.diff
 Patch2: libcap-1.10-alt-userland.diff
 Patch3: libcap-1.10-alt-warnings.diff
 Patch4: libcap-1.10-rh-alt-makenames.diff
+Patch5: libcap-1.10-alt-Makefile.diff
 BuildRoot: /override/%name-%version
 
 %description
@@ -46,6 +47,7 @@ capabilities.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 install -p -m 644 $RPM_SOURCE_DIR/capfaq-0.2.txt .
 
 %{expand:%%define optflags %optflags -Wall}
@@ -78,6 +80,10 @@ make install FAKEROOT=$RPM_BUILD_ROOT
 %_mandir/man3/*
 
 %changelog
+* Thu Nov 06 2003 Dmitry V. Levin <ldv@owl.openwall.com> 1.10-owl2
+- Do not override capget and capset symbols defined in glibc.
+- Build the shared library with -fPIC.
+
 * Sun Oct 26 2003 Solar Designer <solar@owl.openwall.com> 1.10-owl1
 - Re-worked the spec file to make it suitable for inclusion in Owl.
 
