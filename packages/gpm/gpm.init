@@ -1,12 +1,12 @@
 #!/bin/sh
-# $Id: Owl/packages/gpm/gpm.init,v 1.4 2001/01/05 18:04:15 kad Exp $
+# $Id: Owl/packages/gpm/gpm.init,v 1.5 2001/01/06 07:03:46 solar Exp $
 #
 # chkconfig: 2345 85 15
 # description: \
-#       GPM adds mouse support to text-based Linux applications such \
-#       the Midnight Commander. Is also allows mouse-based console \
-#       cut-and-paste operations, and includes support for pop-up \
-#       menus on the console.
+#	GPM adds mouse support to text-based Linux applications such \
+#	the Midnight Commander. Is also allows mouse-based console \
+#	cut-and-paste operations, and includes support for pop-up \
+#	menus on the console.
 #
 # processname: gpm
 # pidfile: /var/run/gpm.pid
@@ -26,7 +26,7 @@ start)
 	else
 		MOUSETYPE="none"
 	fi
-    
+
 	if [ "$MOUSETYPE" = "none" ]; then
 		echo "Not starting gpm (no mouse is configured)"
 		exit 0
@@ -38,11 +38,11 @@ start)
 
 	if [ -n "$MOUSETYPE" ]; then
 		GPM_ARG="-t $MOUSETYPE"
-	else 
+	else
 		GPM_ARG=""
 	fi
 
-        if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
+	if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
 		daemon --pidfile /var/run/gpm.pid --expect-user root \
 			gpm -- "$GPM_ARG"
 	else
@@ -50,18 +50,18 @@ start)
 	fi
 	;;
 stop)
-        if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
-        	killproc --pidfile /var/run/gpm.pid --expect-user root gpm        
-        else
-        	killproc gpm
-        fi
+	if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
+		killproc --pidfile /var/run/gpm.pid --expect-user root gpm
+	else
+		killproc gpm
+	fi
 	;;
 restart|reload)
-        $0 stop
+	$0 stop
 	$0 start
 	;;
 status)
-        status --pidfile /var/run/gpm.pid --expect-user root gpm
+	status --pidfile /var/run/gpm.pid --expect-user root gpm
 	;;
 *)
 	echo "Usage: gpm {start|stop|restart|status}"
@@ -69,4 +69,3 @@ status)
 esac
 
 exit $?
-
