@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.33 2005/03/14 04:56:53 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.34 2005/03/14 05:04:16 solar Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
@@ -22,6 +22,7 @@ Patch8: vixie-cron-4.1.20040916-alt-children.diff
 PreReq: owl-control >= 0.4, owl-control < 2.0
 PreReq: /sbin/chkconfig, grep, shadow-utils
 Provides: at
+Obsoletes: at
 BuildRoot: /override/%name-%version
 
 %description
@@ -48,8 +49,10 @@ done
 
 %install
 rm -rf %buildroot
+
 mkdir -p -m 700 %buildroot/var/spool/{cron,at}
 mkdir -p -m 755 %buildroot/etc/cron.d
+
 for dir in usr.sbin/cron usr.bin/crontab usr.bin/at; do
 	%makeinstall -C $dir .CURDIR=. DESTDIR=%buildroot
 done
