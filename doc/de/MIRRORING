@@ -21,7 +21,7 @@ nicht.
 Man sollte nun ein separaten pseudo-user anlegen, der den
 FTP Bereich mit einem cron-job dieser Art updatet:
 
-05 6 * * *      umask 022 && cd /home/ftp && /usr/bin/lftp -c 'o ftp.openwall.com && mirror pub -v --delete --exclude Owl &' &> /dev/null
+05 6 * * *     umask 022 && cd /home/ftp && /usr/bin/lftp -c 'o ftp.openwall.com && mirror pub -v --delete --exclude Owl --include presentations/Owl &' &> /dev/null
 15 6 * * *      umask 022 && cd /home/ftp/pub && /usr/bin/lftp -c 'o ftp.feed.openwall.com/pub/ && mirror Owl -v --delete &' &> /dev/null
 
 Die Aktivitäten werden in ~mirror/.lftp/log geloggt. Wir
@@ -50,4 +50,4 @@ keine anderen, möglicherweise gefährlichen Dienste anbietet.
 von Owl sind, ist das in Ordnung). In Ausnahmen kann der
 Server andere Inhalte hosten.
 
-$Id: Owl/doc/de/MIRRORING,v 1.1 2002/12/29 21:01:59 schmidt Exp $
+$Id: Owl/doc/de/MIRRORING,v 1.2 2003/01/26 21:44:19 schmidt Exp $

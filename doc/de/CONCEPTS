@@ -20,8 +20,7 @@ Software-Pakete von anderen grossen Linux Distributionen, wie zum
 Beispiel Red Hat Linux.
 
 Zusätzlich beinhaltet Owl eine wachsende Zahl von Internet Diensten
-für Server-Plattformen. Bisher sind erst einige mit dem prerelease
-verfügbar, aber dies ist einer der primären Bereiche an dem wir arbeiten.
+für Server-Plattformen.
 
 Mit Owl ist es möglich das komplette System aus den Quellen neu
 zu kompilieren. Und das ganze mit einem einzigen Befehl
@@ -127,4 +126,4 @@ Fällen ist es möglich eine Applikation, die für eine aktuelle Red
 Hat Version erstellt worden ist, zu installieren (Momentan gilt dies
 für Red Hat 6.x).
 
-$Id: Owl/doc/de/CONCEPTS,v 1.4 2002/07/13 08:53:22 schmidt Exp $
+$Id: Owl/doc/de/CONCEPTS,v 1.5 2003/01/26 21:44:19 schmidt Exp $
