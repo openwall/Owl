@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.13 2001/03/19 02:19:24 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.14 2001/04/01 15:12:45 solar Exp $
 
 Summary: Simple PAM-based Applications
 Name: SimplePAMApps
 Version: 0.60
-Release: 10owl
+Release: 11owl
 Copyright: BSD or GNU GPL
 Group: Utilities/System
 Source0: SimplePAMApps-0.60.tar.gz
@@ -87,6 +87,11 @@ rm -rf $RPM_BUILD_ROOT
 %doc README CHANGELOG* NOTES.su Discussions
 
 %changelog
+* Sun Apr 01 2001 Solar Designer <solar@owl.openwall.com>
+- Use pam_limits with login and su.
+- passwd: line-buffer stdout.
+- passwd: don't require an utmp entry even when run on a tty.
+
 * Mon Mar 19 2001 Solar Designer <solar@owl.openwall.com>
 - passwd: don't require a tty.
 - passwd.pam and su.pam: "nodelay" for pam_pwdb.

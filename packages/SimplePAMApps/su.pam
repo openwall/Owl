@@ -1,9 +1,10 @@
 #%PAM-1.0
-# $Id: Owl/packages/SimplePAMApps/su.pam,v 1.5 2001/03/19 02:46:13 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/su.pam,v 1.6 2001/04/01 15:12:45 solar Exp $
 auth       sufficient	/lib/security/pam_rootok.so
 #auth       required	/lib/security/pam_wheel.so use_uid group=wheel
 auth       required	/lib/security/pam_pwdb.so shadow nullok nodelay
 account    required	/lib/security/pam_pwdb.so
 password   required	/lib/security/pam_deny.so
 session    required	/lib/security/pam_pwdb.so
+session    required	/lib/security/pam_limits.so
 session    required	/lib/security/pam_mktemp.so

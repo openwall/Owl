@@ -1,7 +1,7 @@
 diff -ur SimplePAMApps-0.60.orig/pamapps/passwd/passwd.c SimplePAMApps-0.60/pamapps/passwd/passwd.c
 --- SimplePAMApps-0.60.orig/pamapps/passwd/passwd.c	Thu Feb 18 15:29:43 1999
-+++ SimplePAMApps-0.60/pamapps/passwd/passwd.c	Mon Mar 19 05:00:25 2001
-@@ -81,27 +81,23 @@
++++ SimplePAMApps-0.60/pamapps/passwd/passwd.c	Sun Apr  1 19:03:58 2001
+@@ -81,31 +81,27 @@
      }
  
      if (user == NULL) {
@@ -20,22 +20,28 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/passwd/passwd.c SimplePAMApps-0.60/pama
 -	    || (pwent = getpwuid(getuid())) == NULL
 -	    || !(pwent->pw_name
 -		 && !strncmp(pwent->pw_name, user, strlen(user)))) {
-+	if ((user = getlogin()))
++	if ((user = getlogin())) {
 +	    pwent = getpwnam(user);
-+	else
++	    if (!pwent || pwent->pw_uid != getuid())
++		pwent = getpwuid(getuid());
++	} else
 +	    pwent = getpwuid(getuid());
 +
-+	if ((!user && isatty(0))
-+	    || !pwent
-+	    || !pwent->pw_name
-+	    || pwent->pw_uid != getuid()
-+	    || (user && strcmp(pwent->pw_name, user) != 0)) {
++	if (!pwent || !pwent->pw_name) {
  	    fprintf(stderr, "passwd: cannot retrieve user's name\n");
  	    exit(1);
- 	} else {
- 	    user = pwent->pw_name;
+-	} else {
+-	    user = pwent->pw_name;
  	}
 -#endif /* HAVE_PWDB */
++
++	user = pwent->pw_name;
      }
  
      /* here we know whose passwords are to be changed and whether
+        we'll change everything or just the expired ones */
++
++    setlinebuf(stdout);
+ 
+     D(("service=%s, user=%s\n", service, user));
+     retval = pam_start(service, user, &conv, &pamh);
