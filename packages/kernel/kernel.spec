@@ -1,9 +1,8 @@
-# $Id: Owl/packages/kernel/kernel.spec,v 1.11 2003/07/31 15:28:37 solar Exp $
+# $Id: Owl/packages/kernel/kernel.spec,v 1.12 2003/07/31 15:43:48 solar Exp $
 
 Summary: Fake Linux kernel package for Red Hat Linux compatibility.
 Name: kernel
-# 2.2.999fake or 2.4.999fake
-Version: %(sed -n 's,^#define UTS_RELEASE "\(2\.[2-9]\)\..*$,\1.999fake,p' < /usr/include/linux/version.h)
+Version: %(sed -n 's,^#define UTS_RELEASE "\(2\.[2-9]\.[0-9]\+\).*$,\1fake,p' < /usr/include/linux/version.h)
 Release: owl3
 License: public domain
 Group: System Environment/Base
