@@ -1,4 +1,4 @@
-# $Id: Owl/packages/db4/db4.spec,v 1.7 2005/01/16 18:04:17 galaxy Exp $
+# $Id: Owl/packages/db4/db4.spec,v 1.8 2005/01/18 13:34:37 solar Exp $
 
 %define __soversion	4.0
 %define _libdb_a	libdb-%__soversion.a
@@ -66,9 +66,10 @@ popd
 %patch2 -p1
 %patch3 -p1
 
+%{expand:%%define optflags_lib %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
+
 %build
 
-%{expand:%%define optflags_lib %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 # Static link with old db-185 libraries.
 %__make -C db.1.85/PORT/%_os CC="%__cc" OORG="%optflags_lib"
 /bin/sh libtool --mode=compile %__cc $RPM_OPT_FLAGS \
@@ -81,7 +82,7 @@ pushd dist
 
 CC="%__cc"
 CXX="%__cc"
-# XXX: (GM): This is an workaround to link libgcc statically
+# XXX: (GM): This is a workaround to link libgcc statically
 LIBXSO_LIBS="-Xcompiler -static-libgcc"
 export CC CXX LIBXSO_LIBS
 %configure \
