@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libutempter/libutempter.spec,v 1.2 2003/02/24 22:48:22 mci Exp $
+# $Id: Owl/packages/libutempter/libutempter.spec,v 1.3 2003/02/24 23:08:33 mci Exp $
 
 Summary: A privileged helper for utmp/wtmp updates.
 Name: libutempter
@@ -68,8 +68,6 @@ grep -q ^utempter: /etc/group || groupadd -g 162 utempter
 - Updated to 1.1.1
   * Fri Feb 14 2003 Dmitry V. Levin <ldv@altlinux.org> 1.1.1-alt1
   - iface.c: don't block SIGCHLD; redefine signal handler instead.
-
-- iface.c: don't block SIGCHLD; redefine signal handler instead.
 
 * Tue Jan 14 2003 Dmitry V. Levin <ldv@altlinux.org> 1.1.0-owl1
 - Migrated to libutempter-1.1.0
