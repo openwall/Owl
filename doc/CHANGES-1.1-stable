@@ -5,6 +5,12 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 1.1 and Owl 1.1-stable.
 
+(2004/01/17)
+2004/01/17	Package: procps
+In top, handle ticks going backwards gracefully.  This may happen due
+to kernel and hardware issues and previously resulted in top reporting
+absurd idle processor time percentages under high load on SMP systems.
+
 (2004/01/15 - 2004/01/17)
 2004/01/17	Package: readline
 Corrected a packaging error where the readline library usage examples
@@ -18,4 +24,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 2004/01/15	Owl/doc/DOWNLOAD, Owl/doc/*/DOWNLOAD, Owl/doc/fr/CREDITS
 Sync'ed with the minor post-release updates made in Owl-current.
 
-$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.2 2004/01/17 16:48:33 solar Exp $
+$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.3 2004/01/17 17:59:10 solar Exp $
