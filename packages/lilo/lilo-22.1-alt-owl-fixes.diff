@@ -15,7 +15,7 @@
 +extern const char *__progname;
  
 -/*volatile*/ void die(char *fmt,...)
-+/*volatile*/ void die(const char *fmt, ...) __attribute__ ((format (printf, 1, 2)))
++/*volatile*/ void die(const char *fmt, ...)
  {
 -    va_list ap;
 +    va_list args;
