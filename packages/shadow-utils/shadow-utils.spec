@@ -1,9 +1,9 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.21 2002/10/21 15:23:29 nergal Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.22 2002/10/24 05:02:53 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.0
-Release: owl5
+Release: owl6
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -183,8 +183,14 @@ grep -q ^auth: /etc/group || groupadd -g 164 auth
 /etc/control.d/facilities/*
 
 %changelog
+* Thu Oct 24 2002 Solar Designer <solar@owl.openwall.com>
+- Cleaned up the recent changes.
+- Corrected a newly introduced memory leak on an error path.
+- Changed the TCB_SYMLINKS pseudo-code in login.defs(5) manual page to
+be C/English rather than shell for consistency with the pam_tcb(8) page.
+
 * Mon Aug 19 2002 Rafal Wojtczuk <nergal@owl.openwall.com>
-- Merged the enhancements which remove 32K users limit
+- Merged the enhancements which remove 32K users limit.
 
 * Sun Jul 21 2002 Solar Designer <solar@owl.openwall.com>
 - Made "chage -l" drop its saved GID too.
