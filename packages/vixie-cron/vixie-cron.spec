@@ -1,9 +1,9 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.11 2001/11/05 09:39:18 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.12 2002/02/03 00:18:04 solar Exp $
 
-Summary: Daemon to execute scheduled commands (Vixie Cron)
+Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
 Version: 3.0.2.7
-Release: 11owl
+Release: owl11
 License: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%{version}.tar.gz
@@ -34,17 +34,18 @@ make -C usr.sbin/cron CFLAGS="-c -I. -I../../include $RPM_OPT_FLAGS" \
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/usr/{bin,man/man{1,5,8},sbin}
+mkdir -p $RPM_BUILD_ROOT/usr/{bin,sbin}
+mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man{1,5,8}
 mkdir -p -m 700 $RPM_BUILD_ROOT/var/spool/cron
 mkdir -p -m 755 $RPM_BUILD_ROOT/etc/cron.d
 
-install -m 700 usr.sbin/cron/crontab $RPM_BUILD_ROOT/usr/bin
-install -m 700 usr.sbin/cron/crond $RPM_BUILD_ROOT/usr/sbin
+install -m 700 usr.sbin/cron/crontab $RPM_BUILD_ROOT/usr/bin/
+install -m 700 usr.sbin/cron/crond $RPM_BUILD_ROOT/usr/sbin/
 
-install -m 644 usr.sbin/cron/crontab.1 $RPM_BUILD_ROOT/usr/man/man1
-install -m 644 usr.sbin/cron/crontab.5 $RPM_BUILD_ROOT/usr/man/man5
-install -m 644 usr.sbin/cron/cron.8 $RPM_BUILD_ROOT/usr/man/man8
-ln -s cron.8 $RPM_BUILD_ROOT/usr/man/man8/crond.8
+install -m 644 usr.sbin/cron/crontab.1 ${RPM_BUILD_ROOT}%{_mandir}/man1/
+install -m 644 usr.sbin/cron/crontab.5 ${RPM_BUILD_ROOT}%{_mandir}/man5/
+install -m 644 usr.sbin/cron/cron.8 ${RPM_BUILD_ROOT}%{_mandir}/man8/
+ln -s cron.8 ${RPM_BUILD_ROOT}%{_mandir}/man8/crond.8
 
 install -m 700 -D $RPM_SOURCE_DIR/vixie-cron.init \
 	$RPM_BUILD_ROOT/etc/rc.d/init.d/crond
@@ -89,22 +90,23 @@ fi
 %defattr(-,root,root)
 /usr/sbin/crond
 %attr(2711,root,crontab) /usr/bin/crontab
-/usr/man/man8/crond.*
-/usr/man/man8/cron.*
-/usr/man/man5/crontab.*
-/usr/man/man1/crontab.*
+%{_mandir}/man*/*
 %dir %attr(1730,root,crontab) /var/spool/cron
-%dir /etc/cron.d 
+%dir /etc/cron.d
 %config /etc/rc.d/init.d/crond
 /etc/control.d/facilities/crontab
 
 %changelog
+* Sat Feb 02 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+- Use the _mandir macro.
+
 * Mon Nov 05 2001 Solar Designer <solar@owl.openwall.com>
 - Use a trigger to re-create the rc*.d symlinks when upgrading from
 old versions of the package.
 
 * Wed Jul 18 2001 Michail Litvak <mci@owl.openwall.com>
-- rework spooldirs handling to exclude files with 
+- rework spooldirs handling to exclude files with
   filenames containing a dot '.' or ending with '~'
 - spec changes: remove packaging /etc/rc.d/rc*.d/*
   (this is a chkconfig work)

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.2 2001/12/16 04:36:17 solar Exp $
+# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.3 2002/02/03 00:18:04 solar Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
 Version: 1.0.1
-Release: 1owl
+Release: owl1
 License: GPL
 Group: System Environment/Daemons
 Source0: ftp://ferret.lmh.ox.ac.uk/pub/linux/%{name}-%{version}.tar.gz
@@ -76,6 +76,9 @@ chmod 600 /etc/ftpusers
 mkdir -m 755 /home/ftp &> /dev/null || :
 
 %changelog
+* Sat Feb 02 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Sun Dec 16 2001 Solar Designer <solar@owl.openwall.com>
 - Adjusted the default tunable settings, based some on those from ALT Linux.
 - Patched in pam_userpass support.
