@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libcap/libcap.spec,v 1.1 2003/10/26 10:32:55 solar Exp $
+# $Id: Owl/packages/libcap/libcap.spec,v 1.2 2003/10/26 10:35:54 solar Exp $
 
 Summary: Library for getting and setting POSIX.1e capabilities.
 Name: libcap
@@ -23,6 +23,7 @@ draft 15 capabilities.
 %package utils
 Summary: Utilities for getting and setting POSIX.1e capabilities.
 Group: System Environment/Base
+Requires: %name = %version-%release
 
 %description utils
 This packages contains utilities for getting and setting POSIX.1e
@@ -31,6 +32,7 @@ This packages contains utilities for getting and setting POSIX.1e
 %package devel
 Summary: The development library, header files, and documentation for libcap.
 Group: Development/Libraries
+Requires: %name = %version-%release
 
 %description devel
 The development library, header files, and documentation for building
