@@ -1,6 +1,6 @@
 diff -ur SimplePAMApps-0.60.orig/pamapps/lib/wtmp-gate.c SimplePAMApps-0.60/pamapps/lib/wtmp-gate.c
 --- SimplePAMApps-0.60.orig/pamapps/lib/wtmp-gate.c	Wed Nov 25 15:33:32 1998
-+++ SimplePAMApps-0.60/pamapps/lib/wtmp-gate.c	Sat Nov  4 05:57:34 2000
++++ SimplePAMApps-0.60/pamapps/lib/wtmp-gate.c	Mon Nov 19 06:54:45 2001
 @@ -35,6 +35,7 @@
          *err_descr = pam_strerror(pamh, retval);
          return -1;
@@ -19,7 +19,19 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/lib/wtmp-gate.c SimplePAMApps-0.60/pama
          utmp_do_close_session(terminal, callname, err_descr);
 diff -ur SimplePAMApps-0.60.orig/pamapps/su/su.c SimplePAMApps-0.60/pamapps/su/su.c
 --- SimplePAMApps-0.60.orig/pamapps/su/su.c	Thu Feb 18 15:29:50 1999
-+++ SimplePAMApps-0.60/pamapps/su/su.c	Mon Oct 30 01:30:02 2000
++++ SimplePAMApps-0.60/pamapps/su/su.c	Mon Nov 19 06:56:35 2001
+@@ -18,9 +18,10 @@
+ #define DEFAULT_SHELL             "/bin/sh"
+ #define SLEEP_TO_KILL_CHILDREN    3  /* seconds to wait after SIGTERM before
+ 					SIGKILL */
+-#define SU_FAIL_DELAY     2000000    /* usec on authentication failure */
++#define SU_FAIL_DELAY             0  /* usec on authentication failure */
+ 
+ #include <stdlib.h>
++#include <stdarg.h>
+ #include <signal.h>
+ #include <stdio.h>
+ #include <sys/stat.h>
 @@ -380,7 +381,7 @@
  	if (terminal) {
  	    retval = pam_set_item(pamh, PAM_TTY, (const void *)terminal);
@@ -38,3 +50,12 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/su/su.c SimplePAMApps-0.60/pamapps/su/s
  	}
  	ruser = NULL;
      }
+@@ -403,7 +402,7 @@
+ 	exit_now(1, "su: problem establishing environment\n");
+     }
+ 
+-#ifdef HAVE_PAM_FAIL_DELAY
++#if defined(HAVE_PAM_FAIL_DELAY) && SU_FAIL_DELAY
+     /* have to pause on failure. At least this long (doubles..) */
+     retval = pam_fail_delay(pamh, SU_FAIL_DELAY);
+     if (retval != PAM_SUCCESS) {

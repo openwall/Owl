@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.15 2001/11/16 03:09:22 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.16 2001/11/19 04:39:36 solar Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
 Version: 0.60
-Release: 12owl
+Release: 13owl
 License: BSD or GPL
 Group: Utilities/System
 URL: http://www.kernel.org/pub/linux/libs/pam/
@@ -13,12 +13,11 @@ Source2: su.pam
 Source3: passwd.pam
 Source4: su.control
 Source5: passwd.control
-Patch0: SimplePAMApps-0.60-owl-passwd-strerror.diff
-Patch1: SimplePAMApps-0.60-owl-login.diff
-Patch2: SimplePAMApps-0.60-owl-su-no-tty.diff
-Patch3: SimplePAMApps-0.60-owl-stdarg.diff
-Patch4: SimplePAMApps-0.60-owl-passwd-no-tty.diff
-Requires: pam, tcb, pam_passwdqc >= 0.2, pam_mktemp, owl-control < 2.0
+Patch0: SimplePAMApps-0.60-owl-login.diff
+Patch1: SimplePAMApps-0.60-owl-passwd.diff
+Patch2: SimplePAMApps-0.60-owl-su.diff
+Requires: pam >= 0.75-14owl, tcb, pam_passwdqc >= 0.2, pam_mktemp
+Requires: owl-control < 2.0
 Obsoletes: passwd
 BuildRoot: /override/%{name}-%{version}
 
@@ -31,12 +30,10 @@ includes "login", "su", and "passwd".
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%patch4 -p1
 
 %build
 touch conf/.ignore_age
-CFLAGS="$RPM_OPT_FLAGS -Wall" ./configure
+CFLAGS="$RPM_OPT_FLAGS -Wall" ./configure --without-pniam --without-pwdb
 make
 
 %install
@@ -51,13 +48,15 @@ install -m 0644 pamapps/{login/login.1,su/su.1,passwd/passwd.1} \
 	$RPM_BUILD_ROOT/usr/man/man1/
 
 mkdir -p $RPM_BUILD_ROOT/etc/pam.d
-install -m 600 %{SOURCE1} $RPM_BUILD_ROOT/etc/pam.d/login
-install -m 600 %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/su
-install -m 600 %{SOURCE3} $RPM_BUILD_ROOT/etc/pam.d/passwd
+install -m 600 $RPM_SOURCE_DIR/login.pam $RPM_BUILD_ROOT/etc/pam.d/login
+install -m 600 $RPM_SOURCE_DIR/su.pam $RPM_BUILD_ROOT/etc/pam.d/su
+install -m 600 $RPM_SOURCE_DIR/passwd.pam $RPM_BUILD_ROOT/etc/pam.d/passwd
 
 mkdir -p $RPM_BUILD_ROOT/etc/control.d/facilities
-install -m 700 %{SOURCE4} $RPM_BUILD_ROOT/etc/control.d/facilities/su
-install -m 700 %{SOURCE5} $RPM_BUILD_ROOT/etc/control.d/facilities/passwd
+install -m 700 $RPM_SOURCE_DIR/su.control \
+	$RPM_BUILD_ROOT/etc/control.d/facilities/su
+install -m 700 $RPM_SOURCE_DIR/passwd.control \
+	$RPM_BUILD_ROOT/etc/control.d/facilities/passwd
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -78,6 +77,15 @@ rm -rf $RPM_BUILD_ROOT
 /etc/control.d/facilities/passwd
 
 %changelog
+* Mon Nov 19 2001 Solar Designer <solar@owl.openwall.com>
+- Use (the recently patched version of) pam_lastlog with login.
+- login: treat all PAM errors except PAM_NEW_AUTHTOK_REQD in the same way to
+reduce information leaks.
+- login: only chdir to the user's home directory after becoming the user.
+- su: don't set a fail delay (it made very little sense and may be enabled
+from within a PAM module anyway).
+- Re-arranged the patches such that we now have one patch file per program.
+
 * Fri Nov 16 2001 Solar Designer <solar@owl.openwall.com>
 - Use pam_tcb.
 - Dropped outdated documentation.

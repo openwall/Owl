@@ -1,7 +1,7 @@
 diff -ur SimplePAMApps-0.60.orig/pamapps/passwd/passwd.c SimplePAMApps-0.60/pamapps/passwd/passwd.c
 --- SimplePAMApps-0.60.orig/pamapps/passwd/passwd.c	Thu Feb 18 15:29:43 1999
-+++ SimplePAMApps-0.60/pamapps/passwd/passwd.c	Sun Apr  1 19:03:58 2001
-@@ -81,31 +81,27 @@
++++ SimplePAMApps-0.60/pamapps/passwd/passwd.c	Mon Nov 19 06:52:18 2001
+@@ -81,32 +81,28 @@
      }
  
      if (user == NULL) {
@@ -15,11 +15,12 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/passwd/passwd.c SimplePAMApps-0.60/pama
 -#ifndef HAVE_PWDB
 -	/* attempt to patch over libc's inability to handle longer that
 -	   fixed length login names from the utmp file */
- 
+-
 -	if ((pwent = getpwnam(user)) == NULL
 -	    || (pwent = getpwuid(getuid())) == NULL
 -	    || !(pwent->pw_name
 -		 && !strncmp(pwent->pw_name, user, strlen(user)))) {
++
 +	if ((user = getlogin())) {
 +	    pwent = getpwnam(user);
 +	    if (!pwent || pwent->pw_uid != getuid())
@@ -40,8 +41,26 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/passwd/passwd.c SimplePAMApps-0.60/pama
  
      /* here we know whose passwords are to be changed and whether
         we'll change everything or just the expired ones */
-+
-+    setlinebuf(stdout);
  
++    setlinebuf(stdout);
++
      D(("service=%s, user=%s\n", service, user));
      retval = pam_start(service, user, &conv, &pamh);
+     user = NULL;                         /* can no longer rely on this */
+@@ -145,13 +141,13 @@
+ 	exit(0);
+     }
+ 
++    if (retval != PAM_SUCCESS)
++	fprintf(stderr, "passwd: %s\n", pam_strerror(pamh, retval));
++
+     if (pamh != NULL) {
+ 	(void) pam_end(pamh,PAM_SUCCESS);
+ 	pamh = NULL;
+     }
+-
+-    if (retval != PAM_SUCCESS)
+-	fprintf(stderr, "passwd: %s\n", pam_strerror(pamh, retval));
+ 
+     exit(1);
+ }
