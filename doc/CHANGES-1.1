@@ -23,17 +23,8 @@ vulnerability could allow a malicious HTTP server to execute arbitrary
 code on the client system.  Additionally, a patch by Nalin Dahyabhai
 of Red Hat needed to handle malformed HTTP server responses gracefully
 has been added.
-References:
+Reference:
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0963
-Additionally, CVS server has been further restricted to disallow the
-use of relative pathnames to view files outside of the CVS repository.
-However, despite this last fix, it should not be assumed that CVS
-server provides any security against a malicious client being able to
-access arbitrary files available under the privileges granted to the
-CVS server at the OS level.
-References:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0180
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0405
 
 2003/12/08	Package: glibc
 Sanity check the forward and backward chunk pointers in the unlink()
@@ -532,4 +523,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.99.2.2 2004/05/10 18:48:07 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.99.2.3 2004/05/10 18:53:33 solar Exp $
