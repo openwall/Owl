@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/installworld.sh,v 1.8 2002/03/13 04:51:09 solar Exp $
+# $Id: Owl/build/installworld.sh,v 1.9 2002/03/13 16:25:05 solar Exp $
 
 . installworld.conf
 
@@ -52,13 +52,16 @@ export TMP=$HOME/tmp-work
 cd $RPMS || exit 1
 
 RPM=rpm
+RPM_FLAGS=
 FILE="`ls rpm-[0-9]*-*.*.rpm 2>/dev/null | tail -1`"
 if [ -n "$FILE" ]; then
 	cd $TMPDIR || exit 1
 	log "Extracting the RPM binary"
-	rpm2cpio $RPMS/$FILE |
-		cpio -id --no-preserve-owner --quiet bin/rpm &&
+	if rpm2cpio $RPMS/$FILE | cpio -id --no-preserve-owner --quiet \
+	    bin/rpm usr/lib/rpm/rpmrc; then
 		RPM=$TMPDIR/bin/rpm
+		RPM_FLAGS="--rcfile $TMPDIR/usr/lib/rpm/rpmrc:$HOME/.rpmrc"
+	fi
 	cd $RPMS || exit 1
 else
 	log "Missing RPM package, will try to use this system's RPM binary"
@@ -68,7 +71,7 @@ if [ ! -d $ROOT/var/lib/rpm ]; then
 	log "Initializing RPM database"
 	umask 022
 	mkdir -p $ROOT/var/lib/rpm
-	$RPM --root $ROOT --define "home $HOME" --initdb || exit 1
+	$RPM $RPM_FLAGS --root $ROOT --define "home $HOME" --initdb || exit 1
 	umask $UMASK
 fi
 
@@ -87,7 +90,8 @@ while read PACKAGES; do
 	done
 	test -n "$FILES" || continue
 	log "Installing $PACKAGES ($FILES)"
-	$RPM --root $ROOT --define "home $HOME" $FLAGS $FILES && continue
+	$RPM $RPM_FLAGS --root $ROOT --define "home $HOME" $FLAGS $FILES && \
+		continue
 	STATUS=1
 	log "Failed $PACKAGES"
 done
