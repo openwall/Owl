@@ -1,4 +1,4 @@
-# $Id: Owl/packages/modutils/modutils.spec,v 1.13 2002/06/12 14:23:40 mci Exp $
+# $Id: Owl/packages/modutils/modutils.spec,v 1.14 2002/06/12 20:39:29 solar Exp $
 
 Summary: Kernel module utilities.
 Name: modutils
@@ -6,7 +6,7 @@ Version: 2.4.16
 Release: owl1
 License: GPL
 Group: System Environment/Kernel
-Source: ftp://ftp.kernel.org/pub/linux/utils/kernel/modutils/v2.4/modutils-%{version}.tar.gz
+Source: ftp://ftp.kernel.org/pub/linux/utils/kernel/modutils/v2.4/modutils-%{version}.tar.bz2
 Patch0: modutils-2.4.16-alt-GPL.diff
 Patch1: modutils-2.4.16-alt-modprobe-bL.diff
 Patch2: modutils-2.4.16-alt-owl-aliases.diff
