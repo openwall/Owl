@@ -1,4 +1,4 @@
-# $Id: Owl/packages/quota/quota.spec,v 1.1 2001/06/24 22:09:03 mci Exp $
+# $Id: Owl/packages/quota/quota.spec,v 1.2 2001/06/25 07:36:29 mci Exp $
 
 Name: quota
 Summary: System administration tools for monitoring users' disk usage.
@@ -6,11 +6,10 @@ Version: 2.00
 Release: 1owl
 Copyright: BSD
 Source0: ftp://ftp.cistron.nl/pub/people/mvw/quota/%{name}-2.00.tar.gz
-Source1: quota.init
 Group: System Environment/Base
 Patch0: quota-2.00-pld-man.diff
 BuildRoot: /var/rpm-buildroot/%{name}-root
-BuildPreReq: e2fsprogs-devel
+#BuildPreReq: e2fsprogs-devel
 
 %description
 The quota package contains system administration tools for monitoring
@@ -21,14 +20,11 @@ usage.
 
 %prep
 %setup -q
-
 %patch0 -p1
 
-%configure
-
 %build
-
-%make
+%configure
+make
 
 %install
 rm -rf ${RPM_BUILD_ROOT}
@@ -40,18 +36,11 @@ mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man{1,2,3,8}
 
 %makeinstall root_sbindir=${RPM_BUILD_ROOT}/sbin DEF_BIN_MODE=0555 
 
-install -m 755 -D %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/quota
-
-#pushd ${RPM_BUILD_ROOT}
-#ln -s rquotad.8 ./usr/man/man8/rpc.rquotad.8
-#popd
-
 %clean
 rm -rf ${RPM_BUILD_ROOT}
 
 %files
 %defattr(-,root,root)
-
 /sbin/*
 %{_bindir}/*
 %{_sbindir}/edquota
@@ -59,7 +48,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_sbindir}/repquota
 %{_sbindir}/setquota
 %{_sbindir}/warnquota
-# %{_sbindir}/rpc.rquotad
 
 %{_mandir}/man1/quota.1*
 %{_mandir}/man2/quotactl.2*
@@ -69,11 +57,11 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man8/quotaon.8*
 %{_mandir}/man8/repquota.8*
 %{_mandir}/man8/setquota.8*
-# %{_mandir}/man8/rquotad.8*
-# %{_mandir}/man8/rpc.rquotad.8*
-%config /etc/rc.d/init.d/quota
 
 %changelog
+* Sun Mon 25 2001 Michail Litvak <mci@owl.openwall.com>
+- some spec cleanups
+
 * Sun Jun 24 2001 Michail Litvak <mci@owl.openwall.com>
 - Imported from RH
 - man patch from PLD 
