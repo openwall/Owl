@@ -1,9 +1,9 @@
-# $Id: Owl/packages/readline/readline.spec,v 1.4 2000/12/06 14:12:30 mci Exp $
+# $Id: Owl/packages/readline/readline.spec,v 1.5 2000/12/08 00:04:25 mci Exp $
 
 Summary: A library for editing typed in command lines.
 Name: readline
 Version: 4.1
-Release: 7owl
+Release: 8owl
 Copyright: GPL
 Group: System Environment/Libraries
 Source: ftp://ftp.gnu.org/gnu/readline-%{version}.tar.gz
@@ -17,6 +17,11 @@ Prefix: %{_prefix}
 Buildroot: /var/rpm-buildroot/%{name}-root
 BuildRequires: sed
 Provides: libreadline.so.3 libreadline.so.3.0
+
+# Use %optflags_lib for this package if defined.
+%{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%o
+ptflags}}
+
 
 %description
 The readline library reads a line from the terminal and returns it,
@@ -51,7 +56,7 @@ need to have the readline package installed.
 
 %build
 %configure
-make all shared
+make all shared CFLAGS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf ${RPM_BUILD_ROOT}
@@ -106,6 +111,9 @@ fi
 %doc %{_docdir}/examples/*
 
 %changelog
+* Fri Dec 08 2000 Michail Litvak <mci@owl.openwall.com>
+- %optflags_lib support.
+
 * Wed Dec 06 2000 Michail Litvak <mci@owl.openwall.com>
 - hack for compatibility with readline2  
 - spec file cleanups
