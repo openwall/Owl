@@ -1,9 +1,9 @@
-# $Id: Owl/packages/db4/db4.spec,v 1.1 2004/09/10 07:18:16 galaxy Exp $
+# $Id: Owl/packages/db4/db4.spec,v 1.2 2004/09/11 00:06:04 solar Exp $
 
 %define	__soversion	4.0
 %define	_libdb_a	libdb-%__soversion.a
 %define	_libcxx_a	libdb_cxx-%__soversion.a
-%define _libdb_so       libdb-%__soversion.so
+%define _libdb_so	libdb-%__soversion.so
 
 Summary: The Berkeley DB database library (version 4) for C.
 Name: db4
