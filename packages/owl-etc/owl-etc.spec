@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.15 2000/12/06 11:56:47 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.16 2000/12/11 04:21:15 solar Exp $
 
 Summary: Initial set of configuration files
 Name: owl-etc
 Version: 0.4
-Release: 1owl
+Release: 2owl
 Copyright: public domain
 Group: System Environment/Base
 Source0: passwd
@@ -22,6 +22,7 @@ Source21: csh.cshrc
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 BuildArchitectures: noarch
 BuildRequires: fileutils >= 4.0.27
+Conflicts: setup
 
 %description
 Initial set of configuration files to be placed into /etc.
@@ -55,6 +56,9 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(755,root,root) /etc/profile.d
 
 %changelog
+* Mon Dec 11 2000 Solar Designer <solar@owl.openwall.com>
+- Conflicts: setup
+
 * Wed Dec 06 2000 Solar Designer <solar@owl.openwall.com>
 - popa3d user/group.
 
