@@ -1,7 +1,7 @@
-diff -ur vsftpd-1.0.1.orig/tunables.c vsftpd-1.0.1/tunables.c
---- vsftpd-1.0.1.orig/tunables.c	Thu Nov  8 04:24:53 2001
-+++ vsftpd-1.0.1/tunables.c	Sun Dec 16 06:41:31 2001
-@@ -50,19 +50,19 @@
+diff -ur vsftpd-1.0.2.orig/tunables.c vsftpd-1.0.2/tunables.c
+--- vsftpd-1.0.2.orig/tunables.c	Tue Apr  2 02:55:04 2002
++++ vsftpd-1.0.2/tunables.c	Tue Apr  2 13:39:56 2002
+@@ -53,19 +53,19 @@
  unsigned int tunable_anon_max_rate = 0;
  unsigned int tunable_local_max_rate = 0;
  
@@ -28,9 +28,9 @@ diff -ur vsftpd-1.0.1.orig/tunables.c vsftpd-1.0.1/tunables.c
  const char* tunable_anon_root = 0;
  const char* tunable_local_root = 0;
  
-diff -ur vsftpd-1.0.1.orig/vsftpd.conf vsftpd-1.0.1/vsftpd.conf
---- vsftpd-1.0.1.orig/vsftpd.conf	Tue Jul 31 01:51:07 2001
-+++ vsftpd-1.0.1/vsftpd.conf	Sun Dec 16 06:55:15 2001
+diff -ur vsftpd-1.0.2.orig/vsftpd.conf vsftpd-1.0.2/vsftpd.conf
+--- vsftpd-1.0.2.orig/vsftpd.conf	Tue Jul 31 01:51:07 2001
++++ vsftpd-1.0.2/vsftpd.conf	Tue Apr  2 13:44:42 2002
 @@ -1,13 +1,10 @@
 -# Example config file /etc/vsftpd.conf
 -#
@@ -99,7 +99,7 @@ diff -ur vsftpd-1.0.1.orig/vsftpd.conf vsftpd-1.0.1/vsftpd.conf
  #
  # You may fully customise the login banner string:
  #ftpd_banner=Welcome to blah FTP service.
-@@ -83,18 +91,20 @@
+@@ -83,18 +91,29 @@
  # useful for combatting certain DoS attacks.
  #deny_email_enable=YES
  # (default follows)
@@ -123,10 +123,19 @@ diff -ur vsftpd-1.0.1.orig/vsftpd.conf vsftpd-1.0.1/vsftpd.conf
  # the presence of the "-R" option, so there is a strong case for enabling it.
  #ls_recurse_enable=YES
 -
-diff -ur vsftpd-1.0.1.orig/vsftpd.conf.5 vsftpd-1.0.1/vsftpd.conf.5
---- vsftpd-1.0.1.orig/vsftpd.conf.5	Thu Nov  8 04:30:21 2001
-+++ vsftpd-1.0.1/vsftpd.conf.5	Sun Dec 16 06:41:31 2001
-@@ -109,7 +109,7 @@
++#
++# If enabled, all user and group information in directory listings will be
++# displayed as "ftp".
++hide_ids=YES
++#
++# If enabled, vsftpd will display directory listings with the time in your
++# local time zone. The default is to display GMT. The times returned by the
++# MDTM FTP command are also affected by this option.
++#use_localtime=YES
+diff -ur vsftpd-1.0.2.orig/vsftpd.conf.5 vsftpd-1.0.2/vsftpd.conf.5
+--- vsftpd-1.0.2.orig/vsftpd.conf.5	Tue Apr  2 03:03:50 2002
++++ vsftpd-1.0.2/vsftpd.conf.5	Tue Apr  2 13:45:11 2002
+@@ -115,7 +115,7 @@
  different if chroot_local_user is set to YES. In this case, the list becomes
  a list of users which are NOT to be placed in a chroot() jail.
  By default, the file containing this list is
@@ -135,7 +144,7 @@ diff -ur vsftpd-1.0.1.orig/vsftpd.conf.5 vsftpd-1.0.1/vsftpd.conf.5
  .BR chroot_list_file
  setting.
  
-@@ -135,7 +135,7 @@
+@@ -141,7 +141,7 @@
  .B deny_email_enable
  If activated, you may provide a list of anonymous password e-mail responses
  which cause login to be denied. By default, the file containing this list is
@@ -144,7 +153,16 @@ diff -ur vsftpd-1.0.1.orig/vsftpd.conf.5 vsftpd-1.0.1/vsftpd.conf.5
  .BR banned_email_file
  setting.
  
-@@ -249,7 +249,7 @@
+@@ -244,7 +244,7 @@
+ Default: YES
+ .TP
+ .B use_localtime
+-If enabled, vsftpd will display directory listings with the the time in your
++If enabled, vsftpd will display directory listings with the time in your
+ local time zone. The default is to display GMT. The times returned by the
+ MDTM FTP command are also affected by this option.
+ 
+@@ -268,7 +268,7 @@
  .TP
  .B xferlog_enable
  If enabled, a log file will be maintained detailling uploads and downloads.
@@ -153,7 +171,7 @@ diff -ur vsftpd-1.0.1.orig/vsftpd.conf.5 vsftpd-1.0.1/vsftpd.conf.5
  may be overridden using the configuration setting
  .BR xferlog_file .
  
-@@ -355,7 +355,7 @@
+@@ -374,7 +374,7 @@
  .BR deny_email_enable
  is enabled.
  
@@ -162,7 +180,7 @@ diff -ur vsftpd-1.0.1.orig/vsftpd.conf.5 vsftpd-1.0.1/vsftpd.conf.5
  .TP
  .B chown_username
  This is the name of the user who is given ownership of anonymously uploaded
-@@ -374,7 +374,7 @@
+@@ -393,7 +393,7 @@
  .BR chroot_local_user
  is disabled.
  
@@ -171,7 +189,7 @@ diff -ur vsftpd-1.0.1.orig/vsftpd.conf.5 vsftpd-1.0.1/vsftpd.conf.5
  .TP
  .B guest_username
  See the boolean setting
-@@ -417,26 +417,26 @@
+@@ -436,26 +436,26 @@
  than nobody. The user nobody tends to be used for rather a lot of important
  things on most machines.
  
@@ -202,7 +220,7 @@ diff -ur vsftpd-1.0.1.orig/vsftpd.conf.5 vsftpd-1.0.1/vsftpd.conf.5
  .TP
  .B xferlog_file
  This option is the name of the file to which we write the transfer log. The
-@@ -444,7 +444,7 @@
+@@ -463,7 +463,7 @@
  .BR xferlog_enable
  is set.
  

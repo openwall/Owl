@@ -1,16 +1,17 @@
-# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.4 2002/02/07 10:07:26 solar Exp $
+# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.5 2002/04/02 10:18:00 solar Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
-Version: 1.0.1
-Release: owl1
+Version: 1.0.2
+Release: owl0.1
 License: GPL
 Group: System Environment/Daemons
-Source0: ftp://ferret.lmh.ox.ac.uk/pub/linux/%{name}-%{version}.tar.gz
+# The primary site for releases is ftp://ferret.lmh.ox.ac.uk/pub/linux/
+Source0: ftp://ftp.beasts.org/users/cevans/vsftpd-%{version}pre3.tar.gz
 Source1: vsftpd.pam
 Source2: vsftpd.xinetd
 Source3: vsftpd.logrotate
-Patch0: vsftpd-1.0.1-owl-alt-defaults.diff
+Patch0: vsftpd-1.0.2-owl-alt-defaults.diff
 Patch1: vsftpd-1.0.1-owl-pam_userpass.diff
 Patch2: vsftpd-1.0.1-owl-no-libcap.diff
 Requires: xinetd, logrotate, pam_userpass, tcb, /var/empty
@@ -61,7 +62,7 @@ mkdir -m 755 /home/ftp &> /dev/null || :
 
 %files
 %defattr(-,root,root)
-%doc README FAQ LICENSE
+%doc README FAQ LICENSE COPYING
 %doc README.security REWARD SECURITY/
 %doc BENCHMARKS SPEED TUNING
 %doc BUGS TODO
@@ -76,6 +77,10 @@ mkdir -m 755 /home/ftp &> /dev/null || :
 %{_mandir}/man8/vsftpd.8*
 
 %changelog
+* Tue Apr 02 2002 Solar Designer <solar@owl.openwall.com>
+- Updated to 1.0.2pre3.
+- Set hide_ids to YES.
+
 * Sat Feb 02 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 
