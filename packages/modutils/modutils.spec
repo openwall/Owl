@@ -1,9 +1,9 @@
-# $Id: Owl/packages/modutils/modutils.spec,v 1.2 2000/10/18 19:23:08 solar Exp $
+# $Id: Owl/packages/modutils/modutils.spec,v 1.3 2000/10/25 19:32:02 kad Exp $
 
 Summary: 	Kernel module utilities.
 Name: 		modutils
-Version: 	2.3.17
-Release: 	4owl
+Version: 	2.3.19
+Release: 	1owl
 Copyright: 	GPL
 Group: 		System Environment/Kernel
 Source0: 	ftp://ftp.kernel.org/pub/linux/utils/kernel/modutils/v2.3/modutils-%{version}.tar.bz2
@@ -67,6 +67,9 @@ fi
 #%config /etc/rc.d/init.d/kerneld
 
 %changelog
+* Wed Oct 25 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- v2.3.19
+
 * Wed Oct 18 2000 Solar Designer <solar@owl.openwall.com>
 - Removed /etc/cron.d/kmod
 
