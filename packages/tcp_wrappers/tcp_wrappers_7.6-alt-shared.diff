@@ -1,0 +1,69 @@
+--- tcp_wrappers_7.6/Makefile.orig	Fri Mar 21 10:27:21 1997
++++ tcp_wrappers_7.6/Makefile	Tue Apr 20 15:56:27 2004
+@@ -685,6 +685,9 @@ KIT	= README miscd.c tcpd.c fromhost.c h
+ 	scaffold.h tcpdmatch.8 README.NIS
+ 
+ LIB	= libwrap.a
++SHLIB	= libwrap.so
++SONAME  = libwrap.so.0
++SOVER   = libwrap.so.7.6
+ 
+ all other: config-check tcpd tcpdmatch try-from safe_finger tcpdchk
+ 
+@@ -703,27 +706,33 @@ $(LIB):	$(LIB_OBJ)
+ 	$(AR) $(ARFLAGS) $(LIB) $(LIB_OBJ)
+ 	-$(RANLIB) $(LIB)
+ 
+-tcpd:	tcpd.o $(LIB)
+-	$(CC) $(CFLAGS) -o $@ tcpd.o $(LIB) $(LIBS)
++$(SHLIB):	$(LIB)
++	rm -f $(SHLIB) $(SONAME) $(SOVER)
++	gcc -shared -Wl,-soname,$(SONAME) -o $(SOVER) -Wl,-whole-archive $(LIB) -Wl,-no-whole-archive $(LIBS)
++	ln -s $(SOVER) $(SONAME)
++	ln -s $(SOVER) $(SHLIB)
+ 
+-miscd:	miscd.o $(LIB)
+-	$(CC) $(CFLAGS) -o $@ miscd.o $(LIB) $(LIBS)
++tcpd:	tcpd.o $(SHLIB)
++	$(CC) $(CFLAGS) -o $@ tcpd.o -L. -lwrap
+ 
+-safe_finger: safe_finger.o $(LIB)
+-	$(CC) $(CFLAGS) -o $@ safe_finger.o $(LIB) $(LIBS)
++miscd:	miscd.o $(SHLIB)
++	$(CC) $(CFLAGS) -o $@ miscd.o -L. -lwrap
++
++safe_finger: safe_finger.o
++	$(CC) $(CFLAGS) -o $@ safe_finger.o
+ 
+ TCPDMATCH_OBJ = tcpdmatch.o fakelog.o inetcf.o scaffold.o
+ 
+-tcpdmatch: $(TCPDMATCH_OBJ) $(LIB)
+-	$(CC) $(CFLAGS) -o $@ $(TCPDMATCH_OBJ) $(LIB) $(LIBS)
++tcpdmatch: $(TCPDMATCH_OBJ) $(SHLIB)
++	$(CC) $(CFLAGS) -o $@ $(TCPDMATCH_OBJ) -L. -lwrap
+ 
+-try-from: try-from.o fakelog.o $(LIB)
+-	$(CC) $(CFLAGS) -o $@ try-from.o fakelog.o $(LIB) $(LIBS)
++try-from: try-from.o fakelog.o $(SHLIB)
++	$(CC) $(CFLAGS) -o $@ try-from.o fakelog.o -L. -lwrap
+ 
+ TCPDCHK_OBJ = tcpdchk.o fakelog.o inetcf.o scaffold.o
+ 
+-tcpdchk: $(TCPDCHK_OBJ) $(LIB)
+-	$(CC) $(CFLAGS) -o $@ $(TCPDCHK_OBJ) $(LIB) $(LIBS)
++tcpdchk: $(TCPDCHK_OBJ) $(SHLIB)
++	$(CC) $(CFLAGS) -o $@ $(TCPDCHK_OBJ) -L. -lwrap
+ 
+ shar:	$(KIT)
+ 	@shar $(KIT)
+--- tcp_wrappers_7.6/options.c.orig	Sun Feb 11 08:01:32 1996
++++ tcp_wrappers_7.6/options.c	Tue Apr 20 15:56:27 2004
+@@ -56,6 +56,8 @@ static char sccsid[] = "@(#) options.c 1
+ 
+ #include "tcpd.h"
+ 
++int allow_severity = LOG_INFO, deny_severity = LOG_WARNING;
++
+ /* Options runtime support. */
+ 
+ int     dry_run = 0;			/* flag set in verification mode */

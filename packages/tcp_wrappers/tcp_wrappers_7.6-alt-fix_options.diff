@@ -1,0 +1,30 @@
+--- tcp_wrappers_7.6/fix_options.orig     2002-11-09 14:59:06 +0300
++++ tcp_wrappers_7.6/fix_options.c      2002-11-09 15:06:07 +0300
+@@ -28,6 +28,27 @@
+ 
+ #define BUFFER_SIZE    512             /* Was: BUFSIZ */
+ 
++#include <stdint.h>
++struct ip_options {
++  uint32_t     faddr;                          /* Saved first hop address */
++  unsigned char        optlen;
++  unsigned char srr;
++  unsigned char rr;
++  unsigned char ts;
++  unsigned char is_setbyuser:1,                        /* Set by setsockopt?                   */
++                is_data:1,                     /* Options in __data, rather than skb   */
++                is_strictroute:1,              /* Strict source route                  */
++                srr_is_hit:1,                  /* Packet destination addr was our one  */
++                is_changed:1,                  /* IP checksum more not valid           */      
++                rr_needaddr:1,                 /* Need to record addr of outgoing dev  */
++                ts_needtime:1,                 /* Need to record timestamp             */
++                ts_needaddr:1;                 /* Need to record addr of outgoing dev  */
++  unsigned char router_alert;
++  unsigned char __pad1;
++  unsigned char __pad2;
++  unsigned char __data[0];
++};
++
+ /* fix_options - get rid of IP-level socket options */
+ 
+ void

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/tcp_wrappers/tcp_wrappers.spec,v 1.6 2003/12/07 11:10:00 solar Exp $
+# $Id: Owl/packages/tcp_wrappers/tcp_wrappers.spec,v 1.7 2004/05/19 12:29:30 solar Exp $
 
 Summary: A security tool which acts as a wrapper for network services.
 Name: tcp_wrappers
 Version: 7.6
-Release: owl3
+Release: owl4
 License: distributable
 Group: System Environment/Daemons
 Source: ftp.porcupine.org/pub/security/tcp_wrappers_7.6.tar.gz
@@ -12,6 +12,8 @@ Patch1: tcp_wrappers_7.6-openbsd-owl-cleanups.diff
 Patch2: tcp_wrappers_7.6-openbsd-owl-ip-options.diff
 Patch3: tcp_wrappers_7.6-owl-safe_finger.diff
 Patch4: tcp_wrappers_7.6-steveg-owl-match.diff
+Patch5: tcp_wrappers_7.6-alt-fix_options.diff
+Patch6: tcp_wrappers_7.6-alt-shared.diff
 BuildRoot: /override/%name-%version
 
 %description
@@ -25,13 +27,11 @@ can monitor and filter incoming requests for network services.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
+%patch6 -p1
 
 %build
-%ifarch sparc sparcv9 sparc64
-make linux EXTRA_CFLAGS="$RPM_OPT_FLAGS -fPIC"
-%else
-make linux EXTRA_CFLAGS="$RPM_OPT_FLAGS"
-%endif
+make linux EXTRA_CFLAGS="$RPM_OPT_FLAGS -fPIC -DPIC -D_REENTRANT"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -39,9 +39,10 @@ mkdir -p $RPM_BUILD_ROOT/usr/{sbin,lib,include}
 mkdir -p $RPM_BUILD_ROOT%_mandir/man{3,5,8}
 
 install -m 755 safe_finger tcpd tcpdchk tcpdmatch try-from \
-	$RPM_BUILD_ROOT/usr/sbin/
-install -m 644 libwrap.a $RPM_BUILD_ROOT/usr/lib/
-install -m 644 tcpd.h $RPM_BUILD_ROOT/usr/include/
+	$RPM_BUILD_ROOT%_sbindir/
+install -m 644 libwrap.a $RPM_BUILD_ROOT%_libdir/
+cp -a libwrap.so* $RPM_BUILD_ROOT%_libdir/
+install -m 644 tcpd.h $RPM_BUILD_ROOT%_includedir/
 install -m 644 hosts_access.3 $RPM_BUILD_ROOT%_mandir/man3/
 install -m 644 hosts_access.5 hosts_options.5 $RPM_BUILD_ROOT%_mandir/man5/
 install -m 644 tcpd.8 tcpdchk.8 tcpdmatch.8 $RPM_BUILD_ROOT%_mandir/man8/
@@ -51,12 +52,19 @@ ln -s hosts_access.5 $RPM_BUILD_ROOT%_mandir/man5/hosts.deny.5
 %files
 %defattr(-,root,root)
 %doc BLURB CHANGES README* DISCLAIMER Banners.Makefile
-/usr/sbin/*
-/usr/lib/libwrap.a
-/usr/include/tcpd.h
+%_sbindir/*
+%_libdir/libwrap.a
+%_libdir/libwrap.so*
+%_includedir/tcpd.h
 %_mandir/man*/*
 
 %changelog
+* Wed Apr 21 2004 Michail Litvak <mci@owl.openwall.com> 7.6-owl4
+- Build shared library (patch from ALT).
+
+* Fri Feb 27 2004 Michail Litvak <mci@owl.openwall.com> 7.6-owl3.1
+- Patch from ALT to fix building with glibc 2.3.2.
+
 * Sun Dec 07 2003 Solar Designer <solar@owl.openwall.com> 7.6-owl3
 - Don't use a file under /tmp during builds, spotted by (GalaxyMaster).
 
