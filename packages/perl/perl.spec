@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.27 2005/01/12 16:49:16 galaxy Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.28 2005/01/20 04:47:54 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -274,30 +274,30 @@ find %buildroot%_libdir/perl* -name .packlist -o -name perllocal.pod | \
 - Removed unneeded BuildRequires for tcsh.
 - Reflected Epoch in the %changelog.
 
-* Fri Mar 19 2004 Michail Litvak <mci@owl.openwall.com> 5.8.3-owl2
+* Fri Mar 19 2004 Michail Litvak <mci@owl.openwall.com> 1:5.8.3-owl2
 - Deal with automatic requires.
 - Add some Provides, which were undetected automatically.
 
-* Fri Mar 19 2004 Solar Designer <solar@owl.openwall.com> 5.8.3-owl1.3
+* Fri Mar 19 2004 Solar Designer <solar@owl.openwall.com> 1:5.8.3-owl1.3
 - Dropped the AutoReq: false
 
-* Mon Mar 15 2004 Michail Litvak <mci@owl.openwall.com> 5.8.3-owl1.2
+* Mon Mar 15 2004 Michail Litvak <mci@owl.openwall.com> 1:5.8.3-owl1.2
 - Build with threading support to be RH9 compatible.
 - Added vendor_perl directory to @INC.
 
-* Thu Feb 19 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 5.8.3-owl1.1
+* Thu Feb 19 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:5.8.3-owl1.1
 - Temporarily set AutoReq to false
 
-* Sun Jan 25 2004 Solar Designer <solar@owl.openwall.com> 5.8.3-owl1
+* Sun Jan 25 2004 Solar Designer <solar@owl.openwall.com> 1:5.8.3-owl1
 - Additional temporary file handling fixes.
 - Made building/packaging of suidperl optional and officially unsupported.
 
-* Tue Jan 20 2004 Solar Designer <solar@owl.openwall.com> 5.8.3-owl0
+* Tue Jan 20 2004 Solar Designer <solar@owl.openwall.com> 1:5.8.3-owl0
 - Updated to 5.8.3.
 - Reviewed all the patches, re-generated those which are to remain, applied
 various corrections to the patches and the spec file.
 
-* Thu Dec 25 2003 (GalaxyMaster) <galaxy@owl.openwall.com> 5.8.2-owl0
+* Thu Dec 25 2003 (GalaxyMaster) <galaxy@owl.openwall.com> 1:5.8.2-owl0
 - Updated to 5.8.2.
 - Dropped patches incorporated into mainstream (rh-buildroot, rh-fhs,
 rh-installman-man, rh-no-db, rh-prereq, up-owl-glob-bound).
@@ -311,12 +311,12 @@ Pod::Perldoc, which deals with temporary files via File::Temp).
 (they will fail on system with CONFIG_HARDEN_SHM).
 - Reviewed Owl patches and corrected some of them to suit the new version.
 
-* Fri Jul 04 2003 Solar Designer <solar@owl.openwall.com> 5.6.0-owl13
+* Fri Jul 04 2003 Solar Designer <solar@owl.openwall.com> 1:5.6.0-owl13
 - Corrected the Perl getpwent() to not rely on getspent(3) returning
 entries in the same order as getpwent(3) does; this actually makes a
 difference with /etc/tcb and likely with non-files password databases.
 
-* Sun Aug 11 2002 Solar Designer <solar@owl.openwall.com> 5.6.0-owl12
+* Sun Aug 11 2002 Solar Designer <solar@owl.openwall.com> 1:5.6.0-owl12
 - Back-ported bound checking fixes for File::Glob from Perl 5.8.0.
 Thanks to Pavel Kankovsky for the report and to Michael Tokarev for
 discussing other possible approaches to fixing this.
