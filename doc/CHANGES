@@ -60,7 +60,8 @@ statically linked against zlib and thus needed a rebuild.  They now
 have a build dependency on the corrected version of zlib introduced.
 OpenSSH could potentially allow for an active remote attack resulting
 in a root compromise.  If only SSH protocol version 1 is allowed in
-the OpenSSH server, this is reduced to a local attack.
+the OpenSSH server this is reduced to a local attack on the server,
+but reverse remote attack possibilities by a malicious server remain.
 
 2002/01/24 -
 2002/02/08	Owl/doc/CONVENTIONS;
@@ -597,4 +598,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.72 2002/03/07 19:24:12 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.73 2002/03/08 16:46:31 solar Exp $
