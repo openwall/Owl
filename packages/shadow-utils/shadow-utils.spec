@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.9 2001/05/27 09:30:58 kad Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.10 2001/05/27 09:37:47 kad Exp $
 
 %define BUILD_CHSH_CHFN	'yes'
 %define BUILD_VIPW_VIGR	'yes'
@@ -6,7 +6,7 @@
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 19990827
-Release: 14owl
+Release: 15owl
 Serial: 1
 Source0: ftp://ftp.ists.pwr.wroc.pl/pub/linux/shadow/shadow-%{version}.tar.gz
 Source1: login.defs
