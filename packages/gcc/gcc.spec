@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.14 2000/11/17 07:53:36 solar Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.15 2000/11/17 09:26:05 solar Exp $
 
 %define GCC_PREFIX /usr
 %define CPP_PREFIX /lib
@@ -283,9 +283,7 @@ test -d ../compat/i386 && install -m 755 ../compat/i386/* $RPM_BUILD_ROOT%{GCC_P
 
 cd ..
 cat >gcc-filelist <<EOF
-%ifarch i386 i486 i586 i686 alpha
 %defattr(-,root,root)
-%endif
 %{GCC_PREFIX}/bin/gcc
 %{GCC_PREFIX}/bin/cc
 %{GCC_PREFIX}/bin/protoize
@@ -379,9 +377,7 @@ fi
 %files -f gcc-filelist
 
 %files -n cpp
-%ifarch i386 i486 i586 i686 alpha
 %defattr(-,root,root)
-%endif
 %{CPP_PREFIX}/cpp
 %{GCC_PREFIX}/man/man1/cpp.1*
 %{GCC_PREFIX}/man/man1/cccp.1*
@@ -389,9 +385,7 @@ fi
 %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/cpp
 
 %files c++
-%ifarch i386 i486 i586 i686 alpha
 %defattr(-,root,root)
-%endif
 %{GCC_PREFIX}/man/man1/g++.1*
 %{GCC_PREFIX}/bin/g++
 %{GCC_PREFIX}/bin/c++
@@ -407,9 +401,7 @@ fi
 %doc gcc/cp/ChangeLog*
 
 %files -n libstdc++
-%ifarch i386 i486 i586 i686 alpha
 %defattr(-,root,root)
-%endif
 %{GCC_PREFIX}/lib/libstdc++-3-libc*-%{STDC_VERSION}.so
 %{GCC_PREFIX}/lib/libstdc++-libc*.so.3
 %{GCC_PREFIX}/lib/libstdc++-libc*.so.2
@@ -431,9 +423,7 @@ fi
 %endif
 
 %files -n libstdc++-devel
-%ifarch i386 i486 i586 i686 alpha
 %defattr(-,root,root)
-%endif
 %{GCC_PREFIX}/lib/libstdc++-3-libc*-%{STDC_VERSION}.a
 %{GCC_PREFIX}/lib/libstdc++-libc*.a.3
 %{GCC_PREFIX}/include/g++-3
@@ -517,6 +507,8 @@ fi
 - Pass plain sparc- target to configure when building for sparcv9, to
 allow for the use of sparcv9 optflags while not confusing configure.
 - Check for __arch64__ rather than __sparc_v9__ in limits.h.
+- %defattr(-,root,root) for all architectures, not just x86 and alpha
+(no idea why this was restricted).
 
 * Wed Nov 08 2000 Solar Designer <solar@owl.openwall.com>
 - Added a patch for copying of DECL_MODE in duplicate_decls(), by
