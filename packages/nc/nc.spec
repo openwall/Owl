@@ -1,9 +1,9 @@
-# $Id: Owl/packages/nc/nc.spec,v 1.3 2002/12/29 21:40:38 solar Exp $
+# $Id: Owl/packages/nc/nc.spec,v 1.4 2003/01/23 22:40:41 mci Exp $
 
 Summary: Reads and writes data across network connections using TCP or UDP.
 Name: nc
 Version: 3.2
-Release: owl1
+Release: owl2
 License: BSD
 Group: Applications/Internet
 Source: nc-%{version}-20021213.tar.bz2
@@ -47,6 +47,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/nc.1*
 
 %changelog
+* Fri Jan 24 2003 Michail Litvak <mci@owl.openwall.com>
+- Updated -owl-fixes. Initialize len argument before accept(),
+  handle accept()'s errors.
+
 * Fri Dec 27 2002 Michail Litvak <mci@owl.openwall.com>
 - Ported the nc utility from OpenBSD-current (post-3.2).
 - Patch to set AF_INET by default to fix problem with getaddrinfo(3).
