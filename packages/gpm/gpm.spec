@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gpm/gpm.spec,v 1.1 2001/01/05 16:37:53 kad Exp $
+# $Id: Owl/packages/gpm/gpm.spec,v 1.2 2001/01/06 09:11:29 solar Exp $
 
 # this defines the library version that this package builds.
 %define 	LIBVER 1.18.0
@@ -6,19 +6,19 @@
 Summary:	A mouse server for the Linux console.
 Name: 	 	gpm
 Version:	1.19.3
-Release: 	5owl
+Release: 	6owl
 License: 	GPL
 Group: 		System Environment/Daemons
 Source0: 	ftp://ftp.systemy.it/pub/develop/%{name}-%{version}.tar.gz
 Source1: 	gpm.init
 Patch0: 	gpm-1.19.3-rh-nops.diff
-Patch1: 	gpm-1.17.5-rh-docfix.diff
-Patch2: 	gpm-1.19.3-rh-noroot.diff
-Patch3: 	gpm-1.19.2-rh-initgroups.diff
-Patch4: 	gpm-1.19.1-rh-gpm-node-chmod.diff
-Patch5: 	gpm-1.19.2-rh-limits.diff
-Patch6:		gpm-1.19.3-immunix-owl-mktemp.diff
+Patch1: 	gpm-1.19.3-rh-noroot.diff
+Patch2: 	gpm-1.17.5-rh-docfix.diff
+Patch3:		gpm-1.19.3-immunix-owl-tmp.diff
+Patch4:		gpm-1.19.3-rh-owl-socket-mode.diff
+Patch5:		gpm-1.19.3-rh-owl-setuser-closeall-archs.diff
 Prereq: 	/sbin/chkconfig /sbin/ldconfig /sbin/install-info /etc/rc.d/init.d
+BuildRequires:	bison
 BuildRoot: 	/var/rpm-buildroot/%{name}-root
 
 %description
@@ -46,26 +46,26 @@ use the mouse.  You'll also need to install the gpm package.
 
 %prep
 %setup -q
-%patch0 -p1 
-%patch1 -p1 
+%patch0 -p1
+%patch1 -p1
 %patch2 -p1
-%patch3 -p1 
-%patch4 -p1 
-%patch5 -p1 
-%patch6 -p1 
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
 
 %build
 autoconf
 CFLAGS="-D_GNU_SOURCE $RPM_OPT_FLAGS" \
-    lispdir=%{buildroot}%{_datadir}/emacs/site-lisp \
-    %configure
+	lispdir=%{buildroot}%{_datadir}/emacs/site-lisp \
+	%configure
+rm gpm-root.c
 make
 
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{_sysconfdir}
 
-PATH=/sbin:$PATH:/usr/sbin:$PATH
+PATH=/sbin:/usr/sbin:$PATH
 
 mkdir -p %{buildroot}%{_datadir}/emacs/site-lisp
 %makeinstall lispdir=%{buildroot}%{_datadir}/emacs/site-lisp
@@ -82,29 +82,38 @@ ln -sf libgpm.so.%{LIBVER} .%{_libdir}/libgpm.so
 gzip -9nf .%{_infodir}/gpm.info*
 popd
 
-
-mkdir -p %{buildroot}%{_sysconfdir}/rc.d/init.d  
+mkdir -p %{buildroot}%{_sysconfdir}/rc.d/init.d
 install -m 755 $RPM_SOURCE_DIR/gpm.init %{buildroot}%{_sysconfdir}/rc.d/init.d/gpm
 
 %clean
 rm -rf %{buildroot}
 
+%pre
+rm -f /var/run/gpm.restart
+if [ $1 -ge 2 ]; then
+	/etc/rc.d/init.d/gpm status && touch /var/run/gpm.restart || :
+	/etc/rc.d/init.d/gpm stop || :
+fi
+
 %post
-/sbin/chkconfig --add gpm
+if [ $1 -eq 1 ]; then
+	/sbin/chkconfig --add gpm
+fi
+if [ -f /var/run/gpm.restart ]; then
+	/etc/rc.d/init.d/gpm start
+fi
+rm -f /var/run/gpm.restart
 /sbin/ldconfig
 /sbin/install-info %{_infodir}/gpm.info.gz %{_infodir}/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-    /sbin/install-info %{_infodir}/gpm.info.gz --delete %{_infodir}/dir
-    service gpm stop >/dev/null 2>&1
-    /sbin/chkconfig --del gpm
+	/sbin/install-info %{_infodir}/gpm.info.gz --delete %{_infodir}/dir
+	/etc/rc.d/init.d/gpm stop || :
+	/sbin/chkconfig --del gpm
 fi
 
 %postun
-if [ "$1" -ge "1" ]; then
-  service gpm condrestart >/dev/null 2>&1
-fi
 /sbin/ldconfig
 
 %files
@@ -131,7 +140,14 @@ fi
 %{_libdir}/libgpm.so
 
 %changelog
-* Fri Jan  5 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sat Jan 06 2001 Solar Designer <solar@owl.openwall.com>
+- Updated the patches for fail-closeness in many cases.
+- Re-generate gpm-root.c at build time, to avoid maintaining two patches.
+- /tmp fixes in the documentation (don't suggest bad practices).
+- More startup script cleanups.
+- Restart after package upgrades in an owl-startup compatible way.
+
+* Fri Jan 05 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import mktemp patch from Immunix, fix strncpy
 
 * Sun Dec 24 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
@@ -243,7 +259,7 @@ fi
 - bumped libver to 1.17.5
 - fixed texinfo source
 
-* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com> 
+* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com>
 - auto rebuild in the new build environment (release 2)
 
 * Thu Mar  4 1999 Matt Wilson <msw@redhat.com>
