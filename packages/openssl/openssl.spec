@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.22 2002/07/30 18:44:28 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.23 2002/07/30 19:52:46 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
@@ -126,11 +126,10 @@ LD_LIBRARY_PATH=`pwd` ldd $RPM_BUILD_ROOT/usr/bin/openssl | tee openssl.libs
 grep -qw libssl openssl.libs
 grep -qw libcrypto openssl.libs
 
-# Rename manpages
-mv $RPM_BUILD_ROOT%{_mandir}/man1/passwd.1 \
-	$RPM_BUILD_ROOT%{_mandir}/man1/sslpasswd.1
-mv $RPM_BUILD_ROOT%{_mandir}/man3/rand.3 \
-	$RPM_BUILD_ROOT%{_mandir}/man3/sslrand.3
+# Rename man pages
+mv $RPM_BUILD_ROOT%{_mandir}/man1/{,ssl}passwd.1
+mv $RPM_BUILD_ROOT%{_mandir}/man3/{,ssl}err.3
+mv $RPM_BUILD_ROOT%{_mandir}/man3/{,ssl}rand.3
 
 # Install RSAref stuff
 install -m 644 rsaref/rsaref.h $RPM_BUILD_ROOT/usr/include/openssl
@@ -175,6 +174,8 @@ by Ben Laurie and others of A.L. Digital Ltd and The Bunker under DARPA's
 CHATS program, by consultants at Neohapsis, and by Adi Stav and James Yonan.
 The patch has been prepared by Ben Laurie and Dr. Stephen Henson, with one
 of the fixes partly based on a version by Adi Stav.
+- Renamed the err.3 man page to avoid conflict with the new man-pages
+package which documents the BSD-derived libc function under that name.
 
 * Wed May 29 2002 Solar Designer <solar@owl.openwall.com>
 - Made shared library builds work on SPARC (again).
@@ -223,7 +224,7 @@ binary compatibility).
 - Don't require bc (disable one of the tests if bc isn't available).
 
 * Mon Oct 02 2000 Solar Designer <solar@owl.openwall.com>
-- Rename the passwd and rand manpages differently (this is still a hack).
+- Rename the passwd and rand man pages differently (this is still a hack).
 
 * Sun Jul 09 2000 Solar Designer <solar@owl.openwall.com>
 - Imported Damien Miller's spec file.
