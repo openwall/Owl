@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/owl-startup/rc.sysinit,v 1.11 2002/02/12 23:14:48 solar Exp $
+# $Id: Owl/packages/owl-startup/rc.sysinit,v 1.12 2002/02/14 08:18:26 solar Exp $
 
 # Set the initial default search path for use by startup scripts.
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
@@ -8,7 +8,7 @@ export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 umask 077
 ulimit -Sc 0
 
-# Setup a RAM disk if we're booting from an Owl CD-ROM
+# Setup a RAM disk if we're booting off an Owl CD-ROM.
 if [ -e /.Owl-CD-ROM ]; then
 	. /etc/rc.d/rc.ramdisk
 fi
@@ -98,7 +98,7 @@ mount -f /
 
 rm -f /fastboot /forcefsck
 
-# Load modules, if any
+# Load modules, if any.
 if [ -x /sbin/depmod -a -d "/lib/modules/`uname -r`" ]; then
 	echo "Finding module dependencies"
 	depmod -a
