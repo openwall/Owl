@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.17 2002/10/12 06:17:35 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.18 2002/11/03 03:27:52 solar Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -13,7 +13,7 @@ Version: %{base_version}.%{crypto_version}
 %else
 Version: %{base_version}
 %endif
-Release: owl6
+Release: owl7
 License: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%{base_version}.tar.bz2
@@ -28,7 +28,7 @@ Patch10: util-linux-2.10r-rh-locale-overflow.diff
 Patch20: util-linux-2.10r-%{crypto_version}-int.diff
 Patch21: util-linux-2.10r-%{crypto_version}-int-owl-fixes.diff
 PreReq: /sbin/install-info
-Requires: owl-control < 2.0
+Requires: owl-control >= 0.4, owl-control < 2.0
 Obsoletes: fdisk, tunelp
 %ifarch sparc alpha
 Obsoletes: clock
@@ -106,7 +106,17 @@ install -m 700 $RPM_SOURCE_DIR/write.control write
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%pre
+if [ $1 -ge 2 ]; then
+	/usr/sbin/control-dump mount write
+fi
+
 %post
+if [ $1 -ge 2 ]; then
+	/usr/sbin/control-restore mount write
+else
+	/usr/sbin/control write public
+fi
 /sbin/install-info %{_infodir}/ipc.info.gz %{_infodir}/dir \
 	--entry="* ipc: (ipc).                                   System V IPC."
 
@@ -159,7 +169,7 @@ fi
 /usr/bin/script
 /usr/bin/setterm
 /usr/bin/whereis
-%attr(2711,root,tty) /usr/bin/write
+%attr(700,root,root) /usr/bin/write
 /usr/bin/getopt
 /usr/man/man1/cal.1*
 /usr/man/man1/kill.1*
@@ -285,6 +295,13 @@ fi
 %endif
 
 %changelog
+* Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
+- Dump/restore the owl-control settings for mount and write on package
+upgrades.
+- Keep write at mode 700 ("restricted") in the package, but default
+it to "public" in %post when the package is first installed.  This avoids
+a race and fail-open behavior.
+
 * Sat Oct 12 2002 Solar Designer <solar@owl.openwall.com>
 - Use umask 077 when creating mtab files (to be chmod'ed later) to avoid
 the race pointed out by Olaf Kirch of SuSE.
