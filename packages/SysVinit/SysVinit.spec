@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.4 2000/11/14 14:04:22 solar Exp $
+# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.5 2000/11/30 21:43:01 solar Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
 Version: 2.78
-Release: 7owl
+Release: 8owl
 Copyright: GPL
 Group: System Environment/Base
 Source: ftp://ftp.cistron.nl/pub/people/miquels/sysvinit/sysvinit-%{version}.tar.gz
@@ -64,20 +64,23 @@ rm -rf $RPM_BUILD_ROOT
 /sbin/sulogin
 /sbin/telinit
 /sbin/bootlogd
-/sbin/start-stop-daemon
 %defattr(0755,root,root)
+/sbin/start-stop-daemon
 /sbin/killall5
 /sbin/pidof
 /sbin/runlevel
 /usr/bin/last
 /usr/bin/lastb
 /usr/bin/mesg
-/usr/bin/utmpdump
 %attr(0700,root,tty) /usr/bin/wall
 %attr(0644,root,root) /usr/man/*/*
 %attr(0600,root,root) /dev/initctl
 
 %changelog
+* Fri Dec 01 2000 Solar Designer <solar@owl.openwall.com>
+- Relaxed permissions on start-stop-daemon to 755 for status checks.
+- Removed the packaging of utmpdump as it is unsafe on untrusted files.
+
 * Wed Aug 09 2000 Solar Designer <solar@owl.openwall.com>
 - Added building of bootlogd and start-stop-daemon.
 
