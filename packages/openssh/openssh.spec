@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.76 2005/01/12 16:41:07 galaxy Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.77 2005/01/20 04:35:07 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
@@ -82,7 +82,7 @@ PreReq: %name = %version-%release
 PreReq: /sbin/chkconfig, grep, shadow-utils, /dev/urandom
 Requires: tcp_wrappers >= 7.6-owl3.2
 Requires: owl-control >= 0.4, owl-control < 2.0
-Requires: %_var/empty, tcb, pam_userpass, pam_mktemp
+Requires: /var/empty, tcb, pam_userpass, pam_mktemp
 Obsoletes: ssh-server
 
 %description server
@@ -131,7 +131,7 @@ export LIBS="-lcrypt -lpam -lpam_misc -lpam_userpass"
 	--with-tcp-wrappers \
 	--with-ipv4-default \
 	--with-default-path=/bin:%_bindir:/usr/local/bin \
-	--with-privsep-path=%_var/empty \
+	--with-privsep-path=/var/empty \
 	--with-privsep-user=sshd
 %ifarch alphaev56 alphapca56 alphaev6 alphaev67
 %__make deattack.o CFLAGS="$RPM_OPT_FLAGS -mcpu=ev5 -Wall"
@@ -152,7 +152,6 @@ mkdir -p %buildroot/etc/control.d/facilities
 install -m 700 $RPM_SOURCE_DIR/sftp.control \
 	%buildroot/etc/control.d/facilities/sftp
 
-# XXX: (GM): Remove unpackaged files (check later)
 rm %buildroot%_datadir/Ssh.bin
 
 %pre server
