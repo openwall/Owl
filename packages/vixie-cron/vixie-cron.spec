@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.30 2005/03/14 04:01:21 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.31 2005/03/14 04:02:08 solar Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
@@ -6,7 +6,7 @@ Version: 4.1.20040916
 Release: owl1
 License: distributable
 Group: System Environment/Base
-Source0: vixie-cron-4.1.20040916.tar.bz2
+Source0: vixie-cron-%version.tar.bz2
 Source1: vixie-cron.init
 Source2: crontab.control
 Source3: at.control
@@ -14,7 +14,7 @@ Patch0: vixie-cron-4.1.20040916-alt-warnings.diff
 Patch1: vixie-cron-4.1.20040916-owl-alt-linux.diff
 Patch2: vixie-cron-4.1.20040916-owl-vitmp.diff
 Patch3: vixie-cron-4.1.20040916-owl-crond.diff
-Patch4: vixie-cron-4.1.20040916-alt-makefile.diff
+Patch4: vixie-cron-4.1.20040916-alt-Makefile.diff
 Patch5: vixie-cron-4.1.20040916-alt-progname.diff
 Patch6: vixie-cron-4.1.20040916-alt-sigpipe.diff
 Patch7: vixie-cron-4.1.20040916-alt-setlocale.diff
@@ -27,7 +27,7 @@ BuildRoot: /override/%name-%version
 %description
 cron is a daemon that runs specified programs at scheduled times.  This
 package contains Paul Vixie's implementation of cron, with significant
-modifications by the NetBSD, OpenBSD, Red Hat, ALT and Owl teams.
+modifications by the NetBSD, OpenBSD, Red Hat, ALT, and Owl teams.
 
 %prep
 %setup -q
@@ -54,9 +54,9 @@ mkdir -p -m 700 %buildroot/var/spool/cron
 mkdir -p -m 700 $RPM_BUILD_ROOT/var/spool/at
 mkdir -p -m 755 %buildroot/etc/cron.d
 
-install -m 700 usr.sbin/cron/crontab %buildroot%_bindir/
 install -m 700 usr.sbin/cron/crond %buildroot%_sbindir/
-install -m 700 usr.sbin/cron/at %buildroot%_bindir/
+install -m 700 usr.bin/crontab/crontab %buildroot%_bindir/
+install -m 700 usr.bin/at/at %buildroot%_bindir/
 (cd %buildroot%_bindir/
 	ln -s at atq
 	ln -s at atrm
@@ -65,9 +65,9 @@ install -m 700 usr.sbin/cron/at %buildroot%_bindir/
 install -m 644 usr.sbin/cron/crontab.1 %buildroot%_mandir/man1/
 install -m 644 usr.sbin/cron/crontab.5 %buildroot%_mandir/man5/
 install -m 644 usr.sbin/cron/cron.8 %buildroot%_mandir/man8/
-install -m 644 usr.sbin/cron/at.1 %buildroot%_mandir/man1/
-install -m 644 usr.sbin/cron/atq.1 %buildroot%_mandir/man1/
-install -m 644 usr.sbin/cron/atrm.1 %buildroot%_mandir/man1/
+install -m 644 usr.bin/at/at.1 %buildroot%_mandir/man1/
+install -m 644 usr.bin/at/atq.1 %buildroot%_mandir/man1/
+install -m 644 usr.bin/at/atrm.1 %buildroot%_mandir/man1/
 ln -s cron.8 %buildroot%_mandir/man8/crond.8
 ln -s at.1 %buildroot%_mandir/man1/batch.1
 
@@ -78,7 +78,7 @@ mkdir -p %buildroot/etc/control.d/facilities
 install -m 700 $RPM_SOURCE_DIR/crontab.control \
 	%buildroot/etc/control.d/facilities/crontab
 install -m 700 $RPM_SOURCE_DIR/at.control \
-	$buildroot/etc/control.d/facilities/at
+	%buildroot/etc/control.d/facilities/at
 
 %pre
 grep -q ^crontab: /etc/group || groupadd -g 160 crontab
@@ -132,7 +132,6 @@ fi
 %_bindir/atq
 %_bindir/atrm
 %_bindir/batch
-%_mandir/man*/*
 %_mandir/man*/*
 %dir %attr(1730,root,crontab) /var/spool/cron
 %dir %attr(1770,root,crontab) /var/spool/at
