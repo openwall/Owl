@@ -1,9 +1,9 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.4 2000/08/21 00:18:01 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.5 2000/10/28 16:03:19 solar Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron)
 Name: vixie-cron
 Version: 3.0.2.7
-Release: 4owl
+Release: 5owl
 Copyright: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%{version}.tar.gz
@@ -70,7 +70,7 @@ grep ^crontab: /etc/passwd &> /dev/null ||
 %post
 grep ^crontab: /etc/group &> /dev/null || chmod 700 /usr/bin/crontab
 /sbin/chkconfig --add crond
-test -r /var/run/crond.pid && /etc/rc.d/init.d/crond restart >&2
+test -r /var/run/crond.pid && /etc/rc.d/init.d/crond restart >&2 || :
 
 %preun
 if [ $1 = 0 ]; then
@@ -96,6 +96,9 @@ fi
 /etc/control.d/facilities/crontab
 
 %changelog
+* Sat Oct 28 2000 Solar Designer <solar@owl.openwall.com>
+- Added "|| :" to the test in %post, as it should return success to RPM.
+
 * Mon Aug 21 2000 Solar Designer <solar@owl.openwall.com>
 - Check nlink and permissions as well as the owner of crontabs.
 
