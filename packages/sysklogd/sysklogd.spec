@@ -1,9 +1,9 @@
-# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.1 2000/09/12 20:11:46 solar Exp $
+# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.2 2000/09/20 01:58:55 solar Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
 Version: 1.3.31
-Release: 1owl
+Release: 2owl
 Copyright: BSD for syslogd and GPL for klogd
 Group: System Environment/Daemons
 Source0: ftp://sunsite.unc.edu/pub/Linux/system/daemons/sysklogd-1.3-31.tar.gz
@@ -18,6 +18,7 @@ Patch4: sysklogd-1.3-31-rh-ksymless.diff
 Patch5: sysklogd-1.3-31-debian-bug-32580.diff
 Patch6: sysklogd-1.3-31-owl-klogd.diff
 Patch7: sysklogd-1.3-31-owl-syslogd.diff
+Patch8: sysklogd-1.3-31-owl-klogd-drop-root.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: logrotate
 Prereq: fileutils, /sbin/chkconfig
@@ -38,6 +39,7 @@ places according to a configuration file.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 %build
 make CFLAGS="$RPM_OPT_FLAGS -Wall -DSYSV"
@@ -69,6 +71,11 @@ install -m 644 $RPM_SOURCE_DIR/syslog.logrotate etc/logrotate.d/syslog
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%pre
+grep ^klogd: /etc/group &> /dev/null || groupadd -g 180 klogd
+grep ^klogd: /etc/passwd &> /dev/null ||
+	useradd -g klogd -u 180 -d / -s /bin/false -M klogd
+
 %post
 for n in /var/log/{kernel,messages,maillog,cron}
 do
@@ -99,6 +106,9 @@ fi
 /usr/man/*/*
 
 %changelog
+* Wed Sep 20 2000 Solar Designer <solar@owl.openwall.com>
+- Run klogd as a non-root user.
+
 * Tue Sep 12 2000 Solar Designer <solar@owl.openwall.com>
 - Imported this spec file from RH, did the usual cleanups.
 - Based many of the patches on those found in RH.

@@ -25,13 +25,15 @@ case "$1" in
 	RETVAL=$?
 	echo
 	echo -n "Starting kernel logger: "
-	daemon klogd
+	daemon klogd -u klogd
 	echo
 	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/syslog
 	;;
   stop)
 	echo -n "Shutting down kernel logger: "
 	killproc klogd
+	test -L /var/run/klogd.pid && rm -f /var/run/klogd.pid
+	test -d /var/run/klogd && rmdir /var/run/klogd
 	echo
 	echo -n "Shutting down system logger: "
 	killproc syslogd
