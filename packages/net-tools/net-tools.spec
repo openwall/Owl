@@ -1,15 +1,16 @@
-# $Id: Owl/packages/net-tools/net-tools.spec,v 1.7 2004/11/23 22:40:47 mci Exp $
+# $Id: Owl/packages/net-tools/net-tools.spec,v 1.8 2004/11/27 22:34:48 mci Exp $
 
 Summary: The basic tools for setting up networking.
 Name: net-tools
 Version: 1.57
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 Source0: http://www.tazenda.demon.co.uk/phil/net-tools/net-tools-%version.tar.bz2
 Source1: net-tools-1.57-config.h
 Source2: net-tools-1.57-config.make
 Patch0: net-tools-1.56-rh-fhs.diff
+Patch1: net-tools-1.57-owl-fixes.diff
 BuildRoot: /override/%name-%version
 
 %description
@@ -19,6 +20,7 @@ networking: ethers, route and others.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 cp $RPM_SOURCE_DIR/net-tools-1.57-config.h config.h
 cp $RPM_SOURCE_DIR/net-tools-1.57-config.make config.make
@@ -96,6 +98,9 @@ rm %buildroot%_mandir/pt_BR/man8/route.8*
 %_mandir/man[158]/*
 
 %changelog
+* Sun Nov 28 2004 Michail Litvak <mci@owl.openwall.com> 1.57-owl2
+- Fixed building with 2.4.28 kernel.
+
 * Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com> 1.57-owl1
 - Enforce our new spec file conventions
 
