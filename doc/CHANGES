@@ -5,6 +5,7 @@ remains fixed; it's only the stable branch which has these changes.
 
 	Changes made between Owl 0.1-prerelease and Owl 0.1-stable.
 
+(2002/02/11)
 2002/03/07	Package: zlib
 SECURITY FIX	Severity: high, remote, active
 There was a vulnerability in the zlib data compression library which,
@@ -21,9 +22,11 @@ library.  Of these, the rpm and texinfo packages contain binaries
 statically linked against zlib and thus aren't fully fixed by simply
 installing this zlib update.  OpenSSH could potentially allow for an
 active remote attack resulting in a root compromise.  If only SSH
-protocol version 1 is allowed in the OpenSSH server, this is reduced
-to a local attack.
+protocol version 1 is allowed in the OpenSSH server this is reduced
+to a local attack, but reverse remote attack possibilities by a
+malicious server remain.
 
+(2002/03/05)
 2002/03/07	Package: openssh
 SECURITY FIX	Severity: high, local/remote, active/passive
 Patched an off by one channel id check bug discovered by Joost Pol.
@@ -344,4 +347,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.2.2.20 2002/03/07 19:35:03 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.2.2.21 2002/03/08 16:46:31 solar Exp $
