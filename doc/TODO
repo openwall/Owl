@@ -39,7 +39,7 @@ update libtool first and the problem goes away).
 	bash.
 
 [PRIORITY: low]
-Update to latest release (we're currently at 2.05, but 2.05a went out
+Update to latest release (we're currently at 2.05, but 2.05b went out
 a long time ago), with our patches.  Make sure it still builds cleanly
 with -Wall (due to our patches).  Once again try to get our generic
 fixes (the "-owl-fixes.diff") to the maintainer (haven't received a
@@ -117,7 +117,7 @@ Update to latest release.
 	gcc.
 
 [PRIORITY: low]
-Update to 3.1+ and deal with whatever this will break.  Probably do
+Update to 3.2.1+ and deal with whatever this will break.  Probably do
 after or at the same time with the binutils and glibc.
 
 
@@ -126,6 +126,23 @@ after or at the same time with the binutils and glibc.
 [PRIORITY: medium]
 [ASSIGNED: solar@]
 Update to 2.3.1+ with all the related auditing, porting, and fixing.
+
+[PRIORITY: low]
+Make mkstemp(3) and friends produce unpredictable filenames (not just
+unique).
+
+[PRIORITY: low]
+Fix locales to not declare characters with codes 0 to 0x1f and 0x7f to
+0x9f as printable unless some really have to be (as in CP1251).  Do it
+better than by patching localedef(1) as we do now (breaks CP1251).
+
+[PRIORITY: low]
+Support an /etc/libc.conf for hardening features such as zeroing out
+freed memory.
+
+[PRIORITY: low]
+Investigate and deal with snprintf(3) looping and crashing with huge
+field widths.
 
 
 	gnupg.
@@ -531,4 +548,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.1 2002/12/05 21:39:00 solar Exp $
+$Id: Owl/doc/TODO,v 1.2 2002/12/06 23:04:28 solar Exp $
