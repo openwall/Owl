@@ -12,17 +12,18 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
-2004/08/08	kernel
+2004/08/04 -
+2004/08/15	kernel
 SECURITY FIX	Severity: none to high, local, active
-Updated to Linux 2.4.26-ow3.  This corrects the access control check
-which previously wrongly allowed any local user to change the group
-ownership of arbitrary NFS-exported/imported files and adds a
-workaround for the file offset pointer races discovered by
-Paul Starzetz.  The former is only exploitable when files are
-NFS-exported from a server running a vulnerable version of Linux
-2.4.x, and the currently publicly known exploit for the latter relies
-on code enabled with CONFIG_MTRR kernel build option which has not
-been enabled in the default kernels on Owl CDs.  However, as the
+Updated to Linux 2.4.26-ow3 and further to 2.4.27-ow1.  This corrects
+the access control check which previously wrongly allowed any local
+user to change the group ownership of arbitrary NFS-exported/imported
+files and adds a workaround for the file offset pointer races
+discovered by Paul Starzetz.  The former is only exploitable when
+files are NFS-exported from a server running a vulnerable version of
+Linux 2.4.x, and the currently publicly known exploit for the latter
+relies on code enabled with CONFIG_MTRR kernel build option which has
+not been enabled in the default kernels on Owl CDs.  However, as the
 potential impact of both issues is a local root compromise, an upgrade
 of older Linux 2.4.x installs to 2.4.26-ow3+ is highly recommended.
 References:
@@ -218,4 +219,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.47 2004/08/08 21:03:48 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.48 2004/08/14 22:25:25 solar Exp $
