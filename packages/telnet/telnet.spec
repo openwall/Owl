@@ -1,4 +1,4 @@
-# $Id: Owl/packages/telnet/telnet.spec,v 1.1 2001/11/25 02:32:21 solar Exp $
+# $Id: Owl/packages/telnet/telnet.spec,v 1.2 2001/11/25 02:34:10 solar Exp $
 
 Summary: The client program for the telnet remote login protocol.
 Name: telnet
@@ -13,7 +13,6 @@ Patch1: telnet-3.0-owl-no-mini_inetd.diff
 Patch2: telnet-3.0-owl-ipv4-only.diff
 Patch10: telnet-3.0-rh-env.diff
 Patch20: telnet-3.0-owl-drop-root.diff
-Requires: /var/empty, xinetd
 PreReq: grep, shadow-utils
 BuildRequires: ncurses-devel
 BuildRoot: /override/%{name}-%{version}
@@ -25,7 +24,7 @@ Internet.  The telnet package provides a command line telnet client.
 %package server
 Summary: The server program for the telnet remote login protocol.
 Group: System Environment/Daemons
-Requires: xinetd
+Requires: /var/empty, xinetd
 
 %description server
 Telnet is a popular protocol for logging into remote systems over the
