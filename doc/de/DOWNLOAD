@@ -1,4 +1,4 @@
-Die Owl Homepage liegt unter:
+Die Owl Homepage befindet sich unter:
 
 http://www.openwall.com/Owl/
 
@@ -27,21 +27,21 @@ i?86, sparc*, alpha*	Binärpakete zu Owl
 iso			ISO-9660 Images der Owl CD's
 
 Einige der Unterverzeichnisse benutzen symbolische Links zu Dateien, die
-in allen Owl Sparten vorkommen. Um nur eine Sparte herunter zuladen,
-müsst ihr eventuell eurem FTP Client sagen, dass er Symbolische Links
-nicht dereferenzieren soll. Wenn ihr lftp (ist Bestandteil von Owl) nutzt,
-nehmt das "mirror -L" Kommando.
+in allen Owl Sparten vorkommen. Um nur eine Sparte herunterzuladen,
+muss man eventuell dem FTP Client sagen, dass er Symbolische Links
+nicht dereferenzieren soll. Wird lftp (ist Bestandteil von Owl) benutzt,
+dient dazu das "mirror -L" Kommando.
 
-Die mtree(8) Spezifikationen von Owl sind mit PGP signiert. Den
-entsprechenden Schlüssel findet ihr unter:
+Die mtree(8) Spezifikationen von Owl sind mit PGP signiert. Der
+entsprechende Schlüssel findet sich unter:
 
 http://www.openwall.com/signatures/
 
-Du wirst fast immer den CVS tree brauchen, auch wenn du nur die
-Binärpakete installierst. Wenn du Owl aus den Quellen neu übersetzen
-willst, brauchst du beides: den CVS tree und den Quellcode.
+Man wird fast immer den CVS tree brauchen, auch wenn man nur die
+Binärpakete installiert. Wenn man Owl aus den Quellen neu übersetzen
+will, braucht man beides: den CVS tree und den Quellcode.
 
 Mehr Dokumentation (inklusive BUILD und INSTALL) gibt es im CVS tree unter
 Owl/doc/.
 
-$Id: Owl/doc/de/DOWNLOAD,v 1.2 2002/06/12 23:24:03 solar Exp $
+$Id: Owl/doc/de/DOWNLOAD,v 1.3 2002/06/20 14:31:59 schmidt Exp $

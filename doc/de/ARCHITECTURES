@@ -1,4 +1,4 @@
-Das folgende ist eine Liste der von Owl unterstützden Architekturen, ihren
+Im Folgenden eine Liste der von Owl unterstützten Architekturen, ihren
 Versionen und verschiedenen architektur-spezifischen Details.
 
 
@@ -10,25 +10,24 @@ pakete von einer älteren Version der Architektur zu erstellen oder zu
 verwenden.
 
 Auf vielen Architekturen unterstützt Owl verschiedene Versionen.
-Pakete, die für die neuste Version deiner Architektur erstellt wurden,
+Pakete, die für die neueste Version einer Architektur erstellt wurden,
 erzielen normalerweise nur einen geringen Geschwindigkeitszuwachs
-(zwischen einem und fünf Prozent bei normalen Aufgaben). Wie auch
-immer, das ist der Preis dafür: Du könntest die Pakete nicht auf
-einer älteren Maschine kopieren und dort installieren. Im schlechtesten
-Fall könntest du nicht mal Pakete (oder ausführbare Dateien) für die
-ältere Version erstellen, da die Entwicklungs-Bibilotheken nur für
-die neueste Version der Architektur erstellt worden sind. Ok, die Pakete
-könnten eventuell sogar erstellt werden, würden aber die neue Klasse
-der Architektur benötigen.
+(zwischen einem und fünf Prozent bei normalen Aufgaben). Der Preis dafür
+jedoch ist: die Pakete können nicht auf eine ältere Maschine kopiert 
+und dort installiert werden. Im schlechtesten Fall könnten nicht einmal 
+die Pakete (oder ausführbare Dateien) für die älteren Version erstellt 
+werden, da die Entwicklungs-Bibilotheken nur für die neueste Version 
+der Architektur erstellt worden sind. Ok, die Pakete könnten eventuell 
+sogar erstellt werden, würden aber die neue Klasse der Architektur benötigen.
 
-Es gibt zwei Lösungen für dieses Problem: Du könntest nur Pakete der
-ältesten Version der Architektur verwenden oder du könntest die
+Es gibt zwei Lösungen für dieses Problem: Man könnte nur Pakete der
+ältesten Version der Architektur verwenden oder man könnte die
 Entwicklungs-Bibilotheken für die alte Architektur-Version installieren,
 aber trotzdem Pakete benutzen, die für die aktuelle Hardware erstellt
-worden sind. Es ist klar das die erste Lösung praktischer ist, obwohl
-sie nicht die best mögliche Geschwindigkeit bietet.
+worden sind. Es ist klar, dass die erste Lösung praktischer ist, obwohl
+sie nicht die bestmögliche Geschwindigkeit bietet.
 
-Pakete die für eine ältere Version der Architektur erstellt worden
+Pakete, die für eine ältere Version der Architektur erstellt worden
 sind, können zudem an aktuelle CPU's angepasst werden ohne die Zusätze
 für die alte Version zu verlieren. Das ist das System, wie die
 Pakete in Owl erstellt werden.
@@ -37,12 +36,12 @@ Pakete in Owl erstellt werden.
 	Einstellen der Architektur.
 
 Die Architektur kann mittels der ARCHITECTURE= Zeile in der Datei
-buildworld.conf eingestellt werden. Die Zeile ist optional und
+buildworld.conf eingestellt werden. Diese Zeile ist optional und
 standardmässig auskommentiert. In diesem Fall wird die älteste
 Architektur-Version des Rechners genommen.
 
 Es ist nicht möglich Pakete für eine andere Architektur als die des
-Rechners, auf dem alles kompiliert wird, zu erstellen. Das gleiche
+Rechners, auf dem alles kompiliert wird, zu erstellen. Das Gleiche
 gilt für eine neuere CPU-Version als die des Rechners.
 
 
@@ -76,13 +75,13 @@ software zu erstellen, obwohl man einen sparc64 Kernel benutzt.
 
 	Alpha.
 
-Zwei Architektur Versionen sind standardmässig enthalten: alpha
-und alphaev56. Egal welche du nimmst, beide benutzen die BWX Er-
+Zwei Architekturversionen sind standardmässig enthalten: alpha
+und alphaev56. Egal welche man nimmt, beide benutzen die BWX Er-
 weiterungen und Instruktions-Scheduling. Pakete, die für alpha
 erstellt worden sind, sind für ältere EV4 Prozessoren (21064, 21066)
 optimiert. Die Pakete für alphaev56 sind für EV56/PCA56 Prozessoren
-(21164A, 21164PC) optimiert. Auf dem EV5 (21164) kannst du auch die
-alpha Pakete nutzen. Auf einem EV6+ (21264, 21264A) benutze bitte
-die alphaev56 Pakete.
+(21164A, 21164PC) optimiert. Auf dem EV5 (21164) kann man auch die
+alpha Pakete nutzen. Auf einem EV6+ (21264, 21264A) sollten
+die alphaev56 Pakete benutzt werden.
 
-$Id: Owl/doc/de/ARCHITECTURES,v 1.2 2002/06/12 23:24:03 solar Exp $
+$Id: Owl/doc/de/ARCHITECTURES,v 1.3 2002/06/20 14:31:59 schmidt Exp $

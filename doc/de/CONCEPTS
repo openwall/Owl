@@ -1,7 +1,7 @@
 	"Owl", -- eine sicherheitsoptimierte Server-Plattform.
 
-"Owl" (oder "Openwall GNU/*/Linux"; bitte beachtet, dass das "O" in
-jedem Fall gross geschrieben wird) ist ein auf Sicherheit optimiertes
+"Owl" (oder "Openwall GNU/*/Linux";  -- das "O" ist in
+jedem Fall gross zu schreiben) ist ein auf Sicherheit optimiertes
 Betriebssystem mit Linux und GNU-Software als Kern. Owl ist zu allen
 anderen grossen GNU/*/Linux Distributionen kompatibel und als Server-
 Plattform gedacht. Und natürlich ist es frei.
@@ -69,10 +69,10 @@ Obwohl die Überprüfung des Quelltextes der bevorzugte Weg ist, um
 mit Softwarefehlern umzugehen, kann es nicht in allen Fällen
 angewandt werden. Wenn unsichere Dritt-Software auf ein sonst
 sicheres System installiert wird, ist "das Spiel" verloren. Das
-einzige was ein Betriebssystem garantieren kann, ist das der
+Einzige was ein Betriebssystem garantieren kann, ist dass der
 mögliche unauthorisierte Zugriff auf die von der Software
-bereitgestellten Privilegien limitiert bleibt. Wie auch immer,
-in den letzten Jahren wurden einige Versuche unternommen um die
+bereitgestellten Privilegien limitiert bleibt.
+In den letzten Jahren wurden einige Versuche unternommen um die
 erfolgreichen Attacken auf unsichere Dritt-Software einzudämmen.
 Owl wird einige von diesen "Versuchen" in verschiedenen Teilen
 des Systems benutzen.
@@ -89,10 +89,10 @@ zu stellen, die auch "out of the box" benutzt werden können.
 	Die Arbeitsumgebung und das Paket-Management.
 
 Im Gegensatz zu anderen "Linux Distributionen" enthält Owl eine
-komplette Arbeitsumgebung um das komplette System aus den Quelltexten
-neu zu kompilieren. Und das ganze mit einem einzigen Kommando ("make
-buildworld"). Wie auch immer, die Implementation des "make buildworld"
-unter Owl ist komplett anders als die von *BSD. Es ist eigentlich
+komplette Arbeitsumgebung um das ganze System aus den Quelltexten
+neu zu kompilieren. Und das mit einem einzigen Kommando ("make
+buildworld"). Die Implementation des "make buildworld" ist jedoch
+unter Owl komplett anders als die von *BSD. Es ist eigentlich
 mehr mit den *BSD ports/packages vergleichbar, da sie die komplette
 Owl-Benutzersoftware beinhaltet (alles ausser dem Linux Kernel).
 
@@ -110,12 +110,12 @@ Auf diesen zwei Verzeichnisbäumen basierend, werden die Binär-
 pakete erstellt. Diese können installiert werden, um das ganze
 System zu updaten (mit "make installworld") oder um eine neue
 Owl-Installation zu erstellen (die ROOT= Einstellung). Sie
-können auch über das Netzwerk transferiert und irgenwo anders
+können auch über das Netzwerk transferiert und irgendwo anders
 installiert werden.
 
 Wir benutzen das RPM-Format für Binärpakete, weil es uns erlaubt
 Abhängigkeiten von Paketen zu regeln, die von einem Red Hat Linux
-oder einem anderem System auf ein Owl-System installiert werden.
+oder einem anderen System auf ein Owl-System installiert werden.
 
 
 	Kompatibiliät.
@@ -127,4 +127,4 @@ Fällen ist es möglich eine Applikation, die für eine aktuelle Red
 Hat Version erstellt worden ist, zu installieren (Momentan gilt dies
 für Red Hat 6.x).
 
-$Id: Owl/doc/de/CONCEPTS,v 1.2 2002/06/12 23:24:03 solar Exp $
+$Id: Owl/doc/de/CONCEPTS,v 1.3 2002/06/20 14:31:59 schmidt Exp $
