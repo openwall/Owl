@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.31 2002/09/09 10:49:35 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.32 2002/10/24 08:54:23 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.16
+Version: 0.17
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -146,6 +146,11 @@ fi
 %doc redhat
 
 %changelog
+* Thu Oct 24 2002 Solar Designer <solar@owl.openwall.com>
+- Set net.ipv4.icmp_echo_ignore_broadcasts = 1 to prevent the use of Owl
+boxes for "smurf" attacks even when proper packet filters aren't in place
+(suggested by Steve Olszewski).
+
 * Mon Sep 09 2002 Solar Designer <solar@owl.openwall.com>
 - Don't export $HOME, $TMP, and $TMPDIR into daemons because they may be
 invalid under another UID and the directories may be gone while a daemon
