@@ -1,0 +1,132 @@
+--- ed-0.2.orig/ed.1
++++ ed-0.2/ed.1
+@@ -196,14 +196,14 @@
+ The last line in the buffer.
+ 
+ .TP 8
+-n
++.I n
+ The
+ .IR n th,
+ line in the buffer
+ where
+ .I n
+ is a number in the range
+-.I [0,$].
++.IR [0,$] .
+ 
+ .HP
+ -
+@@ -215,9 +215,9 @@
+ and may be repeated with cumulative effect.
+ 
+ .HP
+--\fIn\fR
++.RI - n
+ .TP 8
+-^\fIn\fR
++.RI ^ n
+ The
+ .IR n th
+ previous line, where
+@@ -235,7 +235,7 @@
+ .HP
+ +\fIn\fR
+ .TP 8
+-whitespace \fIn\fR
++.I whitespace n
+ The
+ .IR n th
+ next line, where
+@@ -253,16 +253,16 @@
+ %
+ The first through last lines in the buffer.  This is equivalent to
+ the address range
+-.I 1,$.
++.IR 1,$ .
+ 
+ .TP 8
+ ;
+ The current through last lines in the buffer.  This is equivalent to
+ the address range
+-.I .,$.
++.IR .,$ .
+ 
+ .TP 8
+-.RI / re/
++.RI / re /
+ The
+ next line containing the regular expression
+ .IR re .
+@@ -271,7 +271,7 @@
+ // repeats the last search.
+ 
+ .TP 8
+-.RI ? re?
++.RI ? re ?
+ The
+ previous line containing the regular expression
+ .IR re .
+@@ -280,7 +280,7 @@
+ ?? repeats the last search.
+ 
+ .TP 8
+-.RI \' lc
++.RI ' lc
+ The
+ line previously marked by a
+ .I `k'
+@@ -331,7 +331,7 @@
+ matches itself.
+ 
+ .TP 8
+-\fR.\fR
++\&.
+ Matches any single character.
+ 
+ .TP 8
+@@ -482,7 +482,7 @@
+ \fR\e+\fR
+ Matches the single character regular expression or subexpression
+ immediately preceding it one or more times.  So the regular expression
+-`a+' is shorthand for `aa*'.  If \e+ occurs at the beginning of a
++`a\e+' is shorthand for `aa*'.  If \e+ occurs at the beginning of a
+ regular expression or subexpression, then it matches a literal `+'.
+ 
+ 
+@@ -564,7 +564,7 @@
+ The current address is set to the last line read.
+ 
+ .TP 8
+-.RI e \ !command
++e !\fIcommand\fR
+ Edits the standard output of
+ .IR `!command' ,
+ (see
+@@ -746,7 +746,7 @@
+ The current address is set to the last line read.
+ 
+ .TP 8
+-.RI ($)r \ !command
++($)r !\fIcommand\fR
+ Reads
+ to after the addressed line
+ the standard output of
+@@ -843,7 +843,7 @@
+ suffix toggles the global suffix of the last substitution.
+ The
+ .I `p'
+-suffix toggles the print suffix of the last substitution
++suffix toggles the print suffix of the last substitution.
+ The current address is set to the last line affected.
+ 
+ .TP 8
+@@ -909,7 +909,7 @@
+ command.
+ 
+ .TP 8
+-.RI (1,$)w \ !command
++(1,$)w !\fIcommand\fR
+ Writes the addressed lines to the standard input of
+ .IR `!command' ,
+ (see the

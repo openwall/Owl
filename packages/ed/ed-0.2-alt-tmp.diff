@@ -1,0 +1,131 @@
+--- ed-0.2/buf.c.orig	1994-11-19 15:37:59 +0300
++++ ed-0.2/buf.c	2002-08-26 12:59:50 +0400
+@@ -23,8 +23,10 @@
+ static char *rcsid = "@(#)$Id: buf.c,v 1.11 1994/11/13 04:25:44 alm Exp $";
+ #endif /* not lint */
+ 
++#define _GNU_SOURCE
+ #include "ed.h"
+ 
++#include <error.h>
+ #include <sys/file.h>
+ #include <sys/stat.h>
+ 
+@@ -54,7 +56,7 @@
+       sfseek = lp->seek;
+       if (fseek (sfp, sfseek, SEEK_SET) < 0)
+ 	{
+-	  fprintf (stderr, "%s\n", strerror (errno));
++	  error (0, errno, "fseek");
+ 	  sprintf (errmsg, "Cannot seek temp file");
+ 	  return NULL;
+ 	}
+@@ -63,7 +65,7 @@
+   REALLOC (sfbuf, sfbufsz, len + 1, NULL);
+   if ((ct = fread (sfbuf, sizeof (char), len, sfp)) < 0 || ct != len)
+     {
+-      fprintf (stderr, "%s\n", strerror (errno));
++      error (0, errno, "fread");
+       sprintf (errmsg, "Cannot read temp file");
+       return NULL;
+     }
+@@ -103,7 +105,7 @@
+     {
+       if (fseek (sfp, 0L, SEEK_END) < 0)
+ 	{
+-	  fprintf (stderr, "%s\n", strerror (errno));
++	  error (0, errno, "fseek");
+ 	  sprintf (errmsg, "Cannot seek temp file");
+ 	  return NULL;
+ 	}
+@@ -114,7 +116,7 @@
+   if ((ct = fwrite (cs, sizeof (char), len, sfp)) < 0 || ct != len)
+     {
+       sfseek = -1;
+-      fprintf (stderr, "%s\n", strerror (errno));
++      error (0, errno, "fwrite");
+       sprintf (errmsg, "Cannot write temp file");
+       return NULL;
+     }
+@@ -194,26 +196,39 @@
+ 
+ extern int newline_added;
+ 
+-char sfn[15] = "";		/* scratch file name */
++static char *sfn;		/* scratch file name */
+ 
+ /* open_sbuf: open scratch file */
+ int
+ open_sbuf ()
+ {
+-  char *mktemp ();
+-  int u;
++  int fd;
+ 
+   isbinary = newline_added = 0;
+-  u = umask(077);
+-  strcpy (sfn, "/tmp/ed.XXXXXX");
+-  if (mktemp (sfn) == NULL || (sfp = fopen (sfn, "w+")) == NULL)
++  if (asprintf (&sfn, "%s/ed.XXXXXX", getenv ("TMPDIR") ?: P_tmpdir) < 0)
++    {
++      error (0, errno, "asprintf");
++      sprintf (errmsg, "Cannot make temp file name");
++      sfn = 0;
++      return ERR;
++    }
++  if ((fd = mkstemp (sfn)) < 0)
+     {
+-      fprintf (stderr, "%s: %s\n", sfn, strerror (errno));
++      error (0, errno, "%s", sfn);
+       sprintf (errmsg, "Cannot open temp file");
+-      umask(u);
++      free (sfn);
++      sfn = 0;
++      return ERR;
++    }
++  if (!(sfp = fdopen (fd, "w+")))
++    {
++      error (0, errno, "%s", sfn);
++      sprintf (errmsg, "Cannot open temp file");
++      close (fd);
++      free (sfn);
++      sfn = 0;
+       return ERR;
+     }
+-  umask(u);
+   return 0;
+ }
+ 
+@@ -226,12 +241,18 @@
+     {
+       if (fclose (sfp) < 0)
+ 	{
+-	  fprintf (stderr, "%s: %s\n", sfn, strerror (errno));
++	  error (0, errno, "%s", sfn);
+ 	  sprintf (errmsg, "Cannot close temp file");
++	  free (sfn);
++	  sfn = 0;
++	  sfp = 0;
+ 	  return ERR;
+ 	}
+-      sfp = NULL;
+-      unlink (sfn);
++      sfp = 0;
++      if (unlink (sfn) < 0)
++	error (0, errno, "unlink: %s", sfn);
++      free (sfn);
++      sfn = 0;
+     }
+   sfseek = seek_write = 0;
+   return 0;
+@@ -246,7 +267,10 @@
+   if (sfp)
+     {
+       fclose (sfp);
++      sfp = 0;
+       unlink (sfn);
++      free (sfn);
++      sfn = 0;
+     }
+   exit (n);
+ }
