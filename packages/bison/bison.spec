@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bison/bison.spec,v 1.18 2005/01/14 03:27:50 galaxy Exp $
+# $Id: Owl/packages/bison/bison.spec,v 1.19 2005/01/18 13:24:58 solar Exp $
 
 Summary: A GNU general-purpose parser generator.
 Name: bison
@@ -29,12 +29,12 @@ to be very proficient in C programming to be able to program with Bison.
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-%configure --datadir=%_datadir
-make LDFLAGS=-s
+%configure
+%__make
 
 %install
 rm -rf %buildroot
-%makeinstall datadir=%buildroot%_datadir
+%makeinstall
 
 %post
 /sbin/install-info %_infodir/bison.info.gz %_infodir/dir \
@@ -57,9 +57,8 @@ fi
 
 %changelog
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.35-owl4
-- Fixed package filelist to include files which belongs to this package
-only.
-- Used %%_datadir for data, but not %%_libdir.
+- Fixed package filelist to include files which belong to this package only.
+- Use %%_datadir for data, not %%_libdir.
 
 * Sat Sep 11 2004 Solar Designer <solar@owl.openwall.com> 1.35-owl3
 - Use RPM's exclude macro on info dir file.
