@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.13 2000/11/17 08:22:22 solar Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.14 2000/11/27 10:49:44 kad Exp $
 
 # XXX legacy requires './' payload prefix to be omitted from rpm packages.
 %define        _noPayloadPrefix        1
@@ -12,7 +12,7 @@
 Summary: The Red Hat package management system.
 Name: 		rpm
 Version: 	%{version}
-Release: 	9.7.4owl
+Release: 	9.7.5owl
 Group: 		System Environment/Base
 Source: 	ftp://ftp.rpm.org/pub/rpm/dist/rpm-3.0.x/rpm-%{version}.tar.gz
 Patch0:		rpm-3.0.5-owl-topdir.diff
@@ -20,6 +20,7 @@ Patch1:		rpm-3.0.5-owl-bash2.diff
 Patch2:		rpm-3.0.5-owl-vendor.diff
 Patch3:		rpm-3.0.5-owl-closeall.diff
 Patch4:		rpm-3.0.5-owl-includes.diff
+Patch5:		rpm-3.0.5-owl-gendiff.diff
 Copyright: 	GPL
 Conflicts: 	patch < 2.5
 %ifos linux
@@ -106,6 +107,7 @@ capabilities.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 autoconf
