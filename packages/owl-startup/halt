@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/owl-startup/halt,v 1.1 2000/11/28 22:48:33 solar Exp $
+# $Id: Owl/packages/owl-startup/halt,v 1.2 2001/04/11 12:47:04 mci Exp $
 #
 # This file is based on several Debian scripts by Miquel van Smoorenburg.
 #
@@ -27,7 +27,6 @@ echo "Turning off swap"
 swapoff -a
 
 if [ -x /sbin/accton ]; then
-	echo "Turning off process accounting"
 	/sbin/accton
 fi
 

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.14 2001/03/28 08:42:44 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.15 2001/04/11 12:47:04 mci Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -142,6 +142,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc redhat
 
 %changelog
+* Wed Apr 11 2001 Michail Litvak <mci@owl.openwall.com>
+- removed echo about accounting stopping.
+
 * Wed Mar 28 2001 Solar Designer <solar@owl.openwall.com>
 - Disable coredumps with the soft rlimit only.
 
