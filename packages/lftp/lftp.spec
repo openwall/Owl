@@ -1,4 +1,4 @@
-# $Id: Owl/packages/lftp/lftp.spec,v 1.16 2003/06/04 08:29:33 mci Exp $
+# $Id: Owl/packages/lftp/lftp.spec,v 1.17 2003/06/04 09:17:27 solar Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
@@ -6,7 +6,7 @@ Version: 2.6.6
 Release: owl2
 License: GPL
 Group: Applications/Internet
-URL: http://lftp.yar.ru/
+URL: http://lftp.yar.ru
 Source0: ftp://ftp.yars.free.net/pub/software/unix/net/ftp/client/lftp/%{name}-%{version}.tar.bz2
 Source1: lftpget.1
 Patch0: lftp-2.6.6-owl-n-option.diff
