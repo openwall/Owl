@@ -1,0 +1,31 @@
+"Owl" is a security-enhanced operating system with Linux and GNU
+software as its core, compatible with other major distributions of
+GNU/*/Linux-based systems.  It is intended as a server platform.
+
+
+	The build environment and package management.
+
+Unlike most other "Linux distributions", Owl includes a complete build
+environment capable to re-build the entire system from source with one
+simple command ("make buildworld").  However, the implementation of
+"make buildworld" on Owl is very different from that available with
+*BSD.  It is in fact more similar to *BSD ports/packages, covering the
+entire Owl userland (that is, everything but the Linux kernel).
+
+The Owl userland source code consists of two source trees, where each
+Owl package is split between the two trees.  One source tree consists
+of original archives as distributed by the authors or maintainers of
+the corresponding software components.  The other tree, which we store
+in a CVS repository, has the build specifications, patches, and other
+Owl-specific additions to the packages.
+
+Based on the two source trees, binary packages are built.  They can be
+installed (with "make installworld") to update the system itself or to
+create a new Owl installation (the ROOT= setting), or they can be
+transferred over a network and installed elsewhere.
+
+We're using RPM for the binary packages, as that allows for reasonable
+dependency handling when installing packages from or intended for Red
+Hat Linux and several other distributions, on an Owl system.
+
+$Id: Owl/doc/CONCEPTS,v 1.1 2000/12/09 20:25:06 solar Exp $
