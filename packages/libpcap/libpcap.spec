@@ -1,9 +1,9 @@
-# $Id: Owl/packages/libpcap/libpcap.spec,v 1.10 2003/10/30 09:00:26 solar Exp $
+# $Id: Owl/packages/libpcap/libpcap.spec,v 1.11 2003/12/15 14:39:52 solar Exp $
 
 Summary: Network packet capture library.
 Name: libpcap
 Version: 0.6.2
-Release: owl4
+Release: owl5
 Epoch: 2
 License: GPL
 Group: System Environment/Libraries
@@ -12,6 +12,7 @@ Source: http://www.tcpdump.org/release/%name-%version.tar.gz
 Patch0: libpcap-0.6.2-pld-shared.diff
 Patch1: libpcap-0.6.2-cvs-20020712-buffer.diff
 Patch2: libpcap-0.6.2-nmap-alt-owl-linux-honor-timeout.diff
+Patch3: libpcap-0.6.2-owl-align.diff
 PreReq: /sbin/ldconfig
 BuildRequires: flex, bison
 BuildRoot: /override/%name-%version
@@ -37,6 +38,7 @@ Header files and development documentation for libpcap.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 %configure \
@@ -69,6 +71,10 @@ mkdir -p ${RPM_BUILD_ROOT}{%_libdir,%_mandir/man3}
 %_libdir/lib*.a
 
 %changelog
+* Mon Dec 15 2003 Solar Designer <solar@owl.openwall.com> 2:0.6.2-owl5
+- Avoid unaligned accesses in bpf_filter.c unless we're positive the
+architecture can handle them.
+
 * Mon Jun 02 2003 Solar Designer <solar@owl.openwall.com> 2:0.6.2-owl4
 - Corrected the timeout handling patch to do it in the packet receive
 loop rather than only once before the loop and to return on timeout.
