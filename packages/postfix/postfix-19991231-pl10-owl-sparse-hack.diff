@@ -1,0 +1,21 @@
+diff -ur postfix-19991231-pl10.orig/local/dotforward.c postfix-19991231-pl10/local/dotforward.c
+--- postfix-19991231-pl10.orig/local/dotforward.c	Fri Dec 10 02:04:40 1999
++++ postfix-19991231-pl10/local/dotforward.c	Wed Nov 22 18:26:20 2000
+@@ -224,6 +224,17 @@
+ 		msg_warn("file %s is world writable", STR(path));
+ 	    } else if ((fd = open_as(STR(path), O_RDONLY, 0, usr_attr.uid, usr_attr.gid)) < 0) {
+ 		msg_warn("cannot open file %s: %m", STR(path));
++	    } else if (fstat(fd, &st) != 0) {
++		msg_warn("cannot fstat file %s: %m", STR(path));
++		close(fd);
++	    } else if (S_ISREG(st.st_mode) == 0) {
++		msg_warn("file %s is no longer a regular file", STR(path));
++		close(fd);
++	    } else if (st.st_size > st.st_blocks * st.st_blksize &&
++		st.st_blksize >= 512) {
++		/* This works on Linux with ext2fs, but it doesn't have to */
++		msg_warn("file %s is a sparse file", STR(path));
++		close(fd);
+ 	    } else {
+ 		close_on_exec(fd, CLOSE_ON_EXEC);
+ 		addr_count = 0;
