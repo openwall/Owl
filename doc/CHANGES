@@ -12,6 +12,9 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/07/31	Package: openssl
+Updated to 0.9.6e, dropping patches that are now included.
+
 2002/07/30	Package: openssl
 SECURITY FIX	Severity: high, remote, passive to active
 Applied the official patch with 4 security fixes to vulnerabilities
@@ -859,4 +862,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.115 2002/07/30 18:46:28 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.116 2002/07/31 02:18:25 solar Exp $
