@@ -1,11 +1,11 @@
-# $Id: Owl/packages/silo/silo.spec,v 1.4 2001/01/09 02:32:53 kad Exp $
+# $Id: Owl/packages/silo/silo.spec,v 1.5 2001/01/18 03:25:47 solar Exp $
 
 %define 	SILO_NO_CAT	'yes'
 
 Summary: 	The SILO boot loader for SPARCs.
 Name: 		silo
 Version: 	0.9.9
-Release: 	2owl
+Release: 	3owl
 Copyright: 	GPL
 Group: 		System Environment/Base
 Source: 	ftp://sunsite.mff.cuni.cz/OS/Linux/Sparc/local/silo/silo-%{version}.tgz
@@ -48,6 +48,9 @@ install -m644 man/silo.8	$RPM_BUILD_ROOT%{_mandir}/man8/silo.8
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%post
+test -f /etc/silo.conf -a "$SILO_INSTALL" = "yes" && /sbin/silo $SILO_FLAGS || :
+
 %files
 %defattr(-,root,root)
 %doc docs COPYING ChangeLog
@@ -64,7 +67,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/silo.8*
  
 %changelog
-* Fri Jan  5 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Thu Jan 18 2001 Solar Designer <solar@owl.openwall.com>
+- Run silo in %post if enabled via $SILO_INSTALL.
+
+* Fri Jan 05 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import from RH
 - disable cat command
 
