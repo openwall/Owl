@@ -21,31 +21,6 @@
  .SM CLSET_RETRY_TIMEOUT\s0	struct timeval	set the retry timeout
  .SM CLGET_RETRY_TIMEOUT\s0	struct timeval	get the retry timeout
  .fi
---- man-pages-1.38/man7/mdoc.samples.7.orig	Thu Jun  7 14:56:37 2001
-+++ man-pages-1.38/man7/mdoc.samples.7	Sun Jun 17 18:30:00 2001
-@@ -1647,6 +1647,22 @@
- .Xr troff Ns / Ns Xr ditroff
- output.
- .Ss Return Values
-+.de Rv
-+.ie \\n(.$==0 \{\
-+.tm Usage: .Rv [-std] (#\\n(.c)
-+.\}
-+.el \{\
-+.       ds mN Rv
-+.       if "\\$1"-std" \{\
-+.       nr cH \\*(cH
-+.       if (\\n(cH<1):(\\n(cH>8) .tm Usage: .Rv -std sections 2 and 3 only
-+.               br
-+\&The
-+.Fn \\$2
-+\&\\*(rV
-+.       \}
-+.\}
-+..
- The
- .Ql \&.Rv
- macro generates text for use in the
 --- man-pages-1.38/man7/regex.7.orig	Thu Jun  7 14:56:37 2001
 +++ man-pages-1.38/man7/regex.7	Sun Jun 17 19:44:46 2001
 @@ -27,7 +27,7 @@

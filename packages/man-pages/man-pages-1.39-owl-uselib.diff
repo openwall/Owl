@@ -13,7 +13,7 @@
  \fBuselib\fP selects the shared library binary that will be used by
  the calling process.
 +.sp
-+Uselib is only used for loading a.out libraries and thus is
++\fBuselib\fP is only used for loading a.out libraries and thus is
 +obsolete on most architectures.
  .SH "RETURN VALUE"
  On success, zero is returned.  On error, \-1 is returned, and
