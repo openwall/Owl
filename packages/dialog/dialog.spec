@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dialog/dialog.spec,v 1.1 2000/12/07 12:25:08 mci Exp $
+# $Id: Owl/packages/dialog/dialog.spec,v 1.2 2000/12/07 15:38:49 solar Exp $
 
 Summary: A utility for creating TTY dialog boxes.
 Name: dialog
@@ -7,11 +7,11 @@ Release: 4owl
 Copyright: GPL
 Group: Applications/System
 Source: ftp://dickey.his.com/dialog/dialog-0.9a-20001027.tgz
-Patch: dialog-0.9a-owl-pwdbox.diff
+Patch0: dialog-0.9a-owl-pwdbox.diff
 BuildRoot: /var/rpm-buildroot/%{name}-root
 
 %description
-Displays user-friendly dialog boxes from shell scripts
+Displays user-friendly dialog boxes from shell scripts.
 This application provides a method of displaying several different types
 of dialog boxes from shell scripts.  This allows a developer of a script
 to interact with the user in a much friendlier manner.
@@ -53,10 +53,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dialog.*
 
 %changelog
-* Thu Dec 7 2000 Michail Litvak <mci@owl.openwall.com>
+* Thu Dec 07 2000 Michail Litvak <mci@owl.openwall.com>
 - Imported from RH
 - New upstream release
-- added patch to display '*' in passwordbox   
+- Added patch to display '*' in passwordbox
 
 * Mon Aug  7 2000 Bill Nottingham <notting@redhat.com>
 - fix one of the examples (#14073)
