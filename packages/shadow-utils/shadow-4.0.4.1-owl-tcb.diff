@@ -1,5 +1,5 @@
 diff -uNrp shadow-4.0.4.1.orig/lib/Makefile.am shadow-4.0.4.1/lib/Makefile.am
---- shadow-4.0.4.1.orig/lib/Makefile.am	Wed Dec 17 12:43:30 2003
+--- shadow-4.0.4.1.orig/lib/Makefile.am	Wed Dec 17 09:43:30 2003
 +++ shadow-4.0.4.1/lib/Makefile.am	Sun Feb 29 03:21:46 2004
 @@ -11,6 +11,8 @@ libshadow_la_LIBADD = $(INTLLIBS) $(LIBC
  	$(top_builddir)/libmisc/libmisc.la
@@ -11,7 +11,7 @@ diff -uNrp shadow-4.0.4.1.orig/lib/Makefile.am shadow-4.0.4.1/lib/Makefile.am
  	commonio.h \
  	defines.h \
 diff -uNrp shadow-4.0.4.1.orig/lib/commonio.c shadow-4.0.4.1/lib/commonio.c
---- shadow-4.0.4.1.orig/lib/commonio.c	Sun Feb 29 03:21:22 2004
+--- shadow-4.0.4.1.orig/lib/commonio.c	Sat Feb 28 00:30:24 2004
 +++ shadow-4.0.4.1/lib/commonio.c	Sun Feb 29 03:21:46 2004
 @@ -12,6 +12,9 @@ RCSID("$Id: commonio.c,v 1.23 2003/05/12
  #include <stdio.h>
@@ -101,9 +101,9 @@ diff -uNrp shadow-4.0.4.1.orig/lib/commonio.c shadow-4.0.4.1/lib/commonio.c
  	/*
  	 * If O_CREAT was specified and the file didn't exist, it will be
 diff -uNrp shadow-4.0.4.1.orig/lib/getdef.c shadow-4.0.4.1/lib/getdef.c
---- shadow-4.0.4.1.orig/lib/getdef.c	Sun Feb 29 03:21:22 2004
-+++ shadow-4.0.4.1/lib/getdef.c	Sun Feb 29 03:21:46 2004
-@@ -114,6 +114,8 @@ static struct itemdef def_table[] = {
+--- shadow-4.0.4.1.orig/lib/getdef.c	Sat Feb 28 23:10:38 2004
++++ shadow-4.0.4.1/lib/getdef.c	Thu Sep 30 08:52:09 2004
+@@ -115,6 +115,8 @@ static struct itemdef def_table[] = {
  	{ "SYSLOG_SG_ENAB",		NULL },
  	{ "SYSLOG_SU_ENAB",		NULL },
  #endif
@@ -112,18 +112,18 @@ diff -uNrp shadow-4.0.4.1.orig/lib/getdef.c shadow-4.0.4.1/lib/getdef.c
  	{ "TTYGROUP",			NULL },
  	{ "TTYPERM",			NULL },
  	{ "TTYTYPE_FILE",		NULL },
-@@ -122,7 +124,8 @@ static struct itemdef def_table[] = {
- 	{ "ULIMIT",			NULL },
+@@ -124,7 +126,8 @@ static struct itemdef def_table[] = {
  	{ "UMASK",			NULL },
  	{ "USERDEL_CMD",		NULL },
--	{ "USERGROUPS_ENAB",		NULL }
-+	{ "USERGROUPS_ENAB",		NULL },
+ 	{ "USERGROUPS_ENAB",		NULL },
+-	{ "USERNAME_MAX",		NULL }
++	{ "USERNAME_MAX",		NULL },
 +	{ "USE_TCB",			NULL }
  };
  
  #ifndef LOGINDEFS
 diff -uNrp shadow-4.0.4.1.orig/lib/pam_chpw.c shadow-4.0.4.1/lib/pam_chpw.c
---- shadow-4.0.4.1.orig/lib/pam_chpw.c	Thu Jan  1 03:00:00 1970
+--- shadow-4.0.4.1.orig/lib/pam_chpw.c	Thu Jan  1 00:00:00 1970
 +++ shadow-4.0.4.1/lib/pam_chpw.c	Sun Feb 29 03:21:46 2004
 @@ -0,0 +1,38 @@
 +#include <stdio.h>
@@ -165,7 +165,7 @@ diff -uNrp shadow-4.0.4.1.orig/lib/pam_chpw.c shadow-4.0.4.1/lib/pam_chpw.c
 +	return 1;
 +}
 diff -uNrp shadow-4.0.4.1.orig/lib/pam_chpw.h shadow-4.0.4.1/lib/pam_chpw.h
---- shadow-4.0.4.1.orig/lib/pam_chpw.h	Thu Jan  1 03:00:00 1970
+--- shadow-4.0.4.1.orig/lib/pam_chpw.h	Thu Jan  1 00:00:00 1970
 +++ shadow-4.0.4.1/lib/pam_chpw.h	Sun Feb 29 03:21:46 2004
 @@ -0,0 +1,7 @@
 +#ifndef _PAM_CHPW_H
@@ -176,7 +176,7 @@ diff -uNrp shadow-4.0.4.1.orig/lib/pam_chpw.h shadow-4.0.4.1/lib/pam_chpw.h
 +
 +#endif
 diff -uNrp shadow-4.0.4.1.orig/lib/shadowio.c shadow-4.0.4.1/lib/shadowio.c
---- shadow-4.0.4.1.orig/lib/shadowio.c	Wed Aug 15 01:10:36 2001
+--- shadow-4.0.4.1.orig/lib/shadowio.c	Tue Aug 14 21:10:36 2001
 +++ shadow-4.0.4.1/lib/shadowio.c	Sun Feb 29 03:21:51 2004
 @@ -11,10 +11,15 @@ RCSID("$Id: shadowio.c,v 1.13 2001/08/14
  #ifdef HAVE_SHADOW_H
@@ -325,7 +325,7 @@ diff -uNrp shadow-4.0.4.1.orig/lib/shadowio.c shadow-4.0.4.1/lib/shadowio.c
  
  struct commonio_entry *
 diff -uNrp shadow-4.0.4.1.orig/lib/tcbfuncs.c shadow-4.0.4.1/lib/tcbfuncs.c
---- shadow-4.0.4.1.orig/lib/tcbfuncs.c	Thu Jan  1 03:00:00 1970
+--- shadow-4.0.4.1.orig/lib/tcbfuncs.c	Thu Jan  1 00:00:00 1970
 +++ shadow-4.0.4.1/lib/tcbfuncs.c	Sun Feb 29 03:21:46 2004
 @@ -0,0 +1,476 @@
 +#define _GNU_SOURCE
@@ -805,7 +805,7 @@ diff -uNrp shadow-4.0.4.1.orig/lib/tcbfuncs.c shadow-4.0.4.1/lib/tcbfuncs.c
 +	return ret;
 +}
 diff -uNrp shadow-4.0.4.1.orig/lib/tcbfuncs.h shadow-4.0.4.1/lib/tcbfuncs.h
---- shadow-4.0.4.1.orig/lib/tcbfuncs.h	Thu Jan  1 03:00:00 1970
+--- shadow-4.0.4.1.orig/lib/tcbfuncs.h	Thu Jan  1 00:00:00 1970
 +++ shadow-4.0.4.1/lib/tcbfuncs.h	Sun Feb 29 03:21:46 2004
 @@ -0,0 +1,13 @@
 +#ifndef _TCBFUNCS_H
@@ -822,11 +822,11 @@ diff -uNrp shadow-4.0.4.1.orig/lib/tcbfuncs.h shadow-4.0.4.1/lib/tcbfuncs.h
 +
 +#endif
 diff -uNrp shadow-4.0.4.1.orig/man/login.defs.5 shadow-4.0.4.1/man/login.defs.5
---- shadow-4.0.4.1.orig/man/login.defs.5	Sun Feb 29 03:21:22 2004
-+++ shadow-4.0.4.1/man/login.defs.5	Sun Feb 29 03:21:46 2004
-@@ -27,10 +27,18 @@
- .\"
- .\"	$Id: login.defs.5,v 1.12 2003/05/01 18:17:39 kloczek Exp $
+--- shadow-4.0.4.1.orig/man/login.defs.5	Sat Feb 28 23:10:38 2004
++++ shadow-4.0.4.1/man/login.defs.5	Thu Sep 30 08:51:46 2004
+@@ -30,10 +30,18 @@
+ .\" 2004/09/29 Juan M. Bello Rivas <jmbr@owl.openwall.com>
+ .\" Documented USERNAME_MAX and GROUPNAME_MAX
  .\"
 +.\" 2002/10/24 Rafal Wojtczuk <nergal@owl.openwall.com>
 +.\"            Solar Designer <solar@owl.openwall.com>
@@ -835,16 +835,16 @@ diff -uNrp shadow-4.0.4.1.orig/man/login.defs.5 shadow-4.0.4.1/man/login.defs.5
  .\" 2001/11/11 Solar Designer <solar@owl.openwall.com>
  .\" Documented CRYPT_PREFIX and CRYPT_ROUNDS.
  .\"
+-.TH LOGIN.DEFS 5 "11 November 2001"
 +.\" 2001/11/04 Solar Designer <solar@owl.openwall.com>
 +.\"            Rafal Wojtczuk <nergal@owl.openwall.com>
 +.\" Documented TCB_AUTH_GROUP and USE_TCB.
 +.\"
--.TH LOGIN.DEFS 5 "11 November 2001"
-+.TH LOGIN.DEFS 5 "24 November 2002"
++.TH LOGIN.DEFS 5 "30 September 2004"
  .SH NAME
  /etc/login.defs \- shadow password suite configuration
  .SH DESCRIPTION
-@@ -116,6 +124,78 @@ PASS_MAX_DAYS, PASS_MIN_DAYS and PASS_WA
+@@ -118,6 +126,78 @@ PASS_MAX_DAYS, PASS_MIN_DAYS and PASS_WA
  are only used at the time of account creation. Any changes to these
  settings won't affect existing accounts.
  .\"
@@ -923,7 +923,7 @@ diff -uNrp shadow-4.0.4.1.orig/man/login.defs.5 shadow-4.0.4.1/man/login.defs.5
  .IP "UID_MAX (number)"
  .IP "UID_MIN (number)"
  Range of user IDs to choose from for the \fBuseradd\fR program.
-@@ -124,6 +204,13 @@ Range of user IDs to choose from for the
+@@ -126,6 +206,13 @@ Range of user IDs to choose from for the
  The permission mask is initialized to this value. If not specified,
  the permission mask will be initialized to 077.
  .\"
@@ -937,7 +937,7 @@ diff -uNrp shadow-4.0.4.1.orig/man/login.defs.5 shadow-4.0.4.1/man/login.defs.5
  .IP "USERDEL_CMD (string)"
  If defined, this command is run when removing a user.
  It should remove any at/cron/print jobs etc. owned by
-@@ -133,8 +220,12 @@ the user to be removed (passed as the fi
+@@ -140,8 +227,12 @@ characters). If not specified, 8 charact
  The following cross reference shows which programs in the shadow password
  suite use which parameters.
  .na
@@ -950,8 +950,8 @@ diff -uNrp shadow-4.0.4.1.orig/man/login.defs.5 shadow-4.0.4.1/man/login.defs.5
  .IP chsh 12
  CHFN_AUTH
  .IP gpasswd 12
-@@ -143,20 +234,34 @@ CRYPT_PREFIX CRYPT_ROUNDS
- GID_MAX GID_MIN
+@@ -151,22 +242,36 @@ GID_MAX GID_MIN
+ GROUPNAME_MAX
  .IP newusers 12
  PASS_MAX_DAYS PASS_MIN_DAYS PASS_WARN_AGE
 +TCB_AUTH_GROUP TCB_SYMLINKS
@@ -972,12 +972,14 @@ diff -uNrp shadow-4.0.4.1.orig/man/login.defs.5 shadow-4.0.4.1/man/login.defs.5
  UID_MAX UID_MIN
  UMASK
 +USE_TCB
+ USERNAME_MAX GROUPNAME_MAX
  .IP userdel 12
  MAIL_DIR
 +USE_TCB
  USERDEL_CMD
  .IP usermod 12
  MAIL_DIR
+ USERNAME_MAX
 +TCB_SYMLINKS
 +USE_TCB
 +.IP vipw 12
@@ -986,7 +988,7 @@ diff -uNrp shadow-4.0.4.1.orig/man/login.defs.5 shadow-4.0.4.1/man/login.defs.5
  .SH BUGS
  Much of the functionality that used to be provided by the shadow password
 diff -uNrp shadow-4.0.4.1.orig/src/Makefile.am shadow-4.0.4.1/src/Makefile.am
---- shadow-4.0.4.1.orig/src/Makefile.am	Tue Dec 16 23:53:47 2003
+--- shadow-4.0.4.1.orig/src/Makefile.am	Tue Dec 16 20:53:47 2003
 +++ shadow-4.0.4.1/src/Makefile.am	Sun Feb 29 03:21:46 2004
 @@ -50,9 +50,10 @@ suidbins = su
  suidubins = chage chfn chsh expiry gpasswd newgrp passwd
@@ -1011,7 +1013,7 @@ diff -uNrp shadow-4.0.4.1.orig/src/Makefile.am shadow-4.0.4.1/src/Makefile.am
  su_SOURCES     = su.c suauth.c
  su_LDADD       = $(LDADD) $(LIBPAM)
 diff -uNrp shadow-4.0.4.1.orig/src/chage.c shadow-4.0.4.1/src/chage.c
---- shadow-4.0.4.1.orig/src/chage.c	Sun Feb 29 03:21:22 2004
+--- shadow-4.0.4.1.orig/src/chage.c	Sat Feb 28 15:59:34 2004
 +++ shadow-4.0.4.1/src/chage.c	Sun Feb 29 03:21:46 2004
 @@ -78,6 +78,9 @@ extern char *l64a ();
  #include "pwio.h"
@@ -1048,7 +1050,7 @@ diff -uNrp shadow-4.0.4.1.orig/src/chage.c shadow-4.0.4.1/src/chage.c
  		fprintf (stderr,
  			 _("%s: can't lock shadow password file"), Prog);
 diff -uNrp shadow-4.0.4.1.orig/src/chpasswd.c shadow-4.0.4.1/src/chpasswd.c
---- shadow-4.0.4.1.orig/src/chpasswd.c	Sun Feb 29 03:21:22 2004
+--- shadow-4.0.4.1.orig/src/chpasswd.c	Sat Feb 28 23:16:45 2004
 +++ shadow-4.0.4.1/src/chpasswd.c	Sun Feb 29 03:21:51 2004
 @@ -25,6 +25,19 @@
   * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
@@ -1277,8 +1279,7 @@ diff -uNrp shadow-4.0.4.1.orig/src/chpasswd.c shadow-4.0.4.1/src/chpasswd.c
  				 Prog, line);
  			errors++;
 -			continue;
-+			break;
- 		}
+-		}
 -		newpwd = cp;
 -		if (!eflg)
 -			cp = pw_encrypt (newpwd, crypt_make_salt ());
@@ -1293,17 +1294,7 @@ diff -uNrp shadow-4.0.4.1.orig/src/chpasswd.c shadow-4.0.4.1/src/chpasswd.c
 -			fprintf (stderr,
 -				 _("%s: line %d: unknown user %s\n"), Prog,
 -				 line, name);
-+		if (eflg) {
-+			if (!paste_pwd (name, cp)) {
-+				fprintf (stderr, "%s: line %d: unable to paste new hash\n",
-+					Prog, line);
-+				errors++;
-+				break;
-+			}
-+		} else if (!do_pam_chpass ("chpasswd", name, cp)) {
-+			fprintf (stderr, "%s: line %d: unable to change password for %s\n",
-+				Prog, line, name);
- 			errors++;
+-			errors++;
 -			continue;
 -		}
 -#ifdef SHADOWPWD
@@ -1329,7 +1320,8 @@ diff -uNrp shadow-4.0.4.1.orig/src/chpasswd.c shadow-4.0.4.1/src/chpasswd.c
 -		{
 -			newpw = *pw;
 -			newpw.pw_passwd = cp;
--		}
++			break;
+ 		}
 -
 -		/* 
 -		 * The updated password file entry is then put back and will
@@ -1349,11 +1341,22 @@ diff -uNrp shadow-4.0.4.1.orig/src/chpasswd.c shadow-4.0.4.1/src/chpasswd.c
 -				 _
 -				 ("%s: line %d: cannot update password entry\n"),
 -				 Prog, line);
--			errors++;
++		if (eflg) {
++			if (!paste_pwd (name, cp)) {
++				fprintf (stderr, "%s: line %d: unable to paste new hash\n",
++					Prog, line);
++				errors++;
++				break;
++			}
++		} else if (!do_pam_chpass ("chpasswd", name, cp)) {
++			fprintf (stderr, "%s: line %d: unable to change password for %s\n",
++				Prog, line, name);
+ 			errors++;
 -			continue;
--		}
--	}
--
++			break;
+ 		}
+ 	}
+ 
 -	/*
 -	 * Any detected errors will cause the entire set of changes to be
 -	 * aborted. Unlocking the password file will cause all of the
@@ -1380,10 +1383,9 @@ diff -uNrp shadow-4.0.4.1.orig/src/chpasswd.c shadow-4.0.4.1/src/chpasswd.c
 -				 Prog);
 -			pw_unlock ();
 -			exit (1);
-+			break;
- 		}
+-		}
 -		spw_unlock ();
- 	}
+-	}
 -#endif
 -	if (!pw_close ()) {
 -		fprintf (stderr, _("%s: error updating password file\n"),
@@ -1392,7 +1394,7 @@ diff -uNrp shadow-4.0.4.1.orig/src/chpasswd.c shadow-4.0.4.1/src/chpasswd.c
 -	}
 -
 -	nscd_flush_cache ("passwd");
- 
+-
 -	pw_unlock ();
 -
 -#ifdef USE_PAM
@@ -1417,7 +1419,7 @@ diff -uNrp shadow-4.0.4.1.orig/src/chpasswd.c shadow-4.0.4.1/src/chpasswd.c
  	return (0);
  }
 diff -uNrp shadow-4.0.4.1.orig/src/newusers.c shadow-4.0.4.1/src/newusers.c
---- shadow-4.0.4.1.orig/src/newusers.c	Sun Feb 29 03:21:22 2004
+--- shadow-4.0.4.1.orig/src/newusers.c	Sat Feb 28 23:16:45 2004
 +++ shadow-4.0.4.1/src/newusers.c	Sun Feb 29 03:21:46 2004
 @@ -59,7 +59,10 @@ static char *Prog;
  #ifdef	SHADOWPWD
@@ -1827,7 +1829,7 @@ diff -uNrp shadow-4.0.4.1.orig/src/newusers.c shadow-4.0.4.1/src/newusers.c
  	exit (0);
  	/* NOT REACHED */
 diff -uNrp shadow-4.0.4.1.orig/src/pwck.c shadow-4.0.4.1/src/pwck.c
---- shadow-4.0.4.1.orig/src/pwck.c	Sun Feb 29 03:21:22 2004
+--- shadow-4.0.4.1.orig/src/pwck.c	Sat Feb 28 23:16:45 2004
 +++ shadow-4.0.4.1/src/pwck.c	Sun Feb 29 03:21:46 2004
 @@ -40,6 +40,7 @@ RCSID (PKG_VER "$Id: pwck.c,v 1.23 2002/
  #include <pwd.h>
@@ -1862,7 +1864,7 @@ diff -uNrp shadow-4.0.4.1.orig/src/pwck.c shadow-4.0.4.1/src/pwck.c
  
  	/*
 diff -uNrp shadow-4.0.4.1.orig/src/pwconv.c shadow-4.0.4.1/src/pwconv.c
---- shadow-4.0.4.1.orig/src/pwconv.c	Thu Jun 19 22:11:01 2003
+--- shadow-4.0.4.1.orig/src/pwconv.c	Thu Jun 19 18:11:01 2003
 +++ shadow-4.0.4.1/src/pwconv.c	Sun Feb 29 03:21:46 2004
 @@ -81,6 +81,11 @@ int main (int argc, char **argv)
  	bindtextdomain (PACKAGE, LOCALEDIR);
@@ -1877,7 +1879,7 @@ diff -uNrp shadow-4.0.4.1.orig/src/pwconv.c shadow-4.0.4.1/src/pwconv.c
  		fprintf (stderr, _("%s: can't lock passwd file\n"), Prog);
  		fail_exit (E_PWDBUSY);
 diff -uNrp shadow-4.0.4.1.orig/src/pwunconv.c shadow-4.0.4.1/src/pwunconv.c
---- shadow-4.0.4.1.orig/src/pwunconv.c	Thu Jun 19 22:11:01 2003
+--- shadow-4.0.4.1.orig/src/pwunconv.c	Thu Jun 19 18:11:01 2003
 +++ shadow-4.0.4.1/src/pwunconv.c	Sun Feb 29 03:21:46 2004
 @@ -40,6 +40,7 @@ RCSID (PKG_VER "$Id: pwunconv.c,v 1.15 2
  #include "prototypes.h"
@@ -1900,7 +1902,7 @@ diff -uNrp shadow-4.0.4.1.orig/src/pwunconv.c shadow-4.0.4.1/src/pwunconv.c
  	if (!spw_file_present ())
  		/* shadow not installed, do nothing */
 diff -uNrp shadow-4.0.4.1.orig/src/useradd.c shadow-4.0.4.1/src/useradd.c
---- shadow-4.0.4.1.orig/src/useradd.c	Sun Feb 29 03:21:22 2004
+--- shadow-4.0.4.1.orig/src/useradd.c	Sat Feb 28 15:35:59 2004
 +++ shadow-4.0.4.1/src/useradd.c	Sun Feb 29 03:21:46 2004
 @@ -56,6 +56,9 @@ RCSID (PKG_VER "$Id: useradd.c,v 1.46.2.
  #endif
@@ -1991,7 +1993,7 @@ diff -uNrp shadow-4.0.4.1.orig/src/useradd.c shadow-4.0.4.1/src/useradd.c
  	 * open the group files in the open_files() function  --gafton */
  	if (! (nflg || gflg)) {
 diff -uNrp shadow-4.0.4.1.orig/src/userdel.c shadow-4.0.4.1/src/userdel.c
---- shadow-4.0.4.1.orig/src/userdel.c	Sun Feb 29 03:21:22 2004
+--- shadow-4.0.4.1.orig/src/userdel.c	Sat Feb 28 15:15:16 2004
 +++ shadow-4.0.4.1/src/userdel.c	Sun Feb 29 03:21:46 2004
 @@ -38,11 +38,19 @@ RCSID (PKG_VER "$Id: userdel.c,v 1.29 20
  #include <grp.h>
@@ -2081,7 +2083,7 @@ diff -uNrp shadow-4.0.4.1.orig/src/userdel.c shadow-4.0.4.1/src/userdel.c
  	if (retval == PAM_SUCCESS) {
  		retval = pam_chauthtok (pamh, 0);
 diff -uNrp shadow-4.0.4.1.orig/src/usermod.c shadow-4.0.4.1/src/usermod.c
---- shadow-4.0.4.1.orig/src/usermod.c	Sun Feb 29 03:21:22 2004
+--- shadow-4.0.4.1.orig/src/usermod.c	Sat Feb 28 15:16:33 2004
 +++ shadow-4.0.4.1/src/usermod.c	Sun Feb 29 03:21:46 2004
 @@ -57,6 +57,9 @@ RCSID (PKG_VER "$Id: usermod.c,v 1.31 20
  #include "pwauth.h"
@@ -2106,7 +2108,7 @@ diff -uNrp shadow-4.0.4.1.orig/src/usermod.c shadow-4.0.4.1/src/usermod.c
  static gid_t user_gid;
  static gid_t user_newgid;
  static char *user_comment;
-@@ -1451,6 +1454,11 @@ int main (int argc, char **argv)
+@@ -1453,6 +1456,11 @@ int main (int argc, char **argv)
  	 * change the home directory, then close and update the files.
  	 */
  
@@ -2118,7 +2120,7 @@ diff -uNrp shadow-4.0.4.1.orig/src/usermod.c shadow-4.0.4.1/src/usermod.c
  	open_files ();
  
  	usr_update ();
-@@ -1482,6 +1490,12 @@ int main (int argc, char **argv)
+@@ -1484,6 +1492,12 @@ int main (int argc, char **argv)
  			    user_id, user_newid,
  			    user_gid, gflg ? user_newgid : user_gid);
  	}
@@ -2132,7 +2134,7 @@ diff -uNrp shadow-4.0.4.1.orig/src/usermod.c shadow-4.0.4.1/src/usermod.c
  	if (grp_err)
  		exit (E_GRP_UPDATE);
 diff -uNrp shadow-4.0.4.1.orig/src/vipw.c shadow-4.0.4.1/src/vipw.c
---- shadow-4.0.4.1.orig/src/vipw.c	Sun Feb 29 03:21:22 2004
+--- shadow-4.0.4.1.orig/src/vipw.c	Sat Feb 28 00:31:27 2004
 +++ shadow-4.0.4.1/src/vipw.c	Sun Feb 29 03:21:46 2004
 @@ -33,6 +33,12 @@ RCSID (PKG_VER "$Id: vipw.c,v 1.6 2003/0
  #include <sys/types.h>

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.39 2004/11/11 18:05:23 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.40 2004/11/11 19:00:55 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.4.1
-Release: owl3
+Release: owl4
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -26,15 +26,15 @@ Patch5: shadow-4.0.4.1-owl-chage-drop-priv.diff
 Patch6: shadow-4.0.4.1-owl-chage-ro-no-lock.diff
 Patch7: shadow-4.0.4.1-owl-userdel-path_prefix.diff
 Patch8: shadow-4.0.4.1-owl-pam_chauthtok.diff
-Patch10: shadow-4.0.4.1-rh-owl-redhat.diff
+Patch9: shadow-4.0.4.1-owl-usermod-update-lstchg.diff
+Patch10: shadow-4.0.4.1-owl-usergroupname_max.diff
+Patch19: shadow-4.0.4.1-rh-owl-redhat.diff
 Patch20: shadow-4.0.4.1-owl-man.diff
-Patch21: shadow-4.0.4.1-owl-check_names.diff
-Patch22: shadow-4.0.4.1-owl-create-mailbox.diff
-Patch23: shadow-4.0.4.1-owl-restrict-locale.diff
-Patch24: shadow-4.0.4.1-owl-crypt_gensalt.diff
-Patch25: shadow-4.0.4.1-owl-newgrp.diff
+Patch21: shadow-4.0.4.1-owl-create-mailbox.diff
+Patch22: shadow-4.0.4.1-owl-restrict-locale.diff
+Patch23: shadow-4.0.4.1-owl-crypt_gensalt.diff
+Patch24: shadow-4.0.4.1-owl-newgrp.diff
 Patch30: shadow-4.0.4.1-owl-tcb.diff
-Patch31: shadow-4.0.4.1-owl-usermod-update-lstchg.diff
 Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: pam, tcb >= 0.9.8, pam_userpass >= 0.5
 BuildRequires: libtool, gettext = 0.14.1, automake, autoconf
@@ -58,15 +58,15 @@ shadow password files.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 %patch10 -p1
+%patch19 -p1
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
 %patch23 -p1
 %patch24 -p1
-%patch25 -p1
 %patch30 -p1
-%patch31 -p1
 
 find . -name "*.orig" -delete
 
@@ -229,6 +229,10 @@ fi
 %exclude %_mandir/man8/mkpasswd*
 
 %changelog
+* Thu Nov 11 2004 Juan M. Bello Rivas <jmbr@owl.openwall.com> 2:4.0.4.1-owl4
+- Added the USERNAME_MAX and GROUPNAME_MAX options.
+- Placed the "usermod -p" patch higher in the patch list.
+
 * Thu Nov 11 2004 Dmitry V. Levin <ldv@owl.openwall.com> 2:4.0.4.1-owl3
 - Restore chpasswd(8) behaviour, which was broken since 4.0.4.1-owl0.1.
 
