@@ -1,9 +1,9 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.1 2001/04/02 16:12:10 mci Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.2 2001/04/09 06:34:59 mci Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
 Version: 6.3.5
-Release: 1owl
+Release: 2owl
 Copyright: GPL
 Group: Applications/System
 Source0: ftp://ftp.red-bean.com/pub/noel/%{name}-%{version}.tar.gz
@@ -12,18 +12,19 @@ Source2: dump-utmp.8
 Source3: acct.logrotate
 Source4: acct.init
 Provides: psacct
+Obsoletes: psacct
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Prereq: /sbin/install-info
 
 %description
-The psacct package contains several utilities for monitoring process
+The acct package contains several utilities for monitoring process
 activities, including ac, lastcomm, accton and sa.  The ac command
 displays statistics about how long users have been logged on.  The
 lastcomm command displays information about previous executed commands.
 The accton command turns process accounting on or off.  The sa command
-summarizes information about previously executed commmands.
+summarizes information about previously executed commands.
 
-Install the psacct package if you'd like to use its utilities for
+Install the acct package if you'd like to use its utilities for
 monitoring process activities on your system.
 
 %prep
@@ -63,22 +64,29 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 # we need this hack to get rid of an old, incorrect accounting info entry.
-if [ $1 -eq 0 ]; then
-  grep -v '* accounting: (psacct)' < /etc/info-dir > /etc/info-dir.new
-  mv -f /etc/info-dir.new /etc/info-dir
-  /sbin/install-info %{_infodir}/accounting.info.gz /usr/info/dir --entry="* accounting: (accounting).            The GNU Process Accounting Suite."
-fi
+grep -v '* accounting: (psacct)' < /etc/info-dir > /etc/info-dir.new
+mv -f /etc/info-dir.new /etc/info-dir
+/sbin/install-info %{_infodir}/accounting.info.gz %{_infodir}/dir --entry="* accounting: (accounting).            The GNU Process Accounting Suite."
+
+for f in %{_var}/account/pacct \
+	 %{_var}/account/usracct \
+	 %{_var}/account/savacct ; do
+        test -e $f && continue || :
+        touch $f
+        chown root.root $f && chmod 600 $f
+done
 
 %preun
-if [ $1 -eq 1 ]; then
-   /sbin/install-info --delete %{_infodir}/accounting.info.gz /usr/info/dir --entry="* accounting: (accounting).            The GNU Process Accounting Suite."
+if [ "$1" -eq 0 ]; then
+	/sbin/install-info --delete %{_infodir}/accounting.info.gz %{_infodir}/dir --entry="* accounting: (accounting).            The GNU Process Accounting Suite."
 fi
 
 %files
 %defattr(-,root,root)
-%attr(0600,root,root)   %config /var/account/pacct
-%attr(0600,root,root)   %config /var/account/usracct
-%attr(0600,root,root)   %config /var/account/savacct
+%dir /var/account
+%ghost %attr(0600,root,root) /var/account/pacct
+%ghost %attr(0600,root,root) /var/account/usracct
+%ghost %attr(0600,root,root) /var/account/savacct
 %attr(0644,root,root)   %config(noreplace) /etc/logrotate.d/*
 %config /etc/rc.d/init.d/acct
 /sbin/accton
@@ -88,8 +96,13 @@ fi
 %{_infodir}/*
 
 %changelog
+* Mon Apr 08 2001 Michail Litvak <mci@owl.openwall.com>
+- spec cleanups
+- acct.logrotate and acct.init was rewrited
+- Obsoletes: psacct
+- Use %ghost for /var/account/*
+
 * Mon Apr 02 2001 Michail Litvak <mci@owl.openwall.com>
 - Imported spec from RH (some parts from Mandrake)
-- update to 6.3.5, fixed source location 
+- update to 6.3.5, fixed source location
 - dump-acct, dump-utmp manpages from Debian
-

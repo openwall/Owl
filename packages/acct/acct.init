@@ -1,126 +1,27 @@
 #! /bin/sh
 #
 # Start or stop process accounting
-#
-# Initial version written by Ian Murdock <imurdock@debian.org>
-# This version written by Dirk Eddelbuettel <edd@debian.org>   
 
 ACCTON=/sbin/accton
 
-set -e 
-
-compare_kernel_version_and_exit_if_needed() {
-
-    # thanks to Joey Hess for this shell script snippet 
-    # -- easier than my previous perl code
-    cmp_major=2
-    cmp_minor=2
-
-    kernel_major=`uname -a | cut -d' ' -f 3 | cut -d. -f 1`
-    kernel_minor=`uname -a | cut -d' ' -f 3 | cut -d. -f 2`
-    if [ $kernel_major -gt $cmp_major ]; then
-	valid=true
-    elif [ $kernel_major -eq $cmp_major ] && [ $kernel_minor -ge $cmp_minor ]; then
-	valid=true
-    else
-	valid=false
-    fi
-
-    if [ "$valid" = "false" ]; then
-	echo "Skipping process accounting: Package requires kernel 2.2.*."
-	exit 0
-    fi
-}
-
 test -x $ACCTON || exit 0
 
-# If you want to keep acct installed, but not started automatically, set this
-# variable to 0. 
-START_ACCT=1
-
-if [ $START_ACCT -eq 1 ] 
-then
-    compare_kernel_version_and_exit_if_needed
-fi
-
 case "$1" in
-  start)
-    # We start acct only if the switch variable tells us to
-    if [ $START_ACCT -eq 1 ] 
-    then
-	# Have to turn this on to be able to test the return code
-	set +e
-	echo -n "Starting process accounting: "
+start)
+	echo "Starting process accounting"
 	$ACCTON /var/account/pacct 2>/dev/null
-	rv=$?
-	if [ $rv -eq 0 ]
-	then
-	    echo "done."
-	elif [ $rv -eq 38 ]
-	then
-	    echo "failed"
-	    echo "Process accounting not available on this system."
-	elif [ $rv -eq 16 ]
-	then
-	    echo "failed"
-	    echo "Process accounting already running on this system."
-	fi
-	set -e 
-    fi
-    ;;
-  stop)
-    echo -n "Stopping process accounting: "
-    # Have to turn this on to be able to test the return code
-    set +e
-    $ACCTON 2>/dev/null
-    if [ $? -eq 0 ]
-    then
-	echo "done."
-    else
-      echo "failed."
-      echo "Process accounting not available on this system."
-    fi
-    set -e
-    ;;
-  restart|force-reload) 
-    echo -n "Stopping process accounting: "
-    # Have to turn this on to be able to test the return code
-    set +e
-    $ACCTON 2>/dev/null
-    if [ $? -eq 0 ]
-    then
-	echo "done."
-    else
-	echo "failed."
-	echo "Process accounting not available on this system."
-    fi
-    set -e
-    # We start acct only if the switch variable tells us to
-    if [ $START_ACCT -eq 1 ] 
-    then
-	# Have to turn this on to be able to test the return code
-	set +e
-	echo -n "Starting process accounting: "
-	$ACCTON /var/account/pacct 2>/dev/null
-	rv=$?
-	if [ $rv -eq 0 ]
-	then
-	    echo "done."
-	elif [ $rv -eq 38 ]
-	then
-	    echo "failed"
-	    echo "Process accounting not available on this system."
-	elif [ $rv -eq 16 ]
-	then
-	    echo " failed"
-	    echo "Process accounting already running on this system."
-	fi
-	set -e 
-    fi
-    ;;
-  *)
-    echo "Usage: /etc/rc.d/init.d/acct {start|stop|restart|force-reload}"
-    exit 1
+	;;
+stop)
+	echo "Stopping process accounting"
+	$ACCTON 2>/dev/null
+	;;
+restart)
+	$0 stop
+	$0 start
+	;;
+*)
+	echo "Usage: acct {start|stop|restart}"
+	exit 1
 esac
 
-exit 0
+exit $?
