@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.12 2000/11/08 07:25:23 solar Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.13 2000/11/17 04:58:39 solar Exp $
 
 %define GCC_PREFIX /usr
 %define CPP_PREFIX /lib
@@ -12,7 +12,7 @@
 Summary:	Various compilers (C, C++, Objective-C, f77, ...)
 Name:		gcc
 Version:	%{GCC_VERSION}
-Release:	6owl
+Release:	7owl
 Serial:		1
 Copyright:	GPL
 URL:		http://gcc.gnu.org
@@ -184,11 +184,15 @@ done
 
 
 %build
+%ifarch sparcv9
+%define _target_platform sparc-%{_vendor}-%{_target_os}
+%endif
+
 rm -fr obj-%{_target_platform}
 mkdir obj-%{_target_platform}
 cd obj-%{_target_platform}
 
-%ifarch sparc
+%ifarch sparc sparcv9
 # pthreads are currently not supported on sparc
 CFLAGS="`echo $RPM_OPT_FLAGS|sed -e 's/-fno-rtti//g'` -fexceptions" \
 	CXXFLAGS="`echo $RPM_OPT_FLAGS|sed -e 's/-fno-rtti//g'` -fexceptions" \
@@ -506,6 +510,11 @@ fi
 %endif
 
 %changelog
+* Fri Nov 17 2000 Solar Designer <solar@owl.openwall.com>
+- No pthreads on sparcv9, not just on plain sparc.
+- Pass plain sparc- target to configure when building for sparcv9, to
+allow for the use of sparcv9 optflags while not confusing configure.
+
 * Wed Nov 08 2000 Solar Designer <solar@owl.openwall.com>
 - Added a patch for copying of DECL_MODE in duplicate_decls(), by
 Richard Henderson (http://gcc.gnu.org/ml/gcc-patches/1999-11/msg00087.html).
