@@ -16,7 +16,7 @@ ftp://gd.tuwien.ac.at/opsys/linux/Owl/	(Австрия)
 	http://gd.tuwien.ac.at/opsys/linux/Owl/
 	rsync://gd.tuwien.ac.at/opsys/linux/Owl/
 ftp://ftp.mathematik.uni-marburg.de/pub/mirror/openwall/Owl/	(Германия)
-ftp://ftp.ca.openwall.com/pub/Owl/	(Канада)
+ftp://ftp.busymonkey.org/pub/Owl/	(США)
 ftp://ftp.wiretapped.net/pub/Owl/	(Австралия)
 
 Каждому релизу или ветке Owl соответствует отдельный каталог со
@@ -62,4 +62,4 @@ CVSROOT=anoncvs@anoncvs.owl.openwall.com:/cvs
 использовать сжатие при любом способе доступа - обычно посредством
 указания опции -z3 для CVS или включив сжатие в настройках SSH-клиента.
 
-$Id: Owl/doc/ru/DOWNLOAD,v 1.4 2003/01/10 14:09:23 gremlin Exp $
+$Id: Owl/doc/ru/DOWNLOAD,v 1.5 2003/01/18 09:54:05 solar Exp $
