@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.13 2000/12/04 23:52:02 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.14 2000/12/05 00:27:11 solar Exp $
 
 Summary: Initial set of configuration files
 Name: owl-etc
@@ -39,7 +39,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root)
 %verify(not md5 size mtime) %config(noreplace) /etc/passwd
-%verify(not md5 size mtime) %config(noreplace) /etc/shadow
+%verify(not md5 size mtime) %config(noreplace) %attr(400,root,root) /etc/shadow
 %verify(not md5 size mtime) %config(noreplace) /etc/group
 %attr(600,root,root) /etc/securetty
 %config /etc/shells
