@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.16 2003/10/24 00:18:05 solar Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.17 2003/10/25 08:38:36 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
@@ -89,7 +89,7 @@ pushd $RPM_BUILD_ROOT
 rm etc/postfix/{install.cf,postfix-script-{diff,*sgid}}
 
 install -m 644 $RPM_SOURCE_DIR/aliases etc/postfix/
-ln -s /etc/postfix/aliases{,.db} etc/
+ln -s postfix/aliases{,.db} etc/
 
 mkdir -p etc/rc.d/init.d
 install -m 700 $RPM_SOURCE_DIR/postfix.init etc/rc.d/init.d/postfix
@@ -98,7 +98,11 @@ mkdir -p etc/control.d/facilities
 install -m 700 $RPM_SOURCE_DIR/postfix.control etc/control.d/facilities/postfix
 
 mkdir -p usr/lib
-ln -s /usr/sbin/sendmail usr/lib/sendmail
+ln -s ../sbin/sendmail usr/lib/sendmail
+
+# Shorten the symlink
+rm usr/bin/mailq
+ln -s ../sbin/sendmail usr/bin/mailq
 
 chmod go-r usr/sbin/postdrop
 
