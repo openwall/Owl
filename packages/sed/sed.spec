@@ -1,13 +1,14 @@
-# $Id: Owl/packages/sed/sed.spec,v 1.6 2004/07/12 20:43:43 mci Exp $
+# $Id: Owl/packages/sed/sed.spec,v 1.7 2004/07/17 00:12:30 solar Exp $
 
 Summary: A GNU stream text editor.
 Name: sed
-Version: 4.0.9
+Version: 4.1.1
 Release: owl1
 License: GPL
 Group: Applications/Text
+URL: http://www.gnu.org/software/sed/
 Source: ftp://ftp.gnu.org/gnu/sed/sed-%version.tar.gz
-Patch: sed-4.0.9-owl-info.diff
+Patch0: sed-4.0.9-owl-info.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
@@ -53,6 +54,9 @@ fi
 %_mandir/man*/*
 
 %changelog
+* Fri Jul 16 2004 Solar Designer <solar@owl.openwall.com> 4.1.1-owl1
+- Updated to 4.1.1.
+
 * Mon Jul 12 2004 Michail Litvak <mci@owl.openwall.com> 4.0.9-owl1
 - 4.0.9
 
