@@ -1,4 +1,4 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.30 2003/10/16 02:53:31 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.31 2003/10/24 00:19:41 solar Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
@@ -76,9 +76,9 @@ fi
 if [ $1 -ge 2 ]; then
 	/usr/sbin/control-restore passwd su
 	if [ -d /etc/tcb -a -f /etc/shadow-pre-tcb -a ! -e /etc/shadow -a \
-	    "`control passwd`" = traditional ]; then
+	    "`/usr/sbin/control passwd`" = traditional ]; then
 		echo "Setting passwd(1) file modes for tcb"
-		control passwd tcb
+		/usr/sbin/control passwd tcb
 		ls -l /usr/bin/passwd
 	fi
 else

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.52 2003/09/14 13:05:33 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.53 2003/10/24 00:23:16 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
@@ -92,9 +92,9 @@ to /etc/tcb.
 EOF
 		if /sbin/tcb_convert; then
 			echo "tcb_convert succeeded"
-			if [ "`control passwd`" != restricted ]; then
+			if [ "`/usr/sbin/control passwd`" != restricted ]; then
 				echo "Setting passwd(1) file modes for tcb"
-				control passwd tcb
+				/usr/sbin/control passwd tcb
 				ls -l /usr/bin/passwd
 			fi
 			rm -f /etc/shadow.rpmnew
