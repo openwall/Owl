@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.47 2005/01/14 03:27:53 galaxy Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.48 2005/01/20 04:43:47 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -43,7 +43,7 @@ rm -rf %buildroot
 
 mkdir -p %buildroot/etc/{rc.d/{rc{0,1,2,3,4,5,6}.d,init.d},profile.d}
 mkdir -p %buildroot/etc/sysconfig/network-scripts
-mkdir -p %buildroot/{bin,sbin,/var/{log,run}}
+mkdir -p %buildroot/{bin,sbin,var/{log,run}}
 mkdir -p %buildroot%_mandir/man1
 
 install -m 755 src/{usleep,ipcalc} %buildroot/bin/
