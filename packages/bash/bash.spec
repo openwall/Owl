@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.22 2004/09/10 07:17:16 galaxy Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.23 2004/09/11 00:09:54 solar Exp $
 
 Version: 2.05
 Name: bash
@@ -141,7 +141,7 @@ install -m 644 $RPM_SOURCE_DIR/dot-bashrc etc/skel/.bashrc
 install -m 644 $RPM_SOURCE_DIR/dot-bash_profile etc/skel/.bash_profile
 install -m 644 $RPM_SOURCE_DIR/dot-bash_logout etc/skel/.bash_logout
 
-# XXX: (GM): Remove unpackaged files (check later)
+# Remove unpackaged files
 rm %buildroot%_infodir/dir
 
 %triggerin -- libtermcap

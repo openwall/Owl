@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cvs/cvs.spec,v 1.22 2004/09/10 07:17:36 galaxy Exp $
+# $Id: Owl/packages/cvs/cvs.spec,v 1.23 2004/09/11 00:09:54 solar Exp $
 
 Summary: A version control system.
 Name: cvs
@@ -82,7 +82,7 @@ cd $RPM_BUILD_ROOT
 find .%_datadir/cvs -type f -print0 | xargs -r0 chmod -x --
 chmod 755 .%_datadir/cvs/contrib/rcs2log
 
-# XXX: (GM): Remove unpackaged files (check later)                              
+# Remove unpackaged files
 rm %buildroot%_infodir/dir
 
 %post

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/chkconfig/chkconfig.spec,v 1.7 2004/09/10 07:17:30 galaxy Exp $
+# $Id: Owl/packages/chkconfig/chkconfig.spec,v 1.8 2004/09/11 00:09:54 solar Exp $
 
 %define BUILD_NTSYSV 0
 %define INSTALL_ALTERNATIVES 0
@@ -60,7 +60,7 @@ for n in 0 1 2 3 4 5 6; do
 	ln -s rc.d/rc${n}.d $RPM_BUILD_ROOT/etc/rc${n}.d
 done
 
-# XXX: (GM): Remove unpackaged files (check later)                              
+# Remove unpackaged files
 %if !%INSTALL_ALTERNATIVES
 rm %buildroot%_sbindir/alternatives
 rm %buildroot%_mandir/man8/alternatives.8*
