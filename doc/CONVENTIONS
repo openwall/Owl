@@ -93,10 +93,11 @@ usual description of the patch.
 
 There're also some common WHAT's to use whenever applicable:
 
-fixes	- cumulative bug, reliability, and/or security patches
-linux	- changes needed to build on Linux (for ported software)
-man	- man page patches only
-tmp	- patches dealing with temporary file handling issues
+fixes		- cumulative bug, reliability, and/or security patches
+install-no-root	- changes to run "make install" or equivalent as non-root
+linux		- changes needed to build on Linux (for ported software)
+man		- man page patches only
+tmp		- patches dealing with temporary file handling issues
 
 This is NOT to suggest you should try to arrange your modifications
 such that the patch files fit one of these categories.  In fact, it is
@@ -116,4 +117,4 @@ options:
 This does not exactly match our preferred coding style and thus isn't
 to be used on sources already in Owl.
 
-$Id: Owl/doc/CONVENTIONS,v 1.3 2001/11/22 17:31:44 solar Exp $
+$Id: Owl/doc/CONVENTIONS,v 1.4 2001/12/08 00:36:50 solar Exp $
