@@ -1,5 +1,5 @@
 --- logrotate-3.6.2/logrotate.8.orig	Tue Jan 29 22:20:03 2002
-+++ logrotate-3.6.2/logrotate.8	Mon Mar 11 17:53:33 2002
++++ logrotate-3.6.2/logrotate.8	Tue Mar 12 10:30:32 2002
 @@ -1,4 +1,4 @@
 -.TH LOGROTATE 8 "Wed Nov 28 2001" "Red Hat Linux" "System Administor's Manual"
 +.TH LOGROTATE 8 "Wed Nov 28 2001" "Red Hat Linux" "System Administrator's Manual"
@@ -25,11 +25,15 @@
  Here is more information on the directives which may be included in
  a \fBlogrotate\fR configuration file:
  
-@@ -348,7 +353,7 @@
+@@ -346,9 +351,9 @@
+ .TP
+ \fBstart \fIcount\fR
  This is the number to use as the base for rotation. For example, if
- you specify 0 the logs will be created with a .0 extension as the are
- rotated from the original log file.  If you specify 9, log files will
+-you specify 0 the logs will be created with a .0 extension as the are
+-rotated from the original log file.  If you specify 9, log files will
 -start with end with .9, skipping 0-8.  Files will still be rotated the
++you specify 0, the logs will be created with a .0 extension as the are
++rotated from the original log files.  If you specify 9, log files will
 +be created with a .9, skipping 0-8.  Files will still be rotated the
  number of times specified with the \fBcount\fR directive.
  
