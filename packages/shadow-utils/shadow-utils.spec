@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.13 2001/11/12 02:18:45 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.14 2001/11/16 03:16:19 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
@@ -34,9 +34,9 @@ Patch24: shadow-4.0.0-owl-crypt_gensalt.diff
 Patch25: shadow-4.0.0-owl-newgrp.diff
 Patch26: shadow-4.0.0-owl-automake.diff
 Patch30: shadow-4.0.0-owl-tcb.diff
+Requires: owl-control < 2.0, pam, tcb, pam_userpass >= 0.5
 BuildRequires: libtool, gettext, automake, autoconf
 BuildRequires: pam-devel, tcb-devel
-Requires: owl-control < 2.0, tcb, pam, pam_userpass >= 0.5
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -91,23 +91,23 @@ ln -s vipw usr/sbin/vigr
 ln -s vipw.8 usr/man/man8/vigr.8
 
 mkdir -p -m 700 etc/default
-install -m 600 ${RPM_SOURCE_DIR}/login.defs etc/login.defs
-install -m 600 ${RPM_SOURCE_DIR}/useradd.default etc/default/useradd
+install -m 600 $RPM_SOURCE_DIR/login.defs etc/login.defs
+install -m 600 $RPM_SOURCE_DIR/useradd.default etc/default/useradd
 
 mkdir -p etc/pam.d
 pushd etc/pam.d
-install -m 600 ${RPM_SOURCE_DIR}/user-group-mod.pam user-group-mod
+install -m 600 $RPM_SOURCE_DIR/user-group-mod.pam user-group-mod
 ln -s user-group-mod groupadd
 ln -s user-group-mod groupdel
 ln -s user-group-mod groupmod
 ln -s user-group-mod useradd
 ln -s user-group-mod userdel
 ln -s user-group-mod usermod
-install -m 644 ${RPM_SOURCE_DIR}/chage-chfn-chsh.pam chage-chfn-chsh
+install -m 644 $RPM_SOURCE_DIR/chage-chfn-chsh.pam chage-chfn-chsh
 ln -s chage-chfn-chsh chage
 ln -s chage-chfn-chsh chfn
 ln -s chage-chfn-chsh chsh
-install -m 600 ${RPM_SOURCE_DIR}/chpasswd-newusers.pam chpasswd-newusers
+install -m 600 $RPM_SOURCE_DIR/chpasswd-newusers.pam chpasswd-newusers
 ln -s chpasswd-newusers chpasswd
 ln -s chpasswd-newusers newusers
 popd
@@ -115,11 +115,11 @@ popd
 mkdir -p etc/control.d/facilities
 cd etc/control.d/facilities
 
-install -m 700 ${RPM_SOURCE_DIR}/chage.control chage
-install -m 700 ${RPM_SOURCE_DIR}/chfn.control chfn
-install -m 700 ${RPM_SOURCE_DIR}/chsh.control chsh
-install -m 700 ${RPM_SOURCE_DIR}/gpasswd.control gpasswd
-install -m 700 ${RPM_SOURCE_DIR}/newgrp.control newgrp
+install -m 700 $RPM_SOURCE_DIR/chage.control chage
+install -m 700 $RPM_SOURCE_DIR/chfn.control chfn
+install -m 700 $RPM_SOURCE_DIR/chsh.control chsh
+install -m 700 $RPM_SOURCE_DIR/gpasswd.control gpasswd
+install -m 700 $RPM_SOURCE_DIR/newgrp.control newgrp
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -180,6 +180,9 @@ fi
 /etc/control.d/facilities/*
 
 %changelog
+* Fri Nov 16 2001 Solar Designer <solar@owl.openwall.com>
+- Enable forking for pam_tcb with chage, chfn, and chsh.
+
 * Mon Nov 12 2001 Solar Designer <solar@owl.openwall.com>
 - Use /etc/tcb/root as scratch space for "vipw -s user".
 
