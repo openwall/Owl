@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.22 2001/01/31 14:17:51 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.23 2001/02/04 23:04:38 solar Exp $
 
 Summary: Initial set of configuration files
 Name: owl-etc
-Version: 0.8
+Version: 0.9
 Release: 1owl
 Copyright: public domain
 Group: System Environment/Base
@@ -65,6 +65,13 @@ rm -rf $RPM_BUILD_ROOT
 %ghost /var/log/lastlog
 
 %changelog
+* Mon Feb 05 2001 Solar Designer <solar@owl.openwall.com>
+- Add /usr/X11R6/bin to the default PATH when applicable.
+- Changed the default csh prompts to be the same as they are with bash.
+- Mention that /etc/profile.d/local.* is the place for local additions.
+- No longer disable bash history by default.
+- Source /etc/bashrc from /etc/profile unless ~/.bashrc exists.
+
 * Wed Jan 31 2001 Solar Designer <solar@owl.openwall.com>
 - Changed some more pseudo-user home directories to / to avoid certain
 attacks via group write permissions.
