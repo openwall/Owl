@@ -124,6 +124,6 @@ Zielen kollidiert, versucht Owl Binär- und Paketkompatibel mit
 diversen grossen GNU/*/Linux Distributionen zu sein. In den meisten
 Fällen ist es möglich eine Applikation, die für eine aktuelle Red
 Hat Version erstellt worden ist, zu installieren (Momentan gilt dies
-für Red Hat 6.x).
+für Red Hat Linux 9 und in eingeschränktem Masse für RHL 5.0 bis 8).
 
-$Id: Owl/doc/de/CONCEPTS,v 1.5 2003/01/26 21:44:19 schmidt Exp $
+$Id: Owl/doc/de/CONCEPTS,v 1.6 2004/11/04 15:39:37 schmidt Exp $

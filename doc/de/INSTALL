@@ -17,7 +17,9 @@ das Bootdisketten-Image (unter boot/floppy.image) auf eine formatierte
 1,44 MB Diskette (mittels dd(1) oder einem äquivalenten Tool) und bootet
 von der Diskette. In beiden Fällen wird der boot loader nach dem
 CD-ROM Device fragen, welches der Kernel als root Dateisystem verwenden
-soll.
+soll. Wird ein IDE CD-ROM verwendet muss hier der richtige IDE Controller
+und die richtige Anschlussart (Master oder Slave) gewählt werden. Bei
+einem SCSI CD-ROM wählt man "scsi".
 
 Owl sollte dann in den single-user Modus booten. Bei der Frage nach dem
 root Passwort drückt man einfach Enter (die CDs haben kein Passwort) oder
@@ -79,11 +81,11 @@ land geschehen:
 
 	chroot /owl
 
-Aktuell unterstützt Owl den 2.2er sowie den 2.4er Kernel.  Es wird
-empfohlen den Kernel zu installieren, der mit Owl mitgeliefert wird.
+Aktuell unterstützt Owl den 2.4er Kernel.  Es wird empfohlen den Kernel
+zu installieren, der mit Ihrer Owl-Kopie mitgeliefert wird.
 
 Man kann nun den boot loader konfigurieren, der unter Owl verfügbar
 ist (LILO oder SILO, kommt auf die Architektur an), oder einen
 bereits installierten (falls vorhanden) verwenden.
 
-$Id: Owl/doc/de/INSTALL,v 1.11 2003/09/11 10:01:30 schmidt Exp $
+$Id: Owl/doc/de/INSTALL,v 1.12 2004/11/04 15:39:37 schmidt Exp $

@@ -1,0 +1,126 @@
+In dieser Datei werden Probleme beschrieben, die Auftauchen können,
+wenn man Pakete von Red Hat Linux 9 oder welche die dafür gedacht
+sind, verwendet.  Die Namen der betroffenen Red Hat Linux Pakete,
+falls zutreffend oder bekannt, sind in Klammern gesetzt.
+
+
+	Pakete für cron jobs (slocate).
+
+Owl stellt die folgenden Verzeichnisse, die vom LSB 1.3 spezifiziert
+werden, zur Verfügung:
+
+/etc/cron.d
+/etc/cron.daily
+/etc/cron.weekly
+/etc/cron.monthly
+
+Zudem wird das Verzeichnis /etc/cron.hourly, wie man es auf Red Hat
+Linux findet, zur Verfügung gestellt.
+
+Red Hat Linux sowie Owl bearbeiten nur in diesen Verzeichnissen ab-
+gelegte Skripte, die bestimmten Ansprüchen an den Dateinamen gen-
+nügen müssen.  Red Hat Linux besitzt eine Reihe von Suffixen, die
+nicht verwendet werden dürfen, dies sind "~" (Backup-Dateien von
+Editoren), ".rpmsave", ".rpmnew" und einige andere.  Owl verfolgt
+einen anderen Ansatz.  Dateinamen, die unerlaubte Zeichen und am
+allerwichtigsten Punkte ('.') enthalten, werden ausgelassen.  Dies ist
+ein sicherer Ansatz um ungewollte Dateien zu bearbeiten.  Gelegentlich
+enthalten Red Hat Linux Pakte cron job Dateien, die Punkte in Namen
+enthalten, dies ist der Fall bei Red Hat's slocate Paket.  Die Lösung
+für dieses Problem besteht im Umbenennen der Dateien nach der
+Installation.
+
+In den Manual-Seiten von crond(8) und run-parts(8) wird das genaue
+Verhalten von Owl erklärt.
+
+
+	Rechte von Device files (mc).
+
+Owl stellt zum einen keinen Pseudo-User "vcsa" (welcher unter Red
+Hat Linux direkten Zugriff auf die virtuellen Terminals hat) zur
+Verfügung noch sind die /dev/ttyp* Devices für alle lesbar.  Dieser
+Unterschied zu Red Hat Linux verursacht Komplikationen bei Ctrl-O
+sowie bei dem Bildschirmschoner des Midnight Commander (mc).  Eine
+Lösung für dieses Problem wird nicht empfohlen; man sollte dem mc
+beibringen Unix98 ptys anstelle von /dev/ttyp* zu benutzen.
+
+
+	Kein pam_console (XFree86-*).
+
+Das pam_console Modul wird nicht von Owl bereitgestellt.  Die XFree86
+X Server Pakete von Red Hat Linux stellen aber PAM Konfigurations-
+dateien zur Verfügung, die pam_console benötigen.  Um das zu
+beheben, sollte man den Aufruf von pam_console durch den Aufruf eines
+anderen Modules, z.B. pam_listfile, ersetzen.  Hierfür muss die
+entsprechende Zeile in /etc/pam.d/xserver durch folgende ersetzt werden:
+
+auth       required     /lib/security/pam_listfile.so item=user sense=allow onerr=fail file=/etc/xserver.allow
+
+Nun müssen noch alle User, die X benutzen wollen, in /etc/xserver.allow
+eingetragen werden.
+
+
+	pam_pwdb kann nicht mit tcb kommunizieren (Red Hat Linux 6.2
+	und kleiner).
+
+Das für Rückwärtskompatibilität zu Red Hat Linux 6.2 bereitgestellte
+pam_pwdb Modul ist nicht zu unserem neuen Passwort-Schema kompatibel.
+Sollten also Pakete verwendet werden, die von Red Hat Linux 6.2 oder
+kleiner stammen oder dafür geschrieben sind und PAM zum Authentifizieren
+verwenden, werden diese Pakete nicht richtig funktionieren wenn Sie
+/etc/tcb verwenden.  Um dieses Problem zu lösen müssen die Pakete über
+die Konfigurationsdateien angewiesen werden, pam_tcb anstatt von
+pam_pwdb zu verwenden.
+
+
+	Passwort überprüfung (xlock*).
+
+Die Helferprogramme für die PAM Module, die das eigene Passwort des
+Benutzers überprüfen sind bei Red Hat Linux für alle Benutzer zugreif-
+bar.  Bei Owl sind diese auf die Gruppe chkpwd beschränkt.  Dies
+bedeutet, dass einige Programme die diese Funktionalität benötigen
+diese Rechte erhalten müssen.  Bekannt ist dies für die PAM-kompatiblen
+Programme zum Sperren des Bildschirmes unter X, zum Beispiel das was
+aus dem Paket xlockmore stammt.  Um das unter Owl zum Laufen zu be-
+kommen muss es SGID für die Gruppe chkpwd gemacht werden:
+
+-rwx--s--x    1 root     chkpwd     751328 Mar 30  2001 /usr/X11R6/bin/xlock
+
+
+	Kein rpm-python Paket (rpm-python).
+
+
+Da Python kein Bestandteil von Owl ist, stellen wir RPM ohne Unterstützung
+von Python zur Verfügung.  Zudem kann Red Hat's rpm-python Paket wegen
+Versionskonflikten mit unserem RPM Paket nicht richtig installiert werden.
+
+
+	Das Owl slang Paket hat keine Unterstützung für UTF-8.
+
+Red Hat hat dem S-Lang Paket UTF-8 Unterstützung mittels einem Patch
+hinzugefügt.  Dies machen wir nicht.  Sollte ein anderes Paket S-Lang
+mit UTF-8 Unterstützung benötigen kann man einfach unser slang Paket
+mit dem von Red Hat ersetzen, da es innerhalb von Owl keine Abhängigkeiten
+zu dem slang Paket gibt.
+
+
+	Keine Unterstützung für NPTL in der glibc.
+
+Red Hat Linux 9 unterstützt die Native POSIX Thread Library (NPTL) in
+ihrem glibc (C library) Paket.  Wir stellen die ältere LinuxThreads
+Bibilothek zur Verfügung, die sich, zum Zeitpunkt als dies geschrieben
+wurde, immer noch in der aktuellen Version von glibc findet (glibc
+Version 2.3.2).  Zudem benötigt NPTL Unterstützung von Kernel, welche
+wir momentan nicht bereitstellen.
+
+Im Moment ist uns kein Red Hat Linux 9 Paket bekannt, welches nicht ohne
+NPTL funktioniert.  Dies ist auch nicht verwunderlich, da Red Hat Linux
+selbst durch Bibilotheken Rückwärtskompatibilität zur Verfügung stellt,
+falls der laufende Kernel kein NPTL enthält.  Dadurch funktionieren die
+Pakete auch auf einem System ohne NPTL.
+
+Ein uns bekanntes Problem liegt in den Sourcen zu den aktuellsten Versionen
+von RPM (neuer als die, die in PHL 9 verwendet werden) die NPTL verwenden.
+Diese Abhängigkeit ist in unserer Version von RPM gelöst.
+
+$Id: Owl/doc/de/REDHAT,v 1.1 2004/11/04 15:39:37 schmidt Exp $

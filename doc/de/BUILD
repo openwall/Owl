@@ -36,7 +36,7 @@ von Binärpaketen gebraucht wird.
 
 Um Owl aus den Quellen (neu) zu übersetzten, braucht man:
 
-Mindestens 500 MB freien Speicherplatz in /usr/src/world der
+Mindestens 1 GB freien Speicherplatz in /usr/src/world der
 während des Übersetzens genutzt werden kann;
 
 Mindestens 64 MB Arbeitsspeicher (es geht auch mit weniger und aus-
@@ -52,8 +52,13 @@ dies alles auf einem anderen GNU/*/Linux System zu machen, aber man muss
 etwas tricksen um das System zu einem Owl zu machen. Das Ganze geht
 mit mehreren Wiederholungen von "make buildworld" und "make installworld".
 
-Hier einige Übersetzungszeiten (Stunden:Minuten) um einen Eindruck
-zu bekommen:
+Hier einige Übersetzungszeiten (Stunden:Minuten) für Owl-current um
+einen Eindruck zu bekommen was einen erwartet:
+
+Dual Pentium III, 600 MHz, 512 MB				2:50
+
+Hier noch einige Übersetzungszeiten für Owl 1.1, die aber nicht mehr
+länger gültig sind.
 
 Dual Pentium 4 Xeon, HT (4-way MP), 2.666 GHz, 2 GB		0:17
 Dual Pentium 4 Xeon, no HT (2-way SMP), 2.666 GHz, 2 GB		0:21
@@ -71,7 +76,7 @@ wenn die Software, die bereits Bestandteil von Owl ist, ge-updated wird.
 
 	Richtige (Neu-)Übersetzung.
 
-Man braucht einen konfigurierten 2.2er Linux Kernel in /usr/src/linux.
+Man braucht einen konfigurierten 2.4er Linux Kernel in /usr/src/linux.
 Wechsle als Benutzer "build" nach /usr/src/world und gib ein:
 
 	make clean && make buildworld
@@ -100,12 +105,6 @@ die Pakete nach /owl installiert.
 
 "make installworld" sollte als root ausgeführt werden.
 
-Momentan ist es möglich eine existierende Red Hat Linux 6.x Installation
-in ein Owl mittels "make installworld" und einiger Handbuchhilfe
-umzuwandeln. Bevor das versucht wird, sollte alles in
-der Datei installorder.conf gelesen und verstanden worden sein! Insbesondere
-sollte der Kernel während der Umstellung kein RPM-Paket mehr sein.
-
 
 	(Neu-) übersetzung individueller Pakete.
 
@@ -114,4 +113,4 @@ Individuelle Pakete können wieder- oder neuübersetzt werden, indem man
 Für fremde Pakete (SRPMs) die mit der Owl-Arbeitsumgebung erstellt worden
 sind, muss man zusätzlich die Versionsnummer in "name" einfügen.
 
-$Id: Owl/doc/de/BUILD,v 1.12 2003/06/28 13:02:31 solar Exp $
+$Id: Owl/doc/de/BUILD,v 1.13 2004/11/04 15:39:37 schmidt Exp $
