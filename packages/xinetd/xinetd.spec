@@ -1,4 +1,4 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.25 2003/08/26 17:20:39 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.26 2003/09/04 23:44:55 solar Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
@@ -108,9 +108,11 @@ fi
 %{_mandir}/*/*
 
 %changelog
-* Tue Aug 26 2003 Solar Designer <solar@owl.openwall.com> 2.3.12-owl2
+* Fri Sep 05 2003 Solar Designer <solar@owl.openwall.com> 2.3.12-owl2
 - Back-ported a fix from the CVS, thanks to Steve Grubb:
 Add NULL entry to success_log_options to properly end the nvlist.
+- With IPv6, correctly extract IPv4 mapped addresses from sa_data:
+http://marc.theaimsgroup.com/?l=xinetd&m=106027800730549
 
 * Mon Aug 25 2003 Solar Designer <solar@owl.openwall.com> 2.3.12-owl1
 - Updated to 2.3.12.

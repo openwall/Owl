@@ -25,16 +25,16 @@ diff -urp xinetd-2.3.12.orig/xinetd/access.c xinetd-2.3.12/xinetd/access.c
     if( scp->sc_per_source != UNLIMITED ) {
 diff -urp xinetd-2.3.12.orig/xinetd/addr.c xinetd-2.3.12/xinetd/addr.c
 --- xinetd-2.3.12.orig/xinetd/addr.c	Wed Jun 25 17:39:15 2003
-+++ xinetd-2.3.12/xinetd/addr.c	Mon Aug 25 03:02:56 2003
-@@ -204,7 +204,7 @@ int addrlist_match( const pset_h addr_li
++++ xinetd-2.3.12/xinetd/addr.c	Thu Sep  4 23:43:23 2003
+@@ -203,7 +203,7 @@ int addrlist_match( const pset_h addr_li
+              */
              if( IN6_IS_ADDR_V4MAPPED( &SAIN6(addr)->sin6_addr ) ) 
  	    {
-                uint32_t *tmp_addr = (uint32_t *)&addr->sa_data[3];
--               if( (ntohl(*tmp_addr) & cap->m.mask)
-+               if( (ntohl(*tmp_addr) & cap->m.mask) /* XXX: unaligned?! */
+-               uint32_t *tmp_addr = (uint32_t *)&addr->sa_data[3];
++               uint32_t *tmp_addr = (uint32_t *)&addr->sa_data[12];
+                if( (ntohl(*tmp_addr) & cap->m.mask)
  			       == ( cap->a.addr & cap->m.mask ) )
                    return (u+1);
-             }
 diff -urp xinetd-2.3.12.orig/xinetd/confparse.c xinetd-2.3.12/xinetd/confparse.c
 --- xinetd-2.3.12.orig/xinetd/confparse.c	Sat Jul 12 19:26:21 2003
 +++ xinetd-2.3.12/xinetd/confparse.c	Mon Aug 25 03:04:49 2003
