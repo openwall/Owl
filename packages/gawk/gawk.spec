@@ -1,19 +1,16 @@
-# $Id: Owl/packages/gawk/gawk.spec,v 1.4 2002/02/01 15:28:39 solar Exp $
+# $Id: Owl/packages/gawk/gawk.spec,v 1.5 2002/07/15 13:44:07 mci Exp $
 
 Summary: The GNU version of the awk text processing utility.
 Name: gawk
-Version: 3.0.6
-Release: owl2
+Version: 3.1.1
+Release: owl1
 License: GPL
 Group: Applications/Text
 Source0: ftp://ftp.gnu.org/gnu/gawk/gawk-%{version}.tar.gz
 Source1: ftp://ftp.gnu.org/gnu/gawk/gawk-%{version}-ps.tar.gz
-# The "unaligned" patch should be obsolete with glibc 2.1+
-Patch0: gawk-3.0-rh-unaligned.diff
-Patch1: gawk-3.0.6-jh-owl-igawk-tmp.diff
+Patch0: gawk-3.1.1-eggert-tmp.diff
 PreReq: /sbin/install-info
-Requires: mktemp
-BuildRequires: texinfo
+BuildRequires: texinfo >= 4.2
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -24,11 +21,15 @@ quick and easy text pattern matching and reformatting jobs.
 %prep
 %setup -q -b 1
 %patch0 -p1
-%patch1 -p1
+
+%{expand:%%define optflags %optflags -Wall}
 
 %build
-rm -f doc/gawk.info awklib/eg/prog/igawk.sh
+rm doc/gawk.info awklib/stamp-eg
 %configure
+pushd awklib
+make stamp-eg
+popd
 make
 
 %install
@@ -59,7 +60,7 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%doc README COPYING ACKNOWLEDGMENT FUTURES INSTALL LIMITATIONS NEWS PORTS
+%doc README COPYING FUTURES INSTALL LIMITATIONS NEWS
 %doc README_d POSIX.STD doc/gawk.ps doc/awkcard.ps
 /bin/*
 /usr/bin/*
@@ -69,6 +70,11 @@ fi
 %{_datadir}/awk
 
 %changelog
+* Mon Jul 15 2002 Michail Litvak <mci@owl.openwall.com>
+- 3.1.1
+- Switched to using Paul Eggert's patch to igawk which makes it
+not use temporary files at all.
+
 * Fri Feb 01 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions.
 

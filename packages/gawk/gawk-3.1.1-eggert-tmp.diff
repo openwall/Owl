@@ -1,0 +1,270 @@
+--- gawk-3.1.1/doc/gawk.texi.orig	Mon Apr 22 14:26:20 2002
++++ gawk-3.1.1/doc/gawk.texi	Mon Jul  8 17:30:56 2002
+@@ -15100,7 +15100,7 @@
+ 
+ @example
+ # write the data for processing
+-tempfile = ("/tmp/mydata." PROCINFO["pid"])
++tempfile = ("mydata." PROCINFO["pid"])
+ while (@var{not done with data})
+     print @var{data} | ("subprogram > " tempfile)
+ close("subprogram > " tempfile)
+@@ -15113,7 +15113,10 @@
+ @end example
+ 
+ @noindent
+-This works, but not elegantly.
++This works, but not elegantly.  Among other things, it requires that
++the program be run in a directory that cannot be shared among users;
++for example, @file{/tmp} will not do, as another user might happen
++to be using a temporary file with the same name.
+ 
+ @cindex coprocesses
+ @cindex input/output, two-way
+@@ -21388,25 +21391,23 @@
+ 
+ @item
+ For any arguments that do represent @command{awk} text, put the arguments into
+-a temporary file that will be expanded.  There are two cases:
++a shell variable that will be expanded.  There are two cases:
+ 
+ @enumerate a
+ @item
+ Literal text, provided with @option{--source} or @option{--source=}.  This
+-text is just echoed directly.  The @command{echo} program automatically
+-supplies a trailing newline.
++text is just appended directly.
+ 
+-@item
+-Source @value{FN}s, provided with @option{-f}.  We use a neat trick and echo
+-@samp{@@include @var{filename}} into the temporary file.  Since the file-inclusion
++Source @value{FN}s, provided with @option{-f}.  We use a neat trick and append
++@samp{@@include @var{filename}} to the shell variable.  Since the file-inclusion
+ program works the way @command{gawk} does, this gets the text
+ of the file included into the program at the correct point.
+ @end enumerate
+ 
+ @item
+-Run an @command{awk} program (naturally) over the temporary file to expand
++Run an @command{awk} program (naturally) over the shell variable to expand
+ @samp{@@include} statements.  The expanded program is placed in a second
+-temporary file.
++shell variable.
+ 
+ @item
+ Run the expanded program with @command{gawk} and any other original command-line
+@@ -21414,12 +21415,7 @@
+ @end enumerate
+ 
+ The initial part of the program turns on shell tracing if the first
+-argument is @samp{debug}.  Otherwise, a shell @code{trap} statement
+-arranges to clean up any temporary files on program exit or upon an
+-interrupt.
+-
+-@c 2e: For the temp file handling, go with Darrel's ig=${TMP:-/tmp}/igs.$$
+-@c 2e: or something as similar as possible.
++argument is @samp{debug}.
+ 
+ The next part loops through all the command-line arguments.
+ There are several cases of interest:
+@@ -21440,13 +21436,13 @@
+ These are saved and passed on to @command{gawk}.
+ 
+ @item -f@r{,} --file@r{,} --file=@r{,} -Wfile=
+-The @value{FN} is saved to the temporary file @file{/tmp/ig.s.$$} with an
++The @value{FN} is appended to the shell variable @code{program} with an
+ @samp{@@include} statement.
+-The @command{sed} utility is used to remove the leading option part of the
++The @command{expr} utility is used to remove the leading option part of the
+ argument (e.g., @samp{--file=}).
+ 
+ @item --source@r{,} --source=@r{,} -Wsource=
+-The source text is echoed into @file{/tmp/ig.s.$$}.
++The source text is appended to @code{program}.
+ 
+ @item --version@r{,} -Wversion
+ @command{igawk} prints its version number, runs @samp{gawk --version}
+@@ -21457,17 +21453,11 @@
+ or @option{-Wsource} arguments are supplied, then the first nonoption argument
+ should be the @command{awk} program.  If there are no command-line
+ arguments left, @command{igawk} prints an error message and exits.
+-Otherwise, the first argument is echoed into @file{/tmp/ig.s.$$}.
++Otherwise, the first argument is appended to @code{program}.
+ In any case, after the arguments have been processed,
+-@file{/tmp/ig.s.$$} contains the complete text of the original @command{awk}
++@code{program} contains the complete text of the original @command{awk}
+ program.
+ 
+-@cindex @command{sed} utility
+-@cindex stream editors
+-The @samp{$$} in @command{sh} represents the current process ID number.
+-It is often used in shell programs to generate unique temporary @value{FN}s.
+-This allows multiple users to run @command{igawk} without worrying
+-that the temporary @value{FN}s will clash.
+ The program is as follows:
+ 
+ @cindex @code{igawk.sh} program
+@@ -21489,48 +21479,50 @@
+ then
+     set -x
+     shift
+-else
+-    # cleanup on exit, hangup, interrupt, quit, termination
+-    trap 'rm -f /tmp/ig.[se].$$' 0 1 2 3 15
+ fi
+ 
++n='
++'
++program=''
++opts=''
++
+ while [ $# -ne 0 ] # loop over arguments
+ do
+     case $1 in
+     --)     shift; break;;
+ 
+     -W)     shift
+-            set -- -W"$@@"
++            set -- -W"$@{@@?'missing operand'@}"
+             continue;;
+ 
+-    -[vF])  opts="$opts $1 '$2'"
++    -[vF])  opts="$opts $1 '$@{2?'missing operand'@}'"
+             shift;;
+ 
+     -[vF]*) opts="$opts '$1'" ;;
+ 
+-    -f)     echo @@include "$2" >> /tmp/ig.s.$$
++    -f)     program="$program$n@@include $@{2?'missing operand'@}"
+             shift;;
+ 
+-    -f*)    f=`echo "$1" | sed 's/-f//'`
+-            echo @@include "$f" >> /tmp/ig.s.$$ ;;
++    -f*)    f=`expr "$1" : '-f\(.*\)'`
++            program="$program$n@@include $f";;
+ 
+-    -?file=*)    # -Wfile or --file
+-            f=`echo "$1" | sed 's/-.file=//'`
+-            echo @@include "$f" >> /tmp/ig.s.$$ ;;
++    -[W-]file=*)
++            f=`expr "$1" : '-.file=\(.*\)'`
++            program="$program$n@@include $f";;
+ 
+-    -?file)      # get arg, $2
+-            echo @@include "$2" >> /tmp/ig.s.$$
++    -[W-]file)
++            program="$program$n@@include $@{2?'missing operand'@}"
+             shift;;
+ 
+-    -?source=*)  # -Wsource or --source
+-            t=`echo "$1" | sed 's/-.source=//'`
+-            echo "$t" >> /tmp/ig.s.$$ ;;
++    -[W-]source=*)
++            t=`expr "$1" : '-.source=\(.*\)'`
++            program="$program$n$t";;
+ 
+-    -?source)    # get arg, $2
+-            echo "$2" >> /tmp/ig.s.$$
++    -[W-]source)
++            program="$program$n$@{2?'missing operand'@}"
+             shift;;
+ 
+-    -?version)
++    -[W-]version)
+             echo igawk: version 1.0 1>&2
+             gawk --version
+             exit 0 ;;
+@@ -21542,21 +21534,13 @@
+     shift
+ done
+ 
+-if [ ! -s /tmp/ig.s.$$ ]
++if [ -z "$program" ]
+ then
+-@group
+-    if [ -z "$1" ]
+-    then
+-         echo igawk: no program! 1>&2
+-         exit 1
+-@end group
+-    else
+-        echo "$1" > /tmp/ig.s.$$
+-        shift
+-    fi
++     program=$@{1?'missing program'@}
++     shift
+ fi
+ 
+-# at this point, /tmp/ig.s.$$ has the program
++# At this point, 'program' has the program.
+ @c endfile
+ @end example
+ 
+@@ -21595,8 +21579,7 @@
+ 
+ @example
+ @c file eg/prog/igawk.sh
+-gawk -- '
+-# process @@include directives
++process_include_directives='
+ 
+ function pathto(file,    i, t, junk)
+ @{
+@@ -21635,7 +21618,7 @@
+ @c endfile
+ @end example
+ 
+-The stack is initialized with @code{ARGV[1]}, which will be @file{/tmp/ig.s.$$}.
++The stack is initialized with @code{ARGV[1]}, which will be @file{/dev/stdin}.
+ The main loop comes next.  Input lines are read in succession. Lines that
+ do not start with @samp{@@include} are printed verbatim.
+ If the line does start with @samp{@@include}, the @value{FN} is in @code{$2}.
+@@ -21681,14 +21664,18 @@
+         @}
+         close(input[stackptr])
+     @}
+-@}' /tmp/ig.s.$$ > /tmp/ig.e.$$
++@}'
++
++processed_program=`gawk -- "$process_include_directives" /dev/stdin <<EOF
++$program
++EOF
++`
+ @c endfile
+ @end example
+ 
+ The last step is to call @command{gawk} with the expanded program,
+ along with the original
+-options and command-line arguments that the user supplied.  @command{gawk}'s
+-exit status is passed back on to @command{igawk}'s calling program:
++options and command-line arguments that the user supplied.
+ 
+ @c this causes more problems than it solves, so leave it out.
+ @ignore
+@@ -21707,13 +21694,11 @@
+ 
+ @example
+ @c file eg/prog/igawk.sh
+-eval gawk -f /tmp/ig.e.$$ $opts -- "$@@"
+-
+-exit $?
++eval gawk $opts -- '"$processed_program"' '"$@@"'
+ @c endfile
+ @end example
+ 
+-This version of @command{igawk} represents my third attempt at this program.
++This version of @command{igawk} represents my fourth attempt at this program.
+ There are three key simplifications that make the program work better:
+ 
+ @itemize @bullet
+@@ -21734,6 +21719,10 @@
+ Using a @code{getline} loop in the @code{BEGIN} rule does it all in one
+ place.  It is not necessary to call out to a separate loop for processing
+ nested @samp{@@include} statements.
++
++@item
++Instead of saving the program in a temporary file, put it in a shell variable.
++This avoids some potential security problems.
+ @end itemize
+ 
+ Also, this program illustrates that it is often worthwhile to combine
