@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.77 2005/01/19 14:58:32 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.78 2005/01/19 20:07:46 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -342,7 +342,7 @@ for n in %_includedir %_libdir %_datadir; do
 done
 
 # primary filelist
-sed 's|^\( *\)%buildroot|&|' < rpm.filelist.in |
+sed 's|\( *\)%buildroot|\1|' < rpm.filelist.in |
 	fgrep -vx '%dir %_includedir' |
 	fgrep -vx '%dir %_libdir' |
 	fgrep -vx '%dir %_datadir' |
