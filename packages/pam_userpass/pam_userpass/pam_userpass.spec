@@ -1,9 +1,9 @@
-# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.3 2000/08/17 23:10:56 solar Exp $
+# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.4 2000/12/19 11:01:02 solar Exp $
 
 Summary: Pluggable authentication module for USER/PASS-style protocols
 Name: pam_userpass
 Version: 0.3
-Release: 1owl
+Release: 2owl
 Copyright: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
 Source: pam_userpass-%{version}.tar.gz
@@ -21,7 +21,7 @@ to provide the authentication.
 %setup -q
 
 %build
-make CFLAGS="-c -Iinclude $RPM_OPT_FLAGS"
+make CFLAGS="-c -Wall -fPIC -Iinclude $RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -36,6 +36,9 @@ rm -rf $RPM_BUILD_ROOT
 /lib/security/pam_userpass.so
 
 %changelog
+* Tue Dec 19 2000 Solar Designer <solar@owl.openwall.com>
+- Added "-Wall -fPIC" to the CFLAGS.
+
 * Fri Aug 18 2000 Solar Designer <solar@owl.openwall.com>
 - 0.3, added README.
 
