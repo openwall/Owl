@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.51 2005/04/01 23:21:56 solar Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.52 2005/04/02 00:13:38 solar Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -17,6 +17,7 @@ Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
 Source1: rpminit
 Source2: rpminit.1
+Source3: gendiff
 # XXX: Patch0 is only for the case of using glibc with NPTL and is currently
 # not applied.
 #Patch0: rpm-4.2-owl-pthreads.diff
@@ -33,7 +34,6 @@ Patch10: rpm-4.2-owl-db-umask.diff
 Patch11: rpm-4.2-owl-mtab-message.diff
 # Regenerated Owl 1.1 patches
 Patch12: rpm-4.2-owl-closeall.diff
-Patch13: rpm-4.2-owl-gendiff.diff
 Patch14: rpm-4.2-owl-autodeps-symbol-versioning.diff
 Patch15: rpm-4.2-owl-autoreq.diff
 Patch16: rpm-4.2-owl-buildhost.diff
@@ -141,7 +141,6 @@ rm -r tests
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
-%patch13 -p1
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
@@ -159,6 +158,9 @@ rm -r tests
 %patch28 -p1
 %patch29 -p1
 %patch30 -p1
+
+# Replace gendiff with our implementation
+cp $RPM_SOURCE_DIR/gendiff .
 
 # Prepare libelf archive and save it with headers to the tools subdirectory
 pushd elfutils
@@ -458,7 +460,7 @@ fi
 * Sat Apr 02 2005 Solar Designer <solar@owl.openwall.com> 4.2-owl6
 - Allow unpackaged files and missing docs by default for building legacy
 third-party packages (our build environment overrides this for native ones).
-- gendiff bugfix.
+- Re-implemented the gendiff script.
 
 * Tue Mar 22 2005 Solar Designer <solar@owl.openwall.com> 4.2-owl5
 - Updated the default rpmrc to use -march/-mtune as required for gcc 3.4.3+
