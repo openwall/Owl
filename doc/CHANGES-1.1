@@ -12,6 +12,17 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.0 and Owl-current.
 
+2003/04/23	Package: SysVinit
+Updated to 2.85 which includes most of our old patches plus quite a
+few from ALT Linux, including to make wall(1) not trust utmp contents
+more than it has to (this prevents a group utmp -> root attack).
+Added more patches from ALT and Red Hat Linux, including for alternate
+program executable matching in start-stop-daemon and pidof(8) such
+that processes may be located even after their executables could have
+been unlinked.  This should make no difference for packages in Owl,
+but may help lame third-party packages which attempt to stop their
+daemon processes after having replaced the programs on disk.
+
 2003/04/17 -
 2003/04/18	Packages: tcb, openssh, popa3d, screen, shadow-utils,
 		SimplePAMApps, vsftpd
@@ -289,4 +300,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.47 2003/04/18 12:18:59 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.48 2003/04/22 23:21:44 solar Exp $
