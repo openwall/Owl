@@ -207,7 +207,7 @@ void MD5_Update(MD5_CTX *ctx, void *data, unsigned long size)
 		}
 
 		memcpy(&ctx->buffer[used], data, free);
-		(unsigned char *)data += free;
+		data = (unsigned char *)data + free;
 		size -= free;
 		body(ctx, ctx->buffer, 64);
 	}

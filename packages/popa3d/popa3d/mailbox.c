@@ -51,7 +51,7 @@ static int db_compare(struct db_message *msg)
  * string s2, of n2 chars.
  */
 #ifdef __GNUC__
-inline
+__inline__
 #endif
 static int eq(char *s1, int n1, char *s2, int n2)
 {

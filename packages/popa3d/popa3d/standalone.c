@@ -35,8 +35,7 @@ extern int log_error(char *s);
 extern int do_pop_startup(void);
 extern int do_pop_session(void);
 
-typedef sig_atomic_t a_int;
-typedef volatile a_int va_int;
+typedef volatile sig_atomic_t va_int;
 
 /*
  * Active POP sessions. Those that were started within the last MIN_DELAY
@@ -46,7 +45,7 @@ typedef volatile a_int va_int;
  */
 static struct {
 	struct in_addr addr;		/* Source IP address */
-	a_int pid;			/* PID of the server, or 0 for none */
+	va_int pid;			/* PID of the server, or 0 for none */
 	clock_t start;			/* When the server was started */
 	clock_t log;			/* When we've last logged a failure */
 } sessions[MAX_SESSIONS];
@@ -235,7 +234,7 @@ int main(void)
 
 		default:
 			sessions[j].addr = addr.sin_addr;
-			(va_int)sessions[j].pid = pid;
+			sessions[j].pid = pid;
 			sessions[j].start = now;
 			sessions[j].log = 0;
 		}

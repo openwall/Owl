@@ -1,8 +1,8 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.23 2002/08/02 06:52:58 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.24 2002/09/08 08:00:10 solar Exp $
 
 Summary: Post Office Protocol (POP3) server.
 Name: popa3d
-Version: 0.5.1.5
+Version: 0.5.1.6
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
@@ -72,6 +72,9 @@ fi
 %doc DESIGN LICENSE
 
 %changelog
+* Sun Sep 08 2002 Solar Designer <solar@owl.openwall.com>
+- Avoid non-ANSI/ISO C constructs.
+
 * Fri Aug 02 2002 Solar Designer <solar@owl.openwall.com>
 - Use unsigned integer types where integer overflows are possible and
 post-checked for; ISO C 99 leaves the behavior on integer overflow for
