@@ -1,5 +1,7 @@
 #!/bin/bash
 #
+# $Id: Owl/packages/gpm/gpm.init,v 1.2 2001/01/05 17:35:59 kad Exp $
+#
 # chkconfig: 2345 85 15
 # description: GPM adds mouse support to text-based Linux applications such \
 #              the Midnight Commander. Is also allows mouse-based console \
@@ -10,7 +12,9 @@
 # config: /etc/sysconfig/mouse
 
 # source function library
-. /etc/rc.d/init.d/functions
+. /etc/init.d/functions
+
+OWL_STARTUP_ENABLE=1
 
 MOUSECFG=/etc/sysconfig/mouse
 
@@ -18,6 +22,21 @@ RETVAL=0
 
 start() {
 	echo -n "Starting console mouse services: "
+	RETVAL=$?
+	echo
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/gpm
+}
+
+stop() {
+	echo -n "Shutting down console mouse services: "
+	RETVAL=$?
+
+	echo
+	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/gpm
+}
+
+case "$1" in
+  start)
 	if [ -f "$MOUSECFG" ]; then
 		. "$MOUSECFG"
 	else
@@ -36,51 +55,37 @@ start() {
 	fi
 
 	if [ -n "$MOUSETYPE" ]; then
-		daemon gpm -t $MOUSETYPE
-	else
-		daemon gpm
+	    GPM_ARG="-t $MOUSETYPE"
+	else 
+	    GPM_ARG=""
 	fi
-	RETVAL=$?
-	echo
-	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/gpm
-}
 
-stop() {
-	echo -n "Shutting down console mouse services: "
-	killproc gpm
-	RETVAL=$?
 
-	echo
-	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/gpm
-}
-
-case "$1" in
-  start)
-	start
+        if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
+	    daemon --pidfile /var/run/gpm.pid --expect-user root \
+	        gpm -- "$GPM_ARG"
+	else
+	    daemon gpm "$GPM_ARG"
+	fi
 	;;
   stop)
-	stop
+        if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
+            killproc --pidfile /var/run/gpm.pid --expect-user root gpm        
+        else
+            killproc gpm
+        fi
 	;;
   restart|reload)
-	stop
-	start
-	RETVAL=$?
-	;;
-  condrestart)
-	if [ -f /var/lock/subsys/gpm ]; then
-	    stop
-	    start
-	    RETVAL=$?
-	fi
+        $0 stop
+	$0 start
 	;;
   status)
-	status gpm
-	RETVAL=$?
+        status --pidfile /var/run/gpm.pid --expect-user root gpm
 	;;
   *)
-	echo "Usage: gpm {start|stop|restart|condrestart|status}"
+	echo "Usage: gpm {start|stop|restart|status}"
 	exit 1
 esac
 
-exit $RETVAL
+exit $?
 
