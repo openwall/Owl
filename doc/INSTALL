@@ -16,7 +16,10 @@ off a CD just do so.  Otherwise take the boot floppy image from the CD
 under boot/floppy.image, write it onto a formatted 1.44 MB floppy
 (with dd(1) or an equivalent tool), and boot off the floppy.  In
 either case, the boot loader will prompt you for your CD-ROM device
-which the kernel will use for the root filesystem.
+which the kernel will use for the root filesystem.  If you're using an
+IDE CD-ROM drive, select the proper IDE controller and whether the
+drive is set to master or slave.  If you're using a SCSI CD-ROM drive,
+select "scsi".
 
 Owl should boot into single user mode.  At the root password prompt
 you can either just press Enter (as the CDs have a null password) or
@@ -73,11 +76,11 @@ chrooted to your newly installed userland:
 
 	chroot /owl
 
-Currently, Owl supports Linux 2.2.x and 2.4.x kernels.  We recommend
-that you build the version provided with Owl.
+Currently, Owl supports Linux 2.4.x kernels.  We recommend that you
+build the version provided with your copy of Owl.
 
 You may choose to configure the boot loader available with Owl (LILO
 or SILO, depending on the architecture), or you may use a boot loader
 already installed on the system (if any).
 
-$Id: Owl/doc/INSTALL,v 1.11 2003/05/16 00:16:30 solar Exp $
+$Id: Owl/doc/INSTALL,v 1.12 2004/11/02 22:45:34 solar Exp $
