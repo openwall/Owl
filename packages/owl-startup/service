@@ -1,0 +1,66 @@
+#!/bin/sh
+# $Id: Owl/packages/owl-startup/service,v 1.1 2004/01/18 11:35:55 solar Exp $
+
+# This script is mostly compatible with Red Hat's service script,
+# version 0.91.  However, it is not so ugly and support for option
+# --status-all has been intentionally dropped.
+
+VERSION="service version 0.91-owl1"
+SERVICEDIR=/etc/init.d
+
+function usage()
+{
+	echo -n "Usage: `basename $0` --version | " >&2
+	echo "[ service_name [ command | --full-restart ] ]" >&2
+}
+
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+
+if [ $# -eq 0 ]; then
+	usage
+	exit 1
+fi
+
+SERVICE=
+OPTIONS=
+
+while [ $# -gt 0 ]; do
+	case "$1" in
+	--help|-h)
+		usage
+		exit 0
+		;;
+	--version|-V)
+		echo "$VERSION"
+		exit 0
+		;;
+	-*)
+		usage
+		exit 1
+		;;
+	*)
+		if [ $# -eq 2 -a "$2" = "--full-restart" ]; then
+			SERVICE="$1"
+			if [ -x $SERVICEDIR/$SERVICE ]; then
+				cd / || exit
+				$SERVICEDIR/$SERVICE stop
+				$SERVICEDIR/$SERVICE start
+				exit $?
+			fi
+		elif [ -z "$SERVICE" ]; then
+			SERVICE="$1"
+		else
+			OPTIONS="$OPTIONS $1"
+		fi
+		shift
+		;;
+	esac
+done
+
+if [ -x $SERVICEDIR/$SERVICE ]; then
+	cd / || exit
+	$SERVICEDIR/$SERVICE $OPTIONS
+else
+	echo "`basename $0`: $SERVICE: unrecognized service" >&2
+	exit 1
+fi
