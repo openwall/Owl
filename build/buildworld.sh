@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.15 2002/03/03 23:02:09 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.16 2002/03/18 02:05:19 solar Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -35,7 +35,7 @@ function build_native()
 	log "#$NUMBER: Building $PACKAGE"
 	cd $WORK/SOURCES/ || exit 1
 	ls $SOURCES/$PACKAGES/$PACKAGE/*.src.rpm 2>/dev/null | \
-		xargs -n 1 -i sh -c 'rpm2cpio {} | cpio -i 2>/dev/null'
+		xargs -n 1 -i sh -c 'rpm2cpio {} | cpio -i --quiet'
 	ln -sf $SOURCES/$PACKAGES/$PACKAGE/* .
 	rm -f '*' || :
 	ln -sf $NATIVE/$PACKAGES/$PACKAGE/* .
