@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.41 2002/06/29 17:30:04 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.42 2002/07/01 20:15:57 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.4p1
-Release: owl1.1
+Release: owl1.3
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -214,6 +214,11 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Tue Jul 02 2002 Solar Designer <solar@owl.openwall.com>
+- In the PAM conversation, queue any text messages appearing in initial
+login mode for printing later, similarly to what the original code did.
+This is needed to pass password expiration warnings on to the user.
+
 * Sat Jun 29 2002 Solar Designer <solar@owl.openwall.com>
 - Keep the /dev/log fd open and only close it before executing other
 programs, to enable direct logging from chrooted child processes.
