@@ -16,7 +16,8 @@ Despite this fix, it should not be assumed that CVS server provides
 any security against a malicious client.  If required, any
 restrictions on the actions CVS server is allowed to perform should be
 imposed at the OS level.
-Reference:
+References:
+http://security.e-matters.de/advisories/072004.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0396
 
 (2004/04/18)
@@ -95,4 +96,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 2004/01/15	Owl/doc/DOWNLOAD, Owl/doc/*/DOWNLOAD, Owl/doc/fr/CREDITS
 Sync'ed with the minor post-release updates made in Owl-current.
 
-$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.9 2004/05/17 22:16:24 solar Exp $
+$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.10 2004/05/19 10:30:34 solar Exp $
