@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/SimplePAMApps/su.control,v 1.1 2000/08/11 07:23:42 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/su.control,v 1.2 2001/03/19 02:46:14 solar Exp $
 
 . /etc/control.d/functions
 
@@ -7,12 +7,12 @@ CONFIG=/etc/pam.d/su
 BINARY=/bin/su
 
 new_subst public \
-	'^#auth *required */lib/security/pam_wheel\.so' \
-	's,^\(auth *required */lib/security/pam_wheel\.so\),#\1,'
+	'^#auth[[:space:]]+required[[:space:]]+/lib/security/pam_wheel\.so' \
+	's,^\(auth[[:space:]]\+required[[:space:]]\+/lib/security/pam_wheel\.so\),#\1,'
 new_fmode public 4711 root root
 new_subst wheel \
-	'^auth *required */lib/security/pam_wheel\.so' \
-	's,^#\(auth *required */lib/security/pam_wheel\.so\),\1,'
+	'^auth[[:space:]]+required[[:space:]]+/lib/security/pam_wheel\.so' \
+	's,^#\(auth[[:space:]]\+required[[:space:]]\+/lib/security/pam_wheel\.so\),\1,'
 new_fmode wheelonly 4710 root wheel
 new_fmode restricted 700 root root
 
