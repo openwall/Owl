@@ -12,6 +12,11 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/09/27	Package: gzip
+SECURITY FIX	Severity: low, local, passive
+Patched unsafe temporary file handling in gzexe, zdiff, and znew based
+on work by Todd Miller of OpenBSD.
+
 2001/09/27	Package: openssh
 SECURITY FIX	Severity: low to high, remote, passive to active
 Updated to 2.9.9p2, which fixes three security issues compared to our
@@ -311,4 +316,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp@hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.27 2001/09/27 17:22:18 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.28 2001/09/28 01:25:50 solar Exp $
