@@ -12,6 +12,13 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/05/28 -
+2002/06/08	Package: strace
+Updated to today's CVS version (post-4.4) with an additional fix for
+displaying all possible ioctl names when there's more than one match
+for a number.  The strace-graph Perl script is now packaged, in its
+own subpackage.
+
 2002/06/04	Package: silo
 Updated to 1.2.5.
 
@@ -712,4 +719,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.93 2002/06/04 18:26:48 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.94 2002/06/08 02:35:59 solar Exp $
