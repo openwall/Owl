@@ -12,6 +12,12 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/03/03	kernel
+SECURITY FIX	Severity: medium, local, active
+Updated to Linux 2.2.20-ow2.  This fixes an x86-specific vulnerability
+where local users could abuse a binary compatibility interface (lcall)
+to kill processes not belonging to them (including system processes).
+
 2002/02/15	Package: lilo
 Updated to 22.1.
 
@@ -559,4 +565,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.68 2002/02/15 22:30:24 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.69 2002/03/03 18:05:44 solar Exp $
