@@ -1,10 +1,10 @@
-# $Id: Owl/packages/pwdb/Attic/pwdb.spec,v 1.6 2002/02/07 18:07:47 solar Exp $
+# $Id: Owl/packages/pwdb/Attic/pwdb.spec,v 1.7 2002/02/07 18:20:20 solar Exp $
 
 Summary: The password database library.
 Name: pwdb
 Version: 0.61.1
-Release: 2owl
-Copyright: GPL or BSD
+Release: owl2
+License: GPL or BSD
 Group: System Environment/Base
 Source: pwdb-%{version}.tar.gz
 Patch0: pwdb-0.61-owl-fgets.diff
@@ -14,16 +14,19 @@ Patch3: pwdb-0.61-owl-sprintf.diff
 Patch4: pwdb-0.61-owl-sp_flag.diff
 Patch5: pwdb-0.61-koni-owl-memory-leaks.diff
 PreReq: /sbin/ldconfig
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The pwdb package contains libpwdb, the password database library.
 libpwdb is a library which implements a generic user information
 database.  libpwdb was specifically designed to work with Linux-PAM
 (Pluggable Authentication Modules).  libpwdb allows configurable
-access to and management of security tools like /etc/passwd,
+access to and management of user databases such as /etc/passwd,
 /etc/shadow and network authentication systems including NIS and
 Radius.
+
+pwdb has since been obsoleted with glibc's NSS and is only provided
+for compatibility.
 
 # Use optflags_lib for this package if defined.
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
@@ -49,10 +52,10 @@ make RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/{etc,lib,usr/include/pwdb}
 
-make	INCLUDED=$RPM_BUILD_ROOT/usr/include/pwdb \
+make install \
+	INCLUDED=$RPM_BUILD_ROOT/usr/include/pwdb \
 	LIBDIR=$RPM_BUILD_ROOT/lib \
-	LDCONFIG=":" \
-	install
+	LDCONFIG=':'
 
 install -m 644 conf/pwdb.conf $RPM_BUILD_ROOT/etc/pwdb.conf
 
@@ -72,6 +75,9 @@ rm -rf $RPM_BUILD_ROOT
 /lib/libpwdb.so.%{version}
 
 %changelog
+* Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Mon Jul 30 2001 Solar Designer <solar@owl.openwall.com>
 - optflags_lib support.
 
@@ -88,10 +94,3 @@ Koni <mhw6@cornell.edu>.
 * Mon Aug 07 2000 Solar Designer <solar@owl.openwall.com>
 - Imported from RH, added four reliability/security patches; a lot of
 problems still remain in the code, we should stop using pam_pwdb soon.
-
-* Wed Feb 02 2000 Cristian Gafton <gafton@redhat.com>
-- fix setting the password for passwordless accounts. Patch from Thomas
-  Sailer
-
-* Mon Jan 31 2000 Cristian Gafton <gafton@redhat.com>
-- rebuild to fix dependencies

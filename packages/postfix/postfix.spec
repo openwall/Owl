@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.8 2001/12/26 14:22:47 solar Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.9 2002/02/07 18:46:31 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
@@ -7,7 +7,7 @@ Name: postfix
 %define original_version %{original_date}-%{original_pl}
 %define package_version %{original_date}_%{original_pl}
 Version: %{package_version}
-Release: 1owl
+Release: owl1
 License: IBM Public License
 Group: System Environment/Daemons
 Source0: ftp://ftp.sunet.se/pub/unix/mail/postfix/official/%{name}-%{original_version}.tar.gz
@@ -175,6 +175,9 @@ fi
 %files -f filelist
 
 %changelog
+* Thu Feb 07 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Wed Dec 26 2001 Solar Designer <solar@owl.openwall.com>
 - Additional postfix-script fail-closeness.
 
