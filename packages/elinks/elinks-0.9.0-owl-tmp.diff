@@ -1,6 +1,7 @@
---- elinks-0.9.0/src/sched/download.c.orig	Mon Dec 22 02:15:02 2003
-+++ elinks-0.9.0/src/sched/download.c	Tue Jan 20 22:56:04 2004
-@@ -536,24 +536,21 @@
+diff -urp elinks-0.9.0.orig/src/sched/download.c elinks-0.9.0/src/sched/download.c
+--- elinks-0.9.0.orig/src/sched/download.c	Mon Dec 22 02:15:02 2003
++++ elinks-0.9.0/src/sched/download.c	Sun Jan 25 11:03:21 2004
+@@ -536,23 +536,22 @@ create_download_file_do(struct terminal 
  	unsigned char *wd;
  	int h = -1;
  	int saved_errno;
@@ -21,20 +22,20 @@
 -	h = open(file, O_CREAT | O_WRONLY | (resume ? 0 : O_TRUNC)
 -			| (sf && !resume ? O_EXCL : 0),
 -		 sf ? 0600 : 0666);
--	saved_errno = errno; /* Saved in case of ... --Zas */
 +	if (cdf_hop->safe) {
 +		h = mkstemp(file);
 +	} else {
-+		/* O_APPEND means repositioning at the end of file before each write(),
-+		 * thus ignoring seek()s and that can hide mysterious bugs. IMHO.
++		/* O_APPEND means repositioning at the end of file before each
++		 * write(), thus ignoring seek()s and that can hide mysterious
++		 * bugs. IMHO.
 +		 * --pasky */
-+		h = open(file, O_CREAT | O_WRONLY | (resume ? 0 : O_TRUNC), 0666);
-+		saved_errno = errno; /* Saved in case of ... --Zas */
++		h = open(file,
++			O_WRONLY | (resume ? 0 : (O_CREAT | O_TRUNC)), 0666);
 +	}
+ 	saved_errno = errno; /* Saved in case of ... --Zas */
  
  	if (wd) {
- 		set_cwd(wd);
-@@ -600,38 +597,6 @@
+@@ -600,38 +599,6 @@ finish:
  }
  
  
@@ -73,33 +74,26 @@
  unsigned char *
  subst_file(unsigned char *prog, unsigned char *file)
  {
-@@ -778,6 +743,7 @@
- {
- 	struct tq *tq = data;
- 	struct codw_hop *codw_hop;
-+	struct string tmpstr;
- 
- 	if (!tq->url) return;
- 
-@@ -788,13 +754,14 @@
+@@ -788,9 +755,15 @@ continue_download(void *data, unsigned c
  	}
  
  	if (tq->prog) {
 -		/* FIXME: get_temp_name() calls tempnam(). --Zas */
 -		file = get_temp_name(tq->url);
 -		if (!file) {
-+		if(!init_string(&tmpstr)) {
++		unsigned char *tmpdir;
++
++		tmpdir = getenv("TMPDIR");
++		if (!tmpdir || !*tmpdir) tmpdir = "/tmp";
++
++		file = straconcat(tmpdir,
++			"/" ELINKS_TEMPNAME_PREFIX "-XXXXXX", NULL);
++
++		if(!file) {
  			mem_free(codw_hop);
  			tp_cancel(tq);
  			return;
- 		}
-+		add_to_string(&tmpstr, getenv("TMPDIR") ?: "/tmp");
-+		add_to_string(&tmpstr, "/linksXXXXXX");
-+		file = tmpstr.source;
- 	}
- 
- 	codw_hop->tq = tq;
-@@ -832,9 +799,9 @@
+@@ -832,9 +805,9 @@ continue_download_do(struct terminal *te
  	file_download->ses = codw_hop->tq->ses;
  
  	if (codw_hop->tq->prog) {
@@ -111,7 +105,7 @@
  		mem_free(codw_hop->tq->prog);
  		codw_hop->tq->prog = NULL;
  	}
-@@ -854,7 +821,7 @@
+@@ -854,7 +827,7 @@ continue_download_do(struct terminal *te
  
  cancel:
  	tp_cancel(codw_hop->tq);
@@ -120,3 +114,21 @@
  	if (file_download) {
  		if (file_download->url) mem_free(file_download->url);
  		mem_free(file_download);
+diff -urp elinks-0.9.0.orig/src/viewer/text/textarea.c elinks-0.9.0/src/viewer/text/textarea.c
+--- elinks-0.9.0.orig/src/viewer/text/textarea.c	Mon Dec 22 09:53:29 2003
++++ elinks-0.9.0/src/viewer/text/textarea.c	Sun Jan 25 10:50:38 2004
+@@ -287,12 +287,10 @@ textarea_edit(int op, struct terminal *t
+ 		int h;
+ 
+ 		tmpdir = getenv("TMPDIR");
+-		if (!tmpdir || !*tmpdir) tmpdir = getenv("TMP");
+-		if (!tmpdir || !*tmpdir) tmpdir = getenv("TEMPDIR");
+-		if (!tmpdir || !*tmpdir) tmpdir = getenv("TEMP");
+ 		if (!tmpdir || !*tmpdir) tmpdir = "/tmp";
+ 
+-		fn = straconcat(tmpdir, "/linksarea-XXXXXX", NULL);
++		fn = straconcat(tmpdir,
++			"/" ELINKS_TEMPNAME_PREFIX "area-XXXXXX", NULL);
+ 		if (!fn) goto free_and_return;
+ 
+ 		h = mkstemp(fn);
