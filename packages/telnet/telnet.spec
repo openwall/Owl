@@ -1,9 +1,9 @@
-# $Id: Owl/packages/telnet/telnet.spec,v 1.6 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/telnet/telnet.spec,v 1.7 2005/03/28 12:57:20 solar Exp $
 
 Summary: The client program for the telnet remote login protocol.
 Name: telnet
 Version: 3.0
-Release: owl1
+Release: owl2
 License: BSD
 Group: Applications/Internet
 Source0: telnet-%version-20011117.tar.bz2
@@ -11,7 +11,9 @@ Source1: telnetd.xinetd
 Patch0: telnet-3.0-owl-linux.diff
 Patch1: telnet-3.0-owl-no-mini_inetd.diff
 Patch2: telnet-3.0-owl-ipv4-only.diff
-Patch10: telnet-3.0-rh-env.diff
+Patch10: telnet-3.0-owl-env-export.diff
+Patch11: telnet-3.0-owl-env-DISPLAY.diff
+Patch12: telnet-3.0-owl-bound.diff
 Patch20: telnet-3.0-owl-drop-root.diff
 BuildRequires: ncurses-devel
 BuildRoot: /override/%name-%version
@@ -37,6 +39,8 @@ will support remote logins into the host machine.
 %patch1 -p1
 %patch2 -p1
 %patch10 -p1
+%patch11 -p1
+%patch12 -p1
 %patch20 -p1
 
 %build
@@ -74,6 +78,15 @@ grep -q ^telnetd: /etc/passwd ||
 %_mandir/man8/telnetd.8*
 
 %changelog
+* Thu Mar 17 2005 Solar Designer <solar@owl.openwall.com> 3.0-owl2
+- Introduced the appropriate bounds checking into slc_add_reply() and
+env_opt_add() (both are in the telnet client only).
+- Improved the environment variable export restrictions such that the
+exportability of DISPLAY and TERM variables may be controlled too,
+updated the man page; this replaced the Red Hat Linux derived patch.
+- Resolved a possible truncation of DISPLAY when it is sent in response
+to TELOPT_XDISPLOC.
+
 * Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com> 3.0-owl1
 - Enforce our new spec file conventions.
 
