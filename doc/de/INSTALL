@@ -79,14 +79,11 @@ land geschehen:
 
 	chroot /owl
 
-Aktuell bringt Owl für den 2.2er Kernel volle Unterstützung mit, läuft
-aber auch auf einem 2.4er Kernel (will man aber Owl mit "make buildworld"
-neu übersetzen, müssen die Linux 2.2er Kernel Sourcen, wie es in BUILD
-erklärt wird, zur Verfügung stehen). Es wird empfohlen, den Kernel zu
-installieren, der mit Owl mitgeliefert wird.
+Aktuell unterstützt Owl den 2.2er sowie den 2.4er Kernel.  Es wird
+empfohlen den Kernel zu installieren, der mit Owl mitgeliefert wird.
 
 Man kann nun den boot loader konfigurieren, der unter Owl verfügbar
 ist (LILO oder SILO, kommt auf die Architektur an), oder einen
 bereits installierten (falls vorhanden) verwenden.
 
-$Id: Owl/doc/de/INSTALL,v 1.10 2003/05/06 21:19:55 schmidt Exp $
+$Id: Owl/doc/de/INSTALL,v 1.11 2003/09/11 10:01:30 schmidt Exp $

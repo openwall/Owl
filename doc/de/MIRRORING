@@ -34,7 +34,7 @@ sollte eine Owl-Installation perfekt sein.
 
 Es wird empfohlen die selbe Verzeichnis-Struktur wie die
 ftp*.*.openwall.com Server zu benutzen, um eventuell dann
-einen solchen Namen ebenfalls zu bekommen. Das bedeutet,
+ebenfalls einen solchen Namen zu bekommen. Das bedeutet,
 dass eine IP-Adresse speziell für diesen mirror eingerichtet
 werden müsste, falls dieser Server noch anderen Inhalt
 hostet.
@@ -50,4 +50,4 @@ keine anderen, möglicherweise gefährlichen Dienste anbietet.
 von Owl sind, ist das in Ordnung). In Ausnahmen kann der
 Server andere Inhalte hosten.
 
-$Id: Owl/doc/de/MIRRORING,v 1.2 2003/01/26 21:44:19 schmidt Exp $
+$Id: Owl/doc/de/MIRRORING,v 1.3 2003/09/11 10:01:30 schmidt Exp $
