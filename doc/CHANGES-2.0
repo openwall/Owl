@@ -28,6 +28,19 @@ http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0001
 http://www.isec.pl/vulnerabilities/isec-0021-uselib.txt
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-1235
 
+2005/01/12 -
+2005/01/20	Packages: gcc, glibc, SysVinit, crontabs, db4, dhcp,
+		fileutils, gpm, ipchains, lilo, ltrace, mtree,
+		net-tools, procps;
+		Owl/build/.rpmmacros;
+		Owl/build/{installorder.conf,installworld.sh}
+Updated to GCC 3.4.3 and a post-2.3.3 glibc snapshot.  Fixed whatever
+packages this broke.
+
+2005/01/15	Package: psmisc
+Implemented support for displaying multiple accessible subtrees when
+running with the "restricted /proc" kernel patch.
+
 2004/12/04	Package: gnupg
 Updated to 1.2.6.
 
@@ -313,4 +326,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.62 2005/01/20 03:37:55 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.63 2005/01/20 05:53:30 solar Exp $
