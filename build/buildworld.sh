@@ -1,12 +1,15 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.11 2001/05/11 08:50:25 solar Exp $
-
-REPOSITORY=Owl
-PACKAGES=$REPOSITORY/packages
+# $Id: Owl/build/buildworld.sh,v 1.12 2001/06/20 21:04:17 solar Exp $
 
 TIME=/usr/bin/time
 
 . buildworld.conf
+
+PACKAGES=$BRANCH/packages
+
+NATIVE=$HOME/native
+SOURCES=$HOME/sources
+FOREIGN=$HOME/foreign
 
 function log()
 {
