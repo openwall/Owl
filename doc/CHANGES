@@ -12,6 +12,16 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/03/20	Packages: glibc, pam_mktemp, pam_passwdqc,
+		pam_userpass, popa3d, scanlogd, tcb;
+		Owl/build/buildworld.sh, Owl/build/Makefile
+The non-Owl-specific pieces of software developed by the Openwall team
+now live in the Owl CVS tree.  This includes crypt_blowfish (a part of
+the glibc package), pam_mktemp, pam_passwdqc, pam_userpass, popa3d,
+scanlogd, and tcb.  For these, the updated buildworld script may now
+produce source archives which we may be releasing separately from Owl.
+Of course, the corresponding Owl packages are built as usual.
+
 2002/03/17	Package: openssh
 Updated to 3.1p1.
 
@@ -610,4 +620,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.77 2002/03/16 23:22:33 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.78 2002/03/20 18:50:20 solar Exp $
