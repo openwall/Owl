@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bzip2/bzip2.spec,v 1.1 2000/10/18 17:27:11 solar Exp $
+# $Id: Owl/packages/bzip2/bzip2.spec,v 1.2 2000/11/29 12:34:34 kad Exp $
 
 Summary: 	A file compression utility.
 Name: 		bzip2
@@ -61,6 +61,9 @@ rm -rf ${RPM_BUILD_ROOT}
 cp %SOURCE1 ${RPM_BUILD_ROOT}%{_bindir}
 chmod 0755 ${RPM_BUILD_ROOT}%{_bindir}/bzgrep
 
+# Hack!
+ln -s libbz2.so.1.0.0 ${RPM_BUILD_ROOT}%{_libdir}/libbz2.so.0
+
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
@@ -82,6 +85,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_libdir}/*so
 
 %changelog
+* Wed Nov 29 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- bzip2 ver 0.x compat hack
+
 * Sun Oct  1 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import spec from RH
 - patch goes to repacked
