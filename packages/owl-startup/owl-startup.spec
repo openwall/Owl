@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.7 2000/12/04 18:18:28 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.8 2000/12/05 03:06:12 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
 Version: 0.3
-Release: 2owl
+Release: 3owl
 Copyright: GPL
 Group: System Environment/Base
 Source0: initscripts-5.00.tar.gz
@@ -80,6 +80,11 @@ for f in /var/log/wtmp /var/run/utmp; do
 	chown root.utmp $f && chmod 664 $f
 done
 
+if [ ! -e /var/log/lastlog ]; then
+	touch /var/log/lastlog
+	chown root.root /var/log/lastlog && chmod 644 /var/log/lastlog
+fi
+
 /sbin/chkconfig --add random
 /sbin/chkconfig --add network
 /sbin/chkconfig --add netfs
@@ -133,7 +138,7 @@ rm -rf $RPM_BUILD_ROOT
 * Mon Dec 04 2000 Solar Designer <solar@owl.openwall.com>
 - Obsoletes: initscripts
 - Don't require console-tools for now.
-- Create wtmp and utmp in %post.
+- Create wtmp, utmp and lastlog in %post.
 - Enable swapping into files.
 - Save dmesg on boot.
 
