@@ -1,4 +1,4 @@
-# $Id: Owl/packages/modutils/modutils.spec,v 1.9 2002/02/06 18:45:35 solar Exp $
+# $Id: Owl/packages/modutils/modutils.spec,v 1.10 2002/02/07 00:49:45 solar Exp $
 
 Summary: Kernel module utilities.
 Name: modutils
@@ -34,14 +34,10 @@ make dep all
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%{_sbindir}
-%makeinstall sbindir=$RPM_BUILD_ROOT%{_sbindir}
+mkdir -p $RPM_BUILD_ROOT/sbin
+%makeinstall sbindir=$RPM_BUILD_ROOT/sbin
 
-rm -f $RPM_BUILD_ROOT/%{_mandir}/man8/{kdstat,kerneld}.8
-
-# security hole, works poorly anyway
-rm -f $RPM_BUILD_ROOT/sbin/request-route
-find $RPM_BUILD_ROOT/sbin/ -type l -a -name '*.static' -exec rm {} \;
+find $RPM_BUILD_ROOT/sbin -type l -a -name '*.static' -print0 | xargs -r0 rm --
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -56,7 +52,7 @@ fi
 
 %files
 %defattr(-,root,root)
-%{_sbindir}/*
+/sbin/*
 %{_mandir}/*/*
 
 %changelog

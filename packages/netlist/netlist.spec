@@ -1,4 +1,4 @@
-# $Id: Owl/packages/netlist/Attic/netlist.spec,v 1.4 2002/02/06 18:56:38 mci Exp $
+# $Id: Owl/packages/netlist/Attic/netlist.spec,v 1.5 2002/02/07 00:49:45 solar Exp $
 
 Summary: A program to list active Internet connections and sockets.
 Name: netlist
@@ -44,7 +44,7 @@ grep -q '^proc:[^:]*:110:' /etc/group && \
 %{_mandir}/man1/netlist.1*
 
 %changelog
-* wed feb 06 2002 Michail Litvak <mci@owl.openwall.com>
+* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions
 
 * Wed Nov 07 2001 Solar Designer <solar@owl.openwall.com>

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/texinfo/texinfo.spec,v 1.5 2002/02/04 08:50:21 solar Exp $
+# $Id: Owl/packages/texinfo/texinfo.spec,v 1.6 2002/02/07 02:08:13 solar Exp $
 
 Summary: Tools needed to create Texinfo format documentation files.
 Name: texinfo
@@ -55,6 +55,7 @@ cd $RPM_BUILD_ROOT
 install -m 644 $RPM_SOURCE_DIR/info-dir etc/info-dir
 ln -sf /etc/info-dir ${RPM_BUILD_ROOT}%{_infodir}/dir
 mv .%{_prefix}/bin/install-info sbin/
+gzip -9nf .%{_infodir}/*info*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
