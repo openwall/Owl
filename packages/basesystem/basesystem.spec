@@ -1,4 +1,4 @@
-# $Id: Owl/packages/basesystem/basesystem.spec,v 1.1 2000/08/01 23:54:55 solar Exp $
+# $Id: Owl/packages/basesystem/basesystem.spec,v 1.2 2000/08/01 23:57:39 solar Exp $
 
 Summary: Initial set of configuration files and directory hierarchy
 Name: basesystem
@@ -13,6 +13,8 @@ BuildArchitectures: noarch
 %description
 This package combines owl-etc and owl-hier, and exists primarily for
 RH compatibility.
+
+%files
 
 %changelog
 * Wed Aug 02 2000 Solar Designer <solar@owl.openwall.com>
