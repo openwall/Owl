@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tcb/tcb/tcb.spec,v 1.4 2001/11/16 03:38:55 solar Exp $
+# $Id: Owl/packages/tcb/tcb/tcb.spec,v 1.5 2001/11/16 03:50:20 solar Exp $
 
 Summary: Libraries and tools implementing the tcb password shadowing scheme.
 Name: tcb
@@ -33,7 +33,7 @@ building tcb-aware applications.
 %setup -q
 
 %build
-CFLAGS="$RPM_OPT_FLAGS -DHAVE_PAM_FAIL_DELAY" make
+CFLAGS="$RPM_OPT_FLAGS" make
 
 %install
 rm -rf $RPM_BUILD_ROOT
