@@ -5,7 +5,7 @@ INSTALL = install
 LN_S = ln -sf
 CFLAGS = -c -O2 -Wall -fPIC -Iinclude
 LDFLAGS = -s
-LDLIBS = -lpam
+LIBS = -lpam
 LINK = $(CC) $(LDFLAGS)
 LINK_SHARED = $(LINK) -shared
 AR = ar
@@ -34,10 +34,10 @@ DESTDIR =
 all: $(LIBPAMSHARED) $(LIBAPPLSTATIC) example_userpass
 
 $(LIBPAMSHARED): pam_userpass.o
-	$(LINK_SHARED) $< $(LDLIBS) -o $@
+	$(LINK_SHARED) $< $(LIBS) -o $@
 
 $(LIBAPPLSHARED): appl_userpass.o
-	$(LINK_SHARED) -Wl,-soname,$(SONAME) $< $(LDLIBS) -o $@
+	$(LINK_SHARED) -Wl,-soname,$(SONAME) $< $(LIBS) -o $@
 
 $(LIBAPPLSTATIC): appl_userpass.o
 	$(AR) $(ARFLAGS) $@ $<
