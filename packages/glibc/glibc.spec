@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.69 2004/12/26 14:23:52 galaxy Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.70 2004/12/26 23:58:44 galaxy Exp $
 
 %define BUILD_PROFILE 0
 
@@ -200,8 +200,8 @@ popd
 %install
 rm -rf %buildroot
 mkdir -p %buildroot
-%__make install_root=%buildroot install -C build-%target_cpu-linux
-pushd build-%target_cpu-linux
+%__make install_root=%buildroot install -C build-%_target_cpu-linux
+pushd build-%_target_cpu-linux
 %__make install_root=%buildroot install-locales -C ../localedata objdir=`pwd`
 popd
 
