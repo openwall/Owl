@@ -1,31 +1,26 @@
-# $Id: Owl/packages/man-pages/man-pages.spec,v 1.12 2002/02/06 18:45:35 solar Exp $
+# $Id: Owl/packages/man-pages/man-pages.spec,v 1.13 2002/07/30 15:03:30 mci Exp $
 
 Summary: Manual (man) pages from the Linux Documentation Project.
 Name: man-pages
-Version: 1.39
-Release: owl4
+Version: 1.52
+Release: owl1
 License: distributable
 Group: Documentation
 Source0: ftp://ftp.win.tue.nl/pub/linux-local/manpages/man-pages-%{version}.tar.gz
 Source1: rpcgen.1
-Source2: ldd.1
-Source3: getent.1
-Source4: iconv.1
-Source5: locale.1
-Source6: localedef.1
-Source7: sprof.1
-Source8: getcontext.2
-Source9: setcontext.2
-Source10: sigaltstack.2
-Source11: ld-linux.so.8
-Source12: ldconfig.8
-Source13: rpcinfo.8
-Patch0: man-pages-1.39-deb-misc.diff
-Patch1: man-pages-1.39-rh-ctype.diff
-Patch2: man-pages-1.39-rh-owl-roffix.diff
-Patch3: man-pages-1.39-owl-ccldso.diff
-Patch4: man-pages-1.39-owl-uselib.diff
-Patch5: man-pages-1.39-owl-pwrite.diff
+Source2: getent.1
+Source3: iconv.1
+Source4: locale.1
+Source5: localedef.1
+Source6: sprof.1
+Source7: setcontext.2
+Source8: ld-linux.so.8
+Source9: ldconfig.8
+Source10: rpcinfo.8
+Patch0: man-pages-1.52-deb-owl-misc.diff
+Patch1: man-pages-1.52-rh-owl-roff-fixes.diff
+Patch2: man-pages-1.52-owl-cc-ld.so.diff
+Patch3: man-pages-1.52-owl-uselib.diff
 AutoReqProv: false
 BuildArchitectures: noarch
 BuildRoot: /override/%{name}-%{version}
@@ -44,16 +39,13 @@ administration (intro only).
 %setup -q
 
 cp $RPM_SOURCE_DIR/rpcgen.1 man1/
-cp $RPM_SOURCE_DIR/ldd.1 man1/
 cp $RPM_SOURCE_DIR/getent.1 man1/
 cp $RPM_SOURCE_DIR/iconv.1 man1/
 cp $RPM_SOURCE_DIR/locale.1 man1/
 cp $RPM_SOURCE_DIR/localedef.1 man1/
 cp $RPM_SOURCE_DIR/sprof.1 man1/
 
-cp $RPM_SOURCE_DIR/getcontext.2 man2/
 cp $RPM_SOURCE_DIR/setcontext.2 man2/
-cp $RPM_SOURCE_DIR/sigaltstack.2 man2/
 
 cp $RPM_SOURCE_DIR/ld-linux.so.8 man8/
 cp $RPM_SOURCE_DIR/ldconfig.8 man8/
@@ -63,12 +55,9 @@ cp $RPM_SOURCE_DIR/rpcinfo.8 man8/
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
-%patch5 -p1
 
 %build
 rm -fv man1/README
-mv -fv man1/COPYING .
 
 # These are parts of fileutils
 rm -fv man1/{chgrp,chmod,chown,cp,dd,df,dircolors,du,install}.1
@@ -94,6 +83,10 @@ rm -f man3/infnan.3
 # Part of time
 rm -fv man1/time.1
 
+# We don't package it
+rm -fv man5/nscd.conf.5
+rm -fv man8/nscd.8
+
 %install
 rm -rf $RPM_BUILD_ROOT
 
@@ -114,6 +107,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man*/*
 
 %changelog
+* Tue Jul 30 2002 Michail Litvak <mci@owl.openwall.com>
+- 1.52
+- Obsolete patches removed
+- Don't package nscd* man pages
+
 * Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions
 

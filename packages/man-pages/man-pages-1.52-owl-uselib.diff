@@ -1,5 +1,5 @@
---- man-pages-1.39/man2/uselib.2.orig	Thu Jun  7 15:09:29 2001
-+++ man-pages-1.39/man2/uselib.2	Sun Jun 17 18:02:58 2001
+--- man-pages-1.52/man2/uselib.2.orig	Fri Dec 28 21:39:20 2001
++++ man-pages-1.52/man2/uselib.2	Thu Jul 25 16:25:23 2002
 @@ -25,6 +25,7 @@
  .\" Modified by Michael Haardt <michael@moria.de>
  .\" Modified Sat Jul 24 14:34:48 1993 by Rik Faith <faith@cs.unc.edu>
