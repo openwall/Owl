@@ -9,8 +9,7 @@ The build environment is pre-configured for the use of /usr/src/world
 (the HOME= setting in buildworld.conf and installworld.conf).  It is
 recommended that you leave this default setting and either actually
 place the files in /usr/src/world or use a symlink if /usr/src is not
-on a suitable device.  You need to have at least about 500 MB free on
-the device for use during the builds.
+on a suitable device (see below for the requirements).
 
 When building natively (that is, on Owl), the directory is already
 there.  Otherwise, you need to create the directory, add pseudo-user
@@ -30,12 +29,45 @@ architecture in there.  Note that you need the CVS tree even for
 installing binary packages.
 
 
+	Requirements.
+
+To (re-)build Owl from source, you'll need:
+
+at least about 500 MB free disk space under /usr/src/world for use
+during the builds;
+
+at least 64 MB of physical memory (it is possible to build on less
+with sufficient swap space, but you'd better not);
+
+1 to 4 hours of CPU time, on a modern system (as of this writing).
+
+And, of course, you should be running the build on Owl.  Building on
+another GNU/*/Linux system is possible, but tricky and requires that
+you actually convert the system into Owl with multiple iterations of
+"make buildworld" and "make installworld".
+
+Here are some build times (hours:minutes), so that you get an idea:
+
+Dual Pentium III, 800 MHz, 512 MB:		0:35
+Dual Pentium III, 700 MHz, 1 GB:		0:40
+Dual Celeron (Mendocino), 433 MHz, 256 MB	1:15
+Pentium III, 550 MHz, 64 MB:			1:50
+UltraSparc IIi, 440 MHz, 256 MB:		3:20
+
+The build times will increase as we add more packages and update to
+new versions of software already in Owl.
+
+
 	Native (re-)builds.
 
-It is sufficient to type "make clean && make buildworld".  With the
-default buildworld.conf, packages will be built for oldest flavor of
-the build host's architecture (see ARCHITECTURES) and the build will
-attempt to use up to two processors.
+You need to have a configured Linux 2.2 kernel in /usr/src/linux.  As
+user "build", change directory to /usr/src/world and type:
+
+	make clean && make buildworld
+
+With the default buildworld.conf, packages will be built for oldest
+flavor of the build host's architecture (see ARCHITECTURES) and the
+build will attempt to use up to two processors.
 
 buildworld.conf (as well as other *.conf's) may be edited by copying
 it from checkout/Owl/build into /usr/src/world.  You need to remove
@@ -63,4 +95,4 @@ We do consider the building of SRPM's and the lack of automatic build
 dependency handling for re-builds to be bugs in the build environment.
 We will eventually fix these.
 
-$Id: Owl/doc/BUILD,v 1.1 2000/12/24 07:46:14 solar Exp $
+$Id: Owl/doc/BUILD,v 1.2 2000/12/25 09:16:27 solar Exp $
