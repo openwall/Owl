@@ -1,12 +1,14 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.7 2000/08/16 02:03:30 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.8 2000/08/26 14:56:33 solar Exp $
 
 %define BUILD_MOUNT	'yes'
 %define BUILD_LOSETUP	'yes'
+%define BUILD_CHSH_CHFN	'no'
+%define BUILD_VIPW_VIGR	'no'
 
 Summary: A collection of basic system utilities.
 Name: util-linux
 Version: 2.10h
-Release: 5owl
+Release: 6owl
 Copyright: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%{version}.tar.gz
@@ -94,17 +96,23 @@ ln -s hwclock $RPM_BUILD_ROOT/sbin/clock
 # We do not want dependencies on csh
 chmod 644 $RPM_BUILD_ROOT/usr/lib/getopt/*
 
+%if "%{BUILD_CHSH_CHFN}"=="'yes'"
 install -m 600 ${RPM_SOURCE_DIR}/chsh-chfn.pam $RPM_BUILD_ROOT/etc/pam.d/chsh
 install -m 600 ${RPM_SOURCE_DIR}/chsh-chfn.pam $RPM_BUILD_ROOT/etc/pam.d/chfn
+%endif
 
 mkdir -p $RPM_BUILD_ROOT/etc/control.d/facilities
 cd $RPM_BUILD_ROOT/etc/control.d/facilities
-install -m 700 ${RPM_SOURCE_DIR}/chsh-chfn.control chsh
-sed 's,/usr/bin/chsh,/usr/bin/chfn,' < chsh > chfn
-chmod 700 chfn
+
 install -m 700 ${RPM_SOURCE_DIR}/mount.control mount
 install -m 700 ${RPM_SOURCE_DIR}/newgrp.control newgrp
 install -m 700 ${RPM_SOURCE_DIR}/write.control write
+
+%if "%{BUILD_CHSH_CHFN}"=="'yes'"
+install -m 700 ${RPM_SOURCE_DIR}/chsh-chfn.control chsh
+sed 's,/usr/bin/chsh,/usr/bin/chfn,' < chsh > chfn
+chmod 700 chfn
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -119,8 +127,10 @@ rm -rf $RPM_BUILD_ROOT
 /usr/sbin/tunelp
 /usr/man/man8/tunelp.8*
 
+%if "%{BUILD_CHSH_CHFN}"=="'yes'"
 %config /etc/pam.d/chfn
 %config /etc/pam.d/chsh
+%endif
 
 /sbin/fdisk
 %ifarch i386 alpha armv4l
@@ -146,15 +156,19 @@ rm -rf $RPM_BUILD_ROOT
 /usr/bin/ddate
 /usr/man/man1/ddate.1*
 
-%ifarch i386 alpha sparc
+%attr(4711,root,root)	/usr/bin/newgrp
+/usr/man/man1/newgrp.1*
+
+%if "%{BUILD_CHSH_CHFN}"=="'yes'"
 %attr(700,root,root)	/usr/bin/chfn
 %attr(700,root,root)	/usr/bin/chsh
-%attr(4711,root,root)	/usr/bin/newgrp
-%attr(700,root,root)	/usr/sbin/vipw
-%attr(700,root,root)	/usr/sbin/vigr
 /usr/man/man1/chfn.1*
 /usr/man/man1/chsh.1*
-/usr/man/man1/newgrp.1*
+%endif
+
+%if "%{BUILD_VIPW_VIGR}"=="'yes'"
+%attr(700,root,root)	/usr/sbin/vipw
+%attr(700,root,root)	/usr/sbin/vigr
 /usr/man/man8/vipw.8*
 /usr/man/man8/vigr.8*
 %endif
@@ -268,8 +282,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc fdisk/sfdisk.examples
 %endif
 
+%if "%{BUILD_CHSH_CHFN}"=="'yes'"
 /etc/control.d/facilities/chsh
 /etc/control.d/facilities/chfn
+%endif
 /etc/control.d/facilities/newgrp
 /etc/control.d/facilities/write
 
@@ -297,6 +313,10 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Sat Aug 26 2000 Solar Designer <solar@owl.openwall.com>
+- chsh, chfn, vipw, and vigr are now built from shadow-utils, which
+uses libpwdb-compatible locking.
+
 * Wed Aug 16 2000 Solar Designer <solar@owl.openwall.com>
 - owl-control support for chsh, chfn, newgrp, write, and mount/umount.
 
