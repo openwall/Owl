@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.19 2001/06/03 03:03:35 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.20 2001/06/13 03:40:55 solar Exp $
 
 %define BUILD_PROFILE	'no'
 
@@ -6,7 +6,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
 %define crypt_bf_version 0.4.1
-Release: 15owl
+Release: 16owl
 Copyright: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%{version}.tar.gz
@@ -44,6 +44,7 @@ Patch41: glibc-2.1.3-cvs-20000824-unsetenv.diff
 Patch42: glibc-2.1.3-cvs-20000824-md5-align-clean.diff
 Patch43: glibc-2.1.3-cvs-20000926-tmp-warnings.diff
 Patch44: glibc-2.1.3-cvs-20010109-dl.diff
+Patch45: glibc-2.1.3-cvs-20000929-alpha-reloc.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Autoreq: false
 %ifarch alpha
@@ -137,6 +138,7 @@ cd md5-crypt
 cd ..
 %patch43 -p1
 %patch44 -p1
+%patch45 -p1
 %ifarch sparcv9
 echo 'ASFLAGS-.os += -Wa,-Av8plusa' >> sysdeps/sparc/sparc32/elf/Makefile
 %endif
@@ -294,6 +296,15 @@ rm -f *.filelist*
 %endif
 
 %changelog
+* Wed Jun 13 2001 Solar Designer <solar@owl.openwall.com>
+- Back-ported a patch from the CVS to handle unaligned relocations on Alpha.
+References:
+http://bugs.debian.org/43401
+http://www.alphalinux.org/archives/debian-alpha/February2000/0183.html
+http://www.alphalinux.org/archives/debian-alpha/February2000/0197.html
+http://gcc.gnu.org/ml/gcc/1999-07n/msg00968.html
+http://gcc.gnu.org/ml/gcc/1999-07n/msg01041.html
+
 * Sun Jun 03 2001 Solar Designer <solar@owl.openwall.com>
 - Sync the fts(3) routines with current OpenBSD and FreeBSD; this is
 triggered by Nick Cleaton's report of yet another FTS vulnerability

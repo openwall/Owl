@@ -1,0 +1,59 @@
+===================================================================
+RCS file: /cvs/glibc/libc/sysdeps/alpha/dl-machine.h,v
+retrieving revision 1.42
+retrieving revision 1.43
+diff -u -r1.42 -r1.43
+--- libc/sysdeps/alpha/dl-machine.h	2000/05/08 15:40:26	1.42
++++ libc/sysdeps/alpha/dl-machine.h	2000/07/01 05:08:03	1.43
+@@ -500,7 +500,12 @@
+ 	elf_machine_fixup_plt (map, NULL, reloc, reloc_addr, sym_value);
+       else if (r_type == R_ALPHA_REFQUAD)
+ 	{
+-	  sym_value += *reloc_addr;
++	  void *reloc_addr_1 = reloc_addr;
++	  Elf64_Addr reloc_addr_val;
++
++	  /* Load value without causing unaligned trap.  */
++	  memcpy (&reloc_addr_val, reloc_addr_1, 8);
++	  sym_value += reloc_addr_val;
+ #ifndef RTLD_BOOTSTRAP
+ 	  if (map == &_dl_rtld_map)
+ 	    {
+@@ -516,7 +521,8 @@
+ 	      sym_value -= reloc->r_addend;
+ 	    }
+ #endif
+-	  *reloc_addr = sym_value;
++	  /* Store value without causing unaligned trap.  */
++	  memcpy (reloc_addr_1, &sym_value, 8);
+ 	}
+       else
+ 	_dl_reloc_bad_type (map, r_type, 0);
+===================================================================
+RCS file: /cvs/glibc/libc/sysdeps/alpha/dl-machine.h,v
+retrieving revision 1.44
+retrieving revision 1.45
+diff -u -r1.44 -r1.45
+--- libc/sysdeps/alpha/dl-machine.h	2000/07/18 14:14:51	1.44
++++ libc/sysdeps/alpha/dl-machine.h	2000/09/29 06:50:53	1.45
+@@ -482,7 +482,19 @@
+       /* Already done in dynamic linker.  */
+       if (map != &_dl_rtld_map)
+ #endif
+-	*reloc_addr += map->l_addr;
++	{
++	  /* XXX Make some timings.  Maybe it's preverable to test for
++	     unaligned access and only do it the complex way if necessary.  */
++	  void *reloc_addr_1 = reloc_addr;
++	  Elf64_Addr reloc_addr_val;
++
++	  /* Load value without causing unaligned trap. */
++	  memcpy (&reloc_addr_val, reloc_addr_1, 8);
++	  reloc_addr_val += map->l_addr;
++
++	  /* Store value without causing unaligned trap. */
++	  memcpy (reloc_addr_1, &reloc_addr_val, 8);
++	}
+     }
+   else if (r_type == R_ALPHA_NONE)
+     return;
