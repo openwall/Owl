@@ -59,6 +59,7 @@ response).
 	bind.
 
 [PRIORITY: low]
+[ASSIGNED: jhuuskon@]
 Package BIND 9.x, built without pthreads.  Use the query ID shuffle
 code from our glibc.  Allocate and use a pseudo-user, setup and use a
 chroot jail.  Ensure the PID file is dealt with safely (it shouldn't
@@ -108,8 +109,14 @@ tar already.
 
 	dhcp.
 
+[PRIORITY: medium]
+[ASSIGNED: schmidt@, solar@]
+All of the DHCP suite programs should use /dev/urandom as the only
+source of randomness.  The resolver should be either corrected to use
+unpredictable query IDs, or dropped in favor of the one in glibc.
+
 [PRIORITY: low]
-[ASSIGNED: Matthias, solar@]
+[ASSIGNED: schmidt@, solar@]
 The DHCP client should be modified to run as a dedicated pseudo-user
 and in a chroot jail.  This requires privilege separation within the
 client (not easy).
@@ -562,4 +569,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.25 2003/09/09 07:21:38 solar Exp $
+$Id: Owl/doc/TODO,v 1.26 2003/09/14 13:45:08 solar Exp $
