@@ -11,6 +11,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl 1.0.
 
+2002/10/14	Owl/doc/fr/*
+Updated French translations.
+
 2002/10/13	Package: postfix
 RELIABILITY FIX: Use fcntl(2) locking, not flock(2).
 
@@ -991,4 +994,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/CHANGES-1.0,v 1.3 2002/10/13 18:37:18 solar Exp $
+$Id: Owl/doc/CHANGES-1.0,v 1.4 2002/10/14 20:34:53 solar Exp $
