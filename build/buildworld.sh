@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.17 2002/03/20 14:48:47 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.18 2002/03/20 15:24:29 solar Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -25,7 +25,7 @@ function log()
 
 function build_native()
 {
-	local NUMBER PACKAGE WORK NAME VERSION ARCHIVE
+	local NUMBER PACKAGE WORK NAME VERSION SPEC ARCHIVE
 
 	NUMBER=$1
 	PACKAGE=$2
@@ -35,7 +35,7 @@ function build_native()
 	log "#$NUMBER: Building $PACKAGE"
 	cd $WORK/SOURCES/ || exit 1
 	if [ -f $NATIVE/$PACKAGES/$PACKAGE/archive ]; then
-		while read NAME VERSION; do
+		while read NAME VERSION SPEC; do
 			ARCHIVE=${NAME}-${VERSION}
 			ln -sf $NATIVE/$PACKAGES/$PACKAGE/$NAME $ARCHIVE
 			tar czhf $ARCHIVE.tar.gz $ARCHIVE \
@@ -46,6 +46,9 @@ function build_native()
 				ln -s $HOME/archives/$ARCHIVE.tar.gz .
 			fi
 			rm $ARCHIVE
+			if [ -n "$SPEC" ]; then
+				ln -sf $NATIVE/$PACKAGES/$PACKAGE/$SPEC .
+			fi
 		done < $NATIVE/$PACKAGES/$PACKAGE/archive
 	fi
 	ls $SOURCES/$PACKAGES/$PACKAGE/*.src.rpm 2>/dev/null | \
@@ -144,7 +147,8 @@ function builder()
 
 	ls $NATIVE/$PACKAGES/ | grep -v '^CVS$' |
 	while read PACKAGE; do
-		test -e $NATIVE/$PACKAGES/$PACKAGE/$PACKAGE.spec || continue
+		test -f $NATIVE/$PACKAGES/$PACKAGE/$PACKAGE.spec -o \
+			-f $NATIVE/$PACKAGES/$PACKAGE/archive || continue
 		mkdir .$PACKAGE &> /dev/null || continue
 		touch .$PACKAGE/$NUMBER
 		REGEX="^${PACKAGE}-[^-]*[0-9][^-]*-[^-]*[0-9][^-]*\.src\.rpm\$"
