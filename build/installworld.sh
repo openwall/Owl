@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/installworld.sh,v 1.9 2002/03/13 16:25:05 solar Exp $
+# $Id: Owl/build/installworld.sh,v 1.10 2003/10/24 04:35:31 solar Exp $
 
 . installworld.conf
 
@@ -75,10 +75,17 @@ if [ ! -d $ROOT/var/lib/rpm ]; then
 	umask $UMASK
 fi
 
+export SILO_INSTALL
+export SILO_FLAGS
+
 grep -v ^# $HOME/installorder.conf |
 while read PACKAGES; do
 	FILES=
 	for PACKAGE in $PACKAGES; do
+		if [ "$PACKAGE" = owl-cdrom -a "$MAKE_CDROM" != yes ]; then
+			log "Skipping $PACKAGE"
+			continue
+		fi
 		REGEX="^${PACKAGE}-[^-]*[0-9][^-]*-[^-]*[0-9][^-]*\..*\.rpm\$"
 		FILE="`ls | grep "$REGEX" | tail -1`"
 		if [ -z "$FILE" ]; then
