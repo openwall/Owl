@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.35 2004/09/30 00:43:47 galaxy Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.36 2004/09/30 00:46:54 galaxy Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -294,31 +294,24 @@ if [ -f /var/lib/rpm/packages.rpm ]; then
 You have both
 /var/lib/rpm/packages.rpm     db1 format installed package headers
 /var/lib/rpm/Packages         db3 format installed package headers
-
-"
+" >&2
 		if [ /var/lib/rpm/Packages -ot /var/lib/rpm/packages.rpm ]; then
-			echo "
-/var/lib/rpm/Packages is older than /var/lib/packages.rpm. We cannot
+			echo "/var/lib/rpm/Packages is older than /var/lib/packages.rpm. We cannot
 decide which of these databases is actual. Please, remove (or at least
-rename) one of those files, and re-install this package.
-"
+rename) one of those files, and re-install this package." >&2
 			exit 1
 		fi
 
-		echo "
-/var/lib/rpm/Packages is newer than /var/lib/packages.rpm, perhaps you
+		echo "/var/lib/rpm/Packages is newer than /var/lib/packages.rpm, perhaps you
 converted db1 format database to db3 format some time ago and forgot
 to remove old files. You can safely remove /var/lib/rpm/*.rpm after
-this package will be installed.
-"
+this package will be installed."
 	else
-		echo "
-The old RPM database (db1 format) was found. Unfortunately, we cannot
+		echo "The old RPM database (db1 format) was found. Unfortunately, we cannot
 automatically convert this database during installation of this
 package due 'chicken and egg' problem. To convert old RPM database to
 the new database format extract 'rpmd' binary from this package and
-run 'rpmd --rebuild' manually
-"
+run 'rpmd --rebuild' manually" >&2
 		exit 1
 	fi
 fi
