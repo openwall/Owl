@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.22 2003/10/20 02:23:31 solar Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.23 2003/10/25 08:31:00 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -44,7 +44,7 @@ install -m 700 $RPM_SOURCE_DIR/owl-setup $RPM_BUILD_ROOT/usr/lib/owl-setup/
 install -m 700 $RPM_SOURCE_DIR/mkfstab $RPM_BUILD_ROOT/usr/lib/owl-setup/
 install -m 700 $RPM_SOURCE_DIR/netcfg $RPM_BUILD_ROOT/usr/lib/owl-setup/
 install -m 644 $RPM_SOURCE_DIR/README $RPM_BUILD_ROOT/usr/lib/owl-setup/
-ln -s /usr/lib/owl-setup/owl-setup $RPM_BUILD_ROOT/usr/sbin/setup
+ln -s ../../usr/lib/owl-setup/owl-setup $RPM_BUILD_ROOT/usr/sbin/setup
 
 %clean
 rm -rf $RPM_BUILD_ROOT
