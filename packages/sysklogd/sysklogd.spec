@@ -1,12 +1,13 @@
-# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.8 2002/07/07 00:07:48 solar Exp $
+# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.9 2003/07/31 22:24:51 solar Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
 Version: 1.4.1
-Release: owl3
+Release: owl4
 License: BSD for syslogd and GPL for klogd
 Group: System Environment/Daemons
-Source0: http://www.infodrom.ffis.de/projects/sysklogd/download/sysklogd-%{version}.tar.gz
+URL: http://www.infodrom.org/projects/sysklogd/
+Source0: http://www.infodrom.org/projects/sysklogd/download/%{name}-%{version}.tar.gz
 Source1: syslog.conf
 Source2: syslog.init
 Source3: syslog.logrotate
@@ -105,7 +106,10 @@ fi
 %_mandir/*/*
 
 %changelog
-* Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
+* Fri Aug 01 2003 Solar Designer <solar@owl.openwall.com> 1.4.1-owl4
+- Added URL.
+
+* Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com> 1.4.1-owl3
 - Use grep -q in %pre.
 
 * Tue Feb 05 2002 Solar Designer <solar@owl.openwall.com>
