@@ -55,13 +55,13 @@ mit mehreren Wiederholungen von "make buildworld" und "make installworld".
 Hier einige Übersetzungszeiten (Stunden:Minuten) um einen Eindruck
 zu bekommen:
 
-Dual Pentium 4 (Xeon), 2.666 GHz, 2 GB		0:20
-Quad Pentium 4 (Dual Xeon), 2 GHz, 2 GB		0:22
-Dual Pentium III, 1.266 GHz, 2 GB		0:30
-Athlon XP 2000+, 1.666 GHz, 512 MB		0:45
-Pentium III, 700 MHz, 192 MB			1:35
-UltraSparc IIi, 400 MHz, 256 MB			3:50
-Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB	5:30
+Dual Pentium 4 Xeon, HT (4-way MP), 2.666 GHz, 2 GB		0:17
+Dual Pentium 4 Xeon, no HT (2-way SMP), 2.666 GHz, 2 GB		0:21
+Dual Pentium III, 1.266 GHz, 2 GB				0:30
+Athlon XP 2000+, 1.666 GHz, 512 MB				0:45
+Pentium III, 700 MHz, 192 MB					1:40
+UltraSparc IIi, 400 MHz, 256 MB					3:50
+Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB			5:30
 
 (Ja, der gcc ist auf einer Alpha ganz schön hungrig)
 
@@ -114,4 +114,4 @@ Individuelle Pakete können wieder- oder neuübersetzt werden, indem man
 Für fremde Pakete (SRPMs) die mit der Owl-Arbeitsumgebung erstellt worden
 sind, muss man zusätzlich die Versionsnummer in "name" einfügen.
 
-$Id: Owl/doc/de/BUILD,v 1.11 2003/05/16 12:26:43 solar Exp $
+$Id: Owl/doc/de/BUILD,v 1.12 2003/06/28 13:02:31 solar Exp $

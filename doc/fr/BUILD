@@ -53,13 +53,13 @@ convertissiez effectivement le système en Owl avec plusieurs itérations de
 Voici quelques temps de compilation (heures:minutes), ainsi vous savez à
 quoi vous attendre :
 
-Dual Pentium 4 (Xeon), 2.666 GHz, 2 GB		0:20
-Quad Pentium 4 (Dual Xeon), 2 GHz, 2 GB		0:22
-Dual Pentium III, 1.266 GHz, 2 GB		0:30
-Athlon XP 2000+, 1.666 GHz, 512 MB		0:45
-Pentium III, 700 MHz, 192 MB			1:35
-UltraSparc IIi, 400 MHz, 256 MB			3:50
-Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB	5:30
+Dual Pentium 4 Xeon, HT (4-way MP), 2.666 GHz, 2 GB		0:17
+Dual Pentium 4 Xeon, no HT (2-way SMP), 2.666 GHz, 2 GB		0:21
+Dual Pentium III, 1.266 GHz, 2 GB				0:30
+Athlon XP 2000+, 1.666 GHz, 512 MB				0:45
+Pentium III, 700 MHz, 192 MB					1:40
+UltraSparc IIi, 400 MHz, 256 MB					3:50
+Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB			5:30
 
 (Oui, gcc est si gourmand et lent sur Alpha.)
 
@@ -117,4 +117,4 @@ Les paquets individuels peuvent être compilés ou re-compilés avec
 étrangers (SRPMs) compilés avec l'environnement de compilation de Owl vous
 avez aussi besoin d'inclure dans "nom" la partie numéro de version.
 
-$Id: Owl/doc/fr/BUILD,v 1.6 2003/05/16 12:26:43 solar Exp $
+$Id: Owl/doc/fr/BUILD,v 1.7 2003/06/28 13:02:31 solar Exp $
