@@ -1,9 +1,9 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.14 2002/04/24 23:18:56 solar Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.15 2002/05/24 21:11:34 solar Exp $
 
 Version: 2.05
 Name: bash
 Summary: The GNU Bourne-Again SHell (Bash).
-Release: owl2
+Release: owl3
 Group: System Environment/Shells
 License: GPL
 Source0: ftp://ftp.gnu.org/gnu/bash/bash-%{version}.tar.gz
@@ -32,6 +32,7 @@ Requires: mktemp >= 1:1.3.1
 Provides: bash2
 Obsoletes: bash2, etcskel
 Prefix: %{_prefix}
+BuildRequires: mktemp >= 1:1.3.1
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -184,6 +185,9 @@ fi
 %doc doc/*.ps* doc/*.html doc/article.txt*
 
 %changelog
+* Sat May 25 2002 Solar Designer <solar@owl.openwall.com>
+- Declare that the new mktemp is also required for bash _builds_.
+
 * Thu Apr 25 2002 Solar Designer <solar@owl.openwall.com>
 - Default to vitmp in fc (the history editor) and bashbug script.
 - Provide sh.1 and bash2.1 symlinks to the man page.
