@@ -1,11 +1,11 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.14 2001/03/18 01:34:02 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.15 2001/03/19 01:16:04 solar Exp $
 
 # Version of OpenSSH
 %define oversion 2.5.1p1
 Summary: OpenSSH free Secure Shell (SSH) implementation
 Name: openssh
 Version: %{oversion}
-Release: 2owl
+Release: 3owl
 URL: http://www.openssh.com/
 Source0: http://violet.ibs.com.au/openssh/files/openssh-%{oversion}.tar.gz
 Source1: sshd.pam
@@ -147,13 +147,15 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc ChangeLog OVERVIEW COPYING.Ylonen README* INSTALL
-%doc CREDITS LICENCE
+%doc README CREDITS LICENCE ChangeLog
 %attr(0755,root,root) /usr/bin/ssh-keygen
 %attr(0755,root,root) /usr/bin/scp
+%attr(0755,root,root) /usr/bin/ssh-keyscan
 %attr(0644,root,root) /usr/man/man1/ssh-keygen.1*
+%attr(0644,root,root) /usr/man/man1/ssh-keyscan.1*
 %attr(0644,root,root) /usr/man/man1/scp.1*
 %attr(0755,root,root) %dir /etc/ssh
+%attr(0600,root,root) %config(noreplace) /etc/ssh/primes
 %attr(0755,root,root) %dir /usr/libexec/ssh
 
 %files clients
@@ -161,9 +163,11 @@ fi
 %attr(0755,root,root) /usr/bin/ssh
 %attr(0755,root,root) /usr/bin/ssh-agent
 %attr(0755,root,root) /usr/bin/ssh-add
+%attr(0755,root,root) /usr/bin/sftp
 %attr(0644,root,root) /usr/man/man1/ssh.1*
 %attr(0644,root,root) /usr/man/man1/ssh-agent.1*
 %attr(0644,root,root) /usr/man/man1/ssh-add.1*
+%attr(0644,root,root) /usr/man/man1/sftp.1*
 %attr(0644,root,root) %config(noreplace) /etc/ssh/ssh_config
 %attr(-,root,root) /usr/bin/slogin
 %attr(-,root,root) /usr/man/man1/slogin.1*
@@ -179,6 +183,9 @@ fi
 %attr(0700,root,root) %config /etc/rc.d/init.d/sshd
 
 %changelog
+* Mon Mar 19 2001 Solar Designer <solar@owl.openwall.com>
+- Package files introduced with 2.5.0 (primes, sftp, ssh-keyscan).
+
 * Sun Mar 18 2001 Solar Designer <solar@owl.openwall.com>
 - Increased the STALLTIME for scp from 5 to 60 seconds (needed for large
 windows and slow links).
