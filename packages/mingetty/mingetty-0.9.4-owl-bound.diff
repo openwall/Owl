@@ -1,0 +1,60 @@
+diff -ur mingetty-0.9.4.suse/mingetty.c mingetty-0.9.4/mingetty.c
+--- mingetty-0.9.4.suse/mingetty.c	Sun Jul  9 17:51:06 2000
++++ mingetty-0.9.4/mingetty.c	Sun Jul  9 17:58:06 2000
+@@ -97,14 +97,14 @@
+ 	buf[0] = '\0';
+ 	bp = buf;
+ #else
+-	strncpy (buf, progname, sizeof buf - 4);
+-	buf[sizeof buf - 5] = '\0';
++	buf[0] = '\0';
++	strncat (buf, progname, sizeof(buf) - 5);
+ 	strcat (buf, ": ");
+ 	bp = buf + strlen (buf);
+ #endif
+ 
+ 	va_start (va_alist, fmt);
+-	vsprintf (bp, fmt, va_alist);
++	vsnprintf (bp, sizeof(buf) - (bp - buf) - 2, fmt, va_alist);
+ 	va_end (va_alist);
+ 
+ #ifdef	USE_SYSLOG
+@@ -176,7 +176,9 @@
+ 	}
+ }
+ 
++#if 0
+ #define CONTROL(c) ((c) & 0x1f)
++#endif
+ 
+ /* open_tty - set up tty as standard { input, output, error } */
+ static void open_tty (void)
+@@ -188,6 +190,8 @@
+ 
+ 	/* Set up new standard input. */
+ 	strcpy (buf, "/dev/");
++	if (strlen(buf) + strlen(tty) >= sizeof(buf))
++		error ("tty name too long: %s", tty);
+ 	strcat (buf, tty);	/* XXX strncat ??? */
+ 	if (chown (buf, 0, 0) || chmod (buf, 0600))
+ #ifdef __GLIBC__
+@@ -216,7 +220,7 @@
+ 		error ("%s: not a tty", buf);
+ 
+ 	if (vhangup ())
+-		error ("vhangup() failed");
++		error ("vhangup: %s", strerror(errno));
+ 	/* Get rid of the present stdout/stderr. */
+ 	close (2);
+ 	close (1);
+@@ -448,7 +452,9 @@
+ 			if (c == '\n' || c == '\r') {
+ 				*bp = 0;
+ 				break;
+-			} else if (!isprint (c))
++			} else
++			if (!isalnum (c) && c != '_' &&
++			    (c != '-' || bp > logname))
+ 				error ("%s: invalid character for login name",
+ 								tty);
+ 			else if (bp - logname >= sizeof (logname) - 1)
