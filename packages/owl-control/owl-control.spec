@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-control/owl-control.spec,v 1.7 2002/11/03 01:24:35 solar Exp $
+# $Id: Owl/packages/owl-control/owl-control.spec,v 1.8 2002/11/03 02:57:27 solar Exp $
 
 Summary: A set of scripts to control installed system facilities.
 Name: owl-control
@@ -43,6 +43,7 @@ rm -rf $RPM_BUILD_ROOT
 * Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
 - Imported some of the ALT Linux updates, including (modified versions of)
 the control-dump and control-restore scripts.
+- In control_subst(), don't rewrite files when the new setting is the same.
 - Install the scripts into %{_sbindir} directly, no more symlinks.
 
 * Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>

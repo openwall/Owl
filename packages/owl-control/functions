@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-control/functions,v 1.5 2002/11/03 01:24:35 solar Exp $
+# $Id: Owl/packages/owl-control/functions,v 1.6 2002/11/03 02:57:27 solar Exp $
 
 function define()
 {
@@ -103,6 +103,9 @@ function control_subst()
 		if [ -z "$SUBST" ]; then
 			echo "${0##*/}: Invalid mode: $REQUEST" >&2
 			return 1
+		fi
+		if [ "`control_subst "$FILE" status`" = "$REQUEST" ]; then
+			return
 		fi
 		TMPFILE="`mktemp "$FILE.control.XXXXXX"`" || return 1
 		while :; do
