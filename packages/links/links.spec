@@ -1,4 +1,4 @@
-# $Id: Owl/packages/links/Attic/links.spec,v 1.7 2001/07/27 21:18:13 mci Exp $
+# $Id: Owl/packages/links/Attic/links.spec,v 1.8 2001/07/27 21:35:37 mci Exp $
 
 Name: links
 Summary: Lynx-like text WWW browser with support for frames
@@ -32,8 +32,7 @@ don't use it. :-)
 %patch1 -p1
 
 %build
-autoconf
-configure --with-ssl
+%configure --with-ssl
 
 %install
 rm -rf $RPM_BUILD_ROOT
