@@ -1,4 +1,4 @@
-# $Id: Owl/packages/readline/readline.spec,v 1.16 2004/02/20 01:55:39 mci Exp $
+# $Id: Owl/packages/readline/readline.spec,v 1.17 2004/02/20 02:19:16 solar Exp $
 
 %define compat_list 3 3.0 4.0 4.1 4.2
 
@@ -81,10 +81,10 @@ ln -sf libhistory.so.%version \
 	.%_libdir/libhistory.so.`echo %version | sed 's^\..*^^g'`
 
 for n in %name history; do
-        t=`objdump -p "$RPM_BUILD_ROOT%_libdir/lib$n.so" |awk '/SONAME/ {print $2}'`
-        for v in %compat_list; do
-                ln -s "$t" "$RPM_BUILD_ROOT%_libdir/lib$n.so.$v"
-        done
+	t=`objdump -p "$RPM_BUILD_ROOT%_libdir/lib$n.so" | awk '/SONAME/ {print $2}'`
+	for v in %compat_list; do
+		ln -s "$t" "$RPM_BUILD_ROOT%_libdir/lib$n.so.$v"
+	done
 done
 
 %post
@@ -127,7 +127,7 @@ fi
 %changelog
 * Wed Feb 18 2004 Michail Litvak <mci@owl.openwall.com> 4.3-owl1
 - 4.3
-- Added oficial patches, patches from Alt Linux Team,
+- Added official patches, patches from Alt Linux Team,
 dropped outdated patches.
 - Provide symlinks for compatibility with previous versions of readline.
 
