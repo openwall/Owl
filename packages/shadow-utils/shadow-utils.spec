@@ -1,9 +1,9 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.20 2002/07/21 15:19:08 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.21 2002/10/21 15:23:29 nergal Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.0
-Release: owl4
+Release: owl5
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -35,7 +35,7 @@ Patch24: shadow-4.0.0-owl-crypt_gensalt.diff
 Patch25: shadow-4.0.0-owl-newgrp.diff
 Patch26: shadow-4.0.0-owl-automake.diff
 Patch30: shadow-4.0.0-owl-tcb.diff
-Requires: owl-control < 2.0, pam, tcb, pam_userpass >= 0.5
+Requires: owl-control < 2.0, pam, tcb >= 0.9.8, pam_userpass >= 0.5
 BuildRequires: libtool, gettext, automake, autoconf
 BuildRequires: pam-devel, tcb-devel
 BuildRoot: /override/%{name}-%{version}
@@ -183,6 +183,9 @@ grep -q ^auth: /etc/group || groupadd -g 164 auth
 /etc/control.d/facilities/*
 
 %changelog
+* Mon Aug 19 2002 Rafal Wojtczuk <nergal@owl.openwall.com>
+- Merged the enhancements which remove 32K users limit
+
 * Sun Jul 21 2002 Solar Designer <solar@owl.openwall.com>
 - Made "chage -l" drop its saved GID too.
 - Removed the extra space in "[-e expire ]" in the usage instructions for

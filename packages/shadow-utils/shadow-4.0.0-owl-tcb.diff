@@ -1,6 +1,6 @@
 diff -urN shadow-4.0.0-owl-no-tcb/lib/Makefile.am shadow-4.0.0/lib/Makefile.am
---- shadow-4.0.0-owl-no-tcb/lib/Makefile.am	Sat Oct  6 23:35:26 2001
-+++ shadow-4.0.0/lib/Makefile.am	Sun Nov 11 09:50:29 2001
+--- shadow-4.0.0-owl-no-tcb/lib/Makefile.am	Sat Oct  6 19:35:26 2001
++++ shadow-4.0.0/lib/Makefile.am	Tue Aug 20 14:19:27 2002
 @@ -11,6 +11,9 @@
  	$(top_builddir)/libmisc/libmisc.la
  
@@ -12,8 +12,8 @@ diff -urN shadow-4.0.0-owl-no-tcb/lib/Makefile.am shadow-4.0.0/lib/Makefile.am
  	commonio.h \
  	defines.h \
 diff -urN shadow-4.0.0-owl-no-tcb/lib/_pam_userpass.h shadow-4.0.0/lib/_pam_userpass.h
---- shadow-4.0.0-owl-no-tcb/lib/_pam_userpass.h	Thu Jan  1 03:00:00 1970
-+++ shadow-4.0.0/lib/_pam_userpass.h	Sun Nov 11 09:50:29 2001
+--- shadow-4.0.0-owl-no-tcb/lib/_pam_userpass.h	Thu Jan  1 00:00:00 1970
++++ shadow-4.0.0/lib/_pam_userpass.h	Tue Aug 20 14:19:27 2002
 @@ -0,0 +1,12 @@
 +#ifndef __PAM_USERPASS_H
 +#define __PAM_USERPASS_H
@@ -28,8 +28,8 @@ diff -urN shadow-4.0.0-owl-no-tcb/lib/_pam_userpass.h shadow-4.0.0/lib/_pam_user
 +
 +#endif
 diff -urN shadow-4.0.0-owl-no-tcb/lib/appl_userpass.c shadow-4.0.0/lib/appl_userpass.c
---- shadow-4.0.0-owl-no-tcb/lib/appl_userpass.c	Thu Jan  1 03:00:00 1970
-+++ shadow-4.0.0/lib/appl_userpass.c	Sun Nov 11 09:50:29 2001
+--- shadow-4.0.0-owl-no-tcb/lib/appl_userpass.c	Thu Jan  1 00:00:00 1970
++++ shadow-4.0.0/lib/appl_userpass.c	Tue Aug 20 14:19:27 2002
 @@ -0,0 +1,59 @@
 +#include <string.h>
 +#include <stdlib.h>
@@ -91,8 +91,8 @@ diff -urN shadow-4.0.0-owl-no-tcb/lib/appl_userpass.c shadow-4.0.0/lib/appl_user
 +	return PAM_SUCCESS;
 +}
 diff -urN shadow-4.0.0-owl-no-tcb/lib/commonio.c shadow-4.0.0/lib/commonio.c
---- shadow-4.0.0-owl-no-tcb/lib/commonio.c	Sun Nov 11 09:48:15 2001
-+++ shadow-4.0.0/lib/commonio.c	Sun Nov 11 09:50:29 2001
+--- shadow-4.0.0-owl-no-tcb/lib/commonio.c	Tue Aug 20 14:15:54 2002
++++ shadow-4.0.0/lib/commonio.c	Tue Aug 20 14:19:27 2002
 @@ -1,4 +1,4 @@
 -
 +#define _GNU_SOURCE
@@ -187,17 +187,18 @@ diff -urN shadow-4.0.0-owl-no-tcb/lib/commonio.c shadow-4.0.0/lib/commonio.c
  	 * If O_CREAT was specified and the file didn't exist, it will be
  	 * created by commonio_close().  We have no entries to read yet.  --marekm
 diff -urN shadow-4.0.0-owl-no-tcb/lib/getdef.c shadow-4.0.0/lib/getdef.c
---- shadow-4.0.0-owl-no-tcb/lib/getdef.c	Sun Nov 11 09:49:24 2001
-+++ shadow-4.0.0/lib/getdef.c	Sun Nov 11 09:50:29 2001
-@@ -116,6 +116,7 @@
+--- shadow-4.0.0-owl-no-tcb/lib/getdef.c	Tue Aug 20 14:18:04 2002
++++ shadow-4.0.0/lib/getdef.c	Tue Aug 20 14:19:27 2002
+@@ -116,6 +116,8 @@
  	{ "SYSLOG_SG_ENAB",		NULL },
  	{ "SYSLOG_SU_ENAB",		NULL },
  #endif
 +	{ "TCB_AUTH_GROUP",		NULL },
++	{ "TCB_SYMLINKS",		NULL },
  	{ "TTYGROUP",			NULL },
  	{ "TTYPERM",			NULL },
  	{ "TTYTYPE_FILE",		NULL },
-@@ -124,7 +125,8 @@
+@@ -124,7 +126,8 @@
  	{ "ULIMIT",			NULL },
  	{ "UMASK",			NULL },
  	{ "USERDEL_CMD",		NULL },
@@ -208,8 +209,8 @@ diff -urN shadow-4.0.0-owl-no-tcb/lib/getdef.c shadow-4.0.0/lib/getdef.c
  
  #ifndef LOGINDEFS
 diff -urN shadow-4.0.0-owl-no-tcb/lib/pam_chpw.c shadow-4.0.0/lib/pam_chpw.c
---- shadow-4.0.0-owl-no-tcb/lib/pam_chpw.c	Thu Jan  1 03:00:00 1970
-+++ shadow-4.0.0/lib/pam_chpw.c	Sun Nov 11 09:50:29 2001
+--- shadow-4.0.0-owl-no-tcb/lib/pam_chpw.c	Thu Jan  1 00:00:00 1970
++++ shadow-4.0.0/lib/pam_chpw.c	Tue Aug 20 14:19:27 2002
 @@ -0,0 +1,39 @@
 +#include <stdio.h>
 +#include <stdlib.h>
@@ -251,8 +252,8 @@ diff -urN shadow-4.0.0-owl-no-tcb/lib/pam_chpw.c shadow-4.0.0/lib/pam_chpw.c
 +	return 1;
 +}
 diff -urN shadow-4.0.0-owl-no-tcb/lib/pam_chpw.h shadow-4.0.0/lib/pam_chpw.h
---- shadow-4.0.0-owl-no-tcb/lib/pam_chpw.h	Thu Jan  1 03:00:00 1970
-+++ shadow-4.0.0/lib/pam_chpw.h	Sun Nov 11 09:50:29 2001
+--- shadow-4.0.0-owl-no-tcb/lib/pam_chpw.h	Thu Jan  1 00:00:00 1970
++++ shadow-4.0.0/lib/pam_chpw.h	Tue Aug 20 14:19:27 2002
 @@ -0,0 +1,7 @@
 +#ifndef _PAM_CHPW_H
 +#define _PAM_CHPW_H
@@ -262,8 +263,8 @@ diff -urN shadow-4.0.0-owl-no-tcb/lib/pam_chpw.h shadow-4.0.0/lib/pam_chpw.h
 +
 +#endif
 diff -urN shadow-4.0.0-owl-no-tcb/lib/pam_userpass.h shadow-4.0.0/lib/pam_userpass.h
---- shadow-4.0.0-owl-no-tcb/lib/pam_userpass.h	Thu Jan  1 03:00:00 1970
-+++ shadow-4.0.0/lib/pam_userpass.h	Sun Nov 11 09:50:29 2001
+--- shadow-4.0.0-owl-no-tcb/lib/pam_userpass.h	Thu Jan  1 00:00:00 1970
++++ shadow-4.0.0/lib/pam_userpass.h	Tue Aug 20 14:19:27 2002
 @@ -0,0 +1,14 @@
 +#ifndef _PAM_USERPASS_H
 +#define _PAM_USERPASS_H
@@ -280,8 +281,8 @@ diff -urN shadow-4.0.0-owl-no-tcb/lib/pam_userpass.h shadow-4.0.0/lib/pam_userpa
 +
 +#endif
 diff -urN shadow-4.0.0-owl-no-tcb/lib/shadowio.c shadow-4.0.0/lib/shadowio.c
---- shadow-4.0.0-owl-no-tcb/lib/shadowio.c	Wed Aug 15 03:17:53 2001
-+++ shadow-4.0.0/lib/shadowio.c	Sun Nov 11 09:50:29 2001
+--- shadow-4.0.0-owl-no-tcb/lib/shadowio.c	Tue Aug 14 23:17:53 2001
++++ shadow-4.0.0/lib/shadowio.c	Tue Aug 20 14:19:27 2002
 @@ -1,4 +1,3 @@
 -
  #include <config.h>
@@ -399,9 +400,9 @@ diff -urN shadow-4.0.0-owl-no-tcb/lib/shadowio.c shadow-4.0.0/lib/shadowio.c
 +
  #endif
 diff -urN shadow-4.0.0-owl-no-tcb/lib/tcbfuncs.c shadow-4.0.0/lib/tcbfuncs.c
---- shadow-4.0.0-owl-no-tcb/lib/tcbfuncs.c	Thu Jan  1 03:00:00 1970
-+++ shadow-4.0.0/lib/tcbfuncs.c	Sun Nov 11 09:50:29 2001
-@@ -0,0 +1,282 @@
+--- shadow-4.0.0-owl-no-tcb/lib/tcbfuncs.c	Thu Jan  1 00:00:00 1970
++++ shadow-4.0.0/lib/tcbfuncs.c	Tue Aug 20 14:19:27 2002
+@@ -0,0 +1,471 @@
 +#define _GNU_SOURCE
 +#include <stdio.h>
 +#include <fcntl.h>
@@ -455,7 +456,7 @@ diff -urN shadow-4.0.0-owl-no-tcb/lib/tcbfuncs.c shadow-4.0.0/lib/tcbfuncs.c
 +	int retval;
 +
 +	if (!getdef_bool("USE_TCB"))
-+		/* The user should be in traditional shadow file */
++		/* The user should be in the traditional shadow file */
 +		return 1;
 +
 +	if (stored_tcb_user)
@@ -468,7 +469,7 @@ diff -urN shadow-4.0.0-owl-no-tcb/lib/tcbfuncs.c shadow-4.0.0/lib/tcbfuncs.c
 +	if (!buf)
 +		NOMEM;
 +
-+	retval = spw_name(buf); /* should be 1 */
++	retval = spw_name(buf);	/* should be 1 */
 +
 +	free(buf);
 +
@@ -477,7 +478,7 @@ diff -urN shadow-4.0.0-owl-no-tcb/lib/tcbfuncs.c shadow-4.0.0/lib/tcbfuncs.c
 +
 +static int unlink_suffs(const char *user)
 +{
-+	static char *suffs[] = {"+", "-", LOCK_SUFFIX};
++	static char *suffs[] = { "+", "-", LOCK_SUFFIX };
 +	char *tmp;
 +	int i;
 +
@@ -497,197 +498,386 @@ diff -urN shadow-4.0.0-owl-no-tcb/lib/tcbfuncs.c shadow-4.0.0/lib/tcbfuncs.c
 +	return 1;
 +}
 +
-+int tcb_move(const char *user_newname, uid_t user_newid)
++/* 
++tcb_path_rel must return relative (against TCB_DIR) directory, whose last 
++component is user's tcb directory
++*/
++#define HASH_BY 1000
++static char *tcb_path_rel(const char *name, uid_t uid)
 +{
-+	struct stat dirmode, filemode;
-+	char *tmp, *dir, *shadow;
-+	const char *currname;
++	char *ret;
 +
-+	if (!getdef_bool("USE_TCB"))
-+		return 1;
++	if (!getdef_bool("TCB_SYMLINKS") || uid < HASH_BY)
++		asprintf(&ret, "%s", name);
++	else if (uid < HASH_BY * HASH_BY)
++		asprintf(&ret, ":%dK/%s", uid / HASH_BY, name);
++	else
++		asprintf(&ret, ":%dM/:%dK/%s", uid / (HASH_BY * HASH_BY),
++			 (uid % (HASH_BY * HASH_BY)) / HASH_BY, name);
++	if (!ret)
++		NOMEM;
++	return ret;
++}
 +
-+	if (user_newname) {
-+		asprintf(&dir, TCB_DIR "/%s", user_newname);
-+		asprintf(&tmp, TCB_DIR "/%s", stored_tcb_user);
-+		if (!dir || !tmp)
-+			NOMEM;
-+		if (rename(tmp, dir)) {
-+			perror("rename");
-+			return 0;
-+		}
-+		free(tmp);
-+		currname = user_newname;
-+	} else {
-+		asprintf(&dir, TCB_DIR "/%s", stored_tcb_user);
-+		if (!dir)
-+			NOMEM;
-+		currname = stored_tcb_user;
++static char *tcb_path_rel_existing(const char *name)
++{
++	char *path, *rval;
++	struct stat st;
++	char link[8192];
++	int ret;
++
++
++	asprintf(&path, TCB_DIR "/%s", name);
++	if (!path)
++		NOMEM;
++	if (lstat(path, &st)) {
++		fprintf(stderr, "Cannot stat %s: %s\n", path,
++			strerror(errno));
++		free(path);
++		return NULL;
 +	}
-+	if (user_newid == -1)
-+		return 1;
-+	if (stat(dir, &dirmode)) {
++	if (S_ISDIR(st.st_mode)) {
++		free(path);
++		rval = strdup(name);
++		if (!rval)
++			NOMEM;
++		return rval;
++	}
++	if (!S_ISLNK(st.st_mode)) {
++		fprintf(stderr,
++			"%s is neither a directory, nor a symlink ?\n",
++			path);
++		free(path);
++		return NULL;
++	}
++	ret = readlink(path, link, sizeof(link) - 1);
++	free(path);
++	if (ret == -1) {
++		perror("readlink");
++		return NULL;
++	}
++	link[ret] = 0;
++	if (ret >= sizeof(link) - 1) {
++		fprintf(stderr, "Suspiciously long symlink %s ?\n", link);
++		return NULL;
++	}
++	rval = strdup(link);
++	if (!rval)
++		NOMEM;
++	return rval;
++}
++
++
++static char *tcb_path(const char *name, uid_t uid)
++{
++	char *ret, *rel;
++
++	if (!(rel = tcb_path_rel(name, uid)))
++		return 0;
++	asprintf(&ret, TCB_DIR "/%s", rel);
++	free(rel);
++	if (!ret)
++		NOMEM;
++	return ret;
++}
++
++static char *tcb_path_existing(const char *name)
++{
++	char *ret, *rel;
++
++	if (!(rel = tcb_path_rel_existing(name)))
++		return 0;
++	asprintf(&ret, TCB_DIR "/%s", rel);
++	free(rel);
++	if (!ret)
++		NOMEM;
++	return ret;
++}
++
++
++static int mkdir_leading(const char *name, uid_t uid)
++{
++	char *ind, *dir, *ptr, *path = tcb_path_rel(name, uid);
++	struct stat st;
++
++	if (!path)
++		return 0;
++	ptr = path;
++	if (stat(TCB_DIR, &st)) {
 +		perror("stat");
 +		return 0;
 +	}
-+	if (chown(dir, 0, 0)) {
-+		perror("chown");
-+		return 0;
-+	}
-+	if (chmod(dir, 0)) {
-+		perror("chmod");
-+		return 0;
-+	}
-+	asprintf(&shadow, TCB_FMT, currname);
-+	if (!shadow)
-+		NOMEM;
-+	if (lstat(shadow, &filemode)) {
-+		if (errno != ENOENT) {
-+			perror("lstat");
++	while ((ind = index(ptr, '/'))) {
++		*ind = 0;
++		asprintf(&dir, TCB_DIR "/%s", path);
++		if (!dir)
++			NOMEM;
++		if (mkdir(dir, 0700) && errno != EEXIST) {
++			perror("mkdir");
++			free(dir);
 +			return 0;
 +		}
-+		fprintf(stderr, "Warning, user %s has no shadow file.\n",
-+		    currname);
-+	} else {
-+		if (!S_ISREG(filemode.st_mode) || filemode.st_nlink != 1) {
-+			fprintf(stderr,
-+			    "Emergency: %s'shadow is not a regular file with"
-+			    " st_nlink=1.\n"
-+			    "The account is left locked.\n", currname);
++		if (chown(dir, 0, st.st_gid) || chmod(dir, 0711)) {
++			perror("chown or chmod");
++			free(dir);
 +			return 0;
 +		}
-+		if (chown(shadow, user_newid, filemode.st_gid)) {
-+			perror("chown");
-+			return 0;
-+		}
-+		if (chmod(shadow, filemode.st_mode & 07777)) {
-+			perror("chmod");
-+			return 0;
-+		}
++		free(dir);
++		*ind = '/';
++		ptr = ind + 1;
 +	}
-+	free(shadow);
-+	if (!unlink_suffs(currname))
-+		return 0;
-+
-+	if (chown(dir, user_newid, dirmode.st_gid)) {
-+		perror("chown");
-+		return 0;
-+	}
-+	if (chmod(dir, dirmode.st_mode & 07777)) {
-+		perror("chmod");
-+		return 0;
-+	}
-+	free(dir);
-+
++	free(path);
 +	return 1;
 +}
-+
-+int tcb_create(const char *name)
++/* path should be a relative, existing tcb directory */
++static int rmdir_leading(char *path)
 +{
-+	struct stat st;
-+	char *shadow, *dir;
-+	int fd;
++	char *ind, *dir;
++	int ret = 1;
++
++	while ((ind = rindex(path, '/'))) {
++		*ind = 0;
++		asprintf(&dir, TCB_DIR "/%s", path);
++		if (!dir)
++			NOMEM;
++		if (rmdir(dir)) {
++			if (errno != ENOTEMPTY) {
++				perror("rmdir");
++				ret = 0;
++			}
++			free(dir);
++			break;
++		}
++		free(dir);
++	}
++	return ret;
++}
++
++/* tcb directory must be empty before tcb_rmdir is called */
++int tcb_rmdir(const char *name)
++{
++	int ret = 1;
++	char *path = tcb_path_existing(name);
++	char *rel = tcb_path_rel_existing(name);
++
++	if (!path || !rel || rmdir(path))
++		return 0;
++	if (!rmdir_leading(rel))
++		return 0;
++	free(path);
++	free(rel);
++	asprintf(&path, TCB_DIR "/%s", name);
++	if (!path)
++		NOMEM;
++	if (unlink(path) && errno != ENOENT)
++		ret = 0;
++	free(path);
++	return ret;
++}
++
++#define FREE_IF_USED(x) if (x) free(x)
++
++static int move_dir(const char *user_newname, uid_t user_newid)
++{
++	char *olddir = NULL, *newdir = NULL;
++	char *real_old_dir = NULL, *real_new_dir = NULL;
++	char *real_old_dir_rel = NULL, *real_new_dir_rel = NULL;
++	uid_t old_uid, the_newid;
++	struct stat oldmode;
++	int ret = 0;
++
++	asprintf(&olddir, TCB_DIR "/%s", stored_tcb_user);
++	if (!olddir)
++		goto out_free_nomem;
++	if (stat(olddir, &oldmode)) {
++		perror("stat");
++		goto out_free;
++	}
++	old_uid = oldmode.st_uid;
++	if (user_newid == -1)
++		the_newid = old_uid;
++	else
++		the_newid = user_newid;
++	if (!(real_old_dir = tcb_path_existing(stored_tcb_user)) ||
++	    !(real_new_dir = tcb_path(user_newname, the_newid))   )
++		goto out_free;
++	if (!strcmp(real_old_dir, real_new_dir)) {
++		ret = 1;
++		goto out_free;
++	}
++	if (!(real_old_dir_rel = tcb_path_rel_existing(stored_tcb_user)) ||
++	    !mkdir_leading(user_newname, the_newid)  )
++		goto out_free;
++	if (rename(real_old_dir, real_new_dir)) {
++		perror("rename");
++		goto out_free;
++	}
++	if (!rmdir_leading(real_old_dir_rel))
++		goto out_free;
++	if (unlink(olddir) && errno != ENOENT) {
++		perror("unlink");
++		goto out_free;
++	}
++	asprintf(&newdir, TCB_DIR "/%s", user_newname);
++	if (!newdir)
++		goto out_free_nomem;
++	if (!(real_new_dir_rel = tcb_path_rel(user_newname, the_newid)))
++		goto out_free;
++	if (strcmp(real_new_dir, newdir)
++	    && symlink(real_new_dir_rel, newdir)) {
++		perror("symlink");
++		goto out_free;
++	}
++	ret = 1;
++	goto out_free;
++      out_free_nomem:
++	fprintf(stderr, "Out of memory\n");
++      out_free:
++	FREE_IF_USED(olddir);
++	FREE_IF_USED(newdir);
++	FREE_IF_USED(real_old_dir);
++	FREE_IF_USED(real_new_dir);
++	FREE_IF_USED(real_old_dir_rel);
++	FREE_IF_USED(real_new_dir_rel);
++	return ret;
++}
++
++int tcb_move(const char *user_newname, uid_t user_newid)
++{
++	struct stat dirmode, filemode;
++	char *tcbdir, *shadow;
++	int ret = 0;
 +
 +	if (!getdef_bool("USE_TCB"))
 +		return 1;
-+
-+	asprintf(&dir, TCB_DIR "/%s", name);
-+	if (!dir)
++	if (!user_newname)
++		user_newname = stored_tcb_user;
++	if (!move_dir(user_newname, user_newid))
++		return 0;
++	/* Directory moved, adjust ownership */
++	if (user_newid == -1)
++		return 1;
++	asprintf(&tcbdir, TCB_DIR "/%s", user_newname);
++	asprintf(&shadow, TCB_DIR "/%s/shadow", user_newname);
++	if (!tcbdir || !shadow)
 +		NOMEM;
-+	if (lstat(dir, &st)) {
++	if (stat(tcbdir, &dirmode)) {
++		perror("stat");
++		goto out_free2;
++	}
++	if (chown(tcbdir, 0, 0)) {
++		perror("chown");
++		goto out_free2;
++	}
++	if (chmod(tcbdir, 0)) {
++		perror("chmod");
++		goto out_free2;
++	}
++	if (lstat(shadow, &filemode)) {
 +		if (errno != ENOENT) {
 +			perror("lstat");
-+			return 0;
++			goto out_free2;
 +		}
-+		if (mkdir(dir, 0700)) {
-+			perror("mkdir");
-+			return 0;
++		fprintf(stderr,
++			"Warning, user %s has no shadow file.\n",
++			user_newname);} else {
++		if (!S_ISREG(filemode.st_mode)
++		    || filemode.st_nlink != 1) {
++			fprintf(stderr,
++				"Emergency: %s'shadow is not a regular file with"
++				" st_nlink=1.\n"
++				"The account is left locked.\n",
++				user_newname); goto out_free2;
 +		}
-+	} else {
-+		if (!S_ISDIR(st.st_mode) ||
-+		    (st.st_mode & (0777 & ~0710))) {
-+			fprintf(stderr, "Wrong permissions on %s\n", dir);
-+			return 0;
-+		}
-+		if (st.st_uid && chown(dir, 0, st.st_gid)) {
++		if (chown(shadow, user_newid, filemode.st_gid)) {
 +			perror("chown");
-+			return 0;
++			goto out_free2;
++		}
++		if (chmod(shadow, filemode.st_mode & 07777)) {
++			perror("chmod");
++			goto out_free2;
 +		}
 +	}
-+	free(dir);
-+
-+	asprintf(&shadow, TCB_FMT, name);
-+	if (!shadow)
-+		NOMEM;
-+	fd = open(shadow, O_RDWR | O_CREAT | O_TRUNC, 0600);
-+	if (fd < 0) {
-+		perror("open");
-+		free(shadow);
-+		return 0;
++	if (!unlink_suffs(user_newname))
++		goto out_free2;
++	if (chown(tcbdir, user_newid, dirmode.st_gid)) {
++		perror("chown");
++		goto out_free2;
 +	}
-+	close(fd);
++	if (chmod(tcbdir, dirmode.st_mode & 07777)) {
++		perror("chmod");
++		goto out_free2;
++	}
++	ret = 1;
++      out_free2:
++	free(tcbdir);
 +	free(shadow);
-+
-+	if (!tcb_user(name))
-+		return 0;
-+
-+	return 1;
++	return ret;
 +}
 +
-+int tcb_setup_new_perms(const char *name, uid_t uid)
++int tcb_create(const char *name, uid_t uid)
 +{
 +	char *dir, *shadow;
 +	struct stat st;
 +	gid_t shadowgid, authgid;
 +	struct group *gr;
++	int fd, ret = 0;
 +
 +	if (!getdef_bool("USE_TCB"))
 +		return 1;
-+
 +	if (stat(TCB_DIR, &st)) {
 +		perror("stat");
 +		return 0;
 +	}
 +	shadowgid = st.st_gid;
-+	if (getdef_bool("TCB_AUTH_GROUP") && (gr = getgrnam("auth")))
++	if (getdef_bool("TCB_AUTH_GROUP")
++	    && (gr = getgrnam("auth")))
 +		authgid = gr->gr_gid;
 +	else
 +		authgid = shadowgid;
-+
++	asprintf(&dir, TCB_DIR "/%s", name);
 +	asprintf(&shadow, TCB_FMT, name);
-+	if (!shadow)
++	if (!dir || !shadow)
 +		NOMEM;
-+	if (chown(shadow, uid, authgid)) {
-+		perror("chown");
++	if (mkdir(dir, 0700)) {
++		fprintf(stderr, "mkdir %s: %s\n", dir, strerror(errno));
++		goto out_free3;
 +		return 0;
++	}
++	fd = open(shadow, O_RDWR | O_CREAT | O_TRUNC, 0600);
++	if (fd < 0) {
++		perror("open");
++		goto out_free3;
++	}
++	close(fd);
++	if (chown(shadow, 0, authgid)) {
++		perror("chown");
++		goto out_free3;
 +	}
 +	if (chmod(shadow, authgid == shadowgid ? 0600 : 0640)) {
 +		perror("chmod");
-+		return 0;
++		goto out_free3;
 +	}
-+	free(shadow);
-+
-+	asprintf(&dir, TCB_DIR "/%s", name);
-+	if (!dir)
-+		NOMEM;
-+	if (chown(dir, uid, authgid)) {
++	if (chown(dir, 0, authgid)) {
 +		perror("chown");
-+		return 0;
++		goto out_free3;
 +	}
 +	if (chmod(dir, authgid == shadowgid ? 02700 : 02710)) {
 +		perror("chmod");
-+		return 0;
++		goto out_free3;
 +	}
++	if (!tcb_user(name) || !tcb_move(NULL, uid))
++		goto out_free3;
++	ret = 1;
++out_free3:
 +	free(dir);
-+
-+	if (!unlink_suffs(name))
-+		return 0;
-+
-+	return 1;
++	free(shadow);
++	return ret;
 +}
 diff -urN shadow-4.0.0-owl-no-tcb/lib/tcbfuncs.h shadow-4.0.0/lib/tcbfuncs.h
---- shadow-4.0.0-owl-no-tcb/lib/tcbfuncs.h	Thu Jan  1 03:00:00 1970
-+++ shadow-4.0.0/lib/tcbfuncs.h	Sun Nov 11 09:50:29 2001
-@@ -0,0 +1,13 @@
+--- shadow-4.0.0-owl-no-tcb/lib/tcbfuncs.h	Thu Jan  1 00:00:00 1970
++++ shadow-4.0.0/lib/tcbfuncs.h	Tue Aug 20 14:19:27 2002
+@@ -0,0 +1,12 @@
 +#ifndef _TCBFUNCS_H
 +#define _TCBFUNCS_H
 +
@@ -696,14 +886,13 @@ diff -urN shadow-4.0.0-owl-no-tcb/lib/tcbfuncs.h shadow-4.0.0/lib/tcbfuncs.h
 +extern int s_drop_priv(void);
 +extern int s_gain_priv(void);
 +extern int tcb_user(const char *);
-+extern int tcb_create(const char *);
-+extern int tcb_setup_new_perms(const char *, uid_t);
++extern int tcb_create(const char *, uid_t);
 +extern int tcb_move(const char *, uid_t);
-+
++extern int tcb_rmdir(const char *);
 +#endif
 diff -urN shadow-4.0.0-owl-no-tcb/man/login.defs.5 shadow-4.0.0/man/login.defs.5
---- shadow-4.0.0-owl-no-tcb/man/login.defs.5	Sun Nov 11 09:49:24 2001
-+++ shadow-4.0.0/man/login.defs.5	Sun Nov 11 09:51:07 2001
+--- shadow-4.0.0-owl-no-tcb/man/login.defs.5	Tue Aug 20 14:18:04 2002
++++ shadow-4.0.0/man/login.defs.5	Tue Aug 20 14:44:51 2002
 @@ -30,6 +30,10 @@
  .\" 2001/11/11	Solar Designer <solar@owl.openwall.com>
  .\" Documented CRYPT_PREFIX and CRYPT_ROUNDS.
@@ -715,7 +904,7 @@ diff -urN shadow-4.0.0-owl-no-tcb/man/login.defs.5 shadow-4.0.0/man/login.defs.5
  .\" 2001/06/15	Solar Designer <solar@owl.openwall.com>
  .\" Removed the descriptions of most parameters as only a small subset is
  .\" actually used on Owl, corrected those which remain, and wrote whatever
-@@ -133,6 +137,11 @@
+@@ -133,6 +137,37 @@
  are only used at the time of account creation.  Any changes to these
  settings won't affect existing accounts.
  .\"
@@ -724,10 +913,36 @@ diff -urN shadow-4.0.0-owl-no-tcb/man/login.defs.5 shadow-4.0.0/man/login.defs.5
 +.IR yes ,
 +newly created tcb shadow files will be group-owned by "auth".
 +.\"
++.IP "TCB_SYMLINKS (boolean)"
++If
++.IR yes ,
++the location of the user tcb directory to be created will not be automaticly 
++set to
++.IR /etc/tcb/user,
++but will be computed depending on the uid of the user, according to the
++following algorithm (pseudo shell script):
++.sp
++.in 0
++.nf
++	if [ uid < 1000 ] ; then  
++		tcbdir = /etc/tcb/user
++	elif  [ uid < 1000000 ] ; then 
++		kilos = $((uid/1000))
++		tcbdir = /etc/tcb/:"$kilos"K/user
++		make symlink /etc/tcb/user -> $tcbdir
++	else
++		megas = $((uid/1000000))
++		kilos = (uid-megas*1000000)/1000
++		tcbdir = /etc/tcb/:"$megas"M/$kilos/user
++		make symlink /etc/tcb/user -> $tcbdir
++	fi
++.fi
++.in
++.sp
  .IP "UID_MAX (number)"
  .IP "UID_MIN (number)"
  Range of user IDs to choose from for the
-@@ -143,6 +152,13 @@
+@@ -143,6 +178,13 @@
  The permission mask is initialized to this value.  If not specified,
  the permission mask will be initialized to 077.
  .\"
@@ -741,7 +956,7 @@ diff -urN shadow-4.0.0-owl-no-tcb/man/login.defs.5 shadow-4.0.0/man/login.defs.5
  .IP "USERDEL_CMD (string)"
  If defined, this command is run when removing a user.
  It should remove any at/cron/print jobs etc. owned by
-@@ -152,8 +168,12 @@
+@@ -152,8 +194,12 @@
  The following cross reference shows which programs in the shadow password
  suite use which parameters.
  .na
@@ -754,7 +969,7 @@ diff -urN shadow-4.0.0-owl-no-tcb/man/login.defs.5 shadow-4.0.0/man/login.defs.5
  .IP chsh 12
  CHFN_AUTH
  .IP gpasswd 12
-@@ -162,20 +182,33 @@
+@@ -162,20 +208,33 @@
  GID_MAX GID_MIN
  .IP newusers 12
  PASS_MAX_DAYS PASS_MIN_DAYS PASS_WARN_AGE
@@ -789,8 +1004,8 @@ diff -urN shadow-4.0.0-owl-no-tcb/man/login.defs.5 shadow-4.0.0/man/login.defs.5
  .SH BUGS
  Much of the functionality that used to be provided by the shadow password
 diff -urN shadow-4.0.0-owl-no-tcb/src/Makefile.am shadow-4.0.0/src/Makefile.am
---- shadow-4.0.0-owl-no-tcb/src/Makefile.am	Sat Oct  6 23:46:49 2001
-+++ shadow-4.0.0/src/Makefile.am	Sun Nov 11 09:50:29 2001
+--- shadow-4.0.0-owl-no-tcb/src/Makefile.am	Sat Oct  6 19:46:49 2001
++++ shadow-4.0.0/src/Makefile.am	Tue Aug 20 14:19:27 2002
 @@ -36,7 +36,8 @@
  suidubins = chage chfn chsh expiry gpasswd newgrp passwd
  
@@ -802,8 +1017,8 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/Makefile.am shadow-4.0.0/src/Makefile.am
  chpasswd_LDADD = $(LDADD) $(LIBPAM)
  chage_LDADD    = $(LDADD) $(LIBPAM)
 diff -urN shadow-4.0.0-owl-no-tcb/src/chage.c shadow-4.0.0/src/chage.c
---- shadow-4.0.0-owl-no-tcb/src/chage.c	Sun Nov 11 09:49:15 2001
-+++ shadow-4.0.0/src/chage.c	Sun Nov 11 09:50:29 2001
+--- shadow-4.0.0-owl-no-tcb/src/chage.c	Tue Aug 20 14:17:54 2002
++++ shadow-4.0.0/src/chage.c	Tue Aug 20 14:19:27 2002
 @@ -94,6 +94,7 @@
  
  #ifdef	SHADOWPWD
@@ -812,7 +1027,7 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/chage.c shadow-4.0.0/src/chage.c
  #endif
  
  extern	int	optind;
-@@ -597,6 +598,11 @@
+@@ -599,6 +600,11 @@
  	STRFCPY(name, pwent.pw_name);
  
  #ifdef	SHADOWPWD
@@ -825,8 +1040,8 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/chage.c shadow-4.0.0/src/chage.c
  	 * For shadow password files we have to lock the file and
  	 * read in the entries as was done for the password file.
 diff -urN shadow-4.0.0-owl-no-tcb/src/chpasswd.c shadow-4.0.0/src/chpasswd.c
---- shadow-4.0.0-owl-no-tcb/src/chpasswd.c	Sun Nov 11 09:48:26 2001
-+++ shadow-4.0.0/src/chpasswd.c	Sun Nov 11 09:50:29 2001
+--- shadow-4.0.0-owl-no-tcb/src/chpasswd.c	Tue Aug 20 14:16:28 2002
++++ shadow-4.0.0/src/chpasswd.c	Tue Aug 20 14:19:27 2002
 @@ -25,12 +25,25 @@
   * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
   * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
@@ -1318,8 +1533,8 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/chpasswd.c shadow-4.0.0/src/chpasswd.c
 +    return 0;
  }
 diff -urN shadow-4.0.0-owl-no-tcb/src/newusers.c shadow-4.0.0/src/newusers.c
---- shadow-4.0.0-owl-no-tcb/src/newusers.c	Sun Nov 11 09:48:26 2001
-+++ shadow-4.0.0/src/newusers.c	Sun Nov 11 09:50:29 2001
+--- shadow-4.0.0-owl-no-tcb/src/newusers.c	Tue Aug 20 14:16:28 2002
++++ shadow-4.0.0/src/newusers.c	Tue Aug 20 14:19:27 2002
 @@ -62,8 +62,9 @@
  #ifdef	SHADOWPWD
  #include "shadowio.h"
@@ -1524,7 +1739,7 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/newusers.c shadow-4.0.0/src/newusers.c
  		}
  
  		/*
-@@ -484,7 +469,36 @@
+@@ -484,7 +469,28 @@
  		if (nfields != 6) {
  			fprintf (stderr, _("%s: line %d: invalid line\n"),
  				Prog, line);
@@ -1551,18 +1766,10 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/newusers.c shadow-4.0.0/src/newusers.c
 +			(void) gr_unlock ();
 +			(void) pw_unlock ();
 +			exit (1);
-+		}
-+		if (!tcb_create(fields[0])) {
-+			fprintf(stderr, "Problems creating /etc/tcb/%s; "
-+			    "there may be a stale entry left.\n", fields[0]);
-+			fprintf (stderr, "line %d user %s\n", line, fields[0]);
-+			(void) gr_unlock ();
-+			(void) pw_unlock ();
-+			exit (1);
  		}
  
  		/*
-@@ -502,8 +516,9 @@
+@@ -502,8 +508,9 @@
  			add_group (fields[0], fields[3], &gid)) {
  			fprintf (stderr, _("%s: line %d: can't create GID\n"),
  				Prog, line);
@@ -1574,7 +1781,7 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/newusers.c shadow-4.0.0/src/newusers.c
  		}
  
  		/*
-@@ -518,8 +533,9 @@
+@@ -518,8 +525,18 @@
  		if (! pw && add_user (fields[0], fields[2], &uid, gid)) {
  			fprintf (stderr, _("%s: line %d: can't create UID\n"),
  				Prog, line);
@@ -1583,10 +1790,19 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/newusers.c shadow-4.0.0/src/newusers.c
 +			(void) gr_unlock ();
 +			(void) pw_unlock ();
 +			exit(1);
++		}
++
++		if (!tcb_create(fields[0], uid)) {
++			fprintf(stderr, "Problems creating /etc/tcb/%s; "
++			    "there may be a stale entry left.\n", fields[0]);
++			fprintf (stderr, "line %d user %s\n", line, fields[0]);
++			(void) gr_unlock ();
++			(void) pw_unlock ();
++			exit (1);
  		}
  
  		/*
-@@ -530,16 +546,18 @@
+@@ -530,16 +547,18 @@
  		if (! (pw = pw_locate (fields[0]))) {
  			fprintf (stderr, _("%s: line %d: cannot find user %s\n"),
  				Prog, line, fields[0]);
@@ -1609,7 +1825,7 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/newusers.c shadow-4.0.0/src/newusers.c
  		}
  		if (fields[4][0])
  			newpw.pw_gecos = fields[4];
-@@ -552,68 +570,56 @@
+@@ -552,68 +571,51 @@
  
  		if (newpw.pw_dir[0] && access(newpw.pw_dir, F_OK)) {
  			if (mkdir (newpw.pw_dir,
@@ -1691,11 +1907,6 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/newusers.c shadow-4.0.0/src/newusers.c
 -#endif
  		(void) pw_unlock ();
 -		exit (1);
-+		if (!tcb_setup_new_perms(fields[0], uid)) {
-+			perror("tcb_setup_new_perms");
-+			fprintf (stderr, "line %d user %s\n", line, fields[0]);
-+			exit(1);
-+		}
 +		if (!do_pam_chpass("newusers", fields[0], fields[1])) {
 +			fprintf (stderr, "line %d user %s\n", line, fields[0]);
 +			exit(1);
@@ -1713,7 +1924,7 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/newusers.c shadow-4.0.0/src/newusers.c
  	if (retval == PAM_SUCCESS) {
  		retval = pam_chauthtok(pamh, 0);
  		if (retval != PAM_SUCCESS) {
-@@ -628,7 +634,7 @@
+@@ -628,7 +630,7 @@
  
  	if (retval == PAM_SUCCESS)
  		pam_end(pamh, PAM_SUCCESS);
@@ -1723,8 +1934,8 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/newusers.c shadow-4.0.0/src/newusers.c
  	exit (0);
  	/*NOTREACHED*/
 diff -urN shadow-4.0.0-owl-no-tcb/src/pwck.c shadow-4.0.0/src/pwck.c
---- shadow-4.0.0-owl-no-tcb/src/pwck.c	Sun Nov 11 09:48:26 2001
-+++ shadow-4.0.0/src/pwck.c	Sun Nov 11 09:50:29 2001
+--- shadow-4.0.0-owl-no-tcb/src/pwck.c	Tue Aug 20 14:16:28 2002
++++ shadow-4.0.0/src/pwck.c	Tue Aug 20 14:19:27 2002
 @@ -34,12 +34,13 @@
  
  #include <stdio.h>
@@ -1753,8 +1964,8 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/pwck.c shadow-4.0.0/src/pwck.c
  
  	/*
 diff -urN shadow-4.0.0-owl-no-tcb/src/pwconv.c shadow-4.0.0/src/pwconv.c
---- shadow-4.0.0-owl-no-tcb/src/pwconv.c	Sat Aug 26 22:27:18 2000
-+++ shadow-4.0.0/src/pwconv.c	Sun Nov 11 09:50:29 2001
+--- shadow-4.0.0-owl-no-tcb/src/pwconv.c	Sat Aug 26 18:27:18 2000
++++ shadow-4.0.0/src/pwconv.c	Tue Aug 20 14:19:27 2002
 @@ -90,6 +90,11 @@
  	bindtextdomain(PACKAGE, LOCALEDIR);
  	textdomain(PACKAGE);
@@ -1768,8 +1979,8 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/pwconv.c shadow-4.0.0/src/pwconv.c
  		fprintf(stderr, _("%s: can't lock passwd file\n"), Prog);
  		fail_exit(E_PWDBUSY);
 diff -urN shadow-4.0.0-owl-no-tcb/src/pwunconv.c shadow-4.0.0/src/pwunconv.c
---- shadow-4.0.0-owl-no-tcb/src/pwunconv.c	Thu Jan 25 13:36:07 2001
-+++ shadow-4.0.0/src/pwunconv.c	Sun Nov 11 09:50:29 2001
+--- shadow-4.0.0-owl-no-tcb/src/pwunconv.c	Thu Jan 25 10:36:07 2001
++++ shadow-4.0.0/src/pwunconv.c	Tue Aug 20 14:19:27 2002
 @@ -41,6 +41,7 @@
  #include "prototypes.h"
  #include "pwio.h"
@@ -1791,8 +2002,8 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/pwunconv.c shadow-4.0.0/src/pwunconv.c
  	if (!spw_file_present())
  		/* shadow not installed, do nothing */
 diff -urN shadow-4.0.0-owl-no-tcb/src/useradd.c shadow-4.0.0/src/useradd.c
---- shadow-4.0.0-owl-no-tcb/src/useradd.c	Sun Nov 11 09:49:06 2001
-+++ shadow-4.0.0/src/useradd.c	Sun Nov 11 09:50:29 2001
+--- shadow-4.0.0-owl-no-tcb/src/useradd.c	Tue Aug 20 14:17:43 2002
++++ shadow-4.0.0/src/useradd.c	Tue Aug 20 14:19:27 2002
 @@ -59,6 +59,8 @@
  #endif
  #include "faillog.h"
@@ -1802,32 +2013,76 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/useradd.c shadow-4.0.0/src/useradd.c
  #ifndef SKEL_DIR
  #define SKEL_DIR "/etc/skel"
  #endif
-@@ -2037,6 +2039,10 @@
- 	 * create the home directory, then close and update the files.
- 	 */
+@@ -229,6 +231,7 @@
+ static void process_flags(int argc, char **argv);
+ static void close_files(void);
+ static void open_files(void);
++static void open_shadow(void);
+ static void faillog_reset(uid_t);
+ static void lastlog_reset(uid_t);
+ static void usr_update(void);
+@@ -1505,21 +1508,6 @@
+ 		pw_unlock();
+ 		exit(E_PW_UPDATE);
+ 	}
+-#ifdef	SHADOWPWD
+-	if (is_shadow_pwd && !spw_lock()) {
+-		fprintf(stderr, _("%s: cannot lock shadow password file\n"),
+-			Prog);
+-		pw_unlock();
+-		exit(E_PW_UPDATE);
+-	}
+-	if (is_shadow_pwd && !spw_open(O_RDWR)) {
+-		fprintf(stderr, _("%s: cannot open shadow password file\n"),
+-			Prog);
+-		spw_unlock();
+-		pw_unlock();
+-		exit(E_PW_UPDATE);
+-	}
+-#endif
+ 	/*
+ 	 * Lock and open the group file.  This will load all of the group
+ 	 * entries.
+@@ -1547,6 +1535,24 @@
+ #endif        /* SHADOWGRP*/
+ }
  
-+	if (getdef_bool("USE_TCB") && !tcb_create(user_name)) {
++static void open_shadow()
++{
++#ifdef	SHADOWPWD
++	if (is_shadow_pwd && !spw_lock()) {
++		fprintf(stderr, _("%s: cannot lock shadow password file\n"),
++			Prog);
++		pw_unlock();
++		exit(E_PW_UPDATE);
++	}
++	if (is_shadow_pwd && !spw_open(O_RDWR)) {
++		fprintf(stderr, _("%s: cannot open shadow password file\n"),
++			Prog);
++		spw_unlock();
++		pw_unlock();
++		exit(E_PW_UPDATE);
++	}
++#endif
++}
+ 
+ static void
+ faillog_reset(uid_t uid)
+@@ -2044,6 +2050,11 @@
+ 	 * gid too ... --gafton */
+ 	if (! uflg)
+ 	    find_new_uid ();
++	if (getdef_bool("USE_TCB") && !tcb_create(user_name, user_id)) {
 +		fprintf(stderr, "Problems creating /etc/tcb/%s\n", user_name);
 +		exit(E_UID_IN_USE);
 +	}
- 	open_files ();
- 
- 	/* first, seek for a valid uid to use for this user.
-@@ -2060,6 +2066,11 @@
- 	}
- 
- 	close_files ();
-+	if (!tcb_setup_new_perms(user_name, user_id)) {
-+		fprintf(stderr, "Can't set permissions on /etc/tcb/%s/*\n",
-+			user_name);
-+		exit(E_PW_UPDATE);
-+	}
- 
- #ifdef USE_PAM
- 	if (retval == PAM_SUCCESS) {
++	open_shadow();
+ 	/* do we have to add a group for that user? This is why we need to
+ 	 * open the group files in the open_files() function  --gafton */
+ 	if (! (nflg || gflg)) {
 diff -urN shadow-4.0.0-owl-no-tcb/src/userdel.c shadow-4.0.0/src/userdel.c
---- shadow-4.0.0-owl-no-tcb/src/userdel.c	Sun Nov 11 09:48:43 2001
-+++ shadow-4.0.0/src/userdel.c	Sun Nov 11 09:50:29 2001
+--- shadow-4.0.0-owl-no-tcb/src/userdel.c	Tue Aug 20 14:17:14 2002
++++ shadow-4.0.0/src/userdel.c	Tue Aug 20 14:19:27 2002
 @@ -27,6 +27,8 @@
   * SUCH DAMAGE.
   */
@@ -1854,15 +2109,50 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/userdel.c shadow-4.0.0/src/userdel.c
  /*
   * exit status values
   */
-@@ -783,6 +788,7 @@
- 	struct	group	*gr;
- 	int	arg;
- 	int	errors = 0;
-+	char	*buf;
- #ifdef USE_PAM
- 	pam_handle_t *pamh = NULL;
- 	struct passwd *pampw;
-@@ -884,6 +890,8 @@
+@@ -772,6 +777,42 @@
+ };
+ #endif /* USE_PAM */
+ 
++static int userdel_rm_tcbdir(const char *user_name, uid_t user_id)
++{
++	char *buf;
++	int ret = 0;
++	
++	if (!getdef_bool("USE_TCB"))
++		return 0;
++
++	asprintf(&buf, TCB_DIR "/%s", user_name);
++	if (!buf) {
++		fprintf(stderr, "Can't allocate memory, "
++			"tcb entry for %s not removed.\n",
++			user_name);
++		return 1;
++	}
++	if (!s_drop_priv()) {
++		perror("tcb_drop_privs");
++		free(buf);
++		return 1;
++	}		
++	if (remove_tree (buf)) {
++		perror("remove_tree");
++		s_gain_priv();
++		free(buf);
++		return 1;
++	}
++	s_gain_priv();
++	free(buf);
++	if (!tcb_rmdir(user_name)) {
++		fprintf(stderr,"Cannot remove tcb files for %s: %s\n", 
++			user_name, strerror(errno));
++		ret = 1;
++	} 
++	free(buf);
++	return ret;
++}
+ /*
+  * main - userdel command
+  */
+@@ -884,6 +925,8 @@
  			Prog, user_name);
  		exit(E_NOTFOUND);
  	}
@@ -1871,32 +2161,17 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/userdel.c shadow-4.0.0/src/userdel.c
  #ifdef	USE_NIS
  
  	/*
-@@ -989,6 +997,22 @@
+@@ -989,6 +1032,7 @@
  
  	close_files ();
  
-+	if (getdef_bool("USE_TCB")) {
-+		asprintf(&buf, TCB_DIR "/%s", user_name);
-+		if (buf) {
-+			if (remove_tree (buf) || rmdir (buf)) {
-+				fprintf(stderr, "Can't remove /etc/tcb/%s\n",
-+					user_name);
-+				errors++;
-+			}
-+			free(buf);
-+		} else {
-+			fprintf(stderr, "Can't allocate memory, "
-+				"tcb entry for %s not removed.\n",
-+				user_name);
-+			errors++;
-+		}
-+	}
++	errors += userdel_rm_tcbdir(user_name, user_id);
  #ifdef USE_PAM
  	if (retval == PAM_SUCCESS) {
  		retval = pam_chauthtok(pamh, 0);
 diff -urN shadow-4.0.0-owl-no-tcb/src/usermod.c shadow-4.0.0/src/usermod.c
---- shadow-4.0.0-owl-no-tcb/src/usermod.c	Sun Nov 11 09:48:43 2001
-+++ shadow-4.0.0/src/usermod.c	Sun Nov 11 09:50:29 2001
+--- shadow-4.0.0-owl-no-tcb/src/usermod.c	Tue Aug 20 14:17:14 2002
++++ shadow-4.0.0/src/usermod.c	Tue Aug 20 14:19:27 2002
 @@ -59,6 +59,7 @@
  #endif
  #include "pwauth.h"
@@ -1940,8 +2215,8 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/usermod.c shadow-4.0.0/src/usermod.c
  	if (grp_err)
  		exit(E_GRP_UPDATE);
 diff -urN shadow-4.0.0-owl-no-tcb/src/vipw.c shadow-4.0.0/src/vipw.c
---- shadow-4.0.0-owl-no-tcb/src/vipw.c	Sun Nov 11 09:48:15 2001
-+++ shadow-4.0.0/src/vipw.c	Sun Nov 11 09:50:29 2001
+--- shadow-4.0.0-owl-no-tcb/src/vipw.c	Tue Aug 20 14:15:54 2002
++++ shadow-4.0.0/src/vipw.c	Tue Aug 20 14:20:50 2002
 @@ -20,6 +20,7 @@
  
    */
@@ -1950,7 +2225,13 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/vipw.c shadow-4.0.0/src/vipw.c
  #include <config.h>
  
  #include "rcsid.h"
-@@ -40,10 +41,14 @@
+@@ -35,15 +36,20 @@
+ #include <sys/types.h>
+ #include <signal.h>
+ #include <utime.h>
++#include <tcb.h>
+ #include "prototypes.h"
+ #include "pwio.h"
  #include "shadowio.h"
  #include "groupio.h"
  #include "sgroupio.h"
@@ -1966,7 +2247,7 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/vipw.c shadow-4.0.0/src/vipw.c
  static int (*unlock)(void);
  
  /* local function prototypes */
-@@ -91,6 +96,24 @@
+@@ -91,6 +97,24 @@
    return 0;
  }
  
@@ -1991,7 +2272,16 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/vipw.c shadow-4.0.0/src/vipw.c
  
  static void
  vipwexit(const char *msg, int syserr, int ret)
-@@ -117,22 +140,45 @@
+@@ -108,6 +132,8 @@
+ #define DEFAULT_EDITOR "vi"
+ #endif
+ 
++#define SCRATCHDIR ":tmp"
++
+ static void
+ vipwedit(const char *file, int (*file_lock)(void), int (*file_unlock)(void))
+ {
+@@ -117,22 +143,51 @@
    int status;
    FILE *f;
    char filebackup[1024], fileedit[1024];
@@ -1999,8 +2289,14 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/vipw.c shadow-4.0.0/src/vipw.c
  
    snprintf(filebackup, sizeof filebackup, "%s-", file);
 -  snprintf(fileedit, sizeof fileedit, "%s.edit", file);
-+  if (securemode)
-+    snprintf(fileedit, sizeof fileedit, "/etc/tcb/root/.vipw.shadow.%s", user);
++  if (securemode) {
++    if (mkdir(TCB_DIR "/" SCRATCHDIR, 0700) && errno != EEXIST) {
++       fprintf(stderr, "%s when trying to mkdir " TCB_DIR "/" SCRATCHDIR
++         "\nare you sure you're the admin here :) ?\n", strerror(errno));
++       exit(1);
++    }  
++    snprintf(fileedit, sizeof fileedit, TCB_DIR "/" SCRATCHDIR "/.vipw.shadow.%s", user);
++  }
 +  else
 +    snprintf(fileedit, sizeof fileedit, "%s.edit", file);
    unlock = file_unlock;
@@ -2038,7 +2334,7 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/vipw.c shadow-4.0.0/src/vipw.c
    createedit = 1;
    
    editor = getenv("VISUAL");
-@@ -182,17 +228,46 @@
+@@ -182,17 +237,46 @@
       without saving).  Use pwck or grpck to do the check.  --marekm */
  
    createedit = 0;
@@ -2086,7 +2382,7 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/vipw.c shadow-4.0.0/src/vipw.c
  
  int
  main(int argc, char **argv)
-@@ -224,18 +299,25 @@
+@@ -224,18 +308,25 @@
      case 'h':
        e = 0;
      default:

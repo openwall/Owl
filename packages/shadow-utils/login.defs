@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/login.defs,v 1.6 2001/11/25 18:59:19 solar Exp $
+# $Id: Owl/packages/shadow-utils/login.defs,v 1.7 2002/10/21 15:23:29 nergal Exp $
 #
 # Please refer to login.defs(5) for more information on this file, the
 # parameters which may be defined here and the corresponding programs.
@@ -87,3 +87,9 @@ USE_TCB			no
 # group "auth".
 #
 TCB_AUTH_GROUP		yes
+
+#
+# Whether useradd should create in /etc/tcb symlinks to tcb directories of
+# newly created users with uid > 1000
+# 
+TCB_SYMLINKS		no
