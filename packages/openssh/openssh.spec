@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.10 2000/12/20 00:02:04 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.11 2000/12/23 08:27:12 solar Exp $
 
 # Version of OpenSSH
 %define oversion 2.3.0p1
@@ -21,6 +21,7 @@ Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Obsoletes: ssh
 PreReq: openssl >= 0.9.5a-1owl
 Requires: openssl >= 0.9.5a-1owl
+Requires: pam_mktemp
 BuildPreReq: perl
 BuildPreReq: openssl-devel
 BuildPreReq: zlib-devel
