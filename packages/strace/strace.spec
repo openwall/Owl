@@ -1,4 +1,4 @@
-# $Id: Owl/packages/strace/strace.spec,v 1.3 2001/08/21 16:18:20 mci Exp $
+# $Id: Owl/packages/strace/strace.spec,v 1.4 2001/08/23 06:03:33 mci Exp $
 
 Summary: Tracks and displays system calls associated with a running process.
 Name: strace
@@ -65,7 +65,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/strace.1*
 
 %changelog
-* Tue Aug 26 2001 Michail Litvak <mci@owl.openwall.com>
+* Tue Aug 21 2001 Michail Litvak <mci@owl.openwall.com>
 - man page fix
 
 * Thu Jan 25 2001 Michail Litvak <mci@owl.openwall.com>
