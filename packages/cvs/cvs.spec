@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cvs/cvs.spec,v 1.6 2003/04/30 23:57:51 solar Exp $
+# $Id: Owl/packages/cvs/cvs.spec,v 1.7 2003/05/01 00:02:11 solar Exp $
 
 Summary: A version control system.
 Name: cvs
@@ -95,11 +95,11 @@ and not pick and store $TMPDIR that was set at build time.
 - Use vitmp with cvsbug, rcs-to-cvs, and cvs itself.
 - Enable mkstemp explicitly, not rely on configure.
 - Patched 47 gcc -Wall warnings (all of them), including some real bugs.
-- chmod -x most scripts in contrib/ to prevent bogus dependencies on perl
-and csh.
 - Patched cvs to not create world-writable files (val-tags, dbm).
 - Canonicalize paths to avoid a failed assertion on "cvs rdiff" and maybe
 other commands if $CVSROOT contains symlinks.
+- chmod -x most scripts in contrib/ to prevent bogus dependencies on perl
+and csh.
 
 * Mon Mar 24 2003 Simon B <simonb@owl.openwall.com> 1.11.5-owl0.1
 - Pulled in mktemp fixes from ALT Linux
