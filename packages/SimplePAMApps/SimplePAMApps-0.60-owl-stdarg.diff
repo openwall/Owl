@@ -1,0 +1,11 @@
+diff -ur SimplePAMApps-0.60.orig/pamapps/su/su.c SimplePAMApps-0.60/pamapps/su/su.c
+--- SimplePAMApps-0.60.orig/pamapps/su/su.c	Thu Feb 18 15:29:50 1999
++++ SimplePAMApps-0.60/pamapps/su/su.c	Mon Oct 30 01:30:02 2000
+@@ -21,6 +21,7 @@
+ #define SU_FAIL_DELAY     2000000    /* usec on authentication failure */
+ 
+ #include <stdlib.h>
++#include <stdarg.h>
+ #include <signal.h>
+ #include <stdio.h>
+ #include <sys/stat.h>
