@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ldconfig/Attic/ldconfig.spec,v 1.5 2002/02/04 13:48:13 mci Exp $
+# $Id: Owl/packages/ldconfig/Attic/ldconfig.spec,v 1.6 2002/02/04 16:59:26 solar Exp $
 
 %define reldate 1999-07-31
 
@@ -32,14 +32,13 @@ gcc -s -o ldconfig $RPM_OPT_FLAGS -static ldconfig.c
 
 %install
 mkdir -p $RPM_BUILD_ROOT/{sbin,etc}
-install -s -m 755 ldconfig $RPM_BUILD_ROOT/sbin/ldconfig
+install -m 755 ldconfig $RPM_BUILD_ROOT/sbin/
 touch $RPM_BUILD_ROOT/etc/ld.so.conf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %post -p /sbin/ldconfig
-
 %postun -p /sbin/ldconfig
 
 %files

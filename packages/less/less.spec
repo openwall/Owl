@@ -1,4 +1,4 @@
-# $Id: Owl/packages/less/less.spec,v 1.7 2002/02/04 14:21:57 mci Exp $
+# $Id: Owl/packages/less/less.spec,v 1.8 2002/02/04 17:02:35 solar Exp $
 
 Summary: A text file browser similar to more, but better.
 Name: less
@@ -7,7 +7,7 @@ Release: owl6
 License: GPL
 Group: Applications/Text
 URL: http://www.flash.net/~marknu/less/
-Source0: ftp://ftp.gnu.org/pub/gnu/less/%{name}-%{version}.tar.gz
+Source0: ftp://ftp.gnu.org/gnu/less/%{name}-%{version}.tar.gz
 Source1: lesspipe.sh
 Source2: less.sh
 Source3: less.csh
@@ -35,9 +35,8 @@ make datadir=/usr/doc
 rm -rf $RPM_BUILD_ROOT
 %makeinstall
 mkdir -p $RPM_BUILD_ROOT/etc/profile.d
-install -c -m 755 $RPM_SOURCE_DIR/lesspipe.sh $RPM_BUILD_ROOT/usr/bin/
-install -c -m 755 $RPM_SOURCE_DIR/less.sh $RPM_BUILD_ROOT/etc/profile.d
-install -c -m 755 $RPM_SOURCE_DIR/less.csh $RPM_BUILD_ROOT/etc/profile.d
+install -m 755 $RPM_SOURCE_DIR/lesspipe.sh $RPM_BUILD_ROOT/usr/bin/
+install -m 755 $RPM_SOURCE_DIR/less.{sh,csh} $RPM_BUILD_ROOT/etc/profile.d/
 
 %files
 %defattr(-,root,root)

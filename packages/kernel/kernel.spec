@@ -1,6 +1,6 @@
-# $Id: Owl/packages/kernel/kernel.spec,v 1.8 2002/02/04 13:45:28 mci Exp $
+# $Id: Owl/packages/kernel/kernel.spec,v 1.9 2002/02/04 16:56:14 solar Exp $
 
-Summary: Fake Linux kernel package for RH compatibility
+Summary: Fake Linux kernel package for Red Hat Linux compatibility.
 Name: kernel
 Version: 2.2.999fake
 Release: owl2
@@ -13,21 +13,21 @@ BuildArchitectures: %{_arch}
 %else
 BuildArchitectures: noarch
 %endif
-ExclusiveOS: Linux
 BuildRoot: /override/%{name}-%{version}
 
 %package headers
-Summary: Symlinks for the Linux kernel header files
+Summary: Symlinks for the Linux kernel header files.
 Group: Development/System
 PreReq: basesystem
 
 %description
-This package exists for RH compatibility only.  It doesn't provide an
-actual Linux kernel, but satisfies package dependencies.
+This package exists for Red Hat Linux compatibility only.  It doesn't
+provide an actual Linux kernel, but satisfies package dependencies.
 
 %description headers
-This package exists primarily for RH compatibility.  It provides only
-the symlinks to Linux kernel header files, not the actual files.
+This package exists primarily for Red Hat Linux compatibility.  It
+provides only the symlinks to Linux kernel header files, not the actual
+files.
 
 %install
 rm -rf $RPM_BUILD_ROOT

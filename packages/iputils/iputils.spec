@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iputils/iputils.spec,v 1.2 2002/02/04 13:43:31 mci Exp $
+# $Id: Owl/packages/iputils/iputils.spec,v 1.3 2002/02/04 16:49:08 solar Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
@@ -42,21 +42,21 @@ rm -rf $RPM_BUILD_ROOT
 
 mkdir -p ${RPM_BUILD_ROOT}%{_sbindir}
 mkdir -p $RPM_BUILD_ROOT/{bin,sbin}
-install -c arping clockdiff ping6 tracepath tracepath6 traceroute6 \
+install -m 755 arping clockdiff ping6 tracepath tracepath6 traceroute6 \
 	${RPM_BUILD_ROOT}%{_sbindir}/
-install -c rdisc ${RPM_BUILD_ROOT}%{_sbindir}/rdiscd
-install -c ping	$RPM_BUILD_ROOT/bin/
-install -c bonding-0.2/ifenslave $RPM_BUILD_ROOT/sbin/
-strip ${RPM_BUILD_ROOT}%{_sbindir} $RPM_BUILD_ROOT/{bin,sbin}/* || :
+install -m 755 rdisc ${RPM_BUILD_ROOT}%{_sbindir}/rdiscd
+install -m 700 ping $RPM_BUILD_ROOT/bin/
+install -m 755 bonding-0.2/ifenslave $RPM_BUILD_ROOT/sbin/
 
 mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man8
-install -c {arping,clockdiff,ping,tracepath}.8 \
+install -m 644 {arping,clockdiff,ping,tracepath}.8 \
 	${RPM_BUILD_ROOT}%{_mandir}/man8/
 sed 's/in\.rdisc/rdiscd/' \
 	< in.rdisc.8c > ${RPM_BUILD_ROOT}%{_mandir}/man8/rdiscd.8
 
 mkdir -p $RPM_BUILD_ROOT/etc/control.d/facilities
-install -m 700 $RPM_SOURCE_DIR/ping.control $RPM_BUILD_ROOT/etc/control.d/facilities/ping
+install -m 700 $RPM_SOURCE_DIR/ping.control \
+	$RPM_BUILD_ROOT/etc/control.d/facilities/ping
 
 %clean
 rm -rf $RPM_BUILD_ROOT

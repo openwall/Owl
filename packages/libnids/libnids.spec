@@ -1,16 +1,16 @@
-# $Id: Owl/packages/libnids/libnids.spec,v 1.2 2002/02/04 15:39:12 mci Exp $
+# $Id: Owl/packages/libnids/libnids.spec,v 1.3 2002/02/04 17:28:27 solar Exp $
 
-Summary: NIDS E-component
+Summary: NIDS E-component.
 Name: libnids
 Version: 1.16
 Release: owl1
 Epoch: 1
 License: GPL
-Group: Libraries
-Source: http://www.packetfactory.net/Projects/Libnids/dist/%{name}-%{version}.tar.gz
+Group: System Environment/Libraries
 URL: http://www.packetfactory.net/Projects/Libnids/
-Patch0: %{name}-%{version}-pld-conf.diff
-Patch1: %{name}-%{version}-owl-pcap062.diff
+Source: http://www.packetfactory.net/Projects/Libnids/dist/%{name}-%{version}.tar.gz
+Patch0: libnids-1.16-pld-conf.diff
+Patch1: libnids-1.16-owl-pcap062.diff
 BuildRequires: autoconf, libpcap-devel, libnet-devel
 BuildRoot: /override/%{name}-%{version}
 
@@ -21,9 +21,9 @@ offers IP defragmentation, TCP stream assembly and TCP port scan
 detection.
 
 %package devel
-Summary: Header files and development documentation for libnids
+Summary: Header files and development documentation for libnids.
 Group: Development/Libraries
-Requires: %{name} = %{version}
+Requires: %{name} = %{version}-%{release}
 
 %description devel
 Header files and development documentation for libnids.
@@ -42,10 +42,9 @@ autoconf
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%{__make} install \
-	install_prefix=$RPM_BUILD_ROOT
+%{__make} install install_prefix=$RPM_BUILD_ROOT
 
-%post   -p /sbin/ldconfig
+%post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
 %clean

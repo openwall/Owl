@@ -1,14 +1,14 @@
-# $Id: Owl/packages/libpcap/libpcap.spec,v 1.2 2002/02/04 15:45:06 mci Exp $
+# $Id: Owl/packages/libpcap/libpcap.spec,v 1.3 2002/02/04 17:33:52 solar Exp $
 
-Summary: libpcap provides promiscuous mode access to network interfaces
+Summary: Network packet capture library.
 Name: libpcap
 Version: 0.6.2
 Release: owl1
 Epoch: 2
 License: GPL
-Group: Libraries
+Group: System Environment/Libraries
 Source: http://www.tcpdump.org/release/%{name}-%{version}.tar.gz
-Patch0: %{name}-%{version}-pld-shared.diff
+Patch0: libpcap-0.6.2-pld-shared.diff
 BuildRequires: flex, bison
 BuildRoot: /override/%{name}-%{version}
 
@@ -21,9 +21,9 @@ system-independent API that is used by several applications, including
 tcpdump and arpwatch.
 
 %package devel
-Summary: Header files and development documentation for libpcap
+Summary: Header files and development documentation for libpcap.
 Group: Development/Libraries
-Requires: %{name} = %{version}
+Requires: %{name} = %{version}-%{release}
 
 %description devel
 Header files and development documentation for libpcap.
@@ -40,13 +40,13 @@ Header files and development documentation for libpcap.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{_includedir}/net \
-	$RPM_BUILD_ROOT{%{_libdir},%{_mandir}/man3}
+mkdir -p $RPM_BUILD_ROOT%{_includedir}/net
+mkdir -p ${RPM_BUILD_ROOT}{%{_libdir},%{_mandir}/man3}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-%post   -p /sbin/ldconfig
+%post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
 %clean
