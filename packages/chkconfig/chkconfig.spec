@@ -1,21 +1,22 @@
-# $Id: Owl/packages/chkconfig/chkconfig.spec,v 1.4 2003/10/29 18:40:33 solar Exp $
+# $Id: Owl/packages/chkconfig/chkconfig.spec,v 1.5 2004/02/08 19:54:17 solar Exp $
 
 %define BUILD_NTSYSV 0
+%define INSTALL_ALTERNATIVES 0
 
 Summary: A system tool for maintaining the /etc/rc.d/rc*.d hierarchy.
 Name: chkconfig
-Version: 1.2.16
+Version: 1.3.9
 Release: owl1
 License: GPL
 Group: System Environment/Base
 Source: ftp://ftp.redhat.com/pub/redhat/code/chkconfig/%name-%version.tar.gz
-Patch0: chkconfig-1.2.16-owl-xinetd.d-check.diff
-Patch1: chkconfig-1.2.16-owl-no-ntsysv.diff
+Patch0: chkconfig-1.3.9-owl-xinetd.d-check.diff
+Patch1: chkconfig-1.3.9-owl-no-ntsysv.diff
 BuildRoot: /override/%name-%version
 
 %description
-Chkconfig is a basic system utility.  It updates and queries runlevel
-information for system services.  Chkconfig manipulates the numerous
+chkconfig is a basic system utility.  It updates and queries runlevel
+information for system services.  chkconfig manipulates the numerous
 symbolic links in /etc/rc.d/rc*.d to relieve system administrators of
 some of the drudgery of manually editing the symbolic links.
 
@@ -25,9 +26,9 @@ Summary: A tool to set the stop/start of system services in a runlevel.
 Group: System Environment/Base
 
 %description -n ntsysv
-Ntsysv provides a simple interface for setting which system services
+ntsysv provides a simple interface for setting which system services
 are started or stopped in various runlevels (instead of directly
-manipulating the numerous symbolic links in /etc/rc.d/rc*.d). Unless
+manipulating the numerous symbolic links in /etc/rc.d/rc*.d).  Unless
 you specify a runlevel or runlevels on the command line (see the man
 page), ntsysv configures the current runlevel.
 %endif
@@ -59,7 +60,9 @@ for n in 0 1 2 3 4 5 6; do
 	ln -s rc.d/rc${n}.d $RPM_BUILD_ROOT/etc/rc${n}.d
 done
 
-%files
+%find_lang %name
+
+%files -f %{name}.lang
 %defattr(-,root,root)
 /sbin/chkconfig
 /etc/init.d
@@ -67,7 +70,14 @@ done
 /etc/rc[0-6].d
 /etc/rc.d/rc[0-6].d
 %_mandir/*/chkconfig*
-/usr/share/locale/*/LC_MESSAGES/chkconfig.mo
+
+%if %INSTALL_ALTERNATIVES
+%dir /etc/alternatives
+%dir /var/lib/alternatives
+%_sbindir/update-alternatives
+%_sbindir/alternatives
+%_mandir/*/alternatives*
+%endif
 
 %if %BUILD_NTSYSV
 %files -n ntsysv
@@ -77,6 +87,9 @@ done
 %endif
 
 %changelog
+* Fri Feb 06 2004 Michail Litvak <mci@owl.openwall.com> 1.3.9-owl1
+- 1.3.9
+
 * Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com> 1.2.16-owl1
 - Enforce our new spec file conventions.
 
