@@ -1,17 +1,18 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.5 2001/09/02 08:51:02 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.6 2001/09/08 21:32:51 solar Exp $
 
 Summary: A tiny POP3 server with security as its primary design goal
 Name: popa3d
-Version: 0.4.9.2
+Version: 0.4.9.3
 Release: 1owl
 Copyright: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
 Source0: ftp://ftp.openwall.com/pub/projects/popa3d/popa3d-%{version}.tar.gz
 Source1: popa3d.pam
 Source2: popa3d.init
-Patch0: popa3d-0.4.9-owl-params.diff
+Source3: popa3d.xinetd
+Patch0: popa3d-0.4.9.3-owl-params.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
-Requires: pam_userpass
+Requires: pam_userpass, xinetd
 Prereq: /sbin/chkconfig, /dev/null, grep, shadow-utils
 
 %description
@@ -22,17 +23,19 @@ popa3d is a tiny POP3 server with security as its primary design goal.
 %patch0 -p1
 
 %build
-make CFLAGS="-c -Wall $RPM_OPT_FLAGS" LIBS="-lpam"
+make CFLAGS="-c -Wall $RPM_OPT_FLAGS -DHAVE_PROGNAME" LIBS="-lpam"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{usr/sbin,etc/{pam.d,rc.d/init.d}}
+mkdir -p $RPM_BUILD_ROOT/{usr/sbin,etc/{pam.d,rc.d/init.d,xinetd.d}}
 
 install -m 700 popa3d $RPM_BUILD_ROOT/usr/sbin/
 install -m 600 $RPM_SOURCE_DIR/popa3d.pam \
 	$RPM_BUILD_ROOT/etc/pam.d/popa3d
 install -m 700 $RPM_SOURCE_DIR/popa3d.init \
 	$RPM_BUILD_ROOT/etc/rc.d/init.d/popa3d
+install -m 600 $RPM_SOURCE_DIR/popa3d.xinetd \
+	$RPM_BUILD_ROOT/etc/xinetd.d/popa3d
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -62,9 +65,15 @@ fi
 /usr/sbin/popa3d
 %config(noreplace) /etc/pam.d/popa3d
 %config /etc/rc.d/init.d/popa3d
+%config /etc/xinetd.d/popa3d
 %doc DESIGN LICENSE
 
 %changelog
+* Sun Sep 09 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 0.4.9.3.
+- The same popa3d binary may now be run as a standalone server as well as
+via xinetd, an /etc/xinetd.d file is provided.
+
 * Sun Sep 02 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 0.4.9.2.
 
