@@ -11,7 +11,7 @@ diff -puNr glibc-2.3.3-200406160000.orig/debug/xtrace.sh glibc-2.3.3-20040616000
    done
  else
 -  fifo=$(mktemp -u ${TMPDIR:-/tmp}/xtrace.XXXXXX)
-+  fifo="`mktemp -t xtrace.XXXXXXXXXX`" || exit
++  fifo="`mktemp -ut xtrace.XXXXXXXXXX`" || exit
 +  trap 'rm -f -- "$fifo"' EXIT
 +  trap 'trap - EXIT; rm -f -- "$fifo"; exit 1' HUP INT QUIT TERM PIPE
    mkfifo -m 0600 $fifo || exit 1
