@@ -12,6 +12,11 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.0 and Owl-current.
 
+2003/11/22	Package: iproute2
+SECURITY FIX	Severity: low, local, passive
+Added a patch from Herbert Xu of Debian to prevent a local denial of
+service attack on iproute2 utilities via spoofed Netlink messages.
+
 2003/11/06	Package: openssl
 Updated to 0.9.6l.  The added bug fix is believed to be not security
 related on Linux.
@@ -469,4 +474,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.87 2003/11/06 16:21:48 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.88 2003/11/21 23:59:44 solar Exp $
