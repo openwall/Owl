@@ -1,6 +1,14 @@
-# $Id: Owl/packages/tcsh/csh.login,v 1.1 2000/07/27 00:03:52 solar Exp $
+# $Id: Owl/packages/tcsh/csh.login,v 1.2 2001/02/04 23:02:52 solar Exp $
+
+# It is recommended that this file be left unchanged to permit for upgrades,
+# and any local additions go into /etc/profile.d/local.csh.
 
 setenv PATH "/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin"
+
+test -x /usr/X11R6/bin/xterm
+if ($status == 0) then
+	setenv PATH "${PATH}:/usr/X11R6/bin"
+endif
 
 limit coredumpsize 0
 umask 077
