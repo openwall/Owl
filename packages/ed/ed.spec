@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ed/ed.spec,v 1.9 2002/01/31 10:24:02 mci Exp $
+# $Id: Owl/packages/ed/ed.spec,v 1.10 2002/01/31 18:23:25 solar Exp $
 
 Summary: The GNU line editor.
 Name: ed
@@ -15,10 +15,10 @@ Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
 
 %description
-Ed is a line-oriented text editor, used to create, display, and modify
+ed is a line-oriented text editor, used to create, display, and modify
 text files (both interactively and via shell scripts).  For most
 purposes, ed has been replaced in normal usage by full-screen editors
-(emacs and vi, for example).
+such as vi and emacs.
 
 %prep
 %setup -q
@@ -33,15 +33,14 @@ autoconf
 make LDFLAGS=-s
 
 %install
-%makeinstall bindir=$RPM_BUILD_ROOT/bin \
-	     mandir=$RPM_BUILD_ROOT%{_mandir}/man1
+%makeinstall bindir=$RPM_BUILD_ROOT/bin mandir=$RPM_BUILD_ROOT%{_mandir}/man1
 
 %post
 /sbin/install-info %{_infodir}/ed.info.gz %{_infodir}/dir \
 	--entry="* ed: (ed).                  The GNU Line Editor."
 
 %preun
-if [ $1 -eq 0 ] ; then
+if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %{_infodir}/ed.info.gz %{_infodir}/dir \
 		--entry="* ed: (ed).                  The GNU Line Editor."
 fi
@@ -66,9 +65,9 @@ rm -rf $RPM_BUILD_ROOT
 
 * Wed Nov 22 2000 Michail Litvak <mci@owl.openwall.com>
 - imported from RH
-- patches from Debian 
-- ed-0.2-deb-mkfile.diff: don't compile in 
-  libed.a as it's redundant old code   superseded by code in glibc.  
+- patches from Debian
+- ed-0.2-deb-mkfile.diff: don't compile in
+  libed.a as it's redundant old code   superseded by code in glibc.
   This reduces the ed binary by 23k.
 - ed-0.2-deb-parentheses.diff: parentheses to quiet -Wall
 - ed-0.2-deb-tmpnam.diff: Patched buf.c to use tempnam()
