@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/installworld.sh,v 1.24 2005/01/20 05:50:16 solar Exp $
+# $Id: Owl/build/installworld.sh,v 1.25 2005/01/20 06:37:24 solar Exp $
 
 . installworld.conf
 
@@ -173,7 +173,7 @@ while read PACKAGES; do
 		fi
 		if [ "$NEED_FAKE" != yes ]; then
 			case "$PACKAGE" in
-			glibc-compat-fake|libstdc++-compat*)
+			glibc-compat-fake|libstdc++*-compat)
 				log "Skipping $PACKAGE"
 				continue
 				;;
@@ -198,7 +198,7 @@ done
 
 if [ "$NEED_FAKE" = yes ]; then
 	log "Removing installation support packages"
-	for PACKAGE in glibc-compat-fake libstdc++-compat-v{3,5}; do
+	for PACKAGE in glibc-compat-fake libstdc++-v{3,5}-compat; do
 		if ! $RPM $RPM_FLAGS --root $ROOT -ev $PACKAGE; then
 			log "Removal of $PACKAGE failed"
 		fi
