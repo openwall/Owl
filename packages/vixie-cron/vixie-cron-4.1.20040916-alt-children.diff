@@ -1,0 +1,223 @@
+diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/atrun.c vixie-cron-4.1.20040916/usr.sbin/cron/atrun.c
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/atrun.c	Sun Feb 20 16:41:02 2005
++++ vixie-cron-4.1.20040916/usr.sbin/cron/atrun.c	Sun Feb 20 16:48:25 2005
+@@ -227,6 +227,24 @@ unlink_job(at_db *db, atjob *job)
+ 		job->next->prev = job->prev;
+ }
+ 
++static void
++sigchld_handler(int signo) {
++	for (;;) {
++		WAIT_T waiter;
++		PID_T pid = waitpid(-1, &waiter, WNOHANG);
++
++		switch (pid) {
++		case -1:
++			if (errno == EINTR)
++				continue;
++		case 0:
++			return;
++		default:
++			break;
++		}
++	}
++}
++
+ /*
+  * Run the specified job contained in atfile.
+  */
+@@ -238,7 +256,7 @@ run_job(atjob *job, char *atfile)
+ 	pid_t pid;
+ 	long nuid, ngid;
+ 	FILE *fp;
+-	WAIT_T waiter;
++	struct sigaction sact;
+ 	size_t nread;
+ 	char *cp, *ep, mailto[MAX_UNAME], buf[BUFSIZ];
+ 	int fd, always_mail;
+@@ -279,7 +297,14 @@ run_job(atjob *job, char *atfile)
+ 	 * We don't want the main cron daemon to wait for our children--
+ 	 * we will do it ourselves via waitpid().
+ 	 */
+-	(void) signal(SIGCHLD, SIG_DFL);
++	bzero((char *)&sact, sizeof sact);
++	sigemptyset(&sact.sa_mask);
++	sact.sa_flags = 0;
++#ifdef SA_RESTART
++	sact.sa_flags |= SA_RESTART;
++#endif
++	sact.sa_handler = sigchld_handler;
++	(void) sigaction(SIGCHLD, &sact, NULL);
+ 
+ 	/*
+ 	 * Verify the user still exists and their account has not expired.
+@@ -584,25 +609,7 @@ run_job(atjob *job, char *atfile)
+ 	fclose(fp);	/* also closes output_pipe[READ_PIPE] */
+ 
+ 	/* Wait for grandchild to die.  */
+-	Debug(DPROC, ("[%ld] waiting for grandchild (%ld) to finish\n",
+-		      (long)getpid(), (long)pid))
+-	for (;;) {
+-		if (waitpid(pid, &waiter, 0) == -1) {
+-			if (errno == EINTR)
+-				continue;
+-			Debug(DPROC,
+-			    ("[%ld] no grandchild process--mail written?\n",
+-			    (long)getpid()))
+-			break;
+-		} else {
+-			Debug(DPROC, ("[%ld] grandchild (%ld) finished, status=%04x",
+-			    (long)getpid(), (long)pid, WEXITSTATUS(waiter)))
+-			if (WIFSIGNALED(waiter) && WCOREDUMP(waiter))
+-				Debug(DPROC, (", dumped core"))
+-			Debug(DPROC, ("\n"))
+-			break;
+-		}
+-	}
++ 	sigchld_handler (0);
+ 	_exit(OK_EXIT);
+ 
+ bad_file:
+diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/cron.c vixie-cron-4.1.20040916/usr.sbin/cron/cron.c
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/cron.c	Sun Feb 20 16:41:03 2005
++++ vixie-cron-4.1.20040916/usr.sbin/cron/cron.c	Sun Feb 20 16:45:23 2005
+@@ -482,11 +482,10 @@ quit(int x) {
+ 
+ static void
+ sigchld_reaper(void) {
+-	WAIT_T waiter;
+-	PID_T pid;
++	for (;;) {
++		WAIT_T waiter;
++		PID_T pid = waitpid(-1, &waiter, WNOHANG);
+ 
+-	do {
+-		pid = waitpid(-1, &waiter, WNOHANG);
+ 		switch (pid) {
+ 		case -1:
+ 			if (errno == EINTR)
+@@ -494,19 +493,19 @@ sigchld_reaper(void) {
+ 			Debug(DPROC,
+ 			      ("[%ld] sigchld...no children\n",
+ 			       (long)getpid()))
+-			break;
++			return;
+ 		case 0:
+ 			Debug(DPROC,
+ 			      ("[%ld] sigchld...no dead kids\n",
+ 			       (long)getpid()))
+-			break;
++			return;
+ 		default:
+ 			Debug(DPROC,
+ 			      ("[%ld] sigchld...pid #%ld died, stat=%d\n",
+ 			       (long)getpid(), (long)pid, WEXITSTATUS(waiter)))
+ 			break;
+ 		}
+-	} while (pid > 0);
++	}
+ }
+ 
+ static void
+diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/do_command.c vixie-cron-4.1.20040916/usr.sbin/cron/do_command.c
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/do_command.c	Sun Feb 20 16:41:02 2005
++++ vixie-cron-4.1.20040916/usr.sbin/cron/do_command.c	Sun Feb 20 16:47:45 2005
+@@ -60,12 +60,30 @@ do_command(entry *e, user *u) {
+ 	}
+ 	Debug(DPROC, ("[%ld] main process returning to work\n",(long)getpid()))
+ }
++  
++static void
++sigchld_handler(int signo) {
++	for (;;) {
++		WAIT_T waiter;
++		PID_T pid = waitpid(-1, &waiter, WNOHANG);
++
++		switch (pid) {
++		case -1:
++			if (errno == EINTR)
++				continue;
++		case 0:
++			return;
++		default:
++			break;
++		}
++	}
++}
+ 
+ static void
+ child_process(entry *e, user *u) {
+ 	int stdin_pipe[2], stdout_pipe[2];
+ 	char *input_data, *usernm, *mailto;
+-	int children = 0;
++ 	struct sigaction sact;
+ 
+ 	Debug(DPROC, ("[%ld] child_process('%s')\n", (long)getpid(), e->cmd))
+ #ifdef CAPITALIZE_FOR_PS
+@@ -89,12 +107,14 @@ child_process(entry *e, user *u) {
+ 	usernm = e->pwd->pw_name;
+ 	mailto = env_get("MAILTO", e->envp);
+ 
+-	/* our parent is watching for our death by catching SIGCHLD.  we
+-	 * do not care to watch for our children's deaths this way -- we
+-	 * use wait() explicitly.  so we have to reset the signal (which
+-	 * was inherited from the parent).
+-	 */
+-	(void) signal(SIGCHLD, SIG_DFL);
++	bzero((char *)&sact, sizeof sact);
++	sigemptyset(&sact.sa_mask);
++	sact.sa_flags = 0;
++#ifdef SA_RESTART
++	sact.sa_flags |= SA_RESTART;
++#endif
++	sact.sa_handler = sigchld_handler;
++	(void) sigaction(SIGCHLD, &sact, NULL);
+ 
+ 	/* create some pipes to talk to our future child
+ 	 */
+@@ -292,8 +312,6 @@ child_process(entry *e, user *u) {
+ 		break;
+ 	}
+ 
+-	children++;
+-
+ 	/* middle process, child of original cron, parent of process running
+ 	 * the user's command.
+ 	 */
+@@ -370,8 +388,6 @@ child_process(entry *e, user *u) {
+ 	 */
+ 	close(stdin_pipe[WRITE_PIPE]);
+ 
+-	children++;
+-
+ 	/*
+ 	 * read output from the grandchild.  it's stderr has been redirected to
+ 	 * it's stdout, which has been redirected to our pipe.  if there is any
+@@ -496,26 +512,7 @@ child_process(entry *e, user *u) {
+ 
+ 	/* wait for children to die.
+ 	 */
+-	for (; children > 0; children--) {
+-		WAIT_T waiter;
+-		PID_T pid;
+-
+-		Debug(DPROC, ("[%ld] waiting for grandchild #%d to finish\n",
+-			      (long)getpid(), children))
+-		while ((pid = wait(&waiter)) < OK && errno == EINTR)
+-			;
+-		if (pid < OK) {
+-			Debug(DPROC,
+-			      ("[%ld] no more grandchildren--mail written?\n",
+-			       (long)getpid()))
+-			break;
+-		}
+-		Debug(DPROC, ("[%ld] grandchild #%ld finished, status=%04x",
+-			      (long)getpid(), (long)pid, WEXITSTATUS(waiter)))
+-		if (WIFSIGNALED(waiter) && WCOREDUMP(waiter))
+-			Debug(DPROC, (", dumped core"))
+-		Debug(DPROC, ("\n"))
+-	}
++ 	sigchld_handler (0);
+ }
+ 
+ int

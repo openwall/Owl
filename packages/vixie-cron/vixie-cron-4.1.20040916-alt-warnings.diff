@@ -1,0 +1,23 @@
+diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/do_command.c vixie-cron-4.1.20040916/usr.sbin/cron/do_command.c
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/do_command.c	2004-06-18 02:11:55 +0400
++++ vixie-cron-4.1.20040916/usr.sbin/cron/do_command.c	2004-11-03 00:46:16 +0300
+@@ -372,7 +372,7 @@ child_process(entry *e, user *u) {
+ 		int	ch = getc(in);
+ 
+ 		if (ch != EOF) {
+-			FILE	*mail;
++			FILE	*mail = 0;
+ 			int	bytes = 1;
+ 			int	status = 0;
+ 
+diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/env.c vixie-cron-4.1.20040916/usr.sbin/cron/env.c
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/env.c	2004-06-22 07:15:33 +0400
++++ vixie-cron-4.1.20040916/usr.sbin/cron/env.c	2004-11-03 00:46:16 +0300
+@@ -206,6 +206,7 @@ load_env(char *envstr, FILE *f) {
+ 			else
+ 				state++;
+ 			break;
++		default: break;
+ 		}
+ 	}
+ 	if (state != FINI && !(state == VALUE && !quotechar)) {

@@ -1,0 +1,16 @@
+diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/pathnames.h vixie-cron-4.1.20040916/usr.sbin/cron/pathnames.h
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/pathnames.h	2004-11-03 01:15:30 +0300
++++ vixie-cron-4.1.20040916/usr.sbin/cron/pathnames.h	2004-11-03 01:15:45 +0300
+@@ -98,11 +98,7 @@
+ 			/* what editor to use if no EDITOR or VISUAL
+ 			 * environment variable specified.
+ 			 */
+-#if defined(_PATH_VI)
+-# define EDITOR _PATH_VI
+-#else
+-# define EDITOR "/usr/ucb/vi"
+-#endif
++#define EDITOR "/bin/vitmp"
+ 
+ #ifndef _PATH_SENDMAIL
+ # define _PATH_SENDMAIL "/usr/lib/sendmail"

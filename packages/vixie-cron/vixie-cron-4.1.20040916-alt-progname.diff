@@ -1,0 +1,41 @@
+diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.bin/at/at.c vixie-cron-4.1.20040916/usr.bin/at/at.c
+--- vixie-cron-4.1.20040916.orig/usr.bin/at/at.c	2004-12-18 19:04:21 +0300
++++ vixie-cron-4.1.20040916/usr.bin/at/at.c	2004-12-18 19:04:33 +0300
+@@ -927,10 +927,7 @@ main(int argc, char **argv)
+ 	if (argc < 1)
+ 		usage();
+ 
+-	if ((ProgramName = strrchr(argv[0], '/')) != NULL)
+-		ProgramName++;
+-	else
+-		ProgramName = argv[0];
++	ProgramName = program_invocation_short_name;
+ 
+ 	RELINQUISH_PRIVS;
+ 
+diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/cron.c vixie-cron-4.1.20040916/usr.sbin/cron/cron.c
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/cron.c	2004-12-18 19:04:21 +0300
++++ vixie-cron-4.1.20040916/usr.sbin/cron/cron.c	2004-12-18 19:04:33 +0300
+@@ -73,7 +73,7 @@ main(int argc, char *argv[]) {
+ 	struct sigaction sact;
+ 	int fd;
+ 
+-	ProgramName = argv[0];
++	ProgramName = program_invocation_short_name;
+ 	FixedName = "crond";
+ 
+ 	setlocale(LC_ALL, "");
+diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/globals.h vixie-cron-4.1.20040916/usr.sbin/cron/globals.h
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/globals.h	2004-12-18 19:04:21 +0300
++++ vixie-cron-4.1.20040916/usr.sbin/cron/globals.h	2004-12-18 19:04:33 +0300
+@@ -57,8 +57,8 @@ XTRN const char *DowNames[]
+ #endif
+ 	;
+ 
+-XTRN char	*ProgramName INIT("crond");
+-XTRN char	*FixedName INIT("crond");
++XTRN const char	*ProgramName INIT("crond");
++XTRN const char	*FixedName INIT("crond");
+ XTRN int	LineNumber INIT(0);
+ XTRN time_t	StartTime INIT(0);
+ XTRN int	NoFork INIT(0);

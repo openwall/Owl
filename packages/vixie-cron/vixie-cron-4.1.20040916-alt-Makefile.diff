@@ -1,0 +1,86 @@
+diff -uprk.orig vixie-cron-4.1.20040916.orig/linux.mk vixie-cron-4.1.20040916/linux.mk
+--- vixie-cron-4.1.20040916.orig/linux.mk	1970-01-01 03:00:00 +0300
++++ vixie-cron-4.1.20040916/linux.mk	2004-11-03 01:16:51 +0300
+@@ -0,0 +1,30 @@
++DESTDIR=$(RPM_BUILD_ROOT)
++MANDIR=$(DESTDIR)/usr/share/man/
++
++CFLAGS += -I. -I../../include $(RPM_OPT_FLAGS)
++
++.PHONY: clean install maninstall proginstall
++
++$(PROG): $(SRCS:.c=.o)
++	$(LINK.o) $(LDFLAGS) $+ -o $@
++
++clean:
++	$(RM) $(PROG) $(SRCS:.c=.o)
++
++install: maninstall proginstall
++
++maninstall: $(MAN)
++	for i in $+;  do \
++	case "$$i" in \
++	    *.1*) dir="man1" ;; \
++	    *.5*) dir="man5" ;; \
++	    *.8*) dir="man8" ;; \
++	esac; \
++	installdir=$(MANDIR)$$dir; \
++	install -pD -m644 $$i $$installdir/`basename $$i` ;\
++	done
++
++proginstall:$(PROG)
++	dir=/usr/sbin/;\
++	[ -z "$(BINGRP)" ] || dir=/usr/bin/; \
++	install -pD -m755 $(PROG) $(DESTDIR)/$$dir/$(PROG);
+diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.bin/at/Makefile vixie-cron-4.1.20040916/usr.bin/at/Makefile
+--- vixie-cron-4.1.20040916.orig/usr.bin/at/Makefile	2003-02-20 23:38:08 +0300
++++ vixie-cron-4.1.20040916/usr.bin/at/Makefile	2004-11-03 01:16:51 +0300
+@@ -12,6 +12,8 @@ MLINKS=	at.1 batch.1
+ BINGRP=	crontab
+ BINMODE= 2555
+ 
+-.PATH: ${CRONDIR}
++#.PATH: ${CRONDIR}
++VPATH=${CRONDIR}
+ 
+-.include <bsd.prog.mk>
++#.include <bsd.prog.mk>
++include ../../linux.mk
+diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.bin/crontab/Makefile vixie-cron-4.1.20040916/usr.bin/crontab/Makefile
+--- vixie-cron-4.1.20040916.orig/usr.bin/crontab/Makefile	2002-05-10 01:22:01 +0400
++++ vixie-cron-4.1.20040916/usr.bin/crontab/Makefile	2004-11-03 01:16:51 +0300
+@@ -1,12 +1,14 @@
+ #	$OpenBSD: Makefile,v 1.4 2002/05/09 21:22:01 millert Exp $
+ 
+ PROG=	crontab
+-SRCS=	crontab.c misc.c entry.c env.c
++SRCS=	crontab.c misc.c entry.c env.c  closeall.c  ../../lib/libc/gen/pw_dup.c
+ CFLAGS+=-I${.CURDIR} -I${.CURDIR}/../../usr.sbin/cron -DDEBUGGING=0 
+ BINGRP =crontab
+ BINMODE=2555
+ MAN=	crontab.1 crontab.5
+ 
+-.PATH: ${.CURDIR}/../../usr.sbin/cron
++#.PATH: ${.CURDIR}/../../usr.sbin/cron
++VPATH=${.CURDIR}/../../usr.sbin/cron
+ 
+-.include <bsd.prog.mk>
++#.include <bsd.prog.mk>
++include ../../linux.mk
+diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/Makefile vixie-cron-4.1.20040916/usr.sbin/cron/Makefile
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/Makefile	2002-07-15 23:26:51 +0400
++++ vixie-cron-4.1.20040916/usr.sbin/cron/Makefile	2004-11-03 01:16:51 +0300
+@@ -1,9 +1,10 @@
+ #	$OpenBSD: Makefile,v 1.4 2002/07/15 19:26:51 millert Exp $
+ 
+-PROG=	cron
++PROG=	crond
+ SRCS=	cron.c database.c user.c entry.c job.c do_command.c \
+-	misc.c env.c popen.c atrun.c
++	misc.c env.c popen.c atrun.c closeall.c  ../../lib/libc/gen/pw_dup.c
+ CFLAGS+=-I${.CURDIR}
+ MAN=	cron.8
+ 
+-.include <bsd.prog.mk>
++#.include <bsd.prog.mk>
++include ../../linux.mk

@@ -1,0 +1,26 @@
+diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/atrun.c vixie-cron-4.1.20040916/usr.sbin/cron/atrun.c
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/atrun.c	Sun Feb 20 15:58:24 2005
++++ vixie-cron-4.1.20040916/usr.sbin/cron/atrun.c	Sun Feb 20 15:59:55 2005
+@@ -492,6 +492,9 @@ run_job(atjob *job, char *atfile)
+ 		}
+ #endif /*DEBUGGING*/
+ 
++		(void) signal(SIGPIPE, SIG_DFL);
++		(void) signal(SIGUSR1, SIG_DFL);
++
+ 		/*
+ 		 * Exec /bin/sh with stdin connected to the at job file
+ 		 * and stdout/stderr hooked up to our parent.
+diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/do_command.c vixie-cron-4.1.20040916/usr.sbin/cron/do_command.c
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/do_command.c	Sun Feb 20 15:58:24 2005
++++ vixie-cron-4.1.20040916/usr.sbin/cron/do_command.c	Sun Feb 20 15:59:55 2005
+@@ -263,6 +263,9 @@ child_process(entry *e, user *u) {
+ #endif /* LOGIN_CAP */
+ 		chdir(env_get("HOME", e->envp));
+ 
++		(void) signal(SIGPIPE, SIG_DFL);
++		(void) signal(SIGUSR1, SIG_DFL);
++
+ 		/*
+ 		 * Exec the command.
+ 		 */

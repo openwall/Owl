@@ -1,0 +1,918 @@
+diff -urpN vixie-cron-4.1.20040916.orig/lib/libc/gen/pw_dup.c vixie-cron-4.1.20040916/lib/libc/gen/pw_dup.c
+--- vixie-cron-4.1.20040916.orig/lib/libc/gen/pw_dup.c	Tue Jun 17 21:56:23 2003
++++ vixie-cron-4.1.20040916/lib/libc/gen/pw_dup.c	Sun Feb 20 15:50:10 2005
+@@ -35,7 +35,10 @@ struct passwd *
+ pw_dup(const struct passwd *pw)
+ {
+ 	char		*cp;
+-	size_t		 nsize, psize, csize, gsize, dsize, ssize, total;
++	size_t		 nsize = 0, psize = 0, gsize = 0, dsize = 0, ssize = 0, total;
++#ifdef LOGIN_CAP
++	size_t		 csize = 0;
++#endif
+ 	struct passwd	*newpw;
+ 
+ 	/* Allocate in one big chunk for easy freeing */
+@@ -48,10 +51,12 @@ pw_dup(const struct passwd *pw)
+ 		psize = strlen(pw->pw_passwd) + 1;
+ 		total += psize;
+ 	}
++#ifdef LOGIN_CAP
+ 	if (pw->pw_class) {
+ 		csize = strlen(pw->pw_class) + 1;
+ 		total += csize;
+ 	}
++#endif
+ 	if (pw->pw_gecos) {
+ 		gsize = strlen(pw->pw_gecos) + 1;
+ 		total += gsize;
+@@ -84,11 +89,13 @@ pw_dup(const struct passwd *pw)
+ 		newpw->pw_passwd = cp;
+ 		cp += psize;
+ 	}
++#ifdef LOGIN_CAP
+ 	if (pw->pw_class) {
+ 		(void)memcpy(cp, pw->pw_class, csize);
+ 		newpw->pw_class = cp;
+ 		cp += csize;
+ 	}
++#endif
+ 	if (pw->pw_gecos) {
+ 		(void)memcpy(cp, pw->pw_gecos, gsize);
+ 		newpw->pw_gecos = cp;
+diff -urpN vixie-cron-4.1.20040916.orig/usr.bin/at/at.1 vixie-cron-4.1.20040916/usr.bin/at/at.1
+--- vixie-cron-4.1.20040916.orig/usr.bin/at/at.1	Tue Jun 10 09:12:09 2003
++++ vixie-cron-4.1.20040916/usr.bin/at/at.1	Sun Feb 20 15:50:10 2005
+@@ -276,20 +276,20 @@ shell, the owner of the login shell will
+ For non-root users, permission to run
+ .Nm
+ is determined by the files
+-.Pa /var/cron/at.allow
++.Pa /etc/at.allow
+ and
+-.Pa /var/cron/at.deny .
++.Pa /etc/at.deny .
+ .Em Note :
+ these files must be readable by group crontab (if they exist).
+ .Pp
+ If the file
+-.Pa /var/cron/at.allow
++.Pa /etc/at.allow
+ exists, only usernames mentioned in it are allowed to use
+ .Nm at .
+ If
+-.Pa /var/cron/at.allow
++.Pa /etc/at.allow
+ does not exist,
+-.Pa /var/cron/at.deny
++.Pa /etc/at.deny
+ is checked.
+ Every username not mentioned in it is then allowed to use
+ .Nm at .
+@@ -297,16 +297,16 @@ If neither exists, only the superuser is
+ .Nm at .
+ .Pp
+ An empty
+-.Pa /var/cron/at.deny
++.Pa /etc/at.deny
+ means that every user is allowed use these commands.
+ This is the default configuration.
+ .Sh FILES
+-.Bl -tag -width /var/cron/at.allow -compact
+-.It Pa /var/cron/atjobs
++.Bl -tag -width /etc/at.allow -compact
++.It Pa /var/spool/at
+ directory containing job files
+-.It Pa /var/cron/at.allow
++.It Pa /etc/at.allow
+ allow permission control
+-.It Pa /var/cron/at.deny
++.It Pa /etc/at.deny
+ deny permission control
+ .El
+ .Sh SEE ALSO
+diff -urpN vixie-cron-4.1.20040916.orig/usr.bin/at/at.c vixie-cron-4.1.20040916/usr.bin/at/at.c
+--- vixie-cron-4.1.20040916.orig/usr.bin/at/at.c	Thu Jun 17 22:09:11 2004
++++ vixie-cron-4.1.20040916/usr.bin/at/at.c	Sun Feb 20 15:50:10 2005
+@@ -38,6 +38,8 @@
+ #include "privs.h"
+ #include <limits.h>
+ 
++#define __dead __attribute__ ((noreturn))
++
+ #define ALARMC 10		/* Number of seconds to wait for timeout */
+ #define TIMESIZE 50		/* Size of buffer passed to strftime() */
+ 
+@@ -134,7 +136,7 @@ perr2(const char *a, const char *b)
+ 	perr(b);
+ }
+ 
+-static void
++static __dead void
+ sigc(int signo)
+ {
+ 	/* If the user presses ^C, remove the spool file and exit. */
+@@ -512,7 +514,7 @@ list_jobs(int argc, char **argv, int cou
+ 
+ 	PRIV_END;
+ 
+-	if (fstat(spool->dd_fd, &stbuf) != 0)
++	if (fstat(dirfd(spool), &stbuf) != 0)
+ 		perr2("Cannot stat ", AT_DIR);
+ 
+ 	/*
+diff -urpN vixie-cron-4.1.20040916.orig/usr.bin/at/atq.1 vixie-cron-4.1.20040916/usr.bin/at/atq.1
+--- vixie-cron-4.1.20040916.orig/usr.bin/at/atq.1	Tue Jun 10 09:12:09 2003
++++ vixie-cron-4.1.20040916/usr.bin/at/atq.1	Sun Feb 20 15:50:10 2005
+@@ -88,8 +88,8 @@ Jobs that have completed but have not ye
+ If a name(s) is provided, only those files belonging to that user(s) are
+ displayed.
+ .Sh FILES
+-.Bl -tag -width /var/cron/atjobs -compact
+-.It Pa /var/cron/atjobs
++.Bl -tag -width /var/spool/at -compact
++.It Pa /var/spool/at
+ directory containing job files
+ .El
+ .Sh SEE ALSO
+diff -urpN vixie-cron-4.1.20040916.orig/usr.bin/at/atrm.1 vixie-cron-4.1.20040916/usr.bin/at/atrm.1
+--- vixie-cron-4.1.20040916.orig/usr.bin/at/atrm.1	Tue Jun 10 09:12:09 2003
++++ vixie-cron-4.1.20040916/usr.bin/at/atrm.1	Sun Feb 20 15:50:10 2005
+@@ -74,8 +74,8 @@ If one or more user names are specified,
+ are removed.
+ Only the superuser may remove other users' jobs.
+ .Sh FILES
+-.Bl -tag -width /var/cron/atjobs -compact
+-.It Pa /var/cron/atjobs
++.Bl -tag -width /var/spool/at -compact
++.It Pa /var/spool/at
+ directory containing job files
+ .El
+ .Sh SEE ALSO
+diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/atrun.c vixie-cron-4.1.20040916/usr.sbin/cron/atrun.c
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/atrun.c	Thu Jun 17 22:11:55 2004
++++ vixie-cron-4.1.20040916/usr.sbin/cron/atrun.c	Sun Feb 20 15:50:10 2005
+@@ -383,7 +383,9 @@ run_job(atjob *job, char *atfile)
+ 	}
+ 
+ 	/* mark ourselves as different to PS command watchers */
++#ifdef HAVE_SETPROCTITLE
+ 	setproctitle("atrun %s", atfile);
++#endif
+ 
+ 	pipe(output_pipe);	/* child's stdout/stderr */
+ 
+diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/closeall.c vixie-cron-4.1.20040916/usr.sbin/cron/closeall.c
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/closeall.c	Thu Jan  1 00:00:00 1970
++++ vixie-cron-4.1.20040916/usr.sbin/cron/closeall.c	Sun Feb 20 15:50:10 2005
+@@ -0,0 +1,27 @@
++#include <unistd.h>
++#include <errno.h>
++
++#ifdef __linux__
++#include <linux/limits.h>
++#endif
++
++int close_all(void)
++{
++	int fd, max;
++
++	max = sysconf(_SC_OPEN_MAX);
++	if (max <= 0)
++		return -1;
++
++#ifdef __linux__
++	if (max < NR_OPEN)
++		max = NR_OPEN;
++#endif
++
++	for (fd = 3; fd < max; fd++) {
++		if (close(fd) && errno != EBADF)
++			return -1;
++	}
++
++	return 0;
++}
+diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/config.h vixie-cron-4.1.20040916/usr.sbin/cron/config.h
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/config.h	Thu Jun 17 22:11:55 2004
++++ vixie-cron-4.1.20040916/usr.sbin/cron/config.h	Sun Feb 20 15:50:10 2005
+@@ -29,7 +29,7 @@
+  */
+ 
+ #ifndef DEBUGGING
+-#define DEBUGGING 1	/* 1 or 0 -- do you want debugging code built in? */
++#define DEBUGGING 0	/* 1 or 0 -- do you want debugging code built in? */
+ #endif
+ 
+ 			/*
+@@ -78,21 +78,23 @@
+ 			 * are both defined, then logging will go to both
+ 			 * places.
+ 			 */
+-#define SYSLOG	 			/*-*/
++#define SYSLOG 1	 			/*-*/
+ 
+ 			/* if you have a tm_gmtoff member in struct tm.
+ 			 * If not, we will have to compute the value ourselves.
+ 			 */
+-#define HAVE_TM_GMTOFF		 	/*-*/
++#define HAVE_TM_GMTOFF	1	 	/*-*/
+ 
+ 			/* if your OS supports a BSD-style login.conf file */
+-#define LOGIN_CAP			/*-*/
++#undef LOGIN_CAP
++/* #define LOGIN_CAP */ 			/*-*/
+ 
+ 			/* if your OS supports BSD authentication */
+-#define BSD_AUTH			/*-*/
++#undef BSD_AUTH
++/*#define BSD_AUTH*/ 			/*-*/
+ 
+ 			/* if your OS has a getloadavg() function */
+-#define HAVE_GETLOADAVG			/*-*/
++#undef HAVE_GETLOADAVG			/*-*/
+ 
+ 			/* maximum load at which batch jobs will still run */
+ #define BATCH_MAXLOAD	1.5		/*-*/
+diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/cron.8 vixie-cron-4.1.20040916/usr.sbin/cron/cron.8
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/cron.8	Thu Jun  3 19:56:09 2004
++++ vixie-cron-4.1.20040916/usr.sbin/cron/cron.8	Sun Feb 20 15:50:10 2005
+@@ -29,7 +29,7 @@
+ .Nm cron
+ .Op Fl l Ar load_avg
+ .Op Fl n
+-.Op Fl x Ar [ext,sch,proc,pars,load,misc,test]
++.Op Fl x Ar [ext,sch,proc,pars,load,misc,test,bit]
+ .Sh DESCRIPTION
+ The
+ .Nm
+@@ -45,7 +45,7 @@ commands.
+ Normally, the
+ .Nm
+ daemon is started from the
+-.Pa /etc/rc
++.Pa /etc/init.d/crond
+ command script.
+ Because it can execute commands on a user's behalf,
+ .Nm
+@@ -67,9 +67,9 @@ Additionally,
+ checks the modification time on the system crontab file
+ .Pq Pa /etc/crontab ,
+ the crontab spool
+-.Pq Pa /var/cron/tabs ,
++.Pq Pa /var/spool/cron ,
+ and the at spool
+-.Pq Pa /var/cron/atjobs
++.Pq Pa /var/spool/at
+ once a minute.
+ If the modification time has changed, the affected files are reloaded.
+ .Pp
+@@ -171,28 +171,27 @@ causes
+ .Nm
+ to close and reopen its log file.
+ This is useful in scripts which rotate and age log files.
+-On
+-.Ox
++On Linux
+ this has no effect because
+ .Nm cron
+ logs via
+ .Xr syslog 3 .
+ .El
+ .Sh FILES
+-.Bl -tag -width "/var/cron/tabs/.sock" -compact
++.Bl -tag -width "/var/spool/cron/.sock" -compact
+ .It Pa /etc/crontab
+ system crontab file
+-.It Pa /var/cron/atjobs
++.It Pa /var/spool/at
+ directory containing
+ .Xr at 1
+ jobs
+-.It Pa /var/cron/log
+-cron's log file
+-.It Pa /var/cron/tabs
++.It Pa /var/spool/cron
+ directory containing individual crontab files
+-.It Pa /var/cron/tabs/.sock
++.It Pa /var/spool/cron/.sock
+ used by
+ .Xr crontab 1
++and
++.Xr at 1
+ to tell
+ .Nm
+ to check for crontab changes immediately
+@@ -207,12 +206,7 @@ to check for crontab changes immediately
+ .Sh CAVEATS
+ All
+ .Xr crontab 5
+-files must not be readable or writable by any user other than their owner,
+-including
+-.Pa /etc/crontab .
++files must not be readable or writable by any user other than their owner.
+ In practice this means they should be mode 0600.
+ This restriction is enforced automatically by
+-.Xr crontab 1
+-but if
+-.Pa /etc/crontab
+-is used, the mode must be set manually on that file.
++.Xr crontab 1 .
+diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/cron.c vixie-cron-4.1.20040916/usr.sbin/cron/cron.c
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/cron.c	Thu Jun 17 22:11:55 2004
++++ vixie-cron-4.1.20040916/usr.sbin/cron/cron.c	Sun Feb 20 15:50:10 2005
+@@ -49,6 +49,8 @@ static	cron_db			database;
+ static	at_db			at_database;
+ static	double			batch_maxload = BATCH_MAXLOAD;
+ 
++extern int close_all(void);
++
+ static void
+ usage(void) {
+ #if DEBUGGING
+@@ -72,6 +74,7 @@ main(int argc, char *argv[]) {
+ 	int fd;
+ 
+ 	ProgramName = argv[0];
++	FixedName = "crond";
+ 
+ 	setlocale(LC_ALL, "");
+ 
+@@ -82,6 +85,10 @@ main(int argc, char *argv[]) {
+ 
+ 	NoFork = 0;
+ 	parse_args(argc, argv);
++	if (close_all()) {
++		perror("close");
++		exit(ERROR_EXIT);
++	}
+ 
+ 	bzero((char *)&sact, sizeof sact);
+ 	sigemptyset(&sact.sa_mask);
+diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/crontab.1 vixie-cron-4.1.20040916/usr.sbin/cron/crontab.1
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/crontab.1	Thu Jun 17 22:11:55 2004
++++ vixie-cron-4.1.20040916/usr.sbin/cron/crontab.1	Sun Feb 20 15:50:10 2005
+@@ -45,7 +45,7 @@ daemon.
+ Each user can have their own
+ .Xr crontab 5 ,
+ and though these are files in
+-.Pa /var/cron/tabs ,
++.Pa /var/spool/cron ,
+ they are not intended to be edited directly.
+ .Pp
+ The first form of this command is used to install a new crontab from some
+@@ -54,17 +54,17 @@ named file, or standard input if the pse
+ is given.
+ .Pp
+ If the
+-.Pa /var/cron/cron.allow
++.Pa /etc/cron.allow
+ file exists, then you must be listed therein in order to use
+ .Nm crontab .
+ If the
+-.Pa /var/cron/cron.allow
++.Pa /etc/cron.allow
+ file does not exist but the
+-.Pa /var/cron/cron.deny
++.Pa /etc/cron.deny
+ file does exist, then you must
+ .Em not
+ be listed in the
+-.Pa /var/cron/cron.deny
++.Pa /etc/cron.deny
+ file in order to use
+ .Nm crontab .
+ If neither of these files exists then only the super user
+@@ -72,9 +72,9 @@ will be allowed to use
+ .Nm crontab .
+ .Em NOTE :
+ if they exist,
+-.Pa /var/cron/cron.allow
++.Pa /etc/cron.allow
+ and
+-.Pa /var/cron/cron.deny
++.Pa /etc/cron.deny
+ must be readable by group crontab.
+ If
+ .Nm
+@@ -119,12 +119,12 @@ After you exit from the editor, the modi
+ will be installed automatically.
+ .El
+ .Sh FILES
+-.Bl -tag -width "/var/cron/cron.allow" -compact
+-.It Pa /var/cron/cron.allow
++.Bl -tag -width "/etc/cron.allow" -compact
++.It Pa /etc/cron.allow
+ list of users allowed to use crontab
+-.It Pa /var/cron/cron.deny
++.It Pa /etc/cron.deny
+ list of users prohibited from using crontab
+-.It Pa /var/cron/tabs
++.It Pa /var/spool/cron
+ directory of individual crontabs
+ .El
+ .Sh DIAGNOSTICS
+diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/crontab.5 vixie-cron-4.1.20040916/usr.sbin/cron/crontab.5
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/crontab.5	Thu Jun 17 22:11:55 2004
++++ vixie-cron-4.1.20040916/usr.sbin/cron/crontab.5	Sun Feb 20 15:50:10 2005
+@@ -39,7 +39,7 @@ There may be a system
+ .Pf ( Pa /etc/crontab )
+ and each user may have their own
+ .Nm
+-.Pf ( Pa /var/cron/tabs/<user> ) .
++.Pf ( Pa /var/spool/cron/<user> ) .
+ Commands in any given
+ .Nm
+ will be
+diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/crontab.c vixie-cron-4.1.20040916/usr.sbin/cron/crontab.c
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/crontab.c	Thu Sep 16 18:34:05 2004
++++ vixie-cron-4.1.20040916/usr.sbin/cron/crontab.c	Sun Feb 20 15:50:10 2005
+@@ -60,6 +60,8 @@ static	void		list_cmd(void),
+ 			die(int);
+ static	int		replace_cmd(void);
+ 
++extern int close_all(void);
++
+ static void
+ usage(const char *msg) {
+ 	fprintf(stderr, "%s: usage error: %s\n", ProgramName, msg);
+@@ -78,6 +80,7 @@ main(int argc, char *argv[]) {
+ 
+ 	Pid = getpid();
+ 	ProgramName = argv[0];
++	FixedName = "crontab";
+ 
+ 	setlocale(LC_ALL, "");
+ 
+@@ -285,8 +288,12 @@ edit_cmd(void) {
+ 	FILE *f;
+ 	int ch, t, x;
+ 	struct stat statbuf;
++#ifndef HAVE_FUTIMES
++	struct utimbuf utimebuf;
++#else
+ 	struct timespec mtimespec;
+ 	struct timeval tv[2];
++#endif
+ 	WAIT_T waiter;
+ 	PID_T pid, xpid;
+ 
+@@ -312,16 +319,21 @@ edit_cmd(void) {
+ 		perror("fstat");
+ 		goto fatal;
+ 	}
++#ifndef HAVE_FUTIMES
++	utimebuf.actime = statbuf.st_atime;
++	utimebuf.modtime = statbuf.st_mtime;
++#else
+ 	memcpy(&mtimespec, &statbuf.st_mtimespec, sizeof(mtimespec));
+ 	TIMESPEC_TO_TIMEVAL(&tv[0], &statbuf.st_atimespec);
+ 	TIMESPEC_TO_TIMEVAL(&tv[1], &statbuf.st_mtimespec);
++#endif
+ 
+ 	/* Turn off signals. */
+ 	(void)signal(SIGHUP, SIG_IGN);
+ 	(void)signal(SIGINT, SIG_IGN);
+ 	(void)signal(SIGQUIT, SIG_IGN);
+ 
+-	if (snprintf(Filename, sizeof Filename, "%s/crontab.XXXXXXXXXX",
++	if (snprintf(Filename, sizeof Filename, "%s/crontab.XXXXXX",
+ 	    _PATH_TMP) >= sizeof(Filename)) {
+ 		fprintf(stderr, "path too long\n");
+ 		goto fatal;
+@@ -340,6 +352,7 @@ edit_cmd(void) {
+ 	/* ignore the top few comments since we probably put them there.
+ 	 */
+ 	x = 0;
++	ch = 0;
+ 	while (EOF != (ch = get_char(f))) {
+ 		if ('#' != ch) {
+ 			putc(ch, NewCrontab);
+@@ -357,12 +370,19 @@ edit_cmd(void) {
+ 	if (EOF != ch)
+ 		while (EOF != (ch = get_char(f)))
+ 			putc(ch, NewCrontab);
+-	fclose(f);
++	if (fclose(f) < OK) {
++		perror("fclose");
++		exit(ERROR_EXIT);
++	}
+ 	if (fflush(NewCrontab) < OK) {
+ 		perror(Filename);
+ 		exit(ERROR_EXIT);
+ 	}
++#ifndef HAVE_FUTIMES
++	utime(Filename, &utimebuf);
++#else
+ 	(void)futimes(t, tv);
++#endif
+  again:
+ 	rewind(NewCrontab);
+ 	if (ferror(NewCrontab)) {
+@@ -392,12 +412,16 @@ edit_cmd(void) {
+ 		goto fatal;
+ 	case 0:
+ 		/* child */
+-		if (setgid(MY_GID(pw)) < 0) {
++		if (setgid(getgid()) < 0) {
+ 			perror("setgid(getgid())");
+ 			exit(ERROR_EXIT);
+ 		}
+-		if (chdir(_PATH_TMP) < 0) {
+-			perror(_PATH_TMP);
++		if (chdir("/") < 0) {
++			perror("/");
++			exit(ERROR_EXIT);
++		}
++		if (close_all()) {
++			perror("close");
+ 			exit(ERROR_EXIT);
+ 		}
+ 		if (snprintf(q, sizeof q, "%s %s", editor, Filename) >= sizeof(q)) {
+@@ -447,7 +471,11 @@ edit_cmd(void) {
+ 		perror("fstat");
+ 		goto fatal;
+ 	}
++#ifndef HAVE_FUTIMES
++	if (utimebuf.modtime == statbuf.st_mtime) {
++#else
+ 	if (timespeccmp(&mtimespec, &statbuf.st_mtimespec, -) == 0) {
++#endif
+ 		fprintf(stderr, "%s: no changes made to crontab\n",
+ 			ProgramName);
+ 		goto remove;
+@@ -508,7 +536,7 @@ replace_cmd(void) {
+ 		fprintf(stderr, "%s: Cannot allocate memory.\n", ProgramName);
+ 		return (-2);
+ 	}
+-	if (snprintf(TempFilename, sizeof TempFilename, "%s/tmp.XXXXXXXXX", SPOOL_DIR) >=
++	if (snprintf(TempFilename, sizeof TempFilename, "%s/tmp.XXXXXX", SPOOL_DIR) >=
+ 		sizeof(TempFilename)) {
+ 		TempFilename[0] = '\0';
+ 		fprintf(stderr, "path too long\n");
+diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/do_command.c vixie-cron-4.1.20040916/usr.sbin/cron/do_command.c
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/do_command.c	Thu Jun 17 22:11:55 2004
++++ vixie-cron-4.1.20040916/usr.sbin/cron/do_command.c	Sun Feb 20 15:50:10 2005
+@@ -68,9 +68,21 @@ child_process(entry *e, user *u) {
+ 	int children = 0;
+ 
+ 	Debug(DPROC, ("[%ld] child_process('%s')\n", (long)getpid(), e->cmd))
++#ifdef CAPITALIZE_FOR_PS
++	/* mark ourselves as different to PS command watchers by upshifting
++	 * our program name.  This has no effect on some kernels.
++	 */
++	/*local*/{
++		char    *pch;
+ 
++		for (pch = ProgramName;  *pch;  pch++)
++			*pch = MkUpper(*pch);
++	}
++#endif /* CAPITALIZE_FOR_PS */
+ 	/* mark ourselves as different to PS command watchers */
++#ifdef HAVE_SETPROCTITLE
+ 	setproctitle("running job");
++#endif
+ 
+ 	/* discover some useful and important environment settings
+ 	 */
+diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/externs.h vixie-cron-4.1.20040916/usr.sbin/cron/externs.h
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/externs.h	Thu Jun 17 22:11:55 2004
++++ vixie-cron-4.1.20040916/usr.sbin/cron/externs.h	Sun Feb 20 15:50:10 2005
+@@ -22,6 +22,9 @@
+  */
+ 
+ /* reorder these #include's at your peril */
++#ifndef _GNU_SOURCE
++#define _GNU_SOURCE
++#endif
+ 
+ #include <sys/param.h>
+ #include <sys/types.h>
+diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/funcs.h vixie-cron-4.1.20040916/usr.sbin/cron/funcs.h
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/funcs.h	Thu Jun 17 22:11:55 2004
++++ vixie-cron-4.1.20040916/usr.sbin/cron/funcs.h	Sun Feb 20 15:50:10 2005
+@@ -66,6 +66,7 @@ char		*env_get(char *, char **),
+ 		**env_copy(char **),
+ 		**env_set(char **, char *);
+ 
++struct passwd	*pw_dup(const struct passwd *);
+ void		mkprint(char *, unsigned char *, int);
+ 
+ user		*load_user(int, struct passwd *, const char *),
+diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/globals.h vixie-cron-4.1.20040916/usr.sbin/cron/globals.h
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/globals.h	Thu Jun 17 22:11:55 2004
++++ vixie-cron-4.1.20040916/usr.sbin/cron/globals.h	Sun Feb 20 15:50:10 2005
+@@ -57,7 +57,8 @@ XTRN const char *DowNames[]
+ #endif
+ 	;
+ 
+-XTRN char	*ProgramName INIT("amnesia");
++XTRN char	*ProgramName INIT("crond");
++XTRN char	*FixedName INIT("crond");
+ XTRN int	LineNumber INIT(0);
+ XTRN time_t	StartTime INIT(0);
+ XTRN int	NoFork INIT(0);
+diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/macros.h vixie-cron-4.1.20040916/usr.sbin/cron/macros.h
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/macros.h	Thu Jun 17 22:11:55 2004
++++ vixie-cron-4.1.20040916/usr.sbin/cron/macros.h	Sun Feb 20 15:50:10 2005
+@@ -46,6 +46,9 @@
+ #define	MAX_COMMAND	1000	/* max length of internally generated cmd */
+ #define	MAX_ENVSTR	1000	/* max length of envvar=value\0 strings */
+ #define	MAX_TEMPSTR	100	/* obvious */
++#ifndef _PW_NAME_LEN
++#define _PW_NAME_LEN 33
++#endif
+ #define	MAX_UNAME	(_PW_NAME_LEN+1)	/* max length of username, should be overkill */
+ #define	ROOT_UID	0	/* don't change this, it really must be root */
+ #define	ROOT_USER	"root"	/* ditto */
+diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/misc.c vixie-cron-4.1.20040916/usr.sbin/cron/misc.c
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/misc.c	Thu Sep 16 20:11:09 2004
++++ vixie-cron-4.1.20040916/usr.sbin/cron/misc.c	Sun Feb 20 15:50:10 2005
+@@ -173,13 +173,15 @@ set_cron_uid(void) {
+ void
+ set_cron_cwd(void) {
+ 	struct stat sb;
+-	struct group *grp = NULL;
+ 
++#ifdef ENABLE_FIX_DIRECTORIES
+ #ifdef CRON_GROUP
+-	grp = getgrnam(CRON_GROUP);
++	struct group *grp = getgrnam(CRON_GROUP);
++#endif
+ #endif
+ 	/* first check for CRONDIR ("/var/cron" or some such)
+ 	 */
++#ifdef ENABLE_FIX_DIRECTORIES
+ 	if (stat(CRONDIR, &sb) < OK && errno == ENOENT) {
+ 		perror(CRONDIR);
+ 		if (OK == mkdir(CRONDIR, 0710)) {
+@@ -196,6 +198,7 @@ set_cron_cwd(void) {
+ 			CRONDIR);
+ 		exit(ERROR_EXIT);
+ 	}
++#endif /* ENABLE_FIX_DIRECTORIES */
+ 	if (chdir(CRONDIR) < OK) {
+ 		fprintf(stderr, "cannot chdir(%s), bailing out.\n", CRONDIR);
+ 		perror(CRONDIR);
+@@ -204,6 +207,7 @@ set_cron_cwd(void) {
+ 
+ 	/* CRONDIR okay (now==CWD), now look at SPOOL_DIR ("tabs" or some such)
+ 	 */
++#ifdef ENABLE_FIX_DIRECTORIES
+ 	if (stat(SPOOL_DIR, &sb) < OK && errno == ENOENT) {
+ 		perror(SPOOL_DIR);
+ 		if (OK == mkdir(SPOOL_DIR, 0700)) {
+@@ -215,20 +219,29 @@ set_cron_cwd(void) {
+ 			exit(ERROR_EXIT);
+ 		}
+ 	}
++#else
++	if (stat(SPOOL_DIR, &sb)) {
++		perror(SPOOL_DIR);
++		exit(ERROR_EXIT);
++	}
++#endif /* ENABLE_FIX_DIRECTORIES */
+ 	if (!S_ISDIR(sb.st_mode)) {
+ 		fprintf(stderr, "'%s' is not a directory, bailing out.\n",
+ 			SPOOL_DIR);
+ 		exit(ERROR_EXIT);
+ 	}
++#ifdef ENABLE_FIX_DIRECTORIES
+ 	if (grp != NULL) {
+ 		if (sb.st_gid != grp->gr_gid)
+ 			chown(SPOOL_DIR, -1, grp->gr_gid);
+ 		if (sb.st_mode != 01730)
+ 			chmod(SPOOL_DIR, 01730);
+ 	}
++#endif /* ENABLE_FIX_DIRECTORIES */
+ 
+ 	/* finally, look at AT_DIR ("atjobs" or some such)
+ 	 */
++#ifdef ENABLE_FIX_DIRECTORIES
+ 	if (stat(AT_DIR, &sb) < OK && errno == ENOENT) {
+ 		perror(AT_DIR);
+ 		if (OK == mkdir(AT_DIR, 0700)) {
+@@ -240,17 +253,25 @@ set_cron_cwd(void) {
+ 			exit(ERROR_EXIT);
+ 		}
+ 	}
++#else
++	if (stat(AT_DIR, &sb)) {
++		perror(AT_DIR);
++		exit(ERROR_EXIT);
++	}
++#endif /* ENABLE_FIX_DIRECTORIES */
+ 	if (!S_ISDIR(sb.st_mode)) {
+ 		fprintf(stderr, "'%s' is not a directory, bailing out.\n",
+ 			AT_DIR);
+ 		exit(ERROR_EXIT);
+ 	}
++#ifdef ENABLE_FIX_DIRECTORIES
+ 	if (grp != NULL) {
+ 		if (sb.st_gid != grp->gr_gid)
+ 			chown(AT_DIR, -1, grp->gr_gid);
+ 		if (sb.st_mode != 01770)
+ 			chmod(AT_DIR, 01770);
+ 	}
++#endif /* ENABLE_FIX_DIRECTORIES */
+ }
+ 
+ /* acquire_daemonlock() - write our PID into /etc/cron.pid, unless
+@@ -280,23 +301,20 @@ acquire_daemonlock(int closeflag) {
+ 
+ 	if (fd == -1) {
+ 		pidfile = _PATH_CRON_PID;
+-		if ((fd = open(pidfile, O_RDWR|O_CREAT|O_EXLOCK|O_NONBLOCK,
+-		    0644)) == -1) {
+-			int save_errno = errno;
++		/* Initial mode is 0600 to prevent flock() race/DoS. */
++		if ((fd = open(pidfile, O_RDWR|O_CREAT, 0600)) == -1) {
++			snprintf(buf, sizeof buf, "can't open or create %s: %s",
++				pidfile, strerror(errno));
++			fprintf(stderr, "%s: %s\n", ProgramName, buf);
++			log_it("CRON", getpid(), "DEATH", buf);
++			exit(ERROR_EXIT);
++		}
+ 
+-			if (errno != EWOULDBLOCK)  {
+-				snprintf(buf, sizeof buf,
+-				    "can't open or create %s: %s", pidfile,
+-				    strerror(save_errno));
+-				fprintf(stderr, "%s: %s\n", ProgramName, buf);
+-				log_it("CRON", getpid(), "DEATH", buf);
+-				exit(ERROR_EXIT);
+-			}
++		if (flock(fd, LOCK_EX|LOCK_NB) < OK) {
++			int save_errno = errno;
+ 
+-			/* couldn't lock the pid file, try to read existing. */
+ 			bzero(buf, sizeof(buf));
+-			if ((fd = open(pidfile, O_RDONLY, 0)) >= 0 &&
+-			    (num = read(fd, buf, sizeof(buf) - 1)) > 0 &&
++			if ((num = read(fd, buf, sizeof(buf) - 1)) > 0 &&
+ 			    (otherpid = strtol(buf, &ep, 10)) > 0 &&
+ 			    ep != buf && *ep == '\n' && otherpid != LONG_MAX) {
+ 				snprintf(buf, sizeof buf,
+@@ -311,6 +329,7 @@ acquire_daemonlock(int closeflag) {
+ 			log_it("CRON", getpid(), "DEATH", buf);
+ 			exit(ERROR_EXIT);
+ 		}
++		(void) fchmod(fd, 0644);
+ 		(void) fcntl(fd, F_SETFD, 1);
+ 	}
+ 
+@@ -507,11 +526,7 @@ log_it(const char *username, PID_T xpid,
+ 
+ #if defined(SYSLOG)
+ 	if (!syslog_open) {
+-# ifdef LOG_DAEMON
+-		openlog(ProgramName, LOG_PID, FACILITY);
+-# else
+-		openlog(ProgramName, LOG_PID);
+-# endif
++		openlog(FixedName, LOG_PID, LOG_CRON);
+ 		syslog_open = TRUE;		/* assume openlog success */
+ 	}
+ 
+@@ -712,6 +727,10 @@ open_socket(void)
+ 	int		   sock;
+ 	mode_t		   omask;
+ 	struct sockaddr_un s_un;
++#ifdef CRON_GROUP
++	struct group *grp = NULL;
++#endif
++	int rc, saved_errno;
+ 
+ 	sock = socket(AF_UNIX, SOCK_STREAM, 0);
+ 	if (sock == -1) {
+@@ -742,12 +761,15 @@ open_socket(void)
+ 	}
+ 	unlink(s_un.sun_path);
+ 	s_un.sun_family = AF_UNIX;
+-#ifdef SUN_LEN
++#ifdef HAVE_SUN_LEN_MEMBER
+ 	s_un.sun_len = SUN_LEN(&s_un);
+ #endif
+-
+-	omask = umask(007);
+-	if (bind(sock, (struct sockaddr *)&s_un, sizeof(s_un))) {
++	omask = umask(0157);
++	rc = bind(sock, (struct sockaddr *)&s_un, SUN_LEN(&s_un));
++	saved_errno = errno;
++	umask(omask);
++	if (rc) {
++		errno = saved_errno;
+ 		fprintf(stderr, "%s: can't bind socket: %s\n",
+ 		    ProgramName, strerror(errno));
+ 		log_it("CRON", getpid(), "DEATH", "can't bind socket");
+@@ -759,8 +781,12 @@ open_socket(void)
+ 		log_it("CRON", getpid(), "DEATH", "can't listen on socket");
+ 		exit(ERROR_EXIT);
+ 	}
+-	chmod(s_un.sun_path, 0660);
+-	umask(omask);
++#ifdef CRON_GROUP
++	if ((grp = getgrnam(CRON_GROUP)) == NULL) {
++		log_it("CRON", getpid(), "DEATH", "can't find crontab group");
++		exit(ERROR_EXIT);
++	}
++#endif
+ 
+ 	return(sock);
+ }
+@@ -779,12 +805,12 @@ poke_daemon(const char *spool_dir, unsig
+ 		return;
+ 	}
+ 	s_un.sun_family = AF_UNIX;
+-#ifdef SUN_LEN
++#ifdef HAVE_SUN_LEN_MEMBER
+ 	s_un.sun_len = SUN_LEN(&s_un);
+ #endif
+ 	(void) signal(SIGPIPE, SIG_IGN);
+ 	if ((sock = socket(AF_UNIX, SOCK_STREAM, 0)) >= 0 &&
+-	    connect(sock, (struct sockaddr *)&s_un, sizeof(s_un)) == 0)
++	    connect(sock, (struct sockaddr *)&s_un, SUN_LEN(&s_un)) == 0)
+ 		write(sock, &cookie, 1);
+ 	else
+ 		fprintf(stderr, "%s: warning, cron does not appear to be "
+diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/pathnames.h vixie-cron-4.1.20040916/usr.sbin/cron/pathnames.h
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/pathnames.h	Thu Jun 17 22:11:55 2004
++++ vixie-cron-4.1.20040916/usr.sbin/cron/pathnames.h	Sun Feb 20 15:50:10 2005
+@@ -33,7 +33,7 @@
+ 			 * to; SPOOL_DIR, CRON_ALLOW, CRON_DENY, and LOG_FILE
+ 			 * are all relative to this directory.
+ 			 */
+-#define CRONDIR		"/var/cron"
++#define CRONDIR		"/var/spool"
+ #endif
+ 
+ 			/* SPOOLDIR is where the crontabs live.
+@@ -44,7 +44,7 @@
+ 			 * newer than they were last time around (or which
+ 			 * didn't exist last time around...)
+ 			 */
+-#define SPOOL_DIR	"tabs"
++#define SPOOL_DIR	"cron"
+ 
+ 			/* ATDIR is where the at jobs live (relative to CRONDIR)
+ 			 * This directory will have its modtime updated
+@@ -52,7 +52,7 @@
+ 			 * the signal for cron(8) to look for changes in the
+ 			 * jobs directory (new, changed or jobs).
+ 			 */
+-#define AT_DIR		"atjobs"
++#define AT_DIR		"at"
+ 
+ 			/* CRONSOCK is the name of the socket used by at and
+ 			 * crontab to poke cron to re-read the at and cron
+@@ -64,14 +64,14 @@
+ 			/* cron allow/deny file.  At least cron.deny must
+ 			 * exist for ordinary users to run crontab.
+ 			 */
+-#define	CRON_ALLOW	"cron.allow"
+-#define	CRON_DENY	"cron.deny"
++#define	CRON_ALLOW	"/etc/cron.allow"
++#define	CRON_DENY	"/etc/cron.deny"
+ 
+ 			/* at allow/deny file.  At least at.deny must
+ 			 * exist for ordinary users to run at.
+ 			 */
+-#define	AT_ALLOW	"at.allow"
+-#define	AT_DENY		"at.deny"
++#define	AT_ALLOW	"/etc/at.allow"
++#define	AT_DENY		"/etc/at.deny"
+ 
+ 			/* undefining this turns off logging to a file.  If
+ 			 * neither LOG_FILE or SYSLOG is defined, we don't log.
+@@ -79,7 +79,7 @@
+ 			 * LOG_CRON is defined by <syslog.h>, LOG_FILE will not
+ 			 * be used.
+ 			 */
+-#define LOG_FILE	"log"
++/*#define LOG_FILE	"log"*/
+ 
+ 			/* where should the daemon stick its PID?
+ 			 * PIDDIR must end in '/'.
+@@ -87,9 +87,9 @@
+ #ifdef _PATH_VARRUN
+ # define PIDDIR	_PATH_VARRUN
+ #else
+-# define PIDDIR "/etc/"
++# define PIDDIR "/var/run/"
+ #endif
+-#define PIDFILE		"cron.pid"
++#define PIDFILE		"crond.pid"
+ #define _PATH_CRON_PID	PIDDIR PIDFILE
+ 
+ 			/* 4.3BSD-style crontab */
+diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/popen.c vixie-cron-4.1.20040916/usr.sbin/cron/popen.c
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/popen.c	Mon Jun  2 04:39:45 2003
++++ vixie-cron-4.1.20040916/usr.sbin/cron/popen.c	Sun Feb 20 15:50:10 2005
+@@ -92,6 +92,7 @@ cron_popen(char *program, char *type, st
+ 		return (NULL);
+ 		/* NOTREACHED */
+ 	case 0:				/* child */
++		closelog();
+ 		if (pw) {
+ #ifdef LOGIN_CAP
+ 			if (setusercontext(0, pw, pw->pw_uid, LOGIN_SETALL) < 0) {

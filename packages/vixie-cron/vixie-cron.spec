@@ -1,28 +1,33 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.29 2005/01/20 05:15:05 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.30 2005/03/14 04:01:21 solar Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
-Version: 3.0.2.7
-Release: owl19
+Version: 4.1.20040916
+Release: owl1
 License: distributable
 Group: System Environment/Base
-Source0: vixie-cron-%version.tar.gz
+Source0: vixie-cron-4.1.20040916.tar.bz2
 Source1: vixie-cron.init
 Source2: crontab.control
-Patch0: vixie-cron-3.0.2.7-owl-linux.diff
-Patch1: vixie-cron-3.0.2.7-owl-sgid-crontab.diff
-Patch2: vixie-cron-3.0.2.7-owl-crond.diff
-Patch3: vixie-cron-3.0.2.7-owl-vitmp.diff
-Patch4: vixie-cron-3.0.2.7-openbsd-sigchld.diff
-Patch5: vixie-cron-3.0.2.7-owl-fixes.diff
+Source3: at.control
+Patch0: vixie-cron-4.1.20040916-alt-warnings.diff
+Patch1: vixie-cron-4.1.20040916-owl-alt-linux.diff
+Patch2: vixie-cron-4.1.20040916-owl-vitmp.diff
+Patch3: vixie-cron-4.1.20040916-owl-crond.diff
+Patch4: vixie-cron-4.1.20040916-alt-makefile.diff
+Patch5: vixie-cron-4.1.20040916-alt-progname.diff
+Patch6: vixie-cron-4.1.20040916-alt-sigpipe.diff
+Patch7: vixie-cron-4.1.20040916-alt-setlocale.diff
+Patch8: vixie-cron-4.1.20040916-alt-children.diff
 PreReq: owl-control >= 0.4, owl-control < 2.0
 PreReq: /sbin/chkconfig, grep, shadow-utils
+Provides: at
 BuildRoot: /override/%name-%version
 
 %description
 cron is a daemon that runs specified programs at scheduled times.  This
 package contains Paul Vixie's implementation of cron, with significant
-modifications by the NetBSD, OpenBSD, Red Hat, and Owl teams.
+modifications by the NetBSD, OpenBSD, Red Hat, ALT and Owl teams.
 
 %prep
 %setup -q
@@ -32,29 +37,39 @@ modifications by the NetBSD, OpenBSD, Red Hat, and Owl teams.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
 
 %build
-%__make -C usr.sbin/cron \
-	CC="%__cc" LD="%__cc" CFLAGS="-c -I. -I../../include $RPM_OPT_FLAGS" \
-	LDFLAGS=""
-%__make -C usr.sbin/cron -f ../../usr.bin/crontab/Makefile \
-	CC="%__cc" LD="%__cc" CFLAGS="-c -I. -I../../include $RPM_OPT_FLAGS" \
-	LDFLAGS=""
+for i in usr.sbin/cron usr.bin/crontab usr.bin/at; do
+%__make .CURDIR=. -C "$i"
+done
 
 %install
 rm -rf %buildroot
 mkdir -p %buildroot{%_bindir,%_sbindir}
 mkdir -p %buildroot%_mandir/man{1,5,8}
 mkdir -p -m 700 %buildroot/var/spool/cron
+mkdir -p -m 700 $RPM_BUILD_ROOT/var/spool/at
 mkdir -p -m 755 %buildroot/etc/cron.d
 
 install -m 700 usr.sbin/cron/crontab %buildroot%_bindir/
 install -m 700 usr.sbin/cron/crond %buildroot%_sbindir/
+install -m 700 usr.sbin/cron/at %buildroot%_bindir/
+(cd %buildroot%_bindir/
+	ln -s at atq
+	ln -s at atrm
+	ln -s at batch )
 
 install -m 644 usr.sbin/cron/crontab.1 %buildroot%_mandir/man1/
 install -m 644 usr.sbin/cron/crontab.5 %buildroot%_mandir/man5/
 install -m 644 usr.sbin/cron/cron.8 %buildroot%_mandir/man8/
+install -m 644 usr.sbin/cron/at.1 %buildroot%_mandir/man1/
+install -m 644 usr.sbin/cron/atq.1 %buildroot%_mandir/man1/
+install -m 644 usr.sbin/cron/atrm.1 %buildroot%_mandir/man1/
 ln -s cron.8 %buildroot%_mandir/man8/crond.8
+ln -s at.1 %buildroot%_mandir/man1/batch.1
 
 install -m 700 -D $RPM_SOURCE_DIR/vixie-cron.init \
 	%buildroot/etc/rc.d/init.d/crond
@@ -62,6 +77,8 @@ install -m 700 -D $RPM_SOURCE_DIR/vixie-cron.init \
 mkdir -p %buildroot/etc/control.d/facilities
 install -m 700 $RPM_SOURCE_DIR/crontab.control \
 	%buildroot/etc/control.d/facilities/crontab
+install -m 700 $RPM_SOURCE_DIR/at.control \
+	$buildroot/etc/control.d/facilities/at
 
 %pre
 grep -q ^crontab: /etc/group || groupadd -g 160 crontab
@@ -72,13 +89,23 @@ if [ $1 -ge 2 ]; then
 	/etc/rc.d/init.d/crond status && touch /var/run/crond.restart || :
 	/etc/rc.d/init.d/crond stop || :
 	%_sbindir/control-dump crontab
+	%_sbindir/control at status > /dev/null 2>&1
+	if [ $? -eq 0 ]; then
+		%_sbindir/control-dump at
+		touch /var/run/crond.restoreat
+	fi
 fi
 
 %post
 if [ $1 -ge 2 ]; then
 	%_sbindir/control-restore crontab
+	if [ -f /var/run/crond.restoreat ]; then
+		%_sbindir/control-restore at
+		rm -f /var/run/crond.restoreat
+	fi
 else
 	grep -q ^crontab: /etc/group && %_sbindir/control crontab public
+	grep -q ^crontab: /etc/group && %_sbindir/control at public
 fi
 /sbin/chkconfig --add crond
 if [ -f /var/run/crond.restart ]; then
@@ -87,6 +114,9 @@ elif [ -f /var/run/crond.pid ]; then
 	/etc/rc.d/init.d/crond restart
 fi
 rm -f /var/run/crond.restart
+
+%triggerun -- vixie-cron <= 3.0.2.7
+	grep -q ^crontab: /etc/group && %_sbindir/control at public
 
 %preun
 if [ $1 -eq 0 ]; then
@@ -98,13 +128,23 @@ fi
 %defattr(-,root,root)
 %_sbindir/crond
 %attr(700,root,root) %verify(not mode group) %_bindir/crontab
+%attr(700,root,root) %verify(not mode group) %_bindir/at
+%_bindir/atq
+%_bindir/atrm
+%_bindir/batch
+%_mandir/man*/*
 %_mandir/man*/*
 %dir %attr(1730,root,crontab) /var/spool/cron
+%dir %attr(1770,root,crontab) /var/spool/at
 %dir /etc/cron.d
 %config /etc/rc.d/init.d/crond
 /etc/control.d/facilities/crontab
+/etc/control.d/facilities/at
 
 %changelog
+* Sun Feb 20 2005 Juan M. Bello Rivas <jmbr@owl.openwall.com> 4.1.20040916-owl1
+- Merged the changes by Jarno Huuskonen and by Dmitry V. Levin.
+
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.0.2.7-owl19
 - Removed verify checks for crontab binary since we are controlling it
 through owl-control facility.

@@ -1,0 +1,26 @@
+diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/cron.c vixie-cron-4.1.20040916/usr.sbin/cron/cron.c
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/cron.c	Sun Feb 20 16:04:35 2005
++++ vixie-cron-4.1.20040916/usr.sbin/cron/cron.c	Sun Feb 20 16:02:30 2005
+@@ -76,7 +76,9 @@ main(int argc, char *argv[]) {
+ 	ProgramName = program_invocation_short_name;
+ 	FixedName = "crond";
+ 
++#ifdef HAVE_SETLOCALE
+ 	setlocale(LC_ALL, "");
++#endif
+ 
+ #if defined(BSD)
+ 	setlinebuf(stdout);
+diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/crontab.c vixie-cron-4.1.20040916/usr.sbin/cron/crontab.c
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/crontab.c	Sun Feb 20 16:04:35 2005
++++ vixie-cron-4.1.20040916/usr.sbin/cron/crontab.c	Sun Feb 20 16:02:30 2005
+@@ -82,7 +82,9 @@ main(int argc, char *argv[]) {
+ 	ProgramName = argv[0];
+ 	FixedName = "crontab";
+ 
++#ifdef HAVE_SETLOCALE
+ 	setlocale(LC_ALL, "");
++#endif
+ 
+ #if defined(BSD)
+ 	setlinebuf(stderr);
