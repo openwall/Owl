@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.11 2002/10/19 14:08:43 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.12 2002/11/01 21:03:48 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.32.2
+Version: 1.6.32.3
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -76,6 +76,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Fri Nov 01 2002 Solar Designer <solar@owl.openwall.com>
+- Fixed a bug in "unique" which caused it to fail on big-endian boxes
+on files bigger than a single buffer, thanks to Corey Becker.
+
 * Sat Oct 19 2002 Solar Designer <solar@owl.openwall.com>
 - Simplified DES_bs_get_binary_raw().
 
