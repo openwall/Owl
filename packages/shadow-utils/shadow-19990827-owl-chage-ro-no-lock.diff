@@ -34,7 +34,7 @@
 +
 +	if (lflg) {
 +		if (setgid(getgid()) || setuid(ruid)) {
-+			fprintf(stderr, "%s: failed to drop privileges (%s)",
++			fprintf(stderr, "%s: failed to drop privileges (%s)\n",
 +				Prog, strerror(errno));
 +			exit(1);
 +		}
