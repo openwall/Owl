@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ltrace/ltrace.spec,v 1.9 2001/10/25 11:33:03 mci Exp $
+# $Id: Owl/packages/ltrace/ltrace.spec,v 1.10 2001/10/25 11:38:23 mci Exp $
 
 Summary: Tracks runtime library calls from dynamically linked executables.
 Name: ltrace
@@ -43,7 +43,8 @@ make
 %install
 make DESTDIR=$RPM_BUILD_ROOT mandir=%{_mandir} install
 rm -rf $RPM_BUILD_ROOT/%{_prefix}/doc
-cp -f debian/changelog ChangeLog
+rm ChangeLog
+cp debian/changelog ChangeLog
 
 %clean
 rm -rf $RPM_BUILD_ROOT
