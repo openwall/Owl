@@ -1,9 +1,9 @@
-# $Id: Owl/packages/quota/quota.spec,v 1.7 2001/07/01 11:05:27 mci Exp $
+# $Id: Owl/packages/quota/quota.spec,v 1.8 2001/07/01 15:58:49 mci Exp $
 
 Name: quota
 Summary: System administration tools for monitoring users' disk usage.
 Version: 2.00
-Release: 3owl
+Release: 4owl
 Copyright: BSD
 Source0: ftp://ftp.cistron.nl/pub/people/mvw/quota/%{name}-2.00.tar.gz
 Group: System Environment/Base
@@ -44,7 +44,8 @@ mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man{1,2,3,8}
 rm -rf ${RPM_BUILD_ROOT}
 
 %files
-%doc doc/*html
+%doc doc/*.html
+%doc warnquota.conf
 %defattr(-,root,root)
 /sbin/*
 %{_bindir}/*
@@ -56,7 +57,6 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %{_mandir}/man1/quota.1*
 %{_mandir}/man2/quotactl.2*
-%{_mandir}/man3/rquota.3*
 %{_mandir}/man8/edquota.8*
 %{_mandir}/man8/quotacheck.8*
 %{_mandir}/man8/quotaon.8*
@@ -65,9 +65,10 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %changelog
 * Sun Jul 01 2001 Michail Litvak <mci@owl.openwall.com>
-- pack only *html in doc/
+- pack only *.html in doc/
 - man pages fixes
 - added TMPDIR support to edquota
+- put warnquota.conf in doc
 
 * Wed Jun 27 2001 Michail Litvak <mci@owl.openwall.com>
 - more fixes in mans and docs

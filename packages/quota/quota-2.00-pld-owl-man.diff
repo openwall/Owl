@@ -1,5 +1,5 @@
---- quota-2.00/doc/quota.html.orig	Wed Jun 27 00:15:18 2001
-+++ quota-2.00/doc/quota.html	Wed Jun 27 00:16:32 2001
+--- quota-2.00/doc/quota.html.orig	Fri Jul 23 18:15:31 1999
++++ quota-2.00/doc/quota.html	Sun Jul  1 17:58:29 2001
 @@ -162,7 +162,7 @@
  <P>
  Ok now one should have all the quotafiles one needs.
@@ -9,8 +9,8 @@
  <P>
  to your /etc/rc. This is to turn the quotas on when you boot your machine.
  This is they way to go and not turn it on yourself any time when you boot
---- quota-2.00/doc/quotactl(2).html.orig	Wed Jun 27 00:19:30 2001
-+++ quota-2.00/doc/quotactl(2).html	Wed Jun 27 00:20:32 2001
+--- quota-2.00/doc/quotactl(2).html.orig	Fri Jul 23 18:15:31 1999
++++ quota-2.00/doc/quotactl(2).html	Sun Jul  1 17:58:29 2001
 @@ -9,7 +9,7 @@
  <H1>NAME</H1>
  quotactl - manipulate disk quotas
@@ -48,7 +48,7 @@
  This call is restricted to the super-user.
  <LI>
 --- quota-2.00/edquota.8.orig	Tue Sep  5 21:49:43 2000
-+++ quota-2.00/edquota.8	Wed Jun 27 00:11:33 2001
++++ quota-2.00/edquota.8	Sun Jul  1 17:58:29 2001
 @@ -2,7 +2,7 @@
  .SH NAME
  edquota \- edit user quotas
@@ -68,7 +68,7 @@
  .B \-n
  ]
 --- quota-2.00/quotacheck.8.orig	Tue Sep  5 21:49:43 2000
-+++ quota-2.00/quotacheck.8	Wed Jun 27 00:12:32 2001
++++ quota-2.00/quotacheck.8	Sun Jul  1 18:01:18 2001
 @@ -26,7 +26,7 @@
  values. ( for definitions of
  .I struct dqblk
@@ -78,7 +78,7 @@
  )
  .PP
  .I Quotacheck
-@@ -68,8 +68,17 @@
+@@ -68,10 +68,19 @@
  should only be run as Super User. Non-privilidged users are presumably not allowed
  to read all the directories on the given file system.
  .SH "SEE ALSO"
@@ -89,17 +89,20 @@
 +.BR fstab (5),
 +.BR e2fsck (8),
 +.BR edquota (8),
-+.BR efsck (8),
 +.BR fsck (8),
-+.BR quotaon (8),
 +.BR quotaoff (8),
-+.BR repquota (8),
-+.BR xfsck (8)
++.BR quotaon (8),
++.BR repquota (8)
  .SH FILES
- .I "quota.user, quota.group, /etc/fstab"
+-.I "quota.user, quota.group, /etc/fstab"
++.BR quota.user ,
++.BR quota.group ,
++.B  /etc/fstab
  .SH "AUTHOR"
+ Edvard Tuinder \<ed@elm.net\>
+ .br
 --- quota-2.00/quotactl.2.orig	Tue Sep  5 21:49:43 2000
-+++ quota-2.00/quotactl.2	Wed Jun 27 00:11:33 2001
++++ quota-2.00/quotactl.2	Sun Jul  1 17:58:29 2001
 @@ -3,7 +3,7 @@
  quotactl \- manipulate disk quotas
  .SH SYNOPSIS
@@ -137,7 +140,7 @@
  .TP
  .SB Q_SYNC
 --- quota-2.00/quotaon.8.orig	Tue Sep  5 21:49:43 2000
-+++ quota-2.00/quotaon.8	Wed Jun 27 00:11:33 2001
++++ quota-2.00/quotaon.8	Sun Jul  1 18:02:15 2001
 @@ -3,24 +3,24 @@
  .SH NAME
  quotaon, quotaoff \- turn file system quotas on and off
@@ -167,8 +170,14 @@
  [
  .B \-avug
  ]
+@@ -98,4 +98,4 @@
+ .PD
+ .SH "SEE ALSO"
+ .BR quotactl (2),
+-.BR fstab (5),
++.BR fstab (5)
 --- quota-2.00/repquota.8.orig	Tue Sep  5 21:49:43 2000
-+++ quota-2.00/repquota.8	Wed Jun 27 00:11:33 2001
++++ quota-2.00/repquota.8	Sun Jul  1 17:58:29 2001
 @@ -3,13 +3,13 @@
  .SH NAME
  repquota \- summarize quotas for a file system
@@ -185,19 +194,8 @@
  [
  .B \-avug
  ]
---- quota-2.00/rquotad.8.orig	Tue Sep  5 21:49:44 2000
-+++ quota-2.00/rquotad.8	Wed Jun 27 00:11:33 2001
-@@ -3,7 +3,7 @@
- .SH NAME
- rquotad, rpc.rquotad \- remote quota server
- .SH SYNOPSIS
--.B /usr/etc/rpc.rquotad
-+.B /usr/sbin/rpc.rquotad
- .SH DESCRIPTION
- .LP
- .IX  "rquotad daemon"  ""  "\fLrquotad\fP \(em remote quota server"
---- quota-2.00/quota.1.orig	Wed Jun 27 00:11:50 2001
-+++ quota-2.00/quota.1	Wed Jun 27 00:06:50 2001
+--- quota-2.00/quota.1.orig	Tue Sep 26 18:18:02 2000
++++ quota-2.00/quota.1	Sun Jul  1 17:58:29 2001
 @@ -88,11 +88,9 @@
  .B /etc/fstab
  to find filesystem names and locations
