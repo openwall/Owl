@@ -1,9 +1,9 @@
-# $Id: Owl/packages/which/which.spec,v 1.1 2000/11/19 10:20:03 mci Exp $
+# $Id: Owl/packages/which/which.spec,v 1.2 2000/11/19 10:46:49 mci Exp $
 
 Summary: Displays where a particular program in your path is located.
 Name: which
 Version: 2.12
-Release: owl1
+Release: 1owl
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.gnu.org/gnu/which/%{name}-%{version}.tar.gz
