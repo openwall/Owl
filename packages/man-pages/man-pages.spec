@@ -1,4 +1,4 @@
-# $Id: Owl/packages/man-pages/man-pages.spec,v 1.3 2001/05/02 11:54:37 mci Exp $
+# $Id: Owl/packages/man-pages/man-pages.spec,v 1.4 2001/05/03 07:05:35 mci Exp $
 
 Summary: Man (manual) pages from the Linux Documentation Project.
 Name: man-pages
@@ -22,7 +22,7 @@ Source12: ldconfig.8
 Source13: rpcinfo.8
 Patch1: man-pages-1.35-deb-misc.diff
 Patch2: man-pages-1.35-rh-ctype.diff
-# temporary disabled, we don't yet have these paths
+# temporarily disabled, we don't yet have these paths
 # Patch3: man-pages-1.35-rh-pathupdate.diff
 Patch4: man-pages-1.35-rh-unicodeurl.diff
 Patch5: man-pages-1.35-rh-roffix.diff
@@ -130,7 +130,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Wed May 02 2001 Michail Litvak <mci@owl.openwall.com>
-- use cp instead cp -a in spec
+- use cp instead of cp -a in spec
 - uselib.2 patch
 
 * Mon Apr 30 2001 Michail Litvak <mci@owl.openwall.com>
