@@ -51,7 +51,7 @@ expect:
 
 Dual Pentium III, 800 MHz, 512 MB:		0:35
 Dual Pentium III, 700 MHz, 1 GB:		0:40
-Dual Celeron (Mendocino), 433 MHz, 256 MB	1:15
+Dual Celeron (Mendocino), 433 MHz, 256 MB	1:20
 Pentium III, 550 MHz, 64 MB:			1:50
 UltraSparc IIi, 440 MHz, 256 MB:		3:20
 
@@ -98,4 +98,4 @@ We do consider the building of SRPM's and the lack of automatic build
 dependency handling for re-builds to be bugs in the build environment.
 We will eventually fix these.
 
-$Id: Owl/doc/BUILD,v 1.3 2000/12/28 17:28:25 solar Exp $
+$Id: Owl/doc/BUILD,v 1.4 2001/01/19 16:20:54 solar Exp $
