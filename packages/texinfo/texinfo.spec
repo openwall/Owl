@@ -1,9 +1,9 @@
-# $Id: Owl/packages/texinfo/texinfo.spec,v 1.16 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/texinfo/texinfo.spec,v 1.17 2005/01/12 16:59:43 galaxy Exp $
 
 Summary: Tools needed to create Texinfo format documentation files.
 Name: texinfo
 Version: 4.2
-Release: owl3
+Release: owl4
 License: GPL
 Group: Applications/Publishing
 Source0: ftp://ftp.gnu.org/gnu/texinfo/texinfo-%version.tar.gz
@@ -20,7 +20,7 @@ Prefix: %_prefix
 Requires: mktemp >= 1:1.3.1
 BuildRoot: /override/%name-%version
 
-%define __spec_install_post /usr/lib/rpm/brp-strip \; /usr/lib/rpm/brp-strip-comment-note
+%define __spec_install_post %_libdir/rpm/brp-strip \; %_libdir/rpm/brp-strip-comment-note
 
 %description
 Texinfo is a documentation system that can produce both online
@@ -50,18 +50,18 @@ browser program for viewing Info files.
 %build
 unset LINGUAS || :
 %configure --mandir=%_mandir --infodir=%_infodir
-make
+%__make
 gzip -9nf ChangeLog
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot/{etc,sbin}
+mkdir -p %buildroot/{%_sysconfdir,sbin}
 
 %makeinstall
 
 cd %buildroot
-install -m 644 $RPM_SOURCE_DIR/info-dir etc/info-dir
-ln -sf /etc/info-dir %buildroot%_infodir/dir
+install -m 644 $RPM_SOURCE_DIR/info-dir .%_sysconfdir/info-dir
+ln -sf %_sysconfdir/info-dir %buildroot%_infodir/dir
 mv .%_prefix/bin/install-info sbin/
 gzip -9nf .%_infodir/*info*
 
@@ -106,7 +106,7 @@ fi
 
 %files -n info
 %defattr(-,root,root)
-%config(noreplace) /etc/info-dir
+%config(noreplace) %verify(not size md5 mtime) %_sysconfdir/info-dir
 %config(noreplace) %_infodir/dir
 %_prefix/bin/info
 %_infodir/info.info*
@@ -114,6 +114,11 @@ fi
 /sbin/install-info
 
 %changelog
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl4
+- Removed verify checks for info-dir since it's heavily modified during
+the system lifetime.
+- Cleaned up the spec.
+
 * Fri Nov 22 2002 Solar Designer <solar@owl.openwall.com> 4.2-owl3
 - Corrected the path to bzcat, thanks to (GalaxyMaster).
 
