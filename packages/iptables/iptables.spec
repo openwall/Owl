@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iptables/iptables.spec,v 1.4 2003/08/22 01:33:57 solar Exp $
+# $Id: Owl/packages/iptables/iptables.spec,v 1.5 2003/08/22 02:00:47 solar Exp $
 
 Summary: Tools for managing Netfilter/iptables packet filtering rules.
 Name: iptables
@@ -57,6 +57,9 @@ fi
 /%{_lib}/iptables/libipt*
 
 %changelog
-* Wed Aug 20 2003 Michail Litvak <mci@owl.openwall.com> 1.2.8-owl1
+* Fri Aug 22 2003 Solar Designer <solar@owl.openwall.com> 1.2.8-owl1
+- Further cleanups and changes for consistency with the ipchains package.
+
+* Wed Aug 20 2003 Michail Litvak <mci@owl.openwall.com>
 - initial package for Owl.
 - startup script cleanups.
