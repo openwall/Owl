@@ -1,14 +1,17 @@
+# $Id: Owl/packages/pam/pam.spec,v 1.3 2000/07/16 14:11:43 solar Exp $
+
 Summary: A security tool which provides authentication for applications.
 Name: pam
 Version: 0.72
-Release: 8owl
+Release: 9owl
 Copyright: GPL or BSD
 Group: System Environment/Base
 Source0: pam-redhat-%{version}.tar.gz
 Source1: other.pamd
 Patch0: pam-0.72-owl-pam_pwdb-hack.diff
-Patch1: pam-0.72-owl-no-cracklib.diff
-Patch2: pam-0.72-owl-install-no-root.diff
+Patch1: pam-0.72-owl-pam_pwdb-expiration.diff
+Patch2: pam-0.72-owl-no-cracklib.diff
+Patch3: pam-0.72-owl-install-no-root.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: pwdb >= 0.54-2, initscripts >= 3.94
 Obsoletes: pamconfig
@@ -24,6 +27,7 @@ without having to recompile programs which do authentication.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 ln -sf defs/redhat.defs default.defs
 
 %build
@@ -79,6 +83,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/man/man8/*
 
 %changelog
+* Sun Jul 16 2000 Solar Designer <solar@false.com>
+- Added a password expiration bugfix for pam_pwdb.
+
 * Sun Jul  9 2000 Solar Designer <solar@false.com>
 - Added installation of pam_client.h
 

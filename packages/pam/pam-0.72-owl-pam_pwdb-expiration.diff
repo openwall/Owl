@@ -1,0 +1,11 @@
+--- pam-0.72.orig/modules/pam_pwdb/pam_unix_acct.-c	Mon Jan  3 20:34:26 2000
++++ pam-0.72/modules/pam_pwdb/pam_unix_acct.-c	Sun Jul 16 17:56:06 2000
+@@ -171,7 +171,7 @@
+ 	warn_days = *((const int *) pwe->value);
+ 	(void) pwdb_entry_delete(&pwe);
+ 
+-	if ((daysleft <= warn_days) && (warn_days > 0)) {
++	if ((daysleft <= warn_days) && (warn_days > 0) && daysleft >= 0) {
+ 	    char *s;
+ 
+ 	    if ( on(UNIX_DEBUG, ctrl) ) {
