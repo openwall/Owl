@@ -1,9 +1,9 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.20 2003/10/29 18:04:09 solar Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.21 2004/03/12 18:07:24 solar Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
 Version: 6.3.5
-Release: owl11
+Release: owl12
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.red-bean.com/pub/noel/%name-%version.tar.gz
@@ -33,7 +33,6 @@ rm accounting.info
 %patch1 -p1
 
 %build
-autoconf
 %configure
 sed -e 's,/\* #undef HAVE_LINUX_ACCT_H \*/,#define HAVE_LINUX_ACCT_H,' \
 	config.h > config.h.new
@@ -110,6 +109,9 @@ fi
 %_infodir/*
 
 %changelog
+* Thu Feb 26 2004 Michail Litvak <mci@owl.openwall.com> 6.3.5-owl12
+- Don't call autoconf.
+
 * Mon May 05 2003 Solar Designer <solar@owl.openwall.com> 6.3.5-owl11
 - Added a patch from Denis Ducamp to support /dev/pts in lastcomm(1).
 
