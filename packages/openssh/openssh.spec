@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.34 2002/03/16 23:21:07 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.35 2002/06/08 17:58:09 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.1p1
-Release: owl1
+Release: owl2
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -107,7 +107,10 @@ CFLAGS="$RPM_OPT_FLAGS" LIBS="-lcrypt -lpam -lpam_misc" ./configure \
 	--with-ipv4-default \
 	--with-rsh=/usr/bin/rsh \
 	--with-default-path=/bin:/usr/bin:/usr/local/bin
-make DESTDIR=$RPM_BUILD_ROOT
+%ifarch alphaev56 alphapca56 alphaev6 alphaev67
+make deattack.o CFLAGS="$RPM_OPT_FLAGS -mcpu=ev5 -Wall"
+%endif
+make
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -196,6 +199,10 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Sat Jun 08 2002 Solar Designer <solar@owl.openwall.com>
+- Build deattack.c with -mcpu=ev5 when building for alphaev56+ to not
+trigger a not fully debugged problem with the EV56+ code.
+
 * Sun Mar 17 2002 Solar Designer <solar@owl.openwall.com>
 - Updated to 3.1p1.
 
