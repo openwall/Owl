@@ -12,6 +12,11 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/11/19	Packages: SimplePAMApps, pam
+Use pam_lastlog with login(1).  Additionally, several bug fixes and
+other changes have been applied to libpam, pam_lastlog, pam_securetty,
+and login.  Please refer to change logs for the packages for details.
+
 2001/11/16	Packages: SimplePAMApps, openssh, popa3d, screen,
 		owl-setup
 Use pam_tcb instead of pam_pwdb.
@@ -463,4 +468,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.49 2001/11/16 03:09:22 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.50 2001/11/19 04:44:30 solar Exp $
