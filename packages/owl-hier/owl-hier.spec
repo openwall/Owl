@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.16 2004/01/15 23:38:05 mci Exp $
+# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.17 2004/02/17 00:31:58 mci Exp $
 
 Summary: Initial directory hierarchy.
 Name: owl-hier
-Version: 0.7
+Version: 0.8
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -33,6 +33,7 @@ sed \
 		/usr/sbin/mtree -U
 ln -s ../var/tmp usr/tmp
 ln -s ../X11R6/bin usr/bin/X11
+ln -s ../X11R6/include/X11 usr/include/X11
 ln -s ../X11R6/lib/X11 usr/lib/X11
 ln -s log var/adm
 ln -s spool/mail var/mail
@@ -69,6 +70,9 @@ comm -3 - filelist.remove >> filelist
 %files -f filelist
 
 %changelog
+* Mon Feb 16 2004 Michail Litvak <mci@owl.openwall.com> 0.8-owl1
+- Add some directories for FHS 2.2 compatibility.
+
 * Fri Jan 16 2004 Michail Litvak <mci@owl.openwall.com> 0.7-owl1
 - Added /usr/local/include.
 
