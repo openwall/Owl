@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ed/ed.spec,v 1.6 2002/01/30 10:16:27 mci Exp $
+# $Id: Owl/packages/ed/ed.spec,v 1.7 2002/01/30 15:29:51 mci Exp $
 
 Summary: The GNU line editor.
 Name: ed
@@ -37,11 +37,13 @@ make LDFLAGS=-s
 	     mandir=$RPM_BUILD_ROOT%{_mandir}/man1
 
 %post
-/sbin/install-info %{_infodir}/ed.info.gz %{_infodir}/dir
+/sbin/install-info %{_infodir}/ed.info.gz %{_infodir}/dir\
+	--entry="* ed: (ed).                  The GNU Line Editor."
 
 %preun
 if [ $1 -eq 0 ] ; then
-	/sbin/install-info --delete %{_infodir}/ed.info.gz %{_infodir}/dir
+	/sbin/install-info --delete %{_infodir}/ed.info.gz %{_infodir}/dir\
+		--entry="* ed: (ed).                  The GNU Line Editor."
 fi
 
 %clean
@@ -56,7 +58,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Wed Jan 30 2002 Michail Litval <mci@owl.openwall.com>
-- Install the info dir entry for ed as well.
 - Enforce our new spec file conventions.
 
 * Thu Nov 23 2000 Michail Litvak <mci@owl.openwall.com>
