@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.72 2004/06/06 22:30:33 mci Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.73 2004/09/10 07:27:38 galaxy Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl9
+Release: owl10
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -29,7 +29,7 @@ Patch12: openssh-3.6.1p2-cvs-20030603-UseDNS.diff
 Patch13: openssh-3.6.1p2-cvs-20030916-buffer-channels-realloc.diff
 Patch14: openssh-3.6.1p2-owl-realloc.diff
 Patch15: openssh-3.6.1p2-cvs-20040401-scp-fix.diff
-PreReq: openssl >= 0.9.6, openssl < 0.9.7
+PreReq: openssl >= 0.9.7, openssl < 0.9.8
 Requires: pam >= 0.75-owl16
 Obsoletes: ssh
 BuildRequires: openssl-devel
@@ -150,6 +150,9 @@ mkdir -p $RPM_BUILD_ROOT/etc/control.d/facilities
 install -m 700 $RPM_SOURCE_DIR/sftp.control \
 	$RPM_BUILD_ROOT/etc/control.d/facilities/sftp
 
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot%_datadir/Ssh.bin
+
 %pre server
 grep -q ^sshd: /etc/group || groupadd -g 74 sshd
 grep -q ^sshd: /etc/passwd || useradd -g sshd -u 74 -d / -s /bin/false -M sshd
@@ -231,6 +234,9 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Thu Sep 09 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 3.6.1p2-owl10
+- Rebuild with openssl 0.9.7
+
 * Fri Jun 04 2004 Michail Litvak <mci@owl.openwall.com> 3.6.1p2-owl9
 - Fixed directory traversal vulnerability in scp which allows remote malicious
 servers to overwrite arbitrary files (CAN-2004-0175).
