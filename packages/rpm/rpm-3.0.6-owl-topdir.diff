@@ -1,7 +1,6 @@
-diff -urN rpm-3.0.5.org/Makefile.am rpm-3.0.5/Makefile.am
---- rpm-3.0.5.org/Makefile.am	Sat Jul 22 14:31:58 2000
-+++ rpm-3.0.5/Makefile.am	Sun Sep  3 17:41:32 2000
-@@ -61,30 +61,30 @@
+--- rpm-3.0.6/Makefile.am.topdir	Tue Jun 12 11:38:05 2001
++++ rpm-3.0.6/Makefile.am	Tue Jun 12 11:39:45 2001
+@@ -61,31 +61,31 @@
  	@@LN_S@ rpm/rpmrc $(DESTDIR)/$(libdir)/rpmrc
  	@rm -f $(DESTDIR)/$(libdir)/rpmpopt
  	@@LN_S@ rpm/rpmpopt $(DESTDIR)/$(libdir)/rpmpopt
@@ -13,7 +12,8 @@ diff -urN rpm-3.0.5.org/Makefile.am rpm-3.0.5/Makefile.am
 -		$(mkinstalldirs) $(DESTDIR)/$(prefix)/src/redhat/RPMS/i586;\
 -		$(mkinstalldirs) $(DESTDIR)/$(prefix)/src/redhat/RPMS/i686;\
 -		$(mkinstalldirs) $(DESTDIR)/$(prefix)/src/redhat/RPMS/athlon ;;\
--	alpha*) $(mkinstalldirs) $(DESTDIR)/$(prefix)/src/redhat/RPMS/alpha ;;\
+-	alpha*) $(mkinstalldirs) $(DESTDIR)/$(prefix)/src/redhat/RPMS/alpha;\
+-		$(mkinstalldirs) $(DESTDIR)/$(prefix)/src/redhat/RPMS/alphaev6 ;;\
 -	sparc*) $(mkinstalldirs) $(DESTDIR)/$(prefix)/src/redhat/RPMS/sparc;\
 -		$(mkinstalldirs) $(DESTDIR)/$(prefix)/src/redhat/RPMS/sparcv9;\
 -		$(mkinstalldirs) $(DESTDIR)/$(prefix)/src/redhat/RPMS/sparc64 ;;\
@@ -23,7 +23,8 @@ diff -urN rpm-3.0.5.org/Makefile.am rpm-3.0.5/Makefile.am
 +		$(mkinstalldirs) $(DESTDIR)/$(prefix)/src/RPM/RPMS/i586;\
 +		$(mkinstalldirs) $(DESTDIR)/$(prefix)/src/RPM/RPMS/i686;\
 +		$(mkinstalldirs) $(DESTDIR)/$(prefix)/src/RPM/RPMS/athlon ;;\
-+	alpha*) $(mkinstalldirs) $(DESTDIR)/$(prefix)/src/RPM/RPMS/alpha ;;\
++	alpha*) $(mkinstalldirs) $(DESTDIR)/$(prefix)/src/RPM/RPMS/alpha;\
++		$(mkinstalldirs) $(DESTDIR)/$(prefix)/src/RPM/RPMS/alphaev6 ;;\
 +	sparc*) $(mkinstalldirs) $(DESTDIR)/$(prefix)/src/RPM/RPMS/sparc;\
 +		$(mkinstalldirs) $(DESTDIR)/$(prefix)/src/RPM/RPMS/sparcv9;\
 +		$(mkinstalldirs) $(DESTDIR)/$(prefix)/src/RPM/RPMS/sparc64 ;;\
@@ -50,10 +51,9 @@ diff -urN rpm-3.0.5.org/Makefile.am rpm-3.0.5/Makefile.am
  	@$(mkinstalldirs) $(DESTDIR)/var/tmp
  
  .PHONY: tar
-diff -urN rpm-3.0.5.org/macros.in rpm-3.0.5/macros.in
---- rpm-3.0.5.org/macros.in	Sun Jul  9 18:35:56 2000
-+++ rpm-3.0.5/macros.in	Sun Sep  3 16:37:40 2000
-@@ -110,7 +110,7 @@
+--- rpm-3.0.6/macros.in.topdir	Tue Jun 12 11:39:52 2001
++++ rpm-3.0.6/macros.in	Tue Jun 12 11:40:17 2001
+@@ -116,7 +116,7 @@
  %_specdir		%{_topdir}/SPECS
  %_srcrpmdir		%{_topdir}/SRPMS
  %_tmppath		%{_var}/tmp

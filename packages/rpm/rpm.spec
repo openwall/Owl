@@ -1,21 +1,24 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.16 2000/11/29 23:16:34 kad Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.17 2001/06/12 09:47:59 kad Exp $
+%define        _noVersionedDependencies        1
 
 # XXX legacy requires './' payload prefix to be omitted from rpm packages.
 %define        _noPayloadPrefix        1
 %define        __prefix        /usr
 #%{expand:%%define __share %(if [ -d %{__prefix}/share/man ]; then echo /share ; else echo %%{nil} ; fi)}
-%define __share %{nil}
+%define        __share %{nil}
+%define        __mandir        %{__prefix}%{__share}/man
+
 
 %define NEED_PYTHON 'no'
-%define version 3.0.5
+%define version 3.0.6
 
 Summary: The Red Hat package management system.
 Name: 		rpm
 Version: 	%{version}
-Release: 	9.7.6owl
+Release: 	1owl
 Group: 		System Environment/Base
 Source: 	ftp://ftp.rpm.org/pub/rpm/dist/rpm-3.0.x/rpm-%{version}.tar.gz
-Patch0:		rpm-3.0.5-owl-topdir.diff
+Patch0:		rpm-3.0.6-owl-topdir.diff
 Patch1:		rpm-3.0.5-owl-bash2.diff
 Patch2:		rpm-3.0.5-owl-vendor.diff
 Patch3:		rpm-3.0.5-owl-closeall.diff
@@ -24,6 +27,8 @@ Patch5:		rpm-3.0.5-owl-gendiff.diff
 Copyright: 	GPL
 Conflicts: 	patch < 2.5
 %ifos linux
+# XXX the libio interface is incompatible in glibc-2.2
+Conflicts:      glibc >= 2.1.3
 Prereq: 	gawk fileutils textutils sh-utils mktemp
 BuildRequires: 	bzip2 >= 0.9.0c-2
 Requires: 	popt, bzip2 >= 0.9.0c-2
@@ -85,7 +90,7 @@ programs that will manipulate RPM packages and databases.
 %package -n popt
 Summary: A C library for parsing command line parameters.
 Group: Development/Libraries
-Version: 1.5
+Version: 1.5.1
 
 %description -n popt
 Popt is a C library for parsing command line parameters.  Popt was
@@ -220,9 +225,10 @@ fi
 #%dir %{__prefix}/src/RPM/RPMS
 #%{__prefix}/src/RPM/RPMS/*
 %{__prefix}/*/locale/*/LC_MESSAGES/rpm.mo
-%{__prefix}%{__share}/man/man[18]/*.[18]*
-%lang(pl) %{__prefix}%{__share}/man/pl/man[18]/*.[18]*
-%lang(ru) %{__prefix}%{__share}/man/ru/man[18]/*.[18]*
+%{__mandir}/man[18]/*.[18]*
+%lang(pl) %{__mandir}/pl/man[18]/*.[18]*
+%lang(ru) %{__mandir}/ru/man[18]/*.[18]*
+%lang(sk) %{__mandir}/sk/man[18]/*.[18]*
 
 %files build
 %defattr(-,root,root)
@@ -264,7 +270,7 @@ fi
 %defattr(-,root,root)
 %{__prefix}/lib/libpopt.so.*
 %{__prefix}/*/locale/*/LC_MESSAGES/popt.mo
-%{__prefix}%{__share}/man/man3/popt.3*
+%{__mandir}/man3/popt.3*
 
 # XXX These may end up in popt-devel but it hardly seems worth the effort now.
 %{__prefix}/lib/libpopt.a
@@ -273,6 +279,9 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Tue Jun 12 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- update to 3.0.6 release
+
 * Thu Nov 30 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - disable /usr/src/RPM for security reasons
 
