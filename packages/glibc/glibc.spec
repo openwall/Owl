@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.79 2005/01/20 04:13:50 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.80 2005/01/20 05:26:59 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -43,13 +43,13 @@ Patch200: glibc-2.3.2-suse-resolv-response-length.diff
 Patch300: glibc-2.3.3-alt-doc-linuxthreads.diff
 Patch301: glibc-2.3.3-alt-string2.diff
 Patch302: glibc-2.3.3-alt-sys_mount.diff
-Patch303: glibc-2.3.3-obsd-alt-sys_queue.diff
+Patch303: glibc-2.3.3-openbsd-alt-sys_queue.diff
 Patch304: glibc-2.3.3-alt-getopt_optind.diff
 Patch305: glibc-2.3.3-alt-io_fts-cleanup.diff
 Patch306: glibc-2.3.3-alt-asprintf.diff
 Patch307: glibc-2.3.3-alt-realpath.diff
 Patch308: glibc-2.3.3-alt-libio.diff
-Patch309: glibc-2.3.3-obsd-strlcpy-strlcat.diff
+Patch309: glibc-2.3.3-openbsd-strlcpy-strlcat.diff
 Patch310: glibc-2.3.3-alt-iconv_prog-replace.diff
 Patch311: glibc-2.3.3-alt-i18n.diff
 Patch312: glibc-2.3.3-alt-relocate-helper-libs.diff
