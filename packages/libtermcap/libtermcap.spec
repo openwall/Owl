@@ -1,9 +1,9 @@
-# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.1 2000/08/02 02:38:43 solar Exp $
+# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.2 2000/09/08 18:26:22 solar Exp $
 
 Summary: A basic system library for accessing the termcap database.
 Name: libtermcap
 Version: 2.0.8
-Release: 1owl
+Release: 2owl
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://sunsite.unc.edu/pub/Linux/GCC/termcap-2.0.8.tar.gz
@@ -37,6 +37,9 @@ developing programs which will access the termcap database.
 If you need to develop programs which will access the termcap database,
 you'll need to install this package.  You'll also need to install the
 libtermcap package.
+
+# Use %optflags_lib for this package if defined.
+%{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 
 %prep
 %setup -q -n termcap-2.0.8
@@ -98,5 +101,8 @@ fi
 /usr/include/termcap.h
 
 %changelog
+* Fri Sep 08 2000 Solar Designer <solar@owl.openwall.com>
+- %optflags_lib support.
+
 * Wed Aug 02 2000 Solar Designer <solar@owl.openwall.com>
 - Imported this spec file from RH, and changed it heavily.
