@@ -1,6 +1,6 @@
-# $Id: Owl/packages/prtconf/prtconf.spec,v 1.1 2003/07/24 20:20:42 solar Exp $
+# $Id: Owl/packages/prtconf/prtconf.spec,v 1.2 2003/07/24 20:21:21 solar Exp $
 
-Summary: SPARC OpenPROM dump utility.
+Summary: Utilities to dump and modify SPARC OpenPROM.
 Name: prtconf
 Version: 1.3
 Release: owl1
