@@ -1,12 +1,12 @@
-# $Id: Owl/packages/cpio/cpio.spec,v 1.4 2000/11/29 16:26:35 kad Exp $
+# $Id: Owl/packages/cpio/cpio.spec,v 1.5 2000/12/02 00:52:07 solar Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
 Version: 2.4.2
-Release: 22owl
+Release: 23owl
 Copyright: GPL
 Group: Archiving/Backup
-conflicts: mt-st
+Conflicts: mt-st, rmt
 Source: ftp://ftp.gnu.org/gnu/cpio-2.4.2.tar.gz
 Patch1:  cpio-2.4.2-deb-cpio.diff
 Patch2:  cpio-2.4.2-deb-mt_scsi.diff
@@ -69,6 +69,10 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/%{_mandir}/man8/
 install -m 644 rmt.8 ${RPM_BUILD_ROOT}%{_mandir}/man8/
 
+mkdir -p $RPM_BUILD_ROOT/{etc,sbin}
+ln -s /usr/libexec/rmt $RPM_BUILD_ROOT/etc/
+ln -s /usr/libexec/rmt $RPM_BUILD_ROOT/sbin/
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -86,11 +90,17 @@ fi
 /bin/cpio
 /bin/mt
 /usr/libexec/rmt
+/etc/rmt
+/sbin/rmt
 %{_infodir}/cpio.*
 %{_mandir}/man1/cpio.1*
 %{_mandir}/man8/rmt.8*
 
 %changelog
+* Sat Dec 02 2000 Solar Designer <solar@owl.openwall.com>
+- Added /etc/rmt and /sbin/rmt symlinks.
+- Conflicts: rmt
+
 * Wed Nov 29 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - imported lchown patch from RH7
 
