@@ -1,4 +1,4 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.11 2002/02/13 00:14:45 solar Exp $
+# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.12 2002/02/14 08:17:36 solar Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
@@ -93,7 +93,7 @@ fi
 
 %changelog
 * Wed Feb 13 2002 Solar Designer <solar@owl.openwall.com>
-- Don't unlink the old init(8) on package upgrades as that would actually
+- Don't unlink the old /sbin/init on package upgrades as that would actually
 leave it pending for delete on process termination and prevent remounting
 the filesystem read-only during shutdown.
 - Link init statically to avoid the same problem with glibc upgrades where
