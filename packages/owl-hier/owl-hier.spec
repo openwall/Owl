@@ -1,10 +1,10 @@
-# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.7 2001/09/02 11:31:44 solar Exp $
+# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.8 2001/09/25 16:39:56 solar Exp $
 
 Summary: Initial directory hierarchy
 Name: owl-hier
-Version: 0.2
+Version: 0.3
 Release: 1owl
-Copyright: public domain
+License: public domain
 Group: System Environment/Base
 Source: special
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
@@ -72,6 +72,12 @@ rm -rf $RPM_BUILD_ROOT
 %files -f filelist
 
 %changelog
+* Tue Sep 25 2001 Solar Designer <solar@owl.openwall.com>
+- Provide /var/empty, which is a better choice than /usr/share/empty as
+/usr/share is intended to be NFS-(un)mountable.  /var/empty is going to
+be available on OpenBSD as well.  /usr/share/empty is for Red Hat Linux
+compatibility and should no longer be used by new Owl packages.
+
 * Sun Sep 02 2001 Solar Designer <solar@owl.openwall.com>
 - 1771 for /var/spool/mail
 
