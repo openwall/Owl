@@ -1,5 +1,5 @@
---- screen-3.9.9/os.h.orig	Sat Apr 28 16:26:43 2001
-+++ screen-3.9.9/os.h	Wed Jun 13 09:43:25 2001
+--- screen-4.0.2/os.h.orig	Tue Jan  8 15:42:33 2002
++++ screen-4.0.2/os.h	Tue Dec  9 14:00:28 2003
 @@ -53,6 +53,7 @@
  #endif
  #ifdef POSIX
@@ -8,7 +8,7 @@
  # if defined(__STDC__)
  #  include <stdlib.h>
  # endif /* __STDC__ */
-@@ -266,7 +268,7 @@
+@@ -270,7 +271,7 @@
  #  define pututline	pututxline
  #  define setutent	setutxent
  #  define endutent	endutxent
@@ -17,7 +17,7 @@
  # else /* SVR4 */
  #  include <utmp.h>
  # endif /* SVR4 */
-@@ -287,7 +289,7 @@
+@@ -291,7 +292,7 @@
  #   ifdef _PATH_UTMP
  #    define UTMPFILE	_PATH_UTMP
  #   else
@@ -26,8 +26,8 @@
  #   endif /* _PATH_UTMP */
  #  endif
  # endif
---- screen-3.9.9/osdef.h.in.orig	Wed Jun 13 09:43:34 2001
-+++ screen-3.9.9/osdef.h.in	Wed Jun 13 09:43:43 2001
+--- screen-4.0.2/osdef.h.in.orig	Sat Apr 28 13:26:43 2001
++++ screen-4.0.2/osdef.h.in	Tue Dec  9 14:00:28 2003
 @@ -96,7 +96,6 @@
  extern int   setegid __P((int));
  #endif

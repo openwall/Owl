@@ -1,26 +1,24 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.28 2003/12/14 00:11:28 mci Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.29 2004/01/15 00:17:22 mci Exp $
 
 Summary: A screen manager that supports multiple sessions on one terminal.
 Name: screen
-Version: 3.9.10
-Release: owl8
+Version: 4.0.2
+Release: owl1
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%version.tar.gz
 Source1: screen.pam
-Patch0: screen-3.9.9-owl-os.diff
-Patch1: screen-3.9.9-owl-config.diff
-Patch2: screen-3.9.10-owl-pam.diff
-Patch3: screen-3.9.10-deb-owl-home-screen-exchange.diff
-Patch4: screen-3.9.10-deb-owl-pty.diff
-Patch5: screen-3.9.10-deb-owl-doc.diff
-Patch6: screen-3.9.10-rh-delete-hack.diff
-Patch7: screen-3.9.10-rh-doc.diff
-Patch8: screen-3.9.9-owl-telnet.diff
-Patch9: screen-3.9.10-owl-tmp.diff
-Patch10: screen-3.9.10-owl-no-fault-handler.diff
-Patch11: screen-3.9.11-alt-utempter.diff
-Patch12: screen-3.9.10-up-fixes.diff
+Patch0: screen-4.0.2-owl-os.diff
+Patch1: screen-4.0.2-owl-config.diff
+Patch2: screen-4.0.2-owl-pam.diff
+Patch3: screen-4.0.2-deb-owl-home-screen-exchange.diff
+Patch4: screen-4.0.2-deb-owl-doc.diff
+Patch5: screen-4.0.2-rh-delete-hack.diff
+Patch6: screen-4.0.2-rh-doc.diff
+Patch7: screen-4.0.2-owl-tmp.diff
+Patch8: screen-4.0.2-owl-no-fault-handler.diff
+Patch9: screen-4.0.2-alt-utempter.diff
+Patch10: screen-4.0.2-owl-warnings.diff
 PreReq: /sbin/install-info
 Requires: tcb, pam_userpass, libutempter
 # Just in case this is built with an older version of RPM package.
@@ -48,14 +46,12 @@ but want to use more than one session.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
-%patch11 -p1
-%patch12 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
 %build
 autoconf
-%configure --disable-socket-dir
+%configure --disable-socket-dir --enable-pam
 
 rm doc/screen.info*
 
@@ -65,7 +61,7 @@ make CFLAGS="$RPM_OPT_FLAGS"
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/etc/pam.d
 
-%makeinstall
+make install DESTDIR=$RPM_BUILD_ROOT
 
 pushd $RPM_BUILD_ROOT
 rm -f .%_bindir/screen.old .%_bindir/screen
@@ -113,11 +109,16 @@ fi
 %attr(2711,root,screen) %_bindir/screen
 %_mandir/man1/screen.1.*
 %_infodir/screen.info*
+%_datadir/screen/utf8encodings/*
 %config(noreplace) /etc/screenrc
 %config(noreplace) /etc/pam.d/screen
 %attr(710,root,screen) %dir %_libexecdir/screen
 
 %changelog
+* Fri Jan 09 2004 Michail Litvak <mci@owl.openwall.com> 4.0.2-owl1
+- 4.0.2
+- Dropped obsoleted patches.
+
 * Sun Dec 14 2003 Michail Litvak <mci@owl.openwall.com> 3.9.10-owl8
 - Patch from 4.0.2 upstream version - buffer overflow fix in
 ANSI characters handling (reported by Timo Sirainen).

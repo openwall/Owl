@@ -1,9 +1,8 @@
-diff -ur screen-3.9.10.orig/etc/etcscreenrc screen-3.9.10/etc/etcscreenrc
---- screen-3.9.10.orig/etc/etcscreenrc	Sat Apr 28 19:25:34 2001
-+++ screen-3.9.10/etc/etcscreenrc	Sun May 19 07:19:24 2002
+--- screen-4.0.2/etc/etcscreenrc.orig	Fri Dec  5 13:46:13 2003
++++ screen-4.0.2/etc/etcscreenrc	Wed Jan  7 23:25:13 2004
 @@ -92,3 +92,10 @@
- bind 'O' login off
- bind '}' history
+ bind O login off
+ bind } history
  
 +# Red Hat Hack^H^H^H^HPatch
 +# This makes screen treat backspaces '^?' as
@@ -12,10 +11,9 @@ diff -ur screen-3.9.10.orig/etc/etcscreenrc screen-3.9.10/etc/etcscreenrc
 +# but I dont know where to put it, and this works.
 +bindkey -d -k kb stuff \010
 +# /Red Hat Patch
-diff -ur screen-3.9.10.orig/etc/screenrc screen-3.9.10/etc/screenrc
---- screen-3.9.10.orig/etc/screenrc	Tue Sep  4 18:26:21 2001
-+++ screen-3.9.10/etc/screenrc	Sun May 19 07:19:24 2002
-@@ -123,6 +123,15 @@
+--- screen-4.0.2/etc/screenrc.orig	Fri Dec  5 13:59:39 2003
++++ screen-4.0.2/etc/screenrc	Wed Jan  7 23:25:13 2004
+@@ -130,6 +130,15 @@
  register ] "\033:se ai\015a"
  bind ^] paste [.]
  

@@ -1,7 +1,6 @@
-diff -uprk.orig screen-3.9.11.orig/utmp.c screen-3.9.11/utmp.c
---- screen-3.9.11.orig/utmp.c	2002-01-08 18:44:37 +0300
-+++ screen-3.9.11/utmp.c	2002-05-26 13:45:45 +0300
-@@ -576,12 +576,11 @@ struct win *wi;
+--- screen-4.0.2/utmp.c.orig	Mon Sep  8 14:27:17 2003
++++ screen-4.0.2/utmp.c	Wed Jan  7 22:57:45 2004
+@@ -572,12 +572,11 @@
  #ifdef HAVE_UTEMPTER
    if (eff_uid && wi->w_ptyfd != -1)
      {

@@ -1,0 +1,22 @@
+--- screen-4.0.2/screen.c.orig	Mon Sep  8 17:26:41 2003
++++ screen-4.0.2/screen.c	Thu Jan 15 00:34:13 2004
+@@ -2301,7 +2301,7 @@
+   int truncpos = -1;
+   int truncper = 0;
+   int trunclong = 0;
+-  struct backtick *bt;
++  struct backtick *bt = NULL;
+  
+   if (winmsg_numrend >= 0)
+     winmsg_numrend = 0;
+--- screen-4.0.2/process.c.orig	Thu Sep 18 15:53:54 2003
++++ screen-4.0.2/process.c	Thu Jan 15 00:35:52 2004
+@@ -3049,7 +3049,7 @@
+           int newnr, fl = 0, kf = 0, af = 0, df = 0, mf = 0;
+ 	  struct display *odisp = display;
+ 	  int used = 0;
+-          struct kmap_ext *kme;
++          struct kmap_ext *kme = NULL;
+ 
+ 	  for (; *args && **args == '-'; args++, argl++)
+ 	    {

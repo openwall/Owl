@@ -1,7 +1,6 @@
-diff -ur screen-3.9.10.orig/doc/screen.1 screen-3.9.10/doc/screen.1
---- screen-3.9.10.orig/doc/screen.1	Fri May 25 18:39:19 2001
-+++ screen-3.9.10/doc/screen.1	Sun May 19 07:16:54 2002
-@@ -101,7 +101,7 @@
+--- screen-4.0.2/doc/screen.1.orig	Fri Dec  5 13:51:57 2003
++++ screen-4.0.2/doc/screen.1	Wed Jan  7 23:36:26 2004
+@@ -99,7 +99,7 @@
  The above example would start the emacs editor (editing prog.c) and switch
  to its window.
  .PP
@@ -10,7 +9,7 @@ diff -ur screen-3.9.10.orig/doc/screen.1 screen-3.9.10/doc/screen.1
  .IR screen ,
  an appropriate record will be written to this file for each window, and
  removed when the window is terminated.
-@@ -230,7 +230,7 @@
+@@ -228,7 +228,7 @@
  The use of this option is discouraged.
  .TP 5
  .BR \-l " and " \-ln
@@ -19,7 +18,7 @@ diff -ur screen-3.9.10.orig/doc/screen.1 screen-3.9.10/doc/screen.1
  This can also be defined through the \*Qdeflogin\*U .screenrc command.
  .TP 5
  .BR \-ls " and " \-list
-@@ -592,7 +592,7 @@
+@@ -594,7 +594,7 @@
  When
  .I screen
  is invoked, it executes initialization commands from the files
@@ -28,7 +27,7 @@ diff -ur screen-3.9.10.orig/doc/screen.1 screen-3.9.10/doc/screen.1
  \*Q.screenrc\*U in the user's home directory. These are the \*Qprogrammer's
  defaults\*U that can be overridden in the following ways: for the
  global screenrc file 
-@@ -1010,7 +1010,7 @@
+@@ -1098,7 +1098,7 @@
  .PP
  Change the filename used for reading and writing with the paste buffer.
  If the optional argument to the \*Qbufferfile\*U command is omitted, 
@@ -37,7 +36,7 @@ diff -ur screen-3.9.10.orig/doc/screen.1 screen-3.9.10/doc/screen.1
  The following example will paste the system's password file into 
  the
  .I screen
-@@ -1275,7 +1275,7 @@
+@@ -1369,7 +1369,7 @@
  .br
  .ti -2n
  \fB>\fP sets the (second) mark and writes the contents of the paste buffer to
@@ -46,7 +45,7 @@ diff -ur screen-3.9.10.orig/doc/screen.1 screen-3.9.10/doc/screen.1
  finished. 
  .br
  This example demonstrates how to dump the whole scrollback buffer 
-@@ -1557,7 +1557,7 @@
+@@ -1669,7 +1669,7 @@
  The echo command may be used to annoy 
  .I screen
  users with a 'message of the
@@ -55,16 +54,16 @@ diff -ur screen-3.9.10.orig/doc/screen.1 screen-3.9.10/doc/screen.1
  The option \*Q-n\*U may be used to suppress the line feed.
  See also \*Qsleep\*U.
  Echo is also useful for online checking of environment variables.
-@@ -2805,7 +2805,7 @@
- file if no filename is given. This is thought of as a primitive means of communication between
- .I screen
- users on the same host. The filename can be set with the \fIbufferfile\fP
+@@ -3044,7 +3044,7 @@
+ users on the same host. If an encoding is specified the paste buffer
+ is recoded on the fly to match the encoding.
+ The filename can be set with the \fIbufferfile\fP
 -command and defaults to \*Q/tmp/screen-exchange\*U.
 +command and defaults to \*Q$HOME/.screen-exchange\*U.
  .sp
  .ne 3
  .BR "writelock " [ on | "off\fR|\fBauto\fR]"
-@@ -4091,12 +4091,12 @@
+@@ -4416,12 +4416,12 @@
  .I screen
  distribution package for private and global initialization files.
  .IP $SYSSCREENRC 
@@ -79,7 +78,7 @@ diff -ur screen-3.9.10.orig/doc/screen.1 screen-3.9.10/doc/screen.1
  .IP $SCREENDIR/S-<login>
  .IP /local/screens/S-<login>
  Socket directories (default)
-@@ -4104,9 +4104,7 @@
+@@ -4429,9 +4429,7 @@
  Alternate socket directories.
  .IP "<socket directory>/.termcap"
  Written by the "termcap" output function
@@ -90,7 +89,7 @@ diff -ur screen-3.9.10.orig/doc/screen.1 screen-3.9.10/doc/screen.1
  .I screen
  `interprocess communication buffer'
  .IP hardcopy.[0-9]
-@@ -4117,7 +4115,7 @@
+@@ -4442,7 +4440,7 @@
  or
  .IP /etc/termcap
  Terminal capability databases
@@ -99,7 +98,7 @@ diff -ur screen-3.9.10.orig/doc/screen.1 screen-3.9.10/doc/screen.1
  Login records
  .IP $LOCKPRG
  Program that locks a terminal.
-@@ -4228,9 +4226,9 @@
+@@ -4555,9 +4553,9 @@
  must be installed as set-uid with owner root on most systems in order
  to be able to correctly change the owner of the tty device file for
  each window.
@@ -111,10 +110,9 @@ diff -ur screen-3.9.10.orig/doc/screen.1 screen-3.9.10/doc/screen.1
  .I screen
  is killed with SIGKILL.
  This will cause some programs (like "w" or "rwho")
-diff -ur screen-3.9.10.orig/doc/screen.texinfo screen-3.9.10/doc/screen.texinfo
---- screen-3.9.10.orig/doc/screen.texinfo	Fri May 25 18:40:02 2001
-+++ screen-3.9.10/doc/screen.texinfo	Sun May 19 07:16:54 2002
-@@ -438,7 +438,7 @@
+--- screen-4.0.2/doc/screen.texinfo.orig	Fri Dec  5 13:51:46 2003
++++ screen-4.0.2/doc/screen.texinfo	Wed Jan  7 23:37:12 2004
+@@ -447,7 +447,7 @@
  @cindex screenrc
  When @code{screen} is invoked, it executes initialization commands from
  the files @file{.screenrc} in the user's home directory and
@@ -123,16 +121,16 @@ diff -ur screen-3.9.10.orig/doc/screen.texinfo screen-3.9.10/doc/screen.texinfo
  following ways:
  For the global screenrc file @code{screen} searches for the environment
  variable @code{$SYSSCREENRC} (this override feature may be disabled at
-@@ -2912,7 +2912,7 @@
+@@ -3028,7 +3028,7 @@
  
  @noindent
  @kbd{>} sets the (second) mark and writes the contents of the paste buffer
 -to the screen-exchange file (@file{/tmp/screen-exchange} per default)
 +to the screen-exchange file (@file{$HOME/.screen-exchange} per default)
- once copy-mode is finished.  @xref{Screen-Exchange}.@*
+ once copy-mode is finished.  @xref{Screen Exchange}.@*
  This example demonstrates how to dump the
  whole scrollback buffer to that file: @*@kbd{C-a [ g SPACE G $ >}.
-@@ -3034,7 +3034,7 @@
+@@ -3151,7 +3151,7 @@
  (none)@*
  Change the filename used for reading and writing with the paste buffer.
  If the @var{exchange-file} parameter is omitted, @code{screen} reverts
@@ -141,7 +139,7 @@ diff -ur screen-3.9.10.orig/doc/screen.texinfo screen-3.9.10/doc/screen.texinfo
  will paste the system's password file into the screen window (using the 
  paste buffer, where a copy remains):
  
-@@ -4621,13 +4621,13 @@
+@@ -4962,13 +4962,13 @@
  global initialization files.
  
  @item @code{$SYSSCREENRC}
@@ -157,7 +155,7 @@ diff -ur screen-3.9.10.orig/doc/screen.texinfo screen-3.9.10/doc/screen.texinfo
  
  @item @code{$SCREENDIR}/S-@var{login}
  
-@@ -4640,8 +4640,7 @@
+@@ -4981,8 +4981,7 @@
  @item @var{socket directory}/.termcap
  Written by the @code{dumptermcap} command
  

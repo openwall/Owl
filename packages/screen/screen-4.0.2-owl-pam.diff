@@ -1,0 +1,154 @@
+--- screen-4.0.2/attacher.c.orig	Mon Sep  8 17:24:48 2003
++++ screen-4.0.2/attacher.c	Thu Jan 15 01:39:33 2004
+@@ -30,6 +30,10 @@
+ #include "screen.h"
+ #include "extern.h"
+ 
++#ifdef USE_PAM
++#include <security/pam_userpass.h>
++#endif
++
+ #include <pwd.h>
+ 
+ static int WriteMessage __P((int, struct msg *));
+@@ -50,7 +54,7 @@
+ static sigret_t AttachSigCont __P(SIGPROTOARG);
+ #endif
+ 
+-extern int real_uid, real_gid, eff_uid, eff_gid;
++extern int real_uid, real_gid, eff_uid, eff_gid, init_eff_gid;
+ extern char *SockName, *SockMatch, SockPath[];
+ extern struct passwd *ppp;
+ extern char *attach_tty, *attach_term, *LoginName, *preselect;
+@@ -740,6 +744,7 @@
+ 
+ #ifdef USE_PAM
+ 
++#if 0
+ /*
+  *  PAM support by Pablo Averbuj <pablo@averbuj.com>
+  */
+@@ -794,8 +799,13 @@
+     &PAM_conv,
+     NULL
+ };
++#endif
+ 
+-
++static pam_userpass_t userpass;
++static struct pam_conv conv = {
++    &pam_userpass_conv,
++    &userpass
++};
+ #endif
+ 
+ /* -- original copyright by Luigi Cannelloni 1985 (luigi@faui70.UUCP) -- */
+@@ -804,8 +814,8 @@
+ {
+   char fullname[100], *cp1, message[100 + 100];
+ #ifdef USE_PAM
+-  pam_handle_t *pamh = 0;
+-  int pam_error;
++  int status;
++  pam_handle_t *pamh = NULL;
+ #else
+   char *pass, mypass[16 + 1], salt[3];
+ #endif
+@@ -873,15 +883,32 @@
+           /* NOTREACHED */
+         }
+ #ifdef USE_PAM
+-      PAM_conversation.appdata_ptr = cp1;
+-      pam_error = pam_start("screen", ppp->pw_name, &PAM_conversation, &pamh);
+-      if (pam_error != PAM_SUCCESS)
+-	AttacherFinit(SIGARG);		/* goodbye */
+-      pam_error = pam_authenticate(pamh, 0);
+-      pam_end(pamh, pam_error);
+-      PAM_conversation.appdata_ptr = 0;
+-      if (pam_error == PAM_SUCCESS)
+-	break;
++      userpass.user = ppp->pw_name;
++      userpass.pass = cp1;
++
++      status = pam_start("screen", ppp->pw_name, &conv, &pamh);
++
++      if (status == PAM_SUCCESS)
++	{
++	  /* Let the PAM modules make use of our SGID privileges. */
++	  xsetegid(init_eff_gid);
++	  if ((status = pam_authenticate(pamh, 0)) != PAM_SUCCESS)
++            {
++	       xsetegid(real_gid);
++	       pam_end(pamh, status);
++	       continue;
++	    }
++	  xsetegid(real_gid);
++
++	  status = pam_end(pamh, PAM_SUCCESS);
++	  if (status == PAM_SUCCESS)
++	    {
++	       memset(cp1, 0, strlen(cp1));
++	       userpass.pass = NULL;
++	       break;
++	    }
++	}
++
+ #else
+       if (!strncmp(crypt(cp1, pass), pass, strlen(pass)))
+ 	break;
+--- screen-4.0.2/screen.c.orig	Mon Sep  8 17:26:41 2003
++++ screen-4.0.2/screen.c	Fri Jan  9 01:38:45 2004
+@@ -212,7 +212,7 @@
+ 
+ char HostName[MAXSTR];
+ int MasterPid;
+-int real_uid, real_gid, eff_uid, eff_gid;
++int real_uid, real_gid, eff_uid, eff_gid, init_eff_gid;
+ int default_startup;
+ int ZombieKey_destroy, ZombieKey_resurrect;
+ char *preselect = NULL;		/* only used in Attach() */
+@@ -726,7 +726,7 @@
+   real_uid = getuid();
+   real_gid = getgid();
+   eff_uid = geteuid();
+-  eff_gid = getegid();
++  init_eff_gid = eff_gid = getegid();
+   if (eff_uid != real_uid)
+     {		
+       /* if running with s-bit, we must install a special signal
+--- screen-4.0.2/configure.in.orig	Tue Jun  3 14:58:24 2003
++++ screen-4.0.2/configure.in	Fri Jan  9 01:38:45 2004
+@@ -1225,17 +1225,26 @@
+ 
+ AC_CHECK_FUNCS(rename fchmod fchown strerror lstat _exit utimes vsnprintf getcwd setlocale strftime)
+ 
++AC_CHECK_LIB(dl, dlopen)
++
+ AC_ARG_ENABLE(pam, [  --enable-pam            enable PAM support])
+ if test "$enable_pam" = "yes"; then
+     AC_MSG_CHECKING(for PAM support)
+     oldlibs="$LIBS"
+-    LIBS="$LIBS -lpam"
+-    AC_TRY_LINK([#include <security/pam_appl.h>], [
+-	pam_start(0, 0, 0, 0);
+-	pam_authenticate(0, 0);
+-	pam_end(0,0);
+-    ], AC_MSG_RESULT(yes);AC_DEFINE(USE_PAM),
+-       AC_MSG_RESULT(no);LIBS="$oldlibs")
++    cf_result=no
++
++    AC_CHECK_LIB(pam, pam_start, LIBS="$LIBS -lpam";cf_result=yes, cf_result=no)
++
++    if test "$cf_result" = yes; then
++    	AC_CHECK_LIB(pam_userpass, pam_userpass_conv, LIBS="$LIBS -lpam_userpass";cf_result=yes, cf_result=no)
++    fi
++
++    if test "$cf_result" = yes; then
++	AC_DEFINE(USE_PAM)
++    else
++    	LIBS="$oldlibs"
++    fi
++    AC_MSG_RESULT($cf_result);
+ fi
+ 
+ AC_ARG_ENABLE(use_locale, [  --enable-locale         use localized month/day names])
