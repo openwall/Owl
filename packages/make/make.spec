@@ -1,12 +1,12 @@
-# $Id: Owl/packages/make/make.spec,v 1.7 2004/09/10 07:25:18 galaxy Exp $
+# $Id: Owl/packages/make/make.spec,v 1.8 2004/09/26 03:57:51 solar Exp $
 
 Summary: A GNU tool which simplifies the build process for users.
 Name: make
-Version: 3.79.1
-Release: owl4
+Version: 3.80
+Release: owl1
 License: GPL
 Group: Development/Tools
-Source: ftp://ftp.gnu.org/gnu/make/make-%version.tar.gz
+Source: ftp://ftp.gnu.org/gnu/make/make-%version.tar.bz2
 PreReq: /sbin/install-info
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
@@ -26,7 +26,8 @@ export ac_cv_func_mkstemp=yes \
 make
 
 %install
-rm -f $RPM_BUILD_ROOT
+rm -rf $RPM_BUILD_ROOT
+
 %makeinstall
 ln -sf make $RPM_BUILD_ROOT%_bindir/gmake
 
@@ -60,6 +61,10 @@ fi
 %_infodir/*.info*
 
 %changelog
+* Sun Sep 19 2004 Andreas Ericsson <exon@owl.openwall.com> 3.80-owl1
+- Corrected rm-args for removing $RPM_BUILD_ROOT in %install.
+- Upgraded to latest version.
+
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 3.79.1-owl4
 - Deal with info dir entries such that the menu looks pretty.
 
