@@ -1,4 +1,4 @@
-# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.14 2004/02/11 00:36:46 mci Exp $
+# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.15 2004/02/11 21:48:02 solar Exp $
 
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
@@ -68,11 +68,11 @@ make install install-libs DESTDIR="$RPM_BUILD_ROOT" \
 %postun -p /sbin/ldconfig
 
 %post devel
-/sbin/install-info %_infodir/libext2fs.info.gz /usr/info/dir
+/sbin/install-info %_infodir/libext2fs.info.gz %_infodir/dir
 
 %postun devel
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete /usr/info/libext2fs.info.gz /usr/info/dir
+	/sbin/install-info --delete %_infodir/libext2fs.info.gz %_infodir/dir
 fi
 
 %files
@@ -158,7 +158,7 @@ fi
 
 %changelog
 * Mon Feb 09 2004 Michail Litvak <mci@owl.openwall.com> 1.27-owl5
-- Use rpm macros instead just paths.
+- Use RPM macros instead of explicit paths.
 
 * Sat Oct 12 2002 Solar Designer <solar@owl.openwall.com> 1.27-owl4
 - Dropped the mke2fs lost+found permissions patch (leaving only the hunks
