@@ -1,4 +1,4 @@
-# $Id: Owl/packages/texinfo/texinfo.spec,v 1.18 2005/01/14 03:27:53 galaxy Exp $
+# $Id: Owl/packages/texinfo/texinfo.spec,v 1.19 2005/01/20 05:07:04 solar Exp $
 
 Summary: Tools needed to create Texinfo format documentation files.
 Name: texinfo
@@ -55,7 +55,7 @@ gzip -9nf ChangeLog
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot/{/etc,sbin}
+mkdir -p %buildroot/{etc,sbin}
 
 %makeinstall
 
