@@ -1,9 +1,9 @@
-# $Id: Owl/packages/libpcap/libpcap.spec,v 1.8 2003/06/02 03:23:51 solar Exp $
+# $Id: Owl/packages/libpcap/libpcap.spec,v 1.9 2003/06/02 07:34:48 solar Exp $
 
 Summary: Network packet capture library.
 Name: libpcap
 Version: 0.6.2
-Release: owl3
+Release: owl4
 Epoch: 2
 License: GPL
 Group: System Environment/Libraries
@@ -11,7 +11,7 @@ URL: http://www.tcpdump.org
 Source: http://www.tcpdump.org/release/%{name}-%{version}.tar.gz
 Patch0: libpcap-0.6.2-pld-shared.diff
 Patch1: libpcap-0.6.2-cvs-20020712-buffer.diff
-Patch2: libpcap-0.6.2-nmap-alt-linux-honor-timeout.diff
+Patch2: libpcap-0.6.2-nmap-alt-owl-linux-honor-timeout.diff
 PreReq: /sbin/ldconfig
 BuildRequires: flex, bison
 BuildRoot: /override/%{name}-%{version}
@@ -72,6 +72,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/lib*.a
 
 %changelog
+* Mon Jun 02 2003 Solar Designer <solar@owl.openwall.com> 2:0.6.2-owl4
+- Corrected the timeout handling patch to do it in the packet receive
+loop rather than only once before the loop and to return on timeout.
+
 * Mon Jun 02 2003 Solar Designer <solar@owl.openwall.com> 2:0.6.2-owl3
 - Added a patch for timeout handling on Linux from Nmap with minor
 modifications by ALT Linux team.
