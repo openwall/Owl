@@ -1,24 +1,26 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.15 2001/04/07 18:39:33 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.16 2001/05/04 14:42:09 solar Exp $
 
 %define BUILD_PROFILE	'no'
 
 Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
-Release: 12owl
+%define crypt_bf_version 0.3.9
+Release: 13owl
 Copyright: LGPL
 Group: System Environment/Libraries
-Source0: glibc-2.1.3.tar.gz
-Source1: glibc-linuxthreads-2.1.3.tar.gz
+Source0: glibc-%{version}.tar.gz
+Source1: glibc-linuxthreads-%{version}.tar.gz
 Source2: glibc-crypt-2.1.tar.gz
 Source3: nsswitch.conf
-Source4: glibc-compat-2.1.3.tar.gz
-Patch0: glibc-2.1.3-owl-dl-open.diff
-Patch1: glibc-2.1.3-owl-sanitize-env.diff
-Patch2: glibc-2.1.3-owl-res_randomid.diff
-Patch3: glibc-2.1.3-owl-blowfish.diff
-Patch4: glibc-2.1.3-owl-freesec-hack.diff
-Patch5: glibc-2.1.3-owl-iscntrl.diff
+Source4: glibc-compat-%{version}.tar.gz
+Source5: crypt_blowfish-%{crypt_bf_version}.tar.gz
+Source6: crypt_freesec.c
+Patch0: glibc-2.1.3-owl-freesec-hack.diff
+Patch1: glibc-2.1.3-owl-dl-open.diff
+Patch2: glibc-2.1.3-owl-sanitize-env.diff
+Patch3: glibc-2.1.3-owl-res_randomid.diff
+Patch4: glibc-2.1.3-owl-iscntrl.diff
 Patch10: glibc-2.1.3-rh-libnoversion.diff
 Patch11: glibc-2.1.3-rh-paths.diff
 Patch12: glibc-2.1.3-rh-linuxthreads.diff
@@ -99,13 +101,16 @@ need to install the glibc-profile program.
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 
 %prep
-%setup -q -a 1 -a 2 -a 4
+%setup -q -a 1 -a 2 -a 4 -a 5
+patch -p1 < crypt_blowfish-%{crypt_bf_version}/glibc-%{version}-crypt.diff
+mv crypt/sysdeps/unix/{crypt.h,gnu-crypt.h}
+mv crypt_blowfish-%{crypt_bf_version}/*.[chS] crypt/sysdeps/unix/
+cp $RPM_SOURCE_DIR/crypt_freesec.c crypt/sysdeps/unix/
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
@@ -157,10 +162,12 @@ cd build-$RPM_ARCH-linux && \
     make install_root=$RPM_BUILD_ROOT install-locales -C ../localedata objdir=`pwd` && \
     cd ..
 
-# the man pages for the linuxthreads require special attention
+# the man pages for linuxthreads and crypt_blowfish require special attention
 make -C linuxthreads/man
 mkdir -p $RPM_BUILD_ROOT/usr/man/man3
 install -m 0644 linuxthreads/man/*.3thr $RPM_BUILD_ROOT/usr/man/man3
+install -m 0644 crypt_blowfish-%{crypt_bf_version}/*.3 \
+	$RPM_BUILD_ROOT/usr/man/man3
 gzip -9nvf $RPM_BUILD_ROOT/usr/man/man3/*
 
 gzip -9nvf $RPM_BUILD_ROOT/usr/info/libc*
@@ -241,7 +248,7 @@ cp db2/README documentation/README.db2
 cp db2/mutex/README documentation/README.db2.mutex
 cp timezone/README documentation/README.timezone
 cp ChangeLog* documentation
-gzip -9 documentation/ChangeLog*
+gzip -9nf documentation/ChangeLog*
 
 %post -p /sbin/ldconfig
 
@@ -277,6 +284,10 @@ rm -f *.filelist*
 %endif
 
 %changelog
+* Fri May 04 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to crypt_blowfish-0.3.9, which adds crypt_ra, crypt_gensalt_ra
+and an up-to-date crypt(3) man page.
+
 * Sat Apr 07 2001 Solar Designer <solar@owl.openwall.com>
 - Force known control characters for iscntrl(3) (in localedef and C locale).
 
