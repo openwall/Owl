@@ -1,4 +1,4 @@
-# $Id: Owl/build/Makefile,v 1.2 2000/12/03 22:09:53 solar Exp $
+# $Id: Owl/build/Makefile,v 1.3 2000/12/03 22:18:25 solar Exp $
 
 default: buildworld
 
@@ -13,3 +13,5 @@ installworld:
 
 clean:
 	rm SRPMS/* RPMS/*
+
+.PHONY: checkout buildworld installworld clean
