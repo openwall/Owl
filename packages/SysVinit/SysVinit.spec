@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.14 2003/04/23 21:33:12 solar Exp $
+# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.15 2003/04/23 22:14:10 solar Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
 Version: 2.85
-Release: owl2
+Release: owl3
 License: GPL
 Group: System Environment/Base
 Source: ftp://ftp.cistron.nl/pub/people/miquels/sysvinit/sysvinit-%{version}.tar.gz
@@ -69,14 +69,14 @@ ln -sf killall5 $RPM_BUILD_ROOT/sbin/pidof
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-# This is tricky.  We don't want to let RPM unlink the old init as that
-# would actually leave it pending for delete on process termination.
-# That delete is a filesystem write operation meaning that the root
-# filesystem would need to stay mounted read/write.  But we absolutely
-# want to be able to remount it read-only during shutdown, with the
-# init still alive!
+# This is tricky.  We don't want to let RPM remove the only link to the
+# old init as that would actually leave it pending for delete on process
+# termination.  That delete is a filesystem write operation meaning that
+# the root filesystem would need to stay mounted read/write.  But we
+# absolutely want to be able to remount it read-only during shutdown,
+# with the init still alive!
 if [ -e /sbin/init -a ! -e /sbin/.init-working ]; then
-	mv /sbin/init /sbin/.init-working
+	ln /sbin/init /sbin/.init-working
 fi
 
 %files
@@ -108,6 +108,8 @@ fi
 * Thu Apr 24 2003 Solar Designer <solar@owl.openwall.com>
 - Fixed a bug in yesterday's update to start-stop-daemon's executable file
 matching, thanks to Dmitry V. Levin.
+- On package upgrades, make a hard link to (the old) /sbin/init instead of
+renaming it.
 
 * Wed Apr 23 2003 Solar Designer <solar@owl.openwall.com>
 - Updated to 2.85 (which includes most of our old patches plus quite a few
