@@ -1,9 +1,9 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.14 2001/11/16 03:16:19 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.15 2001/11/16 03:20:21 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.0
-Release: 1owl
+Release: 2owl
 Epoch: 2
 License: BSD
 Group: System Environment/Base
