@@ -1,9 +1,9 @@
-# $Id: Owl/packages/less/less.spec,v 1.3 2000/09/03 19:02:52 kad Exp $
+# $Id: Owl/packages/less/less.spec,v 1.4 2000/10/19 16:43:05 solar Exp $
 
 Summary: A text file browser similar to more, but better.
 Name: 		less
 Version: 	358
-Release: 	3owl
+Release: 	4owl
 License: 	GPL
 Group: 		Applications/Text
 Source: 	ftp://ftp.gnu.org/pub/gnu/less/%{name}-%{version}.tar.gz
@@ -19,7 +19,7 @@ The less utility is a text file browser that resembles more, but has
 more capabilities.  Less allows you to move backwards in the file as
 well as forwards.  Since less doesn't have to read the entire input file
 before it starts, less starts up more quickly than text editors (for
-example, vi). 
+example, vi).
 
 You should install less because it is a basic utility for viewing text
 files, and you'll use it frequently.
@@ -51,6 +51,10 @@ install -c -m 755 %{SOURCE3} $RPM_BUILD_ROOT/etc/profile.d
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Thu Oct 19 2000 Solar Designer <solar@owl.openwall.com>
+- lesspipe.sh: "cd /" before running groff such that it can't be attacked
+when less is run with an untrusted current directory.
+
 * Sun Sep  3 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - use popen
 
