@@ -8,8 +8,9 @@ remains fixed; it's only the stable branch which has these changes.
 2002/03/03	kernel
 SECURITY FIX	Severity: medium, local, active
 Updated to Linux 2.2.20-ow2.  This fixes an x86-specific vulnerability
-where local users could abuse a binary compatibility interface (lcall)
-to kill processes not belonging to them (including system processes).
+in the Linux kernel discovered by Stephan Springl where local users
+could abuse a binary compatibility interface (lcall) to kill processes
+not belonging to them (including system processes).
 
 2001/12/14	Package: glibc
 SECURITY FIX	Severity: none to high, remote, active
@@ -312,4 +313,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.2.2.17 2002/03/03 18:17:37 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.2.2.18 2002/03/05 16:20:47 solar Exp $
