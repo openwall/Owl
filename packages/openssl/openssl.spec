@@ -1,11 +1,11 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.39 2004/09/10 07:27:59 galaxy Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.40 2004/11/02 03:35:27 solar Exp $
 
 %define soversion 4
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
 Version: 0.9.7d
-Release: owl1
+Release: owl2
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
@@ -132,10 +132,8 @@ pushd $RPM_BUILD_ROOT%_datadir/ssl/misc
 mv CA.sh CA
 popd
 
-# XXX: (GM): Remove unpackaged files (check later)
-rm %buildroot%_datadir/ssl/misc/CA.pl
+# This script is obsolete and insecure.
 rm %buildroot%_datadir/ssl/misc/der_chop
-
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -146,7 +144,7 @@ rm %buildroot%_datadir/ssl/misc/der_chop
 %doc doc
 %attr(0755,root,root) %_bindir/*
 %attr(0755,root,root) /%_lib/*.so.%version
-%attr(0755,root,root) %openssldir/misc/CA
+%attr(0755,root,root) %openssldir/misc/CA{,.pl}
 %attr(0755,root,root) %openssldir/misc/c_*
 %attr(0644,root,root) %_mandir/man[157]/*
 %config %attr(0644,root,root) %openssldir/openssl.cnf
@@ -166,6 +164,10 @@ rm %buildroot%_datadir/ssl/misc/der_chop
 %attr(0644,root,root) %_mandir/man3/*
 
 %changelog
+* Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 0.9.7d-owl2
+- Do package CA.pl; we were packaging CA.pl.pod and CA.pl.1 anyway, and we
+had a dependency on Perl anyway (possibly something to be resolved later).
+
 * Thu Mar 18 2004 Michail Litvak <mci@owl.openwall.com> 0.9.7d-owl1
 - 0.9.7d
 
