@@ -1,0 +1,63 @@
+diff -urN silo-0.9.9.org/second/main.c silo-0.9.9/second/main.c
+--- silo-0.9.9.org/second/main.c	Fri Feb 11 15:51:09 2000
++++ silo-0.9.9/second/main.c	Sat Dec 30 22:59:45 2000
+@@ -40,7 +40,6 @@
+ int useconf = 0;
+ enum {
+     CMD_BOOT,
+-    CMD_CAT,
+     CMD_LS
+ } load_cmd;
+ enum arch architecture;
+@@ -590,13 +589,8 @@
+     }
+     strcpy (buffer2, imagename);
+     *part = -2;
+-    if (!label && (!strcmp (imagename, "cat") || !strcmp (imagename, "ls"))) {
+-	if (*imagename == 'c')
+-	    load_cmd = CMD_CAT;
+-	else {
+-	    load_cmd = CMD_LS;
+-	    *params = ls_options (*params);
+-	}
++    if (!label && !strcmp (imagename, "ls")) {
++        load_cmd = CMD_LS;
+ 	imagename = *params;
+ 	p = strchr (imagename, ' ');
+ 	if (!p)
+@@ -607,17 +601,11 @@
+ 		p++;
+ 	    *params = p;
+ 	}
+-    } else if (label && (!strncmp (imagename, "cat ", 4) || !strncmp (imagename, "ls ", 3))) {
+-	if (*imagename == 'c') {
+-	    load_cmd = CMD_CAT;
+-	    imagename += 4;
+-	    while (*imagename == ' ') imagename++;
+-	} else {
+-	    load_cmd = CMD_LS;
+-	    imagename += 3;
+-	    while (*imagename == ' ') imagename++;
+-	    imagename = ls_options (imagename);
+-	}
++    } else if (label && !strncmp (imagename, "ls ", 3)) {
++	load_cmd = CMD_LS;
++	imagename += 3;
++	while (*imagename == ' ') imagename++;
++	imagename = ls_options (imagename);
+     }
+     parse_name (imagename, -2, device, part, kname);
+     if (!*device)
+@@ -1065,12 +1053,6 @@
+ 		printf ("\nImage not found.... try again\n");
+         	continue;
+             }
+-
+-	    if (load_cmd == CMD_CAT) {
+-		*(image_base + image_len) = 0;
+-		printf ("%s", image_base);
+-		continue;
+-	    }
+ 
+ 	    if (load_cmd == CMD_LS) {
+ 		do_ls (image_base);
