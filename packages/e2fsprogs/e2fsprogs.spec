@@ -1,16 +1,18 @@
-# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.7 2002/01/31 18:18:31 solar Exp $
+# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.8 2002/04/25 14:33:35 mci Exp $
 
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
-Version: 1.18
-Release: owl7
+Version: 1.27
+Release: owl1
 License: GPL
 Group: System Environment/Base
 Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%{version}.tar.gz
-Patch0: ftp://ftp.cistron.nl/pub/people/miquels/misc/e2fsprogs-1.18-spinnerfix.diff
-Patch1: e2fsprogs-1.18-owl-lost+found-mode.diff
-Patch2: e2fsprogs-1.18-rh-debugfs-y2k.diff
-Patch3: e2fsprogs-1.18-rh-et.diff
+Patch0: e2fsprogs-1.27-alt-fixes.diff
+Patch1: e2fsprogs-1.27-alt-notitle.diff
+Patch2: e2fsprogs-1.27-rh-c++.diff
+Patch3: e2fsprogs-1.27-rh-owl-mountlabel3.diff
+Patch4: e2fsprogs-1.27-owl-lost+found-mode.diff
+Patch5: e2fsprogs-1.27-owl-warnings.diff
 PreReq: /sbin/ldconfig
 BuildRoot: /override/%{name}-%{version}
 
@@ -37,19 +39,23 @@ develop second extended (ext2) filesystem-specific programs.
 
 %prep
 %setup -q
+chmod -R u+w .
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
+%patch5 -p1
+
+%{expand:%%define optflags %optflags -Wall}
 
 %build
 autoconf
 %configure --enable-elf-shlibs
-make libs progs docs
+make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-export PATH=/sbin:$PATH
 make install install-libs DESTDIR="$RPM_BUILD_ROOT" \
 	root_sbindir=/sbin root_libdir=/lib
 
@@ -69,7 +75,7 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc README RELEASE-NOTES
+%doc README RELEASE-NOTES ChangeLog
 
 /sbin/badblocks
 /sbin/debugfs
@@ -78,8 +84,10 @@ fi
 /sbin/e2label
 /sbin/fsck
 /sbin/fsck.ext2
+/sbin/fsck.ext3
 /sbin/mke2fs
 /sbin/mkfs.ext2
+/sbin/mkfs.ext3
 /sbin/tune2fs
 /usr/sbin/mklost+found
 
@@ -92,19 +100,33 @@ fi
 /usr/bin/chattr
 /usr/bin/lsattr
 /usr/bin/uuidgen
-/usr/man/man1/chattr.1*
-/usr/man/man1/lsattr.1*
-/usr/man/man1/uuidgen.1*
+%{_mandir}/man1/chattr.1*
+%{_mandir}/man1/lsattr.1*
+%{_mandir}/man1/uuidgen.1*
 
-/usr/man/man8/badblocks.8*
-/usr/man/man8/debugfs.8*
-/usr/man/man8/dumpe2fs.8*
-/usr/man/man8/e2fsck.8*
-/usr/man/man8/e2label.8*
-/usr/man/man8/fsck.8*
-/usr/man/man8/mke2fs.8*
-/usr/man/man8/mklost+found.8*
-/usr/man/man8/tune2fs.8*
+%{_mandir}/man3/libuuid.3*
+%{_mandir}/man3/uuid_clear.3*
+%{_mandir}/man3/uuid_compare.3*
+%{_mandir}/man3/uuid_copy.3*
+%{_mandir}/man3/uuid_generate.3*
+%{_mandir}/man3/uuid_is_null.3*
+%{_mandir}/man3/uuid_parse.3*
+%{_mandir}/man3/uuid_time.3*
+%{_mandir}/man3/uuid_unparse.3*
+
+%{_mandir}/man8/badblocks.8*
+%{_mandir}/man8/debugfs.8*
+%{_mandir}/man8/dumpe2fs.8*
+%{_mandir}/man8/e2fsck.8*
+%{_mandir}/man8/e2label.8*
+%{_mandir}/man8/fsck.8*
+%{_mandir}/man8/fsck.ext2.8*
+%{_mandir}/man8/fsck.ext3.8*
+%{_mandir}/man8/mke2fs.8*
+%{_mandir}/man8/mkfs.ext2.8*
+%{_mandir}/man8/mkfs.ext3.8*
+%{_mandir}/man8/mklost+found.8*
+%{_mandir}/man8/tune2fs.8*
 
 %files devel
 %defattr(-,root,root)
@@ -129,10 +151,15 @@ fi
 /usr/include/ext2fs
 /usr/include/ss
 /usr/include/uuid
-/usr/man/man1/compile_et.1*
-/usr/man/man3/com_err.3*
+%{_mandir}/man1/compile_et.1*
+%{_mandir}/man3/com_err.3*
 
 %changelog
+* Mon Apr 22 2002 Michail Litvak <mci@owl.openwall.com>
+- 1.27
+- Build with -Wall
+- Added some reviewed patches from RH and ALT, removed unnecessary patches
+
 * Wed Jan 30 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions.
 - New source URL

@@ -1,0 +1,39 @@
+--- e2fsprogs-1.27/misc/get_device_by_label.c.orig	Sun Feb 24 23:04:00 2002
++++ e2fsprogs-1.27/misc/get_device_by_label.c	Mon Apr 22 00:19:03 2002
+@@ -196,6 +196,8 @@
+ }
+ #endif
+ 
++#define CBBUF  (16 * 1024)
++
+ static void
+ uuidcache_init(void) {
+ 	char line[100];
+@@ -209,6 +211,7 @@
+ 	struct stat statbuf;
+ 	int firstPass;
+ 	int handleOnFirst;
++	char *iobuf;
+ 
+ 	if (uuidCache)
+ 		return;
+@@ -221,6 +224,10 @@
+ 	if (!procpt)
+ 		return;
+ 
++	iobuf = (char *)malloc(CBBUF);
++	if (iobuf)
++		setvbuf(procpt, iobuf, _IOFBF, CBBUF);
++
+ 	for (firstPass = 1; firstPass >= 0; firstPass--) {
+ 	    fseek(procpt, 0, SEEK_SET);
+ 
+@@ -268,6 +275,8 @@
+ 	}
+ 
+ 	fclose(procpt);
++	if (iobuf)
++		free(iobuf);
+ }
+ 
+ #define UUID   1

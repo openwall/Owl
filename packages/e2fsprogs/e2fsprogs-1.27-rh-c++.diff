@@ -1,0 +1,31 @@
+--- e2fsprogs-1.27/lib/ext2fs/ext2fs.h.orig	Fri Mar  8 08:05:02 2002
++++ e2fsprogs-1.27/lib/ext2fs/ext2fs.h	Mon Apr 15 22:52:31 2002
+@@ -53,11 +53,14 @@
+ #endif
+ 
+ #include <stdlib.h>
++#include <stdio.h>
+ 
+ #if EXT2_FLAT_INCLUDES
+ #include "e2_types.h"
++#include "ext2_fs.h"
+ #else
+ #include <ext2fs/ext2_types.h>
++#include <ext2fs/ext2_fs.h>
+ #endif /* EXT2_FLAT_INCLUDES */
+ 
+ typedef __u32		ext2_ino_t;
+@@ -783,11 +786,11 @@
+ /* read_bb_file.c */
+ extern errcode_t ext2fs_read_bb_FILE2(ext2_filsys fs, FILE *f, 
+ 				      ext2_badblocks_list *bb_list,
+-				      void *private,
++				      void *_private,
+ 				      void (*invalid)(ext2_filsys fs,
+ 						      blk_t blk,
+ 						      char *badstr,
+-						      void *private));
++						      void *_private));
+ extern errcode_t ext2fs_read_bb_FILE(ext2_filsys fs, FILE *f, 
+ 				     ext2_badblocks_list *bb_list,
+ 				     void (*invalid)(ext2_filsys fs,
