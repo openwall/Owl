@@ -29,6 +29,10 @@ Russische Übersetzung:
 
 	Gremlin from Kremlin <gremlin@owl.openwall.com>
 
+Offizielle Owl Grafiken:
+
+	Gleb Todosov <gleb@owl.openwall.com>
+
 Das Virtual Unix Project hat die erste Unterstützung für Owl
 gespendet. Andere Firmen, Teams oder Personen haben Geld, Hardware
 und andere für das Projekt relevante Dienste gespendet.  Auf unserer
@@ -38,4 +42,4 @@ etwas zu spenden:
 
 http://www.openwall.com/donations/
 
-$Id: Owl/doc/de/CREDITS,v 1.8 2003/09/09 08:30:54 schmidt Exp $
+$Id: Owl/doc/de/CREDITS,v 1.9 2003/11/24 17:53:40 schmidt Exp $
