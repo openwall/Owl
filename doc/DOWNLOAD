@@ -12,6 +12,7 @@ ftp://ftp.cz.openwall.com/pub/Owl/	(Czech Republic)
 ftp://gd.tuwien.ac.at/opsys/linux/Owl/	(Austria)
 	http://gd.tuwien.ac.at/opsys/linux/Owl/
 	rsync://gd.tuwien.ac.at/opsys/linux/Owl/
+ftp://ftp.mathematik.uni-marburg.de/pub/mirror/openwall/Owl/	(Germany)
 ftp://ftp.ca.openwall.com/pub/Owl/	(Canada)
 ftp://ftp.wiretapped.net/pub/Owl/	(Australia)
 
@@ -42,4 +43,4 @@ need both the CVS and the source trees.
 More documentation (including BUILD and INSTALL) is available in the
 CVS tree, under Owl/doc/.
 
-$Id: Owl/doc/DOWNLOAD,v 1.11 2002/06/22 08:46:52 solar Exp $
+$Id: Owl/doc/DOWNLOAD,v 1.12 2002/06/25 21:09:48 solar Exp $
