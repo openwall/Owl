@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.19 2002/11/03 04:06:40 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.20 2002/11/03 04:23:23 solar Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
@@ -90,9 +90,6 @@ if [ $1 -eq 0 ]; then
 	/sbin/chkconfig --del crond
 fi
 
-%triggerpostun -- vixie-cron < 3.0.2.7-10owl
-/sbin/chkconfig --add crond
-
 %files
 %defattr(-,root,root)
 /usr/sbin/crond
@@ -109,6 +106,9 @@ fi
 - Keep crontab at mode 700 ("restricted") in the package, but default
 it to "public" in %post when the package is first installed.  This avoids
 a race and fail-open behavior.
+- Dropped the trigger which was needed for upgrades from versions of the
+package from over a year ago, -- it would wrongly go off on each upgrade
+or uninstall of the new package because of our new version numbering.
 
 * Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
 - Use grep -q in %pre.
