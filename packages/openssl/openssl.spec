@@ -142,7 +142,7 @@ ldconfig
 ldconfig
 
 %changelog
-* Sun Jul  9 2000 Solar Designer <solar@false.com>
+* Sun Jul 09 2000 Solar Designer <solar@owl.openwall.com>
 - Added two patches from Trustix and, more importantly, a patch to avoid
 exporting crypt() as a symbol (which used to override the weak alias for
 crypt(3), while applications generally want the libcrypt version).  crypt
