@@ -51,6 +51,7 @@ you actually convert the system into Owl with multiple iterations of
 Here are some build times (hours:minutes), so that you know what to
 expect:
 
+Dual Pentium III, 1.266 GHz, 2 GB		0:29
 Dual Pentium III, 1 GHz, 2 GB			0:36
 Dual Pentium III, 800 MHz, 512 MB		0:45
 Athlon, 1 GHz, 256 MB				1:10
@@ -113,4 +114,4 @@ We do consider the building of SRPM's and the lack of automatic build
 dependency handling for re-builds to be bugs in the build environment.
 We will eventually fix these.
 
-$Id: Owl/doc/BUILD,v 1.14 2002/06/08 15:36:27 solar Exp $
+$Id: Owl/doc/BUILD,v 1.15 2002/06/13 12:45:37 solar Exp $
