@@ -5,6 +5,23 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 1.1 and Owl 1.1-stable.
 
+2004/11/23	kernel
+SECURITY FIX	Severity: low to high, local/remote, active/passive
+Updated to Linux 2.4.28-ow1.  Linux 2.4.28, and thus 2.4.28-ow1, fixes
+a number of security-related bugs, including the ELF loader
+vulnerabilities discovered by Paul Starzetz (confirmed: ability for
+users to read +s-r binaries; potential: local root), a race condition
+with reads from Unix domain sockets (potential local root), smbfs
+support vulnerabilities discovered by Stefan Esser (confirmed: remote
+DoS by a malicious smbfs server; potential: remote root by a malicious
+server).
+References:
+http://isec.pl/vulnerabilities/isec-0017-binfmt_elf.txt
+http://marc.theaimsgroup.com/?l=bugtraq&m=110091183206580
+http://security.e-matters.de/advisories/142004.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0883
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0949
+
 2004/08/04 -
 2004/08/15	kernel
 SECURITY FIX	Severity: none to high, local, active
@@ -162,4 +179,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 2004/01/15	Owl/doc/DOWNLOAD, Owl/doc/*/DOWNLOAD, Owl/doc/fr/CREDITS
 Sync'ed with the minor post-release updates made in Owl-current.
 
-$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.18 2004/08/14 22:26:30 solar Exp $
+$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.19 2004/11/23 03:31:41 solar Exp $
