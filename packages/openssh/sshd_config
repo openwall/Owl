@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/sshd_config,v 1.9 2002/06/23 16:42:03 solar Exp $
+# $Id: Owl/packages/openssh/sshd_config,v 1.10 2002/06/27 12:45:49 solar Exp $
 
 # This is the sshd server system-wide configuration file.  See
 # sshd_config(5) for more information.
@@ -53,7 +53,7 @@ IgnoreUserKnownHosts yes
 #PermitEmptyPasswords no
 
 # Warning: enabling this may bypass the setting of PasswordAuthentication
-#PAMAuthenticationViaKbdInt yes
+#PAMAuthenticationViaKbdInt no
 
 X11Forwarding yes
 #X11DisplayOffset 10
