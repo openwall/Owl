@@ -1,0 +1,71 @@
+--- sh-utils-2.0/lib/readutmp.c.patch3	Wed May  5 09:30:31 1999
++++ sh-utils-2.0/lib/readutmp.c	Tue Aug 17 19:02:38 1999
+@@ -32,6 +32,7 @@
+ 
+ char *xmalloc ();
+ char *realloc ();
++char *xrealloc();
+ 
+ /* Copy UT->ut_name into storage obtained from malloc.  Then remove any
+    trailing spaces from the copy, NUL terminate it, and return the copy.  */
+@@ -93,40 +94,31 @@
+ }
+ 
+ #else
++#define UTMP_READ_INCR 128
+ 
+ int
+ read_utmp (const char *filename, int *n_entries, STRUCT_UTMP **utmp_buf)
+ {
+-  FILE *utmp;
+-  struct stat file_stats;
+-  size_t n_read;
+-  size_t size;
+-  STRUCT_UTMP *buf;
+-
+-  utmp = fopen (filename, "r");
+-  if (utmp == NULL)
+-    return 1;
+-
+-  fstat (fileno (utmp), &file_stats);
+-  size = file_stats.st_size;
+-  if (size > 0)
+-    buf = (STRUCT_UTMP *) xmalloc (size);
+-  else
+-    {
+-      fclose (utmp);
+-      return 1;
+-    }
+-
+-  /* Use < instead of != in case the utmp just grew.  */
+-  n_read = fread (buf, 1, size, utmp);
+-  if (ferror (utmp) || fclose (utmp) == EOF
+-      || n_read < size)
+-    return 1;
++    int n_read;
++    STRUCT_UTMP *uptr;
+ 
+-  *n_entries = size / sizeof (STRUCT_UTMP);
+-  *utmp_buf = buf;
+-
+-  return 0;
++    utmpname(filename);
++    setutent();
++    n_read = 0;
++    utmp_contents = (STRUCT_UTMP *) xmalloc(UTMP_READ_INCR*sizeof(STRUCT_UTMP));
++    while ((uptr=getutent())) {
++	if (NULL == utmp_contents)
++	    break;  /* we do not have more memory here */
++	memcpy(&utmp_contents[n_read], uptr, sizeof(STRUCT_UTMP));
++	n_read++;
++	if (0 == ( n_read % UTMP_READ_INCR ))
++	    utmp_contents = (STRUCT_UTMP *)
++		xrealloc(utmp_contents,
++			 (n_read + UTMP_READ_INCR) * sizeof(STRUCT_UTMP));
++    }
++   
++    endutent();
++    return n_read;
+ }
+ 
+ #endif /* HAVE_UTMPNAME */
