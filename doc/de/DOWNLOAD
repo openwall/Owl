@@ -1,0 +1,45 @@
+Die Owl Homepage liegt unter:
+
+http://www.openwall.com/Owl/
+
+Owl kann von einem der folgenden offiziellen Spiegel-Server herunter
+geladen werden:
+
+ftp://ftp1.ru.openwall.com/pub/Owl/	(Russland, Russian Express ISP)
+ftp://ftp2.ru.openwall.com/pub/Owl/	(Russland, DataForce ISP)
+ftp://ftp.pl.openwall.com/pub/Owl/	(Polen)
+ftp://ftp.ua.openwall.com/pub/Owl/	(Ukraine)
+ftp://ftp.cz.openwall.com/pub/Owl/	(Tschechien)
+ftp://gd.tuwien.ac.at/opsys/linux/Owl/	(Österreich)
+	http://gd.tuwien.ac.at/opsys/linux/Owl/
+	rsync://gd.tuwien.ac.at/opsys/linux/Owl/
+ftp://ftp.ca.openwall.com/pub/Owl/	(Kanada)
+ftp://ftp.wiretapped.net/pub/Owl/	(Australien)
+
+Für jedes Release von Owl gibt es ein eigenes Unterverzeichnis mit dem
+folgenden Inhalt:
+
+native.tar.gz		CVS tree (Patches und div. Spezifikationen)
+sources			Quellcode (Original tar-Archive, etc)
+kernel			Kernel-Quellen und empfohlene Patches
+Owl.mtree		Die mtree(8) Spezifikationen von dem oberen
+i?86, sparc*, alpha*	Binärpakete zu Owl
+iso			ISO-9660 Images der Owl CD's
+
+Einige der Unterverzeichnisse benutzen symbolische Links zu Dateien, die
+in allen Owl Sparten vorkommen. Um nur eine Sparte herunter zuladen,
+müsst ihr eventuell eurem FTP Client sagen, dass er Symbolische Links
+nicht dereferenzieren soll. Wenn ihr lftp (ist Bestandteil von Owl) nutzt,
+nehmt das "mirror -L" Kommando.
+
+Die mtree(8) Spezifikationen von Owl sind mit PGP signiert. Den
+entsprechenden Schlüssel findet ihr unter:
+
+http://www.openwall.com/signatures/
+
+Du wirst fast immer den CVS tree brauchen, auch wenn du nur die
+Binärpakete installierst. Wenn du Owl aus den Quellen neu übersetzen
+willst, brauchst du beides: den CVS tree und den Quellcode.
+
+Mehr Dokumentation (inklusive BUILD und INSTALL) gibt es im CVS tree unter
+Owl/doc/.
