@@ -1,14 +1,17 @@
-# $Id: Owl/packages/slang/Attic/slang.spec,v 1.4 2002/02/07 18:07:47 solar Exp $
+# $Id: Owl/packages/slang/Attic/slang.spec,v 1.5 2002/10/12 09:12:52 solar Exp $
 
 Summary: The shared library for the S-Lang extension language.
 Name: slang
-Version: 1.4.2
-Release: owl2
+Version: 1.4.6
+Release: owl1
 License: GPL
 Group: System Environment/Libraries
-URL: http://www.s-lang.org/
-Source: ftp://space.mit.edu/pub/davis/slang/v1.4/slang-%{version}.tar.bz2
+URL: http://www.s-lang.org
+Source: ftp://ftp.jedsoft.org/pub/davis/slang/v1.4/slang-%{version}.tar.bz2
+Patch0: slang-1.4.6-owl-fixes.diff
+Patch1: slang-1.4.6-owl-tmp.diff
 PreReq: /sbin/ldconfig
+BuildRequires: perl
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -31,11 +34,16 @@ applications.  Documentation which may help you write S-Lang based
 applications is also included.
 
 %prep
-%setup -n slang-%{version} -q
+%setup -q -n slang-%{version}
+%patch0 -p1
+%patch1 -p1
 
 %build
-mv autoconf/configure.in .
-%configure --includedir=/usr/include/slang
+perl -pi -e 's/(ELF_CFLAGS=".*)-O2(.*)/$1'"$RPM_OPT_FLAGS"'$2/' configure
+export ac_cv_func_snprintf=yes ac_cv_func_vsnprintf=yes \
+%configure \
+	--includedir=%{_includedir}/slang \
+	--enable-warnings
 make elf all
 
 %install
@@ -43,8 +51,8 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr/include/slang
 
 %makeinstall \
-	install_lib_dir=$RPM_BUILD_ROOT/usr/lib \
-	install_include_dir=$RPM_BUILD_ROOT/usr/include/slang install-elf
+	install_lib_dir=$RPM_BUILD_ROOT%{_libdir} \
+	install_include_dir=$RPM_BUILD_ROOT%{_includedir}/slang install-elf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -54,16 +62,27 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-/usr/lib/libslang.so.*
+%{_libdir}/libslang.so.*
 
 %files devel
 %defattr(-,root,root)
 %doc doc
-/usr/lib/libslang.a
-/usr/lib/libslang.so
-/usr/include/slang
+%{_libdir}/libslang.a
+%{_libdir}/libslang.so
+%{_includedir}/slang
 
 %changelog
+* Sat Oct 12 2002 Solar Designer <solar@owl.openwall.com>
+- Updated to 1.4.6.
+- Reviewed all of the library code for environment variable uses and
+restricted those which would be unsafe in SUID/SGID programs.
+- Corrected the examples to not use temporary files unsafely.
+- Enable snprintf() and vsnprintf() explicitly.
+- Set ELF_CFLAGS (used for the shared library) to include RPM_OPT_FLAGS.
+
+* Wed Sep 25 2002 Ilya Andreiv <ilya@if5641.spb.edu>
+- Upgrade to 1.4.5
+
 * Tue Feb 05 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 

@@ -1,0 +1,33 @@
+diff -ur slang-1.4.6.orig/examples/assoc.sl slang-1.4.6/examples/assoc.sl
+--- slang-1.4.6.orig/examples/assoc.sl	Tue Oct  8 00:36:22 2002
++++ slang-1.4.6/examples/assoc.sl	Sat Oct 12 10:55:52 2002
+@@ -1,7 +1,7 @@
+ % This example illustrates the use of associative arrays.  
+ % The function 'analyse_file' counts the number of occurrences of each word
+ % in a specified file.  Once the file has been read in, it writes out
+-% the list of words and number of occurrences to the file /tmp/counts.log
++% the list of words and number of occurrences to the file counts.log
+ 
+ define analyse_file (file)
+ {
+@@ -34,7 +34,7 @@
+    keys = keys[i];
+    values = values[i];
+ 
+-   fp = fopen ("/tmp/count.log", "w");
++   fp = fopen ("counts.log", "w");
+    % The default array_sort for Int_Type is an ascending sort.  We want the 
+    % opposite.
+    for (i = n-1; i >= 0; i--)
+diff -ur slang-1.4.6.orig/modules/varray.sl slang-1.4.6/modules/varray.sl
+--- slang-1.4.6.orig/modules/varray.sl	Tue Oct  8 00:36:22 2002
++++ slang-1.4.6/modules/varray.sl	Sat Oct 12 10:56:56 2002
+@@ -6,7 +6,7 @@
+ static variable x = [1:1000.0:1.0];
+ 
+ % and write it to disk
+-static variable file = "/tmp/varray_example.dat";
++static variable file = "varray_example.dat";
+ static variable fp = fopen (file, "wb");
+ if (fp == NULL)
+ {

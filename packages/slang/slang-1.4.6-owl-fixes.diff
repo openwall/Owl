@@ -1,0 +1,257 @@
+diff -ur slang-1.4.6.orig/src/slang.h slang-1.4.6/src/slang.h
+--- slang-1.4.6.orig/src/slang.h	Tue Oct  8 00:36:22 2002
++++ slang-1.4.6/src/slang.h	Sat Oct 12 12:39:31 2002
+@@ -696,14 +696,22 @@
+ extern char *SLang_Doc_Dir;
+ 
+ extern void (*SLang_VMessage_Hook) (char *, va_list);
+-extern void SLang_vmessage (char *, ...);
++extern void SLang_vmessage (char *, ...)
++#ifdef __GNUC__
++__attribute__ ((format (printf, 1, 2)))
++#endif
++	;
+ 
+   extern void (*SLang_Error_Hook)(char *);
+   /* Pointer to application dependent error messaging routine.  By default,
+      messages are displayed on stderr. */
+ 
+   extern void (*SLang_Exit_Error_Hook)(char *, va_list);
+-  extern void SLang_exit_error (char *, ...);
++  extern void SLang_exit_error (char *, ...)
++#ifdef __GNUC__
++__attribute__ ((format (printf, 1, 2), noreturn))
++#endif
++	;
+   extern void (*SLang_Dump_Routine)(char *);
+   /* Called if S-Lang traceback is enabled as well as other debugging
+      routines (e.g., trace).  By default, these messages go to stderr. */
+@@ -884,7 +892,11 @@
+ extern int SLang_end_arg_list (void);
+ extern int SLang_start_arg_list (void);
+ 
+-extern void SLang_verror (int, char *, ...);
++extern void SLang_verror (int, char *, ...)
++#ifdef __GNUC__
++__attribute__ ((format (printf, 2, 3)))
++#endif
++	;
+ 
+ extern void SLang_doerror(char *);
+    /* set SLang_Error and display p1 as error message */
+@@ -1365,7 +1377,11 @@
+ extern void SLsmg_reverse_video (void);
+ extern void SLsmg_set_color (int);
+ extern void SLsmg_normal_video (void);
+-extern void SLsmg_printf (char *, ...);
++extern void SLsmg_printf (char *, ...)
++#ifdef __GNUC__
++__attribute__ ((format (printf, 1, 2)))
++#endif
++	;
+ extern void SLsmg_vprintf (char *, va_list);
+ extern void SLsmg_write_string (char *);
+ extern void SLsmg_write_nstring (char *, unsigned int);
+diff -ur slang-1.4.6.orig/src/sldisply.c slang-1.4.6/src/sldisply.c
+--- slang-1.4.6.orig/src/sldisply.c	Tue Oct  8 00:36:22 2002
++++ slang-1.4.6/src/sldisply.c	Sat Oct 12 12:39:31 2002
+@@ -5,6 +5,7 @@
+  * License or the Perl Artistic License.
+  */
+ 
++#define _GNU_SOURCE
+ #include "slinclud.h"
+ 
+ #include <time.h>
+@@ -974,7 +975,7 @@
+    char *s = color;
+ 
+    i = 0;
+-   while ((ich = (int) *s) != 0)
++   while ((ich = (unsigned int)(unsigned char) *s) != 0)
+      {
+ 	if ((ich < '0') || (ich > '9'))
+ 	  return color;
+@@ -1031,7 +1032,7 @@
+    p = bg_buf;
+    pmax = p + (sizeof (bg_buf) - 1);
+ 
+-   /* Mark suggested allowing for extra spplication specific stuff following
++   /* Mark suggested allowing for extra application specific stuff following
+     * the background color.  That is what the check for the semi-colon is for.
+     */
+    while ((*bg != 0) && (*bg != ';'))
+@@ -1129,11 +1130,11 @@
+ }
+ 
+ /* This looks for colors with name form 'colorN'.  If color is of this
+- * form, N is passed back via paramter list.
++ * form, N is passed back via parameter list.
+  */
+ static int parse_color_digit_name (char *color, SLtt_Char_Type *f)
+ {
+-   unsigned int i;
++   unsigned int i, j;
+    unsigned char ch;
+ 
+    if (strncmp (color, "color", 5))
+@@ -1151,7 +1152,12 @@
+ 	  break;
+ 	if ((ch > '9') || (ch < '0'))
+ 	  return -1;
+-	i = 10 * i + (ch - '0');
++	if (i > 0xFFFFFFFFU / 10)
++	  return -1;
++	j = (i *= 10);
++	i += (ch - '0');
++	if (i < j)
++	  return -1;
+      }
+ 
+    *f = (SLtt_Char_Type) i;
+@@ -2158,6 +2164,9 @@
+ 	  return -1;
+      }
+ 
++   if (__libc_enable_secure && (term[0] == '.' || strchr(term, '/')))
++     return -1;
++
+    Linux_Console = (!strncmp (term, "linux", 5)
+ # ifdef linux
+ 		    || !strncmp(term, "con", 3)
+@@ -2636,11 +2645,12 @@
+ 	if (s != NULL) c = atoi (s);
+      }
+ 
++#if 1
++   if ((r <= 0) || (r > 1000)) r = 24;
++   if ((c <= 0) || (c > 1000)) c = 80;
++#else
+    if (r <= 0) r = 24;
+    if (c <= 0) c = 80;
+-#if 0
+-   if ((r <= 0) || (r > 200)) r = 24;
+-   if ((c <= 0) || (c > 250)) c = 80;
+ #endif
+    SLtt_Screen_Rows = r;
+    SLtt_Screen_Cols = c;
+diff -ur slang-1.4.6.orig/src/slimport.c slang-1.4.6/src/slimport.c
+--- slang-1.4.6.orig/src/slimport.c	Tue Oct  8 00:36:22 2002
++++ slang-1.4.6/src/slimport.c	Sat Oct 12 12:39:31 2002
+@@ -5,6 +5,7 @@
+  * License or the Perl Artistic License.
+  */
+ 
++#define _GNU_SOURCE
+ #include "slinclud.h"
+ 
+ #include "slang.h"
+@@ -133,7 +134,7 @@
+ 	/* Purify reports that dlerror returns a pointer that generates UMR
+ 	 * errors.  There is nothing that I can do about that....
+ 	 */
+-	if (NULL == strchr (file, '/'))
++	if (NULL == strchr (file, '/') && strlen (file) < sizeof (filebuf) - 2)
+ 	  {
+ 	     err = (char *) dlerror ();
+ 	     if (err != NULL)
+@@ -216,8 +217,8 @@
+ 	if (-1 == SLang_pop_slstring (&ns))
+ 	  return;	
+      }
+-   
+-   if (-1 == SLang_pop_slstring (&module))
++
++   if (-1 == SLang_pop_slstring (&module) || strlen (module) > 240)
+      {
+ 	SLang_free_slstring (ns);      /* NULL ok */
+ 	return;
+@@ -233,7 +234,7 @@
+    else file = NULL;
+ 
+    if ((file == NULL)
+-       && (NULL != (path = getenv (MODULE_PATH_ENV_NAME))))
++       && (NULL != (path = __secure_getenv (MODULE_PATH_ENV_NAME))))
+      file = SLpath_find_file_in_path (path, module_name);
+ 
+    if (file == NULL)
+@@ -261,7 +262,7 @@
+    char *path;
+    if (Module_Path != NULL)
+      return Module_Path;
+-   if (NULL != (path = getenv (MODULE_PATH_ENV_NAME)))
++   if (NULL != (path = __secure_getenv (MODULE_PATH_ENV_NAME)))
+      return path;
+    return MODULE_INSTALL_DIR;
+ }
+diff -ur slang-1.4.6.orig/src/slmisc.c slang-1.4.6/src/slmisc.c
+--- slang-1.4.6.orig/src/slmisc.c	Tue Oct  8 00:36:22 2002
++++ slang-1.4.6/src/slmisc.c	Sat Oct 12 12:39:54 2002
+@@ -235,6 +235,7 @@
+ }
+ 
+ #ifndef HAVE_VSNPRINTF
++#error vsnprintf() not detected
+ int _SLvsnprintf (char *buf, unsigned int buflen, char *fmt, va_list ap)
+ {
+ #if 1
+@@ -271,6 +272,7 @@
+ #endif
+ 
+ #ifndef HAVE_SNPRINTF
++#error snprintf() not detected
+ int _SLsnprintf (char *buf, unsigned int buflen, char *fmt, ...)
+ {
+    int status;
+diff -ur slang-1.4.6.orig/src/sltermin.c slang-1.4.6/src/sltermin.c
+--- slang-1.4.6.orig/src/sltermin.c	Tue Oct  8 00:36:22 2002
++++ slang-1.4.6/src/sltermin.c	Sat Oct 12 12:39:31 2002
+@@ -9,6 +9,7 @@
+  * License or the Perl Artistic License.
+  */
+ 
++#define _GNU_SOURCE
+ #include "slinclud.h"
+ 
+ #include "slang.h"
+@@ -249,6 +250,10 @@
+        )
+      return NULL;
+ 
++   if (__libc_enable_secure &&
++       term != NULL && (term[0] == '.' || strchr(term, '/')))
++     return NULL;
++
+    if (NULL == (ti = (SLterminfo_Type *) SLmalloc (sizeof (SLterminfo_Type))))
+      {
+ 	return NULL;
+@@ -265,15 +270,16 @@
+    /* If we are on a termcap based system, use termcap */
+    if (0 == tcap_getent (term, ti)) return ti;
+ 
+-   if (NULL != (home = getenv ("HOME")))
++   if (NULL != (home = __secure_getenv ("HOME")) &&
++       strlen (home) <= sizeof (home_ti) - 11)
+      {
+-	strncpy (home_ti, home, sizeof (home_ti) - 11);
+-	home_ti [sizeof(home_ti) - 11] = 0;
++	home_ti[0] = '\0';
++	strncat (home_ti, home, sizeof (home_ti) - 11);
+ 	strcat (home_ti, "/.terminfo");
+ 	Terminfo_Dirs [0] = home_ti;
+      }
+ 
+-   Terminfo_Dirs[1] = getenv ("TERMINFO");
++   Terminfo_Dirs[1] = __secure_getenv ("TERMINFO");
+    i = 0;
+    while (1)
+      {
+@@ -1000,7 +1006,7 @@
+    if (!strncmp (term, "xterm", 5))
+      return -1;
+ #endif
+-   termcap = (unsigned char *) getenv ("TERMCAP");
++   termcap = (unsigned char *) __secure_getenv ("TERMCAP");
+    if ((termcap == NULL) || (*termcap == '/')) return -1;
+ 
+    /* We have a termcap so lets use it provided it does not have a reference
