@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.2 2000/07/13 09:58:44 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.3 2000/07/13 10:06:52 solar Exp $
 
 Summary: A collection of basic system utilities.
 Name: util-linux
@@ -222,9 +222,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/man/man8/sfdisk.8*
 %doc fdisk/sfdisk.examples
 %endif
-
-/bin/mount
-/bin/umount
 
 %changelog
 * Thu Jul 13 2000 Solar Designer <solar@false.com>
