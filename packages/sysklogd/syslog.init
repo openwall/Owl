@@ -1,0 +1,57 @@
+#!/bin/sh
+#
+# syslog        Starts syslogd/klogd.
+#
+#
+# chkconfig: 2345 30 99
+# description: Syslog is the facility by which many daemons use to log \
+# messages to various system log files.  It is a good idea to always \
+# run syslog.
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+[ -f /sbin/syslogd ] || exit 0
+[ -f /sbin/klogd ] || exit 0
+
+RETVAL=0
+
+# See how we were called.
+case "$1" in
+  start)
+	echo -n "Starting system logger: "
+	# we don't want the MARK ticks
+	daemon syslogd -m 0
+	RETVAL=$?
+	echo
+	echo -n "Starting kernel logger: "
+	daemon klogd
+	echo
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/syslog
+	;;
+  stop)
+	echo -n "Shutting down kernel logger: "
+	killproc klogd
+	echo
+	echo -n "Shutting down system logger: "
+	killproc syslogd
+	RETVAL=$?
+	echo
+	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/syslog
+	;;
+  status)
+	status syslogd
+	status klogd
+	RETVAL=$?
+	;;
+  restart|reload)
+	$0 stop
+	$0 start
+	RETVAL=$?
+	;;
+  *)
+	echo "Usage: syslog {start|stop|status|restart}"
+	exit 1
+esac
+
+exit $RETVAL

@@ -1,0 +1,12 @@
+diff -ur sysklogd-1.3-31.orig/syslogd.c sysklogd-1.3-31/syslogd.c
+--- sysklogd-1.3-31.orig/syslogd.c	Tue Jan 19 14:31:58 1999
++++ sysklogd-1.3-31/syslogd.c	Tue Sep 12 19:58:34 2000
+@@ -1925,7 +1925,7 @@
+ 			/* is this slot used? */
+ 			if (ut.ut_name[0] == '\0')
+ 				continue;
+-			if (ut.ut_type == LOGIN_PROCESS)
++			if (ut.ut_type != USER_PROCESS)
+ 			        continue;
+ 			if (!(strcmp (ut.ut_name,"LOGIN"))) /* paranoia */
+ 			        continue;
