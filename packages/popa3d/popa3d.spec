@@ -1,4 +1,4 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.6 2001/09/08 21:32:51 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.7 2001/09/08 21:47:01 solar Exp $
 
 Summary: A tiny POP3 server with security as its primary design goal
 Name: popa3d
@@ -12,7 +12,7 @@ Source2: popa3d.init
 Source3: popa3d.xinetd
 Patch0: popa3d-0.4.9.3-owl-params.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
-Requires: pam_userpass, xinetd
+Requires: /usr/share/empty, pam_userpass, xinetd
 Prereq: /sbin/chkconfig, /dev/null, grep, shadow-utils
 
 %description
