@@ -1,20 +1,20 @@
-# $Id: Owl/packages/gzip/gzip.spec,v 1.6 2002/02/03 21:50:32 mci Exp $
+# $Id: Owl/packages/gzip/gzip.spec,v 1.7 2002/07/06 23:40:39 solar Exp $
 
 Summary: The GNU data compression program.
 Name: gzip
 Version: 1.3
-Release: owl14
+Release: owl15
 License: GPL
 Group: Applications/File
 URL: http://www.gzip.org
 Source: ftp://alpha.gnu.org/gnu/gzip/gzip-%{version}.tar.gz
 Patch0: gzip-1.3-openbsd-owl-tmp.diff
-Patch1: gzip-1.2.4-rh-zforce.diff
-Patch2: gzip-1.2.4a-rh-dirinfo.diff
+Patch1: gzip-1.3-rh-owl-zforce.diff
+Patch2: gzip-1.3-rh-info.diff
 Patch3: gzip-1.3-rh-stderr.diff
-Patch4: gzip-1.3-rh-zgreppipe.diff
+Patch4: gzip-1.3-rh-zgrep.diff
 Prereq: /sbin/install-info
-Requires: mktemp >= 1:1.0
+Requires: mktemp >= 1:1.3.1
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -71,6 +71,10 @@ fi
 %{_infodir}/gzip.info*
 
 %changelog
+* Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
+- Use grep -q in zforce.
+- Use mktemp -t rather than substitute $TMPDIR manually in gzexe, zdiff.
+
 * Sun Feb 03 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions
 
