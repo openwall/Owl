@@ -5,8 +5,8 @@ http://www.openwall.com/Owl/
 Owl kann von einem der folgenden offiziellen Spiegel-Server herunter
 geladen werden:
 
-ftp://ftp1.ru.openwall.com/pub/Owl/	(Russland, Russian Express ISP)
-ftp://ftp2.ru.openwall.com/pub/Owl/	(Russland, DataForce ISP)
+ftp://ftp1.ru.openwall.com/pub/Owl/	(Russland, DataForce ISP)
+ftp://ftp2.ru.openwall.com/pub/Owl/	(Russland, Caravan ISP)
 ftp://ftp.pl.openwall.com/pub/Owl/	(Polen)
 ftp://ftp.ua.openwall.com/pub/Owl/	(Ukraine)
 ftp://ftp.cz.openwall.com/pub/Owl/	(Tschechien)
@@ -62,4 +62,4 @@ Kompression zu benutzen, zum einen, wenn man direkt auf den anonymen CVS Server
 zugreift, mit der Option -z3 und/oder zum anderen wenn man die -C Option an den
 SSH Client übergibt.
 
-$Id: Owl/doc/de/DOWNLOAD,v 1.7 2002/07/13 08:53:22 schmidt Exp $
+$Id: Owl/doc/de/DOWNLOAD,v 1.8 2002/08/02 20:23:41 solar Exp $
