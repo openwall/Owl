@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.26 2005/03/05 23:37:01 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.27 2005/03/06 00:44:49 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
@@ -83,7 +83,9 @@ fi
 
 %changelog
 * Sun Mar 06 2005 Solar Designer <solar@owl.openwall.com> 0.12-owl1
-- Updated to Linux 2.4.29-ow1.
+- Updated to Linux 2.4.29-ow1, dropped support for parallel ports, SCSI tape
+drives, PPP, SLIP, and NFS server to make the kernel still fit on a floppy
+when built with the new gcc (3.4.3).
 
 * Sun Apr 18 2004 Solar Designer <solar@owl.openwall.com> 0.11-owl1
 - Updated to Linux 2.4.26-ow1.
