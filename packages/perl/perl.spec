@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.23 2004/01/25 20:33:43 solar Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.24 2004/09/10 07:28:57 galaxy Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -7,6 +7,9 @@
 # this is at your own risk, -- we do not officially support suidperl.
 %define BUILD_SUIDPERL 0
 
+# Build perl with threads support.
+%define BUILD_THREADS 1
+
 # Set this if you might be running kernel with enabled "Destroy shared
 # memory segments not in use" (CONFIG_HARDEN_SHM) configuration option.
 %define KERNEL_CONFIG_HARDEN_SHM 1
@@ -14,7 +17,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.8.3
-Release: owl1
+Release: owl1.4
 Epoch: 1
 License: GPL
 Group: Development/Languages
@@ -25,18 +28,60 @@ Patch2: perl-5.8.3-owl-vitmp.diff
 %if %KERNEL_CONFIG_HARDEN_SHM
 Patch10: perl-5.8.3-owl-tests-shm.diff
 %endif
-Patch20: perl-5.8.3-alt-no-previous-perl.diff
-Patch21: perl-5.8.3-alt-AnyDBM_File-DB_File.diff
-Patch22: perl-5.8.3-alt-MM-uninst.diff
-Patch23: perl-5.8.3-alt-deb-perldoc-INC.diff
+Patch20: perl-5.8.3-alt-AnyDBM_File-DB_File.diff
+Patch21: perl-5.8.3-alt-MM-uninst.diff
+Patch22: perl-5.8.3-alt-deb-perldoc-INC.diff
+Patch30: perl-5.8.3-rh-lpthread.diff
+Provides: perl(:WITH_PERLIO)
+%if %BUILD_THREADS
+%define thread_arch -thread-multi
+Provides: perl(:WITH_ITHREADS)
+Provides: perl(:WITH_THREADS)
+%else
+%define thread_arch %nil
+Provides: perl(:WITHOUT_ITHREADS)
+Provides: perl(:WITHOUT_THREADS)
+%endif
+# XXX: RH do this
+Provides: perl(abbrev.pl)
+Provides: perl(assert.pl)
+Provides: perl(bigfloat.pl)
+Provides: perl(bigint.pl)
+Provides: perl(bigrat.pl)
+Provides: perl(bytes_heavy.pl)
+Provides: perl(cacheout.pl)
+Provides: perl(complete.pl)
+Provides: perl(ctime.pl)
+Provides: perl(dotsh.pl)
+Provides: perl(dumpvar.pl)
+Provides: perl(exceptions.pl)
+Provides: perl(fastcwd.pl)
+Provides: perl(find.pl)
+Provides: perl(finddepth.pl)
+Provides: perl(flush.pl)
+Provides: perl(getcwd.pl)
+Provides: perl(getopt.pl)
+Provides: perl(getopts.pl)
+Provides: perl(hostname.pl)
+Provides: perl(importenv.pl)
+Provides: perl(look.pl)
+Provides: perl(newgetopt.pl)
+Provides: perl(open2.pl)
+Provides: perl(open3.pl)
+Provides: perl(perl5db.pl)
+Provides: perl(pwd.pl)
+Provides: perl(shellwords.pl)
+Provides: perl(stat.pl)
+Provides: perl(syslog.pl)
+Provides: perl(tainted.pl)
+Provides: perl(termcap.pl)
+Provides: perl(timelocal.pl)
+Provides: perl(utf8_heavy.pl)
+Provides: perl(validate.pl)
 Obsoletes: perl-MD5
-BuildRequires: rpm >= 3.0.5
+BuildRequires: rpm >= 4.0.5
 BuildRequires: gawk, grep, tcsh
 BuildRoot: /override/%name-%version
-
-# Provide Perl-specific find-{provides,requires}.
-%define	__find_provides	/usr/lib/rpm/find-provides.perl
-%define	__find_requires	/usr/lib/rpm/find-requires.perl
 
 %description
 Perl is a high-level programming language with roots in C, sed, awk
@@ -76,7 +121,7 @@ introduce security holes.
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
-%patch23 -p1
+%patch30 -p1
 
 # Remove files with known temporary file handling issues that we don't
 # package or use anyway.
@@ -89,6 +134,14 @@ for f in $REMOVE_FILES; do
 done | sed 's/\./\\./' | grep -vEf - MANIFEST.orig > MANIFEST
 # Satisfy a make dependency
 touch makeaperl.SH
+
+cat > filter_depends.sh <<EOF
+#!/bin/sh
+/usr/lib/rpm/find-requires.perl $* | grep -v NDBM | grep -v 'perl(v5.6.0)' | grep -v 'perl(Mac::' | grep -v 'perl(Tk' | grep -v 'perl(VMS::' | grep -v 'perl(FCGI)'
+EOF
+chmod +x filter_depends.sh
+
+%define __find_requires	%_builddir/%name-%version/filter_depends.sh
 
 %build
 rm -rf $RPM_BUILD_ROOT
@@ -104,6 +157,9 @@ rm -rf $RPM_BUILD_ROOT
 	-Dinstallprefix=$RPM_BUILD_ROOT%_prefix \
 	-Dprefix=%_prefix \
 	-Darchname=%_arch-%_os \
+	-Dvendorprefix=%_prefix \
+	-Dsiteprefix=%_prefix \
+	-Dotherlibdirs=/usr/lib/perl5/%version \
 %if %BUILD_SUIDPERL
 	-Dd_dosuid \
 %else
@@ -120,7 +176,17 @@ rm -rf $RPM_BUILD_ROOT
 	-Dman1dir=%_mandir/man1 \
 	-Dman3dir=%_mandir/man3 \
 	-Dman3ext=3pm \
-	-Uuselargefiles
+%if %BUILD_THREADS
+	-Dusethreads \
+	-Duseithreads \
+%else
+	-Uusethreads \
+	-Uuseithreads \
+%endif
+	-Duselargefiles \
+	-Ubincompat5005 \
+	-Uversiononly \
+	-Dinc_version_list='5.8.0/%_arch-%_os%thread_arch 5.8.0'
 %__make
 
 # Some of the tests might create temporary files without due care, some
@@ -158,7 +224,7 @@ GCCH	= \$(filter \$(GCCDIR)/%%.h, \$(shell rpm -ql gcc))
 
 PERLLIB = \$(RPM_BUILD_ROOT)%_libdir/perl5/%version
 PERL	= PERL5LIB=\$(PERLLIB) \$(RPM_BUILD_ROOT)%_bindir/perl
-PHDIR	= \$(PERLLIB)/%_arch-%_os
+PHDIR	= \$(PERLLIB)/%_arch-%_os%thread_arch
 H2PH	= \$(PERL) \$(RPM_BUILD_ROOT)%_bindir/h2ph -d \$(PHDIR)/
 
 all: std-headers gcc-headers fix-config
@@ -175,10 +241,12 @@ gcc-headers: \$(GCCH)
 fix-config: \$(PHDIR)/Config.pm
 	\$(PERL) -i -p -e "s|\$(RPM_BUILD_ROOT)||g;" \$<
 EOF
-
-# Don't leak information specific to the build system
-rm -f $RPM_BUILD_ROOT%_libdir/perl5/%version/%_arch-%_os/linux/compile.ph
 %endif
+
+# Don't leak information specific to the build system.
+# "-f" here because compile.ph appeared here only when we have
+# compiled kernel source tree in system.
+rm -f $RPM_BUILD_ROOT%_libdir/perl5/%version/%_arch-%_os%thread_arch/linux/compile.ph
 
 # Fix the rest of the stuff
 find $RPM_BUILD_ROOT%_libdir/perl* -name .packlist -o -name perllocal.pod | \
@@ -202,6 +270,20 @@ find $RPM_BUILD_ROOT%_libdir/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Fri Mar 19 2004 Michail Litvak <mci@owl.openwall.com> 5.8.3-owl1.4
+- Deal with automatic requires
+- Add some Provides, which is undetected automatically.
+
+* Fri Mar 19 2004 Solar Designer <solar@owl.openwall.com> 5.8.3-owl1.3
+- Dropped the AutoReq: false
+
+* Mon Mar 15 2004 Michail Litvak <mci@owl.openwall.com> 5.8.3-owl1.2
+- Build with threading support to be RH9 compatible.
+- Added vendor_perl directory to @INC.
+
+* Thu Feb 19 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 5.8.3-owl1.1
+- Temporarily set AutoReq to false
+
 * Sun Jan 25 2004 Solar Designer <solar@owl.openwall.com> 5.8.3-owl1
 - Additional temporary file handling fixes.
 - Made building/packaging of suidperl optional and officially unsupported.

@@ -1,0 +1,11 @@
+--- perl-5.8.3/ext/threads/Makefile.PL.orig	Thu Apr  3 06:08:54 2003
++++ perl-5.8.3/ext/threads/Makefile.PL	Mon Mar 15 11:03:57 2004
+@@ -10,7 +10,7 @@ WriteMakefile(
+       (ABSTRACT_FROM => 'threads.pm', # retrieve abstract from module
+        AUTHOR     => 'Artur Bergman  <artur@contiller.se>') : ()),
+     'MAN3PODS'		=> {},  # Pods will be built by installman
+-    'LIBS'		=> [''], # e.g., '-lm'
++    'LIBS'		=> ['-lpthread'], # e.g., '-lm'
+     'DEFINE'		=> '', # e.g., '-DHAVE_SOMETHING'
+ 	# Insert -I. if you add *.h files later:
+ #    'INC'		=> '', # e.g., '-I/usr/include/other'
