@@ -11,9 +11,9 @@ auf MARC verfügbar:
 http://marc.theaimsgroup.com/?l=owl-users
 
 Zusätzlich zu der owl-users Liste hat man die Möglichkeit Kommentare
-über Owl via <feedback@owl.openwall.com> direkt an uns zu richten.
+über Owl via <feedback at owl.openwall.com> direkt an uns zu richten.
 
-Berichte über mögliche Sicherheitslücken bitte an <security@owl.openwall.com>,
-andere Bugs an <bugs@owl.openwall.com>.
+Berichte über mögliche Sicherheitslücken bitte an
+<security at owl.openwall.com>, andere Bugs an <bugs at owl.openwall.com>.
 
-$Id: Owl/doc/de/CONTACT,v 1.3 2002/06/20 14:31:59 schmidt Exp $
+$Id: Owl/doc/de/CONTACT,v 1.4 2004/02/07 06:23:23 solar Exp $

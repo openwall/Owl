@@ -5,9 +5,9 @@ Actuellement, nous avons spécialement besoin de miroirs officiels au Canada
 et au Japon.
 
 Avant d'installer un miroir, merci d'envoyer un e-mail à
-<mirrors@owl.openwall.com> afin que nous ayons votre adresse de contact dans
-les cas d'un problème technique ou d'un changement significatif dans les
-exigences décrites ci-dessous.
+<mirrors at owl.openwall.com> afin que nous ayons votre adresse de contact
+dans les cas d'un problème technique ou d'un changement significatif dans
+les exigences décrites ci-dessous.
 
 La façon connue pour faire des miroirs Owl depuis la source primaire
 (ftp.feed.openwall.com) est d'utiliser lftp, de préférence le paquet Owl.
@@ -48,4 +48,4 @@ installez Owl et n'utilisez que les services qui font partie de Owl, ce
 devrait toujours être bon.) Comme exception, il peut héberger d'autres
 contenus FTP.
 
-$Id: Owl/doc/fr/MIRRORING,v 1.2 2004/02/05 04:36:11 solar Exp $
+$Id: Owl/doc/fr/MIRRORING,v 1.3 2004/02/07 06:23:23 solar Exp $

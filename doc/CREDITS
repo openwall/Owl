@@ -1,38 +1,38 @@
 Owl development team core:
 
-	Solar Designer <solar@owl.openwall.com>
-	Alexandr D. Kanevskiy <kad@owl.openwall.com>
-	Michail Litvak <mci@owl.openwall.com>
-	Rafal Wojtczuk <nergal@owl.openwall.com>
-	(GalaxyMaster) <galaxy@owl.openwall.com>
+	Solar Designer <solar at owl.openwall.com>
+	Alexandr D. Kanevskiy <kad at owl.openwall.com>
+	Michail Litvak <mci at owl.openwall.com>
+	Rafal Wojtczuk <nergal at owl.openwall.com>
+	(GalaxyMaster) <galaxy at owl.openwall.com>
 
 Import of enhancements to our software back from ALT Linux:
 
-	Dmitry V. Levin <ldv@owl.openwall.com>
+	Dmitry V. Levin <ldv at owl.openwall.com>
 
 Mutt package:
 
-	Jarno Huuskonen <jhuuskon@owl.openwall.com>
+	Jarno Huuskonen <jhuuskon at owl.openwall.com>
 
 CVS package:
 
-	Simon B <simonb@owl.openwall.com>
+	Simon B <simonb at owl.openwall.com>
 
 The DHCP suite package and German translations:
 
-	Matthias Schmidt <schmidt@owl.openwall.com>
+	Matthias Schmidt <schmidt at owl.openwall.com>
 
 French translations:
 
-	Denis Ducamp <ducamp@owl.openwall.com>
+	Denis Ducamp <ducamp at owl.openwall.com>
 
 Russian translations:
 
-	Gremlin from Kremlin <gremlin@owl.openwall.com>
+	Gremlin from Kremlin <gremlin at owl.openwall.com>
 
 Official Owl artwork:
 
-	Gleb Todosov <gleb@owl.openwall.com>
+	Gleb Todosov <gleb at owl.openwall.com>
 
 Virtual Unix Project has provided the initial funding for Owl.  Many
 other companies, teams and individuals have donated money, hardware,
@@ -42,4 +42,4 @@ a donation too:
 
 http://www.openwall.com/donations/
 
-$Id: Owl/doc/CREDITS,v 1.10 2004/01/27 07:56:16 solar Exp $
+$Id: Owl/doc/CREDITS,v 1.11 2004/02/07 06:23:23 solar Exp $

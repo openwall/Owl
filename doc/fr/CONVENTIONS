@@ -115,7 +115,7 @@ jour du mois avec un zéro devant si nécessaire.
 11. Dans %changelog, en ajoutant de nouvelles entrées spécifiez les Version
 et Release actuelles après votre adresse e-mail, comme ceci :
 
-* Mon Mar 10 2003 Solar Designer <solar@owl.openwall.com> 0.6.2-owl1
+* Mon Mar 10 2003 Your Name <you@example.com> 0.6.2-owl1
 
 
 	Nommage des fichiers patch.
@@ -229,4 +229,4 @@ Requires: mktemp >= 1:1.3.1
 Comme d'habitude, utilisez Requires, PreReq, et/ou BuildRequires selon où
 dans le paquet les utilisations de mktemp se produisent.
 
-$Id: Owl/doc/fr/CONVENTIONS,v 1.4 2003/10/29 16:36:39 solar Exp $
+$Id: Owl/doc/fr/CONVENTIONS,v 1.5 2004/02/07 06:23:23 solar Exp $

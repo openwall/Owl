@@ -5,7 +5,7 @@ verwalten wollen.
 Aktuell brauchen wir offizielle mirrors in Japan und Kanada.
 
 Bevor man einen mirror aufsetzt, sollte man eine E-Mail an
-<mirrors@owl.openwall.com> schicken damit wir eine Kontakt-
+<mirrors at owl.openwall.com> schicken damit wir eine Kontakt-
 adresse haben, falls technische Probleme oder signifikante
 Änderungen der untenstehenden Voraussetzungen auftreten.
 
@@ -50,4 +50,4 @@ keine anderen, möglicherweise gefährlichen Dienste anbietet.
 von Owl sind, ist das in Ordnung). In Ausnahmen kann der
 Server andere Inhalte hosten.
 
-$Id: Owl/doc/de/MIRRORING,v 1.5 2004/02/05 13:55:38 schmidt Exp $
+$Id: Owl/doc/de/MIRRORING,v 1.6 2004/02/07 06:23:23 solar Exp $
