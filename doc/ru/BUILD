@@ -55,7 +55,7 @@ UID 151 и GID 150 ("sources"), и сделать этого пользователя владельцем
 
 для Owl-current:
 
-Dual Pentium III, 600 MHz, 512 MB                               2:50
+Dual Pentium III, 600 MHz, 512 MB				2:50
 
 для Owl 1.1 release, не актуальны для Owl-current:
 
@@ -113,4 +113,4 @@ native/Owl/build в /usr/src/world. Предварительно следует удалить
 (SRPM), собираемых с помощью системы сборки Owl, вам следует также
 указать в названии номер версии.
 
-$Id: Owl/doc/ru/BUILD,v 1.8 2004/11/09 13:00:24 gremlin Exp $
+$Id: Owl/doc/ru/BUILD,v 1.9 2004/11/09 13:51:52 solar Exp $
