@@ -78,7 +78,7 @@ Software übersetzen.)
 
 Es wird auch empfohlen, dass die Quelltexte sauber genug sind, damit
 keine einzige Kompilerwarnung erscheint, wenn man mit "gcc -Wall" über-
-setzt. Wenn dem so ist, ist der richtige Weg um die -Wall Option zu 
+setzt. Wenn dem so ist, ist der richtige Weg um die -Wall Option zu
 übergeben, einfach folgende Zeile vor der %build Sektion einfügen:
 
 	%{expand:%%define optflags %optflags -Wall}
@@ -121,7 +121,7 @@ unser Problem sind). Wenn ein Patch aus einem CVS Archiv entnommen
 wurde, sollte ORIGIN auf "cvs" gesetzt werden. Zusätzlich sollte WHAT
 auf das koresspondierende Datum (JJJJMMDD) gesetzt werden.
 
-Hier ein paar gebräuchliche WHAT's zum benutzen:
+Hier ein paar gebräuchliche WHATs zum benutzen:
 
 Makefile	- Nur für Makefile* Patches (Grossschreibung)
 bound		- bound checking (Speicher- oder Zahlenüberlauf)
@@ -157,4 +157,4 @@ mit den folgenden Optionen benutzen:
 Das entspricht nicht ganz unserem bevorzugten Code-Stil und wird
 deswegen bei Quelltexten in Owl noch nicht eingesetzt.
 
-$Id: Owl/doc/de/CONVENTIONS,v 1.3 2002/06/20 14:31:59 schmidt Exp $
+$Id: Owl/doc/de/CONVENTIONS,v 1.4 2002/06/22 15:02:23 schmidt Exp $

@@ -13,11 +13,11 @@ Auf vielen Architekturen unterstützt Owl verschiedene Versionen.
 Pakete, die für die neueste Version einer Architektur erstellt wurden,
 erzielen normalerweise nur einen geringen Geschwindigkeitszuwachs
 (zwischen einem und fünf Prozent bei normalen Aufgaben). Der Preis dafür
-jedoch ist: die Pakete können nicht auf eine ältere Maschine kopiert 
-und dort installiert werden. Im schlechtesten Fall könnten nicht einmal 
-die Pakete (oder ausführbare Dateien) für die älteren Version erstellt 
-werden, da die Entwicklungs-Bibilotheken nur für die neueste Version 
-der Architektur erstellt worden sind. Ok, die Pakete könnten eventuell 
+jedoch ist: die Pakete können nicht auf eine ältere Maschine kopiert
+und dort installiert werden. Im schlechtesten Fall könnten nicht einmal
+die Pakete (oder ausführbare Dateien) für die älteren Version erstellt
+werden, da die Entwicklungs-Bibilotheken nur für die neueste Version
+der Architektur erstellt worden sind. Ok, die Pakete könnten eventuell
 sogar erstellt werden, würden aber die neue Klasse der Architektur benötigen.
 
 Es gibt zwei Lösungen für dieses Problem: Man könnte nur Pakete der
@@ -28,7 +28,7 @@ worden sind. Es ist klar, dass die erste Lösung praktischer ist, obwohl
 sie nicht die bestmögliche Geschwindigkeit bietet.
 
 Pakete, die für eine ältere Version der Architektur erstellt worden
-sind, können zudem an aktuelle CPU's angepasst werden ohne die Zusätze
+sind, können zudem an aktuelle CPUs angepasst werden ohne die Zusätze
 für die alte Version zu verlieren. Das ist das System, wie die
 Pakete in Owl erstellt werden.
 
@@ -48,7 +48,7 @@ gilt für eine neuere CPU-Version als die des Rechners.
 	x86, auch bekannt als IA32.
 
 Zwei Version sind standardmässig definert: i386 und i686. Die für i386
-erstellten Pakete laufen auch auf einem i686 und auf neueren CPU's. Die
+erstellten Pakete laufen auch auf einem i686 und auf neueren CPUs. Die
 i386 Pakete als auch die für i686 sind für den i686 optimiert, allerdings
 benutzen die i686 Pakete Instruktionen, die nur für diese neue
 CPU-Version verfügbar sind.
@@ -84,4 +84,4 @@ optimiert. Die Pakete für alphaev56 sind für EV56/PCA56 Prozessoren
 alpha Pakete nutzen. Auf einem EV6+ (21264, 21264A) sollten
 die alphaev56 Pakete benutzt werden.
 
-$Id: Owl/doc/de/ARCHITECTURES,v 1.3 2002/06/20 14:31:59 schmidt Exp $
+$Id: Owl/doc/de/ARCHITECTURES,v 1.4 2002/06/22 15:02:23 schmidt Exp $

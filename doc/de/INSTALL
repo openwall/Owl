@@ -11,7 +11,7 @@ Wenn man noch keine Owl-CD hat finden sich in der DOWNLOAD Datei
 verschiedene Server, von denen man ein ISO-9660 Image herunter
 laden kann um es auf CD zu brennen.
 
-Die Owl CD's sind im Moment nur auf x86 Architekturen bootfähig. Sollte
+Die Owl CDs sind im Moment nur auf x86 Architekturen bootfähig. Sollte
 der Rechner von CD booten wird dieser Weg empfohlen. Wenn nicht, schreibt man
 das Bootdisketten-Image (unter /boot/floppy.image) auf eine formatierte
 1,44 MB Diskette (mittels dd(1) oder einem äquivalenten Tool) und bootet
@@ -20,7 +20,7 @@ CD-ROM Device fragen, welches der Kernel als root Dateisystem verwenden
 soll.
 
 Owl sollte dann in den single-user Modus booten. Bei der Frage nach dem
-root Passwort drückt man einfach Enter (die CD's haben kein Passwort) oder
+root Passwort drückt man einfach Enter (die CDs haben kein Passwort) oder
 man drückt STRG-D um das System in den multi-user Modus zu booten (nicht
 empfohlen). Wenn man sich für den single-user Modus entschieden hat,
 kann man das von der CD gebootete System durch Eingabe von
@@ -52,8 +52,8 @@ weitermachen.
 
 	Allgemeine Installationshinweise.
 
-Mit fdisk(8) kann man die Platte für Owl nach Belieben partitionieren. 
-Mit mkfs(8) wird ein neues Dateisystem angelegt, mit mkswap(8) eine 
+Mit fdisk(8) kann man die Platte für Owl nach Belieben partitionieren.
+Mit mkfs(8) wird ein neues Dateisystem angelegt, mit mkswap(8) eine
 Swap-Partition und danach mountet man das neue Dateisystem mittels mount(8)
 unter /owl. Selbstverständlich auch alle anderen Dateisysteme an
 ihrem bestimmten Platz unter /owl. Um Owl nun zu installieren, wechselt
@@ -73,4 +73,4 @@ Man kann nun den boot loader konfigurieren, der unter Owl verfügbar
 ist (LILO oder SILO, kommt auf die Architektur an), oder einen
 bereits installierten (falls vorhanden) verwenden.
 
-$Id: Owl/doc/de/INSTALL,v 1.3 2002/06/20 14:31:59 schmidt Exp $
+$Id: Owl/doc/de/INSTALL,v 1.4 2002/06/22 15:02:23 schmidt Exp $

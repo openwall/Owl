@@ -28,7 +28,7 @@ ebenfalls in /usr/src/world.
 Wird noch nicht auf einem Owl-System gearbeitet und Binärpakete
 sollen installiert werden, so sollte /usr/src/world/RPMS erstellt,
 und die Pakete für die jeweilige Architektur dort plaziert werden.
-Es ist zu beachten, dass das CVS Archiv auch für die Installation 
+Es ist zu beachten, dass das CVS Archiv auch für die Installation
 von Binärpaketen gebraucht wird.
 
 
@@ -110,9 +110,9 @@ sollte der Kernel während der Umstellung kein RPM-Paket mehr sein.
 
 	(Neu-) übersetzung individueller Pakete.
 
-Individuelle Pakete können wieder- oder neuübersetzt werden, indem man 
+Individuelle Pakete können wieder- oder neuübersetzt werden, indem man
 "make PACKAGE=name" eingibt, wobei "name" der Name des Quell-Paketes ist.
-Für fremde Pakete (SRPMs) die mit der Owl-Arbeitsumgebung erstellt worden 
+Für fremde Pakete (SRPMs) die mit der Owl-Arbeitsumgebung erstellt worden
 sind, muss man zusätzlich die Versionsnummer in "name" einfügen.
 
-$Id: Owl/doc/de/BUILD,v 1.6 2002/06/22 12:32:28 schmidt Exp $
+$Id: Owl/doc/de/BUILD,v 1.7 2002/06/22 15:02:23 schmidt Exp $
