@@ -1,4 +1,4 @@
-# $Id: Owl/packages/groff/groff.spec,v 1.9 2001/05/06 13:52:51 solar Exp $
+# $Id: Owl/packages/groff/groff.spec,v 1.10 2001/05/06 14:00:45 solar Exp $
 
 %define BUILD_USE_X	'no'
 %define BUILD_CURRENT	'no'
@@ -73,7 +73,7 @@ zcat %{SOURCE1} | patch -p1 -l
 %patch1 -p0
 %patch2 -p1
 %patch3 -p1
-cp %{SOURCE3} .
+install -m 644 %{SOURCE3} .
 
 %build
 %if "%{BUILD_USE_X}"=="'yes'"
