@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/console-tools/Attic/keytable.init,v 1.3 2000/12/15 05:14:27 solar Exp $
+# $Id: Owl/packages/console-tools/Attic/keytable.init,v 1.4 2000/12/15 05:21:29 solar Exp $
 #
 # Load keytable
 #
@@ -18,8 +18,6 @@ RETVAL=0
 case "$1" in
 start|restart|reload)
 	test -f /etc/sysconfig/keyboard -a -x /usr/bin/loadkeys || exit 0
-	# Load the proper keymap
-	echo "Loading keymap"
 	. /etc/sysconfig/keyboard
 	if [ "${KEYTABLE:-bogus}" != "bogus" ]; then
 	# Specify VT0 in case we use a serial console
@@ -27,7 +25,6 @@ start|restart|reload)
 		RETVAL=$?
 	fi
 	if [ -x /sbin/setsysfont ]; then
-		echo "Loading system font"
 		/sbin/setsysfont
 	fi
 	;;
