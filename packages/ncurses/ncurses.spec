@@ -1,13 +1,10 @@
-# $Id: Owl/packages/ncurses/ncurses.spec,v 1.1 2000/10/25 19:13:01 kad Exp $
+# $Id: Owl/packages/ncurses/ncurses.spec,v 1.2 2000/11/04 07:45:49 kad Exp $
 
-%define BUILD_COMPAT      'no'
+%define 	major	5
+%define 	oldmajor	4
 
 Summary: 	A CRT screen handling and optimization package.
-%if "%{BUILD_COMPAT}"=="'no'"
 Name: 		ncurses
-%else
-Name: 		ncurses4
-%endif
 Version: 	5.2
 Release: 	1owl
 Copyright: 	distributable
@@ -18,7 +15,6 @@ Source2: 	ncurses-linux
 Source3: 	ncurses-linux-m
 Source4: 	ncurses-resetall.sh
 Patch0:		ncurses-5.0-rh-setuid2.diff
-Patch1:		ncurses-5.2-rh-oldmajor.diff
 BuildRoot: 	/var/rpm-buildroot/%{name}-root
 
 %description
@@ -27,12 +23,7 @@ updating character screens with reasonable optimization.  The ncurses
 (new curses) library is a freely distributable replacement for the
 discontinued 4.4BSD classic curses library.
 
-%if "%{BUILD_COMPAT}"=="'yes'"
-This ncurses package provides compatiblity libaries for packages
-built against Red Hat Linux 6.2.
-%endif
- 
-%if "%{BUILD_COMPAT}"=="'no'"
+
 %package devel
 Summary: The development files for applications which use ncurses.
 Group: Development/Libraries
@@ -44,14 +35,21 @@ the ncurses CRT screen handling and optimization package.
 
 Install the ncurses-devel package if you want to develop applications
 which will use ncurses.
-%endif
+
+
+%package compat
+Summary: Ncurses compatibility for ncurses 4.x
+Group: System Environment/Libraries
+Requires: ncurses = %{PACKAGE_VERSION}
+Provides: libform.so.%{oldmajor} libmenu.so.%{oldmajor} libncurses.so.%{oldmajor} libpanel.so.%{oldmajor}
+
+%description compat
+This ncurses package provides compatiblity libaries for packages
+built against Red Hat Linux 6.2.
 
 %prep
 %setup -q -n ncurses-%{version}
 %patch0 -p1
-%if "%{BUILD_COMPAT}"=="'yes'"
-%patch1 -p1
-%endif
 find . -name "*.orig" -exec rm -f {} \;
 
 %build
@@ -83,15 +81,20 @@ make clean -C test
 # the resetall script
 install -c -m 755 %{SOURCE4} $RPM_BUILD_ROOT/usr/bin/resetall
 
+# comapt links
+ln -s libform.so.%{version} $RPM_BUILD_ROOT/usr/lib/libform.so.%{oldmajor}
+ln -s libmenu.so.%{version} $RPM_BUILD_ROOT/usr/lib/libmenu.so.%{oldmajor}
+ln -s libncurses.so.%{version} $RPM_BUILD_ROOT/usr/lib/libncurses.so.%{oldmajor}
+ln -s libpanel.so.%{version} $RPM_BUILD_ROOT/usr/lib/libpanel.so.%{oldmajor}
+
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
 
 %files
 %defattr(-,root,root)
-%attr(755,root,root) /usr/lib/lib*.so.*
+%attr(755,root,root) /usr/lib/lib*.so.%{major}*
 %doc README ANNOUNCE 
-%if "%{BUILD_COMPAT}"=="'no'"
 %doc doc/html/announce.html
 %{_datadir}/terminfo
 %{_datadir}/tabset
@@ -109,7 +112,9 @@ install -c -m 755 %{SOURCE4} $RPM_BUILD_ROOT/usr/bin/resetall
 %{_libdir}/lib*.a
 %{_includedir}/*
 %{_mandir}/man3/*
-%endif
+
+%files compat
+/usr/lib/lib*.so.%{oldmajor}*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
