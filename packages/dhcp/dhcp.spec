@@ -1,11 +1,11 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.13 2003/09/14 13:16:12 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.14 2003/09/15 08:38:31 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
 Summary: Dynamic Host Configuration Protocol (DHCP) distribution.
 Name: dhcp
 Version: 3.0pl2
-Release: owl0.4
+Release: owl1
 License: ISC License
 Group: System Environment/Daemons
 URL: http://www.isc.org/products/DHCP/
@@ -167,6 +167,9 @@ fi
 %attr(1770,root,dhcp) %dir /var/lib/dhcp/dhcrelay/state
 
 %changelog
+* Mon Sep 15 2003 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl1
+- Let's make the package public.
+
 * Sun Sep 14 2003 Matthias Schmidt <schmidt@owl.openwall.com> 3.0pl2-owl0.4
 - Create three subdirectories for every service under /var/lib/dhcp
 
