@@ -1,16 +1,16 @@
-# $Id: Owl/packages/links/Attic/links.spec,v 1.5 2001/06/07 13:00:09 mci Exp $
+# $Id: Owl/packages/links/Attic/links.spec,v 1.6 2001/06/08 19:01:53 mci Exp $
 
 Name: links
 Summary: Lynx-like text WWW browser with support for frames
 Version: 0.95
-Release: 5owl
+Release: 6owl
 Copyright: GPL
 Source: http://artax.karlin.mff.cuni.cz/~mikulas/links/download/%{name}-%{version}.tar.gz
 Group: Applications/Internet
 BuildRoot: /var/rpm-buildroot/%{name}-%{version}
 Patch0: links-0.95-asp-koi.diff
 Patch1: links-0.95-owl-tmp.diff
-Patch2: links-0.95-owl-confssl.diff
+Patch2: links-0.95-owl-configure.diff
 Requires: openssl
 BuildPreReq: openssl-devel
 
@@ -36,6 +36,7 @@ don't use it. :-)
 %build
 autoconf
 %configure --with-ssl
+make
 
 %install
 rm -rf $RPM_BUILD_ROOT
