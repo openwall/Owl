@@ -1,8 +1,8 @@
-# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.8 2002/03/31 04:51:01 solar Exp $
+# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.9 2002/04/01 20:34:24 solar Exp $
 
 Summary: Pluggable private /tmp space support for interactive (shell) sessions.
 Name: pam_mktemp
-Version: 0.2.2
+Version: 0.2.3
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
@@ -37,6 +37,9 @@ test -d /tmp/.private -a -O /tmp/.private && chattr +a /tmp/.private || :
 /lib/security/pam_mktemp.so
 
 %changelog
+* Tue Apr 02 2002 Solar Designer <solar@owl.openwall.com>
+- Use '=' instead of '.set' to declare the alias.
+
 * Sun Mar 31 2002 Solar Designer <solar@owl.openwall.com>
 - Support running without CAP_LINUX_IMMUTABLE as long as this code is
 _never_ executed with the capability; should probably switch to using

@@ -173,7 +173,7 @@ PAM_EXTERN int pam_sm_close_session(pam_handle_t *pamh, int flags,
 #ifdef PAM_STATIC
 #define pam_sm_acct_mgmt pam_sm_open_session
 #elif defined(__linux__) && defined(__ELF__)
-__asm__(".globl pam_sm_acct_mgmt; .set pam_sm_acct_mgmt, pam_sm_open_session");
+__asm__(".globl pam_sm_acct_mgmt; pam_sm_acct_mgmt = pam_sm_open_session");
 #else
 PAM_EXTERN int pam_sm_acct_mgmt(pam_handle_t *pamh, int flags,
 	int argc, const char **argv)
