@@ -1,0 +1,397 @@
+diff -urN mtree-2.6.orig/lib/libc/gen/setmode.c mtree-2.6/lib/libc/gen/setmode.c
+--- mtree-2.6.orig/lib/libc/gen/setmode.c	Thu Mar 25 01:24:55 1999
++++ mtree-2.6/lib/libc/gen/setmode.c	Sat Jul 22 05:15:08 2000
+@@ -218,7 +218,7 @@
+ 	 */
+ 	if (isdigit(*p)) {
+ 		perml = strtol(p, NULL, 8);
+-		if (perml < 0 || (perml & ~(STANDARD_BITS|S_ISTXT))) {
++		if (perml < 0 || (perml & ~(STANDARD_BITS|S_ISVTX))) {
+ 			free(saveset);
+ 			return (NULL);
+ 		}
+@@ -228,7 +228,7 @@
+ 				free(saveset);
+ 				return (NULL);
+ 			}
+-		ADDCMD('=', (STANDARD_BITS|S_ISTXT), perm, mask);
++		ADDCMD('=', (STANDARD_BITS|S_ISVTX), perm, mask);
+ 		return (saveset);
+ 	}
+ 
+@@ -264,7 +264,7 @@
+ 		if (op == '=')
+ 			equalopdone = 0;
+ 
+-		who &= ~S_ISTXT;
++		who &= ~S_ISVTX;
+ 		for (perm = 0, permXbits = 0;; ++p) {
+ 			switch (*p) {
+ 			case 'r':
+@@ -284,8 +284,8 @@
+ 				 * only "other" bits ignore sticky.
+ 				 */
+ 				if (who == 0 || (who & ~S_IRWXO)) {
+-					who |= S_ISTXT;
+-					perm |= S_ISTXT;
++					who |= S_ISVTX;
++					perm |= S_ISVTX;
+ 				}
+ 				break;
+ 			case 'w':
+diff -urN mtree-2.6.orig/usr.sbin/mtree/Makefile mtree-2.6/usr.sbin/mtree/Makefile
+--- mtree-2.6.orig/usr.sbin/mtree/Makefile	Mon Sep 22 23:34:48 1997
++++ mtree-2.6/usr.sbin/mtree/Makefile	Sat Jul 22 06:13:00 2000
+@@ -3,7 +3,21 @@
+ PROG=	mtree
+ #CFLAGS+=-DDEBUG
+ MAN=	mtree.8
+-SRCS=	compare.c crc.c create.c misc.c mtree.c spec.c verify.c
+-.PATH:	${.CURDIR}/../../usr.bin/cksum
++SRCS=	compare.c create.c misc.c mtree.c spec.c verify.c \
++	../../usr.bin/cksum/crc.c \
++	../../lib/libc/gen/setmode.c \
++	hashfile.c
+ 
+-.include <bsd.prog.mk>
++CC = gcc
++LD = gcc
++CFLAGS = -c -O2 -fomit-frame-pointer -I.
++LDFLAGS = -s -lcrypto
++
++$(PROG): $(SRCS:.c=.o)
++	$(LD) $(LDFLAGS) $+ -o $@
++
++.c.o:
++	$(CC) $(CFLAGS) $< -o $@
++
++clean:
++	$(RM) $(PROG) $(SRCS:.c=.o)
+diff -urN mtree-2.6.orig/usr.sbin/mtree/compare.c mtree-2.6/usr.sbin/mtree/compare.c
+--- mtree-2.6.orig/usr.sbin/mtree/compare.c	Tue Sep 15 04:08:45 1998
++++ mtree-2.6/usr.sbin/mtree/compare.c	Sun Jul 23 06:32:25 2000
+@@ -44,17 +44,21 @@
+ 
+ #include <sys/param.h>
+ #include <sys/stat.h>
++#define __USE_GNU
+ #include <fcntl.h>
++#undef __USE_GNU
+ #include <fts.h>
+ #include <errno.h>
+ #include <stdio.h>
+ #include <time.h>
++#include <sys/time.h>
+ #include <unistd.h>
+-#include <md5.h>
+-#include <sha1.h>
+-#include <rmd160.h>
++#include <openssl/md5.h>
++#include <openssl/sha.h>
++#include <openssl/ripemd.h>
+ #include "mtree.h"
+ #include "extern.h"
++#include "hashfile.h"
+ 
+ extern int tflag, uflag;
+ 
+@@ -170,7 +174,7 @@
+ 	}
+ 	if (s->flags & F_SIZE && s->st_size != p->fts_statp->st_size) {
+ 		LABEL;
+-		(void)printf("%ssize (%qd, %qd)\n",
++		(void)printf("%ssize (%lu, %lu)\n",
+ 		    tab, s->st_size, p->fts_statp->st_size);
+ 		tab = "\t";
+ 	}
+@@ -186,14 +190,15 @@
+ 		struct timeval tv[2];
+ 
+ 		TIMESPEC_TO_TIMEVAL(&tv[0], &s->st_mtimespec);
+-		TIMESPEC_TO_TIMEVAL(&tv[1], &p->fts_statp->st_mtimespec);
++		tv[1].tv_sec = p->fts_statp->st_mtime;
++		tv[1].tv_usec = 0;
+ 		if (tv[0].tv_sec != tv[1].tv_sec ||
+ 		    tv[0].tv_usec != tv[1].tv_usec) {
+ 			LABEL;
+ 			(void)printf("%smodification time (%.24s, ",
+ 			    tab, ctime(&s->st_mtimespec.tv_sec));
+ 			(void)printf("%.24s",
+-			    ctime(&p->fts_statp->st_mtimespec.tv_sec));
++			    ctime(&p->fts_statp->st_mtime));
+ 			if (tflag) {
+ 				tv[1] = tv[0];
+ 				if (utimes(p->fts_accpath, tv))
+@@ -207,7 +212,7 @@
+ 		}
+ 	}
+ 	if (s->flags & F_CKSUM)
+-		if ((fd = open(p->fts_accpath, O_RDONLY, 0)) < 0) {
++		if ((fd = open(p->fts_accpath, MTREE_O_FLAGS, 0)) < 0) {
+ 			LABEL;
+ 			(void)printf("%scksum: %s: %s\n",
+ 			    tab, p->fts_accpath, strerror(errno));
+diff -urN mtree-2.6.orig/usr.sbin/mtree/create.c mtree-2.6/usr.sbin/mtree/create.c
+--- mtree-2.6.orig/usr.sbin/mtree/create.c	Fri Jan 23 01:56:21 1998
++++ mtree-2.6/usr.sbin/mtree/create.c	Sun Jul 23 06:32:42 2000
+@@ -45,7 +45,9 @@
+ #include <sys/param.h>
+ #include <sys/stat.h>
+ #include <time.h>
++#define __USE_GNU
+ #include <fcntl.h>
++#undef __USE_GNU
+ #include <fts.h>
+ #include <dirent.h>
+ #include <grp.h>
+@@ -53,11 +55,12 @@
+ #include <errno.h>
+ #include <unistd.h>
+ #include <stdio.h>
+-#include <md5.h>
+-#include <sha1.h>
+-#include <rmd160.h>
++#include <openssl/md5.h>
++#include <openssl/sha.h>
++#include <openssl/ripemd.h>
+ #include "mtree.h"
+ #include "extern.h"
++#include "hashfile.h"
+ 
+ #define	INDENTNAMELEN	15
+ #define	MAXLINELEN	80
+@@ -73,7 +76,11 @@
+ static mode_t mode;
+ 
+ static int	dsort __P((const FTSENT **, const FTSENT **));
+-static void	output __P((int, int *, const char *, ...));
++static void	output __P((int, int *, const char *, ...))
++#ifdef __GNUC__
++__attribute__ ((format (printf, 3, 4)))
++#endif
++	;
+ static int	statd __P((FTS *, FTSENT *, uid_t *, gid_t *, mode_t *));
+ static void	statf __P((int, FTSENT *));
+ 
+@@ -185,13 +192,12 @@
+ 	if (keys & F_NLINK && p->fts_statp->st_nlink != 1)
+ 		output(indent, &offset, "nlink=%u", p->fts_statp->st_nlink);
+ 	if (keys & F_SIZE && S_ISREG(p->fts_statp->st_mode))
+-		output(indent, &offset, "size=%qd", p->fts_statp->st_size);
++		output(indent, &offset, "size=%lu", p->fts_statp->st_size);
+ 	if (keys & F_TIME)
+-		output(indent, &offset, "time=%ld.%ld",
+-		    p->fts_statp->st_mtimespec.tv_sec,
+-		    p->fts_statp->st_mtimespec.tv_nsec);
++		output(indent, &offset, "time=%ld.0",
++		    p->fts_statp->st_mtime);
+ 	if (keys & F_CKSUM && S_ISREG(p->fts_statp->st_mode)) {
+-		if ((fd = open(p->fts_accpath, O_RDONLY, 0)) < 0 ||
++		if ((fd = open(p->fts_accpath, MTREE_O_FLAGS, 0)) < 0 ||
+ 		    crc(fd, &val, &len))
+ 			error("%s: %s", p->fts_accpath, strerror(errno));
+ 		(void)close(fd);
+diff -urN mtree-2.6.orig/usr.sbin/mtree/extern.h mtree-2.6/usr.sbin/mtree/extern.h
+--- mtree-2.6.orig/usr.sbin/mtree/extern.h	Tue Sep  9 12:47:23 1997
++++ mtree-2.6/usr.sbin/mtree/extern.h	Sat Jul 22 04:47:56 2000
+@@ -36,6 +36,9 @@
+  *	@(#)extern.h	8.1 (Berkeley) 6/6/93
+  */
+ 
++#include <fts.h>
++#include "mtree.h"
++
+ int	 compare __P((char *, NODE *, FTSENT *));
+ int	 crc __P((int, u_int32_t *, u_int32_t *));
+ void	 cwalk __P((void));
+diff -urN mtree-2.6.orig/usr.sbin/mtree/hashfile.c mtree-2.6/usr.sbin/mtree/hashfile.c
+--- mtree-2.6.orig/usr.sbin/mtree/hashfile.c	Thu Jan  1 03:00:00 1970
++++ mtree-2.6/usr.sbin/mtree/hashfile.c	Sun Jul 23 06:56:59 2000
+@@ -0,0 +1,79 @@
++#include <stdio.h>
++#define __USE_GNU
++#include <fcntl.h>
++#undef __USE_GNU
++#include <sys/stat.h>
++#include <stdlib.h>
++#include <errno.h>
++#include <unistd.h>
++
++#include <openssl/md5.h>
++#include <openssl/sha.h>
++#include <openssl/ripemd.h>
++
++#include "hashfile.h"
++
++#define FILE_BUFFER			0x1000
++
++static char hex[16] =
++	"0123456789abcdef";
++
++#define HASHFile(F, CTX, Init, Update, Final, N) \
++char *F(const char *pathname, char *output) \
++{ \
++	CTX c; \
++	unsigned char binary[N]; \
++	struct stat st; \
++	int fd, n, i; \
++	char *buffer, *p; \
++\
++	if (stat(pathname, &st)) return NULL; \
++	if (!S_ISREG(st.st_mode)) { \
++		errno = EIO; \
++		return NULL; \
++	} \
++\
++	if ((fd = open(pathname, MTREE_O_FLAGS)) < 0) \
++		return NULL; \
++\
++	if (fstat(fd, &st)) { \
++		close(fd); \
++		return NULL; \
++	} \
++	if (!S_ISREG(st.st_mode)) { \
++		close(fd); \
++		errno = EIO; \
++		return NULL; \
++	} \
++\
++	if (!(buffer = malloc(FILE_BUFFER))) { \
++		close(fd); \
++		errno = ENOMEM; \
++		return NULL; \
++	} \
++\
++	Init(&c); \
++	while ((n = read(fd, buffer, FILE_BUFFER)) > 0) \
++		Update(&c, buffer, n); \
++\
++	if (!n) { \
++		Final(binary, &c); \
++		p = output; \
++		for (i = 0; i < N; i++) { \
++			*p++ = hex[(int)binary[i] >> 4]; \
++			*p++ = hex[(int)binary[i] & 0x0f]; \
++		} \
++		*p = '\0'; \
++	} else \
++		output = NULL; \
++\
++	close(fd); \
++	free(buffer); \
++\
++	return output; \
++}
++
++HASHFile(MD5File, MD5_CTX, MD5_Init, MD5_Update, MD5_Final, 16)
++HASHFile(SHA1File, SHA_CTX, SHA1_Init, SHA1_Update, SHA1_Final, 20)
++HASHFile(RMD160File, RIPEMD160_CTX,
++	RIPEMD160_Init, RIPEMD160_Update, RIPEMD160_Final, 20)
+diff -urN mtree-2.6.orig/usr.sbin/mtree/hashfile.h mtree-2.6/usr.sbin/mtree/hashfile.h
+--- mtree-2.6.orig/usr.sbin/mtree/hashfile.h	Thu Jan  1 03:00:00 1970
++++ mtree-2.6/usr.sbin/mtree/hashfile.h	Sun Jul 23 06:25:52 2000
+@@ -0,0 +1,11 @@
++#ifndef _HASHFILE_H
++#define _HASHFILE_H
++
++extern char *MD5File(const char *pathname, char *output);
++extern char *SHA1File(const char *pathname, char *output);
++extern char *RMD160File(const char *pathname, char *output);
++
++#define MTREE_O_FLAGS \
++	(O_RDONLY | O_NOCTTY | O_NONBLOCK | O_NOFOLLOW)
++
++#endif
+diff -urN mtree-2.6.orig/usr.sbin/mtree/mtree.8 mtree-2.6/usr.sbin/mtree/mtree.8
+--- mtree-2.6.orig/usr.sbin/mtree/mtree.8	Thu Jul  8 00:28:11 1999
++++ mtree-2.6/usr.sbin/mtree/mtree.8	Sat Jul 22 08:37:56 2000
+@@ -276,18 +276,21 @@
+ .Cm sha1digest
+ be run on the file systems, and a copy of the results stored on a different
+ machine, or, at least, in encrypted form.
+-The output file itself should be digested using the
+-.Xr sha1 1
+-utility.
++The output file itself should be digested using
++.Nm openssl
++.Cm dgst
++.Fl sha1 .
+ Then, periodically,
+ .Nm mtree
+ and
+-.Xr sha1 1
++.Nm openssl
++.Cm dgst
++.Fl sha1
+ should be run against the on-line specifications.
+ While it is possible for the bad guys to change the on-line specifications
+ to conform to their modified binaries, it is believed to be
+ impractical for them to create a modified specification which has
+-the same MD5 digest as the original.
++the same SHA1 digest as the original.
+ .Pp
+ The
+ .Fl d
+@@ -307,15 +310,14 @@
+ .Xr chgrp 1 ,
+ .Xr chmod 1 ,
+ .Xr cksum 1 ,
+-.Xr md5 1 ,
+-.Xr rmd160 1 ,
+-.Xr sha1 1 ,
++.Xr md5sum 1 ,
++.Xr openssl 1 ,
++.Xr stat 1 ,
+ .Xr stat 2 ,
+-.Xr fts 3 ,
+ .Xr md5 3 ,
+-.Xr rmd160 3 ,
+-.Xr sha1 3 ,
+-.Xr chown 8
++.Xr ripemd 3 ,
++.Xr sha 3 ,
++.Xr chown 1
+ .Sh HISTORY
+ The
+ .Nm mtree
+diff -urN mtree-2.6.orig/usr.sbin/mtree/mtree.h mtree-2.6/usr.sbin/mtree/mtree.h
+--- mtree-2.6.orig/usr.sbin/mtree/mtree.h	Tue Sep  9 12:47:24 1997
++++ mtree-2.6/usr.sbin/mtree/mtree.h	Sat Jul 22 04:48:44 2000
+@@ -36,6 +36,9 @@
+  *	@(#)mtree.h	8.1 (Berkeley) 6/6/93
+  */
+ 
++#ifndef _MTREE_H
++#define _MTREE_H
++
+ #include <string.h>
+ #include <stdlib.h>
+ 
+@@ -56,7 +59,7 @@
+ 	char	*slink;				/* symbolic link reference */
+ 	uid_t	st_uid;				/* uid */
+ 	gid_t	st_gid;				/* gid */
+-#define	MBITS	(S_ISUID|S_ISGID|S_ISTXT|S_IRWXU|S_IRWXG|S_IRWXO)
++#define	MBITS	(S_ISUID|S_ISGID|S_ISVTX|S_IRWXU|S_IRWXG|S_IRWXO)
+ 	mode_t	st_mode;			/* mode */
+ 	nlink_t	st_nlink;			/* link count */
+ 
+@@ -96,3 +99,5 @@
+ #define	RP(p)	\
+ 	((p)->fts_path[0] == '.' && (p)->fts_path[1] == '/' ? \
+ 	    (p)->fts_path + 2 : (p)->fts_path)
++
++#endif
+diff -urN mtree-2.6.orig/usr.sbin/mtree/spec.c mtree-2.6/usr.sbin/mtree/spec.c
+--- mtree-2.6.orig/usr.sbin/mtree/spec.c	Sun Sep 27 03:17:35 1998
++++ mtree-2.6/usr.sbin/mtree/spec.c	Sat Jul 22 05:17:32 2000
+@@ -54,6 +54,9 @@
+ #include "mtree.h"
+ #include "extern.h"
+ 
++extern mode_t getmode(const void *set, mode_t mode);
++extern void * setmode(const char *mode_str);
++
+ int lineno;				/* Current spec line number. */
+ 
+ static void	 set __P((char *, NODE *));
