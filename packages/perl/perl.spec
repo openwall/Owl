@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.13 2002/07/18 06:28:54 solar Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.14 2002/08/03 23:01:01 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -6,7 +6,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.6.0
-Release: owl10
+Release: owl11
 Epoch: 1
 License: GPL
 Group: Development/Languages
@@ -167,7 +167,7 @@ fix-config: \$(PHDIR)/Config.pm
 EOF
 
 # Don't leak information specific to the build system
-rm ${RPM_BUILD_ROOT}%{_libdir}/perl5/%{version}/%{_arch}-linux/linux/compile.ph
+rm -f $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}/%{_arch}-linux/linux/compile.ph
 %endif
 
 # Now pay attention to the extra modules
@@ -194,6 +194,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/*/*
 
 %changelog
+* Sun Aug 04 2002 Solar Designer <solar@owl.openwall.com>
+- Use "rm -f" on compile.ph as it won't exist if the kernel sources under
+/usr/src/linux haven't been compiled (reported by Camiel Dobbelaar).
+
 * Thu Jul 18 2002 Solar Designer <solar@owl.openwall.com>
 - Patched c2ph and lib/ExtUtils/inst to use File::Temp, and the inst to
 work with GNU tar.
