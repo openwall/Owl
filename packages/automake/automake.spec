@@ -1,11 +1,11 @@
-# $Id: Owl/packages/automake/automake.spec,v 1.7 2004/09/10 07:16:58 galaxy Exp $
+# $Id: Owl/packages/automake/automake.spec,v 1.8 2004/09/11 00:27:09 solar Exp $
 
 %define api_version 1.8
 
 Summary: A GNU tool for automatically creating Makefiles.
 Name: automake
 Version: %{api_version}.3
-Release: owl0.1
+Release: owl1
 License: GPL
 Group: Development/Tools
 URL: http://sourceware.cygnus.com/automake/
@@ -34,7 +34,6 @@ rm -rf $RPM_BUILD_ROOT
 %makeinstall
 
 mkdir -p $RPM_BUILD_ROOT%_datadir/aclocal
-rm -f $RPM_BUILD_ROOT%_infodir/dir
 
 %post
 /sbin/install-info %_infodir/automake.info.gz %_infodir/dir
@@ -49,14 +48,18 @@ fi
 %doc AUTHORS COPYING ChangeLog INSTALL NEWS README THANKS TODO
 %_bindir/*
 %_infodir/*.info*
+%exclude %_infodir/dir
 %_datadir/automake-%api_version
 %_datadir/aclocal-%api_version
 %dir %_datadir/aclocal
 
 %changelog
+* Sat Sep 11 2004 Solar Designer <solar@owl.openwall.com> 1.8.3-owl1
+- Use RPM's exclude macro on info dir file.
+
 * Tue Mar 09 2004 Michail Litvak <mci@owl.openwall.com> 1.8.3-owl0.1
 - 1.8.3 (fixes a vulnerability discovered by Stefan Nordhausen).
- 
+
 * Wed Feb 25 2004 Michail Litvak <mci@owl.openwall.com> 1.8.2-owl0.1
 - 1.8.2
 - spec cleanups.

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/bison/bison.spec,v 1.14 2004/09/10 07:17:27 galaxy Exp $
+# $Id: Owl/packages/bison/bison.spec,v 1.15 2004/09/11 00:45:23 solar Exp $
 
 Summary: A GNU general-purpose parser generator.
 Name: bison
 Version: 1.35
-Release: owl2
+Release: owl3
 License: GPL
 Group: Development/Tools
 Source: ftp://ftp.gnu.org/gnu/bison/bison-%version.tar.bz2
@@ -36,9 +36,6 @@ make LDFLAGS=-s
 rm -rf $RPM_BUILD_ROOT
 %makeinstall datadir=$RPM_BUILD_ROOT%_libdir
 
-# XXX: (GM): Remove unpackaged files (check later)
-rm %buildroot%_infodir/dir
-
 %post
 /sbin/install-info %_infodir/bison.info.gz %_infodir/dir \
 	--entry="* bison: (bison).                               The GNU parser generator."
@@ -54,9 +51,13 @@ fi
 %_mandir/*/*
 %_libdir/*
 %_infodir/bison.info*
+%exclude %_infodir/dir
 %_bindir/*
 
 %changelog
+* Sat Sep 11 2004 Solar Designer <solar@owl.openwall.com> 1.35-owl3
+- Use RPM's exclude macro on info dir file.
+
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1.35-owl2
 - Deal with info dir entries such that the menu looks pretty.
 

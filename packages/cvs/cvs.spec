@@ -1,9 +1,9 @@
-# $Id: Owl/packages/cvs/cvs.spec,v 1.23 2004/09/11 00:09:54 solar Exp $
+# $Id: Owl/packages/cvs/cvs.spec,v 1.24 2004/09/11 00:19:58 solar Exp $
 
 Summary: A version control system.
 Name: cvs
 Version: 1.11.5
-Release: owl7
+Release: owl8
 License: GPL
 Group: Development/Tools
 URL: http://www.cvshome.org
@@ -82,9 +82,6 @@ cd $RPM_BUILD_ROOT
 find .%_datadir/cvs -type f -print0 | xargs -r0 chmod -x --
 chmod 755 .%_datadir/cvs/contrib/rcs2log
 
-# Remove unpackaged files
-rm %buildroot%_infodir/dir
-
 %post
 /sbin/install-info %_infodir/cvs.info.gz %_infodir/dir
 /sbin/install-info %_infodir/cvsclient.info.gz %_infodir/dir
@@ -100,6 +97,7 @@ fi
 %_bindir/cvs*
 %_mandir/*/*
 %_infodir/*.info*
+%exclude %_infodir/dir
 
 %files doc
 %defattr(-,root,root)
@@ -112,6 +110,9 @@ fi
 %_datadir/cvs
 
 %changelog
+* Sat Sep 11 2004 Solar Designer <solar@owl.openwall.com> 1.11.5-owl8
+- Use RPM's exclude macro on info dir file.
+
 * Thu Jun 03 2004 Solar Designer <solar@owl.openwall.com> 1.11.5-owl7
 - Added back-ports of further CVS security fixes to CAN-2004-0414,
 CAN-2004-0416, CAN-2004-0417, CAN-2004-0418, and to some minor bugs which

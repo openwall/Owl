@@ -1,9 +1,9 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.23 2004/09/11 00:09:54 solar Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.24 2004/09/11 00:39:27 solar Exp $
 
 Version: 2.05
 Name: bash
 Summary: The GNU Bourne-Again SHell (Bash).
-Release: owl7
+Release: owl8
 Group: System Environment/Shells
 License: GPL
 Source0: ftp://ftp.gnu.org/gnu/bash/bash-%version.tar.gz
@@ -141,9 +141,6 @@ install -m 644 $RPM_SOURCE_DIR/dot-bashrc etc/skel/.bashrc
 install -m 644 $RPM_SOURCE_DIR/dot-bash_profile etc/skel/.bash_profile
 install -m 644 $RPM_SOURCE_DIR/dot-bash_logout etc/skel/.bash_logout
 
-# Remove unpackaged files
-rm %buildroot%_infodir/dir
-
 %triggerin -- libtermcap
 if [ ! -f /etc/shells ]; then
 	echo "/bin/sh" >> /etc/shells
@@ -178,6 +175,7 @@ fi
 /bin/bash
 /bin/bash2
 %_infodir/bash.info*
+%exclude %_infodir/dir
 %_mandir/man1/*.1*
 %_mandir/man1/..1*
 %_prefix/bin/bashbug
@@ -187,6 +185,9 @@ fi
 %doc doc/*.ps* doc/*.html doc/article.txt*
 
 %changelog
+* Sat Sep 11 2004 Solar Designer <solar@owl.openwall.com> 2.05-owl8
+- Use RPM's exclude macro on info dir file.
+
 * Tue Feb 24 2004 Michail Litvak <mci@owl.openwall.com> 2.05-owl7
 - Statically link with system readline.
 

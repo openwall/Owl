@@ -1,4 +1,4 @@
-# $Id: Owl/packages/autoconf/autoconf.spec,v 1.7 2004/09/11 00:13:00 solar Exp $
+# $Id: Owl/packages/autoconf/autoconf.spec,v 1.8 2004/09/11 00:35:27 solar Exp $
 
 Summary: A GNU tool for automatically configuring source code.
 Name: autoconf
@@ -40,10 +40,7 @@ mkdir -p $RPM_BUILD_ROOT%_infodir
 
 # We don't want to include the standards.info stuff in the package,
 # because it comes from binutils...
-rm -f $RPM_BUILD_ROOT%_infodir/standards*
-
-# Remove unpackaged files
-rm %buildroot%_infodir/dir
+rm $RPM_BUILD_ROOT%_infodir/standards*
 
 %post
 /sbin/install-info %_infodir/autoconf.info.gz %_infodir/dir
@@ -57,12 +54,13 @@ fi
 %defattr(-,root,root)
 %_bindir/*
 %_infodir/*.info*
+%exclude %_infodir/dir
 %_datadir/autoconf
 %_mandir/man1/*
 
 %changelog
 * Sat Sep 11 2004 Solar Designer <solar@owl.openwall.com> 2.59-owl1
-- Make it official.
+- Use RPM's exclude macro on info dir file.
 
 * Wed Feb 25 2004 Michail Litvak <mci@owl.openwall.com> 2.59-owl0.1
 - 2.59

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/bc/bc.spec,v 1.8 2004/09/10 07:17:25 galaxy Exp $
+# $Id: Owl/packages/bc/bc.spec,v 1.9 2004/09/11 00:45:23 solar Exp $
 
 Summary: GNU's bc (a numeric processing language) and dc (a calculator).
 Name: bc
 Version: 1.06
-Release: owl4
+Release: owl5
 License: GPL
 Group: Applications/Engineering
 Source: ftp://ftp.gnu.org/gnu/bc/bc-%version.tar.gz
@@ -37,9 +37,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %makeinstall
 
-# XXX: (GM): Remove unpackaged files (check later)
-rm %buildroot%_infodir/dir
-
 %post
 /sbin/install-info %_infodir/bc.info.gz %_infodir/dir
 /sbin/install-info %_infodir/dc.info.gz %_infodir/dir
@@ -56,8 +53,12 @@ fi
 /usr/bin/bc
 %_mandir/*/*
 %_infodir/*.info*
+%exclude %_infodir/dir
 
 %changelog
+* Sat Sep 11 2004 Solar Designer <solar@owl.openwall.com> 1.06-owl5
+- Use RPM's exclude macro on info dir file.
+
 * Fri Feb 20 2004 Michail Litvak <mci@owl.openwall.com> 1.06-owl4
 - Fixed building with new readline 4.3.
 
