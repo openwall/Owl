@@ -1,4 +1,4 @@
-# $Id: Owl/packages/texinfo/texinfo.spec,v 1.11 2002/08/27 18:37:00 solar Exp $
+# $Id: Owl/packages/texinfo/texinfo.spec,v 1.12 2002/08/27 19:13:08 solar Exp $
 
 Summary: Tools needed to create Texinfo format documentation files.
 Name: texinfo
@@ -30,6 +30,7 @@ Project uses the Texinfo file format for most of its documentation.
 %package -n info
 Summary: A stand-alone TTY-based reader for GNU Texinfo documentation.
 Group: System Environment/Base
+PreReq: gzip
 
 %description -n info
 The GNU Project uses the Texinfo file format for much of its
@@ -104,6 +105,10 @@ fi
 /sbin/install-info
 
 %changelog
+* Tue Aug 27 2002 Solar Designer <solar@owl.openwall.com>
+- PreReq: gzip in info subpackage as required for the new texinfo
+(install-info now invokes external *zcat instead of using zlib).
+
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
 - Deal with info dir entries such that the menu looks pretty.
 
