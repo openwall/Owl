@@ -1,21 +1,21 @@
-# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.5 2001/06/14 03:45:04 solar Exp $
+# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.6 2001/11/09 02:18:09 solar Exp $
 
-Summary: Pluggable authentication module for USER/PASS-style protocols
+Summary: Pluggable authentication module for USER/PASS-style protocols.
 Name: pam_userpass
-Version: 0.4
+Version: 0.5
 Release: 1owl
-Copyright: relaxed BSD and (L)GPL-compatible
+License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
 Source: pam_userpass-%{version}.tar.gz
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
 BuildPreReq: pam >= 0.72-8owl
+BuildRoot: /override/%{name}-%{version}
 
 %description
 pam_userpass is a PAM authentication module for use specifically by
 services implementing non-interactive protocols and wishing to verify
-a username/password pair.  The module doesn't do any actual
-authentication, -- other modules, such as pam_pwdb, should be stacked
-to provide the authentication.
+a username/password pair.  This module doesn't do any actual
+authentication, -- other modules, such as pam_tcb, should be stacked
+after it to provide the authentication.
 
 %prep
 %setup -q
@@ -36,6 +36,10 @@ rm -rf $RPM_BUILD_ROOT
 /lib/security/pam_userpass.so
 
 %changelog
+* Fri Nov 09 2001 Solar Designer <solar@owl.openwall.com>
+- 0.5: provide a pam_sm_chauthtok as well, currently only supporting
+password changes which don't require the old password to be passed.
+
 * Thu Jun 14 2001 Solar Designer <solar@owl.openwall.com>
 - 0.4: deal with null passwords correctly (thanks to Rafal Wojtczuk
 <nergal@owl.openwall.com>), support Linux-PAM 0.74+'s new BP macros.
