@@ -1,8 +1,8 @@
-# $Id: Owl/packages/lftp/lftp.spec,v 1.19 2003/12/08 00:14:21 mci Exp $
+# $Id: Owl/packages/lftp/lftp.spec,v 1.20 2003/12/12 20:54:01 mci Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
-Version: 2.6.9
+Version: 2.6.10
 Release: owl1
 License: GPL
 Group: Applications/Internet
@@ -81,6 +81,9 @@ fi
 %_datadir/locale/*/*/*
 
 %changelog
+* Sat Dec 13 2003 Michail Litvak <mci@owl.openwall.com> 2.6.10-owl1
+- 2.6.10 (security fixes in html parsing code)
+
 * Mon Dec 08 2003 Michail Litvak <mci@owl.openwall.com> 2.6.9-owl1
 - 2.6.9
 - Dropped patch to fix tmp-files handling in configure script,
