@@ -1,0 +1,74 @@
+--- tcp_wrappers_7.6.orig/safe_finger.c	Wed Dec 28 19:42:42 1994
++++ tcp_wrappers_7.6/safe_finger.c	Mon Oct  2 06:34:10 2000
+@@ -22,23 +22,22 @@
+ 
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#include <sys/wait.h>
+ #include <signal.h>
+ #include <stdio.h>
++#include <stdlib.h>
++#include <unistd.h>
++#include <fcntl.h>
+ #include <ctype.h>
+-#include <pwd.h>
+-
+-extern void exit();
+ 
+ /* Local stuff */
+ 
+-char    path[] = "PATH=/bin:/usr/bin:/usr/ucb:/usr/bsd:/etc:/usr/etc:/usr/sbin";
++char    path[] = "PATH=/bin:/usr/bin:/usr/sbin:/sbin";
+ 
+ #define	TIME_LIMIT	60		/* Do not keep listinging forever */
+ #define	INPUT_LENGTH	100000		/* Do not keep listinging forever */
+ #define	LINE_LENGTH	128		/* Editors can choke on long lines */
+ #define	FINGER_PROGRAM	"finger"	/* Most, if not all, UNIX systems */
+-#define	UNPRIV_NAME	"nobody"	/* Preferred privilege level */
+-#define	UNPRIV_UGID	32767		/* Default uid and gid */
+ 
+ int     finger_pid;
+ 
+@@ -49,7 +48,10 @@
+     exit(0);
+ }
+ 
+-main(argc, argv)
++int pipe_stdin(char **argv);
++
++char  **argv;
++int main(argc, argv)
+ int     argc;
+ char  **argv;
+ {
+@@ -58,19 +60,13 @@
+     int     finger_status;
+     int     wait_pid;
+     int     input_count = 0;
+-    struct passwd *pwd;
+ 
+     /*
+      * First of all, let's don't run with superuser privileges.
+      */
+     if (getuid() == 0 || geteuid() == 0) {
+-	if ((pwd = getpwnam(UNPRIV_NAME)) && pwd->pw_uid > 0) {
+-	    setgid(pwd->pw_gid);
+-	    setuid(pwd->pw_uid);
+-	} else {
+-	    setgid(UNPRIV_UGID);
+-	    setuid(UNPRIV_UGID);
+-	}
++	fprintf(stderr, "%s: run me as a non-root user via su -c\n",argv[0]);
++	return 1;
+     }
+ 
+     /*
+@@ -160,7 +156,7 @@
+      */
+ 
+     for (i = 0; i < 3; i++) {
+-	if (fstat(i, &st) == -1 && open("/dev/null", 2) != i)
++	if (fstat(i, &st) == -1 && open("/dev/null", O_RDWR) != i)
+ 	    perror_exit("open /dev/null");
+     }
+ 

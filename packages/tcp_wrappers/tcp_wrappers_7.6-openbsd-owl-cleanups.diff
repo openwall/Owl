@@ -1,0 +1,826 @@
+diff -ur tcp_wrappers_7.6.orig/clean_exit.c tcp_wrappers_7.6/clean_exit.c
+--- tcp_wrappers_7.6.orig/clean_exit.c	Wed Dec 28 19:42:20 1994
++++ tcp_wrappers_7.6/clean_exit.c	Mon Oct  2 06:19:22 2000
+@@ -13,13 +13,16 @@
+ #endif
+ 
+ #include <stdio.h>
+-
+-extern void exit();
++#include <stdlib.h>
++#include <unistd.h>
+ 
+ #include "tcpd.h"
+ 
+ /* clean_exit - clean up and exit */
+ 
++#ifdef __GNUC__
++__attribute__ ((noreturn))
++#endif
+ void    clean_exit(request)
+ struct request_info *request;
+ {
+diff -ur tcp_wrappers_7.6.orig/diag.c tcp_wrappers_7.6/diag.c
+--- tcp_wrappers_7.6.orig/diag.c	Wed Dec 28 19:42:20 1994
++++ tcp_wrappers_7.6/diag.c	Mon Oct  2 06:19:22 2000
+@@ -38,15 +38,18 @@
+     char    fmt[BUFSIZ];
+ 
+     if (tcpd_context.file)
+-	sprintf(fmt, "%s: %s, line %d: %s",
++	snprintf(fmt, sizeof(fmt), "%s: %s, line %d: %s",
+ 		tag, tcpd_context.file, tcpd_context.line, format);
+     else
+-	sprintf(fmt, "%s: %s", tag, format);
++	snprintf(fmt, sizeof(fmt), "%s: %s", tag, format);
+     vsyslog(severity, fmt, ap);
+ }
+ 
+ /* tcpd_warn - report problem of some sort and proceed */
+ 
++#if defined(__STDC__) && defined(__GNUC__)
++__attribute__ ((format (printf, 1, 2)))
++#endif
+ void    VARARGS(tcpd_warn, char *, format)
+ {
+     va_list ap;
+@@ -58,6 +61,10 @@
+ 
+ /* tcpd_jump - report serious problem and jump */
+ 
++#if defined(__STDC__) && defined(__GNUC__)
++__attribute__ ((format (printf, 1, 2)))
++__attribute__ ((noreturn))
++#endif
+ void    VARARGS(tcpd_jump, char *, format)
+ {
+     va_list ap;
+diff -ur tcp_wrappers_7.6.orig/eval.c tcp_wrappers_7.6/eval.c
+--- tcp_wrappers_7.6.orig/eval.c	Mon Jan 30 21:51:46 1995
++++ tcp_wrappers_7.6/eval.c	Mon Oct  2 06:19:22 2000
+@@ -111,7 +111,7 @@
+ 	return (hostinfo);
+ #endif
+     if (STR_NE(eval_user(request), unknown)) {
+-	sprintf(both, "%s@%s", request->user, hostinfo);
++	snprintf(both, sizeof(both), "%s@%s", request->user, hostinfo);
+ 	return (both);
+     } else {
+ 	return (hostinfo);
+@@ -128,7 +128,7 @@
+     char   *daemon = eval_daemon(request);
+ 
+     if (STR_NE(host, unknown)) {
+-	sprintf(both, "%s@%s", daemon, host);
++	snprintf(both, sizeof(both), "%s@%s", daemon, host);
+ 	return (both);
+     } else {
+ 	return (daemon);
+diff -ur tcp_wrappers_7.6.orig/fakelog.c tcp_wrappers_7.6/fakelog.c
+--- tcp_wrappers_7.6.orig/fakelog.c	Wed Dec 28 19:42:22 1994
++++ tcp_wrappers_7.6/fakelog.c	Mon Oct  2 06:19:22 2000
+@@ -17,7 +17,7 @@
+ 
+ /* ARGSUSED */
+ 
+-openlog(name, logopt, facility)
++void openlog(name, logopt, facility)
+ char   *name;
+ int     logopt;
+ int     facility;
+@@ -27,7 +27,7 @@
+ 
+ /* vsyslog - format one record */
+ 
+-vsyslog(severity, fmt, ap)
++void vsyslog(severity, fmt, ap)
+ int     severity;
+ char   *fmt;
+ va_list ap;
+@@ -43,7 +43,7 @@
+ 
+ /* VARARGS */
+ 
+-VARARGS(syslog, int, severity)
++void VARARGS(syslog, int, severity)
+ {
+     va_list ap;
+     char   *fmt;
+@@ -56,7 +56,7 @@
+ 
+ /* closelog - dummy */
+ 
+-closelog()
++void closelog(void)
+ {
+     /* void */
+ }
+diff -ur tcp_wrappers_7.6.orig/hosts_access.c tcp_wrappers_7.6/hosts_access.c
+--- tcp_wrappers_7.6.orig/hosts_access.c	Wed Feb 12 04:13:23 1997
++++ tcp_wrappers_7.6/hosts_access.c	Mon Oct  2 06:19:22 2000
+@@ -33,9 +33,10 @@
+ #include <errno.h>
+ #include <setjmp.h>
+ #include <string.h>
+-
+-extern char *fgets();
+-extern int errno;
++#ifdef NETGROUP
++#include <netdb.h>
++#include <rpcsvc/ypclnt.h>
++#endif
+ 
+ #ifndef	INADDR_NONE
+ #define	INADDR_NONE	(-1)		/* XXX should be 0xffffffff */
+@@ -130,7 +131,7 @@
+     FILE   *fp;
+     char    sv_list[BUFLEN];		/* becomes list of daemons */
+     char   *cl_list;			/* becomes list of clients */
+-    char   *sh_cmd;			/* becomes optional shell command */
++    char   *sh_cmd = NULL;		/* becomes optional shell command */
+     int     match = NO;
+     struct tcpd_context saved_context;
+ 
+diff -ur tcp_wrappers_7.6.orig/inetcf.c tcp_wrappers_7.6/inetcf.c
+--- tcp_wrappers_7.6.orig/inetcf.c	Wed Feb 12 04:13:24 1997
++++ tcp_wrappers_7.6/inetcf.c	Mon Oct  2 06:20:50 2000
+@@ -14,12 +14,16 @@
+ #include <stdio.h>
+ #include <errno.h>
+ #include <string.h>
++#include <stdlib.h>
++#include <limits.h>
+ 
+-extern int errno;
+-extern void exit();
++#ifndef MAXPATHNAMELEN
++#define MAXPATHNAMELEN	PATH_MAX
++#endif
+ 
+ #include "tcpd.h"
+ #include "inetcf.h"
++#include "scaffold.h"
+ 
+  /*
+   * Network configuration files may live in unusual places. Here are some
+@@ -58,7 +62,7 @@
+ char   *conf;
+ {
+     char    buf[BUFSIZ];
+-    FILE   *fp;
++    FILE   *fp = NULL;
+     char   *service;
+     char   *protocol;
+     char   *user;
+@@ -78,14 +82,14 @@
+      * guesses.
+      */
+     if (conf != 0) {
+-	if ((fp = fopen(conf, "r")) == 0) {
++	if ((fp = fopen(conf, "r")) == NULL) {
+ 	    fprintf(stderr, percent_m(buf, "open %s: %m\n"), conf);
+ 	    exit(1);
+ 	}
+     } else {
+ 	for (i = 0; inet_files[i] && (fp = fopen(inet_files[i], "r")) == 0; i++)
+ 	     /* void */ ;
+-	if (fp == 0) {
++	if (fp == NULL) {
+ 	    fprintf(stderr, "Cannot find your inetd.conf or tlid.conf file.\n");
+ 	    fprintf(stderr, "Please specify its location.\n");
+ 	    exit(1);
+@@ -165,7 +169,7 @@
+ char   *arg0;
+ char   *arg1;
+ {
+-    char    daemon[BUFSIZ];
++    char    daemon[MAXPATHNAMELEN];
+     struct stat st;
+     int     wrap_status = WR_MAYBE;
+     char   *base_name_path = base_name(path);
+@@ -230,7 +234,7 @@
+ 		tcpd_warn("%s: not executable", arg0);
+ 	    }
+ 	} else {				/* look in REAL_DAEMON_DIR */
+-	    sprintf(daemon, "%s/%s", REAL_DAEMON_DIR, arg0);
++	    snprintf(daemon, sizeof(daemon), "%s/%s", REAL_DAEMON_DIR, arg0);
+ 	    if (check_path(daemon, &st) < 0) {
+ 		tcpd_warn("%s: not found in %s: %m",
+ 			  arg0, REAL_DAEMON_DIR);
+@@ -246,7 +250,7 @@
+ 	 * recipe. Look for a file with the same basename in REAL_DAEMON_DIR.
+ 	 * Draw some conservative conclusions when a distinct file is found.
+ 	 */
+-	sprintf(daemon, "%s/%s", REAL_DAEMON_DIR, arg0);
++	snprintf(daemon, sizeof(daemon), "%s/%s", REAL_DAEMON_DIR, arg0);
+ 	if (STR_EQ(path, daemon)) {
+ 	    wrap_status = WR_NOT;
+ 	} else if (check_path(daemon, &st) >= 0) {
+diff -ur tcp_wrappers_7.6.orig/misc.c tcp_wrappers_7.6/misc.c
+--- tcp_wrappers_7.6.orig/misc.c	Sun Feb 11 19:01:30 1996
++++ tcp_wrappers_7.6/misc.c	Mon Oct  2 06:19:22 2000
+@@ -17,8 +17,6 @@
+ 
+ #include "tcpd.h"
+ 
+-extern char *fgets();
+-
+ #ifndef	INADDR_NONE
+ #define	INADDR_NONE	(-1)		/* XXX should be 0xffffffff */
+ #endif
+diff -ur tcp_wrappers_7.6.orig/miscd.c tcp_wrappers_7.6/miscd.c
+--- tcp_wrappers_7.6.orig/miscd.c	Sun Feb 11 19:01:31 1996
++++ tcp_wrappers_7.6/miscd.c	Mon Oct  2 06:21:15 2000
+@@ -26,9 +26,10 @@
+ #include <netinet/in.h>
+ #include <stdio.h>
+ #include <syslog.h>
++#include <limits.h>
+ 
+ #ifndef MAXPATHNAMELEN
+-#define MAXPATHNAMELEN	BUFSIZ
++#define MAXPATHNAMELEN	PATH_MAX
+ #endif
+ 
+ #ifndef STDIN_FILENO
+@@ -111,7 +112,7 @@
+     /* Report request and invoke the real daemon program. */
+ 
+     syslog(allow_severity, "connect from %s", eval_client(&request));
+-    sprintf(path, "%s/miscd", REAL_DAEMON_DIR);
++    snprintf(path, sizeof(path), "%s/miscd", REAL_DAEMON_DIR);
+     closelog();
+     (void) execv(path, argv);
+     syslog(LOG_ERR, "error: cannot execute %s: %m", path);
+diff -ur tcp_wrappers_7.6.orig/myvsyslog.c tcp_wrappers_7.6/myvsyslog.c
+--- tcp_wrappers_7.6.orig/myvsyslog.c	Wed Dec 28 19:42:34 1994
++++ tcp_wrappers_7.6/myvsyslog.c	Mon Oct  2 06:19:22 2000
+@@ -14,11 +14,12 @@
+ #ifdef vsyslog
+ 
+ #include <stdio.h>
++#include <syslog.h>
+ 
+ #include "tcpd.h"
+ #include "mystdarg.h"
+ 
+-myvsyslog(severity, format, ap)
++void myvsyslog(severity, format, ap)
+ int     severity;
+ char   *format;
+ va_list ap;
+@@ -26,7 +27,7 @@
+     char    fbuf[BUFSIZ];
+     char    obuf[3 * STRING_LENGTH];
+ 
+-    vsprintf(obuf, percent_m(fbuf, format), ap);
++    vsnprintf(obuf, sizeof(obuf), percent_m(fbuf, format), ap);
+     syslog(severity, "%s", obuf);
+ }
+ 
+diff -ur tcp_wrappers_7.6.orig/options.c tcp_wrappers_7.6/options.c
+--- tcp_wrappers_7.6.orig/options.c	Sun Feb 11 19:01:32 1996
++++ tcp_wrappers_7.6/options.c	Mon Oct  2 06:21:29 2000
+@@ -41,15 +41,18 @@
+ #include <netinet/in.h>
+ #include <netdb.h>
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <syslog.h>
+ #include <pwd.h>
+ #include <grp.h>
+ #include <ctype.h>
+ #include <setjmp.h>
+ #include <string.h>
++#include <unistd.h>
++#include <limits.h>
+ 
+ #ifndef MAXPATHNAMELEN
+-#define MAXPATHNAMELEN  BUFSIZ
++#define MAXPATHNAMELEN	PATH_MAX
+ #endif
+ 
+ /* Local stuff. */
+@@ -108,21 +111,21 @@
+ /* List of known keywords. Add yours here. */
+ 
+ static struct option option_table[] = {
+-    "user", user_option, NEED_ARG,
+-    "group", group_option, NEED_ARG,
+-    "umask", umask_option, NEED_ARG,
+-    "linger", linger_option, NEED_ARG,
+-    "keepalive", keepalive_option, 0,
+-    "spawn", spawn_option, NEED_ARG | EXPAND_ARG,
+-    "twist", twist_option, NEED_ARG | EXPAND_ARG | USE_LAST,
+-    "rfc931", rfc931_option, OPT_ARG,
+-    "setenv", setenv_option, NEED_ARG | EXPAND_ARG,
+-    "nice", nice_option, OPT_ARG,
+-    "severity", severity_option, NEED_ARG,
+-    "allow", allow_option, USE_LAST,
+-    "deny", deny_option, USE_LAST,
+-    "banners", banners_option, NEED_ARG,
+-    0,
++    {"user", user_option, NEED_ARG},
++    {"group", group_option, NEED_ARG},
++    {"umask", umask_option, NEED_ARG},
++    {"linger", linger_option, NEED_ARG},
++    {"keepalive", keepalive_option, 0},
++    {"spawn", spawn_option, NEED_ARG | EXPAND_ARG},
++    {"twist", twist_option, NEED_ARG | EXPAND_ARG | USE_LAST},
++    {"rfc931", rfc931_option, OPT_ARG},
++    {"setenv", setenv_option, NEED_ARG | EXPAND_ARG},
++    {"nice", nice_option, OPT_ARG},
++    {"severity", severity_option, NEED_ARG},
++    {"allow", allow_option, USE_LAST},
++    {"deny", deny_option, USE_LAST},
++    {"banners", banners_option, NEED_ARG},
++    {NULL}
+ };
+ 
+ /* process_options - process access control options */
+@@ -224,7 +227,7 @@
+     int     ch;
+     FILE   *fp;
+ 
+-    sprintf(path, "%s/%s", value, eval_daemon(request));
++    snprintf(path, sizeof(path), "%s/%s", value, eval_daemon(request));
+     if ((fp = fopen(path, "r")) != 0) {
+ 	while ((ch = fgetc(fp)) == 0)
+ 	    write(request->fd, "", 1);
+@@ -447,85 +450,85 @@
+ 
+ static struct syslog_names log_fac[] = {
+ #ifdef LOG_KERN
+-    "kern", LOG_KERN,
++    {"kern", LOG_KERN},
+ #endif
+ #ifdef LOG_USER
+-    "user", LOG_USER,
++    {"user", LOG_USER},
+ #endif
+ #ifdef LOG_MAIL
+-    "mail", LOG_MAIL,
++    {"mail", LOG_MAIL},
+ #endif
+ #ifdef LOG_DAEMON
+-    "daemon", LOG_DAEMON,
++    {"daemon", LOG_DAEMON},
+ #endif
+ #ifdef LOG_AUTH
+-    "auth", LOG_AUTH,
++    {"auth", LOG_AUTH},
+ #endif
+ #ifdef LOG_LPR
+-    "lpr", LOG_LPR,
++    {"lpr", LOG_LPR},
+ #endif
+ #ifdef LOG_NEWS
+-    "news", LOG_NEWS,
++    {"news", LOG_NEWS},
+ #endif
+ #ifdef LOG_UUCP
+-    "uucp", LOG_UUCP,
++    {"uucp", LOG_UUCP},
+ #endif
+ #ifdef LOG_CRON
+-    "cron", LOG_CRON,
++    {"cron", LOG_CRON},
+ #endif
+ #ifdef LOG_LOCAL0
+-    "local0", LOG_LOCAL0,
++    {"local0", LOG_LOCAL0},
+ #endif
+ #ifdef LOG_LOCAL1
+-    "local1", LOG_LOCAL1,
++    {"local1", LOG_LOCAL1},
+ #endif
+ #ifdef LOG_LOCAL2
+-    "local2", LOG_LOCAL2,
++    {"local2", LOG_LOCAL2},
+ #endif
+ #ifdef LOG_LOCAL3
+-    "local3", LOG_LOCAL3,
++    {"local3", LOG_LOCAL3},
+ #endif
+ #ifdef LOG_LOCAL4
+-    "local4", LOG_LOCAL4,
++    {"local4", LOG_LOCAL4},
+ #endif
+ #ifdef LOG_LOCAL5
+-    "local5", LOG_LOCAL5,
++    {"local5", LOG_LOCAL5},
+ #endif
+ #ifdef LOG_LOCAL6
+-    "local6", LOG_LOCAL6,
++    {"local6", LOG_LOCAL6},
+ #endif
+ #ifdef LOG_LOCAL7
+-    "local7", LOG_LOCAL7,
++    {"local7", LOG_LOCAL7},
+ #endif
+-    0,
++    {NULL}
+ };
+ 
+ static struct syslog_names log_sev[] = {
+ #ifdef LOG_EMERG
+-    "emerg", LOG_EMERG,
++    {"emerg", LOG_EMERG},
+ #endif
+ #ifdef LOG_ALERT
+-    "alert", LOG_ALERT,
++    {"alert", LOG_ALERT},
+ #endif
+ #ifdef LOG_CRIT
+-    "crit", LOG_CRIT,
++    {"crit", LOG_CRIT},
+ #endif
+ #ifdef LOG_ERR
+-    "err", LOG_ERR,
++    {"err", LOG_ERR},
+ #endif
+ #ifdef LOG_WARNING
+-    "warning", LOG_WARNING,
++    {"warning", LOG_WARNING},
+ #endif
+ #ifdef LOG_NOTICE
+-    "notice", LOG_NOTICE,
++    {"notice", LOG_NOTICE},
+ #endif
+ #ifdef LOG_INFO
+-    "info", LOG_INFO,
++    {"info", LOG_INFO},
+ #endif
+ #ifdef LOG_DEBUG
+-    "debug", LOG_DEBUG,
++    {"debug", LOG_DEBUG},
+ #endif
+-    0,
++    {NULL}
+ };
+ 
+ /* severity_map - lookup facility or severity value */
+@@ -586,7 +589,7 @@
+     if (src[0] == 0)
+ 	return (0);
+ 
+-    while (ch = *src) {
++    while ((ch = *src)) {
+ 	if (ch == ':') {
+ 	    if (*++src == 0)
+ 		tcpd_warn("rule ends in \":\"");
+@@ -606,13 +609,13 @@
+ static char *chop_string(string)
+ register char *string;
+ {
+-    char   *start = 0;
+-    char   *end;
++    char   *start = NULL;
++    char   *end = NULL;
+     char   *cp;
+ 
+     for (cp = string; *cp; cp++) {
+ 	if (!isspace(*cp)) {
+-	    if (start == 0)
++	    if (start == NULL)
+ 		start = cp;
+ 	    end = cp;
+ 	}
+diff -ur tcp_wrappers_7.6.orig/percent_m.c tcp_wrappers_7.6/percent_m.c
+--- tcp_wrappers_7.6.orig/percent_m.c	Wed Dec 28 19:42:37 1994
++++ tcp_wrappers_7.6/percent_m.c	Mon Oct  2 06:19:22 2000
+@@ -27,7 +27,11 @@
+     char   *bp = obuf;
+     char   *cp = ibuf;
+ 
+-    while (*bp = *cp)
++    while ((*bp = *cp)) {
++	if (bp >= obuf + BUFSIZ - 1) {
++		*bp = '\0';
++		return obuf;
++	}
+ 	if (*cp == '%' && cp[1] == 'm') {
+ 	    if (errno < sys_nerr && errno > 0) {
+ 		strcpy(bp, sys_errlist[errno]);
+@@ -39,5 +43,6 @@
+ 	} else {
+ 	    bp++, cp++;
+ 	}
++    }
+     return (obuf);
+ }
+diff -ur tcp_wrappers_7.6.orig/percent_x.c tcp_wrappers_7.6/percent_x.c
+--- tcp_wrappers_7.6.orig/percent_x.c	Wed Dec 28 19:42:38 1994
++++ tcp_wrappers_7.6/percent_x.c	Mon Oct  2 06:19:22 2000
+@@ -17,10 +17,10 @@
+ /* System libraries. */
+ 
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <syslog.h>
+ #include <string.h>
+-
+-extern void exit();
++#include <unistd.h>
+ 
+ /* Local stuff. */
+ 
+diff -ur tcp_wrappers_7.6.orig/rfc931.c tcp_wrappers_7.6/rfc931.c
+--- tcp_wrappers_7.6.orig/rfc931.c	Mon Jan  2 18:11:34 1995
++++ tcp_wrappers_7.6/rfc931.c	Mon Oct  2 06:22:01 2000
+@@ -23,6 +23,7 @@
+ #include <setjmp.h>
+ #include <signal.h>
+ #include <string.h>
++#include <unistd.h>
+ 
+ /* Local stuff. */
+ 
+@@ -82,6 +83,10 @@
+     char   *result = unknown;
+     FILE   *fp;
+ 
++#ifdef __GNUC__
++    (void)&result;
++#endif
++
+     /*
+      * Use one unbuffered stdio stream for writing to and for reading from
+      * the RFC931 etc. server. This is done because of a bug in the SunOS
+@@ -152,7 +157,7 @@
+ 		     * protocol, not part of the data.
+ 		     */
+ 
+-		    if (cp = strchr(user, '\r'))
++		    if ((cp = strchr(user, '\r')))
+ 			*cp = 0;
+ 		    result = user;
+ 		}
+diff -ur tcp_wrappers_7.6.orig/scaffold.c tcp_wrappers_7.6/scaffold.c
+--- tcp_wrappers_7.6.orig/scaffold.c	Fri Mar 21 21:27:24 1997
++++ tcp_wrappers_7.6/scaffold.c	Mon Oct  2 06:19:22 2000
+@@ -17,6 +17,7 @@
+ #include <arpa/inet.h>
+ #include <netdb.h>
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <syslog.h>
+ #include <setjmp.h>
+ #include <string.h>
+@@ -25,8 +26,6 @@
+ #define	INADDR_NONE	(-1)		/* XXX should be 0xffffffff */
+ #endif
+ 
+-extern char *malloc();
+-
+ /* Application-specific. */
+ 
+ #include "tcpd.h"
+@@ -205,7 +204,7 @@
+ #endif
+     if (st->st_mode & 002)
+ 	tcpd_warn("%s: world writable", path);
+-    if (path[0] == '/' && path[1] != 0) {
++    if (path[0] == '/' && path[1] != 0 && strlen(path) < sizeof(buf)) {
+ 	strrchr(strcpy(buf, path), '/')[0] = 0;
+ 	(void) check_path(buf[0] ? buf : "/", &stbuf);
+     }
+diff -ur tcp_wrappers_7.6.orig/shell_cmd.c tcp_wrappers_7.6/shell_cmd.c
+--- tcp_wrappers_7.6.orig/shell_cmd.c	Wed Dec 28 19:42:44 1994
++++ tcp_wrappers_7.6/shell_cmd.c	Mon Oct  2 06:19:22 2000
+@@ -16,12 +16,14 @@
+ 
+ #include <sys/types.h>
+ #include <sys/param.h>
++#include <sys/wait.h>
+ #include <signal.h>
+ #include <stdio.h>
++#include <stdlib.h>
++#include <fcntl.h>
+ #include <syslog.h>
+ #include <string.h>
+-
+-extern void exit();
++#include <unistd.h>
+ 
+ /* Local stuff. */
+ 
+@@ -76,7 +78,7 @@
+ 
+     for (tmp_fd = 0; tmp_fd < 3; tmp_fd++)
+ 	(void) close(tmp_fd);
+-    if (open("/dev/null", 2) != 0) {
++    if (open("/dev/null", O_RDWR) != 0) {
+ 	error = "open /dev/null: %m";
+     } else if (dup(0) != 1 || dup(0) != 2) {
+ 	error = "dup: %m";
+diff -ur tcp_wrappers_7.6.orig/socket.c tcp_wrappers_7.6/socket.c
+--- tcp_wrappers_7.6.orig/socket.c	Fri Mar 21 21:27:25 1997
++++ tcp_wrappers_7.6/socket.c	Mon Oct  2 06:19:22 2000
+@@ -25,12 +25,11 @@
+ #include <sys/param.h>
+ #include <sys/socket.h>
+ #include <netinet/in.h>
++#include <arpa/inet.h>
+ #include <netdb.h>
+ #include <stdio.h>
+ #include <syslog.h>
+ #include <string.h>
+-
+-extern char *inet_ntoa();
+ 
+ /* Local stuff. */
+ 
+diff -ur tcp_wrappers_7.6.orig/tcpd.c tcp_wrappers_7.6/tcpd.c
+--- tcp_wrappers_7.6.orig/tcpd.c	Sun Feb 11 19:01:33 1996
++++ tcp_wrappers_7.6/tcpd.c	Mon Oct  2 06:21:42 2000
+@@ -24,9 +24,11 @@
+ #include <stdio.h>
+ #include <syslog.h>
+ #include <string.h>
++#include <unistd.h>
++#include <limits.h>
+ 
+ #ifndef MAXPATHNAMELEN
+-#define MAXPATHNAMELEN	BUFSIZ
++#define MAXPATHNAMELEN	PATH_MAX
+ #endif
+ 
+ #ifndef STDIN_FILENO
+@@ -38,15 +40,19 @@
+ #include "patchlevel.h"
+ #include "tcpd.h"
+ 
++#ifdef KILL_IP_OPTIONS
++extern void fix_options(struct request_info *request);
++#endif
++
+ int     allow_severity = SEVERITY;	/* run-time adjustable */
+ int     deny_severity = LOG_WARNING;	/* ditto */
+ 
+-main(argc, argv)
++int main(argc, argv)
+ int     argc;
+ char  **argv;
+ {
+     struct request_info request;
+-    char    path[MAXPATHNAMELEN];
++    char    *path, path_buffer[MAXPATHNAMELEN];
+ 
+     /* Attempt to prevent the creation of world-writable files. */
+ 
+@@ -60,10 +66,11 @@
+      */
+ 
+     if (argv[0][0] == '/') {
+-	strcpy(path, argv[0]);
++	path = argv[0];
+ 	argv[0] = strrchr(argv[0], '/') + 1;
+     } else {
+-	sprintf(path, "%s/%s", REAL_DAEMON_DIR, argv[0]);
++	path = path_buffer;
++	snprintf(path, sizeof(path), "%s/%s", REAL_DAEMON_DIR, argv[0]);
+     }
+ 
+     /*
+diff -ur tcp_wrappers_7.6.orig/tcpd.h tcp_wrappers_7.6/tcpd.h
+--- tcp_wrappers_7.6.orig/tcpd.h	Tue Mar 19 18:22:25 1996
++++ tcp_wrappers_7.6/tcpd.h	Mon Oct  2 06:19:22 2000
+@@ -70,6 +70,7 @@
+ extern void shell_cmd();		/* execute shell command */
+ extern char *percent_x();		/* do %<char> expansion */
+ extern void rfc931();			/* client name from RFC 931 daemon */
++__attribute__ ((noreturn))
+ extern void clean_exit();		/* clean up and exit */
+ extern void refuse();			/* clean up and exit */
+ extern char *xgets();			/* fgets() on steroids */
+@@ -147,7 +148,14 @@
+   */
+ 
+ #ifdef __STDC__
++#ifdef __GNUC__
++__attribute__ ((format (printf, 1, 2)))
++#endif
+ extern void tcpd_warn(char *, ...);	/* report problem and proceed */
++#ifdef __GNUC__
++__attribute__ ((format (printf, 1, 2)))
++__attribute__ ((noreturn))
++#endif
+ extern void tcpd_jump(char *, ...);	/* report problem and jump */
+ #else
+ extern void tcpd_warn();
+diff -ur tcp_wrappers_7.6.orig/tcpdchk.c tcp_wrappers_7.6/tcpdchk.c
+--- tcp_wrappers_7.6.orig/tcpdchk.c	Wed Feb 12 04:13:25 1997
++++ tcp_wrappers_7.6/tcpdchk.c	Mon Oct  2 06:22:23 2000
+@@ -30,11 +30,7 @@
+ #include <errno.h>
+ #include <netdb.h>
+ #include <string.h>
+-
+-extern int errno;
+-extern void exit();
+-extern int optind;
+-extern char *optarg;
++#include <unistd.h>
+ 
+ #ifndef INADDR_NONE
+ #define INADDR_NONE     (-1)		/* XXX should be 0xffffffff */
+@@ -100,7 +96,7 @@
+     /*
+      * Parse the JCL.
+      */
+-    while ((c = getopt(argc, argv, "adi:v")) != EOF) {
++    while ((c = getopt(argc, argv, "adi:v")) != -1) {
+ 	switch (c) {
+ 	case 'a':
+ 	    allow_check = 1;
+@@ -199,13 +195,19 @@
+     char    sv_list[BUFLEN];		/* becomes list of daemons */
+     char   *cl_list;			/* becomes list of requests */
+     char   *sh_cmd;			/* becomes optional shell command */
++#ifndef PROCESS_OPTIONS
+     char    buf[BUFSIZ];
++#endif
+     int     verdict;
+     struct tcpd_context saved_context;
+ 
++#ifdef __GNUC__
++    (void)&real_verdict;
++#endif
++
+     saved_context = tcpd_context;		/* stupid compilers */
+ 
+-    if (fp = fopen(table, "r")) {
++    if ((fp = fopen(table, "r"))) {
+ 	tcpd_context.file = table;
+ 	tcpd_context.line = 0;
+ 	while (xgets(sv_list, sizeof(sv_list), fp)) {
+@@ -331,7 +333,7 @@
+ 	    clients = 0;
+ 	} else {
+ 	    clients++;
+-	    if (host = split_at(cp + 1, '@')) {	/* user@host */
++	    if ((host = split_at(cp + 1, '@'))) {	/* user@host */
+ 		check_user(cp);
+ 		check_host(host);
+ 	    } else {
+@@ -422,7 +424,7 @@
+ 	tcpd_warn("netgroup support disabled");
+ #endif
+ #endif
+-    } else if (mask = split_at(pat, '/')) {	/* network/netmask */
++    } else if ((mask = split_at(pat, '/'))) {	/* network/netmask */
+ 	if (dot_quad_addr(pat) == INADDR_NONE
+ 	    || dot_quad_addr(mask) == INADDR_NONE)
+ 	    tcpd_warn("%s/%s: bad net/mask pattern", pat, mask);
+diff -ur tcp_wrappers_7.6.orig/tcpdmatch.c tcp_wrappers_7.6/tcpdmatch.c
+--- tcp_wrappers_7.6.orig/tcpdmatch.c	Sun Feb 11 19:01:36 1996
++++ tcp_wrappers_7.6/tcpdmatch.c	Mon Oct  2 06:19:22 2000
+@@ -26,13 +26,11 @@
+ #include <arpa/inet.h>
+ #include <netdb.h>
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <syslog.h>
+ #include <setjmp.h>
+ #include <string.h>
+-
+-extern void exit();
+-extern int optind;
+-extern char *optarg;
++#include <unistd.h>
+ 
+ #ifndef	INADDR_NONE
+ #define	INADDR_NONE	(-1)		/* XXX should be 0xffffffff */
+@@ -80,7 +78,7 @@
+     /*
+      * Parse the JCL.
+      */
+-    while ((ch = getopt(argc, argv, "di:")) != EOF) {
++    while ((ch = getopt(argc, argv, "di:")) != -1) {
+ 	switch (ch) {
+ 	case 'd':
+ 	    hosts_allow_table = "hosts.allow";
+diff -ur tcp_wrappers_7.6.orig/try-from.c tcp_wrappers_7.6/try-from.c
+--- tcp_wrappers_7.6.orig/try-from.c	Wed Dec 28 19:42:55 1994
++++ tcp_wrappers_7.6/try-from.c	Mon Oct  2 06:19:22 2000
+@@ -37,7 +37,7 @@
+ int     allow_severity = SEVERITY;	/* run-time adjustable */
+ int     deny_severity = LOG_WARNING;	/* ditto */
+ 
+-main(argc, argv)
++int main(argc, argv)
+ int     argc;
+ char  **argv;
+ {
+diff -ur tcp_wrappers_7.6.orig/update.c tcp_wrappers_7.6/update.c
+--- tcp_wrappers_7.6.orig/update.c	Wed Dec 28 19:42:56 1994
++++ tcp_wrappers_7.6/update.c	Mon Oct  2 06:19:22 2000
+@@ -22,6 +22,7 @@
+ #include <stdio.h>
+ #include <syslog.h>
+ #include <string.h>
++#include <unistd.h>
+ 
+ /* Local stuff. */
+ 
