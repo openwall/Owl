@@ -12,6 +12,11 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/09/20 -
+2002/10/07	Owl/doc/ru/*
+New files: Russian translations of the documentation, by Gremlin from
+Kremlin <gremlin at owl.openwall.com>.
+
 2002/10/05	Package: newt
 Dropped newt from Owl, it's a Red Hat'ism that we never made use of.
 
@@ -979,4 +984,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.140 2002/10/05 17:23:09 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.141 2002/10/08 01:05:06 solar Exp $
