@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.85 2005/02/08 22:09:20 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.86 2005/02/22 22:52:20 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -11,7 +11,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 0.4.7
-Release: owl2
+Release: owl3
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%basevers%{?snapshot:-%snapshot}.tar.bz2
@@ -449,6 +449,9 @@ fi
 %files compat-fake
 
 %changelog
+* Tue Feb 22 2005 Solar Designer <solar@owl.openwall.com> 2.3.3.2004061600-owl3
+- crypt_blowfish-0.4.7: crypt(3) man page updates.
+
 * Thu Jan 20 2005 Solar Designer <solar@owl.openwall.com> 2.3.3.2004061600-owl2
 - Many post-update corrections.
 
