@@ -1,9 +1,9 @@
-# $Id: Owl/packages/cpio/cpio.spec,v 1.9 2002/08/26 15:23:17 mci Exp $
+# $Id: Owl/packages/cpio/cpio.spec,v 1.10 2003/10/19 18:27:16 solar Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
 Version: 2.4.2
-Release: owl26
+Release: owl27
 License: GPL
 Group: Applications/Archiving
 Source: ftp://ftp.gnu.org/gnu/cpio-%{version}.tar.gz
@@ -62,10 +62,10 @@ make LDFLAGS=-s
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%makeinstall bindir=$RPM_BUILD_ROOT/bin mandir=$RPM_BUILD_ROOT/%{_mandir}/
+%makeinstall bindir=$RPM_BUILD_ROOT/bin mandir=$RPM_BUILD_ROOT%{_mandir}/
 
-mkdir -p $RPM_BUILD_ROOT/%{_mandir}/man8/
-install -m 644 rmt.8 ${RPM_BUILD_ROOT}%{_mandir}/man8/
+mkdir -p $RPM_BUILD_ROOT%{_mandir}/man8/
+install -m 644 rmt.8 $RPM_BUILD_ROOT%{_mandir}/man8/
 
 mkdir -p $RPM_BUILD_ROOT/{etc,sbin}
 ln -s /usr/libexec/rmt $RPM_BUILD_ROOT/etc/
@@ -88,14 +88,18 @@ fi
 /bin/cpio
 /bin/mt
 /usr/libexec/rmt
-/etc/rmt
 /sbin/rmt
+/etc/rmt
 %{_infodir}/cpio.*
 %{_mandir}/man1/cpio.1*
+%{_mandir}/man1/mt.1*
 %{_mandir}/man8/rmt.8*
 
 %changelog
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Sun Oct 19 2003 Solar Designer <solar@owl.openwall.com> 2.4.2-owl27
+- Install the mt(1) man page.
+
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 2.4.2-owl26
 - Deal with info dir entries such that the menu looks pretty.
 
 * Sun Mar 24 2002 Solar Designer <solar@owl.openwall.com>
