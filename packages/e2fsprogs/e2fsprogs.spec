@@ -1,4 +1,4 @@
-# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.5 2002/01/31 09:54:43 mci Exp $
+# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.6 2002/01/31 09:59:20 mci Exp $
 
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
@@ -6,7 +6,7 @@ Version: 1.18
 Release: owl7
 License: GPL
 Group: System Environment/Base
-Source: ftp://sunsite.unc.edu/pub/Linux/system/filesystems/ext2/e2fsprogs-%{version}.tar.gz
+Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%{version}.tar.gz
 Patch0: ftp://ftp.cistron.nl/pub/people/miquels/misc/e2fsprogs-1.18-spinnerfix.diff
 Patch1: e2fsprogs-1.18-owl-lost+found-mode.diff
 Patch2: e2fsprogs-1.18-rh-debugfs-y2k.diff
@@ -137,6 +137,7 @@ fi
 %changelog
 * Wed Jan 30 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions.
+- New source URL
 
 * Tue Aug 08 2000 Solar Designer <solar@owl.openwall.com>
 - Added a patch by Miquel van Smoorenburg to fix the progress indicator
