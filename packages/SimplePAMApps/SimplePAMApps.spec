@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.16 2001/11/19 04:39:36 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.17 2002/02/04 10:17:39 solar Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
 Version: 0.60
-Release: 13owl
+Release: owl13
 License: BSD or GPL
 Group: Utilities/System
 URL: http://www.kernel.org/pub/linux/libs/pam/
@@ -16,7 +16,7 @@ Source5: passwd.control
 Patch0: SimplePAMApps-0.60-owl-login.diff
 Patch1: SimplePAMApps-0.60-owl-passwd.diff
 Patch2: SimplePAMApps-0.60-owl-su.diff
-Requires: pam >= 0.75-14owl, tcb, pam_passwdqc >= 0.2, pam_mktemp
+Requires: tcb, pam_passwdqc >= 0.2, pam_mktemp
 Requires: owl-control < 2.0
 Obsoletes: passwd
 BuildRoot: /override/%{name}-%{version}
@@ -43,9 +43,9 @@ install -m 700 pamapps/{login/login,su/su} $RPM_BUILD_ROOT/bin/
 mkdir -p $RPM_BUILD_ROOT/usr/bin
 install -m 700 pamapps/passwd/passwd $RPM_BUILD_ROOT/usr/bin/
 
-mkdir -p $RPM_BUILD_ROOT/usr/man/man1
+mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man1
 install -m 0644 pamapps/{login/login.1,su/su.1,passwd/passwd.1} \
-	$RPM_BUILD_ROOT/usr/man/man1/
+	${RPM_BUILD_ROOT}%{_mandir}/man1/
 
 mkdir -p $RPM_BUILD_ROOT/etc/pam.d
 install -m 600 $RPM_SOURCE_DIR/login.pam $RPM_BUILD_ROOT/etc/pam.d/login
@@ -65,18 +65,17 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %doc Copyright Discussions
 %attr(0700,root,root) /bin/login
-/usr/man/man1/login.1*
-%config(noreplace) /etc/pam.d/login
 %attr(4710,root,wheel) /bin/su
-/usr/man/man1/su.1*
-%config(noreplace) /etc/pam.d/su
 %attr(4711,root,root) /usr/bin/passwd
-/usr/man/man1/passwd.1*
-%config(noreplace) /etc/pam.d/passwd
-/etc/control.d/facilities/su
-/etc/control.d/facilities/passwd
+%{_mandir}/man1/*
+%config(noreplace) /etc/pam.d/*
+/etc/control.d/facilities/*
 
 %changelog
+* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+- Use the _mandir macro.
+
 * Mon Nov 19 2001 Solar Designer <solar@owl.openwall.com>
 - Use (the recently patched version of) pam_lastlog with login.
 - login: treat all PAM errors except PAM_NEW_AUTHTOK_REQD in the same way to
