@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.13 2000/12/20 19:03:54 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.14 2001/03/28 08:42:44 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.5
-Release: 2owl
+Version: 0.6
+Release: 1owl
 Copyright: GPL
 Group: System Environment/Base
 Source0: initscripts-5.00.tar.gz
@@ -142,6 +142,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc redhat
 
 %changelog
+* Wed Mar 28 2001 Solar Designer <solar@owl.openwall.com>
+- Disable coredumps with the soft rlimit only.
+
 * Wed Dec 20 2000 Solar Designer <solar@owl.openwall.com>
 - Provide wtmp and utmp as ghosts just so that they don't get removed
 when upgrading from Red Hat's "initscripts" package.

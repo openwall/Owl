@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-startup/functions,v 1.3 2000/12/07 18:31:48 solar Exp $
+# $Id: Owl/packages/owl-startup/functions,v 1.4 2001/03/28 08:42:44 solar Exp $
 #
 # Functions defined in this file are used by many /etc/init.d scripts;
 # they offer some limited Red Hat compatibility.
@@ -78,7 +78,7 @@ function daemon()
 	fi
 
 # Disable coredumps (this is probably redundant).
-	ulimit -c 0
+	ulimit -Sc 0
 
 # Actually start the daemon.
 	FLAGS="--start --exec $WHICH"
