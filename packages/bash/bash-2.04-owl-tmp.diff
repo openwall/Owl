@@ -1,6 +1,70 @@
+diff -ur bash-2.04.orig/builtins/fc.def bash-2.04/builtins/fc.def
+--- bash-2.04.orig/builtins/fc.def	Thu Aug  5 15:42:12 1999
++++ bash-2.04/builtins/fc.def	Sat Jan 13 01:36:49 2001
+@@ -63,6 +63,7 @@
+ #endif
+ 
+ #include <stdio.h>
++#include <stdlib.h>
+ 
+ #include "../bashansi.h"
+ #include <errno.h>
+@@ -161,7 +162,7 @@
+   REPL *rlist, *rl;
+   char *ename, *command, *newcom, *line;
+   HIST_ENTRY **hlist;
+-  char fn[64];
++  char *fn;
+ 
+   numbering = 1;
+   reverse = listing = execute = 0;
+@@ -326,11 +327,22 @@
+     stream = stdout;
+   else
+     {
+-      numbering = 0;
+-      /* XXX - this is raceable */
+-      sprintf (fn, "/tmp/bash%d", (int)time ((time_t *) 0) + (int)getpid ());
++      char *tmpdir;
++      int fd;
+ 
+-      stream = fopen (fn, "w");
++      numbering = 0;
++      tmpdir = getenv("TMPDIR");
++      if (!tmpdir) tmpdir = "/tmp";
++      fn = (char *)xmalloc (strlen (tmpdir) + 13);
++      sprintf (fn, "%s/bash.XXXXXX", tmpdir);
++
++      fd = mkstemp(fn);
++      if (fd == -1)
++        {
++          builtin_error ("cannot create temp file %s", fn);
++          return (EXECUTION_FAILURE);
++        }
++      stream = fdopen (fd, "w");
+ 
+       if (stream == 0)
+ 	{
+@@ -369,6 +381,7 @@
+   if (retval != EXECUTION_SUCCESS)
+     {
+       unlink (fn);
++      free (fn);
+       return (EXECUTION_FAILURE);
+     }
+ 
+@@ -388,6 +401,8 @@
+   retval = fc_execute_file (fn);
+ 
+   run_unwind_frame ("fc builtin");
++
++  free (fn);
+ 
+   return (retval);
+ }
 diff -ur bash-2.04.orig/error.c bash-2.04/error.c
 --- bash-2.04.orig/error.c	Thu Aug  5 15:04:01 1999
-+++ bash-2.04/error.c	Mon Dec 11 06:40:06 2000
++++ bash-2.04/error.c	Sat Jan 13 00:48:49 2001
 @@ -463,6 +463,7 @@
  
  /* A trace function for silent debugging -- doesn't require a control
@@ -20,7 +84,7 @@ diff -ur bash-2.04.orig/error.c bash-2.04/error.c
      tracefp = stderr;
 diff -ur bash-2.04.orig/lib/malloc/malloc.c bash-2.04/lib/malloc/malloc.c
 --- bash-2.04.orig/lib/malloc/malloc.c	Fri Oct  1 23:39:32 1999
-+++ bash-2.04/lib/malloc/malloc.c	Mon Dec 11 06:40:33 2000
++++ bash-2.04/lib/malloc/malloc.c	Sat Jan 13 00:48:49 2001
 @@ -928,7 +928,8 @@
    _print_malloc_stats (s, stderr);
  }
@@ -33,19 +97,21 @@ diff -ur bash-2.04.orig/lib/malloc/malloc.c bash-2.04/lib/malloc/malloc.c
  void
 diff -ur bash-2.04.orig/redir.c bash-2.04/redir.c
 --- bash-2.04.orig/redir.c	Fri Dec 31 19:59:02 1999
-+++ bash-2.04/redir.c	Mon Dec 11 06:29:01 2000
-@@ -24,6 +24,8 @@
++++ bash-2.04/redir.c	Sat Jan 13 01:08:46 2001
+@@ -24,6 +24,7 @@
  #endif /* _AIX && RISC6000 && !__GNUC__ */
  
  #include <stdio.h>
 +#include <stdlib.h>
-+#include <string.h>
  #include "bashtypes.h"
  #ifndef _MINIX
  #  include <sys/file.h>
-@@ -304,17 +306,9 @@
+@@ -302,23 +303,24 @@
+ here_document_to_fd (redirectee)
+      WORD_DESC *redirectee;
  {
-   char filename[24];
+-  char filename[24];
++  char *tmpdir, *filename;
    int r, fd, fd2;
 -  static int fnum = 0;
  
@@ -53,46 +119,94 @@ diff -ur bash-2.04.orig/redir.c bash-2.04/redir.c
 -    {
 -      /* Make the filename for the temp file. */
 -      sprintf (filename, "/tmp/t%d-%d-sh", (int)getpid (), fnum++);
--
++  tmpdir = getenv("TMPDIR");
++  if (!tmpdir) tmpdir = "/tmp";
++  filename = (char *)xmalloc (strlen (tmpdir) + 13);
++  sprintf (filename, "%s/bash.XXXXXX", tmpdir);
+ 
 -      /* Make sure we open it exclusively. */
 -      fd = open (filename, O_TRUNC | O_WRONLY | O_CREAT | O_EXCL, 0600);
 -    }
 -  while (fd < 0 && errno == EEXIST);
-+  strcpy (filename, "/tmp/sh-hd-XXXXXX");
 +  fd = mkstemp (filename);
  
    /* If we failed for some reason other than the file existing, abort */
    if (fd < 0)
+-    return (fd);
++    {
++      r = errno;
++      free (filename);
++      errno = r;
++      return (fd);
++    }
+ 
+   errno = r = 0;		/* XXX */
+   /* write_here_document returns 0 on success, errno on failure. */
+@@ -329,6 +331,7 @@
+     {
+       close (fd);
+       unlink (filename);
++      free (filename);
+       errno = r;
+       return (-1);
+     }
+@@ -342,6 +345,7 @@
+     {
+       r = errno;
+       unlink (filename);
++      free (filename);
+       close (fd);
+       errno = r;
+       return -1;
+@@ -351,10 +355,13 @@
+   if (unlink (filename) < 0)
+     {
+       r = errno;
++      free (filename);
+       close (fd2);
+       errno = r;
+       return (-1);
+     }
++
++  free (filename);
+ 
+   return (fd2);
+ }
 diff -ur bash-2.04.orig/subst.c bash-2.04/subst.c
 --- bash-2.04.orig/subst.c	Tue Mar 14 18:42:02 2000
-+++ bash-2.04/subst.c	Mon Dec 11 06:25:13 2000
-@@ -2998,12 +2998,24 @@
++++ bash-2.04/subst.c	Sat Jan 13 01:16:10 2001
+@@ -2996,14 +2996,28 @@
+ static char *
+ make_named_pipe ()
  {
-   char *tname;
+-  char *tname;
++  char *tmpdir, *tname;
  
 -  tname = mktemp (savestring ("/tmp/sh-np-XXXXXX"));
 -  if (mkfifo (tname, 0600) < 0)
++  tmpdir = getenv("TMPDIR");
++  if (!tmpdir) tmpdir = "/tmp";
++  tname = (char *)xmalloc (strlen (tmpdir) + 13);
++
 +  do
      {
 -      free (tname);
 -      return ((char *)NULL);
 -    }
-+      if (!mktemp (tname = savestring ("/tmp/sh-np-XXXXXX")))
++      sprintf (tname, "%s/bash.XXXXXX", tmpdir);
++      if (!mktemp (tname) || !tname[0])
 +	{
 +	  free (tname);
 +	  return ((char *)NULL);
 +	}
 +      if (mkfifo (tname, 0600) < 0)
 +	{
-+	  if (errno == EEXIST)
-+	    {
-+	      free (tname);
-+	      continue;
-+	    }
++	  if (errno == EEXIST) continue;
 +	  free (tname);
 +	  return ((char *)NULL);
 +	}
-+    } while (0);
++      break;
++    } while (1);
  
    add_fifo_list (tname);
    return (tname);

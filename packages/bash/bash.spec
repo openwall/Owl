@@ -1,9 +1,9 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.5 2000/12/11 03:51:10 solar Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.6 2001/01/12 22:43:08 solar Exp $
 
 Version: 	2.04
 Name: 		bash
 Summary: 	The GNU Bourne Again shell (bash) version %{version}.
-Release: 	11owl
+Release: 	12owl
 Group: 		System Environment/Shells
 Copyright: 	GPL
 Source0:	ftp://ftp.gnu.org/gnu/bash/bash-%{version}.tar.gz
@@ -171,6 +171,11 @@ fi
 %doc doc/*.ps doc/*.0 doc/*.html doc/article.txt
 
 %changelog
+* Sat Jan 13 2001 Solar Designer <solar@owl.openwall.com>
+- One more temporary file handling fix for the history editor, as reported
+by Marcus Meissner of Caldera.
+- Use $TMPDIR.
+
 * Mon Dec 11 2000 Solar Designer <solar@owl.openwall.com>
 - Some /tmp fixes (the old code was mostly safe, though).
 
