@@ -1,0 +1,28 @@
+diff -ur bc-1.06.orig/doc/bc.texi bc-1.06/doc/bc.texi
+--- bc-1.06.orig/doc/bc.texi	Thu Sep 28 04:22:24 2000
++++ bc-1.06/doc/bc.texi	Thu Jan 24 17:19:41 2002
+@@ -4,6 +4,12 @@
+ @settitle bc Command Manual
+ @c %**end of header
+ 
++@ifinfo
++@direntry
++* bc: (bc).                   Arbitrary precision numeric processing language.
++@end direntry
++@end ifinfo
++
+ @c This file has the new style title page commands.
+ @c Run `makeinfo' rather than `texinfo-format-buffer'.
+ 
+diff -ur bc-1.06.orig/doc/dc.texi bc-1.06/doc/dc.texi
+--- bc-1.06.orig/doc/dc.texi	Thu Aug 31 19:57:43 2000
++++ bc-1.06/doc/dc.texi	Thu Jan 24 17:17:37 2002
+@@ -22,7 +22,7 @@
+ 
+ @ifinfo
+ @direntry
+-* dc: (dc).                   Arbritrary precision RPN ``Desktop Calculator''.
++* dc: (dc).                   Arbitrary precision RPN ``Desktop Calculator''.
+ @end direntry
+ This file documents @sc{dc}, an arbitrary precision calculator.
+ 
