@@ -33,7 +33,7 @@ SILO, dépendant de l'architecture), ou vous pouvez utiliser un chargeur de
 démarrage déjà installé sur le système (s'il y en a un). Si vous avez déjà
 un système Linux 2.2 installé, vous pouvez utiliser son chargeur de
 démarrage et même son noyau, en ajoutant simplement une entrée avec une
-valeur différente de root= (fixez à la valeur du périphérique avec le
+valeur différente de ROOT= (fixez à la valeur du périphérique avec le
 système de fichiers racine de Owl).
 
-$Id: Owl/doc/fr/INSTALL,v 1.1 2001/05/15 04:25:15 solar Exp $
+$Id: Owl/doc/fr/INSTALL,v 1.2 2001/05/15 04:26:42 solar Exp $
