@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.14 2003/09/15 08:38:31 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.15 2003/09/15 08:54:54 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -28,7 +28,7 @@ DHCP protocol.
 %package client
 Summary: The ISC DHCP client.
 Group: System Enviroment/Base
-Requires: dhcp = %{version}-%{release}
+PreReq: dhcp = %{version}-%{release}
 Obsoletes: dhcpcd
 
 %description client
@@ -102,10 +102,12 @@ EOF
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%pre server
+%pre
 grep -q ^dhcp: /etc/group || groupadd -g 188 dhcp
 grep -q ^dhcp: /etc/passwd ||
 	useradd -g dhcp -u 188 -d / -s /bin/false -M dhcp
+
+%pre server
 rm -f /var/run/dhcp.restart
 if [ $1 -ge 2 ]; then
 	/etc/rc.d/init.d/dhcpd status && touch /var/run/dhcp.restart || :
@@ -168,7 +170,7 @@ fi
 
 %changelog
 * Mon Sep 15 2003 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl1
-- Let's make the package public.
+- Create the pseudo-user/group in the common package.
 
 * Sun Sep 14 2003 Matthias Schmidt <schmidt@owl.openwall.com> 3.0pl2-owl0.4
 - Create three subdirectories for every service under /var/lib/dhcp
