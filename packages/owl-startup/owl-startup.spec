@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.32 2002/10/24 08:54:23 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.33 2002/11/30 21:42:45 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.17
+Version: 0.18
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -146,6 +146,11 @@ fi
 %doc redhat
 
 %changelog
+* Sun Dec 01 2002 Solar Designer <solar@owl.openwall.com>
+- Set net.ipv4.tcp_syncookies = 1.
+- Documented the security risk of having SYN cookies enabled with certain
+packet filter setups.
+
 * Thu Oct 24 2002 Solar Designer <solar@owl.openwall.com>
 - Set net.ipv4.icmp_echo_ignore_broadcasts = 1 to prevent the use of Owl
 boxes for "smurf" attacks even when proper packet filters aren't in place
