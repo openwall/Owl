@@ -1,3 +1,11 @@
+	Changes made between 0.6.4 and 0.6.4.1 (2004/07/22).
+
+Bugfix: actually zeroize the context structure in MD5_Final().  Thanks
+to Andrey Panin and Timo Sirainen for bringing this to my attention.
+This change makes no difference for popa3d, but may be important for
+possible other applications which might use these MD5 routines.
+
+
 	Changes made between 0.6.3 and 0.6.4 (2003/11/17).
 
 The uses of sprintf(3) have been replaced by the concat() function
@@ -77,4 +85,4 @@ code size.
 Added a popa3d(8) manual page based on the one Camiel Dobbelaar wrote
 for OpenBSD.
 
-$Id: Owl/packages/popa3d/popa3d/CHANGES,v 1.5 2003/11/16 21:59:14 solar Exp $
+$Id: Owl/packages/popa3d/popa3d/CHANGES,v 1.6 2004/07/22 19:00:51 solar Exp $

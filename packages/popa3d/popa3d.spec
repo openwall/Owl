@@ -1,8 +1,8 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.40 2003/11/17 00:16:22 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.41 2004/07/22 18:52:16 solar Exp $
 
 Summary: Post Office Protocol (POP3) server.
 Name: popa3d
-Version: 0.6.4
+Version: 0.6.4.1
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
@@ -72,6 +72,12 @@ fi
 %doc CHANGES CONTACT DESIGN LICENSE
 
 %changelog
+* Thu Jul 22 2004 Solar Designer <solar@owl.openwall.com> 0.6.4.1-owl1
+- Bugfix: actually zeroize the context structure in MD5_Final().  Thanks
+to Andrey Panin and Timo Sirainen for bringing this to my attention.  This
+change is unimportant for popa3d in particular, but may be important for
+possible other applications which might use these MD5 routines.
+
 * Mon Nov 17 2003 Solar Designer <solar@owl.openwall.com> 0.6.4-owl1
 - The uses of sprintf(3) have been replaced by the concat() function
 implemented locally.
