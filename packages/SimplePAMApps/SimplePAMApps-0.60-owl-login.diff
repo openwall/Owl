@@ -303,7 +303,7 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  	else if (retval > 0) 
  	{
 -	    (void) fprintf (stderr, "login: %s: %s\n", place, err_descr);
-+	    say("%s: %s\n", place, err_descr);
++	    say("%s: %s", place, err_descr);
  	    err_descr = NULL;
  	}
  	state = LOGIN_STATE_UTMP_OPENED;
