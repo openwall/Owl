@@ -1,5 +1,5 @@
 --- vixie-cron-3.0.2.7/usr.sbin/cron/database.c.orig	Mon Jul 16 11:36:12 2001
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/database.c	Mon Jul 16 11:45:43 2001
++++ vixie-cron-3.0.2.7/usr.sbin/cron/database.c	Tue Jul 17 23:49:24 2001
 @@ -36,6 +36,17 @@
  					     struct stat *,
  					     cron_db *, cron_db *));
@@ -10,7 +10,7 @@
 +	char *fname;
 +};
 +
-+static struct spooldir spools[]={
++static struct spooldir spools[] = {
 +	{SPOOL_DIR, NULL, NULL},
 +	{"/etc/cron.d", "root", "*system*"},
 +	{NULL, NULL, NULL}
@@ -74,7 +74,7 @@
  	new_db.head = new_db.tail = NULL;
  
  	if (syscron_stat.st_mtime) {
-@@ -91,34 +106,42 @@
+@@ -91,34 +106,46 @@
  				&new_db, old_db);
  	}
  
@@ -106,13 +106,17 @@
 +			char	fname[MAXNAMLEN+1],
 +				tabname[MAXPATHLEN];
 +
-+			/* avoid file names beginning with ".".  this is good
-+			 * because we would otherwise waste two guaranteed calls
-+			 * to getpwnam() for . and .., and also because user names
-+			 * starting with a period are just too nasty to consider.
++			/* Don't try to parse any files containing a dot ('.')
++			 * or ending with a tilde ('~'). This catches the case of 
++			 * '.' and '..', as well as preventing the parsing of 
++			 * many editor files, temporary files and those saved by RPM
++			 * package upgrades.
 +			 */
-+			if (dp->d_name[0] == '.')
++			if ( !dp->d_name[0] /* Shouldn't happen */ || 
++			      strchr(dp->d_name, '.') ||
++			      dp->d_name[strlen(dp->d_name)-1] == '~')
 +				continue;
++
 +			if (strlen(dp->d_name) > sizeof(fname) - 1) continue;
 +			(void) strcpy(fname, dp->d_name);
 +			snprintf(tabname, sizeof(tabname), "%s/%s", p->path, fname);
@@ -142,7 +146,7 @@
  
  	/* if we don't do this, then when our children eventually call
  	 * getpwnam() in do_command.c's child_process to verify MAILTO=,
-@@ -141,7 +164,6 @@
+@@ -141,7 +168,6 @@
  	*old_db = new_db;
  	Debug(DLOAD, ("load_database is done\n"))
  }
@@ -150,16 +154,19 @@
  
  void
  link_user(db, u)
---- vixie-cron-3.0.2.7/usr.sbin/cron/cron.8.orig	Sun May  6 13:59:57 2001
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/cron.8	Sun May  6 14:02:17 2001
-@@ -45,7 +45,9 @@
+--- vixie-cron-3.0.2.7/usr.sbin/cron/cron.8.orig	Tue Mar 21 02:56:25 2000
++++ vixie-cron-3.0.2.7/usr.sbin/cron/cron.8	Tue Jul 17 23:59:27 2001
+@@ -45,8 +45,11 @@
  .Nm
  also searches for
  .Pa /etc/crontab
 -which is in a different format (see
+-.Xr crontab 5 ) .
 +and the files in the 
 +.Pa /etc/cron.d/
 +directory which are in a different format (see
- .Xr crontab 5 ) .
++.Xr crontab 5 ), excluding files with names containing
++a dot ('.') or ending with a tilde ('~').
  .Nm
  then wakes up every minute, examining all loaded crontabs, checking each
+ command to see if it should be run in the current minute.

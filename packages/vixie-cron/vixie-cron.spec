@@ -1,9 +1,9 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.8 2001/07/16 21:58:20 mci Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.9 2001/07/17 21:47:42 mci Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron)
 Name: vixie-cron
 Version: 3.0.2.7
-Release: 8owl
+Release: 9owl
 Copyright: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%{version}.tar.gz
@@ -11,7 +11,7 @@ Source1: vixie-cron.init
 Source2: crontab.control
 Patch0: vixie-cron-%{version}-owl-linux.diff
 Patch1: vixie-cron-%{version}-owl-sgid-crontab.diff
-Patch2: vixie-cron-3.0.2.7-owl-crond.diff
+Patch2: vixie-cron-%{version}-owl-crond.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: owl-control < 2.0
 Prereq: /sbin/chkconfig, /dev/null, grep, shadow-utils
@@ -35,7 +35,6 @@ make -C usr.sbin/cron CFLAGS="-c -I. -I../../include $RPM_OPT_FLAGS" \
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr/{bin,man/man{1,5,8},sbin}
-mkdir -p $RPM_BUILD_ROOT/etc/rc.d/{init.d,rc{0,1,2,3,4,5,6}.d}
 mkdir -p -m 700 $RPM_BUILD_ROOT/var/spool/cron
 
 mkdir -p -m 755 $RPM_BUILD_ROOT/etc/cron.d
@@ -49,15 +48,8 @@ install -m 644 usr.sbin/cron/cron.8 $RPM_BUILD_ROOT/usr/man/man8
 gzip -9nf $RPM_BUILD_ROOT/usr/man/man*/*
 ln -s cron.8.gz $RPM_BUILD_ROOT/usr/man/man8/crond.8.gz
 
-install -m 700 $RPM_SOURCE_DIR/vixie-cron.init \
+install -m 700 -D $RPM_SOURCE_DIR/vixie-cron.init \
 	$RPM_BUILD_ROOT/etc/rc.d/init.d/crond
-cd $RPM_BUILD_ROOT/etc/rc.d
-ln -sf ../init.d/crond rc0.d/K60crond
-ln -sf ../init.d/crond rc1.d/K60crond
-ln -sf ../init.d/crond rc2.d/S40crond
-ln -sf ../init.d/crond rc3.d/S40crond
-ln -sf ../init.d/crond rc5.d/S40crond
-ln -sf ../init.d/crond rc6.d/K60crond
 
 mkdir -p $RPM_BUILD_ROOT/etc/control.d/facilities
 install -m 700 $RPM_SOURCE_DIR/crontab.control \
@@ -102,16 +94,16 @@ fi
 /usr/man/man1/crontab.*
 %dir %attr(1730,root,crontab) /var/spool/cron
 %dir /etc/cron.d 
-%config(missingok) /etc/rc.d/rc0.d/K60crond
-%config(missingok) /etc/rc.d/rc1.d/K60crond
-%config(missingok) /etc/rc.d/rc2.d/S40crond
-%config(missingok) /etc/rc.d/rc3.d/S40crond
-%config(missingok) /etc/rc.d/rc5.d/S40crond
-%config(missingok) /etc/rc.d/rc6.d/K60crond
 %config /etc/rc.d/init.d/crond
 /etc/control.d/facilities/crontab
 
 %changelog
+* Wed Jul 18 2001 Michail Litvak <mci@owl.openwall.com>
+- rework spooldirs handling to exclude files with 
+  filenames containing a dot '.' or ending with '~'
+- spec changes: remove packaging /etc/rc.d/rc*.d/*
+  (this is a chkconfig work)
+
 * Mon Jul 16 2001 Michail Litvak <mci@owl.openwall.com>
 - Patch to support /etc/cron.d dir
 
