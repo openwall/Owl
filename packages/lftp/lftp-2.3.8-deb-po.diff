@@ -1,0 +1,327 @@
+--- lftp-2.3.8.orig/po/lftp.pot
++++ lftp-2.3.8/po/lftp.pot
+@@ -1717,6 +1717,16 @@
+ msgid "%s: argument required. "
+ msgstr ""
+ 
++#: getdate.y:1012
++msgid ""
++"Enter date, or blank line to exit.\n"
++"\t> "
++msgstr ""
++
++#: getdate.y:1020
++msgid "Bad format - couldn't convert.\n"
++msgstr ""
++
+ #: src/module.cc:160
+ #, c-format
+ msgid "depend module `%s': %s\n"
+--- lftp-2.3.8.orig/po/es.po
++++ lftp-2.3.8/po/es.po
+@@ -1121,24 +1121,20 @@
+ msgstr "Igual que more, pero filtra cada archivo a través de zcat\n"
+ 
+ #: src/commands.cc:353
+-#, fuzzy
+ msgid "bzcat <files>"
+-msgstr "zcat <archivos>"
++msgstr "bzcat <archivos>"
+ 
+ #: src/commands.cc:354
+-#, fuzzy
+ msgid "Same as cat, but filter each file through bzcat\n"
+-msgstr "Igual que cat, pero filtra cada archivo a través de zcat\n"
++msgstr "Igual que cat, pero filtra cada archivo a través de bzcat\n"
+ 
+ #: src/commands.cc:355
+-#, fuzzy
+ msgid "bzmore <files>"
+-msgstr "zmore <archivos>"
++msgstr "bzmore <archivos>"
+ 
+ #: src/commands.cc:356
+-#, fuzzy
+ msgid "Same as more, but filter each file through bzcat\n"
+-msgstr "Igual que more, pero filtra cada archivo a través de zcat\n"
++msgstr "Igual que more, pero filtra cada archivo a través de bzcat\n"
+ 
+ #: src/commands.cc:405
+ #, c-format
+@@ -1431,7 +1427,7 @@
+ #: src/ftpclass.cc:242
+ msgid "Data connection peer has wrong port number"
+ msgstr ""
+-"El otro extremo de la conexión de datos tiene un úmero equivocado de puerto"
++"El otro extremo de la conexión de datos tiene un número equivocado de puerto"
+ 
+ #: src/ftpclass.cc:248
+ msgid "Data connection peer has mismatching address"
+@@ -1868,11 +1864,11 @@
+ #. both ways failed. Fall back to normal copying.
+ #: src/FileCopyFtp.cc:77
+ msgid "**** FXP: giving up, reverting to plain copy\n"
+-msgstr "**** FXP: me dindo, se usará copiado simple\n"
++msgstr "**** FXP: me rindo, se usará copiado simple\n"
+ 
+ #: src/FileCopyFtp.cc:90
+ msgid "**** FXP: trying to reverse ftp:fxp-passive-source\n"
+-msgstr ""
++msgstr "**** FXP: intentando invertir ftp:fxp-passive-source\n"
+ 
+ #: src/Filter.cc:134
+ msgid "chain output error"
+@@ -1920,12 +1916,24 @@
+ #: src/SleepJob.cc:113
+ #, c-format
+ msgid "\tRepeat count: %d\n"
+-msgstr ""
++msgstr "\tRepeticiones: %d\n"
+ 
+ #: src/SleepJob.cc:126
+ #, c-format
+ msgid "%s: argument required. "
+ msgstr "%s: se requiere un argumento. "
++
++#: getdate.y:1012
++msgid ""
++"Enter date, or blank line to exit.\n"
++"\t> "
++msgstr ""
++"Ingrese fecha, o una línea en blanco para salir.\n"
++"\t> "
++
++#: getdate.y:1020
++msgid "Bad format - couldn't convert.\n"
++msgstr "Formato incorrecto - no se pudo convertir.\n"
+ 
+ #: src/module.cc:160
+ #, c-format
+--- lftp-2.3.8.orig/po/pt_BR.po
++++ lftp-2.3.8/po/pt_BR.po
+@@ -83,9 +83,8 @@
+ msgstr "\tEsperanto término do serviço [%d]\n"
+ 
+ #: src/CmdExec.cc:755
+-#, fuzzy
+ msgid "\tWaiting for termination of jobs: "
+-msgstr "Esperando término da filtragem"
++msgstr "\tEsperando término da serviços: "
+ 
+ #: src/CmdExec.cc:765
+ #, c-format
+@@ -152,9 +151,9 @@
+ msgstr ""
+ 
+ #: src/FtpListInfo.cc:230 src/HttpDir.cc:1337
+-#, fuzzy, c-format
++#, c-format
+ msgid "Getting directory contents (%lld)"
+-msgstr "Buscando conteúdo do diretório (%ld)"
++msgstr "Buscando conteúdo do diretório (%lld)"
+ 
+ #: src/FtpListInfo.cc:240 src/HttpDir.cc:1343
+ #, c-format
+@@ -269,9 +268,9 @@
+ msgstr ""
+ 
+ #: src/MirrorJob.cc:806
+-#, fuzzy, c-format
++#, c-format
+ msgid "Removing old remote directory `%s'"
+-msgstr "Removendo arquivo remoto antigo `%s'"
++msgstr "Removendo diretório remoto antigo `%s'"
+ 
+ #: src/MirrorJob.cc:826
+ #, c-format
+@@ -461,9 +460,8 @@
+ "                  minutos (x=m), horas (x=h) ou dias (x=d)\n"
+ 
+ #: src/commands.cc:134
+-#, fuzzy
+ msgid "cat [-b] <files>"
+-msgstr "cat [-u] <arquivos>"
++msgstr "cat [-b] <arquivos>"
+ 
+ #: src/commands.cc:135
+ #, fuzzy
+@@ -523,9 +521,8 @@
+ " -o <arquivo>  redireciona a saída do debug para o arquivo.\n"
+ 
+ #: src/commands.cc:152
+-#, fuzzy
+ msgid "exit [<code>|bg]"
+-msgstr "exit [<código>]"
++msgstr "exit [<código>|bg]"
+ 
+ #: src/commands.cc:153
+ #, fuzzy
+@@ -655,9 +652,8 @@
+ "listagem execute `rels' ou `cache flush'.\n"
+ 
+ #: src/commands.cc:207
+-#, fuzzy
+ msgid "mget [OPTS] <files>"
+-msgstr "rm [-r] <arquivos>"
++msgstr "mget [OPÇÕES] <arquivos>"
+ 
+ #: src/commands.cc:208
+ #, fuzzy
+@@ -736,18 +732,16 @@
+ msgstr ""
+ 
+ #: src/commands.cc:251
+-#, fuzzy
+ msgid "more <files>"
+-msgstr "rm [-r] <arquivos>"
++msgstr "more <arquivos>"
+ 
+ #: src/commands.cc:252
+ msgid "Same as `cat <files> | more'. if PAGER is set, it is used as filter\n"
+ msgstr ""
+ 
+ #: src/commands.cc:253
+-#, fuzzy
+ msgid "mput [OPTS] <files>"
+-msgstr "rm [-r] <arquivos>"
++msgstr "mput [OPÇÕES] <arquivos>"
+ 
+ #: src/commands.cc:254
+ #, fuzzy
+@@ -768,7 +762,7 @@
+ 
+ #: src/commands.cc:261
+ msgid "mrm <files>"
+-msgstr ""
++msgstr "mrm <arquivos>"
+ 
+ #: src/commands.cc:262
+ msgid "Removes specified files with wildcard expansion\n"
+@@ -776,7 +770,7 @@
+ 
+ #: src/commands.cc:263
+ msgid "mv <file1> <file2>"
+-msgstr ""
++msgstr "mv <arquivo1> <arquivo2>"
+ 
+ #: src/commands.cc:264
+ msgid "Rename <file1> to <file2>\n"
+@@ -819,9 +813,8 @@
+ msgstr ""
+ 
+ #: src/commands.cc:279
+-#, fuzzy
+ msgid "put [OPTS] <lfile> [-o <rfile>]"
+-msgstr "get [OPÇÕES] <arquivo_remoto> [-o <arquivo_local>]"
++msgstr "put [OPÇÕES] <arquivo_local> [-o <arquivo_remoto>]"
+ 
+ #: src/commands.cc:280
+ #, fuzzy
+@@ -908,9 +901,8 @@
+ msgstr ""
+ 
+ #: src/commands.cc:313
+-#, fuzzy
+ msgid "rm [-r] [-f] <files>"
+-msgstr "rm [-r] <arquivos>"
++msgstr "rm [-r] [-f] <arquivos>"
+ 
+ #: src/commands.cc:314
+ msgid ""
+@@ -920,9 +912,8 @@
+ msgstr ""
+ 
+ #: src/commands.cc:317
+-#, fuzzy
+ msgid "rmdir [-f] <dirs>"
+-msgstr "rm [-r] <arquivos>"
++msgstr ""
+ 
+ #: src/commands.cc:318
+ msgid "Remove remote directories\n"
+@@ -937,9 +928,8 @@
+ msgstr ""
+ 
+ #: src/commands.cc:321
+-#, fuzzy
+ msgid "set [OPT] [<var> [<val>]]"
+-msgstr "get [OPÇÕES] <arquivo_remoto> [-o <arquivo_local>]"
++msgstr "set [OPÇÕES] [<var> <val>]]"
+ 
+ #: src/commands.cc:322
+ msgid ""
+@@ -1003,36 +993,32 @@
+ msgstr ""
+ 
+ #: src/commands.cc:349
+-#, fuzzy
+ msgid "zcat <files>"
+-msgstr "cat [-u] <arquivos>"
++msgstr "zcat <arquivos>"
+ 
+ #: src/commands.cc:350
+ msgid "Same as cat, but filter each file through zcat\n"
+ msgstr ""
+ 
+ #: src/commands.cc:351
+-#, fuzzy
+ msgid "zmore <files>"
+-msgstr "rm [-r] <arquivos>"
++msgstr "zmore <arquivos>"
+ 
+ #: src/commands.cc:352
+ msgid "Same as more, but filter each file through zcat\n"
+ msgstr ""
+ 
+ #: src/commands.cc:353
+-#, fuzzy
+ msgid "bzcat <files>"
+-msgstr "cat [-u] <arquivos>"
++msgstr "bzcat <arquivos>"
+ 
+ #: src/commands.cc:354
+ msgid "Same as cat, but filter each file through bzcat\n"
+ msgstr ""
+ 
+ #: src/commands.cc:355
+-#, fuzzy
+ msgid "bzmore <files>"
+-msgstr "rm [-r] <arquivos>"
++msgstr "bzmore <arquivos>"
+ 
+ #: src/commands.cc:356
+ msgid "Same as more, but filter each file through bzcat\n"
+@@ -1081,9 +1067,8 @@
+ msgstr ""
+ 
+ #: src/DummyProto.cc:67 src/commands.cc:692 src/commands.cc:1434
+-#, fuzzy
+ msgid " - not supported protocol"
+-msgstr "%s: %s - protocolo não suportado\n"
++msgstr " - protocolo não suportado"
+ 
+ #: src/commands.cc:734 src/commands.cc:1418
+ msgid "Password: "
+@@ -1449,9 +1434,8 @@
+ msgstr ""
+ 
+ #: src/ftpclass.cc:3426
+-#, fuzzy
+ msgid "Connected"
+-msgstr "Não conectado"
++msgstr "Conectado"
+ 
+ #: src/ftpclass.cc:3428
+ msgid "Logging in..."
+@@ -1655,9 +1639,9 @@
+ msgstr "\tExecutando comando embutido `%s' [%s]\n"
+ 
+ #: src/CopyJob.cc:65
+-#, fuzzy, c-format
++#, c-format
+ msgid "`%s' at %lld %s%s%s%s"
+-msgstr "`%s' em %lu %s%s%s[%s]"
++msgstr "`%s' em %lld %s%s%s%s"
+ 
+ #: src/FileCopy.cc:144
+ msgid "copy: put is broken\n"

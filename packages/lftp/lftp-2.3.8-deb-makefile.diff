@@ -1,0 +1,75 @@
+--- lftp-2.3.8.orig/Makefile.in
++++ lftp-2.3.8/Makefile.in
+@@ -119,7 +119,7 @@
+ 
+ EXTRA_DIST = lftp.conf lftp.lsm FAQ acconfig.h README README.debug-levels  README.modules MIRRORS BUGS FEATURES ltcf-c.sh ltcf-cxx.sh
+ 
+-SUBDIRS = include readline-4.1 lib doc intl src po m4
++SUBDIRS = include lib doc intl src po m4
+ AUTOMAKE_OPTIONS = foreign
+ ACLOCAL_AMFLAGS = -I m4
+ 
+@@ -136,7 +136,7 @@
+ 
+ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
+ 
+-TAR = gtar
++TAR = tar
+ GZIP_ENV = --best
+ all: all-redirect
+ .SUFFIXES:
+@@ -314,7 +314,7 @@
+ 	@for file in $(DISTFILES); do \
+ 	  d=$(srcdir); \
+ 	  if test -d $$d/$$file; then \
+-	    cp -pr $$/$$file $(distdir)/$$file; \
++	    cp -pr $$d/$$file $(distdir)/$$file; \
+ 	  else \
+ 	    test -f $(distdir)/$$file \
+ 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+--- lftp-2.3.8.orig/Makefile.am
++++ lftp-2.3.8/Makefile.am
+@@ -1,6 +1,6 @@
+ EXTRA_DIST = lftp.conf lftp.lsm FAQ acconfig.h README README.debug-levels\
+  README.modules MIRRORS BUGS FEATURES ltcf-c.sh ltcf-cxx.sh
+-SUBDIRS = include readline-4.1 lib doc intl src po m4
++SUBDIRS = include lib doc intl src po m4
+ AUTOMAKE_OPTIONS = foreign
+ ACLOCAL_AMFLAGS = -I m4
+ 
+--- lftp-2.3.8.orig/missing
++++ lftp-2.3.8/missing
+@@ -229,6 +229,33 @@
+     exit 1
+     ;;
+ 
++ msgfmt)
++    echo 1>&2 "\
++WARNING: \`$1' is missing on your system. You should only need it if
++         you have modified a \`.po' file. You might want
++         to install the \`GNU gettext' package."
++    file=`echo "$*" | sed -n 's/.*-o \([^ ]*\).*/\1/p'`
++    if test -z "$file"; then
++	file=messages
++    fi
++    touch $file
++;;
++
++ xgettext)
++    echo 1>&2 "\
++WARNING: \`$1' is missing on your system. You should only need it if
++         you have modified a translatable string in the source. You might want
++         to install the \`GNU gettext' package."
++    file=`echo "$*" | sed -n 's/.*--default-domain \([^ ]*\).*/\1/p'`
++    if test -z "$file"; then
++        file=`echo "$*" | sed -n 's/.*--d \([^ ]*\).*/\1/p'`
++        if test -z "$file"; then
++            file=messages
++        fi
++    fi
++    cp ${file}.pot ${file}.po
++;;
++
+   *)
+     echo 1>&2 "\
+ WARNING: \`$1' is needed, and you do not seem to have it handy on your
