@@ -1,5 +1,5 @@
---- linux-86/libc/kinclude/Makefile.kinclude	Tue Dec  5 04:08:34 2000
-+++ linux-86/libc/kinclude/Makefile	Tue Dec  5 04:08:10 2000
+--- dev86-0.16.0/libc/kinclude/Makefile.orig	Sat Aug 16 11:26:04 1997
++++ dev86-0.16.0/libc/kinclude/Makefile	Thu Jan  3 17:32:10 2002
 @@ -6,11 +6,11 @@
  	@:
  
@@ -16,9 +16,9 @@
 -	-@rm -f ../include/linuxmt ../include/arch
 +	-@rm -rf ../include/linuxmt ../include/arch
  	-@rm -f Used
---- linux-86/makefile.in.kinclude	Tue Dec  5 04:09:16 2000
-+++ linux-86/makefile.in	Tue Dec  5 04:09:50 2000
-@@ -118,9 +118,9 @@
+--- dev86-0.16.0/makefile.in.orig	Sat Jan  6 16:20:47 2001
++++ dev86-0.16.0/makefile.in	Thu Jan  3 17:32:10 2002
+@@ -123,9 +123,9 @@
  	@rm -f include
  	@ln -s libc/include include 2>/dev/null || true
  #ifndef GNUMAKE

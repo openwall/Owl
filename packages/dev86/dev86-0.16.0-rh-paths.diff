@@ -1,6 +1,5 @@
-diff -uNr linux-86/bcc/bcc.c linux-86-bccpaths/bcc/bcc.c
---- linux-86/bcc/bcc.c	Sat Feb  7 06:01:44 1998
-+++ linux-86-bccpaths/bcc/bcc.c	Fri Feb  4 19:50:25 2000
+--- dev86-0.16.0/bcc/bcc.c.orig	Wed Sep 27 23:43:51 2000
++++ dev86-0.16.0/bcc/bcc.c	Thu Jan  3 17:29:43 2002
 @@ -80,7 +80,7 @@
  #else
  #define STANDARD_EXEC_PREFIX_2	"/usr/bin/"

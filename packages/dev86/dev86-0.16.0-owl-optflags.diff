@@ -1,5 +1,5 @@
---- linux-86/makefile.in.optflags	Mon Dec  4 23:45:39 2000
-+++ linux-86/makefile.in	Mon Dec  4 23:48:55 2000
+--- dev86-0.16.0/makefile.in.orig	Sat Jan  6 16:20:47 2001
++++ dev86-0.16.0/makefile.in	Thu Jan  3 17:33:43 2002
 @@ -39,7 +39,8 @@
  WALL  =-Wstrict-prototypes
  

@@ -1,6 +1,6 @@
---- linux-86/Makefile.djb	Mon Sep 20 16:51:12 1999
-+++ linux-86/Makefile	Mon Sep 20 16:51:51 1999
-@@ -11,9 +11,9 @@
+--- dev86-0.16.0/Makefile.orig	Sat May 12 10:03:01 2001
++++ dev86-0.16.0/Makefile	Thu Jan  3 17:28:29 2002
+@@ -11,7 +11,7 @@
  
  ELKSSRC= /usr/src/elks
  PREFIX=  /usr

@@ -1,17 +1,17 @@
-# $Id: Owl/packages/dev86/dev86.spec,v 1.6 2002/01/24 17:27:40 solar Exp $
+# $Id: Owl/packages/dev86/dev86.spec,v 1.7 2002/03/14 20:20:48 mci Exp $
 
 Summary: A real mode 80x86 assembler and linker.
 Name: dev86
-Version: 0.15.4
-Release: owl4
+Version: 0.16.0
+Release: owl1
 License: GPL
 Group: Development/Languages
 Source: http://www.cix.co.uk/~mayday/Dev86src-%{version}.tar.gz
-Patch0: dev86-0.14-rh-noroot.diff
-Patch1: dev86-0.14-rh-nobcc.diff
-Patch2: dev86-0.15-rh-bccpaths.diff
-Patch3: dev86-0.15.4-owl-optflags.diff
-Patch4: dev86-0.15.4-owl-kinclude.diff
+Patch0: dev86-0.16.0-rh-install-no-root.diff
+Patch1: dev86-0.16.0-rh-no-bcc.diff
+Patch2: dev86-0.16.0-rh-paths.diff
+Patch3: dev86-0.16.0-owl-kinclude.diff
+Patch4: dev86-0.16.0-owl-optflags.diff
 Obsoletes: bin86
 ExclusiveArch: %ix86
 BuildRoot: /override/%{name}-%{version}
@@ -23,7 +23,7 @@ build programs that run in real mode, including LILO and the kernel's
 bootstrapping code, from their sources.
 
 %prep
-%setup -q -n linux-86
+%setup -q
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -81,6 +81,9 @@ rm -rf $RPM_BUILD_ROOT
 /%{_mandir}/man1/*
 
 %changelog
+* Thu Mar 14 2002 Michail Litvak <mci@owl.openwall.com>
+- 0.16
+
 * Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 
