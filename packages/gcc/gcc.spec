@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.13 2000/11/17 04:58:39 solar Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.14 2000/11/17 07:53:36 solar Exp $
 
 %define GCC_PREFIX /usr
 %define CPP_PREFIX /lib
@@ -23,6 +23,7 @@ Patch0:		gcc-2.95.2-rh-warn.diff
 Patch1:		gcc-2.95.2-owl-disable-dvi.diff
 Patch2:		gcc-2.95.2-owl-texconfig-bug.diff
 Patch3:		gcc-2.95.2-owl-rth-array-1-alpha.diff
+Patch4:		gcc-2.95.2-owl-sparcv9-LONG_MAX.diff
 Packager:	<kad@owl.openwall.com>
 Distribution:	Owl
 BuildRoot:	/var/rpm-buildroot/%{name}-root
@@ -163,6 +164,7 @@ being used in Europe, Brazil, Korea, and other places.
 %patch1 -p0
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 # Remove bison-generated files - we want bison 1.28'ish versions...
 for i in gcc/cp/parse gcc/c-parse gcc/cexp gcc/java/parse-scan gcc/java/parse gcc/objc/objc-parse; do
@@ -514,6 +516,7 @@ fi
 - No pthreads on sparcv9, not just on plain sparc.
 - Pass plain sparc- target to configure when building for sparcv9, to
 allow for the use of sparcv9 optflags while not confusing configure.
+- Check for __arch64__ rather than __sparc_v9__ in limits.h.
 
 * Wed Nov 08 2000 Solar Designer <solar@owl.openwall.com>
 - Added a patch for copying of DECL_MODE in duplicate_decls(), by
