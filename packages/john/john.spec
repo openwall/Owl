@@ -1,4 +1,4 @@
-# $Id: Owl/packages/john/john.spec,v 1.41 2005/02/15 17:02:13 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.42 2005/02/15 17:32:54 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -42,7 +42,7 @@ make linux-alpha CFLAGS='%cflags'
 make linux-sparc CFLAGS='%cflags'
 %endif
 %ifarch ppc
-make linux-ppc CFLAGS='%cflags'
+make linux-ppc32 CFLAGS='%cflags'
 %endif
 
 %install
