@@ -12,6 +12,15 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.0 and Owl-current.
 
+2002/10/24 -
+2002/12/01	Package: owl-startup
+Set net.ipv4.icmp_echo_ignore_broadcasts = 1 to prevent the use of Owl
+boxes for "smurf" attacks even when proper packet filters aren't in
+place (suggested by Steve Olszewski).  Set net.ipv4.tcp_syncookies = 1
+to defeat SYN flood attacks.  Documented (in /etc/sysctl.conf) the
+security risk of having SYN cookies enabled with certain packet filter
+setups.
+
 2002/11/27	kernel
 SECURITY FIX	Severity: medium, local, active
 Updated to Linux 2.2.22-ow2 which improves the "lcall" DoS fix for the
@@ -46,4 +55,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.6 2002/11/27 06:22:00 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.7 2002/11/30 22:04:57 solar Exp $
