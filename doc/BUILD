@@ -68,8 +68,9 @@ new versions of software already in Owl.
 
 	Native (re-)builds.
 
-You need to have a configured Linux 2.2 kernel in /usr/src/linux.  As
-user "build", change directory to /usr/src/world and type:
+You need to have a configured Linux 2.2.x or 2.4.x kernel in
+/usr/src/linux.  As user "build", change directory to /usr/src/world
+and type:
 
 	make clean && make buildworld
 
@@ -111,4 +112,4 @@ where "name" is the name of the source package.  For foreign packages
 (SRPMs) built with the Owl build environment you also need to include
 the version number part in "name".
 
-$Id: Owl/doc/BUILD,v 1.20 2003/05/08 04:07:00 solar Exp $
+$Id: Owl/doc/BUILD,v 1.21 2003/05/16 00:16:30 solar Exp $

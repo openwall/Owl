@@ -73,13 +73,11 @@ chrooted to your newly installed userland:
 
 	chroot /owl
 
-Currently, Owl fully supports Linux 2.2 kernels and supports running
-with 2.4 kernels (but in order to rebuild Owl with "make buildworld"
-you'd need to provide Linux 2.2 kernel sources as explained in BUILD).
-We recommend that you build the version provided with Owl.
+Currently, Owl supports Linux 2.2.x and 2.4.x kernels.  We recommend
+that you build the version provided with Owl.
 
 You may choose to configure the boot loader available with Owl (LILO
 or SILO, depending on the architecture), or you may use a boot loader
 already installed on the system (if any).
 
-$Id: Owl/doc/INSTALL,v 1.10 2003/05/06 02:44:46 solar Exp $
+$Id: Owl/doc/INSTALL,v 1.11 2003/05/16 00:16:30 solar Exp $
