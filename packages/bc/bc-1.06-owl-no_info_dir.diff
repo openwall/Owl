@@ -1,0 +1,26 @@
+diff -uNr bc-1.06.orig/doc/Makefile.in bc-1.06/doc/Makefile.in
+--- bc-1.06.orig/doc/Makefile.in	Wed Nov 15 22:19:18 2000
++++ bc-1.06/doc/Makefile.in	Tue Nov 21 10:43:46 2000
+@@ -171,14 +171,14 @@
+ 	    else : ; fi; \
+ 	  done; \
+ 	done
+-	@$(POST_INSTALL)
+-	@if $(SHELL) -c 'install-info --version | sed 1q | fgrep -s -v -i debian' >/dev/null 2>&1; then \
+-	  list='$(INFO_DEPS)'; \
+-	  for file in $$list; do \
+-	    echo " install-info --info-dir=$(DESTDIR)$(infodir) $(DESTDIR)$(infodir)/$$file";\
+-	    install-info --info-dir=$(DESTDIR)$(infodir) $(DESTDIR)$(infodir)/$$file || :;\
+-	  done; \
+-	else : ; fi
++#	@$(POST_INSTALL)
++#	@if $(SHELL) -c 'install-info --version | sed 1q | fgrep -s -v -i debian' >/dev/null 2>&1; then \
++#	  list='$(INFO_DEPS)'; \
++#	  for file in $$list; do \
++#	    echo " install-info --info-dir=$(DESTDIR)$(infodir) $(DESTDIR)$(infodir)/$$file";\
++#	    install-info --info-dir=$(DESTDIR)$(infodir) $(DESTDIR)$(infodir)/$$file || :;\
++#	  done; \
++#	else : ; fi
+ 
+ uninstall-info:
+ 	$(PRE_UNINSTALL)
