@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.7 2000/09/01 11:24:39 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.8 2000/09/01 12:53:12 solar Exp $
 
 %define BUILD_PROFILE	'no'
 
@@ -35,7 +35,7 @@ Patch18: glibc-2.1.3-mdk-ldd.diff
 Patch19: glibc-2.1.3-rh-time.diff
 Patch20: glibc-2.1.3-rh-timezone.diff
 Patch21: glibc-2.1.3-rh-syslog.diff
-Patch22: glibc-2.1.3-cvs-20000824-locale.diff
+Patch22: glibc-2.1.3-cvs-20000827-locale.diff
 Patch23: glibc-2.1.3-cvs-20000824-unsetenv.diff
 Patch24: glibc-2.1.3-cvs-20000824-md5-align-clean.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
@@ -262,6 +262,7 @@ rm -f *.filelist*
 
 %changelog
 * Fri Sep 01 2000 Solar Designer <solar@owl.openwall.com>
+- One more security fix (locale once again) from the CVS version.
 - Fixed a bug in crypt_gensalt*() reported by Michael Tokarev.
 
 * Fri Aug 25 2000 Solar Designer <solar@owl.openwall.com>

@@ -1,15 +1,16 @@
 ===================================================================
 RCS file: /cvs/glibc/libc/catgets/catgets.c,v
-retrieving revision 1.15
-retrieving revision 1.16
-diff -u -r1.15 -r1.16
---- libc/catgets/catgets.c	2000/01/29 11:56:33	1.15
-+++ libc/catgets/catgets.c	2000/08/21 20:55:30	1.16
-@@ -50,7 +50,8 @@
+retrieving revision 1.14.2.1
+retrieving revision 1.14.2.2
+diff -u -r1.14.2.1 -r1.14.2.2
+--- libc/catgets/catgets.c	2000/01/29 11:52:12	1.14.2.1
++++ libc/catgets/catgets.c	2000/08/21 21:01:52	1.14.2.2
+@@ -50,7 +50,9 @@
  	/* Use the LANG environment variable.  */
  	env_var = getenv ("LANG");
  
 -      if (env_var == NULL)
++
 +      if (env_var == NULL || *env_var == '\0'
 +	  || (__libc_enable_secure && strchr (env_var, '/') != NULL))
  	env_var = "C";
@@ -18,10 +19,10 @@ diff -u -r1.15 -r1.16
 ===================================================================
 RCS file: /cvs/glibc/libc/locale/findlocale.c,v
 retrieving revision 1.10.2.1
-retrieving revision 1.10.2.2
-diff -u -r1.10.2.1 -r1.10.2.2
+retrieving revision 1.10.2.4
+diff -u -r1.10.2.1 -r1.10.2.4
 --- libc/locale/findlocale.c	1999/11/08 23:45:13	1.10.2.1
-+++ libc/locale/findlocale.c	2000/08/21 21:02:42	1.10.2.2
++++ libc/locale/findlocale.c	2000/08/27 19:00:32	1.10.2.4
 @@ -1,4 +1,4 @@
 -/* Copyright (C) 1996, 1997, 1998, 1999 Free Software Foundation, Inc.
 +/* Copyright (C) 1996, 1997, 1998, 1999, 2000 Free Software Foundation, Inc.
@@ -51,8 +52,27 @@ diff -u -r1.10.2.1 -r1.10.2.2
 +
 +  if (*name == NULL || (*name)[0] == '\0'
 +      || (__builtin_expect (__libc_enable_secure, 0)
-+	  && memchr (*name, '/', _nl_find_language (*name) - *name) != NULL))
++	  && strchr (*name, '/') != NULL))
 +    *name = (char *) _nl_C_name;
  
    if (strcmp (*name, _nl_C_name) == 0 || strcmp (*name, _nl_POSIX_name) == 0)
      {
+===================================================================
+RCS file: /cvs/glibc/libc/intl/dcigettext.c,v
+retrieving revision 1.16
+retrieving revision 1.18
+diff -u -r1.16 -r1.18
+--- libc/intl/dcigettext.c	2000/08/21 04:14:38	1.16
++++ libc/intl/dcigettext.c	2000/08/27 19:00:56	1.18
+@@ -524,10 +524,7 @@
+ 
+ 	  /* When this is a SUID binary we must not allow accessing files
+ 	     outside the dedicated directories.  */
+-	  if (ENABLE_SECURE
+-	      && (memchr (single_locale, '/',
+-			  _nl_find_language (single_locale) - single_locale)
+-		  != NULL))
++	  if (ENABLE_SECURE && strchr (single_locale, '/') != NULL)
+ 	    /* Ingore this entry.  */
+ 	    continue;
+ 	}
