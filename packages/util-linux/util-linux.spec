@@ -1,9 +1,12 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.5 2000/08/02 00:22:14 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.6 2000/08/02 17:56:30 solar Exp $
+
+%define BUILD_MOUNT	'yes'
+%define BUILD_LOSETUP	'yes'
 
 Summary: A collection of basic system utilities.
 Name: util-linux
 Version: 2.10h
-Release: 3owl
+Release: 4owl
 Copyright: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%{version}.tar.gz
@@ -22,6 +25,34 @@ Obsoletes: clock
 %description
 The util-linux package contains a large variety of low-level system
 utilities that are necessary for a Linux system to function.
+
+%if "%{BUILD_MOUNT}"=="'yes'"
+%package -n mount
+Summary: Programs for mounting and unmounting filesystems.
+Group: System Environment/Base
+
+%description -n mount
+The mount package contains the mount, umount, swapon and swapoff
+programs.  Accessible files on your system are arranged in one big
+tree or hierarchy.  These files can be spread out over several
+devices.  The mount command attaches a filesystem on some device to
+your system's file tree.  The umount command detaches a filesystem
+from the tree.  Swapon and swapoff, respectively, specify and disable
+devices and files for paging and swapping.
+%endif
+
+%if "%{BUILD_LOSETUP}"=="'yes'"
+%package -n losetup
+Summary: Programs for setting up and configuring loopback devices.
+Group: System Environment/Base
+
+%description -n losetup
+Linux supports a special block device called the loop device, which maps
+a normal file onto a virtual block device.  This allows for the file to
+be used as a "virtual file system".  Losetup is used to associate loop
+devices with regular files or block devices, to detach loop devices and
+to query the status of a loop device.
+%endif
 
 %prep
 %setup -q
@@ -223,10 +254,35 @@ rm -rf $RPM_BUILD_ROOT
 %doc fdisk/sfdisk.examples
 %endif
 
+%if "%{BUILD_MOUNT}"=="'yes'"
+%files -n mount
+%defattr(-,root,root)
+%attr(700,root,root) /bin/mount
+%attr(700,root,root) /bin/umount
+/sbin/swapon
+/sbin/swapoff
+/usr/man/man5/fstab.5*
+/usr/man/man5/nfs.5*
+/usr/man/man8/mount.8*
+/usr/man/man8/swapoff.8*
+/usr/man/man8/swapon.8*
+/usr/man/man8/umount.8*
+%endif
+
+%if "%{BUILD_LOSETUP}"=="'yes'"
+%files -n losetup
+%defattr(-,root,root)
+/sbin/losetup
+/usr/man/man8/losetup.8*
+%endif
+
 %changelog
 * Wed Aug 02 2000 Solar Designer <solar@owl.openwall.com>
+- Disabled locale support in write(1) entirely for security reasons
+(dangerous printf formats, control characters, anonymous messages).
 - Removed the dependency on kernel as we may not have the kernel in
 an RPM package.
+- mount and losetup are now packaged here.
 
 * Tue Jul 18 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - locale come back
