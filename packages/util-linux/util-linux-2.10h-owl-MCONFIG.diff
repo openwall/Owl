@@ -1,0 +1,64 @@
+diff -ur util-linux-2.10h.orig/MCONFIG util-linux-2.10h/MCONFIG
+--- util-linux-2.10h.orig/MCONFIG	Fri Feb 18 13:12:59 2000
++++ util-linux-2.10h/MCONFIG	Wed Jul 12 09:22:06 2000
+@@ -16,17 +16,17 @@
+ # If HAVE_PAM is set to "yes", then login, chfn, chsh, and newgrp
+ # will use PAM for authentication. Additionally, passwd will not be
+ # installed as it is not PAM aware.
+-HAVE_PAM=no
++HAVE_PAM=yes
+ 
+ # If HAVE_SHADOW is set to "yes", then login, chfn, chsh, newgrp, passwd,
+ # and vipw will not be built or installed from the login-utils
+ # subdirectory.  
+-HAVE_SHADOW=yes
++HAVE_SHADOW=no
+ 
+ # If HAVE_PASSWD is set to "yes", then passwd will not be built or
+ # installed from the login-utils subdirectory (but login, chfn, chsh,
+ # newgrp, and vipw *will* be installed).
+-HAVE_PASSWD=no
++HAVE_PASSWD=yes
+ 
+ # If you use chfn and chsh from this package, REQUIRE_PASSWORD will require
+ # non-root users to enter the account password before updating /etc/passwd.
+@@ -72,11 +72,11 @@
+ # If HAVE_SLN is set to "yes", then sln won't be installed
+ # (but the man page sln.8 will be installed anyway).
+ # sln also comes with libc and glibc.
+-HAVE_SLN=no
++HAVE_SLN=yes
+ 
+ # If HAVE_TSORT is set to "yes", then tsort won't be installed.
+ # GNU textutils 2.0 includes tsort.
+-HAVE_TSORT=no
++HAVE_TSORT=yes
+ 
+ # If HAVE_FDUTILS is set to "yes", then setfdprm won't be installed.
+ HAVE_FDUTILS=no
+@@ -117,6 +117,7 @@
+ # Set HAVE_SLANG to yes if you have slang (and prefer to use that for cfdisk)
+ # (If neither HAVE_NCURSES nor HAVE_SLANG is defined, cfdisk is not made.)
+ # HAVE_SLANG=yes
++HAVE_NCURSES=yes
+ 
+ # There is a subdirectory /usr/include/slang containing slcurses.h
+ # SLANGFLAGS=-I/usr/include/slang
+@@ -161,7 +162,7 @@
+ MANMODE=	644
+ DATMODE=	644
+ INFOMODE=	644
+-SUIDMODE=      4755
++SUIDMODE=	700
+ 
+ CHMOD=		chmod
+ INSTALL=	install
+@@ -169,7 +170,7 @@
+ INSTALLBIN=	$(INSTALL) -m $(BINMODE)
+ INSTALLMAN=	$(INSTALL) -m $(MANMODE)
+ INSTALLDAT=	$(INSTALL) -m $(DATMODE)
+-INSTALLSUID=    $(INSTALL) -m $(SUIDMODE) -o root
++INSTALLSUID=    $(INSTALL) -m $(SUIDMODE)
+ 
+ %.o: %.c
+ 	$(CC) -c $(CFLAGS) $< -o $@

@@ -1,0 +1,54 @@
+--- util-linux-2.10h.orig/misc-utils/write.c	Tue Mar 21 02:15:28 2000
++++ util-linux-2.10h/misc-utils/write.c	Thu Jul 13 12:43:26 2000
+@@ -70,6 +70,8 @@
+ int term_chk(char *, int *, time_t *, int);
+ int utmp_chk(char *, char *);
+ 
++#define fixed_iscntrl(c) \
++	(((c) & 0x7f) < 0x20 || (c) == 0x7f)
+ 
+ int
+ main(int argc, char **argv)
+@@ -297,12 +299,13 @@
+ 	void done();
+ 
+ 	/* Determine our login name before the we reopen() stdout */
+-	if ((login = getlogin()) == NULL) {
+-		if ((pwd = getpwuid(myuid)) != NULL)
+-			login = pwd->pw_name;
+-		else
+-			login = "???";
++	login = getlogin();
++	if (!(pwd = getpwuid(myuid))) {
++		perror("getpwuid");
++		exit(1);
+ 	}
++	if (!login)
++		login = pwd->pw_name;
+ 
+ 	if (strlen(tty) + 6 > sizeof(path))
+ 		exit(1);
+@@ -322,8 +325,12 @@
+ 	nows = ctime(&now);
+ 	nows[16] = '\0';
+ 	printf("\r\n\007\007\007");
+-	(void)printf(_("Message from %s@%s on %s at %s ..."),
+-	    login, host, mytty, nows + 11);
++	if (strcmp(login, pwd->pw_name))
++	    (void)printf(_("Message from %s@%s (as %s) on %s at %s ..."),
++		login, host, pwd->pw_name, mytty, nows + 11);
++	else
++	    (void)printf(_("Message from %s@%s on %s at %s ..."),
++		login, host, mytty, nows + 11);
+ 	printf("\r\n");
+ 
+ 	while (fgets(line, sizeof(line), stdin) != NULL)
+@@ -355,7 +362,7 @@
+ 		if (c == '\n') {
+ 			PUTC('\r');
+ 			PUTC('\n');
+-		} else if (!isprint(c) && !isspace(c) && c != '\007') {
++		} else if (iscntrl(c) || fixed_iscntrl(c)) {
+ 			if (c & 0x80) {
+ 				/* use some fallback? */
+ 				(void)printf("\\%3o", (unsigned char) c);
