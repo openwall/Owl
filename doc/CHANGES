@@ -12,6 +12,14 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/03/05	Package: openssh
+SECURITY FIX	Severity: high, local/remote, active/passive
+Patched an off by one channel id check bug discovered by Joost Pol.
+The bug could be exploited by either a user able to login into a
+vulnerable OpenSSH server or a malicious SSH server attacking a
+vulnerable OpenSSH client.  If successful, this could let one execute
+arbitrary code in the context of the remote server or client process.
+
 2002/03/03	kernel
 SECURITY FIX	Severity: medium, local, active
 Updated to Linux 2.2.20-ow2.  This fixes an x86-specific vulnerability
@@ -566,4 +574,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.70 2002/03/05 16:20:47 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.71 2002/03/05 16:50:29 solar Exp $
