@@ -1,11 +1,11 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.2 2000/12/14 21:09:03 kad Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.3 2000/12/15 03:22:13 solar Exp $
 
 %define NEED_PYTHON 'no'
 
 Summary: 	A secure replacement for inetd.
 Name: 		xinetd
 Version: 	2.1.8.9pre13
-Release: 	2owl
+Release: 	3owl
 License: 	Distributable (BSD-like)
 Group: 		System Environment/Daemons
 Source: 	http://www.xinetd.org/xinetd-%{version}.tar.gz
@@ -30,16 +30,21 @@ BuildRoot: 	/var/rpm-buildroot/%{name}-root
 Obsoletes: 	inetd
 
 %description
-Xinetd is a secure replacement for inetd, the Internet services
-daemon.  Xinetd provides access control for all services based on the
-address of the remote host and/or on time of access and can prevent
-denial-of-access attacks. Xinetd provides extensive logging, has no
-limit on the number of server arguments and you can bind specific
-services to specific IP addresses on your host machine. It also enables
-information of a service to be in a separate file
+xinetd performs the same function as inetd: it starts programs that
+provide Internet services.  Instead of having such servers started at
+system initialization time, and be dormant until a connection request
+arrives, xinetd is the only daemon process started and it listens on
+all service ports for the services listed in its configuration file.
+When a request comes in, xinetd starts the appropriate server.  Because
+of the way it operates, xinetd (as well as inetd) is also referred to
+as a super-server.
+
+xinetd has access control machanisms, extensive logging capabilities,
+the ability to make services available based on time, and can place
+limits on the number of servers that can be started, among other things.
 
 %prep
-%setup -q 
+%setup -q
 %patch0 -p1
 
 %build
@@ -50,7 +55,8 @@ make
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/etc/rc.d/init.d
-%makeinstall DAEMONDIR=$RPM_BUILD_ROOT/usr/sbin MANDIR=$RPM_BUILD_ROOT/%{_mandir}
+%makeinstall \
+	DAEMONDIR=$RPM_BUILD_ROOT/usr/sbin MANDIR=$RPM_BUILD_ROOT/%{_mandir}
 mkdir -p $RPM_BUILD_ROOT/etc/xinetd.d/
 install -m 755 %SOURCE1 $RPM_BUILD_ROOT/etc/rc.d/init.d/xinetd
 install -m 644 %SOURCE2 $RPM_BUILD_ROOT/etc/xinetd.conf
@@ -73,25 +79,31 @@ rm -f $RPM_BUILD_ROOT/usr/sbin/xconv.pl
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post
-if [ "$1" -eq 1 ]; then
-/sbin/chkconfig --add xinetd 
+%pre
+rm -f /var/run/xinetd.restart
+if [ $1 -ge 2 ]; then
+	/etc/rc.d/init.d/xinetd status && touch /var/run/xinetd.restart || :
+	/etc/rc.d/init.d/xinetd stop || :
 fi
+
+%post
+if [ $1 -eq 1 ]; then
+	/sbin/chkconfig --add xinetd
+fi
+if [ -f /var/run/xinetd.restart ]; then
+	/etc/rc.d/init.d/xinetd start
+fi
+rm -f /var/run/xinetd.restart
 
 %preun
-if [ "$1" -eq 0 ]; then
-/sbin/chkconfig --del xinetd 
+if [ $1 -eq 0 ]; then
+	/etc/rc.d/init.d/xinetd stop || :
+	/sbin/chkconfig --del xinetd
 fi
-
-%postun
-if [ "$1" -ge 1 ]; then
-/sbin/service xinetd condrestart >/dev/null 2>&1
-fi
-
 
 %files
 %defattr(-,root,root)
-%doc INSTALL xinetd/CHANGELOG xinetd/COPYRIGHT README xinetd/sample.conf 
+%doc INSTALL xinetd/CHANGELOG xinetd/COPYRIGHT README xinetd/sample.conf
 
 %config /etc/xinetd.conf
 /usr/sbin/*
@@ -100,6 +112,11 @@ fi
 %config /etc/xinetd.d/*
 
 %changelog
+* Fri Dec 15 2000 Solar Designer <solar@owl.openwall.com>
+- Changed the default xinetd.conf.
+- Startup script cleanups.
+- Restart after package upgrades in an owl-startup compatible way.
+
 * Mon Dec 11 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import
 - xinetd.init -> owl-startup
