@@ -1,64 +1,67 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.18 2001/07/06 05:50:57 solar Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.19 2002/01/28 21:19:23 solar Exp $
 
-%define GCC_PREFIX	/usr
-%define CPP_PREFIX	/lib
-%define GCC_VERSION	2.95.3
-%define STDC_VERSION	2.10.0
+%define GCC_PREFIX /usr
+%define CPP_PREFIX /lib
+%define GCC_VERSION 2.95.3
+%define STDC_VERSION 2.10.0
 
-%define BUILD_OBJC 	'no'
-%define BUILD_F77	'no'
-%define BUILD_CHILL 	'no'
+%define BUILD_OBJC 0
+%define BUILD_F77 0
+%define BUILD_CHILL 0
 
-Summary:	Various compilers (C, C++, Objective-C, f77, ...)
-Name:		gcc
-Version:	%{GCC_VERSION}
-Release:	1owl
-Serial:		1
-Copyright:	GPL
-URL:		http://gcc.gnu.org
-Group:		Development/Languages
-Source0:	ftp://ftp.gnu.org/pub/gnu/gcc/gcc-%{GCC_VERSION}.tar.gz
-Source1:	libstdc++-compat.tar.bz2
-Patch0:		gcc-2.95.2-rh-warn.diff
-Patch1:		gcc-2.95.2-owl-disable-dvi.diff
-Patch2:		gcc-2.95.2-owl-texconfig-bug.diff
-%if "%{GCC_VERSION}" != "2.95.2"
-Patch3:		gcc-2.95.3-owl-sparcv9-LONG_MAX.diff
-%else
-Patch3:		gcc-2.95.2-owl-sparcv9-LONG_MAX.diff
-Patch4:		gcc-2.95.2-owl-rth-array-1-alpha.diff
-%endif
-Packager:	<kad@owl.openwall.com>
-Distribution:	Owl
-BuildRoot:	/var/rpm-buildroot/%{name}-root
-Obsoletes: 	egcs
-Requires: 	binutils >= 2.9.1.0.25
-Requires: 	cpp = %{GCC_VERSION}
-Prereq: 	/sbin/install-info
+Summary: C compiler from the GNU Compiler Collection.
+Name: gcc
+Version: %{GCC_VERSION}
+Release: owl1
+Epoch: 1
+License: GPL
+Group: Development/Languages
+URL: http://gcc.gnu.org
+Source0: ftp://ftp.gnu.org/pub/gnu/gcc/gcc-%{GCC_VERSION}.tar.gz
+Source1: libstdc++-compat.tar.bz2
+Patch0: gcc-2.95.2-rh-warn.diff
+Patch1: gcc-2.95.2-owl-disable-dvi.diff
+Patch2: gcc-2.95.2-owl-texconfig-bug.diff
+Patch3: gcc-2.95.3-owl-sparcv9-LONG_MAX.diff
+PreReq: /sbin/install-info
+Requires: binutils >= 2.9.1.0.25
+Requires: cpp = %{GCC_VERSION}
+Obsoletes: egcs
+BuildRoot: /override/%{name}-%{version}
 
 %description
-The gcc package contains the GNU Compiler Collection: cc and gcc. You'll need
-this package in order to compile C/C++ code.
+The gcc package contains C compiler from the GNU Compiler Collection,
+as well as documentation which is not limited to just the C compiler.
+
+%package -n cpp
+Summary: GNU C preprocessor.
+Group: Development/Languages
+PreReq: /sbin/install-info
+
+%description -n cpp
+cpp (or cccp) is the GNU C Compatible Compiler Preprocessor.  cpp is a
+macro processor which is used automatically by the C compiler to
+transform program source before actual compilation.  cpp may also be
+used independently from the C compiler and the C language.
 
 %package c++
-Summary: 	C++ support for gcc
-Obsoletes: 	egcs-c++
-Group:		Development/Languages
-Requires: 	gcc = %{GCC_VERSION}
-Requires: 	cpp = %{GCC_VERSION}
+Summary: C++ support for gcc.
+Group: Development/Languages
+Requires: gcc = %{GCC_VERSION}, cpp = %{GCC_VERSION}
+Obsoletes: egcs-c++
 
 %description c++
-This package adds C++ support to the GNU C compiler. It includes support
-for most of the current C++ specification, including templates and
-exception handling. It does include the static standard C++
-library and C++ header files; the library for dynamically linking
-programs is available separately.
+This package contains the C++ compiler from the GNU Compiler Collection.
+It includes support for most of the current C++ specification, including
+templates and exception handling.  It does include the static standard
+C++ library and C++ header files.  The library for dynamically linking
+programs is available as a separate binary package.
 
 %package -n libstdc++
-Summary: 	GNU c++ library
-Group:		System Environment/Libraries
-Obsoletes: 	gcc-libstdc++
-Provides: libstdc++-libc6.1-1.so.2 libstdc++-libc6.1-2.so.3 libstdc++.so.2.9
+Summary: GNU C++ library.
+Group: System Environment/Libraries
+Provides: libstdc++-libc6.1-1.so.2, libstdc++-libc6.1-2.so.3, libstdc++.so.2.9
+Obsoletes: gcc-libstdc++
 
 %description -n libstdc++
 The libstdc++ package contains a snapshot of the GCC Standard C++
@@ -66,101 +69,67 @@ Library v3, an ongoing project to implement the ISO 14882 Standard C++
 library.
 
 %ifarch %ix86
-
 %package -n libstdc++-compat
-Summary: GNU old c++ library
+Summary: Old GNU C++ libraries for binary compatibility.
 Group: System Environment/Libraries
 
 %description -n libstdc++-compat
-This is the GNU implementation of the standard C++ libraries. This package
-includes the old shared libraries necessary to run C++ applications.
-
+This package includes the old shared libraries necessary to run C++
+applications built against the libraries.
 %endif
 
 %package -n libstdc++-devel
-Summary: 	Header files and libraries for C++ development
-Group:		Development/Libraries
-Obsoletes: 	gcc-libstdc++-devel
+Summary: Header files and libraries for C++ development.
+Group: Development/Libraries
+Obsoletes: gcc-libstdc++-devel
 
 %description -n libstdc++-devel
 This is the GNU implementation of the standard C++ libraries.  This
-package includes the header files and libraries needed for C++
-development. This includes SGI's implementation of the STL.
+package includes the header files and libraries needed for C++ development.
 
-%package -n cpp
-Summary: 	The C Preprocessor.
-Group:		Development/Languages
-Prereq: 	/sbin/install-info
-
-%description -n cpp
-Cpp (or cccp) is the GNU C-Compatible Compiler Preprocessor.
-Cpp is a macro processor which is used automatically
-by the C compiler to transform your program before actual
-compilation. It is called a macro processor because it allows
-you to define macros, abbreviations for longer
-constructs.
-
-The C preprocessor provides four separate functionalities: the
-inclusion of header files (files of declarations that can be
-substituted into your program); macro expansion (you can define macros,
-and the C preprocessor will replace the macros with their definitions
-throughout the program); conditional compilation (using special
-preprocessing directives, you can include or exclude parts of the
-program according to various conditions); and line control (if you use
-a program to combine or rearrange source files into an intermediate
-file which is then compiled, you can use line control to inform the
-compiler about where each source line originated).
-
-You should install this package if you are a C programmer and you use
-macros.
-
-%if "%{BUILD_OBJC}"=="'yes'"
+%if %BUILD_OBJC
 %package objc
-Summary: 	Objective C support for gcc
-Group:		Development/Languages
-Obsoletes:	egcs-objc
-Requires:	gcc = %{GCC_VERSION}
-Requires:	cpp = %{GCC_VERSION}
+Summary: Objective C support for gcc.
+Group: Development/Languages
+Requires: gcc = %{GCC_VERSION}, cpp = %{GCC_VERSION}
+Obsoletes: egcs-objc
 
 %description objc
-This package adds Objective C support to the GNU C compiler. Objective
-C is a object oriented derivative of the C language, mainly used on
-systems running NeXTSTEP. This package does not include the standard
-objective C object library.
+This package contains the Objective C compiler from the GNU Compiler
+Collection.  Objective C is an object oriented derivative of the C
+language, mainly used on systems running NeXTSTEP.  This package does
+not include the standard Objective C object library.
 %endif
 
-%if "%{BUILD_F77}"=="'yes'"
+%if %BUILD_F77
 %package g77
-Summary:	Fortran 77 support for gcc
-Group:		Development/Languages
-Obsoletes:	egcs-g77
-Requires:	gcc = %{GCC_VERSION}
+Summary: Fortran 77 support for gcc.
+Group: Development/Languages
+Requires: gcc = %{GCC_VERSION}
+Obsoletes: egcs-g77
 
 %description g77
-This package adds support for compiling Fortran 77 programs with the GNU
-compiler.
-
+This package contains the Fortran 77 compiler from the GNU Compiler
+Collection.
 %endif
 
-%if "%{BUILD_CHILL}"=="'yes'"
+%if %BUILD_CHILL
 %package chill
-Summary: 	CHILL support for gcc
-Group:		Development/Languages
-Requires:	gcc = %{GCC_VERSION}
+Summary: CHILL support for gcc.
+Group: Development/Languages
+Requires: gcc = %{GCC_VERSION}
 
 %description chill
 This package adds support for compiling CHILL programs with the GNU
 compiler.
 
-Chill is the "CCITT High-Level Language", where CCITT is the old
+CHILL is the "CCITT High-Level Language", where CCITT is the old
 name for what is now ITU, the International Telecommunications Union.
-It is is language in the Modula2 family, and targets many of the
-same applications as Ada (especially large embedded systems).
-Chill was never used much in the United States, but is still
-being used in Europe, Brazil, Korea, and other places.
-
+It is a language in the Modula2 family, and targets many of the same
+applications as Ada (especially large embedded systems).  Chill was
+never used much in the United States, but is still being used in Europe,
+Brazil, Korea, and other places.
 %endif
-
 
 %prep
 %setup -q -n gcc-%{GCC_VERSION} -a 1
@@ -168,11 +137,8 @@ being used in Europe, Brazil, Korea, and other places.
 %patch1 -p0
 %patch2 -p1
 %patch3 -p1
-%if "%{GCC_VERSION}" == "2.95.2"
-%patch4 -p1
-%endif
 
-# Remove bison-generated files - we want bison 1.28'ish versions...
+# Remove bison-generated files - we want bison 1.28+'ish versions...
 for i in gcc/cp/parse gcc/c-parse gcc/cexp gcc/java/parse-scan gcc/java/parse gcc/objc/objc-parse; do
 	rm -f $i.c
 done
@@ -180,51 +146,42 @@ done
 # Remove unneeded languages.
 rm -f gcc/java/config-lang.in
 
-%if "%{BUILD_OBJC}"!="'yes'"
+%if !%BUILD_OBJC
 	rm -f gcc/objc/config-lang.in
 %endif
-%if "%{BUILD_F77}"!="'yes'"
+%if !%BUILD_F77
 	rm -f gcc/f/config-lang.in
 %endif
-%if "%{BUILD_CHILL}"!="'yes'"
+%if !%BUILD_CHILL
 	rm -f gcc/ch/config-lang.in
 %endif
-
 
 %build
 %ifarch sparcv9
 %define _target_platform sparc-%{_vendor}-%{_target_os}
 %endif
+%ifarch sparc sparcv9
+# pthreads are currently not supported on sparc
+ENABLE_THREADS=''
+%else
+ENABLE_THREADS='--enable-threads=posix'
+%endif
 
-rm -fr obj-%{_target_platform}
+rm -rf obj-%{_target_platform}
 mkdir obj-%{_target_platform}
 cd obj-%{_target_platform}
 
-%ifarch sparc sparcv9
-# pthreads are currently not supported on sparc
-CFLAGS="`echo $RPM_OPT_FLAGS|sed -e 's/-fno-rtti//g'` -fexceptions" \
-	CXXFLAGS="`echo $RPM_OPT_FLAGS|sed -e 's/-fno-rtti//g'` -fexceptions" \
-	XCFLAGS="`echo $RPM_OPT_FLAGS|sed -e 's/-fno-rtti//g'` -fexceptions" \
-	TCFLAGS="`echo $RPM_OPT_FLAGS|sed -e 's/-fno-rtti//g'` -fexceptions" \
-	../configure --prefix=%{GCC_PREFIX} \
-	--enable-shared --enable-haifa \
+CFLAGS="`echo "$RPM_OPT_FLAGS" | sed -e 's/-fno-rtti//g'` -fexceptions"
+CXXFLAGS="$CFLAGS"
+XCFLAGS="$CFLAGS"
+TCFLAGS="$CFLAGS"
+../configure --prefix=%{GCC_PREFIX} \
+	--mandir=%{_mandir} --infodir=%{_infodir} \
+	--enable-shared --enable-haifa $ENABLE_THREADS \
 	--host=%{_target_platform}
-%else
-CFLAGS="`echo $RPM_OPT_FLAGS|sed -e 's/-fno-rtti//g'` -fexceptions" \
-	CXXFLAGS="`echo $RPM_OPT_FLAGS|sed -e 's/-fno-rtti//g'` -fexceptions" \
-	XCFLAGS="`echo $RPM_OPT_FLAGS|sed -e 's/-fno-rtti//g'` -fexceptions" \
-	TCFLAGS="`echo $RPM_OPT_FLAGS|sed -e 's/-fno-rtti//g'` -fexceptions" \
-	../configure --prefix=%{GCC_PREFIX} \
-	--enable-shared --enable-threads=posix --enable-haifa \
-	--host=%{_target_platform}
-%endif
 touch ../gcc/c-gperf.h
 
 make bootstrap-lean
-
-# run the tests.
-# rpm seems to terminate when make -k check fails.
-# make -k check || true
 
 # Copy various doc files here and there
 cd ..
@@ -279,7 +236,7 @@ done
 popd
 
 %install
-rm -fr $RPM_BUILD_ROOT
+rm -rf $RPM_BUILD_ROOT
 
 cd obj-%{_target_platform}
 make prefix=$RPM_BUILD_ROOT%{GCC_PREFIX} install
@@ -288,29 +245,19 @@ FULLVER=`$RPM_BUILD_ROOT%{GCC_PREFIX}/bin/%{_target_platform}-gcc --version | \
 	cut -d' ' -f1`
 FULLPATH=$(dirname $RPM_BUILD_ROOT%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/$FULLVER/cc1)
 
-file $RPM_BUILD_ROOT/%{GCC_PREFIX}/bin/* | grep ELF | cut -d':' -f1 | xargs strip || :
-strip $FULLPATH/cc1
-
 # fix some things
 ln -sf gcc $RPM_BUILD_ROOT%{GCC_PREFIX}/bin/cc
 rm -f $RPM_BUILD_ROOT%{GCC_PREFIX}/info/dir
-gzip -9nf $RPM_BUILD_ROOT%{GCC_PREFIX}/info/*.info*
-%if "%{BUILD_F77}"=="'yes'"
+%if %BUILD_F77
 ln -sf g77 $RPM_BUILD_ROOT%{GCC_PREFIX}/bin/f77
 %endif
 
 mkdir -p $RPM_BUILD_ROOT/lib
-%if "%{GCC_VERSION}" != "2.95.2"
 ln -sf ../${FULLPATH##$RPM_BUILD_ROOT/}/cpp0 $RPM_BUILD_ROOT/lib/cpp
-%else
-ln -sf ../${FULLPATH##$RPM_BUILD_ROOT/}/cpp $RPM_BUILD_ROOT/lib/cpp
-%endif
-
 ln -sf cccp.1 $RPM_BUILD_ROOT%{GCC_PREFIX}/man/man1/cpp.1
 
 %ifarch %ix86
 # install the compatibility libstdc++ library
-pwd
 test -d ../compat/i386 && install -m 755 ../compat/i386/* $RPM_BUILD_ROOT%{GCC_PREFIX}/lib/
 %endif
 
@@ -343,8 +290,7 @@ EOF
 ) | sed 's|^|%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/include/|' \
 	>>gcc-filelist
 
-# This is required for the old RedHat 6. based programs ...
-
+# This is required for the old Red Hat Linux 6 based programs ...
 cd $RPM_BUILD_ROOT/usr/lib
 ln -sf libstdc++-3-libc6.1-2-2.10.0.so libstdc++-libc6.1-1.so.2
 ln -sf libstdc++-3-libc6.1-2-2.10.0.so libstdc++-libc6.1-1.1.so.2
@@ -354,55 +300,48 @@ ln -sf libstdc++-3-libc6.1-2-2.10.0.so libstdc++.so.2.9
 rm -rf $RPM_BUILD_ROOT
 
 %post
-/sbin/install-info \
-	--info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/gcc.info.gz
+/sbin/install-info %{_infodir}/gcc.info.gz %{_infodir}/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete \
-		--info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/gcc.info.gz
+	/sbin/install-info --delete %{_infodir}/gcc.info.gz %{_infodir}/dir
 fi
 
 %post -n libstdc++
-if ! grep '^%{GCC_PREFIX}/lib$' /etc/ld.so.conf > /dev/null 2>&1; then
-	echo %{GCC_PREFIX}/lib >>/etc/ld.so.conf
+if ! grep -q '^%{GCC_PREFIX}/lib$' /etc/ld.so.conf; then
+	echo %{GCC_PREFIX}/lib >> /etc/ld.so.conf
 fi
 /sbin/ldconfig
 
 %postun -n libstdc++
 if [ $1 -eq 0 ]; then
-	grep -v "%{GCC_PREFIX}/lib" /etc/ld.so.conf >/etc/ld.so.conf.new
+	grep -v "%{GCC_PREFIX}/lib" /etc/ld.so.conf > /etc/ld.so.conf.new
 	mv -f /etc/ld.so.conf.new /etc/ld.so.conf
 fi
 /sbin/ldconfig
 
 %ifarch %ix86
-
 %post -n libstdc++-compat
-if ! grep '^%{GCC_PREFIX}/lib$' /etc/ld.so.conf > /dev/null 2>&1; then
+if ! grep -q '^%{GCC_PREFIX}/lib$' /etc/ld.so.conf; then
 	echo %{GCC_PREFIX}/lib >>/etc/ld.so.conf
 fi
 /sbin/ldconfig
 
 %postun -n libstdc++-compat
 if [ $1 -eq 0 ]; then
-	grep -v "%{GCC_PREFIX}/lib" /etc/ld.so.conf >/etc/ld.so.conf.new
+	grep -v "%{GCC_PREFIX}/lib" /etc/ld.so.conf > /etc/ld.so.conf.new
 	mv -f /etc/ld.so.conf.new /etc/ld.so.conf
 fi
 /sbin/ldconfig
-
 %endif
 
 %post -n cpp
-/sbin/install-info \
-	--info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/cpp.info.gz
+/sbin/install-info %{_infodir}/cpp.info.gz %{_infodir}/dir
 
 %preun -n cpp
 if [ $1 -eq 0 ]; then
-    /sbin/install-info --delete \
-	--info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/cpp.info.gz
+	/sbin/install-info --delete %{_infodir}/cpp.info.gz %{_infodir}/dir
 fi
-
 /sbin/ldconfig
 
 %files -f gcc-filelist
@@ -413,11 +352,7 @@ fi
 %{GCC_PREFIX}/man/man1/cpp.1*
 %{GCC_PREFIX}/man/man1/cccp.1*
 %{GCC_PREFIX}/info/cpp.info*.gz
-%if "%{GCC_VERSION}" != "2.95.2"
 %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/cpp0
-%else
-%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/cpp
-%endif
 
 %files c++
 %defattr(-,root,root)
@@ -469,8 +404,7 @@ fi
 %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/libstdc++.a
 %doc rpm.doc/libstdc++/*
 
-
-%if "%{BUILD_OBJC}"=="'yes'"
+%if %BUILD_OBJC
 %files objc
 %defattr(-,root,root)
 %dir %{GCC_PREFIX}/lib/gcc-lib
@@ -484,15 +418,13 @@ fi
 %doc libobjc/THREADS* libobjc/ChangeLog
 %endif
 
-%if "%{BUILD_F77}"=="'yes'"
+%if %BUILD_F77
 %post g77
-/sbin/install-info \
-	--info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/g77.info.gz
+/sbin/install-info %{_infodir}/g77.info.gz %{_infodir}/dir
 
 %preun g77
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete \
-		--info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/g77.info.gz
+	/sbin/install-info --delete %{_infodir}/g77.info.gz %{_infodir}/dir
 fi
 
 %files g77
@@ -511,15 +443,13 @@ fi
 %doc gcc/f/README rpm.doc/g77/*
 %endif
 
-%if "%{BUILD_CHILL}"=="'yes'"
+%if %BUILD_CHILL
 %post chill
-/sbin/install-info \
-	--info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/chill.info.gz
+/sbin/install-info %{_infodir}/chill.info.gz %{_infodir}/dir
 
 %preun chill
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete \
-		--info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/chill.info.gz
+	/sbin/install-info --delete %{_infodir}/chill.info.gz %{_infodir}/dir
 fi
 
 %files chill
@@ -537,6 +467,10 @@ fi
 %endif
 
 %changelog
+* Tue Jan 29 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions (but more cleanups are still needed).
+- Dropped the 2.95.2-specific patches entirely.
+
 * Sun Mar 18 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 2.95.3.
 - Dropped the duplicate_decls() patch (included in 2.95.3).
@@ -570,22 +504,5 @@ Richard Henderson (http://gcc.gnu.org/ml/gcc-patches/1999-11/msg00087.html).
 - spec cleanup.
 - duplicate file fix.
 
-* Sun Jul  9 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Jul 09 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - Imported from RH.
-
-* Sat Dec 11 1999 Bernhard Rosenkraenzer <bero@redhat.com>
-- Obsolete egcs*, g77
-- Add egcs 1.1.x'ish libstdc++ versions to libstdc++-compat
-
-* Wed Dec  8 1999 Bernhard Rosenkraenzer <bero@redhat.com>
-- Fix build on sparc
-
-* Tue Dec  7 1999 Bernhard Rosenkraenzer <bero@redhat.com>
-- Add -warn patch (adapted from egcs-1.1.2 RPM)
-- drop release number to 1 for 7.0 tree
-
-* Tue Oct 26 1999 Bernhard Rosenkraenzer <bero@redhat.com>
-- 2.95.2 release
-
-* Sun Oct 24 1999 Bernhard Rosenkraenzer <bero@redhat.com>
-- initial RPM
