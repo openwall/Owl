@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ed/ed.spec,v 1.4 2000/11/23 13:46:07 mci Exp $
+# $Id: Owl/packages/ed/ed.spec,v 1.5 2000/11/24 19:34:47 mci Exp $
 
 Summary: The GNU line editor.
 Name: ed
@@ -59,6 +59,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/*/*
 
 %changelog
+* Thu Nov 23 2000 Michail Litvak <mci@owl.openwall.com>
+- ed-0.2-deb-tmpnam.diff replaced by ed-0.2-owl-mkstemp.diff
+  we must use mkstemp(3)
+
 * Wed Nov 22 2000 Michail Litvak <mci@owl.openwall.com>
 - imported from RH
 - patches from Debian 
