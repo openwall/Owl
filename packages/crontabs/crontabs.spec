@@ -1,15 +1,15 @@
-# $Id: Owl/packages/crontabs/crontabs.spec,v 1.2 2001/05/16 17:45:25 mci Exp $
+# $Id: Owl/packages/crontabs/crontabs.spec,v 1.3 2001/05/17 06:35:15 mci Exp $
 
 Summary: System crontab files used to schedule the execution of programs.
 Name: crontabs
 Version: 2.0
-Release: 2owl
+Release: 3owl
 Copyright: GPL
 Group: System Environment/Base
 Source0: run-parts-1.15.tar.gz
 Source1: crontab
 Patch0: run-parts-1.15-owl-writeloop.diff
-Patch1: run-parts-1.15-owl-ulimit.diff
+Patch1: run-parts-1.15-owl-umask.diff
 BuildRoot: /var/rpm-buildroot/%{name}-%{version}
 
 %description
@@ -62,7 +62,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Thu May 16 2001 Michail Litvak <mci@owl.openwall.com>
 - run-parts source archive renamed to name with version
-- ulimit patching extracted to separate patch (and improved)
+- umask patching extracted to separate patch (and improved)
 - use gcc instead of make
 
 * Thu May 15 2001 Michail Litvak <mci@owl.openwall.com>
