@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/installworld.sh,v 1.6 2001/06/20 21:04:17 solar Exp $
+# $Id: Owl/build/installworld.sh,v 1.7 2002/01/24 14:39:28 solar Exp $
 
 . installworld.conf
 
@@ -63,7 +63,7 @@ grep -v ^# $HOME/installorder.conf |
 while read PACKAGES; do
 	FILES=
 	for PACKAGE in $PACKAGES; do
-		REGEX="^${PACKAGE}-[^-]*[0-9]\+[^-]*-[0-9][^-]*.*.rpm\$"
+		REGEX="^${PACKAGE}-[^-]*[0-9][^-]*-[^-]*[0-9][^-]*\..*\.rpm\$"
 		FILE="`ls | grep "$REGEX" | tail -1`"
 		if [ -z "$FILE" ]; then
 			log "Missing $PACKAGE"
