@@ -1,10 +1,10 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.7 2000/10/28 23:59:25 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.8 2000/11/13 03:39:31 solar Exp $
 
 %define libmaj 0
 %define libmin 9
 %define librel 5
 %define librev a
-Release: 2owl
+Release: 3owl
 
 %define openssldir /var/ssl
 
@@ -20,6 +20,7 @@ Group: System Environment/Libraries
 Provides: SSL
 URL: http://www.openssl.org/
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
+BuildPreReq: perl
 
 %description
 The OpenSSL Project is a collaborative effort to develop a robust,
@@ -78,6 +79,12 @@ perl util/perlpath.pl /usr/bin/perl
 %endif
 %ifarch alpha
 ./Configure %{CONFIG_FLAGS} --openssldir=%{openssldir} linux-alpha
+%endif
+%ifarch sparc
+./Configure %{CONFIG_FLAGS} --openssldir=%{openssldir} linux-sparcv8
+%endif
+%ifarch sparcv9
+./Configure %{CONFIG_FLAGS} --openssldir=%{openssldir} linux-sparcv9
 %endif
 make linux-shared
 LD_LIBRARY_PATH=`pwd` make
@@ -148,6 +155,9 @@ ldconfig
 ldconfig
 
 %changelog
+* Mon Nov 13 2000 Solar Designer <solar@owl.openwall.com>
+- Support SPARC targets (32-bit only at this time).
+
 * Sun Oct 29 2000 Solar Designer <solar@owl.openwall.com>
 - Don't require bc (disable one of the tests if bc isn't available).
 
