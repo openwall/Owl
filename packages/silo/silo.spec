@@ -1,4 +1,4 @@
-# $Id: Owl/packages/silo/silo.spec,v 1.1 2001/01/05 18:02:55 kad Exp $
+# $Id: Owl/packages/silo/silo.spec,v 1.2 2001/01/05 18:40:45 kad Exp $
 
 %define 	SILO_NO_CAT	'yes'
 
@@ -10,7 +10,7 @@ Copyright: 	GPL
 Group: 		System Environment/Base
 Source: 	ftp://sunsite.mff.cuni.cz/pub/silo/silo-%{version}.tgz
 Patch:		silo-0.9.9-owl-nocat.diff
-ExclusiveArch: 	sparc
+ExclusiveArch: 	sparc sparcv9 sparc64
 BuildRoot: 	/var/rpm-buildroot/%{name}-root
 
 
