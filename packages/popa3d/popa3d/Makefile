@@ -30,6 +30,7 @@ MANDIR = $(PREFIX)/man
 
 PROJ = popa3d
 OBJS = \
+	version.o \
 	startup.o \
 	standalone.o \
 	virtual.o \
