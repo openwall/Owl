@@ -1,9 +1,9 @@
-# $Id: Owl/packages/stmpclean/stmpclean.spec,v 1.6 2003/10/30 21:15:49 solar Exp $
+# $Id: Owl/packages/stmpclean/stmpclean.spec,v 1.7 2004/03/20 02:29:21 solar Exp $
 
 Summary: A safe temporary directory cleaner.
 Name: stmpclean
 Version: 0.3
-Release: owl1
+Release: owl2
 License: BSD
 Group: System Environment/Base
 URL: http://www.internet2.edu/~shalunov/stmpclean/
@@ -38,10 +38,13 @@ install -m 700 $RPM_SOURCE_DIR/stmpclean.cron etc/cron.daily/stmpclean
 %defattr(-,root,root)
 %doc README FAQ
 %_sbindir/*
-%_mandir/*
+%_mandir/man8/*
 /etc/cron.daily/stmpclean
 
 %changelog
+* Fri Mar 19 2004 Solar Designer <solar@owl.openwall.com> 0.3-owl2
+- Package only man8/*, not the entire man8 directory (that was a bug).
+
 * Thu Jun 12 2003 Solar Designer <solar@owl.openwall.com> 0.3-owl1
 - Updated to 0.3 which will refuse to process relative pathnames.
 
