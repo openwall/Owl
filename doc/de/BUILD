@@ -78,7 +78,7 @@ Wechsle als Benutzer "build" nach /usr/src/world und gib ein:
 
 Per Standardeinstellung in buildworld.conf werden die Pakete für
 die älteste Version der jeweiligen Architektur (siehe ARCHITECTURES) über-
-setzt und zusätzlich wird versucht, mehrere Prozessoren zu nutzen.
+setzt und zusätzlich wird versucht, alle Prozessoren zu nutzen.
 
 buildworld.conf (sowie andere *.conf's) können editiert werden, indem
 man sie von native/Owl/build nach /usr/src/world kopiert. Man muss vorher jedoch
@@ -114,4 +114,4 @@ Individuelle Pakete können wieder- oder neuübersetzt werden, indem man
 Für fremde Pakete (SRPMs) die mit der Owl-Arbeitsumgebung erstellt worden
 sind, muss man zusätzlich die Versionsnummer in "name" einfügen.
 
-$Id: Owl/doc/de/BUILD,v 1.9 2002/08/20 16:16:08 solar Exp $
+$Id: Owl/doc/de/BUILD,v 1.10 2002/09/01 12:21:20 schmidt Exp $
