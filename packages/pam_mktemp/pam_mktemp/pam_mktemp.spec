@@ -1,12 +1,13 @@
-# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.10 2002/04/25 18:04:24 solar Exp $
+# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.11 2003/06/02 03:32:00 solar Exp $
 
 Summary: Pluggable private /tmp space support for interactive (shell) sessions.
 Name: pam_mktemp
-Version: 0.2.4
+Version: 0.2.4.1
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
-Source: pam_mktemp-%{version}.tar.gz
+URL: http://www.openwall.com/pam/
+Source: ftp://ftp.openwall.com/pub/projects/pam/modules/%{name}/%{name}-%{version}.tar.gz
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -39,7 +40,10 @@ test -d /tmp/.private -a -O /tmp/.private && chattr +a /tmp/.private || :
 /lib/security/pam_mktemp.so
 
 %changelog
-* Thu Apr 25 2002 Solar Designer <solar@owl.openwall.com>
+* Mon Jun 02 2003 Solar Designer <solar@owl.openwall.com> 0.2.4.1-owl1
+- Added URL.
+
+* Thu Apr 25 2002 Solar Designer <solar@owl.openwall.com> 0.2.4-owl1
 - Use a trigger on e2fsprogs, don't assume that chattr(1) is available
 at the time this package is installed.
 

@@ -1,12 +1,13 @@
-# $Id: Owl/packages/netlist/Attic/netlist.spec,v 1.5 2002/02/07 00:49:45 solar Exp $
+# $Id: Owl/packages/netlist/Attic/netlist.spec,v 1.6 2003/06/02 03:27:24 solar Exp $
 
 Summary: A program to list active Internet connections and sockets.
 Name: netlist
 Version: 2.0
-Release: owl1
+Release: owl2
 License: distributable
 Group: System Environment/Base
-Source: netlist-%{version}.tar.gz
+URL: http://www.openwall.com/linux/
+Source: ftp://ftp.openwall.com/pub/patches/linux/contrib/netlist-%{version}.tar.gz
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -44,7 +45,10 @@ grep -q '^proc:[^:]*:110:' /etc/group && \
 %{_mandir}/man1/netlist.1*
 
 %changelog
-* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Jun 02 2003 Solar Designer <solar@owl.openwall.com> 2.0-owl2
+- Added URL.
+
+* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com> 2.0-owl1
 - Enforce our new spec file conventions
 
 * Wed Nov 07 2001 Solar Designer <solar@owl.openwall.com>

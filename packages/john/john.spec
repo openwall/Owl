@@ -1,11 +1,12 @@
-# $Id: Owl/packages/john/john.spec,v 1.15 2003/01/24 04:02:33 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.16 2003/06/02 03:20:32 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
 Version: 1.6.33
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/System
+URL: http://www.openwall.com/john/
 Source0: ftp://ftp.openwall.com/pub/projects/john/john-%{version}.tar.gz
 Source1: ftp://ftp.openwall.com/pub/projects/john/john-1.6.tar.gz
 BuildRoot: /override/%{name}-%{version}
@@ -76,7 +77,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
-* Fri Jan 24 2003 Solar Designer <solar@owl.openwall.com>
+* Mon Jun 02 2003 Solar Designer <solar@owl.openwall.com> 1.6.33-owl2
+- Added URL.
+
+* Fri Jan 24 2003 Solar Designer <solar@owl.openwall.com> 1.6.33-owl1
 - Added a 64-bit Solaris SPARC make target (recent gcc only for now).
 
 * Wed Jan 15 2003 Solar Designer <solar@owl.openwall.com>

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libpcap/libpcap.spec,v 1.7 2003/06/02 03:09:12 solar Exp $
+# $Id: Owl/packages/libpcap/libpcap.spec,v 1.8 2003/06/02 03:23:51 solar Exp $
 
 Summary: Network packet capture library.
 Name: libpcap
@@ -7,6 +7,7 @@ Release: owl3
 Epoch: 2
 License: GPL
 Group: System Environment/Libraries
+URL: http://www.tcpdump.org
 Source: http://www.tcpdump.org/release/%{name}-%{version}.tar.gz
 Patch0: libpcap-0.6.2-pld-shared.diff
 Patch1: libpcap-0.6.2-cvs-20020712-buffer.diff
@@ -74,6 +75,7 @@ rm -rf $RPM_BUILD_ROOT
 * Mon Jun 02 2003 Solar Designer <solar@owl.openwall.com> 2:0.6.2-owl3
 - Added a patch for timeout handling on Linux from Nmap with minor
 modifications by ALT Linux team.
+- Added URL.
 
 * Mon Sep 16 2002 Michail Litvak <mci@owl.openwall.com> 2:0.6.2-owl2
 - Back-ported a possible buffer overflow fix from the CVS; This fixes
