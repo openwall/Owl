@@ -18,7 +18,7 @@ native.tar.gz		CVS tree (build specifications and patches)
 sources			source tree (original tarballs, etc)
 kernel			kernel sources and recommended patches
 Owl.mtree		mtree(8) specification of the above
-i386, sparc, sparcv9	Owl binary packages
+i?86, sparc*, alpha*	Owl binary packages
 iso			ISO-9660 images of Owl CD's
 
 Some of the subdirectories may use symlinks to files common to several
@@ -38,4 +38,4 @@ need both the CVS and the source trees.
 More documentation (including BUILD and INSTALL) is available in the
 CVS tree, under Owl/doc/.
 
-$Id: Owl/doc/DOWNLOAD,v 1.7 2001/10/02 17:40:20 solar Exp $
+$Id: Owl/doc/DOWNLOAD,v 1.8 2002/04/05 23:01:22 solar Exp $
