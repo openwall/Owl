@@ -1,0 +1,31 @@
+--- groff-1.17.2/configure.orig	Tue Jun 26 23:48:33 2001
++++ groff-1.17.2/configure	Fri Dec 21 02:15:08 2001
+@@ -4760,25 +4760,12 @@
+ # Create a temporary directory, and hook for its removal unless debugging.
+ $debug ||
+ {
+-  trap 'exit_status=$?; rm -rf $tmp && exit $exit_status' 0
+-  trap '{ (exit $?); exit $?; }' 1 2 13 15
++  trap 'exit_status=$?; rm -rf $tmp && exit $exit_status' EXIT
++  trap '{ (exit $?); exit $?; }' HUP INT PIPE TERM
+ }
+ 
+ # Create a (secure) tmp directory for tmp files.
+-: ${TMPDIR=/tmp}
+-{
+-  tmp=`(umask 077 && mktemp -d -q "$TMPDIR/csXXXXXX") 2>/dev/null` &&
+-  test -n "$tmp" && test -d "$tmp"
+-}  ||
+-{
+-  tmp=$TMPDIR/cs$$-$RANDOM
+-  (umask 077 && mkdir $tmp)
+-} ||
+-{
+-   echo "$me: cannot create a temporary directory in $TMPDIR" >&2
+-   { (exit 1); exit 1; }
+-}
+-
++tmp="`mktemp -dt cs.XXXXXXXXXX`" || exit 1
+ EOF
+ 
+ cat >>$CONFIG_STATUS <<EOF

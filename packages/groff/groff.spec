@@ -1,24 +1,26 @@
-# $Id: Owl/packages/groff/groff.spec,v 1.12 2001/09/03 06:49:39 solar Exp $
+# $Id: Owl/packages/groff/groff.spec,v 1.13 2002/01/08 17:59:05 solar Exp $
 
-%define BUILD_USE_X	'no'
-%define BUILD_CURRENT	'no'
+%define BUILD_USE_X 0
+%define BUILD_CURRENT 0
 
 Summary: A document formatting system.
 Name: groff
 Version: 1.17.2
-Release: 1owl
+Release: 2owl
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.gnu.org/gnu/groff/groff-%{version}.tar.gz
-%if "%{BUILD_CURRENT}"=="'yes'"
+%if %BUILD_CURRENT
 Source1: ftp://ftp.ffii.org/pub/groff/devel/groff-%{version}-current.diff.gz
 %endif
 Source2: README.A4
 Patch0: groff-1.17-owl-latin1-shc-hack.diff
 Patch1: groff-1.17.2-suse-pic-format.diff
-Requires: mktemp
-Buildroot: /var/rpm-buildroot/%{name}-root
+Patch2: groff-1.17.2-owl-grn-bound.diff
+Patch3: groff-1.17.2-owl-tmp.diff
 Obsoletes: groff-tools
+BuildRequires: mktemp >= 1:1.3.1
+BuildRoot: /override/%{name}-%{version}
 
 %description
 groff is a document formatting system.  groff takes standard text and
@@ -28,7 +30,7 @@ groff's formatting commands allow you to specify font type and size,
 bold type, italic type, the number and size of columns on a page, and
 more.  groff is also used to format man pages.
 
-%if "%{BUILD_USE_X}"=="'yes'"
+%if %BUILD_USE_X
 If you are going to use groff with the X Window System, you'll also
 need to install the groff-gxditview package.
 %endif
@@ -44,7 +46,7 @@ for creating PostScript font files, the grog utility that can be used
 to automatically determine groff command-line options, and the mmroff
 reference preprocessor.
 
-%if "%{BUILD_USE_X}"=="'yes'"
+%if %BUILD_USE_X
 %package gxditview
 Summary: An X previewer for groff text processor output.
 Group: Applications/Publishing
@@ -60,15 +62,17 @@ also need to install the groff package and the X Window System.
 
 %prep
 %setup -q
-%if "%{BUILD_CURRENT}"=="'yes'"
-zcat %{SOURCE1} | patch -p1 -l
+%if %BUILD_CURRENT
+zcat %SOURCE1 | patch -p1 -l
 %endif
 %patch0 -p1
 %patch1 -p1
-install -m 644 %{SOURCE2} .
+%patch2 -p1
+%patch3 -p1
+install -m 644 $RPM_SOURCE_DIR/README.A4 .
 
 %build
-%if "%{BUILD_USE_X}"=="'yes'"
+%if %BUILD_USE_X
 PATH=$PATH:%{_prefix}/X11R6/bin
 %endif
 
@@ -76,15 +80,15 @@ export ac_cv_func_mkstemp=yes \
 %configure
 make
 
-%if "%{BUILD_USE_X}"=="'yes'"
+%if %BUILD_USE_X
 cd src/xditview
 xmkmf && make
 %endif
 
 %install
-rm -rf ${RPM_BUILD_ROOT}
+rm -rf $RPM_BUILD_ROOT
 
-%if "%{BUILD_USE_X}"=="'yes'"
+%if %BUILD_USE_X
 PATH=$PATH:%{_prefix}/X11R6/bin
 %endif
 
@@ -92,7 +96,7 @@ mkdir -p ${RPM_BUILD_ROOT}%{_prefix}
 
 %makeinstall
 
-%if "%{BUILD_USE_X}"=="'yes'"
+%if %BUILD_USE_X
 cd src/xditview
 %makeinstall DESTDIR=$RPM_BUILD_ROOT
 cd ../..
@@ -112,16 +116,15 @@ ln -s nroff gnroff
 popd
 
 pushd ${RPM_BUILD_ROOT}%{_mandir}/man1
-# Build system is compressing man-pages
-ln -s eqn.1.gz geqn.1.gz
-ln -s indxbib.1.gz gindxbib.1.gz
-ln -s lookbib.1.gz glookbib.1.gz
-ln -s nroff.1.gz gnroff.1.gz
-ln -s pic.1.gz gpic.1.gz
-ln -s refer.1.gz grefer.1.gz
-ln -s soelim.1.gz gsoelim.1.gz
-ln -s tbl.1.gz gtbl.1.gz
-ln -s troff.1.gz gtroff.1.gz
+ln -s eqn.1 geqn.1
+ln -s indxbib.1 gindxbib.1
+ln -s lookbib.1 glookbib.1
+ln -s nroff.1 gnroff.1
+ln -s pic.1 gpic.1
+ln -s refer.1 grefer.1
+ln -s soelim.1 gsoelim.1
+ln -s tbl.1 gtbl.1
+ln -s troff.1 gtroff.1
 popd
 
 find ${RPM_BUILD_ROOT}%{_prefix}/bin ${RPM_BUILD_ROOT}%{_mandir} \
@@ -130,7 +133,7 @@ find ${RPM_BUILD_ROOT}%{_prefix}/bin ${RPM_BUILD_ROOT}%{_mandir} \
 	sed -e "s|${RPM_BUILD_ROOT}||g" -e "s|\.[0-9]|\.*|g" > groff-files
 
 %clean
-rm -rf ${RPM_BUILD_ROOT}
+rm -rf $RPM_BUILD_ROOT
 
 %files -f groff-files
 %defattr(-,root,root)
@@ -146,7 +149,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man1/grog.*
 %{_mandir}/man7/mmroff*
 
-%if "%{BUILD_USE_X}"=="'yes'"
+%if %BUILD_USE_X
 %files gxditview
 %defattr(-,root,root)
 %{_prefix}/X11R6/bin/gxditview
@@ -154,6 +157,11 @@ rm -rf ${RPM_BUILD_ROOT}
 %endif
 
 %changelog
+* Fri Dec 21 2001 Solar Designer <solar@owl.openwall.com>
+- Patched two buffer overflow bugs in grn(1) discovered by zen-parse.
+- Made the configure script fail-close on the temporary directory creation,
+corrected the dependency on mktemp(1).
+
 * Sun Sep 02 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 1.17.2.
 - Added Sebastian Krahmer's patch for the pic(1) plot command's "format
