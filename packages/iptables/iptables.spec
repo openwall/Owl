@@ -1,9 +1,9 @@
-# $Id: Owl/packages/iptables/iptables.spec,v 1.8 2003/10/29 21:39:46 solar Exp $
+# $Id: Owl/packages/iptables/iptables.spec,v 1.9 2004/07/26 22:42:59 mci Exp $
 
 Summary: Tools for managing Netfilter/iptables packet filtering rules.
 Name: iptables
-Version: 1.2.8
-Release: owl2
+Version: 1.2.11
+Release: owl1
 License: GPL
 Group: System Environment/Base
 URL: http://www.netfilter.org
@@ -22,7 +22,6 @@ iptables-based filtering is used on Linux 2.4.x and newer kernels.
 
 %prep
 %setup -q
-mv extensions/.NETLINK.test extensions/.NETLINK-test
 
 %build
 OPT="$RPM_OPT_FLAGS"
@@ -54,6 +53,9 @@ fi
 /%_lib/iptables/libipt*
 
 %changelog
+* Thu Jul 22 2004 Michail Litvak <mci@owl.openwall.com> 1.2.11-owl1
+- 1.2.11
+
 * Mon Sep 15 2003 Solar Designer <solar@owl.openwall.com> 1.2.8-owl2
 - In "stop", only try to do anything if iptables is supported by kernel.
 
