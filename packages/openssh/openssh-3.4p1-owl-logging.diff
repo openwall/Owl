@@ -1,0 +1,223 @@
+diff -ur openssh-3.4p1.orig/entropy.c openssh-3.4p1/entropy.c
+--- openssh-3.4p1.orig/entropy.c	Sun Jun  9 23:41:48 2002
++++ openssh-3.4p1/entropy.c	Sat Jun 29 20:36:17 2002
+@@ -93,7 +93,8 @@
+ 			    original_uid, strerror(errno));
+ 			_exit(1);
+ 		}
+-		
++
++		log_done();
+ 		execl(SSH_RAND_HELPER, "ssh-rand-helper", NULL);
+ 		fprintf(stderr, "(rand child) Couldn't exec '%s': %s\n", 
+ 		    SSH_RAND_HELPER, strerror(errno));
+diff -ur openssh-3.4p1.orig/log.c openssh-3.4p1/log.c
+--- openssh-3.4p1.orig/log.c	Tue Feb 26 20:52:15 2002
++++ openssh-3.4p1/log.c	Sat Jun 29 20:34:00 2002
+@@ -241,6 +241,15 @@
+  */
+ 
+ void
++log_reinit(void)
++{
++	if (log_on_stderr)
++		return;
++
++	openlog(argv0 ? argv0 : __progname, LOG_PID|LOG_NDELAY, log_facility);
++}
++
++void
+ log_init(char *av0, LogLevel level, SyslogFacility facility, int on_stderr)
+ {
+ 	argv0 = av0;
+@@ -311,6 +320,15 @@
+ 		    (int) facility);
+ 		exit(1);
+ 	}
++
++	tzset();
++	log_reinit();
++}
++
++void
++log_done(void)
++{
++	closelog();
+ }
+ 
+ #define MSGBUFSIZ 1024
+@@ -369,8 +387,6 @@
+ 	if (log_on_stderr) {
+ 		fprintf(stderr, "%s\r\n", msgbuf);
+ 	} else {
+-		openlog(argv0 ? argv0 : __progname, LOG_PID, log_facility);
+ 		syslog(pri, "%.500s", msgbuf);
+-		closelog();
+ 	}
+ }
+diff -ur openssh-3.4p1.orig/log.h openssh-3.4p1/log.h
+--- openssh-3.4p1.orig/log.h	Thu Jun  6 23:51:06 2002
++++ openssh-3.4p1/log.h	Sat Jun 29 20:35:24 2002
+@@ -49,6 +49,8 @@
+ }       LogLevel;
+ 
+ void     log_init(char *, LogLevel, SyslogFacility, int);
++void     log_done(void);
++void     log_reinit(void);
+ 
+ SyslogFacility	log_facility_number(char *);
+ LogLevel log_level_number(char *);
+diff -ur openssh-3.4p1.orig/monitor.c openssh-3.4p1/monitor.c
+--- openssh-3.4p1.orig/monitor.c	Wed Jun 26 17:27:11 2002
++++ openssh-3.4p1/monitor.c	Sat Jun 29 21:01:38 2002
+@@ -279,8 +279,6 @@
+ 		}
+ 
+ 		if (ent->flags & MON_AUTHDECIDE) {
+-			auth_log(authctxt, authenticated, auth_method,
+-			    compat20 ? " ssh2" : "");
+ 			if (!authenticated)
+ 				authctxt->failures++;
+ 		}
+diff -ur openssh-3.4p1.orig/readpass.c openssh-3.4p1/readpass.c
+--- openssh-3.4p1.orig/readpass.c	Wed Mar 27 20:28:47 2002
++++ openssh-3.4p1/readpass.c	Sat Jun 29 20:37:06 2002
+@@ -58,7 +58,9 @@
+ 		close(p[0]);
+ 		if (dup2(p[1], STDOUT_FILENO) < 0)
+ 			fatal("ssh_askpass: dup2: %s", strerror(errno));
++		log_done();
+ 		execlp(askpass, askpass, msg, (char *) 0);
++		log_reinit();
+ 		fatal("ssh_askpass: exec(%s): %s", askpass, strerror(errno));
+ 	}
+ 	close(p[1]);
+diff -ur openssh-3.4p1.orig/scp.c openssh-3.4p1/scp.c
+--- openssh-3.4p1.orig/scp.c	Fri Jun 21 04:41:52 2002
++++ openssh-3.4p1/scp.c	Sat Jun 29 20:38:16 2002
+@@ -174,6 +174,7 @@
+ 		addargs(&args, "%s", host);
+ 		addargs(&args, "%s", cmd);
+ 
++		log_done();
+ 		execvp(ssh_program, args.list);
+ 		perror(ssh_program);
+ 		exit(1);
+diff -ur openssh-3.4p1.orig/session.c openssh-3.4p1/session.c
+--- openssh-3.4p1.orig/session.c	Wed Jun 26 17:51:06 2002
++++ openssh-3.4p1/session.c	Sat Jun 29 20:42:42 2002
+@@ -1225,6 +1225,7 @@
+ {
+ 	/* Launch login(1). */
+ 
++	log_done();
+ 	execl(LOGIN_PROGRAM, "login", "-h", hostname,
+ #ifdef xxxLOGIN_NEEDS_TERM
+ 		    (s->term ? s->term : "unknown"),
+@@ -1391,6 +1392,8 @@
+ 			exit(1);
+ 		}
+ 
++		log_done();
++
+ 		/* Execute the shell. */
+ 		argv[0] = argv0;
+ 		argv[1] = NULL;
+@@ -1400,6 +1403,9 @@
+ 		perror(shell);
+ 		exit(1);
+ 	}
++
++	log_done();
++
+ 	/*
+ 	 * Execute the command using the user's shell.  This uses the -c
+ 	 * option to execute the command.
+diff -ur openssh-3.4p1.orig/sftp-int.c openssh-3.4p1/sftp-int.c
+--- openssh-3.4p1.orig/sftp-int.c	Mon Jun 24 01:27:19 2002
++++ openssh-3.4p1/sftp-int.c	Sat Jun 29 20:44:53 2002
+@@ -167,9 +167,11 @@
+ 		/* XXX: child has pipe fds to ssh subproc open - issue? */
+ 		if (args) {
+ 			debug3("Executing %s -c \"%s\"", shell, args);
++			log_done();
+ 			execl(shell, shell, "-c", args, (char *)NULL);
+ 		} else {
+ 			debug3("Executing %s", shell);
++			log_done();
+ 			execl(shell, shell, (char *)NULL);
+ 		}
+ 		fprintf(stderr, "Couldn't execute \"%s\": %s\n", shell,
+diff -ur openssh-3.4p1.orig/sftp.c openssh-3.4p1/sftp.c
+--- openssh-3.4p1.orig/sftp.c	Mon Jun 24 01:27:19 2002
++++ openssh-3.4p1/sftp.c	Sat Jun 29 20:44:26 2002
+@@ -84,6 +84,7 @@
+ 		close(*out);
+ 		close(c_in);
+ 		close(c_out);
++		log_done();
+ 		execv(path, args);
+ 		fprintf(stderr, "exec: %s: %s\n", path, strerror(errno));
+ 		exit(1);
+diff -ur openssh-3.4p1.orig/ssh-agent.c openssh-3.4p1/ssh-agent.c
+--- openssh-3.4p1.orig/ssh-agent.c	Wed Jun 26 03:19:13 2002
++++ openssh-3.4p1/ssh-agent.c	Sat Jun 29 20:45:37 2002
+@@ -1091,6 +1091,7 @@
+ 			perror("setenv");
+ 			exit(1);
+ 		}
++		log_done();
+ 		execvp(av[0], av);
+ 		perror(av[0]);
+ 		exit(1);
+diff -ur openssh-3.4p1.orig/ssh-rand-helper.c openssh-3.4p1/ssh-rand-helper.c
+--- openssh-3.4p1.orig/ssh-rand-helper.c	Sun Jun  9 23:41:49 2002
++++ openssh-3.4p1/ssh-rand-helper.c	Sat Jun 29 20:48:36 2002
+@@ -313,7 +313,9 @@
+ 			close(p[1]);
+ 			close(devnull);
+ 
++			log_done();
+ 			execv(src->path, (char**)(src->args));
++			log_reinit();
+ 
+ 			debug("(child) Couldn't exec '%s': %s", 
+ 			    src->cmdstring, strerror(errno));
+diff -ur openssh-3.4p1.orig/sshconnect.c openssh-3.4p1/sshconnect.c
+--- openssh-3.4p1.orig/sshconnect.c	Mon Jun 24 01:23:20 2002
++++ openssh-3.4p1/sshconnect.c	Sat Jun 29 20:47:40 2002
+@@ -127,6 +127,8 @@
+ 		/* Cannot be 1 because pin allocated two descriptors. */
+ 		close(pout[1]);
+ 
++		log_done();
++
+ 		/* Stderr is left as it is so that error messages get
+ 		   printed on the user's terminal. */
+ 		argv[0] = _PATH_BSHELL;
+diff -ur openssh-3.4p1.orig/sshconnect2.c openssh-3.4p1/sshconnect2.c
+--- openssh-3.4p1.orig/sshconnect2.c	Mon Jun 24 01:23:21 2002
++++ openssh-3.4p1/sshconnect2.c	Sat Jun 29 20:46:29 2002
+@@ -937,7 +937,9 @@
+ 			fatal("ssh_keysign: dup2: %s", strerror(errno));
+ 		close(from[1]);
+ 		close(to[0]);
++		log_done();
+ 		execl(_PATH_SSH_KEY_SIGN, _PATH_SSH_KEY_SIGN, (char *) 0);
++		log_reinit();
+ 		fatal("ssh_keysign: exec(%s): %s", _PATH_SSH_KEY_SIGN,
+ 		    strerror(errno));
+ 	}
+diff -ur openssh-3.4p1.orig/sshd.c openssh-3.4p1/sshd.c
+--- openssh-3.4p1.orig/sshd.c	Wed Jun 26 03:24:19 2002
++++ openssh-3.4p1/sshd.c	Sat Jun 29 20:48:13 2002
+@@ -261,7 +261,9 @@
+ 	log("Received SIGHUP; restarting.");
+ 	close_listen_socks();
+ 	close_startup_pipes();
++	log_done();
+ 	execv(saved_argv[0], saved_argv);
++	log_reinit();
+ 	log("RESTART FAILED: av[0]='%.100s', error: %.100s.", saved_argv[0],
+ 	    strerror(errno));
+ 	exit(1);

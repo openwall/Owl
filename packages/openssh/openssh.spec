@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.40 2002/06/28 12:32:18 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.41 2002/06/29 17:30:04 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.4p1
-Release: owl1
+Release: owl1.1
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -13,14 +13,15 @@ Source2: sshd.init
 Source3: ssh_config
 Source4: sshd_config
 Source5: sftp.control
-Patch0: openssh-3.3p1-owl-hide-unknown.diff
-Patch1: openssh-3.3p1-owl-always-auth.diff
-Patch2: openssh-3.3p1-owl-pam_userpass.diff
-Patch3: openssh-3.1p1-owl-scp-stalltime.diff
-Patch4: openssh-3.3p1-owl-drop-groups.diff
-Patch5: openssh-3.1p1-owl-openssl-version-check.diff
-Patch6: openssh-3.4p1-owl-mm.diff
-Patch7: openssh-3.4p1-owl-warnings.diff
+Patch0: openssh-3.4p1-owl-warnings.diff
+Patch1: openssh-3.4p1-owl-hide-unknown.diff
+Patch2: openssh-3.4p1-owl-always-auth.diff
+Patch3: openssh-3.4p1-owl-pam_userpass.diff
+Patch4: openssh-3.4p1-owl-drop-groups.diff
+Patch5: openssh-3.4p1-owl-openssl-version-check.diff
+Patch6: openssh-3.4p1-owl-scp-stalltime.diff
+Patch7: openssh-3.4p1-owl-mm.diff
+Patch8: openssh-3.4p1-owl-logging.diff
 PreReq: openssl >= 0.9.6b-1owl
 PreReq: openssl < 0.9.7
 PreReq: /sbin/chkconfig, grep, shadow-utils
@@ -100,6 +101,7 @@ rm -r autom4te-*.cache
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 %define _sysconfdir /etc/ssh
 %{expand:%%define _datadir %{_datadir}/ssh}
@@ -212,6 +214,10 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Sat Jun 29 2002 Solar Designer <solar@owl.openwall.com>
+- Keep the /dev/log fd open and only close it before executing other
+programs, to enable direct logging from chrooted child processes.
+
 * Thu Jun 27 2002 Solar Designer <solar@owl.openwall.com>
 - Updated to 3.4p1.
 - Zero out the written-to pages in memory mapped areas when they're
