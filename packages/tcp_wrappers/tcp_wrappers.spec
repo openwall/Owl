@@ -1,9 +1,9 @@
-# $Id: Owl/packages/tcp_wrappers/tcp_wrappers.spec,v 1.5 2003/10/30 21:15:49 solar Exp $
+# $Id: Owl/packages/tcp_wrappers/tcp_wrappers.spec,v 1.6 2003/12/07 11:10:00 solar Exp $
 
 Summary: A security tool which acts as a wrapper for network services.
 Name: tcp_wrappers
 Version: 7.6
-Release: owl2
+Release: owl3
 License: distributable
 Group: System Environment/Daemons
 Source: ftp.porcupine.org/pub/security/tcp_wrappers_7.6.tar.gz
@@ -28,9 +28,9 @@ can monitor and filter incoming requests for network services.
 
 %build
 %ifarch sparc sparcv9 sparc64
-make linux RPM_OPT_FLAGS="$RPM_OPT_FLAGS -fPIC"
+make linux EXTRA_CFLAGS="$RPM_OPT_FLAGS -fPIC"
 %else
-make linux RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
+make linux EXTRA_CFLAGS="$RPM_OPT_FLAGS"
 %endif
 
 %install
@@ -57,6 +57,9 @@ ln -s hosts_access.5 $RPM_BUILD_ROOT%_mandir/man5/hosts.deny.5
 %_mandir/man*/*
 
 %changelog
+* Sun Dec 07 2003 Solar Designer <solar@owl.openwall.com> 7.6-owl3
+- Don't use a file under /tmp during builds, spotted by (GalaxyMaster).
+
 * Thu Dec 19 2002 Solar Designer <solar@owl.openwall.com> 7.6-owl2
 - Handle error conditions with table matching, patch from Steve Grubb.
 
