@@ -1,0 +1,57 @@
+--- libcap-1.10/libcap/include/sys/capability.h.orig	1999-11-18 09:19:21 +0300
++++ libcap-1.10/libcap/include/sys/capability.h	2003-08-27 21:09:51 +0400
+@@ -4,6 +4,7 @@
+  * 
+  * Copyright (C) 1997   Aleph One
+  * Copyright (C) 1997-8 Andrew G. Morgan <morgan@linux.kernel.org>
++ * Copyright (C) 2002-2003 Dmitry V. Levin <ldv@altlinux.org>
+  *
+  * defunct POSIX.1e Standard: 25.2 Capabilities           <sys/capability.h>
+  */
+@@ -21,8 +22,46 @@
+  */
+ 
+ #include <sys/types.h>
++
++/*
++ * Make sure we can be included from userland by preventing
++ * capability.h from including other kernel headers
++ */
++#ifndef __KERNEL__
++
++#undef _SYSCAP_OWN_LINUX_TYPES_H
++#undef _SYSCAP_OWN_LINUX_FS_H
++
++#ifndef _LINUX_TYPES_H
++#define _LINUX_TYPES_H
++#define _SYSCAP_OWN_LINUX_TYPES_H
++
++#include <stdint.h>
++typedef uint32_t __u32;
++
++#endif /* _LINUX_TYPES_H */
++
++#ifndef _LINUX_FS_H
++#define _LINUX_FS_H
++#define _SYSCAP_OWN_LINUX_FS_H
++#endif /* _LINUX_FS_H */
++
++#endif /* __KERNEL__ */
++
+ #include <linux/capability.h>
+ 
++#ifndef __KERNEL__
++
++#ifdef _SYSCAP_OWN_LINUX_TYPES_H
++#undef _LINUX_TYPES_H
++#endif /* _SYSCAP_OWN_LINUX_TYPES_H */
++
++#ifdef _SYSCAP_OWN_LINUX_FS_H
++#undef _LINUX_FS_H
++#endif /* _SYSCAP_OWN_LINUX_FS_H */
++
++#endif /* __KERNEL__ */
++
+ /*
+  * POSIX capability types
+  */

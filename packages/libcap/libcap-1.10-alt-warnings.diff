@@ -1,0 +1,114 @@
+diff -uprk.orig libcap-1.10.orig/libcap/cap_extint.c libcap-1.10/libcap/cap_extint.c
+--- libcap-1.10.orig/libcap/cap_extint.c	1999-04-18 02:16:31 +0400
++++ libcap-1.10/libcap/cap_extint.c	2002-09-16 04:18:24 +0400
+@@ -91,7 +91,7 @@ cap_t cap_copy_int(const void *cap_ext)
+ 	(const struct cap_ext_struct *) cap_ext;
+     cap_t cap_d;
+     int set, blen;
+-    __u32 * to = (__u32 *) &cap_d->set;
++    __u32 * to;
+ 
+     /* Does the external representation make sense? */
+     if (export == NULL || !memcmp(export->magic, external_magic
+@@ -105,6 +105,7 @@ cap_t cap_copy_int(const void *cap_ext)
+        return NULL;
+ 
+     blen = export->length_of_capset;
++    to = (__u32 *) &cap_d->set;
+     for (set=0; set<=NUMBER_OF_CAP_SETS; ++set) {
+ 	int blk;
+ 	int bno = 0;
+diff -uprk.orig libcap-1.10.orig/progs/execcap.c libcap-1.10/progs/execcap.c
+--- libcap-1.10.orig/progs/execcap.c	1999-04-18 02:16:31 +0400
++++ libcap-1.10/progs/execcap.c	2002-09-16 04:19:07 +0400
+@@ -10,11 +10,12 @@
+ #include <sys/types.h>
+ #include <errno.h>
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <sys/capability.h>
+ #include <unistd.h>
+ #include <string.h>
+ 
+-static void usage(void)
++static void __attribute__((noreturn)) usage(void)
+ {
+     fprintf(stderr,
+ "usage: execcap <caps> <command-path> [command-args...]\n\n"
+@@ -28,7 +29,7 @@ static void usage(void)
+     exit(1);
+ }
+ 
+-void main(int argc, char **argv)
++int main(int argc, char **argv)
+ {
+     cap_t new_caps;
+ 
+@@ -46,13 +47,13 @@ void main(int argc, char **argv)
+     new_caps = cap_from_text(argv[1]);
+     if (new_caps == NULL) {
+ 	fprintf(stderr, "requested capabilities were not recognized\n");
+-	usage();
++	return 1;
+     }
+ 
+     /* set these capabilities for the current process */
+     if (cap_set_proc(new_caps) != 0) {
+ 	fprintf(stderr, "unable to set capabilities: %s\n", strerror(errno));
+-	usage();	
++	return 1;	
+     }
+ 
+     /* exec the program indicated by args 2 ... */
+@@ -61,5 +62,5 @@ void main(int argc, char **argv)
+     /* if we fall through to here, our exec failed -- announce the fact */
+     fprintf(stderr, "Unable to execute command: %s\n", strerror(errno));
+ 
+-    usage();
++    return 1;
+ }
+diff -uprk.orig libcap-1.10.orig/progs/sucap.c libcap-1.10/progs/sucap.c
+--- libcap-1.10.orig/progs/sucap.c	1999-04-18 02:16:31 +0400
++++ libcap-1.10/progs/sucap.c	2002-09-16 04:19:25 +0400
+@@ -11,17 +11,19 @@
+ #include <sys/types.h>
+ #include <errno.h>
+ #include <stdio.h>
+-#undef _POSIX_SOURCE
+-#include <sys/capability.h>
++#include <stdlib.h>
+ #include <pwd.h>
+-#define __USE_BSD
+ #include <grp.h>
+ #include <unistd.h>
+ #include <sys/wait.h>
+ #include <errno.h>
+ #include <string.h>
+ 
+-static void usage(void)
++#undef _POSIX_SOURCE
++#include <sys/capability.h>
++#define _POSIX_SOURCE 1
++
++static void __attribute__((noreturn)) usage(void)
+ {
+     fprintf(stderr,
+ "usage: sucap <user> <group> <command-path> [command-args...]\n\n"
+@@ -48,7 +50,7 @@ wait_on_fd(int fd)
+ }
+ 
+ 
+-void main(int argc, char **argv)
++int main(int argc, char **argv)
+ {
+     cap_t old_caps;
+     uid_t uid;
+@@ -176,7 +178,7 @@ void main(int argc, char **argv)
+ 	/* if we fall through to here, our exec failed -- announce the fact */
+ 	fprintf(stderr, "Unable to execute command: %s\n", strerror(errno));
+ 	
+-	usage();
++	exit(1);
+     } else {
+ 	/* Child process */
+ 	close(pipe_fds[1]);

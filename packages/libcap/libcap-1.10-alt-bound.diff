@@ -1,0 +1,55 @@
+diff -uprk.orig libcap-1.10.orig/libcap/cap_text.c libcap-1.10/libcap/cap_text.c
+--- libcap-1.10.orig/libcap/cap_text.c	2003-10-13 12:31:13 +0400
++++ libcap-1.10/libcap/cap_text.c	2003-10-13 12:34:33 +0400
+@@ -16,8 +16,8 @@
+ #include <ctype.h>
+ #include <stdio.h>
+ 
+-/* Maximum output text length (16 per cap) */
+-#define CAP_TEXT_SIZE    (16*__CAP_BITS)
++/* Maximum output text length (20 per cap) */
++#define CAP_TEXT_SIZE    (20*__CAP_BITS)
+ 
+ #define LIBCAP_EFF   01
+ #define LIBCAP_INH   02
+@@ -262,7 +262,7 @@ char *cap_to_text(cap_t caps, ssize_t *l
+ 	    m = t;
+ 
+     /* blank is not a valid capability set */
+-    p = sprintf(buf, "=%s%s%s",
++    p = snprintf(buf, sizeof(buf), "=%s%s%s",
+ 		(m & LIBCAP_EFF) ? "e" : "",
+ 		(m & LIBCAP_INH) ? "i" : "",
+ 		(m & LIBCAP_PER) ? "p" : "" ) + buf;
+@@ -273,9 +273,9 @@ char *cap_to_text(cap_t caps, ssize_t *l
+ 	    for (n = 0; n != __CAP_BITS; n++)
+ 		if (getstateflags(caps, n) == t) {
+ 		    if (_cap_names[n])
+-			p += sprintf(p, "%s,", _cap_names[n]);
++			p += snprintf(p, sizeof(buf)-(p-buf), "%s,", _cap_names[n]);
+ 		    else
+-			p += sprintf(p, "%d,", n);
++			p += snprintf(p, sizeof(buf)-(p-buf), "%d,", n);
+ 		    if (p - buf > CAP_TEXT_SIZE) {
+ 			errno = ERANGE;
+ 			return NULL;
+@@ -284,13 +284,17 @@ char *cap_to_text(cap_t caps, ssize_t *l
+ 	    p--;
+ 	    n = t & ~m;
+ 	    if (n)
+-		p += sprintf(p, "+%s%s%s",
++		p += snprintf(p, sizeof(buf)-(p-buf), "+%s%s%s",
+ 			     (n & LIBCAP_EFF) ? "e" : "",
+ 			     (n & LIBCAP_INH) ? "i" : "",
+ 			     (n & LIBCAP_PER) ? "p" : "");
++	    if (p - buf > CAP_TEXT_SIZE) {
++		errno = ERANGE;
++		return NULL;
++	    }
+ 	    n = ~t & m;
+ 	    if (n)
+-		p += sprintf(p, "-%s%s%s",
++		p += snprintf(p, sizeof(buf)-(p-buf), "-%s%s%s",
+ 			     (n & LIBCAP_EFF) ? "e" : "",
+ 			     (n & LIBCAP_INH) ? "i" : "",
+ 			     (n & LIBCAP_PER) ? "p" : "");
