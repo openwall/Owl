@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.37 2005/01/14 21:38:40 galaxy Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.38 2005/01/16 00:12:36 galaxy Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -378,8 +378,8 @@ cd obj-%_target_platform
 # Currently, we use only one depricated option in our build environment.
 # It's '-mcpu' and we change it to '-mtune' to save meaning, but avoid
 # gcc's deprication warning.
-TARGET_OPT_FLAGS="%{!?optflags_bin:$RPM_OPT_FLAGS}"
-TARGET_OPT_LIBFLAGS="%{!?optflags_lib:$RPM_OPT_FLAGS}"
+TARGET_OPT_FLAGS="%{expand:%{?optflags_bin:%optflags_bin}}%{!?optflags_bin:$RPM_OPT_FLAGS}"
+TARGET_OPT_LIBFLAGS="%{expand:%{?optflags_lib:%optflags_lib}}%{!?optflags_lib:$RPM_OPT_FLAGS}"
 TARGET_OPT_FLAGS="${TARGET_OPT_FLAGS//-mcpu=/-mtune=}"
 TARGET_OPT_LIBFLAGS="${TARGET_OPT_LIBFLAGS//-mcpu=/-mtune=}"
 
@@ -734,6 +734,7 @@ fi
 %changelog
 * Fri Jan 14 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.4.3-owl1
 - Reverted the change with removing symbolic links from gcc to cc.
+- Fixed missed compile flags for target compiler.
 
 * Thu Jan 06 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.4.3-owl0
 - Updated to 3.4.3.
