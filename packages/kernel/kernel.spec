@@ -1,4 +1,4 @@
-# $Id: Owl/packages/kernel/kernel.spec,v 1.5 2000/11/16 12:49:59 solar Exp $
+# $Id: Owl/packages/kernel/kernel.spec,v 1.6 2000/11/16 13:16:30 solar Exp $
 
 Summary: Fake Linux kernel package for RH compatibility
 Name: kernel
@@ -50,6 +50,12 @@ ln -s /usr/src/linux/include/asm usr/include/asm
 %defattr(-,root,root)
 /usr/include/linux
 /usr/include/asm
+%ifarch sparc sparcv9
+/usr/include/asm-sparc*
+
+%pre headers
+test -L /usr/include/asm && rm -f /usr/include/asm
+%endif
 
 %changelog
 * Thu Nov 16 2000 Solar Designer <solar@owl.openwall.com>
