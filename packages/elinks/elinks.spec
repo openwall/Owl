@@ -1,15 +1,17 @@
-# $Id: Owl/packages/elinks/elinks.spec,v 1.1 2004/01/21 00:51:58 mci Exp $
+# $Id: Owl/packages/elinks/elinks.spec,v 1.2 2004/01/25 12:05:18 solar Exp $
 
 Summary: Lynx-like text WWW browser with many features.
 Name: elinks
 Version: 0.9.0
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Internet
-URL: http://elinks.or.cz/
-Source: http://elinks.or.cz/download/%{name}-%{version}.tar.bz2
+URL: http://elinks.or.cz
+Source: http://elinks.or.cz/download/%name-%version.tar.bz2
 Patch0: elinks-0.9.0-owl-tmp.diff
+Patch1: elinks-0.9.0-owl-vitmp.diff
 Requires: openssl
+Obsoletes: links
 BuildRequires: openssl-devel
 BuildRoot: /override/%name-%version
 
@@ -19,7 +21,7 @@ background downloading, menu driven configuration interface, tabbed
 browsing and slim code.
 
 Frames are supported.  You can have different file formats associated
-with external viewers. mailto: and telnet: are supported via external
+with external viewers.  mailto: and telnet: are supported via external
 clients.
 
 ELinks was forked from the original Links browser written by Mikulas Patocka.
@@ -28,6 +30,7 @@ It is in no way associated with Twibright Labs and their Links version.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 %configure --with-ssl --enable-leds
@@ -47,8 +50,13 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %_mandir/man?/*
 
 %changelog
+* Sun Jan 25 2004 Solar Designer <solar@owl.openwall.com> 0.9.0-owl2
+- Use vitmp in textarea_edit().
+- Minor corrections to the temporary file handling patch.
+- Obsoletes: links
+
 * Wed Jan 21 2004 Michail Litvak <mci@owl.openwall.com> 0.9.0-owl1
-- Switch to ELinks.
+- Switch from Links to ELinks.
 
 * Tue Feb 05 2002 Michail Litvak <mci@owl.openwall.com> 0.96-owl2
 - Enforce our new spec file conventions
