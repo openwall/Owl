@@ -1,0 +1,11 @@
+#!/bin/sh
+# $Id: Owl/packages/traceroute/Attic/traceroute.control,v 1.1 2001/03/06 17:06:24 solar Exp $
+
+. /etc/control.d/functions
+
+BINARY=/usr/sbin/traceroute
+
+new_fmode public 4711 root root
+new_fmode restricted 700 root root
+
+control_fmode "$BINARY" "$*" || exit 1
