@@ -1,9 +1,9 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.15 2000/11/17 09:26:05 solar Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.16 2001/03/18 03:19:42 solar Exp $
 
-%define GCC_PREFIX /usr
-%define CPP_PREFIX /lib
-%define GCC_VERSION 2.95.2
-%define STDC_VERSION 2.10.0
+%define GCC_PREFIX	/usr
+%define CPP_PREFIX	/lib
+%define GCC_VERSION	2.95.3
+%define STDC_VERSION	2.10.0
 
 %define BUILD_OBJC 	'no'
 %define BUILD_F77	'no'
@@ -12,7 +12,7 @@
 Summary:	Various compilers (C, C++, Objective-C, f77, ...)
 Name:		gcc
 Version:	%{GCC_VERSION}
-Release:	7owl
+Release:	1owl
 Serial:		1
 Copyright:	GPL
 URL:		http://gcc.gnu.org
@@ -22,8 +22,12 @@ Source1:	libstdc++-compat.tar.bz2
 Patch0:		gcc-2.95.2-rh-warn.diff
 Patch1:		gcc-2.95.2-owl-disable-dvi.diff
 Patch2:		gcc-2.95.2-owl-texconfig-bug.diff
-Patch3:		gcc-2.95.2-owl-rth-array-1-alpha.diff
-Patch4:		gcc-2.95.2-owl-sparcv9-LONG_MAX.diff
+%if "%{GCC_VERSION}" != "2.95.2"
+Patch3:		gcc-2.95.3-owl-sparcv9-LONG_MAX.diff
+%else
+Patch3:		gcc-2.95.2-owl-sparcv9-LONG_MAX.diff
+Patch4:		gcc-2.95.2-owl-rth-array-1-alpha.diff
+%endif
 Packager:	<kad@owl.openwall.com>
 Distribution:	Owl
 BuildRoot:	/var/rpm-buildroot/%{name}-root
@@ -61,7 +65,7 @@ The libstdc++ package contains a snapshot of the GCC Standard C++
 Library v3, an ongoing project to implement the ISO 14882 Standard C++
 library.
 
-%ifarch i386 i486 i586 k6 i686
+%ifarch %ix86
 
 %package -n libstdc++-compat
 Summary: GNU old c++ library
@@ -164,24 +168,26 @@ being used in Europe, Brazil, Korea, and other places.
 %patch1 -p0
 %patch2 -p1
 %patch3 -p1
+%if "%{GCC_VERSION}" == "2.95.2"
 %patch4 -p1
+%endif
 
 # Remove bison-generated files - we want bison 1.28'ish versions...
 for i in gcc/cp/parse gcc/c-parse gcc/cexp gcc/java/parse-scan gcc/java/parse gcc/objc/objc-parse; do
-    rm -f $i.c
+	rm -f $i.c
 done
 
 # Remove unneeded languages.
-    rm -f gcc/java/config-lang.in
+rm -f gcc/java/config-lang.in
 
 %if "%{BUILD_OBJC}"!="'yes'"
-    rm -f gcc/objc/config-lang.in
+	rm -f gcc/objc/config-lang.in
 %endif
 %if "%{BUILD_F77}"!="'yes'"
-    rm -f gcc/f/config-lang.in
+	rm -f gcc/f/config-lang.in
 %endif
 %if "%{BUILD_CHILL}"!="'yes'"
-    rm -f gcc/ch/config-lang.in
+	rm -f gcc/ch/config-lang.in
 %endif
 
 
@@ -224,30 +230,53 @@ make bootstrap-lean
 cd ..
 mkdir -p rpm.doc/libstdc++ rpm.doc/g77 rpm.doc/chill rpm.doc/objc
 
-(cd libio; for i in ChangeLog*; do
+pushd libio
+for i in ChangeLog*; do
 	cp -p $i ../rpm.doc/libstdc++/$i.libio
-done)
-(cd libstdc++; for i in ChangeLog*; do
+done
+popd
+
+pushd libstdc++
+for i in ChangeLog*; do
 	cp -p $i ../rpm.doc/libstdc++/$i.libstdc++
-done)
-(cd gcc/f; for i in ChangeLog*; do
+done
+popd
+
+pushd gcc/f
+for i in ChangeLog*; do
 	cp -p $i ../../rpm.doc/g77/$i.f
-done)
-(cd libf2c; for i in ChangeLog*; do
+done
+popd
+
+pushd libf2c
+for i in ChangeLog*; do
 	cp -p $i ../rpm.doc/g77/$i.libf2c
-done)
-(cd gcc/ch; for i in ChangeLog*; do
+done
+popd
+
+pushd gcc/ch
+for i in ChangeLog*; do
 	cp -p $i ../../rpm.doc/chill/$i.ch
-done)
-(cd libchill; for i in ChangeLog*; do
+done
+popd
+
+pushd libchill
+for i in ChangeLog*; do
 	cp -p $i ../rpm.doc/chill/$i.libchill
-done)
-(cd gcc/objc; for i in README*; do
+done
+popd
+
+pushd gcc/objc
+for i in README*; do
 	cp -p $i ../../rpm.doc/objc/$i.objc
-done)
-(cd libobjc; for i in README*; do
+done
+popd
+
+pushd libobjc
+for i in README*; do
 	cp -p $i ../rpm.doc/objc/$i.libobjc
-done)
+done
+popd
 
 %install
 rm -fr $RPM_BUILD_ROOT
@@ -265,7 +294,7 @@ strip $FULLPATH/cc1
 # fix some things
 ln -sf gcc $RPM_BUILD_ROOT%{GCC_PREFIX}/bin/cc
 rm -f $RPM_BUILD_ROOT%{GCC_PREFIX}/info/dir
-gzip -9 $RPM_BUILD_ROOT%{GCC_PREFIX}/info/*.info*
+gzip -9nf $RPM_BUILD_ROOT%{GCC_PREFIX}/info/*.info*
 %if "%{BUILD_F77}"=="'yes'"
 ln -sf g77 $RPM_BUILD_ROOT%{GCC_PREFIX}/bin/f77
 %endif
@@ -275,7 +304,7 @@ ln -sf ../${FULLPATH##$RPM_BUILD_ROOT/}/cpp $RPM_BUILD_ROOT/lib/cpp
 
 ln -sf cccp.1 $RPM_BUILD_ROOT%{GCC_PREFIX}/man/man1/cpp.1
 
-%ifarch i386 i486 i586 k6 i686
+%ifarch %ix86
 # install the compatibility libstdc++ library
 pwd
 test -d ../compat/i386 && install -m 755 ../compat/i386/* $RPM_BUILD_ROOT%{GCC_PREFIX}/lib/
@@ -312,12 +341,10 @@ EOF
 
 # This is required for the old RedHat 6. based programs ...
 
-(
 cd $RPM_BUILD_ROOT/usr/lib
 ln -sf libstdc++-3-libc6.1-2-2.10.0.so libstdc++-libc6.1-1.so.2
 ln -sf libstdc++-3-libc6.1-2-2.10.0.so libstdc++-libc6.1-1.1.so.2
 ln -sf libstdc++-3-libc6.1-2-2.10.0.so libstdc++.so.2.9
-)
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -327,9 +354,9 @@ rm -rf $RPM_BUILD_ROOT
 	--info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/gcc.info.gz
 
 %preun
-if [ $1 = 0 ]; then
-    /sbin/install-info --delete \
-	--info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/gcc.info.gz
+if [ $1 -eq 0 ]; then
+	/sbin/install-info --delete \
+		--info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/gcc.info.gz
 fi
 
 %post -n libstdc++
@@ -339,13 +366,13 @@ fi
 /sbin/ldconfig
 
 %postun -n libstdc++
-if [ "$1" = "0" ]; then
+if [ $1 -eq 0 ]; then
 	grep -v "%{GCC_PREFIX}/lib" /etc/ld.so.conf >/etc/ld.so.conf.new
 	mv -f /etc/ld.so.conf.new /etc/ld.so.conf
 fi
 /sbin/ldconfig
 
-%ifarch i386 i486 i586 k6 i686
+%ifarch %ix86
 
 %post -n libstdc++-compat
 if ! grep '^%{GCC_PREFIX}/lib$' /etc/ld.so.conf > /dev/null 2>&1; then
@@ -354,7 +381,7 @@ fi
 /sbin/ldconfig
 
 %postun -n libstdc++-compat
-if [ "$1" = "0" ]; then
+if [ $1 -eq 0 ]; then
 	grep -v "%{GCC_PREFIX}/lib" /etc/ld.so.conf >/etc/ld.so.conf.new
 	mv -f /etc/ld.so.conf.new /etc/ld.so.conf
 fi
@@ -367,7 +394,7 @@ fi
 	--info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/cpp.info.gz
 
 %preun -n cpp
-if [ $1 = 0 ]; then
+if [ $1 -eq 0 ]; then
     /sbin/install-info --delete \
 	--info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/cpp.info.gz
 fi
@@ -382,7 +409,11 @@ fi
 %{GCC_PREFIX}/man/man1/cpp.1*
 %{GCC_PREFIX}/man/man1/cccp.1*
 %{GCC_PREFIX}/info/cpp.info*.gz
+%if "%{GCC_VERSION}" != "2.95.2"
+%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/cpp0
+%else
 %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/cpp
+%endif
 
 %files c++
 %defattr(-,root,root)
@@ -412,7 +443,7 @@ fi
 %dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/include
 %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/libstdc++.so
 
-%ifarch i386 i486 i586 k6 i686
+%ifarch %ix86
 %files -n libstdc++-compat
 %defattr(-,root,root)
 %{GCC_PREFIX}/lib/libstdc++.so.2.7.2.8
@@ -452,12 +483,12 @@ fi
 %if "%{BUILD_F77}"=="'yes'"
 %post g77
 /sbin/install-info \
-        --info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/g77.info.bz2
+	--info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/g77.info.gz
 
 %preun g77
-if [ $1 = 0 ]; then
-   /sbin/install-info --delete \
-        --info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/g77.info.bz2
+if [ $1 -eq 0 ]; then
+	/sbin/install-info --delete \
+		--info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/g77.info.gz
 fi
 
 %files g77
@@ -479,12 +510,12 @@ fi
 %if "%{BUILD_CHILL}"=="'yes'"
 %post chill
 /sbin/install-info \
-	--info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/chill.info.bz2
+	--info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/chill.info.gz
 
 %preun chill
-if [ $1 = 0 ]; then
-    /sbin/install-info --delete \
-	--info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/chill.info.bz2
+if [ $1 -eq 0 ]; then
+	/sbin/install-info --delete \
+		--info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/chill.info.gz
 fi
 
 %files chill
@@ -502,6 +533,11 @@ fi
 %endif
 
 %changelog
+* Sun Mar 18 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 2.95.3.
+- Dropped the duplicate_decls() patch (included in 2.95.3).
+- Various spec file cleanups (use %ix86, avoid subshells).
+
 * Fri Nov 17 2000 Solar Designer <solar@owl.openwall.com>
 - No pthreads on sparcv9, not just on plain sparc.
 - Pass plain sparc- target to configure when building for sparcv9, to
