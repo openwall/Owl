@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mingetty/mingetty.spec,v 1.3 2000/09/25 19:11:56 solar Exp $
+# $Id: Owl/packages/mingetty/mingetty.spec,v 1.4 2000/11/23 19:12:30 solar Exp $
 
 Summary: A compact getty program for virtual consoles only.
 Name: mingetty
@@ -21,7 +21,7 @@ lines (you should use the mgetty program in that case).
 
 %prep
 %setup -q
-%patch0 -p1
+%patch0 -p0
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ldconfig/Attic/ldconfig.spec,v 1.2 2000/10/28 02:02:52 solar Exp $
+# $Id: Owl/packages/ldconfig/Attic/ldconfig.spec,v 1.3 2000/11/23 19:12:30 solar Exp $
 
 %define reldate 1999-07-31
 
@@ -24,8 +24,8 @@ speeds the loading of programs which use shared libraries.
 
 %prep
 %setup -q -n ldconfig-%{reldate}
-%patch0 -p1
-%patch1 -p1
+%patch0 -p0
+%patch1 -p0
 
 %build
 rm -f ldconfig
