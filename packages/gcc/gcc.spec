@@ -248,6 +248,9 @@ strip $FULLPATH/cc1
 ln -sf gcc $RPM_BUILD_ROOT%{GCC_PREFIX}/bin/cc
 rm -f $RPM_BUILD_ROOT%{GCC_PREFIX}/info/dir
 gzip -9 $RPM_BUILD_ROOT%{GCC_PREFIX}/info/*.info*
+%if "%{BUILD_F77}"=="'yes'"
+ln -sf g77 $RPM_BUILD_ROOT%{GCC_PREFIX}/bin/f77
+%endif
 
 mkdir -p $RPM_BUILD_ROOT/lib
 ln -sf ../${FULLPATH##$RPM_BUILD_ROOT/}/cpp $RPM_BUILD_ROOT/lib/cpp
@@ -359,8 +362,8 @@ fi
 %defattr(-,root,root)
 %endif
 %{CPP_PREFIX}/cpp
-%{GCC_PREFIX}/man/man1/cpp.1
-%{GCC_PREFIX}/man/man1/cccp.1
+%{GCC_PREFIX}/man/man1/cpp.1*
+%{GCC_PREFIX}/man/man1/cccp.1*
 %{GCC_PREFIX}/info/cpp.info*.gz
 %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/cpp
 
@@ -368,7 +371,7 @@ fi
 %ifarch i386 i486 i586 i686 alpha
 %defattr(-,root,root)
 %endif
-%{GCC_PREFIX}/man/man1/g++.1
+%{GCC_PREFIX}/man/man1/g++.1*
 %{GCC_PREFIX}/bin/g++
 %{GCC_PREFIX}/bin/c++
 %dir %{GCC_PREFIX}/lib/gcc-lib
