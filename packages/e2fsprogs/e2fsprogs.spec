@@ -1,3 +1,5 @@
+# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.2 2000/08/03 00:57:10 solar Exp $
+
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
 Version: 1.18
