@@ -1,44 +1,48 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.21.2.1 2001/06/23 14:04:50 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.21.2.2 2001/09/27 17:51:15 solar Exp $
 
-Summary: OpenSSH free Secure Shell (SSH) implementation
+Summary: The OpenSSH implementation of SSH.
 Name: openssh
-Version: 2.9p1
-Release: 3owl
-URL: http://www.openssh.com/
+Version: 2.9.9p2
+Release: 0.0.1.1owl
+URL: http://www.openssh.com/portable.html
 Source0: ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-%{version}.tar.gz
 Source1: sshd.pam
 Source2: sshd.init
 Source3: ssh_config
 Source4: sshd_config
 Source5: sftp.control
-Patch0: openssh-2.9p1-owl-hide-unknown.diff
-Patch1: openssh-2.9p1-owl-always-auth.diff
-Patch2: openssh-2.9p1-owl-pam_userpass.diff
-Patch3: openssh-2.5.1p1-owl-scp-stalltime.diff
-Patch4: openssh-2.9p1-markus-owl-unlink.diff
-Copyright: BSD
+Patch0: openssh-2.9.9p2-owl-hide-unknown.diff
+Patch1: openssh-2.9.9p2-owl-always-auth.diff
+Patch2: openssh-2.9.9p2-owl-pam_userpass.diff
+Patch3: openssh-2.9.9p2-owl-scp-stalltime.diff
+Patch4: openssh-2.9.9p2-owl-drop-groups.diff
+Patch5: openssh-2.9.9p2-owl-openssl-version-check.diff
+Patch6: openssh-2.9.9p2-owl-typos.diff
+License: BSD
 Group: Applications/Internet
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Obsoletes: ssh
 Requires: pam_mktemp
-PreReq: openssl >= 0.9.6a-1owl
-BuildPreReq: openssl-devel >= 0.9.6a-1owl
+PreReq: openssl >= 0.9.6a-2owl
+PreReq: openssl < 0.9.7
+BuildPreReq: openssl-devel >= 0.9.6a-2owl
 BuildPreReq: pam >= 0.72-8owl
 BuildPreReq: perl
 BuildPreReq: zlib-devel
 BuildPreReq: tcp_wrappers
 
 %package clients
-Summary: OpenSSH Secure Shell protocol clients
-Requires: openssh
-Group: System Environment/Daemons
+Summary: OpenSSH clients.
+Requires: openssh = %{version}-%{release}
+Group: Applications/Internet
 Obsoletes: ssh-clients
 
 %package server
-Summary: OpenSSH Secure Shell protocol server (sshd)
+Summary: The OpenSSH server daemon.
 Group: System Environment/Daemons
 Obsoletes: ssh-server
-PreReq: openssh, chkconfig >= 0.9, pam_userpass, /dev/urandom
+PreReq: openssh = %{version}-%{release}
+PreReq: chkconfig >= 0.9, pam_userpass, /dev/urandom
 
 %description
 SSH (Secure Shell) is a program for logging into a remote machine and for
@@ -90,15 +94,22 @@ clients to connect to your host.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
+%patch6 -p1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" LIBS="-lcrypt -lpam -lpam_misc" ./configure \
-	--prefix=/usr --sysconfdir=/etc/ssh --libexecdir=/usr/libexec/ssh \
-	--with-pam --disable-suid-ssh \
-	--with-tcp-wrappers --with-ipv4-default \
+	--prefix=/usr \
+	--sysconfdir=/etc/ssh \
+	--libexecdir=%{_libexecdir}/ssh \
+	--datadir=%{_datadir}/ssh \
+	--disable-suid-ssh \
+	--with-pam \
+	--with-tcp-wrappers \
+	--with-ipv4-default \
 	--with-rsh=/usr/bin/rsh \
 	--with-default-path=/bin:/usr/bin:/usr/local/bin
-make DESTDIR=$RPM_BUILD_ROOT/
+make DESTDIR=$RPM_BUILD_ROOT
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -106,7 +117,6 @@ make install DESTDIR=$RPM_BUILD_ROOT
 
 install -d $RPM_BUILD_ROOT/etc/pam.d
 install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
-install -d $RPM_BUILD_ROOT/usr/libexec/ssh
 install -m 600 %{SOURCE1} $RPM_BUILD_ROOT/etc/pam.d/sshd
 install -m 700 %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 install -m 644 %{SOURCE3} $RPM_BUILD_ROOT/etc/ssh/ssh_config
@@ -155,8 +165,8 @@ fi
 %attr(0644,root,root) /usr/man/man1/ssh-keyscan.1*
 %attr(0644,root,root) /usr/man/man1/scp.1*
 %attr(0755,root,root) %dir /etc/ssh
-%attr(0600,root,root) %config(noreplace) /etc/ssh/primes
-%attr(0755,root,root) %dir /usr/libexec/ssh
+%attr(0600,root,root) %config(noreplace) /etc/ssh/moduli
+%attr(0755,root,root) %dir %{_libexecdir}/ssh
 
 %files clients
 %defattr(-,root,root)
@@ -175,7 +185,7 @@ fi
 %files server
 %defattr(-,root,root)
 %attr(0700,root,root) /usr/sbin/sshd
-%attr(0755,root,root) /usr/libexec/ssh/sftp-server
+%attr(0755,root,root) %{_libexecdir}/ssh/sftp-server
 %attr(0644,root,root) /usr/man/man8/sshd.8*
 %attr(0644,root,root) /usr/man/man8/sftp-server.8*
 %attr(0600,root,root) %config(noreplace) /etc/ssh/sshd_config
@@ -184,6 +194,12 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Thu Sep 27 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 2.9.9p2.
+- Patched the OpenSSL version check to ignore the patch and status bits.
+- Drop supplementary groups at sshd startup such that they aren't inherited
+by the PAM modules.
+
 * Fri Jun 15 2001 Solar Designer <solar@owl.openwall.com>
 - Prevent additional timing leaks with null passwords (when allowed),
 updated patch from Rafal Wojtczuk <nergal@owl.openwall.com>.

@@ -1,16 +1,16 @@
-diff -ur openssh-2.5.1p1.orig/scp.c openssh-2.5.1p1/scp.c
---- openssh-2.5.1p1.orig/scp.c	Mon Feb 19 13:51:08 2001
-+++ openssh-2.5.1p1/scp.c	Sun Mar 18 04:12:48 2001
+diff -ur openssh-2.9.9p2.orig/scp.c openssh-2.9.9p2/scp.c
+--- openssh-2.9.9p2.orig/scp.c	Thu Sep 20 04:57:56 2001
++++ openssh-2.9.9p2/scp.c	Thu Sep 27 04:04:00 2001
 @@ -90,7 +90,7 @@
  #endif
  
  /* For progressmeter() -- number of seconds before xfer considered "stalled" */
 -#define STALLTIME	5
 +#define STALLTIME	60
+ /* alarm() interval for updating progress meter */
+ #define PROGRESSTIME	1
  
- /* Progress meter bar */
- #define BAR \
-@@ -1184,10 +1184,12 @@
+@@ -1154,10 +1154,12 @@
  	if (cursize > lastsize) {
  		lastupdate = now;
  		lastsize = cursize;

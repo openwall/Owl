@@ -5,6 +5,20 @@ remains fixed; it's only the stable branch which has these changes.
 
 	Changes made between Owl 0.1-prerelease and Owl 0.1-stable.
 
+2001/09/27	Package: openssh
+SECURITY FIX	Severity: low to high, remote, passive to active
+Updated to 2.9.9p2, which fixes three security issues compared to our
+previous package version.  The issues are:
+1. The "from=" restriction in ~/.ssh/authorized_keys2 could fail to
+work when the file defines a mix of RSA and DSA keys.
+2. A documentation problem that the authorized_keys* options didn't
+restrict the use of sftp.  They do so now.  sftp has never been
+enabled on Owl by default (it is owl-control'able).
+3. As discovered by Yang Yu, the "echo simulation" traffic analysis
+countermeasure produced an extra echo packet for the carriage return
+after password entry.  That could serve as a traffic signature for
+attackers.
+
 2001/09/03	Package: groff
 SECURITY FIX	Severity: none to high, remote, active
 zen-parse has demonstrated a security problem with format string
@@ -213,4 +227,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp@hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.2.2.9 2001/09/03 06:45:30 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.2.2.10 2001/09/27 17:51:15 solar Exp $

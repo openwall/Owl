@@ -1,0 +1,74 @@
+diff -ur openssh-2.9.9p2.orig/auth.c openssh-2.9.9p2-owl-hide-unknown/auth.c
+--- openssh-2.9.9p2.orig/auth.c	Sat Jul 14 06:21:34 2001
++++ openssh-2.9.9p2-owl-hide-unknown/auth.c	Thu Sep 27 04:05:45 2001
+@@ -207,8 +207,10 @@
+ 	authlog("%s %s for %s%.100s from %.200s port %d%s",
+ 	    authmsg,
+ 	    method,
+-	    authctxt->valid ? "" : "illegal user ",
+-	    authctxt->valid && authctxt->pw->pw_uid == 0 ? "ROOT" : authctxt->user,
++	    !authctxt->known ? "UNKNOWN USER" :
++	    (!authctxt->valid ? "ILLEGAL USER " :
++	    (authctxt->pw->pw_uid == 0 ? "ROOT USER " : "")),
++	    authctxt->known ? authctxt->user : "",
+ 	    get_remote_ipaddr(),
+ 	    get_remote_port(),
+ 	    info);
+diff -ur openssh-2.9.9p2.orig/auth.h openssh-2.9.9p2-owl-hide-unknown/auth.h
+--- openssh-2.9.9p2.orig/auth.h	Wed Jul  4 08:46:57 2001
++++ openssh-2.9.9p2-owl-hide-unknown/auth.h	Thu Sep 27 04:06:54 2001
+@@ -47,6 +47,7 @@
+ 	int		 success;
+ 	int		 postponed;
+ 	int		 valid;
++	int		 known;
+ 	int		 attempt;
+ 	int		 failures;
+ 	char		*user;
+diff -ur openssh-2.9.9p2.orig/auth1.c openssh-2.9.9p2-owl-hide-unknown/auth1.c
+--- openssh-2.9.9p2.orig/auth1.c	Wed Jul  4 08:21:16 2001
++++ openssh-2.9.9p2-owl-hide-unknown/auth1.c	Thu Sep 27 04:05:45 2001
+@@ -394,6 +394,7 @@
+ 
+ 	/* Verify that the user is a valid user. */
+ 	pw = getpwnam(user);
++	authctxt->known = (pw != NULL);
+ 	if (pw && allowed_user(pw)) {
+ 		authctxt->valid = 1;
+ 		pw = pwcopy(pw);
+@@ -403,7 +404,7 @@
+ 	}
+ 	authctxt->pw = pw;
+ 
+-	setproctitle("%s", pw ? user : "unknown");
++	setproctitle("%s", authctxt->known ? user : "UNKNOWN USER");
+ 
+ #ifdef USE_PAM
+ 	if (pw)
+diff -ur openssh-2.9.9p2.orig/auth2.c openssh-2.9.9p2-owl-hide-unknown/auth2.c
+--- openssh-2.9.9p2.orig/auth2.c	Fri Sep 21 03:11:26 2001
++++ openssh-2.9.9p2-owl-hide-unknown/auth2.c	Thu Sep 27 04:05:45 2001
+@@ -201,6 +201,7 @@
+ 		/* setup auth context */
+ 		struct passwd *pw = NULL;
+ 		pw = getpwnam(user);
++		authctxt->known = (pw != NULL);
+ 		if (pw && allowed_user(pw) && strcmp(service, "ssh-connection")==0) {
+ 			authctxt->pw = pwcopy(pw);
+ 			authctxt->valid = 1;
+@@ -209,12 +210,13 @@
+ 			start_pam(pw->pw_name);
+ #endif
+ 		} else {
+-			log("input_userauth_request: illegal user %s", user);
++			authctxt->pw = NULL;
++			authctxt->valid = 0;
+ #ifdef USE_PAM
+ 			start_pam("NOUSER");
+ #endif
+ 		}
+-		setproctitle("%s", pw ? user : "unknown");
++		setproctitle("%s", authctxt->known ? user : "UNKNOWN USER");
+ 		authctxt->user = xstrdup(user);
+ 		authctxt->service = xstrdup(service);
+ 		authctxt->style = style ? xstrdup(style) : NULL;
