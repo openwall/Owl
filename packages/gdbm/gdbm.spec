@@ -1,9 +1,9 @@
-# $Id: Owl/packages/gdbm/gdbm.spec,v 1.8 2003/10/29 19:22:05 solar Exp $
+# $Id: Owl/packages/gdbm/gdbm.spec,v 1.9 2004/07/01 12:34:42 solar Exp $
 
 Summary: A GNU set of database routines which use extensible hashing.
 Name: gdbm
 Version: 1.8.0
-Release: owl7
+Release: owl8
 License: GPL
 Group: System Environment/Libraries
 Source: ftp://ftp.gnu.org/gnu/gdbm/gdbm-%version.tar.gz
@@ -52,6 +52,14 @@ rm -rf $RPM_BUILD_ROOT
 %makeinstall install-compat
 
 cd $RPM_BUILD_ROOT
+
+# Fix devel package whackyness
+mv .%_libdir/libgdbm.la{,.orig}
+sed "s,^\(libdir=\).*$,\1'%_libdir'," \
+	< .%_libdir/libgdbm.la.orig \
+	> .%_libdir/libgdbm.la
+rm .%_libdir/libgdbm.la.orig
+
 ln -sf gdbm/gdbm.h .%_oldincludedir/gdbm.h
 ln -sf libgdbm.so.2.0.0 .%_libdir/libgdbm.so
 
@@ -84,6 +92,10 @@ fi
 %_mandir/man3/*
 
 %changelog
+* Thu Jul 01 2004 Solar Designer <solar@owl.openwall.com> 1.8.0-owl8
+- Fixed whacky libdir statement in libgdbm.la (patch from Andreas Ericsson
+with minor changes).
+
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1.8.0-owl7
 - Deal with info dir entries such that the menu looks pretty.
 
