@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.28 2002/05/23 05:35:51 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.29 2002/05/23 06:32:40 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -14,11 +14,13 @@ Source4: functions
 Source5: halt
 Source6: single
 Source7: clock
+Source8: sysctl.conf
 PreReq: /sbin/chkconfig
 Requires: SysVinit, /sbin/start-stop-daemon
 Requires: bash >= 2.0, sh-utils
 Requires: mingetty, e2fsprogs >= 1.15, util-linux, net-tools
 Requires: gawk, sed, mktemp
+Requires: /sbin/sysctl
 Provides: initscripts
 Obsoletes: initscripts
 BuildRoot: /override/%{name}-%{version}
@@ -63,6 +65,7 @@ install -m 700 $RPM_SOURCE_DIR/rc etc/rc.d/
 install -m 644 $RPM_SOURCE_DIR/functions etc/rc.d/init.d/
 install -m 700 $RPM_SOURCE_DIR/{halt,single,clock} etc/rc.d/init.d/
 install -m 700 /dev/null etc/rc.d/rc.local
+install -m 600 $RPM_SOURCE_DIR/sysctl.conf etc/
 
 ln -s ../init.d/halt etc/rc.d/rc0.d/S01halt
 ln -s ../init.d/halt etc/rc.d/rc6.d/S01reboot
@@ -120,6 +123,7 @@ fi
 %config(missingok) /etc/rc.d/init.d/network
 %config(missingok) /etc/rc.d/init.d/netfs
 %config(noreplace) /etc/rc.d/rc.local
+%config(noreplace) /etc/sysctl.conf
 %config /etc/profile.d/lang.*
 %dir /etc/sysconfig/network-scripts
 %config /etc/sysconfig/network-scripts/ifcfg-lo
@@ -147,6 +151,8 @@ fi
 or "no", otherwise hwclock would default to whatever setting was last
 used ignoring the current UTC setting (thanks to Sergey V. Kurokhtin for
 noticing this).
+- Added /etc/sysctl.conf, with default settings to disable IPv4 packet
+forwarding and enable source validation by reversed path.
 
 * Mon Apr 01 2002 Solar Designer <solar@owl.openwall.com>
 - Mount /proc early.  We currently need this on Alpha, for glibc's I/O
