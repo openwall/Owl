@@ -1,9 +1,9 @@
-# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.3 2002/02/06 22:34:16 mci Exp $
+# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.4 2002/03/13 03:46:41 solar Exp $
 
 Summary: Pluggable private /tmp space support for interactive (shell) sessions.
 Name: pam_mktemp
 Version: 0.1
-Release: owl1
+Release: owl2
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
 Source: pam_mktemp-%{version}.tar.gz
@@ -29,6 +29,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 mkdir -p -m 711 /tmp/.private
+test -d /tmp/.private -a -O /tmp/.private && chattr +a /tmp/.private || :
 
 %files
 %defattr(-,root,root)
@@ -36,6 +37,10 @@ mkdir -p -m 711 /tmp/.private
 /lib/security/pam_mktemp.so
 
 %changelog
+* Wed Mar 13 Solar Designer <solar@owl.openwall.com>
+- Make the /tmp/.private directory append-only (where supported) such that
+the directory or its subdirectories don't get removed by a /tmp cleaner.
+
 * Thu Feb 07 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions.
 
