@@ -1,11 +1,18 @@
 #!/bin/sh
-# $Id: Owl/packages/owl-control/control,v 1.1 2000/08/10 07:33:15 solar Exp $
+# $Id: Owl/packages/owl-control/control,v 1.2 2000/08/11 03:53:54 solar Exp $
 
 if [ $# -ge 1 ]; then
 	if [ -x "/etc/control.d/facilities/$1" ]; then
 		FACILITY="$1"
 		shift
 		/etc/control.d/facilities/$FACILITY "$*" || exit 1
+		if [ -n "$*" -a "$*" != "list" -a "$*" != "status" ]; then
+			STATUS="`/etc/control.d/facilities/$FACILITY status`"
+			if [ "$STATUS" != "$*" ]; then
+				echo "Requested $*, got $STATUS"
+				exit 1
+			fi
+		fi
 		exit 0
 	else
 		echo "$0: No such facility: $1"
