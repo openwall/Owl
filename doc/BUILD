@@ -46,7 +46,8 @@ another GNU/*/Linux system is possible, but tricky and requires that
 you actually convert the system into Owl with multiple iterations of
 "make buildworld" and "make installworld".
 
-Here are some build times (hours:minutes), so that you get an idea:
+Here are some build times (hours:minutes), so that you know what to
+expect:
 
 Dual Pentium III, 800 MHz, 512 MB:		0:35
 Dual Pentium III, 700 MHz, 1 GB:		0:40
@@ -81,6 +82,8 @@ onto the current system, or in a new root directory of your choice (as
 specified by the ROOT= setting in installworld.conf).  By default, the
 packages will be installed into /owl.
 
+"make installworld" should be run as root.
+
 Currently, it is possible to convert an existing Red Hat Linux 6.x
 installation into Owl with "make installworld" and some manual help.
 
@@ -95,4 +98,4 @@ We do consider the building of SRPM's and the lack of automatic build
 dependency handling for re-builds to be bugs in the build environment.
 We will eventually fix these.
 
-$Id: Owl/doc/BUILD,v 1.2 2000/12/25 09:16:27 solar Exp $
+$Id: Owl/doc/BUILD,v 1.3 2000/12/28 17:28:25 solar Exp $
