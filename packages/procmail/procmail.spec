@@ -1,9 +1,9 @@
-# $Id: Owl/packages/procmail/procmail.spec,v 1.1 2000/11/15 19:43:25 solar Exp $
+# $Id: Owl/packages/procmail/procmail.spec,v 1.2 2001/05/10 17:48:54 solar Exp $
 
 Summary: The procmail mail processing program.
 Name: procmail
 Version: 3.15
-Release: 1owl
+Release: 2owl
 Copyright: GPL or Artistic License
 Group: System Environment/Daemons
 Source0: ftp://ftp.procmail.org/pub/procmail/procmail-%{version}.tar.gz
@@ -24,6 +24,7 @@ may be installed as the local delivery agent.
 %build
 make \
 	LOCKINGTEST=100 \
+	SEARCHLIBS="-lm -lnsl -ldl" \
 	CC=gcc \
 	CFLAGS0="$RPM_OPT_FLAGS -Wall -Wno-comment -Wno-parentheses"
 
@@ -51,6 +52,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man[15]/*
 
 %changelog
+* Thu May 10 2001 Solar Designer <solar@owl.openwall.com>
+- Don't let procmail get linked against -lnet (our libnet isn't what
+procmail thinks it is).
+
 * Wed Nov 15 2000 Solar Designer <solar@owl.openwall.com>
 - Checked procmail for a number of possible problems in the handling of
 .procmailrc files, produced a patch.
