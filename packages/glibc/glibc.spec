@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.46 2003/05/23 02:50:52 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.47 2003/05/23 02:55:44 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -116,7 +116,7 @@ libraries included in the glibc package).
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 
 %prep
-%setup -q -a 1 -a 2 -a 4 -a 5
+%setup -q -a 1 -a 2 -a 3 -a 4
 patch -p1 < crypt_blowfish-%{crypt_bf_version}/glibc-%{version}-crypt.diff
 mv crypt/sysdeps/unix/{crypt.h,gnu-crypt.h}
 mv crypt_blowfish-%{crypt_bf_version}/*.[chS] crypt/sysdeps/unix/
