@@ -1,6 +1,5 @@
-diff -ur util-linux-2.10h.orig/MCONFIG util-linux-2.10h/MCONFIG
---- util-linux-2.10h.orig/MCONFIG	Fri Feb 18 13:12:59 2000
-+++ util-linux-2.10h/MCONFIG	Wed Jul 12 09:22:06 2000
+--- util-linux-2.10r.orig/MCONFIG	Thu Nov  9 22:41:13 2000
++++ util-linux-2.10r/MCONFIG	Sun Jan 28 06:45:07 2001
 @@ -16,17 +16,17 @@
  # If HAVE_PAM is set to "yes", then login, chfn, chsh, and newgrp
  # will use PAM for authentication. Additionally, passwd will not be
@@ -22,7 +21,7 @@ diff -ur util-linux-2.10h.orig/MCONFIG util-linux-2.10h/MCONFIG
  
  # If you use chfn and chsh from this package, REQUIRE_PASSWORD will require
  # non-root users to enter the account password before updating /etc/passwd.
-@@ -72,11 +72,11 @@
+@@ -72,29 +72,17 @@
  # If HAVE_SLN is set to "yes", then sln won't be installed
  # (but the man page sln.8 will be installed anyway).
  # sln also comes with libc and glibc.
@@ -36,7 +35,26 @@ diff -ur util-linux-2.10h.orig/MCONFIG util-linux-2.10h/MCONFIG
  
  # If HAVE_FDUTILS is set to "yes", then setfdprm won't be installed.
  HAVE_FDUTILS=no
-@@ -117,6 +117,7 @@
+ 
+ # Different optimizations for different cpus.
+-ifeq "$(ARCH)" "intel"
+-  ifeq "$(CPU)" "i386"
+-    OPT=	-pipe -O2 -m386 -fomit-frame-pointer
+-  else
+-    OPT=	-pipe -O2 -m486 -fomit-frame-pointer
+-  endif
+-else 
+-  ifeq "$(ARCH)" "arm"
+-    OPT=	-pipe -O2 -fsigned-char -fomit-frame-pointer
+-  else
+-    OPT=	-O2 -fomit-frame-pointer
+-  endif
+-endif
++OPT=$(RPM_OPT_FLAGS)
+ 
+ WARNFLAGS = -Wall -Wmissing-prototypes -Wstrict-prototypes
+ 
+@@ -105,6 +93,7 @@
  # Set HAVE_SLANG to yes if you have slang (and prefer to use that for cfdisk)
  # (If neither HAVE_NCURSES nor HAVE_SLANG is defined, cfdisk is not made.)
  # HAVE_SLANG=yes
@@ -44,7 +62,7 @@ diff -ur util-linux-2.10h.orig/MCONFIG util-linux-2.10h/MCONFIG
  
  # There is a subdirectory /usr/include/slang containing slcurses.h
  # SLANGFLAGS=-I/usr/include/slang
-@@ -161,7 +162,7 @@
+@@ -150,7 +139,7 @@
  MANMODE=	644
  DATMODE=	644
  INFOMODE=	644
@@ -53,12 +71,12 @@ diff -ur util-linux-2.10h.orig/MCONFIG util-linux-2.10h/MCONFIG
  
  CHMOD=		chmod
  INSTALL=	install
-@@ -169,7 +170,7 @@
+@@ -158,7 +147,7 @@
  INSTALLBIN=	$(INSTALL) -m $(BINMODE)
  INSTALLMAN=	$(INSTALL) -m $(MANMODE)
  INSTALLDAT=	$(INSTALL) -m $(DATMODE)
 -INSTALLSUID=    $(INSTALL) -m $(SUIDMODE) -o root
 +INSTALLSUID=    $(INSTALL) -m $(SUIDMODE)
  
- %.o: %.c
- 	$(CC) -c $(CFLAGS) $< -o $@
+ CFLAGS    := $(CFLAGS) $(OPT) -I$(LIB) $(WARNFLAGS) \
+ 			$(CURSESFLAGS) $(SLANGFLAGS) \
