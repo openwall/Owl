@@ -1,9 +1,9 @@
-# $Id: Owl/packages/kbd/kbd.spec,v 1.3 2003/04/18 23:35:55 mci Exp $
+# $Id: Owl/packages/kbd/kbd.spec,v 1.4 2003/05/01 21:08:32 mci Exp $
 
 Summary: Tools for configuring the console.
 Name: kbd
 Version: 1.08
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/kbd/kbd-%{version}.tar.bz2
@@ -52,6 +52,7 @@ make install BINDIR=$RPM_BUILD_ROOT%{_bindir}
 
 # Obsolete
 rm -fv $RPM_BUILD_ROOT%{_bindir}/resizecons
+rm -fv $RPM_BUILD_ROOT%{_mandir}/man8/resizecons.8*
 
 cd $RPM_BUILD_ROOT
 for binary in setfont dumpkeys kbd_mode unicode_start unicode_stop; do
@@ -90,6 +91,9 @@ fi
 /lib/kbd/*
 
 %changelog
+* Thu Apr 17 2003 Michail Litvak <mci@owl.openwall.com> 1.08-owl2
+- Don't install resizecons man page.
+
 * Thu Apr 17 2003 Michail Litvak <mci@owl.openwall.com>
 - Obsoletes console-tools package, but derive kbdtable.init from it.
 - spec based on RH

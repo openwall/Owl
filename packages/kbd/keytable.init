@@ -1,11 +1,7 @@
 #!/bin/sh
-# $Id: Owl/packages/kbd/keytable.init,v 1.1 2003/04/16 22:14:58 mci Exp $
+# $Id: Owl/packages/kbd/keytable.init,v 1.2 2003/05/01 21:08:32 mci Exp $
 #
 # Load keytable
-#
-# This must be executed *after* /usr is mounted.
-# This means if /usr is NFS-mounted, it needs to
-# run after networking and NFS mounts are up.
 #
 # chkconfig: 2345 75 05
 # description: \
