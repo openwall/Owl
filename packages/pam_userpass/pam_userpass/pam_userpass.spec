@@ -6,6 +6,7 @@ Copyright: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
 Source: pam_userpass-0.2.tar.gz
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
+BuildPreReq: pam >= 0.72-8owl
 
 %description
 pam_userpass is a PAM authentication module for use specifically by
