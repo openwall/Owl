@@ -12,12 +12,15 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.0 and Owl-current.
 
-2003/12/12	Package: lftp
+2003/12/12 -
+2003/12/16	Package: lftp
 SECURITY FIX	Severity: high, remote, passive
 Updated to 2.6.10 fixing a buffer overflow vulnerability in the HTTP
 directory listing parsing code discovered by Ulf Harnhammar.  The
-vulnerability could allow a malicious HTTP server execute arbitrary
-code on the client system.
+vulnerability could allow a malicious HTTP server to execute arbitrary
+code on the client system.  Additionally, a patch by Nalin Dahyabhai
+of Red Hat needed to handle malformed HTTP server responses gracefully
+has been added.
 Reference:
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0963
 
@@ -520,4 +523,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.97 2003/12/12 20:57:37 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.98 2003/12/19 16:18:19 solar Exp $
