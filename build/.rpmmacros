@@ -1,25 +1,25 @@
-# $Id: Owl/build/.rpmmacros,v 1.6 2003/10/29 17:26:48 solar Exp $
+# $Id: Owl/build/.rpmmacros,v 1.7 2005/01/19 13:57:27 solar Exp $
 %_tmppath %home/tmp-work
 %_topdir %home/rpm-work-%number
 %buildroot %home/rpm-work-%number/buildroot
 # i386
-%optflags_lib_i386 -pipe -march=i386 -mcpu=i686 -O2 -momit-leaf-frame-pointer -mpreferred-stack-boundary=3
-%optflags_bin_i386 -pipe -march=i386 -mcpu=i686 -O2 -fomit-frame-pointer -mpreferred-stack-boundary=2
+%optflags_lib_i386 -pipe -march=i386 -mtune=i686 -O2 -momit-leaf-frame-pointer -mpreferred-stack-boundary=3
+%optflags_bin_i386 -pipe -march=i386 -mtune=i686 -O2 -fomit-frame-pointer -mpreferred-stack-boundary=2
 # i686
 %optflags_lib_i686 -pipe -march=i686 -O2 -momit-leaf-frame-pointer -mpreferred-stack-boundary=3
 %optflags_bin_i686 -pipe -march=i686 -O2 -fomit-frame-pointer -mpreferred-stack-boundary=2
 # sparc
-%optflags_lib_sparc -pipe -mcpu=v8 -mtune=ultrasparc -O2
-%optflags_bin_sparc -pipe -mcpu=v8 -mtune=ultrasparc -O2 -fomit-frame-pointer
+%optflags_lib_sparc -pipe -march=v8 -mtune=ultrasparc -O2
+%optflags_bin_sparc -pipe -march=v8 -mtune=ultrasparc -O2 -fomit-frame-pointer
 # sparcv9
-%optflags_lib_sparcv9 -pipe -mcpu=ultrasparc -Wa,-Av8plusa -O2
-%optflags_bin_sparcv9 -pipe -mcpu=ultrasparc -Wa,-Av8plusa -O2 -fomit-frame-pointer
+%optflags_lib_sparcv9 -pipe -march=ultrasparc -Wa,-Av8plusa -O2
+%optflags_bin_sparcv9 -pipe -march=ultrasparc -Wa,-Av8plusa -O2 -fomit-frame-pointer
 # alpha
-%optflags_lib_alpha -pipe -mcpu=ev4 -O2
-%optflags_bin_alpha -pipe -mcpu=ev4 -O2 -fomit-frame-pointer
+%optflags_lib_alpha -pipe -march=ev4 -O2
+%optflags_bin_alpha -pipe -march=ev4 -O2 -fomit-frame-pointer
 # alphaev56
-%optflags_lib_alphaev56 -pipe -mcpu=ev56 -O2
-%optflags_bin_alphaev56 -pipe -mcpu=ev56 -O2 -fomit-frame-pointer
+%optflags_lib_alphaev56 -pipe -march=ev56 -O2
+%optflags_bin_alphaev56 -pipe -march=ev56 -O2 -fomit-frame-pointer
 #
 %optflags_lib %{expand:%{optflags_lib_%{expand:%buildarch}}}
 %optflags_bin %{expand:%{optflags_bin_%{expand:%buildarch}}}
