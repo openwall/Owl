@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mutt/mutt.spec,v 1.2 2003/01/20 12:34:26 solar Exp $
+# $Id: Owl/packages/mutt/mutt.spec,v 1.3 2003/01/20 12:44:07 solar Exp $
 
 Summary: A text mode mail user agent.
 Name: mutt
@@ -7,7 +7,7 @@ Release: owl1
 License: GPL
 Group: Applications/Internet
 URL: http://www.mutt.org
-Source0: ftp://ftp.mutt.org/pub/mutt/mutt-%{version}i.tar.gz
+Source0: ftp://ftp.mutt.org/mutt/mutt-%{version}i.tar.gz
 Source1: Muttrc-color
 Patch0: mutt-1.4-owl-no-sgid.diff
 Patch1: mutt-1.4-owl-muttbug-tmp.diff
