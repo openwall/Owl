@@ -27,9 +27,9 @@ Mit Owl ist es möglich das komplette System aus den Quellen neu
 zu kompilieren. Und das ganze mit einem einzigen Befehl
 ("make buildworld"). (Das ganze wird unten detaillierter erklärt.)
 
-Owl unterstützt mehrere Architekturen (momentan x86 und SPARC). Dies
-hat den Vorteil, dass man es in mehr Situationen benutzen kann und
-es uns hilft Software-Fehler früher zu erkennen.
+Owl unterstützt mehrere Architekturen (momentan x86, SPARC und Alpha).
+Dies hat den Vorteil, dass man es in mehr Situationen benutzen kann
+und es uns hilft Software-Fehler früher zu erkennen.
 
 
 	Sicherheit.
@@ -127,4 +127,4 @@ Fällen ist es möglich eine Applikation, die für eine aktuelle Red
 Hat Version erstellt worden ist, zu installieren (Momentan gilt dies
 für Red Hat 6.x).
 
-$Id: Owl/doc/de/CONCEPTS,v 1.3 2002/06/20 14:31:59 schmidt Exp $
+$Id: Owl/doc/de/CONCEPTS,v 1.4 2002/07/13 08:53:22 schmidt Exp $

@@ -57,6 +57,9 @@ oder über SSH mit den folgenden Einstellungen:
 CVS_RSH=ssh
 CVSROOT=anoncvs@anoncvs.owl.openwall.com:/cvs
 
-Das Passwort ist "anoncvs" und der Modulname ist "Owl".
+Das Passwort ist "anoncvs" und der Modulname ist "Owl". Es ist auch möglich
+Kompression zu benutzen, zum einen, wenn man direkt auf den anonymen CVS Server
+zugreift, mit der Option -z3 und/oder zum anderen wenn man die -C Option an den
+SSH Client übergibt.
 
-$Id: Owl/doc/de/DOWNLOAD,v 1.6 2002/07/12 16:04:16 schmidt Exp $
+$Id: Owl/doc/de/DOWNLOAD,v 1.7 2002/07/13 08:53:22 schmidt Exp $
