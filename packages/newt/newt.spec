@@ -1,4 +1,4 @@
-# $Id: Owl/packages/newt/Attic/newt.spec,v 1.1 2000/12/14 20:43:02 kad Exp $
+# $Id: Owl/packages/newt/Attic/newt.spec,v 1.2 2000/12/15 19:11:35 kad Exp $
 
 %define version 0.50.18
 
@@ -11,7 +11,8 @@ Release: 	2owl
 Copyright: 	LGPL
 Group: 		System Environment/Libraries
 Source: 	ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
-Patch:		newt-0.50.18-owl-strcpy.diff
+Patch0:		newt-0.50.18-owl-strcpy.diff
+Patch1:		newt-0.50.18-owl-notcl.diff
 Requires: 	slang
 Provides: 	snack
 %if "%{NEED_PYTHON}"=="'yes'"
@@ -44,7 +45,8 @@ newt.
 
 %prep
 %setup
-%patch -p1
+%patch0 -p1
+%patch1 -p1
 
 %build
 # gpm support seems to smash the stack w/ we use help in anaconda??

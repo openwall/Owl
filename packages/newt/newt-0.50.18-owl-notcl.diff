@@ -1,0 +1,37 @@
+--- newt-0.50.18/Makefile.in.kad	Fri Dec 15 21:04:10 2000
++++ newt-0.50.18/Makefile.in	Fri Dec 15 21:05:21 2000
+@@ -12,10 +12,9 @@
+ CVSTAG = r$(subst .,-,$(VERSION))
+ SONAME = @SONAME@
+ 
+-PROGS = test whiptail whiptcl.so testgrid testtree
++PROGS = test whiptail testgrid testtree
+ TESTOBJS = test.o
+ NDIALOGOBJS = whiptail.o dialogboxes.o
+-WHIPTCLOBJS = whiptcl.o dialogboxes.o
+ LIBNEWT = libnewt.a
+ LIBNEWTSH = libnewt.so.$(VERSION)
+ LIBNEWTSONAME = libnewt.so.$(SONAME)
+@@ -66,9 +65,6 @@
+ whiptail: $(NDIALOGOBJS) $(LIBNEWTSH)
+ 	gcc -g -o whiptail $(NDIALOGOBJS) -L . $(LIBNEWTSH) $(LIBS) -lpopt
+ 
+-whiptcl.so: $(WHIPTCLOBJS) $(LIBNEWTSH)
+-	gcc -shared $(SHCFLAGS) -o whiptcl.so $(WHIPTCLOBJS) -L . $(LIBNEWTSH) -ltcl -lslang -lpopt -lm
+-
+ $(LIBNEWT): $(LIBNEWT)($(LIBOBJS))
+ 
+ newt.o: newt.c Makefile
+@@ -107,11 +103,10 @@
+ 	install -m 644 $(LIBNEWT) $(instroot)/$(libdir)
+ 	install -s -m 755 whiptail $(instroot)/$(bindir)
+ 
+-install-sh: sharedlib whiptcl.so _snackmodule.so
++install-sh: sharedlib _snackmodule.so
+ 	[ -d $(instroot)/$(libdir) ] || install -m 755 -d $(instroot)/$(libdir)
+ 	install -s -m 755 $(LIBNEWTSH) $(instroot)/$(libdir)
+ 	ln -sf $(LIBNEWTSH) $(instroot)/$(libdir)/libnewt.so
+-	install -s -m 755 whiptcl.so $(instroot)/$(libdir)
+ 	[ -d $(instroot)/$(pythonbindir) ] || install -m 755 -d $(instroot)/$(pythonbindir)
+ 	install -s -m 755 _snackmodule.so $(instroot)/$(pythonbindir)
+ 	install -m 755 snack.py $(instroot)/$(pythondir)
