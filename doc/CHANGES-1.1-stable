@@ -33,7 +33,7 @@ support vulnerabilities discovered by Stefan Esser (confirmed: remote
 DoS by a malicious smbfs server; potential: remote root by a malicious
 server).
 References:
-http://isec.pl/vulnerabilities/isec-0017-binfmt_elf.txt
+http://www.isec.pl/vulnerabilities/isec-0017-binfmt_elf.txt
 http://marc.theaimsgroup.com/?l=bugtraq&m=110091183206580
 http://security.e-matters.de/advisories/142004.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0883
@@ -196,4 +196,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 2004/01/15	Owl/doc/DOWNLOAD, Owl/doc/*/DOWNLOAD, Owl/doc/fr/CREDITS
 Sync'ed with the minor post-release updates made in Owl-current.
 
-$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.21 2005/01/20 03:04:45 solar Exp $
+$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.22 2005/01/20 03:11:23 solar Exp $
