@@ -1,0 +1,217 @@
+diff -urp glibc-2.1.3.orig/string/endian.h glibc-2.1.3/string/endian.h
+--- glibc-2.1.3.orig/string/endian.h	Fri Nov 27 11:34:04 1998
++++ glibc-2.1.3/string/endian.h	Sat Aug  2 04:58:09 2003
+@@ -1,4 +1,4 @@
+-/* Copyright (C) 1992, 1996, 1997 Free Software Foundation, Inc.
++/* Copyright (C) 1992, 1996, 1997, 2000 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+@@ -45,6 +45,12 @@
+ # define BIG_ENDIAN	__BIG_ENDIAN
+ # define PDP_ENDIAN	__PDP_ENDIAN
+ # define BYTE_ORDER	__BYTE_ORDER
++#endif
++
++#if __BYTE_ORDER == __LITTLE_ENDIAN
++# define __LONG_LONG_PAIR(HI, LO) LO, HI
++#elif __BYTE_ORDER == __BIG_ENDIAN
++# define __LONG_LONG_PAIR(HI, LO) HI, LO
+ #endif
+ 
+ #endif	/* endian.h */
+diff -urp glibc-2.1.3.orig/sysdeps/unix/sysv/linux/ftruncate64.c glibc-2.1.3/sysdeps/unix/sysv/linux/ftruncate64.c
+--- glibc-2.1.3.orig/sysdeps/unix/sysv/linux/ftruncate64.c	Thu Jan  6 01:45:52 2000
++++ glibc-2.1.3/sysdeps/unix/sysv/linux/ftruncate64.c	Sat Aug  2 05:03:00 2003
+@@ -18,6 +18,7 @@
+ 
+ #include <sys/types.h>
+ #include <errno.h>
++#include <endian.h>
+ #include <unistd.h>
+ 
+ #include <sysdep.h>
+@@ -29,14 +30,13 @@
+ extern int __have_no_truncate64;
+ #endif
+ 
++/* The order of high, low depends on endianness.  */
+ extern int __syscall_ftruncate64 (int fd, int high_length, int low_length);
+ 
+ 
+ /* Truncate the file FD refers to to LENGTH bytes.  */
+ int
+-ftruncate64 (fd, length)
+-     int fd;
+-     off64_t length;
++ftruncate64 (int fd, off64_t length)
+ {
+   if (! __have_no_truncate64)
+     {
+@@ -44,8 +44,8 @@ ftruncate64 (fd, length)
+       unsigned int high = length >> 32;
+       int saved_errno = errno;
+ 
+-      int result = INLINE_SYSCALL (ftruncate64, 3, fd, low, high);
+-
++      int result = INLINE_SYSCALL (ftruncate64, 3, fd,
++				   __LONG_LONG_PAIR (high, low));
+       if (result != -1 || errno != ENOSYS)
+ 	return result;
+ 
+diff -urp glibc-2.1.3.orig/sysdeps/unix/sysv/linux/pread.c glibc-2.1.3/sysdeps/unix/sysv/linux/pread.c
+--- glibc-2.1.3.orig/sysdeps/unix/sysv/linux/pread.c	Tue Dec 21 23:52:14 1999
++++ glibc-2.1.3/sysdeps/unix/sysv/linux/pread.c	Sat Aug  2 04:58:09 2003
+@@ -1,4 +1,4 @@
+-/* Copyright (C) 1997, 1998, 1999 Free Software Foundation, Inc.
++/* Copyright (C) 1997, 1998, 1999, 2000 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1997.
+ 
+@@ -18,6 +18,7 @@
+    Boston, MA 02111-1307, USA.  */
+ 
+ #include <errno.h>
++#include <endian.h>
+ #include <unistd.h>
+ 
+ #include <sysdep.h>
+@@ -25,6 +26,7 @@
+ 
+ #ifdef __NR_pread
+ 
++/* The order of hi, lo depends on endianness.  */
+ extern ssize_t __syscall_pread (int fd, void *buf, size_t count,
+ 				off_t offset_hi, off_t offset_lo);
+ 
+@@ -42,7 +44,9 @@ __libc_pread (fd, buf, count, offset)
+   ssize_t result;
+ 
+   /* First try the syscall.  */
+-  result = INLINE_SYSCALL (pread, 5, fd, buf, count, 0, offset);
++  result = INLINE_SYSCALL (pread, 5, fd, buf, count,
++			   __LONG_LONG_PAIR (0, offset));
++
+   if (result == -1 && errno == ENOSYS)
+     /* No system call available.  Use the emulation.  */
+     result = __emulate_pread (fd, buf, count, offset);
+diff -urp glibc-2.1.3.orig/sysdeps/unix/sysv/linux/pread64.c glibc-2.1.3/sysdeps/unix/sysv/linux/pread64.c
+--- glibc-2.1.3.orig/sysdeps/unix/sysv/linux/pread64.c	Tue Dec 21 23:52:14 1999
++++ glibc-2.1.3/sysdeps/unix/sysv/linux/pread64.c	Sat Aug  2 04:58:09 2003
+@@ -18,6 +18,7 @@
+    Boston, MA 02111-1307, USA.  */
+ 
+ #include <errno.h>
++#include <endian.h>
+ #include <unistd.h>
+ 
+ #include <sysdep.h>
+@@ -42,8 +43,10 @@ __libc_pread64 (fd, buf, count, offset)
+   ssize_t result;
+ 
+   /* First try the syscall.  */
+-  result = INLINE_SYSCALL (pread, 5, fd, buf, count, (off_t) (offset >> 32),
+-			   (off_t) (offset & 0xffffffff));
++  result = INLINE_SYSCALL (pread, 5, fd, buf, count,
++			   __LONG_LONG_PAIR ((off_t) (offset >> 32),
++					     (off_t) (offset & 0xffffffff)));
++
+   if (result == -1 && errno == ENOSYS)
+     /* No system call available.  Use the emulation.  */
+     result = __emulate_pread64 (fd, buf, count, offset);
+diff -urp glibc-2.1.3.orig/sysdeps/unix/sysv/linux/pwrite.c glibc-2.1.3/sysdeps/unix/sysv/linux/pwrite.c
+--- glibc-2.1.3.orig/sysdeps/unix/sysv/linux/pwrite.c	Tue Dec 21 23:52:14 1999
++++ glibc-2.1.3/sysdeps/unix/sysv/linux/pwrite.c	Sat Aug  2 04:58:09 2003
+@@ -1,4 +1,4 @@
+-/* Copyright (C) 1997, 1998, 1999 Free Software Foundation, Inc.
++/* Copyright (C) 1997, 1998, 1999, 2000 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1997.
+ 
+@@ -18,6 +18,7 @@
+    Boston, MA 02111-1307, USA.  */
+ 
+ #include <errno.h>
++#include <endian.h>
+ #include <unistd.h>
+ 
+ #include <sysdep.h>
+@@ -25,6 +26,7 @@
+ 
+ #ifdef __NR_pwrite
+ 
++/* The order of hi, lo depends on endianness.  */
+ extern ssize_t __syscall_pwrite (int fd, const void *buf, size_t count,
+ 				 off_t offset_hi, off_t offset_lo);
+ 
+@@ -42,7 +44,8 @@ __libc_pwrite (fd, buf, count, offset)
+   ssize_t result;
+ 
+   /* First try the syscall.  */
+-  result = INLINE_SYSCALL (pwrite, 5, fd, buf, count, 0, offset);
++  result = INLINE_SYSCALL (pwrite, 5, fd, buf, count,
++			   __LONG_LONG_PAIR (0, offset));
+   if (result == -1 && errno == ENOSYS)
+     /* No system call available.  Use the emulation.  */
+     result = __emulate_pwrite (fd, buf, count, offset);
+diff -urp glibc-2.1.3.orig/sysdeps/unix/sysv/linux/pwrite64.c glibc-2.1.3/sysdeps/unix/sysv/linux/pwrite64.c
+--- glibc-2.1.3.orig/sysdeps/unix/sysv/linux/pwrite64.c	Tue Dec 21 23:52:14 1999
++++ glibc-2.1.3/sysdeps/unix/sysv/linux/pwrite64.c	Sat Aug  2 04:58:09 2003
+@@ -18,6 +18,7 @@
+    Boston, MA 02111-1307, USA.  */
+ 
+ #include <errno.h>
++#include <endian.h>
+ #include <unistd.h>
+ 
+ #include <sysdep.h>
+@@ -42,8 +43,9 @@ __libc_pwrite64 (fd, buf, count, offset)
+   ssize_t result;
+ 
+   /* First try the syscall.  */
+-  result = INLINE_SYSCALL (pwrite, 5, fd, buf, count, (off_t) (offset >> 32),
+-			   (off_t) (offset & 0xffffffff));
++  result = INLINE_SYSCALL (pwrite, 5, fd, buf, count,
++			   __LONG_LONG_PAIR ((off_t) (offset >> 32),
++					     (off_t) (offset & 0xffffffff)));
+   if (result == -1 && errno == ENOSYS)
+     /* No system call available.  Use the emulation.  */
+     result = __emulate_pwrite64 (fd, buf, count, offset);
+diff -urp glibc-2.1.3.orig/sysdeps/unix/sysv/linux/truncate64.c glibc-2.1.3/sysdeps/unix/sysv/linux/truncate64.c
+--- glibc-2.1.3.orig/sysdeps/unix/sysv/linux/truncate64.c	Thu Jan  6 01:45:53 2000
++++ glibc-2.1.3/sysdeps/unix/sysv/linux/truncate64.c	Sat Aug  2 05:01:05 2003
+@@ -17,6 +17,7 @@
+    Boston, MA 02111-1307, USA.  */
+ 
+ #include <sys/types.h>
++#include <endian.h>
+ #include <errno.h>
+ #include <unistd.h>
+ 
+@@ -27,14 +28,13 @@
+ /* The variable is shared between all wrappers around *truncate64 calls.  */
+ int __have_no_truncate64;
+ 
++/* The order of high, low depends on endianness.  */
+ extern int __syscall_truncate64 (int fd, int high_length, int low_length);
+ 
+ 
+ /* Truncate the file FD refers to to LENGTH bytes.  */
+ int
+-truncate64 (path, length)
+-     const char *path;
+-     off64_t length;
++truncate64 (const char *path, off64_t length)
+ {
+   if (! __have_no_truncate64)
+     {
+@@ -42,7 +42,8 @@ truncate64 (path, length)
+       unsigned int high = length >> 32;
+       int saved_errno = errno;
+ 
+-      int result = INLINE_SYSCALL (truncate64, 3, path, low, high);
++      int result = INLINE_SYSCALL (truncate64, 3, path,
++				   __LONG_LONG_PAIR (high, low));
+ 
+       if (result != -1 || errno != ENOSYS)
+ 	return result;

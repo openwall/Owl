@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.50 2003/06/28 15:05:06 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.51 2003/08/02 05:10:51 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -6,7 +6,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
 %define crypt_bf_version 0.4.5
-Release: owl34
+Release: owl35
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%{version}.tar.gz
@@ -63,6 +63,7 @@ Patch56: glibc-2.1.3-cvs-20011129-glob.diff
 Patch57: glibc-2.1.3-cvs-20020702-resolv.diff
 Patch58: glibc-2.1.3-cvs-20021216-rh-xdrmem.diff
 Patch59: glibc-2.1.3-cvs-20000417-pthread_cond_wait.diff
+Patch60: glibc-2.1.3-cvs-20000706-lfs-endianness.diff
 PreReq: /sbin/ldconfig
 Requires: /etc/nsswitch.conf
 %ifarch alpha
@@ -172,6 +173,7 @@ cd ..
 %patch57 -p1
 %patch58 -p1
 %patch59 -p1
+%patch60 -p1
 %ifarch sparcv9
 echo 'ASFLAGS-.os += -Wa,-Av8plusa' >> sysdeps/sparc/sparc32/elf/Makefile
 %endif
@@ -320,6 +322,14 @@ fi
 %endif
 
 %changelog
+* Sat Aug 02 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl35
+- Back-ported a fix from glibc CVS to pass the high and low 32 bits of
+file offsets into ftruncate64, truncate64, pread64, and pwrite64
+syscalls under the correct endianness.  Of the architectures we support
+currently, this only makes a difference for SPARC.  The MIPS-specific
+bits of this fix are intentionally not included (we'll probably update
+glibc earlier than we might possibly support it).
+
 * Sat Jun 28 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl34
 - Corrected the comments in stdlib.h for canonicalize_file_name() and
 realpath() to not describe behavior that is not actually implemented.
