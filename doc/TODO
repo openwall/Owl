@@ -15,6 +15,16 @@ help achieve the goal.  (In fact, I really don't expect some people to
 complete what they've volunteered for.)
 
 
+	apache.
+
+[PRIORITY: low]
+Package Russian Apache 1.3.x, but have the use of Cyrillic charsets
+disabled by default (use US-ASCII or iso-8859-1).  Use mod_ssl.  Build
+modules as DSO, only load the safest subset of them by default.  Make
+it fail-close on suEXEC.  Clone and maintain a version of suEXEC more
+friendly to virtual hosting.
+
+
 	autoconf, automake, libtool.
 
 [PRIORITY: low]
@@ -44,6 +54,17 @@ a long time ago), with our patches.  Make sure it still builds cleanly
 with -Wall (due to our patches).  Once again try to get our generic
 fixes (the "-owl-fixes.diff") to the maintainer (haven't received a
 response).
+
+
+	bind.
+
+[PRIORITY: low]
+Package BIND 9.x, built without pthreads.  Use the query ID shuffle
+code from our glibc.  Allocate and use a pseudo-user, setup and use a
+chroot jail.  Ensure the PID file is dealt with safely (it shouldn't
+allow for named -> root attacks on BIND itself and on our startup
+scripts), preferably have it kept in the system's /var/run and as
+root.
 
 
 	binutils.
@@ -593,4 +614,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.5 2002/12/22 19:23:39 solar Exp $
+$Id: Owl/doc/TODO,v 1.6 2002/12/22 19:41:47 solar Exp $
