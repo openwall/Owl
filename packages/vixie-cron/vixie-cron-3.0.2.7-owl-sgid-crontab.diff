@@ -45,7 +45,7 @@ diff -ur vixie-cron-3.0.2.7.linux/usr.sbin/cron/crontab.c vixie-cron-3.0.2.7/usr
  		perror("chown");
 diff -ur vixie-cron-3.0.2.7.linux/usr.sbin/cron/database.c vixie-cron-3.0.2.7/usr.sbin/cron/database.c
 --- vixie-cron-3.0.2.7.linux/usr.sbin/cron/database.c	Sat Aug 19 11:49:06 2000
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/database.c	Mon Aug 21 04:24:45 2000
++++ vixie-cron-3.0.2.7/usr.sbin/cron/database.c	Mon Aug 21 04:28:50 2000
 @@ -24,7 +24,9 @@
  
  
@@ -104,9 +104,9 @@ diff -ur vixie-cron-3.0.2.7.linux/usr.sbin/cron/database.c vixie-cron-3.0.2.7/us
 + * we've got.
 + */
 +	if (pw &&
-+	    !S_ISREG(statbuf->st_mode) ||
++	    (!S_ISREG(statbuf->st_mode) ||
 +	    statbuf->st_nlink != 1 ||
-+	    (statbuf->st_mode & 07777) != 0600) {
++	    (statbuf->st_mode & 07777) != 0600)) {
 +		log_it(fname, getpid(), "WRONG INODE INFO", tabname);
  		goto next_crontab;
  	}
