@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.62 2004/09/30 09:39:09 galaxy Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.63 2004/11/02 01:11:23 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -6,7 +6,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.3.2
 %define crypt_bf_version 0.4.6
-Release: owl0.8
+Release: owl1
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%version.tar.bz2
@@ -92,7 +92,6 @@ libraries included in the glibc package).
 
 %package compat-fake
 Summary: Fake package to help upgrade glibc from 2.1.3 to 2.3+
-Version: 2.3.2
 Group: System Environment/Libraries
 Provides: libdb.so.2
 Provides: libdb.so.2(GLIBC_2.0)
@@ -101,11 +100,11 @@ Provides: libdb.so.3(GLIBC_2.1)
 
 %description compat-fake
 This package solves the problem with upgrading glibc 2.1.3 -based Owl to
-glibc 2.3+ version by reporting necessary Provides to RPM. All packages
-in glibc 2.3+ -based Owl doesn't rely on libdb.so.2 and libdb.so.3, if
-you have a package which uses these libraries - you have to recompile
-that package against db package supplied with Owl or create compatibility
-package with necessary binaries.
+glibc 2.3+ version by reporting necessary Provides to RPM.  All packages
+in glibc 2.3+ -based Owl don't rely on libdb.so.2 and libdb.so.3.  If
+you have a package which uses these older libraries, you have to recompile
+that package against the db4 package supplied with Owl or create a
+compatibility package with necessary binaries of old libdb libraries.
 
 # Use optflags_lib for this package if defined.
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
@@ -222,6 +221,7 @@ cp %buildroot%_datadir/zoneinfo/Europe/Moscow %buildroot%_sysconfdir/localtime
 > %buildroot%_sysconfdir/ld.so.conf
 
 # The database support
+# XXX: why is this disabled?
 #mkdir -p %buildroot/var/db
 #install -m 644 nss/db-Makefile %buildroot/var/db/Makefile
 
@@ -313,6 +313,7 @@ fi
 %ghost %config(noreplace) %_sysconfdir/ld.so.cache
 %config %_sysconfdir/ld.so.conf
 %config(noreplace) %_sysconfdir/rpc
+# XXX
 #%dir /var/db
 %if %BUILD_PROFILE
 %exclude %_libdir/*_p.a
@@ -335,6 +336,11 @@ fi
 %files compat-fake
 
 %changelog
+* Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 2.3.2-owl1
+- Corrected the -compat-fake sub-package description.
+- Set Release to -owl1 such that we can make it public, then proceed with
+further corrections for whatever we've broken with the big update.
+
 * Thu Sep 30 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl0.8
 - Added compat-fake sub-package to help upgrade procedure
 
