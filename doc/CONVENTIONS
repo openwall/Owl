@@ -95,6 +95,9 @@ scripts.
 9. Use -eq to compare numeric values (in particular, the $1 argument
 that RPM itself passes to scripts, and don't place the $1 in quotes).
 
+10. In %changelog entry dates, use two digits for day of month with a
+leading zero if necessary.
+
 
 	Patch file naming.
 
@@ -145,4 +148,4 @@ options:
 This does not exactly match our preferred coding style and thus isn't
 to be used on sources already in Owl.
 
-$Id: Owl/doc/CONVENTIONS,v 1.7 2002/01/24 11:24:08 solar Exp $
+$Id: Owl/doc/CONVENTIONS,v 1.8 2002/01/31 18:33:57 solar Exp $
