@@ -1,9 +1,9 @@
-# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.11 2002/10/09 08:50:05 solar Exp $
+# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.12 2002/10/12 06:16:55 solar Exp $
 
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
 Version: 1.27
-Release: owl3
+Release: owl4
 License: GPL
 Group: System Environment/Base
 Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%{version}.tar.gz
@@ -160,6 +160,10 @@ fi
 %{_mandir}/man3/com_err.3*
 
 %changelog
+* Sat Oct 12 2002 Solar Designer <solar@owl.openwall.com>
+- Dropped the mke2fs lost+found permissions patch (leaving only the hunks
+for e2fsck and mklost+found) as it's no longer needed with 1.27.
+
 * Wed Oct 09 2002 Solar Designer <solar@owl.openwall.com>
 - Updated the lost+found permissions patch to cover e2fsck as well, thanks
 to Jarno Huuskonen for noticing that this was missing.

@@ -19,35 +19,6 @@ diff -ur e2fsprogs-1.27.orig/e2fsck/pass3.c e2fsprogs-1.27/e2fsck/pass3.c
  	inode.i_size = fs->blocksize;
  	inode.i_atime = inode.i_ctime = inode.i_mtime = time(0);
  	inode.i_links_count = 2;
-diff -ur e2fsprogs-1.27.orig/misc/mke2fs.c e2fsprogs-1.27/misc/mke2fs.c
---- e2fsprogs-1.27.orig/misc/mke2fs.c	Fri Mar  8 11:02:37 2002
-+++ e2fsprogs-1.27/misc/mke2fs.c	Wed Oct  9 12:28:25 2002
-@@ -489,6 +489,7 @@
- {
- 	errcode_t		retval;
- 	ext2_ino_t		ino;
-+	struct ext2_inode       inode;
- 	const char		*name = "lost+found";
- 	int			i;
- 	int			lpf_size = 0;
-@@ -508,6 +509,17 @@
- 		exit(1);
- 	}
- 	
-+	retval = ext2fs_read_inode(fs, ino, &inode);
-+	if (!retval) {
-+		inode.i_mode &= ~077;
-+		retval = ext2fs_write_inode(fs, ino, &inode);
-+	}
-+	if (retval) {
-+		com_err("ext2_{read,write}_inode", retval,
-+			"while fixing permissions on /lost+found");
-+		exit(1);
-+	}
-+
- 	for (i=1; i < EXT2_NDIR_BLOCKS; i++) {
- 		if ((lpf_size += fs->blocksize) >= 16*1024)
- 			break;
 diff -ur e2fsprogs-1.27.orig/misc/mklost+found.c e2fsprogs-1.27/misc/mklost+found.c
 --- e2fsprogs-1.27.orig/misc/mklost+found.c	Tue Mar  5 11:31:15 2002
 +++ e2fsprogs-1.27/misc/mklost+found.c	Wed Oct  9 12:28:25 2002
