@@ -1,4 +1,4 @@
-# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.17 2004/11/23 22:40:45 mci Exp $
+# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.18 2005/01/12 15:57:18 galaxy Exp $
 
 # The texinfo documentation for fileutils, sh-utils, and textutils is
 # currently provided by fileutils.
@@ -7,7 +7,7 @@
 Summary: The GNU versions of common file management utilities.
 Name: fileutils
 Version: 4.1.11
-Release: owl4
+Release: owl5
 License: GPL
 Group: Applications/File
 Source0: ftp://alpha.gnu.org/gnu/fetish/fileutils-%version.tar.bz2
@@ -24,6 +24,7 @@ Patch6: fileutils-4.1.11-alt-owl-chown.diff
 Patch7: fileutils-4.1.11-owl-fixes.diff
 Patch8: fileutils-4.1.11-owl-info.diff
 Patch9: fileutils-4.1.11-owl-ls-max-columns.diff
+Patch10: fileutils-4.1.11-owl-gcc343-fixes.diff
 %if %BUILD_INFO
 PreReq: /sbin/install-info
 %endif
@@ -58,6 +59,7 @@ timestamps), and vdir (provides long directory listings).
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 %{expand:%%define optflags %optflags -Wall -Dlint}
 
@@ -66,22 +68,23 @@ rm doc/coreutils.info
 unset LINGUAS || :
 %define _exec_prefix /
 %configure
-make
+%__make
 
 %install
 rm -rf %buildroot
 %makeinstall
+%define _exec_prefix %_prefix
 
 cd %buildroot
 
-mkdir -p .%_prefix/bin
+mkdir -p .%_bindir
 for i in dir dircolors du install mkfifo shred vdir; do
-	mv -f bin/$i .%_prefix/bin/
+	mv -f bin/$i .%_bindir/
 done
 
-mkdir -p etc/profile.d
-install -c -m 644 $RPM_SOURCE_DIR/DIR_COLORS etc/
-install -c -m 755 $RPM_SOURCE_DIR/colorls.{c,}sh etc/profile.d/
+mkdir -p .%_sysconfdir/profile.d
+install -c -m 644 $RPM_SOURCE_DIR/DIR_COLORS .%_sysconfdir/
+install -c -m 755 $RPM_SOURCE_DIR/colorls.{c,}sh .%_sysconfdir/profile.d/
 
 # Remove unpackaged files
 rm %buildroot%_infodir/dir
@@ -114,8 +117,8 @@ fi
 %defattr(-,root,root)
 %doc COPYING NEWS README THANKS TODO
 %config %_sysconfdir/*
-%_exec_prefix/bin/*
-%_prefix/bin/*
+/bin/*
+%_bindir/*
 %_mandir/man*/*
 %if %BUILD_INFO
 %_infodir/coreutils.info*
@@ -123,6 +126,12 @@ fi
 %_datadir/locale/*/*/*
 
 %changelog
+* Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.1.11-owl5
+- Fixed "label at end of compound statement" issue in install.c. Usage
+of label at end of compound statement was deprecated in previous versions
+of GCC and now (GCC 3.4.3) it's counted as a hard error.
+- Cleaned up the spec.
+
 * Thu Oct 16 2003 Solar Designer <solar@owl.openwall.com> 4.1.11-owl4
 - Place a limit on the number of columns in ls; previously, ls -w (and
 other equivalent invocations) could result in excessive memory

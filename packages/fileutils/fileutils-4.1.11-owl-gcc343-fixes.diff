@@ -1,0 +1,11 @@
+diff -puNr fileutils-4.1.11.orig/src/install.c fileutils-4.1.11/src/install.c
+--- fileutils-4.1.11.orig/src/install.c	Thu Jan  6 23:33:01 2005
++++ fileutils-4.1.11/src/install.c	Thu Jan  6 23:36:10 2005
+@@ -538,6 +538,7 @@ copy_file (const char *from, const char 
+ 	  return 0;
+ 	case 1: /* Files are different */
+ 	case 2: /* Destination file doesn't exist */
++	  ;
+       }
+     }
+ 
