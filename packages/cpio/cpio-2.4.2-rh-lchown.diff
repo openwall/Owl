@@ -1,0 +1,55 @@
+--- cpio-2.4.2/copypass.c.orig	Wed Nov 29 18:20:32 2000
++++ cpio-2.4.2/copypass.c	Wed Nov 29 18:21:14 2000
+@@ -24,9 +24,6 @@
+ #include "dstring.h"
+ #include "extern.h"
+ 
+-#ifndef HAVE_LCHOWN
+-#define lchown chown
+-#endif
+ 
+ /* Debian hack to fix a bug in the --sparse option.  This bug has been
+    reported to "bug-gnu-utils@prep.ai.mit.edu".  (96/7/10) -BEM */
+@@ -380,12 +377,14 @@
+ 	    }
+ 
+ 	  /* Set the attributes of the new link.  */
++#ifdef HAVE_LCHOWN
+ 	  if (!no_chown_flag)
+ 	    if ((lchown (output_name.ds_string,
+ 			 set_owner_flag ? set_owner : in_file_stat.st_uid,
+ 		      set_group_flag ? set_group : in_file_stat.st_gid) < 0)
+ 		&& errno != EPERM)
+ 	      error (0, errno, "%s", output_name.ds_string);
++#endif
+ 	  free (link_name);
+ 	}
+ #endif
+--- cpio-2.4.2/copyin.c.orig	Wed Nov 29 18:21:26 2000
++++ cpio-2.4.2/copyin.c	Wed Nov 29 18:22:15 2000
+@@ -29,10 +29,6 @@
+ #include <fnmatch.h>
+ #endif
+ 
+-#ifndef HAVE_LCHOWN
+-#define lchown chown
+-#endif
+-
+ /* Debian hack to fix a bug in the --sparse option.  This bug has been
+    reported to "bug-gnu-utils@prep.ai.mit.edu".  (96/7/10) -BEM */
+ extern int delayed_seek_count;
+@@ -1034,12 +1030,14 @@
+ 		    link_name = NULL;
+ 		    continue;
+ 		  }
++#ifdef HAVE_LCHOWN
+ 		if (!no_chown_flag)
+ 		  if ((lchown (file_hdr.c_name,
+ 			       set_owner_flag ? set_owner : file_hdr.c_uid,
+ 			   set_group_flag ? set_group : file_hdr.c_gid) < 0)
+ 		      && errno != EPERM)
+ 		    error (0, errno, "%s", file_hdr.c_name);
++#endif
+ 		free (link_name);
+ 		link_name = NULL;
+ 	      }
