@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.35 2002/07/07 00:30:22 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.36 2002/07/07 21:42:53 mci Exp $
 
 %define BUILD_PROFILE 0
 
@@ -6,7 +6,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
 %define crypt_bf_version 0.4.3
-Release: owl22
+Release: owl23
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%{version}.tar.gz

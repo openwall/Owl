@@ -8,8 +8,8 @@
 -flex.info, Flex: The Lexical Scanner Generator}, and @ref{, , ,
 -bison.info, The Bison Reference Manual}.
 +@code{scanf}.  For more information about these tools, see @inforef{
-+Top, Flex: The Lexical Scanner Generator, flex}, and @inforef{
-+Top, The Bison Reference Manual, bison}.
++Top, , flex}, and @inforef{
++Top, , bison}.
  
  @node Input Conversion Syntax
  @subsection Input Conversion Syntax
