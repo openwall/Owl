@@ -430,7 +430,7 @@ diff -ur cvs-1.11.5.orig/contrib/rcs-to-cvs.sh cvs-1.11.5/contrib/rcs-to-cvs.sh
  if [ $# -lt 1 ]; then
 diff -ur cvs-1.11.5.orig/contrib/rcs2log.sh cvs-1.11.5/contrib/rcs2log.sh
 --- cvs-1.11.5.orig/contrib/rcs2log.sh	Thu Sep  6 15:55:51 2001
-+++ cvs-1.11.5/contrib/rcs2log.sh	Mon Apr 28 19:18:09 2003
++++ cvs-1.11.5/contrib/rcs2log.sh	Tue Apr 29 01:32:52 2003
 @@ -80,7 +80,6 @@
  
  # defaults
@@ -439,7 +439,7 @@ diff -ur cvs-1.11.5.orig/contrib/rcs2log.sh cvs-1.11.5/contrib/rcs2log.sh
  changelog=ChangeLog # change log file name
  datearg= # rlog date option
  hostname= # name of local host (if empty, will deduce it later)
-@@ -182,10 +181,12 @@
+@@ -182,11 +181,12 @@
  	m[9]="Oct"; m[10]="Nov"; m[11]="Dec"
  '
  
@@ -452,9 +452,10 @@ diff -ur cvs-1.11.5.orig/contrib/rcs2log.sh cvs-1.11.5/contrib/rcs2log.sh
  llogout=$logdir/l
 -trap exit 1 2 13 15
 -trap "rm -fr $logdir 2>/dev/null" 0
- (umask 077 && exec mkdir $logdir) || exit
+-(umask 077 && exec mkdir $logdir) || exit
  
  # If no rlog-format log file is given, generate one into $rlogfile.
+ case $rlogfile in
 diff -ur cvs-1.11.5.orig/contrib/rcs2sccs.sh cvs-1.11.5/contrib/rcs2sccs.sh
 --- cvs-1.11.5.orig/contrib/rcs2sccs.sh	Tue Oct 16 19:06:24 2001
 +++ cvs-1.11.5/contrib/rcs2sccs.sh	Sun Apr 27 12:38:59 2003
