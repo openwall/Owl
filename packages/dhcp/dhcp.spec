@@ -1,11 +1,11 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.4 2003/09/09 06:09:10 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.5 2003/09/09 14:21:15 schmidt Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
 Summary: Dynamic Host Configuration Protocol (DHCP) distribution.
 Name: dhcp
 Version: 3.0pl2
-Release: owl0.2
+Release: owl0.3
 License: ISC License
 Group: System Environment/Daemons
 URL: http://www.isc.org/products/DHCP/
@@ -83,12 +83,12 @@ make install DESTDIR=$RPM_BUILD_ROOT MANDIR=%{_mandir}
 
 cd $RPM_BUILD_ROOT
 
-mkdir -p $RPM_BUILD_ROOT/{etc/rc.d/init.d,var/lib/dhcp/var/state/dhcp}
+mkdir -p $RPM_BUILD_ROOT/{etc/rc.d/init.d,var/lib/dhcp/state}
 
 install -m 700 $RPM_SOURCE_DIR/dhcpd.init $RPM_BUILD_ROOT/etc/rc.d/init.d/dhcpd
 install -m 644 $RPM_SOURCE_DIR/dhcpd.conf.sample $RPM_BUILD_ROOT/
 
-touch $RPM_BUILD_ROOT/var/lib/dhcp/var/state/dhcp/{dhcpd,dhclient}.leases
+touch $RPM_BUILD_ROOT/var/lib/dhcp/state/{dhcpd,dhclient}.leases
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -127,22 +127,24 @@ fi
 %if %BUILD_DHCP_CLIENT
 %files client
 %defattr(-,root,root)
-%config /var/lib/dhcp/var/state/dhcp/dhclient.leases
 /sbin/dhclient
 %{_mandir}/man5/dhclient.conf.5*
 %{_mandir}/man5/dhclient.leases.5*
 %{_mandir}/man8/dhclient.8*
 %{_mandir}/man8/dhclient-script.8*
+%attr(-,dhcpd,dhcpd) %config /var/lib/dhcp/state/dhclient.leases
 %endif
 
 %files server
 %defattr(-,root,root)
 %config /etc/rc.d/init.d/dhcpd
-%config /var/lib/dhcp/var/state/dhcp/dhcpd.leases
 /usr/sbin/dhcpd
 %{_mandir}/man5/dhcpd.conf.5*
 %{_mandir}/man5/dhcpd.leases.5*
 %{_mandir}/man8/dhcpd.8*
+%attr(-,dhcpd,dhcpd) %dir /var/lib/dhcp/
+%attr(-,dhcpd,dhcpd) %dir /var/lib/dhcp/state
+%attr(-,dhcpd,dhcpd) %config /var/lib/dhcp/state/dhcpd.leases
 
 %files relay
 %defattr(-,root,root)
@@ -150,6 +152,10 @@ fi
 %{_mandir}/man8/dhcrelay.8*
 
 %changelog
+* Tue Sep 09 2003 Matthias Schmidt <schmidt@owl.openwall.com> 3.0pl2-owl0.3
+- Minor changes in the drop-root patch
+- Set the permissions for /var/lib/dhcp correct
+
 * Tue Sep 09 2003 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl0.2
 - Applied the initial set of corrections.
 - Pass the optflags correctly.

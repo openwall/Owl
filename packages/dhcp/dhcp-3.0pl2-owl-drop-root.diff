@@ -1,23 +1,23 @@
 diff -urpN dhcp-3.0pl2.orig/includes/cf/linux.h dhcp-3.0pl2/includes/cf/linux.h
 --- dhcp-3.0pl2.orig/includes/cf/linux.h	Thu May 10 21:28:55 2001
-+++ dhcp-3.0pl2/includes/cf/linux.h	Mon May  5 11:02:30 2003
++++ dhcp-3.0pl2/includes/cf/linux.h	Tue Sep  9 12:47:03 2003
 @@ -92,11 +92,11 @@ extern int h_errno;
     directory. */
  
  #ifndef _PATH_DHCPD_DB
 -#define _PATH_DHCPD_DB		"/var/state/dhcp/dhcpd.leases"
-+#define _PATH_DHCPD_DB		"/var/lib/dhcp/var/state/dhcp/dhcpd.leases"
++#define _PATH_DHCPD_DB		"/state/dhcpd.leases"
  #endif
  
  #ifndef _PATH_DHCLIENT_DB
 -#define _PATH_DHCLIENT_DB	"/var/state/dhcp/dhclient.leases"
-+#define _PATH_DHCLIENT_DB	"/var/lib/dhcp/var/state/dhcp/dhclient.leases"
++#define _PATH_DHCLIENT_DB	"/state/dhclient.leases"
  #endif
  
  /* Varargs stuff... */
 diff -urpN dhcp-3.0pl2.orig/relay/dhcrelay.8 dhcp-3.0pl2/relay/dhcrelay.8
 --- dhcp-3.0pl2.orig/relay/dhcrelay.8	Thu Oct  4 23:47:39 2001
-+++ dhcp-3.0pl2/relay/dhcrelay.8	Mon May  5 10:53:18 2003
++++ dhcp-3.0pl2/relay/dhcrelay.8	Tue Sep  9 12:12:16 2003
 @@ -79,6 +79,14 @@ dhcrelay - Dynamic Host Configuration Pr
  |
  .I discard
@@ -48,18 +48,21 @@ diff -urpN dhcp-3.0pl2.orig/relay/dhcrelay.8 dhcp-3.0pl2/relay/dhcrelay.8
  .B -a
 diff -urpN dhcp-3.0pl2.orig/relay/dhcrelay.c dhcp-3.0pl2/relay/dhcrelay.c
 --- dhcp-3.0pl2.orig/relay/dhcrelay.c	Thu Apr 19 18:48:53 2001
-+++ dhcp-3.0pl2/relay/dhcrelay.c	Mon May  5 10:53:45 2003
-@@ -48,6 +48,9 @@ static char ocopyright[] =
++++ dhcp-3.0pl2/relay/dhcrelay.c	Tue Sep  9 16:18:16 2003
+@@ -48,6 +48,12 @@ static char ocopyright[] =
  
  #include "dhcpd.h"
  #include "version.h"
 +#include <sys/types.h>
 +#include <pwd.h>
 +#include <unistd.h>
++#define group real_group
++#include <grp.h>
++#undef group
  
  static void usage PROTO ((void));
  
-@@ -112,6 +115,30 @@ static char arr [] = "All rights reserve
+@@ -112,6 +118,32 @@ static char arr [] = "All rights reserve
  static char message [] = "Internet Software Consortium DHCP Relay Agent";
  static char url [] = "For info, please visit http://www.isc.org/products/DHCP";
  
@@ -76,11 +79,13 @@ diff -urpN dhcp-3.0pl2.orig/relay/dhcrelay.c dhcp-3.0pl2/relay/dhcrelay.c
 +		return (-1);
 +	if (chdir("/"))
 +		return (-1);
-+
++	
++#define group real_group
 +	if (initgroups(server_user, pw->pw_gid))
 +		return (-1);
 +	if (setgid(pw->pw_gid))
 +		return (-1);
++#undef group
 +	if (setuid(pw->pw_uid))
 +		return (-1);
 +
@@ -90,7 +95,7 @@ diff -urpN dhcp-3.0pl2.orig/relay/dhcrelay.c dhcp-3.0pl2/relay/dhcrelay.c
  int main (argc, argv, envp)
  	int argc;
  	char **argv, **envp;
-@@ -124,6 +151,9 @@ int main (argc, argv, envp)
+@@ -124,6 +156,9 @@ int main (argc, argv, envp)
  	isc_result_t status;
  	char *s;
  
@@ -100,7 +105,7 @@ diff -urpN dhcp-3.0pl2.orig/relay/dhcrelay.c dhcp-3.0pl2/relay/dhcrelay.c
  	/* Make sure we have stdin, stdout and stderr. */
  	i = open ("/dev/null", O_RDWR);
  	if (i == 0)
-@@ -186,6 +216,14 @@ int main (argc, argv, envp)
+@@ -186,6 +221,14 @@ int main (argc, argv, envp)
  			if (++i == argc)
  				usage ();
  			dhcp_max_agent_option_packet_length = atoi (argv [i]);
@@ -115,27 +120,27 @@ diff -urpN dhcp-3.0pl2.orig/relay/dhcrelay.c dhcp-3.0pl2/relay/dhcrelay.c
  		} else if (!strcmp (argv [i], "-m")) {
  			if (++i == argc)
  				usage ();
-@@ -317,6 +355,19 @@ int main (argc, argv, envp)
+@@ -317,6 +360,19 @@ int main (argc, argv, envp)
  		pid = setsid ();
  	}
  
 +	/* chroot if possible */	
 +	if (server_user && !server_jail) {
 +		if (drop_root(server_user, "/var/lib/dhcp") < 0)
-+			log_fatal("chroot failed.");
++			log_fatal("dhcrelay: Failed to drop root.");
 +	}
 +	else if (server_jail && !server_user)
 +		log_fatal("'-j' is only valid with '-u'");
 +	else {
 +		if (drop_root(server_user, server_jail) < 0)
-+			log_fatal("chroot failed.");
++			log_fatal("dhcrelay: Failed to drop root.");
 +	}
 +
 +		
  	/* Start dispatching packets and timeouts... */
  	dispatch ();
  
-@@ -449,7 +500,7 @@ static void usage ()
+@@ -449,7 +505,7 @@ static void usage ()
  	log_fatal ("Usage: dhcrelay [-p <port>] [-d] [-D] [-i %s%s%s",
  	       "interface]\n                ",
  	       "[-q] [-a] [-A length] [-m append|replace|forward|discard]\n",
@@ -144,9 +149,18 @@ diff -urpN dhcp-3.0pl2.orig/relay/dhcrelay.c dhcp-3.0pl2/relay/dhcrelay.c
  }
  
  int write_lease (lease)
+@@ -637,7 +693,7 @@ int find_interface_by_agent_option (pack
+ {
+ 	int i = 0;
+ 	u_int8_t *circuit_id = 0;
+-	unsigned circuit_id_len;
++	unsigned circuit_id_len = 0;
+ 	struct interface_info *ip;
+ 
+ 	while (i < len) {
 diff -urpN dhcp-3.0pl2.orig/server/dhcpd.8 dhcp-3.0pl2/server/dhcpd.8
 --- dhcp-3.0pl2.orig/server/dhcpd.8	Thu Oct  4 23:49:13 2001
-+++ dhcp-3.0pl2/server/dhcpd.8	Mon May  5 10:50:02 2003
++++ dhcp-3.0pl2/server/dhcpd.8	Tue Sep  9 12:12:16 2003
 @@ -74,6 +74,14 @@ dhcpd - Dynamic Host Configuration Proto
  .I trace-playback-file
  ]
@@ -156,7 +170,7 @@ diff -urpN dhcp-3.0pl2.orig/server/dhcpd.8 dhcp-3.0pl2/server/dhcpd.8
 +]
 +[
 +.B -j
-+.I chroot-dir
++.I chroot-dir 
 +]
 +[
  .I if0
@@ -176,18 +190,21 @@ diff -urpN dhcp-3.0pl2.orig/server/dhcpd.8 dhcp-3.0pl2/server/dhcpd.8
  section should be used as an overview of the configuration process,
 diff -urpN dhcp-3.0pl2.orig/server/dhcpd.c dhcp-3.0pl2/server/dhcpd.c
 --- dhcp-3.0pl2.orig/server/dhcpd.c	Wed Jan 15 00:02:33 2003
-+++ dhcp-3.0pl2/server/dhcpd.c	Mon May  5 10:49:40 2003
-@@ -55,6 +55,9 @@ static char url [] = "For info, please v
++++ dhcp-3.0pl2/server/dhcpd.c	Tue Sep  9 16:17:55 2003
+@@ -55,6 +55,12 @@ static char url [] = "For info, please v
  #include "dhcpd.h"
  #include "version.h"
  #include <omapip/omapip_p.h>
 +#include <sys/types.h>
 +#include <pwd.h>
 +#include <unistd.h>
++#define group real_group
++#include <grp.h>
++#undef group
  
  static void usage PROTO ((void));
  
-@@ -204,6 +207,29 @@ static void omapi_listener_start (void *
+@@ -204,6 +210,30 @@ static void omapi_listener_start (void *
  	omapi_object_dereference (&listener, MDL);
  }
  
@@ -204,11 +221,12 @@ diff -urpN dhcp-3.0pl2.orig/server/dhcpd.c dhcp-3.0pl2/server/dhcpd.c
 +		return (-1);
 +	if (chdir("/"))
 +		return (-1);
-+
++#define group real_group
 +	if (initgroups(server_user, pw->pw_gid))
 +		return (-1);
 +	if (setgid(pw->pw_gid))
 +		return (-1);
++#undef group
 +	if (setuid(pw->pw_uid))
 +		return (-1);
 +	return (0);
@@ -217,7 +235,7 @@ diff -urpN dhcp-3.0pl2.orig/server/dhcpd.c dhcp-3.0pl2/server/dhcpd.c
  int main (argc, argv, envp)
  	int argc;
  	char **argv, **envp;
-@@ -237,6 +263,9 @@ int main (argc, argv, envp)
+@@ -237,6 +267,9 @@ int main (argc, argv, envp)
  	char *traceoutfile = (char *)0;
  #endif
  
@@ -227,7 +245,7 @@ diff -urpN dhcp-3.0pl2.orig/server/dhcpd.c dhcp-3.0pl2/server/dhcpd.c
  	/* Make sure we have stdin, stdout and stderr. */
  	status = open ("/dev/null", O_RDWR);
  	if (status == 0)
-@@ -263,6 +292,7 @@ int main (argc, argv, envp)
+@@ -263,6 +296,7 @@ int main (argc, argv, envp)
  	dhcp_common_objects_setup ();
  
  	/* Initially, log errors to stderr as well as to syslogd. */
@@ -235,7 +253,7 @@ diff -urpN dhcp-3.0pl2.orig/server/dhcpd.c dhcp-3.0pl2/server/dhcpd.c
  #ifdef SYSLOG_4_2
  	openlog ("dhcpd", LOG_NDELAY);
  	log_priority = DHCPD_LOG_FACILITY;
-@@ -331,6 +361,14 @@ int main (argc, argv, envp)
+@@ -331,6 +365,14 @@ int main (argc, argv, envp)
  		} else if (!strcmp (argv [i], "-q")) {
  			quiet = 1;
  			quiet_interface_discovery = 1;
@@ -250,46 +268,70 @@ diff -urpN dhcp-3.0pl2.orig/server/dhcpd.c dhcp-3.0pl2/server/dhcpd.c
  		} else if (!strcmp (argv [i], "--version")) {
  			log_info ("isc-dhcpd-%s", DHCP_VERSION);
  			exit (0);
-@@ -565,6 +603,19 @@ int main (argc, argv, envp)
+@@ -506,12 +548,6 @@ int main (argc, argv, envp)
+ 
+ 	group_write_hook = group_writer;
+ 
+-	/* Start up the database... */
+-	db_startup (lftest);
+-
+-	if (lftest)
+-		exit (0);
+-
+ 	/* Discover all the network interfaces and initialize them. */
+ 	discover_interfaces (DISCOVER_SERVER);
+ 
+@@ -565,6 +601,19 @@ int main (argc, argv, envp)
  			log_fatal ("There's already a DHCP server running.");
  	}
  
 +	if (pidfilewritten) {
 +		if (server_user && !server_jail) {
 +			if (drop_root(server_user, "/var/lib/dhcp") < 0)
-+				log_fatal("chroot failed.");
++				log_fatal("dhcpd: Failed to drop root.");
 +		}
 +		else if (server_jail && !server_user)
 +			log_fatal("'-j' is only valid with '-u'");
 +		else {
 +			if (drop_root(server_user, server_jail) < 0)
-+				log_fatal("chroot failed.");
++				log_fatal("dhcpd: Failed to drop root.");
 +		}
 +	}
 +	
  	/* If we were requested to log to stdout on the command line,
  	   keep doing so; otherwise, stop. */
  	if (log_perror == -1)
-@@ -593,6 +644,16 @@ int main (argc, argv, envp)
+@@ -593,7 +642,24 @@ int main (argc, argv, envp)
  			close (i);
  			pidfilewritten = 1;
  		}
 +		if (server_user && !server_jail) {
 +			if (drop_root(server_user, "/var/lib/dhcp") < 0)
-+				log_fatal("chroot failed.");
++				log_fatal("dhcpd: Failed to drop root.");
 +		}
 +		else if (server_jail && !server_user)
 +			log_fatal("'-j' is only valid with '-u'");
 +		else {
 +			if (drop_root(server_user, server_jail) < 0)
-+				log_fatal("chroot failed.");
++				log_fatal("dhcpd: Failed to drop root.");
 +		}
  	}
++
++	/* Start up the database... */
++	db_startup (lftest);
++
++	if (lftest)
++		exit (0);
++	
  #endif /* !DEBUG */
  
-@@ -888,6 +949,7 @@ static void usage ()
+ #if defined (DEBUG_MEMORY_LEAKAGE) || defined (DEBUG_MALLOC_POOL) || \
+@@ -886,8 +952,9 @@ static void usage ()
+ 	log_info (copyright);
+ 	log_info (arr);
  
- 	log_fatal ("Usage: dhcpd [-p <UDP port #>] [-d] [-f]%s%s%s%s",
+-	log_fatal ("Usage: dhcpd [-p <UDP port #>] [-d] [-f]%s%s%s%s",
++	log_fatal ("Usage: dhcpd [-p <UDP port #>] [-d] [-f]%s%s%s%s%s",
  		   "\n             [-cf config-file] [-lf lease-file]",
 +		   "\n             [-u user] [-j chroot-dir]",
  #if defined (TRACING)
