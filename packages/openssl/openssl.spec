@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.16 2002/02/07 01:19:23 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.17 2002/02/07 10:07:26 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
@@ -127,6 +127,9 @@ ln -s openssl $RPM_BUILD_ROOT/usr/bin/ssleay
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%post -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
+
 %files
 %defattr(0644,root,root,0755)
 %doc CHANGES CHANGES.SSLeay LICENSE NEWS README
@@ -148,9 +151,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0644,root,root) /usr/lib/*.a
 %attr(0644,root,root) /usr/include/openssl/*
 %attr(0644,root,root) /usr/man/man3/*
-
-%post -p /sbin/ldconfig
-%postun -p /sbin/ldconfig
 
 %changelog
 * Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>

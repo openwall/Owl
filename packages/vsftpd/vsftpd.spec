@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.3 2002/02/03 00:18:04 solar Exp $
+# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.4 2002/02/07 10:07:26 solar Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
@@ -50,6 +50,15 @@ touch $RPM_BUILD_ROOT/etc/ftpusers
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%pre
+grep -q ^vsftpd: /etc/group || groupadd -g 187 vsftpd
+grep -q ^vsftpd: /etc/passwd ||
+	useradd -g vsftpd -u 187 -d / -s /bin/false -M vsftpd
+set noclobber
+test -e /etc/ftpusers || echo root > /etc/ftpusers
+chmod 600 /etc/ftpusers
+mkdir -m 755 /home/ftp &> /dev/null || :
+
 %files
 %defattr(-,root,root)
 %doc README FAQ LICENSE
@@ -65,15 +74,6 @@ rm -rf $RPM_BUILD_ROOT
 %ghost %config %attr(0600,root,root) /etc/ftpusers
 %{_mandir}/man5/vsftpd.conf.5*
 %{_mandir}/man8/vsftpd.8*
-
-%pre
-grep -q ^vsftpd: /etc/group || groupadd -g 187 vsftpd
-grep -q ^vsftpd: /etc/passwd ||
-	useradd -g vsftpd -u 187 -d / -s /bin/false -M vsftpd
-set noclobber
-test -e /etc/ftpusers || echo root > /etc/ftpusers
-chmod 600 /etc/ftpusers
-mkdir -m 755 /home/ftp &> /dev/null || :
 
 %changelog
 * Sat Feb 02 2002 Solar Designer <solar@owl.openwall.com>

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/less/less.spec,v 1.8 2002/02/04 17:02:35 solar Exp $
+# $Id: Owl/packages/less/less.spec,v 1.9 2002/02/07 10:07:27 solar Exp $
 
 Summary: A text file browser similar to more, but better.
 Name: less
@@ -38,14 +38,14 @@ mkdir -p $RPM_BUILD_ROOT/etc/profile.d
 install -m 755 $RPM_SOURCE_DIR/lesspipe.sh $RPM_BUILD_ROOT/usr/bin/
 install -m 755 $RPM_SOURCE_DIR/less.{sh,csh} $RPM_BUILD_ROOT/etc/profile.d/
 
+%clean
+rm -rf $RPM_BUILD_ROOT
+
 %files
 %defattr(-,root,root)
 /etc/profile.d/*
 /usr/bin/*
 %{_mandir}/man1/*
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com>
@@ -62,12 +62,12 @@ faster (but still a lot slower than wc and grep).
 - lesspipe.sh: "cd /" before running groff such that it can't be attacked
 when less is run with an untrusted current directory.
 
-* Sun Sep  3 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Sep 03 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - use popen
 
 * Wed Aug 23 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - lesspipe fixes
 
-* Sun Aug  6 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import spec from RH
 - fix URL

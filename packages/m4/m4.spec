@@ -1,4 +1,4 @@
-# $Id: Owl/packages/m4/m4.spec,v 1.6 2002/02/07 01:41:15 solar Exp $
+# $Id: Owl/packages/m4/m4.spec,v 1.7 2002/02/07 10:07:27 solar Exp $
 
 Summary: The GNU macro processor.
 Name: m4
@@ -22,8 +22,6 @@ etc.  The autoconf program needs m4 for generating configure scripts, but
 not for running configure scripts.
 
 %prep
-rm -rf $RPM_BUILD_ROOT
-
 %setup -q
 %patch0 -p1
 %patch1 -p1
@@ -35,13 +33,11 @@ export ac_cv_func_mkstemp=yes \
 make CFLAGS="$RPM_OPT_FLAGS" LDFLAGS=-s
 
 %install
+rm -rf $RPM_BUILD_ROOT
 %makeinstall INSTALL_DATA="install -c -m 644"
 
-%files
-%defattr(-,root,root)
-%doc NEWS README
-%{_bindir}/m4
-%{_infodir}/*.info*
+%clean
+rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/install-info %{_infodir}/m4.info.gz %{_infodir}/dir
@@ -51,8 +47,11 @@ if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %{_infodir}/m4.info.gz %{_infodir}/dir
 fi
 
-%clean
-rm -rf $RPM_BUILD_ROOT
+%files
+%defattr(-,root,root)
+%doc NEWS README
+%{_bindir}/m4
+%{_infodir}/*.info*
 
 %changelog
 * Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
