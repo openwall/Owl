@@ -1,9 +1,9 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.16 2002/07/07 00:07:48 solar Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.17 2003/04/15 14:24:47 solar Exp $
 
 Version: 2.05
 Name: bash
 Summary: The GNU Bourne-Again SHell (Bash).
-Release: owl4
+Release: owl5
 Group: System Environment/Shells
 License: GPL
 Source0: ftp://ftp.gnu.org/gnu/bash/bash-%{version}.tar.gz
@@ -185,7 +185,10 @@ fi
 %doc doc/*.ps* doc/*.html doc/article.txt*
 
 %changelog
-* Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Apr 15 2003 Solar Designer <solar@owl.openwall.com> 2.05-owl5
+- Added /usr/local/sbin to the default PATH.
+
+* Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com> 2.05-owl4
 - Use grep -q in this spec file.
 
 * Sat May 25 2002 Solar Designer <solar@owl.openwall.com>

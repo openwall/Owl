@@ -6,7 +6,7 @@ diff -ur bash-2.05-cwru-fixes/config-top.h bash-2.05/config-top.h
  #ifndef DEFAULT_PATH_VALUE
  #define DEFAULT_PATH_VALUE \
 -  "/usr/gnu/bin:/usr/local/bin:/usr/ucb:/bin:/usr/bin:."
-+  "/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin"
++  "/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/sbin"
  #endif
  
  /* The value for PATH when invoking `command -p'.  This is only used when

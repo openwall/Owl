@@ -1,9 +1,9 @@
-# $Id: Owl/packages/tcsh/csh.login,v 1.2 2001/02/04 23:02:52 solar Exp $
+# $Id: Owl/packages/tcsh/csh.login,v 1.3 2003/04/15 14:20:09 solar Exp $
 
 # It is recommended that this file be left unchanged to permit for upgrades,
 # and any local additions go into /etc/profile.d/local.csh.
 
-setenv PATH "/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin"
+setenv PATH "/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/sbin"
 
 test -x /usr/X11R6/bin/xterm
 if ($status == 0) then

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.39 2002/08/22 01:39:29 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.40 2003/04/15 14:20:09 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
-Version: 0.23
-Release: owl2
+Version: 0.24
+Release: owl1
 License: public domain
 Group: System Environment/Base
 Source0: passwd
@@ -65,7 +65,10 @@ rm -rf $RPM_BUILD_ROOT
 %ghost /var/log/lastlog
 
 %changelog
-* Thu Aug 22 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Apr 15 2003 Solar Designer <solar@owl.openwall.com> 0.24-owl1
+- Added /usr/local/sbin to the default PATH.
+
+* Thu Aug 22 2002 Solar Designer <solar@owl.openwall.com> 0.23-owl2
 - Made more files noreplace.
 
 * Sun Jun 23 2002 Solar Designer <solar@owl.openwall.com>
