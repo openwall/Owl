@@ -1,11 +1,11 @@
-# $Id: Owl/packages/mktemp/mktemp.spec,v 1.4 2001/06/28 23:38:30 solar Exp $
+# $Id: Owl/packages/mktemp/mktemp.spec,v 1.5 2001/10/02 17:25:54 solar Exp $
 
 Summary: A small utility for safely making /tmp files.
 Name: mktemp
 Epoch: 1
-Version: 1.2
+Version: 1.3.1
 Release: 1owl
-Copyright: BSD
+License: BSD
 Group: System Environment/Base
 Source: ftp://ftp.courtesan.com/pub/mktemp/mktemp-%{version}.tar.gz
 URL: http://www.courtesan.com/mktemp/
@@ -40,6 +40,9 @@ rm -rf $RPM_BUILD_ROOT
 %_mandir/man1/mktemp.*
 
 %changelog
+* Tue Oct 02 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 1.3.1 (built-in $TMPDIR support).
+
 * Fri Jun 29 2001 Solar Designer <solar@owl.openwall.com>
 - Packaged the portable mktemp, now that Todd Miller maintains it in
 addition to the OpenBSD-specific version. :-)
