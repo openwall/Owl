@@ -104,14 +104,11 @@ this.  In particular, your kernel should be no longer a part of an RPM
 package by the time you convert the system into Owl.
 
 
-	Re-building individual packages.
+	(Re-)building individual packages.
 
-To re-build an Owl package: remove the SRPM in /usr/src/world/SRPMS,
-remove all the binary packages produced from this source package in
-/usr/src/world/RPMS, type "make buildworld".
+Individual packages may be built or re-built with "make PACKAGE=name",
+where "name" is the name of the source package.  For foreign packages
+(SRPMs) built with the Owl build environment you also need to include
+the version number part in "name".
 
-We do consider the building of SRPM's and the lack of automatic build
-dependency handling for re-builds to be bugs in the build environment.
-We will eventually fix these.
-
-$Id: Owl/doc/BUILD,v 1.15 2002/06/13 12:45:37 solar Exp $
+$Id: Owl/doc/BUILD,v 1.16 2002/06/22 08:39:34 solar Exp $
