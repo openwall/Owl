@@ -1,9 +1,9 @@
-# $Id: Owl/packages/gnupg/gnupg.spec,v 1.19 2003/05/16 13:10:24 mci Exp $
+# $Id: Owl/packages/gnupg/gnupg.spec,v 1.20 2003/05/16 17:49:51 solar Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
 Version: 1.2.2
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Cryptography
 URL: http://www.gnupg.org
