@@ -1,5 +1,5 @@
 --- SimplePAMApps-0.60.orig/common/lib/wtmp.c	Wed Jan 27 19:27:16 1999
-+++ SimplePAMApps-0.60/common/lib/wtmp.c	Fri Mar  1 22:51:14 2002
++++ SimplePAMApps-0.60/common/lib/wtmp.c	Fri Mar  1 23:14:57 2002
 @@ -3,9 +3,6 @@
   */
  
@@ -10,7 +10,7 @@
  #define WTMP_LOCK_TIMEOUT         3      /* in seconds */
  
  #include <fcntl.h>
-@@ -41,19 +38,32 @@
+@@ -41,19 +38,31 @@
   */
  
  static
@@ -32,8 +32,7 @@
 -            !strncmp(u_tmp_p->ut_line, ut_line, UT_LINESIZE))
 -                break;
 +	     u_tmp_p->ut_type == LOGIN_PROCESS ||
-+	     u_tmp_p->ut_type == USER_PROCESS ||
-+	     u_tmp_p->ut_type == DEAD_PROCESS) &&
++	     u_tmp_p->ut_type == USER_PROCESS) &&
 +	    !strncmp(u_tmp_p->ut_line, ut_line, UT_LINESIZE)) {
 +	    if (!strncmp(u_tmp_p->ut_id, ut_id, UT_IDSIZE))
 +		break;
@@ -52,7 +51,7 @@
  
      return u_tmp_p;
  }
-@@ -72,13 +82,18 @@
+@@ -72,13 +81,18 @@
      if ( *terminal == '/' ) {     /* now deal with filenames */
  	int o1, o2;
  
@@ -73,7 +72,7 @@
  	}
  
  	strncpy(ut_line, terminal + o1, UT_LINESIZE);
-@@ -203,7 +218,6 @@
+@@ -203,7 +217,6 @@
      set_terminal_name(terminal, ut_line, ut_id);
  
      utmpname(_PATH_UTMP);
