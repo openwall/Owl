@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.16 2001/04/12 03:06:39 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.17 2001/05/08 11:10:48 mci Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
 Version: 0.6
-Release: 2owl
+Release: 3owl
 Copyright: GPL
 Group: System Environment/Base
 Source0: initscripts-5.00.tar.gz
@@ -142,6 +142,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc redhat
 
 %changelog
+* Tue May 08 2001 Michail Litvak <mci@owl.openwall.com>
+- added ignoring *.swp, *~, *,
+
 * Wed Apr 11 2001 Michail Litvak <mci@owl.openwall.com>
 - removed echo about accounting stopping.
 
