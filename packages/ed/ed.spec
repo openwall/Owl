@@ -1,9 +1,9 @@
-# $Id: Owl/packages/ed/ed.spec,v 1.3 2000/11/23 13:38:03 mci Exp $
+# $Id: Owl/packages/ed/ed.spec,v 1.4 2000/11/23 13:46:07 mci Exp $
 
 Summary: The GNU line editor.
 Name: ed
 Version: 0.2
-Release: 18owl
+Release: 19owl
 Copyright: GPL
 Group: Applications/Text
 Source: ftp://ftp.gnu.org/gnu/%{name}-%{version}.tar.gz
