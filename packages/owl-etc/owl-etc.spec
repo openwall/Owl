@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.60 2005/01/14 03:27:52 galaxy Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.61 2005/01/20 04:39:13 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
@@ -161,6 +161,11 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 %ghost /etc/*-
 
 %changelog
+* Fri Jan 14 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.29-owl3
+- Let RPM know that /etc/shadow may be missing.
+- Include /etc/{group,passwd,shadow}- (backup copies - with the trailing
+"minus") into this package as "ghosts".
+
 * Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 0.29-owl2
 - Do install all sources explicitly (and do not pick anything else which
 might happen to be in RPM's source dir).
