@@ -1,9 +1,9 @@
-# $Id: Owl/packages/binutils/binutils.spec,v 1.2 2000/07/29 12:32:16 kad Exp $
+# $Id: Owl/packages/binutils/binutils.spec,v 1.3 2000/11/17 04:12:05 solar Exp $
 
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.10
-Release: 1owl
+Release: 2owl
 Copyright: GPL
 Group: Development/Tools
 URL: http://sourceware.cygnus.com/binutils
@@ -33,8 +33,11 @@ binary files.  Most programmers will want to install binutils.
 %build
 ADDITIONAL_TARGETS=""
 %ifos linux
-%ifarch sparc
+%ifarch sparc sparcv9
 ADDITIONAL_TARGETS="--enable-targets=sparc64-linux"
+%endif
+%ifarch sparcv9
+%define _target_platform sparc-%{_vendor}-%{_target_os}
 %endif
 %endif
 
@@ -92,6 +95,11 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Fri Nov 17 2000 Solar Designer <solar@owl.openwall.com>
+- --enable-targets=sparc64-linux for sparcv9 as well as plain sparc.
+- Pass plain sparc- target to configure when building for sparcv9, to
+allow for the use of sparcv9 optflags while not confusing configure.
+
 * Sat Jul 29 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - 2.10
 
