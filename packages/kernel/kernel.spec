@@ -1,4 +1,4 @@
-# $Id: Owl/packages/kernel/kernel.spec,v 1.4 2000/11/16 11:53:27 solar Exp $
+# $Id: Owl/packages/kernel/kernel.spec,v 1.5 2000/11/16 12:49:59 solar Exp $
 
 Summary: Fake Linux kernel package for RH compatibility
 Name: kernel
@@ -9,14 +9,17 @@ Group: System Environment/Base
 Source0: BuildASM-sparc.sh
 Prereq: basesystem
 ExclusiveOS: Linux
+%ifarch sparc sparcv9
+BuildArchitectures: %{_arch}
+%else
 BuildArchitectures: noarch
+%endif
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 
 %package headers
 Summary: Symlinks for the Linux kernel header files
 Group: Development/System
 Prereq: basesystem
-BuildArchitectures: noarch sparc sparcv9
 
 %description
 This package exists for RH compatibility only.  It doesn't provide an
