@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.44 2002/11/08 02:51:28 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.45 2003/03/23 18:52:39 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -6,7 +6,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
 %define crypt_bf_version 0.4.5
-Release: owl29
+Release: owl30
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%{version}.tar.gz
@@ -61,6 +61,7 @@ Patch54: glibc-2.1.3-cvs-20010109-dl.diff
 Patch55: glibc-2.1.3-cvs-20000929-alpha-reloc.diff
 Patch56: glibc-2.1.3-cvs-20011129-glob.diff
 Patch57: glibc-2.1.3-cvs-20020702-resolv.diff
+Patch58: glibc-2.1.3-cvs-20021216-rh-xdrmem.diff
 PreReq: /sbin/ldconfig
 %ifarch alpha
 Provides: ld.so.2
@@ -166,6 +167,7 @@ cd ..
 %patch55 -p1
 %patch56 -p1
 %patch57 -p1
+%patch58 -p1
 %ifarch sparcv9
 echo 'ASFLAGS-.os += -Wa,-Av8plusa' >> sysdeps/sparc/sparc32/elf/Makefile
 %endif
@@ -194,7 +196,7 @@ pushd build-$RPM_ARCH-linux
 make install_root=$RPM_BUILD_ROOT install-locales -C ../localedata objdir=`pwd`
 popd
 
-# the man pages for linuxthreads and crypt_blowfish require special attention
+# The man pages for linuxthreads and crypt_blowfish require special attention
 mkdir -p $RPM_BUILD_ROOT/usr/man/man3
 make -C linuxthreads/man
 install -m 0644 linuxthreads/man/*.3thr $RPM_BUILD_ROOT/usr/man/man3
@@ -268,7 +270,7 @@ grep -v '/usr/lib/lib.*\.a' < rpm.filelist.full |
 rm -f $RPM_BUILD_ROOT/etc/localtime
 cp -f $RPM_BUILD_ROOT/usr/share/zoneinfo/Europe/Moscow $RPM_BUILD_ROOT/etc/localtime
 
-# the last bit: more documentation
+# The last bit: more documentation
 rm -rf documentation
 mkdir documentation
 cp linuxthreads/ChangeLog  documentation/ChangeLog.threads
@@ -319,6 +321,12 @@ fi
 %endif
 
 %changelog
+* Sun Mar 23 2003 Solar Designer <solar@owl.openwall.com>
+- Included Red Hat's back-port of the Sun RPC XDR integer overflow fixes
+from glibc CVS; the fixes are by Paul Eggert and Roland McGrath, and the
+xdrmem_getbytes() integer overflow has been discovered by Riley Hassell
+of eEye Digital Security.
+
 * Fri Nov 08 2002 Solar Designer <solar@owl.openwall.com>
 - Made the x86 assembly code in crypt_blowfish reentrant (this time for
 real), added a test for proper operation with multiple threads, made
