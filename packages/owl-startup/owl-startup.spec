@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.17 2001/05/08 11:10:48 mci Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.17.2.1 2001/06/23 14:08:12 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.6
-Release: 3owl
+Version: 0.7
+Release: 1owl
 Copyright: GPL
 Group: System Environment/Base
 Source0: initscripts-5.00.tar.gz
@@ -142,6 +142,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc redhat
 
 %changelog
+* Wed May 30 2001 Solar Designer <solar@owl.openwall.com>
+- Set umask to 077 in daemon() for the case when a service is started
+manually rather than from rc.sysinit.
+
 * Tue May 08 2001 Michail Litvak <mci@owl.openwall.com>
 - added ignoring *.swp, *~, *,
 
