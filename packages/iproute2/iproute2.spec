@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iproute2/iproute2.spec,v 1.14 2003/11/21 23:19:31 mci Exp $
+# $Id: Owl/packages/iproute2/iproute2.spec,v 1.15 2004/04/18 02:22:07 solar Exp $
 
 %define ver 2.4.7
 %define snapshot ss020116
@@ -6,7 +6,7 @@
 Summary: Enhanced IP routing and network devices configuration tools.
 Name: iproute2
 Version: %ver.%snapshot
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.inr.ac.ru/ip-routing/%name-%ver-now-%snapshot-try.tar.gz
@@ -25,6 +25,7 @@ Patch0: iproute2-2.4.7-rh-promisc-allmulti.diff
 Patch1: iproute2-2.4.7-owl-socketbits.diff
 Patch2: iproute2-2.4.7-owl-warnings.diff
 Patch3: iproute2-2.4.7-deb-netlink.diff
+Patch4: iproute2-2.4.7-owl-nstat-bound.diff
 Provides: iproute = %version
 Obsoletes: iproute
 BuildRoot: /override/%name-%version
@@ -42,6 +43,7 @@ utilities (ip, tc, rtmon, rtacct, ifstat, nstat, rtstat, ss).
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %{expand:%%define optflags %optflags -Wall -Wstrict-prototypes}
 
@@ -81,6 +83,10 @@ gzip -9nf iproute2-ps/*.ps
 %_mandir/man8/*
 
 %changelog
+* Sun Apr 18 2004 Solar Designer <solar@owl.openwall.com> 2.4.7.ss020116-owl2
+- Fixed the potential buffer overflow in nstat discovered by Steve Grubb,
+and a number of other related potential issues in nstat.
+
 * Sat Nov 22 2003 Michail Litvak <mci@owl.openwall.com> 2.4.7.ss020116-owl1
 - reduce -owl-socketbits.diff to include only sockaddr_storage
 definition.
