@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.2 2000/12/03 02:29:47 solar Exp $
+# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.3 2000/12/04 02:40:07 solar Exp $
 
 Summary: Initial set of device files and MAKEDEV, a script to manage them
 Name: owl-dev
-Version: 0.1
+Version: 0.2
 Release: 1owl
 Copyright: public domain
 Group: System Environment/Base
@@ -39,19 +39,26 @@ chmod -R go-rwx $RPM_BUILD_ROOT/dev
 # Build the filelist
 cd $RPM_BUILD_DIR/MAKEDEV-2.5.2
 echo '%defattr(-,root,root)' > filelist
-find $RPM_BUILD_ROOT/dev ! -type d | sed "s,^$RPM_BUILD_ROOT,," >> filelist
+find $RPM_BUILD_ROOT/dev ! -type d ! -size 0 | \
+	sed "s,^$RPM_BUILD_ROOT,," >> filelist
+find $RPM_BUILD_ROOT/dev ! -type d -size 0 | \
+	sed "s,^$RPM_BUILD_ROOT,%ghost ," >> filelist
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %post
 cd /dev
-./MAKEDEV -p -d generic
 ./MAKEDEV -p generic
 
 %files -f filelist
 
 %changelog
+* Mon Dec 04 2000 Solar Designer <solar@owl.openwall.com>
+- Create device files for 4 IDE and 8 SCSI devices with up to 15 partitions
+by default.
+- Use %ghost.
+
 * Sun Dec 03 2000 Solar Designer <solar@owl.openwall.com>
 - Unix98 pty's support.
 
