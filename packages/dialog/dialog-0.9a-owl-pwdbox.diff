@@ -1,5 +1,5 @@
---- dialog-0.9a-20001027/inputstr.c.orig	Wed Dec  6 23:55:58 2000
-+++ dialog-0.9a-20001027/inputstr.c	Thu Dec  7 13:04:44 2000
+--- dialog-0.9a-20010527/inputstr.c.orig	Sat Oct 28 04:04:54 2000
++++ dialog-0.9a-20010527/inputstr.c	Sat Jun  9 15:31:08 2001
 @@ -87,28 +87,21 @@
  dlg_show_string(WINDOW *win, char *string, int offset, chtype attr,
  		int y_base, int x_base, int x_last, bool hidden, bool force)

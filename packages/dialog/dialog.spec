@@ -1,13 +1,16 @@
-# $Id: Owl/packages/dialog/dialog.spec,v 1.3 2000/12/27 23:36:28 mci Exp $
+# $Id: Owl/packages/dialog/dialog.spec,v 1.4 2001/06/10 01:17:49 mci Exp $
 
 Summary: A utility for creating TTY dialog boxes.
 Name: dialog
 Version: 0.9a
-Release: 5owl
+%define original_date	20010527
+Release: 6owl
 Copyright: GPL
 Group: Applications/System
-Source: ftp://dickey.his.com/dialog/dialog-0.9a-20001217.tgz
+Source: ftp://dickey.his.com/dialog/%{name}-%{version}-%{original_date}.tgz
 Patch0: dialog-0.9a-owl-pwdbox.diff
+Patch1: dialog-0.9a-asp-locale.diff
+Patch2: dialog-0.9a-asp-tmpdir.diff
 BuildRoot: /var/rpm-buildroot/%{name}-root
 
 %description
@@ -28,11 +31,17 @@ The following types of boxes are at your disposal:
   gauge            Typical "progress report" style box
   tail             Allows viewing the end of files (tail) that auto updates
   background tail  Similar to tail but runs in the background.
+  calendar         A calendar box displays month, day and year in
+		   separately  adjustable  windows
+  timebox	   A dialog is displayed which allows  you  to  select
+                   hour,  minute  and  second.
 
 
 %prep
-%setup -q -n dialog-0.9a-20001217
-%patch -p1
+%setup -q -n %{name}-%{version}-%{original_date}
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
 
 %build
 %configure --enable-nls
@@ -53,6 +62,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dialog.*
 
 %changelog
+* Sun Jun 10 2001 Michail Litvak <mci@owl.openwall.com>
+- Updated to new version
+- imported patches from ASP Linux
+
 * Thu Dec 28 2000 Michail Litvak <mci@owl.openwall.com>
 - Updated to new snapshot for fix file locking problem
 
