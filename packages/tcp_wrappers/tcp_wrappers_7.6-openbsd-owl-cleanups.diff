@@ -1,6 +1,6 @@
 diff -ur tcp_wrappers_7.6.orig/clean_exit.c tcp_wrappers_7.6/clean_exit.c
 --- tcp_wrappers_7.6.orig/clean_exit.c	Wed Dec 28 19:42:20 1994
-+++ tcp_wrappers_7.6/clean_exit.c	Mon Oct  2 06:19:22 2000
++++ tcp_wrappers_7.6/clean_exit.c	Tue Oct  3 03:04:22 2000
 @@ -13,13 +13,16 @@
  #endif
  
@@ -22,7 +22,7 @@ diff -ur tcp_wrappers_7.6.orig/clean_exit.c tcp_wrappers_7.6/clean_exit.c
  {
 diff -ur tcp_wrappers_7.6.orig/diag.c tcp_wrappers_7.6/diag.c
 --- tcp_wrappers_7.6.orig/diag.c	Wed Dec 28 19:42:20 1994
-+++ tcp_wrappers_7.6/diag.c	Mon Oct  2 06:19:22 2000
++++ tcp_wrappers_7.6/diag.c	Tue Oct  3 03:04:22 2000
 @@ -38,15 +38,18 @@
      char    fmt[BUFSIZ];
  
@@ -57,7 +57,7 @@ diff -ur tcp_wrappers_7.6.orig/diag.c tcp_wrappers_7.6/diag.c
      va_list ap;
 diff -ur tcp_wrappers_7.6.orig/eval.c tcp_wrappers_7.6/eval.c
 --- tcp_wrappers_7.6.orig/eval.c	Mon Jan 30 21:51:46 1995
-+++ tcp_wrappers_7.6/eval.c	Mon Oct  2 06:19:22 2000
++++ tcp_wrappers_7.6/eval.c	Tue Oct  3 03:04:22 2000
 @@ -111,7 +111,7 @@
  	return (hostinfo);
  #endif
@@ -78,7 +78,7 @@ diff -ur tcp_wrappers_7.6.orig/eval.c tcp_wrappers_7.6/eval.c
  	return (daemon);
 diff -ur tcp_wrappers_7.6.orig/fakelog.c tcp_wrappers_7.6/fakelog.c
 --- tcp_wrappers_7.6.orig/fakelog.c	Wed Dec 28 19:42:22 1994
-+++ tcp_wrappers_7.6/fakelog.c	Mon Oct  2 06:19:22 2000
++++ tcp_wrappers_7.6/fakelog.c	Tue Oct  3 03:04:22 2000
 @@ -17,7 +17,7 @@
  
  /* ARGSUSED */
@@ -117,7 +117,7 @@ diff -ur tcp_wrappers_7.6.orig/fakelog.c tcp_wrappers_7.6/fakelog.c
  }
 diff -ur tcp_wrappers_7.6.orig/hosts_access.c tcp_wrappers_7.6/hosts_access.c
 --- tcp_wrappers_7.6.orig/hosts_access.c	Wed Feb 12 04:13:23 1997
-+++ tcp_wrappers_7.6/hosts_access.c	Mon Oct  2 06:19:22 2000
++++ tcp_wrappers_7.6/hosts_access.c	Tue Oct  3 03:04:22 2000
 @@ -33,9 +33,10 @@
  #include <errno.h>
  #include <setjmp.h>
@@ -143,7 +143,7 @@ diff -ur tcp_wrappers_7.6.orig/hosts_access.c tcp_wrappers_7.6/hosts_access.c
  
 diff -ur tcp_wrappers_7.6.orig/inetcf.c tcp_wrappers_7.6/inetcf.c
 --- tcp_wrappers_7.6.orig/inetcf.c	Wed Feb 12 04:13:24 1997
-+++ tcp_wrappers_7.6/inetcf.c	Mon Oct  2 06:20:50 2000
++++ tcp_wrappers_7.6/inetcf.c	Tue Oct  3 03:04:22 2000
 @@ -14,12 +14,16 @@
  #include <stdio.h>
  #include <errno.h>
@@ -218,7 +218,7 @@ diff -ur tcp_wrappers_7.6.orig/inetcf.c tcp_wrappers_7.6/inetcf.c
  	} else if (check_path(daemon, &st) >= 0) {
 diff -ur tcp_wrappers_7.6.orig/misc.c tcp_wrappers_7.6/misc.c
 --- tcp_wrappers_7.6.orig/misc.c	Sun Feb 11 19:01:30 1996
-+++ tcp_wrappers_7.6/misc.c	Mon Oct  2 06:19:22 2000
++++ tcp_wrappers_7.6/misc.c	Tue Oct  3 03:04:22 2000
 @@ -17,8 +17,6 @@
  
  #include "tcpd.h"
@@ -230,7 +230,7 @@ diff -ur tcp_wrappers_7.6.orig/misc.c tcp_wrappers_7.6/misc.c
  #endif
 diff -ur tcp_wrappers_7.6.orig/miscd.c tcp_wrappers_7.6/miscd.c
 --- tcp_wrappers_7.6.orig/miscd.c	Sun Feb 11 19:01:31 1996
-+++ tcp_wrappers_7.6/miscd.c	Mon Oct  2 06:21:15 2000
++++ tcp_wrappers_7.6/miscd.c	Tue Oct  3 03:04:22 2000
 @@ -26,9 +26,10 @@
  #include <netinet/in.h>
  #include <stdio.h>
@@ -254,7 +254,7 @@ diff -ur tcp_wrappers_7.6.orig/miscd.c tcp_wrappers_7.6/miscd.c
      syslog(LOG_ERR, "error: cannot execute %s: %m", path);
 diff -ur tcp_wrappers_7.6.orig/myvsyslog.c tcp_wrappers_7.6/myvsyslog.c
 --- tcp_wrappers_7.6.orig/myvsyslog.c	Wed Dec 28 19:42:34 1994
-+++ tcp_wrappers_7.6/myvsyslog.c	Mon Oct  2 06:19:22 2000
++++ tcp_wrappers_7.6/myvsyslog.c	Tue Oct  3 03:04:22 2000
 @@ -14,11 +14,12 @@
  #ifdef vsyslog
  
@@ -280,7 +280,7 @@ diff -ur tcp_wrappers_7.6.orig/myvsyslog.c tcp_wrappers_7.6/myvsyslog.c
  
 diff -ur tcp_wrappers_7.6.orig/options.c tcp_wrappers_7.6/options.c
 --- tcp_wrappers_7.6.orig/options.c	Sun Feb 11 19:01:32 1996
-+++ tcp_wrappers_7.6/options.c	Mon Oct  2 06:21:29 2000
++++ tcp_wrappers_7.6/options.c	Tue Oct  3 03:04:22 2000
 @@ -41,15 +41,18 @@
  #include <netinet/in.h>
  #include <netdb.h>
@@ -488,7 +488,7 @@ diff -ur tcp_wrappers_7.6.orig/options.c tcp_wrappers_7.6/options.c
  	}
 diff -ur tcp_wrappers_7.6.orig/percent_m.c tcp_wrappers_7.6/percent_m.c
 --- tcp_wrappers_7.6.orig/percent_m.c	Wed Dec 28 19:42:37 1994
-+++ tcp_wrappers_7.6/percent_m.c	Mon Oct  2 06:19:22 2000
++++ tcp_wrappers_7.6/percent_m.c	Tue Oct  3 03:04:22 2000
 @@ -27,7 +27,11 @@
      char   *bp = obuf;
      char   *cp = ibuf;
@@ -511,7 +511,7 @@ diff -ur tcp_wrappers_7.6.orig/percent_m.c tcp_wrappers_7.6/percent_m.c
  }
 diff -ur tcp_wrappers_7.6.orig/percent_x.c tcp_wrappers_7.6/percent_x.c
 --- tcp_wrappers_7.6.orig/percent_x.c	Wed Dec 28 19:42:38 1994
-+++ tcp_wrappers_7.6/percent_x.c	Mon Oct  2 06:19:22 2000
++++ tcp_wrappers_7.6/percent_x.c	Tue Oct  3 03:04:22 2000
 @@ -17,10 +17,10 @@
  /* System libraries. */
  
@@ -527,7 +527,7 @@ diff -ur tcp_wrappers_7.6.orig/percent_x.c tcp_wrappers_7.6/percent_x.c
  
 diff -ur tcp_wrappers_7.6.orig/rfc931.c tcp_wrappers_7.6/rfc931.c
 --- tcp_wrappers_7.6.orig/rfc931.c	Mon Jan  2 18:11:34 1995
-+++ tcp_wrappers_7.6/rfc931.c	Mon Oct  2 06:22:01 2000
++++ tcp_wrappers_7.6/rfc931.c	Tue Oct  3 03:04:22 2000
 @@ -23,6 +23,7 @@
  #include <setjmp.h>
  #include <signal.h>
@@ -558,7 +558,7 @@ diff -ur tcp_wrappers_7.6.orig/rfc931.c tcp_wrappers_7.6/rfc931.c
  		}
 diff -ur tcp_wrappers_7.6.orig/scaffold.c tcp_wrappers_7.6/scaffold.c
 --- tcp_wrappers_7.6.orig/scaffold.c	Fri Mar 21 21:27:24 1997
-+++ tcp_wrappers_7.6/scaffold.c	Mon Oct  2 06:19:22 2000
++++ tcp_wrappers_7.6/scaffold.c	Tue Oct  3 03:04:22 2000
 @@ -17,6 +17,7 @@
  #include <arpa/inet.h>
  #include <netdb.h>
@@ -587,7 +587,7 @@ diff -ur tcp_wrappers_7.6.orig/scaffold.c tcp_wrappers_7.6/scaffold.c
      }
 diff -ur tcp_wrappers_7.6.orig/shell_cmd.c tcp_wrappers_7.6/shell_cmd.c
 --- tcp_wrappers_7.6.orig/shell_cmd.c	Wed Dec 28 19:42:44 1994
-+++ tcp_wrappers_7.6/shell_cmd.c	Mon Oct  2 06:19:22 2000
++++ tcp_wrappers_7.6/shell_cmd.c	Tue Oct  3 03:04:22 2000
 @@ -16,12 +16,14 @@
  
  #include <sys/types.h>
@@ -616,7 +616,7 @@ diff -ur tcp_wrappers_7.6.orig/shell_cmd.c tcp_wrappers_7.6/shell_cmd.c
  	error = "dup: %m";
 diff -ur tcp_wrappers_7.6.orig/socket.c tcp_wrappers_7.6/socket.c
 --- tcp_wrappers_7.6.orig/socket.c	Fri Mar 21 21:27:25 1997
-+++ tcp_wrappers_7.6/socket.c	Mon Oct  2 06:19:22 2000
++++ tcp_wrappers_7.6/socket.c	Tue Oct  3 03:04:22 2000
 @@ -25,12 +25,11 @@
  #include <sys/param.h>
  #include <sys/socket.h>
@@ -633,7 +633,7 @@ diff -ur tcp_wrappers_7.6.orig/socket.c tcp_wrappers_7.6/socket.c
  
 diff -ur tcp_wrappers_7.6.orig/tcpd.c tcp_wrappers_7.6/tcpd.c
 --- tcp_wrappers_7.6.orig/tcpd.c	Sun Feb 11 19:01:33 1996
-+++ tcp_wrappers_7.6/tcpd.c	Mon Oct  2 06:21:42 2000
++++ tcp_wrappers_7.6/tcpd.c	Tue Oct  3 03:06:58 2000
 @@ -24,9 +24,11 @@
  #include <stdio.h>
  #include <syslog.h>
@@ -678,14 +678,14 @@ diff -ur tcp_wrappers_7.6.orig/tcpd.c tcp_wrappers_7.6/tcpd.c
  	argv[0] = strrchr(argv[0], '/') + 1;
      } else {
 -	sprintf(path, "%s/%s", REAL_DAEMON_DIR, argv[0]);
-+	path = path_buffer;
-+	snprintf(path, sizeof(path), "%s/%s", REAL_DAEMON_DIR, argv[0]);
++	snprintf(path = path_buffer, sizeof(path_buffer),
++	    "%s/%s", REAL_DAEMON_DIR, argv[0]);
      }
  
      /*
 diff -ur tcp_wrappers_7.6.orig/tcpd.h tcp_wrappers_7.6/tcpd.h
 --- tcp_wrappers_7.6.orig/tcpd.h	Tue Mar 19 18:22:25 1996
-+++ tcp_wrappers_7.6/tcpd.h	Mon Oct  2 06:19:22 2000
++++ tcp_wrappers_7.6/tcpd.h	Tue Oct  3 03:04:22 2000
 @@ -70,6 +70,7 @@
  extern void shell_cmd();		/* execute shell command */
  extern char *percent_x();		/* do %<char> expansion */
@@ -711,7 +711,7 @@ diff -ur tcp_wrappers_7.6.orig/tcpd.h tcp_wrappers_7.6/tcpd.h
  extern void tcpd_warn();
 diff -ur tcp_wrappers_7.6.orig/tcpdchk.c tcp_wrappers_7.6/tcpdchk.c
 --- tcp_wrappers_7.6.orig/tcpdchk.c	Wed Feb 12 04:13:25 1997
-+++ tcp_wrappers_7.6/tcpdchk.c	Mon Oct  2 06:22:23 2000
++++ tcp_wrappers_7.6/tcpdchk.c	Tue Oct  3 03:04:22 2000
 @@ -30,11 +30,7 @@
  #include <errno.h>
  #include <netdb.h>
@@ -775,7 +775,7 @@ diff -ur tcp_wrappers_7.6.orig/tcpdchk.c tcp_wrappers_7.6/tcpdchk.c
  	    tcpd_warn("%s/%s: bad net/mask pattern", pat, mask);
 diff -ur tcp_wrappers_7.6.orig/tcpdmatch.c tcp_wrappers_7.6/tcpdmatch.c
 --- tcp_wrappers_7.6.orig/tcpdmatch.c	Sun Feb 11 19:01:36 1996
-+++ tcp_wrappers_7.6/tcpdmatch.c	Mon Oct  2 06:19:22 2000
++++ tcp_wrappers_7.6/tcpdmatch.c	Tue Oct  3 03:04:22 2000
 @@ -26,13 +26,11 @@
  #include <arpa/inet.h>
  #include <netdb.h>
@@ -803,7 +803,7 @@ diff -ur tcp_wrappers_7.6.orig/tcpdmatch.c tcp_wrappers_7.6/tcpdmatch.c
  	    hosts_allow_table = "hosts.allow";
 diff -ur tcp_wrappers_7.6.orig/try-from.c tcp_wrappers_7.6/try-from.c
 --- tcp_wrappers_7.6.orig/try-from.c	Wed Dec 28 19:42:55 1994
-+++ tcp_wrappers_7.6/try-from.c	Mon Oct  2 06:19:22 2000
++++ tcp_wrappers_7.6/try-from.c	Tue Oct  3 03:04:22 2000
 @@ -37,7 +37,7 @@
  int     allow_severity = SEVERITY;	/* run-time adjustable */
  int     deny_severity = LOG_WARNING;	/* ditto */
@@ -815,7 +815,7 @@ diff -ur tcp_wrappers_7.6.orig/try-from.c tcp_wrappers_7.6/try-from.c
  {
 diff -ur tcp_wrappers_7.6.orig/update.c tcp_wrappers_7.6/update.c
 --- tcp_wrappers_7.6.orig/update.c	Wed Dec 28 19:42:56 1994
-+++ tcp_wrappers_7.6/update.c	Mon Oct  2 06:19:22 2000
++++ tcp_wrappers_7.6/update.c	Tue Oct  3 03:04:22 2000
 @@ -22,6 +22,7 @@
  #include <stdio.h>
  #include <syslog.h>
