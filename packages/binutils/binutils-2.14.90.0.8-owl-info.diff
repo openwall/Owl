@@ -1,6 +1,7 @@
---- binutils-2.10.1.0.4/bfd/doc/bfd.texinfo.orig	Thu Nov 16 22:33:34 2000
-+++ binutils-2.10.1.0.4/bfd/doc/bfd.texinfo	Mon Aug 26 01:44:15 2002
-@@ -20,7 +20,8 @@
+diff -uprN binutils-2.14.90.0.8.orig/bfd/doc/bfd.texinfo binutils-2.14.90.0.8/bfd/doc/bfd.texinfo
+--- binutils-2.14.90.0.8.orig/bfd/doc/bfd.texinfo	Wed Jan 14 21:07:44 2004
++++ binutils-2.14.90.0.8/bfd/doc/bfd.texinfo	Wed Jan 21 10:09:04 2004
+@@ -22,7 +22,8 @@
  @ifinfo
  @format
  START-INFO-DIR-ENTRY
@@ -10,9 +11,10 @@
  END-INFO-DIR-ENTRY
  @end format
  @end ifinfo
---- binutils-2.10.1.0.4/binutils/binutils.texi.orig	Tue Dec  5 05:33:58 2000
-+++ binutils-2.10.1.0.4/binutils/binutils.texi	Mon Aug 26 01:54:12 2002
-@@ -5,22 +5,31 @@
+diff -uprN binutils-2.14.90.0.8.orig/binutils/doc/binutils.texi binutils-2.14.90.0.8/binutils/doc/binutils.texi
+--- binutils-2.14.90.0.8.orig/binutils/doc/binutils.texi	Wed Jan 14 21:07:44 2004
++++ binutils-2.14.90.0.8/binutils/doc/binutils.texi	Wed Jan 21 10:09:04 2004
+@@ -7,22 +7,31 @@
  @ifinfo
  @format
  START-INFO-DIR-ENTRY
@@ -60,8 +62,9 @@
  END-INFO-DIR-ENTRY
  @end format
  @end ifinfo
---- binutils-2.10.1.0.4/etc/standards.texi.orig	Thu Jun  3 22:01:55 1999
-+++ binutils-2.10.1.0.4/etc/standards.texi	Mon Aug 26 01:39:57 2002
+diff -uprN binutils-2.14.90.0.8.orig/etc/standards.texi binutils-2.14.90.0.8/etc/standards.texi
+--- binutils-2.14.90.0.8.orig/etc/standards.texi	Thu Mar  7 19:52:37 2002
++++ binutils-2.14.90.0.8/etc/standards.texi	Wed Jan 21 10:09:04 2004
 @@ -9,7 +9,7 @@
  @ifinfo
  @format
@@ -71,31 +74,24 @@
  END-INFO-DIR-ENTRY
  @end format
  @end ifinfo
---- binutils-2.10.1.0.4/gas/doc/gasp.texi.orig	Wed Nov  8 03:30:32 2000
-+++ binutils-2.10.1.0.4/gas/doc/gasp.texi	Mon Aug 26 01:39:57 2002
-@@ -15,7 +15,7 @@
- @ifinfo
- @format
- START-INFO-DIR-ENTRY
--* gasp: (gasp).                     The GNU Assembler Preprocessor
-+* gasp: (gasp).                                 The GNU Assembler Preprocessor
- END-INFO-DIR-ENTRY
- @end format
- @end ifinfo
---- binutils-2.10.1.0.4/gas/doc/as.texinfo.orig	Tue Dec  5 05:34:01 2000
-+++ binutils-2.10.1.0.4/gas/doc/as.texinfo	Mon Aug 26 01:39:57 2002
-@@ -76,7 +76,7 @@
+diff -uprN binutils-2.14.90.0.8.orig/gas/doc/as.texinfo binutils-2.14.90.0.8/gas/doc/as.texinfo
+--- binutils-2.14.90.0.8.orig/gas/doc/as.texinfo	Wed Jan 14 21:07:46 2004
++++ binutils-2.14.90.0.8/gas/doc/as.texinfo	Wed Jan 21 10:13:03 2004
+@@ -90,8 +90,8 @@
  @ifinfo
  @format
  START-INFO-DIR-ENTRY
 -* As: (as).                     The GNU assembler.
+-* Gas: (as).                    The GNU assembler.
 +* As: (as).                                     The GNU assembler.
++* Gas: (as).                                    The GNU assembler.
  END-INFO-DIR-ENTRY
  @end format
  @end ifinfo
---- binutils-2.10.1.0.4/gprof/gprof.texi.orig	Wed Nov  8 03:30:49 2000
-+++ binutils-2.10.1.0.4/gprof/gprof.texi	Mon Aug 26 01:55:25 2002
-@@ -8,7 +8,8 @@
+diff -uprN binutils-2.14.90.0.8.orig/gprof/gprof.texi binutils-2.14.90.0.8/gprof/gprof.texi
+--- binutils-2.14.90.0.8.orig/gprof/gprof.texi	Wed Jan 14 21:07:51 2004
++++ binutils-2.14.90.0.8/gprof/gprof.texi	Wed Jan 21 10:09:04 2004
+@@ -10,7 +10,8 @@
  @c manuals to an info tree.  zoo@cygnus.com is developing this facility.
  @format
  START-INFO-DIR-ENTRY
@@ -105,9 +101,10 @@
  END-INFO-DIR-ENTRY
  @end format
  @end ifinfo
---- binutils-2.10.1.0.4/ld/ld.texinfo.orig	Fri Dec 22 03:47:49 2000
-+++ binutils-2.10.1.0.4/ld/ld.texinfo	Mon Aug 26 01:39:57 2002
-@@ -10,7 +10,7 @@
+diff -uprN binutils-2.14.90.0.8.orig/ld/ld.texinfo binutils-2.14.90.0.8/ld/ld.texinfo
+--- binutils-2.14.90.0.8.orig/ld/ld.texinfo	Wed Jan 14 21:07:52 2004
++++ binutils-2.14.90.0.8/ld/ld.texinfo	Wed Jan 21 10:09:04 2004
+@@ -52,7 +52,7 @@
  @ifinfo
  @format
  START-INFO-DIR-ENTRY
@@ -116,9 +113,10 @@
  END-INFO-DIR-ENTRY
  @end format
  @end ifinfo
---- binutils-2.10.1.0.4/ld/ldint.texinfo.orig	Wed Nov  8 03:30:52 2000
-+++ binutils-2.10.1.0.4/ld/ldint.texinfo	Mon Aug 26 01:39:57 2002
-@@ -4,7 +4,7 @@
+diff -uprN binutils-2.14.90.0.8.orig/ld/ldint.texinfo binutils-2.14.90.0.8/ld/ldint.texinfo
+--- binutils-2.14.90.0.8.orig/ld/ldint.texinfo	Wed Jan 14 21:07:52 2004
++++ binutils-2.14.90.0.8/ld/ldint.texinfo	Wed Jan 21 10:09:04 2004
+@@ -6,7 +6,7 @@
  @ifinfo
  @format
  START-INFO-DIR-ENTRY

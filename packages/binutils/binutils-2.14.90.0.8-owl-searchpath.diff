@@ -1,0 +1,118 @@
+diff -urpN binutils-2.14.90.0.8.orig/ld/ldfile.c binutils-2.14.90.0.8/ld/ldfile.c
+--- binutils-2.14.90.0.8.orig/ld/ldfile.c	Wed Jan 14 21:07:52 2004
++++ binutils-2.14.90.0.8/ld/ldfile.c	Sat Jan 24 21:26:59 2004
+@@ -287,6 +287,19 @@ ldfile_try_open_bfd (const char *attempt
+ /* Search for and open the file specified by ENTRY.  If it is an
+    archive, use ARCH, LIB and SUFFIX to modify the file name.  */
+ 
++/*
++ * Logic (simplified):
++ *
++ * 1. if this is not an archive, try to open it in current directory first
++ * 2. scan search path for dynamic objects (*)
++ * 3. scan search path for archive objects
++ *
++ * (*) - if the pathname in the search path comes from command line (i.e.
++ *       was specified via -L command line switch, then if opening of the
++ *       dynamic object fails, try to open archive object.  This is done
++ *       because else we will break ability to build executables with
++ *       included libraries whose versions differ from the system ones.
++ */
+ bfd_boolean
+ ldfile_open_file_search (const char *arch,
+ 			 lang_input_statement_type *entry,
+@@ -295,6 +308,10 @@ ldfile_open_file_search (const char *arc
+ {
+   search_dirs_type *search;
+ 
++  /* these variables used to save information about found archive */
++  bfd_boolean saved_sysrooted = FALSE;
++  char *saved_filename = NULL;
++
+   /* If this is not an archive, try to open it in the current
+      directory first.  */
+   if (! entry->is_archive)
+@@ -323,7 +340,6 @@ ldfile_open_file_search (const char *arc
+ 
+   for (search = search_head; search != NULL; search = search->next)
+     {
+-      char *string;
+ 
+       if (entry->dynamic && ! link_info.relocatable)
+ 	{
+@@ -334,28 +350,55 @@ ldfile_open_file_search (const char *arc
+ 	    }
+ 	}
+ 
+-      string = xmalloc (strlen (search->name)
+-			+ strlen (slash)
+-			+ strlen (lib)
+-			+ strlen (entry->filename)
+-			+ strlen (arch)
+-			+ strlen (suffix)
+-			+ 1);
+-
+-      if (entry->is_archive)
+-	sprintf (string, "%s%s%s%s%s%s", search->name, slash,
+-		 lib, entry->filename, arch, suffix);
+-      else
+-	sprintf (string, "%s%s%s", search->name, slash, entry->filename);
++      if (!saved_filename)	/* we haven't found any archive yet */
++        {
++	  char *string;
++
++          string = xmalloc (strlen (search->name)
++			    + strlen (slash)
++			    + strlen (lib)
++			    + strlen (entry->filename)
++			    + strlen (arch)
++			    + strlen (suffix)
++			    + 1);
++
++          if (entry->is_archive)
++	    sprintf (string, "%s%s%s%s%s%s", search->name, slash,
++		     lib, entry->filename, arch, suffix);
++          else
++	    sprintf (string, "%s%s%s", search->name, slash, entry->filename);
+ 
+-      if (ldfile_try_open_bfd (string, entry))
+-	{
+-	  entry->filename = string;
+-	  entry->sysrooted = search->sysrooted;
+-	  return TRUE;
+-	}
++          if (ldfile_try_open_bfd (string, entry))
++	    {
+ 
+-      free (string);
++	      if (!bfd_close(entry->the_bfd))
++	        {
++		  einfo (_("%F%P: error closing bfd: %s\n"), entry->filename);
++		}
++
++	      entry->the_bfd = NULL;
++
++	      /* we found the archive, let's save information */
++	      saved_filename = string;
++	      saved_sysrooted = search->sysrooted;
++
++	      if (search->cmdline)
++	        break;
++	    }
++	  else
++	    free (string);
++        }	
++    }
++
++  /*
++   * if control gets here this means that we haven't found shared object
++   * and have to try to link against archive whose name we saved previously.
++   */
++  if (saved_filename && ldfile_try_open_bfd (saved_filename, entry))
++    {
++      entry->filename = saved_filename;
++      entry->sysrooted = saved_sysrooted;
++      return TRUE;
+     }
+ 
+   return FALSE;
