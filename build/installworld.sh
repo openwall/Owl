@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/installworld.sh,v 1.2 2000/12/11 02:42:46 solar Exp $
+# $Id: Owl/build/installworld.sh,v 1.3 2000/12/17 02:00:49 solar Exp $
 
 . installworld.conf
 
@@ -41,7 +41,9 @@ rm -rf tmp-work $ROOT/$HOME/tmp-work
 trap clean_death HUP INT TERM
 
 mkdir -p tmp-work $ROOT/$HOME/tmp-work
+
 export TMPDIR=$HOME/tmp-work
+export TMP=$HOME/tmp-work
 
 cd $RPMS || exit 1
 
