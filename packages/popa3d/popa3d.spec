@@ -1,8 +1,8 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.16 2002/04/16 17:53:06 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.17 2002/05/25 14:38:49 solar Exp $
 
 Summary: Post Office Protocol server.
 Name: popa3d
-Version: 0.5.1
+Version: 0.5.1.1
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
@@ -72,6 +72,11 @@ fi
 %doc DESIGN LICENSE
 
 %changelog
+* Sat May 25 2002 Solar Designer <solar@owl.openwall.com>
+- Relaxed the overflow check with strtol() to what really is needed
+to solve the interoperability problem reported by Yury Trembach on
+fido7.ru.unix.
+
 * Tue Apr 02 2002 Solar Designer <solar@owl.openwall.com>
 - Let the local delivery agent help generate unique ID's by setting the
 X-Delivery-ID: header.

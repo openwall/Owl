@@ -9,6 +9,7 @@
 #include <setjmp.h>
 #include <string.h>
 #include <stdarg.h>
+#include <errno.h>
 
 #include "misc.h"
 #include "params.h"
@@ -161,10 +162,16 @@ int pop_get_int(char **params)
 	long value;
 
 	if ((param = pop_get_param(params))) {
+/* SUSv2 says:
+ * "Because 0, LONG_MIN and LONG_MAX are returned on error and are also
+ * valid returns on success, an application wishing to check for error
+ * situations should set errno to 0, then call strtol(), then check errno." */
+		errno = 0;
 		value = strtol(param, &error, 10);
-		if (!*param || *error || (value & ~0x3FFFFFFFL)) return -1;
+		if (errno || !*param || *error || (long)(int)value != value)
+			return -1;
 
-		return value;
+		return (int)value;
 	}
 
 	return -1;
