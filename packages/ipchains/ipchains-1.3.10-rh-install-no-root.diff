@@ -1,0 +1,15 @@
+--- ipchains-1.3.10/Makefile.nonroot	Tue Oct 10 11:24:31 2000
++++ ipchains-1.3.10/Makefile	Tue Oct 10 11:24:40 2000
+@@ -41,9 +41,9 @@
+ 	[ -d $(PREFIX)/$(MANDIR)/man4 ] || mkdir -p $(PREFIX)/$(MANDIR)/man4
+ 	[ -d $(PREFIX)/$(MANDIR)/man8 ] || mkdir -p $(PREFIX)/$(MANDIR)/man8
+ 	@-mv $(PREFIX)/$(SBIN)/ipchains $(PREFIX)/$(SBIN)/ipchains.old
+-	$(INSTALL) -m 0755 -o root -g root ipchains $(PREFIX)/$(SBIN)/
+-	$(INSTALL) -m 0644 -o root -g root ipfw.4 $(PREFIX)/$(MANDIR)/man4/
+-	$(INSTALL) -m 0644 -o root -g root ipchains.8 $(PREFIX)/$(MANDIR)/man8/
++	$(INSTALL) -m 0755 ipchains $(PREFIX)/$(SBIN)/
++	$(INSTALL) -m 0644 ipfw.4 $(PREFIX)/$(MANDIR)/man4/
++	$(INSTALL) -m 0644 ipchains.8 $(PREFIX)/$(MANDIR)/man8/
+
+ uninstall:
+ 	-rm -f $(PREFIX)/$(SBIN)/ipchains $(PREFIX)/$(MANDIR)/man4/ipfw.4 $(PREFIX)/$(MANDIR)/man8/ipchains.8
