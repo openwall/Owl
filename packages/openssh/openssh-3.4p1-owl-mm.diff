@@ -128,7 +128,7 @@ diff -ur openssh-3.4p1.orig/configure.ac openssh-3.4p1/configure.ac
  	AC_CHECK_LIB(gen, dirname,[
 diff -ur openssh-3.4p1.orig/monitor_mm.c openssh-3.4p1/monitor_mm.c
 --- openssh-3.4p1.orig/monitor_mm.c	Wed Jun 26 04:29:03 2002
-+++ openssh-3.4p1/monitor_mm.c	Fri Jun 28 16:12:49 2002
++++ openssh-3.4p1/monitor_mm.c	Fri Jul  5 22:13:45 2002
 @@ -29,6 +29,7 @@
  #ifdef HAVE_SYS_MMAN_H
  #include <sys/mman.h>
@@ -181,7 +181,7 @@ diff -ur openssh-3.4p1.orig/monitor_mm.c openssh-3.4p1/monitor_mm.c
  	if (address == MAP_FAILED)
  		fatal("mmap(%lu): %s", (u_long)size, strerror(errno));
  #else
-@@ -105,6 +139,28 @@
+@@ -105,6 +139,27 @@
  	return (mm);
  }
  
@@ -199,9 +199,8 @@ diff -ur openssh-3.4p1.orig/monitor_mm.c openssh-3.4p1/monitor_mm.c
 +		if (*ptr++) *(ptr - 1) = 0;
 +	ptr_l = (u_long *)ptr;
 +	end_l = (u_long *)end - 1;
-+	while (ptr_l <= end_l) {
++	while (ptr_l <= end_l)
 +		if (*ptr_l++) *(ptr_l - 1) = 0;
-+	}
 +	ptr = (u_char *)ptr_l;
 +	while (ptr < end)
 +		if (*ptr++) *(ptr - 1) = 0;
@@ -210,7 +209,7 @@ diff -ur openssh-3.4p1.orig/monitor_mm.c openssh-3.4p1/monitor_mm.c
  /* Frees either the allocated or the free list */
  
  static void
-@@ -130,7 +186,12 @@
+@@ -130,7 +185,12 @@
  	mm_freelist(mm->mmalloc, &mm->rb_free);
  	mm_freelist(mm->mmalloc, &mm->rb_allocated);
  
@@ -224,7 +223,7 @@ diff -ur openssh-3.4p1.orig/monitor_mm.c openssh-3.4p1/monitor_mm.c
  	if (munmap(mm->address, mm->size) == -1)
  		fatal("munmap(%p, %lu): %s", mm->address, (u_long)mm->size,
  		    strerror(errno));
-@@ -176,8 +237,12 @@
+@@ -176,8 +236,12 @@
  	if (mms == NULL)
  		return (NULL);
  
@@ -237,7 +236,7 @@ diff -ur openssh-3.4p1.orig/monitor_mm.c openssh-3.4p1/monitor_mm.c
  
  	tmp = mm_make_entry(mm, &mm->rb_allocated, mms->address, size);
  
-@@ -208,8 +273,12 @@
+@@ -208,8 +272,12 @@
  	if (mms == NULL)
  		fatal("mm_free(%p): can not find %p", mm, address);
  
@@ -250,7 +249,7 @@ diff -ur openssh-3.4p1.orig/monitor_mm.c openssh-3.4p1/monitor_mm.c
  
  	/* Remove from allocated list and insert in free list */
  	RB_REMOVE(mmtree, &mm->rb_allocated, mms);
-@@ -339,4 +408,7 @@
+@@ -339,4 +407,7 @@
  		fatal("mm_memvalid: end < address: %p < %p", end, address);
  	if (end > (void *)((u_char *)mm->address + mm->size))
  		fatal("mm_memvalid: address too large: %p", address);
