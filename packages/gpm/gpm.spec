@@ -1,6 +1,6 @@
-# $Id: Owl/packages/gpm/gpm.spec,v 1.13 2002/08/26 16:16:00 mci Exp $
+# $Id: Owl/packages/gpm/gpm.spec,v 1.14 2003/04/23 22:16:37 solar Exp $
 
-# this defines the library version that this package builds.
+# This defines the library version that this package builds.
 %define LIBVER 1.18.0
 %define BUILD_GPM_ROOT 0
 
@@ -67,12 +67,12 @@ make CFLAGS="" CPPFLAGS=""
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}
 
 %makeinstall
 
-install -m 644 doc/gpm-root.1 ${RPM_BUILD_ROOT}%{_mandir}/man1
-install -m 644 conf/gpm-root.conf ${RPM_BUILD_ROOT}%{_sysconfdir}
+install -m 644 doc/gpm-root.1 $RPM_BUILD_ROOT%{_mandir}/man1/
+install -m 644 conf/gpm-root.conf $RPM_BUILD_ROOT%{_sysconfdir}/
 
 cd $RPM_BUILD_ROOT
 
