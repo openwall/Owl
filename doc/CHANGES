@@ -12,6 +12,14 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/04/19 -
+2002/04/25	Packages: vim, bash, quota, vixie-cron
+Updated vim to 6.1 patchlevel 18, with various additional changes to
+the package.  The package now includes vitmp(1), a wrapper around VIM
+to be used for editing temporary files with in-place rewrites.  It is
+now the default editor for crontab(1), edquota(8), the "fix command"
+(fc) history editor in bash, and the bashbug script.
+
 2002/04/10	Package: john
 New package: John the Ripper, a fast password cracker.
 
@@ -657,4 +665,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.83 2002/04/10 14:52:41 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.84 2002/04/24 23:21:13 solar Exp $
