@@ -1,9 +1,9 @@
-# $Id: Owl/packages/elinks/elinks.spec,v 1.9 2004/01/28 03:41:13 solar Exp $
+# $Id: Owl/packages/elinks/elinks.spec,v 1.10 2004/02/01 00:12:33 mci Exp $
 
 Summary: Lynx-like text WWW browser with many features.
 Name: elinks
 Version: 0.9.1
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Internet
 URL: http://elinks.or.cz
@@ -71,6 +71,9 @@ popd
 %_mandir/man?/*
 
 %changelog
+* Sun Feb 01 2004 Michail Litvak <mci@owl.openwall.com> 0.9.1-owl2
+- Fix bug in -owl-tmp patch (Thanks to Alexey Tourbin for report).
+
 * Wed Jan 28 2004 Michail Litvak <mci@owl.openwall.com> 0.9.1-owl1
 - 0.9.1
 - Regenerated patches.
