@@ -1,4 +1,4 @@
-# $Id: Owl/packages/john/john.spec,v 1.1 2002/04/10 14:13:24 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.2 2002/04/10 14:22:50 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -22,8 +22,12 @@ of other hash types are supported as well.
 
 %build
 cd src
+%ifarch i686 i786 i886 i986
+make linux-x86-mmx-elf CFLAGS='%cflags'
+%else
 %ifarch %ix86
 make linux-x86-any-elf CFLAGS='%cflags'
+%endif
 %endif
 %ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
 make linux-alpha CFLAGS='%cflags'
