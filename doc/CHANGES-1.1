@@ -17,7 +17,11 @@ SECURITY FIX	Severity: none to high, remote, active
 Included Red Hat's back-port of the Sun RPC XDR integer overflow
 fixes from glibc CVS.  The fixes are by Paul Eggert and Roland
 McGrath, and the xdrmem_getbytes() integer overflow has been
-discovered by Riley Hassell of eEye Digital Security.
+discovered by Riley Hassell of eEye Digital Security.  Please note
+that Owl does not include any RPC services (but it does include a few
+RPC clients).  It has not been fully researched whether an Owl install
+with no third-party software added is affected by this vulnerability
+at all.
 References:
 http://www.eeye.com/html/Research/Advisories/AD20030318.html
 http://www.kb.cert.org/vuls/id/516825
@@ -223,4 +227,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.35 2003/03/23 18:54:59 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.36 2003/03/23 19:43:56 solar Exp $
