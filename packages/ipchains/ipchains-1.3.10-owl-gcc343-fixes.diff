@@ -1,0 +1,11 @@
+diff -puNr ipchains-1.3.10.orig/libipfwc/libipfwc.c ipchains-1.3.10/libipfwc/libipfwc.c
+--- ipchains-1.3.10.orig/libipfwc/libipfwc.c	Tue Mar 23 03:41:17 1999
++++ ipchains-1.3.10/libipfwc/libipfwc.c	Fri Jan  7 00:39:00 2005
+@@ -501,6 +501,7 @@ const char *ipfwc_strerror(int err)
+ 					       " transparent proxying?)");
+ 					break;
+ 				default:
++					;
+ 				}
+ 			return message;
+ 		}

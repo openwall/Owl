@@ -1,9 +1,9 @@
-# $Id: Owl/packages/ltrace/ltrace.spec,v 1.15 2004/11/23 22:40:47 mci Exp $
+# $Id: Owl/packages/ltrace/ltrace.spec,v 1.16 2005/01/12 16:32:17 galaxy Exp $
 
 Summary: Tracks runtime library calls from dynamically linked executables.
 Name: ltrace
 Version: 0.3.10
-Release: owl8
+Release: owl9
 License: GPL
 Group: Development/Debuggers
 Source: ftp://ftp.debian.org/debian/dists/potato/main/source/utils/ltrace_%version.tar.gz
@@ -11,6 +11,7 @@ Patch0: ltrace-0.3.10-rh-sparc.diff
 Patch1: ltrace-0.3.10-rh-mandir.diff
 Patch2: ltrace-0.3.10-rh-nsyscals0.diff
 Patch3: ltrace-0.3.10-rh-strlen.diff
+Patch4: ltrace-0.3.10-owl-gcc343-fixes.diff
 Prefix: %_prefix
 ExclusiveArch: %ix86 sparc sparcv9
 BuildRoot: /override/%name-%version
@@ -31,13 +32,14 @@ intercept and print system calls invoked by the process.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 %configure
-make
+%__make
 
 %install
-make DESTDIR=%buildroot mandir=%_mandir install
+%__make DESTDIR=%buildroot mandir=%_mandir install
 rm -rf %buildroot%_prefix/doc
 mv -f debian/changelog ChangeLog
 
@@ -46,9 +48,14 @@ mv -f debian/changelog ChangeLog
 %doc COPYING README TODO BUGS ChangeLog
 %_prefix/bin/ltrace
 %_mandir/man1/ltrace.1*
-%config /etc/ltrace.conf
+%config %_sysconfdir/ltrace.conf
 
 %changelog
+* Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.3.10-owl9
+- Added gcc343-fixes patch to deal with "label at end of compound statment"
+issue.
+- Cleaned up the spec.
+
 * Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com> 0.3.10-owl8
 - Enforce our new spec file conventions
 

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.12 2004/11/23 22:40:46 mci Exp $
+# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.13 2005/01/12 16:13:12 galaxy Exp $
 
 Summary: Tools for managing ipchains packet filtering rules.
 Name: ipchains
 Version: 1.3.10
-Release: owl12
+Release: owl13
 License: GPL
 Group: System Environment/Base
 URL: http://netfilter.samba.org/ipchains/
@@ -14,6 +14,7 @@ Source3: ipchains.init
 Patch0: ipchains-1.3.10-rh-install-no-root.diff
 Patch1: ipchains-1.3.10-rh-owl-man.diff
 Patch2: ipchains-1.3.10-rh-RETURN.diff
+Patch3: ipchains-1.3.10-owl-gcc343-fixes.diff
 PreReq: chkconfig
 Requires: fileutils, sh-utils, textutils, grep, sed
 Obsoletes: ipfwadm, ipchains-scripts
@@ -32,18 +33,19 @@ a non-default configuration option.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 install -m 644 $RPM_SOURCE_DIR/HOWTO.txt.gz .
 
 %build
-make clean
-make COPTS="$RPM_OPT_FLAGS"
+%__make clean
+%__make CC="%__cc" COPTS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf %buildroot
 mkdir -p %buildroot/sbin
 mkdir -p %buildroot%_mandir/man{4,8}
 
-make install SBIN=%buildroot/sbin MANDIR=%buildroot%_mandir
+%__make install SBIN=%buildroot/sbin MANDIR=%buildroot%_mandir
 pushd ipchains-scripts-1.1.2
 cp ipchains-restore ipchains-save %buildroot/sbin/
 cp ipfwadm-wrapper %buildroot/sbin/ipfwadm
@@ -51,9 +53,9 @@ ln -s ipfwadm %buildroot/sbin/ipfwadm-wrapper
 cp *.8 %buildroot%_mandir/man8/
 popd
 
-mkdir -p %buildroot/etc/rc.d/init.d
+mkdir -p %buildroot%_sysconfdir/rc.d/init.d
 install -m 755 $RPM_SOURCE_DIR/ipchains.init \
-	%buildroot/etc/rc.d/init.d/ipchains
+	%buildroot%_sysconfdir/rc.d/init.d/ipchains
 
 gzip -9nf ipchains-quickref.ps
 
@@ -69,11 +71,16 @@ fi
 %defattr(-,root,root)
 %doc *.txt*
 %doc COPYING README ipchains-quickref.ps.gz
-%attr(755,root,root) %config /etc/rc.d/init.d/ipchains
+%attr(755,root,root) %config %_sysconfdir/rc.d/init.d/ipchains
 /sbin/*
 %_mandir/man*/*
 
 %changelog
+* Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.3.10-owl13
+- Added gcc343-fixes patch to deal with "label at end of compound statment"
+issue.
+- Cleaned up the spec.
+
 * Mon Sep 15 2003 Solar Designer <solar@owl.openwall.com> 1.3.10-owl12
 - In "stop", only try to do anything if ipchains is supported by kernel.
 

@@ -1,0 +1,11 @@
+diff -puNr ltrace-0.3.10.orig/wait_for_something.c ltrace-0.3.10/wait_for_something.c
+--- ltrace-0.3.10.orig/wait_for_something.c	Fri Sep 25 10:16:39 1998
++++ ltrace-0.3.10/wait_for_something.c	Fri Jan  7 00:51:20 2005
+@@ -74,6 +74,7 @@ struct event * wait_for_something(void)
+ 			event.e_un.sysnum = tmp;
+ 			return &event;
+ 		default:
++			;
+ 	}
+ 	if (WIFEXITED(status)) {
+ 		event.thing = LT_EV_EXIT;
