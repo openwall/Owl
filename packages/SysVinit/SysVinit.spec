@@ -1,4 +1,4 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.19 2003/10/30 08:49:44 solar Exp $
+# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.20 2004/09/10 07:16:15 galaxy Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
@@ -67,6 +67,9 @@ install -m 700 contrib/start-stop-daemon $RPM_BUILD_ROOT/sbin/
 
 mkfifo -m 600 $RPM_BUILD_ROOT/dev/initctl
 ln -sf killall5 $RPM_BUILD_ROOT/sbin/pidof
+
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot%_includedir/initreq.h
 
 %pre
 # This is tricky.  We don't want to let RPM remove the only link to the

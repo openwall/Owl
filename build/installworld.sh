@@ -1,9 +1,13 @@
 #!/bin/sh
-# $Id: Owl/build/installworld.sh,v 1.11 2003/10/24 04:47:04 solar Exp $
+# $Id: Owl/build/installworld.sh,v 1.12 2004/09/10 07:15:47 galaxy Exp $
 
 . installworld.conf
 
 RPMS=$HOME/RPMS
+
+RPM=rpm
+RPMD=rpm
+RPM_FLAGS=
 
 function log()
 {
@@ -23,6 +27,39 @@ function clean_death()
 
 	echo "`date '+%Y %b %e %H:%M:%S'`: Interrupted" >> logs/installworld
 	exit 1
+}
+
+function setup_rpm()
+{
+	local FILE
+
+	if [ -e /.Owl-CD-ROM ]; then
+		log "Running off a CD, will use this system's RPM binary"
+		return
+	fi
+
+	cd $RPMS || exit 1
+
+	FILE="`ls rpm-[0-9]*-*.*.rpm 2>/dev/null | tail -1`"
+	if [ -z "$FILE" ]; then
+		log "Missing RPM package, will use this system's RPM binary"
+		return
+	fi
+
+	cd $TMPDIR || exit 1
+	log "Extracting the RPM binary"
+	if rpm2cpio $RPMS/$FILE | cpio -id --no-preserve-owner --quiet \
+	    usr/lib/rpm/{rpmi,rpmd,rpmrc,macros,rpmpopt\*} && \
+	    sed -e "s,^\\(macrofiles:\\).*\$,\\1 $TMPDIR/usr/lib/rpm/macros," \
+	    < $TMPDIR/usr/lib/rpm/rpmrc \
+	    > $TMPDIR/usr/lib/rpm/rpmrc-work; then
+		RPM=$TMPDIR/usr/lib/rpm/rpmi
+		RPMD=$TMPDIR/usr/lib/rpm/rpmd
+		export RPMALIAS_FILENAME="$TMPDIR/usr/lib/rpm/rpmpopt"
+		RPM_FLAGS="--rcfile $TMPDIR/usr/lib/rpm/rpmrc-work:$HOME/.rpmrc"
+	else
+		log "Failed to extract RPM, will use this system's RPM binary"
+	fi
 }
 
 if [ ! -d $ROOT -o ! -O $ROOT ]; then
@@ -49,29 +86,13 @@ mkdir -p tmp-work $ROOT/$HOME/tmp-work
 export TMPDIR=$HOME/tmp-work
 export TMP=$HOME/tmp-work
 
-cd $RPMS || exit 1
-
-RPM=rpm
-RPM_FLAGS=
-FILE="`ls rpm-[0-9]*-*.*.rpm 2>/dev/null | tail -1`"
-if [ -n "$FILE" ]; then
-	cd $TMPDIR || exit 1
-	log "Extracting the RPM binary"
-	if rpm2cpio $RPMS/$FILE | cpio -id --no-preserve-owner --quiet \
-	    bin/rpm usr/lib/rpm/rpmrc; then
-		RPM=$TMPDIR/bin/rpm
-		RPM_FLAGS="--rcfile $TMPDIR/usr/lib/rpm/rpmrc:$HOME/.rpmrc"
-	fi
-	cd $RPMS || exit 1
-else
-	log "Missing RPM package, will try to use this system's RPM binary"
-fi
+setup_rpm
 
 if [ ! -d $ROOT/var/lib/rpm ]; then
 	log "Initializing RPM database"
 	umask 022
 	mkdir -p $ROOT/var/lib/rpm
-	$RPM $RPM_FLAGS --root $ROOT --define "home $HOME" --initdb || exit 1
+	$RPMD $RPM_FLAGS --root $ROOT --initdb || exit 1
 	umask $UMASK
 fi
 
@@ -79,6 +100,8 @@ export MAKE_CDROM
 
 export SILO_INSTALL
 export SILO_FLAGS
+
+cd $RPMS || exit 1
 
 grep -v ^# $HOME/installorder.conf |
 while read PACKAGES; do

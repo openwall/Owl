@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.31 2003/10/29 17:25:23 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.32 2004/09/10 07:15:47 galaxy Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -16,6 +16,9 @@ PACKAGES=$BRANCH/packages
 NATIVE=$HOME/native
 SOURCES=$HOME/sources
 FOREIGN=$HOME/foreign
+
+RPMQ=rpm
+RPMB=rpm
 
 function log()
 {
@@ -63,9 +66,9 @@ EOF`"
 	test $? -gt 1 && return 1
 
 	if [ $TOTAL -gt $SUB ]; then
-		rpm -q --specfile $SPEC
+		$RPMQ -q --specfile $SPEC
 	else
-		rpm -q --specfile $SPEC | grep -v "^${SOURCE}-[^-]*-[^-]*\$"
+		$RPMQ -q --specfile $SPEC | grep -v "^${SOURCE}-[^-]*-[^-]*\$"
 	fi
 }
 
@@ -121,7 +124,7 @@ function build_native()
 	else
 		FLAGS=-bb
 	fi
-	if $TIME $PERSONALITY rpm $FLAGS $PACKAGE.spec \
+	if $TIME $PERSONALITY $RPMB $FLAGS $PACKAGE.spec \
 		$TARGET \
 		--define "distribution $NATIVE_DISTRIBUTION" \
 		--define "vendor $NATIVE_VENDOR" \
@@ -154,7 +157,7 @@ function build_foreign()
 	WORK=$HOME/rpm-work-$NUMBER
 
 	log "#$NUMBER: Building $PACKAGE"
-	if $TIME $PERSONALITY rpm --rebuild $FOREIGN/${PACKAGE}.src.rpm \
+	if $TIME $PERSONALITY $RPMB --rebuild $FOREIGN/${PACKAGE}.src.rpm \
 		$TARGET \
 		--define "buildarch $BUILDARCH" \
 		--define "buildhost $BUILDHOST" \
@@ -280,6 +283,7 @@ function detect()
 	test -n "$ARCHITECTURE" || detect_arch
 	test -n "$PROCESSORS" || detect_proc
 	test -n "$BUILDHOST" || BUILDHOST="`hostname -f`"
+	test -n "$BUILDHOST" || BUILDHOST="localhost.localdomain"
 
 	if [ -n "$ARCHITECTURE" ]; then
 		TARGET="--target ${ARCHITECTURE}-unknown-linux"
@@ -329,6 +333,32 @@ function clean_death()
 	exit 1
 }
 
+function setup_rpm()
+{
+	local RPM_VERSION
+
+	log "Detecting version of RPM"
+	RPM_VERSION="`rpm --version | cut -f3 -d' '`"
+	if [ -z "$RPM_VERSION" ]; then
+		log "Cannot find RPM version, perhaps 'rpm' is not in PATH?"
+		exit 1
+	fi
+
+	case "$RPM_VERSION" in
+	4.*)
+		log "It's RPM4, using different binaries for different tasks"
+		RPMQ=rpmquery
+		RPMB=rpmbuild
+		;;
+	3.*)
+		log "It's RPM3, using 'rpm' for everything"
+		;;
+	*)
+		log "Unknown version of RPM, using defaults"
+		;;
+	esac
+}
+
 if [ "`id -u`" = "0" -o ! -O $HOME ]; then
 	echo "Run this as the owner of $HOME (typically, as user \"build\")"
 	exit 1
@@ -345,6 +375,8 @@ mkdir -p logs archives RPMS
 test "$BUILDSOURCE" = "yes" && mkdir -p SRPMS
 
 echo "`date '+%Y %b %e %H:%M:%S'`: Started" >> logs/buildworld
+
+setup_rpm
 
 log "Removing stale temporary files"
 rm -rf tmp-work rpm-work-[1-9]* native-work foreign-work
