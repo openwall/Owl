@@ -1,0 +1,5 @@
+#
+# hosts.allow access control file for "tcp wrapped" services.  This file
+# is consulted by tcpd(8) and services that are linked against libwrap.
+#
+# See hosts_access(5) and hosts_options(5) for the format of this file.
