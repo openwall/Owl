@@ -1,7 +1,7 @@
-diff -ur openssl-0.9.5a.orig/crypto/des/des.h openssl-0.9.5a/crypto/des/des.h
---- openssl-0.9.5a.orig/crypto/des/des.h	Mon Mar 20 01:13:51 2000
-+++ openssl-0.9.5a/crypto/des/des.h	Sun Jul  9 08:22:32 2000
-@@ -191,7 +191,8 @@
+diff -ur openssl-0.9.6d.orig/crypto/des/des.h openssl-0.9.6d/crypto/des/des.h
+--- openssl-0.9.6d.orig/crypto/des/des.h	Thu Mar 29 11:44:50 2001
++++ openssl-0.9.6d/crypto/des/des.h	Sun May 12 03:51:25 2002
+@@ -190,7 +190,8 @@
  char *des_fcrypt(const char *buf,const char *salt, char *ret);
  char *des_crypt(const char *buf,const char *salt);
  #if !defined(PERL5) && !defined(__FreeBSD__) && !defined(NeXT)
@@ -11,13 +11,13 @@ diff -ur openssl-0.9.5a.orig/crypto/des/des.h openssl-0.9.5a/crypto/des/des.h
  #endif
  void des_ofb_encrypt(const unsigned char *in,unsigned char *out,int numbits,
  		     long length,des_key_schedule schedule,des_cblock *ivec);
-diff -ur openssl-0.9.5a.orig/crypto/des/fcrypt.c openssl-0.9.5a/crypto/des/fcrypt.c
---- openssl-0.9.5a.orig/crypto/des/fcrypt.c	Mon Mar 20 01:13:51 2000
-+++ openssl-0.9.5a/crypto/des/fcrypt.c	Sun Jul  9 08:28:55 2000
+diff -ur openssl-0.9.6d.orig/crypto/des/fcrypt.c openssl-0.9.6d/crypto/des/fcrypt.c
+--- openssl-0.9.6d.orig/crypto/des/fcrypt.c	Tue Jan  8 12:19:55 2002
++++ openssl-0.9.6d/crypto/des/fcrypt.c	Sun May 12 03:52:23 2002
 @@ -62,7 +62,7 @@
  	DES_LONG Eswap0, DES_LONG Eswap1);
  
- #if !defined(PERL5) && !defined(__FreeBSD__) && !defined(NeXT)
+ #if !defined(PERL5) && !defined(__FreeBSD__) && !defined(NeXT) && !defined(_DARWIN)
 -char *crypt(const char *buf, const char *salt)
 +char *_openssl_crypt(const char *buf, const char *salt)
  	{

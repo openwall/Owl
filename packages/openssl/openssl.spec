@@ -1,16 +1,17 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.18 2002/02/07 18:07:47 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.19 2002/05/12 02:31:31 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
-Version: 0.9.6c
+Version: 0.9.6d
 Release: owl1
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
 Source: ftp://ftp.openssl.org/source/%{name}-%{version}.tar.gz
-Patch0: openssl-0.9.5a-rh-config-path.diff
-Patch1: openssl-0.9.5a-owl-crypt.diff
-Patch2: openssl-0.9.6a-owl-glibc-enable_secure.diff
+Patch0: openssl-0.9.6d-owl-crypt.diff
+Patch1: openssl-0.9.6a-owl-glibc-enable_secure.diff
+Patch2: openssl-0.9.6d-owl-Makefile.diff
+Patch3: openssl-0.9.6d-ben-read-errors.diff
 PreReq: /sbin/ldconfig
 Provides: SSL
 BuildRequires: perl
@@ -57,38 +58,46 @@ libraries and header files required when developing applications.
 
 %prep
 %setup -q
+# XXX: should investigate and deal with this properly
+touch now
+find -type f -print0 | xargs -0 touch -r now
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p0
 
 %define openssldir /var/ssl
-%define CONFIG_FLAGS shared -DSSL_ALLOW_ADH --prefix=/usr
+%define opensslflags shared -DSSL_ALLOW_ADH --prefix=/usr
 
 %build
 perl -pi -e "s/-O.(?: -fomit-frame-pointer)?(?: -m.86)?/${RPM_OPT_FLAGS}/;" \
 	Configure
 
 %ifarch %ix86
-./Configure %{CONFIG_FLAGS} --openssldir=%{openssldir} linux-elf
+%ifarch i386
+./Configure %{opensslflags} --openssldir=%{openssldir} 386 linux-elf
+%else
+./Configure %{opensslflags} --openssldir=%{openssldir} linux-elf
+%endif
 %endif
 %ifarch ppc
-./Configure %{CONFIG_FLAGS} --openssldir=%{openssldir} linux-ppc
+./Configure %{opensslflags} --openssldir=%{openssldir} linux-ppc
 %endif
 %ifarch alpha alphaev5
-./Configure %{CONFIG_FLAGS} --openssldir=%{openssldir} linux-alpha-gcc
+./Configure %{opensslflags} --openssldir=%{openssldir} linux-alpha-gcc
 %endif
 %ifarch alphaev56 alphapca56 alphaev6 alphaev67
-./Configure %{CONFIG_FLAGS} --openssldir=%{openssldir} linux-alpha+bwx-gcc
+./Configure %{opensslflags} --openssldir=%{openssldir} linux-alpha+bwx-gcc
 %endif
 %ifarch sparc
-./Configure %{CONFIG_FLAGS} --openssldir=%{openssldir} linux-sparcv8
+./Configure %{opensslflags} --openssldir=%{openssldir} linux-sparcv8
 %endif
 %ifarch sparcv9
-./Configure %{CONFIG_FLAGS} --openssldir=%{openssldir} linux-sparcv9
+./Configure %{opensslflags} --openssldir=%{openssldir} linux-sparcv9
 %endif
 
 # Check these against the DIRS= line and "all" target in top-level Makefile
-# when updating to a new version of OpenSSL; with 0.9.6c the Makefile says:
+# when updating to a new version of OpenSSL; with 0.9.6d the Makefile says:
 # DIRS= crypto ssl rsaref $(SHLIB_MARK) apps test tools
 # all: clean-shared Makefile.ssl sub_all
 make Makefile.ssl
@@ -154,6 +163,14 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0644,root,root) /usr/man/man3/*
 
 %changelog
+* Sun May 12 2002 Solar Designer <solar@owl.openwall.com>
+- Updated to 0.9.6d.
+- Added a patch by Ben Laurie for "openssl dgst" to behave on read errors.
+- Dropped the incorrect (or no longer correct?) RH-derived configuration
+file path patch to ca(1).
+- Properly restrict the instruction set in assembly code when building for
+i386 (don't use bswapl).
+
 * Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions.
 
