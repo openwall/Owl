@@ -1,12 +1,12 @@
-# $Id: Owl/packages/ncurses/ncurses.spec,v 1.2 2000/11/04 07:45:49 kad Exp $
+# $Id: Owl/packages/ncurses/ncurses.spec,v 1.3 2000/11/04 08:19:42 kad Exp $
 
-%define 	major	5
+%define 	major		5
 %define 	oldmajor	4
 
 Summary: 	A CRT screen handling and optimization package.
 Name: 		ncurses
 Version: 	5.2
-Release: 	1owl
+Release: 	2owl
 Copyright: 	distributable
 Group: 		System Environment/Libraries
 URL: 		http://dickey.his.com/ncurses/ncurses.html
@@ -120,6 +120,9 @@ ln -s libpanel.so.%{version} $RPM_BUILD_ROOT/usr/lib/libpanel.so.%{oldmajor}
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Sat Nov  4 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- new compat 
+
 * Wed Oct 25 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - ncurses 5.2 and compat.
 
