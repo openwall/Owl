@@ -1,9 +1,9 @@
-# $Id: Owl/packages/quota/quota.spec,v 1.14 2002/04/21 01:49:06 solar Exp $
+# $Id: Owl/packages/quota/quota.spec,v 1.15 2002/04/24 04:12:49 solar Exp $
 
 Summary: System administration tools for monitoring users' disk usage.
 Name: quota
 Version: 2.00
-Release: owl7
+Release: owl8
 License: BSD
 Group: System Environment/Base
 Source: ftp://ftp.cistron.nl/pub/people/mvw/quota/%{name}-%{version}.tar.gz
@@ -11,6 +11,7 @@ Patch0: quota-2.00-pld-owl-man.diff
 Patch1: quota-2.00-owl-install-no-root.diff
 Patch2: quota-2.00-owl-tmp.diff
 Patch3: quota-2.00-owl-vitmp.diff
+Requires: /usr/libexec/vitmp
 BuildRequires: e2fsprogs-devel
 BuildRoot: /override/%{name}-%{version}
 
