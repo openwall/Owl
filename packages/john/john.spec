@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.30 2003/12/03 10:26:39 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.30.2.1 2004/01/15 05:25:55 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.36.8
+Version: 1.6.36.9
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -74,6 +74,9 @@ cp -a john-1.6/doc/* doc/john-1.6/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Sat Jan 10 2004 Solar Designer <solar@owl.openwall.com> 1.6.36.9-owl1
+- Corrected a segfault with --stdin introduced with 1.6.34.2.
+
 * Wed Dec 03 2003 Solar Designer <solar@owl.openwall.com> 1.6.36.8-owl1
 - Avoid triggering a MacOS X cpp bug(?) where it would detect and refuse to
 handle "recursive" cpp macros.
