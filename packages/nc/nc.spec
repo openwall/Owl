@@ -1,4 +1,4 @@
-# $Id: Owl/packages/nc/nc.spec,v 1.1 2002/12/28 23:11:22 mci Exp $
+# $Id: Owl/packages/nc/nc.spec,v 1.2 2002/12/29 21:16:14 solar Exp $
 
 Summary: Reads and writes data across network connections using TCP or UDP.
 Name: nc
@@ -32,11 +32,11 @@ CFLAGS="-c $RPM_OPT_FLAGS" make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p ${RPM_BUILD_ROOT}%{_bindir}
-mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man1
+mkdir -p $RPM_BUILD_ROOT%{_bindir}
+mkdir -p $RPM_BUILD_ROOT%{_mandir}/man1
 
-install -m 755 usr.bin/nc/nc ${RPM_BUILD_ROOT}%{_bindir}/
-install -m 644 usr.bin/nc/nc.1 ${RPM_BUILD_ROOT}%{_mandir}/man1/
+install -m 755 usr.bin/nc/nc $RPM_BUILD_ROOT%{_bindir}/
+install -m 644 usr.bin/nc/nc.1 $RPM_BUILD_ROOT%{_mandir}/man1/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -49,7 +49,6 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Fri Dec 27 2002 Michail Litvak <mci@owl.openwall.com>
 - Ported the nc utility from OpenBSD-current (post-3.2).
-- Patch to set AF_INET by default to fix problem with
-  getaddrinfo(3).
+- Patch to set AF_INET by default to fix problem with getaddrinfo(3).
 - Fix error handling and other.
 - Wrote this spec file, based on telnet/telnetd's spec.

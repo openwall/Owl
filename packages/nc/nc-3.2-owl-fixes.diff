@@ -1,6 +1,6 @@
 diff -urN --show-c-function nc-3.2-owl-linux/usr.bin/nc/netcat.c nc-3.2-owl-fixes/usr.bin/nc/netcat.c
---- nc-3.2-owl-linux/usr.bin/nc/netcat.c	Fri Dec 27 00:06:41 2002
-+++ nc-3.2-owl-fixes/usr.bin/nc/netcat.c	Fri Dec 27 00:28:05 2002
+--- nc-3.2-owl-linux/usr.bin/nc/netcat.c	Sun Dec 29 23:50:35 2002
++++ nc-3.2-owl-fixes/usr.bin/nc/netcat.c	Mon Dec 30 00:07:25 2002
 @@ -277,11 +277,11 @@ main(int argc, char *argv[])
  				rv = recvfrom(s, buf, sizeof(buf), MSG_PEEK,
  				    (struct sockaddr *)&z, &len);
@@ -15,7 +15,7 @@ diff -urN --show-c-function nc-3.2-owl-linux/usr.bin/nc/netcat.c nc-3.2-owl-fixe
  
  				connfd = s;
  			} else {
-@@ -319,39 +319,44 @@ main(int argc, char *argv[])
+@@ -319,39 +319,46 @@ main(int argc, char *argv[])
  			if (s)
  				close(s);
  
@@ -45,15 +45,28 @@ diff -urN --show-c-function nc-3.2-owl-linux/usr.bin/nc/netcat.c nc-3.2-owl-fixe
 -						ret = 1;
 -						continue;
 -					}
-+			/* unless() */
-+			if (!(s < 0)) {
-+				if (uflag && zflag) {
++			if (s >= 0) {
++				if (uflag && zflag)
 +					ret = (udptest(s) == -1) ? 1 : 0;
- 				}
-+			} else {
++			} else
 +				ret = 1;
-+			}
- 
++
++			if (vflag) {
++				if (ret) {
++					printf("Connection to %s %s port "
++						"[%s/%s] failed : %s\n",
++						host, portlist[i],
++						uflag ? "udp" : "tcp",
++						sv ? sv->s_name : "*",
++						strerror(errno));
++				} else {
++					printf("Connection to %s %s port "
++						"[%s/%s] succeeded!\n",
++						host, portlist[i],
++						uflag ? "udp" : "tcp",
++						sv ? sv->s_name : "*");
+ 				}
+-
 -				/* Don't lookup port if -n */
 -				if (nflag)
 -					sv = NULL;
@@ -61,16 +74,7 @@ diff -urN --show-c-function nc-3.2-owl-linux/usr.bin/nc/netcat.c nc-3.2-owl-fixe
 -					sv = getservbyport(
 -					    ntohs(atoi(portlist[i])),
 -					    uflag ? "udp" : "tcp");
-+			if (vflag) {
-+				if (ret) {
-+					printf("Connection to %s %s port [%s/%s] failed : %s\n",
-+						host, portlist[i], uflag ? "udp" : "tcp",
-+						sv ? sv->s_name : "*", strerror(errno));
-+				} else {
-+					printf("Connection to %s %s port [%s/%s] succeeded!\n",
-+			    		host, portlist[i], uflag ? "udp" : "tcp",
-+			   			sv ? sv->s_name : "*");
- 				}
+-				}
 -
 -				printf("Connection to %s %s port [%s/%s] succeeded!\n",
 -				    host, portlist[i], uflag ? "udp" : "tcp",
@@ -82,7 +86,7 @@ diff -urN --show-c-function nc-3.2-owl-linux/usr.bin/nc/netcat.c nc-3.2-owl-fixe
  				readwrite(s);
  		}
  	}
-@@ -373,7 +378,7 @@ unix_connect(char *path)
+@@ -373,7 +380,7 @@ unix_connect(char *path)
  	int s;
  
  	if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
@@ -91,7 +95,7 @@ diff -urN --show-c-function nc-3.2-owl-linux/usr.bin/nc/netcat.c nc-3.2-owl-fixe
  	(void)fcntl(s, F_SETFD, 1);
  
  	memset(&sun, 0, sizeof(struct sockaddr_un));
-@@ -385,8 +390,7 @@ unix_connect(char *path)
+@@ -385,8 +392,7 @@ unix_connect(char *path)
  	}
  
  	if (connect(s, (struct sockaddr *)&sun, SUN_LEN(&sun)) < 0) {
@@ -101,18 +105,18 @@ diff -urN --show-c-function nc-3.2-owl-linux/usr.bin/nc/netcat.c nc-3.2-owl-fixe
  	}
  	return (s);
  
-@@ -404,7 +408,7 @@ unix_listen(char *path)
+@@ -404,7 +410,7 @@ unix_listen(char *path)
  
  	/* create unix domain socket */
  	if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
 -		return (-1);
 +		err(1, "socket");
  
- 	if (strlen(path) < sizeof(sun.sun_path)) {
- 		strncat(sun.sun_path, path, sizeof(sun.sun_path));
-@@ -414,13 +418,11 @@ unix_listen(char *path)
- 
+ 	memset(&sun, 0, sizeof(struct sockaddr_un));
  	sun.sun_family = AF_UNIX;
+@@ -415,13 +421,11 @@ unix_listen(char *path)
+ 	}
+ 
  	if (bind(s, (struct sockaddr *)&sun, SUN_LEN(&sun)) < 0) {
 -		close(s);
 -		return (-1);
@@ -126,7 +130,7 @@ diff -urN --show-c-function nc-3.2-owl-linux/usr.bin/nc/netcat.c nc-3.2-owl-fixe
  	}
  	return (s);
  }
-@@ -434,10 +436,10 @@ int
+@@ -435,10 +439,10 @@ int
  remote_connect(char *host, char *port, struct addrinfo hints)
  {
  	struct addrinfo *res, *res0;
@@ -139,7 +143,7 @@ diff -urN --show-c-function nc-3.2-owl-linux/usr.bin/nc/netcat.c nc-3.2-owl-fixe
  
  	res0 = res;
  	do {
-@@ -462,12 +464,14 @@ remote_connect(char *host, char *port, s
+@@ -463,12 +467,14 @@ remote_connect(char *host, char *port, s
  			ahints.ai_protocol = uflag ? IPPROTO_UDP : IPPROTO_TCP;
  			ahints.ai_flags = AI_PASSIVE;
  			if ((error = getaddrinfo(sflag, pflag, &ahints, &ares)))
@@ -156,7 +160,7 @@ diff -urN --show-c-function nc-3.2-owl-linux/usr.bin/nc/netcat.c nc-3.2-owl-fixe
  				continue;
  			}
  			freeaddrinfo(ares);
-@@ -476,12 +480,17 @@ remote_connect(char *host, char *port, s
+@@ -477,12 +483,17 @@ remote_connect(char *host, char *port, s
  		if (connect(s, res0->ai_addr, res0->ai_addrlen) == 0)
  			break;
  
@@ -174,7 +178,7 @@ diff -urN --show-c-function nc-3.2-owl-linux/usr.bin/nc/netcat.c nc-3.2-owl-fixe
  	return (s);
  }
  
-@@ -508,7 +517,7 @@ local_listen(char *host, char *port, str
+@@ -509,7 +520,7 @@ local_listen(char *host, char *port, str
  		hints.ai_family = AF_INET;
  
  	if ((error = getaddrinfo(host, port, &hints, &res)))
@@ -183,20 +187,18 @@ diff -urN --show-c-function nc-3.2-owl-linux/usr.bin/nc/netcat.c nc-3.2-owl-fixe
  
  	res0 = res;
  	do {
-@@ -518,23 +527,24 @@ local_listen(char *host, char *port, str
+@@ -519,23 +530,24 @@ local_listen(char *host, char *port, str
  
  		ret = setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &x, sizeof(x));
  		if (ret == -1)
--			exit(1);	
+-			exit(1);
 +			err(1, "setsockopt");
  
  		if (bind(s, (struct sockaddr *)res0->ai_addr,
  		    res0->ai_addrlen) == 0)
--			break;
--
-+				break;
+ 			break;
 +		warn("bind");
-+		
+ 
  		close(s);
  		s = -1;
  	} while ((res0 = res0->ai_next) != NULL);
@@ -214,7 +216,7 @@ diff -urN --show-c-function nc-3.2-owl-linux/usr.bin/nc/netcat.c nc-3.2-owl-fixe
  	return (s);
  }
  
-@@ -693,23 +703,20 @@ build_ports(char *p)
+@@ -694,23 +706,20 @@ build_ports(char *p)
  	}
  }
  
