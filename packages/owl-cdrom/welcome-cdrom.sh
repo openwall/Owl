@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-cdrom/welcome-cdrom.sh,v 1.2 2002/09/10 03:58:59 solar Exp $
+# $Id: Owl/packages/owl-cdrom/welcome-cdrom.sh,v 1.2.2.1 2002/10/15 00:40:08 solar Exp $
 
 echo
 echo 'Welcome to Openwall GNU/*/Linux (Owl)!'
@@ -11,7 +11,7 @@ test "`id -u`" = "0" || return 0
 
 WORLD=/usr/src/world
 KERNEL=/usr/src/kernel
-DOC=$WORLD/native/Owl/doc
+DOC=$WORLD/native/Owl*/doc
 
 HAVE_SRCS=
 test -d $WORLD/native -a -d $WORLD/sources && HAVE_SRCS=yes

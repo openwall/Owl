@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.14 2002/09/10 03:58:59 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.14.2.1 2002/10/15 00:40:08 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
 Version: 0.5
-Release: owl1
+Release: owl1.1.0.1
 License: public domain
 Group: System Environment/Base
 Source0: rc.ramdisk
@@ -85,6 +85,10 @@ fi
 %dir /owl
 
 %changelog
+* Tue Oct 15 2002 Solar Designer <solar@owl.openwall.com>
+- Corrected the DOC= setting to work for non-default branches, provided
+there's only one installed.
+
 * Tue Sep 10 2002 Solar Designer <solar@owl.openwall.com>
 - Build the CD kernels with SMP, it is always possible to disable SMP
 with "nosmp" on the kernel command line.
