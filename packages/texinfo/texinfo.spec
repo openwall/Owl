@@ -1,15 +1,16 @@
-# $Id: Owl/packages/texinfo/texinfo.spec,v 1.2 2000/08/09 02:05:27 kad Exp $
+# $Id: Owl/packages/texinfo/texinfo.spec,v 1.3 2001/01/03 08:05:57 solar Exp $
 
 Summary: Tools needed to create Texinfo format documentation files.
 Name: 		texinfo
 Version: 	4.0
-Release: 	10owl
+Release: 	11owl
 Copyright: 	GPL
 Group: 		Applications/Publishing
 Source0: 	ftp://ftp.gnu.org/gnu/texinfo/texinfo-%{version}.tar.gz
 Source1: 	info-dir
+Patch0:		texinfo-4.0-owl-tmp.diff
 Patch1: 	texinfo-3.12h-rh-data_size_fix.diff
-Patch3: 	texinfo-4.0-rh-zlib.diff
+Patch2: 	texinfo-4.0-rh-zlib.diff
 Prereq: 	/sbin/install-info
 Prefix: 	%{_prefix}
 Buildroot: 	/var/rpm-buildroot/%{name}-root
@@ -45,13 +46,14 @@ valuable source of information about the software on your system.
 
 %prep
 %setup -q
+%patch0 -p1
 %patch1 -p1
-%patch3 -p1 -b .zlib
+%patch2 -p1
 
 %build
 unset LINGUAS || :
 %configure --mandir=%{_mandir} --infodir=%{_infodir}
-make 
+make
 
 rm util/install-info
 make -C util LIBS=%{_prefix}/lib/libz.a
@@ -62,24 +64,14 @@ mkdir -p ${RPM_BUILD_ROOT}/{etc,sbin}
 
 %makeinstall
 
-( cd ${RPM_BUILD_ROOT}
-  gzip -n -9f .%{_infodir}/*info*
-  install -m644 $RPM_SOURCE_DIR/info-dir ./etc/info-dir
-  ln -sf /etc/info-dir ${RPM_BUILD_ROOT}%{_infodir}/dir
-  for i in makeinfo texindex info install-info ; do
-    strip .%{_prefix}/bin/$i
-  done
-  mv -f .%{_prefix}/bin/install-info ./sbin
-#  mkdir -p ./etc/X11/applnk/Utilities
-#cat > ./etc/X11/applnk/Utilities/info.desktop <<EOF
-#[Desktop Entry]
-#Name=Info Viewer
-#Type=Application
-#Comment=GNU Info Page Reader
-#Exec=info
-#Terminal=true
-#EOF
-)
+cd ${RPM_BUILD_ROOT}
+gzip -n -9f .%{_infodir}/*info*
+install -m 644 $RPM_SOURCE_DIR/info-dir ./etc/info-dir
+ln -sf /etc/info-dir ${RPM_BUILD_ROOT}%{_infodir}/dir
+for i in makeinfo texindex info install-info; do
+	strip .%{_prefix}/bin/$i
+done
+mv -f .%{_prefix}/bin/install-info ./sbin
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
@@ -88,16 +80,16 @@ rm -rf ${RPM_BUILD_ROOT}
 /sbin/install-info %{_infodir}/texinfo.gz %{_infodir}/dir
 
 %preun
-if [ $1 = 0 ]; then
-    /sbin/install-info --delete %{_infodir}/texinfo.gz %{_infodir}/dir
+if [ $1 -eq 0 ]; then
+	/sbin/install-info --delete %{_infodir}/texinfo.gz %{_infodir}/dir
 fi
 
 %post -n info
 /sbin/install-info %{_infodir}/info-stnd.info.gz %{_infodir}/dir
 
 %preun -n info
-if [ $1 = 0 ]; then
-    /sbin/install-info --delete %{_infodir}/info-stnd.info.gz %{_infodir}/dir
+if [ $1 -eq 0 ]; then
+	/sbin/install-info --delete %{_infodir}/info-stnd.info.gz %{_infodir}/dir
 fi
 
 %files
@@ -121,7 +113,12 @@ fi
 /sbin/install-info
 
 %changelog
-* Wed Aug  9 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Wed Jan 03 2001 Solar Designer <solar@owl.openwall.com>
+- Patch to create temporary files safely.
+- Give offline sorting in texindex a chance to work (fixed a bug in there;
+did anyone ever test that code, it certainly looks like not).
+
+* Wed Aug 09 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import from RH
 - FHS build
 
