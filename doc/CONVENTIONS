@@ -101,7 +101,7 @@ its package manager to pass it the correct input anyway.
 leading zero if necessary.
 
 11. In %changelog, when adding new entries do specify the current
-package Version and Release after the e-mail address, like this:
+package Version and Release after your e-mail address, like this:
 
 * Mon Mar 10 2003 Solar Designer <solar@owl.openwall.com> 0.6.2-owl1
 
@@ -163,4 +163,23 @@ options:
 This does not exactly match our preferred coding style and thus isn't
 to be used on sources already in Owl.
 
-$Id: Owl/doc/CONVENTIONS,v 1.14 2003/03/28 01:11:25 solar Exp $
+
+	Temporary file handling.
+
+It's better to not use temporary files, however if you must, the
+preferred way to do it from shell scripts is with code like this:
+
+TMPFILE=
+trap 'rm -f -- "$TMPFILE"' EXIT
+trap 'trap - EXIT; rm -f -- "$TMPFILE"; exit 1' HUP INT QUIT TERM
+TMPFILE="`mktemp -t program.XXXXXXXXXX`" || exit
+
+This may be used in our own scripts or in patches.  The package should
+then require the proper version of mktemp(1):
+
+Requires: mktemp >= 1:1.3.1
+
+As usual, use Requires, PreReq, and/or BuildRequires depending on
+where in the package the uses of mktemp occur.
+
+$Id: Owl/doc/CONVENTIONS,v 1.15 2003/03/28 01:21:59 solar Exp $
