@@ -1,13 +1,13 @@
-# $Id: Owl/packages/sed/sed.spec,v 1.5 2003/10/30 21:15:48 solar Exp $
+# $Id: Owl/packages/sed/sed.spec,v 1.6 2004/07/12 20:43:43 mci Exp $
 
 Summary: A GNU stream text editor.
 Name: sed
-Version: 3.02
-Release: owl9
+Version: 4.0.9
+Release: owl1
 License: GPL
 Group: Applications/Text
 Source: ftp://ftp.gnu.org/gnu/sed/sed-%version.tar.gz
-Patch: sed-3.02-owl-info.diff
+Patch: sed-4.0.9-owl-info.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
@@ -46,12 +46,16 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc ANNOUNCE BUGS NEWS README TODO
+%doc AUTHORS BUGS NEWS README THANKS ChangeLog
 /bin/sed
 %_infodir/*.info*
+%_datadir/locale/*/*/*
 %_mandir/man*/*
 
 %changelog
+* Mon Jul 12 2004 Michail Litvak <mci@owl.openwall.com> 4.0.9-owl1
+- 4.0.9
+
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 3.02-owl9
 - Deal with info dir entries such that the menu looks pretty.
 

@@ -1,0 +1,10 @@
+--- sed-4.0.9/doc/config.texi.orig	Thu Dec 12 21:05:56 2002
++++ sed-4.0.9/doc/config.texi	Mon Jul 12 16:12:56 2004
+@@ -1,6 +1,6 @@
+ @dircategory Text creation and manipulation
+ @direntry
+-* sed: (sed).                   Stream EDitor.
++* sed: (sed).					Stream EDitor.
+ 
+ @end direntry
+ 
