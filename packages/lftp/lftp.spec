@@ -1,14 +1,16 @@
-# $Id: Owl/packages/lftp/lftp.spec,v 1.15 2003/06/01 23:09:44 solar Exp $
+# $Id: Owl/packages/lftp/lftp.spec,v 1.16 2003/06/04 08:29:33 mci Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
 Version: 2.6.6
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Internet
+URL: http://lftp.yar.ru/
 Source0: ftp://ftp.yars.free.net/pub/software/unix/net/ftp/client/lftp/%{name}-%{version}.tar.bz2
 Source1: lftpget.1
 Patch0: lftp-2.6.6-owl-n-option.diff
+Patch1: lftp-2.6.6-owl-tmp.diff
 Prefix: %{_prefix}
 BuildRequires: openssl-devel
 BuildRoot: /override/%{name}-%{version}
@@ -38,6 +40,7 @@ downloading files.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 # Make sure that all message catalogs are built
@@ -80,6 +83,9 @@ fi
 %{_datadir}/locale/*/*/*
 
 %changelog
+* Tue Jun 03 2003 Michail Litvak <mci@owl.openwall.com> 2.6.6-owl2
+- Fixed tmp-files handling in configure script of included readline.
+
 * Mon Jun 02 2003 Michail Litvak <mci@owl.openwall.com> 2.6.6-owl1
 - 2.6.6
 - Removed outdated patches.
