@@ -1,13 +1,13 @@
-# $Id: Owl/packages/netlist/Attic/netlist.spec,v 1.2 2001/11/09 03:14:37 solar Exp $
+# $Id: Owl/packages/netlist/Attic/netlist.spec,v 1.3 2002/02/06 18:31:45 mci Exp $
 
 Summary: A program to list active Internet connections and sockets.
 Name: netlist
 Version: 2.0
-Release: 1owl
+Release: owl1
 License: distributable
 Group: System Environment/Base
-Source: netlist-%version.tar.gz
-BuildRoot: /override/%name-%version
+Source: netlist-%{version}.tar.gz
+BuildRoot: /override/%{name}-%{version}
 
 %description
 When run by a non-privileged user, netlist lists active Internet
@@ -28,21 +28,24 @@ make CFLAGS="-c -Wall $RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT BINDIR=%_bindir MANDIR=%_mandir
+make install DESTDIR=$RPM_BUILD_ROOT BINDIR=%{_bindir} MANDIR=%{_mandir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %post
 grep -q '^proc:[^:]*:110:' /etc/group && \
-	chgrp proc %_bindir/netlist && chmod 2711 %_bindir/netlist
+	chgrp proc %{_bindir}/netlist && chmod 2711 %{_bindir}/netlist
 
 %files
 %defattr(-,root,root)
 %doc LICENSE
 /usr/bin/netlist
-%_mandir/man1/netlist.1*
+%{_mandir}/man1/netlist.1*
 
 %changelog
+* wed feb 06 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions
+
 * Wed Nov 07 2001 Solar Designer <solar@owl.openwall.com>
 - Wrote the man page, Makefile, and this spec file.

@@ -1,16 +1,16 @@
-# $Id: Owl/packages/mtree/mtree.spec,v 1.3 2001/04/25 21:39:03 solar Exp $
+# $Id: Owl/packages/mtree/mtree.spec,v 1.4 2002/02/06 17:32:43 mci Exp $
 
 Summary: Map a directory hierarchy
 Name: mtree
 Version: 2.7
-Release: 2owl
-Copyright: BSD
+Release: owl2
+License: BSD
 Group: System Environment/Base
 Source: mtree-%{version}.tar.gz
 Patch: mtree-%{version}-owl-linux.diff
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: openssl
-BuildPreReq: openssl-devel
+BuildRequires: openssl-devel
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The utility mtree compares the file hierarchy rooted in the current
@@ -31,7 +31,6 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr/sbin $RPM_BUILD_ROOT/usr/man/man8
 install -m 755 usr.sbin/mtree/mtree $RPM_BUILD_ROOT/usr/sbin/
 install -m 644 usr.sbin/mtree/mtree.8 $RPM_BUILD_ROOT/usr/man/man8/
-gzip -9nf $RPM_BUILD_ROOT/usr/man/man8/*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -42,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/man/man8/mtree.8*
 
 %changelog
+* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Thu Apr 26 2001 Solar Designer <solar@owl.openwall.com>
 - New release number for upgrades after building against OpenSSL 0.9.6a.
 

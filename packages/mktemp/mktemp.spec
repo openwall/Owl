@@ -1,10 +1,10 @@
-# $Id: Owl/packages/mktemp/mktemp.spec,v 1.6 2001/11/13 09:31:08 solar Exp $
+# $Id: Owl/packages/mktemp/mktemp.spec,v 1.7 2002/02/06 17:02:51 mci Exp $
 
 Summary: A small utility for safely making temporary files.
 Name: mktemp
-Epoch: 1
 Version: 1.4
-Release: 1owl
+Release: owl1
+Epoch: 1
 License: BSD
 Group: System Environment/Base
 URL: http://www.courtesan.com/mktemp/
@@ -37,6 +37,9 @@ rm -rf $RPM_BUILD_ROOT
 %_mandir/man1/mktemp.*
 
 %changelog
+* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Tue Nov 13 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 1.4 release.
 

@@ -1,26 +1,23 @@
-# $Id: Owl/packages/man/man.spec,v 1.3 2001/06/12 03:03:41 solar Exp $
+# $Id: Owl/packages/man/man.spec,v 1.4 2002/02/06 16:28:31 mci Exp $
 
 Summary: A set of documentation tools: man, apropos and whatis.
 Name: man
 Version: 1.5i2
-Release: 1owl
-Copyright: GPL
+Release: owl1
+License: GPL
 Group: System Environment/Base
 Source: ftp://ftp.win.tue.nl/pub/linux-local/utils/man/man-%{version}.tar.gz
 Patch0: man-1.5i-owl-makewhatis.diff
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: groff, mktemp
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The man package includes three tools for finding information and/or
 documentation about your Linux system: man, apropos and whatis.  The
 man system formats and displays on-line manual pages about commands or
-functions on your system.  Apropos searches the whatis database
+functions on your system.  apropos searches the whatis database
 (containing short descriptions of system commands) for a string.
-Whatis searches its own database for a complete word.
-
-The man package should be installed on your system because it is the
-primary way to find documentation on a Linux system.
+whatis searches its own database for a complete word.
 
 %prep
 %setup -q
@@ -46,8 +43,6 @@ for i in 1 2 3 4 5 6 7 8 9 n; do
 	mkdir -p $RPM_BUILD_ROOT/var/catman/local/cat$i
 	mkdir -p $RPM_BUILD_ROOT/var/catman/X11R6/cat$i
 done
-
-strip $RPM_BUILD_ROOT/usr/bin/{man,man2html}
 
 # symlinks for manpath
 cd $RPM_BUILD_ROOT
@@ -92,6 +87,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0775,root,man) %dir /var/catman/X11R6/cat[123456789n]
 
 %changelog
+* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions
+
 * Tue Jun 12 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 1.5i2.
 
