@@ -1,9 +1,9 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.17 2001/11/15 04:45:06 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.18 2001/11/16 03:03:47 solar Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
 Version: 0.75
-Release: 12owl
+Release: 13owl
 License: GPL or BSD
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
@@ -14,10 +14,10 @@ Patch1: pam-0.75-owl-pam_pwdb.diff
 Patch2: pam-0.75-owl-pam_chroot.diff
 Patch3: pam-0.75-owl-no-cracklib.diff
 Patch4: pam-0.75-alt-read_string.diff
-BuildRequires: glibc-devel >= 2.1.3-13owl
 Requires: glibc >= 2.1.3-13owl, pwdb >= 0.61-1owl
 # Just to make sure noone misses pam_unix, which is now provided by tcb
 Requires: tcb >= 0.9.5
+BuildRequires: glibc-devel >= 2.1.3-13owl
 BuildRoot: /override/%{name}-%{version}
  
 %description
@@ -107,11 +107,11 @@ rm -rf $RPM_BUILD_ROOT
 grep -q '^shadow:[^:]*:42:' /etc/group && \
 	chgrp shadow /sbin/chkpwd.d/pwdb_chkpwd && \
 	chmod 2711 /sbin/chkpwd.d/pwdb_chkpwd
-
-%pre
-grep ^chkpwd: /etc/group &>/dev/null || groupadd -g 163 chkpwd
+grep -q ^chkpwd: /etc/group || groupadd -g 163 chkpwd
+chgrp chkpwd /sbin/chkpwd.d && chmod 710 /sbin/chkpwd.d
 
 %post -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
 
 %files
 %defattr(-,root,root)
@@ -126,7 +126,7 @@ grep ^chkpwd: /etc/group &>/dev/null || groupadd -g 163 chkpwd
 /lib/libpamc.so.*
 /lib/libpam_misc.so.*
 
-%attr(710,root,chkpwd) %dir /sbin/chkpwd.d/
+%attr(700,root,root) %dir /sbin/chkpwd.d/
 %attr(700,root,root) /sbin/chkpwd.d/pwdb_chkpwd
 /sbin/pwdb_chkpwd
 
@@ -192,6 +192,13 @@ grep ^chkpwd: /etc/group &>/dev/null || groupadd -g 163 chkpwd
 %doc doc/specs/rfc86.0.txt
 
 %changelog
+* Fri Nov 16 2001 Solar Designer <solar@owl.openwall.com>
+- Use the trigger on shadow-utils for possibly creating and making use of
+group chkpwd, not just for group shadow.  This makes no difference on Owl
+as either the groups are provided by owl-etc (on new installs) or groupadd
+is already available when this package is installed, but may be useful on
+hybrid systems.
+
 * Thu Nov 15 2001 Solar Designer <solar@owl.openwall.com>
 - No longer build pam_unix, the tcb package will provide compatibility
 symlinks instead.
