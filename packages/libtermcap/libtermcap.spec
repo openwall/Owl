@@ -1,9 +1,9 @@
-# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.2 2000/09/08 18:26:22 solar Exp $
+# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.3 2000/10/28 02:02:28 solar Exp $
 
 Summary: A basic system library for accessing the termcap database.
 Name: libtermcap
 Version: 2.0.8
-Release: 2owl
+Release: 3owl
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://sunsite.unc.edu/pub/Linux/GCC/termcap-2.0.8.tar.gz
@@ -66,7 +66,7 @@ install -m 644 termcap.info* $RPM_BUILD_ROOT/usr/info
 
 cd $RPM_BUILD_ROOT
 mv usr/lib/libtermcap.so* lib
-ln -sf libtermcap.so.2.0.8 lib/libtermcap.so
+ln -sf libtermcap.so.2.0.8 lib/libtermcap.so.2
 ln -sf /lib/libtermcap.so.2.0.8 usr/lib/libtermcap.so
 strip -R .comments --strip-unneeded lib/libtermcap.so.2.0.8
 gzip -9nf usr/info/termcap.info*
@@ -92,7 +92,7 @@ fi
 %files
 %defattr(-,root,root)
 /usr/info/termcap.info*
-/lib/libtermcap.so.2.0.8
+/lib/libtermcap.so.2*
 
 %files devel
 %defattr(-,root,root)
@@ -101,6 +101,9 @@ fi
 /usr/include/termcap.h
 
 %changelog
+* Sat Oct 28 2000 Solar Designer <solar@owl.openwall.com>
+- Create /lib/libtermcap.so.2 before ldconfig.
+
 * Fri Sep 08 2000 Solar Designer <solar@owl.openwall.com>
 - %optflags_lib support.
 
