@@ -1,16 +1,17 @@
-# $Id: Owl/packages/gnupg/gnupg.spec,v 1.9 2002/02/11 15:38:30 solar Exp $
+# $Id: Owl/packages/gnupg/gnupg.spec,v 1.10 2002/05/18 21:34:16 mci Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
-Version: 1.0.6
+Version: 1.0.7
 Release: owl1
 License: GPL
 Group: Applications/Cryptography
 URL: http://www.gnupg.org
 Source: ftp://ftp.gnupg.org/pub/gcrypt/gnupg/%{name}-%{version}.tar.gz
-Patch0: gnupg-1.0.2-rh-locale.diff
-Patch1: gnupg-1.0.4-cvs-secret-key-checks.diff
+Patch0: gnupg-1.0.7-fw-secret-key-checks.diff
+PreReq: /sbin/install-info
 Provides: gpg, openpgp
+BuildRequires: zlib-devel, bison, texinfo
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -29,15 +30,14 @@ all:
 install:
 EOF
 %patch0 -p1
-%patch1 -p0
 
 %build
 unset LINGUAS || :
 %configure
-make
+make INFO_DEPS='gpg.info gpgv.info'
 
 %install
-%makeinstall
+%makeinstall transform= INFO_DEPS='gpg.info gpgv.info'
 sed 's^\.\./g[0-9\.]*/^^g' tools/lspgpot > lspgpot
 install -m 755 lspgpot $RPM_BUILD_ROOT%{_bindir}/lspgpot
 
@@ -47,11 +47,20 @@ strip $RPM_BUILD_ROOT/usr/lib/gnupg/*
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%post
+/sbin/install-info %{_infodir}/gpg.info.gz %{_infodir}/dir
+/sbin/install-info %{_infodir}/gpgv.info.gz %{_infodir}/dir
+
+%preun
+if [ $1 -eq 0 ]; then
+        /sbin/install-info --delete %{_infodir}/gpg.info.gz %{_infodir}/dir
+        /sbin/install-info --delete %{_infodir}/gpgv.info.gz %{_infodir}/dir
+fi
+
 %files
 %defattr(-,root,root)
 %doc AUTHORS COPYING ChangeLog INSTALL NEWS PROJECTS README THANKS TODO
-%doc doc/DETAILS doc/FAQ doc/HACKING doc/OpenPGP doc/faq.html
-%doc g*/OPTIONS g*/pubring.asc
+%doc doc/{DETAILS,FAQ,HACKING,OpenPGP,*.html}
 
 %{_bindir}/gpg
 %{_bindir}/gpgv
@@ -61,8 +70,16 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/gnupg
 %{_mandir}/man1/gpg.*
 %{_mandir}/man1/gpgv.*
+%{_infodir}/gpg.*
+%{_infodir}/gpgv.*
 
 %changelog
+* Fri May 17 2002 Michail Litvak <mci@owl.openwall.com>
+- 1.0.7
+- updated -fw-secret-key-checks patch (by Florian Weimer,
+  http://cert.uni-stuttgart.de/files/fw/gnupg-klima-rosa.diff)
+- add info files into package
+
 * Sun Feb 03 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions
 
