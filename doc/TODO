@@ -135,9 +135,11 @@ Update to latest release.
 	glibc.
 
 [PRIORITY: medium]
-Develop safe log-and-exit function for use by the dlmalloc unlink()
-macro's sanity check.  It will need to connect to /dev/log and write
-there directly, without utilizing syslog(3).
+After upgrading to glibc 2.3.4, patch its __libc_message() to write to
+syslog by default (rather than as a fallback) and when doing so to
+connect to /dev/log and write there directly, without utilizing
+vsyslog(3) (which may use malloc()-family functions and thus is unsafe
+to be invoked on a detected malloc inconsistency).
 
 [PRIORITY: low]
 Make mkstemp(3) and friends produce unpredictable filenames (not just
@@ -505,4 +507,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.55 2005/01/19 14:19:58 solar Exp $
+$Id: Owl/doc/TODO,v 1.56 2005/02/08 04:01:20 solar Exp $
