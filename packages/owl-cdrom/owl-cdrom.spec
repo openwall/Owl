@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.22 2003/12/19 14:26:21 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.23 2004/02/05 04:29:25 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 0.9
+Version: 0.10
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -82,6 +82,11 @@ fi
 %dir /owl
 
 %changelog
+* Thu Feb 05 2004 Solar Designer <solar@owl.openwall.com> 0.10-owl1
+- In lilo.conf, pass the "rootfstype=iso9660" kernel option to get rid of
+the ugly error message resulting from the kernel trying FAT first; thanks
+to Nergal for the suggestion.
+
 * Fri Dec 19 2003 Solar Designer <solar@owl.openwall.com> 0.9-owl1
 - Linux 2.4.23-ow1 + cryptoloop (w/ AES compiled in).
 - Support Silicon Image SATA controllers (CONFIG_BLK_DEV_SIIMAGE).
