@@ -1,9 +1,9 @@
-# $Id: Owl/packages/traceroute/traceroute.spec,v 1.9 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/traceroute/traceroute.spec,v 1.10 2005/01/12 17:00:16 galaxy Exp $
 
 Summary: Traces the route taken by packets over a TCP/IP network.
 Name: traceroute
 Version: 1.4a12
-Release: owl5
+Release: owl6
 License: BSD
 Group: Applications/Internet
 Source0: ftp://ftp.ee.lbl.gov/traceroute-%version.tar.gz
@@ -34,37 +34,42 @@ along the route.
 
 %build
 %configure
-make
+%__make
 
 %install
 rm -rf %buildroot
 mkdir -p %buildroot%_sbindir
 mkdir -p %buildroot%_mandir/man8
 
-make DESTDIR=%buildroot install install-man
+%__make DESTDIR=%buildroot install install-man
 
-mkdir -p %buildroot/etc/control.d/facilities
-install -m 700 %SOURCE1 %buildroot/etc/control.d/facilities/traceroute
+mkdir -p %buildroot%_sysconfdir/control.d/facilities
+install -m 700 %SOURCE1 %buildroot%_sysconfdir/control.d/facilities/traceroute
 
 %pre
 if [ $1 -ge 2 ]; then
-	/usr/sbin/control-dump traceroute
+	%_sbindir/control-dump traceroute
 fi
 
 %post
 if [ $1 -ge 2 ]; then
-	/usr/sbin/control-restore traceroute
+	%_sbindir/control-restore traceroute
 else
-	/usr/sbin/control traceroute public
+	%_sbindir/control traceroute public
 fi
 
 %files
 %defattr(-,root,root)
-%attr(700,root,root) %_sbindir/traceroute
+%attr(700,root,root) %verify(not mode group) %_sbindir/traceroute
 %_mandir/man8/*
-/etc/control.d/facilities/traceroute
+%_sysconfdir/control.d/facilities/traceroute
 
 %changelog
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.4a12-owl6
+- Removed verify checks for traceroute binary since we are using control
+to configure its permissions and group owner.
+- Cleaned up the spec.
+
 * Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com> 1.4a12-owl5
 - Dump/restore the owl-control setting for traceroute on package upgrades.
 - Keep traceroute at mode 700 ("restricted") in the package, but default
