@@ -1,4 +1,4 @@
-# $Id: Owl/packages/lilo/lilo.spec,v 1.14 2005/01/12 16:16:36 galaxy Exp $
+# $Id: Owl/packages/lilo/lilo.spec,v 1.15 2005/01/20 04:01:13 solar Exp $
 
 Summary: The boot loader for Linux and other operating systems.
 Name: lilo
@@ -35,8 +35,8 @@ can also boot other operating systems.
 
 %build
 %__make CC="%__cc" OPT="$RPM_OPT_FLAGS -Wall" \
-    CFG_DIR="%_sysconfdir" \
-    BOOT_DIR="/boot" \
+	CFG_DIR="%_sysconfdir" \
+	BOOT_DIR="/boot"
 
 %__cc $RPM_OPT_FLAGS -Wall -s -o keytab-lilo $RPM_SOURCE_DIR/keytab-lilo.c
 
@@ -45,12 +45,12 @@ rm -rf %buildroot
 mkdir -p %buildroot/usr/bin
 mkdir -p %buildroot%_mandir
 %__make install \
-    ROOT=%buildroot \
-    CFG_DIR="%_sysconfdir" \
-    BOOT_DIR="/boot" \
-    SBIN_DIR="/sbin" \
-    USRSBIN_DIR="%_sbindir" \
-    MAN_DIR=%_mandir
+	ROOT=%buildroot \
+	CFG_DIR="%_sysconfdir" \
+	BOOT_DIR="/boot" \
+	SBIN_DIR="/sbin" \
+	USRSBIN_DIR="%_sbindir" \
+	MAN_DIR=%_mandir
 
 install -m 755 keytab-lilo %buildroot%_bindir/
 
