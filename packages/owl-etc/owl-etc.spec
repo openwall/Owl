@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.37 2002/05/19 04:03:20 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.38 2002/06/23 16:00:07 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
-Version: 0.22
+Version: 0.23
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -65,6 +65,9 @@ rm -rf $RPM_BUILD_ROOT
 %ghost /var/log/lastlog
 
 %changelog
+* Sun Jun 23 2002 Solar Designer <solar@owl.openwall.com>
+- sshd user/group.
+
 * Sun May 19 2002 Solar Designer <solar@owl.openwall.com>
 - screen group.
 

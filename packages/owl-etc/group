@@ -20,6 +20,7 @@ utmp:x:22:
 dip:x:40:
 shadow:x:42:
 ftp:x:50:
+sshd:x:74:
 nobody:x:99:
 users:x:100:
 proc:x:110:
