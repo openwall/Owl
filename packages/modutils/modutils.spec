@@ -1,8 +1,8 @@
-# $Id: Owl/packages/modutils/modutils.spec,v 1.4 2000/10/25 19:41:28 kad Exp $
+# $Id: Owl/packages/modutils/modutils.spec,v 1.5 2000/11/17 07:03:03 solar Exp $
 
 Summary: 	Kernel module utilities.
 Name: 		modutils
-Version: 	2.3.19
+Version: 	2.3.20
 Release: 	1owl
 Copyright: 	GPL
 Group: 		System Environment/Kernel
@@ -30,6 +30,9 @@ modules are device drivers and filesystems, as well as some other things.
 # kerneld --disable-* to --enable-* and uncomment
 # %config /etc/rc.d/init.d/kerneld in the %files section and remove the %post
 # section.
+%ifarch sparcv9
+%define _target_platform sparc-%{_vendor}-%{_target_os}
+%endif
 %configure --disable-compat-2-0 --disable-kerneld --enable-insmod-static \
 	--exec_prefix=/
 make dep all
@@ -67,6 +70,11 @@ fi
 #%config /etc/rc.d/init.d/kerneld
 
 %changelog
+* Fri Nov 17 2000 Solar Designer <solar@owl.openwall.com>
+- v2.3.20
+- Pass plain sparc- target to configure when building for sparcv9, to
+allow for the use of sparcv9 optflags while not confusing configure.
+
 * Wed Oct 25 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - v2.3.19
 
