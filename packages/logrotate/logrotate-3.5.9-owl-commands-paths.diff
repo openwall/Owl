@@ -1,5 +1,27 @@
---- logrotate-3.5.9/logrotate.h.orig	Thu Jun 21 22:38:12 2001
-+++ logrotate-3.5.9/logrotate.h	Thu Nov 22 23:49:40 2001
+diff -ur logrotate-3.5.9.orig/logrotate.8 logrotate-3.5.9/logrotate.8
+--- logrotate-3.5.9.orig/logrotate.8	Thu Aug  2 21:13:32 2001
++++ logrotate-3.5.9/logrotate.8	Tue Nov 27 14:06:18 2001
+@@ -46,7 +46,7 @@
+ \fB-s, -\-state <statefile>\fR
+ Tells \fBlogrotate\fR to use an alternate state file.  This is useful
+ if logrotate is being run as a different user for various sets of
+-log files.  The default state file is \fB/var/lib/logrotate.status\fR.
++log files.  The default state file is \fI/var/lib/logrotate/status\fR.
+ 
+ .TP
+ \fB-\-usage\fR
+@@ -340,7 +340,7 @@
+ .SH FILES
+ .PD 0
+ .TP 27
+-\fI/var/lib/logrotate.status\fR
++\fI/var/lib/logrotate/status\fR
+ Default state file.
+ .TP 27
+ \fI/etc/logrotate.conf\fR
+diff -ur logrotate-3.5.9.orig/logrotate.h logrotate-3.5.9/logrotate.h
+--- logrotate-3.5.9.orig/logrotate.h	Thu Jun 21 23:38:12 2001
++++ logrotate-3.5.9/logrotate.h	Tue Nov 27 14:04:30 2001
 @@ -15,14 +15,14 @@
  
  #define DEFAULT_MAIL_COMMAND "/bin/mail -s"

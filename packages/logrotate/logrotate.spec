@@ -1,9 +1,9 @@
-# $Id: Owl/packages/logrotate/logrotate.spec,v 1.3 2001/11/26 22:45:03 mci Exp $
+# $Id: Owl/packages/logrotate/logrotate.spec,v 1.4 2001/11/27 11:26:47 solar Exp $
 
 Summary: Rotates, compresses, removes and mails system log files.
 Name: logrotate
 Version: 3.5.9
-Release: 1owl
+Release: 2owl
 License: GPL
 Group: System Environment/Base
 Source: logrotate-%{version}.tar.bz2
@@ -11,6 +11,7 @@ Patch0: logrotate-3.5.9-cvs-20011126.diff
 Patch1: logrotate-3.5.9-owl-commands-paths.diff
 Patch2: logrotate-3.5.9-owl-man.diff
 Patch3: logrotate-3.5.9-owl-fchmod-fchown-race.diff
+Patch4: logrotate-3.5.9-owl-tmp.diff
 Requires: crontabs
 BuildPreReq: popt
 BuildRoot: /override/%{name}-%{version}
@@ -29,6 +30,7 @@ logrotate runs as a daily cron job.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 make CC=gcc RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
@@ -63,6 +65,10 @@ fi
 %attr(0700,root,root) /var/lib/logrotate
 
 %changelog
+* Tue Nov 27 2001 Solar Designer <solar@owl.openwall.com>
+- Corrected the man page for our status file path.
+- Use $TMPDIR.
+
 * Mon Nov 26 2001 Michail Litvak <mci@owl.openwall.com>
 - 3.5.9
 - Patch from CVS to fix zero-length state files.

@@ -19,7 +19,7 @@
  one file, the log files are not compressed.
 +
 +Please use wildcards with caution.  If you specify *, \fBlogrotate\fR will
-+rotate all files, including previously rotated ones.   A way around this
++rotate all files, including previously rotated ones.  A way around this
 +is to use the \fBolddir\fR directive or a more exact wildcard (such as *.log).
  
  Here is more information on the directives which may be included in

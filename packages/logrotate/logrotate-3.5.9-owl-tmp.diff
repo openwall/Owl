@@ -1,0 +1,78 @@
+diff -ur logrotate-3.5.9.orig/Makefile logrotate-3.5.9/Makefile
+--- logrotate-3.5.9.orig/Makefile	Thu Jun 21 22:17:52 2001
++++ logrotate-3.5.9/Makefile	Tue Nov 27 14:23:52 2001
+@@ -55,17 +55,6 @@
+ cvstag:
+ 	cvs tag -F $(CVSTAG) .
+ 
+-archive: cvstag
+-	@rm -rf /tmp/logrotate-$(VERSION) /tmp/logrotate
+-	@cd /tmp; cvs export -r$(CVSTAG) logrotate; mv logrotate logrotate-$(VERSION)
+-	@cd /tmp/logrotate-$(VERSION)
+-	@cd /tmp; tar czSpf logrotate-$(VERSION).tar.gz logrotate-$(VERSION)
+-	@rm -rf /tmp/logrotate-$(VERSION)
+-	@cp /tmp/logrotate-$(VERSION).tar.gz .
+-	@rm -f /tmp/logrotate-$(VERSION).tar.gz
+-	@echo " "
+-	@echo "The final archive is ./logrotate-$(VERSION).tar.gz."
+-
+ ifeq (.depend,$(wildcard .depend))
+ include .depend
+ endif
+diff -ur logrotate-3.5.9.orig/logrotate.c logrotate-3.5.9/logrotate.c
+--- logrotate-3.5.9.orig/logrotate.c	Thu Aug  2 21:08:23 2001
++++ logrotate-3.5.9/logrotate.c	Tue Nov 27 14:23:56 2001
+@@ -62,8 +62,7 @@
+ 
+ static int runScript(char * logfn, char * script) {
+     int fd;
+-    char filespec[32];
+-    char * cmd;
++    char *filespec, *cmd;
+     int rc;
+ 
+     if (debug) {
+@@ -72,22 +71,26 @@
+ 	return 0;
+     }
+ 
+-    strcpy(filespec, "/tmp/logrotate.XXXXXX");
+-    if ((fd = mkstemp(filespec)) < 0 || fchmod(fd, 0700)) {
++    asprintf(&filespec, "%s/logrotate.XXXXXX", getenv("TMPDIR") ?: "/tmp");
++    fd = -1;
++    if (!filespec || (fd = mkstemp(filespec)) < 0 || fchmod(fd, 0700)) {
+ 	message(MESS_DEBUG, "error creating %s: %s\n", filespec,
+ 		strerror(errno));
+-	if (fd >= 0) close(fd);
++	if (fd >= 0) {
++	    close(fd);
++	    unlink(filespec);
++	}
++	if (filespec)
++	    free(filespec);
+ 	return -1;
+     }
+ 
+-    if (write(fd, "#!/bin/sh\n\n", 11) != 11) {
+-	close(fd);
+-	unlink(filespec);
+-	return -1;
+-    }
+-    if (write(fd, script, strlen(script)) != strlen(script)) {
++    if (write(fd, "#!/bin/sh\n\n", 11) != 11 ||
++	write(fd, script, strlen(script)) != strlen(script)) {
++	message(MESS_DEBUG, "error writing %s\n", filespec);
+ 	close(fd);
+ 	unlink(filespec);
++	free(filespec);
+ 	return -1;
+     }
+ 
+@@ -98,6 +101,7 @@
+     rc = system(cmd);
+ 
+     unlink(filespec);
++    free(filespec);
+ 
+     return rc;
+ }
