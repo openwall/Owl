@@ -1,9 +1,9 @@
-# $Id: Owl/packages/lftp/lftp.spec,v 1.6 2001/03/23 01:04:46 solar Exp $
+# $Id: Owl/packages/lftp/lftp.spec,v 1.7 2001/04/25 21:39:03 solar Exp $
 
 Summary: sophisticated command line file transfer program
 Name: lftp
 Version: 2.3.8
-Release: 5owl
+Release: 6owl
 Copyright: GPL
 Source0: ftp://ftp.yars.free.net/pub/software/unix/net/ftp/client/lftp/%{name}-%{version}.tar.bz2
 Source1: lftpget.1
@@ -91,6 +91,9 @@ fi
 %{_datadir}/locale/*/*/*
 
 %changelog
+* Thu Apr 26 2001 Solar Designer <solar@owl.openwall.com>
+- New release number for upgrades after building against OpenSSL 0.9.6a.
+
 * Fri Mar 23 2001 Solar Designer <solar@owl.openwall.com>
 - Corrected the package description.
 - Point /usr/bin/ftp to lftp if it doesn't exist when lftp is installed.

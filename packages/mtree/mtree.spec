@@ -1,9 +1,9 @@
-# $Id: Owl/packages/mtree/mtree.spec,v 1.2 2000/07/23 17:39:03 solar Exp $
+# $Id: Owl/packages/mtree/mtree.spec,v 1.3 2001/04/25 21:39:03 solar Exp $
 
 Summary: Map a directory hierarchy
 Name: mtree
 Version: 2.7
-Release: 1owl
+Release: 2owl
 Copyright: BSD
 Group: System Environment/Base
 Source: mtree-%{version}.tar.gz
@@ -42,6 +42,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/man/man8/mtree.8*
 
 %changelog
+* Thu Apr 26 2001 Solar Designer <solar@owl.openwall.com>
+- New release number for upgrades after building against OpenSSL 0.9.6a.
+
 * Sun Jul 23 2000 Solar Designer <solar@owl.openwall.com>
 - Updated to version from OpenBSD 2.7.
 
