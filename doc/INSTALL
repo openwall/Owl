@@ -70,4 +70,9 @@ You may choose to configure the boot loader available with Owl (LILO
 or SILO, depending on the architecture), or you may use a boot loader
 already installed on the system (if any).
 
-$Id: Owl/doc/INSTALL,v 1.7 2002/09/01 01:19:46 solar Exp $
+Note that the kernel build and the boot loader setup need to be done
+chrooted to your newly installed userland:
+
+	chroot /owl
+
+$Id: Owl/doc/INSTALL,v 1.8 2002/09/17 13:24:44 solar Exp $
