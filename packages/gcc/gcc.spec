@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.20 2002/01/28 21:59:27 solar Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.21 2002/01/30 15:55:36 solar Exp $
 
 %define GCC_PREFIX /usr
 %define CPP_PREFIX /lib
@@ -172,10 +172,12 @@ mkdir obj-%{_target_platform}
 cd obj-%{_target_platform}
 
 CFLAGS="`echo "$RPM_OPT_FLAGS" | sed -e 's/-fno-rtti//g'` -fexceptions"
-CXXFLAGS="$CFLAGS"
-XCFLAGS="$CFLAGS"
-TCFLAGS="$CFLAGS"
-../configure --prefix=%{GCC_PREFIX} \
+CFLAGS="$CFLAGS" \
+CXXFLAGS="$CFLAGS" \
+XCFLAGS="$CFLAGS" \
+TCFLAGS="$CFLAGS" \
+../configure \
+	--prefix=%{GCC_PREFIX} \
 	--mandir=${RPM_BUILD_ROOT}%{_mandir} \
 	--infodir=${RPM_BUILD_ROOT}%{_infodir} \
 	--enable-shared --enable-haifa $ENABLE_THREADS \
