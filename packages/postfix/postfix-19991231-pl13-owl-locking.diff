@@ -1,0 +1,11 @@
+--- postfix-19991231-pl13/util/sys_defs.h.orig	Sun Jan 23 00:03:31 2000
++++ postfix-19991231-pl13/util/sys_defs.h	Sun Oct 13 16:59:03 2002
+@@ -327,7 +327,7 @@
+ #define SUPPORTED
+ #include <sys/types.h>
+ #define USE_PATHS_H
+-#define USE_FLOCK_LOCK
++#define USE_FCNTL_LOCK
+ #define USE_DOT_LOCK
+ #define HAS_FSYNC
+ #define HAS_DB
