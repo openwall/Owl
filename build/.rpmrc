@@ -1,6 +1,7 @@
-# $Id: Owl/build/.rpmrc,v 1.1 2000/12/03 21:26:16 solar Exp $
+# $Id: Owl/build/.rpmrc,v 1.2 2001/04/14 02:57:50 solar Exp $
 optflags: i386 %{optflags_bin}
 optflags: i686 %{optflags_bin}
 optflags: alpha %{optflags_bin}
+optflags: alphaev56 %{optflags_bin}
 optflags: sparc %{optflags_bin}
 optflags: sparcv9 %{optflags_bin}
