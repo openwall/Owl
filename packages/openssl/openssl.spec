@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.11 2001/07/06 05:24:36 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.12 2001/07/06 05:50:57 solar Exp $
 
 %define libmaj 0
 %define libmin 9
@@ -177,7 +177,7 @@ binary compatibility).
 
 * Sat Apr 14 2001 Solar Designer <solar@owl.openwall.com>
 - Support Alpha targets.
-- Use the %ix86 macro.
+- Use the ix86 macro.
 
 * Mon Nov 13 2000 Solar Designer <solar@owl.openwall.com>
 - Support SPARC targets (32-bit only at this time).

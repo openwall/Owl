@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.13 2001/04/18 05:54:49 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.14 2001/07/06 05:50:57 solar Exp $
 
 %define BUILD_MOUNT	'yes'
 %define BUILD_LOSETUP	'yes'
@@ -338,7 +338,7 @@ are case-sensitive).
 * Sun Jan 28 2001 Solar Designer <solar@owl.openwall.com>
 - Reviewed the changes made in 2.10r, updated the write patch accordingly.
 - More improvements to the write patch (prompt/prefix with usernames).
-- %optflags are now passed correctly.
+- optflags are now passed correctly.
 - newgrp is no longer installed SUID by default (it's owl-control'able).
 
 * Tue Jan 23 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
@@ -348,7 +348,7 @@ are case-sensitive).
 - Dirty hack for builds with Linux 2.2.18 headers.
 
 * Wed Dec 13 2000 Solar Designer <solar@owl.openwall.com>
-- i386 -> %ix86.
+- Use the ix86 macro.
 
 * Sat Aug 26 2000 Solar Designer <solar@owl.openwall.com>
 - chsh, chfn, vipw, and vigr are now built from shadow-utils, which

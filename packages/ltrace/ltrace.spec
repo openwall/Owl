@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ltrace/ltrace.spec,v 1.7 2001/01/15 05:20:24 solar Exp $
+# $Id: Owl/packages/ltrace/ltrace.spec,v 1.8 2001/07/06 05:50:57 solar Exp $
 
 Summary: Tracks runtime library calls from dynamically linked executables.
 Name: ltrace
@@ -61,7 +61,7 @@ rm -rf $RPM_BUILD_ROOT
 - fixed some type cast in sparc patch
 
 * Sun Jan 14 2001 Solar Designer <solar@owl.openwall.com>
-- i386 -> %ix86
+- Use the ix86 macro.
 
 * Sun Jan 14 2001 Michail Litvak <mci@owl.openwall.com>
 - Imported from RH

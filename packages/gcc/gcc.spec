@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.17 2001/03/18 04:08:01 solar Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.18 2001/07/06 05:50:57 solar Exp $
 
 %define GCC_PREFIX	/usr
 %define CPP_PREFIX	/lib
@@ -540,7 +540,7 @@ fi
 * Sun Mar 18 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 2.95.3.
 - Dropped the duplicate_decls() patch (included in 2.95.3).
-- Various spec file cleanups (use %ix86, avoid subshells).
+- Various spec file cleanups (use the ix86 macro, avoid subshells).
 
 * Fri Nov 17 2000 Solar Designer <solar@owl.openwall.com>
 - No pthreads on sparcv9, not just on plain sparc.
