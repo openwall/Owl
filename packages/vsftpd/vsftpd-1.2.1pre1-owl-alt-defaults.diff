@@ -1,18 +1,18 @@
-diff -ur vsftpd-1.0.2.orig/tunables.c vsftpd-1.0.2/tunables.c
---- vsftpd-1.0.2.orig/tunables.c	Tue Apr  2 02:55:04 2002
-+++ vsftpd-1.0.2/tunables.c	Tue Apr  2 13:39:56 2002
-@@ -53,19 +53,19 @@
- unsigned int tunable_anon_max_rate = 0;
- unsigned int tunable_local_max_rate = 0;
+diff -ur vsftpd-1.2.1.orig/tunables.c vsftpd-1.2.1/tunables.c
+--- vsftpd-1.2.1.orig/tunables.c	Tue May 27 22:30:06 2003
++++ vsftpd-1.2.1/tunables.c	Sun Oct 26 11:54:28 2003
+@@ -76,19 +76,19 @@
+ unsigned int tunable_max_per_ip = 0;
+ unsigned int tunable_trans_chunk_size = 0;
  
 -const char* tunable_secure_chroot_dir = "/usr/share/empty";
 +const char* tunable_secure_chroot_dir = "/var/empty";
  const char* tunable_ftp_username = "ftp";
  const char* tunable_chown_username = "root";
--const char* tunable_xferlog_file = "/var/log/vsftpd.log";
-+const char* tunable_xferlog_file = "/var/log/vsftpd";
+ const char* tunable_xferlog_file = "/var/log/xferlog";
+-const char* tunable_vsftpd_log_file = "/var/log/vsftpd.log";
++const char* tunable_vsftpd_log_file = "/var/log/vsftpd";
  const char* tunable_message_file = ".message";
- /* XXX -> "secure"? */
 -const char* tunable_nopriv_user = "nobody";
 +const char* tunable_nopriv_user = "vsftpd";
  const char* tunable_ftpd_banner = 0;
@@ -27,18 +27,25 @@ diff -ur vsftpd-1.0.2.orig/tunables.c vsftpd-1.0.2/tunables.c
 +const char* tunable_userlist_file = "/etc/vsftpd/user_list";
  const char* tunable_anon_root = 0;
  const char* tunable_local_root = 0;
- 
-diff -ur vsftpd-1.0.2.orig/vsftpd.conf vsftpd-1.0.2/vsftpd.conf
---- vsftpd-1.0.2.orig/vsftpd.conf	Tue Jul 31 01:51:07 2001
-+++ vsftpd-1.0.2/vsftpd.conf	Tue Apr  2 13:44:42 2002
-@@ -1,13 +1,10 @@
+ const char* tunable_banner_file = 0;
+diff -ur vsftpd-1.2.1.orig/vsftpd.conf vsftpd-1.2.1/vsftpd.conf
+--- vsftpd-1.2.1.orig/vsftpd.conf	Tue Jan 21 01:15:34 2003
++++ vsftpd-1.2.1/vsftpd.conf	Sun Oct 26 12:12:50 2003
+@@ -1,18 +1,16 @@
 -# Example config file /etc/vsftpd.conf
--#
--# The default compiled in settings are very paranoid. This sample file
--# loosens things up a bit, to make the ftp daemon more usable.
 +# The configuration file for vsftpd.
  #
- # Allow anonymous FTP?
+-# The default compiled in settings are fairly paranoid. This sample file
+-# loosens things up a bit, to make the ftp daemon more usable.
+-# Please see vsftpd.conf.5 for all compiled in defaults.
++# Please see vsftpd.conf(5) for all compiled in defaults.
+ #
+ # READ THIS: This example file is NOT an exhaustive list of vsftpd options.
+-# Please read the vsftpd.conf.5 manual page to get a full idea of vsftpd's
++# Please read the vsftpd.conf(5) manual page to get a full idea of vsftpd's
+ # capabilities.
+ #
+ # Allow anonymous FTP? (Beware - allowed by default if you comment this out).
 -anonymous_enable=YES
 +anonymous_enable=NO
  #
@@ -49,7 +56,7 @@ diff -ur vsftpd-1.0.2.orig/vsftpd.conf vsftpd-1.0.2/vsftpd.conf
  #
  # Uncomment this to enable any form of FTP write command.
  #write_enable=YES
-@@ -32,9 +29,20 @@
+@@ -37,22 +35,26 @@
  # Activate logging of uploads/downloads.
  xferlog_enable=YES
  #
@@ -70,16 +77,20 @@ diff -ur vsftpd-1.0.2.orig/vsftpd.conf vsftpd-1.0.2/vsftpd.conf
  # If you want, you can arrange for uploaded anonymous files to be owned by
  # a different user. Note! Using "root" for uploaded files is not
  # recommended!
-@@ -43,7 +51,7 @@
+ #chown_uploads=YES
+ #chown_username=whoever
  #
- # You may override where the log file goes if you like. The default is shown
- # below.
+-# You may override where the log file goes if you like. The default is shown
+-# below.
 -#xferlog_file=/var/log/vsftpd.log
-+#xferlog_file=/var/log/vsftpd
+-#
+-# If you want, you can have your log file in standard ftpd xferlog format
+-#xferlog_std_format=YES
+-#
+ # You may change the default value for timing out an idle session.
+ #idle_session_timeout=600
  #
- # If you want, you can have your log file in standard ftpd xferlog format
- #xferlog_std_format=YES
-@@ -56,7 +64,7 @@
+@@ -61,7 +63,7 @@
  #
  # It is recommended that you define on your system a unique user which the
  # ftp server can use as a totally isolated and unprivileged user.
@@ -88,7 +99,7 @@ diff -ur vsftpd-1.0.2.orig/vsftpd.conf vsftpd-1.0.2/vsftpd.conf
  #
  # Enable this and the server will recognise asynchronous ABOR requests. Not
  # recommended for security (the code is non-trivial). Not enabling it,
-@@ -73,8 +81,8 @@
+@@ -78,8 +80,8 @@
  # to enable ASCII uploads (to prevent uploaded scripts etc. from breaking),
  # without the DoS risk of SIZE and ASCII downloads. ASCII mangling should be
  # on the client anyway..
@@ -99,7 +110,7 @@ diff -ur vsftpd-1.0.2.orig/vsftpd.conf vsftpd-1.0.2/vsftpd.conf
  #
  # You may fully customise the login banner string:
  #ftpd_banner=Welcome to blah FTP service.
-@@ -83,18 +91,29 @@
+@@ -88,18 +90,29 @@
  # useful for combatting certain DoS attacks.
  #deny_email_enable=YES
  # (default follows)
@@ -132,10 +143,10 @@ diff -ur vsftpd-1.0.2.orig/vsftpd.conf vsftpd-1.0.2/vsftpd.conf
 +# local time zone. The default is to display GMT. The times returned by the
 +# MDTM FTP command are also affected by this option.
 +#use_localtime=YES
-diff -ur vsftpd-1.0.2.orig/vsftpd.conf.5 vsftpd-1.0.2/vsftpd.conf.5
---- vsftpd-1.0.2.orig/vsftpd.conf.5	Tue Apr  2 03:03:50 2002
-+++ vsftpd-1.0.2/vsftpd.conf.5	Tue Apr  2 13:45:11 2002
-@@ -115,7 +115,7 @@
+diff -ur vsftpd-1.2.1.orig/vsftpd.conf.5 vsftpd-1.2.1/vsftpd.conf.5
+--- vsftpd-1.2.1.orig/vsftpd.conf.5	Thu Jun 26 20:59:12 2003
++++ vsftpd-1.2.1/vsftpd.conf.5	Sun Oct 26 12:14:31 2003
+@@ -128,7 +128,7 @@
  different if chroot_local_user is set to YES. In this case, the list becomes
  a list of users which are NOT to be placed in a chroot() jail.
  By default, the file containing this list is
@@ -144,7 +155,7 @@ diff -ur vsftpd-1.0.2.orig/vsftpd.conf.5 vsftpd-1.0.2/vsftpd.conf.5
  .BR chroot_list_file
  setting.
  
-@@ -141,7 +141,7 @@
+@@ -156,7 +156,7 @@
  .B deny_email_enable
  If activated, you may provide a list of anonymous password e-mail responses
  which cause login to be denied. By default, the file containing this list is
@@ -153,8 +164,26 @@ diff -ur vsftpd-1.0.2.orig/vsftpd.conf.5 vsftpd-1.0.2/vsftpd.conf.5
  .BR banned_email_file
  setting.
  
-@@ -244,7 +244,7 @@
- Default: YES
+@@ -184,7 +184,7 @@
+ If enabled, two log files are generated in parallel, going by default to
+ .BR /var/log/xferlog
+ and
+-.BR /var/log/vsftpd.log .
++.BR /var/log/vsftpd .
+ The former is a wu-ftpd style transfer log, parseable by standard tools. The
+ latter is vsftpd's own style log.
+ 
+@@ -317,7 +317,7 @@
+ Default: NO
+ .TP
+ .B syslog_enable
+-If enabled, then any log output which would have gone to /var/log/vsftpd.log
++If enabled, then any log output which would have gone to /var/log/vsftpd
+ goes to the system log instead. Logging is done under the FTPD facility.
+ 
+ Default: NO
+@@ -339,7 +339,7 @@
+ Default: NO
  .TP
  .B use_localtime
 -If enabled, vsftpd will display directory listings with the the time in your
@@ -162,36 +191,43 @@ diff -ur vsftpd-1.0.2.orig/vsftpd.conf.5 vsftpd-1.0.2/vsftpd.conf.5
  local time zone. The default is to display GMT. The times returned by the
  MDTM FTP command are also affected by this option.
  
-@@ -268,7 +268,7 @@
+@@ -387,7 +387,7 @@
  .TP
  .B xferlog_enable
  If enabled, a log file will be maintained detailling uploads and downloads.
 -By default, this file will be placed at /var/log/vsftpd.log, but this location
 +By default, this file will be placed at /var/log/vsftpd, but this location
  may be overridden using the configuration setting
- .BR xferlog_file .
+ .BR vsftpd_log_file .
  
-@@ -374,7 +374,7 @@
+@@ -528,7 +528,7 @@
  .BR deny_email_enable
  is enabled.
  
 -Default: /etc/vsftpd.banned_emails
 +Default: /etc/vsftpd/banned_emails
  .TP
- .B chown_username
- This is the name of the user who is given ownership of anonymously uploaded
-@@ -393,7 +393,7 @@
+ .B banner_file
+ This option is the name of a file containing text to display when someone
+@@ -556,7 +556,7 @@
  .BR chroot_local_user
  is disabled.
  
 -Default: /etc/vsftpd.chroot_list
 +Default: /etc/vsftpd/chroot_list
  .TP
- .B guest_username
- See the boolean setting
-@@ -436,26 +436,26 @@
+ .B cmds_allowed
+ This options specifies a comma separated list of allowed FTP commands (post
+@@ -615,17 +615,17 @@
+ Default: .message
+ .TP
+ .B nopriv_user
+-This is the name of the user that is used by vsftpd when it want to be
++This is the name of the user that is used by vsftpd when it wants to be
+ totally unprivileged. Note that this should be a dedicated user, rather
  than nobody. The user nobody tends to be used for rather a lot of important
- things on most machines.
+-things on most machines.
++things on many machines.
  
 -Default: nobody
 +Default: vsftpd
@@ -202,30 +238,34 @@ diff -ur vsftpd-1.0.2.orig/vsftpd.conf.5 vsftpd-1.0.2/vsftpd.conf.5
 -Default: ftp
 +Default: vsftpd
  .TP
- .B secure_chroot_dir
- This option should be the name of a directory which is empty. Also, the
+ .B pasv_address
+ Use this option to override the IP address that vsftpd will advertise in
+@@ -638,7 +638,7 @@
  directory should not be writable by the ftp user. This directory is used
  as a secure chroot() jail at times vsftpd does not require filesystem access.
  
 -Default: /usr/share/empty
 +Default: /var/empty
  .TP
- .B userlist_file
- This option is the name of the file loaded when the
+ .B user_config_dir
+ This powerful option allows the override of any config option specified in
+@@ -660,8 +660,8 @@
  .BR userlist_enable
  option is active.
  
 -Default: /etc/vsftpd.user_list
+-.BR
 +Default: /etc/vsftpd/user_list
- .TP
- .B xferlog_file
- This option is the name of the file to which we write the transfer log. The
-@@ -463,7 +463,7 @@
- .BR xferlog_enable
- is set.
++.TP
+ .B vsftpd_log_file
+ This option is the name of the file to which we write the vsftpd style
+ log file. This log is only written if the option
+@@ -674,7 +674,7 @@
+ .BR syslog_enable ,
+ then this file is not written and output is sent to the system log instead.
  
 -Default: /var/log/vsftpd.log
 +Default: /var/log/vsftpd
- 
- .SH AUTHOR
- chris@scary.beasts.org
+ .TP
+ .B xferlog_file
+ This option is the name of the file to which we write the wu-ftpd style

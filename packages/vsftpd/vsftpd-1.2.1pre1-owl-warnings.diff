@@ -1,0 +1,48 @@
+diff -ur vsftpd-1.2.1.orig/sysutil.h vsftpd-1.2.1/sysutil.h
+--- vsftpd-1.2.1.orig/sysutil.h	Sat Apr 19 18:51:03 2003
++++ vsftpd-1.2.1/sysutil.h	Sun Oct 26 12:53:27 2003
+@@ -159,6 +159,9 @@
+ unsigned int vsf_sysutil_getpid(void);
+ int vsf_sysutil_fork(void);
+ int vsf_sysutil_fork_failok(void);
++#ifdef __GNUC__
++__attribute__ ((noreturn))
++#endif
+ void vsf_sysutil_exit(int exit_code);
+ struct vsf_sysutil_wait_retval
+ {
+diff -ur vsftpd-1.2.1.orig/utility.h vsftpd-1.2.1/utility.h
+--- vsftpd-1.2.1.orig/utility.h	Mon Mar  3 23:27:15 2003
++++ vsftpd-1.2.1/utility.h	Sun Oct 26 12:51:20 2003
+@@ -10,6 +10,9 @@
+  * PARAMETERS
+  * p_text       - text string describing why the process is exiting
+  */
++#ifdef __GNUC__
++__attribute__ ((noreturn))
++#endif
+ void die(const char* p_text);
+ 
+ /* die2()
+@@ -20,6 +23,9 @@
+  * p_text1      - text string describing why the process is exiting
+  * p_text2      - text to safely concatenate to p_text1
+  */
++#ifdef __GNUC__
++__attribute__ ((noreturn))
++#endif
+ void die2(const char* p_text1, const char* p_text2);
+ 
+ /* bug()
+@@ -28,7 +34,10 @@
+  * the reason this happened down the network in FTP response format.
+  * PARAMETERS
+  * p_text       - text string describing what bug trap has triggered
+- *       */
++ */
++#ifdef __GNUC__
++__attribute__ ((noreturn))
++#endif
+ void bug(const char* p_text);
+ 
+ #endif

@@ -1,19 +1,21 @@
-# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.8 2003/04/17 14:12:59 solar Exp $
+# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.9 2003/10/26 13:18:31 solar Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
-Version: 1.0.2
-Release: owl0.3
+Version: 1.2.1
+Release: owl0.1
 License: GPL
 Group: System Environment/Daemons
+URL: http://vsftpd.beasts.org
 # The primary site for releases is ftp://ferret.lmh.ox.ac.uk/pub/linux/
-Source0: ftp://ftp.beasts.org/users/cevans/vsftpd-%{version}pre3.tar.gz
-Source1: vsftpd.pam
-Source2: vsftpd.xinetd
-Source3: vsftpd.logrotate
-Patch0: vsftpd-1.0.2-owl-alt-defaults.diff
-Patch1: vsftpd-1.0.2-owl-pam_userpass.diff
-Patch2: vsftpd-1.0.1-owl-no-libcap.diff
+Source0: ftp://ftp.beasts.org/users/cevans/vsftpd-%{version}pre1.tar.gz
+Source1: vsftpd.eps.gz
+Source2: vsftpd.pam
+Source3: vsftpd.xinetd
+Source4: vsftpd.logrotate
+Patch0: vsftpd-1.2.1pre1-owl-alt-defaults.diff
+Patch1: vsftpd-1.2.1pre1-owl-pam_userpass.diff
+Patch2: vsftpd-1.2.1pre1-owl-warnings.diff
 Requires: xinetd, logrotate, pam_userpass, tcb, /var/empty
 Provides: ftpserver
 BuildRequires: pam-devel, pam_userpass-devel
@@ -30,9 +32,10 @@ program has been carefully designed to be resilient to attack.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+install -p -m 644 $RPM_SOURCE_DIR/vsftpd.eps.gz .
 
 %build
-make CFLAGS="$RPM_OPT_FLAGS -Wall" LIBS="-lpam -lpam_userpass"
+make CFLAGS="$RPM_OPT_FLAGS -Wall" LIBS="-lcap -lpam -lpam_userpass"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -66,7 +69,9 @@ mkdir -m 755 /home/ftp &> /dev/null || :
 %doc README.security REWARD SECURITY/
 %doc BENCHMARKS SPEED TUNING
 %doc BUGS TODO
+%doc EXAMPLE/
 %doc Changelog
+%doc vsftpd.eps.gz
 /usr/sbin/vsftpd
 %config(noreplace) /etc/vsftpd.conf
 %config(noreplace) /etc/pam.d/vsftpd
@@ -77,6 +82,13 @@ mkdir -m 755 /home/ftp &> /dev/null || :
 %{_mandir}/man8/vsftpd.8*
 
 %changelog
+* Sun Oct 26 2003 Solar Designer <solar@owl.openwall.com> 1.2.1-owl0.1
+- Updated to 1.2.1pre1.
+- Let vsftpd use libcap now that we package it.
+- Package the control flow diagram from our presentation slides; the dia
+source to vsftpd.eps is available through the download link from
+http://www.openwall.com/presentations/Owl/
+
 * Thu Apr 17 2003 Solar Designer <solar@owl.openwall.com> 1.0.2-owl0.3
 - Pass prefix= and count= to pam_tcb also for authentication such that it
 can use this information to reduce timing leaks.

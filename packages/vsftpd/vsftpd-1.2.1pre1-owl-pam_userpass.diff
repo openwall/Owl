@@ -1,7 +1,7 @@
-diff -upr vsftpd-1.0.2.orig/sysdeputil.c vsftpd-1.0.2/sysdeputil.c
---- vsftpd-1.0.2.orig/sysdeputil.c	Tue Apr  2 02:04:16 2002
-+++ vsftpd-1.0.2/sysdeputil.c	Thu Apr  3 00:08:20 2003
-@@ -94,7 +94,7 @@
+diff -urp vsftpd-1.2.1.orig/sysdeputil.c vsftpd-1.2.1/sysdeputil.c
+--- vsftpd-1.2.1.orig/sysdeputil.c	Tue Jun 10 21:42:33 2003
++++ vsftpd-1.2.1/sysdeputil.c	Sun Oct 26 12:28:52 2003
+@@ -131,7 +131,7 @@
  /* END config */
  
  /* PAM support - we include our own dummy version if the system lacks this */
@@ -10,19 +10,19 @@ diff -upr vsftpd-1.0.2.orig/sysdeputil.c vsftpd-1.0.2/sysdeputil.c
  
  /* No PAM? Try getspnam() with a getpwnam() fallback */
  #ifndef VSF_SYSDEP_HAVE_PAM
-@@ -221,9 +221,7 @@ vsf_sysdep_check_auth(const struct mystr
- 
+@@ -264,9 +264,7 @@ vsf_sysdep_check_auth(const struct mystr
  #else /* VSF_SYSDEP_HAVE_PAM */
  
+ static pam_handle_t* s_pamh;
 -static struct mystr s_pword_str;
 -static int pam_conv_func(int nmsg, const struct pam_message** p_msg,
 -                         struct pam_response** p_reply, void* p_addata);
 +static pam_userpass_t userpass;
+ static void vsf_auth_shutdown(void);
  
  int
- vsf_sysdep_check_auth(const struct mystr* p_user_str,
-@@ -234,10 +232,11 @@ vsf_sysdep_check_auth(const struct mystr
-   pam_handle_t* pamh = 0;
+@@ -277,14 +275,15 @@ vsf_sysdep_check_auth(const struct mystr
+   int retval;
    struct pam_conv the_conv =
    {
 -    &pam_conv_func,
@@ -30,21 +30,25 @@ diff -upr vsftpd-1.0.2.orig/sysdeputil.c vsftpd-1.0.2/sysdeputil.c
 +    pam_userpass_conv,
 +    &userpass
    };
+   if (s_pamh != 0)
+   {
+     bug("vsf_sysdep_check_auth");
+   }
 -  str_copy(&s_pword_str, p_pass_str);
 +  userpass.user = str_getbuf(p_user_str);
 +  userpass.pass = str_getbuf(p_pass_str);
    retval = pam_start(tunable_pam_service_name,
-                      str_getbuf(p_user_str), &the_conv, &pamh);
+                      str_getbuf(p_user_str), &the_conv, &s_pamh);
    if (retval != PAM_SUCCESS)
-@@ -280,6 +279,7 @@ vsf_sysdep_check_auth(const struct mystr
-   return 1;
+@@ -362,6 +361,7 @@ vsf_auth_shutdown(void)
+   vsf_remove_uwtmp();
  }
  
 +#if 0
  static int
  pam_conv_func(int nmsg, const struct pam_message** p_msg,
                struct pam_response** p_reply, void* p_addata)
-@@ -315,6 +315,7 @@ pam_conv_func(int nmsg, const struct pam
+@@ -397,6 +397,7 @@ pam_conv_func(int nmsg, const struct pam
    *p_reply = p_resps;
    return PAM_SUCCESS;
  }
