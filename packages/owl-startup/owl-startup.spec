@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.3 2000/12/01 22:22:53 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.4 2000/12/02 22:08:27 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
 Version: 0.2
-Release: 2owl
+Release: 3owl
 Copyright: GPL
 Group: System Environment/Base
 Source0: initscripts-5.00.tar.gz
@@ -29,12 +29,26 @@ system down cleanly.
 %setup -q -n initscripts-5.00
 
 %build
-make CFLAGS="$RPM_OPT_FLAGS"
+make -C src CFLAGS="$RPM_OPT_FLAGS" usleep ipcalc
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/etc/{rc.d/rc{0,1,2,3,4,5,6}.d,init.d}
-make ROOT=$RPM_BUILD_ROOT install || :
+
+mkdir -p $RPM_BUILD_ROOT/etc/{rc.d/{rc{0,1,2,3,4,5,6}.d,init.d},profile.d}
+mkdir -p $RPM_BUILD_ROOT/etc/sysconfig/network-scripts
+mkdir -p $RPM_BUILD_ROOT/{bin,sbin,usr/man/man1}
+
+install -m 755 src/{usleep,ipcalc} $RPM_BUILD_ROOT/bin/
+install -m 644 src/{usleep.1,ipcalc.1} $RPM_BUILD_ROOT/usr/man/man1/
+
+install -m 755 lang.*sh $RPM_BUILD_ROOT/etc/profile.d/
+install -m 700 rc.d/init.d/{random,network,netfs} \
+	$RPM_BUILD_ROOT/etc/rc.d/init.d/
+install -m 700 sysconfig/network-scripts/* \
+	$RPM_BUILD_ROOT/etc/sysconfig/network-scripts/
+mv $RPM_BUILD_ROOT/etc/sysconfig/network-scripts/if{up,down} \
+	$RPM_BUILD_ROOT/sbin/
+ln -s /sbin/if{up,down} $RPM_BUILD_ROOT/etc/sysconfig/network-scripts/
 
 mkdir redhat
 mv sysconfig.txt sysvinitfiles redhat
@@ -44,9 +58,9 @@ cd $RPM_BUILD_ROOT
 install -m 600 $RPM_SOURCE_DIR/inittab etc/
 install -m 700 $RPM_SOURCE_DIR/rc.sysinit etc/rc.d/
 install -m 700 $RPM_SOURCE_DIR/rc etc/rc.d/
-install -m 644 $RPM_SOURCE_DIR/functions etc/init.d/
-install -m 700 $RPM_SOURCE_DIR/halt etc/init.d/
-install -m 700 $RPM_SOURCE_DIR/clock etc/init.d/
+install -m 644 $RPM_SOURCE_DIR/functions etc/rc.d/init.d/
+install -m 700 $RPM_SOURCE_DIR/halt etc/rc.d/init.d/
+install -m 700 $RPM_SOURCE_DIR/clock etc/rc.d/init.d/
 install -m 700 /dev/null etc/rc.d/rc.local
 
 ln -s ../init.d/halt etc/rc.d/rc0.d/S01halt
@@ -78,9 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/inittab
 %config /etc/rc.d/rc.sysinit
 %config /etc/rc.d/rc
-/etc/init.d/functions
-%config /etc/init.d/halt
-%config /etc/init.d/clock
+/etc/rc.d/init.d/functions
+%config /etc/rc.d/init.d/halt
+%config /etc/rc.d/init.d/clock
 %dir /etc/rc.d
 %dir /etc/rc.d/rc*.d
 %dir /etc/rc.d/init.d
@@ -109,6 +123,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc redhat
 
 %changelog
+* Sun Dec 03 2000 Solar Designer <solar@owl.openwall.com>
+- No longer require glib for builds.
+
 * Fri Dec 01 2000 Solar Designer <solar@owl.openwall.com>
 - Correctly report non-default signals in killproc().
 - %preun: only when last instance is uninstalled.
