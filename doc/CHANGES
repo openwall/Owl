@@ -5,6 +5,23 @@ remains fixed; it's only the stable branch which has these changes.
 
 	Changes made between Owl 0.1-prerelease and Owl 0.1-stable.
 
+(2001/05/29 - 2001/06/29)
+2001/06/29	Package: xinetd
+SECURITY FIX	Severity: none to high, remote, active
+Updated to 2.3.0, which fixes the problem with xinetd's string
+handling routines discovered by Sebastian Krahmer of SuSE Security
+Team.  This should complete an earlier security fix to the buffer
+overflow in the xinetd logging code discovered by zen-parse.  The
+buffer overflow could be triggered by a remote attacker via xinetd's
+ident (RFC 1413) lookup feature and could allow for the execution of
+arbitrary code as the user xinetd is running as (typically root).
+ident lookups are and have always been disabled in the Owl xinetd
+package by default.  Additionally, this update ensures the umask is no
+less restrictive than 022 when starting programs from xinetd (and is
+actually set to 077 by the startup scripts).  The old xinetd behavior
+was to set the umask to 0 which resulted in a vulnerability on setups
+we support (Owl with third-party services installed).
+
 2001/06/29	Owl/doc/fr/*
 Updated French translations, from Denis Ducamp.
 
@@ -154,4 +171,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp@hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.2.2.3 2001/06/29 13:30:00 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.2.2.4 2001/06/29 21:16:57 solar Exp $
