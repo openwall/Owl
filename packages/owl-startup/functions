@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-startup/functions,v 1.7 2002/09/09 10:49:35 solar Exp $
+# $Id: Owl/packages/owl-startup/functions,v 1.8 2002/12/12 16:36:07 solar Exp $
 #
 # Functions defined in this file are used by many /etc/rc.d/init.d scripts;
 # they offer some limited Red Hat compatibility.
@@ -293,6 +293,22 @@ function pidofproc()
 
 # More compatibility functions.  These were introduced in Red Hat 6.0.
 
+function echo_success()
+{
+}
+
+function echo_failure()
+{
+}
+
+function echo_passed()
+{
+}
+
+function echo_warning()
+{
+}
+
 function success()
 {
 	return 0
@@ -306,6 +322,11 @@ function failure()
 function passed()
 {
 	return 0
+}
+
+function warning()
+{
+	return $?
 }
 
 function action()

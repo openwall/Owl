@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.34 2002/12/08 15:26:53 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.35 2002/12/12 16:36:08 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.19
+Version: 0.20
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -147,6 +147,10 @@ fi
 %doc redhat
 
 %changelog
+* Thu Dec 12 2002 Solar Designer <solar@owl.openwall.com>
+- Added more dummy functions for Red Hat Linux compatibility: echo_success,
+echo_failure, echo_passed, echo_warning, warning (thanks to Jarno Huuskonen).
+
 * Sun Dec 08 2002 Solar Designer <solar@owl.openwall.com>
 - Also create /var/log/lastlog in rc.sysinit, not just on package install
 (thanks to Oleg Lukashin).
