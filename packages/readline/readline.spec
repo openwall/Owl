@@ -1,9 +1,9 @@
-# $Id: Owl/packages/readline/readline.spec,v 1.1 2000/12/05 09:02:43 mci Exp $
+# $Id: Owl/packages/readline/readline.spec,v 1.2 2000/12/06 00:30:08 mci Exp $
 
 Summary: A library for editing typed in command lines.
 Name: readline
 Version: 4.1
-Release: 6owl
+Release: 7owl
 Copyright: GPL
 Group: System Environment/Libraries
 Source: ftp://ftp.gnu.org/gnu/readline-%{version}.tar.gz
@@ -16,6 +16,7 @@ Prereq: /sbin/install-info /sbin/ldconfig
 Prefix: %{_prefix}
 Buildroot: /var/rpm-buildroot/%{name}-root
 BuildRequires: sed
+Provides: libreadline.so.3
 
 %description
 The readline library reads a line from the terminal and returns it,
@@ -70,12 +71,15 @@ mkdir -p ${RPM_BUILD_ROOT}%{_libdir}
   	.%{_libdir}/libreadline.so.`echo %{version} | sed 's^\..*^^g'`
   ln -sf libhistory.so.%{version} \
   	.%{_libdir}/libhistory.so.`echo %{version} | sed 's^\..*^^g'`
+
+# Hack !
+  ln -s libreadline.so.%{version} .%{_libdir}/libreadline.so.3
 }
 
 %clean
 [ "${RPM_BUILD_ROOT}" != "/" ] && rm -rf ${RPM_BUILD_ROOT}
 
-%post
+%post 
 /sbin/ldconfig
 /sbin/install-info %{_infodir}/history.info.gz %{_infodir}/dir
 /sbin/install-info %{_infodir}/readline.info.gz %{_infodir}/dir
@@ -102,6 +106,9 @@ fi
 %doc %{_docdir}/examples/*
 
 %changelog
+
+* Wed Dec 06 2000 Michail Litvak <mci@owl.openwall.com>
+- hack for compatibility with readline2  (Provides: libreadline.so.3)
 
 * Tue Dec 05 2000 Michail Litvak <mci@owl.openwall.com>
 - Imported from RH
