@@ -1,0 +1,77 @@
+diff -ur openssh-3.4p1.orig/cipher.c openssh-3.4p1/cipher.c
+--- openssh-3.4p1.orig/cipher.c	Mon Jun 24 01:21:31 2002
++++ openssh-3.4p1/cipher.c	Fri Jun 28 16:20:16 2002
+@@ -50,17 +50,17 @@
+ 
+ #if OPENSSL_VERSION_NUMBER < 0x00907000L
+ #include "rijndael.h"
+-static const EVP_CIPHER *evp_rijndael(void);
++static EVP_CIPHER *evp_rijndael(void);
+ #endif
+-static const EVP_CIPHER *evp_ssh1_3des(void);
+-static const EVP_CIPHER *evp_ssh1_bf(void);
++static EVP_CIPHER *evp_ssh1_3des(void);
++static EVP_CIPHER *evp_ssh1_bf(void);
+ 
+ struct Cipher {
+ 	char	*name;
+ 	int	number;		/* for ssh1 only */
+ 	u_int	block_size;
+ 	u_int	key_len;
+-	const EVP_CIPHER	*(*evptype)(void);
++	EVP_CIPHER	*(*evptype)(void);
+ } ciphers[] = {
+ 	{ "none", 		SSH_CIPHER_NONE, 8, 0, EVP_enc_null },
+ 	{ "des", 		SSH_CIPHER_DES, 8, 8, EVP_des_cbc },
+@@ -395,7 +395,7 @@
+ 	return (1);
+ }
+ 
+-static const EVP_CIPHER *
++static EVP_CIPHER *
+ evp_ssh1_3des(void)
+ {
+ 	static EVP_CIPHER ssh1_3des;
+@@ -450,7 +450,7 @@
+ 	return (ret);
+ }
+ 
+-static const EVP_CIPHER *
++static EVP_CIPHER *
+ evp_ssh1_bf(void)
+ {
+ 	static EVP_CIPHER ssh1_bf;
+@@ -552,7 +552,7 @@
+ 	return (1);
+ }
+ 
+-static const EVP_CIPHER *
++static EVP_CIPHER *
+ evp_rijndael(void)
+ {
+ 	static EVP_CIPHER rijndal_cbc;
+diff -ur openssh-3.4p1.orig/mac.c openssh-3.4p1/mac.c
+--- openssh-3.4p1.orig/mac.c	Thu Jun  6 23:48:16 2002
++++ openssh-3.4p1/mac.c	Fri Jun 28 16:14:27 2002
+@@ -36,7 +36,7 @@
+ 
+ struct {
+ 	char		*name;
+-	const EVP_MD *	(*mdfunc)(void);
++	EVP_MD *	(*mdfunc)(void);
+ 	int		truncatebits;	/* truncate digest if != 0 */
+ } macs[] = {
+ 	{ "hmac-sha1",			EVP_sha1, 0, },
+diff -ur openssh-3.4p1.orig/session.c openssh-3.4p1/session.c
+--- openssh-3.4p1.orig/session.c	Wed Jun 26 17:51:06 2002
++++ openssh-3.4p1/session.c	Fri Jun 28 16:15:39 2002
+@@ -1159,7 +1159,9 @@
+ void
+ do_setusercontext(struct passwd *pw)
+ {
++#ifdef _AIX
+ 	char tty='\0';
++#endif
+ 
+ #ifdef HAVE_CYGWIN
+ 	if (is_winnt) {

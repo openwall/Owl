@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.39 2002/06/28 11:49:45 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.40 2002/06/28 12:32:18 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
@@ -20,6 +20,7 @@ Patch3: openssh-3.1p1-owl-scp-stalltime.diff
 Patch4: openssh-3.3p1-owl-drop-groups.diff
 Patch5: openssh-3.1p1-owl-openssl-version-check.diff
 Patch6: openssh-3.4p1-owl-mm.diff
+Patch7: openssh-3.4p1-owl-warnings.diff
 PreReq: openssl >= 0.9.6b-1owl
 PreReq: openssl < 0.9.7
 PreReq: /sbin/chkconfig, grep, shadow-utils
@@ -98,6 +99,7 @@ rm -r autom4te-*.cache
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %define _sysconfdir /etc/ssh
 %{expand:%%define _datadir %{_datadir}/ssh}

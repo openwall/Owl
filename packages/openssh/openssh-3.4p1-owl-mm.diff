@@ -128,7 +128,7 @@ diff -ur openssh-3.4p1.orig/configure.ac openssh-3.4p1/configure.ac
  	AC_CHECK_LIB(gen, dirname,[
 diff -ur openssh-3.4p1.orig/monitor_mm.c openssh-3.4p1/monitor_mm.c
 --- openssh-3.4p1.orig/monitor_mm.c	Wed Jun 26 04:29:03 2002
-+++ openssh-3.4p1/monitor_mm.c	Fri Jun 28 15:38:35 2002
++++ openssh-3.4p1/monitor_mm.c	Fri Jun 28 16:12:49 2002
 @@ -29,6 +29,7 @@
  #ifdef HAVE_SYS_MMAN_H
  #include <sys/mman.h>
@@ -256,7 +256,7 @@ diff -ur openssh-3.4p1.orig/monitor_mm.c openssh-3.4p1/monitor_mm.c
  		fatal("mm_memvalid: address too large: %p", address);
 +	/* Redundant on most platforms */
 +	if (size > mm->size)
-+		fatal("mm_memvalid: size too large: %lu", size);
++		fatal("mm_memvalid: size too large: %lu", (u_long)size);
  }
 diff -ur openssh-3.4p1.orig/monitor_mm.h openssh-3.4p1/monitor_mm.h
 --- openssh-3.4p1.orig/monitor_mm.h	Wed Jun 26 03:01:37 2002
