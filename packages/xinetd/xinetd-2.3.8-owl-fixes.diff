@@ -1,0 +1,151 @@
+diff -ur xinetd-2.3.8.orig/xinetd/builtins.c xinetd-2.3.8/xinetd/builtins.c
+--- xinetd-2.3.8.orig/xinetd/builtins.c	Thu Sep  5 22:08:43 2002
++++ xinetd-2.3.8/xinetd/builtins.c	Thu Sep 19 22:06:21 2002
+@@ -214,7 +214,6 @@
+    }
+    for ( ;; )
+    {
+-      check_pipe();
+       cc = read( descriptor, buf, sizeof( buf ) ) ;
+       if ( (cc == 0) || ((cc == -1) && (errno != EINTR)) )
+          break ;
+@@ -445,7 +444,6 @@
+    (void) shutdown( descriptor, 0 ) ;
+    for ( ;; )
+    {
+-      check_pipe();
+       if ( generate_line( line_buf, sizeof( line_buf ) ) == NULL )
+          break ;
+       if ( write_buf( descriptor, line_buf, sizeof( line_buf ) ) == FAILED )
+@@ -558,6 +556,9 @@
+    }
+ 
+    /*  Read in the name of the service in the format "svc_name\r\n".
++    *
++    *  XXX: should loop on partial reads (could probably use Sread() if
++    *  it wasn't thrown out of xinetd source code a few revisions back).
+     */
+    do
+    {
+@@ -571,7 +572,7 @@
+    }
+ 
+    if ( ( cc <= 2 ) ||
+-        ( ( svc_name[cc - 1] != '\n' ) && ( svc_name[cc - 2] != '\r' ) ) )
++        ( ( svc_name[cc - 1] != '\n' ) || ( svc_name[cc - 2] != '\r' ) ) )
+    {
+       if ( debug.on )
+          msg(LOG_DEBUG, "tcpmux_handler", "Invalid service name format.");
+@@ -579,7 +580,7 @@
+       return ( NULL );
+    }
+ 
+-   svc_name[cc - 2] = '\0';  /*  Remove /r/n for compare */
++   svc_name[cc - 2] = '\0';  /*  Remove \r\n for compare */
+ 
+    if ( debug.on )
+    {
+diff -ur xinetd-2.3.8.orig/xinetd/child.c xinetd-2.3.8/xinetd/child.c
+--- xinetd-2.3.8.orig/xinetd/child.c	Thu Sep  5 22:11:12 2002
++++ xinetd-2.3.8/xinetd/child.c	Thu Sep 19 22:04:28 2002
+@@ -273,15 +273,14 @@
+ 
+    signal_default_state();
+ 
+-   if (signals_pending[0] >= 0)
++   if ((signals_pending[0] >= 0 && close(signals_pending[0])) ||
++       (signals_pending[1] >= 0 && close(signals_pending[1])))
+    {
+-      if (close(signals_pending[0]) || close(signals_pending[1]))
+-      {
+-         msg(LOG_ERR, func, "Failed to close the signal pipe: %m");
+-         _exit(1);
+-      }
+-      signals_pending[0] = -1;
++      msg(LOG_ERR, func, "Failed to close the signal pipe: %m");
++      _exit(1);
+    }
++   signals_pending[0] = -1;
++   signals_pending[1] = -1;
+ 
+ #ifdef DEBUG_SERVER
+    if ( debug.on )
+diff -ur xinetd-2.3.8.orig/xinetd/confparse.c xinetd-2.3.8/xinetd/confparse.c
+--- xinetd-2.3.8.orig/xinetd/confparse.c	Thu Sep  5 09:24:47 2002
++++ xinetd-2.3.8/xinetd/confparse.c	Thu Sep 19 21:45:18 2002
+@@ -718,8 +718,10 @@
+    Sclose( config_fd ) ;
+    if( inetd_compat ) {
+       config_fd = open("/etc/inetd.conf", O_RDONLY);
+-      if( config_fd >= 0 )
++      if( config_fd >= 0 ) {
+          parse_inet_conf_file( config_fd, confp );
++         Sclose( config_fd );
++      }
+    }
+ 
+    remove_disabled_services( confp ) ;
+diff -ur xinetd-2.3.8.orig/xinetd/parsers.c xinetd-2.3.8/xinetd/parsers.c
+--- xinetd-2.3.8.orig/xinetd/parsers.c	Thu Sep  5 09:24:47 2002
++++ xinetd-2.3.8/xinetd/parsers.c	Thu Sep 19 21:36:02 2002
+@@ -1105,8 +1105,7 @@
+    struct addrinfo hints, *res;
+ 
+    port_char = pset_pointer(values, 1);
+-   parse_base10(port_char, &port_int);
+-   if (port_int == 0)
++   if (parse_base10(port_char, &port_int) || port_int <= 0)
+    {  /* OK, maybe its a service name... */
+       struct servent *entry;
+       entry = getservbyname(port_char, "tcp");
+diff -ur xinetd-2.3.8.orig/xinetd/service.c xinetd-2.3.8/xinetd/service.c
+--- xinetd-2.3.8.orig/xinetd/service.c	Sat Aug 31 02:14:59 2002
++++ xinetd-2.3.8/xinetd/service.c	Thu Sep 19 21:32:14 2002
+@@ -349,6 +349,7 @@
+    }
+ 
+ #ifdef HAVE_DNSREGISTRATION
++/* XXX: malloc()/asprintf() error checking */
+    char *srvname;
+    char *hostname = malloc(256);
+ 
+diff -ur xinetd-2.3.8.orig/xinetd/signals.c xinetd-2.3.8/xinetd/signals.c
+--- xinetd-2.3.8.orig/xinetd/signals.c	Thu Sep  5 20:07:30 2002
++++ xinetd-2.3.8/xinetd/signals.c	Thu Sep 19 22:01:19 2002
+@@ -415,6 +415,7 @@
+    int ret_val;
+ #if NSIG < 256
+    unsigned char sig_byte;
++   if (signals_pending[1] < 0) return;
+    if (sig >= 256) return;
+    sig_byte = sig;
+    do
+@@ -422,6 +423,7 @@
+       ret_val = write(signals_pending[1], &sig_byte, 1);
+    } while (ret_val == -1 && errno == EINTR);
+ #else
++   if (signals_pending[1] < 0) return;
+    do
+    {
+       ret_val = write(signals_pending[1], &sig, sizeof(int));
+@@ -464,6 +466,8 @@
+    int sig;
+ #endif
+    const char *func = "check_pipe";
++
++   if (signals_pending[0] < 0) return;
+ 
+    if( ioctl(signals_pending[0], FIONREAD, &i) != 0 ) {
+       msg(LOG_ERR, func, "Can't get the number of pending signals: %m");
+diff -ur xinetd-2.3.8.orig/xinetd/xinetd.man xinetd-2.3.8/xinetd/xinetd.man
+--- xinetd-2.3.8.orig/xinetd/xinetd.man	Sun Sep  1 00:10:02 2002
++++ xinetd-2.3.8/xinetd/xinetd.man	Thu Sep 19 21:28:45 2002
+@@ -93,7 +93,7 @@
+ for remote userid acquisition.
+ .TP
+ .BI \-version
+-This option causes xinetd to print out it's version information.
++This option causes xinetd to print out its version information.
+ .TP
+ .BI \-inetd_compat
+ This option causes xinetd to read /etc/inetd.conf in addition to the

@@ -1,8 +1,8 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.16 2002/08/10 21:31:25 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.17 2002/09/19 19:57:41 solar Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
-Version: 2.3.6
+Version: 2.3.8
 Release: owl1
 License: BSD with minor restrictions
 Group: System Environment/Daemons
@@ -18,7 +18,7 @@ Source7: xinetd-echo
 Source8: xinetd-uecho
 Source9: xinetd-chargen
 Source10: xinetd-uchargen
-Patch0: xinetd-2.3.6-owl-fixes.diff
+Patch0: xinetd-2.3.8-owl-fixes.diff
 PreReq: /sbin/chkconfig
 Provides: inetd
 Obsoletes: inetd
@@ -46,6 +46,7 @@ limits on the number of servers that can be started, among other things.
 %{expand:%%define optflags %optflags -Wall -Wno-unused -Wno-switch}
 
 %build
+export ac_cv_header_DNSServiceDiscovery_DNSServiceDiscovery_h=no \
 %configure --with-libwrap
 make
 
@@ -53,7 +54,7 @@ make
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/etc/{rc.d/init.d,xinetd.d}
 %makeinstall \
-	DAEMONDIR=$RPM_BUILD_ROOT/usr/sbin MANDIR=$RPM_BUILD_ROOT%{_mandir}
+	DAEMONDIR=$RPM_BUILD_ROOT%{_sbindir} MANDIR=$RPM_BUILD_ROOT%{_mandir}
 
 cd $RPM_BUILD_ROOT
 
@@ -68,7 +69,7 @@ install -m 644 $RPM_SOURCE_DIR/xinetd-uecho etc/xinetd.d/echo-udp
 install -m 644 $RPM_SOURCE_DIR/xinetd-chargen etc/xinetd.d/chargen
 install -m 644 $RPM_SOURCE_DIR/xinetd-uchargen etc/xinetd.d/chargen-udp
 
-rm usr/sbin/{itox,xconv.pl} .%{_mandir}/man8/{itox,xconv.pl}.8*
+rm .%{_sbindir}/{itox,xconv.pl} .%{_mandir}/man8/{itox,xconv.pl}.8*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -98,13 +99,16 @@ fi
 %files
 %defattr(-,root,root)
 %doc README AUDIT xinetd/CHANGELOG xinetd/COPYRIGHT xinetd/sample.conf
-%config /etc/xinetd.conf
-/usr/sbin/*
-%{_mandir}/*/*
+%config(noreplace) /etc/xinetd.conf
+%config(noreplace) /etc/xinetd.d/*
 %config /etc/rc.d/init.d/xinetd
-%config /etc/xinetd.d/*
+%{_sbindir}/*
+%{_mandir}/*/*
 
 %changelog
+* Thu Sep 19 2002 Solar Designer <solar@owl.openwall.com>
+- Updated to 2.3.8 with a new set of minor fixes.
+
 * Sun Aug 11 2002 Solar Designer <solar@owl.openwall.com>
 - Updated to 2.3.6 adding fixes or workarounds for issues introduced after
 2.3.3 including the signal pipe leak into child processes (a security hole
