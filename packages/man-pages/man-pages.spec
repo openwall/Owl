@@ -1,9 +1,9 @@
-# $Id: Owl/packages/man-pages/man-pages.spec,v 1.2 2001/04/30 18:03:09 mci Exp $
+# $Id: Owl/packages/man-pages/man-pages.spec,v 1.3 2001/05/02 11:54:37 mci Exp $
 
 Summary: Man (manual) pages from the Linux Documentation Project.
 Name: man-pages
 Version: 1.35
-Release: 2owl
+Release: 3owl
 Copyright: distributable
 Group: Documentation
 Source0: ftp://ftp.win.tue.nl/pub/linux-local/manpages/man-pages-%{version}.tar.gz 
@@ -22,12 +22,13 @@ Source12: ldconfig.8
 Source13: rpcinfo.8
 Patch1: man-pages-1.35-deb-misc.diff
 Patch2: man-pages-1.35-rh-ctype.diff
-# temporary disabled, now we haven't this paths
+# temporary disabled, we don't yet have these paths
 # Patch3: man-pages-1.35-rh-pathupdate.diff
 Patch4: man-pages-1.35-rh-unicodeurl.diff
 Patch5: man-pages-1.35-rh-roffix.diff
 Patch6: man-pages-1.35-rh-mssync.diff
 Patch7: man-pages-1.35-owl-ccldso.diff
+Patch8: man-pages-1.35-owl-uselib.diff
 Buildroot: /var/rpm-buildroot/%{name}-root
 Autoreqprov: false
 BuildArchitectures: noarch
@@ -45,21 +46,21 @@ administration (intro only).
 %prep
 %setup -q
 
-cp -a %{SOURCE1} man1
-cp -a %{SOURCE2} man1
-cp -a %{SOURCE3} man1
-cp -a %{SOURCE4} man1
-cp -a %{SOURCE5} man1
-cp -a %{SOURCE6} man1
-cp -a %{SOURCE7} man1
+cp %{SOURCE1} man1
+cp %{SOURCE2} man1
+cp %{SOURCE3} man1
+cp %{SOURCE4} man1
+cp %{SOURCE5} man1
+cp %{SOURCE6} man1
+cp %{SOURCE7} man1
 
-cp -a %{SOURCE8} man2
-cp -a %{SOURCE9} man2
-cp -a %{SOURCE10} man2
+cp %{SOURCE8} man2
+cp %{SOURCE9} man2
+cp %{SOURCE10} man2
 
-cp -a %{SOURCE11} man8
-cp -a %{SOURCE12} man8
-cp -a %{SOURCE13} man8
+cp %{SOURCE11} man8
+cp %{SOURCE12} man8
+cp %{SOURCE13} man8
 
 %patch1 -p1 
 %patch2 -p1
@@ -68,6 +69,7 @@ cp -a %{SOURCE13} man8
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 %build
 rm -fv man1/README
@@ -127,12 +129,16 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man*/*
 
 %changelog
+* Wed May 02 2001 Michail Litvak <mci@owl.openwall.com>
+- use cp instead cp -a in spec
+- uselib.2 patch
+
 * Mon Apr 30 2001 Michail Litvak <mci@owl.openwall.com>
-- Disabled patch 3 (now we haven't this paths)
+- Disabled patch 3 (we don't yet have these paths)
 - added man for ld-linux.so
 - remove time.1 (it is in time package)
 - man-pages-extralocale.tar.bz2, man2.tar.gz replaced
-  by just non packed files (this better for storing in CVS) 
+  by just non packed files (is better for storing in CVS) 
 - patch to replace cc(1) -> gcc(1), ld.so -> ld-linux.so
 
 * Fri Apr 27 2001 Michail Litvak <mci@owl.openwall.com>

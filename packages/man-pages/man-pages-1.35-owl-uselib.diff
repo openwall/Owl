@@ -1,0 +1,20 @@
+--- man-pages-1.35/man2/uselib.2.orig	Mon Apr 30 19:01:54 2001
++++ man-pages-1.35/man2/uselib.2	Wed May  2 14:00:34 2001
+@@ -25,6 +25,7 @@
+ .\" Modified by Michael Haardt <michael@moria.de>
+ .\" Modified Sat Jul 24 14:34:48 1993 by Rik Faith <faith@cs.unc.edu>
+ .\" Modified Tue Oct 22 22:59:17 1996 by Eric S. Raymond <esr@thyrsus.com>
++.\" Modified Wed May 02 14:01:38 2001 by Michail Litvak <mci@owl.openwall.com> 
+ .TH USELIB 2 "24 July 1993" "Linux 0.99.11" "Linux Programmer's Manual"
+ .SH NAME
+ uselib \- select shared library
+@@ -35,6 +36,9 @@
+ .SH DESCRIPTION
+ \fBuselib\fP selects the shared library binary that will be used by
+ the calling process.
++.sp
++Uselib is only used for loading a.out libraries and thus is
++obsolete on most architectures.
+ .SH "RETURN VALUE"
+ On success, zero is returned.  On error, \-1 is returned, and
+ .I errno

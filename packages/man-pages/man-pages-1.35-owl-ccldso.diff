@@ -15,14 +15,6 @@
  .BR environ (5),
 -.BR ld.so (8)
 +.BR ld-linux.so (8)
---- man-pages-1.35/man2/uselib.2.orig	Mon Apr 30 19:01:54 2001
-+++ man-pages-1.35/man2/uselib.2	Mon Apr 30 19:02:07 2001
-@@ -64,4 +64,4 @@
- .BR ldd (1),
- .BR mmap (2),
- .BR open (2),
--.BR ld.so (8)
-+.BR ld-linux.so (8)
 --- man-pages-1.35/man3/intro.3.orig	Mon Apr 30 18:55:43 2001
 +++ man-pages-1.35/man3/intro.3	Mon Apr 30 18:56:04 2001
 @@ -33,7 +33,7 @@
