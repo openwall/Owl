@@ -1,7 +1,7 @@
-diff -ur openssh-3.1p1.orig/entropy.c openssh-3.1p1/entropy.c
---- openssh-3.1p1.orig/entropy.c	Tue Jan 22 13:57:54 2002
-+++ openssh-3.1p1/entropy.c	Sun Mar 17 00:16:55 2002
-@@ -134,9 +134,9 @@
+diff -ur openssh-3.4p1.orig/entropy.c openssh-3.4p1/entropy.c
+--- openssh-3.4p1.orig/entropy.c	Sun Jun  9 23:41:48 2002
++++ openssh-3.4p1/entropy.c	Sat Jun 29 21:18:47 2002
+@@ -138,9 +138,9 @@
  {
  	/*
  	 * OpenSSL version numbers: MNNFFPPS: major minor fix patch status

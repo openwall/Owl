@@ -1,7 +1,7 @@
-diff -ur openssh-3.3p1.orig/sshd.c openssh-3.3p1/sshd.c
---- openssh-3.3p1.orig/sshd.c	Fri Jun 21 05:09:47 2002
-+++ openssh-3.3p1/sshd.c	Tue Jun 25 17:28:22 2002
-@@ -1025,8 +1025,15 @@
+diff -ur openssh-3.4p1.orig/sshd.c openssh-3.4p1/sshd.c
+--- openssh-3.4p1.orig/sshd.c	Wed Jun 26 03:24:19 2002
++++ openssh-3.4p1/sshd.c	Sat Jun 29 21:17:31 2002
+@@ -1051,8 +1051,15 @@
  	 * to create a file, and we can't control the code in every 
  	 * module which might be used).
  	 */

@@ -1,6 +1,6 @@
-diff -ur openssh-3.3p1-owl-hide-unknown/auth-pam.c openssh-3.3p1/auth-pam.c
---- openssh-3.3p1-owl-hide-unknown/auth-pam.c	Wed May  8 06:27:56 2002
-+++ openssh-3.3p1/auth-pam.c	Sun Jun 23 18:36:26 2002
+diff -ur openssh-3.4p1-owl-hide-unknown/auth-pam.c openssh-3.4p1/auth-pam.c
+--- openssh-3.4p1-owl-hide-unknown/auth-pam.c	Wed May  8 06:27:56 2002
++++ openssh-3.4p1/auth-pam.c	Sat Jun 29 21:13:08 2002
 @@ -204,15 +204,20 @@
  {
  	extern ServerOptions options;
@@ -47,9 +47,9 @@ diff -ur openssh-3.3p1-owl-hide-unknown/auth-pam.c openssh-3.3p1/auth-pam.c
  		return 0;
  	}
  }
-diff -ur openssh-3.3p1-owl-hide-unknown/auth1.c openssh-3.3p1/auth1.c
---- openssh-3.3p1-owl-hide-unknown/auth1.c	Sun Jun 23 18:23:04 2002
-+++ openssh-3.3p1/auth1.c	Sun Jun 23 18:37:42 2002
+diff -ur openssh-3.4p1-owl-hide-unknown/auth1.c openssh-3.4p1/auth1.c
+--- openssh-3.4p1-owl-hide-unknown/auth1.c	Sat Jun 29 21:02:35 2002
++++ openssh-3.4p1/auth1.c	Sat Jun 29 21:13:08 2002
 @@ -383,7 +383,7 @@
  	    use_privsep ? " [net]" : "");
  
@@ -59,9 +59,9 @@ diff -ur openssh-3.3p1-owl-hide-unknown/auth1.c openssh-3.3p1/auth1.c
  #endif
  
  	/*
-diff -ur openssh-3.3p1-owl-hide-unknown/auth2.c openssh-3.3p1/auth2.c
---- openssh-3.3p1-owl-hide-unknown/auth2.c	Sun Jun 23 18:26:04 2002
-+++ openssh-3.3p1/auth2.c	Sun Jun 23 18:38:11 2002
+diff -ur openssh-3.4p1-owl-hide-unknown/auth2.c openssh-3.4p1/auth2.c
+--- openssh-3.4p1-owl-hide-unknown/auth2.c	Sat Jun 29 21:03:37 2002
++++ openssh-3.4p1/auth2.c	Sat Jun 29 21:13:08 2002
 @@ -164,7 +164,7 @@
  			authctxt->pw = NULL;
  			authctxt->valid = 0;
