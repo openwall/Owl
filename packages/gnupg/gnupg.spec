@@ -1,19 +1,14 @@
-# $Id: Owl/packages/gnupg/gnupg.spec,v 1.4 2001/03/26 18:31:09 kad Exp $
+# $Id: Owl/packages/gnupg/gnupg.spec,v 1.5 2001/05/27 11:14:13 kad Exp $
 
 Summary: 	A GNU utility for secure communication and data storage.
 Name: 		gnupg
-Version:	1.0.4
-Release: 	6owl
+Version:	1.0.5
+Release: 	1owl
 Copyright:	GPL
 Group: 		Applications/Cryptography
 Source0: 	ftp://ftp.gnupg.org/pub/gcrypt/gnupg/%{name}-%{version}.tar.gz
-Patch0: 	gnupg-1.0.2-rh-locale.diff
-Patch1: 	gnupg-1.0.3-rh-spell.diff
-Patch2: 	gnupg-1.0.4-rh-rijndael.diff
-Patch3: 	gnupg-1.0.4-rh-strlen-bug.diff
-Patch4:		gnupg-1.0.4-owl-security.diff
-Patch5:		gnupg-1.0.4-cvs-secret-key-checks.diff
-Patch6:		gnupg-1.0.4-cvs-disallow-secret.diff
+Patch0:		gnupg-1.0.2-rh-locale.diff
+Patch1:		gnupg-1.0.4-cvs-secret-key-checks.diff
 URL: 		http://www.gnupg.org/
 Provides: 	gpg openpgp
 BuildRoot: 	/var/rpm-buildroot/%{name}-root
@@ -28,13 +23,8 @@ only IDEA for symmetric-key encryption, which is patented worldwide).
 
 %prep
 %setup -q
-%patch1 -p1 -b .typos
-%patch2 -p1 -b .rijndael
-# obsoleted by patch4
-#%patch3 -p1 -b .strlen
-%patch4 -p1
-%patch5 -p0
-%patch6 -p1
+%patch0 -p1 -b .locale
+%patch1 -p0 -b .rsacheck
 
 %build
 unset LINGUAS || :
@@ -68,6 +58,9 @@ strip $RPM_BUILD_ROOT/usr/lib/gnupg/*
 %{_mandir}/man1/gpgv.*
 
 %changelog
+* Sun May 27 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- upgraded to 1.0.5
+
 * Mon Mar 26 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - additional checks to secret key
 - add the --allow-secret-key-import patch from CVS
