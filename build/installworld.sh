@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/installworld.sh,v 1.4 2000/12/28 18:44:25 solar Exp $
+# $Id: Owl/build/installworld.sh,v 1.5 2001/04/12 05:03:01 solar Exp $
 
 . installworld.conf
 
@@ -59,11 +59,18 @@ fi
 
 grep -v ^# $HOME/installorder.conf |
 while read PACKAGES; do
-	FILES=$(echo `echo "$PACKAGES " | sed 's/ /-[0-9]*.rpm /g'`)
-	if echo "$FILES" | grep '*' &> /dev/null; then
-		log "Missing $PACKAGES"
-		continue
-	fi
+	FILES=
+	for PACKAGE in $PACKAGES; do
+		REGEX="^${PACKAGE}-[^-]*[0-9]\+[^-]*-[0-9][^-]*.*.rpm\$"
+		FILE="`ls | grep "$REGEX" | tail -1`"
+		if [ -z "$FILE" ]; then
+			log "Missing $PACKAGE"
+			continue
+		fi
+		test -z "$FILES" || FILES="$FILES "
+		FILES="${FILES}${FILE}"
+	done
+	test -n "$FILES" || continue
 	log "Installing $PACKAGES ($FILES)"
 	rpm --root $ROOT --define "home $HOME" $FLAGS $FILES && continue
 	STATUS=1
