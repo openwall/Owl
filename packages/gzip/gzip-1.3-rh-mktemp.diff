@@ -1,6 +1,12 @@
---- gzip-1.3/gzexe.in.gzexe	Fri Sep 18 00:43:06 1998
-+++ gzip-1.3/gzexe.in	Mon Mar 20 10:28:02 2000
-@@ -94,18 +94,22 @@
+diff -urN gzip-1.3/gzexe.in gzip-1.3.new/gzexe.in
+--- gzip-1.3/gzexe.in	Fri Sep 18 02:43:06 1998
++++ gzip-1.3.new/gzexe.in	Thu Feb  8 16:25:42 2001
+@@ -90,22 +90,26 @@
+   if test $decomp -eq 0; then
+     sed 1q $0 > $tmp
+     sed "s|^if tail|if $tail|" >> $tmp <<'EOF'
+-skip=22
++skip=26
  set -C
  umask=`umask`
  umask 77
@@ -9,7 +15,7 @@
 +	echo 'cannot create temporary file' >&2
 +	exit 1
 +}
-+if tail +$skip $0 | "/bin"/gzip -cd > $tmpfile; then
++if tail +$skip $0 | "/bin"/gzip -cd >| $tmpfile; then
    umask $umask
 -  /bin/chmod 700 /tmp/gztmp$$
 +  /bin/chmod 700 $tmpfile

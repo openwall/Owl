@@ -1,15 +1,18 @@
-# $Id: Owl/packages/gzip/gzip.spec,v 1.1 2000/08/09 00:51:27 kad Exp $
+# $Id: Owl/packages/gzip/gzip.spec,v 1.2 2001/06/16 10:46:44 kad Exp $
 
 Summary: The GNU data compression program.
 Name: 		gzip
 Version: 	1.3
-Release: 	6owl
+Release: 	12owl
 Copyright: 	GPL
 Group: 		Applications/File
 Source: 	ftp://alpha.gnu.org/gnu/gzip/gzip-%{version}.tar.gz
 Patch2: 	gzip-1.3-rh-mktemp.diff
 Patch3: 	gzip-1.2.4-rh-zforce.diff
 Patch5: 	gzip-1.2.4a-rh-dirinfo.diff
+Patch6:		gzip-1.3-rh-stderr.diff
+Patch7:		gzip-1.3-rh-zgreppipe.diff
+
 URL: 		http://www.gzip.org/
 Prereq: 	/sbin/install-info
 Requires: 	mktemp
@@ -27,6 +30,8 @@ very commonly used data compression program.
 %patch2 -p1 -b .mktemp
 %patch3 -p1 -b .zforce
 %patch5 -p1 -b .dirinfo
+%patch6 -p1 -b .stderr
+%patch7 -p1 -b .zgreppipe
 
 %build
 %configure  --bindir=/bin
@@ -73,6 +78,11 @@ fi
 %{_infodir}/gzip.info*
 
 %changelog
+* Sat Jun 16 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- sync mktemp patch from RH
+- errors go to stderror
+- add handler for SIGPIPE in zgrep
+
 * Sun Aug  6 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import from RH
 
