@@ -1,0 +1,534 @@
+This is the public Owl TODO list.  Its primary purpose is to give you
+some ideas of how to contribute to Owl development (but please also
+see CONVENTIONS if you do).  It is not intended as a poor replacement
+for a request tracking system (although we don't yet use one) and it
+is not a complete TODO list either.
+
+Currently, this list is limited to packages and just those already in
+Owl.  It doesn't have to be, so this may change.  In reality, besides
+the existing packages, there're quite a few bits of work on packages
+yet to be added, on Owl build environment, kernel, documentation, and
+the facilities we use to run the project.
+
+If something is listed as ASSIGNED, it doesn't mean you shouldn't
+offer to do it.  Re-assigning is perfectly fine if it would seem to
+help achieve the goal.
+
+
+	autoconf, automake, libtool.
+
+[PRIORITY: low]
+Update to latest releases.  Fix whatever other packages this will
+break.  Should probably do some other core package updates first.
+
+[PRIORITY: medium]
+Deal with temporary file handling.  The RH-derived patch in libtool is
+fail-open on mktemp(1).  autoconf 2.52, if we update to it, would be
+fail-open on mktemp(1) in configure scripts it generates, so we'd need
+to fix that.  automake.texi suggests bad practices in both 1.4 and 1.5
+(look for "make DESTDIR=/tmp/staging install" and what follows).
+
+[PRIORITY: medium]
+[ASSIGNED: mci@]
+With our current libtool, some software (that is not a part of Owl)
+won't build unless one sets LTCONFIG_VERSION=1.3.5.  This needs to be
+investigated and dealt with in the libtool package itself (unless we
+update libtool first and the problem goes away).
+
+
+	bash.
+
+[PRIORITY: low]
+Update to latest release (we're currently at 2.05, but 2.05a went out
+a long time ago), with our patches.  Make sure it still builds cleanly
+with -Wall (due to our patches).  Once again try to get our generic
+fixes (the "-owl-fixes.diff") to the maintainer (haven't received a
+response).
+
+
+	binutils.
+
+[PRIORITY: low]
+Update to latest release.
+
+
+	console-tools.
+
+[PRIORITY: high]
+[ASSIGNED: mci@]
+Migrate to kbd or downgrade to 0.2.3.
+
+
+	cpio, tar.
+
+[PRIORITY: medium]
+Audit for and deal with:
+
+1. Races when creating archives: whether it may be made to leave the
+intended directory tree by moving directories around, whether it may
+be made to block on reading a FIFO or device, -- should probably use
+O_NOFOLLOW, then fstat().  Refer to the patches to FTS code in glibc
+and to mtree, both of which had similar issues.
+
+2. Races when extracting archives: whether it will be possible for an
+attacker to place [sym]links into directories being extracted such
+that files in them would go to the wrong place, -- for example, when
+restoring user home directories from a backup, as root.  Races between
+the calls to chmod() and chown(), -- if chmod() is done first, that
+would mean that permissions may be given to the wrong group for a
+moment and if chown() is done first it may mean that extra permissions
+are given to the file's group for a moment.  The right sequence is
+chmod() to a safe mode (0700 & mode), then chown(), then chmod().
+
+3. In cpio only: ways a malicious archive may specify that files go
+outside of the intended directory tree.  This has been dealt with in
+tar already.
+
+
+	bison, dialog, diffstat, diffutils, file, hdparm, man-pages.
+
+[PRIORITY: low]
+[ASSIGNED: mci@]
+Update these to latest releases once in a while.
+
+
+	fileutils, sh-utils, textutils.
+
+[PRIORITY: medium]
+Update to coreutils (one package instead of three).
+
+Update DIR_COLORS from dircolors.hin.  In ls, dir, and vdir use
+__progname instead of separate binaries with hard-coded ls_mode.
+
+
+	gdb.
+
+[PRIORITY: medium]
+Investigate and deal with fd leaks into traced programs.
+
+[PRIORITY: low]
+[ASSIGNED: solar@]
+Package a tool to trap unaligned accesses on Alpha.
+
+[PRIORITY: low]
+Update to latest release.
+
+
+	gcc.
+
+[PRIORITY: low]
+Update to 3.1+ and deal with whatever this will break.  Probably do
+after or at the same time with the binutils and glibc.
+
+
+	glibc.
+
+[PRIORITY: medium]
+[ASSIGNED: solar@]
+Update to 2.3.1+ with all the related auditing, porting, and fixing.
+
+
+	gnupg.
+
+[PRIORITY: medium]
+Keep it to latest release.
+
+
+	john.
+
+[PRIORITY: medium]
+[ASSIGNED: solar@]
+Update documentation and .chr files, release as 1.7.  (Lots of other
+items are in a separate non-public TODO list for just John.)
+
+
+	lftp.
+
+[PRIORITY: medium]
+Update to latest release, make sure it is able to handle our mirroring
+again.  Support (ignore) the "-n" flag, for CPAN.
+
+
+	libnet, libnids, libpcap.
+
+[PRIORITY: low]
+[ASSIGNED: nergal@]
+Update to latest releases.
+
+
+	links.
+
+[PRIORITY: medium]
+[ASSIGNED: mci@]
+Update to latest release.
+
+
+	mailx.
+
+[PRIORITY: low]
+Sync with current OpenBSD.
+
+If we ever add OpenBSD's lockspool, make sure the order in which mailx
+obtains fcntl() and dot-locks is compatible with that of Postfix and
+procmail.
+
+
+	make.
+
+[PRIORITY: low]
+Update to latest release.
+
+
+	man.
+
+[PRIORITY: low]
+Allocate a pseudo-user and group for makewhatis, have makewhatis
+results go under a separate directory writable by the group.  Provide
+a makewhatis cron job.  Don't process cat (preformatted) pages in
+makewhatis.
+
+
+	mtree.
+
+[PRIORITY: low]
+Correct the man page to not refer to chflags(1) (it's a BSD'ism).
+Support ext2fs flags.  Optionally don't store and ignore symlink
+permissions.  Optionally dereference symlinks.
+
+
+	openssh.
+
+[PRIORITY: medium]
+[ASSIGNED: solar@]
+Keep OpenSSH to latest release, with our modifications obviously.
+
+[PRIORITY: low]
+Support changing expired passwords for the privsep case as well.
+Re-enable forwardings if disabled because of a forced password change.
+Do PAM session management as root (again).
+
+[PRIORITY: low]
+Investigate and solve the SSH-1 sshd crashes on Alpha w/ BWX (EV56+)
+for real rather than workaround them (by building deattack.c without
+BWX as is done currently), unless this proves to be a CPU bug (which
+it might be).
+
+
+	openssl.
+
+[PRIORITY: medium]
+[ASSIGNED: solar@]
+Keep OpenSSL to latest in a branch.
+
+
+	owl-cdrom.
+
+[PRIORITY: medium]
+In the "welcome" script, handle DOC= paths for non-current branches
+(native/Owl-BRANCH/doc, not just native/Owl/doc, but in a way smarter
+than with native/Owl*/doc which will fail if more than one branch is
+in place).
+
+[PRIORITY: low]
+Also provide a silo.conf and generic kernel configuration for SPARC.
+
+
+	owl-control.
+
+[PRIORITY: medium]
+Provide a control(8) manual page.
+
+
+	owl-dev.
+
+[PRIORITY: low]
+[ASSIGNED: mci@]
+Migrate to MAKEDEV-C with proper modifications.
+
+
+	owl-etc.
+
+[PRIORITY: medium]
+Don't install /etc/shadow on package updates when /etc/tcb is in use.
+
+
+	owl-setup.
+
+[PRIORITY: medium]
+Replace with a full-featured installer which would have the ability to
+guide through the installation process, including disk partitioning,
+filesystem creation, "make installworld" and optionally building and
+installing a kernel.  Might move from the current shell + dialog to C
+or even C++ and cdk (which would then be packaged).
+
+
+	owl-startup.
+
+[PRIORITY: low]
+Replace all of the RH-derived networking scripts with our own (yet to
+be written).
+
+
+	pam.
+
+[PRIORITY: medium]
+Review PAM man pages in OpenPAM (FreeBSD-current) and on other OSes,
+most likely import some from OpenPAM (with minor changes for Linux-PAM
+where it differs) and correct others.  Currently, the Linux-PAM man
+pages are in a really bad shape.
+
+[PRIORITY: low]
+Update to latest release (with our modifications), either Red Hat's
+again or official Linux-PAM with its pre-compiled documentation and
+still adding a few modules from Red Hat's for compatibility.
+
+[PRIORITY: low]
+Move pam_pwdb (with its dependency on libpwdb) into a new pam-compat
+subpackage.
+
+
+	pam_mktemp.
+
+[PRIORITY: low]
+Do error logging.
+
+
+	pam_passwdqc.
+
+[PRIORITY: medium]
+Currently, "enforce=users" is only safe for uses by passwd(1) (and not
+for changing expired passwords from a login service).  This should be
+either documented or solved.  In general, the getuid() checks should
+be replaced with something smarter because they also don't work well
+for Solaris' login (and probably more).
+
+[PRIORITY: low]
+(Optionally?) only display the requirements for valid passwords once
+rather than before each retry (from William R. Knox).
+
+[PRIORITY: low]
+Provide some real stacking examples in the documentation.
+
+[PRIORITY: low]
+Support an external configuration file where settings common to uses
+of the module by several services could reside.  (If we start using
+pam_stack or add an equivalent libpam feature, that wouldn't be needed
+for Owl itself any longer.)
+
+[PRIORITY: low]
+Support external wordlists and "31337" word mangling.
+
+
+	pam_userpass.
+
+[PRIORITY: medium]
+Place the conversation function into a library and use that rather
+than separate copies in other packages.  This has been done in ALT
+Linux and needs to be imported back.
+
+
+	patch.
+
+[PRIORITY: low]
+Solve the DoS-against-itself on the temporary file.
+
+
+	perl.
+
+[PRIORITY: low]
+Update to 5.8.0+, migrating the patches that are still relevant and
+repeating the audit of temporary file handling by its utilities and
+modules.
+
+
+	popa3d, scanlogd.
+
+Separate, currently non-public, TODO lists exist.
+
+
+	postfix.
+
+[PRIORITY: medium]
+Update to latest release, considering a number of patches and add-ons.
+
+[PRIORITY: medium]
+Restrict queue views and runs.
+
+[PRIORITY: medium]
+Open PAM sessions for programs run from .forward or LDA such that
+resource limits are set.
+
+[PRIORITY: low]
+The order of fcntl() and dot-locks is currently compatible with
+procmail, but not the Debian policy.  Someone should get either the
+Debian policy or both Postfix and procmail corrected.
+
+
+	procmail.
+
+[PRIORITY: low]
+Update to 3.22+.
+
+
+	rpm.
+
+[PRIORITY: medium]
+Update to 4.x.  Migrate to paths required by FHS (in particular,
+/usr/share/{doc,man} rather than /usr/{doc,man}).  This needs to be
+done after or at the same time with the glibc update because before
+that it makes more sense to be package-compatible with RHL 6.x rather
+than with nothing at all.  Then fix all other packages that either get
+broken or are unaffected by the change here.
+
+[PRIORITY: medium]
+Audit and correct rpm's temporary file handling and its support for
+package signature checking.
+
+[PRIORITY: low]
+Bug: "rpm --rebuilddb" is affected by umask.
+
+
+	shadow-utils.
+
+[PRIORITY: medium]
+Optionally allow user and group names longer than 8 characters, even
+though these may not be fully supported by the rest of Owl and by
+third-party software.  This should be two settings in /etc/login.defs,
+with proper documentation in comments in that file and in the man page
+(including the cross reference for which commands are affected).
+There should still a be check for usernames exceeding
+sizeof(ut.ut_user) and some sane "hard" limits for both user and group
+names (or the shadow suite programs themselves would misbehave).
+
+
+	SimplePAMApps.
+
+[PRIORITY: low]
+login should accept IP addresses rather than hostnames such that it
+can log both into wtmp.
+
+[PRIORITY: medium]
+su should support the "su - user -c command" syntax as well.
+
+[PRIORITY: low]
+su should allow root to specify a custom shell via the command line.
+
+
+	strace.
+
+[PRIORITY: low]
+32-bit UID handling with Linux 2.4.x (should look at the package in
+ALT Linux first).
+
+[PRIORITY: low]
+Deal with incorrect pipe(2) reporting on Alpha.
+
+
+	sysklogd.
+
+[PRIORITY: medium]
+chown to syslogd (group or user if the group permissions are already
+in use) in syslogd itself.
+
+[PRIORITY: low]
+Protect against timestamp spoofing.
+
+[PRIORITY: low]
+Pass options from /etc/sysconfig/syslog.
+
+[PRIORITY: low]
+In klogd, support new System.map format used starting with recent
+2.2.x kernels on Alpha.
+
+[PRIORITY: low]
+Migrate to a better alternative for syslogd, retain this package for
+klogd.  Most likely go with a clone of Darren Reed's nsyslogd, which
+we will likely have to maintain ourselves.
+
+
+	SysVinit.
+
+[PRIORITY: low]
+Update to latest release.
+
+[PRIORITY: low]
+Support logging in to alternate UID 0 accounts in sulogin (ask for
+both login name and password, only let it proceed if it's UID 0, be
+careful about timings).
+
+[PRIORITY: medium]
+In wall(1), don't trust utmp for writing into arbitrary files (or
+someone who gained group utmp access may extend it to root).
+
+
+	tcb.
+
+[PRIORITY: medium]
+Reduce timing leaks in pam_tcb.
+
+
+	telnet.
+
+[PRIORITY: low]
+Sync with current OpenBSD.
+
+[PRIORITY: low]
+Pass IP addresses to login once it supports that.
+
+[PRIORITY: low]
+Re-enable IPV6 in the client once glibc is fixed.
+
+
+	traceroute.
+
+[PRIORITY: medium]
+Replace with Olaf Kirch's after we fully migrate to Linux 2.4.x.
+
+
+	utempter.
+
+[PRIORITY: medium]
+Replace with ALT Linux's libutempter.
+
+
+	util-linux.
+
+[PRIORITY: medium]
+Update to latest release.
+
+
+	vim.
+
+[PRIORITY: low]
+Update to latest 6.1 patchlevel.
+
+[PRIORITY: low]
+Use mkdtemp(3) for the directory after the glibc update.
+
+
+	vixie-cron.
+
+[PRIORITY: low]
+Sync with current OpenBSD (now based on Vixie Cron 4.0b1).
+
+[PRIORITY: medium]
+Open PAM sessions for cron jobs such that resource limits are set.
+Reject or support long usernames in crontab(1).
+
+
+	vsftpd.
+
+[PRIORITY: low]
+Keep to latest release.
+
+
+	xinetd.
+
+[PRIORITY: medium]
+Do ident lookups (if enabled) as a dedicated pseudo-user.
+
+[PRIORITY: low]
+Develop and migrate to a cleaner replacement, with some limited
+configuration file compatibility.
+
+$Id: Owl/doc/TODO,v 1.1 2002/12/05 21:39:00 solar Exp $
