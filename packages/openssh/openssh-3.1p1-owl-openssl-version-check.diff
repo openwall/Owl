@@ -1,0 +1,15 @@
+diff -ur openssh-3.1p1.orig/entropy.c openssh-3.1p1/entropy.c
+--- openssh-3.1p1.orig/entropy.c	Tue Jan 22 13:57:54 2002
++++ openssh-3.1p1/entropy.c	Sun Mar 17 00:16:55 2002
+@@ -134,9 +134,9 @@
+ {
+ 	/*
+ 	 * OpenSSL version numbers: MNNFFPPS: major minor fix patch status
+-	 * We match major, minor, fix and status (not patch)
++	 * We match major, minor and fix (but not patch and status)
+ 	 */
+-	if ((SSLeay() ^ OPENSSL_VERSION_NUMBER) & ~0xff0L)
++	if ((SSLeay() ^ OPENSSL_VERSION_NUMBER) & ~0xfffL)
+ 		fatal("OpenSSL version mismatch. Built against %lx, you "
+ 		    "have %lx", OPENSSL_VERSION_NUMBER, SSLeay());
+ 

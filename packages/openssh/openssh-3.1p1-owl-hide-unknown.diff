@@ -1,7 +1,7 @@
-diff -ur openssh-3.0.2p1.orig/auth.c openssh-3.0.2p1-owl-hide-unknown/auth.c
---- openssh-3.0.2p1.orig/auth.c	Mon Nov 12 03:06:07 2001
-+++ openssh-3.0.2p1-owl-hide-unknown/auth.c	Wed Dec 12 19:02:38 2001
-@@ -207,8 +207,10 @@
+diff -ur openssh-3.1p1.orig/auth.c openssh-3.1p1/auth.c
+--- openssh-3.1p1.orig/auth.c	Tue Mar  5 04:42:43 2002
++++ openssh-3.1p1/auth.c	Sat Mar 16 23:48:45 2002
+@@ -226,8 +226,10 @@
  	authlog("%s %s for %s%.100s from %.200s port %d%s",
  	    authmsg,
  	    method,
@@ -14,10 +14,10 @@ diff -ur openssh-3.0.2p1.orig/auth.c openssh-3.0.2p1-owl-hide-unknown/auth.c
  	    get_remote_ipaddr(),
  	    get_remote_port(),
  	    info);
-diff -ur openssh-3.0.2p1.orig/auth.h openssh-3.0.2p1-owl-hide-unknown/auth.h
---- openssh-3.0.2p1.orig/auth.h	Wed Jul  4 08:46:57 2001
-+++ openssh-3.0.2p1-owl-hide-unknown/auth.h	Wed Dec 12 18:57:34 2001
-@@ -47,6 +47,7 @@
+diff -ur openssh-3.1p1.orig/auth.h openssh-3.1p1/auth.h
+--- openssh-3.1p1.orig/auth.h	Tue Mar  5 04:53:04 2002
++++ openssh-3.1p1/auth.h	Sat Mar 16 23:48:45 2002
+@@ -49,6 +49,7 @@
  	int		 success;
  	int		 postponed;
  	int		 valid;
@@ -25,10 +25,10 @@ diff -ur openssh-3.0.2p1.orig/auth.h openssh-3.0.2p1-owl-hide-unknown/auth.h
  	int		 attempt;
  	int		 failures;
  	char		*user;
-diff -ur openssh-3.0.2p1.orig/auth1.c openssh-3.0.2p1-owl-hide-unknown/auth1.c
---- openssh-3.0.2p1.orig/auth1.c	Tue Nov 13 15:46:19 2001
-+++ openssh-3.0.2p1-owl-hide-unknown/auth1.c	Wed Dec 12 18:57:34 2001
-@@ -388,6 +388,7 @@
+diff -ur openssh-3.1p1.orig/auth1.c openssh-3.1p1/auth1.c
+--- openssh-3.1p1.orig/auth1.c	Thu Feb 14 12:39:50 2002
++++ openssh-3.1p1/auth1.c	Sat Mar 16 23:48:45 2002
+@@ -383,6 +383,7 @@
  
  	/* Verify that the user is a valid user. */
  	pw = getpwnam(user);
@@ -36,7 +36,7 @@ diff -ur openssh-3.0.2p1.orig/auth1.c openssh-3.0.2p1-owl-hide-unknown/auth1.c
  	if (pw && allowed_user(pw)) {
  		authctxt->valid = 1;
  		pw = pwcopy(pw);
-@@ -397,7 +398,7 @@
+@@ -392,7 +393,7 @@
  	}
  	authctxt->pw = pw;
  
@@ -44,11 +44,11 @@ diff -ur openssh-3.0.2p1.orig/auth1.c openssh-3.0.2p1-owl-hide-unknown/auth1.c
 +	setproctitle("%s", authctxt->known ? user : "UNKNOWN USER");
  
  #ifdef USE_PAM
- 	if (pw)
-diff -ur openssh-3.0.2p1.orig/auth2.c openssh-3.0.2p1-owl-hide-unknown/auth2.c
---- openssh-3.0.2p1.orig/auth2.c	Tue Nov 13 15:46:19 2001
-+++ openssh-3.0.2p1-owl-hide-unknown/auth2.c	Wed Dec 12 18:57:34 2001
-@@ -196,6 +196,7 @@
+ 	start_pam(pw == NULL ? "NOUSER" : user);
+diff -ur openssh-3.1p1.orig/auth2.c openssh-3.1p1/auth2.c
+--- openssh-3.1p1.orig/auth2.c	Tue Feb 26 21:09:43 2002
++++ openssh-3.1p1/auth2.c	Sat Mar 16 23:48:45 2002
+@@ -185,6 +185,7 @@
  		/* setup auth context */
  		struct passwd *pw = NULL;
  		pw = getpwnam(user);
@@ -56,7 +56,7 @@ diff -ur openssh-3.0.2p1.orig/auth2.c openssh-3.0.2p1-owl-hide-unknown/auth2.c
  		if (pw && allowed_user(pw) && strcmp(service, "ssh-connection")==0) {
  			authctxt->pw = pwcopy(pw);
  			authctxt->valid = 1;
-@@ -204,12 +205,13 @@
+@@ -193,12 +194,13 @@
  			start_pam(pw->pw_name);
  #endif
  		} else {

@@ -1,6 +1,6 @@
-diff -ur openssh-3.0.2p1-owl-hide-unknown/auth-pam.c openssh-3.0.2p1-owl-always-auth/auth-pam.c
---- openssh-3.0.2p1-owl-hide-unknown/auth-pam.c	Fri Nov  9 23:22:17 2001
-+++ openssh-3.0.2p1-owl-always-auth/auth-pam.c	Wed Dec 12 19:10:27 2001
+diff -ur openssh-3.1p1-owl-hide-unknown/auth-pam.c openssh-3.1p1/auth-pam.c
+--- openssh-3.1p1-owl-hide-unknown/auth-pam.c	Tue Feb  5 04:40:47 2002
++++ openssh-3.1p1/auth-pam.c	Sat Mar 16 23:50:39 2002
 @@ -203,14 +203,19 @@
  {
  	extern ServerOptions options;
@@ -46,22 +46,22 @@ diff -ur openssh-3.0.2p1-owl-hide-unknown/auth-pam.c openssh-3.0.2p1-owl-always-
  		return 0;
  	}
  }
-diff -ur openssh-3.0.2p1-owl-hide-unknown/auth1.c openssh-3.0.2p1-owl-always-auth/auth1.c
---- openssh-3.0.2p1-owl-hide-unknown/auth1.c	Wed Dec 12 18:57:34 2001
-+++ openssh-3.0.2p1-owl-always-auth/auth1.c	Wed Dec 12 19:04:59 2001
-@@ -403,6 +403,8 @@
+diff -ur openssh-3.1p1-owl-hide-unknown/auth1.c openssh-3.1p1/auth1.c
+--- openssh-3.1p1-owl-hide-unknown/auth1.c	Sat Mar 16 23:48:45 2002
++++ openssh-3.1p1/auth1.c	Sat Mar 16 23:52:29 2002
+@@ -396,7 +396,7 @@
+ 	setproctitle("%s", authctxt->known ? user : "UNKNOWN USER");
+ 
  #ifdef USE_PAM
- 	if (pw)
- 		start_pam(user);
-+	else
-+		start_pam("ILLEGAL USER");
+-	start_pam(pw == NULL ? "NOUSER" : user);
++	start_pam(pw ? user : "ILLEGAL USER");
  #endif
  
  	/*
-diff -ur openssh-3.0.2p1-owl-hide-unknown/auth2.c openssh-3.0.2p1-owl-always-auth/auth2.c
---- openssh-3.0.2p1-owl-hide-unknown/auth2.c	Wed Dec 12 18:57:34 2001
-+++ openssh-3.0.2p1-owl-always-auth/auth2.c	Wed Dec 12 19:04:59 2001
-@@ -208,7 +208,7 @@
+diff -ur openssh-3.1p1-owl-hide-unknown/auth2.c openssh-3.1p1/auth2.c
+--- openssh-3.1p1-owl-hide-unknown/auth2.c	Sat Mar 16 23:48:45 2002
++++ openssh-3.1p1/auth2.c	Sat Mar 16 23:50:39 2002
+@@ -197,7 +197,7 @@
  			authctxt->pw = NULL;
  			authctxt->valid = 0;
  #ifdef USE_PAM

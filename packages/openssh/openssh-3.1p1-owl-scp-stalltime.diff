@@ -1,6 +1,6 @@
-diff -ur openssh-3.0.2p1.orig/scp.c openssh-3.0.2p1/scp.c
---- openssh-3.0.2p1.orig/scp.c	Mon Oct 22 04:53:59 2001
-+++ openssh-3.0.2p1/scp.c	Wed Dec 12 19:36:19 2001
+diff -ur openssh-3.1p1.orig/scp.c openssh-3.1p1/scp.c
+--- openssh-3.1p1.orig/scp.c	Tue Mar  5 21:59:45 2002
++++ openssh-3.1p1/scp.c	Sun Mar 17 00:23:34 2002
 @@ -90,7 +90,7 @@
  #endif
  
@@ -10,7 +10,7 @@ diff -ur openssh-3.0.2p1.orig/scp.c openssh-3.0.2p1/scp.c
  /* alarm() interval for updating progress meter */
  #define PROGRESSTIME	1
  
-@@ -1159,10 +1159,12 @@
+@@ -1158,10 +1158,12 @@
  	if (cursize > lastsize) {
  		lastupdate = now;
  		lastsize = cursize;

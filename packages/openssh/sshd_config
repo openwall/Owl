@@ -1,65 +1,72 @@
-# $Id: Owl/packages/openssh/sshd_config,v 1.7 2001/09/27 02:35:02 solar Exp $
+# $Id: Owl/packages/openssh/sshd_config,v 1.8 2002/03/16 23:21:07 solar Exp $
 
 # This is the sshd server system-wide configuration file.  See sshd(8)
 # for more information.
 
-Port 22
+# The strategy used for options in the default sshd_config is to
+# specify options with their default value where possible, but leave
+# them commented.  Uncommented options change a default value.
+
+#Port 22
 #Protocol 2,1
 #ListenAddress 0.0.0.0
 #ListenAddress ::
 
 # HostKey for protocol version 1
-HostKey /etc/ssh/ssh_host_key
+#HostKey /etc/ssh/ssh_host_key
 # HostKeys for protocol version 2
 #HostKey /etc/ssh/ssh_host_rsa_key
-HostKey /etc/ssh/ssh_host_dsa_key
+#HostKey /etc/ssh/ssh_host_dsa_key
 
 # Lifetime and size of ephemeral version 1 server key
-KeyRegenerationInterval 3600
-ServerKeyBits 768
+#KeyRegenerationInterval 3600
+#ServerKeyBits 768
 
 # Logging
-SyslogFacility AUTH
-LogLevel INFO
+#SyslogFacility AUTH
+#LogLevel INFO
 
 # Authentication:
 
-LoginGraceTime 600
-PermitRootLogin yes
-StrictModes yes
+#LoginGraceTime 600
+#PermitRootLogin yes
+#StrictModes yes
 
-RSAAuthentication yes
-PubkeyAuthentication yes
-#AuthorizedKeysFile %h/.ssh/authorized_keys
+#RSAAuthentication yes
+#PubkeyAuthentication yes
+#AuthorizedKeysFile .ssh/authorized_keys
 
 # rhosts authentication should not be used
-RhostsAuthentication no
+#RhostsAuthentication no
 # Don't read the user's ~/.rhosts and ~/.shosts files
-IgnoreRhosts yes
-# For this to work you will also need host keys in /etc/ssh_known_hosts
-RhostsRSAAuthentication no
+#IgnoreRhosts yes
+# For this to work you will also need host keys in /etc/ssh/ssh_known_hosts
+#RhostsRSAAuthentication no
 # Similar to RhostsRSAAuthentication, for protocol version 2
-HostbasedAuthentication no
+#HostbasedAuthentication no
 # Comment if you trust ~/.ssh/known_hosts for RhostsRSAAuthentication
+# and HostbasedAuthentication
 IgnoreUserKnownHosts yes
 
 # To disable tunneled clear text passwords, change to no here!
-PasswordAuthentication yes
-PermitEmptyPasswords no
+#PasswordAuthentication yes
+#PermitEmptyPasswords no
 
 # Warning: enabling this may bypass the setting of PasswordAuthentication
-PAMAuthenticationViaKbdInt no
+#PAMAuthenticationViaKbdInt yes
 
 X11Forwarding yes
-X11DisplayOffset 10
-PrintMotd yes
-PrintLastLog yes
-KeepAlive yes
-UseLogin no
+#X11DisplayOffset 10
+#X11UseLocalhost yes
+#PrintMotd yes
+#PrintLastLog yes
+#KeepAlive yes
+#UseLogin no
 
-#MaxStartups 10:30:60
+#MaxStartups 10
+# There's no default banner path
 #Banner /etc/issue.net
-#ReverseMappingCheck yes
+#VerifyReverseMapping no
 
 # Uncomment this if you want to enable sftp
 #Subsystem	sftp	/usr/libexec/ssh/sftp-server
