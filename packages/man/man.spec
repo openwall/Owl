@@ -1,14 +1,14 @@
-# $Id: Owl/packages/man/man.spec,v 1.5 2002/02/07 21:04:23 solar Exp $
+# $Id: Owl/packages/man/man.spec,v 1.6 2002/03/29 22:52:42 solar Exp $
 
 Summary: A set of documentation tools: man, apropos and whatis.
 Name: man
 Version: 1.5i2
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 Source: ftp://ftp.win.tue.nl/pub/linux-local/utils/man/man-%{version}.tar.gz
 Patch0: man-1.5i-owl-makewhatis.diff
-Requires: groff, mktemp
+Requires: groff, mktemp, findutils >= 1:4.1.5-owl4
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -35,33 +35,26 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr/{bin,man,sbin}
 make install PREFIX=$RPM_BUILD_ROOT
 
-mkdir -p $RPM_BUILD_ROOT/var/catman
-mkdir -p $RPM_BUILD_ROOT/var/catman/local
-mkdir -p $RPM_BUILD_ROOT/var/catman/X11
+cd $RPM_BUILD_ROOT
+
+mkdir -p var/catman/{X11R6,local}
 for i in 1 2 3 4 5 6 7 8 9 n; do
-	mkdir -p $RPM_BUILD_ROOT/var/catman/cat$i
-	mkdir -p $RPM_BUILD_ROOT/var/catman/local/cat$i
-	mkdir -p $RPM_BUILD_ROOT/var/catman/X11R6/cat$i
+	mkdir var/catman/{cat$i,X11R6/cat$i,local/cat$i}
 done
 
 # symlinks for manpath
-cd $RPM_BUILD_ROOT
 ln -s man usr/bin/manpath
-ln -s man.1.gz usr/man/man1/manpath.1.gz
+ln -s man.1 usr/man/man1/manpath.1
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%preun
 # Clean up accumulated cat litter.
-rm -f /var/catman/cat[123456789n]/*
-rm -f /var/catman/local/cat[123456789n]/*
-rm -f /var/catman/X11R6/cat[123456789n]/*
+%preun
+find /var/catman/{,X11R6/,local/}cat[123456789n] -type f -delete
 
 %post
-rm -f /var/catman/cat[123456789n]/*
-rm -f /var/catman/local/cat[123456789n]/*
-rm -f /var/catman/X11/cat[123456789n]/*
+find /var/catman/{,X11R6/,local/}cat[123456789n] -type f -delete
 
 %files
 %defattr(-,root,root)
@@ -79,16 +72,23 @@ rm -f /var/catman/X11/cat[123456789n]/*
 /usr/man/man1/man2html.1*
 /usr/bin/man2html
 
-%attr(0775,root,man) %dir /var/catman
+%attr(0755,root,man) %dir /var/catman
 %attr(0775,root,man) %dir /var/catman/cat[123456789n]
-%attr(0775,root,man) %dir /var/catman/local
-%attr(0775,root,man) %dir /var/catman/local/cat[123456789n]
-%attr(0775,root,man) %dir /var/catman/X11R6
+%attr(0755,root,man) %dir /var/catman/X11R6
 %attr(0775,root,man) %dir /var/catman/X11R6/cat[123456789n]
+%attr(0755,root,man) %dir /var/catman/local
+%attr(0775,root,man) %dir /var/catman/local/cat[123456789n]
 
 %changelog
+* Sat Mar 30 2002 Solar Designer <solar@owl.openwall.com>
+- No longer have the /var/catman/{,X11R6/,local/} directories themselves
+(as opposed to their subdirectories) writable to group man.
+- Clean up the subdirectories on package removal or upgrade safely (this
+assumes that group man could have been compromised, even though we don't
+really use it on Owl).
+
 * Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
-- Enforce our new spec file conventions
+- Enforce our new spec file conventions.
 
 * Tue Jun 12 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 1.5i2.
