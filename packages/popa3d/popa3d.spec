@@ -1,4 +1,4 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.21 2002/06/30 16:30:08 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.22 2002/07/06 23:54:21 solar Exp $
 
 Summary: Post Office Protocol (POP3) server.
 Name: popa3d
@@ -11,7 +11,7 @@ Source1: params.h
 Source2: popa3d.pam
 Source3: popa3d.init
 Source4: popa3d.xinetd
-PreReq: /sbin/chkconfig, /dev/null, grep, shadow-utils
+PreReq: /sbin/chkconfig, grep, shadow-utils
 Requires: /var/empty, tcb, pam_userpass, xinetd
 BuildRoot: /override/%{name}-%{version}
 

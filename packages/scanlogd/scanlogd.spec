@@ -1,4 +1,4 @@
-# $Id: Owl/packages/scanlogd/Attic/scanlogd.spec,v 1.3 2002/05/08 18:40:00 solar Exp $
+# $Id: Owl/packages/scanlogd/Attic/scanlogd.spec,v 1.4 2002/07/06 23:58:43 solar Exp $
 
 Summary: A tool to detect and log TCP port scans.
 Name: scanlogd
@@ -9,7 +9,7 @@ Group: System Environment/Daemons
 URL: http://www.openwall.com/scanlogd/
 Source0: ftp://ftp.openwall.com/pub/projects/scanlogd/scanlogd-%{version}.tar.gz
 Source1: scanlogd.init
-PreReq: /sbin/chkconfig, /dev/null, grep, shadow-utils
+PreReq: /sbin/chkconfig, grep, shadow-utils
 BuildRoot: /override/%{name}-%{version}
 
 %description
