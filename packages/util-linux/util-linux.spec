@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.27 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.28 2005/01/12 17:02:25 galaxy Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -7,7 +7,7 @@
 Summary: A collection of basic system utilities.
 Name: util-linux
 Version: 2.11z
-Release: owl2
+Release: owl3
 License: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%version.tar.bz2
@@ -73,21 +73,24 @@ to query the status of a loop device.
 
 %build
 unset LINGUAS || :
+CC="%__cc" \
+CFLAGS="$RPM_OPT_FLAGS" \
+LDFLAGS="" \
 ./configure
-make RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
+%__make RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf %buildroot
 
-make install DESTDIR=%buildroot MAN_DIR=%_mandir INFO_DIR=%_infodir
+%__make install DESTDIR=%buildroot MAN_DIR=%_mandir INFO_DIR=%_infodir
 
 ln -sf hwclock %buildroot/sbin/clock
 
 # We do not want dependencies on csh
 chmod 644 %buildroot/usr/share/misc/getopt/*
 
-mkdir -p %buildroot/etc/control.d/facilities
-cd %buildroot/etc/control.d/facilities
+mkdir -p %buildroot%_sysconfdir/control.d/facilities
+cd %buildroot%_sysconfdir/control.d/facilities
 
 install -m 700 $RPM_SOURCE_DIR/mount.control mount
 install -m 700 $RPM_SOURCE_DIR/write.control write
@@ -114,14 +117,14 @@ rm %buildroot%_mandir/man8/vipw.8*
 
 %pre
 if [ $1 -ge 2 ]; then
-	/usr/sbin/control-dump write
+	%_sbindir/control-dump write
 fi
 
 %post
 if [ $1 -ge 2 ]; then
-	/usr/sbin/control-restore write
+	%_sbindir/control-restore write
 else
-	/usr/sbin/control write public
+	%_sbindir/control write public
 fi
 /sbin/install-info %_infodir/ipc.info.gz %_infodir/dir \
 	--entry="* ipc: (ipc).                                   System V IPC."
@@ -135,23 +138,23 @@ fi
 %if %BUILD_MOUNT
 %pre -n mount
 if [ $1 -ge 2 ]; then
-	/usr/sbin/control-dump mount
+	%_sbindir/control-dump mount
 fi
 
 %post -n mount
 if [ $1 -ge 2 ]; then
-	/usr/sbin/control-restore mount
+	%_sbindir/control-restore mount
 fi
 %endif
 
 %files
 %defattr(-,root,root)
-/usr/share/locale/*/LC_MESSAGES/*
+%_datadir/locale/*/LC_MESSAGES/*
 /sbin/clock
 /sbin/hwclock
 %_mandir/man8/hwclock.8*
 
-/usr/sbin/tunelp
+%_sbindir/tunelp
 %_mandir/man8/tunelp.8*
 
 /sbin/fdisk
@@ -171,30 +174,30 @@ fi
 /sbin/blockdev
 /sbin/elvtune
 
-/usr/bin/fdformat
-/usr/bin/setfdprm
-%config /etc/fdprm
-/usr/bin/isosize
+%_bindir/fdformat
+%_bindir/setfdprm
+%config %_sysconfdir/fdprm
+%_bindir/isosize
 
 %_mandir/man8/fdformat.8*
 %_mandir/man8/mkswap.8*
 %_mandir/man8/setfdprm.8*
 %_mandir/man8/isosize.8*
 
-/usr/bin/ddate
+%_bindir/ddate
 %_mandir/man1/ddate.1*
 
 /bin/kill
-/usr/bin/cal
-/usr/bin/logger
-/usr/bin/look
-/usr/bin/mcookie
-/usr/bin/namei
-/usr/bin/script
-/usr/bin/setterm
-/usr/bin/whereis
-%attr(700,root,root) /usr/bin/write
-/usr/bin/getopt
+%_bindir/cal
+%_bindir/logger
+%_bindir/look
+%_bindir/mcookie
+%_bindir/namei
+%_bindir/script
+%_bindir/setterm
+%_bindir/whereis
+%attr(700,root,root) %verify(not mode group) %_bindir/write
+%_bindir/getopt
 %_mandir/man1/cal.1*
 %_mandir/man1/kill.1*
 %_mandir/man1/logger.1*
@@ -207,19 +210,19 @@ fi
 %_mandir/man1/write.1*
 %_mandir/man1/getopt.1*
 
-/usr/share/misc/getopt
+%_datadir/misc/getopt
 
 /bin/dmesg
 
 /sbin/ctrlaltdel
 /bin/arch
-/usr/bin/ipcrm
-/usr/bin/ipcs
-/usr/bin/renice
-/usr/sbin/readprofile
-/usr/bin/setsid
+%_bindir/ipcrm
+%_bindir/ipcs
+%_bindir/renice
+%_sbindir/readprofile
+%_bindir/setsid
 %ifarch %ix86 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
-/usr/bin/cytune
+%_bindir/cytune
 %endif
 
 %_mandir/man1/arch.1*
@@ -235,10 +238,10 @@ fi
 %_mandir/man8/setsid.8*
 
 %ifarch %ix86
-/usr/sbin/rdev
-/usr/sbin/ramsize
-/usr/sbin/rootflags
-/usr/sbin/vidmode
+%_sbindir/rdev
+%_sbindir/ramsize
+%_sbindir/rootflags
+%_sbindir/vidmode
 %_mandir/man8/rdev.8*
 %_mandir/man8/ramsize.8*
 %_mandir/man8/rootflags.8*
@@ -247,16 +250,16 @@ fi
 
 %_infodir/ipc.info.gz
 
-/usr/bin/col
-/usr/bin/colcrt
-/usr/bin/colrm
-/usr/bin/column
-/usr/bin/hexdump
-/usr/bin/rename
-/usr/bin/rev
-/usr/bin/ul
-/usr/bin/pg
-/usr/bin/line
+%_bindir/col
+%_bindir/colcrt
+%_bindir/colrm
+%_bindir/column
+%_bindir/hexdump
+%_bindir/rename
+%_bindir/rev
+%_bindir/ul
+%_bindir/pg
+%_bindir/line
 
 %_mandir/man1/col.1*
 %_mandir/man1/colcrt.1*
@@ -294,13 +297,13 @@ fi
 %doc fdisk/sfdisk.examples
 %endif
 
-/etc/control.d/facilities/write
+%_sysconfdir/control.d/facilities/write
 
 %if %BUILD_MOUNT
 %files -n mount
 %defattr(-,root,root)
-%attr(700,root,root) /bin/mount
-%attr(700,root,root) /bin/umount
+%attr(700,root,root) %verify(not mode) /bin/mount
+%attr(700,root,root) %verify(not mode) /bin/umount
 /sbin/swapon
 /sbin/swapoff
 %_mandir/man5/fstab.5*
@@ -309,7 +312,7 @@ fi
 %_mandir/man8/swapoff.8*
 %_mandir/man8/swapon.8*
 %_mandir/man8/umount.8*
-/etc/control.d/facilities/mount
+%_sysconfdir/control.d/facilities/mount
 %endif
 
 %if %BUILD_LOSETUP
@@ -320,6 +323,11 @@ fi
 %endif
 
 %changelog
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.11z-owl3
+- Supplied %__cc to make.
+- Removed verify checks for files under the "control" utility.
+- Cleaned up the spec.
+
 * Fri Nov 07 2003 Michail Litvak <mci@owl.openwall.com> 2.11z-owl2
 - Replaced crypto code from international crypto patch (2.2.18.3) to
 unified util-linux crypto patch by Jari Ruusu.
