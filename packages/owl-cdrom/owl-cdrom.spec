@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.14 2002/09/10 03:58:59 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.15 2003/10/19 04:37:50 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 0.5
+Version: 0.6
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -85,7 +85,14 @@ fi
 %dir /owl
 
 %changelog
-* Tue Sep 10 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Oct 19 2003 Solar Designer <solar@owl.openwall.com> 0.6-owl1
+- Updated .config for Linux 2.4.22-ow1, require at least a Pentium (need
+TSC, and math emulation for older CPUs which could be missing a coprocessor
+is too big), dropped PCMCIA and USB support to make the kernel with certain
+more relevant 2.4.x-specific features (e.g., ext3fs) still fit on a 1.44 MB
+"floppy".
+
+* Tue Sep 10 2002 Solar Designer <solar@owl.openwall.com> 0.5-owl1
 - Build the CD kernels with SMP, it is always possible to disable SMP
 with "nosmp" on the kernel command line.
 - In the "welcome" script, explicitly tell ls to list entries by lines
