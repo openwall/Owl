@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iproute2/iproute2.spec,v 1.9 2002/04/01 16:06:05 solar Exp $
+# $Id: Owl/packages/iproute2/iproute2.spec,v 1.10 2002/04/01 17:14:52 solar Exp $
 
 Summary: Enhanced IP routing and network devices configuration tools.
 Name: iproute2
@@ -22,6 +22,7 @@ Source11: tc-cbq.8
 Patch0: iproute2-2.4.7-rh-config.diff
 Patch1: iproute2-2.4.7-rh-promisc-allmulti.diff
 Patch2: iproute2-2.4.7-pld-owl-ll_types_proto.diff
+Patch3: iproute2-2.4.7-owl-warnings.diff
 Provides: iproute = %{version}
 Obsoletes: iproute
 BuildRoot: /override/%{name}-%{version}
@@ -38,6 +39,7 @@ utilities (ip, tc, rtmon, rtacct).
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %{expand:%%define optflags %optflags -Wall -Wstrict-prototypes}
 
@@ -82,6 +84,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Mon Apr 01 2002 Solar Designer <solar@owl.openwall.com>
 - More formatting fixes to ip.8; the tc*.8 man pages remain _very_ dirty.
+- Compilation warning fixes on Alpha (builds with -Wall cleanly now).
 
 * Mon Feb 11 2002 Michail Litvak <mci@owl.openwall.com>
 - add manpages

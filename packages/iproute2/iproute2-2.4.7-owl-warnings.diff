@@ -1,0 +1,54 @@
+--- iproute2/tc/tc.c.orig	Thu Aug  2 10:32:34 2001
++++ iproute2/tc/tc.c	Mon Apr  1 20:58:31 2002
+@@ -42,7 +42,8 @@
+ static int print_noqopt(struct qdisc_util *qu, FILE *f, struct rtattr *opt)
+ {
+ 	if (opt && RTA_PAYLOAD(opt))
+-		fprintf(f, "[Unknown qdisc, optlen=%u] ", RTA_PAYLOAD(opt));
++		fprintf(f, "[Unknown qdisc, optlen=%u] ",
++			(unsigned int)RTA_PAYLOAD(opt));
+ 	return 0;
+ }
+ 
+@@ -58,7 +59,8 @@
+ static int print_nofopt(struct filter_util *qu, FILE *f, struct rtattr *opt, __u32 fhandle)
+ {
+ 	if (opt && RTA_PAYLOAD(opt))
+-		fprintf(f, "fh %08x [Unknown filter, optlen=%u] ", fhandle, RTA_PAYLOAD(opt));
++		fprintf(f, "fh %08x [Unknown filter, optlen=%u] ",
++			fhandle, (unsigned int)RTA_PAYLOAD(opt));
+ 	else if (fhandle)
+ 		fprintf(f, "fh %08x ", fhandle);
+ 	return 0;
+@@ -233,17 +235,17 @@
+ 		tc_core_init();
+ 
+ 		while (fgets(line, sizeof(line)-1, batch)) {
+-			if (line[strlen(line)-1]=='\n') {
++			if (line[0] && line[strlen(line)-1]=='\n') {
+ 				line[strlen(line)-1] = '\0';
+ 			} else {
+-				fprintf(stderr, "No newline at the end of line, looks like to long (%d chars or more)\n", strlen(line));
++				fprintf(stderr, "No newline at the end of line, looks like too long (%d chars or more)\n", (int)strlen(line));
+ 				exit(-1);
+ 			}
+ 			largc = 0;
+ 			largv[largc]=strtok(line, " ");
+ 			while ((largv[++largc]=strtok(NULL, " ")) != NULL) {
+ 				if (largc > BMAXARG) {
+-					fprintf(stderr, "Over %d arguments in batch mode, enough!\n", BMAXARG);
++					fprintf(stderr, "Over %d arguments in batch mode, enough!\n", (int)BMAXARG);
+ 					exit(-1);
+ 				}
+ 			}
+--- iproute2/tc/q_cbq.c.orig	Sun Apr 16 21:42:54 2000
++++ iproute2/tc/q_cbq.c	Mon Apr  1 20:56:45 2002
+@@ -452,7 +452,7 @@
+ 	if (tb[TCA_CBQ_OVL_STRATEGY]) {
+ 		if (RTA_PAYLOAD(tb[TCA_CBQ_OVL_STRATEGY]) < sizeof(*ovl))
+ 			fprintf(stderr, "CBQ: too short overlimit strategy %u/%u\n",
+-				RTA_PAYLOAD(tb[TCA_CBQ_OVL_STRATEGY]), sizeof(*ovl));
++				(unsigned int)RTA_PAYLOAD(tb[TCA_CBQ_OVL_STRATEGY]), (unsigned int)sizeof(*ovl));
+ 		else
+ 			ovl = RTA_DATA(tb[TCA_CBQ_OVL_STRATEGY]);
+ 	}
