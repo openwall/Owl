@@ -12,6 +12,19 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/11/08	Package: glibc
+If syslog(3) is called by a SUID/SGID program without a preceding call
+to openlog(3), don't blindly trust __progname for the syslog ident.
+This situation may occur because of bad interaction between a program
+and PAM modules where either a PAM module relies on the program to
+have initialized logging or one or more of the PAM modules utilize
+syslog calls followed by a call to closelog(3) and the program doesn't
+bother to re-initialize its logging before making further calls to
+syslog(3).  All of this is of course a consequence of PAM lacking a
+logging framework.  Without this change to glibc, such situations
+would go unnoticed while allowing for malicious users to play games
+with messages logged by privileged programs.
+
 2001/11/08	Package: bison
 Updated to 1.30.
 
@@ -398,4 +411,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.41 2001/11/07 23:42:37 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.42 2001/11/08 01:19:15 solar Exp $
