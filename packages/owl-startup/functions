@@ -1,6 +1,6 @@
-# $Id: Owl/packages/owl-startup/functions,v 1.5 2001/05/29 21:23:59 solar Exp $
+# $Id: Owl/packages/owl-startup/functions,v 1.6 2001/11/05 11:01:24 solar Exp $
 #
-# Functions defined in this file are used by many /etc/init.d scripts;
+# Functions defined in this file are used by many /etc/rc.d/init.d scripts;
 # they offer some limited Red Hat compatibility.
 
 # Export our version number to the scripts.

@@ -1,10 +1,10 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.19 2001/07/27 18:26:10 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.20 2001/11/05 11:01:24 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.8
+Version: 0.9
 Release: 1owl
-Copyright: GPL
+License: GPL
 Group: System Environment/Base
 Source0: initscripts-5.00.tar.gz
 Source1: inittab
@@ -14,14 +14,14 @@ Source4: functions
 Source5: halt
 Source6: single
 Source7: clock
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Provides: initscripts
 Obsoletes: initscripts
+PreReq: /sbin/chkconfig
 Requires: SysVinit, /sbin/start-stop-daemon
 Requires: bash >= 2.0, sh-utils
 Requires: mingetty, e2fsprogs >= 1.15, util-linux, net-tools
 Requires: gawk, sed, mktemp
-Prereq: /sbin/chkconfig
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The scripts used to boot your system, change runlevels, and shut the
@@ -142,6 +142,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc redhat
 
 %changelog
+* Mon Nov 05 2001 Solar Designer <solar@owl.openwall.com>
+- /etc/init.d -> /etc/rc.d/init.d for consistency.
+
 * Fri Jul 27 2001 Solar Designer <solar@owl.openwall.com>
 - Setup a RAM disk if we're booting from an Owl CD-ROM; this is done by
 running rc.ramdisk which is to be provided by the owl-cdrom package.

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gpm/gpm.spec,v 1.7 2001/10/06 01:17:15 solar Exp $
+# $Id: Owl/packages/gpm/gpm.spec,v 1.8 2001/11/05 11:01:24 solar Exp $
 
 # this defines the library version that this package builds.
 %define	LIBVER		1.18.0
@@ -7,7 +7,7 @@
 Summary: A mouse server for the Linux console.
 Name: gpm
 Version: 1.19.6
-Release: 1owl
+Release: 2owl
 License: GPL
 Group: System Environment/Daemons
 Source0: ftp://ftp.systemy.it/pub/develop/%{name}-%{version}.tar.bz2
@@ -20,9 +20,9 @@ Patch4: gpm-1.19.6-owl-liblow.diff
 Patch5: gpm-1.19.6-owl-tmp.diff
 Patch6: gpm-1.19.6-owl-warnings.diff
 Patch7: gpm-1.19.6-owl-doc-mkinstalldirs.diff
-Prereq: /sbin/chkconfig /sbin/ldconfig /sbin/install-info /etc/rc.d/init.d
+PreReq: /sbin/chkconfig /sbin/ldconfig /sbin/install-info /etc/rc.d/init.d
 BuildRequires: bison
-BuildRoot: /var/rpm-buildroot/%{name}-root
+BuildRoot: /override/%{name}-%{version}
 
 %description
 gpm provides mouse support to text-based Linux applications as well as
@@ -109,8 +109,7 @@ if [ $1 -eq 0 ]; then
 	/sbin/chkconfig --del gpm
 fi
 
-%postun
-/sbin/ldconfig
+%postun -p /sbin/ldconfig
 
 %files
 %defattr(-,root,root)
@@ -137,6 +136,9 @@ fi
 %endif
 
 %changelog
+* Mon Nov 05 2001 Solar Designer <solar@owl.openwall.com>
+- /etc/init.d -> /etc/rc.d/init.d for consistency.
+
 * Sat Oct 06 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 1.19.6.
 - Dropped hltest, t-mouse.el* (gpm itself is broken enough).

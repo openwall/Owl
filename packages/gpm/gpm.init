@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/gpm/gpm.init,v 1.7 2001/06/26 00:31:29 solar Exp $
+# $Id: Owl/packages/gpm/gpm.init,v 1.8 2001/11/05 11:01:24 solar Exp $
 #
 # chkconfig: 2345 85 15
 # description: \
@@ -11,7 +11,7 @@
 # config: /etc/sysconfig/mouse
 
 # source function library
-. /etc/init.d/functions
+. /etc/rc.d/init.d/functions
 
 OWL_STARTUP_ENABLE=1
 

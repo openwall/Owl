@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/xinetd/xinetd.init,v 1.5 2001/07/28 16:17:43 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.init,v 1.6 2001/11/05 11:01:24 solar Exp $
 #
 # chkconfig: 345 56 50
 # description: \
@@ -13,7 +13,7 @@
 # pidfile: /var/run/xinetd.pid
 
 # Source function library.
-. /etc/init.d/functions
+. /etc/rc.d/init.d/functions
 
 OWL_STARTUP_ENABLE=1
 

@@ -1,13 +1,12 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.12 2001/08/29 22:38:38 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.13 2001/11/05 11:01:24 solar Exp $
 
-%define NEED_PYTHON 'no'
-
-Summary: The extended Internet services daemon
+Summary: The extended Internet services daemon.
 Name: xinetd
 Version: 2.3.3
-Release: 1owl
+Release: 2owl
 License: BSD with minor restrictions
 Group: System Environment/Daemons
+URL: http://www.xinetd.org/
 Source0: http://www.xinetd.org/xinetd-%{version}.tar.gz
 Source1: xinetd.init
 Source2: xinetd.conf
@@ -22,11 +21,10 @@ Source10: xinetd-chargen
 Source11: xinetd-uchargen
 Patch0: xinetd-2.3.3-owl-pidfile.diff
 Provides: inetd
-Prereq: /sbin/chkconfig /etc/init.d
-BuildRequires: tcp_wrappers
-URL: http://www.xinetd.org/
-BuildRoot: /var/rpm-buildroot/%{name}-root
 Obsoletes: inetd
+PreReq: /sbin/chkconfig /etc/rc.d/init.d
+BuildRequires: tcp_wrappers
+BuildRoot: /override/%{name}-%{version}
 
 %description
 xinetd performs the same function as inetd: it starts programs that
@@ -60,9 +58,6 @@ mkdir -p $RPM_BUILD_ROOT/etc/rc.d/init.d
 mkdir -p $RPM_BUILD_ROOT/etc/xinetd.d/
 install -m 755 %SOURCE1 $RPM_BUILD_ROOT/etc/rc.d/init.d/xinetd
 install -m 644 %SOURCE2 $RPM_BUILD_ROOT/etc/xinetd.conf
-%if "%{NEED_PYTHON}"=="'yes'"
-install -m 755 %SOURCE3 $RPM_BUILD_ROOT/usr/sbin/inetdconvert
-%endif
 install -m 644 %SOURCE4 $RPM_BUILD_ROOT/etc/xinetd.d/time
 install -m 644 %SOURCE5 $RPM_BUILD_ROOT/etc/xinetd.d/time-udp
 install -m 644 %SOURCE6 $RPM_BUILD_ROOT/etc/xinetd.d/daytime
@@ -111,6 +106,9 @@ fi
 %config /etc/xinetd.d/*
 
 %changelog
+* Mon Nov 05 2001 Solar Designer <solar@owl.openwall.com> 
+- /etc/init.d -> /etc/rc.d/init.d for consistency.
+
 * Thu Aug 30 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 2.3.3.
 - Dropped the big -audit patch all of which went into xinetd 2.3.1+.

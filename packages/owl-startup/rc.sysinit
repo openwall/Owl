@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/owl-startup/rc.sysinit,v 1.6 2001/07/27 20:52:27 solar Exp $
+# $Id: Owl/packages/owl-startup/rc.sysinit,v 1.7 2001/11/05 11:01:24 solar Exp $
 
 # Set the initial default search path for use by startup scripts.
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
@@ -14,7 +14,7 @@ if [ -e /.Owl-CD-ROM ]; then
 fi
 
 # Set the system time from the hardware clock.
-. /etc/init.d/clock
+. /etc/rc.d/init.d/clock
 
 # Enable swapping.
 swapon -a
