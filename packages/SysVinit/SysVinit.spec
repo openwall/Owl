@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.10 2002/02/12 22:57:54 solar Exp $
+# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.11 2002/02/13 00:14:45 solar Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
 Version: 2.78
-Release: owl11
+Release: owl12
 License: GPL
 Group: System Environment/Base
 Source: ftp://ftp.cistron.nl/pub/people/miquels/sysvinit/sysvinit-%{version}.tar.gz
@@ -25,11 +25,14 @@ of all other programs.
 %patch1 -p1
 %patch2 -p1
 
+%{expand:%%define optflags %optflags -Wall}
+
 %build
-make -C src CC=gcc CFLAGS="-Wall $RPM_OPT_FLAGS"
-make -C src CC=gcc CFLAGS="-Wall $RPM_OPT_FLAGS" LDFLAGS="-s -lutil" bootlogd
+make -C src CC=gcc CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-s -static" init
+make -C src CC=gcc CFLAGS="$RPM_OPT_FLAGS"
+make -C src CC=gcc CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-s -lutil" bootlogd
 cd contrib
-gcc start-stop-daemon.c -o start-stop-daemon -s -Wall $RPM_OPT_FLAGS
+gcc start-stop-daemon.c -o start-stop-daemon -s $RPM_OPT_FLAGS
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -93,6 +96,9 @@ fi
 - Don't unlink the old init(8) on package upgrades as that would actually
 leave it pending for delete on process termination and prevent remounting
 the filesystem read-only during shutdown.
+- Link init statically to avoid the same problem with glibc upgrades where
+the old libc would remain pending for delete until the very end preventing
+the remount.
 
 * Tue Feb 05 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
