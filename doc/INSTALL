@@ -39,9 +39,8 @@ instructions, below.
 
 	Using an existing Linux installation.
 
-A suitable Linux installation needs to offer some GNU tools and RPM
-(versions 3.0.5 or 3.0.6 are recommended, earlier ones won't work).
-It does not have to use RPM as its package manager.
+A suitable Linux installation needs to offer some GNU tools and
+rpm2cpio.  It does not have to use RPM as its package manager.
 
 You need to prepare the usual /usr/src/world setup as explained in
 BUILD.  Then proceed with the generic installation instructions.
@@ -68,4 +67,4 @@ You may choose to configure the boot loader available with Owl (LILO
 or SILO, depending on the architecture), or you may use a boot loader
 already installed on the system (if any).
 
-$Id: Owl/doc/INSTALL,v 1.3 2001/10/02 17:40:20 solar Exp $
+$Id: Owl/doc/INSTALL,v 1.4 2002/03/13 04:51:09 solar Exp $
