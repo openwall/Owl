@@ -49,7 +49,7 @@ diff -urp net-tools-1.57.orig/lib/inet_sr.c net-tools-1.57/lib/inet_sr.c
      /* Fill in the other fields. */
 diff -urp net-tools-1.57.orig/mii-tool.c net-tools-1.57/mii-tool.c
 --- net-tools-1.57.orig/mii-tool.c	Sun May 21 14:31:17 2000
-+++ net-tools-1.57/mii-tool.c	Fri Jan  7 01:23:32 2005
++++ net-tools-1.57/mii-tool.c	Thu Jan 20 04:19:43 2005
 @@ -379,17 +379,17 @@ static void watch_one_xcvr(int skfd, cha
  /*--------------------------------------------------------------------*/
  
@@ -65,16 +65,16 @@ diff -urp net-tools-1.57.orig/mii-tool.c net-tools-1.57/mii-tool.c
 -       -F, --force=media           force specified media technology
 -media: 100baseT4, 100baseTx-FD, 100baseTx-HD, 10baseT-FD, 10baseT-HD,
 -       (to advertise both HD and FD) 100baseTx, 10baseT\n";
-+"usage: %s [-VvRrwl] [-A media,... | -F media] [interface ...]" \
-+"       -V, --version               display version information" \
-+"       -v, --verbose               more verbose output" \
-+"       -R, --reset                 reset MII to poweron state" \
-+"       -r, --restart               restart autonegotiation" \
-+"       -w, --watch                 monitor for link status changes" \
-+"       -l, --log                   with -w, write events to syslog" \
-+"       -A, --advertise=media,...   advertise only specified media" \
-+"       -F, --force=media           force specified media technology" \
-+"media: 100baseT4, 100baseTx-FD, 100baseTx-HD, 10baseT-FD, 10baseT-HD," \
++"usage: %s [-VvRrwl] [-A media,... | -F media] [interface ...]\n"
++"       -V, --version               display version information\n"
++"       -v, --verbose               more verbose output\n"
++"       -R, --reset                 reset MII to poweron state\n"
++"       -r, --restart               restart autonegotiation\n"
++"       -w, --watch                 monitor for link status changes\n"
++"       -l, --log                   with -w, write events to syslog\n"
++"       -A, --advertise=media,...   advertise only specified media\n"
++"       -F, --force=media           force specified media technology\n"
++"media: 100baseT4, 100baseTx-FD, 100baseTx-HD, 10baseT-FD, 10baseT-HD,\n"
 +"       (to advertise both HD and FD) 100baseTx, 10baseT\n";
  
  int main(int argc, char **argv)
