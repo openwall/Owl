@@ -7,6 +7,7 @@ endscript
 	compress
 	delaycompress
 	notifempty
+	nocreate
 	daily
 postrotate
 	test ! -e /var/account/pacct && mv /var/account/pacct.tmp /var/account/pacct

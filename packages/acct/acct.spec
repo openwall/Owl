@@ -1,9 +1,9 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.7 2001/04/11 20:44:08 mci Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.8 2001/04/12 03:06:07 solar Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
 Version: 6.3.5
-Release: 4owl
+Release: 5owl
 Copyright: GPL
 Group: Applications/System
 Source0: ftp://ftp.red-bean.com/pub/noel/%{name}-%{version}.tar.gz
@@ -95,6 +95,9 @@ fi
 %{_infodir}/*
 
 %changelog
+* Thu Apr 12 2001 Solar Designer <solar@owl.openwall.com>
+- acct.logrotate: nocreate (we create the file from the postrotate script).
+
 * Wed Apr 11 2001 Michail Litvak <mci@owl.openwall.com>
 - added chkconfig support in init script
 - improved logrotate config
