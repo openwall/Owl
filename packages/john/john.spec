@@ -1,4 +1,4 @@
-# $Id: Owl/packages/john/john.spec,v 1.37 2004/11/09 13:17:19 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.38 2004/11/09 17:06:32 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -96,7 +96,7 @@ load time, but we don't want this clock reset to be seen in event logs.
 - Corrected a segfault with --stdin introduced with 1.6.34.2.
 
 * Wed Dec 03 2003 Solar Designer <solar@owl.openwall.com> 1.6.36.8-owl1
-- Avoid triggering a MacOS X cpp bug(?) where it would detect and refuse to
+- Avoid triggering a Mac OS X cpp bug(?) where it would detect and refuse to
 handle "recursive" cpp macros.
 
 * Sun Nov 30 2003 Solar Designer <solar@owl.openwall.com> 1.6.36.7-owl1
