@@ -1,0 +1,10 @@
+/var/account/pacct {
+prerotate
+        /sbin/accton
+endscript
+        notifempty
+        monthly
+postrotate
+        /sbin/accton /var/account/pacct
+endscript
+}

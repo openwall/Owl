@@ -1,0 +1,79 @@
+.TH DUMP-UTMP 8 "2000 July 19"
+.SH NAME
+dump-utmp \-  print an utmp file in human-readable format
+.SH SYNOPSIS
+.hy 0
+.na
+.TP
+.B dump-utmp
+[
+.B \-r
+|
+.B \-\-reverse
+]
+[
+.B \-R
+|
+.B \-\-raw 
+]
+[
+.B \-n
+|
+.B \-\-num
+.I recs
+]
+[
+.B \-h
+|
+.B \-\-help
+]
+.I files
+.SH DESCRIPTION
+.LP
+.B dump-acct
+.I file
+prints a list of all logins.  This list is usually written in
+.IR /var/log/wtmp .
+.LP
+All fields are separated by vertical line.  Fields are:
+.IR "user name" ,
+.IR tty ,
+.IR type ,
+.IR id ,
+.IR pid ,
+.IR hostaddr ,
+.IR host ,
+.IR time .
+.SH OPTIONS
+\..PD 0
+.TP
+.TP
+.B \-h, \-\-help
+Prints the usage string and default locations of system files to
+standard output and exits.
+.TP
+.B \-n, \-\-num recs
+Number of lines to print.
+.TP
+.B \-r, \-\-reverse
+Start printing from last records.
+.TP
+.B \-R, \-\-raw
+Print raw records, not human-readable.
+.SH FILES
+.I wtmp
+.RS
+The system wide login record file. See
+.BR wtmp (5)
+for further details.
+.LP
+.SH AUTHOR
+The GNU accounting utilities were written by Noel Cragg
+<noel@gnu.ai.mit.edu>. The man page was written 
+by Ognyan Kulev <ogi@fmi.uni-sofia.bg> for Debian GNU systems (but may be
+used by others).
+.SH "SEE ALSO"
+.BR login (1),
+.BR wtmp (5),
+.BR init (8),
+.BR sa (8)

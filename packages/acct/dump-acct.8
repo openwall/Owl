@@ -1,0 +1,86 @@
+.TH DUMP-ACCT 8 "2000 July 19"
+.SH NAME
+dump-acct \-  print an acct/pacct file in human-readable format
+.SH SYNOPSIS
+.hy 0
+.na
+.TP
+.B dump-acct
+[
+.B \-r
+|
+.B \-\-reverse
+]
+[
+.B \-R
+|
+.B \-\-raw 
+]
+[
+.B \-n
+|
+.B \-\-num
+.I recs
+]
+[
+.B \-h
+|
+.B \-\-help
+]
+[
+.I files
+]
+.SH DESCRIPTION
+.LP
+.B dump-acct
+.I filename
+prints a list of all executed processes.  This list is written by the kernel
+which must be compiled with BSD process accounting enabled.
+It must be started with
+.BR accton (5).
+.LP
+All fields are separated by vertical line.  Fields are:
+.IR command ,
+.IR "user time" ,
+.IR "system time" ,
+.IR "effective time" ,
+.IR uid ,
+.IR gid ,
+.IR memory ,
+.IR io ,
+.IR time .
+User, system and effective times are ticks per second.  One tick is
+usually 1/50 of a second.
+.SH OPTIONS
+\..PD 0
+.TP
+.TP
+.B \-h, \-\-help
+Prints the usage string and default locations of system files to
+standard output and exits.
+.TP
+.B \-n, \-\-num recs
+Number of lines to print.
+.TP
+.B \-r, \-\-reverse
+Start printing from last records.
+.TP
+.B \-R, \-\-raw
+Print raw records, not human-readable.
+.SH FILES
+.TP
+.I acct
+The system wide process accounting file. See
+.BR acct (5)
+(or
+.BR pacct (5))
+for further details.
+.LP
+.SH AUTHOR
+The GNU accounting utilities were written by Noel Cragg
+<noel@gnu.ai.mit.edu>. The man page was written 
+by Ognyan Kulev <ogi@fmi.uni-sofia.bg> for Debian GNU systems (but may be
+used by others).
+.SH "SEE ALSO"
+.BR acct (5),
+.BR ac (8)
