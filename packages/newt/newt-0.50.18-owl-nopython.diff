@@ -1,0 +1,48 @@
+--- newt-0.50.18/Makefile.in.nopython	Fri Dec 15 21:17:40 2000
++++ newt-0.50.18/Makefile.in	Fri Dec 15 21:19:58 2000
+@@ -29,8 +29,6 @@
+ libdir = $(prefix)/lib
+ bindir = $(prefix)/bin
+ ARCHNAME = $(shell uname -m | sed 's/i.86/i386/')
+-pythondir = $(prefix)/lib/python1.5
+-pythonbindir = $(prefix)/lib/python1.5/lib-dynload
+ 
+ #--------------------------------------
+ 
+@@ -45,7 +43,7 @@
+ TARGET=depend $(PROGS)
+ endif
+ 
+-all:	$(TARGET) _snackmodule.so
++all:	$(TARGET) 
+ 
+ test:	$(TESTOBJS) $(LIBNEWT)
+ 	gcc -g -o test $(TESTOBJS) $(LIBNEWT) $(LIBS) -static
+@@ -56,12 +54,6 @@
+ testtree:	testtree.o $(LIBNEWT)
+ 	gcc -g -o testtree testtree.o $(LIBNEWT) $(LIBS)
+ 
+-_snackmodule.so:   snackmodule.o $(LIBNEWTSH)
+-	gcc --shared $(SHCFLAGS) -o _snackmodule.so snackmodule.o -L . $(LIBNEWTSH)
+-
+-snackmodule.o:   snackmodule.c
+-	gcc -I/usr/include/python1.5 -fPIC $(CFLAGS) -c snackmodule.c
+-
+ whiptail: $(NDIALOGOBJS) $(LIBNEWTSH)
+ 	gcc -g -o whiptail $(NDIALOGOBJS) -L . $(LIBNEWTSH) $(LIBS) -lpopt
+ 
+@@ -103,13 +95,10 @@
+ 	install -m 644 $(LIBNEWT) $(instroot)/$(libdir)
+ 	install -s -m 755 whiptail $(instroot)/$(bindir)
+ 
+-install-sh: sharedlib _snackmodule.so
++install-sh: sharedlib 
+ 	[ -d $(instroot)/$(libdir) ] || install -m 755 -d $(instroot)/$(libdir)
+ 	install -s -m 755 $(LIBNEWTSH) $(instroot)/$(libdir)
+ 	ln -sf $(LIBNEWTSH) $(instroot)/$(libdir)/libnewt.so
+-	[ -d $(instroot)/$(pythonbindir) ] || install -m 755 -d $(instroot)/$(pythonbindir)
+-	install -s -m 755 _snackmodule.so $(instroot)/$(pythonbindir)
+-	install -m 755 snack.py $(instroot)/$(pythondir)
+ 
+ configure:  configure.in
+ 	autoconf
