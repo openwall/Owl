@@ -222,9 +222,9 @@ lilo_config()
 boot=$boot
 
 image=/boot/bzImage
-		label=Linux
-		read-only
-		root=$root" > $f_liloconf
+	label=Linux
+	read-only
+	root=$root" > $f_liloconf
 
 	chmod 600 $f_liloconf
 	mv -f $f_liloconf $F_LILOCONF
