@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.2 2000/11/22 17:13:50 solar Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.3 2000/12/01 18:35:37 solar Exp $
 
 Summary: Postfix mail system
 Name: postfix
@@ -7,7 +7,7 @@ Name: postfix
 %define original_version %{original_date}-%{original_pl}
 %define package_version %{original_date}_%{original_pl}
 Version: %{package_version}
-Release: 2owl
+Release: 3owl
 Copyright: IBM Public License
 Group: System Environment/Daemons
 Source0: ftp://ftp.sunet.se/pub/unix/mail/postfix/official/%{name}-%{original_version}.tar.gz
@@ -167,6 +167,9 @@ rmdir /var/spool/postfix/[^m]*
 %files -f filelist
 
 %changelog
+* Fri Dec 01 2000 Solar Designer <solar@owl.openwall.com>
+- Simplified postfix.init for use with owl-startup.
+
 * Wed Nov 22 2000 Solar Designer <solar@owl.openwall.com>
 - Restrict relaying to the host's own addresses only by default.
 - Ignore sparse .forward files on filesystems which allow for this.
