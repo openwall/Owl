@@ -1,4 +1,4 @@
-# $Id: Owl/build/Makefile,v 1.9 2001/06/21 08:01:24 solar Exp $
+# $Id: Owl/build/Makefile,v 1.10 2001/06/21 15:08:47 solar Exp $
 
 # The Owl branch to build and/or install, specified by its tag in the
 # CVS.  This should only be set to build and/or install a non-current
@@ -13,7 +13,7 @@ default: buildworld
 
 checkout:
 	mkdir -p native
-	cd native && cvs co -r $(TAG) -d $(BRANCH) $(MODULE)
+	cd native && cvs co $(if $(TAG),-r $(TAG) -d $(BRANCH) )$(MODULE)
 
 symlinks:
 	test -d native/$(BRANCH)/build || $(MAKE) checkout
