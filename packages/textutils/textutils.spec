@@ -1,4 +1,4 @@
-# $Id: Owl/packages/textutils/Attic/textutils.spec,v 1.9 2002/08/05 08:09:29 solar Exp $
+# $Id: Owl/packages/textutils/Attic/textutils.spec,v 1.10 2003/10/25 08:57:04 solar Exp $
 
 # The texinfo documentation for fileutils, sh-utils, and textutils is
 # currently provided by fileutils.
@@ -43,7 +43,8 @@ rm -rf $RPM_BUILD_ROOT
 cd $RPM_BUILD_ROOT
 mkdir bin
 mv .%{_bindir}/{cat,cut,sort} bin/
-ln -s /bin/cut .%{_bindir}/cut
+ln -s ../../bin/cut .%{_bindir}/
+test -r .%{_bindir}/cut
 
 %clean
 rm -rf $RPM_BUILD_ROOT
