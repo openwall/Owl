@@ -1,8 +1,8 @@
-# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.16 2004/11/23 22:40:48 mci Exp $
+# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.17 2005/03/25 21:07:36 solar Exp $
 
 Summary: Pluggable authentication module for USER/PASS-style protocols.
 Name: pam_userpass
-Version: 0.9.1
+Version: 1.0
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
@@ -52,6 +52,9 @@ make install DESTDIR=%buildroot
 %_includedir/security/*
 
 %changelog
+* Fri Mar 25 2005 Solar Designer <solar@owl.openwall.com> 1.0-owl1
+- Corrected the source code to not break C strict aliasing rules.
+
 * Sun Nov 02 2003 Solar Designer <solar@owl.openwall.com> 0.9.1-owl1
 - Use "install -c" (makes a difference on some non-Linux systems).
 - Moved the "-c" out of CFLAGS.

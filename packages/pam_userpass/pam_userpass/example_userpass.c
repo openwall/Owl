@@ -10,6 +10,7 @@ static char *auth_pam_userpass(const char *user, const char *pass)
 	pam_handle_t *pamh;
 	pam_userpass_t userpass;
 	struct pam_conv conv = {pam_userpass_conv, &userpass};
+	const void *item;
 	const char *template;
 	char *retval;
 	int status;
@@ -30,11 +31,12 @@ static char *auth_pam_userpass(const char *user, const char *pass)
 		return NULL;
 	}
 
-	status = pam_get_item(pamh, PAM_USER, (const void **)&template);
+	status = pam_get_item(pamh, PAM_USER, &item);
 	if (status != PAM_SUCCESS) {
 		pam_end(pamh, status);
 		return NULL;
 	}
+	template = item;
 
 	retval = strdup(template);
 

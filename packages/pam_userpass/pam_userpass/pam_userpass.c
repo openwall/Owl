@@ -17,22 +17,25 @@
 PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags,
 	int argc, const char **argv)
 {
-	struct pam_conv *conv;
+	const void *item;
+	const struct pam_conv *conv;
 	pamc_bp_t prompt;
 	struct pam_message msg, *pmsg;
 	struct pam_response *resp;
-	char *user;
+	const char *user;
 	const char *input;
 	char *output;
 	int status;
 
-	status = pam_get_item(pamh, PAM_CONV, (const void **)&conv);
+	status = pam_get_item(pamh, PAM_CONV, &item);
 	if (status != PAM_SUCCESS)
 		return status;
+	conv = item;
 
-	status = pam_get_item(pamh, PAM_USER, (const void **)&user);
+	status = pam_get_item(pamh, PAM_USER, &item);
 	if (status != PAM_SUCCESS)
 		return status;
+	user = item;
 
 	prompt = NULL;
 	PAM_BP_RENEW(&prompt, PAM_BPC_SELECT,
