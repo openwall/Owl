@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.38 2002/06/27 12:08:08 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.39 2002/06/28 11:49:45 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
-Version: 3.3p1
-Release: owl2
+Version: 3.4p1
+Release: owl1
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -19,7 +19,7 @@ Patch2: openssh-3.3p1-owl-pam_userpass.diff
 Patch3: openssh-3.1p1-owl-scp-stalltime.diff
 Patch4: openssh-3.3p1-owl-drop-groups.diff
 Patch5: openssh-3.1p1-owl-openssl-version-check.diff
-Patch6: openssh-3.3p1-owl-mmap-fallback.diff
+Patch6: openssh-3.4p1-owl-mm.diff
 PreReq: openssl >= 0.9.6b-1owl
 PreReq: openssl < 0.9.7
 PreReq: /sbin/chkconfig, grep, shadow-utils
@@ -90,6 +90,7 @@ clients to connect to your host.
 
 %prep
 %setup -q
+rm -r autom4te-*.cache
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -98,13 +99,13 @@ clients to connect to your host.
 %patch5 -p1
 %patch6 -p1
 
+%define _sysconfdir /etc/ssh
+%{expand:%%define _datadir %{_datadir}/ssh}
+%{expand:%%define _libexecdir %{_libexecdir}/ssh}
+
 %build
-CFLAGS="$RPM_OPT_FLAGS" LIBS="-lcrypt -lpam -lpam_misc" ./configure \
-	--prefix=/usr \
-	--sysconfdir=/etc/ssh \
-	--libexecdir=%{_libexecdir}/ssh \
-	--datadir=%{_datadir}/ssh \
-	--mandir=%{_mandir} \
+export LIBS="-lcrypt -lpam -lpam_misc"
+%configure \
 	--with-pam \
 	--with-tcp-wrappers \
 	--with-ipv4-default \
@@ -175,7 +176,7 @@ fi
 %attr(0644,root,root) %{_mandir}/man1/ssh-keygen.1*
 %attr(0755,root,root) %dir /etc/ssh
 %attr(0600,root,root) %config(noreplace) /etc/ssh/moduli
-%attr(0755,root,root) %dir %{_libexecdir}/ssh
+%attr(0755,root,root) %dir %{_libexecdir}
 
 %files clients
 %defattr(-,root,root)
@@ -184,7 +185,7 @@ fi
 %attr(0755,root,root) /usr/bin/ssh-agent
 %attr(0755,root,root) /usr/bin/ssh-keyscan
 %attr(0755,root,root) /usr/bin/sftp
-%attr(0700,root,root) %{_libexecdir}/ssh/ssh-keysign
+%attr(0700,root,root) %{_libexecdir}/ssh-keysign
 %attr(0644,root,root) %{_mandir}/man1/ssh.1*
 %attr(0644,root,root) %{_mandir}/man1/ssh-add.1*
 %attr(0644,root,root) %{_mandir}/man1/ssh-agent.1*
@@ -199,7 +200,7 @@ fi
 %files server
 %defattr(-,root,root)
 %attr(0700,root,root) /usr/sbin/sshd
-%attr(0755,root,root) %{_libexecdir}/ssh/sftp-server
+%attr(0755,root,root) %{_libexecdir}/sftp-server
 %attr(0644,root,root) %{_mandir}/man5/sshd_config.5*
 %attr(0644,root,root) %{_mandir}/man8/sshd.8*
 %attr(0644,root,root) %{_mandir}/man8/sftp-server.8*
@@ -209,6 +210,13 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Thu Jun 27 2002 Solar Designer <solar@owl.openwall.com>
+- Updated to 3.4p1.
+- Zero out the written-to pages in memory mapped areas when they're
+destroyed to reduce the chances of sensitive data remaining on disk media
+in a remotely-recoverable way while not wasting any extra physical pages
+or filesystem blocks.
+
 * Tue Jun 25 2002 Solar Designer <solar@owl.openwall.com>
 - Fixed the dropping of supplementary groups now included in 3.3p1 rather
 than adding our own version of the fix, to allow for running sshd as

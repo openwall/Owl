@@ -1,0 +1,300 @@
+diff -ur openssh-3.4p1.orig/acconfig.h openssh-3.4p1/acconfig.h
+--- openssh-3.4p1.orig/acconfig.h	Wed Jun 26 02:35:16 2002
++++ openssh-3.4p1/acconfig.h	Thu Jun 27 16:22:33 2002
+@@ -355,9 +355,6 @@
+ /* Path that unprivileged child will chroot() to in privep mode */
+ #undef PRIVSEP_PATH
+ 
+-/* Define if you have the `mmap' function that supports MAP_ANON|SHARED */
+-#undef HAVE_MMAP_ANON_SHARED
+-
+ /* Define if sendmsg()/recvmsg() has problems passing file descriptors */
+ #undef BROKEN_FD_PASSING
+ 
+diff -ur openssh-3.4p1.orig/config.h.in openssh-3.4p1/config.h.in
+--- openssh-3.4p1.orig/config.h.in	Wed Jun 26 18:08:19 2002
++++ openssh-3.4p1/config.h.in	Thu Jun 27 16:22:44 2002
+@@ -355,9 +355,6 @@
+ /* Path that unprivileged child will chroot() to in privep mode */
+ #undef PRIVSEP_PATH
+ 
+-/* Define if you have the `mmap' function that supports MAP_ANON|SHARED */
+-#undef HAVE_MMAP_ANON_SHARED
+-
+ /* Define if sendmsg()/recvmsg() has problems passing file descriptors */
+ #undef BROKEN_FD_PASSING
+ 
+diff -ur openssh-3.4p1.orig/configure openssh-3.4p1/configure
+--- openssh-3.4p1.orig/configure	Wed Jun 26 18:08:18 2002
++++ openssh-3.4p1/configure	Thu Jun 27 16:24:47 2002
+@@ -6528,64 +6528,6 @@
+ done
+ 
+ 
+-if test $ac_cv_func_mmap = yes ; then
+-echo "$as_me:$LINENO: checking for mmap anon shared" >&5
+-echo $ECHO_N "checking for mmap anon shared... $ECHO_C" >&6
+-if test "$cross_compiling" = yes; then
+-  { { echo "$as_me:$LINENO: error: cannot run test program while cross compiling" >&5
+-echo "$as_me: error: cannot run test program while cross compiling" >&2;}
+-   { (exit 1); exit 1; }; }
+-else
+-  cat >conftest.$ac_ext <<_ACEOF
+-#line $LINENO "configure"
+-#include "confdefs.h"
+-
+-#include <stdio.h>
+-#include <sys/mman.h>
+-#if !defined(MAP_ANON) && defined(MAP_ANONYMOUS)
+-#define MAP_ANON MAP_ANONYMOUS
+-#endif
+-main() { char *p;
+-p = (char *) mmap(NULL, 10, PROT_WRITE|PROT_READ, MAP_ANON|MAP_SHARED, -1, 0);
+-if (p == (char *)-1)
+-	exit(1);
+-exit(0);
+-}
+-
+-_ACEOF
+-rm -f conftest$ac_exeext
+-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+-  (eval $ac_link) 2>&5
+-  ac_status=$?
+-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+-  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
+-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+-  (eval $ac_try) 2>&5
+-  ac_status=$?
+-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+-  (exit $ac_status); }; }; then
+-
+-		echo "$as_me:$LINENO: result: yes" >&5
+-echo "${ECHO_T}yes" >&6
+-		cat >>confdefs.h <<\_ACEOF
+-#define HAVE_MMAP_ANON_SHARED 1
+-_ACEOF
+-
+-
+-else
+-  echo "$as_me: program exited with status $ac_status" >&5
+-echo "$as_me: failed program was:" >&5
+-cat conftest.$ac_ext >&5
+-( exit $ac_status )
+- echo "$as_me:$LINENO: result: no" >&5
+-echo "${ECHO_T}no" >&6
+-
+-fi
+-rm -f core core.* *.core conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
+-fi
+-fi
+-
+-
+ for ac_func in dirname
+ do
+ as_ac_var=`echo "ac_cv_func_$ac_func" | $as_tr_sh`
+diff -ur openssh-3.4p1.orig/configure.ac openssh-3.4p1/configure.ac
+--- openssh-3.4p1.orig/configure.ac	Wed Jun 26 02:35:16 2002
++++ openssh-3.4p1/configure.ac	Thu Jun 27 16:23:06 2002
+@@ -577,30 +577,6 @@
+ 	socketpair strerror strlcat strlcpy strmode strsep sysconf tcgetpgrp \
+ 	truncate utimes vhangup vsnprintf waitpid __b64_ntop _getpty)
+ 
+-if test $ac_cv_func_mmap = yes ; then
+-AC_MSG_CHECKING([for mmap anon shared])
+-AC_TRY_RUN(
+-	[
+-#include <stdio.h>
+-#include <sys/mman.h>
+-#if !defined(MAP_ANON) && defined(MAP_ANONYMOUS)
+-#define MAP_ANON MAP_ANONYMOUS
+-#endif
+-main() { char *p;
+-p = (char *) mmap(NULL, 10, PROT_WRITE|PROT_READ, MAP_ANON|MAP_SHARED, -1, 0);
+-if (p == (char *)-1)
+-	exit(1);
+-exit(0);
+-}
+-	],
+-	[
+-		AC_MSG_RESULT(yes)
+-		AC_DEFINE(HAVE_MMAP_ANON_SHARED)
+-	],
+-	[ AC_MSG_RESULT(no) ] 
+-)
+-fi
+-
+ dnl IRIX and Solaris 2.5.1 have dirname() in libgen
+ AC_CHECK_FUNCS(dirname, [AC_CHECK_HEADERS(libgen.h)] ,[
+ 	AC_CHECK_LIB(gen, dirname,[
+diff -ur openssh-3.4p1.orig/monitor_mm.c openssh-3.4p1/monitor_mm.c
+--- openssh-3.4p1.orig/monitor_mm.c	Wed Jun 26 04:29:03 2002
++++ openssh-3.4p1/monitor_mm.c	Fri Jun 28 15:38:35 2002
+@@ -29,6 +29,7 @@
+ #ifdef HAVE_SYS_MMAN_H
+ #include <sys/mman.h>
+ #endif
++#include <sys/shm.h>
+ 
+ #include "ssh.h"
+ #include "xmalloc.h"
+@@ -84,9 +85,42 @@
+ 	 */
+ 	mm->mmalloc = mmalloc;
+ 
+-#ifdef HAVE_MMAP_ANON_SHARED
++#ifdef HAVE_MMAP
++	mm->shm_not_mmap = 0;
++#ifdef MAP_ANON
+ 	address = mmap(NULL, size, PROT_WRITE|PROT_READ, MAP_ANON|MAP_SHARED,
+ 	    -1, 0);
++#else
++	address = MAP_FAILED;
++#endif
++	if (address == MAP_FAILED) {
++		int shmid;
++
++		shmid = shmget(IPC_PRIVATE, size, IPC_CREAT|S_IRUSR|S_IWUSR);
++		if (shmid != -1) {
++			address = shmat(shmid, NULL, 0);
++			shmctl(shmid, IPC_RMID, NULL);
++			if (address != MAP_FAILED)
++				mm->shm_not_mmap = 1;
++		}
++	}
++	if (address == MAP_FAILED) {
++		char tmpname[sizeof(MM_SWAP_TEMPLATE)] = MM_SWAP_TEMPLATE;
++		int tmpfd;
++		int save_errno;
++
++		tmpfd = mkstemp(tmpname);
++		if (tmpfd == -1)
++			fatal("mkstemp(\"%s\"): %s",
++			    MM_SWAP_TEMPLATE, strerror(errno));
++		unlink(tmpname);
++		ftruncate(tmpfd, size);
++		address = mmap(NULL, size, PROT_WRITE|PROT_READ, MAP_SHARED,
++		    tmpfd, 0);
++		save_errno = errno;
++		close(tmpfd);
++		errno = save_errno;
++	}
+ 	if (address == MAP_FAILED)
+ 		fatal("mmap(%lu): %s", (u_long)size, strerror(errno));
+ #else
+@@ -105,6 +139,28 @@
+ 	return (mm);
+ }
+ 
++/* Zeroes out the written-to pages in an address space area */
++
++static void
++mm_clean(void *address, size_t size)
++{
++	u_char *ptr = (u_char *)address;
++	u_char *end = (u_char *)address + size;
++	u_long *ptr_l;
++	u_long *end_l;
++
++	while (((u_long)ptr % sizeof(u_long)) && ptr < end)
++		if (*ptr++) *(ptr - 1) = 0;
++	ptr_l = (u_long *)ptr;
++	end_l = (u_long *)end - 1;
++	while (ptr_l <= end_l) {
++		if (*ptr_l++) *(ptr_l - 1) = 0;
++	}
++	ptr = (u_char *)ptr_l;
++	while (ptr < end)
++		if (*ptr++) *(ptr - 1) = 0;
++}
++
+ /* Frees either the allocated or the free list */
+ 
+ static void
+@@ -130,7 +186,12 @@
+ 	mm_freelist(mm->mmalloc, &mm->rb_free);
+ 	mm_freelist(mm->mmalloc, &mm->rb_allocated);
+ 
+-#ifdef HAVE_MMAP_ANON_SHARED
++#ifdef HAVE_MMAP
++	mm_clean(mm->address, mm->size);
++	if (mm->shm_not_mmap) {
++		if (shmdt(mm->address) == -1)
++			fatal("shmdt(%p): %s", mm->address, strerror(errno));
++	} else
+ 	if (munmap(mm->address, mm->size) == -1)
+ 		fatal("munmap(%p, %lu): %s", mm->address, (u_long)mm->size,
+ 		    strerror(errno));
+@@ -176,8 +237,12 @@
+ 	if (mms == NULL)
+ 		return (NULL);
+ 
++#if 0
+ 	/* Debug */
+ 	memset(mms->address, 0xd0, size);
++#else
++	mm_clean(mms->address, size);
++#endif
+ 
+ 	tmp = mm_make_entry(mm, &mm->rb_allocated, mms->address, size);
+ 
+@@ -208,8 +273,12 @@
+ 	if (mms == NULL)
+ 		fatal("mm_free(%p): can not find %p", mm, address);
+ 
++#if 0
+ 	/* Debug */
+ 	memset(mms->address, 0xd0, mms->size);
++#else
++	mm_clean(mms->address, mms->size);
++#endif
+ 
+ 	/* Remove from allocated list and insert in free list */
+ 	RB_REMOVE(mmtree, &mm->rb_allocated, mms);
+@@ -339,4 +408,7 @@
+ 		fatal("mm_memvalid: end < address: %p < %p", end, address);
+ 	if (end > (void *)((u_char *)mm->address + mm->size))
+ 		fatal("mm_memvalid: address too large: %p", address);
++	/* Redundant on most platforms */
++	if (size > mm->size)
++		fatal("mm_memvalid: size too large: %lu", size);
+ }
+diff -ur openssh-3.4p1.orig/monitor_mm.h openssh-3.4p1/monitor_mm.h
+--- openssh-3.4p1.orig/monitor_mm.h	Wed Jun 26 03:01:37 2002
++++ openssh-3.4p1/monitor_mm.h	Thu Jun 27 16:47:17 2002
+@@ -40,6 +40,7 @@
+ 	struct mmtree rb_allocated;
+ 	void *address;
+ 	size_t size;
++	int shm_not_mmap;
+ 
+ 	struct mm_master *mmalloc;	/* Used to completely share */
+ 
+@@ -52,6 +53,8 @@
+ #define MM_MINSIZE		128
+ 
+ #define MM_ADDRESS_END(x)	(void *)((u_char *)(x)->address + (x)->size)
++
++#define MM_SWAP_TEMPLATE	"/var/run/sshd.mm.XXXXXXXX"
+ 
+ struct mm_master *mm_create(struct mm_master *, size_t);
+ void mm_destroy(struct mm_master *);
+diff -ur openssh-3.4p1.orig/servconf.c openssh-3.4p1/servconf.c
+--- openssh-3.4p1.orig/servconf.c	Tue Jun 25 07:22:04 2002
++++ openssh-3.4p1/servconf.c	Fri Jun 28 14:24:08 2002
+@@ -257,7 +257,7 @@
+ 	if (use_privsep == -1)
+ 		use_privsep = 1;
+ 
+-#if !defined(HAVE_MMAP_ANON_SHARED)
++#ifndef HAVE_MMAP
+ 	if (use_privsep && options->compression == 1) {
+ 		error("This platform does not support both privilege "
+ 		    "separation and compression");
+@@ -265,7 +265,6 @@
+ 		options->compression = 0;
+ 	}
+ #endif
+-
+ }
+ 
+ /* Keyword tokens. */
