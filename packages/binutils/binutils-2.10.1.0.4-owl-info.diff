@@ -1,0 +1,129 @@
+--- binutils-2.10.1.0.4/bfd/doc/bfd.texinfo.orig	Thu Nov 16 22:33:34 2000
++++ binutils-2.10.1.0.4/bfd/doc/bfd.texinfo	Mon Aug 26 01:44:15 2002
+@@ -20,7 +20,8 @@
+ @ifinfo
+ @format
+ START-INFO-DIR-ENTRY
+-* Bfd: (bfd).                   The Binary File Descriptor library.
++* Bfd: (bfd).                                   The Binary File Descriptor
++                                                library.
+ END-INFO-DIR-ENTRY
+ @end format
+ @end ifinfo
+--- binutils-2.10.1.0.4/binutils/binutils.texi.orig	Tue Dec  5 05:33:58 2000
++++ binutils-2.10.1.0.4/binutils/binutils.texi	Mon Aug 26 01:54:12 2002
+@@ -5,22 +5,31 @@
+ @ifinfo
+ @format
+ START-INFO-DIR-ENTRY
+-* Binutils: (binutils).         The GNU binary utilities.
+-* ar: (binutils)ar.               Create, modify, and extract from archives
+-* nm: (binutils)nm.               List symbols from object files
+-* objcopy: (binutils)objcopy.	  Copy and translate object files
+-* objdump: (binutils)objdump.     Display information from object files
+-* ranlib: (binutils)ranlib.       Generate index to archive contents
+-* readelf: (binutils)readelf.	  Display the contents of ELF format files.
+-* size: (binutils)size.           List section sizes and total size
+-* strings: (binutils)strings.     List printable strings from files
+-* strip: (binutils)strip.         Discard symbols
+-* c++filt: (binutils)c++filt.	  Filter to demangle encoded C++ symbols
+-* cxxfilt: (binutils)c++filt.     MS-DOS name for c++filt
+-* addr2line: (binutils)addr2line. Convert addresses to file and line
+-* nlmconv: (binutils)nlmconv.     Converts object code into an NLM
+-* windres: (binutils)windres.	  Manipulate Windows resources
+-* dlltool: (binutils)dlltool.	  Create files needed to build and use DLLs
++* Binutils: (binutils).                         The GNU binary utilities.
++* ar: (binutils)ar.                             Create, modify, and extract
++                                                from archives
++* nm: (binutils)nm.                             List symbols from object files
++* objcopy: (binutils)objcopy.                   Copy and translate object files
++* objdump: (binutils)objdump.                   Display information from
++                                                object files
++* ranlib: (binutils)ranlib.                     Generate index to archive
++                                                contents
++* readelf: (binutils)readelf.                   Display the contents of ELF
++                                                format files.
++* size: (binutils)size.                         List section sizes and
++                                                total size
++* strings: (binutils)strings.                   List printable strings
++                                                from files
++* strip: (binutils)strip.                       Discard symbols
++* c++filt: (binutils)c++filt.                   Filter to demangle encoded
++                                                C++ symbols
++* cxxfilt: (binutils)c++filt.                   MS-DOS name for c++filt
++* addr2line: (binutils)addr2line.               Convert addresses to file and
++                                                line
++* nlmconv: (binutils)nlmconv.                   Converts object code into an NLM
++* windres: (binutils)windres.                   Manipulate Windows resources
++* dlltool: (binutils)dlltool.                   Create files needed to build
++                                                and use DLLs
+ END-INFO-DIR-ENTRY
+ @end format
+ @end ifinfo
+--- binutils-2.10.1.0.4/etc/standards.texi.orig	Thu Jun  3 22:01:55 1999
++++ binutils-2.10.1.0.4/etc/standards.texi	Mon Aug 26 01:39:57 2002
+@@ -9,7 +9,7 @@
+ @ifinfo
+ @format
+ START-INFO-DIR-ENTRY
+-* Standards: (standards).        GNU coding standards.
++* Standards: (standards).                       GNU coding standards.
+ END-INFO-DIR-ENTRY
+ @end format
+ @end ifinfo
+--- binutils-2.10.1.0.4/gas/doc/gasp.texi.orig	Wed Nov  8 03:30:32 2000
++++ binutils-2.10.1.0.4/gas/doc/gasp.texi	Mon Aug 26 01:39:57 2002
+@@ -15,7 +15,7 @@
+ @ifinfo
+ @format
+ START-INFO-DIR-ENTRY
+-* gasp: (gasp).                     The GNU Assembler Preprocessor
++* gasp: (gasp).                                 The GNU Assembler Preprocessor
+ END-INFO-DIR-ENTRY
+ @end format
+ @end ifinfo
+--- binutils-2.10.1.0.4/gas/doc/as.texinfo.orig	Tue Dec  5 05:34:01 2000
++++ binutils-2.10.1.0.4/gas/doc/as.texinfo	Mon Aug 26 01:39:57 2002
+@@ -76,7 +76,7 @@
+ @ifinfo
+ @format
+ START-INFO-DIR-ENTRY
+-* As: (as).                     The GNU assembler.
++* As: (as).                                     The GNU assembler.
+ END-INFO-DIR-ENTRY
+ @end format
+ @end ifinfo
+--- binutils-2.10.1.0.4/gprof/gprof.texi.orig	Wed Nov  8 03:30:49 2000
++++ binutils-2.10.1.0.4/gprof/gprof.texi	Mon Aug 26 01:55:25 2002
+@@ -8,7 +8,8 @@
+ @c manuals to an info tree.  zoo@cygnus.com is developing this facility.
+ @format
+ START-INFO-DIR-ENTRY
+-* gprof: (gprof).                Profiling your program's execution
++* gprof: (gprof).                               Profiling your program's
++                                                execution
+ END-INFO-DIR-ENTRY
+ @end format
+ @end ifinfo
+--- binutils-2.10.1.0.4/ld/ld.texinfo.orig	Fri Dec 22 03:47:49 2000
++++ binutils-2.10.1.0.4/ld/ld.texinfo	Mon Aug 26 01:39:57 2002
+@@ -10,7 +10,7 @@
+ @ifinfo
+ @format
+ START-INFO-DIR-ENTRY
+-* Ld: (ld).                       The GNU linker.
++* Ld: (ld).                                     The GNU linker.
+ END-INFO-DIR-ENTRY
+ @end format
+ @end ifinfo
+--- binutils-2.10.1.0.4/ld/ldint.texinfo.orig	Wed Nov  8 03:30:52 2000
++++ binutils-2.10.1.0.4/ld/ldint.texinfo	Mon Aug 26 01:39:57 2002
+@@ -4,7 +4,7 @@
+ @ifinfo
+ @format
+ START-INFO-DIR-ENTRY
+-* Ld-Internals: (ldint).	The GNU linker internals.
++* Ld-Internals: (ldint).                        The GNU linker internals.
+ END-INFO-DIR-ENTRY
+ @end format
+ @end ifinfo

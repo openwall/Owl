@@ -1,9 +1,9 @@
-# $Id: Owl/packages/diffutils/diffutils.spec,v 1.5 2002/02/07 21:04:23 solar Exp $
+# $Id: Owl/packages/diffutils/diffutils.spec,v 1.6 2002/08/26 15:24:56 mci Exp $
 
 Summary: A GNU collection of diff utilities.
 Name: diffutils
 Version: 2.7
-Release: owl23
+Release: owl24
 License: GPL
 Group: Applications/Text
 URL: http://www.gnu.org/software/diffutils/diffutils.html
@@ -51,11 +51,13 @@ done
 rm -rf $RPM_BUILD_ROOT
 
 %post
-/sbin/install-info %{_infodir}/diff.info.gz %{_infodir}/dir --entry="* diff: (diff).                 The GNU diff."
+/sbin/install-info %{_infodir}/diff.info.gz %{_infodir}/dir \
+	--entry="* diff: (diff).                                 The GNU diff."
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/diff.info.gz %{_infodir}/dir --entry="* diff: (diff).                 The GNU diff."
+	/sbin/install-info --delete %{_infodir}/diff.info.gz %{_infodir}/dir \
+		--entry="* diff: (diff).                                 The GNU diff."
 fi
 
 %files
@@ -66,6 +68,9 @@ fi
 %{_infodir}/diff.info*
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 

@@ -1,0 +1,17 @@
+--- gawk-3.1.1/doc/gawk.texi.orig	Mon Apr 22 15:26:20 2002
++++ gawk-3.1.1/doc/gawk.texi	Mon Aug 26 02:10:30 2002
+@@ -6,11 +6,12 @@
+ 
+ @dircategory GNU Packages
+ @direntry
+-* Gawk: (gawk).           A text scanning and processing language.
++* Gawk: (gawk).                                 A text scanning and processing
++                                                language.
+ @end direntry
+ @dircategory Individual utilities
+ @direntry
+-* awk: (gawk)Invoking gawk.           Text scanning and processing.
++* awk: (gawk)Invoking gawk.                     Text scanning and processing.
+ @end direntry
+ 
+ @c @set xref-automatic-section-title

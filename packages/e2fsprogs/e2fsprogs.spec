@@ -1,9 +1,9 @@
-# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.8 2002/04/25 14:33:35 mci Exp $
+# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.9 2002/08/26 15:26:29 mci Exp $
 
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
 Version: 1.27
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%{version}.tar.gz
@@ -13,6 +13,7 @@ Patch2: e2fsprogs-1.27-rh-c++.diff
 Patch3: e2fsprogs-1.27-rh-owl-mountlabel3.diff
 Patch4: e2fsprogs-1.27-owl-lost+found-mode.diff
 Patch5: e2fsprogs-1.27-owl-warnings.diff
+Patch6: e2fsprogs-1.27-owl-info.diff
 PreReq: /sbin/ldconfig
 BuildRoot: /override/%{name}-%{version}
 
@@ -46,10 +47,12 @@ chmod -R u+w .
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
 %build
+rm doc/libext2fs.info
 autoconf
 %configure --enable-elf-shlibs
 make
@@ -155,6 +158,9 @@ fi
 %{_mandir}/man3/com_err.3*
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Mon Apr 22 2002 Michail Litvak <mci@owl.openwall.com>
 - 1.27
 - Build with -Wall

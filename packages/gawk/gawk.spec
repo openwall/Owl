@@ -1,16 +1,17 @@
-# $Id: Owl/packages/gawk/gawk.spec,v 1.8 2002/07/27 23:52:31 solar Exp $
+# $Id: Owl/packages/gawk/gawk.spec,v 1.9 2002/08/26 15:46:12 mci Exp $
 
 %define BUILD_PROFILE 0
 
 Summary: The GNU version of the awk text processing utility.
 Name: gawk
 Version: 3.1.1
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/Text
 Source0: ftp://ftp.gnu.org/gnu/gawk/gawk-%{version}.tar.gz
 Source1: ftp://ftp.gnu.org/gnu/gawk/gawk-%{version}-ps.tar.gz
 Patch0: gawk-3.1.1-eggert-tmp.diff
+Patch1: gawk-3.1.1-owl-info.diff
 PreReq: /sbin/install-info
 BuildRequires: texinfo >= 4.2
 BuildRoot: /override/%{name}-%{version}
@@ -35,6 +36,7 @@ it creates a profile of your program with line execution counts.
 %prep
 %setup -q -b 1
 %patch0 -p1
+%patch1 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -97,6 +99,9 @@ fi
 %endif
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Mon Jul 23 2002 Michail Litvak <mci@owl.openwall.com>
 - Moved profiling gawk (pgawk) into separate subpackage, not built by default.
 - Compress PostScript documentation.

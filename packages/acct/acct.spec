@@ -1,9 +1,9 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.16 2002/08/06 14:12:14 solar Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.17 2002/08/26 15:01:07 mci Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
 Version: 6.3.5
-Release: owl9
+Release: owl10
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.red-bean.com/pub/noel/%{name}-%{version}.tar.gz
@@ -80,7 +80,8 @@ if grep -q '^* accounting: (psacct)' $INFODIRFILE; then
 	mv $INFODIRFILE.rpmtmp $INFODIRFILE
 fi
 
-/sbin/install-info %{_infodir}/accounting.info.gz %{_infodir}/dir --entry="* accounting: (accounting).            The GNU Process Accounting Suite."
+/sbin/install-info %{_infodir}/accounting.info.gz %{_infodir}/dir \
+	--entry="* accounting: (accounting).                     The GNU Process Accounting Suite."
 
 for f in %{_var}/account/{pacct,usracct,savacct}; do
 	test -e $f && continue || :
@@ -91,7 +92,8 @@ done
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/accounting.info.gz %{_infodir}/dir --entry="* accounting: (accounting).            The GNU Process Accounting Suite."
+	/sbin/install-info --delete %{_infodir}/accounting.info.gz %{_infodir}/dir \
+		--entry="* accounting: (accounting).                     The GNU Process Accounting Suite."
 fi
 
 %files
@@ -109,6 +111,9 @@ fi
 %{_infodir}/*
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Mon Aug 05 2002 Solar Designer <solar@owl.openwall.com>
 - Use a more generic script to remove the obsolete info dir entry.
 

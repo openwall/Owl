@@ -1,4 +1,4 @@
-# $Id: Owl/packages/binutils/binutils.spec,v 1.7 2002/02/07 18:07:46 solar Exp $
+# $Id: Owl/packages/binutils/binutils.spec,v 1.8 2002/08/26 15:14:29 mci Exp $
 
 %define BUILD_HJL 1
 
@@ -14,6 +14,7 @@ Source: ftp://ftp.valinux.com/pub/support/hjl/binutils/binutils-%{version}.tar.g
 %else
 Source: ftp://ftp.gnu.org/gnu/binutils/binutils-%{version}.tar.gz
 %endif
+Patch: binutils-2.10.1.0.4-owl-info.diff
 PreReq: /sbin/ldconfig, /sbin/install-info
 ExcludeArch: ia64
 BuildRoot: /override/%{name}-%{version}
@@ -31,8 +32,12 @@ addresses to file and line).
 
 %prep
 %setup -q
+%patch -p1
 
 %build
+rm bfd/doc/bfd.info binutils/binutils.info etc/standards.info
+rm gas/doc/{gasp,as}.info gprof/gprof.info
+rm ld/{ld,ldint}.info
 ADDITIONAL_TARGETS=""
 %ifos linux
 %ifarch sparc sparcv9
@@ -97,6 +102,9 @@ fi
 %{_infodir}/*.info*
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 

@@ -1,15 +1,16 @@
-# $Id: Owl/packages/autoconf/autoconf.spec,v 1.3 2002/02/04 17:13:23 solar Exp $
+# $Id: Owl/packages/autoconf/autoconf.spec,v 1.4 2002/08/26 15:03:00 mci Exp $
 
 Summary: A GNU tool for automatically configuring source code.
 Name: autoconf
 Version: 2.13
-Release: owl9
+Release: owl10
 License: GPL
 Group: Development/Tools
 Source: ftp://ftp.gnu.org/gnu/autoconf/autoconf-%{version}.tar.gz
 Patch0: autoconf-2.12-rh-race.diff
 Patch1: autoconf-2.13-rh-mawk.diff
 Patch2: autoconf-2.13-rh-notmp.diff
+Patch3: autoconf-2.13-owl-info.diff
 PreReq: /sbin/install-info
 Requires: gawk, m4, mktemp, perl, textutils
 BuildArchitectures: noarch
@@ -28,8 +29,10 @@ portable and configurable software.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
+rm autoconf.info
 %configure
 make
 
@@ -62,6 +65,9 @@ fi
 %{_datadir}/autoconf
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 - Based the new package description on the texinfo documentation.

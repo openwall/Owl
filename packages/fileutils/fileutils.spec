@@ -1,4 +1,4 @@
-# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.11 2002/08/12 18:21:18 solar Exp $
+# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.12 2002/08/26 15:32:40 mci Exp $
 
 # The texinfo documentation for fileutils, sh-utils, and textutils is
 # currently provided by fileutils.
@@ -7,7 +7,7 @@
 Summary: The GNU versions of common file management utilities.
 Name: fileutils
 Version: 4.1.11
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/File
 Source0: ftp://alpha.gnu.org/gnu/fetish/fileutils-%{version}.tar.bz2
@@ -22,6 +22,7 @@ Patch4: fileutils-4.1.11-owl-alt-rh-restore-color.diff
 Patch5: fileutils-4.1.11-alt-cp-force.diff
 Patch6: fileutils-4.1.11-alt-owl-chown.diff
 Patch7: fileutils-4.1.11-owl-fixes.diff
+Patch8: fileutils-4.1.11-owl-info.diff
 %if %BUILD_INFO
 PreReq: /sbin/install-info
 %endif
@@ -54,6 +55,7 @@ timestamps), and vdir (provides long directory listings).
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 %{expand:%%define optflags %optflags -Wall -Dlint}
 
@@ -119,6 +121,9 @@ fi
 %{_datadir}/locale/*/*/*
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Mon Aug 12 2002 Solar Designer <solar@owl.openwall.com>
 - Handle SIGTSTP in the ls restore colors patch (from ALT Linux).
 - Two additional -Wall fixes for SPARC and Alpha (the issues were real).

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.27 2002/06/21 14:39:04 solar Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.28 2002/08/26 15:56:03 mci Exp $
 
 %define GCC_PREFIX /usr
 %define CPP_PREFIX /lib
@@ -12,7 +12,7 @@
 Summary: C compiler from the GNU Compiler Collection.
 Name: gcc
 Version: %{GCC_VERSION}
-Release: owl4
+Release: owl5
 Epoch: 1
 License: GPL
 Group: Development/Languages
@@ -24,6 +24,7 @@ Patch1: gcc-2.95.2-owl-disable-dvi.diff
 Patch2: gcc-2.95.2-owl-texconfig-bug.diff
 Patch3: gcc-2.95.3-owl-sparcv9-LONG_MAX.diff
 Patch4: gcc-2.95.3-owl-sparc-library-path.diff
+Patch5: gcc-2.95.3-owl-info.diff
 PreReq: /sbin/install-info
 Requires: binutils >= 2.9.1.0.25
 Requires: cpp = %{GCC_VERSION}
@@ -143,6 +144,7 @@ Brazil, Korea, and other places.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 # Remove bison-generated files - we want bison 1.28+'ish versions...
 for i in gcc/cp/parse gcc/c-parse gcc/cexp gcc/java/parse-scan gcc/java/parse gcc/objc/objc-parse; do
@@ -163,6 +165,7 @@ rm -f gcc/java/config-lang.in
 %endif
 
 %build
+rm gcc/{gcc,cpp}.info
 %ifarch sparcv9
 %define _target_platform sparc-%{_vendor}-%{_target_os}
 %endif
@@ -479,6 +482,9 @@ fi
 %endif
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Fri Jun 21 2002 Solar Designer <solar@owl.openwall.com>
 - Provide a cc(1) man page.
 

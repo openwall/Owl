@@ -1,0 +1,12 @@
+--- autoconf-2.13/autoconf.texi.orig	Tue Jan  5 16:28:37 1999
++++ autoconf-2.13/autoconf.texi	Fri Aug 23 21:49:57 2002
+@@ -17,7 +17,8 @@
+ @ifinfo
+ @format
+ START-INFO-DIR-ENTRY
+-* Autoconf: (autoconf).         Create source code configuration scripts.
++* Autoconf: (autoconf).                         Create source code
++                                                configuration scripts.
+ END-INFO-DIR-ENTRY
+ @end format
+ 

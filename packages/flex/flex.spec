@@ -1,9 +1,9 @@
-# $Id: Owl/packages/flex/flex.spec,v 1.7 2002/07/08 06:08:35 mci Exp $
+# $Id: Owl/packages/flex/flex.spec,v 1.8 2002/08/26 15:40:33 mci Exp $
 
 Summary: A tool for creating scanners (text pattern recognizers).
 Name: flex
 Version: 2.5.4a
-Release: owl12
+Release: owl13
 License: GPL
 Group: Development/Tools
 Source: ftp://ftp.gnu.org/non-gnu/flex/flex-%{version}.tar.gz
@@ -52,11 +52,11 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/install-info %{_infodir}/flex.info.gz %{_infodir}/dir \
-	--entry="* Flex: (flex).            A fast scanner generator."
+	--entry="* Flex: (flex).                                 A fast scanner generator."
 %preun
 if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %{_infodir}/flex.info.gz %{_infodir}/dir \
-	--entry="* Flex: (flex).            A fast scanner generator."
+		--entry="* Flex: (flex).                                 A fast scanner generator."
 fi
 
 %files
@@ -72,6 +72,9 @@ fi
 %{_prefix}/include/FlexLexer.h
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Sun Jul 07 2002 Michail Litvak <mci@owl.openwall.com>
 - Package flex.info
 

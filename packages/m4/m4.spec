@@ -1,4 +1,4 @@
-# $Id: Owl/packages/m4/m4.spec,v 1.7 2002/02/07 10:07:27 solar Exp $
+# $Id: Owl/packages/m4/m4.spec,v 1.8 2002/08/26 16:48:37 mci Exp $
 
 Summary: The GNU macro processor.
 Name: m4
@@ -9,6 +9,7 @@ Group: Applications/Text
 Source: ftp://ftp.gnu.org/gnu/m4/m4-%{version}.tar.gz
 Patch0: m4-1.4-rh-glibc.diff
 Patch1: m4-1.4-owl-format.diff
+Patch2: m4-1.4-owl-info.diff
 PreReq: /sbin/install-info
 Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
@@ -25,8 +26,10 @@ not for running configure scripts.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
+rm doc/m4.info
 autoconf
 export ac_cv_func_mkstemp=yes \
 %configure
@@ -54,6 +57,9 @@ fi
 %{_infodir}/*.info*
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions
 

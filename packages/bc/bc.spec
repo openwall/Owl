@@ -1,9 +1,9 @@
-# $Id: Owl/packages/bc/bc.spec,v 1.4 2002/01/24 14:46:32 solar Exp $
+# $Id: Owl/packages/bc/bc.spec,v 1.5 2002/08/26 15:08:05 mci Exp $
 
 Summary: GNU's bc (a numeric processing language) and dc (a calculator).
 Name: bc
 Version: 1.06
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/Engineering
 Source: ftp://ftp.gnu.org/gnu/bc/bc-%{version}.tar.gz
@@ -56,6 +56,9 @@ fi
 %{_infodir}/*.info*
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
 - Install the info dir entry for bc as well.
 - Enforce our new spec file conventions.

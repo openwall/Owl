@@ -1,0 +1,45 @@
+--- gdb-5.0/gdb/doc/gdb.texinfo.orig	Fri May 12 14:30:39 2000
++++ gdb-5.0/gdb/doc/gdb.texinfo	Mon Aug 26 02:14:08 2002
+@@ -41,7 +41,7 @@
+ @c manuals to an info tree.
+ @dircategory Programming & development tools.
+ @direntry
+-* Gdb: (gdb).                     The @sc{gnu} debugger.
++* Gdb: (gdb).                                   The @sc{gnu} debugger.
+ @end direntry
+ 
+ @ifinfo
+--- gdb-5.0/gdb/doc/stabs.texinfo.orig	Mon Jun 28 20:02:18 1999
++++ gdb-5.0/gdb/doc/stabs.texinfo	Mon Aug 26 02:14:59 2002
+@@ -6,7 +6,8 @@
+ @ifinfo
+ @format
+ START-INFO-DIR-ENTRY
+-* Stabs: (stabs).                 The "stabs" debugging information format.
++* Stabs: (stabs).                               The "stabs" debugging
++                                                information format.
+ END-INFO-DIR-ENTRY
+ @end format
+ @end ifinfo
+--- gdb-5.0/gdb/doc/gdbint.texinfo.orig	Wed Apr 12 09:16:56 2000
++++ gdb-5.0/gdb/doc/gdbint.texinfo	Mon Aug 26 02:14:08 2002
+@@ -4,7 +4,7 @@
+ @ifinfo
+ @format
+ START-INFO-DIR-ENTRY
+-* Gdb-Internals: (gdbint).	The GNU debugger's internals.
++* Gdb-Internals: (gdbint).                      The GNU debugger's internals.
+ END-INFO-DIR-ENTRY
+ @end format
+ @end ifinfo
+--- gdb-5.0/mmalloc/mmalloc.texi.orig	Fri Apr 16 05:34:49 1999
++++ gdb-5.0/mmalloc/mmalloc.texi	Mon Aug 26 02:14:08 2002
+@@ -4,7 +4,7 @@
+ @ifinfo
+ @format
+ START-INFO-DIR-ENTRY
+-* Mmalloc: (mmalloc).		The GNU mapped-malloc package.
++* Mmalloc: (mmalloc).                           The GNU mapped-malloc package.
+ END-INFO-DIR-ENTRY
+ @end format
+ 

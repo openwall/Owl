@@ -1,9 +1,9 @@
-# $Id: Owl/packages/bison/bison.spec,v 1.11 2002/06/11 14:10:04 mci Exp $
+# $Id: Owl/packages/bison/bison.spec,v 1.12 2002/08/26 15:17:17 mci Exp $
 
 Summary: A GNU general-purpose parser generator.
 Name: bison
 Version: 1.35
-Release: owl1
+Release: owl2
 License: GPL
 Group: Development/Tools
 Source: ftp://ftp.gnu.org/gnu/bison/bison-%{version}.tar.bz2
@@ -40,11 +40,13 @@ rm -rf $RPM_BUILD_ROOT
 rm -rf $RPM_BUILD_ROOT
 
 %post
-/sbin/install-info %{_infodir}/bison.info.gz %{_infodir}/dir --entry="* bison: (bison).                        The GNU parser generator."
+/sbin/install-info %{_infodir}/bison.info.gz %{_infodir}/dir \
+	--entry="* bison: (bison).                               The GNU parser generator."
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/bison.info.gz %{_infodir}/dir --entry="* bison: (bison).                        The GNU parser generator."
+	/sbin/install-info --delete %{_infodir}/bison.info.gz %{_infodir}/dir \
+		--entry="* bison: (bison).                               The GNU parser generator."
 fi
 
 %files
@@ -55,6 +57,9 @@ fi
 %{_bindir}/*
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Tue Jun 11 2002 Michail Litvak <mci@owl.openwall.com>
 - 1.35
 

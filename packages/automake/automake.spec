@@ -1,14 +1,15 @@
-# $Id: Owl/packages/automake/automake.spec,v 1.3 2002/02/04 17:13:23 solar Exp $
+# $Id: Owl/packages/automake/automake.spec,v 1.4 2002/08/26 15:05:43 mci Exp $
 
 Summary: A GNU tool for automatically creating Makefiles.
 Name: automake
 Version: 1.4
-Release: owl8
+Release: owl9
 License: GPL
 Group: Development/Tools
 URL: http://sourceware.cygnus.com/automake/
 Source: ftp://ftp.gnu.org/gnu/automake/automake-%{version}.tar.gz
-Patch: automake-1.4-rh-copytosourcedir.diff
+Patch0: automake-1.4-rh-copytosourcedir.diff
+Patch1: automake-1.4-owl-info.diff
 PreReq: /sbin/install-info
 Requires: perl
 BuildArchitectures: noarch
@@ -20,9 +21,11 @@ template files.
 
 %prep
 %setup -q
-%patch -p0
+%patch0 -p0
+%patch1 -p1
 
 %build
+rm automake.info
 %configure
 make
 
@@ -51,6 +54,9 @@ fi
 %{_datadir}/aclocal
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 - Based the new package description on the texinfo documentation.

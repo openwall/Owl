@@ -1,9 +1,9 @@
-# $Id: Owl/packages/cpio/cpio.spec,v 1.8 2002/03/24 19:01:43 solar Exp $
+# $Id: Owl/packages/cpio/cpio.spec,v 1.9 2002/08/26 15:23:17 mci Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
 Version: 2.4.2
-Release: owl25
+Release: owl26
 License: GPL
 Group: Applications/Archiving
 Source: ftp://ftp.gnu.org/gnu/cpio-%{version}.tar.gz
@@ -12,9 +12,9 @@ Patch1: cpio-2.4.2-deb-mt_scsi.diff
 Patch2: cpio-2.4.2-deb-rmt.diff
 Patch3: cpio-2.4.2-deb-glibc21.diff
 Patch4: cpio-2.4.2-deb-cpio_man.diff
-Patch5: cpio-2.4.2-deb-cpio_info.diff
-Patch6: cpio-2.4.2-deb-mt_man.diff
-Patch7: cpio-2.4.2-deb-rmt_man.diff
+Patch5: cpio-2.4.2-deb-mt_man.diff
+Patch6: cpio-2.4.2-deb-rmt_man.diff
+Patch7: cpio-2.4.2-deb-owl-info.diff
 Patch8: cpio-2.4.2-rh-fhs.diff
 Patch9: cpio-2.4.2-rh-glibc.diff
 Patch10: cpio-2.4.2-rh-man.diff
@@ -56,6 +56,7 @@ and can read archives created on machines with a different byte-order.
 %patch13 -p1
 
 %build
+rm cpio.info
 %configure
 make LDFLAGS=-s
 
@@ -94,6 +95,9 @@ fi
 %{_mandir}/man8/rmt.8*
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Sun Mar 24 2002 Solar Designer <solar@owl.openwall.com>
 - Group: Applications/Archiving (be the same as tar).
 

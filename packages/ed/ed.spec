@@ -1,9 +1,9 @@
-# $Id: Owl/packages/ed/ed.spec,v 1.11 2002/02/07 21:04:23 solar Exp $
+# $Id: Owl/packages/ed/ed.spec,v 1.12 2002/08/26 15:28:26 mci Exp $
 
 Summary: The GNU line editor.
 Name: ed
 Version: 0.2
-Release: owl19
+Release: owl20
 License: GPL
 Group: Applications/Text
 Source: ftp://ftp.gnu.org/gnu/%{name}-%{version}.tar.gz
@@ -40,12 +40,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/install-info %{_infodir}/ed.info.gz %{_infodir}/dir \
-	--entry="* ed: (ed).                  The GNU Line Editor."
+	--entry="* ed: (ed).                                     The GNU Line Editor."
 
 %preun
 if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %{_infodir}/ed.info.gz %{_infodir}/dir \
-		--entry="* ed: (ed).                  The GNU Line Editor."
+		--entry="* ed: (ed).                                     The GNU Line Editor."
 fi
 
 %files
@@ -56,6 +56,9 @@ fi
 %{_mandir}/*/*
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Wed Jan 30 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions.
 

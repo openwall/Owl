@@ -1,0 +1,11 @@
+--- e2fsprogs-1.27/doc/libext2fs.texinfo.orig	Tue Mar  5 11:31:15 2002
++++ e2fsprogs-1.27/doc/libext2fs.texinfo	Fri Aug 23 23:21:13 2002
+@@ -9,7 +9,7 @@
+ @dircategory Development
+ @format
+ START-INFO-DIR-ENTRY
+-* libext2fs: (libext2fs.info).   The EXT2FS library.
++* libext2fs: (libext2fs.info).                  The EXT2FS library.
+ END-INFO-DIR-ENTRY
+ @end format
+ @end ifinfo

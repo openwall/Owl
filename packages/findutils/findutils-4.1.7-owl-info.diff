@@ -1,0 +1,13 @@
+--- findutils-4.1.7/doc/find.texi.orig	Mon May 21 00:39:37 2001
++++ findutils-4.1.7/doc/find.texi	Fri Aug 23 23:32:10 2002
+@@ -15,8 +15,8 @@
+ @ifinfo
+ @format
+ START-INFO-DIR-ENTRY
+-* Finding Files: (find).        Listing and operating on files
+-                                that match certain criteria.
++* Finding Files: (find).                        Listing and operating on files
++                                                that match certain criteria.
+ END-INFO-DIR-ENTRY
+ @end format
+ 
