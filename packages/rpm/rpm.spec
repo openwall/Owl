@@ -1,9 +1,10 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.10 2000/09/03 18:53:13 kad Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.11 2000/10/20 06:43:38 kad Exp $
 
 # XXX legacy requires './' payload prefix to be omitted from rpm packages.
 %define        _noPayloadPrefix        1
 %define        __prefix        /usr
-%{expand:%%define __share %(if [ -d %{__prefix}/share/man ]; then echo /share ; else echo %%{nil} ; fi)}
+#%{expand:%%define __share %(if [ -d %{__prefix}/share/man ]; then echo /share ; else echo %%{nil} ; fi)}
+%define __share %{nil}
 
 %define NEED_PYTHON 'no'
 %define version 3.0.5
@@ -11,7 +12,7 @@
 Summary: The Red Hat package management system.
 Name: 		rpm
 Version: 	%{version}
-Release: 	9.7.2owl
+Release: 	9.7.3owl
 Group: 		System Environment/Base
 Source: 	ftp://ftp.rpm.org/pub/rpm/dist/rpm-3.0.x/rpm-%{version}.tar.gz
 Patch0:		rpm-3.0.5-owl-topdir.diff
@@ -267,6 +268,9 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Fri Oct 20 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- disabled /usr/share/man autodetection
+
 * Sun Sep  3 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - vendor fix
 - FHS
