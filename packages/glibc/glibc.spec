@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.68 2004/12/25 20:53:11 galaxy Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.69 2004/12/26 14:23:52 galaxy Exp $
 
 %define BUILD_PROFILE 0
 
@@ -200,8 +200,8 @@ popd
 %install
 rm -rf %buildroot
 mkdir -p %buildroot
-%__make install_root=%buildroot install -C build-$RPM_ARCH-linux
-pushd build-$RPM_ARCH-linux
+%__make install_root=%buildroot install -C build-%target_cpu-linux
+pushd build-%target_cpu-linux
 %__make install_root=%buildroot install-locales -C ../localedata objdir=`pwd`
 popd
 
@@ -339,6 +339,9 @@ fi
 %changelog
 * Wed Dec 25 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl3
 - Fixed compat-fake's provides to deal with Owl 1.1 release upgrades
+- Fixed a bug with creating buildtree using %_target_cpu, but accessing it
+using RPM_ARCH variable. Thanks goes to Piotr Janiec, who had pointed and
+fixed this issue.
 
 * Wed Dec 08 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl2
 - Fixed <sys/quota.h> types (we were using types from linux/types.h instead
