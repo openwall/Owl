@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.18 2001/04/01 16:01:49 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.19 2001/04/22 02:32:30 solar Exp $
 
 Summary: OpenSSH free Secure Shell (SSH) implementation
 Name: openssh
 Version: 2.5.2p2
-Release: 2owl
+Release: 3owl
 URL: http://www.openssh.com/
 Source0: ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-%{version}.tar.gz
 Source1: sshd.pam
@@ -19,8 +19,8 @@ Copyright: BSD
 Group: Applications/Internet
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Obsoletes: ssh
-PreReq: openssl >= 0.9.5a-1owl
-Requires: openssl >= 0.9.5a-1owl
+PreReq: openssl >= 0.9.6a-1owl
+Requires: openssl >= 0.9.6a-1owl
 Requires: pam_mktemp
 BuildPreReq: perl
 BuildPreReq: openssl-devel
@@ -181,6 +181,9 @@ fi
 %attr(0700,root,root) %config /etc/rc.d/init.d/sshd
 
 %changelog
+* Sun Apr 22 2001 Solar Designer <solar@owl.openwall.com>
+- New release number for upgrades after building against OpenSSL 0.9.6a.
+
 * Sun Apr 01 2001 Solar Designer <solar@owl.openwall.com>
 - Patch from the CVS to not use AES/Rijndael against OpenSSH versions
 with bigendian bug.
