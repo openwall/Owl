@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.49 2005/03/22 15:24:12 solar Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.50 2005/04/01 23:08:43 solar Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -11,7 +11,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl5
+Release: owl6
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -455,6 +455,10 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Sat Apr 02 2005 Solar Designer <solar@owl.openwall.com> 4.2-owl6
+- Allow unpackaged files and missing docs by default, for building legacy
+third-party packages.
+
 * Tue Mar 22 2005 Solar Designer <solar@owl.openwall.com> 4.2-owl5
 - Updated the default rpmrc to use -march/-mtune as required for gcc 3.4.3+
 and to use -pipe with all supported archs.

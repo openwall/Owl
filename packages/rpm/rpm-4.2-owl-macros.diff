@@ -1,7 +1,7 @@
-diff -uNrp rpm-4.2.orig/macros.in rpm-4.2/macros.in
+diff -ur rpm-4.2.orig/macros.in rpm-4.2/macros.in
 --- rpm-4.2.orig/macros.in	Wed Mar  5 00:13:11 2003
-+++ rpm-4.2/macros.in	Tue Mar  2 17:26:19 2004
-@@ -164,11 +164,11 @@ package or when debugging this package.\
++++ rpm-4.2/macros.in	Fri Apr  1 23:04:07 2005
+@@ -164,11 +164,11 @@
  #	The directory where newly built source packages will be written.
  %_srcrpmdir		%{_topdir}/SRPMS
  
@@ -15,7 +15,7 @@ diff -uNrp rpm-4.2.orig/macros.in rpm-4.2/macros.in
  
  #	The path to the unzip executable (legacy, use %{__unzip} instead).
  %_unzipbin		%{__unzip}
-@@ -272,8 +272,8 @@ package or when debugging this package.\
+@@ -272,8 +272,8 @@
  #		"w9.gzdio"	gzip level 9 (default).
  #		"w9.bzdio"	bzip2 level 9.
  #
@@ -26,7 +26,19 @@ diff -uNrp rpm-4.2.orig/macros.in rpm-4.2/macros.in
  
  #	The signature to use and the location of configuration files for
  #	signing packages with PGP.
-@@ -321,7 +321,7 @@ package or when debugging this package.\
+@@ -311,17 +311,17 @@
+ # Should unpackaged files in a build root terminate a build?
+ #
+ # Note: The default value should be 0 for legacy compatibility.
+-%_unpackaged_files_terminate_build	1
++%_unpackaged_files_terminate_build	0
+ 
+ #
+ # Should missing %doc files in the build directory terminate a build?
+ #
+ # Note: The default value should be 0 for legacy compatibility.
+-%_missing_doc_files_terminate_build	1
++%_missing_doc_files_terminate_build	0
  
  #
  # Use internal dependency generator rather than external helpers?
@@ -35,7 +47,7 @@ diff -uNrp rpm-4.2.orig/macros.in rpm-4.2/macros.in
  
  #
  # Path to scripts to autogenerate package dependencies,
-@@ -449,7 +449,7 @@ package or when debugging this package.\
+@@ -449,7 +449,7 @@
  
  # Use a CDB database model for concurrent access.
  # XXX Add "private" here for legacy interoperation transiting to glibc+nptl.
@@ -44,7 +56,7 @@ diff -uNrp rpm-4.2.orig/macros.in rpm-4.2/macros.in
  
  %__dbi_other			%{?_tmppath:tmpdir=%{_tmppath}} %{?__dbi_cdb}
  
-@@ -698,14 +698,14 @@ package or when debugging this package.\
+@@ -698,14 +698,14 @@
  #	Note: These values are specific to my machine, and most certainly
  #	are incorrect for any non-redhat.com machine. The macros are
  #	included here only to document the macro names and usage.
@@ -65,7 +77,7 @@ diff -uNrp rpm-4.2.orig/macros.in rpm-4.2/macros.in
  
  #==============================================================================
  # ---- per-platform macros.
-@@ -903,15 +903,15 @@ package or when debugging this package.\
+@@ -903,15 +903,15 @@
  %_sbindir		%{_exec_prefix}/sbin
  %_libexecdir		%{_exec_prefix}/libexec
  %_datadir		%{_prefix}/share
