@@ -1,9 +1,9 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.6 2001/04/11 12:15:10 mci Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.7 2001/04/11 20:44:08 mci Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
 Version: 6.3.5
-Release: 3owl
+Release: 4owl
 Copyright: GPL
 Group: Applications/System
 Source0: ftp://ftp.red-bean.com/pub/noel/%{name}-%{version}.tar.gz
@@ -71,7 +71,8 @@ mv -f /etc/info-dir.new /etc/info-dir
 for f in %{_var}/account/{pacct,usracct,savacct}; do
 	test -e $f && continue || :
 	touch $f
-	chown root.root $f && chmod 600 $f
+	chown root.root $f
+	chmod 600 $f
 done
 
 %preun
