@@ -1,12 +1,13 @@
-# $Id: Owl/packages/utempter/Attic/utempter.spec,v 1.4 2002/02/07 18:07:47 solar Exp $
+# $Id: Owl/packages/utempter/Attic/utempter.spec,v 1.5 2002/05/19 03:56:03 solar Exp $
 
 Summary: A privileged helper for utmp/wtmp updates.
 Name: utempter
 Version: 0.5.2
-Release: owl5
+Release: owl6
 License: GPL
 Group: System Environment/Base
 Source: utempter-%{version}.tar.gz
+Patch0: utempter-0.5.2-owl-helper-path-hack.diff
 PreReq: /sbin/ldconfig, grep, /usr/sbin/groupadd
 Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
@@ -17,6 +18,7 @@ as screen and xterm to record user sessions to utmp and wtmp files.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 make RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
@@ -24,9 +26,7 @@ make RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
 %install
 rm -rf $RPM_BUILD_ROOT
 make PREFIX=$RPM_BUILD_ROOT install
-mkdir -p $RPM_BUILD_ROOT/usr/sbin/utempter.d/
-mv $RPM_BUILD_ROOT/usr/sbin/utempter $RPM_BUILD_ROOT/usr/sbin/utempter.d/
-ln -s utempter.d/utempter $RPM_BUILD_ROOT/usr/sbin/utempter
+strip $RPM_BUILD_ROOT%{_libexecdir}/utempter/*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -39,14 +39,17 @@ grep -q ^utempter: /etc/group || groupadd -g 162 utempter
 
 %files
 %defattr(-,root,root)
-%attr(710,root,utempter) %dir /usr/sbin/utempter.d/
-%attr(2711,root,utmp) /usr/sbin/utempter.d/utempter
 %doc COPYING
+%attr(710,root,utempter) %dir %{_libexecdir}/utempter
+%attr(2711,root,utmp) %{_libexecdir}/utempter/utempter
 /usr/lib/libutempter.so*
 /usr/include/utempter.h
-/usr/sbin/utempter
 
 %changelog
+* Sun May 19 2002 Solar Designer <solar@owl.openwall.com>
+- Moved the utempter directory to /usr/libexec.
+- Try an alternate utempter helper binary location for screen.
+
 * Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 
