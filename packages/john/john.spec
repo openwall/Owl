@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.18 2003/08/24 22:58:16 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.19 2003/09/06 20:36:17 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.34.1
+Version: 1.6.34.2
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -77,6 +77,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Sun Sep 07 2003 Solar Designer <solar@owl.openwall.com> 1.6.34.2-owl1
+- Verbose logging; John now logs how it proceeds through stages of each
+of its cracking modes, regardless of whether there're guesses or not.
+
 * Mon Aug 25 2003 Solar Designer <solar@owl.openwall.com> 1.6.34.1-owl1
 - Added an event logging framework; only session start/stop, cracking
 modes, and cracked login names are logged currently, but the plan is to
