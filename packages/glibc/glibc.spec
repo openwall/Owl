@@ -1,12 +1,12 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.42 2002/10/01 00:16:18 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.43 2002/11/08 01:36:13 solar Exp $
 
 %define BUILD_PROFILE 0
 
 Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
-%define crypt_bf_version 0.4.4
-Release: owl28
+%define crypt_bf_version 0.4.5
+Release: owl29
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%{version}.tar.gz
@@ -319,6 +319,15 @@ fi
 %endif
 
 %changelog
+* Fri Nov 08 2002 Solar Designer <solar@owl.openwall.com>
+- Made the x86 assembly code in crypt_blowfish reentrant, this time for
+real.  Added a test for proper operation with multiple threads.
+- Cleaned up the default /etc/nsswitch.conf file.  Now it refers to
+nsswitch.conf(5) for more information, uses the proper terms instead of
+calling everything an "entry" (now we use "databases", name "services",
+and "entries" being looked up via NSS), and lists "tcb" among possible
+name services and provides an example of its use.
+
 * Tue Oct 01 2002 Solar Designer <solar@owl.openwall.com>
 - Avoid read buffer overruns in glibc itself and applications that
 naively assume the length returned by res_* is always less than or equal
