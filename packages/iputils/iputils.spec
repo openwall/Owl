@@ -1,9 +1,9 @@
-# $Id: Owl/packages/iputils/iputils.spec,v 1.18 2004/11/23 22:40:46 mci Exp $
+# $Id: Owl/packages/iputils/iputils.spec,v 1.19 2005/01/12 16:14:31 galaxy Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
 Version: ss020927
-Release: owl2
+Release: owl3
 License: mostly BSD, some GPL
 Group: Applications/Internet
 Source0: ftp://ftp.inr.ac.ru/ip-routing/%name-%version.tar.gz
@@ -34,10 +34,10 @@ mv -f bonding-0.2/README bonding-0.2/README.ifenslave
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-make \
+%__make \
 	CCOPT="-D_GNU_SOURCE $RPM_OPT_FLAGS" \
 	IPV4_TARGETS="tracepath ping clockdiff rdisc arping" # no tftpd, rarpd
-gcc $RPM_OPT_FLAGS -s bonding-0.2/ifenslave.c -o bonding-0.2/ifenslave
+%__cc $RPM_OPT_FLAGS -s bonding-0.2/ifenslave.c -o bonding-0.2/ifenslave
 
 %install
 rm -rf %buildroot
@@ -59,18 +59,18 @@ sed 's/rdisc/rdiscd/' \
 
 mkdir -p %buildroot/etc/control.d/facilities
 install -m 700 $RPM_SOURCE_DIR/ping.control \
-	%buildroot/etc/control.d/facilities/ping
+	%buildroot%_sysconfdir/control.d/facilities/ping
 
 %pre
 if [ $1 -ge 2 ]; then
-	/usr/sbin/control-dump ping
+	%_sbindir/control-dump ping
 fi
 
 %post
 if [ $1 -ge 2 ]; then
-	/usr/sbin/control-restore ping
+	%_sbindir/control-restore ping
 else
-	/usr/sbin/control ping public
+	%_sbindir/control ping public
 fi
 
 %files
@@ -79,16 +79,21 @@ fi
 %_sbindir/arping
 %_sbindir/clockdiff
 /sbin/ifenslave
-%attr(700,root,root) /bin/ping
+%attr(700,root,root) %verify(not mode group) /bin/ping
 %_sbindir/ping6
 %_sbindir/tracepath
 %_sbindir/tracepath6
 %_sbindir/traceroute6
 %_sbindir/rdiscd
 %_mandir/man8/*
-/etc/control.d/facilities/ping
+%_sysconfdir/control.d/facilities/ping
 
 %changelog
+* Wed Jun 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> ss020927-owl3
+- Removed verifying permissions and group owner for ping since it's
+controlled by owl-control facility.
+- Cleaned up the spec.
+
 * Tue Oct 21 2003 Michail Litvak <mci@owl.openwall.com> ss020927-owl2
 - reduce -owl-socketbits.diff to include only sockaddr_storage
 definition, because previous version broke tracepath.
