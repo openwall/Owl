@@ -16,3 +16,19 @@
  }
  
  #ifdef HAVE_X11
+--- elinks-0.9.1.orig/src/config/options.inc	Thu Jan  8 22:00:01 2004
++++ elinks-0.9.1/src/config/options.inc	Sun Feb  1 05:31:58 2004
+@@ -1255,10 +1255,11 @@
+ 
+ 
+ 	INIT_OPT_BOOL("ui", N_("Set window title"),
+-		"window_title", 0, 1,
++		"window_title", 0, 0,
+ 		N_("Set the window title when running in a windowing environment\n"
+ 		"in an xterm-like terminal. This way the document's title is\n"
+-		"shown on the window titlebar.")),
++		"shown on the window titlebar. This functionality is currently\n"
++		"disabled at compile time and may be re-enabled in the future.")),
+ 
+ 
+ 
