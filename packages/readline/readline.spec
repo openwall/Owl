@@ -1,9 +1,9 @@
-# $Id: Owl/packages/readline/readline.spec,v 1.13 2003/10/30 21:15:48 solar Exp $
+# $Id: Owl/packages/readline/readline.spec,v 1.13.2.1 2004/01/17 16:44:10 solar Exp $
 
 Summary: A library for editing typed in command lines.
 Name: readline
 Version: 4.1
-Release: owl9
+Release: owl11
 License: GPL
 Group: System Environment/Libraries
 Source: ftp://ftp.gnu.org/gnu/readline-%version.tar.gz
@@ -91,6 +91,14 @@ if [ $1 -eq 0 ]; then
 		%_infodir/dir
 fi
 
+# Remove remnants of this packaging error.  The directory contents are
+# removed by RPM when package is upgraded, but the directory itself is
+# not a part of the old packages and thus would remain.
+%triggerpostun devel -- readline-devel < 4.1-owl11
+if [ -d /usr/doc/examples ]; then
+	rmdir /usr/doc/examples
+fi
+
 %files
 %defattr(-,root,root)
 %_mandir/man*/*
@@ -99,12 +107,18 @@ fi
 
 %files devel
 %defattr(-,root,root)
+%doc examples
 %_includedir/readline
 %_libdir/lib*.a
 %_libdir/lib*.so
-%doc %_docdir/examples/*
 
 %changelog
+* Sat Jan 17 2004 Solar Designer <solar@owl.openwall.com> 4.1-owl11
+- Remove /usr/doc/examples with a trigger on package upgrades.
+
+* Thu Jan 15 2004 Michail Litvak <mci@owl.openwall.com> 4.1-owl10
+- Put examples to right place.
+
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 4.1-owl9
 - Deal with info dir entries such that the menu looks pretty.
 
