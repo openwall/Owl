@@ -78,19 +78,19 @@ diff -urpN rpm-4.2.orig/rpmio/ugid.c rpm-4.2/rpmio/ugid.c
 +    if (!result) {
 +	long id = -1;
 +	while ((fgetl(line, LINE_SIZE, file))) {
-+	    char *account = strtok(line,":");
-+	    if (account && !strcmp(account,name)) {
-+		char *str; /* to hold id in string representation */
-+		if (strtok(NULL, ":") && (str = strtok(NULL, ":")) && strtok(NULL, ":")) {
++	    char *account = strtok(line, ":");
++	    if (account && !strcmp(account, name)) {
++		char *p;
++		if (strtok(NULL, ":") && (p = strtok(NULL, ":")) && strtok(NULL, ":")) {
 +		    char *error;
 +		    errno = 0;
-+		    id = strtol(str, &error, 10);
-+		    if (errno || !*str || *error || id < 0 || (long)(uid_t)id != id) {
++		    id = strtol(p, &error, 10);
++		    if (errno || !*p || *error || id < 0 || (long)(uid_t)id != id) {
 +			id = -1;
 +		    }
 +		    else {
 +			*uid = id;
-+			 break;
++			break;
 +		    }
 +		}
 +	    }
@@ -124,19 +124,19 @@ diff -urpN rpm-4.2.orig/rpmio/ugid.c rpm-4.2/rpmio/ugid.c
 +    if (!result) {
 +	long id = -1;
 +	while ((fgetl(line, LINE_SIZE, file))) {
-+	    char *account = strtok(line,":");
-+	    if (account && !strcmp(account,name)) {
-+		char *str; /* to hold id in string representation */
-+		if (strtok(NULL, ":") && (str = strtok(NULL, ":"))) {
++	    char *account = strtok(line, ":");
++	    if (account && !strcmp(account, name)) {
++		char *p;
++		if (strtok(NULL, ":") && (p = strtok(NULL, ":"))) {
 +		    char *error;
 +		    errno = 0;
-+		    id = strtol(str, &error, 10);
-+		    if (errno || !*str || *error || id < 0 || (long)(gid_t)id != id) {
++		    id = strtol(p, &error, 10);
++		    if (errno || !*p || *error || id < 0 || (long)(gid_t)id != id) {
 +			id = -1;
 +		    }
 +		    else {
 +			*gid = id;
-+			 break;
++			break;
 +		    }
 +		}
 +	    }
@@ -165,8 +165,8 @@ diff -urpN rpm-4.2.orig/rpmio/ugid.c rpm-4.2/rpmio/ugid.c
 +	    if (pwent == NULL) {
 +		uid_t id = 0;
 +		if (get_uid_by_name(thisUname, &id) == 0) {
-+			lastUid = *uid = id;
-+			return 0;
++		    lastUid = *uid = id;
++		    return 0;
 +		}
 +		return -1;
 +	    }
@@ -181,8 +181,8 @@ diff -urpN rpm-4.2.orig/rpmio/ugid.c rpm-4.2/rpmio/ugid.c
 +	    if (grent == NULL) {
 +		gid_t id = 0;
 +		if (get_gid_by_name(thisGname, &id) == 0) {
-+			lastGid = *gid = id;
-+			return 0;
++		    lastGid = *gid = id;
++		    return 0;
 +		}
 +		return -1;
 +	    }
