@@ -1,9 +1,9 @@
-# $Id: Owl/packages/gdb/gdb.spec,v 1.3 2001/07/11 08:51:25 mci Exp $
+# $Id: Owl/packages/gdb/gdb.spec,v 1.4 2001/07/11 09:02:46 mci Exp $
 
 Summary: A GNU source-level debugger for C, C++ and Fortran.
 Name: gdb
 Version: 5.0
-Release: 8
+Release: 8owl
 Copyright: GPL
 Group: Development/Debuggers
 Source0: ftp://sourceware.cygnus.com/pub/gdb/releases/gdb-%{version}.tar.bz2
