@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.8 2001/03/10 21:12:59 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.9 2001/05/27 09:30:58 kad Exp $
 
 %define BUILD_CHSH_CHFN	'yes'
 %define BUILD_VIPW_VIGR	'yes'
@@ -48,7 +48,7 @@ autoconf
 rm -rf build-$RPM_ARCH
 mkdir build-$RPM_ARCH
 cd build-$RPM_ARCH
-CFLAGS="$RPM_OPT_FLAGS" ../configure --prefix=/usr \
+CFLAGS="$RPM_OPT_FLAGS -DEXTRA_CHECK_HOME_DIR" ../configure --prefix=/usr \
 	--disable-desrpc --disable-shared \
 	--with-libcrypt --with-libpam --without-libcrack
 make
@@ -152,6 +152,9 @@ grep -q '^shadow:[^:]*:42:' /etc/group && \
 %endif
 
 %changelog
+* Sun May 27 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- enable EXTRA_CHECK_HOME_DIR for userdel
+
 * Sat Mar 10 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - restrictions to username/groupname
 
