@@ -1,12 +1,13 @@
-# $Id: Owl/packages/hdparm/hdparm.spec,v 1.6 2002/02/04 06:50:08 solar Exp $
+# $Id: Owl/packages/hdparm/hdparm.spec,v 1.7 2002/11/04 21:19:41 mci Exp $
 
 Summary: A utility for displaying and/or setting hard disk parameters.
 Name: hdparm
-Version: 4.1
-Release: owl4
+Version: 5.2
+Release: owl1
 License: BSD
 Group: Applications/System
 Source: http://www.ibiblio.org/pub/Linux/system/hardware/%{name}-%{version}.tar.gz
+Patch0: hdparm-5.2-owl-warnings.diff
 Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
 
@@ -15,16 +16,18 @@ hdparm - get/set hard disk parameters for IDE drives.
 
 %prep
 %setup -q
+%patch0 -p1
+
+%{expand:%%define optflags %optflags -Wall}
 
 %build
-sed -e "s/-O2/$RPM_OPT_FLAGS/g" < Makefile > Makefile.optflags
-make -f Makefile.optflags
+make CFLAGS="$RPM_OPT_FLAGS"
 
 %install
 mkdir -p $RPM_BUILD_ROOT/sbin
 mkdir -p $RPM_BUILD_ROOT/%{_mandir}/man8
-install -c -s -m 755 hdparm $RPM_BUILD_ROOT/sbin/hdparm
-install -c -m 644 hdparm.8 $RPM_BUILD_ROOT/%{_mandir}/man8
+install -s -m 755 hdparm $RPM_BUILD_ROOT/sbin/hdparm
+install -m 644 hdparm.8 $RPM_BUILD_ROOT/%{_mandir}/man8
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -36,6 +39,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/hdparm.8*
 
 %changelog
+* Mon Nov 04 2002 Michail Litvak <mci@owl.openwall.com>
+- 5.2
+- Fixed building with -Wall
+
 * Sun Feb 03 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions
 
