@@ -1,4 +1,4 @@
-# $Id: Owl/packages/console-tools/Attic/console-tools.spec,v 1.1 2000/12/14 20:43:02 kad Exp $
+# $Id: Owl/packages/console-tools/Attic/console-tools.spec,v 1.2 2000/12/15 01:54:47 solar Exp $
 
 %define CTVER	0.3.3
 %define	CDVER	1999.08.29
@@ -7,7 +7,7 @@
 Summary: 	Tools for configuring the console.
 Name: 		console-tools
 Version: 	19990829
-Release: 	25owl
+Release: 	26owl
 Group: 		Applications/System
 Exclusiveos: 	Linux
 Copyright: 	GPL
@@ -61,12 +61,11 @@ Provides: 	kbd
 BuildRoot: 	/var/rpm-buildroot/%{name}-root
 
 %description
-The console-tools package contains tools for managing a Linux 
-system's console's behavior, including the keyboard, the screen 
+The console-tools package contains tools for managing a Linux
+system's console's behavior, including the keyboard, the screen
 fonts, the virtual terminals and font files.
 
 %prep
-
 %ifarch m68k
 %setup -q -n console-tools-%{CTVER} -a 4 -a 6 -a 9 -a 10 -a 11 -a 13 -a 14 -a 15
 %else
@@ -81,7 +80,7 @@ mv -f %{DATA} data
 tar xzf %{SOURCE5}
 mv -f data %{DATA}
 
-%ifarch sparc sparc64 sparcv9
+%ifarch sparc sparcv9 sparc64
 %patch0 -p1
 %endif
 
@@ -112,16 +111,20 @@ DISABLE_RESIZECONS=--disable-resizecons
 
 cd %{DATA}
 libtoolize --copy --force
-CFLAGS="$RPM_OPT_FLAGS -D_GNU_SOURCE -static" LDFLAGS="-static" ./configure --prefix=/usr \
-  --datadir='${prefix}/lib/kbd' --enable-localdatadir=/etc/sysconfig/console \
-  --mandir=$RPM_BUILD_ROOT%{_mandir} \
-  $DISABLE_RESIZECONS
+CFLAGS="$RPM_OPT_FLAGS -D_GNU_SOURCE -static" LDFLAGS="-static" ./configure \
+	--prefix=/usr \
+	--datadir='${prefix}/lib/kbd' \
+	--enable-localdatadir=/etc/sysconfig/console \
+	--mandir=$RPM_BUILD_ROOT%{_mandir} \
+	$DISABLE_RESIZECONS
 cd ..
 libtoolize --copy --force
-CFLAGS="$RPM_OPT_FLAGS -D_GNU_SOURCE -static" LDFLAGS="-static" ./configure --prefix=/usr \
-  --datadir='${prefix}/lib/kbd' --enable-localdatadir=/etc/sysconfig/console \
-  --mandir=$RPM_BUILD_ROOT%{_mandir} \
-  $DISABLE_RESIZECONS
+CFLAGS="$RPM_OPT_FLAGS -D_GNU_SOURCE -static" LDFLAGS="-static" ./configure \
+	--prefix=/usr \
+	--datadir='${prefix}/lib/kbd' \
+	--enable-localdatadir=/etc/sysconfig/console \
+	--mandir=$RPM_BUILD_ROOT%{_mandir} \
+	$DISABLE_RESIZECONS
 cd %{DATA}
 make CFLAGS="$RPM_OPT_FLAGS -D_GNU_SOURCE" LDFLAGS=-s prefix=/usr
 cd ..
@@ -129,10 +132,10 @@ make CFLAGS="$RPM_OPT_FLAGS -D_GNU_SOURCE" LDFLAGS=-s prefix=/usr
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/usr
+mkdir -p $RPM_BUILD_ROOT/{usr,bin,rc.d/init.d}
 
 # Don't ship zero-length documentation
-find doc %{DATA}/doc -size 0b | xargs rm -f
+find doc %{DATA}/doc -size 0b -type f -print0 | xargs -0 rm -f --
 
 cd %{DATA}
 make install prefix=$RPM_BUILD_ROOT/usr
@@ -140,17 +143,17 @@ cd ..
 make install prefix=$RPM_BUILD_ROOT/usr
 
 # XXX hotwire some fonts on sun
-%ifarch sparc sparc64
+%ifarch sparc sparcv9 sparc64
 XXXFONTS="
-    RUSCII_8x14.psf.gz RUSCII_8x16.psf.gz RUSCII_8x8.psf.gz
-    koi8u-8x14.psf.gz koi8u-8x16.psf.gz koi8u-8x8.psf.gz
-    lat2u-16.psf.gz lat5-12.psf.gz lat5-14.psf.gz lat5-16.psf.gz 
-    ucw08.psf.gz  ucw11m.psf.gz ucw11z.psf.gz ucw16.psf.gz
+	RUSCII_8x14.psf.gz RUSCII_8x16.psf.gz RUSCII_8x8.psf.gz
+	koi8u-8x14.psf.gz koi8u-8x16.psf.gz koi8u-8x8.psf.gz
+	lat2u-16.psf.gz lat5-12.psf.gz lat5-14.psf.gz lat5-16.psf.gz 
+	ucw08.psf.gz  ucw11m.psf.gz ucw11z.psf.gz ucw16.psf.gz
 "
 make -C %{DATA}/consolefonts $XXXFONTS
-for F in $XXXFONTS
-do
-  install -c -m 0644 %{DATA}/consolefonts/$F $RPM_BUILD_ROOT/usr/lib/kbd/consolefonts/$F
+for F in $XXXFONTS; do
+	install -c -m 0644 %{DATA}/consolefonts/$F \
+		$RPM_BUILD_ROOT/usr/lib/kbd/consolefonts/$F
 done
 %endif
 
@@ -160,30 +163,28 @@ file $RPM_BUILD_ROOT/usr/bin/* | grep ELF | cut -f 1 -d ':' | xargs strip
 chmod 755 $RPM_BUILD_ROOT/usr/bin/loadkeys
 
 # other keymaps
-for map in ro sr ; do
-   install -m 644 $RPM_SOURCE_DIR/kbd-$map.map.gz \
-      $RPM_BUILD_ROOT/usr/lib/kbd/keymaps/i386/qwerty/$map.kmap.gz
+for map in ro sr; do
+	install -m 644 $RPM_SOURCE_DIR/kbd-$map.map.gz \
+		$RPM_BUILD_ROOT/usr/lib/kbd/keymaps/i386/qwerty/$map.kmap.gz
 done
 
 tar Ixvf $RPM_SOURCE_DIR/keymaps-mdkre.tar.bz2 \
-      -C $RPM_BUILD_ROOT/usr/lib/kbd/
-      
+	-C $RPM_BUILD_ROOT/usr/lib/kbd/
+
 install -m 644 $RPM_SOURCE_DIR/sunt4-no-latin1.map.gz \
 	$RPM_BUILD_ROOT/usr/lib/kbd/keymaps/sun/sunt4-no-latin1.map.gz
 
-install -d -m 755 $RPM_BUILD_ROOT/etc/rc.d/init.d
+install -m 700 $RPM_SOURCE_DIR/keytable.init \
+	$RPM_BUILD_ROOT/etc/rc.d/init.d/keytable
 
-install -m 755 $RPM_SOURCE_DIR/keytable.init $RPM_BUILD_ROOT/etc/rc.d/init.d/keytable
-
-mkdir -p $RPM_BUILD_ROOT/bin
 pushd $RPM_BUILD_ROOT/usr/bin
-for foo in loadkeys consolechars ; do
-  mv $foo ../../bin
-  ln -s ../../bin/$foo
+for foo in loadkeys consolechars; do
+	mv $foo ../../bin
+	ln -s ../../bin/$foo
 done
 popd
 
-%ifarch sparc
+%ifarch sparc sparcv9 sparc64
 install -c -m 755 $RPM_SOURCE_DIR/pc2sun.pl $RPM_BUILD_ROOT/usr/lib/kbd/keytables
 %endif
 
@@ -194,9 +195,12 @@ rm -f $RPM_BUILD_ROOT%{_mandir}/man8/resizecons.8
 chmod +x $RPM_BUILD_ROOT/usr/lib/*.so*
 strip --strip-unneeded -R .comments $RPM_BUILD_ROOT/usr/lib/*.so*
 
-ln -sf lat0-sun16.psf.gz $RPM_BUILD_ROOT/usr/lib/kbd/consolefonts/lat1-sun16.psf.gz
-ln -sf lat0-sun16.psf.gz $RPM_BUILD_ROOT/usr/lib/kbd/consolefonts/lat5-sun16.psf.gz
-gzip -9 < %{DATA}/consolefonts/cyr-sun16.psf > $RPM_BUILD_ROOT/usr/lib/kbd/consolefonts/cyr-sun16.psf.gz
+ln -sf lat0-sun16.psf.gz \
+	$RPM_BUILD_ROOT/usr/lib/kbd/consolefonts/lat1-sun16.psf.gz
+ln -sf lat0-sun16.psf.gz \
+	$RPM_BUILD_ROOT/usr/lib/kbd/consolefonts/lat5-sun16.psf.gz
+gzip -9 < %{DATA}/consolefonts/cyr-sun16.psf \
+	> $RPM_BUILD_ROOT/usr/lib/kbd/consolefonts/cyr-sun16.psf.gz
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -204,31 +208,31 @@ rm -rf $RPM_BUILD_ROOT
 %post
 /sbin/ldconfig
 /sbin/chkconfig --add keytable
-if [ -f /etc/sysconfig/keyboard ] ; then
+if [ -f /etc/sysconfig/keyboard ]; then
     . /etc/sysconfig/keyboard
-    if [ -n "$KEYTABLE" ] ; then
-        KT=`echo $KEYTABLE | sed -e "s/.*\///g" | sed -e "s/\..*//g"`
-        echo "KEYTABLE=$KT" > /etc/sysconfig/keyboard
+    if [ -n "$KEYTABLE" ]; then
+	KT=`echo $KEYTABLE | sed -e "s/.*\///g" | sed -e "s/\..*//g"`
+	echo "KEYTABLE=$KT" > /etc/sysconfig/keyboard
     fi
 fi
-if [ -f /etc/sysconfig/i18n ] ; then
-   . /etc/sysconfig/i18n
-   if [ -d /etc/sysconfig/console ] ; then
-      if [ -n "$SYSFONT" ]; then
-         cp -f /usr/lib/kbd/consolefonts/$SYSFONT* /etc/sysconfig/console
-      fi
-      if [ -n "$UNIMAP" ]; then
-         cp -f /usr/lib/kbd/consoletrans/$UNIMAP* /etc/sysconfig/console
-      fi
-      if [ -n "$SYSFONTACM" ]; then 
-         cp -f /usr/lib/kbd/consoletrans/$SYSFONTACM* /etc/sysconfig/console
-      fi
-   fi
+if [ -f /etc/sysconfig/i18n ]; then
+    . /etc/sysconfig/i18n
+    if [ -d /etc/sysconfig/console ]; then
+	if [ -n "$SYSFONT" ]; then
+	    cp -f /usr/lib/kbd/consolefonts/$SYSFONT* /etc/sysconfig/console
+	fi
+	if [ -n "$UNIMAP" ]; then
+	    cp -f /usr/lib/kbd/consoletrans/$UNIMAP* /etc/sysconfig/console
+	fi
+	if [ -n "$SYSFONTACM" ]; then 
+	    cp -f /usr/lib/kbd/consoletrans/$SYSFONTACM* /etc/sysconfig/console
+	fi
+    fi
 fi
 
 %preun
 if [ $1 -eq 0 ]; then
-   /sbin/chkconfig --del keytable
+	/sbin/chkconfig --del keytable
 fi
 
 %postun -p /sbin/ldconfig
@@ -237,7 +241,7 @@ fi
 /sbin/chkconfig --add keytable
 
 %triggerpostun -- console-tools <= 19990829-15
-/sbin/chkconfig --add  keytable
+/sbin/chkconfig --add keytable
 
 %files
 %defattr(-,root,root)
@@ -295,6 +299,10 @@ fi
 %{_mandir}/man8/*
 
 %changelog
+* Fri Dec 15 2000 Solar Designer <solar@owl.openwall.com>
+- More spec file and startup script cleanups.
+- sparcv9
+
 * Thu Dec 14 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import from BCL 7.0
 - spec cleanup
