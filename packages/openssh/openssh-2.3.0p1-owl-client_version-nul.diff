@@ -1,0 +1,12 @@
+--- openssh-2.3.0p1.orig/sshd.c	Sat Oct 14 09:23:13 2000
++++ openssh-2.3.0p1/sshd.c	Mon Nov 20 09:35:49 2000
+@@ -327,7 +327,8 @@
+ 			fatal_cleanup();
+ 		}
+ 
+-		/* Read other side\'s version identification. */
++		/* Read other side's version identification. */
++		memset(buf, 0, sizeof(buf));
+ 		for (i = 0; i < sizeof(buf) - 1; i++) {
+ 			if (atomicio(read, sock_in, &buf[i], 1) != 1) {
+ 				log("Did not receive ident string from %s.", get_remote_ipaddr());

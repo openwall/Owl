@@ -1,7 +1,7 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.6 2000/08/04 02:59:28 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.7 2000/11/20 06:59:36 solar Exp $
 
 # Version of OpenSSH
-%define oversion 2.1.1p4
+%define oversion 2.3.0p1
 Summary: OpenSSH free Secure Shell (SSH) implementation
 Name: openssh
 Version: %{oversion}
@@ -12,9 +12,9 @@ Source1: sshd.pam
 Source2: sshd.init
 Source3: ssh_config
 Source4: sshd_config
-Patch0: openssh-2.1.1p4-owl-crypt-hack.diff
-Patch1: openssh-2.1.1p4-owl-pam_userpass.diff
-Patch2: openssh-2.1.1p4-owl-hide-unknown.diff
+Patch0: openssh-2.3.0p1-owl-pam_userpass.diff
+Patch1: openssh-2.3.0p1-owl-hide-unknown.diff
+Patch2: openssh-2.3.0p1-owl-client_version-nul.diff
 Copyright: BSD
 Group: Applications/Internet
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
@@ -83,23 +83,23 @@ part of the secure shell protocol and allows ssh clients to connect to
 your host.
 
 %prep
-
 %setup -q
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" \
-	./configure --prefix=/usr --sysconfdir=/etc/ssh \
-               --with-tcp-wrappers --with-ipv4-default --with-rsh=/usr/bin/rsh
+CFLAGS="$RPM_OPT_FLAGS" LIBS="-lcrypt -lpam -lpam_misc" ./configure \
+	--prefix=/usr --sysconfdir=/etc/ssh --libexecdir=/usr/libexec/ssh \
+	--with-tcp-wrappers --with-ipv4-default --with-rsh=/usr/bin/rsh \
+	--with-default-path=/bin:/usr/bin:/usr/local/bin
 make DESTDIR=$RPM_BUILD_ROOT/
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT/
+make install DESTDIR=$RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT/etc/pam.d/
+install -d $RPM_BUILD_ROOT/etc/pam.d
 install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
 install -d $RPM_BUILD_ROOT/usr/libexec/ssh
 install -m 600 %{SOURCE1} $RPM_BUILD_ROOT/etc/pam.d/sshd
@@ -132,8 +132,8 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc ChangeLog OVERVIEW COPYING.Ylonen README* INSTALL 
-%doc CREDITS UPGRADING
+%doc ChangeLog OVERVIEW COPYING.Ylonen README* INSTALL
+%doc CREDITS LICENCE
 %attr(0755,root,root) /usr/bin/ssh-keygen
 %attr(0755,root,root) /usr/bin/scp
 %attr(0644,root,root) /usr/man/man1/ssh-keygen.1*
@@ -155,13 +155,18 @@ fi
 
 %files server
 %defattr(-,root,root)
-%attr(0755,root,root) /usr/sbin/sshd
+%attr(0700,root,root) /usr/sbin/sshd
+%attr(0755,root,root) /usr/libexec/ssh/sftp-server
 %attr(0644,root,root) /usr/man/man8/sshd.8*
+%attr(0644,root,root) /usr/man/man8/sftp-server.8*
 %attr(0600,root,root) %config(noreplace) /etc/ssh/sshd_config
 %attr(0600,root,root) %config(noreplace) /etc/pam.d/sshd
-%attr(0755,root,root) %config /etc/rc.d/init.d/sshd
+%attr(0700,root,root) %config /etc/rc.d/init.d/sshd
 
 %changelog
+* Mon Nov 20 2000 Solar Designer <solar@owl.openwall.com>
+- Updated to 2.3.0p1.
+
 * Fri Aug 04 2000 Solar Designer <solar@owl.openwall.com>
 - Updated to 2.1.1p4.
 

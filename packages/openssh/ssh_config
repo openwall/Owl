@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/ssh_config,v 1.2 2000/08/04 03:00:39 solar Exp $
+# $Id: Owl/packages/openssh/ssh_config,v 1.3 2000/11/20 06:59:36 solar Exp $
 
 # This is ssh client systemwide configuration file.  This file provides 
 # defaults for users, and the values can be changed in per-user configuration
@@ -29,7 +29,7 @@
 #   IdentityFile ~/.ssh/identity
 #   Port 22
 #   Protocol 2,1
-#   Cipher 3des
+#   Cipher blowfish
 #   EscapeChar ~
 
 # Be paranoid by default
