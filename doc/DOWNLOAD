@@ -1,0 +1,22 @@
+Owl is currently available from the following official mirrors:
+
+ftp://ftp.ru.openwall.com/pub/Owl/	(Russian)
+ftp://ftp.ca.openwall.com/pub/Owl/	(Canadian)
+
+There's a subdirectory for each Owl release or branch, with the
+following contents:
+
+checkout.tar.gz		CVS tree (build specifications and patches)
+sources			source tree (original tarballs, etc)
+Owl.mtree		mtree(8) specification of the above
+kernel			kernel sources and recommended patches
+i386, sparc, sparcv9	Owl binary packages
+
+You will always need the CVS tree, -- even if you choose to install
+binary packages only.  In order to (re-)build Owl from source, you'll
+need both the CVS and the source trees.
+
+More documentation (including BUILD and INSTALL) is available in the
+CVS tree, under Owl/doc/.
+
+$Id: Owl/doc/DOWNLOAD,v 1.1 2001/01/21 19:15:05 solar Exp $
