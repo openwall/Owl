@@ -1,9 +1,9 @@
-# $Id: Owl/packages/stmpclean/stmpclean.spec,v 1.1 2002/03/30 01:13:18 solar Exp $
+# $Id: Owl/packages/stmpclean/stmpclean.spec,v 1.2 2002/03/31 04:22:59 solar Exp $
 
 Summary: A safe temporary directory cleaner.
 Name: stmpclean
 Version: 0.1
-Release: 1owl
+Release: 2owl
 License: BSD
 Group: System Environment/Base
 Source0: ftp://ftp.mccme.ru/users/shalunov/stmpclean-%{version}.tar.gz
@@ -24,11 +24,11 @@ such as /tmp where old files tend to accumulate.
 %patch0 -p1
 
 %build
-make CFLAGS="$RPM_OPT_FLAGS -Wall"
+make CFLAGS="$RPM_OPT_FLAGS -Wall" stmpclean
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT BINDIR=%{_sbindir} MANDIR=%{_mandir}
+make install DESTDIR=$RPM_BUILD_ROOT SBINDIR=%{_sbindir} MANDIR=%{_mandir}
 cd $RPM_BUILD_ROOT
 mkdir -p etc/cron.daily
 install -m 700 $RPM_SOURCE_DIR/stmpclean.cron etc/cron.daily/stmpclean
@@ -44,6 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 /etc/cron.daily/stmpclean
 
 %changelog
+* Sun Mar 31 2002 Solar Designer <solar@owl.openwall.com>
+- Corrected the tmpwatch emulation to accept the time in hours.
+
 * Sat Mar 30 2002 Solar Designer <solar@owl.openwall.com>
 - Packaged stmpclean 0.1 with minor fixes and modifications to switch
 supplementary groups as well as euid/egid, make use of O_DIRECTORY and
