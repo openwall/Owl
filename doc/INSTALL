@@ -60,11 +60,13 @@ If there are any problems during the "installworld" stage (watch for
 the "Failed" lines), correct their cause and re-run the command.
 
 Once the Owl userland is installed, you need to also install a kernel.
-Currently, this needs to be a Linux 2.2 kernel, and we recommend that
-you build the version available with Owl.
+Currently, Owl fully supports Linux 2.2 kernels and supports running
+with 2.4 kernels (but in order to rebuild Owl with "make buildworld"
+you'd need to provide Linux 2.2 kernel sources as explained in BUILD).
+We recommend that you build the version provided with Owl.
 
 You may choose to configure the boot loader available with Owl (LILO
 or SILO, depending on the architecture), or you may use a boot loader
 already installed on the system (if any).
 
-$Id: Owl/doc/INSTALL,v 1.5 2002/06/22 08:46:52 solar Exp $
+$Id: Owl/doc/INSTALL,v 1.6 2002/08/22 02:17:12 solar Exp $
