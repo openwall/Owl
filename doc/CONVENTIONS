@@ -128,6 +128,7 @@ config		- configuration files patches only (compile- or runtime)
 doc		- documentation patches only
 fixes		- cumulative bug, reliability, and/or security patches
 format		- printf-style format string fixes (not only security)
+info		- texinfo documentation patches only
 install-no-root	- changes to run "make install" or equivalent as non-root
 linux		- changes needed to build on Linux (for ported software)
 man		- man page patches only
@@ -153,4 +154,4 @@ options:
 This does not exactly match our preferred coding style and thus isn't
 to be used on sources already in Owl.
 
-$Id: Owl/doc/CONVENTIONS,v 1.11 2002/06/22 08:46:52 solar Exp $
+$Id: Owl/doc/CONVENTIONS,v 1.12 2002/07/07 00:36:15 solar Exp $
