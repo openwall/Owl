@@ -12,6 +12,9 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/10/04	Package: owl-setup
+Support for LILO boot loader configuration.
+
 2002/10/01	Package: glibc
 SECURITY FIX	Severity: none to low, remote, passive to active
 Avoid read buffer overruns in glibc itself and applications that
@@ -973,4 +976,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.138 2002/10/01 00:16:18 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.139 2002/10/05 16:38:09 solar Exp $
