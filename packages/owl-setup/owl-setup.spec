@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.21 2003/05/29 01:10:54 solar Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.22 2003/10/20 02:23:31 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 0.13
+Version: 0.14
 Release: owl1
 License: mostly public domain, passwdlg is under GPL
 Group: System Environment/Base
@@ -58,6 +58,10 @@ rm -rf $RPM_BUILD_ROOT
 /usr/sbin/setup
 
 %changelog
+* Mon Oct 20 2003 Solar Designer <solar@owl.openwall.com> 0.14-owl1
+- Corrected the path to loadkeys(1) (it broke with the move from console-tools
+to kbd).
+
 * Thu May 29 2003 Solar Designer <solar@owl.openwall.com> 0.13-owl1
 - write_to=tcb
 
