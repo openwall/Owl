@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.10 2003/10/30 21:15:50 solar Exp $
+# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.11 2003/12/15 11:35:40 solar Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
@@ -18,7 +18,7 @@ Patch1: vsftpd-1.2.1pre1-owl-pam_userpass.diff
 Patch2: vsftpd-1.2.1pre1-owl-warnings.diff
 Requires: xinetd, logrotate, pam_userpass, tcb, /var/empty
 Provides: ftpserver
-BuildRequires: pam-devel, pam_userpass-devel
+BuildRequires: pam-devel, pam_userpass-devel, libcap-devel
 BuildRoot: /override/%name-%version
 
 %description
