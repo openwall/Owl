@@ -523,17 +523,12 @@ we will likely have to maintain ourselves.
 	SysVinit.
 
 [PRIORITY: low]
-Update to latest release.
+Keep to latest release.
 
 [PRIORITY: low]
 Support logging in to alternate UID 0 accounts in sulogin (ask for
 both login name and password, only let it proceed if it's UID 0, be
 careful about timings).
-
-[PRIORITY: medium]
-In wall(1), don't trust utmp for writing into arbitrary files (or
-someone who gained group utmp access may extend it to root).  This has
-been done in ALT Linux, should import their patch.
 
 
 	telnet.
@@ -594,4 +589,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.18 2003/04/17 14:25:54 solar Exp $
+$Id: Owl/doc/TODO,v 1.19 2003/04/22 23:07:43 solar Exp $
