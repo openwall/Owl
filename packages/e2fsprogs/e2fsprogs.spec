@@ -1,4 +1,4 @@
-# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.21 2005/03/22 15:39:41 solar Exp $
+# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.22 2005/03/22 15:53:57 solar Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -16,10 +16,9 @@ Version: 1.36
 Release: owl1
 License: GPL
 Group: System Environment/Base
-Source0: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
-Patch0: e2fsprogs-1.36-owl-mkdir-mode.diff
-Patch1: e2fsprogs-1.36-owl-warnings.diff
-Patch2: e2fsprogs-1.36-owl-tests-fix.diff
+Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
+Patch0: e2fsprogs-1.36-owl-warnings.diff
+Patch1: e2fsprogs-1.36-owl-tests-fix.diff
 PreReq: /sbin/ldconfig
 BuildRoot: /override/%name-%version
 
@@ -49,7 +48,6 @@ develop second extended (ext2) filesystem-specific programs.
 chmod -R u+w .
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -223,8 +221,8 @@ fi
 * Mon Mar 01 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.36-owl1
 - Updated to 1.36.
 - Reviewed all patches, dropped the ones accepted.
+- Dropped the "notitle" patch.
 - Fixed make check to fail in case of failed tests.
-- Forced e2fsck to use 0700 permissions when it's creating directories.
 
 * Sun Jan 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.27-owl7
 - Using %__cc macro during configure
