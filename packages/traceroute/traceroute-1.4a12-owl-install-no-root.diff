@@ -1,0 +1,15 @@
+--- traceroute-1.4a12.orig/Makefile.in	Thu Nov 23 23:05:29 2000
++++ traceroute-1.4a12/Makefile.in	Tue Mar  6 18:21:15 2001
+@@ -90,10 +90,10 @@
+ 	sed -e 's/.*/char version[] = "&";/' $(srcdir)/VERSION > $@
+ 
+ install: force
+-	$(INSTALL) -m 4555 -o root -g bin traceroute $(DESTDIR)$(BINDEST)
++	$(INSTALL) -m 700 traceroute $(DESTDIR)$(BINDEST)
+ 
+ install-man: force
+-	$(INSTALL) -m 444 -o bin -g bin traceroute.8 $(DESTDIR)$(MANDEST)/man8
++	$(INSTALL) -m 444 traceroute.8 $(DESTDIR)$(MANDEST)/man8
+ 
+ lint: $(GENSRC) force
+ 	lint -hbxn $(SRC) | \
