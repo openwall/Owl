@@ -1,18 +1,21 @@
-# $Id: Owl/packages/groff/groff.spec,v 1.1 2000/08/09 00:51:27 kad Exp $
+# $Id: Owl/packages/groff/groff.spec,v 1.2 2000/11/21 10:10:00 solar Exp $
 
-%define BUILD_USE_X      'no'
+%define BUILD_USE_X	'no'
+%define BUILD_CURRENT	'yes'
 
 Summary: A document formatting system.
 Name: 		groff
 Version: 	1.16.1
-Release: 	1owl
+Release: 	2owl
 Copyright: 	GPL
 Group: 		Applications/Publishing
 Source0: 	ftp://ftp.gnu.org/gnu/groff/groff-%{version}.tar.gz
-Source1: 	troff-to-ps.fpi
-Source2: 	README.A4
+%if "%{BUILD_CURRENT}"=="'yes'"
+Source1:	ftp://ftp.ffii.org/pub/groff/devel/groff-%{version}-current.diff.gz
+%endif
+Source2: 	troff-to-ps.fpi
+Source3: 	README.A4
 Patch0:		groff-1.16.1-owl-man.diff
-Patch1: 	groff-1.16-rh-safer.diff
 Requires: 	mktemp
 Buildroot:      /var/rpm-buildroot/%{name}-root
 Obsoletes: 	groff-tools
@@ -57,10 +60,11 @@ also need to install the groff package and the X Window System.
 
 %prep
 %setup -q
+%if "%{BUILD_CURRENT}"=="'yes'"
+zcat %{SOURCE1} | patch -p1 -l
+%endif
 %patch0 -p0
-%patch1 -p1 -b .safer
-
-cp %{SOURCE2} .
+cp %{SOURCE3} .
 
 %build
 
@@ -121,7 +125,7 @@ ln -s tbl.1.gz 	${RPM_BUILD_ROOT}%{_mandir}/man1/gtbl.1.gz
 ln -s troff.1.gz 	${RPM_BUILD_ROOT}%{_mandir}/man1/gtroff.1.gz
 
 mkdir -p ${RPM_BUILD_ROOT}%{_prefix}/share/rhs/rhs-printfilters
-install -m755 %{SOURCE1} ${RPM_BUILD_ROOT}%{_prefix}/share/rhs/rhs-printfilters
+install -m 755 %{SOURCE2} ${RPM_BUILD_ROOT}%{_prefix}/share/rhs/rhs-printfilters
 
 find ${RPM_BUILD_ROOT}%{_prefix}/bin ${RPM_BUILD_ROOT}%{_mandir} -type f -o -type l | \
 	grep -v afmtodit | grep -v grog | grep -v mdoc.samples |\
@@ -154,7 +158,14 @@ rm -rf ${RPM_BUILD_ROOT}
 %endif
 
 %changelog
-* Sun Aug  6 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Tue Nov 21 2000 Solar Designer <solar@owl.openwall.com>
+- Patch to -current which now includes fixes for the current directory
+problem described in the ISS X-Force advisory.
+- Dropped the RH safer patch for .so (source) as it is non-obvious whether
+this needed fixing, and the patch wasn't a complete fix anyway (it trusted
+files under the cwd and had races).
+
+* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import from RH
 - update to 1.16.1
 
@@ -238,4 +249,3 @@ rm -rf ${RPM_BUILD_ROOT}
 
 * Fri Jun 13 1997 Erik Troan <ewt@redhat.com>
 - built against glibc
-
