@@ -1,4 +1,4 @@
-# $Id: Owl/packages/db4/db4.spec,v 1.4 2004/11/23 22:40:45 mci Exp $
+# $Id: Owl/packages/db4/db4.spec,v 1.5 2005/01/12 15:48:00 galaxy Exp $
 
 %define __soversion	4.0
 %define _libdb_a	libdb-%__soversion.a
@@ -8,7 +8,7 @@
 Summary: The Berkeley DB database library (version 4) for C.
 Name: db4
 Version: 4.0.14
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Libraries
 URL: http://www.sleepycat.com
@@ -67,10 +67,10 @@ popd
 %patch3 -p1
 
 %build
-export CFLAGS="$RPM_OPT_FLAGS"
 
+%{expand:%%define optflags_lib %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 # Static link with old db-185 libraries.
-make -C db.1.85/PORT/%_os OORG="$CFLAGS"
+%__make -C db.1.85/PORT/%_os CC="%__cc" OORG="%optflags_lib"
 /bin/sh libtool --mode=compile %__cc $RPM_OPT_FLAGS \
 	-Idb.1.85/PORT/%_os/include -D_REENTRANT \
 	-c db_dump185/db_dump185.c -o dist/db_dump185.lo
@@ -78,13 +78,15 @@ make -C db.1.85/PORT/%_os OORG="$CFLAGS"
 	dist/db_dump185.lo db.1.85/PORT/%_os/libdb.a
 
 pushd dist
+
+CXX="%__cc" \
 %configure \
 	--enable-compat185 --enable-dump185 \
 	--enable-shared --enable-static --enable-rpc \
 	--enable-cxx \
 	--disable-java \
 	--disable-posixmutexes
-make libdb=%_libdb_a libcxx=%_libcxx_a LIBSO_LIBS='$(LIBS)'
+%__make libdb=%_libdb_a libcxx=%_libcxx_a LIBSO_LIBS='$(LIBS)'
 popd
 
 %install
@@ -156,5 +158,9 @@ rm -rf %buildroot
 %_includedir/*.h
 
 %changelog
+* Sun Jan 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.0.14-owl2
+- Used %__cc and %__make macros.
+- Cleaned up the spec.
+
 * Tue Mar 02 2004 Michail Litvak <mci@owl.openwall.com> 4.0.14-owl1
 - Imported spec from RH.
