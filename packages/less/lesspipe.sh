@@ -18,12 +18,16 @@ lesspipe() {
   *.zip) unzip -l "$1" 2>/dev/null ;;
   *.rpm) rpm -qpivl "$1" 2>/dev/null ;; # view contents of .rpm files
   *.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9|*.n|*.man) 
-   FILE=`file -L "$1" | grep ": troff or preprocessor input text"` ; # groff src
+   FILE="`file -L - < "$1" | grep "^standard input: *troff"`" ; # groff src
    if [ -n "$FILE" ]; then
      groff -s -p -t -e -Tascii -mandoc "$1"
    fi ;;
   esac
 }
 
-lesspipe "$1"
+if [ -n "`echo "$1" | grep "^-"`" ]; then
+    lesspipe "./$1"
+else
+    lesspipe "$1"
+fi
 
