@@ -1,9 +1,9 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.13 2002/01/24 14:44:14 solar Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.14 2002/04/24 23:18:56 solar Exp $
 
 Version: 2.05
 Name: bash
 Summary: The GNU Bourne-Again SHell (Bash).
-Release: owl1
+Release: owl2
 Group: System Environment/Shells
 License: GPL
 Source0: ftp://ftp.gnu.org/gnu/bash/bash-%{version}.tar.gz
@@ -14,7 +14,8 @@ Source4: dot-bash_logout
 Patch0: bash-2.05-cwru-fixes.diff
 Patch10: bash-2.05-owl-fixes.diff
 Patch11: bash-2.05-owl-tmp.diff
-Patch12: bash-2.05-owl-paths.diff
+Patch12: bash-2.05-owl-vitmp.diff
+Patch13: bash-2.05-owl-paths.diff
 Patch20: bash-2.04-rh-bash1_compat.diff
 Patch21: bash-2.04-rh-shellfunc.diff
 Patch22: bash-2.05-rh-requires.diff
@@ -56,6 +57,7 @@ Again shell version %{version}.
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
+%patch13 -p1
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
@@ -100,13 +102,17 @@ rm -rf $RPM_BUILD_ROOT
 %makeinstall
 
 mkdir -p $RPM_BUILD_ROOT/bin
-mv $RPM_BUILD_ROOT%_bindir/%name $RPM_BUILD_ROOT/bin/%name
-ln -s %name $RPM_BUILD_ROOT/bin/sh
-ln -s %name $RPM_BUILD_ROOT/bin/bash2
+mv $RPM_BUILD_ROOT%{_bindir}/bash $RPM_BUILD_ROOT/bin/
+ln -s bash $RPM_BUILD_ROOT/bin/sh
+ln -s bash $RPM_BUILD_ROOT/bin/bash2
 
-gzip -9nf doc/*.{ps,txt}
+ln -s bash.1 $RPM_BUILD_ROOT%{_mandir}/man1/sh.1
+ln -s bash.1 $RPM_BUILD_ROOT%{_mandir}/man1/bash2.1
 
-pushd doc
+cd doc
+gzip -9nf *.{ps,txt}
+
+install -m 644 builtins.1 $RPM_BUILD_ROOT%{_mandir}/man1/builtins.1
 
 # Make manpages for bash builtins as per suggestion in doc/README
 sed -e '
@@ -119,22 +125,18 @@ b
 }
 d
 ' builtins.1 > man.pages
-
-install -c -m 644 builtins.1 ${RPM_BUILD_ROOT}%{_mandir}/man1/builtins.1
-
 for c in `cat man.pages`; do
-	echo .so man1/builtins.1 > ${RPM_BUILD_ROOT}%{_mandir}/man1/$c.1
+	ln -s builtins.1 $RPM_BUILD_ROOT%{_mandir}/man1/$c.1
 done
 
-popd
-
+cd $RPM_BUILD_ROOT
 # These conflict with real manpages
-rm -f ${RPM_BUILD_ROOT}%{_mandir}/man1/{echo,pwd,test,kill}.1
+rm .%{_mandir}/man1/{echo,pwd,test,kill}.1
 
-mkdir -p $RPM_BUILD_ROOT/etc/skel
-install -c -m 644 %{SOURCE2} $RPM_BUILD_ROOT/etc/skel/.bashrc
-install -c -m 644 %{SOURCE3} $RPM_BUILD_ROOT/etc/skel/.bash_profile
-install -c -m 644 %{SOURCE4} $RPM_BUILD_ROOT/etc/skel/.bash_logout
+mkdir -p etc/skel
+install -m 644 $RPM_SOURCE_DIR/dot-bashrc etc/skel/.bashrc
+install -m 644 $RPM_SOURCE_DIR/dot-bash_profile etc/skel/.bash_profile
+install -m 644 $RPM_SOURCE_DIR/dot-bash_logout etc/skel/.bash_logout
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -173,7 +175,8 @@ fi
 /bin/bash
 /bin/bash2
 %{_infodir}/bash.info*
-%{_mandir}/man1/*
+%{_mandir}/man1/*.1*
+%{_mandir}/man1/..1*
 %{_prefix}/bin/bashbug
 
 %files doc
@@ -181,6 +184,10 @@ fi
 %doc doc/*.ps* doc/*.html doc/article.txt*
 
 %changelog
+* Thu Apr 25 2002 Solar Designer <solar@owl.openwall.com>
+- Default to vitmp in fc (the history editor) and bashbug script.
+- Provide sh.1 and bash2.1 symlinks to the man page.
+
 * Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 

@@ -1,0 +1,101 @@
+diff -ur bash-2.05.orig/bashline.c bash-2.05/bashline.c
+--- bash-2.05.orig/bashline.c	Tue Mar  6 21:36:07 2001
++++ bash-2.05/bashline.c	Thu Apr 25 01:47:20 2002
+@@ -650,7 +650,7 @@
+    command being entered (if no explicit argument is given), otherwise on
+    a command from the history file. */
+ 
+-#define VI_EDIT_COMMAND "fc -e ${VISUAL:-${EDITOR:-vi}}"
++#define VI_EDIT_COMMAND "fc -e ${VISUAL:-${EDITOR:-vitmp}}"
+ 
+ static int
+ vi_edit_and_execute_command (count, c)
+diff -ur bash-2.05.orig/builtins/fc.def bash-2.05/builtins/fc.def
+--- bash-2.05.orig/builtins/fc.def	Wed Jan 17 19:51:50 2001
++++ bash-2.05/builtins/fc.def	Thu Apr 25 01:53:10 2002
+@@ -32,7 +32,7 @@
+ string.
+ 
+    -e ENAME selects which editor to use.  Default is FCEDIT, then EDITOR,
+-      then vi.
++      then vitmp.
+ 
+    -l means list lines instead of editing.
+    -n means no line numbers listed.
+@@ -104,8 +104,7 @@
+    string.
+ 
+    -e ENAME selects which editor to use.  Default is FCEDIT, then EDITOR,
+-      then the editor which corresponds to the current readline editing
+-      mode, then vi.
++      then vitmp.
+ 
+    -l means list lines instead of editing.
+    -n means no line numbers listed.
+@@ -147,7 +146,7 @@
+ 	} while (0)
+ 
+ /* String to execute on a file that we want to edit. */
+-#define FC_EDIT_COMMAND "${FCEDIT:-${EDITOR:-vi}}"
++#define FC_EDIT_COMMAND "${FCEDIT:-${EDITOR:-vitmp}}"
+ 
+ int
+ fc_builtin (list)
+diff -ur bash-2.05.orig/doc/bash.1 bash-2.05/doc/bash.1
+--- bash-2.05.orig/doc/bash.1	Mon Mar  5 22:41:30 2001
++++ bash-2.05/doc/bash.1	Thu Apr 25 01:54:14 2002
+@@ -6254,7 +6254,7 @@
+ .SM
+ .B FCEDIT
+ is not set.  If neither variable is set,
+-.FN vi
++.FN vitmp
+ is used.  When editing is complete, the edited commands are
+ echoed and executed.
+ .sp 1
+diff -ur bash-2.05.orig/doc/bashbug.1 bash-2.05/doc/bashbug.1
+--- bash-2.05.orig/doc/bashbug.1	Fri Jul 31 00:22:49 1998
++++ bash-2.05/doc/bashbug.1	Thu Apr 25 01:58:31 2002
+@@ -35,7 +35,8 @@
+ is not set,
+ .B bashbug
+ defaults to
+-.BR emacs .
++an instance of
++.BR vi .
+ .TP
+ .B HOME
+ Directory in which the failed bug report is saved if the mail fails.
+diff -ur bash-2.05.orig/support/bashbug.sh bash-2.05/support/bashbug.sh
+--- bash-2.05.orig/support/bashbug.sh	Wed Mar 28 17:19:45 2001
++++ bash-2.05/support/bashbug.sh	Thu Apr 25 01:51:42 2002
+@@ -101,24 +101,12 @@
+ BUGADDR="${1-$BUGBASH}"
+ 
+ if [ -z "$DEFEDITOR" ] && [ -z "$EDITOR" ]; then
+-	if [ -x /usr/bin/editor ]; then
+-		DEFEDITOR=editor
+-	elif [ -x /usr/local/bin/ce ]; then
+-		DEFEDITOR=ce
+-	elif [ -x /usr/local/bin/emacs ]; then
+-		DEFEDITOR=emacs
+-	elif [ -x /usr/contrib/bin/emacs ]; then
+-		DEFEDITOR=emacs
+-	elif [ -x /usr/bin/emacs ]; then
+-		DEFEDITOR=emacs
+-	elif [ -x /usr/bin/xemacs ]; then
+-		DEFEDITOR=xemacs
+-	elif [ -x /usr/contrib/bin/jove ]; then
+-		DEFEDITOR=jove
+-	elif [ -x /usr/local/bin/jove ]; then
+-		DEFEDITOR=jove
+-	elif [ -x /usr/bin/vi ]; then
++	if [ -x /bin/vitmp ]; then
++		DEFEDITOR=vitmp
++	elif [ -x /bin/vi ]; then
+ 		DEFEDITOR=vi
++	elif [ -x /usr/bin/vim ]; then
++		DEFEDITOR=vim
+ 	else
+ 		echo "$0: No default editor found: attempting to use vi" >&2
+ 		DEFEDITOR=vi
