@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.12 2000/11/12 00:23:59 solar Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.13 2000/11/17 08:22:22 solar Exp $
 
 # XXX legacy requires './' payload prefix to be omitted from rpm packages.
 %define        _noPayloadPrefix        1
@@ -199,7 +199,7 @@ fi
 %ifarch alpha
 %{__prefix}/lib/rpm/alpha*
 %endif
-%ifarch sparc sparc64
+%ifarch sparc sparcv9 sparc64
 %{__prefix}/lib/rpm/sparc*
 %endif
 %ifarch ia64

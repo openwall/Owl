@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tcp_wrappers/tcp_wrappers.spec,v 1.1 2000/10/02 02:47:51 solar Exp $
+# $Id: Owl/packages/tcp_wrappers/tcp_wrappers.spec,v 1.2 2000/11/17 08:22:22 solar Exp $
 
 Summary: A security tool which acts as a wrapper for network services.
 Name: tcp_wrappers
@@ -25,7 +25,7 @@ can monitor and filter incoming requests for network services.
 %patch3 -p1
 
 %build
-%ifarch sparc sparc64
+%ifarch sparc sparcv9 sparc64
 make linux RPM_OPT_FLAGS="$RPM_OPT_FLAGS -fPIC"
 %else
 make linux RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
