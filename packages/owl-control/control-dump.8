@@ -1,0 +1,55 @@
+.\" $Id: Owl/packages/owl-control/control-dump.8,v 1.1 2003/01/08 02:07:12 solar Exp $
+.TH CONTROL-DUMP 8 "8 January 2003" "Openwall Project"
+.SH NAME
+.ad l
+.BR control-dump ,
+.B control-restore
+\- dump or restore state of installed system facilities
+.ad b
+.SH SYNOPSIS
+.B control-dump
+.RI [ FACILITY ...]
+.br
+.B control-restore
+.RI [ FACILITY ...]
+.SH DESCRIPTION
+.B control-dump
+and
+.B control-restore
+are intended to be used by package pre-install and post-install scripts,
+respectively, to dump and restore state of system facilities provided by
+those packages.
+This allows to keep the desired state of installed system facilities over
+package or OS upgrades.
+.SH FILES
+.ad l
+.in +4
+.ti -4
+.IR /var/run/ * .control-status
+\- shell pattern of saved status files created by
+.BR control-dump ,
+later used and removed by
+.B control-restore
+.br
+.ti -4
+.I /etc/control.d/facilities/
+\- installed system facilities' control scripts to be invoked by
+.BR control (8)
+.br
+.ti -4
+.I /etc/control.d/functions
+\- common shell functions used by the above scripts
+.in -4
+.ad b
+.SH HISTORY
+.B control-dump
+and
+.B control-restore
+first appeared in ALT Linux Sisyphus and Openwall GNU/*/Linux 1.0.
+.SH AUTHORS
+Dmitry V. Levin <ldv@altlinux.org>
+.br
+Solar Designer <solar@owl.openwall.com>
+.SH SEE ALSO
+.BR chkconfig (8),
+.BR control (8)

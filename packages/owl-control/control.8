@@ -1,0 +1,54 @@
+.\" $Id: Owl/packages/owl-control/control.8,v 1.1 2003/01/08 02:07:12 solar Exp $
+.TH CONTROL 8 "8 January 2003" "Openwall Project"
+.SH NAME
+.B control
+\- control installed system facilities
+.SH SYNOPSIS
+.B control
+[ \fIFACILITY\fR [\fBlist\fR|\fBstatus\fR|\fISTATUS\fR] ]
+.SH DESCRIPTION
+.B control
+provides a common interface to register and control system facilities.
+.PP
+This is intended primarily for facilities that can potentially be
+dangerous to system security, to let you enable, disable, or configure
+the facility independently from package installation.
+.PP
+When run with no arguments,
+.B control
+lists all available facilities, their current status, and their
+supported settings.
+.PP
+When a
+.I FACILITY
+name is specified,
+.B control
+may
+.B list
+its supported settings,
+reports its current
+.B status
+(default action),
+or switch it to a new
+.IR STATUS .
+.SH FILES
+.ad l
+.in +4
+.ti -4
+.I /etc/control.d/facilities/
+\- installed system facilities' control scripts to be invoked by
+.B control
+.br
+.ti -4
+.I /etc/control.d/functions
+\- common shell functions used by the above scripts
+.in -4
+.ad b
+.SH HISTORY
+.B control
+first appeared in Openwall GNU/*/Linux 0.1.
+.SH AUTHORS
+Solar Designer <solar@owl.openwall.com>
+.SH SEE ALSO
+.BR chkconfig (8),
+.BR control-dump (8)
