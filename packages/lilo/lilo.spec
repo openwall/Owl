@@ -1,9 +1,9 @@
-# $Id: Owl/packages/lilo/lilo.spec,v 1.2 2000/11/30 06:03:09 solar Exp $
+# $Id: Owl/packages/lilo/lilo.spec,v 1.3 2000/12/04 18:12:49 solar Exp $
 
 Summary: 	The boot loader for Linux and other operating systems.
 Name: 		lilo
 Version: 	21.6
-Release: 	1owl
+Release: 	2owl
 ExclusiveArch: 	%ix86
 Copyright: 	MIT
 Group: 		System Environment/Base
@@ -14,7 +14,6 @@ Patch2: 	lilo-21.4.4-rh-sa5300.diff
 Patch3: 	lilo-21.4.4-rh-i2o.diff
 Buildroot: 	/var/rpm-buildroot/%{name}-root
 BuildRequires: 	fileutils dev86
-Requires: 	mkinitrd
 
 %description
 LILO (LInux LOader) is a basic system program which boots your Linux
@@ -51,7 +50,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%doc README CHANGES COPYING INCOMPAT QuickInst 
+%doc README CHANGES COPYING INCOMPAT QuickInst
 %doc doc
 /usr/bin/keytab-lilo
 /boot/boot*
@@ -62,6 +61,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/*/*
 
 %changelog
+* Mon Dec 04 2000 Solar Designer <solar@owl.openwall.com>
+- No longer require mkinitrd.
+
 * Sun Nov 19 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - 21.6
 - import from RH 
@@ -166,4 +168,3 @@ rm -rf $RPM_BUILD_ROOT
 
 * Tue Jul 08 1997 Erik Troan <ewt@redhat.com>
 - built against glibc
-
