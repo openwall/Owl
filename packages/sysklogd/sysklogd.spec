@@ -1,9 +1,9 @@
-# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.14 2004/02/10 04:55:10 solar Exp $
+# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.15 2004/04/18 01:40:37 solar Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
 Version: 1.4.1
-Release: owl7
+Release: owl8
 License: BSD for syslogd and GPL for klogd
 Group: System Environment/Daemons
 URL: http://www.infodrom.org/projects/sysklogd/
@@ -22,6 +22,7 @@ Patch6: sysklogd-1.4.1-alt-owl-syslogd-killing.diff
 Patch7: sysklogd-1.4.1-caen-owl-klogd-drop-root.diff
 Patch8: sysklogd-1.4.1-caen-owl-syslogd-bind.diff
 Patch9: sysklogd-1.4.1-caen-owl-syslogd-drop-root.diff
+Patch10: sysklogd-1.4.1-owl-syslogd-crunch_list.diff
 PreReq: shadow-utils, grep, fileutils, /sbin/chkconfig
 Requires: logrotate, /var/empty
 BuildRoot: /override/%name-%version
@@ -44,6 +45,7 @@ places according to a configuration file.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 %build
 make CFLAGS="$RPM_OPT_FLAGS -Wall -DSYSV -D_FILE_OFFSET_BITS=64"
@@ -106,6 +108,10 @@ fi
 %_mandir/*/*
 
 %changelog
+* Sun Apr 18 2004 Solar Designer <solar@owl.openwall.com> 1.4.1-owl8
+- Cleaned up the crunch_list() function in syslogd fixing the buffer overflow
+discovered by Steve Grubb and a number of other issues.
+
 * Tue Feb 10 2004 Solar Designer <solar@owl.openwall.com> 1.4.1-owl7
 - Use "sharedscripts" directive in /etc/logrotate.d/syslog such that syslogd
 is told to restart only once for all logs rotated.
