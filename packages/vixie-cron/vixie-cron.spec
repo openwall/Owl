@@ -1,9 +1,9 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.14 2002/04/24 04:12:49 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.15 2002/04/24 04:44:14 solar Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
 Version: 3.0.2.7
-Release: owl13
+Release: owl12
 License: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%{version}.tar.gz
@@ -14,7 +14,7 @@ Patch1: vixie-cron-%{version}-owl-sgid-crontab.diff
 Patch2: vixie-cron-%{version}-owl-crond.diff
 Patch3: vixie-cron-%{version}-owl-vitmp.diff
 PreReq: /sbin/chkconfig, /dev/null, grep, shadow-utils
-Requires: /usr/libexec/vitmp, owl-control < 2.0
+Requires: owl-control < 2.0
 BuildRoot: /override/%{name}-%{version}
 
 %description
