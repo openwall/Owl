@@ -1,7 +1,7 @@
 Summary: A security tool which provides authentication for applications.
 Name: pam
 Version: 0.72
-Release: 7owl
+Release: 8owl
 Copyright: GPL or BSD
 Group: System Environment/Base
 Source0: pam-redhat-%{version}.tar.gz
@@ -35,6 +35,7 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr/include/security
 mkdir -p $RPM_BUILD_ROOT/lib/security
 make install FAKEROOT=$RPM_BUILD_ROOT LDCONFIG=:
+install -m 644 libpamc/include/security/pam_client.h $RPM_BUILD_ROOT/usr/include/security
 install -d -m 755 $RPM_BUILD_ROOT/etc/pam.d
 install -m 644 other.pamd $RPM_BUILD_ROOT/etc/pam.d/other
 # make sure the modules built...
@@ -78,6 +79,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/man/man8/*
 
 %changelog
+* Sun Jul  9 2000 Solar Designer <solar@false.com>
+- Added installation of pam_client.h
+
 * Sat Jul  8 2000 Solar Designer <solar@false.com>
 - Import from RH, port the Owl pam_pwdb patch from original Linux-PAM-0.72,
 disable pam_cracklib as it's to be replaced with pam_passwdqc (not a part
