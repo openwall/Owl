@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.6 2000/08/06 15:28:15 kad Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.7 2000/08/06 15:31:23 kad Exp $
 
 %define NEED_PYTHON 'no'
 %define version 3.0.5
@@ -94,6 +94,7 @@ capabilities.
 %patch -p1
 
 %build
+automake
 unset LINGUAS || :
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=/usr --build=%{_arch}-openwall-linux
 make
