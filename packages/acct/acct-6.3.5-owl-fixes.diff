@@ -1,5 +1,1452 @@
---- acct-6.3.5/sa.c.orig	Mon Mar 23 08:06:34 1998
-+++ acct-6.3.5/sa.c	Wed Mar 20 23:28:48 2002
+diff -ur acct-6.3.5.orig/ac.1 acct-6.3.5/ac.1
+--- acct-6.3.5.orig/ac.1	Tue Sep 30 03:41:30 1997
++++ acct-6.3.5/ac.1	Sat Mar 23 23:19:53 2002
+@@ -1,6 +1,6 @@
+-.TH AC 1 "1995 October 31"
++.TH AC 1 "2002 March 23"
+ .SH NAME
+-ac \-  print statistics about users' connect time
++ac \- print statistics about users' connect time
+ .SH SYNOPSIS
+ .hy 0
+ .na
+@@ -38,18 +38,18 @@
+ .B \-\-all-days
+ ]
+ .br
+-[ 
+-.B \-\-complain 
++[
++.B \-\-complain
+ ]
+ [
+-.B \-\-reboots 
++.B \-\-reboots
+ ]
+ [
+ .B \-\-supplants
+ ]
+ .br
+ [
+-.B \-\-timewarps 
++.B \-\-timewarps
+ ]
+ [
+ .B \-\-compatibility
+@@ -76,59 +76,39 @@
+ [
+ .B \-V
+ |
+-.B \-\-version 
++.B \-\-version
+ ]
+ [
+ .B \-h
+ |
+-.B \-\-help 
++.B \-\-help
+ ]
+ .ad b
+ .hy 1
+ .SH DESCRIPTION
+ .LP
+-.B ac 
++.B ac
+ prints out a report of connect time (in hours) based on the
+ logins/logouts in the current
+ .I wtmp
+ file.  A total is also printed out.
+ .LP
+-The accounting file 
+-.I wtmp
+-is maintained by 
+-.BR init (8)
+-and
+-.BR login (1).
+-Neither 
++Although
++GNU
+ .B ac
+-nor
+-.B login
+-creates the 
+-.I wtmp
+-if it doesn't exist, no accounting is done.  To begin accounting, create 
+-the file with a length of zero.  
+-.LP
+-NOTE:  The 
+-.I wtmp
+-file can get really big, really fast.  You might want to trim it every 
+-once and a while.
+-.LP
+-GNU 
+-.B ac 
+-works nearly the same u*x 
+-.BR ac , 
+-though it's a little
+-smarter in several ways.  You should therefore expect differences in
+-the output of GNU 
++works nearly the same as
++.BR ac 's
++on other systems, it is a little smarter in several ways.
++You should therefore expect differences in
++the output of GNU
+ .B ac
+-and the output of 
+-.BR ac 's 
++and the output of
++.BR ac 's
+ on other systems.
+ Use the command
+ .BI info " accounting"
+ to get additional information.
+ .SH OPTIONS
+-\..PD 0
+ .TP
+ .B \-d, \-\-daily-totals
+ Print totals for each day rather than just one big total at the
+@@ -150,21 +130,21 @@
+ .TP
+ .I people
+ Print out the sum total of the connect time used by all of the
+-users included in 
+-.I people.  
+-Note that 
++users included in
++.I people.
++Note that
+ .I people
+ is a space separated list of valid user names; wildcards are not allowed.
+ .TP
+ .BI "\-f, \-\-file " filename
+-Read from the file 
++Read from the file
+ .I filename
+-instead of the system's 
++instead of the system's
+ .I wtmp
+ file.
+ .TP
+ .B \-\-complain
+-When the 
++When the
+ .I wtmp
+ file has a problem (a time-warp, missing record, or
+ whatever), print out an appropriate error.
+@@ -173,14 +153,14 @@
+ Reboot records are NOT written at the time of a reboot, but when
+ the system restarts; therefore, it is impossible to know exactly
+ when the reboot occurred.  Users may have been logged into the
+-system at the time of the reboot, and many 
++system at the time of the reboot, and many
+ .B ac's
+-automatically 
+-count the time between the login and the reboot record 
+-against the user (even though all of that time shouldn't be, perhaps, 
++automatically
++count the time between the login and the reboot record
++against the user (even though all of that time shouldn't be, perhaps,
+ if the system is down for a long time, for instance).  If you want to
+-count this time, include the flag.  
+-*For vanilla 
++count this time, include the flag.
++*For vanilla
+ .B ac
+ compatibility, include this flag.*
+ .TP
+@@ -191,8 +171,8 @@
+ login on the terminal (though probably incorrect), include this
+ you want to include the time from the user's login to the next
+ login on the terminal (though probably incorrect), include this
+-flag.  
+-*For vanilla 
++flag.
++*For vanilla
+ .B ac
+ compatibility, include this flag.*
+ .TP
+@@ -216,9 +196,9 @@
+ the next day where there is login activity.
+ .TP
+ .BI \-\-tw-leniency " num"
+-Set the time warp leniency to 
+-.I num 
+-seconds.  Records in 
++Set the time warp leniency to
++.I num
++seconds.  Records in
+ .I wtmp
+ files might be slightly out of order (most notably when two logins
+ occur within a one-second period - the second one gets written first).
+@@ -228,8 +208,8 @@
+ flag is used.
+ .TP
+ .BI \-\-tw-suspicious " num"
+-Set the time warp suspicious value to 
+-.I num 
++Set the time warp suspicious value to
++.I num
+ seconds.  If two records in the
+ .I wtmp
+ file are farther than this number of seconds apart, there is a problem
+@@ -251,7 +231,7 @@
+ Print verbose internal information.
+ .TP
+ .B \-V, \-\-version
+-Print the version number of 
++Print the version number of
+ .B ac
+ to standard output and quit.
+ .TP
+@@ -261,17 +241,19 @@
+ .SH FILES
+ .I wtmp
+ .RS
+-The system wide login record file. See
++The system wide login record file.  See
+ .BR wtmp (5)
+ for further details.
+-.LP
+-
+ .SH AUTHOR
+ The GNU accounting utilities were written by Noel Cragg
+-<noel@gnu.ai.mit.edu>. The man page was adapted from the accounting
++<noel@gnu.ai.mit.edu>.  The man page was adapted from the accounting
+ texinfo page by Susan Kleinmann <sgk@sgk.tiac.net>.
+ .SH "SEE ALSO"
++.BR last (1),
++.BR lastcomm (1),
+ .BR login (1),
++.BR acct (5),
+ .BR wtmp (5),
++.BR accton (8),
+ .BR init (8),
+ .BR sa (8)
+diff -ur acct-6.3.5.orig/ac.c acct-6.3.5/ac.c
+--- acct-6.3.5.orig/ac.c	Tue Oct 14 04:28:36 1997
++++ acct-6.3.5/ac.c	Sat Mar 23 21:30:25 2002
+@@ -152,7 +152,7 @@
+ 
+ /* prototypes */
+ 
+-void main PARAMS((int, char *[]));
++int main PARAMS((int, char *[]));
+ void give_usage PARAMS((void));
+ void do_statistics PARAMS((char *));
+ void log_in PARAMS((struct utmp *));
+@@ -168,7 +168,7 @@
+ 
+ /* code */
+ 
+-void
++int
+ main (int argc, char *argv[])
+ {
+   int c;
+diff -ur acct-6.3.5.orig/accounting.texi acct-6.3.5/accounting.texi
+--- acct-6.3.5.orig/accounting.texi	Wed May 27 03:22:16 1998
++++ acct-6.3.5/accounting.texi	Sun Mar 24 00:06:20 2002
+@@ -61,7 +61,7 @@
+ @node Top, Preface, (dir), (dir)
+ 
+ Welcome to the GNU Accounting Utilities!  If you don't have a clue about
+-the accounting utilities, read the introduction.  For specfic
++the accounting utilities, read the introduction.  For specific
+ information about any of the applications, see the chapter with the
+ program's name.
+ 
+@@ -105,7 +105,7 @@
+ 
+ The accounting utilities were born.
+ 
+-Seriously though, the accouting utilities can provide a system
++Seriously though, the accounting utilities can provide a system
+ administrator with useful information about system usage---connections,
+ programs executed, and utilization of system resources.
+ 
+@@ -144,13 +144,12 @@
+ @item sa
+ summarizes the information in the @code{acct} file into the
+ @code{savacct} and @code{usracct} file.  It also
+-generates reports about commands, giving the number of invocations, cpu
++generates reports about commands, giving the number of invocations, CPU
+ time used, average core usage, etc.
+ 
+ @item dump-acct
+ @itemx dump-utmp
+ display @code{acct} and @code{utmp} files in a human-readable format.
+-
+ @end table
+ 
+ For more detailed information on any of these programs, check the
+@@ -164,7 +163,7 @@
+ process accounting file might be @code{acct} or @code{pacct} on your
+ system.  To find the actual locations and names of these files on your
+ system, specify the @code{--help} flag to any of the programs in this
+-package and the information will dumped to standard output.
++package and the information will be dumped to standard output.
+ 
+ Regardless of the names and locations of files on your system, this
+ manual will refer to the login accounting file as @code{wtmp} and the
+@@ -207,7 +206,7 @@
+ @item Scott Crosby <root@@hypercube.res.cmu.edu>
+ Suggested idea behind @code{--sort-real-time} for @code{sa}.
+ 
+-@item Solar Designer <solar@@false.com>
++@item Solar Designer <solar@@openwall.com>
+ Added code for @code{--ahz} flag in @code{lastcomm} and @code{sa}.
+ 
+ @item Dirk Eddelbuettel <edd@@miles.econ.queensu.ca>
+@@ -239,7 +238,7 @@
+ Noticed install target was missing, and corrected a typo for prefix in
+ Makefile.in.
+ 
+-@item Ian Murdock <imurdock@@gnu.ai.mit.edu> 
++@item Ian Murdock <imurdock@@gnu.ai.mit.edu>
+ Tracked down miscellaneous bugs in sa.c under Linux.  Added Debian
+ package maintenance files.
+ 
+@@ -273,7 +272,7 @@
+ @code{wtmp} file can get really big, really fast.  You might
+ want to trim it every once and a while.
+ 
+-GNU @code{ac} works nearly the same u*x @code{ac}, though it's a little
++GNU @code{ac} works nearly the same as u*x @code{ac}, though it's a little
+ smarter in its printing out of daily totals---it actually prints
+ @emph{every} day, rather than skipping to the date of the next entry in
+ the @code{wtmp} file.
+@@ -410,7 +409,7 @@
+ For no fault of @code{ac}'s, if two logins occur at the same time
+ (within a second of each other), each @code{login} process will try to
+ write an entry to the @code{wtmp} file.  With file system
+-overhead, it is forseeable that the entries would get written in the
++overhead, it is foreseeable that the entries would get written in the
+ wrong order.  GNU @code{ac} automatically compensates for this, but some
+ other @code{ac}s may not...  beware.
+ 
+@@ -463,8 +462,8 @@
+ 
+ Some @code{ac}'s on System V machines (I've tried SGI Indigo & SGI Indy)
+ forget to pay attention to the @code{ut_type} field in a @code{struct
+-utmp}.  As such, they chalk up a lot of time to non-existant processes
+-called @code{LOGIN} or @code{runlevel}.  
++utmp}.  As such, they chalk up a lot of time to non-existent processes
++called @code{LOGIN} or @code{runlevel}.
+ 
+ @noindent
+ @strong{TANGIBLE RESULT:} The amount of total time reported by the
+@@ -491,7 +490,6 @@
+ @section Flags
+ 
+ @table @code
+-
+ @item -V
+ @itemx --version
+ Print @code{accton}'s version number.
+@@ -500,7 +498,6 @@
+ @itemx --help
+ Print @code{accton}'s usage string and default locations of system files
+ to standard output.
+-
+ @end table
+ 
+ @c ----------------------------------------------------------------------
+@@ -771,15 +768,16 @@
+ The output fields are labeled as follows:
+ 
+ @table @code
+-
+-@item cpu
+-sum of system and user time in cpu seconds
++@item cp
++sum of system and user CPU time in minutes
++(unless @code{-j} or @code{--print-seconds} is specified)
+ 
+ @item re
+-``real time'' in cpu seconds
++real time in minutes
++(unless @code{-j} or @code{--print-seconds} is specified)
+ 
+ @item k
+-cpu-time averaged core usage, in 1k units
++CPU time averaged core usage, in 1 KB units
+ 
+ @item avio
+ average number of I/O operations per execution
+@@ -788,23 +786,24 @@
+ total number of I/O operations
+ 
+ @item k*sec
+-cpu storage integral (kilo-core seconds)
++CPU-storage integral (kilo-core seconds)
+ 
+ @item u
+-user cpu time in cpu seconds
++user CPU time in minutes
++(unless @code{-j} or @code{--print-seconds} is specified)
+ 
+ @item s
+-system time in cpu seconds
+-
++system CPU time in minutes
++(unless @code{-j} or @code{--print-seconds} is specified)
+ @end table
+ 
+ Note that these column titles do not appear in the first row of the
+ table, but after each numeric entry (as units of measurement) in every
+-row.  For example, you might see @code{79.29re}, meaning 79.29 cpu
+-seconds of ``real time.''
++row.  For example, you might see @code{79.29re}, meaning 79.29 minutes
++or seconds of real time.
+ 
+ An asterisk will appear after the name of commands that forked but
+-didn't call @code{exec}.
++didn't do an exec.
+ 
+ @section Flags
+ 
+@@ -819,7 +818,6 @@
+ In short, all of these flags may not be available on your machine.
+ 
+ @table @code
+-
+ @item -a
+ @itemx --list-all-names
+ Force @code{sa} not to sort those command names with unprintable
+@@ -859,16 +857,16 @@
+ 
+ @item -k
+ @itemx --sort-cpu-avmem
+-Sort the output by cpu time average memory usage.
++Sort the output by CPU time averaged memory usage.
+ 
+ @item -K
+ @itemx --sort-ksec
+-Print and sort the output by the cpu-storage integral.
++Print and sort the output by the CPU-storage integral.
+ 
+ @item -l
+ @itemx --separate-times
+ Print separate columns for system and user time; usually the two are
+-added together and listed as @code{cpu}.
++added together and listed as @code{cp}.
+ 
+ @item -m
+ @itemx --user-summary
+@@ -893,7 +891,7 @@
+ @itemx --print-ratio
+ For each entry, print the ratio of real time to the sum of system and
+ user times.  If the sum of system and user times is too small to
+-report---the sum is zero---@code{*ignore*} will appear in this field.
++report, @code{*ignore*} will appear in this field.
+ 
+ @item -u
+ @itemx --print-users
+@@ -914,13 +912,7 @@
+ information together unless this option is specified.
+ 
+ @item --sort-real-time
+-Sort the output by the ``real time'' (elapsed time) for each command.
+-
+-@item --ahz @var{hz}
+-Use this flag to tell the program what @code{AHZ} should be (in hertz).
+-This option is useful if you are trying to view an @code{acct} file
+-created on another machine which has the same byte order and file format
+-as your current machine, but has a different value for @code{AHZ}.
++Sort the output by the real time field.
+ 
+ @item --debug
+ Print verbose internal information.
+@@ -933,6 +925,24 @@
+ @itemx --help
+ Print @code{sa}'s usage string and default locations of system files to
+ standard output.
++
++@item --other-usracct-file @var{filename}
++Write summaries by user ID to @var{filename} rather than the system's
++default @var{usracct} file.
++
++@item --other-savacct-file @var{filename}
++Write summaries by command name to @var{filename} rather than the system's
++default @var{savacct} file.
++
++@item --other-acct-file @var{filename}
++Read from the file @var{filename} instead of the system's
++default @var{pacct} file.
++
++@item --ahz @var{hz}
++Use this flag to tell the program what @code{AHZ} should be (in hertz).
++This option is useful if you are trying to view an @code{acct} file
++created on another machine which has the same byte order and file format
++as your current machine, but has a different value for @code{AHZ}.
+ @end table
+ 
+ @strong{Note}: if more than one sorting option is specified, the list
+@@ -950,7 +960,7 @@
+ @code{--print-users} flags.  GNU @code{sa} pays attention to these flags
+ if they are applicable.
+ 
+-@subsection mips sa
++@subsection MIPS sa
+ 
+ The average memory use is stored as a short rather than a double, so we
+ suffer from round-off errors.  GNU @code{sa} uses double the whole way
+@@ -960,9 +970,9 @@
+ @c ----------------------------------------------------------------------
+ @c @node Index,  , sa, Top
+ @c @unnumbered Index
+-@c 
++@c
+ @c @printindex cp
+-@c 
++@c
+ 
+ @contents
+ 
+diff -ur acct-6.3.5.orig/accton.8 acct-6.3.5/accton.8
+--- acct-6.3.5.orig/accton.8	Tue Sep 30 03:41:38 1997
++++ acct-6.3.5/accton.8	Sat Mar 23 23:28:11 2002
+@@ -1,6 +1,6 @@
+-.TH ACCTON 8 "1995 October 31"
++.TH ACCTON 8 "2002 March 23"
+ .SH NAME
+-accton \-  turns process accounting on or off
++accton \- turns process accounting on or off
+ .SH SYNOPSIS
+ .hy 0
+ .na
+@@ -9,7 +9,7 @@
+ [
+ .B \-V
+ |
+-.B \-\-version 
++.B \-\-version
+ ]
+ [
+ .B \-h
+@@ -19,6 +19,8 @@
+ [
+ .I filename
+ ]
++.ad b
++.hy 1
+ .SH DESCRIPTION
+ .LP
+ .B accton
+@@ -26,12 +28,11 @@
+ turns on process accounting.  If called with no arguments,
+ it will, by default, stop process accounting.
+ .SH OPTIONS
+-\..PD 0
+ .TP
+ .TP
+ .B \-V, \-\-version
+-Print the version number of 
+-.B ac
++Print the version number of
++.B accton
+ to standard output and quit.
+ .TP
+ .B \-h, \-\-help
+@@ -39,17 +40,20 @@
+ standard output and exits.
+ .SH FILES
+ .TP
+-.I acct
+-The system wide process accounting file. See
++.I pacct
++The system wide process accounting file.  See
+ .BR acct (5)
+ (or
+ .BR pacct (5))
+ for further details.
+-.LP
+ .SH AUTHOR
+ The GNU accounting utilities were written by Noel Cragg
+-<noel@gnu.ai.mit.edu>. The man page was adapted from the accounting
++<noel@gnu.ai.mit.edu>.  The man page was adapted from the accounting
+ texinfo page by Susan Kleinmann <sgk@sgk.tiac.net>.
+ .SH "SEE ALSO"
++.BR ac (1),
++.BR acct (2),
++.BR last (1),
++.BR lastcomm (1),
+ .BR acct (5),
+-.BR ac (8)
++.BR sa (8)
+diff -ur acct-6.3.5.orig/accton.c acct-6.3.5/accton.c
+--- acct-6.3.5.orig/accton.c	Tue Oct 14 04:28:36 1997
++++ acct-6.3.5/accton.c	Sat Mar 23 21:30:25 2002
+@@ -41,7 +41,7 @@
+ 
+ /* protos */
+ 
+-void main PARAMS((int argc, char *argv[]));
++int main PARAMS((int argc, char *argv[]));
+ void usage PARAMS((void));
+ 
+ 
+@@ -57,7 +57,7 @@
+   print_acct_file_location ();
+ }
+ 
+-void
++int
+ main (int argc, char *argv[])
+ {
+   int c;
+diff -ur acct-6.3.5.orig/dump-acct.c acct-6.3.5/dump-acct.c
+--- acct-6.3.5.orig/dump-acct.c	Tue Oct 14 04:28:36 1997
++++ acct-6.3.5/dump-acct.c	Sat Mar 23 21:30:25 2002
+@@ -20,7 +20,7 @@
+ 				   records or the file-reading
+ 				   algorithms. */
+ 
+-void main PARAMS((int argc, char *argv[]));
++int main PARAMS((int argc, char *argv[]));
+ 
+ static
+ void
+@@ -33,7 +33,7 @@
+ }
+ 
+ 
+-void
++int
+ main (int argc, char *argv[])
+ {
+   int c;
+diff -ur acct-6.3.5.orig/dump-utmp.c acct-6.3.5/dump-utmp.c
+--- acct-6.3.5.orig/dump-utmp.c	Tue Oct 14 04:28:36 1997
++++ acct-6.3.5/dump-utmp.c	Sat Mar 23 21:30:25 2002
+@@ -20,7 +20,7 @@
+ 				   records or the file-reading
+ 				   algorithms. */
+ 
+-void main PARAMS((int argc, char *argv[]));
++int main PARAMS((int argc, char *argv[]));
+ 
+ static
+ void
+@@ -33,7 +33,7 @@
+ }
+ 
+ 
+-void
++int
+ main (int argc, char *argv[])
+ {
+   int c;
+diff -ur acct-6.3.5.orig/last.1 acct-6.3.5/last.1
+--- acct-6.3.5.orig/last.1	Mon Mar 23 09:20:13 1998
++++ acct-6.3.5/last.1	Sat Mar 23 23:25:34 2002
+@@ -1,13 +1,13 @@
+ .\" Man page by Dirk Eddelbuettel
+-.TH LAST 1 "1997 August 19"
++.TH LAST 1 "2002 March 23"
+ .SH NAME
+ last \- list logins on the system
+ .SH SYNOPSIS
+ .hy 0
+ .na
+ .TP
+-.B last 
+-[ 
++.B last
++[
+ .BI \- "num"
+ |
+ .BI \-n " num"
+@@ -19,14 +19,14 @@
+ .BI \-f " filename"
+ |
+ .BI \-\-file " filename"
+-] 
++]
+ .br
+ [
+ .I people ...
+-] 
++]
+ [
+ .I ttys ...
+-] 
++]
+ .br
+ [
+ .B \-\-complain
+@@ -94,72 +94,69 @@
+ .ad b
+ .SH DESCRIPTION
+ .B last
+-looks through the file 
++looks through the file
+ .I wtmp
+ (which records all logins/logouts) and
+ prints information about connect times of users. Records are printed from
+ most recent to least recent.  Records can be specified by tty and username.
+-tty names can be abbreviated: 
++tty names can be abbreviated:
+ .ce
+-.BR last " 0" 
++.BR last " 0"
+ .ce 0
+-is equivalent to 
++is equivalent to
+ .ce
+ .BR last " tty0."
+ .ce 0
+ .LP
+-Multiple arguments can be specified: 
++Multiple arguments can be specified:
+ .ce
+ .BR last " root console"
+ .ce 0
+-will print all of the entries for the user 
+-.I root 
+-and all entries logged in on the 
++will print all of the entries for the user
++.I root
++and all entries logged in on the
+ .I console
+ tty.
+ .LP
+-The special users 
+-.IR reboot " and " shutdown 
++The special users
++.IR reboot " and " shutdown
+ log in when the system reboots or
+-(surprise) shuts down.  
++(surprise) shuts down.
+ .ce
+-.BR last " reboot" 
++.BR last " reboot"
+ .ce 0
+ will produce a record of reboot times.
+ .LP
+-If 
+-.B last 
++If
++.B last
+ is interrupted by a quit signal, it prints out how far its search
+-in the 
++in the
+ .I wtmp
+ file had reached and then quits.
+ .SH OPTIONS
+-.PD 0
+ .TP
+ .BI \-n " num, " \-\-lines " num "
+-Limit the number of lines that 
+-.B last 
+-outputs.  This is different from u*x
+-.B last, 
+-which lets you specify the number right after a dash.
++Limit the number of lines that
++.B last
++outputs.
+ .TP
+ .BI \-f " filename, " \-\-file " filename"
+-Read from the file 
++Read from the file
+ .I filename
+-instead of the system's 
++instead of the system's
+ .I wtmp
+ file.
+ .TP
+ .B \-\-complain
+-When the 
++When the
+ .I wtmp
+ file has a problem (a time-warp, missing record, or
+ whatever), print out an appropriate error.
+ .TP
+ .BI \-\-tw-leniency " num"
+-Set the time warp leniency to 
+-.I num 
+-seconds.  Records in 
++Set the time warp leniency to
++.I num
++seconds.  Records in
+ .I wtmp
+ files might be slightly out of order (most notably when two logins
+ occur within a one-second period - the second one gets written first).
+@@ -169,8 +166,8 @@
+ flag is used.
+ .TP
+ .BI \-\-tw-suspicious " num"
+-Set the time warp suspicious value to 
+-.I num 
++Set the time warp suspicious value to
++.I num
+ seconds.  If two records in the
+ .I wtmp
+ file are farther than this number of seconds apart, there is a problem
+@@ -180,15 +177,15 @@
+ notices this problem, time is not assigned to users unless the
+ .B \-\-timewarps
+ flag is used.
+-.TP 
++.TP
+ .B \-\-no-truncate-ftp-entries
+-When printing out the information, don't chop the number part off of 
++When printing out the information, don't chop the number part off of
+ `ftp'XXXX entries.
+-.TP 
++.TP
+ .B \-x, \-\-more-records
+ Print out run level changes, shutdowns, and time changes in addition to
+ the normal records.
+-.TP 
++.TP
+ .B \-a, \-\-all-records
+ Print out all records in the
+ .I wtmp
+@@ -221,8 +218,8 @@
+ Print year when displaying dates.
+ .TP
+ .B \-V, \-\-version
+-Print 
+-.B last's 
++Print
++.B last's
+ version number.
+ .TP
+ .B \-h, \-\-help
+@@ -231,13 +228,20 @@
+ .SH FILES
+ .I wtmp
+ .RS
+-The system wide login record file. See
++The system wide login record file.  See
+ .BR wtmp (5)
+ for further details.
+ .SH AUTHOR
+ The GNU accounting utilities were written by Noel Cragg
+-<noel@gnu.ai.mit.edu>. The man page was added by Dirk Eddelbuettel
++<noel@gnu.ai.mit.edu>.  The man page was added by Dirk Eddelbuettel
+ <edd@qed.econ.queensu.ca>.
+ .SH "SEE ALSO"
++.BR ac (1),
++.BR lastcomm (1),
++.BR login (1),
+ .BR who (1),
+-.BR wtmp (5)
++.BR acct (5),
++.BR wtmp (5),
++.BR accton (8),
++.BR init (8),
++.BR sa (8)
+diff -ur acct-6.3.5.orig/last.c acct-6.3.5/last.c
+--- acct-6.3.5.orig/last.c	Mon Mar 23 08:37:06 1998
++++ acct-6.3.5/last.c	Sat Mar 23 21:30:25 2002
+@@ -172,7 +172,7 @@
+ 
+ /* code */
+ 
+-void
++int
+ main (int argc, char *argv[])
+ {
+   int c;
+diff -ur acct-6.3.5.orig/lastcomm.1 acct-6.3.5/lastcomm.1
+--- acct-6.3.5.orig/lastcomm.1	Mon Mar 23 09:26:12 1998
++++ acct-6.3.5/lastcomm.1	Sat Mar 23 23:34:54 2002
+@@ -1,6 +1,6 @@
+-.TH LASTCOMM 1 "1995 October 31"
++.TH LASTCOMM 1 "2002 March 23"
+ .SH NAME
+-lastcomm \-  print out information about previously executed commands.
++lastcomm \- print out information about previously executed commands
+ .SH SYNOPSIS
+ .hy 0
+ .na
+@@ -18,7 +18,7 @@
+ .I terminal-name ...
+ ]
+ .br
+-[ 
++[
+ .B \-\-strict-match
+ ]
+ .br
+@@ -50,12 +50,12 @@
+ [
+ .B \-V
+ |
+-.B \-\-version 
++.B \-\-version
+ ]
+ [
+ .B \-h
+ |
+-.B \-\-help 
++.B \-\-help
+ ]
+ .ad b
+ .hy 1
+@@ -63,31 +63,31 @@
+ .LP
+ .B lastcomm
+ prints out information about previously executed
+-commands.  If no arguments are specified, 
+-.B lastcomm 
++commands.  If no arguments are specified,
++.B lastcomm
+ will print info
+-about all of the commands in 
++about all of the commands in
+ .I acct
+ (the record file).  If called with one or more of
+-.I command-name,
+-.I user-name, 
+-or 
+-.I terminal-name,
+-only records containing those items will be displayed.  For 
+-example, to find out which users used command `a.out' 
++.IR command-name ,
++.IR user-name ,
++or
++.IR terminal-name ,
++only records containing those items will be displayed.  For
++example, to find out which users used command `a.out'
+ and which users were logged into `tty0', type:
+ .ce
+ lastcomm a.out tty0
+ .ce 0
+ .LP
+-This will print any entry for which `a.out' or `tty0' 
+-matches in any of the record's fields (command, name, or terminal).  If 
+-you want to find only items that match *all* of the arguments on the command 
+-line, you must use the '\-strict-match' option.  For example, to list 
+-all of the executions of command 
+-.IR a.out " by user " root " on terminal " tty0, 
++This will print any entry for which `a.out' or `tty0'
++matches in any of the record's fields (command, name, or terminal).  If
++you want to find only items that match *all* of the arguments on the command
++line, you must use the '\-strict-match' option.  For example, to list
++all of the executions of command
++.IR a.out " by user " root " on terminal " tty0 ,
+ type:
+-.ce 
++.ce
+ lastcomm \-\-strict-match a.out root tty0
+ .ce 0
+ .LP
+@@ -104,7 +104,6 @@
+    + the name of the user who ran the process
+    + time the process exited
+ .SH OPTIONS
+-\. .PD 0
+ .TP
+ .B \-\-strict-match
+ Print only entries that match *all* of the arguments on the command
+@@ -112,25 +111,24 @@
+ .TP
+ .BI \-\-user " name"
+ List records for user with
+-.I name.
++.IR name .
+ This is useful if you're trying
+ to match a username that happens to be the same as a command (e.g.,
+-.I ed
+-).
++.IR ed ).
+ .TP
+ .BI \-\-command " name"
+ List records for command
+-.I name.
++.IR name .
+ .TP
+ .BI \-\-tty " name"
+ List records for tty
+-.I name.
++.IR name .
+ .TP
+-.BI \-f " filename, " \-\-file " filename"
+-Read from the file 
+-.I filename 
++.BI \-f " filename" ", \-\-file " filename
++Read from the file
++.I filename
+ instead of
+-.I acct
++.IR acct .
+ .TP
+ .BI \-\-ahz " hz"
+ Use this flag to tell the program what
+@@ -140,35 +138,34 @@
+ .I acct
+ file created on another machine which has the same byte order and file
+ format as your current machine, but has a different value for
+-.B AHZ.
++.BR AHZ .
+ .TP
+ .B \-\-debug
+ Print verbose internal information.
+ .TP
+ .B \-V, \-\-version
+ Print the version number of
+-.B lastcomm.
++.BR lastcomm .
+ .TP
+ .B \-h, \-\-help
+ Prints the usage string and default locations of system files to
+ standard output and exits.
+-
+ .SH FILES
+-.I acct
++.I pacct
+ .RS
+-The system wide process accounting file. See
++The system wide process accounting file.  See
+ .BR acct (5)
+ (or
+ .BR pacct (5))
+ for further details.
+ .RE
+-.LP
+-
+ .SH AUTHOR
+ The GNU accounting utilities were written by Noel Cragg
+-<noel@gnu.ai.mit.edu>. The man page was adapted from the accounting
++<noel@gnu.ai.mit.edu>.  The man page was adapted from the accounting
+ texinfo page by Susan Kleinmann <sgk@sgk.tiac.net>.
+ .SH "SEE ALSO"
++.BR ac (1),
+ .BR last (1),
+-.BR acct (5)
+-
++.BR acct (5),
++.BR accton (8),
++.BR sa (8)
+diff -ur acct-6.3.5.orig/lastcomm.c acct-6.3.5/lastcomm.c
+--- acct-6.3.5.orig/lastcomm.c	Thu Apr  9 03:24:49 1998
++++ acct-6.3.5/lastcomm.c	Sat Mar 23 21:30:25 2002
+@@ -81,7 +81,7 @@
+ 
+ /* protos */
+ 
+-void main PARAMS((int, char *[]));
++int main PARAMS((int, char *[]));
+ void give_usage PARAMS((void));
+ void parse_entries PARAMS((void));
+ char *devname PARAMS((long));
+@@ -91,7 +91,7 @@
+ 
+ /* code */
+ 
+-void
++int
+ main (int argc, char *argv[])
+ {
+   int c;
+@@ -296,6 +296,7 @@
+ 	  double ut = (double) rec->ac_utime;
+ 	  double st = (double) rec->ac_stime;
+ #endif
++	  time_t tmp = rec->ac_btime;
+ 	  
+ 	  /* Make sure there are no unprintable characters in the
+              command name string. */
+@@ -352,7 +353,7 @@
+ 	  printf (" %-8.8s %-8.8s %6.2f secs %-16.16s\n",
+ 		  this_uid, this_dev,
+ 		  ((ut + st) / (double) ahz),
+-		  ctime (&rec->ac_btime));
++		  ctime (&tmp));
+ 	}
+     }
+ }
+diff -ur acct-6.3.5.orig/sa.8 acct-6.3.5/sa.8
+--- acct-6.3.5.orig/sa.8	Wed May 27 03:27:45 1998
++++ acct-6.3.5/sa.8	Sat Mar 23 23:33:17 2002
+@@ -1,6 +1,6 @@
+-.TH SA 8 "1997 August 19"
++.TH SA 8 "2002 March 23"
+ .SH NAME
+-sa \-  summarizes accounting information
++sa \- summarizes accounting information
+ .SH SYNOPSIS
+ .hy 0
+ .na
+@@ -15,7 +15,7 @@
+ [
+ .B \-b
+ |
+-.B \-\-sort-sys-user-div-calls 
++.B \-\-sort-sys-user-div-calls
+ ]
+ .br
+ [
+@@ -121,15 +121,12 @@
+ [
+ .B \-h
+ |
+-.B \-\-help 
++.B \-\-help
+ ]
+ .br
+ [
+ .BI "\-\-other-usracct-file " filename
+ ]
+-[
+-.BI \-\-ahz " hz"
+-]
+ .br
+ [
+ .BI "\-\-other-savacct-file " filename
+@@ -137,104 +134,127 @@
+ .br
+ [
+ [
+-.B "\-\-other-acct-file " 
++.B "\-\-other-acct-file "
+ ]
+ .I filename
+ ]
++[
++.BI \-\-ahz " hz"
++]
++.ad b
++.hy 1
+ .SH DESCRIPTION
+ .LP
+ .B sa
+ summarizes information about previously executed commands as
+-recorded in the 
++recorded in the
+ .I acct
+ file.  In addition, it condenses this data into a summary file named
+ .I savacct
+-which contains the number of times the command was called and the system 
+-resources used.  The information can also be summarized on a per-user 
+-basis; 
++which contains the number of times the command was called and the system
++resources used.  The information can also be summarized on a per-user
++basis;
+ .B sa
+ will save this information into a file named
+-.I usracct.
++.IR usracct .
+ .LP
+-If no arguments are specified, 
+-.B sa 
+-will print information about all of the commands in the 
++If no arguments are specified,
++.B sa
++will print information about all of the commands in the
+ .I acct
+-file.  
++file.
+ .LP
+-If called with a file name as the last argument, 
+-.B sa 
++If called with a file name as the last argument,
++.B sa
+ will use that file instead of the system's default
+ .I acct
+ file.
+ .LP
+-By default, 
+-.B sa 
+-will sort the output by sum of user and system time.  
+-If command names have unprintable characters, or are only called once, 
+-.B sa 
++By default,
++.B sa
++will sort the output by sum of user and system time.
++If command names have unprintable characters, or are only called once,
++.B sa
+ will sort them into a group called `***other'.
+ If more than one sorting option is specified, the list will
+ be sorted by the one specified last on the command line.
+ .LP
+ The output fields are labeled as follows:
+ .TP
+-.I cpu
+- sum of system and user time in cpu seconds
++.hy 0
++.I cp
++sum of system and user CPU time in minutes (unless
++.B -j
++or
++.B --print-seconds
++is specified)
+ .TP
+ .I re
+- "real time" in cpu seconds
++real time in minutes (unless
++.B -j
++or
++.B --print-seconds
++is specified)
+ .TP
+ .I k
+- cpu-time averaged core usage, in 1k units
++CPU time averaged core usage, in 1 KB units
+ .TP
+ .I avio
+- average number of I/O operations per execution
++average number of I/O operations per execution
+ .TP
+ .I tio
+- total number of I/O operations
++total number of I/O operations
+ .TP
+ .I k*sec
+- cpu storage integral (kilo-core seconds)
++CPU-storage integral (kilo-core seconds)
+ .TP
+ .I u
+- user cpu time in cpu seconds
++user CPU time in minutes (unless
++.B -j
++or
++.B --print-seconds
++is specified)
+ .TP
+ .I s
+- system time in cpu seconds
++system CPU time in minutes (unless
++.B -j
++or
++.B --print-seconds
++is specified)
++.hy 1
+ .LP
+ Note that these column titles do not appear in the first row of the
+ table, but after each numeric entry (as units of measurement) in every
+-row.  For example, you might see `79.29re', meaning 79.29 cpu seconds
+-of "real time".
++row.  For example, you might see `79.29re', meaning 79.29 minutes or seconds
++of real time.
+ .LP
+-An asterisk will appear after the name of commands that forked but didn't call 
+-.B exec.
++An asterisk will appear after the name of commands that forked but didn't do
++an exec.
+ .LP
+-GNU 
++GNU
+ .B sa
+ takes care to implement a number of features not found in other versions.
+-For example, most versions of 
+-.B sa 
+-don't pay attention to flags like `\-\-print-seconds' and 
+-`\-\-sort-num-calls' when printing out commands when combined with 
+-the `\-\-user-summary' or `\-\-print-users' flags.  GNU 
+-.B sa 
++For example, most versions of
++.B sa
++don't pay attention to flags like `\-\-print-seconds' and
++`\-\-sort-num-calls' when combined with
++the `\-\-user-summary' or `\-\-print-users' flags.  GNU
++.B sa
+ pays attention to these flags if they are applicable.
+ Also, MIPS'
+ .B sa
+ stores the average memory use as a short rather than a double, resulting
+-in some round-off errors.  GNU 
+-.B sa 
++in some round-off errors.  GNU
++.B sa
+ uses double the whole way through.
+ .SH OPTIONS
+ .LP
+ The availability of these program options depends on your operating
+ system.  In specific, the members that appear in the
+ .B struct acct
+-of your system's process accounting header file (usually 
+-.I acct.h
+-) determine which flags will be present.  For example, if your system's
++of your system's process accounting header file (usually
++.IR acct.h )
++determine which flags will be present.  For example, if your system's
+ .B struct acct
+ doesn't have the `ac_mem' field, the installed
+ version of
+@@ -244,12 +264,11 @@
+ .LP
+ In short, all of these flags may not be available on your machine.
+ .TP
+-.PD 0
+ .B \-a, \-\-list-all-names
+-Force 
+-.B sa 
+-not to sort those command names with unprintable characters and those 
+-used only once into the 
++Force
++.B sa
++not to sort those command names with unprintable characters and those
++used only once into the
+ .I ***other
+ group.
+ .TP
+@@ -280,14 +299,14 @@
+ Instead of printing total minutes for each category, print seconds per call.
+ .TP
+ .B \-k, \-\-sort-cpu-avmem
+-Sort the output by cpu time average memory usage.
++Sort the output by CPU time averaged memory usage.
+ .TP
+ .B \-K, \-\-sort-ksec
+-Print and sort the output by the cpu-storage integral.
++Print and sort the output by the CPU-storage integral.
+ .TP
+ .B \-l, \-\-separate-times
+ Print separate columns for system and user time; usually the two
+-are added together and listed as `cpu'.
++are added together and listed as `cp'.
+ .TP
+ .B \-m, \-\-user-summary
+ Print the number of processes and number of CPU minutes on a
+@@ -303,81 +322,81 @@
+ Merge the summarized accounting data into the summary files
+ .I savacct
+ and
+-.I usracct.
++.IR usracct .
+ .TP
+ .B \-t, \-\-print-ratio
+ For each entry, print the ratio of real time to the sum of system
+ and user times.  If the sum of system and user times is too small
+-to report--the sum is zero--`*ignore*' will appear in this field.
++to report, `*ignore*' will appear in this field.
+ .TP
+ .B \-u, \-\-print-users
+ For each command in the accounting file, print the userid and
+ command name.  After printing all entries, quit.  *Note*: this flag
+ supersedes all others.
+ .TP
+-.BI \-v " num " \-\-threshold " num"
+-Print commands which were executed 
+-.I num 
++.BI \-v " num" ", \-\-threshold" " num"
++Print commands which were executed
++.I num
+ times or fewer and await a
+ reply from the terminal.  If the response begins with `y', add the
+ command to the `**junk**' group.
+-.TP 
++.TP
+ .B \-\-separate-forks
+ It really doesn't make any sense to me that the stock version of
+-.B sa 
++.B sa
+ separates statistics for a particular executable depending on
+-whether or not that command forked.  Therefore, GNU 
+-.B sa 
++whether or not that command forked.  Therefore, GNU
++.B sa
+ lumps this information together unless this option is specified.
+ .TP
+-.BI \-\-ahz " hz"
+-Use this flag to tell the program what
+-.B AHZ
+-should be (in hertz).  This option is useful if you are trying to view
+-an
+-.I acct
+-file created on another machine which has the same byte order and file
+-format as your current machine, but has a different value for
+-.B AHZ.
++.BI \-\-sort-real-time
++Sort the output by the real time field.
+ .TP
+ .B \-\-debug
+ Print verbose internal information.
+ .TP
+ .B \-V, \-\-version
+ Print the version number of
+-.B sa.
++.BR sa .
+ .TP
+ .B \-h, \-\-help
+ Prints the usage string and default locations of system files to
+ standard output and exits.
+ .TP
+-.BI \-\-sort-real-time
+-Sort the output by the "real time" field.
+-.TP
+ .BI \-\-other-usracct-file " filename"
+-Write summaries by user ID to 
++Write summaries by user ID to
+ .I filename
+ rather than the system's default
+ .I usracct
+ file.
+ .TP
+ .BI \-\-other-savacct-file " filename"
+-Write summaries by command name to 
++Write summaries by command name to
+ .I filename
+ rather than the system's default
+-.I SAVACCT
++.I savacct
+ file.
+ .TP
+-.BI \-\-other-file " filename"
+-Read from the file 
+-.I filename 
++.BI \-\-other-acct-file " filename"
++Read from the file
++.I filename
+ instead of the system's default
+-.I ACCT
++.I pacct
+ file.
+-.SH FILES
+ .TP
++.BI \-\-ahz " hz"
++Use this flag to tell the program what
++.B AHZ
++should be (in hertz).  This option is useful if you are trying to view
++an
+ .I acct
+-The raw system wide process accounting file. See
++file created on another machine which has the same byte order and file
++format as your current machine, but has a different value for
++.BR AHZ .
++.SH FILES
++.TP
++.I pacct
++The raw system wide process accounting file.  See
+ .BR acct (5)
+ (or
+ .BR pacct (5))
+@@ -388,22 +407,20 @@
+ .TP
+ .I usracct
+ A summary of system process accounting sorted by user ID.
+-.RE
+-.LP
+-
+ .SH BUGS
+ There is not yet a wide experience base for comparing the output of GNU
+-.B sa 
++.B sa
+ with versions of
+ .B sa
+ in many other systems.  The problem is that the data files grow big in a short
+ time and therefore require a lot of disk space.
+-.LP
+-
+ .SH AUTHOR
+ The GNU accounting utilities were written by Noel Cragg
+-<noel@gnu.ai.mit.edu>. The man page was adapted from the accounting
++<noel@gnu.ai.mit.edu>.  The man page was adapted from the accounting
+ texinfo page by Susan Kleinmann <sgk@sgk.tiac.net>.
+ .SH "SEE ALSO"
++.BR ac (1),
++.BR last (1),
++.BR lastcomm (1),
+ .BR acct (5),
+-.BR ac (8)
++.BR accton (8)
+diff -ur acct-6.3.5.orig/sa.c acct-6.3.5/sa.c
+--- acct-6.3.5.orig/sa.c	Mon Mar 23 09:06:34 1998
++++ acct-6.3.5/sa.c	Sat Mar 23 22:34:45 2002
 @@ -21,6 +21,8 @@
  
  #include "config.h"
@@ -27,6 +1474,15 @@
  main (int argc, char *argv[])
  {
    int c;
+@@ -685,7 +687,7 @@
+ #ifdef HAVE_ACETIME
+                                            " [--sort-real-time]"
+ #endif
+-                                                              "\n\
++                                                              " [--ahz hz]\n\
+ \n\
+ ";
+   
 @@ -1129,17 +1131,6 @@
  # endif
  #endif
@@ -63,197 +1519,3 @@
  # endif
  #endif
  
---- acct-6.3.5/sa.8.orig	Fri Mar 22 22:29:43 2002
-+++ acct-6.3.5/sa.8	Fri Mar 22 22:30:30 2002
-@@ -180,10 +180,10 @@
- The output fields are labeled as follows:
- .TP
- .I cpu
-- sum of system and user time in cpu seconds
-+ sum of system and user time in seconds
- .TP
- .I re
-- "real time" in cpu seconds
-+ "real time" in seconds
- .TP
- .I k
-  cpu-time averaged core usage, in 1k units
-@@ -198,14 +198,14 @@
-  cpu storage integral (kilo-core seconds)
- .TP
- .I u
-- user cpu time in cpu seconds
-+ user cpu time in seconds
- .TP
- .I s
-- system time in cpu seconds
-+ system time in seconds
- .LP
- Note that these column titles do not appear in the first row of the
- table, but after each numeric entry (as units of measurement) in every
--row.  For example, you might see `79.29re', meaning 79.29 cpu seconds
-+row.  For example, you might see `79.29re', meaning 79.29 seconds
- of "real time".
- .LP
- An asterisk will appear after the name of commands that forked but didn't call 
---- acct-6.3.5/lastcomm.c.orig	Wed Mar 20 23:22:21 2002
-+++ acct-6.3.5/lastcomm.c	Fri Mar 22 22:25:21 2002
-@@ -81,7 +81,7 @@
- 
- /* protos */
- 
--void main PARAMS((int, char *[]));
-+int main PARAMS((int, char *[]));
- void give_usage PARAMS((void));
- void parse_entries PARAMS((void));
- char *devname PARAMS((long));
-@@ -91,7 +91,7 @@
- 
- /* code */
- 
--void
-+int
- main (int argc, char *argv[])
- {
-   int c;
-@@ -296,6 +296,7 @@
- 	  double ut = (double) rec->ac_utime;
- 	  double st = (double) rec->ac_stime;
- #endif
-+	  time_t tmp = rec->ac_btime;
- 	  
- 	  /* Make sure there are no unprintable characters in the
-              command name string. */
-@@ -352,7 +353,7 @@
- 	  printf (" %-8.8s %-8.8s %6.2f secs %-16.16s\n",
- 		  this_uid, this_dev,
- 		  ((ut + st) / (double) ahz),
--		  ctime (&rec->ac_btime));
-+		  ctime (&tmp));
- 	}
-     }
- }
---- acct-6.3.5/dump-utmp.c.orig	Wed Mar 20 23:27:08 2002
-+++ acct-6.3.5/dump-utmp.c	Wed Mar 20 23:27:30 2002
-@@ -20,7 +20,7 @@
- 				   records or the file-reading
- 				   algorithms. */
- 
--void main PARAMS((int argc, char *argv[]));
-+int main PARAMS((int argc, char *argv[]));
- 
- static
- void
-@@ -33,7 +33,7 @@
- }
- 
- 
--void
-+int
- main (int argc, char *argv[])
- {
-   int c;
---- acct-6.3.5/dump-acct.c.orig	Wed Mar 20 23:27:42 2002
-+++ acct-6.3.5/dump-acct.c	Wed Mar 20 23:27:57 2002
-@@ -20,7 +20,7 @@
- 				   records or the file-reading
- 				   algorithms. */
- 
--void main PARAMS((int argc, char *argv[]));
-+int main PARAMS((int argc, char *argv[]));
- 
- static
- void
-@@ -33,7 +33,7 @@
- }
- 
- 
--void
-+int
- main (int argc, char *argv[])
- {
-   int c;
---- acct-6.3.5/accton.c.orig	Wed Mar 20 23:28:13 2002
-+++ acct-6.3.5/accton.c	Wed Mar 20 23:28:29 2002
-@@ -41,7 +41,7 @@
- 
- /* protos */
- 
--void main PARAMS((int argc, char *argv[]));
-+int main PARAMS((int argc, char *argv[]));
- void usage PARAMS((void));
- 
- 
-@@ -57,7 +57,7 @@
-   print_acct_file_location ();
- }
- 
--void
-+int
- main (int argc, char *argv[])
- {
-   int c;
---- acct-6.3.5/ac.c.orig	Tue Oct 14 03:28:36 1997
-+++ acct-6.3.5/ac.c	Wed Mar 20 23:20:41 2002
-@@ -152,7 +152,7 @@
- 
- /* prototypes */
- 
--void main PARAMS((int, char *[]));
-+int main PARAMS((int, char *[]));
- void give_usage PARAMS((void));
- void do_statistics PARAMS((char *));
- void log_in PARAMS((struct utmp *));
-@@ -168,7 +168,7 @@
- 
- /* code */
- 
--void
-+int
- main (int argc, char *argv[])
- {
-   int c;
---- acct-6.3.5/last.c.orig	Mon Mar 23 07:37:06 1998
-+++ acct-6.3.5/last.c	Wed Mar 20 23:21:34 2002
-@@ -172,7 +172,7 @@
- 
- /* code */
- 
--void
-+int
- main (int argc, char *argv[])
- {
-   int c;
---- acct-6.3.5/accounting.info.orig	Fri Mar 22 22:31:40 2002
-+++ acct-6.3.5/accounting.info	Fri Mar 22 22:32:14 2002
-@@ -702,10 +702,10 @@
-    The output fields are labeled as follows:
- 
- `cpu'
--     sum of system and user time in cpu seconds
-+     sum of system and user time in seconds
- 
- `re'
--     "real time" in cpu seconds
-+     "real time" in seconds
- 
- `k'
-      cpu-time averaged core usage, in 1k units
-@@ -720,14 +720,14 @@
-      cpu storage integral (kilo-core seconds)
- 
- `u'
--     user cpu time in cpu seconds
-+     user cpu time in seconds
- 
- `s'
--     system time in cpu seconds
-+     system time in seconds
- 
-    Note that these column titles do not appear in the first row of the
- table, but after each numeric entry (as units of measurement) in every
--row.  For example, you might see `79.29re', meaning 79.29 cpu seconds
-+row.  For example, you might see `79.29re', meaning 79.29 seconds
- of "real time."
- 
-    An asterisk will appear after the name of commands that forked but

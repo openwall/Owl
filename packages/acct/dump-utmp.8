@@ -1,9 +1,9 @@
-.TH DUMP-UTMP 8 "2000 July 19"
+.TH DUMP-UTMP 8 "2002 March 23"
 .SH NAME
-dump-utmp \-  print an utmp file in human-readable format
-.SH SYNOPSIS
 .hy 0
 .na
+dump-utmp \- print an utmp file in human-readable format
+.SH SYNOPSIS
 .TP
 .B dump-utmp
 [
@@ -11,31 +11,36 @@ dump-utmp \-  print an utmp file in human-readable format
 |
 .B \-\-reverse
 ]
+.br
 [
 .B \-R
 |
 .B \-\-raw
 ]
+.br
 [
 .B \-n
 |
 .B \-\-num
 .I recs
 ]
+.br
 [
 .B \-h
 |
 .B \-\-help
 ]
 .I files
+.ad b
+.hy 1
 .SH DESCRIPTION
 .LP
-.B dump-acct
-.I file
-prints a list of all logins.  This list is usually written in
+.B dump-utmp
+.I filename
+prints a list of all logins.  This list is usually obtained from
 .IR /var/log/wtmp .
 .LP
-All fields are separated by vertical line.  Fields are:
+All fields are separated by vertical lines.  The fields are:
 .IR "user name" ,
 .IR tty ,
 .IR type ,
@@ -45,35 +50,39 @@ All fields are separated by vertical line.  Fields are:
 .IR host ,
 .IR time .
 .SH OPTIONS
-\..PD 0
-.TP
-.TP
-.B \-h, \-\-help
-Prints the usage string and default locations of system files to
-standard output and exits.
-.TP
-.B \-n, \-\-num recs
-Number of lines to print.
 .TP
 .B \-r, \-\-reverse
 Start printing from last records.
 .TP
 .B \-R, \-\-raw
 Print raw records, not human-readable.
+.TP
+.B \-n, \-\-num recs
+Number of lines to print.
+.TP
+.B \-h, \-\-help
+Prints the usage string and default locations of system files to
+standard output and exits.
 .SH FILES
 .I wtmp
 .RS
-The system wide login record file. See
+The system wide login record file.  See
 .BR wtmp (5)
 for further details.
 .LP
 .SH AUTHOR
 The GNU accounting utilities were written by Noel Cragg
-<noel@gnu.ai.mit.edu>. The man page was written
+<noel@gnu.ai.mit.edu>.  The man page was written
 by Ognyan Kulev <ogi@fmi.uni-sofia.bg> for Debian GNU systems (but may be
 used by others).
 .SH "SEE ALSO"
+.BR ac (1),
+.BR last (1),
+.BR lastcomm (1),
 .BR login (1),
+.BR who (1),
+.BR acct (5),
 .BR wtmp (5),
+.BR accton (8),
 .BR init (8),
 .BR sa (8)

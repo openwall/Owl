@@ -1,9 +1,9 @@
-.TH DUMP-ACCT 8 "2000 July 19"
+.TH DUMP-ACCT 8 "2002 March 23"
 .SH NAME
-dump-acct \-  print an acct/pacct file in human-readable format
-.SH SYNOPSIS
 .hy 0
 .na
+dump-acct \- print an acct/pacct file in human-readable format
+.SH SYNOPSIS
 .TP
 .B dump-acct
 [
@@ -11,17 +11,20 @@ dump-acct \-  print an acct/pacct file in human-readable format
 |
 .B \-\-reverse
 ]
+.br
 [
 .B \-R
 |
 .B \-\-raw
 ]
+.br
 [
 .B \-n
 |
 .B \-\-num
 .I recs
 ]
+.br
 [
 .B \-h
 |
@@ -30,6 +33,8 @@ dump-acct \-  print an acct/pacct file in human-readable format
 [
 .I files
 ]
+.ad b
+.hy 1
 .SH DESCRIPTION
 .LP
 .B dump-acct
@@ -37,9 +42,9 @@ dump-acct \-  print an acct/pacct file in human-readable format
 prints a list of all executed processes.  This list is written by the kernel
 which must be compiled with BSD process accounting enabled.
 It must be started with
-.BR accton (5).
+.BR accton (8).
 .LP
-All fields are separated by vertical line.  Fields are:
+All fields are separated by vertical lines.  The fields are:
 .IR command ,
 .IR "user time" ,
 .IR "system time" ,
@@ -50,27 +55,25 @@ All fields are separated by vertical line.  Fields are:
 .IR io ,
 .IR time .
 User, system and effective times are ticks per second.  One tick is
-usually 1/50 of a second.
+usually 1/100 of a second.
 .SH OPTIONS
-\..PD 0
-.TP
-.TP
-.B \-h, \-\-help
-Prints the usage string and default locations of system files to
-standard output and exits.
-.TP
-.B \-n, \-\-num recs
-Number of lines to print.
 .TP
 .B \-r, \-\-reverse
 Start printing from last records.
 .TP
 .B \-R, \-\-raw
 Print raw records, not human-readable.
+.TP
+.B \-n, \-\-num recs
+Number of lines to print.
+.TP
+.B \-h, \-\-help
+Prints the usage string and default locations of system files to
+standard output and exits.
 .SH FILES
 .TP
-.I acct
-The system wide process accounting file. See
+.I pacct
+The system wide process accounting file.  See
 .BR acct (5)
 (or
 .BR pacct (5))
@@ -78,9 +81,12 @@ for further details.
 .LP
 .SH AUTHOR
 The GNU accounting utilities were written by Noel Cragg
-<noel@gnu.ai.mit.edu>. The man page was written
+<noel@gnu.ai.mit.edu>.  The man page was written
 by Ognyan Kulev <ogi@fmi.uni-sofia.bg> for Debian GNU systems (but may be
 used by others).
 .SH "SEE ALSO"
+.BR lastcomm (1),
+.BR acct (2),
 .BR acct (5),
-.BR ac (8)
+.BR accton (8),
+.BR sa (8)

@@ -1,17 +1,17 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.12 2002/03/22 21:02:51 mci Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.13 2002/03/23 21:22:27 solar Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
 Version: 6.3.5
-Release: owl7
+Release: owl8
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.red-bean.com/pub/noel/%{name}-%{version}.tar.gz
 Source1: dump-acct.8
 Source2: dump-utmp.8
-Source3: acct.logrotate
-Source4: acct.init
-Patch: acct-6.3.5-owl-fixes.diff
+Source3: acct.init
+Source4: acct.logrotate
+Patch0: acct-6.3.5-owl-fixes.diff
 PreReq: /sbin/install-info
 Provides: psacct
 Obsoletes: psacct
@@ -27,24 +27,29 @@ summarizes information about previously executed commands.
 
 %prep
 %setup -q
-%patch -p1
+rm accounting.info
+%patch0 -p1
 
 %build
 autoconf
 %configure
-sed -e "s/\/\* #undef HAVE_LINUX_ACCT_H \*\//#define HAVE_LINUX_ACCT_H/" config.h > config.h.new
+sed -e 's,/\* #undef HAVE_LINUX_ACCT_H \*/,#define HAVE_LINUX_ACCT_H,' \
+	config.h > config.h.new
 mv -f config.h.new config.h
 touch texinfo.tex
 make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT{/etc/{rc.d/init.d,logrotate.d},/sbin,%{_bindir},%{_mandir},%{_sbindir},%{_var}/account}
-%{makeinstall}
-install -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_mandir}/man8/
-install -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_mandir}/man8/
-install -m 644 %{SOURCE3} $RPM_BUILD_ROOT/etc/logrotate.d/acct
-install -m 755 %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/acct
+mkdir -p $RPM_BUILD_ROOT/etc/{rc.d/init.d,logrotate.d}
+mkdir -p $RPM_BUILD_ROOT{/sbin,%{_bindir},%{_sbindir},%{_mandir}}
+mkdir -p $RPM_BUILD_ROOT%{_var}/account
+%makeinstall
+install -m 644 $RPM_SOURCE_DIR/dump-acct.8 $RPM_BUILD_ROOT%{_mandir}/man8/
+install -m 644 $RPM_SOURCE_DIR/dump-utmp.8 $RPM_BUILD_ROOT%{_mandir}/man8/
+install -m 755 $RPM_SOURCE_DIR/acct.init $RPM_BUILD_ROOT/etc/rc.d/init.d/acct
+install -m 644 $RPM_SOURCE_DIR/acct.logrotate \
+	$RPM_BUILD_ROOT/etc/logrotate.d/acct
 
 # move accton to /sbin -- leave historical symlink
 mv $RPM_BUILD_ROOT%{_sbindir}/accton $RPM_BUILD_ROOT/sbin/accton
@@ -52,7 +57,8 @@ ln -s ../../sbin/accton $RPM_BUILD_ROOT%{_sbindir}/accton
 
 # Because of the last command conflicting with the one from SysVinit
 mv $RPM_BUILD_ROOT/usr/bin/last $RPM_BUILD_ROOT/usr/bin/last-acct
-mv $RPM_BUILD_ROOT%{_mandir}/man1/last.1 $RPM_BUILD_ROOT%{_mandir}/man1/last-acct.1
+mv $RPM_BUILD_ROOT%{_mandir}/man1/last.1 \
+	$RPM_BUILD_ROOT%{_mandir}/man1/last-acct.1
 
 touch $RPM_BUILD_ROOT%{_var}/account/pacct
 touch $RPM_BUILD_ROOT%{_var}/account/usracct
@@ -62,7 +68,8 @@ touch $RPM_BUILD_ROOT%{_var}/account/savacct
 rm -rf $RPM_BUILD_ROOT
 
 %post
-# we need this hack to get rid of an old, incorrect accounting info entry.
+# We need this hack to get rid of an old, incorrect accounting info entry
+# when installing over older versions of Red Hat Linux.
 cp -p /etc/info-dir /etc/info-dir.new &&
 grep -v '* accounting: (psacct)' < /etc/info-dir > /etc/info-dir.new &&
 mv -f /etc/info-dir.new /etc/info-dir
@@ -95,6 +102,10 @@ fi
 %{_infodir}/*
 
 %changelog
+* Sun Mar 24 2002 Solar Designer <solar@owl.openwall.com>
+- Heavy documentation corrections and cleanups (both man pages and texinfo).
+- Minor spec file cleanups.
+
 * Fri Mar 22 2002 Michail Litvak <mci@owl.openwall.com>
 - fix sa to display real time in seconds not cpu seconds,
   also fix man and info pages
