@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.7 2002/02/06 22:51:02 mci Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.8 2002/02/07 01:49:34 solar Exp $
 
 Summary: The Perl programming language.
 Name: perl
@@ -27,8 +27,8 @@ BuildRoot: /override/%{name}-%{version}
 # ----- Perl module dependencies.
 #
 # Provide perl-specific find-{provides,requires} until rpm-3.0.4 catches up.
-%define	__find_provides	$RPM_SOURCE_DIR/find-provides
-%define	__find_requires	$RPM_SOURCE_DIR/find-requires
+%define	__find_provides	%{SOURCE2}
+%define	__find_requires	%{SOURCE3}
 
 # These modules appear to be missing or break assumptions made by the
 # dependency analysis tools.  Typical problems include refering to
@@ -46,13 +46,13 @@ BuildRoot: /override/%{name}-%{version}
 # Provides: perl(VMS::Filespec)
 
 %description
-perl is a high-level programming language with roots in C, sed, awk
-and shell scripting.  perl is good at handling processes and files,
-and is especially good at handling text.  perl's hallmarks are
+Perl is a high-level programming language with roots in C, sed, awk
+and shell scripting.  Perl is good at handling processes and files,
+and is especially good at handling text.  Perl's hallmarks are
 practicality and efficiency.  While it is used to do a lot of
-different things, perl's most common applications are system
+different things, Perl's most common applications are system
 administration utilities and web programming.  A large proportion of
-the CGI scripts on the web are written in perl.  You need the perl
+the CGI scripts on the web are written in Perl.  You need the Perl
 package installed on your system so that your system can handle Perl
 scripts.
 
@@ -69,7 +69,7 @@ tar xzf %{SOURCE1} -C modules
 %patch6 -p1
 %patch7 -p1
 
-find . -name \*.orig -exec rm -fv {} \;
+find . -name '*.orig' -print0 | xargs -r0 rm -v --
 
 %build
 rm -rf $RPM_BUILD_ROOT
@@ -90,27 +90,26 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Di_shadow \
 	-Dman3ext=3pm \
 	-Uuselargefiles
-make -f Makefile
+make
 
 # Build the modules we have
-MainDir=$(pwd)
+MainDir=`pwd`
 cd modules
-for module in *; do 
-    cd $module
-    $MainDir/perl -I$MainDir/lib Makefile.PL
-    make
-    cd ..
+for module in *; do
+	cd $module
+	$MainDir/perl -I$MainDir/lib Makefile.PL
+	make
+	cd ..
 done
-cd $MainDir
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-make install -f Makefile
+make install
 mkdir -p ${RPM_BUILD_ROOT}%{_bindir}
-install -m 755 utils/pl2pm ${RPM_BUILD_ROOT}%{_bindir}/pl2pm
+install -m 755 utils/pl2pm ${RPM_BUILD_ROOT}%{_bindir}/
 
-# Generate *.ph files with a trick. Is this sick or what ?
+# Generate *.ph files with a trick. Is this sick or what?
 make all -f - <<EOF
 PKGS	= glibc-devel gdbm-devel gpm-devel libgr-devel libjpeg-devel \
 	  libpng-devel libtiff-devel ncurses-devel popt \
@@ -141,18 +140,18 @@ fix-config: \$(PHDIR)/Config.pm
 EOF
 
 # Now pay attention to the extra modules
-MainDir=$(pwd)
+MainDir=`pwd`
 pushd modules
-for module in *; do 
-    eval $($MainDir/perl '-V:installarchlib')
-    mkdir -p $RPM_BUILD_ROOT/$installarchlib
-    make -C $module install
+for module in *; do
+	eval $($MainDir/perl '-V:installarchlib')
+	mkdir -p $RPM_BUILD_ROOT/$installarchlib
+	make -C $module install
 done
 popd
 
 # fix the rest of the stuff
 find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
-xargs ./perl -i -p -e "s|$RPM_BUILD_ROOT||g;" $packlist
+	xargs ./perl -i -p -e "s|$RPM_BUILD_ROOT||g;" $packlist
 
 chmod 400 $RPM_BUILD_ROOT%{_prefix}/bin/suidperl
 
