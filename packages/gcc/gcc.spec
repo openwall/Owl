@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.26 2002/05/28 17:18:16 solar Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.27 2002/06/21 14:39:04 solar Exp $
 
 %define GCC_PREFIX /usr
 %define CPP_PREFIX /lib
@@ -12,7 +12,7 @@
 Summary: C compiler from the GNU Compiler Collection.
 Name: gcc
 Version: %{GCC_VERSION}
-Release: owl3
+Release: owl4
 Epoch: 1
 License: GPL
 Group: Development/Languages
@@ -257,6 +257,7 @@ FULLPATH=$(dirname $RPM_BUILD_ROOT%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/
 
 # fix some things
 ln -sf gcc $RPM_BUILD_ROOT%{GCC_PREFIX}/bin/cc
+ln -sf gcc.1 $RPM_BUILD_ROOT%{GCC_PREFIX}/man/man1/cc.1
 rm -f $RPM_BUILD_ROOT%{GCC_PREFIX}/info/dir
 %if %BUILD_F77
 ln -sf g77 $RPM_BUILD_ROOT%{GCC_PREFIX}/bin/f77
@@ -281,6 +282,7 @@ cat >gcc-filelist <<EOF
 %{GCC_PREFIX}/bin/gcov
 %{GCC_PREFIX}/bin/%{_target_platform}-gcc
 %{GCC_PREFIX}/man/man1/gcc.1*
+%{GCC_PREFIX}/man/man1/cc.1*
 %{GCC_PREFIX}/info/gcc*
 %dir %{GCC_PREFIX}/lib/gcc-lib
 %dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}
@@ -477,6 +479,9 @@ fi
 %endif
 
 %changelog
+* Fri Jun 21 2002 Solar Designer <solar@owl.openwall.com>
+- Provide a cc(1) man page.
+
 * Tue May 28 2002 Solar Designer <solar@owl.openwall.com>
 - Don't override the linker's default library path for elf32_sparc, place
 /lib64 before /usr/lib64 in the path for elf64_sparc; this is needed to
