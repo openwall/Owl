@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.8 2000/12/05 03:06:12 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.9 2000/12/07 18:31:48 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.3
-Release: 3owl
+Version: 0.4
+Release: 1owl
 Copyright: GPL
 Group: System Environment/Base
 Source0: initscripts-5.00.tar.gz
@@ -135,6 +135,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc redhat
 
 %changelog
+* Thu Dec 07 2000 Solar Designer <solar@owl.openwall.com>
+- Added --pidfile and --expect-user to daemon(), killproc(), and status().
+
 * Mon Dec 04 2000 Solar Designer <solar@owl.openwall.com>
 - Obsoletes: initscripts
 - Don't require console-tools for now.

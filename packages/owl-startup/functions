@@ -1,10 +1,10 @@
-# $Id: Owl/packages/owl-startup/functions,v 1.2 2000/12/01 18:19:55 solar Exp $
+# $Id: Owl/packages/owl-startup/functions,v 1.3 2000/12/07 18:31:48 solar Exp $
 #
 # Functions defined in this file are used by many /etc/init.d scripts;
 # they offer some limited Red Hat compatibility.
 
 # Export our version number to the scripts.
-OWL_STARTUP_VERSION=2
+OWL_STARTUP_VERSION=3
 
 # Do they recognize us?  Try to be more Red Hat compatible if not.
 OWL_STARTUP_ENABLE=0
@@ -32,17 +32,34 @@ function absolute()
 
 function daemon()
 {
-	local WHICH BASENAME USER NICE STATUS
+	local WHICH BASENAME PIDFILE EXPECT SU NICE FLAGS STATUS
 
 # Process options.
-	USER=
+	PIDFILE=
+	EXPECT=
+	SU=
 	NICE=0
 	while [ "$1" != "${1##-}" -o "$1" != "${1##+}" ]; do
 		case "$1" in
-		--user)
+		--pidfile)
 			shift
-			USER="$1"
+			PIDFILE="$1"
 			shift
+			;;
+		--expect-user)
+			shift
+			EXPECT="$1"
+			shift
+			;;
+		--user|--set-user)
+			shift
+			SU="$1"
+			test -z "$EXPECT" && EXPECT="$SU"
+			shift
+			;;
+		--)
+			shift
+			break
 			;;
 		-*|+*)
 			NICE="$1"
@@ -53,9 +70,9 @@ function daemon()
 
 # We need the absolute pathname.
 	WHICH="`absolute "$1"`" || return 1
+	BASENAME="`basename "$1"`" || return 1
 
 # Announce the action.
-	BASENAME="`basename "$1"`" || return 1
 	if [ "$OWL_STARTUP_ENABLE" -ge 1 ]; then
 		echo "Starting $BASENAME"
 	fi
@@ -64,15 +81,16 @@ function daemon()
 	ulimit -c 0
 
 # Actually start the daemon.
+	FLAGS="--start --exec $WHICH"
+	test -n "$PIDFILE" && FLAGS="$FLAGS --pidfile $PIDFILE"
+	test -n "$EXPECT" && FLAGS="$FLAGS --user $EXPECT"
 	shift
-	if [ -z "$USER" ]; then
-		start-stop-daemon --start \
-			--exec "$WHICH" --startas /bin/nice -- \
+	if [ -z "$SU" ]; then
+		start-stop-daemon $FLAGS --startas /bin/nice -- \
 			-n "$NICE" "$WHICH" $*
 	else
-		start-stop-daemon --start \
-			--exec "$WHICH" --user "$USER" --startas /bin/nice -- \
-			-n "$NICE" su "$USER" -c "\"$WHICH\" $*"
+		start-stop-daemon $FLAGS --startas /bin/nice -- \
+			-n "$NICE" su "$SU" -c "\"$WHICH\" $*"
 	fi
 	STATUS=$?
 
@@ -85,37 +103,64 @@ function daemon()
 
 function killproc()
 {
-	local WHICH BASENAME SIGNAL DEFAULT PIDFILE FLAGS STATUS
+	local NAME WHICH BASENAME PIDFILE EXPECT SIGNAL DEFAULT FLAGS STATUS
 
-	test $# -eq 1 -o $# -eq 2 || return 1
-
-# We need the absolute pathname for /proc/*/exe checks.
-	WHICH="`absolute "$1"`" || return 1
-
+# Process options.
+	NAME=
+	PIDFILE=
+	EXPECT=
 # start-stop-daemon wants a signal number.
 	SIGNAL="`kill -l TERM`"
 	DEFAULT=true
-	case "$2" in
-	'')
-		;;
-	-[0-9]*)
-		SIGNAL="${2##-}"
-		DEFAULT=false
-		;;
-	-*)
-		SIGNAL="${2##-}"
-		SIGNAL="`kill -l "$SIGNAL"`"
-		DEFAULT=false
-		;;
-	*)
-		return 1
-		;;
-	esac
+	while [ $# -ge 1 ]; do
+		case "$1" in
+		--pidfile)
+			shift
+			PIDFILE="$1"
+			shift
+			;;
+		--expect-user)
+			shift
+			EXPECT="$1"
+			shift
+			;;
+		-[0-9]*)
+			SIGNAL="${1##-}"
+			DEFAULT=false
+			shift
+			;;
+		-*)
+			SIGNAL="${1##-}"
+			SIGNAL="`kill -l "$SIGNAL"`"
+			DEFAULT=false
+			shift
+			;;
+		--)
+			shift
+			test -z "$NAME" || return 1
+			NAME="$1"
+			break
+			;;
+# Allow the process name to be in any argument for Red Hat compatibility.
+		*)
+			test -z "$NAME" || return 1
+			NAME="$1"
+			shift
+			;;
+		esac
+	done
 
-# Try to guess the PID file.
-	BASENAME="`basename "$1"`" || return 1
-	PIDFILE="/var/run/$BASENAME.pid"
-	test -r "$PIDFILE" || PIDFILE=
+# We need the absolute pathname for /proc/*/exe checks.
+	WHICH="`absolute "$NAME"`" || return 1
+	BASENAME="`basename "$NAME"`" || return 1
+
+# Try to guess the PID file if one isn't specified manually.
+	if [ -z "$PIDFILE" ]; then
+		PIDFILE="/var/run/$BASENAME.pid"
+		test -f "$PIDFILE" || PIDFILE=
+	elif [ "$PIDFILE" = "none" ]; then
+		PIDFILE=
+	fi
 
 # Announce the action.
 	if [ "$OWL_STARTUP_ENABLE" -ge 1 ]; then
@@ -127,11 +172,9 @@ function killproc()
 	fi
 
 # Actually tell the daemon to stop.
-	if [ -n "$PIDFILE" ]; then
-		FLAGS="--stop --exec $WHICH --pidfile $PIDFILE"
-	else
-		FLAGS="--stop --exec $WHICH"
-	fi
+	FLAGS="--stop --exec $WHICH"
+	test -n "$PIDFILE" && FLAGS="$FLAGS --pidfile $PIDFILE"
+	test -n "$EXPECT" && FLAGS="$FLAGS --user $EXPECT"
 	start-stop-daemon $FLAGS --signal "$SIGNAL"
 	STATUS=$?
 
@@ -156,26 +199,50 @@ function killproc()
 
 function status()
 {
-	local WHICH BASENAME PIDFILE
+	local WHICH BASENAME PIDFILE EXPECT FLAGS
 
-	test $# -eq 1 || return 1
+# Process options.
+	PIDFILE=
+	EXPECT=
+	while [ "$1" != "${1##-}" ]; do
+		case "$1" in
+		--pidfile)
+			shift
+			PIDFILE="$1"
+			shift
+			;;
+		--expect-user)
+			shift
+			EXPECT="$1"
+			shift
+			;;
+		--)
+			shift
+			break
+			;;
+		*)
+			return 1
+			;;
+		esac
+	done
 
 # We need the absolute pathname for /proc/*/exe checks.
 	WHICH="`absolute "$1"`" || return 1
-
-# Try to guess the PID file.
 	BASENAME="`basename "$1"`" || return 1
-	PIDFILE="/var/run/$BASENAME.pid"
-	test -r "$PIDFILE" || PIDFILE=
+
+# Try to guess the PID file if one isn't specified manually.
+	if [ -z "$PIDFILE" ]; then
+		PIDFILE="/var/run/$BASENAME.pid"
+		test -f "$PIDFILE" || PIDFILE=
+	elif [ "$PIDFILE" = "none" ]; then
+		PIDFILE=
+	fi
 
 # Actually determine the status.
-	if [ -n "$PIDFILE" ]; then
-		start-stop-daemon --stop --test \
-			--exec "$WHICH" --pidfile "$PIDFILE" > /dev/null
-	else
-		start-stop-daemon --stop --test \
-			--exec "$WHICH" > /dev/null
-	fi
+	FLAGS="--stop --test --exec $WHICH"
+	test -n "$PIDFILE" && FLAGS="$FLAGS --pidfile $PIDFILE"
+	test -n "$EXPECT" && FLAGS="$FLAGS --user $EXPECT"
+	start-stop-daemon $FLAGS > /dev/null
 
 # Report it.
 	if [ $? -eq 0 ]; then
@@ -183,7 +250,7 @@ function status()
 		return 0
 	fi
 
-	if [ -n "$PIDFILE" ]; then
+	if [ -n "$PIDFILE" -a -f "$PIDFILE" ]; then
 		echo "$BASENAME is dead, but stale PID file exists"
 		return 1
 	fi
