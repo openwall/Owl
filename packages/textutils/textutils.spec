@@ -1,13 +1,14 @@
-# $Id: Owl/packages/textutils/Attic/textutils.spec,v 1.4 2001/01/06 14:41:11 solar Exp $
+# $Id: Owl/packages/textutils/Attic/textutils.spec,v 1.5 2001/01/26 05:46:07 solar Exp $
 
 Summary: A set of GNU text file modifying utilities.
 Name: 		textutils
 Version: 	2.0.11
-Release: 	1owl
+Release: 	2owl
 Copyright: 	GPL
 Group: 		Applications/Text
 Source: 	ftp://alpha.gnu.org/gnu/fetish/textutils-%{version}.tar.gz
 Patch0:		textutils-2.0.11-owl-tmp.diff
+Patch1:		textutils-2.0.11-owl-sort-size.diff
 Prereq: 	/sbin/install-info
 BuildPrereq: 	libtool
 BuildRoot:      /var/rpm-buildroot/%{name}-root
@@ -19,6 +20,7 @@ programs for splitting, joining, comparing and modifying files.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 unset LINGUAS || :
@@ -64,6 +66,10 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/locale/*/*/*
 
 %changelog
+* Fri Jan 26 2001 Solar Designer <solar@owl.openwall.com>
+- Patched the flawed memory allocation strategy in sort(1) introduced
+with 2.0.11.
+
 * Sat Jan 06 2001 Solar Designer <solar@owl.openwall.com>
 - 2.0.11
 - DoS attack fixes for tac and sort (O_EXCL -> mkstemp).
