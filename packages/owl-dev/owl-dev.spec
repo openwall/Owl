@@ -1,15 +1,16 @@
-# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.17 2003/10/30 21:15:47 solar Exp $
+# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.18 2004/03/12 23:12:17 solar Exp $
 
 Summary: Initial set of device files and MAKEDEV, a script to manage them.
 Name: owl-dev
 Version: 0.10
-Release: owl1
+Release: owl2
 License: public domain
 Group: System Environment/Base
 Source: MAKEDEV-2.5.2.tar.gz
 Patch: MAKEDEV-2.5.2-owl.diff
 PreReq: grep
 PreReq: owl-etc >= 0.18-owl1, fileutils, sh-utils
+Provides: dev
 Obsoletes: MAKEDEV, dev
 BuildArchitectures: noarch
 BuildRoot: /override/%name-%version
@@ -66,6 +67,9 @@ echo "Creating device files"
 %files -f filelist
 
 %changelog
+* Wed Mar 10 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 0.10-owl2
+- Added "dev" to Provides.
+
 * Sat Oct 25 2003 Solar Designer <solar@owl.openwall.com> 0.10-owl1
 - /dev/rtc (but restricted to just root, unlike on Red Hat Linux).
 - Make the /dev/core and /dev/fd symlinks relative.
