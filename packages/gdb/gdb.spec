@@ -1,10 +1,10 @@
-# $Id: Owl/packages/gdb/gdb.spec,v 1.4 2001/07/11 09:02:46 mci Exp $
+# $Id: Owl/packages/gdb/gdb.spec,v 1.5 2001/07/12 01:00:27 solar Exp $
 
 Summary: A GNU source-level debugger for C, C++ and Fortran.
 Name: gdb
 Version: 5.0
 Release: 8owl
-Copyright: GPL
+License: GPL
 Group: Development/Debuggers
 Source0: ftp://sourceware.cygnus.com/pub/gdb/releases/gdb-%{version}.tar.bz2
 Patch0: gdb-5.0-pld-procfs.diff
@@ -20,14 +20,10 @@ BuildRequires: readline-devel >= 4.1
 Prereq: /sbin/install-info
 
 %description
-Gdb is a full featured, command driven debugger. Gdb allows you to
+GDB is a full featured, command driven debugger.  GDB allows you to
 trace the execution of programs and examine their internal state at
-any time.  Gdb works for C and C++ compiled with the GNU C compiler
-gcc.
-
-If you are going to develop C and/or C++ programs and use the GNU gcc
-compiler, you may want to install gdb to help you debug your
-programs.
+any time.  The debugger is most effective when used together with a
+supported compiler, such as those from the GNU Compiler Collection.
 
 %prep
 %setup -q
@@ -73,8 +69,7 @@ make install install-info \
 
 rm -f $RPM_BUILD_ROOT%{_infodir}/dir $RPM_BUILD_ROOT%{_infodir}/dir.info*
 
-#These are part of binutils
-
+# These are part of binutils
 rm -f $RPM_BUILD_ROOT%{_infodir}/bfd*
 rm -f $RPM_BUILD_ROOT%{_infodir}/standard*
 rm -rf $RPM_BUILD_ROOT/usr/include/
@@ -107,9 +102,10 @@ fi
 %{_infodir}/stabs.info*
 %{_infodir}/mmalloc.info*
 
-# don't include the files in include, they are part of binutils
-
 %changelog
+* Thu Jul 12 2001 Solar Designer <solar@owl.openwall.com>
+- Corrected the package description.
+
 * Wed Jul 11 2001 Michail Litvak <mci@owl.openwall.com>
-- spec imported from RH with additions from PLD and SuSe
+- spec imported from RH with additions from PLD and SuSE
 - patches from PLD and RH
