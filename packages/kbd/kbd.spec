@@ -1,4 +1,4 @@
-# $Id: Owl/packages/kbd/kbd.spec,v 1.2 2003/04/17 10:41:17 solar Exp $
+# $Id: Owl/packages/kbd/kbd.spec,v 1.3 2003/04/18 23:35:55 mci Exp $
 
 Summary: Tools for configuring the console.
 Name: kbd
@@ -43,7 +43,7 @@ and font files.
 	--mandir=%{_mandir} \
 	--disable-nls
 
-make CFLAGS="$RPM_OPT_FLAGS" LDFLAGS=-s
+make CFLAGS="$RPM_OPT_FLAGS" LDFLAGS=-s DATA_DIR=/lib/kbd
 
 %install
 rm -rf $RPM_BUILD_ROOT
