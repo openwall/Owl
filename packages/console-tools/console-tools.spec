@@ -1,4 +1,4 @@
-# $Id: Owl/packages/console-tools/Attic/console-tools.spec,v 1.5 2000/12/15 17:30:01 solar Exp $
+# $Id: Owl/packages/console-tools/Attic/console-tools.spec,v 1.6 2000/12/16 23:14:12 solar Exp $
 
 %define CTVER	0.3.3
 %define	CDVER	1999.08.29
@@ -157,7 +157,7 @@ for F in $XXXFONTS; do
 done
 %endif
 
-file $RPM_BUILD_ROOT/usr/bin/* | grep ELF | cut -f 1 -d ':' | xargs strip
+strip $RPM_BUILD_ROOT/usr/bin/* || :
 
 # don't give loadkeys SUID perms
 chmod 755 $RPM_BUILD_ROOT/usr/bin/loadkeys
