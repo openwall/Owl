@@ -1,9 +1,9 @@
-# $Id: Owl/packages/procmail/procmail.spec,v 1.4 2002/08/12 22:41:54 solar Exp $
+# $Id: Owl/packages/procmail/procmail.spec,v 1.5 2002/10/04 07:56:19 solar Exp $
 
 Summary: The procmail mail processing program.
 Name: procmail
 Version: 3.15.2
-Release: owl1
+Release: owl2
 License: GPL or Artistic License
 Group: System Environment/Daemons
 Source: ftp://ftp.procmail.org/pub/procmail/procmail-%{version}.tar.gz
@@ -50,6 +50,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man[15]/*
 
 %changelog
+* Fri Oct 04 2002 Solar Designer <solar@owl.openwall.com>
+- Corrected the mansed script "fix", thanks to Dmitry V. Levin of ALT Linux
+for pointing out that it was broken.
+
 * Tue Aug 13 2002 Solar Designer <solar@owl.openwall.com>
 - Updated to 3.15.2.
 - Added temporary file handling fixes to scripts used during the builds.

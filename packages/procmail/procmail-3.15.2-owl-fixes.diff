@@ -1,6 +1,6 @@
 diff -ur procmail-3.15.2.orig/man/mansed procmail-3.15.2/man/mansed
 --- procmail-3.15.2.orig/man/mansed	Tue May  9 10:36:35 2000
-+++ procmail-3.15.2/man/mansed	Tue Aug 13 01:51:02 2002
++++ procmail-3.15.2/man/mansed	Fri Oct  4 11:45:14 2002
 @@ -19,13 +19,19 @@
  RM="$4"
  DEVNULL=$5
@@ -24,7 +24,7 @@ diff -ur procmail-3.15.2.orig/man/mansed procmail-3.15.2/man/mansed
  
  (cat <<\HERE
  .\"if n .pl +(135i-\n(.pu)
-@@ -120,32 +126,26 @@
+@@ -120,11 +126,10 @@
  .rm RE
  .rn Re RE
  HERE
@@ -37,9 +37,7 @@ diff -ur procmail-3.15.2.orig/man/mansed procmail-3.15.2/man/mansed
    exit 1
  fi
  
-+RESF="$TMPF0"
- for a in man.sed.[0-9]*
- do
+@@ -133,19 +138,16 @@
    case $a in
       man.sed.0000) ;;
       man.sed.????)
@@ -48,7 +46,9 @@ diff -ur procmail-3.15.2.orig/man/mansed procmail-3.15.2/man/mansed
 +	if sed -f $a < "$TMPF0" > "$TMPF1"
  	then
 -	:
-+	   RESF="$TMPF1"
++	   TMPF="$TMPF0"
++	   TMPF0="$TMPF1"
++	   TMPF1="$TMPF"
  	else
 -	   $RM $TMPF1 $TMPF0
  	   exit 1
@@ -61,7 +61,8 @@ diff -ur procmail-3.15.2.orig/man/mansed procmail-3.15.2/man/mansed
 -
 -$RM $TMPF0 $TMPF1
 -exit $result
-+cat "$RESF" > "$DEST"
++cat "$TMPF0" > "$DEST"
++touch -r "$SRC" "$DEST"
 diff -ur procmail-3.15.2.orig/src/autoconf procmail-3.15.2/src/autoconf
 --- procmail-3.15.2.orig/src/autoconf	Mon Jul 16 12:08:13 2001
 +++ procmail-3.15.2/src/autoconf	Tue Aug 13 01:53:37 2002
