@@ -1,31 +1,24 @@
---- modutils-2.4.16/util/alias.h.orig	Sun Apr 28 11:00:14 2002
-+++ modutils-2.4.16/util/alias.h	Mon Jun 10 00:16:43 2002
+diff -ruN modutils-2.4.27.orig/util/alias.h modutils-2.4.27/util/alias.h
+--- modutils-2.4.27.orig/util/alias.h	Thu Oct 14 16:04:11 2004
++++ modutils-2.4.27/util/alias.h	Thu Oct 14 16:07:18 2004
 @@ -116,6 +116,7 @@
  	"char-major-10-144 nvram",	/* from Tigran Aivazian <tigran@sco.COM> */
  	"char-major-10-157 applicom",	/* from David Woodhouse <dwmw2@infradead.org> */
  	"char-major-10-175 agpgart",    /* /dev/agpgart GART AGP mapping access */
 +	"char-major-10-181 toshiba",	/* /dev/toshiba - for Toshiba notebooks */
  	"char-major-10-184 microcode",	/* Tigran Aivazian <tigran@veritas.com> */
- 
- 	"char-major-14 soundcore",
-@@ -141,6 +142,7 @@
- 	"char-major-108 ppp_generic",
- 	"char-major-109 lvm-mod",
- 	"char-major-161 ircomm-tty",
-+	"char-major-195 NVdriver",
- 	"char-major-200 vxspec",
- 
- 	"dos msdos",
-@@ -162,7 +164,7 @@
+ 	"char-major-10-200 tun",	/* Universal TUN/TAP device driver */
+ 	"char-major-10-250 hci_vhci",
+@@ -173,7 +174,7 @@
  				/* PF_BRIDGE	7  Multiprotocol bridge */
  				/* PF_AAL5	8  Reserved for Werner's ATM */
  				/* PF_X25	9  Reserved for X.25 project */
 -	"net-pf-10 off",	/* PF_INET6	10 IP version 6 */
 +	"net-pf-10 ipv6",	/* PF_INET6	10 IP version 6 */
+ 	"net-pf-15 af_key",	/* PF_KEY       15 Key Management API */
  
  	/* next two from <dairiki@matthews.dairiki.org>  Thanks! */
- 	"net-pf-17 af_packet",
-@@ -197,12 +199,36 @@
+@@ -229,12 +230,36 @@
  	"ppp-compress-24 ppp_deflate",
  	"ppp-compress-26 ppp_deflate",
  
@@ -45,7 +38,7 @@
  #ifndef __sparc__
  	"parport_lowlevel parport_pc",
  #else
-         "parport_lowlevel parport_ax",
+ 	"parport_lowlevel parport_ax",
  #endif
  
 +	/* To be able to attach some dongles */
@@ -61,21 +54,21 @@
 +
  	"usbdevfs usbcore",
  
- 	NULL			/* marks the end of the list! */
-@@ -227,6 +253,8 @@
-  */
- char *above[] =
- {
+ 	"xfrm-type-2-50 esp4",
+@@ -248,6 +273,8 @@
+ 	"digest_null crypto_null",
+ 	"compress_null crypto_null",
+ 	"sha384 sha512",
 +	"hid keybdev mousedev",
 +	"wacom evdev",
+ 
  	NULL			/* marks the end of the list! */
  };
- 
-@@ -247,6 +275,7 @@
+@@ -295,6 +322,7 @@
   */
  char *prune[] =
  {
 +	".rhkmvtag",
  	"modules.dep",
+ 	"modules.description",
  	"modules.generic_string",
- 	"modules.pcimap",

@@ -1,0 +1,30 @@
+diff -urp modutils-2.4.27.orig/insmod/modinfo.c modutils-2.4.27/insmod/modinfo.c
+--- modutils-2.4.27.orig/insmod/modinfo.c	Tue Jul 30 08:00:17 2002
++++ modutils-2.4.27/insmod/modinfo.c	Fri Nov  5 01:51:50 2004
+@@ -267,6 +267,7 @@ static void show_parameter(struct obj_fi
+ 
+ #define MAX_TAG_LEN 128
+ 
++#if !defined(COMMON_3264) || !defined(ONLY_32)
+ /* Check the "format" string. */
+ static int format_check_string(const char *format)
+ {
+@@ -321,6 +322,7 @@ static int format_check_string(const cha
+ 	}			/* while */
+ 	return 0;
+ }
++#endif
+ 
+ /* Format one line of the "format" string based on the module contents. */
+ static void format_query_line(struct obj_file *f, const char *format,
+diff -urp modutils-2.4.27.orig/obj/obj_x86_64.c modutils-2.4.27/obj/obj_x86_64.c
+--- modutils-2.4.27.orig/obj/obj_x86_64.c	Mon Nov 25 03:28:17 2002
++++ modutils-2.4.27/obj/obj_x86_64.c	Fri Nov  5 01:41:50 2004
+@@ -97,7 +97,6 @@ arch_apply_relocation (struct obj_file *
+ 
+   Elf64_Addr *loc = (Elf64_Addr *)(targsec->contents + rel->r_offset);
+   Elf64_Addr dot = targsec->header.sh_addr + rel->r_offset;
+-  Elf64_Addr got = ifile->got ? ifile->got->header.sh_addr : 0;
+ 
+   enum obj_reloc ret = obj_reloc_ok;
+ 

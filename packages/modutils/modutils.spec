@@ -1,17 +1,17 @@
-# $Id: Owl/packages/modutils/modutils.spec,v 1.17 2003/10/30 21:15:46 solar Exp $
+# $Id: Owl/packages/modutils/modutils.spec,v 1.18 2004/11/05 01:57:28 solar Exp $
 
 Summary: Kernel module utilities.
 Name: modutils
-Version: 2.4.16
+Version: 2.4.27
 Release: owl1
 License: GPL
 Group: System Environment/Kernel
 Source: ftp://ftp.kernel.org/pub/linux/utils/kernel/modutils/v2.4/modutils-%version.tar.bz2
 Patch0: modutils-2.4.16-alt-GPL.diff
 Patch1: modutils-2.4.16-alt-modprobe-bL.diff
-Patch2: modutils-2.4.16-alt-owl-aliases.diff
+Patch2: modutils-2.4.27-alt-owl-aliases.diff
 Patch3: modutils-2.4.16-rh-owl-syms.diff
-Patch4: modutils-2.4.16-owl-warnings.diff
+Patch4: modutils-2.4.27-owl-warnings.diff
 PreReq: /sbin/chkconfig
 Obsoletes: modules
 BuildRoot: /override/%name-%version
@@ -63,6 +63,14 @@ fi
 %_mandir/*/*
 
 %changelog
+* Fri Nov 05 2004 Solar Designer <solar@owl.openwall.com> 2.4.27-owl1
+- Fixed two new compiler warnings.
+
+* Thu Oct 14 2004 Maxim Timofeyev <tma@tma.spb.ru> 2.4.27-owl0
+- v2.4.27
+- Remove modutils-2.4.16-owl-warnings.diff
+- Update alt-owl-aliases.diff
+
 * Mon Jun 10 2002 Michail Litvak <mci@owl.openwall.com> 2.4.16-owl1
 - v2.4.16
 - reviewed patches, added patches from ALT
