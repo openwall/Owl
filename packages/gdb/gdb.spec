@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gdb/gdb.spec,v 1.5 2001/07/12 01:00:27 solar Exp $
+# $Id: Owl/packages/gdb/gdb.spec,v 1.6 2001/07/12 03:08:04 solar Exp $
 
 Summary: A GNU source-level debugger for C, C++ and Fortran.
 Name: gdb
@@ -14,6 +14,7 @@ Patch3: gdb-5.0-pld-ncurses.diff
 Patch4: gdb-5.0-pld-readline.diff
 Patch5: gdb-5.0-rh-symchanges.diff
 Patch6: gdb-5.0-rh-alpha.diff
+Patch7: gdb-5.0-owl-warnings.diff
 Buildroot: /var/rpm-buildroot/%{name}-root
 BuildRequires: ncurses-devel >= 5.0
 BuildRequires: readline-devel >= 4.1
@@ -34,6 +35,7 @@ supported compiler, such as those from the GNU Compiler Collection.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %build
 
@@ -42,6 +44,7 @@ aclocal
 autoconf
 popd
 
+export ac_cv_func_vfork_works=no \
 %configure \
 	--enable-nls \
 	--without-included-gettext \
@@ -105,6 +108,8 @@ fi
 %changelog
 * Thu Jul 12 2001 Solar Designer <solar@owl.openwall.com>
 - Corrected the package description.
+- Disabled the (incorrect) use of vfork.
+- Fixed some harmless compiler warnings.
 
 * Wed Jul 11 2001 Michail Litvak <mci@owl.openwall.com>
 - spec imported from RH with additions from PLD and SuSE

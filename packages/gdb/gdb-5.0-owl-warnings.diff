@@ -1,0 +1,47 @@
+--- gdb-5.0/gdb/lin-thread.c.orig	Fri Apr 14 14:40:00 2000
++++ gdb-5.0/gdb/lin-thread.c	Thu Jul 12 06:43:50 2001
+@@ -944,10 +944,10 @@
+     }
+ 
+   /* Set up the breakpoint. */
+-  create_thread_event_breakpoint (notify.u.bptaddr);
++  create_thread_event_breakpoint ((CORE_ADDR)notify.u.bptaddr);
+ 
+   /* Save it's location. */
+-  thread_creation_bkpt_address = notify.u.bptaddr;
++  thread_creation_bkpt_address = (CORE_ADDR)notify.u.bptaddr;
+ 
+   /* thread death */
+   /* get breakpoint location */
+@@ -957,10 +957,10 @@
+       return;
+     }
+   /* Set up the breakpoint. */
+-  create_thread_event_breakpoint (notify.u.bptaddr);
++  create_thread_event_breakpoint ((CORE_ADDR)notify.u.bptaddr);
+ 
+   /* Save it's location. */
+-  thread_death_bkpt_address = notify.u.bptaddr;
++  thread_death_bkpt_address = (CORE_ADDR)notify.u.bptaddr;
+ }
+ 
+ /* This function handles the global parts of disabling thread events.
+--- gdb-5.0/libiberty/pexecute.c.orig	Tue Feb 22 19:14:35 2000
++++ gdb-5.0/libiberty/pexecute.c	Thu Jul 12 06:49:06 2001
+@@ -697,6 +697,7 @@
+     }
+ 
+   /* Fork a subprocess; wait and retry if it fails.  */
++  pid = 0;
+   sleep_interval = 1;
+   for (retries = 0; retries < 4; retries++)
+     {
+@@ -738,7 +739,7 @@
+       /* Exec the program.  */
+       (*func) (program, argv);
+ 
+-      /* Note: Calling fprintf and exit here doesn't seem right for vfork.  */
++      /* Note: Calling fprintf and exit here isn't right for vfork.  */
+       fprintf (stderr, "%s: ", this_pname);
+       fprintf (stderr, install_error_msg, program);
+       fprintf (stderr, ": %s\n", xstrerror (errno));
