@@ -1,0 +1,96 @@
+--- xinetd-2.1.8.9pre15/xinetd/xinetd.man.orig	Mon May 14 23:06:01 2001
++++ xinetd-2.1.8.9pre15/xinetd/xinetd.man	Tue Jun 12 00:52:57 2001
+@@ -4,7 +4,7 @@
+ .\"and conditions for redistribution.
+ .\"
+ .\" $Id: xinetd.man,v 1.1.1.1 1999/10/12 17:28:59 bbraun Exp $
+-.TH XINETD 8 "28 April 1993"
++.TH XINETD 8 "12 June 2001"
+ .\" *************************** NAME *********************************
+ .SH NAME
+ xinetd \- the extended Internet services daemon
+@@ -165,7 +165,7 @@
+ .TP
+ .B SIGHUP
+ causes an internal state dump (the default dump file is
+-\fI/tmp/xinetd.dump\fP;
++\fI/var/run/xinetd.dump\fP;
+ to change the filename, edit \fIconfig.h\fP and recompile).
+ .TP
+ .B SIGIOT
+--- xinetd-2.1.8.9pre15/xinetd/xinetd.conf.man.orig	Mon May 14 23:10:41 2001
++++ xinetd-2.1.8.9pre15/xinetd/xinetd.conf.man	Tue Jun 12 00:59:58 2001
+@@ -4,7 +4,7 @@
+ .\"and conditions for redistribution.
+ .\"
+ .\" $Id: xinetd.conf.man,v 1.3 1999/10/14 23:46:27 bbraun Exp $
+-.TH XINETD.CONF 5 "31 October 2000"
++.TH XINETD.CONF 5 "12 June 2001"
+ .\" *************************** NAME *********************************
+ .SH NAME
+ xinetd.conf \- Extended Internet Services Daemon configuration file
+@@ -109,7 +109,7 @@
+ .B NAMEINARGS
+ This will cause the first argument in "server_args" to be argv[0] when
+ executing the server, as specified in "server".  This allows you to use
+-tcpd by puting tcpd in "server" and the name of the server in "server_args"
++tcpd by putting tcpd in "server" and the name of the server in "server_args"
+ like in normal inetd.
+ .TP
+ .B NODELAY
+@@ -411,7 +411,7 @@
+ except for those explicitly defined using the
+ .I env
+ attribute.
+-(notice that you can use this attribute in conjuction with the
++(notice that you can use this attribute in conjunction with the
+ .I env
+ attribute to specify exactly what argument will be passed to the server).
+ .TP
+@@ -422,7 +422,7 @@
+ it must be equal to the port number listed in that file.
+ .TP
+ .B redirect
+-Allows a tcp service to be redirected to another host.  When xinetd recieves
++Allows a tcp service to be redirected to another host.  When xinetd receives
+ a tcp connection on this port it spawns a process that establishes a
+ connection to the host and port number specified, and forwards all data
+ between the two hosts.  This option is useful when your internal machines
+@@ -458,7 +458,7 @@
+ .B banner_fail
+ Takes the name of a file to be splatted at the remote host when a
+ connection to that service is denied.  This banner is printed 
+-immediatly upon denial of access.  This is useful for informing
++immediately upon denial of access.  This is useful for informing
+ your users that they are doing something bad and they shouldn't be
+ doing it anymore.
+ .TP
+@@ -478,15 +478,14 @@
+ Takes a floating point value as the load at which the service will 
+ stop accepting connections.  For example: 2 or 2.5.  The service
+ will stop accepting connections at this load.  This is the one minute
+-load average.  This is an OS dependant feature, and currently only
++load average.  This is an OS dependent feature, and currently only
+ Linux and Solaris are supported for this.
+ .TP
+ .B groups
+-Takes either "yes" or "no".  This is Solar Designer's fix to the
+-supplementary groups problem.  If the groups attribute is set to
++Takes either "yes" or "no".  If the groups attribute is set to
+ "yes", then the server is executed with access to the groups that the
+-server's effective UID has access to.  If the groups attribute is 
+-set to "no", then the server runs with no group privleges.  This
++server's effective UID has access to.  If the groups attribute is set
++to "no", then the server runs with no supplementary groups.  This
+ attribute must be set to "yes" for many BSD systems.  This attribute
+ can be set in the defaults section as well.
+ .TP
+@@ -549,7 +548,7 @@
+ Sets the time span that access to all services on all IP addresses are
+ denied to someone that sets off the SENSOR. The unit of time is in minutes.
+ Valid options are: FOREVER, NEVER, and a numeric value. FOREVER causes
+-the IP address not to be purged until xinted is restarted. NEVER has the
++the IP address not to be purged until xinetd is restarted. NEVER has the
+ effect of just logging the offending IP address. A typical time value would
+ be 60 minutes. This should stop most DOS attacks while allowing IP addresses
+ that come from a pool to be recycled for legitimate purposes. This option

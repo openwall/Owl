@@ -1,0 +1,89 @@
+--- xinetd-2.1.8.9pre15/xinetd/xinetd.conf.man.orig	Mon May 14 23:10:41 2001
++++ xinetd-2.1.8.9pre15/xinetd/xinetd.conf.man	Tue Jun 12 05:07:43 2001
+@@ -506,13 +506,14 @@
+ a service.  It must be specified outside a service declaration.
+ .TP
+ .B includedir
+-Takes a directory name in the form of "includedir /etc/xinetd".
+-Every file inside that directory (excluding files beginning with a '.')
+-will be parsed as an xinetd configuration file.  The files will
+-be parsed in alphabetical order, as returned by strcmp(). This allows you 
+-to specify services one per file within a directory.  This may
+-not be specified from within a service.  It must be specified outside
+-a service declaration.
++Takes a directory name in the form of "includedir /etc/xinetd.d".
++Every file inside that directory, excluding files with names containing
++a dot ('.') or ending with a tilde ('~'), will be parsed as xinetd
++configuration files.  The files will be parsed in alphabetical order
++according to the C locale.  This allows you to specify services one
++per file within a directory.  The
++.B includedir
++directive may not be specified from within a service declaration.
+ .TP
+ .B rlimit_as
+ Sets the Address Space resource limit for the service. One parameter
+--- xinetd-2.1.8.9pre15/xinetd/includedir.c.orig	Mon May 14 23:06:01 2001
++++ xinetd-2.1.8.9pre15/xinetd/includedir.c	Tue Jun 12 05:05:50 2001
+@@ -56,10 +56,6 @@
+ 		parsemsg( LOG_ERR, func, "includedir: Out of memory\n");
+ 		return;
+ 	}
+-	memset(filename, 0, strlen(service_name) + NAME_MAX+2);
+-
+-	strncpy(filename,service_name, strlen(service_name));
+-	filename[strlen(filename)] = '/';
+ 	dirfp = opendir(service_name);
+ 	if (! dirfp) {
+ 		parsemsg( LOG_ERR, func, "Unable to read included directory: %s", service_name);
+@@ -74,7 +70,6 @@
+ 			return;
+ 		}
+ 		strcpy(storename, direntry->d_name);
+-		storename[strlen(direntry->d_name)] = '\0';
+ 		pset_add(dir_list, storename);
+ 	}
+ 
+@@ -87,29 +82,28 @@
+ 	for( u = 0; u < pset_count(dir_list); u++ ) {
+ 		char *storename = pset_pointer(dir_list, u);
+ 
+-		memset(filename, 0, strlen(service_name) + NAME_MAX+2);
+-
+-		strncpy(filename,service_name, strlen(service_name));
+-		filename[strlen(filename)] = '/';
+-		strncpy(filename + strlen(service_name) + 1,
+-			storename, NAME_MAX);
+-
+-		/* Don't try to parse any file beginning with a '.'
+-		* This catches the case of '.' and '..', as well as preventing
+-		* the parsing of other files beginning with a .
+-		*/
+-		if ( storename[0] == '.' )
++		/* Don't try to parse files with names containing a dot ('.')
++		 * or ending with a tilde ('~'). This catches the case of '.'
++		 * and '..', as well as preventing the parsing of many editor
++		 * temporary files and those saved on RPM package upgrades.
++		 */
++		if ( !storename[0] /* "can't happen" */ ||
++		    strchr(storename, '.') ||
++		    storename[strlen(storename) - 1] == '~' )
+ 			continue;
+-	
++
++		sprintf(filename, "%s/", service_name);
++		strncat(filename, storename, NAME_MAX);
++
+ 		if( lstat(filename, &sb) < 0 ) {
+ 			parsemsg( LOG_ERR, func, "Unable to stat includedir file %s\n", filename);
+ 			continue;
+ 		}
+-	
++
+ 		/* Only open it if it's a regular file. */
+ 		if( !S_ISREG(sb.st_mode) )
+ 			continue;
+-	
++
+ 		incfd = open(filename, O_RDONLY);
+ 		if( incfd < 0 ) {
+ 			parsemsg( LOG_ERR, func, "Unable to open included configuration file: %s", filename);

@@ -1,14 +1,14 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.6 2001/05/29 21:18:18 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.7 2001/06/12 01:12:07 solar Exp $
 
 %define NEED_PYTHON 'no'
 
-Summary: 	A secure replacement for inetd.
+Summary: 	The extended Internet services daemon
 Name: 		xinetd
-Version: 	2.1.8.9pre13
-Release: 	5owl
+Version: 	2.1.8.9pre15
+Release: 	1owl
 License: 	Distributable (BSD-like)
 Group: 		System Environment/Daemons
-Source: 	http://www.xinetd.org/xinetd-%{version}.tar.gz
+Source0: 	http://www.xinetd.org/xinetd-%{version}.tar.gz
 Source1: 	xinetd.init
 Source2: 	xinetd.conf
 Source3:	xinetd-inetdconvert
@@ -20,11 +20,13 @@ Source8: 	xinetd-echo
 Source9: 	xinetd-uecho
 Source10: 	xinetd-chargen
 Source11: 	xinetd-uchargen
-Patch0: 	xinetd-2.1.8.9pre10-rh-skipjunkfiles.diff
-Patch1:		xinetd-2.1.8.9pre13-owl-umask.diff
+Patch0:		xinetd-2.1.8.9pre15-owl-includedir.diff
+Patch1:		xinetd-2.1.8.9pre15-owl-umask.diff
+Patch2:		xinetd-2.1.8.9pre15-owl-messages.diff
+Patch3:		xinetd-2.1.8.9pre15-owl-man-fixes.diff
 Provides: 	inetd
 Prereq: 	/sbin/chkconfig /etc/init.d
-BuildRequires: 	tcp_wrappers
+BuildRequires:	tcp_wrappers
 URL: 		http://www.xinetd.org/
 BuildRoot: 	/var/rpm-buildroot/%{name}-root
 Obsoletes: 	inetd
@@ -47,11 +49,13 @@ limits on the number of servers that can be started, among other things.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
+%patch3 -p1
 
 %build
 autoconf
 %configure --with-libwrap
-make
+make CC=gcc
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -113,6 +117,12 @@ fi
 %config /etc/xinetd.d/*
 
 %changelog
+* Tue Jun 12 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 2.1.8.9pre15.
+- With includedir, skip all files with names containing a dot ('.') or
+ending with a tilde ('~'); this replaces the Red Hat Linux derived patch.
+- Minor man page fixes.
+
 * Wed May 30 2001 Solar Designer <solar@owl.openwall.com>
 - Ensure the umask is no less restrictive than 022.
 
@@ -131,7 +141,7 @@ fi
 
 * Tue Oct 17 2000 Trond Eivind Glomsrød <teg@redhat.com>
 - 2.1.8.9pre11, which includes the previous bugfixes.
-- don't convert the internal services, include 
+- don't convert the internal services, include
   such files with xinetd (#17331, #18899)
 
 * Mon Oct 09 2000 Trond Eivind Glomsrød <teg@redhat.com>
@@ -142,13 +152,13 @@ fi
   connections with wait=yes properly
 
 * Tue Sep 26 2000 Trond Eivind Glomsrød <teg@redhat.com>
-- add explicit dependency on a modern version of initscripts 
+- add explicit dependency on a modern version of initscripts
   (#17533)
 
 * Wed Aug 30 2000 Trond Eivind Glomsrød <teg@redhat.com>
 - 2.1.8.9pre10 - remove tcpwrapper and pidfile patches,
   as they are now in.
-- change default startup position to 56, so it 
+- change default startup position to 56, so it
   starts after bind (#17047)
 
 * Thu Aug 18 2000 Trond Eivind Glomsrød <teg@redhat.com>
@@ -167,16 +177,16 @@ fi
 - added support for "-pidfile" option (#15531)
 
 * Fri Aug 04 2000 Trond Eivind Glomsrød <teg@redhat.com>
-- added patch to ignore .rpmsave, .rpmorig, .rpmnew, ~ 
+- added patch to ignore .rpmsave, .rpmorig, .rpmnew, ~
   suffixed files (#15304)
 
 * Thu Aug 03 2000 Trond Eivind Glomsrød <teg@redhat.com>
 - 2.1.8.9pre9, old patches are now integrated.
 
 * Wed Aug 02 2000 Trond Eivind Glomsrød <teg@redhat.com>
-- fix converting of "wait" argument (#13884) 
+- fix converting of "wait" argument (#13884)
 - remove tcpd and /usr/sbin/tcpd from inetd.conf services
-  before converting - xinetd is linked against tcp_wrappers 
+  before converting - xinetd is linked against tcp_wrappers
 
 * Mon Jul 31 2000 Trond Eivind Glomsrød <teg@redhat.com>
 - fix linuxconf restart problem (#14856)
@@ -242,7 +252,7 @@ fi
 
 * Sun Jun 04 2000 Trond Eivind Glomsrød <teg@redhat.com>
 - 2.1.8.9pre6
-- added converter script which can convert specified or 
+- added converter script which can convert specified or
   remaing uncoverted services
 - use %%{_mandir}
 - removed +x on xinetd.conf

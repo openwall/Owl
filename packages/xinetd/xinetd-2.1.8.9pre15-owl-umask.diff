@@ -1,0 +1,11 @@
+--- xinetd-2.1.8.9pre15/xinetd/init.c.orig	Sun May 20 22:48:19 2001
++++ xinetd-2.1.8.9pre15/xinetd/init.c	Tue Jun 12 00:23:23 2001
+@@ -217,7 +217,7 @@
+             "Initialization of %s facility failed. Exiting...", mp->name ) ;
+          exit( 1 ) ;
+       }
+-   (void) umask( 022 ) ;
++   (void) umask( umask ( 077 ) | 022 ) ;
+ }
+ 
+ 
