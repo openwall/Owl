@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gpm/gpm.spec,v 1.8 2001/11/05 11:01:24 solar Exp $
+# $Id: Owl/packages/gpm/gpm.spec,v 1.9 2002/02/03 21:31:40 mci Exp $
 
 # this defines the library version that this package builds.
 %define	LIBVER		1.18.0
@@ -7,10 +7,10 @@
 Summary: A mouse server for the Linux console.
 Name: gpm
 Version: 1.19.6
-Release: 2owl
+Release: owl2
 License: GPL
 Group: System Environment/Daemons
-Source0: ftp://ftp.systemy.it/pub/develop/%{name}-%{version}.tar.bz2
+Source0: ftp://arcana.linux.it/pub/%{name}-%{version}.tar.bz2
 Source1: gpm.init
 Patch0: gpm-1.19.6-rh-no-ps.diff
 Patch1: gpm-1.19.6-rh-owl-socket-mode.diff
@@ -20,7 +20,7 @@ Patch4: gpm-1.19.6-owl-liblow.diff
 Patch5: gpm-1.19.6-owl-tmp.diff
 Patch6: gpm-1.19.6-owl-warnings.diff
 Patch7: gpm-1.19.6-owl-doc-mkinstalldirs.diff
-PreReq: /sbin/chkconfig /sbin/ldconfig /sbin/install-info /etc/rc.d/init.d
+PreReq: /sbin/chkconfig, /sbin/ldconfig, /sbin/install-info, /etc/rc.d/init.d
 BuildRequires: bison
 BuildRoot: /override/%{name}-%{version}
 
@@ -29,9 +29,9 @@ gpm provides mouse support to text-based Linux applications as well as
 console cut-and-paste operations using the mouse.
 
 %package devel
-Requires: %{name} = %{version}-%{release}
 Summary: Libraries and header files for developing mouse driven programs.
 Group: Development/Libraries
+Requires: %{name} = %{version}-%{release}
 
 %description devel
 The gpm-devel package contains the libraries and header files needed
@@ -39,9 +39,9 @@ for the development of mouse driven programs for the console.
 
 %if "%{BUILD_GPM_ROOT}"=="'yes'"
 %package root
-Requires: %{name} = %{version}-%{release}
 Summary: A mouse server add-on which draws pop-up menus on the console.
 Group: System Environment/Daemons
+Requires: %{name} = %{version}-%{release}
 
 %description root
 The gpm-root program allows pop-up menus to appear on a text console
@@ -76,7 +76,6 @@ cd $RPM_BUILD_ROOT
 
 chmod +x .%{_libdir}/libgpm.so.%{LIBVER}
 ln -sf libgpm.so.%{LIBVER} .%{_libdir}/libgpm.so
-gzip -9nf .%{_infodir}/gpm.info*
 
 mkdir -p .%{_sysconfdir}/rc.d/init.d
 install -m 755 $RPM_SOURCE_DIR/gpm.init .%{_sysconfdir}/rc.d/init.d/gpm
@@ -136,6 +135,10 @@ fi
 %endif
 
 %changelog
+* Sun Feb 03 2002 Michail Litvak <mci@owl.openwall.com>
+- Fix source URL
+- Enforce our new spec file conventions
+
 * Mon Nov 05 2001 Solar Designer <solar@owl.openwall.com>
 - /etc/init.d -> /etc/rc.d/init.d for consistency.
 
