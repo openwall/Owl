@@ -1,9 +1,9 @@
-# $Id: Owl/packages/kbd/kbd.spec,v 1.4 2003/05/01 21:08:32 mci Exp $
+# $Id: Owl/packages/kbd/kbd.spec,v 1.5 2003/07/31 21:42:23 mci Exp $
 
 Summary: Tools for configuring the console.
 Name: kbd
 Version: 1.08
-Release: owl2
+Release: owl3
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/kbd/kbd-%{version}.tar.bz2
@@ -12,7 +12,7 @@ Source2: keytable.init
 Source3: setsysfont
 Patch0: kbd-1.08-rh-compose.diff
 Patch1: kbd-1.08-rh-other-vt.diff
-Patch2: kbd-1.08-rh-sparc.diff
+Patch2: kbd-1.08-owl-rh-sparc.diff
 Patch3: kbd-1.08-rh-speakup.diff
 Patch4: kbd-1.08-rh-terminal.diff
 Patch5: kbd-1.08-rh-owl-install-no-root.diff
@@ -91,6 +91,9 @@ fi
 /lib/kbd/*
 
 %changelog
+* Fri Aug 01 2003 Michail Litvak <mci@owl.openwall.com> 1.08-owl3
+- Fixed building on sparc architecture.
+
 * Thu Apr 17 2003 Michail Litvak <mci@owl.openwall.com> 1.08-owl2
 - Don't install resizecons man page.
 

@@ -1,0 +1,103 @@
+--- kbd-1.08/man/man8/kbdrate.8.orig	Fri Oct 11 14:08:58 2002
++++ kbd-1.08/man/man8/kbdrate.8	Thu Jul 31 23:37:54 2003
+@@ -22,7 +22,7 @@
+ without any options will reset the repeat rate to 10.9 characters per second (cps)
+ and the delay to 250 milliseconds (ms) for Intel- and M68K-based systems.
+ These are the IBM defaults. On SPARC-based systems it will reset the repeat rate
+-to 5 cps and the delay to 200 ms.
++to 20 cps and the delay to 200 ms.
+ 
+ .SH OPTIONS
+ .TP
+@@ -69,3 +69,5 @@
+ .I /etc/rc.local
+ .br
+ .I /dev/port
++.br
++.I /dev/kbd
+--- kbd-1.08/src/kbdrate.c.orig	Thu Jul 31 23:37:54 2003
++++ kbd-1.08/src/kbdrate.c	Thu Jul 31 23:38:00 2003
+@@ -80,15 +80,7 @@
+ #include <asm/kbio.h>
+ #endif
+ 
+-#ifndef KDKBDREP
+-/* usually defined in <linux/kd.h> */
+-#define KDKBDREP        0x4B52  /* set keyboard delay/repeat rate;
+-				 * actually used values are returned */
+-struct kbd_repeat {
+-        int delay;      /* in msec; <= 0: don't change */
+-        int period;       /* in msec; <= 0: don't change */
+-};
+-#endif
++#include <linux/kd.h>
+ 
+ #include "nls.h"
+ #include "version.h"
+@@ -112,7 +104,7 @@
+ 	struct kbd_repeat kbdrep_s;
+ 
+ 	/* don't change, just test */
+-	kbdrep_s.period = -1;
++	kbdrep_s.rate = -1;
+ 	kbdrep_s.delay = -1;
+ 	if (ioctl( 0, KDKBDREP, &kbdrep_s )) {
+ 		if (errno == EINVAL)
+@@ -123,16 +115,16 @@
+ 
+ #if 0
+ 	printf("old delay %d, period %d\n",
+-	       kbdrep_s.delay, kbdrep_s.period);
++	       kbdrep_s.delay, kbdrep_s.rate);
+ #endif
+ 
+ 	/* do the change */
+ 	if (rate == 0)				  /* switch repeat off */
+-		kbdrep_s.period = 0;
++		kbdrep_s.rate = 0;
+ 	else
+-		kbdrep_s.period  = 1000.0 / rate; /* convert cps to msec */
+-	if (kbdrep_s.period < 1)
+-		kbdrep_s.period = 1;
++		kbdrep_s.rate  = 1000.0 / rate; /* convert cps to msec */
++	if (kbdrep_s.rate < 1)
++		kbdrep_s.rate = 1;
+ 	kbdrep_s.delay = delay;
+ 	if (kbdrep_s.delay < 1)
+ 		kbdrep_s.delay = 1;
+@@ -143,10 +135,10 @@
+ 	}
+ 
+ 	/* report */
+-	if (kbdrep_s.period == 0)
++	if (kbdrep_s.rate == 0)
+ 		rate = 0;
+ 	else
+-		rate = 1000.0 / (double) kbdrep_s.period;
++		rate = 1000.0 / (double) kbdrep_s.rate;
+ 
+ 	if (!silent)
+ 		printf( _("Typematic Rate set to %.1f cps (delay = %d ms)\n"),
+@@ -170,10 +162,10 @@
+ 		exit( 1 );
+ 	}
+ 
+-	kbdrate_s.period = (int) (rate + 0.5);  /* round up */
++	kbdrate_s.rate = (int) (rate + 0.5);  /* round up */
+ 	kbdrate_s.delay = delay * HZ / 1000;  /* convert ms to Hz */
+-	if (kbdrate_s.period > 50)
+-		kbdrate_s.period = 50;
++	if (kbdrate_s.rate > 50)
++		kbdrate_s.rate = 50;
+ 
+ 	if (ioctl( fd, KIOCSRATE, &kbdrate_s )) {
+ 		perror( "ioctl(KIOCSRATE)" );
+@@ -183,7 +175,7 @@
+ 
+ 	if (!silent)
+ 		printf( "Typematic Rate set to %d cps (delay = %d ms)\n",
+-			kbdrate_s.period, kbdrate_s.delay * 1000 / HZ );
++			kbdrate_s.rate, kbdrate_s.delay * 1000 / HZ );
+ 
+ 	return 1;
+ #else /* no KIOCSRATE */
