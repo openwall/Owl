@@ -1,4 +1,4 @@
-# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.20 2005/03/20 13:41:40 galaxy Exp $
+# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.21 2005/03/22 15:39:41 solar Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -17,11 +17,9 @@ Release: owl1
 License: GPL
 Group: System Environment/Base
 Source0: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
-Source1: libuuid.3.in
-Patch0: e2fsprogs-1.36-owl-libuuid-man.diff
-Patch1: e2fsprogs-1.36-owl-mkdir-mode.diff
-Patch2: e2fsprogs-1.36-owl-warnings.diff
-Patch3: e2fsprogs-1.36-owl-tests-fix.diff
+Patch0: e2fsprogs-1.36-owl-mkdir-mode.diff
+Patch1: e2fsprogs-1.36-owl-warnings.diff
+Patch2: e2fsprogs-1.36-owl-tests-fix.diff
 PreReq: /sbin/ldconfig
 BuildRoot: /override/%name-%version
 
@@ -48,12 +46,10 @@ develop second extended (ext2) filesystem-specific programs.
 
 %prep
 %setup -q
-cp %SOURCE1 lib/uuid/
 chmod -R u+w .
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -213,7 +209,6 @@ fi
 %_mandir/man1/mk_cmds.1*
 %_mandir/man3/com_err.3*
 %_mandir/man3/libblkid.3*
-%_mandir/man3/libuuid.3*
 %_mandir/man3/uuid.3*
 %_mandir/man3/uuid_clear.3*
 %_mandir/man3/uuid_compare.3*
@@ -229,7 +224,6 @@ fi
 - Updated to 1.36.
 - Reviewed all patches, dropped the ones accepted.
 - Fixed make check to fail in case of failed tests.
-- Added missing libuuid.3 man page
 - Forced e2fsck to use 0700 permissions when it's creating directories.
 
 * Sun Jan 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.27-owl7
