@@ -12,6 +12,13 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.0 and Owl-current.
 
+2003/07/22	Package: pam
+SECURITY FIX	Severity: none to medium, local, active
+Patched pam_wheel to never rely on getlogin(3), even if use_uid is not
+specified.  The default /etc/pam.d/su on Owl doesn't use pam_wheel,
+and, after "control su wheel", uses it with use_uid.  This change was
+only needed to make other local configurations with pam_wheel safe.
+
 2003/07/21	Package: openssh
 SECURITY FIX	Severity: none to medium, local, active
 VerifyReverseMapping is now deprecated and replaced with a new option,
@@ -359,4 +366,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.63 2003/07/21 21:34:46 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.64 2003/07/22 11:05:25 solar Exp $
