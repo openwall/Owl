@@ -1,14 +1,15 @@
-# $Id: Owl/packages/quota/quota.spec,v 1.4 2001/06/25 08:17:39 mci Exp $
+# $Id: Owl/packages/quota/quota.spec,v 1.5 2001/06/27 12:39:50 mci Exp $
 
 Name: quota
 Summary: System administration tools for monitoring users' disk usage.
 Version: 2.00
-Release: 1owl
+Release: 2owl
 Copyright: BSD
 Source0: ftp://ftp.cistron.nl/pub/people/mvw/quota/%{name}-2.00.tar.gz
 Group: System Environment/Base
-Patch0: quota-2.00-pld-man.diff
-Patch1: quota-2.00-owl-makefile.diff
+Patch0: quota-2.00-pld-owl-man.diff
+Patch1: quota-2.00-owl-install-no-root.diff
+Patch2: quota-2.00-owl-tmp.diff
 BuildRoot: /var/rpm-buildroot/%{name}-root
 BuildPreReq: e2fsprogs-devel
 
@@ -23,6 +24,7 @@ usage.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 %configure
@@ -42,6 +44,7 @@ mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man{1,2,3,8}
 rm -rf ${RPM_BUILD_ROOT}
 
 %files
+%doc doc/*
 %defattr(-,root,root)
 /sbin/*
 %{_bindir}/*
@@ -61,7 +64,12 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man8/setquota.8*
 
 %changelog
-* Mon Jun 25 2001 Michail Litvak <mci@owl.openwall.com>
+* Sun Mon 27 2001 Michail Litvak <mci@owl.openwall.com>
+- more fixes in mans and docs
+- patch to catch error from mkstemp
+- include doc/ subdir into package
+
+* Sun Mon 25 2001 Michail Litvak <mci@owl.openwall.com>
 - some spec cleanups
 - patch to allow building to non-root user
 

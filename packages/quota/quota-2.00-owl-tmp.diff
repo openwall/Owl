@@ -1,0 +1,14 @@
+--- quota-2.00/edquota.c.orig	Wed Jun 27 00:25:05 2001
++++ quota-2.00/edquota.c	Wed Jun 27 00:34:32 2001
+@@ -171,7 +171,10 @@
+    }
+ 
+    umask(077);
+-   tmpfd = mkstemp(tmpfil);
++   if((tmpfd = mkstemp(tmpfil)) < 0) {
++      fprintf(stderr, _("mkstemp: %m\n"));
++      exit(1);
++   }
+    fchown(tmpfd, getuid(), getgid());
+    if (tflag) {
+       protoprivs = getprivs(0, quotatype, (nflag == 0));
