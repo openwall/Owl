@@ -1,0 +1,11 @@
+--- which-2.6/tilde/shell.c.jbj	Sat Jun 12 17:13:47 1999
++++ which-2.6/tilde/shell.c	Sat Jun 12 17:16:42 1999
+@@ -62,7 +62,7 @@
+   char *home_dir;
+   struct passwd *entry;
+ 
+-  home_dir = (char *)NULL;
++  home_dir = (char *)0;
+   entry = getpwuid (getuid ());
+   if (entry)
+     home_dir = entry->pw_dir;
