@@ -88,5 +88,5 @@ support complexe des virgules flottantes (de le FAQ de glibc). Ceci a changé
 avec gcc 2.95.3 donc nous supporterons Alpha dans le futur proche. La
 plupart (mais pas tous) des packages Owl ont été compilés et testés sur
 Alpha déjà.
-   
-$Id: Owl/doc/fr/ARCHITECTURES,v 1.1 2001/05/15 04:25:15 solar Exp $
+
+$Id: Owl/doc/fr/ARCHITECTURES,v 1.2 2001/05/15 04:46:14 solar Exp $

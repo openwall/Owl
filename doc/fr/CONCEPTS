@@ -71,7 +71,7 @@ fonctionnalités système tels que les binaires SUID/SGID optionnels
 indépendamment de l'installation des packages correspondant. Tout package
 Owl aura la situation de ses audits documentés pour permettre les
 estimations de risques.
-   
+
 Alors que la revue de code est la façon préférée de s'occuper des
 vulnérabilités logicielles, elle ne peut être appliquée dans tous les cas.
 Typiquement quand des logiciels non-sécurisés de tierces parties sont
@@ -133,4 +133,4 @@ dans la plupart des cas il sera possible d'installer des applications
 packagées pour une version récente de Linux Red Hat (actuellement, ceci
 s'applique à Linux Red Hat 6.x) sur Owl.
 
-$Id: Owl/doc/fr/CONCEPTS,v 1.1 2001/05/15 04:25:15 solar Exp $
+$Id: Owl/doc/fr/CONCEPTS,v 1.2 2001/05/15 04:46:14 solar Exp $
