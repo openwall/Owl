@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.37 2002/06/23 22:39:51 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.38 2002/06/27 12:08:08 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.3p1
-Release: owl1
+Release: owl2
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -17,7 +17,7 @@ Patch0: openssh-3.3p1-owl-hide-unknown.diff
 Patch1: openssh-3.3p1-owl-always-auth.diff
 Patch2: openssh-3.3p1-owl-pam_userpass.diff
 Patch3: openssh-3.1p1-owl-scp-stalltime.diff
-Patch4: openssh-3.1p1-owl-drop-groups.diff
+Patch4: openssh-3.3p1-owl-drop-groups.diff
 Patch5: openssh-3.1p1-owl-openssl-version-check.diff
 Patch6: openssh-3.3p1-owl-mmap-fallback.diff
 PreReq: openssl >= 0.9.6b-1owl
@@ -209,6 +209,11 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Tue Jun 25 2002 Solar Designer <solar@owl.openwall.com>
+- Fixed the dropping of supplementary groups now included in 3.3p1 rather
+than adding our own version of the fix, to allow for running sshd as
+non-root and to be fail-close whenever possible.
+
 * Sun Jun 23 2002 Solar Designer <solar@owl.openwall.com>
 - Updated to 3.3p1 with privilege separation.
 - If MAP_ANON|MAP_SHARED fails (is unsupported on Linux 2.2), fallback

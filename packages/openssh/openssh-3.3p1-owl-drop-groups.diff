@@ -1,0 +1,21 @@
+diff -ur openssh-3.3p1.orig/sshd.c openssh-3.3p1/sshd.c
+--- openssh-3.3p1.orig/sshd.c	Fri Jun 21 05:09:47 2002
++++ openssh-3.3p1/sshd.c	Tue Jun 25 17:28:22 2002
+@@ -1025,8 +1025,15 @@
+ 	 * to create a file, and we can't control the code in every 
+ 	 * module which might be used).
+ 	 */
+-	if (setgroups(0, NULL) < 0)
+-		debug("setgroups() failed: %.200s", strerror(errno));
++	if (geteuid() == 0 && setgroups(0, NULL) != 0)
++#ifndef USE_PAM
++	/*
++	 * We can ignore the lack of support for having no supplementary
++	 * groups at all if don't use PAM.
++	 */
++		if (errno != EINVAL)
++#endif
++			fatal("setgroups: %.200s", strerror(errno));
+ 
+ 	/* Initialize the log (it is reinitialized below in case we forked). */
+ 	if (debug_flag && !inetd_flag)
