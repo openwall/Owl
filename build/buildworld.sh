@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.7 2000/12/25 09:12:48 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.8 2000/12/28 18:45:43 solar Exp $
 
 REPOSITORY=Owl
 PACKAGES=$REPOSITORY/packages
@@ -182,12 +182,12 @@ function clean_death()
 	rm -rf tmp-work rpm-work-[1-9]* native-work foreign-work
 
 	echo "`date '+%Y %b %e %H:%M:%S'`: Interrupted" >> logs/buildworld
-	exit 0
+	exit 1
 }
 
 if [ "`id -u`" = "0" -o ! -O $HOME ]; then
 	echo "Run this as the owner of $HOME (typically, as user \"build\")"
-	exit
+	exit 1
 fi
 
 umask $UMASK
