@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.5 2000/11/30 21:43:01 solar Exp $
+# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.6 2000/12/10 03:39:38 solar Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
 Version: 2.78
-Release: 8owl
+Release: 9owl
 Copyright: GPL
 Group: System Environment/Base
 Source: ftp://ftp.cistron.nl/pub/people/miquels/sysvinit/sysvinit-%{version}.tar.gz
@@ -77,6 +77,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0600,root,root) /dev/initctl
 
 %changelog
+* Sun Dec 10 2000 Solar Designer <solar@owl.openwall.com>
+- Use getpass(3) in sulogin; the old code was unreliable.
+- Updated the sulogin man page (no fallback).
+
 * Fri Dec 01 2000 Solar Designer <solar@owl.openwall.com>
 - Relaxed permissions on start-stop-daemon to 755 for status checks.
 - Removed the packaging of utmpdump as it is unsafe on untrusted files.
