@@ -12,6 +12,10 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/02/01	Package: bzip2
+Updated to 1.0.2, with significant changes to the way the package is
+built.
+
 2002/01/24	Package: bison
 Updated to 1.32.
 
@@ -527,4 +531,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.61 2002/01/24 11:39:04 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.62 2002/02/01 21:09:38 solar Exp $
