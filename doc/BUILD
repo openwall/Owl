@@ -55,9 +55,9 @@ Dual Pentium III, 1 GHz, 2 GB			0:36
 Dual Pentium III, 800 MHz, 512 MB		0:45
 Athlon, 1 GHz, 256 MB				1:10
 Dual Celeron (Mendocino), 433 MHz, 256 MB	1:20
-Pentium III, 550 MHz, 64 MB			2:10
+Pentium III, 700 MHz, 192 MB			1:35
 UltraSparc IIi, 440 MHz, 256 MB			3:30
-Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB	5:00
+Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB	5:20
 
 (Yes, gcc is this hungry and slow on Alpha.)
 
@@ -113,4 +113,4 @@ We do consider the building of SRPM's and the lack of automatic build
 dependency handling for re-builds to be bugs in the build environment.
 We will eventually fix these.
 
-$Id: Owl/doc/BUILD,v 1.12 2002/02/15 23:20:06 solar Exp $
+$Id: Owl/doc/BUILD,v 1.13 2002/04/02 08:57:34 solar Exp $
