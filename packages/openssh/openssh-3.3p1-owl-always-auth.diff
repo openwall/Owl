@@ -1,11 +1,12 @@
-diff -ur openssh-3.1p1-owl-hide-unknown/auth-pam.c openssh-3.1p1/auth-pam.c
---- openssh-3.1p1-owl-hide-unknown/auth-pam.c	Tue Feb  5 04:40:47 2002
-+++ openssh-3.1p1/auth-pam.c	Sat Mar 16 23:50:39 2002
-@@ -203,14 +203,19 @@
+diff -ur openssh-3.3p1-owl-hide-unknown/auth-pam.c openssh-3.3p1/auth-pam.c
+--- openssh-3.3p1-owl-hide-unknown/auth-pam.c	Wed May  8 06:27:56 2002
++++ openssh-3.3p1/auth-pam.c	Sun Jun 23 18:36:26 2002
+@@ -204,15 +204,20 @@
  {
  	extern ServerOptions options;
  	int pam_retval;
 +	int fail;
+ 	struct passwd *pw = authctxt->pw;
  
  	do_pam_set_conv(&conv);
  
@@ -25,7 +26,7 @@ diff -ur openssh-3.1p1-owl-hide-unknown/auth-pam.c openssh-3.1p1/auth-pam.c
  	if (*password == '\0' && options.permit_empty_passwd == 0)
  		return 0;
  
-@@ -219,14 +224,14 @@
+@@ -221,14 +226,14 @@
  	pamstate = INITIAL_LOGIN;
  	pam_retval = do_pam_authenticate(
  	    options.permit_empty_passwd == 0 ? PAM_DISALLOW_NULL_AUTHTOK : 0);
@@ -46,27 +47,27 @@ diff -ur openssh-3.1p1-owl-hide-unknown/auth-pam.c openssh-3.1p1/auth-pam.c
  		return 0;
  	}
  }
-diff -ur openssh-3.1p1-owl-hide-unknown/auth1.c openssh-3.1p1/auth1.c
---- openssh-3.1p1-owl-hide-unknown/auth1.c	Sat Mar 16 23:48:45 2002
-+++ openssh-3.1p1/auth1.c	Sat Mar 16 23:52:29 2002
-@@ -396,7 +396,7 @@
- 	setproctitle("%s", authctxt->known ? user : "UNKNOWN USER");
+diff -ur openssh-3.3p1-owl-hide-unknown/auth1.c openssh-3.3p1/auth1.c
+--- openssh-3.3p1-owl-hide-unknown/auth1.c	Sun Jun 23 18:23:04 2002
++++ openssh-3.3p1/auth1.c	Sun Jun 23 18:37:42 2002
+@@ -383,7 +383,7 @@
+ 	    use_privsep ? " [net]" : "");
  
  #ifdef USE_PAM
--	start_pam(pw == NULL ? "NOUSER" : user);
-+	start_pam(pw ? user : "ILLEGAL USER");
+-	PRIVSEP(start_pam(authctxt->pw == NULL ? "NOUSER" : user));
++	PRIVSEP(start_pam(authctxt->pw ? user : "ILLEGAL USER"));
  #endif
  
  	/*
-diff -ur openssh-3.1p1-owl-hide-unknown/auth2.c openssh-3.1p1/auth2.c
---- openssh-3.1p1-owl-hide-unknown/auth2.c	Sat Mar 16 23:48:45 2002
-+++ openssh-3.1p1/auth2.c	Sat Mar 16 23:50:39 2002
-@@ -197,7 +197,7 @@
+diff -ur openssh-3.3p1-owl-hide-unknown/auth2.c openssh-3.3p1/auth2.c
+--- openssh-3.3p1-owl-hide-unknown/auth2.c	Sun Jun 23 18:26:04 2002
++++ openssh-3.3p1/auth2.c	Sun Jun 23 18:38:11 2002
+@@ -164,7 +164,7 @@
  			authctxt->pw = NULL;
  			authctxt->valid = 0;
  #ifdef USE_PAM
--			start_pam("NOUSER");
-+			start_pam("ILLEGAL USER");
+-			PRIVSEP(start_pam("NOUSER"));
++			PRIVSEP(start_pam("ILLEGAL USER"));
  #endif
  		}
- 		setproctitle("%s", authctxt->known ? user : "UNKNOWN USER");
+ 		setproctitle("%s%s", authctxt->pw ? user : "UNKNOWN USER",

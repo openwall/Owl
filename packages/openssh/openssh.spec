@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.35 2002/06/08 17:58:09 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.36 2002/06/23 16:42:03 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
-Version: 3.1p1
-Release: owl2
+Version: 3.3p1
+Release: owl1
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -13,15 +13,16 @@ Source2: sshd.init
 Source3: ssh_config
 Source4: sshd_config
 Source5: sftp.control
-Patch0: openssh-3.1p1-owl-hide-unknown.diff
-Patch1: openssh-3.1p1-owl-always-auth.diff
-Patch2: openssh-3.1p1-owl-pam_userpass.diff
+Patch0: openssh-3.3p1-owl-hide-unknown.diff
+Patch1: openssh-3.3p1-owl-always-auth.diff
+Patch2: openssh-3.3p1-owl-pam_userpass.diff
 Patch3: openssh-3.1p1-owl-scp-stalltime.diff
 Patch4: openssh-3.1p1-owl-drop-groups.diff
 Patch5: openssh-3.1p1-owl-openssl-version-check.diff
 PreReq: openssl >= 0.9.6b-1owl
 PreReq: openssl < 0.9.7
-Requires: tcb, pam_mktemp
+PreReq: /sbin/chkconfig, grep, shadow-utils
+Requires: /var/empty, tcb, pam_userpass, pam_mktemp
 Obsoletes: ssh
 BuildRequires: openssl-devel >= 0.9.6b-1owl
 BuildRequires: pam-devel
@@ -101,12 +102,13 @@ CFLAGS="$RPM_OPT_FLAGS" LIBS="-lcrypt -lpam -lpam_misc" ./configure \
 	--sysconfdir=/etc/ssh \
 	--libexecdir=%{_libexecdir}/ssh \
 	--datadir=%{_datadir}/ssh \
-	--disable-suid-ssh \
+	--mandir=%{_mandir} \
 	--with-pam \
 	--with-tcp-wrappers \
 	--with-ipv4-default \
-	--with-rsh=/usr/bin/rsh \
-	--with-default-path=/bin:/usr/bin:/usr/local/bin
+	--with-default-path=/bin:/usr/bin:/usr/local/bin \
+	--with-privsep-path=/var/empty \
+	--with-privsep-user=sshd
 %ifarch alphaev56 alphapca56 alphaev6 alphaev67
 make deattack.o CFLAGS="$RPM_OPT_FLAGS -mcpu=ev5 -Wall"
 %endif
@@ -130,6 +132,8 @@ install -m 700 $RPM_SOURCE_DIR/sftp.control \
 rm -rf $RPM_BUILD_ROOT
 
 %pre server
+grep -q ^sshd: /etc/group || groupadd -g 74 sshd
+grep -q ^sshd: /etc/passwd || useradd -g sshd -u 74 -d / -s /bin/false -M sshd
 rm -f /var/run/sshd.restart
 if [ $1 -ge 2 ]; then
 	/etc/rc.d/init.d/sshd status && touch /var/run/sshd.restart || :
@@ -163,12 +167,10 @@ fi
 %files
 %defattr(-,root,root)
 %doc README CREDITS LICENCE ChangeLog
-%attr(0755,root,root) /usr/bin/ssh-keygen
 %attr(0755,root,root) /usr/bin/scp
-%attr(0755,root,root) /usr/bin/ssh-keyscan
-%attr(0644,root,root) /usr/man/man1/ssh-keygen.1*
-%attr(0644,root,root) /usr/man/man1/ssh-keyscan.1*
-%attr(0644,root,root) /usr/man/man1/scp.1*
+%attr(0755,root,root) /usr/bin/ssh-keygen
+%attr(0644,root,root) %{_mandir}/man1/scp.1*
+%attr(0644,root,root) %{_mandir}/man1/ssh-keygen.1*
 %attr(0755,root,root) %dir /etc/ssh
 %attr(0600,root,root) %config(noreplace) /etc/ssh/moduli
 %attr(0755,root,root) %dir %{_libexecdir}/ssh
@@ -176,29 +178,38 @@ fi
 %files clients
 %defattr(-,root,root)
 %attr(0755,root,root) /usr/bin/ssh
-%attr(0755,root,root) /usr/bin/ssh-agent
 %attr(0755,root,root) /usr/bin/ssh-add
+%attr(0755,root,root) /usr/bin/ssh-agent
+%attr(0755,root,root) /usr/bin/ssh-keyscan
 %attr(0755,root,root) /usr/bin/sftp
-%attr(0644,root,root) /usr/man/man1/ssh.1*
-%attr(0644,root,root) /usr/man/man1/ssh-agent.1*
-%attr(0644,root,root) /usr/man/man1/ssh-add.1*
-%attr(0644,root,root) /usr/man/man1/sftp.1*
+%attr(0700,root,root) %{_libexecdir}/ssh/ssh-keysign
+%attr(0644,root,root) %{_mandir}/man1/ssh.1*
+%attr(0644,root,root) %{_mandir}/man1/ssh-add.1*
+%attr(0644,root,root) %{_mandir}/man1/ssh-agent.1*
+%attr(0644,root,root) %{_mandir}/man1/ssh-keyscan.1*
+%attr(0644,root,root) %{_mandir}/man1/sftp.1*
+%attr(0644,root,root) %{_mandir}/man5/ssh_config.5*
+%attr(0644,root,root) %{_mandir}/man8/ssh-keysign.8*
 %attr(0644,root,root) %config(noreplace) /etc/ssh/ssh_config
 %attr(-,root,root) /usr/bin/slogin
-%attr(-,root,root) /usr/man/man1/slogin.1*
+%attr(-,root,root) %{_mandir}/man1/slogin.1*
 
 %files server
 %defattr(-,root,root)
 %attr(0700,root,root) /usr/sbin/sshd
 %attr(0755,root,root) %{_libexecdir}/ssh/sftp-server
-%attr(0644,root,root) /usr/man/man8/sshd.8*
-%attr(0644,root,root) /usr/man/man8/sftp-server.8*
+%attr(0644,root,root) %{_mandir}/man5/sshd_config.5*
+%attr(0644,root,root) %{_mandir}/man8/sshd.8*
+%attr(0644,root,root) %{_mandir}/man8/sftp-server.8*
 %attr(0600,root,root) %config(noreplace) /etc/ssh/sshd_config
 %attr(0600,root,root) %config(noreplace) /etc/pam.d/sshd
 %attr(0700,root,root) %config /etc/rc.d/init.d/sshd
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Sun Jun 23 2002 Solar Designer <solar@owl.openwall.com>
+- Updated to 3.3p1 with privilege separation.
+
 * Sat Jun 08 2002 Solar Designer <solar@owl.openwall.com>
 - Build deattack.c with -mcpu=ev5 when building for alphaev56+ to not
 trigger a not fully debugged problem with the EV56+ code.

@@ -1,18 +1,18 @@
-diff -urN openssh-3.1p1-owl-always-auth/Makefile.in openssh-3.1p1/Makefile.in
---- openssh-3.1p1-owl-always-auth/Makefile.in	Tue Feb 26 22:24:22 2002
-+++ openssh-3.1p1/Makefile.in	Sun Mar 17 00:07:15 2002
-@@ -54,7 +54,7 @@
+diff -urN openssh-3.3p1-owl-always-auth/Makefile.in openssh-3.3p1/Makefile.in
+--- openssh-3.3p1-owl-always-auth/Makefile.in	Fri Jun 21 05:38:53 2002
++++ openssh-3.3p1/Makefile.in	Sun Jun 23 18:42:28 2002
+@@ -63,7 +63,7 @@
  
  SSHOBJS= ssh.o sshconnect.o sshconnect1.o sshconnect2.o sshtty.o readconf.o clientloop.o
  
--SSHDOBJS= sshd.o auth.o auth1.o auth2.o auth-chall.o auth2-chall.o auth-rhosts.o auth-options.o auth-krb4.o auth-pam.o auth2-pam.o auth-passwd.o auth-rsa.o auth-rh-rsa.o auth-sia.o sshpty.o sshlogin.o loginrec.o servconf.o serverloop.o md5crypt.o session.o groupaccess.o auth-skey.o auth-bsdauth.o
-+SSHDOBJS= sshd.o auth.o auth1.o auth2.o auth-chall.o auth2-chall.o auth-rhosts.o auth-options.o auth-krb4.o auth-pam.o appl_userpass.o auth2-pam.o auth-passwd.o auth-rsa.o auth-rh-rsa.o auth-sia.o sshpty.o sshlogin.o loginrec.o servconf.o serverloop.o md5crypt.o session.o groupaccess.o auth-skey.o auth-bsdauth.o
+-SSHDOBJS= sshd.o auth.o auth1.o auth2.o auth2-hostbased.o auth2-kbdint.o auth2-none.o auth2-passwd.o auth2-pubkey.o auth-chall.o auth2-chall.o auth-rhosts.o auth-options.o auth-krb4.o auth-krb5.o auth-pam.o auth2-pam.o auth-passwd.o auth-rsa.o auth-rh-rsa.o auth-sia.o sshpty.o sshlogin.o loginrec.o servconf.o serverloop.o md5crypt.o session.o groupaccess.o auth-skey.o auth-bsdauth.o monitor_mm.o monitor.o
++SSHDOBJS= sshd.o auth.o auth1.o auth2.o auth2-hostbased.o auth2-kbdint.o auth2-none.o auth2-passwd.o auth2-pubkey.o auth-chall.o auth2-chall.o auth-rhosts.o auth-options.o auth-krb4.o auth-krb5.o auth-pam.o appl_userpass.o auth2-pam.o auth-passwd.o auth-rsa.o auth-rh-rsa.o auth-sia.o sshpty.o sshlogin.o loginrec.o servconf.o serverloop.o md5crypt.o session.o groupaccess.o auth-skey.o auth-bsdauth.o monitor_mm.o monitor.o
  
- MANPAGES	= scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.8.out sftp-server.8.out sftp.1.out
- MANPAGES_IN	= scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.8 sftp-server.8 sftp.1
-diff -urN openssh-3.1p1-owl-always-auth/_pam_userpass.h openssh-3.1p1/_pam_userpass.h
---- openssh-3.1p1-owl-always-auth/_pam_userpass.h	Thu Jan  1 03:00:00 1970
-+++ openssh-3.1p1/_pam_userpass.h	Sun Mar 17 00:07:15 2002
+ MANPAGES	= scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.8.out sftp-server.8.out sftp.1.out ssh-rand-helper.8.out ssh-keysign.8.out sshd_config.5.out ssh_config.5.out
+ MANPAGES_IN	= scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.8 sftp-server.8 sftp.1 ssh-rand-helper.8 ssh-keysign.8 sshd_config.5 ssh_config.5
+diff -urN openssh-3.3p1-owl-always-auth/_pam_userpass.h openssh-3.3p1/_pam_userpass.h
+--- openssh-3.3p1-owl-always-auth/_pam_userpass.h	Thu Jan  1 03:00:00 1970
++++ openssh-3.3p1/_pam_userpass.h	Sun Jun 23 18:41:14 2002
 @@ -0,0 +1,12 @@
 +#ifndef __PAM_USERPASS_H
 +#define __PAM_USERPASS_H
@@ -26,9 +26,9 @@ diff -urN openssh-3.1p1-owl-always-auth/_pam_userpass.h openssh-3.1p1/_pam_userp
 +#define USERPASS_USER_FIXED		3
 +
 +#endif
-diff -urN openssh-3.1p1-owl-always-auth/appl_userpass.c openssh-3.1p1/appl_userpass.c
---- openssh-3.1p1-owl-always-auth/appl_userpass.c	Thu Jan  1 03:00:00 1970
-+++ openssh-3.1p1/appl_userpass.c	Sun Mar 17 00:07:15 2002
+diff -urN openssh-3.3p1-owl-always-auth/appl_userpass.c openssh-3.3p1/appl_userpass.c
+--- openssh-3.3p1-owl-always-auth/appl_userpass.c	Thu Jan  1 03:00:00 1970
++++ openssh-3.3p1/appl_userpass.c	Sun Jun 23 18:41:14 2002
 @@ -0,0 +1,59 @@
 +#include <string.h>
 +#include <stdlib.h>
@@ -89,10 +89,10 @@ diff -urN openssh-3.1p1-owl-always-auth/appl_userpass.c openssh-3.1p1/appl_userp
 +
 +	return PAM_SUCCESS;
 +}
-diff -urN openssh-3.1p1-owl-always-auth/auth-pam.c openssh-3.1p1/auth-pam.c
---- openssh-3.1p1-owl-always-auth/auth-pam.c	Sat Mar 16 23:50:39 2002
-+++ openssh-3.1p1/auth-pam.c	Sun Mar 17 00:07:15 2002
-@@ -33,6 +33,9 @@
+diff -urN openssh-3.3p1-owl-always-auth/auth-pam.c openssh-3.3p1/auth-pam.c
+--- openssh-3.3p1-owl-always-auth/auth-pam.c	Sun Jun 23 18:36:26 2002
++++ openssh-3.3p1/auth-pam.c	Sun Jun 23 18:41:14 2002
+@@ -34,6 +34,9 @@
  #include "canohost.h"
  #include "readpass.h"
  
@@ -101,8 +101,8 @@ diff -urN openssh-3.1p1-owl-always-auth/auth-pam.c openssh-3.1p1/auth-pam.c
 +
  extern char *__progname;
  
- RCSID("$Id: auth-pam.c,v 1.42 2002/02/05 01:40:47 djm Exp $");
-@@ -44,13 +47,13 @@
+ RCSID("$Id: auth-pam.c,v 1.46 2002/05/08 02:27:56 djm Exp $");
+@@ -45,13 +48,13 @@
  	struct pam_response **resp, void *appdata_ptr);
  
  /* module-local variables */
@@ -118,7 +118,7 @@ diff -urN openssh-3.1p1-owl-always-auth/auth-pam.c openssh-3.1p1/auth-pam.c
  
  /* states for do_pam_conversation() */
  enum { INITIAL_LOGIN, OTHER } pamstate = INITIAL_LOGIN;
-@@ -82,18 +85,20 @@
+@@ -83,18 +86,20 @@
   * PAM conversation function.
   * There are two states this can run in.
   *
@@ -146,7 +146,7 @@ diff -urN openssh-3.1p1-owl-always-auth/auth-pam.c openssh-3.1p1/auth-pam.c
  	struct pam_response *reply;
  	int count;
  	char buf[1024];
-@@ -169,6 +174,7 @@
+@@ -170,6 +175,7 @@
  	*resp = reply;
  
  	return PAM_SUCCESS;
@@ -154,7 +154,7 @@ diff -urN openssh-3.1p1-owl-always-auth/auth-pam.c openssh-3.1p1/auth-pam.c
  }
  
  /* Called at exit to cleanly shutdown PAM */
-@@ -219,7 +225,8 @@
+@@ -221,7 +227,8 @@
  	if (*password == '\0' && options.permit_empty_passwd == 0)
  		return 0;
  
@@ -164,9 +164,9 @@ diff -urN openssh-3.1p1-owl-always-auth/auth-pam.c openssh-3.1p1/auth-pam.c
  
  	pamstate = INITIAL_LOGIN;
  	pam_retval = do_pam_authenticate(
-diff -urN openssh-3.1p1-owl-always-auth/pam_userpass.h openssh-3.1p1/pam_userpass.h
---- openssh-3.1p1-owl-always-auth/pam_userpass.h	Thu Jan  1 03:00:00 1970
-+++ openssh-3.1p1/pam_userpass.h	Sun Mar 17 00:07:15 2002
+diff -urN openssh-3.3p1-owl-always-auth/pam_userpass.h openssh-3.3p1/pam_userpass.h
+--- openssh-3.3p1-owl-always-auth/pam_userpass.h	Thu Jan  1 03:00:00 1970
++++ openssh-3.3p1/pam_userpass.h	Sun Jun 23 18:41:14 2002
 @@ -0,0 +1,14 @@
 +#ifndef _PAM_USERPASS_H
 +#define _PAM_USERPASS_H
