@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.24 2003/10/05 13:32:22 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.25 2003/10/10 03:35:10 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.36.3
+Version: 1.6.36.4
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -77,6 +77,11 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Fri Oct 10 2003 Solar Designer <solar@owl.openwall.com> 1.6.36.4-owl1
+- Also support Matthew Kwan's older DES S-box expressions with standard
+gates only, use them for x86-64 and autodetect between them and the
+non-standard gates version with "make generic".
+
 * Sun Oct 05 2003 Solar Designer <solar@owl.openwall.com> 1.6.36.3-owl1
 - Added two make targets for Linux on x86-64, thanks to John Edward Scott.
 
