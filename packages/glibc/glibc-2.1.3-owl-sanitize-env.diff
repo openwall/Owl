@@ -172,7 +172,7 @@
 +	 Note that glibc itself tries to be careful to not trust these
 +	 variables when running SUID/SGID, and it remains the responsibility
 +	 of SUID/SGID programs to sanitize environment before executing
-+	 other programs with matching real and effective ID's.  This is a
++	 other programs with matching real and effective IDs.  This is a
 +	 "hardening" measure only, -- noone is supposed to rely on it.  */
        static const char *unsecure_envvars[] =
        {

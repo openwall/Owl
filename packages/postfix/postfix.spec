@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.9 2002/02/07 18:46:31 solar Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.10 2002/06/22 08:56:23 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
@@ -207,7 +207,7 @@ happen during system installation).
 - Ignore sparse .forward files on filesystems which allow for this.
 - /var/spool/postfix/pid/ is now only writable by root.
 - Run whatever possible chroot'ed (many of the processes keep root
-privileges in their real and/or saved ID's and pseudo-user postfix
+privileges in their real and/or saved IDs and pseudo-user postfix
 is shared with non-chroot'ed processes, so this is breakable).
 - Wrote postfix.control to enable/disable the SMTP server.
 
