@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.17 2001/05/10 12:04:49 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.18 2001/06/03 01:48:41 solar Exp $
 
 %define BUILD_PROFILE	'no'
 
@@ -6,7 +6,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
 %define crypt_bf_version 0.4
-Release: 14owl
+Release: 14.1owl
 Copyright: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%{version}.tar.gz
@@ -21,6 +21,7 @@ Patch1: glibc-2.1.3-owl-dl-open.diff
 Patch2: glibc-2.1.3-owl-sanitize-env.diff
 Patch3: glibc-2.1.3-owl-res_randomid.diff
 Patch4: glibc-2.1.3-owl-iscntrl.diff
+Patch5: glibc-2.1.3-openbsd-freebsd-owl-fts.diff
 Patch10: glibc-2.1.3-rh-libnoversion.diff
 Patch11: glibc-2.1.3-rh-paths.diff
 Patch12: glibc-2.1.3-rh-linuxthreads.diff
@@ -111,6 +112,7 @@ cp $RPM_SOURCE_DIR/crypt_freesec.c crypt/sysdeps/unix/
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
@@ -287,6 +289,13 @@ rm -f *.filelist*
 %endif
 
 %changelog
+* Sun Jun 03 2001 Solar Designer <solar@owl.openwall.com>
+- Sync the fts(3) routines with current OpenBSD and FreeBSD; this is
+triggered by Nick Cleaton's report of yet another FTS vulnerability
+to FreeBSD, and a discussion with Kris Kennaway and Todd Miller.  It
+should no longer be possible to trick FTS into leaving the intended
+directory hierarchy, but DoS attacks on FTS itself remain possible.
+
 * Thu May 10 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to crypt_blowfish-0.4 (release).
 
