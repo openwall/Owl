@@ -1,8 +1,8 @@
-# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.12 2003/10/30 08:45:15 solar Exp $
+# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.13 2003/11/02 13:25:51 solar Exp $
 
 Summary: Pluggable private /tmp space support for interactive (shell) sessions.
 Name: pam_mktemp
-Version: 0.2.4.1
+Version: 0.2.5
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
@@ -19,17 +19,19 @@ or account management.
 %setup -q
 
 %build
-make CFLAGS="-c -Wall -fPIC -DLINUX_PAM $RPM_OPT_FLAGS"
+make CFLAGS="-Wall -fPIC -DLINUX_PAM $RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make install FAKEROOT=$RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT
 
 %post
 mkdir -p -m 711 /tmp/.private
 
 %triggerin -- e2fsprogs
-test -d /tmp/.private -a -O /tmp/.private && chattr +a /tmp/.private || :
+if [ -d /tmp/.private -a -O /tmp/.private ]; then
+	chattr +a /tmp/.private 2> /dev/null || :
+fi
 
 %files
 %defattr(-,root,root)
@@ -37,6 +39,12 @@ test -d /tmp/.private -a -O /tmp/.private && chattr +a /tmp/.private || :
 /lib/security/pam_mktemp.so
 
 %changelog
+* Sun Nov 02 2003 Solar Designer <solar@owl.openwall.com> 0.2.5-owl1
+- Ignore errors from chattr as /tmp may be on tmpfs rather than ext[23]fs.
+- When compiling with gcc, also link with gcc.
+- Use "install -c" (makes a difference on some non-Linux systems).
+- Moved the "-c" out of CFLAGS, renamed FAKEROOT to DESTDIR.
+
 * Mon Jun 02 2003 Solar Designer <solar@owl.openwall.com> 0.2.4.1-owl1
 - Added URL.
 

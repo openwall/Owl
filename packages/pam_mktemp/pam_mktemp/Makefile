@@ -1,20 +1,20 @@
 #
-# Copyright (c) 2000 by Solar Designer. See LICENSE.
+# Copyright (c) 2000,2003 by Solar Designer. See LICENSE.
 #
 
 CC = gcc
-LD = ld
+LD = $(CC)
 RM = rm -f
 MKDIR = mkdir -p
-INSTALL = install
-CFLAGS = -c -Wall -O2 -fPIC
+INSTALL = install -c
+CFLAGS = -Wall -O2 -fPIC
 LDFLAGS = -s -lpam --shared
 
 TITLE = pam_mktemp
 LIBSHARED = $(TITLE).so
 SHLIBMODE = 700
 SECUREDIR = /lib/security
-FAKEROOT =
+DESTDIR =
 
 OBJS = pam_mktemp.o
 
@@ -24,14 +24,14 @@ pam_mktemp.so: $(OBJS)
 	$(LD) $(LDFLAGS) $(OBJS) -o pam_mktemp.so
 
 .c.o:
-	$(CC) $(CFLAGS) $*.c
+	$(CC) $(CFLAGS) -c $*.c
 
 install:
-	$(MKDIR) $(FAKEROOT)$(SECUREDIR)
-	$(INSTALL) -m $(SHLIBMODE) $(LIBSHARED) $(FAKEROOT)$(SECUREDIR)
+	$(MKDIR) $(DESTDIR)$(SECUREDIR)
+	$(INSTALL) -m $(SHLIBMODE) $(LIBSHARED) $(DESTDIR)$(SECUREDIR)
 
 remove:
-	$(RM) $(FAKEROOT)$(SECUREDIR)/$(TITLE).so
+	$(RM) $(DESTDIR)$(SECUREDIR)/$(TITLE).so
 
 clean:
 	$(RM) $(LIBSHARED) *.o
