@@ -1,4 +1,4 @@
-# $Id: Owl/packages/newt/Attic/newt.spec,v 1.8 2002/02/06 18:52:46 solar Exp $
+# $Id: Owl/packages/newt/Attic/newt.spec,v 1.9 2002/02/07 00:49:45 solar Exp $
 
 Summary: A development library for text mode user interfaces.
 Name: newt
@@ -38,6 +38,7 @@ the slang library.
 %setup
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 autoconf
