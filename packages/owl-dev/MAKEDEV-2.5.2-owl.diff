@@ -1,6 +1,6 @@
 diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
 --- MAKEDEV-2.5.2.orig/MAKEDEV	Wed Mar  1 22:16:37 2000
-+++ MAKEDEV-2.5.2/MAKEDEV	Thu Jul 24 21:04:49 2003
++++ MAKEDEV-2.5.2/MAKEDEV	Thu Jul 24 21:24:00 2003
 @@ -1,6 +1,11 @@
  #!/bin/bash -
  
@@ -204,7 +204,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  			sbpcd | sbpcd[123])	echo $1 ;;
  			joystick)	echo js ;;
  			apm_bios)	echo apm ;;
-@@ -222,44 +267,58 @@
+@@ -222,44 +267,59 @@
  do
  	case $arg in
  	generic)
@@ -241,6 +241,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
 +		$0 $opts audio || exit 1
 +		$0 $opts usb || exit 1
 +		$0 $opts fb || exit 1
++		$0 $opts misc || exit 1
  		;;
  	local)
 -		$0.local $opts
@@ -285,7 +286,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		# console
  		makedev tty0 c 4 0 $cons
  		makedev console c 5 1 $cons
-@@ -302,7 +361,15 @@
+@@ -302,7 +362,15 @@
  		do
  			ptysufs="$ptysufs pty$i"
  		done
@@ -302,7 +303,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		;;
  	cyclades|ttyC)
  		major1=`Major ttyC 19` || continue
-@@ -528,12 +595,18 @@
+@@ -528,12 +596,18 @@
  		done
  		;;
  	busmice)
@@ -322,7 +323,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		;;
  	js)
  		major=`Major Joystick` || continue
-@@ -585,12 +658,12 @@
+@@ -585,12 +659,12 @@
  		makedev ${arg}H1600 b $major `math $base + 124` $floppy
  		;;
  	hd[a-b])
@@ -337,7 +338,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		do
  			makedev hd$unit$part b $major `math $base + $part` $disk
  		done
-@@ -601,7 +674,7 @@
+@@ -601,7 +675,7 @@
  		base=`index cd $unit`
  		base=`math $base \* 64`
  		makedev hd$unit b $major $base $disk
@@ -346,7 +347,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		do
  			makedev hd$unit$part b $major `expr $base + $part` $disk
  		done
-@@ -612,7 +685,7 @@
+@@ -612,7 +686,7 @@
  		base=`index ef $unit`
  		base=`math $base \* 64`
  		makedev hd$unit b $major $base $disk
@@ -355,7 +356,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		do
  			makedev hd$unit$part b $major `expr $base + $part` $disk
  		done
-@@ -623,7 +696,51 @@
+@@ -623,7 +697,51 @@
  		base=`index gh $unit`
  		base=`math $base \* 64`
  		makedev hd$unit b $major $base $disk
@@ -408,7 +409,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		do
  			makedev hd$unit$part b $major `expr $base + $part` $disk
  		done
-@@ -632,7 +749,6 @@
+@@ -632,7 +750,6 @@
  		major=`Major ht0 37` || continue
  		# Only one IDE tape drive is currently supported; ht0.
  		makedev ht0 c $major 0 $tape
@@ -416,7 +417,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		makedev nht0 c $major 128 $tape
  		;;
  	pt)
-@@ -649,7 +765,7 @@
+@@ -649,7 +766,7 @@
  		base=`index abcd $unit`
  		base=`math $base \* 64`
  		makedev xd$unit b $major $base $disk
@@ -425,7 +426,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		do
  			makedev xd$unit$part b $major `expr $base + $part` $disk
  		done
-@@ -665,7 +781,7 @@
+@@ -665,7 +782,7 @@
                          base=`math $base \- 256`
                  fi
  		makedev sd$unit b $major $base $disk
@@ -434,7 +435,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		do
  			minor=`expr $base + $part`
  			makedev sd$unit$part b $major $minor $disk
-@@ -758,14 +874,14 @@
+@@ -758,14 +875,14 @@
  		done
  		;;
  	loop)
@@ -451,7 +452,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		for part in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
  		do
  			makedev md$part b $major $part $disk
-@@ -919,15 +1035,15 @@
+@@ -919,15 +1036,15 @@
  		minor=0
  		until [ $minor -gt 63 ]
  		do
@@ -471,7 +472,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  			minor=`math $minor + 1`
  		done
  		symlink video video0
-@@ -937,13 +1053,13 @@
+@@ -937,13 +1054,13 @@
  		minor=0
  		until [ $minor -gt 1 ]
  		do
@@ -488,7 +489,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		;;
  	i2c)
  		major=`Major i2c 89` || continue
-@@ -968,16 +1084,16 @@
+@@ -968,16 +1085,16 @@
  		makedev srnd1 c 110 1 $private
  		;;
  	fgrab)
@@ -510,7 +511,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		done
  		;;
  	sg)
-@@ -1036,15 +1152,31 @@
+@@ -1036,15 +1153,31 @@
  		;;
  	apm)
  		major=`Major apm_bios` || continue
@@ -547,7 +548,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		;;
  	update)
  		if [ ! "$devices" ]
-@@ -1080,8 +1212,8 @@
+@@ -1080,8 +1213,8 @@
  			exec 3<&-
  		fi
  		create="$create "`cvt $devs`
