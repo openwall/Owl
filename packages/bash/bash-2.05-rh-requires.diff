@@ -1,20 +1,19 @@
---- bash-2.05/builtins/mkbuiltins.c.orig	Thu Feb 15 00:06:45 2001
-+++ bash-2.05/builtins/mkbuiltins.c	Tue Oct 23 01:01:33 2001
-@@ -51,8 +51,13 @@
+diff -ur bash-2.05-cwru-fixes/builtins/mkbuiltins.c bash-2.05/builtins/mkbuiltins.c
+--- bash-2.05-cwru-fixes/builtins/mkbuiltins.c	Thu Feb 15 01:06:45 2001
++++ bash-2.05/builtins/mkbuiltins.c	Sat Oct 27 18:41:59 2001
+@@ -51,8 +51,11 @@
  #define whitespace(c) (((c) == ' ') || ((c) == '\t'))
  
  /* Flag values that builtins can have. */
-+/*  These flags are for the C code generator, 
-+    the C which is produced (./builtin.c)
-+    includes the flags definitions found 
-+    in ../builtins.h */
++/* These flags are for the C code generator, the C which is produced
++ * (./builtins.c) includes the flags definitions found in ../builtins.h */
  #define BUILTIN_FLAG_SPECIAL	0x01
  #define BUILTIN_FLAG_ASSIGNMENT 0x02
 +#define BUILTIN_FLAG_REQUIRES	0x04
  
  /* If this stream descriptor is non-zero, then write
     texinfo documentation to it. */
-@@ -126,9 +131,17 @@
+@@ -126,9 +129,17 @@
    (char *)NULL
  };
  
@@ -32,7 +31,7 @@
  
  #if !defined (HAVE_RENAME)
  static int rename ();
-@@ -759,6 +772,8 @@
+@@ -759,6 +770,8 @@
      new->flags |= BUILTIN_FLAG_SPECIAL;
    if (is_assignment_builtin (name))
      new->flags |= BUILTIN_FLAG_ASSIGNMENT;
@@ -41,7 +40,7 @@
  
    array_add ((char *)new, defs->builtins);
    building_builtin = 1;
-@@ -1164,10 +1179,11 @@
+@@ -1164,10 +1177,11 @@
  		  else
  		    fprintf (structfile, "(Function *)0x0, ");
  
@@ -54,7 +53,7 @@
  		    builtin->docname ? builtin->docname : builtin->name);
  
  		  fprintf
-@@ -1401,6 +1417,13 @@
+@@ -1401,6 +1415,13 @@
       char *name;
  {
    return (_find_in_table (name, assignment_builtins));
@@ -68,39 +67,9 @@
  }
  
  #if !defined (HAVE_RENAME)
---- bash-2.05/doc/bash.1.orig	Mon Mar  5 21:41:30 2001
-+++ bash-2.05/doc/bash.1	Tue Oct 23 01:01:33 2001
-@@ -200,6 +200,12 @@
- .B "RESTRICTED SHELL"
- below).
- .TP
-+.B \-\-rpm-requires
-+Produce the list of files that are required for the 
-+shell script to run.  This implies '-n' and is subject
-+to the same limitations as compile time error checking checking;
-+Backticks, [] tests,  and evals are not parsed so some 
-+dependencies may be missed.
- .B \-\-verbose
- Equivalent to  \fB\-v\fP.
- .TP
---- bash-2.05/doc/bashref.texi.orig	Wed Mar 28 22:49:52 2001
-+++ bash-2.05/doc/bashref.texi	Tue Oct 23 01:01:34 2001
-@@ -4375,6 +4375,13 @@
- @item --restricted
- Make the shell a restricted shell (@pxref{The Restricted Shell}).
- 
-+@item --rpm-requires
-+Produce the list of files that are required for the 
-+shell script to run.  This implies '-n' and is subject
-+to the same limitations as compile time error checking checking;
-+Backticks, [] tests,  and evals are not parsed so some 
-+dependencies may be missed.
-+
- @item --verbose
- Equivalent to @option{-v}.  Print shell input lines as they're read.
- 
---- bash-2.05/builtins.h.orig	Thu Aug  5 14:18:12 1999
-+++ bash-2.05/builtins.h	Tue Oct 23 01:01:34 2001
+diff -ur bash-2.05-cwru-fixes/builtins.h bash-2.05/builtins.h
+--- bash-2.05-cwru-fixes/builtins.h	Thu Aug  5 15:18:12 1999
++++ bash-2.05/builtins.h	Sat Oct 27 18:41:59 2001
 @@ -40,6 +40,7 @@
  #define STATIC_BUILTIN  0x4	/* This builtin is not dynamically loaded. */
  #define SPECIAL_BUILTIN 0x8	/* This is a Posix `special' builtin. */
@@ -109,9 +78,50 @@
  
  /* The thing that we build the array of builtins out of. */
  struct builtin {
---- bash-2.05/make_cmd.c.orig	Wed Feb 14 23:54:04 2001
-+++ bash-2.05/make_cmd.c	Tue Oct 23 01:01:34 2001
-@@ -42,6 +42,9 @@
+diff -ur bash-2.05-cwru-fixes/doc/bash.1 bash-2.05/doc/bash.1
+--- bash-2.05-cwru-fixes/doc/bash.1	Mon Mar  5 22:41:30 2001
++++ bash-2.05/doc/bash.1	Sat Oct 27 18:41:59 2001
+@@ -200,6 +200,13 @@
+ .B "RESTRICTED SHELL"
+ below).
+ .TP
++.B \-\-rpm-requires
++Produce the list of files that are required for the
++shell script to run.  This implies '-n' and is subject
++to the same limitations as compile time error checking;
++Backticks, [] tests, and evals are not parsed so some
++dependencies may be missed.
++.TP
+ .B \-\-verbose
+ Equivalent to  \fB\-v\fP.
+ .TP
+diff -ur bash-2.05-cwru-fixes/doc/bashref.texi bash-2.05/doc/bashref.texi
+--- bash-2.05-cwru-fixes/doc/bashref.texi	Wed Mar 28 23:49:52 2001
++++ bash-2.05/doc/bashref.texi	Sat Oct 27 18:41:59 2001
+@@ -4375,6 +4375,13 @@
+ @item --restricted
+ Make the shell a restricted shell (@pxref{The Restricted Shell}).
+ 
++@item --rpm-requires
++Produce the list of files that are required for the
++shell script to run.  This implies '-n' and is subject
++to the same limitations as compile time error checking;
++Backticks, [] tests, and evals are not parsed so some
++dependencies may be missed.
++
+ @item --verbose
+ Equivalent to @option{-v}.  Print shell input lines as they're read.
+ 
+diff -ur bash-2.05-cwru-fixes/make_cmd.c bash-2.05/make_cmd.c
+--- bash-2.05-cwru-fixes/make_cmd.c	Thu Feb 15 00:54:04 2001
++++ bash-2.05/make_cmd.c	Sat Oct 27 18:42:39 2001
+@@ -38,10 +38,15 @@
+ #include "error.h"
+ #include "flags.h"
+ #include "make_cmd.h"
++#include "shell.h"
++#include "execute_cmd.h"
+ #include "variables.h"
  #include "subst.h"
  #include "input.h"
  #include "externs.h"
@@ -121,7 +131,7 @@
  
  #if defined (JOB_CONTROL)
  #include "jobs.h"
-@@ -50,7 +53,10 @@
+@@ -50,7 +55,10 @@
  extern int line_number, current_command_line_count;
  extern int disallow_filename_globbing;
  extern int last_command_exit_value;
@@ -132,36 +142,35 @@
  
  WORD_DESC *
  make_bare_word (string)
-@@ -697,6 +703,36 @@
+@@ -697,6 +705,35 @@
    return (make_command (cm_subshell, (SIMPLE_COM *)temp));
  }
  
 +void
 +output_requirement (file)
-+char *file;
++	char *file;
 +{
-+  if ( (file[0] != '/') || strchr(file, '$')) {
-+    /* if we are not given a full path name we require the basename
-+       otherwise we require the full path.  This does not work in the
-+       Win/Dos world but I don't know what to do there.*/
-+    char *basename;
-+    basename = strrchr(file, '/');
-+    if (basename) {    
-+      basename++;
-+      file=basename;
++  if (file[0] != '/' || strchr(file, '$'))
++    {
++      /* If we are not given a full path name we require the basename
++       * otherwise we require the full path. */
++      char *basename;
++      basename = strrchr(file, '/');
++      if (basename) {
++        basename++;
++        file = basename;
++      }
 +    }
-+  }  
 +
-+    /* 
-+       if the executable is called via variable substitution we can
-+       not dermine what it is at compile time.  
-+
-+       if the executable consists only of characters not in the
-+       alphabet we do not consider it a dependency just an artifact of
-+       shell parsing (ex "exec < ${infile}").
-+    */
-+
-+  if ( !strchr(file, '$') && strpbrk(file, alphabet_set) ) {
++  /*
++   * If the executable is called via variable substitution we cannot
++   * determine what it is at compile time.
++   *
++   * If the executable consists only of characters not in the alphabet
++   * we do not consider it a dependency just an artifact of shell parsing
++   * (ex "exec < ${infile}").
++   */
++  if (!strchr(file, '$') && strpbrk(file, alphabet_set)) {
 +    printf ("executable(%s)\n", file);
 +  }
 +}
@@ -169,7 +178,7 @@
  /* Reverse the word list and redirection list in the simple command
     has just been parsed.  It seems simpler to do this here the one
     time then by any other method that I can think of. */
-@@ -713,6 +749,35 @@
+@@ -713,6 +750,35 @@
        command->value.Simple->redirects =
  	REVERSE_LIST (command->value.Simple->redirects, REDIRECT *);
      }
@@ -183,30 +192,31 @@
 +      cmd0 = command->value.Simple->words->word->word;
 +      b = builtin_address_internal (cmd0, 0);
 +      cmd1 = 0;
-+      if (command->value.Simple->words->next) {
++      if (command->value.Simple->words->next)
 +	cmd1 = command->value.Simple->words->next->word->word;
-+      }
-+      if (b) {
-+	if ( (b->flags & REQUIRES_BUILTIN) && cmd1){
-+	  output_requirement(cmd1);
++      if (b)
++	{
++	  if ((b->flags & REQUIRES_BUILTIN) && cmd1)
++	    output_requirement (cmd1);
 +	}
-+      } else {
-+	if (!assignment(cmd0)) {
-+	  output_requirement(cmd0);
-+	} else {
-+
-+	  /* This will not work, the subshell that this runs in does
-+             not get the "requires" commandline argument. */
-+
-+	  execute_command(command);
++      else
++	{
++	  if (!assignment (cmd0))
++	    output_requirement (cmd0);
++	  else
++	    {
++	      /* This will not work, the subshell that this runs in does
++	       * not get the "requires" commandline argument. */
++	      execute_command (command);
++	    }
 +	}
-+      }
-+    } /*rpm_requires*/
++    } /* rpm_requires */
  
    return (command);
  }
---- bash-2.05/shell.c.orig	Tue Mar 27 17:25:51 2001
-+++ bash-2.05/shell.c	Tue Oct 23 01:01:34 2001
+diff -ur bash-2.05-cwru-fixes/shell.c bash-2.05/shell.c
+--- bash-2.05-cwru-fixes/shell.c	Tue Mar 27 18:25:51 2001
++++ bash-2.05/shell.c	Sat Oct 27 18:41:59 2001
 @@ -163,6 +163,9 @@
  /* The name of the .(shell)rc file. */
  static char *bashrc_file = "~/.bashrc";

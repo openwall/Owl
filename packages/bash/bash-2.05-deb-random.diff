@@ -50,7 +50,7 @@
  brand ()
  {
 +#if defined(HAVE_RANDOM)
-+  return (unsigned int) (labs(random()) & 32767);
++  return random() & 32767;
 +#else
    rseed = rseed * 1103515245 + 12345;
    return ((unsigned int)(rseed & 32767));	/* was % 32768 */

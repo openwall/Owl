@@ -1,22 +1,12 @@
---- bash-2.03/config.h.in.paths	Thu Feb 18 11:48:31 1999
-+++ bash-2.03/config.h.in	Mon Feb 22 14:32:04 1999
-@@ -351,7 +351,7 @@
- 
- #undef HAVE_POSIX_SIGSETJMP
- 
--#define DEFAULT_MAIL_DIRECTORY "/usr/spool/mail"
-+#define DEFAULT_MAIL_DIRECTORY "/var/spool/mail"
- 
- /* Define if you have the bcopy function.  */
- #undef HAVE_BCOPY
---- bash-2.03/config-top.h.paths	Tue Dec 15 13:24:38 1998
-+++ bash-2.03/config-top.h	Mon Feb 22 14:35:03 1999
+diff -ur bash-2.05-cwru-fixes/config-top.h bash-2.05/config-top.h
+--- bash-2.05-cwru-fixes/config-top.h	Wed Feb  7 21:28:14 2001
++++ bash-2.05/config-top.h	Thu Oct 25 21:59:55 2001
 @@ -34,14 +34,14 @@
  /* The default value of the PATH variable. */
  #ifndef DEFAULT_PATH_VALUE
  #define DEFAULT_PATH_VALUE \
 -  "/usr/gnu/bin:/usr/local/bin:/usr/ucb:/bin:/usr/bin:."
-+  "/usr/local/bin:/bin:/usr/bin"
++  "/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin"
  #endif
  
  /* The value for PATH when invoking `command -p'.  This is only used when

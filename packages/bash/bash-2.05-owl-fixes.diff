@@ -1,0 +1,2413 @@
+diff -ur bash-2.05-cwru-fixes/array.c bash-2.05/array.c
+--- bash-2.05-cwru-fixes/array.c	Fri Nov  3 19:20:00 2000
++++ bash-2.05/array.c	Sat Oct 27 19:15:05 2001
+@@ -309,6 +309,7 @@
+ 		return ((char *)NULL);
+ 
+ 	slen = strlen(sep);
++	result = NULL; /* never used */
+ 	for (rsize = rlen = 0, ae = start; ae != end; ae = element_forw(ae)) {
+ 		if (rsize == 0)
+ 			result = xmalloc (rsize = 64);
+diff -ur bash-2.05-cwru-fixes/bashhist.c bash-2.05/bashhist.c
+--- bash-2.05-cwru-fixes/bashhist.c	Tue Mar 13 22:54:46 2001
++++ bash-2.05/bashhist.c	Sat Oct 27 19:15:05 2001
+@@ -470,6 +470,7 @@
+   return (p && *p == '#');
+ }
+ 
++#if 0
+ /* Remove shell comments from LINE.  A `#' and anything after it is a comment.
+    This isn't really useful yet, since it doesn't handle quoting. */
+ static char *
+@@ -484,6 +485,7 @@
+     *p = '\0';
+   return (line);
+ }
++#endif
+ 
+ /* Add LINE to the history list depending on the value of HISTORY_CONTROL. */
+ void
+diff -ur bash-2.05-cwru-fixes/bashjmp.h bash-2.05/bashjmp.h
+--- bash-2.05-cwru-fixes/bashjmp.h	Thu Aug  5 15:24:12 1999
++++ bash-2.05/bashjmp.h	Sat Oct 27 19:15:05 2001
+@@ -27,7 +27,9 @@
+ extern procenv_t	subshell_top_level;
+ extern procenv_t	return_catch;	/* used by `return' builtin */
+ 
++#if 0
+ #define SHFUNC_RETURN()	longjmp (return_catch, 1)
++#endif
+ 
+ #define COPY_PROCENV(old, save) \
+ 	xbcopy ((char *)old, (char *)save, sizeof (procenv_t));
+diff -ur bash-2.05-cwru-fixes/bashline.c bash-2.05/bashline.c
+--- bash-2.05-cwru-fixes/bashline.c	Sat Oct 27 19:14:36 2001
++++ bash-2.05/bashline.c	Sat Oct 27 19:15:05 2001
+@@ -111,7 +111,6 @@
+ 
+ #if defined (PROGRAMMABLE_COMPLETION)
+ static char **prog_complete_matches;
+-static int old_rl_completion_append_character;
+ #endif
+ 
+ /* Variables used here but defined in other files. */
+@@ -484,7 +483,7 @@
+   if (file == 0)
+     return;
+ 
+-  while (temp = fgets (buffer, 255, file))
++  while ((temp = fgets (buffer, 255, file)))
+     {
+       /* Skip to first character. */
+       for (i = 0; buffer[i] && cr_whitespace (buffer[i]); i++)
+@@ -619,6 +618,7 @@
+     rl_get_previous_history (history_length - saved_history_line_to_use, 0);
+   saved_history_line_to_use = -1;
+   rl_startup_hook = old_rl_startup_hook;
++  return 0;
+ }
+ 
+ static int
+@@ -2002,6 +2002,8 @@
+ 
+   rl_completion_entry_function = orig_func;
+   rl_attempted_completion_function = orig_attempt_func;
++
++  return 0;
+ }
+ 
+ #if defined (SPECIFIC_COMPLETION_FUNCTIONS)
+@@ -2453,7 +2455,7 @@
+   if (startp)
+     *startp = delim ? ++i : i;
+ 
+-  for (passc = 0; c = string[i]; i++)
++  for (passc = 0; (c = string[i]); i++)
+     {
+       if (passc)
+ 	{
+@@ -2484,7 +2486,7 @@
+ {
+   Keymap kmap;
+   char *kseq, *value;
+-  int i, kstart, len, ok;
++  int i, kstart;
+ 
+   if (cmd_xmap == 0)
+     init_unix_command_map ();
+diff -ur bash-2.05-cwru-fixes/braces.c bash-2.05/braces.c
+--- bash-2.05-cwru-fixes/braces.c	Thu Feb 15 00:51:23 2001
++++ bash-2.05/braces.c	Sat Oct 27 19:15:05 2001
+@@ -228,7 +228,7 @@
+ 
+   level = quoted = pass_next = 0;
+ 
+-  for (i = *indx; c = text[i]; i++)
++  for (i = *indx; (c = text[i]); i++)
+     {
+       if (pass_next)
+ 	{
+diff -ur bash-2.05-cwru-fixes/builtins/bind.def bash-2.05/builtins/bind.def
+--- bash-2.05-cwru-fixes/builtins/bind.def	Thu Feb 15 01:07:33 2001
++++ bash-2.05/builtins/bind.def	Sat Oct 27 19:15:05 2001
+@@ -124,6 +124,8 @@
+   old_rl_outstream = rl_outstream;
+   rl_outstream = stdout;
+ 
++  cmd_seq = NULL; /* never used */
++
+   reset_internal_getopt ();  
+   while ((opt = internal_getopt (list, "lvpVPsSf:q:u:m:r:x:")) != EOF)
+     {
+diff -ur bash-2.05-cwru-fixes/builtins/cd.def bash-2.05/builtins/cd.def
+--- bash-2.05-cwru-fixes/builtins/cd.def	Wed Oct 11 19:10:20 2000
++++ bash-2.05/builtins/cd.def	Sat Oct 27 19:15:05 2001
+@@ -87,7 +87,7 @@
+      int no_symlinks;
+ {
+   char *dirname, *pwdvar;
+-  int old_symlinks, old_anm;
++  int old_anm;
+   SHELL_VAR *tvar;
+ 
+ #define tcwd the_current_working_directory
+@@ -189,13 +189,13 @@
+     }
+   else if (absolute_pathname (list->word->word))
+     dirname = list->word->word;
+-  else if (cdpath = get_string_value ("CDPATH"))
++  else if ((cdpath = get_string_value ("CDPATH")))
+     {
+       dirname = list->word->word;
+ 
+       /* Find directory in $CDPATH. */
+       path_index = 0;
+-      while (path = extract_colon_unit (cdpath, &path_index))
++      while ((path = extract_colon_unit (cdpath, &path_index)))
+ 	{
+ 	  /* OPT is 1 if the path element is non-empty */
+ 	  opt = path[0] != '\0';
+diff -ur bash-2.05-cwru-fixes/builtins/common.c bash-2.05/builtins/common.c
+--- bash-2.05-cwru-fixes/builtins/common.c	Thu Feb 15 01:05:11 2001
++++ bash-2.05/builtins/common.c	Sat Oct 27 19:15:05 2001
+@@ -500,13 +500,15 @@
+ 		  {
+ 		    if ((substring && strindex (p->command, word)) ||
+ 			(STREQN (p->command, word, wl)))
+-		      if (job != NO_JOB)
+-			{
+-			  builtin_error ("ambigious job spec: %s", word);
+-			  return (DUP_JOB);
+-			}
+-		      else
+-			job = i;
++		      {
++			if (job != NO_JOB)
++			  {
++			    builtin_error ("ambigious job spec: %s", word);
++			    return (DUP_JOB);
++			  }
++			else
++			  job = i;
++		      }
+ 
+ 		    p = p->next;
+ 		  }
+diff -ur bash-2.05-cwru-fixes/builtins/complete.def bash-2.05/builtins/complete.def
+--- bash-2.05-cwru-fixes/builtins/complete.def	Thu Feb 15 01:07:54 2001
++++ bash-2.05/builtins/complete.def	Sat Oct 27 19:15:05 2001
+@@ -144,7 +144,7 @@
+      int *pp, *rp;
+      unsigned long *actp, *optp;
+ {
+-  int opt, ind, pflag, rflag, opt_given;
++  int opt, ind, opt_given;
+   unsigned long acts, copts;
+ 
+   acts = copts = (unsigned long)0L;
+diff -ur bash-2.05-cwru-fixes/builtins/declare.def bash-2.05/builtins/declare.def
+--- bash-2.05-cwru-fixes/builtins/declare.def	Thu Feb 15 01:08:37 2001
++++ bash-2.05/builtins/declare.def	Sat Oct 27 19:15:05 2001
+@@ -231,7 +231,7 @@
+ 
+ #if defined (ARRAY_VARS)
+       assigning_array_special = 0;
+-      if (t = strchr (name, '['))
++      if ((t = strchr (name, '[')))
+ 	{
+ 	  *t = '\0';
+ 	  making_array_special = 1;
+diff -ur bash-2.05-cwru-fixes/builtins/echo.def bash-2.05/builtins/echo.def
+--- bash-2.05-cwru-fixes/builtins/echo.def	Fri Dec 17 15:12:40 1999
++++ bash-2.05/builtins/echo.def	Sat Oct 27 19:15:05 2001
+@@ -110,7 +110,7 @@
+ 
+       /* All of the options in TEMP are valid options to ECHO.
+ 	 Handle them. */
+-      while (i = *temp++)
++      while ((i = *temp++))
+ 	{
+ 	  switch (i)
+ 	    {
+diff -ur bash-2.05-cwru-fixes/builtins/enable.def bash-2.05/builtins/enable.def
+--- bash-2.05-cwru-fixes/builtins/enable.def	Thu Feb 15 01:09:05 2001
++++ bash-2.05/builtins/enable.def	Sat Oct 27 19:15:05 2001
+@@ -98,6 +98,8 @@
+   result = EXECUTION_SUCCESS;
+   flags = 0;
+ 
++  filename = NULL; /* never used */
++
+   reset_internal_getopt ();
+   while ((opt = internal_getopt (list, "adnpsf:")) != -1)
+     {
+@@ -325,7 +327,7 @@
+ 	b->flags |= SPECIAL_BUILTIN;
+       b->handle = handle;
+ 
+-      if (old_builtin = builtin_address_internal (name, 1))
++      if ((old_builtin = builtin_address_internal (name, 1)))
+ 	{
+ 	  replaced++;
+ 	  FASTCOPY ((char *)b, (char *)old_builtin, sizeof (struct builtin));
+@@ -427,7 +429,6 @@
+   struct builtin *b;
+   void *handle;
+   int ref, i;
+-  char *uerror;
+ 
+   b = builtin_address_internal (name, 1);
+   if (b == 0)
+diff -ur bash-2.05-cwru-fixes/builtins/evalfile.c bash-2.05/builtins/evalfile.c
+--- bash-2.05-cwru-fixes/builtins/evalfile.c	Thu Feb 15 01:05:16 2001
++++ bash-2.05/builtins/evalfile.c	Sat Oct 27 19:15:05 2001
+@@ -79,6 +79,8 @@
+   size_t file_size;
+   VFunction *errfunc;
+ 
++  (void) &pflags;
++
+   fd = open (filename, O_RDONLY);
+ 
+   if (fd < 0 || (fstat (fd, &finfo) == -1))
+diff -ur bash-2.05-cwru-fixes/builtins/evalstring.c bash-2.05/builtins/evalstring.c
+--- bash-2.05-cwru-fixes/builtins/evalstring.c	Thu Feb 15 01:05:23 2001
++++ bash-2.05/builtins/evalstring.c	Sat Oct 27 19:15:05 2001
+@@ -203,7 +203,7 @@
+ 	      dispose_command (global_command);
+ 	      global_command = (COMMAND *)NULL;
+ 	    }
+-	  else if (command = global_command)
++	  else if ((command = global_command))
+ 	    {
+ 	      struct fd_bitmap *bitmap;
+ 
+diff -ur bash-2.05-cwru-fixes/builtins/fc.def bash-2.05/builtins/fc.def
+--- bash-2.05-cwru-fixes/builtins/fc.def	Wed Jan 17 19:51:50 2001
++++ bash-2.05/builtins/fc.def	Sat Oct 27 19:15:05 2001
+@@ -117,9 +117,13 @@
+    Equivalent to !command:sg/pat/rep execpt there can be multiple PAT=REP's.
+ */
+ 
+-static char *fc_dosubs (), *fc_gethist (), *fc_readline ();
++static char *fc_dosubs (), *fc_gethist ();
+ static int fc_gethnum (), fc_number ();
+-static void fc_replhist (), fc_addhist ();
++static void fc_replhist ();
++#if 0
++static char *fc_readline ();
++static void fc_addhist ();
++#endif
+ 
+ /* Data structure describing a list of global replacements to perform. */
+ typedef struct repl {
+@@ -159,7 +163,7 @@
+   int histbeg, histend, last_hist, retval, opt;
+   FILE *stream;
+   REPL *rlist, *rl;
+-  char *ename, *command, *newcom, *line;
++  char *ename, *command, *newcom;
+   HIST_ENTRY **hlist;
+   char *fn;
+ 
+@@ -494,6 +498,7 @@
+     return ((char *)NULL);
+ }
+ 
++#if 0
+ /* Read the edited history lines from STREAM and return them
+    one at a time.  This can read unlimited length lines.  The
+    caller should free the storage. */
+@@ -535,6 +540,7 @@
+   line[lindex++] = '\0';
+   return (line);
+ }
++#endif
+ 
+ /* Perform the SUBS on COMMAND.
+    SUBS is a list of substitutions, and COMMAND is a simple string.
+@@ -604,6 +610,7 @@
+     }
+ }
+ 
++#if 0
+ /* Add LINE to the history, after removing a single trailing newline. */
+ static void
+ fc_addhist (line)
+@@ -619,4 +626,6 @@
+   if (line && *line)
+     maybe_add_history (line);
+ }
++#endif
++
+ #endif /* HISTORY */
+diff -ur bash-2.05-cwru-fixes/builtins/fg_bg.def bash-2.05/builtins/fg_bg.def
+--- bash-2.05-cwru-fixes/builtins/fg_bg.def	Thu Aug  5 15:42:21 1999
++++ bash-2.05/builtins/fg_bg.def	Sat Oct 27 19:15:05 2001
+@@ -129,11 +129,9 @@
+       goto failure;
+     }
+ 
++  old_async_pid = last_asynchronous_pid;
+   if (foreground == 0)
+-    {
+-      old_async_pid = last_asynchronous_pid;
+-      last_asynchronous_pid = jobs[job]->pgrp;	/* As per Posix.2 5.4.2 */
+-    }
++    last_asynchronous_pid = jobs[job]->pgrp;	/* As per Posix.2 5.4.2 */
+ 
+   status = start_job (job, foreground);
+ 
+diff -ur bash-2.05-cwru-fixes/builtins/getopt.c bash-2.05/builtins/getopt.c
+--- bash-2.05-cwru-fixes/builtins/getopt.c	Thu Aug  5 15:32:39 1999
++++ bash-2.05/builtins/getopt.c	Sat Oct 27 19:15:05 2001
+@@ -181,7 +181,7 @@
+ 
+   /* If the option is illegal, return an error, but defer updating sh_optind
+      until the next call so $OPTIND is correct. */
+-  if (sh_badopt = (temp == NULL || c == ':'))
++  if ((sh_badopt = (temp == NULL || c == ':')))
+     {
+       if (sh_opterr)
+ 	BADOPT (c);
+diff -ur bash-2.05-cwru-fixes/builtins/getopts.def bash-2.05/builtins/getopts.def
+--- bash-2.05-cwru-fixes/builtins/getopts.def	Thu Feb 15 01:09:23 2001
++++ bash-2.05/builtins/getopts.def	Sat Oct 27 19:15:05 2001
+@@ -162,9 +162,9 @@
+ 
+   special_error = optstr[0] == ':';
+ 
++  old_opterr = sh_opterr;
+   if (special_error)
+     {
+-      old_opterr = sh_opterr;
+       optstr++;
+       sh_opterr = 0;		/* suppress diagnostic messages */
+     }
+diff -ur bash-2.05-cwru-fixes/builtins/help.def bash-2.05/builtins/help.def
+--- bash-2.05-cwru-fixes/builtins/help.def	Thu Aug  5 15:42:44 1999
++++ bash-2.05/builtins/help.def	Sat Oct 27 19:15:05 2001
+@@ -105,7 +105,7 @@
+       pattern = list->word->word;
+       plen = strlen (pattern);
+ 
+-      for (i = 0; name = shell_builtins[i].name; i++)
++      for (i = 0; (name = shell_builtins[i].name); i++)
+ 	{
+ 	  QUIT;
+ 	  if ((strncmp (pattern, name, plen) == 0) ||
+diff -ur bash-2.05-cwru-fixes/builtins/history.def bash-2.05/builtins/history.def
+--- bash-2.05-cwru-fixes/builtins/history.def	Thu Feb 15 01:09:42 2001
++++ bash-2.05/builtins/history.def	Sat Oct 27 19:15:05 2001
+@@ -92,6 +92,8 @@
+   char *filename, *delete_arg;
+   long delete_offset;
+ 
++  delete_arg = NULL; /* never used */
++
+   flags = 0;
+   reset_internal_getopt ();
+   while ((opt = internal_getopt (list, "acd:npsrw")) != -1)
+diff -ur bash-2.05-cwru-fixes/builtins/mkbuiltins.c bash-2.05/builtins/mkbuiltins.c
+--- bash-2.05-cwru-fixes/builtins/mkbuiltins.c	Thu Feb 15 01:06:45 2001
++++ bash-2.05/builtins/mkbuiltins.c	Sat Oct 27 19:15:05 2001
+@@ -497,7 +497,7 @@
+   output_cpp_line_info = 1;
+ 
+   /* Process each line in the array. */
+-  for (i = 0; line = defs->lines->array[i]; i++)
++  for (i = 0; (line = defs->lines->array[i]); i++)
+     {
+       defs->line_number = i;
+ 
+@@ -613,7 +613,7 @@
+ 
+   if (defs->builtins)
+     {
+-      for (i = 0; builtin = (BUILTIN_DESC *)defs->builtins->array[i]; i++)
++      for (i = 0; (builtin = (BUILTIN_DESC *)defs->builtins->array[i]); i++)
+ 	{
+ 	  free_builtin (builtin);
+ 	  free (builtin);
+@@ -1312,7 +1312,7 @@
+     goto end_of_document;
+ #endif /* !OLDCODE */
+ 
+-  for (i = 0, texinfo = (flags & TEXINFO); line = documentation[i]; i++)
++  for (i = 0, texinfo = (flags & TEXINFO); (line = documentation[i]); i++)
+     {
+       /* Allow #ifdef's to be written out verbatim. */
+       if (*line == '#')
+diff -ur bash-2.05-cwru-fixes/builtins/printf.def bash-2.05/builtins/printf.def
+--- bash-2.05-cwru-fixes/builtins/printf.def	Thu Feb 15 01:09:55 2001
++++ bash-2.05/builtins/printf.def	Sat Oct 27 19:15:05 2001
+@@ -56,6 +56,7 @@
+ #include "../shell.h"
+ #include "stdc.h"
+ #include "bashgetopt.h"
++#include "common.h"
+ 
+ #if !defined (errno)
+ extern int errno;
+@@ -100,7 +101,7 @@
+ printf_builtin (list)
+      WORD_LIST *list;
+ {
+-  int ch, end, fieldwidth, precision, foundmod, fmtlen;
++  int ch, fieldwidth, precision, foundmod;
+   char convch, nextch, *format, *fmt, *start;
+ 
+   retval = EXECUTION_SUCCESS;
+diff -ur bash-2.05-cwru-fixes/builtins/read.def bash-2.05/builtins/read.def
+--- bash-2.05-cwru-fixes/builtins/read.def	Thu Feb 15 01:10:46 2001
++++ bash-2.05/builtins/read.def	Sat Oct 27 19:15:05 2001
+@@ -50,6 +50,7 @@
+ #include "posixstat.h"
+ 
+ #include <stdio.h>
++#include <stdlib.h>
+ 
+ #if defined (HAVE_UNISTD_H)
+ #  include <unistd.h>
+@@ -134,6 +135,23 @@
+   char *rlbuf;
+   int rlind;
+ #endif
++
++  (void) &size;
++  (void) &i;
++  (void) &pass_next;
++  (void) &saw_escape;
++  (void) &input_is_pipe;
++  (void) &raw;
++  (void) &edit;
++  (void) &tmout;
++  (void) &nchars;
++  (void) &silent;
++  (void) &ifs_chars;
++  (void) &prompt;
++  (void) &arrayname;
++  (void) &rlbuf;
++  (void) &rlind;
++  (void) &list;
+ 
+   i = 0;		/* Index into the string that we are reading. */
+   raw = edit = 0;	/* Not reading raw input by default. */
+diff -ur bash-2.05-cwru-fixes/builtins/set.def bash-2.05/builtins/set.def
+--- bash-2.05-cwru-fixes/builtins/set.def	Wed Mar 28 23:47:55 2001
++++ bash-2.05/builtins/set.def	Sat Oct 27 19:15:05 2001
+@@ -505,7 +505,7 @@
+   int vptr;
+ 
+   vptr = 0;
+-  while (vname = extract_colon_unit (value, &vptr))
++  while ((vname = extract_colon_unit (value, &vptr)))
+     {
+       set_minus_o_option (FLAG_ON, vname);
+       free (vname);
+@@ -581,7 +581,7 @@
+ 	  if (arg[0] == '-' && (!arg[1] || (arg[1] == '-' && !arg[2])))
+ 	    break;
+ 
+-	  while (c = *++arg)
++	  while ((c = *++arg))
+ 	    {
+ 	      if (find_flag (c) == FLAG_UNKNOWN && c != 'o')
+ 		{
+@@ -628,7 +628,7 @@
+ 
+       if ((on_or_off = *arg) && (on_or_off == '-' || on_or_off == '+'))
+ 	{
+-	  while (flag_name = *++arg)
++	  while ((flag_name = *++arg))
+ 	    {
+ 	      if (flag_name == '?')
+ 		{
+@@ -752,6 +752,7 @@
+       name = list->word->word;
+ 
+ #if defined (ARRAY_VARS)
++      t = NULL; /* never used */
+       if (!unset_function && valid_array_reference (name))
+ 	{
+ 	  t = strchr (name, '[');
+diff -ur bash-2.05-cwru-fixes/builtins/setattr.def bash-2.05/builtins/setattr.def
+--- bash-2.05-cwru-fixes/builtins/setattr.def	Thu Feb 15 01:11:44 2001
++++ bash-2.05/builtins/setattr.def	Sat Oct 27 19:15:05 2001
+@@ -242,7 +242,7 @@
+ 
+       if (variable_list)
+ 	{
+-	  for (i = 0; var = variable_list[i]; i++)
++	  for (i = 0; (var = variable_list[i]); i++)
+ 	    {
+ #if defined (ARRAY_VARS)
+ 	      if (arrays_only && array_p (var) == 0)
+@@ -342,7 +342,6 @@
+      int nodefs;
+ {
+   SHELL_VAR *var;
+-  int ret;
+ 
+   var = find_tempenv_variable (name);
+   if (var == 0)
+@@ -370,7 +369,7 @@
+     var = find_variable (name);
+   else
+     {
+-      if (tv = find_tempenv_variable (name))
++      if ((tv = find_tempenv_variable (name)))
+ 	{
+ 	  var = bind_variable (tv->name, tv->value ? tv->value : "");
+ 	  dispose_variable (tv);
+diff -ur bash-2.05-cwru-fixes/builtins/type.def bash-2.05/builtins/type.def
+--- bash-2.05-cwru-fixes/builtins/type.def	Thu Feb 15 01:12:13 2001
++++ bash-2.05/builtins/type.def	Sat Oct 27 19:15:05 2001
+@@ -108,6 +108,7 @@
+      the arguments and removing those options from the list before calling
+      internal_getopt.  Recognize `--type', `--path', and `--all' also.
+      THIS SHOULD REALLY GO AWAY. */
++  prev = NULL; /* never used */
+   for (this = list; this && this->word->word[0] == '-'; )
+     {
+       char *flag = &(this->word->word[1]);
+@@ -213,7 +214,7 @@
+      int verbose, all;
+ {
+   int found, i, found_file, f;
+-  char *full_path, *x, *cwd;
++  char *full_path, *x;
+   SHELL_VAR *func;
+ #if defined (ALIAS)
+   alias_t *alias;
+diff -ur bash-2.05-cwru-fixes/builtins/wait.def bash-2.05/builtins/wait.def
+--- bash-2.05-cwru-fixes/builtins/wait.def	Wed Jan 17 23:40:08 2001
++++ bash-2.05/builtins/wait.def	Sat Oct 27 19:15:05 2001
+@@ -81,6 +81,8 @@
+   int status, code;
+   volatile int old_interrupt_immediately;
+ 
++  (void) &list;
++
+   if (no_options (list))
+     return (EX_USAGE);
+   if (list != loptend)
+diff -ur bash-2.05-cwru-fixes/config-bot.h bash-2.05/config-bot.h
+--- bash-2.05-cwru-fixes/config-bot.h	Wed Feb  7 21:27:59 2001
++++ bash-2.05/config-bot.h	Sat Oct 27 19:15:05 2001
+@@ -70,7 +70,7 @@
+ #  undef HAVE_STRCOLL
+ #endif
+ 
+-#if defined (HAVE_SYS_SOCKET_H) && defined (HAVE_GETPEERNAME) && defined (HAVE_NETINET_IN_H)
++#if defined (HAVE_SYS_SOCKET_H) && defined (HAVE_GETPEERNAME) && defined (HAVE_NETINET_IN_H) && defined (NETWORK_REDIRECTIONS)
+ #  define HAVE_NETWORK
+ #endif
+ 
+diff -ur bash-2.05-cwru-fixes/doc/bashref.texi bash-2.05/doc/bashref.texi
+--- bash-2.05-cwru-fixes/doc/bashref.texi	Wed Mar 28 23:49:52 2001
++++ bash-2.05/doc/bashref.texi	Sat Oct 27 19:15:05 2001
+@@ -5065,7 +5065,7 @@
+ referencing element zero. 
+ 
+ The @code{unset} builtin is used to destroy arrays.
+-@code{unset} @var{name[subscript]}
++@code{unset} @var{name}[@var{subscript}]
+ destroys the array element at index @var{subscript}.
+ @code{unset} @var{name}, where @var{name} is an array, removes the
+ entire array. A subscript of @samp{*} or @samp{@@} also removes the
+diff -ur bash-2.05-cwru-fixes/eval.c bash-2.05/eval.c
+--- bash-2.05-cwru-fixes/eval.c	Thu Feb 15 00:58:24 2001
++++ bash-2.05/eval.c	Sat Oct 27 19:15:05 2001
+@@ -62,12 +62,16 @@
+   int our_indirection_level;
+   COMMAND *current_command = (COMMAND *)NULL;
+ 
++  (void) &current_command;
++
+   our_indirection_level = ++indirection_level;
+ 
+   while (EOF_Reached == 0)
+     {
+       int code;
+ 
++      /* XXX: non-atomic update of top_level, do we allow interrupts here? */
++      /* XXX: doesn't restore top_level on function return */
+       code = setjmp (top_level);
+ 
+ #if defined (PROCESS_SUBSTITUTION)
+@@ -129,7 +133,7 @@
+ 	      dispose_command (global_command);
+ 	      global_command = (COMMAND *)NULL;
+ 	    }
+-	  else if (current_command = global_command)
++	  else if ((current_command = global_command))
+ 	    {
+ 	      global_command = (COMMAND *)NULL;
+ 	      current_command_number++;
+@@ -234,11 +238,11 @@
+   /* Only do timeouts if interactive. */
+   tmout_var = (SHELL_VAR *)NULL;
+   tmout_len = 0;
++  old_alrm = (SigHandler *)NULL;
+ 
+   if (interactive)
+     {
+       tmout_var = find_variable ("TMOUT");
+-      old_alrm = (SigHandler *)NULL;
+ 
+       if (tmout_var && tmout_var->value)
+ 	{
+diff -ur bash-2.05-cwru-fixes/execute_cmd.c bash-2.05/execute_cmd.c
+--- bash-2.05-cwru-fixes/execute_cmd.c	Thu Mar 22 18:17:23 2001
++++ bash-2.05/execute_cmd.c	Sat Oct 27 19:15:05 2001
+@@ -1070,6 +1070,11 @@
+   int ois;
+   COMMAND *tcom;
+ 
++  (void) &user_subshell;
++  (void) &invert;
++  (void) &tcom;
++  (void) &asynchronous;
++
+   should_redir_stdin = (asynchronous && (command->flags & CMD_STDIN_REDIR) &&
+ 			  pipe_in == NO_PIPE &&
+ 			  stdin_redirects (command->redirects) == 0);
+@@ -1624,7 +1629,7 @@
+      ARITH_FOR_COM *arith_for_command;
+ {
+   long expresult;
+-  int expok, result, body_status;
++  int expok, body_status;
+ 
+   body_status = EXECUTION_SUCCESS;
+   loop_level++;
+@@ -1891,6 +1896,7 @@
+   retval = EXECUTION_SUCCESS;
+ 
+   unwind_protect_int (return_catch_flag);
++  /* XXX: will be restored non-atomically */
+   unwind_protect_jmp_buf (return_catch);
+   return_catch_flag++;
+ 
+@@ -2148,9 +2154,8 @@
+ execute_arith_command (arith_command)
+      ARITH_COM *arith_command;
+ {
+-  int result, expok, expresult;
+-  WORD_LIST *new, *p, *printit;
+-  WORD_DESC *w;
++  int result, expok;
++  WORD_LIST *new;
+ 
+   result = 0;
+ 
+@@ -2184,8 +2189,8 @@
+ execute_cond_node (cond)
+      COND_COM *cond;
+ {
+-  int result, invert, patmatch, flags;
+-  char *arg1, *arg2, *print2;
++  int result, invert, patmatch;
++  char *arg1, *arg2;
+ 
+   invert = (cond->flags & CMD_INVERT_RETURN);
+ 
+@@ -2216,8 +2221,8 @@
+     }
+   else if (cond->type == COND_BINARY)
+     {
+-      patmatch = ((cond->op->word[1] == '=') && (cond->op->word[2] == '\0') &&
+-		  (cond->op->word[0] == '!' || cond->op->word[0] == '=') ||
++      patmatch = (((cond->op->word[1] == '=') && (cond->op->word[2] == '\0') &&
++		   (cond->op->word[0] == '!' || cond->op->word[0] == '=')) ||
+ 		  (cond->op->word[0] == '=' && cond->op->word[1] == '\0'));
+ 
+       arg1 = cond_expand_word (cond->left->op, 0);
+@@ -2788,6 +2793,8 @@
+   char *debug_trap;
+   SHELL_VAR *old_shell_function;
+ 
++  (void) &fc;
++
+   tc = (COMMAND *)copy_command (function_cell (var));
+   if (tc && (flags & CMD_IGNORE_RETURN))
+     tc->flags |= CMD_IGNORE_RETURN;
+@@ -2965,6 +2972,7 @@
+     {
+       /* Give builtins a place to jump back to on failure,
+ 	 so we don't go back up to main(). */
++      /* XXX: non-atomic update of top_level, do we allow interrupts here? */
+       result = setjmp (top_level);
+ 
+       if (result == EXITPROG)
+@@ -3184,11 +3192,9 @@
+ 
+       do_piping (pipe_in, pipe_out);
+ 
++      old_interactive = interactive;
+       if (async)
+-	{
+-	  old_interactive = interactive;
+-	  interactive = 0;
+-	}
++	interactive = 0;
+ 
+       subshell_environment = SUBSHELL_FORK;
+ 
+diff -ur bash-2.05-cwru-fixes/expr.c bash-2.05/expr.c
+--- bash-2.05-cwru-fixes/expr.c	Thu Feb 15 00:58:32 2001
++++ bash-2.05/expr.c	Sat Oct 27 19:15:05 2001
+@@ -376,11 +376,8 @@
+       if (lasttok != STR)
+ 	evalerror ("attempted assignment to non-variable");
+ 
+-      if (special)
+-	{
+-	  op = assigntok;		/* a OP= b */
+-	  lvalue = value;
+-	}
++      op = assigntok;			/* a OP= b */
++      lvalue = value;
+ 
+       lhs = savestring (tokstr);
+       readtok ();
+diff -ur bash-2.05-cwru-fixes/externs.h bash-2.05/externs.h
+--- bash-2.05-cwru-fixes/externs.h	Fri Nov  3 19:25:31 2000
++++ bash-2.05/externs.h	Sat Oct 27 19:15:05 2001
+@@ -44,7 +44,7 @@
+ #endif
+ 
+ /* Functions from shell.c. */
+-extern void exit_shell __P((int));
++extern void exit_shell __P((int)) __attribute__((__noreturn__));
+ extern void disable_priv_mode __P((void));
+ extern void unbind_args __P((void));
+ 
+@@ -202,7 +202,9 @@
+ extern STRINGLIST *realloc_stringlist __P((STRINGLIST *, int));
+ extern void free_stringlist __P((STRINGLIST *));
+ extern STRINGLIST *copy_stringlist __P((STRINGLIST *));
++#if 0
+ extern STRINGLIST *merge_stringlists __P((STRINGLIST *, STRINGLIST *));
++#endif
+ extern STRINGLIST *append_stringlist __P((STRINGLIST *, STRINGLIST *));
+ extern STRINGLIST *prefix_suffix_stringlist __P((STRINGLIST *, char *, char *));
+ extern void print_stringlist __P((STRINGLIST *, char *));
+diff -ur bash-2.05-cwru-fixes/findcmd.c bash-2.05/findcmd.c
+--- bash-2.05-cwru-fixes/findcmd.c	Tue Feb 20 23:19:10 2001
++++ bash-2.05/findcmd.c	Sat Oct 27 19:15:05 2001
+@@ -203,7 +203,7 @@
+ 
+   /* Search for the value of PATH in both the temporary environment, and
+      in the regular list of variables. */
+-  if (var = find_variable_internal ("PATH", 1))	/* XXX could be array? */
++  if ((var = find_variable_internal ("PATH", 1))) /* XXX could be array? */
+     path_list = value_cell (var);
+   else
+     path_list = (char *)NULL;
+@@ -363,6 +363,7 @@
+ 	  match_list[0] = find_absolute_program (name, flags);
+ 	  match_list[1] = (char *)NULL;
+ 	  path_list = (char *)NULL;
++	  name_len = 0; /* never used */
+ 	}
+       else
+ 	{
+diff -ur bash-2.05-cwru-fixes/general.h bash-2.05/general.h
+--- bash-2.05-cwru-fixes/general.h	Thu Feb 15 00:53:05 2001
++++ bash-2.05/general.h	Sat Oct 27 19:15:05 2001
+@@ -32,6 +32,8 @@
+ #  include <sys/resource.h>
+ #endif
+ 
++#include <ctype.h>
++
+ #if defined (HAVE_STRING_H)
+ #  include <string.h>
+ #else
+@@ -79,11 +81,11 @@
+ #endif
+ 
+ #ifndef digit
+-#define digit(c)  (isdigit(c))
++#define digit(c)  (isdigit((int)(unsigned char)(c)))
+ #endif
+ 
+ #ifndef isletter
+-#define isletter(c) (isalpha(c))
++#define isletter(c) (isalpha((int)(unsigned char)(c)))
+ #endif
+ 
+ #ifndef digit_value
+diff -ur bash-2.05-cwru-fixes/include/stdc.h bash-2.05/include/stdc.h
+--- bash-2.05-cwru-fixes/include/stdc.h	Thu Aug  5 15:51:40 1999
++++ bash-2.05/include/stdc.h	Sat Oct 27 19:15:05 2001
+@@ -78,4 +78,8 @@
+ 
+ #endif /* !__STDC__ */
+ 
++#if !defined(__GNUC__) || __GNUC__ < 2 ||  (__GNUC__ == 2 && __GNUC_MINOR__ < 5)
++#define __attribute__(args)
++#endif
++
+ #endif /* !_STDC_H_ */
+diff -ur bash-2.05-cwru-fixes/input.c bash-2.05/input.c
+--- bash-2.05-cwru-fixes/input.c	Tue Feb 13 23:39:59 2001
++++ bash-2.05/input.c	Sat Oct 27 19:15:05 2001
+@@ -274,8 +274,6 @@
+ check_bash_input (fd)
+      int fd;
+ {
+-  int nfd;
+-
+   if (fd > 0 && fd_is_bash_input (fd))
+     return ((save_bash_input (fd, -1) == -1) ? -1 : 0);
+   return 0;
+diff -ur bash-2.05-cwru-fixes/jobs.c bash-2.05/jobs.c
+--- bash-2.05-cwru-fixes/jobs.c	Mon Mar 26 22:08:24 2001
++++ bash-2.05/jobs.c	Sat Oct 27 19:15:05 2001
+@@ -243,9 +243,6 @@
+    commands. */
+ static int jobs_list_frozen;
+ 
+-static sigset_t empty_sigset;
+-static sigset_t sigchld_sigset;
+-
+ static char retcode_name_buffer[64];
+ 
+ #if !defined (_POSIX_VERSION)
+@@ -582,7 +579,7 @@
+   if (job_slots == 0)
+     return;
+ 
+-  if (temp = jobs[job_index])
++  if ((temp = jobs[job_index]))
+     temp->flags |= J_NOHUP;
+ }
+ 
+diff -ur bash-2.05-cwru-fixes/lib/glob/collsyms.h bash-2.05/lib/glob/collsyms.h
+--- bash-2.05-cwru-fixes/lib/glob/collsyms.h	Thu Aug  5 15:56:04 1999
++++ bash-2.05/lib/glob/collsyms.h	Sat Oct 27 19:15:05 2001
+@@ -34,96 +34,96 @@
+ 
+ static COLLSYM posix_collsyms[] =
+ {
+-  "NUL",	'\0',
+-  "SOH",	'\001',
+-  "STX",	'\002',
+-  "ETX",	'\003',
+-  "EOT",	'\004',
+-  "ENQ",	'\005',
+-  "ACK",	'\006',
++  {"NUL",	'\0'},
++  {"SOH",	'\001'},
++  {"STX",	'\002'},
++  {"ETX",	'\003'},
++  {"EOT",	'\004'},
++  {"ENQ",	'\005'},
++  {"ACK",	'\006'},
+ #ifdef __STDC__
+-  "alert",	'\a',
++  {"alert",	'\a'},
+ #else
+-  "alert",	'\007',
++  {"alert",	'\007'},
+ #endif
+-  "backspace",	'\b',
+-  "tab",	'\t',
+-  "newline",	'\n',
+-  "vertical-tab",	'\v',
+-  "form-feed",	'\f',
+-  "carriage-return",	'\r',
+-  "SO",		'\016',
+-  "SI",		'\017',
+-  "DLE",	'\020',
+-  "DC1",	'\021',
+-  "DC2",	'\022',
+-  "DC3",	'\023',
+-  "DC4",	'\024',
+-  "NAK",	'\025',
+-  "SYN",	'\026',
+-  "ETB",	'\027',
+-  "CAN",	'\030',
+-  "EM",		'\031',
+-  "SUB",	'\032',
+-  "ESC",	'\033',
+-  "IS4",	'\034',
+-  "IS3",	'\035',
+-  "IS2",	'\036',
+-  "IS1",	'\037',
+-  "space",		' ',
+-  "exclamation-mark",	'!',
+-  "quotation-mark",	'"',
+-  "number-sign",	'#',
+-  "dollar-sign",	'$',
+-  "percent-sign",	'%',
+-  "ampersand",		'&',
+-  "apostrophe",		'\'',
+-  "left-parenthesis",	'(',
+-  "right-parenthesis",	')',
+-  "asterisk",	'*',
+-  "plus-sign",	'+',
+-  "comma",	',',
+-  "hyphen",	'-',
+-  "minus",	'-',		/* extension from POSIX.2 */
+-  "dash",	'-',		/* extension from POSIX.2 */
+-  "period",	'.',
+-  "slash",	'/',
+-  "solidus",	'/',		/* extension from POSIX.2 */
+-  "zero",	'0',
+-  "one",	'1',
+-  "two",	'2',
+-  "three",	'3',
+-  "four",	'4',
+-  "five",	'5',
+-  "six",	'6',
+-  "seven",	'7',
+-  "eight",	'8',
+-  "nine",	'9',
+-  "colon",	':',
+-  "semicolon",	';',
+-  "less-than-sign",	'<',
+-  "equals-sign",	'=',
+-  "greater-than-sign",	'>',
+-  "question-mark",	'?',
+-  "commercial-at",	'@',
++  {"backspace",	'\b'},
++  {"tab",	'\t'},
++  {"newline",	'\n'},
++  {"vertical-tab",	'\v'},
++  {"form-feed",	'\f'},
++  {"carriage-return",	'\r'},
++  {"SO",		'\016'},
++  {"SI",		'\017'},
++  {"DLE",	'\020'},
++  {"DC1",	'\021'},
++  {"DC2",	'\022'},
++  {"DC3",	'\023'},
++  {"DC4",	'\024'},
++  {"NAK",	'\025'},
++  {"SYN",	'\026'},
++  {"ETB",	'\027'},
++  {"CAN",	'\030'},
++  {"EM",		'\031'},
++  {"SUB",	'\032'},
++  {"ESC",	'\033'},
++  {"IS4",	'\034'},
++  {"IS3",	'\035'},
++  {"IS2",	'\036'},
++  {"IS1",	'\037'},
++  {"space",		' '},
++  {"exclamation-mark",	'!'},
++  {"quotation-mark",	'"'},
++  {"number-sign",	'#'},
++  {"dollar-sign",	'$'},
++  {"percent-sign",	'%'},
++  {"ampersand",		'&'},
++  {"apostrophe",		'\''},
++  {"left-parenthesis",	'('},
++  {"right-parenthesis",	')'},
++  {"asterisk",	'*'},
++  {"plus-sign",	'+'},
++  {"comma",	','},
++  {"hyphen",	'-'},
++  {"minus",	'-'},		/* extension from POSIX.2 */
++  {"dash",	'-'},		/* extension from POSIX.2 */
++  {"period",	'.'},
++  {"slash",	'/'},
++  {"solidus",	'/'},		/* extension from POSIX.2 */
++  {"zero",	'0'},
++  {"one",	'1'},
++  {"two",	'2'},
++  {"three",	'3'},
++  {"four",	'4'},
++  {"five",	'5'},
++  {"six",	'6'},
++  {"seven",	'7'},
++  {"eight",	'8'},
++  {"nine",	'9'},
++  {"colon",	':'},
++  {"semicolon",	';'},
++  {"less-than-sign",	'<'},
++  {"equals-sign",	'='},
++  {"greater-than-sign",	'>'},
++  {"question-mark",	'?'},
++  {"commercial-at",	'@'},
+   /* upper-case letters omitted */
+-  "left-square-bracket",'[',
+-  "backslash",		'\\',
+-  "reverse-solidus",	'\\',
+-  "right-square-bracket",	']',
+-  "circumflex",		'^',
+-  "circumflex-accent",	'^',		/* extension from POSIX.2 */
+-  "underscore",		'_',
+-  "grave-accent",		'`',
++  {"left-square-bracket",'['},
++  {"backslash",		'\\'},
++  {"reverse-solidus",	'\\'},
++  {"right-square-bracket",	']'},
++  {"circumflex",		'^'},
++  {"circumflex-accent",	'^'},		/* extension from POSIX.2 */
++  {"underscore",		'_'},
++  {"grave-accent",		'`'},
+   /* lower-case letters omitted */
+-  "left-brace",		'{',		/* extension from POSIX.2 */
+-  "left-curly-bracket",	'{',
+-  "vertical-line",	'|',
+-  "right-brace",		'}',	/* extension from POSIX.2 */
+-  "right-curly-bracket",	'}',
+-  "tilde",		'~',
+-  "DEL",	'\177',
+-  0,	0,
++  {"left-brace",		'{'},		/* extension from POSIX.2 */
++  {"left-curly-bracket",	'{'},
++  {"vertical-line",	'|'},
++  {"right-brace",		'}'},	/* extension from POSIX.2 */
++  {"right-curly-bracket",	'}'},
++  {"tilde",		'~'},
++  {"DEL",	'\177'},
++  {0,	0}
+ };
+ 
+ #endif
+diff -ur bash-2.05-cwru-fixes/lib/glob/fnmatch.c bash-2.05/lib/glob/fnmatch.c
+--- bash-2.05-cwru-fixes/lib/glob/fnmatch.c	Fri Mar 16 21:24:27 2001
++++ bash-2.05/lib/glob/fnmatch.c	Sat Oct 27 19:32:00 2001
+@@ -385,7 +385,7 @@
+      circumflex (`^') in its role in a `nonmatching list'.  A bracket
+      expression starting with an unquoted circumflex character produces
+      unspecified results.  This implementation treats the two identically. */
+-  if (not = (*p == '!' || *p == '^'))
++  if ((not = (*p == '!' || *p == '^')))
+     ++p;
+ 
+   c = *p++;
+@@ -614,7 +614,7 @@
+ 
+   pnest = bnest = cchar = 0;
+   bfirst = 0;
+-  for (s = string; c = *s; s++)
++  for (s = string; (c = *s); s++)
+     {
+       if (s >= end)
+ 	return (s);
+@@ -758,6 +758,7 @@
+ 	      /* OK, we matched a subpattern, so make sure the rest of the
+ 		 string matches the rest of the pattern.  Also handle
+ 		 multiple matches of the pattern. */
++	      m2 = 0; /* never used */
+ 	      if (m1)
+ 		m2 = (gmatch (srest, se, prest, pe, flags) == 0) ||
+ 		      (s != srest && gmatch (srest, se, p - 1, pe, flags) == 0);
+@@ -803,7 +804,7 @@
+ 	    {
+ 	      pnext = patscan (psub, pe, '|');
+ 	      /* If one of the patterns matches, just bail immediately. */
+-	      if (m1 = (gmatch (s, srest, psub, pnext - 1, flags) == 0))
++	      if ((m1 = (gmatch (s, srest, psub, pnext - 1, flags) == 0)))
+ 		break;
+ 	      if (pnext == prest)
+ 		break;
+diff -ur bash-2.05-cwru-fixes/lib/malloc/malloc.c bash-2.05/lib/malloc/malloc.c
+--- bash-2.05-cwru-fixes/lib/malloc/malloc.c	Thu Feb 15 01:01:50 2001
++++ bash-2.05/lib/malloc/malloc.c	Sat Oct 27 19:15:05 2001
+@@ -559,11 +559,13 @@
+ }
+ #endif /* MEMSCRAMBLE || !NO_CALLOC */
+ 
++#if 0
+ static void
+ malloc_debug_dummy ()
+ {
+   write (1, "malloc_debug_dummy\n", 19);
+ }
++#endif
+ 
+ PTR_T
+ malloc (n)		/* get a block */
+diff -ur bash-2.05-cwru-fixes/lib/readline/bind.c bash-2.05/lib/readline/bind.c
+--- bash-2.05-cwru-fixes/lib/readline/bind.c	Mon Mar  5 18:10:07 2001
++++ bash-2.05/lib/readline/bind.c	Sat Oct 27 19:15:05 2001
+@@ -316,7 +316,7 @@
+ {
+   register int i, c, l, temp;
+ 
+-  for (i = l = 0; c = seq[i]; i++)
++  for (i = l = 0; (c = seq[i]); i++)
+     {
+       if (c == '\\')
+ 	{
+@@ -1028,7 +1028,7 @@
+     {
+       int passc = 0;
+ 
+-      for (i = 1; c = string[i]; i++)
++      for (i = 1; (c = string[i]); i++)
+ 	{
+ 	  if (passc)
+ 	    {
+@@ -1104,7 +1104,7 @@
+     {
+       int delimiter = string[i++], passc;
+ 
+-      for (passc = 0; c = string[i]; i++)
++      for (passc = 0; (c = string[i]); i++)
+ 	{
+ 	  if (passc)
+ 	    {
+@@ -1842,7 +1842,7 @@
+ 
+   fprintf (rl_outstream, "\n");
+ 
+-  for (i = 0; name = names[i]; i++)
++  for (i = 0; (name = names[i]); i++)
+     {
+       rl_command_func_t *function;
+       char **invokers;
+diff -ur bash-2.05-cwru-fixes/lib/readline/complete.c bash-2.05/lib/readline/complete.c
+--- bash-2.05-cwru-fixes/lib/readline/complete.c	Wed Feb 14 15:47:18 2001
++++ bash-2.05/lib/readline/complete.c	Sat Oct 27 19:15:05 2001
+@@ -1364,7 +1364,7 @@
+   match_list = (char **)xmalloc ((match_list_size + 1) * sizeof (char *));
+   match_list[1] = (char *)NULL;
+ 
+-  while (string = (*entry_function) (text, matches))
++  while ((string = (*entry_function) (text, matches)))
+     {
+       if (matches + 1 == match_list_size)
+ 	match_list = (char **)xrealloc
+@@ -1414,7 +1414,7 @@
+       setpwent ();
+     }
+ 
+-  while (entry = getpwent ())
++  while ((entry = getpwent ()))
+     {
+       /* Null usernames should result in all users as possible completions. */
+       if (namelen == 0 || (STREQN (username, entry->pw_name, namelen)))
+diff -ur bash-2.05-cwru-fixes/lib/readline/histexpand.c bash-2.05/lib/readline/histexpand.c
+--- bash-2.05-cwru-fixes/lib/readline/histexpand.c	Tue Mar  6 22:09:25 2001
++++ bash-2.05/lib/readline/histexpand.c	Sat Oct 27 19:15:05 2001
+@@ -203,7 +203,7 @@
+     }
+ 
+   /* Only a closing `?' or a newline delimit a substring search string. */
+-  for (local_index = i; c = string[i]; i++)
++  for (local_index = i; (c = string[i]); i++)
+     if ((!substring_okay && (whitespace (c) || c == ':' ||
+ 	(history_search_delimiter_chars && member (c, history_search_delimiter_chars)) ||
+ 	string[i] == delimiting_quote)) ||
+diff -ur bash-2.05-cwru-fixes/lib/readline/input.c bash-2.05/lib/readline/input.c
+--- bash-2.05-cwru-fixes/lib/readline/input.c	Tue Mar 27 19:15:04 2001
++++ bash-2.05/lib/readline/input.c	Sat Oct 27 19:15:05 2001
+@@ -357,7 +357,7 @@
+   else
+     {
+       /* If input is coming from a macro, then use that. */
+-      if (c = _rl_next_macro_key ())
++      if ((c = _rl_next_macro_key ()))
+ 	return (c);
+ 
+       /* If the user has an event function, then call it periodically. */
+diff -ur bash-2.05-cwru-fixes/lib/readline/savestring.c bash-2.05/lib/readline/savestring.c
+--- bash-2.05-cwru-fixes/lib/readline/savestring.c	Thu Sep 14 22:58:41 2000
++++ bash-2.05/lib/readline/savestring.c	Sat Oct 27 19:29:14 2001
+@@ -20,7 +20,8 @@
+    have a copy of the license, write to the Free Software Foundation,
+    59 Temple Place, Suite 330, Boston, MA 02111 USA. */
+ 
+-extern char *strcpy ();
++#include <string.h>
++
+ extern char *xmalloc ();
+ 
+ /* Backwards compatibility, now that savestring has been removed from
+diff -ur bash-2.05-cwru-fixes/lib/readline/tilde.c bash-2.05/lib/readline/tilde.c
+--- bash-2.05-cwru-fixes/lib/readline/tilde.c	Thu Feb 15 01:04:21 2001
++++ bash-2.05/lib/readline/tilde.c	Sat Oct 27 19:15:05 2001
+@@ -189,7 +189,7 @@
+   int result_size, result_index;
+ 
+   result_index = result_size = 0;
+-  if (result = strchr (string, '~'))
++  if ((result = strchr (string, '~')))
+     result = xmalloc (result_size = (strlen (string) + 16));
+   else
+     result = xmalloc (result_size = (strlen (string) + 1));
+diff -ur bash-2.05-cwru-fixes/lib/sh/clock.c bash-2.05/lib/sh/clock.c
+--- bash-2.05-cwru-fixes/lib/sh/clock.c	Mon Aug 16 20:20:39 1999
++++ bash-2.05/lib/sh/clock.c	Sat Oct 27 19:15:05 2001
+@@ -31,6 +31,8 @@
+ 
+ #include <stdio.h>
+ 
++extern long get_clk_tck();
++
+ void
+ clock_t_to_secs (t, sp, sfp)
+      clock_t t;
+diff -ur bash-2.05-cwru-fixes/lib/sh/makepath.c bash-2.05/lib/sh/makepath.c
+--- bash-2.05-cwru-fixes/lib/sh/makepath.c	Mon Sep 11 18:07:19 2000
++++ bash-2.05/lib/sh/makepath.c	Sat Oct 27 19:15:05 2001
+@@ -109,7 +109,7 @@
+   if (s[-1] != '/')
+     *r++ = '/';      
+   s = dir;
+-  while (*r++ = *s++)
++  while ((*r++ = *s++))
+     ;
+   if (xpath != path)
+     free (xpath);
+diff -ur bash-2.05-cwru-fixes/lib/sh/netopen.c bash-2.05/lib/sh/netopen.c
+--- bash-2.05-cwru-fixes/lib/sh/netopen.c	Tue Aug  1 22:59:59 2000
++++ bash-2.05/lib/sh/netopen.c	Sat Oct 27 19:15:05 2001
+@@ -27,7 +27,8 @@
+ 
+ #if defined (HAVE_NETWORK)
+ 
+-#include <stdio.h> 
++#include <stdio.h>
++#include <unistd.h>
+ #include <sys/types.h>
+ 
+ #if defined (HAVE_SYS_SOCKET_H)
+@@ -60,6 +61,10 @@
+ 
+ extern char *xmalloc ();
+ 
++extern int legal_number (char *, long *);
++extern void internal_error (const char *, ...);
++extern void sys_error (const char *, ...);
++
+ /* Stuff the internet address corresponding to HOST into AP, in network
+    byte order.  Return 1 on success, 0 on failure. */
+ 
+@@ -141,7 +146,6 @@
+   struct sockaddr_in sin;
+   unsigned short p;
+   int s, e;
+-  char **cp;
+ 
+   if (_getaddr(host, &ina) == 0)
+     {
+@@ -234,6 +238,8 @@
+ #endif
+ 
+ #else /* !HAVE_NETWORK */
++
++extern void internal_error (const char *, ...);
+ 
+ int
+ netopen (path)
+diff -ur bash-2.05-cwru-fixes/lib/sh/pathcanon.c bash-2.05/lib/sh/pathcanon.c
+--- bash-2.05-cwru-fixes/lib/sh/pathcanon.c	Thu Feb 15 01:02:38 2001
++++ bash-2.05/lib/sh/pathcanon.c	Sat Oct 27 19:15:05 2001
+@@ -76,7 +76,8 @@
+ 
+   /* POSIX.2 says to leave a leading `//' alone.  On cygwin, we skip over any
+      leading `x:' (dos drive name). */
+-  if (rooted = ROOTEDPATH(path))
++  double_slash_path = 0;
++  if ((rooted = ROOTEDPATH(path)))
+     {
+       stub_char = DIRSEP;
+ #if defined (__CYGWIN__)
+diff -ur bash-2.05-cwru-fixes/lib/sh/shquote.c bash-2.05/lib/sh/shquote.c
+--- bash-2.05-cwru-fixes/lib/sh/shquote.c	Thu Feb 15 01:03:13 2001
++++ bash-2.05/lib/sh/shquote.c	Sat Oct 27 19:28:22 2001
+@@ -26,6 +26,7 @@
+ #endif
+ 
+ #include <stdio.h>
++#include <string.h>
+ 
+ #include "syntax.h"
+ 
+@@ -113,7 +114,7 @@
+ 	  pass_next = 0;
+ 	  continue;
+ 	}
+-      if (c == '\\' && (sh_syntaxtab[s[1]] & CBSDQUOTE))
++      if (c == '\\' && (sh_syntaxtab[(int)(unsigned char)s[1]] & CBSDQUOTE))
+ 	{
+ 	  pass_next = 1;
+ 	  continue;
+diff -ur bash-2.05-cwru-fixes/lib/sh/spell.c bash-2.05/lib/sh/spell.c
+--- bash-2.05-cwru-fixes/lib/sh/spell.c	Tue Oct 17 22:40:51 2000
++++ bash-2.05/lib/sh/spell.c	Sat Oct 27 19:15:05 2001
+@@ -93,7 +93,7 @@
+       /*
+        *  Add to end of newname
+        */
+-      for (p = best; *np = *p++; np++)
++      for (p = best; (*np = *p++); np++)
+ 	;
+     }
+ }
+diff -ur bash-2.05-cwru-fixes/lib/sh/stringlist.c bash-2.05/lib/sh/stringlist.c
+--- bash-2.05-cwru-fixes/lib/sh/stringlist.c	Fri Sep 15 20:39:59 2000
++++ bash-2.05/lib/sh/stringlist.c	Sat Oct 27 19:15:05 2001
+@@ -110,6 +110,7 @@
+   return new;
+ }
+ 
++#if 0
+ /* Return a new STRINGLIST with everything from M1 and M2. */
+ 
+ STRINGLIST *
+@@ -129,7 +130,10 @@
+     sl->list[n] = STRDUP (m2->list[i]);
+   sl->list_len = n;
+   sl->list[n] = (char *)NULL;
++
++  return sl;
+ }
++#endif
+ 
+ /* Make STRINGLIST M1 contain everything in M1 and M2. */
+ STRINGLIST *
+diff -ur bash-2.05-cwru-fixes/lib/sh/zread.c bash-2.05/lib/sh/zread.c
+--- bash-2.05-cwru-fixes/lib/sh/zread.c	Thu Feb 15 01:03:59 2001
++++ bash-2.05/lib/sh/zread.c	Sat Oct 27 19:15:05 2001
+@@ -92,8 +92,6 @@
+      int fd;
+      char *cp;
+ {
+-  int r;
+-
+   if (lind == lused || lused == 0)
+     {
+       lused = zread (fd, lbuf, sizeof (lbuf));
+diff -ur bash-2.05-cwru-fixes/lib/tilde/tilde.c bash-2.05/lib/tilde/tilde.c
+--- bash-2.05-cwru-fixes/lib/tilde/tilde.c	Thu Feb 15 01:04:21 2001
++++ bash-2.05/lib/tilde/tilde.c	Sat Oct 27 19:15:05 2001
+@@ -189,7 +189,7 @@
+   int result_size, result_index;
+ 
+   result_index = result_size = 0;
+-  if (result = strchr (string, '~'))
++  if ((result = strchr (string, '~')))
+     result = xmalloc (result_size = (strlen (string) + 16));
+   else
+     result = xmalloc (result_size = (strlen (string) + 1));
+diff -ur bash-2.05-cwru-fixes/locale.c bash-2.05/locale.c
+--- bash-2.05-cwru-fixes/locale.c	Thu Feb 15 00:59:09 2001
++++ bash-2.05/locale.c	Sat Oct 27 19:15:05 2001
+@@ -168,7 +168,7 @@
+ 	return (setlocale (LC_MESSAGES, value ? value : "") != 0);
+ #  endif /* LC_MESSAGES */
+     }
+-  else if (var[3] = 'N' && var[4] == 'U')	/* LC_NUMERIC */
++  else if (var[3] == 'N' && var[4] == 'U')	/* LC_NUMERIC */
+     {
+ #  if defined (LC_NUMERIC)
+       if (lc_all == 0 || *lc_all == '\0')
+diff -ur bash-2.05-cwru-fixes/mailcheck.c bash-2.05/mailcheck.c
+--- bash-2.05-cwru-fixes/mailcheck.c	Thu Feb 15 00:59:15 2001
++++ bash-2.05/mailcheck.c	Sat Oct 27 19:15:05 2001
+@@ -328,7 +328,7 @@
+       return;
+     }
+ 
+-  while (mailfile = extract_colon_unit (mailpaths, &i))
++  while ((mailfile = extract_colon_unit (mailpaths, &i)))
+     {
+       mp = parse_mailpath_spec (mailfile);
+       if (mp && *mp)
+diff -ur bash-2.05-cwru-fixes/make_cmd.c bash-2.05/make_cmd.c
+--- bash-2.05-cwru-fixes/make_cmd.c	Thu Feb 15 00:54:04 2001
++++ bash-2.05/make_cmd.c	Sat Oct 27 19:15:05 2001
+@@ -238,7 +238,7 @@
+   ARITH_FOR_COM *temp;
+   WORD_LIST *init, *test, *step;
+   char *s, *t, *start;
+-  int nsemi, l;
++  int nsemi;
+ 
+   init = test = step = (WORD_LIST *)NULL;
+   /* Parse the string into the three component sub-expressions. */
+@@ -561,7 +561,7 @@
+      be read verbatim from the input.  If it was not quoted, we
+      need to perform backslash-quoted newline removal. */
+   delim_unquoted = (temp->redirectee.filename->flags & W_QUOTED) == 0;
+-  while (full_line = read_secondary_line (delim_unquoted))
++  while ((full_line = read_secondary_line (delim_unquoted)))
+     {
+       register char *line;
+       int len;
+diff -ur bash-2.05-cwru-fixes/mksyntax.c bash-2.05/mksyntax.c
+--- bash-2.05-cwru-fixes/mksyntax.c	Thu Feb 15 00:59:25 2001
++++ bash-2.05/mksyntax.c	Sat Oct 27 19:15:05 2001
+@@ -82,6 +82,7 @@
+   exit (2);
+ }
+ 
++#if 0
+ static int
+ getcflag (s)
+      char *s;
+@@ -93,6 +94,7 @@
+       return wordflags[i].flag;
+   return -1;
+ }
++#endif
+ 
+ static char *
+ cdesc (i)
+@@ -256,8 +258,7 @@
+ dump_lsyntax (fp)
+      FILE *fp;
+ {
+-  int i, cflag;
+-  char *cstr;
++  int i;
+ 
+   fprintf (fp, "const int sh_syntaxtab[%d] = {\n", SYNSIZE);
+ 
+@@ -273,6 +274,7 @@
+   fprintf (fp, "};\n");
+ }
+ 
++int
+ main(argc, argv)
+      int argc;
+      char **argv;
+diff -ur bash-2.05-cwru-fixes/parse.y bash-2.05/parse.y
+--- bash-2.05-cwru-fixes/parse.y	Tue Mar 27 19:06:12 2001
++++ bash-2.05/parse.y	Sat Oct 27 19:15:05 2001
+@@ -982,6 +982,7 @@
+ 	give_terminal_to (shell_pgrp, 0);
+ #endif /* JOB_CONTROL */
+ 
++      old_sigint = NULL; /* never used */
+       if (signal_is_ignored (SIGINT) == 0)
+ 	{
+ 	  old_sigint = (SigHandler *)set_signal_handler (SIGINT, sigint_sighandler);
+@@ -1817,12 +1818,14 @@
+     eol_ungetc_lookahead = c;
+ }
+ 
++#if 0
+ static void
+ shell_ungetchar ()
+ {
+   if (shell_input_line && shell_input_line_index)
+     shell_input_line_index--;
+ }
++#endif
+ 
+ /* Discard input until CHARACTER is seen, then push that character back
+    onto the input stream. */
+@@ -2598,6 +2601,7 @@
+ 	{
+ 	  if (open == ch)	/* undo previous increment */
+ 	    count--;
++	  nestret = '\0'; /* never used */
+ 	  if (ch == '(')		/* ) */
+ 	    nestret = parse_matched_pair (0, '(', ')', &nestlen, 0);
+ 	  else if (ch == '{')		/* } */
+@@ -3609,7 +3613,7 @@
+   result[result_index = 0] = 0;
+   temp = (char *)NULL;
+ 
+-  while (c = *string++)
++  while ((c = *string++))
+     {
+       if (posixly_correct && c == '!')
+ 	{
+diff -ur bash-2.05-cwru-fixes/pathexp.c bash-2.05/pathexp.c
+--- bash-2.05-cwru-fixes/pathexp.c	Thu Feb 15 00:54:26 2001
++++ bash-2.05/pathexp.c	Sat Oct 27 19:15:05 2001
+@@ -56,7 +56,7 @@
+   int open;
+ 
+   open = 0;
+-  while (c = *string++)
++  while ((c = *string++))
+     {
+       switch (c)
+ 	{
+@@ -389,7 +389,7 @@
+ 
+   numitems = maxitems = ptr = 0;
+ 
+-  while (colon_bit = extract_colon_unit (this_ignoreval, &ptr))
++  while ((colon_bit = extract_colon_unit (this_ignoreval, &ptr)))
+     {
+       if (numitems + 1 >= maxitems)
+ 	{
+diff -ur bash-2.05-cwru-fixes/pcomplete.c bash-2.05/pcomplete.c
+--- bash-2.05-cwru-fixes/pcomplete.c	Thu Feb 15 00:59:55 2001
++++ bash-2.05/pcomplete.c	Sat Oct 27 19:15:05 2001
+@@ -48,6 +48,7 @@
+ #include "alias.h"
+ #include "bashline.h"
+ #include "pathexp.h"
++#include "execute_cmd.h"
+ 
+ #if defined (JOB_CONTROL)
+ #  include "jobs.h"
+@@ -396,7 +397,6 @@
+      ITEMLIST *itp;
+ {
+   STRINGLIST *sl;
+-  char **list;
+   register int i, n;
+ 
+   sl = alloc_stringlist (num_shell_builtins);
+@@ -414,7 +414,6 @@
+      ITEMLIST *itp;
+ {
+   STRINGLIST *sl;
+-  char **list;
+   register int i, n;
+ 
+   sl = alloc_stringlist (num_shell_builtins);
+@@ -434,7 +433,6 @@
+      ITEMLIST *itp;
+ {
+   STRINGLIST *sl;
+-  char **list;
+   register int i, n;
+ 
+   sl = alloc_stringlist (num_shell_builtins);
+@@ -487,11 +485,12 @@
+ {
+ #if defined (JOB_CONTROL)
+   STRINGLIST *sl;
+-  register int i, n;
++  register int i;
+   register PROCESS *p;
+   char *s, *t;
+   JOB_STATE js;
+ 
++  js = -1;
+   if (jstate == 0)
+     js = JRUNNING;
+   else if (jstate == 1)
+@@ -748,7 +747,6 @@
+       const char *text;
+ {
+   STRINGLIST *sl;
+-  char *t;
+ 
+   sl = alloc_stringlist (0);
+   sl->list = glob_filename (cs->globpat);
+@@ -1103,7 +1101,7 @@
+      int start, end;
+ {
+   STRINGLIST *ret, *tmatches;
+-  char *line, *lword;
++  char *line;
+   int llen, nw, cw;
+   WORD_LIST *lwords;
+ 
+diff -ur bash-2.05-cwru-fixes/redir.c bash-2.05/redir.c
+--- bash-2.05-cwru-fixes/redir.c	Sat Oct 27 19:14:36 2001
++++ bash-2.05/redir.c	Sat Oct 27 19:15:05 2001
+@@ -84,6 +84,7 @@
+ 
+   if (expandable_redirection_filename (temp))
+     {
++      oflags = 0; /* never used */
+       if (posixly_correct && interactive_shell == 0)
+ 	{
+ 	  oflags = temp->redirectee.filename->flags;
+@@ -309,7 +310,6 @@
+ {
+   char *filename;
+   int r, fd, fd2;
+-  static int fnum = 0;
+ 
+   fd = sh_mktmpfd ("sh-thd", MT_USERANDOM, &filename);
+ 
+@@ -404,7 +404,9 @@
+      enum r_instruction ri;
+ {
+   int fd;
++#if !defined (HAVE_DEV_FD)
+   long lfd;
++#endif
+ 
+   fd = -1;
+   switch (spec)
+@@ -633,6 +635,7 @@
+     case r_err_and_out:		/* command &>filename */
+     case r_input_output:
+     case r_output_force:
++      oflags = 0; /* never used */
+       if (posixly_correct && interactive_shell == 0)
+ 	{
+ 	  oflags = redirectee->flags;
+@@ -665,11 +668,13 @@
+       if (for_real)
+ 	{
+ 	  if (remembering)
+-	    /* Only setup to undo it if the thing to undo is active. */
+-	    if ((fd != redirector) && (fcntl (redirector, F_GETFD, 0) != -1))
+-	      add_undo_redirect (redirector);
+-	    else
+-	      add_undo_close_redirect (redirector);
++	    {
++	      /* Only setup to undo it if the thing to undo is active. */
++	      if ((fd != redirector) && (fcntl (redirector, F_GETFD, 0) != -1))
++		add_undo_redirect (redirector);
++	      else
++		add_undo_close_redirect (redirector);
++	    }
+ 
+ #if defined (BUFFERED_INPUT)
+ 	  check_bash_input (redirector);
+@@ -741,11 +746,13 @@
+ 	  if (for_real)
+ 	    {
+ 	      if (remembering)
+-		/* Only setup to undo it if the thing to undo is active. */
+-		if ((fd != redirector) && (fcntl (redirector, F_GETFD, 0) != -1))
+-		  add_undo_redirect (redirector);
+-		else
+-		  add_undo_close_redirect (redirector);
++		{
++		  /* Only setup to undo it if the thing to undo is active. */
++		  if ((fd != redirector) && (fcntl (redirector, F_GETFD, 0) != -1))
++		    add_undo_redirect (redirector);
++		  else
++		    add_undo_close_redirect (redirector);
++		}
+ 
+ #if defined (BUFFERED_INPUT)
+ 	      check_bash_input (redirector);
+@@ -779,11 +786,13 @@
+       if (for_real && (redir_fd != redirector))
+ 	{
+ 	  if (remembering)
+-	    /* Only setup to undo it if the thing to undo is active. */
+-	    if (fcntl (redirector, F_GETFD, 0) != -1)
+-	      add_undo_redirect (redirector);
+-	    else
+-	      add_undo_close_redirect (redirector);
++	    {
++	      /* Only setup to undo it if the thing to undo is active. */
++	      if (fcntl (redirector, F_GETFD, 0) != -1)
++		add_undo_redirect (redirector);
++	      else
++		add_undo_close_redirect (redirector);
++	    }
+ 
+ #if defined (BUFFERED_INPUT)
+ 	  check_bash_input (redirector);
+diff -ur bash-2.05-cwru-fixes/shell.c bash-2.05/shell.c
+--- bash-2.05-cwru-fixes/shell.c	Tue Mar 27 18:25:51 2001
++++ bash-2.05/shell.c	Sat Oct 27 19:15:05 2001
+@@ -290,7 +290,10 @@
+ #endif /* !NO_MAIN_ENV_ARG */
+ {
+   register int i;
+-  int code, saverst, old_errexit_flag;
++  int code, old_errexit_flag;
++#if defined (RESTRICTED_SHELL)
++  int saverst;
++#endif
+   volatile int locally_skip_execution;
+   volatile int arg_index, top_level_arg_index;
+ #ifdef __OPENNT
+@@ -299,6 +302,15 @@
+   env = environ;
+ #endif /* __OPENNT */
+ 
++  (void) &argc;
++  (void) &argv;
++  (void) &env;
++  (void) &code;
++  (void) &old_errexit_flag;
++#if defined (RESTRICTED_SHELL)
++  (void) &saverst;
++#endif
++
+   /* Catch early SIGINTs. */
+   code = setjmp (top_level);
+   if (code)
+@@ -356,6 +368,7 @@
+ 	shell_name++;
+ 
+       shell_reinitialize ();
++      /* XXX: non-atomic update of top_level with nothing preventing its use */
+       if (setjmp (top_level))
+ 	exit (2);
+     }
+@@ -483,6 +496,7 @@
+   /* Give this shell a place to longjmp to before executing the
+      startup files.  This allows users to press C-c to abort the
+      lengthy startup. */
++  /* XXX: non-atomic update of top_level with nothing preventing its use */
+   code = setjmp (top_level);
+   if (code)
+     {
+@@ -708,7 +722,7 @@
+ 
+       i = 1;
+       on_or_off = arg_string[0];
+-      while (arg_character = arg_string[i++])
++      while ((arg_character = arg_string[i++]))
+ 	{
+ 	  switch (arg_character)
+ 	    {
+@@ -1058,9 +1072,10 @@
+      char *words;
+ {
+   int code, nw, nb;
+-  WORD_DESC *w;
+   WORD_LIST *wl, *result;
+ 
++  /* XXX: non-atomic update of top_level with nothing preventing its use */
++  /* XXX: doesn't restore top_level on function return (but will exit soon) */
+   code = setjmp (top_level);
+ 
+   if (code != NOT_JUMPED)
+@@ -1131,6 +1146,8 @@
+ {
+   int code;
+ 
++  /* XXX: non-atomic update of top_level with nothing preventing its use */
++  /* XXX: doesn't restore top_level on function return (but will exit soon) */
+   code = setjmp (top_level);
+ 
+   if (code != NOT_JUMPED)
+diff -ur bash-2.05-cwru-fixes/sig.c bash-2.05/sig.c
+--- bash-2.05-cwru-fixes/sig.c	Mon Mar 26 20:01:55 2001
++++ bash-2.05/sig.c	Sat Oct 27 19:15:05 2001
+@@ -105,89 +105,89 @@
+    and so forth. */
+ static struct termsig terminating_signals[] = {
+ #ifdef SIGHUP
+-  SIGHUP, NULL_HANDLER,
++  {SIGHUP, NULL_HANDLER},
+ #endif
+ 
+ #ifdef SIGINT
+-  SIGINT, NULL_HANDLER,
++  {SIGINT, NULL_HANDLER},
+ #endif
+ 
+ #ifdef SIGILL
+-  SIGILL, NULL_HANDLER,
++  {SIGILL, NULL_HANDLER},
+ #endif
+ 
+ #ifdef SIGTRAP
+-  SIGTRAP, NULL_HANDLER,
++  {SIGTRAP, NULL_HANDLER},
+ #endif
+ 
+ #ifdef SIGIOT
+-  SIGIOT, NULL_HANDLER,
++  {SIGIOT, NULL_HANDLER},
+ #endif
+ 
+ #ifdef SIGDANGER
+-  SIGDANGER, NULL_HANDLER,
++  {SIGDANGER, NULL_HANDLER},
+ #endif
+ 
+ #ifdef SIGEMT
+-  SIGEMT, NULL_HANDLER,
++  {SIGEMT, NULL_HANDLER},
+ #endif
+ 
+ #ifdef SIGFPE
+-  SIGFPE, NULL_HANDLER,
++  {SIGFPE, NULL_HANDLER},
+ #endif
+ 
+ #ifdef SIGBUS
+-  SIGBUS, NULL_HANDLER,
++  {SIGBUS, NULL_HANDLER},
+ #endif
+ 
+ #ifdef SIGSEGV
+-  SIGSEGV, NULL_HANDLER,
++  {SIGSEGV, NULL_HANDLER},
+ #endif
+ 
+ #ifdef SIGSYS
+-  SIGSYS, NULL_HANDLER,
++  {SIGSYS, NULL_HANDLER},
+ #endif
+ 
+ #ifdef SIGPIPE
+-  SIGPIPE, NULL_HANDLER,
++  {SIGPIPE, NULL_HANDLER},
+ #endif
+ 
+ #ifdef SIGALRM
+-  SIGALRM, NULL_HANDLER,
++  {SIGALRM, NULL_HANDLER},
+ #endif
+ 
+ #ifdef SIGTERM
+-  SIGTERM, NULL_HANDLER,
++  {SIGTERM, NULL_HANDLER},
+ #endif
+ 
+ #ifdef SIGXCPU
+-  SIGXCPU, NULL_HANDLER,
++  {SIGXCPU, NULL_HANDLER},
+ #endif
+ 
+ #ifdef SIGXFSZ
+-  SIGXFSZ, NULL_HANDLER,
++  {SIGXFSZ, NULL_HANDLER},
+ #endif
+ 
+ #ifdef SIGVTALRM
+-  SIGVTALRM, NULL_HANDLER,
++  {SIGVTALRM, NULL_HANDLER},
+ #endif
+ 
+ #if 0
+ #ifdef SIGPROF
+-  SIGPROF, NULL_HANDLER,
++  {SIGPROF, NULL_HANDLER},
+ #endif
+ #endif
+ 
+ #ifdef SIGLOST
+-  SIGLOST, NULL_HANDLER,
++  {SIGLOST, NULL_HANDLER},
+ #endif
+ 
+ #ifdef SIGUSR1
+-  SIGUSR1, NULL_HANDLER,
++  {SIGUSR1, NULL_HANDLER},
+ #endif
+ 
+ #ifdef SIGUSR2
+-  SIGUSR2, NULL_HANDLER,
++  {SIGUSR2, NULL_HANDLER},
+ #endif
+ };
+ 
+@@ -443,6 +443,8 @@
+   if (interrupt_immediately)
+     {
+       interrupt_immediately = 0;
++      /* XXX: may interrupt non-reentrant library functions and cause
++       * re-entry with invalid (internal) state. */
+       throw_to_top_level ();
+     }
+ 
+diff -ur bash-2.05-cwru-fixes/sig.h bash-2.05/sig.h
+--- bash-2.05-cwru-fixes/sig.h	Thu Aug  5 15:14:07 1999
++++ bash-2.05/sig.h	Sat Oct 27 19:15:05 2001
+@@ -114,7 +114,7 @@
+ extern void initialize_terminating_signals __P((void));
+ extern void reset_terminating_signals __P((void));
+ extern void throw_to_top_level __P((void));
+-extern void jump_to_top_level __P((int));
++extern void jump_to_top_level __P((int)) __attribute__((__noreturn__));
+ 
+ /* Functions defined in trap.c. */
+ extern SigHandler *set_sigint_handler __P((void));
+diff -ur bash-2.05-cwru-fixes/subst.c bash-2.05/subst.c
+--- bash-2.05-cwru-fixes/subst.c	Mon Mar 26 22:06:16 2001
++++ bash-2.05/subst.c	Sat Oct 27 19:15:06 2001
+@@ -95,10 +95,13 @@
+ #define VALID_PARAM_EXPAND_CHAR(c) \
+   ((c) == '-' || (c) == '=' || (c) == '?' || (c) == '+')
+ 
++#define C2I(c) \
++	((int)(unsigned char)(c))
++
+ /* Evaluates to 1 if this is one of the shell's special variables. */
+ #define SPECIAL_VAR(name, wi) \
+- ((isdigit (*name) && all_digits (name)) || \
+-      (name[1] == '\0' && (sh_syntaxtab[*name] & CSPECVAR)) || \
++ ((isdigit (C2I(*name)) && all_digits (name)) || \
++      (name[1] == '\0' && (sh_syntaxtab[C2I(*name)] & CSPECVAR)) || \
+       (wi && name[2] == '\0' && VALID_INDIR_PARAM (name[1])))
+ 
+ /* Process ID of the last command executed within command substitution. */
+@@ -125,7 +128,9 @@
+    output of expand_word_list_internal) are the result of globbing
+    expansions.  GLOB_ARGV_FLAGS is used by execute_cmd.c. */
+ char *glob_argv_flags;
++#if 0
+ static int glob_argv_flags_size;
++#endif
+ 
+ static WORD_LIST expand_word_error, expand_word_fatal;
+ static char expand_param_error, expand_param_fatal;
+@@ -269,7 +274,7 @@
+ {
+   int sindex, c;
+ 
+-  for (sindex = 0; c = string[sindex]; )
++  for (sindex = 0; (c = string[sindex]); )
+     {
+       if (c == character)
+ 	return (1);
+@@ -309,7 +314,7 @@
+     return (0);
+ 
+   sublen = strlen (substr);
+-  for (sindex = 0; c = string[sindex]; )
++  for (sindex = 0; (c = string[sindex]); )
+     {
+       if (STREQN (string + sindex, substr, sublen))
+ 	return (1);
+@@ -407,7 +412,7 @@
+   register int c, i;
+   char *temp;
+ 
+-  for (i = *sindex; c = string[i]; i++)
++  for (i = *sindex; (c = string[i]); i++)
+     {
+       if (c == '\\')
+ 	if (string[i + 1])
+@@ -453,7 +458,7 @@
+   pass_next = backquote = dquote = 0;
+   temp = xmalloc (1 + strlen (string) - *sindex);
+ 
+-  for (j = 0, i = *sindex; c = string[i]; i++)
++  for (j = 0, i = *sindex; (c = string[i]); i++)
+     {
+       /* Process a character that was quoted by a backslash. */
+       if (pass_next)
+@@ -577,7 +582,7 @@
+ 
+   pass_next = backquote = 0;
+ 
+-  for (j = 0, i = sind; c = string[i]; i++)
++  for (j = 0, i = sind; (c = string[i]); i++)
+     {
+       if (pass_next)
+ 	{
+@@ -633,7 +638,7 @@
+      char *string;
+      int *sindex;
+ {
+-  register int i, j;
++  register int i;
+   char *t;
+ 
+   for (i = *sindex; string[i] && string[i] != '\''; i++)
+@@ -680,7 +685,7 @@
+       return temp;
+     }
+ 
+-  for (i = *sindex; c = string[i]; i++)
++  for (i = *sindex; (c = string[i]); i++)
+     {
+       if (c == CTLESC)
+ 	{
+@@ -892,7 +897,7 @@
+      char *string;
+      int *sindex, quoted;
+ {
+-  register int i, c, l;
++  register int i, c;
+   int pass_character, nesting_level, si;
+   char *result, *t;
+ 
+@@ -1180,8 +1185,8 @@
+      int sentinel;
+      int *nwp, *cwp;
+ {
+-  int ts, te, i, nw, cw, peekc;
+-  char *token, *s, *d, *d2;
++  int ts, te, i, nw, cw;
++  char *token, *d, *d2;
+   WORD_LIST *ret, *tl;
+ 
+   if (string == 0 || *string == '\0')
+@@ -1796,17 +1801,20 @@
+     }
+ 
+   if (echo_command_at_execute)
++    {
+ #if defined (ARRAY_VARS)
+-    if (assign_list)
+-      fprintf (stderr, "%s%s=(%s)\n", indirection_level_string (), name, value);
+-    else
++      if (assign_list)
++	fprintf (stderr, "%s%s=(%s)\n",
++	  indirection_level_string (), name, value);
++      else
+ #endif
+-    fprintf (stderr, "%s%s=%s\n", indirection_level_string (), name, value);
++      fprintf (stderr, "%s%s=%s\n", indirection_level_string (), name, value);
++    }
+ 
+ #define ASSIGN_RETURN(r)	do { FREE (value); free (name); return (r); } while (0)
+ 
+ #if defined (ARRAY_VARS)
+-  if (t = strchr (name, '['))	/*]*/
++  if ((t = strchr (name, '[')))	/*]*/
+     {
+       if (assign_list)
+ 	{
+@@ -3346,6 +3354,7 @@
+ 
+   istring = (char *)NULL;
+   istring_index = istring_size = bufn = 0;
++  bufp = buf; /* redundant */
+ 
+ #ifdef __CYGWIN__
+   setmode (fd, O_TEXT);		/* we don't want CR/LF, we want Unix-style */
+@@ -3705,7 +3714,7 @@
+ {
+   int len, ind;
+   char *retval, *t, *temp;
+-  WORD_LIST *l, *list;
++  WORD_LIST *l;
+   SHELL_VAR *var;
+ 
+   var = array_variable_part (s, &t, &len);
+@@ -3864,7 +3873,9 @@
+   char *temp, *tt;
+   int arg_index;
+   SHELL_VAR *var;
++#if 0
+   WORD_LIST *l;
++#endif
+ 
+   /* Handle multiple digit arguments, as in ${11}. */
+   if (isdigit (*name))
+@@ -3895,7 +3906,7 @@
+       temp = array_value (name, quoted);
+     }
+ #endif
+-  else if (var = find_variable (name))
++  else if ((var = find_variable (name)))
+     {
+       if (var && invisible_p (var) == 0)
+ 	{
+@@ -4052,8 +4063,9 @@
+      char *name;
+ {
+   return (name[1] == '\0' ||					/* ${#} */
+-	  ((sh_syntaxtab[name[1]] & CSPECVAR) && name[2] == '\0') ||  /* special param */
+-	  (isdigit (name[1]) && all_digits (name + 1)) ||	/* ${#11} */
++	  /* special param */
++	  ((sh_syntaxtab[C2I(name[1])] & CSPECVAR) && name[2] == '\0') ||
++	  (isdigit (C2I(name[1])) && all_digits (name + 1)) ||	/* ${#11} */
+ #if defined (ARRAY_VARS)
+ 	  valid_array_reference (name + 1) ||			/* ${#a[7]} */
+ #endif
+@@ -4077,8 +4089,9 @@
+     number = number_of_args ();
+   else if ((name[1] == '@' || name[1] == '*') && name[2] == '\0')	/* ${#@}, ${#*} */
+     number = number_of_args ();
+-  else if ((sh_syntaxtab[name[1]] & CSPECVAR) && name[2] == '\0')
++  else if ((sh_syntaxtab[C2I(name[1])] & CSPECVAR) && name[2] == '\0')
+     {
++      t = (char *)NULL;
+       /* Take the lengths of some of the shell's special parameters. */
+       switch (name[1])
+ 	{
+@@ -4226,6 +4239,7 @@
+   if (expok == 0)
+     return (0);
+ 
++  len = -1;
+   switch (vtype)
+     {
+     case VT_VARIABLE:
+@@ -4243,6 +4257,9 @@
+ #endif
+     }
+ 
++  if (len == -1)
++    return (-1);
++
+   if (*e1p < 0)		/* negative offsets count from end */
+     *e1p += len;
+ 
+@@ -4363,6 +4380,7 @@
+       return ((r == 0) ? &expand_param_error : (char *)NULL);
+     }
+ 
++  temp = NULL;
+   switch (vtype)
+     {
+     case VT_VARIABLE:
+@@ -4533,7 +4551,7 @@
+   if (quoted & (Q_HERE_DOCUMENT|Q_DOUBLE_QUOTES))
+     mflags |= MATCH_QUOTED;
+ 
+-  if (rep = quoted_strchr (lpatsub, '/', ST_BACKSL))
++  if ((rep = quoted_strchr (lpatsub, '/', ST_BACKSL)))
+     *rep++ = '\0';
+   else
+     rep = (char *)NULL;
+@@ -4576,6 +4594,7 @@
+      flags & MATCH_GLOBREP is non-zero, the substitution is done
+      everywhere, otherwise only the first occurrence of PAT is
+      replaced. */
++  temp = NULL;
+   switch (vtype)
+     {
+     case VT_VARIABLE:
+@@ -4659,7 +4678,7 @@
+ 
+   /* Find out what character ended the variable name.  Then
+      do the appropriate thing. */
+-  if (c = string[sindex])
++  if ((c = string[sindex]))
+     sindex++;
+ 
+   /* If c is followed by one of the valid parameter expansion
+@@ -4669,7 +4688,7 @@
+   if (c == ':' && VALID_PARAM_EXPAND_CHAR (string[sindex]))
+     {
+       check_nullness++;
+-      if (c = string[sindex])
++      if ((c = string[sindex]))
+ 	sindex++;
+     }
+   else if (c == ':' && string[sindex] != RBRACE)
+@@ -4977,7 +4996,7 @@
+   char *temp, *temp1;
+   int zindex, number, c, t_index, expok;
+   SHELL_VAR *var;
+-  WORD_LIST *list, *tlist;
++  WORD_LIST *list;
+ 
+   zindex = *sindex;
+   c = string[++zindex];
+@@ -5309,7 +5328,6 @@
+ {
+   WORD_LIST *list;
+   WORD_DESC *tword;
+-  SHELL_VAR *var;
+ 
+   /* The intermediate string that we build while expanding. */
+   char *istring;
+@@ -5342,7 +5360,6 @@
+   int tflag;
+ 
+   register int c;		/* Current character. */
+-  int number;			/* Temporary number value. */
+   int t_index;			/* For calls to string_extract_xxx. */
+ 
+   char ifscmap[256];
+@@ -5581,7 +5598,7 @@
+ 	  else
+ 	    {
+ 	      /* What we have is "".  This is a minor optimization. */
+-	      free (temp);
++	      FREE (temp);
+ 	      list = (WORD_LIST *)NULL;
+ 	    }
+ 
+@@ -5770,6 +5787,9 @@
+ 	  if (quoted & (Q_HERE_DOCUMENT|Q_DOUBLE_QUOTES))
+ 	    tword->flags |= W_QUOTED;
+ 	}
++#else
++      else
++	list = (WORD_LIST *)NULL;
+ #endif
+     }
+   else if (word->flags & W_NOSPLIT)
+@@ -5833,7 +5853,7 @@
+   /* The result can be no longer than the original string. */
+   r = result_string = xmalloc (strlen (string) + 1);
+ 
+-  for (dquote = sindex = 0; c = string[sindex];)
++  for (dquote = sindex = 0; (c = string[sindex]);)
+     {
+       switch (c)
+ 	{
+@@ -6257,7 +6277,7 @@
+ 	{
+ 	  expansions = brace_expand (tlist->word->word);
+ 
+-	  for (eindex = 0; temp_string = expansions[eindex]; eindex++)
++	  for (eindex = 0; (temp_string = expansions[eindex]); eindex++)
+ 	    {
+ 	      w = make_word (temp_string);
+ 	      /* If brace expansion didn't change the word, preserve
+diff -ur bash-2.05-cwru-fixes/test.c bash-2.05/test.c
+--- bash-2.05-cwru-fixes/test.c	Thu Mar  8 16:52:45 2001
++++ bash-2.05/test.c	Sat Oct 27 19:15:06 2001
+@@ -30,6 +30,8 @@
+ 
+ #include <stdio.h>
+ 
++#include "stdc.h"
++
+ #include "bashtypes.h"
+ 
+ #if defined (HAVE_LIMITS_H)
+@@ -128,7 +130,7 @@
+ 
+ static void beyond ();
+ 
+-static void
++static void __attribute__((__noreturn__))
+ test_syntax_error (format, arg)
+      char *format, *arg;
+ {
+@@ -550,7 +552,7 @@
+ static int
+ unary_operator ()
+ {
+-  char *op, *arg;
++  char *op;
+   long r;
+ 
+   op = argv[pos];
+@@ -691,6 +693,8 @@
+     case 'o':			/* True if option `arg' is set. */
+       return (minus_o_option_value (arg) == 1);
+     }
++
++    return 0;
+ }
+ 
+ /* Return TRUE if OP is one of the test command's binary operators. */
+@@ -878,8 +882,9 @@
+      char **margv;
+ {
+   int value;
+-
+   int code;
++
++  (void) &margc;
+ 
+   code = setjmp (test_exit_buf);
+ 
+diff -ur bash-2.05-cwru-fixes/trap.c bash-2.05/trap.c
+--- bash-2.05-cwru-fixes/trap.c	Thu Feb 15 01:00:48 2001
++++ bash-2.05/trap.c	Sat Oct 27 19:15:06 2001
+@@ -623,7 +623,7 @@
+      char *tag;
+ {
+   char *trap_command, *old_trap;
+-  int old_exit_value, old_line_number, *token_state;
++  int old_exit_value, *token_state;
+ 
+   /* Run the trap only if SIG is trapped and not ignored, and we are not
+      currently executing in the trap handler. */
+diff -ur bash-2.05-cwru-fixes/unwind_prot.c bash-2.05/unwind_prot.c
+--- bash-2.05-cwru-fixes/unwind_prot.c	Sat Oct 27 19:14:36 2001
++++ bash-2.05/unwind_prot.c	Sat Oct 27 19:18:10 2001
+@@ -147,7 +147,7 @@
+ {
+   if (unwind_protect_list)
+     without_interrupts
+-      (clear_unwind_protects_internal, (char *)flags, (char *)NULL);
++      (clear_unwind_protects_internal, (char *)(long)flags, (char *)NULL);
+ }
+ 
+ /* **************************************************************** */
+@@ -212,7 +212,7 @@
+ clear_unwind_protects_internal (flag, ignore)
+      char *flag, *ignore;
+ {
+-  int free_elts = (int)flag;
++  int free_elts = (long)flag;
+ 
+   if (free_elts != 0 && unwind_protect_list)
+     {
+@@ -228,7 +228,7 @@
+ {
+   UNWIND_ELT *elt;
+ 
+-  while (elt = unwind_protect_list)
++  while ((elt = unwind_protect_list))
+     {
+       unwind_protect_list = unwind_protect_list->next;
+       if (elt->cleanup == 0 && (STREQ (elt->arg, tag)))
+@@ -252,7 +252,7 @@
+ {
+   UNWIND_ELT *elt;
+ 
+-  while (elt = unwind_protect_list)
++  while ((elt = unwind_protect_list))
+     {
+       unwind_protect_list = elt->next;
+ 
+diff -ur bash-2.05-cwru-fixes/unwind_prot.h bash-2.05/unwind_prot.h
+--- bash-2.05-cwru-fixes/unwind_prot.h	Thu Feb  1 21:51:00 2001
++++ bash-2.05/unwind_prot.h	Sat Oct 27 19:27:37 2001
+@@ -46,6 +46,7 @@
+ 	do \
+ 	  { \
+ 	    UWP u; \
++	    u.s = NULL; \
+ 	    u.i = (X); \
+ 	    unwind_protect_var (&(X), u.s, sizeof (int)); \
+ 	  } \
+diff -ur bash-2.05-cwru-fixes/variables.c bash-2.05/variables.c
+--- bash-2.05-cwru-fixes/variables.c	Wed Feb 21 21:47:11 2001
++++ bash-2.05/variables.c	Sat Oct 27 19:15:06 2001
+@@ -161,7 +161,7 @@
+   if (shell_functions == 0)
+     shell_functions = make_hash_table (0);
+ 
+-  for (string_index = 0; string = env[string_index++]; )
++  for (string_index = 0; (string = env[string_index++]); )
+     {
+       char_index = 0;
+       name = string;
+@@ -197,7 +197,7 @@
+ 	  if (name[char_index - 1] == ')' && name[char_index - 2] == '(')
+ 	    name[char_index - 2] = '\0';
+ 
+-	  if (temp_var = find_function (name))
++	  if ((temp_var = find_function (name)))
+ 	    {
+ 	      VSETATTR (temp_var, (att_exported|att_imported));
+ 	      array_needs_making = 1;
+@@ -1334,7 +1334,6 @@
+ {
+   SHELL_VAR *new_var, *old_var;
+   BUCKET_CONTENTS *elt;
+-  int old_var_context;
+ 
+   /* local foo; local foo;  is a no-op. */
+   old_var = find_variable (name);
+@@ -2138,7 +2137,7 @@
+ 
+       if (list)
+ 	{
+-	  for (i = 0; var = list[i]; i++)
++	  for (i = 0; (var = list[i]); i++)
+ 	    {
+ 	      VUNSETATTR (var, att_local);
+ 	      makunbound (var->name, varlist);
+@@ -2373,7 +2372,7 @@
+   if (legal_variable_starter (c) == 0)
+     return (0);
+ 
+-  while (c = string[indx])
++  while ((c = string[indx]))
+     {
+       /* The following is safe.  Note that '=' at the start of a word
+ 	 is not an assignment statement. */
+@@ -2520,6 +2519,7 @@
+ }
+ 
+ /* Debugging */
++#if 0
+ static int
+ valid_exportstr (v)
+      SHELL_VAR *v;
+@@ -2549,6 +2549,7 @@
+     }
+   return (1);
+ }
++#endif
+ 
+ /* Make an array of assignment statements from the hash table
+    HASHED_VARS which contains SHELL_VARs.  Only visible, exported
+@@ -2571,7 +2572,7 @@
+ 
+ #define USE_EXPORTSTR (value == var->exportstr)
+ 
+-  for (i = 0, list_index = 0; var = vars[i]; i++)
++  for (i = 0, list_index = 0; (var = vars[i]); i++)
+     {
+ #if defined (__CYGWIN__)
+       /* We don't use the exportstr stuff on Cygwin at all. */
+@@ -2628,7 +2629,6 @@
+ {
+   int size, offset;
+   char *name, *temp, *value;
+-  int nlen, vlen;
+   WORD_LIST *list;
+   SHELL_VAR *var;
+ 
+@@ -2729,7 +2729,7 @@
+      char **array;
+ {
+   register int i, l;
+-  char *new_env_string, *w;
++  char *new_env_string;
+   SHELL_VAR *temp;
+ 
+   if (array == 0)

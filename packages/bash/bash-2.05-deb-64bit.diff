@@ -18,7 +18,7 @@
      {
        v = malloc_bucket_stats (i);
 -      fprintf (fp, "%12lu\t%4d\t%6d\t%5d\t%8d\t%5d\n", v.blocksize, v.nfree, v.nused, v.nmal, v.nmorecore, v.nsplit);
-+      fprintf (fp, "%12lu\t%4d\t%6ld\t%5d\t%8d\t%5d\n", v.blocksize, v.nfree, v.nused, v.nmal, v.nmorecore, v.nsplit);
++      fprintf (fp, "%12lu\t%4d\t%6lu\t%5d\t%8d\t%5d\n", (unsigned long)v.blocksize, v.nfree, (unsigned long)v.nused, v.nmal, v.nmorecore, v.nsplit);
        totfree += v.nfree * v.blocksize;
        totused += v.nused * v.blocksize;
      }

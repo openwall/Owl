@@ -12,4 +12,3 @@ BASH_ENV=$HOME/.bashrc
 USERNAME=""
 
 export USERNAME BASH_ENV PATH
-

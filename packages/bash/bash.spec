@@ -1,8 +1,8 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.10 2001/10/24 20:47:48 mci Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.11 2001/10/27 15:49:13 solar Exp $
 
 Version: 2.05
 Name: bash
-Summary: The GNU Bourne Again shell (bash) version %{version}.
+Summary: The GNU Bourne-Again SHell (Bash).
 Release: 1owl
 Group: System Environment/Shells
 License: GPL
@@ -11,44 +11,38 @@ Source1: ftp://ftp.gnu.org/gnu/bash/bash-doc-%{version}.tar.gz
 Source2: dot-bashrc
 Source3: dot-bash_profile
 Source4: dot-bash_logout
-Patch0: bash-2.03-rh-paths.diff
-Patch1: bash-2.04-rh-bash1_compat.diff
-Patch2: bash-2.04-rh-shellfunc.diff
-Patch3: bash-2.05-rh-profile.diff
-Patch4: bash-2.05-rh-requires.diff
-Patch5: bash-2.05-rh-security.diff
-Patch6: bash-2.05-alt-bashbug.diff
-Patch7: bash-2.05-alt-man.diff
-Patch8: bash-2.05-alt-nostrcoll.diff
-Patch9: bash-2.05-deb-64bit.diff
-Patch10: bash-2.05-deb-gnusource.diff
-Patch11: bash-2.05-deb-misc.diff
-Patch12: bash-2.05-deb-printcmd.diff
-Patch13: bash-2.05-deb-privmode.diff
-Patch14: bash-2.05-deb-random.diff
-Patch15: bash-2.05-deb-vxman.diff
-Patch16: bash-2.05-owl-disable.diff
-Patch17: bash-2.05-owl-tmp.diff
+Patch0: bash-2.05-cwru-fixes.diff
+Patch1: bash-2.05-owl-fixes.diff
+Patch2: bash-2.05-owl-tmp.diff
+Patch3: bash-2.05-owl-paths.diff
+Patch4: bash-2.04-rh-bash1_compat.diff
+Patch5: bash-2.04-rh-shellfunc.diff
+Patch6: bash-2.05-rh-requires.diff
+Patch7: bash-2.05-rh-profile.diff
+Patch8: bash-2.05-deb-64bit.diff
+Patch9: bash-2.05-deb-gnusource.diff
+Patch10: bash-2.05-deb-print_cmd.diff
+Patch11: bash-2.05-deb-random.diff
+Patch12: bash-2.05-deb-man.diff
+Patch13: bash-2.05-alt-fnmatch-disable-strcoll.diff
+Patch14: bash-2.05-alt-man.diff
 Prefix: %{_prefix}
-Requires: mktemp
+Requires: mktemp >= 1:1.3.1
 Provides: bash2
 Obsoletes: bash2 etcskel
-BuildRoot: /override/%{name}-%{version}
+Buildroot: /override/%{name}-%{version}
 
 %description
 The GNU Bourne Again shell (Bash) is a shell or command language
 interpreter that is compatible with the Bourne shell (sh).  Bash
 incorporates useful features from the Korn shell (ksh) and the C shell
-(csh).  Most sh scripts can be run by bash without modification.  This
-package (bash) contains bash version %{version}, which improves POSIX
-compliance over previous versions.
+(csh).  Most sh scripts can be run by bash without modification.
 
-Documentation for bash version %{version} is contained in the bash-doc 
-package.
+Documentation for bash is contained in the bash-doc package.
 
 %package doc
 Group: Documentation
-Summary: Documentation for the GNU Bourne Again shell (bash) version %{version}.
+Summary: Documentation for the GNU Bourne Again shell (bash).
 Obsoletes: bash2-doc
 
 %description doc
@@ -57,7 +51,7 @@ Again shell version %{version}.
 
 %prep
 %setup -q -a 1
-%patch0 -p1
+%patch0 -p0
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -72,26 +66,30 @@ Again shell version %{version}.
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
-%patch15 -p1
-%patch16 -p1
-%patch17 -p1
 
 echo %{version} > _distribution
 echo %{release} | sed -e "s/[A-Za-z]//g" > _patchlevel
 
+# Would anyone volunteer to fix those? Probably not.
+find examples -type f -print0 | xargs -r0 grep -lZ /tmp | xargs -r0 rm -f --
+
+# Prevent bogus dependencies
+find examples -type f -print0 | xargs -r0 chmod -x --
+
+%{expand:%%define optflags %optflags -Wall}
+
 %build
+rm -f configure doc/bashref.info
 autoconf
+export \
+	bash_cv_dev_fd=standard \
+	bash_cv_dev_stdin=present \
+	bash_cv_mail_dir=/var/mail \
 %configure \
-        --enable-alias \
-        --enable-help-builtin \
-        --enable-history \
-        --enable-job-control \
-        --enable-restricted \
-        --enable-readline \
-        --enable-extended-glob \
-        --enable-dparen-arithmetic \
-        --with-installed-readline \
-	--without-bash-malloc
+	--without-curses \
+	--without-installed-readline \
+	--disable-restricted \
+	--disable-net-redirections
 make
 
 %install
@@ -104,10 +102,11 @@ mv $RPM_BUILD_ROOT%_bindir/%name $RPM_BUILD_ROOT/bin/%name
 ln -s %name $RPM_BUILD_ROOT/bin/sh
 ln -s %name $RPM_BUILD_ROOT/bin/bash2
 
-gzip -9nf doc/*.ps
+gzip -9nf doc/*.{ps,txt}
 
-# make manpages for bash builtins as per suggestion in DOC/README
 pushd doc
+
+# Make manpages for bash builtins as per suggestion in doc/README
 sed -e '
 /^\.SH NAME/, /\\- bash built-in commands, see \\fBbash\\fR(1)$/{
 /^\.SH NAME/d
@@ -121,13 +120,13 @@ d
 
 install -c -m 644 builtins.1 ${RPM_BUILD_ROOT}%{_mandir}/man1/builtins.1
 
-for i in `cat man.pages` ; do
-  echo .so man1/builtins.1 > ${RPM_BUILD_ROOT}%{_mandir}/man1/$i.1
+for c in `cat man.pages`; do
+	echo .so man1/builtins.1 > ${RPM_BUILD_ROOT}%{_mandir}/man1/$c.1
 done
 
 popd
 
-# Those conflicts with real manpages
+# These conflict with real manpages
 rm -f ${RPM_BUILD_ROOT}%{_mandir}/man1/{echo,pwd,test,kill}.1
 
 mkdir -p $RPM_BUILD_ROOT/etc/skel
@@ -137,9 +136,6 @@ install -c -m 644 %{SOURCE4} $RPM_BUILD_ROOT/etc/skel/.bash_logout
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-
-# ***** bash doesn't use install-info. It's always listed in %{_infodir}/dir
-# to prevent prereq loops
 
 %triggerin -- libtermcap
 if [ ! -f /etc/shells ]; then
@@ -163,8 +159,6 @@ if [ $1 -eq 0 -a -x /bin/grep ]; then
 	test -s /etc/shells || rm /etc/shells
 fi
 
-find examples -type f -print0 | xargs -r0 chmod -x
-
 %files
 %defattr(-,root,root)
 %config(noreplace) /etc/skel/.b*
@@ -182,15 +176,25 @@ find examples -type f -print0 | xargs -r0 chmod -x
 
 %files doc
 %defattr(-,root,root)
-%doc doc/*.ps* doc/*.0 doc/*.html doc/article.txt
+%doc doc/*.ps* doc/*.html doc/article.txt*
 
 %changelog
+* Sat Oct 27 2001 Solar Designer <solar@owl.openwall.com>
+- Applied many cleanups to bash sources to build with -Wall also fixing a
+few real bugs, disabling pieces of dead code, and commenting on likely
+signal races (which remain).
+- Updated the temporary file handling fixes to fit the new tmpfile.c
+interfaces, reviewed and applied fixes to scripts used during bash builds
+and to bashbug as well.
+- The official bash patches are now in a separate file and applied first.
+- Dropped some obsolete patches.
+
 * Wed Oct 24 2001 Michail Litvak <mci@owl.openwall.com>
 - 2.05
 - Many patches from Debian, ALT Linux.
 - some spec rework.
-- removed -glibc-build-hack.diff it no more needed.
-- add -owl-disable.diff - #if 0'ed not used valid_exportstr function.
+- removed -glibc-build-hack.diff which is no longer needed.
+- #if 0'ed not used valid_exportstr function.
 
 * Sat Jan 13 2001 Solar Designer <solar@owl.openwall.com>
 - One more temporary file handling fix for the history editor, as reported
