@@ -1,6 +1,6 @@
-diff -ur openssh-3.3p1.orig/auth.c openssh-3.3p1/auth.c
---- openssh-3.3p1.orig/auth.c	Wed May 22 09:06:28 2002
-+++ openssh-3.3p1/auth.c	Sun Jun 23 18:31:33 2002
+diff -ur openssh-3.4p1.orig/auth.c openssh-3.4p1/auth.c
+--- openssh-3.4p1.orig/auth.c	Wed May 22 09:06:28 2002
++++ openssh-3.4p1/auth.c	Sat Jun 29 21:02:35 2002
 @@ -251,8 +251,9 @@
  	authlog("%s %s for %s%.100s from %.200s port %d%s",
  	    authmsg,
@@ -13,9 +13,9 @@ diff -ur openssh-3.3p1.orig/auth.c openssh-3.3p1/auth.c
  	    get_remote_ipaddr(),
  	    get_remote_port(),
  	    info);
-diff -ur openssh-3.3p1.orig/auth1.c openssh-3.3p1/auth1.c
---- openssh-3.3p1.orig/auth1.c	Fri Jun 21 10:21:11 2002
-+++ openssh-3.3p1/auth1.c	Sun Jun 23 18:23:04 2002
+diff -ur openssh-3.4p1.orig/auth1.c openssh-3.4p1/auth1.c
+--- openssh-3.4p1.orig/auth1.c	Fri Jun 21 10:21:11 2002
++++ openssh-3.4p1/auth1.c	Sat Jun 29 21:02:35 2002
 @@ -379,7 +379,7 @@
  	else
  		debug("do_authentication: illegal user %s", user);
@@ -25,13 +25,15 @@ diff -ur openssh-3.3p1.orig/auth1.c openssh-3.3p1/auth1.c
  	    use_privsep ? " [net]" : "");
  
  #ifdef USE_PAM
-diff -ur openssh-3.3p1.orig/auth2.c openssh-3.3p1/auth2.c
---- openssh-3.3p1.orig/auth2.c	Fri Jun 21 10:21:11 2002
-+++ openssh-3.3p1/auth2.c	Sun Jun 23 18:26:04 2002
-@@ -161,11 +161,13 @@
+diff -ur openssh-3.4p1.orig/auth2.c openssh-3.4p1/auth2.c
+--- openssh-3.4p1.orig/auth2.c	Fri Jun 21 10:21:11 2002
++++ openssh-3.4p1/auth2.c	Sat Jun 29 21:03:37 2002
+@@ -160,12 +160,14 @@
+ 			PRIVSEP(start_pam(authctxt->pw->pw_name));
  #endif
  		} else {
- 			log("input_userauth_request: illegal user %s", user);
+-			log("input_userauth_request: illegal user %s", user);
++			debug2("input_userauth_request: illegal user %s", user);
 +			authctxt->pw = NULL;
 +			authctxt->valid = 0;
  #ifdef USE_PAM
