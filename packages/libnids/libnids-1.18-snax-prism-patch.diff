@@ -1,0 +1,49 @@
+--- libnids-1.18/src/libnids.c	2003-10-10 10:41:32.000000000 -0700
++++ libnids-1.18-patched/src/libnids.c	2004-01-15 17:23:04.000000000 -0800
+@@ -181,6 +181,7 @@
+ #ifdef DLT_IEEE802_11
+     unsigned short fc;
+ #endif
++    linkoffset = 0;
+     switch (linktype) {
+     case DLT_EN10MB:
+ 	if (hdr->caplen < 14)
+@@ -196,12 +197,17 @@
+ 	    /* non-ip frame */
+ 	    return;
+ 	break;
++#ifdef DLT_PRISM_HEADER
++    case DLT_PRISM_HEADER:
++        linkoffset = 144; //sizeof(prism2_hdr);
++        //now let DLT_IEEE802_11 do the rest
++#endif
+ #ifdef DLT_IEEE802_11
+     case DLT_IEEE802_11:
+ 	/* I don't know why frame control is always little endian, but it 
+ 	 * works for tcpdump, so who am I to complain? (wam)
+ 	 */
+-	fc = EXTRACT_LE_16BITS(data);
++	fc = EXTRACT_LE_16BITS(data + linkoffset);
+ 	if (FC_TYPE(fc) != T_DATA || FC_WEP(fc)) {
+ 	    return;
+ 	}
+@@ -209,9 +215,9 @@
+ 	    /* a wireless distribution system packet will have another
+ 	     * MAC addr in the frame
+ 	     */
+-	    linkoffset = 30;
++	    linkoffset += 30;
+ 	} else {
+-	    linkoffset = 24;
++	    linkoffset += 24;
+ 	}
+ 	if (hdr->len < linkoffset + LLC_FRAME_SIZE)
+ 	    return;
+@@ -440,6 +446,7 @@
+     }
+     switch ((linktype = pcap_datalink(desc))) {
+ #ifdef DLT_IEEE802_11
++    case DLT_PRISM_HEADER:
+     case DLT_IEEE802_11:
+ 	/* wireless, need to calculate offset per frame */
+ 	break;

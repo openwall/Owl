@@ -1,14 +1,15 @@
-# $Id: Owl/packages/libnids/libnids.spec,v 1.9 2003/10/30 09:00:25 solar Exp $
+# $Id: Owl/packages/libnids/libnids.spec,v 1.10 2004/02/17 00:03:40 solar Exp $
 
 Summary: NIDS E-component.
 Name: libnids
 Version: 1.18
-Release: owl1
+Release: owl2
 Epoch: 1
 License: GPL
 Group: System Environment/Libraries
 URL: http://libnids.sourceforge.net
 Source: %name-%version.tar.gz
+Patch0: libnids-1.18-snax-prism-patch.diff
 PreReq: /sbin/ldconfig
 BuildRequires: autoconf, libpcap-devel, libnet-devel
 BuildRoot: /override/%name-%version
@@ -29,6 +30,7 @@ Development libraries, header files, and documentation for libnids.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 autoconf
@@ -57,6 +59,9 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/lib*.a
 
 %changelog
+* Mon Feb 16 2004 Simon Baker <simonb@owl.openwall.com> 1:1.18-owl2
+- Added prism wireless capabilities patch from Snax (snax@shmoo.com)
+
 * Wed Oct 15 2003 Rafal Wojtczuk <nergal@owl.openwall.com> 1:1.18-owl1
 - updated to 1.18
 
