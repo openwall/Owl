@@ -223,9 +223,10 @@ static int mailbox_parse(int init)
 		    line[4] == ' ') {
 /* Process the previous one first, if exists */
 			if (offset) {
-				if (!header && !body) break;
+/* If we aren't at the very beginning, there must have been a message */
+				if (!msg.data_offset) break;
 				msg.raw_size = offset - msg.raw_offset;
-				msg.data_size = offset - 1 - msg.data_offset;
+				msg.data_size = offset - body - msg.data_offset;
 				MD5_Final(msg.hash, &hash);
 				if (db_op(&msg)) break;
 			}
@@ -252,12 +253,18 @@ static int mailbox_parse(int init)
 /* If we see LF at start of line, then this is a blank line :-) */
 		blank = start && line[0] == '\n';
 
+		if (!header) {
+/* If we're no longer in message headers and we see more data, then it's
+ * the body. */
+			if (msg.data_offset)
+				body = 1;
 /* The rest of actions in this loop are for header lines only */
-		if (!header) continue;
+			continue;
+		}
 
-/* Blank line in headers means start of the message body */
+/* Blank line ends message headers */
 		if (blank) {
-			header = 0; body = 1;
+			header = 0;
 			continue;
 		}
 
@@ -309,9 +316,9 @@ static int mailbox_parse(int init)
 	if (done) {
 /* Process the last message */
 		if (offset != mailbox_size) return 1;
-		if (!header && !body) return 1;
+		if (!msg.data_offset) return 1;
 		msg.raw_size = offset - msg.raw_offset;
-		msg.data_size = offset - blank - msg.data_offset;
+		msg.data_size = offset - (blank & body) - msg.data_offset;
 		MD5_Final(msg.hash, &hash);
 		if (db_op(&msg)) return 1;
 

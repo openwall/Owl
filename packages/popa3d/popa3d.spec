@@ -1,8 +1,8 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.17 2002/05/25 14:38:49 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.18 2002/05/27 15:46:09 solar Exp $
 
 Summary: Post Office Protocol server.
 Name: popa3d
-Version: 0.5.1.1
+Version: 0.5.1.2
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
@@ -72,6 +72,11 @@ fi
 %doc DESIGN LICENSE
 
 %changelog
+* Mon May 27 2002 Solar Designer <solar@owl.openwall.com>
+- Workaround a bug in certain versions of Microsoft Outlook Express
+(reported) where the client would abort on body-less messages which are
+lacking a blank line after the headers (valid per RFC 822, 2822).
+
 * Sat May 25 2002 Solar Designer <solar@owl.openwall.com>
 - Relaxed the overflow check with strtol() to what really is needed
 to solve the interoperability problem reported by Yury Trembach on
