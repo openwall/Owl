@@ -77,10 +77,10 @@ a sparc64 kernel, though.
 	Alpha.
 
 We don't support Alpha at this stage, with the reason for this being
-that gcc 2.95.2 cannot compile glibc on Alpha due to problems in the
-complex float support (right out of the glibc FAQ).  We are going to
-support Alpha in the future, after we either move to a newer version
-of gcc (once that is sufficiently stable) or patch a number of "libm"
-functions out when building on Alpha as a temporary workaround.
+that gcc 2.95.2 couldn't build glibc on Alpha due to problems in the
+complex float support (right out of the glibc FAQ).  This has changed
+with gcc 2.95.3 so we are going to support Alpha in the near future.
+Most (but not all) of the Owl packages have been built and tested on
+Alpha already.
 
-$Id: Owl/doc/ARCHITECTURES,v 1.1 2000/12/24 05:59:39 solar Exp $
+$Id: Owl/doc/ARCHITECTURES,v 1.2 2001/04/17 04:35:32 solar Exp $
