@@ -1,4 +1,4 @@
-# $Id: Owl/packages/binutils/binutils.spec,v 1.9 2002/08/26 15:15:43 mci Exp $
+# $Id: Owl/packages/binutils/binutils.spec,v 1.10 2002/08/27 00:16:56 solar Exp $
 
 %define BUILD_HJL 1
 
@@ -35,9 +35,11 @@ addresses to file and line).
 %patch -p1
 
 %build
-rm bfd/doc/bfd.info binutils/binutils.info etc/standards.info
-rm gas/doc/{gasp,as}.info gprof/gprof.info
-rm ld/{ld,ldint}.info
+# There're currently no pre-compiled versions of these texinfo files
+# included, should uncomment if that changes.
+#rm bfd/doc/bfd.info binutils/binutils.info etc/standards.info
+#rm gas/doc/{gasp,as}.info gprof/gprof.info
+#rm ld/{ld,ldint}.info
 ADDITIONAL_TARGETS=""
 %ifos linux
 %ifarch sparc sparcv9
@@ -56,15 +58,15 @@ make tooldir=%{_prefix}usr all info
 %install
 rm -rf $RPM_BUILD_ROOT
 
-mkdir -p ${RPM_BUILD_ROOT}%{_prefix}
+mkdir -p $RPM_BUILD_ROOT%{_prefix}
 %makeinstall
-make prefix=${RPM_BUILD_ROOT}%{_prefix} infodir=${RPM_BUILD_ROOT}%{_infodir} \
+make prefix=$RPM_BUILD_ROOT%{_prefix} infodir=$RPM_BUILD_ROOT%{_infodir} \
 	install-info
-rm ${RPM_BUILD_ROOT}%{_mandir}/man1/nlmconv.1
+rm $RPM_BUILD_ROOT%{_mandir}/man1/nlmconv.1
 
-install -m 644 include/libiberty.h ${RPM_BUILD_ROOT}%{_prefix}/include
+install -m 644 include/libiberty.h $RPM_BUILD_ROOT%{_prefix}/include/
 
-chmod +x ${RPM_BUILD_ROOT}%{_prefix}/%{_lib}/lib*.so*
+chmod +x $RPM_BUILD_ROOT%{_prefix}/%{_lib}/lib*.so*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
