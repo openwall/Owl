@@ -12,6 +12,12 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.0 and Owl-current.
 
+2003/07/04	Package: perl
+RELIABILITY FIX: Corrected the Perl getpwent() to not rely on
+getspent(3) returning entries in the same order as getpwent(3) does;
+this actually makes a difference with /etc/tcb and likely with
+non-files password databases.
+
 2003/06/12	Package: stmpclean
 RELIABILITY FIX: Updated to 0.3 which will refuse to run on relative
 pathnames.  The previous version would interpret relative pathnames in
@@ -345,4 +351,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.60 2003/06/12 02:21:18 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.61 2003/07/06 20:15:33 solar Exp $
