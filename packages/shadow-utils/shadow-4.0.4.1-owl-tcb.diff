@@ -107,8 +107,8 @@ diff -uNrp shadow-4.0.4.1.orig/lib/getdef.c shadow-4.0.4.1/lib/getdef.c
  	{ "SYSLOG_SG_ENAB",		NULL },
  	{ "SYSLOG_SU_ENAB",		NULL },
  #endif
-+	{ "TCB_AUTH_GROUP",             NULL },
-+	{ "TCB_SYMLINKS",               NULL },
++	{ "TCB_AUTH_GROUP",		NULL },
++	{ "TCB_SYMLINKS",		NULL },
  	{ "TTYGROUP",			NULL },
  	{ "TTYPERM",			NULL },
  	{ "TTYTYPE_FILE",		NULL },
@@ -118,7 +118,7 @@ diff -uNrp shadow-4.0.4.1.orig/lib/getdef.c shadow-4.0.4.1/lib/getdef.c
  	{ "USERDEL_CMD",		NULL },
 -	{ "USERGROUPS_ENAB",		NULL }
 +	{ "USERGROUPS_ENAB",		NULL },
-+	{ "USE_TCB",                    NULL }
++	{ "USE_TCB",			NULL }
  };
  
  #ifndef LOGINDEFS
