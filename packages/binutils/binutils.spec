@@ -1,4 +1,4 @@
-# $Id: Owl/packages/binutils/binutils.spec,v 1.12 2004/05/08 00:25:12 galaxy Exp $
+# $Id: Owl/packages/binutils/binutils.spec,v 1.13 2004/05/09 16:50:58 solar Exp $
 
 %define BUILD_HJL 1
 
@@ -9,7 +9,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.15.90.0.3
-Release: owl0.1
+Release: owl1
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils/
@@ -125,7 +125,7 @@ install -m 644 ../include/libiberty.h %buildroot%_includedir/
 chmod +x %buildroot%_libdir/lib*.so*
 
 # Remove unpackaged files
-[ -f %buildroot%_infodir/dir ] && rm %buildroot%_infodir/dir
+rm %buildroot%_infodir/dir
 
 cd ..
 
@@ -162,8 +162,8 @@ fi
 %_datadir/locale/*/LC_MESSAGES/*.mo
 
 %changelog
-* Fri May 07 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.15.90.0.3-owl0.1
-- Updated to the 2.15.90.0.3
+* Fri May 07 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.15.90.0.3-owl1
+- Updated to 2.15.90.0.3
 
 * Mon Mar 15 2004 Solar Designer <solar@owl.openwall.com> 2.14.90.0.8-owl0.5
 - Further spec file cleanups.
