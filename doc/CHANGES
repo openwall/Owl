@@ -12,6 +12,10 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/06/25	Package: quota
+New package: tools for monitoring users' disk usage and managing disk
+usage quotas.
+
 2001/06/24	Owl/doc/CHANGES
 New file: the system-wide change log will now be maintained.
 
@@ -184,4 +188,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp@hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.2 2001/06/24 14:03:32 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.3 2001/06/25 19:20:04 solar Exp $
