@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.28 2002/11/15 09:55:11 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.29 2002/12/12 17:33:44 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
-Version: 0.9.6g
-Release: owl3
+Version: 0.9.6h
+Release: owl1
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
@@ -96,7 +96,7 @@ perl -pi -e "s/-O.(?: -fomit-frame-pointer)?(?: -m.86)?/${RPM_OPT_FLAGS}/" \
 %endif
 
 # Check these against the DIRS= line and "all" target in top-level Makefile
-# when updating to a new version of OpenSSL; with 0.9.6g the Makefile says:
+# when updating to a new version of OpenSSL; with 0.9.6h the Makefile says:
 # DIRS= crypto ssl rsaref $(SHLIB_MARK) apps test tools
 # all: clean-shared Makefile.ssl sub_all
 make Makefile.ssl
@@ -157,6 +157,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0644,root,root) %{_mandir}/man3/*
 
 %changelog
+* Thu Dec 12 2002 Solar Designer <solar@owl.openwall.com>
+- Updated to 0.9.6h.
+
 * Fri Nov 15 2002 Solar Designer <solar@owl.openwall.com>
 - Dropped the patch removing -Wl,-Bsymbolic which is no longer needed with
 0.9.6g and/or after dropping the explicit "make build-shared".
