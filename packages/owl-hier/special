@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-hier/Attic/special,v 1.4 2000/12/05 00:45:02 solar Exp $
+# $Id: Owl/packages/owl-hier/Attic/special,v 1.5 2001/03/31 11:42:21 solar Exp $
 
 # /
 /set type=file uname=root gname=root mode=0755
@@ -420,6 +420,12 @@ sbin		type=dir
 
 # /usr/share
 share		type=dir
+
+# /usr/share/empty
+empty		type=dir
+# /usr/share/empty
+..
+
 # /usr/share
 ..
 

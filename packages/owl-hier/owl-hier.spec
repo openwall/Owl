@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.3 2000/12/20 18:52:12 solar Exp $
+# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.4 2001/03/31 11:42:21 solar Exp $
 
 Summary: Initial directory hierarchy
 Name: owl-hier
-Version: 0.0
-Release: 2owl
+Version: 0.1
+Release: 1owl
 Copyright: public domain
 Group: System Environment/Base
 Source: special
@@ -72,6 +72,9 @@ rm -rf $RPM_BUILD_ROOT
 %files -f filelist
 
 %changelog
+* Sat Mar 31 2001 Solar Designer <solar@owl.openwall.com>
+- Provide /usr/share/empty (an always-empty directory for chroots).
+
 * Wed Dec 20 2000 Solar Designer <solar@owl.openwall.com>
 - Obsoletes: and Provides: filesystem to permit for upgrades from RH.
 
