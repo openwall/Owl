@@ -5,6 +5,15 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 1.1 and Owl 1.1-stable.
 
+2005/02/06	Package: cpio
+SECURITY FIX	Severity: low, local, passive
+Obey the current umask when creating output files; previously, the
+files would be created with mode 666.  Thanks to Mike O'Connor for
+bringing this up.
+References:
+http://www.freebsd.org/cgi/query-pr.cgi?pr=bin/1391
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-1999-1572
+
 2005/01/20	kernel
 SECURITY FIX	Severity: high, local, active
 Updated to Linux 2.4.29-ow1.  Linux 2.4.29, and thus 2.4.29-ow1, adds
@@ -196,4 +205,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 2004/01/15	Owl/doc/DOWNLOAD, Owl/doc/*/DOWNLOAD, Owl/doc/fr/CREDITS
 Sync'ed with the minor post-release updates made in Owl-current.
 
-$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.24 2005/02/06 02:50:00 solar Exp $
+$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.25 2005/02/06 02:52:55 solar Exp $

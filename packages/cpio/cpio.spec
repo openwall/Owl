@@ -1,9 +1,9 @@
-# $Id: Owl/packages/cpio/cpio.spec,v 1.13 2003/11/03 12:27:29 solar Exp $
+# $Id: Owl/packages/cpio/cpio.spec,v 1.13.2.1 2005/02/06 02:52:55 solar Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
 Version: 2.4.2
-Release: owl27
+Release: owl28
 License: GPL
 Group: Applications/Archiving
 Source: ftp://ftp.gnu.org/gnu/cpio-%version.tar.gz
@@ -21,6 +21,7 @@ Patch10: cpio-2.4.2-rh-man.diff
 Patch11: cpio-2.4.2-rh-mtime.diff
 Patch12: cpio-2.4.2-rh-svr4compat.diff
 Patch13: cpio-2.4.2-rh-lchown.diff
+Patch14: cpio-2.4.2-freebsd-umask.diff
 PreReq: /sbin/install-info
 Provides: mt-st, rmt
 Prefix: %_prefix
@@ -54,6 +55,7 @@ and can read archives created on machines with a different byte-order.
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
+%patch14 -p5
 
 %build
 rm cpio.info
@@ -61,16 +63,16 @@ rm cpio.info
 make LDFLAGS=-s
 
 %install
-rm -rf $RPM_BUILD_ROOT
-%makeinstall bindir=$RPM_BUILD_ROOT/bin mandir=$RPM_BUILD_ROOT%_mandir/
+rm -rf %buildroot
+%makeinstall bindir=%buildroot/bin mandir=%buildroot%_mandir/
 
-mkdir -p $RPM_BUILD_ROOT%_mandir/man8/
-install -m 644 rmt.8 $RPM_BUILD_ROOT%_mandir/man8/
+mkdir -p %buildroot%_mandir/man8/
+install -m 644 rmt.8 %buildroot%_mandir/man8/
 
-mkdir -p $RPM_BUILD_ROOT/{etc,sbin}
+mkdir -p %buildroot/{etc,sbin}
 # Can't have relative symlinks out of /etc as it's moved under /ram on CDs
-ln -s /usr/libexec/rmt $RPM_BUILD_ROOT/etc/
-ln -s ../usr/libexec/rmt $RPM_BUILD_ROOT/sbin/
+ln -s /usr/libexec/rmt %buildroot/etc/
+ln -s ../usr/libexec/rmt %buildroot/sbin/
 
 %post
 /sbin/install-info %_infodir/cpio.info.gz %_infodir/dir
@@ -94,6 +96,11 @@ fi
 %_mandir/man8/rmt.8*
 
 %changelog
+* Sun Feb 06 2005 Solar Designer <solar@owl.openwall.com> 2.4.2-owl28
+- With "cpio -oO ...", postpone the setting of umask to 0 (yes, that's
+still far from perfect!) to until after the output file is created;
+thanks to Mike O'Connor for bringing this up.
+
 * Sun Oct 19 2003 Solar Designer <solar@owl.openwall.com> 2.4.2-owl27
 - Install the mt(1) man page.
 
