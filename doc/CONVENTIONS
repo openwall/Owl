@@ -110,7 +110,7 @@ leading zero if necessary.  When adding new entries do specify the
 current package Version and Release after your e-mail address, like
 this:
 
-* Wed Dec 01 2004 Your Name <you@example.com> 1.0-owl1
+	* Wed Dec 01 2004 Your Name <you@example.com> 1.0-owl1
 
 
 	Patch file naming.
@@ -197,24 +197,24 @@ to be used on sources already in Owl.
 It's better to not use temporary files, however if you must, the
 preferred way to do it from shell scripts is with code like this:
 
-TMPFILE="`mktemp -t program.XXXXXXXXXX`" || exit
-trap 'rm -f -- "$TMPFILE"' EXIT
-trap 'trap - EXIT; rm -f -- "$TMPFILE"; exit 1' HUP INT QUIT TERM
+	TMPFILE="`mktemp -t program.XXXXXXXXXX`" || exit
+	trap 'rm -f -- "$TMPFILE"' EXIT
+	trap 'trap - EXIT; rm -f -- "$TMPFILE"; exit 1' HUP INT QUIT TERM
 
 To create temporary directories, use:
 
-TMPD="`mktemp -dt program.XXXXXXXXXX`" || exit
-trap 'rm -rf -- "$TMPD"' EXIT
-trap 'trap - EXIT; rm -rf -- "$TMPD"; exit 1' HUP INT QUIT TERM
+	TMPD="`mktemp -dt program.XXXXXXXXXX`" || exit
+	trap 'rm -rf -- "$TMPD"' EXIT
+	trap 'trap - EXIT; rm -rf -- "$TMPD"; exit 1' HUP INT QUIT TERM
 
 This may be used in our own scripts or in patches.  The package should
 then require the proper version of mktemp(1):
 
-Requires: mktemp >= 1:1.3.1
+	Requires: mktemp >= 1:1.3.1
 
 (This is the version which introduced support for the "-t" option.)
 
 As usual, use Requires, PreReq, and/or BuildRequires depending on
 where in the package the uses of mktemp occur.
 
-$Id: Owl/doc/CONVENTIONS,v 1.21 2004/12/01 14:36:24 solar Exp $
+$Id: Owl/doc/CONVENTIONS,v 1.22 2005/03/25 17:18:54 solar Exp $
