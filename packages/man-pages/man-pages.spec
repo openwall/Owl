@@ -1,8 +1,8 @@
-# $Id: Owl/packages/man-pages/man-pages.spec,v 1.6 2001/06/17 22:27:18 mci Exp $
+# $Id: Owl/packages/man-pages/man-pages.spec,v 1.7 2001/09/05 09:56:01 mci Exp $
 
 Summary: Manual (man) pages from the Linux Documentation Project.
 Name: man-pages
-Version: 1.38
+Version: 1.39
 Release: 1owl
 Copyright: distributable
 Group: Documentation
@@ -20,13 +20,14 @@ Source10: sigaltstack.2
 Source11: ld-linux.so.8
 Source12: ldconfig.8
 Source13: rpcinfo.8
-Patch1: man-pages-1.38-deb-misc.diff
-Patch2: man-pages-1.38-rh-ctype.diff
+Patch1: man-pages-1.39-deb-misc.diff
+Patch2: man-pages-1.39-rh-ctype.diff
 # temporarily disabled, we don't yet have these paths
 # Patch3: man-pages-1.35-rh-pathupdate.diff
 Patch4: man-pages-1.38-rh-roffix.diff
-Patch5: man-pages-1.38-owl-ccldso.diff
-Patch6: man-pages-1.38-owl-uselib.diff
+Patch5: man-pages-1.39-owl-ccldso.diff
+Patch6: man-pages-1.39-owl-uselib.diff
+Patch7: man-pages-1.39-owl-pwrite.diff
 Buildroot: /var/rpm-buildroot/%{name}-root
 Autoreqprov: false
 BuildArchitectures: noarch
@@ -66,6 +67,7 @@ cp %{SOURCE13} man8
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %build
 rm -fv man1/README
@@ -82,16 +84,8 @@ rm -fv man2/quotactl.2
 # Part of glibc (crypt_blowfish)
 rm -fv man3/crypt.3
 
-# Part of modutils
-rm -fv man2/get_kernel_syms.2
-rm -fv man2/{create,delete,init,query}_module.2
-
 # Part of console-tools
 rm -fv man4/console.4
-
-# Part of nfs-utils
-rm -fv man5/exports.5
-rm -fv man5/nfs.5
 
 # Part of bind-utils
 rm -fv man5/resolver.5
@@ -99,9 +93,6 @@ rm -fv man5/resolv.conf.5
 
 # Obsolete
 rm -f man3/infnan.3
-
-# Part of mount
-rm -fv man5/fstab.5
 
 # Part of time
 rm -fv man1/time.1
@@ -126,6 +117,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man*/*
 
 %changelog
+* Wed Sep 05 2001 Michail Litvak <mci@owl.openwall.com>
+- updated to 1.39
+- patch to add reference pwrite.2 -> pread.2
+
 * Mon Jun 18 2001 Michail Litvak <mci@owl.openwall.com>
 - updated to 1.38
 

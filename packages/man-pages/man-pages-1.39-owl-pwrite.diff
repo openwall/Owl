@@ -1,0 +1,4 @@
+--- man-pages-1.39/man2/pwrite.2.orig	Wed Sep  5 12:27:51 2001
++++ man-pages-1.39/man2/pwrite.2	Wed Sep  5 12:27:37 2001
+@@ -0,0 +1 @@
++.so man2/pread.2

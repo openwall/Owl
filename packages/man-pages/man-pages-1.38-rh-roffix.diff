@@ -1,16 +1,3 @@
---- man-pages-1.35/man1/rpcgen.1.rofffix	Tue Apr 22 10:54:22 1997
-+++ man-pages-1.35/man1/rpcgen.1	Mon Apr  2 19:10:13 2001
-@@ -312,9 +312,7 @@
- \f4\-l\f1,
- \f4\-m\f1,
- \f4\-n\f1,
--\f4\-s\f1,
--\f4\-s\Sc,
--\f4\-s\Ss
-+\f4\-s\f1
- and
- \f4\-t\f1
- modes only).
 --- man-pages-1.38/man2/ioctl_list.2.orig	Thu Jun  7 15:09:28 2001
 +++ man-pages-1.38/man2/ioctl_list.2	Mon Jun 18 00:03:10 2001
 @@ -543,8 +543,7 @@

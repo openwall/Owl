@@ -1,5 +1,5 @@
---- man-pages-1.38/man7/regex.7.orig	Sun Jun 17 17:49:43 2001
-+++ man-pages-1.38/man7/regex.7	Sun Jun 17 17:50:14 2001
+--- man-pages-1.39/man7/regex.7.orig	Sun Jun 17 17:49:43 2001
++++ man-pages-1.39/man7/regex.7	Sun Jun 17 17:50:14 2001
 @@ -154,7 +154,7 @@
  .RE
  .PP
