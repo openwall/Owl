@@ -1,4 +1,4 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.1 2000/12/14 20:43:02 kad Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.2 2000/12/14 21:09:03 kad Exp $
 
 %define NEED_PYTHON 'no'
 
@@ -8,7 +8,7 @@ Version: 	2.1.8.9pre13
 Release: 	2owl
 License: 	Distributable (BSD-like)
 Group: 		System Environment/Daemons
-Source: 	http://synack.net/xinetd/xinetd-%{version}.tar.gz
+Source: 	http://www.xinetd.org/xinetd-%{version}.tar.gz
 Source1: 	xinetd.init
 Source2: 	xinetd.conf
 Source3:	xinetd-inetdconvert
@@ -25,7 +25,7 @@ Provides: 	inetd
 Prereq: 	/sbin/chkconfig /etc/init.d /sbin/service
 BuildRequires: 	tcp_wrappers
 Requires: 	filesystem >= 2.0.1
-URL: 		http://synack.net/xinetd/
+URL: 		http://www.xinetd.org/
 BuildRoot: 	/var/rpm-buildroot/%{name}-root
 Obsoletes: 	inetd
 
