@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tar/tar.spec,v 1.13 2002/09/29 05:42:52 solar Exp $
+# $Id: Owl/packages/tar/tar.spec,v 1.14 2002/10/01 00:10:14 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
@@ -106,7 +106,8 @@ http://marc.theaimsgroup.com/?l=bugtraq&m=99496364810666
 http://mail.gnu.org/pipermail/bug-gnu-utils/2002-May/000827.html
 http://marc.theaimsgroup.com/?l=bugtraq&m=103314336129887
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2001-1267
-1.13.17 and 1.13.18 had this right.
+1.13.17 and 1.13.18 had this right.  CVE CAN-2002-0399 applies to the
+implementation bug in 1.13.19 to 1.13.25, but isn't yet public.
 - Fixed another 1.13.19's bug which effectively disabled the symlink safety
 introduced in 1.13.18; this avoids the problem described by Willy TARREAU
 where tar could be made to follow a symlink it just extracted and place a
