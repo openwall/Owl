@@ -1,0 +1,12 @@
+diff -ur procps-2.0.7.orig/ps/Makefile procps-2.0.7/ps/Makefile
+--- procps-2.0.7.orig/ps/Makefile	Mon Jul 10 21:16:47 2000
++++ procps-2.0.7/ps/Makefile	Fri Jan 17 15:49:19 2003
+@@ -29,8 +29,6 @@
+ install: ps
+ 	install $(OWNERGROUP) --mode a=rx --strip ps $(BINDIR)/ps
+ 	install $(OWNERGROUP) --mode a=r ps.1 $(MAN1DIR)/ps.1
+-	# The following does no harm and on older systems might help
+-	rm -f /var/catman/cat1/ps.1.gz /var/man/cat1/ps.1.gz
+ 
+ clean:
+ 	rm -f *.o DEADJOE *~ core ps gmon.out

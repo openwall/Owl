@@ -1,15 +1,16 @@
-# $Id: Owl/packages/procps/Attic/procps.spec,v 1.6 2002/02/07 18:37:33 solar Exp $
+# $Id: Owl/packages/procps/Attic/procps.spec,v 1.7 2003/01/17 12:54:52 solar Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
 Version: 2.0.7
-Release: owl1
+Release: owl2
 License: GPL and LGPL
 Group: System Environment/Base
 Source: ftp://sunsite.unc.edu/pub/Linux/system/status/ps/procps-%{version}.tar.gz
 Patch0: procps-2.0.6-owl-alt-stale.diff
 Patch1: procps-2.0.7-owl-locale.diff
 Patch2: procps-2.0.7-owl-meminfo-fixes.diff
+Patch3: procps-2.0.7-owl-no-catman-cleanup.diff
 PreReq: /sbin/ldconfig
 BuildRoot: /override/%{name}-%{version}
 
@@ -23,6 +24,7 @@ top, pgrep, pkill, uptime, vmstat, w, and watch.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 make CC="gcc $RPM_OPT_FLAGS" LDFLAGS=-s
@@ -74,6 +76,11 @@ rm -rf $RPM_BUILD_ROOT
 /usr/man/man8/sysctl.8*
 
 %changelog
+* Fri Jan 17 2003 Solar Designer <solar@owl.openwall.com>
+- Don't try to remove catman (preformatted) manual pages during package
+builds: this fails with an error if the files do exist because we build
+as non-root.
+
 * Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 
