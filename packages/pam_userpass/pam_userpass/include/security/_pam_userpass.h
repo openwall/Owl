@@ -1,0 +1,12 @@
+#ifndef __PAM_USERPASS_H
+#define __PAM_USERPASS_H
+
+#define USERPASS_AGENT_ID		"userpass"
+#define USERPASS_AGENT_ID_LENGTH	8
+
+#define USERPASS_USER_MASK		0x03
+#define USERPASS_USER_REQUIRED		1
+#define USERPASS_USER_KNOWN		2
+#define USERPASS_USER_FIXED		3
+
+#endif

@@ -1,0 +1,18 @@
+PAM has traditionally assumed that services doing authentication have
+the ability to interact with the user.  Unfortunately, this isn't true
+for services that implement non-interactive and/or fixed protocols,
+such as FTP and POP3.  This is typically worked around by making the
+flawed assumption that PAM_PROMPT_ECHO_ON requests the username and
+PAM_PROMPT_ECHO_OFF requests the password.
+
+With pam_userpass, this assumption is no longer required.
+
+pam_userpass uses PAM binary prompts (only available in Linux-PAM) to
+ask the application for the username and password specifically.
+
+pam_userpass doesn't perform any actual authentication.  An actual
+authentication module should be stacked after pam_userpass and told to
+use the authentication token (password) provided by pam_userpass.
+
+-- 
+Solar Designer <solar@openwall.com>
