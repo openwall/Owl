@@ -1,16 +1,18 @@
-# $Id: Owl/packages/procps/Attic/procps.spec,v 1.7 2003/01/17 12:54:52 solar Exp $
+# $Id: Owl/packages/procps/Attic/procps.spec,v 1.8 2003/10/16 02:06:47 solar Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
 Version: 2.0.7
-Release: owl2
+Release: owl3
 License: GPL and LGPL
 Group: System Environment/Base
+URL: http://procps.sf.net
 Source: ftp://sunsite.unc.edu/pub/Linux/system/status/ps/procps-%{version}.tar.gz
 Patch0: procps-2.0.6-owl-alt-stale.diff
 Patch1: procps-2.0.7-owl-locale.diff
 Patch2: procps-2.0.7-owl-meminfo-fixes.diff
 Patch3: procps-2.0.7-owl-no-catman-cleanup.diff
+Patch4: procps-2.0.7-owl-top-ticks.diff
 PreReq: /sbin/ldconfig
 BuildRoot: /override/%{name}-%{version}
 
@@ -25,6 +27,7 @@ top, pgrep, pkill, uptime, vmstat, w, and watch.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 make CC="gcc $RPM_OPT_FLAGS" LDFLAGS=-s
@@ -76,7 +79,15 @@ rm -rf $RPM_BUILD_ROOT
 /usr/man/man8/sysctl.8*
 
 %changelog
-* Fri Jan 17 2003 Solar Designer <solar@owl.openwall.com>
+* Thu Oct 16 2003 Solar Designer <solar@owl.openwall.com> 2.0.7-owl3
+- Patched top to use unsigned long long's for tick counts; previously,
+its SMP-specific code used just int which resulted in the overflow
+happening twice earlier than it does in the kernel on x86/SMP (that is,
+after 248 days of idle time of a CPU instead of after 497 days) or to
+happen really early on Alpha/SMP (after just 24 days whereas the kernel
+uses 64-bit jiffies and essentially never overflows).
+
+* Fri Jan 17 2003 Solar Designer <solar@owl.openwall.com> 2.0.7-owl2
 - Don't try to remove catman (preformatted) manual pages during package
 builds: this fails with an error if the files do exist because we build
 as non-root.
