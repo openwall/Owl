@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.81 2005/01/20 05:33:59 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.82 2005/01/20 05:38:32 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -452,10 +452,10 @@ fi
 * Thu Jan 20 2005 Solar Designer <solar@owl.openwall.com> 2.3.3.2004061600-owl2
 - Many post-update corrections.
 
-* Sun Jun 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.3.2004061600-owl1
+* Sun Jan 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.3.2004061600-owl1
 - Removed commented out block in %%post.
 
-* Sun Jun 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.3.2004061600-owl0
+* Sun Jan 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.3.2004061600-owl0
 - Updated to CVS version 2.3.3 (2004061600).
 - Spec file was revised and reworked.
 - Imported a bunch of patches from ALT Linux.
