@@ -478,9 +478,6 @@ in use) in syslogd itself.
 Protect against timestamp spoofing.
 
 [PRIORITY: low]
-Pass options from /etc/sysconfig/syslog.
-
-[PRIORITY: low]
 In klogd, support new System.map format used starting with recent
 2.2.x kernels on Alpha.
 
@@ -558,4 +555,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.29 2003/12/19 16:40:40 solar Exp $
+$Id: Owl/doc/TODO,v 1.30 2004/01/06 05:24:56 solar Exp $
