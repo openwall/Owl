@@ -7,8 +7,9 @@ an Owl CD or by using another Linux installation you may already have.
 
 	Installing from a local CD-ROM drive.
 
-If you don't already have an Owl CD, please see DOWNLOAD for locations
-where you may obtain the ISO-9660 CD images and burn one onto a CD-R.
+If you don't already have an Owl CD, please either order one or see
+DOWNLOAD for locations where you may obtain the ISO-9660 CD images and
+burn one onto a CD-R.
 
 The Owl CDs for x86 are bootable, so if your machine supports booting
 off a CD just do so.  Otherwise take the boot floppy image from the CD
@@ -27,7 +28,7 @@ chance to optionally configure the CD-booted system by simply typing:
 
 The configuration will be stored in RAM (parts of /etc and /var are on
 a ramdisk).  You may then let the system boot into multi-user by
-leaving the shell.  Of course, this step is optional and is only
+exiting the shell.  Of course, this step is optional and is only
 needed if it is more convenient to complete the installation while in
 multi-user mode (such as, operating from a remote workstation) or if
 you intend to actually use the CD-booted Owl without installing on a
@@ -69,4 +70,4 @@ You may choose to configure the boot loader available with Owl (LILO
 or SILO, depending on the architecture), or you may use a boot loader
 already installed on the system (if any).
 
-$Id: Owl/doc/INSTALL,v 1.6 2002/08/22 02:17:12 solar Exp $
+$Id: Owl/doc/INSTALL,v 1.7 2002/09/01 01:19:46 solar Exp $
