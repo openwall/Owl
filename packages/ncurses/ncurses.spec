@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ncurses/ncurses.spec,v 1.5 2000/11/08 05:51:47 solar Exp $
+# $Id: Owl/packages/ncurses/ncurses.spec,v 1.6 2000/11/08 06:05:53 solar Exp $
 
 %define 	major		5
 %define 	oldmajor	4
@@ -50,6 +50,9 @@ Provides: libform.so.%{oldmajor} libmenu.so.%{oldmajor} libncurses.so.%{oldmajor
 %description compat
 This ncurses package provides compatiblity libraries for packages
 built against Red Hat Linux 6.2.
+
+# Use %optflags_lib for this package if defined.
+%{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 
 %prep
 %setup -q -n ncurses-%{version}
@@ -131,6 +134,7 @@ rm -rf $RPM_BUILD_ROOT
 * Wed Nov 08 2000 Solar Designer <solar@owl.openwall.com>
 - ncurses-5.2-20001104 patch which adds --with-ospeed and bugfixes.
 - --with-ospeed=speed_t for compatibility with libtermcap.
+- %optflags_lib support.
 
 * Mon Nov 06 2000 Solar Designer <solar@owl.openwall.com>
 - --disable-root-environ to enable the recent security fixes.
