@@ -16,7 +16,16 @@ change logs for the packages themselves.
 Updated to Linux 2.4.22-ow1.
 
 2003/10/18	Package: libnids
-Updated to 1.18.
+SECURITY FIX	Severity: none to high, remote, active
+Updated to 1.18 which fixes incorrect buffer memory reallocation (and
+thus a possible buffer overflow) in TCP stream reassembly which may be
+remotely exploitable into arbitrary code execution.  This does not
+affect applications that are currently a part of Owl (scanlogd does
+not use libnids' TCP stream reassembly capability), but a number of
+other applications such as those in dsniff toolkit are affected.  The
+vulnerability has been discovered by Robert Watson.
+Reference:
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0850
 
 2003/10/12 -
 2003/10/17	Packages: iproute2, iputils
@@ -441,4 +450,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.81 2003/10/20 00:40:03 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.82 2003/10/22 01:27:33 solar Exp $
