@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.19 2002/07/21 15:07:36 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.20 2002/07/21 15:19:08 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
@@ -184,9 +184,9 @@ grep -q ^auth: /etc/group || groupadd -g 164 auth
 
 %changelog
 * Sun Jul 21 2002 Solar Designer <solar@owl.openwall.com>
+- Made "chage -l" drop its saved GID too.
 - Removed the extra space in "[-e expire ]" in the usage instructions for
 useradd and usermod.
-- Made "chage -l" drop its saved GID too.
 
 * Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
