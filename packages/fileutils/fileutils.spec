@@ -1,9 +1,9 @@
-# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.1 2000/10/18 17:31:54 solar Exp $
+# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.2 2000/10/18 22:44:16 solar Exp $
 
 Summary: 	The GNU versions of common file management utilities.
 Name: 		fileutils
 Version: 	4.0.27
-Release: 	2owl
+Release: 	3owl
 License: 	GPL
 Group: 		Applications/File
 Source0: 	ftp://alpha.gnu.org/gnu/fetish/%{name}-%{version}.tar.gz
@@ -106,6 +106,9 @@ fi
 %{_prefix}/share/locale/*/*/*
 
 %changelog
+* Thu Oct 19 2000 Solar Designer <solar@owl.openwall.com>
+- Fixed a bug in RH patch to mv (don't exit if lstat on a file fails).
+
 * Sun Oct  1 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - v4.0.27
 

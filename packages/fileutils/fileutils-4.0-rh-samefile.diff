@@ -20,7 +20,7 @@
 +   */
 +  fail = lstat(source, &st_src);
 +  if (fail != 0)
-+      error(1, 0, "can't stat source %s", source);
++      error(0, errno, "%s", source);
 +  fail = lstat(dest, &st_dst);
 +  /*
 +   * don't bail if second stat fails. We could be renaming it. --notting
