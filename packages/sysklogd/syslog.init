@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/sysklogd/syslog.init,v 1.3 2000/12/01 21:18:37 solar Exp $
+# $Id: Owl/packages/sysklogd/syslog.init,v 1.4 2001/10/08 06:20:28 solar Exp $
 #
 # chkconfig: 2345 30 99
 # description: \
@@ -15,13 +15,13 @@ OWL_STARTUP_ENABLE=1
 # See how we were called.
 case "$1" in
 start)
-	daemon syslogd -m 0 && daemon klogd -u klogd
+	daemon syslogd -u syslogd -m 0 && daemon klogd -u klogd -j /var/empty
 	;;
 stop)
 	killproc klogd
-	test -L /var/run/klogd.pid && rm -f /var/run/klogd.pid
-	test -d /var/run/klogd && rmdir /var/run/klogd
+	rm -f /var/run/klogd.pid
 	killproc syslogd
+	rm -f /var/run/syslogd.pid
 	;;
 status)
 	status syslogd

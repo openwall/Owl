@@ -1,22 +1,26 @@
 /var/log/kernel {
+    create 620 root syslogd
     postrotate
 	test -f /var/run/syslogd.pid && kill -HUP `cat /var/run/syslogd.pid`
     endscript
 }
 
 /var/log/messages {
+    create 620 root syslogd
     postrotate
 	test -f /var/run/syslogd.pid && kill -HUP `cat /var/run/syslogd.pid`
     endscript
 }
 
 /var/log/maillog {
+    create 620 root syslogd
     postrotate
 	test -f /var/run/syslogd.pid && kill -HUP `cat /var/run/syslogd.pid`
     endscript
 }
 
 /var/log/cron {
+    create 620 root syslogd
     postrotate
 	test -f /var/run/syslogd.pid && kill -HUP `cat /var/run/syslogd.pid`
     endscript

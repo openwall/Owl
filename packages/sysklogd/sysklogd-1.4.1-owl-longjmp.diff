@@ -1,0 +1,28 @@
+diff -ur sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
+--- sysklogd-1.4.1.orig/syslogd.c	Sun Mar 11 22:40:10 2001
++++ sysklogd-1.4.1/syslogd.c	Mon Oct  8 08:05:34 2001
+@@ -1899,6 +1899,8 @@
+ 	struct utmp *uptr;
+ 	char greetings[200];
+ 
++	(void) &len;
++
+ 	if (reenter++)
+ 		return;
+ 
+@@ -1913,7 +1915,6 @@
+ 	if (fork() == 0) {
+ 		(void) signal(SIGTERM, SIG_DFL);
+ 		(void) alarm(0);
+-		(void) signal(SIGALRM, endtty);
+ #ifndef SYSV
+ 		(void) signal(SIGTTOU, SIG_IGN);
+ 		(void) sigsetmask(0);
+@@ -1959,6 +1960,7 @@
+ 				iov[1].iov_len = 0;
+ 			}
+ 			if (setjmp(ttybuf) == 0) {
++				(void) signal(SIGALRM, endtty);
+ 				(void) alarm(15);
+ 				/* open the terminal */
+ 				ttyf = open(p, O_WRONLY|O_NOCTTY);

@@ -1,28 +1,28 @@
-# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.4 2001/05/23 12:45:02 solar Exp $
+# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.5 2001/10/08 06:20:28 solar Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
-Version: 1.3.31
-Release: 4owl
-Copyright: BSD for syslogd and GPL for klogd
+Version: 1.4.1
+Release: 1owl
+License: BSD for syslogd and GPL for klogd
 Group: System Environment/Daemons
-Source0: ftp://sunsite.unc.edu/pub/Linux/system/daemons/sysklogd-1.3-31.tar.gz
+Source0: http://www.infodrom.ffis.de/projects/sysklogd/download/sysklogd-%{version}.tar.gz
 Source1: syslog.conf
 Source2: syslog.init
 Source3: syslog.logrotate
-Patch0: sysklogd-1.3-31-okir-dgram.diff
-Patch1: sysklogd-1.3-31-rh-owl-Makefile.diff
-Patch2: sysklogd-1.3-31-rh-ksyslog-nul.diff
-Patch3: sysklogd-1.3-31-rh-utmp.diff
-Patch4: sysklogd-1.3-31-rh-ksymless.diff
-Patch5: sysklogd-1.3-31-debian-bug-32580.diff
-Patch6: sysklogd-1.3-31-owl-klogd.diff
-Patch7: sysklogd-1.3-31-owl-syslogd.diff
-Patch8: sysklogd-1.3-31-owl-klogd-drop-root.diff
-Patch9: sysklogd-1.3-31-debian-bug-85478.diff
+Patch0: sysklogd-1.3-31-rh-owl-Makefile.diff
+Patch1: sysklogd-1.3-31-rh-ksyslog-nul.diff
+Patch2: sysklogd-1.3-31-rh-utmp.diff
+Patch3: sysklogd-1.3-31-rh-ksymless.diff
+Patch4: sysklogd-1.4.1-owl-longjmp.diff
+Patch5: sysklogd-1.4.1-owl-syslogd-create-mode.diff
+Patch6: sysklogd-1.4.1-alt-owl-syslogd-killing.diff
+Patch7: sysklogd-1.4.1-caen-owl-klogd-drop-root.diff
+Patch8: sysklogd-1.4.1-caen-owl-syslogd-bind.diff
+Patch9: sysklogd-1.4.1-caen-owl-syslogd-drop-root.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
-Requires: logrotate
-Prereq: fileutils, /sbin/chkconfig
+Requires: logrotate, /var/empty
+PreReq: shadow-utils, grep, fileutils, /sbin/chkconfig
 
 %description
 The sysklogd package contains two system utilities (syslogd and klogd)
@@ -31,7 +31,7 @@ daemons (background processes) and log system messages to different
 places according to a configuration file.
 
 %prep
-%setup -q -n sysklogd-1.3-31
+%setup -q
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -48,26 +48,18 @@ make CFLAGS="$RPM_OPT_FLAGS -Wall -DSYSV"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{etc,usr/{bin,man/man{5,8},sbin}}
-mkdir -p $RPM_BUILD_ROOT/sbin
+mkdir -p $RPM_BUILD_ROOT{%_mandir/man{5,8},/sbin}
 
-make install TOPDIR=$RPM_BUILD_ROOT
+%makeinstall TOPDIR=$RPM_BUILD_ROOT MANDIR=$RPM_BUILD_ROOT%_mandir
 
 cd $RPM_BUILD_ROOT
 
 strip sbin/*
 chmod 700 sbin/*logd
 
-install -m 644 $RPM_SOURCE_DIR/syslog.conf etc/syslog.conf
 mkdir -p etc/{rc.d/init.d,logrotate.d}
+install -m 644 $RPM_SOURCE_DIR/syslog.conf etc/syslog.conf
 install -m 755 $RPM_SOURCE_DIR/syslog.init etc/rc.d/init.d/syslog
-mkdir -p etc/rc.d/rc{0,1,2,3,4,5,6}.d
-ln -sf ../init.d/syslog etc/rc.d/rc0.d/K99syslog
-ln -sf ../init.d/syslog etc/rc.d/rc1.d/K99syslog
-ln -sf ../init.d/syslog etc/rc.d/rc2.d/S30syslog
-ln -sf ../init.d/syslog etc/rc.d/rc3.d/S30syslog
-ln -sf ../init.d/syslog etc/rc.d/rc5.d/S30syslog
-ln -sf ../init.d/syslog etc/rc.d/rc6.d/K99syslog
 install -m 644 $RPM_SOURCE_DIR/syslog.logrotate etc/logrotate.d/syslog
 
 %clean
@@ -77,6 +69,9 @@ rm -rf $RPM_BUILD_ROOT
 grep ^klogd: /etc/group &> /dev/null || groupadd -g 180 klogd
 grep ^klogd: /etc/passwd &> /dev/null ||
 	useradd -g klogd -u 180 -d / -s /bin/false -M klogd
+grep ^syslogd: /etc/group &> /dev/null || groupadd -g 181 syslogd
+grep ^syslogd: /etc/passwd &> /dev/null ||
+	useradd -g syslogd -u 181 -d / -s /bin/false -M syslogd
 rm -f /var/run/syslog.restart
 if [ $1 -ge 2 ]; then
 	/etc/rc.d/init.d/syslog status && touch /var/run/syslog.restart || :
@@ -84,12 +79,6 @@ if [ $1 -ge 2 ]; then
 fi
 
 %post
-for n in /var/log/{kernel,messages,maillog,cron}
-do
-	test -f $n && continue
-	touch $n
-	chmod 600 $n
-done
 /sbin/chkconfig --add syslog
 if [ -f /var/run/syslog.restart ]; then
 	/etc/rc.d/init.d/syslog start
@@ -106,20 +95,22 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc ANNOUNCE README* NEWS INSTALL Sysklogd-1.3.lsm
-%config /etc/syslog.conf
-%config /etc/logrotate.d/syslog
-%config /etc/rc.d/init.d/syslog
-%config(missingok) /etc/rc.d/rc0.d/K99syslog
-%config(missingok) /etc/rc.d/rc3.d/S30syslog
-%config(missingok) /etc/rc.d/rc1.d/K99syslog
-%config(missingok) /etc/rc.d/rc5.d/S30syslog
-%config(missingok) /etc/rc.d/rc2.d/S30syslog
-%config(missingok) /etc/rc.d/rc6.d/K99syslog
+%doc COPYING ANNOUNCE README* NEWS CHANGES
+%config(noreplace) /etc/syslog.conf
+%config(noreplace) /etc/logrotate.d/syslog
+%config(noreplace) /etc/rc.d/init.d/syslog
 /sbin/*
-/usr/man/*/*
+%_mandir/*/*
 
 %changelog
+* Mon Oct 08 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 1.4.1.
+- Based the new klogd drop root patch on one from CAEN Linux.
+- Added syslogd patches derived from CAEN Linux to allow specifying a
+bind address for the UDP socket and to let syslogd run as non-root.
+- klogd is now running chrooted to /var/empty.
+- syslogd is now running as its dedicated pseudo-user, too.
+
 * Wed May 23 2001 Solar Designer <solar@owl.openwall.com>
 - Back-ported a klogd DoS fix from 1.4.1, thanks to the reports from
 Jarno Huuskonen and Thomas Roessler who initially reported the problem

@@ -1,0 +1,25 @@
+diff -ur sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
+--- sysklogd-1.4.1.orig/syslogd.c	Sun Mar 11 22:40:10 2001
++++ sysklogd-1.4.1/syslogd.c	Mon Oct  8 08:52:50 2001
+@@ -890,11 +890,11 @@
+ 		dprintf("Checking pidfile.\n");
+ 		if (!check_pid(PidFile))
+ 		{
++			signal(SIGTERM, doexit);
+ 			if (fork()) {
+ 				/*
+ 				 * Parent process
+ 				 */
+-				signal (SIGTERM, doexit);
+ 				sleep(300);
+ 				/*
+ 				 * Not reached unless something major went wrong.  5
+@@ -2177,7 +2177,7 @@
+ void doexit(sig)
+ 	int sig;
+ {
+-	exit (0);
++	_exit(0);
+ }
+ #endif
+ 
