@@ -1,17 +1,18 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.10 2000/09/16 12:40:53 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.11 2001/03/08 16:45:48 solar Exp $
 
 Summary: A security tool which provides authentication for applications.
 Name: pam
 Version: 0.72
-Release: 11owl
+Release: 12owl
 Copyright: GPL or BSD
 Group: System Environment/Base
 Source0: pam-redhat-%{version}.tar.gz
 Source1: other.pamd
 Patch0: pam-0.72-owl-pam_pwdb-hack.diff
 Patch1: pam-0.72-owl-pam_pwdb-expiration.diff
-Patch2: pam-0.72-owl-no-cracklib.diff
-Patch3: pam-0.72-owl-install-no-root.diff
+Patch2: pam-0.72-owl-pwdb_chkpwd.diff
+Patch3: pam-0.72-owl-no-cracklib.diff
+Patch4: pam-0.72-owl-install-no-root.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: pwdb >= 0.61-1owl
 Obsoletes: pamconfig
@@ -32,6 +33,7 @@ rm -rf modules/pam_console
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 ln -sf defs/redhat.defs default.defs
 
 %build
@@ -45,14 +47,28 @@ mkdir -p $RPM_BUILD_ROOT/usr/{include/security,man/man3,man/man8}
 make install FAKEROOT=$RPM_BUILD_ROOT LDCONFIG=:
 test -f $RPM_BUILD_ROOT/lib/security/pam_deny.so || exit 1
 install -m 644 libpamc/include/security/pam_client.h $RPM_BUILD_ROOT/usr/include/security
+
+mkdir $RPM_BUILD_ROOT/sbin/chkpwd.d
+mv $RPM_BUILD_ROOT/sbin/*_chkpwd $RPM_BUILD_ROOT/sbin/chkpwd.d
+ln -s /sbin/chkpwd.d/pwdb_chkpwd $RPM_BUILD_ROOT/sbin/pwdb_chkpwd
+
 install -d -m 755 $RPM_BUILD_ROOT/etc/pam.d
 install -m 644 other.pamd $RPM_BUILD_ROOT/etc/pam.d/other
+
 install -m 644 doc/man/*.3 $RPM_BUILD_ROOT/usr/man/man3
 install -m 644 doc/man/*.8 $RPM_BUILD_ROOT/usr/man/man8
 gzip -9nf $RPM_BUILD_ROOT/usr/man/man[38]/*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%triggerin -- shadow-utils
+grep -q '^shadow:[^:]*:42:' /etc/group && \
+	chgrp shadow /sbin/chkpwd.d/pwdb_chkpwd && \
+	chmod 2711 /sbin/chkpwd.d/pwdb_chkpwd
+
+%pre
+grep ^chkpwd: /etc/group &>/dev/null || groupadd -g 163 chkpwd
 
 %post -p /sbin/ldconfig
 
@@ -69,7 +85,9 @@ rm -rf $RPM_BUILD_ROOT
 /lib/libpam_misc.so
 /lib/libpam_misc.a
 /usr/include/security/*.h
-/sbin/*
+%attr(710,root,chkpwd) %dir /sbin/chkpwd.d/
+%attr(700,root,root) /sbin/chkpwd.d/pwdb_chkpwd
+/sbin/pwdb_chkpwd
 /lib/security
 %config /etc/security/access.conf
 %config /etc/security/time.conf
@@ -80,6 +98,10 @@ rm -rf $RPM_BUILD_ROOT
 /usr/man/man8/*
 
 %changelog
+* Thu Mar 08 2001 Solar Designer <solar@owl.openwall.com>
+- Patched some of the pam_pwdb/pwdb_chkpwd interaction problems.
+- Install pwdb_chkpwd SGID shadow, but restricted to group chkpwd.
+
 * Sat Sep 16 2000 Solar Designer <solar@owl.openwall.com>
 - %optflags_lib support.
 
