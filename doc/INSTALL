@@ -24,10 +24,11 @@ Once the Owl userland is installed, you need to also install a kernel.
 Currently, this needs to be a Linux 2.2 kernel, and we recommend that
 you build the version available with Owl.
 
-You may choose to configure the boot loader (LILO) available with Owl,
-or you may use a boot loader already installed on the system (if any).
-If you already have a Linux 2.2 system installed, you may use its boot
-loader and even its kernel, by simply adding an entry with a different
-root= setting (set to the device with Owl root filesystem).
+You may choose to configure the boot loader available with Owl (LILO
+or SILO, depending on the architecture), or you may use a boot loader
+already installed on the system (if any).  If you already have a Linux
+2.2 system installed, you may use its boot loader and even its kernel,
+by simply adding an entry with a different root= setting (set to the
+device with Owl root filesystem).
 
-$Id: Owl/doc/INSTALL,v 1.1 2000/12/28 18:39:39 solar Exp $
+$Id: Owl/doc/INSTALL,v 1.2 2001/01/11 12:20:18 solar Exp $
