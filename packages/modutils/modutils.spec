@@ -1,4 +1,4 @@
-# $Id: Owl/packages/modutils/modutils.spec,v 1.11 2002/06/11 08:17:33 mci Exp $
+# $Id: Owl/packages/modutils/modutils.spec,v 1.12 2002/06/11 08:27:05 mci Exp $
 
 Summary: Kernel module utilities.
 Name: modutils
@@ -39,7 +39,7 @@ make dep all
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/sbin
+mkdir -p $RPM_BUILD_ROOT/{etc,sbin}
 %makeinstall sbindir=$RPM_BUILD_ROOT/sbin
 
 rm -f $RPM_BUILD_ROOT%_mandir/man8/{kdstat,kerneld}.8                          
