@@ -109,7 +109,7 @@ tar already.
 	dhcp.
 
 [PRIORITY: low]
-[ASSIGNED: Matthias]
+[ASSIGNED: Matthias, solar@]
 Package it.  The likely choice is latest ISC DHCP suite.  There should
 be client, server, and relay subpackages.  Both the server and the
 client should be modified to run as dedicated pseudo-users and in
@@ -183,13 +183,6 @@ Keep it to latest release.
 [ASSIGNED: solar@]
 Update documentation and .chr files, release as 1.7.  (Lots of other
 items are in a separate non-public TODO list for just John.)
-
-
-	lftp.
-
-[PRIORITY: medium]
-Update to latest release, make sure it is able to handle our mirroring
-again.  Support (ignore) the "-n" flag, for CPAN.
 
 
 	libcap, ntp.
@@ -311,12 +304,6 @@ Also provide a silo.conf and generic kernel configuration for SPARC.
 Migrate to MAKEDEV-C with proper modifications.
 
 
-	owl-etc.
-
-[PRIORITY: medium]
-Don't install /etc/shadow on package updates when /etc/tcb is in use.
-
-
 	owl-setup.
 
 [PRIORITY: medium]
@@ -362,10 +349,10 @@ Do error logging.
 
 [PRIORITY: medium]
 Currently, "enforce=users" is only safe for uses by passwd(1) (and not
-for changing expired passwords from a login service).  This should be
-either documented or solved.  In general, the getuid() checks should
-be replaced with something smarter because they also don't work well
-for Solaris' login (and probably more).
+for changing expired passwords from a login service).  This is now
+documented, but to fix it the getuid() checks should be replaced with
+something smarter because they also don't work well for Solaris' login
+(and probably more).
 
 [PRIORITY: low]
 (Optionally?) only display the requirements for valid passwords once
@@ -524,7 +511,7 @@ Sync with current OpenBSD.
 Pass IP addresses to login once it supports that.
 
 [PRIORITY: low]
-Re-enable IPV6 in the client once glibc is fixed.
+Re-enable IPv6 in the client once glibc is fixed.
 
 
 	traceroute.
@@ -534,6 +521,10 @@ Replace with Olaf Kirch's after we fully migrate to Linux 2.4.x.
 
 
 	util-linux.
+
+[PRIORITY: medium]
+Update the international crypto patch to work for both Linux 2.2.x and
+2.4.x.
 
 [PRIORITY: medium]
 Update to latest release.
@@ -573,4 +564,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.23 2003/06/02 05:37:07 solar Exp $
+$Id: Owl/doc/TODO,v 1.24 2003/09/06 21:21:39 solar Exp $
