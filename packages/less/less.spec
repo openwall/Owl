@@ -1,9 +1,9 @@
-# $Id: Owl/packages/less/less.spec,v 1.9 2002/02/07 10:07:27 solar Exp $
+# $Id: Owl/packages/less/less.spec,v 1.10 2002/07/06 23:48:00 solar Exp $
 
 Summary: A text file browser similar to more, but better.
 Name: less
 Version: 358
-Release: owl6
+Release: owl7
 License: GPL
 Group: Applications/Text
 URL: http://www.flash.net/~marknu/less/
@@ -48,6 +48,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*
 
 %changelog
+* Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
+- Use grep -q in lesspipe.sh.
+
 * Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions
 
