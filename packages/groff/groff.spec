@@ -1,4 +1,4 @@
-# $Id: Owl/packages/groff/groff.spec,v 1.11 2001/09/02 13:32:22 solar Exp $
+# $Id: Owl/packages/groff/groff.spec,v 1.12 2001/09/03 06:49:39 solar Exp $
 
 %define BUILD_USE_X	'no'
 %define BUILD_CURRENT	'no'
@@ -41,8 +41,8 @@ Group: Applications/Publishing
 The groff-perl package contains the parts of the groff text processor
 package that require Perl.  These include the afmtodit font processor
 for creating PostScript font files, the grog utility that can be used
-to automatically determine groff command-line options, and the
-troff-to-ps print filter.
+to automatically determine groff command-line options, and the mmroff
+reference preprocessor.
 
 %if "%{BUILD_USE_X}"=="'yes'"
 %package gxditview
