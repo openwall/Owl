@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.19 2002/10/05 16:36:24 solar Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.20 2003/04/17 12:56:33 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 0.11
+Version: 0.12
 Release: owl1
 License: mostly public domain, passwdlg is under GPL
 Group: System Environment/Base
@@ -14,10 +14,10 @@ Source4: owl-setup
 Source5: mkfstab
 Source6: netcfg
 Source10: README
-Requires: owl-startup
-Requires: dialog
 Requires: bash >= 2.0, sh-utils, util-linux, sed, mktemp
-Requires: tcb, console-tools
+Requires: dialog
+Requires: tcb, kbd
+Requires: owl-startup
 Conflicts: setuptool
 BuildRoot: /override/%{name}-%{version}
 
@@ -58,6 +58,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/sbin/setup
 
 %changelog
+* Thu Apr 17 2003 Solar Designer <solar@owl.openwall.com>
+- Use /lib/kbd, not /usr/lib/kbd.
+
 * Fri Oct 04 2002 Michail Litvak <mci@owl.openwall.com>
 - Support for LILO boot loader configuration.
 

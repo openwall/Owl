@@ -155,11 +155,11 @@ select_keyboard()
 {
 	case "`uname -m`" in
 		sparc*)
-        		maps_path=/usr/lib/kbd/keymaps/sun
+        		maps_path=/lib/kbd/keymaps/sun
         	;;
 		#*86|alpha)
 		*)
-			maps_path=/usr/lib/kbd/keymaps/i386
+			maps_path=/lib/kbd/keymaps/i386
         	;;
 	esac
 
