@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/installworld.sh,v 1.13 2004/09/30 01:06:13 galaxy Exp $
+# $Id: Owl/build/installworld.sh,v 1.14 2004/09/30 09:33:25 galaxy Exp $
 
 . installworld.conf
 
@@ -160,9 +160,14 @@ while read PACKAGES; do
 			log "Skipping $PACKAGE"
 			continue
 		fi
-		if [ "$PACKAGE" = glibc-compat-libdb -a "$NEED_FAKE" != yes ]; then
-			log "Skipping $PACKAGE"
-			continue
+		if [ "$NEED_FAKE" != yes ]; then
+			case "$PACKAGE" in
+				glibc-compat-libdb|\
+				libstdc++-compat)
+				log "Skipping $PACKAGE"
+				continue
+				;;
+			esac
 		fi
 		REGEX="^${PACKAGE}-[^-]*[0-9][^-]*-[^-]*[0-9][^-]*\..*\.rpm\$"
 		FILE="`ls | grep "$REGEX" | tail -1`"
@@ -184,6 +189,9 @@ done
 if [ "$NEED_FAKE" == yes ]; then
 	log "Removing installation support packages"
 	if ! $RPM $RPM_FLAGS --root $ROOT -ev glibc-compat-libdb; then
+		log "Removal of glibc-compat-libdb was failed"
+	fi
+	if ! $RPM $RPM_FLAGS --root $ROOT -ev libstdc++-compat; then
 		log "Removal of glibc-compat-libdb was failed"
 	fi
 fi
