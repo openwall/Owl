@@ -1,23 +1,24 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.11 2000/12/04 18:41:45 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.12 2000/12/04 23:43:00 solar Exp $
 
 Summary: Initial set of configuration files
 Name: owl-etc
-Version: 0.2
+Version: 0.3
 Release: 1owl
 Copyright: public domain
 Group: System Environment/Base
 Source0: passwd
-Source1: group
-Source2: securetty
-Source3: shells
-Source4: host.conf
-Source5: protocols
-Source6: services
-Source7: profile
-Source8: bashrc
-Source9: inputrc
-Source10: csh.login
-Source11: csh.cshrc
+Source1: shadow
+Source2: group
+Source10: securetty
+Source11: shells
+Source12: host.conf
+Source13: protocols
+Source14: services
+Source15: profile
+Source16: bashrc
+Source17: inputrc
+Source20: csh.login
+Source21: csh.cshrc
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 BuildArchitectures: noarch
 BuildRequires: fileutils >= 4.0.27
@@ -55,6 +56,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Mon Dec 04 2000 Solar Designer <solar@owl.openwall.com>
 - utmp group.
+- Keep the initial shadow file here rather than use pwconv.
 
 * Tue Nov 21 2000 Solar Designer <solar@owl.openwall.com>
 - More pseudo-users/groups: klogd, postfix, postdrop, postman.
