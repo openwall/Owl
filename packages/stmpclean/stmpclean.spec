@@ -1,9 +1,9 @@
-# $Id: Owl/packages/stmpclean/stmpclean.spec,v 1.2 2002/03/31 04:22:59 solar Exp $
+# $Id: Owl/packages/stmpclean/stmpclean.spec,v 1.3 2002/04/01 21:38:56 solar Exp $
 
 Summary: A safe temporary directory cleaner.
 Name: stmpclean
 Version: 0.1
-Release: 2owl
+Release: owl2
 License: BSD
 Group: System Environment/Base
 Source0: ftp://ftp.mccme.ru/users/shalunov/stmpclean-%{version}.tar.gz
