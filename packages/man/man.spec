@@ -1,9 +1,9 @@
-# $Id: Owl/packages/man/man.spec,v 1.13 2004/11/08 21:00:51 mci Exp $
+# $Id: Owl/packages/man/man.spec,v 1.14 2004/11/11 21:25:50 mci Exp $
 
 Summary: A set of documentation tools: man, apropos and whatis.
 Name: man
 Version: 1.5l
-Release: owl4
+Release: owl5
 License: GPL
 Group: System Environment/Base
 Source: ftp://ftp.win.tue.nl/pub/linux-local/utils/man/man-%version.tar.gz
@@ -32,11 +32,11 @@ whatis searches its own database for a complete word.
 make CC="gcc $RPM_OPT_FLAGS -D_GNU_SOURCE"
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/usr/{bin,sbin}
-make install PREFIX=$RPM_BUILD_ROOT
+rm -rf %buildroot
+mkdir -p %buildroot/usr/{bin,sbin}
+make install PREFIX=%buildroot
 
-cd $RPM_BUILD_ROOT
+cd %buildroot
 
 mkdir -p var/cache/man/{X11R6,local}
 for i in 1 2 3 4 5 6 7 8 9 n; do
@@ -44,14 +44,11 @@ for i in 1 2 3 4 5 6 7 8 9 n; do
 done
 
 # symlinks for manpath
-ln -s man usr/bin/manpath
-ln -s man.1 $RPM_BUILD_ROOT%_mandir/man1/manpath.1
+ln -s man .%_bindir/manpath
+ln -s man.1 .%_mandir/man1/manpath.1
 
 # Clean up accumulated cat litter.
 %preun
-find /var/cache/man/{,X11R6/,local/}cat[123456789n] -type f -delete
-
-%post
 find /var/cache/man/{,X11R6/,local/}cat[123456789n] -type f -delete
 
 %files
@@ -61,6 +58,7 @@ find /var/cache/man/{,X11R6/,local/}cat[123456789n] -type f -delete
 %_bindir/apropos
 %_bindir/whatis
 %_bindir/man2html
+%_bindir/man2dvi
 %attr(0700,root,root) %_sbindir/makewhatis
 %config /etc/man.conf
 %_mandir/man1/whatis.1*
@@ -78,9 +76,11 @@ find /var/cache/man/{,X11R6/,local/}cat[123456789n] -type f -delete
 %attr(0755,root,man) %dir /var/cache/man/local
 %attr(0775,root,man) %dir /var/cache/man/local/cat[123456789n]
 
-%exclude %_bindir/man2dvi
-
 %changelog
+* Thu Nov 11 2004 Michail Litvak <mci@owl.openwall.com> 1.5l-owl5
+- Spec file cleanups.
+- Include man2dvi.
+
 * Mon Nov 08 2004 Michail Litvak <mci@owl.openwall.com> 1.5l-owl4
 - FHS 2.2 compatibility.
 
