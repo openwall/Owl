@@ -1,9 +1,9 @@
-# $Id: Owl/packages/m4/m4.spec,v 1.8 2002/08/26 16:48:37 mci Exp $
+# $Id: Owl/packages/m4/m4.spec,v 1.9 2002/08/26 16:52:35 mci Exp $
 
 Summary: The GNU macro processor.
 Name: m4
 Version: 1.4
-Release: owl15
+Release: owl16
 License: GPL
 Group: Applications/Text
 Source: ftp://ftp.gnu.org/gnu/m4/m4-%{version}.tar.gz

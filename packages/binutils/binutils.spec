@@ -1,11 +1,11 @@
-# $Id: Owl/packages/binutils/binutils.spec,v 1.8 2002/08/26 15:14:29 mci Exp $
+# $Id: Owl/packages/binutils/binutils.spec,v 1.9 2002/08/26 15:15:43 mci Exp $
 
 %define BUILD_HJL 1
 
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.10.1.0.4
-Release: owl1
+Release: owl2
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils/
