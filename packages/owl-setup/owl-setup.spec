@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.17 2002/09/07 20:34:00 mci Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.18 2002/10/04 20:28:30 mci Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 0.10
+Version: 0.11
 Release: owl1
 License: mostly public domain, passwdlg is under GPL
 Group: System Environment/Base
@@ -58,6 +58,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/sbin/setup
 
 %changelog
+* Fri Oct 04 2002 Michail Litvak <mci@owl.openwall.com>
+- Suppport for LILO boot loader configuration
+
 * Fri Sep 06 2002 Michail Litvak <mci@owl.openwall.com>
 - Support for keyboard layout configuration
   (thanks to Matthias Schmidt <schmidt@giessen.ccc.de>)
