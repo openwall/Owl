@@ -1,17 +1,17 @@
-# $Id: Owl/packages/crontabs/crontabs.spec,v 1.4 2001/05/24 22:59:07 solar Exp $
+# $Id: Owl/packages/crontabs/crontabs.spec,v 1.5 2002/01/24 17:22:03 solar Exp $
 
 Summary: System crontab files used to schedule the execution of programs.
 Name: crontabs
 Version: 2.0
-Release: 4owl
-Copyright: GPL
+Release: owl4
+License: GPL
 Group: System Environment/Base
 Source0: run-parts-1.15.tar.gz
 Source1: crontab
 Patch0: run-parts-1.15-owl-umask.diff
 Patch1: run-parts-1.15-owl-races.diff
 Patch2: run-parts-1.15-owl-write_loop.diff
-BuildRoot: /var/rpm-buildroot/%{name}-%{version}
+BuildRoot: /override/%{name}-%{version}
 
 %description
 This package contains the system crontab file and provides the
@@ -61,6 +61,9 @@ rm -rf $RPM_BUILD_ROOT
 %dir /etc/cron.monthly
 
 %changelog
+* Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Fri May 25 2001 Solar Designer <solar@owl.openwall.com>
 - Fixed SIGCHLD races in run-parts (the code is still far from clean).
 

@@ -1,30 +1,30 @@
-# $Id: Owl/packages/cpio/cpio.spec,v 1.6 2000/12/24 09:13:09 solar Exp $
+# $Id: Owl/packages/cpio/cpio.spec,v 1.7 2002/01/24 17:16:53 solar Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
 Version: 2.4.2
-Release: 24owl
-Copyright: GPL
+Release: owl24
+License: GPL
 Group: Archiving/Backup
-Provides: mt-st, rmt
-Source: ftp://ftp.gnu.org/gnu/cpio-2.4.2.tar.gz
-Patch1:  cpio-2.4.2-deb-cpio.diff
-Patch2:  cpio-2.4.2-deb-mt_scsi.diff
-Patch3:  cpio-2.4.2-deb-rmt.diff
-Patch4:  cpio-2.4.2-deb-glibc21.diff
-Patch5:  cpio-2.4.2-deb-cpio_man.diff
-Patch6:  cpio-2.4.2-deb-cpio_info.diff
-Patch7:  cpio-2.4.2-deb-mt_man.diff
-Patch8:  cpio-2.4.2-deb-rmt_man.diff
-Patch9:  cpio-2.4.2-rh-fhs.diff
+Source: ftp://ftp.gnu.org/gnu/cpio-%{version}.tar.gz
+Patch1: cpio-2.4.2-deb-cpio.diff
+Patch2: cpio-2.4.2-deb-mt_scsi.diff
+Patch3: cpio-2.4.2-deb-rmt.diff
+Patch4: cpio-2.4.2-deb-glibc21.diff
+Patch5: cpio-2.4.2-deb-cpio_man.diff
+Patch6: cpio-2.4.2-deb-cpio_info.diff
+Patch7: cpio-2.4.2-deb-mt_man.diff
+Patch8: cpio-2.4.2-deb-rmt_man.diff
+Patch9: cpio-2.4.2-rh-fhs.diff
 Patch10: cpio-2.4.2-rh-glibc.diff
 Patch11: cpio-2.4.2-rh-man.diff
 Patch12: cpio-2.4.2-rh-mtime.diff
 Patch13: cpio-2.4.2-rh-svr4compat.diff
 Patch14: cpio-2.4.2-rh-lchown.diff
-Prereq: /sbin/install-info
+PreReq: /sbin/install-info
+Provides: mt-st, rmt
 Prefix: %{_prefix}
-Buildroot: /var/rpm-buildroot/%{name}-root
+BuildRoot: /override/%{name}-%{version}
 
 %description
 GNU cpio copies files into or out of a cpio or tar archive.  Archives
@@ -38,19 +38,17 @@ compatible with older cpio programs.  When it is extracting files from
 archives, cpio automatically recognizes which kind of archive it is reading
 and can read archives created on machines with a different byte-order.
 
-Install cpio if you need a program to manage file archives.
-
 %prep
 %setup -q
-%patch1  -p1
-%patch2  -p1
-%patch3  -p1
-%patch4  -p1
-%patch5  -p1
-%patch6  -p1
-%patch7  -p1
-%patch8  -p1
-%patch9  -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
@@ -59,7 +57,6 @@ Install cpio if you need a program to manage file archives.
 
 %build
 %configure
-
 make LDFLAGS=-s
 
 %install
@@ -80,8 +77,8 @@ rm -rf $RPM_BUILD_ROOT
 /sbin/install-info %{_infodir}/cpio.info.gz %{_infodir}/dir
 
 %preun
-if [ $1 = 0 ]; then
-    /sbin/install-info --delete %{_infodir}/cpio.info.gz %{_infodir}/dir
+if [ $1 -eq 0 ]; then
+	/sbin/install-info --delete %{_infodir}/cpio.info.gz %{_infodir}/dir
 fi
 
 %files
@@ -97,6 +94,9 @@ fi
 %{_mandir}/man8/rmt.8*
 
 %changelog
+* Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Sun Dec 24 2000 Solar Designer <solar@owl.openwall.com>
 - Conflicts -> Provides: mt-st, rmt
 
@@ -112,59 +112,3 @@ fi
 - added some patches from Debian
   (many bug fixes in cpio, mt and rmt improvements)
 - man page for rmt
-
-* Tue Aug  8 2000 Jeff Johnson <jbj@redhat.com>
-- update man page with decription of -c behavior (#10581).
-
-* Wed Jul 12 2000 Prospector <bugzilla@redhat.com>
-- automatic rebuild
-
-* Thu Jun 29 2000 Preston Brown <pbrown@redhat.com>
-- patch from HJ Lu for better error codes upon exit
-
-* Mon Jun  5 2000 Jeff Johnson <jbj@redhat.com>
-- FHS packaging.
-
-* Wed Feb  9 2000 Jeff Johnson <jbj@redhat.com>
-- missing defattr.
-
-* Mon Feb  7 2000 Bill Nottingham <notting@redhat.com>
-- handle compressed manpages
-
-* Fri Dec 17 1999 Jeff Johnson <jbj@redhat.com>
-- revert the stdout patch (#3358), restoring original GNU cpio behavior
-  (#6376, #7538), the patch was dumb.
-
-* Tue Aug 31 1999 Jeff Johnson <jbj@redhat.com>
-- fix infinite loop unpacking empty files with hard links (#4208).
-- stdout should contain progress information (#3358).
-
-* Sun Mar 21 1999 Crstian Gafton <gafton@redhat.com> 
-- auto rebuild in the new build environment (release 12)
-
-* Sat Dec  5 1998 Jeff Johnson <jbj@redhat.com>
-- longlong dev wrong with "-o -H odc" headers (formerly "-oc").
-
-* Thu Dec 03 1998 Cristian Gafton <gafton@redhat.com>
-- patch to compile on glibc 2.1, where strdup is a macro
-
-* Tue Jul 14 1998 Jeff Johnson <jbj@redhat.com>
-- Fiddle bindir/libexecdir to get RH install correct.
-- Don't include /sbin/rmt -- use the rmt from dump package.
-- Don't include /bin/mt -- use the mt from mt-st package.
-- Add prereq's
-
-* Tue Jun 30 1998 Jeff Johnson <jbj@redhat.com>
-- fix '-c' to duplicate svr4 behavior (problem #438)
-- install support programs & info pages
-
-* Mon Apr 27 1998 Prospector System <bugs@redhat.com>
-- translations modified for de, fr, tr
-
-* Fri Oct 17 1997 Donnie Barnes <djb@redhat.com>
-- added BuildRoot
-- removed "(used by RPM)" comment in Summary
-
-* Thu Jun 19 1997 Erik Troan <ewt@redhat.com>
-- built against glibc
-- no longer statically linked as RPM doesn't use cpio for unpacking packages
