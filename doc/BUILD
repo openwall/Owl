@@ -74,7 +74,7 @@ user "build", change directory to /usr/src/world and type:
 
 With the default buildworld.conf, packages will be built for oldest
 flavor of the build host's architecture (see ARCHITECTURES) and the
-build will attempt to use up to two processors.
+build will attempt to use all system processors.
 
 buildworld.conf (as well as other *.conf's) may be edited by copying
 it from native/Owl/build into /usr/src/world.  You need to remove the
@@ -110,4 +110,4 @@ where "name" is the name of the source package.  For foreign packages
 (SRPMs) built with the Owl build environment you also need to include
 the version number part in "name".
 
-$Id: Owl/doc/BUILD,v 1.18 2002/08/20 16:16:08 solar Exp $
+$Id: Owl/doc/BUILD,v 1.19 2002/09/01 01:36:20 solar Exp $
