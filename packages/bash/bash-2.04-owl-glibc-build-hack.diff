@@ -1,0 +1,12 @@
+diff -ur bash-2.04.orig/variables.c bash-2.04/variables.c
+--- bash-2.04.orig/variables.c	Tue Mar 14 19:36:18 2000
++++ bash-2.04/variables.c	Thu Sep  7 05:03:34 2000
+@@ -2438,7 +2438,7 @@
+     {
+       if (*s == '=')
+         break;
+-      if (legal_variable_char (*s) == 0)
++      if (legal_variable_char (*s) == 0 && *s != '-')
+ 	{
+ 	  internal_error ("invalid character %d in exportstr for %s", *s, v->name);
+ 	  return (0);

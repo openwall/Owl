@@ -1,9 +1,9 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.2 2000/09/03 21:25:30 solar Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.3 2000/09/07 01:15:39 solar Exp $
 
 Version: 	2.04
 Name: 		bash
 Summary: 	The GNU Bourne Again shell (bash) version %{version}.
-Release: 	8owl
+Release: 	9owl
 Group: 		System Environment/Shells
 Copyright: 	GPL
 Source0:	ftp://ftp.gnu.org/gnu/bash/bash-%{version}.tar.gz
@@ -17,6 +17,7 @@ Patch2: 	bash-2.03-rh-profile.diff
 Patch3: 	bash-2.04-rh-requires.diff
 Patch4: 	bash-2.04-rh-bash1_compat.diff
 Patch5: 	bash-2.04-rh-shellfunc.diff
+Patch6:		bash-2.04-owl-glibc-build-hack.diff
 Prefix: 	%{_prefix}
 Requires: 	mktemp
 Provides: 	bash2
@@ -51,6 +52,7 @@ Again shell version %{version}.
 %patch3 -p1 -b .requires
 %patch4 -p1 -b .compat
 %patch5 -p1 -b .shellfunc
+%patch6 -p1
 echo %{version} > _distribution
 echo %{release} | sed -e "s/[A-Za-z]//g" > _patchlevel
 
@@ -189,8 +191,11 @@ fi
 %doc doc/*.ps doc/*.0 doc/*.html doc/article.txt
 
 %changelog
-* Sun Sep  3 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Thu Sep 07 2000 Solar Designer <solar@owl.openwall.com>
+- Workaround for glibc builds (allow '-' in identifiers in the exportstr
+code, which is new for bash 2.04).
+
+* Sun Sep 03 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import from rawhide.
 - spec cleanup
 - /etc/bashrc now in owl-etc
-
