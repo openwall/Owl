@@ -12,6 +12,20 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.0 and Owl-current.
 
+2003/04/12	Package: openssl
+SECURITY FIX	Severity: medium, remote, active
+Updated to 0.9.6j which adds two security fixes.  One of the fixes is
+to enable RSA blinding (a technique to avoid information leaks via
+timing with RSA encryption), without an application having to request
+it explicitly, despite the small performance impact this has.  The
+other is to prevent the Klima-Pokorny-Rosa attack on RSA in SSL/TLS.
+References:
+http://www.openssl.org/news/secadv_20030317.txt
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0147
+http://www.openssl.org/news/secadv_20030319.txt
+http://eprint.iacr.org/2003/052/
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0131
+
 2003/04/08	Package: openssh
 Updated to 3.6.1p1.
 
@@ -246,4 +260,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.39 2003/04/08 02:18:49 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.40 2003/04/12 05:10:00 solar Exp $
