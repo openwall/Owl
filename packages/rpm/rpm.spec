@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.17 2001/06/12 09:47:59 kad Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.18 2001/06/12 10:04:31 kad Exp $
 %define        _noVersionedDependencies        1
 
 # XXX legacy requires './' payload prefix to be omitted from rpm packages.
@@ -28,7 +28,7 @@ Copyright: 	GPL
 Conflicts: 	patch < 2.5
 %ifos linux
 # XXX the libio interface is incompatible in glibc-2.2
-Conflicts:      glibc >= 2.1.3
+Conflicts:      glibc >= 2.1.90
 Prereq: 	gawk fileutils textutils sh-utils mktemp
 BuildRequires: 	bzip2 >= 0.9.0c-2
 Requires: 	popt, bzip2 >= 0.9.0c-2
