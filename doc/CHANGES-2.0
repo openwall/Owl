@@ -12,13 +12,13 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2004/01/20 -
+2004/01/29	Packages: perl, vim
+Updated Perl to 5.8.3.
+
 2004/01/21 -
 2004/01/28	Packages: links, elinks
 Links has been replaced with ELinks 0.9.0 and further with 0.9.1.
-
-2004/01/20 -
-2004/01/25	Package: perl
-Updated to 5.8.3.
 
 2004/01/18	Package: owl-startup
 Added /sbin/service script for Red Hat Linux compatibility.  Set
@@ -42,4 +42,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.9 2004/01/28 03:47:12 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.10 2004/01/29 03:42:58 solar Exp $
