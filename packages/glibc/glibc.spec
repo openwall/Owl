@@ -1,11 +1,11 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.14 2001/01/11 19:54:45 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.15 2001/04/07 18:39:33 solar Exp $
 
 %define BUILD_PROFILE	'no'
 
 Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
-Release: 11owl
+Release: 12owl
 Copyright: LGPL
 Group: System Environment/Libraries
 Source0: glibc-2.1.3.tar.gz
@@ -18,28 +18,29 @@ Patch1: glibc-2.1.3-owl-sanitize-env.diff
 Patch2: glibc-2.1.3-owl-res_randomid.diff
 Patch3: glibc-2.1.3-owl-blowfish.diff
 Patch4: glibc-2.1.3-owl-freesec-hack.diff
-Patch5: glibc-2.1.3-rh-libnoversion.diff
-Patch6: glibc-2.1.3-rh-paths.diff
-Patch7: glibc-2.1.3-rh-linuxthreads.diff
-Patch8: glibc-2.1.3-rh-nis-malloc.diff
-Patch9: glibc-2.1.3-rh-c-type.diff
-Patch10: glibc-2.1.3-rh-cppfix.diff
-Patch11: glibc-2.1.3-rh-db2-closedir.diff
-Patch12: glibc-2.1.3-rh-glob.diff
-Patch13: glibc-2.1.3-rh-localedata.diff
-Patch14: glibc-2.1.3-rh-yp_xdr.diff
-Patch15: glibc-2.1.3-rh-makeconfig.diff
-Patch16: glibc-2.1.3-bcl-cyr-locale.diff
-Patch17: glibc-2.1.3-mdk-fix-ucontext.diff
-Patch18: glibc-2.1.3-mdk-ldd.diff
-Patch19: glibc-2.1.3-rh-time.diff
-Patch20: glibc-2.1.3-rh-timezone.diff
-Patch21: glibc-2.1.3-rh-syslog.diff
-Patch22: glibc-2.1.3-cvs-20000827-locale.diff
-Patch23: glibc-2.1.3-cvs-20000824-unsetenv.diff
-Patch24: glibc-2.1.3-cvs-20000824-md5-align-clean.diff
-Patch25: glibc-2.1.3-cvs-20000926-tmp-warnings.diff
-Patch26: glibc-2.1.3-cvs-20010109-dl.diff
+Patch5: glibc-2.1.3-owl-iscntrl.diff
+Patch10: glibc-2.1.3-rh-libnoversion.diff
+Patch11: glibc-2.1.3-rh-paths.diff
+Patch12: glibc-2.1.3-rh-linuxthreads.diff
+Patch13: glibc-2.1.3-rh-nis-malloc.diff
+Patch14: glibc-2.1.3-rh-c-type.diff
+Patch15: glibc-2.1.3-rh-cppfix.diff
+Patch16: glibc-2.1.3-rh-db2-closedir.diff
+Patch17: glibc-2.1.3-rh-glob.diff
+Patch18: glibc-2.1.3-rh-localedata.diff
+Patch19: glibc-2.1.3-rh-yp_xdr.diff
+Patch20: glibc-2.1.3-rh-makeconfig.diff
+Patch21: glibc-2.1.3-rh-time.diff
+Patch22: glibc-2.1.3-rh-timezone.diff
+Patch23: glibc-2.1.3-rh-syslog.diff
+Patch30: glibc-2.1.3-bcl-cyr-locale.diff
+Patch31: glibc-2.1.3-mdk-fix-ucontext.diff
+Patch32: glibc-2.1.3-mdk-ldd.diff
+Patch40: glibc-2.1.3-cvs-20000827-locale.diff
+Patch41: glibc-2.1.3-cvs-20000824-unsetenv.diff
+Patch42: glibc-2.1.3-cvs-20000824-md5-align-clean.diff
+Patch43: glibc-2.1.3-cvs-20000926-tmp-warnings.diff
+Patch44: glibc-2.1.3-cvs-20010109-dl.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Autoreq: false
 %ifarch alpha
@@ -105,10 +106,6 @@ need to install the glibc-profile program.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
@@ -123,11 +120,16 @@ need to install the glibc-profile program.
 %patch21 -p1
 %patch22 -p1
 %patch23 -p1
+%patch30 -p1
+%patch31 -p1
+%patch32 -p1
+%patch40 -p1
+%patch41 -p1
 cd md5-crypt
-%patch24 -p2
+%patch42 -p2
 cd ..
-%patch25 -p1
-%patch26 -p1
+%patch43 -p1
+%patch44 -p1
 %ifarch sparcv9
 echo 'ASFLAGS-.os += -Wa,-Av8plusa' >> sysdeps/sparc/sparc32/elf/Makefile
 %endif
@@ -249,8 +251,8 @@ gzip -9 documentation/ChangeLog*
 /sbin/install-info /usr/info/libc.info.gz /usr/info/dir
 
 %preun devel
-if [ "$1" = 0 ]; then
-    /sbin/install-info --delete /usr/info/libc.info.gz /usr/info/dir
+if [ $1 -eq 0 ]; then
+	/sbin/install-info --delete /usr/info/libc.info.gz /usr/info/dir
 fi
 
 %clean
@@ -275,6 +277,9 @@ rm -f *.filelist*
 %endif
 
 %changelog
+* Sat Apr 07 2001 Solar Designer <solar@owl.openwall.com>
+- Force known control characters for iscntrl(3) (in localedef and C locale).
+
 * Thu Jan 11 2001 Solar Designer <solar@owl.openwall.com>
 - Sanitize the environment in a paranoid way (this was meant to be delayed
 until we add a configuration file, but well...).
