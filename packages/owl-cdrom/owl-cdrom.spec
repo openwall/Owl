@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.19 2003/10/24 00:01:45 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.20 2003/10/24 04:15:26 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
@@ -36,8 +36,8 @@ ln -s ../rom/{dev,etc,home,root,tmp,var,world} ram/
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-if [ "$CDROM" != "yes" ]; then
-	echo "Please set CDROM=yes if you know what you're doing"
+if [ "$MAKE_CDROM" != yes ]; then
+	echo "Please set \"MAKE_CDROM=yes\" if you know what you're doing"
 	exit 1
 fi
 
