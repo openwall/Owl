@@ -1,12 +1,12 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.16 2001/05/04 14:42:09 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.17 2001/05/10 12:04:49 solar Exp $
 
 %define BUILD_PROFILE	'no'
 
 Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
-%define crypt_bf_version 0.3.9
-Release: 13owl
+%define crypt_bf_version 0.4
+Release: 14owl
 Copyright: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%{version}.tar.gz
@@ -249,6 +249,9 @@ cp db2/mutex/README documentation/README.db2.mutex
 cp timezone/README documentation/README.timezone
 cp ChangeLog* documentation
 gzip -9nf documentation/ChangeLog*
+mkdir documentation/crypt_blowfish-%{crypt_bf_version}
+cp crypt_blowfish-%{crypt_bf_version}/{README,LINKS,PERFORMANCE} \
+	documentation/crypt_blowfish-%{crypt_bf_version}
 
 %post -p /sbin/ldconfig
 
@@ -284,6 +287,9 @@ rm -f *.filelist*
 %endif
 
 %changelog
+* Thu May 10 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to crypt_blowfish-0.4 (release).
+
 * Fri May 04 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to crypt_blowfish-0.3.9, which adds crypt_ra, crypt_gensalt_ra
 and an up-to-date crypt(3) man page.
