@@ -1,6 +1,6 @@
-# $Id: Owl/packages/iptables/iptables.spec,v 1.2 2003/08/22 00:50:54 solar Exp $
+# $Id: Owl/packages/iptables/iptables.spec,v 1.3 2003/08/22 01:16:52 solar Exp $
 
-Summary: Tools for managing Linux kernel packet filtering capabilities.
+Summary: Tools for managing Netfilter/iptables packet filtering rules.
 Name: iptables
 Version: 1.2.8
 Release: owl1
@@ -14,8 +14,10 @@ BuildRequires: kernel-headers >= 2.4.0
 BuildRoot: /override/%{name}-%{version}
 
 %description
-The iptables utility controls the network packet filtering code in the
-Linux kernel.
+Tools found in this package are used to set up, maintain, and inspect the
+iptables-based IP packet filtering rules in the Linux kernel.
+
+iptables-based filtering is used on Linux 2.4.x and newer kernels.
 
 %prep
 %setup -q
