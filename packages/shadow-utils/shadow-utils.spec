@@ -1,9 +1,9 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.16 2001/11/25 18:59:19 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.17 2002/02/06 19:16:24 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.0
-Release: 3owl
+Release: owl3
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -181,6 +181,9 @@ grep -q ^auth: /etc/group || groupadd -g 164 auth
 /etc/control.d/facilities/*
 
 %changelog
+* Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Sun Nov 25 2001 Solar Designer <solar@owl.openwall.com>
 - auth group.
 
@@ -222,7 +225,7 @@ pieces; the tcb patch is still far from clean, though.
 * Wed Aug 21 2001 Rafal Wojtczuk <nergal@owl.openwall.com>
 - fixed mailbox creation, which was wrong in rh patch
 - added USE_TCB to login.defs.5
- 
+
 * Fri Aug 03 2001 Rafal Wojtczuk <nergal@owl.openwall.com>
 - upgrade to 20000902 version
 - added tcb support

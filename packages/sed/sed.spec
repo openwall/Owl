@@ -1,19 +1,19 @@
-# $Id: Owl/packages/sed/sed.spec,v 1.2 2002/02/04 17:13:24 solar Exp $
+# $Id: Owl/packages/sed/sed.spec,v 1.3 2002/02/06 19:21:28 solar Exp $
 
 Summary: A GNU stream text editor.
-Name: 		sed
-Version: 	3.02
-Release: 	8owl
-Copyright: 	GPL
-Group: 		Applications/Text
-Source0: 	ftp://ftp.gnu.org/gnu/sed/sed-%{version}.tar.gz
-Prereq: 	/sbin/install-info
-Prefix: 	%{_prefix}
-Buildroot: 	/var/rpm-buildroot/%{name}-root
+Name: sed
+Version: 3.02
+Release: owl8
+License: GPL
+Group: Applications/Text
+Source: ftp://ftp.gnu.org/gnu/sed/sed-%{version}.tar.gz
+PreReq: /sbin/install-info
+Prefix: %{_prefix}
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The sed (Stream EDitor) editor is a stream or batch (non-interactive)
-editor.  Sed takes text as input, performs an operation or set of
+editor.  sed takes text as input, performs an operation or set of
 operations on the text and outputs the modified text.  The operations
 that sed performs (substitutions, deletions, insertions, etc.) can be
 specified in a script file or from the command line.
@@ -22,84 +22,39 @@ specified in a script file or from the command line.
 %setup -q
 
 %build
-
 %configure
 make
 
 %install
-rm -rf ${RPM_BUILD_ROOT}
+rm -rf $RPM_BUILD_ROOT
 
 %makeinstall
 
-{ cd ${RPM_BUILD_ROOT}
+cd $RPM_BUILD_ROOT
+mv .%{_bindir} bin
 
-%ifos linux
-  mkdir -p ./bin
-  mv .%{_bindir}/sed ./bin/sed
-  rmdir .%{_bindir}
-%endif
-
-  gzip -9nf .%{_infodir}/sed.info*
-  rm -f .%{_infodir}/dir
-}
+%clean
+rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/install-info %{_infodir}/sed.info.gz %{_infodir}/dir
 
 %preun
-if [ $1 = 0 ]; then
-   /sbin/install-info --delete %{_infodir}/sed.info.gz %{_infodir}/dir
+if [ $1 -eq 0 ]; then
+	/sbin/install-info --delete %{_infodir}/sed.info.gz %{_infodir}/dir
 fi
-
-%clean
-rm -rf ${RPM_BUILD_ROOT}
 
 %files
 %defattr(-,root,root)
 %doc ANNOUNCE BUGS NEWS README TODO
-%ifos linux
-/bin/sed 
-%else
-%{_bindir}/sed
-%endif
+/bin/sed
 %{_infodir}/*.info*
 %{_mandir}/man*/*
 
 %changelog
-* Sun Aug  6 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+
+* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import spec from RH rawhide
 - fix URL
-
-* Wed Jul 12 2000 Prospector <bugzilla@redhat.com>
-- automatic rebuild
-
-* Mon Jun  5 2000 Jeff Johnson <jbj@redhat.com>
-- FHS packaging.
-
-* Mon Feb  7 2000 Jeff Johnson <jbj@redhat.com>
-- compress man pages.
-
-* Tue Jan 18 2000 Jakub Jelinek <jakub@redhat.com>
-- rebuild with glibc 2.1.3 to fix an mmap64 bug in sys/mman.h
-
-* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com> 
-- auto rebuild in the new build environment (release 4)
-
-* Tue Aug 18 1998 Jeff Johnson <jbj@redhat.com>
-- update to 3.02
-
-* Sun Jul 26 1998 Jeff Johnson <jbj@redhat.com>
-- update to 3.01
-
-* Mon Apr 27 1998 Prospector System <bugs@redhat.com>
-- translations modified for de, fr, tr
-
-* Thu Oct 23 1997 Donnie Barnes <djb@redhat.com>
-- removed references to the -g option from the man page that we add
-
-* Fri Oct 17 1997 Donnie Barnes <djb@redhat.com>
-- spec file cleanups
-- added BuildRoot
-
-* Mon Jun 02 1997 Erik Troan <ewt@redhat.com>
-- built against glibc
