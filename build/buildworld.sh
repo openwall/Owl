@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.22 2002/06/22 07:00:04 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.23 2002/06/22 07:22:56 solar Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -84,7 +84,7 @@ function built()
 
 function build_native()
 {
-	local NUMBER PACKAGE WORK NAME VERSION ARCHIVE
+	local NUMBER PACKAGE WORK NAME VERSION ARCHIVE FLAGS
 
 	NUMBER=$1
 	PACKAGE=$2
@@ -113,7 +113,12 @@ function build_native()
 	rm -f '*' || :
 	ln -sf $NATIVE/$PACKAGES/$PACKAGE/* .
 	test -e $PACKAGE.spec || ln -s "`spec $PACKAGE`" $PACKAGE.spec
-	if $TIME $PERSONALITY rpm -bb $PACKAGE.spec \
+	if [ "$BUILDSOURCE" = "yes" ]; then
+		FLAGS=-ba
+	else
+		FLAGS=-bb
+	fi
+	if $TIME $PERSONALITY rpm $FLAGS $PACKAGE.spec \
 		$TARGET \
 		--define "distribution $NATIVE_DISTRIBUTION" \
 		--define "vendor $NATIVE_VENDOR" \
@@ -124,9 +129,10 @@ function build_native()
 		&> $HOME/logs/$PACKAGE < /dev/null;
 	then
 		mv $WORK/RPMS/*/* $HOME/RPMS/
-		mv $WORK/SRPMS/* $HOME/SRPMS/ &> /dev/null
+		test "$BUILDSOURCE" = "yes" && mv $WORK/SRPMS/* $HOME/SRPMS/
 	else
-		rm -rf $WORK/RPMS/* $WORK/SRPMS/*
+		rm -rf $WORK/RPMS/*
+		test "$BUILDSOURCE" = "yes" && rm -rf $WORK/SRPMS/*
 		log "#$NUMBER: Failed $PACKAGE"
 	fi
 	rm -rf $WORK/BUILD/*
@@ -295,7 +301,8 @@ umask $UMASK
 cd $HOME || exit 1
 
 mkdir -p foreign
-mkdir -p RPMS SRPMS archives logs
+mkdir -p logs archives RPMS
+test "$BUILDSOURCE" = "yes" && mkdir -p SRPMS
 
 echo "`date '+%Y %b %e %H:%M:%S'`: Started" >> logs/buildworld
 
