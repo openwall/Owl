@@ -79,7 +79,7 @@
 +#define RMTI_EOM	4
 +#define RMTI_NBSF	5
 +
-+/* Extended 's' comands */
++/* Extended 's' commands */
 +#define MTS_TYPE	'T'
 +#define MTS_DSREG	'D'
 +#define MTS_ERREG	'E'

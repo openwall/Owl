@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cpio/cpio.spec,v 1.1 2000/11/26 21:00:46 mci Exp $
+# $Id: Owl/packages/cpio/cpio.spec,v 1.2 2000/11/26 22:12:03 solar Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
@@ -89,10 +89,10 @@ fi
 %{_mandir}/man8/rmt.8*
 
 %changelog
-* Sun Nov 26 2000 Michail Litvak <mci@wowl.openwall.com>
+* Sun Nov 26 2000 Michail Litvak <mci@owl.openwall.com>
 - Imported from RH
-- added some patches from Debian 
-  (many bug fixes in cpio, mt and rmt improvements )
+- added some patches from Debian
+  (many bug fixes in cpio, mt and rmt improvements)
 - man page for rmt
 
 * Tue Aug  8 2000 Jeff Johnson <jbj@redhat.com>

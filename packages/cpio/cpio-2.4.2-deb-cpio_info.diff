@@ -22,7 +22,7 @@
 -[-no-abosolute-filenames] [-only-verify-crc] [-quiet]
 -[pattern...] [< archive]
 +[--no-preserve-owner] [--message=message] [--help] [--version]
-+[-no-abosolute-filenames] [--sparse] [-only-verify-crc] [-quiet]
++[--no-absolute-filenames] [--sparse] [-only-verify-crc] [-quiet]
 +[--rsh-command=command] [pattern...] [< archive]
  @end example
  
