@@ -1,0 +1,187 @@
+# Version of OpenSSH
+%define oversion 2.1.1p2
+Summary: OpenSSH free Secure Shell (SSH) implementation
+Name: openssh
+Version: %{oversion}
+Release: 1owl
+URL: http://www.openssh.com/
+Source0: http://violet.ibs.com.au/openssh/files/openssh-%{oversion}.tar.gz
+Source1: sshd.pam
+Source2: sshd.init
+Patch0: openssh-2.1.1p2-owl-buildroot.diff
+Copyright: BSD
+Group: Applications/Internet
+Buildroot: /var/rpm-buildroot/%{name}-%{version}
+Obsoletes: ssh
+PreReq: openssl >= 0.9.5a
+Requires: openssl >= 0.9.5a
+BuildPreReq: perl
+BuildPreReq: openssl-devel
+BuildPreReq: zlib-devel
+BuildPreReq: tcp_wrappers
+
+%package clients
+Summary: OpenSSH Secure Shell protocol clients
+Requires: openssh
+Group: System Environment/Daemons
+Obsoletes: ssh-clients
+
+%package server
+Summary: OpenSSH Secure Shell protocol server (sshd)
+Group: System Environment/Daemons
+Obsoletes: ssh-server
+PreReq: openssh chkconfig >= 0.9
+
+%description
+Ssh (Secure Shell) a program for logging into a remote machine and for
+executing commands in a remote machine.  It is intended to replace
+rlogin and rsh, and provide secure encrypted communications between
+two untrusted hosts over an insecure network.  X11 connections and
+arbitrary TCP/IP ports can also be forwarded over the secure channel.
+
+OpenSSH is OpenBSD's rework of the last free version of SSH, bringing it
+up to date in terms of security and features, as well as removing all 
+patented algorithms to seperate libraries (OpenSSL).
+
+This package includes the core files necessary for both the OpenSSH
+client and server.  To make this package useful, you should also
+install openssh-clients, openssh-server, or both.
+
+%description clients
+Ssh (Secure Shell) a program for logging into a remote machine and for
+executing commands in a remote machine.  It is intended to replace
+rlogin and rsh, and provide secure encrypted communications between
+two untrusted hosts over an insecure network.  X11 connections and
+arbitrary TCP/IP ports can also be forwarded over the secure channel.
+
+OpenSSH is OpenBSD's rework of the last free version of SSH, bringing it
+up to date in terms of security and features, as well as removing all 
+patented algorithms to seperate libraries (OpenSSL).
+
+This package includes the clients necessary to make encrypted connections
+to SSH servers.
+
+%description server
+Ssh (Secure Shell) a program for logging into a remote machine and for
+executing commands in a remote machine.  It is intended to replace
+rlogin and rsh, and provide secure encrypted communications between
+two untrusted hosts over an insecure network.  X11 connections and
+arbitrary TCP/IP ports can also be forwarded over the secure channel.
+
+OpenSSH is OpenBSD's rework of the last free version of SSH, bringing it
+up to date in terms of security and features, as well as removing all 
+patented algorithms to seperate libraries (OpenSSL).
+
+This package contains the secure shell daemon. The sshd is the server 
+part of the secure shell protocol and allows ssh clients to connect to 
+your host.
+
+%changelog
+* Sun Jul  9 2000 Solar Designer <solar@false.com>
+- Imported current Damien Miller's spec file, removed the X11-specific
+stuff, fixed buildroot issues.  sshd.pam and sshd.init are now taken
+from separate files, not the original package.
+
+* Mon Jun 12 2000 Damien Miller <djm@mindrot.org>
+- Glob manpages to catch compressed files
+* Wed Mar 15 2000 Damien Miller <djm@ibs.com.au>
+- Updated for new location
+- Updated for new gnome-ssh-askpass build
+* Sun Dec 26 1999 Damien Miller <djm@mindrot.org>
+- Added Jim Knoble's <jmknoble@pobox.com> askpass
+* Mon Nov 15 1999 Damien Miller <djm@mindrot.org>
+- Split subpackages further based on patch from jim knoble <jmknoble@pobox.com>
+* Sat Nov 13 1999 Damien Miller <djm@mindrot.org>
+- Added 'Obsoletes' directives
+* Tue Nov 09 1999 Damien Miller <djm@ibs.com.au>
+- Use make install
+- Subpackages
+* Mon Nov 08 1999 Damien Miller <djm@ibs.com.au>
+- Added links for slogin
+- Fixed perms on manpages
+* Sat Oct 30 1999 Damien Miller <djm@ibs.com.au>
+- Renamed init script
+* Fri Oct 29 1999 Damien Miller <djm@ibs.com.au>
+- Back to old binary names
+* Thu Oct 28 1999 Damien Miller <djm@ibs.com.au>
+- Use autoconf
+- New binary names
+* Wed Oct 27 1999 Damien Miller <djm@ibs.com.au>
+- Initial RPMification, based on Jan "Yenya" Kasprzak's <kas@fi.muni.cz> spec.
+
+%prep
+
+%setup -q
+%patch0 -p1
+
+%build
+CFLAGS="$RPM_OPT_FLAGS" \
+	./configure --prefix=/usr --sysconfdir=/etc/ssh \
+               --with-tcp-wrappers --with-ipv4-default \
+					--with-rsh=/usr/bin/rsh
+make DESTDIR=$RPM_BUILD_ROOT/
+
+%install
+rm -rf $RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT/
+
+install -d $RPM_BUILD_ROOT/etc/pam.d/
+install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
+install -d $RPM_BUILD_ROOT/usr/libexec/ssh
+install -m600 %{SOURCE1} $RPM_BUILD_ROOT/etc/pam.d/sshd
+install -m700 %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%post server
+/sbin/chkconfig --add sshd
+if [ ! -f /etc/ssh/ssh_host_key -o ! -s /etc/ssh/ssh_host_key ]; then
+	/usr/bin/ssh-keygen -b 1024 -f /etc/ssh/ssh_host_key -N '' >&2
+fi
+if [ ! -f /etc/ssh/ssh_host_dsa_key -o ! -s /etc/ssh/ssh_host_dsa_key ]; then
+	/usr/bin/ssh-keygen -d -f /etc/ssh/ssh_host_dsa_key -N '' >&2
+fi
+if test -r /var/run/sshd.pid
+then
+	/etc/rc.d/init.d/sshd restart >&2
+fi
+
+%preun server
+if [ "$1" = 0 ]
+then
+	/etc/rc.d/init.d/sshd stop >&2
+	/sbin/chkconfig --del sshd
+fi
+
+%files
+%defattr(-,root,root)
+%doc ChangeLog OVERVIEW COPYING.Ylonen README* INSTALL 
+%doc CREDITS UPGRADING
+%attr(0755,root,root) /usr/bin/ssh-keygen
+%attr(0755,root,root) /usr/bin/scp
+%attr(0644,root,root) /usr/man/man1/ssh-keygen.1*
+%attr(0644,root,root) /usr/man/man1/scp.1*
+%attr(0755,root,root) %dir /etc/ssh
+%attr(0755,root,root) %dir /usr/libexec/ssh
+
+%files clients
+%defattr(-,root,root)
+%attr(4755,root,root) /usr/bin/ssh
+%attr(0755,root,root) /usr/bin/ssh-agent
+%attr(0755,root,root) /usr/bin/ssh-add
+%attr(0644,root,root) /usr/man/man1/ssh.1*
+%attr(0644,root,root) /usr/man/man1/ssh-agent.1*
+%attr(0644,root,root) /usr/man/man1/ssh-add.1*
+%attr(0644,root,root) %config(noreplace) /etc/ssh/ssh_config
+%attr(-,root,root) /usr/bin/slogin
+%attr(-,root,root) /usr/man/man1/slogin.1*
+
+%files server
+%defattr(-,root,root)
+%attr(0755,root,root) /usr/sbin/sshd
+%attr(0644,root,root) /usr/man/man8/sshd.8*
+%attr(0600,root,root) %config(noreplace) /etc/ssh/sshd_config
+%attr(0600,root,root) %config(noreplace) /etc/pam.d/sshd
+%attr(0755,root,root) %config /etc/rc.d/init.d/sshd
+
