@@ -1,16 +1,15 @@
-# $Id: Owl/packages/lftp/lftp.spec,v 1.18 2003/10/30 09:00:25 solar Exp $
+# $Id: Owl/packages/lftp/lftp.spec,v 1.19 2003/12/08 00:14:21 mci Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
-Version: 2.6.6
-Release: owl2
+Version: 2.6.9
+Release: owl1
 License: GPL
 Group: Applications/Internet
 URL: http://lftp.yar.ru
 Source0: ftp://ftp.yars.free.net/pub/software/unix/net/ftp/client/lftp/%name-%version.tar.bz2
 Source1: lftpget.1
-Patch0: lftp-2.6.6-owl-n-option.diff
-Patch1: lftp-2.6.6-owl-tmp.diff
+Patch0: lftp-2.6.9-owl-n-option.diff
 Prefix: %_prefix
 BuildRequires: openssl-devel
 BuildRoot: /override/%name-%version
@@ -40,7 +39,6 @@ downloading files.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 
 %build
 # Make sure that all message catalogs are built
@@ -53,6 +51,9 @@ make CFLAGS="$RPM_OPT_FLAGS"
 %install
 rm -rf $RPM_BUILD_ROOT
 make install-strip DESTDIR=$RPM_BUILD_ROOT
+
+find $RPM_BUILD_ROOT%_libdir/%name/ -type f -name \*.la -print -delete
+
 install -m 644 $RPM_SOURCE_DIR/lftpget.1 $RPM_BUILD_ROOT%_mandir/man1/
 
 %post
@@ -80,6 +81,12 @@ fi
 %_datadir/locale/*/*/*
 
 %changelog
+* Mon Dec 08 2003 Michail Litvak <mci@owl.openwall.com> 2.6.9-owl1
+- 2.6.9
+- Dropped patch to fix tmp-files handling in configure script,
+  this fixed in upstream.
+- Do not package .la files.
+
 * Tue Jun 03 2003 Michail Litvak <mci@owl.openwall.com> 2.6.6-owl2
 - Fixed tmp-files handling in configure script of included readline.
 
