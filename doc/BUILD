@@ -71,9 +71,8 @@ new versions of software already in Owl.
 
 	Native (re-)builds.
 
-You need to have a configured Linux 2.2.x or 2.4.x kernel in
-/usr/src/linux.  As user "build", change directory to /usr/src/world
-and type:
+You need to have a configured Linux 2.4.x kernel in /usr/src/linux.
+As user "build", change directory to /usr/src/world and type:
 
 	make clean && make buildworld
 
@@ -101,12 +100,6 @@ packages will be installed into /owl.
 
 "make installworld" should be run as root.
 
-Currently, it is possible to convert an existing Red Hat Linux 6.x
-installation into Owl with "make installworld" and some manual help.
-Be sure to read and understand all of installorder.conf before you try
-this.  In particular, your kernel should be no longer a part of an RPM
-package by the time you convert the system into Owl.
-
 
 	(Re-)building individual packages.
 
@@ -115,4 +108,4 @@ where "name" is the name of the source package.  For foreign packages
 (SRPMs) built with the Owl build environment you also need to include
 the version number part in "name".
 
-$Id: Owl/doc/BUILD,v 1.24 2004/11/02 08:36:22 solar Exp $
+$Id: Owl/doc/BUILD,v 1.25 2004/11/02 22:37:51 solar Exp $
