@@ -1,0 +1,22 @@
+Date: Mon, 20 Nov 2000 16:39:08 -0200
+From: Andreas Hasenack <andreas@conectiva.com.br>
+To: vendor-sec@lst.de, "Keith Owens" <kaos@ocs.com.au>
+Subject: typo in modutils-2.3.20
+
+safemode wasn't being enabled automatically if modprobe was
+called from the kernel due to a small typo:
+
+
+--- modutils-2.3.20/insmod/modprobe.c.orig	Mon Nov 20 16:33:31 2000
++++ modutils-2.3.20/insmod/modprobe.c	Mon Nov 20 16:33:42 2000
+@@ -1516,7 +1516,7 @@
+ 			continue;
+ 		if (strcmp(*env, "TERM=linux") == 0)
+ 			continue;
+-		if (strcmp(*env, "PATH=sbin:/usr/sbin:/bin:/usr/bin") == 0)
++		if (strcmp(*env, "PATH=/sbin:/usr/sbin:/bin:/usr/bin") == 0)
+ 			continue;
+ 		safemode = 0;
+ 		break;
+
+

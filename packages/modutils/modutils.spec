@@ -1,14 +1,15 @@
-# $Id: Owl/packages/modutils/modutils.spec,v 1.5 2000/11/17 07:03:03 solar Exp $
+# $Id: Owl/packages/modutils/modutils.spec,v 1.6 2000/11/21 08:23:56 solar Exp $
 
 Summary: 	Kernel module utilities.
 Name: 		modutils
 Version: 	2.3.20
-Release: 	1owl
+Release: 	2owl
 Copyright: 	GPL
 Group: 		System Environment/Kernel
 Source0: 	ftp://ftp.kernel.org/pub/linux/utils/kernel/modutils/v2.3/modutils-%{version}.tar.gz
-Patch1: 	modutils-2.3.17-owl-alias.diff
-Patch2:		modutils-2.3.17-rh-systemmap.diff
+Patch0: 	modutils-2.3.17-owl-alias.diff
+Patch1:		modutils-2.3.17-rh-systemmap.diff
+Patch2:		modutils-2.3.20-con-modprobe-typo.diff
 Exclusiveos: 	Linux
 Buildroot: 	/var/rpm-buildroot/%{name}-%{version}
 Prereq: 	/sbin/chkconfig
@@ -22,8 +23,9 @@ modules are device drivers and filesystems, as well as some other things.
 
 %prep
 %setup -q
-%patch1 -p1 -b .alias
-%patch2 -p1 -b .systemmap
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
 
 %build
 # To build kernel 2.0.x compatible modutils, change the compat-2-0 and
@@ -70,6 +72,10 @@ fi
 #%config /etc/rc.d/init.d/kerneld
 
 %changelog
+* Tue Nov 21 2000 Solar Designer <solar@owl.openwall.com>
+- Added a patch by Andreas Hasenack of Conectiva to fix a typo in the
+recent security fix to modprobe.c.
+
 * Fri Nov 17 2000 Solar Designer <solar@owl.openwall.com>
 - v2.3.20
 - Pass plain sparc- target to configure when building for sparcv9, to
