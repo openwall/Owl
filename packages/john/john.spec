@@ -1,4 +1,4 @@
-# $Id: Owl/packages/john/john.spec,v 1.31 2004/01/10 06:20:02 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.32 2004/01/10 06:21:43 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -74,7 +74,7 @@ cp -a john-1.6/doc/* doc/john-1.6/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
-* Sat Jan 10 2003 Solar Designer <solar@owl.openwall.com> 1.6.36.9-owl1
+* Sat Jan 10 2004 Solar Designer <solar@owl.openwall.com> 1.6.36.9-owl1
 - Corrected a segfault with --stdin introduced with 1.6.34.2.
 
 * Wed Dec 03 2003 Solar Designer <solar@owl.openwall.com> 1.6.36.8-owl1
