@@ -17,6 +17,9 @@ Updated to 0.4.9.4.  The same popa3d binary may now be run as a
 standalone server as well as via xinetd, an /etc/xinetd.d file is
 provided.  Parts of the daemon code are now run in a chroot jail.
 
+2001/09/05	Package: man-pages
+Updated to 1.39 with additional corrections.
+
 2001/09/02	Package: groff
 SECURITY FIX	Severity: none to high, remote, active
 zen-parse has demonstrated a security problem with format string
@@ -294,4 +297,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp@hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.24 2001/09/11 11:03:50 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.25 2001/09/14 13:54:21 solar Exp $
