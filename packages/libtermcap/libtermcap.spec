@@ -1,10 +1,10 @@
-# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.5 2002/02/05 15:49:46 mci Exp $
+# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.6 2002/02/05 15:58:29 solar Exp $
 
 Summary: A basic system library for accessing the termcap database.
 Name: libtermcap
 Version: 2.0.8
 Release: owl3
-Copyright: LGPL
+License: LGPL
 Group: System Environment/Libraries
 Source: ftp://sunsite.unc.edu/pub/Linux/GCC/termcap-2.0.8.tar.gz
 Patch0: termcap-2.0.8-owl-TERMCAP.diff
@@ -16,8 +16,8 @@ Patch5: termcap-2.0.8-rh-glibc-2.1.diff
 Patch6: termcap-2.0.8-rh-ignore-p.diff
 Patch7: termcap-2.0.8-rh-xref.diff
 Requires: /etc/termcap
-BuildPreReq: texinfo
-Buildroot: /override/%{name}-%{version}
+BuildRequires: texinfo
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The libtermcap package contains a basic system library needed to
@@ -53,15 +53,16 @@ make CFLAGS="$RPM_OPT_FLAGS -I."
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{usr/lib,usr/info,usr/include,etc,lib}
+mkdir -p $RPM_BUILD_ROOT/{usr/lib,usr/include,etc,lib}
+mkdir -p ${RPM_BUILD_ROOT}%{_infodir}
 
 export PATH=/sbin:$PATH
 make prefix=$RPM_BUILD_ROOT/usr install
 
-install -m 644 termcap.info* $RPM_BUILD_ROOT/usr/info
+install -m 644 termcap.info* ${RPM_BUILD_ROOT}%{_infodir}/
 
 cd $RPM_BUILD_ROOT
-mv usr/lib/libtermcap.so* lib
+mv usr/lib/libtermcap.so* lib/
 ln -sf libtermcap.so.2.0.8 lib/libtermcap.so.2
 ln -sf /lib/libtermcap.so.2.0.8 usr/lib/libtermcap.so
 strip -R .comments --strip-unneeded lib/libtermcap.so.2.0.8
@@ -84,7 +85,7 @@ fi
 
 %files
 %defattr(-,root,root)
-/usr/info/termcap.info*
+%{_infodir}/termcap.info*
 /lib/libtermcap.so.2*
 
 %files devel
