@@ -1,13 +1,13 @@
-# $Id: Owl/packages/lilo/lilo.spec,v 1.1 2000/11/29 13:43:43 kad Exp $
+# $Id: Owl/packages/lilo/lilo.spec,v 1.2 2000/11/30 06:03:09 solar Exp $
 
 Summary: 	The boot loader for Linux and other operating systems.
 Name: 		lilo
 Version: 	21.6
 Release: 	1owl
-Exclusivearch: 	i386
+ExclusiveArch: 	%ix86
 Copyright: 	MIT
 Group: 		System Environment/Base
-Source: 	ftp://metalab.unc.edu/pub/Linux/system/boot/lilo/%{name}-%{version}.tar.gz
+Source: 	ftp://sunsite.unc.edu/pub/Linux/system/boot/lilo/%{name}-%{version}.tar.gz
 Source1: 	keytab-lilo.c
 Patch1: 	lilo-21-rh-broken-headers.diff
 Patch2: 	lilo-21.4.4-rh-sa5300.diff
