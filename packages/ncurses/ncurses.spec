@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ncurses/ncurses.spec,v 1.17 2002/02/07 18:07:47 solar Exp $
+# $Id: Owl/packages/ncurses/ncurses.spec,v 1.18 2003/10/29 17:40:54 solar Exp $
 
 %define major 5
 %define oldmajor 4
@@ -10,7 +10,7 @@ Release: owl9
 License: distributable
 Group: System Environment/Libraries
 URL: http://dickey.his.com/ncurses/ncurses.html
-Source0: ftp://dickey.his.com/ncurses/ncurses-%{version}.tar.gz
+Source0: ftp://dickey.his.com/ncurses/ncurses-%version.tar.gz
 Source1: ncurses-linux
 Source2: ncurses-linux-m
 Source3: ncurses-resetall.sh
@@ -21,7 +21,7 @@ Patch3: ncurses-5.2-owl-fixes.diff
 Patch4: ncurses-5.2-rh-typo.diff
 Patch5: ncurses-5.2-rh-tput-S.diff
 PreReq: /sbin/ldconfig
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The curses library routines are a terminal-independent method of
@@ -32,7 +32,7 @@ discontinued 4.4BSD classic curses library.
 %package devel
 Summary: The development files for applications which use ncurses.
 Group: Development/Libraries
-Requires: ncurses = %{version}-%{release}
+Requires: ncurses = %version-%release
 AutoReq: false
 
 %description devel
@@ -42,9 +42,9 @@ the ncurses CRT screen handling and optimization package.
 %package compat
 Summary: ncurses compatibility for ncurses 4.x
 Group: System Environment/Libraries
-Requires: ncurses = %{version}-%{release}
-Provides: libform.so.%{oldmajor}, libmenu.so.%{oldmajor}
-Provides: libncurses.so.%{oldmajor}, libpanel.so.%{oldmajor}
+Requires: ncurses = %version-%release
+Provides: libform.so.%oldmajor, libmenu.so.%oldmajor
+Provides: libncurses.so.%oldmajor, libpanel.so.%oldmajor
 
 %description compat
 This ncurses package provides compatibility libraries for packages
@@ -54,7 +54,7 @@ built against Red Hat Linux 6.2.
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 
 %prep
-%setup -q -n ncurses-%{version}
+%setup -q -n ncurses-%version
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -63,7 +63,7 @@ built against Red Hat Linux 6.2.
 %patch5 -p1
 
 %build
-CFLAGS="%{optflags} -DPURE_TERMINFO"
+CFLAGS="%optflags -DPURE_TERMINFO"
 %define optflags $CFLAGS
 export ac_cv_func_mkstemp=yes \
 %configure \
@@ -97,13 +97,10 @@ install -m 755 $RPM_SOURCE_DIR/ncurses-resetall.sh \
 	$RPM_BUILD_ROOT/usr/bin/resetall
 
 # compat links
-ln -s libform.so.%{version} $RPM_BUILD_ROOT/usr/lib/libform.so.%{oldmajor}
-ln -s libmenu.so.%{version} $RPM_BUILD_ROOT/usr/lib/libmenu.so.%{oldmajor}
-ln -s libncurses.so.%{version} $RPM_BUILD_ROOT/usr/lib/libncurses.so.%{oldmajor}
-ln -s libpanel.so.%{version} $RPM_BUILD_ROOT/usr/lib/libpanel.so.%{oldmajor}
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+ln -s libform.so.%version $RPM_BUILD_ROOT/usr/lib/libform.so.%oldmajor
+ln -s libmenu.so.%version $RPM_BUILD_ROOT/usr/lib/libmenu.so.%oldmajor
+ln -s libncurses.so.%version $RPM_BUILD_ROOT/usr/lib/libncurses.so.%oldmajor
+ln -s libpanel.so.%version $RPM_BUILD_ROOT/usr/lib/libpanel.so.%oldmajor
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -113,22 +110,22 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) /usr/lib/lib*.so.%{major}*
 %doc README ANNOUNCE
 %doc doc/html/announce.html
-%{_datadir}/terminfo
-%{_datadir}/tabset
-%{_bindir}/*
-%{_mandir}/man1/*
-%{_mandir}/man5/*
-%{_mandir}/man7/*
+%_datadir/terminfo
+%_datadir/tabset
+%_bindir/*
+%_mandir/man1/*
+%_mandir/man5/*
+%_mandir/man7/*
 
 %files devel
 %defattr(-,root,root)
 %doc c++ test
 %doc doc/html/hackguide.html
 %doc doc/html/ncurses-intro.html
-%{_libdir}/lib*.so
-%{_libdir}/lib*.a
-%{_includedir}/*
-%{_mandir}/man3/*
+%_libdir/lib*.so
+%_libdir/lib*.a
+%_includedir/*
+%_mandir/man3/*
 
 %files compat
 %defattr(-,root,root)
