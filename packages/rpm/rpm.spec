@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.8 2000/08/06 16:11:02 kad Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.9 2000/08/07 10:49:14 kad Exp $
 
 %define NEED_PYTHON 'no'
 %define version 3.0.5
@@ -187,13 +187,13 @@ fi
 /usr/lib/rpm/ppc*
 %endif
 
-%dir /usr/src/rpm
-%dir /usr/src/rpm/BUILD
-%dir /usr/src/rpm/SPECS
-%dir /usr/src/rpm/SOURCES
-%dir /usr/src/rpm/SRPMS
-%dir /usr/src/rpm/RPMS
-/usr/src/rpm/RPMS/*
+%dir /usr/src/RPM
+%dir /usr/src/RPM/BUILD
+%dir /usr/src/RPM/SPECS
+%dir /usr/src/RPM/SOURCES
+%dir /usr/src/RPM/SRPMS
+%dir /usr/src/RPM/RPMS
+/usr/src/RPM/RPMS/*
 /usr/*/locale/*/LC_MESSAGES/rpm.mo
 /usr/man/man[18]/*.[18]*
 %lang(pl) /usr/man/pl/man[18]/*.[18]*
