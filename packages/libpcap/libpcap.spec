@@ -1,9 +1,9 @@
-# $Id: Owl/packages/libpcap/libpcap.spec,v 1.14 2004/11/23 22:40:46 mci Exp $
+# $Id: Owl/packages/libpcap/libpcap.spec,v 1.15 2005/01/12 16:15:50 galaxy Exp $
 
 Summary: Network packet capture library.
 Name: libpcap
 Version: 0.8.1
-Release: owl2
+Release: owl3
 Epoch: 2
 License: GPL
 Group: System Environment/Libraries
@@ -54,13 +54,16 @@ mkdir -p %buildroot{%_libdir,%_mandir/man3}
 mkdir -p %buildroot%_includedir/net
 ln -s ../pcap-bpf.h %buildroot%_includedir/net/bpf.h
 
+# XXX: (GM): We have to find a universal way to do the following:
+ln -s %name.so.0.8 %buildroot%_libdir/%name.so.1
+
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
 %files
 %defattr(644,root,root,755)
 %doc README CHANGES CREDITS
-%attr(755,root,root) %_libdir/lib*.so.*.*
+%attr(755,root,root) %_libdir/lib*.so.*
 
 %files devel
 %defattr(644,root,root,755)
@@ -71,6 +74,9 @@ ln -s ../pcap-bpf.h %buildroot%_includedir/net/bpf.h
 %_libdir/lib*.a
 
 %changelog
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2:0.8.1-owl3
+- Fixed orphaned %_libdir/libpcap.so.0 produced in %post.
+
 * Thu Feb 19 2004 Michail Litvak <mci@owl.openwall.com> 2:0.8.1-owl2
 - Updated -nmap-alt-owl-linux-honor-timeout.diff patch.
 
