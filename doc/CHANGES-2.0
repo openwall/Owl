@@ -30,21 +30,6 @@ http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0497
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0415
 http://www.isec.pl/vulnerabilities/isec-0016-procleaks.txt
 
-fixes multiple security-related
-bugs in the Linux kernel (those discovered by Al Viro using "Sparse",
-fsave/frstor local DoS on x86, infoleak in the e1000 driver, and some
-others) as well as two non-security bugs in the -ow patch itself.
-Which of these bugs affect a particular build of the Linux kernel
-depends on what drivers are compiled in (or loaded as modules).  For
-the default kernels on Owl CDs, it's only the Intel PRO/1000 Gigabit
-Ethernet driver (e1000) which has a vulnerability allowing for more
-than a DoS attack fixed with this update.
-References:
-http://marc.theaimsgroup.com/?l=openwall-announce&m=108763826328168
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0495
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0554
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0535
-
 2004/07/27	Package: iptables
 Updated to 1.2.11.
 
@@ -233,4 +218,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.46 2004/08/08 20:51:53 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.47 2004/08/08 21:03:48 solar Exp $
