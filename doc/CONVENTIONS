@@ -190,17 +190,24 @@ to be used on sources already in Owl.
 It's better to not use temporary files, however if you must, the
 preferred way to do it from shell scripts is with code like this:
 
-TMPFILE=
+TMPFILE="`mktemp -t program.XXXXXXXXXX`" || exit
 trap 'rm -f -- "$TMPFILE"' EXIT
 trap 'trap - EXIT; rm -f -- "$TMPFILE"; exit 1' HUP INT QUIT TERM
-TMPFILE="`mktemp -t program.XXXXXXXXXX`" || exit
+
+To create temporary directories, use:
+
+TMPD="`mktemp -dt program.XXXXXXXXXX`" || exit
+trap 'rm -rf -- "$TMPD"' EXIT
+trap 'trap - EXIT; rm -rf -- "$TMPD"; exit 1' HUP INT QUIT TERM
 
 This may be used in our own scripts or in patches.  The package should
 then require the proper version of mktemp(1):
 
 Requires: mktemp >= 1:1.3.1
 
+(This is the version which introduced support for the "-t" option.)
+
 As usual, use Requires, PreReq, and/or BuildRequires depending on
 where in the package the uses of mktemp occur.
 
-$Id: Owl/doc/CONVENTIONS,v 1.18 2004/02/07 06:23:23 solar Exp $
+$Id: Owl/doc/CONVENTIONS,v 1.19 2004/11/26 12:25:52 solar Exp $
