@@ -12,6 +12,9 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/02/15	Package: lilo
+Updated to 22.1.
+
 2002/02/13	Packages: owl-startup, SysVinit
 Don't unlink the old /sbin/init on SysVinit package upgrades as that
 would actually leave it pending for delete on process termination and
@@ -556,4 +559,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.67 2002/02/14 08:19:15 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.68 2002/02/15 22:30:24 solar Exp $
