@@ -1,3 +1,62 @@
+diff -ur openssh-3.4p1.orig/auth-pam.c openssh-3.4p1/auth-pam.c
+--- openssh-3.4p1.orig/auth-pam.c	Wed May  8 06:27:56 2002
++++ openssh-3.4p1/auth-pam.c	Sat Jul  6 22:27:59 2002
+@@ -75,6 +75,7 @@
+ int do_pam_authenticate(int flags)
+ {
+ 	int retval = pam_authenticate(__pamh, flags);
++	log_reinit();
+ 	was_authenticated = (retval == PAM_SUCCESS);
+ 	return retval;
+ }
+@@ -179,6 +180,7 @@
+ 
+ 	if (__pamh && session_opened) {
+ 		pam_retval = pam_close_session(__pamh, 0);
++		log_reinit();
+ 		if (pam_retval != PAM_SUCCESS)
+ 			log("Cannot close PAM session[%d]: %.200s",
+ 			    pam_retval, PAM_STRERROR(__pamh, pam_retval));
+@@ -186,6 +188,7 @@
+ 
+ 	if (__pamh && creds_set) {
+ 		pam_retval = pam_setcred(__pamh, PAM_DELETE_CRED);
++		log_reinit();
+ 		if (pam_retval != PAM_SUCCESS)
+ 			debug("Cannot delete credentials[%d]: %.200s", 
+ 			    pam_retval, PAM_STRERROR(__pamh, pam_retval));
+@@ -249,6 +252,7 @@
+ 	}
+ 
+ 	pam_retval = pam_acct_mgmt(__pamh, 0);
++	log_reinit();
+ 	debug2("pam_acct_mgmt() = %d", pam_retval);
+ 	switch (pam_retval) {
+ 		case PAM_SUCCESS:
+@@ -287,6 +291,7 @@
+ 	}
+ 
+ 	pam_retval = pam_open_session(__pamh, 0);
++	log_reinit();
+ 	if (pam_retval != PAM_SUCCESS)
+ 		fatal("PAM session setup failed[%d]: %.200s",
+ 		    pam_retval, PAM_STRERROR(__pamh, pam_retval));
+@@ -307,6 +312,7 @@
+ 	debug("PAM establishing creds");
+ 	pam_retval = pam_setcred(__pamh, 
+ 	    init ? PAM_ESTABLISH_CRED : PAM_REINITIALIZE_CRED);
++	log_reinit();
+ 	if (pam_retval != PAM_SUCCESS) {
+ 		if (was_authenticated)
+ 			fatal("PAM setcred failed[%d]: %.200s",
+@@ -339,6 +345,7 @@
+ 	if (password_change_required) {
+ 		pamstate = OTHER;
+ 		pam_retval = pam_chauthtok(__pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
++		log_reinit();
+ 		if (pam_retval != PAM_SUCCESS)
+ 			fatal("PAM pam_chauthtok failed[%d]: %.200s",
+ 			    pam_retval, PAM_STRERROR(__pamh, pam_retval));
 diff -ur openssh-3.4p1.orig/entropy.c openssh-3.4p1/entropy.c
 --- openssh-3.4p1.orig/entropy.c	Sun Jun  9 23:41:48 2002
 +++ openssh-3.4p1/entropy.c	Sat Jun 29 20:36:17 2002
@@ -105,7 +164,25 @@ diff -ur openssh-3.4p1.orig/scp.c openssh-3.4p1/scp.c
  		exit(1);
 diff -ur openssh-3.4p1.orig/session.c openssh-3.4p1/session.c
 --- openssh-3.4p1.orig/session.c	Wed Jun 26 17:51:06 2002
-+++ openssh-3.4p1/session.c	Sat Jun 29 20:42:42 2002
++++ openssh-3.4p1/session.c	Sat Jul  6 22:21:36 2002
+@@ -471,7 +471,7 @@
+ 	/* Fork the child. */
+ 	if ((pid = fork()) == 0) {
+ 		/* Child.  Reinitialize the log since the pid has changed. */
+-		log_init(__progname, options.log_level, options.log_facility, log_stderr);
++		log_reinit();
+ 
+ 		/*
+ 		 * Create a new session and process group since the 4.4BSD
+@@ -587,7 +587,7 @@
+ 	if ((pid = fork()) == 0) {
+ 
+ 		/* Child.  Reinitialize the log because the pid has changed. */
+-		log_init(__progname, options.log_level, options.log_facility, log_stderr);
++		log_reinit();
+ 		/* Close the master side of the pseudo tty. */
+ 		close(ptyfd);
+ 
 @@ -1225,6 +1225,7 @@
  {
  	/* Launch login(1). */
@@ -210,7 +287,7 @@ diff -ur openssh-3.4p1.orig/sshconnect2.c openssh-3.4p1/sshconnect2.c
  	}
 diff -ur openssh-3.4p1.orig/sshd.c openssh-3.4p1/sshd.c
 --- openssh-3.4p1.orig/sshd.c	Wed Jun 26 03:24:19 2002
-+++ openssh-3.4p1/sshd.c	Sat Jun 29 20:48:13 2002
++++ openssh-3.4p1/sshd.c	Sat Jul  6 22:21:36 2002
 @@ -261,7 +261,9 @@
  	log("Received SIGHUP; restarting.");
  	close_listen_socks();
@@ -221,3 +298,21 @@ diff -ur openssh-3.4p1.orig/sshd.c openssh-3.4p1/sshd.c
  	log("RESTART FAILED: av[0]='%.100s', error: %.100s.", saved_argv[0],
  	    strerror(errno));
  	exit(1);
+@@ -1081,7 +1083,7 @@
+ #endif /* TIOCNOTTY */
+ 	}
+ 	/* Reinitialize the log (because of the fork above). */
+-	log_init(__progname, options.log_level, options.log_facility, log_stderr);
++	log_reinit();
+ 
+ 	/* Initialize the random number generator. */
+ 	arc4random_stir();
+@@ -1335,7 +1337,7 @@
+ 						close_listen_socks();
+ 						sock_in = newsock;
+ 						sock_out = newsock;
+-						log_init(__progname, options.log_level, options.log_facility, log_stderr);
++						log_reinit();
+ 						break;
+ 					}
+ 				}

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.44 2002/07/06 01:40:25 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.45 2002/07/06 19:03:25 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.4p1
-Release: owl1.5
+Release: owl1.7
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -21,8 +21,8 @@ Patch4: openssh-3.4p1-owl-drop-groups.diff
 Patch5: openssh-3.4p1-owl-openssl-version-check.diff
 Patch6: openssh-3.4p1-owl-scp-stalltime.diff
 Patch7: openssh-3.4p1-owl-mm.diff
-Patch8: openssh-3.4p1-owl-logging.diff
-Patch9: openssh-3.4p1-owl-password-changing.diff
+Patch8: openssh-3.4p1-owl-password-changing.diff
+Patch9: openssh-3.4p1-owl-logging.diff
 Patch10: openssh-3.4p1-owl-fatal_cleanups.diff
 PreReq: openssl >= 0.9.6b-1owl
 PreReq: openssl < 0.9.7
@@ -218,6 +218,10 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Sat Jul 06 2002 Solar Designer <solar@owl.openwall.com>
+- Re-initialize logging after calls into PAM module stacks, make use of
+log_reinit() where the original code needed that kind of functionality.
+
 * Fri Jul 05 2002 Solar Designer <solar@owl.openwall.com>
 - Re-enable the password changing code (disabled in 3.3p1 and 3.4p1) for
 non-privsep case, disallowing any forwardings (such that the session may
