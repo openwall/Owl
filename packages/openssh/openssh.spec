@@ -1,13 +1,11 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.15 2001/03/19 01:16:04 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.16 2001/03/21 01:25:56 solar Exp $
 
-# Version of OpenSSH
-%define oversion 2.5.1p1
 Summary: OpenSSH free Secure Shell (SSH) implementation
 Name: openssh
-Version: %{oversion}
-Release: 3owl
+Version: 2.5.2p1
+Release: 1owl
 URL: http://www.openssh.com/
-Source0: http://violet.ibs.com.au/openssh/files/openssh-%{oversion}.tar.gz
+Source0: ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-%{version}.tar.gz
 Source1: sshd.pam
 Source2: sshd.init
 Source3: ssh_config
@@ -15,8 +13,9 @@ Source4: sshd_config
 Patch0: openssh-2.5.1p1-owl-hide-unknown.diff
 Patch1: openssh-2.5.1p1-owl-always-auth.diff
 Patch2: openssh-2.5.1p1-owl-pam_chauthtok-no-loop.diff
-Patch3: openssh-2.5.1p1-owl-pam_userpass.diff
-Patch4: openssh-2.5.1p1-owl-scp-stalltime.diff
+Patch3: openssh-2.5.2p1-owl-pam_userpass.diff
+Patch4: openssh-2.5.2p1-owl-pam-cleanup.diff
+Patch5: openssh-2.5.1p1-owl-scp-stalltime.diff
 Copyright: BSD
 Group: Applications/Internet
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
@@ -92,6 +91,7 @@ clients to connect to your host.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" LIBS="-lcrypt -lpam -lpam_misc" ./configure \
@@ -183,6 +183,10 @@ fi
 %attr(0700,root,root) %config /etc/rc.d/init.d/sshd
 
 %changelog
+* Wed Mar 21 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 2.5.2p1.
+- Patched a potential uninitialized reference in do_pam_cleanup_proc().
+
 * Mon Mar 19 2001 Solar Designer <solar@owl.openwall.com>
 - Package files introduced with 2.5.0 (primes, sftp, ssh-keyscan).
 
