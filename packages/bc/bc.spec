@@ -1,17 +1,18 @@
-# $Id: Owl/packages/bc/bc.spec,v 1.6 2003/10/29 18:20:27 solar Exp $
+# $Id: Owl/packages/bc/bc.spec,v 1.7 2004/02/20 01:57:45 mci Exp $
 
 Summary: GNU's bc (a numeric processing language) and dc (a calculator).
 Name: bc
 Version: 1.06
-Release: owl3
+Release: owl4
 License: GPL
 Group: Applications/Engineering
 Source: ftp://ftp.gnu.org/gnu/bc/bc-%version.tar.gz
 Patch0: bc-1.06-owl-info.diff
 Patch1: bc-1.06-owl-functions-fix.diff
+Patch2: bc-1.06-owl-readline.diff
 PreReq: /sbin/install-info, grep
 Prefix: %_prefix
-BuildRequires: texinfo, readline-devel
+BuildRequires: texinfo, readline-devel >= 4.3
 BuildRoot: /override/%name-%version
 
 %description
@@ -23,6 +24,7 @@ calculator.  Both bc and dc support arbitrary precision arithmetic.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 rm doc/*.info
@@ -53,6 +55,9 @@ fi
 %_infodir/*.info*
 
 %changelog
+* Fri Feb 20 2004 Michail Litvak <mci@owl.openwall.com> 1.06-owl4
+- Fixed building with new readline 4.3.
+
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1.06-owl3
 - Deal with info dir entries such that the menu looks pretty.
 

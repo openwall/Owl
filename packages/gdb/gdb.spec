@@ -1,9 +1,9 @@
-# $Id: Owl/packages/gdb/gdb.spec,v 1.12 2003/10/29 19:29:54 solar Exp $
+# $Id: Owl/packages/gdb/gdb.spec,v 1.13 2004/02/20 02:00:42 mci Exp $
 
 Summary: A GNU source-level debugger for C, C++ and Fortran.
 Name: gdb
 Version: 5.0
-Release: owl9
+Release: owl10
 License: GPL
 Group: Development/Debuggers
 Source: ftp://sourceware.cygnus.com/pub/gdb/releases/gdb-%version.tar.bz2
@@ -11,13 +11,13 @@ Patch0: gdb-5.0-pld-procfs.diff
 Patch1: gdb-5.0-pld-info.diff
 Patch2: gdb-5.0-pld-gettext.diff
 Patch3: gdb-5.0-pld-ncurses.diff
-Patch4: gdb-5.0-pld-readline.diff
+Patch4: gdb-5.0-pld-owl-readline.diff
 Patch5: gdb-5.0-rh-symchanges.diff
 Patch6: gdb-5.0-owl-warnings.diff
 Patch7: gdb-5.0-owl-info.diff
 PreReq: /sbin/install-info
 BuildRequires: ncurses-devel >= 5.0
-BuildRequires: readline-devel >= 4.1
+BuildRequires: readline-devel >= 4.3
 BuildRoot: /override/%name-%version
 
 %description
@@ -102,6 +102,9 @@ fi
 %_infodir/mmalloc.info*
 
 %changelog
+* Fri Feb 20 2004 Michail Litvak <mci@owl.openwall.com> 5.0-owl10
+- Fixed building with new readline 4.3.
+
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 5.0-owl9
 - Deal with info dir entries such that the menu looks pretty.
 
