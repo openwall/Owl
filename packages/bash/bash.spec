@@ -1,9 +1,9 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.19 2004/02/20 02:40:42 mci Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.20 2004/02/24 12:45:37 mci Exp $
 
 Version: 2.05
 Name: bash
 Summary: The GNU Bourne-Again SHell (Bash).
-Release: owl6
+Release: owl7
 Group: System Environment/Shells
 License: GPL
 Source0: ftp://ftp.gnu.org/gnu/bash/bash-%version.tar.gz
@@ -93,7 +93,11 @@ export \
 	--with-installed-readline \
 	--disable-restricted \
 	--disable-net-redirections
-make
+make \
+	READLINE_LIBRARY=/usr/lib/libreadline.a \
+	READLINE_LIB="-Wl,-Bstatic -lreadline -Wl,-Bdynamic" \
+	HISTORY_LIBRARY=/usr/lib/libhistory.a \
+	HISTORY_LIB="-Wl,-Bstatic -lhistory -Wl,-Bdynamic"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -180,6 +184,9 @@ fi
 %doc doc/*.ps* doc/*.html doc/article.txt*
 
 %changelog
+* Tue Feb 24 2004 Michail Litvak <mci@owl.openwall.com> 2.05-owl7
+- Statically link with system readline. 
+
 * Fri Feb 20 2004 Michail Litvak <mci@owl.openwall.com> 2.05-owl6
 - Build with system readline.
 
