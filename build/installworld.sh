@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/installworld.sh,v 1.22 2004/12/27 11:22:27 galaxy Exp $
+# $Id: Owl/build/installworld.sh,v 1.23 2004/12/29 02:09:57 solar Exp $
 
 . installworld.conf
 
@@ -33,7 +33,7 @@ function setup_rpm()
 {
 	local FILE
 
-	if [ -e /.Owl-CD-ROM ]; then
+	if [ -e /.Owl-CD-ROM -a "$HOME" = /usr/src/world ]; then
 		log "Running off a CD, will use this system's RPM binary"
 		return
 	fi
