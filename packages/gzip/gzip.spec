@@ -1,9 +1,9 @@
-# $Id: Owl/packages/gzip/gzip.spec,v 1.4 2001/09/28 01:25:50 solar Exp $
+# $Id: Owl/packages/gzip/gzip.spec,v 1.5 2001/09/29 00:26:03 solar Exp $
 
 Summary: The GNU data compression program.
 Name: gzip
 Version: 1.3
-Release: 13owl
+Release: 14owl
 License: GPL
 Group: Applications/File
 Source: ftp://alpha.gnu.org/gnu/gzip/gzip-%{version}.tar.gz
@@ -73,6 +73,10 @@ fi
 %{_infodir}/gzip.info*
 
 %changelog
+* Sat Sep 29 2001 Solar Designer <solar@owl.openwall.com>
+- Synced with Todd's latest fixes: re-create the temporary file in gzexe
+safely when run on multiple files, support GZIP="--suffix .suf" in znew.
+
 * Fri Sep 28 2001 Solar Designer <solar@owl.openwall.com>
 - Patched unsafe temporary file handling in gzexe, zdiff, and znew based
 on work by Todd Miller of OpenBSD.
