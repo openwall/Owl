@@ -1,11 +1,11 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.2 2003/09/09 05:59:25 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.3 2003/09/09 06:06:08 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
 Summary: Dynamic Host Configuration Protocol (DHCP) distribution.
 Name: dhcp
 Version: 3.0pl2
-Release: owl1
+Release: owl0.2
 License: ISC License
 Group: System Environment/Daemons
 URL: http://www.isc.org/products/DHCP/
@@ -73,8 +73,8 @@ subnet.  The DHCP relay takes care of this for the client.
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-./configure
-make OPT="$RPM_OPT_FLAGS"
+./configure --copts "$RPM_OPT_FLAGS"
+make CC=gcc DEBUG=
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -150,7 +150,11 @@ fi
 %{_mandir}/man8/dhcrelay.8*
 
 %changelog
-* Mon May 05 2003 Matthias Schmidt <schmidt@owl.openwall.com> 3.0pl2-owl1
+* Tue Sep 09 2003 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl0.2
+- Applied the initial set of corrections.
+- Pass the optflags correctly.
+
+* Mon May 05 2003 Matthias Schmidt <schmidt@owl.openwall.com> 3.0pl2-owl0.1
 - Initial release (3.0pl2)
 - chroot patch for dhcpd and dhcrelay
 - Modified a client-patch from Red Hat
