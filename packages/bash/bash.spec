@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.20 2004/02/24 12:45:37 mci Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.21 2004/02/24 13:30:14 solar Exp $
 
 Version: 2.05
 Name: bash
@@ -185,7 +185,7 @@ fi
 
 %changelog
 * Tue Feb 24 2004 Michail Litvak <mci@owl.openwall.com> 2.05-owl7
-- Statically link with system readline. 
+- Statically link with system readline.
 
 * Fri Feb 20 2004 Michail Litvak <mci@owl.openwall.com> 2.05-owl6
 - Build with system readline.
