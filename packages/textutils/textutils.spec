@@ -1,4 +1,4 @@
-# $Id: Owl/packages/textutils/Attic/textutils.spec,v 1.8 2002/08/05 08:05:14 solar Exp $
+# $Id: Owl/packages/textutils/Attic/textutils.spec,v 1.9 2002/08/05 08:09:29 solar Exp $
 
 # The texinfo documentation for fileutils, sh-utils, and textutils is
 # currently provided by fileutils.
@@ -39,7 +39,6 @@ make
 %install
 rm -rf $RPM_BUILD_ROOT
 %makeinstall
-#make install DESTDIR=$RPM_BUILD_ROOT
 
 cd $RPM_BUILD_ROOT
 mkdir bin
