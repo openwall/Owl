@@ -406,14 +406,6 @@ for Owl itself any longer.)
 Support external wordlists and "31337" word mangling.
 
 
-	pam_userpass.
-
-[PRIORITY: medium]
-Place the conversation function into a library and use that rather
-than separate copies in other packages.  This has been done in ALT
-Linux and needs to be imported back.
-
-
 	patch.
 
 [PRIORITY: low]
@@ -621,4 +613,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.14 2003/03/28 03:13:22 solar Exp $
+$Id: Owl/doc/TODO,v 1.15 2003/04/12 15:54:12 solar Exp $
