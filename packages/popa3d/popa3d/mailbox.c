@@ -158,7 +158,7 @@ static int mailbox_parse(int init)
 				current = next; block -= length;
 			}
 		} else {
-/* No more LF's in the file buffer */
+/* No more LFs in the file buffer */
 			if (saved || block <= LINE_BUFFER_SIZE) {
 /* Have this line's beginning in the line buffer: combine them */
 /* Not enough data to process right now: buffer it */
@@ -246,7 +246,7 @@ static int mailbox_parse(int init)
 			msg.size = 0;
 		}
 
-/* Count this fragment, with LF's as CRLF, into the message size */
+/* Count this fragment, with LFs as CRLF, into the message size */
 		if (msg.data_offset)
 			msg.size += length + end;
 
@@ -296,7 +296,7 @@ static int mailbox_parse(int init)
 			break;
 
 		case 'X':
-/* Let the local delivery agent help generate unique ID's but don't blindly
+/* Let the local delivery agent help generate unique IDs but don't blindly
  * trust this header alone as it could just as easily come from the remote. */
 			fixed = eq(line, length, "X-Delivery-ID:", 14);
 			break;

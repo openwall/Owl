@@ -23,7 +23,7 @@ sources			source tree (original tarballs, etc)
 kernel			kernel sources and recommended patches
 Owl.mtree		mtree(8) specification of the above
 i?86, sparc*, alpha*	Owl binary packages
-iso			ISO-9660 images of Owl CD's
+iso			ISO-9660 images of Owl CDs
 
 Some of the subdirectories may use symlinks to files common to several
 Owl branches.  Thus, to download just one Owl branch you may need to
@@ -42,4 +42,4 @@ need both the CVS and the source trees.
 More documentation (including BUILD and INSTALL) is available in the
 CVS tree, under Owl/doc/.
 
-$Id: Owl/doc/DOWNLOAD,v 1.10 2002/05/08 15:38:27 solar Exp $
+$Id: Owl/doc/DOWNLOAD,v 1.11 2002/06/22 08:46:52 solar Exp $

@@ -10,7 +10,7 @@ an Owl CD or by using another Linux installation you may already have.
 If you don't already have an Owl CD, please see DOWNLOAD for locations
 where you may obtain the ISO-9660 CD images and burn one onto a CD-R.
 
-The Owl CD's for x86 are bootable, so if your machine supports booting
+The Owl CDs for x86 are bootable, so if your machine supports booting
 off a CD just do so.  Otherwise take the boot floppy image from the CD
 under /boot/floppy.image, write it onto a formatted 1.44 MB floppy
 (with dd(1) or an equivalent tool), and boot off the floppy.  In
@@ -18,7 +18,7 @@ either case, the boot loader will prompt you for your CD-ROM device
 which the kernel will use for the root filesystem.
 
 Owl should boot into single user mode.  At the root password prompt
-you can either just press Enter (as the CD's have a null password) or
+you can either just press Enter (as the CDs have a null password) or
 press Ctrl-D to let the system boot into multi-user right away (not
 recommended).  If you chose to enter a single user shell, you have a
 chance to optionally configure the CD-booted system by simply typing:
@@ -67,4 +67,4 @@ You may choose to configure the boot loader available with Owl (LILO
 or SILO, depending on the architecture), or you may use a boot loader
 already installed on the system (if any).
 
-$Id: Owl/doc/INSTALL,v 1.4 2002/03/13 04:51:09 solar Exp $
+$Id: Owl/doc/INSTALL,v 1.5 2002/06/22 08:46:52 solar Exp $

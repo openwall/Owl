@@ -109,7 +109,7 @@ now the default editor for crontab(1), edquota(8), the "fix command"
 New package: John the Ripper, a fast password cracker.
 
 2002/04/02	Package: vsftpd
-Updated to 1.0.2pre3, made use of the new option to hide numeric ID's.
+Updated to 1.0.2pre3, made use of the new option to hide numeric IDs.
 
 2002/04/01 -
 2002/04/02	Packages: iproute2, owl-cdrom, owl-startup,
@@ -441,7 +441,7 @@ Updated to 1.19.6 with some additional fixes.
 
 2001/10/03	Owl/doc/DOWNLOAD, Owl/doc/INSTALL
 Documented the availability and installation instructions for ISO-9660
-images of Owl CD's.
+images of Owl CDs.
 
 2001/10/02	Package: mktemp
 Updated to 1.3.1 (built-in $TMPDIR support).
@@ -501,7 +501,7 @@ that no user input would reach it.
 
 2001/07/28	Package: owl-cdrom
 New package: directory hierarchy changes and additional files needed
-for Owl bootable CD-ROM's.
+for Owl bootable CD-ROMs.
 
 2001/07/27	Package: links
 Updated to 0.96.
@@ -750,4 +750,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.102 2002/06/13 00:53:25 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.103 2002/06/22 08:46:52 solar Exp $

@@ -193,7 +193,7 @@
  * Locking method your system uses for user mailboxes. It is important
  * that you set this correctly.
  *
- * *BSD's use flock(2), others typically use fcntl(2).
+ * *BSDs use flock(2), others typically use fcntl(2).
  */
 #define LOCK_FCNTL			1
 #define LOCK_FLOCK			0

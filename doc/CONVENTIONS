@@ -120,7 +120,7 @@ this may be the case for various back-ports), ORIGIN should be set to
 "cvs" and WHAT to the date it corresponds to (as YYYYMMDD) plus the
 usual description of the patch.
 
-There're also some common WHAT's to use whenever applicable:
+There're also some common WHATs to use whenever applicable:
 
 Makefile	- Makefile* patches only (note the capitalization)
 bound		- bound checking (buffer and/or integer overflow fixes)
@@ -153,4 +153,4 @@ options:
 This does not exactly match our preferred coding style and thus isn't
 to be used on sources already in Owl.
 
-$Id: Owl/doc/CONVENTIONS,v 1.10 2002/05/11 22:31:50 solar Exp $
+$Id: Owl/doc/CONVENTIONS,v 1.11 2002/06/22 08:46:52 solar Exp $
