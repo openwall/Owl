@@ -19,7 +19,7 @@
 -		    *name == '\n' || !isprint(*name))
 +		if (!((*name >= 'a' && *name <= 'z') ||
 +		    (*name >= '0' && *name <= '9') ||
-+		    (*name == '_') || (*name == '-'))
++		    (*name == '_') || (*name == '-')))
  			return 0;
  
  		name++;
