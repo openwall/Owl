@@ -1,9 +1,9 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.24 2003/04/12 13:30:10 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.25 2003/04/12 15:36:40 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.0
-Release: owl8
+Release: owl9
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -135,7 +135,7 @@ fi
 %post
 grep -q ^shadow: /etc/group || groupadd -g 42 shadow
 if grep -q '^shadow:[^:]*:42:' /etc/group; then
-	chgrp shadow /etc/shadow && chmod 440 /etc/shadow
+	chgrp -f shadow /etc/shadow && chmod 440 /etc/shadow || :
 	chgrp shadow /etc/login.defs && chmod 640 /etc/login.defs
 	chgrp shadow /etc/pam.d/chage-chfn-chsh && \
 		chmod 640 /etc/pam.d/chage-chfn-chsh
@@ -192,6 +192,10 @@ fi
 /etc/control.d/facilities/*
 
 %changelog
+* Sat Apr 12 2003 Solar Designer <solar@owl.openwall.com> 2:4.0.0-owl9
+- Don't let %post fail if group shadow exists, but /etc/shadow doesn't
+(tcb is in use).
+
 * Mon Apr 07 2003 Dmitry V. Levin <ldv@altlinux.org> 2:4.0.0-owl8
 - Updated pam_userpass support: build with libpam_userpass.
 
