@@ -1,4 +1,4 @@
-	Changes made between 0.6.1 and 0.6.2 (2003/03/09).
+	Changes made between 0.6.1 and 0.6.2 (2003/03/10).
 
 Rate-limit the "sessions limit reached" log message similarly to the
 per-source one; spotted by Michael Tokarev.
@@ -62,4 +62,4 @@ code size.
 Added a popa3d(8) manual page based on the one Camiel Dobbelaar wrote
 for OpenBSD.
 
-$Id: Owl/packages/popa3d/popa3d/CHANGES,v 1.1 2003/03/09 22:48:01 solar Exp $
+$Id: Owl/packages/popa3d/popa3d/CHANGES,v 1.2 2003/03/10 00:31:28 solar Exp $
