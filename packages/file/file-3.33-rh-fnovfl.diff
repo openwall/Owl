@@ -1,0 +1,11 @@
+--- file-3.30/file.c.fnovfl	Mon Jul 31 14:04:57 2000
++++ file-3.30/file.c	Mon Jul 31 14:05:02 2000
+@@ -151,7 +151,7 @@
+ 			break;
+ 		case 'i':
+ 			iflag++;
+-			if ((mime = malloc(strlen(magicfile) + 5)) != NULL) {
++			if ((mime = malloc(strlen(magicfile) + sizeof(".mime"))) != NULL) {
+ 				(void)strcpy(mime, magicfile);
+ 				(void)strcat(mime, ".mime");
+ 				magicfile = mime;
