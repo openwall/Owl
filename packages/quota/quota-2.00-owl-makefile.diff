@@ -1,0 +1,10 @@
+--- quota-2.00/Makefile.in.orig	Mon Jun 25 10:48:08 2001
++++ quota-2.00/Makefile.in	Mon Jun 25 10:48:32 2001
+@@ -68,7 +68,6 @@
+ 	-$(INSTALL) -m $(DEF_SBIN_MODE) \
+ 	quotacheck quotaon $(ROOTDIR)$(root_sbindir)
+ 	$(LN) quotaon $(ROOTDIR)$(root_sbindir)/quotaoff
+-	chown -h $(BIN_OWNER):$(BIN_GROUP) $(root_sbindir)/quotaoff
+ 	-$(INSTALL) -m $(DEF_SBIN_MODE) \
+ 	edquota repquota warnquota quotastats setquota $(ROOTDIR)$(sbindir)
+ 	-$(INSTALL) -m 644 rquota.h rquota.x $(ROOTDIR)$(includedir)/rpcsvc
