@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.8 2000/12/28 18:45:43 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.9 2001/01/06 20:56:12 solar Exp $
 
 REPOSITORY=Owl
 PACKAGES=$REPOSITORY/packages
@@ -189,6 +189,10 @@ if [ "`id -u`" = "0" -o ! -O $HOME ]; then
 	echo "Run this as the owner of $HOME (typically, as user \"build\")"
 	exit 1
 fi
+
+unset LANG LANGUAGE
+unset LC_ALL LC_COLLATE LC_CTYPE LC_MESSAGES LC_MONETARY LC_NUMERIC LC_TIME
+unset LINGUAS
 
 umask $UMASK
 cd $HOME || exit 1
