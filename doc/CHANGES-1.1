@@ -12,6 +12,31 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.0 and Owl-current.
 
+2003/03/20	kernel
+SECURITY FIX	Severity: low to high, local/remote, active/passive
+Updated to Linux 2.2.25-ow1.  Linux 2.2.25 fixes the kmod/ptrace race
+condition vulnerability discovered by Andrzej Szombierski.  The
+vulnerability could result in a local root compromise if the kernel is
+built with support for auto-loading modules (CONFIG_KMOD) and the path
+to a module loader program is specified in /proc/sys/kernel/modprobe.
+It is recommended that you not enable or use kmod, for both security
+and reliability reasons.  The kernels used on Owl CDs have never been
+built with support for kmod.  Owl startup scripts, unlike those used
+on some other distributions, don't setup a path to modprobe with the
+kernel.  This version of the kernel also corrects "Etherleak" issues
+with a number of Ethernet drivers (a common class of vulnerabilities
+publicized by Ofir Arkin and Josh Anderson of @stake) and a local DoS
+vulnerability with mmap(2) of /proc/<pid>/mem files discovered by
+Michal Zalewski of Bindview.
+References:
+http://marc.theaimsgroup.com/?l=linux-kernel&m=104791735604202
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0127
+http://www.atstake.com/research/advisories/2003/a010603-1.txt
+http://www.kb.cert.org/vuls/id/412115
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0001
+http://razor.bindview.com/publish/advisories/adv_mmap.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2002-1380
+
 2003/03/16	Package: man
 Updated to 1.5l.  This version fixes a bug discovered by Jack Lloyd
 where a specially crafted man page would result in an attempt to
@@ -185,4 +210,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.31 2003/03/16 20:35:26 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.32 2003/03/20 17:30:48 solar Exp $
