@@ -11,6 +11,7 @@ ftp://ftp1.ru.openwall.com/pub/Owl/	(Россия)
 ftp://ftp2.ru.openwall.com/pub/Owl/	(Россия)
 ftp://ftp.pl.openwall.com/pub/Owl/	(Польша)
 ftp://ftp.cz.openwall.com/pub/Owl/	(Чешская Республика)
+ftp://ftp.ua.openwall.com/pub/Owl/	(ТОЛЬКО Украина)
 ftp://gd.tuwien.ac.at/opsys/linux/Owl/	(Австрия)
 	http://gd.tuwien.ac.at/opsys/linux/Owl/
 	rsync://gd.tuwien.ac.at/opsys/linux/Owl/
@@ -60,4 +61,4 @@ CVSROOT=anoncvs@anoncvs.owl.openwall.com:/cvs
 использовать сжатие при любом способе доступа - обычно посредством
 указания опции -z3 для CVS или включив сжатие в настройках SSH-клиента.
 
-$Id: Owl/doc/ru/DOWNLOAD,v 1.6 2003/01/22 12:11:29 solar Exp $
+$Id: Owl/doc/ru/DOWNLOAD,v 1.7 2003/01/22 16:42:31 solar Exp $
