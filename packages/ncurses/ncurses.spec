@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ncurses/ncurses.spec,v 1.23 2004/05/14 14:25:31 solar Exp $
+# $Id: Owl/packages/ncurses/ncurses.spec,v 1.24 2004/11/02 03:26:05 solar Exp $
 
 %define major 5
 %define oldmajor 4
@@ -132,7 +132,8 @@ for I in curses unctrl eti form menu panel term; do
 done
 
 %ifarch sparc sparcv9 sparc64
-# XXX (GM): Warning: I cannot test if this block is necessary for current version of ncurses
+# XXX (GM): Warning: I cannot test if this block is necessary for current
+# version of ncurses.
 install -m 644 $RPM_SOURCE_DIR/ncurses-linux \
 	$RPM_BUILD_ROOT%_datadir/terminfo/l/linux
 install -m 644 $RPM_SOURCE_DIR/ncurses-linux-m \
