@@ -1,4 +1,4 @@
-# $Id: Owl/packages/texinfo/texinfo.spec,v 1.8 2002/07/12 08:06:34 mci Exp $
+# $Id: Owl/packages/texinfo/texinfo.spec,v 1.9 2002/07/13 01:18:29 solar Exp $
 
 Summary: Tools needed to create Texinfo format documentation files.
 Name: texinfo
@@ -16,7 +16,7 @@ Patch4: texinfo-4.2-rh-owl-data_size-fix.diff
 Patch5: texinfo-4.2-deb-fixes.diff
 PreReq: /sbin/install-info
 Prefix: %{_prefix}
-Requires: mktemp
+Requires: mktemp >= 1:1.3.1
 BuildRoot: /override/%{name}-%{version}
 
 %define __spec_install_post /usr/lib/rpm/brp-strip \; /usr/lib/rpm/brp-strip-comment-note
@@ -48,6 +48,7 @@ browser program for viewing Info files.
 unset LINGUAS || :
 %configure --mandir=%{_mandir} --infodir=%{_infodir}
 make
+gzip -9nf ChangeLog
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -83,7 +84,7 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS ChangeLog INTRODUCTION NEWS README TODO
+%doc AUTHORS ChangeLog* INTRODUCTION NEWS README TODO
 %doc info/README
 %{_prefix}/bin/makeinfo
 %{_prefix}/bin/texindex
@@ -101,6 +102,10 @@ fi
 /sbin/install-info
 
 %changelog
+* Sat Jul 13 2002 Solar Designer <solar@owl.openwall.com>
+- Require mktemp >= 1:1.3.1 as needed by the updated patches.
+- Package the ChangeLog gzipped as it grew too large.
+
 * Thu Jun 20 2002 Michail Litvak <mci@owl.openwall.com>
 - 4.2
 - reviewed patches, added patches from ALT
