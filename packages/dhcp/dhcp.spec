@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.5 2003/09/09 14:21:15 schmidt Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.6 2003/09/10 09:49:38 schmidt Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -83,12 +83,17 @@ make install DESTDIR=$RPM_BUILD_ROOT MANDIR=%{_mandir}
 
 cd $RPM_BUILD_ROOT
 
-mkdir -p $RPM_BUILD_ROOT/{etc/rc.d/init.d,var/lib/dhcp/state}
+mkdir -p $RPM_BUILD_ROOT/{etc/rc.d/init.d,etc/sysconfig,var/lib/dhcp/state}
 
 install -m 700 $RPM_SOURCE_DIR/dhcpd.init $RPM_BUILD_ROOT/etc/rc.d/init.d/dhcpd
 install -m 644 $RPM_SOURCE_DIR/dhcpd.conf.sample $RPM_BUILD_ROOT/
 
 touch $RPM_BUILD_ROOT/var/lib/dhcp/state/{dhcpd,dhclient}.leases
+
+cat <<EOF > $RPM_BUILD_ROOT/etc/sysconfig/dhcpd
+# Command line options here
+DHCPDARGS="-u dhcpd -j /var/lib/dhcp"
+EOF
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -128,23 +133,25 @@ fi
 %files client
 %defattr(-,root,root)
 /sbin/dhclient
+/sbin/dhclient-script
 %{_mandir}/man5/dhclient.conf.5*
 %{_mandir}/man5/dhclient.leases.5*
 %{_mandir}/man8/dhclient.8*
 %{_mandir}/man8/dhclient-script.8*
-%attr(-,dhcpd,dhcpd) %config /var/lib/dhcp/state/dhclient.leases
+%attr(0660,root,dhcpd) %config /var/lib/dhcp/state/dhclient.leases
 %endif
 
 %files server
 %defattr(-,root,root)
+%config /etc/sysconfig/dhcpd
 %config /etc/rc.d/init.d/dhcpd
 /usr/sbin/dhcpd
 %{_mandir}/man5/dhcpd.conf.5*
 %{_mandir}/man5/dhcpd.leases.5*
 %{_mandir}/man8/dhcpd.8*
-%attr(-,dhcpd,dhcpd) %dir /var/lib/dhcp/
-%attr(-,dhcpd,dhcpd) %dir /var/lib/dhcp/state
-%attr(-,dhcpd,dhcpd) %config /var/lib/dhcp/state/dhcpd.leases
+%attr(0770,root,dhcpd) %dir /var/lib/dhcp/
+%attr(0770,root,dhcpd) %dir /var/lib/dhcp/state
+%attr(0660,root,dhcpd) %config /var/lib/dhcp/state/dhcpd.leases
 
 %files relay
 %defattr(-,root,root)
@@ -154,7 +161,8 @@ fi
 %changelog
 * Tue Sep 09 2003 Matthias Schmidt <schmidt@owl.openwall.com> 3.0pl2-owl0.3
 - Minor changes in the drop-root patch
-- Set the permissions for /var/lib/dhcp correct
+- Set the permissions for /var/lib/dhcp correctly
+- Passing options to dhcpd via /etc/sysconfig/dhcpd
 
 * Tue Sep 09 2003 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl0.2
 - Applied the initial set of corrections.
