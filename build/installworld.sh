@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/installworld.sh,v 1.14 2004/09/30 09:33:25 galaxy Exp $
+# $Id: Owl/build/installworld.sh,v 1.15 2004/09/30 09:41:10 galaxy Exp $
 
 . installworld.conf
 
@@ -192,7 +192,7 @@ if [ "$NEED_FAKE" == yes ]; then
 		log "Removal of glibc-compat-libdb was failed"
 	fi
 	if ! $RPM $RPM_FLAGS --root $ROOT -ev libstdc++-compat; then
-		log "Removal of glibc-compat-libdb was failed"
+		log "Removal of libstdc++-compat was failed"
 	fi
 fi
 
