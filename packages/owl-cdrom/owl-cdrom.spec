@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.16 2003/10/19 21:31:14 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.17 2003/10/20 01:57:40 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
@@ -86,8 +86,9 @@ fi
 
 %changelog
 * Mon Oct 20 2003 Solar Designer <solar@owl.openwall.com> 0.7-owl1
-- In the "welcome" script, correctly locate documentation when multiple
-branches are available and explain how to set Cyrillic font.
+- In the "welcome" script, report the Owl version from /.Owl-CD-ROM,
+correctly locate documentation when multiple branches are available, and
+explain how to set Cyrillic font.
 
 * Sun Oct 19 2003 Solar Designer <solar@owl.openwall.com> 0.6-owl1
 - Updated .config for Linux 2.4.22-ow1, require at least a Pentium (need

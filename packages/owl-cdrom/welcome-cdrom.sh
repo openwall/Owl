@@ -1,11 +1,18 @@
-# $Id: Owl/packages/owl-cdrom/welcome-cdrom.sh,v 1.3 2003/10/19 21:31:14 solar Exp $
+# $Id: Owl/packages/owl-cdrom/welcome-cdrom.sh,v 1.4 2003/10/20 01:57:40 solar Exp $
+
+CD=/.Owl-CD-ROM
+if [ -s $CD -a -r $CD ]; then
+	VERSION=" `cat $CD`"
+fi
 
 echo
-echo 'Welcome to Openwall GNU/*/Linux (Owl)!'
+echo "Welcome to Openwall GNU/*/Linux (Owl)${VERSION}!"
 echo
 echo 'The Owl homepage is:'
 echo 'http://www.openwall.com/Owl/'
 echo
+
+unset CD VERSION
 
 test "`id -u`" = "0" || return 0
 
