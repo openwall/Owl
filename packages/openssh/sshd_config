@@ -1,12 +1,15 @@
-# $Id: Owl/packages/openssh/sshd_config,v 1.3 2000/11/20 06:59:36 solar Exp $
+# $Id: Owl/packages/openssh/sshd_config,v 1.4 2001/02/28 09:10:21 solar Exp $
 
-# This is ssh server systemwide configuration file.
+# This is the sshd server system-wide configuration file.  See sshd(8)
+# for more information.
 
 Port 22
 #Protocol 2,1
-ListenAddress 0.0.0.0
+#ListenAddress 0.0.0.0
 #ListenAddress ::
 HostKey /etc/ssh/ssh_host_key
+HostKey /etc/ssh/ssh_host_dsa_key
+#HostKey /etc/ssh/ssh_host_rsa_key
 ServerKeyBits 768
 LoginGraceTime 600
 KeyRegenerationInterval 3600

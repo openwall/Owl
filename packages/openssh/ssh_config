@@ -1,8 +1,8 @@
-# $Id: Owl/packages/openssh/ssh_config,v 1.4 2001/01/21 16:51:17 solar Exp $
+# $Id: Owl/packages/openssh/ssh_config,v 1.5 2001/02/28 09:10:21 solar Exp $
 
-# This is ssh client systemwide configuration file.  This file provides 
-# defaults for users, and the values can be changed in per-user configuration
-# files or on the command line.
+# This is ssh client systemwide configuration file.  See ssh(1) for more
+# information.  This file provides defaults for users, and the values can
+# be changed in per-user configuration files or on the command line.
 
 # Configuration data is parsed as follows:
 #  1. command line options
@@ -15,9 +15,9 @@
 # Site-wide defaults for various options
 
 # Host *
-#   ForwardAgent yes
-#   ForwardX11 yes
-#   RhostsAuthentication yes
+#   ForwardAgent no
+#   ForwardX11 no
+#   RhostsAuthentication no
 #   RhostsRSAAuthentication yes
 #   RSAAuthentication yes
 #   PasswordAuthentication yes
@@ -27,8 +27,11 @@
 #   CheckHostIP yes
 #   StrictHostKeyChecking ask
 #   IdentityFile ~/.ssh/identity
+#   IdentityFile ~/.ssh/id_dsa
+#   IdentityFile ~/.ssh/id_rsa1
+#   IdentityFile ~/.ssh/id_rsa2
 #   Port 22
-#   Protocol 2,1
+#   Protocol 1,2
 #   Cipher blowfish
 #   EscapeChar ~
 
@@ -36,6 +39,6 @@
 Host *
 	ForwardAgent no
 	ForwardX11 no
-	FallBackToRsh no
 	RhostsAuthentication no
+	FallBackToRsh no
 	Cipher blowfish
