@@ -5,8 +5,8 @@
            if (!t) t = ttyname(1); /* stdout */
            if (!t) goto err;
 -          strcpy(tty,t);
-+	  tty[0]='\0';
-+          strncat(tty,t,sizeof(tty));
++          tty[0] = '\0';
++          strncat(tty, t, sizeof(tty) - 1);
            if (strncmp(tty,"/dev/tty",8) || !isdigit(tty[8]))
              goto err;
            conn->vc=atoi(tty+8);
