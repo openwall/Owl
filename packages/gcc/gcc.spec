@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.32 2004/09/10 07:23:02 galaxy Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.33 2004/11/02 02:58:32 solar Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -30,7 +30,7 @@
 Summary: C compiler from the GNU Compiler Collection.
 Name: gcc
 Version: 3.2.2
-Release: owl1.6
+Release: owl2
 Epoch: 1
 License: GPL
 Group: Development/Languages
@@ -620,7 +620,7 @@ fi
 %endif
 
 %changelog
-* Thu Sep 02 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.2.2-owl1.6
+* Thu Sep 02 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.2.2-owl2
 - Imported into Owl-current
 - Removed duplicate entry in filelist for include directory
 
