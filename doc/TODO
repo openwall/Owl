@@ -486,7 +486,9 @@ Re-enable IPv6 in the client once glibc is fixed.
 	traceroute.
 
 [PRIORITY: medium]
-Replace with Olaf Kirch's after we fully migrate to Linux 2.4.x.
+Replace with Olaf Kirch's.  URLs:
+http://rechner.lst.de/~okir/traceroute/
+ftp://ftp.lst.de/pub/people/okir/traceroute
 
 
 	vim.
@@ -525,4 +527,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.47 2004/11/11 19:24:21 solar Exp $
+$Id: Owl/doc/TODO,v 1.48 2004/11/13 01:54:59 solar Exp $
