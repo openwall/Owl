@@ -1,11 +1,11 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.7 2000/11/20 06:59:36 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.8 2000/12/01 20:26:04 solar Exp $
 
 # Version of OpenSSH
 %define oversion 2.3.0p1
 Summary: OpenSSH free Secure Shell (SSH) implementation
 Name: openssh
 Version: %{oversion}
-Release: 1owl
+Release: 2owl
 URL: http://www.openssh.com/
 Source0: http://violet.ibs.com.au/openssh/files/openssh-%{oversion}.tar.gz
 Source1: sshd.pam
@@ -37,50 +37,50 @@ Obsoletes: ssh-clients
 Summary: OpenSSH Secure Shell protocol server (sshd)
 Group: System Environment/Daemons
 Obsoletes: ssh-server
-PreReq: openssh chkconfig >= 0.9 pam_userpass /dev/urandom
+PreReq: openssh, chkconfig >= 0.9, pam_userpass, /dev/urandom
 
 %description
-Ssh (Secure Shell) a program for logging into a remote machine and for
-executing commands in a remote machine.  It is intended to replace
+SSH (Secure Shell) is a program for logging into a remote machine and for
+executing commands on a remote machine.  It is intended to replace
 rlogin and rsh, and provide secure encrypted communications between
 two untrusted hosts over an insecure network.  X11 connections and
 arbitrary TCP/IP ports can also be forwarded over the secure channel.
 
 OpenSSH is OpenBSD's rework of the last free version of SSH, bringing it
-up to date in terms of security and features, as well as removing all 
-patented algorithms to seperate libraries (OpenSSL).
+up to date in terms of security and features, as well as removing all
+patented algorithms to separate libraries (OpenSSL).
 
 This package includes the core files necessary for both the OpenSSH
 client and server.  To make this package useful, you should also
 install openssh-clients, openssh-server, or both.
 
 %description clients
-Ssh (Secure Shell) a program for logging into a remote machine and for
-executing commands in a remote machine.  It is intended to replace
+SSH (Secure Shell) is a program for logging into a remote machine and for
+executing commands on a remote machine.  It is intended to replace
 rlogin and rsh, and provide secure encrypted communications between
 two untrusted hosts over an insecure network.  X11 connections and
 arbitrary TCP/IP ports can also be forwarded over the secure channel.
 
 OpenSSH is OpenBSD's rework of the last free version of SSH, bringing it
-up to date in terms of security and features, as well as removing all 
-patented algorithms to seperate libraries (OpenSSL).
+up to date in terms of security and features, as well as removing all
+patented algorithms to separate libraries (OpenSSL).
 
 This package includes the clients necessary to make encrypted connections
 to SSH servers.
 
 %description server
-Ssh (Secure Shell) a program for logging into a remote machine and for
-executing commands in a remote machine.  It is intended to replace
+SSH (Secure Shell) is a program for logging into a remote machine and for
+executing commands on a remote machine.  It is intended to replace
 rlogin and rsh, and provide secure encrypted communications between
 two untrusted hosts over an insecure network.  X11 connections and
 arbitrary TCP/IP ports can also be forwarded over the secure channel.
 
 OpenSSH is OpenBSD's rework of the last free version of SSH, bringing it
-up to date in terms of security and features, as well as removing all 
-patented algorithms to seperate libraries (OpenSSL).  
-This package contains the secure shell daemon. The sshd is the server 
-part of the secure shell protocol and allows ssh clients to connect to 
-your host.
+up to date in terms of security and features, as well as removing all
+patented algorithms to separate libraries (OpenSSL).
+
+This package contains the secure shell daemon, sshd, which allows SSH
+clients to connect to your host.
 
 %prep
 %setup -q
@@ -110,6 +110,13 @@ install -m 600 %{SOURCE4} $RPM_BUILD_ROOT/etc/ssh/sshd_config
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%pre server
+rm -f /var/run/sshd.restart
+if [ $1 -ge 2 ]; then
+	/etc/rc.d/init.d/sshd status && touch /var/run/sshd.restart || :
+	/etc/rc.d/init.d/sshd stop || :
+fi
+
 %post server
 /sbin/chkconfig --add sshd
 if [ ! -f /etc/ssh/ssh_host_key -o ! -s /etc/ssh/ssh_host_key ]; then
@@ -118,15 +125,16 @@ fi
 if [ ! -f /etc/ssh/ssh_host_dsa_key -o ! -s /etc/ssh/ssh_host_dsa_key ]; then
 	/usr/bin/ssh-keygen -d -f /etc/ssh/ssh_host_dsa_key -N '' >&2
 fi
-if test -r /var/run/sshd.pid
-then
-	/etc/rc.d/init.d/sshd restart >&2
+if [ -f /var/run/sshd.restart ]; then
+	/etc/rc.d/init.d/sshd start
+elif [ -f /var/run/sshd.pid ]; then
+	/etc/rc.d/init.d/sshd restart
 fi
+rm -f /var/run/sshd.restart
 
 %preun server
-if [ "$1" = 0 ]
-then
-	/etc/rc.d/init.d/sshd stop >&2
+if [ $1 -eq 0 ]; then
+	/etc/rc.d/init.d/sshd stop || :
 	/sbin/chkconfig --del sshd
 fi
 
@@ -164,6 +172,11 @@ fi
 %attr(0700,root,root) %config /etc/rc.d/init.d/sshd
 
 %changelog
+* Fri Dec 01 2000 Solar Designer <solar@owl.openwall.com>
+- Adjusted sshd.init for owl-startup.
+- Restart sshd after package upgrades in an owl-startup compatible way.
+- Corrected package descriptions.
+
 * Mon Nov 20 2000 Solar Designer <solar@owl.openwall.com>
 - Updated to 2.3.0p1.
 
