@@ -1,9 +1,9 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.16 2001/10/07 11:06:45 solar Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.17 2001/11/13 13:02:38 mci Exp $
 
 Summary: A screen manager that supports multiple logins on one terminal.
 Name: screen
-Version: 3.9.9
-Release: 6owl
+Version: 3.9.10
+Release: 1owl
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%{version}.tar.gz
@@ -17,9 +17,9 @@ Patch5: screen-3.9.9-deb-owl-mans.diff
 Patch6: screen-3.9.9-rh-deletehack.diff
 Patch7: screen-3.9.9-rh-docbug.diff
 Patch8: screen-3.9.9-owl-telnet.diff
-Patch9: screen-3.9.9-owl-configure.diff
+Patch9: screen-3.9.10-owl-tmp.diff
 Prefix: %{_prefix}
-BuildRoot: /var/rpm-buildroot/%{name}-root
+BuildRoot: /override/%{name}-%{version}
 Prereq: /sbin/install-info, pam_userpass, utempter
 BuildPreReq: pam-devel >= 0.75-11owl
 
@@ -91,6 +91,10 @@ fi
 %config(noreplace) /etc/pam.d/screen
 
 %changelog
+* Tue Nov 13 2001 Michail Litvak <mci@owl.openwall.com>
+- 3.9.10
+- more tmp fixes in configure
+
 * Sun Oct 07 2001 Solar Designer <solar@owl.openwall.com>
 - Updates to appl_userpass.c to support building against Linux-PAM 0.74+.
 
