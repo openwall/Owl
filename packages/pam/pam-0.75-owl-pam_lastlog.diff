@@ -1,6 +1,6 @@
 diff -ur pam-0.75.orig/modules/pam_lastlog/pam_lastlog.c pam-0.75/modules/pam_lastlog/pam_lastlog.c
 --- pam-0.75.orig/modules/pam_lastlog/pam_lastlog.c	Mon Apr 23 22:14:19 2001
-+++ pam-0.75/modules/pam_lastlog/pam_lastlog.c	Mon Nov 19 07:11:56 2001
++++ pam-0.75/modules/pam_lastlog/pam_lastlog.c	Mon Nov 19 07:45:03 2001
 @@ -84,7 +84,7 @@
      va_list args;
  
@@ -149,3 +149,13 @@ diff -ur pam-0.75.orig/modules/pam_lastlog/pam_lastlog.c pam-0.75/modules/pam_la
      }
      uid = pwd->pw_uid;
      pwd = NULL;                                         /* tidy up */
+@@ -441,6 +454,9 @@
+ 			 ,const char **argv)
+ {
+     const char *terminal_line;
++
++    if (!(announce & LASTLOG_WTMP))
++	return PAM_SUCCESS;
+ 
+     pam_get_item(pamh, PAM_TTY, (const void **)&terminal_line);
+ 
