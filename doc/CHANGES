@@ -12,6 +12,24 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/03/22 -
+2002/03/24	Package: acct
+Applied bug fixes to sa(8) to properly report real time in minutes or
+seconds and to lastcomm(1) to properly report process creation times
+on 64-bit architectures.  Heavy documentation corrections and cleanups
+(both man pages and texinfo).
+
+2002/03/22	Package: popa3d
+Re-worked all of the UIDL calculation, adding support for multi-line
+headers and re-considering which headers to use.
+
+2002/03/13 -
+2002/03/21	Package: pam_mktemp
+Make the /tmp/.private directory append-only (where supported) such
+that the directory or its subdirectories don't get removed by a /tmp
+cleaner.  A third-party /tmp cleaner may complain, but that isn't as
+bad as removing the directories could be.
+
 2002/03/20	Packages: glibc, pam_mktemp, pam_passwdqc,
 		pam_userpass, popa3d, scanlogd, tcb;
 		Owl/build/buildworld.sh, Owl/build/Makefile
@@ -620,4 +638,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.78 2002/03/20 18:50:20 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.79 2002/03/24 19:55:35 solar Exp $
