@@ -1,3 +1,5 @@
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.2 2000/07/27 00:07:01 solar Exp $
+
 Summary: Initial set of configuration files
 Name: owl-etc
 Version: 0.0
