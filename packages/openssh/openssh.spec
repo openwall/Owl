@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.20 2001/05/06 23:51:18 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.21 2001/05/06 23:56:30 solar Exp $
 
 Summary: OpenSSH free Secure Shell (SSH) implementation
 Name: openssh
 Version: 2.9p1
-Release: 0.4owl
+Release: 1owl
 URL: http://www.openssh.com/
 Source0: ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-%{version}.tar.gz
 Source1: sshd.pam
