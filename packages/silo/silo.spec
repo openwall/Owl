@@ -1,4 +1,4 @@
-# $Id: Owl/packages/silo/silo.spec,v 1.2 2001/01/05 18:40:45 kad Exp $
+# $Id: Owl/packages/silo/silo.spec,v 1.3 2001/01/06 06:31:17 solar Exp $
 
 %define 	SILO_NO_CAT	'yes'
 
@@ -13,14 +13,12 @@ Patch:		silo-0.9.9-owl-nocat.diff
 ExclusiveArch: 	sparc sparcv9 sparc64
 BuildRoot: 	/var/rpm-buildroot/%{name}-root
 
-
 %description
-The silo package installs the SILO (Sparc Improved LOader) boot
-loader, which you'll need to boot Red Hat Linux on a SPARC.  SILO
-installs onto your system's boot block and can be configured to boot
-Linux, Solaris and SunOS.
+The silo package installs the Sparc Improved boot LOader (SILO), which
+you'll need to boot Linux on a SPARC.  SILO installs onto your system's
+boot block and can be configured to boot Linux, Solaris and SunOS.
 
-%prep 
+%prep
 %setup -q -n silo-%{version}
 
 %if "%{SILO_NO_CAT}"=="'yes'"
