@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vim/vim.spec,v 1.3 2000/12/15 17:37:42 kad Exp $
+# $Id: Owl/packages/vim/vim.spec,v 1.4 2001/01/06 14:43:14 solar Exp $
 
 %define vimversion vim60p
 
@@ -22,7 +22,7 @@
 Summary: 	The VIM editor.
 Name: 		vim
 Version: 	6.0
-Release: 	0.16owl
+Release: 	0.17owl
 Copyright: 	freeware
 Group: 		Applications/Editors
 Source0: 	ftp://ftp.vim.org/pub/vim/unreleased/unix/vim-%{version}p-src.tar.gz
@@ -139,6 +139,7 @@ perl -pi -e "s,\\\$VIMRUNTIME,/usr/share/vim/%{vimversion},g" os_unix.h
 perl -pi -e "s,\\\$VIM,/usr/share/vim/%{vimversion}/macros,g" os_unix.h
 
 %if "%{NEED_X11}"=="'yes'"
+export ac_cv_func_mkstemp=yes \
 %configure \
 	--with-features=huge \
 	--enable-perlinterp --disable-tclinterp \
@@ -150,6 +151,7 @@ cp vim gvim
 make clean
 %endif
 
+export ac_cv_func_mkstemp=yes \
 %configure \
 	--prefix=/usr \
 	--with-features=huge \
@@ -160,6 +162,7 @@ make
 cp vim enhanced-vim
 make clean
 
+export ac_cv_func_mkstemp=yes \
 %configure \
 	--prefix='${DEST}'/usr \
 	--with-features=tiny \
@@ -258,6 +261,10 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Sat Jan 06 2001 Solar Designer <solar@owl.openwall.com>
+- Enable mkstemp explicitly, not rely on configure (this will make sense
+once vim uses mkstemp for real).
+
 * Fri Dec 15 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - disable gpm
 
