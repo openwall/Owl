@@ -55,6 +55,7 @@ mit mehreren Iterationen von "make buildworld" und "make installworld".
 Hier einige Übersetzungszeiten (Stunden:Minuten), damit du weist
 was dich erwartet:
 
+Dual Pentium III, 1.266Mhz GHz, 2 GB		0:29
 Dual Pentium III, 1 GHz, 2 GB			0:36
 Dual Pentium III, 800 MHz, 512 MB		0:45
 Athlon, 1 GHz, 256 MB				1:10
@@ -117,4 +118,4 @@ Wir betrachten das Übersetzen von SRPM's und das Fehlen des automatischen
 Lösens der Abhängigkeiten als Bug in der Arbeitsumgebung. Wir werden das
 eventuell fixen.
 
-$Id: Owl/doc/de/BUILD,v 1.2 2002/06/12 23:24:03 solar Exp $
+$Id: Owl/doc/de/BUILD,v 1.3 2002/06/13 13:10:19 schmidt Exp $
