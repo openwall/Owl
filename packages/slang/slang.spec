@@ -1,9 +1,9 @@
-# $Id: Owl/packages/slang/Attic/slang.spec,v 1.7 2003/10/30 21:15:49 solar Exp $
+# $Id: Owl/packages/slang/Attic/slang.spec,v 1.8 2004/07/19 23:54:44 mci Exp $
 
 Summary: The shared library for the S-Lang extension language.
 Name: slang
 Version: 1.4.6
-Release: owl2
+Release: owl3
 License: GPL
 Group: System Environment/Libraries
 URL: http://www.s-lang.org
@@ -11,7 +11,7 @@ Source: ftp://ftp.jedsoft.org/pub/davis/slang/v1.4/slang-%version.tar.bz2
 Patch0: slang-1.4.6-owl-fixes.diff
 Patch1: slang-1.4.6-owl-tmp.diff
 PreReq: /sbin/ldconfig
-BuildRequires: perl
+BuildRequires: sed >= 4.0.9
 BuildRoot: /override/%name-%version
 
 %description
@@ -39,7 +39,7 @@ applications is also included.
 %patch1 -p1
 
 %build
-perl -pi -e 's/(ELF_CFLAGS=".*)-O2(.*)/$1'"$RPM_OPT_FLAGS"'$2/' configure
+sed -i 's,\(ELF_CFLAGS=".*\)-O2\(.*\),\1'"$RPM_OPT_FLAGS"'\2,' configure
 export ac_cv_func_snprintf=yes ac_cv_func_vsnprintf=yes \
 %configure \
 	--includedir=%_includedir/slang \
@@ -69,6 +69,9 @@ mkdir -p $RPM_BUILD_ROOT/usr/include/slang
 %_includedir/slang
 
 %changelog
+* Tue Jul 20 2004 Michail Litvak <mci@owl.openwall.com> 1.4.6-owl3
+- Use sed -i instead perl.
+
 * Sat Oct 12 2002 Solar Designer <solar@owl.openwall.com> 1.4.6-owl2
 - Updated to 1.4.6.
 - Reviewed all of the library code for environment variable uses and
