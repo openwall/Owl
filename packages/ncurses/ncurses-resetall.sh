@@ -1,14 +1,14 @@
 #!/bin/sh
 
-# Xterm codes can be found here: 
+# xterm codes can be found here: 
 # http://babayaga.math.fu-berlin.de/~rxvt/refer/refer.html
-if [    a"$TERM" = axterm -o a"$TERM" = axterm-color -o \
-        a"$TERM" = akterm -o a"$TERM" = arxvt ]; then
-        # Disable X11 XTerm mouse reporting
-        echo '[?1000l'
-        
-        # Reset foreground and background colors
-        echo '[0m'
+if [ "$TERM" = xterm -o "$TERM" = xterm-color -o \
+    "$TERM" = kterm -o "$TERM" = rxvt ]; then
+	# Disable X11 xterm mouse reporting
+	echo -en '\033[?1000l'
+
+	# Reset foreground and background colors
+	echo -en '\033[0m'
 fi
 
 # Reset the terminal
@@ -16,6 +16,5 @@ fi
 
 # Reset terminal size
 if [ -f /usr/X11R6/bin/resize ]; then
-        eval `resize`
+	eval `/usr/X11R6/bin/resize`
 fi
-
