@@ -1,0 +1,63 @@
+diff -ur pwdb-0.61.orig/libpwdb/pwdb/pwdb_error.c pwdb-0.61/libpwdb/pwdb/pwdb_error.c
+--- pwdb-0.61.orig/libpwdb/pwdb/pwdb_error.c	Wed Oct  7 00:58:43 1998
++++ pwdb-0.61/libpwdb/pwdb/pwdb_error.c	Mon Aug  7 05:30:45 2000
+@@ -131,8 +131,19 @@
+         const pwdb_type *tmp;
+ 
+         sprintf(buffer, "pwdb source type:");
+-        for (tmp=p->source; tmp && *tmp != _PWDB_MAX_TYPES; ++tmp)
++        for (tmp=p->source; tmp && *tmp != _PWDB_MAX_TYPES; ++tmp) {
++#if 0
++/* This sprintf is broken: uses 'buffer' for both input and output */
+             sprintf(buffer, "%s %s", buffer, pwdb_db_name(*tmp));
++#else
++	    if (strlen(buffer) + 1 + strlen(pwdb_db_name(*tmp)) >=
++	      sizeof(buffer))
++		break;
++	    strncat(buffer, " ", sizeof(buffer) - strlen(buffer) - 1);
++	    strncat(buffer, pwdb_db_name(*tmp),
++		sizeof(buffer) - strlen(buffer) - 1);
++#endif
++	}
+ 	D(("%s",buffer));
+     }
+ 
+@@ -149,8 +160,14 @@
+                 s = (char *) malloc(entry->max_strval_size);
+                 if (!s)
+                     for (i=0; i < entry->length; i++) {
++#if 0
+                         sprintf(buffer, "%s%d[%c] "
+ 				, buffer
++#else
++			snprintf(buffer + strlen(buffer),
++				sizeof(buffer) - strlen(buffer),
++				"%d[%c] "
++#endif
+ 				, (unsigned char)((char *)(entry->value))[i]
+ 				, isprint(((char *)(entry->value))[i]) ?
+ 				((char *)(entry->value))[i]:'_');
+@@ -158,13 +175,23 @@
+                 else {
+                     memset(s, 0, entry->max_strval_size);
+                     (*entry->strvalue)(entry->value,s,entry->length);
++#if 0
+                     sprintf(buffer,"%s%s",buffer,s);
++#else
++		    strncat(buffer, s, sizeof(buffer) - strlen(buffer) - 1);
++#endif
+                     free(s);
+                 }
+             } else {
+                 for (i=0; i < entry->length; i++) {
++#if 0
+                     sprintf(buffer, "%s%d[%c] "
+ 			    , buffer
++#else
++		    snprintf(buffer + strlen(buffer),
++			    sizeof(buffer) - strlen(buffer),
++			    "%d[%c] "
++#endif
+ 			    , (unsigned char)((char *)(entry->value))[i]
+ 			    , isprint(((char *)(entry->value))[i]) ?
+ 			    ((char *)(entry->value))[i]:'_');

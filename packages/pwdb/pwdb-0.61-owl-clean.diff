@@ -1,0 +1,78 @@
+diff -ur pwdb-0.61.owl-fgets/libpwdb/shadow/gshadow.c pwdb-0.61/libpwdb/shadow/gshadow.c
+--- pwdb-0.61.owl-fgets/libpwdb/shadow/gshadow.c	Mon Aug  7 05:53:54 2000
++++ pwdb-0.61/libpwdb/shadow/gshadow.c	Mon Aug  7 06:46:57 2000
+@@ -92,6 +92,7 @@
+ 
+ struct __pwdb_sgrp * __pwdb_fgetsgent (FILE  *fp)
+ {
++	struct __pwdb_sgrp *result;
+ 	char	buf[sizeof sgrbuf];
+ 	char	*cp;
+ 	int	c;
+@@ -103,12 +104,15 @@
+ 	{
+ 		if (buf[0] && *(cp = buf + strlen(buf) - 1) == '\n') {
+ 			*cp = '\0';
+-			return (__pwdb_sgetsgent (buf));
++			result = __pwdb_sgetsgent (buf);
++			memset(buf, 0, cp - buf + 1);
++			return result;
+ 		}
+ 		do {
+ 			c = getc(fp);
+ 		} while (c != EOF && c != '\n');
+ 	}
++	memset(buf, 0, sizeof(buf));
+ 	return 0;
+ }
+ 
+diff -ur pwdb-0.61.owl-fgets/libpwdb/shadow/sgroupio.c pwdb-0.61/libpwdb/shadow/sgroupio.c
+--- pwdb-0.61.owl-fgets/libpwdb/shadow/sgroupio.c	Mon Aug  7 06:11:57 2000
++++ pwdb-0.61/libpwdb/shadow/sgroupio.c	Mon Aug  7 06:49:15 2000
+@@ -88,6 +88,7 @@
+ 	int	i;
+ 
+ 	free (sgrent->sg_name);
++	memset(sgrent->sg_passwd, 0, strlen(sgrent->sg_passwd));
+ 	free (sgrent->sg_passwd);
+ 
+ 	for (i = 0;sgrent->sg_mem[i];i++)
+diff -ur pwdb-0.61.owl-fgets/libpwdb/shadow/shadow.c pwdb-0.61/libpwdb/shadow/shadow.c
+--- pwdb-0.61.owl-fgets/libpwdb/shadow/shadow.c	Mon Aug  7 06:16:20 2000
++++ pwdb-0.61/libpwdb/shadow/shadow.c	Mon Aug  7 06:45:34 2000
+@@ -185,6 +185,7 @@
+ 
+ struct __pwdb_spwd * __pwdb_fgetspent (FILE *fp)
+ {
++	struct __pwdb_spwd *result;
+ 	char	buf[BUFSIZ];
+ 	char	*cp;
+ 	int	c;
+@@ -198,12 +199,15 @@
+ 		shadow_file_end = 0;                /* we read something */
+ 		if (buf[0] && *(cp = buf + strlen(buf) - 1) == '\n') {
+ 			*cp = '\0';
+-			return (__pwdb_sgetspent (buf));
++			result = __pwdb_sgetspent (buf);
++			memset(buf, 0, cp - buf + 1);
++			return result;
+ 		}
+ 		do {
+ 			c = getc(fp);
+ 		} while (c != EOF && c != '\n');
+ 	}
++	memset(buf, 0, sizeof(buf));
+ 	return 0;
+ }
+ 
+diff -ur pwdb-0.61.owl-fgets/libpwdb/shadow/shadowio.c pwdb-0.61/libpwdb/shadow/shadowio.c
+--- pwdb-0.61.owl-fgets/libpwdb/shadow/shadowio.c	Mon Aug  7 06:17:57 2000
++++ pwdb-0.61/libpwdb/shadow/shadowio.c	Mon Aug  7 06:49:45 2000
+@@ -72,6 +72,7 @@
+ static void __pwdb_spw_free (const struct __pwdb_spwd *spwd)
+ {
+ 	free (spwd->sp_namp);
++	memset(spwd->sp_pwdp, 0, strlen(spwd->sp_pwdp));
+ 	free (spwd->sp_pwdp);
+ }
+ 

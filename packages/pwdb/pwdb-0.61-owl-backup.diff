@@ -1,0 +1,23 @@
+--- pwdb-0.61.orig/libpwdb/common/commonio.c	Wed Oct  7 00:58:43 1998
++++ pwdb-0.61/libpwdb/common/commonio.c	Mon Aug  7 06:35:52 2000
+@@ -128,17 +128,18 @@
+ 	int c;
+ 
+ 	unlink(backup);
++	if (fseek(fp, 0, SEEK_SET))
++		return -1;
+ 	bkfp = fopen_with_umask(backup, "w", 0777);
+ 	if (bkfp == NULL)
+ 		return -1;
+-	rewind(fp);
+ 	while ((c = getc(fp)) != EOF) {
+ 		if (putc(c, bkfp) == EOF) {
+ 			fclose(bkfp);
+ 			return -1;
+ 		}
+ 	}
+-	if (fflush(bkfp)) {
++	if (ferror(fp) || ferror(bkfp) || fflush(bkfp)) {
+ 		fclose(bkfp);
+ 		return -1;
+ 	}
