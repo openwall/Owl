@@ -1,17 +1,20 @@
+# $Id: Owl/packages/openssh/openssh.spec,v 1.3 2000/07/12 02:58:16 solar Exp $
+
 # Version of OpenSSH
 %define oversion 2.1.1p2
 Summary: OpenSSH free Secure Shell (SSH) implementation
 Name: openssh
 Version: %{oversion}
-Release: 2owl
+Release: 3owl
 URL: http://www.openssh.com/
 Source0: http://violet.ibs.com.au/openssh/files/openssh-%{oversion}.tar.gz
 Source1: sshd.pam
 Source2: sshd.init
+Source3: ssh_config
+Source4: sshd_config
 Patch0: openssh-2.1.1p2-owl-buildroot.diff
 Patch1: openssh-2.1.1p2-owl-crypt-hack.diff
 Patch2: openssh-2.1.1p2-owl-pam_userpass.diff
-Patch3: openssh-2.1.1p2-owl-config.diff
 Copyright: BSD
 Group: Applications/Internet
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
@@ -79,64 +82,17 @@ This package contains the secure shell daemon. The sshd is the server
 part of the secure shell protocol and allows ssh clients to connect to 
 your host.
 
-%changelog
-* Sun Jul  9 2000 Solar Designer <solar@false.com>
-- Imported current Damien Miller's spec file, removed the X11-specific
-stuff, fixed buildroot issues.
-- sshd.pam and sshd.init are now taken from separate files, not the
-original package.
-- Added -lcrypt so that PAM modules may access crypt(3); the OpenSSL
-package should also have a patch applied so that it doesn't export its
-crypt() function as a symbol, but only #define it in the appropriate
-header file.  Other things might break (look for "DES corruption" in
-ChangeLog), but this is better than getting failed authentication with
-modern hashes and I believe current glibc is careful not to export
-internal functions and use weak aliases when exporting things.
-- Patched PAM authentication to use pam_userpass rather than assume
-that modules can only ask for a password.
-- Changed default ssh*_config.
-- non-SUID installation by default.
-
-* Mon Jun 12 2000 Damien Miller <djm@mindrot.org>
-- Glob manpages to catch compressed files
-* Wed Mar 15 2000 Damien Miller <djm@ibs.com.au>
-- Updated for new location
-- Updated for new gnome-ssh-askpass build
-* Sun Dec 26 1999 Damien Miller <djm@mindrot.org>
-- Added Jim Knoble's <jmknoble@pobox.com> askpass
-* Mon Nov 15 1999 Damien Miller <djm@mindrot.org>
-- Split subpackages further based on patch from jim knoble <jmknoble@pobox.com>
-* Sat Nov 13 1999 Damien Miller <djm@mindrot.org>
-- Added 'Obsoletes' directives
-* Tue Nov 09 1999 Damien Miller <djm@ibs.com.au>
-- Use make install
-- Subpackages
-* Mon Nov 08 1999 Damien Miller <djm@ibs.com.au>
-- Added links for slogin
-- Fixed perms on manpages
-* Sat Oct 30 1999 Damien Miller <djm@ibs.com.au>
-- Renamed init script
-* Fri Oct 29 1999 Damien Miller <djm@ibs.com.au>
-- Back to old binary names
-* Thu Oct 28 1999 Damien Miller <djm@ibs.com.au>
-- Use autoconf
-- New binary names
-* Wed Oct 27 1999 Damien Miller <djm@ibs.com.au>
-- Initial RPMification, based on Jan "Yenya" Kasprzak's <kas@fi.muni.cz> spec.
-
 %prep
 
 %setup -q
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" \
 	./configure --prefix=/usr --sysconfdir=/etc/ssh \
-               --with-tcp-wrappers --with-ipv4-default \
-					--with-rsh=/usr/bin/rsh
+               --with-tcp-wrappers --with-ipv4-default --with-rsh=/usr/bin/rsh
 make DESTDIR=$RPM_BUILD_ROOT/
 
 %install
@@ -146,8 +102,10 @@ make install DESTDIR=$RPM_BUILD_ROOT/
 install -d $RPM_BUILD_ROOT/etc/pam.d/
 install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
 install -d $RPM_BUILD_ROOT/usr/libexec/ssh
-install -m600 %{SOURCE1} $RPM_BUILD_ROOT/etc/pam.d/sshd
-install -m700 %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
+install -m 600 %{SOURCE1} $RPM_BUILD_ROOT/etc/pam.d/sshd
+install -m 700 %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
+install -m 644 %{SOURCE3} $RPM_BUILD_ROOT/etc/ssh/ssh_config
+install -m 600 %{SOURCE4} $RPM_BUILD_ROOT/etc/ssh/sshd_config
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -203,3 +161,52 @@ fi
 %attr(0600,root,root) %config(noreplace) /etc/pam.d/sshd
 %attr(0755,root,root) %config /etc/rc.d/init.d/sshd
 
+%changelog
+* Wed Jul 12 2000 Solar Designer <solar@false.com>
+- Cleaned up the default ssh*_config.
+- The config files are now declared as separate Source's in this spec.
+- Moved this changelog to end of spec file.
+
+* Sun Jul  9 2000 Solar Designer <solar@false.com>
+- Imported current Damien Miller's spec file, removed the X11-specific
+stuff, fixed buildroot issues.
+- sshd.pam and sshd.init are now taken from separate files, not the
+original package.
+- Added -lcrypt so that PAM modules may access crypt(3); the OpenSSL
+package should also have a patch applied so that it doesn't export its
+crypt() function as a symbol, but only #define it in the appropriate
+header file.  Other things might break (look for "DES corruption" in
+ChangeLog), but this is better than getting failed authentication with
+modern hashes and I believe current glibc is careful not to export
+internal functions and use weak aliases when exporting things.
+- Patched PAM authentication to use pam_userpass rather than assume
+that modules can only ask for a password.
+- Changed default ssh*_config.
+- non-SUID installation by default.
+
+* Mon Jun 12 2000 Damien Miller <djm@mindrot.org>
+- Glob manpages to catch compressed files
+* Wed Mar 15 2000 Damien Miller <djm@ibs.com.au>
+- Updated for new location
+- Updated for new gnome-ssh-askpass build
+* Sun Dec 26 1999 Damien Miller <djm@mindrot.org>
+- Added Jim Knoble's <jmknoble@pobox.com> askpass
+* Mon Nov 15 1999 Damien Miller <djm@mindrot.org>
+- Split subpackages further based on patch from jim knoble <jmknoble@pobox.com>
+* Sat Nov 13 1999 Damien Miller <djm@mindrot.org>
+- Added 'Obsoletes' directives
+* Tue Nov 09 1999 Damien Miller <djm@ibs.com.au>
+- Use make install
+- Subpackages
+* Mon Nov 08 1999 Damien Miller <djm@ibs.com.au>
+- Added links for slogin
+- Fixed perms on manpages
+* Sat Oct 30 1999 Damien Miller <djm@ibs.com.au>
+- Renamed init script
+* Fri Oct 29 1999 Damien Miller <djm@ibs.com.au>
+- Back to old binary names
+* Thu Oct 28 1999 Damien Miller <djm@ibs.com.au>
+- Use autoconf
+- New binary names
+* Wed Oct 27 1999 Damien Miller <djm@ibs.com.au>
+- Initial RPMification, based on Jan "Yenya" Kasprzak's <kas@fi.muni.cz> spec.
