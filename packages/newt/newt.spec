@@ -1,4 +1,4 @@
-# $Id: Owl/packages/newt/Attic/newt.spec,v 1.4 2000/12/15 19:26:30 kad Exp $
+# $Id: Owl/packages/newt/Attic/newt.spec,v 1.5 2000/12/17 01:43:48 solar Exp $
 
 %define version 0.50.18
 
@@ -15,6 +15,7 @@ Patch0:		newt-0.50.18-owl-strcpy.diff
 Patch1:		newt-0.50.18-owl-notcl.diff
 Patch2:		newt-0.50.18-owl-nopython.diff
 Requires: 	slang
+BuildRequires:	slang
 %if "%{NEED_PYTHON}"=="'yes'"
 Provides: 	snack
 BuildRequires: 	python 
