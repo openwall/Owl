@@ -1,0 +1,33 @@
+Owl installation is currently more complicated than we'd like it to
+be.  This is going to change with future releases.
+
+At this stage, Owl doesn't include its own boot disks and installation
+tools.  Thus, you need to boot into some other Linux system to install
+Owl.  This other system needs to offer some GNU tools and RPM (version
+3.0.5 is recommended, earlier ones may not work), but it doesn't have
+to use RPM as its package manager.  You don't really have to install
+that other system first: its boot CD's could be sufficient, provided
+that you can mount a filesystem with Owl binary packages and CVS tree.
+
+Once you get a Linux system booted, the first thing you need to do is
+prepare the usual /usr/src/world setup, as explained in BUILD.  Then,
+partition your disks for Owl as desired, mkfs, mkswap, and mount the
+new filesystems under /owl (the default, as set in installworld.conf).
+To actually install Owl, change directory to /usr/src/world and type:
+
+	make installworld && make setup
+
+If there are any problems during the "installworld" stage (watch for
+the "Failed" lines), correct their cause and re-run the command.
+
+Once the Owl userland is installed, you need to also install a kernel.
+Currently, this needs to be a Linux 2.2 kernel, and we recommend that
+you build the version available with Owl.
+
+You may choose to configure the boot loader (LILO) available with Owl,
+or you may use a boot loader already installed on the system (if any).
+If you already have a Linux 2.2 system installed, you may use its boot
+loader and even its kernel, by simply adding an entry with a different
+root= setting (set to the device with Owl root filesystem).
+
+$Id: Owl/doc/INSTALL,v 1.1 2000/12/28 18:39:39 solar Exp $
