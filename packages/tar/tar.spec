@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tar/tar.spec,v 1.3 2000/09/07 01:13:43 solar Exp $
+# $Id: Owl/packages/tar/tar.spec,v 1.3.2.1 2001/07/10 13:11:06 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: 		tar
@@ -10,26 +10,25 @@ Source: 	ftp://alpha.gnu.org/pub/gnu/tar/tar-%{version}.tar.gz
 Patch0: 	tar-1.13.14-rh-manpage.diff
 Patch1: 	tar-1.13.17-rh-fnmatch.diff
 Patch2: 	tar-1.3.17-rh-excluded_name.diff
+Patch3:		tar-1.13.17-owl-verify-looping-fix.diff
 Prereq: 	/sbin/install-info
 Buildroot: 	/var/rpm-buildroot/%{name}-root
 
 %description
 The GNU tar program saves many files together into one archive and can
-restore individual files (or all of the files) from the archive.  Tar
+restore individual files (or all of the files) from the archive.  tar
 can also be used to add supplemental files to an archive and to update
-or list files in the archive. Tar includes multivolume support,
+or list files in the archive.  tar includes multivolume support,
 automatic archive compression/decompression, the ability to perform
 remote archives and the ability to perform incremental and full
 backups.
-
-If you want to use tar for remote backups, you'll also need to install
-the rmt package.
 
 %prep
 %setup -q
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 
@@ -102,6 +101,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_prefix}/share/locale/*/LC_MESSAGES/*
 
 %changelog
+* Tue Jul 10 2001 Solar Designer <solar@owl.openwall.com>
+- Fixed the looping on verify bug.
+
 * Thu Sep 07 2000 Solar Designer <solar@owl.openwall.com>
 - Fixed the passing of %optflags into configure.
 
