@@ -1,8 +1,8 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.30 2003/03/02 03:45:32 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.31 2003/03/09 20:06:24 solar Exp $
 
 Summary: Post Office Protocol (POP3) server.
 Name: popa3d
-Version: 0.6.1
+Version: 0.6.2
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
@@ -72,6 +72,10 @@ fi
 %doc DESIGN LICENSE
 
 %changelog
+* Sun Mar 09 2003 Solar Designer <solar@owl.openwall.com> 0.6.2-owl1
+- Rate-limit the "sessions limit reached" log message similarly to the
+per-source one; spotted by Michael Tokarev.
+
 * Sun Mar 02 2003 Solar Designer <solar@owl.openwall.com> 0.6.1-owl1
 - Ensure DB_STALE is set if mailbox_get() fails for that possible reason.
 - Added version.c and the -V option to print out version information.

@@ -114,7 +114,7 @@ int main(void)
 	int addrlen;
 	int pid;
 	struct tms buf;
-	clock_t now;
+	clock_t now, log;
 	int i, j, n;
 
 	if (do_pop_startup()) return 1;
@@ -157,6 +157,8 @@ int main(void)
 	signal(SIGCHLD, handle_child);
 
 	memset((void *)sessions, 0, sizeof(sessions));
+	log = 0;
+
 	new = 0;
 
 	while (1) {
@@ -178,6 +180,7 @@ int main(void)
 		if (new < 0) continue;
 
 		now = times(&buf);
+		if (!now) now = 1;
 
 		child_blocked = 1;
 
@@ -208,8 +211,13 @@ int main(void)
 		}
 
 		if (j < 0) {
-			syslog(SYSLOG_PRI_HI, "%s: sessions limit reached",
-				inet_ntoa(addr.sin_addr));
+			if (!log ||
+			    now < log || now - log >= MIN_DELAY * CLK_TCK) {
+				syslog(SYSLOG_PRI_HI,
+					"%s: sessions limit reached",
+					inet_ntoa(addr.sin_addr));
+				log = now;
+			}
 			continue;
 		}
 
