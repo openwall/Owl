@@ -1,0 +1,22 @@
+# $Id: Owl/build/.rpmmacros,v 1.1 2000/12/03 21:26:16 solar Exp $
+%distribution Owl
+%_topdir %{home}/rpm-work-%{number}
+%buildroot %{home}/rpm-work-%{number}/buildroot
+# i386
+%optflags_lib_i386 -pipe -march=i386 -mcpu=i686 -O2 -momit-leaf-frame-pointer -mpreferred-stack-boundary=3
+%optflags_bin_i386 -pipe -march=i386 -mcpu=i686 -O2 -fomit-frame-pointer -mpreferred-stack-boundary=2
+# i686
+%optflags_lib_i686 -pipe -march=i686 -O2 -momit-leaf-frame-pointer -mpreferred-stack-boundary=3
+%optflags_bin_i686 -pipe -march=i686 -O2 -fomit-frame-pointer -mpreferred-stack-boundary=2
+# alpha
+%optflags_lib_alpha -pipe -O2
+%optflags_bin_alpha -pipe -O2 -fomit-frame-pointer
+# sparc
+%optflags_lib_sparc -pipe -mcpu=v8 -mtune=ultrasparc -O2
+%optflags_bin_sparc -pipe -mcpu=v8 -mtune=ultrasparc -O2 -fomit-frame-pointer
+# sparcv9
+%optflags_lib_sparcv9 -pipe -mcpu=ultrasparc -Wa,-Av8plusa -O2
+%optflags_bin_sparcv9 -pipe -mcpu=ultrasparc -Wa,-Av8plusa -O2 -fomit-frame-pointer
+#
+%optflags_lib %{expand:%{optflags_lib_%{expand:%{buildarch}}}}
+%optflags_bin %{expand:%{optflags_bin_%{expand:%{buildarch}}}}
