@@ -1,8 +1,8 @@
-# $Id: Owl/packages/diffstat/diffstat.spec,v 1.3 2002/01/24 17:39:25 solar Exp $
+# $Id: Owl/packages/diffstat/diffstat.spec,v 1.4 2003/01/12 00:27:13 mci Exp $
 
 Summary: A utility which provides statistics based on the output of diff.
 Name: diffstat
-Version: 1.28
+Version: 1.32
 Release: owl1
 Group: Development/Tools
 License: distributable
@@ -37,6 +37,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/*/*
 
 %changelog
+* Sun Jan 12 2003 Michail Litvak <mci@owl.openwall.com>
+- 1.32
+
 * Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 
