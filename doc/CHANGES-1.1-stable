@@ -5,6 +5,12 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 1.1 and Owl 1.1-stable.
 
+(2004/01/15 - 2004/01/17)
+2004/01/17	Package: readline
+Corrected a packaging error where the readline library usage examples
+were incorrectly placed under /usr/doc/examples instead of under
+readline's documentation directory.
+
 (2004/01/10)
 2004/01/15	Package: john
 Corrected a segfault with --stdin introduced with John 1.6.34.2.
@@ -12,4 +18,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 2004/01/15	Owl/doc/DOWNLOAD, Owl/doc/*/DOWNLOAD, Owl/doc/fr/CREDITS
 Sync'ed with the minor post-release updates made in Owl-current.
 
-$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.1 2004/01/15 05:34:01 solar Exp $
+$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.2 2004/01/17 16:48:33 solar Exp $
