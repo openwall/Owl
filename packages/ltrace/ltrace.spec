@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ltrace/ltrace.spec,v 1.4 2001/01/14 20:58:45 mci Exp $
+# $Id: Owl/packages/ltrace/ltrace.spec,v 1.5 2001/01/14 21:05:03 mci Exp $
 
 Summary: Tracks runtime library calls from dynamically linked executables.
 Name: ltrace
@@ -34,7 +34,7 @@ execution of processes.
 
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
+%patch3 -p0
 
 %build
 %configure
