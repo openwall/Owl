@@ -1,9 +1,9 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.13 2001/06/13 11:51:07 mci Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.14 2001/06/16 20:56:17 mci Exp $
 
 Summary: A screen manager that supports multiple logins on one terminal.
 Name: screen
 Version: 3.9.9
-Release: 3owl
+Release: 4owl
 Copyright: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%{version}.tar.gz

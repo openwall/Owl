@@ -1,14 +1,13 @@
 --- screen-3.9.9/os.h.orig	Sat Apr 28 16:26:43 2001
 +++ screen-3.9.9/os.h	Wed Jun 13 09:43:25 2001
-@@ -52,6 +52,8 @@
- # define exit __exit
+@@ -53,6 +53,7 @@
  #endif
  #ifdef POSIX
-+# define __USE_XOPEN
-+# define __USE_XOPEN_EXTENDED
  # include <unistd.h>
++# include <crypt.h>
  # if defined(__STDC__)
  #  include <stdlib.h>
+ # endif /* __STDC__ */
 @@ -266,7 +268,7 @@
  #  define pututline	pututxline
  #  define setutent	setutxent
