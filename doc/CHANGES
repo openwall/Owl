@@ -12,6 +12,11 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/08/11	Package: xinetd
+Updated to 2.3.6 adding fixes or workarounds for issues introduced
+after 2.3.3 including the signal pipe leak into child processes (a
+security hole with 2.3.4+ which never got into Owl).
+
 2002/08/04 -
 2002/08/05	Packages: fileutils, sh-utils, textutils;
 		Owl/build/installorder.conf
@@ -890,4 +895,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.121 2002/08/05 08:05:14 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.122 2002/08/11 17:25:15 solar Exp $
