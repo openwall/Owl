@@ -1,11 +1,11 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.10 2003/09/11 09:12:01 schmidt Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.11 2003/09/14 10:44:54 schmidt Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
 Summary: Dynamic Host Configuration Protocol (DHCP) distribution.
 Name: dhcp
 Version: 3.0pl2
-Release: owl0.3
+Release: owl0.4
 License: ISC License
 Group: System Environment/Daemons
 URL: http://www.isc.org/products/DHCP/
@@ -85,12 +85,14 @@ make install DESTDIR=$RPM_BUILD_ROOT MANDIR=%{_mandir}
 
 cd $RPM_BUILD_ROOT
 
-mkdir -p $RPM_BUILD_ROOT/{etc/rc.d/init.d,etc/sysconfig,var/lib/dhcp/state}
+mkdir -p $RPM_BUILD_ROOT/{etc/rc.d/init.d,etc/sysconfig,var/lib/dhcp/}
+mkdir -p $RPM_BUILD_ROOT/var/lib/dhcp/{dhcpd/state,dhcrelay/state,dhclient/state}
 
 install -m 700 $RPM_SOURCE_DIR/dhcpd.init $RPM_BUILD_ROOT/etc/rc.d/init.d/dhcpd
 install -m 644 $RPM_SOURCE_DIR/dhcpd.conf.sample $RPM_BUILD_ROOT/
 
-touch $RPM_BUILD_ROOT/var/lib/dhcp/state/{dhcpd,dhclient}.leases
+touch $RPM_BUILD_ROOT/var/lib/dhcp/dhcpd/state/dhcpd.leases
+touch $RPM_BUILD_ROOT/var/lib/dhcp/dhclient/state/dhclient.leases
 
 cat <<EOF > $RPM_BUILD_ROOT/etc/sysconfig/dhcpd
 # Additional command line options here
@@ -101,9 +103,9 @@ EOF
 rm -rf $RPM_BUILD_ROOT
 
 %pre server
-grep -q ^dhcpd: /etc/group || groupadd -g 188 dhcpd
-grep -q ^dhcpd: /etc/passwd ||
-	useradd -g dhcpd -u 188 -d / -s /bin/false -M dhcpd
+grep -q ^dhcp: /etc/group || groupadd -g 188 dhcp
+grep -q ^dhcp: /etc/passwd ||
+	useradd -g dhcp -u 188 -d / -s /bin/false -M dhcp
 rm -f /var/run/dhcp.restart
 if [ $1 -ge 2 ]; then
 	/etc/rc.d/init.d/dhcpd status && touch /var/run/dhcp.restart || :
@@ -141,7 +143,9 @@ fi
 %{_mandir}/man8/dhclient.8*
 %{_mandir}/man8/dhclient-script.8*
 # XXX: wrong
-%attr(0660,root,dhcpd) %config /var/lib/dhcp/state/dhclient.leases
+%attr(0700,root,dhcp) %dir /var/lib/dhcp/dhclient
+%attr(1770,root,dhcp) %dir /var/lib/dhcp/dhclient/state
+%attr(0600,root,dhcp) %config /var/lib/dhcp/dhclient/state/dhclient.leases
 %endif
 
 %files server
@@ -152,16 +156,21 @@ fi
 %{_mandir}/man5/dhcpd.conf.5*
 %{_mandir}/man5/dhcpd.leases.5*
 %{_mandir}/man8/dhcpd.8*
-%attr(0750,root,dhcpd) %dir /var/lib/dhcp
-%attr(1770,root,dhcpd) %dir /var/lib/dhcp/state
-%attr(0600,dhcpd,dhcpd) %config /var/lib/dhcp/state/dhcpd.leases
+%attr(0750,root,dhcp) %dir /var/lib/dhcp/dhcpd
+%attr(1770,root,dhcp) %dir /var/lib/dhcp/dhcpd/state
+%attr(0600,dhcp,dhcp) %config /var/lib/dhcp/dhcpd/state/dhcpd.leases
 
 %files relay
 %defattr(-,root,root)
 /usr/sbin/dhcrelay
 %{_mandir}/man8/dhcrelay.8*
+%attr(0750,root,dhcp) %dir /var/lib/dhcp/dhcrelay
+%attr(1770,root,dhcp) %dir /var/lib/dhcp/dhcrelay/state
 
 %changelog
+* Sun Sep 14 2003 Matthias Schmidt <schmidt@owl.openwall.com> 3.0pl2-owl0.4
+- Create three subdirectories for every service under /var/lib/dhcp
+
 * Tue Sep 09 2003 Matthias Schmidt <schmidt@owl.openwall.com> 3.0pl2-owl0.3
 - Minor changes in the drop-root patch
 - Set the permissions for /var/lib/dhcp correctly

@@ -1,17 +1,17 @@
 diff -urpN dhcp-3.0pl2.orig/includes/cf/linux.h dhcp-3.0pl2/includes/cf/linux.h
 --- dhcp-3.0pl2.orig/includes/cf/linux.h	Thu May 10 21:28:55 2001
-+++ dhcp-3.0pl2/includes/cf/linux.h	Tue Sep  9 12:47:03 2003
++++ dhcp-3.0pl2/includes/cf/linux.h	Fri Sep 12 14:02:35 2003
 @@ -92,11 +92,11 @@ extern int h_errno;
     directory. */
  
  #ifndef _PATH_DHCPD_DB
 -#define _PATH_DHCPD_DB		"/var/state/dhcp/dhcpd.leases"
-+#define _PATH_DHCPD_DB		"/state/dhcpd.leases"
++#define _PATH_DHCPD_DB		"/dhcpd/state/dhcpd.leases"
  #endif
  
  #ifndef _PATH_DHCLIENT_DB
 -#define _PATH_DHCLIENT_DB	"/var/state/dhcp/dhclient.leases"
-+#define _PATH_DHCLIENT_DB	"/state/dhclient.leases"
++#define _PATH_DHCLIENT_DB	"/dhclient/state/dhclient.leases"
  #endif
  
  /* Varargs stuff... */
