@@ -1,4 +1,4 @@
-# $Id: Owl/packages/console-tools/Attic/console-tools.spec,v 1.2 2000/12/15 01:54:47 solar Exp $
+# $Id: Owl/packages/console-tools/Attic/console-tools.spec,v 1.3 2000/12/15 02:00:00 solar Exp $
 
 %define CTVER	0.3.3
 %define	CDVER	1999.08.29
@@ -27,7 +27,7 @@ Source11: 	kbd-0.96-amiga.tar.gz
 Source12: 	sunt4-no-latin1.map.gz
 Source13: 	lat2u-font.tar.gz
 Source14: 	data-addon.tar.gz
-Source15: 	console-fonts-cyr.tgz
+Source15: 	console-fonts-cyr.tar.gz
 Source16: 	keymaps-mdkre.tar.bz2
 Patch0: 	console-tools-1999.08.29-rh-sparc.diff
 Patch1: 	console-tools-1999.08.29-rh-fonts.diff
