@@ -1,16 +1,15 @@
-# $Id: Owl/packages/links/Attic/links.spec,v 1.6 2001/06/08 19:01:53 mci Exp $
+# $Id: Owl/packages/links/Attic/links.spec,v 1.7 2001/07/27 21:18:13 mci Exp $
 
 Name: links
 Summary: Lynx-like text WWW browser with support for frames
-Version: 0.95
-Release: 6owl
+Version: 0.96
+Release: 1owl
 Copyright: GPL
 Source: http://artax.karlin.mff.cuni.cz/~mikulas/links/download/%{name}-%{version}.tar.gz
 Group: Applications/Internet
 BuildRoot: /var/rpm-buildroot/%{name}-%{version}
-Patch0: links-0.95-asp-koi.diff
-Patch1: links-0.95-owl-tmp.diff
-Patch2: links-0.95-owl-configure.diff
+Patch0: links-0.96-asp-koi.diff
+Patch1: links-0.96-owl-tmp.diff
 Requires: openssl
 BuildPreReq: openssl-devel
 
@@ -31,12 +30,10 @@ don't use it. :-)
 
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 %build
 autoconf
-%configure --with-ssl
-make
+configure --with-ssl
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -52,6 +49,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*
 
 %changelog
+* Fri Jul 27 2001 Michail Litvak <mci@owl.openwall.com>
+- updated to 0.96 
+- remove configure patch, because it was included in source
+
 * Sat Jun 07 2001 Michail Litvak <mci@owl.openwall.com>
 - patch configure.in to force error if OpenSSL not found
 
