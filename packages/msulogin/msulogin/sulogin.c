@@ -11,7 +11,7 @@
  * Copyright (c) 2003 by Solar Designer <solar@owl.openwall.com>.
  * See LICENSE.
  *
- * $Id: Owl/packages/msulogin/msulogin/sulogin.c,v 1.1 2003/04/27 02:26:29 solar Exp $
+ * $Id: Owl/packages/msulogin/msulogin/sulogin.c,v 1.2 2003/05/23 01:07:07 solar Exp $
  */
 
 #include <stdio.h>
@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include <setjmp.h>
 #include <termios.h>
 #include <unistd.h>
 #include <limits.h>
@@ -34,26 +35,29 @@ extern char *__progname;
 static int opt_profile = 0;
 static unsigned int opt_timeout = 0;
 
+static sigjmp_buf jmp_alarm;
+
 typedef enum {
 	S_WORKING, S_PASSED, S_FAILED = 64, S_TIMEOUT = 65, S_EOF = 66
 } sulogin_state_t;
 
 static void handle_alarm(int signum)
 {
+	siglongjmp(jmp_alarm, 1);
 }
 
 static int getline_fd(char *line, int size, int fd)
 {
-	struct sigaction saved_action, action;
 	char *p, *e, c;
 	int retval;
 
-	alarm(0);
-	action.sa_handler = handle_alarm;
-	sigemptyset(&action.sa_mask);
-	action.sa_flags = 0; /* no SA_RESTART */
-	if (sigaction(SIGALRM, &action, &saved_action) < 0)
-		return -S_FAILED;
+	if (sigsetjmp(jmp_alarm, 1)) {
+		alarm(0);
+		signal(SIGALRM, SIG_DFL);
+		return -S_TIMEOUT;
+	}
+
+	signal(SIGALRM, handle_alarm);
 	alarm(opt_timeout);
 
 	p = line;
@@ -65,11 +69,10 @@ static int getline_fd(char *line, int size, int fd)
 	*p = '\0';
 
 	alarm(0);
-	sigaction(SIGALRM, &saved_action, NULL);
+	signal(SIGALRM, SIG_DFL);
 
 	if (retval <= 0) {
 		if (retval == 0) return -S_EOF;
-		if (errno == EINTR) return -S_TIMEOUT;
 		return -S_FAILED;
 	}
 
