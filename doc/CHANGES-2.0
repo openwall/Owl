@@ -12,6 +12,23 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2004/11/23	kernel
+SECURITY FIX	Severity: low to high, local/remote, active/passive
+Updated to Linux 2.4.28-ow1.  Linux 2.4.28, and thus 2.4.28-ow1, fixes
+a number of security-related bugs, including the ELF loader
+vulnerabilities discovered by Paul Starzetz (confirmed: ability for
+users to read +s-r binaries; potential: local root), a race condition
+with reads from Unix domain sockets (potential local root), smbfs
+support vulnerabilities discovered by Stefan Esser (confirmed: remote
+DoS by a malicious smbfs server; potential: remote root by a malicious
+server).
+References:
+http://isec.pl/vulnerabilities/isec-0017-binfmt_elf.txt
+http://marc.theaimsgroup.com/?l=bugtraq&m=110091183206580
+http://security.e-matters.de/advisories/142004.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0883
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0949
+
 2004/11/11	Package: shadow-utils
 "useradd" and related tools will now optionally allow user and group
 names longer than 8 characters, even though these may not be fully
@@ -270,4 +287,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.55 2004/11/11 20:38:44 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.56 2004/11/23 03:25:53 solar Exp $
