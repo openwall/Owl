@@ -1,9 +1,9 @@
-# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.7 2002/02/05 16:15:47 solar Exp $
+# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.8 2002/07/07 00:07:48 solar Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
 Version: 1.4.1
-Release: owl2
+Release: owl3
 License: BSD for syslogd and GPL for klogd
 Group: System Environment/Daemons
 Source0: http://www.infodrom.ffis.de/projects/sysklogd/download/sysklogd-%{version}.tar.gz
@@ -65,11 +65,11 @@ install -m 644 $RPM_SOURCE_DIR/syslog.logrotate etc/logrotate.d/syslog
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-grep ^klogd: /etc/group &> /dev/null || groupadd -g 180 klogd
-grep ^klogd: /etc/passwd &> /dev/null ||
+grep -q ^klogd: /etc/group || groupadd -g 180 klogd
+grep -q ^klogd: /etc/passwd ||
 	useradd -g klogd -u 180 -d / -s /bin/false -M klogd
-grep ^syslogd: /etc/group &> /dev/null || groupadd -g 181 syslogd
-grep ^syslogd: /etc/passwd &> /dev/null ||
+grep -q ^syslogd: /etc/group || groupadd -g 181 syslogd
+grep -q ^syslogd: /etc/passwd ||
 	useradd -g syslogd -u 181 -d / -s /bin/false -M syslogd
 rm -f /var/run/syslog.restart
 if [ $1 -ge 2 ]; then
@@ -105,6 +105,9 @@ fi
 %_mandir/*/*
 
 %changelog
+* Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
+- Use grep -q in %pre.
+
 * Tue Feb 05 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 

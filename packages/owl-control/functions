@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-control/functions,v 1.3 2000/11/22 17:04:26 solar Exp $
+# $Id: Owl/packages/owl-control/functions,v 1.4 2002/07/07 00:07:48 solar Exp $
 
 function define()
 {
@@ -12,7 +12,7 @@ function lookup()
 
 function validate()
 {
-	echo "$1" | grep '^[a-z0-9_]*$' > /dev/null
+	echo "$1" | grep -q '^[a-z0-9_]*$'
 }
 
 function register()
@@ -91,7 +91,7 @@ function control_subst()
 		for NAME in $NAME_LIST; do
 			REGEX="`lookup NAME_TO_REGEX "$NAME"`"
 			test -n "$REGEX" || continue
-			if grep -E "$REGEX" "$FILE" > /dev/null; then
+			if grep -Eq "$REGEX" "$FILE"; then
 				echo "$NAME"
 				return
 			fi

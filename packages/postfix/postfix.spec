@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.10 2002/06/22 08:56:23 solar Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.11 2002/07/07 00:07:48 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
@@ -7,7 +7,7 @@ Name: postfix
 %define original_version %{original_date}-%{original_pl}
 %define package_version %{original_date}_%{original_pl}
 Version: %{package_version}
-Release: owl1
+Release: owl2
 License: IBM Public License
 Group: System Environment/Daemons
 Source0: ftp://ftp.sunet.se/pub/unix/mail/postfix/official/%{name}-%{original_version}.tar.gz
@@ -20,7 +20,7 @@ Patch2: postfix-19991231-pl13-snapshot-20011217-safe-opens.diff
 Patch10: postfix-19991231-pl13-owl-postfix-script.diff
 Patch20: postfix-19991231-pl10-owl-INSTALL.diff
 Patch21: postfix-19991231-pl10-owl-config.diff
-PreReq: /sbin/chkconfig, /dev/null, grep, shadow-utils
+PreReq: /sbin/chkconfig, grep, shadow-utils
 Requires: owl-control >= 0.2, owl-control < 2.0
 Conflicts: sendmail
 Provides: MTA, smtpd, smtpdaemon
@@ -139,14 +139,14 @@ find $RPM_BUILD_ROOT ! -type d |
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-grep ^postdrop: /etc/group &> /dev/null || groupadd -g 161 postdrop
-grep ^postdrop: /etc/passwd &> /dev/null ||
+grep -q ^postdrop: /etc/group || groupadd -g 161 postdrop
+grep -q ^postdrop: /etc/passwd ||
 	useradd -g postdrop -u 161 -d / -s /bin/false -M postdrop
-grep ^postfix: /etc/group &> /dev/null || groupadd -g 182 postfix
-grep ^postfix: /etc/passwd &> /dev/null ||
+grep -q ^postfix: /etc/group || groupadd -g 182 postfix
+grep -q ^postfix: /etc/passwd ||
 	useradd -g postfix -u 182 -d / -s /bin/false -M postfix
-grep ^postman: /etc/group &> /dev/null || groupadd -g 183 postman
-grep ^postman: /etc/passwd &> /dev/null ||
+grep -q ^postman: /etc/group || groupadd -g 183 postman
+grep -q ^postman: /etc/passwd ||
 	useradd -g postman -u 183 -d / -s /bin/false -M postman
 rm -f /var/run/postfix.restart
 if [ $1 -ge 2 ]; then
@@ -175,6 +175,9 @@ fi
 %files -f filelist
 
 %changelog
+* Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
+- Use grep -q in %pre.
+
 * Thu Feb 07 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 

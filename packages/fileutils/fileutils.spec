@@ -1,9 +1,9 @@
-# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.6 2002/02/01 15:28:39 solar Exp $
+# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.7 2002/07/07 00:07:48 solar Exp $
 
 Summary: The GNU versions of common file management utilities.
 Name: fileutils
 Version: 4.0.27
-Release: owl4
+Release: owl5
 License: GPL
 Group: Applications/File
 Source0: ftp://alpha.gnu.org/gnu/fetish/%{name}-%{version}.tar.gz
@@ -96,6 +96,9 @@ fi
 %{_prefix}/share/locale/*/*/*
 
 %changelog
+* Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
+- Use grep -q in colorls.sh.
+
 * Fri Feb 01 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions.
 - Changed SOURCE* to explicit $RPM_SOURCE_DIR/*

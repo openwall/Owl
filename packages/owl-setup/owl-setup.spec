@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.15 2002/05/23 06:39:51 solar Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.16 2002/07/07 00:07:48 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 0.8
+Version: 0.9
 Release: owl1
 License: mostly public domain, passwdlg is under GPL
 Group: System Environment/Base
@@ -58,6 +58,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/sbin/setup
 
 %changelog
+* Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
+- Use grep -q in mkfstab.
+
 * Thu May 23 2002 Solar Designer <solar@owl.openwall.com>
 - No longer set the obsolete FORWARD_IPV4 option.
 

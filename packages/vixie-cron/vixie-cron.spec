@@ -1,9 +1,9 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.17 2002/05/08 22:21:01 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.18 2002/07/07 00:07:48 solar Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
 Version: 3.0.2.7
-Release: owl14
+Release: owl15
 License: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%{version}.tar.gz
@@ -13,7 +13,7 @@ Patch0: vixie-cron-%{version}-owl-linux.diff
 Patch1: vixie-cron-%{version}-owl-sgid-crontab.diff
 Patch2: vixie-cron-%{version}-owl-crond.diff
 Patch3: vixie-cron-%{version}-owl-vitmp.diff
-PreReq: /sbin/chkconfig, /dev/null, grep, shadow-utils
+PreReq: /sbin/chkconfig, grep, shadow-utils
 Requires: owl-control < 2.0
 BuildRoot: /override/%{name}-%{version}
 
@@ -60,8 +60,8 @@ install -m 700 $RPM_SOURCE_DIR/crontab.control \
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-grep ^crontab: /etc/group &> /dev/null || groupadd -g 160 crontab
-grep ^crontab: /etc/passwd &> /dev/null ||
+grep -q ^crontab: /etc/group || groupadd -g 160 crontab
+grep -q ^crontab: /etc/passwd ||
 	useradd -g crontab -u 160 -d / -s /bin/false -M crontab
 rm -f /var/run/crond.restart
 if [ $1 -ge 2 ]; then
@@ -70,7 +70,7 @@ if [ $1 -ge 2 ]; then
 fi
 
 %post
-grep ^crontab: /etc/group &> /dev/null || chmod 700 /usr/bin/crontab
+grep -q ^crontab: /etc/group || chmod 700 /usr/bin/crontab
 /sbin/chkconfig --add crond
 if [ -f /var/run/crond.restart ]; then
 	/etc/rc.d/init.d/crond start
@@ -99,6 +99,9 @@ fi
 /etc/control.d/facilities/crontab
 
 %changelog
+* Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
+- Use grep -q in %pre.
+
 * Thu May 09 2002 Solar Designer <solar@owl.openwall.com>
 - Ensure all files are closed in crontab(1) when the editor is run; this
 fixes the problem pointed out by Paul Starzetz on Bugtraq where crontab

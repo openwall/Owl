@@ -1,9 +1,9 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.15 2002/05/24 21:11:34 solar Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.16 2002/07/07 00:07:48 solar Exp $
 
 Version: 2.05
 Name: bash
 Summary: The GNU Bourne-Again SHell (Bash).
-Release: owl3
+Release: owl4
 Group: System Environment/Shells
 License: GPL
 Source0: ftp://ftp.gnu.org/gnu/bash/bash-%{version}.tar.gz
@@ -148,11 +148,11 @@ if [ ! -f /etc/shells ]; then
 	echo "/bin/bash" >> /etc/shells
 	echo "/bin/bash2" >> /etc/shells
 elif [ -x /bin/grep ]; then
-	grep '^/bin/sh$' /etc/shells &> /dev/null || \
+	grep -q '^/bin/sh$' /etc/shells || \
 		echo "/bin/sh" >> /etc/shells
-	grep '^/bin/bash$' /etc/shells &> /dev/null || \
+	grep -q '^/bin/bash$' /etc/shells || \
 		echo "/bin/bash" >> /etc/shells
-	grep '^/bin/bash2$' /etc/shells &> /dev/null || \
+	grep -q '^/bin/bash2$' /etc/shells || \
 		echo "/bin/bash2" >> /etc/shells
 fi
 
@@ -185,6 +185,9 @@ fi
 %doc doc/*.ps* doc/*.html doc/article.txt*
 
 %changelog
+* Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
+- Use grep -q in this spec file.
+
 * Sat May 25 2002 Solar Designer <solar@owl.openwall.com>
 - Declare that the new mktemp is also required for bash _builds_.
 
