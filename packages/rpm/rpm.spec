@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.48 2005/03/22 15:23:19 solar Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.49 2005/03/22 15:24:12 solar Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -174,7 +174,7 @@ rm -r elfutils
 pushd file
 # We add -DMAGIC=path to configure to make sure that default magic file will
 # be searched for in the directory where "file" package stores it (this will
-# be unneeded once we seperate "file" from "rpm")
+# be unneeded once we separate "file" from "rpm")
 export CFLAGS="$CFLAGS -DMAGIC='\"/usr/share/magic\"'"
 ./configure
 %__make libfmagic.la
