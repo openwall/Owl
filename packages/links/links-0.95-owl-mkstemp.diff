@@ -1,5 +1,5 @@
 --- links-0.95/session.c.orig	Sat Jun  2 14:01:24 2001
-+++ links-0.95/session.c	Sat Jun  2 18:12:14 2001
++++ links-0.95/session.c	Mon Jun  4 00:38:16 2001
 @@ -578,11 +578,7 @@
  	unsigned char *wd;
  	int h;
@@ -51,19 +51,22 @@
  unsigned char *subst_file(unsigned char *prog, unsigned char *file)
  {
  	unsigned char *n = init_str();
-@@ -686,11 +662,14 @@
+@@ -686,11 +662,16 @@
  void continue_download(struct session *ses, unsigned char *file)
  {
  	struct download *down;
 -	int h;
+-	unsigned char *url = ses->tq_url;
 +	int h, len;
- 	unsigned char *url = ses->tq_url;
++	unsigned char *tmp, *url = ses->tq_url;
  	if (!url) return;
  	if (ses->tq_prog) {
 -		if (!(file = get_temp_name(url))) {
++		tmp = getenv("TMPDIR");
 +		file = init_str();
 +		len = 0;
-+		add_to_str(&file, &len, "/tmp/linksXXXXXX");
++		add_to_str(&file, &len, tmp ? tmp : (unsigned char*) "/tmp");
++		add_to_str(&file, &len, "/linksXXXXXX");
 +		if (!file) {
  			tp_cancel(ses);
  			return;
