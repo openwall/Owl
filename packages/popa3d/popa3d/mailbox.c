@@ -89,18 +89,21 @@ static int mailbox_parse(int init)
 /* Prepare for the database initialization */
 		if (!S_ISREG(stat.st_mode)) return 1;
 		mailbox_mtime = stat.st_mtime;
+		if (stat.st_size > MAX_MAILBOX_OPEN_BYTES ||
+		    stat.st_size > ~0UL) return 1;
 		mailbox_size = stat.st_size;
 		if (!mailbox_size) return 0;
-		if (mailbox_size > MAX_MAILBOX_BYTES) return 1;
 		db_op = db_add;
 	} else {
 /* Prepare for checking against the database */
 		if (mailbox_mtime == stat.st_mtime) return 0;
 		if (!mailbox_size) return 0;
-		if (mailbox_size > stat.st_size) {
+		if (stat.st_size < mailbox_size) {
 			db.flags |= DB_STALE;
 			return 1;
 		}
+		if (stat.st_size > MAX_MAILBOX_WORK_BYTES ||
+		    stat.st_size > ~0UL) return 1;
 		if (lseek(mailbox_fd, 0, SEEK_SET) < 0) return 1;
 		db_op = db_compare; cmp = db.head;
 	}
@@ -414,7 +417,6 @@ static int mailbox_write(char *buffer)
 	unsigned long old, new;
 	unsigned long size;
 	int block;
-	int trunc;
 
 	msg = db.head;
 	old = new = 0;
@@ -444,23 +446,20 @@ static int mailbox_write(char *buffer)
 	} while ((msg = msg->next));
 
 	old = mailbox_size;
-	trunc = new < old;
-	if (lseek(mailbox_fd, old, SEEK_SET) < 0) return 1;
-	if (lseek(mailbox_fd, new, SEEK_SET) < 0) return 1;
 	while (1) {
+		if (lseek(mailbox_fd, old, SEEK_SET) < 0) return 1;
 		block = read(mailbox_fd, buffer, FILE_BUFFER_SIZE);
 		if (!block) break;
 		if (block < 0) return 1;
 
+		if (lseek(mailbox_fd, new, SEEK_SET) < 0) return 1;
 		if (write_loop(mailbox_fd, buffer, block) != block) return 1;
 
-		if (trunc) {
-			if ((new += block) < block) trunc = 0;
-			if (new >= old) trunc = 0;
-		}
+/* Cannot overflow unless locking is bypassed */
+		if ((old += block) < block || (new += block) < block) return 1;
 	}
 
-	if (trunc && ftruncate(mailbox_fd, new)) return 1;
+	if (ftruncate(mailbox_fd, new)) return 1;
 
 	return fsync(mailbox_fd);
 }
