@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.11 2001/01/23 20:41:01 kad Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.12 2001/01/28 06:11:05 solar Exp $
 
 %define BUILD_MOUNT	'yes'
 %define BUILD_LOSETUP	'yes'
@@ -8,7 +8,7 @@
 Summary: A collection of basic system utilities.
 Name: util-linux
 Version: 2.10r
-Release: 1owl
+Release: 2owl
 Copyright: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%{version}.tar.bz2
@@ -17,7 +17,7 @@ Source2: chsh-chfn.control
 Source3: mount.control
 Source4: newgrp.control
 Source5: write.control
-Patch0: util-linux-2.10h-owl-MCONFIG.diff
+Patch0: util-linux-2.10r-owl-MCONFIG.diff
 Patch1: util-linux-2.10r-owl-Makefiles.diff
 Patch2: util-linux-2.10r-owl-restrict-locale.diff
 Patch3: util-linux-2.10r-owl-write.diff
@@ -156,7 +156,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/bin/ddate
 /usr/man/man1/ddate.1*
 
-%attr(4711,root,root)	/usr/bin/newgrp
+%attr(700,root,root)	/usr/bin/newgrp
 /usr/man/man1/newgrp.1*
 
 %if "%{BUILD_CHSH_CHFN}"=="'yes'"
@@ -313,6 +313,12 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Sun Jan 28 2001 Solar Designer <solar@owl.openwall.com>
+- Reviewed the changes made in 2.10r, updated the write patch accordingly.
+- More improvements to the write patch (prompt/prefix with usernames).
+- %optflags are now passed correctly.
+- newgrp is no longer installed SUID by default (it's owl-control'able).
+
 * Tue Jan 23 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - 2.10r
 
