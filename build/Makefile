@@ -1,4 +1,4 @@
-# $Id: Owl/build/Makefile,v 1.10 2001/06/21 15:08:47 solar Exp $
+# $Id: Owl/build/Makefile,v 1.11 2002/03/20 14:48:47 solar Exp $
 
 # The Owl branch to build and/or install, specified by its tag in the
 # CVS.  This should only be set to build and/or install a non-current
@@ -30,7 +30,8 @@ setup: symlinks
 	native/$(BRANCH)/build/setup.sh
 
 clean:
-	test -d SRPMS && rm -f SRPMS/* || :
 	test -d RPMS && rm -f RPMS/* || :
+	test -d SRPMS && rm -f SRPMS/* || :
+	test -d archives && rm -f archives/* || :
 
 .PHONY: default checkout symlinks buildworld installworld setup clean

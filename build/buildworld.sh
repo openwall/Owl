@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.16 2002/03/18 02:05:19 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.17 2002/03/20 14:48:47 solar Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -25,7 +25,7 @@ function log()
 
 function build_native()
 {
-	local NUMBER PACKAGE WORK
+	local NUMBER PACKAGE WORK NAME VERSION ARCHIVE
 
 	NUMBER=$1
 	PACKAGE=$2
@@ -34,6 +34,20 @@ function build_native()
 
 	log "#$NUMBER: Building $PACKAGE"
 	cd $WORK/SOURCES/ || exit 1
+	if [ -f $NATIVE/$PACKAGES/$PACKAGE/archive ]; then
+		while read NAME VERSION; do
+			ARCHIVE=${NAME}-${VERSION}
+			ln -sf $NATIVE/$PACKAGES/$PACKAGE/$NAME $ARCHIVE
+			tar czhf $ARCHIVE.tar.gz $ARCHIVE \
+				--exclude CVS \
+				--owner=root --group=root --mode=go-rwx
+			if [ $? -eq 0 -a -d $HOME/archives ]; then
+				mv -f $ARCHIVE.tar.gz $HOME/archives/
+				ln -s $HOME/archives/$ARCHIVE.tar.gz .
+			fi
+			rm $ARCHIVE
+		done < $NATIVE/$PACKAGES/$PACKAGE/archive
+	fi
 	ls $SOURCES/$PACKAGES/$PACKAGE/*.src.rpm 2>/dev/null | \
 		xargs -n 1 -i sh -c 'rpm2cpio {} | cpio -i --quiet'
 	ln -sf $SOURCES/$PACKAGES/$PACKAGE/* .
@@ -212,7 +226,7 @@ umask $UMASK
 cd $HOME || exit 1
 
 mkdir -p foreign
-mkdir -p RPMS SRPMS logs
+mkdir -p RPMS SRPMS archives logs
 
 echo "`date '+%Y %b %e %H:%M:%S'`: Started" >> logs/buildworld
 
