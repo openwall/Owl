@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.31 2003/10/29 16:28:17 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.32 2003/10/30 21:13:16 solar Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
@@ -115,9 +115,6 @@ install -m 644 doc/man/*.8 $RPM_BUILD_ROOT%_mandir/man8/
 rm -f doc/ps/missfont.log
 gzip -9nf doc/ps/*.ps
 gzip -9nf doc/txts/*.txt
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %triggerin -- shadow-utils
 grep -q '^shadow:[^:]*:42:' /etc/group && \

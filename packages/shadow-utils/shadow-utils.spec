@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.32 2003/10/29 16:29:10 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.33 2003/10/30 21:12:33 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
@@ -126,9 +126,6 @@ install -m 700 $RPM_SOURCE_DIR/chfn.control chfn
 install -m 700 $RPM_SOURCE_DIR/chsh.control chsh
 install -m 700 $RPM_SOURCE_DIR/gpasswd.control gpasswd
 install -m 700 $RPM_SOURCE_DIR/newgrp.control newgrp
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %pre
 if [ $1 -ge 2 ]; then
