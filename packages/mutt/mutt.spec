@@ -1,9 +1,9 @@
-# $Id: Owl/packages/mutt/mutt.spec,v 1.8 2003/10/30 21:15:46 solar Exp $
+# $Id: Owl/packages/mutt/mutt.spec,v 1.9 2004/01/30 09:08:20 mci Exp $
 
 Summary: A feature-rich text-based mail user agent.
 Name: mutt
 Version: 1.4.1
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/Internet
 URL: http://www.mutt.org
@@ -12,6 +12,7 @@ Source1: Muttrc-color
 Patch0: mutt-1.4-owl-no-sgid.diff
 Patch1: mutt-1.4-owl-muttbug-tmp.diff
 Patch2: mutt-1.4.1-owl-tmp.diff
+Patch3: mutt-1.4.1-cvs-20020213-bound.diff
 Requires: mktemp >= 1:1.3.1
 Conflicts: mutt-us
 Provides: mutt-i
@@ -29,6 +30,7 @@ and more.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" ./prepare --prefix=%_prefix \
@@ -72,6 +74,12 @@ cat contrib/gpg.rc $RPM_SOURCE_DIR/Muttrc-color >> $RPM_BUILD_ROOT/etc/Muttrc
 %_mandir/man1/flea.*
 
 %changelog
+* Fri Jan 30 2004 Michail Litvak <mci@owl.openwall.com> 1.4.1-owl3
+- Patch (from mutt's CVS) to fix mutt crash on some emails. This
+is occur when UTF-8 locale used on wide (more than ~120 columns)
+terminals, but Owl isn't affected with current glibc because
+lack of UTF-8 locales support.
+
 * Mon Oct 20 2003 Solar Designer <solar@owl.openwall.com> 1.4.1-owl2
 - Build without glibc's wide character functions due to the broken locales;
 in particular, with koi8-r some control characters wouldn't be treated
