@@ -1,9 +1,9 @@
-# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.4 2001/07/06 03:22:42 solar Exp $
+# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.5 2002/02/05 15:49:46 mci Exp $
 
 Summary: A basic system library for accessing the termcap database.
 Name: libtermcap
 Version: 2.0.8
-Release: 3owl
+Release: owl3
 Copyright: LGPL
 Group: System Environment/Libraries
 Source: ftp://sunsite.unc.edu/pub/Linux/GCC/termcap-2.0.8.tar.gz
@@ -15,9 +15,9 @@ Patch4: termcap-2.0.8-rh-fix-tc.diff
 Patch5: termcap-2.0.8-rh-glibc-2.1.diff
 Patch6: termcap-2.0.8-rh-ignore-p.diff
 Patch7: termcap-2.0.8-rh-xref.diff
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: /etc/termcap
 BuildPreReq: texinfo
+Buildroot: /override/%{name}-%{version}
 
 %description
 The libtermcap package contains a basic system library needed to
@@ -33,10 +33,6 @@ Requires: libtermcap
 %description devel
 This package includes the libraries and header files necessary for
 developing programs which will access the termcap database.
-
-If you need to develop programs which will access the termcap database,
-you'll need to install this package.  You'll also need to install the
-libtermcap package.
 
 # Use optflags_lib for this package if defined.
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
@@ -69,7 +65,6 @@ mv usr/lib/libtermcap.so* lib
 ln -sf libtermcap.so.2.0.8 lib/libtermcap.so.2
 ln -sf /lib/libtermcap.so.2.0.8 usr/lib/libtermcap.so
 strip -R .comments --strip-unneeded lib/libtermcap.so.2.0.8
-gzip -9nf usr/info/termcap.info*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -77,15 +72,13 @@ rm -rf $RPM_BUILD_ROOT
 %post -p /sbin/ldconfig
 
 %trigger -- info >= 3.12
-/sbin/install-info \
-	--section="Libraries" --entry="* Termcap: (termcap).               The GNU termcap library." \
-	--info-dir=/usr/info /usr/info/termcap.info.gz
+/sbin/install-info %{_infodir}/termcap.info.gz %{_infodir}/dir \
+	--entry="* Termcap: (termcap).               The GNU termcap library."
 
 %postun
-if [ $1 = 0 ]; then
-    /sbin/install-info --delete \
-	--section="Libraries" --entry="* Termcap: (termcap).               The GNU termcap library." \
-	--info-dir=/usr/info /usr/info/termcap.info.gz
+if [ $1 -eq 0 ]; then
+	/sbin/install-info --delete %{_infodir}/termcap.info.gz %{_infodir}/dir \
+		--entry="* Termcap: (termcap).               The GNU termcap library."
 fi
 /sbin/ldconfig
 
@@ -101,6 +94,9 @@ fi
 /usr/include/termcap.h
 
 %changelog
+* Tue Feb 05 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions
+
 * Sat Oct 28 2000 Solar Designer <solar@owl.openwall.com>
 - Create /lib/libtermcap.so.2 before ldconfig.
 
