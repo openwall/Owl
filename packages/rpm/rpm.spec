@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.14 2000/11/27 10:49:44 kad Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.15 2000/11/27 10:52:42 kad Exp $
 
 # XXX legacy requires './' payload prefix to be omitted from rpm packages.
 %define        _noPayloadPrefix        1
@@ -272,6 +272,9 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Sun Nov 19 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- gendiff fix
+
 * Sun Nov 12 2000 Solar Designer <solar@owl.openwall.com>
 - Added missing #include's to lib/rpmio.c (it wouldn't build with a
 sparc64 kernel).
