@@ -1,4 +1,4 @@
-# $Id: Owl/packages/elinks/elinks.spec,v 1.5 2004/01/25 15:04:09 solar Exp $
+# $Id: Owl/packages/elinks/elinks.spec,v 1.6 2004/01/25 16:06:15 solar Exp $
 
 Summary: Lynx-like text WWW browser with many features.
 Name: elinks
@@ -12,6 +12,7 @@ Patch0: elinks-0.9.0-owl-tmp.diff
 Patch1: elinks-0.9.0-owl-vitmp.diff
 Patch2: elinks-0.9.0-owl-no-xterm-title.diff
 Patch3: elinks-0.9.0-owl-external-programs.diff
+Patch10: elinks-0.9.0-owl-man.diff
 Requires: gpm, zlib, bzip2, openssl
 Obsoletes: links
 BuildRequires: gpm-devel, zlib-devel, bzip2-devel, openssl-devel
@@ -35,6 +36,7 @@ It is in no way associated with Twibright Labs and their Links version.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch10 -p1
 
 %build
 %configure \
@@ -70,6 +72,7 @@ vulnerabilities exploitable via the window title string).
 default.
 - When invoking external programs, treat '-' as an unsafe character unless
 it is preceded by a safe non-whitespace one.
+- man page corrections and updates of the "see also" lists for Owl.
 - Enable/disable the use of external libraries explicitly, do not depend
 on what libraries might happen to be installed on the build system.
 - Obsoletes: links
