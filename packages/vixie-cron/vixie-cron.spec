@@ -1,9 +1,9 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.18 2002/07/07 00:07:48 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.19 2002/11/03 04:06:40 solar Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
 Version: 3.0.2.7
-Release: owl15
+Release: owl16
 License: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%{version}.tar.gz
@@ -14,7 +14,7 @@ Patch1: vixie-cron-%{version}-owl-sgid-crontab.diff
 Patch2: vixie-cron-%{version}-owl-crond.diff
 Patch3: vixie-cron-%{version}-owl-vitmp.diff
 PreReq: /sbin/chkconfig, grep, shadow-utils
-Requires: owl-control < 2.0
+Requires: owl-control >= 0.4, owl-control < 2.0
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -67,10 +67,15 @@ rm -f /var/run/crond.restart
 if [ $1 -ge 2 ]; then
 	/etc/rc.d/init.d/crond status && touch /var/run/crond.restart || :
 	/etc/rc.d/init.d/crond stop || :
+	/usr/sbin/control-dump crontab
 fi
 
 %post
-grep -q ^crontab: /etc/group || chmod 700 /usr/bin/crontab
+if [ $1 -ge 2 ]; then
+	/usr/sbin/control-restore crontab
+else
+	grep -q ^crontab: /etc/group && /usr/sbin/control crontab public
+fi
 /sbin/chkconfig --add crond
 if [ -f /var/run/crond.restart ]; then
 	/etc/rc.d/init.d/crond start
@@ -91,7 +96,7 @@ fi
 %files
 %defattr(-,root,root)
 /usr/sbin/crond
-%attr(2711,root,crontab) /usr/bin/crontab
+%attr(700,root,root) /usr/bin/crontab
 %{_mandir}/man*/*
 %dir %attr(1730,root,crontab) /var/spool/cron
 %dir /etc/cron.d
@@ -99,6 +104,12 @@ fi
 /etc/control.d/facilities/crontab
 
 %changelog
+* Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
+- Dump/restore the owl-control setting for crontab on package upgrades.
+- Keep crontab at mode 700 ("restricted") in the package, but default
+it to "public" in %post when the package is first installed.  This avoids
+a race and fail-open behavior.
+
 * Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
 - Use grep -q in %pre.
 
