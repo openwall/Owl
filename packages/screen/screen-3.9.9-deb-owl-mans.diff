@@ -1,5 +1,5 @@
---- screen-3.9.8/doc/screen.1.orig	Thu Jul  6 16:40:50 2000
-+++ screen-3.9.8/doc/screen.1	Thu Mar  8 01:25:56 2001
+--- screen-3.9.9/doc/screen.1.orig	Fri May 25 17:39:19 2001
++++ screen-3.9.9/doc/screen.1	Tue Jun 12 17:13:25 2001
 @@ -101,7 +101,7 @@
  The above example would start the emacs editor (editing prog.c) and switch
  to its window.
@@ -18,7 +18,7 @@
  This can also be defined through the \*Qdeflogin\*U .screenrc command.
  .TP 5
  .BR \-ls " and " \-list
-@@ -581,7 +583,7 @@
+@@ -592,7 +592,7 @@
  When
  .I screen
  is invoked, it executes initialization commands from the files
@@ -27,7 +27,25 @@
  \*Q.screenrc\*U in the user's home directory. These are the \*Qprogrammer's
  defaults\*U that can be overridden in the following ways: for the
  global screenrc file 
-@@ -1515,7 +1517,7 @@
+@@ -1010,7 +1010,7 @@
+ .PP
+ Change the filename used for reading and writing with the paste buffer.
+ If the optional argument to the \*Qbufferfile\*U command is omitted, 
+-the default setting (\*Q/tmp/screen-exchange\*U) is reactivated.
++the default setting (\*Q/$HOME/.screen-exchange\*U) is reactivated.
+ The following example will paste the system's password file into 
+ the
+ .I screen
+@@ -1275,7 +1275,7 @@
+ .br
+ .ti -2n
+ \fB>\fP sets the (second) mark and writes the contents of the paste buffer to
+-the screen-exchange file (/tmp/screen-exchange per default) once copy-mode is 
++the screen-exchange file ($HOME/.screen-exchange per default) once copy-mode is 
+ finished. 
+ .br
+ This example demonstrates how to dump the whole scrollback buffer 
+@@ -1557,7 +1557,7 @@
  The echo command may be used to annoy 
  .I screen
  users with a 'message of the
@@ -36,7 +54,16 @@
  The option \*Q-n\*U may be used to suppress the line feed.
  See also \*Qsleep\*U.
  Echo is also useful for online checking of environment variables.
-@@ -3941,12 +3943,12 @@
+@@ -2805,7 +2805,7 @@
+ file if no filename is given. This is thought of as a primitive means of communication between
+ .I screen
+ users on the same host. The filename can be set with the \fIbufferfile\fP
+-command and defaults to \*Q/tmp/screen-exchange\*U.
++command and defaults to \*Q$HOME/.screen-exchange\*U.
+ .sp
+ .ne 3
+ .BR "writelock " [ on | "off\fR|\fBauto\fR]"
+@@ -4091,12 +4091,12 @@
  .I screen
  distribution package for private and global initialization files.
  .IP $SYSSCREENRC 
@@ -51,7 +78,7 @@
  .IP $SCREENDIR/S-<login>
  .IP /local/screens/S-<login>
  Socket directories (default)
-@@ -3954,9 +3956,7 @@
+@@ -4104,9 +4104,7 @@
  Alternate socket directories.
  .IP "<socket directory>/.termcap"
  Written by the "termcap" output function
@@ -62,7 +89,7 @@
  .I screen
  `interprocess communication buffer'
  .IP hardcopy.[0-9]
-@@ -3967,7 +3967,7 @@
+@@ -4117,7 +4115,7 @@
  or
  .IP /etc/termcap
  Terminal capability databases
@@ -71,7 +98,7 @@
  Login records
  .IP $LOCKPRG
  Program that locks a terminal.
-@@ -4078,9 +4078,9 @@
+@@ -4228,9 +4226,9 @@
  must be installed as set-uid with owner root on most systems in order
  to be able to correctly change the owner of the tty device file for
  each window.
@@ -83,9 +110,9 @@
  .I screen
  is killed with SIGKILL.
  This will cause some programs (like "w" or "rwho")
---- screen-3.9.8/doc/screen.texinfo.orig	Thu Jul  6 16:41:22 2000
-+++ screen-3.9.8/doc/screen.texinfo	Thu Mar  8 01:29:16 2001
-@@ -422,7 +422,7 @@
+--- screen-3.9.9/doc/screen.texinfo.orig	Fri May 25 17:40:02 2001
++++ screen-3.9.9/doc/screen.texinfo	Tue Jun 12 17:21:31 2001
+@@ -438,7 +438,7 @@
  @cindex screenrc
  When @code{screen} is invoked, it executes initialization commands from
  the files @file{.screenrc} in the user's home directory and
@@ -94,7 +121,25 @@
  following ways:
  For the global screenrc file @code{screen} searches for the environment
  variable @code{$SYSSCREENRC} (this override feature may be disabled at
-@@ -4454,13 +4454,13 @@
+@@ -2912,7 +2912,7 @@
+ 
+ @noindent
+ @kbd{>} sets the (second) mark and writes the contents of the paste buffer
+-to the screen-exchange file (@file{/tmp/screen-exchange} per default)
++to the screen-exchange file (@file{$HOME/.screen-exchange} per default)
+ once copy-mode is finished.  @xref{Screen-Exchange}.@*
+ This example demonstrates how to dump the
+ whole scrollback buffer to that file: @*@kbd{C-a [ g SPACE G $ >}.
+@@ -3034,7 +3034,7 @@
+ (none)@*
+ Change the filename used for reading and writing with the paste buffer.
+ If the @var{exchange-file} parameter is omitted, @code{screen} reverts
+-to the default of @file{/tmp/screen-exchange}.  The following example
++to the default of @file{$HOME/.screen-exchange}.  The following example
+ will paste the system's password file into the screen window (using the 
+ paste buffer, where a copy remains):
+ 
+@@ -4621,13 +4621,13 @@
  global initialization files.
  
  @item @code{$SYSSCREENRC}
@@ -110,3 +155,13 @@
  
  @item @code{$SCREENDIR}/S-@var{login}
  
+@@ -4640,8 +4640,7 @@
+ @item @var{socket directory}/.termcap
+ Written by the @code{dumptermcap} command
+ 
+-@item /usr/tmp/screens/screen-exchange or
+-@itemx /tmp/screen-exchange
++@item $HOME/.screen-exchange 
+ @code{screen} interprocess communication buffer
+ 
+ @item hardcopy.[0-9]
