@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vim/vim.spec,v 1.18 2004/09/10 07:33:06 galaxy Exp $
+# $Id: Owl/packages/vim/vim.spec,v 1.19 2004/11/02 04:11:41 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -12,7 +12,7 @@ Name: vim
 %define patchlevel 386
 %define vimdir vim%major%minor%alpha
 Version: %major.%minor%{?patchlevel:.%patchlevel}
-Release: owl3.1
+Release: owl4
 License: Charityware
 Group: Applications/Editors
 Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%major.%minor%alpha.tar.bz2
@@ -172,7 +172,7 @@ export ac_cv_func_mkstemp=yes \
 	--with-features=small \
 	--disable-pythoninterp --disable-perlinterp --disable-tclinterp \
 	--with-x=no --enable-gui=no \
-	--with-tlib=termcap --disable-gpm 
+	--with-tlib=termcap --disable-gpm
 %__make VIMRUNTIMEDIR=%_datadir/vim/%vimdir COMPILEDBY=build@%buildhost
 
 gcc $RPM_OPT_FLAGS -Wall -s $RPM_SOURCE_DIR/vitmp.c -o vitmp
@@ -286,9 +286,9 @@ chmod 644 ../runtime/doc/vim2html.pl
 %endif
 
 %changelog
-* Thu Sep 09 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 6.1.386-owl3.1
-- Patched to build with new autotools
-- Spec prepared for FHS moving
+* Thu Sep 09 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 6.1.386-owl4
+- Patched to build with new autotools.
+- Spec prepared for FHS moving.
 
 * Tue Jul 20 2004 Michail Litvak <mci@owl.openwall.com> 6.1.386-owl3
 - Use sed -i instead of perl.
