@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.72 2005/01/14 03:27:51 galaxy Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.73 2005/01/14 17:31:56 galaxy Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -10,7 +10,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.3.3
 %define crypt_bf_version 0.4.6
-Release: owl0%{?snapshot:.%snapshot}
+Release: owl1%{?snapshot:.%snapshot}
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%version%{?snapshot:-%snapshot}.tar.bz2
@@ -406,16 +406,6 @@ rm %buildroot%_sbindir/nscd
 rm %buildroot%_sbindir/nscd_nischeck
 
 %post -p /sbin/ldconfig
-%if 0
-# XXX: (GM): This %%post section postponed while our RPM doesn't understand
-#            AutoReq: noshell
-# If there is no %_sysconfig/localtime, then we are in the fresh install
-# stage (or system is misconfigured). Try to create a symbolic link to
-# Factory timezone and report this to the user.
-ln -s ../%_datadir/zoneinfo/Factory /etc/localtime 2>/dev/null || \
-echo "No timezone information was found, installed glibc factory default."
-/sbin/ldconfig
-%endif
 
 %postun -p /sbin/ldconfig
 
@@ -459,6 +449,9 @@ fi
 %files compat-fake
 
 %changelog
+* Sun Jun 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.3-owl1.2004061600
+- Removed commented out block in %%post.
+
 * Sun Jun 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.3-owl0.2004061600
 - Updated to CVS version 2.3.3 (2004061600).
 - Spec file was revised and reworked.
