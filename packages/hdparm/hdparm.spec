@@ -1,13 +1,13 @@
-# $Id: Owl/packages/hdparm/hdparm.spec,v 1.9 2002/11/05 01:14:57 solar Exp $
+# $Id: Owl/packages/hdparm/hdparm.spec,v 1.10 2003/01/07 23:19:01 mci Exp $
 
 Summary: A utility for displaying and/or setting hard disk parameters.
 Name: hdparm
-Version: 5.2
+Version: 5.3
 Release: owl1
 License: BSD
 Group: Applications/System
 Source: http://www.ibiblio.org/pub/Linux/system/hardware/%{name}-%{version}.tar.gz
-Patch0: hdparm-5.2-owl-warnings.diff
+Patch: hdparm-5.3-owl-warnings.diff
 Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
 
@@ -16,7 +16,7 @@ hdparm - get/set hard disk parameters for IDE drives.
 
 %prep
 %setup -q
-%patch0 -p1
+%patch -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -39,6 +39,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/hdparm.8*
 
 %changelog
+* Wed Jan 08 2003 Michail Litvak <mci@owl.openwall.com>
+- 5.3
+- Updated -warnings.diff.
+
 * Tue Nov 05 2002 Solar Designer <solar@owl.openwall.com>
 - Package README.acoustic.
 

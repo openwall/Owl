@@ -1,0 +1,12 @@
+--- hdparm-5.3/hdparm.c.orig	Mon Nov 25 00:52:19 2002
++++ hdparm-5.3/hdparm.c	Wed Jan  8 00:38:01 2003
+@@ -1517,7 +1517,9 @@
+ 	char c, *p;
+ 	char *tmpstr;
+ 	char name[32];
++#ifdef HDIO_GET_QDMA
+ 	int neg;
++#endif
+ 
+ 	if  ((progname = (char *) strrchr(*argv, '/')) == NULL)
+ 		progname = *argv;
