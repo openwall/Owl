@@ -1,4 +1,4 @@
-# $Id: Owl/packages/groff/groff.spec,v 1.6 2000/11/23 13:45:46 solar Exp $
+# $Id: Owl/packages/groff/groff.spec,v 1.7 2001/01/06 14:42:39 solar Exp $
 
 %define BUILD_USE_X	'no'
 %define BUILD_CURRENT	'yes'
@@ -7,7 +7,7 @@
 Summary: A document formatting system.
 Name: 		groff
 Version: 	1.16.1
-Release: 	3owl
+Release: 	4owl
 Copyright: 	GPL
 Group: 		Applications/Publishing
 Source0: 	ftp://ftp.gnu.org/gnu/groff/groff-%{version}.tar.gz
@@ -78,11 +78,11 @@ zcat %{SOURCE1} | patch -p1 -l
 cp %{SOURCE3} .
 
 %build
-
 %if "%{BUILD_USE_X}"=="'yes'"
 PATH=$PATH:%{_prefix}/X11R6/bin
 %endif
 
+export ac_cv_func_mkstemp=yes \
 %configure
 make
 
@@ -90,7 +90,6 @@ make
 cd src/xditview
 xmkmf && make
 %endif
-
 
 %install
 rm -rf ${RPM_BUILD_ROOT}
@@ -171,6 +170,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %endif
 
 %changelog
+* Sat Jan 06 2001 Solar Designer <solar@owl.openwall.com>
+- Enable mkstemp explicitly, not rely on configure.
+
 * Thu Nov 23 2000 Solar Designer <solar@owl.openwall.com>
 - Update to today's -current.
 - Dropped the now obsolete patches from Nov 21.

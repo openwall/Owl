@@ -1,9 +1,9 @@
-# $Id: Owl/packages/m4/m4.spec,v 1.1 2000/08/09 00:51:27 kad Exp $
+# $Id: Owl/packages/m4/m4.spec,v 1.2 2001/01/06 14:42:39 solar Exp $
 
 Summary: The GNU macro processor.
 Name: 		m4
 Version: 	1.4
-Release: 	13owl
+Release: 	14owl
 Copyright: 	GPL
 Group:		Applications/Text
 Source: 	ftp://ftp.gnu.org/gnu/m4/m4-%{version}.tar.gz
@@ -30,6 +30,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %build
 autoconf
+export ac_cv_func_mkstemp=yes \
 %configure
 make CFLAGS="$RPM_OPT_FLAGS" LDFLAGS=-s
 
@@ -48,13 +49,16 @@ gzip -9fn $RPM_BUILD_ROOT/%{_infodir}/*
 /sbin/install-info %{_infodir}/m4.info.gz %{_infodir}/dir
 
 %preun
-if [ "$1" = 0 ]; then
-    /sbin/install-info --delete %{_infodir}/m4.info.gz %{_infodir}/dir
+if [ $1 -eq 0 ]; then
+	/sbin/install-info --delete %{_infodir}/m4.info.gz %{_infodir}/dir
 fi
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
-* Sun Aug  6 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sat Jan 06 2001 Solar Designer <solar@owl.openwall.com>
+- Enable mkstemp explicitly, not rely on configure.
+
+* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import from RH

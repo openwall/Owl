@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ncurses/ncurses.spec,v 1.10 2000/12/24 10:20:43 solar Exp $
+# $Id: Owl/packages/ncurses/ncurses.spec,v 1.11 2001/01/06 14:42:39 solar Exp $
 
 %define 	major		5
 %define 	oldmajor	4
@@ -6,7 +6,7 @@
 Summary: 	A CRT screen handling and optimization package.
 Name: 		ncurses
 Version: 	5.2
-Release: 	6owl
+Release: 	7owl
 Copyright: 	distributable
 Group: 		System Environment/Libraries
 URL: 		http://dickey.his.com/ncurses/ncurses.html
@@ -64,6 +64,7 @@ built against Red Hat Linux 6.2.
 %build
 CFLAGS="%{optflags} -DPURE_TERMINFO"
 %define optflags $CFLAGS
+export ac_cv_func_mkstemp=yes \
 %configure \
 	--with-normal --with-shared --without-debug --without-profile \
 	--without-cxx --without-ada \
@@ -131,6 +132,9 @@ ln -s libpanel.so.%{version} $RPM_BUILD_ROOT/usr/lib/libpanel.so.%{oldmajor}
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Sat Jan 06 2001 Solar Designer <solar@owl.openwall.com>
+- Enable mkstemp explicitly, not rely on configure.
+
 * Sun Dec 24 2000 Solar Designer <solar@owl.openwall.com>
 - Autoreq: false for the -devel package to install before perl.
 

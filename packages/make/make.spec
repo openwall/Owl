@@ -1,9 +1,9 @@
-# $Id: Owl/packages/make/make.spec,v 1.1 2000/08/09 00:51:27 kad Exp $
+# $Id: Owl/packages/make/make.spec,v 1.2 2001/01/06 14:42:39 solar Exp $
 
 Summary: A GNU tool which simplifies the build process for users.
 Name: 		make
 Version: 	3.79.1
-Release: 	2owl
+Release: 	3owl
 Copyright: 	GPL
 Group: 		Development/Tools
 Source: 	ftp://ftp.gnu.org/gnu/make/make-%{version}.tar.gz
@@ -26,6 +26,7 @@ commonly used to simplify the process of installing programs.
 %setup -q
 
 %build
+export ac_cv_func_mkstemp=yes \
 %configure
 make
 
@@ -34,11 +35,10 @@ rm -f ${RPM_BUILD_ROOT}
 
 %makeinstall
 
-{ cd ${RPM_BUILD_ROOT}
-  ln -sf make .%{_bindir}/gmake
-  gzip -9nf .%{_infodir}/make.info*
-  rm -f .%{_infodir}/dir
-}
+cd ${RPM_BUILD_ROOT}
+ln -sf make .%{_bindir}/gmake
+gzip -9nf .%{_infodir}/make.info*
+rm -f .%{_infodir}/dir
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
@@ -47,8 +47,8 @@ rm -rf ${RPM_BUILD_ROOT}
 /sbin/install-info %{_infodir}/make.info.gz %{_infodir}/dir --entry="* GNU make: (make).           The GNU make utility."
 
 %preun
-if [ $1 = 0 ]; then
-   /sbin/install-info --delete %{_infodir}/make.info.gz %{_infodir}/dir --entry="* GNU make: (make).           The GNU make utility."
+if [ $1 -eq 0 ]; then
+	/sbin/install-info --delete %{_infodir}/make.info.gz %{_infodir}/dir --entry="* GNU make: (make).           The GNU make utility."
 fi
 
 %files
@@ -59,7 +59,10 @@ fi
 %{_infodir}/*.info*
 
 %changelog
-* Sun Aug  6 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sat Jan 06 2001 Solar Designer <solar@owl.openwall.com>
+- Enable mkstemp explicitly, not rely on configure.
+
+* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import spec from RH rawhide
 
 * Wed Jul 12 2000 Prospector <bugzilla@redhat.com>
