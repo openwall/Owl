@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.6 2002/02/05 15:58:29 solar Exp $
+# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.7 2002/02/07 18:07:47 solar Exp $
 
 Summary: A basic system library for accessing the termcap database.
 Name: libtermcap
@@ -15,6 +15,7 @@ Patch4: termcap-2.0.8-rh-fix-tc.diff
 Patch5: termcap-2.0.8-rh-glibc-2.1.diff
 Patch6: termcap-2.0.8-rh-ignore-p.diff
 Patch7: termcap-2.0.8-rh-xref.diff
+PreReq: /sbin/ldconfig
 Requires: /etc/termcap
 BuildRequires: texinfo
 BuildRoot: /override/%{name}-%{version}

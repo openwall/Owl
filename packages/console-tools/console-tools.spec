@@ -1,4 +1,4 @@
-# $Id: Owl/packages/console-tools/Attic/console-tools.spec,v 1.11 2002/01/24 17:09:27 solar Exp $
+# $Id: Owl/packages/console-tools/Attic/console-tools.spec,v 1.12 2002/02/07 18:07:46 solar Exp $
 
 %define CTVER 0.3.3
 %define	CDVER 1999.08.29
@@ -55,7 +55,7 @@ Patch13: console-tools-1999.08.29-rh-se-no-deadkeys.diff
 Patch14: console-tools-1999.08.29-rh-slovene.diff
 # Russian keyboards fixes.
 Patch15: console-tools-1999.08.29-bcl-russian-keyboards.diff
-PreReq: /sbin/chkconfig, fileutils, sed
+PreReq: /sbin/ldconfig, /sbin/chkconfig
 Provides: kbd
 Obsoletes: kbd
 BuildRoot: /override/%{name}-%{version}

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ldconfig/Attic/ldconfig.spec,v 1.6 2002/02/04 16:59:26 solar Exp $
+# $Id: Owl/packages/ldconfig/Attic/ldconfig.spec,v 1.7 2002/02/07 18:07:46 solar Exp $
 
 %define reldate 1999-07-31
 
@@ -39,7 +39,6 @@ touch $RPM_BUILD_ROOT/etc/ld.so.conf
 rm -rf $RPM_BUILD_ROOT
 
 %post -p /sbin/ldconfig
-%postun -p /sbin/ldconfig
 
 %files
 %defattr(-,root,root)

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libpcap/libpcap.spec,v 1.3 2002/02/04 17:33:52 solar Exp $
+# $Id: Owl/packages/libpcap/libpcap.spec,v 1.4 2002/02/07 18:07:46 solar Exp $
 
 Summary: Network packet capture library.
 Name: libpcap
@@ -9,6 +9,7 @@ License: GPL
 Group: System Environment/Libraries
 Source: http://www.tcpdump.org/release/%{name}-%{version}.tar.gz
 Patch0: libpcap-0.6.2-pld-shared.diff
+PreReq: /sbin/ldconfig
 BuildRequires: flex, bison
 BuildRoot: /override/%{name}-%{version}
 
@@ -46,11 +47,11 @@ mkdir -p ${RPM_BUILD_ROOT}{%{_libdir},%{_mandir}/man3}
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-%post -p /sbin/ldconfig
-%postun -p /sbin/ldconfig
-
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%post -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
 
 %files
 %defattr(644,root,root,755)

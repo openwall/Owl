@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ncurses/ncurses.spec,v 1.16 2002/02/06 18:45:35 solar Exp $
+# $Id: Owl/packages/ncurses/ncurses.spec,v 1.17 2002/02/07 18:07:47 solar Exp $
 
 %define major 5
 %define oldmajor 4
@@ -20,6 +20,7 @@ Patch2: ncurses-5.2-owl-glibc-enable_secure.diff
 Patch3: ncurses-5.2-owl-fixes.diff
 Patch4: ncurses-5.2-rh-typo.diff
 Patch5: ncurses-5.2-rh-tput-S.diff
+PreReq: /sbin/ldconfig
 BuildRoot: /override/%{name}-%{version}
 
 %description

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/newt/Attic/newt.spec,v 1.10 2002/02/07 01:41:15 solar Exp $
+# $Id: Owl/packages/newt/Attic/newt.spec,v 1.11 2002/02/07 18:07:47 solar Exp $
 
 Summary: A development library for text mode user interfaces.
 Name: newt
@@ -10,6 +10,7 @@ Source: ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
 Patch0: newt-0.50.18-castle-owl-Gpm_Open.diff
 Patch1: newt-0.50.18-owl-notcl.diff
 Patch2: newt-0.50.18-owl-nopython.diff
+PreReq: /sbin/ldconfig
 Requires: slang
 BuildRequires: slang
 BuildRoot: /override/%{name}-%{version}

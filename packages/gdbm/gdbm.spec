@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gdbm/gdbm.spec,v 1.5 2002/02/04 17:13:23 solar Exp $
+# $Id: Owl/packages/gdbm/gdbm.spec,v 1.6 2002/02/07 18:07:46 solar Exp $
 
 Summary: A GNU set of database routines which use extensible hashing.
 Name: gdbm
@@ -9,6 +9,7 @@ Group: System Environment/Libraries
 Source: ftp://ftp.gnu.org/gnu/gdbm/gdbm-%{version}.tar.gz
 Patch0: gdbm-1.8.0-rh-header.diff
 Patch1: gdbm-1.8.0-rh-owl-Makefile.diff
+PreReq: /sbin/ldconfig
 Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
 

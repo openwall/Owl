@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libnet/libnet.spec,v 1.5 2002/02/04 17:28:01 solar Exp $
+# $Id: Owl/packages/libnet/libnet.spec,v 1.6 2002/02/07 18:07:46 solar Exp $
 
 Summary: "libpwrite" Network Routine Library.
 Name: libnet
@@ -11,6 +11,7 @@ URL: http://www.packetfactory.net/libnet/
 Source: http://www.packetfactory.net/libnet/dist/%{name}-%{version}.tar.gz
 Patch0: libnet-1.0.2a-pld-shared.diff
 Patch1: libnet-1.0.2a-owl-alpha-targets.diff
+PreReq: /sbin/ldconfig
 BuildRequires: libpcap-devel, autoconf
 BuildRoot: /override/%{name}-%{version}
 
@@ -55,11 +56,11 @@ ln -sf libnet.so.*.* libnet.so
 popd
 ln -sf libnet.so $RPM_BUILD_ROOT%{_libdir}/libpwrite
 
-%post -p /sbin/ldconfig
-%postun -p /sbin/ldconfig
-
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%post -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
 
 %files
 %defattr(644,root,root,755)

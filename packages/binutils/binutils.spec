@@ -1,4 +1,4 @@
-# $Id: Owl/packages/binutils/binutils.spec,v 1.6 2002/02/04 17:13:23 solar Exp $
+# $Id: Owl/packages/binutils/binutils.spec,v 1.7 2002/02/07 18:07:46 solar Exp $
 
 %define BUILD_HJL 1
 
@@ -14,6 +14,7 @@ Source: ftp://ftp.valinux.com/pub/support/hjl/binutils/binutils-%{version}.tar.g
 %else
 Source: ftp://ftp.gnu.org/gnu/binutils/binutils-%{version}.tar.gz
 %endif
+PreReq: /sbin/ldconfig, /sbin/install-info
 ExcludeArch: ia64
 BuildRoot: /override/%{name}-%{version}
 

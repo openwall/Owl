@@ -1,4 +1,4 @@
-# $Id: Owl/packages/zlib/zlib.spec,v 1.2 2002/02/02 20:34:13 solar Exp $
+# $Id: Owl/packages/zlib/zlib.spec,v 1.3 2002/02/07 18:07:47 solar Exp $
 
 Summary: The zlib compression and decompression library.
 Name: zlib
@@ -9,6 +9,7 @@ Group: System Environment/Libraries
 URL: http://www.info-zip.org/pub/infozip/zlib/
 Source: ftp://ftp.info-zip.org/pub/infozip/zlib/zlib-%{version}.tar.gz
 Patch0: zlib-1.1.3-rh-glibc.diff
+PreReq: /sbin/ldconfig
 Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
 

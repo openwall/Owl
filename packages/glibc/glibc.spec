@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.25 2002/02/04 07:50:24 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.26 2002/02/07 18:07:46 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -49,6 +49,7 @@ Patch43: glibc-2.1.3-cvs-20000926-tmp-warnings.diff
 Patch44: glibc-2.1.3-cvs-20010109-dl.diff
 Patch45: glibc-2.1.3-cvs-20000929-alpha-reloc.diff
 Patch46: glibc-2.1.3-cvs-20011129-glob.diff
+PreReq: /sbin/ldconfig
 %ifarch alpha
 Provides: ld.so.2
 %endif
@@ -71,7 +72,6 @@ Summary: Header and object files for development using standard C libraries.
 Group: Development/Libraries
 Conflicts: texinfo < 3.11
 PreReq: /sbin/install-info
-PreReq: kernel-headers
 Requires: kernel-headers >= 2.2.1
 AutoReq: true
 

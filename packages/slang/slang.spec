@@ -1,4 +1,4 @@
-# $Id: Owl/packages/slang/Attic/slang.spec,v 1.3 2002/02/05 16:33:22 solar Exp $
+# $Id: Owl/packages/slang/Attic/slang.spec,v 1.4 2002/02/07 18:07:47 solar Exp $
 
 Summary: The shared library for the S-Lang extension language.
 Name: slang
@@ -8,6 +8,7 @@ License: GPL
 Group: System Environment/Libraries
 URL: http://www.s-lang.org/
 Source: ftp://space.mit.edu/pub/davis/slang/v1.4/slang-%{version}.tar.bz2
+PreReq: /sbin/ldconfig
 BuildRoot: /override/%{name}-%{version}
 
 %description

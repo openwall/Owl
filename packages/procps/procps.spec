@@ -1,4 +1,4 @@
-# $Id: Owl/packages/procps/Attic/procps.spec,v 1.4 2002/02/07 01:47:15 solar Exp $
+# $Id: Owl/packages/procps/Attic/procps.spec,v 1.5 2002/02/07 18:07:47 solar Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
@@ -10,6 +10,7 @@ Source: ftp://sunsite.unc.edu/pub/Linux/system/status/ps/procps-%{version}.tar.g
 Patch0: procps-2.0.6-owl-alt-stale.diff
 Patch1: procps-2.0.7-owl-locale.diff
 Patch2: procps-2.0.7-owl-meminfo-fixes.diff
+PreReq: /sbin/ldconfig
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 
 %description
@@ -39,7 +40,6 @@ gzip -9nf $RPM_BUILD_ROOT/usr/man/man[158]/*
 rm -rf $RPM_BUILD_ROOT
 
 %post -p /sbin/ldconfig
-
 %postun -p /sbin/ldconfig
 
 %files

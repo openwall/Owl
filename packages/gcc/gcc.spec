@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.23 2002/02/07 09:36:58 solar Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.24 2002/02/07 18:07:46 solar Exp $
 
 %define GCC_PREFIX /usr
 %define CPP_PREFIX /lib
@@ -36,7 +36,7 @@ as well as documentation which is not limited to just the C compiler.
 %package -n cpp
 Summary: GNU C preprocessor.
 Group: Development/Languages
-PreReq: /sbin/install-info
+PreReq: /sbin/ldconfig, /sbin/install-info
 
 %description -n cpp
 cpp (or cccp) is the GNU C Compatible Compiler Preprocessor.  cpp is a
@@ -60,6 +60,7 @@ programs is available as a separate binary package.
 %package -n libstdc++
 Summary: GNU C++ library.
 Group: System Environment/Libraries
+PreReq: /sbin/ldconfig, grep, fileutils
 Provides: libstdc++-libc6.1-1.so.2, libstdc++-libc6.1-2.so.3, libstdc++.so.2.9
 Obsoletes: gcc-libstdc++
 
@@ -72,6 +73,7 @@ library.
 %package -n libstdc++-compat
 Summary: Old GNU C++ libraries for binary compatibility.
 Group: System Environment/Libraries
+PreReq: /sbin/ldconfig, grep, fileutils
 
 %description -n libstdc++-compat
 This package includes the old shared libraries necessary to run C++
@@ -105,6 +107,7 @@ not include the standard Objective C object library.
 %package g77
 Summary: Fortran 77 support for gcc.
 Group: Development/Languages
+PreReq: /sbin/install-info
 Requires: gcc = %{GCC_VERSION}
 Obsoletes: egcs-g77
 
@@ -117,6 +120,7 @@ Collection.
 %package chill
 Summary: CHILL support for gcc.
 Group: Development/Languages
+PreReq: /sbin/install-info
 Requires: gcc = %{GCC_VERSION}
 
 %description chill

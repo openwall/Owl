@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.17 2002/02/07 10:07:26 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.18 2002/02/07 18:07:47 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
@@ -11,6 +11,7 @@ Source: ftp://ftp.openssl.org/source/%{name}-%{version}.tar.gz
 Patch0: openssl-0.9.5a-rh-config-path.diff
 Patch1: openssl-0.9.5a-owl-crypt.diff
 Patch2: openssl-0.9.6a-owl-glibc-enable_secure.diff
+PreReq: /sbin/ldconfig
 Provides: SSL
 BuildRequires: perl
 BuildRoot: /override/%{name}-%{version}

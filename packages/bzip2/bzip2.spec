@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bzip2/bzip2.spec,v 1.9 2002/02/01 21:04:15 solar Exp $
+# $Id: Owl/packages/bzip2/bzip2.spec,v 1.10 2002/02/07 18:07:46 solar Exp $
 
 Summary: A file compression utility.
 Name: bzip2
@@ -10,6 +10,7 @@ URL: http://sources.redhat.com/bzip2/
 Source: ftp://sources.redhat.com/pub/bzip2/v102/bzip2-%{version}.tar.gz
 Patch0: bzip2-1.0.2-owl-Makefiles.diff
 Patch1: bzip2-1.0.2-owl-tmp.diff
+PreReq: /sbin/ldconfig
 Requires: mktemp >= 1:1.3.1
 Provides: libbz2.so.0
 BuildRoot: /override/%{name}-%{version}
@@ -55,11 +56,11 @@ make -f Makefile-libbz2_so install PREFIX="${RPM_BUILD_ROOT}/usr"
 # Hack!
 ln -s libbz2.so.%{version} ${RPM_BUILD_ROOT}%{_libdir}/libbz2.so.0
 
-%post -p /sbin/ldconfig
-%postun -p /sbin/ldconfig
-
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%post -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
 
 %files
 %defattr(-,root,root)

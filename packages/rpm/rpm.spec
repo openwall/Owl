@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.20 2002/02/07 17:12:13 solar Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.21 2002/02/07 18:07:47 solar Exp $
 
 Summary: The Red Hat package management system.
 Name: rpm
@@ -13,6 +13,7 @@ Patch2: rpm-3.0.5-owl-vendor.diff
 Patch3: rpm-3.0.5-owl-closeall.diff
 Patch4: rpm-3.0.5-owl-includes.diff
 Patch5: rpm-3.0.5-owl-gendiff.diff
+PreReq: /sbin/ldconfig
 PreReq: gawk, fileutils, textutils, sh-utils, mktemp
 Requires: popt, bzip2 >= 0.9.0c-2
 Conflicts: patch < 2.5
@@ -54,6 +55,7 @@ build packages using RPM.
 Summary: A C library for parsing command line arguments.
 Version: 1.5.1
 Group: Development/Libraries
+PreReq: /sbin/ldconfig
 
 %description -n popt
 popt is a C library for parsing command line arguments.  popt was
@@ -109,13 +111,13 @@ mkdir -p $RPM_BUILD_ROOT/etc/rpm
 rm -rf $RPM_BUILD_ROOT
 
 %post
+/sbin/ldconfig
 /bin/rpm --initdb
 if [ ! -e /etc/rpm/macros -a -e /etc/rpmrc -a -f %{__prefix}/lib/rpm/convertrpmrc.sh ]; then
 	sh %{__prefix}/lib/rpm/convertrpmrc.sh &> /dev/null
 fi
 
-%post devel -p /sbin/ldconfig
-%postun devel -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
 
 %post -n popt -p /sbin/ldconfig
 %postun -n popt -p /sbin/ldconfig

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/utempter/Attic/utempter.spec,v 1.3 2002/02/04 08:07:29 solar Exp $
+# $Id: Owl/packages/utempter/Attic/utempter.spec,v 1.4 2002/02/07 18:07:47 solar Exp $
 
 Summary: A privileged helper for utmp/wtmp updates.
 Name: utempter
@@ -7,7 +7,7 @@ Release: owl5
 License: GPL
 Group: System Environment/Base
 Source: utempter-%{version}.tar.gz
-PreReq: grep, /usr/sbin/groupadd, /sbin/ldconfig
+PreReq: /sbin/ldconfig, grep, /usr/sbin/groupadd
 Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
 
@@ -31,11 +31,11 @@ ln -s utempter.d/utempter $RPM_BUILD_ROOT/usr/sbin/utempter
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%pre
-grep -q ^utempter: /etc/group || groupadd -g 162 utempter
-
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
+
+%pre
+grep -q ^utempter: /etc/group || groupadd -g 162 utempter
 
 %files
 %defattr(-,root,root)

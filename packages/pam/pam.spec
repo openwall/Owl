@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.21 2002/02/04 10:08:08 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.22 2002/02/07 18:07:47 solar Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
@@ -18,6 +18,7 @@ Patch11: pam-0.75-owl-pam_chroot.diff
 Patch12: pam-0.75-owl-pam_lastlog.diff
 Patch13: pam-0.75-owl-pam_securetty.diff
 Patch20: pam-0.75-owl-no-cracklib.diff
+PreReq: /sbin/ldconfig
 Requires: glibc-crypt_blowfish, pwdb >= 0.61-1owl
 # Just to make sure noone misses pam_unix, which is now provided by tcb
 Requires: tcb >= 0.9.5

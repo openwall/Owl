@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pwdb/Attic/pwdb.spec,v 1.5 2001/07/30 02:21:27 solar Exp $
+# $Id: Owl/packages/pwdb/Attic/pwdb.spec,v 1.6 2002/02/07 18:07:47 solar Exp $
 
 Summary: The password database library.
 Name: pwdb
@@ -13,6 +13,7 @@ Patch2: pwdb-0.61-owl-backup.diff
 Patch3: pwdb-0.61-owl-sprintf.diff
 Patch4: pwdb-0.61-owl-sp_flag.diff
 Patch5: pwdb-0.61-koni-owl-memory-leaks.diff
+PreReq: /sbin/ldconfig
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 
 %description
@@ -55,12 +56,11 @@ make	INCLUDED=$RPM_BUILD_ROOT/usr/include/pwdb \
 
 install -m 644 conf/pwdb.conf $RPM_BUILD_ROOT/etc/pwdb.conf
 
-%post -p /sbin/ldconfig
-
-%postun -p /sbin/ldconfig
-
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%post -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
 
 %files
 %defattr(-,root,root)

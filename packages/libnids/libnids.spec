@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libnids/libnids.spec,v 1.3 2002/02/04 17:28:27 solar Exp $
+# $Id: Owl/packages/libnids/libnids.spec,v 1.4 2002/02/07 18:07:46 solar Exp $
 
 Summary: NIDS E-component.
 Name: libnids
@@ -11,6 +11,7 @@ URL: http://www.packetfactory.net/Projects/Libnids/
 Source: http://www.packetfactory.net/Projects/Libnids/dist/%{name}-%{version}.tar.gz
 Patch0: libnids-1.16-pld-conf.diff
 Patch1: libnids-1.16-owl-pcap062.diff
+PreReq: /sbin/ldconfig
 BuildRequires: autoconf, libpcap-devel, libnet-devel
 BuildRoot: /override/%{name}-%{version}
 
@@ -44,11 +45,11 @@ rm -rf $RPM_BUILD_ROOT
 
 %{__make} install install_prefix=$RPM_BUILD_ROOT
 
-%post -p /sbin/ldconfig
-%postun -p /sbin/ldconfig
-
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%post -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
 
 %files
 %defattr(644,root,root,755)
