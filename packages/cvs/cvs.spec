@@ -1,9 +1,9 @@
-# $Id: Owl/packages/cvs/cvs.spec,v 1.1 2003/04/27 12:24:30 solar Exp $
+# $Id: Owl/packages/cvs/cvs.spec,v 1.2 2003/04/27 13:45:17 solar Exp $
 
 Summary: A version control system.
 Name: cvs
 Version: 1.11.5
-Release: owl0.1
+Release: owl0.2
 License: GPL
 Group: Development/Tools
 URL: http://www.cvshome.org
@@ -70,6 +70,11 @@ fi
 %{_datadir}/%{name}
 
 %changelog
+* Sun Apr 27 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl0.2
+- Re-worked much of the temporary file handling patch to make it actually
+do at least some of what it was supposed to; also patched the fail-open
+use in configure.
+
 * Mon Mar 24 2003 Simon B <simonb@owl.openwall.com> 1.11.5-owl0.1
 - Pulled in mktemp fixes from ALT Linux
 - Disable {Checkin,Update}-prog
