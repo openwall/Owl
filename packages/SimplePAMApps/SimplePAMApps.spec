@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.29 2003/05/29 01:10:54 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.30 2003/10/16 02:53:31 solar Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
 Version: 0.60
-Release: owl20
+Release: owl21
 License: BSD or GPL
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
@@ -75,6 +75,12 @@ fi
 %post
 if [ $1 -ge 2 ]; then
 	/usr/sbin/control-restore passwd su
+	if [ -d /etc/tcb -a -f /etc/shadow-pre-tcb -a ! -e /etc/shadow -a \
+	    "`control passwd`" = traditional ]; then
+		echo "Setting passwd(1) file modes for tcb"
+		control passwd tcb
+		ls -l /usr/bin/passwd
+	fi
 else
 	/usr/sbin/control passwd tcb
 	/usr/sbin/control su wheelonly
@@ -91,6 +97,11 @@ fi
 /etc/control.d/facilities/*
 
 %changelog
+* Thu Oct 16 2003 Solar Designer <solar@owl.openwall.com> 0.60-owl21
+- Invoke "control passwd tcb" when updating old installs; the invocation
+from owl-etc could have failed if the previous version of SimplePAMApps
+was too old to even know of tcb as a possible setting for passwd.
+
 * Thu May 29 2003 Solar Designer <solar@owl.openwall.com> 0.60-owl20
 - write_to=tcb
 - passwd(1) file modes now default to tcb.
