@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tcp_wrappers/tcp_wrappers.spec,v 1.8 2004/05/19 12:38:08 solar Exp $
+# $Id: Owl/packages/tcp_wrappers/tcp_wrappers.spec,v 1.9 2004/05/19 12:39:00 solar Exp $
 
 Summary: A security tool which acts as a wrapper for network services.
 Name: tcp_wrappers
@@ -59,7 +59,7 @@ ln -s hosts_access.5 $RPM_BUILD_ROOT%_mandir/man5/hosts.deny.5
 %_mandir/man*/*
 
 %changelog
-* Wed May 19 Solar Designer <solar@owl.openwall.com> 7.6-owl4
+* Wed May 19 2004 Solar Designer <solar@owl.openwall.com> 7.6-owl4
 - Do not apply the patch for building with new glibc just yet as it breaks
 things for glibc 2.1.3.
 
