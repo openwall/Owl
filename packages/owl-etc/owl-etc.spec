@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.48 2003/05/29 01:44:56 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.49 2003/05/29 01:49:19 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
@@ -56,7 +56,7 @@ function pause()
 
 # Determine whether the current /etc/shadow matches the initial version
 # as provided by this package.
-if [ -e /etc/shadow.rpmnew ]; then
+if [ -e /etc/shadow.rpmnew -o ! -e /etc/shadow ]; then
 	SHADOW_INITIAL=no
 elif [ "`sha1sum < /etc/shadow`" = "%{shadow_initial_sha1}  -" ]; then
 	SHADOW_INITIAL=yes
