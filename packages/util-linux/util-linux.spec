@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.15 2001/11/12 01:57:59 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.16 2002/02/04 07:38:38 solar Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -13,7 +13,7 @@ Version: %{base_version}.%{crypto_version}
 %else
 Version: %{base_version}
 %endif
-Release: 4owl
+Release: owl5
 License: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%{base_version}.tar.bz2
@@ -26,8 +26,9 @@ Patch3: util-linux-2.10r-owl-alpha-hwclock-usage.diff
 Patch4: util-linux-2.10r-rh-locale-overflow.diff
 Patch10: util-linux-2.10r-%{crypto_version}-int.diff
 Patch11: util-linux-2.10r-%{crypto_version}-int-owl-fixes.diff
+PreReq: /sbin/install-info
 Requires: owl-control < 2.0
-Obsoletes: fdisk tunelp
+Obsoletes: fdisk, tunelp
 %ifarch sparc alpha
 Obsoletes: clock
 %endif
@@ -97,11 +98,21 @@ chmod 644 $RPM_BUILD_ROOT/usr/share/misc/getopt/*
 mkdir -p $RPM_BUILD_ROOT/etc/control.d/facilities
 cd $RPM_BUILD_ROOT/etc/control.d/facilities
 
-install -m 700 ${RPM_SOURCE_DIR}/mount.control mount
-install -m 700 ${RPM_SOURCE_DIR}/write.control write
+install -m 700 $RPM_SOURCE_DIR/mount.control mount
+install -m 700 $RPM_SOURCE_DIR/write.control write
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%post
+/sbin/install-info %{_infodir}/ipc.info.gz %{_infodir}/dir \
+	--entry="* ipc: (ipc).                                   System V IPC."
+
+%preun
+if [ $1 -eq 0 ]; then
+	/sbin/install-info --delete %{_infodir}/ipc.info.gz %{_infodir}/dir \
+		--entry="* ipc: (ipc).                                   System V IPC."
+fi
 
 %files
 %defattr(-,root,root)
@@ -272,6 +283,10 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
+- Install the info dir entry for ipc.
+- Enforce our new spec file conventions.
+
 * Mon Nov 12 2001 Solar Designer <solar@owl.openwall.com>
 - newgrp is now built from shadow-utils, for gshadow support.
 - Dropped the support for building of chsh, chfn, vipw, vigr, and newgrp
