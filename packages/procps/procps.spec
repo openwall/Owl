@@ -1,4 +1,4 @@
-# $Id: Owl/packages/procps/Attic/procps.spec,v 1.3 2000/12/02 03:01:33 solar Exp $
+# $Id: Owl/packages/procps/Attic/procps.spec,v 1.4 2002/02/07 01:47:15 solar Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
@@ -90,7 +90,7 @@ rm -rf $RPM_BUILD_ROOT
 - Imported this spec from iNs/Linux, cleaned it up a bit, and added the
 patch for alternative stale utmp entry checking.
 
-* Thu Feb 17 2000  Francis J. Lacoste <francis.lacoste@iNsu.COM> 
+* Thu Feb 17 2000  Francis J. Lacoste <francis.lacoste@iNsu.COM>
   [2.0.6-1i]
 - Changed group.
 - Removed wmconfig file.
@@ -99,7 +99,7 @@ patch for alternative stale utmp entry checking.
 - Added sysctl program.
 - Compressed man pages.
 
-* Mon Mar 15 1999  Francis J. Lacoste <francis@Contre.COM> 
+* Mon Mar 15 1999  Francis J. Lacoste <francis@Contre.COM>
 - Removed setuid bit on XConsole.
 - Handled non root build.
 - Fix perms.

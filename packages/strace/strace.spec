@@ -1,4 +1,4 @@
-# $Id: Owl/packages/strace/strace.spec,v 1.5 2002/02/05 16:26:33 solar Exp $
+# $Id: Owl/packages/strace/strace.spec,v 1.6 2002/02/07 01:47:15 solar Exp $
 
 Summary: Tracks and displays system calls associated with a running process.
 Name: strace
@@ -67,7 +67,7 @@ rm -rf $RPM_BUILD_ROOT
 - man page fix
 
 * Thu Jan 25 2001 Michail Litvak <mci@owl.openwall.com>
-- Added patch to fix printsock 
+- Added patch to fix printsock
 
 * Mon Jan 23 2001 Michail Litvak <mci@owl.openwall.com>
 - Imported from RH

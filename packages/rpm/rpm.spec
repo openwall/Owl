@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.18 2001/06/12 10:04:31 kad Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.19 2002/02/07 01:47:15 solar Exp $
 %define        _noVersionedDependencies        1
 
 # XXX legacy requires './' payload prefix to be omitted from rpm packages.
@@ -154,7 +154,7 @@ rm -rf $RPM_BUILD_ROOT
 %post
 /bin/rpm --initdb
 %ifos linux
-if [ ! -e /etc/rpm/macros -a -e /etc/rpmrc -a -f %{__prefix}/lib/rpm/convertrpmrc.sh ] 
+if [ ! -e /etc/rpm/macros -a -e /etc/rpmrc -a -f %{__prefix}/lib/rpm/convertrpmrc.sh ]
 then
 	sh %{__prefix}/lib/rpm/convertrpmrc.sh > /dev/null 2>&1
 fi

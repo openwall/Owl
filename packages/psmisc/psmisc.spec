@@ -1,4 +1,4 @@
-# $Id: Owl/packages/psmisc/psmisc.spec,v 1.1 2000/08/09 00:51:27 kad Exp $
+# $Id: Owl/packages/psmisc/psmisc.spec,v 1.2 2002/02/07 01:47:15 solar Exp $
 
 Summary: Utilities for managing processes on your system.
 Name: 		psmisc
@@ -72,7 +72,7 @@ rm -rf $RPM_BUILD_ROOT
 * Mon Sep 27 1999 Bill Nottingham <notting@redhat.com>
 - move fuser to /sbin
 
-* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com> 
+* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com>
 - auto rebuild in the new build environment (release 2)
 
 * Sat Mar 13 1999 Michael Maher <mike@redhat.com>

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/readline/readline.spec,v 1.7 2001/07/06 03:22:42 solar Exp $
+# $Id: Owl/packages/readline/readline.spec,v 1.8 2002/02/07 01:47:15 solar Exp $
 
 Summary: A library for editing typed in command lines.
 Name: readline
@@ -83,7 +83,7 @@ ln -s libreadline.so.%{version} .%{_libdir}/libreadline.so.3.0
 %clean
 rm -rf ${RPM_BUILD_ROOT}
 
-%post 
+%post
 /sbin/ldconfig
 /sbin/install-info %{_infodir}/history.info.gz %{_infodir}/dir
 /sbin/install-info %{_infodir}/readline.info.gz %{_infodir}/dir
@@ -114,7 +114,7 @@ fi
 - optflags_lib support.
 
 * Wed Dec 06 2000 Michail Litvak <mci@owl.openwall.com>
-- hack for compatibility with readline2  
+- hack for compatibility with readline2
 - spec file cleanups
 
 * Tue Dec 05 2000 Michail Litvak <mci@owl.openwall.com>
@@ -142,7 +142,7 @@ fi
 * Fri Apr 09 1999 Michael K. Johnson <johnsonm@redhat.com>
 - added guard patch from Taneli Huuskonen <huuskone@cc.helsinki.fi>
 
-* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com> 
+* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com>
 - auto rebuild in the new build environment (release 4)
 
 * Sun Jul 26 1998 Jeff Johnson <jbj@redhat.com>

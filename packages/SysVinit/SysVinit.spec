@@ -1,4 +1,4 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.8 2002/02/05 16:12:35 solar Exp $
+# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.9 2002/02/07 01:47:15 solar Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
@@ -13,9 +13,9 @@ Patch2: sysvinit-2.78-owl-umask.diff
 BuildRoot: /override/%{name}-%{version}
 
 %description
-The SysVinit package contains a group of processes that control 
-the very basic functions of your system.  SysVinit includes the init 
-program, the first program started by the Linux kernel when the 
+The SysVinit package contains a group of processes that control
+the very basic functions of your system.  SysVinit includes the init
+program, the first program started by the Linux kernel when the
 system boots.  init then controls the startup, running and shutdown
 of all other programs.
 

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.14 2002/02/02 20:53:56 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.15 2002/02/07 01:47:15 solar Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
@@ -111,7 +111,7 @@ fi
 - Enforce our new spec file conventions.
 - Dropped the unused xinetd-inetdconvert.
 
-* Mon Nov 05 2001 Solar Designer <solar@owl.openwall.com> 
+* Mon Nov 05 2001 Solar Designer <solar@owl.openwall.com>
 - /etc/init.d -> /etc/rc.d/init.d for consistency.
 
 * Thu Aug 30 2001 Solar Designer <solar@owl.openwall.com>

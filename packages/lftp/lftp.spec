@@ -1,4 +1,4 @@
-# $Id: Owl/packages/lftp/lftp.spec,v 1.11 2002/02/06 15:01:10 solar Exp $
+# $Id: Owl/packages/lftp/lftp.spec,v 1.12 2002/02/07 01:47:15 solar Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
@@ -105,4 +105,4 @@ fi
 * Mon Mar 19 2001 Michail Litvak <mci@owl.openwall.com>
 - reworked spec from author's package
 - imported patches from Debian
-- add patch to check length of address returned from DNS 
+- add patch to check length of address returned from DNS
