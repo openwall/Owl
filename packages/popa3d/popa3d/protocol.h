@@ -90,8 +90,8 @@ extern int pop_reply_error(void);
 /*
  * Produces a multi-line POP response, reading the data from the supplied
  * file descriptor for up to the requested size or number of lines of the
- * message body, if that number is non-negative. Returns a non-zero value
- * on error; the POP session then has to crash.
+ * message body, if that number is non-negative. Returns POP_OK or one of
+ * the POP_CRASH_* event codes.
  */
 extern int pop_reply_multiline(int fd, unsigned long size, int lines);
 

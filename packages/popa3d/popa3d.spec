@@ -1,8 +1,8 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.28 2003/01/26 17:10:52 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.29 2003/02/20 03:42:27 solar Exp $
 
 Summary: Post Office Protocol (POP3) server.
 Name: popa3d
-Version: 0.5.9.1
+Version: 0.6
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
@@ -72,6 +72,11 @@ fi
 %doc DESIGN LICENSE
 
 %changelog
+* Thu Feb 20 2003 Solar Designer <solar@owl.openwall.com>
+- pop_reply_multiline() will now return different POP_CRASH_* codes on
+error (both network- and server-related errors are possible there).
+- Let it be 0.6 stable release.
+
 * Sun Jan 26 2003 Solar Designer <solar@owl.openwall.com>
 - Corrected the message size reporting bug introduced with 0.4.9.3 and
 now reported on popa3d-users by Nuno Teixeira.

@@ -224,10 +224,10 @@ int pop_reply_multiline(int fd, unsigned long size, int lines)
 
 	if (lines >= 0) lines++;
 
-	if (pop_reply_ok()) return 1;
+	if (pop_reply_ok()) return POP_CRASH_NETFAIL;
 
 	in_buffer = malloc(RETR_BUFFER_SIZE * 3);
-	if (!in_buffer) return 1;
+	if (!in_buffer) return POP_CRASH_SERVER;
 	out_buffer = &in_buffer[RETR_BUFFER_SIZE];
 
 	start = 1;
@@ -239,7 +239,7 @@ int pop_reply_multiline(int fd, unsigned long size, int lines)
 			in_block = read(fd, in_buffer, size);
 		if (in_block <= 0) {
 			free(in_buffer);
-			return 1;
+			return POP_CRASH_SERVER;
 		}
 
 		in = in_buffer;
@@ -265,7 +265,7 @@ int pop_reply_multiline(int fd, unsigned long size, int lines)
 		out_block = out - out_buffer;
 		if (write_loop(1, out_buffer, out_block) != out_block) {
 			free(in_buffer);
-			return 1;
+			return POP_CRASH_NETFAIL;
 		}
 
 		size -= in_block;
@@ -274,9 +274,9 @@ int pop_reply_multiline(int fd, unsigned long size, int lines)
 	free(in_buffer);
 
 	if (!start)
-	if (pop_reply("%s", "")) return 1;
+	if (pop_reply("%s", "")) return POP_CRASH_NETFAIL;
 
-	return 0;
+	return POP_OK;
 }
 
 int pop_reply_terminate(void)
