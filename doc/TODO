@@ -189,7 +189,9 @@ again.  Support (ignore) the "-n" flag, for CPAN.
 
 [PRIORITY: low]
 Package these.  Use CAEN Linux patches for both xntpd and ntpdate, use
-user xntpd, UID/GID 185 (already allocated).
+user xntpd, UID/GID 185 (already allocated).  Once the NTP stuff is
+done, possibly also let vsftpd make use of libcap instead of invoking
+the syscalls directly like it does now.
 
 
 	libnet, libnids, libpcap.
@@ -591,4 +593,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.4 2002/12/22 19:22:04 solar Exp $
+$Id: Owl/doc/TODO,v 1.5 2002/12/22 19:23:39 solar Exp $
