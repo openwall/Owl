@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.14 2005/01/14 03:27:51 galaxy Exp $
+# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.15 2005/01/20 04:08:30 solar Exp $
 
 Summary: Tools for managing ipchains packet filtering rules.
 Name: ipchains
@@ -77,7 +77,7 @@ fi
 
 %changelog
 * Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.3.10-owl13
-- Added fixes patch to deal with "label at end of compound statment" issue.
+- Added a patch to deal with "label at end of compound statement" issue.
 - Cleaned up the spec.
 
 * Mon Sep 15 2003 Solar Designer <solar@owl.openwall.com> 1.3.10-owl12

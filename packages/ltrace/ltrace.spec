@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ltrace/ltrace.spec,v 1.17 2005/01/14 03:27:52 galaxy Exp $
+# $Id: Owl/packages/ltrace/ltrace.spec,v 1.18 2005/01/20 04:08:30 solar Exp $
 
 Summary: Tracks runtime library calls from dynamically linked executables.
 Name: ltrace
@@ -52,7 +52,7 @@ mv -f debian/changelog ChangeLog
 
 %changelog
 * Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.3.10-owl9
-- Added fixes patch to deal with "label at end of compound statment" issue.
+- Added a patch to deal with "label at end of compound statement" issue.
 - Cleaned up the spec.
 
 * Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com> 0.3.10-owl8
