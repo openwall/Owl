@@ -12,6 +12,13 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/09/28	Package: tar
+Fixed the contains_dot_dot() bug introduced in 1.13.19 and discovered
+by 3APA3A; thanks to Mark J Cox of Red Hat and Bencsath Boldizsar for
+further analysis.  This is not marked a security fix because GNU tar
+is still unsafe to use on untrusted archives for other reasons anyway.
+Check signatures, then extract.
+
 2002/09/19 -
 2002/09/28	Package: xinetd
 Updated to 2.3.8 with a new set of minor fixes and then to 2.3.9.
@@ -940,4 +947,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.134 2002/09/28 07:03:28 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.135 2002/09/28 10:16:21 solar Exp $

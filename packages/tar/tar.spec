@@ -1,9 +1,9 @@
-# $Id: Owl/packages/tar/tar.spec,v 1.10 2002/08/26 17:33:26 mci Exp $
+# $Id: Owl/packages/tar/tar.spec,v 1.11 2002/09/28 10:16:21 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
 Version: 1.13.19
-Release: owl3
+Release: owl4
 License: GPL
 Group: Applications/Archiving
 Source0: ftp://alpha.gnu.org/pub/gnu/tar/tar-%{version}.tar.gz
@@ -15,6 +15,7 @@ Patch3: tar-1.13.19-rh-owl-unreadable-segfault.diff
 Patch4: tar-1.13.19-rh-autoconf.diff
 Patch5: tar-1.13.19-rh-owl-no-librt.diff
 Patch6: tar-1.13.19-owl-info.diff
+Patch7: tar-1.13.19-owl-dot-dot.diff
 PreReq: /sbin/install-info, grep
 BuildRoot: /override/%{name}-%{version}
 
@@ -36,6 +37,7 @@ backups.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %{expand:%%define optflags %optflags -Wall -Dlint}
 
@@ -92,6 +94,11 @@ fi
 %{_prefix}/share/locale/*/LC_MESSAGES/*
 
 %changelog
+* Sat Sep 28 2002 Solar Designer <solar@owl.openwall.com>
+- Fixed the contains_dot_dot() bug introduced in 1.13.19 and discovered by
+3APA3A; thanks to Mark J Cox of Red Hat and Bencsath Boldizsar for further
+analysis.
+
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
 - Deal with info dir entries such that the menu looks pretty.
 
@@ -108,7 +115,7 @@ fi
 - Dropped obsolete patches (all of them, actually; checked the testcase
 for RH bug #9201 to make sure it doesn't occur with the new version, so
 the patch can really be dropped).
-- Imported relevant patches from Rawhide and Mandrake (via Alt).
+- Imported relevant patches from Rawhide and Mandrake (via ALT).
 
 * Thu Sep 07 2000 Solar Designer <solar@owl.openwall.com>
 - Fixed the passing of %optflags into configure.
