@@ -3,10 +3,13 @@
 # Source common settings
 . /etc/owl-setup.conf
 
+dlgresult=''
+partbl=''
+fstype=''
+trap rm -f '$dlgresult $partbl $fstemp' EXIT HUP INT TERM
 dlgresult=`mktemp /tmp/owl-setup.XXXXXX` || exit 1
 partbl=`mktemp /tmp/owl-setup.XXXXXX` || exit 1
 fstemp=`mktemp $FSTAB.XXXXXX` || exit 1
-trap "rm -f $dlgresult $partbl $fstemp" EXIT HUP INT TERM
 
 function type2fs
 {

@@ -6,10 +6,11 @@
 NETCFG=$HOME/netcfg
 MKFSTAB=$HOME/mkfstab
 
-# Generate tmpfile name for conversation with dialog
+tempfile=''
+f_keytable=''
+trap rm -f '$tempfile $f_keytable' EXIT HUP INT TERM
 tempfile=`mktemp /var/run/owl-setup.XXXXXX` || exit 1
 f_keytable=`mktemp $F_KEYTABLE.XXXXXX` || exit 1
-trap "rm -f $tempfile $f_keytable" EXIT HUP INT TERM
 
 ##
 # Set root password
