@@ -1,1 +1,0 @@
-pam_passwdqc/pam_passwdqc.spec
