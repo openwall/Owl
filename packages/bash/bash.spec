@@ -1,26 +1,26 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.8 2001/10/23 14:28:29 mci Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.9 2001/10/24 13:06:03 mci Exp $
 
 Version: 2.05
-Name:    bash
+Name: bash
 Summary: The GNU Bourne Again shell (bash) version %{version}.
 Release: 1owl
-Group:   System Environment/Shells
+Group: System Environment/Shells
 License: GPL
 Source0: ftp://ftp.gnu.org/gnu/bash/bash-%{version}.tar.gz
 Source1: ftp://ftp.gnu.org/gnu/bash/bash-doc-%{version}.tar.gz
 Source2: dot-bashrc
 Source3: dot-bash_profile
 Source4: dot-bash_logout
-Patch0:	 bash-2.03-rh-paths.diff
-Patch1:  bash-2.04-rh-bash1_compat.diff
-Patch2:  bash-2.04-rh-shellfunc.diff
-Patch3:  bash-2.05-rh-profile.diff
-Patch4:  bash-2.05-rh-requires.diff
-Patch5:  bash-2.05-rh-security.diff
-Patch6:  bash-2.05-alt-bashbug.diff
-Patch7:  bash-2.05-alt-man.diff
-Patch8:  bash-2.05-alt-nostrcoll.diff
-Patch9:  bash-2.05-deb-64bit.diff
+Patch0: bash-2.03-rh-paths.diff
+Patch1: bash-2.04-rh-bash1_compat.diff
+Patch2: bash-2.04-rh-shellfunc.diff
+Patch3: bash-2.05-rh-profile.diff
+Patch4: bash-2.05-rh-requires.diff
+Patch5: bash-2.05-rh-security.diff
+Patch6: bash-2.05-alt-bashbug.diff
+Patch7: bash-2.05-alt-man.diff
+Patch8: bash-2.05-alt-nostrcoll.diff
+Patch9: bash-2.05-deb-64bit.diff
 Patch10: bash-2.05-deb-gnusource.diff
 Patch11: bash-2.05-deb-misc.diff
 Patch12: bash-2.05-deb-printcmd.diff
@@ -29,11 +29,11 @@ Patch14: bash-2.05-deb-random.diff
 Patch15: bash-2.05-deb-vxman.diff
 Patch16: bash-2.05-owl-glibc-build-hack.diff
 Patch17: bash-2.05-owl-tmp.diff
-Prefix:	 %{_prefix}
+Prefix: %{_prefix}
 Requires: mktemp
 Provides: bash2
 Obsoletes: bash2 etcskel
-BuildRoot: /var/rpm-buildroot/%{name}-%{version}
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The GNU Bourne Again shell (Bash) is a shell or command language
@@ -88,7 +88,6 @@ autoconf
         --enable-job-control \
         --enable-restricted \
         --enable-readline \
-        --with-curses \
         --enable-extended-glob \
         --enable-dparen-arithmetic \
         --with-installed-readline
@@ -141,42 +140,26 @@ rm -rf $RPM_BUILD_ROOT
 # ***** bash doesn't use install-info. It's always listed in %{_infodir}/dir
 # to prevent prereq loops
 
-%post
-
-HASBASH2=""
-HASBASH=""
-HASSH=""
-
+%triggerin -- libtermcap
 if [ ! -f /etc/shells ]; then
-        > /etc/shells
+	echo "/bin/sh" >> /etc/shells
+	echo "/bin/bash" >> /etc/shells
+	echo "/bin/bash2" >> /etc/shells
+elif [ -x /bin/grep ]; then
+	grep '^/bin/sh$' /etc/shells &> /dev/null || \
+		echo "/bin/sh" >> /etc/shells
+	grep '^/bin/bash$' /etc/shells &> /dev/null || \
+		echo "/bin/bash" >> /etc/shells
+	grep '^/bin/bash2$' /etc/shells &> /dev/null || \
+		echo "/bin/bash2" >> /etc/shells
 fi
 
-(while read line ; do
-        if [ $line = /bin/bash ]; then
-                HASBASH=1
-        elif [ $line = /bin/sh ]; then
-                HASSH=1
-        elif [ $line = /bin/bash2 ]; then
-                HASBASH2=1
-        fi
- done
-
- if [ -z "$HASBASH2" ]; then
-        echo "/bin/bash2" >> /etc/shells
- fi
- if [ -z "$HASBASH" ]; then
-        echo "/bin/bash" >> /etc/shells
- fi
- if [ -z "$HASSH" ]; then
-        echo "/bin/sh" >> /etc/shells
-fi) < /etc/shells
-
-%postun
-if [ "$1" -eq 0 -a -x /bin/grep ]; then
-        grep -vE '^/bin/sh$|^/bin/bash$|^/bin/bash2$' \
-                /etc/shells > /etc/shells.bash-un
-        mv /etc/shells.bash-un /etc/shells
-        test -s /etc/shells || rm /etc/shells
+%preun
+if [ $1 -eq 0 -a -x /bin/grep ]; then
+	grep -vE '^/bin/sh$|^/bin/bash$|^/bin/bash2$' \
+		/etc/shells > /etc/shells.bash-un
+	mv /etc/shells.bash-un /etc/shells
+	test -s /etc/shells || rm /etc/shells
 fi
 
 find examples -type f -print0 | xargs -r0 chmod -x
