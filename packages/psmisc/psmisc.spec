@@ -1,14 +1,14 @@
-# $Id: Owl/packages/psmisc/psmisc.spec,v 1.7 2005/01/15 02:56:51 galaxy Exp $
+# $Id: Owl/packages/psmisc/psmisc.spec,v 1.8 2005/02/18 23:48:08 galaxy Exp $
 
 Summary: Utilities for managing processes on your system.
 Name: psmisc
-Version: 19
-Release: owl6
+Version: 21.5
+Release: owl0
 License: BSD
 Group: Applications/System
-Source: ftp://lrcftp.epfl.ch/pub/linux/local/psmisc/psmisc-%version.tar.gz
-Patch0: psmisc-19-owl-Makefile.diff
-Patch1: psmisc-19-owl-restricted-proc.diff
+Source: ftp://prdownloads.sourceforge.net/psmisc/psmisc-%version.tar.gz
+Patch0: psmisc-21.5-owl-termcap.diff
+Patch1: psmisc-21.5-owl-restricted-proc.diff
 BuildRoot: /override/%name-%version
 
 %description
@@ -20,30 +20,36 @@ processes identified by name.  The fuser command identifies the PIDs
 of processes that are using specified files or filesystems.
 
 %prep
-%setup -q -n psmisc
+%setup -q
 %patch0 -p1
 %patch1 -p1
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" make
+%configure --disable-rpath
+%__make all
 
 %install
 rm -rf %buildroot
-make install \
-	DESTDIR=%buildroot \
-	EBINDIR=/sbin BINDIR=%_bindir MANDIR=%_mandir
+%makeinstall
+%find_lang %name
 
-%files
+%files -f %name.lang
 %defattr(-,root,root)
-%doc CHANGES COPYING README psmisc-%version.lsm
-/sbin/fuser
+%doc ChangeLog COPYING README AUTHORS
+%_bindir/fuser
 %_bindir/killall
-%_bindir/pstree
+%_bindir/pstree*
 %_mandir/man1/fuser.1*
 %_mandir/man1/killall.1*
 %_mandir/man1/pstree.1*
 
 %changelog
+* Sat Feb 19 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 21.5-owl0
+- Updated to 21.5.
+- Dropped unneeded Makefile patch.
+- Regenerated restricted proc patch.
+- Temporary workaround for termcap.
+
 * Sat Jan 15 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 19-owl6
 - Implemented support for restricted proc kernel patch.
 
