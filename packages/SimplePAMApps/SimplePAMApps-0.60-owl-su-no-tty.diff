@@ -1,0 +1,40 @@
+diff -ur SimplePAMApps-0.60.orig/pamapps/lib/wtmp-gate.c SimplePAMApps-0.60/pamapps/lib/wtmp-gate.c
+--- SimplePAMApps-0.60.orig/pamapps/lib/wtmp-gate.c	Wed Nov 25 15:33:32 1998
++++ SimplePAMApps-0.60/pamapps/lib/wtmp-gate.c	Sat Nov  4 05:57:34 2000
+@@ -35,6 +35,7 @@
+         *err_descr = pam_strerror(pamh, retval);
+         return -1;
+     }
++    if (!terminal) terminal = "???";
+     retval = pam_get_item(pamh, PAM_RHOST, (const void **)&rhost);
+     if (retval != PAM_SUCCESS)
+         rhost = NULL;
+@@ -55,6 +56,7 @@
+         *err_descr = pam_strerror(pamh, retval);
+         return -1;
+     }
++    if (!terminal) terminal = "???";
+ 
+     return
+         utmp_do_close_session(terminal, callname, err_descr);
+diff -ur SimplePAMApps-0.60.orig/pamapps/su/su.c SimplePAMApps-0.60/pamapps/su/su.c
+--- SimplePAMApps-0.60.orig/pamapps/su/su.c	Thu Feb 18 15:29:50 1999
++++ SimplePAMApps-0.60/pamapps/su/su.c	Mon Oct 30 01:30:02 2000
+@@ -380,7 +381,7 @@
+ 	if (terminal) {
+ 	    retval = pam_set_item(pamh, PAM_TTY, (const void *)terminal);
+ 	} else {
+-	    retval = PAM_PERM_DENIED;                /* how did we get here? */
++	    if (getuid() != 0) retval = PAM_PERM_DENIED;
+ 	}
+ 	terminal = NULL;
+     }
+@@ -389,8 +390,6 @@
+ 	const char *ruser = getlogin();      /* Who is running this program? */
+ 	if (ruser) {
+ 	    retval = pam_set_item(pamh, PAM_RUSER, (const void *)ruser);
+-	} else {
+-	    retval = PAM_PERM_DENIED;             /* must be known to system */
+ 	}
+ 	ruser = NULL;
+     }

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.8 2000/10/29 23:10:47 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.9 2000/11/04 03:12:42 solar Exp $
 
 Summary: Simple PAM-based Applications
 Name: SimplePAMApps
 Version: 0.60
-Release: 7owl
+Release: 8owl
 Copyright: BSD or GNU GPL
 Group: Utilities/System
 Source0: SimplePAMApps-0.60.tar.gz
@@ -14,7 +14,7 @@ Source4: su.control
 Source5: passwd.control
 Patch0: SimplePAMApps-0.60-owl-passwd-strerror.diff
 Patch1: SimplePAMApps-0.60-owl-login.diff
-Patch2: SimplePAMApps-0.60-owl-su-no-getlogin.diff
+Patch2: SimplePAMApps-0.60-owl-su-no-tty.diff
 Patch3: SimplePAMApps-0.60-owl-stdarg.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: pam >= 0.58, pam_passwdqc >= 0.2, owl-control < 2.0
@@ -85,7 +85,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Sun Oct 29 2000 Solar Designer <solar@owl.openwall.com>
-- Don't require that getlogin() works to set PAM_RUSER.
+- su: don't require that the tty can be determined when started by root.
+- su: don't require that getlogin() works to set PAM_RUSER.
 - #include <stdarg.h> in su.c (was needed, but missing).
 
 * Fri Sep 22 2000 Solar Designer <solar@owl.openwall.com>
