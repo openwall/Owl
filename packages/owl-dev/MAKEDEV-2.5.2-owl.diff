@@ -1,6 +1,6 @@
 diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
 --- MAKEDEV-2.5.2.orig/MAKEDEV	Thu Mar  2 01:16:37 2000
-+++ MAKEDEV-2.5.2/MAKEDEV	Sun Dec  3 05:19:39 2000
++++ MAKEDEV-2.5.2/MAKEDEV	Mon Dec  4 05:22:03 2000
 @@ -1,6 +1,11 @@
  #!/bin/bash -
  
@@ -158,9 +158,9 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
 +		$0 $opts std || exit 1
 +		$0 $opts fd || exit 1
 +		$0 $opts fd0 fd1 || exit 1
-+		$0 $opts hda hdb || exit 1
++		$0 $opts hda hdb hdc hdd || exit 1
 +		$0 $opts xda xdb || exit 1
-+		$0 $opts sda sdb sdc sdd || exit 1
++		$0 $opts sda sdb sdc sdd sde sdf sdg sdh || exit 1
 +		$0 $opts pty || exit 1
 +		$0 $opts pts || exit 1
 +		$0 $opts console || exit 1
@@ -237,7 +237,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		makedev msmouse   c $major 2 $mouse
  		makedev atimouse  c $major 3 $mouse
  		makedev jmouse    c $major 4 $mouse
-@@ -585,7 +626,7 @@
+@@ -585,12 +626,12 @@
  		makedev ${arg}H1600 b $major `math $base + 124` $floppy
  		;;
  	hd[a-b])
@@ -246,6 +246,57 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		unit=`suffix $arg hd`
  		base=`index ab $unit`
  		base=`math $base \* 64`
+ 		makedev hd$unit b $major $base $disk
+-		for part in 1 2 3 4 5 6 7 8 # 9 10 11 12 13 14 15 16 17 18 19 20
++		for part in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+ 		do
+ 			makedev hd$unit$part b $major `math $base + $part` $disk
+ 		done
+@@ -601,7 +642,7 @@
+ 		base=`index cd $unit`
+ 		base=`math $base \* 64`
+ 		makedev hd$unit b $major $base $disk
+-		for part in 1 2 3 4 5 6 7 8 # 9 10 11 12 13 14 15 16 17 18 19 20
++		for part in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+ 		do
+ 			makedev hd$unit$part b $major `expr $base + $part` $disk
+ 		done
+@@ -612,7 +653,7 @@
+ 		base=`index ef $unit`
+ 		base=`math $base \* 64`
+ 		makedev hd$unit b $major $base $disk
+-		for part in 1 2 3 4 5 6 7 8 # 9 10 11 12 13 14 15 16 17 18 19 20
++		for part in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+ 		do
+ 			makedev hd$unit$part b $major `expr $base + $part` $disk
+ 		done
+@@ -623,7 +664,7 @@
+ 		base=`index gh $unit`
+ 		base=`math $base \* 64`
+ 		makedev hd$unit b $major $base $disk
+-		for part in 1 2 3 4 5 6 7 8 # 9 10 11 12 13 14 15 16 17 18 19 20
++		for part in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+ 		do
+ 			makedev hd$unit$part b $major `expr $base + $part` $disk
+ 		done
+@@ -649,7 +690,7 @@
+ 		base=`index abcd $unit`
+ 		base=`math $base \* 64`
+ 		makedev xd$unit b $major $base $disk
+-		for part in 1 2 3 4 5 6 7 8 # 9 10 11 12 13 14 15 16 17 18 19 20
++		for part in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+ 		do
+ 			makedev xd$unit$part b $major `expr $base + $part` $disk
+ 		done
+@@ -665,7 +706,7 @@
+                         base=`math $base \- 256`
+                 fi
+ 		makedev sd$unit b $major $base $disk
+-		for part in 1 2 3 4 5 6 7 8 # 9 10 11 12 13 14 15
++		for part in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+ 		do
+ 			minor=`expr $base + $part`
+ 			makedev sd$unit$part b $major $minor $disk
 @@ -1042,10 +1083,6 @@
  		major=`Major dcf` || continue
  		makedev $arg c $major 0 $system
