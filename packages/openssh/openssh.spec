@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.73 2004/09/10 07:27:38 galaxy Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.74 2004/11/03 05:12:21 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl10
+Release: owl11
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -29,6 +29,7 @@ Patch12: openssh-3.6.1p2-cvs-20030603-UseDNS.diff
 Patch13: openssh-3.6.1p2-cvs-20030916-buffer-channels-realloc.diff
 Patch14: openssh-3.6.1p2-owl-realloc.diff
 Patch15: openssh-3.6.1p2-cvs-20040401-scp-fix.diff
+Patch16: openssh-3.6.1p2-owl-sanitize-packet-types.diff
 PreReq: openssl >= 0.9.7, openssl < 0.9.8
 Requires: pam >= 0.75-owl16
 Obsoletes: ssh
@@ -117,6 +118,7 @@ rm -r autom4te.cache
 %patch13 -p0
 %patch14 -p1
 %patch15 -p1
+%patch16 -p1
 
 %define _sysconfdir /etc/ssh
 %{expand:%%define _datadir %_datadir/ssh}
@@ -234,8 +236,11 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Wed Nov 03 2004 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl11
+- Sanitize packet types early on.
+
 * Thu Sep 09 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 3.6.1p2-owl10
-- Rebuild with openssl 0.9.7
+- Rebuild with OpenSSL 0.9.7.
 
 * Fri Jun 04 2004 Michail Litvak <mci@owl.openwall.com> 3.6.1p2-owl9
 - Fixed directory traversal vulnerability in scp which allows remote malicious

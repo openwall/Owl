@@ -1,0 +1,38 @@
+diff -urp openssh-3.6.1p2.orig/packet.c openssh-3.6.1p2/packet.c
+--- openssh-3.6.1p2.orig/packet.c	Tue Apr  1 11:43:39 2003
++++ openssh-3.6.1p2/packet.c	Sun Oct 17 19:20:35 2004
+@@ -899,6 +899,10 @@ packet_read_poll1(void)
+ 		    buffer_len(&compression_buffer));
+ 	}
+ 	type = buffer_get_char(&incoming_packet);
++	if (type < SSH_MSG_MIN || type > SSH_MSG_MAX) {
++		log("Bad packet type received: %d", type);
++		type = SSH_MSG_IGNORE;
++	}
+ 	return type;
+ }
+ 
+@@ -1011,6 +1015,10 @@ packet_read_poll2(u_int32_t *seqnr_p)
+ 	fprintf(stderr, "read/plain[%d]:\r\n", type);
+ 	buffer_dump(&incoming_packet);
+ #endif
++	if (type < SSH2_MSG_MIN || type > SSH2_MSG_MAX) {
++		log("Bad packet type received: %d", type);
++		type = SSH2_MSG_IGNORE;
++	}
+ 	/* reset for next packet */
+ 	packet_length = 0;
+ 	return type;
+diff -urp openssh-3.6.1p2.orig/ssh1.h openssh-3.6.1p2/ssh1.h
+--- openssh-3.6.1p2.orig/ssh1.h	Sat Jun  9 00:17:12 2001
++++ openssh-3.6.1p2/ssh1.h	Sun Oct 17 19:18:29 2004
+@@ -18,6 +18,9 @@
+  * for compatibility.  The maximum value is 254; value 255 is reserved for
+  * future extension.
+  */
++/* Ranges */
++#define SSH_MSG_MIN				1
++#define SSH_MSG_MAX				255
+ /* Message name */			/* msg code */	/* arguments */
+ #define SSH_MSG_NONE				0	/* no message */
+ #define SSH_MSG_DISCONNECT			1	/* cause (string) */
