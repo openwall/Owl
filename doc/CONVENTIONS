@@ -86,8 +86,9 @@ placing the following line right before the %build section:
 are to be avoided by all means as they mask possible errors.  If you
 intended to use a subshell to temporarily change current directory,
 use pushd and popd commands instead.  If you really must use a
-subshell, it is suggested that you propagate the status of commands it
-runs to the parent shell manually.
+subshell, it is suggested that you issue a "set -e" within the
+subshell or propagate the status of commands it runs to the parent
+shell manually.
 
 8. Use tabs to indent conditional blocks and continuation lines in
 scripts.
@@ -97,10 +98,12 @@ particular, this applies to the $1 argument that RPM itself passes to
 scripts.  And don't place the $1 in quotes, the package has to trust
 its package manager to pass it the correct input anyway.
 
-10. In %changelog entry dates, use two digits for day of month with a
+10. Use the %buildroot macro instead of $RPM_BUILD_ROOT.
+
+11. In %changelog entry dates, use two digits for day of month with a
 leading zero if necessary.
 
-11. In %changelog, when adding new entries do specify the current
+12. In %changelog, when adding new entries do specify the current
 package Version and Release after your e-mail address, like this:
 
 * Mon Mar 10 2003 Your Name <you@example.com> 0.6.2-owl1
@@ -210,4 +213,4 @@ Requires: mktemp >= 1:1.3.1
 As usual, use Requires, PreReq, and/or BuildRequires depending on
 where in the package the uses of mktemp occur.
 
-$Id: Owl/doc/CONVENTIONS,v 1.19 2004/11/26 12:25:52 solar Exp $
+$Id: Owl/doc/CONVENTIONS,v 1.20 2004/11/26 12:34:41 solar Exp $
