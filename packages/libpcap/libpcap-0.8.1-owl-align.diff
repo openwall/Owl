@@ -1,0 +1,23 @@
+--- libpcap-0.8.1/bpf/net/bpf_filter.c.orig	Sat Nov 15 23:26:49 2003
++++ libpcap-0.8.1/bpf/net/bpf_filter.c	Fri Feb 13 00:34:51 2004
+@@ -80,18 +80,9 @@
+ #define int32 bpf_int32
+ #define u_int32 bpf_u_int32
+ 
+-#ifndef LBL_ALIGN
+-/*
+- * XXX - IA-64?  If not, this probably won't work on Win64 IA-64
+- * systems, unless LBL_ALIGN is defined elsewhere for them.
+- * XXX - SuperH?  If not, this probably won't work on WinCE SuperH
+- * systems, unless LBL_ALIGN is defined elsewhere for them.
+- */
+-#if defined(sparc) || defined(__sparc__) || defined(mips) || \
+-    defined(ibm032) || defined(__alpha) || defined(__hpux) || \
+-    defined(__arm__)
++#if !defined(LBL_ALIGN) && \
++	!defined(__i386__) && !defined(__x86_64__) && !defined(__vax__)
+ #define LBL_ALIGN
+-#endif
+ #endif
+ 
+ #ifndef LBL_ALIGN

@@ -1,18 +1,17 @@
-# $Id: Owl/packages/libpcap/libpcap.spec,v 1.11 2003/12/15 14:39:52 solar Exp $
+# $Id: Owl/packages/libpcap/libpcap.spec,v 1.12 2004/02/15 16:44:14 mci Exp $
 
 Summary: Network packet capture library.
 Name: libpcap
-Version: 0.6.2
-Release: owl5
+Version: 0.8.1
+Release: owl1
 Epoch: 2
 License: GPL
 Group: System Environment/Libraries
 URL: http://www.tcpdump.org
 Source: http://www.tcpdump.org/release/%name-%version.tar.gz
-Patch0: libpcap-0.6.2-pld-shared.diff
-Patch1: libpcap-0.6.2-cvs-20020712-buffer.diff
-Patch2: libpcap-0.6.2-nmap-alt-owl-linux-honor-timeout.diff
-Patch3: libpcap-0.6.2-owl-align.diff
+Patch0: libpcap-0.8.1-pld-shared.diff
+Patch1: libpcap-0.8.1-nmap-alt-owl-linux-honor-timeout.diff
+Patch2: libpcap-0.8.1-owl-align.diff
 PreReq: /sbin/ldconfig
 BuildRequires: flex, bison
 BuildRoot: /override/%name-%version
@@ -38,7 +37,6 @@ Header files and development documentation for libpcap.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 
 %build
 %configure \
@@ -48,11 +46,13 @@ Header files and development documentation for libpcap.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%_includedir/net
-mkdir -p ${RPM_BUILD_ROOT}{%_libdir,%_mandir/man3}
+mkdir -p $RPM_BUILD_ROOT{%_libdir,%_mandir/man3}
 
 %__make install \
 	DESTDIR=$RPM_BUILD_ROOT
+
+mkdir -p $RPM_BUILD_ROOT%_includedir/net
+ln -s ../pcap-bpf.h $RPM_BUILD_ROOT%_includedir/net/bpf.h
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -71,6 +71,10 @@ mkdir -p ${RPM_BUILD_ROOT}{%_libdir,%_mandir/man3}
 %_libdir/lib*.a
 
 %changelog
+* Fri Feb 13 2004 Michail Litvak <mci@owl.openwall.com> 2:0.8.1-owl1
+- 0.8.1
+- provide %_includedir/net/bpf.h for compatibility.
+
 * Mon Dec 15 2003 Solar Designer <solar@owl.openwall.com> 2:0.6.2-owl5
 - Avoid unaligned accesses in bpf_filter.c unless we're positive the
 architecture can handle them.
