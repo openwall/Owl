@@ -1,4 +1,4 @@
-# $Id: Owl/packages/console-tools/Attic/console-tools.spec,v 1.6 2000/12/16 23:14:12 solar Exp $
+# $Id: Owl/packages/console-tools/Attic/console-tools.spec,v 1.7 2000/12/18 14:56:01 kad Exp $
 
 %define CTVER	0.3.3
 %define	CDVER	1999.08.29
@@ -7,7 +7,7 @@
 Summary: 	Tools for configuring the console.
 Name: 		console-tools
 Version: 	19990829
-Release: 	26owl
+Release: 	27owl
 Group: 		Applications/System
 Exclusiveos: 	Linux
 Copyright: 	GPL
@@ -29,6 +29,7 @@ Source13: 	lat2u-font.tar.gz
 Source14: 	data-addon.tar.gz
 Source15: 	console-fonts-cyr.tar.gz
 Source16: 	keymaps-mdkre.tar.bz2
+Source17:	setsysfont
 Patch0: 	console-tools-1999.08.29-rh-sparc.diff
 Patch1: 	console-tools-1999.08.29-rh-fonts.diff
 # Euro support
@@ -202,6 +203,8 @@ ln -sf lat0-sun16.psf.gz \
 gzip -9 < %{DATA}/consolefonts/cyr-sun16.psf \
 	> $RPM_BUILD_ROOT/usr/lib/kbd/consolefonts/cyr-sun16.psf.gz
 
+install -c -m 755 %{SOURCE17} $RPM_BUILD_ROOT/sbin
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -251,7 +254,7 @@ fi
 %doc doc/README* %{DATA}/doc/README* doc/*.txt
 
 %config /etc/rc.d/init.d/keytable
-
+/sbin/setsysfont
 /usr/lib/*
 /bin/consolechars
 /bin/loadkeys
