@@ -4,11 +4,12 @@ http://www.openwall.com/Owl/
 
 Owl can be downloaded from the following official mirrors:
 
-ftp://ftp.ca.openwall.com/pub/Owl/	(Canada)
+ftp://ftp1.ru.openwall.com/pub/Owl/	(Russia, Russian Express ISP)
+ftp://ftp2.ru.openwall.com/pub/Owl/	(Russia, DataForce ISP)
 ftp://ftp.pl.openwall.com/pub/Owl/	(Poland)
-ftp://ftp.ru.openwall.com/pub/Owl/	(Russia)
 ftp://ftp.ua.openwall.com/pub/Owl/	(Ukraine)
 ftp://ftp.cz.openwall.com/pub/Owl/	(Czech Republic)
+ftp://ftp.ca.openwall.com/pub/Owl/	(Canada)
 ftp://ftp.wiretapped.net/pub/Owl/	(Australia)
 
 There's a subdirectory for each Owl release or branch, with the
@@ -38,4 +39,4 @@ need both the CVS and the source trees.
 More documentation (including BUILD and INSTALL) is available in the
 CVS tree, under Owl/doc/.
 
-$Id: Owl/doc/DOWNLOAD,v 1.8 2002/04/05 23:01:22 solar Exp $
+$Id: Owl/doc/DOWNLOAD,v 1.9 2002/04/27 14:55:36 solar Exp $
