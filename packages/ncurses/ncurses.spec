@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ncurses/ncurses.spec,v 1.7 2000/11/08 06:17:34 solar Exp $
+# $Id: Owl/packages/ncurses/ncurses.spec,v 1.8 2000/11/17 08:14:49 solar Exp $
 
 %define 	major		5
 %define 	oldmajor	4
@@ -80,7 +80,7 @@ for I in curses unctrl eti form menu panel term; do
 	ln -sf ncurses/$I.h $RPM_BUILD_ROOT/usr/include/$I.h
 done
 
-%ifarch sparc
+%ifarch sparc sparcv9 sparc64
 install -c -m 644 %{SOURCE1} $RPM_BUILD_ROOT/usr/share/terminfo/l/linux
 install -c -m 644 %{SOURCE2} $RPM_BUILD_ROOT/usr/share/terminfo/l/linux-m
 %endif
