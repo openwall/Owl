@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iputils/iputils.spec,v 1.11 2003/10/17 21:34:41 mci Exp $
+# $Id: Owl/packages/iputils/iputils.spec,v 1.12 2003/10/17 21:59:21 solar Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
@@ -40,20 +40,20 @@ gcc $RPM_OPT_FLAGS -Wall -s bonding-0.2/ifenslave.c -o bonding-0.2/ifenslave
 %install
 rm -rf $RPM_BUILD_ROOT
 
-mkdir -p ${RPM_BUILD_ROOT}%{_sbindir}
+mkdir -p $RPM_BUILD_ROOT%{_sbindir}
 mkdir -p $RPM_BUILD_ROOT/{bin,sbin}
 install -m 755 arping clockdiff ping6 tracepath tracepath6 traceroute6 \
-	${RPM_BUILD_ROOT}%{_sbindir}/
-install -m 755 rdisc ${RPM_BUILD_ROOT}%{_sbindir}/rdiscd
+	$RPM_BUILD_ROOT%{_sbindir}/
+install -m 755 rdisc $RPM_BUILD_ROOT%{_sbindir}/rdiscd
 install -m 700 ping $RPM_BUILD_ROOT/bin/
 install -m 755 bonding-0.2/ifenslave $RPM_BUILD_ROOT/sbin/
 
-mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man8
+mkdir -p $RPM_BUILD_ROOT%{_mandir}/man8
 install -m 644 doc/{arping,clockdiff,ping,tracepath,traceroute6}.8 \
-	${RPM_BUILD_ROOT}%{_mandir}/man8/
+	$RPM_BUILD_ROOT%{_mandir}/man8/
 
 sed 's/rdisc/rdiscd/' \
-	< doc/rdisc.8 > ${RPM_BUILD_ROOT}%{_mandir}/man8/rdiscd.8
+	< doc/rdisc.8 > $RPM_BUILD_ROOT%{_mandir}/man8/rdiscd.8
 
 mkdir -p $RPM_BUILD_ROOT/etc/control.d/facilities
 install -m 700 $RPM_SOURCE_DIR/ping.control \
@@ -93,8 +93,8 @@ fi
 * Thu Oct 16 2003 Michail Litvak <mci@owl.openwall.com> 020927-owl1
 - ss020927
 - Fixed building with kernel >= 2.4.22.
-- Source archive now contain precompiled man pages, so don't include
-it as another archive.
+- Source archive now contains precompiled man pages, so don't include
+them as another archive.
 
 * Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
 - Dump/restore the owl-control setting for ping on package upgrades.
