@@ -1,13 +1,12 @@
-# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.9 2002/04/01 20:19:13 solar Exp $
+# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.10 2002/04/01 20:23:07 solar Exp $
 
 Summary: Pluggable authentication module for USER/PASS-style protocols.
 Name: pam_userpass
 Version: 0.5.1
-Release: 1owl
+Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
 Source: pam_userpass-%{version}.tar.gz
-BuildPreReq: pam >= 0.72-8owl
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -39,6 +38,9 @@ rm -rf $RPM_BUILD_ROOT
 * Tue Apr 02 2002 Solar Designer <solar@owl.openwall.com>
 - 0.5.1: use const within the declaration of pam_userpass_t, use '='
 instead of '.set' to declare the alias.
+
+* Thu Feb 07 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions.
 
 * Fri Nov 09 2001 Solar Designer <solar@owl.openwall.com>
 - 0.5: provide a pam_sm_chauthtok as well, currently only supporting
