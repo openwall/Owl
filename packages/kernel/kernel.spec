@@ -1,9 +1,10 @@
-# $Id: Owl/packages/kernel/kernel.spec,v 1.10 2002/08/28 03:47:51 solar Exp $
+# $Id: Owl/packages/kernel/kernel.spec,v 1.11 2003/07/31 15:28:37 solar Exp $
 
 Summary: Fake Linux kernel package for Red Hat Linux compatibility.
 Name: kernel
-Version: 2.2.999fake
-Release: owl2
+# 2.2.999fake or 2.4.999fake
+Version: %(sed -n 's,^#define UTS_RELEASE "\(2\.[2-9]\)\..*$,\1.999fake,p' < /usr/include/linux/version.h)
+Release: owl3
 License: public domain
 Group: System Environment/Base
 Source: BuildASM-sparc.sh
@@ -58,7 +59,11 @@ test -L /usr/include/asm && rm -f /usr/include/asm || :
 %endif
 
 %changelog
-* Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com>
+* Thu Jul 31 2003 Solar Designer <solar@owl.openwall.com> 2.2+.x-owl3
+- Set this package's version to match the actual kernel headers used
+(this is especially important on SPARC).
+
+* Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com> 2.2.999-owl2
 - Enforce our new spec file conventions
 
 * Thu Nov 16 2000 Solar Designer <solar@owl.openwall.com>
