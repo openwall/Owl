@@ -1,13 +1,14 @@
-# $Id: Owl/packages/silo/silo.spec,v 1.6 2002/02/05 16:38:35 solar Exp $
+# $Id: Owl/packages/silo/silo.spec,v 1.7 2002/06/04 18:14:19 solar Exp $
 
-Summary: The SILO boot loader for SPARCs.
+Summary: Sparc Improved boot LOader.
 Name: silo
-Version: 0.9.9
-Release: owl3
+Version: 1.2.5
+Release: owl1
 License: GPL
 Group: System Environment/Base
-Source: ftp://sunsite.mff.cuni.cz/OS/Linux/Sparc/local/silo/silo-%{version}.tgz
-Patch: silo-0.9.9-owl-nocat.diff
+Source: http://prdownloads.sourceforge.net/silo/silo-%{version}.tar.bz2
+Patch0: silo-1.2.5-owl-Makefile.diff
+Patch1: silo-1.2.5-owl-man.diff
 ExclusiveArch: sparc sparcv9 sparc64
 BuildRoot: /override/%{name}-%{version}
 
@@ -18,27 +19,15 @@ boot block and can be configured to boot Linux, Solaris and SunOS.
 
 %prep
 %setup -q -n silo-%{version}
-%patch -p1
+%patch0 -p1
+%patch1 -p1
 
 %build
-make
+make CFLAGS="$RPM_OPT_FLAGS -Wall -I. -I../include"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{boot,sbin,usr/sbin}
-mkdir -p $RPM_BUILD_ROOT%{_mandir}/man{5,8}
-
-install -m 755 sbin/silo $RPM_BUILD_ROOT/sbin/silo
-install -m 644 boot/first.b $RPM_BUILD_ROOT/boot/first.b
-install -m 644 boot/ultra.b $RPM_BUILD_ROOT/boot/ultra.b
-install -m 644 boot/cd.b $RPM_BUILD_ROOT/boot/cd.b
-install -m 644 boot/fd.b $RPM_BUILD_ROOT/boot/fd.b
-install -m 644 boot/ieee32.b $RPM_BUILD_ROOT/boot/ieee32.b
-install -m 644 boot/second.b $RPM_BUILD_ROOT/boot/second.b
-install -m 644 boot/silotftp.b $RPM_BUILD_ROOT/boot/silotftp.b
-install -m 755 misc/silocheck $RPM_BUILD_ROOT/usr/sbin/silocheck
-install -m 644 man/silo.conf.5 $RPM_BUILD_ROOT%{_mandir}/man5/silo.conf.5
-install -m 644 man/silo.8 $RPM_BUILD_ROOT%{_mandir}/man8/silo.8
+make install DESTDIR=$RPM_BUILD_ROOT MANDIR=%{_mandir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -50,6 +39,8 @@ test -f /etc/silo.conf -a "$SILO_INSTALL" = "yes" && /sbin/silo $SILO_FLAGS || :
 %defattr(-,root,root)
 %doc docs COPYING ChangeLog
 /sbin/silo
+/usr/bin/tilo
+/usr/bin/maketilo
 /boot/first.b
 /boot/ultra.b
 /boot/cd.b
@@ -58,10 +49,16 @@ test -f /etc/silo.conf -a "$SILO_INSTALL" = "yes" && /sbin/silo $SILO_FLAGS || :
 /boot/silotftp.b
 /boot/second.b
 /usr/sbin/silocheck
+%{_mandir}/man1/*tilo.1*
 %{_mandir}/man5/silo.conf.5*
 %{_mandir}/man8/silo.8*
 
 %changelog
+* Mon Jun 03 2002 Solar Designer <solar@owl.openwall.com>
+- Updated to 1.2.5.
+- Don't disable cat anymore; anyone who wants boot loader security
+should use the proper measures to achieve it.
+
 * Tue Feb 05 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 

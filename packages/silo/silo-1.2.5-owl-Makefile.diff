@@ -1,0 +1,22 @@
+diff -ur silo-1.2.5.orig/Makefile silo-1.2.5/Makefile
+--- silo-1.2.5.orig/Makefile	Sat Jun 16 22:12:41 2001
++++ silo-1.2.5/Makefile	Tue Jun  4 21:43:39 2002
+@@ -1,5 +1,7 @@
+ include Rules.make
+ 
++MANDIR = /usr/share/man
++
+ # These only get built on Linux
+ ifeq ($(OPSYS),Linux)
+   SUBDIRS  = common first second tilo
+@@ -28,8 +30,8 @@
+  endif
+ 	for manpage in $(MANPAGES); do \
+ 		sect=`echo $$manpage | sed 's/.*\([1-8]\)$$/\1/'`; \
+-		install -d -m755 $(DESTDIR)/usr/share/man/man$$sect; \
+-		install -m644 man/$$manpage $(DESTDIR)/usr/share/man/man$$sect/; \
++		install -d -m755 $(DESTDIR)$(MANDIR)/man$$sect; \
++		install -m644 man/$$manpage $(DESTDIR)$(MANDIR)/man$$sect/; \
+ 	done
+ 	if test x"$(DESTDIR)" = x; then \
+ 		echo "You need to run 'silo -f' now, to update the boot block" 1>&2; \
