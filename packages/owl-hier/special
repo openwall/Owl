@@ -1,0 +1,569 @@
+# /
+/set type=file uname=root gname=root mode=0755
+.		type=dir
+
+# /bin
+bin		type=dir
+# /bin
+..
+
+
+# /boot
+boot		type=dir mode=0700
+# /boot
+..
+
+
+# /dev
+dev		type=dir
+
+# /dev/pts
+pts		type=dir
+# /dev/pts
+..
+
+# /dev
+..
+
+
+# /etc
+etc		type=dir
+
+# /etc/X11
+X11		type=dir
+# /etc/X11
+..
+
+
+# /etc/mtree
+mtree		type=dir mode=0700
+# /etc/mtree
+..
+
+# /etc
+..
+
+
+# /home
+home		type=dir
+# /home
+..
+
+
+# /lib
+lib		type=dir
+
+# /lib/modules
+modules		type=dir mode=0700
+# /lib/modules
+..
+
+
+# /lib/security
+security	type=dir
+# /lib/security
+..
+
+# /lib
+..
+
+
+# /mnt
+mnt		type=dir
+
+# /mnt/cdrom
+cdrom		type=dir
+# /mnt/cdrom
+..
+
+
+# /mnt/floppy
+floppy		type=dir
+# /mnt/floppy
+..
+
+# /mnt
+..
+
+
+# /opt
+opt		type=dir
+# /opt
+..
+
+
+# /proc
+proc		type=dir mode=0555
+# /proc
+..
+
+
+# /root
+root		type=dir mode=0700
+# /root
+..
+
+
+# /sbin
+sbin		type=dir
+# /sbin
+..
+
+
+# /tmp
+tmp		type=dir mode=01777
+# /tmp
+..
+
+
+# /usr
+usr		type=dir
+    tmp		type=link mode=0777 link=/var/tmp
+
+# /usr/X11R6
+X11R6		type=dir
+
+# /usr/X11R6/bin
+bin		type=dir
+# /usr/X11R6/bin
+..
+
+
+# /usr/X11R6/doc
+doc		type=dir
+# /usr/X11R6/doc
+..
+
+
+# /usr/X11R6/include
+include		type=dir
+# /usr/X11R6/include
+..
+
+
+# /usr/X11R6/lib
+lib		type=dir
+# /usr/X11R6/lib
+..
+
+
+# /usr/X11R6/man
+man		type=dir
+# /usr/X11R6/man
+..
+
+# /usr/X11R6
+..
+
+
+# /usr/bin
+bin		type=dir
+    X11		type=link link=../X11R6/bin
+# /usr/bin
+..
+
+
+# /usr/dict
+dict		type=dir
+# /usr/dict
+..
+
+
+# /usr/doc
+doc		type=dir
+# /usr/doc
+..
+
+
+# /usr/etc
+etc		type=dir
+# /usr/etc
+..
+
+
+# /usr/games
+games		type=dir
+# /usr/games
+..
+
+
+# /usr/include
+include		type=dir
+# /usr/include
+..
+
+
+# /usr/info
+info		type=dir
+# /usr/info
+..
+
+
+# /usr/lib
+lib		type=dir
+    X11		type=link link=../X11R6/lib/X11
+
+# /usr/lib/games
+games		type=dir
+# /usr/lib/games
+..
+
+
+# /usr/lib/gcc-lib
+gcc-lib		type=dir
+# /usr/lib/gcc-lib
+..
+
+# /usr/lib
+..
+
+
+# /usr/libexec
+libexec		type=dir
+# /usr/libexec
+..
+
+
+# /usr/local
+local		type=dir
+
+# /usr/local/bin
+bin		type=dir
+# /usr/local/bin
+..
+
+
+# /usr/local/doc
+doc		type=dir
+# /usr/local/doc
+..
+
+
+# /usr/local/etc
+etc		type=dir
+# /usr/local/etc
+..
+
+
+# /usr/local/games
+games		type=dir
+# /usr/local/games
+..
+
+
+# /usr/local/info
+info		type=dir
+# /usr/local/info
+..
+
+
+# /usr/local/lib
+lib		type=dir
+# /usr/local/lib
+..
+
+
+# /usr/local/man
+man		type=dir
+
+# /usr/local/man/man1
+man1		type=dir
+# /usr/local/man/man1
+..
+
+
+# /usr/local/man/man2
+man2		type=dir
+# /usr/local/man/man2
+..
+
+
+# /usr/local/man/man3
+man3		type=dir
+# /usr/local/man/man3
+..
+
+
+# /usr/local/man/man4
+man4		type=dir
+# /usr/local/man/man4
+..
+
+
+# /usr/local/man/man5
+man5		type=dir
+# /usr/local/man/man5
+..
+
+
+# /usr/local/man/man6
+man6		type=dir
+# /usr/local/man/man6
+..
+
+
+# /usr/local/man/man7
+man7		type=dir
+# /usr/local/man/man7
+..
+
+
+# /usr/local/man/man8
+man8		type=dir
+# /usr/local/man/man8
+..
+
+
+# /usr/local/man/man9
+man9		type=dir
+# /usr/local/man/man9
+..
+
+
+# /usr/local/man/mann
+mann		type=dir
+# /usr/local/man/mann
+..
+
+# /usr/local/man
+..
+
+
+# /usr/local/sbin
+sbin		type=dir
+# /usr/local/sbin
+..
+
+
+# /usr/local/src
+src		type=dir
+# /usr/local/src
+..
+
+# /usr/local
+..
+
+
+# /usr/man
+man		type=dir
+
+# /usr/man/man1
+man1		type=dir
+# /usr/man/man1
+..
+
+
+# /usr/man/man2
+man2		type=dir
+# /usr/man/man2
+..
+
+
+# /usr/man/man3
+man3		type=dir
+# /usr/man/man3
+..
+
+
+# /usr/man/man4
+man4		type=dir
+# /usr/man/man4
+..
+
+
+# /usr/man/man5
+man5		type=dir
+# /usr/man/man5
+..
+
+
+# /usr/man/man6
+man6		type=dir
+# /usr/man/man6
+..
+
+
+# /usr/man/man7
+man7		type=dir
+# /usr/man/man7
+..
+
+
+# /usr/man/man8
+man8		type=dir
+# /usr/man/man8
+..
+
+
+# /usr/man/man9
+man9		type=dir
+# /usr/man/man9
+..
+
+
+# /usr/man/mann
+mann		type=dir
+# /usr/man/mann
+..
+
+# /usr/man
+..
+
+
+# /usr/sbin
+sbin		type=dir
+# /usr/sbin
+..
+
+
+# /usr/share
+share		type=dir
+# /usr/share
+..
+
+
+# /usr/src
+src		type=dir uname=sources gname=sources
+    linux	type=link
+
+# /usr/src/world
+world		type=dir uname=build gname=sources mode=0750
+# /usr/src/world
+..
+
+# /usr/src
+..
+
+# /usr
+..
+
+
+# /var
+var		type=dir
+    adm		type=link link=log
+    mail	type=link link=spool/mail
+
+# /var/account
+account		type=dir mode=0700
+# /var/account
+..
+
+
+# /var/cache
+cache		type=dir
+# /var/cache
+..
+
+
+# /var/db
+db		type=dir mode=0700
+# /var/db
+..
+
+
+# /var/lib
+lib		type=dir
+
+# /var/lib/games
+games		type=dir
+# /var/lib/games
+..
+
+
+# /var/lib/rpm
+rpm		type=dir
+# /var/lib/rpm
+..
+
+# /var/lib
+..
+
+
+# /var/local
+local		type=dir
+# /var/local
+..
+
+
+# /var/lock
+lock		type=dir
+
+# /var/lock/console
+console		type=dir mode=0700
+# /var/lock/console
+..
+
+
+# /var/lock/subsys
+subsys		type=dir mode=0700
+# /var/lock/subsys
+..
+
+
+# /var/lock/uucp
+uucp		type=dir gname=uucp mode=0770
+# /var/lock/uucp
+..
+
+# /var/lock
+..
+
+
+# /var/log
+log		type=dir
+# /var/log
+..
+
+
+# /var/nis
+nis		type=dir
+# /var/nis
+..
+
+
+# /var/preserve
+preserve	type=dir
+# /var/preserve
+..
+
+
+# /var/run
+run		type=dir
+# /var/run
+..
+
+
+# /var/spool
+spool		type=dir
+
+# /var/spool/mail
+mail		type=dir gname=mail mode=0775
+# /var/spool/mail
+..
+
+# /var/spool
+..
+
+
+# /var/state
+state		type=dir
+
+# /var/state/misc
+misc		type=dir
+# /var/state/misc
+..
+
+# /var/state
+..
+
+
+# /var/tmp
+tmp		type=dir mode=01777
+# /var/tmp
+..
+
+# /var
+..
+
+..
+
