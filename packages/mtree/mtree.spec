@@ -1,9 +1,9 @@
-# $Id: Owl/packages/mtree/mtree.spec,v 1.8 2004/11/23 22:40:47 mci Exp $
+# $Id: Owl/packages/mtree/mtree.spec,v 1.9 2004/12/25 21:01:17 galaxy Exp $
 
 Summary: Map a directory hierarchy.
 Name: mtree
 Version: 3.1
-Release: owl1
+Release: owl2
 License: BSD
 Group: System Environment/Base
 Source: mtree-%version-20020728.tar.bz2
@@ -38,6 +38,10 @@ install -m 644 usr.sbin/mtree/mtree.8 %buildroot%_mandir/man8/
 %_mandir/man8/mtree.8*
 
 %changelog
+* Sun Dec 25 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 3.1-owl2
+- Bumped up release to satisfy dependency resolver (fix for openssl
+upgrading issue.
+
 * Sun Jul 28 2002 Solar Designer <solar@owl.openwall.com> 3.1-owl1
 - Updated to version from current OpenBSD (post-3.1).
 

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/nmap/nmap.spec,v 1.6 2004/11/23 22:40:47 mci Exp $
+# $Id: Owl/packages/nmap/nmap.spec,v 1.7 2004/12/25 21:01:31 galaxy Exp $
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
 Version: 3.48
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/System
 URL: http://www.insecure.org/nmap/
@@ -55,6 +55,10 @@ grep -q ^nmap: /etc/passwd ||
 %_datadir/nmap
 
 %changelog
+* Sun Dec 25 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 3.48-owl3
+- Bumped up release to satisfy dependency resolver (fix for openssl
+upgrading issue).
+
 * Sun Oct 26 2003 Solar Designer <solar@owl.openwall.com> 3.48-owl2
 - Added a reduced version of the drop privileges patch from ALT Linux,
 without chrooting if DNS resolver is required.
