@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.9 2000/09/07 01:17:55 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.10 2000/09/08 18:27:25 solar Exp $
 
 %define BUILD_PROFILE	'no'
 
@@ -92,6 +92,9 @@ If you are going to use the gprof program to profile a program, you'll
 need to install the glibc-profile program.
 %endif
 
+# Use %optflags_lib for this package if defined.
+%{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
+
 %prep
 %setup -q -a 1 -a 2 -a 4
 %patch0 -p1
@@ -123,14 +126,14 @@ cd md5-crypt
 
 %build
 rm -rf build-$RPM_ARCH-linux
-mkdir build-$RPM_ARCH-linux ; cd build-$RPM_ARCH-linux
-USE_OPT_FLAGS="%{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}"
+mkdir build-$RPM_ARCH-linux
+cd build-$RPM_ARCH-linux
 %if "%{BUILD_PROFILE}"=="'yes'"
-CFLAGS="-g $USE_OPT_FLAGS" ../configure --prefix=/usr \
+CFLAGS="-g $RPM_OPT_FLAGS" ../configure --prefix=/usr \
 	--enable-add-ons=yes \
 	%_target_platform
 %else
-CFLAGS="-g $USE_OPT_FLAGS" ../configure --prefix=/usr \
+CFLAGS="-g $RPM_OPT_FLAGS" ../configure --prefix=/usr \
 	--enable-add-ons=yes --disable-profile \
 	%_target_platform
 %endif
