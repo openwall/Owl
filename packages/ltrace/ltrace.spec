@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ltrace/ltrace.spec,v 1.10 2001/10/25 11:38:23 mci Exp $
+# $Id: Owl/packages/ltrace/ltrace.spec,v 1.11 2001/10/25 13:47:18 mci Exp $
 
 Summary: Tracks runtime library calls from dynamically linked executables.
 Name: ltrace
@@ -43,8 +43,7 @@ make
 %install
 make DESTDIR=$RPM_BUILD_ROOT mandir=%{_mandir} install
 rm -rf $RPM_BUILD_ROOT/%{_prefix}/doc
-rm ChangeLog
-cp debian/changelog ChangeLog
+mv -f debian/changelog ChangeLog
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -57,7 +56,7 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/ltrace.conf
 
 %changelog
-* Thu Jan 14 2001 Michail Litvak <mci@owl.openwall.com>
+* Thu Oct 25 2001 Michail Litvak <mci@owl.openwall.com>
 - fix dangling symlink
 
 * Sun Jan 14 2001 Michail Litvak <mci@owl.openwall.com>
