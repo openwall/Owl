@@ -1,4 +1,4 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.16 2003/04/27 02:29:23 solar Exp $
+# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.17 2003/04/27 03:07:08 solar Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
@@ -107,11 +107,11 @@ fi
 %attr(0600,root,root) /dev/initctl
 
 %changelog
-* Sun Apr 27 2003 Solar Designer <solar@owl.openwall.com>
+* Sun Apr 27 2003 Solar Designer <solar@owl.openwall.com> 2.85-owl4
 - Wrote a new implementation of sulogin which is now packaged separately,
 so don't package sulogin here.
 
-* Thu Apr 24 2003 Solar Designer <solar@owl.openwall.com>
+* Thu Apr 24 2003 Solar Designer <solar@owl.openwall.com> 2.85-owl3
 - Fixed a bug in yesterday's update to start-stop-daemon's executable file
 matching, thanks to Dmitry V. Levin.
 - On package upgrades, make a hard link to (the old) /sbin/init instead of
