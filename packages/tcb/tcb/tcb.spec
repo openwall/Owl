@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tcb/tcb/tcb.spec,v 1.16 2002/10/21 15:23:29 nergal Exp $
+# $Id: Owl/packages/tcb/tcb/tcb.spec,v 1.17 2002/10/24 00:45:19 solar Exp $
 
 Summary: Libraries and tools implementing the tcb password shadowing scheme.
 Name: tcb
@@ -81,9 +81,14 @@ rmdir /sbin/chkpwd.d
 /usr/lib/libtcb.so
 
 %changelog
-* Mon Aug 19 2002 Rafal Wojtczuk <nergal@owl.openwall.com>
-- Merged enhancements which remove 32K users limit
-- Added ENABLE_SETFSUGID
+* Thu Oct 24 2002 Solar Designer <solar@owl.openwall.com>
+- Cleaned up the recent changes.
+
+* Mon Oct 21 2002 Rafal Wojtczuk <nergal@owl.openwall.com>
+- Merged enhancements which remove 32K users limit.
+- Added ENABLE_SETFSUGID.
+- Pass the username to the helper binary such that it can handle non-unique
+UIDs.
 
 * Mon Aug 19 2002 Solar Designer <solar@owl.openwall.com>
 - Moved libtcb.so symlink to /usr/lib (patch from Dmitry V. Levin).
