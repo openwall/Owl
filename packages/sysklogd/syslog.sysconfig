@@ -1,0 +1,7 @@
+# Options to syslogd
+# See syslogd(8) for details.
+SYSLOGD_OPTIONS='-m 0'
+
+# Options to klogd
+# See klogd(8) for details.
+KLOGD_OPTIONS=''

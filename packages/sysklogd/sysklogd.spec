@@ -1,9 +1,9 @@
-# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.11 2003/10/30 21:15:49 solar Exp $
+# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.12 2004/01/04 23:01:55 mci Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
 Version: 1.4.1
-Release: owl5
+Release: owl6
 License: BSD for syslogd and GPL for klogd
 Group: System Environment/Daemons
 URL: http://www.infodrom.org/projects/sysklogd/
@@ -11,6 +11,7 @@ Source0: http://www.infodrom.org/projects/sysklogd/download/%name-%version.tar.g
 Source1: syslog.conf
 Source2: syslog.init
 Source3: syslog.logrotate
+Source4: syslog.sysconfig
 Patch0: sysklogd-1.3-31-rh-owl-Makefile.diff
 Patch1: sysklogd-1.3-31-rh-ksyslog-nul.diff
 Patch2: sysklogd-1.3-31-rh-utmp.diff
@@ -61,6 +62,7 @@ mkdir -p etc/{rc.d/init.d,logrotate.d}
 install -m 644 $RPM_SOURCE_DIR/syslog.conf etc/syslog.conf
 install -m 755 $RPM_SOURCE_DIR/syslog.init etc/rc.d/init.d/syslog
 install -m 644 $RPM_SOURCE_DIR/syslog.logrotate etc/logrotate.d/syslog
+install -m 600 $RPM_SOURCE_DIR/syslog.sysconfig etc/sysconfig/syslog
 
 %pre
 grep -q ^klogd: /etc/group || groupadd -g 180 klogd
@@ -99,10 +101,14 @@ fi
 %config(noreplace) /etc/syslog.conf
 %config(noreplace) /etc/logrotate.d/syslog
 %config(noreplace) /etc/rc.d/init.d/syslog
+%config(noreplace) /etc/sysconfig/syslog
 /sbin/*
 %_mandir/*/*
 
 %changelog
+* Sun Jan 04 2004 Michail Litvak <mci@owl.openwall.com> 1.4.1-owl6
+- Pass options to syslogd and klogd from /etc/sysconfig/syslog file.
+
 * Sun Aug 10 2003 Solar Designer <solar@owl.openwall.com> 1.4.1-owl5
 - Build with LFS (thanks to Dmitry V. Levin).
 
