@@ -1,0 +1,13 @@
+Index: groff/src/utils/indxbib/indxbib.cc
+diff -u groff/src/utils/indxbib/indxbib.cc:1.7 groff/src/utils/indxbib/indxbib.cc:1.10
+--- groff/src/utils/indxbib/indxbib.cc:1.7	Tue Apr 10 14:54:22 2001
++++ groff/src/utils/indxbib/indxbib.cc	Sat Apr 21 01:53:49 2001
+@@ -502,7 +503,7 @@
+     // every CR character before a Newline.
+     if (c == '\r') {
+       int peek = getc(fp);
+-      if (peek = '\n') {
++      if (peek == '\n') {
+ 	byte_count++;
+ 	c = peek;
+       }

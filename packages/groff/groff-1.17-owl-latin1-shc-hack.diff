@@ -1,0 +1,11 @@
+--- groff-1.17/font/devlatin1/R.proto.orig	Fri May 19 09:05:52 2000
++++ groff-1.17/font/devlatin1/R.proto	Sat May  5 20:57:47 2001
+@@ -187,8 +187,6 @@
+ char171	"
+ no	24	0	0254
+ char172	"
+-shc	24	0	0255
+-char173	"
+ rg	24	0	0256
+ char174	"
+ a-	24	0	0257
