@@ -27,7 +27,7 @@ int db_add(struct db_message *msg)
 
 	if (db.total_count >= MAX_MAILBOX_MESSAGES) goto out_fail;
 	if (++db.total_count <= 0) goto out_undo_count;
-	if ((db.total_size += msg->size) < db.total_size) goto out_undo_size;
+	if ((db.total_size += msg->size) < msg->size) goto out_undo_size;
 
 	entry = malloc(sizeof(struct db_message));
 	if (!entry) goto out_undo_size;
