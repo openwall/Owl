@@ -1,9 +1,9 @@
-# $Id: Owl/packages/gnupg/gnupg.spec,v 1.3 2000/12/14 20:43:02 kad Exp $
+# $Id: Owl/packages/gnupg/gnupg.spec,v 1.4 2001/03/26 18:31:09 kad Exp $
 
 Summary: 	A GNU utility for secure communication and data storage.
 Name: 		gnupg
 Version:	1.0.4
-Release: 	5owl
+Release: 	6owl
 Copyright:	GPL
 Group: 		Applications/Cryptography
 Source0: 	ftp://ftp.gnupg.org/pub/gcrypt/gnupg/%{name}-%{version}.tar.gz
@@ -12,6 +12,8 @@ Patch1: 	gnupg-1.0.3-rh-spell.diff
 Patch2: 	gnupg-1.0.4-rh-rijndael.diff
 Patch3: 	gnupg-1.0.4-rh-strlen-bug.diff
 Patch4:		gnupg-1.0.4-owl-security.diff
+Patch5:		gnupg-1.0.4-cvs-secret-key-checks.diff
+Patch6:		gnupg-1.0.4-cvs-disallow-secret.diff
 URL: 		http://www.gnupg.org/
 Provides: 	gpg openpgp
 BuildRoot: 	/var/rpm-buildroot/%{name}-root
@@ -28,7 +30,11 @@ only IDEA for symmetric-key encryption, which is patented worldwide).
 %setup -q
 %patch1 -p1 -b .typos
 %patch2 -p1 -b .rijndael
-%patch3 -p1 -b .strlen
+# obsoleted by patch4
+#%patch3 -p1 -b .strlen
+%patch4 -p1
+%patch5 -p0
+%patch6 -p1
 
 %build
 unset LINGUAS || :
@@ -42,6 +48,9 @@ rm -rf $RPM_BUILD_ROOT
 %{makeinstall}
 sed 's^\.\./g[0-9\.]*/^^g' tools/lspgpot > lspgpot
 install -m755 lspgpot $RPM_BUILD_ROOT%{_bindir}/lspgpot
+
+# Strip files otherwise not touched
+strip $RPM_BUILD_ROOT/usr/lib/gnupg/*
 
 %files
 %defattr(-,root,root)
@@ -59,6 +68,10 @@ install -m755 lspgpot $RPM_BUILD_ROOT%{_bindir}/lspgpot
 %{_mandir}/man1/gpgv.*
 
 %changelog
+* Mon Mar 26 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- additional checks to secret key
+- add the --allow-secret-key-import patch from CVS
+
 * Thu Dec 14 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - detached signatures security fix
 
