@@ -2,10 +2,10 @@ diff -uprk.orig vixie-cron-4.1.20040916.orig/linux.mk vixie-cron-4.1.20040916/li
 --- vixie-cron-4.1.20040916.orig/linux.mk	1970-01-01 03:00:00 +0300
 +++ vixie-cron-4.1.20040916/linux.mk	2004-11-03 01:16:51 +0300
 @@ -0,0 +1,30 @@
-+DESTDIR=$(RPM_BUILD_ROOT)
++DESTDIR=
 +MANDIR=$(DESTDIR)/usr/share/man/
 +
-+CFLAGS += -I. -I../../include $(RPM_OPT_FLAGS)
++CFLAGS += -I. -I../../include
 +
 +.PHONY: clean install maninstall proginstall
 +

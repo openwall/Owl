@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.31 2005/03/14 04:02:08 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.32 2005/03/14 04:49:59 solar Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
@@ -14,7 +14,7 @@ Patch0: vixie-cron-4.1.20040916-alt-warnings.diff
 Patch1: vixie-cron-4.1.20040916-owl-alt-linux.diff
 Patch2: vixie-cron-4.1.20040916-owl-vitmp.diff
 Patch3: vixie-cron-4.1.20040916-owl-crond.diff
-Patch4: vixie-cron-4.1.20040916-alt-Makefile.diff
+Patch4: vixie-cron-4.1.20040916-alt-owl-Makefile.diff
 Patch5: vixie-cron-4.1.20040916-alt-progname.diff
 Patch6: vixie-cron-4.1.20040916-alt-sigpipe.diff
 Patch7: vixie-cron-4.1.20040916-alt-setlocale.diff
@@ -42,25 +42,25 @@ modifications by the NetBSD, OpenBSD, Red Hat, ALT, and Owl teams.
 %patch8 -p1
 
 %build
-for i in usr.sbin/cron usr.bin/crontab usr.bin/at; do
-%__make .CURDIR=. -C "$i"
+for dir in usr.sbin/cron usr.bin/crontab usr.bin/at; do
+	CFLAGS="$RPM_OPT_FLAGS" %__make -C $dir .CURDIR=. CC="%__cc" LD="%__cc"
 done
 
 %install
 rm -rf %buildroot
 mkdir -p %buildroot{%_bindir,%_sbindir}
 mkdir -p %buildroot%_mandir/man{1,5,8}
-mkdir -p -m 700 %buildroot/var/spool/cron
-mkdir -p -m 700 $RPM_BUILD_ROOT/var/spool/at
+mkdir -p -m 700 %buildroot/var/spool/{cron,at}
 mkdir -p -m 755 %buildroot/etc/cron.d
 
 install -m 700 usr.sbin/cron/crond %buildroot%_sbindir/
 install -m 700 usr.bin/crontab/crontab %buildroot%_bindir/
 install -m 700 usr.bin/at/at %buildroot%_bindir/
-(cd %buildroot%_bindir/
-	ln -s at atq
-	ln -s at atrm
-	ln -s at batch )
+pushd %buildroot%_bindir
+ln -s at atq
+ln -s at atrm
+ln -s at batch
+popd
 
 install -m 644 usr.sbin/cron/crontab.1 %buildroot%_mandir/man1/
 install -m 644 usr.sbin/cron/crontab.5 %buildroot%_mandir/man5/
@@ -89,23 +89,22 @@ if [ $1 -ge 2 ]; then
 	/etc/rc.d/init.d/crond status && touch /var/run/crond.restart || :
 	/etc/rc.d/init.d/crond stop || :
 	%_sbindir/control-dump crontab
-	%_sbindir/control at status > /dev/null 2>&1
-	if [ $? -eq 0 ]; then
+	if %_sbindir/control at status &> /dev/null; then
 		%_sbindir/control-dump at
-		touch /var/run/crond.restoreat
+		touch /var/run/crond.restore-at
 	fi
 fi
 
 %post
 if [ $1 -ge 2 ]; then
 	%_sbindir/control-restore crontab
-	if [ -f /var/run/crond.restoreat ]; then
+	if [ -f /var/run/crond.restore-at ]; then
 		%_sbindir/control-restore at
-		rm -f /var/run/crond.restoreat
+		rm -f /var/run/crond.restore-at
 	fi
 else
-	grep -q ^crontab: /etc/group && %_sbindir/control crontab public
-	grep -q ^crontab: /etc/group && %_sbindir/control at public
+	grep -q ^crontab: /etc/group && %_sbindir/control crontab public || :
+	grep -q ^crontab: /etc/group && %_sbindir/control at public || :
 fi
 /sbin/chkconfig --add crond
 if [ -f /var/run/crond.restart ]; then
@@ -116,7 +115,7 @@ fi
 rm -f /var/run/crond.restart
 
 %triggerun -- vixie-cron <= 3.0.2.7
-	grep -q ^crontab: /etc/group && %_sbindir/control at public
+grep -q ^crontab: /etc/group && %_sbindir/control at public || :
 
 %preun
 if [ $1 -eq 0 ]; then
@@ -132,8 +131,8 @@ fi
 %_bindir/atq
 %_bindir/atrm
 %_bindir/batch
-%_mandir/man*/*
-%dir %attr(1730,root,crontab) /var/spool/cron
+%_mandir/man?/*
+%dir %attr(3730,root,crontab) /var/spool/cron
 %dir %attr(1770,root,crontab) /var/spool/at
 %dir /etc/cron.d
 %config /etc/rc.d/init.d/crond
@@ -141,7 +140,10 @@ fi
 /etc/control.d/facilities/at
 
 %changelog
-* Sun Feb 20 2005 Juan M. Bello Rivas <jmbr@owl.openwall.com> 4.1.20040916-owl1
+* Mon Mar 14 2005 Solar Designer <solar@owl.openwall.com> 4.1.20040916-owl1
+- Assorted corrections and cleanups.
+
+* Sun Feb 20 2005 Juan M. Bello Rivas <jmbr@owl.openwall.com> 4.1.20040916-owl0.1
 - Merged the changes by Jarno Huuskonen and by Dmitry V. Levin.
 
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.0.2.7-owl19
