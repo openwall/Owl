@@ -673,7 +673,7 @@ diff -urN shadow-4.0.0-owl-no-tcb/lib/tcbfuncs.c shadow-4.0.0/lib/tcbfuncs.c
 +		perror("chown");
 +		goto out_free;
 +	}
-+	if (chmod(tcbdir, 0)) {
++	if (chmod(tcbdir, 0700)) {
 +		perror("chmod");
 +		goto out_free;
 +	}

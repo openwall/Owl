@@ -1,9 +1,9 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.33 2003/10/30 21:12:33 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.34 2003/11/22 00:56:47 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.0
-Release: owl13
+Release: owl14
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -192,6 +192,11 @@ fi
 /etc/control.d/facilities/*
 
 %changelog
+* Sat Nov 22 2003 Solar Designer <solar@owl.openwall.com> 2:4.0.0-owl14
+- In tcb_move(), use mode 700 and not mode 0 for the directory being
+modified as the latter is incompatible with the mode 0 hack in vserver
+kernel patches; thanks to Dmitry V. Levin for the report and patch.
+
 * Wed Oct 29 2003 Solar Designer <solar@owl.openwall.com> 2:4.0.0-owl13
 - Require glibc-crypt_blowfish-devel for builds.
 
