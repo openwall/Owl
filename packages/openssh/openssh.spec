@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.4 2000/07/16 22:38:54 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.5 2000/07/23 16:55:46 solar Exp $
 
 # Version of OpenSSH
 %define oversion 2.1.1p2
@@ -38,7 +38,7 @@ Obsoletes: ssh-clients
 Summary: OpenSSH Secure Shell protocol server (sshd)
 Group: System Environment/Daemons
 Obsoletes: ssh-server
-PreReq: openssh chkconfig >= 0.9
+PreReq: openssh chkconfig >= 0.9 pam_userpass /dev/urandom
 
 %description
 Ssh (Secure Shell) a program for logging into a remote machine and for
@@ -164,17 +164,20 @@ fi
 %attr(0755,root,root) %config /etc/rc.d/init.d/sshd
 
 %changelog
-* Mon Jul 17 2000 Solar Designer <solar@false.com>
+* Sun Jul 23 2000 Solar Designer <solar@owl.openwall.com>
+- Added dependencies on pam_userpass and /dev/urandom into openssh-server.
+
+* Mon Jul 17 2000 Solar Designer <solar@owl.openwall.com>
 - Added a patch to not log unknown usernames (someone could have typed
 their password at the username prompt by mistake, even though there's no
 such prompt with the "native" client).
 
-* Wed Jul 12 2000 Solar Designer <solar@false.com>
+* Wed Jul 12 2000 Solar Designer <solar@owl.openwall.com>
 - Cleaned up the default ssh*_config.
 - The config files are now declared as separate Source's in this spec.
 - Moved this changelog to end of spec file.
 
-* Sun Jul  9 2000 Solar Designer <solar@false.com>
+* Sun Jul 09 2000 Solar Designer <solar@owl.openwall.com>
 - Imported current Damien Miller's spec file, removed the X11-specific
 stuff, fixed buildroot issues.
 - sshd.pam and sshd.init are now taken from separate files, not the
