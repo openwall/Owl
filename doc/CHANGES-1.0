@@ -1,16 +1,15 @@
-This file lists the major changes made between Owl releases as well as
-between the last released version and Owl-current.  While some of the
-changes listed here may also be made to a stable branch, the complete
-lists of stable branch changes are included with those branches and as
-errata for the corresponding Owl releases only.
+This file lists the major changes made between Owl releases.  While
+some of the changes listed here may also be made to a stable branch,
+the complete lists of stable branch changes are included with those
+branches and as errata for the corresponding Owl releases only.
 
 This is very far from an exhaustive list of changes.  Small changes to
 individual packages won't be mentioned here unless they fix a security
-or a reliability problem.  They are, however, mentioned in change logs
-for the packages themselves.
+or a critical reliability problem.  They are, however, mentioned in
+change logs for the packages themselves.
 
 
-	Changes made between Owl 0.1-prerelease and Owl-current.
+	Changes made between Owl 0.1-prerelease and Owl 1.0.
 
 2002/10/12	Package: slang
 Updated to 1.4.6.  Reviewed all of the library code for environment
@@ -989,4 +988,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/CHANGES-1.0,v 1.1 2002/10/12 12:53:58 solar Exp $
+$Id: Owl/doc/CHANGES-1.0,v 1.2 2002/10/12 13:06:04 solar Exp $
