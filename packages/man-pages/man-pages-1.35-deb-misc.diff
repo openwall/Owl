@@ -1,0 +1,1390 @@
+--- man-pages-1.35/man2/fcntl.2.orig	Wed Mar  7 19:56:37 2001
++++ man-pages-1.35/man2/fcntl.2	Mon Apr 23 14:32:29 2001
+@@ -282,7 +282,13 @@
+ .TP
+ .B EBADF
+ .I fd
+-is not an open file descriptor.
++is not an open file descriptor or command was
++.B F_SETLK
++or
++.B F_SETLKW and
++file descriptor open mode doesn't match with type of lock requested (eg:
++file descriptor was read only and the lock requested was
++.BR F_WRLCK ).
+ .TP
+ .B EDEADLK
+ It was detected that the specified
+--- man-pages-1.35/man2/gettimeofday.2.orig	Fri Mar 16 19:11:07 2001
++++ man-pages-1.35/man2/gettimeofday.2	Mon Apr 23 14:32:29 2001
+@@ -49,7 +49,7 @@
+ .B gettimeofday
+ and
+ .B settimeofday
+-can set the time as well as a timezone.      
++can get and set the time as well as a timezone.      
+ .I tv
+ is a 
+ .B timeval 
+@@ -64,10 +64,20 @@
+ };
+ .fi
+ .PP
++The
++.I tv_sec
++member of the struct is the number of seconds since the Epoch (see
++.BR time (2)),
++and
++.I tv_usec
++is the amount of microseconds past the current
++.I tv_sec
++value.
++.PP
+ .sp
+-and 
++The
+ .I tz
+-is a 
++argument is a 
+ .B timezone 
+ :
+ .sp
+--- man-pages-1.35/man2/shmget.2.orig	Thu Dec 28 18:22:37 2000
++++ man-pages-1.35/man2/shmget.2	Mon Apr 23 14:32:29 2001
+@@ -245,7 +245,7 @@
+ .TP
+ .B SHMMNI
+ System wide maximum number of shared memory segments: implementation
+-dependent (currently 4096).
++dependent (currently 4096, was 128 in Linux 2.2 kernels).
+ .PP
+ The implementation has no specific limits for the per process maximum
+ number of shared memory segments
+--- man-pages-1.35/man2/signal.2.orig	Sat Aug 12 08:02:27 2000
++++ man-pages-1.35/man2/signal.2	Mon Apr 23 14:32:29 2001
+@@ -28,7 +28,9 @@
+ .SH SYNOPSIS
+ .B #include <signal.h>
+ .sp
+-.BI "void (*signal(int " signum ", void (*" sighandler ")(int)))(int);"
++.B typedef void (*sighandler_t)(int);
++.sp 2
++.BI "sighandler_t signal(int " signum ", sighandler_t " handler );
+ .SH DESCRIPTION
+ The
+ .BR signal ()
+@@ -54,12 +56,11 @@
+ occurs.
+ Finally, if the handler is set to a function
+ .I sighandler
+-then first either the handler is reset to SIG_DFL
+-or an implementation-dependent blocking of the signal
+-is performed and next
++then the signal is blocked and
+ .I sighandler
+ is called with argument
+ .IR signum .
++The signal remains blocked during the execution of the signal handler.
+ 
+ Using a signal handler function for a signal
+ is called "catching the signal".
+@@ -70,9 +71,9 @@
+ cannot be caught or ignored.
+ 
+ .SH "RETURN VALUE"
+-The function
++The
+ .BR signal ()
+-returns the previous value of the signal handler, or
++function returns the previous value of the signal handler, or
+ .B SIG_ERR
+ on error.
+ 
+@@ -85,22 +86,22 @@
+ new instances of this signal from occurring during a call of the handler.
+ The glibc2 library follows the BSD behaviour.
+ 
+-If one on a libc5 system includes
++In a libc5 system including
+ .B "<bsd/signal.h>"
+ instead of
+ .B "<signal.h>"
+-then 
++makes
+ .B signal
+-is redefined as
++to be redefined as
+ .B __bsd_signal
+ and signal has the BSD semantics. This is not recommended.
+ 
+-If one on a glibc2 system defines a feature test
++In a glibc2 system defining a feature test
+ macro such as
+ .B _XOPEN_SOURCE
+-or uses a separate
++or using a separate
+ .B sysv_signal
+-function, one obtains classical behaviour. This is not recommended.
++function, the classical behaviour is obtained. This is not recommended.
+ 
+ Trying to change the semantics of this call using
+ defines and includes is not a good idea. It is better to avoid
+@@ -110,23 +111,6 @@
+ instead.
+ 
+ .SH NOTES
+-If you're confused by the prototype at the top of this manpage, it
+-may help to see it separated out thus:
+-.PP
+-typedef void (*sighandler_t)(int);
+-.br
+-.BI "sighandler_t signal(int " signum ", sighandler_t " handler );
+-.PP
+-(Various versions of libc predefine this type; libc4 and libc5
+-define
+-.IR SignalHandler ,
+-glibc defines
+-.I sig_t
+-and, when
+-.B _GNU_SOURCE
+-is defined, also
+-.IR sighandler_t .)
+-.PP
+ According to POSIX, the behaviour of a process is undefined after it
+ ignores a
+ .BR SIGFPE ,
+@@ -134,7 +118,7 @@
+ or
+ .B SIGSEGV
+ signal that was not generated
+-by the \fIkill()\fP or the \fIraise()\fP functions.
++by the \fBkill\fR(2) or the \fBraise\fR(3) functions.
+ Integer division by zero has undefined result.
+ On some architectures it will generate a
+ .B SIGFPE
+@@ -153,6 +137,20 @@
+ to
+ .B SIG_IGN
+ to fail on Linux.
++.PP
++The use of the
++.B sighandler_t
++is a GNU extension.
++Various versions of libc predefine this type; libc4 and libc5
++define
++.IR SignalHandler ,
++glibc defines
++.I sig_t
++and, when
++.B _GNU_SOURCE
++is defined, also
++.IR sighandler_t .
++.PP
+ 
+ .SH "CONFORMING TO"
+ ANSI C
+--- man-pages-1.35/man2/vm86.2.orig	Sat Aug 12 08:05:41 2000
++++ man-pages-1.35/man2/vm86.2	Mon Apr 23 14:32:29 2001
+@@ -25,13 +25,13 @@
+ .\"
+ .TH VM86 2 "17 July 1997" "Linux 2.1.15" "Linux Programmer's Manual"
+ .SH NAME
+-vm86old, vm86 \- enter virtual 8086 mode
++vm86, vm86old \- enter virtual 8086 mode
+ .SH SYNOPSIS
+ .B #include <sys/vm86.h>
+ .sp
+-.BI "int vm86old(struct vm86_struct * " info );
+-.sp
+ .BI "int vm86(unsigned long " fn ", struct vm86plus_struct * " v86 );
++.sp
++.BI "int vm86old(struct vm86_struct * " info );
+ .SH DESCRIPTION
+ The system call
+ .B vm86
+@@ -43,7 +43,7 @@
+ in 1.1.8 and 1.1.9.
+ .LP
+ These calls cause the process to enter VM86 mode, and are used by
+-.BR dosemu .
++.BR dosemu " (" dos (1)).
+ .SH "RETURN VALUE"
+ On success, zero is returned.  On error, \-1 is returned, and
+ .I errno
+--- man-pages-1.35/man2/syscalls.2.orig	Sat Nov 27 17:38:42 1999
++++ man-pages-1.35/man2/syscalls.2	Mon Apr 23 14:32:29 2001
+@@ -28,8 +28,7 @@
+ .SH DESCRIPTION
+ As of Linux 2.0.34, there are 164 system calls listed in
+ .IR /usr/include/asm/unistd.h .
+-This man page lists them (providing hyperlinks if you read this
+-with a browser).
++This man page lists them.
+ 
+ _llseek(2),
+ _newselect(2),
+--- man-pages-1.35/man2/bind.2.orig	Sun Feb 18 15:14:29 2001
++++ man-pages-1.35/man2/bind.2	Mon Apr 23 14:32:29 2001
+@@ -188,10 +188,9 @@
+ .B ENOSR 
+ general error conditions, and
+ additional 
+-.BR EIO , 
+-.B EISDIR 
+-and 
+-.B EROFS 
++.B EIO
++and
++.B EISDIR
+ Unix-domain error conditions.
+ .SH NOTE
+ The third argument of
+--- man-pages-1.35/man2/clone.2.orig	Sat Aug 12 08:09:18 2000
++++ man-pages-1.35/man2/clone.2	Mon Apr 23 14:32:29 2001
+@@ -220,7 +220,7 @@
+ intended to be portable.  For programming threaded applications
+ (multiple threads of control in the same memory space), it is better
+ to use a library implementing the POSIX 1003.1c thread API, such as
+-the LinuxThreads library (included in glibc2).  See
++the LinuxThreads library (included in glibc2 (libc6) ).  See
+ .BR pthread_create (3thr).
+ 
+ This manual page corresponds to kernels 2.0.x and 2.1.x, and to glibc
+--- man-pages-1.35/man2/stat.2.orig	Mon Mar 12 01:20:06 2001
++++ man-pages-1.35/man2/stat.2	Mon Apr 23 14:32:29 2001
+@@ -74,8 +74,8 @@
+ is identical to stat, only the open file pointed to by 
+ .I filedes
+ (as returned by
+-.IR open (2))
+-is stated in place of 
++.BR open (2))
++is statted in place of 
+ .IR file_name .
+ 
+ .PP
+--- man-pages-1.35/man2/wait.2.orig	Tue Jul 25 10:57:00 2000
++++ man-pages-1.35/man2/wait.2	Mon Apr 23 14:32:29 2001
+@@ -167,16 +167,12 @@
+ .I options
+ argument was invalid.
+ .TP
+-.B ERESTARTSYS
++.B EINTR
+ if
+ .B WNOHANG
+ was not set and an unblocked signal or a
+ .B SIGCHLD
+-was caught. This error is returned by the system call.
+-The library interface is not allowed to return
+-.BR ERESTARTSYS ,
+-but will return
+-.BR EINTR .
++was caught.
+ .SH "NOTES"
+ The Single Unix Specification describes a flag SA_NOCLDWAIT (not present
+ under Linux) such that if either this flag is set, or the action for
+--- man-pages-1.35/man2/intro.2.orig	Sat Aug 12 15:02:49 2000
++++ man-pages-1.35/man2/intro.2	Mon Apr 23 14:32:29 2001
+@@ -161,7 +161,7 @@
+ IEEE Std 1003.1b-1993 (POSIX.1b standard) describing real-time facilities
+ for portable operating systems, aka ISO/IEC 9945-1:1996, as elucidated in
+ "Programming for the real world \- POSIX.4"
+-by Bill O. Gallmeister (O'Reilly & Associates, Inc. ISBN 1-56592-074-0).
++by Bill O. Gallmeister (O'Reilly & Associates, Inc. ISBN 1\-56592\-074\-0).
+ .TP
+ SUS, SUSv2
+ Single Unix Specification.
+--- man-pages-1.35/man2/iopl.2.orig	Sat Nov 27 17:38:40 1999
++++ man-pages-1.35/man2/iopl.2	Mon Apr 23 14:32:29 2001
+@@ -32,11 +32,11 @@
+ .SH NAME
+ iopl \- change I/O privilege level
+ .SH SYNOPSIS
+-.B #include <unistd.h>
+-/* for libc5 */
+-.br
++.\" .B #include <unistd.h>
++.\" /* for libc5 */
++.\" .br
+ .B #include <sys/io.h>
+-/* for glibc */
++.\" /* for glibc */
+ .sp
+ .BI "int iopl(int " level );
+ .SH DESCRIPTION
+@@ -76,13 +76,10 @@
+ .SH "CONFORMING TO"
+ \fBiopl\fP is Linux specific and should not be used in processes
+ intended to be portable.
+-.SH "NOTES"
+-Libc5 treats it as a system call and has a prototype in
++.SH "COMPATIBILITY"
++Under libc5, the prototype for
++.BR iopl ()
++was given in
+ .IR <unistd.h> .
+-Glibc1 does not have a prototype. Glibc2 has a prototype both in
+-.I <sys/io.h>
+-and in
+-.IR <sys/perm.h> .
+-Avoid the latter, it is available on i386 only.
+ .SH "SEE ALSO"
+ .BR ioperm (2)
+--- man-pages-1.35/man2/pause.2.orig	Fri Sep  8 18:01:12 2000
++++ man-pages-1.35/man2/pause.2	Mon Apr 23 14:32:29 2001
+@@ -60,7 +60,7 @@
+ .B EINTR
+ a signal was caught and the signal-catching function returned.
+ .SH "CONFORMING TO"
+-SVr4, SVID, POSIX, X/OPEN, BSD 4.3
++SVr4, SVID, POSIX, X/OPEN, BSD 4.3, SUSv2
+ .SH "SEE ALSO"
+ .BR kill (2),
+ .BR select (2),
+--- man-pages-1.35/man2/ipc.2.orig	Sat Nov 27 17:38:40 1999
++++ man-pages-1.35/man2/ipc.2	Mon Apr 23 14:32:29 2001
+@@ -30,7 +30,7 @@
+ .BI "int ipc(unsigned int" " call, " "int" " first, " "int" " second, "
+ .BI "int" " third, " "void *" "ptr, " "long" " fifth);"
+ .SH DESCRIPTION
+-.B ipc
++.B ipc()
+ is a common kernel entry point for the System V IPC calls
+ for messages, semaphores, and shared memory.
+ .I call
+@@ -39,9 +39,9 @@
+ .PP
+ User programs should call the appropriate functions by their usual names.
+ Only standard library implementors and kernel hackers need to know about
+-.BR ipc .
++.BR ipc() .
+ .SH "CONFORMING TO"
+-\fBipc\fP is Linux specific, and should not be used in programs
++\fBipc()\fP is Linux specific, and should not be used in programs
+ intended to be portable.
+ .SH "SEE ALSO"
+ .BR msgctl (2),
+--- man-pages-1.35/man2/select.2.orig	Sun Mar 18 18:19:25 2001
++++ man-pages-1.35/man2/select.2	Mon Apr 23 14:32:29 2001
+@@ -26,7 +26,7 @@
+ .\" Modified 1993-07-24 by Rik Faith <faith@cs.unc.edu>
+ .\" Modified 1995-05-18 by Jim Van Zandt <jrv@vanzandt.mv.com>
+ .\" Sun Feb 11 14:07:00 MET 1996  Martin Schulze  <joey@linux.de>
+-.\"	* layout slightly modified
++.\"    * layout slightly modified
+ .\"
+ .\" Modified Mon Oct 21 23:05:29 EDT 1996 by Eric S. Raymond <esr@thyrsus.com>
+ .\" Modified Thu Feb 24 01:41:09 CET 2000 by aeb
+@@ -197,7 +197,7 @@
+ Some code calls
+ .B select
+ with all three sets empty,
+-.I n
++.B n
+ zero, and a non-null
+ .I timeout
+ as a fairly portable way to sleep with subsecond precision.
+--- man-pages-1.35/man2/close.2.orig	Fri Jan 12 18:00:52 2001
++++ man-pages-1.35/man2/close.2	Mon Apr 23 14:32:29 2001
+@@ -89,7 +89,11 @@
+ A successful close does not guarantee that the data has been successfully
+ saved to disk, as the kernel defers writes. It is not common for a filesystem
+ to flush the buffers when the stream is closed. If you need to be sure that
+-the data is physically stored use fsync(2) or sync(2), they will get you
++the data is physically stored use
++.BR fsync (2)
++or
++.BR sync (2),
++they will get you
+ closer to that goal (it will depend on the disk hardware at this point).
+ .SH "SEE ALSO"
+ .BR open (2),
+--- man-pages-1.35/man3/crypt.3.orig	Sat Nov 27 17:43:42 1999
++++ man-pages-1.35/man3/crypt.3	Mon Apr 23 14:32:29 2001
+@@ -34,14 +34,12 @@
+ .SH NAME
+ crypt \- password and data encryption
+ .SH SYNOPSIS
+-.B #define _XOPEN_SOURCE
+-.br
+-.B #include <unistd.h>
++.B #include <crypt.h>
+ .sp
+ .BI "char *crypt(const char *" key ", const char *" salt );
+ .SH DESCRIPTION
+ .B crypt
+-is the password encryption function.  It is based on the Data Encryption
++provides acess to two algoritms for password encryption.  One it's based on the Data Encryption
+ Standard algorithm with variations intended (among other things) to
+ discourage use of hardware implementations of a key search.
+ .PP
+@@ -116,6 +114,11 @@
+ .\" .PP
+ .\" Making encrypted data computed using crypt() publically available has
+ .\" to be considered insecure for the given reasons.
++.PP
++If the salt starts with \fI$1$\fR an MD5 based password hashing algoritm is
++applied. The salt should consist off \fI$1$\fR followed with eight characters.
++.PP
++Programs using this function must be linked with -lcrypt.
+ .SH "CONFORMING TO"
+ SVID, X/OPEN, BSD 4.3
+ .SH "SEE ALSO"
+--- man-pages-1.35/man3/fflush.3.orig	Sat Dec 23 18:18:28 2000
++++ man-pages-1.35/man3/fflush.3	Mon Apr 23 14:32:29 2001
+@@ -36,8 +36,8 @@
+ .\"     @(#)fflush.3	5.4 (Berkeley) 6/29/91
+ .\"
+ .\" Converted for Linux, Mon Nov 29 15:22:01 1993, faith@cs.unc.edu
+-.\"
+ .\" Modified 2000-07-22 by Nicolás Lichtmaier <nick@debian.org>
++.\"      added note about fflush not ensuring the data is physically saved
+ .\"
+ .TH FFLUSH 3  "29 November 1993" "BSD MANPAGE" "Linux Programmer's Manual"
+ .SH NAME
+@@ -82,7 +82,7 @@
+ .BR write (2).
+ .SH NOTES
+ Note that
+-.B fflush
++.BR fflush ()
+ only flushes the user space buffers provided by the C library.
+ To ensure that the data is physically stored on disk
+ the kernel buffers must be flushed too, e.g. with
+--- man-pages-1.35/man3/ffs.3.orig	Sat Nov 27 17:43:43 1999
++++ man-pages-1.35/man3/ffs.3	Mon Apr 23 14:32:29 2001
+@@ -40,6 +40,8 @@
+ most significant position 32.
+ .SH "RETURN VALUE"
+ The \fBffs()\fP function returns the position of the first bit set,
+-or NULL if no bits are set.
++or 0 if no bits are set.
+ .SH "CONFORMING TO"
+-BSD 4.3
++BSD 4.3, SUSv2
++.PP
++According to SUSv2, this function is defined in <strings.h>.
+--- man-pages-1.35/man3/dbopen.3.orig	Sat Nov 27 17:43:42 1999
++++ man-pages-1.35/man3/dbopen.3	Mon Apr 23 14:32:29 2001
+@@ -41,6 +41,7 @@
+ #include <sys/types.h>
+ #include <limits.h>
+ #include <db.h>
++#include <fcntl.h>
+ 
+ DB *
+ dbopen(const char *file, int flags, int mode, DBTYPE type,
+@@ -122,11 +123,12 @@
+ typedef struct {
+ .RS
+ DBTYPE type;
+-int (*close)(const DB *db);
+-int (*del)(const DB *db, const DBT *key, u_int flags);
+-int (*fd)(const DB *db);
+-int (*get)(const DB *db, DBT *key, DBT *data, u_int flags);
+-int (*put)(const DB *db, DBT *key, const DBT *data,
++int (*close)(DB *db);
++int (*del)(DB *db, DB_TXN txnid, const DBT *key, u_int flags);
++int (*fd)(DB *db, int *fdp);
++int (*get)(DB *db, DB_TXN txnid, DBT *key, DBT *data, u_int flags);
++int (*join)(DB *db, DBC **, u_int, DBC **);
++int (*put)(DB *db, DB_TXN txnid, DBT *key, const DBT *data,
+ .ti +5
+ u_int flags);
+ int (*sync)(const DB *db, u_int flags);
+--- man-pages-1.35/man3/printf.3.orig	Sun Dec 17 17:05:39 2000
++++ man-pages-1.35/man3/printf.3	Mon Apr 23 14:32:29 2001
+@@ -44,6 +44,10 @@
+ .BI "int sprintf(char *" str ", const char *" format ", ...);"
+ .br
+ .BI "int snprintf(char *" str ", size_t " size ", const char *" format ", ...);"
++.br
++.BI "int asprintf(char **" strp ", const char *" format ", ...);"
++.br
++.BI "int dprintf(int " d ", const char *" format ", ...);"
+ .sp
+ .B #include <stdarg.h>
+ .sp
+@@ -54,6 +58,10 @@
+ .BI "int vsprintf(char *" str ", const char *" format ", va_list " ap );
+ .br
+ .BI "int vsnprintf(char *" str ", size_t " size ", const char *" format ", va_list " ap );
++.br
++.BI "int vasprintf(char **" strp ", const char *" format ", va_list " ap );
++.br
++.BI "int vdprintf(int " d ", const char *" format ", va_list " ap );
+ .SH DESCRIPTION
+ The functions in the
+ .B printf
+@@ -168,7 +176,7 @@
+ arguments 1 and 3 are specified, argument 2 must also be specified
+ somewhere in the format string.
+ 
+-For some numeric conversion a radix character (`decimal point') or
++For some numeric conversions a radix character (`decimal point') or
+ thousands' grouping character is used. The actual character used
+ depends on the LC_NUMERIC part of the locale. The POSIX locale
+ uses `.' as radix character, and does not have a grouping character.
+@@ -265,7 +273,7 @@
+ .B \&0
+ if both are given.
+ .TP
+-.B \' \'
++.B ' '
+ (a space) A blank should be left before a positive number
+ (or empty string) produced by a signed conversion.
+ .TP
+@@ -819,14 +827,6 @@
+ as the number of characters that would have been written in case
+ the output string has been large enough.
+ .PP
+-Linux libc4 knows about the five C standard flags.
+-It knows about the length modifiers h,l,L, and the conversions
+-cdeEfFgGinopsuxX, where F is a synonym for f.
+-Additionally, it accepts D,O,U as synonyms for ld,lo,lu.
+-(This is bad, and caused serious bugs later, when
+-support for %D disappeared.) No locale-dependent radix character,
+-no thousands' separator, no NaN or infinity, no %m$ and *m$.
+-.PP
+ Linux libc5 knows about the five C standard flags and the ' flag,
+ locale, %m$ and *m$.
+ It knows about the length modifiers h,l,L,Z,q, but accepts L and q
+@@ -887,19 +887,6 @@
+ and
+ .BR vasprintf ).
+ .PP
+-Linux libc4.[45] does not have a
+-.BR snprintf ,
+-but provides a libbsd that contains an
+-.B snprintf
+-equivalent to
+-.BR sprintf ,
+-i.e., one that ignores the
+-.I size
+-argument.
+-Thus, the use of
+-.B snprintf
+-with early libc4 leads to serious security problems.
+-.PP
+ Code such as
+ .BI printf( foo );
+ often indicates a bug, since
+@@ -909,6 +896,3 @@
+ comes from untrusted user input, it may contain %n, causing the
+ .B printf
+ call to write to memory and creating a security hole.
+-.PP
+-Some floating point conversions under early libc4
+-caused memory leaks.
+--- man-pages-1.35/man3/scandir.3.orig	Sun Sep 24 21:20:33 2000
++++ man-pages-1.35/man3/scandir.3	Mon Apr 23 14:32:29 2001
+@@ -28,13 +28,11 @@
+ .\" Modified Thu Apr 11 17:11:33 1996 by Andries Brouwer (aeb@cwi.nl):
+ .\"     Corrected type of compar routines, as suggested by
+ .\"     Miguel Barreiro (enano@avalon.yaix.es).  Added example.
+-.\" In case a Debian maintainer sees this: the Debian version is wrong.
+-.\" Please do not `correct' the version here.
+ .\" Modified Sun Sep 24 20:15:46 2000 by aeb, following Petter Reinholdtsen.
+ .\"
+ .TH SCANDIR 3  "11 April 1996" "GNU" "Linux Programmer's Manual"
+ .SH NAME
+-scandir, alphasort \- scan a directory for matching entries
++scandir, alphasort,versionsort \- scan a directory for matching entries
+ .SH SYNOPSIS
+ .nf
+ .B #include <dirent.h>
+@@ -42,10 +40,11 @@
+ .BI "int scandir(const char *" dir ", struct dirent ***" namelist ,
+ .RS
+ .BI "int (*" select ")(const struct dirent *),"
+-.BI "int (*" compar ")(const struct dirent **, const struct dirent **));
++.BI "int (*" compar ")(const struct dirent *, const struct dirent *));
+ .RE
+ .sp
+-.BI "int alphasort(const struct dirent **" a ", const struct dirent **" b );
++.BI "int alphasort(const struct dirent *" a ", const struct dirent *" b );
++.BI "int versionsort(const struct dirent *" a ", const struct dirent *" b );
+ .fi
+ .SH DESCRIPTION
+ The \fBscandir()\fP function scans the directory \fIdir\fP, calling
+@@ -54,17 +53,33 @@
+ \fBmalloc()\fP, sorted using \fBqsort()\fP with the comparison
+ function \fBcompar()\fP, and collected in array \fInamelist\fP
+ which is allocated via \fBmalloc()\fP.
+-If \fBselect\fP is NULL, all entries are selected.
+ .PP
+-The \fBalphasort()\fP function can be used as the comparison function
++The
++.B alphasort()
++and
++.B versionsort()
++functions can be used
++as the comparison function
+ for the \fBscandir()\fP function to sort the directory entries into
+-alphabetical order.  Its parameters are the two directory entries, 
++alphabetical order.  Their parameters are the two directory entries, 
+ \fIa\fP and \fIb\fP, to compare.
++.PP
++.B alphasort()
++will order the files with
++.BR strcoll (3),
++while
++.B versionsort()
++will use
++.BR strverscmp (3).
+ .SH "RETURN VALUE"
+ The \fBscandir()\fP function returns the number of directory entries
+ selected or \-1 if an error occurs.
+ .PP
+-The \fBalphasort()\fP function returns an integer less than, equal to, 
++The
++.B alphasort()
++and
++.B versionsort()
++functions return an integer less than, equal to, 
+ or greater than zero if the first argument is considered to be 
+ respectively less than, equal to, or greater than the second.
+ .SH "ERRORS"
+--- man-pages-1.35/man3/tsearch.3.orig	Sat Nov 27 17:43:49 1999
++++ man-pages-1.35/man3/tsearch.3	Mon Apr 23 14:32:29 2001
+@@ -40,6 +40,13 @@
+ .BI "void twalk (const void *" root ", void (*" action ") (const void *" nodep ,
+ .BI "                                   const VISIT " which ,
+ .BI "                                   const int " depth "));"
++.sp
++.B #ifdef _GNU_SOURCE
++.sp
++.BI "typedef void (*" __free_fn_t ") (void *" __nodep );
++.BI "void tdestroy (void *" root ", __free_fn_t " free_content );
++.sp
++.B #endif
+ 
+ .RE
+ .fi
+@@ -79,7 +86,16 @@
+ third visit to the internal node, or \fBleaf\fP if it is the single
+ visit to a leaf node.  (These symbols are defined in
+ \fI<search.h>\fP.)  The third argument is the depth of the node, with
+-zero being the root.
++zero being the root. You should not modify the tree while traversing it
++as the the results would be undefined.
++.PP
++\fBtdestroy\fP() removes the whole tree pointed to by \fIrootp\fP,
++freeing all resources allocated by the \fBtsearch\fP() function. For
++the data in each tree node the function \fIfree_content\fP is called.
++The pointer to the data is passed as the argument to the function. If
++no such work is necessary \fIfree_content\fP must point to a function
++doing nothing.  It is called in any case.
++
+ .SH "RETURN VALUE"
+ \fBtsearch\fP returns a pointer to a matching item in the tree, or to
+ the newly added item, or \fBNULL\fP if there was insufficient memory
+@@ -111,13 +127,14 @@
+ implementation, but is not in the SysV documentation.  
+ .SH EXAMPLE
+ The following program inserts twelve random numbers into a binary
+-tree, then prints the numbers in order.  The numbers are removed from
+-the tree and their storage freed during the traversal.
++tree, then prints the numbers in order. Note that this example will
++collapse duplicate numbers.
+ .sp
+ .nf
+     #include <search.h>
+     #include <stdlib.h>
+     #include <stdio.h>
++    #include <time.h>
+     
+     void *root=NULL;
+     
+@@ -140,7 +157,6 @@
+     void action(const void *nodep, const VISIT which, const int depth)
+     {
+       int *datap;
+-      void *val;
+     
+       switch(which)
+         {
+@@ -151,15 +167,10 @@
+           printf("%6d\\n", *datap);
+           break;
+         case endorder:
+-          datap = *(int **)nodep;
+-          (void)tdelete(datap, &root, compare);
+-          free(datap);
+           break;
+         case leaf:
+           datap = *(int **)nodep;
+           printf("%6d\\n", *datap);
+-          val = tdelete(datap, &root, compare);
+-          free(datap);
+           break;
+         }
+       return;
+@@ -169,6 +180,7 @@
+     {
+       int i, *ptr;
+       void *val;
++      srand(time(NULL));
+     
+       for (i = 0; i < 12; i++)
+         {
+@@ -182,7 +194,14 @@
+     }
+ .fi
+ .SH "CONFORMING TO"
+-SVID
++SVID, SUSv2
++.PP
++The
++.BR tdestroy ()
++function is a GNU extension, and it's only defined when the symbol
++.B _GNU_SOURCE
++is defined before including
++.IR <search.h> .
+ .SH "SEE ALSO"
+ .BR qsort "(3), " bsearch "(3), " hsearch "(3), " lsearch "(3)"
+ 
+--- man-pages-1.35/man3/__setfpucw.3.orig	Sat Aug 12 18:12:08 2000
++++ man-pages-1.35/man3/__setfpucw.3	Mon Apr 23 14:32:29 2001
+@@ -44,6 +44,9 @@
+ .IR feraiseexcept ,
+ .IR fesetexceptflag ,
+ .IR fetestexcept .
++These functions don't have manpages, but are documented in the
++.I info
++docs.
+ .PP
+ If direct acces to the FPU control word is still needed, the _FPU_GETCW
+ and _FPU_SETCW macros from
+--- man-pages-1.35/man3/gethostbyname.3.orig	Sat Aug 12 19:32:54 2000
++++ man-pages-1.35/man3/gethostbyname.3	Mon Apr 23 14:32:29 2001
+@@ -40,6 +40,7 @@
+ .B extern int h_errno;
+ .sp
+ .BI "struct hostent *gethostbyname(const char *" name );
++.BI "struct hostent *gethostbyname2(const char *" name ", int " af );
+ .sp
+ .B #include <sys/socket.h> "      " /* for AF_INET */
+ .BI "struct hostent *gethostbyaddr(const char *" addr ,
+--- man-pages-1.35/man3/mkstemp.3.orig	Sat Nov 27 17:43:46 1999
++++ man-pages-1.35/man3/mkstemp.3	Mon Apr 23 14:32:29 2001
+@@ -65,8 +65,12 @@
+ The old behaviour (creating a file with mode 0666) may be
+ a security risk, especially since other Unix flavours use 0600,
+ and somebody might overlook this detail when porting programs.
++.PP
++Don't use this function, use
++.BR tmpfile (3)
++instead. It's better defined and more portable.
+ .SH "CONFORMING TO"
+-BSD 4.3
++BSD 4.3, SUSv2
+ .SH NOTE
+ The prototype is in
+ .I <unistd.h>
+--- man-pages-1.35/man3/strptime.3.orig	Sat Mar 17 19:57:20 2001
++++ man-pages-1.35/man3/strptime.3	Mon Apr 23 14:41:48 2001
+@@ -21,14 +21,19 @@
+ .\" the source, must acknowledge the copyright and authors of this work.
+ .\"
+ .\" Modified, jmv@lucifer.dorms.spbu.ru, 1999-11-08
++.\" 1999-07-31: Nicolás Lichtmaier <nick@debian.org>
+ .\" Modified, aeb, 2000-04-07
+ .\"
+ .TH STRPTIME 3 "26 September 1994"  "GNU" "Linux Programmer's Manual"
+ .SH NAME
+ strptime \- convert a string representation of time to a time tm structure
+ .SH SYNOPSIS
+-.BR "#define _XOPEN_SOURCE" " /* glibc2 needs this */"
+-.br
++.B #define _XOPEN_SOURCE                                              
++.sp                                                                   
++or                                                                    
++.sp                                                                   
++.B #define _GNU_SOURCE                                                
++.sp
+ .B #include <time.h>
+ .sp
+ .BI "char *strptime(const char *" s ", const char *" format ,
+--- man-pages-1.35/man3/strftime.3.orig	Sat Nov 27 17:43:49 1999
++++ man-pages-1.35/man3/strftime.3	Mon Apr 23 14:32:29 2001
+@@ -67,6 +67,10 @@
+ .B %C
+ The century number (year/100) as a 2-digit integer. (SU)
+ .TP
++.B %C
++The century number (the year divided by  100  and  truncated  to  an
++integer).
++.TP
+ .B %d
+ The day of the month as a decimal number (range 01 to 31).
+ .TP
+--- man-pages-1.35/man3/strtok.3.orig	Sat Jun 24 20:36:59 2000
++++ man-pages-1.35/man3/strtok.3	Mon Apr 23 14:32:29 2001
+@@ -58,7 +58,7 @@
+ .I ptrptr
+ parameter, must be the same while parsing the same string.
+ .SH "BUGS"
+-Never use these functions. If you do, note that:
++When using this funcion note that:
+ .PP
+ .RS
+ These functions modify their first argument.
+--- man-pages-1.35/man3/swab.3.orig	Sat Nov 27 17:43:49 1999
++++ man-pages-1.35/man3/swab.3	Mon Apr 23 14:32:29 2001
+@@ -30,7 +30,7 @@
+ swab \- swap adjacent bytes
+ .SH SYNOPSIS
+ .nf
+-.B #include <string.h>
++.B #include <unistd.h>
+ .sp
+ .BI "void swab(const void *" from ", void *" to ", size_t " n );
+ .fi
+--- man-pages-1.35/man3/readdir.3.orig	Sat Aug 12 23:40:05 2000
++++ man-pages-1.35/man3/readdir.3	Mon Apr 23 14:32:29 2001
+@@ -27,10 +27,14 @@
+ .\" Modified Sat Jul 24 16:09:49 1993 by Rik Faith (faith@cs.unc.edu)
+ .\" Modified 11 June 1995 by Andries Brouwer (aeb@cwi.nl)
+ .\" Modified 22 July 1996 by Andries Brouwer (aeb@cwi.nl)
+-.\" If a Debian maintainer sees this: the current Debian page
+-.\" shows an incorrect struct dirent.
++.\" Modified 22 April 1996 by Martin Schulze (joey@Linux.de)
++.\"  included struct dirent
++.\" Modified 25 July 1997 by Nicolás Lichtmaier <nick@debian.org>
++.\" - If a Debian maintainer sees this: the current Debian page
++.\"   shows an incorrect struct dirent.
++.\" - No, it doesn't.
+ .\"
+-.TH READDIR 3  "22 April 1996" "" "Linux Programmer's Manual"
++.TH READDIR 3  "25 July 1997" "" "Linux Programmer's Manual"
+ .SH NAME
+ readdir \- read a directory
+ .SH SYNOPSIS
+@@ -50,14 +54,23 @@
+ The data returned by \fBreaddir()\fP is overwritten by subsequent
+ calls to \fBreaddir()\fP for the same directory stream.
+ .PP
+-According to POSIX, the
++The
+ .I dirent
+-structure contains a field
+-.I "char d_name[]"
+-of unspecified size, with at most
+-.B NAME_MAX
+-characters preceding the terminating null character.
+-Use of other fields will harm the portability of your programs.
++structure is defined as follows:
++.sp
++.RS
++.nf
++.ta 8n 16n 32n
++struct dirent {
++        long            d_ino;		/* inode number */
++        off_t           d_off;		/* offset to the next dirent */
++        unsigned short  d_reclen;	/* length of this record */
++        unsigned char   d_type;         /* type of file */
++        char            d_name[256];    /* filename */
++};
++.ta
++.fi
++.RE
+ .SH "RETURN VALUE"
+ The \fBreaddir()\fP function returns a pointer to a dirent structure, or
+ NULL if an error occurs or end-of-file is reached.
+@@ -67,6 +80,19 @@
+ Invalid directory stream descriptor \fIdir\fP.
+ .SH "CONFORMING TO"
+ SVID 3, POSIX, BSD 4.3
++.PP
++According to POSIX, the
++.I dirent
++structure contains a field
++.I "char d_name[]"
++of unspecified size, with at most
++.B NAME_MAX
++characters preceding the terminating null character.
++Use of other fields will harm the portability of your programs.
++.SH BUGS
++Field
++.I d_type
++is not implemented as of libc6 2.1 and will always return DT_UNKNOWN (0).
+ .SH "SEE ALSO"
+ .BR read "(2), " opendir "(3), " closedir "(3), " rewinddir (3),
+ .BR seekdir "(3), " telldir "(3), " scandir (3)
+--- man-pages-1.35/man3/putenv.3.orig	Tue Apr 18 20:28:14 2000
++++ man-pages-1.35/man3/putenv.3	Mon Apr 23 14:32:29 2001
+@@ -37,7 +37,7 @@
+ .nf
+ .B #include <stdlib.h>
+ .sp
+-.BI "int putenv(const char *" string );
++.BI "int putenv(char *" string );
+ .fi
+ .SH DESCRIPTION
+ The \fBputenv()\fP function adds or changes the value of environment
+@@ -88,4 +88,4 @@
+ .BR getenv (3),
+ .BR setenv (3),
+ .BR unsetenv (3),
+-.BR environ (5)
++.BR environ (7)
+--- man-pages-1.35/man3/getenv.3.orig	Sat Nov 27 17:43:44 1999
++++ man-pages-1.35/man3/getenv.3	Mon Apr 23 14:32:29 2001
+@@ -49,4 +49,4 @@
+ .BR putenv (3),
+ .BR setenv (3),
+ .BR unsetenv (3),
+-.BR environ (5)
++.BR environ (7)
+--- man-pages-1.35/man3/fclose.3.orig	Fri Jan 12 18:08:54 2001
++++ man-pages-1.35/man3/fclose.3	Mon Apr 23 14:32:30 2001
+@@ -36,8 +36,8 @@
+ .\"     @(#)fclose.3	6.7 (Berkeley) 6/29/91
+ .\"
+ .\" Converted for Linux, Mon Nov 29 15:19:14 1993, faith@cs.unc.edu
+-.\"
+ .\" Modified 2000-07-22 by Nicolás Lichtmaier <nick@debian.org>
++.\"      added note about fclose not ensuring the data is physically saved
+ .\"
+ .TH FCLOSE 3  "29 November 1993" "BSD MANPAGE" "Linux Programmer's Manual"
+ .SH NAME
+--- man-pages-1.35/man3/stdio.3.orig	Sat Aug 12 23:24:15 2000
++++ man-pages-1.35/man3/stdio.3	Mon Apr 23 14:32:30 2001
+@@ -208,9 +208,6 @@
+ fgetc
+ get next character or word from input stream
+ .TP
+-fgetline
+-get a line from a stream
+-.TP
+ fgetpos
+ reposition a stream
+ .TP
+--- man-pages-1.35/man3/remove.3.orig	Sun Aug 13 01:33:19 2000
++++ man-pages-1.35/man3/remove.3	Mon Apr 23 14:32:30 2001
+@@ -28,8 +28,6 @@
+ .\" Edited into remove.3 shape by:
+ .\" Graeme W. Wilford (G.Wilford@ee.surrey.ac.uk) on 13th July 1994
+ .\"
+-.\" If a Debian maintainer sees this: the current Debian page is wrong.
+-.\"
+ .TH REMOVE 3 "13 July 1994" Linux "GNU"
+ .SH NAME
+ remove \- delete a name and possibly the file it refers to
+--- man-pages-1.35/man3/glob.3.orig	Sat Dec 23 18:21:52 2000
++++ man-pages-1.35/man3/glob.3	Mon Apr 23 14:32:30 2001
+@@ -248,5 +248,4 @@
+ .BR malloc (3),
+ .BR opendir (3),
+ .BR readdir (3),
+-.BR wordexp (3),
+-.BR glob (7)
++.BR wordexp (3)
+--- man-pages-1.35/man3/tempnam.3.orig	Sat Nov 27 17:43:49 1999
++++ man-pages-1.35/man3/tempnam.3	Mon Apr 23 14:32:30 2001
+@@ -92,7 +92,7 @@
+ The precise meaning of `appropriate' is undefined;
+ it is unspecified how accessibility of a directory is determined.
+ Never use this function. Use
+-.BR mkstemp (3)
++.BR tmpfile (3)
+ instead.
+ .SH "CONFORMING TO"
+ SVID 2, BSD 4.3
+--- man-pages-1.35/man3/tmpnam.3.orig	Sat Nov 27 17:43:49 1999
++++ man-pages-1.35/man3/tmpnam.3	Mon Apr 23 14:32:30 2001
+@@ -80,7 +80,7 @@
+ the behaviour is implementation defined.
+ .SH BUGS
+ Never use this function. Use
+-.BR mkstemp (3)
++.BR tmpfile (3)
+ instead.
+ .SH "CONFORMING TO"
+ SVID 2, POSIX, BSD 4.3, ISO 9899
+--- man-pages-1.35/man3/ctime.3.orig	Mon Mar  6 02:04:16 2000
++++ man-pages-1.35/man3/ctime.3	Mon Apr 23 14:32:30 2001
+@@ -163,5 +163,4 @@
+ .SH "SEE ALSO"
+ .BR date "(1), " gettimeofday "(2), " time "(2), " tzset (3),
+ .BR difftime (3),
+-.BR strftime (3),
+-.BR newctime (3)
++.BR strftime (3).
+--- man-pages-1.35/man3/strdup.3.orig	Sat Nov 27 17:43:49 1999
++++ man-pages-1.35/man3/strdup.3	Mon Apr 23 14:32:30 2001
+@@ -25,6 +25,7 @@
+ .\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+ .\"     386BSD man pages
+ .\" Modified Sun Jul 25 10:41:34 1993 by Rik Faith (faith@cs.unc.edu)
++.\" 2001-02-25 - Added strndup. Nicolás Lichtmaier <nick@debian.org>
+ .TH STRDUP 3  "April 12, 1993" "GNU" "Linux Programmer's Manual"
+ .SH NAME
+ strdup \- duplicate a string
+@@ -33,13 +34,24 @@
+ .B #include <string.h>
+ .sp
+ .BI "char *strdup(const char *" s );
++.sp
++.BI "char *strndup(const char *" s ", size_t " size );
+ .fi
+ .SH DESCRIPTION
+ The \fBstrdup()\fP function returns a pointer to a new string which
+ is a duplicate of the string \fIs\fP.  Memory for the new string is
+ obtained with \fBmalloc\fP(3), and can be freed with \fBfree\fP(3).
++.PP
++The
++.B strndup()
++works like
++.B strdup()
++but it only copies the first
++.I size
++bytes. It always add a NUL terminator, unlike
++.BR strncpy (3).
+ .SH "RETURN VALUE"
+-The \fBstrdup()\fP function returns a pointer to the duplicated
++These functions returns a pointer to the duplicated
+ string, or NULL if insufficient memory was available.
+ .SH "ERRORS"
+ .TP
+@@ -47,5 +59,8 @@
+ Insufficient memory available to allocate duplicate string.
+ .SH "CONFORMING TO"
+ SVID 3, BSD 4.3
++.PP
++.B strndup()
++is a GNU extension.
+ .SH "SEE ALSO"
+ .BR calloc "(3), " malloc "(3), " realloc "(3), " free (3)
+--- man-pages-1.35/man3/regex.3.orig	Sat Nov 27 17:43:47 1999
++++ man-pages-1.35/man3/regex.3	Mon Apr 23 14:32:30 2001
+@@ -33,6 +33,8 @@
+ .SH NAME
+ regcomp, regexec, regerror, regfree \- POSIX regex functions
+ .SH SYNOPSIS
++.B #include <sys/types.h>
++.br
+ .B #include <regex.h>
+ .sp
+ .xx \w'\fBint\ regcomp(\fR'u
+--- man-pages-1.35/man3/setenv.3.orig	Sat Nov 27 17:43:48 1999
++++ man-pages-1.35/man3/setenv.3	Mon Apr 23 14:32:30 2001
+@@ -55,5 +55,5 @@
+ .SH "SEE ALSO"
+ .BR getenv (3),
+ .BR putenv (3),
+-.BR environ (5)
++.BR environ (7)
+ 
+--- man-pages-1.35/man3/iconv.3.orig	Mon Dec 11 14:46:44 2000
++++ man-pages-1.35/man3/iconv.3	Mon Apr 23 14:32:30 2001
+@@ -19,7 +19,7 @@
+ .B #include <iconv.h>
+ .sp
+ .BI "size_t iconv (iconv_t " cd ,
+-.BI "              const char* * " inbuf ", size_t * "inbytesleft ,
++.BI "              char* * " inbuf ", size_t * "inbytesleft ,
+ .BI "              char* * " outbuf ", size_t * "outbytesleft );
+ .fi
+ .SH DESCRIPTION
+--- man-pages-1.35/man3/getloadavg.3.orig	Mon Apr 23 14:32:30 2001
++++ man-pages-1.35/man3/getloadavg.3	Mon Apr 23 14:32:30 2001
+@@ -0,0 +1,68 @@
++.\" Copyright (c) 1989, 1991, 1993
++.\"	The Regents of the University of California.  All rights reserved.
++.\"
++.\" Redistribution and use in source and binary forms, with or without
++.\" modification, are permitted provided that the following conditions
++.\" are met:
++.\" 1. Redistributions of source code must retain the above copyright
++.\"    notice, this list of conditions and the following disclaimer.
++.\" 2. Redistributions in binary form must reproduce the above copyright
++.\"    notice, this list of conditions and the following disclaimer in the
++.\"    documentation and/or other materials provided with the distribution.
++.\" 3. Neither the name of the University nor the names of its contributors
++.\"    may be used to endorse or promote products derived from this software
++.\"    without specific prior written permission.
++.\"
++.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
++.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
++.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
++.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
++.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
++.\" SUCH DAMAGE.
++.\"
++.\"     @(#)getloadavg.3	8.1 (Berkeley) 6/4/93
++.\" $FreeBSD: src/lib/libc/gen/getloadavg.3,v 1.6 1999/08/27 23:58:41 peter Exp $
++.\"
++.Dd June 4, 1993
++.Dt GETLOADAVG 3
++.Os
++.Sh NAME
++.Nm getloadavg
++.Nd get system load averages
++.Sh SYNOPSIS
++.Fd #define _BSD_SOURCE
++.sp
++or
++.sp
++.Fd #define _GNU_SOURCE
++.sp
++.Fd #include <stdlib.h>
++.Ft int
++.Fn getloadavg "double loadavg[]" "int nelem"
++.Sh DESCRIPTION
++The
++.Fn getloadavg
++function returns the number of processes in the system run queue
++averaged over various periods of time.
++Up to
++.Fa nelem
++samples are retrieved and assigned to successive elements of
++.Fa loadavg Ns Bq .
++The system imposes a maximum of 3 samples, representing averages
++over the last 1, 5, and 15 minutes, respectively.
++.Sh DIAGNOSTICS
++If the load average was unobtainable, \-1 is returned; otherwise,
++the number of samples actually retrieved is returned.
++.Sh SEE ALSO
++.Xr uptime 1 ,
++.Xr proc 5
++.Sh HISTORY
++The
++.Fn getloadavg
++function appeared in
++.Bx 4.3 Reno .
+--- man-pages-1.35/man3/vasprintf.3.orig	Mon Apr 23 14:32:30 2001
++++ man-pages-1.35/man3/vasprintf.3	Mon Apr 23 14:32:30 2001
+@@ -0,0 +1 @@
++.so man3/printf.3
+--- man-pages-1.35/man3/asprintf.3.orig	Mon Apr 23 14:32:30 2001
++++ man-pages-1.35/man3/asprintf.3	Mon Apr 23 14:32:30 2001
+@@ -0,0 +1 @@
++.so man3/printf.3
+--- man-pages-1.35/man3/dprintf.3.orig	Mon Apr 23 14:32:30 2001
++++ man-pages-1.35/man3/dprintf.3	Mon Apr 23 14:32:30 2001
+@@ -0,0 +1 @@
++.so man3/printf.3
+--- man-pages-1.35/man3/vdprintf.3.orig	Mon Apr 23 14:32:30 2001
++++ man-pages-1.35/man3/vdprintf.3	Mon Apr 23 14:32:30 2001
+@@ -0,0 +1 @@
++.so man3/printf.3
+--- man-pages-1.35/man3/xdr_accepted_reply.3.orig	Mon Apr 23 14:32:30 2001
++++ man-pages-1.35/man3/xdr_accepted_reply.3	Mon Apr 23 14:32:30 2001
+@@ -0,0 +1 @@
++.so man3/rpc.3
+--- man-pages-1.35/man3/xdr_authunix_parms.3.orig	Mon Apr 23 14:32:30 2001
++++ man-pages-1.35/man3/xdr_authunix_parms.3	Mon Apr 23 14:32:30 2001
+@@ -0,0 +1 @@
++.so man3/rpc.3
+--- man-pages-1.35/man3/xdr_callhdr.3.orig	Mon Apr 23 14:32:30 2001
++++ man-pages-1.35/man3/xdr_callhdr.3	Mon Apr 23 14:32:30 2001
+@@ -0,0 +1 @@
++.so man3/rpc.3
+--- man-pages-1.35/man3/xdr_callmsg.3.orig	Mon Apr 23 14:32:30 2001
++++ man-pages-1.35/man3/xdr_callmsg.3	Mon Apr 23 14:32:30 2001
+@@ -0,0 +1 @@
++.so man3/rpc.3
+--- man-pages-1.35/man3/xdr_opaque_auth.3.orig	Mon Apr 23 14:32:30 2001
++++ man-pages-1.35/man3/xdr_opaque_auth.3	Mon Apr 23 14:32:30 2001
+@@ -0,0 +1 @@
++.so man3/rpc.3
+--- man-pages-1.35/man3/xdr_pmap.3.orig	Mon Apr 23 14:32:30 2001
++++ man-pages-1.35/man3/xdr_pmap.3	Mon Apr 23 14:32:30 2001
+@@ -0,0 +1 @@
++.so man3/rpc.3
+--- man-pages-1.35/man3/xdr_pmaplist.3.orig	Mon Apr 23 14:32:30 2001
++++ man-pages-1.35/man3/xdr_pmaplist.3	Mon Apr 23 14:32:30 2001
+@@ -0,0 +1 @@
++.so man3/rpc.3
+--- man-pages-1.35/man3/xdr_rejected_reply.3.orig	Mon Apr 23 14:32:30 2001
++++ man-pages-1.35/man3/xdr_rejected_reply.3	Mon Apr 23 14:32:30 2001
+@@ -0,0 +1 @@
++.so man3/rpc.3
+--- man-pages-1.35/man3/xdr_replymsg.3.orig	Mon Apr 23 14:32:30 2001
++++ man-pages-1.35/man3/xdr_replymsg.3	Mon Apr 23 14:32:30 2001
+@@ -0,0 +1 @@
++.so man3/rpc.3
+--- man-pages-1.35/man3/xprt_register.3.orig	Mon Apr 23 14:32:30 2001
++++ man-pages-1.35/man3/xprt_register.3	Mon Apr 23 14:32:30 2001
+@@ -0,0 +1 @@
++.so man3/rpc.3
+--- man-pages-1.35/man3/xprt_unregister.3.orig	Mon Apr 23 14:32:30 2001
++++ man-pages-1.35/man3/xprt_unregister.3	Mon Apr 23 14:32:30 2001
+@@ -0,0 +1 @@
++.so man3/rpc.3
+--- man-pages-1.35/man3/strndup.3.orig	Mon Apr 23 14:32:30 2001
++++ man-pages-1.35/man3/strndup.3	Mon Apr 23 14:32:30 2001
+@@ -0,0 +1 @@
++.so man3/strdup.3
+--- man-pages-1.35/man3/versionsort.3.orig	Mon Apr 23 14:32:30 2001
++++ man-pages-1.35/man3/versionsort.3	Mon Apr 23 14:32:30 2001
+@@ -0,0 +1 @@
++.so man3/scandir.3
+--- man-pages-1.35/man4/mem.4.orig	Sun Aug 13 02:38:48 2000
++++ man-pages-1.35/man4/mem.4	Mon Apr 23 14:32:30 2001
+@@ -41,7 +41,7 @@
+ .sp
+ mknod -m 660 /dev/mem c 1 1
+ .br
+-chown root:mem /dev/mem
++chown root:kmem /dev/mem
+ .sp
+ .RE
+ .LP
+@@ -53,7 +53,7 @@
+ .sp
+ mknod -m 640 /dev/kmem c 1 2
+ .br
+-chown root:mem /dev/kmem
++chown root:kmem /dev/kmem
+ .sp
+ .RE
+ .LP
+--- man-pages-1.35/man4/sd.4.orig	Sun Dec 24 17:56:18 2000
++++ man-pages-1.35/man4/sd.4	Mon Apr 23 14:32:30 2001
+@@ -122,5 +122,5 @@
+ /dev/sd[a-h]: the whole device
+ .br
+ /dev/sd[a-h][0-8]: individual block partitions
+-.SH "SEE ALSO"
+-.BR scsi (4)
++.\" .SH "SEE ALSO"
++.\" .BR scsi (4)
+--- man-pages-1.35/man4/null.4.orig	Sun Aug 13 02:40:09 2000
++++ man-pages-1.35/man4/null.4	Mon Apr 23 14:32:30 2001
+@@ -37,7 +37,7 @@
+ .br
+ mknod -m 666 /dev/zero c 1 5
+ .br
+-chown root:mem /dev/null /dev/zero
++chown root:root /dev/null /dev/zero
+ .sp
+ .RE
+ .SH NOTES
+--- man-pages-1.35/man5/proc.5.orig	Sun Mar 18 15:04:39 2001
++++ man-pages-1.35/man5/proc.5	Mon Apr 23 14:32:30 2001
+@@ -417,6 +417,9 @@
+ .I locks
+ This file shows current file locks.
+ .TP
++.I locks
++This file shows current file locks.
++.TP
+ .I malloc
+ This file is only present if CONFIGDEBUGMALLOC was defined during
+ compilation.
+--- man-pages-1.35/man5/charmap.5.orig	Sat Aug 12 16:34:08 2000
++++ man-pages-1.35/man5/charmap.5	Mon Apr 23 14:32:30 2001
+@@ -26,10 +26,10 @@
+ available characters and their encodings. All supported character
+ sets should have the 
+ .B portable character set
+-as a proper subset. The portable character set is defined in the
+-file 
+-.I /usr/lib/nls/charmap/POSIX
+-for reference purposes.
++as a proper subset.
++.\" The portable character set is defined in the file 
++.\" .I /usr/share/i18n/charmaps/POSIX
++.\" for reference purposes.
+ .SH SYNTAX
+ The charmap file starts with a header, that may consist of the
+ following keywords:
+--- man-pages-1.35/man5/resolver.5.orig	Sun Jun  4 14:44:27 2000
++++ man-pages-1.35/man5/resolver.5	Mon Apr 23 14:32:30 2001
+@@ -16,7 +16,7 @@
+ .\"	@(#)resolver.5	5.9 (Berkeley) 12/14/89
+ .\"	$Id: resolver.5,v 8.3 1995/12/06 20:34:35 vixie Exp $
+ .\"
+-.TH RESOLVER 5 "November 11, 1993"
++.TH RESOLVER 5 "November 11, 1993" "Debian GNU/Linux"
+ .UC 4
+ .SH NAME
+ resolver \- resolver configuration file
+--- man-pages-1.35/man7/suffixes.7.orig	Mon Jan 22 11:52:15 2001
++++ man-pages-1.35/man7/suffixes.7	Mon Apr 23 14:32:30 2001
+@@ -264,8 +264,8 @@
+  .z	File compressed using \fBpack\fP(1) (or an old \fBgzip\fP(1))
+  .zip	\fBzip\fP(1) archive
+  .zoo	\fBzoo\fP(1) archive
+- ~	Emacs or \fBpatch\fP(1) backup file
+- rc	startup (`run control') file, e.g. \fI.newsrc\fP
++ *~	Emacs or \fBpatch\fP(1) backup file
++ *rc	startup (`run control') file, e.g. \fI.newsrc\fP
+ .TE
+ .SH "CONFORMS TO"
+ General UNIX conventions.
+--- man-pages-1.35/man7/ip.7.orig	Sun Dec 31 02:34:44 2000
++++ man-pages-1.35/man7/ip.7	Mon Apr 23 14:32:30 2001
+@@ -12,8 +12,6 @@
+ .SH SYNOPSIS
+ .B #include <sys/socket.h>
+ .br
+-.\" .B #include <net/netinet.h> -- does not exist anymore
+-.\" .B #include <linux/errqueue.h> -- never include <linux/foo.h>
+ .B #include <netinet/in.h>
+ .sp
+ .IB tcp_socket " = socket(PF_INET, SOCK_STREAM, 0);"
+--- man-pages-1.35/man7/hier.7.orig	Sat Aug 12 15:45:23 2000
++++ man-pages-1.35/man7/hier.7	Mon Apr 23 14:32:30 2001
+@@ -257,7 +257,7 @@
+ .TP
+ .I /usr/sbin
+ This directory contains program binaries for system admininstration
+-which are not essentail for the boot process, for mounting
++which are not essential for the boot process, for mounting
+ .IR /usr ,
+ or for system repair.
+ .TP
+@@ -271,6 +271,18 @@
+ or
+ .IR /usr/man .
+ .TP
++.I /usr/share/doc
++.TP
++.I /usr/share/man
++Manpages go in there, into their subdirectories.
++.TP
++.I /usr/share/man/<locale>/man[1-9]
++These directories contain manual pages which are in source code form.
++Systems which use a unique language and code set for all manual pages
++may omit the
++.I <locale>
++substring.
++.TP
+ .I /usr/src
+ Source files for different parts of the system, included with some packages
+ for reference purposes. Don't work here with your own projects, as files
+@@ -301,9 +313,9 @@
+ .I /var/backups
+ This directory is used to save backup copies of important system files.
+ .TP
+-.IR /var/catman/cat[1-9] " or " /var/cache/man/cat[1-9]
++.I /var/cache/man/cat[1-9]
+ These directories contain preformatted manual pages according to their
+-manpage section. (The use of preformatted manual pages is deprecated.)
++manpage section.
+ .TP
+ .I /var/lock
+ Lock files are placed in this directory.  The naming convention for
+--- man-pages-1.35/man7/man.7.orig	Sat Dec 23 18:30:25 2000
++++ man-pages-1.35/man7/man.7	Mon Apr 23 14:32:30 2001
+@@ -190,8 +190,8 @@
+ It is extremely important that this format is followed, and that there is a
+ backslash before the single dash which follows the command name.  This
+ syntax is used by the
+-.BR makewhatis (8)
+-program to create a database of short command descriptions for the
++.BR makewhatis "(8) or " mandb (8)
++programs to create a database of short command descriptions for the
+ .BR whatis (1)
+ and
+ .BR apropos (1)

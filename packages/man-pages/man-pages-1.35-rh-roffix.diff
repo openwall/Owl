@@ -1,0 +1,193 @@
+--- man-pages-1.35/man1/rpcgen.1.rofffix	Tue Apr 22 10:54:22 1997
++++ man-pages-1.35/man1/rpcgen.1	Mon Apr  2 19:10:13 2001
+@@ -312,9 +312,7 @@
+ \f4\-l\f1,
+ \f4\-m\f1,
+ \f4\-n\f1,
+-\f4\-s\f1,
+-\f4\-s\Sc,
+-\f4\-s\Ss
++\f4\-s\f1
+ and
+ \f4\-t\f1
+ modes only).
+--- man-pages-1.35/man2/ioctl_list.2.rofffix	Sun Mar  5 11:03:29 2000
++++ man-pages-1.35/man2/ioctl_list.2	Mon Apr  2 19:10:13 2001
+@@ -543,8 +543,7 @@
+ pointers.  These are documented here in alphabetical order.
+ 
+ CDROMREADAUDIO takes an input pointer 'const struct cdrom_read_audio *'.
+-The 'buf' field points to an output buffer of length
+-'nframes * CD_FRAMESIZE_RAW'.
++The 'buf' field points to an output buffer of length 'nframes * CD_FRAMESIZE_RAW'.
+ 
+ CDROMREADCOOKED, CDROMREADMODE1, CDROMREADMODE2, and CDROMREADRAW take
+ an input pointer 'const struct cdrom_msf *'.  They use the same pointer
+@@ -574,13 +573,13 @@
+ If 'flags & FD_RAW_READ' is non-zero, then 'data' points to an output
+ buffer of length 'length'.
+ 
+-GIO_FONTX and PIO_FONTX take a 'struct console_font_desc *' or a
+-'const struct console_font_desc *', respectively.  'chardata' points to
++GIO_FONTX and PIO_FONTX take a 'struct console_font_desc *' or a 
++ 'const struct console_font_desc *', respectively.  'chardata' points to
+ a buffer of 'char [charcount]'.  This is an output buffer for GIO_FONTX
+ and an input buffer for PIO_FONTX.
+ 
+ GIO_UNIMAP and PIO_UNIMAP take a 'struct unimapdesc *' or a
+-'const struct unimapdesc *', respectively.  'entries' points to a buffer
++ 'const struct unimapdesc *', respectively.  'entries' points to a buffer
+ of 'struct unipair [entry_ct]'.  This is an output buffer for GIO_UNIMAP
+ and an input buffer for PIO_UNIMAP.
+ 
+@@ -613,7 +612,7 @@
+ TIOCLINUX takes a 'const char *'.  It uses this to distinguish several
+ independent sub-cases.  In the table below, 'N + foo' means 'foo' after
+ an N-byte pad.  'struct selection' is implicitly defined in
+-'drivers/char/selection.c'
++ 'drivers/char/selection.c'
+ 
+ 	    TIOCLINUX-2			1 + const struct selection *
+ 	    TIOCLINUX-3			void
+--- man-pages-1.35/man3/rpc.3.rofffix	Sat Aug 12 19:33:20 2000
++++ man-pages-1.35/man3/rpc.3	Mon Apr  2 19:10:13 2001
+@@ -342,7 +342,7 @@
+ only:
+ .IP
+ .nf
+-.ta +2.0i ; +2.0i ; +2.0i
++.ta T +2.0i
+ .SM CLSET_RETRY_TIMEOUT\s0		struct timeval	set the retry timeout
+ .SM CLGET_RETRY_TIMEOUT\s0		struct timeval	get the retry timeout
+ .fi
+--- man-pages-1.35/man7/mdoc.samples.7.rofffix	Mon Apr  2 19:17:14 2001
++++ man-pages-1.35/man7/mdoc.samples.7	Mon Apr  2 19:53:26 2001
+@@ -1647,6 +1647,22 @@
+ .Xr troff Ns / Ns Xr ditroff
+ output.
+ .Ss Return Values
++.de Rv
++.ie \\n(.$==0 \{\
++.tm Usage: .Rv [-std] (#\\n(.c)
++.\}
++.el \{\
++.       ds mN Rv
++.       if "\\$1"-std" \{\
++.       nr cH \\*(cH
++.       if (\\n(cH<1):(\\n(cH>8) .tm Usage: .Rv -std sections 2 and 3 only
++.               br
++\&The
++.Fn \\$2
++\&\\*(rV
++.       \}
++.\}
++..
+ The
+ .Ql \&.Rv
+ macro generates text for use in the
+--- man-pages-1.35/man7/regex.7.rofffix	Mon Apr  2 19:54:54 2001
++++ man-pages-1.35/man7/regex.7	Tue Apr  3 16:52:03 2001
+@@ -40,18 +40,18 @@
+ Obsolete REs mostly exist for backward compatibility in some old programs;
+ they will be discussed at the end.
+ 1003.2 leaves some aspects of RE syntax and semantics open;
+-`\(dg' marks decisions on these aspects that
++`(*)' marks decisions on these aspects that
+ may not be fully portable to other 1003.2 implementations.
+ .PP
+-A (modern) RE is one\(dg or more non-empty\(dg \fIbranches\fR,
++A (modern) RE is one(*) or more non-empty(*) \fIbranches\fR,
+ separated by `|'.
+ It matches anything that matches one of the branches.
+ .PP
+-A branch is one\(dg or more \fIpieces\fR, concatenated.
++A branch is one(*) or more \fIpieces\fR, concatenated.
+ It matches a match for the first, followed by a match for the second, etc.
+ .PP
+ A piece is an \fIatom\fR possibly followed
+-by a single\(dg `*', `+', `?', or \fIbound\fR.
++by a single(*) `*', `+', `?', or \fIbound\fR.
+ An atom followed by `*' matches a sequence of 0 or more matches of the atom.
+ An atom followed by `+' matches a sequence of 1 or more matches of the atom.
+ An atom followed by `?' matches a sequence of 0 or 1 matches of the atom.
+@@ -60,7 +60,7 @@
+ possibly followed by `,'
+ possibly followed by another unsigned decimal integer,
+ always followed by `}'.
+-The integers must lie between 0 and RE_DUP_MAX (255\(dg) inclusive,
++The integers must lie between 0 and RE_DUP_MAX (255(*)) inclusive,
+ and if there are two of them, the first may not exceed the second.
+ An atom followed by a bound containing one integer \fIi\fR
+ and no comma matches
+@@ -74,19 +74,19 @@
+ .PP
+ An atom is a regular expression enclosed in `()' (matching a match for the
+ regular expression),
+-an empty set of `()' (matching the null string)\(dg,
++an empty set of `()' (matching the null string)(*),
+ a \fIbracket expression\fR (see below), `.'
+ (matching any single character), `^' (matching the null string at the
+ beginning of a line), `$' (matching the null string at the
+ end of a line), a `\e' followed by one of the characters
+ `^.[$()|*+?{\e'
+ (matching that character taken as an ordinary character),
+-a `\e' followed by any other character\(dg
++a `\e' followed by any other character(*)
+ (matching that character taken as an ordinary character,
+-as if the `\e' had not been present\(dg),
++as if the `\e' had not been present(*)),
+ or a single character with no other significance (matching that character).
+ A `{' followed by a character other than a digit is an ordinary
+-character, not the beginning of a bound\(dg.
++character, not the beginning of a bound(*).
+ It is illegal to end an RE with `\e'.
+ .PP
+ A \fIbracket expression\fR is a list of characters enclosed in `[]'.
+@@ -98,7 +98,7 @@
+ for the full \fIrange\fR of characters between those two (inclusive) in the
+ collating sequence,
+ e.g. `[0-9]' in ASCII matches any decimal digit.
+-It is illegal\(dg for two ranges to share an
++It is illegal(*) for two ranges to share an
+ endpoint, e.g. `a-c-e'.
+ Ranges are very collating-sequence-dependent,
+ and portable programs should avoid relying on them.
+@@ -132,7 +132,7 @@
+ the treatment is as if the enclosing delimiters were `[.' and `.]'.)
+ For example, if o and \o'o^' are the members of an equivalence class,
+ then `[[=o=]]', `[[=\o'o^'=]]', and `[o\o'o^']' are all synonymous.
+-An equivalence class may not\(dg be an endpoint
++An equivalence class may not(*) be an endpoint
+ of a range.
+ .PP
+ Within a bracket expression, the name of a \fIcharacter class\fR enclosed
+@@ -155,7 +155,7 @@
+ A locale may provide others.
+ A character class may not be used as an endpoint of a range.
+ .PP
+-There are two special cases\(dg of bracket expressions:
++There are two special cases(*) of bracket expressions:
+ the bracket expressions `[[:<:]]' and `[[:>:]]' match the null string at
+ the beginning and end of a word respectively.
+ A word is defined as a sequence of
+@@ -205,7 +205,7 @@
+ of it are added to the bracket expression, so that (e.g.) `[x]'
+ becomes `[xX]' and `[^x]' becomes `[^xX]'.
+ .PP
+-No particular limit is imposed on the length of REs\(dg.
++No particular limit is imposed on the length of REs(*).
+ Programs intended to be portable should not employ REs longer
+ than 256 bytes,
+ as an implementation can refuse to accept such REs and remain
+@@ -219,9 +219,9 @@
+ The parentheses for nested subexpressions are `\e(' and `\e)',
+ with `(' and `)' by themselves ordinary characters.
+ `^' is an ordinary character except at the beginning of the
+-RE or\(dg the beginning of a parenthesized subexpression,
++RE or(*) the beginning of a parenthesized subexpression,
+ `$' is an ordinary character except at the end of the
+-RE or\(dg the end of a parenthesized subexpression,
++RE or(*) the end of a parenthesized subexpression,
+ and `*' is an ordinary character if it appears at the beginning of the
+ RE or the beginning of a parenthesized subexpression
+ (after a possible leading `^').

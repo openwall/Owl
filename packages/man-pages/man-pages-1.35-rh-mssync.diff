@@ -1,0 +1,21 @@
+--- man-pages-1.35/man2/mount.2.mssync	Wed Apr  4 14:22:08 2001
++++ man-pages-1.35/man2/mount.2	Wed Apr  4 14:23:41 2001
+@@ -64,12 +64,12 @@
+ and various mount flags (as defined in <linux/fs.h> for libc4 and libc5
+ and in <sys/mount.h> for glibc2) in the low order 16 bits:
+ .nf
+-#define MS_RDONLY    1 /* mount read-only */
+-#define MS_NOSUID    2 /* ignore suid and sgid bits */
+-#define MS_NODEV     4 /* disallow access to device special files */
+-#define MS_NOEXEC    8 /* disallow program execution */
+-#define MS_SYNC     16 /* writes are synced at once */
+-#define MS_REMOUNT  32 /* alter flags of a mounted FS */
++#define MS_RDONLY        1 /* mount read-only */
++#define MS_NOSUID        2 /* ignore suid and sgid bits */
++#define MS_NODEV         4 /* disallow access to device special files */
++#define MS_NOEXEC        8 /* disallow program execution */
++#define MS_SYNCHRONOUS  16 /* writes are synced at once */
++#define MS_REMOUNT      32 /* alter flags of a mounted FS */
+ #define MS_MGC_VAL 0xC0ED0000
+ .fi
+ If the magic number is absent, then the last two arguments are not used.
