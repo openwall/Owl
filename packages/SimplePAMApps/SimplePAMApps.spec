@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.6 2000/09/22 03:24:12 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.7 2000/10/28 20:11:48 solar Exp $
 
 Summary: Simple PAM-based Applications
 Name: SimplePAMApps
 Version: 0.60
-Release: 5owl
+Release: 6owl
 Copyright: BSD or GNU GPL
 Group: Utilities/System
 Source0: SimplePAMApps-0.60.tar.gz
@@ -14,6 +14,7 @@ Source4: su.control
 Source5: passwd.control
 Patch0: SimplePAMApps-0.60-owl-passwd-strerror.diff
 Patch1: SimplePAMApps-0.60-owl-login.diff
+Patch2: SimplePAMApps-0.60-owl-su-no-getlogin.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: pam >= 0.58, pam_passwdqc >= 0.2, owl-control < 2.0
 URL: http://parc.power.net/morgan/Linux-PAM/index.html
@@ -26,6 +27,7 @@ includes "login", "su", and "passwd".
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 echo Checking distribution
 make check
@@ -80,6 +82,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc README CHANGELOG* NOTES.su Discussions
 
 %changelog
+* Sun Oct 29 2000 Solar Designer <solar@owl.openwall.com>
+- Don't require that getlogin() works to set PAM_RUSER.
+
 * Fri Sep 22 2000 Solar Designer <solar@owl.openwall.com>
 - Make use of the new pam_passwdqc option: min=99,... -> min=disabled,...
 
