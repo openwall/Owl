@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.50 2002/08/28 03:47:51 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.51 2002/08/28 23:31:51 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.4p1
-Release: owl4
+Release: owl5
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -26,8 +26,7 @@ Patch9: openssh-3.4p1-owl-logging.diff
 Patch10: openssh-3.4p1-owl-fatal_cleanups.diff
 PreReq: openssl >= 0.9.6b-1owl
 PreReq: openssl < 0.9.7
-PreReq: /sbin/chkconfig, grep, shadow-utils
-Requires: /var/empty, pam >= 0.75-owl16, tcb, pam_userpass, pam_mktemp
+Requires: pam >= 0.75-owl16
 Obsoletes: ssh
 BuildRequires: openssl-devel >= 0.9.6b-1owl
 BuildRequires: pam-devel
@@ -75,7 +74,8 @@ to SSH servers.
 Summary: The OpenSSH server daemon.
 Group: System Environment/Daemons
 PreReq: openssh = %{version}-%{release}
-PreReq: chkconfig >= 0.9, pam_userpass, /dev/urandom
+PreReq: /sbin/chkconfig, grep, shadow-utils, /dev/urandom
+Requires: /var/empty, tcb, pam_userpass, pam_mktemp
 Obsoletes: ssh-server
 
 %description server
@@ -218,6 +218,9 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Thu Aug 29 2002 Solar Designer <solar@owl.openwall.com>
+- Corrected the dependencies (many are specific to the server package).
+
 * Sun Jul 28 2002 Solar Designer <solar@owl.openwall.com>
 - Install the packet_close() cleanup for the client as well.
 
