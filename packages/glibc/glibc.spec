@@ -1,11 +1,11 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.6 2000/08/26 01:02:41 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.7 2000/09/01 11:24:39 solar Exp $
 
 %define BUILD_PROFILE	'no'
 
 Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
-Release: 5owl
+Release: 6owl
 Copyright: LGPL
 Group: System Environment/Libraries
 Source0: glibc-2.1.3.tar.gz
@@ -261,6 +261,9 @@ rm -f *.filelist*
 %endif
 
 %changelog
+* Fri Sep 01 2000 Solar Designer <solar@owl.openwall.com>
+- Fixed a bug in crypt_gensalt*() reported by Michael Tokarev.
+
 * Fri Aug 25 2000 Solar Designer <solar@owl.openwall.com>
 - Back-ported 3 security-related fixes from the CVS version.
 

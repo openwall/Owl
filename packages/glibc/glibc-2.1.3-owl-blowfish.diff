@@ -1181,8 +1181,8 @@ diff -urPX nopatch glibc-2.1.3.orig/crypt/sysdeps/unix/wrapper.c glibc-2.1.3/cry
 +	else
 +	if (!prefix[0] ||
 +	    (prefix[0] && prefix[1] &&
-+	    strchr(_crypt_itoa64, prefix[0]) &&
-+	    strchr(_crypt_itoa64, prefix[1])))
++	    memchr(_crypt_itoa64, prefix[0], sizeof(_crypt_itoa64)) &&
++	    memchr(_crypt_itoa64, prefix[1], sizeof(_crypt_itoa64))))
 +		use = _crypt_gensalt_traditional_rn;
 +	else
 +		return NULL;
