@@ -1,16 +1,14 @@
-# $Id: Owl/packages/libnids/libnids.spec,v 1.4 2002/02/07 18:07:46 solar Exp $
+# $Id: Owl/packages/libnids/libnids.spec,v 1.5 2002/12/14 15:40:17 solar Exp $
 
 Summary: NIDS E-component.
 Name: libnids
-Version: 1.16
+Version: 1.17
 Release: owl1
 Epoch: 1
 License: GPL
 Group: System Environment/Libraries
 URL: http://www.packetfactory.net/Projects/Libnids/
 Source: http://www.packetfactory.net/Projects/Libnids/dist/%{name}-%{version}.tar.gz
-Patch0: libnids-1.16-pld-conf.diff
-Patch1: libnids-1.16-owl-pcap062.diff
 PreReq: /sbin/ldconfig
 BuildRequires: autoconf, libpcap-devel, libnet-devel
 BuildRoot: /override/%{name}-%{version}
@@ -31,12 +29,10 @@ Header files and development documentation for libnids.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p0
 
 %build
 autoconf
-%configure
+%configure --enable-shared
 
 %{__make}
 
@@ -64,6 +60,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/lib*.a
 
 %changelog
+* Fri Dec 13 2002 Rafal Wojtczuk <nergal@owl.openwall.com>
+- updated to 1.17
+
 * Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions
 
