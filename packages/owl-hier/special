@@ -1,3 +1,5 @@
+# $Id: Owl/packages/owl-hier/Attic/special,v 1.2 2000/07/25 23:44:53 solar Exp $
+
 # /
 /set type=file uname=root gname=root mode=0755
 .		type=dir
