@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.13 2002/09/10 03:28:58 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.14 2002/09/10 03:58:59 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
@@ -88,6 +88,8 @@ fi
 * Tue Sep 10 2002 Solar Designer <solar@owl.openwall.com>
 - Build the CD kernels with SMP, it is always possible to disable SMP
 with "nosmp" on the kernel command line.
+- In the "welcome" script, explicitly tell ls to list entries by lines
+instead of by columns (-x) and ignore CVS directories (-I CVS).
 
 * Thu Aug 22 2002 Solar Designer <solar@owl.openwall.com>
 - Added a "welcome" script to introduce the user to directory locations.

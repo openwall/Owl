@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-cdrom/welcome-cdrom.sh,v 1.1 2002/08/22 03:54:11 solar Exp $
+# $Id: Owl/packages/owl-cdrom/welcome-cdrom.sh,v 1.2 2002/09/10 03:58:59 solar Exp $
 
 echo
 echo 'Welcome to Openwall GNU/*/Linux (Owl)!'
@@ -30,20 +30,20 @@ if [ -n "$HAVE_SRCS" -o -n "$HAVE_RPMS" ]; then
 		echo -n 'binary packages'
 	fi
 	echo " may be found under $WORLD:"
-	ls $WORLD
+	ls -x $WORLD
 	echo
 fi
 
 if [ -d $KERNEL ]; then
 	echo -n "The kernel sources and recommended patches"
 	echo " may be found under $KERNEL:"
-	ls $KERNEL
+	ls -x $KERNEL
 	echo
 fi
 
 if [ -d $DOC ]; then
 	echo "There's documentation under $DOC:"
-	ls $DOC
+	ls -x -I CVS $DOC
 	echo
 fi
 
