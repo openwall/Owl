@@ -1,9 +1,9 @@
-# $Id: Owl/packages/hdparm/hdparm.spec,v 1.2 2001/03/28 10:42:56 mci Exp $
+# $Id: Owl/packages/hdparm/hdparm.spec,v 1.3 2001/03/29 08:26:07 mci Exp $
 
 Summary: A utility for displaying and/or setting hard disk parameters.
 Name: hdparm
 Version: 4.1
-Release: 2owl
+Release: 3owl
 Copyright: BSD
 Group: Applications/System
 Source: http://www.ibiblio.org/pub/Linux/system/hardware/%{name}-%{version}.tar.gz
@@ -17,7 +17,7 @@ hdparm - get/set hard disk parameters for Linux IDE drives.
 %setup -q
 
 %build
-sed -e "s/-O2/$RPM_OPT_FLAGS/g" <Makefile >Makefile.optflags
+sed -e "s/-O2/$RPM_OPT_FLAGS/g" < Makefile > Makefile.optflags
 make -f Makefile.optflags
 
 %install
@@ -37,8 +37,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/hdparm.8*
 
 %changelog
-* Wed Mar 28 2001  Michail Litvak <mci@owl.openwall.com>
-- use sed instead perl
+* Wed Mar 28 2001 Michail Litvak <mci@owl.openwall.com>
+- use sed instead of perl
 - removed old RH changelog
 
 * Tue Mar 27 2001 Michail Litvak <mci@owl.openwall.com>
