@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.8 2001/07/27 20:13:48 solar Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.9 2001/09/30 15:01:25 mci Exp $
 
 Summary: Owl configuration tool
 Name: owl-setup
-Version: 0.4
-Release: 3owl
+Version: 0.5
+Release: 1owl
 Copyright: mostly public domain, passwdlg is under GPL
 Group: System Environment/Base
 Source0: Makefile
@@ -58,6 +58,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc README
 
 %changelog
+* Sun Sep 30 2001 Michail Litvak <mci@owl.openwall.com>
+- don't check gateway presense for network=yes
+- don't write localhost with non local IP to /etc/hosts
+
 * Wed Jul 25 2001 Michail Litvak <mci@owl.openwall.com>
 - add --cr-wrap option in netcfg to fix broken
   displaying (cause - changes in new dialog version)
