@@ -41,6 +41,10 @@ weiter unten fort.
 
 	Benutzen einer existierenden Linux-Installation.
 
+Wichtig: Dieser Abschnitt ist nur für diejenigen wichtig, die keine Owl CD
+besitzen oder aus einem anderen Grund diese nicht benutzen. Die meisten werden
+eine CD benutzen und können diesen Abschnitt überspringen.
+
 Eine vernünftige Linux-Installation sollte diverse GNU-Tools und
 rpm2cpio zur Verfügung stellen. Es ist nicht notwendig, dass die
 Distribution das RPM Format verwendet.
@@ -66,20 +70,23 @@ Sollten Probleme während des "installworld" Vorgangs auftreten (auf
 Kommando noch mal neu gestartet werden.
 
 Wenn die Owl-Benutzersoftware installiert ist, muss man nur noch einen
-Kernel installieren. Aktuell bringt Owl für den 2.2er Kernel volle
-Unterstützung mit, läuft aber auch auf einem 2.4er Kernel (will man aber
-Owl mit "make buildworld" neu übersetzen, müssen die Linux 2.2er Kernel
-Sourcen, wie es in BUILD erklärt wird, zur Verfügung stehen). Es wird
-empfohlen, den Kernel zu installieren, der mit Owl mitgeliefert wird.
-
-Man kann nun den boot loader konfigurieren, der unter Owl verfügbar
-ist (LILO oder SILO, kommt auf die Architektur an), oder einen
-bereits installierten (falls vorhanden) verwenden.
+Kernel und einen boot loader installieren. Es wird empfohlen den Kernel
+aus den Quellen neu zu übersetzen um ihn seinen Bedürfnissen anzupassen.
 
 Das Übersetzen des Kernels und die Einrichtung des boot loaders muss
 in einer chroot-Umgebung im Verzeichnis des neu installierten User-
 land geschehen:
 
-	chroot /owl
+        chroot /owl
 
-$Id: Owl/doc/de/INSTALL,v 1.8 2002/10/07 19:13:35 solar Exp $
+Aktuell bringt Owl für den 2.2er Kernel volle Unterstützung mit, läuft
+aber auch auf einem 2.4er Kernel (will man aber Owl mit "make buildworld"
+neu übersetzen, müssen die Linux 2.2er Kernel Sourcen, wie es in BUILD
+erklärt wird, zur Verfügung stehen). Es wird empfohlen, den Kernel zu
+installieren, der mit Owl mitgeliefert wird.
+
+Man kann nun den boot loader konfigurieren, der unter Owl verfügbar
+ist (LILO oder SILO, kommt auf die Architektur an), oder einen
+bereits installierten (falls vorhanden) verwenden.
+
+$Id: Owl/doc/de/INSTALL,v 1.9 2003/05/06 17:14:07 schmidt Exp $
