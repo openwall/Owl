@@ -1,0 +1,23 @@
+diff -puNr e2fsprogs-1.36/lib/uuid/Makefile.in e2fsprogs-1.36.man/lib/uuid/Makefile.in
+--- e2fsprogs-1.36/lib/uuid/Makefile.in	Sat Feb  5 20:48:48 2005
++++ e2fsprogs-1.36.man/lib/uuid/Makefile.in	Mon Feb 28 23:19:07 2005
+@@ -14,7 +14,7 @@ all:: 
+ 
+ SMANPAGES=	uuid.3 uuid_clear.3 uuid_compare.3 uuid_copy.3 \
+ 		uuid_generate.3 uuid_is_null.3 uuid_parse.3 \
+-		uuid_time.3 uuid_unparse.3
++		uuid_time.3 uuid_unparse.3 libuuid.3
+ 
+ OBJS=		clear.o \
+ 		compare.o \
+@@ -120,6 +120,10 @@ uuid_time.3: $(DEP_SUBSTITUTE) $(srcdir)
+ uuid_unparse.3: $(DEP_SUBSTITUTE) $(srcdir)/uuid_unparse.3.in
+ 	@echo "	SUBST $@"
+ 	@$(SUBSTITUTE_UPTIME) $(srcdir)/uuid_unparse.3.in uuid_unparse.3
++
++libuuid.3: $(DEP_SUBSTITUTE) $(srcdir)/libuuid.3.in
++	@echo "	SUBST $@"
++	@$(SUBSTITUTE_UPTIME) $(srcdir)/libuuid.3.in libuuid.3
+ 
+ uuid.pc: $(srcdir)/uuid.pc.in $(top_builddir)/config.status
+ 	@echo "	CONFIG.STATUS $@"
