@@ -30,6 +30,18 @@ diff -ur perl-5.8.3.orig/ext/DB_File/DB_File.pm perl-5.8.3/ext/DB_File/DB_File.p
      $fd = $db->fd;
      open(DB_FH, "+<&=$fd") || die "dup $!";
      flock (DB_FH, LOCK_EX) || die "flock: $!";
+diff -ur perl-5.8.3.orig/ext/DB_File/t/db-recno.t perl-5.8.3/ext/DB_File/t/db-recno.t
+--- perl-5.8.3.orig/ext/DB_File/t/db-recno.t	Mon Jan 19 18:46:25 2004
++++ perl-5.8.3/ext/DB_File/t/db-recno.t	Sun Jan 25 18:53:51 2004
+@@ -1198,7 +1198,7 @@
+ 
+ my $testnum = 181;
+ my $failed = 0;
+-require POSIX; my $tmp = POSIX::tmpnam();
++my $tmp = "dbr$$";
+ foreach my $test (@tests) {
+     my $err = test_splice(@$test);
+     if (defined $err) {
 diff -ur perl-5.8.3.orig/ext/Devel/PPPort/PPPort.pm perl-5.8.3/ext/Devel/PPPort/PPPort.pm
 --- perl-5.8.3.orig/ext/Devel/PPPort/PPPort.pm	Mon Jan 19 18:46:25 2004
 +++ perl-5.8.3/ext/Devel/PPPort/PPPort.pm	Sun Jan 25 16:16:53 2004
