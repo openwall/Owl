@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.3 2003/09/09 06:06:08 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.4 2003/09/09 06:09:10 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -70,7 +70,7 @@ subnet.  The DHCP relay takes care of this for the client.
 %patch1 -p1
 %patch2 -p1
 
-%{expand:%%define optflags %optflags -Wall}
+%{expand:%%define optflags %optflags -Wall -Wno-unused}
 
 %build
 ./configure --copts "$RPM_OPT_FLAGS"
@@ -153,6 +153,8 @@ fi
 * Tue Sep 09 2003 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl0.2
 - Applied the initial set of corrections.
 - Pass the optflags correctly.
+- Changed -Wall to -Wall -Wno-unused, this reduces the number of warnings
+from 418 to 34; the remaining warnings need to be dealt with.
 
 * Mon May 05 2003 Matthias Schmidt <schmidt@owl.openwall.com> 3.0pl2-owl0.1
 - Initial release (3.0pl2)
