@@ -1,10 +1,10 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.10 2001/07/18 22:16:20 mci Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.11 2001/11/05 09:39:18 solar Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron)
 Name: vixie-cron
 Version: 3.0.2.7
-Release: 10owl
-Copyright: distributable
+Release: 11owl
+License: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%{version}.tar.gz
 Source1: vixie-cron.init
@@ -12,14 +12,14 @@ Source2: crontab.control
 Patch0: vixie-cron-%{version}-owl-linux.diff
 Patch1: vixie-cron-%{version}-owl-sgid-crontab.diff
 Patch2: vixie-cron-%{version}-owl-crond.diff
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
+PreReq: /sbin/chkconfig, /dev/null, grep, shadow-utils
 Requires: owl-control < 2.0
-Prereq: /sbin/chkconfig, /dev/null, grep, shadow-utils
+BuildRoot: /override/%{name}-%{version}
 
 %description
-Cron is a standard UNIX daemon that runs specified programs at scheduled
-times.  This package contains Paul Vixie's implementation of cron, with
-significant modifications by the NetBSD, OpenBSD, Red Hat, and Owl teams.
+cron is a daemon that runs specified programs at scheduled times.  This
+package contains Paul Vixie's implementation of cron, with significant
+modifications by the NetBSD, OpenBSD, Red Hat, and Owl teams.
 
 %prep
 %setup -q
@@ -36,7 +36,6 @@ make -C usr.sbin/cron CFLAGS="-c -I. -I../../include $RPM_OPT_FLAGS" \
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr/{bin,man/man{1,5,8},sbin}
 mkdir -p -m 700 $RPM_BUILD_ROOT/var/spool/cron
-
 mkdir -p -m 755 $RPM_BUILD_ROOT/etc/cron.d
 
 install -m 700 usr.sbin/cron/crontab $RPM_BUILD_ROOT/usr/bin
@@ -45,8 +44,7 @@ install -m 700 usr.sbin/cron/crond $RPM_BUILD_ROOT/usr/sbin
 install -m 644 usr.sbin/cron/crontab.1 $RPM_BUILD_ROOT/usr/man/man1
 install -m 644 usr.sbin/cron/crontab.5 $RPM_BUILD_ROOT/usr/man/man5
 install -m 644 usr.sbin/cron/cron.8 $RPM_BUILD_ROOT/usr/man/man8
-gzip -9nf $RPM_BUILD_ROOT/usr/man/man*/*
-ln -s cron.8.gz $RPM_BUILD_ROOT/usr/man/man8/crond.8.gz
+ln -s cron.8 $RPM_BUILD_ROOT/usr/man/man8/crond.8
 
 install -m 700 -D $RPM_SOURCE_DIR/vixie-cron.init \
 	$RPM_BUILD_ROOT/etc/rc.d/init.d/crond
@@ -84,6 +82,9 @@ if [ $1 -eq 0 ]; then
 	/sbin/chkconfig --del crond
 fi
 
+%triggerpostun -- vixie-cron < 3.0.2.7-10owl
+/sbin/chkconfig --add crond
+
 %files
 %defattr(-,root,root)
 /usr/sbin/crond
@@ -98,6 +99,10 @@ fi
 /etc/control.d/facilities/crontab
 
 %changelog
+* Mon Nov 05 2001 Solar Designer <solar@owl.openwall.com>
+- Use a trigger to re-create the rc*.d symlinks when upgrading from
+old versions of the package.
+
 * Wed Jul 18 2001 Michail Litvak <mci@owl.openwall.com>
 - rework spooldirs handling to exclude files with 
   filenames containing a dot '.' or ending with '~'

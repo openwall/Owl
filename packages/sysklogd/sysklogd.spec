@@ -1,9 +1,9 @@
-# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.5 2001/10/08 06:20:28 solar Exp $
+# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.6 2001/11/05 09:39:18 solar Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
 Version: 1.4.1
-Release: 1owl
+Release: 2owl
 License: BSD for syslogd and GPL for klogd
 Group: System Environment/Daemons
 Source0: http://www.infodrom.ffis.de/projects/sysklogd/download/sysklogd-%{version}.tar.gz
@@ -20,9 +20,9 @@ Patch6: sysklogd-1.4.1-alt-owl-syslogd-killing.diff
 Patch7: sysklogd-1.4.1-caen-owl-klogd-drop-root.diff
 Patch8: sysklogd-1.4.1-caen-owl-syslogd-bind.diff
 Patch9: sysklogd-1.4.1-caen-owl-syslogd-drop-root.diff
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: logrotate, /var/empty
 PreReq: shadow-utils, grep, fileutils, /sbin/chkconfig
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The sysklogd package contains two system utilities (syslogd and klogd)
@@ -93,6 +93,9 @@ if [ $1 -eq 0 ]; then
 	/sbin/chkconfig --del syslog
 fi
 
+%triggerpostun -- sysklogd < 1.4.1-1owl
+/sbin/chkconfig --add syslog
+
 %files
 %defattr(-,root,root)
 %doc COPYING ANNOUNCE README* NEWS CHANGES
@@ -103,6 +106,10 @@ fi
 %_mandir/*/*
 
 %changelog
+* Mon Nov 05 2001 Solar Designer <solar@owl.openwall.com>
+- Use a trigger to re-create the rc*.d symlinks when upgrading from
+old versions of the package.
+
 * Mon Oct 08 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 1.4.1.
 - Based the new klogd drop root patch on one from CAEN Linux.
