@@ -1,12 +1,12 @@
-# $Id: Owl/packages/cpio/cpio.spec,v 1.5 2000/12/02 00:52:07 solar Exp $
+# $Id: Owl/packages/cpio/cpio.spec,v 1.6 2000/12/24 09:13:09 solar Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
 Version: 2.4.2
-Release: 23owl
+Release: 24owl
 Copyright: GPL
 Group: Archiving/Backup
-Conflicts: mt-st, rmt
+Provides: mt-st, rmt
 Source: ftp://ftp.gnu.org/gnu/cpio-2.4.2.tar.gz
 Patch1:  cpio-2.4.2-deb-cpio.diff
 Patch2:  cpio-2.4.2-deb-mt_scsi.diff
@@ -97,6 +97,9 @@ fi
 %{_mandir}/man8/rmt.8*
 
 %changelog
+* Sun Dec 24 2000 Solar Designer <solar@owl.openwall.com>
+- Conflicts -> Provides: mt-st, rmt
+
 * Sat Dec 02 2000 Solar Designer <solar@owl.openwall.com>
 - Added /etc/rmt and /sbin/rmt symlinks.
 - Conflicts: rmt
