@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.75 2005/01/14 21:42:30 galaxy Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.76 2005/01/18 14:25:18 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -194,7 +194,7 @@ compatibility package with necessary binaries of old libdb libraries.
 
 # Owl
 echo "Applying crypt_blowfish patch:"
-patch -p1 -s < crypt_blowfish-%crypt_bf_version/glibc-%basevers-crypt.diff
+patch -p1 -s < crypt_blowfish-%crypt_bf_version/glibc-2.3.2-crypt.diff
 mv crypt/{crypt.h,gnu-crypt.h}
 mv crypt_blowfish-%crypt_bf_version/*.[chS] crypt/
 cp %_sourcedir/crypt_freesec.[ch] crypt/
@@ -470,7 +470,7 @@ controled through BUILD_LOCALES macro.
 patch also replaces execv() to execvp() to search for cpp binary through the
 path.
 - Cleaned up the spec.
- 
+
 * Wed Dec 25 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl3
 - Fixed compat-fake's provides to deal with Owl 1.1 release upgrades
 - Fixed a bug with creating buildtree using %_target_cpu, but accessing it
