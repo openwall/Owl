@@ -1,13 +1,13 @@
-# $Id: Owl/packages/iproute2/iproute2.spec,v 1.10 2002/04/01 17:14:52 solar Exp $
+# $Id: Owl/packages/iproute2/iproute2.spec,v 1.11 2003/10/12 13:49:51 mci Exp $
 
 Summary: Enhanced IP routing and network devices configuration tools.
 Name: iproute2
 Version: 2.4.7
-%define snapshot ss010824
-Release: owl4
+%define snapshot ss020116
+Release: owl5
 License: GPL
 Group: Applications/System
-Source0: ftp://ftp.inr.ac.ru/ip-routing/%name-%version-now-%snapshot.tar.gz
+Source0: ftp://ftp.inr.ac.ru/ip-routing/%name-%version-now-%snapshot-try.tar.gz
 Source1: %name-%version-%snapshot-ps.tar.bz2
 Source2: ip.8
 Source3: tc.8
@@ -19,10 +19,9 @@ Source8: tc-red.8
 Source9: tc-sfq.8
 Source10: tc-tbf.8
 Source11: tc-cbq.8
-Patch0: iproute2-2.4.7-rh-config.diff
-Patch1: iproute2-2.4.7-rh-promisc-allmulti.diff
-Patch2: iproute2-2.4.7-pld-owl-ll_types_proto.diff
-Patch3: iproute2-2.4.7-owl-warnings.diff
+Patch0: iproute2-2.4.7-rh-promisc-allmulti.diff
+Patch1: iproute2-2.4.7-owl-socketbits.diff
+Patch2: iproute2-2.4.7-owl-warnings.diff
 Provides: iproute = %{version}
 Obsoletes: iproute
 BuildRoot: /override/%{name}-%{version}
@@ -32,14 +31,13 @@ Linux 2.2+ maintains compatibility with the basic configuration utilities
 of the network (ifconfig, route) but a new utility is required to exploit
 the new characteristics and features of the kernel, such as policy
 routing, fast NAT and packet scheduling.  This package includes the new
-utilities (ip, tc, rtmon, rtacct).
+utilities (ip, tc, rtmon, rtacct, ifstat, nstat, rtstat, ss).
 
 %prep
 %setup -q -n %name -a 1
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 
 %{expand:%%define optflags %optflags -Wall -Wstrict-prototypes}
 
@@ -54,7 +52,7 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT{/sbin,%{_sbindir},/etc/iproute2,%{_mandir}/man8}
 
 install -m 755 ip/{ip,ifcfg,rtmon} tc/tc $RPM_BUILD_ROOT/sbin/
-install -m 755 ip/rtacct $RPM_BUILD_ROOT%{_sbindir}/
+install -m 755 misc/{ifstat,nstat,rtacct,rtstat,ss} $RPM_BUILD_ROOT%{_sbindir}/
 install -m 644 etc/iproute2/* $RPM_BUILD_ROOT/etc/iproute2/
 install -m 644 $RPM_SOURCE_DIR/ip.8 $RPM_BUILD_ROOT%{_mandir}/man8/
 install -m 644 $RPM_SOURCE_DIR/tc.8 $RPM_BUILD_ROOT%{_mandir}/man8/
@@ -82,6 +80,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/*
 
 %changelog
+* Sun Oct 12 2003 Michail Litvak <mci@owl.openwall.com>
+- ss020116
+- Fixed building with kernel >= 2.4.22.
+- Dropped some obsolete patches.
+- Include some new tools (ifstat, nstat, rtstat, ss)
+
 * Mon Apr 01 2002 Solar Designer <solar@owl.openwall.com>
 - More formatting fixes to ip.8; the tc*.8 man pages remain _very_ dirty.
 - Compilation warning fixes on Alpha (builds with -Wall cleanly now).
