@@ -12,6 +12,17 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/08/01	Package: glibc
+SECURITY FIX	Severity: low to high, remote, passive to active
+Patched two potential integer overflows (and thus buffer overflows) in
+calloc(3) and Sun RPC xdr_array(3) code (the latter discovered by ISS
+X-Force).  The calloc(3) integer overflow possibility is currently not
+known to allow for an attack on a particular application, but has been
+patched as a proactive measure.  The Sun RPC xdr_array(3) overflow may
+allow for passive attacks on mount(8) by malicious or spoofed NFSv3
+servers as well as for both passive and active attacks on RPC clients
+or services that one might install on Owl.
+
 2002/07/31	Package: openssl
 Updated to 0.9.6e, dropping patches that are now included.
 
@@ -865,4 +876,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.117 2002/07/31 08:13:36 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.118 2002/08/01 07:30:49 solar Exp $
