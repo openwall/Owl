@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.31 2002/02/05 16:05:32 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.32 2002/03/05 16:03:51 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.0.2p1
-Release: owl1
+Release: owl2
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -19,6 +19,7 @@ Patch2: openssh-3.0.2p1-owl-pam_userpass.diff
 Patch3: openssh-3.0.2p1-owl-scp-stalltime.diff
 Patch4: openssh-3.0.2p1-owl-drop-groups.diff
 Patch5: openssh-3.0.2p1-owl-openssl-version-check.diff
+Patch6: openssh-3.0.2p1-cvs-20020304-channel-id-check.diff
 PreReq: openssl >= 0.9.6b-1owl
 PreReq: openssl < 0.9.7
 Requires: tcb, pam_mktemp
@@ -94,6 +95,7 @@ clients to connect to your host.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" LIBS="-lcrypt -lpam -lpam_misc" ./configure \
@@ -193,6 +195,9 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Tue Mar 05 2002 Solar Designer <solar@owl.openwall.com>
+- Patched a channel id check off by one bug discovered by Joost Pol.
+
 * Tue Feb 05 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 
