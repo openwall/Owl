@@ -1,0 +1,12 @@
+--- dialog-0.9a-20010527/fselect.c.orig	Mon Jun 11 22:05:32 2001
++++ dialog-0.9a-20010527/fselect.c	Tue Jun 12 10:26:04 2001
+@@ -525,7 +525,8 @@
+ 	    free_list(&f_list);
+ 	    return (button > 0);
+ 	default:
+-	    (void) ungetch(key);
++	    if(key != KEY_MOUSE)
++	    	(void) ungetch(key);
+ 	    button = -1;
+ 	    break;
+ 
