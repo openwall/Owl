@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.1 2000/09/03 19:56:34 kad Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.2 2000/09/03 21:25:30 solar Exp $
 
 Version: 	2.04
 Name: 		bash
@@ -21,18 +21,15 @@ Prefix: 	%{_prefix}
 Requires: 	mktemp
 Provides: 	bash2
 Obsoletes:	bash2 etcskel
-BuildRoot: 	/var/rpmbuild-root/%{name}-root
+BuildRoot: 	/var/rpm-buildroot/%{name}-root
 
 %description
 The GNU Bourne Again shell (Bash) is a shell or command language
-interpreter that is compatible with the Bourne shell (sh). Bash
+interpreter that is compatible with the Bourne shell (sh).  Bash
 incorporates useful features from the Korn shell (ksh) and the C shell
-(csh). Most sh scripts can be run by bash without modification. This
+(csh).  Most sh scripts can be run by bash without modification.  This
 package (bash) contains bash version %{version}, which improves POSIX
-compliance over previous versions. However, many old shell scripts
-will depend upon the behavior of bash 1.14, which is included in the
-bash1 package. Bash is the default shell for Red Hat Linux.  It is
-popular and powerful, and you'll probably end up using it.
+compliance over previous versions.
 
 Documentation for bash version %{version} is contained in the bash-doc 
 package.
