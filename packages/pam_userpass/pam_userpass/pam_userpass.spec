@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.14 2003/11/02 14:21:14 solar Exp $
+# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.15 2003/11/02 14:36:45 solar Exp $
 
 Summary: Pluggable authentication module for USER/PASS-style protocols.
 Name: pam_userpass
@@ -30,7 +30,7 @@ for building pam_userpass-aware applications.
 %setup -q
 
 %build
-make CFLAGS="-Wall -fPIC $RPM_OPT_FLAGS"
+CFLAGS="-Wall -fPIC $RPM_OPT_FLAGS" make
 
 %install
 rm -rf $RPM_BUILD_ROOT
