@@ -1,11 +1,11 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.8 2000/12/01 20:26:04 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.9 2000/12/07 18:39:02 solar Exp $
 
 # Version of OpenSSH
 %define oversion 2.3.0p1
 Summary: OpenSSH free Secure Shell (SSH) implementation
 Name: openssh
 Version: %{oversion}
-Release: 2owl
+Release: 3owl
 URL: http://www.openssh.com/
 Source0: http://violet.ibs.com.au/openssh/files/openssh-%{oversion}.tar.gz
 Source1: sshd.pam
@@ -172,6 +172,9 @@ fi
 %attr(0700,root,root) %config /etc/rc.d/init.d/sshd
 
 %changelog
+* Thu Dec 07 2000 Solar Designer <solar@owl.openwall.com>
+- Updated sshd.init to use --pidfile and --expect-user.
+
 * Fri Dec 01 2000 Solar Designer <solar@owl.openwall.com>
 - Adjusted sshd.init for owl-startup.
 - Restart sshd after package upgrades in an owl-startup compatible way.

@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/openssh/sshd.init,v 1.2 2000/12/01 20:25:25 solar Exp $
+# $Id: Owl/packages/openssh/sshd.init,v 1.3 2000/12/07 18:39:02 solar Exp $
 #
 # chkconfig: 2345 55 25
 # description: \
@@ -21,8 +21,8 @@ OWL_STARTUP_ENABLE=1
 
 case "$1" in
 start)
-	if [ "0$OWL_STARTUP_VERSION" -ge 1 ]; then
-		daemon sshd
+	if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
+		daemon --pidfile /var/run/sshd.pid --expect-user root sshd
 	else
 # Red Hat's implementation of daemon() would get confused by multiple
 # sshd processes.  We don't bother echo'ing a nice message if this is
@@ -32,14 +32,18 @@ start)
 	fi
 	;;
 stop)
-	test -f /var/run/sshd.pid && killproc sshd
+	if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
+		killproc --pidfile /var/run/sshd.pid --expect-user root sshd
+	else
+		test -f /var/run/sshd.pid && killproc sshd
+	fi
 	;;
 restart)
 	$0 stop
 	$0 start
 	;;
 status)
-	status sshd
+	status --pidfile /var/run/sshd.pid --expect-user root sshd
 	;;
 *)
 	echo "Usage: sshd {start|stop|restart|status}"
