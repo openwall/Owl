@@ -1,5 +1,27 @@
---- e2fsprogs-1.27/misc/mke2fs.c.orig	Fri Mar  8 10:02:37 2002
-+++ e2fsprogs-1.27/misc/mke2fs.c	Mon Apr 15 22:02:41 2002
+diff -ur e2fsprogs-1.27.orig/e2fsck/pass3.c e2fsprogs-1.27/e2fsck/pass3.c
+--- e2fsprogs-1.27.orig/e2fsck/pass3.c	Mon Feb 25 00:03:59 2002
++++ e2fsprogs-1.27/e2fsck/pass3.c	Wed Oct  9 12:33:51 2002
+@@ -423,7 +423,7 @@
+ 	/*
+ 	 * Next find a free inode.
+ 	 */
+-	retval = ext2fs_new_inode(fs, EXT2_ROOT_INO, 040755,
++	retval = ext2fs_new_inode(fs, EXT2_ROOT_INO, 040700,
+ 				  ctx->inode_used_map, &ino);
+ 	if (retval) {
+ 		pctx.errcode = retval;
+@@ -457,7 +457,7 @@
+ 	 * Set up the inode structure
+ 	 */
+ 	memset(&inode, 0, sizeof(inode));
+-	inode.i_mode = 040755;
++	inode.i_mode = 040700;
+ 	inode.i_size = fs->blocksize;
+ 	inode.i_atime = inode.i_ctime = inode.i_mtime = time(0);
+ 	inode.i_links_count = 2;
+diff -ur e2fsprogs-1.27.orig/misc/mke2fs.c e2fsprogs-1.27/misc/mke2fs.c
+--- e2fsprogs-1.27.orig/misc/mke2fs.c	Fri Mar  8 11:02:37 2002
++++ e2fsprogs-1.27/misc/mke2fs.c	Wed Oct  9 12:28:25 2002
 @@ -489,6 +489,7 @@
  {
  	errcode_t		retval;
@@ -26,8 +48,9 @@
  	for (i=1; i < EXT2_NDIR_BLOCKS; i++) {
  		if ((lpf_size += fs->blocksize) >= 16*1024)
  			break;
---- e2fsprogs-1.27/misc/mklost+found.c.orig	Tue Mar  5 10:31:15 2002
-+++ e2fsprogs-1.27/misc/mklost+found.c	Mon Apr 15 21:56:36 2002
+diff -ur e2fsprogs-1.27.orig/misc/mklost+found.c e2fsprogs-1.27/misc/mklost+found.c
+--- e2fsprogs-1.27.orig/misc/mklost+found.c	Tue Mar  5 11:31:15 2002
++++ e2fsprogs-1.27/misc/mklost+found.c	Wed Oct  9 12:28:25 2002
 @@ -48,7 +48,7 @@
  		fprintf (stderr, _("Usage: mklost+found\n"));
  		exit(1);
