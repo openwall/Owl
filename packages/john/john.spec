@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.6 2002/05/10 18:33:21 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.7 2002/09/05 05:56:35 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.31.4
+Version: 1.6.31.5
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -76,6 +76,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Thu Sep 05 2002 Solar Designer <solar@owl.openwall.com>
+- Never put dupes in crk_guesses[], that could overflow it and would be
+inefficient anyway.
+
 * Fri Apr 26 2002 Solar Designer <solar@owl.openwall.com>
 - Check for with_cpu_fallback correctly (unbreak builds on non-x86).
 
