@@ -1,9 +1,9 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.43 2004/11/26 15:10:41 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.44 2005/01/12 16:57:46 galaxy Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.4.1
-Release: owl6
+Release: owl7
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -37,6 +37,7 @@ Patch24: shadow-4.0.4.1-owl-newgrp.diff
 Patch30: shadow-4.0.4.1-owl-tcb.diff
 Patch40: shadow-4.0.4.1-alt-man.diff
 Patch41: shadow-4.0.4.1-alt-configure.diff
+Patch42: shadow-4.0.4.1-owl-malloc-cast.diff
 Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: pam, tcb >= 0.9.8, pam_userpass >= 0.5
 BuildRequires: libtool, gettext = 0.14.1, automake, autoconf
@@ -71,6 +72,7 @@ shadow password files.
 %patch30 -p1
 %patch40 -p1
 %patch41 -p1
+%patch42 -p1
 
 find . -name '*.orig' -delete
 
@@ -145,7 +147,7 @@ install -m 700 $RPM_SOURCE_DIR/newgrp.control newgrp
 
 %pre
 if [ $1 -ge 2 ]; then
-	/usr/sbin/control-dump chage chfn chsh gpasswd newgrp
+	%_sbindir/control-dump chage chfn chsh gpasswd newgrp
 fi
 
 %post
@@ -158,14 +160,14 @@ if grep -q '^shadow:[^:]*:42:' %_sysconfdir/group; then
 fi
 grep -q ^auth: %_sysconfdir/group || groupadd -g 164 auth
 if [ $1 -ge 2 ]; then
-	/usr/sbin/control-restore chage chfn chsh gpasswd newgrp
+	%_sbindir/control-restore chage chfn chsh gpasswd newgrp
 fi
 
 %files
 %defattr(-,root,root)
 %doc README NEWS ChangeLog doc/HOWTO
 %dir %_sysconfdir/default
-%attr(0644,root,root) %config(noreplace) %_sysconfdir/login.defs
+%attr(0644,root,root) %config(noreplace) %verify(not mode group) %_sysconfdir/login.defs
 %attr(0600,root,root) %config(noreplace) %_sysconfdir/default/useradd
 %_sbindir/adduser
 %attr(0700,root,root) %_sbindir/user*
@@ -176,11 +178,11 @@ fi
 %attr(0700,root,root) %_sbindir/chpasswd
 %attr(0700,root,root) %_sbindir/newusers
 %attr(0700,root,root) %_sbindir/vi*
-%attr(0700,root,root) %_bindir/chage
-%attr(0700,root,root) %_bindir/chfn
-%attr(0700,root,root) %_bindir/chsh
-%attr(0700,root,root) %_bindir/gpasswd
-%attr(0700,root,root) %_bindir/newgrp
+%attr(0700,root,root) %verify(not mode group) %_bindir/chage
+%attr(0700,root,root) %verify(not mode) %_bindir/chfn
+%attr(0700,root,root) %verify(not mode) %_bindir/chsh
+%attr(0700,root,root) %verify(not mode group) %_bindir/gpasswd
+%attr(0700,root,root) %verify(not mode group) %_bindir/newgrp
 %_bindir/sg
 %_bindir/lastlog
 %_mandir/man1/chage.1*
@@ -233,6 +235,10 @@ fi
 %exclude %_mandir/man8/mkpasswd*
 
 %changelog
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2:4.0.4.1-owl7
+- Removed verify checks for file controlled via owl-control facility.
+- Fixed xmalloc.c to cast correct return type for malloc().
+
 * Fri Nov 26 2004 Solar Designer <solar@owl.openwall.com> 2:4.0.4.1-owl6
 - Report /etc/login.defs open/read errors to stderr, not only to syslog.
 - Merged some enhancements/corrections from ALT Linux: document the
