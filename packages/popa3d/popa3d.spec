@@ -1,9 +1,9 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.1 2000/12/06 12:04:02 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.2 2000/12/07 18:46:56 solar Exp $
 
 Summary: A small POP3 server with security as its primary design goal
 Name: popa3d
 Version: 0.4.4
-Release: 1owl
+Release: 2owl
 Copyright: GPL
 Group: System Environment/Daemons
 Source0: ftp://ftp.openwall.com/popa3d/popa3d-0.4.tar.gz
@@ -67,6 +67,9 @@ fi
 %doc DESIGN COPYING
 
 %changelog
+* Thu Dec 07 2000 Solar Designer <solar@owl.openwall.com>
+- Updated popa3d.init to use --expect-user.
+
 * Wed Dec 06 2000 Solar Designer <solar@owl.openwall.com>
 - 0.4.4 with pam_userpass support.
 - Wrote this spec file, popa3d.pam, and popa3d.init.

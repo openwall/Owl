@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/popa3d/popa3d.init,v 1.1 2000/12/06 12:04:02 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.init,v 1.2 2000/12/07 18:46:56 solar Exp $
 #
 # chkconfig: 2345 50 50
 # description: \
@@ -14,8 +14,8 @@ OWL_STARTUP_ENABLE=1
 
 case "$1" in
 start)
-	if [ "0$OWL_STARTUP_VERSION" -ge 1 ]; then
-		daemon popa3d
+	if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
+		daemon --expect-user root popa3d
 	else
 # Red Hat's implementation of daemon() would get confused by multiple
 # popa3d processes.
@@ -23,7 +23,11 @@ start)
 	fi
 	;;
 stop)
-	killproc popa3d
+	if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
+		killproc --expect-user root popa3d
+	else
+		killproc popa3d
+	fi
 	;;
 restart)
 	$0 stop
