@@ -1,4 +1,4 @@
-# $Id: Owl/packages/netlist/Attic/netlist.spec,v 1.3 2002/02/06 18:31:45 mci Exp $
+# $Id: Owl/packages/netlist/Attic/netlist.spec,v 1.4 2002/02/06 18:56:38 mci Exp $
 
 Summary: A program to list active Internet connections and sockets.
 Name: netlist
@@ -28,14 +28,14 @@ make CFLAGS="-c -Wall $RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT BINDIR=%{_bindir} MANDIR=%{_mandir}
+make install DESTDIR=$RPM_BUILD_ROOT BINDIR=%_bindir MANDIR=%_mandir
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %post
 grep -q '^proc:[^:]*:110:' /etc/group && \
-	chgrp proc %{_bindir}/netlist && chmod 2711 %{_bindir}/netlist
+	chgrp proc %_bindir/netlist && chmod 2711 %_bindir/netlist
 
 %files
 %defattr(-,root,root)
