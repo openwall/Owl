@@ -1,7 +1,7 @@
 diff -ur traceroute-1.4a12.orig/findsaddr-linux.c traceroute-1.4a12/findsaddr-linux.c
 --- traceroute-1.4a12.orig/findsaddr-linux.c	Thu Nov 23 23:17:21 2000
-+++ traceroute-1.4a12/findsaddr-linux.c	Tue Mar  6 19:00:36 2001
-@@ -74,6 +74,20 @@
++++ traceroute-1.4a12/findsaddr-linux.c	Thu Mar  8 16:46:24 2001
+@@ -74,6 +74,27 @@
  
  static const char route[] = "/proc/net/route";
  
@@ -12,17 +12,24 @@ diff -ur traceroute-1.4a12.orig/findsaddr-linux.c traceroute-1.4a12/findsaddr-li
 +findsaddr_init(void)
 +{
 +	if ((f = fopen(route, "r")) == NULL) {
-+		sprintf(errbuf, "open %s: %.128s", route, strerror(errno));
++		sprintf(errbuf, "fopen %s: %.128s", route, strerror(errno));
 +		return (errbuf);
 +	}
 +
 +	return NULL;
 +}
 +
++void findsaddr_done(void)
++{
++	if (f)
++		fclose(f);
++	f = NULL;
++}
++
  /*
   * Return the source address for the given destination address
   */
-@@ -82,17 +96,13 @@
+@@ -82,17 +103,13 @@
      register struct sockaddr_in *from)
  {
  	register int i, n;
@@ -42,26 +49,27 @@ diff -ur traceroute-1.4a12.orig/findsaddr-linux.c traceroute-1.4a12/findsaddr-li
  
  	/* Find the appropriate interface */
  	n = 0;
-@@ -112,6 +122,7 @@
+@@ -111,7 +128,6 @@
+ 			strcpy(device, tdevice);
  		}
  	}
- 	fclose(f);
-+	f = NULL;
+-	fclose(f);
  
  	if (device[0] == '\0')
  		return ("Can't find interface");
 diff -ur traceroute-1.4a12.orig/findsaddr.h traceroute-1.4a12/findsaddr.h
 --- traceroute-1.4a12.orig/findsaddr.h	Mon Nov 20 02:13:38 2000
-+++ traceroute-1.4a12/findsaddr.h	Tue Mar  6 19:01:24 2001
-@@ -20,4 +20,5 @@
++++ traceroute-1.4a12/findsaddr.h	Thu Mar  8 16:46:38 2001
+@@ -20,4 +20,6 @@
   *
   * @(#) $Id: findsaddr.h,v 1.1 2000/11/19 23:13:38 leres Exp $ (LBL)
   */
 +const char *findsaddr_init(void);
++void findsaddr_done(void);
  const char *findsaddr(const struct sockaddr_in *, struct sockaddr_in *);
 diff -ur traceroute-1.4a12.orig/traceroute.c traceroute-1.4a12/traceroute.c
 --- traceroute-1.4a12.orig/traceroute.c	Thu Dec 14 11:04:50 2000
-+++ traceroute-1.4a12/traceroute.c	Tue Mar  6 19:55:10 2001
++++ traceroute-1.4a12/traceroute.c	Thu Mar  8 17:16:46 2001
 @@ -254,7 +254,7 @@
  #define NGATEWAYS ((int)((MAX_IPOPTLEN - IPOPT_MINOFF - 1) / sizeof(u_int32_t)))
  
@@ -79,7 +87,7 @@ diff -ur traceroute-1.4a12.orig/traceroute.c traceroute-1.4a12/traceroute.c
  
  	if (argv[0] == NULL)
  		prog = "traceroute";
-@@ -380,6 +381,67 @@
+@@ -380,6 +381,63 @@
  	else
  		prog = argv[0];
  
@@ -130,11 +138,7 @@ diff -ur traceroute-1.4a12.orig/traceroute.c traceroute-1.4a12/traceroute.c
 +		exit(1);
 +	}
 +
-+	/* Revert to non-privileged user (and even less) */
-+	if (setgroups(0, NULL)) {
-+		Fprintf(stderr, "%s: setgroups: %s\n", prog, strerror(errno));
-+		exit(1);
-+	}
++	/* Revert to non-privileged user */
 +	if (setgid(getgid())) {
 +		Fprintf(stderr, "%s: setgid: %s\n", prog, strerror(errno));
 +		exit(1);
@@ -147,7 +151,7 @@ diff -ur traceroute-1.4a12.orig/traceroute.c traceroute-1.4a12/traceroute.c
  	opterr = 0;
  	while ((op = getopt(argc, argv, "dFInrvxf:g:i:m:p:q:s:t:w:z:")) != EOF)
  		switch (op) {
-@@ -429,7 +491,8 @@
+@@ -429,7 +487,8 @@
  			break;
  
  		case 'q':
@@ -157,7 +161,7 @@ diff -ur traceroute-1.4a12.orig/traceroute.c traceroute-1.4a12/traceroute.c
  			break;
  
  		case 'r':
-@@ -584,24 +647,6 @@
+@@ -584,24 +643,6 @@
  		outdata = (struct outdata *)(outudp + 1);
  	}
  
@@ -182,7 +186,7 @@ diff -ur traceroute-1.4a12.orig/traceroute.c traceroute-1.4a12/traceroute.c
  	if (options & SO_DEBUG)
  		(void)setsockopt(s, SOL_SOCKET, SO_DEBUG, (char *)&on,
  		    sizeof(on));
-@@ -609,17 +654,6 @@
+@@ -609,17 +650,6 @@
  		(void)setsockopt(s, SOL_SOCKET, SO_DONTROUTE, (char *)&on,
  		    sizeof(on));
  
@@ -200,17 +204,12 @@ diff -ur traceroute-1.4a12.orig/traceroute.c traceroute-1.4a12/traceroute.c
  #if defined(IP_OPTIONS) && !defined(HAVE_RAW_OPTIONS)
  	if (lsrr > 0) {
  		u_char optlist[MAX_IPOPTLEN];
-@@ -742,7 +776,25 @@
+@@ -742,7 +772,18 @@
  			}
  			setsin(from, *ap);
  		} else {
 -			setsin(from, hi->addrs[0]);
 +			do {
-+				if ((ntohl(al->addr) & 0xff000000U) ==
-+				    0x7f000000U) {
-+					al++;
-+					continue;
-+				}
 +				for (i = 0; i < hi->n; i++)
 +					if (hi->addrs[i] == al->addr)
 +						break;
@@ -218,27 +217,53 @@ diff -ur traceroute-1.4a12.orig/traceroute.c traceroute-1.4a12/traceroute.c
 +				al++;
 +			} while (--n > 0);
 +			if (n <= 0) {
-+				Fprintf(stderr,
-+				    "%s: %s is not on an external interface\n",
-+				    prog, source);
-+				exit(1);
++				i = 0;
++				/* bind() should fail */
 +			}
 +			setsin(from, hi->addrs[i]);
  			if (hi->n > 1)
  				Fprintf(stderr,
  			"%s: Warning: %s has multiple addresses; using %s\n",
-@@ -751,10 +803,6 @@
+@@ -751,18 +792,32 @@
  		freehostinfo(hi);
  	}
  
 -	/* Revert to non-privileged user after opening sockets */
 -	setgid(getgid());
 -	setuid(getuid());
--
++	findsaddr_done();
+ 
  	outip->ip_src = from->sin_addr;
- #ifndef IP_HDRINCL
- 	if (bind(sndsock, (struct sockaddr *)from, sizeof(*from)) < 0) {
-@@ -1259,7 +1307,7 @@
+-#ifndef IP_HDRINCL
+-	if (bind(sndsock, (struct sockaddr *)from, sizeof(*from)) < 0) {
++
++	/*
++	 * This is needed even when we have IP_HDRINCL in order to ensure
++	 * that the source address actually belongs to our machine.
++	 */
++	if (bind(sndsock, (struct sockaddr *)from, sizeof(*from)) < 0
++#ifdef IP_HDRINCL
++	    && getuid() != 0) {
++#else
++	    ) {
++#endif
+ 		Fprintf(stderr, "%s: bind: %s\n",
+ 		    prog, strerror(errno));
+ 		exit (1);
+ 	}
+-#endif
++
++	if (getuid() != 0 &&
++	    (ntohl(from->sin_addr.s_addr) & 0xff000000U) == 0x7f000000U &&
++	    (ntohl(to->sin_addr.s_addr) & 0xff000000U) != 0x7f000000U) {
++		Fprintf(stderr, "%s: source is on 127/8, destination isn't\n",
++		    prog);
++		exit(1);
++	}
+ 
+ 	Fprintf(stderr, "%s to %s (%s)",
+ 	    prog, hostname, inet_ntoa(to->sin_addr));
+@@ -1259,7 +1314,7 @@
  	register char **p;
  	register u_int32_t addr, *ap;
  
@@ -247,7 +272,7 @@ diff -ur traceroute-1.4a12.orig/traceroute.c traceroute-1.4a12/traceroute.c
  		Fprintf(stderr, "%s: hostname \"%.32s...\" is too long\n",
  		    prog, hostname);
  		exit(1);
-@@ -1382,7 +1430,7 @@
+@@ -1382,7 +1437,7 @@
  	Fprintf(stderr, "Version %s\n", version);
  	Fprintf(stderr,
  	    "Usage: %s [-dFInrvx] [-g gateway] [-i iface] [-f first_ttl]\n"

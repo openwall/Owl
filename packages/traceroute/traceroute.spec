@@ -1,9 +1,9 @@
-# $Id: Owl/packages/traceroute/traceroute.spec,v 1.1 2001/03/06 17:05:39 solar Exp $
+# $Id: Owl/packages/traceroute/traceroute.spec,v 1.2 2001/03/08 16:43:31 solar Exp $
 
 Summary: Traces the route taken by packets over a TCP/IP network.
 Name: traceroute
 Version: 1.4a12
-Release: 1owl
+Release: 2owl
 Copyright: BSD
 Group: Applications/Internet
 Source0: ftp://ftp.ee.lbl.gov/traceroute-%{version}.tar.gz
@@ -54,6 +54,11 @@ rm -rf $RPM_BUILD_ROOT
 /etc/control.d/facilities/traceroute
 
 %changelog
+* Thu Mar 08 2001 Solar Designer <solar@owl.openwall.com>
+- Use bind(2) for the actual source address restriction (but leave the loop
+such that the right source address is tried in case of multiple A records).
+- Disallow non-loopback destinations for the case of "-i lo" as well.
+
 * Tue Mar 06 2001 Solar Designer <solar@owl.openwall.com>
 - Reviewed many patches in other distributions, concluded that only some
 of the security fixes by Tim Robbins and Chris Evans are still relevant.
