@@ -211,13 +211,6 @@ items are in a separate non-public TODO list for just John.)
 Update to latest releases.
 
 
-	links.
-
-[PRIORITY: medium]
-[ASSIGNED: mci@]
-Update to latest release.
-
-
 	mailx.
 
 [PRIORITY: low]
@@ -379,9 +372,16 @@ Solve the DoS-against-itself on the temporary file.
 	perl.
 
 [PRIORITY: low]
-Complete the audit of temporary file handling by Perl's utilities and
-modules and develop any additional fixes which are needed.  Also fix
-the tests such that "make test" may be safely run during package builds.
+Re-implement temporary file handling in CGI.pm making use of File::Temp.
+
+[PRIORITY: low]
+Fix the tests (or the functions they test) such that "make test" will
+no longer use /tmp when $TMPDIR is set.  Currently, with Perl 5.8.3-owl1,
+3 of the tests fail when /tmp is unavailable, despite $TMPDIR being set.
+
+[PRIORITY: low]
+Determine which of the tests result in network accesses (is it just
+DNS lookups?) and disable those from within our perl.spec.
 
 
 	popa3d, scanlogd.
@@ -550,4 +550,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.33 2004/01/20 02:36:22 solar Exp $
+$Id: Owl/doc/TODO,v 1.34 2004/01/26 02:12:00 solar Exp $
