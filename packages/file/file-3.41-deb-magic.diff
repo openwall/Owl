@@ -49,7 +49,7 @@
  # msx: file(1) magic for MSX game cartridge dumps
 -0 beshort 0x4142 MSX game cartridge dump 
 +# Too simple - MPi
-+#0 beshort 0x4142 MSX game cartridge dump 
++#0 beshort 0x4142 MSX game cartridge dump
 --- file-3.41/Magdir/debian-additions.orig	Wed Mar  5 02:02:47 2003
 +++ file-3.41/Magdir/debian-additions	Wed Mar  5 02:02:47 2003
 @@ -0,0 +1,520 @@
@@ -464,7 +464,7 @@
 +
 +# Variety of PalmOS document types
 +# Michael-John Turner <mj@debian.org>
-+# Thanks to Hasan Umit Ezerce <humit@tr-net.net.tr> for his DocType 
++# Thanks to Hasan Umit Ezerce <humit@tr-net.net.tr> for his DocType
 +60		string	BVokBDIC			BDicty PalmOS document
 +>0    string                  >\0             "%s"
 +
@@ -942,9 +942,9 @@
 ->69	string		scbk		(Scrapbook)
 ->69	string		ttxt		(SimpleText)
 ->69	string		ufox		(Foreign File Access)
-+# 
++#
 +# >65	string		x		\b, type "%4.4s"
-+# 
++#
 +# >65	string		8BIM		(PhotoShop)
 +# >65	string		ALB3		(PageMaker 3)
 +# >65	string		ALB4		(PageMaker 4)
@@ -996,12 +996,12 @@
 +# >65	string		shlb		(shared library)
 +# >65	string		ttro		(SimpleText read-only)
 +# >65	string		zsys		(system file)
-+# 
++#
 +# >69	string		x		\b, creator "%4.4s"
-+# 
++#
 +# # Somewhere, Apple has a repository of registered Creator IDs.  These are
 +# # just the ones that I happened to have files from and was able to identify.
-+# 
++#
 +# >69	string		8BIM		(Adobe Photoshop)
 +# >69	string		ALD3		(PageMaker 3)
 +# >69	string		ALD4		(PageMaker 4)
