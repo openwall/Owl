@@ -4,6 +4,7 @@ Solar Designer <solar@owl.openwall.com>
 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 Michail Litvak <mci@owl.openwall.com>
 Rafal Wojtczuk <nergal@owl.openwall.com>
+Jarno Huuskonen <jhuuskon@owl.openwall.com>
 
 Französische Übersetzung:
 
@@ -20,4 +21,4 @@ Gremlin from Kremlin <gremlin@owl.openwall.com>
 Das Virtual Unix Project hat die erste Unterstützung für Owl
 gespendet.
 
-$Id: Owl/doc/de/CREDITS,v 1.4 2002/09/21 12:05:19 schmidt Exp $
+$Id: Owl/doc/de/CREDITS,v 1.5 2003/01/20 13:06:14 solar Exp $
