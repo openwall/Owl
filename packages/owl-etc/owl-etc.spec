@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.51 2003/09/09 07:27:28 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.52 2003/09/14 13:05:33 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
@@ -30,7 +30,7 @@ BuildRequires: fileutils >= 4.0.27, rpm >= 3.0.6-owl8
 BuildArchitectures: noarch
 BuildRoot: /override/%{name}-%{version}
 
-%define shadow_initial_sha1 857c0fc514f6e6e81b97a7e18461e0ac5a81e00f
+%define shadow_initial_sha1 f6a26fb5f102aff1934c7a9e1ef4b3e0aae49857
 
 %description
 Initial set of configuration files to be placed into /etc.
@@ -160,7 +160,7 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 
 %changelog
 * Tue Sep 09 2003 Solar Designer <solar@owl.openwall.com> 0.28-owl1
-- dhcpd user/group.
+- dhcp user/group.
 
 * Thu May 29 2003 Solar Designer <solar@owl.openwall.com> 0.27-owl1
 - tcb is now the default and automatic conversion to it is attempted.
