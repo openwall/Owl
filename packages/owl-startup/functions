@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-startup/functions,v 1.6 2001/11/05 11:01:24 solar Exp $
+# $Id: Owl/packages/owl-startup/functions,v 1.7 2002/09/09 10:49:35 solar Exp $
 #
 # Functions defined in this file are used by many /etc/rc.d/init.d scripts;
 # they offer some limited Red Hat compatibility.
@@ -81,6 +81,10 @@ function daemon()
 # from rc.sysinit).
 	umask 077
 	ulimit -Sc 0
+
+# Don't export these because they may be invalid under another UID and the
+# directories may be gone while the daemon is still running.
+	export -n HOME TMP TMPDIR
 
 # Actually start the daemon.
 	FLAGS="--start --exec $WHICH"

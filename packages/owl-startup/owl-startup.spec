@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.30 2002/08/22 01:40:00 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.31 2002/09/09 10:49:35 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.15
+Version: 0.16
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -146,6 +146,11 @@ fi
 %doc redhat
 
 %changelog
+* Mon Sep 09 2002 Solar Designer <solar@owl.openwall.com>
+- Don't export $HOME, $TMP, and $TMPDIR into daemons because they may be
+invalid under another UID and the directories may be gone while a daemon
+is still running.
+
 * Thu Aug 22 2002 Solar Designer <solar@owl.openwall.com>
 - Pass -p to the invocation of sulogin used in single user mode (rather
 than on emergency when root fs may not be mounted read/write) such that
