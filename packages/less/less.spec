@@ -1,9 +1,9 @@
-# $Id: Owl/packages/less/less.spec,v 1.1 2000/08/09 00:51:27 kad Exp $
+# $Id: Owl/packages/less/less.spec,v 1.2 2000/08/23 15:20:25 kad Exp $
 
 Summary: A text file browser similar to more, but better.
 Name: 		less
 Version: 	358
-Release: 	1owl
+Release: 	2owl
 License: 	GPL
 Group: 		Applications/Text
 Source: 	ftp://ftp.gnu.org/pub/gnu/less/%{name}-%{version}.tar.gz
@@ -49,6 +49,9 @@ install -c -m 755 %{SOURCE3} $RPM_BUILD_ROOT/etc/profile.d
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Wed Aug 23 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- lesspipe fixes
+
 * Sun Aug  6 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import spec from RH
 - fix URL
