@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dialog/dialog.spec,v 1.8 2002/01/24 17:31:28 solar Exp $
+# $Id: Owl/packages/dialog/dialog.spec,v 1.9 2002/01/24 17:35:34 solar Exp $
 
 Summary: A utility for creating TTY dialog boxes.
 Name: dialog
@@ -42,6 +42,8 @@ The following types of boxes are at your disposal:
 %patch1 -p1
 %patch2 -p1
 
+%{expand:%%define optflags %optflags -Wall}
+
 %build
 %configure --enable-nls
 make
@@ -63,6 +65,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
+- Build with -Wall (no warnings).
 
 * Sun Jun 13 2001 Michail Litvak <mci@owl.openwall.com>
 - patch to fix bug with fselect mouse lock-up
