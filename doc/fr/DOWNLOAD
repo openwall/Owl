@@ -4,8 +4,8 @@ http://www.openwall.com/Owl/
 
 Owl peut être téléchargé depuis les miroirs officiels suivants :
 
-ftp://ftp1.ru.openwall.com/pub/Owl/	(Russie, DataForce ISP)
-ftp://ftp2.ru.openwall.com/pub/Owl/	(Russie, Caravan ISP)
+ftp://ftp1.ru.openwall.com/pub/Owl/	(Russie)
+ftp://ftp2.ru.openwall.com/pub/Owl/	(Russie)
 ftp://ftp.pl.openwall.com/pub/Owl/	(Pologne)
 ftp://ftp.ua.openwall.com/pub/Owl/	(Ukraine)
 ftp://ftp.cz.openwall.com/pub/Owl/	(République Tchèque)
@@ -40,4 +40,4 @@ depuis les sources, vous aurez besoin des deux arbres CVS et sources.
 Plus de documentations (incluant BUILD et INSTALL) sont accessibles dans
 l'arbre CVS, dans Owl/doc/.
 
-$Id: Owl/doc/fr/DOWNLOAD,v 1.6 2002/08/02 20:23:41 solar Exp $
+$Id: Owl/doc/fr/DOWNLOAD,v 1.7 2002/09/03 23:57:34 solar Exp $
