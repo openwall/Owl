@@ -1,9 +1,9 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.18 2002/09/28 07:03:28 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.19 2002/10/28 16:32:08 solar Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
 Version: 2.3.9
-Release: owl1
+Release: owl2
 License: BSD with minor restrictions
 Group: System Environment/Daemons
 URL: http://www.xinetd.org
@@ -45,7 +45,7 @@ limits on the number of servers that can be started, among other things.
 
 %build
 export ac_cv_header_DNSServiceDiscovery_DNSServiceDiscovery_h=no \
-%configure --with-libwrap
+%configure --with-loadavg --with-libwrap
 make
 
 %install
@@ -104,6 +104,9 @@ fi
 %{_mandir}/*/*
 
 %changelog
+* Mon Oct 28 2002 Solar Designer <solar@owl.openwall.com>
+- Build with load averages support.
+
 * Sat Sep 28 2002 Solar Designer <solar@owl.openwall.com>
 - Updated to 2.3.9, dropping the patch (included).
 
