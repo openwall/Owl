@@ -1,0 +1,105 @@
+--- screen-3.9.10/configure.in.orig	Thu May 17 20:00:19 2001
++++ screen-3.9.10/configure.in	Mon Nov 12 00:56:43 2001
+@@ -305,7 +305,7 @@
+ #define S_IFIFO 0010000
+ #endif
+ 
+-char *fin = "/tmp/conftest$$";
++char *fin = "conftest$$";
+ 
+ main()
+ {
+@@ -351,7 +351,7 @@
+ }
+ ], AC_NOTE(- your fifos are usable) fifo=1,
+ AC_NOTE(- your fifos are not usable))
+-rm -f /tmp/conftest*
++rm -f conftest*
+ 
+ if test -n "$fifo"; then
+ AC_CHECKING(for broken fifo implementation)
+@@ -368,7 +368,7 @@
+ #define S_IFIFO 0010000
+ #endif
+ 
+-char *fin = "/tmp/conftest$$";
++char *fin = "conftest$$";
+ 
+ main()
+ {
+@@ -393,7 +393,7 @@
+ }
+ ], AC_NOTE(- your implementation is ok), 
+ AC_NOTE(- you have a broken implementation) AC_DEFINE(BROKEN_PIPE) fifobr=1)
+-rm -f /tmp/conftest*
++rm -f conftest*
+ fi
+ 
+ dnl
+@@ -409,7 +409,7 @@
+ #include <sys/un.h>
+ #include <fcntl.h>
+ 
+-char *son = "/tmp/conftest$$";
++char *son = "conftest$$";
+ 
+ main()
+ {
+@@ -446,7 +446,7 @@
+ }
+ ], AC_NOTE(- your sockets are usable) sock=1,
+ AC_NOTE(- your sockets are not usable))
+-rm -f /tmp/conftest*
++rm -f conftest*
+ 
+ if test -n "$sock"; then
+ AC_CHECKING(socket implementation)
+@@ -456,7 +456,7 @@
+ #include <sys/socket.h>
+ #include <sys/un.h>
+ 
+-char *son = "/tmp/conftest$$";
++char *son = "conftest$$";
+ 
+ main()
+ {
+@@ -478,7 +478,7 @@
+ ],AC_NOTE(- you are normal),
+ AC_NOTE(- unix domain sockets are not kept in the filesystem)
+ AC_DEFINE(SOCK_NOT_IN_FS) socknofs=1)
+-rm -f /tmp/conftest*
++rm -f conftest*
+ fi
+ 
+ 
+@@ -516,7 +516,7 @@
+ #include <sys/stat.h>
+ #include <fcntl.h>
+ 
+-char *nam = "/tmp/conftest$$";
++char *nam = "conftest$$";
+ 
+ #ifdef NAMEDPIPE
+ 
+@@ -1134,16 +1134,16 @@
+ }], AC_DEFINE(USEMEMCPY))
+ 
+ AC_MSG_CHECKING(long file names)
+-(echo 1 > /tmp/conftest9012345) 2>/dev/null
+-(echo 2 > /tmp/conftest9012346) 2>/dev/null
+-val=`cat /tmp/conftest9012345 2>/dev/null`
+-if test -f /tmp/conftest9012345 && test "$val" = 1; then
++(echo 1 > conftest9012345) 2>/dev/null
++(echo 2 > conftest9012346) 2>/dev/null
++val=`cat conftest9012345 2>/dev/null`
++if test -f conftest9012345 && test "$val" = 1; then
+ AC_MSG_RESULT(yes)
+ else
+ AC_MSG_RESULT(no)
+ AC_DEFINE(NAME_MAX, 14)
+ fi
+-rm -f /tmp/conftest*
++rm -f conftest*
+ 
+ AC_MSG_CHECKING(for vsprintf)
+ AC_TRY_LINK(,[vsprintf(0,0,0);], AC_MSG_RESULT(yes);AC_DEFINE(USEVARARGS), AC_MSG_RESULT(no))
