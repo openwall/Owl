@@ -1,4 +1,4 @@
-# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.6 2002/01/31 09:59:20 mci Exp $
+# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.7 2002/01/31 18:18:31 solar Exp $
 
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
@@ -32,7 +32,7 @@ PreReq: /sbin/install-info
 Requires: e2fsprogs
 
 %description devel
-E2fsprogs-devel contains the libraries and header files needed to
+e2fsprogs-devel contains the libraries and header files needed to
 develop second extended (ext2) filesystem-specific programs.
 
 %prep
@@ -44,7 +44,6 @@ develop second extended (ext2) filesystem-specific programs.
 
 %build
 autoconf
-#CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=/usr --enable-elf-shlibs
 %configure --enable-elf-shlibs
 make libs progs docs
 
@@ -58,7 +57,6 @@ make install install-libs DESTDIR="$RPM_BUILD_ROOT" \
 rm -rf $RPM_BUILD_ROOT
 
 %post -p /sbin/ldconfig
-
 %postun -p /sbin/ldconfig
 
 %post devel
