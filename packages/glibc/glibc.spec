@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.76 2005/01/18 14:25:18 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.77 2005/01/19 14:58:32 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -36,7 +36,7 @@ Patch0: glibc-2.3.3-cvs-200406170000-sched_setaffinity.diff
 # RH
 Patch100: glibc-2.3.3-200406101000-redhat.diff
 
-# Suse
+# SuSE
 Patch200: glibc-2.3.2-suse-resolv-response-length.diff
 
 # ALT
@@ -158,8 +158,8 @@ compatibility package with necessary binaries of old libdb libraries.
 # RH
 %patch100 -p1
 
-# Suse
-# avoid read buffer overruns in apps that using res_* calls
+# SuSE
+# avoid read buffer overruns in apps using res_* calls
 %patch200 -p1
 
 # ALT
@@ -263,7 +263,7 @@ mv localedata/SUPPORTED localedata/SUPPORTED.ALL
 %if %BUILD_LOCALES_UTF8
 ln -s SUPPORTED.ALL localedata/SUPPORTED
 %else
-grep -v "/UTF-8" localedata/SUPPORTED.ALL > localedata/SUPPORTED.NO-UTF-8
+fgrep -v /UTF-8 localedata/SUPPORTED.ALL > localedata/SUPPORTED.NO-UTF-8
 ln -s SUPPORTED.NO-UTF-8 localedata/SUPPORTED
 %endif # %BUILD_LOCALES_UTF8
 %endif # %BUILD_LOCALES
@@ -292,7 +292,7 @@ CFLAGS="-g %optflags -DNDEBUG=1 -finline-limit=2000" \
 %endif
 	--enable-add-ons=linuxthreads \
 	--without-cvs \
-	--without-__thread \
+	--without-__thread
 
 %__make MAKE="%__make -s"
 popd
@@ -323,7 +323,7 @@ mv %buildroot/lib/lib{memusage,pcprofile,SegFault}.so %buildroot%_libdir/
 
 # Create default ldconfig configuration file
 echo "include /etc/ld.so.conf.d/*.conf" > %buildroot/etc/ld.so.conf
-mkdir -m 0700 %buildroot/etc/ld.so.conf.d
+mkdir -m 700 %buildroot/etc/ld.so.conf.d
 
 # Truncate /etc/ld.so.cache, we'll create it in the %%post section
 echo -n > %buildroot/etc/ld.so.cache
@@ -342,42 +342,41 @@ for n in %_includedir %_libdir %_datadir; do
 done
 
 # primary filelist
-sed "s|^%buildroot||" < rpm.filelist.in |
-	sed "s| %buildroot| |" | \
-	grep -v '^%dir %_includedir$' | \
-	grep -v '^%dir %_libdir$' | \
-	grep -v '^%dir %_datadir$' | \
-	grep -v '^%dir %_mandir$' | \
-	grep -v '^%dir %_infodir$' | \
-	grep -v '^%config /etc/' | \
+sed 's|^\( *\)%buildroot|&|' < rpm.filelist.in |
+	fgrep -vx '%dir %_includedir' |
+	fgrep -vx '%dir %_libdir' |
+	fgrep -vx '%dir %_datadir' |
+	fgrep -vx '%dir %_mandir' |
+	fgrep -vx '%dir %_infodir' |
+	grep -v '^%config /etc/' |
 	sort > rpm.filelist.full
 
 %if %BUILD_PROFILE
 grep '%_libdir/lib.*_p\.a' < rpm.filelist.full > profile.filelist
 %endif
 
-egrep "(%_includedir)|(%_infodir)" < rpm.filelist.full |
-	grep -v "%_infodir/dir" |
-	grep -v "\.info-" |
+egrep '(%_includedir)|(%_infodir)' < rpm.filelist.full |
+	fgrep -v '%_infodir/dir' |
+	fgrep -v '.info-' |
 	sed -e 's|\.info.*$|&\*|' > devel.filelist
 
 grep -v '%_libdir/lib.*_p.a' rpm.filelist.full |
-	egrep -v "(%_includedir)|(%_infodir)" > rpm.filelist
+	egrep -v '(%_includedir)|(%_infodir)' > rpm.filelist
 
 grep '%_libdir/lib.*\.a' < rpm.filelist >> devel.filelist
 grep '%_libdir/.*\.o' < rpm.filelist >> devel.filelist
 grep '%_libdir/lib.*\.so' < rpm.filelist >> devel.filelist
-grep '%_mandir/man' < rpm.filelist | sed -e 's|$|\*|' >> devel.filelist
+fgrep '%_mandir/man' < rpm.filelist | sed -e 's|$|\*|' >> devel.filelist
 
 mv rpm.filelist rpm.filelist.full
 grep -v '%_libdir/lib.*\.a' < rpm.filelist.full |
-	grep -v '%_bindir/' |
-	grep -v '%_sbindir/' |
+	fgrep -v '%_bindir/' |
+	fgrep -v '%_sbindir/' |
 	grep -v '%_libdir/.*\.o' |
 	grep -v '%_libdir/lib.*\.so'|
-	grep -v '%_mandir/man' |
-	grep -v 'nscd' |
-	grep -v 'sln' > rpm.filelist
+	fgrep -v '%_mandir/man' |
+	fgrep -v 'nscd' |
+	fgrep -v 'sln' > rpm.filelist
 
 # Create empty %_libdir/gconv/gconv-modules.cache
 touch %buildroot%_libdir/gconv/gconv-modules.cache
