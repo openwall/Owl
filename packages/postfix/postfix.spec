@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.6 2000/12/24 09:17:11 solar Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.7 2001/03/18 16:34:51 solar Exp $
 
 Summary: Postfix mail system
 Name: postfix
@@ -7,7 +7,7 @@ Name: postfix
 %define original_version %{original_date}-%{original_pl}
 %define package_version %{original_date}_%{original_pl}
 Version: %{package_version}
-Release: 6owl
+Release: 7owl
 Copyright: IBM Public License
 Group: System Environment/Daemons
 Source0: ftp://ftp.sunet.se/pub/unix/mail/postfix/official/%{name}-%{original_version}.tar.gz
@@ -159,7 +159,7 @@ fi
 /usr/sbin/postfix check
 /sbin/chkconfig --add postfix
 test -f /var/run/postfix.restart && /usr/sbin/postfix start || :
-rm -f /var/run/crond.restart
+rm -f /var/run/postfix.restart
 
 %preun
 if [ $1 -eq 0 ]; then
@@ -176,6 +176,9 @@ fi
 %files -f filelist
 
 %changelog
+* Sun Mar 18 2001 Solar Designer <solar@owl.openwall.com>
+- Fixed a copy/paste bug in the restart script.
+
 * Sun Dec 24 2000 Solar Designer <solar@owl.openwall.com>
 - Obsoletes: sendmail-cf, sendmail-doc
 
