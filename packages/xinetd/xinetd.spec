@@ -1,11 +1,11 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.4 2000/12/15 03:59:50 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.5 2001/01/06 09:03:25 solar Exp $
 
 %define NEED_PYTHON 'no'
 
 Summary: 	A secure replacement for inetd.
 Name: 		xinetd
 Version: 	2.1.8.9pre13
-Release: 	3owl
+Release: 	4owl
 License: 	Distributable (BSD-like)
 Group: 		System Environment/Daemons
 Source: 	http://www.xinetd.org/xinetd-%{version}.tar.gz
@@ -111,6 +111,9 @@ fi
 %config /etc/xinetd.d/*
 
 %changelog
+* Sat Jan 06 2001 Solar Designer <solar@owl.openwall.com>
+- Corrected the use of "--" in the startup script.
+
 * Fri Dec 15 2000 Solar Designer <solar@owl.openwall.com>
 - Changed the default xinetd.conf.
 - Startup script cleanups.
