@@ -1,9 +1,9 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.28 2003/05/15 00:25:39 solar Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.29 2003/05/26 23:06:00 solar Exp $
 
 Summary: The Red Hat package management system.
 Name: rpm
 Version: 3.0.6
-Release: owl7
+Release: owl8
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-3.0.x/rpm-%{version}.tar.gz
@@ -16,10 +16,11 @@ Patch3: rpm-3.0.5-owl-closeall.diff
 Patch4: rpm-3.0.5-owl-includes.diff
 Patch5: rpm-3.0.5-owl-gendiff.diff
 Patch6: rpm-3.0.6-owl-buildhost.diff
-Patch7: rpm-3.0.6-owl-macros.diff
-Patch8: rpm-3.0.6-owl-popt-sgid.diff
-Patch9: rpm-3.0.6-alt-owl-autodeps-symbol-versioning.diff
-Patch10: rpm-3.0.6-alt-rpmio-gzclose.diff
+Patch7: rpm-3.0.6-owl-autoreq.diff
+Patch8: rpm-3.0.6-owl-macros.diff
+Patch9: rpm-3.0.6-owl-popt-sgid.diff
+Patch10: rpm-3.0.6-alt-owl-autodeps-symbol-versioning.diff
+Patch11: rpm-3.0.6-alt-rpmio-gzclose.diff
 Patch20: rpm-3.0.6-owl-rpmrc.diff
 PreReq: /sbin/ldconfig
 PreReq: gawk, fileutils, textutils, sh-utils, mktemp
@@ -93,6 +94,7 @@ EOF
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 %patch20 -p1
 
 %define _noVersionedDependencies 1
@@ -240,6 +242,9 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Tue May 27 2003 Solar Designer <solar@owl.openwall.com> 3.0.6-owl8
+- Obey AutoReq: false also for dependency on the shell with triggers.
+
 * Thu May 15 2003 Solar Designer <solar@owl.openwall.com> 3.0.6-owl7
 - Don't call gzerror() after gzclose(), patch from Dmitry V. Levin.
 
