@@ -1,11 +1,9 @@
-# $Id: Owl/packages/dev86/dev86.spec,v 1.3 2000/12/04 21:10:53 kad Exp $
-
-# http://www.cix.co.uk/~mayday/Dev86src-0.15.4.tar.gz
+# $Id: Owl/packages/dev86/dev86.spec,v 1.4 2000/12/04 23:19:45 kad Exp $
 
 Summary: 	A real mode 80x86 assembler and linker.
 Name: 		dev86
 Version: 	0.15.4
-Release: 	2owl
+Release: 	3owl
 Copyright: 	GPL
 Group: 		Development/Languages
 Source: 	http://www.cix.co.uk/~mayday/Dev86src-%{version}.tar.gz
@@ -42,7 +40,7 @@ quit
 %install
 rm -rf ${RPM_BUILD_ROOT}
 
-make DIST=${RPM_BUILD_ROOT} MANDIR=${RPM_BUILD_ROOT}/%{_mandir} install
+make DIST=${RPM_BUILD_ROOT} MANDIR=${RPM_BUILD_ROOT}/%{_mandir} ELKSSRC=. install
 
 install -m 755 -s ${RPM_BUILD_ROOT}/lib/elksemu ${RPM_BUILD_ROOT}/usr/bin
 rm -rf ${RPM_BUILD_ROOT}/lib/
@@ -86,6 +84,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %changelog
 * Mon Dec  4 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - optflags fix
+- symlink fix
 
 * Sun Nov 19 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - 0.15.4
