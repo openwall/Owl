@@ -424,15 +424,8 @@ package signature checking.
 
 	shadow-utils.
 
-[PRIORITY: medium]
-Optionally allow user and group names longer than 8 characters, even
-though these may not be fully supported by the rest of Owl and by
-third-party software.  This should be two settings in /etc/login.defs,
-with proper documentation in comments in that file and in the man page
-(including the cross reference for which commands are affected).
-There should still a be check for usernames exceeding
-sizeof(ut.ut_user) and some sane "hard" limits for both user and group
-names (or the shadow suite programs themselves would misbehave).
+[PRIORITY: low]
+Try to feed generic patches upstream.  Sync to the latest.
 
 
 	SimplePAMApps.
@@ -532,4 +525,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.46 2004/11/09 13:45:14 solar Exp $
+$Id: Owl/doc/TODO,v 1.47 2004/11/11 19:24:21 solar Exp $
