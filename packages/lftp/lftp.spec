@@ -1,4 +1,4 @@
-# $Id: Owl/packages/lftp/lftp.spec,v 1.8 2002/02/04 14:23:36 mci Exp $
+# $Id: Owl/packages/lftp/lftp.spec,v 1.9 2002/02/04 17:18:14 solar Exp $
 
 Summary: sophisticated command line file transfer program
 Name: lftp
@@ -13,11 +13,9 @@ Patch1: lftp-2.3.8-deb-doc.diff
 Patch2: lftp-2.3.8-deb-makefile.diff
 Patch3: lftp-2.3.8-deb-po.diff
 Patch4: lftp-2.3.8-owl-addr.diff
-Requires: readline >= 4.1
-Requires: openssl >= 0.9.5a-1owl
+Requires: readline >= 4.1, openssl >= 0.9.5a-1owl
 Prefix: %{_prefix}
-BuildPreReq: readline-devel
-BuildPreReq: openssl-devel
+BuildRequires: readline-devel, openssl-devel
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -55,13 +53,13 @@ tools for downloading files.
 unset LINGUAS || :
 
 %define __libtoolize true
-%configure --with-modules --with-ssl --mandir=%{_mandir}
+%configure --with-modules --with-ssl
 make CFLAGS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
 make install-strip DESTDIR=$RPM_BUILD_ROOT
-install -m 644 $RPM_SOURCE_DIR/lftpget.1 $RPM_BUILD_ROOT/usr/man/man1/
+install -m 644 $RPM_SOURCE_DIR/lftpget.1 ${RPM_BUILD_ROOT}%{_mandir}/man1/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
