@@ -207,6 +207,8 @@ function gen_netcfg
     local n txt
 
     # resolv.conf
+    [ -n "$DOMAIN" ] && echo -e "domain\t$DOMAIN" >> $f_resolv_conf
+
     if [ ${#DNS[*]} -gt 0 ]; then
 	for n in ${DNS[*]}; do
 	    [ -n "$n" ] && echo -e "nameserver\t$n" >> $f_resolv_conf

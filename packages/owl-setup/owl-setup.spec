@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.1 2000/12/28 01:00:06 solar Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.2 2001/06/05 21:38:11 mci Exp $
 
 Summary: Owl configuration tool
 Name: owl-setup
-Version: 0.1
+Version: 0.2
 release: 1owl
 Copyright: mostly public domain, passwdlg is under GPL
 Group: System Environment/Base
@@ -58,5 +58,8 @@ rm -rf $RPM_BUILD_ROOT
 %doc README
 
 %changelog
+* Wed Jun 06 2001 Michail Litvak <mci@owl.openwall.com>
+- write domain into resolv.conf
+
 * Tue Dec 26 2000 Michail Litvak <mci@owl.openwall.com>
 - Initial version.
