@@ -1,14 +1,14 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.7 2001/03/18 16:34:51 solar Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.8 2001/12/26 14:22:47 solar Exp $
 
-Summary: Postfix mail system
+Summary: Postfix mail system.
 Name: postfix
 %define original_date 19991231
-%define original_pl pl10
+%define original_pl pl13
 %define original_version %{original_date}-%{original_pl}
 %define package_version %{original_date}_%{original_pl}
 Version: %{package_version}
-Release: 7owl
-Copyright: IBM Public License
+Release: 1owl
+License: IBM Public License
 Group: System Environment/Daemons
 Source0: ftp://ftp.sunet.se/pub/unix/mail/postfix/official/%{name}-%{original_version}.tar.gz
 Source1: aliases
@@ -16,15 +16,16 @@ Source2: postfix.init
 Source3: postfix.control
 Patch0: postfix-19991231-pl10-owl-classless.diff
 Patch1: postfix-19991231-pl10-owl-sparse-hack.diff
-Patch2: postfix-19991231-pl10-owl-postfix-script.diff
-Patch10: postfix-19991231-pl10-owl-INSTALL.diff
-Patch11: postfix-19991231-pl10-owl-config.diff
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
-Provides: MTA smtpd smtpdaemon
-Conflicts: sendmail
-Obsoletes: sendmail-cf, sendmail-doc
+Patch2: postfix-19991231-pl13-snapshot-20011217-safe-opens.diff
+Patch10: postfix-19991231-pl13-owl-postfix-script.diff
+Patch20: postfix-19991231-pl10-owl-INSTALL.diff
+Patch21: postfix-19991231-pl10-owl-config.diff
+PreReq: /sbin/chkconfig, /dev/null, grep, shadow-utils
 Requires: owl-control >= 0.2, owl-control < 2.0
-Prereq: /sbin/chkconfig, /dev/null, grep, shadow-utils
+Conflicts: sendmail
+Provides: MTA, smtpd, smtpdaemon
+Obsoletes: sendmail-cf, sendmail-doc
+BuildRoot: /override/%{name}-%{version}
 
 %description
 Postfix is Wietse Venema's attempt to provide an alternative to the
@@ -38,7 +39,8 @@ compatible enough to not upset your users.
 %patch1 -p1
 %patch2 -p1
 %patch10 -p1
-%patch11 -p1
+%patch20 -p1
+%patch21 -p1
 
 %build
 make OPT="$RPM_OPT_FLAGS"
@@ -95,9 +97,6 @@ mkdir -p usr/lib
 ln -s /usr/sbin/sendmail usr/lib/sendmail
 
 chmod go-r usr/sbin/postdrop
-
-strip usr/{bin,sbin,libexec/postfix}/* || :
-gzip -9nf usr/man/man*/*
 
 popd
 
@@ -176,6 +175,16 @@ fi
 %files -f filelist
 
 %changelog
+* Wed Dec 26 2001 Solar Designer <solar@owl.openwall.com>
+- Additional postfix-script fail-closeness.
+
+* Sat Dec 22 2001 Solar Designer <solar@owl.openwall.com>
+- Hardening of the Postfix queue file permissions and access methods,
+in case someone compromises the postfix account.  The fixes are by
+Wietse Venema and have been back-ported from the 20011217 snapshot.
+Thanks to Michael Tokarev for his help in handling these issues.
+- Updated to 19991231-pl13.
+
 * Sun Mar 18 2001 Solar Designer <solar@owl.openwall.com>
 - Fixed a copy/paste bug in the restart script.
 

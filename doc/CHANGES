@@ -12,6 +12,15 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/12/22 -
+2001/12/26	Package: postfix
+Hardening of the Postfix queue file permissions and access methods, in
+case someone compromises the postfix account.  The fixes are by Wietse
+Venema and have been back-ported from the 20011217 snapshot.  Thanks
+to Michael Tokarev for his help in handling these issues.  At the same
+time, additional postfix-script fail-closeness fixes have been applied
+and the package has been updated to 19991231-pl13.
+
 2001/12/16	Package: vsftpd
 New package: a File Transfer Protocol (FTP) server.
 
@@ -512,4 +521,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.57 2001/12/16 04:19:52 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.58 2001/12/26 14:22:47 solar Exp $

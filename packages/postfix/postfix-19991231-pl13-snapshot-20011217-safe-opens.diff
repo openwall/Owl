@@ -1,0 +1,188 @@
+diff -ur postfix-19991231-pl13.orig/HISTORY postfix-19991231-pl13/HISTORY
+--- postfix-19991231-pl13.orig/HISTORY	Sun Dec 10 18:42:41 2000
++++ postfix-19991231-pl13/HISTORY	Sat Dec 22 03:49:29 2001
+@@ -3905,3 +3905,12 @@
+ 	Files:  qmgr/qmgr_message.c, qmgr/qmgr_deliver.c.  Problem
+ 	reported by David Schweikert (ee.ethz.ch) and Dallas
+ 	Wisehaupt (cynicism.com).
++
++20011217
++
++	Security: subtle hardening of the Postfix chroot jail,
++	Postfix queue file permissions and access methods, in case
++	someone compromises the postfix account.  Result of a
++	discussion with Michael Tokarev, who received his insights
++	from Solar Designer.  Files: master/master_wakeup.c,
++	util/fifo_trigger.c, postfix-script.
+diff -ur postfix-19991231-pl13.orig/conf/postfix-script-nosgid postfix-19991231-pl13/conf/postfix-script-nosgid
+--- postfix-19991231-pl13.orig/conf/postfix-script-nosgid	Fri Dec 17 22:12:22 1999
++++ postfix-19991231-pl13/conf/postfix-script-nosgid	Sat Dec 22 03:49:29 2001
+@@ -185,7 +185,6 @@
+ 		$WARN creating missing Postfix pid directory
+ 		mkdir pid || exit 1
+ 		chmod 755 pid
+-		chown $mail_owner pid
+ 	}
+ 	for dir in incoming active bounce defer deferred saved corrupt; do
+ 		test -d $dir || {
+diff -ur postfix-19991231-pl13.orig/conf/postfix-script-sgid postfix-19991231-pl13/conf/postfix-script-sgid
+--- postfix-19991231-pl13.orig/conf/postfix-script-sgid	Fri Dec 17 22:12:45 1999
++++ postfix-19991231-pl13/conf/postfix-script-sgid	Sat Dec 22 03:49:29 2001
+@@ -186,7 +186,6 @@
+ 		$WARN creating missing Postfix pid directory
+ 		mkdir pid || exit 1
+ 		chmod 755 pid
+-		chown $mail_owner pid
+ 	}
+ 	for dir in incoming active bounce defer deferred saved corrupt; do
+ 		test -d $dir || {
+diff -ur postfix-19991231-pl13.orig/master/Makefile.in postfix-19991231-pl13/master/Makefile.in
+--- postfix-19991231-pl13.orig/master/Makefile.in	Fri Dec  8 21:22:24 2000
++++ postfix-19991231-pl13/master/Makefile.in	Sat Dec 22 03:49:29 2001
+@@ -180,7 +180,10 @@
+ master_wakeup.o: ../include/msg.h
+ master_wakeup.o: ../include/trigger.h
+ master_wakeup.o: ../include/events.h
++master_wakeup.o: ../include/set_eugid.h
++master_wakeup.o: ../include/set_ugid.h
+ master_wakeup.o: ../include/mail_proto.h
++master_wakeup.o: ../include/mail_params.h
+ master_wakeup.o: ../include/vstream.h
+ master_wakeup.o: ../include/vbuf.h
+ master_wakeup.o: ../include/iostuff.h
+diff -ur postfix-19991231-pl13.orig/master/master_wakeup.c postfix-19991231-pl13/master/master_wakeup.c
+--- postfix-19991231-pl13.orig/master/master_wakeup.c	Mon Mar 22 05:00:08 1999
++++ postfix-19991231-pl13/master/master_wakeup.c	Sat Dec 22 04:20:52 2001
+@@ -58,10 +58,13 @@
+ #include <msg.h>
+ #include <trigger.h>
+ #include <events.h>
++#include <set_eugid.h>
++#include <set_ugid.h>
+ 
+ /* Global library. */
+ 
+ #include <mail_proto.h>			/* triggers */
++#include <mail_params.h>
+ 
+ /* Application-specific. */
+ 
+@@ -101,14 +104,35 @@
+ 	case MASTER_SERV_TYPE_UNIX:
+ 	    status = LOCAL_TRIGGER(serv->name, &wakeup, sizeof(wakeup), BRIEFLY);
+ 	    break;
++
++	    /*
++	     * If someone compromises the postfix account then this must not
++	     * overwrite files outside the chroot jail. Countermeasures:
++	     *
++	     * - Limit the damage by accessing the FIFO as postfix not root.
++	     *
++	     * - Have fifo_trigger() call safe_open() so we won't follow
++	     * arbitrary hard/symlinks to files in/outside the chroot jail.
++	     *
++	     * - All non-chroot postfix-related files must be root owned (or
++	     * postfix check complains).
++	     *
++	     * - The postfix user and group ID must not be shared with other
++	     * applications (says the INSTALL documentation).
++	     *
++	     * Result of a discussion with Michael Tokarev, who received his
++	     * insights from Solar Designer.
++	     */
+ 	case MASTER_SERV_TYPE_FIFO:
++	    set_eugid(var_owner_uid, var_owner_gid);
+ 	    status = fifo_trigger(serv->name, &wakeup, sizeof(wakeup), BRIEFLY);
++	    set_ugid(getuid(), getgid());
+ 	    break;
+ 	default:
+ 	    msg_panic("%s: unknown service type: %d", myname, serv->type);
+ 	}
+ 	if (status < 0)
+-	    msg_warn("%s: service %s: %m", myname, serv->name);
++	    msg_warn("%s: service %s: Failed", myname, serv->name);
+     }
+ 
+     /*
+diff -ur postfix-19991231-pl13.orig/util/Makefile.in postfix-19991231-pl13/util/Makefile.in
+--- postfix-19991231-pl13.orig/util/Makefile.in	Fri Dec  8 21:21:41 2000
++++ postfix-19991231-pl13/util/Makefile.in	Sat Dec 22 03:49:29 2001
+@@ -467,6 +467,7 @@
+ fifo_trigger.o: sys_defs.h
+ fifo_trigger.o: msg.h
+ fifo_trigger.o: iostuff.h
++fifo_trigger.o: safe_open.h
+ fifo_trigger.o: trigger.h
+ file_limit.o: file_limit.c
+ file_limit.o: sys_defs.h
+diff -ur postfix-19991231-pl13.orig/util/fifo_trigger.c postfix-19991231-pl13/util/fifo_trigger.c
+--- postfix-19991231-pl13.orig/util/fifo_trigger.c	Fri Dec 11 21:55:36 1998
++++ postfix-19991231-pl13/util/fifo_trigger.c	Sat Dec 22 04:16:32 2001
+@@ -49,6 +49,7 @@
+ 
+ #include <msg.h>
+ #include <iostuff.h>
++#include <safe_open.h>
+ #include <trigger.h>
+ 
+ /* fifo_trigger - wakeup fifo server */
+@@ -56,18 +57,27 @@
+ int     fifo_trigger(const char *service, const char *buf, int len, int timeout)
+ {
+     char   *myname = "fifo_trigger";
++    VSTRING *why;
++    VSTREAM *fp;
+     int     fd;
+ 
+     /*
+      * Write the request to the service fifo. According to POSIX, the open
+      * shall always return immediately, and shall return an error when no
+      * process is reading from the FIFO.
++     * 
++     * Use safe_open() so that we don't follow arbitrary symlinks.
+      */
+-    if ((fd = open(service, O_WRONLY | O_NONBLOCK, 0)) < 0) {
++    why = vstring_alloc(1);
++    if ((fp = safe_open(service, O_WRONLY | O_NONBLOCK, 0,
++			-1, -1, why)) == 0) {
+ 	if (msg_verbose)
+-	    msg_info("%s: open %s: %m", myname, service);
++	    msg_info("%s: open %s: %s", myname, service, vstring_str(why));
++	vstring_free(why);
+ 	return (-1);
+     }
++    vstring_free(why);
++    fd = vstream_fileno(fp);
+ 
+     /*
+      * Write the request...
+@@ -80,7 +90,7 @@
+     /*
+      * Disconnect.
+      */
+-    if (close(fd))
++    if (vstream_fclose(fp))
+ 	if (msg_verbose)
+ 	    msg_warn("%s: close %s: %m", myname, service);
+     return (0);
+diff -ur postfix-19991231-pl13.orig/util/safe_open.c postfix-19991231-pl13/util/safe_open.c
+--- postfix-19991231-pl13.orig/util/safe_open.c	Fri Dec 11 21:55:39 1998
++++ postfix-19991231-pl13/util/safe_open.c	Sat Dec 22 04:14:53 2001
+@@ -2,7 +2,7 @@
+ /* NAME
+ /*	safe_open 3
+ /* SUMMARY
+-/*	safely open or create regular file
++/*	safely open or create regular file or a FIFO
+ /* SYNOPSIS
+ /*	#include <safe_open.h>
+ /*
+@@ -95,7 +95,7 @@
+      */
+     if (fstat(vstream_fileno(fp), &fstat_st) < 0) {
+ 	vstring_sprintf(why, "file %s: bad status: %m", path);
+-    } else if (S_ISREG(fstat_st.st_mode) == 0) {
++    } else if (!S_ISREG(fstat_st.st_mode) && !S_ISFIFO(fstat_st.st_mode)) {
+ 	vstring_sprintf(why, "file %s: must be a regular file", path);
+     } else if (fstat_st.st_nlink != 1) {
+ 	vstring_sprintf(why, "file %s: must have one hard link", path);
