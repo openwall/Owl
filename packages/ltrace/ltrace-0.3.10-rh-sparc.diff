@@ -1,6 +1,6 @@
---- ltrace-0.3.8/debian/copyright.jj	Mon Aug 30 14:09:49 1999
-+++ ltrace-0.3.8/debian/copyright	Thu Nov  4 21:29:27 1999
-@@ -9,6 +9,7 @@ Copyright (C) 1997-1999 Juan Cespedes <c
+--- ltrace-0.3.10/debian/copyright.orig	Mon Aug 30 15:09:49 1999
++++ ltrace-0.3.10/debian/copyright	Sun Jan 14 14:15:45 2001
+@@ -9,6 +9,7 @@
  ARMLinux port: Copyright (C) 1998 Pat Beirne <pbeirne@home.com>
  m68k port: Copyright (C) 1998 Roman Hodek <Roman.Hodek@informatik.uni-erlangen.de>
  Misc fixes: Copyright (C) 1999 Morten Eriksen <mortene@sim.no>
@@ -8,9 +8,9 @@
  
  
  Autoconf stuff: Copyright 1992-1996 Free Software Foundation, Inc.
---- ltrace-0.3.8/sysdeps/linux-gnu/i386/breakpoint.c.jj	Fri Sep 25 12:13:56 1998
-+++ ltrace-0.3.8/sysdeps/linux-gnu/i386/breakpoint.c	Thu Nov  4 21:28:21 1999
-@@ -25,3 +25,8 @@ void delete_breakpoint(pid_t pid, struct
+--- ltrace-0.3.10/sysdeps/linux-gnu/i386/breakpoint.c.orig	Fri Sep 25 13:13:56 1998
++++ ltrace-0.3.10/sysdeps/linux-gnu/i386/breakpoint.c	Sun Jan 14 14:15:45 2001
+@@ -25,3 +25,8 @@
  	a |= sbp->orig_value[0];
  	ptrace(PTRACE_POKETEXT, pid, sbp->addr, a);
  }
@@ -19,13 +19,21 @@
 +{
 +	return sbp->addr == addr;
 +}
---- ltrace-0.3.8/sysdeps/linux-gnu/i386/ptrace.h.jj	Thu Nov  4 21:28:21 1999
-+++ ltrace-0.3.8/sysdeps/linux-gnu/i386/ptrace.h	Thu Nov  4 21:28:21 1999
+--- ltrace-0.3.10/sysdeps/linux-gnu/i386/ptrace.h.orig	Sun Jan 14 14:15:45 2001
++++ ltrace-0.3.10/sysdeps/linux-gnu/i386/ptrace.h	Sun Jan 14 14:15:45 2001
 @@ -0,0 +1 @@
 +#include <sys/ptrace.h>
---- ltrace-0.3.8/sysdeps/linux-gnu/i386/regs.c.jj	Fri Sep 25 12:53:28 1998
-+++ ltrace-0.3.8/sysdeps/linux-gnu/i386/regs.c	Thu Nov  4 21:28:21 1999
-@@ -14,18 +14,18 @@
+--- ltrace-0.3.10/sysdeps/linux-gnu/i386/regs.c.orig	Fri Sep 25 13:53:28 1998
++++ ltrace-0.3.10/sysdeps/linux-gnu/i386/regs.c	Sun Jan 14 14:18:09 2001
+@@ -5,6 +5,7 @@
+ #include <sys/types.h>
+ #include <sys/ptrace.h>
+ #include <asm/ptrace.h>
++#include "ltrace.h"
+ 
+ #if (!defined(PTRACE_PEEKUSER) && defined(PTRACE_PEEKUSR))
+ # define PTRACE_PEEKUSER PTRACE_PEEKUSR
+@@ -14,18 +15,18 @@
  # define PTRACE_POKEUSER PTRACE_POKEUSR
  #endif
  
@@ -50,8 +58,8 @@
 +	return (void *)ptrace(PTRACE_PEEKTEXT, proc->pid, stack_pointer, 0);
  }
  
---- ltrace-0.3.8/sysdeps/linux-gnu/i386/trace.c.jj	Fri Sep 25 12:14:30 1998
-+++ ltrace-0.3.8/sysdeps/linux-gnu/i386/trace.c	Thu Nov  4 21:28:21 1999
+--- ltrace-0.3.10/sysdeps/linux-gnu/i386/trace.c.orig	Fri Sep 25 13:14:30 1998
++++ ltrace-0.3.10/sysdeps/linux-gnu/i386/trace.c	Sun Jan 14 14:18:36 2001
 @@ -18,6 +18,10 @@
  # define PTRACE_POKEUSER PTRACE_POKEUSR
  #endif
@@ -63,7 +71,7 @@
  /* Returns 1 if syscall, 2 if sysret, 0 otherwise.
   */
  int syscall_p(struct process * proc, int status, int * sysnum)
-@@ -47,15 +51,22 @@ void continue_after_breakpoint(struct pr
+@@ -47,15 +51,22 @@
  	}
  }
  
@@ -88,11 +96,11 @@
  #if 0
  		switch(arg_num) {
  			case 0:	return ptrace(PTRACE_PEEKUSER, proc->pid, 4*EBX, 0);
-@@ -78,17 +89,21 @@ long gimme_arg(enum tof type, struct pro
+@@ -78,17 +89,21 @@
  	return 0;
  }
  
-+void save_register_args(struct process * proc)
++void save_register_args(enum tof type, struct process * proc)
 +{
 +}
 +
@@ -114,9 +122,9 @@
  			} else {
  				*(char *)(laddr+offset+i) = '\0';
  				return 0;
---- ltrace-0.3.8/sysdeps/linux-gnu/arm/breakpoint.c.jj	Fri Sep 25 12:14:11 1998
-+++ ltrace-0.3.8/sysdeps/linux-gnu/arm/breakpoint.c	Thu Nov  4 21:28:21 1999
-@@ -25,3 +25,8 @@ void delete_breakpoint(pid_t pid, struct
+--- ltrace-0.3.10/sysdeps/linux-gnu/arm/breakpoint.c.orig	Fri Sep 25 13:14:11 1998
++++ ltrace-0.3.10/sysdeps/linux-gnu/arm/breakpoint.c	Sun Jan 14 14:15:45 2001
+@@ -25,3 +25,8 @@
  	a = sbp->orig_value[0] + (sbp->orig_value[1]<<8) + (sbp->orig_value[2]<<16) + (sbp->orig_value[3]<<24);
  	ptrace(PTRACE_POKETEXT, pid, sbp->addr, a);
  }
@@ -125,12 +133,12 @@
 +{
 +	return sbp->addr == addr;
 +}
---- ltrace-0.3.8/sysdeps/linux-gnu/arm/ptrace.h.jj	Thu Nov  4 21:28:21 1999
-+++ ltrace-0.3.8/sysdeps/linux-gnu/arm/ptrace.h	Thu Nov  4 21:28:21 1999
+--- ltrace-0.3.10/sysdeps/linux-gnu/arm/ptrace.h.orig	Sun Jan 14 14:15:45 2001
++++ ltrace-0.3.10/sysdeps/linux-gnu/arm/ptrace.h	Sun Jan 14 14:15:45 2001
 @@ -0,0 +1 @@
 +#include <sys/ptrace.h>
---- ltrace-0.3.8/sysdeps/linux-gnu/arm/regs.c.jj	Fri Sep 25 12:54:24 1998
-+++ ltrace-0.3.8/sysdeps/linux-gnu/arm/regs.c	Thu Nov  4 21:28:21 1999
+--- ltrace-0.3.10/sysdeps/linux-gnu/arm/regs.c.orig	Fri Sep 25 13:54:24 1998
++++ ltrace-0.3.10/sysdeps/linux-gnu/arm/regs.c	Sun Jan 14 14:15:45 2001
 @@ -18,20 +18,20 @@
  #define off_lr 56
  #define off_sp 52
@@ -158,8 +166,8 @@
 +	return (void *)ptrace(PTRACE_PEEKUSER, proc->pid, off_lr, 0);
  }
  
---- ltrace-0.3.8/sysdeps/linux-gnu/arm/trace.c.jj	Fri Sep 25 12:14:48 1998
-+++ ltrace-0.3.8/sysdeps/linux-gnu/arm/trace.c	Thu Nov  4 21:28:21 1999
+--- ltrace-0.3.10/sysdeps/linux-gnu/arm/trace.c.orig	Fri Sep 25 13:14:48 1998
++++ ltrace-0.3.10/sysdeps/linux-gnu/arm/trace.c	Sun Jan 14 14:15:45 2001
 @@ -26,6 +26,10 @@
  #define off_ip 48
  #define off_pc 60
@@ -171,7 +179,7 @@
  /* Returns 1 if syscall, 2 if sysret, 0 otherwise.
   */
  int syscall_p(struct process * proc, int status, int * sysnum)
-@@ -58,6 +62,13 @@ void continue_after_breakpoint(struct pr
+@@ -58,6 +62,13 @@
  	}
  }
  
@@ -185,7 +193,7 @@
  long gimme_arg(enum tof type, struct process * proc, int arg_num)
  {
  	if (arg_num==-1) {		/* return value */
-@@ -65,13 +76,13 @@ long gimme_arg(enum tof type, struct pro
+@@ -65,13 +76,13 @@
  	}
  
  	/* deal with the ARM calling conventions */
@@ -201,7 +209,7 @@
  		if (arg_num<5) {
  			return ptrace(PTRACE_PEEKUSER, proc->pid, 4*arg_num, 0);
  		} else {
-@@ -85,17 +96,21 @@ long gimme_arg(enum tof type, struct pro
+@@ -85,17 +96,21 @@
  	return 0;
  }
  
@@ -227,9 +235,9 @@
  			} else {
  				*(char *)(laddr+offset+i) = '\0';
  				return 0;
---- ltrace-0.3.8/sysdeps/linux-gnu/m68k/breakpoint.c.jj	Fri Sep 25 14:01:25 1998
-+++ ltrace-0.3.8/sysdeps/linux-gnu/m68k/breakpoint.c	Thu Nov  4 21:28:21 1999
-@@ -26,3 +26,8 @@ void delete_breakpoint(pid_t pid, struct
+--- ltrace-0.3.10/sysdeps/linux-gnu/m68k/breakpoint.c.orig	Fri Sep 25 15:01:25 1998
++++ ltrace-0.3.10/sysdeps/linux-gnu/m68k/breakpoint.c	Sun Jan 14 14:15:45 2001
+@@ -26,3 +26,8 @@
  	a |= (sbp->orig_value[0] << 24) | (sbp->orig_value[1] << 16);
  	ptrace(PTRACE_POKETEXT, pid, sbp->addr, a);
  }
@@ -238,12 +246,12 @@
 +{
 +	return sbp->addr == addr;
 +}
---- ltrace-0.3.8/sysdeps/linux-gnu/m68k/ptrace.h.jj	Thu Nov  4 21:28:21 1999
-+++ ltrace-0.3.8/sysdeps/linux-gnu/m68k/ptrace.h	Thu Nov  4 21:28:21 1999
+--- ltrace-0.3.10/sysdeps/linux-gnu/m68k/ptrace.h.orig	Sun Jan 14 14:15:45 2001
++++ ltrace-0.3.10/sysdeps/linux-gnu/m68k/ptrace.h	Sun Jan 14 14:15:45 2001
 @@ -0,0 +1 @@
 +#include <sys/ptrace.h>
---- ltrace-0.3.8/sysdeps/linux-gnu/m68k/regs.c.jj	Fri Sep 25 14:01:59 1998
-+++ ltrace-0.3.8/sysdeps/linux-gnu/m68k/regs.c	Thu Nov  4 21:28:21 1999
+--- ltrace-0.3.10/sysdeps/linux-gnu/m68k/regs.c.orig	Fri Sep 25 15:01:59 1998
++++ ltrace-0.3.10/sysdeps/linux-gnu/m68k/regs.c	Sun Jan 14 14:15:45 2001
 @@ -14,18 +14,18 @@
  # define PTRACE_POKEUSER PTRACE_POKEUSR
  #endif
@@ -269,8 +277,8 @@
 +	return (void *)ptrace(PTRACE_PEEKTEXT, proc->pid, stack_pointer, 0);
  }
  
---- ltrace-0.3.8/sysdeps/linux-gnu/m68k/trace.c.jj	Fri Sep 25 14:02:24 1998
-+++ ltrace-0.3.8/sysdeps/linux-gnu/m68k/trace.c	Thu Nov  4 21:28:21 1999
+--- ltrace-0.3.10/sysdeps/linux-gnu/m68k/trace.c.orig	Fri Sep 25 15:02:24 1998
++++ ltrace-0.3.10/sysdeps/linux-gnu/m68k/trace.c	Sun Jan 14 14:15:45 2001
 @@ -18,6 +18,10 @@
  # define PTRACE_POKEUSER PTRACE_POKEUSR
  #endif
@@ -282,7 +290,7 @@
  /* Returns 1 if syscall, 2 if sysret, 0 otherwise.
   */
  int syscall_p(struct process * proc, int status, int * sysnum)
-@@ -48,15 +52,22 @@ void continue_after_breakpoint(struct pr
+@@ -48,15 +52,22 @@
  	}
  }
  
@@ -307,7 +315,7 @@
  #if 0
  		switch(arg_num) {
  			case 0:	return ptrace(PTRACE_PEEKUSER, proc->pid, 4*PT_D1, 0);
-@@ -80,17 +91,21 @@ long gimme_arg(enum tof type, struct pro
+@@ -80,17 +91,21 @@
  	return 0;
  }
  
@@ -333,8 +341,8 @@
  			} else {
  				*(char *)(laddr+offset+i) = '\0';
  				return 0;
---- ltrace-0.3.8/sysdeps/linux-gnu/Makefile.jj	Thu Sep 24 13:38:46 1998
-+++ ltrace-0.3.8/sysdeps/linux-gnu/Makefile	Thu Nov  4 21:28:21 1999
+--- ltrace-0.3.10/sysdeps/linux-gnu/Makefile.orig	Thu Sep 24 14:38:46 1998
++++ ltrace-0.3.10/sysdeps/linux-gnu/Makefile	Sun Jan 14 14:15:45 2001
 @@ -1,6 +1,6 @@
  ARCH	:=	$(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ -e s/arm.*/arm/ -e s/sa110/arm/)
  
@@ -343,8 +351,8 @@
  
  OBJ	=	trace.o proc.o
  
---- ltrace-0.3.8/sysdeps/linux-gnu/sparc/Makefile.jj	Thu Nov  4 21:28:21 1999
-+++ ltrace-0.3.8/sysdeps/linux-gnu/sparc/Makefile	Thu Nov  4 21:28:21 1999
+--- ltrace-0.3.10/sysdeps/linux-gnu/sparc/Makefile.orig	Sun Jan 14 14:15:45 2001
++++ ltrace-0.3.10/sysdeps/linux-gnu/sparc/Makefile	Sun Jan 14 14:15:45 2001
 @@ -0,0 +1,9 @@
 +OBJ	=	breakpoint.o regs.o trace.o
 +
@@ -355,15 +363,15 @@
 +
 +clean:
 +		$(RM) $(OBJ) arch.o
---- ltrace-0.3.8/sysdeps/linux-gnu/sparc/arch.h.jj	Thu Nov  4 21:28:21 1999
-+++ ltrace-0.3.8/sysdeps/linux-gnu/sparc/arch.h	Thu Nov  4 21:28:21 1999
+--- ltrace-0.3.10/sysdeps/linux-gnu/sparc/arch.h.orig	Sun Jan 14 14:15:45 2001
++++ ltrace-0.3.10/sysdeps/linux-gnu/sparc/arch.h	Sun Jan 14 14:15:45 2001
 @@ -0,0 +1,4 @@
 +#define BREAKPOINT_VALUE {0x91, 0xd0, 0x20, 0x01}
 +#define BREAKPOINT_LENGTH 4
 +#define DECR_PC_AFTER_BREAK 0
 +
---- ltrace-0.3.8/sysdeps/linux-gnu/sparc/breakpoint.c.jj	Thu Nov  4 21:28:21 1999
-+++ ltrace-0.3.8/sysdeps/linux-gnu/sparc/breakpoint.c	Thu Nov  4 21:28:21 1999
+--- ltrace-0.3.10/sysdeps/linux-gnu/sparc/breakpoint.c.orig	Sun Jan 14 14:15:45 2001
++++ ltrace-0.3.10/sysdeps/linux-gnu/sparc/breakpoint.c	Sun Jan 14 14:15:45 2001
 @@ -0,0 +1,34 @@
 +#if HAVE_CONFIG_H
 +#include "config.h"
@@ -399,8 +407,8 @@
 +{
 +	return (unsigned long)sbp->addr + (sbp->plt ? 4 : 0) == (unsigned long)addr;
 +}
---- ltrace-0.3.8/sysdeps/linux-gnu/sparc/ptrace.h.jj	Thu Nov  4 21:28:21 1999
-+++ ltrace-0.3.8/sysdeps/linux-gnu/sparc/ptrace.h	Thu Nov  4 21:28:21 1999
+--- ltrace-0.3.10/sysdeps/linux-gnu/sparc/ptrace.h.orig	Sun Jan 14 14:15:45 2001
++++ ltrace-0.3.10/sysdeps/linux-gnu/sparc/ptrace.h	Sun Jan 14 14:15:45 2001
 @@ -0,0 +1,22 @@
 +#undef PTRACE_GETREGS
 +#undef PTRACE_SETREGS
@@ -424,8 +432,8 @@
 +	unsigned int func_arg[6];
 +	unsigned int sysc_arg[6];
 +} proc_archdep;
---- ltrace-0.3.8/sysdeps/linux-gnu/sparc/regs.c.jj	Thu Nov  4 21:28:21 1999
-+++ ltrace-0.3.8/sysdeps/linux-gnu/sparc/regs.c	Thu Nov  4 21:28:21 1999
+--- ltrace-0.3.10/sysdeps/linux-gnu/sparc/regs.c.orig	Sun Jan 14 14:15:45 2001
++++ ltrace-0.3.10/sysdeps/linux-gnu/sparc/regs.c	Sun Jan 14 14:15:45 2001
 @@ -0,0 +1,36 @@
 +#if HAVE_CONFIG_H
 +#include "config.h"
@@ -463,8 +471,8 @@
 +		return (void *)a->regs.r_o7 + 12;
 +	return (void *)a->regs.r_o7 + 8;
 +}
---- ltrace-0.3.8/sysdeps/linux-gnu/sparc/signalent.h.jj	Thu Nov  4 21:28:21 1999
-+++ ltrace-0.3.8/sysdeps/linux-gnu/sparc/signalent.h	Thu Nov  4 21:28:21 1999
+--- ltrace-0.3.10/sysdeps/linux-gnu/sparc/signalent.h.orig	Sun Jan 14 14:15:45 2001
++++ ltrace-0.3.10/sysdeps/linux-gnu/sparc/signalent.h	Sun Jan 14 14:15:45 2001
 @@ -0,0 +1,32 @@
 +	"SIG_0",           /* 0 */
 +	"SIGHUP",          /* 1 */
@@ -498,8 +506,8 @@
 +	"SIGLOST",         /* 29 */
 +	"SIGUSR1",         /* 30 */
 +	"SIGUSR2",         /* 31 */
---- ltrace-0.3.8/sysdeps/linux-gnu/sparc/syscallent.h.jj	Thu Nov  4 21:28:21 1999
-+++ ltrace-0.3.8/sysdeps/linux-gnu/sparc/syscallent.h	Thu Nov  4 21:28:21 1999
+--- ltrace-0.3.10/sysdeps/linux-gnu/sparc/syscallent.h.orig	Sun Jan 14 14:15:45 2001
++++ ltrace-0.3.10/sysdeps/linux-gnu/sparc/syscallent.h	Sun Jan 14 14:15:45 2001
 @@ -0,0 +1,256 @@
 +	"0",                               /* 0 */
 +	"exit",                            /* 1 */
@@ -757,8 +765,8 @@
 +	"fdatasync",                       /* 253 */
 +	"nfsservctl",                      /* 254 */
 +	"aplib",                           /* 255 */
---- ltrace-0.3.8/sysdeps/linux-gnu/sparc/trace.c.jj	Thu Nov  4 21:28:21 1999
-+++ ltrace-0.3.8/sysdeps/linux-gnu/sparc/trace.c	Thu Nov  4 21:28:21 1999
+--- ltrace-0.3.10/sysdeps/linux-gnu/sparc/trace.c.orig	Sun Jan 14 14:15:45 2001
++++ ltrace-0.3.10/sysdeps/linux-gnu/sparc/trace.c	Sun Jan 14 14:15:45 2001
 @@ -0,0 +1,120 @@
 +#if HAVE_CONFIG_H
 +#include "config.h"
@@ -880,8 +888,8 @@
 +	*(char *)(laddr+offset) = '\0';
 +	return 0;
 +}
---- ltrace-0.3.8/sysdeps/linux-gnu/trace.c.jj	Sun Mar 28 23:21:23 1999
-+++ ltrace-0.3.8/sysdeps/linux-gnu/trace.c	Thu Nov  4 21:28:21 1999
+--- ltrace-0.3.10/sysdeps/linux-gnu/trace.c.orig	Mon Mar 29 00:21:23 1999
++++ ltrace-0.3.10/sysdeps/linux-gnu/trace.c	Sun Jan 14 14:15:45 2001
 @@ -2,7 +2,7 @@
  #include <string.h>
  #include <errno.h>
@@ -891,7 +899,7 @@
  #include <asm/unistd.h>
  
  #include "ltrace.h"
-@@ -72,10 +72,4 @@ void continue_after_signal(pid_t pid, in
+@@ -72,10 +72,4 @@
  void continue_process(pid_t pid)
  {
  	continue_after_signal(pid, 0);
@@ -902,9 +910,9 @@
 -	insert_breakpoint(pid, sbp);
 -	continue_process(pid);
  }
---- ltrace-0.3.8/etc/ltrace.conf.jj	Mon Aug 30 00:05:22 1999
-+++ ltrace-0.3.8/etc/ltrace.conf	Thu Nov  4 21:28:21 1999
-@@ -161,6 +161,7 @@ string strsep(addr,string);
+--- ltrace-0.3.10/etc/ltrace.conf.orig	Sun Dec 19 18:52:49 1999
++++ ltrace-0.3.10/etc/ltrace.conf	Sun Jan 14 14:15:45 2001
+@@ -162,6 +162,7 @@
  uint strspn(string,string);
  uint strcspn(string,string);
  string strstr(string,string);
@@ -912,9 +920,9 @@
  
  ; sys/ioctl.h
  int ioctl(int, int, addr);
---- ltrace-0.3.8/README.jj	Mon Aug 30 14:09:18 1999
-+++ ltrace-0.3.8/README	Thu Nov  4 21:28:21 1999
-@@ -25,6 +25,7 @@ people have contributed significantly to
+--- ltrace-0.3.10/README.orig	Mon Aug 30 15:09:18 1999
++++ ltrace-0.3.10/README	Sun Jan 14 14:15:45 2001
+@@ -25,6 +25,7 @@
  * Pat Beirne <pbeirne@home.com> (ARM port)
  * Roman Hodek <Roman.Hodek@informatik.uni-erlangen.de> (m68k port)
  * Morten Eriksen <mortene@sim.no> (misc fixes)
@@ -922,7 +930,7 @@
  
  1. Introduction
  ---------------
-@@ -49,7 +50,7 @@ Using software breakpoints, just like gd
+@@ -49,7 +50,7 @@
  4. Where does it work
  ---------------------
  At the time of writting, it works only with ELF32 executables. It only
@@ -931,9 +939,9 @@
  
  5. Bugs
  -------
---- ltrace-0.3.8/display_args.c.jj	Sun Mar 28 22:47:11 1999
-+++ ltrace-0.3.8/display_args.c	Thu Nov  4 21:28:21 1999
-@@ -85,7 +85,7 @@ static int string_maxlength=INT_MAX;
+--- ltrace-0.3.10/display_args.c.orig	Sun Mar 28 23:47:11 1999
++++ ltrace-0.3.10/display_args.c	Sun Jan 14 14:15:45 2001
+@@ -85,7 +85,7 @@
  static int display_string(enum tof type, struct process * proc, int arg_num)
  {
  	void * addr;
@@ -942,7 +950,7 @@
  	int i;
  	int len=0;
  
-@@ -141,7 +141,7 @@ static int display_unknown(enum tof type
+@@ -141,7 +141,7 @@
  static int display_format(enum tof type, struct process * proc, int arg_num)
  {
  	void * addr;
@@ -951,7 +959,7 @@
  	int i;
  	int len=0;
  
-@@ -170,7 +170,7 @@ static int display_format(enum tof type,
+@@ -170,7 +170,7 @@
  	for(i=0; str1[i]; i++) {
  		if (str1[i]=='%') {
  			while(1) {
@@ -960,9 +968,9 @@
  				if (c == '%') {
  					break;
  				} else if (!c) {
---- ltrace-0.3.8/elf.c.jj	Fri Aug  6 17:17:51 1999
-+++ ltrace-0.3.8/elf.c	Thu Nov  4 21:28:21 1999
-@@ -98,8 +98,9 @@ struct library_symbol * read_elf(const c
+--- ltrace-0.3.10/elf.c.orig	Fri Aug  6 18:17:51 1999
++++ ltrace-0.3.10/elf.c	Sun Jan 14 14:15:45 2001
+@@ -98,8 +98,9 @@
  				perror("ltrace: malloc");
  				exit(1);
  			}
@@ -973,9 +981,9 @@
  			library_symbols->name = strtab+(symtab+i)->st_name;
  			library_symbols->next = tmp;
  			if (opt_d>1) {
---- ltrace-0.3.8/ltrace.1.jj	Fri Jan 15 00:21:14 1999
-+++ ltrace-0.3.8/ltrace.1	Thu Nov  4 21:28:21 1999
-@@ -116,7 +116,7 @@ Manual page and documentation are not ve
+--- ltrace-0.3.10/ltrace.1.orig	Fri Jan 15 01:21:14 1999
++++ ltrace-0.3.10/ltrace.1	Sun Jan 14 14:15:45 2001
+@@ -116,7 +116,7 @@
  .LP
  Option -f sometimes fails to trace some children.
  .LP
@@ -984,9 +992,9 @@
  .LP
  Only ELF32 binaries are supported
  .PP
---- ltrace-0.3.8/ltrace.c.jj	Sat Sep 26 00:44:07 1998
-+++ ltrace-0.3.8/ltrace.c	Thu Nov  4 21:28:21 1999
-@@ -38,7 +38,8 @@ int main(int argc, char **argv)
+--- ltrace-0.3.10/ltrace.c.orig	Sat Sep 26 01:44:07 1998
++++ ltrace-0.3.10/ltrace.c	Sun Jan 14 14:15:45 2001
+@@ -38,7 +38,8 @@
  	read_config_file("/etc/ltrace.conf");
  	if (getenv("HOME")) {
  		char path[PATH_MAX];
@@ -996,9 +1004,9 @@
  		strcat(path, "/.ltrace.conf");
  		read_config_file(path);
  	}
---- ltrace-0.3.8/ltrace.h.jj	Sun Mar 28 22:48:21 1999
-+++ ltrace-0.3.8/ltrace.h	Thu Nov  4 21:28:21 1999
-@@ -16,7 +16,8 @@ extern int exiting;		/* =1 if we have to
+--- ltrace-0.3.10/ltrace.h.orig	Sun Mar 28 23:48:21 1999
++++ ltrace-0.3.10/ltrace.h	Sun Jan 14 14:15:45 2001
+@@ -16,7 +16,8 @@
  struct breakpoint {
  	void * addr;
  	unsigned char orig_value[BREAKPOINT_LENGTH];
@@ -1008,7 +1016,7 @@
  };
  
  enum arg_type {
-@@ -39,7 +40,9 @@ enum arg_type {
+@@ -39,7 +40,9 @@
  enum tof {
  	LT_TOF_NONE=0,
  	LT_TOF_FUNCTION,	/* A real library function */
@@ -1019,7 +1027,7 @@
  };
  
  struct function {
-@@ -76,6 +79,7 @@ struct process {
+@@ -76,6 +79,7 @@
  	void * stack_pointer;		/* To get return addr, args... */
  	void * return_addr;
  	struct breakpoint * breakpoint_being_enabled;
@@ -1027,7 +1035,7 @@
  
  	/* output: */
  	enum tof type_being_displayed;
-@@ -122,19 +126,22 @@ extern char * pid2name(pid_t pid);
+@@ -122,19 +126,22 @@
  extern void trace_me(void);
  extern int trace_pid(pid_t pid);
  extern void untrace_pid(pid_t pid);
@@ -1054,9 +1062,9 @@
  extern int umovestr(struct process * proc, void * addr, int len, void * laddr);
  #if 0	/* not yet */
  extern int umoven(struct process * proc, void * addr, int len, void * laddr);
---- ltrace-0.3.8/output.c.jj	Mon Aug 30 14:44:19 1999
-+++ ltrace-0.3.8/output.c	Thu Nov  4 21:28:21 1999
-@@ -73,7 +73,7 @@ static void begin_of_line(enum tof type,
+--- ltrace-0.3.10/output.c.orig	Mon Aug 30 15:44:19 1999
++++ ltrace-0.3.10/output.c	Sun Jan 14 14:15:45 2001
+@@ -73,7 +73,7 @@
  		}
  	}
  	if (opt_i) {
@@ -1065,7 +1073,7 @@
  			current_column += fprintf(output, "[%08x] ",
  				(unsigned)proc->return_addr);
  		} else {
-@@ -176,11 +176,12 @@ void output_left(enum tof type, struct p
+@@ -176,11 +176,12 @@
  		}
  		if (func->num_params>func->params_right) {
  			current_column += display_arg(type, proc, i, func->arg_types[i]);
@@ -1081,9 +1089,9 @@
  			current_column += fprintf(output, ") ");
  			tabto(opt_a);
  			fprintf(output, "= <void>\n");
---- ltrace-0.3.8/proc.c.jj	Fri Sep 25 12:13:01 1998
-+++ ltrace-0.3.8/proc.c	Thu Nov  4 21:28:21 1999
-@@ -20,13 +20,10 @@ struct process * open_program(char * fil
+--- ltrace-0.3.10/proc.c.orig	Fri Sep 25 13:13:01 1998
++++ ltrace-0.3.10/proc.c	Sun Jan 14 14:15:45 2001
+@@ -20,13 +20,10 @@
  		perror("malloc");
  		exit(1);
  	}
@@ -1098,7 +1106,7 @@
  	if (opt_L && filename) {
  		proc->list_of_symbols = read_elf(filename);
  		if (opt_e) {
-@@ -48,8 +45,6 @@ struct process * open_program(char * fil
+@@ -48,8 +45,6 @@
  				}
  			}
  		}
@@ -1107,9 +1115,9 @@
  	}
  
  	proc->next = list_of_processes;
---- ltrace-0.3.8/process_event.c.jj	Fri Sep 25 12:13:09 1998
-+++ ltrace-0.3.8/process_event.c	Thu Nov  4 21:28:21 1999
-@@ -169,10 +169,10 @@ static void process_syscall(struct event
+--- ltrace-0.3.10/process_event.c.orig	Fri Sep 25 13:13:09 1998
++++ ltrace-0.3.10/process_event.c	Sun Jan 14 14:15:45 2001
+@@ -169,10 +169,10 @@
  static void process_sysret(struct event * event)
  {
  	if (opt_S) {
@@ -1122,7 +1130,7 @@
  			event->proc->filename = pid2name(event->proc->pid);
  			event->proc->list_of_symbols = read_elf(event->proc->filename);
  			event->proc->breakpoints_enabled = -1;
-@@ -182,7 +182,7 @@ static void process_sysret(struct event 
+@@ -182,7 +182,7 @@
  	}
  	if (fork_p(event->e_un.sysnum)) {
  		if (opt_f) {
@@ -1131,7 +1139,7 @@
  			if (child>0) {
  				open_pid(child, 0);
  			}
-@@ -196,17 +196,18 @@ static void process_sysret(struct event 
+@@ -196,17 +196,18 @@
  static void process_breakpoint(struct event * event)
  {
  	struct library_symbol * tmp;
@@ -1154,7 +1162,7 @@
  		continue_after_breakpoint(event->proc, &event->proc->return_value, 1);
  		event->proc->current_symbol = NULL;
  		return;
-@@ -214,13 +215,13 @@ static void process_breakpoint(struct ev
+@@ -214,13 +215,13 @@
  
  	tmp = event->proc->list_of_symbols;
  	while(tmp) {
@@ -1171,9 +1179,9 @@
  			output_left(LT_TOF_FUNCTION, event->proc, tmp->name);
  			event->proc->return_value.addr = event->proc->return_addr;
  			insert_breakpoint(event->proc->pid, &event->proc->return_value);
---- ltrace-0.3.8/wait_for_something.c.jj	Fri Sep 25 12:16:39 1998
-+++ ltrace-0.3.8/wait_for_something.c	Thu Nov  4 21:28:21 1999
-@@ -53,6 +53,7 @@ struct event * wait_for_something(void)
+--- ltrace-0.3.10/wait_for_something.c.orig	Fri Sep 25 13:16:39 1998
++++ ltrace-0.3.10/wait_for_something.c	Sun Jan 14 14:15:45 2001
+@@ -53,6 +53,7 @@
  		fprintf(stderr, "signal from wrong pid %u ?!?\n", pid);
  		exit(1);
  	}
@@ -1181,7 +1189,7 @@
  	event.proc->instruction_pointer = NULL;
  	if (opt_d>2) {
  		output_line(0,"signal from pid %u", pid);
-@@ -64,7 +65,7 @@ struct event * wait_for_something(void)
+@@ -64,7 +65,7 @@
  		return &event;
  	}
  	if (opt_i) {
@@ -1190,7 +1198,7 @@
  	}
  	switch(syscall_p(event.proc, status, &tmp)) {
  		case 1:	event.thing = LT_EV_SYSCALL;
-@@ -96,7 +97,7 @@ struct event * wait_for_something(void)
+@@ -96,7 +97,7 @@
  	}
  	event.thing = LT_EV_BREAKPOINT;
  	if (!event.proc->instruction_pointer) {
@@ -1199,8 +1207,8 @@
  	}
  	event.e_un.brk_addr = event.proc->instruction_pointer - DECR_PC_AFTER_BREAK;
  	return &event;
---- ltrace-0.3.8/TODO.jj	Sun Mar 28 22:13:22 1999
-+++ ltrace-0.3.8/TODO	Thu Nov  4 21:32:33 1999
+--- ltrace-0.3.10/TODO.orig	Sun Mar 28 23:13:22 1999
++++ ltrace-0.3.10/TODO	Sun Jan 14 14:15:45 2001
 @@ -19,5 +19,5 @@
      \- Is this still true?
  * Option -T (print time spent in each libcall)

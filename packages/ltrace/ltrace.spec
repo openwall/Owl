@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ltrace/ltrace.spec,v 1.1 2001/01/14 00:19:05 mci Exp $
+# $Id: Owl/packages/ltrace/ltrace.spec,v 1.2 2001/01/14 12:53:10 mci Exp $
 
 Summary: Tracks runtime library calls from dynamically linked executables.
 Name:    ltrace
@@ -7,7 +7,7 @@ Release: 6owl
 Copyright: GPL
 Group: Development/Debuggers
 ExclusiveArch: i386 sparc sparcv9
-Source: ftp://ftp.debian.org/debian/dists/unstable/main/source/utils/ltrace_%{version}.tar.gz
+Source: ftp://ftp.debian.org/debian/dists/potato/main/source/utils/ltrace_%{version}.tar.gz
 Patch0: ltrace-0.3.10-rh-sparc.diff
 Patch1: ltrace-0.3.10-rh-mandir.diff
 Patch2: ltrace-0.3.10-rh-nsyscals0.diff
