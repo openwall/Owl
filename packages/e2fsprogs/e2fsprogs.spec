@@ -1,4 +1,4 @@
-# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.9 2002/08/26 15:26:29 mci Exp $
+# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.10 2002/08/27 18:22:36 solar Exp $
 
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
@@ -52,7 +52,9 @@ chmod -R u+w .
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-rm doc/libext2fs.info
+# There're currently no pre-compiled versions of these texinfo files
+# included, should uncomment if that changes.
+#rm doc/libext2fs.info
 autoconf
 %configure --enable-elf-shlibs
 make
