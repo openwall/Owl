@@ -1,4 +1,4 @@
-# $Id: Owl/packages/chkconfig/chkconfig.spec,v 1.1 2000/10/18 17:28:32 solar Exp $
+# $Id: Owl/packages/chkconfig/chkconfig.spec,v 1.2 2000/11/17 08:11:32 solar Exp $
 
 %define BUILD_NTSYSV      'no'
 
@@ -35,14 +35,16 @@ page), ntsysv configures the current runlevel (5 if you're using X).
 %prep
 %setup -q
 %patch0 -p1
-%if "%{BUILD_BTSYSV}"!="'yes'"
+%if "%{BUILD_NTSYSV}"!="'yes'"
 %patch1 -p1
 %endif
 
 %build
 
-%ifarch sparc
+%if "%{BUILD_NTSYSV}"=="'yes'"
+%ifarch sparc sparcv9
 LIBMHACK=-lm
+%endif
 %endif
 
 make RPM_OPT_FLAGS="$RPM_OPT_FLAGS" LIBMHACK=$LIBMHACK
@@ -71,7 +73,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/*/chkconfig*
 /usr/share/locale/*/LC_MESSAGES/chkconfig.mo
 
-%if "%{BUILD_BTSYSV}"=="'yes'"
+%if "%{BUILD_NTSYSV}"=="'yes'"
 %files -n ntsysv
 %defattr(-,root,root)
 /usr/sbin/ntsysv
