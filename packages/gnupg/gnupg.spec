@@ -1,14 +1,14 @@
-# $Id: Owl/packages/gnupg/gnupg.spec,v 1.15 2002/08/26 16:09:13 mci Exp $
+# $Id: Owl/packages/gnupg/gnupg.spec,v 1.16 2003/05/11 21:25:08 mci Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
-Version: 1.0.7
-Release: owl2
+Version: 1.2.2
+Release: owl1
 License: GPL
 Group: Applications/Cryptography
 URL: http://www.gnupg.org
-Source: ftp://ftp.gnupg.org/pub/gcrypt/gnupg/%{name}-%{version}.tar.gz
-Patch0: gnupg-1.0.7-fw-secret-key-checks.diff
+Source: ftp://ftp.gnupg.org/GnuPG/gnupg/%{name}-%{version}.tar.bz2
+Patch0: gnupg-1.2.2-fw-secret-key-checks.diff
 PreReq: /sbin/install-info
 Provides: gpg, openpgp
 BuildRequires: zlib-devel, bison, texinfo
@@ -33,16 +33,17 @@ EOF
 
 %build
 unset LINGUAS || :
-%configure
-make INFO_DEPS='gpg.info gpgv.info'
+%configure \
+		--with-included-gettext \
+		--with-static-rnd=linux \
+		--with-mailprog=/usr/sbin/sendmail
+make
 
 %install
-%makeinstall transform= INFO_DEPS='gpg.info gpgv.info'
-sed 's^\.\./g[0-9\.]*/^^g' tools/lspgpot > lspgpot
+mkdir -p $RPM_BUILD_ROOT%{_libdir}/%{name}
+%makeinstall transform=
+sed 's,\.\./g[0-9\.]*/,,g' tools/lspgpot > lspgpot
 install -m 755 lspgpot $RPM_BUILD_ROOT%{_bindir}/lspgpot
-
-# Strip files otherwise not touched
-strip $RPM_BUILD_ROOT/usr/lib/gnupg/*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -63,21 +64,28 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS COPYING ChangeLog INSTALL NEWS PROJECTS README THANKS TODO
+%doc AUTHORS COPYING ChangeLog NEWS PROJECTS README THANKS TODO
 %doc doc/{DETAILS,FAQ,HACKING,OpenPGP,*.html}
 
 %{_bindir}/gpg
 %{_bindir}/gpgv
 %{_bindir}/lspgpot
-%{_datadir}/gnupg
 %{_datadir}/locale/*/*/*
-%{_libdir}/gnupg
+%{_libdir}/%{name}
 %{_mandir}/man1/gpg.*
 %{_mandir}/man1/gpgv.*
+%{_mandir}/man7/gnupg.*
 %{_infodir}/gpg.*
 %{_infodir}/gpgv.*
+%{_libexecdir}/*
+%config(noreplace) %{_datadir}/gnupg/options.skel
 
 %changelog
+* Sun May 11 2003 Michail Litvak <mci@owl.openwall.com> 1.2.2-owl1
+- 1.2.2 (Fixed key validity bug)
+- builded with --included-gettext
+- spec file cleanups
+
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
 - Deal with info dir entries such that the menu looks pretty.
 
