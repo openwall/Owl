@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.32 2002/07/04 14:52:51 mci Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.33 2002/07/04 19:18:26 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -26,8 +26,8 @@ Patch6: glibc-2.1.3-owl-ldd.diff
 Patch7: glibc-2.1.3-owl-tmp.diff
 Patch8: glibc-2.1.3-owl-vitmp.diff
 Patch9: glibc-2.1.3-owl-glibcbug-COMMAND.diff
-Patch10: glibc-2.1.3-owl-syslog-ident.diff
-Patch11: glibc-2.1.3-owl-info-fix.diff
+Patch10: glibc-2.1.3-owl-info-fix.diff
+Patch11: glibc-2.1.3-owl-syslog-ident.diff
 Patch12: glibc-2.1.3-mjt-owl-syslog-timestamp.diff
 Patch13: glibc-2.1.3-owl-alt-asprintf-error-handling.diff
 Patch14: glibc-2.1.3-openbsd-freebsd-owl-fts.diff
@@ -54,6 +54,7 @@ Patch53: glibc-2.1.3-cvs-20000926-tmp-warnings.diff
 Patch54: glibc-2.1.3-cvs-20010109-dl.diff
 Patch55: glibc-2.1.3-cvs-20000929-alpha-reloc.diff
 Patch56: glibc-2.1.3-cvs-20011129-glob.diff
+Patch57: glibc-2.1.3-cvs-20020702-resolv.diff
 PreReq: /sbin/ldconfig
 %ifarch alpha
 Provides: ld.so.2
@@ -152,6 +153,7 @@ cd ..
 %patch54 -p1
 %patch55 -p1
 %patch56 -p1
+%patch57 -p1
 %ifarch sparcv9
 echo 'ASFLAGS-.os += -Wa,-Av8plusa' >> sysdeps/sparc/sparc32/elf/Makefile
 %endif
@@ -304,6 +306,15 @@ fi
 %endif
 
 %changelog
+* Thu Jul 04 2002 Solar Designer <solar@owl.openwall.com>
+- Back-ported the fix to buffer overflow in resolv/nss_dns/dns-network.c
+affecting getnetby{addr,name}{,_r}(3) when "dns" is listed on "networks"
+line in /etc/nsswitch.conf (which is not the default).
+- Improved the code used to produce unpredictable DNS query IDs to make
+it generate different sequences of IDs in forked processes (problem
+noted by Jarno Huuskonen), conserve the kernel's randomness pool (based
+on feedback from Michael Tokarev), and properly reseed when chrooted.
+
 * Thu Jul 04 2002 Michail Litvak <mci@owl.openwall.com>
 - patch to build with new texinfo
 
