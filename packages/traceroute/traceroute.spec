@@ -1,9 +1,9 @@
-# $Id: Owl/packages/traceroute/traceroute.spec,v 1.5 2002/07/07 18:39:23 solar Exp $
+# $Id: Owl/packages/traceroute/traceroute.spec,v 1.6 2002/11/03 03:14:29 solar Exp $
 
 Summary: Traces the route taken by packets over a TCP/IP network.
 Name: traceroute
 Version: 1.4a12
-Release: owl4
+Release: owl5
 License: BSD
 Group: Applications/Internet
 Source0: ftp://ftp.ee.lbl.gov/traceroute-%{version}.tar.gz
@@ -14,7 +14,7 @@ Patch2: traceroute-1.4a12-owl-force-linux.diff
 Patch3: traceroute-1.4a12-owl-sockaddr-vs-sockaddr_in.diff
 Patch4: traceroute-1.4a12-rh-unaligned.diff
 Prefix: %{_prefix}
-Requires: owl-control < 2.0
+Requires: owl-control >= 0.4, owl-control < 2.0
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -49,13 +49,31 @@ install -m 700 %{SOURCE1} $RPM_BUILD_ROOT/etc/control.d/facilities/traceroute
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%pre
+if [ $1 -ge 2 ]; then
+	/usr/sbin/control-dump traceroute
+fi
+
+%post
+if [ $1 -ge 2 ]; then
+	/usr/sbin/control-restore traceroute
+else
+	/usr/sbin/control traceroute public
+fi
+
 %files
 %defattr(-,root,root)
-%attr(4711,root,root) %{_sbindir}/traceroute
+%attr(700,root,root) %{_sbindir}/traceroute
 %{_mandir}/man8/*
 /etc/control.d/facilities/traceroute
 
 %changelog
+* Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
+- Dump/restore the owl-control setting for traceroute on package upgrades.
+- Keep traceroute at mode 700 ("restricted") in the package, but default
+it to "public" in %post when the package is first installed.  This avoids
+a race and fail-open behavior.
+
 * Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
 - Use struct sockaddr_in everywhere rather than cast struct sockaddr's as
 the latter may have different alignment requirements.
