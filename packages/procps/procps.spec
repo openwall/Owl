@@ -1,9 +1,9 @@
-# $Id: Owl/packages/procps/Attic/procps.spec,v 1.10 2003/10/30 21:15:47 solar Exp $
+# $Id: Owl/packages/procps/Attic/procps.spec,v 1.11 2004/01/17 17:35:45 solar Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
 Version: 2.0.7
-Release: owl3
+Release: owl4
 License: GPL and LGPL
 Group: System Environment/Base
 URL: http://procps.sf.net
@@ -76,6 +76,9 @@ chmod 755 $RPM_BUILD_ROOT/{lib,bin,sbin,usr/bin}/*
 /usr/man/man8/sysctl.8*
 
 %changelog
+* Sat Jan 17 2004 Solar Designer <solar@owl.openwall.com> 2.0.7-owl4
+- Handle ticks going backwards gracefully.
+
 * Thu Oct 16 2003 Solar Designer <solar@owl.openwall.com> 2.0.7-owl3
 - Patched top to use unsigned long long's for tick counts; previously,
 its SMP-specific code used just int which resulted in the overflow
