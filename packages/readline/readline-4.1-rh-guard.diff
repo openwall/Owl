@@ -1,0 +1,12 @@
+--- readline-2.2.1/readline.c.guard	Thu Apr  2 11:16:12 1998
++++ readline-2.2.1/readline.c	Fri Apr  9 20:50:55 1999
+@@ -1100,6 +1100,9 @@
+       else
+ 	rl_point = end;
+     }
++  /* check for arithmetic overflow */
++  if (rl_point < 0)
++    rl_point = 0;
+   return 0;
+ }
+ 
