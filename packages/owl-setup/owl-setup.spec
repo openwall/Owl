@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.16 2002/07/07 00:07:48 solar Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.17 2002/09/07 20:34:00 mci Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 0.9
+Version: 0.10
 Release: owl1
 License: mostly public domain, passwdlg is under GPL
 Group: System Environment/Base
@@ -17,7 +17,7 @@ Source10: README
 Requires: owl-startup
 Requires: dialog
 Requires: bash >= 2.0, sh-utils, util-linux, sed, mktemp
-Requires: tcb
+Requires: tcb, console-tools
 Conflicts: setuptool
 BuildRoot: /override/%{name}-%{version}
 
@@ -58,6 +58,11 @@ rm -rf $RPM_BUILD_ROOT
 /usr/sbin/setup
 
 %changelog
+* Fri Sep 06 2002 Michail Litvak <mci@owl.openwall.com>
+- Support for keyboard layout configuration
+  (thanks to Matthias Schmidt <schmidt@giessen.ccc.de>)
+- fix code indenting
+
 * Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
 - Use grep -q in mkfstab.
 

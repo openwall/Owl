@@ -8,7 +8,8 @@ MKFSTAB=$HOME/mkfstab
 
 # Generate tmpfile name for conversation with dialog
 tempfile=`mktemp /var/run/owl-setup.XXXXXX` || exit 1
-trap "rm -f $tempfile" EXIT HUP INT TERM
+f_keytable=`mktemp $F_KEYTABLE.XXXXXX` || exit 1
+trap "rm -f $tempfile $f_keytable" EXIT HUP INT TERM
 
 ##
 # Set root password
@@ -16,35 +17,35 @@ trap "rm -f $tempfile" EXIT HUP INT TERM
 ##
 set_root_password()
 {
-    local SERVICE
+	local SERVICE
 
-    if [ -f /etc/pam.d/setup ]; then
-        SERVICE=/etc/pam.d/setup
-    else
-        SERVICE=/etc/pam.d/passwd
-    fi
+	if [ -f /etc/pam.d/setup ]; then
+		SERVICE=/etc/pam.d/setup
+	else
+		SERVICE=/etc/pam.d/passwd
+	fi
 
-    while :; do
-        $PASSWD -e "$DIALOG --clear --backtitle '$TITLE' --passwordbox \"\$PAM_MSG\" 0 0" \
-                -E "$DIALOG --cr-wrap --clear --backtitle '$TITLE' --inputbox \"\$PAM_MSG\" 0 0" \
-                -m "$DIALOG --cr-wrap --clear --backtitle '$TITLE' --msgbox \"\$PAM_MSG\" 0 0" \
-                -u root \
-                -s "$SERVICE"
+	while :; do
+		$PASSWD -e "$DIALOG --clear --backtitle '$TITLE' --passwordbox \"\$PAM_MSG\" 0 0" \
+			-E "$DIALOG --cr-wrap --clear --backtitle '$TITLE' --inputbox \"\$PAM_MSG\" 0 0" \
+			-m "$DIALOG --cr-wrap --clear --backtitle '$TITLE' --msgbox \"\$PAM_MSG\" 0 0" \
+			-u root \
+			-s "$SERVICE"
 
-        if [ $? -eq 1 ]; then
-            $DIALOG --backtitle "$TITLE" \
-                    --clear \
-                    --yesno 'Continue without setting a root password?' 0 0
+		if [ $? -eq 1 ]; then
+			$DIALOG --backtitle "$TITLE" \
+				--clear \
+				--yesno 'Continue without setting a root password?' 0 0
 
-            if [ $? -eq 1 ] ; then
-                continue
-            else
-                break
-            fi
-        else
-            break
-        fi
-    done
+			if [ $? -eq 1 ] ; then
+				continue
+			else
+				break
+			fi
+		else
+			break
+		fi
+	done
 }
 
 ##
@@ -55,92 +56,136 @@ set_root_password()
 # Return $continent
 select_timezone()
 {
-    $DIALOG --backtitle "$TITLE" \
- 	    --title 'Set timezone' \
-            --clear \
-            --menu "Please select the geographic area in which you live:" 0 0 0 \
-            'Africa'    'Africa' \
-            'America'   'America' \
-            'US'        'US time zones' \
-            'Canada'    'Canada time zones' \
-            'Asia'      'Asia' \
-            'Atlantic'  'Atlantic Ocean'  \
-            'Australia' 'Australia' \
-            'Europe'    'Europe' \
-            'Indian'    'Indian Ocean'  \
-            'Pacific'   'Pacific Ocean' \
-            'SystemV'   'Use System V style time zones' \
-            'Etc'       'None of the above' \
-            2> $tempfile || return
+	$DIALOG --backtitle "$TITLE" \
+		--title 'Set timezone' \
+		--clear \
+		--menu "Please select the geographic area in which you live:" 0 0 0 \
+		'Africa'    'Africa' \
+		'America'   'America' \
+		'US'        'US time zones' \
+		'Canada'    'Canada time zones' \
+		'Asia'      'Asia' \
+		'Atlantic'  'Atlantic Ocean'  \
+		'Australia' 'Australia' \
+		'Europe'    'Europe' \
+		'Indian'    'Indian Ocean'  \
+		'Pacific'   'Pacific Ocean' \
+		'SystemV'   'Use System V style time zones' \
+		'Etc'       'None of the above' \
+		2> $tempfile || return
 
-    continent="`cat $tempfile`"
+	continent="`cat $tempfile`"
 
-    find $TZ_BASE -type f | sed -e "s,^$TZ_BASE/,," | sort > $tempfile
+	find $TZ_BASE -type f | sed -e "s,^$TZ_BASE/,," | sort > $tempfile
 
-    local zlist=''
-    for i in `grep -i "^$continent/" $tempfile | cut -d / -f2-`; do
-       zlist="$zlist $i '' "
-    done
+	local zlist=''
+	for i in `grep -i "^$continent/" $tempfile | cut -d / -f2-`; do
+		zlist="$zlist $i '' "
+	done
 
-    eval "\$DIALOG --backtitle \"\$TITLE\" \
- 	    --title 'Set timezone' \
-            --clear \
-            --menu \"Please select the name of one of these cities or zones\" 0 0 15 \
-            $zlist \
-            2> $tempfile" || return
+	eval "\$DIALOG --backtitle \"\$TITLE\" \
+		--title 'Set timezone' \
+		--clear \
+		--menu \"Please select the name of one of these cities or zones\" 0 0 15 \
+		$zlist \
+		2> $tempfile" || return
 
-    zone="`cat $tempfile`"
-    timezone="$continent/$zone"
-    zone_info
+	zone="`cat $tempfile`"
+	timezone="$continent/$zone"
+	zone_info
 
-    $DIALOG --backtitle "$TITLE" \
-            --cr-wrap \
-            --clear \
-            --title 'Set timezone' \
-            --yesno "Set this timezone?\n$extra_info" 0 0 \
-            2> $tempfile || return
+	$DIALOG --backtitle "$TITLE" \
+		--cr-wrap \
+		--clear \
+		--title 'Set timezone' \
+		--yesno "Set this timezone?\n$extra_info" 0 0 \
+		2> $tempfile || return
 
-    if [ -L $LOCALTIME ]; then
-        ln -sf $TZ_BASE/$timezone $LOCALTIME
-    else
-        cp $TZ_BASE/$timezone $LOCALTIME
-    fi
+	if [ -L $LOCALTIME ]; then
+		ln -sf $TZ_BASE/$timezone $LOCALTIME
+	else
+		cp $TZ_BASE/$timezone $LOCALTIME
+	fi
 
-    local UTC='false'
-    local ARC='false'
-    $DIALOG --backtitle "$TITLE" \
- 	    --title 'Set timezone' \
-            --clear \
-            --yesno "Hardware clock set to UTC?" 0 0 \
-            2> $tempfile
+	local UTC='false'
+	local ARC='false'
+	$DIALOG --backtitle "$TITLE" \
+		--title 'Set timezone' \
+		--clear \
+		--yesno "Hardware clock set to UTC?" 0 0 \
+		2> $tempfile
 
-    if [ $? -eq 0 ]; then
-        UTC='true'
-    fi
+	if [ $? -eq 0 ]; then
+		UTC='true'
+	fi
 
-    echo "UTC=$UTC" > $SYSCFG_CLOCK
-    echo "ARC=$ARC" >> $SYSCFG_CLOCK
-    echo "ZONE=$timezone" >> $SYSCFG_CLOCK
+	echo "UTC=$UTC" > $SYSCFG_CLOCK
+	echo "ARC=$ARC" >> $SYSCFG_CLOCK
+	echo "ZONE=$timezone" >> $SYSCFG_CLOCK
 }
 
 zone_info()
 {
-    extra_info=
-    for i in 1 2 3 4 5 6 7 8
-    do
-        TZdate=$(LANG=C TZ="$timezone" date)
-        UTdate=$(LANG=C TZ=UTC0 date)
-        TZsec=$(expr "$TZdate" : '.*:\([0-5][0-9]\)')
-        UTsec=$(expr "$UTdate" : '.*:\([0-5][0-9]\)')
-        case $TZsec in
-            $UTsec)
-                extra_info="
+	extra_info=
+	for i in 1 2 3 4 5 6 7 8
+	do
+		TZdate=$(LANG=C TZ="$timezone" date)
+		UTdate=$(LANG=C TZ=UTC0 date)
+		TZsec=$(expr "$TZdate" : '.*:\([0-5][0-9]\)')
+		UTsec=$(expr "$UTdate" : '.*:\([0-5][0-9]\)')
+		case $TZsec in
+			$UTsec)
+				extra_info="
 Local time is now:      $TZdate.
 Universal Time is now:  $UTdate."
-                break
-                ;;
-        esac
-    done
+				break
+			;;
+		esac
+	done
+}
+
+##
+# Set keyboard layout
+#
+##
+select_keyboard()
+{
+	case "`uname -m`" in
+		sparc*)
+        		maps_path=/usr/lib/kbd/keymaps/sun
+        	;;
+		#*86|alpha)
+		*)
+			maps_path=/usr/lib/kbd/keymaps/i386
+        	;;
+	esac
+
+	find $maps_path -type f -printf '%f\n' | sed -e "s/\([^\.]*\).*/\1 ''/"  | sort -u > $tempfile
+
+	local klist=`cat $tempfile`
+
+	eval "\$DIALOG --backtitle \"\$TITLE\" \
+		--title 'Set keyboard layout' \
+		--clear \
+		--menu \"Please select your keyboard layout:\" 0 0 15 \
+		"$klist" \
+		2> $tempfile" || return
+       
+	layout="`cat $tempfile`"
+
+	$DIALOG --backtitle "$TITLE" \
+		--cr-wrap \
+		--clear \
+		--title 'Set keyboard layout' \
+		--yesno "Set this layout?\n$layout" 0 0 \
+		2> $tempfile || return
+
+	echo "KEYTABLE=$layout" > $f_keytable
+	chmod 644 $f_keytable
+	mv -f $f_keytable $F_KEYTABLE
+
+	# Set keyboard layout for setup
+	$LOADKEYS $layout
 }
 
 ##
@@ -149,20 +194,21 @@ Universal Time is now:  $UTdate."
 ##
 main_menu()
 {
-    $DIALOG --backtitle "$TITLE" \
-            --clear \
-            --menu "Select the task:" 0 0 0 \
-            Password 'Set root password' \
-            fstab    'Filesystems table' \
-            Timezone 'Set timezone' \
-            Network  'Network configuration' \
-            Exit     'Exit the setup program' \
-            2> $tempfile
+	$DIALOG --backtitle "$TITLE" \
+		--clear \
+		--menu "Select the task:" 0 0 0 \
+		Keyboard 'Select keyboard layout' \
+		Password 'Set root password' \
+		fstab    'Filesystems table' \
+		Timezone 'Set timezone' \
+		Network  'Network configuration' \
+		Exit     'Exit the setup program' \
+		2> $tempfile
 
-    [ $? -eq 0 ] || return 1
+	[ $? -eq 0 ] || return 1
 
-    TASK="`cat $tempfile`"
-    return 0
+	TASK="`cat $tempfile`"
+	return 0
 }
 
 ##
@@ -170,26 +216,30 @@ main_menu()
 ##
 
 while main_menu; do
-    case "$TASK" in
+	case "$TASK" in
 
-    Password)
-        set_root_password
-        ;;
+		Keyboard)
+			select_keyboard
+		;;
 
-    fstab)
-	$MKFSTAB
-	;;
+		Password)
+			set_root_password
+		;;
 
-    Timezone)
-        select_timezone
-        ;;
+		fstab)
+			$MKFSTAB
+		;;
 
-    Network)
-	$NETCFG
-        ;;
+		Timezone)
+			select_timezone
+		;;
 
-    Exit)
-        break
-        ;;
-    esac
+		Network)
+			$NETCFG
+		;;
+
+		Exit)
+			break
+		;;
+	esac
 done
