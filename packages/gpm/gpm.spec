@@ -1,7 +1,7 @@
-# $Id: Owl/packages/gpm/gpm.spec,v 1.10 2002/02/04 06:50:08 solar Exp $
+# $Id: Owl/packages/gpm/gpm.spec,v 1.11 2002/02/04 06:58:11 solar Exp $
 
 # this defines the library version that this package builds.
-%define	LIBVER 1.18.0
+%define LIBVER 1.18.0
 %define BUILD_GPM_ROOT 0
 
 Summary: A mouse server for the Linux console.
