@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.49 2003/05/29 01:49:19 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.50 2003/09/09 07:24:36 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
-Version: 0.27
+Version: 0.28
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -159,6 +159,9 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 %ghost /var/log/lastlog
 
 %changelog
+* Tue Sep 09 2003 Solar Designer <solar@owl.openwall.com> 0.28-owl1
+- dhcpd user/group.
+
 * Thu May 29 2003 Solar Designer <solar@owl.openwall.com> 0.27-owl1
 - tcb is now the default and automatic conversion to it is attempted.
 
