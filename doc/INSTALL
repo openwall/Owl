@@ -40,6 +40,10 @@ instructions, below.
 
 	Using an existing Linux installation.
 
+Note: these requirements are only relevant to you if you chose to not
+install from an Owl CD for whatever reason.  Most people use a CD and
+don't need this.
+
 A suitable Linux installation needs to offer some GNU tools and
 rpm2cpio.  It does not have to use RPM as its package manager.
 
@@ -52,15 +56,23 @@ BUILD.  Then proceed with the generic installation instructions.
 Use fdisk(8) to partition your disks for Owl as desired.  Use mkfs(8)
 and mkswap(8) to create filesystems and initialize swap space.  Use
 mount(8) to mount the new root filesystem at /owl.  Similarly, mount
-any additional filesystems at their appropriate places under /owl.  To
-actually install Owl, change directory to /usr/src/world and type:
+any additional filesystems at their appropriate locations under /owl.
+To actually install Owl, change directory to /usr/src/world and type:
 
 	make installworld && make setup
 
 If there are any problems during the "installworld" stage (watch for
 the "Failed" lines), correct their cause and re-run the command.
 
-Once the Owl userland is installed, you need to also install a kernel.
+Once the Owl userland is installed, you need to also install a kernel
+and configure a boot loader.  It is recommended that you build the
+kernel from source in order to better tune it to your needs.
+
+Note that the kernel build and the boot loader setup need to be done
+chrooted to your newly installed userland:
+
+	chroot /owl
+
 Currently, Owl fully supports Linux 2.2 kernels and supports running
 with 2.4 kernels (but in order to rebuild Owl with "make buildworld"
 you'd need to provide Linux 2.2 kernel sources as explained in BUILD).
@@ -70,9 +82,4 @@ You may choose to configure the boot loader available with Owl (LILO
 or SILO, depending on the architecture), or you may use a boot loader
 already installed on the system (if any).
 
-Note that the kernel build and the boot loader setup need to be done
-chrooted to your newly installed userland:
-
-	chroot /owl
-
-$Id: Owl/doc/INSTALL,v 1.9 2002/10/07 19:13:34 solar Exp $
+$Id: Owl/doc/INSTALL,v 1.10 2003/05/06 02:44:46 solar Exp $
