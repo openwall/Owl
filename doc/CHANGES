@@ -748,6 +748,6 @@ we've released.  Thus, this isn't a security update.
 
 2001/05/15	Owl/doc/fr/*
 New files: French translations of the documentation, from Denis Ducamp
-<Denis.Ducamp at owl.openwall.com>.
+<ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.101 2002/06/13 00:50:28 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.102 2002/06/13 00:53:25 solar Exp $
