@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.26 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.27 2005/01/12 16:49:16 galaxy Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -17,7 +17,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.8.3
-Release: owl2
+Release: owl3
 Epoch: 1
 License: GPL
 Group: Development/Languages
@@ -80,7 +80,7 @@ Provides: perl(utf8_heavy.pl)
 Provides: perl(validate.pl)
 Obsoletes: perl-MD5
 BuildRequires: rpm >= 4.0.5
-BuildRequires: gawk, grep, tcsh
+BuildRequires: gawk, grep
 BuildRoot: /override/%name-%version
 
 %description
@@ -270,6 +270,10 @@ find %buildroot%_libdir/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1:5.8.3-owl3
+- Removed unneeded BuildRequires for tcsh.
+- Reflected Epoch in the %changelog.
+
 * Fri Mar 19 2004 Michail Litvak <mci@owl.openwall.com> 5.8.3-owl2
 - Deal with automatic requires.
 - Add some Provides, which were undetected automatically.
