@@ -1,0 +1,14 @@
+--- texinfo-4.2/util/install-info.c.orig	Thu Jun 20 12:32:31 2002
++++ texinfo-4.2/util/install-info.c	Thu Jun 20 14:07:18 2002
+@@ -631,9 +630,9 @@
+         break;
+ 
+       filled += nread;
+-      if (filled == data_size)
++      if (data_size - filled < 8192)
+         {
+-          data_size += 65536;
++          data_size <<= 1;
+           data = xrealloc (data, data_size);
+         }
+     }

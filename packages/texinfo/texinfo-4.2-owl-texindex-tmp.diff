@@ -1,6 +1,6 @@
---- texinfo-4.0/util/texindex.c.orig	Wed Jan  3 09:37:01 2001
-+++ texinfo-4.0/util/texindex.c	Wed Jan  3 10:50:52 2001
-@@ -19,6 +19,7 @@
+--- texinfo-4.2/util/texindex.c.orig	Mon Mar 11 21:55:46 2002
++++ texinfo-4.2/util/texindex.c	Thu Jun 20 11:13:49 2002
+@@ -20,6 +20,7 @@
  
  #include "system.h"
  #include <getopt.h>
@@ -8,7 +8,7 @@
  
  static char *program_name = "texindex";
  
-@@ -36,8 +37,6 @@
+@@ -37,8 +38,6 @@
  #define memset(ptr, ignore, count) bzero (ptr, count)
  #endif
  
@@ -17,7 +17,7 @@
  #if !defined (SEEK_SET)
  #  define SEEK_SET 0
  #  define SEEK_CUR 1
-@@ -96,9 +95,6 @@
+@@ -97,9 +96,6 @@
  /* Directory to use for temporary files.  On Unix, it ends with a slash.  */
  char *tempdir;
  
@@ -27,7 +27,7 @@
  /* Number of last temporary file.  */
  int tempcount;
  
-@@ -137,6 +133,7 @@
+@@ -138,6 +134,7 @@
  void *xmalloc (), *xrealloc ();
  char *concat ();
  void flush_tempfiles ();
@@ -35,7 +35,7 @@
  
  #define MAX_IN_CORE_SORT 500000
  
-@@ -180,8 +177,6 @@
+@@ -181,8 +178,6 @@
  
    decode_command (argc, argv);
  
@@ -44,7 +44,7 @@
    /* Process input files completely, one by one.  */
  
    for (i = 0; i < num_infiles; i++)
-@@ -301,6 +296,8 @@
+@@ -303,6 +298,8 @@
    int arg_index = 1;
    char **ip;
    char **op;
@@ -53,7 +53,7 @@
  
    /* Store default values into parameter variables. */
  
-@@ -314,8 +311,24 @@
+@@ -316,8 +313,24 @@
    else
      tempdir = concat (tempdir, "/", "");
  
@@ -78,7 +78,7 @@
    /* Allocate ARGC input files, which must be enough.  */
  
    infiles = (char **) xmalloc (argc * sizeof (char *));
-@@ -386,8 +399,8 @@
+@@ -388,8 +401,8 @@
       int count;
  {
    char tempsuffix[10];
@@ -89,7 +89,7 @@
  }
  
  /* Delete all temporary files up to TO_COUNT. */
-@@ -400,6 +413,13 @@
+@@ -402,6 +415,13 @@
      return;
    while (last_deleted_tempcount < to_count)
      unlink (maketempname (++last_deleted_tempcount));
@@ -103,7 +103,7 @@
  }
  
  
-@@ -940,7 +960,7 @@
+@@ -942,7 +962,7 @@
    for (i = 0; i < ntemps; i++)
      {
        char *newtemp = maketempname (++tempcount);
@@ -112,3 +112,12 @@
        if (!keep_tempfiles)
          unlink (tempfiles[i]);
        tempfiles[i] = newtemp;
+@@ -1647,7 +1667,7 @@
+   strcpy (result, s1);
+   strcpy (result + len1, s2);
+   strcpy (result + len1 + len2, s3);
+-  *(result + len1 + len2 + len3) = 0;
++  result[len1 + len2 + len3] = '\0';
+ 
+   return result;
+ }

@@ -1,0 +1,60 @@
+--- texinfo-4.2/util/install-info.c.orig	2002-06-11 20:04:33 +0400
++++ texinfo-4.2/util/install-info.c	2002-06-11 20:21:02 +0400
+@@ -311,6 +311,11 @@
+       len -= 3;
+       ret[len] = 0;
+     }
++  else if (len > 4 && FILENAME_CMP (ret + len - 4, ".bz2") == 0)
++    {
++      len -= 4;
++      ret[len] = 0;
++    }
+ 
+   if (len > 5 && FILENAME_CMP (ret + len - 5, ".info") == 0)
+     {
+@@ -354,7 +359,7 @@
+          ITEM.  The various suffixes should never actually appear in the
+          dir file, but sometimes people put them in.  */
+       static char *suffixes[]
+-        = { "", ".info.gz", ".info", ".inf", ".gz",
++        = { "", ".info.gz", ".info.bz2", ".info", ".inf", ".gz", ".bz2",
+ #ifdef __MSDOS__
+             ".inz", ".igz",
+ #endif
+@@ -508,6 +513,12 @@
+     {
+       *opened_filename = concat (filename, ".gz", "");
+       f = fopen (*opened_filename, FOPEN_RBIN);
++      if (!f)
++        {
++          free (*opened_filename);
++          *opened_filename = concat (filename, ".bz2", "");
++          f = fopen (*opened_filename, FOPEN_RBIN);
++        }
+ #ifdef __MSDOS__
+       if (!f)
+         {
+@@ -556,19 +567,15 @@
+     compression_program = &local_compression_program;
+ 
+   if (data[0] == '\x1f' && data[1] == '\x8b')
+-#if STRIP_DOT_EXE
+-    /* An explicit .exe yields a better diagnostics from popen below
+-       if they don't have gzip installed.  */
+-    *compression_program = "gzip.exe";
+-#else
+-    *compression_program = "gzip";
+-#endif
++    *compression_program = "/bin/zcat";
++  else if (data[0] == 'B' && data[1] == 'Z' && (data[2] == 'h' || data[2] == '0'))
++    *compression_program = "/bin/bzcat";
+   else
+     *compression_program = NULL;
+ 
+   if (*compression_program)
+     { /* It's compressed, so fclose the file and then open a pipe.  */
+-      char *command = concat (*compression_program," -cd <", *opened_filename);
++      char *command = concat (*compression_program, " ", *opened_filename);
+       if (fclose (f) < 0)
+         pfatal_with_name (*opened_filename);
+       f = popen (command, "r");

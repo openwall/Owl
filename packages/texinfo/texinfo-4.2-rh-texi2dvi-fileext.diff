@@ -1,0 +1,11 @@
+--- texinfo-4.2/util/texi2dvi.orig	2002-04-01 18:20:59 +0400
++++ texinfo-4.2/util/texi2dvi	2002-06-11 19:45:19 +0400
+@@ -502,7 +502,7 @@
+     # before .aux and .?o?.
+     index_files=`echo "$orig_xref_files" \
+                  | sed "s!.*\.aux!!g;
+-                        s!./$filename_noext\..o.!!g;
++                        s!./$filename_noext\..o[^ ]!!g;
+                         s/^[ ]*//;s/[ ]*$//"`
+     # Run texindex (or makeindex) on current index files.  If they
+     # already exist, and after running TeX a first time the index

@@ -1,19 +1,22 @@
-# $Id: Owl/packages/texinfo/texinfo.spec,v 1.7 2002/02/11 15:41:12 solar Exp $
+# $Id: Owl/packages/texinfo/texinfo.spec,v 1.8 2002/07/12 08:06:34 mci Exp $
 
 Summary: Tools needed to create Texinfo format documentation files.
 Name: texinfo
-Version: 4.0
-Release: owl11
+Version: 4.2
+Release: owl1
 License: GPL
 Group: Applications/Publishing
 Source0: ftp://ftp.gnu.org/gnu/texinfo/texinfo-%{version}.tar.gz
 Source1: info-dir
-Patch0: texinfo-4.0-owl-tmp.diff
-Patch1: texinfo-3.12h-rh-data_size_fix.diff
-Patch2: texinfo-4.0-rh-zlib.diff
+Patch0: texinfo-4.2-owl-texindex-tmp.diff
+Patch1: texinfo-4.2-owl-alt-texi2dvi-tmp.diff
+Patch2: texinfo-4.2-rh-texi2dvi-fileext.diff
+Patch3: texinfo-4.2-mdk-alt-bz2-support.diff
+Patch4: texinfo-4.2-rh-owl-data_size-fix.diff
+Patch5: texinfo-4.2-deb-fixes.diff
 PreReq: /sbin/install-info
 Prefix: %{_prefix}
-BuildRequires: zlib >= 1.1.3-owl12
+Requires: mktemp
 BuildRoot: /override/%{name}-%{version}
 
 %define __spec_install_post /usr/lib/rpm/brp-strip \; /usr/lib/rpm/brp-strip-comment-note
@@ -37,14 +40,14 @@ browser program for viewing Info files.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
 
 %build
 unset LINGUAS || :
 %configure --mandir=%{_mandir} --infodir=%{_infodir}
 make
-
-rm util/install-info
-make -C util LIBS=%{_prefix}/lib/libz.a
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -80,7 +83,7 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS ChangeLog INSTALL INTRODUCTION NEWS README TODO
+%doc AUTHORS ChangeLog INTRODUCTION NEWS README TODO
 %doc info/README
 %{_prefix}/bin/makeinfo
 %{_prefix}/bin/texindex
@@ -98,6 +101,10 @@ fi
 /sbin/install-info
 
 %changelog
+* Thu Jun 20 2002 Michail Litvak <mci@owl.openwall.com>
+- 4.2
+- reviewed patches, added patches from ALT
+
 * Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 
