@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/installworld.sh,v 1.12 2004/09/10 07:15:47 galaxy Exp $
+# $Id: Owl/build/installworld.sh,v 1.13 2004/09/30 01:06:13 galaxy Exp $
 
 . installworld.conf
 
@@ -88,12 +88,61 @@ export TMP=$HOME/tmp-work
 
 setup_rpm
 
-if [ ! -d $ROOT/var/lib/rpm ]; then
+if [ -f $ROOT/var/lib/rpm/packages.rpm -o -f $ROOT/var/lib/rpm/Packages ]; then
+	if [ -f $ROOT/var/lib/rpm/packages.rpm -a -s $ROOT/var/lib/rpm/Packages -a $ROOT/var/lib/rpm/packages.rpm -nt $ROOT/var/lib/rpm/Packages ]; then
+		log "Cannot determine which of RPM database to use in $ROOT/var/lib/rpm"
+		exit 1
+	fi
+	if [ -f $ROOT/var/lib/rpm/Packages -a ! -s $ROOT/var/lib/rpm/Packages ]; then
+		log "Found empty $ROOT/var/lib/rpm/Packages, removed"
+		rm $ROOT/var/lib/rpm/Packages
+	fi
+# First of all, we will do the check that no user packages make use of
+# libdb.so.2 and libdb.so.3 from glibc-2.1.3. For that task we have to
+# use system RPM and, if we cannot access it - we will fail.
+	if ! type rpm >& /dev/null; then
+		log "Cannot find system RPM, aborting"
+		exit 1
+	fi
+
+	LIBDB2_DEPS=$(rpm --root $ROOT -q --whatrequires libdb.so.2 2>/dev/null | grep -vE "^no package" | grep -vE "^rpm-")
+	LIBDB3_DEPS=$(rpm --root $ROOT -q --whatrequires libdb.so.3 2>/dev/null | grep -vE "^no package" | grep -vE "^(pam|perl|postfix)-")
+
+	if [ -n "$LIBDB2_DEPS" -o -n "$LIBDB3_DEPS" ]; then
+		echo "
+Warning!
+We found that upgrade procedure will breaks packages listed below, because
+of absence of libdb.so.2 and libdb.so.3 support in supplied glibc:
+" >&2
+		if [ -n "$LIBDB2_DEPS" ]; then
+			echo "libdb.so.2 dependend packages:" >&2
+			for pkg in $LIBDB2_DEPS; do echo "$pkg" >&2 ; done
+		fi
+		if [ -n "$LIBDB3_DEPS" ]; then
+			echo "libdb.so.3 dependend packages:" >&2
+			for pkg in $LIBDB3_DEPS; do echo "$pkg" >&2 ; done
+		fi
+		echo "
+Please resolve this issue before running Owl upgrade procedure again.
+
+For quick and dirty solution you can use:
+# rpm --root $ROOT -e --justdb package
+This will remove package information and it's dependencies from RPM database,
+but leaves all files inplace.
+" >&2
+		log "Found non-Owl packages those what unsupported libraries"
+		exit 1
+	fi
+
+	log "Rebuilding RPM database"
+	$RPMD $RPM_FLAGS --root $ROOT --rebuilddb || exit 1
+	NEED_FAKE=yes
+else
 	log "Initializing RPM database"
-	umask 022
-	mkdir -p $ROOT/var/lib/rpm
+	[ ! -d $ROOT/var/lib/rpm ] && mkdir -p $ROOT/var/lib/rpm
+	chmod 0755 $ROOT/var/lib/rpm
 	$RPMD $RPM_FLAGS --root $ROOT --initdb || exit 1
-	umask $UMASK
+	NEED_FAKE=no
 fi
 
 export MAKE_CDROM
@@ -108,6 +157,10 @@ while read PACKAGES; do
 	FILES=
 	for PACKAGE in $PACKAGES; do
 		if [ "$PACKAGE" = owl-cdrom -a "$MAKE_CDROM" != yes ]; then
+			log "Skipping $PACKAGE"
+			continue
+		fi
+		if [ "$PACKAGE" = glibc-compat-libdb -a "$NEED_FAKE" != yes ]; then
 			log "Skipping $PACKAGE"
 			continue
 		fi
@@ -127,6 +180,13 @@ while read PACKAGES; do
 	STATUS=1
 	log "Failed $PACKAGES"
 done
+
+if [ "$NEED_FAKE" == yes ]; then
+	log "Removing installation support packages"
+	if ! $RPM $RPM_FLAGS --root $ROOT -ev glibc-compat-libdb; then
+		log "Removal of glibc-compat-libdb was failed"
+	fi
+fi
 
 log "Removing temporary files"
 rm -rf $HOME/tmp-work $ROOT/$HOME/tmp-work
