@@ -1,13 +1,13 @@
-# $Id: Owl/packages/mtree/mtree.spec,v 1.5 2002/02/06 18:45:35 solar Exp $
+# $Id: Owl/packages/mtree/mtree.spec,v 1.6 2002/07/28 05:48:48 solar Exp $
 
 Summary: Map a directory hierarchy.
 Name: mtree
-Version: 2.7
-Release: owl2
+Version: 3.1
+Release: owl1
 License: BSD
 Group: System Environment/Base
-Source: mtree-%{version}.tar.gz
-Patch: mtree-%{version}-owl-linux.diff
+Source: mtree-%{version}-20020728.tar.bz2
+Patch0: mtree-3.1-owl-linux.diff
 Requires: openssl
 BuildRequires: openssl-devel
 BuildRoot: /override/%{name}-%{version}
@@ -21,26 +21,29 @@ missing from either the file hierarchy or the specification.
 
 %prep
 %setup -q
-%patch -p1
+%patch0 -p1
 
 %build
-make -C usr.sbin/mtree CFLAGS="-c -I. $RPM_OPT_FLAGS"
+CFLAGS="-c $RPM_OPT_FLAGS" make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/usr/sbin $RPM_BUILD_ROOT/usr/man/man8
-install -m 755 usr.sbin/mtree/mtree $RPM_BUILD_ROOT/usr/sbin/
-install -m 644 usr.sbin/mtree/mtree.8 $RPM_BUILD_ROOT/usr/man/man8/
+mkdir -p $RPM_BUILD_ROOT{%{_sbindir},%{_mandir}/man8}
+install -m 755 usr.sbin/mtree/mtree $RPM_BUILD_ROOT%{_sbindir}/
+install -m 644 usr.sbin/mtree/mtree.8 $RPM_BUILD_ROOT%{_mandir}/man8/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-/usr/sbin/mtree
-/usr/man/man8/mtree.8*
+%{_sbindir}/mtree
+%{_mandir}/man8/mtree.8*
 
 %changelog
+* Sun Jul 28 2002 Solar Designer <solar@owl.openwall.com>
+- Updated to version from current OpenBSD (post-3.1).
+
 * Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions.
 
