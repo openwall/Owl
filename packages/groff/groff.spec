@@ -1,4 +1,4 @@
-# $Id: Owl/packages/groff/groff.spec,v 1.2 2000/11/21 10:10:00 solar Exp $
+# $Id: Owl/packages/groff/groff.spec,v 1.3 2000/11/21 10:39:35 solar Exp $
 
 %define BUILD_USE_X	'no'
 %define BUILD_CURRENT	'yes'
@@ -99,9 +99,11 @@ cd ../..
 %endif
 
 #mv $RPM_BUILD_ROOT%{_prefix}/man $RPM_BUILD_ROOT%{_prefix}/share
+%if "%{BUILD_CURRENT}"!="'yes'"
 ln -s tmac.s	${RPM_BUILD_ROOT}%{_prefix}/share/groff/tmac/tmac.gs
 ln -s tmac.mse	${RPM_BUILD_ROOT}%{_prefix}/share/groff/tmac/tmac.gmse
 ln -s tmac.m	${RPM_BUILD_ROOT}%{_prefix}/share/groff/tmac/tmac.gm
+%endif
 ln -s troff	${RPM_BUILD_ROOT}%{_prefix}/bin/gtroff
 ln -s tbl	${RPM_BUILD_ROOT}%{_prefix}/bin/gtbl
 ln -s pic	${RPM_BUILD_ROOT}%{_prefix}/bin/gpic
