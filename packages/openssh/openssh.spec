@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.48 2002/07/07 03:10:44 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.49 2002/07/27 23:26:29 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.4p1
-Release: owl3
+Release: owl4
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -218,6 +218,9 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Sun Jul 28 2002 Solar Designer <solar@owl.openwall.com>
+- Install the packet_close() cleanup for the client as well.
+
 * Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
 - Install the packet_close() cleanup for root logins as well (which are
 not privilege separated because that wouldn't make sense and thus were

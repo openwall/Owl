@@ -62,6 +62,36 @@ diff -ur openssh-3.4p1.orig/session.c openssh-3.4p1/session.c
  	if (!use_privsep)
  		pty_setowner(s->pw, s->tty);
  
+diff -ur openssh-3.4p1.orig/ssh-keyscan.c openssh-3.4p1/ssh-keyscan.c
+--- openssh-3.4p1.orig/ssh-keyscan.c	Fri Jun 21 04:09:54 2002
++++ openssh-3.4p1/ssh-keyscan.c	Sun Jul 28 03:20:35 2002
+@@ -344,6 +344,7 @@
+ 	int j;
+ 
+ 	packet_set_connection(c->c_fd, c->c_fd);
++	fatal_add_cleanup((void (*) (void *)) packet_close, NULL);
+ 	enable_compat20();
+ 	myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = c->c_keytype == KT_DSA?
+ 	    "ssh-dss": "ssh-rsa";
+diff -ur openssh-3.4p1.orig/sshconnect.c openssh-3.4p1/sshconnect.c
+--- openssh-3.4p1.orig/sshconnect.c	Mon Jun 24 01:23:20 2002
++++ openssh-3.4p1/sshconnect.c	Sun Jul 28 03:20:07 2002
+@@ -153,6 +153,7 @@
+ 
+ 	/* Set the connection file descriptors. */
+ 	packet_set_connection(pout[0], pin[1]);
++	fatal_add_cleanup((void (*) (void *)) packet_close, NULL);
+ 
+ 	/* Indicate OK return */
+ 	return 0;
+@@ -354,6 +355,7 @@
+ 
+ 	/* Set the connection. */
+ 	packet_set_connection(sock, sock);
++	fatal_add_cleanup((void (*) (void *)) packet_close, NULL);
+ 
+ 	return 0;
+ }
 diff -ur openssh-3.4p1.orig/sshd.c openssh-3.4p1/sshd.c
 --- openssh-3.4p1.orig/sshd.c	Wed Jun 26 03:24:19 2002
 +++ openssh-3.4p1/sshd.c	Sun Jul  7 07:04:55 2002
