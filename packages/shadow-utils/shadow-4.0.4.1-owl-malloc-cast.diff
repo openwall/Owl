@@ -4,9 +4,9 @@ diff -puNr shadow-4.0.4.1.orig/libmisc/xmalloc.c shadow-4.0.4.1/libmisc/xmalloc.
 @@ -13,13 +13,13 @@
  RCSID ("$Id: xmalloc.c,v 1.4 2003/04/22 10:59:22 kloczek Exp $")
  #include <stdio.h>
++#include <stdlib.h>
  #include "defines.h"
 -extern char *malloc ();
-+extern void *malloc ();
  
  char *xmalloc (size_t size)
  {
