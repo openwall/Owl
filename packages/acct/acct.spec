@@ -1,20 +1,20 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.9 2001/04/14 01:12:05 solar Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.10 2002/01/24 11:55:34 solar Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
 Version: 6.3.5
-Release: 6owl
-Copyright: GPL
+Release: owl6
+License: GPL
 Group: Applications/System
 Source0: ftp://ftp.red-bean.com/pub/noel/%{name}-%{version}.tar.gz
 Source1: dump-acct.8
 Source2: dump-utmp.8
 Source3: acct.logrotate
 Source4: acct.init
+PreReq: /sbin/install-info
 Provides: psacct
 Obsoletes: psacct
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
-Prereq: /sbin/install-info
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The acct package contains several utilities for monitoring process
@@ -23,9 +23,6 @@ displays statistics about how long users have been logged on.  The
 lastcomm command displays information about previous executed commands.
 The accton command turns process accounting on or off.  The sa command
 summarizes information about previously executed commands.
-
-Install the acct package if you'd like to use its utilities for
-monitoring process activities on your system.
 
 %prep
 %setup -q
@@ -96,6 +93,9 @@ fi
 %{_infodir}/*
 
 %changelog
+* Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Sat Apr 14 2001 Solar Designer <solar@owl.openwall.com>
 - Preserve permissions of /etc/info-dir when modifying it in %post.
 
