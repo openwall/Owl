@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iproute2/iproute2.spec,v 1.7 2002/02/12 08:00:24 solar Exp $
+# $Id: Owl/packages/iproute2/iproute2.spec,v 1.8 2002/02/12 10:44:55 solar Exp $
 
 Summary: Enhanced IP routing and network devices configuration tools.
 Name: iproute2
@@ -8,7 +8,7 @@ Release: owl3
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.inr.ac.ru/ip-routing/%name-%version-now-%snapshot.tar.gz
-Source1: %name-%version-%snapshot-ps.tar.gz
+Source1: %name-%version-%snapshot-ps.tar.bz2
 Source2: ip.8
 Source3: tc.8
 Source4: tc-htb.8
