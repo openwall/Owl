@@ -66,7 +66,7 @@
   */
  char *above[] =
  {
-+	"hid keybdev mousedev",                                                                             
++	"hid keybdev mousedev",
 +	"wacom evdev",
  	NULL			/* marks the end of the list! */
  };
