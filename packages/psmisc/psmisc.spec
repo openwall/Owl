@@ -1,4 +1,4 @@
-# $Id: Owl/packages/psmisc/psmisc.spec,v 1.9 2005/02/21 01:14:10 solar Exp $
+# $Id: Owl/packages/psmisc/psmisc.spec,v 1.10 2005/02/21 02:03:00 solar Exp $
 
 Summary: Utilities for managing processes on your system.
 Name: psmisc
@@ -32,12 +32,13 @@ of processes that are using specified files or filesystems.
 %install
 rm -rf %buildroot
 %makeinstall
+mv %buildroot%_bindir/fuser %buildroot/sbin/
 %find_lang %name
 
 %files -f %name.lang
 %defattr(-,root,root)
 %doc ChangeLog COPYING README AUTHORS
-%_bindir/fuser
+/sbin/fuser
 %_bindir/killall
 %_bindir/pstree*
 %_mandir/man1/fuser.1*
@@ -47,6 +48,8 @@ rm -rf %buildroot
 %changelog
 * Mon Feb 21 2005 Solar Designer <solar@owl.openwall.com> 21.5-owl1
 - Added URL tag, corrected Source URL.
+- Moved fuser back to /sbin for RHL compatibility and since our current
+/etc/rc.d/init.d/netfs depends on that.
 
 * Sat Feb 19 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 21.5-owl0
 - Updated to 21.5.
