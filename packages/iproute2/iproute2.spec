@@ -1,15 +1,14 @@
-# $Id: Owl/packages/iproute2/iproute2.spec,v 1.3 2001/12/28 17:56:50 mci Exp $
+# $Id: Owl/packages/iproute2/iproute2.spec,v 1.4 2001/12/29 00:17:41 mci Exp $
 
 %define snapshot ss010824
 
 Summary: Enhanced IP routing and network devices configuration tools.
 Name: iproute2
 Version: 2.4.7
-Release: 2owl
+Release: 3owl
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.inr.ac.ru/ip-routing/%name-%version-now-%snapshot.tar.gz
-Source1: libnetlink.3
 Patch0: iproute2-2.4.7-rh-config.diff
 Patch1: iproute2-2.4.7-rh-promisc-allmulti.diff
 Patch2: iproute2-2.4.7-pld-owl-ll_types_proto.diff
@@ -42,7 +41,6 @@ mkdir -p $RPM_BUILD_ROOT{/sbin,%{_sbindir},/etc/iproute2,%{_mandir}/man3}
 install -p -m 755 ip/{ip,ifcfg,rtmon} tc/tc $RPM_BUILD_ROOT/sbin
 install -p -m 755 ip/rtacct $RPM_BUILD_ROOT%{_sbindir}
 install -p -m 644 etc/iproute2/* $RPM_BUILD_ROOT/etc/iproute2
-install -p -m 644 $RPM_SOURCE_DIR/libnetlink.3 $RPM_BUILD_ROOT%{_mandir}/man3/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -52,11 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 /sbin/*
 %dir /etc/iproute2
 %doc README* RELNOTES doc/*.tex examples
-%{_mandir}/man3/*
 %attr(644,root,root) %config(noreplace) /etc/iproute2/*
 %{_sbindir}/*
 
 %changelog
 * Tue Dec 28 2001 Michail Litvak <mci@owl.openwall.com>
 - spec-file based on RH's
-- added libnetlink.3 man page from SuSE
