@@ -1,16 +1,43 @@
-"Owl" is a security-enhanced operating system with Linux and GNU
-software as its core, compatible with other major distributions of
-GNU/*/Linux.  It is intended as a server platform.
+	"Owl", -- a security-enhanced server platform.
+
+"Owl" (or "Openwall GNU/*/Linux"; please, note that only the "O" is
+capitalized in either case) is a security-enhanced operating system
+with Linux and GNU software as its core, compatible with other major
+distributions of GNU/*/Linux.  It is intended as a server platform.
+And, of course, it's free.
+
+
+	Features.
+
+While we value quality above feature set, Owl does indeed offer a
+number of features besides just trying to be more secure.
+
+Most obviously, Owl can be used as a base for installing whatever
+software is generally available for GNU/*/Linux systems.  It offers
+some compatibility (read below) for software packages found in or
+developed for other major Linux distributions, such as Red Hat Linux.
+
+Additionally, being a server platform, Owl will include a growing set
+of integrated Internet services.  Only a few are available with the
+preview, but this is one of the primary areas we will be working in.
+
+Owl includes a complete build environment capable to re-build the
+entire system from source with one simple command ("make buildworld").
+(This is explained in more detail below.)
+
+Owl supports multiple architectures (currently x86 and sparc), as this
+lets you use it in more cases and helps us catch certain classes of
+software bugs earlier, thus improving the reliability of Owl packages.
 
 
 	Security.
 
 Owl combines several approaches to reduce the number and/or impact of
-flaws in its software components and in third-party software that one
-might install on the system.
+flaws in its software components and impact of flaws in third-party
+software that one might install on the system.
 
 The primary approach used is proactive source code review for several
-classes of potential security problems.  However, because of the large
+classes of software vulnerabilities.  However, because of the large
 amount of code, there's a certain level of "importance" for a software
 component or a part thereof to be audited.  Currently, only pieces of
 code which are typically run with privileges greater than those of a
@@ -21,19 +48,38 @@ SGID programs, all daemons and network services.  Other software may
 be audited when it is already a part of Owl.  Potential problems found
 during the audit are fixed or, in some pathological cases, may prevent
 the software component from being included.  In general, code quality
-is always considered when there's a choice between implementations of
-a feature.
+and privilege management are always considered when there's a choice
+between implementations of a feature.  As the project evolves, many of
+the software components will be replaced with ones of our own.
 
-While source code review is the preferred approach, not all software
-can be reviewed.  Typically, when insecure third-party software is
-installed on an otherwise secure system, "the game" is lost.  The only
-thing an operating system can guarantee is that potential unauthorized
-access would be limited to those privileges granted to the software in
-question.  However, in the recent years, a number of approaches were
-developed which reduce the likelihood and/or may reduce the impact of
-successful real-world attacks on insecure third-party software.  Owl
-will use some of those "hardening" approaches in various parts of the
-system.
+When packaged for Owl, the software components are configured or, when
+necessary, modified in order to provide safe defaults, apply the least
+privilege principle, and introduce privilege separation.  The use of
+safe defaults, where optional and potentially dangerous features need
+to be turned on explicitly, lets us audit the pieces of code used in
+in the default configuration in a more thorough way.  Extra systems
+administration facilities ("owl-control") are provided for managing
+system features such as the optional SUID/SGID binaries independently
+from installing the corresponding packages.  Every Owl package will
+have its audit status documented to allow for risk assessment.
+
+While source code review is the preferred way to deal with software
+vulnerabilities, it can't be applied in all cases.  Typically, when
+insecure third-party software is installed on an otherwise secure
+system, "the game" is lost.  The only thing an operating system can
+guarantee is that potential unauthorized access would be limited to
+those privileges granted to the software in question.  However, in the
+recent years, a number of approaches were developed which reduce the
+likelihood and/or may reduce the impact of successful real-world
+attacks on insecure third-party software.  Owl will use some of those
+"hardening" approaches in various parts of the system.
+
+Owl uses "strong" cryptography within its core components, and already
+includes some security policy enforcement (proactive password checking
+with "pam_passwdqc", password and account expiration, network address-
+based access control) and integrity checking ("mtree") capabilities.
+It is one of our goals to provide a wide range of security tools with
+Owl, available for use "out of the box".
 
 
 	The build environment and package management.
@@ -62,4 +108,4 @@ We're using RPM for the binary packages, as that allows for reasonable
 dependency handling when installing packages from or intended for Red
 Hat Linux and several other distributions, on an Owl system.
 
-$Id: Owl/doc/CONCEPTS,v 1.2 2000/12/12 06:08:22 solar Exp $
+$Id: Owl/doc/CONCEPTS,v 1.3 2000/12/23 08:24:47 solar Exp $
