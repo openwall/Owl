@@ -1,19 +1,13 @@
-# $Id: Owl/packages/gettext/gettext.spec,v 1.5 2003/10/29 19:22:05 solar Exp $
+# $Id: Owl/packages/gettext/gettext.spec,v 1.6 2004/09/10 07:23:21 galaxy Exp $
 
 Summary: GNU libraries and utilities for producing multi-lingual messages.
 Name: gettext
-Version: 0.10.35
-Release: owl24
+Version: 0.14.1
+Release: owl0.2
 License: GPL
 Group: Development/Tools
 Source: ftp://alpha.gnu.org/pub/gnu/%name-%version.tar.gz
-Patch0: gettext-0.10.35-owl-sanitize-environ.diff
-Patch1: gettext-0.10.35-rh-getline.diff
-Patch2: gettext-0.10.35-rh-hacks.diff
-Patch3: gettext-0.10.35-rh-aclocaldir.diff
-Patch4: gettext-0.10.35-rh-buildroot.diff
-Patch5: gettext-0.10.35-rh-destdir.diff
-Patch6: gettext-0.10.35-rh-verttab.diff
+Patch0: gettext-0.14.1-alt-gettextize-quiet.diff
 BuildRoot: /override/%name-%version
 
 %description
@@ -31,47 +25,79 @@ programs.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p0
-%patch6 -p1
 
 %build
+
 unset LINGUAS || :
-libtoolize --copy --force
+libtoolize --force --copy
 aclocal
 automake
 autoconf
-%configure --enable-shared --with-included-gettext
-make
+LDFLAGS="-L%buildsubdir/gettext-runtime/intl/.libs -L%buildsubdir/gettext-tools/lib/.libs -L%buildsubdir/gettext-tools/src/.libs $LDFLAGS" \
+%configure --enable-shared --with-included-gettext --enable-relocatable
+%__make aliaspath='%_libdir/X11/locale:%_datadir/locale'
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
 # Fix busted no-emacs install for $lispdir/po-mode.el
-%makeinstall lispdir=%buildroot/usr/share/emacs/site-lisp \
-	aclocaldir=%buildroot/usr/share/aclocal
+%makeinstall lispdir=%buildroot%_datadir/emacs/site-lisp \
+	aclocaldir=%buildroot%_datadir/aclocal \
+	gettextsrcdir=%buildroot%_datadir/%name/intl
+
+mv %buildroot%_datadir/%name/intl/{ABOUT-NLS,archive.tar.gz} \
+	%buildroot%_datadir/%name/
+
+mkdir -p %buildroot%_datadir/%name/po
+install -p -m 644 %name-runtime/po/Makefile.in.in %buildroot%_datadir/%name/po/
+
+# Move documentation in the right place
+mkdir -p %buildroot%_docdir
+mv %buildroot%_datadir/doc/%name %buildroot%_docdir/%name-%version
+mv %buildroot%_datadir/doc/libasprintf %buildroot%_docdir/%name-%version/
+
+# Remove unpackaged files
+rm %buildroot%_infodir/dir
+rm %buildroot%_datadir/locale/locale.alias
+rm %buildroot%_includedir/libintl.h
 
 %post
-/sbin/install-info %_infodir/gettext.info.gz %_infodir/dir
+/sbin/install-info --info-dir=%_infodir %_infodir/gettext.info.gz
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/gettext.info.gz %_infodir/dir
+	/sbin/install-info --delete --info-dir=%_infodir %_infodir/gettext.info.gz
 fi
 
 %files
 %defattr(-,root,root)
+%doc %_docdir/%name-%version
 %_bindir/*
 %_infodir/*.info*
+%_includedir/*.h
+%_mandir/man?/*
+%_libdir/*
 %_datadir/gettext
 %_datadir/locale/*/LC_MESSAGES/*
 %_datadir/aclocal/*
-%_datadir/emacs/site-lisp/*
+#XXX: make install skips these -- (GM)
+#%_datadir/emacs/site-lisp/*
 
 %changelog
+* Wed Sep 08 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 0.14-owl0.2
+- Changed %%exclude to removing the file in %%install section. This will
+allow build this package under RPM3
+
+* Wed Mar 17 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 0.14-owl0.1
+- Updated to 0.14
+- Cleaned up the spec (removed unneeded patches, fixed a typo)
+
+* Thu Feb 26 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 0.11.5-owl0.1
+- Updated to 0.11.5
+- Temporarily we do not package libintl.h as it conflicts with one from glibc
+- Some autotools magic to build this package under new autoconf
+- Temporarily disabled packaging of emacs lisp files, must be investigated
+
 * Sun Feb 03 2002 Michail Litvak <mci@owl.openwall.com> 0.10.35-owl24
 - Enforce our new spec file conventions
 
