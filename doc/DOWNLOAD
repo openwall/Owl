@@ -50,13 +50,15 @@ need both the CVS and the source trees.
 More documentation (including BUILD and INSTALL) is available in the
 CVS tree, under Owl/doc/.
 
-An alternative way to access the CVS tree (besides being able to
-obtain its snapshots for a certain release or branch as native.tar.gz
-from the FTP mirrors listed above) is via our anonymous CVS server:
+In addition to the availability of snapshots of the entire CVS tree on
+the FTP mirrors listed above, for experienced users there's public
+read-only access to a copy of our actual CVS repository provided via
+our anonymous CVS and CVSweb servers.  To access the anonymous CVS
+server via the pserver protocol, set CVSROOT as follows:
 
 CVSROOT=:pserver:anoncvs:anoncvs@anoncvs.owl.openwall.com:/cvs
 
-or over SSH, with the following settings:
+alternatively, to access the anonymous CVS server over SSH, use:
 
 CVS_RSH=ssh
 CVSROOT=anoncvs@anoncvs.owl.openwall.com:/cvs
@@ -66,4 +68,8 @@ compression with either method of access to the anonymous CVS server,
 typically by specifying the -z3 option to CVS and/or "Compression yes"
 in the SSH client's configuration file.
 
-$Id: Owl/doc/DOWNLOAD,v 1.27 2004/05/21 00:47:03 solar Exp $
+Finally, the CVSweb interface is provided at:
+
+http://cvsweb.openwall.com
+
+$Id: Owl/doc/DOWNLOAD,v 1.28 2004/06/06 03:28:44 solar Exp $
