@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.14 2002/08/03 23:01:01 solar Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.15 2002/08/11 23:20:27 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -6,7 +6,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.6.0
-Release: owl11
+Release: owl12
 Epoch: 1
 License: GPL
 Group: Development/Languages
@@ -24,6 +24,7 @@ Patch6: perl-5.6.0-owl-disable-suidperl.diff
 Patch7: perl-5.6.0-alt-owl-perldoc-tmp.diff
 Patch8: perl-5.6.0-owl-tmp.diff
 Patch9: perl-5.6.0-owl-vitmp.diff
+Patch10: perl-5.6.0-up-owl-glob-bound.diff
 Provides: perl <= %{version}
 Obsoletes: perl-MD5
 BuildRequires: rpm >= 3.0.5
@@ -79,6 +80,7 @@ cp $RPM_SOURCE_DIR/perlcc.PL utils/
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 find . -name '*.orig' -print0 | xargs -r0 rm -v --
 
@@ -194,6 +196,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/*/*
 
 %changelog
+* Sun Aug 11 2002 Solar Designer <solar@owl.openwall.com>
+- Back-ported bound checking fixes for File::Glob from Perl 5.8.0.
+Thanks to Pavel Kankovsky for the report and to Michael Tokarev for
+discussing other possible approaches to fixing this.
+
 * Sun Aug 04 2002 Solar Designer <solar@owl.openwall.com>
 - Use "rm -f" on compile.ph as it won't exist if the kernel sources under
 /usr/src/linux haven't been compiled (reported by Camiel Dobbelaar).
