@@ -51,7 +51,8 @@ you actually convert the system into Owl with multiple iterations of
 Here are some build times (hours:minutes), so that you know what to
 expect:
 
-Quad Pentium 4, 2 GHz, 2 GB			0:21
+Dual Pentium 4 (Xeon), 2.66 GHz, 2 GB		0:20
+Quad Pentium 4 (Dual Xeon), 2 GHz, 2 GB		0:21
 Dual Pentium III, 1.266 GHz, 2 GB		0:30
 Dual Pentium III, 800 MHz, 512 MB		0:47
 Athlon, 1 GHz, 256 MB				1:10
@@ -110,4 +111,4 @@ where "name" is the name of the source package.  For foreign packages
 (SRPMs) built with the Owl build environment you also need to include
 the version number part in "name".
 
-$Id: Owl/doc/BUILD,v 1.19 2002/09/01 01:36:20 solar Exp $
+$Id: Owl/doc/BUILD,v 1.20 2003/05/08 04:07:00 solar Exp $
