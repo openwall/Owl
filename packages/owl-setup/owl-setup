@@ -173,7 +173,7 @@ select_keyboard()
 		--menu \"Please select your keyboard layout:\" 0 0 15 \
 		"$klist" \
 		2> $tempfile" || return
-       
+
 	layout="`cat $tempfile`"
 
 	$DIALOG --backtitle "$TITLE" \

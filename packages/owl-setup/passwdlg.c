@@ -61,14 +61,14 @@ static int read_loop(int fd, char *buffer, int count)
     return offset;
 }
 
-char *run_cmd(char *cmd) 
+char *run_cmd(char *cmd)
 {
     int status, asize;
     int chan[2];
     char *argv[4], *buff;
 
     buff = malloc(MAXSTR + 1);
-    if (buff == NULL) 
+    if (buff == NULL)
         return NULL;
 
     if (pipe(chan)) {
@@ -103,7 +103,7 @@ char *run_cmd(char *cmd)
                 if (errno != EINTR) {
                     perror("waitpid");
                     return NULL;
-                } 
+                }
             } else {
                 if ((asize = read_loop(chan[0], buff, MAXSTR)) < 0)
                     return NULL;
@@ -155,19 +155,19 @@ int run_conv(int num_msg, const struct pam_message **msgm,
             free(msg_str);
             msg_str = NULL;
 
-            if (string == NULL) 
+            if (string == NULL)
                 goto failed_conversation;
             break;
         case PAM_PROMPT_ECHO_ON:
             setenv("PAM_MSG", msgm[count]->msg, 1);
             string = run_cmd(echo_on_cmd);
-            if (string == NULL) 
+            if (string == NULL)
                 goto failed_conversation;
             break;
         case PAM_ERROR_MSG:
             setenv("PAM_MSG", msgm[count]->msg, 1);
             string = run_cmd(msg_cmd);
-            if (string == NULL) 
+            if (string == NULL)
                 goto failed_conversation;
 	    break;
         case PAM_TEXT_INFO:
@@ -184,11 +184,11 @@ int run_conv(int num_msg, const struct pam_message **msgm,
 		msgm[count]->msg_style);
             goto failed_conversation;
         }
-        if (string) {                         
+        if (string) {
             /* must add to reply array */
-            /* add string to list of responses */                               
-            reply[count].resp_retcode = 0;                                      
-            reply[count].resp = string;                                         
+            /* add string to list of responses */
+            reply[count].resp_retcode = 0;
+            reply[count].resp = string;
             string = NULL;
         }
     }
@@ -201,7 +201,7 @@ int run_conv(int num_msg, const struct pam_message **msgm,
 failed_conversation:
     if (reply) {
         for (count=0; count<num_msg; ++count) {
-            if (reply[count].resp == NULL) 
+            if (reply[count].resp == NULL)
                 continue;
 
             switch (msgm[count]->msg_style) {
@@ -214,7 +214,7 @@ failed_conversation:
             case PAM_TEXT_INFO:
                 /* should not actually be able to get here... */
                 free(reply[count].resp);
-            }                                            
+            }
             reply[count].resp = NULL;
         }
         /* forget reply too */
@@ -230,7 +230,7 @@ static struct pam_conv conv = {
     NULL
 };
 
-void usage(void) 
+void usage(void)
 {
     printf("Usage:\n");
     printf(" run -e <cmd> -E <cmd> -m <cmd> -u username\n");
