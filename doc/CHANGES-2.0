@@ -20,7 +20,7 @@ for Red Hat Linux on Owl.
 2004/11/03	Packages: autoconf, automake, gcc, gettext, glibc,
 		libtool, rpm;
 		other affected packages;
-		Owl/build/*; Owl/doc/{BUILD,INSTALL}
+		Owl/build/*; Owl/doc/{BUILD,INSTALL,CONCEPTS}
 Merged in updates to autoconf 2.59, automake 1.8.3, gcc 3.2.2, gettext
 0.14.1, glibc 2.3.2 (with Red Hat's patches as of RHL9 but without
 NPTL, and indeed updating all of our relevant patches), libtool 1.5.2,
@@ -255,4 +255,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.51 2004/11/03 00:31:14 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.52 2004/11/03 00:33:44 solar Exp $
