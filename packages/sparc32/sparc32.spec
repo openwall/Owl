@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sparc32/Attic/sparc32.spec,v 1.1 2000/11/16 11:54:46 solar Exp $
+# $Id: Owl/packages/sparc32/Attic/sparc32.spec,v 1.2 2000/11/16 14:36:24 solar Exp $
 
 Summary: A SPARC32 compilation environment.
 Name: sparc32
@@ -23,7 +23,7 @@ Install sparc32 if you need to compile SPARC32 packages on a SPARC64.
 %setup -q
 
 %build
-gcc -c $RPM_OPT_FLAGS sparc32.c -s -o sparc32
+gcc $RPM_OPT_FLAGS sparc32.c -s -o sparc32
 
 %install
 rm -rf $RPM_BUILD_ROOT
