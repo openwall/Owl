@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.16 2001/03/18 03:19:42 solar Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.17 2001/03/18 04:08:01 solar Exp $
 
 %define GCC_PREFIX	/usr
 %define CPP_PREFIX	/lib
@@ -300,7 +300,11 @@ ln -sf g77 $RPM_BUILD_ROOT%{GCC_PREFIX}/bin/f77
 %endif
 
 mkdir -p $RPM_BUILD_ROOT/lib
+%if "%{GCC_VERSION}" != "2.95.2"
+ln -sf ../${FULLPATH##$RPM_BUILD_ROOT/}/cpp0 $RPM_BUILD_ROOT/lib/cpp
+%else
 ln -sf ../${FULLPATH##$RPM_BUILD_ROOT/}/cpp $RPM_BUILD_ROOT/lib/cpp
+%endif
 
 ln -sf cccp.1 $RPM_BUILD_ROOT%{GCC_PREFIX}/man/man1/cpp.1
 
