@@ -1,4 +1,4 @@
-# $Id: Owl/packages/hdparm/hdparm.spec,v 1.7 2002/11/04 21:19:41 mci Exp $
+# $Id: Owl/packages/hdparm/hdparm.spec,v 1.8 2002/11/05 01:08:37 solar Exp $
 
 Summary: A utility for displaying and/or setting hard disk parameters.
 Name: hdparm
@@ -25,9 +25,9 @@ make CFLAGS="$RPM_OPT_FLAGS"
 
 %install
 mkdir -p $RPM_BUILD_ROOT/sbin
-mkdir -p $RPM_BUILD_ROOT/%{_mandir}/man8
-install -s -m 755 hdparm $RPM_BUILD_ROOT/sbin/hdparm
-install -m 644 hdparm.8 $RPM_BUILD_ROOT/%{_mandir}/man8
+mkdir -p $RPM_BUILD_ROOT%{_mandir}/man8
+install -s -m 755 hdparm $RPM_BUILD_ROOT/sbin/
+install -m 644 hdparm.8 $RPM_BUILD_ROOT%{_mandir}/man8/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
