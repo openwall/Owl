@@ -1,4 +1,4 @@
-# $Id: Owl/packages/diffutils/diffutils.spec,v 1.8 2003/10/29 18:56:15 solar Exp $
+# $Id: Owl/packages/diffutils/diffutils.spec,v 1.9 2003/10/29 19:00:47 solar Exp $
 
 Summary: A GNU collection of diff utilities.
 Name: diffutils
@@ -17,7 +17,7 @@ Prefix: %_prefix
 BuildRoot: /override/%name-%version
 
 %description
-Diffutils includes four utilities: diff, cmp, diff3, and sdiff.  diff
+diffutils includes four utilities: diff, cmp, diff3, and sdiff.  diff
 compares two files and shows the differences, line by line.  The cmp
 command shows the offset and line numbers where two files differ, or
 cmp can show the characters that differ between the two files.  The
