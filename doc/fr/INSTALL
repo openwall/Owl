@@ -14,7 +14,7 @@ sur un CD-R.
 
 Le CD Owl pour x86 est démarrable, donc si votre machine supporte de
 démarrer depuis un CD alors faites le. Autrement prenez l'image de la
-disquette de démarrage depuis le CD sous /boot/floppy.image, copiez la sur
+disquette de démarrage depuis le CD sous boot/floppy.image, copiez la sur
 une disquette 1,44 Mo formattée (avec dd(1) ou un outil équivalent), et
 démarrez depuis la disquette. Dans les deux cas, le gestionnaire de
 démarrage vous demandera le périphérique de votre CD-ROM que le noyau
@@ -76,4 +76,4 @@ Vous pouvez choisir de configurer le chargeur de démarrage avec Owl (LILO ou
 SILO, dépendant de l'architecture), ou vous pouvez utiliser un chargeur de
 démarrage déjà installé sur le système (s'il y en a un).
 
-$Id: Owl/doc/fr/INSTALL,v 1.3 2002/02/07 07:42:40 solar Exp $
+$Id: Owl/doc/fr/INSTALL,v 1.4 2002/10/07 19:13:35 solar Exp $

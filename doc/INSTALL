@@ -13,7 +13,7 @@ burn one onto a CD-R.
 
 The Owl CDs for x86 are bootable, so if your machine supports booting
 off a CD just do so.  Otherwise take the boot floppy image from the CD
-under /boot/floppy.image, write it onto a formatted 1.44 MB floppy
+under boot/floppy.image, write it onto a formatted 1.44 MB floppy
 (with dd(1) or an equivalent tool), and boot off the floppy.  In
 either case, the boot loader will prompt you for your CD-ROM device
 which the kernel will use for the root filesystem.
@@ -75,4 +75,4 @@ chrooted to your newly installed userland:
 
 	chroot /owl
 
-$Id: Owl/doc/INSTALL,v 1.8 2002/09/17 13:24:44 solar Exp $
+$Id: Owl/doc/INSTALL,v 1.9 2002/10/07 19:13:34 solar Exp $

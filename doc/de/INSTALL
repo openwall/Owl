@@ -13,7 +13,7 @@ Image herunter laden kann um es auf CD zu brennen.
 
 Die Owl CDs sind im Moment nur auf x86 Architekturen bootfähig. Sollte
 der Rechner von CD booten wird dieser Weg empfohlen. Wenn nicht, schreibt man
-das Bootdisketten-Image (unter /boot/floppy.image) auf eine formatierte
+das Bootdisketten-Image (unter boot/floppy.image) auf eine formatierte
 1,44 MB Diskette (mittels dd(1) oder einem äquivalenten Tool) und bootet
 von der Diskette. In beiden Fällen wird der boot loader nach dem
 CD-ROM Device fragen, welches der Kernel als root Dateisystem verwenden
@@ -82,4 +82,4 @@ land geschehen:
 
 	chroot /owl
 
-$Id: Owl/doc/de/INSTALL,v 1.7 2002/09/17 14:31:51 schmidt Exp $
+$Id: Owl/doc/de/INSTALL,v 1.8 2002/10/07 19:13:35 solar Exp $
