@@ -1,0 +1,40 @@
+--- ed-0.2.orig/buf.c
++++ ed-0.2/buf.c
+@@ -20,7 +20,7 @@
+ */
+ 
+ #ifndef lint
+-static char *rcsid = "@(#)$Id: buf.c,v 1.11 1994/11/13 04:25:44 alm Exp $";
++static char *rcsid = "@(#)%Id: buf.c,v 1.11 1994/11/13 04:25:44 alm Exp %";
+ #endif /* not lint */
+ 
+ #include "ed.h"
+@@ -194,7 +194,7 @@
+ 
+ extern int newline_added;
+ 
+-char sfn[15] = "";		/* scratch file name */
++char *sfn;		/* scratch file name */
+ 
+ /* open_sbuf: open scratch file */
+ int
+@@ -205,8 +205,8 @@
+ 
+   isbinary = newline_added = 0;
+   u = umask(077);
+-  strcpy (sfn, "/tmp/ed.XXXXXX");
+-  if (mktemp (sfn) == NULL || (sfp = fopen (sfn, "w+")) == NULL)
++  sfn = tempnam (NULL, "ed");
++  if (sfn == NULL || (sfp = fopen (sfn, "w+")) == NULL)
+     {
+       fprintf (stderr, "%s: %s\n", sfn, strerror (errno));
+       sprintf (errmsg, "Cannot open temp file");
+@@ -234,6 +234,8 @@
+       unlink (sfn);
+     }
+   sfseek = seek_write = 0;
++
++  free (sfn);
+   return 0;
+ }
+ 

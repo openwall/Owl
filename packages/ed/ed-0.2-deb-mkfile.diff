@@ -1,0 +1,13 @@
+--- ed-0.2.orig/Makefile.in
++++ ed-0.2/Makefile.in
+@@ -65,8 +65,8 @@
+ 
+ all: ed
+ 
+-ed: $(OBJECTS) libed.a
+-	$(CC) $(LDFLAGS) -o ed $(OBJECTS) libed.a $(LIBS)
++ed: $(OBJECTS)
++	$(CC) $(LDFLAGS) -o ed $(OBJECTS) $(LIBS)
+ 
+ buf.o: ed.h config.h regex.h
+ ed.o: ed.h config.h regex.h
