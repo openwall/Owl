@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.27 2005/03/06 00:44:49 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.28 2005/03/06 01:59:44 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
@@ -10,7 +10,8 @@ Source0: rc.ramdisk
 Source1: welcome-cdrom.sh
 Source10: lilo.conf
 Source11: dot-config
-Source12: floppy.update
+Source12: floppy-update.sh
+Source13: message
 Requires: owl-startup >= 0.15-owl1
 ExclusiveArch: %ix86
 BuildRoot: /override/%name-%version
@@ -29,7 +30,8 @@ install -m 700 $RPM_SOURCE_DIR/rc.ramdisk etc/rc.d/
 install -m 755 $RPM_SOURCE_DIR/welcome-cdrom.sh etc/profile.d/
 install -m 600 $RPM_SOURCE_DIR/lilo.conf etc/
 install -m 600 $RPM_SOURCE_DIR/dot-config boot/.config
-install -m 700 $RPM_SOURCE_DIR/floppy.update boot/
+install -m 700 $RPM_SOURCE_DIR/floppy-update.sh boot/
+install -m 600 $RPM_SOURCE_DIR/message boot/
 ln -s ../rom/{dev,etc,home,root,tmp,var,world} ram/
 
 %pre
@@ -76,7 +78,8 @@ fi
 %config /etc/profile.d/welcome-cdrom.sh
 %config /etc/lilo.conf
 %config /boot/.config
-/boot/floppy.update
+/boot/floppy-update.sh
+/boot/message
 %dir /rom
 /ram
 %dir /owl
@@ -86,6 +89,8 @@ fi
 - Updated to Linux 2.4.29-ow1, dropped support for parallel ports, SCSI tape
 drives, PPP, SLIP, and NFS server to make the kernel still fit on a floppy
 when built with the new gcc (3.4.3).
+- Have LILO display a message explaining that it's the controller for the
+CD-ROM device that is being requested in the boot menu.
 
 * Sun Apr 18 2004 Solar Designer <solar@owl.openwall.com> 0.11-owl1
 - Updated to Linux 2.4.26-ow1.

@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/owl-cdrom/Attic/floppy.update,v 1.1 2001/09/16 00:36:18 solar Exp $
+# $Id: Owl/packages/owl-cdrom/Attic/floppy-update.sh,v 1.1 2005/03/06 01:59:44 solar Exp $
 
 set -e
 
@@ -10,7 +10,6 @@ mount floppy.image /mnt/floppy -oloop=/dev/loop0
 trap 'umount /mnt/floppy' EXIT HUP INT TERM
 
 mkdir -m 700 /mnt/floppy/boot
-cp -p /boot/boot.b /mnt/floppy/boot/
-cp -p bzImage /mnt/floppy/boot/
+cp -p boot.b bzImage message /mnt/floppy/boot/
 
 /sbin/lilo -C ../etc/lilo.conf
