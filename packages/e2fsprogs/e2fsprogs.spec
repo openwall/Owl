@@ -1,9 +1,9 @@
-# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.16 2004/09/10 07:22:03 galaxy Exp $
+# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.17 2004/11/02 02:46:51 solar Exp $
 
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
 Version: 1.27
-Release: owl5
+Release: owl6
 License: GPL
 Group: System Environment/Base
 Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
@@ -166,6 +166,9 @@ fi
 %_mandir/man3/com_err.3*
 
 %changelog
+* Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 1.27-owl6
+- Bumped the release to reflect Galaxy's change to remove unpackaged files.
+
 * Mon Feb 09 2004 Michail Litvak <mci@owl.openwall.com> 1.27-owl5
 - Use RPM macros instead of explicit paths.
 
