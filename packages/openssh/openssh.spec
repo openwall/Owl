@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.46 2002/07/06 21:19:09 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.47 2002/07/07 01:24:47 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.4p1
-Release: owl1.8
+Release: owl2
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
