@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.43 2002/11/08 01:36:13 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.44 2002/11/08 02:51:28 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -320,8 +320,9 @@ fi
 
 %changelog
 * Fri Nov 08 2002 Solar Designer <solar@owl.openwall.com>
-- Made the x86 assembly code in crypt_blowfish reentrant, this time for
-real.  Added a test for proper operation with multiple threads.
+- Made the x86 assembly code in crypt_blowfish reentrant (this time for
+real), added a test for proper operation with multiple threads, made
+crypt_blowfish more careful about overwriting sensitive data.
 - Cleaned up the default /etc/nsswitch.conf file.  Now it refers to
 nsswitch.conf(5) for more information, uses the proper terms instead of
 calling everything an "entry" (now we use "databases", name "services",
