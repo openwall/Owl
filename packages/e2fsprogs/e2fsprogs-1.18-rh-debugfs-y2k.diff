@@ -1,0 +1,13 @@
+--- e2fsprogs-1.18/debugfs/ls.c.sopwith	Thu Feb  3 15:57:56 2000
++++ e2fsprogs-1.18/debugfs/ls.c	Thu Feb  3 16:02:22 2000
+@@ -48,9 +48,7 @@
+ 	}
+ 	modtime = inode.i_mtime;
+ 	tm_p = localtime(&modtime);
+-	sprintf(datestr, "%2d-%s-%2d %02d:%02d",
+-		tm_p->tm_mday, monstr[tm_p->tm_mon], tm_p->tm_year,
+-		tm_p->tm_hour, tm_p->tm_min);
++	strftime(datestr, sizeof(datestr), "%d-%b-%Y %R", tm_p);
+  	fprintf(ls->f, "%6ld %6o  %5d  %5d   ", ino, inode.i_mode,
+  	       inode.i_uid, inode.i_gid);
+  	if (LINUX_S_ISDIR(inode.i_mode))

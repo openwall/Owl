@@ -1,0 +1,41 @@
+diff -ur e2fsprogs-1.18.orig/misc/mke2fs.c e2fsprogs-1.18/misc/mke2fs.c
+--- e2fsprogs-1.18.orig/misc/mke2fs.c	Tue Oct 26 20:30:40 1999
++++ e2fsprogs-1.18/misc/mke2fs.c	Thu Aug  3 04:40:30 2000
+@@ -476,6 +476,7 @@
+ {
+ 	errcode_t		retval;
+ 	ino_t			ino;
++	struct ext2_inode	inode;
+ 	const char		*name = "lost+found";
+ 	int			i;
+ 	int			lpf_size = 0;
+@@ -492,6 +493,17 @@
+ 		exit(1);
+ 	}
+ 	
++	retval = ext2fs_read_inode(fs, ino, &inode);
++	if (!retval) {
++		inode.i_mode &= ~077;
++		retval = ext2fs_write_inode(fs, ino, &inode);
++	}
++	if (retval) {
++		com_err("ext2_{read,write}_inode", retval,
++			"while fixing permissions on /lost+found");
++		exit(1);
++	}
++
+ 	for (i=1; i < EXT2_NDIR_BLOCKS; i++) {
+ 		if ((lpf_size += fs->blocksize) >= 16*1024)
+ 			break;
+diff -ur e2fsprogs-1.18.orig/misc/mklost+found.c e2fsprogs-1.18/misc/mklost+found.c
+--- e2fsprogs-1.18.orig/misc/mklost+found.c	Tue Sep 16 06:08:39 1997
++++ e2fsprogs-1.18/misc/mklost+found.c	Thu Aug  3 04:50:12 2000
+@@ -42,7 +42,7 @@
+ 		fprintf (stderr, "Usage: mklost+found\n");
+ 		exit(1);
+ 	}
+-	if (mkdir (LPF, 0755) == -1) {
++	if (mkdir (LPF, 0700) == -1) {
+ 		perror ("mkdir");
+ 		exit(1);
+ 	}
