@@ -1,11 +1,11 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.13 2001/01/10 12:19:07 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.14 2001/01/11 19:54:45 solar Exp $
 
 %define BUILD_PROFILE	'no'
 
 Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
-Release: 10owl
+Release: 11owl
 Copyright: LGPL
 Group: System Environment/Libraries
 Source0: glibc-2.1.3.tar.gz
@@ -14,7 +14,7 @@ Source2: glibc-crypt-2.1.tar.gz
 Source3: nsswitch.conf
 Source4: glibc-compat-2.1.3.tar.gz
 Patch0: glibc-2.1.3-owl-dl-open.diff
-Patch1: glibc-2.1.3-owl-malloc-check.diff
+Patch1: glibc-2.1.3-owl-sanitize-env.diff
 Patch2: glibc-2.1.3-owl-res_randomid.diff
 Patch3: glibc-2.1.3-owl-blowfish.diff
 Patch4: glibc-2.1.3-owl-freesec-hack.diff
@@ -275,6 +275,10 @@ rm -f *.filelist*
 %endif
 
 %changelog
+* Thu Jan 11 2001 Solar Designer <solar@owl.openwall.com>
+- Sanitize the environment in a paranoid way (this was meant to be delayed
+until we add a configuration file, but well...).
+
 * Wed Jan 10 2001 Solar Designer <solar@owl.openwall.com>
 - Included several critical dynamic linker security fixes from the CVS.
 
