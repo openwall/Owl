@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mutt/mutt.spec,v 1.1 2003/01/20 12:28:26 solar Exp $
+# $Id: Owl/packages/mutt/mutt.spec,v 1.2 2003/01/20 12:34:26 solar Exp $
 
 Summary: A text mode mail user agent.
 Name: mutt
@@ -47,8 +47,7 @@ rm -rf $RPM_BUILD_ROOT
 	install
 
 # We like GPG here.
-cat contrib/gpg.rc >> $RPM_BUILD_ROOT/etc/Muttrc
-cat %{SOURCE1} >> $RPM_BUILD_ROOT/etc/Muttrc
+cat contrib/gpg.rc $RPM_SOURCE_DIR/Muttrc-color >> $RPM_BUILD_ROOT/etc/Muttrc
 
 %find_lang %{name}
 
