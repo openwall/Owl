@@ -1,0 +1,22 @@
+#!/bin/sh
+# $Id: Owl/packages/owl-control/control,v 1.1 2000/08/10 07:33:15 solar Exp $
+
+if [ $# -ge 1 ]; then
+	if [ -x "/etc/control.d/facilities/$1" ]; then
+		FACILITY="$1"
+		shift
+		/etc/control.d/facilities/$FACILITY "$*" || exit 1
+		exit 0
+	else
+		echo "$0: No such facility: $1"
+		exit 1
+	fi
+fi
+
+ls -1 /etc/control.d/facilities/ |
+while read FACILITY; do
+	test "${FACILITY%.*}" != "$FACILITY" && continue
+	LIST="`/etc/control.d/facilities/$FACILITY list`"
+	STATUS="`/etc/control.d/facilities/$FACILITY status`"
+	printf "%-15s %-15s (%s)\n" "$FACILITY" "$STATUS" "$LIST"
+done
