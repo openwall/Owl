@@ -1,0 +1,30 @@
+--- zlib-1.1.4/gzio.c.orig	2003-05-01 22:49:01 +0400
++++ zlib-1.1.4/gzio.c	2003-05-01 22:55:24 +0400
+@@ -25,7 +25,7 @@ struct internal_state {int dummy;}; /* f
+ #endif
+ 
+ #define ALLOC(size) malloc(size)
+-#define TRYFREE(p) {if (p) free(p);}
++#define TRYFREE(p) {if (p) {free(p); (p) = NULL;}}
+ 
+ static int gz_magic[2] = {0x1f, 0x8b}; /* gzip magic header */
+ 
+@@ -853,9 +853,14 @@ const char*  ZEXPORT gzerror (file, errn
+     if (m == NULL || *m == '\0') m = (char*)ERR_MSG(s->z_err);
+ 
+     TRYFREE(s->msg);
+-    s->msg = (char*)ALLOC(strlen(s->path) + strlen(m) + 3);
+-    strcpy(s->msg, s->path);
+-    strcat(s->msg, ": ");
+-    strcat(s->msg, m);
++    s->msg = (char*)ALLOC((s->path ? strlen(s->path) + 2 : 0) + strlen(m) + 1);
++    if (s->msg == NULL) return (const char*)"";
++    if (s->path == NULL) {
++        strcpy(s->msg, m);
++    } else {
++        strcpy(s->msg, s->path);
++        strcat(s->msg, ": ");
++        strcat(s->msg, m);
++    }
+     return (const char*)s->msg;
+ }

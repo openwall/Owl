@@ -1,14 +1,15 @@
-# $Id: Owl/packages/zlib/zlib.spec,v 1.6 2003/02/25 04:25:23 solar Exp $
+# $Id: Owl/packages/zlib/zlib.spec,v 1.7 2003/05/15 00:44:51 solar Exp $
 
 Summary: The zlib compression and decompression library.
 Name: zlib
 Version: 1.1.4
-Release: owl2
+Release: owl3
 License: BSD
 Group: System Environment/Libraries
 URL: http://www.gzip.org/zlib/
 Source: ftp://ftp.info-zip.org/pub/infozip/zlib/zlib-%{version}.tar.bz2
 Patch0: zlib-1.1.4-owl-gzprintf-bound.diff
+Patch1: zlib-1.1.4-alt-gzio.diff
 PreReq: /sbin/ldconfig
 Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
@@ -34,6 +35,7 @@ library.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -78,6 +80,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man3/zlib.3*
 
 %changelog
+* Thu May 15 2003 Solar Designer <solar@owl.openwall.com> 1.1.4-owl3
+- Do safer memory (de)allocation in gzio and gzerror() in particular,
+patch from Dmitry V. Levin, originally for ALT Linux.
+
 * Tue Feb 25 2003 Solar Designer <solar@owl.openwall.com>
 - Patched gzprintf() to use vsnprintf() and handle possible truncation,
 thanks to Bugtraq postings by Crazy Einstein, Richard Kettlewell, and
