@@ -1,11 +1,11 @@
-# $Id: Owl/packages/tcsh/tcsh.spec,v 1.1 2000/10/25 19:08:14 kad Exp $
+# $Id: Owl/packages/tcsh/tcsh.spec,v 1.2 2000/11/04 00:08:27 solar Exp $
 
 %define	_bindir	/bin
 
 Summary: 	An enhanced version of csh, the C shell.
 Name: 		tcsh
 Version: 	6.09
-Release: 	6owl
+Release: 	7owl
 Copyright: 	distributable
 Group: 		System Environment/Shells
 Source: 	ftp://ftp.astron.com/pub/tcsh/tcsh-%{version}.tar.gz
@@ -14,6 +14,7 @@ Patch1: 	tcsh-6.09.00-rh-termios_hack.diff
 Patch2: 	tcsh-6.08.00-rh-security.diff
 Patch3: 	tcsh-6.09.00-rh-strcoll.diff
 Patch4: 	tcsh-6.09.00-rh-locale.diff
+Patch5:		tcsh-6.09.00-suse-owl-shtmp.diff
 Provides: 	csh = %{version}
 Prereq: 	fileutils grep
 URL: 		http://www.primate.wisc.edu/software/csh-tcsh-book/
@@ -29,11 +30,12 @@ like syntax.
 
 %prep
 %setup -q -n %{name}-%{version}.00
-%patch0 -p1 -b .getutent
-%patch1 -p1 -b .termios
-%patch2 -p1 -b .security
-%patch3 -p1 -b .strcoll
-%patch4 -p1 -b .locale
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
 
 %build
 
@@ -86,6 +88,10 @@ fi
 %{_datadir}/locale/*/LC_MESSAGES/tcsh*
 
 %changelog
+* Sat Nov 04 2000 Solar Designer <solar@owl.openwall.com>
+- Added a patch by Dr. Werner Fink <werner@suse.de> (and slightly modified)
+for the unsafe /tmp access reported on Bugtraq by proton.
+
 * Sun Sep 24 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import from RH
 
@@ -145,5 +151,5 @@ fi
 - built against glibc
 
 * Fri Feb 07 1997 Erik Troan <ewt@redhat.com>
- - Provides csh, adds and removes /bin/csh from /etc/shells if csh package
+- Provides csh, adds and removes /bin/csh from /etc/shells if csh package
 isn't installed.
