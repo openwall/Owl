@@ -39,7 +39,9 @@ during the builds;
 at least 64 MB of physical memory (it is possible to build on less
 with sufficient swap space, but you'd better not);
 
-1 to 4 hours of CPU time, on a modern system (as of this writing).
+at least 160 MB of virtual memory if building on and for an Alpha;
+
+1 to 5 hours of CPU time, on a modern system (as of this writing).
 
 And, of course, you should be running the build on Owl.  Building on
 another GNU/*/Linux system is possible, but tricky and requires that
@@ -52,8 +54,11 @@ expect:
 Dual Pentium III, 800 MHz, 512 MB:		0:40
 Dual Pentium III, 700 MHz, 1 GB:		0:45
 Dual Celeron (Mendocino), 433 MHz, 256 MB	1:20
-Pentium III, 550 MHz, 64 MB:			1:50
+Pentium III, 550 MHz, 64 MB:			2:00
 UltraSparc IIi, 440 MHz, 256 MB:		3:20
+Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB:	5:00
+
+(Yes, gcc is this hungry and slow on Alpha.)
 
 The build times will increase as we add more packages and update to
 new versions of software already in Owl.
@@ -107,4 +112,4 @@ We do consider the building of SRPM's and the lack of automatic build
 dependency handling for re-builds to be bugs in the build environment.
 We will eventually fix these.
 
-$Id: Owl/doc/BUILD,v 1.7 2001/01/26 07:57:23 solar Exp $
+$Id: Owl/doc/BUILD,v 1.8 2001/04/17 04:49:46 solar Exp $
