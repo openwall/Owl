@@ -1,0 +1,13 @@
+--- time-1.7/time.info~	Wed Jun 12 19:46:10 1996
++++ time-1.7/time.info	Fri Sep  1 18:05:52 2000
+@@ -1,6 +1,10 @@
+ This is Info file ./time.info, produced by Makeinfo-1.55 from the input
+ file time.texi.
+ 
++START-INFO-DIR-ENTRY
++* time: (time).                                 GNU time Utility
++END-INFO-DIR-ENTRY
++
+    This file documents the the GNU `time' command for running programs
+ and summarizing the system resources they use.
+ 

@@ -1,0 +1,129 @@
+--- time-1.7.orig/version.texi
++++ time-1.7/version.texi
+@@ -1,3 +1,3 @@
+-@set UPDATED 12 June 1996
++@set UPDATED 8 February 2000
+ @set EDITION 1.7
+ @set VERSION 1.7
+--- time-1.7.orig/time.texi
++++ time-1.7/time.texi
+@@ -185,6 +185,10 @@
+ sys %S
+ @end example
+ 
++@item -q
++@itemx --quiet
++Suppress non-zero error code from the executed program.
++
+ @item -v
+ @itemx --verbose
+ @cindex format
+--- time-1.7.orig/time.info
++++ time-1.7/time.info
+@@ -1,5 +1,4 @@
+-This is Info file ./time.info, produced by Makeinfo-1.55 from the input
+-file time.texi.
++This is ./time.info, produced by makeinfo version 4.0 from time.texi.
+ 
+    This file documents the the GNU `time' command for running programs
+ and summarizing the system resources they use.
+@@ -31,7 +30,7 @@
+ 
+ * Resource Measurement::  Measuring program resource use.
+ 
+- -- The Detailed Node Listing --
++ --- The Detailed Node Listing ---
+ 
+ Measuring Program Resource Use
+ 
+@@ -58,14 +57,14 @@
+    The `time' command runs another program, then displays information
+ about the resources used by that program, collected by the system while
+ the program was running.  You can select which information is reported
+-and the format in which it is shown (*note Setting Format::.), or have
++and the format in which it is shown (*note Setting Format::), or have
+ `time' save the information in a file instead of displaying it on the
+-screen (*note Redirecting::.).
++screen (*note Redirecting::).
+ 
+    The resources that `time' can report on fall into the general
+ categories of time, memory, and I/O and IPC calls.  Some systems do not
+ provide much information about program resource use; `time' reports
+-unavailable information as zero values (*note Accuracy::.).
++unavailable information as zero values (*note Accuracy::).
+ 
+    The format of the `time' command is:
+ 
+@@ -132,6 +131,10 @@
+           user %U
+           sys %S
+ 
++`-q'
++`--quiet'
++     Suppress non-zero error code from the executed program.
++
+ `-v'
+ `--verbose'
+      Use the built-in verbose format, which displays each available
+@@ -174,7 +177,7 @@
+    The resource specifiers, which are a superset of those recognized by
+ the `tcsh' builtin `time' command, are listed below.  Not all resources
+ are measured by all versions of Unix, so some of the values might be
+-reported as zero (*note Accuracy::.).
++reported as zero (*note Accuracy::).
+ 
+ * Menu:
+ 
+@@ -308,11 +311,11 @@
+ `-o FILE'
+ `--output=FILE'
+      Write the resource use statistics to FILE.  By default, this
+-     *overwrites* the file, destroying the file's previous contents.
++     _overwrites_ the file, destroying the file's previous contents.
+ 
+ `-a'
+ `--append'
+-     *Append* the resource use information to the output file instead
++     _Append_ the resource use information to the output file instead
+      of overwriting it.  This option is only useful with the `-o' or
+      `--output' option.
+ 
+@@ -437,7 +440,7 @@
+ 
+ `-a'
+ `--append'
+-     *Append* the resource use information to the output file instead
++     _Append_ the resource use information to the output file instead
+      of overwriting it.
+ 
+ `-f FORMAT'
+@@ -462,17 +465,17 @@
+ 
+ 
+ Tag Table:
+-Node: Top934
+-Node: Resource Measurement1725
+-Node: Setting Format3678
+-Node: Format String4907
+-Node: Time Resources6214
+-Node: Memory Resources6844
+-Node: I/O Resources7549
+-Node: Command Info8747
+-Node: Redirecting8964
+-Node: Examples9754
+-Node: Accuracy12064
+-Node: Invoking time13586
++Node: Top916
++Node: Resource Measurement1709
++Node: Setting Format3659
++Node: Format String4965
++Node: Time Resources6271
++Node: Memory Resources6901
++Node: I/O Resources7606
++Node: Command Info8804
++Node: Redirecting9021
++Node: Examples9811
++Node: Accuracy12121
++Node: Invoking time13643
+ 
+ End Tag Table
