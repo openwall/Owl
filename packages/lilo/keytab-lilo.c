@@ -86,7 +86,6 @@ static void load_map(struct map *m, char *map)
 	char *map_ext;
 	char buf[1024];
 	FILE *file;
-	int n = 0;
 	struct hexbuf *current;
 
 	if(map==NULL)
@@ -149,7 +148,6 @@ static void load_map(struct map *m, char *map)
 static void build_table(char *maps[])
 {
  	int set = 0;
-	char *map;
  	int i=0,j;
  	static unsigned int tmp[9*256];
  	
