@@ -1,13 +1,13 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.4 2000/07/18 08:23:00 kad Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.5 2000/08/02 00:22:14 solar Exp $
 
 Summary: A collection of basic system utilities.
 Name: util-linux
 Version: 2.10h
-Release: 2owl
+Release: 3owl
 Copyright: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%{version}.tar.gz
-Source1: chsh-chfn-pam
+Source1: chsh-chfn.pam
 Patch0: util-linux-2.10h-owl-MCONFIG.diff
 Patch1: util-linux-2.10h-owl-Makefiles.diff
 Patch2: util-linux-2.10h-owl-restrict-locale.diff
@@ -18,7 +18,6 @@ Obsoletes: fdisk tunelp
 %ifarch sparc alpha
 Obsoletes: clock
 %endif
-Requires: kernel >= 2.2.12
 
 %description
 The util-linux package contains a large variety of low-level system
@@ -53,8 +52,8 @@ done
 
 strip $RPM_BUILD_ROOT/sbin/fdisk || :
 
-install -m 600 ${RPM_SOURCE_DIR}/chsh-chfn-pam $RPM_BUILD_ROOT/etc/pam.d/chsh
-install -m 600 ${RPM_SOURCE_DIR}/chsh-chfn-pam $RPM_BUILD_ROOT/etc/pam.d/chfn
+install -m 600 ${RPM_SOURCE_DIR}/chsh-chfn.pam $RPM_BUILD_ROOT/etc/pam.d/chsh
+install -m 600 ${RPM_SOURCE_DIR}/chsh-chfn.pam $RPM_BUILD_ROOT/etc/pam.d/chfn
 
 rm -f $RPM_BUILD_ROOT/sbin/clock
 ln -s hwclock $RPM_BUILD_ROOT/sbin/clock
@@ -225,10 +224,14 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
-* Tue Jul 18 2000 Alexandr D. Kanevskiy <kad@openwall.com>
+* Wed Aug 02 2000 Solar Designer <solar@owl.openwall.com>
+- Removed the dependency on kernel as we may not have the kernel in
+an RPM package.
+
+* Tue Jul 18 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - locale come back
 
-* Thu Jul 13 2000 Solar Designer <solar@false.com>
+* Thu Jul 13 2000 Solar Designer <solar@owl.openwall.com>
 - Imported this spec file from RH, and changed it heavily.
 - Updated one of the RH patches for 2.10h, removed the rest.
 - Removed login as we use one from SimplePAMApps.
