@@ -1,11 +1,11 @@
-# $Id: Owl/packages/lftp/lftp.spec,v 1.3 2001/03/19 23:38:48 mci Exp $
+# $Id: Owl/packages/lftp/lftp.spec,v 1.4 2001/03/21 08:47:39 mci Exp $
 
 Summary: sophisticated command line file transfer program
 Name: lftp
 Version: 2.3.8
-Release: 3owl
+Release: 4owl
 Copyright: GPL
-Source0: ftp://ftp.yars.free.net/pub/software/unix/net/ftp/client/lftp/%{name}-%{version}.tar.gz
+Source0: ftp://ftp.yars.free.net/pub/software/unix/net/ftp/client/lftp/%{name}-%{version}.tar.bz2
 Source1: lftpget.1
 Patch0: lftp-2.3.8-deb-conf.diff
 Patch1: lftp-2.3.8-deb-doc.diff
@@ -79,6 +79,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/locale/*/*/*
 
 %changelog
+* Wed Mar 21 2001 Michail Litvak <mci@owl.openwall.com>
+- change source from tar.gz to tar.bz2
+
 * Mon Mar 19 2001 Michail Litvak <mci@owl.openwall.com>
 - reworked spec from author's package
 - imported patches from Debian
