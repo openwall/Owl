@@ -1,10 +1,14 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.20 2004/01/25 17:40:05 solar Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.21 2004/01/25 18:21:03 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
 
-# Set this if you're running kernel with enabled "Destroy shared memory
-# segments not in use" (CONFIG_HARDEN_SHM) configuration option.
+# This controls whether to build/package suidperl.  Your possible use of
+# this is at your own risk, -- we do not officially support suidperl.
+%define BUILD_SUIDPERL 0
+
+# Set this if you might be running kernel with enabled "Destroy shared
+# memory segments not in use" (CONFIG_HARDEN_SHM) configuration option.
 %define KERNEL_CONFIG_HARDEN_SHM 1
 
 Summary: The Perl programming language.
@@ -25,7 +29,6 @@ Patch20: perl-5.8.3-alt-no-previous-perl.diff
 Patch21: perl-5.8.3-alt-AnyDBM_File-DB_File.diff
 Patch22: perl-5.8.3-alt-MM-uninst.diff
 Patch23: perl-5.8.3-alt-deb-perldoc-INC.diff
-
 Obsoletes: perl-MD5
 BuildRequires: rpm >= 3.0.5
 BuildRequires: gawk, grep, tcsh
@@ -45,6 +48,22 @@ administration utilities and web programming.  A large proportion of
 the CGI scripts on the web are written in Perl.  You need the Perl
 package installed on your system so that your system can handle Perl
 scripts.
+
+%if %BUILD_SUIDPERL
+%package suidperl
+Summary: Privileged Perl wrapper to support SUID/SGID Perl scripts.
+Group: Development/Languages
+Requires: %name = %version-%release
+
+%description suidperl
+This package contains a SUID root Perl executable that is used to handle
+SUID/SGID Perl scripts.  An attempt has been made by the Perl developers
+to make suidperl safe to be installed on a system and to permit for safe
+operation of SUID/SGID Perl scripts.  In reality, however, due to the
+complexity of Perl, it is almost certain that the use of SUID/SGID Perl
+scripts and possibly even mere installation of suidperl on a system will
+introduce security holes.
+%endif
 
 %prep
 %setup -q
@@ -76,6 +95,7 @@ rm -rf $RPM_BUILD_ROOT
 %_buildshell Configure \
 	-des \
 	-O \
+	-Dmyuname="`uname -mrs`" \
 	-Dnewmyuname="`uname -mrs`" \
 	-Dmyhostname=%buildhost \
 	-Doptimize="$RPM_OPT_FLAGS" \
@@ -84,10 +104,14 @@ rm -rf $RPM_BUILD_ROOT
 	-Dinstallprefix=$RPM_BUILD_ROOT%_prefix \
 	-Dprefix=%_prefix \
 	-Darchname=%_arch-%_os \
+%if %BUILD_SUIDPERL
+	-Dd_dosuid \
+%else
+	-Ud_dosuid \
+%endif
 %ifarch sparc sparcv9
 	-Ud_longdbl \
 %endif
-	-Dd_dosuid \
 	-Dd_semctl_semun \
 	-Di_db \
 	-Di_ndbm \
@@ -163,13 +187,24 @@ find $RPM_BUILD_ROOT%_libdir/perl* -name .packlist -o -name perllocal.pod | \
 %files
 %defattr(-,root,root)
 %doc Artistic Copying AUTHORS README README.Y2K
-%_bindir/*
-%_libdir/*
 %_mandir/*/*
+%_libdir/*
+%if !%BUILD_SUIDPERL
+%_bindir/*
+%else
+%_bindir/[^s]*
+%_bindir/s2p
+%_bindir/splain
+
+%files suidperl
+%attr(4711,root,root) %_bindir/sperl%version
+%attr(4711,root,root) %_bindir/suidperl
+%endif
 
 %changelog
 * Sun Jan 25 2004 Solar Designer <solar@owl.openwall.com> 5.8.3-owl0.1
 - Additional temporary file handling fixes.
+- Made building/packaging of suidperl optional and officially unsupported.
 
 * Tue Jan 20 2004 Solar Designer <solar@owl.openwall.com> 5.8.3-owl0
 - Updated to 5.8.3.
