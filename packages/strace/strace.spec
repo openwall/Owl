@@ -1,19 +1,19 @@
-# $Id: Owl/packages/strace/strace.spec,v 1.10 2003/10/30 21:15:49 solar Exp $
+# $Id: Owl/packages/strace/strace.spec,v 1.11 2004/09/10 07:31:56 galaxy Exp $
 
 Summary: Tracks and displays system calls associated with a running process.
 Name: strace
-Version: 4.4
-Release: owl3
+Version: 4.5.1
+Release: owl2
 License: BSD
 Group: Development/Debuggers
 URL: http://www.liacs.nl/~wichert/strace/
-Source0: http://prdownloads.sourceforge.net/strace/strace_%version-1.tar.gz
-Source1: strace-%version-cvs-20020608.diff.bz2
-Patch0: strace-4.2-owl-man.diff
-Patch1: strace-20020608-owl-fixes.diff
-Patch2: strace-20020608-owl-ioctl.diff
-Patch3: strace-20020608-rh-detach.diff
-Prefix: %_prefix
+Source: http://prdownloads.sourceforge.net/%name/%name-%version.tar.bz2
+Patch0: strace-4.5.1-owl-alt-fixes.diff
+Patch1: strace-4.5.1-owl-man.diff
+Patch2: strace-4.5.1-alt-pipe-setlinebuf.diff
+Patch3: strace-4.5.1-alt-trace-coredump.diff
+Patch4: strace-4.5.1-alt-keep_status.diff
+Patch5: strace-4.5.1-owl-quota.diff
 BuildRoot: /override/%name-%version
 
 %package graph
@@ -34,22 +34,15 @@ commands do.
 
 %prep
 %setup -q
-{
-	bzcat %SOURCE1 || touch failed
-} | patch -p2
-test ! -e failed
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
+%patch5 -p1
 
 %build
-libtoolize --copy --force
-aclocal
-autoheader
-autoconf
-
-%configure
+%GNUconfigure
 make
 
 %install
@@ -70,6 +63,15 @@ mkdir -p $RPM_BUILD_ROOT%_prefix/bin
 %_prefix/bin/strace-graph
 
 %changelog
+* Wed Mar 10 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.5.1-owl2
+- Added a dirty patch to switch strace to using kernel version of quota.h
+(this allows to recognize both types of quota version). This patch must be
+reviewed and cleaned, but for now it has necessary functionality.
+
+* Fri Feb 27 2004 Michail Litvak <mci@owl.openwall.com> 4.5.1-owl1
+- 4.5.1
+- Added patches from ALT.
+
 * Fri May 16 2003 Solar Designer <solar@owl.openwall.com> 4.4-owl3
 - Additional fixes to build with Linux 2.4.21-rc1 headers.
 

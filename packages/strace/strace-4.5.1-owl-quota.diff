@@ -1,0 +1,86 @@
+diff -uNrp strace-4.5.1.orig/resource.c strace-4.5.1/resource.c
+--- strace-4.5.1.orig/resource.c	Tue Jan 14 23:40:54 2003
++++ strace-4.5.1/resource.c	Wed Mar 10 06:38:40 2004
+@@ -36,7 +36,8 @@
+ #ifdef LINUX
+ #include <sys/times.h>
+ #include <linux/kernel.h>
+-#include <sys/quota.h>
++#include <linux/quota.h>
++#include <linux/quotacompat.h>
+ #endif /* LINUX */
+ #ifdef SUNOS4
+ #include <ufs/quota.h>
+@@ -462,15 +463,27 @@ struct tcb *tcp;
+ #define OLD_COMMAND(c) (!NEW_COMMAND(c) && !XQM_COMMAND(c))
+ 
+ static struct xlat quotacmds[] = {
+-	{ Q_QUOTAON,	"Q_QUOTAON"	},
+-	{ Q_QUOTAOFF,	"Q_QUOTAOFF"	},
+-	{ Q_GETQUOTA,	"Q_GETQUOTA"	},
+-	{ Q_SETQUOTA,	"Q_SETQUOTA"	},
+-	{ Q_SETUSE,	"Q_SETUSE"	},
+-	{ Q_SYNC,	"Q_SYNC"	},
+-	{ Q_SETQLIM,	"Q_SETQLIM"	},
+-	{ Q_GETSTATS,	"Q_GETSTATS"	},
+-	{ Q_RSQUASH,	"Q_RSQUASH"	},
++#ifdef _LINUX_QUOTACOMPAT_
++	{ Q_COMP_QUOTAON,	"Q_QUOTAON"	},
++	{ Q_COMP_QUOTAOFF,	"Q_QUOTAOFF"	},
++	{ Q_V1_GETQUOTA,	"Q_GETQUOTA"	},
++	{ Q_V1_SETQUOTA,	"Q_SETQUOTA"	},
++	{ Q_V1_SETUSE,		"Q_SETUSE"	},
++	{ Q_COMP_SYNC,		"Q_SYNC"	},
++	{ Q_V1_SETQLIM,		"Q_SETQLIM"	},
++	{ Q_V1_GETSTATS,	"Q_GETSTATS"	},
++	{ Q_V1_RSQUASH,		"Q_RSQUASH"	},
++
++	{ Q_V2_SETQLIM,		"Q_SETQLIM"	},
++	{ Q_V2_GETINFO,		"Q_GETINFO"	},
++	{ Q_V2_SETINFO,		"Q_SETINFO"	},
++	{ Q_V2_SETGRACE,	"Q_SETGRACE"	},
++	{ Q_V2_SETFLAGS,	"Q_SETFLAGS"	},
++	{ Q_V2_GETQUOTA,	"Q_GETQUOTA"	},
++	{ Q_V2_SETQUOTA,	"Q_SETQUOTA"	},
++	{ Q_V2_SETUSE,		"Q_SETUSE"	},
++	{ Q_V2_GETSTATS,	"Q_GETSTATS"	},
++#endif
+ 	{ NEW_CMD(0x1), "Q_SYNC"        },
+ 	{ NEW_CMD(0x2), "Q_QUOTAON"     },
+ 	{ NEW_CMD(0x3), "Q_QUOTAOFF"    },
+@@ -507,13 +520,31 @@ struct tcb *tcp;
+ 		tprintf(", %lu, ", tcp->u_arg[2]);
+ 	}
+ 	else {
+-		struct dqblk dq;
++		struct v1c_mem_dqblk dq;
+ 
+ 		if (!tcp->u_arg[3])
+ 			tprintf("NULL");
+-               else if (!verbose(tcp) || !OLD_COMMAND(tcp->u_arg[0]))
+-			tprintf("%#lx", tcp->u_arg[3]);
+-                else if (umoven(tcp, tcp->u_arg[3], sizeof(struct dqblk),
++               else if (!verbose(tcp) || !OLD_COMMAND(tcp->u_arg[0])) {
++                   if (verbose(tcp) && NEW_COMMAND(tcp->u_arg[0])) {
++                       struct v2c_mem_dqblk dq2;
++                       if (umoven(tcp, tcp->u_arg[3], sizeof(struct v2c_mem_dqblk), (char *) &dq2) < 0)
++                           tprintf("???");
++                       else {
++                           tprintf("{");
++			   tprintf("%u, ", dq2.dqb_bhardlimit);
++			   tprintf("%u, ", dq2.dqb_bsoftlimit);
++			   tprintf("%u, ", dq2.dqb_curspace);
++			   tprintf("%u, ", dq2.dqb_ihardlimit);
++			   tprintf("%u, ", dq2.dqb_isoftlimit);
++			   tprintf("%u, ", dq2.dqb_curinodes);
++			   tprintf("%lu, ", dq2.dqb_btime);
++			   tprintf("%lu", dq2.dqb_itime);
++                           tprintf("}");
++                       }
++                   } else
++                       tprintf("%#lx", tcp->u_arg[3]);
++		}
++                else if (umoven(tcp, tcp->u_arg[3], sizeof(struct v1c_mem_dqblk),
+                     (char *) &dq) < 0)
+                         tprintf("???");
+ 		else {
