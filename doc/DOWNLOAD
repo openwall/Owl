@@ -45,7 +45,7 @@ CVS tree, under Owl/doc/.
 
 An alternative way to access the CVS tree (besides being able to
 obtain its snapshots for a certain release or branch as native.tar.gz
-from the FTP mirrors listed above) is via our Anonymous CVS server:
+from the FTP mirrors listed above) is via our anonymous CVS server:
 
 CVSROOT=:pserver:anoncvs:anoncvs@anoncvs.owl.openwall.com:/cvs
 
@@ -54,6 +54,9 @@ or over SSH, with the following settings:
 CVS_RSH=ssh
 CVSROOT=anoncvs@anoncvs.owl.openwall.com:/cvs
 
-The password is "anoncvs" and the module name is "Owl".
+The password is "anoncvs" and the module name is "Owl".  You may use
+compression with either method of access to the anonymous CVS server,
+typically by specifying the -z3 to CVS and/or the -C option to the SSH
+client.
 
-$Id: Owl/doc/DOWNLOAD,v 1.13 2002/07/12 04:49:32 solar Exp $
+$Id: Owl/doc/DOWNLOAD,v 1.14 2002/07/13 02:22:59 solar Exp $
