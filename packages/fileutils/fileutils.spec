@@ -1,4 +1,4 @@
-# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.10 2002/08/12 17:16:40 solar Exp $
+# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.11 2002/08/12 18:21:18 solar Exp $
 
 # The texinfo documentation for fileutils, sh-utils, and textutils is
 # currently provided by fileutils.
@@ -26,6 +26,7 @@ Patch7: fileutils-4.1.11-owl-fixes.diff
 PreReq: /sbin/install-info
 %endif
 Conflicts: sh-utils < 2.0-owl3, textutils < 2.0.11-owl3
+Obsoletes: stat
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -122,6 +123,7 @@ fi
 - Handle SIGTSTP in the ls restore colors patch (from ALT Linux).
 - Two additional -Wall fixes for SPARC and Alpha (the issues were real).
 - Also remove the obsolete textutils info dir entry.
+- Obsoletes: stat
 
 * Sun Aug 04 2002 Solar Designer <solar@owl.openwall.com>
 - Updated to 4.1.11.
