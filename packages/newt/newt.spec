@@ -1,4 +1,4 @@
-# $Id: Owl/packages/newt/Attic/newt.spec,v 1.5 2000/12/17 01:43:48 solar Exp $
+# $Id: Owl/packages/newt/Attic/newt.spec,v 1.6 2001/05/18 05:05:36 solar Exp $
 
 %define version 0.50.18
 
@@ -7,11 +7,11 @@
 Summary: 	A development library for text mode user interfaces.
 Name: 		newt
 Version: 	%{version}
-Release: 	2owl
+Release: 	3owl
 Copyright: 	LGPL
 Group: 		System Environment/Libraries
 Source: 	ftp://ftp.redhat.com/pub/redhat/code/newt/newt-%{version}.tar.gz
-Patch0:		newt-0.50.18-owl-strcpy.diff
+Patch0:		newt-0.50.18-castle-owl-Gpm_Open.diff
 Patch1:		newt-0.50.18-owl-notcl.diff
 Patch2:		newt-0.50.18-owl-nopython.diff
 Requires: 	slang
@@ -108,6 +108,10 @@ rm -rf $RPM_BUILD_ROOT
 /usr/lib/libnewt.so
 
 %changelog
+* Fri May 18 2001 Solar Designer <solar@owl.openwall.com>
+- Imported Gpm_Open() cleanups from Castle with minor changes, thanks to
+Dmitry V. Levin <ldv@alt-linux.org>.
+
 * Thu Dec 14 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import from RH
 - spec cleanup
