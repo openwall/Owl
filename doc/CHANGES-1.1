@@ -12,6 +12,11 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.0 and Owl-current.
 
+2003/11/29	kernel
+Updated to Linux 2.4.23-ow1.  The reporting of returns onto stack has
+been made more verbose.  The kernel will now retry attempts to open
+the root filesystem device if the first attempt fails.
+
 2003/11/29	Package: gnupg
 SECURITY FIX	Severity: medium, remote, passive
 Added a patch by David Shaw to disable the ability to create
@@ -484,4 +489,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.90 2003/11/29 07:23:46 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.91 2003/11/29 07:29:15 solar Exp $
