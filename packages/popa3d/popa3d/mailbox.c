@@ -249,21 +249,29 @@ static int mailbox_parse(int init)
 /* Blank line in headers means start of the message body */
 		if (header && blank) {
 			header = 0; body = 1;
+			fixed = 0;
 		}
 
 /* Some header lines are known to remain fixed over MUA runs */
 		if (header && start)
-		if (!linecmp(line, length, "Received:", 9) ||
-		    !linecmp(line, length, "Date:", 5) ||
-		    !linecmp(line, length, "Message-Id:", 11) ||
-		    !linecmp(line, length, "Subject:", 8))
-			fixed = 1;
+		switch (line[0]) {
+		case '\t':
+		case ' ':
+			/* Inherit "fixed" from the previous line */
+			break;
 
-/* We can hash all fragments of those lines (until "end"), for UIDL */
-		if (fixed) {
-			MD5_Update(&hash, line, length);
-			if (end) fixed = 0;
+		default:
+			fixed = 0;
+			if (!linecmp(line, length, "Received:", 9) ||
+			    !linecmp(line, length, "Date:", 5) ||
+			    !linecmp(line, length, "Message-Id:", 11) ||
+			    !linecmp(line, length, "Subject:", 8))
+				fixed = 1;
 		}
+
+/* We can hash all fragments of those lines, for UIDL */
+		if (fixed)
+			MD5_Update(&hash, line, length);
 	} while (1);
 
 	free(file_buffer);
