@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.25 2003/10/10 03:35:10 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.26 2003/10/25 04:30:34 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.36.4
+Version: 1.6.36.5
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -77,6 +77,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Sat Oct 25 2003 Solar Designer <solar@owl.openwall.com> 1.6.36.5-owl1
+- In x86 assembly code, detect and choose optimal existing code version for
+Centaur Technology processors (IDT Winchip to VIA C3 and beyond).
+
 * Fri Oct 10 2003 Solar Designer <solar@owl.openwall.com> 1.6.36.4-owl1
 - Also support Matthew Kwan's older DES S-box expressions with standard
 gates only, use them for x86-64 and autodetect between them and the
