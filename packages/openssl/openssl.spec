@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.37 2004/01/15 23:52:57 mci Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.38 2004/03/18 01:09:25 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
-Version: 0.9.6l
-Release: owl2
+Version: 0.9.6m
+Release: owl1
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
@@ -157,6 +157,9 @@ ln -s openssl $RPM_BUILD_ROOT/usr/bin/ssleay
 %attr(0644,root,root) %_mandir/man3/*
 
 %changelog
+* Thu Mar 18 2004 Solar Designer <solar@owl.openwall.com> 0.9.6m-owl1
+- Updated to 0.9.6m.
+
 * Fri Jan 16 2004 Michail Litvak <mci@owl.openwall.com> 0.9.6l-owl2
 - Make /usr/include/openssl directory owned by this package.
 
