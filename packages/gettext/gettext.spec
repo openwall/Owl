@@ -1,9 +1,9 @@
-# $Id: Owl/packages/gettext/gettext.spec,v 1.6 2004/09/10 07:23:21 galaxy Exp $
+# $Id: Owl/packages/gettext/gettext.spec,v 1.7 2004/11/02 03:04:01 solar Exp $
 
 Summary: GNU libraries and utilities for producing multi-lingual messages.
 Name: gettext
 Version: 0.14.1
-Release: owl0.2
+Release: owl1
 License: GPL
 Group: Development/Tools
 Source: ftp://alpha.gnu.org/pub/gnu/%name-%version.tar.gz
@@ -59,6 +59,7 @@ mv %buildroot%_datadir/doc/libasprintf %buildroot%_docdir/%name-%version/
 # Remove unpackaged files
 rm %buildroot%_infodir/dir
 rm %buildroot%_datadir/locale/locale.alias
+# XXX: This one needs further thought.
 rm %buildroot%_includedir/libintl.h
 
 %post
@@ -80,13 +81,13 @@ fi
 %_datadir/gettext
 %_datadir/locale/*/LC_MESSAGES/*
 %_datadir/aclocal/*
-#XXX: make install skips these -- (GM)
+# XXX: make install skips these -- (GM)
 #%_datadir/emacs/site-lisp/*
 
 %changelog
-* Wed Sep 08 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 0.14-owl0.2
-- Changed %%exclude to removing the file in %%install section. This will
-allow build this package under RPM3
+* Wed Sep 08 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 0.14-owl1
+- Changed %%exclude to removing the file in %%install section; this will
+allow to build this package under RPM3.
 
 * Wed Mar 17 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 0.14-owl0.1
 - Updated to 0.14
