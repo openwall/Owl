@@ -1,4 +1,4 @@
-# $Id: Owl/packages/readline/readline.spec,v 1.2 2000/12/06 00:30:08 mci Exp $
+# $Id: Owl/packages/readline/readline.spec,v 1.3 2000/12/06 01:43:46 mci Exp $
 
 Summary: A library for editing typed in command lines.
 Name: readline
@@ -16,7 +16,7 @@ Prereq: /sbin/install-info /sbin/ldconfig
 Prefix: %{_prefix}
 Buildroot: /var/rpm-buildroot/%{name}-root
 BuildRequires: sed
-Provides: libreadline.so.3
+Provides: libreadline.so.3 libreadline.so.3.0
 
 %description
 The readline library reads a line from the terminal and returns it,
@@ -74,6 +74,7 @@ mkdir -p ${RPM_BUILD_ROOT}%{_libdir}
 
 # Hack !
   ln -s libreadline.so.%{version} .%{_libdir}/libreadline.so.3
+  ln -s libreadline.so.%{version} .%{_libdir}/libreadline.so.3.0
 }
 
 %clean
