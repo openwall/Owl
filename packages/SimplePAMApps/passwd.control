@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/SimplePAMApps/passwd.control,v 1.2 2002/11/03 05:53:14 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/passwd.control,v 1.3 2002/11/03 06:02:45 solar Exp $
 
 . /etc/control.d/functions
 
@@ -9,6 +9,9 @@ CONFIG=/etc/pam.d/passwd
 new_fmode traditional 4711 root root
 new_fmode tcb 2711 root shadow
 new_fmode restricted 700 root root
+
+# Backwards compatibility
+test "$*" = public && set - traditional
 
 control_fmode "$BINARY" "$*" || exit 1
 
