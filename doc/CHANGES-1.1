@@ -12,6 +12,14 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.0 and Owl-current.
 
+2003/11/29	Package: gnupg
+SECURITY FIX	Severity: medium, remote, passive
+Added a patch by David Shaw to disable the ability to create
+signatures using the ElGamal sign+encrypt (type 20) keys as well as to
+remove the option to create such keys.
+Reference:
+http://lists.gnupg.org/pipermail/gnupg-announce/2003q4/000276.html
+
 2003/11/22	Package: iproute2
 SECURITY FIX	Severity: low, local, passive
 Added a patch from Herbert Xu of Debian to prevent a local denial of
@@ -476,4 +484,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.89 2003/11/22 00:02:02 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.90 2003/11/29 07:23:46 solar Exp $
