@@ -1,4 +1,4 @@
-# $Id: Owl/packages/lftp/lftp.spec,v 1.17 2003/06/04 09:17:27 solar Exp $
+# $Id: Owl/packages/lftp/lftp.spec,v 1.18 2003/10/30 09:00:25 solar Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
@@ -7,13 +7,13 @@ Release: owl2
 License: GPL
 Group: Applications/Internet
 URL: http://lftp.yar.ru
-Source0: ftp://ftp.yars.free.net/pub/software/unix/net/ftp/client/lftp/%{name}-%{version}.tar.bz2
+Source0: ftp://ftp.yars.free.net/pub/software/unix/net/ftp/client/lftp/%name-%version.tar.bz2
 Source1: lftpget.1
 Patch0: lftp-2.6.6-owl-n-option.diff
 Patch1: lftp-2.6.6-owl-tmp.diff
-Prefix: %{_prefix}
+Prefix: %_prefix
 BuildRequires: openssl-devel
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 lftp is a file retrieving tool that supports FTP and HTTP protocols under
@@ -53,22 +53,19 @@ make CFLAGS="$RPM_OPT_FLAGS"
 %install
 rm -rf $RPM_BUILD_ROOT
 make install-strip DESTDIR=$RPM_BUILD_ROOT
-install -m 644 $RPM_SOURCE_DIR/lftpget.1 $RPM_BUILD_ROOT%{_mandir}/man1/
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+install -m 644 $RPM_SOURCE_DIR/lftpget.1 $RPM_BUILD_ROOT%_mandir/man1/
 
 %post
-if [ ! -e /usr/bin/ftp -a ! -e %{_mandir}/man1/ftp.1.gz ]; then
+if [ ! -e /usr/bin/ftp -a ! -e %_mandir/man1/ftp.1.gz ]; then
 	ln -s lftp /usr/bin/ftp
-	ln -s lftp.1.gz %{_mandir}/man1/ftp.1.gz
+	ln -s lftp.1.gz %_mandir/man1/ftp.1.gz
 fi
 
 %preun
-if [ $1 -eq 0 -a -L /usr/bin/ftp -a -L %{_mandir}/man1/ftp.1.gz ]; then
+if [ $1 -eq 0 -a -L /usr/bin/ftp -a -L %_mandir/man1/ftp.1.gz ]; then
 	if cmp -s /usr/bin/ftp /usr/bin/lftp; then
 		rm /usr/bin/ftp
-		rm %{_mandir}/man1/ftp.1.gz
+		rm %_mandir/man1/ftp.1.gz
 	fi
 fi
 
@@ -76,11 +73,11 @@ fi
 %defattr(-,root,root)
 %doc BUGS COPYING FAQ FEATURES NEWS README* THANKS TODO lftp.lsm
 %config /etc/lftp.conf
-%attr(755,root,root) %{_bindir}/*
-%{_libdir}/*
-%{_mandir}/man*/*
-%attr(-,root,root) %{_datadir}/lftp
-%{_datadir}/locale/*/*/*
+%attr(755,root,root) %_bindir/*
+%_libdir/*
+%_mandir/man*/*
+%attr(-,root,root) %_datadir/lftp
+%_datadir/locale/*/*/*
 
 %changelog
 * Tue Jun 03 2003 Michail Litvak <mci@owl.openwall.com> 2.6.6-owl2

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.9 2003/10/25 09:31:29 solar Exp $
+# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.10 2003/10/30 09:00:26 solar Exp $
 
 Summary: A basic system library for accessing the termcap database.
 Name: libtermcap
@@ -18,7 +18,7 @@ Patch7: termcap-2.0.8-rh-xref.diff
 PreReq: /sbin/ldconfig
 Requires: /etc/termcap
 BuildRequires: texinfo
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The libtermcap package contains a basic system library needed to
@@ -55,12 +55,12 @@ make CFLAGS="$RPM_OPT_FLAGS -I."
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/{usr/lib,usr/include,etc,lib}
-mkdir -p $RPM_BUILD_ROOT%{_infodir}
+mkdir -p $RPM_BUILD_ROOT%_infodir
 
 export PATH=/sbin:$PATH
 make prefix=$RPM_BUILD_ROOT/usr install
 
-install -m 644 termcap.info* $RPM_BUILD_ROOT%{_infodir}/
+install -m 644 termcap.info* $RPM_BUILD_ROOT%_infodir/
 
 cd $RPM_BUILD_ROOT
 mv usr/lib/libtermcap.so* lib/
@@ -68,25 +68,22 @@ ln -sf libtermcap.so.2.0.8 lib/libtermcap.so.2
 ln -sf ../../lib/libtermcap.so.2.0.8 usr/lib/libtermcap.so
 strip -R .comments --strip-unneeded lib/libtermcap.so.2.0.8
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %post -p /sbin/ldconfig
 
 %trigger -- info >= 3.12
-/sbin/install-info %{_infodir}/termcap.info.gz %{_infodir}/dir \
+/sbin/install-info %_infodir/termcap.info.gz %_infodir/dir \
 	--entry="* Termcap: (termcap).                           The GNU termcap library."
 
 %postun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/termcap.info.gz %{_infodir}/dir \
+	/sbin/install-info --delete %_infodir/termcap.info.gz %_infodir/dir \
 		--entry="* Termcap: (termcap).                           The GNU termcap library."
 fi
 /sbin/ldconfig
 
 %files
 %defattr(-,root,root)
-%{_infodir}/termcap.info*
+%_infodir/termcap.info*
 /lib/libtermcap.so.2*
 
 %files devel

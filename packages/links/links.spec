@@ -1,4 +1,4 @@
-# $Id: Owl/packages/links/Attic/links.spec,v 1.11 2002/02/06 15:06:12 solar Exp $
+# $Id: Owl/packages/links/Attic/links.spec,v 1.12 2003/10/30 09:00:26 solar Exp $
 
 Summary: Lynx-like text WWW browser with support for frames.
 Name: links
@@ -6,12 +6,12 @@ Version: 0.96
 Release: owl2
 License: GPL
 Group: Applications/Internet
-Source: http://artax.karlin.mff.cuni.cz/~mikulas/links/download/%{name}-%{version}.tar.gz
+Source: http://artax.karlin.mff.cuni.cz/~mikulas/links/download/%name-%version.tar.gz
 Patch0: links-0.96-asp-koi.diff
 Patch1: links-0.96-owl-tmp.diff
 Requires: openssl
 BuildRequires: openssl-devel
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 links is a character mode World Wide Web browser.  It supports colors,
@@ -38,17 +38,14 @@ make
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %files
 %defattr(-,root,root)
 %doc README SITES TODO
-%{_bindir}/links
-%{_mandir}/man1/*
+%_bindir/links
+%_mandir/man1/*
 
 %changelog
-* Tue Feb 05 2002 Michail Litvak <mci@owl.openwall.com>
+* Tue Feb 05 2002 Michail Litvak <mci@owl.openwall.com> 0.96-owl2
 - Enforce our new spec file conventions
 
 * Fri Jul 27 2001 Michail Litvak <mci@owl.openwall.com>

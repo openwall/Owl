@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libpcap/libpcap.spec,v 1.9 2003/06/02 07:34:48 solar Exp $
+# $Id: Owl/packages/libpcap/libpcap.spec,v 1.10 2003/10/30 09:00:26 solar Exp $
 
 Summary: Network packet capture library.
 Name: libpcap
@@ -8,13 +8,13 @@ Epoch: 2
 License: GPL
 Group: System Environment/Libraries
 URL: http://www.tcpdump.org
-Source: http://www.tcpdump.org/release/%{name}-%{version}.tar.gz
+Source: http://www.tcpdump.org/release/%name-%version.tar.gz
 Patch0: libpcap-0.6.2-pld-shared.diff
 Patch1: libpcap-0.6.2-cvs-20020712-buffer.diff
 Patch2: libpcap-0.6.2-nmap-alt-owl-linux-honor-timeout.diff
 PreReq: /sbin/ldconfig
 BuildRequires: flex, bison
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 libpcap is a system-independent interface for user-level packet
@@ -27,7 +27,7 @@ tcpdump and arpwatch.
 %package devel
 Summary: Header files and development documentation for libpcap.
 Group: Development/Libraries
-Requires: %{name} = %{version}-%{release}
+Requires: %name = %version-%release
 
 %description devel
 Header files and development documentation for libpcap.
@@ -42,18 +42,15 @@ Header files and development documentation for libpcap.
 %configure \
 	--with-pcap=linux \
 	--enable-ipv6
-%{__make}
+%__make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%{_includedir}/net
-mkdir -p ${RPM_BUILD_ROOT}{%{_libdir},%{_mandir}/man3}
+mkdir -p $RPM_BUILD_ROOT%_includedir/net
+mkdir -p ${RPM_BUILD_ROOT}{%_libdir,%_mandir/man3}
 
-%{__make} install \
+%__make install \
 	DESTDIR=$RPM_BUILD_ROOT
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -61,15 +58,15 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc README CHANGES CREDITS
-%attr(755,root,root) %{_libdir}/lib*.so.*.*
+%attr(755,root,root) %_libdir/lib*.so.*.*
 
 %files devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/lib*.so
-%{_includedir}/*.h
-%{_includedir}/net/*.h
-%{_mandir}/man*/*
-%{_libdir}/lib*.a
+%attr(755,root,root) %_libdir/lib*.so
+%_includedir/*.h
+%_includedir/net/*.h
+%_mandir/man*/*
+%_libdir/lib*.a
 
 %changelog
 * Mon Jun 02 2003 Solar Designer <solar@owl.openwall.com> 2:0.6.2-owl4

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/m4/m4.spec,v 1.9 2002/08/26 16:52:35 mci Exp $
+# $Id: Owl/packages/m4/m4.spec,v 1.10 2003/10/30 09:00:26 solar Exp $
 
 Summary: The GNU macro processor.
 Name: m4
@@ -6,13 +6,13 @@ Version: 1.4
 Release: owl16
 License: GPL
 Group: Applications/Text
-Source: ftp://ftp.gnu.org/gnu/m4/m4-%{version}.tar.gz
+Source: ftp://ftp.gnu.org/gnu/m4/m4-%version.tar.gz
 Patch0: m4-1.4-rh-glibc.diff
 Patch1: m4-1.4-owl-format.diff
 Patch2: m4-1.4-owl-info.diff
 PreReq: /sbin/install-info
-Prefix: %{_prefix}
-BuildRoot: /override/%{name}-%{version}
+Prefix: %_prefix
+BuildRoot: /override/%name-%version
 
 %description
 A GNU implementation of the traditional Unix macro processor.  m4 is
@@ -39,25 +39,22 @@ make CFLAGS="$RPM_OPT_FLAGS" LDFLAGS=-s
 rm -rf $RPM_BUILD_ROOT
 %makeinstall INSTALL_DATA="install -c -m 644"
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %post
-/sbin/install-info %{_infodir}/m4.info.gz %{_infodir}/dir
+/sbin/install-info %_infodir/m4.info.gz %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/m4.info.gz %{_infodir}/dir
+	/sbin/install-info --delete %_infodir/m4.info.gz %_infodir/dir
 fi
 
 %files
 %defattr(-,root,root)
 %doc NEWS README
-%{_bindir}/m4
-%{_infodir}/*.info*
+%_bindir/m4
+%_infodir/*.info*
 
 %changelog
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1.4-owl16
 - Deal with info dir entries such that the menu looks pretty.
 
 * Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>

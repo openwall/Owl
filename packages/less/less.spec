@@ -1,4 +1,4 @@
-# $Id: Owl/packages/less/less.spec,v 1.10 2002/07/06 23:48:00 solar Exp $
+# $Id: Owl/packages/less/less.spec,v 1.11 2003/10/30 09:00:25 solar Exp $
 
 Summary: A text file browser similar to more, but better.
 Name: less
@@ -7,13 +7,13 @@ Release: owl7
 License: GPL
 Group: Applications/Text
 URL: http://www.flash.net/~marknu/less/
-Source0: ftp://ftp.gnu.org/gnu/less/%{name}-%{version}.tar.gz
+Source0: ftp://ftp.gnu.org/gnu/less/%name-%version.tar.gz
 Source1: lesspipe.sh
 Source2: less.sh
 Source3: less.csh
 Patch0: less-358-owl-popen.diff
 Patch1: less-358-owl-optimize.diff
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The less utility is a text file browser that resembles more, but has
@@ -38,17 +38,14 @@ mkdir -p $RPM_BUILD_ROOT/etc/profile.d
 install -m 755 $RPM_SOURCE_DIR/lesspipe.sh $RPM_BUILD_ROOT/usr/bin/
 install -m 755 $RPM_SOURCE_DIR/less.{sh,csh} $RPM_BUILD_ROOT/etc/profile.d/
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %files
 %defattr(-,root,root)
 /etc/profile.d/*
 /usr/bin/*
-%{_mandir}/man1/*
+%_mandir/man1/*
 
 %changelog
-* Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com> 358-owl7
 - Use grep -q in lesspipe.sh.
 
 * Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com>

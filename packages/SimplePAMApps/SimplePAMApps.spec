@@ -1,4 +1,4 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.31 2003/10/24 00:19:41 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.32 2003/10/30 08:49:44 solar Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
@@ -22,7 +22,7 @@ Patch5: SimplePAMApps-0.60-alt-login-su-strip-argv0.diff
 PreReq: owl-control >= 0.4, owl-control < 2.0
 Requires: tcb, pam_passwdqc >= 0.2, pam_mktemp
 Obsoletes: passwd
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 These are applications for use with the Linux-PAM library.  This package
@@ -49,9 +49,9 @@ install -m 700 pamapps/{login/login,su/su} $RPM_BUILD_ROOT/bin/
 mkdir -p $RPM_BUILD_ROOT/usr/bin
 install -m 700 pamapps/passwd/passwd $RPM_BUILD_ROOT/usr/bin/
 
-mkdir -p $RPM_BUILD_ROOT%{_mandir}/man1
+mkdir -p $RPM_BUILD_ROOT%_mandir/man1
 install -m 644 pamapps/{login/login.1,su/su.1,passwd/passwd.1} \
-	$RPM_BUILD_ROOT%{_mandir}/man1/
+	$RPM_BUILD_ROOT%_mandir/man1/
 
 mkdir -p $RPM_BUILD_ROOT/etc/pam.d
 install -m 600 $RPM_SOURCE_DIR/login.pam $RPM_BUILD_ROOT/etc/pam.d/login
@@ -63,9 +63,6 @@ install -m 700 $RPM_SOURCE_DIR/su.control \
 	$RPM_BUILD_ROOT/etc/control.d/facilities/su
 install -m 700 $RPM_SOURCE_DIR/passwd.control \
 	$RPM_BUILD_ROOT/etc/control.d/facilities/passwd
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %pre
 if [ $1 -ge 2 ]; then
@@ -92,7 +89,7 @@ fi
 %attr(0700,root,root) /bin/login
 %attr(0700,root,root) /bin/su
 %attr(0700,root,root) /usr/bin/passwd
-%{_mandir}/man1/*
+%_mandir/man1/*
 %config(noreplace) /etc/pam.d/*
 /etc/control.d/facilities/*
 

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libnids/libnids.spec,v 1.8 2003/10/18 14:42:37 solar Exp $
+# $Id: Owl/packages/libnids/libnids.spec,v 1.9 2003/10/30 09:00:25 solar Exp $
 
 Summary: NIDS E-component.
 Name: libnids
@@ -8,10 +8,10 @@ Epoch: 1
 License: GPL
 Group: System Environment/Libraries
 URL: http://libnids.sourceforge.net
-Source: %{name}-%{version}.tar.gz
+Source: %name-%version.tar.gz
 PreReq: /sbin/ldconfig
 BuildRequires: autoconf, libpcap-devel, libnet-devel
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 libnids is an implementation of an E-component of Network Intrusion
@@ -22,7 +22,7 @@ detection.
 %package devel
 Summary: Development libraries, header files, and documentation for libnids.
 Group: Development/Libraries
-Requires: %{name} = %{version}-%{release}
+Requires: %name = %version-%release
 
 %description devel
 Development libraries, header files, and documentation for libnids.
@@ -34,36 +34,33 @@ Development libraries, header files, and documentation for libnids.
 autoconf
 %configure --enable-shared
 
-%{__make}
+%__make
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%{__make} install install_prefix=$RPM_BUILD_ROOT
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+%__make install install_prefix=$RPM_BUILD_ROOT
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
 %files
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/lib*.so.*
+%attr(755,root,root) %_libdir/lib*.so.*
 
 %files devel
 %defattr(644,root,root,755)
 %doc CHANGES README CREDITS MISC doc/*
-%attr(755,root,root) %{_libdir}/lib*.so
-%{_includedir}/*.h
-%{_mandir}/man3/*
-%{_libdir}/lib*.a
+%attr(755,root,root) %_libdir/lib*.so
+%_includedir/*.h
+%_mandir/man3/*
+%_libdir/lib*.a
 
 %changelog
-* Wed Oct 15 2003 Rafal Wojtczuk <nergal@owl.openwall.com> 1.18-owl1
+* Wed Oct 15 2003 Rafal Wojtczuk <nergal@owl.openwall.com> 1:1.18-owl1
 - updated to 1.18
 
-* Tue Dec 17 2002 Rafal Wojtczuk <nergal@owl.openwall.com> 1.17-owl2
+* Tue Dec 17 2002 Rafal Wojtczuk <nergal@owl.openwall.com> 1:1.17-owl2
 - switched soname to libnids.1.xx because of binary incompatibility between
 versions
 

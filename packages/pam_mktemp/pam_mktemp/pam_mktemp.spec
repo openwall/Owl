@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.11 2003/06/02 03:32:00 solar Exp $
+# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.12 2003/10/30 08:45:15 solar Exp $
 
 Summary: Pluggable private /tmp space support for interactive (shell) sessions.
 Name: pam_mktemp
@@ -7,8 +7,8 @@ Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
 URL: http://www.openwall.com/pam/
-Source: ftp://ftp.openwall.com/pub/projects/pam/modules/%{name}/%{name}-%{version}.tar.gz
-BuildRoot: /override/%{name}-%{version}
+Source: ftp://ftp.openwall.com/pub/projects/pam/modules/%name/%name-%version.tar.gz
+BuildRoot: /override/%name-%version
 
 %description
 pam_mktemp is a PAM module which may be used with a PAM-aware login service
@@ -24,9 +24,6 @@ make CFLAGS="-c -Wall -fPIC -DLINUX_PAM $RPM_OPT_FLAGS"
 %install
 rm -rf $RPM_BUILD_ROOT
 make install FAKEROOT=$RPM_BUILD_ROOT
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %post
 mkdir -p -m 711 /tmp/.private

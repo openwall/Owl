@@ -1,4 +1,4 @@
-# $Id: Owl/packages/msulogin/msulogin/msulogin.spec,v 1.2 2003/05/23 01:07:07 solar Exp $
+# $Id: Owl/packages/msulogin/msulogin/msulogin.spec,v 1.3 2003/10/30 08:45:15 solar Exp $
 
 Summary: The single user mode login program (sulogin).
 Name: msulogin
@@ -7,9 +7,9 @@ Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
 URL: http://www.openwall.com/msulogin/
-Source: ftp://ftp.openwall.com/pub/projects/msulogin/%{name}-%{version}.tar.gz
+Source: ftp://ftp.openwall.com/pub/projects/msulogin/%name-%version.tar.gz
 Conflicts: SysVinit < 2.85-owl4
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 sulogin is a program to force the console user to login under a root
@@ -24,16 +24,13 @@ make CFLAGS="-c -Wall $RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT MANDIR=%{_mandir}
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT MANDIR=%_mandir
 
 %files
 %defattr(-,root,root)
 %doc LICENSE
 /sbin/sulogin
-%{_mandir}/man8/sulogin.8*
+%_mandir/man8/sulogin.8*
 
 %changelog
 * Fri May 23 2003 Solar Designer <solar@owl.openwall.com> 0.9.1-owl1

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/logrotate/logrotate.spec,v 1.7 2002/03/11 21:21:23 mci Exp $
+# $Id: Owl/packages/logrotate/logrotate.spec,v 1.8 2003/10/30 09:00:26 solar Exp $
 
 Summary: Rotates, compresses, removes and mails system log files.
 Name: logrotate
@@ -6,14 +6,14 @@ Version: 3.6.2
 Release: owl1
 License: GPL
 Group: System Environment/Base
-Source: logrotate-%{version}.tar.bz2
+Source: logrotate-%version.tar.bz2
 Patch0: logrotate-3.6.2-owl-commands-paths.diff
 Patch1: logrotate-3.6.2-owl-man.diff
 Patch2: logrotate-3.6.2-owl-fchmod-fchown-race.diff
 Patch3: logrotate-3.6.2-owl-tmp.diff
 Requires: crontabs
 BuildRequires: popt
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The logrotate utility is designed to simplify the administration of
@@ -34,15 +34,12 @@ logrotate runs as a daily cron job.
 make CC=gcc RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
 
 %install
-make PREFIX=$RPM_BUILD_ROOT MANDIR=%{_mandir} install
+make PREFIX=$RPM_BUILD_ROOT MANDIR=%_mandir install
 mkdir -p $RPM_BUILD_ROOT/etc/{logrotate.d,cron.daily}
 mkdir -p $RPM_BUILD_ROOT/var/lib/logrotate
 
 install -m 600 examples/logrotate-default $RPM_BUILD_ROOT/etc/logrotate.conf
 install -m 700 examples/logrotate.cron $RPM_BUILD_ROOT/etc/cron.daily/logrotate
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %post
 if [ -f /var/lib/logrotate.status ]; then
@@ -56,14 +53,14 @@ fi
 
 %files
 %attr(0700,root,root) /usr/sbin/logrotate
-%attr(0644,root,root) %{_mandir}/man8/logrotate.8*
+%attr(0644,root,root) %_mandir/man8/logrotate.8*
 %attr(0600,root,root) %config(noreplace) /etc/logrotate.conf
 %attr(0700,root,root) %dir /etc/logrotate.d
 %attr(0700,root,root) /etc/cron.daily/logrotate
 %attr(0700,root,root) /var/lib/logrotate
 
 %changelog
-* Mon Mar 11 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Mar 11 2002 Michail Litvak <mci@owl.openwall.com> 3.6.2-owl1
 - 3.6.2
 - noreplace config file
 

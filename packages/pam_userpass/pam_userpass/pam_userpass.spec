@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.12 2003/04/13 06:16:31 solar Exp $
+# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.13 2003/10/30 08:45:15 solar Exp $
 
 Summary: Pluggable authentication module for USER/PASS-style protocols.
 Name: pam_userpass
@@ -7,8 +7,8 @@ Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
 URL: http://www.openwall.com/pam/
-Source: ftp://ftp.openwall.com/pub/projects/pam/modules/%{name}/%{name}-%{version}.tar.gz
-BuildRoot: /override/%{name}-%{version}
+Source: ftp://ftp.openwall.com/pub/projects/pam/modules/%name/%name-%version.tar.gz
+BuildRoot: /override/%name-%version
 
 %description
 pam_userpass is a PAM authentication module for use specifically by
@@ -20,7 +20,7 @@ after it to provide the authentication.
 %package devel
 Summary: Libraries and header files for developing pam_userpass-aware applications.
 Group: Development/Libraries
-Requires: %{name} = %{version}-%{release}, pam-devel
+Requires: %name = %version-%release, pam-devel
 
 %description devel
 This package contains development libraries and header files
@@ -35,9 +35,6 @@ make CFLAGS="-c -Wall -fPIC -Iinclude $RPM_OPT_FLAGS"
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libcap/libcap.spec,v 1.3 2003/10/26 13:17:07 solar Exp $
+# $Id: Owl/packages/libcap/libcap.spec,v 1.4 2003/10/30 09:00:25 solar Exp $
 
 Summary: Library for getting and setting POSIX.1e capabilities.
 Name: libcap
@@ -14,7 +14,7 @@ Patch1: libcap-1.10-alt-bound.diff
 Patch2: libcap-1.10-alt-userland.diff
 Patch3: libcap-1.10-alt-warnings.diff
 Patch4: libcap-1.10-rh-alt-makenames.diff
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 This is a library for getting and setting POSIX.1e (formerly POSIX 6)
@@ -56,9 +56,6 @@ make COPTFLAG="$RPM_OPT_FLAGS -D_GNU_SOURCE" DEBUG= LDFLAGS= WARNINGS=
 %install
 rm -rf $RPM_BUILD_ROOT
 make install FAKEROOT=$RPM_BUILD_ROOT
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig

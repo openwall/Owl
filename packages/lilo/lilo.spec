@@ -1,4 +1,4 @@
-# $Id: Owl/packages/lilo/lilo.spec,v 1.10 2002/02/15 10:33:57 mci Exp $
+# $Id: Owl/packages/lilo/lilo.spec,v 1.11 2003/10/30 09:00:26 solar Exp $
 
 Summary: The boot loader for Linux and other operating systems.
 Name: lilo
@@ -6,7 +6,7 @@ Version: 22.1
 Release: owl1
 License: MIT
 Group: System Environment/Base
-Source0: ftp://sunsite.unc.edu/pub/Linux/system/boot/lilo/%{name}-%{version}.tar.gz
+Source0: ftp://sunsite.unc.edu/pub/Linux/system/boot/lilo/%name-%version.tar.gz
 Source1: keytab-lilo.c
 Patch0: lilo-22.1-rh-broken-headers.diff
 Patch1: lilo-22.1-alt-part.diff
@@ -15,7 +15,7 @@ Patch3: lilo-22.1-alt-owl-getopt.diff
 Patch4: lilo-22.1-deb-owl-man.diff
 BuildRequires: fileutils, dev86
 ExclusiveArch: %ix86
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 LILO (LInux LOader) is a basic system program which boots your Linux
@@ -38,12 +38,9 @@ gcc $RPM_OPT_FLAGS -Wall -s -o keytab-lilo $RPM_SOURCE_DIR/keytab-lilo.c
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr/bin
-mkdir -p ${RPM_BUILD_ROOT}%{_mandir}
-make install ROOT=$RPM_BUILD_ROOT MAN_DIR=%{_mandir}
+mkdir -p $RPM_BUILD_ROOT%_mandir
+make install ROOT=$RPM_BUILD_ROOT MAN_DIR=%_mandir
 install -m 755 keytab-lilo $RPM_BUILD_ROOT/usr/bin/
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %post
 test -f /etc/lilo.conf && /sbin/lilo || :
@@ -58,10 +55,10 @@ test -f /etc/lilo.conf && /sbin/lilo || :
 /boot/chain.b
 /boot/os2_d.b
 /sbin/lilo
-%{_mandir}/*/*
+%_mandir/*/*
 
 %changelog
-* Thu Feb 14 2002 Michail Litvak <mci@owl.openwall.com>
+* Thu Feb 14 2002 Michail Litvak <mci@owl.openwall.com> 22.1-owl1
 - 22.1
 - removed non-actual patches
 - added patches from ALT Linux and Debian

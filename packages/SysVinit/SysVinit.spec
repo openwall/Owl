@@ -1,4 +1,4 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.18 2003/04/27 05:32:12 solar Exp $
+# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.19 2003/10/30 08:49:44 solar Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
@@ -6,7 +6,7 @@ Version: 2.85
 Release: owl4
 License: GPL
 Group: System Environment/Base
-Source: ftp://ftp.cistron.nl/pub/people/miquels/sysvinit/sysvinit-%{version}.tar.gz
+Source: ftp://ftp.cistron.nl/pub/people/miquels/sysvinit/sysvinit-%version.tar.gz
 Patch0: sysvinit-2.85-owl-Makefile.diff
 Patch1: sysvinit-2.85-owl-wall-longjmp-clobbering.diff
 Patch2: sysvinit-2.85-owl-format.diff
@@ -18,7 +18,7 @@ Patch7: sysvinit-2.85-owl-typos.diff
 Patch8: sysvinit-2.85-rh-alt-owl-pidof.diff
 Patch9: sysvinit-2.85-rh-alt-owl-shutdown-log.diff
 Requires: /sbin/sulogin
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The SysVinit package contains a group of programs that control the
@@ -28,7 +28,7 @@ system boots.  init then controls the startup, running and shutdown
 of all other programs.
 
 %prep
-%setup -q -n sysvinit-%{version}
+%setup -q -n sysvinit-%version
 rm man/sulogin.8
 %patch0 -p1
 %patch1 -p1
@@ -52,13 +52,13 @@ gcc start-stop-daemon.c -o start-stop-daemon -s $RPM_OPT_FLAGS
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{dev,sbin,usr/bin,%{_mandir}/man{1,5,8}}
+mkdir -p $RPM_BUILD_ROOT/{dev,sbin,usr/bin,%_mandir/man{1,5,8}}
 mkdir -p $RPM_BUILD_ROOT/usr/include
 
 make -C src install \
 	DISTRO=Owl \
 	ROOT=$RPM_BUILD_ROOT \
-	MANDIR=%{_mandir} \
+	MANDIR=%_mandir \
 	BIN_OWNER=`id -nu` \
 	BIN_GROUP=`id -ng`
 
@@ -67,9 +67,6 @@ install -m 700 contrib/start-stop-daemon $RPM_BUILD_ROOT/sbin/
 
 mkfifo -m 600 $RPM_BUILD_ROOT/dev/initctl
 ln -sf killall5 $RPM_BUILD_ROOT/sbin/pidof
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %pre
 # This is tricky.  We don't want to let RPM remove the only link to the
@@ -96,7 +93,7 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc doc/sysvinit-%{version}.lsm
+%doc doc/sysvinit-%version.lsm
 %doc contrib/start-stop-daemon.README doc/bootlogd.README
 %defattr(0700,root,root)
 /sbin/halt
@@ -115,7 +112,7 @@ fi
 /usr/bin/lastb
 /usr/bin/mesg
 %attr(0700,root,tty) /usr/bin/wall
-%attr(0644,root,root) %{_mandir}/man*/*
+%attr(0644,root,root) %_mandir/man*/*
 %attr(0600,root,root) /dev/initctl
 
 %changelog
