@@ -294,12 +294,6 @@ Keep OpenSSL to latest in a branch.
 
 	owl-cdrom.
 
-[PRIORITY: medium]
-In the "welcome" script, handle DOC= paths for non-current branches
-(native/Owl-BRANCH/doc, not just native/Owl/doc, but in a way smarter
-than with native/Owl*/doc which will fail if more than one branch is
-in place).
-
 [PRIORITY: low]
 Also provide a silo.conf and generic kernel configuration for SPARC.
 
@@ -353,13 +347,6 @@ Do error logging.
 
 
 	pam_passwdqc.
-
-[PRIORITY: medium]
-Currently, "enforce=users" is only safe for uses by passwd(1) (and not
-for changing expired passwords from a login service).  This is now
-documented, but to fix it the getuid() checks should be replaced with
-something smarter because they also don't work well for Solaris' login
-(and probably more).
 
 [PRIORITY: low]
 (Optionally?) only display the requirements for valid passwords once
@@ -571,4 +558,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.28 2003/10/26 13:41:01 solar Exp $
+$Id: Owl/doc/TODO,v 1.29 2003/12/19 16:40:40 solar Exp $
