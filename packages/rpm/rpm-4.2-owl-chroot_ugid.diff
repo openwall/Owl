@@ -1,0 +1,191 @@
+diff -urpN rpm-4.2.orig/lib/psm.c rpm-4.2/lib/psm.c
+--- rpm-4.2.orig/lib/psm.c	Sun Dec 26 02:02:31 2004
++++ rpm-4.2/lib/psm.c	Sun Dec 26 03:24:09 2004
+@@ -2033,18 +2033,6 @@ psm->te->h = headerFree(psm->te->h);
+     {	const char * rootDir = rpmtsRootDir(ts);
+ 	/* Change root directory if requested and not already done. */
+ 	if (rootDir != NULL && !rpmtsChrootDone(ts) && !psm->chrootDone) {
+-	    static int _loaded = 0;
+-
+-	    /*
+-	     * This loads all of the name services libraries, in case we
+-	     * don't have access to them in the chroot().
+-	     */
+-	    if (!_loaded) {
+-		(void)getpwnam("root");
+-		endpwent();
+-		_loaded++;
+-	    }
+-
+ 	    xx = chdir("/");
+ 	    /*@-superuser@*/
+ 	    rc = chroot(rootDir);
+diff -urpN rpm-4.2.orig/rpmio/ugid.c rpm-4.2/rpmio/ugid.c
+--- rpm-4.2.orig/rpmio/ugid.c	Sun Jun 23 15:38:57 2002
++++ rpm-4.2/rpmio/ugid.c	Sun Dec 26 02:33:03 2004
+@@ -2,10 +2,133 @@
+  * \file rpmio/ugid.c
+  */
+ 
++#include <stdlib.h>
++#include <stdio.h>
++#include <string.h>
++#include <errno.h>
++
+ #include "system.h"
+ #include "ugid.h"
+ #include "debug.h"
+ 
++#define LINE_SIZE 0x400 /* Assume enough length for single passwd/group line */
++
++static char *fgetl(char *s, int size, FILE *stream)
++{
++        char *res, *pos;
++        int c;
++
++        if ((res = fgets(s, size, stream))) {
++                if (!*res) return res;
++
++                pos = res + strlen(res) - 1;
++                if (*pos == '\n') {
++                        *pos = 0;
++                        if (pos > res)
++                        if (*--pos == '\r') *pos = 0;
++                } else
++                if ((c = getc(stream)) == '\n') {
++                        if (*pos == '\r') *pos = 0;
++                } else
++                while (c != EOF && c != '\n')
++                        c = getc(stream);
++        }
++
++        return res;
++}
++
++/*
++ * Read /etc/passwd, search for "name" account and retrieve uid into "uid".
++ */
++static int get_uid_by_name(const char *name, uid_t *uid)
++{
++    FILE *file;
++    int result = 0;
++    char *line;
++
++    if ((line = malloc(LINE_SIZE)) == NULL) return -1;
++
++    if (!(file = fopen("/etc/passwd", "r"))) result = -1;
++
++    if (!result) {
++	long id = -1;
++	while ((fgetl(line, LINE_SIZE, file))) {
++	    char *account = strtok(line,":");
++	    if (account && !strcmp(account,name)) {
++		char *str; /* to hold id in string representation */
++		if (strtok(NULL, ":") && (str = strtok(NULL, ":")) && strtok(NULL, ":")) {
++		    char *error;
++		    errno = 0;
++		    id = strtol(str, &error, 10);
++		    if (errno || !*str || *error || id < 0 || (long)(uid_t)id != id) {
++			id = -1;
++		    }
++		    else {
++			*uid = id;
++			 break;
++		    }
++		}
++	    }
++	}
++
++	if (ferror(file))
++	    result = -1;
++	fclose(file);
++
++	if (id == -1) result = -1;
++    }
++
++    free(line);
++
++    return result;
++}
++
++/*
++ * Read /etc/group, search for "name" account and retrieve gid into "gid".
++ */
++static int get_gid_by_name(const char *name, gid_t *gid)
++{
++    FILE *file;
++    int result = 0;
++    char *line;
++
++    if ((line = malloc(LINE_SIZE)) == NULL) return -1;
++
++    if (!(file = fopen("/etc/group", "r"))) result = -1;
++
++    if (!result) {
++	long id = -1;
++	while ((fgetl(line, LINE_SIZE, file))) {
++	    char *account = strtok(line,":");
++	    if (account && !strcmp(account,name)) {
++		char *str; /* to hold id in string representation */
++		if (strtok(NULL, ":") && (str = strtok(NULL, ":"))) {
++		    char *error;
++		    errno = 0;
++		    id = strtol(str, &error, 10);
++		    if (errno || !*str || *error || id < 0 || (long)(gid_t)id != id) {
++			id = -1;
++		    }
++		    else {
++			*gid = id;
++			 break;
++		    }
++		}
++	    }
++	}
++
++	if (ferror(file))
++	    result = -1;
++	fclose(file);
++
++	if (id == -1) result = -1;
++    }
++
++    free(line);
++
++    return result;
++}
++
+ /* unameToUid(), uidTouname() and the group variants are really poorly
+    implemented. They really ought to use hash tables. I just made the
+    guess that most files would be owned by root or the same person/group
+@@ -50,7 +173,14 @@ int unameToUid(const char * thisUname, u
+ 	    endpwent();
+ 	    /*@=internalglobs@*/
+ 	    pwent = getpwnam(thisUname);
+-	    if (pwent == NULL) return -1;
++	    if (pwent == NULL) {
++		uid_t id = 0;
++		if (get_uid_by_name(thisUname, &id) == 0) {
++			lastUid = *uid = id;
++			return 0;
++		}
++		return -1;
++	    }
+ 	}
+ 
+ 	lastUid = pwent->pw_uid;
+@@ -100,7 +230,14 @@ int gnameToGid(const char * thisGname, g
+ 	    endgrent();
+ 	    /*@=internalglobs@*/
+ 	    grent = getgrnam(thisGname);
+-	    if (grent == NULL) return -1;
++	    if (grent == NULL) {
++		gid_t id = 0;
++		if (get_gid_by_name(thisGname, &id) == 0) {
++			lastGid = *gid = id;
++			return 0;
++		}
++		return -1;
++	    }
+ 	}
+ 	lastGid = grent->gr_gid;
+     }

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.43 2004/12/19 15:24:27 galaxy Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.44 2004/12/26 13:58:48 galaxy Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -11,7 +11,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -51,6 +51,7 @@ Patch25: rpm-4.2-owl-db-open.diff
 Patch26: rpm-4.2-owl-rpmdb-pthread.diff
 Patch27: rpm-4.2-owl-db1-addon.diff
 Patch28: rpm-4.2-owl-fix-configure.diff
+Patch29: rpm-4.2-owl-chroot_ugid.diff
 
 PreReq: /sbin/ldconfig
 PreReq: sh-utils, fileutils, mktemp, gawk
@@ -155,6 +156,7 @@ rm -r tests
 %patch26 -p1
 %patch27 -p1
 %patch28 -p1
+%patch29 -p1
 
 # Prepare libelf archive and save it with headers to the tools subdirectory
 pushd elfutils
@@ -451,6 +453,9 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Sun Dec 26 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl2
+- Applied chroot_ugid patch to not rely on host OS provided NSS modules.
+
 * Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 4.2-owl1
 - Corrected the long text messages for consistency with owl-etc.
 - Set Release to -owl1 such that we can make this public.
