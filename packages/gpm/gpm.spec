@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gpm/gpm.spec,v 1.18 2004/11/23 22:40:45 mci Exp $
+# $Id: Owl/packages/gpm/gpm.spec,v 1.19 2005/01/12 16:12:20 galaxy Exp $
 
 # This defines the library version that this package builds.
 %define LIBVER 1.18.0
@@ -7,7 +7,7 @@
 Summary: A mouse server for the Linux console.
 Name: gpm
 Version: 1.19.6
-Release: owl4
+Release: owl5
 License: GPL
 Group: System Environment/Daemons
 Source0: ftp://arcana.linux.it/pub/gpm/%name-%version.tar.bz2
@@ -21,6 +21,7 @@ Patch5: gpm-1.19.6-owl-tmp.diff
 Patch6: gpm-1.19.6-owl-warnings.diff
 Patch7: gpm-1.19.6-owl-doc-mkinstalldirs.diff
 Patch8: gpm-1.19.6-owl-info.diff
+Patch9: gpm-1.19.6-owl-gcc343-fixes.diff
 PreReq: /sbin/chkconfig, /sbin/ldconfig, /sbin/install-info
 BuildRequires: bison
 BuildRoot: /override/%name-%version
@@ -60,10 +61,12 @@ at the click of a mouse button.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 %build
+autoreconf
 %configure
-make CFLAGS="" CPPFLAGS=""
+%__make CFLAGS="" CXXFLAGS=""
 
 %install
 rm -rf %buildroot
@@ -78,6 +81,9 @@ cd %buildroot
 
 chmod +x .%_libdir/libgpm.so.%LIBVER
 ln -sf libgpm.so.%LIBVER .%_libdir/libgpm.so
+# XXX: (GM): We have to create .so.1 ourselves, but this is a dirty hack.
+#            It's need to be re-implemented to reflect major version changes.
+ln -sf libgpm.so.%LIBVER .%_libdir/libgpm.so.1
 
 mkdir -p .%_sysconfdir/rc.d/init.d
 install -m 755 $RPM_SOURCE_DIR/gpm.init .%_sysconfdir/rc.d/init.d/gpm
@@ -95,8 +101,8 @@ rm %buildroot%_mandir/man1/gpm-root.1*
 %pre
 rm -f /var/run/gpm.restart
 if [ $1 -ge 2 ]; then
-	/etc/rc.d/init.d/gpm status && touch /var/run/gpm.restart || :
-	/etc/rc.d/init.d/gpm stop || :
+	%_sysconfdir/rc.d/init.d/gpm status && touch /var/run/gpm.restart || :
+	%_sysconfdir/rc.d/init.d/gpm stop || :
 fi
 
 %post
@@ -104,7 +110,7 @@ if [ $1 -eq 1 ]; then
 	/sbin/chkconfig --add gpm
 fi
 if [ -f /var/run/gpm.restart ]; then
-	/etc/rc.d/init.d/gpm start
+	%_sysconfdir/rc.d/init.d/gpm start
 fi
 rm -f /var/run/gpm.restart
 /sbin/ldconfig
@@ -113,7 +119,7 @@ rm -f /var/run/gpm.restart
 %preun
 if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %_infodir/gpm.info.gz %_infodir/dir
-	/etc/rc.d/init.d/gpm stop || :
+	%_sysconfdir/rc.d/init.d/gpm stop || :
 	/sbin/chkconfig --del gpm
 fi
 
@@ -126,7 +132,7 @@ fi
 %_infodir/gpm.info*
 %_mandir/man1/mev.1*
 %_mandir/man8/gpm.8*
-%_libdir/libgpm.so.%LIBVER
+%_libdir/libgpm.so.*
 %config %_sysconfdir/rc.d/init.d/gpm
 
 %files devel
@@ -144,6 +150,12 @@ fi
 %endif
 
 %changelog
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.19.6-owl5
+- Added libgpm.so.1 to the list of packaged files since it's created
+by ldconfig anyway, but now we have a track where this file comes from.
+- Added gcc343-fixes patch to deal with "label at end of compound statement"
+issue.
+
 * Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 1.19.6-owl4
 - Remove unpackaged files.
 

@@ -1,0 +1,22 @@
+diff -puNr gpm-1.19.6.orig/src/synaptics.c gpm-1.19.6/src/synaptics.c
+--- gpm-1.19.6.orig/src/synaptics.c	Fri Jan  7 00:13:49 2005
++++ gpm-1.19.6/src/synaptics.c	Fri Jan  7 00:14:52 2005
+@@ -810,6 +810,7 @@ void syn_read_config_file () 
+ 	      break;
+ 
+ 	    default:
++	      ;
+ 	    }
+ 	  }
+ 	}
+diff -puNr gpm-1.19.6.orig/src/gpm-root.y gpm-1.19.6/src/gpm-root.y
+--- gpm-1.19.6.orig/src/gpm-root.y	Fri Jan  7 00:19:54 2005
++++ gpm-1.19.6/src/gpm-root.y	Fri Jan  7 00:22:44 2005
+@@ -541,6 +541,7 @@ int f_fgcmd(int mode, DrawItem *self, in
+       break;
+     case F_INVOKE:
+       /* MISS */
++      ;
+     }
+   return 0;
+ }
