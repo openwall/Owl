@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.3 2001/06/23 07:38:00 solar Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.4 2001/06/23 08:04:52 solar Exp $
 
 Summary: Owl configuration tool
 Name: owl-setup
@@ -60,6 +60,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Sat Jun 23 2001 Solar Designer <solar@owl.openwall.com>
 - Grammar/spelling fix for a netcfg message.
+- Ensure the newly created /etc/resolv.conf and /etc/hosts are mode 644.
 
 * Wed Jun 06 2001 Michail Litvak <mci@owl.openwall.com>
 - write domain into resolv.conf
