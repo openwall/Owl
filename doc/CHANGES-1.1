@@ -12,6 +12,19 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.0 and Owl-current.
 
+2003/03/26	Package: mutt
+SECURITY FIX	Severity: high, remote, passive
+Updated to 1.4.1.  This version fixes a buffer overflow vulnerability
+in Mutt's IMAP client code which could result in arbitrary code
+execution if Mutt is used to connect to a malicious or spoofed IMAP
+server.  The vulnerability has been discovered by Diego Kelyacoubian,
+Javier Kohen, Alberto Solino, and Juan Vera of Core Security
+Technologies, and fixed by Edmund Grimley Evans.
+References:
+http://www.coresecurity.com/common/showdoc.php?idx=310&idxseccion=10
+http://marc.theaimsgroup.com/?l=bugtraq&m=104818814931378
+http://marc.theaimsgroup.com/?l=bugtraq&m=104812904712828
+
 2003/03/23	Package: glibc
 SECURITY FIX	Severity: none to high, remote, active
 Included Red Hat's back-port of the Sun RPC XDR integer overflow
@@ -227,4 +240,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.36 2003/03/23 19:43:56 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.37 2003/03/26 23:48:39 solar Exp $
