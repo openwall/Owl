@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.12 2001/06/20 21:04:17 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.13 2001/12/15 23:16:59 solar Exp $
 
 TIME=/usr/bin/time
 
@@ -121,6 +121,7 @@ function builder()
 
 	ls $NATIVE/$PACKAGES/ | grep -v '^CVS$' |
 	while read PACKAGE; do
+		test -e $NATIVE/$PACKAGES/$PACKAGE/$PACKAGE.spec || continue
 		mkdir .$PACKAGE &> /dev/null || continue
 		touch .$PACKAGE/$NUMBER
 		REGEX="^${PACKAGE}-[^-]*[0-9]\+[^-]*-[0-9][^-]*.src.rpm\$"
