@@ -1,4 +1,4 @@
-# $Id: Owl/packages/kbd/kbd.spec,v 1.8 2004/01/15 21:37:58 mci Exp $
+# $Id: Owl/packages/kbd/kbd.spec,v 1.9 2004/01/16 10:13:31 mci Exp $
 
 Summary: Tools for configuring the console.
 Name: kbd
@@ -85,7 +85,7 @@ fi
 /bin/*
 %_bindir/*
 %_mandir/man*/*
-%dir /lib/kbd/
+%dir /lib/kbd
 /lib/kbd/*
 
 %changelog
