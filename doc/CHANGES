@@ -12,6 +12,11 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/08/04 -
+2002/08/12	Packages: fileutils, sh-utils, textutils;
+		Owl/build/installorder.conf
+Updated fileutils to 4.1.11 with a number of additional patches.
+
 2002/08/11	Package: perl
 SECURITY FIX	Severity: none to high, remote, active
 Back-ported bound checking fixes for File::Glob from Perl 5.8.0.
@@ -26,11 +31,6 @@ nature of such scripts, may be coming from a remote system.
 Updated to 2.3.6 adding fixes or workarounds for issues introduced
 after 2.3.3 including the signal pipe leak into child processes (a
 security hole with 2.3.4+ which never got into Owl).
-
-2002/08/04 -
-2002/08/05	Packages: fileutils, sh-utils, textutils;
-		Owl/build/installorder.conf
-Updated fileutils to 4.1.11 with a number of additional patches.
 
 2002/08/04	Package: glibc
 Made the FreeSec code (that supports the extended BSDI-style DES-based
@@ -905,4 +905,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.123 2002/08/12 14:27:51 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.124 2002/08/12 17:19:53 solar Exp $
