@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.8 2000/08/26 07:02:55 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.9 2000/09/16 12:34:11 solar Exp $
 
 Summary: A security tool which provides authentication for applications.
 Name: pam
@@ -21,6 +21,9 @@ Url: http://www.us.kernel.org/pub/linux/libs/pam/index.html
 PAM (Pluggable Authentication Modules) is a system security tool
 which allows system administrators to set authentication policy
 without having to recompile programs which do authentication.
+
+# Use %optflags_lib for this package if defined.
+%{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 
 %prep
 %setup -q
@@ -77,6 +80,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/man/man8/*
 
 %changelog
+* Fri Sep 16 2000 Solar Designer <solar@owl.openwall.com>
+- %optflags_lib support.
+
 * Sat Aug 26 2000 Solar Designer <solar@owl.openwall.com>
 - Disabled building of pam_console entirely to avoid the dependency on glib.
 - Removed the (bogus?) dependency on initscripts from this spec file.
