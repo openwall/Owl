@@ -1,0 +1,115 @@
+diff -ur man-1.5h1.orig/src/makewhatis.sh man-1.5h1/src/makewhatis.sh
+--- man-1.5h1.orig/src/makewhatis.sh	Tue Jun 29 06:20:59 1999
++++ man-1.5h1/src/makewhatis.sh	Thu Aug 10 02:56:57 2000
+@@ -3,6 +3,7 @@
+ # Created: Sun Jun 14 10:49:37 1992
+ # Revised: Sat Jan  8 14:12:37 1994 by faith@cs.unc.edu
+ # Revised: Sat Mar 23 17:56:18 1996 by micheal@actrix.gen.nz
++# Revised: Thu Aug 10 02:17:50 2000 by solar@owl.openwall.com
+ # Copyright 1992, 1993, 1994 Rickard E. Faith (faith@cs.unc.edu)
+ # May be freely distributed and modified as long as copyright is retained.
+ #
+@@ -24,6 +25,7 @@
+ # 960510 - added fixes by brennan@raven.ca.boeing.com, author of mawk.
+ # 971012 - replaced "test -z" - it doesnt work on SunOS 4.1.3_U1.
+ # 980710 - be more careful with TMPFILE
++# 000810 - solar: use mktemp, keep whatis files consistent while running.
+ #
+ # Note for Slackware users: "makewhatis -v -w -c" will work.
+ #
+@@ -39,23 +41,7 @@
+ # AWK=/usr/bin/gawk
+ AWK=%gawk%
+ 
+-# Find a place for our temporary files. If security is not a concern, use
+-#	TMPFILE=/tmp/whatis$$; TMPFILEDIR=none
+-# Of course makewhatis should only have the required permissions
+-# (for reading and writing directories like /usr/man).
+-# We try here to be careful (and avoid preconstructed symlinks)
+-# in case makewhatis is run as root, by creating a subdirectory of /tmp.
+-# If that fails we use $HOME.
+-# The code below uses  test -O  which doesnt work on all systems.
+-TMPFILE=$HOME/whatis$$
+-TMPFILEDIR=/tmp/whatis$$
+-if [ ! -d $TMPFILEDIR ]; then
+-	mkdir $TMPFILEDIR
+-	chmod 0700 $TMPFILEDIR
+-	if [ -O $TMPFILEDIR ]; then
+-		TMPFILE=$TMPFILEDIR/w
+-	fi
+-fi
++TMPFILE=`mktemp /tmp/$program.XXXXXX` || exit 1
+ 
+ topath=manpath
+ 
+@@ -74,6 +60,7 @@
+ case $name in
+     --version|-V)
+         echo "$program from %version%"
++	rm $TMPFILE
+ 	exit 0;;
+     -c) topath=catpath
+ 	defmanpath=
+@@ -97,12 +84,14 @@
+         echo "       [manpath]: man directories (default: $DEFMANPATH)"
+ 	echo "       [catpath]: cat directories (default: the first existing"
+ 	echo "           directory in $DEFCATPATH)"
++	rm $TMPFILE
+         exit;;
+      *) if [ -d $name ]
+         then
+             eval $topath="\$$topath":$name
+         else
+             echo "No such directory $name"
++	    rm $TMPFILE
+             exit
+         fi;;
+ esac
+@@ -117,7 +106,7 @@
+ fi
+ catpath=`echo ${catpath} | tr : ' '`
+ 
+-# first truncate all the whatis files that will be created new,
++# first mark all the whatis files that will be created new,
+ # then only update - we might visit the same directory twice
+ if [ x$update = x ]; then
+    for pages in man cat
+@@ -125,7 +114,7 @@
+       eval path="\$$pages"path
+       for mandir in $path
+       do
+-         cp /dev/null $mandir/whatis
++         touch $mandir/whatis.update
+       done
+    done
+ fi
+@@ -139,7 +128,7 @@
+      if [ x$verbose != x ]; then
+         echo "about to enter $mandir" > /dev/tty
+      fi
+-     if [ -s ${mandir}/whatis -a $pages = man -a x$update = x ]; then
++     if [ ! -f ${mandir}/whatis.update -a $pages = man -a x$update = x ]; then
+         if [ x$verbose != x ]; then
+            echo skipping $mandir - we did it already > /dev/tty
+         fi
+@@ -338,15 +327,12 @@
+        then
+          cat ${mandir1}/whatis >> $TMPFILE
+        fi
+-       sed '/^$/d' < $TMPFILE | sort | uniq > ${mandir1}/whatis
++       touch ${mandir1}/whatis.tmp
++       chmod 644 ${mandir1}/whatis.tmp
++       sed '/^$/d' < $TMPFILE | sort -u > ${mandir1}/whatis.tmp
+ 
+-       chmod 644 ${mandir1}/whatis
+-       rm $TMPFILE
++       mv -f ${mandir1}/whatis.tmp ${mandir1}/whatis
++       rm $TMPFILE ${mandir1}/whatis.update
+      fi
+    done
+ done
+-
+-# remove the dir if we created it
+-if [ $TMPFILE = $TMPFILEDIR/w ]; then
+-	rmdir $TMPFILEDIR
+-fi
