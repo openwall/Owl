@@ -1,9 +1,9 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.7 2001/03/10 18:24:26 solar Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.8 2001/03/11 08:23:15 mci Exp $
 
 Summary: A screen manager that supports multiple logins on one terminal.
 Name: screen
 Version: 3.9.8
-Release: 7owl
+Release: 8owl
 Copyright: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%{version}.tar.gz
@@ -65,7 +65,7 @@ mv .%{_bindir}/screen-%{version} .%{_bindir}/screen
 strip .%{_bindir}/screen
 popd
 
-install -c -m 444 etc/etcscreenrc $RPM_BUILD_ROOT/etc/screenrc
+install -c -m 644 etc/etcscreenrc $RPM_BUILD_ROOT/etc/screenrc
 install -d $RPM_BUILD_ROOT/etc/pam.d
 install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/etc/pam.d/screen
 
@@ -92,13 +92,11 @@ fi
 %config(noreplace) /etc/pam.d/screen
 
 %changelog
-* Sat Mar 10 2001 Michail Litvak <mci@owl.openwall.com>
-- example user's .screenrc moved to doc
-
 * Sat Mar 10 2001 Solar Designer <solar@owl.openwall.com>
 - Don't require and link against libpam_misc.
 
 * Sat Mar 10 2001 Michail Litvak <mci@owl.openwall.com>
+- example user's .screenrc moved to doc
 - added patch to builtin telnet (bcopy->memmove)
 - spec, patches cleanups
 
