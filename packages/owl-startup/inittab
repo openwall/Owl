@@ -1,5 +1,5 @@
 # /etc/inittab: init(8) configuration.
-# $Id: Owl/packages/owl-startup/inittab,v 1.1 2000/11/28 22:48:33 solar Exp $
+# $Id: Owl/packages/owl-startup/inittab,v 1.2 2002/08/22 01:40:00 solar Exp $
 
 # The default runlevel.
 id:3:initdefault:
@@ -9,7 +9,7 @@ id:3:initdefault:
 si::sysinit:/etc/rc.d/rc.sysinit
 
 # What to do in single-user mode.
-~~:S:wait:/sbin/sulogin
+~~:S:wait:/sbin/sulogin -p
 
 # /etc/rc.d/rc executes the S and K scripts upon change of runlevel.
 #

@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.29 2002/05/23 06:32:40 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.30 2002/08/22 01:40:00 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.14
+Version: 0.15
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -146,6 +146,11 @@ fi
 %doc redhat
 
 %changelog
+* Thu Aug 22 2002 Solar Designer <solar@owl.openwall.com>
+- Pass -p to the invocation of sulogin used in single user mode (rather
+than on emergency when root fs may not be mounted read/write) such that
+it will produce a login shell (letting it process /etc/profile).
+
 * Mon May 20 2002 Solar Designer <solar@owl.openwall.com>
 - Pass --localtime to hwclock(8) when UTC is explicitly set to "false"
 or "no", otherwise hwclock would default to whatever setting was last
