@@ -1,6 +1,6 @@
-diff -ur strace-20020528.orig/file.c strace-20020528-owl-fixes/file.c
---- strace-20020528.orig/file.c	Thu May 30 04:48:52 2002
-+++ strace-20020528-owl-fixes/file.c	Thu May 30 12:41:44 2002
+diff -ur strace-20020608.orig/file.c strace-20020608/file.c
+--- strace-20020608.orig/file.c	Thu May 30 04:48:52 2002
++++ strace-20020608/file.c	Sat Jun  8 06:14:02 2002
 @@ -40,6 +40,7 @@
  #include <linux/types.h>
  #include <linux/dirent.h>
@@ -43,9 +43,9 @@ diff -ur strace-20020528.orig/file.c strace-20020528-owl-fixes/file.c
  				i ? " " : "", d->d_ino, d->d_off);
  			tprintf("d_reclen=%u, d_name=\"%s\"}",
  				d->d_reclen, d->d_name);
-diff -ur strace-20020528.orig/linux/syscall.h strace-20020528-owl-fixes/linux/syscall.h
---- strace-20020528.orig/linux/syscall.h	Thu May 30 04:48:52 2002
-+++ strace-20020528-owl-fixes/linux/syscall.h	Thu May 30 12:41:44 2002
+diff -ur strace-20020608.orig/linux/syscall.h strace-20020608/linux/syscall.h
+--- strace-20020608.orig/linux/syscall.h	Thu May 30 04:48:52 2002
++++ strace-20020608/linux/syscall.h	Sat Jun  8 06:14:02 2002
 @@ -83,7 +83,7 @@
  int sys_rt_sigtimedwait(), sys_prctl(), sys_poll(), sys_vfork();
  int sys_sendfile(), sys_old_mmap(), sys_stat64(), sys_lstat64(), sys_fstat64();
@@ -55,9 +55,9 @@ diff -ur strace-20020528.orig/linux/syscall.h strace-20020528-owl-fixes/linux/sy
  
  
  /* sys_socketcall subcalls */
-diff -ur strace-20020528.orig/process.c strace-20020528-owl-fixes/process.c
---- strace-20020528.orig/process.c	Thu May 30 04:48:52 2002
-+++ strace-20020528-owl-fixes/process.c	Thu May 30 12:41:44 2002
+diff -ur strace-20020608.orig/process.c strace-20020608/process.c
+--- strace-20020608.orig/process.c	Thu May 30 04:48:52 2002
++++ strace-20020608/process.c	Sat Jun  8 06:14:02 2002
 @@ -484,6 +484,7 @@
  	return 0;
  }
@@ -84,9 +84,9 @@ diff -ur strace-20020528.orig/process.c strace-20020528-owl-fixes/process.c
  
  #ifdef SYS_clone
  int
-diff -ur strace-20020528.orig/syscall.c strace-20020528-owl-fixes/syscall.c
---- strace-20020528.orig/syscall.c	Thu May 30 04:48:52 2002
-+++ strace-20020528-owl-fixes/syscall.c	Thu May 30 12:42:07 2002
+diff -ur strace-20020608.orig/syscall.c strace-20020608/syscall.c
+--- strace-20020608.orig/syscall.c	Thu May 30 04:48:52 2002
++++ strace-20020608/syscall.c	Sat Jun  8 06:14:02 2002
 @@ -455,8 +455,7 @@
  };
  #endif /* FREEBSD */
@@ -166,10 +166,30 @@ diff -ur strace-20020528.orig/syscall.c strace-20020528-owl-fixes/syscall.c
  #ifdef SPARC
  	case SYS_socketcall:
  		sparc_socket_decode (tcp);
-diff -ur strace-20020528.orig/util.c strace-20020528-owl-fixes/util.c
---- strace-20020528.orig/util.c	Thu May 30 04:48:52 2002
-+++ strace-20020528-owl-fixes/util.c	Thu May 30 12:42:17 2002
-@@ -1040,7 +1040,7 @@
+diff -ur strace-20020608.orig/util.c strace-20020608/util.c
+--- strace-20020608.orig/util.c	Thu May 30 04:48:52 2002
++++ strace-20020608/util.c	Sat Jun  8 06:13:05 2002
+@@ -69,7 +69,19 @@
+ 
+ #if defined(LINUX) && defined(SPARC)
+ 
++#if HAVE_ASM_REG_H
++#ifdef SPARC
++#  define fpq kernel_fpq
++#  define fq kernel_fq
++#  define fpu kernel_fpu
++#endif
+ #include <asm/reg.h>
++#ifdef SPARC
++#  undef fpq
++#  undef fq
++#  undef fpu
++#endif
++#endif /* HAVE_ASM_REG_H */
+ 
+ #if !defined(__GLIBC__)
+ 
+@@ -1040,7 +1052,7 @@
  		tprintf("[????????] ");
  		return;
  	}
