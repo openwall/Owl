@@ -44,7 +44,7 @@ diff -urN stmpclean-0.1.orig/stmpclean.8 stmpclean-0.1/stmpclean.8
  .Sh BUGS
 diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
 --- stmpclean-0.1.orig/stmpclean.c	Wed Aug  4 19:48:39 1999
-+++ stmpclean-0.1/stmpclean.c	Sat Mar 30 03:59:03 2002
++++ stmpclean-0.1/stmpclean.c	Sat Mar 30 04:15:53 2002
 @@ -1,7 +1,7 @@
  /* stmpclean.c -- remove old files from a world-writable directory.
 -   
@@ -178,16 +178,28 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  		syslog(LOG_ERR, "cannot set EUID/EGID to %d/%d, exiting",
  		       uid, gid);
  		exit(1);
-@@ -193,7 +222,7 @@
+@@ -182,6 +211,8 @@
+ 		return;
+ 	}
+ 	if (lstat(dir, &st) == -1) {
++		if (errno == ENOENT)
++			return;
+ 		GETCWD;
+ 		syslog(LOG_ERR, "RACE?: lstat(\"%s\") in %s failed: %m, "
+ 		       "exiting", dir, cwd);
+@@ -193,8 +224,10 @@
  		       dir, cwd);
  		exit(1);
  	}
 -	dir_fd = open(dir, O_RDONLY);
 +	dir_fd = open(dir, O_RDONLY | O_NONBLOCK | O_DIRECTORY | O_NOFOLLOW);
  	if (dir_fd == -1) {
++		if (errno == ENOENT)
++			return;
  		GETCWD;
  		syslog(LOG_ERR,
-@@ -219,7 +248,8 @@
+ 		       "RACE?: cannot open(\"%s\"): %m (lstat was OK), "
+@@ -219,7 +252,8 @@
  	}
  	/* We'll chdir up later once done with recursive descend.
  	   Hence the name. */
@@ -197,7 +209,7 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  	if (dot_dot_fd == -1) {
  		GETCWD;
  		syslog(LOG_ERR, "open(\".\") in %s: %m, exiting", cwd);
-@@ -258,11 +288,17 @@
+@@ -258,11 +292,18 @@
  			/* Looking at a directory. */
  			if (isemptydir(dp->d_name)) {
  				/* Looking at an empty directory. */
@@ -207,6 +219,7 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  					setecreds(st.st_uid, st.st_gid);
  					if (rmdir(dp->d_name) == -1
 -					    && errno != EACCES) {
++					    && errno != ENOENT
 +					    && errno != EACCES
 +					    && errno != EPERM) {
 +						if (errno == ENOTEMPTY) {
@@ -217,7 +230,7 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  						GETCWD;
  						syslog(LOG_ERR, "RACE?: rmdir"
  						       "(\"%s\") in %s: %m, "
-@@ -273,6 +309,7 @@
+@@ -273,6 +314,7 @@
  					setecreds(0, 0);
  				}
  			} else {
@@ -225,7 +238,7 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  				/*
  				 * Looking at a non-empty directory. Clean it
  				 * recursively (call ourselves).
-@@ -281,10 +318,13 @@
+@@ -281,10 +323,14 @@
  			}
  		} else {
  			/* Looking at a non-directory. */
@@ -235,13 +248,14 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  				setecreds(st.st_uid, st.st_gid);
 -				if (unlink(dp->d_name) == -1) {
 +				if (unlink(dp->d_name) == -1
++				    && errno != ENOENT
 +				    && errno != EACCES
 +				    && errno != EPERM) {
 +					setecreds(0, 0);
  					GETCWD;
  					syslog(LOG_ERR, "RACE?: unlink(\"%s\")"
  					       "in %s: %m, exiting",
-@@ -315,15 +355,27 @@
+@@ -315,15 +361,27 @@
  	/* By default, delete files older than three days. */
  	extern char    *optarg;
  	extern int      optind;
@@ -270,7 +284,7 @@ diff -urN stmpclean-0.1.orig/stmpclean.c stmpclean-0.1/stmpclean.c
  		case 't':
  			minage = parse_time(optarg);
  			if (minage == -1)
-@@ -334,8 +386,14 @@
+@@ -334,8 +392,14 @@
  		}
  	argc -= optind;
  	argv += optind;
