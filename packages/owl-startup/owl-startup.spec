@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.18 2001/05/29 21:23:59 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.19 2001/07/27 18:26:10 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.7
+Version: 0.8
 Release: 1owl
 Copyright: GPL
 Group: System Environment/Base
@@ -142,6 +142,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc redhat
 
 %changelog
+* Fri Jul 27 2001 Solar Designer <solar@owl.openwall.com>
+- Setup a RAM disk if we're booting from an Owl CD-ROM; this is done by
+running rc.ramdisk which is to be provided by the owl-cdrom package.
+
 * Wed May 30 2001 Solar Designer <solar@owl.openwall.com>
 - Set umask to 077 in daemon() for the case when a service is started
 manually rather than from rc.sysinit.
