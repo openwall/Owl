@@ -1,4 +1,4 @@
-# $Id: Owl/packages/chkconfig/chkconfig.spec,v 1.5 2004/02/08 19:54:17 solar Exp $
+# $Id: Owl/packages/chkconfig/chkconfig.spec,v 1.6 2004/02/08 20:01:28 solar Exp $
 
 %define BUILD_NTSYSV 0
 %define INSTALL_ALTERNATIVES 0
@@ -62,7 +62,7 @@ done
 
 %find_lang %name
 
-%files -f %{name}.lang
+%files -f %name.lang
 %defattr(-,root,root)
 /sbin/chkconfig
 /etc/init.d
