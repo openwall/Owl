@@ -1,0 +1,12 @@
+diff -urN --show-c-function nc-3.2-owl-linux/usr.bin/nc/netcat.c nc-3.2-owl-ipv4-default/usr.bin/nc/netcat.c
+--- nc-3.2-owl-linux/usr.bin/nc/netcat.c	Thu Dec 26 01:32:28 2002
++++ nc-3.2-owl-ipv4-default/usr.bin/nc/netcat.c	Thu Dec 26 01:48:24 2002
+@@ -73,7 +73,7 @@ int	xflag;					/* Socks proxy */
+ int	zflag;					/* Port Scan Flag */
+ 
+ int timeout = -1;
+-int family = AF_UNSPEC;
++int family = AF_INET;
+ char *portlist[PORT_MAX];
+ 
+ ssize_t	atomicio(ssize_t (*)(), int, void *, size_t);

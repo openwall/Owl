@@ -1,0 +1,130 @@
+diff -urN --show-c-function nc-3.2/Makefile nc-3.2-owl-linux/Makefile
+--- nc-3.2/Makefile	Thu Jan  1 03:00:00 1970
++++ nc-3.2-owl-linux/Makefile	Thu Dec 26 01:31:20 2002
+@@ -0,0 +1,2 @@
++all clean:
++	$(MAKE) -C usr.bin/nc $@
+diff -urN --show-c-function nc-3.2/usr.bin/nc/Makefile nc-3.2-owl-linux/usr.bin/nc/Makefile
+--- nc-3.2/usr.bin/nc/Makefile	Sun Sep  2 21:45:41 2001
++++ nc-3.2-owl-linux/usr.bin/nc/Makefile	Thu Dec 26 01:31:20 2002
+@@ -1,6 +1,25 @@
+ #	$OpenBSD: Makefile,v 1.6 2001/09/02 18:45:41 jakob Exp $
+ 
++CC = gcc
++LD = gcc
++RM = rm -f
++ifndef CFLAGS
++CFLAGS = -c -O2 -fomit-frame-pointer
++endif
++CFLAGS += -Wall -Dlint
++LDFLAGS = -s
++
+ PROG=	nc
+ SRCS=	netcat.c atomicio.c socks.c
+ 
+-.include <bsd.prog.mk>
++all: $(PROG)
++
++$(PROG): $(SRCS:.c=.o)
++	$(LD) $(LDFLAGS) $+ $(LIBS) -o $@
++
++.c.o:
++	$(CC) $(CFLAGS) $< -o $@
++
++clean:
++	$(RM) $(PROG) $(SRCS:.c=.o)
++
+Binary files nc-3.2/usr.bin/nc/atomicio.o and nc-3.2-owl-linux/usr.bin/nc/atomicio.o differ
+Binary files nc-3.2/usr.bin/nc/nc and nc-3.2-owl-linux/usr.bin/nc/nc differ
+diff -urN --show-c-function nc-3.2/usr.bin/nc/netcat.c nc-3.2-owl-linux/usr.bin/nc/netcat.c
+--- nc-3.2/usr.bin/nc/netcat.c	Fri Dec 13 21:53:45 2002
++++ nc-3.2-owl-linux/usr.bin/nc/netcat.c	Fri Dec 27 00:06:41 2002
+@@ -49,6 +49,7 @@
+ #include <string.h>
+ #include <unistd.h>
+ #include <fcntl.h>
++#include <time.h>
+ 
+ #ifndef SUN_LEN
+ #define SUN_LEN(su) \
+@@ -148,6 +149,7 @@ main(int argc, char *argv[])
+ 			break;
+ 		case 'r':
+ 			rflag = 1;
++			srandom(time(NULL) + getpid());
+ 			break;
+ 		case 's':
+ 			sflag = optarg;
+@@ -260,7 +262,7 @@ main(int argc, char *argv[])
+ 			if (family != AF_UNIX)
+ 				s = local_listen(host, uport, hints);
+ 			if (s < 0)
+-				err(1, NULL);
++				exit(1);
+ 			/*
+ 			 * For UDP, we will use recvfrom() initially
+ 			 * to wait for a caller, then use the regular
+@@ -376,7 +378,12 @@ unix_connect(char *path)
+ 
+ 	memset(&sun, 0, sizeof(struct sockaddr_un));
+ 	sun.sun_family = AF_UNIX;
+-	strlcpy(sun.sun_path, path, sizeof(sun.sun_path));
++	if (strlen(path) < sizeof(sun.sun_path)) {
++		strncat(sun.sun_path, path, sizeof(sun.sun_path));
++	} else {
++		errx(1, "Socket path too long");
++	}
++
+ 	if (connect(s, (struct sockaddr *)&sun, SUN_LEN(&sun)) < 0) {
+ 		close(s);
+ 		return (-1);
+@@ -399,7 +406,12 @@ unix_listen(char *path)
+ 	if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
+ 		return (-1);
+ 
+-	strlcpy(sun.sun_path, path, sizeof(sun.sun_path));
++	if (strlen(path) < sizeof(sun.sun_path)) {
++		strncat(sun.sun_path, path, sizeof(sun.sun_path));
++	} else {
++		errx(1, "Socket path too long");
++	}
++
+ 	sun.sun_family = AF_UNIX;
+ 	if (bind(s, (struct sockaddr *)&sun, SUN_LEN(&sun)) < 0) {
+ 		close(s);
+@@ -504,9 +516,9 @@ local_listen(char *host, char *port, str
+ 		    res0->ai_protocol)) == 0)
+ 			continue;
+ 
+-		ret = setsockopt(s, SOL_SOCKET, SO_REUSEPORT, &x, sizeof(x));
++		ret = setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &x, sizeof(x));
+ 		if (ret == -1)
+-			err(1, NULL);
++			exit(1);	
+ 
+ 		if (bind(s, (struct sockaddr *)res0->ai_addr,
+ 		    res0->ai_addrlen) == 0)
+@@ -666,7 +678,7 @@ build_ports(char *p)
+ 			char *c;
+ 
+ 			for (x = 0; x <= (hi - lo); x++) {
+-				y = (arc4random() & 0xFFFF) % (hi - lo);
++				y = (random() & 0xFFFF) % (hi - lo);
+ 				c = portlist[x];
+ 				portlist[x] = portlist[y];
+ 				portlist[y] = c;
+Binary files nc-3.2/usr.bin/nc/netcat.o and nc-3.2-owl-linux/usr.bin/nc/netcat.o differ
+diff -urN --show-c-function nc-3.2/usr.bin/nc/socks.c nc-3.2-owl-linux/usr.bin/nc/socks.c
+--- nc-3.2/usr.bin/nc/socks.c	Thu Feb 28 20:05:36 2002
++++ nc-3.2-owl-linux/usr.bin/nc/socks.c	Thu Dec 26 01:31:20 2002
+@@ -52,6 +52,9 @@
+ 
+ int	remote_connect(char *, char *, struct addrinfo);
+ 
++typedef uint32_t in_addr_t;
++typedef uint16_t in_port_t;
++
+ static in_addr_t
+ decode_addr (const char *s)
+ {
+Binary files nc-3.2/usr.bin/nc/socks.o and nc-3.2-owl-linux/usr.bin/nc/socks.o differ
