@@ -1,4 +1,4 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.3 2000/08/09 02:26:10 solar Exp $
+# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.4 2000/11/14 14:04:22 solar Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
@@ -52,7 +52,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%doc doc/Propaganda doc/changelog doc/Install
+%doc doc/Propaganda doc/Install
 %doc doc/sysvinit-%{version}.lsm contrib/start-stop-daemon.README
 %doc doc/bootlogd.README
 %defattr(0700,root,root)
