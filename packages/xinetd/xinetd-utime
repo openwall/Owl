@@ -2,7 +2,7 @@
 # description: An RFC 868 time server. This is the udp \
 # version.
 
-service time
+service time-udp
 {
 	type		= INTERNAL
 	id		= time-dgram
