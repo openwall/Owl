@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.26 2001/09/27 02:35:02 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.27 2001/09/29 00:51:27 solar Exp $
 
 Summary: The OpenSSH implementation of SSH.
 Name: openssh
 Version: 2.9.9p2
-Release: 1owl
+Release: 2owl
 URL: http://www.openssh.com/portable.html
 Source0: ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-%{version}.tar.gz
 Source1: sshd.pam
@@ -17,7 +17,7 @@ Patch2: openssh-2.9.9p2-owl-pam_userpass.diff
 Patch3: openssh-2.9.9p2-owl-scp-stalltime.diff
 Patch4: openssh-2.9.9p2-owl-drop-groups.diff
 Patch5: openssh-2.9.9p2-owl-openssl-version-check.diff
-Patch6: openssh-2.9.9p2-owl-typos.diff
+Patch6: openssh-2.9.9p2-cvs-20010928-fixes.diff
 License: BSD
 Group: Applications/Internet
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
@@ -95,7 +95,7 @@ clients to connect to your host.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
+%patch6 -p3
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" LIBS="-lcrypt -lpam -lpam_misc" ./configure \
@@ -194,6 +194,10 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Sat Sep 29 2001 Solar Designer <solar@owl.openwall.com>
+- Include post-2.9.9 fixes from the CVS, most importantly to restore the
+order of reading for ~/.ssh/config and /etc/ssh_config.
+
 * Thu Sep 27 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 2.9.9p2.
 - Patched the OpenSSL version check to ignore the patch and status bits.
