@@ -1,4 +1,4 @@
-# $Id: Owl/packages/db4/db4.spec,v 1.6 2005/01/14 03:27:51 galaxy Exp $
+# $Id: Owl/packages/db4/db4.spec,v 1.7 2005/01/16 18:04:17 galaxy Exp $
 
 %define __soversion	4.0
 %define _libdb_a	libdb-%__soversion.a
@@ -79,7 +79,11 @@ popd
 
 pushd dist
 
-CXX="%__cc" \
+CC="%__cc"
+CXX="%__cc"
+# XXX: (GM): This is an workaround to link libgcc statically
+LIBXSO_LIBS="-Xcompiler -static-libgcc"
+export CC CXX LIBXSO_LIBS
 %configure \
 	--enable-compat185 --enable-dump185 \
 	--enable-shared --enable-static --enable-rpc \
@@ -97,6 +101,9 @@ mkdir -p %buildroot{/lib,%_libdir,%_includedir/db4}
 %makeinstall -C dist libdb=%_libdb_a libcxx=%_libcxx_a
 
 chmod +x %buildroot%_libdir/*.so*
+
+# Allow owner to modify to make our brp-scripts happy
+chmod -R u+w %buildroot{%_bindir,%_libdir}
 
 pushd %buildroot
 # Relocate main shared library from %_libdir/ to /lib/.
@@ -158,7 +165,10 @@ rm -rf %buildroot
 %_includedir/*.h
 
 %changelog
-* Sun Jan 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.0.14-owl2
+* Sun Jan 16 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.0.14-owl2
+- Add write permission to files under %_bindir and %_libdir to allow brp-
+scripts to do their work.
+- Add "-Xcompiler -static-libgcc" to LIBXSO_LIBS to link libgcc statically.
 - Used %%__cc and %%__make macros.
 - Cleaned up the spec.
 
