@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.19 2002/11/03 03:34:03 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.20 2002/11/03 03:36:20 solar Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -127,12 +127,12 @@ if [ $1 -eq 0 ]; then
 fi
 
 %if %BUILD_MOUNT
-%pre mount
+%pre -n mount
 if [ $1 -ge 2 ]; then
 	/usr/sbin/control-dump mount
 fi
 
-%post mount
+%post -n mount
 if [ $1 -ge 2 ]; then
 	/usr/sbin/control-restore mount
 fi
