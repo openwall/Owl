@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2004/01/20	Package: perl
+Updated to 5.8.3.
+
 2004/01/18	Package: owl-startup
 Added /sbin/service script for Red Hat Linux compatibility.  Set
 net.ipv4.tcp_timestamps = 0 to prevent leaks of the exact system's
@@ -34,4 +37,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.5 2004/01/18 13:35:02 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.6 2004/01/20 02:36:22 solar Exp $

@@ -379,9 +379,9 @@ Solve the DoS-against-itself on the temporary file.
 	perl.
 
 [PRIORITY: low]
-Update to 5.8.0+, migrating the patches that are still relevant and
-repeating the audit of temporary file handling by its utilities and
-modules.
+Complete the audit of temporary file handling by Perl's utilities and
+modules and develop any additional fixes which are needed.  Also fix
+the tests such that "make test" may be safely run during package builds.
 
 
 	popa3d, scanlogd.
@@ -550,4 +550,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.32 2004/01/16 19:10:52 solar Exp $
+$Id: Owl/doc/TODO,v 1.33 2004/01/20 02:36:22 solar Exp $
