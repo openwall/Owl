@@ -1,0 +1,175 @@
+diff -ur tcp_wrappers_7.6.orig/hosts_access.c tcp_wrappers_7.6/hosts_access.c
+--- tcp_wrappers_7.6.orig/hosts_access.c	Wed Feb 12 04:13:23 1997
++++ tcp_wrappers_7.6/hosts_access.c	Thu Dec 19 21:54:16 2002
+@@ -57,6 +57,7 @@
+ 
+ #define	YES		1
+ #define	NO		0
++#define	ERROR		-1
+ 
+  /*
+   * These variables are globally visible so that they can be redirected in
+@@ -92,7 +93,7 @@
+ int     hosts_access(request)
+ struct request_info *request;
+ {
+-    int     verdict;
++    int verdict, m1=NO, m2=NO;
+ 
+     /*
+      * If the (daemon, client) pair is matched by an entry in the file
+@@ -108,17 +109,23 @@
+      * hosts_access() routine, bypassing the regular return from the
+      * table_match() function calls below.
+      */
+-
++    if (request->server == NULL)
++        tcpd_warn("Server is NULL");
++    if (request->client == NULL)
++        tcpd_warn("Client is NULL");
+     if (resident <= 0)
+ 	resident++;
+     verdict = setjmp(tcpd_buf);
+     if (verdict != 0)
+ 	return (verdict == AC_PERMIT);
+-    if (table_match(hosts_allow_table, request))
+-	return (YES);
+-    if (table_match(hosts_deny_table, request))
+-	return (NO);
+-    return (YES);
++    if ((m1 = table_match(hosts_allow_table, request)) == YES)
++	return YES;
++    if ((m2 = table_match(hosts_deny_table, request)) == YES)
++	return NO;
++    if ((m1 == ERROR) || (m2 == ERROR))
++	return NO;
++    else
++    	return YES;
+ }
+ 
+ /* table_match - match table entries with (daemon, client) pair */
+@@ -145,6 +152,7 @@
+ 	tcpd_context.file = table;
+ 	tcpd_context.line = 0;
+ 	while (match == NO && xgets(sv_list, sizeof(sv_list), fp) != 0) {
++	    int m1, m2;
+ 	    if (sv_list[strlen(sv_list) - 1] != '\n') {
+ 		tcpd_warn("missing newline or line too long");
+ 		continue;
+@@ -156,17 +164,27 @@
+ 		continue;
+ 	    }
+ 	    sh_cmd = split_at(cl_list, ':');
+-	    match = list_match(sv_list, request, server_match)
+-		&& list_match(cl_list, request, client_match);
++	    m1 = list_match(sv_list, request, server_match);
++	    m2 = list_match(cl_list, request, client_match);
++	    if ((m1 == ERROR) || (m2 == ERROR))
++	        match = ERROR;
++	    else
++		match = m1 && m2;
+ 	}
+ 	(void) fclose(fp);
+     } else if (errno != ENOENT) {
+ 	tcpd_warn("cannot open %s: %m", table);
++	match = ERROR;
+     }
+-    if (match) {
++    if (match == YES) {
++#if 0
++	if (hosts_access_verbose > 2)
++	    tcpd_warn("matched: %s line %d",
++		tcpd_context.file, tcpd_context.line);
++#endif
+ 	if (hosts_access_verbose > 1)
+-	    syslog(LOG_DEBUG, "matched:  %s line %d",
+-		   tcpd_context.file, tcpd_context.line);
++	    syslog(LOG_DEBUG, "matched: %s line %d",
++		tcpd_context.file, tcpd_context.line);
+ 	if (sh_cmd) {
+ #ifdef PROCESS_OPTIONS
+ 	    process_options(sh_cmd, request);
+@@ -198,14 +216,25 @@
+ 
+     for (tok = strtok(list, sep); tok != 0; tok = strtok((char *) 0, sep)) {
+ 	if (STR_EQ(tok, "EXCEPT"))		/* EXCEPT: give up */
+-	    return (NO);
+-	if (match_fn(tok, request)) {		/* YES: look for exceptions */
++	    return NO;
++	if (match_fn(tok, request) == YES) {	/* YES: look for exceptions */
+ 	    while ((tok = strtok((char *) 0, sep)) && STR_NE(tok, "EXCEPT"))
+ 		 /* VOID */ ;
+-	    return (tok == 0 || list_match((char *) 0, request, match_fn) == 0);
++	    if (tok == 0)
++		    return YES;
++	    else
++	    {
++	        int m1 = list_match((char *) 0, request, match_fn);
++		if (m1 == NO)
++			return YES;
++		else if (m1 == ERROR)
++			return ERROR;
++		else
++			return NO;
++	    }
+ 	}
+     }
+-    return (NO);
++    return NO;
+ }
+ 
+ /* server_match - match server information */
+@@ -217,10 +246,17 @@
+     char   *host;
+ 
+     if ((host = split_at(tok + 1, '@')) == 0) {	/* plain daemon */
+-	return (string_match(tok, eval_daemon(request)));
++	return string_match(tok, eval_daemon(request));
+     } else {					/* daemon@host */
+-	return (string_match(tok, eval_daemon(request))
+-		&& host_match(host, request->server));
++	int m1, m2;
++
++	m1 = host_match(host, request->server);
++	m2 = string_match(tok, eval_daemon(request));
++
++	if ( m1 == ERROR )
++	   return m1;
++	
++	return ( m1 && m2 );
+     }
+ }
+ 
+@@ -232,11 +268,20 @@
+ {
+     char   *host;
+ 
++    if (request->client == NULL)
++	tcpd_warn("client is NULL");
+     if ((host = split_at(tok + 1, '@')) == 0) {	/* plain host */
+-	return (host_match(tok, request->client));
++	return host_match(tok, request->client);
+     } else {					/* user@host */
+-	return (host_match(host, request->client)
+-		&& string_match(tok, eval_user(request)));
++	int m1, m2;
++
++	m1 = host_match(host, request->client);
++       m2 = string_match(tok, eval_user(request));
++
++	if (m1 == ERROR)
++	    return m1;
++	
++	return ( m1 && m2 );
+     }
+ }
+ 
+@@ -265,7 +310,7 @@
+ 	return (innetgr(tok + 1, eval_hostname(host), (char *) 0, mydomain));
+ #else
+ 	tcpd_warn("netgroup support is disabled");	/* not tcpd_jump() */
+-	return (NO);
++	return ERROR;
+ #endif
+     } else if (STR_EQ(tok, "KNOWN")) {		/* check address and name */
+ 	char   *name = eval_hostname(host);
