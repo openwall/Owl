@@ -1,9 +1,9 @@
-# $Id: Owl/packages/quota/quota.spec,v 1.20 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/quota/quota.spec,v 1.21 2005/01/12 16:51:58 galaxy Exp $
 
 Summary: System administration tools for monitoring users' disk usage.
 Name: quota
 Version: 3.11
-Release: owl1
+Release: owl2
 License: BSD
 Group: System Environment/Base
 Source: http://prdownloads.sourceforge.net/linuxquota/quota-3.11.tar.gz
@@ -30,7 +30,7 @@ and limiting users' and or groups' disk usage, per filesystem.
 %build
 # XXX: really don't build rpc daemon
 %configure --enable-rpc=no
-make
+%__make CC="%__cc" CPP="%__cpp"
 
 %install
 rm -rf %buildroot
@@ -64,6 +64,10 @@ rm %buildroot%_datadir/locale/pl/LC_MESSAGES/quota.mo
 %_mandir/man?/*
 
 %changelog
+* Tue Jan 11 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.11-owl2
+- Added autoreconf before configure to update configure to the current
+state.
+
 * Sat Feb 28 2004 Michail Litvak <mci@owl.openwall.com> 3.11-owl1
 - 3.11
 - Regenerated patches, add patches from Alt and RH.
