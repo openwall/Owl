@@ -1,4 +1,4 @@
-# $Id: Owl/packages/m4/m4.spec,v 1.5 2002/02/06 16:34:18 solar Exp $
+# $Id: Owl/packages/m4/m4.spec,v 1.6 2002/02/07 01:41:15 solar Exp $
 
 Summary: The GNU macro processor.
 Name: m4
@@ -24,7 +24,7 @@ not for running configure scripts.
 %prep
 rm -rf $RPM_BUILD_ROOT
 
-%setup
+%setup -q
 %patch0 -p1
 %patch1 -p1
 

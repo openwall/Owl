@@ -1,4 +1,4 @@
-# $Id: Owl/packages/crontabs/crontabs.spec,v 1.5 2002/01/24 17:22:03 solar Exp $
+# $Id: Owl/packages/crontabs/crontabs.spec,v 1.6 2002/02/07 01:41:15 solar Exp $
 
 Summary: System crontab files used to schedule the execution of programs.
 Name: crontabs
@@ -29,7 +29,7 @@ The crontabs package handles a basic system function, so it should be
 installed on your system.
 
 %prep
-%setup -n run-parts-1.15
+%setup -q -n run-parts-1.15
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1

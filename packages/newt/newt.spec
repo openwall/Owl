@@ -1,4 +1,4 @@
-# $Id: Owl/packages/newt/Attic/newt.spec,v 1.9 2002/02/07 00:49:45 solar Exp $
+# $Id: Owl/packages/newt/Attic/newt.spec,v 1.10 2002/02/07 01:41:15 solar Exp $
 
 Summary: A development library for text mode user interfaces.
 Name: newt
@@ -35,7 +35,7 @@ development library for text mode user interfaces.  newt is based on
 the slang library.
 
 %prep
-%setup
+%setup -q
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
