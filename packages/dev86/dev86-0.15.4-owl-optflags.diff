@@ -1,0 +1,12 @@
+--- linux-86/makefile.in.optflags	Mon Dec  4 23:45:39 2000
++++ linux-86/makefile.in	Mon Dec  4 23:48:55 2000
+@@ -39,7 +39,8 @@
+ WALL  =-Wstrict-prototypes
+ 
+ CC	=gcc
+-CFLAGS	=$(GCCFLAG) -Wall $(WALL) -O6 -g
++CFLAGS	=$(GCCFLAG) $(RPM_OPT_FLAGS)
++# -Wall $(WALL) -O6 -g
+ #endif
+ 
+ #ifndef GNUMAKE

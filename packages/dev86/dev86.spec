@@ -1,17 +1,18 @@
-# $Id: Owl/packages/dev86/dev86.spec,v 1.2 2000/11/27 16:33:39 solar Exp $
+# $Id: Owl/packages/dev86/dev86.spec,v 1.3 2000/12/04 21:10:53 kad Exp $
 
 # http://www.cix.co.uk/~mayday/Dev86src-0.15.4.tar.gz
 
 Summary: 	A real mode 80x86 assembler and linker.
 Name: 		dev86
 Version: 	0.15.4
-Release: 	1owl
+Release: 	2owl
 Copyright: 	GPL
 Group: 		Development/Languages
 Source: 	http://www.cix.co.uk/~mayday/Dev86src-%{version}.tar.gz
 Patch0: 	dev86-0.14-rh-noroot.diff
 Patch1: 	dev86-0.14-rh-nobcc.diff
 Patch2: 	dev86-0.15-rh-bccpaths.diff
+Patch3:		dev86-0.15.4-owl-optflags.diff
 BuildRoot:      /var/rpm-buildroot/%{name}-root
 Obsoletes: 	bin86
 ExclusiveArch: 	%ix86
@@ -30,6 +31,7 @@ mode from their source code.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 make <<!FooBar!
@@ -82,6 +84,9 @@ rm -rf ${RPM_BUILD_ROOT}
 /%{_mandir}/man1/*
 
 %changelog
+* Mon Dec  4 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- optflags fix
+
 * Sun Nov 19 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - 0.15.4
 
