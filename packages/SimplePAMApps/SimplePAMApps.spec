@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.22 2002/08/22 00:43:31 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.23 2002/11/03 02:37:12 solar Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
 Version: 0.60
-Release: owl16
+Release: owl17
 License: BSD or GPL
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
@@ -18,7 +18,7 @@ Patch1: SimplePAMApps-0.60-owl-passwd.diff
 Patch2: SimplePAMApps-0.60-owl-su.diff
 Patch3: SimplePAMApps-0.60-owl-ut_id.diff
 Requires: tcb, pam_passwdqc >= 0.2, pam_mktemp
-Requires: owl-control < 2.0
+Requires: owl-control >= 0.4, owl-control < 2.0
 Provides: SimplePAMApps <= 0.60-13owl, SimplePAMApps >= 0.60-owl13
 Obsoletes: passwd
 BuildRoot: /override/%{name}-%{version}
@@ -64,17 +64,36 @@ install -m 700 $RPM_SOURCE_DIR/passwd.control \
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%pre
+if [ $1 -ge 2 ]; then
+	/usr/sbin/control-dump passwd su
+fi
+
+%post
+if [ $1 -ge 2 ]; then
+	/usr/sbin/control-restore passwd su
+else
+	/usr/sbin/control passwd public
+	/usr/sbin/control su wheelonly
+fi
+
 %files
 %defattr(-,root,root)
 %doc Copyright Discussions
 %attr(0700,root,root) /bin/login
-%attr(4710,root,wheel) /bin/su
-%attr(4711,root,root) /usr/bin/passwd
+%attr(0700,root,root) /bin/su
+%attr(0700,root,root) /usr/bin/passwd
 %{_mandir}/man1/*
 %config(noreplace) /etc/pam.d/*
 /etc/control.d/facilities/*
 
 %changelog
+* Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
+- Dump/restore the owl-control settings for passwd and su on package upgrades.
+- Keep passwd and su at mode 700 ("restricted") in the package, but default
+them to "public" and "wheelonly", respectively, in %post when the package is
+first installed.  This avoids a race and fail-open behavior.
+
 * Thu Aug 22 2002 Solar Designer <solar@owl.openwall.com>
 - Use pam_motd with login.
 
