@@ -1,9 +1,9 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.18 2003/10/29 18:18:52 solar Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.19 2004/02/20 02:40:42 mci Exp $
 
 Version: 2.05
 Name: bash
 Summary: The GNU Bourne-Again SHell (Bash).
-Release: owl5
+Release: owl6
 Group: System Environment/Shells
 License: GPL
 Source0: ftp://ftp.gnu.org/gnu/bash/bash-%version.tar.gz
@@ -20,7 +20,6 @@ Patch20: bash-2.04-rh-bash1_compat.diff
 Patch21: bash-2.04-rh-shellfunc.diff
 Patch22: bash-2.05-rh-requires.diff
 Patch23: bash-2.05-rh-profile.diff
-Patch24: bash-2.05-rh-readline.diff
 Patch30: bash-2.05-deb-64bit.diff
 Patch31: bash-2.05-deb-gnusource.diff
 Patch32: bash-2.05-deb-print_cmd.diff
@@ -32,7 +31,7 @@ Requires: mktemp >= 1:1.3.1
 Provides: bash2
 Obsoletes: bash2, etcskel
 Prefix: %_prefix
-BuildRequires: mktemp >= 1:1.3.1
+BuildRequires: mktemp >= 1:1.3.1, readline-devel >= 4.3
 BuildRoot: /override/%name-%version
 
 %description
@@ -63,7 +62,6 @@ Again shell version %version.
 %patch21 -p1
 %patch22 -p1
 %patch23 -p1
-%patch24 -p1
 %patch30 -p1
 %patch31 -p1
 %patch32 -p1
@@ -92,7 +90,7 @@ export \
 	bash_cv_mail_dir=/var/mail \
 %configure \
 	--without-curses \
-	--without-installed-readline \
+	--with-installed-readline \
 	--disable-restricted \
 	--disable-net-redirections
 make
@@ -182,6 +180,9 @@ fi
 %doc doc/*.ps* doc/*.html doc/article.txt*
 
 %changelog
+* Fri Feb 20 2004 Michail Litvak <mci@owl.openwall.com> 2.05-owl6
+- Build with system readline.
+
 * Tue Apr 15 2003 Solar Designer <solar@owl.openwall.com> 2.05-owl5
 - Added /usr/local/sbin to the default PATH.
 
