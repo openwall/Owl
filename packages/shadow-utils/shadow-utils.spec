@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.2 2001/02/09 22:01:31 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.3 2001/02/09 22:24:22 solar Exp $
 
 %define BUILD_CHSH_CHFN	'yes'
 %define BUILD_VIPW_VIGR	'yes'
@@ -18,6 +18,7 @@ Source6: gpasswd.control
 Patch0: shadow-19990827-rh-redhat.diff
 Patch1: shadow-19990827-owl-man.diff
 Patch2: shadow-19990827-owl-restrict-locale.diff
+Patch3: shadow-19990827-owl-chage-ro-no-lock.diff
 Copyright: BSD
 Group: System Environment/Base
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
@@ -33,6 +34,7 @@ programs for managing user and group accounts.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 unset LINGUAS || :
@@ -149,6 +151,7 @@ chgrp shadow /etc/shadow && chmod 440 /etc/shadow
 %changelog
 * Sat Feb 10 2001 Solar Designer <solar@owl.openwall.com>
 - shadow group.
+- Don't lock password files with "chage -l" (this is read-only access).
 
 * Sat Aug 26 2000 Solar Designer <solar@owl.openwall.com>
 - Imported this spec file from RH, cleaned it up, and changed heavily.

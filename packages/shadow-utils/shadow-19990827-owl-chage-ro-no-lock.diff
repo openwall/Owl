@@ -1,0 +1,20 @@
+--- shadow-19990827/src/chage.c.orig	Sat Feb 10 01:16:09 2001
++++ shadow-19990827/src/chage.c	Sat Feb 10 01:17:18 2001
+@@ -488,7 +488,7 @@
+ 	 * to the password file entry for the requested user.
+ 	 */
+ 
+-	if (!pw_lock()) {
++	if (!lflg && !pw_lock()) {
+ 		fprintf(stderr, _("%s: can't lock password file\n"), Prog);
+ 		SYSLOG((LOG_ERR, LOCK_FAIL, PASSWD_FILE));
+ 		closelog();
+@@ -520,7 +520,7 @@
+ 	 * not exist already.
+ 	 */
+ 
+-	if (!spw_lock()) {
++	if (!lflg && !spw_lock()) {
+ 		fprintf(stderr, _("%s: can't lock shadow password file\n"), Prog);
+ 		cleanup(1);
+ 		SYSLOG((LOG_ERR, LOCK_FAIL, SHADOW_FILE));
