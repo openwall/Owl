@@ -127,6 +127,40 @@ diff -urp e2fsprogs-1.37.orig/lib/ext2fs/inode.c e2fsprogs-1.37/lib/ext2fs/inode
  }
  
   
+diff -urp e2fsprogs-1.37.orig/lib/ext2fs/res_gdt.c e2fsprogs-1.37/lib/ext2fs/res_gdt.c
+--- e2fsprogs-1.37.orig/lib/ext2fs/res_gdt.c	Thu Jan 27 23:20:53 2005
++++ e2fsprogs-1.37/lib/ext2fs/res_gdt.c	Sat Mar 26 00:59:57 2005
+@@ -63,6 +63,7 @@ errcode_t ext2fs_create_resize_inode(ext
+ 	errcode_t		retval, retval2;
+ 	struct ext2_super_block	*sb;
+ 	struct ext2_inode	inode;
++	void			*dindir_mem;
+ 	__u32			*dindir_buf, *gdt_buf;
+ 	int			rsv_add;
+ 	unsigned long long	apb, inode_size;
+@@ -73,9 +74,10 @@ errcode_t ext2fs_create_resize_inode(ext
+ 
+ 	sb = fs->super;
+ 
+-	retval = ext2fs_get_mem(2 * fs->blocksize, (void **)&dindir_buf);
++	retval = ext2fs_get_mem(2 * fs->blocksize, &dindir_mem);
+ 	if (retval)
+-		goto out_free;
++		goto out;
++	dindir_buf = dindir_mem;
+ 	gdt_buf = (__u32 *)((char *)dindir_buf + fs->blocksize);
+ 
+ 	retval = ext2fs_read_inode(fs, EXT2_RESIZE_INO, &inode);
+@@ -214,7 +216,8 @@ out_inode:
+ 			retval = retval2;
+ 	}
+ out_free:
+-	ext2fs_free_mem((void **)&dindir_buf);
++	ext2fs_free_mem(&dindir_mem);
++out:
+ 	return retval;
+ }
+ 
 diff -urp e2fsprogs-1.37.orig/misc/e2image.c e2fsprogs-1.37/misc/e2image.c
 --- e2fsprogs-1.37.orig/misc/e2image.c	Wed Jan 26 16:37:46 2005
 +++ e2fsprogs-1.37/misc/e2image.c	Mon Feb 28 20:43:59 2005

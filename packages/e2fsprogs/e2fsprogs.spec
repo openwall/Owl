@@ -1,4 +1,4 @@
-# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.25 2005/03/25 16:42:15 solar Exp $
+# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.26 2005/03/26 01:17:19 solar Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -51,7 +51,7 @@ chmod -R u+w .
 %patch1 -p1
 %patch2 -p1
 
-%{expand:%%define optflags %optflags -Wall -fno-strict-aliasing}
+%{expand:%%define optflags %optflags -Wall}
 
 %build
 # There're currently no pre-compiled versions of these texinfo files
@@ -225,8 +225,6 @@ fi
 - Patched blkid_get_cache() to use __secure_getenv() instead of an explicit
 UID/EUID check.
 - Fixed more compiler warnings, including some for real bugs.
-- Disabled gcc's optimizations based on C strict aliasing rules since the
-e2fsprogs code is not ready for those.
 
 * Mon Mar 01 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.36-owl1
 - Updated to 1.36.
