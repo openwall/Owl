@@ -1,4 +1,4 @@
-# $Id: Owl/packages/console-tools/Attic/console-tools.spec,v 1.7 2000/12/18 14:56:01 kad Exp $
+# $Id: Owl/packages/console-tools/Attic/console-tools.spec,v 1.8 2000/12/18 15:17:24 kad Exp $
 
 %define CTVER	0.3.3
 %define	CDVER	1999.08.29
@@ -203,7 +203,7 @@ ln -sf lat0-sun16.psf.gz \
 gzip -9 < %{DATA}/consolefonts/cyr-sun16.psf \
 	> $RPM_BUILD_ROOT/usr/lib/kbd/consolefonts/cyr-sun16.psf.gz
 
-install -c -m 755 %{SOURCE17} $RPM_BUILD_ROOT/sbin
+install -c -m 755 %{SOURCE17} $RPM_BUILD_ROOT/sbin/setsysfont
 
 %clean
 rm -rf $RPM_BUILD_ROOT
