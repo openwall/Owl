@@ -13,11 +13,27 @@ for the packages themselves.
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
 2002/09/28	Package: tar
-Fixed the contains_dot_dot() bug introduced in 1.13.19 and discovered
-by 3APA3A; thanks to Mark J Cox of Red Hat and Bencsath Boldizsar for
-further analysis.  This is not marked a security fix because GNU tar
-is still unsafe to use on untrusted archives for other reasons anyway.
-Check signatures, then extract.
+SECURITY FIX	Severity: high, local to remote, passive to active
+Fixed two security and one reliability bug, all introduced into GNU
+tar with 1.13.19.  The contains_dot_dot() bug discovered by 3APA3A and
+further analyzed by Mark J Cox of Red Hat and Bencsath Boldizsar
+resulted in tar following ".." references to outside the intended
+directory tree when extracting archives.  Another bug effectively
+disabled the symlink safety introduced in 1.13.18 that was meant to
+avoid the problem described by Willy TARREAU where tar could be made
+to follow a symlink it just extracted and also place a file outside of
+the intended directory tree.  Finally, there was a hard link storage
+bug discovered by Jose Pedro Oliveira.  Although the two security bugs
+are now fixed, please keep in mind that tar has traditionally been
+intended for making and extracting tape backups rather than archives
+obtained from untrusted sources.  Be very careful with what input you
+pass it and what user you run it as.
+References:
+http://marc.theaimsgroup.com/?l=bugtraq&m=99496364810666
+http://mail.gnu.org/pipermail/bug-gnu-utils/2002-May/000827.html
+http://marc.theaimsgroup.com/?l=bugtraq&m=103314336129887
+http://marc.theaimsgroup.com/?l=bugtraq&m=90674255917321
+https://listman.redhat.com/pipermail/roswell-list/2001-August/001286.html
 
 2002/09/19 -
 2002/09/28	Package: xinetd
@@ -947,4 +963,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.135 2002/09/28 10:16:21 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.136 2002/09/28 12:43:01 solar Exp $

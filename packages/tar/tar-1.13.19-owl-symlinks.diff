@@ -1,0 +1,12 @@
+diff -ur tar-1.13.19.orig/src/extract.c tar-1.13.19/src/extract.c
+--- tar-1.13.19.orig/src/extract.c	Sat Jan 13 08:59:29 2001
++++ tar-1.13.19/src/extract.c	Sat Sep 28 15:37:33 2002
+@@ -850,7 +850,7 @@
+ 	break;
+ 
+       if (absolute_names_option
+-	  || (ISSLASH (current_link_name
++	  || (! ISSLASH (current_link_name
+ 		       [FILESYSTEM_PREFIX_LEN (current_link_name)])
+ 	      && ! contains_dot_dot (current_link_name)))
+ 	{

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tar/tar.spec,v 1.11 2002/09/28 10:16:21 solar Exp $
+# $Id: Owl/packages/tar/tar.spec,v 1.12 2002/09/28 12:43:01 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
@@ -16,6 +16,8 @@ Patch4: tar-1.13.19-rh-autoconf.diff
 Patch5: tar-1.13.19-rh-owl-no-librt.diff
 Patch6: tar-1.13.19-owl-info.diff
 Patch7: tar-1.13.19-owl-dot-dot.diff
+Patch8: tar-1.13.19-owl-symlinks.diff
+Patch9: tar-1.13.19-up-relativize-links.diff
 PreReq: /sbin/install-info, grep
 BuildRoot: /override/%{name}-%{version}
 
@@ -38,6 +40,8 @@ backups.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
+%patch9 -p1
 
 %{expand:%%define optflags %optflags -Wall -Dlint}
 
@@ -97,7 +101,19 @@ fi
 * Sat Sep 28 2002 Solar Designer <solar@owl.openwall.com>
 - Fixed the contains_dot_dot() bug introduced in 1.13.19 and discovered by
 3APA3A; thanks to Mark J Cox of Red Hat and Bencsath Boldizsar for further
-analysis.
+analysis:
+http://marc.theaimsgroup.com/?l=bugtraq&m=99496364810666
+http://mail.gnu.org/pipermail/bug-gnu-utils/2002-May/000827.html
+http://marc.theaimsgroup.com/?l=bugtraq&m=103314336129887
+1.13.17 and 1.13.18 had this right.
+- Fixed another 1.13.19's bug which effectively disabled the symlink safety
+introduced in 1.13.18; this avoids the problem described by Willy TARREAU
+where tar could be made to follow a symlink it just extracted and place a
+file outside of the intended directory tree:
+http://marc.theaimsgroup.com/?l=bugtraq&m=90674255917321
+- Finally, back-ported the fix for the hard link storage bug with 1.13.19
+discovered by Jose Pedro Oliveira (at least not security this time):
+https://listman.redhat.com/pipermail/roswell-list/2001-August/001286.html
 
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
 - Deal with info dir entries such that the menu looks pretty.
