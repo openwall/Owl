@@ -515,7 +515,7 @@ Use mkdtemp(3) for the directory after the glibc update.
 
 [PRIORITY: medium]
 [ASSIGNED: jhuuskon@, solar@]
-Sync with current OpenBSD (now based on Vixie Cron 4.0b1).  Open PAM
+Sync with current OpenBSD (now based on ISC Cron V4.1).  Open PAM
 sessions for cron jobs such that resource limits are set.  This is now
 implemented in ALT Linux's package, so we need to import from there.
 
@@ -538,4 +538,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.43 2004/11/03 07:44:43 solar Exp $
+$Id: Owl/doc/TODO,v 1.44 2004/11/04 04:15:00 solar Exp $
