@@ -1,0 +1,127 @@
+diff -ur findutils-4.1.7.orig/find/find.c findutils-4.1.7/find/find.c
+--- findutils-4.1.7.orig/find/find.c	Mon May 21 00:39:37 2001
++++ findutils-4.1.7/find/find.c	Tue May 14 11:15:17 2002
+@@ -57,7 +57,9 @@
+ static void process_top_path PARAMS((char *pathname));
+ static int process_path PARAMS((char *pathname, char *name, boolean leaf, char *parent));
+ static void process_dir PARAMS((char *pathname, char *name, int pathlen, struct stat *statp, char *parent));
++#if 0
+ static boolean no_side_effects PARAMS((struct predicate *pred));
++#endif
+ static boolean default_prints PARAMS((struct predicate *pred));
+ 
+ /* Name this program was run with. */
+@@ -385,8 +387,6 @@
+   struct stat stat_buf;
+   static dev_t root_dev;	/* Device ID of current argument pathname. */
+   int i;
+-  struct stat dir_buf;
+-  int parent_desc;
+ 
+   /* Assume it is a non-directory initially. */
+   stat_buf.st_mode = 0;
+@@ -600,6 +600,7 @@
+     }
+ }
+ 
++#if 0
+ /* Return true if there are no side effects in any of the predicates in
+    predicate list PRED, false if there are any. */
+ 
+@@ -614,6 +615,7 @@
+     }
+   return (true);
+ }
++#endif
+ 
+ /* Return true if there are no predicates with no_default_print in
+    predicate list PRED, false if there are any.
+diff -ur findutils-4.1.7.orig/find/fstype.c findutils-4.1.7/find/fstype.c
+--- findutils-4.1.7.orig/find/fstype.c	Mon May 21 00:39:37 2001
++++ findutils-4.1.7/find/fstype.c	Tue May 14 11:26:37 2002
+@@ -21,6 +21,7 @@
+ 
+ #include "dirname.h"
+ #include "modetype.h"
++#include "xstrtol.h"
+ #include <errno.h>
+ #ifdef STDC_HEADERS
+ #include <stdlib.h>
+diff -ur findutils-4.1.7.orig/find/parser.c findutils-4.1.7/find/parser.c
+--- findutils-4.1.7.orig/find/parser.c	Mon May 21 00:39:37 2001
++++ findutils-4.1.7/find/parser.c	Tue May 14 11:47:16 2002
+@@ -1617,8 +1617,6 @@
+ static boolean
+ get_num (char *str, uintmax_t *num, enum comparison_type *comp_type)
+ {
+-  int len_num;			/* Length of field. */
+-
+   if (str == NULL)
+     return (false);
+   switch (str[0])
+diff -ur findutils-4.1.7.orig/find/tree.c findutils-4.1.7/find/tree.c
+--- findutils-4.1.7.orig/find/tree.c	Mon May 21 00:39:37 2001
++++ findutils-4.1.7/find/tree.c	Tue May 14 11:36:35 2002
+@@ -61,6 +61,7 @@
+ 
+   if (*input == NULL)
+     error (1, 0, _("invalid expression"));
++  next = NULL; /* never used */
+   switch ((*input)->p_type)
+     {
+     case NO_TYPE:
+@@ -232,6 +233,7 @@
+ 
+   /* Rearrange the predicates. */
+   prevp = eval_treep;
++  biop_prec = NO_PREC; /* not COMMA_PREC */
+   if ((*prevp) && (*prevp)->p_type == BI_OP)
+     biop_prec = (*prevp)->p_prec;
+   while ((curr = *prevp) != NULL)
+diff -ur findutils-4.1.7.orig/lib/getline.h findutils-4.1.7/lib/getline.h
+--- findutils-4.1.7.orig/lib/getline.h	Wed Apr  5 12:02:49 2000
++++ findutils-4.1.7/lib/getline.h	Tue May 14 11:51:43 2002
+@@ -27,7 +27,10 @@
+ #  endif
+ # endif
+ 
+-# if __GLIBC__ < 2
++ssize_t
++getstr PARAMS ((char **lineptr, size_t *n,
++	FILE *stream, char terminator, size_t offset));
++
+ ssize_t
+ getline PARAMS ((char **_lineptr, size_t *_n, FILE *_stream));
+ 
+@@ -35,6 +38,5 @@
+ ssize_t
+ getdelim PARAMS ((char **_lineptr, size_t *_n, int _delimiter, FILE *_stream));
+ #endif
+-# endif
+ 
+ #endif /* not GETLINE_H_ */
+diff -ur findutils-4.1.7.orig/lib/human.c findutils-4.1.7/lib/human.c
+--- findutils-4.1.7.orig/lib/human.c	Tue Oct 10 02:47:38 2000
++++ findutils-4.1.7/lib/human.c	Tue May 14 11:43:33 2002
+@@ -138,10 +138,8 @@
+   p = buf + LONGEST_HUMAN_READABLE;
+   *p = '\0';
+ 
+-#ifdef lint
+   /* Suppress `used before initialized' warning.  */
+   power = 0;
+-#endif
+ 
+   /* Adjust AMT out of FROM_BLOCK_SIZE units and into TO_BLOCK_SIZE units.  */
+ 
+diff -ur findutils-4.1.7.orig/locate/locate.c findutils-4.1.7/locate/locate.c
+--- findutils-4.1.7.orig/locate/locate.c	Mon May 21 00:39:37 2001
++++ findutils-4.1.7/locate/locate.c	Tue May 14 11:40:33 2002
+@@ -49,6 +49,7 @@
+ 
+ #define _GNU_SOURCE
+ #include <config.h>
++#include <ctype.h>
+ #include <stdio.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
