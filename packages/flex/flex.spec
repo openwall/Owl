@@ -1,13 +1,14 @@
-# $Id: Owl/packages/flex/flex.spec,v 1.4 2002/02/04 17:38:22 solar Exp $
+# $Id: Owl/packages/flex/flex.spec,v 1.5 2002/07/07 21:11:41 mci Exp $
 
 Summary: A tool for creating scanners (text pattern recognizers).
 Name: flex
 Version: 2.5.4a
-Release: owl11
+Release: owl12
 License: GPL
 Group: Development/Tools
 Source: ftp://ftp.gnu.org/non-gnu/flex/flex-%{version}.tar.gz
 Patch0: flex-2.5.4a-rh-skel.diff
+PreReq: /sbin/install-info
 Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
 
@@ -43,8 +44,20 @@ ln -s flex.1 .%{_mandir}/man1/flex++.1
 ln -s libfl.a .%{_prefix}/lib/libl.a
 popd
 
+mkdir $RPM_BUILD_ROOT/%{_infodir}
+install -m 644 MISC/texinfo/flex.info $RPM_BUILD_ROOT/%{_infodir}
+
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%post
+/sbin/install-info %{_infodir}/flex.info.gz %{_infodir}/dir \
+	--entry="* Flex: (flex).            A fast scanner generator."
+%preun
+if [ $1 -eq 0 ]; then
+	/sbin/install-info --delete %{_infodir}/flex.info.gz %{_infodir}/dir \
+	--entry="* Flex: (flex).            A fast scanner generator."
+fi
 
 %files
 %defattr(-,root,root)
@@ -53,11 +66,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_prefix}/bin/flex
 %{_prefix}/bin/flex++
 %{_mandir}/man1/*
+%{_infodir}/flex.*
 %{_prefix}/lib/libl.a
 %{_prefix}/lib/libfl.a
 %{_prefix}/include/FlexLexer.h
 
 %changelog
+* Sun Jul 07 2002 Michail Litvak <mci@owl.openwall.com>
+- Package flex.info
+
 * Fri Feb 01 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions.
 
