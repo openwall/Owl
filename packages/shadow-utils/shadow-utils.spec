@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.3 2001/02/09 22:24:22 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.4 2001/02/09 22:39:10 solar Exp $
 
 %define BUILD_CHSH_CHFN	'yes'
 %define BUILD_VIPW_VIGR	'yes'
@@ -152,6 +152,7 @@ chgrp shadow /etc/shadow && chmod 440 /etc/shadow
 * Sat Feb 10 2001 Solar Designer <solar@owl.openwall.com>
 - shadow group.
 - Don't lock password files with "chage -l" (this is read-only access).
+- Drop SGID privileges after opening shadow file with "chage -l".
 
 * Sat Aug 26 2000 Solar Designer <solar@owl.openwall.com>
 - Imported this spec file from RH, cleaned it up, and changed heavily.
