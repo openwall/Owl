@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.8 2000/08/26 14:56:33 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.9 2000/12/13 02:27:44 solar Exp $
 
 %define BUILD_MOUNT	'yes'
 %define BUILD_LOSETUP	'yes'
@@ -8,7 +8,7 @@
 Summary: A collection of basic system utilities.
 Name: util-linux
 Version: 2.10h
-Release: 6owl
+Release: 7owl
 Copyright: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%{version}.tar.gz
@@ -133,11 +133,11 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 /sbin/fdisk
-%ifarch i386 alpha armv4l
+%ifarch %ix86 alpha armv4l
 /sbin/cfdisk
 %endif
 
-%ifarch i386 alpha
+%ifarch %ix86 alpha
 /sbin/fsck.minix
 /sbin/mkfs.minix
 %endif
@@ -208,13 +208,13 @@ rm -rf $RPM_BUILD_ROOT
 /usr/bin/renice
 /usr/sbin/readprofile
 /usr/bin/setsid
-%ifarch i386 alpha armv4l
+%ifarch %ix86 alpha armv4l
 /usr/bin/cytune
 %endif
 
 /usr/man/man1/arch.1*
 /usr/man/man1/readprofile.1*
-%ifarch i386 alpha armv4l
+%ifarch %ix86 alpha armv4l
 /usr/man/man8/cytune.8*
 %endif
 /usr/man/man8/ctrlaltdel.8*
@@ -225,7 +225,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/man/man8/renice.8*
 /usr/man/man8/setsid.8*
 
-%ifarch i386
+%ifarch %ix86
 /usr/sbin/rdev
 /usr/sbin/ramsize
 /usr/sbin/rootflags
@@ -262,7 +262,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/man/man1/more.1*
 /usr/lib/more.help
 
-%ifarch i386 alpha
+%ifarch %ix86 alpha
 /usr/man/man8/fsck.minix.8*
 /usr/man/man8/mkfs.minix.8*
 /usr/man/man8/mkfs.8*
@@ -270,13 +270,13 @@ rm -rf $RPM_BUILD_ROOT
 
 /usr/man/man8/fdisk.8*
 
-%ifarch i386 alpha armv4l
+%ifarch %ix86 alpha armv4l
 /usr/man/man8/cfdisk.8*
 %endif
 
 %doc */README.*
 
-%ifarch i386 alpha
+%ifarch %ix86 alpha
 /sbin/sfdisk
 /usr/man/man8/sfdisk.8*
 %doc fdisk/sfdisk.examples
@@ -313,6 +313,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Wed Dec 13 2000 Solar Designer <solar@owl.openwall.com>
+- i386 -> %ix86.
+
 * Sat Aug 26 2000 Solar Designer <solar@owl.openwall.com>
 - chsh, chfn, vipw, and vigr are now built from shadow-utils, which
 uses libpwdb-compatible locking.
