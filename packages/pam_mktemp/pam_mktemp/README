@@ -1,0 +1,7 @@
+pam_mktemp is a PAM module which may be used with a PAM-aware login
+service to provide per-user private directories under /tmp as a part
+of PAM session or account management.
+
+When an interactive (shell) session is started, a directory is created
+and the environment variables TMPDIR and TMP are set to the name of
+the directory.
