@@ -1,0 +1,108 @@
+--- cpio-2.4.2.orig/mt.1
++++ cpio-2.4.2/mt.1
+@@ -3,7 +3,7 @@
+ mt \- control magnetic tape drive operation
+ .SH SYNOPSIS
+ .B mt
+-[\-V] [\-f device] [\-\-file=device] [\-\-version]
++[\-V] [\-f device] [\-\-file=device] [\-\-rsh-command=command] [\-\-version]
+ operation [count]
+ .SH DESCRIPTION
+ This manual page
+@@ -76,9 +76,6 @@
+ .IR count .
+ Equivalent to rewind followed by fsf
+ .IR count .
+-.IP seek
+-Seek to block number
+-.IR count .
+ .IP eom
+ Space to the end of the recorded media on the tape
+ (for appending files onto tapes).
+@@ -93,6 +90,69 @@
+ then rewind it again.
+ .IP erase
+ Erase the tape.
++.IP fss
++(SCSI tapes) Forward space
++.I count
++setmarks.
++.IP bss
++(SCSI tapes) Backward space
++.I count
++setmarks.
++.IP "wset"
++(SCSI tapes) Write
++.I count
++setmarks at current position (only SCSI tape).
++.IP "eod, seod"
++Space to end of valid data.  Used on streamer tape
++drives to append data to the logical and of tape.
++.IP setblk
++(SCSI tapes) Set the block size of the drive to
++.I count
++bytes per record.
++.IP setdensity
++(SCSI tapes) Set the tape density code to
++.I count.
++The proper codes to use with each drive should be looked up from the
++drive documentation.
++.IP drvbuffer
++(SCSI tapes) Set the tape drive buffer code to
++.I number.
++The proper value for unbuffered operation is zero and "normal" buffered
++operation one. The meanings of other values can be found in the drive
++documentation or, in case of a SCSI-2 drive, from the SCSI-2 standard.
++.IP stoptions
++(SCSI tapes) Set the driver options bits to
++.I count
++for the device.
++The bits can be set by oring the following values: 1 to enable write
++buffering, 2 to enable asynchronous writes, 4 to enable read ahead,
++8 to enable debugging output (if it has been compiled to the driver).
++.IP stwrthreshold
++(SCSI tapes) The write threshold for the tape device is set to
++.I count
++kilobytes. The value must be smaller than or equal to the driver
++buffer size.
++.IP seek
++(SCSI tapes) Seek to the
++.I count
++block on the tape.  This operation is available on some
++Tandberg and Wangtek streamers and some SCSI-2 tape drives.
++.IP tell
++(SCSI tapes) Tell the current block on tape.  This operation is available on some
++Tandberg and Wangtek streamers and some SCSI-2 tape drives.
++.IP densities
++(SCSI tapes) Write explanation of some common density codes to
++standard output.
++.IP datcompression
++(some SCSI-2 DAT tapes) Inquire or set the compression status
++(on/off). If the
++.I count
++is one the compression status is printed. If the
++.I count
++is zero, compression is disabled. Otherwise, compression is
++enabled. The command uses the SCSI ioctl to read and write the Data
++Compression Characteristics mode page (15). ONLY ROOT CAN USE THIS
++COMMAND.
+ .PP
+ .B mt
+ exits with a status of 0 if the operation succeeded, 1 if the
+@@ -110,6 +170,16 @@
+ username and an `@' to access the remote tape drive as that user, if
+ you have permission to do so (typically an entry in that user's
+ `~/.rhosts' file).
++.TP
++.I "\-\-rsh-command=command"
++Notifies
++.B mt
++that it should use
++.I command
++to communicate with remote devices instead of
++.I /usr/bin/ssh
++or
++.IR /usr/bin/rsh .
+ .TP
+ .I "\-V, \-\-version"
+ Print the version number of

@@ -1,0 +1,616 @@
+--- cpio-2.4.2.orig/mt.c
++++ cpio-2.4.2/mt.c
+@@ -16,6 +16,10 @@
+    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
+    */
+ 
++/* Modified for the Linux SCSI tape driver by Brian Mays from code
++   written by Kai Makisara.
++   Last Modified: Tue Apr 23 15:37:54 EDT 1996
++*/
+ 
+ /* If -f is not given, the environment variable TAPE is used;
+    if that is not set, a default device defined in sys/mtio.h is used.
+@@ -50,6 +54,46 @@
+    retension	Rewind the tape, then wind it to the end of the reel,
+ 		then rewind it again.
+    erase	Erase the tape.
++   fss		(SCSI tapes) Forward space COUNT setmarks.
++   bss		(SCSI tapes) Backward space COUNT setmarks.
++   wset		(SCSI tapes) Write COUNT setmarks at current position
++		(only SCSI tape).
++   eod, seod	Space to end of valid data.  Used on streamer tape
++		drives to append data to the logical and of tape.
++   setblk	(SCSI tapes) Set the block size of the drive to COUNT
++		bytes per record.
++   setdensity	(SCSI tapes) Set the tape density code to COUNT.  The
++		proper codes to use with each drive should be looked
++		up from the drive documentation.
++   drvbuffer	(SCSI tapes) Set the tape drive buffer code to
++		NUMBER.  The proper value for unbuffered operation is
++		zero and "normal" buffered operation one. The meanings
++		of other values can be found in the drive
++		documentation or, in case of a SCSI-2 drive, from the
++		SCSI-2 standard.
++   stoptions	(SCSI tapes) Set the driver options bits to COUNT for
++		the device.  The bits can be set by oring the
++		following values: 1 to enable write buffering, 2 to
++		enable asynchronous writes, 4 to enable read ahead, 8
++		to enable debugging output (if it has been compiled to
++		the driver).
++   stwrthreshold 
++		(SCSI tapes) The write threshold for the tape device
++		is set to COUNT kilobytes.  The value must be smaller
++		than or equal to the driver buffer size.
++   seek		(SCSI tapes) Seek to the COUNT block on the tape.
++		This operation is available on some Tandberg and
++		Wangtek streamers and some SCSI-2 tape drives.
++   tell		(SCSI tapes) Tell the current block on tape.  This
++		operation is available on some Tandberg and Wangtek
++		streamers and some SCSI-2 tape drives.
++   densities	(SCSI tapes) Write explanation of some common density
++		codes to standard output.
++   datcompression
++		(some SCSI-2 DAT tapes) Inquire or set the compression
++		status (on/off).  If the COUNT is one the compression
++		status is printed.  If the COUNT is zero, compression
++		is disabled.  Otherwise, compression is enabled.
+ 
+    David MacKenzie <djm@gnu.ai.mit.edu> */
+ 
+@@ -97,6 +141,47 @@
+ void perform_operation ();
+ void print_status ();
+ void usage ();
++#ifdef MTTELL
++void print_position ();
++#endif
++
++int do_dat_compression(char *dev, int fn, int count);
++
++#if defined(linux) || defined(__linux)
++#define MTDATCOMP 1000		/* Random unused number.  */
++#define MTDENS 1001		/* Random unused number.  */
++
++struct densities {
++  int code;
++  char *name;
++} density_tbl[] = {
++  {0x00, "default"},
++  {0x01, "NRZI (800 bpi)"},
++  {0x02, "PE (1600 bpi)"},
++  {0x03, "GCR (6250 bpi)"},
++  {0x05, "QIC-45/60 (GCR, 8000 bpi)"},
++  {0x06, "PE (3200 bpi)"},
++  {0x07, "IMFM (6400 bpi)"},
++  {0x08, "GCR (8000 bpi)"},
++  {0x09, "GCR /37871 bpi)"},
++  {0x0a, "MFM (6667 bpi)"},
++  {0x0b, "PE (1600 bpi)"},
++  {0x0c, "GCR (12960 bpi)"},
++  {0x0d, "GCR (25380 bpi)"},
++  {0x0f, "QIC-120 (GCR 10000 bpi)"},
++  {0x10, "QIC-150/250 (GCR 10000 bpi)"},
++  {0x11, "QIC-320/525 (GCR 16000 bpi)"},
++  {0x12, "QIC-1350 (RLL 51667 bpi)"},
++  {0x13, "DDS (61000 bpi)"},
++  {0x14, "EXB-8200 (RLL 43245 bpi)"},
++  {0x15, "EXB-8500 (RLL 45434 bpi)"},
++  {0x16, "MFM 10000 bpi"},
++  {0x17, "MFM 42500 bpi"},
++  {0x24, "DDS-2"},
++  {140, "EXB-8505 compressed"},
++  {144, "EXB-8205 compressed"},
++  {-1, NULL}};
++#endif
+ 
+ char *opnames[] =
+ {
+@@ -107,6 +192,8 @@
+ #endif
+ #ifdef MTEOM
+   "eom",
++  "eod",
++  "seod",
+ #endif
+ #ifdef MTRETEN
+   "retension",
+@@ -121,6 +208,39 @@
+ #ifdef MTSEEK
+   "seek",
+ #endif
++#ifdef MTTELL
++  "tell",
++#endif
++#ifdef MTFSS
++  "fss",
++#endif
++#ifdef MTBSS
++  "bss",
++#endif
++#ifdef MTWSM
++  "wset",
++#endif
++#ifdef MTSETBLK
++  "setblk",
++#endif
++#ifdef MTSETDENSITY
++  "setdensity",
++#endif
++#ifdef MTSETDRVBUFFER
++  "drvbuffer",
++#ifdef MT_ST_BOOLEANS
++  "stoptions",
++#endif
++#ifdef MT_ST_WRITE_THRESHOLD
++  "stwrthreshold",
++#endif
++#endif
++#ifdef MTDATCOMP
++  "datcompression",
++#endif
++#ifdef MTDENS
++  "densities",
++#endif
+   NULL
+ };
+ 
+@@ -134,6 +254,8 @@
+ #endif
+ #ifdef MTEOM
+   MTEOM,
++  MTEOM,
++  MTEOM,
+ #endif
+ #ifdef MTRETEN
+   MTRETEN,
+@@ -148,9 +270,68 @@
+ #ifdef MTSEEK
+   MTSEEK,
+ #endif
++#ifdef MTTELL
++  MTTELL,
++#endif
++#ifdef MTFSS
++  MTFSS,
++#endif
++#ifdef MTBSS
++  MTBSS,
++#endif
++#ifdef MTWSM
++  MTWSM,
++#endif
++#ifdef MTSETBLK
++  MTSETBLK,
++#endif
++#ifdef MTSETDENSITY
++  MTSETDENSITY,
++#endif
++#ifdef MTSETDRVBUFFER
++  MTSETDRVBUFFER,
++#ifdef MT_ST_BOOLEANS
++  MTSETDRVBUFFER,
++#endif
++#ifdef MT_ST_WRITE_THRESHOLD
++  MTSETDRVBUFFER,
++#endif
++#endif
++#ifdef MTDATCOMP
++  MTDATCOMP,
++#endif
++#ifdef MTDENS
++  MTDENS,
++#endif
+   0
+ };
+ 
++char *cbnames[] =
++{
++#ifdef MT_ST_BOOLEANS
++  "stoptions",
++#endif
++#ifdef MT_ST_WRITE_THRESHOLD
++  "stwrthreshold",
++#endif
++  NULL
++};
++
++int count_bits[] =
++{
++#ifdef MT_ST_BOOLEANS
++  MT_ST_BOOLEANS,
++#endif
++#ifdef MT_ST_WRITE_THRESHOLD
++  MT_ST_WRITE_THRESHOLD,
++#endif
++  0
++};
++
++#ifdef MT_TAPE_INFO
++  struct mt_tape_info tapes[] = MT_TAPE_INFO;
++#endif
++
+ /* If nonzero, don't consider file names that contain a `:' to be
+    on remote hosts; all files are local.  Always zero for mt;
+    since when do local device names contain colons?  */
+@@ -159,6 +340,7 @@
+ struct option longopts[] =
+ {
+   {"file", 1, NULL, 'f'},
++  {"rsh-command", 1, NULL, 1},
+   {"version", 0, NULL, 'V'},
+   {"help", 0, NULL, 'H'},
+   {NULL, 0, NULL, 0}
+@@ -178,12 +360,15 @@
+   char *tapedev;
+   int tapedesc;
+   int i;
++  char *rsh_command_option = NULL;
+ 
+   program_name = argv[0];
+   tapedev = NULL;
+   count = 1;
+ 
+-  while ((i = getopt_long (argc, argv, "f:t:V:H", longopts, (int *) 0)) != -1)
++  /* Debian hack: Fixed a bug in the -V flag.  This bug has been
++     reported to "bug-gnu-utils@prep.ai.mit.edu".  -BEM */
++  while ((i = getopt_long (argc, argv, "f:t:VH", longopts, (int *) 0)) != -1)
+     {
+       switch (i)
+ 	{
+@@ -192,6 +377,10 @@
+ 	  tapedev = optarg;
+ 	  break;
+ 
++	case 1:
++	  rsh_command_option = optarg;
++	  break;
++
+ 	case 'V':
+ 	  printf ("GNU mt %s", version_string);
+ 	  exit (0);
+@@ -214,10 +403,22 @@
+     }
+   operation = operations[i];
+ 
++  i = argmatch (argv[optind], cbnames);
++
+   if (++optind < argc)
++    /* Debian hack: Replaced the atoi function call with strtol so
++       that hexidecimal values can be used for the count parameter.
++       This bug has been reported to "bug-gnu-utils@prep.ai.mit.edu".
++       (97/12/5) -BEM */
++#if defined(STDC_HEADERS)
++    count = (int) strtol (argv[optind], NULL, 0);
++#else
+     count = atoi (argv[optind]);
++#endif
+   if (++optind < argc)
+     usage (stderr, 1);
++  if (i >= 0)
++    count |= count_bits[i];
+ 
+   if (tapedev == NULL)
+     {
+@@ -230,27 +431,58 @@
+ #endif
+     }
+ 
++#ifdef MTDENS
++  if (operation == MTDENS)
++    {
++      printf("Some SCSI tape density codes:\ncode   explanation\n");
++      for (i=0; density_tbl[i].code >= 0; i++)
++	printf("0x%02x   %s\n", density_tbl[i].code, density_tbl[i].name);
++      exit (0);
++    }
++#endif
++
+   if ( (operation == MTWEOF)
+ #ifdef MTERASE
+        || (operation == MTERASE)
+ #endif
++#ifdef MTWSM
++       || (operation == MTWSM)
++#endif
++#ifdef MTSETDRVBUFFER
++       || (operation == MTSETDRVBUFFER)
++#endif
++#ifdef MTDATCOMP
++       || (operation == MTDATCOMP)
++#endif
+ 	)
+-    tapedesc = rmtopen (tapedev, O_WRONLY, 0);
++    tapedesc = rmtopen (tapedev, O_WRONLY, 0, rsh_command_option);
+   else
+-    tapedesc = rmtopen (tapedev, O_RDONLY, 0);
++    tapedesc = rmtopen (tapedev, O_RDONLY, 0, rsh_command_option);
+   if (tapedesc == -1)
+     error (1, errno, "%s", tapedev);
+   check_type (tapedev, tapedesc);
+ 
+-  if (operation == MTASF)
+-    {
+-      perform_operation (tapedev, tapedesc, MTREW, 1);
+-      operation = MTFSF;
+-    }
+-  perform_operation (tapedev, tapedesc, operation, count);
+-  if (operation == MTNOP)
+-    print_status (tapedev, tapedesc);
+-
++#ifdef MTDATCOMP
++  if (operation == MTDATCOMP)
++    do_dat_compression(tapedev, tapedesc, count);
++  else
++#endif
++#ifdef MTTELL
++  if (operation == MTTELL)
++    print_position (tapedev, tapedesc);
++  else
++#endif
++  {
++    if (operation == MTASF)
++      {
++	perform_operation (tapedev, tapedesc, MTREW, 1);
++	operation = MTFSF;
++      }
++    perform_operation (tapedev, tapedesc, operation, count);
++    if (operation == MTNOP)
++      print_status (tapedev, tapedesc);
++  }
++  
+   if (rmtclose (tapedesc) == -1)
+     error (2, errno, "%s", tapedev);
+ 
+@@ -283,10 +515,28 @@
+ 
+   control.mt_op = op;
+   control.mt_count = count;
+-  if (rmtioctl (desc, MTIOCTOP, &control))
++  /* Debian hack: The rmtioctl function returns -1 in case of an
++     error, not 0.  This bug has been reported to
++     "bug-gnu-utils@prep.ai.mit.edu".  (96/7/10) -BEM */
++  if (rmtioctl (desc, MTIOCTOP, &control) == -1)
+     error (2, errno, "%s", dev);
+ }
+ 
++#ifdef MTTELL
++void
++print_position (dev, desc)
++     char *dev;
++     int desc;
++{
++  struct mtpos position;
++
++  if (rmtioctl (desc, MTIOCPOS, &position) == -1)
++    error (2, errno, "%s", dev);
++  printf("At block %d.\n", (int) position.mt_blkno);
++
++}
++#endif
++
+ void
+ print_status (dev, desc)
+      char *dev;
+@@ -297,7 +547,35 @@
+   if (rmtioctl (desc, MTIOCGET, &status))
+     error (2, errno, "%s", dev);
+ 
+-  printf ("drive type = %d\n", (int) status.mt_type);
++#ifdef MT_ISFTAPE_FLAG
++  if ((int) status.mt_type & MT_ISFTAPE_FLAG)
++    {
++      printf ("qic-117 drive type = 0x%05x, ", (int) status.mt_type & 0x1ffff);
++      if (GMT_DR_OPEN( (long) status.mt_gstat))
++	{
++	  printf ("no tape or door open\n");
++	}
++      else
++	{
++	  printf ("%s-line%s\n",
++		  GMT_ONLINE( (long) status.mt_gstat) ? "on" : "off",
++		  GMT_WR_PROT( (long) status.mt_gstat) ?
++		  " and write-protected" : "");
++	}
++    }
++  else
++#endif
++    {
++#ifdef MT_TAPE_INFO
++      struct mt_tape_info *mt;
++      for (mt = tapes; mt->t_type; mt++)
++	if (mt->t_type == status.mt_type) break;
++      if (mt->t_type != 0)
++	printf ("drive type = %s\n", mt->t_name);
++      else
++#endif
++	printf ("drive type = %d\n", (int) status.mt_type);
++    }
+ #if defined(hpux) || defined(__hpux)
+   printf ("drive status (high) = %d\n", (int) status.mt_dsreg1);
+   printf ("drive status (low) = %d\n", (int) status.mt_dsreg2);
+@@ -310,6 +588,60 @@
+   printf ("file number = %d\n", (int) status.mt_fileno);
+   printf ("block number = %d\n", (int) status.mt_blkno);
+ #endif
++#if defined(linux) || defined(__linux)
++  if (status.mt_type == MT_ISSCSI1 ||
++      status.mt_type == MT_ISSCSI2)
++    {
++      int dens, i;
++      char *density;
++      dens = (status.mt_dsreg & MT_ST_DENSITY_MASK) >> MT_ST_DENSITY_SHIFT;
++      density = "unknown";
++      for (i=0; density_tbl[i].code >= 0; i++)
++	if (density_tbl[i].code == dens)
++	  {
++	    density = density_tbl[i].name;
++	    break;
++	  }
++      printf("Tape block size %d bytes. Density code 0x%x (%s).\n",
++	     (int)((status.mt_dsreg & MT_ST_BLKSIZE_MASK) >>
++		   MT_ST_BLKSIZE_SHIFT),
++	     dens, density);
++
++      printf("Soft error count since last status=%d\n",
++	     (int)(status.mt_erreg & MT_ST_SOFTERR_MASK) >>
++	     MT_ST_SOFTERR_SHIFT);
++      printf("General status bits on (%x):\n", (unsigned)status.mt_gstat);
++      if (GMT_EOF(status.mt_gstat))
++	printf(" EOF");
++      if (GMT_BOT(status.mt_gstat))
++	printf(" BOT");
++      if (GMT_EOT(status.mt_gstat))
++	printf(" EOT");
++      if (GMT_SM(status.mt_gstat))
++	printf(" SM");
++      if (GMT_EOD(status.mt_gstat))
++	printf(" EOD");
++      if (GMT_WR_PROT(status.mt_gstat))
++	printf(" WR_PROT");
++      if (GMT_ONLINE(status.mt_gstat))
++	printf(" ONLINE");
++      if (GMT_D_6250(status.mt_gstat))
++	printf(" D_6250");
++      if (GMT_D_1600(status.mt_gstat))
++	printf(" D_1600");
++      if (GMT_D_800(status.mt_gstat))
++	printf(" D_800");
++      if (GMT_DR_OPEN(status.mt_gstat))
++	printf(" DR_OPEN");	  
++      if (GMT_IM_REP_EN(status.mt_gstat))
++	printf(" IM_REP_EN");
++      printf("\n");
++    }
++  else
++    {
++      printf("gstat = %0x\n", (unsigned)status.mt_gstat);
++    }
++#endif
+ }
+ 
+ void
+@@ -318,7 +650,122 @@
+   int status;
+ {
+   fprintf (fp, "\
+-Usage: %s [-V] [-f device] [--file=device] [--help] [--version] operation [count]\n",
++Usage: %s [-V] [-f device] [--file=device] [--rsh-command=command]\n\
++\t[--help] [--version] operation [count]\n",
+ 	   program_name);
+   exit (status);
+ }
++
++#if defined(linux) || defined(__linux)
++/*** Get and set the DAT compression (Mode Page 15) ***/
++
++#define MODE_SENSE 0x1a
++#define MODE_SELECT 0x15
++
++int
++read_mode_page(int fn, int page, int length, unsigned char *buffer,
++	       int do_mask)
++{
++  int result, *ip;
++  unsigned char tmpbuffer[30], *cmd;
++
++  memset(tmpbuffer, 0, 14);
++  ip = (int *)&(tmpbuffer[0]);
++  *ip = 0;
++  *(ip+1) = length + 4;
++
++  cmd = &(tmpbuffer[8]);
++  cmd[0] = MODE_SENSE;
++  cmd[1] = 8;
++  cmd[2] = page;
++  if (do_mask)
++    cmd[2] |= 0x40;  /* Get changeable parameter mask */
++  cmd[4] = length + 4;
++
++  result = ioctl(fn, 1, tmpbuffer);
++  if (result) {
++    fprintf(stderr, "Can't read mode page. Are you sure you are root?\n");
++    return 0;
++  }
++  memcpy(buffer, tmpbuffer + 8, length + 4);
++  return 1;
++}
++
++
++int
++write_mode_page(int fn, int page, int length, unsigned char *buffer)
++{
++  int result, *ip;
++  unsigned char tmpbuffer[40], *cmd;
++
++  memset(tmpbuffer, 0, 14);
++  ip = (int *)&(tmpbuffer[0]);
++  *ip = length + 4;
++  *(ip+1) = 0;
++
++  cmd = &(tmpbuffer[8]);
++  cmd[0] = MODE_SELECT;
++  cmd[1] = 0x10;
++  cmd[4] = length + 4;
++
++  memcpy(tmpbuffer + 14, buffer, length + 4);
++  tmpbuffer[14] = 0;  /* reserved data length */
++  tmpbuffer[18] &= 0x3f;  /* reserved bits in page code byte */
++
++  result = ioctl(fn, 1, tmpbuffer);
++  if (result) {
++    fprintf(stderr, "Can't write mode page.\n");
++    return 0;
++  }
++  return 1;
++}
++
++
++int
++do_dat_compression(char *dev, int fn, int count)
++{
++  int i;
++  unsigned char buffer[30], mask[30];
++
++  if (!read_mode_page(fn, 0x0f, 16, buffer, 0)) {
++    error (2, errno, "%s", dev);
++  }
++
++  if (count != 1) {
++    if (read_mode_page(fn, 0x0f, 16, mask, 1))
++      if (mask[4+2] & 0x80 == 0)
++        fprintf(stderr, "Device does not allow setting this parameter.\n");
++    if (count == 0)
++      buffer[4+2] &= 0x7f;
++    else {
++      buffer[4+2] |= 0x80;
++      if (buffer[4+2+1] & 0x80 == 0) {
++        fprintf(stderr, "Warning: Decompression is disabled.  Enabling.\n");
++        buffer[4+2+1] |= 0x80;
++      }
++    }
++      buffer[1] = 0;
++    if (!write_mode_page(fn, 0x0f, 16, buffer)) {
++      error (2, errno, "%s", dev);
++    }
++    if (!read_mode_page(fn, 0x0f, 16, buffer, 0)) {  /* Re-read to check */
++      error (2, errno, "%s", dev);
++    }
++  }
++
++  if (buffer[4+2] & 0x80)
++    printf("Compression on.\n");
++  else
++    printf("Compression off.\n");
++  if (buffer[4+2] & 0x40)
++    printf("Compression capable.\n");
++  else
++    printf("Compression not capable.\n");
++  if (buffer[4+2+1] & 0x80)
++    printf("Decompression capable.\n");
++  else
++    printf("Decompression not capable.\n");
++
++  return 1;
++}
++#endif

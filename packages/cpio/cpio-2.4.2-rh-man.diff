@@ -1,0 +1,12 @@
+--- cpio-2.4.2/cpio.1.man	Tue Aug  8 11:52:42 2000
++++ cpio-2.4.2/cpio.1	Tue Aug  8 11:58:32 2000
+@@ -152,7 +152,8 @@
+ Set the I/O block size to BLOCK-SIZE * 512 bytes.
+ .TP
+ .I "\-c"
+-Use the old portable (ASCII) archive format.
++Identical to "-H newc", use the new (SVR4) portable format.
++If you wish the old portable (ASCII) archive format, use "-H odc" instead.
+ .TP
+ .I "\-C IO-SIZE, \-\-io-size=IO-SIZE"
+ Set the I/O block size to IO-SIZE bytes.

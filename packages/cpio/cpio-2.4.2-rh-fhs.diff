@@ -1,0 +1,33 @@
+--- cpio-2.4.2/Makefile.in.fhs	Mon Jun  5 16:52:08 2000
++++ cpio-2.4.2/Makefile.in	Mon Jun  5 16:53:52 2000
+@@ -81,7 +81,8 @@
+ infodir = @infodir@
+ 
+ # Where to put the Unix-style manual pages.
+-mandir = @mandir@/man1
++mandir = @mandir@
++man1dir = $(mandir)/man1
+ # Extension (not including `.') for the Unix-style manual page filenames.
+ manext = 1
+ 
+@@ -126,16 +127,16 @@
+ 	$(INSTALL_PROGRAM) cpio $(bindir)/$(binprefix)cpio
+ 	test ! -f mt || $(INSTALL_PROGRAM) mt $(bindir)/$(binprefix)mt
+ 	-test ! -f rmt || $(INSTALL_PROGRAM) rmt $(libexecdir)/rmt
+-	-$(INSTALL_DATA) $(srcdir)/cpio.1 $(mandir)/$(manprefix)cpio.$(manext)
+-	-test ! -f mt || $(INSTALL_DATA) $(srcdir)/mt.1 $(mandir)/$(manprefix)mt.$(manext)
++	-$(INSTALL_DATA) $(srcdir)/cpio.1 $(man1dir)/$(manprefix)cpio.$(manext)
++	-test ! -f mt || $(INSTALL_DATA) $(srcdir)/mt.1 $(man1dir)/$(manprefix)mt.$(manext)
+ 
+ installdirs:
+-	$(srcdir)/mkinstalldirs $(bindir) $(libexecdir) $(mandir) $(infodir)
++	$(srcdir)/mkinstalldirs $(bindir) $(libexecdir) $(man1dir) $(infodir)
+ 
+ uninstall::
+ 	cd $(bindir); rm -f $(binprefix)cpio $(binprefix)mt
+ 	-rm -f $(libexecdir)/rmt
+-	cd $(mandir); rm -f $(manprefix)cpio.$(manext) $(manprefix)mt.$(manext)
++	cd $(man1dir); rm -f $(manprefix)cpio.$(manext) $(manprefix)mt.$(manext)
+ 
+ check:
+ 	@echo No tests are supplied.
