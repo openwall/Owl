@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.48 2003/06/21 02:20:29 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.49 2003/06/22 03:43:34 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -6,7 +6,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
 %define crypt_bf_version 0.4.5
-Release: owl32
+Release: owl33
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%{version}.tar.gz
@@ -61,6 +61,7 @@ Patch55: glibc-2.1.3-cvs-20000929-alpha-reloc.diff
 Patch56: glibc-2.1.3-cvs-20011129-glob.diff
 Patch57: glibc-2.1.3-cvs-20020702-resolv.diff
 Patch58: glibc-2.1.3-cvs-20021216-rh-xdrmem.diff
+Patch59: glibc-2.1.3-cvs-20000417-pthread_cond_wait.diff
 PreReq: /sbin/ldconfig
 Requires: /etc/nsswitch.conf
 %ifarch alpha
@@ -168,6 +169,7 @@ cd ..
 %patch56 -p1
 %patch57 -p1
 %patch58 -p1
+%patch59 -p1
 %ifarch sparcv9
 echo 'ASFLAGS-.os += -Wa,-Av8plusa' >> sysdeps/sparc/sparc32/elf/Makefile
 %endif
@@ -316,6 +318,10 @@ fi
 %endif
 
 %changelog
+* Sun Jun 22 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl33
+- Back-ported a fix from glibc CVS to relax the mutex ownership checks
+in pthread_cond_wait(3) and related functions.
+
 * Sat Jun 21 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl32
 - Applied a fix by Dmitry V. Levin to call openlog_internal() with a
 NULL ident instead of with LogTag to not cause possible deallocation
