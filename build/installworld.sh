@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/installworld.sh,v 1.10 2003/10/24 04:35:31 solar Exp $
+# $Id: Owl/build/installworld.sh,v 1.11 2003/10/24 04:47:04 solar Exp $
 
 . installworld.conf
 
@@ -74,6 +74,8 @@ if [ ! -d $ROOT/var/lib/rpm ]; then
 	$RPM $RPM_FLAGS --root $ROOT --define "home $HOME" --initdb || exit 1
 	umask $UMASK
 fi
+
+export MAKE_CDROM
 
 export SILO_INSTALL
 export SILO_FLAGS
