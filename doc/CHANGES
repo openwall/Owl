@@ -12,6 +12,28 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/07/30 -
+2002/08/03	Package: openssl
+SECURITY FIX	Severity: high, remote, passive to active
+Applied the official security patches and then updated to 0.9.6e with
+two post-release security-related changes from the CVS.  Please refer
+to the package change log for the intermediate steps that occurred
+during this update process to ensure Owl always contains the fixes for
+the currently publicly-known vulnerabilities.  The vulnerabilities
+have been discovered by Ben Laurie and others of A.L. Digital Ltd and
+The Bunker under DARPA's CHATS program, by consultants at Neohapsis,
+and by Adi Stav and James Yonan.  The patches have been prepared by
+Ben Laurie and Dr. Stephen Henson, with one of the fixes partly based
+on a version by Adi Stav.  The vulnerabilities affect applications
+that use OpenSSL to provide SSL or TLS or use OpenSSL's ASN.1 parsing
+code on untrusted input.  It hasn't been fully researched whether
+OpenSSH is affected, but the ASN.1 parsing vulnerability may affect
+OpenSSH's implementation of SSH protocol 2 in both the server and the
+client.  As Owl currently only includes SSL clients (lftp and links),
+only passive attacks are possible via the SSL/TLS vulnerabilities on
+default installs.  If, however, any SSL server software that uses
+OpenSSL is added, active attacks will likely become possible as well.
+
 2002/08/01	Package: glibc
 SECURITY FIX	Severity: low to high, remote, passive to active
 Patched two potential integer overflows (and thus buffer overflows) in
@@ -23,28 +45,8 @@ allow for passive attacks on mount(8) by malicious or spoofed NFSv3
 servers as well as for both passive and active attacks on RPC clients
 or services that one might install on Owl.
 
-2002/07/31	Package: openssl
-Updated to 0.9.6e, dropping patches that are now included.
-
 2002/07/30	Package: man-pages
 Updated to 1.52 with additional corrections.
-
-2002/07/30	Package: openssl
-SECURITY FIX	Severity: high, remote, passive to active
-Applied the official patch with 4 security fixes to vulnerabilities
-discovered by Ben Laurie and others of A.L. Digital Ltd and The Bunker
-under DARPA's CHATS program, by consultants at Neohapsis, and by Adi
-Stav and James Yonan.  The patch has been prepared by Ben Laurie and
-Dr. Stephen Henson, with one of the fixes partly based on a version by
-Adi Stav.  The vulnerabilities affect only applications that use
-OpenSSL to provide SSL or TLS or use OpenSSL's ASN.1 parsing code on
-untrusted input.  It hasn't been fully researched whether OpenSSH is
-affected, but the ASN.1 parsing vulnerability may affect OpenSSH's
-implementation of SSH protocol 2 in both the server and the client.
-As Owl currently only includes SSL clients (lftp and links), only
-passive attacks are possible via the SSL/TLS vulnerabilities on
-default installs.  If, however, any SSL server software that uses
-OpenSSL is added, active attacks will likely become possible as well.
 
 2002/07/28	Package: mtree
 Updated to version from current OpenBSD (post-3.1) which is able to
@@ -876,4 +878,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.118 2002/08/01 07:30:49 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.119 2002/08/03 03:54:52 solar Exp $
