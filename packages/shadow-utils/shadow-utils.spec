@@ -1,9 +1,9 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.38 2004/09/28 01:14:21 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.39 2004/11/11 18:05:23 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.4.1
-Release: owl2
+Release: owl3
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -229,6 +229,9 @@ fi
 %exclude %_mandir/man8/mkpasswd*
 
 %changelog
+* Thu Nov 11 2004 Dmitry V. Levin <ldv@owl.openwall.com> 2:4.0.4.1-owl3
+- Restore chpasswd(8) behaviour, which was broken since 4.0.4.1-owl0.1.
+
 * Tue Sep 28 2004 Juan M. Bello Rivas <jmbr@owl.openwall.com> 2:4.0.4.1-owl2
 - Modified usermod to update the last password change field when invoked
 with the -p option.

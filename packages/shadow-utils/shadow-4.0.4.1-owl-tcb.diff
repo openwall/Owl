@@ -1293,7 +1293,7 @@ diff -uNrp shadow-4.0.4.1.orig/src/chpasswd.c shadow-4.0.4.1/src/chpasswd.c
 -			fprintf (stderr,
 -				 _("%s: line %d: unknown user %s\n"), Prog,
 -				 line, name);
-+		if (!eflg) {
++		if (eflg) {
 +			if (!paste_pwd (name, cp)) {
 +				fprintf (stderr, "%s: line %d: unable to paste new hash\n",
 +					Prog, line);
