@@ -207,16 +207,20 @@ function gen_netcfg
     local n txt
 
     # resolv.conf
+    [ -n "$DOMAIN" ] && echo -e "domain\t$DOMAIN" >> $f_resolv_conf
+
     if [ ${#DNS[*]} -gt 0 ]; then
 	for n in ${DNS[*]}; do
 	    [ -n "$n" ] && echo -e "nameserver\t$n" >> $f_resolv_conf
 	done
+	chmod 644 $f_resolv_conf
 	mv -f $f_resolv_conf $F_RESOLV_CONF
     fi
 
     # hosts
     echo -e "127.0.0.1\tlocalhost" > $f_hosts
     [ -n "$IPADDR" -a -n "$HOSTNAME" ] && echo -e "$IPADDR\t$HOSTNAME" >> $f_hosts
+    chmod 644 $f_hosts
     mv -f $f_hosts $F_HOSTS
 
     # network
@@ -231,7 +235,7 @@ function gen_netcfg
     else
 
 	txt="
-You forget to set some network related pameters.
+You forgot to set some network-related parameters.
 Networking will be off.
 "
 	$DIALOG --backtitle "$TITLE"\
