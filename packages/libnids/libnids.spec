@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libnids/libnids.spec,v 1.5 2002/12/14 15:40:17 solar Exp $
+# $Id: Owl/packages/libnids/libnids.spec,v 1.6 2002/12/17 16:20:36 solar Exp $
 
 Summary: NIDS E-component.
 Name: libnids
@@ -9,6 +9,7 @@ License: GPL
 Group: System Environment/Libraries
 URL: http://www.packetfactory.net/Projects/Libnids/
 Source: http://www.packetfactory.net/Projects/Libnids/dist/%{name}-%{version}.tar.gz
+Patch0: libnids-1.17-owl-soname.diff
 PreReq: /sbin/ldconfig
 BuildRequires: autoconf, libpcap-devel, libnet-devel
 BuildRoot: /override/%{name}-%{version}
@@ -29,6 +30,7 @@ Header files and development documentation for libnids.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 autoconf
@@ -60,6 +62,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/lib*.a
 
 %changelog
+* Tue Dec 17 2002 Rafal Wojtczuk <nergal@owl.openwall.com>
+- switched soname to libnids.1.xx because of binary incompatibility between
+versions
+
 * Fri Dec 13 2002 Rafal Wojtczuk <nergal@owl.openwall.com>
 - updated to 1.17
 
