@@ -1,0 +1,21 @@
+2002-12-14  Dmitry V. Levin <ldv@altlinux.org>
+	* nls.c (_rl_init_eightbit): Instead of setting the LC_CTYPE
+	locale category from environment variables, query it from
+	the program's current locale.
+
+--- readline-4.3/nls.c.orig	2001-10-15 22:32:29 +0400
++++ readline-4.3/nls.c	2002-12-14 20:09:31 +0300
+@@ -84,10 +84,10 @@ _rl_init_eightbit ()
+ /* If we have setlocale(3), just check the current LC_CTYPE category
+    value, and go into eight-bit mode if it's not C or POSIX. */
+ #if defined (HAVE_SETLOCALE)
+-  char *t;
++  const char *t;
+ 
+-  /* Set the LC_CTYPE locale category from environment variables. */
+-  t = setlocale (LC_CTYPE, "");
++  /* Query the LC_CTYPE locale category from the program's current locale. */
++  t = setlocale (LC_CTYPE, NULL);
+   if (t && *t && (t[0] != 'C' || t[1]) && (STREQ (t, "POSIX") == 0))
+     {
+       _rl_meta_flag = 1;

@@ -1,0 +1,10 @@
+--- readline-4.1/doc/readline.3.outdated	Tue Jan 30 15:48:32 2001
++++ readline-4.1/doc/readline.3	Tue Jan 30 15:51:52 2001
+@@ -1203,3 +1204,7 @@
+ .SH BUGS
+ .PP
+ It's too big and too slow.
++.PP
++The info file is much more up-to-date.  This man page conflicts with it in
++a few places, but the conflicts will be resolved in a future release of
++readline.

@@ -1,20 +1,24 @@
-# $Id: Owl/packages/readline/readline.spec,v 1.15 2004/01/17 16:43:00 solar Exp $
+# $Id: Owl/packages/readline/readline.spec,v 1.16 2004/02/20 01:55:39 mci Exp $
+
+%define compat_list 3 3.0 4.0 4.1 4.2
 
 Summary: A library for editing typed in command lines.
 Name: readline
-Version: 4.1
-Release: owl11
+Version: 4.3
+Release: owl1
 License: GPL
 Group: System Environment/Libraries
-Source: ftp://ftp.gnu.org/gnu/readline-%version.tar.gz
-Patch0: readline-4.1-rh-guard.diff
-Patch1: readline-4.1-deb-doc_makefile.diff
-Patch2: readline-4.1-deb-inputrc.diff
-Patch3: readline-4.1-deb-del_bcksp.diff
-Patch4: readline-4.1-deb-char.diff
-Patch5: readline-4.1-owl-info.diff
+Source: ftp://ftp.gnu.org/gnu/%name/%name-%version.tar.gz
+Patch0: readline-4.3-up-fixes.diff
+Patch1: readline-4.3-alt-owl-nls.diff
+Patch2: readline-4.3-alt-warnings.diff
+Patch3: readline-4.3-deb-alt-inputrc.diff
+Patch4: readline-4.3-deb-delete.diff
+Patch5: readline-4.1-rh-man.diff
+Patch6: readline-4.3-rh-histexpand-utf8.diff
+Patch7: readline-4.3-owl-info.diff
 PreReq: /sbin/ldconfig, /sbin/install-info
-Provides: libreadline.so.3, libreadline.so.3.0
+Provides: %(for n in %compat_list; do echo -n "libhistory.so.$n lib%name.so.$n "; done)
 Prefix: %_prefix
 BuildRequires: sed
 BuildRoot: /override/%name-%version
@@ -41,17 +45,21 @@ command line interface for users.
 
 %prep
 %setup -q
-%patch0 -p1
+%patch0 -p0
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
+%patch7 -p1
+
+%{expand:%%define optflags %optflags -Wall}
 
 %build
 rm doc/{history,readline,rluserman}.info
 %configure
-make all shared documentation CFLAGS="$RPM_OPT_FLAGS"
+make all shared documentation CFLAGS="$RPM_OPT_FLAGS -D_GNU_SOURCE"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -72,9 +80,12 @@ ln -sf libreadline.so.%version \
 ln -sf libhistory.so.%version \
 	.%_libdir/libhistory.so.`echo %version | sed 's^\..*^^g'`
 
-# Hack!
-ln -s libreadline.so.%version .%_libdir/libreadline.so.3
-ln -s libreadline.so.%version .%_libdir/libreadline.so.3.0
+for n in %name history; do
+        t=`objdump -p "$RPM_BUILD_ROOT%_libdir/lib$n.so" |awk '/SONAME/ {print $2}'`
+        for v in %compat_list; do
+                ln -s "$t" "$RPM_BUILD_ROOT%_libdir/lib$n.so.$v"
+        done
+done
 
 %post
 /sbin/ldconfig
@@ -101,6 +112,7 @@ fi
 
 %files
 %defattr(-,root,root)
+%doc CHANGELOG CHANGES README
 %_mandir/man*/*
 %_infodir/*.info*
 %_libdir/lib*.so.*
@@ -113,6 +125,12 @@ fi
 %_libdir/lib*.so
 
 %changelog
+* Wed Feb 18 2004 Michail Litvak <mci@owl.openwall.com> 4.3-owl1
+- 4.3
+- Added oficial patches, patches from Alt Linux Team,
+dropped outdated patches.
+- Provide symlinks for compatibility with previous versions of readline.
+
 * Sat Jan 17 2004 Solar Designer <solar@owl.openwall.com> 4.1-owl11
 - Remove /usr/doc/examples with a trigger on package upgrades.
 

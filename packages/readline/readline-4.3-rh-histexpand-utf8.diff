@@ -1,0 +1,29 @@
+--- readline-4.3/histexpand.c.utf8	2002-04-16 16:47:59 +0100
++++ readline-4.3/histexpand.c	2002-08-22 10:37:38 +0100
+@@ -202,6 +202,7 @@
+ 
+   /* Only a closing `?' or a newline delimit a substring search string. */
+   for (local_index = i; (c = string[i]); i++)
++    {
+ #if defined (HANDLE_MULTIBYTE)
+     if (MB_CUR_MAX > 1 && rl_byte_oriented == 0)
+       {
+@@ -217,8 +218,8 @@
+ 	    i += v - 1;
+ 	    continue;
+ 	  }
+-      }
+-    else
++    }
++
+ #endif /* HANDLE_MULTIBYTE */
+       if ((!substring_okay && (whitespace (c) || c == ':' ||
+ 	  (history_search_delimiter_chars && member (c, history_search_delimiter_chars)) ||
+@@ -226,6 +227,7 @@
+ 	  string[i] == '\n' ||
+ 	  (substring_okay && string[i] == '?'))
+ 	break;
++  }
+ 
+   which = i - local_index;
+   temp = (char *)xmalloc (1 + which);
