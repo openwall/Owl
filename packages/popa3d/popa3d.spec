@@ -1,15 +1,15 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.3 2001/05/27 22:49:11 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.4 2001/06/19 20:43:09 solar Exp $
 
 Summary: A tiny POP3 server with security as its primary design goal
 Name: popa3d
-Version: 0.4.9
+Version: 0.4.9.1
 Release: 1owl
-Copyright: GPL
+Copyright: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
 Source0: ftp://ftp.openwall.com/pub/projects/popa3d/popa3d-%{version}.tar.gz
 Source1: popa3d.pam
 Source2: popa3d.init
-Patch0: popa3d-%{version}-owl-params.diff
+Patch0: popa3d-0.4.9-owl-params.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: pam_userpass
 Prereq: /sbin/chkconfig, /dev/null, grep, shadow-utils
@@ -62,9 +62,14 @@ fi
 /usr/sbin/popa3d
 %config(noreplace) /etc/pam.d/popa3d
 %config /etc/rc.d/init.d/popa3d
-%doc DESIGN LICENSE md5/COPYING
+%doc DESIGN LICENSE
 
 %changelog
+* Wed Jun 20 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 0.4.9.1 (finally replaced the GNU MD5 routines to relax
+the license for the entire package, solve certain portability issues,
+and reduce code size).
+
 * Mon May 28 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 0.4.9.
 
