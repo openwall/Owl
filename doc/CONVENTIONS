@@ -100,13 +100,17 @@ its package manager to pass it the correct input anyway.
 
 10. Use the %buildroot macro instead of $RPM_BUILD_ROOT.
 
-11. In %changelog entry dates, use two digits for day of month with a
-leading zero if necessary.
+11. Do use the appropriate RPM macros for invoking build tools which
+we might want to override (e.g., use %__make instead of just make, use
+%__cc instead of gcc, etc.)  However, do not use the macros for
+essential shell commands such as cp, mv, rm.
 
-12. In %changelog, when adding new entries do specify the current
-package Version and Release after your e-mail address, like this:
+12. In %changelog entry dates, use two digits for day of month with a
+leading zero if necessary.  When adding new entries do specify the
+current package Version and Release after your e-mail address, like
+this:
 
-* Mon Mar 10 2003 Your Name <you@example.com> 0.6.2-owl1
+* Wed Dec 01 2004 Your Name <you@example.com> 1.0-owl1
 
 
 	Patch file naming.
@@ -213,4 +217,4 @@ Requires: mktemp >= 1:1.3.1
 As usual, use Requires, PreReq, and/or BuildRequires depending on
 where in the package the uses of mktemp occur.
 
-$Id: Owl/doc/CONVENTIONS,v 1.20 2004/11/26 12:34:41 solar Exp $
+$Id: Owl/doc/CONVENTIONS,v 1.21 2004/12/01 14:36:24 solar Exp $
