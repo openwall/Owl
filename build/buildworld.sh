@@ -1,5 +1,8 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.14 2002/01/24 14:39:28 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.15 2002/03/03 23:02:09 solar Exp $
+
+NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
+NATIVE_VENDOR='Openwall'
 
 TIME=/usr/bin/time
 
@@ -38,7 +41,10 @@ function build_native()
 	ln -sf $NATIVE/$PACKAGES/$PACKAGE/* .
 	$TIME $PERSONALITY rpm -ba $PACKAGE.spec \
 		$TARGET \
+		--define "distribution $NATIVE_DISTRIBUTION" \
+		--define "vendor $NATIVE_VENDOR" \
 		--define "buildarch $BUILDARCH" \
+		--define "buildhost $BUILDHOST" \
 		--define "home $HOME" \
 		--define "number $NUMBER" \
 		&> $HOME/logs/$PACKAGE < /dev/null
@@ -63,6 +69,7 @@ function build_foreign()
 	$TIME $PERSONALITY rpm --rebuild $FOREIGN/$PACKAGE.src.rpm \
 		$TARGET \
 		--define "buildarch $BUILDARCH" \
+		--define "buildhost $BUILDHOST" \
 		--define "home $HOME" \
 		--define "number $NUMBER" \
 		&> $HOME/logs/$PACKAGE < /dev/null
@@ -114,6 +121,8 @@ function builder()
 	else
 		PERSONALITY=
 	fi
+
+	test -n "$BUILDHOST" || BUILDHOST="`hostname -f`"
 
 	log "#$NUMBER: Scanning native"
 

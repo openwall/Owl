@@ -1,9 +1,9 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.22 2002/02/11 15:41:12 solar Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.23 2002/03/03 23:02:09 solar Exp $
 
 Summary: The Red Hat package management system.
 Name: rpm
 Version: 3.0.6
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-3.0.x/rpm-%{version}.tar.gz
@@ -13,6 +13,7 @@ Patch2: rpm-3.0.5-owl-vendor.diff
 Patch3: rpm-3.0.5-owl-closeall.diff
 Patch4: rpm-3.0.5-owl-includes.diff
 Patch5: rpm-3.0.5-owl-gendiff.diff
+Patch6: rpm-3.0.6-owl-buildhost.diff
 PreReq: /sbin/ldconfig
 PreReq: gawk, fileutils, textutils, sh-utils, mktemp
 Requires: popt, bzip2 >= 0.9.0c-2
@@ -69,12 +70,18 @@ shell-like rules.
 
 %prep
 %setup -q
+rm -r tests/*
+cat > tests/Makefile.in << EOF
+all:
+install:
+EOF
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %define _noVersionedDependencies 1
 
@@ -144,8 +151,6 @@ fi
 %{__prefix}/lib/rpm/mkinstalldirs
 %{__prefix}/lib/rpm/rpmpopt
 %{__prefix}/lib/rpm/rpmrc
-%{__prefix}/lib/rpm/vpkg-provides.sh
-%{__prefix}/lib/rpm/vpkg-provides2.sh
 
 %ifarch %ix86
 %{__prefix}/lib/rpm/i*86*
@@ -194,8 +199,6 @@ fi
 %{__prefix}/lib/rpm/perl.req
 %{__prefix}/lib/rpm/rpmdiff
 %{__prefix}/lib/rpm/rpmdiff.cgi
-%{__prefix}/lib/rpm/rpmgettext
-%{__prefix}/lib/rpm/rpmputtext
 %{__prefix}/lib/rpm/u_pkg.sh
 
 %files devel
@@ -221,6 +224,13 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Sun Mar 03 2002 Solar Designer <solar@owl.openwall.com>
+- Support setting the BuildHost tag explicitly rather than only from what
+the kernel thinks the system's hostname is.
+- Don't package vpkg-provides* (temporary file handling issues, non-Linux).
+- Don't package rpmgettext/rpmputtext because of poor quality and no uses
+by RPM itself.
+
 * Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 
@@ -240,13 +250,13 @@ sparc64 kernel).
 * Fri Oct 20 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - disabled /usr/share/man autodetection
 
-* Sun Sep  3 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Sep 03 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - vendor fix
 - FHS
 - closeall security fix
 - RH 6.2 updates merge
 
-* Sat Aug  5 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sat Aug 05 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - change build target
 - /usr/src/redhat -> /usr/src/RPM
 
