@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.29 2005/02/06 04:08:24 solar Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.30 2005/02/06 04:17:23 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -124,7 +124,7 @@ introduce security holes.
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
-%patch23 -p1
+%patch23 -p0
 %patch30 -p1
 
 # Remove files with known temporary file handling issues that we don't
