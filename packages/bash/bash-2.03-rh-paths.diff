@@ -1,0 +1,30 @@
+--- bash-2.03/config.h.in.paths	Thu Feb 18 11:48:31 1999
++++ bash-2.03/config.h.in	Mon Feb 22 14:32:04 1999
+@@ -351,7 +351,7 @@
+ 
+ #undef HAVE_POSIX_SIGSETJMP
+ 
+-#define DEFAULT_MAIL_DIRECTORY "/usr/spool/mail"
++#define DEFAULT_MAIL_DIRECTORY "/var/spool/mail"
+ 
+ /* Define if you have the bcopy function.  */
+ #undef HAVE_BCOPY
+--- bash-2.03/config-top.h.paths	Tue Dec 15 13:24:38 1998
++++ bash-2.03/config-top.h	Mon Feb 22 14:35:03 1999
+@@ -34,14 +34,14 @@
+ /* The default value of the PATH variable. */
+ #ifndef DEFAULT_PATH_VALUE
+ #define DEFAULT_PATH_VALUE \
+-  "/usr/gnu/bin:/usr/local/bin:/usr/ucb:/bin:/usr/bin:."
++  "/usr/local/bin:/bin:/usr/bin"
+ #endif
+ 
+ /* The value for PATH when invoking `command -p'.  This is only used when
+    the Posix.2 confstr () function, or CS_PATH define are not present. */
+ #ifndef STANDARD_UTILS_PATH
+ #define STANDARD_UTILS_PATH \
+-  "/bin:/usr/bin:/usr/ucb:/sbin:/usr/sbin:/etc:/usr/etc"
++  "/bin:/usr/bin:/usr/sbin:/sbin"
+ #endif
+ 
+ /* Default primary and secondary prompt strings. */
