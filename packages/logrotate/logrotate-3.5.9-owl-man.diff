@@ -1,0 +1,26 @@
+--- logrotate-3.5.9/logrotate.8.orig	Fri Nov 23 00:00:16 2001
++++ logrotate-3.5.9/logrotate.8	Fri Nov 23 00:12:50 2001
+@@ -86,6 +86,7 @@
+ /var/log/news/* {
+     monthly
+     rotate 2
++    olddir /var/log/news/old
+     missingok
+     postrotate
+ 	kill -HUP `cat /var/run/inn.pid`
+@@ -117,10 +118,14 @@
+ spaces in the name. Normal shell quoting rules apply, with ', ", and \\
+ characters supported.
+ 
+-The last section definest the parameters for all of the files in
++The last section defines the parameters for all of the files in
+ \fI/var/log/news\fR. Each file is rotated on a monthly basis.  This is
+ considered a single rotation directive and if errors occur for more then
+ one file, the log files are not compressed.
++
++Please use wildcards with caution.  If you specify *, \fBlogrotate\fR will
++rotate all files, including previously rotated ones.   A way around this
++is to use the \fBolddir\fR directive or a more exact wildcard (such as *.log).
+ 
+ Here is more information on the directives which may be included in
+ a \fBlogrotate\fR configuration file:

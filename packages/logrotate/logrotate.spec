@@ -1,17 +1,19 @@
-# $Id: Owl/packages/logrotate/logrotate.spec,v 1.2 2001/06/04 01:01:14 solar Exp $
+# $Id: Owl/packages/logrotate/logrotate.spec,v 1.3 2001/11/26 22:45:03 mci Exp $
 
 Summary: Rotates, compresses, removes and mails system log files.
 Name: logrotate
-Version: 3.5.2
-Release: 2owl
-Copyright: GPL
+Version: 3.5.9
+Release: 1owl
+License: GPL
 Group: System Environment/Base
-Source: ftp://ftp.redhat.com/pub/redhat/code/logrotate/logrotate-%{version}.tar.gz
-Patch0: logrotate-3.5.2-owl-fixes.diff
-Patch1: logrotate-3.5.2-owl-commands-paths.diff
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
+Source: logrotate-%{version}.tar.bz2
+Patch0: logrotate-3.5.9-cvs-20011126.diff
+Patch1: logrotate-3.5.9-owl-commands-paths.diff
+Patch2: logrotate-3.5.9-owl-man.diff
+Patch3: logrotate-3.5.9-owl-fchmod-fchown-race.diff
 Requires: crontabs
 BuildPreReq: popt
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The logrotate utility is designed to simplify the administration of
@@ -21,13 +23,12 @@ log files.  logrotate can be set to handle a log file daily, weekly,
 monthly or when the log file gets to a certain size.  Normally,
 logrotate runs as a daily cron job.
 
-Install the logrotate package if you need a utility to deal with the
-log files on your system.
-
 %prep
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
+%patch3 -p1
 
 %build
 make CC=gcc RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
@@ -62,6 +63,12 @@ fi
 %attr(0700,root,root) /var/lib/logrotate
 
 %changelog
+* Mon Nov 26 2001 Michail Litvak <mci@owl.openwall.com>
+- 3.5.9
+- Patch from CVS to fix zero-length state files.
+- Wrote in man page about use of wildcards.
+- fix race in case fchmod->fchown.
+
 * Mon Jun 04 2001 Solar Designer <solar@owl.openwall.com>
 - Enabled the daily cron job now that we have /etc/cron.daily (finally).
 - Moved /var/lib/logrotate.status to /var/lib/logrotate/status
@@ -71,22 +78,3 @@ level (no "-9").
 * Sat Nov 04 2000 Solar Designer <solar@owl.openwall.com>
 - Imported this spec file for Owl.
 - Added a patch to fix some security/reliability issues.
-
-* Tue Aug 15 2000 Erik Troan <ewt@redhat.com>
-- see CHANGES
-
-* Sun Jul 23 2000 Erik Troan <ewt@redhat.com>
-- see CHANGES
-
-* Tue Jul 11 2000 Erik Troan <ewt@redhat.com>
-- support spaces in filenames
-- added sharedscripts
-
-* Sun Jun 18 2000 Matt Wilson <msw@redhat.com>
-- use %%{_mandir} for man pages
-
-* Thu Feb 24 2000 Erik Troan <ewt@redhat.com>
-- don't rotate lastlog
-
-* Thu Feb 03 2000 Erik Troan <ewt@redhat.com>
-- gzipped manpages
