@@ -1,8 +1,8 @@
-# $Id: Owl/packages/man/man.spec,v 1.2 2001/05/18 06:00:05 solar Exp $
+# $Id: Owl/packages/man/man.spec,v 1.3 2001/06/12 03:03:41 solar Exp $
 
 Summary: A set of documentation tools: man, apropos and whatis.
 Name: man
-Version: 1.5i
+Version: 1.5i2
 Release: 1owl
 Copyright: GPL
 Group: System Environment/Base
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0775,root,man) %dir /var/catman/X11R6/cat[123456789n]
 
 %changelog
+* Tue Jun 12 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 1.5i2.
+
 * Fri May 18 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 1.5i.
 - Corrected the Source URL.
