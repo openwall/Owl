@@ -12,6 +12,12 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.0 and Owl-current.
 
+2002/11/08	Package: glibc
+RELIABILITY FIX: Made the x86 assembly code implementing bcrypt
+password hashing reentrant (this time for real), made it more careful
+about overwriting sensitive data.  At the same time, the default
+/etc/nsswitch.conf file has been cleaned up and improved.
+
 2002/11/07	Owl/doc/MIRRORING
 New file: instructions for those who would like to setup and maintain
 an Owl mirror, official or not.
@@ -34,4 +40,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.4 2002/11/07 04:39:41 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.5 2002/11/08 03:55:14 solar Exp $
