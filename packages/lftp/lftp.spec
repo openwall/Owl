@@ -1,4 +1,4 @@
-# $Id: Owl/packages/lftp/lftp.spec,v 1.14 2003/06/01 22:39:26 mci Exp $
+# $Id: Owl/packages/lftp/lftp.spec,v 1.15 2003/06/01 23:09:44 solar Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
@@ -27,13 +27,13 @@ lftp and it automatically moves to nohup mode and completes the transfers.
 It also has such nice features as reput and mirror.  And it can download a
 file faster using multiple connections.
 
-lftp can also be scriptable, it can be used to mirror sites, it let you
+lftp can also be scriptable, it can be used to mirror sites, it lets you
 copy files among remote servers (even between FTP and HTTP).  It has an
 extensive online help.  It supports bookmarks, and connecting to several
 ftp/http sites at the same time.
 
-This package also includes ftpget and lftpget - simple non-interactive
-tools for downloading files.
+This package also includes lftpget - a simple non-interactive tool for
+downloading files.
 
 %prep
 %setup -q
