@@ -266,9 +266,19 @@ permissions.  Optionally dereference symlinks.
 	mutt.
 
 [PRIORITY: medium]
+Extensively test all of the temporary file handling touched by our
+patch.  One way to do it is start up mutt under a "strace -fF", then,
+reading the patch, make use of every feature the patch touches.  Make
+sure that everything works, the temporary files are dealt with safely
+(as seen from the strace output), and all of them are removed on exit.
+
+[PRIORITY: medium]
+Mutt appears to sometimes send control characters found in a message
+to the terminal: should investigate what's at fault and fix that.
+
+[PRIORITY: low]
 [ASSIGNED: Jarno]
-Package it, fixing the various temporary file handling issues and
-considering enhancements from VVV (http://mutt.org.ua).
+Consider enhancements from VVV (http://mutt.org.ua).
 
 
 	nmap.
@@ -609,4 +619,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.12 2003/01/17 01:33:20 solar Exp $
+$Id: Owl/doc/TODO,v 1.13 2003/01/20 19:05:56 solar Exp $
