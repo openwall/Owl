@@ -1,37 +1,38 @@
 Команда разработчиков Owl:
 
-	Solar Designer <solar@owl.openwall.com>
-	Alexandr D. Kanevskiy <kad@owl.openwall.com>
-	Michail Litvak <mci@owl.openwall.com>
-	Rafal Wojtczuk <nergal@owl.openwall.com>
+	Solar Designer <solar at owl.openwall.com>
+	Alexandr D. Kanevskiy <kad at owl.openwall.com>
+	Michail Litvak <mci at owl.openwall.com>
+	Rafal Wojtczuk <nergal at owl.openwall.com>
+	(GalaxyMaster) <galaxy at owl.openwall.com>
 
 Перенос дополнений из ALT Linux:
 
-	Dmitry V. Levin <ldv@owl.openwall.com>
+	Dmitry V. Levin <ldv at owl.openwall.com>
 
 Пакет Mutt:
 
-	Jarno Huuskonen <jhuuskon@owl.openwall.com>
+	Jarno Huuskonen <jhuuskon at owl.openwall.com>
 
 Пакет CVS:
 
-	Simon B <simonb@owl.openwall.com>
+	Simon B <simonb at owl.openwall.com>
 
 Пакет поддержки DHCP и немецкий перевод:
 
-	Matthias Schmidt <schmidt@owl.openwall.com>
+	Matthias Schmidt <schmidt at owl.openwall.com>
 
 Французский перевод:
 
-	Denis Ducamp <ducamp@owl.openwall.com>
+	Denis Ducamp <ducamp at owl.openwall.com>
 
 Русский перевод:
 
-	Gremlin from Kremlin <gremlin@owl.openwall.com>
+	Gremlin from Kremlin <gremlin at owl.openwall.com>
 
 Графика и разработка логотипа:
 
-	Gleb Todosov <gleb@owl.openwall.com>
+	Gleb Todosov <gleb at owl.openwall.com>
 
 Проект "Virtual Unix" предоставил начальное финансирование Owl. Многие
 другие компании, организации и люди оказали нам помощь деньгами,
@@ -39,6 +40,6 @@
 полный список можно получить на странице поддержки проекта, там же
 описано, как нам помочь:
 
-	http://www.openwall.com/donations/
+http://www.openwall.com/donations/
 
-$Id: Owl/doc/ru/CREDITS,v 1.9 2003/11/16 07:47:47 gremlin Exp $
+$Id: Owl/doc/ru/CREDITS,v 1.9.2.1 2004/04/13 21:44:25 solar Exp $

@@ -64,4 +64,4 @@ CVSROOT=anoncvs@anoncvs.owl.openwall.com:/cvs
 использовать сжатие при любом способе доступа - обычно посредством
 указания опции -z3 для CVS или включив сжатие в настройках SSH-клиента.
 
-$Id: Owl/doc/ru/DOWNLOAD,v 1.11.2.1 2004/01/15 05:22:22 solar Exp $
+$Id: Owl/doc/ru/DOWNLOAD,v 1.11.2.2 2004/04/13 21:44:25 solar Exp $

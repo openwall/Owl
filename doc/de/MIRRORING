@@ -5,14 +5,15 @@ verwalten wollen.
 Aktuell brauchen wir offizielle mirrors in Japan und Kanada.
 
 Bevor man einen mirror aufsetzt, sollte man eine E-Mail an
-<mirrors@owl.openwall.com> schicken damit wir eine Kontakt-
+<mirrors at owl.openwall.com> schicken damit wir eine Kontakt-
 adresse haben, falls technische Probleme oder signifikante
 Änderungen der untenstehenden Voraussetzungen auftreten.
 
 Die bevorzugte Methode für einen Owl mirror vom primären
-feed (ftp.feed.openwall.com) aus ist lftp 2.3.8 zu benutzen,
-vorzugsweise das Owl-Paket. (Spätere Versionen besitzen
-einen bekannten Bug, an dem gearbeitet wird).
+feed (ftp.feed.openwall.com) aus ist lftp zu benutzen,
+vorzugsweise das Owl-Paket. (Spätere Versionen haben
+einen bekannten Bug, aber 2.6.x und neuer funktionieren
+einwandfrei).
 
 Wichtig ist, dass passives FTP benutzt wird. lftp benutzt
 diesen Modus standardmässig, aber andere Programme eventuell
@@ -21,8 +22,7 @@ nicht.
 Man sollte nun ein separaten pseudo-user anlegen, der den
 FTP Bereich mit einem cron-job dieser Art updatet:
 
-05 6 * * *     umask 022 && cd /home/ftp && /usr/bin/lftp -c 'o ftp.openwall.com && mirror pub -v --delete --exclude Owl --include presentations/Owl &' &> /dev/null
-15 6 * * *      umask 022 && cd /home/ftp/pub && /usr/bin/lftp -c 'o ftp.feed.openwall.com/pub/ && mirror Owl -v --delete &' &> /dev/null
+05 6 * * *	umask 022 && cd /home/ftp && lftp -c 'o ftp.feed.openwall.com && mirror -ev pub &' &> /dev/null
 
 Die Aktivitäten werden in ~mirror/.lftp/log geloggt. Wir
 empfehlen nächtliche Updates; zumindest sollte es Nacht in
@@ -50,4 +50,4 @@ keine anderen, möglicherweise gefährlichen Dienste anbietet.
 von Owl sind, ist das in Ordnung). In Ausnahmen kann der
 Server andere Inhalte hosten.
 
-$Id: Owl/doc/de/MIRRORING,v 1.3 2003/09/11 10:01:30 schmidt Exp $
+$Id: Owl/doc/de/MIRRORING,v 1.3.2.1 2004/04/13 21:44:25 solar Exp $

@@ -5,6 +5,10 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 1.1 and Owl 1.1-stable.
 
+2004/04/14	Owl/doc/*, Owl/doc/*/*
+Sync'ed with post-release documentation updates which are pertinent to
+1.1-stable.
+
 (2004/01/17)
 2004/01/17	Package: procps
 In top, handle ticks going backwards gracefully.  This may happen due
@@ -24,4 +28,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 2004/01/15	Owl/doc/DOWNLOAD, Owl/doc/*/DOWNLOAD, Owl/doc/fr/CREDITS
 Sync'ed with the minor post-release updates made in Owl-current.
 
-$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.3 2004/01/17 17:59:10 solar Exp $
+$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.4 2004/04/13 21:44:25 solar Exp $

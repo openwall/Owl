@@ -158,6 +158,11 @@ Update to 3.2.1+ and deal with whatever this will break.
 Once gcc is updated, update to 2.3.1+ with all the related auditing,
 porting, and fixing.
 
+[PRIORITY: medium]
+Develop safe log-and-exit function for use by the dlmalloc unlink()
+macro's sanity check.  It will need to connect to /dev/log and write
+there directly, without utilizing syslog(3).
+
 [PRIORITY: low]
 Make mkstemp(3) and friends produce unpredictable filenames (not just
 unique).
@@ -204,13 +209,6 @@ items are in a separate non-public TODO list for just John.)
 [PRIORITY: low]
 [ASSIGNED: nergal@]
 Update to latest releases.
-
-
-	links.
-
-[PRIORITY: medium]
-[ASSIGNED: mci@]
-Update to latest release.
 
 
 	mailx.
@@ -325,19 +323,23 @@ be written).
 	pam.
 
 [PRIORITY: medium]
-Review PAM man pages in OpenPAM (FreeBSD-current) and on other OSes,
-most likely import some from OpenPAM (with minor changes for Linux-PAM
-where it differs) and correct others.  Currently, the Linux-PAM man
-pages are in a really bad shape.
-
-[PRIORITY: low]
 Update to latest release (with our modifications), either Red Hat's
 again or official Linux-PAM with its pre-compiled documentation and
 still adding a few modules from Red Hat's for compatibility.
 
 [PRIORITY: low]
+Add support for "include" directive per ALT Linux's proposal, using
+pam-0.77-alt-pam_include.patch.  Make other packages in Owl use it.
+
+[PRIORITY: low]
 Move pam_pwdb (with its dependency on libpwdb) into a new pam-compat
 subpackage.
+
+[PRIORITY: low]
+Review PAM man pages in OpenPAM (FreeBSD-current) and on other OSes,
+most likely import some from OpenPAM (with minor changes for Linux-PAM
+where it differs) and correct others.  Currently, the Linux-PAM man
+pages are in a really bad shape.
 
 
 	pam_mktemp.
@@ -374,9 +376,16 @@ Solve the DoS-against-itself on the temporary file.
 	perl.
 
 [PRIORITY: low]
-Update to 5.8.0+, migrating the patches that are still relevant and
-repeating the audit of temporary file handling by its utilities and
-modules.
+Re-implement temporary file handling in CGI.pm making use of File::Temp.
+
+[PRIORITY: low]
+Fix the tests (or the functions they test) such that "make test" will
+no longer use /tmp when $TMPDIR is set.  Currently, with Perl 5.8.3-owl1,
+3 of the tests fail when /tmp is unavailable, despite $TMPDIR being set.
+
+[PRIORITY: low]
+Determine which of the tests result in network accesses (is it just
+DNS lookups?) and disable those from within our perl.spec.
 
 
 	popa3d, scanlogd.
@@ -478,9 +487,6 @@ in use) in syslogd itself.
 Protect against timestamp spoofing.
 
 [PRIORITY: low]
-Pass options from /etc/sysconfig/syslog.
-
-[PRIORITY: low]
 In klogd, support new System.map format used starting with recent
 2.2.x kernels on Alpha.
 
@@ -512,16 +518,6 @@ Re-enable IPv6 in the client once glibc is fixed.
 
 [PRIORITY: medium]
 Replace with Olaf Kirch's after we fully migrate to Linux 2.4.x.
-
-
-	util-linux.
-
-[PRIORITY: medium]
-Update the international crypto patch to work for both Linux 2.2.x and
-2.4.x.
-
-[PRIORITY: medium]
-Update to latest release.
 
 
 	vim.
@@ -558,4 +554,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.29 2003/12/19 16:40:40 solar Exp $
+$Id: Owl/doc/TODO,v 1.29.2.1 2004/04/13 21:44:25 solar Exp $

@@ -64,4 +64,4 @@ compression with either method of access to the anonymous CVS server,
 typically by specifying the -z3 option to CVS and/or "Compression yes"
 in the SSH client's configuration file.
 
-$Id: Owl/doc/DOWNLOAD,v 1.24.2.1 2004/01/15 05:22:22 solar Exp $
+$Id: Owl/doc/DOWNLOAD,v 1.24.2.2 2004/04/13 21:44:25 solar Exp $

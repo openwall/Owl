@@ -10,10 +10,10 @@ disponibles sur MARC :
 http://marc.theaimsgroup.com/?l=owl-users
 
 En plus de la liste owl-users, vous avez l'option d'adresser vos
-commentaires concernant Owl à nous en privé via <feedback@owl.openwall.com>.
+commentaires concernant Owl à nous en privé via <feedback at owl.openwall.com>.
 
 Merci de signaler les problèmes potentiels de sécurité à
-<security@owl.openwall.com> et les bogues non relatifs à la sécurité à
-<bugs@owl.openwall.com>.
+<security at owl.openwall.com> et les bogues non relatifs à la sécurité à
+<bugs at owl.openwall.com>.
 
-$Id: Owl/doc/fr/CONTACT,v 1.1 2001/06/29 13:23:41 solar Exp $
+$Id: Owl/doc/fr/CONTACT,v 1.1.6.1 2004/04/13 21:44:25 solar Exp $
