@@ -1,4 +1,4 @@
-# $Id: Owl/packages/readline/readline.spec,v 1.10 2002/08/26 17:04:18 mci Exp $
+# $Id: Owl/packages/readline/readline.spec,v 1.11 2002/08/27 18:35:34 solar Exp $
 
 Summary: A library for editing typed in command lines.
 Name: readline
@@ -49,7 +49,7 @@ command line interface for users.
 %patch5 -p1
 
 %build
-rm doc/{hist,readline,rluserman}.info
+rm doc/{history,readline,rluserman}.info
 %configure
 make all shared documentation CFLAGS="$RPM_OPT_FLAGS"
 
@@ -83,13 +83,18 @@ rm -rf $RPM_BUILD_ROOT
 /sbin/ldconfig
 /sbin/install-info %{_infodir}/history.info.gz %{_infodir}/dir
 /sbin/install-info %{_infodir}/readline.info.gz %{_infodir}/dir
+/sbin/install-info %{_infodir}/rluserman.info.gz %{_infodir}/dir
 
 %postun -p /sbin/ldconfig
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/history.info.gz %{_infodir}/dir
-	/sbin/install-info --delete %{_infodir}/readline.info.gz %{_infodir}/dir
+	/sbin/install-info --delete %{_infodir}/history.info.gz \
+		%{_infodir}/dir
+	/sbin/install-info --delete %{_infodir}/readline.info.gz \
+		%{_infodir}/dir
+	/sbin/install-info --delete %{_infodir}/rluserman.info.gz \
+		%{_infodir}/dir
 fi
 
 %files
@@ -106,6 +111,9 @@ fi
 %doc %{_docdir}/examples/*
 
 %changelog
+* Tue Aug 27 2002 Solar Designer <solar@owl.openwall.com>
+- Do register rluserman.info into the info directory.
+
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
 - Deal with info dir entries such that the menu looks pretty.
 
