@@ -1,18 +1,18 @@
-# $Id: Owl/packages/sh-utils/Attic/sh-utils.spec,v 1.3 2002/02/04 17:13:24 solar Exp $
+# $Id: Owl/packages/sh-utils/Attic/sh-utils.spec,v 1.4 2002/02/06 19:10:49 solar Exp $
 
 Summary: A set of GNU utilities commonly used in shell scripts.
 Name: sh-utils
 Version: 2.0
-Release: 2owl
-Copyright: GPL
+Release: owl2
+License: GPL
 Group: System Environment/Shells
 Source: ftp://ftp.gnu.org/gnu/sh-utils/sh-utils-%{version}.tar.gz
 Patch0: sh-utils-2.0-owl-no-su-hostname.diff
 Patch1: sh-utils-2.0-owl-false.diff
 Patch2: sh-utils-2.0-rh-cest.diff
 Patch3: sh-utils-2.0-rh-utmp.diff
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
-Prereq: /sbin/install-info
+PreReq: /sbin/install-info
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The GNU shell utilities are a set of useful system utilities which are
@@ -46,13 +46,16 @@ indefinitely).
 %patch3 -p1
 
 # XXX docs should say /var/run/[uw]tmp not /etc/[uw]tmp
-perl -pi -e 's,/etc/utmp,/var/run/utmp,g' doc/sh-utils.texi man/logname.1 man/users.1 man/who.1
-perl -pi -e 's,/etc/wtmp,/var/run/wtmp,g' doc/sh-utils.texi man/logname.1 man/users.1 man/who.1
-rm -f doc/sh-utils.info
+perl -pi -e 's,/etc/utmp,/var/run/utmp,g' \
+	doc/sh-utils.texi man/logname.1 man/users.1 man/who.1
+perl -pi -e 's,/etc/wtmp,/var/run/wtmp,g' \
+	doc/sh-utils.texi man/logname.1 man/users.1 man/who.1
+rm doc/sh-utils.info
 
 %build
 rm -rf build-$RPM_ARCH
-mkdir -p build-$RPM_ARCH ; cd build-$RPM_ARCH
+mkdir -p build-$RPM_ARCH
+cd build-$RPM_ARCH
 CFLAGS="$RPM_OPT_FLAGS" ../configure --prefix=/usr --disable-largefile
 make
 make info
@@ -63,24 +66,16 @@ mkdir -p $RPM_BUILD_ROOT/{bin,usr/sbin}
 
 make install prefix=$RPM_BUILD_ROOT/usr -C build-$RPM_ARCH
 
-# some files are shell scripts... strip will fail on those
-strip $RPM_BUILD_ROOT/usr/bin/* || :
-
-for i in basename date echo false nice pwd sleep stty true uname ; do
-    install -m 755 -s $RPM_BUILD_ROOT/usr/bin/$i $RPM_BUILD_ROOT/bin/$i
-    rm -f $RPM_BUILD_ROOT/usr/bin/$i
+for i in basename date echo false nice pwd sleep stty true uname; do
+	install -m 755 $RPM_BUILD_ROOT/usr/bin/$i $RPM_BUILD_ROOT/bin/$i
+	rm $RPM_BUILD_ROOT/usr/bin/$i
 done
 
-install -m 755 $RPM_BUILD_ROOT/usr/bin/chroot $RPM_BUILD_ROOT/usr/sbin
-rm -f $RPM_BUILD_ROOT/usr/bin/chroot
-rm -f $RPM_BUILD_ROOT/usr/bin/{hostname,uptime}
-rm -f $RPM_BUILD_ROOT/usr/man/man1/{hostname,uptime,su}.1
+mv $RPM_BUILD_ROOT/usr/bin/chroot $RPM_BUILD_ROOT/usr/sbin/
+rm $RPM_BUILD_ROOT/usr/bin/uptime
+rm $RPM_BUILD_ROOT/usr/man/man1/{hostname,su,uptime}.1
 
-rm -f $RPM_BUILD_ROOT/usr/bin/[
 ln -sf test $RPM_BUILD_ROOT/usr/bin/[
-
-gzip -9nf $RPM_BUILD_ROOT/usr/man/man1/*
-gzip -9nf $RPM_BUILD_ROOT/usr/info/sh-utils.info
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -89,8 +84,8 @@ rm -rf $RPM_BUILD_ROOT
 /sbin/install-info /usr/info/sh-utils.info.gz /usr/info/dir
 
 %preun
-if [ $1 = 0 ]; then
-    /sbin/install-info --delete /usr/info/sh-utils.info.gz /usr/info/dir
+if [ $1 -eq 0 ]; then
+	/sbin/install-info --delete /usr/info/sh-utils.info.gz /usr/info/dir
 fi
 
 %files
@@ -100,116 +95,15 @@ fi
 /usr/sbin/chroot
 /usr/bin/*
 /usr/man/man1/*
-/usr/info/sh-utils.info.gz
+/usr/info/sh-utils.info.*
 
 %changelog
+* Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Wed Jul 26 2000 Solar Designer <solar@owl.openwall.com>
 - Replaced true and false with the assembly version.
 
 * Wed Jul 12 2000 Solar Designer <solar@owl.openwall.com>
 - Imported this spec from RH, removed su and the PAM patches (as we're
 using SimplePAMApps instead).
-
-* Tue Mar  7 2000 Jeff Johnson <jbj@redhat.com>
-- rebuild for sparc baud rates > 38400.
-
-* Wed Feb 02 2000 Cristian Gafton <gafton@redhat.com>
-- fix description
-
-* Wed Jan  5 2000 Jeff Johnson <jbj@redhat.com>
-- add cest timezone (#8162).
-
-* Thu Nov 18 1999 Michael K. Johnson <johnsonm@redhat.com>
-- export DISPLAY as part of "su -" so that pam_xauth works.
-  (really ought to be exported anyways...)
-
-* Tue Aug 17 1999 Cristian Gafton <gafton@redhat.com>
-- update to sh-utils 2.0 and port meaningfull patches (why the heck they keep
-  ignoring the PAM patches?!)  (Because our PAM patches, by necessity,
-  remove RMS's rant about the wheel group and how evil he thinks it
-  is...  So we never expect the PAM patches to be accepted.  -mkj)
-- sick thing: they still refer to /etc/[uw]tmp
-- fix bogus requirement for autoconf version 2.14.1, which is unreleased as
-  of today...
-
-* Thu Aug  5 1999 Jeff Johnson <jbj@redhat.com>
-- comment out "timestmap test stinks" hack. WTFO?
-- remove info page so that it is regenerated correctly.
-
-* Wed Aug  4 1999 Jeff Johnson <jbj@redhat.com>
-- docs should say /var/run/[uw]tmp not /etc/[uw]tmp (#4319).
-
-* Wed Jul 28 1999 Cristian Gafton <gafton@redhat.com>
-- fix date +yesterday/tomorrow (#3778)
-- fix #2308, #3954
-
-* Tue Apr 13 1999 Michael K. Johnson <johnsonm@redhat.com>
-- su.pamd now calls pam_xauth
-
-* Mon Apr 12 1999 Michael K. Johnson <johnsonm@redhat.com>
-- merge pam patches
-- wait until in child process to drop priviledges as we need
-  euid != ruid during pam_open_session and pam_close_session
-
-* Thu Apr 01 1999 Erik Troan <ewt@redhat.com>
-- make sure standard in is a tty so we can't feed it from a pipe
-
-* Wed Mar 31 1999 Erik Troan <ewt@redhat.com>
-- don't trust stdin for su (bug 1274)
-
-* Fri Mar 26 1999 Michael Maher <mike@redhat.com>
-- added stty patch, fixed bug #997
-
-* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com> 
-- auto rebuild in the new build environment (release 16)
-
-* Fri Dec 18 1998 Cristian Gafton <gafton@redhat.com>
-- build against glibc 2.1
-
-* Mon Jun  8 1998 Michal Jaegermann <michal@harddata.com>
-- fixed reversed test for when to allocate in who.c and an incorrect
-  use of xrealloc.
-
-* Thu Apr 30 1998 Donnie Barnes <djb@redhat.com>
-- moved /usr/bin/nice to /bin/nice
-
-* Fri Apr 24 1998 Prospector System <bugs@redhat.com>
-- translations modified for de, fr, tr
-
-* Sat Apr 11 1998 Cristian Gafton <gafton@redhat.com>
-- manhattan rebuild
-
-* Wed Oct 22 1997 Michael K. Johnson <johnsonm@redhat.com>
-- added minor patch for glibc 2.1
-
-* Wed Oct 21 1997 Cristian Gafton <gafton@redhat.com>
-- fixed the URLs in spec file
-- cleaned up the spec file
-
-* Thu Oct 02 1997 Michael K. Johnson <johnsonm@redhat.com>
-- BuildRoot
-- New pam standard.
-
-* Sun Sep 14 1997 Erik Troan <ewt@redhat.com>
-- uses install-info
-
-* Mon Jun 02 1997 Erik Troan <ewt@redhat.com>
-- built against glibc
-
-* Fri Apr 18 1997 Michael K. Johnson <johnsonm@redhat.com>
-- Fixed the sense of the user and root default paths.
-
-* Mon Apr 14 1997 Erik Troan <ewt@redhat.com>
-- Fixed getutent patch to define UTMP_READ_INCR
-- Modified su.c to define default paths w/o regard to other header files or
-  -D style definitions
-
-* Wed Apr 02 1997 Erik Troan <ewt@redhat.com>
-- Updated getutent patch for 1.16
-- Added mktime patch for 64bit time_t
-
-* Tue Mar 25 1997 Michael K. Johnson <johnsonm@redhat.com>
-- DEFPATH handling moved from ...path.patch to _PATH_DEFPATH*
-
-* Mon Mar 03 1997 Michael K. Johnson <johnsonm@redhat.com>
-- Moved from pam.conf to pam.d
