@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.13 2003/04/22 22:50:04 solar Exp $
+# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.14 2003/04/23 21:33:12 solar Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
 Version: 2.85
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 Source: ftp://ftp.cistron.nl/pub/people/miquels/sysvinit/sysvinit-%{version}.tar.gz
@@ -105,6 +105,10 @@ fi
 %attr(0600,root,root) /dev/initctl
 
 %changelog
+* Thu Apr 24 2003 Solar Designer <solar@owl.openwall.com>
+- Fixed a bug in yesterday's update to start-stop-daemon's executable file
+matching, thanks to Dmitry V. Levin.
+
 * Wed Apr 23 2003 Solar Designer <solar@owl.openwall.com>
 - Updated to 2.85 (which includes most of our old patches plus quite a few
 from ALT Linux).

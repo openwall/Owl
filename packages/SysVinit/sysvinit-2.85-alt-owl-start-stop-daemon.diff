@@ -1,6 +1,6 @@
 diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-2.85/contrib/start-stop-daemon.c
---- sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c	Tue Apr 22 21:31:25 2003
-+++ sysvinit-2.85/contrib/start-stop-daemon.c	Tue Apr 22 21:41:54 2003
+--- sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c	Wed Apr 23 01:31:25 2003
++++ sysvinit-2.85/contrib/start-stop-daemon.c	Thu Apr 24 01:25:27 2003
 @@ -12,13 +12,14 @@
  #include <stdarg.h>
  #include <signal.h>
@@ -13,7 +13,7 @@ diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-
  #include <pwd.h>
  
 -#define VERSION "version 0.3, 1996-06-05"
-+#define VERSION "Version 0.3+ALT/OW, 2003-04-23"
++#define VERSION "Version 0.3+ALT/OW, 2003-04-24"
  
  static int testmode = 0;
  static int quietmode = 0;
@@ -113,7 +113,7 @@ diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-
  badusage(const char *msg)
  {
  	if (msg && *msg)
-@@ -234,15 +222,40 @@ parse_options(int argc, char * const *ar
+@@ -234,15 +222,38 @@ parse_options(int argc, char * const *ar
  
  
  static int
@@ -124,17 +124,17 @@ diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-
  	char buf[32];
 +	char value[PATH_MAX];
 +	int rc;
-+
-+	if (!esb || !exec)
-+		return 0;
  
- 	sprintf(buf, "/proc/%d/exe", pid);
-+
- 	if (stat(buf, &sb) != 0)
+-	sprintf(buf, "/proc/%d/exe", pid);
+-	if (stat(buf, &sb) != 0)
++	if (!esb || !exec)
  		return 0;
 -	return (sb.st_dev == esb->st_dev && sb.st_ino == esb->st_ino);
 +
-+	if (sb.st_dev == esb->st_dev && sb.st_ino == esb->st_ino)
++	sprintf(buf, "/proc/%d/exe", pid);
++
++	if (stat(buf, &sb) == 0 &&
++	    sb.st_dev == esb->st_dev && sb.st_ino == esb->st_ino)
 +		return 1;
 +
 +	if ((rc = readlink(buf, value, sizeof(value) - 1)) > 0)
@@ -156,7 +156,7 @@ diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-
  }
  
  
-@@ -287,7 +300,7 @@ pid_is_cmd(int pid, const char *name)
+@@ -287,7 +298,7 @@ pid_is_cmd(int pid, const char *name)
  static void
  check(int pid)
  {
@@ -165,7 +165,7 @@ diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-
  		return;
  	if (userspec && !pid_is_user(pid, user_id))
  		return;
-@@ -321,7 +334,7 @@ do_procfs(void)
+@@ -321,7 +332,7 @@ do_procfs(void)
  
  	procdir = opendir("/proc");
  	if (!procdir)
@@ -174,7 +174,7 @@ diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-
  
  	foundany = 0;
  	while ((entry = readdir(procdir)) != NULL) {
-@@ -332,26 +345,26 @@ do_procfs(void)
+@@ -332,26 +343,26 @@ do_procfs(void)
  	}
  	closedir(procdir);
  	if (!foundany)
@@ -208,7 +208,7 @@ diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-
  
  	if (!found) {
  		if (quietmode <= 0)
-@@ -365,8 +378,8 @@ do_stop(void)
+@@ -365,8 +376,8 @@ do_stop(void)
  		else if (kill(p->pid, signal_nr) == 0)
  			push(&killed, p->pid);
  		else
@@ -219,7 +219,7 @@ diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-
  	}
  	if (quietmode < 0 && killed) {
  		printf("stopped %s (pid", what);
-@@ -374,6 +387,8 @@ do_stop(void)
+@@ -374,6 +385,8 @@ do_stop(void)
  			printf(" %d", p->pid);
  		printf(").\n");
  	}
@@ -228,7 +228,7 @@ diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-
  }
  
  
-@@ -387,14 +402,14 @@ main(int argc, char **argv)
+@@ -387,14 +400,14 @@ main(int argc, char **argv)
  	argv += optind;
  
  	if (execname && stat(execname, &exec_stat))
@@ -245,7 +245,7 @@ diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-
  
  		user_id = pw->pw_uid;
  	}
-@@ -425,6 +440,6 @@ main(int argc, char **argv)
+@@ -425,6 +438,6 @@ main(int argc, char **argv)
  		printf("starting %s ...\n", startas);
  	*--argv = startas;
  	execv(startas, argv);
