@@ -1,9 +1,9 @@
-# $Id: Owl/packages/sparc32/Attic/sparc32.spec,v 1.3 2002/02/05 16:28:29 solar Exp $
+# $Id: Owl/packages/sparc32/Attic/sparc32.spec,v 1.4 2002/05/24 21:16:04 solar Exp $
 
 Summary: A SPARC32 compilation environment.
 Name: sparc32
 Version: 1.1
-Release: owl2
+Release: owl3
 License: GPL
 Group: System Environment/Kernel
 Source: sparc32-1.1.tgz
@@ -31,10 +31,14 @@ make install PREFIX=$RPM_BUILD_ROOT
 rm -rf $RPM_BUILD_ROOT
 
 %files
+%defattr(-,root,root)
 /usr/bin/*
 /usr/man/man8/*
 
 %changelog
+* Sat May 25 2002 Solar Designer <solar@owl.openwall.com>
+- Don't let the files get listed under the build user.
+
 * Tue Feb 05 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 
