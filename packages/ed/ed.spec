@@ -1,9 +1,9 @@
-# $Id: Owl/packages/ed/ed.spec,v 1.15 2004/09/10 07:22:21 galaxy Exp $
+# $Id: Owl/packages/ed/ed.spec,v 1.16 2004/11/02 02:48:49 solar Exp $
 
 Summary: The GNU line editor.
 Name: ed
 Version: 0.2
-Release: owl21.1
+Release: owl22
 License: GPL
 Group: Applications/Text
 Source: ftp://ftp.gnu.org/gnu/%name-%version.tar.gz
@@ -59,7 +59,7 @@ fi
 %_mandir/*/*
 
 %changelog
-* Wed Feb 25 2004 Michail Litvak <mci@owl.openwall.com> 0.2-owl21.1
+* Wed Feb 25 2004 Michail Litvak <mci@owl.openwall.com> 0.2-owl22
 - Fixed building with new auto* tools.
 
 * Wed Sep 04 2002 Michail Litvak <mci@owl.openwall.com> 0.2-owl21
