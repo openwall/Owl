@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.20 2001/01/18 04:20:49 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.21 2001/01/26 07:16:48 solar Exp $
 
 Summary: Initial set of configuration files
 Name: owl-etc
 Version: 0.7
-Release: 1owl
+Release: 2owl
 Copyright: public domain
 Group: System Environment/Base
 Source0: passwd
@@ -47,7 +47,7 @@ rm -rf $RPM_BUILD_ROOT
 %verify(not md5 size mtime) %config(noreplace) /etc/passwd
 %verify(not md5 size mtime) %config(noreplace) %attr(400,root,root) /etc/shadow
 %verify(not md5 size mtime) %config(noreplace) /etc/group
-%verify(not md5 size mtime) %config(noreplace) %attr(600,root,root) /etc/fstab
+%verify(not md5 size mtime) %config(noreplace) %attr(644,root,root) /etc/fstab
 %attr(600,root,root) /etc/securetty
 %config /etc/shells
 %config(noreplace) /etc/host.conf
@@ -65,6 +65,10 @@ rm -rf $RPM_BUILD_ROOT
 %ghost /var/log/lastlog
 
 %changelog
+* Fri Jan 26 2001 Solar Designer <solar@owl.openwall.com>
+- Install /etc/fstab world-readable as it is used by sysconf(3) in glibc
+to find the mount point of procfs (which sounds broken enough for me).
+
 * Thu Jan 18 2001 Solar Designer <solar@owl.openwall.com>
 - Don't expire the initial (disabled) password of root and the pseudo-users.
 
