@@ -1,8 +1,8 @@
-# $Id: Owl/packages/kernel/kernel.spec,v 1.2 2000/10/28 18:28:59 solar Exp $
+# $Id: Owl/packages/kernel/kernel.spec,v 1.3 2000/10/28 19:23:30 solar Exp $
 
 Summary: Fake Linux kernel package for RH compatibility
 Name: kernel
-Version: 2.2.fake
+Version: 2.2.999fake
 Release: 1owl
 Copyright: public domain
 Group: System Environment/Base
