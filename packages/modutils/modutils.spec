@@ -1,4 +1,4 @@
-# $Id: Owl/packages/modutils/modutils.spec,v 1.12 2002/06/11 08:27:05 mci Exp $
+# $Id: Owl/packages/modutils/modutils.spec,v 1.13 2002/06/12 14:23:40 mci Exp $
 
 Summary: Kernel module utilities.
 Name: modutils
@@ -39,15 +39,8 @@ make dep all
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{etc,sbin}
+mkdir -p $RPM_BUILD_ROOT/sbin
 %makeinstall sbindir=$RPM_BUILD_ROOT/sbin
-
-rm -f $RPM_BUILD_ROOT%_mandir/man8/{kdstat,kerneld}.8                          
-                                                                               
-# security hole, works poorly anyway                                           
-rm -f $RPM_BUILD_ROOT/sbin/request-route
-
-touch $RPM_BUILD_ROOT/etc/modules.conf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -63,7 +56,6 @@ fi
 %files
 %defattr(-,root,root)
 %doc README CREDITS TODO ChangeLog example/kallsyms.c include/kallsyms.h
-%config(noreplace) /etc/modules.conf
 /sbin/*
 %{_mandir}/*/*
 
