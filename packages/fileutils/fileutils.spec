@@ -1,4 +1,4 @@
-# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.13 2003/10/15 20:32:20 solar Exp $
+# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.14 2003/10/29 19:08:28 solar Exp $
 
 # The texinfo documentation for fileutils, sh-utils, and textutils is
 # currently provided by fileutils.
@@ -10,7 +10,7 @@ Version: 4.1.11
 Release: owl4
 License: GPL
 Group: Applications/File
-Source0: ftp://alpha.gnu.org/gnu/fetish/fileutils-%{version}.tar.bz2
+Source0: ftp://alpha.gnu.org/gnu/fetish/fileutils-%version.tar.bz2
 Source1: colorls.sh
 Source2: colorls.csh
 Source3: DIR_COLORS
@@ -29,7 +29,7 @@ PreReq: /sbin/install-info
 %endif
 Conflicts: sh-utils < 2.0-owl3, textutils < 2.0.11-owl3
 Obsoletes: stat
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The fileutils package includes a number of GNU versions of common and
@@ -74,53 +74,50 @@ rm -rf $RPM_BUILD_ROOT
 
 cd $RPM_BUILD_ROOT
 
-mkdir -p .%{_prefix}/bin
+mkdir -p .%_prefix/bin
 for i in dir dircolors du install mkfifo shred vdir; do
-	mv -f bin/$i .%{_prefix}/bin/
+	mv -f bin/$i .%_prefix/bin/
 done
 
 mkdir -p etc/profile.d
 install -c -m 644 $RPM_SOURCE_DIR/DIR_COLORS etc/
 install -c -m 755 $RPM_SOURCE_DIR/colorls.{c,}sh etc/profile.d/
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %if %BUILD_INFO
 %pre
 /sbin/install-info --quiet --delete \
-	%{_infodir}/fileutils.info.gz %{_infodir}/dir
+	%_infodir/fileutils.info.gz %_infodir/dir
 /sbin/install-info --quiet --delete \
-	%{_infodir}/sh-utils.info.gz %{_infodir}/dir
+	%_infodir/sh-utils.info.gz %_infodir/dir
 /sbin/install-info --quiet --delete \
-	%{_infodir}/textutils.info.gz %{_infodir}/dir
+	%_infodir/textutils.info.gz %_infodir/dir
 
 %post
-/sbin/install-info %{_infodir}/coreutils.info.gz %{_infodir}/dir
+/sbin/install-info %_infodir/coreutils.info.gz %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/coreutils.info.gz %{_infodir}/dir
+	/sbin/install-info --delete %_infodir/coreutils.info.gz %_infodir/dir
 fi
 %else
 %pre
 /sbin/install-info --quiet --delete \
-	%{_infodir}/fileutils.info.gz %{_infodir}/dir
+	%_infodir/fileutils.info.gz %_infodir/dir
 /sbin/install-info --quiet --delete \
-	%{_infodir}/coreutils.info.gz %{_infodir}/dir
+	%_infodir/coreutils.info.gz %_infodir/dir
 %endif
 
 %files
 %defattr(-,root,root)
 %doc COPYING NEWS README THANKS TODO
-%config %{_sysconfdir}/*
-%{_exec_prefix}/bin/*
-%{_prefix}/bin/*
-%{_mandir}/man*/*
+%config %_sysconfdir/*
+%_exec_prefix/bin/*
+%_prefix/bin/*
+%_mandir/man*/*
 %if %BUILD_INFO
-%{_infodir}/coreutils.info*
+%_infodir/coreutils.info*
 %endif
-%{_datadir}/locale/*/*/*
+%_datadir/locale/*/*/*
 
 %changelog
 * Thu Oct 16 2003 Solar Designer <solar@owl.openwall.com> 4.1.11-owl4
@@ -152,7 +149,7 @@ some with modifications.
 - Changed SOURCE* to explicit $RPM_SOURCE_DIR/*
 
 * Thu Nov 30 2000 Solar Designer <solar@owl.openwall.com>
-- Avoid listing %{_sysconfdir}/profile.d (the directory itself).
+- Avoid listing %_sysconfdir/profile.d (the directory itself).
 
 * Wed Nov 29 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - add warning to shred(1) man.

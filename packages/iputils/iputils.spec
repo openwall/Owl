@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iputils/iputils.spec,v 1.15 2003/10/22 00:11:16 solar Exp $
+# $Id: Owl/packages/iputils/iputils.spec,v 1.16 2003/10/29 19:27:21 solar Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
@@ -6,7 +6,7 @@ Version: ss020927
 Release: owl2
 License: mostly BSD, some GPL
 Group: Applications/Internet
-Source0: ftp://ftp.inr.ac.ru/ip-routing/%{name}-%{version}.tar.gz
+Source0: ftp://ftp.inr.ac.ru/ip-routing/%name-%version.tar.gz
 Source1: bonding-0.2.tar.bz2
 Source2: ping.control
 Patch0: iputils-ss020927-rh-owl-cache-reverse-lookups.diff
@@ -14,8 +14,8 @@ Patch1: iputils-ss020927-owl-warnings.diff
 Patch2: iputils-ss020927-owl-socketbits.diff
 Patch3: bonding-0.2-owl-ioctl.diff
 PreReq: owl-control >= 0.4, owl-control < 2.0
-Prefix: %{_prefix}
-BuildRoot: /override/%{name}-%{version}
+Prefix: %_prefix
+BuildRoot: /override/%name-%version
 
 %description
 The iputils package contains a set of IPv4/IPv6 networking utilities,
@@ -24,7 +24,7 @@ protocol ECHO_REQUEST packets to a specified network host and can tell
 you if that machine is alive and receiving network traffic.
 
 %prep
-%setup -q -n %{name} -a 1
+%setup -q -n %name -a 1
 mv -f bonding-0.2/README bonding-0.2/README.ifenslave
 %patch0 -p1
 %patch1 -p1
@@ -42,27 +42,24 @@ gcc $RPM_OPT_FLAGS -s bonding-0.2/ifenslave.c -o bonding-0.2/ifenslave
 %install
 rm -rf $RPM_BUILD_ROOT
 
-mkdir -p $RPM_BUILD_ROOT%{_sbindir}
+mkdir -p $RPM_BUILD_ROOT%_sbindir
 mkdir -p $RPM_BUILD_ROOT/{bin,sbin}
 install -m 755 arping clockdiff ping6 tracepath tracepath6 traceroute6 \
-	$RPM_BUILD_ROOT%{_sbindir}/
-install -m 755 rdisc $RPM_BUILD_ROOT%{_sbindir}/rdiscd
+	$RPM_BUILD_ROOT%_sbindir/
+install -m 755 rdisc $RPM_BUILD_ROOT%_sbindir/rdiscd
 install -m 700 ping $RPM_BUILD_ROOT/bin/
 install -m 755 bonding-0.2/ifenslave $RPM_BUILD_ROOT/sbin/
 
-mkdir -p $RPM_BUILD_ROOT%{_mandir}/man8
+mkdir -p $RPM_BUILD_ROOT%_mandir/man8
 install -m 644 doc/{arping,clockdiff,ping,tracepath,traceroute6}.8 \
-	$RPM_BUILD_ROOT%{_mandir}/man8/
+	$RPM_BUILD_ROOT%_mandir/man8/
 
 sed 's/rdisc/rdiscd/' \
-	< doc/rdisc.8 > $RPM_BUILD_ROOT%{_mandir}/man8/rdiscd.8
+	< doc/rdisc.8 > $RPM_BUILD_ROOT%_mandir/man8/rdiscd.8
 
 mkdir -p $RPM_BUILD_ROOT/etc/control.d/facilities
 install -m 700 $RPM_SOURCE_DIR/ping.control \
 	$RPM_BUILD_ROOT/etc/control.d/facilities/ping
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %pre
 if [ $1 -ge 2 ]; then
@@ -79,16 +76,16 @@ fi
 %files
 %defattr(-,root,root)
 %doc RELNOTES bonding*/README.ifenslave
-%{_sbindir}/arping
-%{_sbindir}/clockdiff
+%_sbindir/arping
+%_sbindir/clockdiff
 /sbin/ifenslave
 %attr(700,root,root) /bin/ping
-%{_sbindir}/ping6
-%{_sbindir}/tracepath
-%{_sbindir}/tracepath6
-%{_sbindir}/traceroute6
-%{_sbindir}/rdiscd
-%{_mandir}/man8/*
+%_sbindir/ping6
+%_sbindir/tracepath
+%_sbindir/tracepath6
+%_sbindir/traceroute6
+%_sbindir/rdiscd
+%_mandir/man8/*
 /etc/control.d/facilities/ping
 
 %changelog

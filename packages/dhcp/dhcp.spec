@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.21 2003/10/11 21:32:56 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.22 2003/10/29 18:51:10 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -9,14 +9,14 @@ Release: owl5
 License: ISC License
 Group: System Environment/Daemons
 URL: http://www.isc.org/products/DHCP/
-Source0: ftp://ftp.isc.org/isc/dhcp/dhcp-%{version}.tar.gz
+Source0: ftp://ftp.isc.org/isc/dhcp/dhcp-%version.tar.gz
 Source1: dhcpd.init
 Source2: dhcpd.conf.sample
 Patch0: dhcp-3.0pl2-owl-man.diff
 Patch1: dhcp-3.0pl2-owl-drop-root.diff
 Patch2: dhcp-3.0pl2-rh-owl-script.diff
 Patch3: dhcp-3.0pl2-owl-warnings.diff
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The ISC Dynamic Host Configuration Protocol distribution provides a
@@ -27,7 +27,7 @@ DHCP protocol.
 %package client
 Summary: The ISC DHCP client.
 Group: System Enviroment/Base
-PreReq: dhcp = %{version}-%{release}
+PreReq: dhcp = %version-%release
 Obsoletes: dhcpcd
 
 %description client
@@ -40,7 +40,7 @@ fail, by statically assigning an address.
 %package server
 Summary: The ISC DHCP server daemon.
 Group: System Environment/Daemons
-PreReq: dhcp = %{version}-%{release}
+PreReq: dhcp = %version-%release
 PreReq: /sbin/chkconfig
 Requires: /var/empty
 Obsoletes: dhcpd
@@ -56,7 +56,7 @@ functionality, with certain restrictions.
 %package relay
 Summary: The ISC DHCP relay.
 Group: System Environment/Daemons
-PreReq: dhcp = %{version}-%{release}
+PreReq: dhcp = %version-%release
 Requires: /var/empty
 
 %description relay
@@ -86,7 +86,7 @@ make CC=gcc DEBUG=
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/etc/{rc.d/init.d}
-make install DESTDIR=$RPM_BUILD_ROOT MANDIR=%{_mandir}
+make install DESTDIR=$RPM_BUILD_ROOT MANDIR=%_mandir
 
 cd $RPM_BUILD_ROOT
 
@@ -103,9 +103,6 @@ cat <<EOF > $RPM_BUILD_ROOT/etc/sysconfig/dhcpd
 # Additional command line options here
 DHCPDARGS=
 EOF
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %pre
 grep -q ^dhcp: /etc/group || groupadd -g 188 dhcp
@@ -134,20 +131,20 @@ fi
 %files
 %defattr(-,root,root)
 %doc README RELNOTES CHANGES COPYRIGHT $RPM_BUILD_ROOT/dhcpd.conf.sample
-%{_mandir}/man1/omshell.1*
-%{_mandir}/man3/dhcpctl.3*
-%{_mandir}/man5/dhcp-eval.5*
-%{_mandir}/man5/dhcp-options.5*
+%_mandir/man1/omshell.1*
+%_mandir/man3/dhcpctl.3*
+%_mandir/man5/dhcp-eval.5*
+%_mandir/man5/dhcp-options.5*
 
 %if %BUILD_DHCP_CLIENT
 %files client
 %defattr(-,root,root)
 /sbin/dhclient
 /sbin/dhclient-script
-%{_mandir}/man5/dhclient.conf.5*
-%{_mandir}/man5/dhclient.leases.5*
-%{_mandir}/man8/dhclient.8*
-%{_mandir}/man8/dhclient-script.8*
+%_mandir/man5/dhclient.conf.5*
+%_mandir/man5/dhclient.leases.5*
+%_mandir/man8/dhclient.8*
+%_mandir/man8/dhclient-script.8*
 %attr(0700,root,dhcp) %dir /var/lib/dhcp/dhclient
 %attr(0700,root,dhcp) %dir /var/lib/dhcp/dhclient/state
 %attr(0600,root,dhcp) %config /var/lib/dhcp/dhclient/state/dhclient.leases
@@ -158,9 +155,9 @@ fi
 %config /etc/sysconfig/dhcpd
 %config /etc/rc.d/init.d/dhcpd
 /usr/sbin/dhcpd
-%{_mandir}/man5/dhcpd.conf.5*
-%{_mandir}/man5/dhcpd.leases.5*
-%{_mandir}/man8/dhcpd.8*
+%_mandir/man5/dhcpd.conf.5*
+%_mandir/man5/dhcpd.leases.5*
+%_mandir/man8/dhcpd.8*
 %attr(0750,root,dhcp) %dir /var/lib/dhcp/dhcpd
 %attr(1770,root,dhcp) %dir /var/lib/dhcp/dhcpd/state
 %attr(0600,dhcp,dhcp) %config /var/lib/dhcp/dhcpd/state/dhcpd.leases
@@ -168,7 +165,7 @@ fi
 %files relay
 %defattr(-,root,root)
 /usr/sbin/dhcrelay
-%{_mandir}/man8/dhcrelay.8*
+%_mandir/man8/dhcrelay.8*
 
 %changelog
 * Sun Oct 12 2003 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl5

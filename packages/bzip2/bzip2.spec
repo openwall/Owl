@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bzip2/bzip2.spec,v 1.11 2002/02/07 18:48:07 solar Exp $
+# $Id: Owl/packages/bzip2/bzip2.spec,v 1.12 2003/10/29 18:37:48 solar Exp $
 
 Summary: A file compression utility.
 Name: bzip2
@@ -7,13 +7,13 @@ Release: owl1
 License: BSD
 Group: Applications/File
 URL: http://sources.redhat.com/bzip2/
-Source: ftp://sources.redhat.com/pub/bzip2/v102/bzip2-%{version}.tar.gz
+Source: ftp://sources.redhat.com/pub/bzip2/v102/bzip2-%version.tar.gz
 Patch0: bzip2-1.0.2-owl-Makefiles.diff
 Patch1: bzip2-1.0.2-owl-tmp.diff
 PreReq: /sbin/ldconfig
 Requires: mktemp >= 1:1.3.1
 Provides: libbz2.so.0
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 bzip2 is a freely available, patent-free, high quality data compressor.
@@ -29,7 +29,7 @@ compression capability.
 %package devel
 Summary: Header files and libraries for developing apps which will use bzip2.
 Group: Development/Libraries
-Requires: bzip2 = %{version}-%{release}
+Requires: bzip2 = %version-%release
 
 %description devel
 Header files and a static library of bzip2 functions, for developing apps
@@ -50,14 +50,11 @@ make CFLAGS="$RPM_OPT_FLAGS -D_FILE_OFFSET_BITS=64"
 %install
 rm -rf $RPM_BUILD_ROOT
 
-make install PREFIX="${RPM_BUILD_ROOT}/usr"
-make -f Makefile-libbz2_so install PREFIX="${RPM_BUILD_ROOT}/usr"
+make install PREFIX=$RPM_BUILD_ROOT/usr
+make -f Makefile-libbz2_so install PREFIX=$RPM_BUILD_ROOT/usr
 
 # Hack!
-ln -s libbz2.so.%{version} ${RPM_BUILD_ROOT}%{_libdir}/libbz2.so.0
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+ln -s libbz2.so.%version $RPM_BUILD_ROOT%_libdir/libbz2.so.0
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -65,18 +62,18 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 %doc CHANGES LICENSE README Y2K_INFO
-%{_bindir}/*
-%{_mandir}/*/*
-%{_libdir}/*.so.*
+%_bindir/*
+%_mandir/*/*
+%_libdir/*.so.*
 
 %files devel
 %defattr(-,root,root)
-%{_includedir}/*
-%{_libdir}/*.a
-%{_libdir}/*.so
+%_includedir/*
+%_libdir/*.a
+%_libdir/*.so
 
 %changelog
-* Fri Feb 01 2002 Solar Designer <solar@owl.openwall.com>
+* Fri Feb 01 2002 Solar Designer <solar@owl.openwall.com> 1.0.2-owl1
 - Updated to 1.0.2.
 - Dropped Red Hat's autoconf/libtoolize patch.
 - Use the new Makefile-libbz2_so for building the shared library.

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dev86/dev86.spec,v 1.9 2002/03/21 06:48:48 mci Exp $
+# $Id: Owl/packages/dev86/dev86.spec,v 1.10 2003/10/29 18:51:10 solar Exp $
 
 Summary: A real mode 80x86 assembler and linker.
 Name: dev86
@@ -6,7 +6,7 @@ Version: 0.16.0
 Release: owl2
 License: GPL
 Group: Development/Languages
-Source: http://www.cix.co.uk/~mayday/Dev86src-%{version}.tar.gz
+Source: http://www.cix.co.uk/~mayday/Dev86src-%version.tar.gz
 Patch0: dev86-0.16.0-rh-install-no-root.diff
 Patch1: dev86-0.16.0-rh-no-bcc.diff
 Patch2: dev86-0.16.0-rh-paths.diff
@@ -15,7 +15,7 @@ Patch4: dev86-0.16.0-owl-optflags.diff
 Patch5: dev86-0.16.0-owl-warnings.diff
 Obsoletes: bin86
 ExclusiveArch: %ix86
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The dev86 package provides an assembler and linker for real mode 80x86
@@ -43,21 +43,18 @@ quit
 %install
 rm -rf $RPM_BUILD_ROOT
 
-make DIST=$RPM_BUILD_ROOT MANDIR=${RPM_BUILD_ROOT}/%{_mandir} ELKSSRC=. install
+make DIST=$RPM_BUILD_ROOT MANDIR=$RPM_BUILD_ROOT/%_mandir ELKSSRC=. install
 
-install -m 755 -s ${RPM_BUILD_ROOT}/lib/elksemu ${RPM_BUILD_ROOT}/usr/bin
-rm -rf ${RPM_BUILD_ROOT}/lib/
+install -m 755 -s $RPM_BUILD_ROOT/lib/elksemu $RPM_BUILD_ROOT/usr/bin/
+rm -rf $RPM_BUILD_ROOT/lib/
 
-cd ${RPM_BUILD_ROOT}/usr/bin
+cd $RPM_BUILD_ROOT/usr/bin
 rm -f nm86 size86
 ln -s objdump86 nm86
 ln -s objdump86 size86
 
-# move header files out of /usr/include and into /usr/lib/bcc/include
-mv ${RPM_BUILD_ROOT}/usr/include ${RPM_BUILD_ROOT}/usr/lib/bcc
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+# Move header files out of /usr/include and into /usr/lib/bcc/include
+mv $RPM_BUILD_ROOT/usr/include $RPM_BUILD_ROOT/usr/lib/bcc/
 
 %files
 %defattr(-,root,root,-)
@@ -82,10 +79,10 @@ rm -rf $RPM_BUILD_ROOT
 /usr/lib/liberror.txt
 /usr/lib/bcc/include/*
 /usr/bin/elksemu
-/%{_mandir}/man1/*
+%_mandir/man1/*
 
 %changelog
-* Thu Mar 20 2002 Michail Litvak <mci@owl.openwall.com>
+* Thu Mar 20 2002 Michail Litvak <mci@owl.openwall.com> 0.16.0-owl2
 - fixes to build with -Wall without warnings
 
 * Thu Mar 14 2002 Michail Litvak <mci@owl.openwall.com>

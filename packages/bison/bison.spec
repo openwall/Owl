@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bison/bison.spec,v 1.12 2002/08/26 15:17:17 mci Exp $
+# $Id: Owl/packages/bison/bison.spec,v 1.13 2003/10/29 18:37:48 solar Exp $
 
 Summary: A GNU general-purpose parser generator.
 Name: bison
@@ -6,11 +6,11 @@ Version: 1.35
 Release: owl2
 License: GPL
 Group: Development/Tools
-Source: ftp://ftp.gnu.org/gnu/bison/bison-%{version}.tar.bz2
+Source: ftp://ftp.gnu.org/gnu/bison/bison-%version.tar.bz2
 Patch0: bison-1.30-owl-tmp.diff
 PreReq: /sbin/install-info
 BuildRequires: mktemp >= 1:1.3.1
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 Bison is a general purpose parser generator which converts a grammar
@@ -29,35 +29,32 @@ to be very proficient in C programming to be able to program with Bison.
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-%configure --datadir=%{_libdir}
+%configure --datadir=%_libdir
 make LDFLAGS=-s
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%makeinstall datadir=${RPM_BUILD_ROOT}%{_libdir}
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+%makeinstall datadir=$RPM_BUILD_ROOT%_libdir
 
 %post
-/sbin/install-info %{_infodir}/bison.info.gz %{_infodir}/dir \
+/sbin/install-info %_infodir/bison.info.gz %_infodir/dir \
 	--entry="* bison: (bison).                               The GNU parser generator."
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/bison.info.gz %{_infodir}/dir \
+	/sbin/install-info --delete %_infodir/bison.info.gz %_infodir/dir \
 		--entry="* bison: (bison).                               The GNU parser generator."
 fi
 
 %files
 %defattr(-,root,root)
-%{_mandir}/*/*
-%{_libdir}/*
-%{_infodir}/bison.info*
-%{_bindir}/*
+%_mandir/*/*
+%_libdir/*
+%_infodir/bison.info*
+%_bindir/*
 
 %changelog
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1.35-owl2
 - Deal with info dir entries such that the menu looks pretty.
 
 * Tue Jun 11 2002 Michail Litvak <mci@owl.openwall.com>

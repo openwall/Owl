@@ -1,4 +1,4 @@
-# $Id: Owl/packages/grep/grep.spec,v 1.6 2002/08/26 16:26:27 mci Exp $
+# $Id: Owl/packages/grep/grep.spec,v 1.7 2003/10/29 19:22:05 solar Exp $
 
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
@@ -7,11 +7,11 @@ Release: owl2
 Epoch: 1
 License: GPL
 Group: Applications/Text
-Source: ftp://ftp.gnu.org/gnu/grep/grep-%{version}.tar.gz
+Source: ftp://ftp.gnu.org/gnu/grep/grep-%version.tar.gz
 Patch: grep-2.4.2-owl-info.diff
 PreReq: /sbin/install-info
-Prefix: %{_prefix}
-BuildRoot: /override/%{name}-%{version}
+Prefix: %_prefix
+BuildRoot: /override/%name-%version
 
 %description
 The GNU versions of commonly used grep utilities.  grep searches
@@ -31,33 +31,31 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%makeinstall LDFLAGS=-s \
-	prefix=${RPM_BUILD_ROOT}%{_prefix} exec_prefix=$RPM_BUILD_ROOT
+%makeinstall \
+	LDFLAGS=-s \
+	prefix=$RPM_BUILD_ROOT%_prefix exec_prefix=$RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/bin
-mv $RPM_BUILD_ROOT%{_prefix}/bin/* $RPM_BUILD_ROOT/bin/
-rm -rf $RPM_BUILD_ROOT%{_prefix}/bin
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+mv $RPM_BUILD_ROOT%_prefix/bin/* $RPM_BUILD_ROOT/bin/
+rm -rf $RPM_BUILD_ROOT%_prefix/bin
 
 %post
-/sbin/install-info %{_infodir}/grep.info.gz %{_infodir}/dir
+/sbin/install-info %_infodir/grep.info.gz %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/grep.info.gz %{_infodir}/dir
+	/sbin/install-info --delete %_infodir/grep.info.gz %_infodir/dir
 fi
 
 %files
 %defattr(-,root,root)
 %doc ABOUT-NLS AUTHORS THANKS TODO NEWS README ChangeLog
 /bin/*
-%{_infodir}/*.info*
-%{_mandir}/*/*
-%{_prefix}/share/locale/*/*/grep.*
+%_infodir/*.info*
+%_mandir/*/*
+%_prefix/share/locale/*/*/grep.*
 
 %changelog
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1:2.4.2-owl2
 - Deal with info dir entries such that the menu looks pretty.
 
 * Sun Feb 03 2002 Michail Litvak <mci@owl.openwall.com>

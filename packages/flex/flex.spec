@@ -1,4 +1,4 @@
-# $Id: Owl/packages/flex/flex.spec,v 1.8 2002/08/26 15:40:33 mci Exp $
+# $Id: Owl/packages/flex/flex.spec,v 1.9 2003/10/29 19:08:28 solar Exp $
 
 Summary: A tool for creating scanners (text pattern recognizers).
 Name: flex
@@ -6,11 +6,11 @@ Version: 2.5.4a
 Release: owl13
 License: GPL
 Group: Development/Tools
-Source: ftp://ftp.gnu.org/non-gnu/flex/flex-%{version}.tar.gz
+Source: ftp://ftp.gnu.org/non-gnu/flex/flex-%version.tar.gz
 Patch0: flex-2.5.4a-rh-skel.diff
 PreReq: /sbin/install-info
-Prefix: %{_prefix}
-BuildRoot: /override/%{name}-%{version}
+Prefix: %_prefix
+BuildRoot: /override/%name-%version
 
 %description
 The flex program generates scanners.  Scanners are programs which can
@@ -35,44 +35,41 @@ make
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%makeinstall mandir=$RPM_BUILD_ROOT/%{_mandir}/man1
+%makeinstall mandir=$RPM_BUILD_ROOT%_mandir/man1
 
 pushd $RPM_BUILD_ROOT
-ln -sf flex .%{_prefix}/bin/lex
-ln -s flex.1 .%{_mandir}/man1/lex.1
-ln -s flex.1 .%{_mandir}/man1/flex++.1
-ln -s libfl.a .%{_prefix}/lib/libl.a
+ln -sf flex .%_prefix/bin/lex
+ln -s flex.1 .%_mandir/man1/lex.1
+ln -s flex.1 .%_mandir/man1/flex++.1
+ln -s libfl.a .%_prefix/lib/libl.a
 popd
 
-mkdir ${RPM_BUILD_ROOT}%{_infodir}
-install -m 644 MISC/texinfo/flex.info ${RPM_BUILD_ROOT}%{_infodir}/
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+mkdir $RPM_BUILD_ROOT%_infodir
+install -m 644 MISC/texinfo/flex.info $RPM_BUILD_ROOT%_infodir/
 
 %post
-/sbin/install-info %{_infodir}/flex.info.gz %{_infodir}/dir \
+/sbin/install-info %_infodir/flex.info.gz %_infodir/dir \
 	--entry="* Flex: (flex).                                 A fast scanner generator."
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/flex.info.gz %{_infodir}/dir \
+	/sbin/install-info --delete %_infodir/flex.info.gz %_infodir/dir \
 		--entry="* Flex: (flex).                                 A fast scanner generator."
 fi
 
 %files
 %defattr(-,root,root)
 %doc COPYING NEWS README
-%{_prefix}/bin/lex
-%{_prefix}/bin/flex
-%{_prefix}/bin/flex++
-%{_mandir}/man1/*
-%{_infodir}/flex.*
-%{_prefix}/lib/libl.a
-%{_prefix}/lib/libfl.a
-%{_prefix}/include/FlexLexer.h
+%_prefix/bin/lex
+%_prefix/bin/flex
+%_prefix/bin/flex++
+%_mandir/man1/*
+%_infodir/flex.*
+%_prefix/lib/libl.a
+%_prefix/lib/libfl.a
+%_prefix/include/FlexLexer.h
 
 %changelog
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 2.5.4a-owl13
 - Deal with info dir entries such that the menu looks pretty.
 
 * Sun Jul 07 2002 Michail Litvak <mci@owl.openwall.com>

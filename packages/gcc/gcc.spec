@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.29 2002/08/27 18:25:00 solar Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.30 2003/10/29 19:22:05 solar Exp $
 
 %define GCC_PREFIX /usr
 %define CPP_PREFIX /lib
@@ -11,13 +11,13 @@
 
 Summary: C compiler from the GNU Compiler Collection.
 Name: gcc
-Version: %{GCC_VERSION}
+Version: %GCC_VERSION
 Release: owl5
 Epoch: 1
 License: GPL
 Group: Development/Languages
 URL: http://gcc.gnu.org
-Source0: ftp://ftp.gnu.org/gnu/gcc/gcc-%{GCC_VERSION}.tar.gz
+Source0: ftp://ftp.gnu.org/gnu/gcc/gcc-%GCC_VERSION.tar.gz
 Source1: libstdc++-compat.tar.bz2
 Patch0: gcc-2.95.3-rh-warn.diff
 Patch1: gcc-2.95.2-owl-disable-dvi.diff
@@ -27,9 +27,9 @@ Patch4: gcc-2.95.3-owl-sparc-library-path.diff
 Patch5: gcc-2.95.3-owl-info.diff
 PreReq: /sbin/install-info
 Requires: binutils >= 2.9.1.0.25
-Requires: cpp = %{GCC_VERSION}
+Requires: cpp = %GCC_VERSION
 Obsoletes: egcs
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The gcc package contains C compiler from the GNU Compiler Collection,
@@ -49,7 +49,7 @@ used independently from the C compiler and the C language.
 %package c++
 Summary: C++ support for gcc.
 Group: Development/Languages
-Requires: gcc = %{GCC_VERSION}, cpp = %{GCC_VERSION}
+Requires: gcc = %GCC_VERSION, cpp = %GCC_VERSION
 Obsoletes: egcs-c++
 
 %description c++
@@ -95,7 +95,7 @@ package includes the header files and libraries needed for C++ development.
 %package objc
 Summary: Objective C support for gcc.
 Group: Development/Languages
-Requires: gcc = %{GCC_VERSION}, cpp = %{GCC_VERSION}
+Requires: gcc = %GCC_VERSION, cpp = %GCC_VERSION
 Obsoletes: egcs-objc
 
 %description objc
@@ -110,7 +110,7 @@ not include the standard Objective C object library.
 Summary: Fortran 77 support for gcc.
 Group: Development/Languages
 PreReq: /sbin/install-info
-Requires: gcc = %{GCC_VERSION}
+Requires: gcc = %GCC_VERSION
 Obsoletes: egcs-g77
 
 %description g77
@@ -123,7 +123,7 @@ Collection.
 Summary: CHILL support for gcc.
 Group: Development/Languages
 PreReq: /sbin/install-info
-Requires: gcc = %{GCC_VERSION}
+Requires: gcc = %GCC_VERSION
 
 %description chill
 This package adds support for compiling CHILL programs with the GNU
@@ -138,7 +138,7 @@ Brazil, Korea, and other places.
 %endif
 
 %prep
-%setup -q -n gcc-%{GCC_VERSION} -a 1
+%setup -q -n gcc-%GCC_VERSION -a 1
 %patch0 -p1
 %patch1 -p0
 %patch2 -p1
@@ -169,7 +169,7 @@ rm -f gcc/java/config-lang.in
 # included, should uncomment if that changes.
 #rm gcc/{gcc,cpp}.info
 %ifarch sparcv9
-%define _target_platform sparc-%{_vendor}-%{_target_os}
+%define _target_platform sparc-%_vendor-%_target_os
 %endif
 %ifarch sparc sparcv9
 # pthreads are currently not supported on sparc
@@ -178,9 +178,9 @@ ENABLE_THREADS=''
 ENABLE_THREADS='--enable-threads=posix'
 %endif
 
-rm -rf obj-%{_target_platform}
-mkdir obj-%{_target_platform}
-cd obj-%{_target_platform}
+rm -rf obj-%_target_platform
+mkdir obj-%_target_platform
+cd obj-%_target_platform
 
 CFLAGS="`echo "$RPM_OPT_FLAGS" | sed -e 's/-fno-rtti//g'` -fexceptions"
 export extra_c_flags="-O -fomit-frame-pointer"
@@ -189,11 +189,11 @@ CXXFLAGS="$CFLAGS" \
 XCFLAGS="$CFLAGS" \
 TCFLAGS="$CFLAGS" \
 ../configure \
-	--prefix=%{GCC_PREFIX} \
-	--mandir=${RPM_BUILD_ROOT}%{_mandir} \
-	--infodir=${RPM_BUILD_ROOT}%{_infodir} \
+	--prefix=%GCC_PREFIX \
+	--mandir=$RPM_BUILD_ROOT%_mandir \
+	--infodir=$RPM_BUILD_ROOT%_infodir \
 	--enable-shared --enable-haifa $ENABLE_THREADS \
-	--host=%{_target_platform}
+	--host=%_target_platform
 touch ../gcc/c-gperf.h
 
 make bootstrap-lean
@@ -253,58 +253,58 @@ popd
 %install
 rm -rf $RPM_BUILD_ROOT
 
-cd obj-%{_target_platform}
-make prefix=$RPM_BUILD_ROOT%{GCC_PREFIX} install
+cd obj-%_target_platform
+make prefix=$RPM_BUILD_ROOT%GCC_PREFIX install
 
-FULLVER=`$RPM_BUILD_ROOT%{GCC_PREFIX}/bin/%{_target_platform}-gcc --version | \
+FULLVER=`$RPM_BUILD_ROOT%GCC_PREFIX/bin/%_target_platform-gcc --version | \
 	cut -d' ' -f1`
-FULLPATH=$(dirname $RPM_BUILD_ROOT%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/$FULLVER/cc1)
+FULLPATH=$(dirname $RPM_BUILD_ROOT%GCC_PREFIX/lib/gcc-lib/%_target_platform/$FULLVER/cc1)
 
 # fix some things
-ln -sf gcc $RPM_BUILD_ROOT%{GCC_PREFIX}/bin/cc
-ln -sf gcc.1 $RPM_BUILD_ROOT%{GCC_PREFIX}/man/man1/cc.1
-rm -f $RPM_BUILD_ROOT%{GCC_PREFIX}/info/dir
+ln -sf gcc $RPM_BUILD_ROOT%GCC_PREFIX/bin/cc
+ln -sf gcc.1 $RPM_BUILD_ROOT%GCC_PREFIX/man/man1/cc.1
+rm -f $RPM_BUILD_ROOT%GCC_PREFIX/info/dir
 %if %BUILD_F77
-ln -sf g77 $RPM_BUILD_ROOT%{GCC_PREFIX}/bin/f77
+ln -sf g77 $RPM_BUILD_ROOT%GCC_PREFIX/bin/f77
 %endif
 
 mkdir -p $RPM_BUILD_ROOT/lib
 ln -sf ../${FULLPATH##$RPM_BUILD_ROOT/}/cpp0 $RPM_BUILD_ROOT/lib/cpp
-ln -sf cccp.1 $RPM_BUILD_ROOT%{GCC_PREFIX}/man/man1/cpp.1
+ln -sf cccp.1 $RPM_BUILD_ROOT%GCC_PREFIX/man/man1/cpp.1
 
 %ifarch %ix86
 # install the compatibility libstdc++ library
-test -d ../compat/i386 && install -m 755 ../compat/i386/* $RPM_BUILD_ROOT%{GCC_PREFIX}/lib/
+test -d ../compat/i386 && install -m 755 ../compat/i386/* $RPM_BUILD_ROOT%GCC_PREFIX/lib/
 %endif
 
 cd ..
 cat >gcc-filelist <<EOF
 %defattr(-,root,root)
-%{GCC_PREFIX}/bin/gcc
-%{GCC_PREFIX}/bin/cc
-%{GCC_PREFIX}/bin/protoize
-%{GCC_PREFIX}/bin/unprotoize
-%{GCC_PREFIX}/bin/gcov
-%{GCC_PREFIX}/bin/%{_target_platform}-gcc
-%{GCC_PREFIX}/man/man1/gcc.1*
-%{GCC_PREFIX}/man/man1/cc.1*
-%{GCC_PREFIX}/info/gcc*
-%dir %{GCC_PREFIX}/lib/gcc-lib
-%dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}
-%dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}
-%dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/include
-%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/cc1
-%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/collect2
-%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/crt*.o
-%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/libgcc.a
-%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/SYSCALLS.c.X
-%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/specs
+%GCC_PREFIX/bin/gcc
+%GCC_PREFIX/bin/cc
+%GCC_PREFIX/bin/protoize
+%GCC_PREFIX/bin/unprotoize
+%GCC_PREFIX/bin/gcov
+%GCC_PREFIX/bin/%_target_platform-gcc
+%GCC_PREFIX/man/man1/gcc.1*
+%GCC_PREFIX/man/man1/cc.1*
+%GCC_PREFIX/info/gcc*
+%dir %GCC_PREFIX/lib/gcc-lib
+%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform
+%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION
+%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include
+%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/cc1
+%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/collect2
+%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/crt*.o
+%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/libgcc.a
+%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/SYSCALLS.c.X
+%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/specs
 %doc gcc/README* gcc/*ChangeLog*
 EOF
 
-(cd $RPM_BUILD_ROOT%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/include &&
+(cd $RPM_BUILD_ROOT%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include &&
 	ls | egrep -v '^((objc)|(exception)|(typeinfo)|(new(\.h)?))$'
-) | sed 's|^|%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/include/|' \
+) | sed 's|^|%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include/|' \
 	>>gcc-filelist
 
 # This is required for the old Red Hat Linux 6 based programs ...
@@ -313,51 +313,48 @@ ln -sf libstdc++-3-libc6.1-2-2.10.0.so libstdc++-libc6.1-1.so.2
 ln -sf libstdc++-3-libc6.1-2-2.10.0.so libstdc++-libc6.1-1.1.so.2
 ln -sf libstdc++-3-libc6.1-2-2.10.0.so libstdc++.so.2.9
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %post
-/sbin/install-info %{_infodir}/gcc.info.gz %{_infodir}/dir
+/sbin/install-info %_infodir/gcc.info.gz %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/gcc.info.gz %{_infodir}/dir
+	/sbin/install-info --delete %_infodir/gcc.info.gz %_infodir/dir
 fi
 
 %post -n libstdc++
-if ! grep -qs '^%{GCC_PREFIX}/lib$' /etc/ld.so.conf; then
-	echo %{GCC_PREFIX}/lib >> /etc/ld.so.conf
+if ! grep -qs '^%GCC_PREFIX/lib$' /etc/ld.so.conf; then
+	echo %GCC_PREFIX/lib >> /etc/ld.so.conf
 fi
 /sbin/ldconfig
 
 %postun -n libstdc++
 if [ $1 -eq 0 ]; then
-	grep -v "%{GCC_PREFIX}/lib" /etc/ld.so.conf > /etc/ld.so.conf.new &&
+	grep -v "%GCC_PREFIX/lib" /etc/ld.so.conf > /etc/ld.so.conf.new &&
 	mv -f /etc/ld.so.conf.new /etc/ld.so.conf
 fi
 /sbin/ldconfig
 
 %ifarch %ix86
 %post -n libstdc++-compat
-if ! grep -qs '^%{GCC_PREFIX}/lib$' /etc/ld.so.conf; then
-	echo %{GCC_PREFIX}/lib >>/etc/ld.so.conf
+if ! grep -qs '^%GCC_PREFIX/lib$' /etc/ld.so.conf; then
+	echo %GCC_PREFIX/lib >>/etc/ld.so.conf
 fi
 /sbin/ldconfig
 
 %postun -n libstdc++-compat
 if [ $1 -eq 0 ]; then
-	grep -v "%{GCC_PREFIX}/lib" /etc/ld.so.conf > /etc/ld.so.conf.new &&
+	grep -v "%GCC_PREFIX/lib" /etc/ld.so.conf > /etc/ld.so.conf.new &&
 	mv -f /etc/ld.so.conf.new /etc/ld.so.conf
 fi
 /sbin/ldconfig
 %endif
 
 %post -n cpp
-/sbin/install-info %{_infodir}/cpp.info.gz %{_infodir}/dir
+/sbin/install-info %_infodir/cpp.info.gz %_infodir/dir
 
 %preun -n cpp
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/cpp.info.gz %{_infodir}/dir
+	/sbin/install-info --delete %_infodir/cpp.info.gz %_infodir/dir
 fi
 /sbin/ldconfig
 
@@ -365,126 +362,126 @@ fi
 
 %files -n cpp
 %defattr(-,root,root)
-%{CPP_PREFIX}/cpp
-%{GCC_PREFIX}/man/man1/cpp.1*
-%{GCC_PREFIX}/man/man1/cccp.1*
-%{GCC_PREFIX}/info/cpp.info*.gz
-%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/cpp0
+%CPP_PREFIX/cpp
+%GCC_PREFIX/man/man1/cpp.1*
+%GCC_PREFIX/man/man1/cccp.1*
+%GCC_PREFIX/info/cpp.info*.gz
+%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/cpp0
 
 %files c++
 %defattr(-,root,root)
-%{GCC_PREFIX}/man/man1/g++.1*
-%{GCC_PREFIX}/bin/g++
-%{GCC_PREFIX}/bin/c++
-%dir %{GCC_PREFIX}/lib/gcc-lib
-%dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}
-%dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}
-%dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/include
-%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/cc1plus
-%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/include/exception
-%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/include/new
-%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/include/new.h
-%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/include/typeinfo
+%GCC_PREFIX/man/man1/g++.1*
+%GCC_PREFIX/bin/g++
+%GCC_PREFIX/bin/c++
+%dir %GCC_PREFIX/lib/gcc-lib
+%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform
+%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION
+%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include
+%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/cc1plus
+%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include/exception
+%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include/new
+%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include/new.h
+%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include/typeinfo
 %doc gcc/cp/ChangeLog*
 
 %files -n libstdc++
 %defattr(-,root,root)
-%{GCC_PREFIX}/lib/libstdc++-3-libc*-%{STDC_VERSION}.so
-%{GCC_PREFIX}/lib/libstdc++-libc*.so.3
-%{GCC_PREFIX}/lib/libstdc++-libc*.so.2
-%{GCC_PREFIX}/lib/libstdc++.so.2.9
-%dir %{GCC_PREFIX}/lib/gcc-lib
-%dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}
-%dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}
-%dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/include
-%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/libstdc++.so
+%GCC_PREFIX/lib/libstdc++-3-libc*-%STDC_VERSION.so
+%GCC_PREFIX/lib/libstdc++-libc*.so.3
+%GCC_PREFIX/lib/libstdc++-libc*.so.2
+%GCC_PREFIX/lib/libstdc++.so.2.9
+%dir %GCC_PREFIX/lib/gcc-lib
+%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform
+%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION
+%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include
+%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/libstdc++.so
 
 %ifarch %ix86
 %files -n libstdc++-compat
 %defattr(-,root,root)
-%{GCC_PREFIX}/lib/libstdc++.so.2.7.2.8
-%{GCC_PREFIX}/lib/libstdc++.so.2.8.0
-%{GCC_PREFIX}/lib/libstdc++-2-libc6.1-1-2.9.0.so
-%{GCC_PREFIX}/lib/libstdc++.so.2.9.dummy
-%{GCC_PREFIX}/lib/libstdc++.so.2.9
+%GCC_PREFIX/lib/libstdc++.so.2.7.2.8
+%GCC_PREFIX/lib/libstdc++.so.2.8.0
+%GCC_PREFIX/lib/libstdc++-2-libc6.1-1-2.9.0.so
+%GCC_PREFIX/lib/libstdc++.so.2.9.dummy
+%GCC_PREFIX/lib/libstdc++.so.2.9
 %endif
 
 %files -n libstdc++-devel
 %defattr(-,root,root)
-%{GCC_PREFIX}/lib/libstdc++-3-libc*-%{STDC_VERSION}.a
-%{GCC_PREFIX}/lib/libstdc++-libc*.a.3
-%{GCC_PREFIX}/include/g++-3
-%dir %{GCC_PREFIX}/lib/gcc-lib
-%dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}
-%dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}
-%dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/include
-%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/libstdc++.a
+%GCC_PREFIX/lib/libstdc++-3-libc*-%STDC_VERSION.a
+%GCC_PREFIX/lib/libstdc++-libc*.a.3
+%GCC_PREFIX/include/g++-3
+%dir %GCC_PREFIX/lib/gcc-lib
+%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform
+%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION
+%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include
+%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/libstdc++.a
 %doc rpm.doc/libstdc++/*
 
 %if %BUILD_OBJC
 %files objc
 %defattr(-,root,root)
-%dir %{GCC_PREFIX}/lib/gcc-lib
-%dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}
-%dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}
-%dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/include
-%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/cc1obj
-%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/libobjc.a
-%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/include/objc
+%dir %GCC_PREFIX/lib/gcc-lib
+%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform
+%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION
+%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include
+%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/cc1obj
+%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/libobjc.a
+%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include/objc
 %doc rpm.doc/objc/*
 %doc libobjc/THREADS* libobjc/ChangeLog
 %endif
 
 %if %BUILD_F77
 %post g77
-/sbin/install-info %{_infodir}/g77.info.gz %{_infodir}/dir
+/sbin/install-info %_infodir/g77.info.gz %_infodir/dir
 
 %preun g77
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/g77.info.gz %{_infodir}/dir
+	/sbin/install-info --delete %_infodir/g77.info.gz %_infodir/dir
 fi
 
 %files g77
 %defattr(-,root,root)
-%{GCC_PREFIX}/bin/g77
-%{GCC_PREFIX}/bin/f77
-%{GCC_PREFIX}/info/g77*
-%dir %{GCC_PREFIX}/lib/gcc-lib
-%dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}
-%dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}
-%dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/include
-%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/f771
-%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/libg2c.a
-%{GCC_PREFIX}/man/man1/g77.1*
-%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/include/g2c.h
+%GCC_PREFIX/bin/g77
+%GCC_PREFIX/bin/f77
+%GCC_PREFIX/info/g77*
+%dir %GCC_PREFIX/lib/gcc-lib
+%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform
+%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION
+%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include
+%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/f771
+%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/libg2c.a
+%GCC_PREFIX/man/man1/g77.1*
+%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include/g2c.h
 %doc gcc/f/README rpm.doc/g77/*
 %endif
 
 %if %BUILD_CHILL
 %post chill
-/sbin/install-info %{_infodir}/chill.info.gz %{_infodir}/dir
+/sbin/install-info %_infodir/chill.info.gz %_infodir/dir
 
 %preun chill
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/chill.info.gz %{_infodir}/dir
+	/sbin/install-info --delete %_infodir/chill.info.gz %_infodir/dir
 fi
 
 %files chill
 %defattr(-,root,root)
-%{GCC_PREFIX}/bin/chill
-%{GCC_PREFIX}/info/chill*
-%dir %{GCC_PREFIX}/lib/gcc-lib
-%dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}
-%dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}
-%dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/include
-%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/cc1chill
-%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/chill*.o
-%{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/libchill.a
+%GCC_PREFIX/bin/chill
+%GCC_PREFIX/info/chill*
+%dir %GCC_PREFIX/lib/gcc-lib
+%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform
+%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION
+%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include
+%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/cc1chill
+%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/chill*.o
+%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/libchill.a
 %doc gcc/ch/README gcc/ch/chill.brochure rpm.doc/chill/*
 %endif
 
 %changelog
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1:2.95.3-owl5
 - Deal with info dir entries such that the menu looks pretty.
 
 * Fri Jun 21 2002 Solar Designer <solar@owl.openwall.com>

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/john/john.spec,v 1.26 2003/10/25 04:30:34 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.27 2003/10/29 19:27:21 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -7,9 +7,9 @@ Release: owl1
 License: GPL
 Group: Applications/System
 URL: http://www.openwall.com/john/
-Source0: ftp://ftp.openwall.com/pub/projects/john/john-%{version}.tar.gz
+Source0: ftp://ftp.openwall.com/pub/projects/john/john-%version.tar.gz
 Source1: ftp://ftp.openwall.com/pub/projects/john/john-1.6.tar.gz
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 John the Ripper is a fast password cracker (password security auditing
@@ -58,9 +58,6 @@ install -m 644 run/{john.conf,password.lst} john-1.6/run/*.chr \
 install -m 644 -p run/mailer doc/
 mkdir doc/john-1.6
 cp -a john-1.6/doc/* doc/john-1.6/
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)

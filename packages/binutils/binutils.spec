@@ -1,4 +1,4 @@
-# $Id: Owl/packages/binutils/binutils.spec,v 1.10 2002/08/27 00:16:56 solar Exp $
+# $Id: Owl/packages/binutils/binutils.spec,v 1.11 2003/10/29 18:25:46 solar Exp $
 
 %define BUILD_HJL 1
 
@@ -10,14 +10,14 @@ License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils/
 %if %BUILD_HJL
-Source: ftp://ftp.valinux.com/pub/support/hjl/binutils/binutils-%{version}.tar.gz
+Source: ftp://ftp.valinux.com/pub/support/hjl/binutils/binutils-%version.tar.gz
 %else
-Source: ftp://ftp.gnu.org/gnu/binutils/binutils-%{version}.tar.gz
+Source: ftp://ftp.gnu.org/gnu/binutils/binutils-%version.tar.gz
 %endif
 Patch: binutils-2.10.1.0.4-owl-info.diff
 PreReq: /sbin/ldconfig, /sbin/install-info
 ExcludeArch: ia64
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 binutils is a collection of binary utilities, including ar (for creating,
@@ -46,7 +46,7 @@ ADDITIONAL_TARGETS=""
 ADDITIONAL_TARGETS="--enable-targets=sparc64-linux"
 %endif
 %ifarch sparcv9
-%define _target_platform sparc-%{_vendor}-%{_target_os}
+%define _target_platform sparc-%_vendor-%_target_os
 %endif
 %endif
 %if %BUILD_HJL
@@ -58,38 +58,35 @@ make tooldir=%{_prefix}usr all info
 %install
 rm -rf $RPM_BUILD_ROOT
 
-mkdir -p $RPM_BUILD_ROOT%{_prefix}
+mkdir -p $RPM_BUILD_ROOT%_prefix
 %makeinstall
-make prefix=$RPM_BUILD_ROOT%{_prefix} infodir=$RPM_BUILD_ROOT%{_infodir} \
+make prefix=$RPM_BUILD_ROOT%_prefix infodir=$RPM_BUILD_ROOT%_infodir \
 	install-info
-rm $RPM_BUILD_ROOT%{_mandir}/man1/nlmconv.1
+rm $RPM_BUILD_ROOT%_mandir/man1/nlmconv.1
 
-install -m 644 include/libiberty.h $RPM_BUILD_ROOT%{_prefix}/include/
+install -m 644 include/libiberty.h $RPM_BUILD_ROOT%_prefix/include/
 
-chmod +x $RPM_BUILD_ROOT%{_prefix}/%{_lib}/lib*.so*
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+chmod +x $RPM_BUILD_ROOT%_prefix/%_lib/lib*.so*
 
 %post
 /sbin/ldconfig
-/sbin/install-info %{_infodir}/as.info.gz %{_infodir}/dir
-/sbin/install-info %{_infodir}/bfd.info.gz %{_infodir}/dir
-/sbin/install-info %{_infodir}/binutils.info.gz %{_infodir}/dir
-/sbin/install-info %{_infodir}/gasp.info.gz %{_infodir}/dir
-/sbin/install-info %{_infodir}/gprof.info.gz %{_infodir}/dir
-/sbin/install-info %{_infodir}/ld.info.gz %{_infodir}/dir
-/sbin/install-info %{_infodir}/standards.info.gz %{_infodir}/dir
+/sbin/install-info %_infodir/as.info.gz %_infodir/dir
+/sbin/install-info %_infodir/bfd.info.gz %_infodir/dir
+/sbin/install-info %_infodir/binutils.info.gz %_infodir/dir
+/sbin/install-info %_infodir/gasp.info.gz %_infodir/dir
+/sbin/install-info %_infodir/gprof.info.gz %_infodir/dir
+/sbin/install-info %_infodir/ld.info.gz %_infodir/dir
+/sbin/install-info %_infodir/standards.info.gz %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/as.info.gz %{_infodir}/dir
-	/sbin/install-info --delete %{_infodir}/bfd.info.gz %{_infodir}/dir
-	/sbin/install-info --delete %{_infodir}/binutils.info.gz %{_infodir}/dir
-	/sbin/install-info --delete %{_infodir}/gasp.info.gz %{_infodir}/dir
-	/sbin/install-info --delete %{_infodir}/gprof.info.gz %{_infodir}/dir
-	/sbin/install-info --delete %{_infodir}/ld.info.gz %{_infodir}/dir
-	/sbin/install-info --delete %{_infodir}/standards.info.gz %{_infodir}/dir
+	/sbin/install-info --delete %_infodir/as.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/bfd.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/binutils.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/gasp.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/gprof.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/ld.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/standards.info.gz %_infodir/dir
 fi
 
 %postun -p /sbin/ldconfig
@@ -97,14 +94,14 @@ fi
 %files
 %defattr(-,root,root)
 %doc README
-%{_prefix}/bin/*
-%{_mandir}/man1/*
-%{_prefix}/include/*
-%{_prefix}/%{_lib}/*
-%{_infodir}/*.info*
+%_prefix/bin/*
+%_mandir/man1/*
+%_prefix/include/*
+%_prefix/%_lib/*
+%_infodir/*.info*
 
 %changelog
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 2.10.1.0.4-owl2
 - Deal with info dir entries such that the menu looks pretty.
 
 * Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>

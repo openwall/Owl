@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gzip/gzip.spec,v 1.10 2002/08/27 19:25:56 solar Exp $
+# $Id: Owl/packages/gzip/gzip.spec,v 1.11 2003/10/29 19:22:05 solar Exp $
 
 Summary: The GNU data compression program.
 Name: gzip
@@ -7,14 +7,14 @@ Release: owl17
 License: GPL
 Group: Applications/File
 URL: http://www.gzip.org
-Source: ftp://alpha.gnu.org/gnu/gzip/gzip-%{version}.tar.gz
+Source: ftp://alpha.gnu.org/gnu/gzip/gzip-%version.tar.gz
 Patch0: gzip-1.3-openbsd-owl-tmp.diff
 Patch1: gzip-1.3-rh-owl-zforce.diff
 Patch2: gzip-1.3-rh-owl-zgrep.diff
 Patch3: gzip-1.3-rh-stderr.diff
 Patch4: gzip-1.3-rh-info.diff
 Requires: mktemp >= 1:1.3.1
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The gzip package contains the popular GNU gzip data compression
@@ -51,15 +51,12 @@ cat > $RPM_BUILD_ROOT/usr/bin/zless <<EOF
 EOF
 chmod 755 $RPM_BUILD_ROOT/usr/bin/zless
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %triggerin -- info
-/sbin/install-info %{_infodir}/gzip.info.gz %{_infodir}/dir
+/sbin/install-info %_infodir/gzip.info.gz %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/gzip.info.gz %{_infodir}/dir
+	/sbin/install-info --delete %_infodir/gzip.info.gz %_infodir/dir
 fi
 
 %files
@@ -67,11 +64,11 @@ fi
 %doc NEWS README AUTHORS ChangeLog THANKS TODO
 /bin/*
 /usr/bin/*
-%{_mandir}/*/*
-%{_infodir}/gzip.info*
+%_mandir/*/*
+%_infodir/gzip.info*
 
 %changelog
-* Tue Aug 27 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Aug 27 2002 Solar Designer <solar@owl.openwall.com> 1.3-owl17
 - Use a trigger instead of a dependency on /sbin/install-info to avoid a
 dependency loop with the new texinfo.
 

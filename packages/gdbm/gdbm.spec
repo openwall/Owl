@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gdbm/gdbm.spec,v 1.7 2002/08/26 16:05:57 mci Exp $
+# $Id: Owl/packages/gdbm/gdbm.spec,v 1.8 2003/10/29 19:22:05 solar Exp $
 
 Summary: A GNU set of database routines which use extensible hashing.
 Name: gdbm
@@ -6,12 +6,12 @@ Version: 1.8.0
 Release: owl7
 License: GPL
 Group: System Environment/Libraries
-Source: ftp://ftp.gnu.org/gnu/gdbm/gdbm-%{version}.tar.gz
+Source: ftp://ftp.gnu.org/gnu/gdbm/gdbm-%version.tar.gz
 Patch0: gdbm-1.8.0-rh-header.diff
 Patch1: gdbm-1.8.0-rh-owl-Makefile.diff
 PreReq: /sbin/ldconfig
-Prefix: %{_prefix}
-BuildRoot: /override/%{name}-%{version}
+Prefix: %_prefix
+BuildRoot: /override/%name-%version
 
 %description
 gdbm is a GNU database indexing library, including routines which use
@@ -37,7 +37,7 @@ necessary if you plan to do development using the gdbm database.
 %patch1 -p 1
 
 %{expand:%%define optflags %optflags -Wall}
-%{expand:%%global _includedir %{_includedir}/gdbm}
+%{expand:%%global _includedir %_includedir/gdbm}
 
 %build
 libtoolize --force --copy
@@ -52,42 +52,39 @@ rm -rf $RPM_BUILD_ROOT
 %makeinstall install-compat
 
 cd $RPM_BUILD_ROOT
-ln -sf gdbm/gdbm.h .%{_oldincludedir}/gdbm.h
-ln -sf libgdbm.so.2.0.0 .%{_libdir}/libgdbm.so
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+ln -sf gdbm/gdbm.h .%_oldincludedir/gdbm.h
+ln -sf libgdbm.so.2.0.0 .%_libdir/libgdbm.so
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
 %post devel
-/sbin/install-info %{_infodir}/gdbm.info.gz %{_infodir}/dir \
+/sbin/install-info %_infodir/gdbm.info.gz %_infodir/dir \
 	--entry="* gdbm: (gdbm).                                 The GNU Database."
 
 %preun devel
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/gdbm.info.gz %{_infodir}/dir \
+	/sbin/install-info --delete %_infodir/gdbm.info.gz %_infodir/dir \
 		--entry="* gdbm: (gdbm).                                 The GNU Database."
 fi
 
 %files
 %defattr(-,root,root)
 %doc COPYING NEWS README
-%{_libdir}/libgdbm.so.*
+%_libdir/libgdbm.so.*
 
 %files devel
 %defattr(-,root,root)
-%{_libdir}/libgdbm.so
-%{_libdir}/libgdbm.la
-%{_libdir}/libgdbm.a
-%{_oldincludedir}/gdbm.h
-%{_includedir}
-%{_infodir}/*.info*
-%{_mandir}/man3/*
+%_libdir/libgdbm.so
+%_libdir/libgdbm.la
+%_libdir/libgdbm.a
+%_oldincludedir/gdbm.h
+%_includedir
+%_infodir/*.info*
+%_mandir/man3/*
 
 %changelog
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1.8.0-owl7
 - Deal with info dir entries such that the menu looks pretty.
 
 * Fri Feb 01 2002 Michail Litvak <mci@owl.openwall.com>

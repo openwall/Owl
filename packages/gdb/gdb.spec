@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gdb/gdb.spec,v 1.10 2002/08/26 16:04:03 mci Exp $
+# $Id: Owl/packages/gdb/gdb.spec,v 1.11 2003/10/29 19:22:05 solar Exp $
 
 Summary: A GNU source-level debugger for C, C++ and Fortran.
 Name: gdb
@@ -6,7 +6,7 @@ Version: 5.0
 Release: owl9
 License: GPL
 Group: Development/Debuggers
-Source: ftp://sourceware.cygnus.com/pub/gdb/releases/gdb-%{version}.tar.bz2
+Source: ftp://sourceware.cygnus.com/pub/gdb/releases/gdb-%version.tar.bz2
 Patch0: gdb-5.0-pld-procfs.diff
 Patch1: gdb-5.0-pld-info.diff
 Patch2: gdb-5.0-pld-gettext.diff
@@ -18,7 +18,7 @@ Patch7: gdb-5.0-owl-info.diff
 PreReq: /sbin/install-info
 BuildRequires: ncurses-devel >= 5.0
 BuildRequires: readline-devel >= 4.1
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 GDB is a full featured, command driven debugger.  GDB allows you to
@@ -50,7 +50,7 @@ export ac_cv_func_vfork_works=no \
 	--enable-nls \
 	--without-included-gettext \
 	--enable-gdbmi \
-	--with-cpu=%{_target_cpu} \
+	--with-cpu=%_target_cpu \
 %ifnarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
 	--with-mmalloc \
 %endif
@@ -63,49 +63,46 @@ make info
 rm -rf $RPM_BUILD_ROOT
 
 make install install-info \
-	prefix=$RPM_BUILD_ROOT%{_prefix} \
-	bindir=$RPM_BUILD_ROOT%{_bindir} \
-        includedir=$RPM_BUILD_ROOT%{_includedir} \
-        libdir=$RPM_BUILD_ROOT%{_libdir} \
-	infodir=$RPM_BUILD_ROOT%{_infodir} \
-	mandir=$RPM_BUILD_ROOT%{_mandir} \
+	prefix=$RPM_BUILD_ROOT%_prefix \
+	bindir=$RPM_BUILD_ROOT%_bindir \
+        includedir=$RPM_BUILD_ROOT%_includedir \
+        libdir=$RPM_BUILD_ROOT%_libdir \
+	infodir=$RPM_BUILD_ROOT%_infodir \
+	mandir=$RPM_BUILD_ROOT%_mandir \
 	DESTDIR=$RPM_BUILD_ROOT
 
 # These are part of binutils
-rm -f $RPM_BUILD_ROOT%{_infodir}/bfd*
-rm -f $RPM_BUILD_ROOT%{_infodir}/standard*
+rm -f $RPM_BUILD_ROOT%_infodir/bfd*
+rm -f $RPM_BUILD_ROOT%_infodir/standard*
 rm -rf $RPM_BUILD_ROOT/usr/include/
 rm -rf $RPM_BUILD_ROOT/usr/lib/lib{bfd*,opcodes*}
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %post
-/sbin/install-info %{_infodir}/gdb.info %{_infodir}/dir
-/sbin/install-info %{_infodir}/gdbint.info.gz %{_infodir}/dir
-/sbin/install-info %{_infodir}/mmalloc.info.gz %{_infodir}/dir
-/sbin/install-info %{_infodir}/stabs.info.gz %{_infodir}/dir
+/sbin/install-info %_infodir/gdb.info %_infodir/dir
+/sbin/install-info %_infodir/gdbint.info.gz %_infodir/dir
+/sbin/install-info %_infodir/mmalloc.info.gz %_infodir/dir
+/sbin/install-info %_infodir/stabs.info.gz %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/gdb.info.gz %{_infodir}/dir
-	/sbin/install-info --delete %{_infodir}/gdbint.info.gz %{_infodir}/dir
-	/sbin/install-info --delete %{_infodir}/mmalloc.info.gz %{_infodir}/dir
-	/sbin/install-info --delete %{_infodir}/stabs.info.gz %{_infodir}/dir
+	/sbin/install-info --delete %_infodir/gdb.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/gdbint.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/mmalloc.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/stabs.info.gz %_infodir/dir
 fi
 
 %files
 %defattr(-,root,root)
 %doc COPYING COPYING.LIB README gdb/NEWS
 /usr/bin/*
-%{_mandir}/*/*
-%{_infodir}/gdb.info*
-%{_infodir}/gdbint.info*
-%{_infodir}/stabs.info*
-%{_infodir}/mmalloc.info*
+%_mandir/*/*
+%_infodir/gdb.info*
+%_infodir/gdbint.info*
+%_infodir/stabs.info*
+%_infodir/mmalloc.info*
 
 %changelog
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 5.0-owl9
 - Deal with info dir entries such that the menu looks pretty.
 
 * Fri Feb 01 2002 Michail Litvak <mci@owl.openwall.com>

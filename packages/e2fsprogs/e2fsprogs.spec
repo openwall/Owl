@@ -1,4 +1,4 @@
-# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.12 2002/10/12 06:16:55 solar Exp $
+# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.13 2003/10/29 19:04:58 solar Exp $
 
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
@@ -6,7 +6,7 @@ Version: 1.27
 Release: owl4
 License: GPL
 Group: System Environment/Base
-Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%{version}.tar.gz
+Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
 Patch0: e2fsprogs-1.27-alt-fixes.diff
 Patch1: e2fsprogs-1.27-alt-notitle.diff
 Patch2: e2fsprogs-1.27-rh-c++.diff
@@ -15,7 +15,7 @@ Patch4: e2fsprogs-1.27-owl-lost+found-mode.diff
 Patch5: e2fsprogs-1.27-owl-warnings.diff
 Patch6: e2fsprogs-1.27-owl-info.diff
 PreReq: /sbin/ldconfig
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The e2fsprogs package contains a number of utilities for creating,
@@ -64,9 +64,6 @@ rm -rf $RPM_BUILD_ROOT
 make install install-libs DESTDIR="$RPM_BUILD_ROOT" \
 	root_sbindir=/sbin root_libdir=/lib
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
@@ -105,33 +102,33 @@ fi
 /usr/bin/chattr
 /usr/bin/lsattr
 /usr/bin/uuidgen
-%{_mandir}/man1/chattr.1*
-%{_mandir}/man1/lsattr.1*
-%{_mandir}/man1/uuidgen.1*
+%_mandir/man1/chattr.1*
+%_mandir/man1/lsattr.1*
+%_mandir/man1/uuidgen.1*
 
-%{_mandir}/man3/libuuid.3*
-%{_mandir}/man3/uuid_clear.3*
-%{_mandir}/man3/uuid_compare.3*
-%{_mandir}/man3/uuid_copy.3*
-%{_mandir}/man3/uuid_generate.3*
-%{_mandir}/man3/uuid_is_null.3*
-%{_mandir}/man3/uuid_parse.3*
-%{_mandir}/man3/uuid_time.3*
-%{_mandir}/man3/uuid_unparse.3*
+%_mandir/man3/libuuid.3*
+%_mandir/man3/uuid_clear.3*
+%_mandir/man3/uuid_compare.3*
+%_mandir/man3/uuid_copy.3*
+%_mandir/man3/uuid_generate.3*
+%_mandir/man3/uuid_is_null.3*
+%_mandir/man3/uuid_parse.3*
+%_mandir/man3/uuid_time.3*
+%_mandir/man3/uuid_unparse.3*
 
-%{_mandir}/man8/badblocks.8*
-%{_mandir}/man8/debugfs.8*
-%{_mandir}/man8/dumpe2fs.8*
-%{_mandir}/man8/e2fsck.8*
-%{_mandir}/man8/e2label.8*
-%{_mandir}/man8/fsck.8*
-%{_mandir}/man8/fsck.ext2.8*
-%{_mandir}/man8/fsck.ext3.8*
-%{_mandir}/man8/mke2fs.8*
-%{_mandir}/man8/mkfs.ext2.8*
-%{_mandir}/man8/mkfs.ext3.8*
-%{_mandir}/man8/mklost+found.8*
-%{_mandir}/man8/tune2fs.8*
+%_mandir/man8/badblocks.8*
+%_mandir/man8/debugfs.8*
+%_mandir/man8/dumpe2fs.8*
+%_mandir/man8/e2fsck.8*
+%_mandir/man8/e2label.8*
+%_mandir/man8/fsck.8*
+%_mandir/man8/fsck.ext2.8*
+%_mandir/man8/fsck.ext3.8*
+%_mandir/man8/mke2fs.8*
+%_mandir/man8/mkfs.ext2.8*
+%_mandir/man8/mkfs.ext3.8*
+%_mandir/man8/mklost+found.8*
+%_mandir/man8/tune2fs.8*
 
 %files devel
 %defattr(-,root,root)
@@ -156,11 +153,11 @@ fi
 /usr/include/ext2fs
 /usr/include/ss
 /usr/include/uuid
-%{_mandir}/man1/compile_et.1*
-%{_mandir}/man3/com_err.3*
+%_mandir/man1/compile_et.1*
+%_mandir/man3/com_err.3*
 
 %changelog
-* Sat Oct 12 2002 Solar Designer <solar@owl.openwall.com>
+* Sat Oct 12 2002 Solar Designer <solar@owl.openwall.com> 1.27-owl4
 - Dropped the mke2fs lost+found permissions patch (leaving only the hunks
 for e2fsck and mklost+found) as it's no longer needed with 1.27.
 

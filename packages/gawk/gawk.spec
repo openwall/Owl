@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gawk/gawk.spec,v 1.9 2002/08/26 15:46:12 mci Exp $
+# $Id: Owl/packages/gawk/gawk.spec,v 1.10 2003/10/29 19:22:05 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -8,13 +8,13 @@ Version: 3.1.1
 Release: owl3
 License: GPL
 Group: Applications/Text
-Source0: ftp://ftp.gnu.org/gnu/gawk/gawk-%{version}.tar.gz
-Source1: ftp://ftp.gnu.org/gnu/gawk/gawk-%{version}-ps.tar.gz
+Source0: ftp://ftp.gnu.org/gnu/gawk/gawk-%version.tar.gz
+Source1: ftp://ftp.gnu.org/gnu/gawk/gawk-%version-ps.tar.gz
 Patch0: gawk-3.1.1-eggert-tmp.diff
 Patch1: gawk-3.1.1-owl-info.diff
 PreReq: /sbin/install-info
 BuildRequires: texinfo >= 4.2
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The gawk package contains the GNU version of awk, a text processing
@@ -25,7 +25,7 @@ quick and easy text pattern matching and reformatting jobs.
 %package profile
 Summary: The version of gawk with profiling support.
 Group: Development/Tools
-Requires: gawk = %{version}-%{release}
+Requires: gawk = %version-%release
 
 %description profile
 The gawk-profile package includes pgawk (profiling gawk).  pgawk is
@@ -51,34 +51,31 @@ make
 %install
 rm -rf $RPM_BUILD_ROOT
 %makeinstall bindir=$RPM_BUILD_ROOT/bin \
-	mandir=${RPM_BUILD_ROOT}%{_mandir} \
-	libexecdir=${RPM_BUILD_ROOT}%{_libexecdir}/awk \
-	datadir=${RPM_BUILD_ROOT}%{_datadir}/awk
+	mandir=$RPM_BUILD_ROOT%_mandir \
+	libexecdir=$RPM_BUILD_ROOT%_libexecdir/awk \
+	datadir=$RPM_BUILD_ROOT%_datadir/awk
 
 gzip -9n doc/*.ps
 
 cd $RPM_BUILD_ROOT
-rm -f .%{_infodir}/dir
-mkdir -p .%{_prefix}/bin
-ln -sf gawk.1.gz .%{_mandir}/man1/awk.1.gz
+rm -f .%_infodir/dir
+mkdir -p .%_prefix/bin
+ln -sf gawk.1.gz .%_mandir/man1/awk.1.gz
 cd bin
 ln -sf ../../bin/gawk ../usr/bin/awk
 ln -sf ../../bin/gawk ../usr/bin/gawk
 mv $RPM_BUILD_ROOT/bin/pgawk $RPM_BUILD_ROOT/usr/bin/
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %post
-/sbin/install-info %{_infodir}/gawk.info.gz %{_infodir}/dir
+/sbin/install-info %_infodir/gawk.info.gz %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/gawk.info.gz %{_infodir}/dir
+	/sbin/install-info --delete %_infodir/gawk.info.gz %_infodir/dir
 fi
 
 %files
-%defattr(-,root,root,-)
+%defattr(-,root,root)
 %doc README COPYING FUTURES LIMITATIONS NEWS PROBLEMS
 %doc POSIX.STD doc/gawk.ps* doc/awkcard.ps*
 
@@ -87,10 +84,10 @@ fi
 /bin/igawk
 /usr/bin/awk
 /usr/bin/gawk
-%{_mandir}/man1/*
-%{_infodir}/gawk.info*
-%{_libexecdir}/awk
-%{_datadir}/awk
+%_mandir/man1/*
+%_infodir/gawk.info*
+%_libexecdir/awk
+%_datadir/awk
 
 %if %BUILD_PROFILE
 %files profile
@@ -99,7 +96,7 @@ fi
 %endif
 
 %changelog
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 3.1.1-owl3
 - Deal with info dir entries such that the menu looks pretty.
 
 * Mon Jul 23 2002 Michail Litvak <mci@owl.openwall.com>

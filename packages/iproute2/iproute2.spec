@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iproute2/iproute2.spec,v 1.11 2003/10/12 13:49:51 mci Exp $
+# $Id: Owl/packages/iproute2/iproute2.spec,v 1.12 2003/10/29 19:27:21 solar Exp $
 
 Summary: Enhanced IP routing and network devices configuration tools.
 Name: iproute2
@@ -22,9 +22,9 @@ Source11: tc-cbq.8
 Patch0: iproute2-2.4.7-rh-promisc-allmulti.diff
 Patch1: iproute2-2.4.7-owl-socketbits.diff
 Patch2: iproute2-2.4.7-owl-warnings.diff
-Provides: iproute = %{version}
+Provides: iproute = %version
 Obsoletes: iproute
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 Linux 2.2+ maintains compatibility with the basic configuration utilities
@@ -49,26 +49,23 @@ make \
 %install
 rm -rf $RPM_BUILD_ROOT
 
-mkdir -p $RPM_BUILD_ROOT{/sbin,%{_sbindir},/etc/iproute2,%{_mandir}/man8}
+mkdir -p $RPM_BUILD_ROOT{/sbin,%_sbindir,/etc/iproute2,%_mandir/man8}
 
 install -m 755 ip/{ip,ifcfg,rtmon} tc/tc $RPM_BUILD_ROOT/sbin/
-install -m 755 misc/{ifstat,nstat,rtacct,rtstat,ss} $RPM_BUILD_ROOT%{_sbindir}/
+install -m 755 misc/{ifstat,nstat,rtacct,rtstat,ss} $RPM_BUILD_ROOT%_sbindir/
 install -m 644 etc/iproute2/* $RPM_BUILD_ROOT/etc/iproute2/
-install -m 644 $RPM_SOURCE_DIR/ip.8 $RPM_BUILD_ROOT%{_mandir}/man8/
-install -m 644 $RPM_SOURCE_DIR/tc.8 $RPM_BUILD_ROOT%{_mandir}/man8/
-install -m 644 $RPM_SOURCE_DIR/tc-htb.8 $RPM_BUILD_ROOT%{_mandir}/man8/
-install -m 644 $RPM_SOURCE_DIR/tc-pbfifo.8 $RPM_BUILD_ROOT%{_mandir}/man8/
-install -m 644 $RPM_SOURCE_DIR/tc-pfifo_fast.8 $RPM_BUILD_ROOT%{_mandir}/man8/
-install -m 644 $RPM_SOURCE_DIR/tc-prio.8 $RPM_BUILD_ROOT%{_mandir}/man8/
-install -m 644 $RPM_SOURCE_DIR/tc-red.8 $RPM_BUILD_ROOT%{_mandir}/man8/
-install -m 644 $RPM_SOURCE_DIR/tc-sfq.8 $RPM_BUILD_ROOT%{_mandir}/man8/
-install -m 644 $RPM_SOURCE_DIR/tc-tbf.8 $RPM_BUILD_ROOT%{_mandir}/man8/
-install -m 644 $RPM_SOURCE_DIR/tc-cbq.8 $RPM_BUILD_ROOT%{_mandir}/man8/
+install -m 644 $RPM_SOURCE_DIR/ip.8 $RPM_BUILD_ROOT%_mandir/man8/
+install -m 644 $RPM_SOURCE_DIR/tc.8 $RPM_BUILD_ROOT%_mandir/man8/
+install -m 644 $RPM_SOURCE_DIR/tc-htb.8 $RPM_BUILD_ROOT%_mandir/man8/
+install -m 644 $RPM_SOURCE_DIR/tc-pbfifo.8 $RPM_BUILD_ROOT%_mandir/man8/
+install -m 644 $RPM_SOURCE_DIR/tc-pfifo_fast.8 $RPM_BUILD_ROOT%_mandir/man8/
+install -m 644 $RPM_SOURCE_DIR/tc-prio.8 $RPM_BUILD_ROOT%_mandir/man8/
+install -m 644 $RPM_SOURCE_DIR/tc-red.8 $RPM_BUILD_ROOT%_mandir/man8/
+install -m 644 $RPM_SOURCE_DIR/tc-sfq.8 $RPM_BUILD_ROOT%_mandir/man8/
+install -m 644 $RPM_SOURCE_DIR/tc-tbf.8 $RPM_BUILD_ROOT%_mandir/man8/
+install -m 644 $RPM_SOURCE_DIR/tc-cbq.8 $RPM_BUILD_ROOT%_mandir/man8/
 
 gzip -9nf iproute2-ps/*.ps
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
@@ -76,11 +73,11 @@ rm -rf $RPM_BUILD_ROOT
 %dir /etc/iproute2
 %attr(644,root,root) %config(noreplace) /etc/iproute2/*
 /sbin/*
-%{_sbindir}/*
-%{_mandir}/man8/*
+%_sbindir/*
+%_mandir/man8/*
 
 %changelog
-* Sun Oct 12 2003 Michail Litvak <mci@owl.openwall.com>
+* Sun Oct 12 2003 Michail Litvak <mci@owl.openwall.com> 2.4.7-owl5
 - ss020116
 - Fixed building with kernel >= 2.4.22.
 - Dropped some obsolete patches.

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gettext/gettext.spec,v 1.4 2002/02/03 17:25:18 solar Exp $
+# $Id: Owl/packages/gettext/gettext.spec,v 1.5 2003/10/29 19:22:05 solar Exp $
 
 Summary: GNU libraries and utilities for producing multi-lingual messages.
 Name: gettext
@@ -6,7 +6,7 @@ Version: 0.10.35
 Release: owl24
 License: GPL
 Group: Development/Tools
-Source: ftp://alpha.gnu.org/pub/gnu/%{name}-%{version}.tar.gz
+Source: ftp://alpha.gnu.org/pub/gnu/%name-%version.tar.gz
 Patch0: gettext-0.10.35-owl-sanitize-environ.diff
 Patch1: gettext-0.10.35-rh-getline.diff
 Patch2: gettext-0.10.35-rh-hacks.diff
@@ -14,7 +14,7 @@ Patch3: gettext-0.10.35-rh-aclocaldir.diff
 Patch4: gettext-0.10.35-rh-buildroot.diff
 Patch5: gettext-0.10.35-rh-destdir.diff
 Patch6: gettext-0.10.35-rh-verttab.diff
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The GNU gettext package provides a set of tools and documentation for
@@ -51,31 +51,28 @@ make
 rm -rf $RPM_BUILD_ROOT
 
 # Fix busted no-emacs install for $lispdir/po-mode.el
-%makeinstall lispdir=%{buildroot}/usr/share/emacs/site-lisp \
-	aclocaldir=%{buildroot}/usr/share/aclocal
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+%makeinstall lispdir=%buildroot/usr/share/emacs/site-lisp \
+	aclocaldir=%buildroot/usr/share/aclocal
 
 %post
-/sbin/install-info %{_infodir}/gettext.info.gz %{_infodir}/dir
+/sbin/install-info %_infodir/gettext.info.gz %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/gettext.info.gz %{_infodir}/dir
+	/sbin/install-info --delete %_infodir/gettext.info.gz %_infodir/dir
 fi
 
 %files
 %defattr(-,root,root)
-%{_bindir}/*
-%{_infodir}/*.info*
-%{_datadir}/gettext
-%{_datadir}/locale/*/LC_MESSAGES/*
-%{_datadir}/aclocal/*
-%{_datadir}/emacs/site-lisp/*
+%_bindir/*
+%_infodir/*.info*
+%_datadir/gettext
+%_datadir/locale/*/LC_MESSAGES/*
+%_datadir/aclocal/*
+%_datadir/emacs/site-lisp/*
 
 %changelog
-* Sun Feb 03 2002 Michail Litvak <mci@owl.openwall.com>
+* Sun Feb 03 2002 Michail Litvak <mci@owl.openwall.com> 0.10.35-owl24
 - Enforce our new spec file conventions
 
 * Thu Oct 19 2000 Solar Designer <solar@owl.openwall.com>

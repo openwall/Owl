@@ -1,4 +1,4 @@
-# $Id: Owl/packages/file/file.spec,v 1.7 2003/04/29 16:00:37 solar Exp $
+# $Id: Owl/packages/file/file.spec,v 1.8 2003/10/29 19:08:28 solar Exp $
 
 Summary: A utility for determining file types.
 Name: file
@@ -7,7 +7,7 @@ Release: owl2
 License: distributable
 Group: Applications/File
 URL: http://www.darwinsys.com/freeware/file.html
-Source0: ftp://ftp.astron.com/pub/file/file-%{version}.tar.gz
+Source0: ftp://ftp.astron.com/pub/file/file-%version.tar.gz
 Patch0: file-3.41-rh-ia64.diff
 Patch1: file-3.41-mdk-alt-zsh.diff
 Patch2: file-3.41-alt-doctype.diff
@@ -18,8 +18,8 @@ Patch6: file-3.41-deb-make.diff
 Patch7: file-3.41-deb-magic.diff
 Patch8: file-3.41-deb-owl-man.diff
 Patch9: file-3.41-deb-owl-apprentice.diff
-Prefix: %{_prefix}
-BuildRoot: /override/%{name}-%{version}
+Prefix: %_prefix
+BuildRoot: /override/%name-%version
 
 %description
 The file command is used to identify a particular file according to the
@@ -47,20 +47,17 @@ make LDFLAGS=-s
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%{_bindir}
-mkdir -p $RPM_BUILD_ROOT%{_mandir}/man{1,5}
-mkdir -p $RPM_BUILD_ROOT%{_datadir}
+mkdir -p $RPM_BUILD_ROOT%_bindir
+mkdir -p $RPM_BUILD_ROOT%_mandir/man{1,5}
+mkdir -p $RPM_BUILD_ROOT%_datadir
 
 %makeinstall
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %files
 %defattr(-,root,root)
-%{_bindir}/*
-%{_datadir}/magic*
-%{_mandir}/man*/*
+%_bindir/*
+%_datadir/magic*
+%_mandir/man*/*
 
 %changelog
 * Tue Apr 29 2003 Michail Litvak <mci@owl.openwall.com> 3.41-owl2

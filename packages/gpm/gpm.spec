@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gpm/gpm.spec,v 1.14 2003/04/23 22:16:37 solar Exp $
+# $Id: Owl/packages/gpm/gpm.spec,v 1.15 2003/10/29 19:22:05 solar Exp $
 
 # This defines the library version that this package builds.
 %define LIBVER 1.18.0
@@ -10,7 +10,7 @@ Version: 1.19.6
 Release: owl3
 License: GPL
 Group: System Environment/Daemons
-Source0: ftp://arcana.linux.it/pub/gpm/%{name}-%{version}.tar.bz2
+Source0: ftp://arcana.linux.it/pub/gpm/%name-%version.tar.bz2
 Source1: gpm.init
 Patch0: gpm-1.19.6-rh-no-ps.diff
 Patch1: gpm-1.19.6-rh-owl-socket-mode.diff
@@ -23,7 +23,7 @@ Patch7: gpm-1.19.6-owl-doc-mkinstalldirs.diff
 Patch8: gpm-1.19.6-owl-info.diff
 PreReq: /sbin/chkconfig, /sbin/ldconfig, /sbin/install-info
 BuildRequires: bison
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 gpm provides mouse support to text-based Linux applications as well as
@@ -32,7 +32,7 @@ console cut-and-paste operations using the mouse.
 %package devel
 Summary: Libraries and header files for developing mouse driven programs.
 Group: Development/Libraries
-Requires: %{name} = %{version}-%{release}
+Requires: %name = %version-%release
 
 %description devel
 The gpm-devel package contains the libraries and header files needed
@@ -42,7 +42,7 @@ for the development of mouse driven programs for the console.
 %package root
 Summary: A mouse server add-on which draws pop-up menus on the console.
 Group: System Environment/Daemons
-Requires: %{name} = %{version}-%{release}
+Requires: %name = %version-%release
 
 %description root
 The gpm-root program allows pop-up menus to appear on a text console
@@ -67,23 +67,20 @@ make CFLAGS="" CPPFLAGS=""
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}
+mkdir -p $RPM_BUILD_ROOT%_sysconfdir
 
 %makeinstall
 
-install -m 644 doc/gpm-root.1 $RPM_BUILD_ROOT%{_mandir}/man1/
-install -m 644 conf/gpm-root.conf $RPM_BUILD_ROOT%{_sysconfdir}/
+install -m 644 doc/gpm-root.1 $RPM_BUILD_ROOT%_mandir/man1/
+install -m 644 conf/gpm-root.conf $RPM_BUILD_ROOT%_sysconfdir/
 
 cd $RPM_BUILD_ROOT
 
-chmod +x .%{_libdir}/libgpm.so.%{LIBVER}
-ln -sf libgpm.so.%{LIBVER} .%{_libdir}/libgpm.so
+chmod +x .%_libdir/libgpm.so.%LIBVER
+ln -sf libgpm.so.%LIBVER .%_libdir/libgpm.so
 
-mkdir -p .%{_sysconfdir}/rc.d/init.d
-install -m 755 $RPM_SOURCE_DIR/gpm.init .%{_sysconfdir}/rc.d/init.d/gpm
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+mkdir -p .%_sysconfdir/rc.d/init.d
+install -m 755 $RPM_SOURCE_DIR/gpm.init .%_sysconfdir/rc.d/init.d/gpm
 
 %pre
 rm -f /var/run/gpm.restart
@@ -101,11 +98,11 @@ if [ -f /var/run/gpm.restart ]; then
 fi
 rm -f /var/run/gpm.restart
 /sbin/ldconfig
-/sbin/install-info %{_infodir}/gpm.info.gz %{_infodir}/dir
+/sbin/install-info %_infodir/gpm.info.gz %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/gpm.info.gz %{_infodir}/dir
+	/sbin/install-info --delete %_infodir/gpm.info.gz %_infodir/dir
 	/etc/rc.d/init.d/gpm stop || :
 	/sbin/chkconfig --del gpm
 fi
@@ -114,30 +111,30 @@ fi
 
 %files
 %defattr(-,root,root)
-%{_sbindir}/gpm
-%{_bindir}/mev
-%{_infodir}/gpm.info*
-%{_mandir}/man1/mev.1*
-%{_mandir}/man8/gpm.8*
-%{_libdir}/libgpm.so.%{LIBVER}
-%config %{_sysconfdir}/rc.d/init.d/gpm
+%_sbindir/gpm
+%_bindir/mev
+%_infodir/gpm.info*
+%_mandir/man1/mev.1*
+%_mandir/man8/gpm.8*
+%_libdir/libgpm.so.%LIBVER
+%config %_sysconfdir/rc.d/init.d/gpm
 
 %files devel
 %defattr(-,root,root)
-%{_includedir}/*
-%{_libdir}/libgpm.a
-%{_libdir}/libgpm.so
+%_includedir/*
+%_libdir/libgpm.a
+%_libdir/libgpm.so
 
 %if %BUILD_GPM_ROOT
 %files root
 %defattr(-,root,root)
-%config %{_sysconfdir}/gpm-root.conf
-%{_sbindir}/gpm-root
-%{_mandir}/man1/gpm-root.1*
+%config %_sysconfdir/gpm-root.conf
+%_sbindir/gpm-root
+%_mandir/man1/gpm-root.1*
 %endif
 
 %changelog
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1.19.6-owl3
 - Deal with info dir entries such that the menu looks pretty.
 
 * Sun Feb 03 2002 Michail Litvak <mci@owl.openwall.com>

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/kbd/kbd.spec,v 1.6 2003/10/21 09:09:55 solar Exp $
+# $Id: Owl/packages/kbd/kbd.spec,v 1.7 2003/10/29 19:27:46 solar Exp $
 
 Summary: Tools for configuring the console.
 Name: kbd
@@ -6,7 +6,7 @@ Version: 1.08
 Release: owl4
 License: GPL
 Group: System Environment/Base
-Source0: ftp://ftp.kernel.org/pub/linux/utils/kbd/kbd-%{version}.tar.bz2
+Source0: ftp://ftp.kernel.org/pub/linux/utils/kbd/kbd-%version.tar.bz2
 Source1: kbd-latsun-fonts.tar.bz2
 Source2: keytable.init
 Source3: setsysfont
@@ -21,7 +21,7 @@ Conflicts: util-linux < 2.11
 Provides: console-tools
 Obsoletes: console-tools
 BuildRequires: bison, flex
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 This package contains tools for managing a Linux system's console's
@@ -40,7 +40,7 @@ and font files.
 %build
 ./configure --prefix=$RPM_BUILD_ROOT \
 	--datadir=/lib/kbd \
-	--mandir=%{_mandir} \
+	--mandir=%_mandir \
 	--disable-nls
 
 make CFLAGS="$RPM_OPT_FLAGS" LDFLAGS=-s DATA_DIR=/lib/kbd
@@ -48,23 +48,20 @@ make CFLAGS="$RPM_OPT_FLAGS" LDFLAGS=-s DATA_DIR=/lib/kbd
 %install
 rm -rf $RPM_BUILD_ROOT
 
-make install BINDIR=$RPM_BUILD_ROOT%{_bindir}
+make install BINDIR=$RPM_BUILD_ROOT%_bindir
 
 # Obsolete
-rm -fv $RPM_BUILD_ROOT%{_bindir}/resizecons
-rm -fv $RPM_BUILD_ROOT%{_mandir}/man8/resizecons.8*
+rm -fv $RPM_BUILD_ROOT%_bindir/resizecons
+rm -fv $RPM_BUILD_ROOT%_mandir/man8/resizecons.8*
 
 cd $RPM_BUILD_ROOT
 for binary in setfont dumpkeys kbd_mode unicode_start unicode_stop; do
-	mv .%{_bindir}/$binary bin/
+	mv .%_bindir/$binary bin/
 done
 
 mkdir -p {sbin,etc/rc.d/init.d}
 install -m 700 $RPM_SOURCE_DIR/keytable.init etc/rc.d/init.d/keytable
 install -m 755 $RPM_SOURCE_DIR/setsysfont sbin/setsysfont
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/ldconfig
@@ -86,8 +83,8 @@ fi
 %config /etc/rc.d/init.d/keytable
 /sbin/setsysfont
 /bin/*
-%{_bindir}/*
-%{_mandir}/man*/*
+%_bindir/*
+%_mandir/man*/*
 /lib/kbd/*
 
 %changelog

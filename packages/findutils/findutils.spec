@@ -1,4 +1,4 @@
-# $Id: Owl/packages/findutils/findutils.spec,v 1.6 2002/08/26 15:36:45 mci Exp $
+# $Id: Owl/packages/findutils/findutils.spec,v 1.7 2003/10/29 19:08:28 solar Exp $
 
 Summary: The GNU versions of find utilities (find and xargs).
 Name: findutils
@@ -7,13 +7,13 @@ Release: owl2
 Epoch: 1
 License: GPL
 Group: Applications/File
-Source0: ftp://alpha.gnu.org/gnu/%{name}-%{version}.tar.gz
+Source0: ftp://alpha.gnu.org/gnu/%name-%version.tar.gz
 Patch0: findutils-4.1.7-rh-doc.diff
 Patch1: findutils-4.1.7-owl-delete.diff
 Patch2: findutils-4.1.7-owl-warnings.diff
 Patch3: findutils-4.1.7-owl-info.diff
 PreReq: /sbin/install-info
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The findutils package contains programs which will help you locate
@@ -41,28 +41,25 @@ make
 rm -rf $RPM_BUILD_ROOT
 %makeinstall
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %post
-/sbin/install-info %{_infodir}/find.info.gz %{_infodir}/dir
+/sbin/install-info %_infodir/find.info.gz %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/find.info.gz %{_infodir}/dir
+	/sbin/install-info --delete %_infodir/find.info.gz %_infodir/dir
 fi
 
 %files
 %defattr(-,root,root)
 %doc NEWS README
-%{_bindir}/find
-%{_bindir}/xargs
-%{_mandir}/man1/find.1*
-%{_mandir}/man1/xargs.1*
-%{_infodir}/find.info*
+%_bindir/find
+%_bindir/xargs
+%_mandir/man1/find.1*
+%_mandir/man1/xargs.1*
+%_infodir/find.info*
 
 %changelog
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1:4.1.7-owl2
 - Deal with info dir entries such that the menu looks pretty.
 
 * Tue May 14 2002 Solar Designer <solar@owl.openwall.com>

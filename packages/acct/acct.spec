@@ -1,4 +1,4 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.19 2003/10/24 00:01:45 solar Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.20 2003/10/29 18:04:09 solar Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
@@ -6,7 +6,7 @@ Version: 6.3.5
 Release: owl11
 License: GPL
 Group: Applications/System
-Source0: ftp://ftp.red-bean.com/pub/noel/%{name}-%{version}.tar.gz
+Source0: ftp://ftp.red-bean.com/pub/noel/%name-%version.tar.gz
 Source1: dump-acct.8
 Source2: dump-utmp.8
 Source3: acct.init
@@ -16,7 +16,7 @@ Patch1: acct-6.3.5-owl-devpts.diff
 PreReq: /sbin/install-info, grep
 Provides: psacct
 Obsoletes: psacct
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The acct package contains several utilities for monitoring process
@@ -44,48 +44,45 @@ make
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/etc/{rc.d/init.d,logrotate.d}
-mkdir -p $RPM_BUILD_ROOT{/sbin,%{_bindir},%{_sbindir},%{_mandir}}
-mkdir -p $RPM_BUILD_ROOT%{_var}/account
+mkdir -p $RPM_BUILD_ROOT{/sbin,%_bindir,%_sbindir,%_mandir}
+mkdir -p $RPM_BUILD_ROOT%_var/account
 %makeinstall
-install -m 644 $RPM_SOURCE_DIR/dump-acct.8 $RPM_BUILD_ROOT%{_mandir}/man8/
-install -m 644 $RPM_SOURCE_DIR/dump-utmp.8 $RPM_BUILD_ROOT%{_mandir}/man8/
+install -m 644 $RPM_SOURCE_DIR/dump-acct.8 $RPM_BUILD_ROOT%_mandir/man8/
+install -m 644 $RPM_SOURCE_DIR/dump-utmp.8 $RPM_BUILD_ROOT%_mandir/man8/
 install -m 755 $RPM_SOURCE_DIR/acct.init $RPM_BUILD_ROOT/etc/rc.d/init.d/acct
 install -m 644 $RPM_SOURCE_DIR/acct.logrotate \
 	$RPM_BUILD_ROOT/etc/logrotate.d/acct
 
 # Move accton to /sbin -- leave historical symlink
-mv $RPM_BUILD_ROOT%{_sbindir}/accton $RPM_BUILD_ROOT/sbin/accton
-ln -s ../../sbin/accton $RPM_BUILD_ROOT%{_sbindir}/accton
+mv $RPM_BUILD_ROOT%_sbindir/accton $RPM_BUILD_ROOT/sbin/accton
+ln -s ../../sbin/accton $RPM_BUILD_ROOT%_sbindir/accton
 
 # Because of the last command conflicting with the one from SysVinit
 mv $RPM_BUILD_ROOT/usr/bin/last $RPM_BUILD_ROOT/usr/bin/last-acct
-mv $RPM_BUILD_ROOT%{_mandir}/man1/last.1 \
-	$RPM_BUILD_ROOT%{_mandir}/man1/last-acct.1
+mv $RPM_BUILD_ROOT%_mandir/man1/last.1 \
+	$RPM_BUILD_ROOT%_mandir/man1/last-acct.1
 
-touch $RPM_BUILD_ROOT%{_var}/account/pacct
-touch $RPM_BUILD_ROOT%{_var}/account/usracct
-touch $RPM_BUILD_ROOT%{_var}/account/savacct
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+touch $RPM_BUILD_ROOT%_var/account/pacct
+touch $RPM_BUILD_ROOT%_var/account/usracct
+touch $RPM_BUILD_ROOT%_var/account/savacct
 
 %post
 # We need this hack to get rid of an old, incorrect accounting info entry
 # when installing over older versions of Red Hat Linux.
-INFODIRFILE=%{_infodir}/dir
+INFODIRFILE=%_infodir/dir
 if grep -q '^* accounting: (psacct)' $INFODIRFILE; then
 	if test -L $INFODIRFILE; then
-		INFODIRFILE="`find %{_infodir} -name dir -printf '%%l'`"
+		INFODIRFILE="`find %_infodir -name dir -printf '%%l'`"
 	fi
 	cp -p $INFODIRFILE $INFODIRFILE.rpmtmp &&
 	grep -v '^* accounting: (psacct)' $INFODIRFILE > $INFODIRFILE.rpmtmp &&
 	mv $INFODIRFILE.rpmtmp $INFODIRFILE
 fi
 
-/sbin/install-info %{_infodir}/accounting.info.gz %{_infodir}/dir \
+/sbin/install-info %_infodir/accounting.info.gz %_infodir/dir \
 	--entry="* accounting: (accounting).                     The GNU Process Accounting Suite."
 
-for f in %{_var}/account/{pacct,usracct,savacct}; do
+for f in %_var/account/{pacct,usracct,savacct}; do
 	test -e $f && continue || :
 	touch $f
 	chown root:root $f
@@ -94,7 +91,7 @@ done
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/accounting.info.gz %{_infodir}/dir \
+	/sbin/install-info --delete %_infodir/accounting.info.gz %_infodir/dir \
 		--entry="* accounting: (accounting).                     The GNU Process Accounting Suite."
 fi
 
@@ -107,10 +104,10 @@ fi
 %attr(0644,root,root) %config(noreplace) /etc/logrotate.d/*
 %config /etc/rc.d/init.d/acct
 /sbin/accton
-%{_sbindir}/*
-%{_bindir}/*
-%{_mandir}/*/*
-%{_infodir}/*
+%_sbindir/*
+%_bindir/*
+%_mandir/*/*
+%_infodir/*
 
 %changelog
 * Mon May 05 2003 Solar Designer <solar@owl.openwall.com> 6.3.5-owl11

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ed/ed.spec,v 1.13 2002/09/04 20:51:54 mci Exp $
+# $Id: Owl/packages/ed/ed.spec,v 1.14 2003/10/29 19:04:58 solar Exp $
 
 Summary: The GNU line editor.
 Name: ed
@@ -6,14 +6,14 @@ Version: 0.2
 Release: owl21
 License: GPL
 Group: Applications/Text
-Source: ftp://ftp.gnu.org/gnu/%{name}-%{version}.tar.gz
+Source: ftp://ftp.gnu.org/gnu/%name-%version.tar.gz
 Patch0: ed-0.2-deb-mkfile.diff
 Patch1: ed-0.2-deb-parentheses.diff
 Patch2: ed-0.2-deb-owl-man.diff
 Patch3: ed-0.2-alt-tmp.diff
 PreReq: /sbin/install-info
-Prefix: %{_prefix}
-BuildRoot: /override/%{name}-%{version}
+Prefix: %_prefix
+BuildRoot: /override/%name-%version
 
 %description
 ed is a line-oriented text editor, used to create, display, and modify
@@ -37,18 +37,15 @@ export ac_cv_func_sigsetjmp=yes
 make LDFLAGS=-s
 
 %install
-%makeinstall bindir=$RPM_BUILD_ROOT/bin mandir=$RPM_BUILD_ROOT%{_mandir}/man1
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+%makeinstall bindir=$RPM_BUILD_ROOT/bin mandir=$RPM_BUILD_ROOT%_mandir/man1
 
 %post
-/sbin/install-info %{_infodir}/ed.info.gz %{_infodir}/dir \
+/sbin/install-info %_infodir/ed.info.gz %_infodir/dir \
 	--entry="* ed: (ed).                                     The GNU Line Editor."
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/ed.info.gz %{_infodir}/dir \
+	/sbin/install-info --delete %_infodir/ed.info.gz %_infodir/dir \
 		--entry="* ed: (ed).                                     The GNU Line Editor."
 fi
 
@@ -56,11 +53,11 @@ fi
 %defattr(-,root,root)
 %doc NEWS POSIX README THANKS
 /bin/*
-%{_infodir}/ed.info*
-%{_mandir}/*/*
+%_infodir/ed.info*
+%_mandir/*/*
 
 %changelog
-* Wed Sep 04 2002 Michail Litvak <mci@owl.openwall.com>
+* Wed Sep 04 2002 Michail Litvak <mci@owl.openwall.com> 0.2-owl21
 - Replace -owl-mkstemp.diff by more improved -alt-tmp.diff
 - add patch to fix man page
 

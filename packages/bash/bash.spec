@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.17 2003/04/15 14:24:47 solar Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.18 2003/10/29 18:18:52 solar Exp $
 
 Version: 2.05
 Name: bash
@@ -6,8 +6,8 @@ Summary: The GNU Bourne-Again SHell (Bash).
 Release: owl5
 Group: System Environment/Shells
 License: GPL
-Source0: ftp://ftp.gnu.org/gnu/bash/bash-%{version}.tar.gz
-Source1: ftp://ftp.gnu.org/gnu/bash/bash-doc-%{version}.tar.gz
+Source0: ftp://ftp.gnu.org/gnu/bash/bash-%version.tar.gz
+Source1: ftp://ftp.gnu.org/gnu/bash/bash-doc-%version.tar.gz
 Source2: dot-bashrc
 Source3: dot-bash_profile
 Source4: dot-bash_logout
@@ -31,9 +31,9 @@ Patch41: bash-2.05-alt-man.diff
 Requires: mktemp >= 1:1.3.1
 Provides: bash2
 Obsoletes: bash2, etcskel
-Prefix: %{_prefix}
+Prefix: %_prefix
 BuildRequires: mktemp >= 1:1.3.1
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The GNU Bourne Again shell (Bash) is a shell or command language
@@ -50,7 +50,7 @@ Obsoletes: bash2-doc
 
 %description doc
 The bash-doc package contains documentation for the GNU Bourne
-Again shell version %{version}.
+Again shell version %version.
 
 %prep
 %setup -q -a 1
@@ -72,8 +72,8 @@ Again shell version %{version}.
 %patch40 -p1
 %patch41 -p1
 
-echo %{version} > _distribution
-echo %{release} | sed -e "s/[A-Za-z]//g" > _patchlevel
+echo %version > _distribution
+echo %release | sed -e "s/[A-Za-z]//g" > _patchlevel
 
 # Would anyone volunteer to fix those? Probably not.
 find examples -type f -print0 | xargs -r0 grep -lZ /tmp | xargs -r0 rm -f --
@@ -103,17 +103,17 @@ rm -rf $RPM_BUILD_ROOT
 %makeinstall
 
 mkdir -p $RPM_BUILD_ROOT/bin
-mv $RPM_BUILD_ROOT%{_bindir}/bash $RPM_BUILD_ROOT/bin/
+mv $RPM_BUILD_ROOT%_bindir/bash $RPM_BUILD_ROOT/bin/
 ln -s bash $RPM_BUILD_ROOT/bin/sh
 ln -s bash $RPM_BUILD_ROOT/bin/bash2
 
-ln -s bash.1 $RPM_BUILD_ROOT%{_mandir}/man1/sh.1
-ln -s bash.1 $RPM_BUILD_ROOT%{_mandir}/man1/bash2.1
+ln -s bash.1 $RPM_BUILD_ROOT%_mandir/man1/sh.1
+ln -s bash.1 $RPM_BUILD_ROOT%_mandir/man1/bash2.1
 
 cd doc
 gzip -9nf *.{ps,txt}
 
-install -m 644 builtins.1 $RPM_BUILD_ROOT%{_mandir}/man1/builtins.1
+install -m 644 builtins.1 $RPM_BUILD_ROOT%_mandir/man1/builtins.1
 
 # Make manpages for bash builtins as per suggestion in doc/README
 sed -e '
@@ -127,20 +127,17 @@ b
 d
 ' builtins.1 > man.pages
 for c in `cat man.pages`; do
-	ln -s builtins.1 $RPM_BUILD_ROOT%{_mandir}/man1/$c.1
+	ln -s builtins.1 $RPM_BUILD_ROOT%_mandir/man1/$c.1
 done
 
 cd $RPM_BUILD_ROOT
 # These conflict with real manpages
-rm .%{_mandir}/man1/{echo,pwd,test,kill}.1
+rm .%_mandir/man1/{echo,pwd,test,kill}.1
 
 mkdir -p etc/skel
 install -m 644 $RPM_SOURCE_DIR/dot-bashrc etc/skel/.bashrc
 install -m 644 $RPM_SOURCE_DIR/dot-bash_profile etc/skel/.bash_profile
 install -m 644 $RPM_SOURCE_DIR/dot-bash_logout etc/skel/.bash_logout
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %triggerin -- libtermcap
 if [ ! -f /etc/shells ]; then
@@ -175,10 +172,10 @@ fi
 /bin/sh
 /bin/bash
 /bin/bash2
-%{_infodir}/bash.info*
-%{_mandir}/man1/*.1*
-%{_mandir}/man1/..1*
-%{_prefix}/bin/bashbug
+%_infodir/bash.info*
+%_mandir/man1/*.1*
+%_mandir/man1/..1*
+%_prefix/bin/bashbug
 
 %files doc
 %defattr(-,root,root)

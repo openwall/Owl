@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gnupg/gnupg.spec,v 1.21 2003/05/16 17:56:06 solar Exp $
+# $Id: Owl/packages/gnupg/gnupg.spec,v 1.22 2003/10/29 19:22:05 solar Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
@@ -7,12 +7,12 @@ Release: owl2
 License: GPL
 Group: Applications/Cryptography
 URL: http://www.gnupg.org
-Source: ftp://ftp.gnupg.org/GnuPG/gnupg/%{name}-%{version}.tar.bz2
+Source: ftp://ftp.gnupg.org/GnuPG/gnupg/%name-%version.tar.bz2
 Patch0: gnupg-1.2.2-fw-secret-key-checks.diff
 PreReq: /sbin/install-info
 Provides: gpg, openpgp
 BuildRequires: zlib-devel, bison, texinfo
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 GnuPG (GNU Privacy Guard) is a GNU utility for encrypting data and
@@ -40,25 +40,22 @@ unset LINGUAS || :
 make
 
 %install
-mkdir -p $RPM_BUILD_ROOT%{_libdir}/%{name}
+mkdir -p $RPM_BUILD_ROOT%_libdir/%name
 %makeinstall transform=
 sed 's,\.\./g[0-9\.]*/,,g' tools/lspgpot > lspgpot
-install -m 755 lspgpot $RPM_BUILD_ROOT%{_bindir}/lspgpot
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+install -m 755 lspgpot $RPM_BUILD_ROOT%_bindir/lspgpot
 
 %post
-/sbin/install-info %{_infodir}/gpg.info.gz %{_infodir}/dir \
+/sbin/install-info %_infodir/gpg.info.gz %_infodir/dir \
 	--entry "* GnuPG: (gpg).                                 Encryption and signing tool."
-/sbin/install-info %{_infodir}/gpgv.info.gz %{_infodir}/dir \
+/sbin/install-info %_infodir/gpgv.info.gz %_infodir/dir \
 	--entry "* gpgv: (gpgv).                                 GnuPG signature verification tool."
 
 %preun
 if [ $1 -eq 0 ]; then
-        /sbin/install-info --delete %{_infodir}/gpg.info.gz %{_infodir}/dir \
+        /sbin/install-info --delete %_infodir/gpg.info.gz %_infodir/dir \
 		--entry "* GnuPG: (gpg).                                 Encryption and signing tool."
-        /sbin/install-info --delete %{_infodir}/gpgv.info.gz %{_infodir}/dir \
+        /sbin/install-info --delete %_infodir/gpgv.info.gz %_infodir/dir \
 		--entry "* gpgv: (gpgv).                                 GnuPG signature verification tool."
 fi
 
@@ -68,23 +65,23 @@ fi
 %doc doc/{DETAILS,FAQ,HACKING,OpenPGP,*.html}
 %doc tools/convert-from-106
 
-%{_bindir}/gpg
-%{_bindir}/gpgv
-%{_bindir}/lspgpot
-%{_datadir}/locale/*/*/*
-%{_libdir}/%{name}
-%{_mandir}/man1/gpg.*
-%{_mandir}/man1/gpgv.*
-%{_mandir}/man7/gnupg.*
-%{_infodir}/gpg.*
-%{_infodir}/gpgv.*
-%{_libexecdir}/*
-%dir %{_datadir}/gnupg
-%config(noreplace) %{_datadir}/gnupg/options.skel
+%_bindir/gpg
+%_bindir/gpgv
+%_bindir/lspgpot
+%_datadir/locale/*/*/*
+%_libdir/%name
+%_mandir/man1/gpg.*
+%_mandir/man1/gpgv.*
+%_mandir/man7/gnupg.*
+%_infodir/gpg.*
+%_infodir/gpgv.*
+%_libexecdir/*
+%dir %_datadir/gnupg
+%config(noreplace) %_datadir/gnupg/options.skel
 
 %changelog
 * Fri May 16 2003 Michail Litvak <mci@owl.openwall.com> 1.2.2-owl2
-- %dir %{_datadir}/gnupg
+- %dir %_datadir/gnupg
 
 * Sun May 11 2003 Michail Litvak <mci@owl.openwall.com> 1.2.2-owl1
 - 1.2.2 (Fixed key validity bug)

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cpio/cpio.spec,v 1.11 2003/10/25 08:43:12 solar Exp $
+# $Id: Owl/packages/cpio/cpio.spec,v 1.12 2003/10/29 18:40:33 solar Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
@@ -6,7 +6,7 @@ Version: 2.4.2
 Release: owl27
 License: GPL
 Group: Applications/Archiving
-Source: ftp://ftp.gnu.org/gnu/cpio-%{version}.tar.gz
+Source: ftp://ftp.gnu.org/gnu/cpio-%version.tar.gz
 Patch0: cpio-2.4.2-deb-cpio.diff
 Patch1: cpio-2.4.2-deb-mt_scsi.diff
 Patch2: cpio-2.4.2-deb-rmt.diff
@@ -23,8 +23,8 @@ Patch12: cpio-2.4.2-rh-svr4compat.diff
 Patch13: cpio-2.4.2-rh-lchown.diff
 PreReq: /sbin/install-info
 Provides: mt-st, rmt
-Prefix: %{_prefix}
-BuildRoot: /override/%{name}-%{version}
+Prefix: %_prefix
+BuildRoot: /override/%name-%version
 
 %description
 GNU cpio copies files into or out of a cpio or tar archive.  Archives
@@ -62,24 +62,21 @@ make LDFLAGS=-s
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%makeinstall bindir=$RPM_BUILD_ROOT/bin mandir=$RPM_BUILD_ROOT%{_mandir}/
+%makeinstall bindir=$RPM_BUILD_ROOT/bin mandir=$RPM_BUILD_ROOT%_mandir/
 
-mkdir -p $RPM_BUILD_ROOT%{_mandir}/man8/
-install -m 644 rmt.8 $RPM_BUILD_ROOT%{_mandir}/man8/
+mkdir -p $RPM_BUILD_ROOT%_mandir/man8/
+install -m 644 rmt.8 $RPM_BUILD_ROOT%_mandir/man8/
 
 mkdir -p $RPM_BUILD_ROOT/{etc,sbin}
 ln -s ../usr/libexec/rmt $RPM_BUILD_ROOT/etc/
 ln -s ../usr/libexec/rmt $RPM_BUILD_ROOT/sbin/
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %post
-/sbin/install-info %{_infodir}/cpio.info.gz %{_infodir}/dir
+/sbin/install-info %_infodir/cpio.info.gz %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/cpio.info.gz %{_infodir}/dir
+	/sbin/install-info --delete %_infodir/cpio.info.gz %_infodir/dir
 fi
 
 %files
@@ -90,10 +87,10 @@ fi
 /usr/libexec/rmt
 /sbin/rmt
 /etc/rmt
-%{_infodir}/cpio.*
-%{_mandir}/man1/cpio.1*
-%{_mandir}/man1/mt.1*
-%{_mandir}/man8/rmt.8*
+%_infodir/cpio.*
+%_mandir/man1/cpio.1*
+%_mandir/man1/mt.1*
+%_mandir/man8/rmt.8*
 
 %changelog
 * Sun Oct 19 2003 Solar Designer <solar@owl.openwall.com> 2.4.2-owl27
