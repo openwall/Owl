@@ -1,7 +1,8 @@
 Owl is currently available from the following official mirrors:
 
-ftp://ftp.ru.openwall.com/pub/Owl/	(Russian)
-ftp://ftp.ca.openwall.com/pub/Owl/	(Canadian)
+ftp://ftp.ca.openwall.com/pub/Owl/	(Canada)
+ftp://ftp.pl.openwall.com/pub/Owl/	(Poland)
+ftp://ftp.ru.openwall.com/pub/Owl/	(Russia)
 
 There's a subdirectory for each Owl release or branch, with the
 following contents:
@@ -19,4 +20,4 @@ need both the CVS and the source trees.
 More documentation (including BUILD and INSTALL) is available in the
 CVS tree, under Owl/doc/.
 
-$Id: Owl/doc/DOWNLOAD,v 1.1 2001/01/21 19:15:05 solar Exp $
+$Id: Owl/doc/DOWNLOAD,v 1.2 2001/04/08 00:27:02 solar Exp $
