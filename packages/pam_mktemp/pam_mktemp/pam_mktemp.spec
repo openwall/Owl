@@ -1,9 +1,9 @@
-# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.5 2002/03/13 03:48:34 solar Exp $
+# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.6 2002/03/19 22:40:55 solar Exp $
 
 Summary: Pluggable private /tmp space support for interactive (shell) sessions.
 Name: pam_mktemp
-Version: 0.1
-Release: owl2
+Version: 0.2
+Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
 Source: pam_mktemp-%{version}.tar.gz
@@ -37,6 +37,9 @@ test -d /tmp/.private -a -O /tmp/.private && chattr +a /tmp/.private || :
 /lib/security/pam_mktemp.so
 
 %changelog
+* Wed Mar 20 2002 Solar Designer <solar@owl.openwall.com>
+- Don't let the append-only flag get inherited by per-user subdirectories.
+
 * Wed Mar 13 2002 Solar Designer <solar@owl.openwall.com>
 - Make the /tmp/.private directory append-only (where supported) such that
 the directory or its subdirectories don't get removed by a /tmp cleaner.
