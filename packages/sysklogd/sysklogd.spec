@@ -1,9 +1,9 @@
-# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.13 2004/01/04 23:24:59 mci Exp $
+# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.14 2004/02/10 04:55:10 solar Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
 Version: 1.4.1
-Release: owl6
+Release: owl7
 License: BSD for syslogd and GPL for klogd
 Group: System Environment/Daemons
 URL: http://www.infodrom.org/projects/sysklogd/
@@ -106,6 +106,10 @@ fi
 %_mandir/*/*
 
 %changelog
+* Tue Feb 10 2004 Solar Designer <solar@owl.openwall.com> 1.4.1-owl7
+- Use "sharedscripts" directive in /etc/logrotate.d/syslog such that syslogd
+is told to restart only once for all logs rotated.
+
 * Sun Jan 04 2004 Michail Litvak <mci@owl.openwall.com> 1.4.1-owl6
 - Pass options to syslogd and klogd from /etc/sysconfig/syslog file.
 

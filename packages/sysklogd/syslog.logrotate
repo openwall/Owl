@@ -1,26 +1,8 @@
-/var/log/kernel {
-    create 620 root syslogd
-    postrotate
-	test -f /var/run/syslogd.pid && kill -HUP `cat /var/run/syslogd.pid`
-    endscript
-}
+# $Id: Owl/packages/sysklogd/syslog.logrotate,v 1.3 2004/02/10 04:55:10 solar Exp $
 
-/var/log/messages {
+/var/log/kernel /var/log/messages /var/log/maillog /var/log/cron {
     create 620 root syslogd
-    postrotate
-	test -f /var/run/syslogd.pid && kill -HUP `cat /var/run/syslogd.pid`
-    endscript
-}
-
-/var/log/maillog {
-    create 620 root syslogd
-    postrotate
-	test -f /var/run/syslogd.pid && kill -HUP `cat /var/run/syslogd.pid`
-    endscript
-}
-
-/var/log/cron {
-    create 620 root syslogd
+    sharedscripts
     postrotate
 	test -f /var/run/syslogd.pid && kill -HUP `cat /var/run/syslogd.pid`
     endscript
