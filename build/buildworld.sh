@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.5 2000/12/16 20:51:23 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.6 2000/12/17 02:43:57 solar Exp $
 
 REPOSITORY=Owl
 PACKAGES=$REPOSITORY/packages
@@ -38,7 +38,7 @@ function build_native()
 		--define "buildarch $BUILDARCH" \
 		--define "home $HOME" \
 		--define "number $NUMBER" \
-		&> $HOME/logs/$PACKAGE
+		&> $HOME/logs/$PACKAGE < /dev/null
 	cd $HOME/native-work || exit 1
 	mv $WORK/RPMS/*/* $HOME/RPMS/ &> /dev/null
 	mv $WORK/SRPMS/* $HOME/SRPMS/ &> /dev/null || \
@@ -62,7 +62,7 @@ function build_foreign()
 		--define "buildarch $BUILDARCH" \
 		--define "home $HOME" \
 		--define "number $NUMBER" \
-		&> $HOME/logs/$PACKAGE
+		&> $HOME/logs/$PACKAGE < /dev/null
 	if mv $WORK/RPMS/*/* $HOME/RPMS/ &> /dev/null; then
 		cp $FOREIGN/$PACKAGE.src.rpm $HOME/SRPMS/
 	else
