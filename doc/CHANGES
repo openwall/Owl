@@ -12,6 +12,34 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/11/12	Packages: tcb, shadow-utils, util-linux
+This is the first in a series of changes needed for us to move to the
+tcb password shadowing scheme (please refer to the tcb(5) manual page
+for information on what tcb is about and why we designed it).  The tcb
+package consists of three components: pam_tcb, libnss_tcb, and libtcb.
+pam_tcb is a PAM module which supersedes pam_unix.  libnss_tcb is the
+accompanying NSS module.  libtcb contains code shared by the PAM and
+NSS modules and is also used by programs from the updated shadow-utils
+package.  At the same time, the shadow suite (shadow-utils) has been
+updated to version 4.0.0 with many additional fixes and modifications
+and, of course, with tcb support added.  The non-tcb-specific changes
+to shadow-utils include: optional mailbox creation in useradd(8), the
+use of PAM with most user management commands (where that made sense),
+support for arbitrary password hashing methods for group passwords set
+with gpasswd(1), packaging of gshadow-aware versions of newgrp(1) and
+sg(1) commands (previously, newgrp(1) was a part of our util-linux
+package), numerous bug fixes and reliability improvements, and quite
+likely new bugs.  chpasswd(8) and newusers(8) will now use PAM to set
+passwords that haven't already been hashed.  Other commands which set
+passwords will invoke the PAM password management stack to possibly
+rebuild additional password databases.  chage(1), once enabled, will
+now use PAM authentication which is by default set to require non-root
+users to authenticate themselves prior to being let to see their
+password aging information.  Other user management commands will now
+support PAM authentication, too, although that isn't of much use given
+that we don't officially support running user management commands on
+behalf of trusted but not root-privileged users.
+
 2001/11/09	Package: pam_userpass
 Updated to 0.5 which is now stackable for password management as well
 as authentication.  This is to be used by programs such as chpasswd(8)
@@ -421,4 +449,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.44 2001/11/09 02:38:08 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.45 2001/11/12 04:34:58 solar Exp $
