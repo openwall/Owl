@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.6 2003/08/22 01:16:52 solar Exp $
+# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.7 2003/08/22 01:24:50 solar Exp $
 
 Summary: Tools for managing ipchains packet filtering rules.
 Name: ipchains
@@ -14,7 +14,8 @@ Source3: ipchains.init
 Patch0: ipchains-1.3.10-rh-install-no-root.diff
 Patch1: ipchains-1.3.10-rh-owl-man.diff
 Patch2: ipchains-1.3.10-rh-RETURN.diff
-Requires: sh-utils
+PreReq: chkconfig
+Requires: fileutils, sh-utils, grep
 Obsoletes: ipfwadm, ipchains-scripts
 BuildRoot: /override/%{name}-%{version}
 
@@ -79,6 +80,8 @@ fi
 * Fri Aug 22 2003 Solar Designer <solar@owl.openwall.com> 1.3.10-owl11
 - Corrected the package summary and description to note the difference
 from iptables.
+- PreReq: chkconfig
+- Requires: fileutils, sh-utils, grep
 
 * Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com> 1.3.10-owl10
 - Enforce our new spec file conventions
