@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.49 2003/06/22 03:43:34 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.50 2003/06/28 15:05:06 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -6,7 +6,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
 %define crypt_bf_version 0.4.5
-Release: owl33
+Release: owl34
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%{version}.tar.gz
@@ -34,6 +34,7 @@ Patch14: glibc-2.1.3-openbsd-freebsd-owl-fts.diff
 Patch15: glibc-2.1.3-owl-calloc-bound.diff
 Patch16: glibc-2.1.3-owl-xdr_array-bound.diff
 Patch17: glibc-2.1.3-owl-resolv-QFIXEDSZ-underfills.diff
+Patch18: glibc-2.1.3-owl-realpath-comments.diff
 Patch20: glibc-2.1.3-rh-libnoversion.diff
 Patch21: glibc-2.1.3-rh-paths.diff
 Patch22: glibc-2.1.3-rh-linuxthreads.diff
@@ -140,6 +141,7 @@ cp $RPM_SOURCE_DIR/crypt_freesec.[ch] crypt/sysdeps/unix/
 %patch15 -p1
 %patch16 -p1
 %patch17 -p1
+%patch18 -p1
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
@@ -318,6 +320,10 @@ fi
 %endif
 
 %changelog
+* Sat Jun 28 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl34
+- Corrected the comments in stdlib.h for canonicalize_file_name() and
+realpath() to not describe behavior that is not actually implemented.
+
 * Sun Jun 22 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl33
 - Back-ported a fix from glibc CVS to relax the mutex ownership checks
 in pthread_cond_wait(3) and related functions.
