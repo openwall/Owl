@@ -1,9 +1,9 @@
-# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.18 2004/11/23 22:40:45 mci Exp $
+# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.19 2005/01/12 15:56:28 galaxy Exp $
 
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
 Version: 1.27
-Release: owl6
+Release: owl7
 License: GPL
 Group: System Environment/Base
 Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
@@ -55,14 +55,13 @@ chmod -R u+w .
 # There're currently no pre-compiled versions of these texinfo files
 # included, should uncomment if that changes.
 #rm doc/libext2fs.info
-autoconf
-%configure --enable-elf-shlibs
-make
+%configure --with-cc="%__cc" --enable-elf-shlibs
+%__make
 
 %install
 rm -rf %buildroot
-make install install-libs DESTDIR="%buildroot" \
-	root_sbindir=/sbin root_libdir=/lib
+%__make install install-libs DESTDIR="%buildroot" \
+	root_sbindir=/sbin root_libdir=/%_lib
 
 # XXX: (GM): Remove unpackaged files (check later)
 rm %buildroot/sbin/e2image
@@ -102,11 +101,11 @@ fi
 /sbin/tune2fs
 %_sbindir/mklost+found
 
-/lib/libcom_err.so.*
-/lib/libe2p.so.*
-/lib/libext2fs.so.*
-/lib/libss.so.*
-/lib/libuuid.so.*
+/%_lib/libcom_err.so.*
+/%_lib/libe2p.so.*
+/%_lib/libext2fs.so.*
+/%_lib/libss.so.*
+/%_lib/libuuid.so.*
 
 %_bindir/chattr
 %_bindir/lsattr
@@ -166,6 +165,10 @@ fi
 %_mandir/man3/com_err.3*
 
 %changelog
+* Sun Jan 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.27-owl7
+- Using %__cc macro during configure
+- Cleaned up the spec.
+
 * Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 1.27-owl6
 - Bumped the release to reflect Galaxy's change to remove unpackaged files.
 
