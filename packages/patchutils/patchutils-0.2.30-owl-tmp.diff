@@ -1,0 +1,16 @@
+diff -urpN patchutils-0.2.30.orig/editdiff.in patchutils-0.2.30/editdiff.in
+--- patchutils-0.2.30.orig/editdiff.in	Mon Jun  7 14:07:44 2004
++++ patchutils-0.2.30/editdiff.in	Sat Nov 27 01:42:36 2004
+@@ -57,9 +57,10 @@ done
+ [ "$#" -gt 0 ] && { usage; exit 1; }
+ [ -n "$FILE" ] || { usage; exit 1; }
+ 
+-TMPD="$(mktemp -d /tmp/editdiff.XXXXXX)" || \
++TMPD="$(mktemp -dt editdiff.XXXXXXXXXX)" || \
+ 	{ echo >&2 "Failed to create temporary directory"; exit 1; }
+-trap 'rm -rf "${TMPD}"' EXIT
++trap 'rm -rf -- "${TMPD}"' EXIT
++trap 'trap - EXIT; rm -rf -- "${TMPD}"; exit 1' HUP INT QUIT TERM
+ NAME="$(basename "${FILE}")"
+ filterdiff -v --format=unified <"${FILE}" >"${TMPD}/${NAME}.orig" || exit 1
+ cp "${TMPD}/${NAME}.orig" "${TMPD}/${NAME}" || exit 1

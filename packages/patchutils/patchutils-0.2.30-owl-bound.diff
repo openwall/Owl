@@ -1,0 +1,39 @@
+diff -urpN patchutils-0.2.30.orig/src/rediff.c patchutils-0.2.30/src/rediff.c
+--- patchutils-0.2.30.orig/src/rediff.c	Mon Jun  7 14:07:46 2004
++++ patchutils-0.2.30/src/rediff.c	Sat Nov 27 10:10:34 2004
+@@ -32,6 +32,7 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <libgen.h>
+ #ifdef HAVE_SYS_TYPES_H
+ # include <sys/types.h> // for ssize_t
+ #endif /* HAVE_SYS_TYPES_H */
+@@ -1039,17 +1040,19 @@ int main (int argc, char *argv[])
+ 		syntax (1);
+ 
+ 	if (argc - optind == 1) {
+-		char *p = xmalloc (PATH_MAX);
++		char *p;
+ 		char *f;
++		char *dname;
++		size_t dname_len;
++		const char recountdiff[] = "/recountdiff";
+ 		char **const new_argv = xmalloc (sizeof (char *) * argc);
+ 		memcpy (new_argv, argv, sizeof (char *) * argc);
+-		new_argv[0] = p;
+-		strcpy (p, argv[0]);
+-		f = strrchr (p, '/');
+-		if (!f)
+-			f = p;
+-		else f++;
+-		strcpy (f, "recountdiff");
++		p = xstrdup (argv[0]);
++		dname = dirname (p);
++		dname_len = strlen (dname);
++		new_argv[0] = xmalloc (dname_len + sizeof (recountdiff));
++		memcpy (new_argv[0], dname, dname_len);
++		memcpy (new_argv[0] + dname_len, recountdiff, sizeof (recountdiff));
+ 		execvp (new_argv[0], new_argv);
+ 		p = strdup (new_argv[0]);
+ 		f = strstr (p, "src/");
