@@ -1,0 +1,103 @@
+--- sysvinit-2.78.orig/src/sulogin.c	Sat Apr 24 15:01:45 1999
++++ sysvinit-2.78/src/sulogin.c	Tue Aug  8 08:40:04 2000
+@@ -4,9 +4,6 @@
+  *		user to supply the root password before a
+  *		shell is started.
+  *
+- *		If the password file is in any way corrupt
+- *		a root password is not needed.
+- *
+  *		If there is a shadow password file and the
+  *		encrypted root password is "x" the shadow
+  *		password will be used.
+@@ -20,21 +17,25 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <stdlib.h>
++#define __USE_XOPEN_EXTENDED
+ #include <unistd.h>
+ #include <fcntl.h>
+ #include <signal.h>
+ #include <pwd.h>
++#include <shadow.h>
+ #include <termios.h>
+ #include <sys/ioctl.h>
+ #if defined(__GLIBC__)
+ #  include <crypt.h>
+ #endif
+ 
++#if 0
+ #define CHECK_DES	1
+ #define CHECK_MD5	1
+ 
+ #define PASSWD	"/etc/passwd"
+ #define SHADOW	"/etc/shadow"
++#endif
+ #define BINSH	"/bin/sh"
+ 
+ char *Version = "@(#)sulogin 2.76-4 24-apr-1999 miquels@cistron.nl";
+@@ -89,6 +90,7 @@
+ {
+ }
+ 
++#if 0
+ /*
+  *	See if an encrypted password is valid. The encrypted
+  *	password is checked for traditional-style DES and
+@@ -136,12 +138,24 @@
+ {
+ 	if (val) *var = val;
+ }
++#endif
+ 
+ /*
+  *	Get the root password entry.
+  */
+ struct passwd *getrootpwent()
+ {
++	struct passwd *pw;
++	struct spwd *spw;
++
++	if ((pw = getpwnam("root")) &&
++	    !strcmp(pw->pw_passwd, "x") &&
++	    (spw = getspnam("root")))
++		pw->pw_passwd = spw->sp_pwdp;
++
++	return pw;
++
++#if 0
+ 	static struct passwd pwd;
+ 	FILE *fp;
+ 	static char line[256];
+@@ -222,6 +236,7 @@
+ 		fprintf(stderr, "%s: root password garbled\n", SHADOW);
+ 		strcpy(pwd.pw_passwd, ""); }
+ 	return &pwd;
++#endif
+ }
+ 
+ /*
+@@ -314,9 +329,11 @@
+ 	execl(sushell, shell, NULL);
+ 	perror(sushell);
+ 
++#if 0
+ 	setenv("SHELL", BINSH, 1);
+ 	execl(BINSH, profile ? "-sh" : "sh", NULL);
+ 	perror(BINSH);
++#endif
+ }
+ 
+ void usage(void)
+@@ -402,9 +419,9 @@
+ 	/*
+ 	 *	Ask for the password.
+ 	 */
+-	while(1) {
++	while(pwd) {
+ 		if ((p = getpasswd()) == NULL) break;
+-		if (pwd->pw_passwd[0] == 0 ||
++		if ((pwd->pw_passwd[0] == 0 && p[0] == 0) ||
+ 		    strcmp(crypt(p, pwd->pw_passwd), pwd->pw_passwd) == 0)
+ 			sushell(pwd);
+ 		printf("Login incorrect.\n");
