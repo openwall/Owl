@@ -1,8 +1,8 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.36 2003/11/06 16:03:19 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.36.2.1 2004/04/13 21:53:05 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
-Version: 0.9.6l
+Version: 0.9.6m
 Release: owl1
 License: distributable
 Group: System Environment/Libraries
@@ -152,10 +152,17 @@ ln -s openssl $RPM_BUILD_ROOT/usr/bin/ssleay
 %defattr(0644,root,root,0755)
 %attr(0644,root,root) /usr/lib/*.a
 %attr(0755,root,root) /usr/lib/*.so
+%dir %attr(0755,root,root) /usr/include/openssl
 %attr(0644,root,root) /usr/include/openssl/*
 %attr(0644,root,root) %_mandir/man3/*
 
 %changelog
+* Thu Mar 18 2004 Solar Designer <solar@owl.openwall.com> 0.9.6m-owl1
+- Updated to 0.9.6m.
+
+* Fri Jan 16 2004 Michail Litvak <mci@owl.openwall.com> 0.9.6l-owl2
+- Make /usr/include/openssl directory owned by this package.
+
 * Thu Nov 06 2003 Solar Designer <solar@owl.openwall.com> 0.9.6l-owl1
 - Updated to 0.9.6l.
 
