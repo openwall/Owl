@@ -1,28 +1,27 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.13 2001/11/05 11:01:24 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.14 2002/02/02 20:53:56 solar Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
 Version: 2.3.3
-Release: 2owl
+Release: owl2
 License: BSD with minor restrictions
 Group: System Environment/Daemons
 URL: http://www.xinetd.org/
 Source0: http://www.xinetd.org/xinetd-%{version}.tar.gz
 Source1: xinetd.init
 Source2: xinetd.conf
-Source3: xinetd-inetdconvert
-Source4: xinetd-ttime
-Source5: xinetd-utime
-Source6: xinetd-tdtime
-Source7: xinetd-udtime
-Source8: xinetd-echo
-Source9: xinetd-uecho
-Source10: xinetd-chargen
-Source11: xinetd-uchargen
+Source3: xinetd-ttime
+Source4: xinetd-utime
+Source5: xinetd-tdtime
+Source6: xinetd-udtime
+Source7: xinetd-echo
+Source8: xinetd-uecho
+Source9: xinetd-chargen
+Source10: xinetd-uchargen
 Patch0: xinetd-2.3.3-owl-pidfile.diff
+PreReq: /sbin/chkconfig /etc/rc.d/init.d
 Provides: inetd
 Obsoletes: inetd
-PreReq: /sbin/chkconfig /etc/rc.d/init.d
 BuildRequires: tcp_wrappers
 BuildRoot: /override/%{name}-%{version}
 
@@ -52,24 +51,26 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/etc/rc.d/init.d
+mkdir -p $RPM_BUILD_ROOT/etc/{rc.d/init.d,xinetd.d}
 %makeinstall \
 	DAEMONDIR=$RPM_BUILD_ROOT/usr/sbin MANDIR=$RPM_BUILD_ROOT/%{_mandir}
-mkdir -p $RPM_BUILD_ROOT/etc/xinetd.d/
-install -m 755 %SOURCE1 $RPM_BUILD_ROOT/etc/rc.d/init.d/xinetd
-install -m 644 %SOURCE2 $RPM_BUILD_ROOT/etc/xinetd.conf
-install -m 644 %SOURCE4 $RPM_BUILD_ROOT/etc/xinetd.d/time
-install -m 644 %SOURCE5 $RPM_BUILD_ROOT/etc/xinetd.d/time-udp
-install -m 644 %SOURCE6 $RPM_BUILD_ROOT/etc/xinetd.d/daytime
-install -m 644 %SOURCE7 $RPM_BUILD_ROOT/etc/xinetd.d/daytime-udp
-install -m 644 %SOURCE8 $RPM_BUILD_ROOT/etc/xinetd.d/echo
-install -m 644 %SOURCE9 $RPM_BUILD_ROOT/etc/xinetd.d/echo-udp
-install -m 644 %SOURCE10 $RPM_BUILD_ROOT/etc/xinetd.d/chargen
-install -m 644 %SOURCE11 $RPM_BUILD_ROOT/etc/xinetd.d/chargen-udp
 
-rm -f $RPM_BUILD_ROOT/%{_mandir}/man8/itox*
-rm -f $RPM_BUILD_ROOT/usr/sbin/itox
-rm -f $RPM_BUILD_ROOT/usr/sbin/xconv.pl
+cd $RPM_BUILD_ROOT
+
+install -m 755 $RPM_SOURCE_DIR/xinetd.init etc/rc.d/init.d/xinetd
+install -m 644 $RPM_SOURCE_DIR/xinetd.conf etc/
+install -m 644 $RPM_SOURCE_DIR/xinetd-ttime etc/xinetd.d/time
+install -m 644 $RPM_SOURCE_DIR/xinetd-utime etc/xinetd.d/time-udp
+install -m 644 $RPM_SOURCE_DIR/xinetd-tdtime etc/xinetd.d/daytime
+install -m 644 $RPM_SOURCE_DIR/xinetd-udtime etc/xinetd.d/daytime-udp
+install -m 644 $RPM_SOURCE_DIR/xinetd-echo etc/xinetd.d/echo
+install -m 644 $RPM_SOURCE_DIR/xinetd-uecho etc/xinetd.d/echo-udp
+install -m 644 $RPM_SOURCE_DIR/xinetd-chargen etc/xinetd.d/chargen
+install -m 644 $RPM_SOURCE_DIR/xinetd-uchargen etc/xinetd.d/chargen-udp
+
+rm ./%{_mandir}/man8/itox*
+rm usr/sbin/itox
+rm usr/sbin/xconv.pl
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -106,6 +107,10 @@ fi
 %config /etc/xinetd.d/*
 
 %changelog
+* Sat Feb 02 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+- Dropped the unused xinetd-inetdconvert.
+
 * Mon Nov 05 2001 Solar Designer <solar@owl.openwall.com> 
 - /etc/init.d -> /etc/rc.d/init.d for consistency.
 
