@@ -1,13 +1,14 @@
-# $Id: Owl/packages/zlib/zlib.spec,v 1.5 2002/03/13 04:07:01 solar Exp $
+# $Id: Owl/packages/zlib/zlib.spec,v 1.6 2003/02/25 04:25:23 solar Exp $
 
 Summary: The zlib compression and decompression library.
 Name: zlib
 Version: 1.1.4
-Release: owl1
+Release: owl2
 License: BSD
 Group: System Environment/Libraries
 URL: http://www.gzip.org/zlib/
 Source: ftp://ftp.info-zip.org/pub/infozip/zlib/zlib-%{version}.tar.bz2
+Patch0: zlib-1.1.4-owl-gzprintf-bound.diff
 PreReq: /sbin/ldconfig
 Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
@@ -32,6 +33,7 @@ library.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -44,17 +46,17 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p ${RPM_BUILD_ROOT}%{_prefix}
+mkdir -p $RPM_BUILD_ROOT%{_prefix}
 
 CFLAGS="$RPM_OPT_FLAGS" ./configure --shared --prefix=%{_prefix}
-make install prefix=${RPM_BUILD_ROOT}%{_prefix}
+make install prefix=$RPM_BUILD_ROOT%{_prefix}
 
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix}
-make install prefix=${RPM_BUILD_ROOT}%{_prefix}
+make install prefix=$RPM_BUILD_ROOT%{_prefix}
 
-install -m 644 zutil.h ${RPM_BUILD_ROOT}%{_includedir}/zutil.h
-mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man3
-install -m 644 zlib.3 ${RPM_BUILD_ROOT}%{_mandir}/man3
+install -m 644 zutil.h $RPM_BUILD_ROOT%{_includedir}/
+mkdir -p $RPM_BUILD_ROOT%{_mandir}/man3
+install -m 644 zlib.3 $RPM_BUILD_ROOT%{_mandir}/man3/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -76,6 +78,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man3/zlib.3*
 
 %changelog
+* Tue Feb 25 2003 Solar Designer <solar@owl.openwall.com>
+- Patched gzprintf() to use vsnprintf() and handle possible truncation,
+thanks to Bugtraq postings by Crazy Einstein, Richard Kettlewell, and
+Carlo Marcelo Arenas Belon.
+
 * Wed Mar 13 2002 Solar Designer <solar@owl.openwall.com>
 - Updated to 1.1.4.
 - Build with -Wall.
