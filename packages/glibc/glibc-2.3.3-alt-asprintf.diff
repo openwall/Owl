@@ -1,0 +1,43 @@
+2004-06-03  Dmitry V. Levin <ldv@altlinux.org>
+
+	* libio/vasprintf.c (_IO_vasprintf): Reset the result pointer
+	to NULL on any error.
+	* manual/stdio.texi: Reflect the change in asprintf API.
+
+diff -uprk.orig glibc-2.3.3-200406020600.orig/libio/vasprintf.c glibc-2.3.3-200406020600/libio/vasprintf.c
+--- glibc-2.3.3-200406020600.orig/libio/vasprintf.c	2003-06-03 13:41:51 +0400
++++ glibc-2.3.3-200406020600/libio/vasprintf.c	2004-06-03 01:50:21 +0400
+@@ -48,7 +48,10 @@ _IO_vasprintf (result_ptr, format, args)
+   _IO_size_t allocated;
+   string = (char *) malloc (init_string_size);
+   if (string == NULL)
+-    return -1;
++    {
++      *result_ptr = NULL;
++      return -1;
++    }
+ #ifdef _IO_MTSAFE_IO
+   sf._sbf._f._lock = NULL;
+ #endif
+@@ -62,6 +65,7 @@ _IO_vasprintf (result_ptr, format, args)
+   if (ret < 0)
+     {
+       free (sf._sbf._f._IO_buf_base);
++      *result_ptr = NULL;
+       return ret;
+     }
+   /* Only use realloc if the size we need is of the same order of
+diff -uprk.orig glibc-2.3.3-200406020600.orig/manual/stdio.texi glibc-2.3.3-200406020600/manual/stdio.texi
+--- glibc-2.3.3-200406020600.orig/manual/stdio.texi	2002-07-03 16:41:42 +0400
++++ glibc-2.3.3-200406020600/manual/stdio.texi	2004-06-03 01:54:03 +0400
+@@ -2397,7 +2397,9 @@ to the newly allocated string at that lo
+ 
+ The return value is the number of characters allocated for the buffer, or
+ less than zero if an error occurred. Usually this means that the buffer
+-could not be allocated.
++could not be allocated, and the value of @var{ptr} in this situation is
++implementation-dependent (in glibc, @var{ptr} will be set to the null
++pointer, but this behavior should not be relied upon).
+ 
+ Here is how to use @code{asprintf} to get the same result as the
+ @code{snprintf} example, but more easily:

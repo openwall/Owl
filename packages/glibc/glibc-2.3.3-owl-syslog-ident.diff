@@ -1,7 +1,7 @@
-diff -uNrp glibc-2.3.2.orig/misc/syslog.c glibc-2.3.2/misc/syslog.c
---- glibc-2.3.2.orig/misc/syslog.c	2002-12-12 02:00:24 +0000
-+++ glibc-2.3.2/misc/syslog.c	2004-03-08 08:55:38 +0000
-@@ -64,6 +64,7 @@ static int	LogFile = -1;		/* fd for log 
+diff -puNr glibc-2.3.3-200406160000.orig/misc/syslog.c glibc-2.3.3-200406160000/misc/syslog.c
+--- glibc-2.3.3-200406160000.orig/misc/syslog.c	Thu Apr 22 08:55:01 2004
++++ glibc-2.3.3-200406160000/misc/syslog.c	Sat Jan  8 04:18:16 2005
+@@ -66,6 +66,7 @@ static int	LogFile = -1;		/* fd for log 
  static int	connected;		/* have done connect */
  static int	LogStat;		/* status bits, set by openlog() */
  static const char *LogTag;		/* string to tag the entry with */
@@ -9,7 +9,7 @@ diff -uNrp glibc-2.3.2.orig/misc/syslog.c glibc-2.3.2/misc/syslog.c
  static int	LogFacility = LOG_USER;	/* default facility code */
  static int	LogMask = 0xff;		/* mask of priorities to be logged */
  extern char	*__progname;		/* Program name, from crt0. */
-@@ -104,6 +105,51 @@ syslog(pri, fmt, va_alist)
+@@ -124,6 +125,51 @@ syslog(pri, fmt, va_alist)
  }
  libc_hidden_def (syslog)
  
@@ -61,14 +61,13 @@ diff -uNrp glibc-2.3.2.orig/misc/syslog.c glibc-2.3.2/misc/syslog.c
  void
  vsyslog(pri, fmt, ap)
  	int pri;
-@@ -177,8 +223,18 @@ vsyslog(pri, fmt, ap)
+@@ -198,8 +244,17 @@ vsyslog(pri, fmt, ap)
  				   "%h %e %T ", __localtime_r (&now, &now_tm));
  #endif
  	    msgoff = ftell (f);
 +
-+	    /* Protect against multiple users.  */
-+	    __libc_cleanup_region_start (
-+	      1, (void (*) __P ((void *))) __libc_mutex_unlock, &syslog_lock);
++	    /* Protect against multiple users and cancellation.  */
++	    __libc_cleanup_push (cancel_handler, NULL);
 +	    __libc_lock_lock (syslog_lock);
 +
  	    if (LogTag == NULL)
@@ -76,12 +75,12 @@ diff -uNrp glibc-2.3.2.orig/misc/syslog.c glibc-2.3.2/misc/syslog.c
 +	      init_syslog_ident();
 +
 +	    /* Free the lock.  */
-+	    __libc_cleanup_region_end (1);
++	    __libc_cleanup_pop (1);
 +
  	    if (LogTag != NULL)
  	      fputs_unlocked (LogTag, f);
  	    if (LogStat & LOG_PID)
-@@ -233,7 +289,7 @@ vsyslog(pri, fmt, ap)
+@@ -263,7 +318,7 @@ vsyslog(pri, fmt, ap)
  
  	/* Get connected, output the message to the local logger. */
  	if (!connected)
@@ -90,7 +89,7 @@ diff -uNrp glibc-2.3.2.orig/misc/syslog.c glibc-2.3.2/misc/syslog.c
  
  	/* If we have a SOCK_STREAM connection, also send ASCII NUL as
  	   a record terminator.  */
-@@ -287,8 +343,12 @@ static void
+@@ -317,8 +372,12 @@ static void
  internal_function
  openlog_internal(const char *ident, int logstat, int logfac)
  {
@@ -104,8 +103,8 @@ diff -uNrp glibc-2.3.2.orig/misc/syslog.c glibc-2.3.2/misc/syslog.c
  	LogStat = logstat;
  	if (logfac != 0 && (logfac &~ LOG_FACMASK) == 0)
  		LogFacility = logfac;
-@@ -380,6 +440,9 @@ closelog ()
- #endif
+@@ -397,6 +456,9 @@ closelog ()
+   __libc_lock_lock (syslog_lock);
  
    closelog_internal ();
 +  if (LogTagDynamic)

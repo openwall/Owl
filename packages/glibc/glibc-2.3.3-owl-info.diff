@@ -1,0 +1,11 @@
+--- glibc-2.3.3.orig/manual/libc.texinfo	Fri Dec 19 11:58:55 2003
++++ glibc-2.3.3/manual/libc.texinfo	Sat Jan  8 03:42:53 2005
+@@ -7,7 +7,7 @@
+ @comment Tell install-info what to do.
+ @dircategory GNU libraries
+ @direntry
+-* Libc: (libc).                 C library.
++* Libc: (libc).                                 C library.
+ @end direntry
+ @include dir-add.texi
+ 

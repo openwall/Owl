@@ -1,0 +1,14 @@
+--- glibc-2.3.3-200404190147/io/fts.c.orig	2003-03-16 04:03:52 +0300
++++ glibc-2.3.3-200404190147/io/fts.c	2004-04-21 18:33:29 +0400
+@@ -1031,10 +1031,7 @@ fts_palloc(sp, more)
+ 	 * We limit fts_pathlen to USHRT_MAX to be safe in both cases.
+ 	 */
+ 	if (sp->fts_pathlen < 0 || sp->fts_pathlen >= USHRT_MAX) {
+-		if (sp->fts_path) {
+-			free(sp->fts_path);
+-			sp->fts_path = NULL;
+-		}
++		free(sp->fts_path);
+ 		sp->fts_path = NULL;
+ 		__set_errno (ENAMETOOLONG);
+ 		return (1);

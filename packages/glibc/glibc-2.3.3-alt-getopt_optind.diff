@@ -1,0 +1,14 @@
+--- glibc-2.3.3-200404190147.orig/posix/getopt.c	2004-03-11 02:13:26 +0300
++++ glibc-2.3.3-200404190147/posix/getopt.c	2004-04-21 16:04:44 +0400
+@@ -399,7 +399,10 @@ _getopt_internal_r (int argc, char *cons
+     print_errors = 0;
+ 
+   if (argc < 1)
+-    return -1;
++    {
++      d->optind = argc;
++      return -1;
++    }
+ 
+   d->optarg = NULL;
+ 

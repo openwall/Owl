@@ -1,0 +1,60 @@
+diff -uprk.orig glibc-2.3.3-200404190147.orig/libio/iofread.c glibc-2.3.3-200404190147/libio/iofread.c
+--- glibc-2.3.3-200404190147.orig/libio/iofread.c	2003-08-29 23:58:27 +0400
++++ glibc-2.3.3-200404190147/libio/iofread.c	2004-04-21 20:24:07 +0400
+@@ -40,6 +40,11 @@ _IO_fread (buf, size, count, fp)
+   CHECK_FILE (fp, 0);
+   if (bytes_requested == 0)
+     return 0;
++#define HALF_INTERNAL_SIZE_T \
++  (((size_t) 1) << (8 * sizeof (size_t) / 2))
++  if (__builtin_expect ((count | size) >= HALF_INTERNAL_SIZE_T, 0))
++    if (bytes_requested / size != count)
++      return 0;
+   _IO_acquire_lock (fp);
+   bytes_read = INTUSE(_IO_sgetn) (fp, (char *) buf, bytes_requested);
+   _IO_release_lock (fp);
+diff -uprk.orig glibc-2.3.3-200404190147.orig/libio/iofread_u.c glibc-2.3.3-200404190147/libio/iofread_u.c
+--- glibc-2.3.3-200404190147.orig/libio/iofread_u.c	2002-08-05 00:34:41 +0400
++++ glibc-2.3.3-200404190147/libio/iofread_u.c	2004-04-21 20:25:21 +0400
+@@ -42,6 +42,11 @@ fread_unlocked (buf, size, count, fp)
+   CHECK_FILE (fp, 0);
+   if (bytes_requested == 0)
+     return 0;
++#define HALF_INTERNAL_SIZE_T \
++  (((size_t) 1) << (8 * sizeof (size_t) / 2))
++  if (__builtin_expect ((count | size) >= HALF_INTERNAL_SIZE_T, 0))
++    if (bytes_requested / size != count)
++      return 0;
+   bytes_read = INTUSE(_IO_sgetn) (fp, (char *) buf, bytes_requested);
+   return bytes_requested == bytes_read ? count : bytes_read / size;
+ }
+diff -uprk.orig glibc-2.3.3-200404190147.orig/libio/iofwrite.c glibc-2.3.3-200404190147/libio/iofwrite.c
+--- glibc-2.3.3-200404190147.orig/libio/iofwrite.c	2003-08-29 23:58:27 +0400
++++ glibc-2.3.3-200404190147/libio/iofwrite.c	2004-04-21 20:23:46 +0400
+@@ -40,6 +40,11 @@ _IO_fwrite (buf, size, count, fp)
+   CHECK_FILE (fp, 0);
+   if (request == 0)
+     return 0;
++#define HALF_INTERNAL_SIZE_T \
++  (((size_t) 1) << (8 * sizeof (size_t) / 2))
++  if (__builtin_expect ((count | size) >= HALF_INTERNAL_SIZE_T, 0))
++    if (request / size != count)
++      return 0;
+   _IO_acquire_lock (fp);
+   if (_IO_vtable_offset (fp) != 0 || _IO_fwide (fp, -1) == -1)
+     written = _IO_sputn (fp, (const char *) buf, request);
+diff -uprk.orig glibc-2.3.3-200404190147.orig/libio/iofwrite_u.c glibc-2.3.3-200404190147/libio/iofwrite_u.c
+--- glibc-2.3.3-200404190147.orig/libio/iofwrite_u.c	2002-08-05 00:35:23 +0400
++++ glibc-2.3.3-200404190147/libio/iofwrite_u.c	2004-04-21 20:23:32 +0400
+@@ -42,6 +42,11 @@ fwrite_unlocked (buf, size, count, fp)
+   CHECK_FILE (fp, 0);
+   if (request == 0)
+     return 0;
++#define HALF_INTERNAL_SIZE_T \
++  (((size_t) 1) << (8 * sizeof (size_t) / 2))
++  if (__builtin_expect ((count | size) >= HALF_INTERNAL_SIZE_T, 0))
++    if (request / size != count)
++      return 0;
+   if (_IO_fwide (fp, -1) == -1)
+     {
+       written = _IO_sputn (fp, (const char *) buf, request);

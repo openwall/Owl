@@ -1,0 +1,28 @@
+diff -puNr glibc-2.3.3-200406160000.orig/io/fts.c glibc-2.3.3-200406160000/io/fts.c
+--- glibc-2.3.3-200406160000.orig/io/fts.c	Sat Jan  8 04:08:42 2005
++++ glibc-2.3.3-200406160000/io/fts.c	Sat Jan  8 05:24:59 2005
+@@ -32,10 +32,11 @@ static char sccsid[] = "@(#)fts.c	8.6 (B
+ #endif /* LIBC_SCCS and not lint */
+ 
+ #include <sys/param.h>
+-#include <include/sys/stat.h>
+-#include <fcntl.h>
++#include <sys/stat.h>
++
+ #include <dirent.h>
+ #include <errno.h>
++#include <fcntl.h>
+ #include <fts.h>
+ #include <stdlib.h>
+ #include <string.h>
+diff -puNr glibc-2.3.3-200406160000.orig/io/fts.h glibc-2.3.3-200406160000/io/fts.h
+--- glibc-2.3.3-200406160000.orig/io/fts.h	Sat Sep 27 21:59:23 2003
++++ glibc-2.3.3-200406160000/io/fts.h	Sat Jan  8 05:24:21 2005
+@@ -107,6 +107,7 @@ typedef struct _ftsent {
+ 
+ #define	FTS_DONTCHDIR	 0x01		/* don't chdir .. to the parent */
+ #define	FTS_SYMFOLLOW	 0x02		/* followed a symlink to get here */
++#define	FTS_ISW		 0x04		/* this is a whiteout object */
+ 	u_short fts_flags;		/* private flags for FTSENT structure */
+ 
+ #define	FTS_AGAIN	 1		/* read node again */

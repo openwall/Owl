@@ -1,7 +1,7 @@
-diff -uNrp glibc-2.3.2.orig/misc/syslog.c glibc-2.3.2/misc/syslog.c
---- glibc-2.3.2.orig/misc/syslog.c	2004-03-08 08:55:38 +0000
-+++ glibc-2.3.2/misc/syslog.c	2004-03-08 09:24:14 +0000
-@@ -54,11 +54,6 @@ static char sccsid[] = "@(#)syslog.c	8.4
+diff -puNr glibc-2.3.3-200406160000.orig/misc/syslog.c glibc-2.3.3-200406160000/misc/syslog.c
+--- glibc-2.3.3-200406160000.orig/misc/syslog.c	Sat Jan  8 04:18:16 2005
++++ glibc-2.3.3-200406160000/misc/syslog.c	Sat Jan  8 04:37:44 2005
+@@ -56,11 +56,6 @@ static char sccsid[] = "@(#)syslog.c	8.4
  #include <varargs.h>
  #endif
  
@@ -13,7 +13,7 @@ diff -uNrp glibc-2.3.2.orig/misc/syslog.c glibc-2.3.2/misc/syslog.c
  static int	LogType = SOCK_DGRAM;	/* type of socket connection */
  static int	LogFile = -1;		/* fd for log */
  static int	connected;		/* have done connect */
-@@ -156,17 +151,17 @@ vsyslog(pri, fmt, ap)
+@@ -176,16 +171,16 @@ vsyslog(pri, fmt, ap)
  	register const char *fmt;
  	va_list ap;
  {
@@ -26,17 +26,16 @@ diff -uNrp glibc-2.3.2.orig/misc/syslog.c glibc-2.3.2/misc/syslog.c
 -	size_t prioff, msgoff;
 +	size_t msgoff;
   	struct sigaction action, oldaction;
- 	struct sigaction *oldaction_ptr = NULL;
   	int sigpipe;
  	int saved_errno = errno;
 +	char ctimebuf[26];
  	char failbuf[3 * sizeof (pid_t) + sizeof "out of memory []"];
  
  #define	INTERNALLOG	LOG_ERR|LOG_CONS|LOG_PERROR|LOG_PID
-@@ -211,18 +206,21 @@ vsyslog(pri, fmt, ap)
- 	  }
+@@ -231,19 +226,21 @@ vsyslog(pri, fmt, ap)
  	else
  	  {
+ 	    __fsetlocking (f, FSETLOCKING_BYCALLER);
 -	    prioff = fprintf (f, "<%d>", pri);
 +	    /*
 +	     * XXX: syslogd may know better what the current time is.
@@ -45,7 +44,7 @@ diff -uNrp glibc-2.3.2.orig/misc/syslog.c glibc-2.3.2/misc/syslog.c
 +	     * is able to construct timestamp if there is no timestamp given
 +	     * in a message.  So it may be a way better to NOT construct ANY
 +	     * timestamp here and allow syslogd to figure out proper time
-+	     * for us. When working with local syslogd (and it IS local
++	     * for us.  When working with local syslogd (and it IS local
 +	     * since we're using either /dev/log or localhost), message
 +	     * should be picked up by syslogd very shortly.  And at least
 +	     * timestamps in system logs will be in chronological order...
@@ -53,10 +52,11 @@ diff -uNrp glibc-2.3.2.orig/misc/syslog.c glibc-2.3.2/misc/syslog.c
 +	     */
  	    (void) time (&now);
 -#ifdef USE_IN_LIBIO
--	    f->_IO_write_ptr += strftime (f->_IO_write_ptr,
--					  f->_IO_write_end - f->_IO_write_ptr,
--					  "%h %e %T ",
--					  __localtime_r (&now, &now_tm));
+-	    f->_IO_write_ptr += __strftime_l (f->_IO_write_ptr,
+-					      f->_IO_write_end - f->_IO_write_ptr,
+-					      "%h %e %T ",
+-					      __localtime_r (&now, &now_tm),
+-					      &_nl_C_locobj);
 -#else
 -	    f->__bufp += strftime (f->__bufp, f->__put_limit - f->__bufp,
 -				   "%h %e %T ", __localtime_r (&now, &now_tm));
@@ -64,5 +64,5 @@ diff -uNrp glibc-2.3.2.orig/misc/syslog.c glibc-2.3.2/misc/syslog.c
 -	    msgoff = ftell (f);
 +	    msgoff = fprintf (f, "<%d>%.15s ", pri, ctime_r(&now, ctimebuf) + 4);
  
- 	    /* Protect against multiple users.  */
- 	    __libc_cleanup_region_start (
+ 	    /* Protect against multiple users and cancellation.  */
+ 	    __libc_cleanup_push (cancel_handler, NULL);

@@ -1,0 +1,20 @@
+--- glibc-2.3.3-200404240000/sysdeps/unix/sysv/linux/dl-execstack.c.orig	2004-04-22 12:55:06 +0400
++++ glibc-2.3.3-200404240000/sysdeps/unix/sysv/linux/dl-execstack.c	2004-04-29 17:54:06 +0400
+@@ -81,7 +81,7 @@ _dl_make_stack_executable (void **stack_
+ 	page -= size;
+       else
+ 	{
+-	  if (errno != ENOMEM)	/* Unexpected failure mode.  */
++	  if (errno != ENOMEM && errno != EFAULT)	/* Unexpected failure mode.  */
+ 	    return errno;
+ 
+ 	  if (size == GLRO(dl_pagesize))
+@@ -134,7 +134,7 @@ _dl_make_stack_executable (void **stack_
+ 	page += size;
+       else
+ 	{
+-	  if (errno != ENOMEM)	/* Unexpected failure mode.  */
++	  if (errno != ENOMEM && errno != EFAULT)	/* Unexpected failure mode.  */
+ 	    return errno;
+ 
+ 	  if (size == GLRO(dl_pagesize))

@@ -1,0 +1,84 @@
+diff -puNr glibc-2.3.3-200406160000.orig/sunrpc/rpc_main.c glibc-2.3.3-200406160000/sunrpc/rpc_main.c
+--- glibc-2.3.3-200406160000.orig/sunrpc/rpc_main.c	Thu Oct 17 12:16:30 2002
++++ glibc-2.3.3-200406160000/sunrpc/rpc_main.c	Wed Jan 12 12:53:39 2005
+@@ -76,13 +76,17 @@ struct commandline
+ 
+ static const char *cmdname;
+ 
+-#define SVR4_CPP "/usr/ccs/lib/cpp"
+-#define SUNOS_CPP "/lib/cpp"
++#ifndef DEFAULT_CPP
++#define DEFAULT_CPP "cpp"
++#endif
++#ifndef DEFAULT_CPPFLAGS
++#define DEFAULT_CPPFLAGS "-C"
++#endif
+ 
+ static const char *svcclosetime = "120";
+ static int cppDefined;	/* explicit path for C preprocessor */
+-static const char *CPP = SUNOS_CPP;
+-static const char CPPFLAGS[] = "-C";
++static const char *CPP = DEFAULT_CPP;
++static const char CPPFLAGS[] = DEFAULT_CPPFLAGS;
+ static char *pathbuf;
+ static int cpp_pid;
+ static const char *allv[] =
+@@ -110,7 +114,6 @@ static char *extendfile (const char *fil
+ static void open_output (const char *infile, const char *outfile);
+ static void add_warning (void);
+ static void clear_args (void);
+-static void find_cpp (void);
+ static void open_input (const char *infile, const char *define);
+ static int check_nettype (const char *name, const char *list_to_check[]);
+ static void c_output (const char *infile, const char *define,
+@@ -329,31 +332,6 @@ clear_args (void)
+   argcount = FIXEDARGS;
+ }
+ 
+-/* make sure that a CPP exists */
+-static void
+-find_cpp (void)
+-{
+-  struct stat buf;
+-
+-  if (stat (CPP, &buf) < 0)
+-    {				/* /lib/cpp or explicit cpp does not exist */
+-      if (cppDefined)
+-	{
+-	  fprintf (stderr, _ ("cannot find C preprocessor: %s \n"), CPP);
+-	  crash ();
+-	}
+-      else
+-	{			/* try the other one */
+-	  CPP = SVR4_CPP;
+-	  if (stat (CPP, &buf) < 0)
+-	    {			/* can't find any cpp */
+-	      fputs (_ ("cannot find any C preprocessor (cpp)\n"), stdout);
+-	      crash ();
+-	    }
+-	}
+-    }
+-}
+-
+ /*
+  * Open input file with given define for C-preprocessor
+  */
+@@ -372,7 +350,6 @@ open_input (const char *infile, const ch
+   switch (cpp_pid)
+     {
+     case 0:
+-      find_cpp ();
+       putarg (0, CPP);
+       putarg (1, CPPFLAGS);
+       addarg (define);
+@@ -382,8 +359,8 @@ open_input (const char *infile, const ch
+       close (1);
+       dup2 (pd[1], 1);
+       close (pd[0]);
+-      execv (arglist[0], (char **) arglist);
+-      perror ("execv");
++      execvp (arglist[0], (char **) arglist);
++      perror ("executing CPP");
+       exit (1);
+     case -1:
+       perror ("fork");

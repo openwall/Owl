@@ -1,0 +1,14 @@
+--- glibc-2.3.3-200406020600/stdlib/canonicalize.c.orig	2004-04-14 21:39:53 +0400
++++ glibc-2.3.3-200406020600/stdlib/canonicalize.c	2004-06-02 21:42:05 +0400
+@@ -199,6 +199,11 @@ __realpath (const char *name, char *reso
+ 		if (dest > rpath + 1)
+ 		  while ((--dest)[-1] != '/');
+ 	    }
++	  else if (!S_ISDIR (st.st_mode) && *end)
++	    {
++	      __set_errno (ENOTDIR);
++	      goto error;
++	    }
+ 	}
+     }
+   if (dest > rpath + 1 && dest[-1] == '/')

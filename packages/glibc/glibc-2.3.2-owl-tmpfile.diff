@@ -1,0 +1,24 @@
+diff -uNrp glibc-2.3.2.orig/libio/oldtmpfile.c glibc-2.3.2/libio/oldtmpfile.c
+--- glibc-2.3.2.orig/libio/oldtmpfile.c	2002-04-08 07:02:09 +0000
++++ glibc-2.3.2/libio/oldtmpfile.c	2004-03-08 08:07:57 +0000
+@@ -35,7 +35,7 @@ __old_tmpfile (void)
+   int fd;
+   FILE *f;
+ 
+-  if (__path_search (buf, FILENAME_MAX, NULL, "tmpf", 0))
++  if (__path_search (buf, FILENAME_MAX, NULL, "tmpf", 1))
+     return NULL;
+   fd = __gen_tempname (buf, __GT_FILE);
+   if (fd < 0)
+diff -uNrp glibc-2.3.2.orig/sysdeps/generic/tmpfile.c glibc-2.3.2/sysdeps/generic/tmpfile.c
+--- glibc-2.3.2.orig/sysdeps/generic/tmpfile.c	2002-06-12 20:57:46 +0000
++++ glibc-2.3.2/sysdeps/generic/tmpfile.c	2004-03-08 08:21:53 +0000
+@@ -43,7 +43,7 @@ tmpfile (void)
+   int fd;
+   FILE *f;
+ 
+-  if (__path_search (buf, FILENAME_MAX, NULL, "tmpf", 0))
++  if (__path_search (buf, FILENAME_MAX, NULL, "tmpf", 1))
+     return NULL;
+   fd = __gen_tempname (buf, GEN_THIS);
+   if (fd < 0)

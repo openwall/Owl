@@ -1,0 +1,31 @@
+--- glibc-2.3.3-200404190147/debug/Makefile.orig	2001-08-30 02:45:25 +0400
++++ glibc-2.3.3-200404190147/debug/Makefile	2004-04-21 17:42:48 +0400
+@@ -57,7 +57,7 @@
+ 
+ $(objpfx)catchsegv: catchsegv.sh $(common-objpfx)soversions.mk \
+ 		    $(common-objpfx)config.make
+-	sed -e 's|@VERSION@|$(version)|' -e 's|@SLIB@|$(slibdir)|' $< > $@.new
++	sed -e 's|@VERSION@|$(version)|' -e 's|@SLIB@|$(libdir)|' $< > $@.new
+ 	chmod 555 $@.new
+ 	mv -f $@.new $@
+ 
+@@ -66,7 +66,7 @@
+ $(objpfx)xtrace: xtrace.sh
+ 	rm -f $@.new
+ 	sed -e 's|@BASH@|$(BASH)|' -e 's|@VERSION@|$(version)|' \
+-	    -e 's|@SLIBDIR@|$(slibdir)|' -e 's|@BINDIR@|$(bindir)|' $^ > $@.new \
++	    -e 's|@SLIBDIR@|$(libdir)|' -e 's|@BINDIR@|$(bindir)|' $^ > $@.new \
+ 	&& rm -f $@ && mv $@.new $@ && chmod +x $@
+ 
+ # Depend on libc.so so a DT_NEEDED is generated in the shared objects.
+--- glibc-2.3.3-200404190147/malloc/Makefile.orig	2003-09-30 06:09:22 +0400
++++ glibc-2.3.3-200404190147/malloc/Makefile	2004-04-21 17:42:48 +0400
+@@ -129,7 +129,7 @@
+ $(objpfx)memusage: memusage.sh
+ 	rm -f $@.new
+ 	sed -e 's|@BASH@|$(BASH)|' -e 's|@VERSION@|$(version)|' \
+-	    -e 's|@SLIBDIR@|$(slibdir)|' -e 's|@BINDIR@|$(bindir)|' $^ > $@.new \
++	    -e 's|@SLIBDIR@|$(libdir)|' -e 's|@BINDIR@|$(bindir)|' $^ > $@.new \
+ 	&& rm -f $@ && mv $@.new $@ && chmod +x $@
+ 
+ 

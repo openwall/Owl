@@ -1,53 +1,91 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.70 2004/12/26 23:58:44 galaxy Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.71 2005/01/12 16:09:40 galaxy Exp $
 
 %define BUILD_PROFILE 0
+%define BUILD_LOCALES 1
+%define BUILD_LOCALES_UTF8 0
+
+%define snapshot 200406160000
 
 Summary: The GNU libc libraries.
 Name: glibc
-Version: 2.3.2
+Version: 2.3.3
 %define crypt_bf_version 0.4.6
-Release: owl3
+Release: owl0%{?snapshot:.%snapshot}
 License: LGPL
 Group: System Environment/Libraries
-Source0: glibc-%version.tar.bz2
+Source0: glibc-%version%{?snapshot:-%snapshot}.tar.bz2
+%if %{?snapshot:0}%{!?snapshot:1}
 Source1: glibc-linuxthreads-%version.tar.bz2
+%endif
 Source2: crypt_blowfish-%crypt_bf_version.tar.gz
 Source3: crypt_freesec.c
 Source4: crypt_freesec.h
-Patch0: glibc-2.3.2-rh-27.9.7-wo-nptl.diff.bz2
-Patch10: glibc-2.3.2-owl-crypt_freesec.diff
-# XXX: (GM): ToDo: update sanitize-env patch to reflect all environment
-# variable uses found in the current version of glibc.
-Patch11: glibc-2.3.2-owl-sanitize-env.diff
-Patch12: glibc-2.3.2-owl-res_randomid.diff
-Patch13: glibc-2.3.2-owl-iscntrl.diff
-Patch14: glibc-2.3.2-owl-quota.diff
-Patch15: glibc-2.3.2-owl-ldd.diff
-Patch16: glibc-2.3.2-owl-tmp.diff
-Patch17: glibc-2.3.2-owl-vitmp.diff
-Patch18: glibc-2.3.2-owl-glibcbug-COMMAND.diff
-Patch19: glibc-2.3.2-owl-info.diff
-Patch20: glibc-2.3.2-owl-syslog-ident.diff
-Patch21: glibc-2.3.2-mjt-owl-syslog-timestamp.diff
-Patch22: glibc-2.3.2-owl-alt-asprintf-error-handling.diff
-Patch23: glibc-2.3.2-owl-alt-fts.diff
-Patch24: glibc-2.3.2-owl-resolv-QFIXEDSZ-underfills.diff
-Patch25: glibc-2.3.2-owl-realpath-comments.diff
-Patch26: glibc-2.3.2-owl-malloc-unlink-sanity-check.diff
-Patch30: glibc-2.3.2-suse-resolv-response-length.diff
+
+# Patches
+# -------
+# We are using the following numbering rules for glibc's patches:
+#    0-99 - CVS
+# 100-199 - RH
+# 200-299 - ALT
+# 300-... - Owl
+
+# CVS
+Patch0: glibc-2.3.3-cvs-200406170000-sched_setaffinity.diff
+
+# RH
+Patch100: glibc-2.3.3-200406101000-redhat.diff
+
+# Suse
+Patch200: glibc-2.3.2-suse-resolv-response-length.diff
+
+# ALT
+Patch300: glibc-2.3.3-alt-doc-linuxthreads.diff
+Patch301: glibc-2.3.3-alt-string2.diff
+Patch302: glibc-2.3.3-alt-sys_mount.diff
+Patch303: glibc-2.3.3-obsd-alt-sys_queue.diff
+Patch304: glibc-2.3.3-alt-getopt_optind.diff
+Patch305: glibc-2.3.3-alt-io_fts-cleanup.diff
+Patch306: glibc-2.3.3-alt-asprintf.diff
+Patch307: glibc-2.3.3-alt-realpath.diff
+Patch308: glibc-2.3.3-alt-libio.diff
+Patch309: glibc-2.3.3-obsd-strlcpy-strlcat.diff
+Patch310: glibc-2.3.3-alt-iconv_prog-replace.diff
+Patch311: glibc-2.3.3-alt-i18n.diff
+Patch312: glibc-2.3.3-alt-relocate-helper-libs.diff
+Patch313: glibc-2.3.3-alt-linux-dl-execstack.diff
+
+# Owl
+Patch400: glibc-2.3.3-owl-crypt_freesec.diff
+Patch401: glibc-2.3.2-owl-res_randomid.diff
+Patch402: glibc-2.3.2-owl-iscntrl.diff
+Patch403: glibc-2.3.2-owl-quota.diff
+Patch404: glibc-2.3.2-owl-ldd.diff
+Patch405: glibc-2.3.3-owl-info.diff
+Patch406: glibc-2.3.3-owl-syslog-ident.diff
+Patch407: glibc-2.3.3-mjt-owl-syslog-timestamp.diff
+Patch408: glibc-2.3.3-owl-alt-fts.diff
+Patch409: glibc-2.3.2-owl-resolv-QFIXEDSZ-underfills.diff
+Patch410: glibc-2.3.2-owl-malloc-unlink-sanity-check.diff
+Patch411: glibc-2.3.3-owl-sanitize-env.diff
+Patch412: glibc-2.3.2-owl-tmpfile.diff
+Patch413: glibc-2.3.2-owl-vitmp.diff
+Patch414: glibc-2.3.2-owl-glibcbug-COMMAND.diff
+Patch415: glibc-2.3.3-owl-tmp-scripts.diff
+Patch416: glibc-2.3.3-owl-rpcgen-cpp.diff
+
 Requires: /etc/nsswitch.conf
 Provides: glibc-crypt_blowfish = %crypt_bf_version, ldconfig
 Obsoletes: ldconfig
 BuildRoot: /override/%name-%version
 
 %description
-The glibc package contains standard libraries which are used by
+The %name package contains standard libraries which are used by
 multiple programs on the system.  In order to save disk space and
 memory, as well as to make upgrading easier, common system code is
 kept in one place and shared between programs.  This particular package
 contains the most important sets of shared libraries: the standard C
 library and the standard math library.  Without these two libraries, a
-Linux system will not function.  The glibc package also contains
+Linux system will not function.  The %name package also contains
 national language (locale) support and timezone databases.
 
 %package utils
@@ -56,18 +94,17 @@ Group: System Environment/Base
 Requires: %name >= %version
 
 %description utils
-The glibc-utils package contains miscellaneous glibc utilities.
+The %name-utils package contains miscellaneous glibc utilities.
 
 %package devel
 Summary: Header and object files for development using standard C libraries.
 Group: Development/Libraries
-PreReq: /sbin/install-info
 Requires: kernel-headers >= 2.2.1
 Provides: glibc-crypt_blowfish-devel = %crypt_bf_version
 Conflicts: texinfo < 3.11
 
 %description devel
-The glibc-devel package contains the header and object files necessary
+The %name-devel package contains the header and object files necessary
 for developing programs which use the standard C libraries (which are
 used by nearly all programs).  If you are developing programs which
 will use the standard C libraries, your system needs to have these
@@ -81,12 +118,12 @@ Group: Development/Libraries
 Requires: %name = %version-%release
 
 %description profile
-The glibc-profile package includes the GNU libc libraries and support
+The %name-profile package includes the GNU libc libraries and support
 for profiling using the gprof program.  Profiling is analyzing a
 program's functions to see how much CPU time they use and determining
 which functions are calling other functions during execution.  To use
 gprof to profile a program, your program needs to use the GNU libc
-libraries included in glibc-profile (instead of the standard GNU libc
+libraries included in %name-profile (instead of the standard GNU libc
 libraries included in the glibc package).
 %endif
 
@@ -111,35 +148,95 @@ compatibility package with necessary binaries of old libdb libraries.
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 
 %prep
-%setup -q -a 1 -a 2
-patch -p1 < crypt_blowfish-%crypt_bf_version/glibc-%version-crypt.diff
+%setup -q %{!?snapshot:-a 1} -a 2 -n %name-%version%{?snapshot:-%snapshot}
+
+# CVS
+# set errno to EINVAL and return -1 if cpuset is wrongly set.
+%patch0 -p0
+
+# RH
+%patch100 -p1
+
+# Suse
+# avoid read buffer overruns in apps that using res_* calls
+%patch200 -p1
+
+# ALT
+# fix linuxthreads documentation
+%patch300 -p1
+# fix -Wpointer-arith issue in string2.h
+%patch301 -p1
+# fix sys/mount.h for gcc -pedantic support
+%patch302 -p1
+# backport sys/queue.h from OpenBSD
+%patch303 -p1
+# set proper optind when argc < 1
+%patch304 -p1
+# minor io/fts.c cleanup
+%patch305 -p1
+# change asprintf/vasprintf error handling
+%patch306 -p1
+# fix realpath behaviour
+%patch307 -p1
+# check for potential integer overflow in fread*/fwrite*
+%patch308 -p1
+# import strlcpy/strlcat from OpenBSD
+%patch309 -p1
+# add "--replace" option to iconv utility
+%patch310 -p1
+# support more ru_* locales
+%patch311 -p1
+# relocate helper libraries from /lib to %_libdir
+%patch312 -p1
+# fix mprotect return code handling in _dl_make_stack_executable()
+%patch313 -p1
+
+# Owl
+echo "Applying crypt_blowfish patch:"
+patch -p1 -s < crypt_blowfish-%crypt_bf_version/glibc-%version-crypt.diff
 mv crypt/{crypt.h,gnu-crypt.h}
 mv crypt_blowfish-%crypt_bf_version/*.[chS] crypt/
 cp %_sourcedir/crypt_freesec.[ch] crypt/
 
-# RH9 Update - begin
-%patch0 -p1
-find . -name configure -exec touch {} \;
-# RH9 Update - finish
-%patch10 -p1
-%patch11 -p1
-%patch12 -p1
-%patch13 -p1
-%patch14 -p1
-%patch15 -p1
-%patch16 -p1
-%patch17 -p1
-%patch18 -p1
-%patch19 -p1
-%patch20 -p1
-%patch21 -p1
-%patch22 -p1
-%patch23 -p1
-%patch24 -p1
-%patch25 -p1
-%patch26 -p1
-%patch30 -p1
-# XXX: check sparcv9 builds and probably fix this for main Owl.
+# FreeSec support for extended/new-style/BSDI hashes in crypt(3)
+%patch400 -p1
+# improve res_randomid in the resolver
+%patch401 -p1
+# force known control characters for iscntrl(3)
+%patch402 -p1
+# sync quota.h with current kernel
+%patch403 -p1
+# always execute traced object directly with dynamic linker
+%patch404 -p1
+# fix libc's info formatting
+%patch405 -p1
+# don't blindly trust __progname for the syslog ident
+%patch406 -p1
+# use ctime_r() instead of strftime_r() in syslog(3)
+%patch407 -p1
+# (?) use sys/stat.h instead of include/sys/stat.h in the fts.h
+%patch408 -p1
+# avoid potential reads beyond end of undersized DNS responses
+%patch409 -p1
+# check the chunk pointers in dlmalloc's unlink() macro
+%patch410 -p1
+# sanitize the environment in a paranoid way
+%patch411 -p1
+# allow tmpfile(3) to use TMPDIR environment variable
+%patch412 -p1
+# glibcbug script is present only in release version
+%if %{?snapshot:0}%{!?snapshot:1}
+# use vitmp(1) as a default editor
+%patch413 -p1
+# fix for COMMAND variable in the glibcbug
+%patch414 -p1
+%endif
+# fix temporary file handling in the scripts
+%patch415 -p1
+# avoid hardcoding of cpp binary, use execvp instead of execv
+%patch416 -p1
+
+# XXX: check sparcv9 builds and probably fix this.
 #%ifarch sparcv9
 #echo 'ASFLAGS-.os += -Wa,-Av8plusa' >> sysdeps/sparc/sparc32/elf/Makefile
 #%endif
@@ -157,17 +254,20 @@ exit 0
 EOF
 chmod +x find_requires.sh
 
-%define __find_provides %_builddir/%name-%version/find_provides.sh
-%define __find_requires %_builddir/%name-%version/find_requires.sh
+%define __find_provides %_builddir/%name-%version%{?snapshot:-%snapshot}/find_provides.sh
+%define __find_requires %_builddir/%name-%version%{?snapshot:-%snapshot}/find_requires.sh
+
+%if %BUILD_LOCALES
+mv localedata/SUPPORTED localedata/SUPPORTED.ALL
+%if %BUILD_LOCALES_UTF8
+ln -s SUPPORTED.ALL localedata/SUPPORTED
+%else
+grep -v "/UTF-8" localedata/SUPPORTED.ALL > localedata/SUPPORTED.NO-UTF-8
+ln -s SUPPORTED.NO-UTF-8 localedata/SUPPORTED
+%endif # %BUILD_LOCALES_UTF8
+%endif # %BUILD_LOCALES
 
 %build
-# Remove precompiled info manuals to get fresh ones.
-# XXX: There're no precompiled info manuals included with current glibc.
-#rm manual/libc.info*
-# remove stamps
-rm manual/stamp-*
-
-rm -rf build-%_target_cpu-linux
 mkdir build-%_target_cpu-linux
 pushd build-%_target_cpu-linux
 CFLAGS="-g %optflags -DNDEBUG=1 -finline-limit=2000" \
@@ -189,37 +289,43 @@ CFLAGS="-g %optflags -DNDEBUG=1 -finline-limit=2000" \
 %if !%BUILD_PROFILE
 	--disable-profile \
 %endif
-	--enable-add-ons \
+	--enable-add-ons=linuxthreads \
 	--without-cvs \
-	--without-__thread
+	--without-__thread \
+
 %__make MAKE="%__make -s"
 popd
 
 %__make -C linuxthreads/man
+%__make -C crypt_blowfish-%crypt_bf_version man
 
 %install
 rm -rf %buildroot
 mkdir -p %buildroot
 %__make install_root=%buildroot install -C build-%_target_cpu-linux
-pushd build-%_target_cpu-linux
-%__make install_root=%buildroot install-locales -C ../localedata objdir=`pwd`
-popd
+%__make install_root=%buildroot localedata/install-locales -C build-%_target_cpu-linux
 
 # The man pages for linuxthreads and crypt_blowfish require special attention
 mkdir -p %buildroot%_mandir/man3
-make -C linuxthreads/man
 install -m 644 linuxthreads/man/*.3thr %buildroot%_mandir/man3/
-make -C crypt_blowfish-%crypt_bf_version man
 install -m 644 crypt_blowfish-%crypt_bf_version/*.3 %buildroot%_mandir/man3/
 
 ln -s libbsd-compat.a %buildroot%_libdir/libbsd.a
 
-# /etc/localtime - we're proud of our timezone
-rm %buildroot%_sysconfdir/localtime
-cp %buildroot%_datadir/zoneinfo/Europe/Moscow %buildroot%_sysconfdir/localtime
+# Relocate shared libraries used by catchsegv, memusage and xtrace
+mv %buildroot/lib/lib{memusage,pcprofile,SegFault}.so %buildroot%_libdir/
 
-# Create empty ldconfig configuration file
-> %buildroot%_sysconfdir/ld.so.conf
+# /etc/localtime - we're proud of our timezone
+# ... yes, but we are setting it through setup utility.
+#rm %buildroot%_sysconfdir/localtime
+#cp %buildroot%_datadir/zoneinfo/Europe/Moscow %buildroot%_sysconfdir/localtime
+
+# Create default ldconfig configuration file
+echo "include %_sysconfdir/ld.so.conf.d/*.conf" > %buildroot%_sysconfdir/ld.so.conf
+mkdir -m 0700 %buildroot%_sysconfdir/ld.so.conf.d
+
+# Truncate %_sysconfdir/ld.so.cache, we'll create it in the %%post section
+echo -n > %buildroot%_sysconfdir/ld.so.cache
 
 # The database support
 # XXX: why is this disabled?
@@ -243,18 +349,17 @@ sed "s|^%buildroot||" < rpm.filelist.in |
 	grep -v '^%dir %_mandir$' | \
 	grep -v '^%dir %_infodir$' | \
 	grep -v '^%config %_sysconfdir/' | \
-	sort > rpm.filelist
+	sort > rpm.filelist.full
 
 %if %BUILD_PROFILE
-grep '%_libdir/lib.*_p\.a' < rpm.filelist > profile.filelist
+grep '%_libdir/lib.*_p\.a' < rpm.filelist.full > profile.filelist
 %endif
 
-egrep "(%_includedir)|(%_infodir)" < rpm.filelist |
+egrep "(%_includedir)|(%_infodir)" < rpm.filelist.full |
 	grep -v "%_infodir/dir" |
 	grep -v "\.info-" |
 	sed -e 's|\.info.*$|&\*|' > devel.filelist
 
-mv rpm.filelist rpm.filelist.full
 grep -v '%_libdir/lib.*_p.a' rpm.filelist.full |
 	egrep -v "(%_includedir)|(%_infodir)" > rpm.filelist
 
@@ -273,6 +378,9 @@ grep -v '%_libdir/lib.*\.a' < rpm.filelist.full |
 	grep -v 'nscd' |
 	grep -v 'sln' > rpm.filelist
 
+# Create empty %_libdir/gconv/gconv-modules.cache
+touch %buildroot%_libdir/gconv/gconv-modules.cache
+
 # The last bit: more documentation
 rm -rf documentation
 mkdir documentation
@@ -283,17 +391,28 @@ cp linuxthreads/FAQ.html documentation/FAQ-threads.html
 cp -r linuxthreads/Examples documentation/examples.threads
 cp timezone/README documentation/README.timezone
 cp ChangeLog* documentation
-gzip -9nf documentation/ChangeLog*
+bzip2 -9qf documentation/ChangeLog*
+bzip2 -9qf FAQ INSTALL NEWS NOTES %{?snapshot:README-alpha} README.libm
 mkdir documentation/crypt_blowfish-%crypt_bf_version
 cp crypt_blowfish-%crypt_bf_version/{README,LINKS,PERFORMANCE} \
 	documentation/crypt_blowfish-%crypt_bf_version
+
+# remove README.template and FAQ.in to allow using wildcards in the filelist
+rm README.template FAQ.in
 
 # Final step: remove unpackaged files.
 rm %buildroot%_infodir/dir
 rm %buildroot%_sbindir/nscd
 rm %buildroot%_sbindir/nscd_nischeck
 
-%post -p /sbin/ldconfig
+%post
+# If there is no %_sysconfig/localtime, then we are in the fresh install
+# stage (or system is misconfigured). Try to create a symbolic link to
+# Factory timezone and report this to the user.
+ln -s ../%_datadir/zoneinfo/Factory %_sysconfdir/localtime 2>/dev/null || \
+echo "No timezone information was found, installed glibc factory default."
+/sbin/ldconfig
+
 %postun -p /sbin/ldconfig
 
 %post devel
@@ -306,19 +425,18 @@ fi
 
 %files -f rpm.filelist
 %defattr(-,root,root)
-%doc README NEWS INSTALL FAQ BUGS NOTES PROJECTS
-%doc documentation/* README.libm
+%doc README* NEWS* INSTALL* FAQ* BUGS NOTES* PROJECTS
+%doc documentation/*
 %doc hesiod/README.hesiod
 %doc crypt/README.ufc-crypt
-%config(noreplace) %_sysconfdir/localtime
+%config(noreplace) %verify(not size md5 mtime) %_sysconfdir/localtime
 %ghost %config(noreplace) %_sysconfdir/ld.so.cache
 %config %_sysconfdir/ld.so.conf
+%config %dir %_sysconfdir/ld.so.conf.d
+%ghost %config(noreplace) %_libdir/gconv/gconv-modules.cache
 %config(noreplace) %_sysconfdir/rpc
 # XXX
 #%dir /var/db
-%if %BUILD_PROFILE
-%exclude %_libdir/*_p.a
-%endif
 
 %files utils
 %defattr(-,root,root)
@@ -337,6 +455,24 @@ fi
 %files compat-fake
 
 %changelog
+* Sun Jun 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.3-owl0.2004061600
+- Updated to CVS version 2.3.3 (2004061600).
+- Spec file was revised and reworked.
+- Imported a bunch of patches from ALT Linux.
+- Owl patches were revised and regenerated against new version (if necessary).
+- Dropped realpath-comments patch (this functionality is implemented).
+- Added tmp-scripts patch to deal with tmp file handling issues in the scripts.
+- sanitize-env patch was revised and reworked to embrace all issues it have
+to deal with.
+- Added BUILD_LOCALES and BUILD_LOCALES_UTF8 macros to control building of
+locales. BUILD_LOCALES support is incomplete yet, we will divide our glibc
+into functional sub-packages soon and generation of locales package will be
+controled through BUILD_LOCALES macro.
+- Added rpmgen-cpp patch to avoid hardcoding of path to cpp binary. This
+patch also replaces execv() to execvp() to search for cpp binary through the
+path.
+- Cleaned up the spec.
+ 
 * Wed Dec 25 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl3
 - Fixed compat-fake's provides to deal with Owl 1.1 release upgrades
 - Fixed a bug with creating buildtree using %_target_cpu, but accessing it

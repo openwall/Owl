@@ -1,6 +1,6 @@
-diff -uNrp glibc-2.3.2.orig/crypt/Makefile glibc-2.3.2/crypt/Makefile
---- glibc-2.3.2.orig/crypt/Makefile	2004-03-08 02:34:04 +0000
-+++ glibc-2.3.2/crypt/Makefile	2004-03-08 02:47:44 +0000
+diff -puNr glibc-2.3.3-200406160000.orig/crypt/Makefile glibc-2.3.3-200406160000/crypt/Makefile
+--- glibc-2.3.3-200406160000.orig/crypt/Makefile	Sat Jan  8 03:10:29 2005
++++ glibc-2.3.3-200406160000/crypt/Makefile	Sat Jan  8 03:15:19 2005
 @@ -28,7 +28,7 @@ distribute := md5.h
  extra-libs := libcrypt
  extra-libs-others := $(extra-libs)
@@ -8,11 +8,11 @@ diff -uNrp glibc-2.3.2.orig/crypt/Makefile glibc-2.3.2/crypt/Makefile
 -libcrypt-routines := crypt-entry md5-crypt md5 crypt crypt_util crypt_blowfish x86 crypt_gensalt wrapper
 +libcrypt-routines := crypt-entry md5-crypt md5 crypt crypt_util crypt_blowfish x86 crypt_gensalt crypt_freesec wrapper
  
- tests = cert md5test md5c-test bcrypt-test
+ tests = cert md5test md5c-test
  
-diff -uNrp glibc-2.3.2.orig/crypt/wrapper.c glibc-2.3.2/crypt/wrapper.c
---- glibc-2.3.2.orig/crypt/wrapper.c	2004-02-14 22:00:47 +0000
-+++ glibc-2.3.2/crypt/wrapper.c	2004-03-08 02:57:15 +0000
+diff -puNr glibc-2.3.3-200406160000.orig/crypt/wrapper.c glibc-2.3.3-200406160000/crypt/wrapper.c
+--- glibc-2.3.3-200406160000.orig/crypt/wrapper.c	Fri Nov  8 01:38:44 2002
++++ glibc-2.3.3-200406160000/crypt/wrapper.c	Sat Jan  8 03:15:19 2005
 @@ -103,32 +103,72 @@ static char *_crypt_retval_magic(char *r
   * its initialization code. Thus, it is important that our multiple hashing
   * algorithms either don't conflict with each other in their use of the

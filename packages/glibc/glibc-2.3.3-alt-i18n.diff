@@ -1,0 +1,27 @@
+--- glibc-2.3.3-200404190147/localedata/SUPPORTED.orig	2004-04-22 17:09:19 +0400
++++ glibc-2.3.3-200404190147/localedata/SUPPORTED	2004-04-22 17:07:56 +0400
+@@ -263,10 +263,12 @@
+ ro_RO.UTF-8/UTF-8 \
+ ro_RO/ISO-8859-2 \
+ ru_RU.KOI8-R/KOI8-R \
++ru_RU.CP1251/CP1251 \
+ ru_RU.UTF-8/UTF-8 \
+-ru_RU/ISO-8859-5 \
++ru_RU.ISO-8859-5/ISO-8859-5 \
+ ru_UA.UTF-8/UTF-8 \
+-ru_UA/KOI8-U \
++ru_UA.CP1251/CP1251 \
++ru_UA.KOI8-U/KOI8-U \
+ se_NO/UTF-8 \
+ sid_ET/UTF-8 \
+ sk_SK.UTF-8/UTF-8 \
+@@ -304,7 +306,8 @@
+ tr_TR/ISO-8859-9 \
+ tt_RU.UTF-8/UTF-8 \
+ uk_UA.UTF-8/UTF-8 \
+-uk_UA/KOI8-U \
++uk_UA.KOI8-U/KOI8-U \
++uk_UA.CP1251/CP1251 \
+ ur_PK/UTF-8 \
+ uz_UZ/ISO-8859-1 \
+ uz_UZ@cyrillic/UTF-8 \
