@@ -1,4 +1,4 @@
-# $Id: Owl/packages/newt/Attic/newt.spec,v 1.11 2002/02/07 18:07:47 solar Exp $
+# $Id: Owl/packages/newt/Attic/newt.spec,v 1.12 2002/08/28 03:47:51 solar Exp $
 
 Summary: A development library for text mode user interfaces.
 Name: newt
@@ -15,11 +15,6 @@ Requires: slang
 BuildRequires: slang
 BuildRoot: /override/%{name}-%{version}
 
-%package devel
-Summary: Newt windowing toolkit development files.
-Requires: slang-devel, %{name} = %{version}-%{release}
-Group: Development/Libraries
-
 %description
 newt is a programming library for color text mode, widget based user
 interfaces.  newt can be used to add stacked windows, entry widgets,
@@ -28,6 +23,11 @@ etc., to text mode user interfaces.  This package also contains the
 shared library needed by programs built with newt, as well as a
 /usr/bin/dialog replacement called whiptail.  newt is based on the
 slang library.
+
+%package devel
+Summary: Newt windowing toolkit development files.
+Requires: slang-devel, %{name} = %{version}-%{release}
+Group: Development/Libraries
 
 %description devel
 The newt-devel package contains the header files and libraries

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/kernel/kernel.spec,v 1.9 2002/02/04 16:56:14 solar Exp $
+# $Id: Owl/packages/kernel/kernel.spec,v 1.10 2002/08/28 03:47:51 solar Exp $
 
 Summary: Fake Linux kernel package for Red Hat Linux compatibility.
 Name: kernel
@@ -15,14 +15,14 @@ BuildArchitectures: noarch
 %endif
 BuildRoot: /override/%{name}-%{version}
 
+%description
+This package exists for Red Hat Linux compatibility only.  It doesn't
+provide an actual Linux kernel, but satisfies package dependencies.
+
 %package headers
 Summary: Symlinks for the Linux kernel header files.
 Group: Development/System
 PreReq: basesystem
-
-%description
-This package exists for Red Hat Linux compatibility only.  It doesn't
-provide an actual Linux kernel, but satisfies package dependencies.
 
 %description headers
 This package exists primarily for Red Hat Linux compatibility.  It

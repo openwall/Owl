@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.49 2002/07/27 23:26:29 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.50 2002/08/28 03:47:51 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
@@ -36,19 +36,6 @@ BuildRequires: zlib-devel
 BuildRequires: tcp_wrappers
 BuildRoot: /override/%{name}-%{version}
 
-%package clients
-Summary: OpenSSH clients.
-Group: Applications/Internet
-Requires: openssh = %{version}-%{release}
-Obsoletes: ssh-clients
-
-%package server
-Summary: The OpenSSH server daemon.
-Group: System Environment/Daemons
-PreReq: openssh = %{version}-%{release}
-PreReq: chkconfig >= 0.9, pam_userpass, /dev/urandom
-Obsoletes: ssh-server
-
 %description
 SSH (Secure Shell) is a program for logging into a remote machine and for
 executing commands on a remote machine.  It is intended to replace
@@ -64,6 +51,12 @@ This package includes the core files necessary for both the OpenSSH
 client and server.  To make this package useful, you should also
 install openssh-clients, openssh-server, or both.
 
+%package clients
+Summary: OpenSSH clients.
+Group: Applications/Internet
+Requires: openssh = %{version}-%{release}
+Obsoletes: ssh-clients
+
 %description clients
 SSH (Secure Shell) is a program for logging into a remote machine and for
 executing commands on a remote machine.  It is intended to replace
@@ -77,6 +70,13 @@ patented algorithms to separate libraries (OpenSSL).
 
 This package includes the clients necessary to make encrypted connections
 to SSH servers.
+
+%package server
+Summary: The OpenSSH server daemon.
+Group: System Environment/Daemons
+PreReq: openssh = %{version}-%{release}
+PreReq: chkconfig >= 0.9, pam_userpass, /dev/urandom
+Obsoletes: ssh-server
 
 %description server
 SSH (Secure Shell) is a program for logging into a remote machine and for
