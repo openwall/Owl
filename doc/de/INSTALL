@@ -77,7 +77,7 @@ Das Übersetzen des Kernels und die Einrichtung des boot loaders muss
 in einer chroot-Umgebung im Verzeichnis des neu installierten User-
 land geschehen:
 
-        chroot /owl
+	chroot /owl
 
 Aktuell bringt Owl für den 2.2er Kernel volle Unterstützung mit, läuft
 aber auch auf einem 2.4er Kernel (will man aber Owl mit "make buildworld"
@@ -89,4 +89,4 @@ Man kann nun den boot loader konfigurieren, der unter Owl verfügbar
 ist (LILO oder SILO, kommt auf die Architektur an), oder einen
 bereits installierten (falls vorhanden) verwenden.
 
-$Id: Owl/doc/de/INSTALL,v 1.9 2003/05/06 17:14:07 schmidt Exp $
+$Id: Owl/doc/de/INSTALL,v 1.10 2003/05/06 21:19:55 schmidt Exp $
