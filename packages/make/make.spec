@@ -1,9 +1,9 @@
-# $Id: Owl/packages/make/make.spec,v 1.8 2004/09/26 03:57:51 solar Exp $
+# $Id: Owl/packages/make/make.spec,v 1.9 2004/09/26 04:04:16 solar Exp $
 
 Summary: A GNU tool which simplifies the build process for users.
 Name: make
 Version: 3.80
-Release: owl1
+Release: owl2
 License: GPL
 Group: Development/Tools
 Source: ftp://ftp.gnu.org/gnu/make/make-%version.tar.bz2
@@ -31,17 +31,8 @@ rm -rf $RPM_BUILD_ROOT
 %makeinstall
 ln -sf make $RPM_BUILD_ROOT%_bindir/gmake
 
-# XXX: (GM): Remove unpackaged files (check later)
+# Remove unpackaged files
 rm %buildroot%_infodir/dir
-rm %buildroot%_datadir/locale/de/LC_MESSAGES/make.mo
-rm %buildroot%_datadir/locale/es/LC_MESSAGES/make.mo
-rm %buildroot%_datadir/locale/fr/LC_MESSAGES/make.mo
-rm %buildroot%_datadir/locale/ja/LC_MESSAGES/make.mo
-rm %buildroot%_datadir/locale/ko/LC_MESSAGES/make.mo
-rm %buildroot%_datadir/locale/nl/LC_MESSAGES/make.mo
-rm %buildroot%_datadir/locale/pl/LC_MESSAGES/make.mo
-rm %buildroot%_datadir/locale/pt_BR/LC_MESSAGES/make.mo
-rm %buildroot%_datadir/locale/ru/LC_MESSAGES/make.mo
 
 %post
 /sbin/install-info %_infodir/make.info.gz %_infodir/dir \
@@ -59,8 +50,12 @@ fi
 %_bindir/*
 %_mandir/man*/*
 %_infodir/*.info*
+%_datadir/locale/*/LC_MESSAGES/make.mo
 
 %changelog
+* Sun Sep 26 2004 Solar Designer <solar@owl.openwall.com> 3.80-owl2
+- Do package locale files.
+
 * Sun Sep 19 2004 Andreas Ericsson <exon@owl.openwall.com> 3.80-owl1
 - Corrected rm-args for removing $RPM_BUILD_ROOT in %install.
 - Upgraded to latest version.
