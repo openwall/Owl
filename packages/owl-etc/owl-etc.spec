@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.44 2003/05/29 00:24:39 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.45 2003/05/29 00:27:59 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
@@ -49,11 +49,9 @@ rm -rf $RPM_BUILD_ROOT
 %triggerin -- tcb
 function pause()
 {
-	if tty -s; then
-		echo
-		echo "Install will continue in 10 seconds..."
-		sleep 10
-	fi
+	echo
+	echo "Install will continue in 10 seconds..."
+	sleep 10
 }
 
 # Determine whether the current /etc/shadow matches the initial version
