@@ -18,7 +18,7 @@ maddr " | "  mroute " | " monitor " }"
 .sp
 
 .ti -8
-.IR OPTIONS " := { " 
+.IR OPTIONS " := { "
 \fB\-V\fR[\fIersion\fR] |
 \fB\-s\fR[\fItatistics\fR] |
 \fB\-r\fR[\fIesolve\fR] |
@@ -46,7 +46,7 @@ maddr " | "  mroute " | " monitor " }"
 .br
 .B  address
 .IR LLADDR " |"
-.B  broadcast 
+.B  broadcast
 .IR LLADDR " |"
 .br
 .B  mtu
@@ -57,7 +57,7 @@ maddr " | "  mroute " | " monitor " }"
 .RI "[ " DEVICE " ]"
 
 .ti -8
-.BR "ip addr" " { " add " | " del " } " 
+.BR "ip addr" " { " add " | " del " } "
 .IB IFADDR " dev " STRING
 
 .ti -8
@@ -65,7 +65,7 @@ maddr " | "  mroute " | " monitor " }"
 .IR STRING " ] [ "
 .B  scope
 .IR SCOPE-ID " ] [ "
-.B  to 
+.B  to
 .IR PREFIX " ] [ " FLAG-LIST " ] [ "
 .B  label
 .IR PATTERN " ]"
@@ -102,10 +102,10 @@ tentative " | " deprecated " ]"
 .I  SELECTOR
 
 .ti -8
-.B  ip route get 
+.B  ip route get
 .IR ADDRESS " [ "
 .BI from " ADDRESS " iif " STRING"
-.RB " ] [ " oif 
+.RB " ] [ " oif
 .IR STRING " ] [ "
 .B  tos
 .IR TOS " ]"
@@ -339,11 +339,9 @@ As a rule, the information is statistics or some time values.
 .TP
 .BR "\-f" , " \-family"
 followed by protocol family identifier:
-.BR "inet" , " inet6"
-or
-.B link
-,enforce the protocol family to use.  If the option is not present,
-the protocol family is guessed from other arguments.  If the rest 
+.BR inet ", " inet6 " or " link ,
+enforce the protocol family to use.  If the option is not present,
+the protocol family is guessed from other arguments.  If the rest
 of the command line does not give enough information to guess the
 family,
 .B ip
@@ -374,11 +372,11 @@ shortcut for
 .BR "\-o" , " \-oneline"
 output each record on a single line, replacing line feeds
 with the
-.B '\'
-character. This is convenient when you want to count records 
+.B \e
+character.  This is convenient when you want to count records
 with
 .BR wc (1)
- or to
+or to
 .BR grep (1)
 the output.
 
@@ -400,7 +398,7 @@ host addresses.
 .B address
 - protocol (IP or IPv6) address on a device.
 .TP
-.B neighbour
+.B neighbor
 - ARP or NDISC cache entry.
 
 .TP
@@ -430,7 +428,7 @@ abbreviated form, f.e.
 is abbreviated as
 .B addr
 or just
-.B a.
+.BR a .
 
 .SS
 .I COMMAND
@@ -442,8 +440,8 @@ As a rule, it is possible to
 and
 .B show
 (or
-.B list
-) objects, but some objects do not allow all of these operations
+.BR list )
+objects, but some objects do not allow all of these operations
 or have some additional commands.  The
 .B help
 command is available for all objects.  It prints
@@ -501,13 +499,13 @@ already configured.
 
 .TP
 .BI txqueuelen " NUMBER"
-.TP 
+.TP
 .BI txqlen " NUMBER"
 change the transmit queue length of the device.
 
 .TP
 .BI mtu " NUMBER"
-change the 
+change the
 .I MTU
 of the device.
 
@@ -574,8 +572,8 @@ the name of the device to add the address to.
 
 .TP
 .BI local " ADDRESS " (default)
-the address of the interface. The format of the address depends
-on the protocol. It is a dotted quad for IP and a sequence of
+the address of the interface.  The format of the address depends
+on the protocol.  It is a dotted quad for IP and a sequence of
 hexadecimal halfwords separated by colons for IPv6.  The
 .I ADDRESS
 may be followed by a slash and a decimal number which encodes
@@ -583,7 +581,7 @@ the network prefix length.
 
 .TP
 .BI peer " ADDRESS"
-the address of the remote endpoint for pointopoint interfaces.
+the address of the remote endpoint for point to point interfaces.
 Again, the
 .I ADDRESS
 may be followed by a slash and a decimal number, encoding the network
@@ -634,7 +632,7 @@ valid inside this site.
 .SS ip address delete - delete protocol address
 .B Arguments:
 coincide with the arguments of
-.B ip addr add.
+.BR "ip addr add" .
 The device name is a required argument.  The rest are optional.
 If no arguments are given, the first address is deleted.
 
@@ -683,7 +681,7 @@ This command flushes the protocol addresses selected by some criteria.
 
 .PP
 This command has the same arguments as
-.B show.
+.BR show .
 The difference is that it does not run when no arguments are given.
 
 .PP
@@ -696,79 +694,79 @@ it will not forgive it, but will cruelly purge all the addresses.
 .PP
 With the
 .B -statistics
-option, the command becomes verbose. It prints out the number of deleted
+option, the command becomes verbose.  It prints out the number of deleted
 addresses and the number of rounds made to flush the address list.  If
 this option is given twice,
 .B ip addr flush
 also dumps all the deleted addresses in the format described in the
 previous subsection.
 
-.SH ip neighbour - neighbour/arp tables management.
+.SH ip neighbor - neighbor/arp tables management.
 
-.B neighbour
+.B neighbor
 objects establish bindings between protocol addresses and
 link layer addresses for hosts sharing the same link.
-Neighbour entries are organized into tables. The IPv4 neighbour table
+Neighbor entries are organized into tables.  The IPv4 neighbor table
 is known by another name - the ARP table.
 
 .P
-The corresponding commands display neighbour bindings
-and their properties, add new neighbour entries and delete old ones.
+The corresponding commands display neighbor bindings
+and their properties, add new neighbor entries and delete old ones.
 
-.SS ip neighbour add - add a new neighbour entry
-.SS ip neighbour change - change an existing entry
-.SS ip neighbour replace - add a new entry or change an existing one
+.SS ip neighbor add - add a new neighbor entry
+.SS ip neighbor change - change an existing entry
+.SS ip neighbor replace - add a new entry or change an existing one
 
-These commands create new neighbour records or update existing ones.
+These commands create new neighbor records or update existing ones.
 
 .TP
 .BI to " ADDRESS " (default)
-the protocol address of the neighbour. It is either an IPv4 or IPv6 address.
+the protocol address of the neighbor.  It is either an IPv4 or IPv6 address.
 
 .TP
 .BI dev " NAME"
-the interface to which this neighbour is attached.
+the interface to which this neighbor is attached.
 
 .TP
 .BI lladdr " LLADDRESS"
-the link layer address of the neighbour.
+the link layer address of the neighbor.
 .I LLADDRESS
 can also be
 .BR "null" .
 
 .TP
 .BI nud " NUD_STATE"
-the state of the neighbour entry.
+the state of the neighbor entry.
 .B nud
-is an abbreviation for 'Neigh bour Unreachability Detection'.
+is an abbreviation for 'Neighbor Unreachability Detection'.
 The state can take one of the following values:
 
 .in +8
 .B permanent
-- the neighbour entry is valid forever and can be only
+- the neighbor entry is valid forever and can be only
 be removed administratively.
 .sp
 
 .B noarp
-- the neighbour entry is valid. No attempts to validate
+- the neighbor entry is valid.  No attempts to validate
 this entry will be made but it can be removed when its lifetime expires.
 .sp
 
 .B reachable
-- the neighbour entry is valid until the reachability
+- the neighbor entry is valid until the reachability
 timeout expires.
 .sp
 
 .B stale
-- the neighbour entry is valid but suspicious.
+- the neighbor entry is valid but suspicious.
 This option to
 .B ip neigh
-does not change the neighbour state if it was valid and the address
+does not change the neighbor state if it was valid and the address
 is not changed by this command.
 .in -8
 
-.SS ip neighbour delete - delete a neighbour entry
-This command invalidates a neighbour entry.
+.SS ip neighbor delete - delete a neighbor entry
+This command invalidates a neighbor entry.
 
 .PP
 The arguments are the same as with
@@ -783,31 +781,31 @@ are ignored.
 .B Warning:
 Attempts to delete or manually change a
 .B noarp
-entry created by the kernel may result in unpredictable behaviour.
+entry created by the kernel may result in unpredictable behavior.
 Particularly, the kernel may try to resolve this address even
 on a
 .B NOARP
 interface or if the address is multicast or broadcast.
 
-.SS ip neighbour show - list neighbour entries
+.SS ip neighbor show - list neighbor entries
 
-This commands displays neighbour tables.
+This commands displays neighbor tables.
 
 .TP
 .BI to " ADDRESS " (default)
-the prefix selecting the neighbours to list.
+the prefix selecting the neighbors to list.
 
 .TP
 .BI dev " NAME"
-only list the neighbours attached to this device.
+only list the neighbors attached to this device.
 
 .TP
 .B unused
-only list neighbours which are not currently in use.
+only list neighbors which are not currently in use.
 
 .TP
 .BI nud " NUD_STATE"
-only list neighbour entries in this state.
+only list neighbor entries in this state.
 .I NUD_STATE
 takes values listed below or the special value
 .B all
@@ -819,15 +817,15 @@ lists all entries except for
 and
 .BR "noarp" .
 
-.SS ip neighbour flush - flush neighbour entries
-This command flushes neighbour tables, selecting
+.SS ip neighbor flush - flush neighbor entries
+This command flushes neighbor tables, selecting
 entries to flush by some criteria.
 
 .PP
 This command has the same arguments as
-.B show.
+.BR show .
 The differences are that it does not run when no arguments are given,
-and that the default neighbour states to be flushed do not include
+and that the default neighbor states to be flushed do not include
 .B permanent
 and
 .BR "noarp" .
@@ -836,11 +834,11 @@ and
 With the
 .B -statistics
 option, the command becomes verbose.  It prints out the number of
-deleted neighbours and the number of rounds made to flush the
-neighbour table.  If the option is given
+deleted neighbors and the number of rounds made to flush the
+neighbor table.  If the option is given
 twice,
 .B ip neigh flush
-also dumps all the deleted neighbours.
+also dumps all the deleted neighbors.
 
 .SH ip route - routing table management
 Manipulate route entries in the kernel routing tables keep
@@ -891,7 +889,7 @@ link broadcasts.
 
 .sp
 .B throw
-- a special control route used together with policy rules. If such a
+- a special control route used together with policy rules.  If such a
 route is selected, lookup in this table is terminated pretending that
 no route was found.  Without policy routing it is equivalent to the
 absence of the route in the routing table.  The packets are dropped
@@ -931,8 +929,8 @@ normal routing tables.
 Linux-2.x can pack routes into several routing
 tables identified by a number in the range from 1 to 255 or by
 name from the file
-.B /etc/iproute2/rt_tables
-. By default all normal routes are inserted into the
+.BR /etc/iproute2/rt_tables .
+By default all normal routes are inserted into the
 .B main
 table (ID 254) and the kernel only uses this table when calculating routes.
 
@@ -1008,7 +1006,7 @@ If this parameter is omitted,
 assumes the
 .B main
 table, with the exception of
-.BR local " , " broadcast " and " nat
+.BR local ", " broadcast " and " nat
 routes, which are put into the
 .B local
 table by default.
@@ -1162,7 +1160,7 @@ If a routing daemon starts, it will purge all of them.
 
 .B static
 - the route was installed by the administrator
-to override dynamic routing. Routing daemon will respect them
+to override dynamic routing.  Routing daemon will respect them
 and, probably, even advertise them to its peers.
 .sp
 
@@ -1234,7 +1232,7 @@ And
 .BI exact " PREFIX"
 (or just
 .IR PREFIX ")"
-selects routes with this exact prefix. If neither of these options
+selects routes with this exact prefix.  If neither of these options
 are present,
 .B ip
 assumes
@@ -1328,9 +1326,9 @@ prints the helper page.
 .sp
 With the
 .B -statistics
-option, the command becomes verbose. It prints out the number of
+option, the command becomes verbose.  It prints out the number of
 deleted routes and the number of rounds made to flush the routing
-table. If the option is given
+table.  If the option is given
 twice,
 .B ip route flush
 also dumps all the deleted routes in the format described in the
@@ -1364,9 +1362,9 @@ force the output device on which this packet will be routed.
 
 .TP
 .B connected
-if no source address 
+if no source address
 .RB "(option " from ")"
-was given, relookup the route with the source set to the preferred
+was given, re-lookup the route with the source set to the preferred
 address received from the first lookup.
 If policy routing is used, it may be a different route.
 
@@ -1416,13 +1414,13 @@ database' (or RPDB), which selects routes by executing some set of rules.
 Each policy routing rule consists of a
 .B selector
 and an
-.B action predicate.
-The RPDB is scanned in the order of increasing priority. The selector
+.BR "action predicate" .
+The RPDB is scanned in the order of increasing priority.  The selector
 of each rule is applied to {source address, destination address, incoming
 interface, tos, fwmark} and, if the selector matches the packet,
 the action is performed.  The action predicate may return with success.
 In this case, it will either give a route or failure indication
-and the RPDB lookup is terminated. Otherwise, the RPDB program
+and the RPDB lookup is terminated.  Otherwise, the RPDB program
 continues on the next rule.
 
 .P
@@ -1443,7 +1441,7 @@ The
 table is a special routing table containing
 high priority control routes for local and broadcast addresses.
 .sp
-Rule 0 is special. It cannot be deleted or overridden.
+Rule 0 is special.  It cannot be deleted or overridden.
 
 .TP
 2.
@@ -1454,7 +1452,7 @@ table
 The
 .B main
 table is the normal routing table containing all non-policy
-routes. This rule may be deleted and/or overridden with other
+routes.  This rule may be deleted and/or overridden with other
 ones by the administrator.
 
 .TP
@@ -1551,14 +1549,14 @@ the routing table identifier to lookup if the rule selector matches.
 .TP
 .BI realms " FROM/TO"
 Realms to select if the rule matched and the routing table lookup
-succeeded.  Realm 
+succeeded.  Realm
 .I TO
 is only used if the route did not select any realm.
 
 .TP
 .BI nat " ADDRESS"
 The base of the IP address block to translate (for source addresses).
-The 
+The
 .I ADDRESS
 may be either the start of the block of NAT addresses (selected by NAT
 routes) or a local host address (or even zero).
@@ -1606,8 +1604,7 @@ objects are multicast routing cache entries created by a user level
 mrouting daemon (f.e.
 .B pimd
 or
-.B mrouted
-).
+.BR mrouted ).
 
 Due to the limitations of the current interface to the multicast routing
 engine, it is impossible to change
@@ -1658,12 +1655,12 @@ It must be an address on another interface of this host.
 
 .TP
 .BI ttl " N"
-set a fixed TTL 
+set a fixed TTL
 .I N
 on tunneled packets.
 .I N
 is a number in the range 1--255. 0 is a special value
-meaning that packets inherit the TTL value. 
+meaning that packets inherit the TTL value.
 The default value is:
 .BR "inherit" .
 
@@ -1678,7 +1675,7 @@ The default value is:
 .BR "inherit" .
 
 .TP
-.BI dev " NAME" 
+.BI dev " NAME"
 bind the tunnel to the device
 .I NAME
 so that tunneled packets will only be routed via this device and will
@@ -1688,8 +1685,8 @@ changes.
 .TP
 .B nopmtudisc
 disable Path MTU Discovery on this tunnel.
-It is enabled by default.  Note that a fixed ttl is incompatible
-with this option: tunnelling with a fixed ttl always makes pmtu
+It is enabled by default.  Note that a fixed TTL is incompatible
+with this option: tunnelling with a fixed TTL always makes PMTU
 discovery.
 
 .TP
@@ -1698,7 +1695,7 @@ discovery.
 .BI ikey " K"
 .TP
 .BI okey " K"
-.RB ( " only GRE tunnels " )
+.RB ( "only GRE tunnels" )
 use keyed GRE with key
 .IR K ". " K
 is either a number or an IP address-like dotted quad.
@@ -1708,12 +1705,12 @@ parameter sets the key to use in both directions.
 The
 .BR ikey " and " okey
 parameters set different keys for input and output.
-   
+
 .TP
 .BR csum ", " icsum ", " ocsum
-.RB ( " only GRE tunnels " )
+.RB ( "only GRE tunnels" )
 generate/require checksums for tunneled packets.
-The 
+The
 .B ocsum
 flag calculates checksums for outgoing packets.
 The
@@ -1726,7 +1723,7 @@ flag is equivalent to the combination
 
 .TP
 .BR seq ", " iseq ", " oseq
-.RB ( " only GRE tunnels " )
+.RB ( "only GRE tunnels" )
 serialize packets.
 The
 .B oseq
@@ -1736,9 +1733,10 @@ The
 flag requires that all input packets are serialized.
 The
 .B  seq
-flag is equivalent to the combination 
+flag is equivalent to the combination
 .BR "iseq oseq" .
-.B It isn't work. Don't use it.
+.B This doesn't work.
+.B Don't use it.
 
 .SS ip tunnel show - list tunnels
 This command has no arguments.
@@ -1777,7 +1775,7 @@ utility.  This utility has a command line syntax similar to
 Ideally,
 .B rtmon
 should be started before the first network configuration command
-is issued. F.e. if you insert:
+is issued.  F.e. if you insert:
 .sp
 .in +8
 rtmon file /var/log/rtmon.log
@@ -1806,4 +1804,4 @@ was written by Alexey N. Kuznetsov and added in Linux 2.2.
 
 .SH AUTHOR
 
-Manpage maintained by Michail Litvak <mci@owl.openwall.com>
+This manual page is maintained by Michail Litvak <mci@owl.openwall.com>.
