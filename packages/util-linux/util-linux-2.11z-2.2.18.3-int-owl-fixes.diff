@@ -1,7 +1,6 @@
-diff -ur util-linux-2.10r.int/mount/lomount.c util-linux-2.10r/mount/lomount.c
---- util-linux-2.10r.int/mount/lomount.c	Wed Apr 18 08:55:42 2001
-+++ util-linux-2.10r/mount/lomount.c	Wed Apr 18 10:17:55 2001
-@@ -35,6 +35,14 @@
+--- util-linux-2.11z/mount/lomount.c.orig	Mon Apr  7 20:22:01 2003
++++ util-linux-2.11z/mount/lomount.c	Mon Apr  7 20:44:28 2003
+@@ -37,6 +37,14 @@
  extern void error (const char *fmt, ...);	/* idem */
  
  #ifdef LOOP_SET_FD
@@ -16,7 +15,7 @@ diff -ur util-linux-2.10r.int/mount/lomount.c util-linux-2.10r/mount/lomount.c
  struct crypt_type_struct {
  	int id;
  	char *name;
-@@ -241,7 +249,7 @@
+@@ -268,7 +276,7 @@
  		loopinfo.lo_encrypt_key_size = strlen(loopinfo.lo_encrypt_key);
  		break;
  	case LO_CRYPT_DES:
@@ -25,7 +24,7 @@ diff -ur util-linux-2.10r.int/mount/lomount.c util-linux-2.10r/mount/lomount.c
  		pass = getpass (_("Password: "));
  		strncpy (loopinfo.lo_encrypt_key, pass, 8);
  		loopinfo.lo_encrypt_key[8] = 0;
-@@ -267,7 +275,7 @@
+@@ -294,7 +302,7 @@
  	case LO_CRYPT_RC6:
  	case LO_CRYPT_DES_EDE3:
  	case LO_CRYPT_DFC:
@@ -34,9 +33,8 @@ diff -ur util-linux-2.10r.int/mount/lomount.c util-linux-2.10r/mount/lomount.c
  		strncpy(passwdbuff+1,pass,PASSWDBUFFLEN-1);
  		passwdbuff[0] = 'A';
  		rmd160_hash_buffer(keybits,pass,strlen(pass));
-diff -ur util-linux-2.10r.int/mount/losetup.8 util-linux-2.10r/mount/losetup.8
---- util-linux-2.10r.int/mount/losetup.8	Wed Apr 18 08:55:42 2001
-+++ util-linux-2.10r/mount/losetup.8	Wed Apr 18 08:59:40 2001
+--- util-linux-2.11z/mount/losetup.8.orig	Mon Apr  7 18:58:14 2003
++++ util-linux-2.11z/mount/losetup.8	Mon Apr  7 20:44:28 2003
 @@ -107,7 +107,7 @@
  .IP
  dd if=/dev/zero of=/file bs=1k count=100

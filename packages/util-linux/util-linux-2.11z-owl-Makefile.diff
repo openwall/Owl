@@ -1,6 +1,5 @@
-diff -ur util-linux-2.10h.orig/login-utils/Makefile util-linux-2.10h/login-utils/Makefile
---- util-linux-2.10h.orig/login-utils/Makefile	Tue Mar 21 02:11:36 2000
-+++ util-linux-2.10h/login-utils/Makefile	Thu Jul 13 12:50:03 2000
+--- util-linux-2.11z/login-utils/Makefile.orig	Sat Sep 29 21:11:24 2001
++++ util-linux-2.11z/login-utils/Makefile	Mon Apr  7 22:44:40 2003
 @@ -13,7 +13,7 @@
  
  MAN1.MISC=	last.1 mesg.1 wall.1
@@ -12,14 +11,14 @@ diff -ur util-linux-2.10h.orig/login-utils/Makefile util-linux-2.10h/login-utils
  MAN8.GETTY=	agetty.8
 @@ -30,7 +30,7 @@
  
- SBIN.INIT=	simpleinit shutdown need
+ SBIN.INIT=	simpleinit shutdown initctl
  
 -BIN.PUTILS=	login
 +BIN.PUTILS=
  
  USRBIN.MISC=	last mesg wall
  
-@@ -159,7 +159,6 @@
+@@ -166,7 +166,6 @@
  
  install-putils: $(BIN.PUTILS) $(USRBIN.PUTILS) $(USRSBIN.PUTILS)
  	$(INSTALLDIR) $(BINDIR) $(USRBINDIR) $(USRSBINDIR)
@@ -27,42 +26,41 @@ diff -ur util-linux-2.10h.orig/login-utils/Makefile util-linux-2.10h/login-utils
  	$(INSTALLSUID) $(USRBIN.PUTILS) $(USRBINDIR)
  	$(INSTALLBIN) $(USRSBIN.PUTILS) $(USRSBINDIR)
  	(cd $(USRSBINDIR); ln -sf vipw vigr)
-diff -ur util-linux-2.10h.orig/misc-utils/Makefile util-linux-2.10h/misc-utils/Makefile
---- util-linux-2.10h.orig/misc-utils/Makefile	Fri Jan 21 15:48:47 2000
-+++ util-linux-2.10h/misc-utils/Makefile	Thu Jul 13 12:49:04 2000
-@@ -9,7 +9,7 @@
+--- util-linux-2.11z/misc-utils/Makefile.orig	Sat Nov  2 15:51:02 2002
++++ util-linux-2.11z/misc-utils/Makefile	Mon Apr  7 23:09:29 2003
+@@ -11,7 +11,7 @@
  
  # Where to put man pages?
  
--MAN1= 		cal.1 chkdupexe.1 ddate.1 kill.1 \
-+MAN1= 		cal.1 ddate.1 kill.1 \
- 		logger.1 look.1 mcookie.1 namei.1 rename.1 script.1 \
- 		whereis.1 write.1
+-MAN1= 		cal.1 chkdupexe.1 ddate.1 logger.1 look.1 mcookie.1 \
++MAN1= 		cal.1 ddate.1 logger.1 look.1 mcookie.1 \
+ 		namei.1 rename.1 script.1 whereis.1
  
-@@ -18,7 +18,7 @@
+ # Where to put binaries?
+@@ -19,7 +19,7 @@
  
- BIN=            kill
+ BIN=
  
 -USRBIN=		cal chkdupexe ddate logger look mcookie \
 +USRBIN=		cal ddate logger look mcookie \
- 		namei rename script whereis write
+ 		namei rename script whereis
  
- ifeq "$(HAVE_RESET)" "no"
-@@ -71,7 +71,6 @@
+ MAYBE=		reset setterm
+@@ -79,7 +79,6 @@
  
  cal.o: $(LIB)/errs.h
  cal: cal.o $(ERR_O)
 -chkdupexe: chkdupexe.pl
+ ddate: ddate.o
  kill: kill.o procs.o
  logger: logger.o
- mcookie: mcookie.o md5.o
-@@ -91,8 +90,7 @@
- 	$(INSTALLDIR) $(MAN1DIR) $(MAN8DIR)
+@@ -104,8 +103,7 @@
  	$(INSTALLMAN) $(MAN1) $(MAN1DIR)
+ ifeq "$(HAVE_WRITE)" "no"
  ifeq "$(USE_TTY_GROUP)" "yes"
 -	chgrp tty $(USRBINDIR)/write
 -	chmod g+s $(USRBINDIR)/write
 +	chmod 2711 $(USRBINDIR)/write
  endif
+ endif
  
- .PHONY:	clean

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.21 2002/11/03 04:47:21 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.22 2003/04/14 14:51:37 mci Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -6,27 +6,25 @@
 
 Summary: A collection of basic system utilities.
 Name: util-linux
-%define base_version 2.10r
+%define base_version 2.11z
 %define crypto_version 2.2.18.3
 %if %BUILD_CRYPTO
 Version: %{base_version}.%{crypto_version}
 %else
 Version: %{base_version}
 %endif
-Release: owl7
+Release: owl1
 License: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%{base_version}.tar.bz2
 Source1: mount.control
 Source2: write.control
-Patch0: util-linux-2.10r-owl-MCONFIG.diff
-Patch1: util-linux-2.10r-owl-Makefiles.diff
-Patch2: util-linux-2.10r-owl-write.diff
-Patch3: util-linux-2.10r-owl-alpha-hwclock-usage.diff
-Patch4: util-linux-2.10r-owl-mtab-umask.diff
-Patch10: util-linux-2.10r-rh-locale-overflow.diff
-Patch20: util-linux-2.10r-%{crypto_version}-int.diff
-Patch21: util-linux-2.10r-%{crypto_version}-int-owl-fixes.diff
+Patch0: util-linux-2.11z-owl-MCONFIG.diff
+Patch1: util-linux-2.11z-owl-Makefile.diff
+Patch2: util-linux-2.11z-owl-write.diff
+Patch3: util-linux-2.11z-owl-mtab-umask.diff
+Patch20: util-linux-2.11z-%{crypto_version}-int.diff
+Patch21: util-linux-2.11z-%{crypto_version}-int-owl-fixes.diff
 PreReq: /sbin/install-info
 PreReq: owl-control >= 0.4, owl-control < 2.0
 Obsoletes: fdisk, tunelp
@@ -74,8 +72,6 @@ to query the status of a loop device.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
-%patch10 -p1
 %if %BUILD_CRYPTO
 %patch20 -p1
 %patch21 -p1
@@ -88,10 +84,8 @@ make RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{bin,sbin}
-mkdir -p $RPM_BUILD_ROOT/usr/{bin,info,lib,man/man1,man/man6,man/man8,sbin}
 
-make install DESTDIR=$RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT MAN_DIR=%{_mandir} INFO_DIR=%{_infodir}
 
 ln -sf hwclock $RPM_BUILD_ROOT/sbin/clock
 
@@ -144,34 +138,40 @@ fi
 /usr/share/locale/*/LC_MESSAGES/*
 /sbin/clock
 /sbin/hwclock
-/usr/man/man8/hwclock.8*
+%{_mandir}/man8/hwclock.8*
 
 /usr/sbin/tunelp
-/usr/man/man8/tunelp.8*
+%{_mandir}/man8/tunelp.8*
 
 /sbin/fdisk
-%ifarch %ix86 alpha armv4l
+%ifarch %ix86 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
 /sbin/cfdisk
 %endif
 
-%ifarch %ix86 alpha
+%ifarch %ix86 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
 /sbin/fsck.minix
 /sbin/mkfs.minix
 %endif
 
 /sbin/mkfs
 /sbin/mkswap
+/sbin/fsck.cramfs
+/sbin/mkfs.cramfs
+/sbin/blockdev
+/sbin/elvtune
 
 /usr/bin/fdformat
 /usr/bin/setfdprm
 %config /etc/fdprm
+/usr/bin/isosize
 
-/usr/man/man8/fdformat.8*
-/usr/man/man8/mkswap.8*
-/usr/man/man8/setfdprm.8*
+%{_mandir}/man8/fdformat.8*
+%{_mandir}/man8/mkswap.8*
+%{_mandir}/man8/setfdprm.8*
+%{_mandir}/man8/isosize.8*
 
 /usr/bin/ddate
-/usr/man/man1/ddate.1*
+%{_mandir}/man1/ddate.1*
 
 /bin/kill
 /usr/bin/cal
@@ -184,61 +184,57 @@ fi
 /usr/bin/whereis
 %attr(700,root,root) /usr/bin/write
 /usr/bin/getopt
-/usr/man/man1/cal.1*
-/usr/man/man1/kill.1*
-/usr/man/man1/logger.1*
-/usr/man/man1/look.1*
-/usr/man/man1/mcookie.1*
-/usr/man/man1/namei.1*
-/usr/man/man1/script.1*
-/usr/man/man1/setterm.1*
-/usr/man/man1/whereis.1*
-/usr/man/man1/write.1*
-/usr/man/man1/getopt.1*
+%{_mandir}/man1/cal.1*
+%{_mandir}/man1/kill.1*
+%{_mandir}/man1/logger.1*
+%{_mandir}/man1/look.1*
+%{_mandir}/man1/mcookie.1*
+%{_mandir}/man1/namei.1*
+%{_mandir}/man1/script.1*
+%{_mandir}/man1/setterm.1*
+%{_mandir}/man1/whereis.1*
+%{_mandir}/man1/write.1*
+%{_mandir}/man1/getopt.1*
 
 /usr/share/misc/getopt
 
 /bin/dmesg
 
 /sbin/ctrlaltdel
-/sbin/kbdrate
 /bin/arch
 /usr/bin/ipcrm
 /usr/bin/ipcs
 /usr/bin/renice
 /usr/sbin/readprofile
 /usr/bin/setsid
-%ifarch %ix86 alpha armv4l
+%ifarch %ix86 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
 /usr/bin/cytune
 %endif
 
-/usr/man/man1/arch.1*
-/usr/man/man1/readprofile.1*
-%ifarch %ix86 alpha armv4l
-/usr/man/man8/cytune.8*
+%{_mandir}/man1/arch.1*
+%{_mandir}/man1/readprofile.1*
+%ifarch %ix86 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
+%{_mandir}/man8/cytune.8*
 %endif
-/usr/man/man8/ctrlaltdel.8*
-/usr/man/man8/dmesg.8*
-/usr/man/man8/ipcrm.8*
-/usr/man/man8/ipcs.8*
-/usr/man/man8/kbdrate.8*
-/usr/man/man8/renice.8*
-/usr/man/man8/setsid.8*
+%{_mandir}/man8/ctrlaltdel.8*
+%{_mandir}/man8/dmesg.8*
+%{_mandir}/man8/ipcrm.8*
+%{_mandir}/man8/ipcs.8*
+%{_mandir}/man8/renice.8*
+%{_mandir}/man8/setsid.8*
 
 %ifarch %ix86
 /usr/sbin/rdev
 /usr/sbin/ramsize
 /usr/sbin/rootflags
-/usr/sbin/swapdev
 /usr/sbin/vidmode
-/usr/man/man8/rdev.8*
-/usr/man/man8/ramsize.8*
-/usr/man/man8/rootflags.8*
-/usr/man/man8/swapdev.8*
-/usr/man/man8/vidmode.8*
+%{_mandir}/man8/rdev.8*
+%{_mandir}/man8/ramsize.8*
+%{_mandir}/man8/rootflags.8*
+%{_mandir}/man8/vidmode.8*
 %endif
 
-/usr/info/ipc.info.gz
+%{_infodir}/ipc.info.gz
 
 /usr/bin/col
 /usr/bin/colcrt
@@ -248,37 +244,42 @@ fi
 /usr/bin/rename
 /usr/bin/rev
 /usr/bin/ul
+/usr/bin/pg
+/usr/bin/line
 
-/usr/man/man1/col.1*
-/usr/man/man1/colcrt.1*
-/usr/man/man1/colrm.1*
-/usr/man/man1/column.1*
-/usr/man/man1/hexdump.1*
-/usr/man/man1/rename.1*
-/usr/man/man1/rev.1*
-/usr/man/man1/ul.1*
+%{_mandir}/man1/col.1*
+%{_mandir}/man1/colcrt.1*
+%{_mandir}/man1/colrm.1*
+%{_mandir}/man1/column.1*
+%{_mandir}/man1/hexdump.1*
+%{_mandir}/man1/rename.1*
+%{_mandir}/man1/rev.1*
+%{_mandir}/man1/ul.1*
+%{_mandir}/man1/pg.1*
+%{_mandir}/man1/line.1*
 
 /bin/more
-/usr/man/man1/more.1*
-/usr/share/misc/more.help
+%{_mandir}/man1/more.1*
 
-%ifarch %ix86 alpha
-/usr/man/man8/fsck.minix.8*
-/usr/man/man8/mkfs.minix.8*
-/usr/man/man8/mkfs.8*
+%ifarch %ix86 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
+%{_mandir}/man8/fsck.minix.8*
+%{_mandir}/man8/mkfs.minix.8*
 %endif
+%{_mandir}/man8/mkfs.8*
+%{_mandir}/man8/elvtune.8*
+%{_mandir}/man8/blockdev.8*
 
-/usr/man/man8/fdisk.8*
+%{_mandir}/man8/fdisk.8*
 
-%ifarch %ix86 alpha armv4l
-/usr/man/man8/cfdisk.8*
+%ifarch %ix86 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
+%{_mandir}/man8/cfdisk.8*
 %endif
 
 %doc */README.*
 
-%ifarch %ix86 alpha
+%ifarch %ix86 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
 /sbin/sfdisk
-/usr/man/man8/sfdisk.8*
+%{_mandir}/man8/sfdisk.8*
 %doc fdisk/sfdisk.examples
 %endif
 
@@ -291,12 +292,12 @@ fi
 %attr(700,root,root) /bin/umount
 /sbin/swapon
 /sbin/swapoff
-/usr/man/man5/fstab.5*
-/usr/man/man5/nfs.5*
-/usr/man/man8/mount.8*
-/usr/man/man8/swapoff.8*
-/usr/man/man8/swapon.8*
-/usr/man/man8/umount.8*
+%{_mandir}/man5/fstab.5*
+%{_mandir}/man5/nfs.5*
+%{_mandir}/man8/mount.8*
+%{_mandir}/man8/swapoff.8*
+%{_mandir}/man8/swapon.8*
+%{_mandir}/man8/umount.8*
 /etc/control.d/facilities/mount
 %endif
 
@@ -304,10 +305,14 @@ fi
 %files -n losetup
 %defattr(-,root,root)
 /sbin/losetup
-/usr/man/man8/losetup.8*
+%{_mandir}/man8/losetup.8*
 %endif
 
 %changelog
+* Tue Apr 14 2003 Michail Litvak <mci@owl.openwall.com>
+- 2.11z
+- minor spec file cleanups.
+
 * Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
 - Dump/restore the owl-control settings for mount and write on package
 upgrades.

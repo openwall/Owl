@@ -1,6 +1,5 @@
-diff -ur util-linux-2.10r.orig/lib/carefulputc.c util-linux-2.10r/lib/carefulputc.c
---- util-linux-2.10r.orig/lib/carefulputc.c	Thu Nov  9 20:57:28 2000
-+++ util-linux-2.10r/lib/carefulputc.c	Sun Jan 28 06:23:32 2001
+--- util-linux-2.11z/lib/carefulputc.c.orig	Thu Nov  9 19:57:28 2000
++++ util-linux-2.11z/lib/carefulputc.c	Sat Apr  5 00:45:49 2003
 @@ -15,8 +15,8 @@
  	if (c == '\007' || c == '\t' || c == '\r' || c == '\n' ||
  	    (!iso8859x_iscntrl(c) && (isprint(c) || isspace(c))))
@@ -12,9 +11,8 @@ diff -ur util-linux-2.10r.orig/lib/carefulputc.c util-linux-2.10r/lib/carefulput
  	else {
  		ret = putc('^', fp);
  		if (ret != EOF)
-diff -ur util-linux-2.10r.orig/misc-utils/write.c util-linux-2.10r/misc-utils/write.c
---- util-linux-2.10r.orig/misc-utils/write.c	Thu Nov  9 18:40:00 2000
-+++ util-linux-2.10r/misc-utils/write.c	Sun Jan 28 08:15:41 2001
+--- util-linux-2.11z/misc-utils/write.c.orig	Thu Mar 15 12:09:58 2001
++++ util-linux-2.11z/misc-utils/write.c	Sat Apr  5 00:45:49 2003
 @@ -46,6 +46,7 @@
   */
  
@@ -23,15 +21,15 @@ diff -ur util-linux-2.10r.orig/misc-utils/write.c util-linux-2.10r/misc-utils/wr
  #include <unistd.h>
  #include <utmp.h>
  #include <errno.h>
-@@ -55,6 +56,7 @@
- #include <string.h>
+@@ -56,6 +57,7 @@
+ #include <stdlib.h>
  #include <locale.h>
  #include <signal.h>
 +#include <limits.h>
  #include <sys/param.h>
  #include <sys/signal.h>
  #include <sys/stat.h>
-@@ -66,7 +68,7 @@
+@@ -67,7 +69,7 @@
  #include "nls.h"
   
  void search_utmp(char *, char *, char *, uid_t);
@@ -40,7 +38,7 @@ diff -ur util-linux-2.10r.orig/misc-utils/write.c util-linux-2.10r/misc-utils/wr
  void wr_fputs(char *);
  static void done(int);
  int term_chk(char *, int *, time_t *, int);
-@@ -79,9 +81,13 @@
+@@ -80,9 +82,13 @@
  	int msgsok, myttyfd;
  	char tty[MAXPATHLEN], *mytty;
  
@@ -55,7 +53,7 @@ diff -ur util-linux-2.10r.orig/misc-utils/write.c util-linux-2.10r/misc-utils/wr
  
  	/* check that sender has write enabled */
  	if (isatty(fileno(stdin)))
-@@ -120,7 +126,7 @@
+@@ -121,7 +127,7 @@
  	switch (argc) {
  	case 2:
  		search_utmp(argv[1], tty, mytty, myuid);
@@ -64,7 +62,7 @@ diff -ur util-linux-2.10r.orig/misc-utils/write.c util-linux-2.10r/misc-utils/wr
  		break;
  	case 3:
  		if (!strncmp(argv[2], "/dev/", 5))
-@@ -139,7 +145,7 @@
+@@ -140,7 +146,7 @@
  			    argv[1], argv[2]);
  			exit(1);
  		}
@@ -73,7 +71,7 @@ diff -ur util-linux-2.10r.orig/misc-utils/write.c util-linux-2.10r/misc-utils/wr
  		break;
  	default:
  		(void)fprintf(stderr, _("usage: write user [tty]\n"));
-@@ -286,20 +292,34 @@
+@@ -276,20 +282,34 @@
  /*
   * do_write - actually make the connection
   */
@@ -113,7 +111,7 @@ diff -ur util-linux-2.10r.orig/misc-utils/write.c util-linux-2.10r/misc-utils/wr
  	if (strlen(tty) + 6 > sizeof(path))
  		exit(1);
  	(void)sprintf(path, "/dev/%s", tty);
-@@ -327,8 +347,16 @@
+@@ -317,8 +337,16 @@
  			     login, host, mytty, nows + 11);
  	printf("\r\n");
  
@@ -131,7 +129,7 @@ diff -ur util-linux-2.10r.orig/misc-utils/write.c util-linux-2.10r/misc-utils/wr
  }
  
  /*
-@@ -337,6 +365,7 @@
+@@ -327,6 +355,7 @@
  static void
  done(int dummy) {
  	(void)printf("EOF\r\n");

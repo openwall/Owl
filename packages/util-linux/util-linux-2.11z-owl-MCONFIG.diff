@@ -1,5 +1,5 @@
---- util-linux-2.10r.orig/MCONFIG	Thu Nov  9 22:41:13 2000
-+++ util-linux-2.10r/MCONFIG	Sun Jan 28 06:45:07 2001
+--- util-linux-2.11z/MCONFIG.orig	Mon Nov 25 12:29:48 2002
++++ util-linux-2.11z/MCONFIG	Mon Apr  7 21:35:09 2003
 @@ -16,17 +16,17 @@
  # If HAVE_PAM is set to "yes", then login, chfn, chsh, and newgrp
  # will use PAM for authentication. Additionally, passwd will not be
@@ -21,28 +21,34 @@
  
  # If you use chfn and chsh from this package, REQUIRE_PASSWORD will require
  # non-root users to enter the account password before updating /etc/passwd.
-@@ -72,29 +72,17 @@
+@@ -88,7 +88,7 @@
  # If HAVE_SLN is set to "yes", then sln won't be installed
  # (but the man page sln.8 will be installed anyway).
  # sln also comes with libc and glibc.
 -HAVE_SLN=no
 +HAVE_SLN=yes
  
- # If HAVE_TSORT is set to "yes", then tsort won't be installed.
- # GNU textutils 2.0 includes tsort.
--HAVE_TSORT=no
-+HAVE_TSORT=yes
- 
  # If HAVE_FDUTILS is set to "yes", then setfdprm won't be installed.
  HAVE_FDUTILS=no
+@@ -102,28 +102,7 @@
+ # DISABLE_NLS to "yes".
+ DISABLE_NLS=no
  
- # Different optimizations for different cpus.
+-# Different optimizations for different cpus.
+-# gcc 3.0 likes options -mcpu=i486 instead of -m486
 -ifeq "$(ARCH)" "intel"
--  ifeq "$(CPU)" "i386"
--    OPT=	-pipe -O2 -m386 -fomit-frame-pointer
+-  ifeq "$(HAVE_OLD_GCC)" "yes"
+-    CPUHEAD=-m
 -  else
--    OPT=	-pipe -O2 -m486 -fomit-frame-pointer
+-    CPUHEAD=-mcpu=i
 -  endif
+-  ifeq "$(CPU)" "i386"
+-    CPUTAIL=386
+-  else
+-    CPUTAIL=486
+-  endif
+-  CPUOPT= $(CPUHEAD)$(CPUTAIL)
+-  OPT=          -pipe -O2 $(CPUOPT) -fomit-frame-pointer
 -else 
 -  ifeq "$(ARCH)" "arm"
 -    OPT=	-pipe -O2 -fsigned-char -fomit-frame-pointer
@@ -54,15 +60,16 @@
  
  WARNFLAGS = -Wall -Wmissing-prototypes -Wstrict-prototypes
  
-@@ -105,6 +93,7 @@
- # Set HAVE_SLANG to yes if you have slang (and prefer to use that for cfdisk)
- # (If neither HAVE_NCURSES nor HAVE_SLANG is defined, cfdisk is not made.)
- # HAVE_SLANG=yes
+@@ -138,7 +117,7 @@
+ # SLANGFLAGS=-I/usr/include/slang
+ # No such subdirectory - slcurses.h lives in /usr/include
+ #   (no extra definition required).
+-LIBSLANG=-lslang
 +HAVE_NCURSES=yes
  
- # There is a subdirectory /usr/include/slang containing slcurses.h
- # SLANGFLAGS=-I/usr/include/slang
-@@ -150,7 +139,7 @@
+ #
+ # Paths used for compilation (not all are actually used, see CFLAGS below)
+@@ -190,7 +169,7 @@
  MANMODE=	644
  DATMODE=	644
  INFOMODE=	644
@@ -71,12 +78,12 @@
  
  CHMOD=		chmod
  INSTALL=	install
-@@ -158,7 +147,7 @@
+@@ -198,7 +177,7 @@
  INSTALLBIN=	$(INSTALL) -m $(BINMODE)
  INSTALLMAN=	$(INSTALL) -m $(MANMODE)
  INSTALLDAT=	$(INSTALL) -m $(DATMODE)
 -INSTALLSUID=    $(INSTALL) -m $(SUIDMODE) -o root
 +INSTALLSUID=    $(INSTALL) -m $(SUIDMODE)
  
- CFLAGS    := $(CFLAGS) $(OPT) -I$(LIB) $(WARNFLAGS) \
- 			$(CURSESFLAGS) $(SLANGFLAGS) \
+ ifeq "$(DISABLE_NLS)" "yes"
+ NLSFLAGS = -DDISABLE_NLS
