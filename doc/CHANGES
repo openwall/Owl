@@ -12,6 +12,19 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/09/02	Package: groff
+SECURITY FIX	Severity: none to high, remote, active
+zen-parse has demonstrated a security problem with format string
+processing in the plot command of pic(1) when groff is used with LPRng
+on Red Hat Linux.  While Owl doesn't (yet?) include a print server,
+our groff package did have the unfortunate pic(1) property and did
+provide a print filter for use on potentially untrusted input by a
+third-party print server package one could install.  This has now been
+corrected.  A patch by Sebastian Krahmer of SuSE Security Team has
+been applied to pic(1) to restrict the format string processing.  The
+print filter has been dropped from the package.  Additionally, the
+package has been updated to 1.17.2.
+
 2001/09/02	Package: popa3d
 Updated to 0.4.9.2.
 
@@ -276,4 +289,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp@hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.20 2001/09/02 08:51:02 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.21 2001/09/02 13:57:13 solar Exp $
