@@ -1,5 +1,6 @@
---- screen-3.9.9/Makefile.in.orig	Fri May 25 17:50:54 2001
-+++ screen-3.9.9/Makefile.in	Tue Jun 12 22:23:30 2001
+diff -urN screen-3.9.9.orig/Makefile.in screen-3.9.9/Makefile.in
+--- screen-3.9.9.orig/Makefile.in	Fri May 25 18:50:54 2001
++++ screen-3.9.9/Makefile.in	Sun Oct  7 13:28:47 2001
 @@ -52,12 +52,12 @@
  
  CFILES=	screen.c ansi.c fileio.c mark.c misc.c resize.c socket.c \
@@ -15,8 +16,9 @@
  	kmapdef.o acls.o braille.o braille_tsi.o logfile.o layer.o \
  	sched.o teln.o nethack.o utf8.o
  
---- screen-3.9.9/_pam_userpass.h.orig	Tue Jun 12 22:21:41 2001
-+++ screen-3.9.9/_pam_userpass.h	Tue Jun 12 22:21:41 2001
+diff -urN screen-3.9.9.orig/_pam_userpass.h screen-3.9.9/_pam_userpass.h
+--- screen-3.9.9.orig/_pam_userpass.h	Thu Jan  1 03:00:00 1970
++++ screen-3.9.9/_pam_userpass.h	Sun Oct  7 13:28:47 2001
 @@ -0,0 +1,12 @@
 +#ifndef __PAM_USERPASS_H
 +#define __PAM_USERPASS_H
@@ -30,14 +32,22 @@
 +#define USERPASS_USER_FIXED		3
 +
 +#endif
---- screen-3.9.9/appl_userpass.c.orig	Tue Jun 12 22:21:41 2001
-+++ screen-3.9.9/appl_userpass.c	Tue Jun 12 22:21:41 2001
-@@ -0,0 +1,51 @@
+diff -urN screen-3.9.9.orig/appl_userpass.c screen-3.9.9/appl_userpass.c
+--- screen-3.9.9.orig/appl_userpass.c	Thu Jan  1 03:00:00 1970
++++ screen-3.9.9/appl_userpass.c	Sun Oct  7 13:23:48 2001
+@@ -0,0 +1,59 @@
 +#include <string.h>
 +#include <stdlib.h>
 +
 +#include <security/pam_appl.h>
 +#include <security/pam_client.h>
++
++#ifndef PAM_BP_RCONTROL
++/* Linux-PAM prior to 0.74 */
++#define PAM_BP_RCONTROL	PAM_BP_CONTROL
++#define PAM_BP_WDATA	PAM_BP_DATA
++#define PAM_BP_RDATA	PAM_BP_DATA
++#endif
 +
 +#include "_pam_userpass.h"
 +#include "pam_userpass.h"
@@ -47,24 +57,25 @@
 +{
 +	pam_userpass_t *userpass = (pam_userpass_t *)appdata_ptr;
 +	pamc_bp_t prompt;
-+	char *data;
++	const char *input;
++	char *output;
 +	char flags;
 +
 +	if (num_msg != 1 || msg[0]->msg_style != PAM_BINARY_PROMPT)
 +		return PAM_CONV_ERR;
 +
 +	prompt = (pamc_bp_t)msg[0]->msg;
-+	data = PAM_BP_DATA(prompt);
++	input = PAM_BP_RDATA(prompt);
 +
-+	if (PAM_BP_CONTROL(prompt) != PAM_BPC_SELECT ||
-+	    strncmp(data, USERPASS_AGENT_ID "/", USERPASS_AGENT_ID_LENGTH + 1))
++	if (PAM_BP_RCONTROL(prompt) != PAM_BPC_SELECT ||
++	    strncmp(input, USERPASS_AGENT_ID "/", USERPASS_AGENT_ID_LENGTH + 1))
 +		return PAM_CONV_ERR;
 +
-+	flags = data[USERPASS_AGENT_ID_LENGTH + 1];
-+	data += USERPASS_AGENT_ID_LENGTH + 1 + 1;
++	flags = input[USERPASS_AGENT_ID_LENGTH + 1];
++	input += USERPASS_AGENT_ID_LENGTH + 1 + 1;
 +
 +	if ((flags & USERPASS_USER_MASK) == USERPASS_USER_FIXED &&
-+	    strcmp(data, userpass->user))
++	    strcmp(input, userpass->user))
 +		return PAM_CONV_AGAIN;
 +
 +	if (!(*resp = malloc(sizeof(struct pam_response))))
@@ -73,19 +84,20 @@
 +	prompt = NULL;
 +	PAM_BP_RENEW(&prompt, PAM_BPC_DONE,
 +		strlen(userpass->user) + 1 + strlen(userpass->pass));
-+	data = PAM_BP_DATA(prompt);
++	output = PAM_BP_WDATA(prompt);
 +
-+	strcpy(data, userpass->user);
-+	data += strlen(data) + 1;
-+	memcpy(data, userpass->pass, strlen(userpass->pass));
++	strcpy(output, userpass->user);
++	output += strlen(output) + 1;
++	memcpy(output, userpass->pass, strlen(userpass->pass));
 +
 +	(*resp)[0].resp_retcode = 0;
 +	(*resp)[0].resp = (char *)prompt;
 +
 +	return PAM_SUCCESS;
 +}
---- screen-3.9.9/attacher.c.orig	Sat Apr 28 16:26:42 2001
-+++ screen-3.9.9/attacher.c	Tue Jun 12 22:21:41 2001
+diff -urN screen-3.9.9.orig/attacher.c screen-3.9.9/attacher.c
+--- screen-3.9.9.orig/attacher.c	Sat Apr 28 17:26:42 2001
++++ screen-3.9.9/attacher.c	Sun Oct  7 13:28:47 2001
 @@ -33,6 +33,9 @@
  #include "screen.h"
  #include "extern.h"
@@ -185,8 +197,9 @@
        debug("screen_builtin_lck: NO!!!!!\n");
      }
    debug("password ok.\n");
---- screen-3.9.9/configure.in.orig	Thu May 17 20:00:19 2001
-+++ screen-3.9.9/configure.in	Tue Jun 12 22:21:42 2001
+diff -urN screen-3.9.9.orig/configure.in screen-3.9.9/configure.in
+--- screen-3.9.9.orig/configure.in	Thu May 17 21:00:19 2001
++++ screen-3.9.9/configure.in	Sun Oct  7 13:28:47 2001
 @@ -1080,6 +1080,8 @@
  )
  fi
@@ -196,8 +209,9 @@
  dnl AC_CHECK_HEADER(shadow.h, AC_DEFINE(SHADOWPW))
  AC_CHECKING(getspnam)
  AC_TRY_LINK([#include <shadow.h>], [getspnam("x");],AC_DEFINE(SHADOWPW))
---- screen-3.9.9/pam_userpass.h.orig	Tue Jun 12 22:21:42 2001
-+++ screen-3.9.9/pam_userpass.h	Tue Jun 12 22:21:42 2001
+diff -urN screen-3.9.9.orig/pam_userpass.h screen-3.9.9/pam_userpass.h
+--- screen-3.9.9.orig/pam_userpass.h	Thu Jan  1 03:00:00 1970
++++ screen-3.9.9/pam_userpass.h	Sun Oct  7 13:28:47 2001
 @@ -0,0 +1,14 @@
 +#ifndef _PAM_USERPASS_H
 +#define _PAM_USERPASS_H

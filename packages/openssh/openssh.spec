@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.27 2001/09/29 00:51:27 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.28 2001/10/07 11:06:45 solar Exp $
 
 Summary: The OpenSSH implementation of SSH.
 Name: openssh
 Version: 2.9.9p2
-Release: 2owl
+Release: 3owl
 URL: http://www.openssh.com/portable.html
 Source0: ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-%{version}.tar.gz
 Source1: sshd.pam
@@ -26,7 +26,7 @@ Requires: pam_mktemp
 PreReq: openssl >= 0.9.6b-1owl
 PreReq: openssl < 0.9.7
 BuildPreReq: openssl-devel >= 0.9.6b-1owl
-BuildPreReq: pam >= 0.72-8owl
+BuildPreReq: pam-devel >= 0.75-11owl
 BuildPreReq: perl
 BuildPreReq: zlib-devel
 BuildPreReq: tcp_wrappers
@@ -194,6 +194,9 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Sun Oct 07 2001 Solar Designer <solar@owl.openwall.com>
+- Updates to appl_userpass.c to support building against Linux-PAM 0.74+.
+
 * Sat Sep 29 2001 Solar Designer <solar@owl.openwall.com>
 - Include post-2.9.9 fixes from the CVS, most importantly to restore the
 order of reading for ~/.ssh/config and /etc/ssh_config.

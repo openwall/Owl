@@ -1,10 +1,10 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.15 2001/08/03 07:47:01 mci Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.16 2001/10/07 11:06:45 solar Exp $
 
 Summary: A screen manager that supports multiple logins on one terminal.
 Name: screen
 Version: 3.9.9
-Release: 5owl
-Copyright: GPL
+Release: 6owl
+License: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%{version}.tar.gz
 Source1: screen.pam
@@ -21,11 +21,11 @@ Patch9: screen-3.9.9-owl-configure.diff
 Prefix: %{_prefix}
 BuildRoot: /var/rpm-buildroot/%{name}-root
 Prereq: /sbin/install-info, pam_userpass, utempter
-BuildPreReq: pam >= 0.72-8owl
+BuildPreReq: pam-devel >= 0.75-11owl
 
 %description
 The screen utility allows you to have multiple logins on just one
-terminal.  Screen is useful for users who telnet into a machine or are
+terminal.  screen is useful for users who telnet into a machine or are
 connected via a dumb terminal, but want to use more than just one
 login.
 
@@ -34,7 +34,6 @@ support multiple logins on one terminal.
 
 %prep
 %setup -q
-
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -47,7 +46,6 @@ support multiple logins on one terminal.
 %patch9 -p1
 
 %build
-
 autoconf
 %configure --disable-socket-dir
 
@@ -57,7 +55,7 @@ make CFLAGS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/etc
+mkdir -p $RPM_BUILD_ROOT/etc/pam.d
 
 %makeinstall
 
@@ -68,7 +66,6 @@ strip .%{_bindir}/screen
 popd
 
 install -c -m 644 etc/etcscreenrc $RPM_BUILD_ROOT/etc/screenrc
-install -d $RPM_BUILD_ROOT/etc/pam.d
 install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/etc/pam.d/screen
 
 %clean
@@ -94,6 +91,9 @@ fi
 %config(noreplace) /etc/pam.d/screen
 
 %changelog
+* Sun Oct 07 2001 Solar Designer <solar@owl.openwall.com>
+- Updates to appl_userpass.c to support building against Linux-PAM 0.74+.
+
 * Fri Aug 03 2001 Michail Litvak <mci@owl.openwall.com>
 - install doc/FAQ as FAQ instead link to doc/FAQ
 
