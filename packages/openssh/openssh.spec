@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.62 2003/09/17 07:45:26 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.63 2003/09/17 07:46:52 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
@@ -112,7 +112,7 @@ rm -r autom4te.cache
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
-%patch13 -p1
+%patch13 -p0
 %patch14 -p1
 
 %define _sysconfdir /etc/ssh
