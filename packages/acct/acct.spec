@@ -1,4 +1,4 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.15 2002/08/05 16:44:29 solar Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.16 2002/08/06 14:12:14 solar Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
@@ -12,7 +12,7 @@ Source2: dump-utmp.8
 Source3: acct.init
 Source4: acct.logrotate
 Patch0: acct-6.3.5-owl-fixes.diff
-PreReq: /sbin/install-info
+PreReq: /sbin/install-info, grep
 Provides: psacct
 Obsoletes: psacct
 BuildRoot: /override/%{name}-%{version}
@@ -70,10 +70,10 @@ rm -rf $RPM_BUILD_ROOT
 %post
 # We need this hack to get rid of an old, incorrect accounting info entry
 # when installing over older versions of Red Hat Linux.
-if grep -q '^* accounting: (psacct)' %{_infodir}/dir; then
-	INFODIRFILE=%{_infodir}/dir
+INFODIRFILE=%{_infodir}/dir
+if grep -q '^* accounting: (psacct)' $INFODIRFILE; then
 	if test -L $INFODIRFILE; then
-		INFODIRFILE="`readlink $INFODIRFILE`"
+		INFODIRFILE="`find %{_infodir} -name dir -printf '%%l'`"
 	fi
 	cp -p $INFODIRFILE $INFODIRFILE.rpmtmp &&
 	grep -v '^* accounting: (psacct)' $INFODIRFILE > $INFODIRFILE.rpmtmp &&

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tar/tar.spec,v 1.8 2002/08/05 16:38:01 solar Exp $
+# $Id: Owl/packages/tar/tar.spec,v 1.9 2002/08/06 14:07:31 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
@@ -66,10 +66,10 @@ rm -rf $RPM_BUILD_ROOT
 %post
 # Get rid of an old, incorrect info entry when replacing older versions
 # of the package.
-if grep -q '^Tar: ' %{_infodir}/dir; then
-	INFODIRFILE=%{_infodir}/dir
+INFODIRFILE=%{_infodir}/dir
+if grep -q '^Tar: ' $INFODIRFILE; then
 	if test -L $INFODIRFILE; then
-		INFODIRFILE="`readlink $INFODIRFILE`"
+		INFODIRFILE="`find %{_infodir} -name dir -printf '%%l'`"
 	fi
 	cp -p $INFODIRFILE $INFODIRFILE.rpmtmp &&
 	grep -v '^Tar: ' $INFODIRFILE > $INFODIRFILE.rpmtmp &&
