@@ -1,0 +1,38 @@
+--- openssh-2.1.1p2.orig/ssh_config	Thu Apr 20 17:32:48 2000
++++ openssh-2.1.1p2/ssh_config	Sun Jul  9 09:40:44 2000
+@@ -34,4 +34,6 @@
+ Host *
+ 	ForwardAgent no
+ 	ForwardX11 no
++	RhostsAuthentication no
+ 	FallBackToRsh no
++	Cipher blowfish
+--- openssh-2.1.1p2.orig/sshd_config	Sun Jun 18 08:50:45 2000
++++ openssh-2.1.1p2/sshd_config	Sun Jul  9 09:47:19 2000
+@@ -8,14 +8,14 @@
+ ServerKeyBits 768
+ LoginGraceTime 600
+ KeyRegenerationInterval 3600
+-PermitRootLogin yes
++PermitRootLogin no
+ #
+ # Don't read ~/.rhosts and ~/.shosts files
+ IgnoreRhosts yes
+-# Uncomment if you don't trust ~/.ssh/known_hosts for RhostsRSAAuthentication
+-#IgnoreUserKnownHosts yes
++# Comment if you trust ~/.ssh/known_hosts for RhostsRSAAuthentication
++IgnoreUserKnownHosts yes
+ StrictModes yes
+-X11Forwarding no
++X11Forwarding yes
+ X11DisplayOffset 10
+ PrintMotd yes
+ KeepAlive yes
+@@ -23,7 +23,6 @@
+ # Logging
+ SyslogFacility AUTH
+ LogLevel INFO
+-#obsoletes QuietMode and FascistLogging
+ 
+ RhostsAuthentication no
+ #
