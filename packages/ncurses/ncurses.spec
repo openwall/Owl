@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ncurses/ncurses.spec,v 1.22 2004/05/14 01:43:29 galaxy Exp $
+# $Id: Owl/packages/ncurses/ncurses.spec,v 1.23 2004/05/14 14:25:31 solar Exp $
 
 %define major 5
 %define oldmajor 4
@@ -9,7 +9,7 @@
 Summary: A CRT screen handling and optimization package.
 Name: ncurses
 Version: 5.4
-Release: owl0.4
+Release: owl1
 License: distributable
 Group: System Environment/Libraries
 URL: http://dickey.his.com/ncurses/ncurses.html
@@ -197,7 +197,7 @@ ln -s libpanel.so.%version $RPM_BUILD_ROOT/usr/lib/libpanel.so.%oldmajor
 %_libdir/lib*.so.%{oldmajor}*
 
 %changelog
-* Fri May 14 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 5.4-owl0.4
+* Fri May 14 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 5.4-owl1
 - Updated patch-set from official site
 - Added %_libdir/terminfo symbolic link into filelist
 
