@@ -1,9 +1,9 @@
-# $Id: Owl/packages/net-tools/net-tools.spec,v 1.8 2004/11/27 22:34:48 mci Exp $
+# $Id: Owl/packages/net-tools/net-tools.spec,v 1.9 2005/01/12 16:37:59 galaxy Exp $
 
 Summary: The basic tools for setting up networking.
 Name: net-tools
 Version: 1.57
-Release: owl2
+Release: owl3
 License: GPL
 Group: System Environment/Base
 Source0: http://www.tazenda.demon.co.uk/phil/net-tools/net-tools-%version.tar.bz2
@@ -11,6 +11,7 @@ Source1: net-tools-1.57-config.h
 Source2: net-tools-1.57-config.make
 Patch0: net-tools-1.56-rh-fhs.diff
 Patch1: net-tools-1.57-owl-fixes.diff
+Patch2: net-tools-1.57-owl-gcc343-fixes.diff
 BuildRoot: /override/%name-%version
 
 %description
@@ -21,19 +22,20 @@ networking: ethers, route and others.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 cp $RPM_SOURCE_DIR/net-tools-1.57-config.h config.h
 cp $RPM_SOURCE_DIR/net-tools-1.57-config.make config.make
 
 %build
-make COPTS="$RPM_OPT_FLAGS -D_GNU_SOURCE -Wall"
+%__make CC="%__cc" COPTS="$RPM_OPT_FLAGS -D_GNU_SOURCE -Wall"
 
 %install
 rm -rf %buildroot
 mkdir -p %buildroot/{bin,sbin}
 mkdir -p %buildroot%_mandir/man{1,5,8}
 
-make BASEDIR=%buildroot mandir=%_mandir install
+%__make BASEDIR=%buildroot mandir=%_mandir install
 
 # XXX: (GM): Remove unpackaged files (check later)
 rm %buildroot%_datadir/locale/cs/LC_MESSAGES/net-tools.mo
@@ -98,6 +100,10 @@ rm %buildroot%_mandir/pt_BR/man8/route.8*
 %_mandir/man[158]/*
 
 %changelog
+* Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.57-owl3
+- Added gcc343-fixes patch to deal with "label at end of compound statment"
+issue.
+
 * Sun Nov 28 2004 Michail Litvak <mci@owl.openwall.com> 1.57-owl2
 - Fixed building with 2.4.28 kernel.
 
