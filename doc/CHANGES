@@ -12,6 +12,10 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/07/13	Package: texinfo
+Updated to 4.2 with an additional temporary file handling fix to
+texi2dvi.
+
 2002/06/27 -
 2002/07/07	Package: openssh
 SECURITY FIX	Severity: none to high, remote, active
@@ -804,4 +808,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.109 2002/07/07 03:15:00 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.110 2002/07/13 02:24:03 solar Exp $
