@@ -5,7 +5,7 @@
 	Michail Litvak <mci@owl.openwall.com>
 	Rafal Wojtczuk <nergal@owl.openwall.com>
 
-ALT
+Перенос дополнений из ALT Linux:
 
 	Dmitry V. Levin <ldv@owl.openwall.com>
 
@@ -37,4 +37,4 @@ ALT
 
 	http://www.openwall.com/donations/
 
-$Id: Owl/doc/ru/CREDITS,v 1.7 2003/09/11 05:38:01 gremlin Exp $
+$Id: Owl/doc/ru/CREDITS,v 1.8 2003/09/11 08:33:11 gremlin Exp $
