@@ -1,9 +1,9 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.24 2002/05/19 03:50:41 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.25 2002/07/06 21:18:13 solar Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
 Version: 0.75
-Release: owl15
+Release: owl16
 %define rh_version %{version}-10
 License: GPL or BSD
 Group: System Environment/Base
@@ -18,12 +18,13 @@ Patch10: pam-0.75-owl-pam_pwdb.diff
 Patch11: pam-0.75-owl-pam_chroot.diff
 Patch12: pam-0.75-owl-pam_lastlog.diff
 Patch13: pam-0.75-owl-pam_securetty.diff
+Patch14: pam-0.75-owl-pam_limits.diff
 Patch20: pam-0.75-owl-no-cracklib.diff
 PreReq: /sbin/ldconfig
 Requires: glibc-crypt_blowfish, pwdb >= 0.61-1owl
 # Just to make sure noone misses pam_unix, which is now provided by tcb
 Requires: tcb >= 0.9.5
-Provides: pam <= 0.75-14owl
+Provides: pam <= 0.75-14owl, pam >= 0.75-owl14
 BuildRequires: glibc-crypt_blowfish
 BuildRoot: /override/%{name}-%{version}
 
@@ -67,6 +68,7 @@ ln -s ../../../libpam_misc/pam_misc.h libpam/include/security/pam_misc.h
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
+%patch14 -p1
 %patch20 -p1
 mkdir modules/READMEs
 for f in modules/pam_*/README; do
@@ -79,6 +81,7 @@ autoconf
 CFLAGS="$RPM_OPT_FLAGS -fPIC" \
 ./configure \
 	--prefix=/ \
+	--sysconfdir=%{_sysconfdir} \
 	--infodir=%{_infodir} \
 	--mandir=%{_mandir} \
 	--enable-static-libpam \
@@ -198,6 +201,11 @@ chgrp chkpwd %{_libexecdir}/chkpwd && chmod 710 %{_libexecdir}/chkpwd
 %doc doc/specs/rfc86.0.txt
 
 %changelog
+* Sat Jul 06 2002 Solar Designer <solar@owl.openwall.com>
+- pam_limits: support stacking for account management (as well as for
+session setup), be fail-close on configuration file reads, report the
+"too many logins" via PAM conversation rather than direct printf(3).
+
 * Sun May 19 2002 Solar Designer <solar@owl.openwall.com>
 - Moved the chkpwd directory to /usr/libexec.
 
