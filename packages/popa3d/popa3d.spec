@@ -1,27 +1,25 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.2 2000/12/07 18:46:56 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.3 2001/05/27 22:49:11 solar Exp $
 
-Summary: A small POP3 server with security as its primary design goal
+Summary: A tiny POP3 server with security as its primary design goal
 Name: popa3d
-Version: 0.4.4
-Release: 2owl
+Version: 0.4.9
+Release: 1owl
 Copyright: GPL
 Group: System Environment/Daemons
-Source0: ftp://ftp.openwall.com/popa3d/popa3d-0.4.tar.gz
+Source0: ftp://ftp.openwall.com/pub/projects/popa3d/popa3d-%{version}.tar.gz
 Source1: popa3d.pam
 Source2: popa3d.init
-Patch0: popa3d-0.4-%{version}.diff.gz
-Patch1: popa3d-0.4.4-owl-params.diff
+Patch0: popa3d-%{version}-owl-params.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: pam_userpass
 Prereq: /sbin/chkconfig, /dev/null, grep, shadow-utils
 
 %description
-popa3d is a small POP3 server with security as its primary design goal.
+popa3d is a tiny POP3 server with security as its primary design goal.
 
 %prep
-%setup -q -n popa3d-0.4
+%setup -q
 %patch0 -p1
-%patch1 -p1
 
 %build
 make CFLAGS="-c -Wall $RPM_OPT_FLAGS" LDFLAGS="-s -lcrypt -lpam"
@@ -64,9 +62,12 @@ fi
 /usr/sbin/popa3d
 %config(noreplace) /etc/pam.d/popa3d
 %config /etc/rc.d/init.d/popa3d
-%doc DESIGN COPYING
+%doc DESIGN LICENSE md5/COPYING
 
 %changelog
+* Mon May 28 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 0.4.9.
+
 * Thu Dec 07 2000 Solar Designer <solar@owl.openwall.com>
 - Updated popa3d.init to use --expect-user.
 
