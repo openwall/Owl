@@ -1,3 +1,10 @@
+2004-06-25  Dmitry V. Levin  <ldv@altlinux.org>
+2004-06-25  Dmitry V. Levin  <ldv at altlinux.org>
+
+	* progs/tcb_unconvert.c (copy_from_tcb):
+	Zero errno before each readdir(3) call.
+
+	* tcb.spec: 0.9.8.8.
 2003-11-02  Solar Designer  <solar@owl.openwall.com>
 2003-11-02  Solar Designer  <solar at owl.openwall.com>
 

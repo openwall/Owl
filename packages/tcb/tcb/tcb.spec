@@ -1,8 +1,8 @@
-# $Id: Owl/packages/tcb/tcb/tcb.spec,v 1.27 2003/11/02 19:38:58 solar Exp $
+# $Id: Owl/packages/tcb/tcb/tcb.spec,v 1.28 2004/06/26 22:00:48 ldv Exp $
 
 Summary: Libraries and tools implementing the tcb password shadowing scheme.
 Name: tcb
-Version: 0.9.8.7
+Version: 0.9.8.8
 Release: owl1
 License: BSD or GPL
 Group: System Environment/Base
@@ -80,6 +80,9 @@ rmdir /sbin/chkpwd.d
 /usr/lib/libtcb.so
 
 %changelog
+* Fri Jun 25 2004 Dmitry V. Levin <ldv@owl.openwall.com> 0.9.8.8-owl1
+- tcb_unconvert: Zero errno before each readdir(3) call.
+
 * Sun Nov 02 2003 Solar Designer <solar@owl.openwall.com> 0.9.8.7-owl1
 - Build the PAM module with -fPIC.
 - Renamed FAKEROOT to DESTDIR.
