@@ -1,4 +1,4 @@
-# $Id: Owl/packages/chkconfig/chkconfig.spec,v 1.11 2005/01/14 03:27:50 galaxy Exp $
+# $Id: Owl/packages/chkconfig/chkconfig.spec,v 1.12 2005/01/18 13:29:07 solar Exp $
 
 %define BUILD_NTSYSV 0
 %define INSTALL_ALTERNATIVES 0
@@ -48,19 +48,19 @@ LIBMHACK=-lm
 %endif
 
 %__make \
-    CC="%__cc" \
-    CFLAGS="$RPM_OPT_FLAGS -D_GNU_SOURCE" \
-    LIBMHACK="$LIBMHACK" \
+	CC="%__cc" \
+	CFLAGS="$RPM_OPT_FLAGS -D_GNU_SOURCE" \
+	LIBMHACK="$LIBMHACK"
 
 %install
 rm -rf %buildroot
 %__make install \
-    instroot="%buildroot" \
-    BINDIR="/sbin" \
-    USRSBINDIR="%_sbindir" \
-    MANDIR="%_mandir" \
-    ALTDIR="/var/lib/alternatives" \
-    ALTDATADIR="/etc/alternatives"
+	instroot="%buildroot" \
+	BINDIR="/sbin" \
+	USRSBINDIR="%_sbindir" \
+	MANDIR="%_mandir" \
+	ALTDIR="%_var/lib/alternatives" \
+	ALTDATADIR="/etc/alternatives"
 
 mkdir -p %buildroot/etc/rc.d/init.d
 ln -s rc.d/init.d %buildroot/etc/init.d
@@ -91,7 +91,7 @@ rm %buildroot%_mandir/man8/ntsysv.8*
 
 %if %INSTALL_ALTERNATIVES
 %dir /etc/alternatives
-%dir %_var/%_lib/alternatives
+%dir %_var/lib/alternatives
 %_sbindir/update-alternatives
 %_sbindir/alternatives
 %_mandir/*/alternatives*
