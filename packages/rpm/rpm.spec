@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.39 2004/12/08 02:38:21 galaxy Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.40 2004/12/09 00:33:40 galaxy Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -11,7 +11,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl1.1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -453,7 +453,7 @@ fi
 %__includedir/popt.h
 
 %changelog
-* Wed Dec 08 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl1.1
+* Wed Dec 08 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl2
 - Fixed a bug with not doing chroot() before resolving name to uid using
 getpwnam() [psm_process-chroot patch]
 * Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 4.2-owl1
