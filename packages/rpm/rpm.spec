@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.11 2000/10/20 06:43:38 kad Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.12 2000/11/12 00:23:59 solar Exp $
 
 # XXX legacy requires './' payload prefix to be omitted from rpm packages.
 %define        _noPayloadPrefix        1
@@ -12,13 +12,14 @@
 Summary: The Red Hat package management system.
 Name: 		rpm
 Version: 	%{version}
-Release: 	9.7.3owl
+Release: 	9.7.4owl
 Group: 		System Environment/Base
 Source: 	ftp://ftp.rpm.org/pub/rpm/dist/rpm-3.0.x/rpm-%{version}.tar.gz
 Patch0:		rpm-3.0.5-owl-topdir.diff
 Patch1:		rpm-3.0.5-owl-bash2.diff
 Patch2:		rpm-3.0.5-owl-vendor.diff
 Patch3:		rpm-3.0.5-owl-closeall.diff
+Patch4:		rpm-3.0.5-owl-includes.diff
 Copyright: 	GPL
 Conflicts: 	patch < 2.5
 %ifos linux
@@ -104,6 +105,7 @@ capabilities.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 autoconf
@@ -268,6 +270,10 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Sun Nov 12 2000 Solar Designer <solar@owl.openwall.com>
+- Added missing #include's to lib/rpmio.c (it wouldn't build with a
+sparc64 kernel).
+
 * Fri Oct 20 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - disabled /usr/share/man autodetection
 
@@ -324,4 +330,3 @@ fi
 - add RPMTAG_DISTURL for rpmfind-like tools (content unknown yet).
 - teach brp-compress about /usr/info and /usr/share/info as well.
 - update macros.in from rpm-4.0 (w/o dbi configuration).
-
