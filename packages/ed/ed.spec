@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ed/ed.spec,v 1.1 2000/11/22 21:29:59 mci Exp $
+# $Id: Owl/packages/ed/ed.spec,v 1.2 2000/11/23 09:07:51 mci Exp $
 
 Summary: The GNU line editor.
 Name: ed
@@ -26,15 +26,19 @@ won't use it.
 
 %prep
 %setup -q
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
 
 %build
+chmod 755 configure
 autoconf
 %configure --exec-prefix=/
 make LDFLAGS=-s
 
 %install
 %makeinstall bindir=$RPM_BUILD_ROOT/bin \
-	mandir=$RPM_BUILD_ROOT%{_mandir}/man1
+	     mandir=$RPM_BUILD_ROOT%{_mandir}/man1
 
 %post
 /sbin/install-info %{_infodir}/ed.info.gz %{_infodir}/dir --entry="* ed: (ed).                  The GNU Line Editor."
