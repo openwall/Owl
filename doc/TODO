@@ -378,9 +378,6 @@ Separate, currently non-public, TODO lists exist.
 
 	postfix.
 
-[PRIORITY: high]
-Correct the placement of man pages to adhere to FHS 2.2.
-
 [PRIORITY: medium]
 Update to latest release, considering a number of patches and add-ons.
 
@@ -538,4 +535,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.44 2004/11/04 04:15:00 solar Exp $
+$Id: Owl/doc/TODO,v 1.45 2004/11/07 21:22:05 solar Exp $
