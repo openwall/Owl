@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.29 2005/01/12 15:55:50 galaxy Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.30 2005/01/14 03:27:51 galaxy Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -17,7 +17,7 @@ Patch1: dhcp-3.0pl2-owl-drop-root.diff
 Patch2: dhcp-3.0pl2-rh-owl-script.diff
 Patch3: dhcp-3.0pl2-owl-warnings.diff
 Patch4: dhcp-3.0pl2-owl-bound.diff
-Patch5: dhcp-3.0pl2-owl-gcc343-fixes.diff
+Patch5: dhcp-3.0pl2-owl-fixes.diff
 BuildRoot: /override/%name-%version
 
 %description
@@ -99,15 +99,15 @@ mkdir -p %buildroot/etc/{rc.d/init.d}
 
 cd %buildroot
 
-mkdir -p %buildroot%_sysconfdir/{rc.d/init.d,sysconfig}
+mkdir -p %buildroot/etc/{rc.d/init.d,sysconfig}
 mkdir -p %buildroot%_var/lib/dhcp/{dhcpd,dhclient}/state
 
-install -m 700 $RPM_SOURCE_DIR/dhcpd.init %buildroot%_sysconfdir/rc.d/init.d/dhcpd
+install -m 700 $RPM_SOURCE_DIR/dhcpd.init %buildroot/etc/rc.d/init.d/dhcpd
 
 touch %buildroot%_var/lib/dhcp/dhcpd/state/dhcpd.leases
 touch %buildroot%_var/lib/dhcp/dhclient/state/dhclient.leases
 
-cat <<EOF > %buildroot%_sysconfdir/sysconfig/dhcpd
+cat <<EOF > %buildroot/etc/sysconfig/dhcpd
 # Additional command line options here
 DHCPDARGS=
 EOF
@@ -140,26 +140,26 @@ rm %buildroot/var/lib/dhcp/dhclient/state/dhclient.leases
 %endif
 
 %pre
-grep -q ^dhcp: %_sysconfdir/group || groupadd -g 188 dhcp
-grep -q ^dhcp: %_sysconfdir/passwd ||
+grep -q ^dhcp: /etc/group || groupadd -g 188 dhcp
+grep -q ^dhcp: /etc/passwd ||
 	useradd -g dhcp -u 188 -d / -s /bin/false -M dhcp
 
 %pre server
 rm -f %_var/run/dhcp.restart
 if [ $1 -ge 2 ]; then
-	%_sysconfdir/rc.d/init.d/dhcpd status && touch %_var/run/dhcp.restart || :
-	%_sysconfdir/rc.d/init.d/dhcpd stop || :
+	/etc/rc.d/init.d/dhcpd status && touch %_var/run/dhcp.restart || :
+	/etc/rc.d/init.d/dhcpd stop || :
 fi
 
 %post server
 if [ -f %_var/run/dhcp.restart ]; then
-	%_sysconfdir/rc.d/init.d/dhcpd start
+	/etc/rc.d/init.d/dhcpd start
 fi
 rm -f %_var/run/dhcp.restart
 
 %preun server
 if [ $1 -eq 0 ]; then
-	%_sysconfdir/rc.d/init.d/dhcpd stop || :
+	/etc/rc.d/init.d/dhcpd stop || :
 	/sbin/chkconfig --del dhcpd
 fi
 
@@ -187,8 +187,8 @@ fi
 
 %files server
 %defattr(-,root,root)
-%config %_sysconfdir/sysconfig/dhcpd
-%config %_sysconfdir/rc.d/init.d/dhcpd
+%config /etc/sysconfig/dhcpd
+%config /etc/rc.d/init.d/dhcpd
 %_sbindir/dhcpd
 %_mandir/man5/dhcpd.conf.5*
 %_mandir/man5/dhcpd.leases.5*
@@ -204,7 +204,7 @@ fi
 
 %changelog
 * Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.0pl2-owl9
-- Added gcc343-fixes patch to deal with gcc post-upgrade issues.
+- Added fixes patch to deal with gcc post-upgrade issues.
 - Cleaned up the spec.
 
 * Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl8

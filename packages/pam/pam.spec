@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.35 2005/01/12 16:43:32 galaxy Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.36 2005/01/14 03:27:53 galaxy Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
@@ -86,7 +86,7 @@ autoconf
 CFLAGS="$RPM_OPT_FLAGS -fPIC" \
 ./configure \
 	--prefix=/ \
-	--sysconfdir=%_sysconfdir \
+	--sysconfdir=/etc \
 	--infodir=%_infodir \
 	--mandir=%_mandir \
 	--enable-static-libpam \
@@ -99,8 +99,8 @@ CFLAGS="$RPM_OPT_FLAGS -fPIC" \
 rm -rf %buildroot
 %__make install THINGSTOMAKE='modules libpam libpamc libpam_misc'
 
-mkdir -p %buildroot%_sysconfdir/security
-install -m 644 modules/pam_chroot/chroot.conf %buildroot%_sysconfdir/security/
+mkdir -p %buildroot/etc/security
+install -m 644 modules/pam_chroot/chroot.conf %buildroot/etc/security/
 
 mkdir -p %buildroot%_libdir
 mv %buildroot/lib/*.a %buildroot%_libdir/
@@ -111,8 +111,8 @@ for link in libpam libpamc libpam_misc; do
 	ln -sf /lib/$link.so.%version %buildroot%_libdir/$link.so
 done
 
-mkdir -m 755 %buildroot%_sysconfdir/pam.d
-install -m 644 other.pamd %buildroot%_sysconfdir/pam.d/other
+mkdir -m 755 %buildroot/etc/pam.d
+install -m 644 other.pamd %buildroot/etc/pam.d/other
 
 mkdir -p %buildroot%_mandir/man{3,5,8}
 install -m 644 doc/man/*.3 %buildroot%_mandir/man3/
@@ -124,10 +124,10 @@ gzip -9nf doc/ps/*.ps
 gzip -9nf doc/txts/*.txt
 
 %triggerin -- shadow-utils
-grep -q '^shadow:[^:]*:42:' %_sysconfdir/group && \
+grep -q '^shadow:[^:]*:42:' /etc/group && \
 	chgrp shadow %_libexecdir/chkpwd/pwdb_chkpwd && \
 	chmod 2711 %_libexecdir/chkpwd/pwdb_chkpwd
-grep -q ^chkpwd: %_sysconfdir/group || groupadd -g 163 chkpwd
+grep -q ^chkpwd: /etc/group || groupadd -g 163 chkpwd
 chgrp chkpwd %_libexecdir/chkpwd && chmod 710 %_libexecdir/chkpwd
 
 %post -p /sbin/ldconfig
@@ -138,9 +138,9 @@ chgrp chkpwd %_libexecdir/chkpwd && chmod 710 %_libexecdir/chkpwd
 %doc Copyright
 %doc modules/READMEs/*
 
-%dir %_sysconfdir/pam.d
-%config(noreplace) %_sysconfdir/pam.d/other
-#%config(noreplace) %_sysconfdir/pam.d/system-auth
+%dir /etc/pam.d
+%config(noreplace) /etc/pam.d/other
+#%config(noreplace) /etc/pam.d/system-auth
 
 /lib/libpam.so.*
 /lib/libpamc.so.*
@@ -184,13 +184,13 @@ chgrp chkpwd %_libexecdir/chkpwd && chmod 710 %_libexecdir/chkpwd
 /lib/security/pam_xauth.so
 /lib/security/pam_filter
 
-%dir %_sysconfdir/security
-%attr(640,root,wheel) %config(noreplace) %_sysconfdir/security/access.conf
-%attr(640,root,wheel) %config(noreplace) %_sysconfdir/security/chroot.conf
-%attr(640,root,wheel) %config(noreplace) %_sysconfdir/security/group.conf
-%attr(640,root,wheel) %config(noreplace) %_sysconfdir/security/limits.conf
-%attr(644,root,root) %config(noreplace) %_sysconfdir/security/pam_env.conf
-%attr(640,root,wheel) %config(noreplace) %_sysconfdir/security/time.conf
+%dir /etc/security
+%attr(640,root,wheel) %config(noreplace) /etc/security/access.conf
+%attr(640,root,wheel) %config(noreplace) /etc/security/chroot.conf
+%attr(640,root,wheel) %config(noreplace) /etc/security/group.conf
+%attr(640,root,wheel) %config(noreplace) /etc/security/limits.conf
+%attr(644,root,root) %config(noreplace) /etc/security/pam_env.conf
+%attr(640,root,wheel) %config(noreplace) /etc/security/time.conf
 
 %_mandir/man5/*
 %_mandir/man8/*
@@ -214,7 +214,7 @@ chgrp chkpwd %_libexecdir/chkpwd && chmod 710 %_libexecdir/chkpwd
 %changelog
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.75-owl24
 - Removed permissions and group owner verify check for %_libexecdir/chkpwd
-due to %triggerin.
+due to %%triggerin.
 - Cleaned up the spec.
 
 * Tue Feb 24 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 0.75-owl23

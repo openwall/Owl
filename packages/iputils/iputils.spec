@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iputils/iputils.spec,v 1.19 2005/01/12 16:14:31 galaxy Exp $
+# $Id: Owl/packages/iputils/iputils.spec,v 1.20 2005/01/14 03:27:52 galaxy Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
@@ -59,7 +59,7 @@ sed 's/rdisc/rdiscd/' \
 
 mkdir -p %buildroot/etc/control.d/facilities
 install -m 700 $RPM_SOURCE_DIR/ping.control \
-	%buildroot%_sysconfdir/control.d/facilities/ping
+	%buildroot/etc/control.d/facilities/ping
 
 %pre
 if [ $1 -ge 2 ]; then
@@ -86,7 +86,7 @@ fi
 %_sbindir/traceroute6
 %_sbindir/rdiscd
 %_mandir/man8/*
-%_sysconfdir/control.d/facilities/ping
+/etc/control.d/facilities/ping
 
 %changelog
 * Wed Jun 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> ss020927-owl3

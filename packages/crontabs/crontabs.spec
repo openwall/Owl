@@ -1,4 +1,4 @@
-# $Id: Owl/packages/crontabs/crontabs.spec,v 1.10 2005/01/12 15:46:38 galaxy Exp $
+# $Id: Owl/packages/crontabs/crontabs.spec,v 1.11 2005/01/14 03:27:50 galaxy Exp $
 
 Summary: System crontab files used to schedule the execution of programs.
 Name: crontabs
@@ -11,17 +11,17 @@ Source1: crontab
 Patch0: run-parts-1.15-owl-umask.diff
 Patch1: run-parts-1.15-owl-races.diff
 Patch2: run-parts-1.15-owl-write_loop.diff
-Patch3: run-parts-1.15-owl-gcc343-fixes.diff
+Patch3: run-parts-1.15-owl-fixes.diff
 BuildRoot: /override/%name-%version
 
 %description
 This package contains the system crontab file and provides the
 following directories:
 
-%_sysconfdir/cron.hourly
-%_sysconfdir/cron.daily
-%_sysconfdir/cron.weekly
-%_sysconfdir/cron.monthly
+/etc/cron.hourly
+/etc/cron.daily
+/etc/cron.weekly
+/etc/cron.monthly
 
 As these directory names say, the files within them are executed by
 cron on an hourly, daily, weekly, or monthly basis, respectively.
@@ -41,28 +41,28 @@ installed on your system.
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot%_sysconfdir/cron.{hourly,daily,weekly,monthly}
+mkdir -p %buildroot/etc/cron.{hourly,daily,weekly,monthly}
 mkdir -p %buildroot%_bindir
 mkdir -p %buildroot%_mandir/man8/
 
-install -m 644 $RPM_SOURCE_DIR/crontab %buildroot%_sysconfdir/
+install -m 644 $RPM_SOURCE_DIR/crontab %buildroot/etc/
 install -m 755 run-parts %buildroot%_bindir/
 install -m 644 run-parts.8 %buildroot%_mandir/man8/
 
 %files
 %defattr(-,root,root)
-%config %_sysconfdir/crontab
+%config /etc/crontab
 %_bindir/run-parts
 %_mandir/man8/*
-%dir %_sysconfdir/cron.hourly
-%dir %_sysconfdir/cron.daily
-%dir %_sysconfdir/cron.weekly
-%dir %_sysconfdir/cron.monthly
+%dir /etc/cron.hourly
+%dir /etc/cron.daily
+%dir /etc/cron.weekly
+%dir /etc/cron.monthly
 
 %changelog
 * Fri Jan 07 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.0-owl5
-- Added gcc343-fixes patch to deal with issues after gcc upgrade.
-- Used %__cc to chose C compiler.
+- Added fixes patch to deal with issues after gcc upgrade.
+- Used %%__cc to chose C compiler.
 - Removed "-s" option from compilation process since we are using brp- scripts.
 
 * Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com> 2.0-owl4

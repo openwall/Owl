@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dev86/dev86.spec,v 1.15 2005/01/12 15:49:05 galaxy Exp $
+# $Id: Owl/packages/dev86/dev86.spec,v 1.16 2005/01/14 03:27:51 galaxy Exp $
 
 Summary: A real mode 80x86 assembler and linker.
 Name: dev86
@@ -116,7 +116,7 @@ mv bin86/ChangeLog ChangeLog.bin86
 
 %changelog
 * Sun Jan 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.16.0-owl6
-- Made use of %__make and %__cc macros.
+- Made use of %%__make and %%__cc macros.
 - Added build of dis86 (it seems like we forgot it)
 - Optimized package build by issuing optflags to all compile stages which
 uses gcc.

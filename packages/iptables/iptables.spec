@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iptables/iptables.spec,v 1.12 2005/01/12 16:13:51 galaxy Exp $
+# $Id: Owl/packages/iptables/iptables.spec,v 1.13 2005/01/14 03:27:52 galaxy Exp $
 
 %define BUILD_STATIC 0
 %define BUILD_IPV6 0
@@ -64,9 +64,9 @@ rm -rf %buildroot
 	MANDIR="%_mandir" \
 	INCDIR="%_includedir"
 
-mkdir -p %buildroot%_sysconfdir/rc.d/init.d
+mkdir -p %buildroot/etc/rc.d/init.d
 install -m 755 $RPM_SOURCE_DIR/iptables.init \
-	%buildroot%_sysconfdir/rc.d/init.d/iptables
+	%buildroot/etc/rc.d/init.d/iptables
 
 %if !%BUILD_IPV6
 rm %buildroot/%_lib/iptables/libip6t*
@@ -99,22 +99,22 @@ fi
 %if %BUILD_IPV6
 %files -n iptables6
 %defattr(-,root,root)
+/sbin/ip6tables*
+%_mandir/*/ip6tables.8*
 %if !%BUILD_STATIC
 %dir /%_lib/iptables
 /%_lib/iptables/libip6t*
 %endif
-/sbin/ip6tables*
-%_mandir/*/ip6tables.8*
 %endif
 
 %changelog
 * Mon Jan 10 2005 (GalaxyMaster) <galaxy@openwall.com> 1.2.11-owl2
 - Corrected kernel requirement to 2.4.4 as mentioned by iptables'
 INSTALL.
-- Made use of %__cc and %__make macros.
+- Made use of %%__cc and %%__make macros.
 - Added iptables6 package and BUILD_IPV6 macro to control its building.
 This need to be revised to add %_sysconfig/etc/init.d/iptables6. NOTE:
-I've introduced dual owning of /%_lib/iptables directory by iptables
+I've introduced dual owning of /lib/iptables directory by iptables
 and iptables6 packages. I think this is ok to share owning of some files
 or directories between several related packages which were built from
 one parent source package.

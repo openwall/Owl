@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ltrace/ltrace.spec,v 1.16 2005/01/12 16:32:17 galaxy Exp $
+# $Id: Owl/packages/ltrace/ltrace.spec,v 1.17 2005/01/14 03:27:52 galaxy Exp $
 
 Summary: Tracks runtime library calls from dynamically linked executables.
 Name: ltrace
@@ -11,7 +11,7 @@ Patch0: ltrace-0.3.10-rh-sparc.diff
 Patch1: ltrace-0.3.10-rh-mandir.diff
 Patch2: ltrace-0.3.10-rh-nsyscals0.diff
 Patch3: ltrace-0.3.10-rh-strlen.diff
-Patch4: ltrace-0.3.10-owl-gcc343-fixes.diff
+Patch4: ltrace-0.3.10-owl-fixes.diff
 Prefix: %_prefix
 ExclusiveArch: %ix86 sparc sparcv9
 BuildRoot: /override/%name-%version
@@ -48,12 +48,11 @@ mv -f debian/changelog ChangeLog
 %doc COPYING README TODO BUGS ChangeLog
 %_prefix/bin/ltrace
 %_mandir/man1/ltrace.1*
-%config %_sysconfdir/ltrace.conf
+%config /etc/ltrace.conf
 
 %changelog
 * Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.3.10-owl9
-- Added gcc343-fixes patch to deal with "label at end of compound statment"
-issue.
+- Added fixes patch to deal with "label at end of compound statment" issue.
 - Cleaned up the spec.
 
 * Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com> 0.3.10-owl8

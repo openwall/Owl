@@ -1,4 +1,4 @@
-# $Id: Owl/packages/traceroute/traceroute.spec,v 1.10 2005/01/12 17:00:16 galaxy Exp $
+# $Id: Owl/packages/traceroute/traceroute.spec,v 1.11 2005/01/14 03:27:53 galaxy Exp $
 
 Summary: Traces the route taken by packets over a TCP/IP network.
 Name: traceroute
@@ -43,8 +43,8 @@ mkdir -p %buildroot%_mandir/man8
 
 %__make DESTDIR=%buildroot install install-man
 
-mkdir -p %buildroot%_sysconfdir/control.d/facilities
-install -m 700 %SOURCE1 %buildroot%_sysconfdir/control.d/facilities/traceroute
+mkdir -p %buildroot/etc/control.d/facilities
+install -m 700 %SOURCE1 %buildroot/etc/control.d/facilities/traceroute
 
 %pre
 if [ $1 -ge 2 ]; then
@@ -62,7 +62,7 @@ fi
 %defattr(-,root,root)
 %attr(700,root,root) %verify(not mode group) %_sbindir/traceroute
 %_mandir/man8/*
-%_sysconfdir/control.d/facilities/traceroute
+/etc/control.d/facilities/traceroute
 
 %changelog
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.4a12-owl6

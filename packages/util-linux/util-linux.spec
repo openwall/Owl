@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.28 2005/01/12 17:02:25 galaxy Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.29 2005/01/14 03:27:53 galaxy Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -89,8 +89,8 @@ ln -sf hwclock %buildroot/sbin/clock
 # We do not want dependencies on csh
 chmod 644 %buildroot/usr/share/misc/getopt/*
 
-mkdir -p %buildroot%_sysconfdir/control.d/facilities
-cd %buildroot%_sysconfdir/control.d/facilities
+mkdir -p %buildroot/etc/control.d/facilities
+cd %buildroot/etc/control.d/facilities
 
 install -m 700 $RPM_SOURCE_DIR/mount.control mount
 install -m 700 $RPM_SOURCE_DIR/write.control write
@@ -176,7 +176,7 @@ fi
 
 %_bindir/fdformat
 %_bindir/setfdprm
-%config %_sysconfdir/fdprm
+%config /etc/fdprm
 %_bindir/isosize
 
 %_mandir/man8/fdformat.8*
@@ -297,7 +297,7 @@ fi
 %doc fdisk/sfdisk.examples
 %endif
 
-%_sysconfdir/control.d/facilities/write
+/etc/control.d/facilities/write
 
 %if %BUILD_MOUNT
 %files -n mount
@@ -312,7 +312,7 @@ fi
 %_mandir/man8/swapoff.8*
 %_mandir/man8/swapon.8*
 %_mandir/man8/umount.8*
-%_sysconfdir/control.d/facilities/mount
+/etc/control.d/facilities/mount
 %endif
 
 %if %BUILD_LOSETUP
@@ -324,7 +324,7 @@ fi
 
 %changelog
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.11z-owl3
-- Supplied %__cc to make.
+- Supplied %%__cc to make.
 - Removed verify checks for files under the "control" utility.
 - Cleaned up the spec.
 

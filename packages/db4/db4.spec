@@ -1,4 +1,4 @@
-# $Id: Owl/packages/db4/db4.spec,v 1.5 2005/01/12 15:48:00 galaxy Exp $
+# $Id: Owl/packages/db4/db4.spec,v 1.6 2005/01/14 03:27:51 galaxy Exp $
 
 %define __soversion	4.0
 %define _libdb_a	libdb-%__soversion.a
@@ -159,7 +159,7 @@ rm -rf %buildroot
 
 %changelog
 * Sun Jan 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.0.14-owl2
-- Used %__cc and %__make macros.
+- Used %%__cc and %%__make macros.
 - Cleaned up the spec.
 
 * Tue Mar 02 2004 Michail Litvak <mci@owl.openwall.com> 4.0.14-owl1

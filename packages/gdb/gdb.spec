@@ -1,9 +1,9 @@
-# $Id: Owl/packages/gdb/gdb.spec,v 1.17 2004/11/23 22:40:45 mci Exp $
+# $Id: Owl/packages/gdb/gdb.spec,v 1.18 2005/01/14 03:27:51 galaxy Exp $
 
 Summary: A GNU source-level debugger for C, C++ and Fortran.
 Name: gdb
 Version: 6.1.1
-Release: owl1
+Release: owl2
 License: GPL
 Group: Development/Debuggers
 URL: http://www.gnu.org/software/gdb/
@@ -41,13 +41,13 @@ export ac_cv_func_vfork_works=no
 	--enable-gdbmi \
 	%_target_platform
 
-make
-make info
+%__make
+%__make info
 
 %install
 rm -rf %buildroot
 
-make install install-info \
+%__make install install-info \
 	prefix=%_prefix \
 	bindir=%_bindir \
 	includedir=%_includedir \
@@ -112,6 +112,9 @@ fi
 %_infodir/mmalloc.info*
 
 %changelog
+* Fri Jan 15 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 6.1.1-owl2
+- Used %%__make macro instead of plain "make".
+
 * Thu Jul 08 2004 Michail Litvak <mci@owl.openwall.com> 6.1.1-owl1
 - 6.1.1
 

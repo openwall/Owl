@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.19 2005/01/12 16:42:28 galaxy Exp $
+# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.20 2005/01/14 03:27:52 galaxy Exp $
 
 Summary: Initial directory hierarchy.
 Name: owl-hier
@@ -31,13 +31,13 @@ sed \
 	-e "s/\(gname=\)root$/\1`id -gn`/" \
 	< $RPM_SOURCE_DIR/base |
 		%_sbindir/mtree -U
-ln -s ..%_var/tmp usr/tmp
+ln -s ../var/tmp usr/tmp
 ln -s ../X11R6/bin .%_bindir/X11
 ln -s ../X11R6/include/X11 .%_includedir/X11
 ln -s ../X11R6/lib/X11 .%_libdir/X11
-ln -s log .%_var/adm
-ln -s spool/mail .%_var/mail
-install -m 600 $RPM_SOURCE_DIR/base .%_sysconfdir/mtree/
+ln -s log var/adm
+ln -s spool/mail var/mail
+install -m 600 $RPM_SOURCE_DIR/base etc/mtree/
 
 # Build the filelist
 cd $RPM_BUILD_DIR
@@ -46,7 +46,7 @@ find %buildroot -type d | sed \
 	-e 's,^,%dir ,' > filelist.mtree
 find %buildroot -type f -o -type l | sed \
 	-e "s,^%buildroot,," \
-	-e 's,^.*%_sysconfdir,%config &,' >> filelist.mtree
+	-e 's,^.*/etc,%config &,' >> filelist.mtree
 
 # Specify some entries manually to set user/group when building as non-root
 cat << EOF > filelist
@@ -54,8 +54,8 @@ cat << EOF > filelist
 %dir %attr(555,root,proc) /proc
 %dir %attr(755,sources,sources) /usr/src
 %dir %attr(750,build,sources) /usr/src/world
-%dir %attr(770,root,uucp) %_var/lock/uucp
-%dir %attr(1771,root,mail) %_var/spool/mail
+%dir %attr(770,root,uucp) /var/lock/uucp
+%dir %attr(1771,root,mail) /var/spool/mail
 EOF
 
 sed -n 's,^.* \(/[^ ]*\)$,\1,p' < filelist |

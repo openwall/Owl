@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.44 2005/01/12 16:57:46 galaxy Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.45 2005/01/14 03:27:53 galaxy Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
@@ -113,13 +113,13 @@ echo '.so pwconv.8' > %buildroot%_mandir/man8/grpconv.8
 echo '.so pwconv.8' > %buildroot%_mandir/man8/grpunconv.8
 echo '.so vipw.8' > %buildroot%_mandir/man8/vigr.8
 
-mkdir -p -m 700 %buildroot%_sysconfdir/default
-install -m 600 $RPM_SOURCE_DIR/login.defs %buildroot%_sysconfdir/
+mkdir -p -m 700 %buildroot/etc/default
+install -m 600 $RPM_SOURCE_DIR/login.defs %buildroot/etc/
 install -m 600 $RPM_SOURCE_DIR/useradd.default \
-	%buildroot%_sysconfdir/default/useradd
+	%buildroot/etc/default/useradd
 
-mkdir -p %buildroot%_sysconfdir/pam.d
-pushd %buildroot%_sysconfdir/pam.d
+mkdir -p %buildroot/etc/pam.d
+pushd %buildroot/etc/pam.d
 install -m 600 $RPM_SOURCE_DIR/user-group-mod.pam user-group-mod
 ln -s user-group-mod groupadd
 ln -s user-group-mod groupdel
@@ -136,8 +136,8 @@ ln -s chpasswd-newusers chpasswd
 ln -s chpasswd-newusers newusers
 popd
 
-mkdir -p %buildroot%_sysconfdir/control.d/facilities
-cd %buildroot%_sysconfdir/control.d/facilities
+mkdir -p %buildroot/etc/control.d/facilities
+cd %buildroot/etc/control.d/facilities
 
 install -m 700 $RPM_SOURCE_DIR/chage.control chage
 install -m 700 $RPM_SOURCE_DIR/chfn.control chfn
@@ -151,14 +151,14 @@ if [ $1 -ge 2 ]; then
 fi
 
 %post
-grep -q ^shadow: %_sysconfdir/group || groupadd -g 42 shadow
-if grep -q '^shadow:[^:]*:42:' %_sysconfdir/group; then
-	chgrp -f shadow %_sysconfdir/shadow && chmod 440 %_sysconfdir/shadow || :
-	chgrp shadow %_sysconfdir/login.defs && chmod 640 %_sysconfdir/login.defs
-	chgrp shadow %_sysconfdir/pam.d/chage-chfn-chsh && \
-		chmod 640 %_sysconfdir/pam.d/chage-chfn-chsh
+grep -q ^shadow: /etc/group || groupadd -g 42 shadow
+if grep -q '^shadow:[^:]*:42:' /etc/group; then
+	chgrp -f shadow /etc/shadow && chmod 440 /etc/shadow || :
+	chgrp shadow /etc/login.defs && chmod 640 /etc/login.defs
+	chgrp shadow /etc/pam.d/chage-chfn-chsh && \
+		chmod 640 /etc/pam.d/chage-chfn-chsh
 fi
-grep -q ^auth: %_sysconfdir/group || groupadd -g 164 auth
+grep -q ^auth: /etc/group || groupadd -g 164 auth
 if [ $1 -ge 2 ]; then
 	%_sbindir/control-restore chage chfn chsh gpasswd newgrp
 fi
@@ -166,9 +166,9 @@ fi
 %files
 %defattr(-,root,root)
 %doc README NEWS ChangeLog doc/HOWTO
-%dir %_sysconfdir/default
-%attr(0644,root,root) %config(noreplace) %verify(not mode group) %_sysconfdir/login.defs
-%attr(0600,root,root) %config(noreplace) %_sysconfdir/default/useradd
+%dir /etc/default
+%attr(0644,root,root) %config(noreplace) %verify(not mode group) /etc/login.defs
+%attr(0600,root,root) %config(noreplace) /etc/default/useradd
 %_sbindir/adduser
 %attr(0700,root,root) %_sbindir/user*
 %attr(0700,root,root) %_sbindir/group*
@@ -206,8 +206,8 @@ fi
 %_mandir/man8/lastlog.8*
 %_mandir/man8/vi*.8*
 %_datadir/locale/*/*/shadow.mo
-%config(noreplace) %_sysconfdir/pam.d/*
-%_sysconfdir/control.d/facilities/*
+%config(noreplace) /etc/pam.d/*
+/etc/control.d/facilities/*
 # excludes
 %exclude %_bindir/expiry
 %exclude %_bindir/faillog

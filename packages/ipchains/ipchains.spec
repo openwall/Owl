@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.13 2005/01/12 16:13:12 galaxy Exp $
+# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.14 2005/01/14 03:27:51 galaxy Exp $
 
 Summary: Tools for managing ipchains packet filtering rules.
 Name: ipchains
@@ -14,7 +14,7 @@ Source3: ipchains.init
 Patch0: ipchains-1.3.10-rh-install-no-root.diff
 Patch1: ipchains-1.3.10-rh-owl-man.diff
 Patch2: ipchains-1.3.10-rh-RETURN.diff
-Patch3: ipchains-1.3.10-owl-gcc343-fixes.diff
+Patch3: ipchains-1.3.10-owl-fixes.diff
 PreReq: chkconfig
 Requires: fileutils, sh-utils, textutils, grep, sed
 Obsoletes: ipfwadm, ipchains-scripts
@@ -53,9 +53,9 @@ ln -s ipfwadm %buildroot/sbin/ipfwadm-wrapper
 cp *.8 %buildroot%_mandir/man8/
 popd
 
-mkdir -p %buildroot%_sysconfdir/rc.d/init.d
+mkdir -p %buildroot/etc/rc.d/init.d
 install -m 755 $RPM_SOURCE_DIR/ipchains.init \
-	%buildroot%_sysconfdir/rc.d/init.d/ipchains
+	%buildroot/etc/rc.d/init.d/ipchains
 
 gzip -9nf ipchains-quickref.ps
 
@@ -71,14 +71,13 @@ fi
 %defattr(-,root,root)
 %doc *.txt*
 %doc COPYING README ipchains-quickref.ps.gz
-%attr(755,root,root) %config %_sysconfdir/rc.d/init.d/ipchains
+%attr(755,root,root) %config /etc/rc.d/init.d/ipchains
 /sbin/*
 %_mandir/man*/*
 
 %changelog
 * Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.3.10-owl13
-- Added gcc343-fixes patch to deal with "label at end of compound statment"
-issue.
+- Added fixes patch to deal with "label at end of compound statment" issue.
 - Cleaned up the spec.
 
 * Mon Sep 15 2003 Solar Designer <solar@owl.openwall.com> 1.3.10-owl12

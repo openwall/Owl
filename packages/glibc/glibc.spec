@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.71 2005/01/12 16:09:40 galaxy Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.72 2005/01/14 03:27:51 galaxy Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -79,13 +79,13 @@ Obsoletes: ldconfig
 BuildRoot: /override/%name-%version
 
 %description
-The %name package contains standard libraries which are used by
+The glibc package contains standard libraries which are used by
 multiple programs on the system.  In order to save disk space and
 memory, as well as to make upgrading easier, common system code is
 kept in one place and shared between programs.  This particular package
 contains the most important sets of shared libraries: the standard C
 library and the standard math library.  Without these two libraries, a
-Linux system will not function.  The %name package also contains
+Linux system will not function.  The glibc package also contains
 national language (locale) support and timezone databases.
 
 %package utils
@@ -94,7 +94,7 @@ Group: System Environment/Base
 Requires: %name >= %version
 
 %description utils
-The %name-utils package contains miscellaneous glibc utilities.
+The glibc-utils package contains miscellaneous glibc utilities.
 
 %package devel
 Summary: Header and object files for development using standard C libraries.
@@ -104,7 +104,7 @@ Provides: glibc-crypt_blowfish-devel = %crypt_bf_version
 Conflicts: texinfo < 3.11
 
 %description devel
-The %name-devel package contains the header and object files necessary
+The glibc-devel package contains the header and object files necessary
 for developing programs which use the standard C libraries (which are
 used by nearly all programs).  If you are developing programs which
 will use the standard C libraries, your system needs to have these
@@ -118,12 +118,12 @@ Group: Development/Libraries
 Requires: %name = %version-%release
 
 %description profile
-The %name-profile package includes the GNU libc libraries and support
+The glibc-profile package includes the GNU libc libraries and support
 for profiling using the gprof program.  Profiling is analyzing a
 program's functions to see how much CPU time they use and determining
 which functions are calling other functions during execution.  To use
 gprof to profile a program, your program needs to use the GNU libc
-libraries included in %name-profile (instead of the standard GNU libc
+libraries included in glibc-profile (instead of the standard GNU libc
 libraries included in the glibc package).
 %endif
 
@@ -317,15 +317,15 @@ mv %buildroot/lib/lib{memusage,pcprofile,SegFault}.so %buildroot%_libdir/
 
 # /etc/localtime - we're proud of our timezone
 # ... yes, but we are setting it through setup utility.
-#rm %buildroot%_sysconfdir/localtime
-#cp %buildroot%_datadir/zoneinfo/Europe/Moscow %buildroot%_sysconfdir/localtime
+#rm %buildroot/etc/localtime
+#cp %buildroot%_datadir/zoneinfo/Europe/Moscow %buildroot/etc/localtime
 
 # Create default ldconfig configuration file
-echo "include %_sysconfdir/ld.so.conf.d/*.conf" > %buildroot%_sysconfdir/ld.so.conf
-mkdir -m 0700 %buildroot%_sysconfdir/ld.so.conf.d
+echo "include /etc/ld.so.conf.d/*.conf" > %buildroot/etc/ld.so.conf
+mkdir -m 0700 %buildroot/etc/ld.so.conf.d
 
-# Truncate %_sysconfdir/ld.so.cache, we'll create it in the %%post section
-echo -n > %buildroot%_sysconfdir/ld.so.cache
+# Truncate /etc/ld.so.cache, we'll create it in the %%post section
+echo -n > %buildroot/etc/ld.so.cache
 
 # The database support
 # XXX: why is this disabled?
@@ -334,7 +334,7 @@ echo -n > %buildroot%_sysconfdir/ld.so.cache
 
 # BUILD THE FILE LIST
 find %buildroot -type f -or -type l |
-	sed -e 's|.*%_sysconfdir|%config &|' > rpm.filelist.in
+	sed -e 's|.*/etc|%config &|' > rpm.filelist.in
 for n in %_includedir %_libdir %_datadir; do
     find %buildroot$n -type d |
 	sed 's/^/%dir /' >> rpm.filelist.in
@@ -348,7 +348,7 @@ sed "s|^%buildroot||" < rpm.filelist.in |
 	grep -v '^%dir %_datadir$' | \
 	grep -v '^%dir %_mandir$' | \
 	grep -v '^%dir %_infodir$' | \
-	grep -v '^%config %_sysconfdir/' | \
+	grep -v '^%config /etc/' | \
 	sort > rpm.filelist.full
 
 %if %BUILD_PROFILE
@@ -405,13 +405,17 @@ rm %buildroot%_infodir/dir
 rm %buildroot%_sbindir/nscd
 rm %buildroot%_sbindir/nscd_nischeck
 
-%post
+%post -p /sbin/ldconfig
+%if 0
+# XXX: (GM): This %%post section postponed while our RPM doesn't understand
+#            AutoReq: noshell
 # If there is no %_sysconfig/localtime, then we are in the fresh install
 # stage (or system is misconfigured). Try to create a symbolic link to
 # Factory timezone and report this to the user.
-ln -s ../%_datadir/zoneinfo/Factory %_sysconfdir/localtime 2>/dev/null || \
+ln -s ../%_datadir/zoneinfo/Factory /etc/localtime 2>/dev/null || \
 echo "No timezone information was found, installed glibc factory default."
 /sbin/ldconfig
+%endif
 
 %postun -p /sbin/ldconfig
 
@@ -429,12 +433,12 @@ fi
 %doc documentation/*
 %doc hesiod/README.hesiod
 %doc crypt/README.ufc-crypt
-%config(noreplace) %verify(not size md5 mtime) %_sysconfdir/localtime
-%ghost %config(noreplace) %_sysconfdir/ld.so.cache
-%config %_sysconfdir/ld.so.conf
-%config %dir %_sysconfdir/ld.so.conf.d
+%config(noreplace) %verify(not size md5 mtime) /etc/localtime
+%ghost %config(noreplace) /etc/ld.so.cache
+%config /etc/ld.so.conf
+%config %dir /etc/ld.so.conf.d
 %ghost %config(noreplace) %_libdir/gconv/gconv-modules.cache
-%config(noreplace) %_sysconfdir/rpc
+%config(noreplace) /etc/rpc
 # XXX
 #%dir /var/db
 

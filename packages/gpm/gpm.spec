@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gpm/gpm.spec,v 1.19 2005/01/12 16:12:20 galaxy Exp $
+# $Id: Owl/packages/gpm/gpm.spec,v 1.20 2005/01/14 03:27:51 galaxy Exp $
 
 # This defines the library version that this package builds.
 %define LIBVER 1.18.0
@@ -21,7 +21,7 @@ Patch5: gpm-1.19.6-owl-tmp.diff
 Patch6: gpm-1.19.6-owl-warnings.diff
 Patch7: gpm-1.19.6-owl-doc-mkinstalldirs.diff
 Patch8: gpm-1.19.6-owl-info.diff
-Patch9: gpm-1.19.6-owl-gcc343-fixes.diff
+Patch9: gpm-1.19.6-owl-fixes.diff
 PreReq: /sbin/chkconfig, /sbin/ldconfig, /sbin/install-info
 BuildRequires: bison
 BuildRoot: /override/%name-%version
@@ -70,12 +70,12 @@ autoreconf
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot%_sysconfdir
+mkdir -p %buildroot/etc
 
 %makeinstall
 
 install -m 644 doc/gpm-root.1 %buildroot%_mandir/man1/
-install -m 644 conf/gpm-root.conf %buildroot%_sysconfdir/
+install -m 644 conf/gpm-root.conf %buildroot/etc/
 
 cd %buildroot
 
@@ -85,15 +85,15 @@ ln -sf libgpm.so.%LIBVER .%_libdir/libgpm.so
 #            It's need to be re-implemented to reflect major version changes.
 ln -sf libgpm.so.%LIBVER .%_libdir/libgpm.so.1
 
-mkdir -p .%_sysconfdir/rc.d/init.d
-install -m 755 $RPM_SOURCE_DIR/gpm.init .%_sysconfdir/rc.d/init.d/gpm
+mkdir -p etc/rc.d/init.d
+install -m 755 $RPM_SOURCE_DIR/gpm.init etc/rc.d/init.d/gpm
 
 # Remove unpackaged files
 rm %buildroot%_bindir/disable-paste
 rm %buildroot%_mandir/man1/mouse-test.1*
 rm %buildroot%_mandir/man7/gpm-types.7*
 %if !%BUILD_GPM_ROOT
-rm %buildroot%_sysconfdir/gpm-root.conf
+rm %buildroot/etc/gpm-root.conf
 rm %buildroot%_sbindir/gpm-root
 rm %buildroot%_mandir/man1/gpm-root.1*
 %endif
@@ -101,8 +101,8 @@ rm %buildroot%_mandir/man1/gpm-root.1*
 %pre
 rm -f /var/run/gpm.restart
 if [ $1 -ge 2 ]; then
-	%_sysconfdir/rc.d/init.d/gpm status && touch /var/run/gpm.restart || :
-	%_sysconfdir/rc.d/init.d/gpm stop || :
+	/etc/rc.d/init.d/gpm status && touch /var/run/gpm.restart || :
+	/etc/rc.d/init.d/gpm stop || :
 fi
 
 %post
@@ -110,7 +110,7 @@ if [ $1 -eq 1 ]; then
 	/sbin/chkconfig --add gpm
 fi
 if [ -f /var/run/gpm.restart ]; then
-	%_sysconfdir/rc.d/init.d/gpm start
+	/etc/rc.d/init.d/gpm start
 fi
 rm -f /var/run/gpm.restart
 /sbin/ldconfig
@@ -119,7 +119,7 @@ rm -f /var/run/gpm.restart
 %preun
 if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %_infodir/gpm.info.gz %_infodir/dir
-	%_sysconfdir/rc.d/init.d/gpm stop || :
+	/etc/rc.d/init.d/gpm stop || :
 	/sbin/chkconfig --del gpm
 fi
 
@@ -133,7 +133,7 @@ fi
 %_mandir/man1/mev.1*
 %_mandir/man8/gpm.8*
 %_libdir/libgpm.so.*
-%config %_sysconfdir/rc.d/init.d/gpm
+%config /etc/rc.d/init.d/gpm
 
 %files devel
 %defattr(-,root,root)
@@ -144,7 +144,7 @@ fi
 %if %BUILD_GPM_ROOT
 %files root
 %defattr(-,root,root)
-%config %_sysconfdir/gpm-root.conf
+%config /etc/gpm-root.conf
 %_sbindir/gpm-root
 %_mandir/man1/gpm-root.1*
 %endif

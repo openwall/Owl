@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mingetty/mingetty.spec,v 1.10 2005/01/12 16:33:19 galaxy Exp $
+# $Id: Owl/packages/mingetty/mingetty.spec,v 1.11 2005/01/14 03:27:52 galaxy Exp $
 
 Summary: A compact getty program for virtual consoles only.
 Name: mingetty
@@ -45,7 +45,7 @@ install -m 644 mingetty.8 %buildroot%_mandir/man8/
 
 %changelog
 * Mon Jan 10 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.9.4-owl15
-- Made use of %__cc and %__make macros.
+- Made use of %%__cc and %%__make macros.
 
 * Thu Dec 18 2003 Michail Litvak <mci@owl.openwall.com> 0.9.4-owl14
 - Fix Y2K bug in -suse.diff (Thanks to Ilya Andreiv)

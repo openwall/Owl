@@ -1,4 +1,4 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.35 2005/01/12 15:35:51 galaxy Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.36 2005/01/14 03:27:35 galaxy Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
@@ -53,16 +53,16 @@ mkdir -p %buildroot%_mandir/man1
 install -m 644 pamapps/{login/login.1,su/su.1,passwd/passwd.1} \
 	%buildroot%_mandir/man1/
 
-mkdir -p %buildroot%_sysconfdir/pam.d
-install -m 600 $RPM_SOURCE_DIR/login.pam %buildroot%_sysconfdir/pam.d/login
-install -m 600 $RPM_SOURCE_DIR/su.pam %buildroot%_sysconfdir/pam.d/su
-install -m 600 $RPM_SOURCE_DIR/passwd.pam %buildroot%_sysconfdir/pam.d/passwd
+mkdir -p %buildroot/etc/pam.d
+install -m 600 $RPM_SOURCE_DIR/login.pam %buildroot/etc/pam.d/login
+install -m 600 $RPM_SOURCE_DIR/su.pam %buildroot/etc/pam.d/su
+install -m 600 $RPM_SOURCE_DIR/passwd.pam %buildroot/etc/pam.d/passwd
 
-mkdir -p %buildroot%_sysconfdir/control.d/facilities
+mkdir -p %buildroot/etc/control.d/facilities
 install -m 700 $RPM_SOURCE_DIR/su.control \
-	%buildroot%_sysconfdir/control.d/facilities/su
+	%buildroot/etc/control.d/facilities/su
 install -m 700 $RPM_SOURCE_DIR/passwd.control \
-	%buildroot%_sysconfdir/control.d/facilities/passwd
+	%buildroot/etc/control.d/facilities/passwd
 
 %pre
 if [ $1 -ge 2 ]; then
@@ -72,7 +72,7 @@ fi
 %post
 if [ $1 -ge 2 ]; then
 	%_sbindir/control-restore passwd su
-	if [ -d %_sysconfdir/tcb -a -f %_sysconfdir/shadow-pre-tcb -a ! -e %_sysconfdir/shadow -a \
+	if [ -d /etc/tcb -a -f /etc/shadow-pre-tcb -a ! -e /etc/shadow -a \
 	    "`%_sbindir/control passwd`" = traditional ]; then
 		echo "Setting passwd(1) file modes for tcb"
 		%_sbindir/control passwd tcb
@@ -90,10 +90,10 @@ fi
 %attr(0700,root,root) %verify(not mode group) /bin/su
 %attr(0700,root,root) %verify(not mode group) %_bindir/passwd
 %_mandir/man1/*
-%config(noreplace) %_sysconfdir/pam.d/login
-%config(noreplace) %verify(not mode group) %_sysconfdir/pam.d/passwd
-%config(noreplace) %verify(not size md5 mtime) %_sysconfdir/pam.d/su
-%_sysconfdir/control.d/facilities/*
+%config(noreplace) /etc/pam.d/login
+%config(noreplace) %verify(not mode group) /etc/pam.d/passwd
+%config(noreplace) %verify(not size md5 mtime) /etc/pam.d/su
+/etc/control.d/facilities/*
 
 %changelog
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.60-owl23

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.22 2005/01/12 15:36:56 galaxy Exp $
+# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.23 2005/01/14 03:27:50 galaxy Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
@@ -124,8 +124,8 @@ fi
 * Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.85-owl5
 - Cleaned up the spec.
 - Removed "-s" from LDFLAGS since we are using brp- scripts.
-- Using %__cc macros to specify C compiler.
-- Fixed multiline string in the start-stop-daemon.c to satisfy GCC 3.4.3.
+- Using %%__cc macros to specify C compiler.
+- Fixed multiline string in start-stop-daemon.c to satisfy GCC 3.4.3.
 
 * Sun Apr 27 2003 Solar Designer <solar@owl.openwall.com> 2.85-owl4
 - Wrote a new implementation of sulogin which is now packaged separately,

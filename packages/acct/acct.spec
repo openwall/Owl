@@ -1,4 +1,4 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.24 2005/01/12 15:37:39 galaxy Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.25 2005/01/14 03:27:50 galaxy Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
@@ -41,15 +41,15 @@ touch texinfo.tex
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot%_sysconfdir/{rc.d/init.d,logrotate.d}
+mkdir -p %buildroot/etc/{rc.d/init.d,logrotate.d}
 mkdir -p %buildroot{/sbin,%_bindir,%_sbindir,%_mandir}
 mkdir -p %buildroot%_var/account
 %makeinstall
 install -m 644 $RPM_SOURCE_DIR/dump-acct.8 %buildroot%_mandir/man8/
 install -m 644 $RPM_SOURCE_DIR/dump-utmp.8 %buildroot%_mandir/man8/
-install -m 755 $RPM_SOURCE_DIR/acct.init %buildroot%_sysconfdir/rc.d/init.d/acct
+install -m 755 $RPM_SOURCE_DIR/acct.init %buildroot/etc/rc.d/init.d/acct
 install -m 644 $RPM_SOURCE_DIR/acct.logrotate \
-	%buildroot%_sysconfdir/logrotate.d/acct
+	%buildroot/etc/logrotate.d/acct
 
 # Move accton to /sbin -- leave historical symlink
 mv %buildroot%_sbindir/accton %buildroot/sbin/accton
@@ -98,8 +98,8 @@ fi
 %ghost %attr(0600,root,root) %_var/account/pacct
 %ghost %attr(0600,root,root) %_var/account/usracct
 %ghost %attr(0600,root,root) %_var/account/savacct
-%attr(0644,root,root) %config(noreplace) %_sysconfdir/logrotate.d/*
-%config %_sysconfdir/rc.d/init.d/acct
+%attr(0644,root,root) %config(noreplace) /etc/logrotate.d/*
+%config /etc/rc.d/init.d/acct
 /sbin/accton
 %_sbindir/*
 %_bindir/*
@@ -108,7 +108,7 @@ fi
 
 %changelog
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 6.3.5-owl14
-- /var/account is owned by owl-hier and use more restrictive permissions,
+- /var/account is owned by owl-hier and uses more restrictive permissions,
 so I've removed it from this package.
 - Cleaned up the spec for consistency.
 

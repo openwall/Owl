@@ -1,4 +1,4 @@
-# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.18 2005/01/12 15:57:18 galaxy Exp $
+# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.19 2005/01/14 03:27:51 galaxy Exp $
 
 # The texinfo documentation for fileutils, sh-utils, and textutils is
 # currently provided by fileutils.
@@ -82,9 +82,9 @@ for i in dir dircolors du install mkfifo shred vdir; do
 	mv -f bin/$i .%_bindir/
 done
 
-mkdir -p .%_sysconfdir/profile.d
-install -c -m 644 $RPM_SOURCE_DIR/DIR_COLORS .%_sysconfdir/
-install -c -m 755 $RPM_SOURCE_DIR/colorls.{c,}sh .%_sysconfdir/profile.d/
+mkdir -p etc/profile.d
+install -c -m 644 $RPM_SOURCE_DIR/DIR_COLORS etc/
+install -c -m 755 $RPM_SOURCE_DIR/colorls.{c,}sh etc/profile.d/
 
 # Remove unpackaged files
 rm %buildroot%_infodir/dir

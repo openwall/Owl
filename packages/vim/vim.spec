@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vim/vim.spec,v 1.19 2004/11/02 04:11:41 solar Exp $
+# $Id: Owl/packages/vim/vim.spec,v 1.20 2005/01/14 03:27:53 galaxy Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -225,8 +225,8 @@ ln -sf vim.1 .%_mandir/man1/vimx.1
 ln -sf vim.1 .%_mandir/man1/gview.1
 ln -sf vim.1 .%_mandir/man1/gex.1
 ln -sf vim.1 .%_mandir/man1/evim.1
-mkdir -p .%_sysconfdir/X11/applnk/Applications
-cp $RPM_SOURCE_DIR/gvim.desktop .%_sysconfdir/X11/applnk/Applications/
+mkdir -p etc/X11/applnk/Applications
+cp $RPM_SOURCE_DIR/gvim.desktop etc/X11/applnk/Applications/
 %else
 # XXX: investigate this -- (GM)
 rm -r .%_mandir/man1/evim.1*
@@ -272,7 +272,7 @@ chmod 644 ../runtime/doc/vim2html.pl
 %if %BUILD_USE_X
 %files X11
 %defattr(-,root,root)
-%config(missingok) %_sysconfdir/X11/applnk/Applications/gvim.desktop
+%config(missingok) /etc/X11/applnk/Applications/gvim.desktop
 %_prefix/X11R6/bin/gvim
 %_prefix/X11R6/bin/vimx
 %_prefix/X11R6/bin/gview
