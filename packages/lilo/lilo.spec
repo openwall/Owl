@@ -1,17 +1,19 @@
-# $Id: Owl/packages/lilo/lilo.spec,v 1.8 2002/02/06 15:01:50 solar Exp $
+# $Id: Owl/packages/lilo/lilo.spec,v 1.9 2002/02/14 16:32:24 mci Exp $
 
 Summary: The boot loader for Linux and other operating systems.
 Name: lilo
-Version: 21.6
-Release: owl5
+Version: 22.1
+Release: owl1
 License: MIT
 Group: System Environment/Base
 Source0: ftp://sunsite.unc.edu/pub/Linux/system/boot/lilo/%{name}-%{version}.tar.gz
 Source1: keytab-lilo.c
-Patch0: lilo-21-rh-broken-headers.diff
-Patch1: lilo-21.4.4-rh-sa5300.diff
-Patch2: lilo-21.4.4-rh-i2o.diff
-BuildRequires: fileutils, dev86
+Patch0: lilo-22.1-rh-broken-headers.diff
+Patch1: lilo-22.1-alt-part.diff
+Patch2: lilo-22.1-alt-owl-fixes.diff
+Patch3: lilo-22.1-alt-owl-getopt.diff
+Patch4: lilo-22.1-deb-owl-man.diff
+BuildRequires: fileutils dev86
 ExclusiveArch: %ix86
 BuildRoot: /override/%{name}-%{version}
 
@@ -26,9 +28,11 @@ can also boot other operating systems.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
+%patch4 -p1
 
 %build
-make CC=gcc CFLAGS="$RPM_OPT_FLAGS -Wall"
+make CC=gcc OPT="$RPM_OPT_FLAGS -Wall"
 gcc $RPM_OPT_FLAGS -Wall -s -o keytab-lilo $RPM_SOURCE_DIR/keytab-lilo.c
 
 %install
@@ -46,7 +50,8 @@ test -f /etc/lilo.conf && /sbin/lilo || :
 
 %files
 %defattr(-,root,root)
-%doc README CHANGES COPYING INCOMPAT QuickInst
+%doc README README.bitmaps README.common.problems README.raid1
+%doc CHANGES COPYING INCOMPAT QuickInst
 %doc doc
 /usr/bin/keytab-lilo
 /boot/boot*
@@ -56,6 +61,11 @@ test -f /etc/lilo.conf && /sbin/lilo || :
 %{_mandir}/*/*
 
 %changelog
+* Thu Feb 14 2002 Michail Litvak <mci@owl.openwall.com>
+- 22.1
+- removed non-actual patches
+- added patches from ALT Linux and Debian
+
 * Tue Feb 05 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions
 

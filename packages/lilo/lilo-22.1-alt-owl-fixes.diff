@@ -1,0 +1,77 @@
+--- lilo-22.1/common.c.orig	Sat Oct 27 18:39:26 2001
++++ lilo-22.1/common.c	Mon Jan 14 23:34:54 2002
+@@ -32,24 +32,26 @@
+ 	CRC_POLY1, CRC_POLY2, CRC_POLY3, CRC_POLY4 };
+ #endif	
+ 
+-/*volatile*/ void pdie(char *msg)
++/*volatile*/ void pdie(const char *msg)
+ {
+     fflush(stdout);
+     perror(msg);
+     exit(1);
+ }
+ 
++extern const char *__progname;
+ 
+-/*volatile*/ void die(char *fmt,...)
++/*volatile*/ void die(const char *fmt, ...) __attribute__ ((format (printf, 1, 2)))
+ {
+-    va_list ap;
++    va_list args;
+ 
+-    fflush(stdout);
+-    fprintf(errstd,"Fatal: ");       /* JRC */
+-    va_start(ap,fmt);
+-    vfprintf(errstd,fmt,ap);
+-    va_end(ap);
+-    fputc('\n',errstd);
++    va_start(args,fmt);
++    fprintf(errstd,"%s: Fatal: ",__progname);
++    vfprintf(errstd,fmt,args);
++    va_end(args);
++    fputs("\r\n",errstd);
++
++    fflush(errstd);
+     exit(1);
+ }
+ 
+--- lilo-22.1/common.h.orig	Sat Oct 27 22:33:32 2001
++++ lilo-22.1/common.h	Mon Jan 14 23:36:17 2002
+@@ -231,12 +231,12 @@
+ extern FILE *errstd;
+ 
+ 
+-/*volatile*/ void pdie(char *msg);
++/*volatile*/ void pdie(const char *msg) __attribute__ ((noreturn));
+ 
+ /* Do a perror and then exit. */
+ 
+ 
+-/*volatile*/ void die(char *fmt,...);
++/*volatile*/ void die(const char *fmt,...) __attribute__ ((noreturn)) __attribute__ ((format (printf, 1, 2)));
+ 
+ /* fprintf an error message and then exit. */
+ 
+--- lilo-22.1/geometry.c.orig	Tue Oct 30 05:16:55 2001
++++ lilo-22.1/geometry.c	Mon Jan 14 23:26:56 2002
+@@ -632,7 +632,7 @@
+ }
+ 
+ 
+-int geo_open(GEOMETRY *geo,char *name,int flags)
++int geo_open(GEOMETRY *geo,const char *name,int flags)
+ {
+     char *here;
+     int user_dev,block_size;
+--- lilo-22.1/geometry.h.orig	Tue May 15 05:55:36 2001
++++ lilo-22.1/geometry.h	Mon Jan 14 23:26:56 2002
+@@ -50,7 +50,7 @@
+    number to user_device unless -1. If ALL is zero, only the BIOS device number
+    is retrieved and the other geometry information is undefined. */
+ 
+-int geo_open(GEOMETRY *geo,char *name,int flags);
++int geo_open(GEOMETRY *geo,const char *name,int flags);
+ 
+ /* Opens the specified file or block device, obtains the necessary geometry
+    information and returns the file descriptor. If the name contains a BIOS
