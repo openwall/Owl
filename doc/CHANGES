@@ -12,6 +12,13 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/05/27	kernel
+Updated to Linux 2.2.21-ow1.  This changes certain permissions on
+/proc entries, fixes the getcwd(2) instance of the d_path() truncation
+problem in the Linux kernel pointed out by Wojciech Purczynski on
+public mailing lists, and fixes the fsuid/fsgid handling inconsistency
+in the Linux kernel discovered by Hao Chen.
+
 2002/05/19	Packages: screen, pam, tcb, utempter, owl-etc
 RELIABILITY FIX: Grant screen(1) access to both chkpwd and utempter
 helpers such that screen session (un)locking works in our default
@@ -693,4 +700,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.89 2002/05/19 04:15:50 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.90 2002/05/27 09:32:57 solar Exp $
