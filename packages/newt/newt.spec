@@ -1,4 +1,4 @@
-# $Id: Owl/packages/newt/Attic/newt.spec,v 1.2 2000/12/15 19:11:35 kad Exp $
+# $Id: Owl/packages/newt/Attic/newt.spec,v 1.3 2000/12/15 19:12:10 kad Exp $
 
 %define version 0.50.18
 
@@ -51,6 +51,7 @@ newt.
 %build
 # gpm support seems to smash the stack w/ we use help in anaconda??
 #./configure --with-gpm-support
+autoconf
 ./configure 
 make
 make shared
