@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ncurses/ncurses.spec,v 1.3 2000/11/04 08:19:42 kad Exp $
+# $Id: Owl/packages/ncurses/ncurses.spec,v 1.4 2000/11/06 04:09:48 solar Exp $
 
 %define 	major		5
 %define 	oldmajor	4
@@ -6,7 +6,7 @@
 Summary: 	A CRT screen handling and optimization package.
 Name: 		ncurses
 Version: 	5.2
-Release: 	2owl
+Release: 	3owl
 Copyright: 	distributable
 Group: 		System Environment/Libraries
 URL: 		http://dickey.his.com/ncurses/ncurses.html
@@ -15,6 +15,8 @@ Source2: 	ncurses-linux
 Source3: 	ncurses-linux-m
 Source4: 	ncurses-resetall.sh
 Patch0:		ncurses-5.0-rh-setuid2.diff
+Patch1:		ncurses-5.2-owl-glibc-enable_secure.diff
+Patch2:		ncurses-5.2-owl-fixes.diff
 BuildRoot: 	/var/rpm-buildroot/%{name}-root
 
 %description
@@ -44,20 +46,22 @@ Requires: ncurses = %{PACKAGE_VERSION}
 Provides: libform.so.%{oldmajor} libmenu.so.%{oldmajor} libncurses.so.%{oldmajor} libpanel.so.%{oldmajor}
 
 %description compat
-This ncurses package provides compatiblity libaries for packages
+This ncurses package provides compatiblity libraries for packages
 built against Red Hat Linux 6.2.
 
 %prep
 %setup -q -n ncurses-%{version}
 %patch0 -p1
-find . -name "*.orig" -exec rm -f {} \;
+%patch1 -p1
+%patch2 -p1
 
 %build
 CFLAGS="%{optflags} -DPURE_TERMINFO"
 %define optflags $CFLAGS
 %configure \
 	--with-normal --with-shared --without-debug --without-profile \
-	--without-cxx --without-ada
+	--without-cxx --without-ada \
+	--disable-root-environ
 make
 
 %install
@@ -81,7 +85,7 @@ make clean -C test
 # the resetall script
 install -c -m 755 %{SOURCE4} $RPM_BUILD_ROOT/usr/bin/resetall
 
-# comapt links
+# compat links
 ln -s libform.so.%{version} $RPM_BUILD_ROOT/usr/lib/libform.so.%{oldmajor}
 ln -s libmenu.so.%{version} $RPM_BUILD_ROOT/usr/lib/libmenu.so.%{oldmajor}
 ln -s libncurses.so.%{version} $RPM_BUILD_ROOT/usr/lib/libncurses.so.%{oldmajor}
@@ -120,7 +124,12 @@ ln -s libpanel.so.%{version} $RPM_BUILD_ROOT/usr/lib/libpanel.so.%{oldmajor}
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
-* Sat Nov  4 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Mon Nov 06 2000 Solar Designer <solar@owl.openwall.com>
+- --disable-root-environ to enable the recent security fixes.
+- Added a patch to use glibc's __libc_enable_secure.
+- Added a patch to fix potential problems found during a mini-audit.
+
+* Sat Nov 04 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - new compat 
 
 * Wed Oct 25 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
