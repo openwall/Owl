@@ -1,3 +1,5 @@
+# $Id: Owl/packages/glibc/glibc.spec,v 1.3 2000/07/13 03:16:29 solar Exp $
+
 Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
@@ -25,9 +27,6 @@ Patch12: glibc-2.1.3-rh-localedata.diff
 Patch13: glibc-2.1.3-rh-yp_xdr.diff
 Patch14: glibc-2.1.3-rh-makeconfig.diff
 Patch15: glibc-2.1.3-bcl-cyr-locale.diff
-
-
-
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Autoreq: false
 %ifarch alpha
