@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ncurses/ncurses.spec,v 1.6 2000/11/08 06:05:53 solar Exp $
+# $Id: Owl/packages/ncurses/ncurses.spec,v 1.7 2000/11/08 06:17:34 solar Exp $
 
 %define 	major		5
 %define 	oldmajor	4
@@ -125,6 +125,7 @@ ln -s libpanel.so.%{version} $RPM_BUILD_ROOT/usr/lib/libpanel.so.%{oldmajor}
 %{_mandir}/man3/*
 
 %files compat
+%defattr(-,root,root)
 /usr/lib/lib*.so.%{oldmajor}*
 
 %clean
@@ -135,6 +136,7 @@ rm -rf $RPM_BUILD_ROOT
 - ncurses-5.2-20001104 patch which adds --with-ospeed and bugfixes.
 - --with-ospeed=speed_t for compatibility with libtermcap.
 - %optflags_lib support.
+- %defattr(-,root,root) for the compat package.
 
 * Mon Nov 06 2000 Solar Designer <solar@owl.openwall.com>
 - --disable-root-environ to enable the recent security fixes.
