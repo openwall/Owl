@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.8 2002/04/01 21:57:51 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.9 2002/06/22 08:58:36 solar Exp $
 
-Summary: Directory hierarchy changes and files needed for bootable CD-ROM's.
+Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
 Version: 0.3
-Release: owl2
+Release: owl3
 License: public domain
 Group: System Environment/Base
 Source0: rc.ramdisk
@@ -16,7 +16,7 @@ BuildRoot: /override/%{name}-%{version}
 
 %description
 This package applies directory hierarchy changes and provides additional
-startup scripts needed for Owl bootable CD-ROM's.
+startup scripts needed for Owl bootable CD-ROMs.
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -82,6 +82,9 @@ fi
 %dir /owl
 
 %changelog
+* Sat Jun 22 2002 Solar Designer <solar@owl.openwall.com>
+- Style change with plural form of abbreviations (CD-ROM's -> CD-ROMs).
+
 * Tue Apr 02 2002 Solar Designer <solar@owl.openwall.com>
 - Marked this package x86-specific because at this stage it really is.
 
@@ -99,7 +102,7 @@ the default choice will very often be wrong.
 
 * Sat Sep 15 2001 Solar Designer <solar@owl.openwall.com>
 - Packaged lilo.conf, .config, and a script to create or update floppy
-images for use with CD-ROM's.
+images for use with CD-ROMs.
 - Move /usr/src/world to /ram such that "make installworld" may create
 its symlinks and write to its log file.
 
