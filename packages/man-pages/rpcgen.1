@@ -47,7 +47,7 @@ is a language similar to C known as
 RPC Language (Remote Procedure Call Language).
 .P
 \f4rpcgen\f1
-is normally used as in the first synopsis where 
+is normally used as in the first synopsis where
 it takes an input file and generates up to four output files.
 If the
 \f2infile\f1
@@ -72,20 +72,20 @@ With the
 \f4\-Sc\f1
 option,
 it will also generate  sample code which would illustrate how to use the
-remote procedures on the client side. This code would be created in 
+remote procedures on the client side. This code would be created in
 \f4proto_client.c\f1.
 With the
 \f4\-Ss\f1
 option,
 it will also generate a sample server code which would illustrate how to write
-the remote procedures. This code would be created in 
+the remote procedures. This code would be created in
 \f4proto_server.c\f1.
 .P
 The server created can be started both by the port monitors
 (for example, \f4inetd\f1 or \f4listen\f1)
 or by itself.
 When it is started by a port monitor,
-it creates servers only for the transport for which 
+it creates servers only for the transport for which
 the file descriptor \f40\fP was passed.
 The name of the transport must be specified
 by setting up the environmental variable
@@ -128,18 +128,18 @@ a pointer to the input and output arguments
 the size of these routines
 .PD
 .RE
-A server can use the dispatch table to check authorization 
-and then to execute the service routine; 
+A server can use the dispatch table to check authorization
+and then to execute the service routine;
 a client library may use it to deal with the details of storage
 management and XDR data conversion.
 .P
-The other three synopses shown above are used when 
+The other three synopses shown above are used when
 one does not want to generate all the output files,
 but only a particular one.
 Some examples of their usage is described in the
 EXAMPLE
 section below.
-When 
+When
 \f4rpcgen\f1
 is executed with the
 \f4\-s\f1
@@ -248,7 +248,7 @@ Compile into
 \f4C\f1
 data-definitions (a header file).
 \f4\-T\f1
-option can be used in conjunction to produce a 
+option can be used in conjunction to produce a
 header file which supports RPC dispatch tables.
 .TP
 \f4\-I\f1
@@ -280,8 +280,8 @@ Compile into client-side stubs.
 \f4\-m\f1
 Compile into server-side stubs,
 but do not generate a \(lqmain\(rq routine.
-This option is useful for doing callback-routines 
-and for users who need to write their own 
+This option is useful for doing callback-routines
+and for users who need to write their own
 \(lqmain\(rq routine to do initialization.
 .TP
 \f4\-n \f2netid\f1
@@ -296,11 +296,11 @@ This option may be specified more than once,
 so as to compile a server that serves multiple transports.
 .TP
 \f4\-N\f1
-Use the newstyle of rpcgen. This allows procedures to have multiple arguments. 
-It also uses the style of parameter passing that closely resembles C. So, when 
+Use the newstyle of rpcgen. This allows procedures to have multiple arguments.
+It also uses the style of parameter passing that closely resembles C. So, when
 passing an argument to a remote procedure you do not have to pass a pointer to
 the argument but the argument itself. This behaviour is different from the oldstyle
-of rpcgen generated code. The newstyle is not the default case because of 
+of rpcgen generated code. The newstyle is not the default case because of
 backward compatibility.
 .TP
 \f4\-o \f2outfile\f1
@@ -318,7 +318,7 @@ and
 modes only).
 .TP
 \f4\-s \f2nettype\f1
-Compile into server-side stubs for all the 
+Compile into server-side stubs for all the
 transports belonging to the class
 \f2nettype\f1.
 The supported classes are
@@ -351,7 +351,7 @@ Compile into RPC dispatch table.
 \f4\-T\f1
 Generate the code to support RPC dispatch tables.
 .P
-The options 
+The options
 \f4\-c\f1,
 \f4\-h\f1,
 \f4\-l\f1,
@@ -371,12 +371,12 @@ are global and can be used with the other options.
 The RPC Language does not support nesting of structures.
 As a work-around,
 structures can be declared at the top-level,
-and their name used inside other structures in 
+and their name used inside other structures in
 order to achieve the same effect.
 .P
 Name clashes can occur when using program definitions,
 since the apparent scoping does not really apply.
-Most of these can be avoided by giving 
+Most of these can be avoided by giving
 unique names for programs,
 versions,
 procedures and types.
@@ -410,7 +410,7 @@ $ rpcgen \-h prot.x
 .P
 To send the test version of the
 \f4-DTEST\f1,
-server side stubs for 
+server side stubs for
 all the transport belonging to the class
 \f4datagram_n\f1
 to standard output, use:

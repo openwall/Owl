@@ -1,9 +1,9 @@
-# $Id: Owl/packages/man-pages/man-pages.spec,v 1.13 2002/07/30 15:03:30 mci Exp $
+# $Id: Owl/packages/man-pages/man-pages.spec,v 1.14 2002/07/30 23:13:31 solar Exp $
 
 Summary: Manual (man) pages from the Linux Documentation Project.
 Name: man-pages
 Version: 1.52
-Release: owl1
+Release: owl2
 License: distributable
 Group: Documentation
 Source0: ftp://ftp.win.tue.nl/pub/linux-local/manpages/man-pages-%{version}.tar.gz

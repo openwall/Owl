@@ -9,10 +9,10 @@ Unless explicitly specified via the
 .B \-static
 option to
 .B ld
-during compilation, all Linux programs are incomplete and require 
+during compilation, all Linux programs are incomplete and require
 further linking at run time.
 .PP
-The necessary shared libraries needed by the program are searched for 
+The necessary shared libraries needed by the program are searched for
 in the following order
 .IP o
 Using the DT_RPATH dynamic section attribute of the binary if present and
@@ -70,12 +70,12 @@ Ignore RPATH and RUNPATH information in object names in LIST.
 .B LD_LIBRARY_PATH
 A colon-separated list of directories in which to search for
 ELF libraries at execution-time.
-Similar to the 
+Similar to the
 .B PATH
 environment variable.
 .TP
 .B LD_PRELOAD
-A whitespace-separated list of additional, user-specified, ELF shared 
+A whitespace-separated list of additional, user-specified, ELF shared
 libraries to be loaded before all others.
 This can be used to selectively override functions in other shared libraries.
 For setuid/setgid ELF binaries, only libraries in the standard search
