@@ -1,9 +1,9 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.3 2000/07/13 10:06:52 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.4 2000/07/18 08:23:00 kad Exp $
 
 Summary: A collection of basic system utilities.
 Name: util-linux
 Version: 2.10h
-Release: 1owl
+Release: 2owl
 Copyright: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%{version}.tar.gz
@@ -67,6 +67,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
+/usr/share/locale/*/LC_MESSAGES/*
 /sbin/clock
 /sbin/hwclock
 /usr/man/man8/hwclock.8*
@@ -224,6 +225,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Tue Jul 18 2000 Alexandr D. Kanevskiy <kad@openwall.com>
+- locale come back
+
 * Thu Jul 13 2000 Solar Designer <solar@false.com>
 - Imported this spec file from RH, and changed it heavily.
 - Updated one of the RH patches for 2.10h, removed the rest.
