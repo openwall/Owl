@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.19 2003/09/06 20:36:17 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.20 2003/09/15 08:20:51 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.34.2
+Version: 1.6.35
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -77,6 +77,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Mon Sep 15 2003 Solar Designer <solar@owl.openwall.com> 1.6.35-owl1
+- Log two more events.
+- With the AIX make target, use -qunroll=2 instead of plain -qunroll.
+
 * Sun Sep 07 2003 Solar Designer <solar@owl.openwall.com> 1.6.34.2-owl1
 - Verbose logging; John now logs how it proceeds through stages of each
 of its cracking modes, regardless of whether there're guesses or not.
