@@ -1,14 +1,16 @@
-# $Id: Owl/packages/mtree/mtree.spec,v 1.1 2000/07/23 03:41:11 solar Exp $
+# $Id: Owl/packages/mtree/mtree.spec,v 1.2 2000/07/23 17:39:03 solar Exp $
 
 Summary: Map a directory hierarchy
 Name: mtree
-Version: 2.6
+Version: 2.7
 Release: 1owl
 Copyright: BSD
 Group: System Environment/Base
-Source: mtree-2.6.tar.gz
-Patch: mtree-2.6-owl-linux.diff
+Source: mtree-%{version}.tar.gz
+Patch: mtree-%{version}-owl-linux.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
+Requires: openssl
+BuildPreReq: openssl-devel
 
 %description
 The utility mtree compares the file hierarchy rooted in the current
@@ -40,5 +42,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/man/man8/mtree.8*
 
 %changelog
+* Sun Jul 23 2000 Solar Designer <solar@owl.openwall.com>
+- Updated to version from OpenBSD 2.7.
+
 * Sat Jul 22 2000 Solar Designer <solar@owl.openwall.com>
 - Ported mtree from OpenBSD, wrote initial version of this spec file.

@@ -1,6 +1,6 @@
-diff -urN mtree-2.6.orig/lib/libc/gen/setmode.c mtree-2.6/lib/libc/gen/setmode.c
---- mtree-2.6.orig/lib/libc/gen/setmode.c	Thu Mar 25 01:24:55 1999
-+++ mtree-2.6/lib/libc/gen/setmode.c	Sat Jul 22 05:15:08 2000
+diff -urN mtree-2.7.orig/lib/libc/gen/setmode.c mtree-2.7/lib/libc/gen/setmode.c
+--- mtree-2.7.orig/lib/libc/gen/setmode.c	Thu Mar 25 01:24:55 1999
++++ mtree-2.7/lib/libc/gen/setmode.c	Sun Jul 23 21:19:56 2000
 @@ -218,7 +218,7 @@
  	 */
  	if (isdigit(*p)) {
@@ -39,9 +39,9 @@ diff -urN mtree-2.6.orig/lib/libc/gen/setmode.c mtree-2.6/lib/libc/gen/setmode.c
  				}
  				break;
  			case 'w':
-diff -urN mtree-2.6.orig/usr.sbin/mtree/Makefile mtree-2.6/usr.sbin/mtree/Makefile
---- mtree-2.6.orig/usr.sbin/mtree/Makefile	Mon Sep 22 23:34:48 1997
-+++ mtree-2.6/usr.sbin/mtree/Makefile	Sat Jul 22 06:13:00 2000
+diff -urN mtree-2.7.orig/usr.sbin/mtree/Makefile mtree-2.7/usr.sbin/mtree/Makefile
+--- mtree-2.7.orig/usr.sbin/mtree/Makefile	Mon Sep 22 23:34:48 1997
++++ mtree-2.7/usr.sbin/mtree/Makefile	Sun Jul 23 21:19:56 2000
 @@ -3,7 +3,21 @@
  PROG=	mtree
  #CFLAGS+=-DDEBUG
@@ -67,9 +67,9 @@ diff -urN mtree-2.6.orig/usr.sbin/mtree/Makefile mtree-2.6/usr.sbin/mtree/Makefi
 +
 +clean:
 +	$(RM) $(PROG) $(SRCS:.c=.o)
-diff -urN mtree-2.6.orig/usr.sbin/mtree/compare.c mtree-2.6/usr.sbin/mtree/compare.c
---- mtree-2.6.orig/usr.sbin/mtree/compare.c	Tue Sep 15 04:08:45 1998
-+++ mtree-2.6/usr.sbin/mtree/compare.c	Sun Jul 23 06:32:25 2000
+diff -urN mtree-2.7.orig/usr.sbin/mtree/compare.c mtree-2.7/usr.sbin/mtree/compare.c
+--- mtree-2.7.orig/usr.sbin/mtree/compare.c	Tue Sep 15 04:08:45 1998
++++ mtree-2.7/usr.sbin/mtree/compare.c	Sun Jul 23 21:19:56 2000
 @@ -44,17 +44,21 @@
  
  #include <sys/param.h>
@@ -131,9 +131,9 @@ diff -urN mtree-2.6.orig/usr.sbin/mtree/compare.c mtree-2.6/usr.sbin/mtree/compa
  			LABEL;
  			(void)printf("%scksum: %s: %s\n",
  			    tab, p->fts_accpath, strerror(errno));
-diff -urN mtree-2.6.orig/usr.sbin/mtree/create.c mtree-2.6/usr.sbin/mtree/create.c
---- mtree-2.6.orig/usr.sbin/mtree/create.c	Fri Jan 23 01:56:21 1998
-+++ mtree-2.6/usr.sbin/mtree/create.c	Sun Jul 23 06:32:42 2000
+diff -urN mtree-2.7.orig/usr.sbin/mtree/create.c mtree-2.7/usr.sbin/mtree/create.c
+--- mtree-2.7.orig/usr.sbin/mtree/create.c	Fri Jan 23 01:56:21 1998
++++ mtree-2.7/usr.sbin/mtree/create.c	Sun Jul 23 21:19:56 2000
 @@ -45,7 +45,9 @@
  #include <sys/param.h>
  #include <sys/stat.h>
@@ -191,9 +191,9 @@ diff -urN mtree-2.6.orig/usr.sbin/mtree/create.c mtree-2.6/usr.sbin/mtree/create
  		    crc(fd, &val, &len))
  			error("%s: %s", p->fts_accpath, strerror(errno));
  		(void)close(fd);
-diff -urN mtree-2.6.orig/usr.sbin/mtree/extern.h mtree-2.6/usr.sbin/mtree/extern.h
---- mtree-2.6.orig/usr.sbin/mtree/extern.h	Tue Sep  9 12:47:23 1997
-+++ mtree-2.6/usr.sbin/mtree/extern.h	Sat Jul 22 04:47:56 2000
+diff -urN mtree-2.7.orig/usr.sbin/mtree/extern.h mtree-2.7/usr.sbin/mtree/extern.h
+--- mtree-2.7.orig/usr.sbin/mtree/extern.h	Tue Sep  9 12:47:23 1997
++++ mtree-2.7/usr.sbin/mtree/extern.h	Sun Jul 23 21:19:56 2000
 @@ -36,6 +36,9 @@
   *	@(#)extern.h	8.1 (Berkeley) 6/6/93
   */
@@ -204,9 +204,9 @@ diff -urN mtree-2.6.orig/usr.sbin/mtree/extern.h mtree-2.6/usr.sbin/mtree/extern
  int	 compare __P((char *, NODE *, FTSENT *));
  int	 crc __P((int, u_int32_t *, u_int32_t *));
  void	 cwalk __P((void));
-diff -urN mtree-2.6.orig/usr.sbin/mtree/hashfile.c mtree-2.6/usr.sbin/mtree/hashfile.c
---- mtree-2.6.orig/usr.sbin/mtree/hashfile.c	Thu Jan  1 03:00:00 1970
-+++ mtree-2.6/usr.sbin/mtree/hashfile.c	Sun Jul 23 06:56:59 2000
+diff -urN mtree-2.7.orig/usr.sbin/mtree/hashfile.c mtree-2.7/usr.sbin/mtree/hashfile.c
+--- mtree-2.7.orig/usr.sbin/mtree/hashfile.c	Thu Jan  1 03:00:00 1970
++++ mtree-2.7/usr.sbin/mtree/hashfile.c	Sun Jul 23 21:19:56 2000
 @@ -0,0 +1,79 @@
 +#include <stdio.h>
 +#define __USE_GNU
@@ -287,9 +287,9 @@ diff -urN mtree-2.6.orig/usr.sbin/mtree/hashfile.c mtree-2.6/usr.sbin/mtree/hash
 +HASHFile(SHA1File, SHA_CTX, SHA1_Init, SHA1_Update, SHA1_Final, 20)
 +HASHFile(RMD160File, RIPEMD160_CTX,
 +	RIPEMD160_Init, RIPEMD160_Update, RIPEMD160_Final, 20)
-diff -urN mtree-2.6.orig/usr.sbin/mtree/hashfile.h mtree-2.6/usr.sbin/mtree/hashfile.h
---- mtree-2.6.orig/usr.sbin/mtree/hashfile.h	Thu Jan  1 03:00:00 1970
-+++ mtree-2.6/usr.sbin/mtree/hashfile.h	Sun Jul 23 06:25:52 2000
+diff -urN mtree-2.7.orig/usr.sbin/mtree/hashfile.h mtree-2.7/usr.sbin/mtree/hashfile.h
+--- mtree-2.7.orig/usr.sbin/mtree/hashfile.h	Thu Jan  1 03:00:00 1970
++++ mtree-2.7/usr.sbin/mtree/hashfile.h	Sun Jul 23 21:19:56 2000
 @@ -0,0 +1,11 @@
 +#ifndef _HASHFILE_H
 +#define _HASHFILE_H
@@ -302,10 +302,10 @@ diff -urN mtree-2.6.orig/usr.sbin/mtree/hashfile.h mtree-2.6/usr.sbin/mtree/hash
 +	(O_RDONLY | O_NOCTTY | O_NONBLOCK | O_NOFOLLOW)
 +
 +#endif
-diff -urN mtree-2.6.orig/usr.sbin/mtree/mtree.8 mtree-2.6/usr.sbin/mtree/mtree.8
---- mtree-2.6.orig/usr.sbin/mtree/mtree.8	Thu Jul  8 00:28:11 1999
-+++ mtree-2.6/usr.sbin/mtree/mtree.8	Sat Jul 22 08:37:56 2000
-@@ -276,18 +276,21 @@
+diff -urN mtree-2.7.orig/usr.sbin/mtree/mtree.8 mtree-2.7/usr.sbin/mtree/mtree.8
+--- mtree-2.7.orig/usr.sbin/mtree/mtree.8	Tue Mar 21 03:57:16 2000
++++ mtree-2.7/usr.sbin/mtree/mtree.8	Sun Jul 23 21:19:56 2000
+@@ -277,18 +277,21 @@
  .Cm sha1digest
  be run on the file systems, and a copy of the results stored on a different
  machine, or, at least, in encrypted form.
@@ -332,7 +332,7 @@ diff -urN mtree-2.6.orig/usr.sbin/mtree/mtree.8 mtree-2.6/usr.sbin/mtree/mtree.8
  .Pp
  The
  .Fl d
-@@ -307,15 +310,14 @@
+@@ -308,15 +311,14 @@
  .Xr chgrp 1 ,
  .Xr chmod 1 ,
  .Xr cksum 1 ,
@@ -354,9 +354,9 @@ diff -urN mtree-2.6.orig/usr.sbin/mtree/mtree.8 mtree-2.6/usr.sbin/mtree/mtree.8
  .Sh HISTORY
  The
  .Nm mtree
-diff -urN mtree-2.6.orig/usr.sbin/mtree/mtree.h mtree-2.6/usr.sbin/mtree/mtree.h
---- mtree-2.6.orig/usr.sbin/mtree/mtree.h	Tue Sep  9 12:47:24 1997
-+++ mtree-2.6/usr.sbin/mtree/mtree.h	Sat Jul 22 04:48:44 2000
+diff -urN mtree-2.7.orig/usr.sbin/mtree/mtree.h mtree-2.7/usr.sbin/mtree/mtree.h
+--- mtree-2.7.orig/usr.sbin/mtree/mtree.h	Tue Sep  9 12:47:24 1997
++++ mtree-2.7/usr.sbin/mtree/mtree.h	Sun Jul 23 21:19:56 2000
 @@ -36,6 +36,9 @@
   *	@(#)mtree.h	8.1 (Berkeley) 6/6/93
   */
@@ -382,9 +382,9 @@ diff -urN mtree-2.6.orig/usr.sbin/mtree/mtree.h mtree-2.6/usr.sbin/mtree/mtree.h
  	    (p)->fts_path + 2 : (p)->fts_path)
 +
 +#endif
-diff -urN mtree-2.6.orig/usr.sbin/mtree/spec.c mtree-2.6/usr.sbin/mtree/spec.c
---- mtree-2.6.orig/usr.sbin/mtree/spec.c	Sun Sep 27 03:17:35 1998
-+++ mtree-2.6/usr.sbin/mtree/spec.c	Sat Jul 22 05:17:32 2000
+diff -urN mtree-2.7.orig/usr.sbin/mtree/spec.c mtree-2.7/usr.sbin/mtree/spec.c
+--- mtree-2.7.orig/usr.sbin/mtree/spec.c	Sun Sep 27 03:17:35 1998
++++ mtree-2.7/usr.sbin/mtree/spec.c	Sun Jul 23 21:19:56 2000
 @@ -54,6 +54,9 @@
  #include "mtree.h"
  #include "extern.h"
