@@ -1,9 +1,9 @@
-# $Id: Owl/packages/mutt/mutt.spec,v 1.6 2003/03/26 22:25:32 solar Exp $
+# $Id: Owl/packages/mutt/mutt.spec,v 1.7 2003/10/20 01:38:58 solar Exp $
 
 Summary: A feature-rich text-based mail user agent.
 Name: mutt
 Version: 1.4.1
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Internet
 URL: http://www.mutt.org
@@ -39,7 +39,8 @@ CFLAGS="$RPM_OPT_FLAGS" ./prepare --prefix=%{_prefix} \
 	--enable-pop --enable-imap \
 	--with-ssl \
 	--disable-domain \
-	--disable-flock --enable-fcntl
+	--disable-flock --enable-fcntl \
+	--without-wc-funcs
 make
 
 %install
@@ -74,7 +75,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/flea.*
 
 %changelog
-* Sun Mar 23 2003 Jarno Huuskonen <jhuuskon@owl.openwall.com>
+* Mon Oct 20 2003 Solar Designer <solar@owl.openwall.com> 1.4.1-owl2
+- Build without glibc's wide character functions due to the broken locales;
+in particular, with koi8-r some control characters wouldn't be treated
+as such after being passed through mbrtowc() and checked with iswcntrl().
+
+* Sun Mar 23 2003 Jarno Huuskonen <jhuuskon@owl.openwall.com> 1.4.1-owl1
 - 1.4.1
 
 * Mon Jan 20 2003 Solar Designer <solar@owl.openwall.com>

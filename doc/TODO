@@ -164,8 +164,17 @@ unique).
 
 [PRIORITY: low]
 Fix locales to not declare characters with codes 0 to 0x1f and 0x7f to
-0x9f as printable unless some really have to be (as in CP1251).  Do it
-better than by patching localedef(1) as we do now (breaks CP1251).
+0x9f as printable unless some really have to be.  Do it better than by
+patching localedef(1) as we do now.
+
+[PRIORITY: low]
+The above problem also applies to wide character versions of the
+locales which are not corrected by our current localedef(1) patch.
+Either fix the locales or enhance the localedef(1) patch to also apply
+to the wide character versions.  The problem is seen in particular
+with the koi8-r locale for characters in the range 0x80 to 0x9f when
+translated with mbrtowc() and checked with iswcntrl().  We have to
+build Mutt without glibc's wide character functions for that reason.
 
 [PRIORITY: low]
 Support an /etc/libc.conf for hardening features such as zeroing out
@@ -254,11 +263,6 @@ patch.  One way to do it is start up mutt under a "strace -fF", then,
 reading the patch, make use of every feature the patch touches.  Make
 sure that everything works, the temporary files are dealt with safely
 (as seen from the strace output), and all of them are removed on exit.
-
-[PRIORITY: medium]
-Mutt appears to sometimes send control characters found in a message
-to the terminal (LC_CTYPE=koi8-r): should investigate what's at fault
-and fix that.
 
 [PRIORITY: low]
 [ASSIGNED: Jarno]
@@ -569,4 +573,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.26 2003/09/14 13:45:08 solar Exp $
+$Id: Owl/doc/TODO,v 1.27 2003/10/20 01:38:58 solar Exp $
