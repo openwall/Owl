@@ -1,0 +1,7 @@
+#%PAM-1.0
+# $Id: Owl/packages/SimplePAMApps/su.pam,v 1.1 2000/07/16 14:09:05 solar Exp $
+auth       sufficient	/lib/security/pam_rootok.so
+auth       required	/lib/security/pam_pwdb.so shadow nullok
+account    required	/lib/security/pam_pwdb.so
+password   required	/lib/security/pam_deny.so
+session    required	/lib/security/pam_pwdb.so
