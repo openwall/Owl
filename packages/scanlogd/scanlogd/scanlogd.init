@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/scanlogd/Attic/scanlogd.init,v 1.2 2002/05/08 18:40:00 solar Exp $
+# $Id: Owl/packages/scanlogd/scanlogd/scanlogd.init,v 1.1 2004/06/02 00:43:09 solar Exp $
 #
 # chkconfig: 2345 35 85
 # description: \
