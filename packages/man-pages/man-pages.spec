@@ -1,9 +1,9 @@
-# $Id: Owl/packages/man-pages/man-pages.spec,v 1.8 2001/09/06 22:24:58 mci Exp $
+# $Id: Owl/packages/man-pages/man-pages.spec,v 1.9 2001/09/12 21:02:38 mci Exp $
 
 Summary: Manual (man) pages from the Linux Documentation Project.
 Name: man-pages
 Version: 1.39
-Release: 2owl
+Release: 3owl
 Copyright: distributable
 Group: Documentation
 Source0: ftp://ftp.win.tue.nl/pub/linux-local/manpages/man-pages-%{version}.tar.gz 
@@ -24,7 +24,7 @@ Patch1: man-pages-1.39-deb-misc.diff
 Patch2: man-pages-1.39-rh-ctype.diff
 # temporarily disabled, we don't yet have these paths
 # Patch3: man-pages-1.35-rh-pathupdate.diff
-Patch4: man-pages-1.38-rh-roffix.diff
+Patch4: man-pages-1.39-rh-roffix.diff
 Patch5: man-pages-1.39-owl-ccldso.diff
 Patch6: man-pages-1.39-owl-uselib.diff
 Patch7: man-pages-1.39-owl-pwrite.diff

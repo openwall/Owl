@@ -1,5 +1,5 @@
---- man-pages-1.38/man2/ioctl_list.2.orig	Thu Jun  7 15:09:28 2001
-+++ man-pages-1.38/man2/ioctl_list.2	Mon Jun 18 00:03:10 2001
+--- man-pages-1.39/man2/ioctl_list.2.orig	Thu Jul 26 00:38:02 2001
++++ man-pages-1.39/man2/ioctl_list.2	Wed Sep 12 23:44:04 2001
 @@ -543,8 +543,7 @@
  pointers.  These are documented here in alphabetical order.
  
@@ -10,8 +10,8 @@
  
  CDROMREADCOOKED, CDROMREADMODE1, CDROMREADMODE2, and CDROMREADRAW take
  an input pointer 'const struct cdrom_msf *'.  They use the same pointer
---- man-pages-1.38/man3/rpc.3.orig	Thu Jun  7 15:04:29 2001
-+++ man-pages-1.38/man3/rpc.3	Mon Jun 18 00:06:07 2001
+--- man-pages-1.39/man3/rpc.3.orig	Mon Jun 11 01:58:22 2001
++++ man-pages-1.39/man3/rpc.3	Wed Sep 12 23:44:04 2001
 @@ -342,7 +342,7 @@
  only:
  .IP
@@ -21,8 +21,23 @@
  .SM CLSET_RETRY_TIMEOUT\s0	struct timeval	set the retry timeout
  .SM CLGET_RETRY_TIMEOUT\s0	struct timeval	get the retry timeout
  .fi
---- man-pages-1.38/man7/regex.7.orig	Thu Jun  7 14:56:37 2001
-+++ man-pages-1.38/man7/regex.7	Sun Jun 17 19:44:46 2001
+--- man-pages-1.39/man7/mdoc.samples.7.orig	Wed Sep 12 23:45:11 2001
++++ man-pages-1.39/man7/mdoc.samples.7	Wed Sep 12 23:45:42 2001
+@@ -1659,10 +1659,10 @@
+ will generate the following text:
+ .Pp
+ .\" fake chapter 3 to avoid error message from Rv
+-.ds cH 3
++.ds section 3
+ .Rv -std atexit
+ .\" and back to 7 again
+-.ds cH 7
++.ds section 7
+ .Pp
+ The
+ .Fl std
+--- man-pages-1.39/man7/regex.7.orig	Mon Jun 11 02:13:28 2001
++++ man-pages-1.39/man7/regex.7	Wed Sep 12 23:44:04 2001
 @@ -27,7 +27,7 @@
  .\"
  .\" In the default nroff environment there is no dagger \(dg.
