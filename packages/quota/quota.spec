@@ -1,4 +1,4 @@
-# $Id: Owl/packages/quota/quota.spec,v 1.8 2001/07/01 15:58:49 mci Exp $
+# $Id: Owl/packages/quota/quota.spec,v 1.9 2001/07/01 20:20:06 mci Exp $
 
 Name: quota
 Summary: System administration tools for monitoring users' disk usage.
@@ -44,9 +44,10 @@ mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man{1,2,3,8}
 rm -rf ${RPM_BUILD_ROOT}
 
 %files
+%defattr(-,root,root)
 %doc doc/*.html
 %doc warnquota.conf
-%defattr(-,root,root)
+
 /sbin/*
 %{_bindir}/*
 %{_sbindir}/edquota
