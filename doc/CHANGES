@@ -12,6 +12,9 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/04/10	Package: john
+New package: John the Ripper, a fast password cracker.
+
 2002/04/02	Package: vsftpd
 Updated to 1.0.2pre3, made use of the new option to hide numeric ID's.
 
@@ -654,4 +657,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.82 2002/04/02 11:45:42 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.83 2002/04/10 14:52:41 solar Exp $
