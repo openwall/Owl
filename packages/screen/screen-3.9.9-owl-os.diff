@@ -4,8 +4,8 @@
  # define exit __exit
  #endif
  #ifdef POSIX
-+# define _XOPEN_SOURCE
-+# define _XOPEN_SOURCE_EXTENDED
++# define __USE_XOPEN
++# define __USE_XOPEN_EXTENDED
  # include <unistd.h>
  # if defined(__STDC__)
  #  include <stdlib.h>
