@@ -1,6 +1,6 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.17 2001/11/13 13:02:38 mci Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.18 2001/11/13 14:45:02 solar Exp $
 
-Summary: A screen manager that supports multiple logins on one terminal.
+Summary: A screen manager that supports multiple sessions on one terminal.
 Name: screen
 Version: 3.9.10
 Release: 1owl
@@ -19,18 +19,15 @@ Patch7: screen-3.9.9-rh-docbug.diff
 Patch8: screen-3.9.9-owl-telnet.diff
 Patch9: screen-3.9.10-owl-tmp.diff
 Prefix: %{_prefix}
+BuildRequires: pam-devel >= 0.75-11owl
+PreReq: /sbin/install-info, pam_userpass, utempter
 BuildRoot: /override/%{name}-%{version}
-Prereq: /sbin/install-info, pam_userpass, utempter
-BuildPreReq: pam-devel >= 0.75-11owl
 
 %description
-The screen utility allows you to have multiple logins on just one
-terminal.  screen is useful for users who telnet into a machine or are
-connected via a dumb terminal, but want to use more than just one
-login.
-
-Install the screen package if you need a screen manager that can
-support multiple logins on one terminal.
+The screen utility allows you to have multiple interactive sessions on
+just one terminal and keep the sessions over disconnects.  screen is
+useful for remote users or users who are connected via a serial line
+but want to use more than one session.
 
 %prep
 %setup -q
@@ -91,6 +88,9 @@ fi
 %config(noreplace) /etc/pam.d/screen
 
 %changelog
+* Tue Nov 13 2001 Solar Designer <solar@owl.openwall.com>
+- Corrected the package description.
+
 * Tue Nov 13 2001 Michail Litvak <mci@owl.openwall.com>
 - 3.9.10
 - more tmp fixes in configure
