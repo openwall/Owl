@@ -1,0 +1,15 @@
+diff -ur shadow-4.0.0.orig/libmisc/pwdcheck.c shadow-4.0.0/libmisc/pwdcheck.c
+--- shadow-4.0.0.orig/libmisc/pwdcheck.c	Sun Oct 15 17:07:26 2000
++++ shadow-4.0.0/libmisc/pwdcheck.c	Sun May 30 23:23:06 2004
+@@ -38,9 +38,9 @@
+ 		goto bailout;
+ 
+ 	retcode = pam_acct_mgmt(pamh, 0);
+-	if (retcode == PAM_NEW_AUTHTOK_REQD) {
++	if (retcode == PAM_NEW_AUTHTOK_REQD)
+ 		retcode = pam_chauthtok(pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
+-	} else if (retcode)
++	if (retcode)
+ 		goto bailout;
+ 
+ 	if (pam_setcred(pamh, 0))

@@ -5,6 +5,15 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 1.1 and Owl 1.1-stable.
 
+2004/06/09	Package: shadow-utils
+SECURITY FIX	Severity: none to low, local, active
+Properly check the return value from pam_chauthtok(3) in chfn(1) and
+chsh(1).  Previously, if chfn and/or chsh commands would be enabled
+for non-privileged users with control(8), it would have been possible
+for a logged in user with an expired password to change their "Full
+Name" and login shell without having to change the password.  Thanks
+to Steve Grubb and Martin Schulze for discovering this problem.
+
 2004/05/18 -
 2004/06/09	Package: cvs
 SECURITY FIX	Severity: none to high, remote, active
@@ -108,4 +117,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 2004/01/15	Owl/doc/DOWNLOAD, Owl/doc/*/DOWNLOAD, Owl/doc/fr/CREDITS
 Sync'ed with the minor post-release updates made in Owl-current.
 
-$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.12 2004/06/09 21:16:36 solar Exp $
+$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.13 2004/06/09 21:32:11 solar Exp $

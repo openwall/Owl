@@ -1,9 +1,9 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.34 2003/11/22 00:56:47 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.34.2.1 2004/06/09 21:32:11 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.0
-Release: owl14
+Release: owl16
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -26,6 +26,7 @@ Patch4: shadow-4.0.0-owl-pam-auth.diff
 Patch5: shadow-4.0.0-owl-chage-drop-priv.diff
 Patch6: shadow-4.0.0-owl-chage-ro-no-lock.diff
 Patch7: shadow-4.0.0-owl-useradd-usermod-usage.diff
+Patch8: shadow-4.0.0-owl-pam_chauthtok.diff
 Patch10: shadow-4.0.0-rh-owl-redhat.diff
 Patch20: shadow-4.0.0-owl-man.diff
 Patch21: shadow-4.0.0-owl-check_names.diff
@@ -58,6 +59,7 @@ shadow password files.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 %patch10 -p1
 %patch20 -p1
 %patch21 -p1
@@ -88,13 +90,15 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make install prefix=$RPM_BUILD_ROOT/usr exec_prefix=$RPM_BUILD_ROOT
+make install prefix=$RPM_BUILD_ROOT/usr \
+	exec_prefix=$RPM_BUILD_ROOT \
+	mandir=$RPM_BUILD_ROOT%_mandir
 chmod -R -s $RPM_BUILD_ROOT
 
 cd $RPM_BUILD_ROOT
 ln -s useradd usr/sbin/adduser
 ln -s vipw usr/sbin/vigr
-ln -s vipw.8 usr/man/man8/vigr.8
+echo ".so man8/vipw.8" > $RPM_BUILD_ROOT%_mandir/man8/vigr.8
 
 mkdir -p -m 700 etc/default
 install -m 600 $RPM_SOURCE_DIR/login.defs etc/login.defs
@@ -151,47 +155,55 @@ fi
 %dir /etc/default
 %attr(0644,root,root) %config(noreplace) /etc/login.defs
 %attr(0600,root,root) %config(noreplace) /etc/default/useradd
-/usr/sbin/adduser
-%attr(0700,root,root) /usr/sbin/user*
-%attr(0700,root,root) /usr/sbin/group*
-%attr(0700,root,root) /usr/sbin/pwck
-%attr(0700,root,root) /usr/sbin/grpck
-%attr(0700,root,root) /usr/sbin/*conv
-%attr(0700,root,root) /usr/sbin/chpasswd
-%attr(0700,root,root) /usr/sbin/newusers
-%attr(0700,root,root) /usr/sbin/vi*
-%attr(0700,root,root) /usr/bin/chage
-%attr(0700,root,root) /usr/bin/chfn
-%attr(0700,root,root) /usr/bin/chsh
-%attr(0700,root,root) /usr/bin/gpasswd
-%attr(0700,root,root) /usr/bin/newgrp
-/usr/bin/sg
-/usr/bin/lastlog
-/usr/man/man1/chage.1*
-/usr/man/man1/chfn.1*
-/usr/man/man1/chsh.1*
-/usr/man/man1/gpasswd.1*
-/usr/man/man1/newgrp.1*
-/usr/man/man1/sg.1*
-/usr/man/man3/getspnam.3*
-/usr/man/man3/shadow.3*
-/usr/man/man5/login.defs.5*
-/usr/man/man5/shadow.5*
-/usr/man/man8/adduser.8*
-/usr/man/man8/group*.8*
-/usr/man/man8/user*.8*
-/usr/man/man8/pwck.8*
-/usr/man/man8/grpck.8*
-/usr/man/man8/chpasswd.8*
-/usr/man/man8/newusers.8*
-/usr/man/man8/*conv.8*
-/usr/man/man8/lastlog.8*
-/usr/man/man8/vi*.8*
+%_sbindir/adduser
+%attr(0700,root,root) %_sbindir/user*
+%attr(0700,root,root) %_sbindir/group*
+%attr(0700,root,root) %_sbindir/pwck
+%attr(0700,root,root) %_sbindir/grpck
+%attr(0700,root,root) %_sbindir/*conv
+%attr(0700,root,root) %_sbindir/chpasswd
+%attr(0700,root,root) %_sbindir/newusers
+%attr(0700,root,root) %_sbindir/vi*
+%attr(0700,root,root) %_bindir/chage
+%attr(0700,root,root) %_bindir/chfn
+%attr(0700,root,root) %_bindir/chsh
+%attr(0700,root,root) %_bindir/gpasswd
+%attr(0700,root,root) %_bindir/newgrp
+%_bindir/sg
+%_bindir/lastlog
+%_mandir/man1/chage.1*
+%_mandir/man1/chfn.1*
+%_mandir/man1/chsh.1*
+%_mandir/man1/gpasswd.1*
+%_mandir/man1/newgrp.1*
+%_mandir/man1/sg.1*
+%_mandir/man3/getspnam.3*
+%_mandir/man3/shadow.3*
+%_mandir/man5/login.defs.5*
+%_mandir/man5/shadow.5*
+%_mandir/man8/adduser.8*
+%_mandir/man8/group*.8*
+%_mandir/man8/user*.8*
+%_mandir/man8/pwck.8*
+%_mandir/man8/grpck.8*
+%_mandir/man8/chpasswd.8*
+%_mandir/man8/newusers.8*
+%_mandir/man8/*conv.8*
+%_mandir/man8/lastlog.8*
+%_mandir/man8/vi*.8*
 /usr/share/locale/*/*/shadow.mo
 %config(noreplace) /etc/pam.d/*
 /etc/control.d/facilities/*
 
 %changelog
+* Mon May 31 2004 Solar Designer <solar@owl.openwall.com> 2:4.0.0-owl16
+- Properly check the return value from pam_chauthtok() in
+libmisc/pwdcheck.c: passwd_check() that is used by chfn and chsh commands.
+Thanks to Steve Grubb and Martin Schulze.
+
+* Thu Feb 12 2004 Michail Litvak <mci@owl.openwall.com> 2:4.0.0-owl15
+- Use RPM macros instead of explicit paths.
+
 * Sat Nov 22 2003 Solar Designer <solar@owl.openwall.com> 2:4.0.0-owl14
 - In tcb_move(), use mode 700 and not mode 0 for the directory being
 modified as the latter is incompatible with the mode 0 hack in vserver
