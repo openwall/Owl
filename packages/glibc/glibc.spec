@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.36 2002/07/07 21:42:53 mci Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.37 2002/08/01 06:12:29 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -6,7 +6,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
 %define crypt_bf_version 0.4.3
-Release: owl23
+Release: owl24
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%{version}.tar.gz
@@ -31,6 +31,8 @@ Patch11: glibc-2.1.3-owl-syslog-ident.diff
 Patch12: glibc-2.1.3-mjt-owl-syslog-timestamp.diff
 Patch13: glibc-2.1.3-owl-alt-asprintf-error-handling.diff
 Patch14: glibc-2.1.3-openbsd-freebsd-owl-fts.diff
+Patch15: glibc-2.1.3-owl-calloc-bound.diff
+Patch16: glibc-2.1.3-owl-xdr_array-bound.diff
 Patch20: glibc-2.1.3-rh-libnoversion.diff
 Patch21: glibc-2.1.3-rh-paths.diff
 Patch22: glibc-2.1.3-rh-linuxthreads.diff
@@ -129,6 +131,8 @@ cp $RPM_SOURCE_DIR/crypt_freesec.c crypt/sysdeps/unix/
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
+%patch15 -p1
+%patch16 -p1
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
@@ -308,6 +312,10 @@ fi
 %endif
 
 %changelog
+* Thu Aug 01 2002 Solar Designer <solar@owl.openwall.com>
+- Patched two potential integer overflows (and thus buffer overflows) in
+calloc(3) and xdr_array (the latter discovered by ISS X-Force).
+
 * Fri Jul 05 2002 Solar Designer <solar@owl.openwall.com>
 - Added the patch by NISHIMURA Daisuke and Tomohiro 'Tomo-p' KATO of
 Vine Linux to fix the DNS resolver buffer overflows affecting both host
