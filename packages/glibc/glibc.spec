@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.54 2003/10/29 16:26:40 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.55 2003/10/29 18:02:12 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -290,10 +290,6 @@ gzip -9nf documentation/ChangeLog*
 mkdir documentation/crypt_blowfish-%crypt_bf_version
 cp crypt_blowfish-%crypt_bf_version/{README,LINKS,PERFORMANCE} \
 	documentation/crypt_blowfish-%crypt_bf_version
-
-%clean
-rm -rf $RPM_BUILD_ROOT
-rm -f *.filelist*
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig

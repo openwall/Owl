@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tcb/tcb/tcb.spec,v 1.25 2003/10/29 16:22:24 solar Exp $
+# $Id: Owl/packages/tcb/tcb/tcb.spec,v 1.26 2003/10/29 17:31:13 solar Exp $
 
 Summary: Libraries and tools implementing the tcb password shadowing scheme.
 Name: tcb
@@ -40,9 +40,6 @@ CFLAGS="$RPM_OPT_FLAGS -DENABLE_SETFSUGID" make
 %install
 rm -rf $RPM_BUILD_ROOT
 make install-non-root install-pam_unix FAKEROOT=$RPM_BUILD_ROOT MANDIR=%_mandir
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
