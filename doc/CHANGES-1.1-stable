@@ -14,6 +14,8 @@ malicious CVS server could cause the CVS client to attempt to create
 files at arbitrary locations thus gaining control over the user
 account.  This problem has been brought to the attention of CVS
 developers and distribution vendors by Sebastian Krahmer of SuSE.
+Reference:
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0180
 
 (2004/03/18)
 2004/04/14	Package: openssl
@@ -57,4 +59,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 2004/01/15	Owl/doc/DOWNLOAD, Owl/doc/*/DOWNLOAD, Owl/doc/fr/CREDITS
 Sync'ed with the minor post-release updates made in Owl-current.
 
-$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.5 2004/04/13 21:58:30 solar Exp $
+$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.6 2004/04/16 01:59:21 solar Exp $
