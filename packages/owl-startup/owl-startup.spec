@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.15 2001/04/11 12:47:04 mci Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.16 2001/04/12 03:06:39 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
 Version: 0.6
-Release: 1owl
+Release: 2owl
 Copyright: GPL
 Group: System Environment/Base
 Source0: initscripts-5.00.tar.gz
