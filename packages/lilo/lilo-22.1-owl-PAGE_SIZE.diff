@@ -1,0 +1,14 @@
+diff -puNr lilo-22.1.orig/lilo.h lilo-22.1/lilo.h
+--- lilo-22.1.orig/lilo.h	Sat Oct 27 19:12:56 2001
++++ lilo-22.1/lilo.h	Wed Jan 12 15:15:32 2005
+@@ -107,6 +107,10 @@ source directory.
+ #define BLOCK_SIZE	1024 /* disk block size */
+ #endif
+ 
++#ifndef PAGE_SIZE
++#define PAGE_SIZE getpagesize() /* use getpagesize() from unistd.h */
++#endif
++
+ #if (MAX_SECONDARY_FILESIZE > MAX_SECONDARY*SECTOR_SIZE)
+ #error "Largest secondary loader exceeds sector addresses reserved."
+ #endif

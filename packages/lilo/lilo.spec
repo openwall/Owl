@@ -1,4 +1,4 @@
-# $Id: Owl/packages/lilo/lilo.spec,v 1.13 2004/11/23 22:40:47 mci Exp $
+# $Id: Owl/packages/lilo/lilo.spec,v 1.14 2005/01/12 16:16:36 galaxy Exp $
 
 Summary: The boot loader for Linux and other operating systems.
 Name: lilo
@@ -13,6 +13,7 @@ Patch1: lilo-22.1-alt-part.diff
 Patch2: lilo-22.1-alt-owl-fixes.diff
 Patch3: lilo-22.1-alt-owl-getopt.diff
 Patch4: lilo-22.1-deb-owl-man.diff
+Patch5: lilo-22.1-owl-PAGE_SIZE.diff
 BuildRequires: fileutils, dev86
 ExclusiveArch: %ix86
 BuildRoot: /override/%name-%version
@@ -30,17 +31,28 @@ can also boot other operating systems.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
-make CC=gcc OPT="$RPM_OPT_FLAGS -Wall"
-gcc $RPM_OPT_FLAGS -Wall -s -o keytab-lilo $RPM_SOURCE_DIR/keytab-lilo.c
+%__make CC="%__cc" OPT="$RPM_OPT_FLAGS -Wall" \
+    CFG_DIR="%_sysconfdir" \
+    BOOT_DIR="/boot" \
+
+%__cc $RPM_OPT_FLAGS -Wall -s -o keytab-lilo $RPM_SOURCE_DIR/keytab-lilo.c
 
 %install
 rm -rf %buildroot
 mkdir -p %buildroot/usr/bin
 mkdir -p %buildroot%_mandir
-make install ROOT=%buildroot MAN_DIR=%_mandir
-install -m 755 keytab-lilo %buildroot/usr/bin/
+%__make install \
+    ROOT=%buildroot \
+    CFG_DIR="%_sysconfdir" \
+    BOOT_DIR="/boot" \
+    SBIN_DIR="/sbin" \
+    USRSBIN_DIR="%_sbindir" \
+    MAN_DIR=%_mandir
+
+install -m 755 keytab-lilo %buildroot%_bindir/
 
 # XXX: (GM): Remove unpackaged files (check later)
 rm %buildroot/boot/mbr.b
@@ -55,7 +67,7 @@ test -f /etc/lilo.conf && /sbin/lilo || :
 %doc README README.bitmaps README.common.problems README.raid1
 %doc CHANGES COPYING INCOMPAT QuickInst
 %doc doc
-/usr/bin/keytab-lilo
+%_bindir/keytab-lilo
 /boot/boot*
 /boot/chain.b
 /boot/os2_d.b
@@ -63,6 +75,10 @@ test -f /etc/lilo.conf && /sbin/lilo || :
 %_mandir/*/*
 
 %changelog
+* Wed Jan 12 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 22.1-owl2
+- Added PAGE_SIZE patch to use getpagesize() from unistd.h.
+- Cleaned up the spec.
+
 * Thu Feb 14 2002 Michail Litvak <mci@owl.openwall.com> 22.1-owl1
 - 22.1
 - removed non-actual patches
