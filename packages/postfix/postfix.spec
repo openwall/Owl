@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.13 2002/10/13 13:13:13 solar Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.14 2002/11/03 01:53:52 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
@@ -7,7 +7,7 @@ Name: postfix
 %define original_version %{original_date}-%{original_pl}
 %define package_version %{original_date}_%{original_pl}
 Version: %{package_version}
-Release: owl4
+Release: owl5
 License: IBM Public License
 Group: System Environment/Daemons
 Source0: ftp://ftp.sunet.se/pub/unix/mail/postfix/official/%{name}-%{original_version}.tar.gz
@@ -22,7 +22,7 @@ Patch10: postfix-19991231-pl13-owl-postfix-script.diff
 Patch20: postfix-19991231-pl10-owl-INSTALL.diff
 Patch21: postfix-19991231-pl10-owl-config.diff
 PreReq: /sbin/chkconfig, grep, shadow-utils
-Requires: owl-control >= 0.2, owl-control < 2.0
+Requires: owl-control >= 0.4, owl-control < 2.0
 Conflicts: sendmail, qmail
 Provides: MTA, smtpd, smtpdaemon
 Obsoletes: sendmail-cf, sendmail-doc
@@ -153,11 +153,15 @@ grep -q ^postman: /etc/passwd ||
 rm -f /var/run/postfix.restart
 if [ $1 -ge 2 ]; then
 	/usr/sbin/postfix stop && touch /var/run/postfix.restart || :
+	/usr/sbin/control-dump postfix
 fi
 
 %post
 /usr/sbin/postalias /etc/postfix/aliases
 /usr/sbin/postfix check
+if [ $1 -ge 2 ]; then
+	/usr/sbin/control-restore postfix
+fi
 /sbin/chkconfig --add postfix
 test -f /var/run/postfix.restart && /usr/sbin/postfix start || :
 rm -f /var/run/postfix.restart
@@ -177,6 +181,9 @@ fi
 %files -f filelist
 
 %changelog
+* Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
+- Dump/restore the owl-control setting for SMTP server on package upgrades.
+
 * Sun Oct 13 2002 Solar Designer <solar@owl.openwall.com>
 - Use fcntl locking, not flock.
 
