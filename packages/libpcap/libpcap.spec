@@ -1,14 +1,15 @@
-# $Id: Owl/packages/libpcap/libpcap.spec,v 1.5 2002/04/10 12:28:34 solar Exp $
+# $Id: Owl/packages/libpcap/libpcap.spec,v 1.6 2002/09/16 12:11:37 mci Exp $
 
 Summary: Network packet capture library.
 Name: libpcap
 Version: 0.6.2
-Release: owl1
+Release: owl2
 Epoch: 2
 License: GPL
 Group: System Environment/Libraries
 Source: http://www.tcpdump.org/release/%{name}-%{version}.tar.gz
 Patch0: libpcap-0.6.2-pld-shared.diff
+Patch1: libpcap-0.6.2-cvs-20020712-buffer.diff
 PreReq: /sbin/ldconfig
 BuildRequires: flex, bison
 BuildRoot: /override/%{name}-%{version}
@@ -32,6 +33,7 @@ Header files and development documentation for libpcap.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 %configure \
@@ -67,6 +69,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/lib*.a
 
 %changelog
+* Mon Sep 16 2002 Michail Litvak <mci@owl.openwall.com>
+- Back-ported a possible buffer overflow fix from the CVS; This fixes
+a bug wherein "live_open_new()" wasn't making the buffer size the maximum
+of "enough to hold packets of the MTU obtained from the socket" and
+"the snapshot length" (for some reason, "recvfrom()" was copying more data
+than the MTU obtained from the socket). Thanks to Pavel Kankovsky.
+
 * Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions
 
