@@ -1,4 +1,4 @@
-# $Id: Owl/packages/readline/readline.spec,v 1.6 2000/12/08 00:10:37 mci Exp $
+# $Id: Owl/packages/readline/readline.spec,v 1.7 2001/07/06 03:22:42 solar Exp $
 
 Summary: A library for editing typed in command lines.
 Name: readline
@@ -18,7 +18,7 @@ Buildroot: /var/rpm-buildroot/%{name}-root
 BuildRequires: sed
 Provides: libreadline.so.3 libreadline.so.3.0
 
-# Use %optflags_lib for this package if defined.
+# Use optflags_lib for this package if defined.
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 
 
@@ -111,7 +111,7 @@ fi
 
 %changelog
 * Fri Dec 08 2000 Michail Litvak <mci@owl.openwall.com>
-- %optflags_lib support.
+- optflags_lib support.
 
 * Wed Dec 06 2000 Michail Litvak <mci@owl.openwall.com>
 - hack for compatibility with readline2  
