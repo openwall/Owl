@@ -40,26 +40,26 @@ diff -urpN rpm-4.2.orig/rpmio/ugid.c rpm-4.2/rpmio/ugid.c
 +
 +static char *fgetl(char *s, int size, FILE *stream)
 +{
-+        char *res, *pos;
-+        int c;
++    char *res, *pos;
++    int c;
 +
-+        if ((res = fgets(s, size, stream))) {
-+                if (!*res) return res;
++    if ((res = fgets(s, size, stream))) {
++	if (!*res) return res;
 +
-+                pos = res + strlen(res) - 1;
-+                if (*pos == '\n') {
-+                        *pos = 0;
-+                        if (pos > res)
-+                        if (*--pos == '\r') *pos = 0;
-+                } else
-+                if ((c = getc(stream)) == '\n') {
-+                        if (*pos == '\r') *pos = 0;
-+                } else
-+                while (c != EOF && c != '\n')
-+                        c = getc(stream);
-+        }
++	pos = res + strlen(res) - 1;
++	if (*pos == '\n') {
++	    *pos = 0;
++	    if (pos > res)
++		if (*--pos == '\r') *pos = 0;
++	} else
++	    if ((c = getc(stream)) == '\n') {
++		if (*pos == '\r') *pos = 0;
++	    } else
++		while (c != EOF && c != '\n')
++		    c = getc(stream);
++    }
 +
-+        return res;
++    return res;
 +}
 +
 +/*
