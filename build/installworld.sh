@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/installworld.sh,v 1.20 2004/12/25 18:09:41 galaxy Exp $
+# $Id: Owl/build/installworld.sh,v 1.21 2004/12/26 01:18:35 galaxy Exp $
 
 . installworld.conf
 
@@ -151,6 +151,8 @@ else
 	# XXX: (GM): This is a hack. We are cloning empty database file
 	# Packages to Providename to shut our RPM during installation
 	cp -a $ROOT/var/lib/rpm/{Packages,Providename} || exit 1
+	$RPMD $RPM_FLAGS --root $ROOT --rebuilddb || exit 1
+
 	NEED_FAKE=no
 fi
 
