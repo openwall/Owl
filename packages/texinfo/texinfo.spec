@@ -1,4 +1,4 @@
-# $Id: Owl/packages/texinfo/texinfo.spec,v 1.4 2002/02/04 08:47:42 solar Exp $
+# $Id: Owl/packages/texinfo/texinfo.spec,v 1.5 2002/02/04 08:50:21 solar Exp $
 
 Summary: Tools needed to create Texinfo format documentation files.
 Name: texinfo
@@ -83,7 +83,7 @@ fi
 %{_prefix}/bin/makeinfo
 %{_prefix}/bin/texindex
 %{_prefix}/bin/texi2dvi
-%{_infodir}/texinfo.info*
+%{_infodir}/texinfo*
 %{_prefix}/share/locale/*/*/*
 
 %files -n info

@@ -1,9 +1,10 @@
-# $Id: Owl/packages/grep/grep.spec,v 1.3 2002/02/04 06:50:08 solar Exp $
+# $Id: Owl/packages/grep/grep.spec,v 1.4 2002/02/04 07:02:06 solar Exp $
 
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
 Version: 2.4.2
 Release: owl1
+Epoch: 1
 License: GPL
 Group: Applications/Text
 Source: ftp://ftp.gnu.org/pub/gnu/grep/grep-%{version}.tar.gz
@@ -27,9 +28,10 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%makeinstall LDFLAGS=-s prefix=${RPM_BUILD_ROOT}%{_prefix} exec_prefix=$RPM_BUILD_ROOT
+%makeinstall LDFLAGS=-s \
+	prefix=${RPM_BUILD_ROOT}%{_prefix} exec_prefix=$RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/bin
-mv $RPM_BUILD_ROOT%{_prefix}/bin/* $RPM_BUILD_ROOT/bin
+mv $RPM_BUILD_ROOT%{_prefix}/bin/* $RPM_BUILD_ROOT/bin/
 rm -rf $RPM_BUILD_ROOT%{_prefix}/bin
 
 %clean
@@ -46,7 +48,7 @@ fi
 %files
 %defattr(-,root,root)
 %doc ABOUT-NLS AUTHORS THANKS TODO NEWS README ChangeLog
-%{_prefix}/bin/*
+/bin/*
 %{_infodir}/*.info*
 %{_mandir}/*/*
 %{_prefix}/share/locale/*/*/grep.*
