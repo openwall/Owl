@@ -1,19 +1,18 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.23 2002/07/30 19:52:46 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.24 2002/07/31 01:53:54 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
-Version: 0.9.6d
-Release: owl4
+Version: 0.9.6e
+Release: owl1
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
 Source: ftp://ftp.openssl.org/source/%{name}-%{version}.tar.gz
-Patch0: openssl-0.9.6d-owl-crypt.diff
+Patch0: openssl-0.9.6e-owl-crypt.diff
 Patch1: openssl-0.9.6a-owl-glibc-enable_secure.diff
 Patch2: openssl-0.9.6d-owl-Makefile.diff
-Patch3: openssl-0.9.6d-owl-sparc-shared.diff
-Patch10: openssl-0.9.6d-ben-read-errors.diff
-Patch11: openssl-0.9.6d-up-20020727-security-fixes.diff
+Patch3: openssl-0.9.6e-owl-release-date-fix.diff
+Patch10: openssl-0.9.6e-up-20020429-read-errors.diff
 PreReq: /sbin/ldconfig
 Provides: SSL
 BuildRequires: perl
@@ -69,7 +68,6 @@ popd
 %patch2 -p1
 %patch3 -p1
 %patch10 -p0
-%patch11 -p0
 
 %define openssldir /var/ssl
 %define opensslflags shared -DSSL_ALLOW_ADH --prefix=/usr
@@ -102,7 +100,7 @@ perl -pi -e "s/-O.(?: -fomit-frame-pointer)?(?: -m.86)?/${RPM_OPT_FLAGS}/" \
 %endif
 
 # Check these against the DIRS= line and "all" target in top-level Makefile
-# when updating to a new version of OpenSSL; with 0.9.6d the Makefile says:
+# when updating to a new version of OpenSSL; with 0.9.6e the Makefile says:
 # DIRS= crypto ssl rsaref $(SHLIB_MARK) apps test tools
 # all: clean-shared Makefile.ssl sub_all
 make Makefile.ssl
@@ -118,7 +116,7 @@ LD_LIBRARY_PATH=`pwd` make tests
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make install MANDIR=/usr/man INSTALL_PREFIX="$RPM_BUILD_ROOT"
+make install MANDIR=%{_mandir} INSTALL_PREFIX="$RPM_BUILD_ROOT"
 
 # Fail if the openssl binary is statically linked against OpenSSL at this
 # stage (which could happen if "make install" caused anything to rebuild).
@@ -152,7 +150,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0755,root,root) /usr/bin/*
 %attr(0755,root,root) /usr/lib/*.so.*
 %attr(0755,root,root) %{openssldir}/misc/*
-%attr(0644,root,root) /usr/man/man[157]/*
+%attr(0644,root,root) %{_mandir}/man[157]/*
 
 %config %attr(0644,root,root) %{openssldir}/openssl.cnf
 %dir %attr(0755,root,root) %{openssldir}/certs
@@ -165,9 +163,13 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0644,root,root) /usr/lib/*.a
 %attr(0755,root,root) /usr/lib/*.so
 %attr(0644,root,root) /usr/include/openssl/*
-%attr(0644,root,root) /usr/man/man3/*
+%attr(0644,root,root) %{_mandir}/man3/*
 
 %changelog
+* Wed Jul 31 2002 Solar Designer <solar@owl.openwall.com>
+- Updated to 0.9.6e, dropping the shared-on-SPARC and the official security
+patches (both are now included).
+
 * Tue Jul 30 2002 Solar Designer <solar@owl.openwall.com>
 - Applied the official patch with 4 security fixes to problems discovered
 by Ben Laurie and others of A.L. Digital Ltd and The Bunker under DARPA's
