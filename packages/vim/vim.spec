@@ -1,10 +1,9 @@
-# $Id: Owl/packages/vim/vim.spec,v 1.1 2000/12/14 20:43:02 kad Exp $
+# $Id: Owl/packages/vim/vim.spec,v 1.2 2000/12/15 02:22:42 solar Exp $
 
 %define vimversion vim60p
 
 %define NEED_PYTHON 	'no'
 %define NEED_X11	'no'
-
 
 Summary: 	The VIM editor.
 Name: 		vim
@@ -29,7 +28,6 @@ Buildrequires: 	python-devel
 %if "%{NEED_X11}"=="'yes'"
 Buildrequires: 	gtk+-devel
 %endif
-
 
 %description
 VIM (VIsual editor iMproved) is an updated and improved version of the
@@ -56,7 +54,7 @@ to the vim-common package installed.
 Summary: A minimal version of the VIM editor.
 Group: Applications/Editors
 Requires: vim-common
-Obsoletes:  vim
+Obsoletes: vim
 
 %description minimal
 VIM (VIsual editor iMproved) is an updated and improved version of the
@@ -125,33 +123,52 @@ perl -pi -e "s,\\\$VIM,/usr/share/vim/%{vimversion}/macros,g" os_unix.h
 
 %if "%{NEED_X11}"=="'yes'"
 %if "%{NEED_PYTHON}"=="'yes'"
-%configure --with-features=huge --enable-pythoninterp --enable-perlinterp --disable-tclinterp --with-x=yes --enable-gui=gnome --exec-prefix=/usr/X11R6 --enable-xim --enable-multibyte
+%configure \
+	--with-features=huge \
+	--enable-pythoninterp --enable-perlinterp --disable-tclinterp \
+	--with-x=yes --enable-gui=gnome \
+	--exec-prefix=/usr/X11R6 \
+	--enable-xim --enable-multibyte
 %else
-%configure --with-features=huge --disable-pythoninterp --enable-perlinterp --disable-tclinterp --with-x=yes --enable-gui=gnome --exec-prefix=/usr/X11R6 --enable-xim --enable-multibyte
+%configure \
+	--with-features=huge \
+	--disable-pythoninterp --enable-perlinterp --disable-tclinterp \
+	--with-x=yes --enable-gui=gnome \
+	--exec-prefix=/usr/X11R6 \
+	--enable-xim --enable-multibyte
 %endif
-make 
+make
 cp vim gvim
 make clean
-%endif 
+%endif
 
 %if "%{NEED_PYTHON}"=="'yes'"
-%configure --prefix=/usr --with-features=huge --enable-pythoninterp \
- --enable-perlinterp --disable-tclinterp --with-x=no --enable-gui=no \
- --exec-prefix=/usr --enable-multibyte
+%configure \
+	--prefix=/usr \
+	--with-features=huge \
+	--enable-pythoninterp --enable-perlinterp --disable-tclinterp \
+	--with-x=no --enable-gui=no \
+	--exec-prefix=/usr --enable-multibyte
 %else
-%configure --prefix=/usr --with-features=huge --disable-pythoninterp \
- --enable-perlinterp --disable-tclinterp --with-x=no --enable-gui=no \
- --exec-prefix=/usr --enable-multibyte
+%configure \
+	--prefix=/usr \
+	--with-features=huge \
+	--disable-pythoninterp --enable-perlinterp --disable-tclinterp \
+	--with-x=no --enable-gui=no \
+	--exec-prefix=/usr --enable-multibyte
 %endif
 make
 cp vim enhanced-vim
 make clean
 
-%configure --prefix='${DEST}'/usr --with-features=tiny --with-x=no \
-  --disable-pythoninterp --disable-perlinterp --disable-tclinterp \
-  --with-tlib=termcap --enable-gui=no --disable-gpm --exec-prefix=/
+%configure \
+	--prefix='${DEST}'/usr \
+	--with-features=tiny \
+	--disable-pythoninterp --disable-perlinterp --disable-tclinterp \
+	--with-x=no --enable-gui=no \
+	--with-tlib=termcap --disable-gpm \
+	--exec-prefix=/
 make
-
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -165,37 +182,37 @@ cd src
 %makeinstall BINDIR=$RPM_BUILD_ROOT/bin DESTDIR=$RPM_BUILD_ROOT
 mv $RPM_BUILD_ROOT/bin/xxd $RPM_BUILD_ROOT/usr/bin
 make installmacros DESTDIR=$RPM_BUILD_ROOT
-install -s -m755 enhanced-vim $RPM_BUILD_ROOT/usr/bin/vim
+install -s -m 755 enhanced-vim $RPM_BUILD_ROOT/usr/bin/vim
 %if "%{NEED_X11}"=="'yes'"
-install -s -m755 gvim $RPM_BUILD_ROOT/usr/X11R6/bin
+install -s -m 755 gvim $RPM_BUILD_ROOT/usr/X11R6/bin
 %endif
 
-( cd $RPM_BUILD_ROOT
-  mv ./bin/vim ./bin/vi
-  rm -f ./bin/rvim
-  ln -sf vi ./bin/view
-  ln -sf vi ./bin/ex
-  ln -sf vi ./bin/rvi
-  ln -sf vi ./bin/rview
-  ln -sf vim ./usr/bin/ex
-  perl -pi -e "s,$RPM_BUILD_ROOT,," .%{_mandir}/man1/vim.1 .%{_mandir}/man1/vimtutor.1
-  rm -f .%{_mandir}/man1/rvim.1
-  ln -sf vim.1.gz .%{_mandir}/man1/vi.1.gz
-  ln -sf vim.1.gz .%{_mandir}/man1/rvi.1.gz
+pushd $RPM_BUILD_ROOT
+mv ./bin/vim ./bin/vi
+rm -f ./bin/rvim
+ln -sf vi ./bin/view
+ln -sf vi ./bin/ex
+ln -sf vi ./bin/rvi
+ln -sf vi ./bin/rview
+ln -sf vim ./usr/bin/ex
+perl -pi -e "s,$RPM_BUILD_ROOT,," \
+	.%{_mandir}/man1/vim.1 .%{_mandir}/man1/vimtutor.1
+rm -f .%{_mandir}/man1/rvim.1
+ln -sf vim.1.gz .%{_mandir}/man1/vi.1.gz
+ln -sf vim.1.gz .%{_mandir}/man1/rvi.1.gz
 %if "%{NEED_X11}"=="'yes'"
-  ln -sf vim.1.gz .%{_mandir}/man1/gvim.1.gz
-  ln -sf gvim ./usr/X11R6/bin/vimx
-  mkdir -p ./etc/X11/applnk/Utilities
-  cp %{SOURCE2} ./etc/X11/applnk/Utilities/gvim.desktop
+ln -sf vim.1.gz .%{_mandir}/man1/gvim.1.gz
+ln -sf gvim ./usr/X11R6/bin/vimx
+mkdir -p ./etc/X11/applnk/Utilities
+cp %{SOURCE2} ./etc/X11/applnk/Utilities/gvim.desktop
 %endif
-  install -s -m644 %{SOURCE3} ./usr/share/vim/%{vimversion}/macros/
-  ln -s vimrc ./usr/share/vim/%{vimversion}/macros/gvimrc
-)
-
+install -s -m 644 %{SOURCE3} ./usr/share/vim/%{vimversion}/macros/
+ln -s vimrc ./usr/share/vim/%{vimversion}/macros/gvimrc
 # Dependency cleanups
-chmod 644 $RPM_BUILD_ROOT/usr/share/vim/%{vimversion}/doc/vim2html.pl \
- $RPM_BUILD_ROOT/usr/share/vim/%{vimversion}/tools/*.pl \
- $RPM_BUILD_ROOT/usr/share/vim/%{vimversion}/tools/vim132
+chmod 644 ./usr/share/vim/%{vimversion}/doc/vim2html.pl \
+	./usr/share/vim/%{vimversion}/tools/*.pl \
+	./usr/share/vim/%{vimversion}/tools/vim132
+popd
 chmod 644 ../runtime/doc/vim2html.pl
 
 %clean
@@ -242,6 +259,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Fri Dec 15 2000 Solar Designer <solar@owl.openwall.com>
+- More spec file cleanups (no subshell).
+
 * Mon Dec 11 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - 6.0p
 - cleanup
