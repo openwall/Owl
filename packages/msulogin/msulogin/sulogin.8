@@ -1,0 +1,68 @@
+.\" $Id: Owl/packages/msulogin/msulogin/sulogin.8,v 1.1 2003/04/27 02:26:29 solar Exp $
+.TH SULOGIN 8 "27 April 2003" "Openwall Project" "System Administration"
+.SH NAME
+sulogin \- the single user mode login program
+.SH SYNOPSIS
+\fBsulogin\fR [\fB-p\fR] [\fB-t \fItimeout\fR]
+.SH DESCRIPTION
+.B sulogin
+is a program to force the console user to login under a root account
+before a shell is started.
+Unlike other implementations of
+.BR sulogin ,
+this one supports having multiple root accounts on a system.
+.PP
+.B sulogin
+is typically invoked from an
+.BR inittab (5)
+entry for single user mode or from the system's startup scripts.
+.PP
+It is important to understand that the use of
+.B sulogin
+alone may be insufficient to prevent unauthorized access to the system
+from the console.
+The firmware (BIOS) and the boot loader may by default provide user
+interaction capabilities that enable access to the system bypassing
+its regular startup.
+.SH OPTIONS
+The supported command line options match those used with
+Miquel van Smoorenburg's implementation of
+.BR sulogin .
+.TP
+.B -p
+Make the shell started by
+.B sulogin
+a login shell by setting the first character of its argument zero to a
+dash ('-').
+Typically, a login shell will process local profile files such as
+.IR /etc/profile .
+.TP
+.BI "-t " timeout
+Request that
+.B sulogin
+will timeout and exit if there's no input to a prompt in the specified
+number of seconds.
+.SH EXIT CODE
+The exit code of
+.B sulogin
+upon its successful completion is that of the shell started.
+Other possible exit codes are:
+64 on system failure or misconfiguration,
+65 on timeout, and
+66 on EOF (Ctrl-D).
+.SH HISTORY
+Implementations of
+.B sulogin
+exist in multiple commercial and free Unix flavors, although
+.B sulogin
+was not a part of AT&T System V.
+.PP
+This implementation with its support for multiple root accounts
+originates in Openwall GNU/*/Linux.
+.SH AUTHORS
+Solar Designer <solar@owl.openwall.com>
+.SH SEE ALSO
+.BR inittab (5),
+.BR init (8)
+.PP
+http://www.openwall.com/msulogin/
