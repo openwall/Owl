@@ -31,7 +31,7 @@ diff -urp procps-2.0.7.orig/proc/sysinfo.h procps-2.0.7/proc/sysinfo.h
  
 diff -urp procps-2.0.7.orig/top.c procps-2.0.7/top.c
 --- procps-2.0.7.orig/top.c	Thu Jul 13 20:19:21 2000
-+++ procps-2.0.7/top.c	Thu Oct 16 01:52:10 2003
++++ procps-2.0.7/top.c	Sat Jan 17 17:12:11 2004
 @@ -1272,6 +1272,9 @@ unsigned show_meminfo(void)
      return mem[meminfo_main][meminfo_total] >> 10;
  }
@@ -119,7 +119,7 @@ diff -urp procps-2.0.7.orig/top.c procps-2.0.7/top.c
  		 user_ticks / 10UL, user_ticks % 10UL,
  		 system_ticks / 10UL, system_ticks % 10UL,
  		 nice_ticks / 10UL, nice_ticks % 10UL,
-@@ -1447,7 +1452,7 @@ void do_stats(proc_t** p, float elapsed_
+@@ -1447,19 +1452,24 @@ void do_stats(proc_t** p, float elapsed_
  	    }
  	    else {
  	      for(i = 0; i < nr_cpu; i++) {
@@ -128,7 +128,12 @@ diff -urp procps-2.0.7.orig/top.c procps-2.0.7/top.c
  			  &u_ticks, &n_ticks, &s_ticks, &i_ticks) != 4) {
  		  fprintf(stderr, "fscanf failed on /proc/stat for cpu %d\n", i);
  		  break;
-@@ -1456,10 +1461,11 @@ void do_stats(proc_t** p, float elapsed_
+ 		}
+ 		else  {
++		  if (u_ticks < u_ticks_o[i]) u_ticks = u_ticks_o[i];
++		  if (s_ticks < s_ticks_o[i]) s_ticks = s_ticks_o[i];
++		  if (i_ticks < i_ticks_o[i]) i_ticks = i_ticks_o[i];
++		  if (n_ticks < n_ticks_o[i]) n_ticks = n_ticks_o[i];
  		  t_ticks = (u_ticks + s_ticks + i_ticks + n_ticks)
  		  	    - (u_ticks_o[i] + s_ticks_o[i]
  			       + i_ticks_o[i] + n_ticks_o[i]);
@@ -142,7 +147,7 @@ diff -urp procps-2.0.7.orig/top.c procps-2.0.7/top.c
  			  cpumap,
  			  (u_ticks - u_ticks_o[i] + n_ticks - n_ticks_o[i]) * 100 / t_ticks,
  			  (u_ticks - u_ticks_o[i]) * 100 % t_ticks / 100,
-@@ -1495,7 +1501,7 @@ void do_stats(proc_t** p, float elapsed_
+@@ -1495,7 +1505,7 @@ void do_stats(proc_t** p, float elapsed_
           fprintf(stderr, "fgets failed on /proc/stat\n");
         }
         for(i = 0; i < nr_cpu; i++) {
