@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vim/vim.spec,v 1.9 2002/04/21 01:10:33 solar Exp $
+# $Id: Owl/packages/vim/vim.spec,v 1.10 2002/04/21 01:19:59 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -102,7 +102,9 @@ with a graphical interface and mouse support.
 
 %prep
 %setup -q -n %{vimdir}
-bzcat %SOURCE1 || touch failed | patch -p0
+{
+	bzcat %SOURCE1 || touch failed
+} | patch -p0
 test ! -e failed
 %patch0 -p1
 %patch1 -p1
