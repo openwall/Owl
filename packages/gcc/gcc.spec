@@ -212,7 +212,25 @@ done)
 (cd libstdc++; for i in ChangeLog*; do
 	cp -p $i ../rpm.doc/libstdc++/$i.libstdc++
 done)
-
+(cd gcc/f; for i in ChangeLog*; do
+        cp -p $i ../../rpm.doc/g77/$i.f
+done)
+(cd libf2c; for i in ChangeLog*; do
+        cp -p $i ../rpm.doc/g77/$i.libf2c
+done)
+(cd gcc/ch; for i in ChangeLog*; do
+        cp -p $i ../../rpm.doc/chill/$i.ch
+done)
+(cd libchill; for i in ChangeLog*; do
+        cp -p $i ../rpm.doc/chill/$i.libchill
+done)
+(cd gcc/objc; for i in README*; do
+        cp -p $i ../../rpm.doc/objc/$i.objc
+done)
+(cd libobjc; for i in README*; do
+        cp -p $i ../rpm.doc/objc/$i.libobjc
+done)
+						
 %install
 rm -fr $RPM_BUILD_ROOT
 
