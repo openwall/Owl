@@ -1,4 +1,4 @@
-# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.3 2000/11/29 15:15:42 kad Exp $
+# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.4 2000/11/30 20:16:50 solar Exp $
 
 Summary: 	The GNU versions of common file management utilities.
 Name: 		fileutils
@@ -97,7 +97,8 @@ fi
 %files
 %defattr(-,root,root)
 %doc ABOUT-NLS AUTHORS COPYING ChangeLog NEWS README THANKS TODO
-%config %{_sysconfdir}/*
+%config %{_sysconfdir}/DIR_COLORS
+%config %{_sysconfdir}/profile.d/*
 
 %ifos linux
 %{_exec_prefix}/bin/*
@@ -109,6 +110,9 @@ fi
 %{_prefix}/share/locale/*/*/*
 
 %changelog
+* Thu Nov 30 2000 Solar Designer <solar@owl.openwall.com>
+- Avoid listing %{_sysconfdir}/profile.d (the directory itself).
+
 * Wed Nov 29 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - add warning to shred(1) man.
 
