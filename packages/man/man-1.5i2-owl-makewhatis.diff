@@ -1,25 +1,27 @@
-diff -ur man-1.5i.orig/src/makewhatis.sh man-1.5i/src/makewhatis.sh
---- man-1.5i.orig/src/makewhatis.sh	Mon Mar 19 19:15:24 2001
-+++ man-1.5i/src/makewhatis.sh	Fri May 18 10:13:09 2001
-@@ -3,6 +3,8 @@
+diff -ur man-1.5i2.orig/src/makewhatis.sh man-1.5i2/src/makewhatis.sh
+--- man-1.5i2.orig/src/makewhatis.sh	Mon Mar 19 19:15:24 2001
++++ man-1.5i2/src/makewhatis.sh	Fri Sep 20 01:35:23 2002
+@@ -3,6 +3,9 @@
  # Created: Sun Jun 14 10:49:37 1992
  # Revised: Sat Jan  8 14:12:37 1994 by faith@cs.unc.edu
  # Revised: Sat Mar 23 17:56:18 1996 by micheal@actrix.gen.nz
 +# Revised: Thu Aug 10 02:17:50 2000 by solar@owl.openwall.com
 +# Revised: Fri May 18 10:11:26 2001 by solar@owl.openwall.com
++# Revised: Fri Sep 20 01:32:19 2002 by solar@owl.openwall.com
  # Copyright 1992, 1993, 1994 Rickard E. Faith (faith@cs.unc.edu)
  # May be freely distributed and modified as long as copyright is retained.
  #
-@@ -25,6 +27,8 @@
+@@ -25,6 +28,9 @@
  # 971012 - replaced "test -z" - it doesnt work on SunOS 4.1.3_U1.
  # 980710 - be more careful with TMPFILE
  # 000323 - do not change PATH, better treatment of catpages - Bryan Henderson
 +# 000810 - solar: use mktemp, keep whatis files consistent while running.
 +# 010518 - solar: /usr/share/man is optional
++# 020920 - solar: use the new mktemp -t
  #
  # Note for Slackware users: "makewhatis -v -w -c" will work.
  #
-@@ -32,30 +36,22 @@
+@@ -32,30 +38,21 @@
  
  program=`basename $0`
  
@@ -50,18 +52,18 @@ diff -ur man-1.5i.orig/src/makewhatis.sh man-1.5i/src/makewhatis.sh
 -    exit 1;
 -fi
 -TMPFILE=$TMPFILEDIR/w
-+test -n "$TMPDIR" || TMPDIR=/tmp
-+TMPFILE=`mktemp $TMPDIR/$program.XXXXXX` || exit 1
- 
+-
 -# make sure TMPFILEDIR is deleted if program is killed or terminates
 -# (just delete this line if your shell doesnt know about trap)
 -trap "rm -rf $TMPFILEDIR" 0 1 2 3 15
 +# make sure TMPFILE is deleted if program is killed or terminates
-+trap "rm -f $TMPFILE" EXIT HUP INT QUIT TERM
++TMPFILE=
++trap 'rm -f "$TMPFILE"' EXIT HUP INT QUIT TERM
++TMPFILE="`mktemp -t $program.XXXXXXXXXX`" || exit 1
  
  topath=manpath
  
-@@ -118,7 +114,7 @@
+@@ -118,7 +115,7 @@
  fi
  catpath=`echo ${catpath} | tr : ' '`
  
@@ -70,7 +72,7 @@ diff -ur man-1.5i.orig/src/makewhatis.sh man-1.5i/src/makewhatis.sh
  # then only update - we might visit the same directory twice
  if [ x$update = x ]; then
     for pages in man cat
-@@ -126,7 +122,7 @@
+@@ -126,7 +123,7 @@
        eval path="\$$pages"path
        for mandir in $path
        do
@@ -79,7 +81,7 @@ diff -ur man-1.5i.orig/src/makewhatis.sh man-1.5i/src/makewhatis.sh
        done
     done
  fi
-@@ -140,7 +136,7 @@
+@@ -140,7 +137,7 @@
       if [ x$verbose != x ]; then
  	echo "about to enter $mandir" > /dev/tty
       fi
@@ -88,14 +90,26 @@ diff -ur man-1.5i.orig/src/makewhatis.sh man-1.5i/src/makewhatis.sh
  	if [ x$verbose != x ]; then
  	   echo skipping $mandir - we did it already > /dev/tty
  	fi
-@@ -358,14 +354,12 @@
+@@ -342,7 +339,7 @@
+ 	    ' pages=$pages section=$section verbose=$verbose
+ 	    cd ..
+ 	 fi
+-       done > $TMPFILE
++       done > "$TMPFILE"
+ 
+        cd $here
+ 
+@@ -356,16 +353,14 @@
+ 
+        if [ -f ${mandir1}/whatis ]
         then
- 	 cat ${mandir1}/whatis >> $TMPFILE
+-	 cat ${mandir1}/whatis >> $TMPFILE
++	 cat ${mandir1}/whatis >> "$TMPFILE"
         fi
 -       sed '/^$/d' < $TMPFILE | sort | uniq > ${mandir1}/whatis
 +       touch ${mandir1}/whatis.tmp
 +       chmod 644 ${mandir1}/whatis.tmp
-+       sed '/^$/d' < $TMPFILE | sort -u > ${mandir1}/whatis.tmp
++       sed '/^$/d' < "$TMPFILE" | sort -u > ${mandir1}/whatis.tmp
  
 -       chmod 644 ${mandir1}/whatis
 -       rm $TMPFILE

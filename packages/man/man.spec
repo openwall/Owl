@@ -1,14 +1,15 @@
-# $Id: Owl/packages/man/man.spec,v 1.6 2002/03/29 22:52:42 solar Exp $
+# $Id: Owl/packages/man/man.spec,v 1.7 2002/09/19 21:43:16 solar Exp $
 
 Summary: A set of documentation tools: man, apropos and whatis.
 Name: man
 Version: 1.5i2
-Release: owl2
+Release: owl3
 License: GPL
 Group: System Environment/Base
 Source: ftp://ftp.win.tue.nl/pub/linux-local/utils/man/man-%{version}.tar.gz
-Patch0: man-1.5i-owl-makewhatis.diff
-Requires: groff, mktemp, findutils >= 1:4.1.5-owl4
+Patch0: man-1.5i2-owl-makewhatis.diff
+Patch1: man-1.5i2-owl-latin1.diff
+Requires: groff, mktemp >= 1:1.3.1, findutils >= 1:4.1.5-owl4
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -22,6 +23,7 @@ whatis searches its own database for a complete word.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 ./configure -default +fsstnd
@@ -80,6 +82,11 @@ find /var/catman/{,X11R6/,local/}cat[123456789n] -type f -delete
 %attr(0775,root,man) %dir /var/catman/local/cat[123456789n]
 
 %changelog
+* Fri Sep 20 2002 Solar Designer <solar@owl.openwall.com>
+- Use groff -Tlatin1 such that 8-bit characters may be seen (for example,
+when viewing rpm(8) with LANG=ru_RU.KOI8_R).
+- Use the new mktemp -t in makewhatis.
+
 * Sat Mar 30 2002 Solar Designer <solar@owl.openwall.com>
 - No longer have the /var/catman/{,X11R6/,local/} directories themselves
 (as opposed to their subdirectories) writable to group man.
