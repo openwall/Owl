@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.86 2005/02/22 22:52:20 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.87 2005/03/03 02:35:14 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -11,7 +11,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 0.4.7
-Release: owl3
+Release: owl4
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%basevers%{?snapshot:-%snapshot}.tar.bz2
@@ -21,14 +21,16 @@ Source1: glibc-linuxthreads-%basevers.tar.bz2
 Source2: crypt_blowfish-%crypt_bf_version.tar.gz
 Source3: crypt_freesec.c
 Source4: crypt_freesec.h
+Source5: strlcpy.3
 
 # Patches
 # -------
-# We are using the following numbering rules for glibc's patches:
+# We are using the following numbering rules for glibc patches:
 #    0-99 - CVS
 # 100-199 - RH
-# 200-299 - ALT
-# 300-... - Owl
+# 200-299 - SuSE
+# 300-399 - ALT
+# 400-... - Owl
 
 # CVS
 Patch0: glibc-2.3.3-cvs-200406170000-sched_setaffinity.diff
@@ -306,10 +308,12 @@ mkdir -p %buildroot
 %__make install_root=%buildroot install -C build-%_target_cpu-linux
 %__make install_root=%buildroot localedata/install-locales -C build-%_target_cpu-linux
 
-# The man pages for linuxthreads and crypt_blowfish require special attention
+# These man pages require special attention
 mkdir -p %buildroot%_mandir/man3
-install -m 644 linuxthreads/man/*.3thr %buildroot%_mandir/man3/
-install -m 644 crypt_blowfish-%crypt_bf_version/*.3 %buildroot%_mandir/man3/
+install -p -m 644 linuxthreads/man/*.3thr %buildroot%_mandir/man3/
+install -p -m 644 crypt_blowfish-%crypt_bf_version/*.3 %buildroot%_mandir/man3/
+install -p -m 644 %_sourcedir/strlcpy.3 %buildroot%_mandir/man3/
+echo '.so man3/strlcpy.3' > %buildroot%_mandir/man3/strlcat.3
 
 ln -s libbsd-compat.a %buildroot%_libdir/libbsd.a
 
@@ -449,6 +453,11 @@ fi
 %files compat-fake
 
 %changelog
+* Thu Mar 03 2005 Solar Designer <solar@owl.openwall.com> 2.3.3.2004061600-owl4
+- Place strlc*() into libc_nonshared.a such that no programs become dependent
+on the presence of these extensions in the shared library.
+- Added the strlcpy(3) and strlcat(3) man pages.
+
 * Tue Feb 22 2005 Solar Designer <solar@owl.openwall.com> 2.3.3.2004061600-owl3
 - crypt_blowfish-0.4.7: crypt(3) man page updates.
 
