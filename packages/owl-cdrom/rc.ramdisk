@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/owl-cdrom/rc.ramdisk,v 1.1 2001/07/27 20:17:22 solar Exp $
+# $Id: Owl/packages/owl-cdrom/rc.ramdisk,v 1.2 2001/07/27 20:49:03 solar Exp $
 
 echo "Setting up a RAM disk"
 
@@ -16,3 +16,7 @@ ln -s /rom/var/lib /ram/var/
 ln -s /rom/etc/termcap /ram/etc/
 
 sed 's,^,/ram/dev/,' < /rom/etc/securetty > /ram/etc/securetty
+
+# Enter /ram into mtab.
+> /etc/mtab
+mount -f /dev/ram0 /ram
