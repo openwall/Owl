@@ -1,0 +1,24 @@
+--- quota-tools/quotacheck_v2.c.orig	Mon Sep 10 13:30:09 2001
++++ quota-tools/quotacheck_v2.c	Sat Feb 28 03:27:17 2004
+@@ -10,7 +10,9 @@
+ #include <errno.h>
+ #include <stdarg.h>
+ #include <stdlib.h>
++#define __KERNEL__
+ #include <asm/byteorder.h>
++#undef __KERNEL__
+ 
+ #include "pot.h"
+ #include "common.h"
+--- quota-tools/quotaio_v2.c.orig	Thu Nov 21 20:36:04 2002
++++ quota-tools/quotaio_v2.c	Sat Feb 28 03:27:17 2004
+@@ -10,7 +10,9 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <unistd.h>
++#define __KERNEL__
+ #include <asm/byteorder.h>
++#undef __KERNEL__
+ 
+ #include "pot.h"
+ #include "common.h"

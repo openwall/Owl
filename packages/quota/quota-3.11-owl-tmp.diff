@@ -1,0 +1,22 @@
+--- quota-tools/edquota.c.orig	Tue Jul 29 20:12:08 2003
++++ quota-tools/edquota.c	Sat Feb 28 00:07:09 2004
+@@ -186,14 +186,14 @@
+ 	}
+ 
+ 	umask(077);
+-	if (getuid() == geteuid() && getgid() == getegid())
+-		tmpdir = getenv("TMPDIR");
+-	if (!tmpdir)
+-		tmpdir = _PATH_TMP;
++	tmpdir = strdup(__secure_getenv("TMPDIR") ?: "/tmp");
+ 	tmpfil = smalloc(strlen(tmpdir) + strlen("/EdP.aXXXXXX") + 1);
+ 	strcpy(tmpfil, tmpdir);
+ 	strcat(tmpfil, "/EdP.aXXXXXX");
+-	tmpfd = mkstemp(tmpfil);
++	if ((tmpfd = mkstemp(tmpfil)) < 0) {
++	   perror("mkstemp");
++	   exit(1);
++	}
+ 	fchown(tmpfd, getuid(), getgid());
+ 	if (tflag) {
+ 		if (writetimes(handles, tmpfd) < 0) {

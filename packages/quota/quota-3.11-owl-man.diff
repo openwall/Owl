@@ -1,0 +1,38 @@
+--- quota-tools/quotaon.8.orig	Tue Nov 12 19:00:24 2002
++++ quota-tools/quotaon.8	Sat Feb 28 03:06:50 2004
+@@ -3,7 +3,7 @@
+ .SH NAME
+ quotaon, quotaoff \- turn filesystem quotas on and off
+ .SH SYNOPSIS
+-.B /usr/sbin/quotaon
++.B /sbin/quotaon
+ [
+ .B \-vugfp
+ ] [
+@@ -12,7 +12,7 @@
+ ]
+ .IR filesystem .\|.\|.
+ .br
+-.B /usr/sbin/quotaon
++.B /sbin/quotaon
+ [
+ .B \-avugfp
+ ] [
+@@ -20,7 +20,7 @@
+ .I format-name
+ ]
+ .LP
+-.B /usr/sbin/quotaoff
++.B /sbin/quotaoff
+ [
+ .B \-vugp
+ ]
+@@ -30,7 +30,7 @@
+ ]
+ .IR filesystem .\|.\|.
+ .br
+-.B /usr/sbin/quotaoff
++.B /sbin/quotaoff
+ [
+ .B \-avugp
+ ]

@@ -1,0 +1,30 @@
+--- quota-tools/edquota.8.orig	Thu Nov 21 18:36:04 2002
++++ quota-tools/edquota.8	Sat Feb 28 00:14:50 2004
+@@ -76,7 +76,7 @@
+ the changes made.
+ .LP
+ The editor invoked is
+-.BR vi (1)
++.BR vitmp (1)
+ unless either the
+ .SB EDITOR
+ or the
+@@ -148,6 +148,7 @@
+ .SH SEE ALSO
+ .BR quota (1),
+ .BR vi (1),
++.BR vitmp (1),
+ .BR quotactl (2),
+ .BR quotacheck (8),
+ .BR quotaon (8),
+--- quota-tools/quotaops.c.orig	Wed Jan  7 15:15:31 2004
++++ quota-tools/quotaops.c	Sat Feb 28 00:19:19 2004
+@@ -198,7 +198,7 @@
+ 		setuid(getuid());
+ 		if (!(ed = getenv("VISUAL")))
+ 			if (!(ed = getenv("EDITOR")))
+-				ed = _PATH_VI;
++				ed = "/bin/vitmp";
+ 		i = 0;
+ 		ed = actp = sstrdup(ed);
+ 		while (actp) {
