@@ -1,9 +1,9 @@
-# $Id: Owl/packages/slang/Attic/slang.spec,v 1.12 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/slang/Attic/slang.spec,v 1.13 2005/01/12 16:58:28 galaxy Exp $
 
 Summary: The shared library for the S-Lang extension language.
 Name: slang
 Version: 1.4.6
-Release: owl4
+Release: owl5
 License: GPL
 Group: System Environment/Libraries
 URL: http://www.s-lang.org
@@ -54,6 +54,10 @@ mkdir -p %buildroot/usr/include/slang
 	install_lib_dir=%buildroot%_libdir \
 	install_include_dir=%buildroot%_includedir/slang install-elf
 
+# XXX: (GM): We have to create this link, but we need to find more robust
+#            way to do it.
+ln -s lib%name.so.%version %buildroot%_libdir/lib%name.so.1
+
 # XXX: (GM): Remove unpackaged files (check later).
 # Some of these are installed with doc/ in the build directory, but a
 # conscious decision needs to be made.
@@ -83,6 +87,9 @@ rm %buildroot/usr/doc/slang/slangfun.txt
 %_includedir/slang
 
 %changelog
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.4.6-owl5
+- Fix for orphaned %_libdir/libslang.so.1 produced by ldconfig in the %post.
+
 * Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 1.4.6-owl4
 - Set Release to -owl4 to permit for making this public.
 
