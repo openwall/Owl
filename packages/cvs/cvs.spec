@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cvs/cvs.spec,v 1.16 2003/10/29 18:40:33 solar Exp $
+# $Id: Owl/packages/cvs/cvs.spec,v 1.17 2003/10/29 18:43:55 solar Exp $
 
 Summary: A version control system.
 Name: cvs
@@ -81,8 +81,8 @@ find .%_datadir/cvs -type f -print0 | xargs -r0 chmod -x --
 chmod 755 .%_datadir/cvs/contrib/rcs2log
 
 %post
-/sbin/install-info %_infodir/cvs.info.gz /%_infodir/dir
-/sbin/install-info %_infodir/cvsclient.info.gz /%_infodir/dir
+/sbin/install-info %_infodir/cvs.info.gz %_infodir/dir
+/sbin/install-info %_infodir/cvsclient.info.gz %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
