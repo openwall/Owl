@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/installworld.sh,v 1.3 2000/12/17 02:00:49 solar Exp $
+# $Id: Owl/build/installworld.sh,v 1.4 2000/12/28 18:44:25 solar Exp $
 
 . installworld.conf
 
@@ -20,16 +20,18 @@ function clean_death()
 	rm -rf tmp-work $ROOT/$HOME/tmp-work
 
 	echo "`date '+%Y %b %e %H:%M:%S'`: Interrupted" >> logs/installworld
-	exit 0
+	exit 1
 }
 
 if [ ! -d $ROOT -o ! -O $ROOT ]; then
 	echo "Invalid ROOT ($ROOT) or not running as the directory owner"
-	exit
+	exit 1
 fi
 
 umask $UMASK
 cd $HOME || exit 1
+
+STATUS=0
 
 mkdir -p logs
 
@@ -51,7 +53,7 @@ if [ ! -d $ROOT/var/lib/rpm ]; then
 	log "Initializing RPM database"
 	umask 022
 	mkdir -p $ROOT/var/lib/rpm
-	rpm --root $ROOT --define "home $HOME" --initdb
+	rpm --root $ROOT --define "home $HOME" --initdb || exit 1
 	umask $UMASK
 fi
 
@@ -64,6 +66,7 @@ while read PACKAGES; do
 	fi
 	log "Installing $PACKAGES ($FILES)"
 	rpm --root $ROOT --define "home $HOME" $FLAGS $FILES && continue
+	STATUS=1
 	log "Failed $PACKAGES"
 done
 
@@ -71,3 +74,5 @@ log "Removing temporary files"
 rm -rf $HOME/tmp-work $ROOT/$HOME/tmp-work
 
 echo "`date '+%Y %b %e %H:%M:%S'`: Finished" >> $HOME/logs/installworld
+
+exit $STATUS
