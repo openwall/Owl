@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.4 2000/08/07 23:30:20 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.5 2000/08/07 23:35:32 solar Exp $
 
 Summary: A security tool which provides authentication for applications.
 Name: pam
@@ -40,6 +40,7 @@ mkdir -p $RPM_BUILD_ROOT/usr/include/security
 mkdir -p $RPM_BUILD_ROOT/lib/security
 make install FAKEROOT=$RPM_BUILD_ROOT LDCONFIG=:
 rm -f $RPM_BUILD_ROOT/lib/security/pam_console.so
+rm -f $RPM_BUILD_ROOT/usr/man/man8/pam_console.8*
 install -m 644 libpamc/include/security/pam_client.h $RPM_BUILD_ROOT/usr/include/security
 install -d -m 755 $RPM_BUILD_ROOT/etc/pam.d
 install -m 644 other.pamd $RPM_BUILD_ROOT/etc/pam.d/other
