@@ -131,18 +131,6 @@ diff -ur xinetd-2.3.6.orig/xinetd/child.c xinetd-2.3.6/xinetd/child.c
              _exit( 1 ) ;
           }
  #endif
-diff -ur xinetd-2.3.6.orig/xinetd/confparse.c xinetd-2.3.6/xinetd/confparse.c
---- xinetd-2.3.6.orig/xinetd/confparse.c	Wed Jul 31 07:03:17 2002
-+++ xinetd-2.3.6/xinetd/confparse.c	Fri Aug  9 19:48:23 2002
-@@ -192,7 +192,7 @@
-          M_SET(scp->sc_xflags, SF_IPV6);
-       else
-       {
--	  if ( SA(scp->sc_bind_addr)->ai_family == AF_INET )
-+	  if ( SA(scp->sc_bind_addr)->sa_family == AF_INET )
-              M_SET(scp->sc_xflags, SF_IPV4);
- 	  else
-              M_SET(scp->sc_xflags, SF_IPV6);
 diff -ur xinetd-2.3.6.orig/xinetd/ident.c xinetd-2.3.6/xinetd/ident.c
 --- xinetd-2.3.6.orig/xinetd/ident.c	Wed Jul  3 17:25:29 2002
 +++ xinetd-2.3.6/xinetd/ident.c	Fri Aug  9 20:00:11 2002
