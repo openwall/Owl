@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.35 2002/12/12 16:36:08 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.36 2003/04/27 03:05:25 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.20
+Version: 0.21
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -16,7 +16,7 @@ Source6: single
 Source7: clock
 Source8: sysctl.conf
 PreReq: /sbin/chkconfig
-Requires: SysVinit, /sbin/start-stop-daemon
+Requires: SysVinit, msulogin, /sbin/start-stop-daemon
 Requires: bash >= 2.0, sh-utils
 Requires: mingetty, e2fsprogs >= 1.15, util-linux, net-tools
 Requires: gawk, sed, mktemp
@@ -147,6 +147,10 @@ fi
 %doc redhat
 
 %changelog
+* Sun Apr 27 2003 Solar Designer <solar@owl.openwall.com> 0.21-owl1
+- In rc.sysinit, use msulogin's exit codes to determine if it failed to
+start a shell and not do the automatic reboot if so.
+
 * Thu Dec 12 2002 Solar Designer <solar@owl.openwall.com>
 - Added more dummy functions for Red Hat Linux compatibility: echo_success,
 echo_failure, echo_passed, echo_warning, warning (thanks to Jarno Huuskonen).
