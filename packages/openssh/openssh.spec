@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.36 2002/06/23 16:42:03 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.37 2002/06/23 22:39:51 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
@@ -19,6 +19,7 @@ Patch2: openssh-3.3p1-owl-pam_userpass.diff
 Patch3: openssh-3.1p1-owl-scp-stalltime.diff
 Patch4: openssh-3.1p1-owl-drop-groups.diff
 Patch5: openssh-3.1p1-owl-openssl-version-check.diff
+Patch6: openssh-3.3p1-owl-mmap-fallback.diff
 PreReq: openssl >= 0.9.6b-1owl
 PreReq: openssl < 0.9.7
 PreReq: /sbin/chkconfig, grep, shadow-utils
@@ -95,6 +96,7 @@ clients to connect to your host.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" LIBS="-lcrypt -lpam -lpam_misc" ./configure \
@@ -209,6 +211,12 @@ fi
 %changelog
 * Sun Jun 23 2002 Solar Designer <solar@owl.openwall.com>
 - Updated to 3.3p1 with privilege separation.
+- If MAP_ANON|MAP_SHARED fails (is unsupported on Linux 2.2), fallback
+to using SysV shm, and, if that fails too (SysV shm is a compile-time
+kernel option), to MAP_SHARED with sparse and unlinked swap files.
+- pam_mktemp is now run during account management, not session setup,
+as the latter is no longer done as root (possibly something to be
+reverted in future versions).
 
 * Sat Jun 08 2002 Solar Designer <solar@owl.openwall.com>
 - Build deattack.c with -mcpu=ev5 when building for alphaev56+ to not

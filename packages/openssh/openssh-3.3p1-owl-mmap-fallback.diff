@@ -1,0 +1,86 @@
+diff -ur openssh-3.3p1.orig/monitor_mm.c openssh-3.3p1/monitor_mm.c
+--- openssh-3.3p1.orig/monitor_mm.c	Fri Jun  7 05:57:25 2002
++++ openssh-3.3p1/monitor_mm.c	Mon Jun 24 01:30:58 2002
+@@ -29,6 +29,7 @@
+ #ifdef HAVE_SYS_MMAN_H
+ #include <sys/mman.h>
+ #endif
++#include <sys/shm.h>
+ 
+ #include "ssh.h"
+ #include "xmalloc.h"
+@@ -84,9 +85,42 @@
+ 	 */
+ 	mm->mmalloc = mmalloc;
+ 
+-#if  defined(HAVE_MMAP) && defined(MAP_ANON)
++#ifdef HAVE_MMAP
++	mm->shm_not_mmap = 0;
++#ifdef MAP_ANON
+ 	address = mmap(NULL, size, PROT_WRITE|PROT_READ, MAP_ANON|MAP_SHARED,
+ 	    -1, 0);
++#else
++	address = MAP_FAILED;
++#endif
++	if (address == MAP_FAILED) {
++		int shmid;
++
++		shmid = shmget(IPC_PRIVATE, size, IPC_CREAT|S_IRUSR|S_IWUSR);
++		if (shmid != -1) {
++			address = shmat(shmid, NULL, 0);
++			shmctl(shmid, IPC_RMID, NULL);
++			if (address != MAP_FAILED)
++				mm->shm_not_mmap = 1;
++		}
++	}
++	if (address == MAP_FAILED) {
++		char tmpname[sizeof(MM_SWAP_TEMPLATE)] = MM_SWAP_TEMPLATE;
++		int tmpfd;
++		int save_errno;
++
++		tmpfd = mkstemp(tmpname);
++		if (tmpfd == -1)
++			fatal("mkstemp(\"%s\"): %s",
++			    MM_SWAP_TEMPLATE, strerror(errno));
++		unlink(tmpname);
++		ftruncate(tmpfd, size);
++		address = mmap(NULL, size, PROT_WRITE|PROT_READ, MAP_SHARED,
++		    tmpfd, 0);
++		save_errno = errno;
++		close(tmpfd);
++		errno = save_errno;
++	}
+ 	if (address == MAP_FAILED)
+ 		fatal("mmap(%lu): %s", (u_long)size, strerror(errno));
+ #else
+@@ -131,6 +165,10 @@
+ 	mm_freelist(mm->mmalloc, &mm->rb_allocated);
+ 
+ #ifdef HAVE_MMAP
++	if (mm->shm_not_mmap) {
++		if (shmdt(mm->address) == -1)
++			fatal("shmdt(%p): %s", mm->address, strerror(errno));
++	} else
+ 	if (munmap(mm->address, mm->size) == -1)
+ 		fatal("munmap(%p, %lu): %s", mm->address, (u_long)mm->size,
+ 		    strerror(errno));
+diff -ur openssh-3.3p1.orig/monitor_mm.h openssh-3.3p1/monitor_mm.h
+--- openssh-3.3p1.orig/monitor_mm.h	Tue Mar 26 06:42:21 2002
++++ openssh-3.3p1/monitor_mm.h	Mon Jun 24 01:25:51 2002
+@@ -40,6 +40,7 @@
+ 	struct mmtree rb_allocated;
+ 	void *address;
+ 	size_t size;
++	int shm_not_mmap;
+ 
+ 	struct mm_master *mmalloc;	/* Used to completely share */
+ 
+@@ -52,6 +53,8 @@
+ #define MM_MINSIZE		128
+ 
+ #define MM_ADDRESS_END(x)	(void *)((u_char *)(x)->address + (x)->size)
++
++#define MM_SWAP_TEMPLATE	"/var/run/sshd.mm.XXXXXXXX"
+ 
+ struct mm_master *mm_create(struct mm_master *, size_t);
+ void mm_destroy(struct mm_master *);
