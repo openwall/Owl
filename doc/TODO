@@ -494,12 +494,6 @@ names (or the shadow suite programs themselves would misbehave).
 login should accept IP addresses rather than hostnames such that it
 can log both into wtmp.
 
-[PRIORITY: medium]
-su should support the "su - user -c command" syntax as well.
-
-[PRIORITY: low]
-su should allow root to specify a custom shell via the command line.
-
 
 	strace.
 
@@ -613,4 +607,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.15 2003/04/12 15:54:12 solar Exp $
+$Id: Owl/doc/TODO,v 1.16 2003/04/15 14:48:50 solar Exp $
