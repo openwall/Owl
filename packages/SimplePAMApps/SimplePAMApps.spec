@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.32 2003/10/30 08:49:44 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.32.2.1 2004/04/13 21:51:50 solar Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
 Version: 0.60
-Release: owl21
+Release: owl22
 License: BSD or GPL
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
@@ -16,7 +16,7 @@ Source5: passwd.control
 Patch0: SimplePAMApps-0.60-owl-alt-login.diff
 Patch1: SimplePAMApps-0.60-owl-passwd.diff
 Patch2: SimplePAMApps-0.60-owl-alt-su.diff
-Patch3: SimplePAMApps-0.60-owl-login-su-ut_id.diff
+Patch3: SimplePAMApps-0.60-owl-alt-login-su-ut_id.diff
 Patch4: SimplePAMApps-0.60-alt-owl-login-su-env.diff
 Patch5: SimplePAMApps-0.60-alt-login-su-strip-argv0.diff
 PreReq: owl-control >= 0.4, owl-control < 2.0
@@ -94,6 +94,10 @@ fi
 /etc/control.d/facilities/*
 
 %changelog
+* Sun Feb 08 2004 Solar Designer <solar@owl.openwall.com> 0.60-owl22
+- In login and su, generate ut_id's consistently with libutempter and
+openssh (patch from Dmitry Levin of ALT Linux).
+
 * Thu Oct 16 2003 Solar Designer <solar@owl.openwall.com> 0.60-owl21
 - Invoke "control passwd tcb" when updating old installs; the invocation
 from owl-etc could have failed if the previous version of SimplePAMApps

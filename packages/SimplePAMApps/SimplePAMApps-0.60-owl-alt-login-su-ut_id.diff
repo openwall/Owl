@@ -1,5 +1,6 @@
---- SimplePAMApps-0.60.orig/common/lib/wtmp.c	Wed Jan 27 19:27:16 1999
-+++ SimplePAMApps-0.60/common/lib/wtmp.c	Fri Mar  1 23:14:57 2002
+diff -uprk.orig SimplePAMApps-0.60.orig/common/lib/wtmp.c SimplePAMApps-0.60/common/lib/wtmp.c
+--- SimplePAMApps-0.60.orig/common/lib/wtmp.c	1999-01-27 19:27:16 +0300
++++ SimplePAMApps-0.60/common/lib/wtmp.c	2004-02-08 20:01:56 +0300
 @@ -3,9 +3,6 @@
   */
  
@@ -51,7 +52,7 @@
  
      return u_tmp_p;
  }
-@@ -72,13 +81,18 @@
+@@ -72,11 +81,11 @@ void set_terminal_name(const char *termi
      if ( *terminal == '/' ) {     /* now deal with filenames */
  	int o1, o2;
  
@@ -61,18 +62,11 @@
  	    o2 = 8;
  	} else {
 -	    o2 = strlen(terminal) - sizeof(UT_IDSIZE);
-+	    if (!strncmp("/dev/pts/", terminal, 9))
-+		o1 = 8; /* include the slash */
-+	    o2 = strlen(terminal + o1) - UT_IDSIZE;
++	    o2 = (int)strlen(terminal) - UT_IDSIZE;
  	    if (o2 < 0)
  		o2 = 0;
-+	    o2 += o1;
-+	    if (o1 > 5)
-+		o1 = 5;
  	}
- 
- 	strncpy(ut_line, terminal + o1, UT_LINESIZE);
-@@ -203,7 +217,6 @@
+@@ -203,7 +212,6 @@ int utmp_do_open_session(const char *use
      set_terminal_name(terminal, ut_line, ut_id);
  
      utmpname(_PATH_UTMP);
