@@ -1,7 +1,7 @@
-diff -ur man-1.5i2.orig/configure man-1.5i2/configure
---- man-1.5i2.orig/configure	Wed May 23 04:02:01 2001
-+++ man-1.5i2/configure	Fri Sep 20 01:22:59 2002
-@@ -369,12 +369,7 @@
+diff -ur man-1.5l.orig/configure man-1.5l/configure
+--- man-1.5l.orig/configure	Mon Mar 10 20:21:00 2003
++++ man-1.5l/configure	Sun Mar 16 19:43:08 2003
+@@ -480,12 +480,7 @@
      troff="troff -mandoc"
      echo "Warning: could not find groff"
    else
@@ -9,9 +9,9 @@ diff -ur man-1.5i2.orig/configure man-1.5i2/configure
 -    then
 -      nroff="$Fgroff -Tlatin1 -mandoc"
 -    else
--      nroff="$Fnroff -mandoc"
+-      nroff="$Fnroff -Tlatin1 -mandoc"
 -    fi
 +    nroff="$Fgroff -Tlatin1 -mandoc"
      troff="$Fgroff -Tps -mandoc"
+     jnroff="$Fgroff -Tnippon -mandocj"
    fi
-   eqn="$Fgeqn -Tps"

@@ -1,42 +1,37 @@
-diff -ur man-1.5i2.orig/src/makewhatis.sh man-1.5i2/src/makewhatis.sh
---- man-1.5i2.orig/src/makewhatis.sh	Mon Mar 19 19:15:24 2001
-+++ man-1.5i2/src/makewhatis.sh	Fri Sep 20 01:35:23 2002
-@@ -3,6 +3,9 @@
+diff -ur man-1.5l.orig/src/makewhatis.sh man-1.5l/src/makewhatis.sh
+--- man-1.5l.orig/src/makewhatis.sh	Mon Mar 10 20:14:51 2003
++++ man-1.5l/src/makewhatis.sh	Sun Mar 16 20:10:58 2003
+@@ -3,6 +3,7 @@
  # Created: Sun Jun 14 10:49:37 1992
  # Revised: Sat Jan  8 14:12:37 1994 by faith@cs.unc.edu
  # Revised: Sat Mar 23 17:56:18 1996 by micheal@actrix.gen.nz
-+# Revised: Thu Aug 10 02:17:50 2000 by solar@owl.openwall.com
-+# Revised: Fri May 18 10:11:26 2001 by solar@owl.openwall.com
-+# Revised: Fri Sep 20 01:32:19 2002 by solar@owl.openwall.com
++# (please see below for further revisions)
  # Copyright 1992, 1993, 1994 Rickard E. Faith (faith@cs.unc.edu)
  # May be freely distributed and modified as long as copyright is retained.
  #
-@@ -25,6 +28,9 @@
+@@ -25,7 +26,10 @@
  # 971012 - replaced "test -z" - it doesnt work on SunOS 4.1.3_U1.
  # 980710 - be more careful with TMPFILE
  # 000323 - do not change PATH, better treatment of catpages - Bryan Henderson
-+# 000810 - solar: use mktemp, keep whatis files consistent while running.
-+# 010518 - solar: /usr/share/man is optional
-+# 020920 - solar: use the new mktemp -t
++# 000810 - use mktemp, keep whatis files consistent while running - solar@owl
++# 010518 - /usr/share/man is optional - solar@owl
+ # 011117 - avoid suspicious filenames
++# 020920 - use the new mktemp -t - solar@owl
+ # 030310 - find files only; fix LAPACK cruft; no /usr/man default;
+ #	use /dev/stderr instead of /dev/tty; handle files with strange names;
+ #	add support for chinese, hungarian, indonesian, japanese, korean,
+@@ -33,7 +37,7 @@
  #
  # Note for Slackware users: "makewhatis -v -w -c" will work.
  #
-@@ -32,30 +38,21 @@
+-# makewhatis aeb 030310 (from %version%)
++# makewhatis aeb 030310 / Owl 030316 (from %version%)
  
  program=`basename $0`
  
--DEFMANPATH=/usr/man:/usr/share/man
--DEFCATPATH=/usr/man/preformat:/usr/man:/usr/share/man
-+DEFMANPATH=/usr/man
-+DEFCATPATH=/usr/man/preformat:/usr/man
-+
-+if [ -d /usr/share/man ]; then
-+	DEFMANPATH="${DEFMANPATH}:/usr/share/man"
-+	DEFCATPATH="${DEFCATPATH}:/usr/share/man"
-+fi
- 
+@@ -63,24 +67,11 @@
  # AWK=/usr/bin/gawk
- AWK=%gawk%
+ AWK=%awk%
  
 -# Find a place for our temporary files. If security is not a concern, use
 -#	TMPFILE=/tmp/whatis$$; TMPFILEDIR=none
@@ -58,12 +53,13 @@ diff -ur man-1.5i2.orig/src/makewhatis.sh man-1.5i2/src/makewhatis.sh
 -trap "rm -rf $TMPFILEDIR" 0 1 2 3 15
 +# make sure TMPFILE is deleted if program is killed or terminates
 +TMPFILE=
-+trap 'rm -f "$TMPFILE"' EXIT HUP INT QUIT TERM
++trap 'rm -f "$TMPFILE"' EXIT
++trap 'rm -f "$TMPFILE"; exit 1' HUP INT QUIT TERM
 +TMPFILE="`mktemp -t $program.XXXXXXXXXX`" || exit 1
  
- topath=manpath
- 
-@@ -118,7 +115,7 @@
+ # default find arg: no directories, no empty files
+ findarg0="-type f -size +0"
+@@ -146,7 +137,7 @@
  fi
  catpath=`echo ${catpath} | tr : ' '`
  
@@ -72,7 +68,7 @@ diff -ur man-1.5i2.orig/src/makewhatis.sh man-1.5i2/src/makewhatis.sh
  # then only update - we might visit the same directory twice
  if [ x$update = x ]; then
     for pages in man cat
-@@ -126,7 +123,7 @@
+@@ -154,7 +145,7 @@
        eval path="\$$pages"path
        for mandir in $path
        do
@@ -81,17 +77,33 @@ diff -ur man-1.5i2.orig/src/makewhatis.sh man-1.5i2/src/makewhatis.sh
        done
     done
  fi
-@@ -140,7 +137,7 @@
+@@ -168,7 +159,7 @@
       if [ x$verbose != x ]; then
- 	echo "about to enter $mandir" > /dev/tty
+ 	echo "about to enter $mandir" > /dev/stderr
       fi
 -     if [ -s ${mandir}/whatis -a $pages = man -a x$update = x ]; then
 +     if [ ! -f ${mandir}/whatis.update -a $pages = man -a x$update = x ]; then
  	if [ x$verbose != x ]; then
- 	   echo skipping $mandir - we did it already > /dev/tty
+ 	   echo skipping $mandir - we did it already > /dev/stderr
  	fi
-@@ -342,7 +339,7 @@
- 	    ' pages=$pages section=$section verbose=$verbose
+@@ -235,12 +226,12 @@
+ 	      sub(/\..*/, "", progname);
+ 	      if (use_zcat || use_bzcat) {
+ 		if (use_zcat) {
+-		  pipe_cmd = "zcat \"" filename "\"";
++		  pipe_cmd = "zcat '"'"'" filename "'"'"'";
+ 		} else {
+-		  pipe_cmd = "bzcat \"" filename "\"";
++		  pipe_cmd = "bzcat '"'"'" filename "'"'"'";
+ 		}
+ 		# try to avoid suspicious stuff
+-		if (filename ~ /[;&|`$(]/) {
++		if (filename ~ /[;&|`'"'"'"$(]/) {
+ 		  print "ignored strange file name " filename " in " curdir > "/dev/stderr";
+ 		  return;
+ 		}
+@@ -387,7 +378,7 @@
+ 	    ' pages=$pages section=$section verbose=$verbose curdir=$curdir
  	    cd ..
  	 fi
 -       done > $TMPFILE
@@ -99,7 +111,7 @@ diff -ur man-1.5i2.orig/src/makewhatis.sh man-1.5i2/src/makewhatis.sh
  
         cd $here
  
-@@ -356,16 +353,14 @@
+@@ -401,16 +392,14 @@
  
         if [ -f ${mandir1}/whatis ]
         then

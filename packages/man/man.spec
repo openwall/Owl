@@ -1,14 +1,14 @@
-# $Id: Owl/packages/man/man.spec,v 1.7 2002/09/19 21:43:16 solar Exp $
+# $Id: Owl/packages/man/man.spec,v 1.8 2003/03/16 20:25:58 solar Exp $
 
 Summary: A set of documentation tools: man, apropos and whatis.
 Name: man
-Version: 1.5i2
-Release: owl3
+Version: 1.5l
+Release: owl1
 License: GPL
 Group: System Environment/Base
 Source: ftp://ftp.win.tue.nl/pub/linux-local/utils/man/man-%{version}.tar.gz
-Patch0: man-1.5i2-owl-makewhatis.diff
-Patch1: man-1.5i2-owl-latin1.diff
+Patch0: man-1.5l-owl-makewhatis.diff
+Patch1: man-1.5l-owl-latin1.diff
 Requires: groff, mktemp >= 1:1.3.1, findutils >= 1:4.1.5-owl4
 BuildRoot: /override/%{name}-%{version}
 
@@ -26,7 +26,7 @@ whatis searches its own database for a complete word.
 %patch1 -p1
 
 %build
-./configure -default +fsstnd
+./configure -default -fhs +fsstnd
 mv conf_script conf_script.orig
 sed 's,/usr/lib,/etc,' < conf_script.orig > conf_script
 chmod u+x conf_script
@@ -82,6 +82,9 @@ find /var/catman/{,X11R6/,local/}cat[123456789n] -type f -delete
 %attr(0775,root,man) %dir /var/catman/local/cat[123456789n]
 
 %changelog
+* Sun Mar 16 2003 Solar Designer <solar@owl.openwall.com>
+- Updated to 1.5l.
+
 * Fri Sep 20 2002 Solar Designer <solar@owl.openwall.com>
 - Use groff -Tlatin1 such that 8-bit characters may be seen (for example,
 when viewing rpm(8) with LANG=ru_RU.KOI8_R).
