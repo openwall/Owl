@@ -5,6 +5,15 @@ remains fixed; it's only the stable branch which has these changes.
 
 	Changes made between Owl 0.1-prerelease and Owl 0.1-stable.
 
+(2001/07/05 - 2001/07/22)
+2001/07/22	Package: xinetd
+SECURITY FIX	Severity: none to high, remote, active
+Performed an audit of the xinetd source code for several classes of
+vulnerabilities, and applied _many_ security and reliability fixes.
+The patch is 100 KB large.  See AUDIT in the package documentation.
+None of the vulnerabilities are known to affect the default xinetd
+configuration on Owl.
+
 2001/07/10	Package: tar
 RELIABILITY FIX: There was a bug which caused tar to loop endlessly on
 a read error when verifying archives (this affected both -W, --verify,
@@ -185,4 +194,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp@hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.2.2.6 2001/07/10 13:11:06 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.2.2.7 2001/07/22 10:58:11 solar Exp $
