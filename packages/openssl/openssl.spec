@@ -1,8 +1,10 @@
+# $Id: Owl/packages/openssl/openssl.spec,v 1.4 2000/10/01 21:21:46 solar Exp $
+
 %define libmaj 0
 %define libmin 9
 %define librel 5
 %define librev a
-Release: 1owl
+Release: 2owl
 
 %define openssldir /var/ssl
 
