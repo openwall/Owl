@@ -1,4 +1,4 @@
-# $Id: Owl/packages/readline/readline.spec,v 1.5 2000/12/08 00:04:25 mci Exp $
+# $Id: Owl/packages/readline/readline.spec,v 1.6 2000/12/08 00:10:37 mci Exp $
 
 Summary: A library for editing typed in command lines.
 Name: readline
@@ -19,8 +19,7 @@ BuildRequires: sed
 Provides: libreadline.so.3 libreadline.so.3.0
 
 # Use %optflags_lib for this package if defined.
-%{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%o
-ptflags}}
+%{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 
 
 %description
