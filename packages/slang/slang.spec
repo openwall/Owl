@@ -1,4 +1,4 @@
-# $Id: Owl/packages/slang/Attic/slang.spec,v 1.8 2004/07/19 23:54:44 mci Exp $
+# $Id: Owl/packages/slang/Attic/slang.spec,v 1.9 2004/07/20 00:11:31 mci Exp $
 
 Summary: The shared library for the S-Lang extension language.
 Name: slang
@@ -70,7 +70,7 @@ mkdir -p $RPM_BUILD_ROOT/usr/include/slang
 
 %changelog
 * Tue Jul 20 2004 Michail Litvak <mci@owl.openwall.com> 1.4.6-owl3
-- Use sed -i instead perl.
+- Use sed -i instead of perl.
 
 * Sat Oct 12 2002 Solar Designer <solar@owl.openwall.com> 1.4.6-owl2
 - Updated to 1.4.6.
