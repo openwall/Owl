@@ -16,11 +16,11 @@ color markers brightcyan default
 color attachment brightmagenta default
 color search default green	# how to hilite search patterns in the pager
 
-color header brightred default ^(From|To|Subject):
+color header brightred default ^(From|To|Cc|Reply-To|Subject):
 color body magenta default "(ftp|https?)://[^ ]+"	# point out URLs
 color body magenta default [-a-z_0-9.+]+@[-a-z_0-9.]+	# e-mail addresses
 color underline brightgreen default
 
 # attributes when using a mono terminal
-mono header underline ^(From|To|Subject):
+mono header underline ^(From|To|Cc|Reply-To|Subject):
 mono quoted bold
