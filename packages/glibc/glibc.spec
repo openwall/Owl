@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.33 2002/07/04 19:18:26 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.34 2002/07/05 14:30:22 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -47,6 +47,7 @@ Patch32: glibc-2.1.3-rh-timezone.diff
 Patch33: glibc-2.1.3-rh-syslog.diff
 Patch40: glibc-2.1.3-bcl-cyr-locale.diff
 Patch41: glibc-2.1.3-mdk-fix-ucontext.diff
+Patch42: glibc-2.1.3-vine-compat-resolv.diff
 Patch50: glibc-2.1.3-cvs-20000827-locale.diff
 Patch51: glibc-2.1.3-cvs-20000824-unsetenv.diff
 Patch52: glibc-2.1.3-cvs-20000824-md5-align-clean.diff
@@ -144,6 +145,7 @@ cp $RPM_SOURCE_DIR/crypt_freesec.c crypt/sysdeps/unix/
 %patch33 -p1
 %patch40 -p1
 %patch41 -p1
+%patch42 -p1
 %patch50 -p1
 %patch51 -p1
 cd md5-crypt
@@ -306,6 +308,13 @@ fi
 %endif
 
 %changelog
+* Fri Jul 05 2002 Solar Designer <solar@owl.openwall.com>
+- Added the patch by NISHIMURA Daisuke and Tomohiro 'Tomo-p' KATO of
+Vine Linux to fix the DNS resolver buffer overflows affecting both host
+and net lookups in the glibc-compat code that is used by binaries built
+against glibc 2.0:
+http://sources.redhat.com/ml/bug-glibc/2002-07/msg00119.html
+
 * Thu Jul 04 2002 Solar Designer <solar@owl.openwall.com>
 - Back-ported the fix to buffer overflow in resolv/nss_dns/dns-network.c
 affecting getnetby{addr,name}{,_r}(3) when "dns" is listed on "networks"
