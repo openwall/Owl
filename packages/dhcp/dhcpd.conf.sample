@@ -1,0 +1,16 @@
+# See dhcpd.conf(5) for further configuration
+
+ddns-update-style none;
+
+subnet 192.168.0.0 netmask 255.255.255.0 {
+	option routers			192.168.0.1;
+	option subnet-mask		255.255.255.0;
+
+	option nis-domain		"domain.org";
+	option domain-name		"domain.org";
+	option domain-name-servers	192.168.1.1;
+
+	range dynamic-bootp 192.168.0.128 192.168.0.254;
+	default-lease-time 21600;
+	max-lease-time 43200;
+}
