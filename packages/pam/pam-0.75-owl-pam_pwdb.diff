@@ -1,6 +1,17 @@
 diff -ur pam-0.75.orig/modules/pam_pwdb/Makefile pam-0.75/modules/pam_pwdb/Makefile
 --- pam-0.75.orig/modules/pam_pwdb/Makefile	Fri Jan  5 01:51:31 2001
-+++ pam-0.75/modules/pam_pwdb/Makefile	Sun Oct  7 08:58:59 2001
++++ pam-0.75/modules/pam_pwdb/Makefile	Sun May 19 03:03:07 2002
+@@ -11,8 +11,8 @@
+ 
+ ifeq ($(HAVE_LIBPWDB),yes)
+ 
+-EXTRALS += -lpwdb 
+-EXTRAS += -DCHKPWD_HELPER=\"$(SUPLEMENTED)/$(CHKPWD)\"
++EXTRALS += -lpwdb
++EXTRAS += -DCHKPWD_HELPER=\"/usr/libexec/chkpwd/$(CHKPWD)\"
+ 
+ ifeq ($(HAVE_LIBCRYPT),yes)
+   EXTRALS += -lcrypt
 @@ -26,9 +26,8 @@
  LIBOBJD = $(addprefix dynamic/,$(LIBOBJ))
  #LIBOBJS = $(addprefix static/,$(LIBOBJ))
@@ -26,18 +37,25 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/Makefile pam-0.75/modules/pam_pwdb/Makef
  
  md5_good.o: md5.c
  	$(CC) $(CFLAGS) $(CPPFLAGS) -DHIGHFIRST -D'MD5Name(x)=Good##x' \
-@@ -106,7 +104,7 @@
+@@ -105,12 +103,12 @@
+ ifdef DYNAMIC
  	$(INSTALL) -m $(SHLIBMODE) $(LIBSHARED) $(FAKEROOT)$(SECUREDIR)
  endif
- 	$(MKDIR) $(FAKEROOT)$(SUPLEMENTED)
+-	$(MKDIR) $(FAKEROOT)$(SUPLEMENTED)
 -	$(INSTALL) -m 4555 $(CHKPWD) $(FAKEROOT)$(SUPLEMENTED)
-+	$(INSTALL) -m 700 $(CHKPWD) $(FAKEROOT)$(SUPLEMENTED)
++	$(MKDIR) $(FAKEROOT)/usr/libexec/chkpwd
++	$(INSTALL) -m 700 $(CHKPWD) $(FAKEROOT)/usr/libexec/chkpwd/
  
  remove:
  	rm -f $(FAKEROOT)$(SECUREDIR)/$(TITLE).so
+-	rm -f $(FAKEROOT)$(SUPLEMENTED)/$(CHKPWD)
++	rm -f $(FAKEROOT)/usr/libexec/chkpwd/$(CHKPWD)
+ 
+ clean:
+ 	rm -f $(CHKPWD) $(LIBOBJD) $(LIBOBJS) $(MOREDELS) core *~ *.o *.so
 diff -ur pam-0.75.orig/modules/pam_pwdb/pam_pwdb.c pam-0.75/modules/pam_pwdb/pam_pwdb.c
 --- pam-0.75.orig/modules/pam_pwdb/pam_pwdb.c	Fri Jan  5 01:51:31 2001
-+++ pam-0.75/modules/pam_pwdb/pam_pwdb.c	Sun Oct  7 08:54:18 2001
++++ pam-0.75/modules/pam_pwdb/pam_pwdb.c	Sun May 19 03:01:37 2002
 @@ -190,7 +190,7 @@
  
      pwdb_start();
@@ -49,7 +67,7 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/pam_pwdb.c pam-0.75/modules/pam_pwdb/pam
      D(("done."));
 diff -ur pam-0.75.orig/modules/pam_pwdb/pam_unix_acct.-c pam-0.75/modules/pam_pwdb/pam_unix_acct.-c
 --- pam-0.75.orig/modules/pam_pwdb/pam_unix_acct.-c	Mon Jan 22 19:04:15 2001
-+++ pam-0.75/modules/pam_pwdb/pam_unix_acct.-c	Sun Oct  7 08:54:12 2001
++++ pam-0.75/modules/pam_pwdb/pam_unix_acct.-c	Sun May 19 03:01:37 2002
 @@ -145,7 +145,7 @@
  	warn_days = *((const int *) pwe->value);
  	(void) pwdb_entry_delete(&pwe);
@@ -61,7 +79,7 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/pam_unix_acct.-c pam-0.75/modules/pam_pw
  	    if ( on(UNIX_DEBUG, ctrl) ) {
 diff -ur pam-0.75.orig/modules/pam_pwdb/pam_unix_md.-c pam-0.75/modules/pam_pwdb/pam_unix_md.-c
 --- pam-0.75.orig/modules/pam_pwdb/pam_unix_md.-c	Mon Jan  3 22:01:53 2000
-+++ pam-0.75/modules/pam_pwdb/pam_unix_md.-c	Sun Oct  7 08:54:18 2001
++++ pam-0.75/modules/pam_pwdb/pam_unix_md.-c	Sun May 19 03:01:37 2002
 @@ -9,6 +9,9 @@
   * software freely from the US, please do not send me any. (AGM)
   */
@@ -109,7 +127,7 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/pam_unix_md.-c pam-0.75/modules/pam_pwdb
 +#endif
 diff -ur pam-0.75.orig/modules/pam_pwdb/pam_unix_passwd.-c pam-0.75/modules/pam_pwdb/pam_unix_passwd.-c
 --- pam-0.75.orig/modules/pam_pwdb/pam_unix_passwd.-c	Mon Jan 22 19:04:15 2001
-+++ pam-0.75/modules/pam_pwdb/pam_unix_passwd.-c	Sun Oct  7 08:54:18 2001
++++ pam-0.75/modules/pam_pwdb/pam_unix_passwd.-c	Sun May 19 03:01:37 2002
 @@ -5,12 +5,20 @@
  " - PAM_PWDB password module <morgan@parc.power.net>"
  ;
@@ -301,7 +319,7 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/pam_unix_passwd.-c pam-0.75/modules/pam_
  	D(("password processed"));
 diff -ur pam-0.75.orig/modules/pam_pwdb/pwdb_chkpwd.c pam-0.75/modules/pam_pwdb/pwdb_chkpwd.c
 --- pam-0.75.orig/modules/pam_pwdb/pwdb_chkpwd.c	Mon Apr 23 22:14:19 2001
-+++ pam-0.75/modules/pam_pwdb/pwdb_chkpwd.c	Sun Oct  7 09:02:48 2001
++++ pam-0.75/modules/pam_pwdb/pwdb_chkpwd.c	Sun May 19 03:01:37 2002
 @@ -108,7 +108,7 @@
  	fprintf(stderr,
  		"This program is not designed for running in this way\n"
@@ -340,7 +358,7 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/pwdb_chkpwd.c pam-0.75/modules/pam_pwdb/
  /*
 diff -ur pam-0.75.orig/modules/pam_pwdb/support.-c pam-0.75/modules/pam_pwdb/support.-c
 --- pam-0.75.orig/modules/pam_pwdb/support.-c	Mon Apr 23 22:39:04 2001
-+++ pam-0.75/modules/pam_pwdb/support.-c	Sun Oct  7 09:09:36 2001
++++ pam-0.75/modules/pam_pwdb/support.-c	Sun May 19 03:01:37 2002
 @@ -228,7 +228,12 @@
  	}
  

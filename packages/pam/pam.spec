@@ -1,9 +1,9 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.23 2002/02/11 15:36:12 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.24 2002/05/19 03:50:41 solar Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
 Version: 0.75
-Release: owl14
+Release: owl15
 %define rh_version %{version}-10
 License: GPL or BSD
 Group: System Environment/Base
@@ -93,10 +93,6 @@ make install THINGSTOMAKE='modules libpam libpamc libpam_misc'
 
 install -m 644 modules/pam_chroot/chroot.conf $RPM_BUILD_ROOT/etc/security/
 
-mkdir $RPM_BUILD_ROOT/sbin/chkpwd.d
-mv $RPM_BUILD_ROOT/sbin/*_chkpwd $RPM_BUILD_ROOT/sbin/chkpwd.d/
-ln -s /sbin/chkpwd.d/pwdb_chkpwd $RPM_BUILD_ROOT/sbin/pwdb_chkpwd
-
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}
 mv $RPM_BUILD_ROOT/lib/*.a $RPM_BUILD_ROOT/%{_libdir}/
 
@@ -116,10 +112,10 @@ rm -rf $RPM_BUILD_ROOT
 
 %triggerin -- shadow-utils
 grep -q '^shadow:[^:]*:42:' /etc/group && \
-	chgrp shadow /sbin/chkpwd.d/pwdb_chkpwd && \
-	chmod 2711 /sbin/chkpwd.d/pwdb_chkpwd
+	chgrp shadow %{_libexecdir}/chkpwd/pwdb_chkpwd && \
+	chmod 2711 %{_libexecdir}/chkpwd/pwdb_chkpwd
 grep -q ^chkpwd: /etc/group || groupadd -g 163 chkpwd
-chgrp chkpwd /sbin/chkpwd.d && chmod 710 /sbin/chkpwd.d
+chgrp chkpwd %{_libexecdir}/chkpwd && chmod 710 %{_libexecdir}/chkpwd
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -137,9 +133,8 @@ chgrp chkpwd /sbin/chkpwd.d && chmod 710 /sbin/chkpwd.d
 /lib/libpamc.so.*
 /lib/libpam_misc.so.*
 
-%attr(700,root,root) %dir /sbin/chkpwd.d/
-%attr(700,root,root) /sbin/chkpwd.d/pwdb_chkpwd
-/sbin/pwdb_chkpwd
+%attr(700,root,root) %dir %{_libexecdir}/chkpwd
+%attr(700,root,root) %{_libexecdir}/chkpwd/pwdb_chkpwd
 
 /sbin/pam_tally
 
@@ -203,6 +198,9 @@ chgrp chkpwd /sbin/chkpwd.d && chmod 710 /sbin/chkpwd.d
 %doc doc/specs/rfc86.0.txt
 
 %changelog
+* Sun May 19 2002 Solar Designer <solar@owl.openwall.com>
+- Moved the chkpwd directory to /usr/libexec.
+
 * Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 
