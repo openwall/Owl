@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bzip2/bzip2.spec,v 1.4 2000/11/29 15:15:42 kad Exp $
+# $Id: Owl/packages/bzip2/bzip2.spec,v 1.5 2000/11/29 15:59:42 kad Exp $
 
 %define 	bz2libver	1.0.0
 
@@ -13,6 +13,7 @@ Source0: 	ftp://sources.redhat.com/pub/bzip2/v100/bzip2-%{version}.tar.gz
 Source1: 	bzgrep
 Patch: 		bzip2-1.0.1-autoconflibtoolize.patch.gz
 BuildRoot: 	/var/rpm-buildroot/%{name}-root
+Provides:       libbz2.so.0
 
 %description
 Bzip2 is a freely available, patent-free, high quality data compressor.
