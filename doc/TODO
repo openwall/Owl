@@ -4,15 +4,15 @@ see CONVENTIONS if you do).  It is not intended as a poor replacement
 for a request tracking system (although we don't yet use one) and it
 is not a complete TODO list either.
 
-Currently, this list is limited to packages and just those already in
-Owl.  It doesn't have to be, so this may change.  In reality, besides
-the existing packages, there're quite a few bits of work on packages
-yet to be added, on Owl build environment, kernel, documentation, and
-the facilities we use to run the project.
+Currently, this list is limited to packages.  It doesn't have to be,
+so this may change.  In reality, besides the packages, there're quite
+a few bits of work on Owl build environment, kernel, documentation,
+and the facilities we use to run the project.
 
 If something is listed as ASSIGNED, it doesn't mean you shouldn't
 offer to do it.  Re-assigning is perfectly fine if it would seem to
-help achieve the goal.
+help achieve the goal.  (In fact, I really don't expect some people to
+complete what they've volunteered for.)
 
 
 	autoconf, automake, libtool.
@@ -52,6 +52,13 @@ response).
 Update to latest release.
 
 
+	bison, dialog, diffstat, diffutils, file, hdparm, man-pages.
+
+[PRIORITY: low]
+[ASSIGNED: mci@]
+Update these to latest releases once in a while.
+
+
 	console-tools.
 
 [PRIORITY: high]
@@ -85,11 +92,23 @@ outside of the intended directory tree.  This has been dealt with in
 tar already.
 
 
-	bison, dialog, diffstat, diffutils, file, hdparm, man-pages.
+	cvs.
 
 [PRIORITY: low]
-[ASSIGNED: mci@]
-Update these to latest releases once in a while.
+[ASSIGNED: Camiel]
+Package it, reviewing and importing some of the fixes found in at
+least OpenBSD, ALT Linux and Red Hat Linux.
+
+
+	dhcp.
+
+[PRIORITY: low]
+[ASSIGNED: Matthias]
+Package it.  The likely choice is latest ISC DHCP suite.  There should
+be client, server, and relay subpackages.  Both the server and the
+client should be modified to run as dedicated pseudo-users and in
+chroot jails, and the client should implement privilege separation
+(not easy).
 
 
 	fileutils, sh-utils, textutils.
@@ -166,6 +185,13 @@ Update to latest release, make sure it is able to handle our mirroring
 again.  Support (ignore) the "-n" flag, for CPAN.
 
 
+	libcap, ntp.
+
+[PRIORITY: low]
+Package these.  Use CAEN Linux patches for both xntpd and ntpdate, use
+user xntpd, UID/GID 185 (already allocated).
+
+
 	libnet, libnids, libpcap.
 
 [PRIORITY: low]
@@ -211,6 +237,23 @@ makewhatis.
 Correct the man page to not refer to chflags(1) (it's a BSD'ism).
 Support ext2fs flags.  Optionally don't store and ignore symlink
 permissions.  Optionally dereference symlinks.
+
+
+	mutt.
+
+[PRIORITY: medium]
+[ASSIGNED: Jarno]
+Package it, fixing the various temporary file handling issues and
+considering enhancements from VVV (http://mutt.org.ua).
+
+
+	nc (netcat).
+
+[PRIORITY: low]
+[ASSIGNED: mci@]
+Port it from OpenBSD, fixing various code paths taken on error.  Have
+it default to AF_INET (not AF_UNSPEC) until glibc gets fixed (see the
+reference in telnet.spec for more information on this problem).
 
 
 	openssh.
@@ -548,4 +591,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.3 2002/12/22 18:54:54 solar Exp $
+$Id: Owl/doc/TODO,v 1.4 2002/12/22 19:22:04 solar Exp $
