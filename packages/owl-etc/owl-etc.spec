@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.46 2003/05/29 00:56:46 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.47 2003/05/29 01:29:45 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
@@ -46,7 +46,7 @@ cp -rL $RPM_SOURCE_DIR/* etc/
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%triggerin -- tcb
+%triggerin -- shadow-utils
 function pause()
 {
 	echo
