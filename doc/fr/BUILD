@@ -17,17 +17,17 @@ Autrement, vous avez besoin de créer le répertoire, ajouter le pseudo
 utilisateur "build", de façon préférée avec l'UID 151 et le GID 150
 ("sources"), et le rendre propriétaire du répertoire.
 
-Placez l'arborescence CVS dans /usr/src/world. Actuellement, ceci est fait
-en extrayant native.tar.gz disponible via les sites FTP. Vous obtiendrez le
-répertoire "native", et un lien symbolique Makefile.
+Placez l'arborescence CVS dans /usr/src/world. La façon la plus simple pour
+faire cela est en extrayant native.tar.gz disponible via les miroirs FTP.
+Vous obtiendrez le répertoire "native", et un lien symbolique Makefile.
 
 Pour compiler effectivement depuis les sources, placez également le
 répertoire "sources" dans /usr/src/world.
 
 Si vous n'êtes pas, encore, sur un système Owl et voulez installer des
-packages binaires, créez /usr/src/world/RPMS et placez y les packages pour
+paquets binaires, créez /usr/src/world/RPMS et placez y les paquets pour
 votre architecture. Notez que vous avez besoin de l'arborescence CVS même
-pour installer les packages binaires.
+pour installer les paquets binaires.
 
 
 	Besoins.
@@ -64,8 +64,8 @@ Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB	5:30
 (Oui, gcc est si gourmand et lent sur Alpha.)
 
 Les temps de compilation vont augmenter quand nous ajouterons plus de
-packages et mettrons à jour vers de nouvelles versions de logiciels déjà
-dans Owl.
+paquets et mettrons à jour vers de nouvelles versions de logiciels déjà dans
+Owl.
 
 
 	(Re-)compilations natives.
@@ -76,29 +76,29 @@ et tapez :
 
 	make clean && make buildworld
 
-Avec le fichier buildworld.conf par défaut, les packages seront compilés
-pour la version la plus ancienne de l'architecture du système de compilation
-(voir ARCHITECTURES) et la compilation tentera d'utiliser jusqu'à deux
-processeurs.
+Avec le fichier buildworld.conf par défaut, les paquets seront compilés pour
+la version la plus ancienne de l'architecture du système de compilation
+(voir ARCHITECTURES) et la compilation tentera d'utiliser tous les
+processeurs systèmes.
 
 Le fichier buildworld.conf (aussi bien que les autres fichiers *.conf) peut
 être édité en le copiant depuis native/Owl/build vers /usr/src/world. Vous
 avez d'abord besoin de supprimer le lien symbolique, si un a été créé pour
 vous auparavant.
 
-Tous les packages sont compilés avec les versions de bibliothèques et
+Tous les paquets sont compilés avec les versions de bibliothèques et
 d'outils de compilation qui sont installés sur le système. Plusieurs
 itérations de buildworld et installworld (deux sont suffisantes la plupart
 du temps) doivent être utilisées quand il y a eu des mises à jour
-significatives des packages utilisés durant les compilations.
+significatives des paquets utilisés durant les compilations.
 
 
-	Installations de packages binaires.
+	Installations de paquets binaires.
 
-"make installworld" installera les packages trouvés dans /usr/src/world/RPMS
+"make installworld" installera les paquets trouvés dans /usr/src/world/RPMS
 dans le système courant, ou dans tout nouveau répertoire racine de votre
 choix (comme spécifié par la valeur de ROOT= dans le fichier
-installworld.conf). Par défaut, les packages seront installés dans /owl.
+installworld.conf). Par défaut, les paquets seront installés dans /owl.
 
 "make installworld" doit être exécuté en tant que root.
 
@@ -106,19 +106,15 @@ Actuellement, il est possible de convertir l'installation d'une Linux Red
 Hat 6.x existante en Owl avec "make installworld" et quelques aides
 manuelles. Assurez vous de lire et comprendre tout du fichier
 installorder.conf avant d'essayer ceci. En particulier, votre noyau ne
-devrait plus être une partie des packages RPM au moment de la conversion du
+devrait plus être une partie des paquets RPM au moment de la conversion du
 système en Owl.
 
 
-	Re-compilations de packages individuels.
+	(Re-)compilations de paquets individuels.
 
-Pour re-compiler un package Owl : supprimez le SRPM dans
-/usr/src/world/SRPMS, supprimez tous les packages binaires produits à partir
-de ce package source dans /usr/src/world/RPMS, tapez "make buildworld".
+Les paquets individuels peuvent être compilés ou re-compilés avec
+"make PACKAGE=nom" où "nom" est le nom du paquet source. Pour les paquets
+étrangers (SRPMs) compilés avec l'environnement de compilation de Owl vous
+avez aussi besoin d'inclure dans "nom" la partie numéro de version.
 
-Nous considérons vraiment la compilation de SRPM et la manque de support de
-dépendances automatiques de compilation pour les re-compilations comme un
-bogue dans l'environnement de compilation. Nous fixerons ceci
-éventuellement.
-
-$Id: Owl/doc/fr/BUILD,v 1.4 2002/08/20 16:16:08 solar Exp $
+$Id: Owl/doc/fr/BUILD,v 1.5 2002/10/14 08:52:25 ducamp Exp $

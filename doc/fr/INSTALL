@@ -8,21 +8,21 @@ que vous pouvez déjà avoir.
 
 	Installer depuis un lecteur de CD-ROM local.
 
-Si vous n'avez pas déjà un CD Owl, merci de voir le fichier DOWNLOAD pour
-les endroits où vous pouvez obtenir les images de CD ISO-9660 et les graver
-sur un CD-R.
+Si vous n'avez pas déjà un CD Owl, merci soit d'en commander un soit de voir
+le fichier DOWNLOAD pour les endroits où vous pouvez obtenir les images de
+CD ISO-9660 et les graver sur un CD-R.
 
-Le CD Owl pour x86 est démarrable, donc si votre machine supporte de
+Les CD Owl pour x86 sont démarrables, donc si votre machine supporte de
 démarrer depuis un CD alors faites le. Autrement prenez l'image de la
 disquette de démarrage depuis le CD sous boot/floppy.image, copiez la sur
-une disquette 1,44 Mo formattée (avec dd(1) ou un outil équivalent), et
+une disquette 1,44 Mo formatée (avec dd(1) ou un outil équivalent), et
 démarrez depuis la disquette. Dans les deux cas, le gestionnaire de
 démarrage vous demandera le périphérique de votre CD-ROM que le noyau
 utilisera comme système de fichiers racine.
 
 Owl devrait démarrer en mode single user (ndt : utilisateur unique). Au
 prompt du mot de passe de root vous pouvez soit presser simplement sur
-Entrée (puisque celui du CD a un mot de passe vide) ou presser Ctrl-D pour
+Entrée (puisque celui des CD a un mot de passe vide) ou presser Ctrl-D pour
 laisser le système démarrer directement en mode multi-user (ndt :
 utilisateurs multiples) (non recommandé). Si vous choisissez d'entrer dans
 un shell en mode single user, vous avez une chance de configurer
@@ -32,7 +32,7 @@ optionnellement le système démarré depuis le CD en tapant simplement :
 
 La configuration sera stockée en mémoire (des parties de /etc et /var sont
 dans un ramdisk (ndt : un disque en mémoire)). Vous pouvez alors laisser le
-système démarrer en mode multi-user en quittant le shell. Bien sûr, cette
+système démarrer en mode multi-user en sortant du shell. Bien sûr, cette
 étape est optionnelle et n'est nécessaire seulement s'il est plus pratique
 de compléter l'installation en mode multi-user (tel que, en opérant depuis
 une station de travail distante) ou si vous avez l'intention d'utiliser
@@ -44,10 +44,8 @@ générique, ci-dessous.
 
 	Utiliser une installation Linux existante.
 
-Une installation Linux adéquate a besoin d'offrir quelques outils GNU et RPM
-(les versions 3.0.5 ou 3.0.6 sont recommandées, les précédentes ne
-fonctionneront pas). Elle n'a pas à utiliser RPM comme son gestionnaire de
-packages.
+Une installation Linux adéquate a besoin d'offrir quelques outils GNU et
+rpm2cpio. Elle n'a pas à utiliser RPM comme son gestionnaire de paquets.
 
 Vous avez besoin de préparer l'habituel organisation /usr/src/world comme
 expliqué dans le fichier BUILD. Puis procédez avec les instructions
@@ -69,11 +67,20 @@ S'il y a un problème durant l'étape "installworld" (regardez les lignes
 "Failed"), corrigez leurs causes et re-exécutez la commande.
 
 Une fois que l'espace utilisateur Owl est installé, vous avez aussi besoin
-d'installer un noyau. Actuellement, ceci nécessite d'être un noyau Linux
-2.2, et nous recommandons que vous compiliez la version disponible avec Owl.
+d'installer un noyau. Actuellement, Owl supporte entièrement les noyaux
+Linux 2.2 et supporte de s'exécuter avec les noyaux 2.4 (mais afin de
+recompiler Owl avec "make buildworld" vous avez besoin de fournir les
+sources du noyau 2.2 comme expliqué dans BUILD). Nous recommandons que vous
+compiliez la version fournie avec Owl.
 
 Vous pouvez choisir de configurer le chargeur de démarrage avec Owl (LILO ou
 SILO, dépendant de l'architecture), ou vous pouvez utiliser un chargeur de
 démarrage déjà installé sur le système (s'il y en a un).
 
-$Id: Owl/doc/fr/INSTALL,v 1.4 2002/10/07 19:13:35 solar Exp $
+Notez que la compilation du noyau et la configuration du gestionnaire de
+démarrage ont besoin d'être effectuées chrootées dans votre espace
+utilisateur nouvellement installé.
+
+	chroot /owl
+
+$Id: Owl/doc/fr/INSTALL,v 1.5 2002/10/14 08:52:25 ducamp Exp $

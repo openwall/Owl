@@ -6,7 +6,7 @@ souhaitent contribuer au projet.
 
 Nos conventions pour les fichiers spec RPM sont assez similaires à celles de
 RedHat, mais quelques différences et besoins supplémentaires pour les
-paquetages natifs Owl existent.
+paquets natifs Owl existent.
 
 1. Commencez le fichier spec avec un commentaire contenant le mot clé CVS
 Id, suivi par une ligne vide.
@@ -22,16 +22,38 @@ Architectures de compilation, Architectures exclues, Architectures
 exclusives, Racine de compilation). Nous n'utilisons pas (actuellement) les
 autres tags.
 
-3. Le tag BuildRoot correct pour un paquetage Owl est :
+3. Les numéros de version pour les paquets Owl natifs sont de la forme :
+
+	owlREVISION
+
+ou, lors de l'empaquetage d'une version alpha/bêta/préversion d'une certaine
+pièce de logiciel et le tag Version est le numéro de version imminent :
+
+	owl0.REVISION
+
+ou, lors de la mise à jour d'une branche plus ancienne de Owl :
+
+	BRANCH_POINT_RELEASE.BRANCH.REVISION
+
+où REVISION est un numéro de version de paquet spécifique à Owl incrémenté
+après chaque mise à jour, BRANCH_POINT_RELEASE est la chaîne Release telle
+que lorsque la branche a été créée, et BRANCH est la version de la branche
+(qui est, "0.1" pour Owl 0.1-stable).
+
+Lors de la mise à jour vers une nouvelle Version, REVISION doit être
+réinitialisé à 1 et, pour les branches plus anciennes, BRANCH_POINT_RELEASE
+initialisé à "owl0".
+
+4. Le tag BuildRoot correct pour un paquet Owl est :
 
 	BuildRoot: /override/%{name}-%{version}
 
 Notre environnement de compilation surchargera le tag BuildRoot sans tenir
 compte de ce tag, mais le fixer de cette façon rappellera aux gens de
-surcharger le tag BuildRoot pour les compilations manuelles du paquetage,
+surcharger le tag BuildRoot pour les compilations manuelles du paquet,
 surtout en dehors de Owl.
 
-4. Séparez les noms de tag et les valeurs que vous leur fixez avec un unique
+5. Séparez les noms de tag et les valeurs que vous leur fixez avec un unique
 caractère espace. Utilisez les virgules (également suivies par un espace)
 pour séparer les articles dans les listes de dépendances. Terminez les
 lignes Summary avec un point. Dans Summary et %description (comme dans tout
@@ -40,7 +62,7 @@ même si elles sont le premier mot d'une phrase, à moins que la forme avec
 une majuscule soit le nom officiel pour le logiciel en question. Utilisez
 deux espaces pour séparer les phrases.
 
-5. Notre environnement de compilation fixe les drapeaux d'optimisation du
+6. Notre environnement de compilation fixe les drapeaux d'optimisation du
 compilateur C/C++ dans %optflags d'une façon qui est optimale pour la
 compilation de programmes standalone et qui ne produit pas trop
 d'avertissements avec des fichiers sources typiques. En compilant des
@@ -70,7 +92,7 @@ avant la section %build :
 
 	%{expand:%%define optflags %optflags -Wall}
 
-6. Les sous-shells dans la compilation, pre/post-
+7. Les sous-shells dans la compilation, pré/post-
 installation/désinstallation, et les trigger-scripts sont à éviter par tous
 les moyens puisqu'ils masquent les erreurs possibles. Si vous avez
 l'intention d'utiliser un sous-shell pour changer temporairement le
@@ -78,12 +100,15 @@ répertoire courant, utilisez plutôt les commandes pushd et popd. Si vous
 devez réellement utiliser un sous-shell, il est suggéré que vous propagiez
 manuellement le statut des commandes qu'il exécute au shell père.
 
-7. Utilisez les tabulations pour indenter les blocs conditionnels et les
+8. Utilisez les tabulations pour indenter les blocs conditionnels et les
 suites de lignes dans les scripts.
 
-8. Utilisez -eq pour comparer les valeurs numériques (en particulier,
-l'argument $1 que RPM lui-même passe aux scripts). Ne placez pas le $1 entre
-guillemets.
+9. Utilisez -eq pour comparer les valeurs numériques (en particulier,
+l'argument $1 que RPM lui-même passe aux scripts, et ne placez pas le $1
+entre guillemets).
+
+10. Dans les dates de l'entrée %changelog, utilisez deux chiffres pour le
+jour du mois avec un zéro devant si nécessaire.
 
 
 	Nommage des fichiers patch.
@@ -92,7 +117,7 @@ Utilisez la syntaxe suivante pour les noms des fichiers patch.
 
 	NOM-VERSION-ORIGINE-QUOI.diff
 
-où NOM et VERSION sont les nom et version du paquetage, ORIGINE est une
+où NOM et VERSION sont les nom et version du paquet, ORIGINE est une
 abréviation du nom de la distribution (ou des noms des distributions) d'où
 est originaire le patch, et QUOI est la description de ce pour quoi le patch
 est fait ou ce qu'il fait.
@@ -103,20 +128,28 @@ patches développés en tant que partie de Owl, ORIGINE doit être fixée à
 "owl". Si un patch est dérivé d'une autre distribution mais avec des
 changements significatifs appliqués, ORIGINE devrait inclure "-owl-"
 également (ce qui devrait indiquer que tous les bogues sont les nôtres). Si
-un patch a été extrait du dépôt CVS principal du paquetage en question (par
+un patch a été extrait du dépôt CVS principal du paquet en question (par
 exemple, ceci peut être le cas pour divers rétro-portages), ORIGINE devrait
 être fixée à "cvs" et QUOI à la date correspondante (comme AAAAMMJJ) plus la
-description habituelle du patch.
+description habituelle du patch. Les patches des mainteneurs en amont qui ne
+sont pas (encore?) dans le dépôt CVS primaire (si un existe encore) peut
+avoir ORIGINE initialisé à "up".
 
-Il y a également quelques QUOI communs à utiliser chaque fois que c'est en
+Il y a également quelques QUOIs communs à utiliser chaque fois que c'est en
 vigueur :
 
+Makefile	- seulement des patches de fichiers Makefile* (notez la
+		  majuscule)
 bound		- vérification de limites (réparations de débordements de
 		  tampon et/ou d'entier)
+config		- seulement des patches de fichiers de configuration
+		  (compilation ou exécution)
+doc		- seulement des patches de fichiers de documentation
 fixes		- accumulation de patches de bogue, de fiabilité, et/ou de
 		  sécurité
 format		- réparations de chaînes de formats de type printf (pas
 		  seulement de sécurité)
+info		- seulement des patches de fichiers de documentation texinfo
 install-no-root	- changements pour exécuter "make install" ou équivalent en
 		  non-root
 linux		- changements nécessaires pour compiler sur Linux (pour les
@@ -124,6 +157,8 @@ linux		- changements nécessaires pour compiler sur Linux (pour les
 man		- patches seulement des manuels
 tmp		- patches s'occupant de problèmes de manipulations de
 		  fichiers temporaires
+vitmp		- patches qui ajoutent un support vitmp(1)
+warnings	- seulement des corrections de warnings de compilation
 
 Ceci NE suggère PAS que vous devriez essayer d'arranger vos modifications
 telles que les fichiers patch correspondent à une de ces catégories. En
@@ -144,4 +179,4 @@ utilisé avec les options suivantes :
 Ceci ne correspond pas exactement à notre style de codage préféré et ainsi
 ne doit pas être utilisé sur les sources déjà dans Owl.
 
-$Id: Owl/doc/fr/CONVENTIONS,v 1.1 2002/02/07 07:42:40 solar Exp $
+$Id: Owl/doc/fr/CONVENTIONS,v 1.2 2002/10/14 08:52:25 ducamp Exp $
