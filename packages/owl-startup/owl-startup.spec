@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.39 2003/10/30 21:15:47 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.40 2003/11/03 12:27:29 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -52,7 +52,8 @@ install -m 700 sysconfig/network-scripts/* \
 	$RPM_BUILD_ROOT/etc/sysconfig/network-scripts/
 mv $RPM_BUILD_ROOT/etc/sysconfig/network-scripts/if{up,down} \
 	$RPM_BUILD_ROOT/sbin/
-ln -s ../../../sbin/if{up,down} $RPM_BUILD_ROOT/etc/sysconfig/network-scripts/
+# Can't have relative symlinks out of /etc as it's moved under /ram on CDs
+ln -s /sbin/if{up,down} $RPM_BUILD_ROOT/etc/sysconfig/network-scripts/
 
 mkdir redhat
 mv sysconfig.txt sysvinitfiles redhat/
