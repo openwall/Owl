@@ -1,0 +1,11 @@
+--- patch-2.5.4/backupfile.c.orig	Thu Dec 14 15:59:58 2000
++++ patch-2.5.4/backupfile.c	Thu Dec 14 16:28:38 2000
+@@ -105,7 +105,7 @@
+ 
+ /* The extension added to file names to produce a simple (as opposed
+    to numbered) backup file name. */
+-const char *simple_backup_suffix = "~";
++char const *simple_backup_suffix = ".orig";
+ 
+ static int max_backup_version PARAMS ((const char *, const char *));
+ static int version_number PARAMS ((const char *, const char *, size_t));

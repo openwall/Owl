@@ -1,14 +1,15 @@
-# $Id: Owl/packages/patch/patch.spec,v 1.1 2000/11/17 13:01:15 mci Exp $
+# $Id: Owl/packages/patch/patch.spec,v 1.2 2000/12/20 20:49:03 mci Exp $
 
 Summary: The GNU patch command, for modifying/upgrading files.
 Name: patch
 Version: 2.5.4
-Release: 5owl
+Release: 6owl
 Copyright: GPL
 Group: Development/Tools
 Source: ftp://ftp.gnu.org/gnu/patch/patch-%{version}.tar.gz
 Patch0: patch-2.5.4-mdk-sigsegv.diff
 Patch1: patch-2.5.4-rh-stderr.diff
+Patch2: patch-2.5.4-owl-backup.diff
 Prefix: %{_prefix}
 Buildroot: /var/rpm-buildroot/%{name}-root
 
@@ -26,6 +27,7 @@ applications.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 # (fg) Large file support can be disabled from ./configure - it is necessary at
@@ -52,6 +54,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/*/*
 
 %changelog
+* Wed Dec 20 2000 Michail Litvak <mci@owl.openwall.com>
+- added patch to fix default backup extension
+
 * Tue Nov 17 2000 Michail Litvak <mci@owl.openwall.com>
 - import from RH and Mandrake 
 - sigsegv patch from MDK, stderr from RH
