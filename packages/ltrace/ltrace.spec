@@ -1,12 +1,12 @@
-# $Id: Owl/packages/ltrace/ltrace.spec,v 1.2 2001/01/14 12:53:10 mci Exp $
+# $Id: Owl/packages/ltrace/ltrace.spec,v 1.3 2001/01/14 14:07:14 solar Exp $
 
 Summary: Tracks runtime library calls from dynamically linked executables.
-Name:    ltrace
+Name: ltrace
 Version: 0.3.10
 Release: 6owl
 Copyright: GPL
 Group: Development/Debuggers
-ExclusiveArch: i386 sparc sparcv9
+ExclusiveArch: %ix86 sparc sparcv9
 Source: ftp://ftp.debian.org/debian/dists/potato/main/source/utils/ltrace_%{version}.tar.gz
 Patch0: ltrace-0.3.10-rh-sparc.diff
 Patch1: ltrace-0.3.10-rh-mandir.diff
@@ -15,10 +15,10 @@ Prefix: %{_prefix}
 BuildRoot: /var/rpm-buildroot/%{name}-root
 
 %description
-Ltrace is a debugging program which runs a specified command until the
+ltrace is a debugging program which runs a specified command until the
 command exits.  While the command is executing, ltrace intercepts and
 records both the dynamic library calls called by the executed process
-and the signals received by the executed process.  Ltrace can also
+and the signals received by the executed process.  ltrace can also
 intercept and print system calls executed by the process.
 
 You should install ltrace if you need a sysadmin tool for tracking the
@@ -53,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/ltrace.conf
 
 %changelog
+* Sun Jan 14 2001 Solar Designer <solar@owl.openwall.com>
+- i386 -> %ix86
+
 * Sun Jan 14 2001 Michail Litvak <mci@owl.openwall.com>
 - Imported from RH
 
@@ -74,7 +77,7 @@ rm -rf $RPM_BUILD_ROOT
 - update to 0.3.10.
 - include (but don't apply) sparc patch from Jakub Jellinek.
 
-* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com> 
+* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com>
 - auto rebuild in the new build environment (release 2)
 
 * Fri Mar 12 1999 Jeff Johnson <jbj@redhat.com>
