@@ -1,16 +1,17 @@
-# $Id: Owl/packages/cvs/cvs.spec,v 1.2 2003/04/27 13:45:17 solar Exp $
+# $Id: Owl/packages/cvs/cvs.spec,v 1.3 2003/04/28 20:26:33 solar Exp $
 
 Summary: A version control system.
 Name: cvs
 Version: 1.11.5
-Release: owl0.2
+Release: owl0.3
 License: GPL
 Group: Development/Tools
 URL: http://www.cvshome.org
 Source: ftp://ftp.cvshome.com/pub/%{name}-%{version}/%{name}-%{version}.tar.bz2
 Patch0: cvs-1.11.5-owl-zlib.diff
 Patch1: cvs-1.11.5-owl-no-checkin-update-prog.diff
-Patch2: cvs-1.11.5-alt-owl-tmp.diff
+Patch2: cvs-1.11.5-owl-tmp.diff
+Patch3: cvs-1.11.5-owl-vitmp.diff
 PreReq: /sbin/install-info
 Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
@@ -35,9 +36,13 @@ release.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
-%configure --without-gssapi
+export ac_cv_func_mkstemp=yes \
+%configure \
+	--without-krb4 --without-gssapi \
+	--with-tmpdir=/tmp --with-editor=/bin/vitmp
 
 make LDFLAGS=-s
 gzip -9nf doc/*.ps
@@ -70,6 +75,14 @@ fi
 %{_datadir}/%{name}
 
 %changelog
+* Tue Apr 29 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl0.3
+- Many more updates to the temporary file handling patch, making it twice
+bigger.
+- Force configure to use /tmp for the default temporary file directory,
+and not pick and store $TMPDIR that was set at build time.
+- Use vitmp with cvsbug, rcs-to-cvs, and cvs itself.
+- Enable mkstemp explicitly, not rely on configure.
+
 * Sun Apr 27 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl0.2
 - Re-worked much of the temporary file handling patch to make it actually
 do at least some of what it was supposed to; also patched the fail-open

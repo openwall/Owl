@@ -1,0 +1,818 @@
+diff -ur cvs-1.11.5.orig/FAQ cvs-1.11.5/FAQ
+--- cvs-1.11.5.orig/FAQ	Thu Dec 19 16:07:17 2002
++++ cvs-1.11.5/FAQ	Mon Apr 28 19:30:55 2003
+@@ -1546,7 +1546,8 @@
+      After running "make" you might try running the "sanity.sh" script:
+    ./src/sanity.sh `pwd`/src/cvs
+    
+-   It writes into /tmp/cvs-sanity by default.
++   By default, it writes into a temporary directory it creates under
++   $TMPDIR or under /tmp if $TMPDIR is not set.
+    
+      Finish reading the INSTALL file and test out the system.
+    
+@@ -4931,30 +4932,30 @@
+    than the recovery step described below.
+    
+    Let's assume your original import procedure was: (We assume there is
+-   enough disk space in /tmp.)
++   enough disk space in ~/tmp.)
+    
+    cd <head-of-vendor-tree>
+-            cvs import -m 'xyz 1.3' gnu/xyz GNU GNUXYZ_1_3 | tee /tmp/IMP
++            cvs import -m 'xyz 1.3' gnu/xyz GNU GNUXYZ_1_3 | tee ~/tmp/IMP
+ 
+    To import just the files ignored by "import", I would do this:
+    
+      Create a list of the ignored files to import:
+    
+-   cd <head-of-vendor-tree> awk '/^I / {print $2}' /tmp/IMP | sed
+-   's|^gnu/xyz/||' > /tmp/IG [Edit the IG file to contain just the files
++   cd <head-of-vendor-tree> awk '/^I / {print $2}' ~/tmp/IMP | sed
++   's|^gnu/xyz/||' > ~/tmp/IG [Edit the IG file to contain just the files
+    you want.]
+    
+      Then create a sparse directory by handing your list to the GNU
+    version of "tar", installed in many places as "gtar":
+    
+-   mkdir /tmp/FIXUP gtar -T /tmp/IG -c -f - . | (cd /tmp/FIXUP; gtar xvBf
++   mkdir ~/tmp/FIXUP gtar -T ~/tmp/IG -c -f - . | (cd ~/tmp/FIXUP; gtar xvBf
+    -)
+    
+      Then rerun the import. Use the exact same command, but execute it in
+    the sparse directory tree you just created. And this time, tell it not
+    to ignore anything.
+    
+-   cd /tmp/FIXUP
++   cd ~/tmp/FIXUP
+            cvs import -I ! -m 'xyz 1.3' gnu/xyz GNU GNUXYZ_1_3
+ 
+    Last modified: _6/13/1997_
+diff -ur cvs-1.11.5.orig/INSTALL cvs-1.11.5/INSTALL
+--- cvs-1.11.5.orig/INSTALL	Thu Dec 19 16:00:01 2002
++++ cvs-1.11.5/INSTALL	Mon Apr 28 19:42:45 2003
+@@ -300,9 +300,7 @@
+ 
+     The --with-tmpdir argument to configure may be used to set a
+     specific directory for use as a default temporary directory.  If not
+-    set, configure will pick the first directory it finds which it has
+-    read, write, and execute permissions to from $TMPDIR, $TMP, $TEMP,
+-    /tmp, and /var/tmp, in that order.  Failing that, it will use /tmp.
++    set, configure will use /tmp.
+ 
+     The --with-umask argument to configure can be used to change
+     the default umask used by the CVS server executable.
+diff -ur cvs-1.11.5.orig/TESTS cvs-1.11.5/TESTS
+--- cvs-1.11.5.orig/TESTS	Thu Oct 18 15:50:43 2001
++++ cvs-1.11.5/TESTS	Mon Apr 28 19:49:06 2003
+@@ -13,10 +13,10 @@
+ WARNING:  This test can take quite a while to run, esp. if your
+ disks are slow or over-loaded.
+ 
+-The tests work in /tmp/cvs-sanity (which the tests create) by default.
+-If for some reason you want them to work in a different directory, you
+-can set the TESTDIR environment variable to the desired location
+-before running them.
++By default, the tests create and use a temporary directory under
++$TMPDIR or under /tmp if $TMPDIR is not set.  If for some reason you
++want them to work in a different directory, you can set the TESTDIR
++environment variable to the desired location before running them.
+ 
+ The tests use a number of tools (awk, expr, id, tr, etc.) that are not
+ required for running CVS itself.  In most cases, the standard vendor-
+diff -ur cvs-1.11.5.orig/TODO cvs-1.11.5/TODO
+--- cvs-1.11.5.orig/TODO	Tue Sep 24 20:08:42 2002
++++ cvs-1.11.5/TODO	Mon Apr 28 19:50:17 2003
+@@ -691,27 +691,27 @@
+ working directory is not a CVS-controlled directory with the correct
+ CVSROOT.  For example, the following will fail:
+ 
+-  cd /tmp
++  cd ~/tmp
+   cvs -d /repos co foo
+   cd /
+-  cvs update /tmp/foo
++  cvs update ~/tmp/foo
+ 
+ It is possible to read the CVSROOT from the administrative files in
+ the directory specified by the absolute pathname argument to update.
+ In that case, the last command above would be equivalent to:
+ 
+-  cd /tmp/foo
++  cd ~/tmp/foo
+   cvs update .
+ 
+ This can be problematic, however, if we ask CVS to update two
+ directories with different CVSROOTs.  Currently, CVS has no way of
+ changing CVSROOT mid-stream.  Consider the following:
+ 
+-  cd /tmp
++  cd ~/tmp
+   cvs -d /repos1 co foo
+   cvs -d /repos2 co bar
+   cd /
+-  cvs update /tmp/foo /tmp/bar
++  cvs update ~/tmp/foo ~/tmp/bar
+ 
+ To make that example work, we need to think hard about:
+ 
+diff -ur cvs-1.11.5.orig/configure cvs-1.11.5/configure
+--- cvs-1.11.5.orig/configure	Thu Jan 16 21:36:48 2003
++++ cvs-1.11.5/configure	Mon Apr 28 19:40:10 2003
+@@ -6200,21 +6200,7 @@
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+   ac_cv_sys_long_file_names=yes
+-# Test for long file names in all the places we know might matter:
+-#      .		the current directory, where building will happen
+-#      $prefix/lib	where we will be installing things
+-#      $exec_prefix/lib	likewise
+-# eval it to expand exec_prefix.
+-#      $TMPDIR		if set, where it might want to write temporary files
+-# if $TMPDIR is not set:
+-#      /tmp		where it might want to write temporary files
+-#      /var/tmp		likewise
+-#      /usr/tmp		likewise
+-if test -n "$TMPDIR" && test -d "$TMPDIR" && test -w "$TMPDIR"; then
+-  ac_tmpdirs=$TMPDIR
+-else
+-  ac_tmpdirs='/tmp /var/tmp /usr/tmp'
+-fi
++ac_tmpdirs=
+ for ac_dir in  . $ac_tmpdirs `eval echo $prefix/lib $exec_prefix/lib` ; do
+   test -d $ac_dir || continue
+   test -w $ac_dir || continue # It is less confusing to not echo anything here.
+@@ -9140,17 +9126,7 @@
+ echo "$as_me:$LINENO: checking for temporary directory" >&5
+ echo $ECHO_N "checking for temporary directory... $ECHO_C" >&6
+ if test -z "$with_tmpdir" || test yes = "$with_tmpdir"; then
+-  for with_tmpdir in "$TMPDIR" "$TMP" "$TEMP" /tmp /var/tmp no; do
+-    if test -d "$with_tmpdir" && test -x "$with_tmpdir" \
+-        && test -w "$with_tmpdir" && test -r "$with_tmpdir"; then
+-      break
+-    fi
+-  done
+-  if test no = "$with_tmpdir"; then
+-    { echo "$as_me:$LINENO: WARNING: Failed to find usable temporary directory.  Using '/tmp'." >&5
+-echo "$as_me: WARNING: Failed to find usable temporary directory.  Using '/tmp'." >&2;}
+-    with_tmpdir=/tmp
+-  fi
++  with_tmpdir=/tmp
+   echo "$as_me:$LINENO: result: $with_tmpdir" >&5
+ echo "${ECHO_T}$with_tmpdir" >&6
+ elif ! echo "$with_tmpdir" |grep '^[\\/]'; then
+@@ -10184,24 +10160,13 @@
+ # Create a temporary directory, and hook for its removal unless debugging.
+ $debug ||
+ {
+-  trap 'exit_status=$?; rm -rf $tmp && exit $exit_status' 0
+-  trap '{ (exit 1); exit 1; }' 1 2 13 15
++  tmp=
++  trap 'exit_status=$?; rm -rf -- "$tmp"; exit $exit_status' EXIT
++  trap 'trap - EXIT; rm -rf -- "$tmp"; exit 1' HUP INT PIPE TERM
+ }
+ 
+ # Create a (secure) tmp directory for tmp files.
+-: ${TMPDIR=/tmp}
+-{
+-  tmp=`(umask 077 && mktemp -d -q "$TMPDIR/csXXXXXX") 2>/dev/null` &&
+-  test -n "$tmp" && test -d "$tmp"
+-}  ||
+-{
+-  tmp=$TMPDIR/cs$$-$RANDOM
+-  (umask 077 && mkdir $tmp)
+-} ||
+-{
+-   echo "$me: cannot create a temporary directory in $TMPDIR" >&2
+-   { (exit 1); exit 1; }
+-}
++tmp="`mktemp -dt cs.XXXXXXXXXX`" || exit 1
+ 
+ _ACEOF
+ 
+diff -ur cvs-1.11.5.orig/contrib/check_cvs.in cvs-1.11.5/contrib/check_cvs.in
+--- cvs-1.11.5.orig/contrib/check_cvs.in	Thu Nov 21 19:04:38 2002
++++ cvs-1.11.5/contrib/check_cvs.in	Mon Apr 28 19:01:20 2003
+@@ -98,7 +98,7 @@
+ #
+ #    COMMENTS :
+ #      Do not run this script inside the repository.  Choose
+-#      a nice safe spot( like /tmp ) outside of the repository.
++#      a nice safe spot outside of the repository.
+ #
+ ######################################################################
+ my $directory_to_look_at;
+@@ -385,15 +385,20 @@
+     my( $file, $revision ) = @_;
+ 
+     my $cwd = getcwd();
+-    chdir( "/tmp" );
++    my $mkdir_succeeded = mkdir( "tmp", 0700 );
+ 
+-    my $ret_code = 0xffff & system( "cvs -l co -n -p -r $revision '$file' > /dev/null 2>&1" );
++    if (chdir( "tmp" ))
++    {
++	$ret_code = 0xffff & system( "cvs -l co -n -p -r $revision '$file' > /dev/null 2>&1" );
++    } else {
++	$ret_code = 1;
++    }
+ 
+-    chdir( $cwd );
++    if (chdir( $cwd )) {
++	rmdir( "tmp" ) if ($mkdir_succeeded);
++    }
+     return( 1 ) if ( $ret_code == 0 );
+     return( 0 );
+-
+-    return( $ret_code );
+ }
+ 
+ ######################################################################
+diff -ur cvs-1.11.5.orig/contrib/commit_prep.in cvs-1.11.5/contrib/commit_prep.in
+--- cvs-1.11.5.orig/contrib/commit_prep.in	Fri Jan  5 18:18:18 2001
++++ cvs-1.11.5/contrib/commit_prep.in	Mon Apr 28 19:06:21 2003
+@@ -29,7 +29,7 @@
+ 
+ # Constants (remember to protect strings from RCS keyword substitution)
+ #
+-$LAST_FILE     = "/tmp/#cvs.lastdir"; # must match name in log_accum.pl
++$LAST_FILE     = "#cvs.lastdir"; # must match name in log_accum.pl
+ $ENTRIES       = "CVS/Entries";
+ 
+ # Patterns to find $Log keywords in files
+diff -ur cvs-1.11.5.orig/contrib/cvs2vendor.sh cvs-1.11.5/contrib/cvs2vendor.sh
+--- cvs-1.11.5.orig/contrib/cvs2vendor.sh	Wed Feb 12 15:34:55 1997
++++ cvs-1.11.5/contrib/cvs2vendor.sh	Sun Apr 27 12:49:20 2003
+@@ -36,11 +36,12 @@
+ tsrcdir=$1
+ tdstdir=$2
+ 
+-revfile=/tmp/cvs2vendor_$$_rev
+-rm -f $revfile
+-
+-commentfile=/tmp/cvs2vendor_$$_comment
+-rm -f $commentfile
++revfile=
++commentfile=
++trap 'rm -f -- "$revfile" "$commentfile"' EXIT
++trap 'trap - EXIT ; rm -f -- "$revfile" "$commentfile"; exit 1' HUP INT QUIT TERM
++revfile="`mktemp -t cvs2vendor_rev.XXXXXXXXXX`" || exit
++commentfile="`mktemp -t cvs2vendor_comment.XXXXXXXXXX`" || exit
+ 
+ srcdirs=`cd $tsrcdir && find . -type d -print | sed 's~^\.[/]*~~'`
+ 
+diff -ur cvs-1.11.5.orig/contrib/debug_check_log.sh cvs-1.11.5/contrib/debug_check_log.sh
+--- cvs-1.11.5.orig/contrib/debug_check_log.sh	Fri Nov  8 17:27:40 2002
++++ cvs-1.11.5/contrib/debug_check_log.sh	Mon Apr 28 19:17:05 2003
+@@ -19,7 +19,10 @@
+ # Contributed by Derek R. Price <derek.price@openavenue.com>
+ #
+ 
+-
++dcldir=
++trap 'rm -rf -- "$dcldir"' EXIT
++trap 'trap - EXIT; rm -rf -- "$dcldir"; exit 1' HUP INT QUIT TERM
++dcldir="`mktemp -td dcl.XXXXXXXXXX`" || exit
+ 
+ usage ()
+ {
+@@ -96,13 +99,13 @@
+ 		# file contains a second regex
+ 		if test $dcl_dofirst -eq 1; then
+ 			# get the first pattern
+-			sed -ne '/^\*\* expected: $/,/^\*\* or: $/p' <$1 >/tmp/dcle$$
+-			dcl_exprfiles="$dcl_exprfiles /tmp/dcle$$"
++			sed -ne '/^\*\* expected: $/,/^\*\* or: $/p' <$1 >$dcldir/e
++			dcl_exprfiles="$dcl_exprfiles $dcldir/e"
+ 		fi
+ 		if test $dcl_doalternate -eq 1; then
+ 			# get the alternate pattern
+-			sed -ne '/^\*\* or: $/,/^\*\* got: $/p' <$1 >/tmp/dclo$$
+-			dcl_exprfiles="$dcl_exprfiles /tmp/dclo$$"
++			sed -ne '/^\*\* or: $/,/^\*\* got: $/p' <$1 >$dcldir/o
++			dcl_exprfiles="$dcl_exprfiles $dcldir/o"
+ 		else
+ 			echo "WARNING:  Ignoring alternate pattern in file: $1" >&2
+ 		fi
+@@ -110,8 +113,8 @@
+ 		# file doesn't contain a second regex
+ 		if test $dcl_dofirst = 1; then
+ 			# get the only pattern
+-			sed -ne '/^\*\* expected: $/,/^\*\* got: $/p' <$1 >/tmp/dcle$$
+-			dcl_exprfiles="$dcl_exprfiles /tmp/dcle$$"
++			sed -ne '/^\*\* expected: $/,/^\*\* got: $/p' <$1 >$dcldir/e
++			dcl_exprfiles="$dcl_exprfiles $dcldir/e"
+ 		fi
+ 		if test $dcl_doalternate -eq 1; then
+ 			echo "WARNING:  No alternate pattern in file:  $1" >&2
+@@ -119,34 +122,34 @@
+ 	fi
+ 
+ 	# and get the actual output
+-	sed -ne '/^\*\* got: $/,$p' <$1 >/tmp/dclg$$
++	sed -ne '/^\*\* got: $/,$p' <$1 >$dcldir/g
+ 	sed -ne '1D
+ $D
+-p' </tmp/dclg$$ >/tmp/dclh$$
+-	mv /tmp/dclh$$ /tmp/dclg$$
++p' <$dcldir/g >$dcldir/h
++	mv $dcldir/h $dcldir/g
+ 
+ 	# compare the output against each pattern requested
+ 	for dcl_f in $dcl_exprfiles; do
+ 		sed -ne '1D
+ $D
+-p' <$dcl_f >/tmp/dclp$$
+-		mv /tmp/dclp$$ $dcl_f
++p' <$dcl_f >$dcldir/p
++		mv $dcldir/p $dcl_f
+ 
+ 		case $dcl_f in
+-			/tmp/dcle*)
++			$dcldir/e)
+ 				echo "********** $1 : Primary **********"
+ 				;;
+-			/tmp/dclo*)
++			$dcldir/o)
+ 				echo "********** $1 : Alternate **********"
+ 				;;
+ 		esac
+ 
+-		expr_line_by_line /tmp/dclg$$ $dcl_f
++		expr_line_by_line $dcldir/g $dcl_f
+ 
+ 		rm $dcl_f
+ 	done
+ 
+-	rm /tmp/dclg$$
++	rm $dcldir/g
+ }
+ 
+ ###
+diff -ur cvs-1.11.5.orig/contrib/log_accum.in cvs-1.11.5/contrib/log_accum.in
+--- cvs-1.11.5.orig/contrib/log_accum.in	Fri Jan  5 18:18:18 2001
++++ cvs-1.11.5/contrib/log_accum.in	Mon Apr 28 19:07:58 2003
+@@ -42,12 +42,12 @@
+ $STATE_REMOVED = 3;
+ $STATE_LOG     = 4;
+ 
+-$LAST_FILE     = "/tmp/#cvs.lastdir";
++$LAST_FILE     = "#cvs.lastdir";
+ 
+-$CHANGED_FILE  = "/tmp/#cvs.files.changed";
+-$ADDED_FILE    = "/tmp/#cvs.files.added";
+-$REMOVED_FILE  = "/tmp/#cvs.files.removed";
+-$LOG_FILE      = "/tmp/#cvs.files.log";
++$CHANGED_FILE  = "#cvs.files.changed";
++$ADDED_FILE    = "#cvs.files.added";
++$REMOVED_FILE  = "#cvs.files.removed";
++$LOG_FILE      = "#cvs.files.log";
+ 
+ $FILE_PREFIX   = "#cvs.files";
+ 
+@@ -56,10 +56,8 @@
+ #
+ 
+ sub cleanup_tmpfiles {
+-    local($wd, @files);
++    local(@files);
+ 
+-    $wd = `pwd`;
+-    chdir("/tmp") || die("Can't chdir('/tmp')\n");
+     opendir(DIR, ".");
+     push(@files, grep(/^$FILE_PREFIX\..*\.$id$/, readdir(DIR)));
+     closedir(DIR);
+@@ -67,8 +65,6 @@
+ 	unlink $_;
+     }
+     unlink $LAST_FILE . "." . $id;
+-
+-    chdir($wd);
+ }
+ 
+ sub write_logfile {
+diff -ur cvs-1.11.5.orig/contrib/pvcs2rcs.in cvs-1.11.5/contrib/pvcs2rcs.in
+--- cvs-1.11.5.orig/contrib/pvcs2rcs.in	Wed May 30 18:31:00 2001
++++ cvs-1.11.5/contrib/pvcs2rcs.in	Mon Apr 28 19:52:21 2003
+@@ -146,9 +146,6 @@
+ # The binaries this script is dependant on:
+ my @bin_dependancies = ("vcs", "vlog", "rcs", "ci");
+ 
+-# Where we should put temporary files
+-my $tmpdir = $ENV{TMPDIR} ? $ENV{TMPDIR} : "/var/tmp";
+-
+ # We use these...
+ use strict;
+ 
+@@ -827,8 +824,6 @@
+ 			$wtr->print ("\n") unless ($comment{$revision} =~ /\n$/s);
+ 			$wtr->print (".\n");
+ 			$wtr->close;
+-			# $ci_output = `$ci_command`;
+-			# $ci_output = `cat $tmpdir/ci.out`;
+ 
+ 			$first_time = 0 if ($first_time);
+ 			} # foreach revision
+diff -ur cvs-1.11.5.orig/contrib/rcs-to-cvs.sh cvs-1.11.5/contrib/rcs-to-cvs.sh
+--- cvs-1.11.5.orig/contrib/rcs-to-cvs.sh	Fri Feb 21 03:44:46 1997
++++ cvs-1.11.5/contrib/rcs-to-cvs.sh	Sun Apr 27 12:36:26 2003
+@@ -32,7 +32,10 @@
+ usage="Usage: rcs-to-cvs [-v] [-m message] [-f message_file] repository"
+ vbose=0
+ message=""
+-if [ -d /var/tmp ]; then message_file=/var/tmp/checkin.$$; else message_file=/usr/tmp/checkin.$$; fi
++message_file=
++trap 'rm -f -- "$message_file"' EXIT
++trap 'trap - EXIT; rm -f -- "$message_file"; exit 1' HUP INT QUIT TERM
++message_file="`mktemp -t checkin.XXXXXXXXXX`" || exit
+ got_one=0
+ 
+ if [ $# -lt 1 ]; then
+diff -ur cvs-1.11.5.orig/contrib/rcs2log.sh cvs-1.11.5/contrib/rcs2log.sh
+--- cvs-1.11.5.orig/contrib/rcs2log.sh	Thu Sep  6 15:55:51 2001
++++ cvs-1.11.5/contrib/rcs2log.sh	Mon Apr 28 19:18:09 2003
+@@ -80,7 +80,6 @@
+ 
+ # defaults
+ : ${AWK=awk}
+-: ${TMPDIR=/tmp}
+ changelog=ChangeLog # change log file name
+ datearg= # rlog date option
+ hostname= # name of local host (if empty, will deduce it later)
+@@ -182,10 +181,12 @@
+ 	m[9]="Oct"; m[10]="Nov"; m[11]="Dec"
+ '
+ 
+-logdir=$TMPDIR/rcs2log$$
++logdir=
++trap 'rm -rf -- "$logdir"' EXIT
++trap 'trap - EXIT; rm -rf -- "$logdir"; exit 1' HUP INT QUIT TERM
++logdir="`mktemp -td rcs2log.XXXXXXXXXX`" || exit
++
+ llogout=$logdir/l
+-trap exit 1 2 13 15
+-trap "rm -fr $logdir 2>/dev/null" 0
+ (umask 077 && exec mkdir $logdir) || exit
+ 
+ # If no rlog-format log file is given, generate one into $rlogfile.
+diff -ur cvs-1.11.5.orig/contrib/rcs2sccs.sh cvs-1.11.5/contrib/rcs2sccs.sh
+--- cvs-1.11.5.orig/contrib/rcs2sccs.sh	Tue Oct 16 19:06:24 2001
++++ cvs-1.11.5/contrib/rcs2sccs.sh	Sun Apr 27 12:38:59 2003
+@@ -9,20 +9,19 @@
+     mkdir SCCS
+ fi
+ 
+-logfile=/tmp/rcs2sccs_$$_log
+-rm -f $logfile
+-tmpfile=/tmp/rcs2sccs_$$_tmp
+-rm -f $tmpfile
+-emptyfile=/tmp/rcs2sccs_$$_empty
+-echo -n "" > $emptyfile
+-initialfile=/tmp/rcs2sccs_$$_init
++rcs2sccsdir=
++trap 'rm -rf -- "$rcs2sccsdir"' EXIT
++trap 'trap - EXIT; rm -rf -- "$rcs2sccsdir"; exit 1' HUP INT QUIT TERM
++rcs2sccsdir="`mktemp -td rcs2sccs.XXXXXXXXXX`" || exit
++logfile="$rcs2sccsdir/log"
++tmpfile="$rcs2sccsdir/tmp"
++emptyfile="$rcs2sccsdir/empty"
++> $emptyfile
++initialfile="$rcs2sccsdir/init"
+ echo "Initial revision" > $initialfile
+-sedfile=/tmp/rcs2sccs_$$_sed
+-rm -f $sedfile
+-revfile=/tmp/rcs2sccs_$$_rev
+-rm -f $revfile
+-commentfile=/tmp/rcs2sccs_$$_comment
+-rm -f $commentfile
++sedfile="$rcs2sccsdir/sed"
++revfile="$rcs2sccsdir/rev"
++commentfile="$rcs2sccsdir/comment"
+ 
+ # create the sed script
+ cat > $sedfile << EOF
+diff -ur cvs-1.11.5.orig/contrib/sccs2rcs.in cvs-1.11.5/contrib/sccs2rcs.in
+--- cvs-1.11.5.orig/contrib/sccs2rcs.in	Tue Oct 16 19:24:04 2001
++++ cvs-1.11.5/contrib/sccs2rcs.in	Mon Apr 28 19:13:05 2003
+@@ -78,18 +78,18 @@
+ 
+ sccs clean
+ 
+-set logfile = /tmp/sccs2rcs_$$_log
+-rm -f $logfile
+-set tmpfile = /tmp/sccs2rcs_$$_tmp
+-rm -f $tmpfile
+-set emptyfile = /tmp/sccs2rcs_$$_empty
+-echo -n "" > $emptyfile
+-set initialfile = /tmp/sccs2rcs_$$_init
++sccs2rcsdir=
++trap 'rm -rf -- "$sccs2rcsdir"' EXIT
++trap 'trap - EXIT; rm -rf -- "$sccs2rcsdir"; exit 1' HUP INT QUIT TERM
++logfile="$sccs2rcsdir/log"
++tmpfile="$sccs2rcsdir/tmp"
++emptyfile="$sccs2rcsdir/empty"
++: > $emptyfile
++
++set initialfile = "$sccs2rcsdir/init"
+ echo "Initial revision" > $initialfile
+-set sedfile = /tmp/sccs2rcs_$$_sed
+-rm -f $sedfile
+-set revfile = /tmp/sccs2rcs_$$_rev
+-rm -f $revfile
++sedfile="$sccs2rcsdir/sed"
++revfile="$sccs2rcsdir/rev"
+ 
+ # the quotes surround the dollar signs to fool RCS when I check in this script
+ set sccs_keywords = (\
+diff -ur cvs-1.11.5.orig/doc/cvs.info-8 cvs-1.11.5/doc/cvs.info-8
+--- cvs-1.11.5.orig/doc/cvs.info-8	Thu Jan 16 21:42:00 2003
++++ cvs-1.11.5/doc/cvs.info-8	Mon Apr 28 19:27:44 2003
+@@ -791,7 +791,7 @@
+      Directory in which temporary files are located.  The CVS server
+      uses `TMPDIR'.  *Note Global options::, for a description of how
+      to specify this.  Some parts of CVS will always use `/tmp' (via
+-     the `tmpnam' function provided by the system).
++     the `mkstemp' function provided by the system).
+ 
+      On Windows NT, `TMP' is used (via the `_tempnam' function provided
+      by the system).
+diff -ur cvs-1.11.5.orig/doc/cvs.ps cvs-1.11.5/doc/cvs.ps
+--- cvs-1.11.5.orig/doc/cvs.ps	Thu Jan 16 21:41:56 2003
++++ cvs-1.11.5/doc/cvs.ps	Mon Apr 28 19:25:57 2003
+@@ -12414,7 +12414,7 @@
+ Fo(TMPDIR)p Ft(.)630 4314 y(See)g(Section)f(A.4)h([Global)f(options],)i
+ (page)f(88,)i(for)d(a)h(description)e(of)i(ho)m(w)f(to)h(sp)s(ecify)630
+ 4423 y(this.)h(Some)22 b(parts)g(of)g Fs(cvs)f Ft(will)f(alw)m(a)m(ys)i
+-(use)g(`)p Fo(/tmp)p Ft(')g(\(via)g(the)g Fo(tmpnam)f
++(use)g(`)p Fo(/tmp)p Ft(')g(\(via)g(the)g Fo(mkstemp)f
+ Ft(function)f(pro)m(vided)630 4533 y(b)m(y)30 b(the)h(system\).)630
+ 4667 y(On)44 b(Windo)m(ws)g(NT,)h Fo(TMP)g Ft(is)f(used)g(\(via)h(the)g
+ Fo(_tempnam)e Ft(function)h(pro)m(vided)g(b)m(y)h(the)630
+@@ -12554,7 +12554,7 @@
+ (of)j(the)g(ro)s(ot)f(\(whic)m(h)g(is)g(also)g(not)h(allo)m(w)m(ed\).)
+ 40 b(If)630 956 y(this)25 b(is)g(the)i(problem,)e(set)i(the)g(temp)s
+ (orary)e(directory)h(to)h(somewhere)f(else,)h(for)f(example)630
+-1066 y(`)p Fo(/var/tmp)p Ft(';)34 b(see)g Fo(TMPDIR)e
++1066 y(`)p Fo($HOME/tmp)p Ft(';)34 b(see)g Fo(TMPDIR)e
+ Ft(in)g(App)s(endix)f(D)j([En)m(vironmen)m(t)f(v)-5 b(ariables],)34
+ b(page)g(151,)i(for)630 1176 y(ho)m(w)30 b(to)i(set)e(the)h(temp)s
+ (orary)f(directory)-8 b(.)150 1340 y Fo(cannot)29 b(commit)f(files)h
+diff -ur cvs-1.11.5.orig/doc/cvs.texinfo cvs-1.11.5/doc/cvs.texinfo
+--- cvs-1.11.5.orig/doc/cvs.texinfo	Mon Nov 18 15:36:07 2002
++++ cvs-1.11.5/doc/cvs.texinfo	Mon Apr 28 19:24:37 2003
+@@ -12375,8 +12375,8 @@
+ @c	::::::::::::::::::
+ @c	:
+ @c	[ -f $1 ] || exit 1
+-@c	zcat $1 > /tmp/.#$1.$$
+-@c	mv /tmp/.#$1.$$ $1
++@c	zcat $1 > $1.gunzipcp.$$
++@c	mv $1.gunzipcp.$$ $1
+ @c
+ @c	::::::::::::::::::
+ @c	gzipcp
+@@ -13646,8 +13646,6 @@
+ The @sc{cvs} server uses
+ @code{TMPDIR}.  @xref{Global options}, for a
+ description of how to specify this.
+-Some parts of @sc{cvs} will always use @file{/tmp} (via
+-the @code{tmpnam} function provided by the system).
+ 
+ On Windows NT, @code{TMP} is used (via the @code{_tempnam}
+ function provided by the system).
+@@ -13847,7 +13845,7 @@
+ directory on the server is set to a subdirectory of the
+ root (which is also not allowed).  If this is the
+ problem, set the temporary directory to somewhere else,
+-for example @file{/var/tmp}; see @code{TMPDIR} in
++for example @file{$HOME/tmp}; see @code{TMPDIR} in
+ @ref{Environment variables}, for how to set the
+ temporary directory.
+ 
+diff -ur cvs-1.11.5.orig/man/cvsbug.8 cvs-1.11.5/man/cvsbug.8
+--- cvs-1.11.5.orig/man/cvsbug.8	Tue Nov 27 16:24:58 2001
++++ cvs-1.11.5/man/cvsbug.8	Tue Apr 22 12:48:37 2003
+@@ -201,12 +201,11 @@
+ instructions on submitting larger test cases and problematic source
+ code.
+ .SH FILES
+-.ta \w'/tmp/pbad$$  'u
+-/tmp/p$$	copy of PR used in editing session
++$TMPDIR/p.XXXXXXXXXX	copy of PR used in editing session
+ .br
+-/tmp/pf$$	copy of empty PR form, for testing purposes
++$TMPDIR/pf.XXXXXXXXXX	copy of empty PR form, for testing purposes
+ .br
+-/tmp/pbad$$	file for rejected PRs
++$TMPDIR/pbad.XXXXXXXXXX	file for rejected PRs
+ .SH INSTALLATION AND CONFIGURATION
+ See 
+ .B INSTALL
+diff -ur cvs-1.11.5.orig/src/cvsbug.in cvs-1.11.5/src/cvsbug.in
+--- cvs-1.11.5.orig/src/cvsbug.in	Mon Apr 29 04:45:47 2002
++++ cvs-1.11.5/src/cvsbug.in	Sun Apr 27 12:48:05 2003
+@@ -83,11 +83,18 @@
+ 
+ #
+ 
+-[ -z "$TMPDIR" ] && TMPDIR=/tmp
++# $xs kludge apparently needed by Sun /bin/sh (and is relied upon by the
++# rest of this script, on all platforms).
++xs=0
+ 
+-TEMP=$TMPDIR/p$$
+-BAD=$TMPDIR/pbad$$
+-REF=$TMPDIR/pf$$
++TEMP=
++BAD=
++REF=
++trap 'rm -f -- "$TEMP" "$BAD" "$REF"; exit $xs' EXIT
++trap 'trap - EXIT; rm -f -- "$TEMP" "$BAD" "$REF"; exit 1' HUP INT QUIT TERM
++TEMP="`mktemp -t p.XXXXXXXXXX`"
++BAD="`mktemp -t pbad.XXXXXXXXXX`"
++REF="`mktemp -t pf.XXXXXXXXXX`"
+ 
+ if [ -z "$LOGNAME" -a -n "$USER" ]; then
+   LOGNAME=$USER
+@@ -263,11 +270,6 @@
+ DESCRIPTION_C='<precise description of the problem (multiple lines)>'
+ HOW_TO_REPEAT_C='<code/input/activities to reproduce the problem (multiple lines)>'
+ FIX_C='<how to correct or work around the problem, if known (multiple lines)>'
+-
+-# Catch some signals. ($xs kludge needed by Sun /bin/sh)
+-xs=0
+-trap 'rm -f $REF $TEMP; exit $xs' 0
+-trap 'echo "$COMMAND: Aborting ..."; rm -f $REF $TEMP; xs=1; exit' 1 2 3 13 15
+ 
+ # If they told us to use a specific file, then do so.
+ if [ -n "$IN_FILE" ]; then
+diff -ur cvs-1.11.5.orig/src/filesubr.c cvs-1.11.5/src/filesubr.c
+--- cvs-1.11.5.orig/src/filesubr.c	Tue Sep 24 20:47:09 2002
++++ cvs-1.11.5/src/filesubr.c	Sun Apr 27 13:10:43 2003
+@@ -703,7 +703,7 @@
+     if (fp == NULL)
+ 	error (1, errno, "Failed to create temporary file");
+     if (fclose (fp) == EOF)
+-	error (0, errno, "Failed to close temporary file %s", fn);
++	error (1, errno, "Failed to close temporary file %s", fn);
+     return fn;
+ }
+ 
+@@ -755,9 +755,10 @@
+ 
+     {
+     int fd;
++    int save_errno;
+ 
+-    fn = xmalloc (strlen (Tmpdir) + 11);
+-    sprintf (fn, "%s/%s", Tmpdir, "cvsXXXXXX" );
++    fn = xmalloc (strlen (Tmpdir) + 12);
++    sprintf (fn, "%s/%s", Tmpdir, "cvs.XXXXXX" );
+     fd = mkstemp (fn);
+ 
+     /* a NULL return will be interpreted by callers as an error and
+@@ -766,23 +767,25 @@
+     if (fd == -1) fp = NULL;
+     else if ((fp = CVS_FDOPEN (fd, "w+")) == NULL)
+     {
+-	/* attempt to close and unlink the file since mkstemp returned sucessfully and
++	/* attempt to unlink the file since mkstemp returned sucessfully and
+ 	 * we believe it's been created and opened
+ 	 */
+- 	int save_errno = errno;
++	save_errno = errno;
+ 	if (close (fd))
+-	    error (0, errno, "Failed to close temporary file %s", fn);
++	    error (1, errno, "Failed to close temporary file %s", fn);
+ 	if (CVS_UNLINK (fn))
+-	    error (0, errno, "Failed to unlink temporary file %s", fn);
++	    error (1, errno, "Failed to unlink temporary file %s", fn);
+ 	errno = save_errno;
+     }
+ 
++    save_errno = errno;
+     if (fp == NULL) free (fn);
+     /* mkstemp is defined to open mode 0600 using glibc 2.0.7+ */
+     /* FIXME - configure can probably tell us which version of glibc we are
+      * linking to and not chmod for 2.0.7+
+      */
+     else chmod (fn, 0600);
++    errno = save_errno;
+ 
+     }
+ 
+diff -ur cvs-1.11.5.orig/src/logmsg.c cvs-1.11.5/src/logmsg.c
+--- cvs-1.11.5.orig/src/logmsg.c	Fri Sep 20 02:48:59 2002
++++ cvs-1.11.5/src/logmsg.c	Sun Apr 27 12:08:20 2003
+@@ -208,13 +208,8 @@
+     if (strcmp (Editor, "") == 0 && !editinfo_editor)
+ 	error(1, 0, "no editor defined, must use -e or -m");
+ 
+-    /* Create a temporary file */
+-    /* FIXME - It's possible we should be relying on cvs_temp_file to open
+-     * the file here - we get race conditions otherwise.
+-     */
+-    fname = cvs_temp_name ();
+   again:
+-    if ((fp = CVS_FOPEN (fname, "w+")) == NULL)
++    if ((fp = cvs_temp_file (&fname)) == NULL)
+ 	error (1, 0, "cannot create temporary file %s", fname);
+ 
+     if (*messagep)
+diff -ur cvs-1.11.5.orig/src/sanity.sh cvs-1.11.5/src/sanity.sh
+--- cvs-1.11.5.orig/src/sanity.sh	Thu Dec 19 15:38:32 2002
++++ cvs-1.11.5/src/sanity.sh	Sun Apr 27 13:25:26 2003
+@@ -176,8 +176,8 @@
+ #     So this would be lost if everything was `pwd`-based.  I suppose
+ #     if we wanted to get baroque we could start making symlinks
+ #     to ensure the two are different.
+-tmp=`(cd /tmp; /bin/pwd || pwd) 2>/dev/null`
+-: ${TMPDIR=$tmp}
++# tmp=`(cd /tmp; /bin/pwd || pwd) 2>/dev/null`
++# : ${TMPDIR=$tmp}
+ 
+ # Now:
+ #	1) Set TESTDIR if it's not set already
+@@ -185,25 +185,31 @@
+ #	3) Create $TESTDIR
+ #	4) Normalize TESTDIR with `cd && (/bin/pwd || pwd)`
+ #	   (This will match CVS output later)
+-: ${TESTDIR=$tmp/cvs-sanity}
++if [ -n "$TESTDIR" ]; then
+ # clean any old remnants (we need the chmod because some tests make
+ # directories read-only)
+-if test -d ${TESTDIR}; then
+-    chmod -R a+wx ${TESTDIR}
+-    rm -rf ${TESTDIR}
+-fi
++  if test -d $TESTDIR; then
++    chmod -R u+wx $TESTDIR
++    rm -rf -- $TESTDIR
++  fi
+ # These exits are important.  The first time I tried this, if the `mkdir && cd`
+ # failed then the build directory would get blown away.  Some people probably
+ # wouldn't appreciate that.
+-mkdir ${TESTDIR} || exit 1
+-cd ${TESTDIR} || exit 1
+-TESTDIR=`(/bin/pwd || pwd) 2>/dev/null`
++  mkdir $TESTDIR || exit 1
++  cd $TESTDIR || exit 1
++  TESTDIR=`(/bin/pwd || pwd) 2>/dev/null`
++else
++  TESTDIR=
++  trap 'cd "$TESTDIR/.."; rm -rf -- "$TESTDIR"' EXIT
++  trap 'trap - EXIT; cd "$TESTDIR/.."; rm -rf -- "$TESTDIR"; exit 1' HUP INT QUIT TERM
++  TESTDIR="`mktemp -td cvs-sanity.XXXXXXXXXX`" || exit
++fi
+ # Ensure $TESTDIR is absolute
+-if test -z "${TESTDIR}" || echo "${TESTDIR}" |grep '^[^/]'; then
++if test -z "$TESTDIR" || echo "$TESTDIR" |grep '^[^/]'; then
+     echo "Unable to resolve TESTDIR to an absolute directory." >&2
+     exit 1
+ fi
+-cd ${TESTDIR}
++cd $TESTDIR || exit 1
+ 
+ # Make sure various tools work the way we expect, or try to find
+ # versions that do.
+@@ -732,14 +738,16 @@
+ 	DIR_2=$2
+ 
+ 	cd $DIR_1
+-	find . -print | fgrep -v /CVS | sort > /tmp/dc$$d1
++	dcd1="$TESTDIR/dcd1"
++	find . -print | fgrep -v /CVS | sort > "$dcd1"
+ 
+ 	# go back where we were to avoid symlink hell...
+ 	cd $OLDPWD
+ 	cd $DIR_2
+-	find . -print | fgrep -v /CVS | sort > /tmp/dc$$d2
++        dcd2="$TESTDIR/dcd2"
++	find . -print | fgrep -v /CVS | sort > "$dcd2"
+ 
+-	if diff /tmp/dc$$d1 /tmp/dc$$d2 >/dev/null 2>&1
++	if diff "$dcd1" "$dcd2" >/dev/null 2>&1
+ 	then
+ 		:
+ 	else
+@@ -754,8 +762,8 @@
+ 				return 1
+ 			fi
+ 		fi
+-	done < /tmp/dc$$d1
+-	rm -f /tmp/dc$$*
++	done < "$dcd1"
++	rm -f "$dcd1" "$dcd2"
+ 	return 0
+ }
+ 
+@@ -24057,7 +24065,7 @@
+ fi
+ 
+ # Remove the test directory, but first change out of it.
+-cd `dirname ${TESTDIR}`
+-rm -rf ${TESTDIR}
++cd "$TESTDIR/.."
++rm -rf $TESTDIR
+ 
+ # end of sanity.sh
