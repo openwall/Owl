@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iputils/iputils.spec,v 1.4 2002/05/30 11:23:21 mci Exp $
+# $Id: Owl/packages/iputils/iputils.spec,v 1.5 2002/05/30 11:30:28 mci Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
@@ -31,7 +31,6 @@ mv -f bonding-0.2/README bonding-0.2/README.ifenslave
 %build
 mv rdisc.c rdisc.c.orig
 sed 's/in\.rdiscd/rdiscd/' < rdisc.c.orig > rdisc.c
-mv Makefile Makefile.orig
 make CCOPTS="-D_GNU_SOURCE $RPM_OPT_FLAGS -Wall" \
 	IPV4_TARGETS="tracepath ping clockdiff rdisc arping" # no tftpd
 gcc $RPM_OPT_FLAGS -Wall -s bonding-0.2/ifenslave.c -o bonding-0.2/ifenslave
