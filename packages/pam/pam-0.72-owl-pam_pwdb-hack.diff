@@ -274,7 +274,7 @@ diff -urN pam-0.72.orig/modules/pam_pwdb/pam_unix_passwd.-c pam-0.72/modules/pam
 +
 +		pw = pass_new;
 +		pass_new = _pam_md(pw, salt);
-+		_pam_delete(pw);
++		_pam_overwrite(pw);	/* XXX: this changes the PAM item */
 +		_pam_overwrite(salt);
 +
 +		if (pass_new && strchr(pass_new, ':'))

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.12 2001/05/04 23:44:04 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.12.2.1 2001/07/30 02:39:35 solar Exp $
 
 Summary: A security tool which provides authentication for applications.
 Name: pam
 Version: 0.72
-Release: 13owl
+Release: 14owl
 Copyright: GPL or BSD
 Group: System Environment/Base
 Source0: pam-redhat-%{version}.tar.gz
@@ -25,7 +25,7 @@ PAM (Pluggable Authentication Modules) is a system security tool
 which allows system administrators to set authentication policy
 without having to recompile programs which do authentication.
 
-# Use %optflags_lib for this package if defined.
+# Use optflags_lib for this package if defined.
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 
 %prep
@@ -100,6 +100,10 @@ grep ^chkpwd: /etc/group &>/dev/null || groupadd -g 163 chkpwd
 /usr/man/man8/*
 
 %changelog
+* Mon Jul 30 2001 Solar Designer <solar@owl.openwall.com>
+- Fixed a double-free bug in pam_pwdb which caused it to segfault after
+successful password changes in some cases.  The bug was specific to Owl.
+
 * Sat May 05 2001 Solar Designer <solar@owl.openwall.com>
 - Minor updates to use crypt_blowfish interfaces in the now officially
 documented ways.
@@ -109,7 +113,7 @@ documented ways.
 - Install pwdb_chkpwd SGID shadow, but restricted to group chkpwd.
 
 * Sat Sep 16 2000 Solar Designer <solar@owl.openwall.com>
-- %optflags_lib support.
+- optflags_lib support.
 
 * Sat Aug 26 2000 Solar Designer <solar@owl.openwall.com>
 - Disabled building of pam_console entirely to avoid the dependency on glib.
