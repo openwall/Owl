@@ -12,6 +12,12 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.0 and Owl-current.
 
+2003/08/02 -
+2003/08/10	Packages: glibc, pam, sysklogd
+LFS (Large File Support) corrections to glibc on SPARC, pam_limits,
+and syslogd.  LFS will only work when Owl userland is built against
+Linux 2.4.x kernel headers and a Linux 2.4.x kernel is booted.
+
 2003/07/25	Packages: prtconf, owl-dev
 New package: prtconf, utilities to dump and modify SPARC OpenPROM.
 
@@ -369,4 +375,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.65 2003/07/24 21:33:24 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.66 2003/08/10 01:29:35 solar Exp $
