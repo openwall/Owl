@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.84 2005/01/20 09:35:03 galaxy Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.85 2005/02/08 22:09:20 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -10,7 +10,7 @@
 Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
-%define crypt_bf_version 0.4.6
+%define crypt_bf_version 0.4.7
 Release: owl2
 License: LGPL
 Group: System Environment/Libraries
