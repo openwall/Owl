@@ -1,9 +1,9 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.3 2000/08/20 06:27:56 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.4 2000/08/21 00:18:01 solar Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron)
 Name: vixie-cron
 Version: 3.0.2.7
-Release: 3owl
+Release: 4owl
 Copyright: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%{version}.tar.gz
@@ -96,11 +96,14 @@ fi
 /etc/control.d/facilities/crontab
 
 %changelog
+* Mon Aug 21 2000 Solar Designer <solar@owl.openwall.com>
+- Check nlink and permissions as well as the owner of crontabs.
+
 * Sun Aug 20 2000 Solar Designer <solar@owl.openwall.com>
 - crontab is now SGID crontab, not SUID root; the required changes
 have been made to crontab, and the file ownership check has been added
 into crond for this to make sense.
-- close fd's at crond startup, so they no longer get inherited by cron
+- Close fd's at crond startup, so they no longer get inherited by cron
 jobs if a custom SHELL= is specified.
 
 * Sat Aug 19 2000 Solar Designer <solar@owl.openwall.com>

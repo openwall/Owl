@@ -1,6 +1,6 @@
 diff -ur vixie-cron-3.0.2.7.linux/usr.sbin/cron/crontab.c vixie-cron-3.0.2.7/usr.sbin/cron/crontab.c
 --- vixie-cron-3.0.2.7.linux/usr.sbin/cron/crontab.c	Sun Aug 20 06:30:25 2000
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/crontab.c	Sun Aug 20 06:30:02 2000
++++ vixie-cron-3.0.2.7/usr.sbin/cron/crontab.c	Sun Aug 20 11:12:30 2000
 @@ -104,7 +104,6 @@
  	setlinebuf(stderr);
  #endif
@@ -45,7 +45,7 @@ diff -ur vixie-cron-3.0.2.7.linux/usr.sbin/cron/crontab.c vixie-cron-3.0.2.7/usr
  		perror("chown");
 diff -ur vixie-cron-3.0.2.7.linux/usr.sbin/cron/database.c vixie-cron-3.0.2.7/usr.sbin/cron/database.c
 --- vixie-cron-3.0.2.7.linux/usr.sbin/cron/database.c	Sat Aug 19 11:49:06 2000
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/database.c	Sun Aug 20 05:14:49 2000
++++ vixie-cron-3.0.2.7/usr.sbin/cron/database.c	Mon Aug 21 04:03:57 2000
 @@ -24,7 +24,9 @@
  
  
@@ -56,16 +56,35 @@ diff -ur vixie-cron-3.0.2.7.linux/usr.sbin/cron/database.c vixie-cron-3.0.2.7/us
  #include <sys/stat.h>
  #include <sys/file.h>
  
-@@ -212,7 +214,7 @@
+@@ -212,7 +214,27 @@
  		goto next_crontab;
  	}
  
--	if ((crontab_fd = open(tabname, O_RDONLY, 0)) < OK) {
++#ifdef __linux
++/*
++ * Linux 2.2+, glibc 2.1+.
++ *
++ * This and the checks below are an attempt to reduce the damage that
++ * can be done by someone with write access to the crontab directory.
++ * Once the crontab binary is no longer SUID root, a vulnerability in
++ * crontab wouldn't provide root access any longer, so it makes sense
++ * for cron to not trust the directory contents.
++ */
 +	if ((crontab_fd = open(tabname, O_RDONLY | O_NOFOLLOW, 0)) < OK) {
++#else
++/*
++ * XXX: should use lstat before open and a dev/ino check afterwards.
++ * In fact, that would be helpful with O_NOFOLLOW as well due to the
++ * side-effects on open and possibility for device hard links.  (Write
++ * access to the crontab directory implies DoS possibilities for cron,
++ * but doesn't have to allow for new attacks on the rest of the system.)
++ */
+ 	if ((crontab_fd = open(tabname, O_RDONLY, 0)) < OK) {
++#endif
  		/* crontab not accessible?
  		 */
  		log_it(fname, getpid(), "CAN'T OPEN", tabname);
-@@ -221,6 +223,13 @@
+@@ -221,6 +243,25 @@
  
  	if (fstat(crontab_fd, statbuf) < OK) {
  		log_it(fname, getpid(), "FSTAT FAILED", tabname);
@@ -76,12 +95,24 @@ diff -ur vixie-cron-3.0.2.7.linux/usr.sbin/cron/database.c vixie-cron-3.0.2.7/us
 +	    statbuf->st_uid != pw->pw_uid &&
 +	    statbuf->st_uid != ROOT_UID) {
 +		log_it(fname, getpid(), "WRONG FILE OWNER", tabname);
++		goto next_crontab;
++	}
++
++/*
++ * The link count check is not sufficient (the owner may delete their
++ * original link, reducing the link count back to 1), but this is all
++ * we've got.
++ */
++	if (!S_ISREG(statbuf->st_mode) ||
++	    statbuf->st_nlink != 1 ||
++	    (statbuf->st_mode & 07777) != 0600) {
++		log_it(fname, getpid(), "WRONG INODE INFO", tabname);
  		goto next_crontab;
  	}
  
 diff -ur vixie-cron-3.0.2.7.linux/usr.sbin/cron/misc.c vixie-cron-3.0.2.7/usr.sbin/cron/misc.c
---- vixie-cron-3.0.2.7.linux/usr.sbin/cron/misc.c	Sun Aug 20 06:44:10 2000
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/misc.c	Sun Aug 20 06:44:18 2000
+--- vixie-cron-3.0.2.7.linux/usr.sbin/cron/misc.c	Sun Aug 20 09:49:12 2000
++++ vixie-cron-3.0.2.7/usr.sbin/cron/misc.c	Sun Aug 20 11:12:30 2000
 @@ -686,10 +686,21 @@
  
  
