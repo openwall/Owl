@@ -2,6 +2,9 @@ Le site web de Owl est :
 
 http://www.openwall.com/Owl/
 
+Vous pouvez y commander Owl sur un CD avec transport mondial et supporter
+notre projet en faisant ceci.
+
 Owl peut être téléchargé depuis les miroirs officiels suivants :
 
 ftp://ftp1.ru.openwall.com/pub/Owl/	(Russie)
@@ -9,24 +12,28 @@ ftp://ftp2.ru.openwall.com/pub/Owl/	(Russie)
 ftp://ftp.pl.openwall.com/pub/Owl/	(Pologne)
 ftp://ftp.ua.openwall.com/pub/Owl/	(Ukraine)
 ftp://ftp.cz.openwall.com/pub/Owl/	(République Tchèque)
+ftp://gd.tuwien.ac.at/opsys/linux/Owl/ (Autriche)
+	http://gd.tuwien.ac.at/opsys/linux/Owl/
+	rsync://gd.tuwien.ac.at/opsys/linux/Owl/
+ftp://ftp.mathematik.uni-marburg.de/pub/mirror/openwall/Owl/	(Allemagne)
 ftp://ftp.ca.openwall.com/pub/Owl/	(Canada)
 ftp://ftp.wiretapped.net/pub/Owl/	(Australie)
 
 Il y a un sous-répertoire pour chaque version ou branche Owl, avec les
 contenus suivants :
 
-native.tar.gz		l'arbre CVS (spécifications de compilation et patches)
-sources			l'arbre des sources (archives originales, etc)
+native.tar.gz		l'arbre CVS (nos logiciels, patches, specs de compil)
+sources			l'arbre des sources (archives originales à patcher)
 kernel			les sources du noyau et les patches recommandés
 Owl.mtree		les spécifications mtree(8) pour ci-dessus
-i?86, sparc*, alpha*	les packages binaires Owl
-iso			ISO-9660 images of Owl CDs
+i?86, sparc*, alpha*	les paquets binaires Owl
+iso			les images ISO-9660 des CD Owl
 
 Quelques uns des sous-répertoires peuvent utiliser des liens symboliques
 vers des fichiers communs à plusieurs branches Owl. Ainsi, pour télécharger
 juste une branche vous pouvez avoir besoin de dire à votre client FTP de
 déréférencer les liens symboliques. Avec lftp (qui fait partie de Owl),
-utilisez la commane "mirror -L".
+utilisez la commande "mirror -L".
 
 Les spécifications mtree(8) pour les versions de Owl sont signées. La clé
 publique PGP correspondante est disponible depuis :
@@ -34,10 +41,26 @@ publique PGP correspondante est disponible depuis :
 http://www.openwall.com/signatures/
 
 Vous aurez toujours besoin de l'arbre CVS, -- même si vous choisissez
-d'installer seulement les packages binaires. Afin de (re-)compiler Owl
-depuis les sources, vous aurez besoin des deux arbres CVS et sources.
+d'installer seulement les paquets binaires. Afin de (re-)compiler Owl depuis
+les sources, vous aurez besoin des deux arbres CVS et sources.
 
 Plus de documentations (incluant BUILD et INSTALL) sont accessibles dans
 l'arbre CVS, dans Owl/doc/.
 
-$Id: Owl/doc/fr/DOWNLOAD,v 1.7 2002/09/03 23:57:34 solar Exp $
+Une façon alternative d'accéder à l'arbre CVS (à côté d'être capable
+d'obtenir ses snapshots pour une certaine version ou branche en tant que
+native.tar.gz depuis les miroirs FTP listés ci-dessus) est via notre
+serveur CVS anonyme :
+
+CVSROOT=:pserver:anoncvs:anoncvs@anoncvs.owl.openwall.com:/cvs
+
+ou sur SSH, avec les paramètres suivants :
+
+CVS_RSH=ssh
+CVSROOT=anoncvs@anoncvs.owl.openwall.com:/cvs
+
+Le mot de passe est "anoncvs" et le nom du module est "Owl". Vous pouvez
+utiliser la compression avec chaque méthode d'accès au serveur CVS anonyme,
+typiquement en spécifiant l'option -z3 à CVS et/ou -C au client SSH.
+
+$Id: Owl/doc/fr/DOWNLOAD,v 1.7.2.1 2002/10/14 20:14:12 solar Exp $

@@ -15,7 +15,7 @@ plus sécurisé.
 
 Bien sûr, Owl peut être utilisé pour installer tout logiciel qui est
 généralement disponible pour les systèmes GNU/*/Linux. Il offre quelques
-compatibilités (lire ci-dessous) pour les packages de logiciels trouvés dans
+compatibilités (lire ci-dessous) pour les paquets de logiciels trouvés dans
 ou développés pour les autres distributions Linux majeures, telles que Linux
 Red Hat.
 
@@ -28,10 +28,10 @@ Owl inclus un environnement de compilation complet pour re-compiler le
 système entier depuis les sources avec une simple commande ("make
 buildworld") (Ceci est expliqué avec plus de détails ci-dessous.)
 
-Owl supporte plusieurs architectures (actuellement x86 et SPARC), ceci vous
-laissant l'utiliser dans plus de cas et nous aidant à capturer certains
-types de bogues logiciels plus tôt, améliorant ainsi la fiabilité des
-packages Owl.
+Owl supporte plusieurs architectures (actuellement x86, SPARC, et Alpha),
+ceci vous laissant l'utiliser dans plus de cas et nous aidant à capturer
+certains types de bogues logiciels plus tôt, améliorant ainsi la fiabilité
+des paquets Owl.
 
 
 	Sécurité.
@@ -68,9 +68,9 @@ nous laisse auditer les morceaux de code utilisés dans la configuration par
 défaut d'une façon plus minutieuse. Des facilités système supplémentaires
 d'administration ("owl-control") sont fournies pour gérer les
 fonctionnalités système tels que les binaires SUID/SGID optionnels
-indépendamment de l'installation des packages correspondant. Tout package
-Owl aura la situation de ses audits documentés pour permettre les
-estimations de risques.
+indépendamment de l'installation des paquets correspondant. Tout paquet Owl
+aura la situation de ses audits documentés pour permettre les estimations de
+risques.
 
 Alors que la revue de code est la façon préférée de s'occuper des
 vulnérabilités logicielles, elle ne peut être appliquée dans tous les cas.
@@ -93,44 +93,43 @@ un large intervalle d'outils de sécurité avec Owl, disponibles pour
 utilisation "dès l'installation".
 
 
-	L'environnement de compilation et la gestion de packages.
+	L'environnement de compilation et la gestion de paquets.
 
 Contrairement à la plupart des autres "distributions Linux", Owl inclut un
 environnement complet de compilation capable de re-compiler le système
 complet depuis les sources avec une simple commande ("make buildworld").
 Toutefois, la mise en oeuvre de "make buildworld" sur Owl est très
 différente de ce qui est disponible avec *BSD. Il est en fait plus similaire
-aux ports/packages *BSD, couvrant l'intégrite de l'espace utilisateur Owl
-(c.-a-d. tout sauf le noyau Linux).
+aux ports/paquets *BSD, couvrant l'intégrité de l'espace utilisateur Owl
+(c.-à-d. tout sauf le noyau Linux).
 
 Le code source de l'espace utilisateur de Owl consiste en deux
-arborescences, où chaque package Owl peut être partagé entre les deux
+arborescences, où chaque paquet Owl peut être partagé entre les deux
 arborescences. Une arborescence source consiste en les archives originales
 telles que distribuées par le mainteneur du composant logiciel
 correspondant. L'autre arborescence, que nous stockons dans un serveur CVS,
 possède les spécifications de compilation, patches, et autres ajouts aux
-packages spécifiques à Owl. Quelques packages ont été développés comme
-partie de Owl, et ainsi existent entièrement dans le serveur CVS.
+paquets spécifiques à Owl. Quelques paquets ont été développés comme partie
+de Owl, et ainsi existent entièrement dans le serveur CVS.
 
-Basés sur les deux arborescences sources, les packages binaires sont
+Basés sur les deux arborescences sources, les paquets binaires sont
 compilés. Ils peuvent être installés (avec "make installworld") pour mettre
 à jour le système lui-même ou pour créer une nouvelle installation Owl (la
 valeur ROOT=), ou ils peuvent être transférés au travers du réseau et
 installés ailleurs.
 
-Nous utilisons RPM pour les packages binaires, puisque cela permet un
-support raisonnable des dépendances en installant des packages depuis ou
-destinés à un Linux Red Hat et plusieurs autres distributions, sur un
-système Owl.
+Nous utilisons RPM pour les paquets binaires, puisque cela permet un support
+raisonnable des dépendances en installant des paquets depuis ou destinés à
+un Linux Red Hat et plusieurs autres distributions, sur un système Owl.
 
 
 	Compatibilité.
 
 Exceptés quelques cas où cela rentre en conflit avec nos buts les plus
-importants, Owl essaye d'être compatible aux niveaux binaires et packages
+importants, Owl essaye d'être compatible aux niveaux binaires et paquets
 avec plusieurs autres distributions majeures de GNU/*/Linux. En particulier,
 dans la plupart des cas il sera possible d'installer des applications
-packagées pour une version récente de Linux Red Hat (actuellement, ceci
+empaquetées pour une version récente de Linux Red Hat (actuellement, ceci
 s'applique à Linux Red Hat 6.x) sur Owl.
 
-$Id: Owl/doc/fr/CONCEPTS,v 1.2 2001/05/15 04:46:14 solar Exp $
+$Id: Owl/doc/fr/CONCEPTS,v 1.2.4.1 2002/10/14 20:14:13 solar Exp $

@@ -7,34 +7,34 @@ et des détails spécifiques aux différentes architectures.
 Sur beaucoup d'architectures, Owl supporte plusieurs versions
 d'architectures. Par exemple, i386 et i686 sont les deux des versions de
 l'architecture x86 (IA32). Il est possible (et en fait recommandé, dans la
-plupart des cas) de compiler et/ou d'utiliser des packages binaires destinés
+plupart des cas) de compiler et/ou d'utiliser des paquets binaires destinés
 à une version plus ancienne de l'architecture sur votre matériel moderne.
 
-Les packages compilés pour une version d'architecture plus proche de celle
+Les paquets compilés pour une version d'architecture plus proche de celle
 implémentée dans votre CPU peut fournir une petite amélioration des
 performances (habituellement de 1 à 5% dans l'ensemble sur des tâches du
 monde réel). Toutefois, il y a un prix : vous ne pourrez déplacer un tel
-package sur une machine plus ancienne et l'y installer. Pire, vous pourriez
-ne pas être capables de compiler des packages (ou tout binaire) pour une
+paquet sur une machine plus ancienne et l'y installer. Pire, vous pourriez
+ne pas être capables de compiler des paquets (ou tout binaire) pour une
 version d'architecture plus ancienne sur un système où les bibliothèques de
-développement ont été compilées pour une plus récente. Les packages
+développement ont été compilées pour une plus récente. Les paquets
 sembleront construire et fonctionner, mais peuvent en fait requérir la
 version d'architecture plus récente à cause de codes hérités des
 bibliothèques de développement installées sur le système.
 
 Il y a deux solutions possibles à ce dernier problème : vous pouvez choisir
-d'utiliser seulement des packages pour la version d'architecture la plus
+d'utiliser seulement des paquets pour la version d'architecture la plus
 ancienne dont vous pourriez avoir besoin, ou vous pouvez installer des
 bibliothèques de développement compilées pour la version la plus ancienne
-tout en utilisant d'autres packages (incluant les bibliothèques dynamiques)
+tout en utilisant d'autres paquets (incluant les bibliothèques dynamiques)
 compilés pour votre matériel actuel. Il est probable que vous trouverez la
 première solution plus pratique, même si elle ne fournit pas les meilleures
 performances possibles.
 
-Notez que les packages compilés pour une version d'architecture plus
-ancienne peuvent être réglés pour votre CPU plus récent, dans les extensions
+Notez que les paquets compilés pour une version d'architecture plus ancienne
+peuvent être réglés pour votre CPU plus récent, dans les extensions
 possibles de l'ensemble des fonctionnalités de la version plus ancienne.
-C'est ainsi que tous les packages Owl sont compilés par défaut.
+C'est ainsi que tous les paquets Owl sont compilés par défaut.
 
 
 	Compiler pour une version d'architecture particulière.
@@ -45,21 +45,21 @@ par défaut, cas dans lequel la version la plus ancienne de l'architecture du
 système de compilation sera sélectionnée.
 
 Les compilations croisées ne sont pas supportées : il n'est pas possible de
-compiler des packages pour une architecture différente de celle du système
-de compilation, ni pour une version d'architecture plus récente que celle
+compiler des paquets pour une architecture différente de celle du système de
+compilation, ni pour une version d'architecture plus récente que celle
 implémentée dans le CPU du système de compilation.
 
 
 	x86, aussi connu comme IA32.
 
 Deux versions d'architecture sont définies par défaut : i386 et i686. i386
-produit des packages qui vont effectivement fonctionner sur un i386 ou sur
-tout CPU plus récent. Aussi bien les packages i386 que les i686 sont réglés
-pour un i686, avec la seule différence que les packages i686 utilisent les
+produit des paquets qui vont effectivement fonctionner sur un i386 ou sur
+tout CPU plus récent. Aussi bien les paquets i386 que les i686 sont réglés
+pour un i686, avec la seule différence que les paquets i686 utilisent les
 instructions seulement disponibles avec cette version d'architecture plus
 récente.
 
-Il est recommandé que vous utilisiez seulement des packages i386, comme les
+Il est recommandé que vous utilisiez seulement des paquets i386, comme les
 améliorations de performances avec le i686 est minimal (moins de 1% dans
 l'ensemble).
 
@@ -67,9 +67,9 @@ l'ensemble).
 	SPARC.
 
 Deux versions d'architectures sont définies : sparc et sparcv9. sparc assume
-au moins un SPARC V8, et les deux produisent des packages réglés pour un
-UltraSPARC. Les packages sparcv9 ne fonctionneront effectivement pas sur
-tout en dessous d'un Ultra.
+au moins un SPARC V8, et les deux produisent des paquets réglés pour un
+UltraSPARC. Les paquets sparcv9 ne fonctionneront effectivement pas sur tout
+en dessous d'un Ultra.
 
 Les amélioration de performances avec sparcv9 est minimal (de 1 à 2%, sauf
 pour certaines fonctions dans glibc et OpenSSL où des versions assembleur
@@ -82,11 +82,13 @@ bits) en fonctionnant sur un noyau sparc64, quand même.
 
 	Alpha.
 
-Nous ne supportons pas Alpha à cette étape, la raison de cela étant que gcc
-2.95.2 ne peut pas compiler glibc sur Alpha à cause de problèmes dans le
-support complexe des virgules flottantes (de le FAQ de glibc). Ceci a changé
-avec gcc 2.95.3 donc nous supporterons Alpha dans le futur proche. La
-plupart (mais pas tous) des packages Owl ont été compilés et testés sur
-Alpha déjà.
+Deux versions d'architectures sont définies par défaut : alpha et alphaev56.
+Le choix affecte à la fois l'utilisation des extensions BWX avec alphaev56
+et l'ordonnancement des instructions. Ainsi, les paquets compilés pour une
+cible alpha ordinaire sont réglés pour les processeurs EV4 les plus anciens
+(21064, 21066) et ceux compilés pour alphaev56 sont réglés pour les
+processeurs EV56/PCA56 (21164A, 21164PC). Sur un processeur EV5 (21164) vous
+pouvez utiliser le paquet alpha ordinaire sous-optimal. Sur un EV6+ (21264,
+21264A), utilisez les paquets alphaev56.
 
-$Id: Owl/doc/fr/ARCHITECTURES,v 1.2 2001/05/15 04:46:14 solar Exp $
+$Id: Owl/doc/fr/ARCHITECTURES,v 1.2.4.1 2002/10/14 20:14:12 solar Exp $
