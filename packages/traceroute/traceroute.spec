@@ -1,9 +1,9 @@
-# $Id: Owl/packages/traceroute/traceroute.spec,v 1.4 2002/04/01 11:03:50 solar Exp $
+# $Id: Owl/packages/traceroute/traceroute.spec,v 1.5 2002/07/07 18:39:23 solar Exp $
 
 Summary: Traces the route taken by packets over a TCP/IP network.
 Name: traceroute
 Version: 1.4a12
-Release: owl3
+Release: owl4
 License: BSD
 Group: Applications/Internet
 Source0: ftp://ftp.ee.lbl.gov/traceroute-%{version}.tar.gz
@@ -11,7 +11,8 @@ Source1: traceroute.control
 Patch0: traceroute-1.4a12-owl-install-no-root.diff
 Patch1: traceroute-1.4a12-owl-tim-chris-fixes.diff
 Patch2: traceroute-1.4a12-owl-force-linux.diff
-Patch3: traceroute-1.4a12-rh-unaligned.diff
+Patch3: traceroute-1.4a12-owl-sockaddr-vs-sockaddr_in.diff
+Patch4: traceroute-1.4a12-rh-unaligned.diff
 Prefix: %{_prefix}
 Requires: owl-control < 2.0
 BuildRoot: /override/%{name}-%{version}
@@ -29,6 +30,7 @@ along the route.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 %configure
@@ -54,6 +56,10 @@ rm -rf $RPM_BUILD_ROOT
 /etc/control.d/facilities/traceroute
 
 %changelog
+* Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
+- Use struct sockaddr_in everywhere rather than cast struct sockaddr's as
+the latter may have different alignment requirements.
+
 * Mon Apr 01 2002 Solar Designer <solar@owl.openwall.com>
 - Imported Red Hat's patch for proper use of the unaligned *outdata
 structure; this really was still needed on 64-bit architectures.
