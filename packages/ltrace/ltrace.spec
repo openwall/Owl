@@ -1,9 +1,9 @@
-# $Id: Owl/packages/ltrace/ltrace.spec,v 1.8 2001/07/06 05:50:57 solar Exp $
+# $Id: Owl/packages/ltrace/ltrace.spec,v 1.9 2001/10/25 11:33:03 mci Exp $
 
 Summary: Tracks runtime library calls from dynamically linked executables.
 Name: ltrace
 Version: 0.3.10
-Release: 7owl
+Release: 8owl
 Copyright: GPL
 Group: Development/Debuggers
 ExclusiveArch: %ix86 sparc sparcv9
@@ -43,6 +43,7 @@ make
 %install
 make DESTDIR=$RPM_BUILD_ROOT mandir=%{_mandir} install
 rm -rf $RPM_BUILD_ROOT/%{_prefix}/doc
+cp -f debian/changelog ChangeLog
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -55,6 +56,9 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/ltrace.conf
 
 %changelog
+* Thu Jan 14 2001 Michail Litvak <mci@owl.openwall.com>
+- fix dangling symlink
+
 * Sun Jan 14 2001 Michail Litvak <mci@owl.openwall.com>
 - extracted from sparc patch - ltrace-0.3.10-rh-strlen.diff
   (it useful for any arch)
