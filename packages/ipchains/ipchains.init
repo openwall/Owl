@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/ipchains/Attic/ipchains.init,v 1.2 2001/12/10 01:30:26 solar Exp $
+# $Id: Owl/packages/ipchains/Attic/ipchains.init,v 1.3 2003/08/22 01:44:39 solar Exp $
 #
 # chkconfig: 2345 08 92
 # description: \
@@ -21,7 +21,7 @@ start|restart|reload)
 		$IPCHAINS -X
 		$IPCHAINS -Z
 		echo "Applying ipchains firewall rules"
-		grep -Ev '^[[:space:]]*#|^[[:space:]]*$' "$IPCHAINS_CONFIG" |
+		grep -Ev '^#|^[[:space:]]*$' "$IPCHAINS_CONFIG" |
 			/sbin/ipchains-restore -p -f
 	fi
 	;;
@@ -53,7 +53,7 @@ panic)
 save)
 	touch "$IPCHAINS_CONFIG"
 	chmod 600 "$IPCHAINS_CONFIG"
-	/sbin/ipchains-save > "$IPCHAINS_CONFIG" 2>/dev/null
+	/sbin/ipchains-save > "$IPCHAINS_CONFIG"
 	;;
 *)
 	echo "Usage: ipchains {start|stop|restart|reload|status|panic|save}"

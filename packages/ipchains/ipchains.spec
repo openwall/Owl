@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.8 2003/08/22 01:30:07 solar Exp $
+# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.9 2003/08/22 01:44:39 solar Exp $
 
 Summary: Tools for managing ipchains packet filtering rules.
 Name: ipchains
@@ -80,6 +80,11 @@ fi
 * Fri Aug 22 2003 Solar Designer <solar@owl.openwall.com> 1.3.10-owl11
 - Corrected the package summary and description to note the difference
 from iptables.
+- Removed the redirect of ipchains-save output to /dev/null, let's see
+if it has anything to say.
+- In the config file, only treat lines starting with a '#' and empty
+lines as comments; no longer allow for an arbitrary number of spaces
+before the '#'.
 - PreReq: chkconfig
 - Requires: fileutils, sh-utils, textutils, grep, sed
 
