@@ -1,0 +1,28 @@
+# $Id: Owl/packages/bash/profile,v 1.1 2000/07/27 00:03:52 solar Exp $
+
+PATH=/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin
+
+ulimit -c 0
+umask 077
+
+USER=`id -un`
+LOGNAME=$USER
+MAIL="/var/spool/mail/$USER"
+
+HOSTNAME=`/bin/hostname`
+HISTSIZE=1000
+HISTFILE=/dev/null
+
+if [ -z "$INPUTRC" -a ! -f "$HOME/.inputrc" ]; then
+	INPUTRC=/etc/inputrc
+fi
+
+export PATH USER LOGNAME MAIL HOSTNAME HISTSIZE HISTFILE INPUTRC
+
+for i in /etc/profile.d/*.sh ; do
+	if [ -x $i ]; then
+		. $i
+	fi
+done
+
+unset i

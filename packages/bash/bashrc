@@ -1,0 +1,8 @@
+# $Id: Owl/packages/bash/bashrc,v 1.1 2000/07/27 00:03:52 solar Exp $
+
+if [ "0$BASH_VERSINFO" -ge 2 ]; then
+	PS1="\h!\u:\w\\$ "
+else
+# bash 1.x has a security problem with shell escapes in directory names
+	PS1="\h!\u:\`echo \"\$PWD\"|/bin/sed s,$HOME,~,\`\\$ "
+fi
