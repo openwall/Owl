@@ -1,8 +1,8 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.30 2002/12/12 19:20:57 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.31 2003/02/20 13:35:04 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
-Version: 0.9.6h
+Version: 0.9.6i
 Release: owl1
 License: distributable
 Group: System Environment/Libraries
@@ -159,6 +159,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0644,root,root) %{_mandir}/man3/*
 
 %changelog
+* Thu Feb 20 2003 Solar Designer <solar@owl.openwall.com>
+- Updated to 0.9.6i.
+
 * Thu Dec 12 2002 Solar Designer <solar@owl.openwall.com>
 - Updated to 0.9.6h.
 - Dropped clean-shared for the "all" target (invoked by "tests" and
