@@ -1,9 +1,9 @@
-# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.3 2000/12/01 21:18:37 solar Exp $
+# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.3.2.1 2001/06/23 14:26:47 solar Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
 Version: 1.3.31
-Release: 3owl
+Release: 4owl
 Copyright: BSD for syslogd and GPL for klogd
 Group: System Environment/Daemons
 Source0: ftp://sunsite.unc.edu/pub/Linux/system/daemons/sysklogd-1.3-31.tar.gz
@@ -19,6 +19,7 @@ Patch5: sysklogd-1.3-31-debian-bug-32580.diff
 Patch6: sysklogd-1.3-31-owl-klogd.diff
 Patch7: sysklogd-1.3-31-owl-syslogd.diff
 Patch8: sysklogd-1.3-31-owl-klogd-drop-root.diff
+Patch9: sysklogd-1.3-31-debian-bug-85478.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: logrotate
 Prereq: fileutils, /sbin/chkconfig
@@ -40,6 +41,7 @@ places according to a configuration file.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 %build
 make CFLAGS="$RPM_OPT_FLAGS -Wall -DSYSV"
@@ -118,6 +120,11 @@ fi
 /usr/man/*/*
 
 %changelog
+* Wed May 23 2001 Solar Designer <solar@owl.openwall.com>
+- Back-ported a klogd DoS fix from 1.4.1, thanks to the reports from
+Jarno Huuskonen and Thomas Roessler who initially reported the problem
+to Debian (see http://bugs.debian.org/85478).
+
 * Fri Dec 01 2000 Solar Designer <solar@owl.openwall.com>
 - Adjusted syslog.init for owl-startup.
 - Restart after package upgrades in an owl-startup compatible way.
