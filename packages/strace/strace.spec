@@ -1,9 +1,9 @@
-# $Id: Owl/packages/strace/strace.spec,v 1.8 2002/06/08 17:14:06 solar Exp $
+# $Id: Owl/packages/strace/strace.spec,v 1.9 2003/05/16 00:01:31 solar Exp $
 
 Summary: Tracks and displays system calls associated with a running process.
 Name: strace
 Version: 4.4
-Release: owl2
+Release: owl3
 License: BSD
 Group: Development/Debuggers
 URL: http://www.liacs.nl/~wichert/strace/
@@ -54,9 +54,9 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man1
-mkdir -p ${RPM_BUILD_ROOT}%{_prefix}/bin
-%makeinstall man1dir=${RPM_BUILD_ROOT}%{_mandir}/man1
+mkdir -p $RPM_BUILD_ROOT%{_mandir}/man1
+mkdir -p $RPM_BUILD_ROOT%{_prefix}/bin
+%makeinstall man1dir=$RPM_BUILD_ROOT%{_mandir}/man1
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -73,6 +73,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_prefix}/bin/strace-graph
 
 %changelog
+* Fri May 16 2003 Solar Designer <solar@owl.openwall.com> 4.4-owl3
+- Additional fixes to build with Linux 2.4.21-rc1 headers.
+
 * Sat Jun 08 2002 Solar Designer <solar@owl.openwall.com>
 - Updated to today's CVS version (post-4.4) with an additional fix for
 displaying all possible ioctl names when there's more than one match,

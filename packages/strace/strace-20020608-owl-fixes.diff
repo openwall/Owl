@@ -1,7 +1,7 @@
-diff -ur strace-20020608.orig/defs.h strace-20020608/defs.h
---- strace-20020608.orig/defs.h	Thu May 30 04:48:52 2002
-+++ strace-20020608/defs.h	Sat Jun  8 21:06:47 2002
-@@ -395,6 +395,9 @@
+diff -urp strace-20020608.orig/defs.h strace-20020608/defs.h
+--- strace-20020608.orig/defs.h	Thu May 30 00:48:52 2002
++++ strace-20020608/defs.h	Sat Jun  8 17:06:47 2002
+@@ -395,6 +395,9 @@ extern void printsiginfo P((siginfo_t *,
  extern void printsock P((struct tcb *, long, int));
  extern void print_sock_optmgmt P((struct tcb *, long, int));
  extern void printrusage P((struct tcb *, long));
@@ -11,10 +11,10 @@ diff -ur strace-20020608.orig/defs.h strace-20020608/defs.h
  extern int clearbpt P((struct tcb *));
  extern int setbpt P((struct tcb *));
  extern int sigishandled P((struct tcb *, int));
-diff -ur strace-20020608.orig/desc.c strace-20020608/desc.c
---- strace-20020608.orig/desc.c	Thu May 30 04:48:52 2002
-+++ strace-20020608/desc.c	Sat Jun  8 21:03:11 2002
-@@ -540,6 +540,7 @@
+diff -urp strace-20020608.orig/desc.c strace-20020608/desc.c
+--- strace-20020608.orig/desc.c	Thu May 30 00:48:52 2002
++++ strace-20020608/desc.c	Sat Jun  8 17:03:11 2002
+@@ -540,6 +540,7 @@ struct tcb *tcp;
  }
  
  #ifdef ALPHA
@@ -22,9 +22,9 @@ diff -ur strace-20020608.orig/desc.c strace-20020608/desc.c
  sys_osf_select(tcp)
  struct tcb *tcp;
  {
-diff -ur strace-20020608.orig/file.c strace-20020608/file.c
---- strace-20020608.orig/file.c	Thu May 30 04:48:52 2002
-+++ strace-20020608/file.c	Sat Jun  8 21:04:01 2002
+diff -urp strace-20020608.orig/file.c strace-20020608/file.c
+--- strace-20020608.orig/file.c	Thu May 30 00:48:52 2002
++++ strace-20020608/file.c	Sat Jun  8 17:04:01 2002
 @@ -40,6 +40,7 @@
  #include <linux/types.h>
  #include <linux/dirent.h>
@@ -33,7 +33,7 @@ diff -ur strace-20020608.orig/file.c strace-20020608/file.c
  #else
  #define kernel_dirent dirent
  #endif
-@@ -630,6 +631,7 @@
+@@ -630,6 +631,7 @@ long addr;
  }
  #endif /* LINUXSPARC */
  
@@ -41,7 +41,7 @@ diff -ur strace-20020608.orig/file.c strace-20020608/file.c
  static struct xlat fileflags[] = {
  #ifdef FREEBSD
  	{ UF_NODUMP,	"UF_NODUMP"	},
-@@ -651,6 +653,7 @@
+@@ -651,6 +653,7 @@ static struct xlat fileflags[] = {
  #endif
  	{ 0,		NULL		},
  };
@@ -49,7 +49,7 @@ diff -ur strace-20020608.orig/file.c strace-20020608/file.c
  
  #ifdef FREEBSD
  int
-@@ -721,7 +724,7 @@
+@@ -721,7 +724,7 @@ struct stat *statbuf;
  #endif /* !HAVE_ST_RDEV */
  	    break;
      default:
@@ -58,7 +58,7 @@ diff -ur strace-20020608.orig/file.c strace-20020608/file.c
  	    break;
      }
      if (!abbrev(tcp)) {
-@@ -1921,8 +1924,9 @@
+@@ -1921,8 +1924,9 @@ struct tcb *tcp;
  		struct dirent64 *d = (struct dirent64 *) &buf[i];
  #ifdef linux
  		if (!abbrev(tcp)) {
@@ -70,10 +70,10 @@ diff -ur strace-20020608.orig/file.c strace-20020608/file.c
  			tprintf("d_reclen=%u, d_name=\"%s\"}",
  				d->d_reclen, d->d_name);
  		}
-diff -ur strace-20020608.orig/linux/syscall.h strace-20020608/linux/syscall.h
---- strace-20020608.orig/linux/syscall.h	Thu May 30 04:48:52 2002
-+++ strace-20020608/linux/syscall.h	Sat Jun  8 21:02:26 2002
-@@ -83,7 +83,7 @@
+diff -urp strace-20020608.orig/linux/syscall.h strace-20020608/linux/syscall.h
+--- strace-20020608.orig/linux/syscall.h	Thu May 30 00:48:52 2002
++++ strace-20020608/linux/syscall.h	Sat Jun  8 17:02:26 2002
+@@ -83,7 +83,7 @@ int sys_rt_sigpending(), sys_rt_sigsuspe
  int sys_rt_sigtimedwait(), sys_prctl(), sys_poll(), sys_vfork();
  int sys_sendfile(), sys_old_mmap(), sys_stat64(), sys_lstat64(), sys_fstat64();
  int sys_truncate64(), sys_ftruncate64(), sys_pivotroot();
@@ -82,10 +82,44 @@ diff -ur strace-20020608.orig/linux/syscall.h strace-20020608/linux/syscall.h
  
  
  /* sys_socketcall subcalls */
-diff -ur strace-20020608.orig/process.c strace-20020608/process.c
---- strace-20020608.orig/process.c	Thu May 30 04:48:52 2002
-+++ strace-20020608/process.c	Sat Jun  8 21:02:26 2002
-@@ -484,6 +484,7 @@
+diff -urp strace-20020608.orig/net.c strace-20020608/net.c
+--- strace-20020608.orig/net.c	Thu May 30 00:48:52 2002
++++ strace-20020608/net.c	Thu May 15 23:55:20 2003
+@@ -40,6 +40,8 @@
+ #define in6_addr in6_addr_libc
+ #define ipv6_mreq ipv6_mreq_libc
+ #define sockaddr_in6 sockaddr_in6_libc
++#define in6addr_any in6addr_any_libc
++#define in6addr_loopback in6addr_loopback_libc
+ #endif
+ 
+ #include <netinet/in.h>
+@@ -66,15 +68,21 @@
+ #undef in6_addr
+ #undef ipv6_mreq
+ #undef sockaddr_in6
++#undef in6addr_any
++#undef in6addr_loopback
+ #define in6_addr in6_addr_kernel
+ #define ipv6_mreq ipv6_mreq_kernel
+ #define sockaddr_in6 sockaddr_in6_kernel
++#define in6addr_any in6addr_any_kernel
++#define in6addr_loopback in6addr_loopback_kernel
+ #endif
+ #include <linux/in6.h>
+ #if defined(HAVE_SIN6_SCOPE_ID_LINUX)
+ #undef in6_addr
+ #undef ipv6_mreq
+ #undef sockaddr_in6
++#undef in6addr_any
++#undef in6addr_loopback
+ #define in6_addr in6_addr_libc
+ #define ipv6_mreq ipv6_mreq_libc
+ #define sockaddr_in6 sockaddr_in6_kernel
+diff -urp strace-20020608.orig/process.c strace-20020608/process.c
+--- strace-20020608.orig/process.c	Thu May 30 00:48:52 2002
++++ strace-20020608/process.c	Sat Jun  8 17:02:26 2002
+@@ -484,6 +484,7 @@ struct tcb *tcp;
  	return 0;
  }
  
@@ -93,7 +127,7 @@ diff -ur strace-20020608.orig/process.c strace-20020608/process.c
  int
  change_syscall(tcp, new)
  struct tcb *tcp;
-@@ -543,7 +544,9 @@
+@@ -543,7 +544,9 @@ int new;
  #endif /* LINUX */
  	return -1;
  }
@@ -103,7 +137,7 @@ diff -ur strace-20020608.orig/process.c strace-20020608/process.c
  int
  setarg(tcp, argnum)
  	struct tcb *tcp;
-@@ -592,6 +595,7 @@
+@@ -592,6 +595,7 @@ setarg(tcp, argnum)
  #endif
  	return 0;
  }
@@ -111,10 +145,10 @@ diff -ur strace-20020608.orig/process.c strace-20020608/process.c
  
  #ifdef SYS_clone
  int
-diff -ur strace-20020608.orig/syscall.c strace-20020608/syscall.c
---- strace-20020608.orig/syscall.c	Thu May 30 04:48:52 2002
-+++ strace-20020608/syscall.c	Sat Jun  8 21:02:26 2002
-@@ -455,8 +455,7 @@
+diff -urp strace-20020608.orig/syscall.c strace-20020608/syscall.c
+--- strace-20020608.orig/syscall.c	Thu May 30 00:48:52 2002
++++ strace-20020608/syscall.c	Sat Jun  8 17:02:26 2002
+@@ -455,8 +455,7 @@ const struct subcall subcalls_table[] = 
  };
  #endif /* FREEBSD */
  
@@ -124,7 +158,7 @@ diff -ur strace-20020608.orig/syscall.c strace-20020608/syscall.c
  const int socket_map [] = {
  	       /* SYS_SOCKET      */ 97,
  	       /* SYS_BIND        */ 104,
-@@ -477,7 +476,7 @@
+@@ -477,7 +476,7 @@ const int socket_map [] = {
  	       /* SYS_RECVMSG     */ 113
  };
  
@@ -133,7 +167,7 @@ diff -ur strace-20020608.orig/syscall.c strace-20020608/syscall.c
  sparc_socket_decode (tcp)
  struct tcb *tcp;
  {
-@@ -498,7 +497,11 @@
+@@ -498,7 +497,11 @@ struct tcb *tcp;
  		addr += sizeof (arg);
  	}
  }
@@ -145,7 +179,7 @@ diff -ur strace-20020608.orig/syscall.c strace-20020608/syscall.c
  static void
  decode_subcall(tcp, subcall, nsubcalls, style)
  struct tcb *tcp;
-@@ -832,7 +835,7 @@
+@@ -832,7 +835,7 @@ struct tcb *tcp;
  			return -1;
  		case 0x91d02000:
  			/* SunOS syscall trap. (pers 1) */
@@ -154,7 +188,7 @@ diff -ur strace-20020608.orig/syscall.c strace-20020608/syscall.c
  			return -1;
  		case 0x91d02008:
  			/* Solaris 2.x syscall trap. (per 2) */
-@@ -852,7 +855,7 @@
+@@ -852,7 +855,7 @@ struct tcb *tcp;
  				tcp->flags &= ~TCB_WAITEXECVE;
  				return 0;
  			}
@@ -163,7 +197,7 @@ diff -ur strace-20020608.orig/syscall.c strace-20020608/syscall.c
  			return -1;
  		}
  
-@@ -949,7 +952,10 @@
+@@ -949,7 +952,10 @@ syscall_fixup(tcp)
  struct tcb *tcp;
  {
  #ifndef USE_PROCFS
@@ -174,7 +208,7 @@ diff -ur strace-20020608.orig/syscall.c strace-20020608/syscall.c
  #else /* USE_PROCFS */	
  	int scno = tcp->scno;
  
-@@ -1278,7 +1284,8 @@
+@@ -1278,7 +1284,8 @@ struct tcb *tcp;
  int syscall_enter(tcp)
  struct tcb *tcp;
  {
@@ -184,7 +218,7 @@ diff -ur strace-20020608.orig/syscall.c strace-20020608/syscall.c
  	int pid = tcp->pid;
  #endif /* !USE_PROCFS */	
  #ifdef LINUX
-@@ -1738,7 +1745,7 @@
+@@ -1738,7 +1745,7 @@ struct tcb *tcp;
  		decode_subcall(tcp, SYS_ipc_subcall,
  			SYS_ipc_nsubcalls, shift_style);
  		break;
@@ -193,9 +227,9 @@ diff -ur strace-20020608.orig/syscall.c strace-20020608/syscall.c
  #ifdef SPARC
  	case SYS_socketcall:
  		sparc_socket_decode (tcp);
-diff -ur strace-20020608.orig/util.c strace-20020608/util.c
---- strace-20020608.orig/util.c	Thu May 30 04:48:52 2002
-+++ strace-20020608/util.c	Sat Jun  8 21:02:26 2002
+diff -urp strace-20020608.orig/util.c strace-20020608/util.c
+--- strace-20020608.orig/util.c	Thu May 30 00:48:52 2002
++++ strace-20020608/util.c	Sat Jun  8 17:02:26 2002
 @@ -69,7 +69,19 @@
  
  #if defined(LINUX) && defined(SPARC)
@@ -216,7 +250,7 @@ diff -ur strace-20020608.orig/util.c strace-20020608/util.c
  
  #if !defined(__GLIBC__)
  
-@@ -1040,7 +1052,7 @@
+@@ -1040,7 +1052,7 @@ struct tcb *tcp;
  		tprintf("[????????] ");
  		return;
  	}
