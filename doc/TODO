@@ -525,11 +525,6 @@ we will likely have to maintain ourselves.
 [PRIORITY: low]
 Keep to latest release.
 
-[PRIORITY: low]
-Support logging in to alternate UID 0 accounts in sulogin (ask for
-both login name and password, only let it proceed if it's UID 0, be
-careful about timings).
-
 
 	telnet.
 
@@ -589,4 +584,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.19 2003/04/22 23:07:43 solar Exp $
+$Id: Owl/doc/TODO,v 1.20 2003/04/27 12:03:41 solar Exp $
