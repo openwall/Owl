@@ -1,0 +1,44 @@
+--- iputils/ping_common.c.orig	Fri Sep 20 16:02:32 2002
++++ iputils/ping_common.c	Wed Oct 15 12:36:13 2003
+@@ -507,7 +507,9 @@
+ 	char ans_data[4096];
+ 	struct iovec iov;
+ 	struct msghdr msg;
++#ifdef SO_TIMESTAMP
+ 	struct cmsghdr *c;
++#endif
+ 	int cc;
+ 	int next;
+ 	int polling;
+--- iputils/tftpd.c.orig	Thu Jan 24 00:31:41 2002
++++ iputils/tftpd.c	Wed Oct 15 12:36:13 2003
+@@ -151,6 +151,7 @@
+ 		int pid;
+ 		int i, j;
+ 
++		pid = 0; /* never used */
+ 		for (i = 1; i < 20; i++) {
+ 		    pid = fork();
+ 		    if (pid < 0) {
+--- iputils/tracepath.c.orig	Sat Feb 23 00:10:59 2002
++++ iputils/tracepath.c	Wed Oct 15 12:36:13 2003
+@@ -330,7 +330,7 @@
+ 	}
+ 
+ 	for (ttl=1; ttl<32; ttl++) {
+-		int res;
++		int res = 0;
+ 		int i;
+ 
+ 		on = ttl;
+--- iputils/tracepath6.c.orig	Sun Sep  2 02:03:46 2001
++++ iputils/tracepath6.c	Wed Oct 15 12:36:13 2003
+@@ -364,7 +364,7 @@
+ 	}
+ 
+ 	for (ttl=1; ttl<32; ttl++) {
+-		int res;
++		int res = 0;
+ 		int i;
+ 
+ 		on = ttl;
