@@ -1,13 +1,14 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.22 2002/02/07 18:07:47 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.23 2002/02/11 15:36:12 solar Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
 Version: 0.75
 Release: owl14
+%define rh_version %{version}-10
 License: GPL or BSD
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
-Source0: pam-redhat-%{version}-10.tar.bz2
+Source0: pam-redhat-%{rh_version}.tar.bz2
 Source1: pam_listfile.c
 Patch0: pam-0.75-owl-tmp.diff
 Patch1: pam-0.75-owl-pam_get_user-cache-failures.diff
@@ -22,6 +23,7 @@ PreReq: /sbin/ldconfig
 Requires: glibc-crypt_blowfish, pwdb >= 0.61-1owl
 # Just to make sure noone misses pam_unix, which is now provided by tcb
 Requires: tcb >= 0.9.5
+Provides: pam <= 0.75-14owl
 BuildRequires: glibc-crypt_blowfish
 BuildRoot: /override/%{name}-%{version}
 
