@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gnupg/gnupg.spec,v 1.8 2002/02/07 21:04:23 solar Exp $
+# $Id: Owl/packages/gnupg/gnupg.spec,v 1.9 2002/02/11 15:38:30 solar Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
@@ -6,7 +6,7 @@ Version: 1.0.6
 Release: owl1
 License: GPL
 Group: Applications/Cryptography
-URL: http://www.gnupg.org/
+URL: http://www.gnupg.org
 Source: ftp://ftp.gnupg.org/pub/gcrypt/gnupg/%{name}-%{version}.tar.gz
 Patch0: gnupg-1.0.2-rh-locale.diff
 Patch1: gnupg-1.0.4-cvs-secret-key-checks.diff
@@ -23,12 +23,17 @@ only IDEA for symmetric-key encryption, which is patented worldwide).
 
 %prep
 %setup -q
+rm zlib/*
+cat > zlib/Makefile.in << EOF
+all:
+install:
+EOF
 %patch0 -p1
 %patch1 -p0
 
 %build
 unset LINGUAS || :
-%configure --enable-shared
+%configure
 make
 
 %install
