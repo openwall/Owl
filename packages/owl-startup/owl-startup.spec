@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.42 2004/01/18 13:26:11 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.43 2004/02/07 06:11:09 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.22
+Version: 0.23
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -16,6 +16,7 @@ Source6: single
 Source7: clock
 Source8: service
 Source9: sysctl.conf
+Patch0: initscripts-5.00-owl-dhclient.diff
 PreReq: /sbin/chkconfig
 Requires: SysVinit, msulogin, /sbin/start-stop-daemon
 Requires: bash >= 2.0, sh-utils
@@ -32,6 +33,7 @@ system down cleanly.
 
 %prep
 %setup -q -n initscripts-5.00
+%patch -p1
 
 %build
 make -C src CFLAGS="$RPM_OPT_FLAGS" usleep ipcalc
@@ -149,6 +151,14 @@ fi
 %doc redhat
 
 %changelog
+* Sat Feb 07 2004 Solar Designer <solar@owl.openwall.com> 0.23-owl1
+- Added a patch by Berend-Jan Wever to make ifup and ifdown scripts use
+dhclient instead of pump when BOOTPROTO=dhcp is requested; please note that
+dhclient is not officially a part of Owl yet, this setting remains
+unsupported, may be changed or removed without notice, and the networking
+startup scripts need to be re-worked entirely (at which point proper DHCP
+support might be added).
+
 * Sun Jan 18 2004 Solar Designer <solar@owl.openwall.com> 0.22-owl1
 - Added /sbin/service script for Red Hat Linux compatibility.
 - Set net.ipv4.tcp_timestamps = 0.

@@ -1,0 +1,67 @@
+diff -urw initscripts-5.00.orig/sysconfig/network-scripts/ifdown initscripts-5.00/sysconfig/network-scripts/ifdown
+--- initscripts-5.00.orig/sysconfig/network-scripts/ifdown	Wed Mar  8 16:20:36 2000
++++ initscripts-5.00/sysconfig/network-scripts/ifdown	Sat Feb  7 05:42:06 2004
+@@ -39,8 +39,13 @@
+ # Check to make sure the device is actually up
+ check_device_down && exit 0
+ 
+-if [ "$BOOTPROTO" = bootp -o "$BOOTPROTO" = dhcp ]; then
++if [ "$BOOTPROTO" = bootp ]; then
+ 	pump -r -i ${DEVICE}
++fi
++if [ "$BOOTPROTO" = dhcp ]; then
++    echo -n "Releasing DHCP lease..."
++    dhclient -q -r ${DEVICE}
++    echo " done."
+ fi
+ 
+ ifconfig ${DEVICE} down
+diff -urw initscripts-5.00.orig/sysconfig/network-scripts/ifup initscripts-5.00/sysconfig/network-scripts/ifup
+--- initscripts-5.00.orig/sysconfig/network-scripts/ifup	Mon Jan 31 22:51:25 2000
++++ initscripts-5.00/sysconfig/network-scripts/ifup	Sat Feb  7 05:42:12 2004
+@@ -1,5 +1,6 @@
+ #!/bin/bash
+ PATH=/sbin:/usr/sbin:/bin:/usr/bin
++# 06-feb-2004, Berend-Jan Wever: Changed dhcp to use dhclient instead of pump
+ 
+ cd /etc/sysconfig/network-scripts
+ . network-functions
+@@ -51,10 +51,6 @@
+     BOOTPROTO=bootp
+ fi
+ 
+-if [ "$BOOTPROTO" = bootp -o "$BOOTPROTO" = dhcp ]; then
+-    PUMP=true
+-fi
+-
+ OTHERSCRIPT="/etc/sysconfig/network-scripts/ifup-${DEVICETYPE}"
+ 
+ if [ -x $OTHERSCRIPT ]; then
+@@ -83,7 +79,26 @@
+    ifconfig ${DEVICE} hw ether ${MACADDR}
+ fi
+ 
+-if [ -n "$PUMP" ]; then
++if [ "$BOOTPROTO" = "dhcp" ]; then
++    DHCLIENTARGS=
++    if [ -n "$DHCP_PORT" ]; then
++        DHCLIENTARGS=="-p $DHCP_PORT"
++    fi
++    if [ -n "$DHCP_DESTINATION" ]; then
++        DHCLIENTARGS=="-s $DHCP_DESTINATION $DHCLIENTARGS"
++    fi
++    if [ -n "$DHCP_RELEASE" ]; then
++        DHCLIENTARGS=="-r $DHCP_RELEASE $DHCLIENTARGS"
++    fi
++    echo -n "Requesting DHCP information for $DEVICE..."
++    if ifconfig $DEVICE up && /sbin/dhclient -q $DEVICE $DHCLIENTARGS ; then
++        echo " done."
++    else
++        ifconfig $DEVICE down
++        echo " failed."
++        exit 1
++    fi
++elif [ "$BOOTPROTO" = "bootp" ]; then
+     PUMPARGS=
+     if [ -n "$DHCP_HOSTNAME" ]; then
+        PUMPARGS="-h $DHCP_HOSTNAME"
