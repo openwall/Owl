@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.5 2000/09/18 11:17:56 kad Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.6 2000/11/17 08:18:22 solar Exp $
 
 Summary: 	The Perl programming language.
 Name: 		perl
@@ -86,7 +86,7 @@ sh Configure -des -Doptimize="$RPM_OPT_FLAGS" \
 	-Dinstallprefix=$RPM_BUILD_ROOT%{_prefix} \
 	-Dprefix=%{_prefix} \
 	-Darchname=%{_arch}-%{_os} \
-%ifarch sparc
+%ifarch sparc sparcv9
 	-Ud_longdbl \
 %endif
 	-Dd_dosuid \
