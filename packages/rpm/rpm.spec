@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.21 2002/02/07 18:07:47 solar Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.22 2002/02/11 15:41:12 solar Exp $
 
 Summary: The Red Hat package management system.
 Name: rpm
@@ -19,7 +19,7 @@ Requires: popt, bzip2 >= 0.9.0c-2
 Conflicts: patch < 2.5
 # XXX the libio interface is incompatible in glibc 2.2
 Conflicts: glibc >= 2.1.90
-BuildRequires: bzip2 >= 0.9.0c-2
+BuildRequires: bzip2 >= 0.9.0c-2, zlib >= 1.1.3-owl12
 BuildRoot: /override/%{name}-%{version}
 
 %description

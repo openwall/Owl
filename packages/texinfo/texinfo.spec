@@ -1,4 +1,4 @@
-# $Id: Owl/packages/texinfo/texinfo.spec,v 1.6 2002/02/07 02:08:13 solar Exp $
+# $Id: Owl/packages/texinfo/texinfo.spec,v 1.7 2002/02/11 15:41:12 solar Exp $
 
 Summary: Tools needed to create Texinfo format documentation files.
 Name: texinfo
@@ -13,6 +13,7 @@ Patch1: texinfo-3.12h-rh-data_size_fix.diff
 Patch2: texinfo-4.0-rh-zlib.diff
 PreReq: /sbin/install-info
 Prefix: %{_prefix}
+BuildRequires: zlib >= 1.1.3-owl12
 BuildRoot: /override/%{name}-%{version}
 
 %define __spec_install_post /usr/lib/rpm/brp-strip \; /usr/lib/rpm/brp-strip-comment-note
