@@ -1,0 +1,35 @@
+diff -rU 7 fileutils-4.1.11.orig/src/chown-core.c fileutils-4.1.11/src/chown-core.c
+--- fileutils-4.1.11.orig/src/chown-core.c	Mon Jan 21 22:50:29 2002
++++ fileutils-4.1.11/src/chown-core.c	Sun Aug  4 17:30:00 2002
+@@ -324,14 +324,15 @@
+ 	      if (chopt->force_silent == 0)
+ 		error (0, saved_errno, (uid != (uid_t) -1
+ 					? _("changing ownership of %s")
+ 					: _("changing group of %s")),
+ 		       quote (file));
+ 	      errors = 1;
+ 	    }
++#if 0
+ 	  else
+ 	    {
+ 	      /* The change succeeded.  On some systems, the chown function
+ 		 resets the `special' permission bits.  When run by a
+ 		 `privileged' user, this program must ensure that at least
+ 		 the set-uid and set-group ones are still set.  */
+ 	      if (file_stats.st_mode & ~(S_IFMT | S_IRWXUGO)
+@@ -344,14 +345,15 @@
+ 		      error (0, saved_errno,
+ 			     _("unable to restore permissions of %s"),
+ 			     quote (file));
+ 		      fail = 1;
+ 		    }
+ 		}
+ 	    }
++#endif
+ 	}
+       else if (chopt->verbosity == V_high)
+ 	{
+ 	  describe_change (file, CH_NO_CHANGE_REQUESTED,
+ 			   chopt->user_name, chopt->group_name);
+ 	}
+     }

@@ -1,9 +1,13 @@
-# $Id: Owl/packages/sh-utils/Attic/sh-utils.spec,v 1.5 2002/02/06 19:14:16 solar Exp $
+# $Id: Owl/packages/sh-utils/Attic/sh-utils.spec,v 1.6 2002/08/05 08:05:14 solar Exp $
+
+# The texinfo documentation for fileutils, sh-utils, and textutils is
+# currently provided by fileutils.
+%define BUILD_INFO 0
 
 Summary: A set of GNU utilities commonly used in shell scripts.
 Name: sh-utils
 Version: 2.0
-Release: owl2
+Release: owl3
 License: GPL
 Group: System Environment/Shells
 Source: ftp://ftp.gnu.org/gnu/sh-utils/sh-utils-%{version}.tar.gz
@@ -11,7 +15,10 @@ Patch0: sh-utils-2.0-owl-no-su-hostname.diff
 Patch1: sh-utils-2.0-owl-false.diff
 Patch2: sh-utils-2.0-rh-cest.diff
 Patch3: sh-utils-2.0-rh-utmp.diff
+%if %BUILD_INFO
 PreReq: /sbin/install-info
+%endif
+BuildRequires: perl
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -45,59 +52,73 @@ indefinitely).
 %patch2 -p1
 %patch3 -p1
 
-# XXX docs should say /var/run/[uw]tmp not /etc/[uw]tmp
+# The docs should say /var/run/[uw]tmp not /etc/[uw]tmp
 perl -pi -e 's,/etc/utmp,/var/run/utmp,g' \
 	doc/sh-utils.texi man/logname.1 man/users.1 man/who.1
 perl -pi -e 's,/etc/wtmp,/var/run/wtmp,g' \
 	doc/sh-utils.texi man/logname.1 man/users.1 man/who.1
 rm doc/sh-utils.info
 
+%{expand:%%define optflags %optflags -Wall -Dlint}
+
 %build
-rm -rf build-$RPM_ARCH
-mkdir -p build-$RPM_ARCH
-cd build-$RPM_ARCH
-CFLAGS="$RPM_OPT_FLAGS" ../configure --prefix=/usr --disable-largefile
+%configure --enable-largefile
 make
-make info
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{bin,usr/sbin}
+%makeinstall
 
-make install prefix=$RPM_BUILD_ROOT/usr -C build-$RPM_ARCH
-
-for i in basename date echo false nice pwd sleep stty true uname; do
-	install -m 755 $RPM_BUILD_ROOT/usr/bin/$i $RPM_BUILD_ROOT/bin/$i
-	rm $RPM_BUILD_ROOT/usr/bin/$i
+cd $RPM_BUILD_ROOT
+mkdir bin
+for i in basename date echo false nice pwd sleep stty true uname env; do
+	mv .%{_bindir}/$i bin/
 done
 
-mv $RPM_BUILD_ROOT/usr/bin/chroot $RPM_BUILD_ROOT/usr/sbin/
-rm $RPM_BUILD_ROOT/usr/bin/uptime
-rm $RPM_BUILD_ROOT/usr/man/man1/{hostname,su}.1
+ln -s /bin/env .%{_bindir}/
+ln -s test .%{_bindir}/[
 
-ln -sf test $RPM_BUILD_ROOT/usr/bin/[
+mkdir -p .%{_sbindir}
+mv .%{_bindir}/chroot .%{_sbindir}/
+rm .%{_bindir}/uptime
+rm .%{_mandir}/man1/{hostname,su}.1
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%if %BUILD_INFO
 %post
-/sbin/install-info /usr/info/sh-utils.info.gz /usr/info/dir
+/sbin/install-info %{_infodir}/sh-utils.info.gz %{_infodir}/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete /usr/info/sh-utils.info.gz /usr/info/dir
+	/sbin/install-info --delete %{_infodir}/sh-utils.info.gz %{_infodir}/dir
 fi
+%else
+%pre
+/sbin/install-info --quiet --delete \
+	%{_infodir}/sh-utils.info.gz %{_infodir}/dir
+%endif
 
 %files
 %defattr(-,root,root)
-%doc NEWS README
+%doc COPYING NEWS README THANKS TODO
 /bin/*
-/usr/sbin/chroot
-/usr/bin/*
-/usr/man/man1/*
-/usr/info/sh-utils.info.*
+%{_bindir}/*
+%{_sbindir}/chroot
+%{_mandir}/man*/*
+%if %BUILD_INFO
+%{_infodir}/sh-utils.info*
+%endif
+%{_datadir}/locale/*/*/*
 
 %changelog
+* Mon Aug 05 2002 Solar Designer <solar@owl.openwall.com>
+- No longer provide texinfo documentation, it is now a part of fileutils.
+- Do package locale data.
+- Use _*dir, configure, and makeinstall RPM macros.
+- Enabled large file support.
+
 * Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 

@@ -12,6 +12,11 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/08/04 -
+2002/08/05	Packages: fileutils, sh-utils, textutils;
+		Owl/build/installorder.conf
+Updated fileutils to 4.1.11 with a number of additional patches.
+
 2002/08/04	Package: glibc
 Made the FreeSec code (that supports the extended BSDI-style DES-based
 password hashes) reentrant, adjusted crypt*(3) wrappers and the manual
@@ -885,4 +890,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.120 2002/08/04 02:35:54 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.121 2002/08/05 08:05:14 solar Exp $

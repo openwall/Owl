@@ -1,10 +1,21 @@
 # color-ls initialization
 COLORS=/etc/DIR_COLORS
-eval `dircolors --sh /etc/DIR_COLORS`
-[ -f "$HOME/.dircolors" ] && eval `dircolors --sh $HOME/.dircolors` && COLORS=$HOME/.dircolors
+[ -e "/etc/DIR_COLORS.$TERM" ] && COLORS="/etc/DIR_COLORS.$TERM"
+[ -f "$HOME/.dircolors" ] && COLORS="$HOME/.dircolors"
+[ -f "$HOME/.dircolors.$TERM" ] && COLORS="$HOME/.dircolors.$TERM"
+[ -f "$HOME/.dir_colors" ] && COLORS="$HOME/.dir_colors"
+[ -f "$HOME/.dir_colors.$TERM" ] && COLORS="$HOME/.dir_colors.$TERM"
 
-if echo $SHELL | grep -q bash; then # aliases are bash only
-	if ! egrep -qi "^COLOR.*none" $COLORS; then
+[ -e "$COLORS" ] || exit 0
+
+eval `dircolors --sh "$COLORS"`
+
+if echo $SHELL | grep -Eq '/bash$|/zsh$'; then
+	if grep -Eq '^COLOR[[:space:]]+all[[:space:]]*$' "$COLORS"; then
+		alias ll='ls -l --color=always'
+		alias l.='ls -d .[a-zA-Z]* --color=always'
+		alias ls='ls --color=always'
+	elif grep -Eq '^COLOR[[:space:]]+tty[[:space:]]*$' "$COLORS"; then
 		alias ll='ls -l --color=tty'
 		alias l.='ls -d .[a-zA-Z]* --color=tty'
 		alias ls='ls --color=tty'

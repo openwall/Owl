@@ -1,24 +1,31 @@
-# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.7 2002/07/07 00:07:48 solar Exp $
+# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.8 2002/08/05 08:05:14 solar Exp $
+
+# The texinfo documentation for fileutils, sh-utils, and textutils is
+# currently provided by fileutils.
+%define BUILD_INFO 1
 
 Summary: The GNU versions of common file management utilities.
 Name: fileutils
-Version: 4.0.27
-Release: owl5
+Version: 4.1.11
+Release: owl1
 License: GPL
 Group: Applications/File
-Source0: ftp://alpha.gnu.org/gnu/fetish/%{name}-%{version}.tar.gz
-Source1: DIR_COLORS
-Source2: colorls.sh
-Source3: colorls.csh
-Source4: shred.1
-Patch0: fileutils-4.0-rh-spacedir.diff
-Patch1: fileutils-4.0-rh-samefile.diff
-Patch2: fileutils-4.0-rh-C-option.diff
-Patch3: fileutils-4.0p-rh-strip.diff
-Patch4: fileutils-4.0x-rh-force-chmod.diff
-Patch5: fileutils-4.0x-rh-overwrite.diff
-Patch6: fileutils-4.0-rh-ls-dumbterm.diff
+Source0: ftp://alpha.gnu.org/gnu/fetish/fileutils-%{version}.tar.bz2
+Source1: colorls.sh
+Source2: colorls.csh
+Source3: DIR_COLORS
+Patch0: fileutils-4.1.11-rh-owl-install-C.diff
+Patch1: fileutils-4.1.11-rh-owl-default-time-style.diff
+Patch2: fileutils-4.1.11-rh-stoneage.diff
+Patch3: fileutils-4.1.11-rh-owl-ls-dumbterm.diff
+Patch4: fileutils-4.1.11-owl-alt-rh-restore-color.diff
+Patch5: fileutils-4.1.11-alt-cp-force.diff
+Patch6: fileutils-4.1.11-alt-owl-chown.diff
+Patch7: fileutils-4.1.11-owl-fixes.diff
+%if %BUILD_INFO
 PreReq: /sbin/install-info
+%endif
+Conflicts: sh-utils < 2.0-owl3
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -45,8 +52,12 @@ timestamps), and vdir (provides long directory listings).
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
+
+%{expand:%%define optflags %optflags -Wall -Dlint}
 
 %build
+rm doc/coreutils.info
 unset LINGUAS || :
 %define _exec_prefix /
 %configure
@@ -59,43 +70,56 @@ rm -rf $RPM_BUILD_ROOT
 cd $RPM_BUILD_ROOT
 
 mkdir -p .%{_prefix}/bin
-for i in dir dircolors du install mkfifo shred vdir
-do
+for i in dir dircolors du install mkfifo shred vdir; do
 	mv -f bin/$i .%{_prefix}/bin/
 done
 
 mkdir -p etc/profile.d
 install -c -m 644 $RPM_SOURCE_DIR/DIR_COLORS etc/
-install -c -m 755 $RPM_SOURCE_DIR/colorls.sh etc/profile.d/
-install -c -m 755 $RPM_SOURCE_DIR/colorls.csh etc/profile.d/
-
-install -c -m 644 $RPM_SOURCE_DIR/shred.1 $RPM_BUILD_ROOT/%{_mandir}/man1/
+install -c -m 755 $RPM_SOURCE_DIR/colorls.{c,}sh etc/profile.d/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%if %BUILD_INFO
+%pre
+/sbin/install-info --quiet --delete \
+	%{_infodir}/fileutils.info.gz %{_infodir}/dir
+
 %post
-/sbin/install-info %{_infodir}/fileutils.info.gz %{_infodir}/dir
+/sbin/install-info %{_infodir}/coreutils.info.gz %{_infodir}/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/fileutils.info.gz %{_infodir}/dir
+	/sbin/install-info --delete %{_infodir}/coreutils.info.gz %{_infodir}/dir
 fi
+%else
+%pre
+/sbin/install-info --quiet --delete \
+	%{_infodir}/fileutils.info.gz %{_infodir}/dir
+/sbin/install-info --quiet --delete \
+	%{_infodir}/coreutils.info.gz %{_infodir}/dir
+%endif
 
 %files
 %defattr(-,root,root)
-%doc ABOUT-NLS AUTHORS COPYING ChangeLog NEWS README THANKS TODO
-%config %{_sysconfdir}/DIR_COLORS
-%config %{_sysconfdir}/profile.d/*
-
+%doc COPYING NEWS README THANKS TODO
+%config %{_sysconfdir}/*
 %{_exec_prefix}/bin/*
 %{_prefix}/bin/*
 %{_mandir}/man*/*
-
-%{_infodir}/fileutils*
-%{_prefix}/share/locale/*/*/*
+%if %BUILD_INFO
+%{_infodir}/coreutils.info*
+%endif
+%{_datadir}/locale/*/*/*
 
 %changelog
+* Sun Aug 04 2002 Solar Designer <solar@owl.openwall.com>
+- Updated to 4.1.11.
+- Reviewed all patches in current Red Hat and ALT Linux packages, imported
+some with modifications.
+- Improved the colorls* scripts.
+
 * Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
 - Use grep -q in colorls.sh.
 
@@ -112,7 +136,7 @@ fi
 * Thu Oct 19 2000 Solar Designer <solar@owl.openwall.com>
 - Fixed a bug in RH patch to mv (don't exit if lstat on a file fails).
 
-* Sun Oct  1 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Oct 01 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - v4.0.27
 
 * Sun Sep 24 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>

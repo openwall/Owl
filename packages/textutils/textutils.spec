@@ -1,15 +1,21 @@
-# $Id: Owl/packages/textutils/Attic/textutils.spec,v 1.7 2002/02/07 21:04:23 solar Exp $
+# $Id: Owl/packages/textutils/Attic/textutils.spec,v 1.8 2002/08/05 08:05:14 solar Exp $
+
+# The texinfo documentation for fileutils, sh-utils, and textutils is
+# currently provided by fileutils.
+%define BUILD_INFO 0
 
 Summary: A set of GNU text file modifying utilities.
 Name: textutils
 Version: 2.0.11
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/Text
 Source: ftp://alpha.gnu.org/gnu/fetish/textutils-%{version}.tar.gz
 Patch0: textutils-2.0.11-owl-tmp.diff
 Patch1: textutils-2.0.11-owl-sort-size.diff
+%if %BUILD_INFO
 PreReq: /sbin/install-info
+%endif
 BuildRequires: libtool
 BuildRoot: /override/%{name}-%{version}
 
@@ -22,6 +28,8 @@ programs for splitting, joining, comparing and modifying files.
 %patch0 -p1
 %patch1 -p1
 
+%{expand:%%define optflags %optflags -Wall -Dlint}
+
 %build
 unset LINGUAS || :
 export ac_cv_sys_long_file_names=yes \
@@ -30,15 +38,18 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
+%makeinstall
+#make install DESTDIR=$RPM_BUILD_ROOT
 
-make install DESTDIR=$RPM_BUILD_ROOT
-
-mkdir -p $RPM_BUILD_ROOT/bin
-mv $RPM_BUILD_ROOT/usr/bin/{cat,sort} $RPM_BUILD_ROOT/bin/
+cd $RPM_BUILD_ROOT
+mkdir bin
+mv .%{_bindir}/{cat,cut,sort} bin/
+ln -s /bin/cut .%{_bindir}/cut
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%if %BUILD_INFO
 %post
 /sbin/install-info %{_infodir}/textutils.info.gz %{_infodir}/dir
 
@@ -47,17 +58,29 @@ if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete \
 		%{_infodir}/textutils.info.gz %{_infodir}/dir
 fi
+%else
+%pre
+/sbin/install-info --quiet --delete \
+	%{_infodir}/textutils.info.gz %{_infodir}/dir
+%endif
 
 %files
 %defattr(-,root,root)
-%doc NEWS README
+%doc AUTHORS COPYING NEWS README THANKS TODO
 /bin/*
-/usr/bin/*
+%{_bindir}/*
 %{_mandir}/*/*
+%if %BUILD_INFO
 %{_infodir}/textutils.info*
-/usr/share/locale/*/*/*
+%endif
+%{_datadir}/locale/*/*/*
 
 %changelog
+* Mon Aug 05 2002 Solar Designer <solar@owl.openwall.com>
+- No longer provide texinfo documentation, it is now a part of fileutils.
+- Use _*dir, configure, and makeinstall RPM macros.
+- Moved cut(1) to /bin for compatibility with Red Hat Linux.
+
 * Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 

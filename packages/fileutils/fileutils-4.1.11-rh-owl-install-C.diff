@@ -1,0 +1,191 @@
+diff -ur fileutils-4.1.11.orig/doc/coreutils.info fileutils-4.1.11/doc/coreutils.info
+--- fileutils-4.1.11.orig/doc/coreutils.info	Tue Jul 23 12:16:18 2002
++++ fileutils-4.1.11/doc/coreutils.info	Sun Aug  4 17:14:34 2002
+@@ -5014,6 +5014,10 @@
+ `-c'
+      Ignored; for compatibility with old Unix versions of `install'.
+ 
++`-C'
++    Install file, unless target already exists and is the same file, in
++    which case the modification time is not changed.
++
+ `-d'
+ `--directory'
+      Create each given directory and any missing parent directories,
+diff -ur fileutils-4.1.11.orig/doc/coreutils.texi fileutils-4.1.11/doc/coreutils.texi
+--- fileutils-4.1.11.orig/doc/coreutils.texi	Mon Jul 22 23:56:32 2002
++++ fileutils-4.1.11/doc/coreutils.texi	Sun Aug  4 17:17:14 2002
+@@ -6200,6 +6200,11 @@
+ @opindex -c
+ Ignored; for compatibility with old Unix versions of @command{install}.
+ 
++@item -C
++@opindex -C
++Install file, unless target already exists and is the same file, in which
++case the modification time is not changed.
++
+ @item -d
+ @itemx --directory
+ @opindex -d
+diff -ur fileutils-4.1.11.orig/man/install.1 fileutils-4.1.11/man/install.1
+--- fileutils-4.1.11.orig/man/install.1	Sat Jul 20 18:17:36 2002
++++ fileutils-4.1.11/man/install.1	Sun Aug  4 17:18:00 2002
+@@ -28,6 +28,10 @@
+ \fB\-c\fR
+ (ignored)
+ .TP
++\fB\-C\fR
++Install file, unless target already exists and is the same as the new file,
++in which case the modification time is not changed.
++.TP
+ \fB\-d\fR, \fB\-\-directory\fR
+ treat all arguments as directory names; create all
+ components of the specified directories
+diff -ur fileutils-4.1.11.orig/src/install.c fileutils-4.1.11/src/install.c
+--- fileutils-4.1.11.orig/src/install.c	Tue Jul  2 08:26:37 2002
++++ fileutils-4.1.11/src/install.c	Sun Aug  4 17:09:38 2002
+@@ -25,6 +25,7 @@
+ #include <stdio.h>
+ #include <getopt.h>
+ #include <sys/types.h>
++#include <sys/mman.h>
+ #include <pwd.h>
+ #include <grp.h>
+ 
+@@ -117,6 +118,9 @@
+    no effect. */
+ static mode_t mode = S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
+ 
++/* Compare files before installing (-C) */
++static int docompare = 0;
++
+ /* If nonzero, strip executable files after copying them. */
+ static int strip_files;
+ 
+@@ -140,6 +144,86 @@
+   {NULL, 0, NULL, 0}
+ };
+ 
++static int compare (const char *file, const char *to)
++{
++  int ret = 0, done = 0;
++  void *p, *q;
++  size_t size;
++  struct stat file_s, to_s;
++  int file_fd, to_fd;
++
++  if (stat(file, &file_s))
++    return -1;
++
++  if (stat(to, &to_s))
++    return (errno == ENOENT) ? 2 : -1;
++
++  if (file_s.st_size != to_s.st_size)
++    return 1;
++
++  file_fd = open(file, O_RDONLY);
++  if (file_fd < 0)
++    return -1;
++
++  to_fd = open(to, O_RDONLY);
++  if (to_fd < 0)
++    {
++      ret = (errno == ENOENT) ? 2 : -1;
++      close(file_fd);
++      return ret;
++    }
++
++  size = (size_t) file_s.st_size;
++  if (size <= (4 * 1024 * 1024)) /* Don't try to mmap() files > 4 MB */
++    {
++      p = mmap(NULL, size, PROT_READ, MAP_SHARED, file_fd, (off_t) 0);
++      if (p != MAP_FAILED)
++	{
++	  q = mmap(NULL, size, PROT_READ, MAP_SHARED, to_fd, (off_t) 0);
++	  if (q == MAP_FAILED)
++	    {
++	      munmap(p, size);
++	    }
++	  else
++	    {
++	      ret = (memcmp(p, q, size) == 0) ? 0 : 1;
++	      munmap(p, size);
++	      munmap(q, size);
++	      done = 1;
++	    }
++	}
++    }
++  if (!done)
++    {
++      char buf1[65536], buf2[65536];
++      int n1, n2;
++
++      if (lseek(file_fd, 0, SEEK_SET) || lseek(to_fd, 0, SEEK_SET))
++	ret = -1;
++      while (ret == 0)
++	{
++	  n1 = read(file_fd, buf1, sizeof(buf1));
++	  if (n1 == 0)
++	    break;
++	  else if (n1 > 0)
++	    {
++	      n2 = read(to_fd, buf2, n1);
++	      if (n2 == n1)
++		ret = (memcmp(buf1, buf2, n1) == 0) ? 0 : 1;
++	      else
++		ret = 1; /* ouf of sync */
++	    }
++	  else
++	    ret = -1; /* read failure */
++	}
++    }
++
++  close(file_fd);
++  close(to_fd);
++
++  return ret;
++}
++
+ static void
+ cp_option_init (struct cp_options *x)
+ {
+@@ -210,7 +294,7 @@
+      we'll actually use backup_suffix_string.  */
+   backup_suffix_string = getenv ("SIMPLE_BACKUP_SUFFIX");
+ 
+-  while ((optc = getopt_long (argc, argv, "bcsDdg:m:o:pvV:S:", long_options,
++  while ((optc = getopt_long (argc, argv, "bcCsDdg:m:o:pvV:S:", long_options,
+ 			      NULL)) != -1)
+     {
+       switch (optc)
+@@ -232,6 +316,9 @@
+ 	  break;
+ 	case 'c':
+ 	  break;
++	case 'C':
++	  docompare = 1;
++	  break;
+ 	case 's':
+ 	  strip_files = 1;
+ 	  break;
+@@ -438,6 +525,20 @@
+     {
+       error (0, 0, _("%s is a directory"), quote (from));
+       return 1;
++    }
++
++  if (docompare)
++    {
++      switch (compare(from, to))
++	{
++	case -1: /* An error occurred */
++	  error (0, 0, _("cannot compare %s against %s"), from, to);
++	  return 1;
++	case 0: /* Files are identical */
++	  return 0;
++	case 1: /* Files are different */
++	case 2: /* Destination file doesn't exist */
++      }
+     }
+ 
+   fail = copy (from, to, nonexistent_dst, x, &copy_into_self, NULL);

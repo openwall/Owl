@@ -1,0 +1,44 @@
+diff -ur fileutils-4.1.11.orig/src/ls.c fileutils-4.1.11/src/ls.c
+--- fileutils-4.1.11.orig/src/ls.c	Sat Jul 20 10:50:44 2002
++++ fileutils-4.1.11/src/ls.c	Sun Aug  4 19:31:32 2002
+@@ -2562,6 +2562,8 @@
+ {
+   int (*func) PARAMS ((V, V));
+ 
++  (void) &func;
++
+   switch (sort_type)
+     {
+     case sort_none:
+diff -ur fileutils-4.1.11.orig/src/shred.c fileutils-4.1.11/src/shred.c
+--- fileutils-4.1.11.orig/src/shred.c	Tue Jul  2 08:26:37 2002
++++ fileutils-4.1.11/src/shred.c	Sun Aug  4 19:36:15 2002
+@@ -539,12 +539,12 @@
+  * The timer registers can be made inaccessible, so we have to deal with the
+  * possibility of SIGILL while we're working.
+  */
+-static jmp_buf env;
++static sigjmp_buf env;
+ static RETSIGTYPE
+ sigill_handler (int signum)
+ {
+   (void) signum;
+-  longjmp (env, 1);  /* Trivial, just return an indication that it happened */
++  siglongjmp (env, 1); /* Trivial, just return an indication that it happened */
+ }
+ 
+ /* FIXME: find a better way.
+@@ -559,10 +559,12 @@
+ {
+   RETSIGTYPE (*old_handler[2]) (int);
+ 
++  (void) &old_handler;
++
+   /* This is how one does try/except in C */
+   old_handler[0] = signal (SIGILL, sigill_handler);
+   old_handler[1] = signal (SIGSEGV, sigill_handler);
+-  if (setjmp (env))  /* ANSI: Must be entire controlling expression */
++  if (sigsetjmp (env, 1))  /* ANSI: Must be entire controlling expression */
+     {
+       signal (SIGILL, old_handler[0]);
+       signal (SIGSEGV, old_handler[1]);

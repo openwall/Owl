@@ -1,0 +1,57 @@
+diff -ur fileutils-4.1.11.orig/src/Makefile.am fileutils-4.1.11/src/Makefile.am
+--- fileutils-4.1.11.orig/src/Makefile.am	Mon Apr 22 15:54:12 2002
++++ fileutils-4.1.11/src/Makefile.am	Sun Aug  4 19:38:47 2002
+@@ -24,10 +24,10 @@
+ # replacement functions defined in libfetish.a.
+ LDADD = ../lib/libfetish.a @LIBINTL@ ../lib/libfetish.a
+ 
+-dir_LDADD = $(LDADD) @LIB_CLOCK_GETTIME@
+-ls_LDADD = $(LDADD) @LIB_CLOCK_GETTIME@
++dir_LDADD = $(LDADD) @LIB_CLOCK_GETTIME@ -ltermcap
++ls_LDADD = $(LDADD) @LIB_CLOCK_GETTIME@ -ltermcap
+ shred_LDADD = $(LDADD) @LIB_CLOCK_GETTIME@
+-vdir_LDADD = $(LDADD) @LIB_CLOCK_GETTIME@
++vdir_LDADD = $(LDADD) @LIB_CLOCK_GETTIME@ -ltermcap
+ 
+ $(bin_PROGRAMS) $(libexec_PROGRAMS): ../lib/libfetish.a
+ 
+diff -ur fileutils-4.1.11.orig/src/Makefile.in fileutils-4.1.11/src/Makefile.in
+--- fileutils-4.1.11.orig/src/Makefile.in	Sat Jul 20 20:00:48 2002
++++ fileutils-4.1.11/src/Makefile.in	Sun Aug  4 19:38:47 2002
+@@ -175,10 +175,10 @@
+ # replacement functions defined in libfetish.a.
+ LDADD = ../lib/libfetish.a @LIBINTL@ ../lib/libfetish.a
+ 
+-dir_LDADD = $(LDADD) @LIB_CLOCK_GETTIME@
+-ls_LDADD = $(LDADD) @LIB_CLOCK_GETTIME@
++dir_LDADD = $(LDADD) @LIB_CLOCK_GETTIME@ -ltermcap
++ls_LDADD = $(LDADD) @LIB_CLOCK_GETTIME@ -ltermcap
+ shred_LDADD = $(LDADD) @LIB_CLOCK_GETTIME@
+-vdir_LDADD = $(LDADD) @LIB_CLOCK_GETTIME@
++vdir_LDADD = $(LDADD) @LIB_CLOCK_GETTIME@ -ltermcap
+ ginstall_SOURCES = install.c copy.c cp-hash.c
+ 
+ cp_SOURCES = cp.c copy.c cp-hash.c
+diff -ur fileutils-4.1.11.orig/src/ls.c fileutils-4.1.11/src/ls.c
+--- fileutils-4.1.11.orig/src/ls.c	Sat Jul 20 10:50:44 2002
++++ fileutils-4.1.11/src/ls.c	Sun Aug  4 19:39:10 2002
+@@ -102,6 +102,7 @@
+ 
+ #include "system.h"
+ #include <fnmatch.h>
++#include <termcap.h>
+ 
+ #include "acl.h"
+ #include "argmatch.h"
+@@ -1529,7 +1530,10 @@
+ 
+ 	    print_with_color = (i == color_always
+ 				|| (i == color_if_tty
+-				    && isatty (STDOUT_FILENO)));
++ 				    && isatty (STDOUT_FILENO)
++				    && getenv("TERM")
++ 			            && tgetent(NULL, getenv("TERM")) > 0
++ 				    && tgetstr("md", NULL) > 0));
+ 
+ 	    if (print_with_color)
+ 	      {
