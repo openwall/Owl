@@ -1,15 +1,14 @@
-# $Id: Owl/packages/lilo/lilo.spec,v 1.5 2001/07/23 14:25:48 solar Exp $
+# $Id: Owl/packages/lilo/lilo.spec,v 1.6 2001/07/24 20:14:15 solar Exp $
 
 Summary: The boot loader for Linux and other operating systems.
 Name: lilo
 Version: 21.6
-Release: 4owl
+Release: 5owl
 ExclusiveArch: %ix86
 License: MIT
 Group: System Environment/Base
 Source0: ftp://sunsite.unc.edu/pub/Linux/system/boot/lilo/%{name}-%{version}.tar.gz
 Source1: keytab-lilo.c
-Patch0: lilo-21.6-owl-loop-floppy.diff
 Patch1: lilo-21-rh-broken-headers.diff
 Patch2: lilo-21.4.4-rh-sa5300.diff
 Patch3: lilo-21.4.4-rh-i2o.diff
@@ -24,7 +23,6 @@ can also boot other operating systems.
 
 %prep
 %setup -q
-%patch0 -p1
 # work around broken kernel headers
 %patch1 -p1 -b .broken
 %patch2 -p1 -b .sa5300
@@ -67,8 +65,6 @@ test -f /etc/lilo.conf && /sbin/lilo || :
 
 %changelog
 * Mon Jul 23 2001 Solar Designer <solar@owl.openwall.com>
-- Support 1.44 MB floppy disk images via loopback block devices such that
-no physical floppy disk is needed when preparing bootable CD's with LILO.
 - Use RPM_OPT_FLAGS.
 
 * Mon Dec 11 2000 Solar Designer <solar@owl.openwall.com>

@@ -12,11 +12,6 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
-2001/07/23	Package: lilo
-Support 1.44 MB floppy disk images via loopback block devices such
-that no physical floppy disk is needed when preparing bootable CD's
-with LILO.
-
 2001/07/05 -
 2001/07/22	Package: xinetd
 SECURITY FIX	Severity: none to high, remote, active
@@ -261,4 +256,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp@hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.14 2001/07/23 14:38:06 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.15 2001/07/24 20:14:16 solar Exp $
