@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.3 2000/12/01 18:35:37 solar Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.4 2000/12/01 19:02:34 solar Exp $
 
 Summary: Postfix mail system
 Name: postfix
@@ -7,7 +7,7 @@ Name: postfix
 %define original_version %{original_date}-%{original_pl}
 %define package_version %{original_date}_%{original_pl}
 Version: %{package_version}
-Release: 3owl
+Release: 4owl
 Copyright: IBM Public License
 Group: System Environment/Daemons
 Source0: ftp://ftp.sunet.se/pub/unix/mail/postfix/official/%{name}-%{original_version}.tar.gz
@@ -148,27 +148,36 @@ grep ^postfix: /etc/passwd &> /dev/null ||
 grep ^postman: /etc/group &> /dev/null || groupadd -g 183 postman
 grep ^postman: /etc/passwd &> /dev/null ||
 	useradd -g postman -u 183 -d / -s /bin/false -M postman
+rm -f /var/run/postfix.restart
+if [ $1 -ge 2 ]; then
+	/usr/sbin/postfix stop && touch /var/run/postfix.restart || :
+fi
 
 %post
 /usr/sbin/postalias /etc/postfix/aliases
 /usr/sbin/postfix check
 /sbin/chkconfig --add postfix
+test -f /var/run/postfix.restart && /usr/sbin/postfix start || :
+rm -f /var/run/crond.restart
 
 %preun
-/usr/sbin/postfix stop
-/sbin/chkconfig --del postfix
-sleep 1
-/usr/sbin/postfix drain &> /dev/null
-rm -f /etc/postfix/aliases.db
-find /var/spool/postfix \( -type p -o -type s \) -delete
-rm -f /var/spool/postfix/{pid,etc,lib}/*
-rmdir /var/spool/postfix/[^m]*
+if [ $1 -eq 0 ]; then
+	/usr/sbin/postfix stop || :
+	/sbin/chkconfig --del postfix
+	sleep 1
+	/usr/sbin/postfix drain &> /dev/null || :
+	rm -f /etc/postfix/aliases.db
+	find /var/spool/postfix \( -type p -o -type s \) -delete
+	rm -f /var/spool/postfix/{pid,etc,lib}/*
+	rmdir /var/spool/postfix/[^m]*
+fi
 
 %files -f filelist
 
 %changelog
 * Fri Dec 01 2000 Solar Designer <solar@owl.openwall.com>
 - Simplified postfix.init for use with owl-startup.
+- Restart on package upgrades.
 
 * Wed Nov 22 2000 Solar Designer <solar@owl.openwall.com>
 - Restrict relaying to the host's own addresses only by default.
