@@ -1,38 +1,44 @@
 diff -ur quota-2.00.orig/doc/edquota(8).html quota-2.00/doc/edquota(8).html
 --- quota-2.00.orig/doc/edquota(8).html	Fri Jul 23 19:15:31 1999
-+++ quota-2.00/doc/edquota(8).html	Sun Apr 21 05:42:16 2002
++++ quota-2.00/doc/edquota(8).html	Thu Apr 25 01:38:08 2002
 @@ -36,7 +36,7 @@
  the changes made.
  <P>
  The editor invoked is
 -<B>vi (1)</B>
-+<I>/usr/libexec/vitmp</I> (a wrapper around <B>vi (1)</B>)
++<B>vitmp (1)</B>
  unless the
  <B>EDITOR</B>
  environment variable specifies otherwise.
 diff -ur quota-2.00.orig/edquota.8 quota-2.00/edquota.8
 --- quota-2.00.orig/edquota.8	Tue Sep  5 22:49:43 2000
-+++ quota-2.00/edquota.8	Sun Apr 21 05:38:48 2002
-@@ -38,7 +38,9 @@
++++ quota-2.00/edquota.8	Thu Apr 25 01:39:05 2002
+@@ -38,7 +38,7 @@
  the changes made.
  .LP
  The editor invoked is
 -.BR vi (1)
-+.I /usr/libexec/vitmp
-+(a wrapper around
-+.BR vi (1))
++.BR vitmp (1)
  unless either the
  .SB EDITOR
  or the
+@@ -92,6 +92,7 @@
+ .SH SEE ALSO
+ .BR quota (1),
+ .BR vi (1),
++.BR vitmp (1),
+ .BR quotactl (2),
+ .BR quotacheck (8),
+ .BR quotaon (8),
 diff -ur quota-2.00.orig/quotaops.c quota-2.00/quotaops.c
 --- quota-2.00.orig/quotaops.c	Mon Sep 18 10:39:32 2000
-+++ quota-2.00/quotaops.c	Sun Apr 21 05:37:43 2002
++++ quota-2.00/quotaops.c	Thu Apr 25 01:40:01 2002
 @@ -304,7 +304,7 @@
        setuid(getuid());
        if ((ed = getenv("VISUAL")) == (char *) 0)
           if ((ed = getenv("EDITOR")) == (char *) 0)
 -            ed = _PATH_VI;
-+            ed = "/usr/libexec/vitmp";
++            ed = "/bin/vitmp";
        execlp(ed, ed, tmpfile, 0);
        perror(ed);
        exit(1);

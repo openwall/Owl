@@ -1,9 +1,9 @@
-# $Id: Owl/packages/quota/quota.spec,v 1.16 2002/04/24 04:44:14 solar Exp $
+# $Id: Owl/packages/quota/quota.spec,v 1.17 2002/04/24 23:12:34 solar Exp $
 
 Summary: System administration tools for monitoring users' disk usage.
 Name: quota
 Version: 2.00
-Release: owl7
+Release: owl8
 License: BSD
 Group: System Environment/Base
 Source: ftp://ftp.cistron.nl/pub/people/mvw/quota/%{name}-%{version}.tar.gz
@@ -62,6 +62,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/setquota.8*
 
 %changelog
+* Thu Apr 25 2002 Solar Designer <solar@owl.openwall.com>
+- vitmp has been moved to /bin.
+
 * Sun Apr 21 2002 Solar Designer <solar@owl.openwall.com>
 - Use /usr/libexec/vitmp in edquota(8).
 

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.15 2002/04/24 04:44:14 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.16 2002/04/24 23:13:02 solar Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
 Version: 3.0.2.7
-Release: owl12
+Release: owl13
 License: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%{version}.tar.gz
@@ -99,6 +99,9 @@ fi
 /etc/control.d/facilities/crontab
 
 %changelog
+* Thu Apr 25 2002 Solar Designer <solar@owl.openwall.com>
+- vitmp has been moved to /bin.
+
 * Sun Apr 21 2002 Solar Designer <solar@owl.openwall.com>
 - Use /usr/libexec/vitmp in crontab(1).
 

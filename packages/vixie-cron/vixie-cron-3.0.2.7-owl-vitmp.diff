@@ -10,7 +10,7 @@ diff -ur vixie-cron-3.0.2.7.linux/usr.sbin/cron/pathnames.h vixie-cron-3.0.2.7/u
 -#else
 -# define EDITOR "/usr/ucb/vi"
 -#endif
-+#define EDITOR "/usr/libexec/vitmp"
++#define EDITOR "/bin/vitmp"
  
  #ifndef _PATH_BSHELL
  # define _PATH_BSHELL "/bin/sh"
