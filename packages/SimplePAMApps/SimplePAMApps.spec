@@ -1,4 +1,4 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.9 2000/11/04 03:12:42 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.10 2000/11/15 09:04:05 solar Exp $
 
 Summary: Simple PAM-based Applications
 Name: SimplePAMApps
@@ -18,6 +18,7 @@ Patch2: SimplePAMApps-0.60-owl-su-no-tty.diff
 Patch3: SimplePAMApps-0.60-owl-stdarg.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: pam >= 0.58, pam_passwdqc >= 0.2, owl-control < 2.0
+Obsoletes: passwd
 URL: http://parc.power.net/morgan/Linux-PAM/index.html
 
 %description
