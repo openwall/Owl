@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vim/vim.spec,v 1.5 2001/02/13 09:29:17 kad Exp $
+# $Id: Owl/packages/vim/vim.spec,v 1.6 2001/02/19 08:54:03 solar Exp $
 
 %define vimversion vim60p
 
@@ -15,14 +15,14 @@
 %if "%{NEED_GPM}"=="'yes'"
 %define	gpmflag --enable-gpm
 %else
-%define	gpmflag --disable-gpm 
+%define	gpmflag --disable-gpm
 %endif
 
 
 Summary: 	The VIM editor.
 Name: 		vim
 Version: 	6.0
-Release: 	0.18owl
+Release: 	0.19owl
 Copyright: 	freeware
 Group: 		Applications/Editors
 Source0: 	ftp://ftp.vim.org/pub/vim/unreleased/unix/vim-%{version}p-src.tar.gz
@@ -40,7 +40,7 @@ Buildrequires: 	perl
 Buildrequires: 	gpm-devel
 %endif
 %if "%{NEED_PYTHON}"=="'yes'"
-Buildrequires: 	python-devel 
+Buildrequires: 	python-devel
 %endif
 %if "%{NEED_X11}"=="'yes'"
 Buildrequires: 	gtk+-devel
@@ -65,25 +65,24 @@ vim-common package contains files which every VIM binary will need in
 order to run.
 
 If you are installing any version of the VIM editor, you'll also need
-to the vim-common package installed.
+to have the vim-common package installed.
 
-%package minimal
-Summary: A minimal version of the VIM editor.
+%package small
+Summary: A small version of the VIM editor.
 Group: Applications/Editors
 Requires: vim-common
-Obsoletes: vim
+Obsoletes: vim, vim-minimal
 
-%description minimal
+%description small
 VIM (VIsual editor iMproved) is an updated and improved version of the
 vi editor.  Vi was the first real screen-based editor for UNIX, and is
 still very popular.  VIM improves on vi by adding new features:
 multiple windows, multi-level undo, block highlighting and more. The
-vim-minimal package includes a minimal version of VIM, which is
-installed into /bin/vi for use when only the root partition is
-present.
+vim-small package includes a small version of VIM, which is installed
+into /bin/vi for use when only the root partition is present.
 
 %package enhanced
-Summary: A version of the VIM editor which includes recent enhancements.
+Summary: A feature-rich version of the VIM editor.
 Group: Applications/Editors
 Requires: vim-common
 Obsoletes: vim-color
@@ -93,13 +92,8 @@ VIM (VIsual editor iMproved) is an updated and improved version of the
 vi editor.  Vi was the first real screen-based editor for UNIX, and is
 still very popular.  VIM improves on vi by adding new features:
 multiple windows, multi-level undo, block highlighting and more.  The
-vim-enhanced package contains a version of VIM with extra, recently
-introduced features like Python and Perl interpreters.
-
-Install the vim-enhanced package if you'd like to use a version of the
-VIM editor which includes recently added enhancements like
-interpreters for the Python and Perl scripting languages.  You'll also
-need to install the vim-common package.
+vim-enhanced package contains a version of VIM with all its features
+compiled in.
 
 %if "%{NEED_X11}"=="'yes'"
 %package X11
@@ -111,8 +105,8 @@ Requires: vim-common
 VIM (VIsual editor iMproved) is an updated and improved version of the
 vi editor.  Vi was the first real screen-based editor for UNIX, and is
 still very popular.  VIM improves on vi by adding new features:
-multiple windows, multi-level undo, block highlighting and
-more. VIM-X11 is a version of the VIM editor which will run within the
+multiple windows, multi-level undo, block highlighting and more.
+VIM-X11 is a version of the VIM editor which will run within the
 X Window System.  If you install this package, you can run VIM as an X
 application with a full GUI interface and mouse support.
 
@@ -165,7 +159,7 @@ make clean
 export ac_cv_func_mkstemp=yes \
 %configure \
 	--prefix='${DEST}'/usr \
-	--with-features=normal \
+	--with-features=small \
 	--disable-pythoninterp --disable-perlinterp --disable-tclinterp \
 	--with-x=no --enable-gui=no \
 	--with-tlib=termcap --disable-gpm \
@@ -238,7 +232,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/rview.*
 %{_mandir}/man1/xxd.*
 
-%files minimal
+%files small
 %defattr(-,root,root)
 /bin/ex
 /bin/vi
@@ -261,6 +255,10 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Mon Feb 19 2001 Solar Designer <solar@owl.openwall.com>
+- "small" feature set for /bin/vi (+visual).
+- Renamed vim-minimal package to vim-small, corrected package descriptions.
+
 * Sat Jan 06 2001 Solar Designer <solar@owl.openwall.com>
 - Enable mkstemp explicitly, not rely on configure (this will make sense
 once vim uses mkstemp for real).
@@ -383,7 +381,7 @@ once vim uses mkstemp for real).
 * Tue Mar 23 1999 Erik Troan <ewt@redhat.com>
 - removed "set backupdir=/tmp/vim_backup" from default vimrc
 
-* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com> 
+* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com>
 - auto rebuild in the new build environment (release 5)
 
 * Thu Dec 17 1998 Michael Maher <mike@redaht.com>
