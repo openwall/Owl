@@ -85,7 +85,7 @@ diff -urpN stmpclean-0.3.orig/stmpclean.8 stmpclean-0.3/stmpclean.8
  when it examines it later (if the directory became empty).  Thus,
 diff -urpN stmpclean-0.3.orig/stmpclean.c stmpclean-0.3/stmpclean.c
 --- stmpclean-0.3.orig/stmpclean.c	Tue Jun 10 19:07:45 2003
-+++ stmpclean-0.3/stmpclean.c	Wed Jun 11 21:36:53 2003
++++ stmpclean-0.3/stmpclean.c	Mon Jun 28 17:37:32 2004
 @@ -1,9 +1,9 @@
  /*
   * stmpclean.c -- remove old files from a world-writable directory.
@@ -298,7 +298,16 @@ diff -urpN stmpclean-0.3.orig/stmpclean.c stmpclean-0.3/stmpclean.c
  	if (dot_dot_fd == -1) {
  		GETCWD;
  		syslog(LOG_ERR, "open(\".\") in %s: %m, exiting", cwd);
-@@ -303,11 +343,18 @@ clean_dir(dir, depth)
+@@ -294,6 +334,8 @@ clean_dir(dir, depth)
+ 		if (!strcmp(dp->d_name, ".") || !strcmp(dp->d_name, ".."))
+ 			continue;
+ 		if (lstat(dp->d_name, &st) == -1) {
++			if (errno == ENOENT)
++				continue;
+ 			GETCWD;
+ 			syslog(LOG_ERR, "RACE?: lstat(\"%s\") in %s: %m, "
+ 			       "exiting", dp->d_name, cwd);
+@@ -303,11 +345,18 @@ clean_dir(dir, depth)
  			/* Looking at a directory. */
  			if (isemptydir(dp->d_name)) {
  				/* Looking at an empty directory. */
@@ -319,7 +328,7 @@ diff -urpN stmpclean-0.3.orig/stmpclean.c stmpclean-0.3/stmpclean.c
  						GETCWD;
  						syslog(LOG_ERR, "RACE?: rmdir"
  						       "(\"%s\") in %s: %m, "
-@@ -323,16 +370,16 @@ clean_dir(dir, depth)
+@@ -323,16 +372,16 @@ clean_dir(dir, depth)
  					setecreds(0, 0);
  				}
  			} else {
@@ -339,7 +348,7 @@ diff -urpN stmpclean-0.3.orig/stmpclean.c stmpclean-0.3/stmpclean.c
  			    && st.st_uid
  			    && (st.st_nlink == 1)
  			    && (((st.st_mode & S_IFMT) == S_IFREG)
-@@ -342,7 +389,11 @@ clean_dir(dir, depth)
+@@ -342,7 +391,11 @@ clean_dir(dir, depth)
  				 * symlink.
  				 */
  				setecreds(st.st_uid, st.st_gid);
@@ -352,7 +361,7 @@ diff -urpN stmpclean-0.3.orig/stmpclean.c stmpclean-0.3/stmpclean.c
  					GETCWD;
  					syslog(LOG_ERR, "RACE?: unlink(\"%s\")"
  					       "in %s: %m, exiting",
-@@ -377,15 +428,27 @@ main(argc, argv)
+@@ -377,15 +430,27 @@ main(argc, argv)
  	/* By default, delete files older than three days. */
  	extern char    *optarg;
  	extern int      optind;
@@ -381,7 +390,7 @@ diff -urpN stmpclean-0.3.orig/stmpclean.c stmpclean-0.3/stmpclean.c
  		case 't':
  			minage = parse_time(optarg);
  			if (minage == -1)
-@@ -399,8 +462,14 @@ main(argc, argv)
+@@ -399,8 +464,14 @@ main(argc, argv)
  		}
  	argc -= optind;
  	argv += optind;
@@ -397,7 +406,7 @@ diff -urpN stmpclean-0.3.orig/stmpclean.c stmpclean-0.3/stmpclean.c
  	/*
  	 * For logging niceties in case one of the directories on the command
  	 * line is bad.
-@@ -422,7 +491,7 @@ main(argc, argv)
+@@ -422,7 +493,7 @@ main(argc, argv)
  			exit(1);
  		}
  	for (i = 0; i < argc; i++)
