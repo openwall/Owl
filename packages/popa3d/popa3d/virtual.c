@@ -28,6 +28,8 @@
 #define NAME_MAX			255
 #endif
 
+#include "misc.h"
+
 extern int log_error(char *s);
 
 char *virtual_domain;
@@ -103,25 +105,25 @@ struct passwd *virtual_userpass(char *user, char *pass, int *known)
 	if (strchr(address, '/') || strchr(user, '/'))
 		return NULL;
 
-	pathname = malloc(strlen(VIRTUAL_HOME_PATH) + strlen(address) +
-		strlen(VIRTUAL_AUTH_PATH) + strlen(user) + 4);
+	pathname = concat(VIRTUAL_HOME_PATH, "/", address, NULL);
 	if (!pathname) return NULL;
-	sprintf(pathname, "%s/%s", VIRTUAL_HOME_PATH, address);
 
 	if (lstat(pathname, &stat)) {
+		free(pathname);
 		if (errno == ENOENT)
 			virtual_domain = NULL;
 		else
 			log_error("lstat");
-		free(pathname);
 		return NULL;
 	}
+	free(pathname);
 
 	if (!(address = strdup(address))) return NULL;
 	virtual_domain = address;
 
-	sprintf(pathname, "%s/%s/%s/%s", VIRTUAL_HOME_PATH, address,
-		VIRTUAL_AUTH_PATH, user);
+	pathname = concat(VIRTUAL_HOME_PATH, "/", address, "/",
+		VIRTUAL_AUTH_PATH, "/", user, NULL);
+	if (!pathname) return NULL;
 
 	if ((fd = open(pathname, O_RDONLY)) < 0 && errno != ENOENT) {
 		log_error("open");
@@ -130,15 +132,12 @@ struct passwd *virtual_userpass(char *user, char *pass, int *known)
 
 	free(pathname);
 
-	virtual_spool = malloc(strlen(VIRTUAL_HOME_PATH) +
-		strlen(virtual_domain) +
-		strlen(VIRTUAL_SPOOL_PATH) + 3);
+	virtual_spool = concat(VIRTUAL_HOME_PATH, "/", virtual_domain, "/",
+		VIRTUAL_SPOOL_PATH, NULL);
 	if (!virtual_spool) {
-		close(fd);
+		if (fd >= 0) close(fd);
 		return NULL;
 	}
-	sprintf(virtual_spool, "%s/%s/%s", VIRTUAL_HOME_PATH, virtual_domain,
-		VIRTUAL_SPOOL_PATH);
 
 	size = 0;
 	if (fd >= 0) {

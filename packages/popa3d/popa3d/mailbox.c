@@ -339,9 +339,8 @@ int mailbox_open(char *spool, char *mailbox)
 
 	mailbox_fd = -1;
 
-	pathname = malloc(strlen(spool) + strlen(mailbox) + 2);
+	pathname = concat(spool, "/", mailbox, NULL);
 	if (!pathname) return 1;
-	sprintf(pathname, "%s/%s", spool, mailbox);
 
 	if (lstat(pathname, &stat)) {
 		free(pathname);

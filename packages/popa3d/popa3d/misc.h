@@ -1,5 +1,5 @@
 /*
- * Miscellaneous syscall wrappers.
+ * Miscellaneous system and library call wrappers.
  */
 
 #ifndef _POP_MISC_H
@@ -23,5 +23,12 @@ extern int unlock_fd(int fd);
  * an error has occurred; if the value is -1, errno is set appropriately.
  */
 extern int write_loop(int fd, char *buffer, int count);
+
+/*
+ * Concatenates a variable number of strings. The argument list must be
+ * terminated with a NULL. Returns a pointer to malloc(3)'ed memory with
+ * the concatenated string, or NULL on error.
+ */
+extern char *concat(char *s1, ...);
 
 #endif

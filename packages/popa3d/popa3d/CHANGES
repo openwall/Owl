@@ -1,3 +1,9 @@
+	Changes made between 0.6.3 and 0.6.4 (2003/11/17).
+
+The uses of sprintf(3) have been replaced by the concat() function
+implemented locally.
+
+
 	Changes made between 0.6.2 and 0.6.3 (2003/04/13).
 
 libpam_userpass support (with pam_userpass 0.9+).
@@ -71,4 +77,4 @@ code size.
 Added a popa3d(8) manual page based on the one Camiel Dobbelaar wrote
 for OpenBSD.
 
-$Id: Owl/packages/popa3d/popa3d/CHANGES,v 1.4 2003/04/13 06:05:28 solar Exp $
+$Id: Owl/packages/popa3d/popa3d/CHANGES,v 1.5 2003/11/16 21:59:14 solar Exp $
