@@ -7,7 +7,6 @@ http://www.openwall.com/Owl/
 
 Owl доступна на следующих официальных зеркалах:
 
-ftp://mirror.sg.depaul.edu/pub/security/openwall.com/Owl/	(США)
 ftp://ftp1.msk.ru.openwall.com/pub/Owl/	(Россия - Москва)
 ftp://ftp2.msk.ru.openwall.com/pub/Owl/	(Россия - Москва)
 ftp://ftp.spb.ru.openwall.com/pub/Owl/	(Россия - Санкт-Петербург)
@@ -21,6 +20,7 @@ ftp://gd.tuwien.ac.at/opsys/linux/Owl/	(Австрия)
 	rsync://gd.tuwien.ac.at/opsys/linux/Owl/
 ftp://ftp.mathematik.uni-marburg.de/pub/mirror/openwall/Owl/	(Германия)
 ftp://ftp.kaizo.org/pub/openwall/Owl/	(Великобритания)
+ftp://mirror.sg.depaul.edu/pub/security/openwall.com/Owl/	(США)
 ftp://ftp.wiretapped.net/pub/Owl/	(Австралия)
 
 Каждому релизу или ветке Owl соответствует отдельный каталог со
@@ -52,12 +52,15 @@ Owl из исходных текстов, вам потребуются и дерево CVS, и дерево sources.
 Подробная документация (включающая в себя файлы BUILD и INSTALL)
 находится в дереве CVS (каталог Owl/doc/).
 
-CVS дерево Owl, помимо отдельных выпусков native.tar.gz на FTP, также
-доступно посредством анонимного CVS сервера:
+Помимо возможности получать дерево CVS целиком посредством FTP с
+вышеуказанных серверов, опытным пользователям доступна для чтения (и
+синхронизации) посредством анонимного CVS или CVSweb копия полного CVS
+дерева Owl. Для доступа по протоколу pserver следует использовать такие
+настройки:
 
 CVSROOT=:pserver:anoncvs:anoncvs@anoncvs.owl.openwall.com:/cvs
 
-или посредством SSH с такими настройками:
+а при использовании SSH - такие:
 
 CVS_RSH=ssh
 CVSROOT=anoncvs@anoncvs.owl.openwall.com:/cvs
@@ -66,4 +69,6 @@ CVSROOT=anoncvs@anoncvs.owl.openwall.com:/cvs
 использовать сжатие при любом способе доступа - обычно посредством
 указания опции -z3 для CVS или включив сжатие в настройках SSH-клиента.
 
-$Id: Owl/doc/ru/DOWNLOAD,v 1.15 2004/05/21 00:47:03 solar Exp $
+Интерфейс CVSweb доступен по адресу http://cvsweb.openwall.com
+
+$Id: Owl/doc/ru/DOWNLOAD,v 1.16 2004/06/11 16:21:17 gremlin Exp $
