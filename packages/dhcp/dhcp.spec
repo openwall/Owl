@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.7 2003/09/10 21:14:34 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.8 2003/09/10 21:33:19 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -91,8 +91,8 @@ install -m 644 $RPM_SOURCE_DIR/dhcpd.conf.sample $RPM_BUILD_ROOT/
 touch $RPM_BUILD_ROOT/var/lib/dhcp/state/{dhcpd,dhclient}.leases
 
 cat <<EOF > $RPM_BUILD_ROOT/etc/sysconfig/dhcpd
-# Command line options here
-DHCPDARGS="-u dhcpd -j /var/lib/dhcp"
+# Additional command line options here
+DHCPDARGS=
 EOF
 
 %clean

@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/dhcp/dhcpd.init,v 1.3 2003/09/10 09:49:38 schmidt Exp $
+# $Id: Owl/packages/dhcp/dhcpd.init,v 1.4 2003/09/10 21:33:19 solar Exp $
 #
 # chkconfig: 2345 60 40
 # description: \
@@ -16,8 +16,7 @@
 # Source function library.
 . /etc/rc.d/init.d/functions
 
-# Source networking configuration.
-. /etc/sysconfig/network
+# Source local dhcpd configuration.
 . /etc/sysconfig/dhcpd
 
 OWL_STARTUP_ENABLE=1
@@ -25,7 +24,7 @@ OWL_STARTUP_ENABLE=1
 case "$1" in
 start)
 	daemon --pidfile /var/run/dhcpd.pid --expect-user dhcpd \
-		dhcpd ${DHCPDARGS}
+		dhcpd -u dhcpd -j /var/lib/dhcp $DHCPDARGS
 	;;
 stop)
 	killproc --pidfile /var/run/dhcpd.pid --expect-user dhcpd dhcpd
