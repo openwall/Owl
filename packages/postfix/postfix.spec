@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.15 2003/10/22 08:25:12 solar Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.16 2003/10/24 00:18:05 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
@@ -7,7 +7,7 @@ Name: postfix
 %define original_version %{original_date}-%{original_pl}
 %define package_version %{original_date}_%{original_pl}
 Version: %{package_version}
-Release: owl6
+Release: owl7
 License: IBM Public License
 Group: System Environment/Daemons
 Source0: ftp://ftp.sunet.se/pub/unix/mail/postfix/official/%{name}-%{original_version}.tar.gz
@@ -167,6 +167,10 @@ fi
 /sbin/chkconfig --add postfix
 test -f /var/run/postfix.restart && /usr/sbin/postfix start || :
 rm -f /var/run/postfix.restart
+if [ "`/usr/sbin/control postfix`" = local ]; then
+	echo -n "SMTP server not enabled by default, use "
+	echo "\"control postfix server\" to enable"
+fi
 
 %preun
 if [ $1 -eq 0 ]; then
@@ -183,6 +187,9 @@ fi
 %files -f filelist
 
 %changelog
+* Fri Oct 24 2003 Solar Designer <solar@owl.openwall.com> 19991231_pl13-owl7
+- Explain how to enable the SMTP server with control(8).
+
 * Wed Oct 22 2003 Solar Designer <solar@owl.openwall.com> 19991231_pl13-owl6
 - Hack: in postalias, don't set YP_MASTER_NAME as that would leak the
 hostname when doing chrooted installs for other systems.
