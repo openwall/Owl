@@ -1,9 +1,9 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.3 2000/07/13 03:16:29 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.4 2000/07/14 08:10:03 kad Exp $
 
 Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
-Release: 2owl
+Release: 3owl
 Copyright: LGPL
 Group: System Environment/Libraries
 Source0: glibc-2.1.3.tar.gz
@@ -27,6 +27,11 @@ Patch12: glibc-2.1.3-rh-localedata.diff
 Patch13: glibc-2.1.3-rh-yp_xdr.diff
 Patch14: glibc-2.1.3-rh-makeconfig.diff
 Patch15: glibc-2.1.3-bcl-cyr-locale.diff
+Patch16: glibc-2.1.3-mdk-fix-ucontext.diff
+Patch17: glibc-2.1.3-mdk-ldd.diff
+Patch18: glibc-2.1.3-rh-time.diff
+Patch19: glibc-2.1.3-rh-timezone.diff
+Patch20: glibc-2.1.3-rh-syslog.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Autoreq: false
 %ifarch alpha
@@ -97,6 +102,11 @@ need to install the glibc-profile program.
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
+%patch16 -p1
+%patch17 -p1
+%patch18 -p1
+%patch19 -p1
+%patch20 -p1
 
 %build
 rm -rf build-$RPM_ARCH-linux
@@ -228,13 +238,19 @@ rm -f *.filelist*
 %defattr(-,root,root)
 
 %changelog
+* Fri Jul 14 2000 Alexandr D. Kanevskiy <kad@openwall.com>
+- import syslog fix from RH
+- import time fix from RH
+- import timezone fixes from RH
+- import ldd patch to handle non-executable shared objects. (mdk)
+- import ucontext.h patch from mdk
+
 * Wed Jul 12 2000 Alexandr D. Kanevskiy <kad@openwall.com>
 - paths patch from RH
 - import libNoVersion from RH
 - import xdr_ypall patch (RH bug id #249)
 - import linuxthreads patches from RH
 - import nis malloc fixes from RH
-- import syslog fix from RH
 - import some little fixes from RH
 - import cp1251 locales from BCL
 

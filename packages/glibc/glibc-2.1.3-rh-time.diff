@@ -1,0 +1,121 @@
+diff -urN glibc-2.1.3.orig/time/ap.c glibc-2.1.3.rh/time/ap.c
+--- glibc-2.1.3.orig/time/ap.c	Thu Jan  1 03:00:00 1970
++++ glibc-2.1.3.rh/time/ap.c	Sat Feb  7 22:39:22 1998
+@@ -0,0 +1,45 @@
++/* Copyright (C) 1991, 1996, 1997 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Library General Public License as
++   published by the Free Software Foundation; either version 2 of the
++   License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Library General Public License for more details.
++
++   You should have received a copy of the GNU Library General Public
++   License along with the GNU C Library; see the file COPYING.LIB.  If not,
++   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++   Boston, MA 02111-1307, USA.  */
++
++#include <stdio.h>
++#include <stdlib.h>
++#include <time.h>
++#include <malloc.h>
++#include <mcheck.h>
++
++/* Prints the time in the form "hh:mm ?M", where ? is A or P.
++   A simple test for strftime().  */
++int
++main (int argc, char *argv[])
++{
++  char buf[20];
++  time_t t;
++
++  mcheck (NULL);
++
++  if (argc != 1)
++    fprintf (stderr, "Usage: %s\n", argv[0]);
++
++  t = time ((time_t *) NULL);
++  if (strftime (buf, sizeof (buf), "%I:%M %p", localtime (&t)) == 0)
++    exit (EXIT_FAILURE);
++
++  puts (buf);
++
++  return EXIT_SUCCESS;
++}
+diff -urN glibc-2.1.3.orig/time/date.c glibc-2.1.3.rh/time/date.c
+--- glibc-2.1.3.orig/time/date.c	Thu Jan  1 03:00:00 1970
++++ glibc-2.1.3.rh/time/date.c	Sat Feb  7 22:39:31 1998
+@@ -0,0 +1,49 @@
++/* Copyright (C) 1991, 1997 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Library General Public License as
++   published by the Free Software Foundation; either version 2 of the
++   License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Library General Public License for more details.
++
++   You should have received a copy of the GNU Library General Public
++   License along with the GNU C Library; see the file COPYING.LIB.  If not,
++   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++   Boston, MA 02111-1307, USA.  */
++
++#include <stddef.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <time.h>
++
++
++/* Prints the date in the form "Day Mon dd hh:mm:ss ZZZ yyyy\n".
++   A simple test for localtime and strftime.  */
++int
++main (argc, argv)
++     int argc;
++     char **argv;
++{
++  time_t t = time (NULL);
++  struct tm *tp = localtime (&t);
++  char good = tp != NULL;
++
++  if (good)
++    {
++      char buf[BUFSIZ];
++      good = strftime (buf, sizeof (buf), "%a %b %d %X %Z %Y", tp);
++      if (good)
++	puts (buf);
++      else
++	perror ("strftime");
++    }
++  else
++    perror ("localtime");
++
++  return good ? EXIT_SUCCESS : EXIT_FAILURE;
++}
+diff -urN glibc-2.1.3.orig/time/getdate.c glibc-2.1.3.rh/time/getdate.c
+--- glibc-2.1.3.orig/time/getdate.c	Thu Sep 23 21:16:22 1999
++++ glibc-2.1.3.rh/time/getdate.c	Wed Mar 15 18:57:15 2000
+@@ -1,5 +1,5 @@
+ /* Convert a string representation of time to a time value.
+-   Copyright (C) 1997, 1998, 1999 Free Software Foundation, Inc.
++   Copyright (C) 1997, 1998, 1999, 2000 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+    Contributed by Mark Kettenis <kettenis@phys.uva.nl>, 1997.
+ 
+@@ -91,7 +91,7 @@
+ 	return 1;
+       break;
+     case 1:
+-      if (mday >= 1 && mday < (__isleap (year) ? 29 : 28))
++      if (mday >= 1 && mday <= (__isleap (year) ? 29 : 28))
+ 	return 1;
+       break;
+     }
