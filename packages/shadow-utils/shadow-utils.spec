@@ -1,9 +1,9 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.37 2004/09/10 07:31:15 galaxy Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.38 2004/09/28 01:14:21 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.4.1
-Release: owl1
+Release: owl2
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -34,6 +34,7 @@ Patch23: shadow-4.0.4.1-owl-restrict-locale.diff
 Patch24: shadow-4.0.4.1-owl-crypt_gensalt.diff
 Patch25: shadow-4.0.4.1-owl-newgrp.diff
 Patch30: shadow-4.0.4.1-owl-tcb.diff
+Patch31: shadow-4.0.4.1-owl-usermod-update-lstchg.diff
 Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: pam, tcb >= 0.9.8, pam_userpass >= 0.5
 BuildRequires: libtool, gettext = 0.14.1, automake, autoconf
@@ -65,6 +66,7 @@ shadow password files.
 %patch24 -p1
 %patch25 -p1
 %patch30 -p1
+%patch31 -p1
 
 find . -name "*.orig" -delete
 
@@ -227,21 +229,25 @@ fi
 %exclude %_mandir/man8/mkpasswd*
 
 %changelog
-* Fri Jun 11 2004 Michail Litvak <mci@owl.openwall.com> 4.0.4.1-owl1
+* Tue Sep 28 2004 Juan M. Bello Rivas <jmbr@owl.openwall.com> 2:4.0.4.1-owl2
+- Modified usermod to update the last password change field when invoked
+with the -p option.
+
+* Fri Jun 11 2004 Michail Litvak <mci@owl.openwall.com> 2:4.0.4.1-owl1
 - Originally by solar@ in Owl-current:
 Properly check the return value from pam_chauthtok() in
 libmisc/pwdcheck.c: passwd_check() that is used by chfn and chsh commands.
 Thanks to Steve Grubb and Martin Schulze.
 
-* Thu Mar 19 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.0.4.1-owl0.3
+* Thu Mar 19 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2:4.0.4.1-owl0.3
 - Removed gettext patch, we are using autopoint now
 - Changed patch number for userdel-path_prefix
 
-* Thu Mar 18 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.0.4.1-owl0.2
+* Thu Mar 18 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2:4.0.4.1-owl0.2
 - Fixed a bug in path_prefix() in userdel
 - Fixed a typo in tcb patch
 
-* Fri Feb 27 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.0.4.1-owl0.1
+* Fri Feb 27 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2:4.0.4.1-owl0.1
 - Updated to the new version
 - All patches were regenerated
 - Spec file was adopted for RPM4

@@ -427,10 +427,6 @@ There should still a be check for usernames exceeding
 sizeof(ut.ut_user) and some sane "hard" limits for both user and group
 names (or the shadow suite programs themselves would misbehave).
 
-[PRIORITY: medium]
-When usermod is invoked with "-p" (to change password), it should set
-the last change time.
-
 
 	SimplePAMApps.
 
@@ -529,4 +525,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.40 2004/09/26 21:14:04 solar Exp $
+$Id: Owl/doc/TODO,v 1.41 2004/09/28 01:15:54 solar Exp $
