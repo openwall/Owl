@@ -1,9 +1,9 @@
-# $Id: Owl/packages/man/man.spec,v 1.12 2004/09/10 07:25:23 galaxy Exp $
+# $Id: Owl/packages/man/man.spec,v 1.13 2004/11/08 21:00:51 mci Exp $
 
 Summary: A set of documentation tools: man, apropos and whatis.
 Name: man
 Version: 1.5l
-Release: owl3
+Release: owl4
 License: GPL
 Group: System Environment/Base
 Source: ftp://ftp.win.tue.nl/pub/linux-local/utils/man/man-%version.tar.gz
@@ -11,7 +11,6 @@ Patch0: man-1.5l-owl-makewhatis.diff
 Patch1: man-1.5l-owl-latin1.diff
 Patch2: man-1.5l-owl-bound.diff
 Requires: groff, mktemp >= 1:1.3.1, findutils >= 1:4.1.5-owl4
-BuildRequires: sed >= 4.0.9
 BuildRoot: /override/%name-%version
 
 %description
@@ -29,62 +28,62 @@ whatis searches its own database for a complete word.
 %patch2 -p1
 
 %build
-./configure -default -fhs +fsstnd
-sed -i 's,/usr/lib,/etc,' conf_script
-chmod u+x conf_script
+./configure -default +fhs -fsstnd -confdir /etc
 make CC="gcc $RPM_OPT_FLAGS -D_GNU_SOURCE"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/usr/{bin,man,sbin}
+mkdir -p $RPM_BUILD_ROOT/usr/{bin,sbin}
 make install PREFIX=$RPM_BUILD_ROOT
 
 cd $RPM_BUILD_ROOT
 
-mkdir -p var/catman/{X11R6,local}
+mkdir -p var/cache/man/{X11R6,local}
 for i in 1 2 3 4 5 6 7 8 9 n; do
-	mkdir var/catman/{cat$i,X11R6/cat$i,local/cat$i}
+	mkdir var/cache/man/{cat$i,X11R6/cat$i,local/cat$i}
 done
 
 # symlinks for manpath
 ln -s man usr/bin/manpath
-ln -s man.1 usr/man/man1/manpath.1
-
-# XXX: (GM): Remove unpackaged files (check later)
-rm %buildroot%_bindir/man2dvi
-rm %buildroot/usr/man/man8/makewhatis.8*
+ln -s man.1 $RPM_BUILD_ROOT%_mandir/man1/manpath.1
 
 # Clean up accumulated cat litter.
 %preun
-find /var/catman/{,X11R6/,local/}cat[123456789n] -type f -delete
+find /var/cache/man/{,X11R6/,local/}cat[123456789n] -type f -delete
 
 %post
-find /var/catman/{,X11R6/,local/}cat[123456789n] -type f -delete
+find /var/cache/man/{,X11R6/,local/}cat[123456789n] -type f -delete
 
 %files
 %defattr(-,root,root)
-%attr(0755,root,man) /usr/bin/man
-/usr/bin/manpath
-/usr/bin/apropos
-/usr/bin/whatis
-%attr(0700,root,root) /usr/sbin/makewhatis
+%attr(0755,root,man) %_bindir/man
+%_bindir/manpath
+%_bindir/apropos
+%_bindir/whatis
+%_bindir/man2html
+%attr(0700,root,root) %_sbindir/makewhatis
 %config /etc/man.conf
-/usr/man/man5/man.conf.5*
-/usr/man/man1/whatis.1*
-/usr/man/man1/man.1*
-/usr/man/man1/manpath.1*
-/usr/man/man1/apropos.1*
-/usr/man/man1/man2html.1*
-/usr/bin/man2html
+%_mandir/man1/whatis.1*
+%_mandir/man1/man.1*
+%_mandir/man1/manpath.1*
+%_mandir/man1/apropos.1*
+%_mandir/man1/man2html.1*
+%_mandir/man5/man.conf.5*
+%_mandir/man8/makewhatis.8*
 
-%attr(0755,root,man) %dir /var/catman
-%attr(0775,root,man) %dir /var/catman/cat[123456789n]
-%attr(0755,root,man) %dir /var/catman/X11R6
-%attr(0775,root,man) %dir /var/catman/X11R6/cat[123456789n]
-%attr(0755,root,man) %dir /var/catman/local
-%attr(0775,root,man) %dir /var/catman/local/cat[123456789n]
+%attr(0755,root,man) %dir /var/cache/man
+%attr(0775,root,man) %dir /var/cache/man/cat[123456789n]
+%attr(0755,root,man) %dir /var/cache/man/X11R6
+%attr(0775,root,man) %dir /var/cache/man/X11R6/cat[123456789n]
+%attr(0755,root,man) %dir /var/cache/man/local
+%attr(0775,root,man) %dir /var/cache/man/local/cat[123456789n]
+
+%exclude %_bindir/man2dvi
 
 %changelog
+* Mon Nov 08 2004 Michail Litvak <mci@owl.openwall.com> 1.5l-owl4
+- FHS 2.2 compatibility.
+
 * Wed Jul 21 2004 Michail Litvak <mci@owl.openwall.com> 1.5l-owl3
 - Use sed -i.
 
