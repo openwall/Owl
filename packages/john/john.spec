@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.10 2002/10/03 04:27:29 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.11 2002/10/19 14:08:43 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.32.1
+Version: 1.6.32.2
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -76,6 +76,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Sat Oct 19 2002 Solar Designer <solar@owl.openwall.com>
+- Simplified DES_bs_get_binary_raw().
+
 * Thu Oct 03 2002 Solar Designer <solar@owl.openwall.com>
 - Never point cfg_name to path_expand()'s result buffer, make a copy.
 
