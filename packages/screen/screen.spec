@@ -1,9 +1,9 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.8 2001/03/11 08:23:15 mci Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.9 2001/03/19 02:53:49 solar Exp $
 
 Summary: A screen manager that supports multiple logins on one terminal.
 Name: screen
 Version: 3.9.8
-Release: 8owl
+Release: 9owl
 Copyright: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%{version}.tar.gz
@@ -92,6 +92,9 @@ fi
 %config(noreplace) /etc/pam.d/screen
 
 %changelog
+* Mon Mar 19 2001 Solar Designer <solar@owl.openwall.com>
+- screen.pam: explicit pam_deny for everything but authentication.
+
 * Sat Mar 10 2001 Solar Designer <solar@owl.openwall.com>
 - Don't require and link against libpam_misc.
 
