@@ -116,16 +116,16 @@ Update to latest release.
 
 	gcc.
 
-[PRIORITY: low]
-Update to 3.2.1+ and deal with whatever this will break.  Probably do
-after or at the same time with the binutils and glibc.
+[PRIORITY: medium]
+Update to 3.2.1+ and deal with whatever this will break.
 
 
 	glibc.
 
 [PRIORITY: medium]
 [ASSIGNED: solar@]
-Update to 2.3.1+ with all the related auditing, porting, and fixing.
+Once gcc is updated, update to 2.3.1+ with all the related auditing,
+porting, and fixing.
 
 [PRIORITY: low]
 Make mkstemp(3) and friends produce unpredictable filenames (not just
@@ -548,4 +548,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.2 2002/12/06 23:04:28 solar Exp $
+$Id: Owl/doc/TODO,v 1.3 2002/12/22 18:54:54 solar Exp $
