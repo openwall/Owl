@@ -1,4 +1,4 @@
-# $Id: Owl/packages/elinks/elinks.spec,v 1.2 2004/01/25 12:05:18 solar Exp $
+# $Id: Owl/packages/elinks/elinks.spec,v 1.3 2004/01/25 12:32:32 solar Exp $
 
 Summary: Lynx-like text WWW browser with many features.
 Name: elinks
@@ -10,9 +10,9 @@ URL: http://elinks.or.cz
 Source: http://elinks.or.cz/download/%name-%version.tar.bz2
 Patch0: elinks-0.9.0-owl-tmp.diff
 Patch1: elinks-0.9.0-owl-vitmp.diff
-Requires: openssl
+Requires: gpm, zlib, bzip2, openssl
 Obsoletes: links
-BuildRequires: openssl-devel
+BuildRequires: gpm-devel, zlib-devel, bzip2-devel, openssl-devel
 BuildRoot: /override/%name-%version
 
 %description
@@ -33,7 +33,12 @@ It is in no way associated with Twibright Labs and their Links version.
 %patch1 -p1
 
 %build
-%configure --with-ssl --enable-leds
+%configure \
+	--with-gpm --with-zlib --with-bzlib --with-openssl \
+	--without-xbel --without-guile --without-lua --without-gnutls \
+	--without-x \
+	--enable-ipv6 --enable-leds \
+	--disable-smb
 make
 
 %install
@@ -53,6 +58,8 @@ make install DESTDIR=$RPM_BUILD_ROOT
 * Sun Jan 25 2004 Solar Designer <solar@owl.openwall.com> 0.9.0-owl2
 - Use vitmp in textarea_edit().
 - Minor corrections to the temporary file handling patch.
+- Enable/disable the use of external libraries explicitly, do not depend
+on what libraries might happen to be installed on the build system.
 - Obsoletes: links
 
 * Wed Jan 21 2004 Michail Litvak <mci@owl.openwall.com> 0.9.0-owl1
