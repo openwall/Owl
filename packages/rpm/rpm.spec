@@ -1,9 +1,9 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.31 2003/12/07 11:55:17 solar Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.32 2003/12/12 18:50:44 solar Exp $
 
 Summary: The Red Hat package management system.
 Name: rpm
 Version: 3.0.6
-Release: owl9
+Release: owl10
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-3.0.x/rpm-%version.tar.gz
@@ -20,6 +20,7 @@ Patch7: rpm-3.0.6-owl-autoreq.diff
 Patch8: rpm-3.0.6-owl-macros.diff
 Patch9: rpm-3.0.6-owl-popt-sgid.diff
 Patch10: rpm-3.0.6-owl-tmp.diff
+Patch11: rpm-3.0.6-owl-strip-sugid.diff
 Patch20: rpm-3.0.6-alt-owl-autodeps-symbol-versioning.diff
 Patch21: rpm-3.0.6-alt-rpmio-gzclose.diff
 Patch30: rpm-3.0.6-owl-rpmrc.diff
@@ -95,6 +96,7 @@ EOF
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 %patch20 -p1
 %patch21 -p1
 %patch30 -p1
@@ -241,6 +243,10 @@ fi
 %__prefix/include/popt.h
 
 %changelog
+* Fri Dec 12 2003 Solar Designer <solar@owl.openwall.com> 3.0.6-owl10
+- In brp-strip*, use sed expressions which allow SUID/SGID binaries to get
+stripped.
+
 * Sun Dec 07 2003 Solar Designer <solar@owl.openwall.com> 3.0.6-owl9
 - Don't use a file under /tmp in installplatform script used during builds,
 spotted by (GalaxyMaster).
