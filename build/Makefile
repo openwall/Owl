@@ -1,4 +1,4 @@
-# $Id: Owl/build/Makefile,v 1.16 2003/12/19 18:51:55 solar Exp $
+# $Id: Owl/build/Makefile,v 1.17 2005/01/25 22:07:32 solar Exp $
 
 # The Owl branch to build and/or install, specified by its tag in the
 # CVS.  This should only be set to build and/or install a non-current
@@ -19,8 +19,7 @@ checkout:
 
 symlinks:
 	test -d native/$(BRANCH)/build || $(MAKE) checkout
-	ln -sf native/$(BRANCH)/build/.rpm* .
-	ln -s native/$(BRANCH)/build/*.conf . 2> /dev/null || :
+	ln -s native/$(BRANCH)/build/{*.conf,.rpm*} . 2> /dev/null || :
 
 buildworld: symlinks
 	BRANCH=$(BRANCH) PACKAGE= native/$(BRANCH)/build/buildworld.sh
