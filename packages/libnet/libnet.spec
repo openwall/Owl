@@ -1,9 +1,9 @@
-# $Id: Owl/packages/libnet/libnet.spec,v 1.9 2004/11/23 22:40:46 mci Exp $
+# $Id: Owl/packages/libnet/libnet.spec,v 1.10 2005/01/12 16:15:17 galaxy Exp $
 
 Summary: "libpwrite" Network Routine Library.
 Name: libnet
 Version: 1.0.2a
-Release: owl3
+Release: owl4
 Epoch: 1
 License: BSD
 Group: System Environment/Libraries
@@ -53,6 +53,8 @@ rm -rf %buildroot
 
 pushd %buildroot%_libdir
 ln -sf libnet.so.*.* libnet.so
+# XXX: (GM): we have to find a universal way to do the following:
+ln -sf libnet.so.*.* libnet.so.1
 popd
 ln -sf libnet.so %buildroot%_libdir/libpwrite
 
@@ -61,7 +63,7 @@ ln -sf libnet.so %buildroot%_libdir/libpwrite
 
 %files
 %defattr(644,root,root,755)
-%attr(755,root,root) %_libdir/lib*.so.*.*
+%attr(755,root,root) %_libdir/lib*.so.*
 %attr(755,root,root) %_libdir/libpwrite
 
 %files devel
@@ -75,6 +77,9 @@ ln -sf libnet.so %buildroot%_libdir/libpwrite
 %_libdir/lib*.a
 
 %changelog
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1:1.0.2a-owl4
+- Fixed orphaned %_libdir/libnet.so.1 created by %post.
+
 * Mon Feb 16 2004 Michail Litvak <mci@owl.openwall.com> 1:1.0.2a-owl3
 - Correctly install documentation from doc/ subdirectory.
 
