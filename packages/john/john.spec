@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.22 2003/09/22 12:21:33 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.23 2003/10/01 01:35:18 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.36.1
+Version: 1.6.36.2
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -77,6 +77,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Wed Oct 01 2003 Solar Designer <solar@owl.openwall.com> 1.6.36.2-owl1
+- Replaced mem_free() with a macro to keep gcc 3.3.1's strict aliasing
+happy (thanks to Anatoly Pugachev for reporting the gcc warnings).
+
 * Mon Sep 22 2003 Solar Designer <solar@owl.openwall.com> 1.6.36.1-owl1
 - Support OpenBSD/x86 w/ ELF binaries (Makefile patch by demon).
 
