@@ -1,5 +1,6 @@
---- cvs-1.11.5/src/client.c.orig	Thu Jan 16 17:10:55 2003
-+++ cvs-1.11.5/src/client.c	Tue Apr 13 02:42:10 2004
+diff -ur cvs-1.11.5.orig/src/client.c cvs-1.11.5/src/client.c
+--- cvs-1.11.5.orig/src/client.c	Thu Jan 16 15:10:55 2003
++++ cvs-1.11.5/src/client.c	Mon May 17 21:26:12 2004
 @@ -1050,6 +1050,19 @@
      char *rdirp;
      int reposdirname_absolute;
@@ -20,8 +21,9 @@
      reposname = NULL;
      read_line (&reposname);
      assert (reposname != NULL);
---- cvs-1.11.5/src/modules.c.orig	Fri Jun 22 00:23:09 2001
-+++ cvs-1.11.5/src/modules.c	Tue Apr 13 03:08:35 2004
+diff -ur cvs-1.11.5.orig/src/modules.c cvs-1.11.5/src/modules.c
+--- cvs-1.11.5.orig/src/modules.c	Thu Jun 21 21:23:09 2001
++++ cvs-1.11.5/src/modules.c	Mon May 17 21:26:12 2004
 @@ -159,6 +159,24 @@
      }
  #endif
@@ -47,3 +49,84 @@
      /* if this is a directory to ignore, add it to that list */
      if (mname[0] == '!' && mname[1] != '\0')
      {
+diff -ur cvs-1.11.5.orig/src/server.c cvs-1.11.5/src/server.c
+--- cvs-1.11.5.orig/src/server.c	Thu Jan 16 15:10:55 2003
++++ cvs-1.11.5/src/server.c	Mon May 17 21:26:35 2004
+@@ -1641,8 +1641,18 @@
+ 	    && strncmp (arg, name, cp - name) == 0)
+ 	{
+ 	    timefield = strchr (cp + 1, '/') + 1;
+-	    if (*timefield != '=')
++	    /* If the time field is not currently empty, then one of
++	     * serve_modified, serve_is_modified, & serve_unchanged were
++	     * already called for this file.  We would like to ignore the
++	     * reinvocation silently or, better yet, exit with an error
++	     * message, but we just avoid the copy-forward and overwrite the
++	     * value from the last invocation instead.  See the comment below
++	     * for more.
++	     */
++	    if (*timefield == '/')
+ 	    {
++		/* Copy forward one character.  Space was allocated for this
++		 * already in serve_entry().  */
+ 		cp = timefield + strlen (timefield);
+ 		cp[1] = '\0';
+ 		while (cp > timefield)
+@@ -1650,8 +1660,17 @@
+ 		    *cp = cp[-1];
+ 		    --cp;
+ 		}
+-		*timefield = '=';
+ 	    }
++	    /* If *TIMEFIELD wasn't "/", we assume that it was because of
++	     * multiple calls to Is-Modified & Unchanged by the client and
++	     * just overwrite the value from the last call.  Technically, we
++	     * should probably either ignore calls after the first or send the
++	     * client an error, since the client/server protocol specification
++	     * specifies that only one call to either Is-Modified or Unchanged
++	     * is allowed, but broken versions of WinCVS & TortoiseCVS rely on
++	     * this behavior.
++	     */
++	    *timefield = '=';
+ 	    break;
+ 	}
+     }
+@@ -1685,8 +1704,18 @@
+ 	    && strncmp (arg, name, cp - name) == 0)
+ 	{
+ 	    timefield = strchr (cp + 1, '/') + 1;
+-	    if (!(timefield[0] == 'M' && timefield[1] == '/'))
++	    /* If the time field is not currently empty, then one of
++	     * serve_modified, serve_is_modified, & serve_unchanged were
++	     * already called for this file.  We would like to ignore the
++	     * reinvocation silently or, better yet, exit with an error
++	     * message, but we just avoid the copy-forward and overwrite the
++	     * value from the last invocation instead.  See the comment below
++	     * for more.
++	     */
++	    if (*timefield == '/')
+ 	    {
++		/* Copy forward one character.  Space was allocated for this
++		 * already in serve_entry().  */
+ 		cp = timefield + strlen (timefield);
+ 		cp[1] = '\0';
+ 		while (cp > timefield)
+@@ -1694,8 +1723,17 @@
+ 		    *cp = cp[-1];
+ 		    --cp;
+ 		}
+-		*timefield = 'M';
+ 	    }
++	    /* If *TIMEFIELD wasn't "/", we assume that it was because of
++	     * multiple calls to Is-Modified & Unchanged by the client and
++	     * just overwrite the value from the last call.  Technically, we
++	     * should probably either ignore calls after the first or send the
++	     * client an error, since the client/server protocol specification
++	     * specifies that only one call to either Is-Modified or Unchanged
++	     * is allowed, but broken versions of WinCVS & TortoiseCVS rely on
++	     * this behavior.
++	     */
++	    *timefield = 'M';
+ 	    if (kopt != NULL)
+ 	    {
+ 		if (alloc_pending (strlen (name) + 80))
