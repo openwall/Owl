@@ -1,15 +1,16 @@
-# $Id: Owl/packages/patchutils/patchutils.spec,v 1.2 2004/11/27 17:32:49 solar Exp $
+# $Id: Owl/packages/patchutils/patchutils.spec,v 1.3 2004/11/28 18:47:17 solar Exp $
 
 Summary: Patchutils is a small collection of programs that operate on patch files.
 Name: patchutils
 Version: 0.2.30
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/Text
 URL: http://cyberelk.net/tim/%name/
 Source: http://cyberelk.net/tim/data/%name/stable/%name-%version.tar.bz2
 Patch0: patchutils-0.2.30-owl-tmp.diff
 Patch1: patchutils-0.2.30-owl-bound.diff
+Patch2: patchutils-0.2.30-owl-fixes.diff
 PreReq: /sbin/install-info
 Requires: mktemp >= 1:1.3.1
 Prefix: %_prefix
@@ -37,6 +38,7 @@ This version contains:
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 autoconf
@@ -55,7 +57,11 @@ rm -rf %buildroot
 %_mandir/*/*
 
 %changelog
-* Mon Nov 27 2004 Juan M. Bello Rivas <jmbr@owl.openwall.com> 0.2.30-owl2
+* Sun Nov 28 2004 Juan M. Bello Rivas <jmbr@owl.openwall.com> 0.2.30-owl3
+- Corrected two instances of calls to memory allocation functions where there
+was no check for their return values.
+
+* Sat Nov 27 2004 Juan M. Bello Rivas <jmbr@owl.openwall.com> 0.2.30-owl2
 - Implemented temporary file handling and bounds checking fixes.
 
 * Mon Nov 22 2004 Juan M. Bello Rivas <jmbr@owl.openwall.com> 0.2.30-owl1
