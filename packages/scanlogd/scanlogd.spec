@@ -1,8 +1,8 @@
-# $Id: Owl/packages/scanlogd/Attic/scanlogd.spec,v 1.2 2002/02/07 01:56:03 solar Exp $
+# $Id: Owl/packages/scanlogd/Attic/scanlogd.spec,v 1.3 2002/05/08 18:40:00 solar Exp $
 
 Summary: A tool to detect and log TCP port scans.
 Name: scanlogd
-Version: 2.2
+Version: 2.2.1
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
@@ -48,6 +48,8 @@ fi
 %post
 test -f /var/run/scanlogd.restart && /etc/rc.d/init.d/scanlogd start || :
 rm -f /var/run/scanlogd.restart
+# This is needed for upgrades from an older version of the startup script.
+/sbin/chkconfig scanlogd && /sbin/chkconfig scanlogd reset || :
 
 %preun
 if [ $1 -eq 0 ]; then
@@ -62,6 +64,10 @@ fi
 %config /etc/rc.d/init.d/scanlogd
 
 %changelog
+* Wed May 08 2002 Solar Designer <solar@owl.openwall.com>
+- Start after syslogd.
+- Don't abuse glibc-internal __feature macros.
+
 * Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 
