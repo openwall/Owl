@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.23 2001/02/04 23:04:38 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.24 2001/02/09 22:01:31 solar Exp $
 
 Summary: Initial set of configuration files
 Name: owl-etc
-Version: 0.9
+Version: 0.10
 Release: 1owl
 Copyright: public domain
 Group: System Environment/Base
@@ -65,6 +65,9 @@ rm -rf $RPM_BUILD_ROOT
 %ghost /var/log/lastlog
 
 %changelog
+* Sat Feb 10 2001 Solar Designer <solar@owl.openwall.com>
+- shadow group.
+
 * Mon Feb 05 2001 Solar Designer <solar@owl.openwall.com>
 - Add /usr/X11R6/bin to the default PATH when applicable.
 - Changed the default csh prompts to be the same as they are with bash.

@@ -18,6 +18,7 @@ games:x:20:
 slocate:x:21:
 utmp:x:22:
 dip:x:40:
+shadow:x:42:
 ftp:x:50:
 nobody:x:99:
 users:x:100:

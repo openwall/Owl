@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.1 2000/08/26 15:02:23 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.2 2001/02/09 22:01:31 solar Exp $
 
 %define BUILD_CHSH_CHFN	'yes'
 %define BUILD_VIPW_VIGR	'yes'
@@ -6,7 +6,7 @@
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 19990827
-Release: 11owl
+Release: 12owl
 Serial: 1
 Source0: ftp://ftp.ists.pwr.wroc.pl/pub/linux/shadow/shadow-%{version}.tar.gz
 Source1: login.defs
@@ -90,6 +90,10 @@ chmod 700 chfn
 rm -rf $RPM_BUILD_ROOT
 rm -rf build-$RPM_ARCH
 
+%post
+grep ^shadow: /etc/group &> /dev/null || groupadd -g 42 shadow
+chgrp shadow /etc/shadow && chmod 440 /etc/shadow
+
 %files
 %defattr(-,root,root)
 %doc doc/ANNOUNCE doc/CHANGES doc/HOWTO
@@ -143,6 +147,9 @@ rm -rf build-$RPM_ARCH
 %endif
 
 %changelog
+* Sat Feb 10 2001 Solar Designer <solar@owl.openwall.com>
+- shadow group.
+
 * Sat Aug 26 2000 Solar Designer <solar@owl.openwall.com>
 - Imported this spec file from RH, cleaned it up, and changed heavily.
 - Imported many of the Red Hat modifications to useradd, including some
