@@ -1,12 +1,13 @@
-# $Id: Owl/packages/groff/groff.spec,v 1.5 2000/11/21 13:04:52 solar Exp $
+# $Id: Owl/packages/groff/groff.spec,v 1.6 2000/11/23 13:45:46 solar Exp $
 
 %define BUILD_USE_X	'no'
 %define BUILD_CURRENT	'yes'
+%define BUILD_20001121	'no'
 
 Summary: A document formatting system.
 Name: 		groff
 Version: 	1.16.1
-Release: 	2owl
+Release: 	3owl
 Copyright: 	GPL
 Group: 		Applications/Publishing
 Source0: 	ftp://ftp.gnu.org/gnu/groff/groff-%{version}.tar.gz
@@ -16,8 +17,10 @@ Source1:	ftp://ftp.ffii.org/pub/groff/devel/groff-%{version}-current.diff.gz
 Source2: 	troff-to-ps.fpi
 Source3: 	README.A4
 Patch0:		groff-1.16.1-owl-man.diff
+%if "%{BUILD_20001121}"=="'yes'"
 Patch1:		groff-1.16.1-current-owl-mso-hpf.diff
 Patch2:		groff-1.16.1-current-owl-eqnrc.diff
+%endif
 Requires: 	mktemp
 Buildroot:      /var/rpm-buildroot/%{name}-root
 Obsoletes: 	groff-tools
@@ -67,8 +70,10 @@ zcat %{SOURCE1} | patch -p1 -l
 %endif
 %patch0 -p0
 %if "%{BUILD_CURRENT}"=="'yes'"
+%if "%{BUILD_20001121}"=="'yes'"
 %patch1 -p1
 %patch2 -p1
+%endif
 %endif
 cp %{SOURCE3} .
 
@@ -166,6 +171,10 @@ rm -rf ${RPM_BUILD_ROOT}
 %endif
 
 %changelog
+* Thu Nov 23 2000 Solar Designer <solar@owl.openwall.com>
+- Update to today's -current.
+- Dropped the now obsolete patches from Nov 21.
+
 * Tue Nov 21 2000 Solar Designer <solar@owl.openwall.com>
 - Update to -current which now includes fixes for the current directory
 problem described in the ISS X-Force advisory.
