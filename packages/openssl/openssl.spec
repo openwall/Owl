@@ -1,10 +1,10 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.10.2.2 2002/07/31 00:07:31 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.10.2.3 2002/08/03 03:32:32 solar Exp $
 
 %define libmaj 0
 %define libmin 9
 %define librel 6
 %define librev a
-Release: 3owl
+Release: 4owl
 
 %define openssldir /var/ssl
 
@@ -17,6 +17,7 @@ Patch1: openssl-0.9.5a-owl-crypt.diff
 Patch2: openssl-0.9.6a-owl-glibc-enable_secure.diff
 Patch3: openssl-0.9.6a-up-prng.diff
 Patch4: openssl-0.9.6a-up-con-20020727-security-fixes.diff
+Patch5: openssl-0.9.6e-cvs-20020802-asn1_lib.diff
 Copyright: Freely distributable
 Group: System Environment/Libraries
 Provides: SSL
@@ -69,6 +70,7 @@ static libraries and header files required when developing applications.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 %define CONFIG_FLAGS shared -DSSL_ALLOW_ADH --prefix=/usr
@@ -162,6 +164,10 @@ ldconfig
 ldconfig
 
 %changelog
+* Sat Aug 03 2002 Solar Designer <solar@owl.openwall.com>
+- Added two post-0.9.6e changes from the CVS which correct the recent ASN.1
+parsing vulnerability fixes.
+
 * Wed Jul 31 2001 Solar Designer <solar@owl.openwall.com>
 - Applied the official patch with 4 security fixes to problems discovered
 by Ben Laurie and others of A.L. Digital Ltd and The Bunker under DARPA's
