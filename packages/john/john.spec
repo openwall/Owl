@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.29 2003/11/30 02:16:27 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.30 2003/12/03 10:26:39 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.36.7
+Version: 1.6.36.8
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -74,6 +74,10 @@ cp -a john-1.6/doc/* doc/john-1.6/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Wed Dec 03 2003 Solar Designer <solar@owl.openwall.com> 1.6.36.8-owl1
+- Avoid triggering a MacOS X cpp bug(?) where it would detect and refuse to
+handle "recursive" cpp macros.
+
 * Sun Nov 30 2003 Solar Designer <solar@owl.openwall.com> 1.6.36.7-owl1
 - When calculating the c/s rate in benchmarks (bench.c, best.c), use 64-bit
 integer operations to avoid a possible integer overflow on 32-bit systems
