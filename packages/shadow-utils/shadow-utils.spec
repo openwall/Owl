@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.18 2002/07/21 14:47:44 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.19 2002/07/21 15:07:36 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
@@ -25,6 +25,7 @@ Patch3: shadow-4.0.0-owl-tmp.diff
 Patch4: shadow-4.0.0-owl-pam-auth.diff
 Patch5: shadow-4.0.0-owl-chage-drop-priv.diff
 Patch6: shadow-4.0.0-owl-chage-ro-no-lock.diff
+Patch7: shadow-4.0.0-owl-useradd-usermod-usage.diff
 Patch10: shadow-4.0.0-rh-owl-redhat.diff
 Patch20: shadow-4.0.0-owl-man.diff
 Patch21: shadow-4.0.0-owl-check_names.diff
@@ -53,6 +54,7 @@ shadow password files.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 %patch10 -p1
 %patch20 -p1
 %patch21 -p1
@@ -182,6 +184,8 @@ grep -q ^auth: /etc/group || groupadd -g 164 auth
 
 %changelog
 * Sun Jul 21 2002 Solar Designer <solar@owl.openwall.com>
+- Removed the extra space in "[-e expire ]" in the usage instructions for
+useradd and usermod.
 - Made "chage -l" drop its saved GID too.
 
 * Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com>

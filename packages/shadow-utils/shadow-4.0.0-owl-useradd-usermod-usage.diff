@@ -1,0 +1,204 @@
+diff -ur shadow-4.0.0.orig/po/cs.po shadow-4.0.0/po/cs.po
+--- shadow-4.0.0.orig/po/cs.po	Sun Oct  7 00:35:10 2001
++++ shadow-4.0.0/po/cs.po	Sun Jul 21 18:59:30 2002
+@@ -2054,8 +2054,8 @@
+ msgstr "\t\t[-d dom·cÌ adr.] [-s shell] [-c koment·¯] [-m [-k πablona]]\n"
+ 
+ #: src/useradd.c:726 src/usermod.c:327
+-msgid "[-f inactive] [-e expire ] "
+-msgstr "[-f vypnutÌ] [-e vyprπenÌ ] "
++msgid "[-f inactive] [-e expire] "
++msgstr "[-f vypnutÌ] [-e vyprπenÌ] "
+ 
+ #: src/useradd.c:729
+ msgid "[-A program] "
+@@ -2071,8 +2071,8 @@
+ msgstr "       %s\t-D [-g skupina [-b z·kladnÌ adr.] [-s shell]\n"
+ 
+ #: src/useradd.c:736
+-msgid "\t\t[-f inactive] [-e expire ]\n"
+-msgstr "\t\t[-f vypnutÌ] [-e vyprπenÌ ]\n"
++msgid "\t\t[-f inactive] [-e expire]\n"
++msgstr "\t\t[-f vypnutÌ] [-e vyprπenÌ]\n"
+ 
+ #: src/useradd.c:833 src/usermod.c:479
+ #, c-format
+diff -ur shadow-4.0.0.orig/po/el.po shadow-4.0.0/po/el.po
+--- shadow-4.0.0.orig/po/el.po	Sun Oct  7 00:35:11 2001
++++ shadow-4.0.0/po/el.po	Sun Jul 21 18:59:15 2002
+@@ -2081,8 +2081,8 @@
+ "\t\t[-m [-k Í·Ì¸Ì·Ú]]\n"
+ 
+ #: src/useradd.c:726 src/usermod.c:327
+-msgid "[-f inactive] [-e expire ] "
+-msgstr "[-f ·ÌÂÌÂÒ„¸] [-e ÎﬁÓÁ ] "
++msgid "[-f inactive] [-e expire] "
++msgstr "[-f ·ÌÂÌÂÒ„¸] [-e ÎﬁÓÁ] "
+ 
+ #: src/useradd.c:729
+ msgid "[-A program] "
+@@ -2098,8 +2098,8 @@
+ msgstr "       %s\t-D [-g ÔÏ‹‰·] [-b ‚‹ÛÁ] [-s ˆÎÔÈ¸Ú]\n"
+ 
+ #: src/useradd.c:736
+-msgid "\t\t[-f inactive] [-e expire ]\n"
+-msgstr "\t\t[-f ·ÌÂÌÂÒ„¸] [-e ÎﬁÓÁ ]\n"
++msgid "\t\t[-f inactive] [-e expire]\n"
++msgstr "\t\t[-f ·ÌÂÌÂÒ„¸] [-e ÎﬁÓÁ]\n"
+ 
+ #: src/useradd.c:833 src/usermod.c:479
+ #, c-format
+diff -ur shadow-4.0.0.orig/po/fr.po shadow-4.0.0/po/fr.po
+--- shadow-4.0.0.orig/po/fr.po	Sun Oct  7 00:35:11 2001
++++ shadow-4.0.0/po/fr.po	Sun Jul 21 18:57:52 2002
+@@ -2061,8 +2061,8 @@
+ msgstr "\t\t[-d home] [-s shell] [-c commentaire] [-m [-k template]]\n"
+ 
+ #: src/useradd.c:726 src/usermod.c:327
+-msgid "[-f inactive] [-e expire ] "
+-msgstr "[-f inactif] [-e expire ] "
++msgid "[-f inactive] [-e expire] "
++msgstr "[-f inactif] [-e expire] "
+ 
+ #: src/useradd.c:729
+ msgid "[-A program] "
+@@ -2078,8 +2078,8 @@
+ msgstr "       %s\t-D [-g groupe] [-b base] [-s shell]\n"
+ 
+ #: src/useradd.c:736
+-msgid "\t\t[-f inactive] [-e expire ]\n"
+-msgstr "\t\t[-f inactif] [-e expire ]\n"
++msgid "\t\t[-f inactive] [-e expire]\n"
++msgstr "\t\t[-f inactif] [-e expire]\n"
+ 
+ #: src/useradd.c:833 src/usermod.c:479
+ #, c-format
+diff -ur shadow-4.0.0.orig/po/pl.po shadow-4.0.0/po/pl.po
+--- shadow-4.0.0.orig/po/pl.po	Sun Oct  7 00:35:12 2001
++++ shadow-4.0.0/po/pl.po	Sun Jul 21 19:00:13 2002
+@@ -2054,8 +2054,8 @@
+ msgstr "\t\t[-d kat_dom] [-s pow≥oka] [-c komentarz] [-m [-k wzÛr]]\n"
+ 
+ #: src/useradd.c:726 src/usermod.c:327
+-msgid "[-f inactive] [-e expire ] "
+-msgstr "[-f nieaktywne] [-e utrata_waøno∂ci ]"
++msgid "[-f inactive] [-e expire] "
++msgstr "[-f nieaktywne] [-e utrata_waøno∂ci] "
+ 
+ #: src/useradd.c:729
+ msgid "[-A program] "
+@@ -2071,8 +2071,8 @@
+ msgstr "       %s\t-D [-g grupa] [-b baza] [-s pow≥oka]\n"
+ 
+ #: src/useradd.c:736
+-msgid "\t\t[-f inactive] [-e expire ]\n"
+-msgstr "\t\t[-f nieaktywne] [-e utrata_waøno∂ci ]\n"
++msgid "\t\t[-f inactive] [-e expire]\n"
++msgstr "\t\t[-f nieaktywne] [-e utrata_waøno∂ci]\n"
+ 
+ #: src/useradd.c:833 src/usermod.c:479
+ #, c-format
+diff -ur shadow-4.0.0.orig/po/shadow.pot shadow-4.0.0/po/shadow.pot
+--- shadow-4.0.0.orig/po/shadow.pot	Sat Sep  8 09:36:33 2001
++++ shadow-4.0.0/po/shadow.pot	Sun Jul 21 18:56:38 2002
+@@ -2017,7 +2017,7 @@
+ msgstr ""
+ 
+ #: src/useradd.c:726 src/usermod.c:327
+-msgid "[-f inactive] [-e expire ] "
++msgid "[-f inactive] [-e expire] "
+ msgstr ""
+ 
+ #: src/useradd.c:729
+@@ -2034,7 +2034,7 @@
+ msgstr ""
+ 
+ #: src/useradd.c:736
+-msgid "\t\t[-f inactive] [-e expire ]\n"
++msgid "\t\t[-f inactive] [-e expire]\n"
+ msgstr ""
+ 
+ #: src/useradd.c:833 src/usermod.c:479
+diff -ur shadow-4.0.0.orig/po/sv.po shadow-4.0.0/po/sv.po
+--- shadow-4.0.0.orig/po/sv.po	Sun Oct  7 00:35:12 2001
++++ shadow-4.0.0/po/sv.po	Sun Jul 21 19:01:04 2002
+@@ -2053,8 +2053,8 @@
+ msgstr "\t\t[-d hem] [-s skal] [-c kommentar] [-m [-k mall]]\n"
+ 
+ #: src/useradd.c:726 src/usermod.c:327
+-msgid "[-f inactive] [-e expire ] "
+-msgstr "[-f inaktiv] [-e upphˆr ] "
++msgid "[-f inactive] [-e expire] "
++msgstr "[-f inaktiv] [-e upphˆr] "
+ 
+ #: src/useradd.c:729
+ msgid "[-A program] "
+@@ -2070,8 +2070,8 @@
+ msgstr "       %s\t-D [-g grupp] [-b bas] [-s skal]\n"
+ 
+ #: src/useradd.c:736
+-msgid "\t\t[-f inactive] [-e expire ]\n"
+-msgstr "\t\t[-f inaktiv] [-e utgÂng ]\n"
++msgid "\t\t[-f inactive] [-e expire]\n"
++msgstr "\t\t[-f inaktiv] [-e utgÂng]\n"
+ 
+ #: src/useradd.c:833 src/usermod.c:479
+ #, c-format
+diff -ur shadow-4.0.0.orig/po/uk.po shadow-4.0.0/po/uk.po
+--- shadow-4.0.0.orig/po/uk.po	Sun Oct  7 00:35:13 2001
++++ shadow-4.0.0/po/uk.po	Sun Jul 21 19:01:40 2002
+@@ -2059,8 +2059,8 @@
+ msgstr "\t\t[-d ƒœÕ¡€Œ—_‘≈À¡] [-s shell] [-c ÀœÕ≈Œ‘¡“] [-m [-k wzÛr]]\n"
+ 
+ #: src/useradd.c:726 src/usermod.c:327
+-msgid "[-f inactive] [-e expire ] "
+-msgstr "[-f Œ≈¡À‘…◊Œ… ] [-e –“œ”‘“œﬁ≈Œ…  ]"
++msgid "[-f inactive] [-e expire] "
++msgstr "[-f Œ≈¡À‘…◊Œ… ] [-e –“œ”‘“œﬁ≈Œ… ] "
+ 
+ #: src/useradd.c:729
+ msgid "[-A program] "
+@@ -2076,8 +2076,8 @@
+ msgstr "       %s\t-D [-g «“’–¡] [-b ¬¡⁄œ◊¡_‘≈À¡] [-s shell]\n"
+ 
+ #: src/useradd.c:736
+-msgid "\t\t[-f inactive] [-e expire ]\n"
+-msgstr "\t\t[-f Œ≈¡À‘…◊Œ… ] [-e –“œ”‘“œﬁ≈Œ…  ]\n"
++msgid "\t\t[-f inactive] [-e expire]\n"
++msgstr "\t\t[-f Œ≈¡À‘…◊Œ… ] [-e –“œ”‘“œﬁ≈Œ… ]\n"
+ 
+ #: src/useradd.c:833 src/usermod.c:479
+ #, c-format
+diff -ur shadow-4.0.0.orig/src/useradd.c shadow-4.0.0/src/useradd.c
+--- shadow-4.0.0.orig/src/useradd.c	Fri Sep  7 19:12:54 2001
++++ shadow-4.0.0/src/useradd.c	Sun Jul 21 19:02:15 2002
+@@ -723,7 +723,7 @@
+ 		_("\t\t[-d home] [-s shell] [-c comment] [-m [-k template]]\n"));
+ 	fprintf(stderr, "\t\t");
+ #ifdef SHADOWPWD
+-	fprintf(stderr, _("[-f inactive] [-e expire ] "));
++	fprintf(stderr, _("[-f inactive] [-e expire] "));
+ #endif
+ #ifdef AUTH_METHODS
+ 	fprintf(stderr, _("[-A program] "));
+@@ -733,7 +733,7 @@
+ 	fprintf(stderr, _("       %s\t-D [-g group] [-b base] [-s shell]\n"),
+ 		Prog);
+ #ifdef SHADOWPWD
+-	fprintf(stderr, _("\t\t[-f inactive] [-e expire ]\n"));
++	fprintf(stderr, _("\t\t[-f inactive] [-e expire]\n"));
+ #endif
+ 
+ 	exit(E_USAGE);
+diff -ur shadow-4.0.0.orig/src/usermod.c shadow-4.0.0/src/usermod.c
+--- shadow-4.0.0.orig/src/usermod.c	Sat Sep  1 08:19:16 2001
++++ shadow-4.0.0/src/usermod.c	Sun Jul 21 19:02:33 2002
+@@ -324,7 +324,7 @@
+ 		_("\t\t[-d home [-m]] [-s shell] [-c comment] [-l new_name]\n"));
+ 	fprintf(stderr, "\t\t");
+ #ifdef SHADOWPWD
+-	fprintf(stderr, _("[-f inactive] [-e expire ] "));
++	fprintf(stderr, _("[-f inactive] [-e expire] "));
+ #endif
+ #ifdef AUTH_METHODS
+ 	fprintf(stderr, _("[-A {DEFAULT|program},... ] "));
