@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.3 2001/09/16 00:36:18 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.4 2001/10/02 23:12:33 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROM's.
 Name: owl-cdrom
-Version: 0.1
+Version: 0.2
 Release: 1owl
 License: public domain
 Group: System Environment/Base
@@ -81,6 +81,12 @@ rm -rf $RPM_BUILD_ROOT
 %dir /owl
 
 %changelog
+* Wed Oct 03 2001 Solar Designer <solar@owl.openwall.com>
+- Create an inode per 1024 bytes on the ramdisk or we would get out of
+inodes with a 4 MB ramdisk.
+- The timeout for root device choice is now 1 minute, not 5 seconds as
+the default choice will very often be wrong.
+
 * Sat Sep 15 2001 Solar Designer <solar@owl.openwall.com>
 - Packaged lilo.conf, .config, and a script to create or update floppy
 images for use with CD-ROM's.
