@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/owl-startup/clock,v 1.1 2000/11/28 22:48:33 solar Exp $
+# $Id: Owl/packages/owl-startup/clock,v 1.2 2002/05/23 05:35:51 solar Exp $
 
 # Setup some sane defaults.
 UTC=true
@@ -11,6 +11,7 @@ test -f /etc/sysconfig/clock && . /etc/sysconfig/clock
 
 FLAGS=""
 test "$UTC" = "true" -o "$UTC" = "yes" && FLAGS="$FLAGS -u"
+test "$UTC" = "false" -o "$UTC" = "no" && FLAGS="$FLAGS --localtime"
 test "$ARC" = "true" -o "$ARC" = "yes" && FLAGS="$FLAGS -A"
 test "$SRM" = "true" -o "$SRM" = "yes" && FLAGS="$FLAGS -S"
 

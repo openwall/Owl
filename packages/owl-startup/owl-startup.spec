@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.27 2002/04/01 19:26:21 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.28 2002/05/23 05:35:51 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.13
+Version: 0.14
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -142,6 +142,12 @@ fi
 %doc redhat
 
 %changelog
+* Mon May 20 2002 Solar Designer <solar@owl.openwall.com>
+- Pass --localtime to hwclock(8) when UTC is explicitly set to "false"
+or "no", otherwise hwclock would default to whatever setting was last
+used ignoring the current UTC setting (thanks to Sergey V. Kurokhtin for
+noticing this).
+
 * Mon Apr 01 2002 Solar Designer <solar@owl.openwall.com>
 - Mount /proc early.  We currently need this on Alpha, for glibc's I/O
 port access routines to be able to determine system type (and thus the
