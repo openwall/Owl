@@ -1,14 +1,14 @@
-# $Id: Owl/packages/psmisc/psmisc.spec,v 1.6 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/psmisc/psmisc.spec,v 1.7 2005/01/15 02:56:51 galaxy Exp $
 
 Summary: Utilities for managing processes on your system.
 Name: psmisc
 Version: 19
-Release: owl5
+Release: owl6
 License: BSD
 Group: Applications/System
 Source: ftp://lrcftp.epfl.ch/pub/linux/local/psmisc/psmisc-%version.tar.gz
 Patch0: psmisc-19-owl-Makefile.diff
-Patch1: psmisc-19-owl-by-user.diff
+Patch1: psmisc-19-owl-restricted-proc.diff
 BuildRoot: /override/%name-%version
 
 %description
@@ -44,6 +44,9 @@ make install \
 %_mandir/man1/pstree.1*
 
 %changelog
+* Sat Jan 15 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 19-owl6
+- Implemented support for restricted proc kernel patch.
+
 * Wed Dec 25 2002 Solar Designer <solar@owl.openwall.com> 19-owl5
 - Fixed the segfault in pstree(1) when asked to report information for a
 user, but entry with PID 1 (init) is inaccessible, thanks to (GalaxyMaster).

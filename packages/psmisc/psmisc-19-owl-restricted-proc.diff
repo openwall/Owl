@@ -1,0 +1,36 @@
+diff -puNr psmisc.orig/pstree.c psmisc/pstree.c
+--- psmisc.orig/pstree.c	Sat May  1 19:40:56 1999
++++ psmisc/pstree.c	Fri Jan 14 20:53:07 2005
+@@ -367,6 +367,7 @@ static void dump_by_user(PROC *current,u
+ {
+     const CHILD *walk;
+ 
++    if (!current) return;
+     if (current->uid == uid) {
+ 	if (dumped) putchar('\n');
+ 	dump_tree(current,0,1,1,1,uid,0);
+@@ -563,10 +564,21 @@ int main(int argc,char **argv)
+     read_proc();
+     for (current = find_proc(highlight); current; current = current->parent)
+ 	current->highlight = 1;
+-    if (!pw)
+-	dump_tree(find_proc(pid),0,1,1,1,0,0);
++    if (!pw) {
++	PROC *root = find_proc(pid);
++	if (root) {
++	    dump_tree(root,0,1,1,1,0,0);
++	}
++	else {
++	    PROC *walk;
++	    for (walk = list; walk; walk = walk->next)
++		if (!walk->parent) dump_tree(walk,0,1,1,1,0,0);
++	}
++    }
+     else {
+-	dump_by_user(find_proc(1),pw->pw_uid);
++	PROC *walk;
++	for (walk = list; walk; walk = walk->next)
++		if (!walk->parent) dump_by_user(walk,pw->pw_uid);
+ 	if (!dumped) {
+ 	    fprintf(stderr,"No processes found.\n");
+ 	    return 1;
