@@ -30,6 +30,7 @@ postdrop:x:161:
 utempter:x:162:
 chkpwd:x:163:
 klogd:x:180:
+syslogd:x:181:
 postfix:x:182:
 postman:x:183:
 popa3d:x:184:

@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.29 2001/07/27 23:48:06 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.30 2001/10/08 06:16:16 solar Exp $
 
 Summary: Initial set of configuration files
 Name: owl-etc
-Version: 0.15
+Version: 0.16
 Release: 1owl
 Copyright: public domain
 Group: System Environment/Base
@@ -65,6 +65,9 @@ rm -rf $RPM_BUILD_ROOT
 %ghost /var/log/lastlog
 
 %changelog
+* Mon Oct 08 2001 Solar Designer <solar@owl.openwall.com>
+- syslogd user/group.
+
 * Sat Jul 28 2001 Solar Designer <solar@owl.openwall.com>
 - Corrected the use of *'s and x's in the default passwd.
 
