@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.22 2004/01/25 20:33:09 solar Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.23 2004/01/25 20:33:43 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -14,7 +14,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.8.3
-Release: owl0.1
+Release: owl1
 Epoch: 1
 License: GPL
 Group: Development/Languages
@@ -202,7 +202,7 @@ find $RPM_BUILD_ROOT%_libdir/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
-* Sun Jan 25 2004 Solar Designer <solar@owl.openwall.com> 5.8.3-owl0.1
+* Sun Jan 25 2004 Solar Designer <solar@owl.openwall.com> 5.8.3-owl1
 - Additional temporary file handling fixes.
 - Made building/packaging of suidperl optional and officially unsupported.
 
