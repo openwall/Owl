@@ -1,48 +1,44 @@
-# $Id: Owl/packages/libtool/libtool.spec,v 1.4 2002/02/05 19:50:16 mci Exp $
+# $Id: Owl/packages/libtool/libtool.spec,v 1.5 2002/02/06 15:01:50 solar Exp $
 
-Summary: The GNU libtool, which simplifies the use of shared libraries.
+Summary: The GNU Libtool, which simplifies the use of shared libraries.
 Name: libtool
 Version: 1.3.5
 Release: owl9
 License: GPL
 Group: Development/Tools
 Source: ftp://ftp.gnu.org/gnu/libtool/libtool-%{version}.tar.gz
-Patch1: libtool-1.2f-rh-cache.diff
-Patch2: libtool-1.3.5-rh-mktemp.diff
-Patch3: libtool-1.3.5-rh-nonneg.diff
+Patch0: libtool-1.2f-rh-cache.diff
+Patch1: libtool-1.3.5-rh-mktemp.diff
+Patch2: libtool-1.3.5-rh-nonneg.diff
 PreReq: /sbin/install-info, autoconf, automake, m4, perl
-Prefix: %{_prefix}
 Requires: libtool-libs = %{version}-%{release}, mktemp
-Buildroot: /override/%{name}-%{version}
+Prefix: %{_prefix}
+BuildRoot: /override/%{name}-%{version}
 
 %description
-The libtool package contains the GNU libtool, a set of shell scripts
-which automatically configure UNIX and UNIX-like architectures to
-generically build shared libraries.  libtool provides a consistent,
-portable interface which simplifies the process of using shared
-libraries.
+The libtool package contains the GNU Libtool, a set of shell scripts
+that allow package developers to provide generic shared library support.
 
 %package libs
-Summary: Runtime libraries for GNU libtool.
+Summary: Runtime libraries for GNU Libtool.
 Group: System Environment/Libraries
 
 %description libs
-The libtool-libs package contains the runtime libraries from GNU
-libtool.  GNU libtool uses these libraries to provide portible dynamic
-loading of shared libraries.
+The libtool-libs package contains the runtime libraries from GNU Libtool.
+GNU Libtool uses these libraries to provide portable dynamic loading of
+shared libraries.
 
 %prep
 %setup -q
+%patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 
 %build
-# define libtoolize to true, in case configure calls it
-%define __libtoolize /bin/true
+%define __libtoolize echo --
 %configure
 
-make -k -C doc
+make -C doc
 make
 
 %install
@@ -51,7 +47,7 @@ mkdir -p ${RPM_BUILD_ROOT}%{_prefix}
 
 %makeinstall
 
-cp install-sh missing mkinstalldirs demo
+cp install-sh missing mkinstalldirs demo/
 
 chmod -R u=rwX,go=rX demo
 
