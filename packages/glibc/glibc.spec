@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.66 2004/12/09 00:32:43 galaxy Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.67 2004/12/25 20:33:16 galaxy Exp $
 
 %define BUILD_PROFILE 0
 
@@ -6,7 +6,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.3.2
 %define crypt_bf_version 0.4.6
-Release: owl2
+Release: owl3
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%version.tar.bz2
@@ -96,6 +96,7 @@ Group: System Environment/Libraries
 Provides: libdb.so.2
 Provides: libdb.so.2(GLIBC_2.0)
 Provides: libdb.so.3
+Provides: libdb.so.3(GLIBC_2.0)
 Provides: libdb.so.3(GLIBC_2.1)
 
 %description compat-fake
@@ -336,6 +337,9 @@ fi
 %files compat-fake
 
 %changelog
+* Wed Dec 08 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl3
+- Fixed compat-fake's provides to deal with Owl 1.1 release upgrades
+
 * Wed Dec 08 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl2
 - Fixed <sys/quota.h> types (we were using types from linux/types.h instead
 of sys/types). Thanks goes to Sergio <sergio@openwall.com>.
