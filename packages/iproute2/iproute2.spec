@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iproute2/iproute2.spec,v 1.13 2003/11/21 22:48:07 mci Exp $
+# $Id: Owl/packages/iproute2/iproute2.spec,v 1.14 2003/11/21 23:19:31 mci Exp $
 
 %define ver 2.4.7
 %define snapshot ss020116
@@ -83,7 +83,7 @@ gzip -9nf iproute2-ps/*.ps
 %changelog
 * Sat Nov 22 2003 Michail Litvak <mci@owl.openwall.com> 2.4.7.ss020116-owl1
 - reduce -owl-socketbits.diff to include only sockaddr_storage
-difinition.
+definition.
 - Added patch from Herbert Xu to prevent a local denial of service attack
 via sending unicast netlink messages to any process on the system.
 
