@@ -1,0 +1,24 @@
+.\" $Id: Owl/packages/rpm/rpminit.1,v 1.1 2002/12/17 16:09:04 solar Exp $
+.TH RPMINIT 1 "17 December 2002" "Openwall Project"
+.SH NAME
+rpminit \- create private RPM package build directories
+.SH SYNOPSIS
+.B rpminit
+.SH DESCRIPTION
+.B rpminit
+is a script that will setup a set of private directories for building
+RPM packages as the current user.  The directories are created under
+.I ~/.rpm.d/
+and their use configured by the script via
+.IR ~/.rpmmacros .
+.SH FILES
+.I ~/.rpm.d/
+.br
+.I ~/.rpmmacros
+.SH HISTORY
+.B rpminit
+first appeared in Openwall GNU/*/Linux.
+.SH AUTHORS
+Solar Designer <solar@owl.openwall.com>
+.SH SEE ALSO
+.BR rpm (8)

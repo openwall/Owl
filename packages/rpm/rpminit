@@ -1,0 +1,43 @@
+#!/bin/sh
+# $Id: Owl/packages/rpm/rpminit,v 1.1 2002/12/17 16:09:04 solar Exp $
+
+RPMMACROS=~/.rpmmacros
+RPMDIR=~/.rpm.d
+
+if [ -e $RPMMACROS ]; then
+	echo "$RPMMACROS exists, please remove it first."
+	exit
+fi
+
+mkdir -p $RPMDIR/{BUILD,SOURCES,SPECS,SRPMS}
+
+mkdir -p $RPMDIR/RPMS/noarch
+case "`uname -m`" in
+*86)
+	mkdir -p $RPMDIR/RPMS/{i386,i486,i586,i686,athlon}
+	;;
+sparc*)
+	mkdir -p $RPMDIR/RPMS/{sparc,sparcv9}
+	;;
+alpha)
+	mkdir -p $RPMDIR/RPMS/alpha
+	;;
+*)
+	echo "Unknown architecture, not all directories made."
+	;;
+esac
+
+mkdir -p $RPMDIR/{tmp,buildroots}
+
+echo "Created a directory structure:"
+ls $RPMDIR/ $RPMDIR/RPMS/
+echo
+
+{
+	echo "%_topdir $RPMDIR"
+	echo "%_tmppath $RPMDIR/tmp"
+	echo "%buildroot $RPMDIR/buildroots/%name-%version"
+} > $RPMMACROS
+
+echo "Wrote ${RPMMACROS}:"
+cat $RPMMACROS

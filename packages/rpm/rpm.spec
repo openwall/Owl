@@ -1,12 +1,14 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.23 2002/03/03 23:02:09 solar Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.24 2002/12/17 16:09:04 solar Exp $
 
 Summary: The Red Hat package management system.
 Name: rpm
 Version: 3.0.6
-Release: owl2
+Release: owl3
 License: GPL
 Group: System Environment/Base
-Source: ftp://ftp.rpm.org/pub/rpm/dist/rpm-3.0.x/rpm-%{version}.tar.gz
+Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-3.0.x/rpm-%{version}.tar.gz
+Source1: rpminit
+Source2: rpminit.1
 Patch0: rpm-3.0.6-owl-topdir.diff
 Patch1: rpm-3.0.5-owl-bash2.diff
 Patch2: rpm-3.0.5-owl-vendor.diff
@@ -14,6 +16,7 @@ Patch3: rpm-3.0.5-owl-closeall.diff
 Patch4: rpm-3.0.5-owl-includes.diff
 Patch5: rpm-3.0.5-owl-gendiff.diff
 Patch6: rpm-3.0.6-owl-buildhost.diff
+Patch7: rpm-3.0.6-owl-rpmrc.diff
 PreReq: /sbin/ldconfig
 PreReq: gawk, fileutils, textutils, sh-utils, mktemp
 Requires: popt, bzip2 >= 0.9.0c-2
@@ -82,6 +85,7 @@ EOF
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %define _noVersionedDependencies 1
 
@@ -114,6 +118,9 @@ rm -rf $RPM_BUILD_ROOT
 make DESTDIR="$RPM_BUILD_ROOT" install
 mkdir -p $RPM_BUILD_ROOT/etc/rpm
 
+install -m 755 $RPM_SOURCE_DIR/rpminit $RPM_BUILD_ROOT%{__prefix}/bin/
+install -m 644 $RPM_SOURCE_DIR/rpminit.1 $RPM_BUILD_ROOT%{_mandir}/man1/
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -135,6 +142,7 @@ fi
 /bin/rpm
 %dir /etc/rpm
 %{__prefix}/bin/rpm2cpio
+%{__prefix}/bin/rpminit
 %{__prefix}/bin/gendiff
 %{__prefix}/lib/librpm.so.*
 %{__prefix}/lib/librpmbuild.so.*
@@ -224,6 +232,12 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Tue Dec 17 2002 Solar Designer <solar@owl.openwall.com>
+- Added rpminit, a script to create private RPM package build directories,
+and its man page.
+- Changed the default rpmrc to use more optimal optflags for our gcc (note
+that builds of Owl itself use a different set of optflags anyway).
+
 * Sun Mar 03 2002 Solar Designer <solar@owl.openwall.com>
 - Support setting the BuildHost tag explicitly rather than only from what
 the kernel thinks the system's hostname is.
