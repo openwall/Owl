@@ -1,6 +1,7 @@
-# $Id: Owl/packages/vim/vim.spec,v 1.6 2001/02/19 08:54:03 solar Exp $
+# $Id: Owl/packages/vim/vim.spec,v 1.7 2001/04/03 07:56:28 kad Exp $
 
-%define vimversion vim60p
+%define alpha z
+%define vimversion vim60%{alpha}
 
 %define NEED_PYTHON 	'no'
 %define NEED_GPM 	'no'
@@ -22,18 +23,22 @@
 Summary: 	The VIM editor.
 Name: 		vim
 Version: 	6.0
-Release: 	0.19owl
+Release: 	0.26owl
 Copyright: 	freeware
 Group: 		Applications/Editors
-Source0: 	ftp://ftp.vim.org/pub/vim/unreleased/unix/vim-%{version}p-src.tar.gz
-Source1: 	ftp://ftp.vim.org/pub/vim/unreleased/unix/vim-%{version}p-rt.tar.gz
-Source2: 	gvim.desktop
-Source3: 	vimrc
+Source0: 	ftp://ftp.vim.org/pub/vim/unreleased/unix/vim-%{version}%{alpha}-src.tar.bz2
+Source1: 	ftp://ftp.vim.org/pub/vim/unreleased/unix/vim-%{version}%{alpha}-rt.tar.bz2
+#Source2: ftp://ftp.vim.org/pub/vim/unreleased/extra/vim-%{version}%{alpha}-lang.tar.bz2
+Source3: 	gvim.desktop
+Source4: 	vimrc
 Patch0: 	vim-4.2-rh-speed_t.diff
 Patch1: 	vim-5.1-rh-vimnotvi.diff
 Patch2: 	vim-5.6a-rh-perl-paths.diff
 Patch3: 	vim-6.0-rh-fixkeys.diff
 Patch4: 	vim-6.0-rh-specsyntax.diff
+Patch5:		vim-6.0r-rh-nocrv.diff
+Patch6:		vim-6.0t-rh-phphighlight.diff
+Patch7:		vim-6.0v-rh-lilo.diff
 Buildroot: 	/var/rpm-buildroot/%{name}-root
 Buildrequires: 	perl
 %if "%{NEED_GPM}"=="'yes'"
@@ -125,6 +130,9 @@ chmod -x runtime/tools/mve.awk
 find . -name \*.paths | xargs rm -f
 %patch3 -p1 -b .fixkeys
 %patch4 -p1 -b .highlite
+%patch5 -p1 -b .nocrv
+%patch6 -p1 -b .phphighlite
+%patch7 -p1 -b .lilo
 perl -pi -e "s,bin/nawk,bin/awk,g" runtime/tools/mve.awk
 
 %build
@@ -139,7 +147,8 @@ export ac_cv_func_mkstemp=yes \
 	--enable-perlinterp --disable-tclinterp \
 	--with-x=yes --enable-gui=gnome \
 	--exec-prefix=/usr/X11R6 \
-	--enable-xim --enable-multibyte %{pythonflag} %{gpmflag}
+	--enable-xim --enable-multibyte \
+	--enable-fontset %{pythonflag} %{gpmflag}
 make
 cp vim gvim
 make clean
@@ -151,7 +160,8 @@ export ac_cv_func_mkstemp=yes \
 	--with-features=huge \
 	--enable-perlinterp --disable-tclinterp \
 	--with-x=no --enable-gui=no \
-	--exec-prefix=/usr --enable-multibyte  %{pythonflag} %{gpmflag}
+	--exec-prefix=/usr --enable-multibyte \
+	--enable-fontset %{pythonflag} %{gpmflag}
 make
 cp vim enhanced-vim
 make clean
@@ -171,7 +181,7 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/bin
 mkdir -p $RPM_BUILD_ROOT/usr/{bin,share/vim}
 %if "%{NEED_X11}"=="'yes'"
-mkdir -p $RPM_BUILD_ROOT/usr/
+mkdir -p $RPM_BUILD_ROOT/usr/X11R6/bin
 %endif
 
 cd src
@@ -200,14 +210,22 @@ ln -sf vim.1.gz .%{_mandir}/man1/rvi.1.gz
 ln -sf vim.1.gz .%{_mandir}/man1/gvim.1.gz
 ln -sf gvim ./usr/X11R6/bin/vimx
 mkdir -p ./etc/X11/applnk/Utilities
-cp %{SOURCE2} ./etc/X11/applnk/Utilities/gvim.desktop
+cp %{SOURCE3} ./etc/X11/applnk/Utilities/gvim.desktop
 %endif
-install -s -m 644 %{SOURCE3} ./usr/share/vim/%{vimversion}/macros/
+install -s -m 644 %{SOURCE4} ./usr/share/vim/%{vimversion}/macros/
 ln -s vimrc ./usr/share/vim/%{vimversion}/macros/gvimrc
+## Extract trick to translated menus
+#tar xjvf %{SOURCE2} '*/runtime/lang/*' -C ./
+#( cd %{vimversion}/runtime; tar cf - lang/* ) | \
+#( cd ./usr/share/vim/%{vimversion}/ ; tar xvf - )
+## ja_JP.ujis is obsolete, ja_JP.eucJP is recommended.
+#( cd ./usr/share/vim/%{vimversion}/lang; \
+#ln -sf menu_ja_jp.ujis.vim menu_ja_jp.eucjp.vim )
+
 # Dependency cleanups
-chmod 644 ./usr/share/vim/%{vimversion}/doc/vim2html.pl \
-	./usr/share/vim/%{vimversion}/tools/*.pl \
-	./usr/share/vim/%{vimversion}/tools/vim132
+chmod 644 $RPM_BUILD_ROOT/usr/share/vim/%{vimversion}/doc/vim2html.pl \
+	$RPM_BUILD_ROOT/usr/share/vim/%{vimversion}/tools/*.pl \
+	$RPM_BUILD_ROOT/usr/share/vim/%{vimversion}/tools/vim132
 popd
 chmod 644 ../runtime/doc/vim2html.pl
 
@@ -255,6 +273,12 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Sun Apr  1 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- import php,lilo,nocrv patches from RH
+- upgrade to 6.0z
+- disable modeline's 
+- alternative languages disabled
+
 * Mon Feb 19 2001 Solar Designer <solar@owl.openwall.com>
 - "small" feature set for /bin/vi (+visual).
 - Renamed vim-minimal package to vim-small, corrected package descriptions.

@@ -1,0 +1,11 @@
+--- vim60v/runtime/syntax/lilo.vim.lilo	Mon Feb 12 11:18:11 2001
++++ vim60v/runtime/syntax/lilo.vim	Mon Feb 12 11:22:29 2001
+@@ -56,7 +56,7 @@
+ syn keyword	liloDiskOpt	bios normal hidden nextgroup=liloEqHexNumber,liloEqHexNumberComment,liloError skipwhite skipempty
+ 
+ " flag
+-syn keyword	liloOption	compact fix-table ignore-table linear nowarn prompt
++syn keyword	liloOption	compact fix-table ignore-table linear nowarn prompt lba32
+ syn keyword	liloKernelOpt	read-only read-write
+ syn keyword	liloImageOpt	lock optional restricted single-key unsafe
+ syn keyword	liloDiskOpt	change activate deactivate inaccessible reset

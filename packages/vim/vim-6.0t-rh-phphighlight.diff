@@ -1,0 +1,11 @@
+--- vim60t/runtime/syntax/php.vim.php	Mon Jan 22 12:22:07 2001
++++ vim60t/runtime/syntax/php.vim	Mon Jan 22 12:22:21 2001
+@@ -220,7 +220,7 @@
+ if exists("php_minlines")
+   exec "syn sync minlines=" . php_minlines
+ else
+-  syn sync minlines=100
++  syn sync minlines=500
+ endif
+ 
+ " The default highlighting.

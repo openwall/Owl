@@ -89,3 +89,6 @@ nmap ,hx wbF<df>f<df>
 set langmap=ÊÃÕËÅÎÇÛÝÚÈ‗ÆÙ×ÁÐÒÏÌÄÖÜÑÞÓÍÉÔØÂÀךדץכוHחû‎תטÿזשקבנעןלהצüס‏ףםיפרגא;qwertyuiop[]asdfghjkl;'zxcvbnm,.QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>
 
 set errorformat=%f:%l:%m
+
+" disable for security reasons
+set modelines=0
