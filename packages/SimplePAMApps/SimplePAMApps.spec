@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.12 2000/12/23 08:27:12 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.13 2001/03/19 02:19:24 solar Exp $
 
 Summary: Simple PAM-based Applications
 Name: SimplePAMApps
 Version: 0.60
-Release: 9owl
+Release: 10owl
 Copyright: BSD or GNU GPL
 Group: Utilities/System
 Source0: SimplePAMApps-0.60.tar.gz
@@ -16,6 +16,7 @@ Patch0: SimplePAMApps-0.60-owl-passwd-strerror.diff
 Patch1: SimplePAMApps-0.60-owl-login.diff
 Patch2: SimplePAMApps-0.60-owl-su-no-tty.diff
 Patch3: SimplePAMApps-0.60-owl-stdarg.diff
+Patch4: SimplePAMApps-0.60-owl-passwd-no-tty.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: pam >= 0.58, pam_passwdqc >= 0.2, pam_mktemp, owl-control < 2.0
 Obsoletes: passwd
@@ -31,6 +32,7 @@ includes "login", "su", and "passwd".
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 echo Checking distribution
 make check
@@ -85,6 +87,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc README CHANGELOG* NOTES.su Discussions
 
 %changelog
+* Mon Mar 19 2001 Solar Designer <solar@owl.openwall.com>
+- passwd: don't require a tty.
+- passwd.pam and su.pam: "nodelay" for pam_pwdb.
+
 * Wed Dec 20 2000 Solar Designer <solar@owl.openwall.com>
 - Use pam_mktemp.
 
