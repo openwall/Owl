@@ -1,22 +1,22 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.7 2001/05/29 21:42:01 solar Exp $
+# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.8 2002/02/05 16:12:35 solar Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
 Version: 2.78
-Release: 10owl
-Copyright: GPL
+Release: owl10
+License: GPL
 Group: System Environment/Base
 Source: ftp://ftp.cistron.nl/pub/people/miquels/sysvinit/sysvinit-%{version}.tar.gz
 Patch0: sysvinit-2.78-owl-bound-format.diff
 Patch1: sysvinit-2.78-owl-sulogin.diff
 Patch2: sysvinit-2.78-owl-umask.diff
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The SysVinit package contains a group of processes that control 
 the very basic functions of your system.  SysVinit includes the init 
 program, the first program started by the Linux kernel when the 
-system boots.  Init then controls the startup, running and shutdown
+system boots.  init then controls the startup, running and shutdown
 of all other programs.
 
 %prep
@@ -41,9 +41,8 @@ make -C src ROOT=$RPM_BUILD_ROOT BIN_OWNER=`id -nu` BIN_GROUP=`id -ng` install
 install -m 700 src/bootlogd $RPM_BUILD_ROOT/sbin
 install -m 700 contrib/start-stop-daemon $RPM_BUILD_ROOT/sbin
 
-# If this already exists, just do nothing (the ||: part)
-mknod --mode=0600 $RPM_BUILD_ROOT/dev/initctl p ||:
-ln -snf killall5 $RPM_BUILD_ROOT/sbin/pidof
+mkfifo -m 600 $RPM_BUILD_ROOT/dev/initctl
+ln -sf killall5 $RPM_BUILD_ROOT/sbin/pidof
 
 chmod 755 $RPM_BUILD_ROOT/usr/bin/utmpdump
 
@@ -79,6 +78,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0600,root,root) /dev/initctl
 
 %changelog
+* Tue Feb 05 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Wed May 30 2001 Solar Designer <solar@owl.openwall.com>
 - Ensure the umask is no less restrictive than 022 when starting programs
 from init and start-stop-daemon.

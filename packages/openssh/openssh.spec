@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.30 2001/12/12 18:31:54 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.31 2002/02/05 16:05:32 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.0.2p1
-Release: 1owl
+Release: owl1
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -19,12 +19,12 @@ Patch2: openssh-3.0.2p1-owl-pam_userpass.diff
 Patch3: openssh-3.0.2p1-owl-scp-stalltime.diff
 Patch4: openssh-3.0.2p1-owl-drop-groups.diff
 Patch5: openssh-3.0.2p1-owl-openssl-version-check.diff
-Requires: tcb, pam_mktemp
 PreReq: openssl >= 0.9.6b-1owl
 PreReq: openssl < 0.9.7
+Requires: tcb, pam_mktemp
 Obsoletes: ssh
 BuildRequires: openssl-devel >= 0.9.6b-1owl
-BuildRequires: pam-devel >= 0.75-11owl
+BuildRequires: pam-devel
 BuildRequires: perl
 BuildRequires: zlib-devel
 BuildRequires: tcp_wrappers
@@ -115,12 +115,13 @@ make install DESTDIR=$RPM_BUILD_ROOT
 
 install -d $RPM_BUILD_ROOT/etc/pam.d
 install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
-install -m 600 %{SOURCE1} $RPM_BUILD_ROOT/etc/pam.d/sshd
-install -m 700 %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
-install -m 644 %{SOURCE3} $RPM_BUILD_ROOT/etc/ssh/ssh_config
-install -m 600 %{SOURCE4} $RPM_BUILD_ROOT/etc/ssh/sshd_config
+install -m 600 $RPM_SOURCE_DIR/sshd.pam $RPM_BUILD_ROOT/etc/pam.d/sshd
+install -m 700 $RPM_SOURCE_DIR/sshd.init $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
+install -m 644 $RPM_SOURCE_DIR/ssh_config $RPM_BUILD_ROOT/etc/ssh/
+install -m 600 $RPM_SOURCE_DIR/sshd_config $RPM_BUILD_ROOT/etc/ssh/
 mkdir -p $RPM_BUILD_ROOT/etc/control.d/facilities
-install -m 700 %{SOURCE5} $RPM_BUILD_ROOT/etc/control.d/facilities/sftp
+install -m 700 $RPM_SOURCE_DIR/sftp.control \
+	$RPM_BUILD_ROOT/etc/control.d/facilities/sftp
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -192,6 +193,9 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Tue Feb 05 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Wed Dec 12 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 3.0.2p1.
 
@@ -310,30 +314,3 @@ internal functions and use weak aliases when exporting things.
 that modules can only ask for a password.
 - Changed default ssh*_config.
 - non-SUID installation by default.
-
-* Mon Jun 12 2000 Damien Miller <djm@mindrot.org>
-- Glob manpages to catch compressed files
-* Wed Mar 15 2000 Damien Miller <djm@ibs.com.au>
-- Updated for new location
-- Updated for new gnome-ssh-askpass build
-* Sun Dec 26 1999 Damien Miller <djm@mindrot.org>
-- Added Jim Knoble's <jmknoble@pobox.com> askpass
-* Mon Nov 15 1999 Damien Miller <djm@mindrot.org>
-- Split subpackages further based on patch from jim knoble <jmknoble@pobox.com>
-* Sat Nov 13 1999 Damien Miller <djm@mindrot.org>
-- Added 'Obsoletes' directives
-* Tue Nov 09 1999 Damien Miller <djm@ibs.com.au>
-- Use make install
-- Subpackages
-* Mon Nov 08 1999 Damien Miller <djm@ibs.com.au>
-- Added links for slogin
-- Fixed perms on manpages
-* Sat Oct 30 1999 Damien Miller <djm@ibs.com.au>
-- Renamed init script
-* Fri Oct 29 1999 Damien Miller <djm@ibs.com.au>
-- Back to old binary names
-* Thu Oct 28 1999 Damien Miller <djm@ibs.com.au>
-- Use autoconf
-- New binary names
-* Wed Oct 27 1999 Damien Miller <djm@ibs.com.au>
-- Initial RPMification, based on Jan "Yenya" Kasprzak's <kas@fi.muni.cz> spec.

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.6 2001/11/05 09:39:18 solar Exp $
+# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.7 2002/02/05 16:15:47 solar Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
 Version: 1.4.1
-Release: 2owl
+Release: owl2
 License: BSD for syslogd and GPL for klogd
 Group: System Environment/Daemons
 Source0: http://www.infodrom.ffis.de/projects/sysklogd/download/sysklogd-%{version}.tar.gz
@@ -20,8 +20,8 @@ Patch6: sysklogd-1.4.1-alt-owl-syslogd-killing.diff
 Patch7: sysklogd-1.4.1-caen-owl-klogd-drop-root.diff
 Patch8: sysklogd-1.4.1-caen-owl-syslogd-bind.diff
 Patch9: sysklogd-1.4.1-caen-owl-syslogd-drop-root.diff
-Requires: logrotate, /var/empty
 PreReq: shadow-utils, grep, fileutils, /sbin/chkconfig
+Requires: logrotate, /var/empty
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -54,7 +54,6 @@ mkdir -p $RPM_BUILD_ROOT{%_mandir/man{5,8},/sbin}
 
 cd $RPM_BUILD_ROOT
 
-strip sbin/*
 chmod 700 sbin/*logd
 
 mkdir -p etc/{rc.d/init.d,logrotate.d}
@@ -106,6 +105,9 @@ fi
 %_mandir/*/*
 
 %changelog
+* Tue Feb 05 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Mon Nov 05 2001 Solar Designer <solar@owl.openwall.com>
 - Use a trigger to re-create the rc*.d symlinks when upgrading from
 old versions of the package.

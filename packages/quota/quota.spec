@@ -1,24 +1,21 @@
-# $Id: Owl/packages/quota/quota.spec,v 1.12 2001/07/12 04:30:45 solar Exp $
+# $Id: Owl/packages/quota/quota.spec,v 1.13 2002/02/05 15:33:42 solar Exp $
 
-Name: quota
 Summary: System administration tools for monitoring users' disk usage.
+Name: quota
 Version: 2.00
-Release: 6owl
-Copyright: BSD
-Source0: ftp://ftp.cistron.nl/pub/people/mvw/quota/%{name}-2.00.tar.gz
+Release: owl6
+License: BSD
 Group: System Environment/Base
+Source: ftp://ftp.cistron.nl/pub/people/mvw/quota/%{name}-%{version}.tar.gz
 Patch0: quota-2.00-pld-owl-man.diff
 Patch1: quota-2.00-owl-install-no-root.diff
 Patch2: quota-2.00-owl-tmp.diff
-BuildRoot: /var/rpm-buildroot/%{name}-root
-BuildRequires: e2fsprogs-devel, glibc-devel >= 2.1.3-17owl
+BuildRequires: e2fsprogs-devel
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The quota package contains system administration tools for monitoring
 and limiting users' and or groups' disk usage, per filesystem.
-
-Install quota if you want to monitor and/or limit user/group disk
-usage.
 
 %prep
 %setup -q
@@ -31,23 +28,22 @@ usage.
 make CC=gcc
 
 %install
-rm -rf ${RPM_BUILD_ROOT}
+rm -rf $RPM_BUILD_ROOT
 
-mkdir -p ${RPM_BUILD_ROOT}/sbin
+mkdir -p $RPM_BUILD_ROOT/sbin
 mkdir -p ${RPM_BUILD_ROOT}%{_bindir}
 mkdir -p ${RPM_BUILD_ROOT}%{_sbindir}
 mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man{1,2,3,8}
 
-%makeinstall root_sbindir=${RPM_BUILD_ROOT}/sbin DEF_BIN_MODE=0555 
+%makeinstall root_sbindir=$RPM_BUILD_ROOT/sbin DEF_BIN_MODE=755
 
 %clean
-rm -rf ${RPM_BUILD_ROOT}
+rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
 %doc doc/*.html
 %doc warnquota.conf
-
 /sbin/*
 %{_bindir}/*
 %{_sbindir}/edquota
@@ -55,7 +51,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_sbindir}/repquota
 %{_sbindir}/setquota
 %{_sbindir}/warnquota
-
 %{_mandir}/man1/quota.1*
 %{_mandir}/man2/quotactl.2*
 %{_mandir}/man8/edquota.8*
@@ -65,6 +60,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man8/setquota.8*
 
 %changelog
+* Tue Feb 05 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Fri Jul 06 2001 Solar Designer <solar@owl.openwall.com>
 - New release number for upgrades after building against glibc >= 2.1.3-17owl
 which includes corrected declaration of struct dqstats in <sys/quota.h>.
@@ -86,4 +84,4 @@ which includes corrected declaration of struct dqstats in <sys/quota.h>.
 
 * Sun Jun 24 2001 Michail Litvak <mci@owl.openwall.com>
 - Imported from RH
-- man patch from PLD 
+- man patch from PLD
