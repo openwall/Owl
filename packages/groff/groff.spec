@@ -1,4 +1,4 @@
-# $Id: Owl/packages/groff/groff.spec,v 1.4 2000/11/21 11:59:40 solar Exp $
+# $Id: Owl/packages/groff/groff.spec,v 1.5 2000/11/21 13:04:52 solar Exp $
 
 %define BUILD_USE_X	'no'
 %define BUILD_CURRENT	'yes'
@@ -17,6 +17,7 @@ Source2: 	troff-to-ps.fpi
 Source3: 	README.A4
 Patch0:		groff-1.16.1-owl-man.diff
 Patch1:		groff-1.16.1-current-owl-mso-hpf.diff
+Patch2:		groff-1.16.1-current-owl-eqnrc.diff
 Requires: 	mktemp
 Buildroot:      /var/rpm-buildroot/%{name}-root
 Obsoletes: 	groff-tools
@@ -67,6 +68,7 @@ zcat %{SOURCE1} | patch -p1 -l
 %patch0 -p0
 %if "%{BUILD_CURRENT}"=="'yes'"
 %patch1 -p1
+%patch2 -p1
 %endif
 cp %{SOURCE3} .
 
@@ -168,6 +170,7 @@ rm -rf ${RPM_BUILD_ROOT}
 - Update to -current which now includes fixes for the current directory
 problem described in the ISS X-Force advisory.
 - Restrict .mso and hpf in a similar way (patch for -current).
+- Use safer_macro_path for .eqnrc (patch for -current).
 - Dropped the RH safer patch for .so (source) as it is non-obvious whether
 this needed fixing, and the patch wasn't a complete fix anyway (it trusted
 files under the cwd and had races).
