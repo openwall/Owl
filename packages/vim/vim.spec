@@ -1,9 +1,23 @@
-# $Id: Owl/packages/vim/vim.spec,v 1.2 2000/12/15 02:22:42 solar Exp $
+# $Id: Owl/packages/vim/vim.spec,v 1.3 2000/12/15 17:37:42 kad Exp $
 
 %define vimversion vim60p
 
 %define NEED_PYTHON 	'no'
+%define NEED_GPM 	'no'
 %define NEED_X11	'no'
+
+
+%if "%{NEED_PYTHON}"=="'yes'"
+%define	pythonflag --enable-pythoninterp
+%else
+%define pythonflag --disable-pythoninterp
+%endif
+%if "%{NEED_GPM}"=="'yes'"
+%define	gpmflag --enable-gpm
+%else
+%define	gpmflag --disable-gpm 
+%endif
+
 
 Summary: 	The VIM editor.
 Name: 		vim
@@ -22,6 +36,9 @@ Patch3: 	vim-6.0-rh-fixkeys.diff
 Patch4: 	vim-6.0-rh-specsyntax.diff
 Buildroot: 	/var/rpm-buildroot/%{name}-root
 Buildrequires: 	perl
+%if "%{NEED_GPM}"=="'yes'"
+Buildrequires: 	gpm-devel
+%endif
 %if "%{NEED_PYTHON}"=="'yes'"
 Buildrequires: 	python-devel 
 %endif
@@ -122,41 +139,23 @@ perl -pi -e "s,\\\$VIMRUNTIME,/usr/share/vim/%{vimversion},g" os_unix.h
 perl -pi -e "s,\\\$VIM,/usr/share/vim/%{vimversion}/macros,g" os_unix.h
 
 %if "%{NEED_X11}"=="'yes'"
-%if "%{NEED_PYTHON}"=="'yes'"
 %configure \
 	--with-features=huge \
-	--enable-pythoninterp --enable-perlinterp --disable-tclinterp \
+	--enable-perlinterp --disable-tclinterp \
 	--with-x=yes --enable-gui=gnome \
 	--exec-prefix=/usr/X11R6 \
-	--enable-xim --enable-multibyte
-%else
-%configure \
-	--with-features=huge \
-	--disable-pythoninterp --enable-perlinterp --disable-tclinterp \
-	--with-x=yes --enable-gui=gnome \
-	--exec-prefix=/usr/X11R6 \
-	--enable-xim --enable-multibyte
-%endif
+	--enable-xim --enable-multibyte %{pythonflag} %{gpmflag}
 make
 cp vim gvim
 make clean
 %endif
 
-%if "%{NEED_PYTHON}"=="'yes'"
 %configure \
 	--prefix=/usr \
 	--with-features=huge \
-	--enable-pythoninterp --enable-perlinterp --disable-tclinterp \
+	--enable-perlinterp --disable-tclinterp \
 	--with-x=no --enable-gui=no \
-	--exec-prefix=/usr --enable-multibyte
-%else
-%configure \
-	--prefix=/usr \
-	--with-features=huge \
-	--disable-pythoninterp --enable-perlinterp --disable-tclinterp \
-	--with-x=no --enable-gui=no \
-	--exec-prefix=/usr --enable-multibyte
-%endif
+	--exec-prefix=/usr --enable-multibyte  %{pythonflag} %{gpmflag}
 make
 cp vim enhanced-vim
 make clean
@@ -259,6 +258,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Fri Dec 15 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- disable gpm
+
 * Fri Dec 15 2000 Solar Designer <solar@owl.openwall.com>
 - More spec file cleanups (no subshell).
 
