@@ -12,6 +12,10 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/11/22	Owl/doc/CONVENTIONS
+New file: explains some of the conventions to follow for those wishing
+to contribute to the project.
+
 2001/11/19	Packages: SimplePAMApps, pam
 Use pam_lastlog with login(1).  Additionally, several bug fixes and
 other changes have been applied to libpam, pam_lastlog, pam_securetty,
@@ -468,4 +472,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.50 2001/11/19 04:44:30 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.51 2001/11/22 17:35:59 solar Exp $
