@@ -1,9 +1,9 @@
-# $Id: Owl/packages/gzip/gzip.spec,v 1.2 2001/06/16 10:46:44 kad Exp $
+# $Id: Owl/packages/gzip/gzip.spec,v 1.3 2001/06/20 08:32:18 kad Exp $
 
 Summary: The GNU data compression program.
 Name: 		gzip
 Version: 	1.3
-Release: 	12owl
+Release: 	12.1owl
 Copyright: 	GPL
 Group: 		Applications/File
 Source: 	ftp://alpha.gnu.org/gnu/gzip/gzip-%{version}.tar.gz
