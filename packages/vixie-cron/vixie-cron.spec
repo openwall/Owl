@@ -1,9 +1,9 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.12 2002/02/03 00:18:04 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.13 2002/04/21 01:34:57 solar Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
 Version: 3.0.2.7
-Release: owl11
+Release: owl12
 License: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%{version}.tar.gz
@@ -12,6 +12,7 @@ Source2: crontab.control
 Patch0: vixie-cron-%{version}-owl-linux.diff
 Patch1: vixie-cron-%{version}-owl-sgid-crontab.diff
 Patch2: vixie-cron-%{version}-owl-crond.diff
+Patch3: vixie-cron-%{version}-owl-vitmp.diff
 PreReq: /sbin/chkconfig, /dev/null, grep, shadow-utils
 Requires: owl-control < 2.0
 BuildRoot: /override/%{name}-%{version}
@@ -26,6 +27,7 @@ modifications by the NetBSD, OpenBSD, Red Hat, and Owl teams.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 make -C usr.sbin/cron CFLAGS="-c -I. -I../../include $RPM_OPT_FLAGS"
@@ -97,6 +99,9 @@ fi
 /etc/control.d/facilities/crontab
 
 %changelog
+* Sun Apr 21 2002 Solar Designer <solar@owl.openwall.com>
+- Use /usr/libexec/vitmp in crontab(1).
+
 * Sat Feb 02 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 - Use the _mandir macro.
