@@ -1,0 +1,13 @@
+diff -ur mingetty-0.9.4.suse/mingetty.c mingetty-0.9.4/mingetty.c
+--- mingetty-0.9.4.suse/mingetty.c	Sun Jul  9 17:51:06 2000
++++ mingetty-0.9.4/mingetty.c	Sun Jul  9 18:13:24 2000
+@@ -515,7 +521,8 @@
+ 
+ 	while ((logname = get_logname ()) == 0);
+ 
+-	execl (_PATH_LOGIN, _PATH_LOGIN, "--", logname, NULL);
++	setenv("LOGNAME", logname, 1);
++	execl (_PATH_LOGIN, _PATH_LOGIN, NULL);
+ 	error ("%s: can't exec " _PATH_LOGIN ": %s", tty, sys_errlist[errno]);
+ 	exit (0);
+ }
