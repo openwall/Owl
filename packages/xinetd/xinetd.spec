@@ -1,9 +1,9 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.20 2002/12/19 19:22:54 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.21 2003/01/18 08:15:04 solar Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
-Version: 2.3.9
-Release: owl3
+Version: 2.3.10
+Release: owl1
 License: BSD with minor restrictions
 Group: System Environment/Daemons
 URL: http://www.xinetd.org
@@ -18,6 +18,7 @@ Source7: xinetd-echo
 Source8: xinetd-uecho
 Source9: xinetd-chargen
 Source10: xinetd-uchargen
+Patch0: xinetd-2.3.10-owl-fixes.diff
 PreReq: /sbin/chkconfig
 Provides: inetd
 Obsoletes: inetd
@@ -40,6 +41,7 @@ limits on the number of servers that can be started, among other things.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %{expand:%%define optflags %optflags -Wall -Wno-unused -Wno-switch}
 
@@ -104,6 +106,9 @@ fi
 %{_mandir}/*/*
 
 %changelog
+* Sat Jan 18 2003 Solar Designer <solar@owl.openwall.com>
+- Updated to 2.3.10, with its meaningless change to Sdone() reverted.
+
 * Thu Dec 19 2002 Solar Designer <solar@owl.openwall.com>
 - New release number for linking against tcp_wrappers with Steve Grubb's
 error handling fix.
