@@ -105,7 +105,7 @@ diff -urN pam-0.72.orig/modules/pam_pwdb/pam_unix_passwd.-c pam-0.72/modules/pam
 +#include <string.h>
 +#include <stdlib.h>
 +#include <unistd.h>
-+#define __USE_OW
++#define _OW_SOURCE
 +#include <crypt.h>
 +
  #include "pam_unix_pwupd.-c"

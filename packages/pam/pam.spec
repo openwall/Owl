@@ -1,9 +1,9 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.11 2001/03/08 16:45:48 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.12 2001/05/04 23:44:04 solar Exp $
 
 Summary: A security tool which provides authentication for applications.
 Name: pam
 Version: 0.72
-Release: 12owl
+Release: 13owl
 Copyright: GPL or BSD
 Group: System Environment/Base
 Source0: pam-redhat-%{version}.tar.gz
@@ -14,6 +14,8 @@ Patch2: pam-0.72-owl-pwdb_chkpwd.diff
 Patch3: pam-0.72-owl-no-cracklib.diff
 Patch4: pam-0.72-owl-install-no-root.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
+BuildRequires: glibc-devel >= 2.1.3-13owl
+Requires: glibc >= 2.1.3-13owl
 Requires: pwdb >= 0.61-1owl
 Obsoletes: pamconfig
 Url: http://www.us.kernel.org/pub/linux/libs/pam/index.html
@@ -98,6 +100,10 @@ grep ^chkpwd: /etc/group &>/dev/null || groupadd -g 163 chkpwd
 /usr/man/man8/*
 
 %changelog
+* Sat May 05 2001 Solar Designer <solar@owl.openwall.com>
+- Minor updates to use crypt_blowfish interfaces in the now officially
+documented ways.
+
 * Thu Mar 08 2001 Solar Designer <solar@owl.openwall.com>
 - Patched some of the pam_pwdb/pwdb_chkpwd interaction problems.
 - Install pwdb_chkpwd SGID shadow, but restricted to group chkpwd.
