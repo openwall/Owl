@@ -409,11 +409,6 @@ version, only one such subtree will be dumped.
 
 	rpm.
 
-[PRIORITY: N/A]
-Reproduce and solve the segfault when installing "fileutils sh-utils
-textutils" with certain --root paths.  We're no longer able to
-reproduce this, although the bug is likely still there.
-
 [PRIORITY: medium]
 Audit and correct rpm's temporary file handling and its support for
 package signature checking.
@@ -524,4 +519,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.51 2005/01/14 22:25:55 solar Exp $
+$Id: Owl/doc/TODO,v 1.52 2005/01/14 23:31:18 solar Exp $
