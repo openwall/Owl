@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.5 2000/09/16 12:53:22 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.6 2000/09/22 03:24:12 solar Exp $
 
 Summary: Simple PAM-based Applications
 Name: SimplePAMApps
 Version: 0.60
-Release: 4owl
+Release: 5owl
 Copyright: BSD or GNU GPL
 Group: Utilities/System
 Source0: SimplePAMApps-0.60.tar.gz
@@ -15,7 +15,7 @@ Source5: passwd.control
 Patch0: SimplePAMApps-0.60-owl-passwd-strerror.diff
 Patch1: SimplePAMApps-0.60-owl-login.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
-Requires: pam >= 0.58, pam_passwdqc, owl-control < 2.0
+Requires: pam >= 0.58, pam_passwdqc >= 0.2, owl-control < 2.0
 URL: http://parc.power.net/morgan/Linux-PAM/index.html
 
 %description
@@ -80,6 +80,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc README CHANGELOG* NOTES.su Discussions
 
 %changelog
+* Fri Sep 22 2000 Solar Designer <solar@owl.openwall.com>
+- Make use of the new pam_passwdqc option: min=99,... -> min=disabled,...
+
 * Sat Sep 16 2000 Solar Designer <solar@owl.openwall.com>
 - Use RPM_OPT_FLAGS correctly.
 
