@@ -1,4 +1,4 @@
-# $Id: Owl/packages/modutils/modutils.spec,v 1.3 2000/10/25 19:32:02 kad Exp $
+# $Id: Owl/packages/modutils/modutils.spec,v 1.4 2000/10/25 19:41:28 kad Exp $
 
 Summary: 	Kernel module utilities.
 Name: 		modutils
@@ -6,7 +6,7 @@ Version: 	2.3.19
 Release: 	1owl
 Copyright: 	GPL
 Group: 		System Environment/Kernel
-Source0: 	ftp://ftp.kernel.org/pub/linux/utils/kernel/modutils/v2.3/modutils-%{version}.tar.bz2
+Source0: 	ftp://ftp.kernel.org/pub/linux/utils/kernel/modutils/v2.3/modutils-%{version}.tar.gz
 Patch1: 	modutils-2.3.17-owl-alias.diff
 Patch2:		modutils-2.3.17-rh-systemmap.diff
 Exclusiveos: 	Linux
