@@ -1,4 +1,4 @@
-# $Id: Owl/packages/john/john.spec,v 1.7 2002/09/05 05:56:35 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.8 2002/09/05 05:59:35 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -77,7 +77,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Thu Sep 05 2002 Solar Designer <solar@owl.openwall.com>
-- Never put dupes in crk_guesses[], that could overflow it and would be
+- Never put dupes in crk_guesses, that could overflow it and would be
 inefficient anyway.
 
 * Fri Apr 26 2002 Solar Designer <solar@owl.openwall.com>
