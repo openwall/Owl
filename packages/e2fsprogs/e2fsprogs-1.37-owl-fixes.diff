@@ -1,18 +1,18 @@
-diff -puNr e2fsprogs-1.36.orig/debugfs/set_fields.c e2fsprogs-1.36/debugfs/set_fields.c
---- e2fsprogs-1.36.orig/debugfs/set_fields.c	Fri Feb  4 01:38:52 2005
-+++ e2fsprogs-1.36/debugfs/set_fields.c	Sun Mar 20 02:03:38 2005
+diff -urp e2fsprogs-1.37.orig/debugfs/set_fields.c e2fsprogs-1.37/debugfs/set_fields.c
+--- e2fsprogs-1.37.orig/debugfs/set_fields.c	Fri Feb  4 01:38:52 2005
++++ e2fsprogs-1.37/debugfs/set_fields.c	Fri Mar 25 14:54:45 2005
 @@ -10,6 +10,7 @@
   */
  
  #define _XOPEN_SOURCE 500 /* for inclusion of strptime() */
-+#define _BSD_SOURCE 1 /* for inclusion of strcasecmp() */
++#define _BSD_SOURCE /* for inclusion of strcasecmp() */
  
  #include <stdio.h>
  #include <unistd.h>
-diff -puNr e2fsprogs-1.36.orig/e2fsck/pass1.c e2fsprogs-1.36/e2fsck/pass1.c
---- e2fsprogs-1.36.orig/e2fsck/pass1.c	Fri Dec 24 06:42:22 2004
-+++ e2fsprogs-1.36/e2fsck/pass1.c	Mon Feb 28 20:43:59 2005
-@@ -723,7 +723,6 @@ void e2fsck_pass1(e2fsck_t ctx)
+diff -urp e2fsprogs-1.37.orig/e2fsck/pass1.c e2fsprogs-1.37/e2fsck/pass1.c
+--- e2fsprogs-1.37.orig/e2fsck/pass1.c	Mon Mar 21 22:31:21 2005
++++ e2fsprogs-1.37/e2fsck/pass1.c	Fri Mar 25 14:53:37 2005
+@@ -863,7 +863,6 @@ void e2fsck_pass1(e2fsck_t ctx)
  
  	if (ctx->flags & E2F_FLAG_RESIZE_INODE) {
  		ext2fs_block_bitmap save_bmap;
@@ -20,9 +20,9 @@ diff -puNr e2fsprogs-1.36.orig/e2fsck/pass1.c e2fsprogs-1.36/e2fsck/pass1.c
  
  		save_bmap = fs->block_map;
  		fs->block_map = ctx->block_found_map;
-diff -puNr e2fsprogs-1.36.orig/lib/blkid/probe.c e2fsprogs-1.36/lib/blkid/probe.c
---- e2fsprogs-1.36.orig/lib/blkid/probe.c	Fri Jan 28 00:46:50 2005
-+++ e2fsprogs-1.36/lib/blkid/probe.c	Mon Feb 28 20:43:59 2005
+diff -urp e2fsprogs-1.37.orig/lib/blkid/probe.c e2fsprogs-1.37/lib/blkid/probe.c
+--- e2fsprogs-1.37.orig/lib/blkid/probe.c	Fri Jan 28 00:46:50 2005
++++ e2fsprogs-1.37/lib/blkid/probe.c	Mon Feb 28 20:43:59 2005
 @@ -127,7 +127,6 @@ static int probe_ext2(int fd __BLKID_ATT
  		      struct blkid_magic *id, unsigned char *buf)
  {
@@ -39,9 +39,9 @@ diff -puNr e2fsprogs-1.36.orig/lib/blkid/probe.c e2fsprogs-1.36/lib/blkid/probe.
  
  	probe_swap0(fd, cache, dev, id, buf);
  	/*
-diff -puNr e2fsprogs-1.36.orig/lib/ext2fs/ind_block.c e2fsprogs-1.36/lib/ext2fs/ind_block.c
---- e2fsprogs-1.36.orig/lib/ext2fs/ind_block.c	Thu Jan  6 04:15:49 2005
-+++ e2fsprogs-1.36/lib/ext2fs/ind_block.c	Mon Feb 28 20:43:59 2005
+diff -urp e2fsprogs-1.37.orig/lib/ext2fs/ind_block.c e2fsprogs-1.37/lib/ext2fs/ind_block.c
+--- e2fsprogs-1.37.orig/lib/ext2fs/ind_block.c	Thu Jan  6 04:15:49 2005
++++ e2fsprogs-1.37/lib/ext2fs/ind_block.c	Mon Feb 28 20:43:59 2005
 @@ -32,7 +32,7 @@ errcode_t ext2fs_read_ind_block(ext2_fil
  	else {
  		retval = io_channel_read_blk(fs->io, blk, 1, buf);
@@ -51,9 +51,9 @@ diff -puNr e2fsprogs-1.36.orig/lib/ext2fs/ind_block.c e2fsprogs-1.36/lib/ext2fs/
  	}
  #ifdef EXT2FS_ENABLE_SWAPFS
  	if (fs->flags & (EXT2_FLAG_SWAP_BYTES | EXT2_FLAG_SWAP_BYTES_READ)) {
-diff -puNr e2fsprogs-1.36.orig/misc/e2image.c e2fsprogs-1.36/misc/e2image.c
---- e2fsprogs-1.36.orig/misc/e2image.c	Wed Jan 26 16:37:46 2005
-+++ e2fsprogs-1.36/misc/e2image.c	Mon Feb 28 20:43:59 2005
+diff -urp e2fsprogs-1.37.orig/misc/e2image.c e2fsprogs-1.37/misc/e2image.c
+--- e2fsprogs-1.37.orig/misc/e2image.c	Wed Jan 26 16:37:46 2005
++++ e2fsprogs-1.37/misc/e2image.c	Mon Feb 28 20:43:59 2005
 @@ -357,7 +357,7 @@ static void scramble_dir_block(ext2_fils
  		if (rec_len < 8 || (rec_len % 4) ||
  		    (p+rec_len > end)) {
@@ -72,9 +72,9 @@ diff -puNr e2fsprogs-1.36.orig/misc/e2image.c e2fsprogs-1.36/misc/e2image.c
  			dirent->name_len = rec_len - 8;
  			continue;
  		}
-diff -puNr e2fsprogs-1.36.orig/resize/resize2fs.c e2fsprogs-1.36/resize/resize2fs.c
---- e2fsprogs-1.36.orig/resize/resize2fs.c	Wed Jan 26 15:03:55 2005
-+++ e2fsprogs-1.36/resize/resize2fs.c	Mon Feb 28 20:43:59 2005
+diff -urp e2fsprogs-1.37.orig/resize/resize2fs.c e2fsprogs-1.37/resize/resize2fs.c
+--- e2fsprogs-1.37.orig/resize/resize2fs.c	Wed Jan 26 15:03:55 2005
++++ e2fsprogs-1.37/resize/resize2fs.c	Mon Feb 28 20:43:59 2005
 @@ -480,10 +480,8 @@ static errcode_t mark_table_blocks(ext2_
  	blk_t			block, b;
  	unsigned int		j;

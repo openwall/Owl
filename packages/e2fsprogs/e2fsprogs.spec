@@ -1,4 +1,4 @@
-# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.22 2005/03/22 15:53:57 solar Exp $
+# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.23 2005/03/25 15:12:49 solar Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -12,13 +12,14 @@
 
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
-Version: 1.36
+Version: 1.37
 Release: owl1
 License: GPL
 Group: System Environment/Base
 Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
-Patch0: e2fsprogs-1.36-owl-warnings.diff
-Patch1: e2fsprogs-1.36-owl-tests-fix.diff
+Patch0: e2fsprogs-1.36-owl-fixes.diff
+Patch1: e2fsprogs-1.36-owl-tests.diff
+Patch2: e2fsprogs-1.36-owl-blkid-env.diff
 PreReq: /sbin/ldconfig
 BuildRoot: /override/%name-%version
 
@@ -48,6 +49,7 @@ develop second extended (ext2) filesystem-specific programs.
 chmod -R u+w .
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -218,6 +220,11 @@ fi
 %_mandir/man3/uuid_unparse.3*
 
 %changelog
+* Fri Mar 25 2005 Solar Designer <solar@owl.openwall.com> 1.37-owl1
+- Updated to 1.37 (the previous update to 1.36 was never made public).
+- Patched blkid_get_cache() to use __secure_getenv() instead of an explicit
+UID/EUID check.
+
 * Mon Mar 01 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.36-owl1
 - Updated to 1.36.
 - Reviewed all patches, dropped the ones accepted.

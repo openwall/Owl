@@ -1,0 +1,8 @@
+diff -ur e2fsprogs-1.37.orig/tests/test_script.in e2fsprogs-1.37/tests/test_script.in
+--- e2fsprogs-1.37.orig/tests/test_script.in	Tue Jan 18 00:13:38 2005
++++ e2fsprogs-1.37/tests/test_script.in	Tue Mar  1 14:41:02 2005
+@@ -59,3 +59,4 @@
+ 
+ echo "$num_ok tests succeeded	$num_failed tests failed"
+ 
++test "$num_failed" -eq 0 || exit 1

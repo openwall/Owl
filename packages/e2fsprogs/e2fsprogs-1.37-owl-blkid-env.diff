@@ -1,0 +1,23 @@
+diff -urp e2fsprogs-1.37.orig/lib/blkid/cache.c e2fsprogs-1.37/lib/blkid/cache.c
+--- e2fsprogs-1.37.orig/lib/blkid/cache.c	Tue Mar 22 03:11:36 2005
++++ e2fsprogs-1.37/lib/blkid/cache.c	Fri Mar 25 15:00:58 2005
+@@ -22,7 +22,7 @@ int blkid_get_cache(blkid_cache *ret_cac
+ 
+ #ifdef CONFIG_BLKID_DEBUG
+ 	if (!(blkid_debug_mask & DEBUG_INIT)) {
+-		char *dstr = getenv("BLKID_DEBUG");
++		char *dstr = __secure_getenv("BLKID_DEBUG");
+ 
+ 		if (dstr)
+ 			blkid_debug_mask = strtoul(dstr, 0, 0);
+@@ -41,8 +41,8 @@ int blkid_get_cache(blkid_cache *ret_cac
+ 
+ 	if (filename && !strlen(filename))
+ 		filename = 0;
+-	if (!filename && (getuid() == geteuid()))
+-		filename = getenv("BLKID_FILE");
++	if (!filename)
++		filename = __secure_getenv("BLKID_FILE");
+ 	if (!filename)
+ 		filename = BLKID_CACHE_FILE;
+ 	cache->bic_filename = blkid_strdup(filename);
