@@ -157,6 +157,7 @@ Update to latest release.
 	gcc.
 
 [PRIORITY: medium]
+[ASSIGNED: Galaxy, solar@]
 Update to 3.2.1+ and deal with whatever this will break.
 
 
@@ -614,4 +615,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.6 2002/12/22 19:41:47 solar Exp $
+$Id: Owl/doc/TODO,v 1.7 2002/12/22 20:01:28 solar Exp $
