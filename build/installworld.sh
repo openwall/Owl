@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/installworld.sh,v 1.15 2004/09/30 09:41:10 galaxy Exp $
+# $Id: Owl/build/installworld.sh,v 1.16 2004/11/02 00:36:40 solar Exp $
 
 . installworld.conf
 
@@ -89,48 +89,56 @@ export TMP=$HOME/tmp-work
 setup_rpm
 
 if [ -f $ROOT/var/lib/rpm/packages.rpm -o -f $ROOT/var/lib/rpm/Packages ]; then
-	if [ -f $ROOT/var/lib/rpm/packages.rpm -a -s $ROOT/var/lib/rpm/Packages -a $ROOT/var/lib/rpm/packages.rpm -nt $ROOT/var/lib/rpm/Packages ]; then
-		log "Cannot determine which of RPM database to use in $ROOT/var/lib/rpm"
+	if [ -f $ROOT/var/lib/rpm/packages.rpm -a \
+	    -s $ROOT/var/lib/rpm/Packages -a \
+	    $ROOT/var/lib/rpm/packages.rpm -nt $ROOT/var/lib/rpm/Packages ];
+	then
+		log "Cannot determine which RPM database to use in $ROOT/var/lib/rpm"
 		exit 1
 	fi
-	if [ -f $ROOT/var/lib/rpm/Packages -a ! -s $ROOT/var/lib/rpm/Packages ]; then
+	if [ -f $ROOT/var/lib/rpm/Packages -a \
+	    ! -s $ROOT/var/lib/rpm/Packages ]; then
 		log "Found empty $ROOT/var/lib/rpm/Packages, removed"
 		rm $ROOT/var/lib/rpm/Packages
 	fi
 # First of all, we will do the check that no user packages make use of
-# libdb.so.2 and libdb.so.3 from glibc-2.1.3. For that task we have to
+# libdb.so.2 and libdb.so.3 from glibc 2.1.3. For that task we have to
 # use system RPM and, if we cannot access it - we will fail.
-	if ! type rpm >& /dev/null; then
+	if ! type rpm &> /dev/null; then
 		log "Cannot find system RPM, aborting"
 		exit 1
 	fi
 
-	LIBDB2_DEPS=$(rpm --root $ROOT -q --whatrequires libdb.so.2 2>/dev/null | grep -vE "^no package" | grep -vE "^rpm-")
-	LIBDB3_DEPS=$(rpm --root $ROOT -q --whatrequires libdb.so.3 2>/dev/null | grep -vE "^no package" | grep -vE "^(pam|perl|postfix)-")
+	LIBDB2_DEPS=$(rpm --root $ROOT -q --whatrequires libdb.so.2 2>/dev/null | grep -vE "^(no package|rpm-)")
+	LIBDB3_DEPS=$(rpm --root $ROOT -q --whatrequires libdb.so.3 2>/dev/null | grep -vE "^(no package|pam-|perl-|postfix-)")
 
 	if [ -n "$LIBDB2_DEPS" -o -n "$LIBDB3_DEPS" ]; then
-		echo "
+		cat << EOF
 Warning!
-We found that upgrade procedure will breaks packages listed below, because
-of absence of libdb.so.2 and libdb.so.3 support in supplied glibc:
-" >&2
+We found that upgrade procedure will break packages listed below, because
+of the absence of libdb.so.2 and libdb.so.3 support in our supplied glibc:
+EOF
 		if [ -n "$LIBDB2_DEPS" ]; then
-			echo "libdb.so.2 dependend packages:" >&2
-			for pkg in $LIBDB2_DEPS; do echo "$pkg" >&2 ; done
+			echo -e "\nPackages depending on libdb.so.2:"
+			for pkg in $LIBDB2_DEPS; do echo "$pkg"; done
 		fi
 		if [ -n "$LIBDB3_DEPS" ]; then
-			echo "libdb.so.3 dependend packages:" >&2
-			for pkg in $LIBDB3_DEPS; do echo "$pkg" >&2 ; done
+			echo -e "\nPackages depending on libdb.so.3:"
+			for pkg in $LIBDB3_DEPS; do echo "$pkg"; done
 		fi
-		echo "
+		cat << EOF
+
 Please resolve this issue before running Owl upgrade procedure again.
 
-For quick and dirty solution you can use:
-# rpm --root $ROOT -e --justdb package
-This will remove package information and it's dependencies from RPM database,
-but leaves all files inplace.
-" >&2
-		log "Found non-Owl packages those what unsupported libraries"
+You can try to remove the problematic packages from the system with:
+
+	# rpm --root $ROOT -e $LIBDB2_DEPS $LIBDB3_DEPS
+
+This command will fail if other packages depend on those requiring the
+old versions of libdb.  If so, remove those other packages in a similar
+manner as well, then try again.
+EOF
+		log "Found non-Owl packages which depend on old libdb"
 		exit 1
 	fi
 
@@ -139,8 +147,7 @@ but leaves all files inplace.
 	NEED_FAKE=yes
 else
 	log "Initializing RPM database"
-	[ ! -d $ROOT/var/lib/rpm ] && mkdir -p $ROOT/var/lib/rpm
-	chmod 0755 $ROOT/var/lib/rpm
+	mkdir -m 755 -p $ROOT/var/lib/rpm
 	$RPMD $RPM_FLAGS --root $ROOT --initdb || exit 1
 	NEED_FAKE=no
 fi
@@ -162,8 +169,7 @@ while read PACKAGES; do
 		fi
 		if [ "$NEED_FAKE" != yes ]; then
 			case "$PACKAGE" in
-				glibc-compat-libdb|\
-				libstdc++-compat)
+			glibc-compat-fake|libstdc++-compat)
 				log "Skipping $PACKAGE"
 				continue
 				;;
@@ -186,13 +192,13 @@ while read PACKAGES; do
 	log "Failed $PACKAGES"
 done
 
-if [ "$NEED_FAKE" == yes ]; then
+if [ "$NEED_FAKE" = yes ]; then
 	log "Removing installation support packages"
-	if ! $RPM $RPM_FLAGS --root $ROOT -ev glibc-compat-libdb; then
-		log "Removal of glibc-compat-libdb was failed"
+	if ! $RPM $RPM_FLAGS --root $ROOT -ev glibc-compat-fake; then
+		log "Removal of glibc-compat-fake failed"
 	fi
 	if ! $RPM $RPM_FLAGS --root $ROOT -ev libstdc++-compat; then
-		log "Removal of libstdc++-compat was failed"
+		log "Removal of libstdc++-compat failed"
 	fi
 fi
 
