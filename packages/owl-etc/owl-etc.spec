@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.58 2004/11/23 22:40:47 mci Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.59 2005/01/12 16:41:42 galaxy Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
 Version: 0.29
-Release: owl2
+Release: owl3
 License: public domain
 Group: System Environment/Base
 Source0: passwd
@@ -37,14 +37,15 @@ Initial set of configuration files to be placed into /etc.
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot/{etc/profile.d,var/log}
+mkdir -p %buildroot/{%_sysconfdir/profile.d,%_var/log}
 cd %buildroot
-touch etc/motd var/log/lastlog
-install -p $RPM_SOURCE_DIR/{passwd,shadow,group,fstab} etc/
-install -p $RPM_SOURCE_DIR/{securetty,shells,host.conf,nsswitch.conf} etc/
-install -p $RPM_SOURCE_DIR/{protocols,services,hosts.{allow,deny}} etc/
-install -p $RPM_SOURCE_DIR/{profile,bashrc,inputrc} etc/
-install -p $RPM_SOURCE_DIR/{csh.{login,cshrc}} etc/
+touch .%_sysconfdir/motd .%_var/log/lastlog
+install -p $RPM_SOURCE_DIR/{passwd,shadow,group,fstab} .%_sysconfdir/
+install -p $RPM_SOURCE_DIR/{securetty,shells,host.conf,nsswitch.conf} .%_sysconfdir/
+install -p $RPM_SOURCE_DIR/{protocols,services,hosts.{allow,deny}} .%_sysconfdir/
+install -p $RPM_SOURCE_DIR/{profile,bashrc,inputrc} .%_sysconfdir/
+install -p $RPM_SOURCE_DIR/{csh.{login,cshrc}} .%_sysconfdir/
+touch .%_sysconfdir/{group,passwd,shadow}-
 
 %triggerin -- shadow-utils
 function pause()
@@ -54,52 +55,52 @@ function pause()
 	sleep 10
 }
 
-# Determine whether the current /etc/shadow matches the initial version
+# Determine whether the current %_sysconfdir/shadow matches the initial version
 # as provided by this package.
-if [ -e /etc/shadow.rpmnew -o ! -e /etc/shadow ]; then
+if [ -e %_sysconfdir/shadow.rpmnew -o ! -e %_sysconfdir/shadow ]; then
 	SHADOW_INITIAL=no
-elif [ "`sha1sum < /etc/shadow`" = "%shadow_initial_sha1  -" ]; then
+elif [ "`sha1sum < %_sysconfdir/shadow`" = "%shadow_initial_sha1  -" ]; then
 	SHADOW_INITIAL=yes
 else
 	SHADOW_INITIAL=no
 fi
 
 # New install?
-if [ $SHADOW_INITIAL = yes -a ! -e /etc/tcb -a \
-    ! -e /etc/nsswitch.conf.rpmnew ]; then
-	echo "No existing password shadowing found, will use /etc/tcb."
-	/sbin/tcb_convert && rm /etc/shadow
+if [ $SHADOW_INITIAL = yes -a ! -e %_sysconfdir/tcb -a \
+    ! -e %_sysconfdir/nsswitch.conf.rpmnew ]; then
+	echo "No existing password shadowing found, will use %_sysconfdir/tcb."
+	/sbin/tcb_convert && rm %_sysconfdir/shadow
 # Updating an install that uses tcb?
-elif [ \( $SHADOW_INITIAL = yes -o ! -e /etc/shadow \) -a -d /etc/tcb ]; then
-	echo "OK, already using /etc/tcb."
-	rm -f /etc/shadow
+elif [ \( $SHADOW_INITIAL = yes -o ! -e %_sysconfdir/shadow \) -a -d %_sysconfdir/tcb ]; then
+	echo "OK, already using %_sysconfdir/tcb."
+	rm -f %_sysconfdir/shadow
 # Updating an install that uses shadow?
-elif [ $SHADOW_INITIAL = no -a -f /etc/shadow -a ! -e /etc/tcb ]; then
-	if [ -e /etc/nsswitch.conf.rpmnew ]; then
+elif [ $SHADOW_INITIAL = no -a -f %_sysconfdir/shadow -a ! -e %_sysconfdir/tcb ]; then
+	if [ -e %_sysconfdir/nsswitch.conf.rpmnew ]; then
 		cat << EOF
-This system appears to be using /etc/shadow.  Conversion to /etc/tcb
-is desired, but /etc/nsswitch.conf appears to have been modified locally
+This system appears to be using %_sysconfdir/shadow.  Conversion to %_sysconfdir/tcb
+is desired, but %_sysconfdir/nsswitch.conf appears to have been modified locally
 preventing automatic conversion.  You'll need to either convert this
-system to /etc/tcb manually or knowingly keep it with /etc/shadow
+system to %_sysconfdir/tcb manually or knowingly keep it with %_sysconfdir/shadow
 (which is also non-default with a number of other configuration files).
 Please refer to tcb_convert(8) for instructions.
 EOF
 	else
 		cat << EOF
-This system appears to be using /etc/shadow and will now be converted
-to /etc/tcb.
+This system appears to be using %_sysconfdir/shadow and will now be converted
+to %_sysconfdir/tcb.
 
 EOF
 		if /sbin/tcb_convert; then
 			echo "tcb_convert succeeded"
-			if [ "`/usr/sbin/control passwd`" != restricted ]; then
+			if [ "`%_sbindir/control passwd`" != restricted ]; then
 				echo "Setting passwd(1) file modes for tcb"
-				/usr/sbin/control passwd tcb
-				ls -l /usr/bin/passwd
+				%_sbindir/control passwd tcb
+				ls -l %_bindir/passwd
 			fi
-			rm -f /etc/shadow.rpmnew
-			mv -v /etc/shadow /etc/shadow-pre-tcb
-			chmod -v go-rwx /etc/shadow*
+			rm -f %_sysconfdir/shadow.rpmnew
+			mv -v %_sysconfdir/shadow %_sysconfdir/shadow-pre-tcb
+			chmod -v go-rwx %_sysconfdir/shadow*
 			cat << EOF
 
 The old shadow file and any its backups have been left around - be sure
@@ -110,53 +111,54 @@ EOF
 tcb_convert FAILED
 
 Your system may be in an inconsistent state now, please perform the
-conversion to /etc/tcb manually.  See tcb_convert(8) for instructions.
+conversion to %_sysconfdir/tcb manually.  See tcb_convert(8) for instructions.
 EOF
 		fi
 	fi
 	pause
 # Updating a misconfigured install?
-elif [ $SHADOW_INITIAL = no -a -e /etc/shadow -a -e /etc/tcb ]; then
+elif [ $SHADOW_INITIAL = no -a -e %_sysconfdir/shadow -a -e %_sysconfdir/tcb ]; then
 	cat << EOF
-This system appears to be misconfigured: both /etc/shadow and /etc/tcb
+This system appears to be misconfigured: both %_sysconfdir/shadow and %_sysconfdir/tcb
 exist.  It may be in an inconsistent state now, please complete the
-conversion to /etc/tcb manually.  See tcb_convert(8) for instructions.
+conversion to %_sysconfdir/tcb manually.  See tcb_convert(8) for instructions.
 EOF
 	pause
 # Possible other misconfigurations.
 else
 	cat << EOF
 This system's local user authentication appears to be misconfigured.
-You might need to convert it to /etc/tcb manually, see tcb_convert(8)
+You might need to convert it to %_sysconfdir/tcb manually, see tcb_convert(8)
 for instructions.
 EOF
 	pause
 fi
 
-rm -f /etc/{passwd,shadow,group}.rpmnew
+rm -f %_sysconfdir/{passwd,shadow,group}.rpmnew
 
 %files
 %defattr(644,root,root)
-%verify(not md5 size mtime) %config(noreplace) /etc/passwd
-%verify(not md5 size mtime) %config(noreplace) %attr(400,root,root) /etc/shadow
-%verify(not md5 size mtime) %config(noreplace) /etc/group
-%verify(not md5 size mtime) %config(noreplace) /etc/fstab
-%config(noreplace) %attr(600,root,root) /etc/securetty
-%config(noreplace) /etc/shells
-%config(noreplace) /etc/host.conf
-%config(noreplace) /etc/nsswitch.conf
-%config /etc/protocols
-%config /etc/services
-%config(noreplace) /etc/hosts.allow
-%config(noreplace) /etc/hosts.deny
-%config(noreplace) /etc/profile
-%config(noreplace) /etc/bashrc
-%config /etc/inputrc
-%config(noreplace) /etc/csh.login
-%config(noreplace) /etc/csh.cshrc
-%config(noreplace) /etc/motd
-%dir %attr(755,root,root) /etc/profile.d
-%ghost /var/log/lastlog
+%verify(not md5 size mtime) %config(noreplace) %_sysconfdir/passwd
+%verify(not md5 size mtime) %config(noreplace,missingok) %attr(400,root,root) %_sysconfdir/shadow
+%verify(not md5 size mtime) %config(noreplace) %_sysconfdir/group
+%verify(not md5 size mtime) %config(noreplace) %_sysconfdir/fstab
+%config(noreplace) %attr(600,root,root) %_sysconfdir/securetty
+%config(noreplace) %_sysconfdir/shells
+%config(noreplace) %_sysconfdir/host.conf
+%config(noreplace) %_sysconfdir/nsswitch.conf
+%config %_sysconfdir/protocols
+%config %_sysconfdir/services
+%config(noreplace) %_sysconfdir/hosts.allow
+%config(noreplace) %_sysconfdir/hosts.deny
+%config(noreplace) %_sysconfdir/profile
+%config(noreplace) %_sysconfdir/bashrc
+%config %_sysconfdir/inputrc
+%config(noreplace) %_sysconfdir/csh.login
+%config(noreplace) %_sysconfdir/csh.cshrc
+%config(noreplace) %_sysconfdir/motd
+%dir %attr(755,root,root) %_sysconfdir/profile.d
+%ghost %_var/log/lastlog
+%ghost %_sysconfdir/*-
 
 %changelog
 * Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 0.29-owl2
