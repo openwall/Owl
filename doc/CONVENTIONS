@@ -118,7 +118,9 @@ indicate that any bugs are ours).  If a patch has been extracted from
 the primary CVS repository for the package in question (for example,
 this may be the case for various back-ports), ORIGIN should be set to
 "cvs" and WHAT to the date it corresponds to (as YYYYMMDD) plus the
-usual description of the patch.
+usual description of the patch.  Patches from upstream maintainers
+that aren't (yet?) in the primary CVS repository (if one even exists)
+may have ORIGIN set to "up".
 
 There're also some common WHATs to use whenever applicable:
 
@@ -154,4 +156,4 @@ options:
 This does not exactly match our preferred coding style and thus isn't
 to be used on sources already in Owl.
 
-$Id: Owl/doc/CONVENTIONS,v 1.12 2002/07/07 00:36:15 solar Exp $
+$Id: Owl/doc/CONVENTIONS,v 1.13 2002/07/29 22:12:36 solar Exp $
