@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.40 2003/04/15 14:20:09 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.41 2003/05/23 02:50:53 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
-Version: 0.24
+Version: 0.25
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -13,6 +13,7 @@ Source3: fstab
 Source10: securetty
 Source11: shells
 Source12: host.conf
+Source13: nsswitch.conf
 Source20: protocols
 Source21: services
 Source30: hosts.allow
@@ -51,6 +52,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %attr(600,root,root) /etc/securetty
 %config(noreplace) /etc/shells
 %config(noreplace) /etc/host.conf
+%config(noreplace) /etc/nsswitch.conf
 %config /etc/protocols
 %config /etc/services
 %config(noreplace) /etc/hosts.allow
@@ -65,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 %ghost /var/log/lastlog
 
 %changelog
+* Fri May 23 2003 Solar Designer <solar@owl.openwall.com> 0.25-owl1
+- Moved /etc/nsswitch.conf from glibc to owl-etc package.
+
 * Tue Apr 15 2003 Solar Designer <solar@owl.openwall.com> 0.24-owl1
 - Added /usr/local/sbin to the default PATH.
 

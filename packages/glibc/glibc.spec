@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.45 2003/03/23 18:52:39 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.46 2003/05/23 02:50:52 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -6,17 +6,16 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
 %define crypt_bf_version 0.4.5
-Release: owl30
+Release: owl31
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%{version}.tar.gz
 Source1: glibc-linuxthreads-%{version}.tar.gz
 Source2: glibc-crypt-2.1.tar.gz
-Source3: nsswitch.conf
-Source4: glibc-compat-%{version}.tar.gz
-Source5: crypt_blowfish-%{crypt_bf_version}.tar.gz
-Source6: crypt_freesec.c
-Source7: crypt_freesec.h
+Source3: glibc-compat-%{version}.tar.gz
+Source4: crypt_blowfish-%{crypt_bf_version}.tar.gz
+Source5: crypt_freesec.c
+Source6: crypt_freesec.h
 Patch0: glibc-2.1.3-owl-crypt_freesec.diff
 Patch1: glibc-2.1.3-owl-dl-open.diff
 Patch2: glibc-2.1.3-owl-sanitize-env.diff
@@ -63,6 +62,7 @@ Patch56: glibc-2.1.3-cvs-20011129-glob.diff
 Patch57: glibc-2.1.3-cvs-20020702-resolv.diff
 Patch58: glibc-2.1.3-cvs-20021216-rh-xdrmem.diff
 PreReq: /sbin/ldconfig
+Requires: /etc/nsswitch.conf
 %ifarch alpha
 Provides: ld.so.2
 %endif
@@ -209,9 +209,6 @@ gzip -9nf $RPM_BUILD_ROOT/usr/{man/man3/*,info/libc*}
 
 ln -sf libbsd-compat.a $RPM_BUILD_ROOT/usr/lib/libbsd.a
 
-install -m 644 $RPM_SOURCE_DIR/nsswitch.conf \
-	$RPM_BUILD_ROOT/etc/nsswitch.conf
-
 # Take care of setuids
 chmod 755 $RPM_BUILD_ROOT/usr/libexec/pt_chown
 
@@ -240,7 +237,6 @@ sed "s|^$RPM_BUILD_ROOT||" < rpm.filelist.in |
 	sed "s| $RPM_BUILD_ROOT| |" | \
 	grep -v '^%dir /usr/share$' | \
 	grep -v '^%config /etc/localtime' | \
-	grep -v '^%config /etc/nsswitch.conf' | \
 	sort > rpm.filelist
 
 %if %BUILD_PROFILE
@@ -306,7 +302,6 @@ fi
 %files -f rpm.filelist
 %defattr(-,root,root)
 %config(noreplace) /etc/localtime
-%config(noreplace) /etc/nsswitch.conf
 %doc README NEWS INSTALL FAQ BUGS NOTES PROJECTS
 %doc documentation/* README.libm
 %doc hesiod/README.hesiod
@@ -321,7 +316,10 @@ fi
 %endif
 
 %changelog
-* Sun Mar 23 2003 Solar Designer <solar@owl.openwall.com>
+* Fri May 23 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl31
+- Moved /etc/nsswitch.conf from glibc to owl-etc package.
+
+* Sun Mar 23 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl30
 - Included Red Hat's back-port of the Sun RPC XDR integer overflow fixes
 from glibc CVS; the fixes are by Paul Eggert and Roland McGrath, and the
 xdrmem_getbytes() integer overflow has been discovered by Riley Hassell
