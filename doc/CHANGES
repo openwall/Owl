@@ -12,6 +12,9 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/04/25	Package: e2fsprogs
+Updated to 1.27 (ext3fs support).
+
 2002/04/19 -
 2002/04/25	Packages: vim, bash, quota, vixie-cron
 Updated vim to 6.1 patchlevel 18, with various additional changes to
@@ -665,4 +668,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.84 2002/04/24 23:21:13 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.85 2002/04/25 18:02:00 solar Exp $
