@@ -12,6 +12,12 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.0 and Owl-current.
 
+2002/11/27	kernel
+SECURITY FIX	Severity: medium, local, active
+Updated to Linux 2.2.22-ow2 which improves the "lcall" DoS fix for the
+Linux kernel to cover the NT (Nested Task) flag attack discovered by
+Christophe Devine.
+
 2002/11/08	Package: glibc
 RELIABILITY FIX: Made the x86 assembly code implementing bcrypt
 password hashing reentrant (this time for real), made it more careful
@@ -40,4 +46,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.5 2002/11/08 03:55:14 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.6 2002/11/27 06:22:00 solar Exp $
