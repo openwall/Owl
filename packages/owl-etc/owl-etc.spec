@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.21 2001/01/26 07:16:48 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.22 2001/01/31 14:17:51 solar Exp $
 
 Summary: Initial set of configuration files
 Name: owl-etc
-Version: 0.7
-Release: 2owl
+Version: 0.8
+Release: 1owl
 Copyright: public domain
 Group: System Environment/Base
 Source0: passwd
@@ -65,6 +65,10 @@ rm -rf $RPM_BUILD_ROOT
 %ghost /var/log/lastlog
 
 %changelog
+* Wed Jan 31 2001 Solar Designer <solar@owl.openwall.com>
+- Changed some more pseudo-user home directories to / to avoid certain
+attacks via group write permissions.
+
 * Fri Jan 26 2001 Solar Designer <solar@owl.openwall.com>
 - Install /etc/fstab world-readable as it is used by sysconf(3) in glibc
 to find the mount point of procfs (which sounds broken enough for me).
