@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.33 2001/11/25 02:24:12 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.34 2001/11/25 18:59:19 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
-Version: 0.19
+Version: 0.20
 Release: 1owl
 License: public domain
 Group: System Environment/Base
@@ -67,6 +67,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Sun Nov 25 2001 Solar Designer <solar@owl.openwall.com>
 - telnetd user/group.
+- auth group.
 
 * Thu Nov 01 2001 Solar Designer <solar@owl.openwall.com>
 - audio, video and radio groups to manage access to devices.

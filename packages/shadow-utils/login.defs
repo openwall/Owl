@@ -1,17 +1,17 @@
-# $Id: Owl/packages/shadow-utils/login.defs,v 1.5 2001/11/12 01:54:03 solar Exp $
+# $Id: Owl/packages/shadow-utils/login.defs,v 1.6 2001/11/25 18:59:19 solar Exp $
 #
 # Please refer to login.defs(5) for more information on this file, the
 # parameters which may be defined here and the corresponding programs.
 #
 
 #
-# Min/max values for automatic UID selection in useradd
+# Min/max values for automatic UID selection in useradd.
 #
 UID_MIN			500
 UID_MAX			60000
 
 #
-# Min/max values for automatic GID selection in useradd and groupadd
+# Min/max values for automatic GID selection in useradd and groupadd.
 #
 GID_MIN			500
 GID_MAX			60000
@@ -86,4 +86,4 @@ USE_TCB			no
 # Whether newly created tcb-style shadow files should be readable by
 # group "auth".
 #
-TCB_AUTH_GROUP		no
+TCB_AUTH_GROUP		yes

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.15 2001/11/16 03:20:21 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.16 2001/11/25 18:59:19 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.0
-Release: 2owl
+Release: 3owl
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -132,6 +132,7 @@ if grep -q '^shadow:[^:]*:42:' /etc/group; then
 	chgrp shadow /etc/pam.d/chage-chfn-chsh && \
 		chmod 640 /etc/pam.d/chage-chfn-chsh
 fi
+grep -q ^auth: /etc/group || groupadd -g 164 auth
 
 %files
 %defattr(-,root,root)
@@ -180,6 +181,9 @@ fi
 /etc/control.d/facilities/*
 
 %changelog
+* Sun Nov 25 2001 Solar Designer <solar@owl.openwall.com>
+- auth group.
+
 * Fri Nov 16 2001 Solar Designer <solar@owl.openwall.com>
 - Enable forking for pam_tcb with chage, chfn, and chsh.
 

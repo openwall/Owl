@@ -32,6 +32,7 @@ crontab:x:160:
 postdrop:x:161:
 utempter:x:162:
 chkpwd:x:163:
+auth:x:164:
 klogd:x:180:
 syslogd:x:181:
 postfix:x:182:
