@@ -122,7 +122,7 @@ diff -urpN dhcp-3.0pl2.orig/omapip/connection.c dhcp-3.0pl2/omapip/connection.c
  	if (status == ISC_R_SUCCESS)
 diff -urpN dhcp-3.0pl2.orig/omapip/convert.c dhcp-3.0pl2/omapip/convert.c
 --- dhcp-3.0pl2.orig/omapip/convert.c	Wed Aug  2 00:34:36 2000
-+++ dhcp-3.0pl2/omapip/convert.c	Tue Sep  9 15:32:06 2003
++++ dhcp-3.0pl2/omapip/convert.c	Thu Sep 11 15:16:02 2003
 @@ -135,7 +135,7 @@ int converted_length (buf, base, width)
  	unsigned int base;
  	unsigned int width;
@@ -137,7 +137,7 @@ diff -urpN dhcp-3.0pl2.orig/omapip/convert.c dhcp-3.0pl2/omapip/convert.c
  	unsigned int width;
  {
 -	u_int32_t number;
-+	u_int32_t number = 1;
++	u_int32_t number = 0;
  	static char h2a [] = "0123456789abcdef";
  	int power = converted_length (inbuf, base, width);
  	int i, j;
