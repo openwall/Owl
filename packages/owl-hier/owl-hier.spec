@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.6 2001/07/27 19:39:20 solar Exp $
+# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.7 2001/09/02 11:31:44 solar Exp $
 
 Summary: Initial directory hierarchy
 Name: owl-hier
-Version: 0.1
+Version: 0.2
 Release: 1owl
 Copyright: public domain
 Group: System Environment/Base
@@ -54,7 +54,7 @@ cat << EOF > filelist
 %dir %attr(755,sources,sources) /usr/src
 %dir %attr(750,build,sources) /usr/src/world
 %dir %attr(770,root,uucp) /var/lock/uucp
-%dir %attr(775,root,mail) /var/spool/mail
+%dir %attr(1771,root,mail) /var/spool/mail
 EOF
 
 sed -n 's,^.* \(/[^ ]*\)$,\1,p' < filelist |
@@ -72,6 +72,9 @@ rm -rf $RPM_BUILD_ROOT
 %files -f filelist
 
 %changelog
+* Sun Sep 02 2001 Solar Designer <solar@owl.openwall.com>
+- 1771 for /var/spool/mail
+
 * Sat Mar 31 2001 Solar Designer <solar@owl.openwall.com>
 - Provide /usr/share/empty (an always-empty directory for chroots).
 

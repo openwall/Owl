@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-hier/Attic/special,v 1.5 2001/03/31 11:42:21 solar Exp $
+# $Id: Owl/packages/owl-hier/Attic/special,v 1.6 2001/09/02 11:31:44 solar Exp $
 
 # /
 /set type=file uname=root gname=root mode=0755
@@ -545,7 +545,7 @@ run		type=dir
 spool		type=dir
 
 # /var/spool/mail
-mail		type=dir gname=mail mode=0775
+mail		type=dir gname=mail mode=01771
 # /var/spool/mail
 ..
 
