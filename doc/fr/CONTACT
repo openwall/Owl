@@ -1,0 +1,19 @@
+Le site web de Owl est :
+
+http://www.openwall.com/Owl/
+
+Il y a une liste de diffusion où vous pouvez partager votre expérience avec
+Owl et poser vos questions. Pour s'abonner, envoyez un message vide à
+<owl-users-subscribe@lists.openwall.com>. Les archives de la liste sont
+disponibles sur MARC :
+
+http://marc.theaimsgroup.com/?l=owl-users
+
+En plus de la liste owl-users, vous avez l'option d'adresser vos
+commentaires concernant Owl à nous en privé via <feedback@owl.openwall.com>.
+
+Merci de signaler les problèmes potentiels de sécurité à
+<security@owl.openwall.com> et les bogues non relatifs à la sécurité à
+<bugs@owl.openwall.com>.
+
+$Id: Owl/doc/fr/CONTACT,v 1.1 2001/06/29 13:23:41 solar Exp $

@@ -12,6 +12,9 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/06/29	Owl/doc/fr/*
+Updated French translations, from Denis Ducamp.
+
 2001/06/29	Package: mktemp
 Switched to packaging the portable mktemp, now that Todd Miller
 maintains it in addition to the OpenBSD-specific version. :-)
@@ -204,4 +207,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp@hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.5 2001/06/28 23:32:26 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.6 2001/06/29 13:30:00 solar Exp $
