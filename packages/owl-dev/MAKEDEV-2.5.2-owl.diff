@@ -1,6 +1,6 @@
 diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
 --- MAKEDEV-2.5.2.orig/MAKEDEV	Thu Mar  2 01:16:37 2000
-+++ MAKEDEV-2.5.2/MAKEDEV	Mon Dec  4 05:22:03 2000
++++ MAKEDEV-2.5.2/MAKEDEV	Sat Jan  6 22:49:16 2001
 @@ -1,6 +1,11 @@
  #!/bin/bash -
  
@@ -229,7 +229,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		;;
  	cyclades|ttyC)
  		major1=`Major ttyC 19` || continue
-@@ -531,6 +571,7 @@
+@@ -531,9 +571,11 @@
  		major=`Major mouse 10` || continue
  		makedev logimouse c $major 0 $mouse
  		makedev psmouse   c $major 1 $mouse
@@ -237,7 +237,11 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		makedev msmouse   c $major 2 $mouse
  		makedev atimouse  c $major 3 $mouse
  		makedev jmouse    c $major 4 $mouse
-@@ -585,12 +626,12 @@
++		makedev sunmouse  c $major 6 $mouse
+ 		;;
+ 	js)
+ 		major=`Major Joystick` || continue
+@@ -585,12 +627,12 @@
  		makedev ${arg}H1600 b $major `math $base + 124` $floppy
  		;;
  	hd[a-b])
@@ -252,7 +256,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		do
  			makedev hd$unit$part b $major `math $base + $part` $disk
  		done
-@@ -601,7 +642,7 @@
+@@ -601,7 +643,7 @@
  		base=`index cd $unit`
  		base=`math $base \* 64`
  		makedev hd$unit b $major $base $disk
@@ -261,7 +265,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		do
  			makedev hd$unit$part b $major `expr $base + $part` $disk
  		done
-@@ -612,7 +653,7 @@
+@@ -612,7 +654,7 @@
  		base=`index ef $unit`
  		base=`math $base \* 64`
  		makedev hd$unit b $major $base $disk
@@ -270,7 +274,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		do
  			makedev hd$unit$part b $major `expr $base + $part` $disk
  		done
-@@ -623,7 +664,7 @@
+@@ -623,7 +665,7 @@
  		base=`index gh $unit`
  		base=`math $base \* 64`
  		makedev hd$unit b $major $base $disk
@@ -279,7 +283,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		do
  			makedev hd$unit$part b $major `expr $base + $part` $disk
  		done
-@@ -649,7 +690,7 @@
+@@ -649,7 +691,7 @@
  		base=`index abcd $unit`
  		base=`math $base \* 64`
  		makedev xd$unit b $major $base $disk
@@ -288,7 +292,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		do
  			makedev xd$unit$part b $major `expr $base + $part` $disk
  		done
-@@ -665,7 +706,7 @@
+@@ -665,7 +707,7 @@
                          base=`math $base \- 256`
                  fi
  		makedev sd$unit b $major $base $disk
@@ -297,7 +301,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		do
  			minor=`expr $base + $part`
  			makedev sd$unit$part b $major $minor $disk
-@@ -1042,10 +1083,6 @@
+@@ -1042,10 +1084,6 @@
  		major=`Major dcf` || continue
  		makedev $arg c $major 0 $system
  		;;
@@ -308,7 +312,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  	update)
  		if [ ! "$devices" ]
  		then
-@@ -1080,8 +1117,8 @@
+@@ -1080,8 +1118,8 @@
  			exec 3<&-
  		fi
  		create="$create "`cvt $devs`

@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.3 2000/12/04 02:40:07 solar Exp $
+# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.4 2001/01/06 19:52:49 solar Exp $
 
 Summary: Initial set of device files and MAKEDEV, a script to manage them
 Name: owl-dev
-Version: 0.2
+Version: 0.3
 Release: 1owl
 Copyright: public domain
 Group: System Environment/Base
@@ -54,6 +54,9 @@ cd /dev
 %files -f filelist
 
 %changelog
+* Sat Jan 06 2001 Solar Designer <solar@owl.openwall.com>
+- /dev/sunmouse.
+
 * Mon Dec 04 2000 Solar Designer <solar@owl.openwall.com>
 - Create device files for 4 IDE and 8 SCSI devices with up to 15 partitions
 by default.
