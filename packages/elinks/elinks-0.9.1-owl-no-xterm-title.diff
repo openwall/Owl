@@ -27,8 +27,8 @@
  		N_("Set the window title when running in a windowing environment\n"
  		"in an xterm-like terminal. This way the document's title is\n"
 -		"shown on the window titlebar.")),
-+		"shown on the window titlebar. This functionality is currently\n"
-+		"disabled at compile time and may be re-enabled in the future.")),
++		"shown on the window titlebar. This functionality is disabled\n"
++		"at compile time and may be re-enabled in the future.")),
  
  
  
