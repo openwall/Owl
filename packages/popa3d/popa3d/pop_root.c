@@ -152,6 +152,10 @@ static int do_root_auth(int channel)
 	memset(pass, 0, strlen(pass));
 	if (!*user) return AUTH_FAILED;
 
+#if VIRTUAL_ONLY
+	if (!virtual_domain) return AUTH_FAILED;
+#endif
+
 	if (set_user(pw)) return AUTH_FAILED;
 
 #if POP_VIRTUAL
@@ -163,6 +167,10 @@ static int do_root_auth(int channel)
 	}
 #endif
 
+#if VIRTUAL_ONLY
+	/* never reached */
+	return AUTH_FAILED;
+#else
 #ifdef MAIL_SPOOL_PATH
 	spool = MAIL_SPOOL_PATH;
 	mailbox = user;
@@ -172,6 +180,7 @@ static int do_root_auth(int channel)
 #endif
 
 	return AUTH_OK;
+#endif
 }
 
 int do_pop_startup(void)
