@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.11 2002/07/17 00:23:44 solar Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.12 2002/07/17 02:15:48 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -6,7 +6,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.6.0
-Release: owl9.6
+Release: owl9.7
 Epoch: 1
 License: GPL
 Group: Development/Languages
@@ -23,6 +23,7 @@ Patch5: perl-5.6.0-owl-no-mail.diff
 Patch6: perl-5.6.0-owl-disable-suidperl.diff
 Patch7: perl-5.6.0-alt-owl-perldoc-tmp.diff
 Patch8: perl-5.6.0-owl-tmp.diff
+Patch9: perl-5.6.0-owl-vitmp.diff
 Provides: perl <= %{version}
 Obsoletes: perl-MD5
 BuildRequires: rpm >= 3.0.5
@@ -77,6 +78,7 @@ cp $RPM_SOURCE_DIR/perlcc.PL utils/
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 find . -name '*.orig' -print0 | xargs -r0 rm -v --
 
@@ -195,6 +197,8 @@ rm -rf $RPM_BUILD_ROOT
 * Tue Jul 16 2002 Solar Designer <solar@owl.openwall.com>
 - Package File::Temp as needed for the modified perldoc.
 - Replaced perlcc with the version that uses File::Temp, from Perl 5.6.1.
+- Patched perlbug and s2p to create temporary files with File::Temp, and
+perlbug to use vitmp.
 - Package some plaintext documentation.
 - Only generate *.ph files out of gcc, glibc and kernel headers (but not
 SCSI ones) by default.

@@ -1,6 +1,6 @@
 diff -ur perl-5.6.0.orig/Configure perl-5.6.0/Configure
 --- perl-5.6.0.orig/Configure	Wed Mar 22 23:36:37 2000
-+++ perl-5.6.0/Configure	Mon Jul 15 10:12:57 2002
++++ perl-5.6.0/Configure	Wed Jul 17 05:12:23 2002
 @@ -23,7 +23,7 @@
  # Generated on Wed Mar 22 19:13:31 EET 2000 [metaconfig 3.0 PL70]
  # (with additional metaconfig patches by perlbug@perl.com)
@@ -33,3 +33,65 @@ diff -ur perl-5.6.0.orig/Configure perl-5.6.0/Configure
  
  : compute my invocation name
  me=$0
+diff -ur perl-5.6.0.orig/utils/perlbug.PL perl-5.6.0/utils/perlbug.PL
+--- perl-5.6.0.orig/utils/perlbug.PL	Wed Mar 22 17:06:17 2000
++++ perl-5.6.0/utils/perlbug.PL	Wed Jul 17 06:10:14 2002
+@@ -78,7 +78,7 @@
+ print OUT <<'!NO!SUBS!';
+ 
+ use Config;
+-use File::Spec;		# keep perlbug Perl 5.005 compatible
++use File::Temp;
+ use Getopt::Std;
+ use strict;
+ 
+@@ -892,14 +892,9 @@
+ }
+ 
+ sub filename {
+-    my $dir = $Is_VMS ? 'sys$scratch:'
+-	: ($Is_MSWin32 && $ENV{'TEMP'}) ? $ENV{'TEMP'}
+-        : $Is_MacOS ? $ENV{'TMPDIR'}
+-	: '/tmp';
+-    $filename = "bugrep0$$";
+-#    $dir .= "\\" if $Is_MSWin32 and $dir !~ m|[\\/]$|;
+-    $filename++ while -e File::Spec->catfile($dir, $filename);
+-    $filename = File::Spec->catfile($dir, $filename);
++    my ($fh, $filename) = File::Temp::tempfile(UNLINK => 1);
++    close($fh);
++    return $filename;
+ }
+ 
+ sub paraprint {
+diff -ur perl-5.6.0.orig/x2p/s2p.PL perl-5.6.0/x2p/s2p.PL
+--- perl-5.6.0.orig/x2p/s2p.PL	Sat Mar  4 07:26:55 2000
++++ perl-5.6.0/x2p/s2p.PL	Wed Jul 17 06:03:24 2002
+@@ -113,6 +113,8 @@
+ 
+ =cut
+ 
++use File::Temp;
++
+ $indent = 4;
+ $shiftwidth = 4;
+ $l = '{'; $r = '}';
+@@ -137,8 +139,9 @@
+ }
+ 
+ unless ($debug) {
+-    open(BODY,"+>/tmp/sperl$$") ||
+-      &Die("Can't open temp file: $!\n");
++    my ($fh, $filename) = File::Temp::tempfile(UNLINK => 1);
++    open(BODY, "+< $filename") || die "open: $!";
++    close($fh);
+ }
+ 
+ if (!$assumen && !$assumep) {
+@@ -369,7 +372,6 @@
+ exit;
+ 
+ sub Cleanup {
+-    unlink "/tmp/sperl$$";
+ }
+ sub Die {
+     &Cleanup;
