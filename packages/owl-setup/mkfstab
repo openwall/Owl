@@ -190,7 +190,7 @@ while :; do
 
 	fstype="`sed -n ${n}p <$partbl | cut -d ' '  -f2`"
 
-	if [ "$fstype" = 'swap' -o `type2fs "$fstype"` = 'swap' ]; then
+	if [ "$fstype" = 'swap' -o "`type2fs "$fstype"`" = 'swap' ]; then
 		mntpoint[$n]=${mntpoint[$n]:-'swap'}
 		mntopt[$n]=${mntopt[$n]:-'defaults'}
 	fi
