@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.19 2002/01/28 21:19:23 solar Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.20 2002/01/28 21:59:27 solar Exp $
 
 %define GCC_PREFIX /usr
 %define CPP_PREFIX /lib
@@ -19,7 +19,7 @@ Group: Development/Languages
 URL: http://gcc.gnu.org
 Source0: ftp://ftp.gnu.org/pub/gnu/gcc/gcc-%{GCC_VERSION}.tar.gz
 Source1: libstdc++-compat.tar.bz2
-Patch0: gcc-2.95.2-rh-warn.diff
+Patch0: gcc-2.95.3-rh-warn.diff
 Patch1: gcc-2.95.2-owl-disable-dvi.diff
 Patch2: gcc-2.95.2-owl-texconfig-bug.diff
 Patch3: gcc-2.95.3-owl-sparcv9-LONG_MAX.diff
@@ -176,7 +176,8 @@ CXXFLAGS="$CFLAGS"
 XCFLAGS="$CFLAGS"
 TCFLAGS="$CFLAGS"
 ../configure --prefix=%{GCC_PREFIX} \
-	--mandir=%{_mandir} --infodir=%{_infodir} \
+	--mandir=${RPM_BUILD_ROOT}%{_mandir} \
+	--infodir=${RPM_BUILD_ROOT}%{_infodir} \
 	--enable-shared --enable-haifa $ENABLE_THREADS \
 	--host=%{_target_platform}
 touch ../gcc/c-gperf.h

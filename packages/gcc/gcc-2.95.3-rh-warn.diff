@@ -1,0 +1,106 @@
+Wed Sep  1 09:12:02 1999  Jim Kingdon  <http://developer.redhat.com>
+
+	* c-parse.in: save and restore warn_pointer_arith on __extension__
+	along with pedantic.
+	* extend.texi (Alternate Keywords): Adjust documentation.
+
+*** egcs-1.1.2/gcc/c-parse.in.~1~	Mon Jul  6 15:30:10 1998
+--- egcs-1.1.2/gcc/c-parse.in		Fri Sep  3 03:19:59 1999
+***************
+*** 307,313 ****
+  		  else
+  		    error ("argument of `asm' is not a constant string"); }
+  	| extension extdef
+! 		{ pedantic = $<itype>1; }
+  	;
+  
+  datadef:
+--- 307,314 ----
+  		  else
+  		    error ("argument of `asm' is not a constant string"); }
+  	| extension extdef
+! 		{ pedantic = ($<itype>1) & 1;
+! 		  warn_pointer_arith = (($<itype>1) >> 1) & 1; }
+  	;
+  
+  datadef:
+***************
+*** 445,454 ****
+  	primary
+  	| '*' cast_expr   %prec UNARY
+  		{ $$ = build_indirect_ref ($2, "unary *"); }
+! 	/* __extension__ turns off -pedantic for following primary.  */
+  	| extension cast_expr	  %prec UNARY
+  		{ $$ = $2;
+! 		  pedantic = $<itype>1; }
+  	| unop cast_expr  %prec UNARY
+  		{ $$ = build_unary_op ($1, $2, 0);
+  		  overflow_warning ($$); }
+--- 446,456 ----
+  	primary
+  	| '*' cast_expr   %prec UNARY
+  		{ $$ = build_indirect_ref ($2, "unary *"); }
+! 	/* __extension__ turns off some warnings for following primary.  */
+  	| extension cast_expr	  %prec UNARY
+  		{ $$ = $2;
+! 		  pedantic = ($<itype>1) & 1;
+! 		  warn_pointer_arith = (($<itype>1) >> 1) & 1; }
+  	| unop cast_expr  %prec UNARY
+  		{ $$ = build_unary_op ($1, $2, 0);
+  		  overflow_warning ($$); }
+***************
+*** 1005,1011 ****
+  	| declmods ';'
+  		{ pedwarn ("empty declaration"); }
+  	| extension decl
+! 		{ pedantic = $<itype>1; }
+  	;
+  
+  /* Declspecs which contain at least one type specifier or typedef name.
+--- 1007,1014 ----
+  	| declmods ';'
+  		{ pedwarn ("empty declaration"); }
+  	| extension decl
+! 		{ pedantic = ($<itype>1) & 1;
+! 		  warn_pointer_arith = (($<itype>1) >> 1) & 1; }
+  	;
+  
+  /* Declspecs which contain at least one type specifier or typedef name.
+***************
+*** 1581,1587 ****
+  		{ $$ = NULL_TREE; }
+  	| extension component_decl
+  		{ $$ = $2;
+! 		  pedantic = $<itype>1; }
+  	;
+  
+  components:
+--- 1584,1591 ----
+  		{ $$ = NULL_TREE; }
+  	| extension component_decl
+  		{ $$ = $2;
+! 		  pedantic = ($<itype>1) & 1;
+! 		  warn_pointer_arith = (($<itype>1) >> 1) & 1; }
+  	;
+  
+  components:
+***************
+*** 2388,2395 ****
+  
+  extension:
+  	EXTENSION
+! 		{ $<itype>$ = pedantic;
+! 		  pedantic = 0; }
+  	;
+  
+  ifobjc
+--- 2392,2400 ----
+  
+  extension:
+  	EXTENSION
+! 		{ $<itype>$ = pedantic | (warn_pointer_arith << 1);
+! 		  pedantic = 0;
+! 		  warn_pointer_arith = 0; }
+  	;
+  
+  ifobjc
