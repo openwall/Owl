@@ -1,4 +1,4 @@
-# $Id: Owl/packages/quota/quota.spec,v 1.5 2001/06/27 12:39:50 mci Exp $
+# $Id: Owl/packages/quota/quota.spec,v 1.6 2001/06/27 14:54:37 mci Exp $
 
 Name: quota
 Summary: System administration tools for monitoring users' disk usage.
@@ -64,12 +64,12 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man8/setquota.8*
 
 %changelog
-* Sun Mon 27 2001 Michail Litvak <mci@owl.openwall.com>
+* Wed Jun 27 2001 Michail Litvak <mci@owl.openwall.com>
 - more fixes in mans and docs
 - patch to catch error from mkstemp
 - include doc/ subdir into package
 
-* Sun Mon 25 2001 Michail Litvak <mci@owl.openwall.com>
+* Mon Jun  25 2001 Michail Litvak <mci@owl.openwall.com>
 - some spec cleanups
 - patch to allow building to non-root user
 
