@@ -1,5 +1,6 @@
---- elinks-0.9.1/feature.h.orig	Thu Jan  1 16:34:41 2004
-+++ elinks-0.9.1/feature.h	Wed Jan 28 00:30:30 2004
+diff -ur elinks-0.9.1.orig/feature.h elinks-0.9.1/feature.h
+--- elinks-0.9.1.orig/feature.h	Thu Jan  1 16:34:41 2004
++++ elinks-0.9.1/feature.h	Wed Jan 28 02:29:45 2004
 @@ -48,7 +48,7 @@
   *
   * Default: disabled */
@@ -9,3 +10,33 @@
  
  
  /*** Bookmarks
+@@ -77,9 +77,10 @@
+  * Default: enabled if libexpat (required library) found and bookmarks are
+  * enabled */
+ 
++#undef CONFIG_XBEL_BOOKMARKS
+ #if defined(HAVE_LIBEXPAT) && defined(CONFIG_BOOKMARKS)
+ /* Comment out the following line if you want to always have this disabled: */
+-#define CONFIG_XBEL_BOOKMARKS
++/* #define CONFIG_XBEL_BOOKMARKS */
+ #endif
+ 
+ 
+@@ -243,7 +244,7 @@
+ 
+ #ifdef CONFIG_BACKTRACE
+ /* Uncomment the following line if you want to always have this disabled: */
+-/* #undef CONFIG_BACKTRACE */
++#undef CONFIG_BACKTRACE
+ #endif
+ 
+ 
+@@ -335,7 +336,7 @@
+ 
+ #ifdef CONFIG_SMB
+ /* Uncomment the following line if you want to always have this disabled: */
+-/* #undef CONFIG_SMB */
++#undef CONFIG_SMB
+ #endif
+ 
+ 

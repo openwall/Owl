@@ -1,4 +1,4 @@
-# $Id: Owl/packages/elinks/elinks.spec,v 1.7 2004/01/28 01:06:46 mci Exp $
+# $Id: Owl/packages/elinks/elinks.spec,v 1.8 2004/01/28 02:42:21 solar Exp $
 
 Summary: Lynx-like text WWW browser with many features.
 Name: elinks
@@ -44,8 +44,8 @@ It is in no way associated with Twibright Labs and their Links version.
 %build
 %configure \
 	--with-gpm --with-zlib --with-bzlib --with-openssl \
-	--without-xbel --without-guile --without-lua --without-gnutls \
-	--without-x --enable-ipv6
+	--without-guile --without-lua --without-gnutls --without-x \
+	--enable-ipv6
 make
 
 %install
