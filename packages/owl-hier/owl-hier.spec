@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.11 2002/02/07 01:19:23 solar Exp $
+# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.12 2002/06/09 00:51:36 solar Exp $
 
 Summary: Initial directory hierarchy.
 Name: owl-hier
-Version: 0.4
+Version: 0.5
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -72,6 +72,9 @@ rm -rf $RPM_BUILD_ROOT
 %files -f filelist
 
 %changelog
+* Sun Jun 09 2002 Solar Designer <solar@owl.openwall.com>
+- Don't list /dev/pts in here, it is a part of owl-dev.
+
 * Thu Feb 07 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions.
 

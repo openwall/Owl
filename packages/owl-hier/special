@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-hier/Attic/special,v 1.8 2001/09/25 21:59:24 solar Exp $
+# $Id: Owl/packages/owl-hier/Attic/special,v 1.9 2002/06/09 00:51:36 solar Exp $
 
 # /
 /set type=file uname=root gname=root mode=0755
@@ -18,12 +18,6 @@ boot		type=dir mode=0700
 
 # /dev
 dev		type=dir
-
-# /dev/pts
-pts		type=dir
-# /dev/pts
-..
-
 # /dev
 ..
 
