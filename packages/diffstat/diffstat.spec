@@ -1,4 +1,4 @@
-# $Id: Owl/packages/diffstat/diffstat.spec,v 1.1 2001/01/29 22:06:58 mci Exp $
+# $Id: Owl/packages/diffstat/diffstat.spec,v 1.2 2001/01/30 10:19:15 mci Exp $
 
 Summary: A utility which provides statistics based on the output of diff.
 Name: diffstat
@@ -24,7 +24,7 @@ diff command's output.  You'll need to also install diffutils.
 
 %build
 %configure
-make
+make CFLAGS="$RPM_OPT_FLAGS -Wall"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -40,6 +40,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/*/*
 
 %changelog
+* Tue Jan 30 2001 Michail Litvak <mci@owl.openwall.com>
+- add $RPM_OPT_FLAGS using for compiling
+
 * Mon Jan 29 2001 Michail Litvak <mci@owl.openwall.com>
 - imported spec from RH
 - moved to new release
