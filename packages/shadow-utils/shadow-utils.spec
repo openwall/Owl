@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.4 2001/02/09 22:39:10 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.5 2001/02/10 00:00:05 solar Exp $
 
 %define BUILD_CHSH_CHFN	'yes'
 %define BUILD_VIPW_VIGR	'yes'
@@ -6,7 +6,7 @@
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 19990827
-Release: 12owl
+Release: 13owl
 Serial: 1
 Source0: ftp://ftp.ists.pwr.wroc.pl/pub/linux/shadow/shadow-%{version}.tar.gz
 Source1: login.defs
@@ -93,8 +93,9 @@ rm -rf $RPM_BUILD_ROOT
 rm -rf build-$RPM_ARCH
 
 %post
-grep ^shadow: /etc/group &> /dev/null || groupadd -g 42 shadow
-chgrp shadow /etc/shadow && chmod 440 /etc/shadow
+grep -q ^shadow: /etc/group || groupadd -g 42 shadow
+grep -q '^shadow:[^:]*:42:' /etc/group && \
+	chgrp shadow /etc/shadow && chmod 440 /etc/shadow
 
 %files
 %defattr(-,root,root)
