@@ -1,9 +1,9 @@
-# $Id: Owl/packages/john/john.spec,v 1.4 2002/04/26 09:48:48 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.5 2002/05/08 18:57:37 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.31.2
-Release: owl2
+Version: 1.6.31.3
+Release: owl1
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.openwall.com/pub/projects/john/john-%{version}.tar.gz
