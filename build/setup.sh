@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/setup.sh,v 1.3 2001/06/20 21:02:14 solar Exp $
+# $Id: Owl/build/setup.sh,v 1.4 2001/07/27 23:25:12 solar Exp $
 
 . installworld.conf
 
@@ -11,4 +11,7 @@ fi
 umask $UMASK
 
 export PATH=/sbin:/usr/sbin:$PATH
+if [ $ROOT != / ]; then
+	export TMPDIR= TMP=
+fi
 chroot $ROOT /usr/sbin/setup
