@@ -66,11 +66,14 @@ Sollten Probleme während des "installworld" Vorgangs auftreten (auf
 Kommando noch mal neu gestartet werden.
 
 Wenn die Owl-Benutzersoftware installiert ist, muss man nur noch einen
-Kernel installieren. Aktuell ist das ein 2.2er Kernel und wir empfehlen,
-dass der Kernel installiert wird, der mit Owl mitgeliefert wird.
+Kernel installieren. Aktuell bringt Owl für den 2.2er Kernel volle
+Unterstützung mit, läuft aber auch auf einem 2.4er Kernel (will man aber
+Owl mit "make buildworld" neu übersetzen, müssen die Linux 2.2er Kernel
+Sourcen, wie es in BUILD erklärt wird, zur Verfügung stehen). Es wird
+empfohlen, den Kernel zu installieren, der mit Owl mitgeliefert wird.
 
 Man kann nun den boot loader konfigurieren, der unter Owl verfügbar
 ist (LILO oder SILO, kommt auf die Architektur an), oder einen
 bereits installierten (falls vorhanden) verwenden.
 
-$Id: Owl/doc/de/INSTALL,v 1.4 2002/06/22 15:02:23 schmidt Exp $
+$Id: Owl/doc/de/INSTALL,v 1.5 2002/08/22 08:25:33 schmidt Exp $
