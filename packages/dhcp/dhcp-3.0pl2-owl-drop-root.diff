@@ -1,6 +1,6 @@
 diff -urpN dhcp-3.0pl2.orig/includes/cf/linux.h dhcp-3.0pl2/includes/cf/linux.h
 --- dhcp-3.0pl2.orig/includes/cf/linux.h	Thu May 10 21:28:55 2001
-+++ dhcp-3.0pl2/includes/cf/linux.h	Fri Sep 12 14:02:35 2003
++++ dhcp-3.0pl2/includes/cf/linux.h	Sun Sep 14 17:07:06 2003
 @@ -92,11 +92,11 @@ extern int h_errno;
     directory. */
  
@@ -17,7 +17,7 @@ diff -urpN dhcp-3.0pl2.orig/includes/cf/linux.h dhcp-3.0pl2/includes/cf/linux.h
  /* Varargs stuff... */
 diff -urpN dhcp-3.0pl2.orig/relay/dhcrelay.8 dhcp-3.0pl2/relay/dhcrelay.8
 --- dhcp-3.0pl2.orig/relay/dhcrelay.8	Thu Oct  4 23:47:39 2001
-+++ dhcp-3.0pl2/relay/dhcrelay.8	Tue Sep  9 12:12:16 2003
++++ dhcp-3.0pl2/relay/dhcrelay.8	Mon Sep 15 11:56:15 2003
 @@ -79,6 +79,14 @@ dhcrelay - Dynamic Host Configuration Pr
  |
  .I discard
@@ -42,13 +42,13 @@ diff -urpN dhcp-3.0pl2.orig/relay/dhcrelay.8 dhcp-3.0pl2/relay/dhcrelay.8
 +.B -u
 +option for the dedicated pseudo-user and additional
 +.B -j
-+for the chroot path (e.g. /var/lib/dhcp/dhcrelay).
++for the chroot path (e.g. /var/empty).
  .SH RELAY AGENT INFORMATION OPTIONS
  If the
  .B -a
 diff -urpN dhcp-3.0pl2.orig/relay/dhcrelay.c dhcp-3.0pl2/relay/dhcrelay.c
 --- dhcp-3.0pl2.orig/relay/dhcrelay.c	Thu Apr 19 18:48:53 2001
-+++ dhcp-3.0pl2/relay/dhcrelay.c	Tue Sep  9 16:18:16 2003
++++ dhcp-3.0pl2/relay/dhcrelay.c	Mon Sep 15 12:47:57 2003
 @@ -48,6 +48,12 @@ static char ocopyright[] =
  
  #include "dhcpd.h"
@@ -126,7 +126,7 @@ diff -urpN dhcp-3.0pl2.orig/relay/dhcrelay.c dhcp-3.0pl2/relay/dhcrelay.c
  
 +	/* chroot if possible */	
 +	if (server_user && !server_jail) {
-+		if (drop_root(server_user, "/var/lib/dhcp/dhcrelay") < 0)
++		if (drop_root(server_user, "/var/empty") < 0)
 +			log_fatal("dhcrelay: Failed to drop root.");
 +	}
 +	else if (server_jail && !server_user)
@@ -160,7 +160,7 @@ diff -urpN dhcp-3.0pl2.orig/relay/dhcrelay.c dhcp-3.0pl2/relay/dhcrelay.c
  	while (i < len) {
 diff -urpN dhcp-3.0pl2.orig/server/dhcpd.8 dhcp-3.0pl2/server/dhcpd.8
 --- dhcp-3.0pl2.orig/server/dhcpd.8	Thu Oct  4 23:49:13 2001
-+++ dhcp-3.0pl2/server/dhcpd.8	Tue Sep  9 12:12:16 2003
++++ dhcp-3.0pl2/server/dhcpd.8	Sun Sep 14 17:07:06 2003
 @@ -74,6 +74,14 @@ dhcpd - Dynamic Host Configuration Proto
  .I trace-playback-file
  ]
@@ -190,7 +190,7 @@ diff -urpN dhcp-3.0pl2.orig/server/dhcpd.8 dhcp-3.0pl2/server/dhcpd.8
  section should be used as an overview of the configuration process,
 diff -urpN dhcp-3.0pl2.orig/server/dhcpd.c dhcp-3.0pl2/server/dhcpd.c
 --- dhcp-3.0pl2.orig/server/dhcpd.c	Wed Jan 15 00:02:33 2003
-+++ dhcp-3.0pl2/server/dhcpd.c	Tue Sep  9 16:17:55 2003
++++ dhcp-3.0pl2/server/dhcpd.c	Mon Sep 15 12:47:38 2003
 @@ -55,6 +55,12 @@ static char url [] = "For info, please v
  #include "dhcpd.h"
  #include "version.h"

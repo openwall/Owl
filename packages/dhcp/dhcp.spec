@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.15 2003/09/15 08:54:54 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.16 2003/09/15 12:33:38 schmidt Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -86,7 +86,7 @@ make install DESTDIR=$RPM_BUILD_ROOT MANDIR=%{_mandir}
 cd $RPM_BUILD_ROOT
 
 mkdir -p $RPM_BUILD_ROOT/etc/{rc.d/init.d,sysconfig}
-mkdir -p $RPM_BUILD_ROOT/var/lib/dhcp/{dhcpd,dhcrelay,dhclient}/state
+mkdir -p $RPM_BUILD_ROOT/var/lib/dhcp/{dhcpd,dhclient}/state
 
 install -m 700 $RPM_SOURCE_DIR/dhcpd.init $RPM_BUILD_ROOT/etc/rc.d/init.d/dhcpd
 install -m 644 $RPM_SOURCE_DIR/dhcpd.conf.sample $RPM_BUILD_ROOT/
@@ -165,15 +165,13 @@ fi
 %defattr(-,root,root)
 /usr/sbin/dhcrelay
 %{_mandir}/man8/dhcrelay.8*
-%attr(0750,root,dhcp) %dir /var/lib/dhcp/dhcrelay
-%attr(1770,root,dhcp) %dir /var/lib/dhcp/dhcrelay/state
 
 %changelog
 * Mon Sep 15 2003 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl1
 - Create the pseudo-user/group in the common package.
 
 * Sun Sep 14 2003 Matthias Schmidt <schmidt@owl.openwall.com> 3.0pl2-owl0.4
-- Create three subdirectories for every service under /var/lib/dhcp
+- Create two subdirectories for dhcpd and dhclient under /var/lib/dhcp
 
 * Tue Sep 09 2003 Matthias Schmidt <schmidt@owl.openwall.com> 3.0pl2-owl0.3
 - Minor changes in the drop-root patch
