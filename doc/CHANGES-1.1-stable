@@ -5,6 +5,13 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 1.1 and Owl 1.1-stable.
 
+2004/06/07	Package: openssh
+SECURITY FIX	Severity: high, remote, passive
+Fixed directory traversal vulnerability in scp which allowed malicious
+SSH servers to overwrite arbitrary files on the client system.
+Reference:
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0175
+
 2004/05/18	Package: cvs
 SECURITY FIX	Severity: none to high, remote, active
 Added a back-port of the fix for the CVS server heap-based buffer
@@ -96,4 +103,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 2004/01/15	Owl/doc/DOWNLOAD, Owl/doc/*/DOWNLOAD, Owl/doc/fr/CREDITS
 Sync'ed with the minor post-release updates made in Owl-current.
 
-$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.10 2004/05/19 10:30:34 solar Exp $
+$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.11 2004/06/07 05:52:28 solar Exp $
