@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.18 2002/02/08 18:50:37 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.19 2002/03/01 20:06:30 solar Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
 Version: 0.60
-Release: owl13
+Release: owl14
 License: BSD or GPL
 Group: Utilities/System
 URL: http://www.kernel.org/pub/linux/libs/pam/
@@ -16,6 +16,7 @@ Source5: passwd.control
 Patch0: SimplePAMApps-0.60-owl-login.diff
 Patch1: SimplePAMApps-0.60-owl-passwd.diff
 Patch2: SimplePAMApps-0.60-owl-su.diff
+Patch3: SimplePAMApps-0.60-owl-ut_id.diff
 Requires: tcb, pam_passwdqc >= 0.2, pam_mktemp
 Requires: owl-control < 2.0
 Provides: SimplePAMApps <= 0.60-13owl
@@ -31,6 +32,7 @@ includes "login", "su", and "passwd".
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 touch conf/.ignore_age
@@ -73,6 +75,11 @@ rm -rf $RPM_BUILD_ROOT
 /etc/control.d/facilities/*
 
 %changelog
+* Fri Mar 01 2002 Solar Designer <solar@owl.openwall.com>
+- Pick the best match utmp entry to replace when ut_id's don't match; if
+that was the case, leave ut_id at what it was in utmp such that the entry
+may be manipulated with pututline(3).
+
 * Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 - Use the _mandir macro.
