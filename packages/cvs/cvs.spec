@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cvs/cvs.spec,v 1.15 2003/06/28 14:43:46 solar Exp $
+# $Id: Owl/packages/cvs/cvs.spec,v 1.16 2003/10/29 18:40:33 solar Exp $
 
 Summary: A version control system.
 Name: cvs
@@ -7,7 +7,7 @@ Release: owl3
 License: GPL
 Group: Development/Tools
 URL: http://www.cvshome.org
-Source: ftp://ftp.cvshome.com/pub/%{name}-%{version}/%{name}-%{version}.tar.bz2
+Source: ftp://ftp.cvshome.com/pub/%name-%version/%name-%version.tar.bz2
 Patch0: cvs-1.11.5-owl-tmp.diff
 Patch1: cvs-1.11.5-owl-vitmp.diff
 Patch2: cvs-1.11.5-owl-fixes.diff
@@ -16,9 +16,9 @@ Patch4: cvs-1.11.5-owl-no-checkin-update-prog.diff
 Patch5: cvs-1.11.5-owl-no-world-writables.diff
 Patch10: cvs-1.11.5-alt-mdk-owl-canonicalize.diff
 PreReq: /sbin/install-info
-Prefix: %{_prefix}
+Prefix: %_prefix
 BuildRequires: mktemp >= 1:1.3.1
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 Concurrent Versions System (CVS) is a version control system which can
@@ -77,27 +77,24 @@ rm -rf $RPM_BUILD_ROOT
 %makeinstall
 
 cd $RPM_BUILD_ROOT
-find .%{_datadir}/cvs -type f -print0 | xargs -r0 chmod -x --
-chmod 755 .%{_datadir}/cvs/contrib/rcs2log
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+find .%_datadir/cvs -type f -print0 | xargs -r0 chmod -x --
+chmod 755 .%_datadir/cvs/contrib/rcs2log
 
 %post
-/sbin/install-info %{_infodir}/cvs.info.gz /%{_infodir}/dir
-/sbin/install-info %{_infodir}/cvsclient.info.gz /%{_infodir}/dir
+/sbin/install-info %_infodir/cvs.info.gz /%_infodir/dir
+/sbin/install-info %_infodir/cvsclient.info.gz /%_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/cvs.info.gz %{_infodir}/dir
-	/sbin/install-info --delete %{_infodir}/cvsclient.info.gz %{_infodir}/dir
+	/sbin/install-info --delete %_infodir/cvs.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/cvsclient.info.gz %_infodir/dir
 fi
 
 %files
 %defattr(-,root,root)
-%{_bindir}/cvs*
-%{_mandir}/*/*
-%{_infodir}/*.info*
+%_bindir/cvs*
+%_mandir/*/*
+%_infodir/*.info*
 
 %files doc
 %defattr(-,root,root)
@@ -106,8 +103,8 @@ fi
 
 %files contrib
 %defattr(-,root,root)
-%{_bindir}/rcs2log
-%{_datadir}/cvs
+%_bindir/rcs2log
+%_datadir/cvs
 
 %changelog
 * Sat Jun 28 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl3
