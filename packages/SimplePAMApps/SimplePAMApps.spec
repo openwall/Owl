@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.21 2002/03/24 19:01:43 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.22 2002/08/22 00:43:31 solar Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
 Version: 0.60
-Release: owl15
+Release: owl16
 License: BSD or GPL
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
@@ -75,6 +75,9 @@ rm -rf $RPM_BUILD_ROOT
 /etc/control.d/facilities/*
 
 %changelog
+* Thu Aug 22 2002 Solar Designer <solar@owl.openwall.com>
+- Use pam_motd with login.
+
 * Sun Mar 24 2002 Solar Designer <solar@owl.openwall.com>
 - Group: System Environment/Base
 

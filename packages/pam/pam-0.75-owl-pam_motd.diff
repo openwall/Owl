@@ -1,0 +1,90 @@
+diff -ur pam-0.75.orig/modules/pam_motd/pam_motd.c pam-0.75/modules/pam_motd/pam_motd.c
+--- pam-0.75.orig/modules/pam_motd/pam_motd.c	Wed Jan 10 02:41:36 2001
++++ pam-0.75/modules/pam_motd/pam_motd.c	Thu Aug 22 04:10:44 2002
+@@ -18,6 +18,7 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <pwd.h>
++#include <errno.h>
+ 
+ #include <security/_pam_macros.h>
+ /*
+@@ -32,6 +33,27 @@
+ 
+ #include <security/pam_modules.h>
+ 
++static int read_loop(int fd, char *buffer, int count)
++{
++	int offset, block;
++
++	offset = 0;
++	while (count > 0) {
++		block = read(fd, &buffer[offset], count);
++
++		if (block < 0) {
++			if (errno == EINTR) continue;
++			return block;
++		}
++		if (!block) return offset;
++
++		offset += block;
++		count -= block;
++	}
++
++	return offset;
++}
++
+ /* --- session management functions (only) --- */
+ 
+ PAM_EXTERN
+@@ -49,7 +71,7 @@
+      int fd;
+      char *mtmp=NULL;
+      const char *motd_path=NULL;
+-     struct pam_conv *conversation;
++     struct pam_conv *conv;
+      struct pam_message message;
+      struct pam_message *pmessage = &message;
+      struct pam_response *resp = NULL;
+@@ -77,21 +99,28 @@
+ 
+      if ((fd = open(motd_path, O_RDONLY, 0)) >= 0) {
+        /* fill in message buffer with contents of motd */
+-       if ((fstat(fd, &st) < 0) || !st.st_size)
+-         return retval;
++       if ((fstat(fd, &st) < 0) || !st.st_size || st.st_size > 0x10000) {
++	  close(fd);
++	  return retval;
++       }
+        message.msg = mtmp = malloc(st.st_size+1);
+        /* if malloc failed... */
+-       if (!message.msg) return retval;
+-       read(fd, mtmp, st.st_size);
+-       if (mtmp[st.st_size-1] == '\n')
+-	  mtmp[st.st_size-1] = '\0';
+-       else
+-	  mtmp[st.st_size] = '\0';
+-       close(fd);
+-       /* Use conversation function to give user contents of motd */
+-       pam_get_item(pamh, PAM_CONV, (const void **)&conversation);
+-       conversation->conv(1, (const struct pam_message **)&pmessage,
+-			  &resp, conversation->appdata_ptr);
++       if (!message.msg) {
++	  close(fd);
++	  return retval;
++       }
++       if (read_loop(fd, mtmp, st.st_size) == st.st_size) {
++	  close(fd);
++	  if (mtmp[st.st_size-1] == '\n')
++	     mtmp[st.st_size-1] = '\0';
++	  else
++	     mtmp[st.st_size] = '\0';
++	  /* Use conversation function to give user contents of motd */
++	  if (pam_get_item(pamh, PAM_CONV, (const void **)&conv) == PAM_SUCCESS)
++	     conv->conv(1, (const struct pam_message **)&pmessage,
++			&resp, conv->appdata_ptr);
++       } else
++	  close(fd);
+        free(mtmp);
+        if (resp)
+ 	   _pam_drop_reply(resp, 1);

@@ -1,5 +1,5 @@
 #%PAM-1.0
-# $Id: Owl/packages/SimplePAMApps/login.pam,v 1.7 2001/11/19 04:39:36 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/login.pam,v 1.8 2002/08/22 00:43:31 solar Exp $
 auth       required	/lib/security/pam_securetty.so
 auth       required	/lib/security/pam_tcb.so shadow fork nullok
 auth       required	/lib/security/pam_nologin.so
@@ -10,3 +10,4 @@ session    required	/lib/security/pam_tcb.so
 session    required	/lib/security/pam_lastlog.so nowtmp
 session    required	/lib/security/pam_limits.so
 session    required	/lib/security/pam_mktemp.so
+session    required	/lib/security/pam_motd.so
