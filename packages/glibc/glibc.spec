@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.27 2002/02/07 21:04:23 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.28 2002/02/08 18:50:37 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -53,7 +53,7 @@ PreReq: /sbin/ldconfig
 %ifarch alpha
 Provides: ld.so.2
 %endif
-Provides: glibc-crypt_blowfish = %{crypt_bf_version}
+Provides: glibc-crypt_blowfish = %{crypt_bf_version}, glibc <= 2.1.3-19owl
 AutoReq: false
 BuildRoot: /override/%{name}-%{version}
 
