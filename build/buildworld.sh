@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.19 2002/03/20 16:10:29 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.20 2002/06/21 14:45:13 solar Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -23,6 +23,25 @@ function log()
 	echo "`date +%H:%M:%S`: $MESSAGE" | tee -a $HOME/logs/buildworld
 }
 
+function spec()
+{
+	local PACKAGE DIR SPEC
+
+	PACKAGE=$1
+
+	DIR=$NATIVE/$PACKAGES/$PACKAGE
+
+	SPEC=
+	if [ -f $DIR/build.spec ]; then
+		SPEC="`cat $DIR/build.spec`"
+		test -n "$SPEC" && SPEC="$DIR/$SPEC"
+	elif [ -f $DIR/$PACKAGE.spec ]; then
+		SPEC=$DIR/$PACKAGE.spec
+	fi
+
+	echo "$SPEC"
+}
+
 function build_native()
 {
 	local NUMBER PACKAGE WORK NAME VERSION ARCHIVE SPEC
@@ -35,7 +54,7 @@ function build_native()
 	log "#$NUMBER: Building $PACKAGE"
 	cd $WORK/SOURCES/ || exit 1
 	if [ -f $NATIVE/$PACKAGES/$PACKAGE/build.archive ]; then
-		while read NAME VERSION SPEC; do
+		while read NAME VERSION; do
 			ARCHIVE=${NAME}-${VERSION}
 			ln -sf $NATIVE/$PACKAGES/$PACKAGE/$NAME $ARCHIVE
 			tar czhf $ARCHIVE.tar.gz $ARCHIVE \
@@ -48,16 +67,13 @@ function build_native()
 			rm $ARCHIVE
 		done < $NATIVE/$PACKAGES/$PACKAGE/build.archive
 	fi
-	SPEC="`cat $NATIVE/$PACKAGES/$PACKAGE/build.spec 2>/dev/null`"
-	if [ -n "$SPEC" ]; then
-		ln -sf $NATIVE/$PACKAGES/$PACKAGE/$SPEC .
-	fi
 	ls $SOURCES/$PACKAGES/$PACKAGE/*.src.rpm 2>/dev/null | \
 		xargs -n 1 -i sh -c 'rpm2cpio {} | cpio -i --quiet'
 	ln -sf $SOURCES/$PACKAGES/$PACKAGE/* .
 	rm -f '*' || :
 	ln -sf $NATIVE/$PACKAGES/$PACKAGE/* .
-	$TIME $PERSONALITY rpm -ba $PACKAGE.spec \
+	test -e $PACKAGE.spec || ln -s "`spec $PACKAGE`" $PACKAGE.spec
+	$TIME $PERSONALITY rpm -bb $PACKAGE.spec \
 		$TARGET \
 		--define "distribution $NATIVE_DISTRIBUTION" \
 		--define "vendor $NATIVE_VENDOR" \
@@ -65,11 +81,11 @@ function build_native()
 		--define "buildhost $BUILDHOST" \
 		--define "home $HOME" \
 		--define "number $NUMBER" \
-		&> $HOME/logs/$PACKAGE < /dev/null
+		&> $HOME/logs/$PACKAGE < /dev/null || \
+		log "#$NUMBER: Failed $PACKAGE"
 	cd $HOME/native-work || exit 1
 	mv $WORK/RPMS/*/* $HOME/RPMS/ &> /dev/null
-	mv $WORK/SRPMS/* $HOME/SRPMS/ &> /dev/null || \
-		log "#$NUMBER: Failed $PACKAGE"
+	mv $WORK/SRPMS/* $HOME/SRPMS/ &> /dev/null
 	rm -rf $WORK/BUILD/*
 	rm $WORK/SOURCES/*
 }
@@ -92,6 +108,7 @@ function build_foreign()
 		--define "number $NUMBER" \
 		&> $HOME/logs/$PACKAGE < /dev/null
 	if mv $WORK/RPMS/*/* $HOME/RPMS/ &> /dev/null; then
+		ln $FOREIGN/$PACKAGE.src.rpm $HOME/SRPMS/ &> /dev/null ||
 		cp $FOREIGN/$PACKAGE.src.rpm $HOME/SRPMS/
 	else
 		log "#$NUMBER: Failed $PACKAGE"
@@ -109,18 +126,18 @@ function detect()
 	*86)
 		ARCHITECTURE=i386
 		;;
-	alpha)
-		ARCHITECTURE=alpha
-		;;
 	sparc*)
 		ARCHITECTURE=sparc
+		;;
+	alpha)
+		ARCHITECTURE=alpha
 		;;
 	esac
 }
 
 function builder()
 {
-	local NUMBER REGEX
+	local NUMBER SOURCE BINARY SPEC REGEX
 
 	NUMBER=$1
 
@@ -147,16 +164,28 @@ function builder()
 	cd $HOME/native-work || exit 1
 
 	ls $NATIVE/$PACKAGES/ | grep -v '^CVS$' |
-	while read PACKAGE; do
-		test -f $NATIVE/$PACKAGES/$PACKAGE/$PACKAGE.spec -o \
-			-f $NATIVE/$PACKAGES/$PACKAGE/build.spec || continue
-		mkdir .$PACKAGE &> /dev/null || continue
-		touch .$PACKAGE/$NUMBER
-		REGEX="^${PACKAGE}-[^-]*[0-9][^-]*-[^-]*[0-9][^-]*\.src\.rpm\$"
-		if [ -n "`ls $HOME/SRPMS/ | grep "$REGEX"`" ]; then
-			log "#$NUMBER: Skipping $PACKAGE"
+	while read SOURCE; do
+		SPEC="`spec $SOURCE`"
+		test -n "$SPEC" || continue
+		mkdir .${SOURCE} &> /dev/null || continue
+		touch .${SOURCE}/$NUMBER
+		if grep -q '^%files[[:space:]]*$' $SPEC; then
+			REGEX='^$'
 		else
-			build_native $NUMBER $PACKAGE
+			REGEX="^${SOURCE}-[^-]*-[^-]*\$"
+		fi
+		rpm -q --specfile $SPEC | grep -v "$REGEX" |
+		while read BINARY; do
+			REGEX="^${BINARY}\.[^.]*\.rpm\$"
+			if [ -z "`ls $HOME/RPMS/ | grep "$REGEX"`" ]; then
+				touch .${SOURCE}/do
+				break
+			fi
+		done
+		if [ -e .${SOURCE}/do ]; then
+			build_native $NUMBER $SOURCE
+		else
+			log "#$NUMBER: Skipping $SOURCE"
 		fi
 	done
 
@@ -165,14 +194,14 @@ function builder()
 	cd $HOME/foreign-work || exit 1
 
 	ls $FOREIGN/ |
-	while read PACKAGE; do
-		PACKAGE=`basename $PACKAGE .src.rpm`
-		mkdir .$PACKAGE &> /dev/null || continue
-		touch .$PACKAGE/$NUMBER
-		if [ -e $HOME/SRPMS/$PACKAGE.src.rpm ]; then
-			log "#$NUMBER: Skipping $PACKAGE"
+	while read SOURCE; do
+		SOURCE=`basename $SOURCE .src.rpm`
+		mkdir .${SOURCE} &> /dev/null || continue
+		touch .${SOURCE}/$NUMBER
+		if [ -e $HOME/SRPMS/$SOURCE.src.rpm ]; then
+			log "#$NUMBER: Skipping $SOURCE"
 		else
-			build_foreign $NUMBER $PACKAGE
+			build_foreign $NUMBER $SOURCE
 		fi
 	done
 
