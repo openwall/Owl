@@ -1,4 +1,4 @@
-# $Id: Owl/packages/readline/readline.spec,v 1.3 2000/12/06 01:43:46 mci Exp $
+# $Id: Owl/packages/readline/readline.spec,v 1.4 2000/12/06 14:12:30 mci Exp $
 
 Summary: A library for editing typed in command lines.
 Name: readline
@@ -54,31 +54,30 @@ need to have the readline package installed.
 make all shared
 
 %install
-[ "${RPM_BUILD_ROOT}" != "/" ] && rm -rf ${RPM_BUILD_ROOT}
+rm -rf ${RPM_BUILD_ROOT}
 mkdir -p ${RPM_BUILD_ROOT}%{_libdir}
 
 %makeinstall install install-shared
 
- mkdir -p ${RPM_BUILD_ROOT}%{_docdir}/examples
- install -m 644 examples/* ${RPM_BUILD_ROOT}%{_docdir}/examples
+mkdir -p ${RPM_BUILD_ROOT}%{_docdir}/examples
+install -m 644 examples/* ${RPM_BUILD_ROOT}%{_docdir}/examples
 
- chmod 755 ${RPM_BUILD_ROOT}/%{prefix}/lib/*.so*
+chmod 755 ${RPM_BUILD_ROOT}/%{prefix}/lib/*.so*
 
-{ cd ${RPM_BUILD_ROOT}
-  ln -sf libreadline.so.%{version} .%{_libdir}/libreadline.so
-  ln -sf libhistory.so.%{version} .%{_libdir}/libhistory.so
-  ln -sf libreadline.so.%{version} \
-  	.%{_libdir}/libreadline.so.`echo %{version} | sed 's^\..*^^g'`
-  ln -sf libhistory.so.%{version} \
+cd ${RPM_BUILD_ROOT}
+ln -sf libreadline.so.%{version} .%{_libdir}/libreadline.so
+ln -sf libhistory.so.%{version} .%{_libdir}/libhistory.so
+ln -sf libreadline.so.%{version} \
+	.%{_libdir}/libreadline.so.`echo %{version} | sed 's^\..*^^g'`
+ln -sf libhistory.so.%{version} \
   	.%{_libdir}/libhistory.so.`echo %{version} | sed 's^\..*^^g'`
 
 # Hack !
-  ln -s libreadline.so.%{version} .%{_libdir}/libreadline.so.3
-  ln -s libreadline.so.%{version} .%{_libdir}/libreadline.so.3.0
-}
+ln -s libreadline.so.%{version} .%{_libdir}/libreadline.so.3
+ln -s libreadline.so.%{version} .%{_libdir}/libreadline.so.3.0
 
 %clean
-[ "${RPM_BUILD_ROOT}" != "/" ] && rm -rf ${RPM_BUILD_ROOT}
+rm -rf ${RPM_BUILD_ROOT}
 
 %post 
 /sbin/ldconfig
@@ -88,9 +87,9 @@ mkdir -p ${RPM_BUILD_ROOT}%{_libdir}
 %postun -p /sbin/ldconfig
 
 %preun
-if [ $1 = 0 ]; then
-   /sbin/install-info --delete %{_infodir}/history.info.gz %{_infodir}/dir
-   /sbin/install-info --delete %{_infodir}/readline.info.gz %{_infodir}/dir
+if [ "$1" -eq 0 ]; then
+  /sbin/install-info --delete %{_infodir}/history.info.gz %{_infodir}/dir
+  /sbin/install-info --delete %{_infodir}/readline.info.gz %{_infodir}/dir
 fi
 
 %files
@@ -107,9 +106,9 @@ fi
 %doc %{_docdir}/examples/*
 
 %changelog
-
 * Wed Dec 06 2000 Michail Litvak <mci@owl.openwall.com>
-- hack for compatibility with readline2  (Provides: libreadline.so.3)
+- hack for compatibility with readline2  
+- spec file cleanups
 
 * Tue Dec 05 2000 Michail Litvak <mci@owl.openwall.com>
 - Imported from RH
