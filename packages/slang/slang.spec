@@ -1,9 +1,9 @@
-# $Id: Owl/packages/slang/Attic/slang.spec,v 1.5 2002/10/12 09:12:52 solar Exp $
+# $Id: Owl/packages/slang/Attic/slang.spec,v 1.6 2002/10/12 10:37:57 solar Exp $
 
 Summary: The shared library for the S-Lang extension language.
 Name: slang
 Version: 1.4.6
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Libraries
 URL: http://www.s-lang.org
@@ -66,7 +66,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(-,root,root)
-%doc doc
+%doc doc/*
 %{_libdir}/libslang.a
 %{_libdir}/libslang.so
 %{_includedir}/slang
