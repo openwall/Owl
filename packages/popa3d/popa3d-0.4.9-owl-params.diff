@@ -1,32 +1,32 @@
-diff -ur popa3d-0.4.4.orig/params.h popa3d-0.4.4/params.h
---- popa3d-0.4.4.orig/params.h	Wed Dec  6 12:56:31 2000
-+++ popa3d-0.4.4/params.h	Wed Dec  6 13:38:15 2000
+--- popa3d-0.4.9/params.h.orig	Sun May 20 09:00:31 2001
++++ popa3d-0.4.9/params.h	Mon May 28 02:30:54 2001
 @@ -8,7 +8,7 @@
  /*
-  * Are we going to be a standalone server, or start via an inetd clone?
+  * Are we going to be a standalone server or start via an inetd clone?
   */
 -#define POP_STANDALONE			0
 +#define POP_STANDALONE			1
  
  #if POP_STANDALONE
  
-@@ -107,8 +107,8 @@
+@@ -108,9 +108,9 @@
   * Note that there's no built-in password aging support.
   */
  #define AUTH_PASSWD			0
 -#define AUTH_SHADOW			1
--#define AUTH_PAM_USERPASS		0
 +#define AUTH_SHADOW			0
+ #define AUTH_PAM			0
+-#define AUTH_PAM_USERPASS		0
 +#define AUTH_PAM_USERPASS		1
  
- #if AUTH_PAM_USERPASS
+ #if AUTH_PAM || AUTH_PAM_USERPASS
  #define AUTH_PAM_SERVICE		"popa3d"
-@@ -121,7 +121,7 @@
+@@ -125,7 +125,7 @@
   * it harder (but still far from impossible, on most systems) to check
   * for valid usernames. Adjust it for your crypt(3).
   */
 -#define AUTH_DUMMY_SALT			"xx"
 +#define AUTH_DUMMY_SALT			"$2a$08$xxxxxxxxxxxxxxxxxxxxxx"
  
- /*
-  * Message to return to the client when authentication fails. You can
+ #endif
+ 
