@@ -1,12 +1,12 @@
-# $Id: Owl/packages/libnet/libnet.spec,v 1.3 2002/02/04 14:24:37 mci Exp $
+# $Id: Owl/packages/libnet/libnet.spec,v 1.4 2002/02/04 17:23:22 solar Exp $
 
-Summary: "libpwrite" Network Routine Library
+Summary: "libpwrite" Network Routine Library.
 Name: libnet
 Version: 1.0.2a
 Release: owl2
 Epoch: 1
 License: BSD
-Group: Libraries
+Group: System Environment/Libraries
 URL: http://www.packetfactory.net/libnet/
 Source: http://www.packetfactory.net/libnet/dist/%{name}-%{version}.tar.gz
 Patch0: libnet-1.0.2a-pld-shared.diff
@@ -27,7 +27,7 @@ functionality.
 %package devel
 Summary: Header files and development documentation for libnet
 Group: Development/Libraries
-Requires: %{name} = %{version}
+Requires: %{name} = %{version}-%{release}
 
 %description devel
 Header files and development documentation for libnet.
@@ -40,8 +40,7 @@ Header files and development documentation for libnet.
 %build
 aclocal
 autoconf
-%configure \
-	--with-pf_packet=yes
+%configure --with-pf_packet=yes
 %{__make} CFLAGS="$RPM_OPT_FLAGS"
 
 %install
@@ -56,7 +55,7 @@ ln -sf libnet.so.*.* libnet.so
 popd
 ln -sf libnet.so $RPM_BUILD_ROOT%{_libdir}/libpwrite
 
-%post   -p /sbin/ldconfig
+%post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
 %clean
