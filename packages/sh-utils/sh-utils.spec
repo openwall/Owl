@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sh-utils/Attic/sh-utils.spec,v 1.6 2002/08/05 08:05:14 solar Exp $
+# $Id: Owl/packages/sh-utils/Attic/sh-utils.spec,v 1.7 2003/10/25 08:57:50 solar Exp $
 
 # The texinfo documentation for fileutils, sh-utils, and textutils is
 # currently provided by fileutils.
@@ -75,7 +75,9 @@ for i in basename date echo false nice pwd sleep stty true uname env; do
 	mv .%{_bindir}/$i bin/
 done
 
-ln -s /bin/env .%{_bindir}/
+ln -s ../../bin/env .%{_bindir}/
+test -r .%{_bindir}/env
+
 ln -s test .%{_bindir}/[
 
 mkdir -p .%{_sbindir}
