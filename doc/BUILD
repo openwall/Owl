@@ -74,6 +74,12 @@ buildworld.conf (as well as other *.conf's) may be edited by copying
 it from checkout/Owl/build into /usr/src/world.  You need to remove
 the symlink first, if one has previously been created for you.
 
+All packages are built with whatever versions of libraries and build
+tools are installed on the system.  Multiple iterations of buildworld
+and installworld (two are sufficient most of the time) should be used
+when there have been significant updates to packages used during the
+builds.
+
 
 	Installing binary packages.
 
@@ -101,4 +107,4 @@ We do consider the building of SRPM's and the lack of automatic build
 dependency handling for re-builds to be bugs in the build environment.
 We will eventually fix these.
 
-$Id: Owl/doc/BUILD,v 1.5 2001/01/19 17:02:41 solar Exp $
+$Id: Owl/doc/BUILD,v 1.6 2001/01/19 18:26:32 solar Exp $
