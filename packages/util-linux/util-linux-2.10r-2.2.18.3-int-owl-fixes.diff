@@ -1,0 +1,33 @@
+diff -ur util-linux-2.10r.int/mount/lomount.c util-linux-2.10r/mount/lomount.c
+--- util-linux-2.10r.int/mount/lomount.c	Wed Apr 18 08:55:42 2001
++++ util-linux-2.10r/mount/lomount.c	Wed Apr 18 09:25:57 2001
+@@ -241,7 +241,7 @@
+ 		loopinfo.lo_encrypt_key_size = strlen(loopinfo.lo_encrypt_key);
+ 		break;
+ 	case LO_CRYPT_DES:
+-		printf(_("WARNING: Use of DES is depreciated.\n"));
++		printf(_("WARNING: Use of DES is deprecated.\n"));
+ 		pass = getpass (_("Password: "));
+ 		strncpy (loopinfo.lo_encrypt_key, pass, 8);
+ 		loopinfo.lo_encrypt_key[8] = 0;
+@@ -267,7 +267,7 @@
+ 	case LO_CRYPT_RC6:
+ 	case LO_CRYPT_DES_EDE3:
+ 	case LO_CRYPT_DFC:
+-		pass = getpass("Password :");
++		pass = getpass("Password: ");
+ 		strncpy(passwdbuff+1,pass,PASSWDBUFFLEN-1);
+ 		passwdbuff[0] = 'A';
+ 		rmd160_hash_buffer(keybits,pass,strlen(pass));
+diff -ur util-linux-2.10r.int/mount/losetup.8 util-linux-2.10r/mount/losetup.8
+--- util-linux-2.10r.int/mount/losetup.8	Wed Apr 18 08:55:42 2001
++++ util-linux-2.10r/mount/losetup.8	Wed Apr 18 08:59:40 2001
+@@ -107,7 +107,7 @@
+ .IP
+ dd if=/dev/zero of=/file bs=1k count=100
+ losetup -e blowfish /dev/loop0 /file
+-Password :
++Password:
+ mkfs -t ext2 /dev/loop0 100
+ mount -t ext2 /dev/loop0 /mnt
+  ...
