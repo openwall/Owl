@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.9 2003/09/10 21:46:39 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.10 2003/09/11 09:12:01 schmidt Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -15,6 +15,7 @@ Source2: dhcpd.conf.sample
 Patch0: dhcp-3.0pl2-owl-man.diff
 Patch1: dhcp-3.0pl2-owl-drop-root.diff
 Patch2: dhcp-3.0pl2-rh-owl-script.diff
+Patch3: dhcp-3.0pl2-owl-warnings.diff
 PreReq: /sbin/chkconfig, /etc/rc.d/init.d
 BuildRoot: /override/%{name}-%{version}
 
@@ -69,6 +70,7 @@ subnet.  The DHCP relay takes care of this for the client.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %{expand:%%define optflags %optflags -Wall -Wno-unused}
 
@@ -164,6 +166,7 @@ fi
 - Minor changes in the drop-root patch
 - Set the permissions for /var/lib/dhcp correctly
 - Passing options to dhcpd via /etc/sysconfig/dhcpd
+- Fix for the remaining 34 warnings
 
 * Tue Sep 09 2003 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl0.2
 - Applied the initial set of corrections.
