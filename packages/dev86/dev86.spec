@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dev86/dev86.spec,v 1.16 2005/01/14 03:27:51 galaxy Exp $
+# $Id: Owl/packages/dev86/dev86.spec,v 1.17 2005/01/18 13:38:47 solar Exp $
 
 Summary: A real mode 80x86 assembler and linker.
 Name: dev86
@@ -41,14 +41,14 @@ bootstrapping code, from their sources.
 %build
 CFLAGS="%optflags" \
 %__make \
-    CC="%__cc" \
-    PREFIX="%_prefix" \
-    BINDIR="%_bindir" \
-    LIBPRE="%_prefix" \
-    LIBDIR="%_libdir/bcc" \
-    MANDIR="%_mandir" \
-    ELKSSRC=.. \
-    <<!FooBar!
+	CC="%__cc" \
+	PREFIX="%_prefix" \
+	BINDIR="%_bindir" \
+	LIBPRE="%_prefix" \
+	LIBDIR="%_libdir/bcc" \
+	MANDIR="%_mandir" \
+	ELKSSRC=.. \
+	<<!FooBar!
 5
 quit
 !FooBar!
@@ -57,14 +57,14 @@ quit
 rm -rf %buildroot
 
 %__make install \
-    DIST="%buildroot" \
-    DISTPRE="%buildroot%_prefix"
+	DIST="%buildroot" \
+	DISTPRE="%buildroot%_prefix"
 
 # Build and install dis88
 %__make install-other \
-    CC="%__cc" \
-    DISTBIN="%buildroot%_bindir" \
-    DISTMAN="%buildroot%_mandir"
+	CC="%__cc" \
+	DISTBIN="%buildroot%_bindir" \
+	DISTMAN="%buildroot%_mandir"
 
 install -m 755 -s %buildroot/%_lib/elksemu %buildroot%_bindir
 rm -rf %buildroot/%_lib/
@@ -117,9 +117,9 @@ mv bin86/ChangeLog ChangeLog.bin86
 %changelog
 * Sun Jan 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.16.0-owl6
 - Made use of %%__make and %%__cc macros.
-- Added build of dis86 (it seems like we forgot it)
+- Added build of dis86 (it seems like we forgot it).
 - Optimized package build by issuing optflags to all compile stages which
-uses gcc.
+use gcc.
 - Cleaned up the spec.
 
 * Fri Feb 27 2004 Michail Litvak <mci@owl.openwall.com> 0.16.0-owl5
