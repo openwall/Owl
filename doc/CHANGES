@@ -15,6 +15,9 @@ for the packages themselves.
 2002/07/31	Package: openssl
 Updated to 0.9.6e, dropping patches that are now included.
 
+2002/07/30	Package: man-pages
+Updated to 1.52 with additional corrections.
+
 2002/07/30	Package: openssl
 SECURITY FIX	Severity: high, remote, passive to active
 Applied the official patch with 4 security fixes to vulnerabilities
@@ -862,4 +865,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.116 2002/07/31 02:18:25 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.117 2002/07/31 08:13:36 solar Exp $
