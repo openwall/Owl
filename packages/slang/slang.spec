@@ -1,9 +1,9 @@
-# $Id: Owl/packages/slang/Attic/slang.spec,v 1.10 2004/09/10 07:31:40 galaxy Exp $
+# $Id: Owl/packages/slang/Attic/slang.spec,v 1.11 2004/11/02 04:03:23 solar Exp $
 
 Summary: The shared library for the S-Lang extension language.
 Name: slang
 Version: 1.4.6
-Release: owl3.1
+Release: owl4
 License: GPL
 Group: System Environment/Libraries
 URL: http://www.s-lang.org
@@ -54,7 +54,9 @@ mkdir -p $RPM_BUILD_ROOT/usr/include/slang
 	install_lib_dir=$RPM_BUILD_ROOT%_libdir \
 	install_include_dir=$RPM_BUILD_ROOT%_includedir/slang install-elf
 
-# XXX: (GM): Remove unpackaged files (check later)
+# XXX: (GM): Remove unpackaged files (check later).
+# Some of these are installed with doc/ in the build directory, but a
+# conscious decision needs to be made.
 rm %buildroot/usr/doc/slang/COPYING
 rm %buildroot/usr/doc/slang/COPYING.ART
 rm %buildroot/usr/doc/slang/COPYING.GPL
@@ -81,6 +83,9 @@ rm %buildroot/usr/doc/slang/slangfun.txt
 %_includedir/slang
 
 %changelog
+* Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 1.4.6-owl4
+- Set Release to -owl4 to permit for making this public.
+
 * Thu Sep 09 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1.4.6-owl3.1
 - Fixed -fixes.patch to compile under glibc 2.3+
 
