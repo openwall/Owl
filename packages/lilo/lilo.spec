@@ -1,4 +1,4 @@
-# $Id: Owl/packages/lilo/lilo.spec,v 1.9 2002/02/14 16:32:24 mci Exp $
+# $Id: Owl/packages/lilo/lilo.spec,v 1.10 2002/02/15 10:33:57 mci Exp $
 
 Summary: The boot loader for Linux and other operating systems.
 Name: lilo
@@ -13,7 +13,7 @@ Patch1: lilo-22.1-alt-part.diff
 Patch2: lilo-22.1-alt-owl-fixes.diff
 Patch3: lilo-22.1-alt-owl-getopt.diff
 Patch4: lilo-22.1-deb-owl-man.diff
-BuildRequires: fileutils dev86
+BuildRequires: fileutils, dev86
 ExclusiveArch: %ix86
 BuildRoot: /override/%{name}-%{version}
 

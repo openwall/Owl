@@ -1,5 +1,5 @@
 --- lilo-22.1/common.c.orig	Sat Oct 27 18:39:26 2001
-+++ lilo-22.1/common.c	Mon Jan 14 23:34:54 2002
++++ lilo-22.1/common.c	Fri Feb 15 11:13:59 2002
 @@ -32,24 +32,26 @@
  	CRC_POLY1, CRC_POLY2, CRC_POLY3, CRC_POLY4 };
  #endif	
@@ -15,7 +15,7 @@
 +extern const char *__progname;
  
 -/*volatile*/ void die(char *fmt,...)
-+/*volatile*/ void die(const char *fmt, ...)
++/*volatile*/ void __attribute__ ((format (printf, 1, 2))) die(const char *fmt, ...)
  {
 -    va_list ap;
 +    va_list args;
@@ -37,7 +37,7 @@
  }
  
 --- lilo-22.1/common.h.orig	Sat Oct 27 22:33:32 2001
-+++ lilo-22.1/common.h	Mon Jan 14 23:36:17 2002
++++ lilo-22.1/common.h	Fri Feb 15 10:37:25 2002
 @@ -231,12 +231,12 @@
  extern FILE *errstd;
  
@@ -54,7 +54,7 @@
  /* fprintf an error message and then exit. */
  
 --- lilo-22.1/geometry.c.orig	Tue Oct 30 05:16:55 2001
-+++ lilo-22.1/geometry.c	Mon Jan 14 23:26:56 2002
++++ lilo-22.1/geometry.c	Fri Feb 15 10:37:25 2002
 @@ -632,7 +632,7 @@
  }
  
@@ -65,7 +65,7 @@
      char *here;
      int user_dev,block_size;
 --- lilo-22.1/geometry.h.orig	Tue May 15 05:55:36 2001
-+++ lilo-22.1/geometry.h	Mon Jan 14 23:26:56 2002
++++ lilo-22.1/geometry.h	Fri Feb 15 10:37:25 2002
 @@ -50,7 +50,7 @@
     number to user_device unless -1. If ALL is zero, only the BIOS device number
     is retrieved and the other geometry information is undefined. */
@@ -75,3 +75,25 @@
  
  /* Opens the specified file or block device, obtains the necessary geometry
     information and returns the file descriptor. If the name contains a BIOS
+--- lilo-22.1/cfg.c.orig	Sat Oct 27 18:40:25 2001
++++ lilo-22.1/cfg.c	Fri Feb 15 11:41:27 2002
+@@ -208,7 +208,7 @@
+ }
+ 
+ 
+-void cfg_error(char *msg,...)
++void __attribute__ ((format (printf, 1, 2))) cfg_error(char *msg,...)
+ {
+     va_list ap;
+ 
+--- lilo-22.1/cfg.h.orig	Fri Apr  6 02:22:27 2001
++++ lilo-22.1/cfg.h	Fri Feb 15 11:40:29 2002
+@@ -31,7 +31,7 @@
+ /* Opens the configuration file. Returns the file descriptor of the open
+    file. */
+ 
+-void cfg_error(char *msg,...);
++void cfg_error(char *msg,...) __attribute__ ((format (printf, 1, 2)));
+ 
+ /* Signals an error while parsing the configuration file and terminates the
+    program. */
