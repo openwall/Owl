@@ -1,0 +1,33 @@
+--- linux-86/libc/kinclude/Makefile.kinclude	Tue Dec  5 04:08:34 2000
++++ linux-86/libc/kinclude/Makefile	Tue Dec  5 04:08:10 2000
+@@ -6,11 +6,11 @@
+ 	@:
+ 
+ transfer:
+-	-@rm -f ../include/linuxmt ../include/arch
+-	ln -s ../kinclude/linuxmt ../include
+-	ln -s ../kinclude/arch ../include
++	-@rm -rf ../include/linuxmt ../include/arch
++	cp -pr linuxmt ../include
++	cp -pr arch ../include
+ 	@touch Used
+ 
+ clean:
+-	-@rm -f ../include/linuxmt ../include/arch
++	-@rm -rf ../include/linuxmt ../include/arch
+ 	-@rm -f Used
+--- linux-86/makefile.in.kinclude	Tue Dec  5 04:09:16 2000
++++ linux-86/makefile.in	Tue Dec  5 04:09:50 2000
+@@ -118,9 +118,9 @@
+ 	@rm -f include
+ 	@ln -s libc/include include 2>/dev/null || true
+ #ifndef GNUMAKE
+-	@rm -f include/linuxmt include/arch || true
+-	@ln -s ../kinclude/linuxmt include/linuxmt 2>/dev/null || true
+-	@ln -s ../kinclude/arch    include/arch    2>/dev/null || true
++	@rm -rf include/linuxmt include/arch || true
++	@ cp -pr kinclude/linuxmt include/linuxmt 2>/dev/null || true
++	@ cp -pr kinclude/arch    include/arch    2>/dev/null || true
+ #endif
+ 
+ bcc: bindir
