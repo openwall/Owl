@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-hier/base,v 1.1 2003/10/25 09:12:10 solar Exp $
+# $Id: Owl/packages/owl-hier/base,v 1.2 2003/10/25 09:21:47 solar Exp $
 
 # /
 /set type=file uname=root gname=root mode=0755
@@ -114,7 +114,7 @@ tmp		type=dir mode=01777
 
 # /usr
 usr		type=dir
-    tmp		type=link link=/var/tmp
+    tmp		type=link link=../var/tmp
 
 # /usr/X11R6
 X11R6		type=dir
@@ -139,6 +139,12 @@ include		type=dir
 
 # /usr/X11R6/lib
 lib		type=dir
+
+# /usr/X11R6/lib/X11
+X11		type=dir
+# /usr/X11R6/lib/X11
+..
+
 # /usr/X11R6/lib
 ..
 

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.13 2003/10/25 09:11:27 solar Exp $
+# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.14 2003/10/25 09:21:47 solar Exp $
 
 Summary: Initial directory hierarchy.
 Name: owl-hier
@@ -75,7 +75,9 @@ rm -rf $RPM_BUILD_ROOT
 * Sat Oct 25 2003 Solar Designer <solar@owl.openwall.com> 0.6-owl1
 - Renamed /etc/mtree/special to /etc/mtree/base; "special" is used on *BSD,
 but its meaning is different.
-- Make /usr/tmp symlink relative.
+- Added /usr/X11R6/lib/X11 such that /usr/lib/X11 is not a dangling symlink
+(even though it gets used if one installs Red Hat's XFree86 packages).
+- Make symlinks relative.
 
 * Sun Jun 09 2002 Solar Designer <solar@owl.openwall.com> 0.5-owl1
 - Don't list /dev/pts in here, it is a part of owl-dev.
