@@ -1,4 +1,4 @@
-# $Id: Owl/packages/diffstat/diffstat.spec,v 1.4 2003/01/12 00:27:13 mci Exp $
+# $Id: Owl/packages/diffstat/diffstat.spec,v 1.5 2003/01/12 16:19:17 solar Exp $
 
 Summary: A utility which provides statistics based on the output of diff.
 Name: diffstat
@@ -25,7 +25,7 @@ make CFLAGS="$RPM_OPT_FLAGS -Wall"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%makeinstall mandir=$RPM_BUILD_ROOT%{_mandir}/man1
+%makeinstall
 
 %clean
 rm -rf $RPM_BUILD_ROOT
