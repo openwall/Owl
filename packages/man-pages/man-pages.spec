@@ -1,9 +1,9 @@
-# $Id: Owl/packages/man-pages/man-pages.spec,v 1.4 2001/05/03 07:05:35 mci Exp $
+# $Id: Owl/packages/man-pages/man-pages.spec,v 1.5 2001/05/04 14:43:20 solar Exp $
 
-Summary: Man (manual) pages from the Linux Documentation Project.
+Summary: Manual (man) pages from the Linux Documentation Project.
 Name: man-pages
 Version: 1.35
-Release: 3owl
+Release: 4owl
 Copyright: distributable
 Group: Documentation
 Source0: ftp://ftp.win.tue.nl/pub/linux-local/manpages/man-pages-%{version}.tar.gz 
@@ -83,6 +83,9 @@ rm -fv man1/{dir,vdir}.1
 # Part of quota
 rm -fv man2/quotactl.2
 
+# Part of glibc (crypt_blowfish)
+rm -fv man3/crypt.3
+
 # Part of modutils
 rm -fv man2/get_kernel_syms.2
 rm -fv man2/{create,delete,init,query}_module.2
@@ -90,7 +93,7 @@ rm -fv man2/{create,delete,init,query}_module.2
 # Part of console-tools
 rm -fv man4/console.4
 
-# part of nfs-utils
+# Part of nfs-utils
 rm -fv man5/exports.5
 rm -fv man5/nfs.5
 
@@ -106,8 +109,6 @@ rm -fv man5/fstab.5
 
 # Part of time
 rm -fv man1/time.1
-
-# find . -name "*sudo*" -exec rm {} \;
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -129,6 +130,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man*/*
 
 %changelog
+* Fri May 04 2001 Solar Designer <solar@owl.openwall.com>
+- crypt.3 is now a part of our glibc package due to crypt_blowfish.
+
 * Wed May 02 2001 Michail Litvak <mci@owl.openwall.com>
 - use cp instead of cp -a in spec
 - uselib.2 patch
