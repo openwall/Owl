@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.38 2005/01/16 00:12:36 galaxy Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.39 2005/01/18 14:16:48 solar Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -14,7 +14,7 @@
 
 # Do we need libstdc++-compat libraries?
 %define BUILD_CXX_COMPAT 1
-# ... 2.7.2.8, 2.8.0 and 2.9.0 versions to upgrade RH6.2 and below
+# ... 2.7.2.8, 2.8.0 and 2.9.0 versions to upgrade RHL 6.2 and below
 %define BUILD_CXX_COMPAT_V2 1
 # ... 2.10.0 version to upgrade Owl 1.0 and 1.1 systems
 %define BUILD_CXX_COMPAT_V3 1
@@ -145,8 +145,8 @@ PreReq: /sbin/ldconfig
 %description -n libstdc++-v2-compat
 This package includes the old shared libraries necessary to run C++
 applications built against the libraries. This package contains
-libstdc++ library versions 2.7.2.8, 2.8.0 and 2.9.0 and used to
-upgrade RedHat Linux 6.2 and below.
+libstdc++ library versions 2.7.2.8, 2.8.0, and 2.9.0 and is used to
+upgrade Red Hat Linux 6.2 and below.
 %endif # BUILD_CXX_COMPAT_V2
 %if %BUILD_CXX_COMPAT_V3
 %package -n libstdc++-v3-compat
@@ -157,7 +157,7 @@ PreReq: /sbin/ldconfig
 %description -n libstdc++-v3-compat
 This package includes the old shared libraries necessary to run C++
 applications built against the libraries. This package contains
-libstdc++ library version 2.10.0 and used to upgrade systems running
+libstdc++ library version 2.10.0 and is used to upgrade systems running
 Openwall GNU/*/Linux versions 1.0 and 1.1.
 %endif # BUILD_CXX_COMPAT_V3
 %if %BUILD_CXX_COMPAT_V5
@@ -375,9 +375,9 @@ cd obj-%_target_platform
 # but it will be more correct to adjust autotools or patch gcc to avoid
 # issuing of warning in case of CPP mode.
 #
-# Currently, we use only one depricated option in our build environment.
-# It's '-mcpu' and we change it to '-mtune' to save meaning, but avoid
-# gcc's deprication warning.
+# Currently, we use only one deprecated option in our build environment.
+# It's "-mcpu" and we change it to "-mtune" to save meaning, but avoid
+# gcc's deprecation warning.
 TARGET_OPT_FLAGS="%{expand:%{?optflags_bin:%optflags_bin}}%{!?optflags_bin:$RPM_OPT_FLAGS}"
 TARGET_OPT_LIBFLAGS="%{expand:%{?optflags_lib:%optflags_lib}}%{!?optflags_lib:$RPM_OPT_FLAGS}"
 TARGET_OPT_FLAGS="${TARGET_OPT_FLAGS//-mcpu=/-mtune=}"
@@ -388,58 +388,58 @@ TARGET_OPT_LIBFLAGS="${TARGET_OPT_LIBFLAGS//-mcpu=/-mtune=}"
 # BOOT_FLAGS is used for stage2..n compiler
 # ..._FOR_TARGET is used for final compiler
 %__make bootstrap-lean \
-    STAGE1_CFLAGS="-O -fomit-frame-pointer" \
-    BOOT_CFLAGS="-O -fomit-frame-pointer" \
-    CFLAGS_FOR_TARGET="$TARGET_OPT_FLAGS" \
-    LIBCFLAGS_FOR_TARGET="$TARGET_OPT_LIBFLAGS" \
-    CXXFLAGS_FOR_TARGET="${TARGET_OPT_FLAGS//-fno-rtti/} -D_GNU_SOURCE" \
-    LIBCXXFLAGS_FOR_TARGET="${TARGET_OPT_LIBFLAGS//-fno-rtti/} -D_GNU_SOURCE" \
+	STAGE1_CFLAGS="-O -fomit-frame-pointer" \
+	BOOT_CFLAGS="-O -fomit-frame-pointer" \
+	CFLAGS_FOR_TARGET="$TARGET_OPT_FLAGS" \
+	LIBCFLAGS_FOR_TARGET="$TARGET_OPT_LIBFLAGS" \
+	CXXFLAGS_FOR_TARGET="${TARGET_OPT_FLAGS//-fno-rtti/} -D_GNU_SOURCE" \
+	LIBCXXFLAGS_FOR_TARGET="${TARGET_OPT_LIBFLAGS//-fno-rtti/} -D_GNU_SOURCE"
 
 # Copy various doc files here and there.
 cd ..
 mkdir -p rpm-doc/gcc
-install -m 0644 -p gcc/*ChangeLog* rpm-doc/gcc/
-install -m 0644 -p BUGS COPYING* FAQ MAINTAINERS README* gcc/SERVICE rpm-doc/gcc/
+install -m 644 -p gcc/*ChangeLog* rpm-doc/gcc/
+install -m 644 -p BUGS COPYING* FAQ MAINTAINERS README* gcc/SERVICE rpm-doc/gcc/
 
 %if %BUILD_GXX
 mkdir -p rpm-doc/g++
-install -m 0644 -p gcc/cp/{ChangeLog*,NEWS} rpm-doc/g++/
+install -m 644 -p gcc/cp/{ChangeLog*,NEWS} rpm-doc/g++/
 
 mkdir -p rpm-doc/libstdc++
-install -m 0644 -p libstdc++-v3/{ChangeLog*,README} rpm-doc/libstdc++/
+install -m 644 -p libstdc++-v3/{ChangeLog*,README} rpm-doc/libstdc++/
 %endif
 
 %if %BUILD_G77
 mkdir -p rpm-doc/g77
-install -m 0644 -p gcc/f/{ChangeLog*,NEWS,BUGS} rpm-doc/g77/
+install -m 644 -p gcc/f/{ChangeLog*,NEWS,BUGS} rpm-doc/g77/
 pushd libf2c
 for i in ChangeLog* README *.netlib; do
-	install -m 0644 -p $i ../rpm-doc/g77/$i.libf2c
+	install -m 644 -p $i ../rpm-doc/g77/$i.libf2c
 done
 popd
 %endif
 
 %if %BUILD_JAVA
 mkdir -p rpm-doc/java
-install -m 0644 -p gcc/java/ChangeLog* libjava/doc/cni* rpm-doc/java/
+install -m 644 -p gcc/java/ChangeLog* libjava/doc/cni* rpm-doc/java/
 pushd libffi
 for i in ChangeLog* README LICENSE; do
-	install -m 0644 -p $i ../rpm-doc/java/$i.libffi
+	install -m 644 -p $i ../rpm-doc/java/$i.libffi
 done
 popd
 pushd libjava
 for i in ChangeLog* README NEWS THANKS HACKING LIBGCJ_LICENSE; do
-	install -m 0644 -p $i ../rpm-doc/java/$i.libjava
+	install -m 644 -p $i ../rpm-doc/java/$i.libjava
 done
 popd
 %endif
 
 %if %BUILD_OBJC
 mkdir -p rpm-doc/objc
-install -m 0644 -p gcc/objc/README* rpm-doc/objc/
+install -m 644 -p gcc/objc/README* rpm-doc/objc/
 pushd libobjc
 for i in ChangeLog* README* THREADS*; do
-	install -m 0644 -p $i ../rpm-doc/java/$i.libobjc
+	install -m 644 -p $i ../rpm-doc/java/$i.libobjc
 done
 popd
 %endif
@@ -451,13 +451,14 @@ mkdir -p rpm-doc/ada
 %install
 rm -rf %buildroot
 
-%__make	-C obj-%_target_platform DESTDIR=%buildroot install
+%__make -C obj-%_target_platform DESTDIR=%buildroot install
 
 # Fix some things.
-
 ln -s gcc %buildroot%_bindir/cc
+echo ".so gcc.1" > %buildroot%_mandir/man1/cc.1
+
 %if %BUILD_GXX
-#echo ".so g++.1" > %buildroot%_mandir/man1/c++.1
+echo ".so g++.1" > %buildroot%_mandir/man1/c++.1
 %endif
 
 %if %BUILD_G77
@@ -489,8 +490,9 @@ chmod -R go+rX %_libdir/gcc/%_target_platform/%version/include/*
 if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete --info-dir=%_infodir %_infodir/gccint.info.gz
 	/sbin/install-info --delete --info-dir=%_infodir %_infodir/gcc.info.gz
-	[ -d %_libdir/gcc/%_target_platform/%version/include ] && \
-	    rm -rf %_libdir/gcc/%_target_platform/%version/include/*
+	if [ -d %_libdir/gcc/%_target_platform/%version/include ]; then
+		rm -rf %_libdir/gcc/%_target_platform/%version/include/*
+	fi
 fi
 
 %postun -p /sbin/ldconfig
@@ -588,6 +590,7 @@ fi
 %_libdir/gcc/%_target_platform/%version/specs
 %dir %_libdir/gcc/%_target_platform/%version/include
 %_libdir/gcc/%_target_platform/%version/install-tools
+%_mandir/man1/cc.1*
 %_mandir/man1/gcc.1*
 %_mandir/man1/gcov.1*
 %_mandir/man7/fsf-funding.7*
@@ -739,7 +742,7 @@ fi
 * Thu Jan 06 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.4.3-owl0
 - Updated to 3.4.3.
 - Enabled autotools magic, it works as expected.
-- Added libstdc++ compatible libraries for glibc 3.2.2 based builds
+- Added libstdc++ compatible libraries for glibc 3.2.2 based builds.
 - Added BUILD_CXX_COMPAT_* macros to control building of compatibility
 packages. I hope that after next release of Owl we will drop this crap.
 - Spec was revised and cleaned up.
@@ -774,7 +777,7 @@ autotools.
 * Mon Feb 23 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.2.2-owl1.1
 - Fixed permission of %_libdir/gcc-lib/%_target_platform/%version/include/*
 directories.
-- Removed unpackaged files to make RPM4 happy :).
+- Removed unpackaged files to make RPM4 happy. :)
 
 * Thu Feb 05 2004 Solar Designer <solar@owl.openwall.com> 1:3.2.2-owl1
 - Added libstdc++ compatibility libraries for gcc 2.95.3 as a separate
