@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.9 2002/09/15 19:21:38 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.10 2002/10/03 04:27:29 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.32
+Version: 1.6.32.1
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -76,6 +76,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Thu Oct 03 2002 Solar Designer <solar@owl.openwall.com>
+- Never point cfg_name to path_expand()'s result buffer, make a copy.
+
 * Thu Sep 05 2002 Solar Designer <solar@owl.openwall.com>
 - Never put dupes in crk_guesses, that could overflow it and would be
 inefficient anyway.
