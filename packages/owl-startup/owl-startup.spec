@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.12 2000/12/20 18:59:29 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.13 2000/12/20 19:03:54 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -38,7 +38,7 @@ rm -rf $RPM_BUILD_ROOT
 
 mkdir -p $RPM_BUILD_ROOT/etc/{rc.d/{rc{0,1,2,3,4,5,6}.d,init.d},profile.d}
 mkdir -p $RPM_BUILD_ROOT/etc/sysconfig/network-scripts
-mkdir -p $RPM_BUILD_ROOT/{bin,sbin,usr/man/man1}
+mkdir -p $RPM_BUILD_ROOT/{bin,sbin,usr/man/man1,var/{log,run}}
 
 install -m 755 src/{usleep,ipcalc} $RPM_BUILD_ROOT/bin/
 install -m 644 src/{usleep.1,ipcalc.1} $RPM_BUILD_ROOT/usr/man/man1/
@@ -72,6 +72,8 @@ ln -s ../init.d/single etc/rc.d/rc1.d/S99single
 ln -s ../rc.local etc/rc.d/rc2.d/S99local
 ln -s ../rc.local etc/rc.d/rc3.d/S99local
 ln -s ../rc.local etc/rc.d/rc5.d/S99local
+
+touch var/log/wtmp var/run/utmp
 
 mkdir -p var/run/netreport
 
