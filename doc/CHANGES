@@ -12,6 +12,20 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/06/12	Package: glibc
+ldd(1) will no longer try to invoke programs directly, even when it
+seems like that would work.  The dynamic linker will be invoked as a
+program instead.  This makes a difference primarily when the program
+is SGID and is being ldd'ed by root.  If the program was executed
+directly, glibc would detect its SGID status and drop LD_* variables,
+resulting in the program being actually started rather than ldd'ed.
+Thanks to Dmitry V. Levin of ALT Linux for suggesting this solution.
+syslog(3) will now use ctime_r() instead of strftime_r() so that month
+names will not depend on current locale settings.  The patch is
+originally by Michael Tokarev.  The glibcbug script will now use
+mktemp(1) in a fail-close way, let it use $TMPDIR, and will default to
+vitmp(1) for the editor.
+
 2002/06/11	Package: bison
 Updated to 1.35.
 
@@ -728,4 +742,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.98 2002/06/12 01:17:29 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.99 2002/06/12 07:40:03 solar Exp $
