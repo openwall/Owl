@@ -1,9 +1,9 @@
-# $Id: Owl/packages/file/file.spec,v 1.8 2003/10/29 19:08:28 solar Exp $
+# $Id: Owl/packages/file/file.spec,v 1.9 2004/03/12 18:13:03 solar Exp $
 
 Summary: A utility for determining file types.
 Name: file
 Version: 3.41
-Release: owl2
+Release: owl3
 License: distributable
 Group: Applications/File
 URL: http://www.darwinsys.com/freeware/file.html
@@ -41,7 +41,7 @@ different graphics formats.
 %patch9 -p1
 
 %build
-automake
+autoreconf -f
 %configure --enable-fsect-man5
 make LDFLAGS=-s
 
@@ -60,6 +60,9 @@ mkdir -p $RPM_BUILD_ROOT%_datadir
 %_mandir/man*/*
 
 %changelog
+* Thu Feb 26 2004 Michail Litvak <mci@owl.openwall.com> 3.41-owl3
+- Fixed building with new auto* tools.
+
 * Tue Apr 29 2003 Michail Litvak <mci@owl.openwall.com> 3.41-owl2
 - Patch to remove annoying message: "Using regular magic file..."
 
