@@ -1,12 +1,12 @@
-# $Id: Owl/packages/dialog/dialog.spec,v 1.2 2000/12/07 15:38:49 solar Exp $
+# $Id: Owl/packages/dialog/dialog.spec,v 1.3 2000/12/27 23:36:28 mci Exp $
 
 Summary: A utility for creating TTY dialog boxes.
 Name: dialog
 Version: 0.9a
-Release: 4owl
+Release: 5owl
 Copyright: GPL
 Group: Applications/System
-Source: ftp://dickey.his.com/dialog/dialog-0.9a-20001027.tgz
+Source: ftp://dickey.his.com/dialog/dialog-0.9a-20001217.tgz
 Patch0: dialog-0.9a-owl-pwdbox.diff
 BuildRoot: /var/rpm-buildroot/%{name}-root
 
@@ -31,7 +31,7 @@ The following types of boxes are at your disposal:
 
 
 %prep
-%setup -q -n dialog-0.9a-20001027
+%setup -q -n dialog-0.9a-20001217
 %patch -p1
 
 %build
@@ -53,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dialog.*
 
 %changelog
+* Thu Dec 28 2000 Michail Litvak <mci@owl.openwall.com>
+- Updated to new snapshot for fix file locking problem
+
 * Thu Dec 07 2000 Michail Litvak <mci@owl.openwall.com>
 - Imported from RH
 - New upstream release
