@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.9 2001/10/24 13:06:03 mci Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.10 2001/10/24 20:47:48 mci Exp $
 
 Version: 2.05
 Name: bash
@@ -27,7 +27,7 @@ Patch12: bash-2.05-deb-printcmd.diff
 Patch13: bash-2.05-deb-privmode.diff
 Patch14: bash-2.05-deb-random.diff
 Patch15: bash-2.05-deb-vxman.diff
-Patch16: bash-2.05-owl-glibc-build-hack.diff
+Patch16: bash-2.05-owl-disable.diff
 Patch17: bash-2.05-owl-tmp.diff
 Prefix: %{_prefix}
 Requires: mktemp
@@ -90,7 +90,8 @@ autoconf
         --enable-readline \
         --enable-extended-glob \
         --enable-dparen-arithmetic \
-        --with-installed-readline
+        --with-installed-readline \
+	--without-bash-malloc
 make
 
 %install
@@ -127,7 +128,7 @@ done
 popd
 
 # Those conflicts with real manpages
-rm -f ${RPM_BUILD_ROOT}%{_mandir}/man1/{echo,export,pwd,test,kill}.1
+rm -f ${RPM_BUILD_ROOT}%{_mandir}/man1/{echo,pwd,test,kill}.1
 
 mkdir -p $RPM_BUILD_ROOT/etc/skel
 install -c -m 644 %{SOURCE2} $RPM_BUILD_ROOT/etc/skel/.bashrc
@@ -184,10 +185,12 @@ find examples -type f -print0 | xargs -r0 chmod -x
 %doc doc/*.ps* doc/*.0 doc/*.html doc/article.txt
 
 %changelog
-* Tue Oct 23 2001 Michail Litvak <mci@owl.openwall.com>
+* Wed Oct 24 2001 Michail Litvak <mci@owl.openwall.com>
 - 2.05
-- Many patches from Debian, ALT Linux
-- some spec rework
+- Many patches from Debian, ALT Linux.
+- some spec rework.
+- removed -glibc-build-hack.diff it no more needed.
+- add -owl-disable.diff - #if 0'ed not used valid_exportstr function.
 
 * Sat Jan 13 2001 Solar Designer <solar@owl.openwall.com>
 - One more temporary file handling fix for the history editor, as reported

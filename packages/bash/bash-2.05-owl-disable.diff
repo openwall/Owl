@@ -1,0 +1,19 @@
+--- bash-2.05/variables.c.orig	Wed Oct 24 23:10:47 2001
++++ bash-2.05/variables.c	Wed Oct 24 23:12:06 2001
+@@ -2520,6 +2520,8 @@
+ }
+ 
+ /* Debugging */
++
++#if 0
+ static int
+ valid_exportstr (v)
+      SHELL_VAR *v;
+@@ -2549,6 +2551,7 @@
+     }
+   return (1);
+ }
++#endif
+ 
+ /* Make an array of assignment statements from the hash table
+    HASHED_VARS which contains SHELL_VARs.  Only visible, exported
