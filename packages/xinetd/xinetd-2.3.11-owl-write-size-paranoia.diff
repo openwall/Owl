@@ -1,0 +1,20 @@
+diff -ur xinetd-2.3.11.orig/libs/src/sio/sio.c xinetd-2.3.11/libs/src/sio/sio.c
+--- xinetd-2.3.11.orig/libs/src/sio/sio.c	Thu Feb 27 22:30:46 2003
++++ xinetd-2.3.11/libs/src/sio/sio.c	Wed Apr 16 06:18:37 2003
+@@ -16,6 +16,7 @@
+ 
+ #include <stdlib.h>
+ #include <unistd.h>
++#include <limits.h>
+ 
+ #include "sio.h"
+ #include "impl.h"
+@@ -37,6 +38,8 @@
+ 	int b_written ;
+ 	int b_in_buffer ;
+ 
++	if ( nbytes > INT_MAX )
++		return( SIO_ERR );
+ 	if( sio_setup( fd, &dp, __SIO_OUTPUT_STREAM ) == SIO_ERR )
+ 		return( SIO_ERR );
+ 	odp = ODP( dp ) ;

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.22 2003/02/24 21:38:17 mci Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.23 2003/04/16 06:26:58 solar Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
-Version: 2.3.10
-Release: owl2
+Version: 2.3.11
+Release: owl1
 License: BSD with minor restrictions
 Group: System Environment/Daemons
 URL: http://www.xinetd.org
@@ -18,8 +18,8 @@ Source7: xinetd-echo
 Source8: xinetd-uecho
 Source9: xinetd-chargen
 Source10: xinetd-uchargen
-Patch0: xinetd-2.3.10-owl-alt-fixes.diff
-Patch1: xinetd-2.3.10-steveg-tcpmux.diff
+Patch0: xinetd-2.3.11-owl-version.diff
+Patch1: xinetd-2.3.11-owl-write-size-paranoia.diff
 PreReq: /sbin/chkconfig
 Provides: inetd
 Obsoletes: inetd
@@ -108,6 +108,9 @@ fi
 %{_mandir}/*/*
 
 %changelog
+* Wed Apr 16 2003 Solar Designer <solar@owl.openwall.com>
+- Updated to 2.3.11.
+
 * Mon Feb 24 2003 Michail Litvak <mci@owl.openwall.com>
 - TCPMUX parser updates. -Steve Grubb                                    
 - TCPMUX was causing core dumps due to changes made in 2.3.10's          
