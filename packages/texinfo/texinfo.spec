@@ -1,4 +1,4 @@
-# $Id: Owl/packages/texinfo/texinfo.spec,v 1.1 2000/08/09 00:51:27 kad Exp $
+# $Id: Owl/packages/texinfo/texinfo.spec,v 1.2 2000/08/09 02:05:27 kad Exp $
 
 Summary: Tools needed to create Texinfo format documentation files.
 Name: 		texinfo
@@ -49,7 +49,7 @@ valuable source of information about the software on your system.
 %patch3 -p1 -b .zlib
 
 %build
-
+unset LINGUAS || :
 %configure --mandir=%{_mandir} --infodir=%{_infodir}
 make 
 
