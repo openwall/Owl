@@ -1,0 +1,9 @@
+Owl setup 0.1
+-------------
+
+This is a configuration tool to initially setup fstab, networking,
+root password, and timezone.  This is temporary solution and will be
+replaced with a more consistent and reliable tool in the future.
+
+-- 
+Michail Litvak <mci@owl.openwall.com>
