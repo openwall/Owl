@@ -1,13 +1,14 @@
-# $Id: Owl/packages/mtree/mtree.spec,v 1.9 2004/12/25 21:01:17 galaxy Exp $
+# $Id: Owl/packages/mtree/mtree.spec,v 1.10 2005/01/12 16:36:56 galaxy Exp $
 
 Summary: Map a directory hierarchy.
 Name: mtree
 Version: 3.1
-Release: owl2
+Release: owl3
 License: BSD
 Group: System Environment/Base
 Source: mtree-%version-20020728.tar.bz2
 Patch0: mtree-3.1-owl-linux.diff
+Patch1: mtree-3.1-owl-gcc343-fixes.diff
 Requires: openssl
 BuildRequires: openssl-devel
 BuildRoot: /override/%name-%version
@@ -22,9 +23,10 @@ missing from either the file hierarchy or the specification.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
-CFLAGS="-c $RPM_OPT_FLAGS" make
+CFLAGS="-c $RPM_OPT_FLAGS" %__make CC="%__cc" LDFLAGS="-lcrypto"
 
 %install
 rm -rf %buildroot
@@ -38,6 +40,11 @@ install -m 644 usr.sbin/mtree/mtree.8 %buildroot%_mandir/man8/
 %_mandir/man8/mtree.8*
 
 %changelog
+* Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.1-owl3
+- Made use of %__cc macro
+- Added gcc343-fixes patch to deal with "label at end of compound statment"
+issue.
+
 * Sun Dec 25 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 3.1-owl2
 - Bumped up release to satisfy dependency resolver (fix for openssl
 upgrading issue.
