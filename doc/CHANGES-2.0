@@ -12,6 +12,10 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2005/02/19 -
+2005/02/21	Package: psmisc
+Updated to 21.5.
+
 2005/02/06	Package: perl
 SECURITY FIX	Severity: low, local, passive
 Corrected File::Path::rmtree to never make directories and files
@@ -344,4 +348,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.68 2005/02/06 04:43:46 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.69 2005/02/21 02:16:42 solar Exp $
