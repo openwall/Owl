@@ -1,9 +1,9 @@
-# $Id: Owl/packages/mutt/mutt.spec,v 1.4 2003/01/20 19:53:53 solar Exp $
+# $Id: Owl/packages/mutt/mutt.spec,v 1.5 2003/03/24 14:07:18 jhuuskon Exp $
 
 Summary: A feature-rich text-based mail user agent.
 Name: mutt
-Version: 1.4
-Release: owl2
+Version: 1.4.1
+Release: owl1
 License: GPL
 Group: Applications/Internet
 URL: http://www.mutt.org
@@ -11,7 +11,7 @@ Source0: ftp://ftp.mutt.org/mutt/mutt-%{version}i.tar.gz
 Source1: Muttrc-color
 Patch0: mutt-1.4-owl-no-sgid.diff
 Patch1: mutt-1.4-owl-muttbug-tmp.diff
-Patch2: mutt-1.4-owl-tmp.diff
+Patch2: mutt-1.4.1-owl-tmp.diff
 Requires: mktemp >= 1:1.3.1
 Conflicts: mutt-us
 Provides: mutt-i
@@ -74,6 +74,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/flea.*
 
 %changelog
+* Sun Mar 23 2003 Jarno Huuskonen <jhuuskon@owl.openwall.com>
+- 1.4.1
+ 
 * Mon Jan 20 2003 Solar Designer <solar@owl.openwall.com>
 - Improved the package description.
 - Require the proper version of mktemp for our muttbug/flea patch.

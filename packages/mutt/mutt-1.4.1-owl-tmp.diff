@@ -1,5 +1,6 @@
----  mutt-1.4.orig/attach.c	29 Aug 2002 09:36:22 -0000
-+++  mutt-1.4/attach.c	15 Jan 2003 12:42:41 -0000
+diff -ur mutt-1.4.1.orig/attach.c mutt-1.4.1/attach.c
+--- mutt-1.4.1.orig/attach.c	Mon Sep  9 22:24:44 2002
++++ mutt-1.4.1/attach.c	Fri Mar 21 15:28:41 2003
 @@ -54,15 +54,13 @@
  
    snprintf(type, sizeof(type), "%s/%s", TYPE(a), a->subtype);
@@ -76,7 +77,7 @@
        }
        else
  	strfcpy(newfile, a->filename, sizeof(newfile));
-@@ -364,6 +369,8 @@
+@@ -363,6 +368,8 @@
  {
    char tempfile[_POSIX_PATH_MAX] = "";
    char pagerfile[_POSIX_PATH_MAX] = "";
@@ -85,7 +86,7 @@
    int is_message;
    int use_mailcap;
    int use_pipe = 0;
-@@ -405,6 +412,8 @@
+@@ -404,6 +411,8 @@
    
    if (use_mailcap)
    {
@@ -94,7 +95,7 @@
      if (!entry->command)
      {
        mutt_error _("MIME type not defined.  Cannot view attachment.");
-@@ -420,12 +429,19 @@
+@@ -419,15 +428,22 @@
      else
        fname = a->filename;
  
@@ -115,8 +116,12 @@
 +		  /* XXX: Error checking */
  	if (safe_symlink (a->filename, tempfile) == -1)
  	{
- 	  if (mutt_yesorno (_("Can't match nametemplate, continue?"), 1) == M_YES)
-@@ -444,7 +460,7 @@
+-	  if (mutt_yesorno (_("Can't match nametemplate, continue?"), 1) == M_YES)
++	  if (mutt_yesorno (_("Can't match nametemplate (temporary file error), continue?"), 1) == M_YES)
+ 	    strfcpy (tempfile, a->filename, sizeof (tempfile));
+ 	  else
+ 	    goto return_error;
+@@ -443,7 +459,7 @@
      {
        /* recv case: we need to save the attachment to a file */
        FREE (&fname);
@@ -125,7 +130,7 @@
  	goto return_error;
      }
  
-@@ -459,10 +475,10 @@
+@@ -458,10 +474,10 @@
      {
        /* recv case */
        strfcpy (pagerfile, a->filename, sizeof (pagerfile));
@@ -138,7 +143,7 @@
    }
      
    if (use_mailcap)
-@@ -475,15 +491,15 @@
+@@ -474,15 +490,15 @@
  
      if (use_pager || use_pipe)
      {
@@ -158,7 +163,7 @@
  	mutt_perror ("open");
  	goto return_error;
        }
-@@ -491,8 +507,8 @@
+@@ -490,8 +506,8 @@
        if ((thepid = mutt_create_filter_fd (command, NULL, NULL, NULL,
  					   use_pipe ? tempfd : -1, use_pager ? pagerfd : -1, -1)) == -1)
        {
@@ -169,7 +174,7 @@
  	
  	if(tempfd != -1)
  	  close(tempfd);
-@@ -517,7 +533,7 @@
+@@ -516,7 +532,7 @@
  	mutt_any_key_to_continue (NULL);
        
        close(tempfd);
@@ -178,7 +183,7 @@
        
      }
      else
-@@ -535,7 +551,7 @@
+@@ -534,7 +550,7 @@
      if (flag == M_AS_TEXT)
      {
        /* just let me see the raw data */
@@ -187,7 +192,7 @@
  	goto return_error;
      }
      else
-@@ -543,7 +559,7 @@
+@@ -542,7 +558,7 @@
        /* Use built-in handler */
        set_option (OPTVIEWATTACH); /* disable the "use 'v' to view this part"
  				   * message in case of error */
@@ -196,7 +201,16 @@
        {
  	unset_option (OPTVIEWATTACH);
  	goto return_error;
-@@ -596,18 +612,14 @@
+@@ -575,6 +591,8 @@
+ 
+     rc = mutt_do_pager (descrip, pagerfile,
+ 			M_PAGER_ATTACHMENT | (is_message ? M_PAGER_MESSAGE : 0), &info);
++    /* mutt_do_pager mutt_unlinks pagerfile. Don't do it twice */ 
++    pagerfile[0] = '\0';
+   }
+   else
+     rc = 0;
+@@ -595,18 +613,14 @@
  }
  
  /* returns 1 on success, 0 on error */
@@ -218,7 +232,7 @@
  
    mutt_endwin (NULL);
  
-@@ -619,7 +631,7 @@
+@@ -618,7 +632,7 @@
  
      memset (&s, 0, sizeof (STATE));
  
@@ -227,7 +241,7 @@
        thepid = mutt_create_filter_fd (path, &s.fpout, NULL, NULL, -1, out, -1);
      else
        thepid = mutt_create_filter (path, &s.fpout, NULL, NULL);
-@@ -643,15 +655,14 @@
+@@ -642,15 +656,14 @@
      if ((ifp = fopen (b->filename, "r")) == NULL)
      {
        mutt_perror ("fopen");
@@ -246,7 +260,7 @@
        thepid = mutt_create_filter_fd (path, &ofp, NULL, NULL, -1, out, -1);
      else
        thepid = mutt_create_filter (path, &ofp, NULL, NULL);
-@@ -672,8 +683,8 @@
+@@ -671,8 +684,8 @@
    
  bail:
    
@@ -255,9 +269,9 @@
 +  if (outf)
 +    fclose (outf);
  
-   if (rv == 0 || mutt_wait_filter (thepid) != 0 || option (OPTWAITKEY))
-     mutt_any_key_to_continue (NULL);
-@@ -745,29 +756,64 @@
+   /*
+    * check for error exit from child process
+@@ -750,29 +763,64 @@
      {
        /* In recv mode, extract from folder and decode */
        
@@ -334,7 +348,7 @@
  
      if ((ofp = fopen (m->filename, "r")) == NULL)
      {
-@@ -775,29 +821,29 @@
+@@ -780,29 +828,29 @@
        return (-1);
      }
      
@@ -369,7 +383,7 @@
  				 int displaying, int flags)
  {
    STATE s;
-@@ -808,18 +854,12 @@
+@@ -813,18 +861,12 @@
    memset (&s, 0, sizeof (s));
    s.flags = displaying;
  
@@ -390,7 +404,7 @@
  
    if (fp == NULL)
    {
-@@ -900,13 +940,21 @@
+@@ -905,19 +947,27 @@
      char command[_POSIX_PATH_MAX+STRING];
      rfc1524_entry *entry;
      int piped = FALSE;
@@ -414,7 +428,14 @@
      {
        if (!fp)
        {
-@@ -926,7 +974,16 @@
+ 	if (safe_symlink(a->filename, newfile) == -1)
+ 	{
+-	  if (mutt_yesorno (_("Can't match nametemplate, continue?"), 1) != M_YES)
++	  if (mutt_yesorno (_("Can't match nametemplate (temporary file error), continue?"), 1) != M_YES)
+ 	  {
+ 	    rfc1524_free_entry (&entry);
+ 	    return 0;
+@@ -931,7 +981,16 @@
  
      /* in recv mode, save file to newfile first */
      if (fp)
@@ -432,7 +453,7 @@
  
      strfcpy (command, entry->printcommand, sizeof (command));
      piped = rfc1524_expand_command (a, newfile, type, command, sizeof (command));
-@@ -979,14 +1036,18 @@
+@@ -984,14 +1043,18 @@
    else if (mutt_can_decode (a))
    {
      /* decode and print */
@@ -456,7 +477,7 @@
      {
        
        dprint (2, (debugfile, "successfully decoded %s type attachment to %s\n",
-@@ -1021,7 +1082,8 @@
+@@ -1026,7 +1089,8 @@
    bail0:
      safe_fclose (&ifp);
      safe_fclose (&fpout);
@@ -466,8 +487,9 @@
      return rc;
    }
    else
----  mutt-1.4.orig/commands.c	29 Aug 2002 09:36:22 -0000
-+++  mutt-1.4/commands.c	11 Sep 2002 17:18:51 -0000
+diff -ur mutt-1.4.1.orig/commands.c mutt-1.4.1/commands.c
+--- mutt-1.4.1.orig/commands.c	Wed Apr  3 13:55:49 2002
++++ mutt-1.4.1/commands.c	Fri Mar 21 15:28:41 2003
 @@ -107,8 +107,7 @@
  
  #endif
@@ -478,8 +500,9 @@
    {
      mutt_error _("Could not create temporary file!");
      return (0);
----  mutt-1.4.orig/editmsg.c	29 Aug 2002 09:36:25 -0000
-+++  mutt-1.4/editmsg.c	2 Jan 2003 22:37:08 -0000
+diff -ur mutt-1.4.1.orig/editmsg.c mutt-1.4.1/editmsg.c
+--- mutt-1.4.1.orig/editmsg.c	Wed Jul 24 11:41:29 2002
++++ mutt-1.4.1/editmsg.c	Fri Mar 21 15:28:41 2003
 @@ -59,19 +59,29 @@
  
    struct stat sb;
@@ -514,8 +537,9 @@
      return -1;
    }
  
----  mutt-1.4.orig/handler.c	29 Aug 2002 09:36:23 -0000
-+++  mutt-1.4/handler.c	12 Jan 2003 16:00:29 -0000
+diff -ur mutt-1.4.1.orig/handler.c mutt-1.4.1/handler.c
+--- mutt-1.4.1.orig/handler.c	Tue Mar 26 11:49:51 2002
++++ mutt-1.4.1/handler.c	Fri Mar 21 15:28:41 2003
 @@ -1504,9 +1504,18 @@
  
    fname = safe_strdup (a->filename);
@@ -573,9 +597,10 @@
  	{
  	  mutt_error _("Unable to open temporary file!");
  	  goto bail;
----  mutt-1.4.orig/headers.c	29 Aug 2002 09:36:23 -0000
-+++  mutt-1.4/headers.c	11 Sep 2002 17:18:51 -0000
-@@ -42,8 +42,7 @@
+diff -ur mutt-1.4.1.orig/headers.c mutt-1.4.1/headers.c
+--- mutt-1.4.1.orig/headers.c	29 Aug 2002 09:36:23
++++ mutt-1.4.1/headers.c	15 Jan 2003 13:51:08
+@@ -42,10 +42,9 @@
    struct stat st;
    LIST *cur, **last = NULL, *tmp;
  
@@ -583,10 +608,14 @@
 -  if ((ofp = safe_fopen (path, "w")) == NULL)
 +  if ((ofp = mutt_mktempfile (path, sizeof (path), "w")) == NULL)
    {
-     mutt_perror ("mutt_mktempfile");
+-    mutt_perror (path);
++    mutt_perror ("mutt_mktempfile");
      return;
----  mutt-1.4.orig/help.c	29 Aug 2002 09:36:23 -0000
-+++  mutt-1.4/help.c	15 Jan 2003 12:42:41 -0000
+   }
+ 
+diff -ur mutt-1.4.1.orig/help.c mutt-1.4.1/help.c
+--- mutt-1.4.1.orig/help.c	Sat Oct  7 21:06:24 2000
++++ mutt-1.4.1/help.c	Fri Mar 21 15:28:41 2003
 @@ -312,17 +312,15 @@
    FILE *f;
    struct binding_t *funcs;
@@ -607,8 +636,38 @@
        return;
      }
    
----  mutt-1.4.orig/main.c	29 Aug 2002 09:36:23 -0000
-+++  mutt-1.4/main.c	6 Oct 2002 12:36:18 -0000
+diff -ur mutt-1.4.1.orig/imap/message.c mutt-1.4.1/imap/message.c
+--- mutt-1.4.1.orig/imap/message.c	Mon Apr  8 00:19:57 2002
++++ mutt-1.4.1/imap/message.c	Fri Mar 21 15:28:41 2003
+@@ -78,8 +78,7 @@
+ 
+   /* instead of downloading all headers and then parsing them, we parse them
+    * as they come in. */
+-  mutt_mktemp (tempfile);
+-  if (!(fp = safe_fopen (tempfile, "w+")))
++  if (!(fp = mutt_mktempfile (tempfile, sizeof (tempfile), "w+")))
+   {
+     mutt_error (_("Could not create temporary file %s"), tempfile);
+     mutt_sleep (2);
+@@ -250,13 +249,11 @@
+     mutt_message _("Fetching message...");
+ 
+   cache->uid = HEADER_DATA(h)->uid;
+-  mutt_mktemp (path);
+-  cache->path = safe_strdup (path);
+-  if (!(msg->fp = safe_fopen (path, "w+")))
++  if (!(msg->fp = mutt_mktempfile (path, sizeof (path), "w+")))
+   {
+-    safe_free ((void**) &cache->path);
+     return -1;
+   }
++  cache->path = safe_strdup (path);
+ 
+   /* mark this header as currently inactive so the command handler won't
+    * also try to update it. HACK until all this code can be moved into the
+diff -ur mutt-1.4.1.orig/main.c mutt-1.4.1/main.c
+--- mutt-1.4.1.orig/main.c	Tue Jul 16 10:28:00 2002
++++ mutt-1.4.1/main.c	Fri Mar 21 15:28:41 2003
 @@ -717,27 +717,25 @@
        else
  	fin = NULL;
@@ -631,7 +690,7 @@
  	  if (!option (OPTNOCURSES))
  	    mutt_endwin (NULL);
 -	  perror (tempfile);
-+	  perror (buf);
++	  perror ("mutt_mktempfile");
  	  fclose (fin);
 -	  FREE (&tempfile);
  	  exit (1);
@@ -642,8 +701,9 @@
  	if (fin)
  	  mutt_copy_stream (fin, fout);
  	else if (bodytext)
----  mutt-1.4.orig/mbox.c	29 Aug 2002 09:36:23 -0000
-+++  mutt-1.4/mbox.c	12 Jan 2003 16:00:56 -0000
+diff -ur mutt-1.4.1.orig/mbox.c mutt-1.4.1/mbox.c
+--- mutt-1.4.1.orig/mbox.c	Thu Feb 28 09:59:24 2002
++++ mutt-1.4.1/mbox.c	Fri Mar 21 15:28:41 2003
 @@ -28,6 +28,7 @@
  #include "sort.h"
  #include "copy.h"
@@ -705,8 +765,9 @@
      mutt_sleep (5);
      return (-1);
    }
----  mutt-1.4.orig/muttlib.c	29 Aug 2002 09:36:25 -0000
-+++  mutt-1.4/muttlib.c	15 Jan 2003 12:42:41 -0000
+diff -ur mutt-1.4.1.orig/muttlib.c mutt-1.4.1/muttlib.c
+--- mutt-1.4.1.orig/muttlib.c	Mon Mar 25 13:29:32 2002
++++ mutt-1.4.1/muttlib.c	Fri Mar 21 15:28:41 2003
 @@ -34,6 +34,7 @@
  #include "pgp.h"
  #endif
@@ -906,8 +967,9 @@
  }
  
  void mutt_free_alias (ALIAS **p)
----  mutt-1.4.orig/mx.c	29 Aug 2002 09:36:23 -0000
-+++  mutt-1.4/mx.c	2 Jan 2003 23:04:43 -0000
+diff -ur mutt-1.4.1.orig/mx.c mutt-1.4.1/mx.c
+--- mutt-1.4.1.orig/mx.c	Wed Mar 20 11:53:42 2002
++++ mutt-1.4.1/mx.c	Fri Mar 21 15:28:41 2003
 @@ -1229,8 +1229,7 @@
  {
    char tmp[_POSIX_PATH_MAX];
@@ -918,8 +980,9 @@
      return (-1);
    msg->path = safe_strdup(tmp);
    return 0;
----  mutt-1.4.orig/pattern.c	29 Aug 2002 09:36:24 -0000
-+++  mutt-1.4/pattern.c	15 Jan 2003 12:42:41 -0000
+diff -ur mutt-1.4.1.orig/pattern.c mutt-1.4.1/pattern.c
+--- mutt-1.4.1.orig/pattern.c	Sat May 18 08:39:55 2002
++++ mutt-1.4.1/pattern.c	Fri Mar 21 15:28:41 2003
 @@ -157,10 +157,9 @@
        memset (&s, 0, sizeof (s));
        s.fpin = msg->fp;
@@ -933,8 +996,9 @@
  	return (0);
        }
  
----  mutt-1.4.orig/pgp.c	29 Aug 2002 09:36:26 -0000
-+++  mutt-1.4/pgp.c	15 Jan 2003 12:42:41 -0000
+diff -ur mutt-1.4.1.orig/pgp.c mutt-1.4.1/pgp.c
+--- mutt-1.4.1.orig/pgp.c	Wed Jan  9 17:39:28 2002
++++ mutt-1.4.1/pgp.c	Fri Mar 21 15:28:41 2003
 @@ -317,17 +317,15 @@
  
  	/* invoke PGP */
@@ -1219,8 +1283,9 @@
      unlink (pgpinfile);
      if (pgpout) 
      {
----  mutt-1.4.orig/pgpkey.c	29 Aug 2002 09:36:26 -0000
-+++  mutt-1.4/pgpkey.c	12 Jan 2003 16:00:29 -0000
+diff -ur mutt-1.4.1.orig/pgpkey.c mutt-1.4.1/pgpkey.c
+--- mutt-1.4.1.orig/pgpkey.c	Tue Jan 15 11:04:28 2002
++++ mutt-1.4.1/pgpkey.c	Fri Mar 21 15:28:41 2003
 @@ -543,13 +543,12 @@
  
      case OP_VERIFY_KEY:
@@ -1252,8 +1317,9 @@
    {
      mutt_perror _("Can't create temporary file");
      return NULL;
----  mutt-1.4.orig/pgpmicalg.c	29 Aug 2002 09:36:26 -0000
-+++  mutt-1.4/pgpmicalg.c	15 Jan 2003 12:42:42 -0000
+diff -ur mutt-1.4.1.orig/pgpmicalg.c mutt-1.4.1/pgpmicalg.c
+--- mutt-1.4.1.orig/pgpmicalg.c	Mon Feb 12 19:21:38 2001
++++ mutt-1.4.1/pgpmicalg.c	Fri Mar 21 15:28:41 2003
 @@ -163,10 +163,9 @@
    
    short rv = -1;
@@ -1267,8 +1333,9 @@
      goto bye;
    }
    unlink (tempfile);
----  mutt-1.4.orig/pop.c	29 Aug 2002 09:36:25 -0000
-+++  mutt-1.4/pop.c	15 Jan 2003 12:42:42 -0000
+diff -ur mutt-1.4.1.orig/pop.c mutt-1.4.1/pop.c
+--- mutt-1.4.1.orig/pop.c	Thu Apr 25 16:30:49 2002
++++ mutt-1.4.1/pop.c	Fri Mar 21 15:28:41 2003
 @@ -55,10 +55,9 @@
    char buf[LONG_STRING];
    char tempfile[_POSIX_PATH_MAX];
@@ -1296,8 +1363,9 @@
        mutt_sleep (2);
        return -1;
      }
----  mutt-1.4.orig/postpone.c	29 Aug 2002 09:36:24 -0000
-+++  mutt-1.4/postpone.c	29 Dec 2002 16:36:42 -0000
+diff -ur mutt-1.4.1.orig/postpone.c mutt-1.4.1/postpone.c
+--- mutt-1.4.1.orig/postpone.c	Wed Oct 31 11:20:38 2001
++++ mutt-1.4.1/postpone.c	Fri Mar 21 15:28:41 2003
 @@ -599,8 +599,7 @@
        mutt_delete_parameter ("x-mutt-noconv", &b->parameter);
      }
@@ -1308,8 +1376,9 @@
        goto bail;
  
      
----  mutt-1.4.orig/protos.h	29 Aug 2002 09:36:26 -0000
-+++  mutt-1.4/protos.h	7 Jan 2003 13:52:45 -0000
+diff -ur mutt-1.4.1.orig/protos.h mutt-1.4.1/protos.h
+--- mutt-1.4.1.orig/protos.h	Mon Apr 29 20:12:18 2002
++++ mutt-1.4.1/protos.h	Fri Mar 21 15:28:41 2003
 @@ -141,6 +141,7 @@
  void mutt_account_hook (const char* url);
  void mutt_add_to_reference_headers (ENVELOPE *env, ENVELOPE *curenv, LIST ***pp, LIST ***qq);
@@ -1349,8 +1418,9 @@
  void _mutt_save_message (HEADER *, CONTEXT *, int, int, int);
  int mutt_save_message (HEADER *, int, int, int, int *);
  int mutt_search_command (int, int);
----  mutt-1.4.orig/recvattach.c	29 Aug 2002 09:36:24 -0000
-+++  mutt-1.4/recvattach.c	14 Jan 2003 11:23:02 -0000
+diff -ur mutt-1.4.1.orig/recvattach.c mutt-1.4.1/recvattach.c
+--- mutt-1.4.1.orig/recvattach.c	Wed Sep 26 13:33:09 2001
++++ mutt-1.4.1/recvattach.c	Fri Mar 21 15:28:41 2003
 @@ -484,6 +484,7 @@
  {
    char tfile[_POSIX_PATH_MAX];
@@ -1426,8 +1496,9 @@
  	}
        }
        else
----  mutt-1.4.orig/recvcmd.c	29 Aug 2002 09:36:24 -0000
-+++  mutt-1.4/recvcmd.c	6 Oct 2002 12:41:16 -0000
+diff -ur mutt-1.4.1.orig/recvcmd.c mutt-1.4.1/recvcmd.c
+--- mutt-1.4.1.orig/recvcmd.c	Wed Jan  2 11:33:38 2002
++++ mutt-1.4.1/recvcmd.c	Fri Mar 21 15:28:41 2003
 @@ -368,8 +368,7 @@
    tmphdr->env = mutt_new_envelope ();
    mutt_make_forward_subject (tmphdr->env, Context, parent);
@@ -1458,8 +1529,9 @@
    {
      mutt_error (_("Can't create %s."), tmpbody);
      mutt_free_header (&tmphdr);
----  mutt-1.4.orig/rfc1524.c	29 Aug 2002 09:36:24 -0000
-+++  mutt-1.4/rfc1524.c	2 Jan 2003 20:45:52 -0000
+diff -ur mutt-1.4.1.orig/rfc1524.c mutt-1.4.1/rfc1524.c
+--- mutt-1.4.1.orig/rfc1524.c	Tue May 15 10:23:49 2001
++++ mutt-1.4.1/rfc1524.c	Fri Mar 21 15:28:41 2003
 @@ -438,10 +438,10 @@
    strfcpy(d, s, len);
  }
@@ -1503,8 +1575,9 @@
  /* If rfc1524_expand_command() is used on a recv'd message, then
   * the filename doesn't exist yet, but if its used while sending a message,
   * then we need to rename the existing file.
----  mutt-1.4.orig/rfc1524.h	29 Aug 2002 09:36:26 -0000
-+++  mutt-1.4/rfc1524.h	2 Jan 2003 20:45:52 -0000
+diff -ur mutt-1.4.1.orig/rfc1524.h mutt-1.4.1/rfc1524.h
+--- mutt-1.4.1.orig/rfc1524.h	Fri Mar  3 12:10:13 2000
++++ mutt-1.4.1/rfc1524.h	Fri Mar 21 15:28:41 2003
 @@ -38,6 +38,7 @@
  void rfc1524_free_entry (rfc1524_entry **);
  int rfc1524_expand_command (BODY *, char *, char *, char *, int);
@@ -1513,8 +1586,9 @@
  int rfc1524_mailcap_lookup (BODY *, char *, rfc1524_entry *, int);
  int mutt_rename_file (char *, char *);
  
----  mutt-1.4.orig/send.c	29 Aug 2002 09:36:24 -0000
-+++  mutt-1.4/send.c	2 Jan 2003 22:44:15 -0000
+diff -ur mutt-1.4.1.orig/send.c mutt-1.4.1/send.c
+--- mutt-1.4.1.orig/send.c	Thu Jan 31 00:50:59 2002
++++ mutt-1.4.1/send.c	Fri Mar 21 15:28:41 2003
 @@ -942,8 +942,7 @@
    int i;
    
@@ -1535,8 +1609,9 @@
        msg->content->filename = safe_strdup (buffer);
      }
      else
----  mutt-1.4.orig/sendlib.c	29 Aug 2002 09:36:25 -0000
-+++  mutt-1.4/sendlib.c	13 Jan 2003 12:00:10 -0000
+diff -ur mutt-1.4.1.orig/sendlib.c mutt-1.4.1/sendlib.c
+--- mutt-1.4.1.orig/sendlib.c	Fri May 31 19:59:39 2002
++++ mutt-1.4.1/sendlib.c	Fri Mar 21 15:28:41 2003
 @@ -1092,10 +1092,9 @@
      a->length = sb.st_size;
    }
@@ -1674,32 +1749,3 @@
        mx_close_mailbox (&f, NULL);
        return (-1);
      }
----  mutt-1.4.orig/imap/message.c	29 Aug 2002 09:36:39 -0000
-+++  mutt-1.4/imap/message.c	29 Aug 2002 09:52:33 -0000
-@@ -78,8 +78,7 @@
- 
-   /* instead of downloading all headers and then parsing them, we parse them
-    * as they come in. */
--  mutt_mktemp (tempfile);
--  if (!(fp = safe_fopen (tempfile, "w+")))
-+  if (!(fp = mutt_mktempfile (tempfile, sizeof (tempfile), "w+")))
-   {
-     mutt_error (_("Could not create temporary file %s"), tempfile);
-     mutt_sleep (2);
-@@ -250,13 +249,11 @@
-     mutt_message _("Fetching message...");
- 
-   cache->uid = HEADER_DATA(h)->uid;
--  mutt_mktemp (path);
--  cache->path = safe_strdup (path);
--  if (!(msg->fp = safe_fopen (path, "w+")))
-+  if (!(msg->fp = mutt_mktempfile (path, sizeof (path), "w+")))
-   {
--    safe_free ((void**) &cache->path);
-     return -1;
-   }
-+  cache->path = safe_strdup (path);
- 
-   /* mark this header as currently inactive so the command handler won't
-    * also try to update it. HACK until all this code can be moved into the
-
