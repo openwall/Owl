@@ -1,9 +1,9 @@
-# $Id: Owl/packages/kbd/kbd.spec,v 1.5 2003/07/31 21:42:23 mci Exp $
+# $Id: Owl/packages/kbd/kbd.spec,v 1.6 2003/10/21 09:09:55 solar Exp $
 
 Summary: Tools for configuring the console.
 Name: kbd
 Version: 1.08
-Release: owl3
+Release: owl4
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/kbd/kbd-%{version}.tar.bz2
@@ -91,6 +91,9 @@ fi
 /lib/kbd/*
 
 %changelog
+* Tue Oct 21 2003 Solar Designer <solar@owl.openwall.com> 1.08-owl4
+- Dropped support for console-tools' consolechars from the setsysfont script.
+
 * Fri Aug 01 2003 Michail Litvak <mci@owl.openwall.com> 1.08-owl3
 - Fixed building on sparc architecture.
 
