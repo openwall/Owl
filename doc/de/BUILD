@@ -108,14 +108,11 @@ der Datei installorder.conf gelesen und verstanden worden sein! Insbesondere
 sollte der Kernel während der Umstellung kein RPM-Paket mehr sein.
 
 
-	Neuübersetzung individueller Pakete.
+	(Neu-) übersetzung individueller Pakete.
 
-Um ein Owl Paket neu zu übersetzen werden das SRPM in /usr/src/world/SRPMS
-und alle Binärpakete entfernt, die aus diesem Quelltext-Paket erstellt worden
-sind. Danach ist abermals "make buildworld" einzugeben.
+Individuelle Pakete können wieder- oder neuübersetzt werden, indem man 
+"make PACKAGE=name" eingibt, wobei "name" der Name des Quell-Paketes ist.
+Für fremde Pakete (SRPMs) die mit der Owl-Arbeitsumgebung erstellt worden 
+sind, muss man zusätzlich die Versionsnummer in "name" einfügen.
 
-Wir betrachten das Übersetzen von SRPM's und das Fehlen des automatischen
-Lösens der Abhängigkeiten als Bug in der Arbeitsumgebung. Wir werden das
-eventuell fixen.
-
-$Id: Owl/doc/de/BUILD,v 1.5 2002/06/20 14:31:59 schmidt Exp $
+$Id: Owl/doc/de/BUILD,v 1.6 2002/06/22 12:32:28 schmidt Exp $
