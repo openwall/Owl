@@ -1,13 +1,13 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.21 2001/07/06 03:50:56 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.22 2001/11/08 00:01:08 solar Exp $
 
-%define BUILD_PROFILE	'no'
+%define BUILD_PROFILE 0
 
 Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
 %define crypt_bf_version 0.4.1
-Release: 17owl
-Copyright: LGPL
+Release: 18owl
+License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%{version}.tar.gz
 Source1: glibc-linuxthreads-%{version}.tar.gz
@@ -23,6 +23,7 @@ Patch3: glibc-2.1.3-owl-res_randomid.diff
 Patch4: glibc-2.1.3-owl-iscntrl.diff
 Patch5: glibc-2.1.3-openbsd-freebsd-owl-fts.diff
 Patch6: glibc-2.1.3-owl-quota.diff
+Patch7: glibc-2.1.3-owl-syslog-ident.diff
 Patch10: glibc-2.1.3-rh-libnoversion.diff
 Patch11: glibc-2.1.3-rh-paths.diff
 Patch12: glibc-2.1.3-rh-linuxthreads.diff
@@ -46,11 +47,11 @@ Patch42: glibc-2.1.3-cvs-20000824-md5-align-clean.diff
 Patch43: glibc-2.1.3-cvs-20000926-tmp-warnings.diff
 Patch44: glibc-2.1.3-cvs-20010109-dl.diff
 Patch45: glibc-2.1.3-cvs-20000929-alpha-reloc.diff
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
-Autoreq: false
+AutoReq: false
 %ifarch alpha
 Provides: ld.so.2
 %endif
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The glibc package contains standard libraries which are used by
@@ -66,10 +67,10 @@ national language (locale) support and timezone databases.
 Summary: Header and object files for development using standard C libraries.
 Group: Development/Libraries
 Conflicts: texinfo < 3.11
-Prereq: /sbin/install-info
-Prereq: kernel-headers
+PreReq: /sbin/install-info
+PreReq: kernel-headers
 Requires: kernel-headers >= 2.2.1
-Autoreq: true
+AutoReq: true
 
 %description devel
 The glibc-devel package contains the header and object files necessary
@@ -82,7 +83,7 @@ executables.
 Install glibc-devel if you are going to develop programs which will
 use the standard C libraries.
 
-%if "%{BUILD_PROFILE}"=="'yes'"
+%if %BUILD_PROFILE
 %package profile
 Summary: The GNU libc libraries, including support for gprof profiling.
 Group: Development/Libraries
@@ -116,6 +117,7 @@ cp $RPM_SOURCE_DIR/crypt_freesec.c crypt/sysdeps/unix/
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
@@ -149,7 +151,7 @@ echo 'ASFLAGS-.os += -Wa,-Av8plusa' >> sysdeps/sparc/sparc32/elf/Makefile
 rm -rf build-$RPM_ARCH-linux
 mkdir build-$RPM_ARCH-linux
 cd build-$RPM_ARCH-linux
-%if "%{BUILD_PROFILE}"=="'yes'"
+%if %BUILD_PROFILE
 CFLAGS="-g $RPM_OPT_FLAGS" ../configure --prefix=/usr \
 	--enable-add-ons=yes --without-cvs \
 	%_target_platform
@@ -219,7 +221,7 @@ sed "s|^$RPM_BUILD_ROOT||" < rpm.filelist.in |
 	grep -v '^%config /etc/nsswitch.conf' | \
 	sort > rpm.filelist
 
-%if "%{BUILD_PROFILE}"=="'yes'"
+%if %BUILD_PROFILE
 grep '/usr/lib/lib.*_p\.a' < rpm.filelist > profile.filelist
 %endif
 
@@ -265,7 +267,6 @@ cp crypt_blowfish-%{crypt_bf_version}/{README,LINKS,PERFORMANCE} \
 	documentation/crypt_blowfish-%{crypt_bf_version}
 
 %post -p /sbin/ldconfig
-
 %postun -p /sbin/ldconfig
 
 %post devel
@@ -277,7 +278,7 @@ if [ $1 -eq 0 ]; then
 fi
 
 %clean
-rm -rf "$RPM_BUILD_ROOT"
+rm -rf $RPM_BUILD_ROOT
 rm -f *.filelist*
 
 %files -f rpm.filelist
@@ -292,12 +293,16 @@ rm -f *.filelist*
 %files -f devel.filelist devel
 %defattr(-,root,root)
 
-%if "%{BUILD_PROFILE}"=="'yes'"
+%if %BUILD_PROFILE
 %files -f profile.filelist profile
 %defattr(-,root,root)
 %endif
 
 %changelog
+* Thu Nov 08 2001 Solar Designer <solar@owl.openwall.com>
+- If syslog(3) is called by a SUID/SGID program without a preceding call to
+openlog(3), don't blindly trust __progname for the syslog ident.
+
 * Fri Jul 06 2001 Solar Designer <solar@owl.openwall.com>
 - Corrected the declaration of struct dqstats in <sys/quota.h>.
 
