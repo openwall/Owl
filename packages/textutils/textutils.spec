@@ -1,4 +1,4 @@
-# $Id: Owl/packages/textutils/Attic/textutils.spec,v 1.12 2004/09/10 07:32:51 galaxy Exp $
+# $Id: Owl/packages/textutils/Attic/textutils.spec,v 1.13 2004/11/02 04:09:39 solar Exp $
 
 # The texinfo documentation for fileutils, sh-utils, and textutils is
 # currently provided by fileutils.
@@ -46,7 +46,7 @@ mv .%_bindir/{cat,cut,sort} bin/
 ln -s ../../bin/cut .%_bindir/
 test -r .%_bindir/cut
 
-# XXX: (GM): Remove unpackaged files (check later)
+# Remove unpackaged files
 rm %buildroot%_infodir/dir
 %if !%BUILD_INFO
 rm %buildroot%_infodir/textutils.info*
