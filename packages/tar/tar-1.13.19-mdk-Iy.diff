@@ -1,0 +1,24 @@
+--- tar-1.13.19/src/tar.c.orig	Sat Jan 13 08:59:29 2001
++++ tar-1.13.19/src/tar.c	Tue Jul 10 14:56:31 2001
+@@ -434,7 +434,7 @@
+    Y  per-block gzip compression */
+ 
+ #define OPTION_STRING \
+-  "-01234567ABC:F:GK:L:MN:OPRST:UV:WX:Zb:cdf:g:hijklmoprstuvwxz"
++  "-01234567ABC:F:GIK:L:MN:OPRST:UV:WX:Zb:cdf:g:hijklmoprstuvwxyz"
+ 
+ static void
+ set_subcommand_option (enum subcommand subcommand)
+@@ -669,6 +669,12 @@
+ 
+ 	ignore_zeros_option = 1;
+ 	break;
++
++      case 'I':
++      case 'y':
++	fprintf( stderr, "Warning: option '%c' is deprecated!"
++	  " Next time use -j instead.\n", optchar );
++	/* Fall through.  */
+ 
+       case 'j':
+ 	set_use_compress_program_option ("bzip2");

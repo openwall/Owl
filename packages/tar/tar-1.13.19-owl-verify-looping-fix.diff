@@ -1,0 +1,11 @@
+--- tar-1.13.19/src/compare.c.orig	Sat Jan 13 08:59:29 2001
++++ tar-1.13.19/src/compare.c	Tue Jul 10 13:52:00 2001
+@@ -795,7 +795,7 @@
+ 	{
+ 	  int counter = 0;
+ 
+-	  while (status == HEADER_FAILURE);
++	  while (status == HEADER_FAILURE)
+ 	    {
+ 	      counter++;
+ 	      status = read_header ();

@@ -1,0 +1,28 @@
+--- tar-1.13.19/src/incremen.c.orig	Sat Jan 13 08:59:29 2001
++++ tar-1.13.19/src/incremen.c	Tue Jul 10 14:57:43 2001
+@@ -220,7 +220,10 @@
+ 
+ 	      if (deref_stat (dereference_option, name_buffer, &stat_data))
+ 		{
+-		  stat_error (name_buffer);
++		  if(ignore_failed_read_option && (errno == ENOENT))
++		    stat_warn (name_buffer);
++		  else
++		    stat_error (name_buffer);
+ 		  continue;
+ 		}
+ 
+--- tar-1.13.19/src/names.c.orig	Sat Jan 13 08:59:29 2001
++++ tar-1.13.19/src/names.c	Tue Jul 10 14:57:43 2001
+@@ -764,7 +764,10 @@
+ 
+       if (deref_stat (dereference_option, name->name, &statbuf) != 0)
+ 	{
+-	  stat_error (name->name);
++	  if(ignore_failed_read_option && (errno == ENOENT))
++	    stat_warn (name->name);
++	  else
++	    stat_error (name->name);
+ 	  continue;
+ 	}
+       if (S_ISDIR (statbuf.st_mode))

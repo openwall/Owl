@@ -1,0 +1,11 @@
+--- tar-1.13.19/acinclude.m4.ac	Thu May 17 14:12:48 2001
++++ tar-1.13.19/acinclude.m4	Thu May 17 14:13:14 2001
+@@ -227,7 +227,7 @@
+ ac_cv_func_fnmatch_works=yes, ac_cv_func_fnmatch_works=no,
+ ac_cv_func_fnmatch_works=no)])
+ if test $ac_cv_func_fnmatch_works = yes; then
+-  AC_DEFINE(HAVE_FNMATCH)
++  AC_DEFINE(HAVE_FNMATCH, 1, [Define if you have a working fnmatch function])
+ fi
+ ])
+ #serial 3
