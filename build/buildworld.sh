@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.2 2000/12/10 00:15:52 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.3 2000/12/10 01:26:36 solar Exp $
 
 REPOSITORY=Owl
 PACKAGES=$REPOSITORY/packages
@@ -158,8 +158,9 @@ function sanity_check()
 		exit 1
 	}
 
-	test -r /usr/include/linux/version.h || {
-		log "No version.h (kernel never configured?)"
+	test -r /usr/include/linux/version.h -a \
+	    -r /usr/include/linux/autoconf.h || {
+		log "No version.h and/or autoconf.h (kernel never configured?)"
 		exit 1
 	}
 }
