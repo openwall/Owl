@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.51 2002/08/28 23:31:51 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.52 2002/11/03 04:39:28 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.4p1
-Release: owl5
+Release: owl6
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -75,6 +75,7 @@ Summary: The OpenSSH server daemon.
 Group: System Environment/Daemons
 PreReq: openssh = %{version}-%{release}
 PreReq: /sbin/chkconfig, grep, shadow-utils, /dev/urandom
+Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: /var/empty, tcb, pam_userpass, pam_mktemp
 Obsoletes: ssh-server
 
@@ -149,10 +150,10 @@ rm -f /var/run/sshd.restart
 if [ $1 -ge 2 ]; then
 	/etc/rc.d/init.d/sshd status && touch /var/run/sshd.restart || :
 	/etc/rc.d/init.d/sshd stop || :
+	/usr/sbin/control-dump sftp
 fi
 
 %post server
-/sbin/chkconfig --add sshd
 if [ ! -f /etc/ssh/ssh_host_key -o ! -s /etc/ssh/ssh_host_key ]; then
 	/usr/bin/ssh-keygen -t rsa1 -f /etc/ssh/ssh_host_key -N '' >&2
 fi
@@ -162,6 +163,10 @@ fi
 if [ ! -f /etc/ssh/ssh_host_rsa_key -o ! -s /etc/ssh/ssh_host_rsa_key ]; then
 	/usr/bin/ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' >&2
 fi
+if [ $1 -ge 2 ]; then
+	/usr/sbin/control-restore sftp
+fi
+/sbin/chkconfig --add sshd
 if [ -f /var/run/sshd.restart ]; then
 	/etc/rc.d/init.d/sshd start
 elif [ -f /var/run/sshd.pid ]; then
@@ -218,6 +223,9 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
+- Dump/restore the owl-control setting for sftp on package upgrades.
+
 * Thu Aug 29 2002 Solar Designer <solar@owl.openwall.com>
 - Corrected the dependencies (many are specific to the server package).
 
