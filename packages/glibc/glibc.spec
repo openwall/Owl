@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.47 2003/05/23 02:55:44 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.48 2003/06/21 02:20:29 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -6,7 +6,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
 %define crypt_bf_version 0.4.5
-Release: owl31
+Release: owl32
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%{version}.tar.gz
@@ -316,6 +316,11 @@ fi
 %endif
 
 %changelog
+* Sat Jun 21 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl32
+- Applied a fix by Dmitry V. Levin to call openlog_internal() with a
+NULL ident instead of with LogTag to not cause possible deallocation
+of LogTagDynamic.
+
 * Fri May 23 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl31
 - Moved /etc/nsswitch.conf from glibc to owl-etc package.
 

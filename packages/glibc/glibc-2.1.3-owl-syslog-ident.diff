@@ -1,5 +1,6 @@
---- glibc-2.1.3/misc/syslog.c.orig	Sat Feb 12 02:49:57 2000
-+++ glibc-2.1.3/misc/syslog.c	Thu Nov  8 03:29:51 2001
+diff -ur glibc-2.1.3.orig/misc/syslog.c glibc-2.1.3/misc/syslog.c
+--- glibc-2.1.3.orig/misc/syslog.c	Fri Feb 11 23:49:57 2000
++++ glibc-2.1.3/misc/syslog.c	Sat Jun 21 02:14:21 2003
 @@ -68,6 +68,7 @@
  static int	connected;		/* have done connect */
  static int	LogStat;		/* status bits, set by openlog() */
@@ -80,6 +81,15 @@
  	if (LogTag != NULL)
  	  fputs_unlocked (LogTag, f);
  	if (LogStat & LOG_PID)
+@@ -207,7 +263,7 @@
+ 
+ 	/* Get connected, output the message to the local logger. */
+ 	if (!connected)
+-		openlog_internal(LogTag, LogStat | LOG_NDELAY, 0);
++		openlog_internal(NULL, LogStat | LOG_NDELAY, 0);
+ 
+ 	/* If we have a SOCK_STREAM connection, also send ASCII NUL as
+ 	   a record terminator.  */
 @@ -246,8 +302,12 @@
  internal_function
  openlog_internal(const char *ident, int logstat, int logfac)
