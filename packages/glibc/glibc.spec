@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.34 2002/07/05 14:30:22 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.35 2002/07/07 00:30:22 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -26,7 +26,7 @@ Patch6: glibc-2.1.3-owl-ldd.diff
 Patch7: glibc-2.1.3-owl-tmp.diff
 Patch8: glibc-2.1.3-owl-vitmp.diff
 Patch9: glibc-2.1.3-owl-glibcbug-COMMAND.diff
-Patch10: glibc-2.1.3-owl-info-fix.diff
+Patch10: glibc-2.1.3-owl-info.diff
 Patch11: glibc-2.1.3-owl-syslog-ident.diff
 Patch12: glibc-2.1.3-mjt-owl-syslog-timestamp.diff
 Patch13: glibc-2.1.3-owl-alt-asprintf-error-handling.diff
