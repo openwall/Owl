@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vim/vim.spec,v 1.16 2004/01/29 03:44:01 solar Exp $
+# $Id: Owl/packages/vim/vim.spec,v 1.17 2004/07/20 00:18:59 mci Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -12,7 +12,7 @@ Name: vim
 %define patchlevel 386
 %define vimdir vim%major%minor%alpha
 Version: %major.%minor%{?patchlevel:.%patchlevel}
-Release: owl2
+Release: owl3
 License: Charityware
 Group: Applications/Editors
 Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%major.%minor%alpha.tar.bz2
@@ -30,7 +30,7 @@ Patch4: vim-6.1-rh-owl-spec-syntax.diff
 Patch5: vim-6.1-owl-tmp.diff
 Patch6: vim-6.1-owl-perl-clash.diff
 Requires: mktemp >= 1:1.3.1
-BuildRequires: perl
+BuildRequires: sed >= 4.0.9
 %if %BUILD_USE_GPM
 BuildRequires: gpm-devel
 %endif
@@ -209,7 +209,7 @@ ln -sf vi bin/rview
 ln -sf vim usr/bin/ex
 ln -sf vim usr/bin/rvim
 ln -sf vim usr/bin/vimdiff
-perl -pi -e "s,$RPM_BUILD_ROOT,," .%_mandir/man1/{vim,vimtutor}.1
+sed -i "s,$RPM_BUILD_ROOT,," .%_mandir/man1/{vim,vimtutor}.1
 rm .%_mandir/man1/rvim.1
 ln -sf vim.1 .%_mandir/man1/vi.1
 ln -sf vim.1 .%_mandir/man1/rvi.1
@@ -284,6 +284,9 @@ chmod 644 ../runtime/doc/vim2html.pl
 %endif
 
 %changelog
+* Tue Jul 20 2004 Michail Litvak <mci@owl.openwall.com> 6.1.386-owl3
+- Use sed -i instead of perl.
+
 * Thu Jan 29 2004 Solar Designer <solar@owl.openwall.com> 6.1.386-owl2
 - Included patch by galaxy@ to resolve a name clash with Perl 5.8.3.
 

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sh-utils/Attic/sh-utils.spec,v 1.8 2003/10/30 21:15:48 solar Exp $
+# $Id: Owl/packages/sh-utils/Attic/sh-utils.spec,v 1.9 2004/07/20 00:10:33 mci Exp $
 
 # The texinfo documentation for fileutils, sh-utils, and textutils is
 # currently provided by fileutils.
@@ -7,7 +7,7 @@
 Summary: A set of GNU utilities commonly used in shell scripts.
 Name: sh-utils
 Version: 2.0
-Release: owl3
+Release: owl4
 License: GPL
 Group: System Environment/Shells
 Source: ftp://ftp.gnu.org/gnu/sh-utils/sh-utils-%version.tar.gz
@@ -18,7 +18,7 @@ Patch3: sh-utils-2.0-rh-utmp.diff
 %if %BUILD_INFO
 PreReq: /sbin/install-info
 %endif
-BuildRequires: perl
+BuildRequires: sed >= 4.0.9
 BuildRoot: /override/%name-%version
 
 %description
@@ -53,10 +53,10 @@ indefinitely).
 %patch3 -p1
 
 # The docs should say /var/run/[uw]tmp not /etc/[uw]tmp
-perl -pi -e 's,/etc/utmp,/var/run/utmp,g' \
-	doc/sh-utils.texi man/logname.1 man/users.1 man/who.1
-perl -pi -e 's,/etc/wtmp,/var/run/wtmp,g' \
-	doc/sh-utils.texi man/logname.1 man/users.1 man/who.1
+sed -i 's,/etc/utmp,/var/run/utmp,g' \
+	doc/sh-utils.texi man/users.1 man/who.1
+sed -i 's,/etc/wtmp,/var/run/wtmp,g' \
+	doc/sh-utils.texi man/users.1 man/who.1
 rm doc/sh-utils.info
 
 %{expand:%%define optflags %optflags -Wall -Dlint}
@@ -112,6 +112,9 @@ fi
 %_datadir/locale/*/*/*
 
 %changelog
+* Tue Jul 20 2004 Michail Litvak <mci@owl.openwall.com> 2.0-owl4 
+- Use sed -i instead of perl.
+
 * Mon Aug 05 2002 Solar Designer <solar@owl.openwall.com> 2.0-owl3
 - No longer provide texinfo documentation, it is now a part of fileutils.
 - Do package locale data.
