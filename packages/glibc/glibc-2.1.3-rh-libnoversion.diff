@@ -16,15 +16,15 @@ diff -urN glibc-2.1.3.orig/elf/rtld.c glibc-2.1.3.rh/elf/rtld.c
 +   *			Blame: gafton@redhat.com
 +   */
 +#define LIB_NOVERSION "/lib/libNoVersion.so.1"
-+  
++
 +  if (_dl_loaded->l_info[DT_NUM + DT_PROCNUM + DT_VERSIONTAGIDX (DT_VERNEED)] == NULL) {
 +      struct link_map *new_map = NULL;
 +      struct stat test_st;
 +      int test_fd;
 +      int can_load;
-+      
++
 +      HP_TIMING_NOW (start);
-+	   
++
 +/*       _dl_sysdep_message("Loading compatibility library... ", NULL); */
 +
 +      can_load = 1;
@@ -38,7 +38,7 @@ diff -urN glibc-2.1.3.orig/elf/rtld.c glibc-2.1.3.rh/elf/rtld.c
 +/* 	      _dl_sysdep_message(" Can't stat " LIB_NOVERSION "\n",  NULL); */
 +	  }
 +      }
-+      
++
 +      if (test_fd >= 0) /* open did no fail.. */
 +	  __close(test_fd); /* avoid fd leaks */
 +
@@ -53,12 +53,12 @@ diff -urN glibc-2.1.3.orig/elf/rtld.c glibc-2.1.3.rh/elf/rtld.c
 +/* 	      _dl_sysdep_message(" FAILED\n", NULL); */
 +	  }
 +      }
-+	  
++
 +      HP_TIMING_NOW (stop);
 +      HP_TIMING_DIFF (diff, start, stop);
 +      HP_TIMING_ACCUM_NT (load_time, diff);
 +  }
-+      
++
    if (npreloads != 0)
      {
        /* Set up PRELOADS with a vector of the preloaded libraries.  */

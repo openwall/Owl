@@ -74,8 +74,8 @@ diff -urN glibc-2.1.3.orig/localedata/locales/bg_BG glibc-2.1.3.rh/localedata/lo
 +repertoiremap mnemonic.ds
 +%
 +% Bulgarian Language Locale for Bulgaria
-+% Source: 
-+% Address: 
++% Source:
++% Address:
 +% Contact: Delyan Toshev	
 +% Email: delyant@yahoo.com	
 +% Language: bg
@@ -93,19 +93,19 @@ diff -urN glibc-2.1.3.orig/localedata/locales/bg_BG glibc-2.1.3.rh/localedata/lo
 +% To use this locale definition, do execute (you'll need enough permissions):
 +% "  localedef -i bg_BG -f "CP1251" 'bg_BG' ". Keep the name enclosed in
 +% single quotes as is, because future definition with differen character set
-+% may use other name. Afterwards set LANG environment var to "bg_BG" for 
++% may use other name. Afterwards set LANG environment var to "bg_BG" for
 +% global setting to Bulgarian locale, or individual LC_CTYPE, LC_COLLATE,
 +% LC_MONETARY,... to whatever you like.
 +%
 +% За да използвате тази дефиниция на локал, изпълнете (трябва да имате
-+% съответни привилегии): 
-+% "  localedef -i bg_BG -f "CP1251" 'bg_BG' ". Препоръчително е последната 
++% съответни привилегии):
++% "  localedef -i bg_BG -f "CP1251" 'bg_BG' ". Препоръчително е последната
 +%  част на командата ('bg_BG'), да се запази такава, за да може в бъдеще друго
 +% име да се използва за друга кодова таблица, и за да не се получават конфликти
 +% на имена. След като се инсталира този локал, можете да укажете на системата
-+% да го използва с "export LANG=bg_BG". Така ще укажете на всички програми, 
++% да го използва с "export LANG=bg_BG". Така ще укажете на всички програми,
 +% които разбират от интернационализация (i18n), да се съобразяват с този локал.
-+% Тъй като това е глобална настройка и за някои случаи не е удачно да се 
++% Тъй като това е глобална настройка и за някои случаи не е удачно да се
 +% прилага, можете да укажете по отделно за различните типове данни, какъв
 +% локал да се използва - чрез LC_CTYPE, LC_MESSAGES, LC_TIME, LC_MONETARY,...
 +%---------------------------------------------------
@@ -3185,7 +3185,7 @@ diff -urN glibc-2.1.3.orig/localedata/locales/gv_GB glibc-2.1.3.rh/localedata/lo
 +comment_char  %
 +repertoiremap mnemonic.ds
 +
-+% WARNING: UNOFFICIAL; EXPERIMENTAL. CHECK WITH Keld Simonsen 
++% WARNING: UNOFFICIAL; EXPERIMENTAL. CHECK WITH Keld Simonsen
 +% to see if there is an offical release for Manx Gaelic.
 +
 +% Manx Gaelic language locale for Britain
@@ -3296,7 +3296,7 @@ diff -urN glibc-2.1.3.orig/localedata/locales/kw_GB glibc-2.1.3.rh/localedata/lo
 +repertoiremap mnemonic.ds
 +
 +% Cornish language locale for Britain
-+% WARNING: UNOFFICIAL; EXPERIMENTAL. CHECK WITH Keld Simonsen 
++% WARNING: UNOFFICIAL; EXPERIMENTAL. CHECK WITH Keld Simonsen
 +% to see if there is an offical release.
 +
 +% Cornish language locale for Britain

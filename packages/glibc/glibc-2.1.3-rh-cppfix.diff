@@ -8,7 +8,7 @@ diff -urN glibc-2.1.3.orig/resolv/arpa/nameser.h glibc-2.1.3.rh/resolv/arpa/name
 +#ifdef __cplusplus
 +extern "C" {
 +#endif
-+    
++
 +
  /*
   * Defines for handling compressed domain names
@@ -21,7 +21,7 @@ diff -urN glibc-2.1.3.orig/resolv/arpa/nameser.h glibc-2.1.3.rh/resolv/arpa/name
 +#ifdef __cplusplus
 +}
 +#endif
-+    
++
  
  __END_DECLS
  
