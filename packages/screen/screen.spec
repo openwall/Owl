@@ -1,9 +1,9 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.32 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.33 2005/01/12 16:53:41 galaxy Exp $
 
 Summary: A screen manager that supports multiple sessions on one terminal.
 Name: screen
 Version: 4.0.2
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%version.tar.gz
@@ -63,15 +63,15 @@ mkdir -p %buildroot/etc/pam.d
 
 make install DESTDIR=%buildroot
 
-pushd %buildroot
-rm -f .%_bindir/screen.old .%_bindir/screen
-mv .%_bindir/screen-%version .%_bindir/screen
-popd
+mv %buildroot%_bindir/screen-%version %buildroot%_bindir/screen
 
 install -m 644 etc/etcscreenrc %buildroot/etc/screenrc
 install -m 644 $RPM_SOURCE_DIR/screen.pam %buildroot/etc/pam.d/screen
 
 mkdir -p %buildroot%_libexecdir/screen
+
+# we will make two links in the %triggerin sections, so we want to track them
+touch %buildroot%_libexecdir/screen/{tcb_chkpwd,utempter}
 
 # Remove unpackaged files
 rm %buildroot%_infodir/dir
@@ -116,8 +116,14 @@ fi
 %config(noreplace) /etc/screenrc
 %config(noreplace) /etc/pam.d/screen
 %attr(710,root,screen) %dir %_libexecdir/screen
+%ghost %_libexecdir/screen/tcb_chkpwd
+%ghost %_libexecdir/screen/utempter
 
 %changelog
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.0.2-owl2
+- Fixed orphaned files in %_libexecdir/screen created by %triggerin.
+- Removed unneeded rm -f of %_bindir/screen{,.old}
+
 * Fri Jan 09 2004 Michail Litvak <mci@owl.openwall.com> 4.0.2-owl1
 - 4.0.2
 - Dropped obsoleted patches.
