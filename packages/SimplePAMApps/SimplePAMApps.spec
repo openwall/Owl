@@ -1,4 +1,4 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.25 2002/11/03 04:42:27 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.26 2002/11/03 05:53:14 solar Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
@@ -46,7 +46,7 @@ mkdir -p $RPM_BUILD_ROOT/usr/bin
 install -m 700 pamapps/passwd/passwd $RPM_BUILD_ROOT/usr/bin/
 
 mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man1
-install -m 0644 pamapps/{login/login.1,su/su.1,passwd/passwd.1} \
+install -m 644 pamapps/{login/login.1,su/su.1,passwd/passwd.1} \
 	${RPM_BUILD_ROOT}%{_mandir}/man1/
 
 mkdir -p $RPM_BUILD_ROOT/etc/pam.d
@@ -72,7 +72,7 @@ fi
 if [ $1 -ge 2 ]; then
 	/usr/sbin/control-restore passwd su
 else
-	/usr/sbin/control passwd public
+	/usr/sbin/control passwd traditional
 	/usr/sbin/control su wheelonly
 fi
 
@@ -89,9 +89,11 @@ fi
 %changelog
 * Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
 - Dump/restore the owl-control settings for passwd and su on package upgrades.
+- Support "traditional" and "tcb" settings for permissions on /usr/bin/passwd
+and /etc/pam.d/passwd.
 - Keep passwd and su at mode 700 ("restricted") in the package, but default
-them to "public" and "wheelonly", respectively, in %post when the package is
-first installed.  This avoids a race and fail-open behavior.
+them to "traditional" and "wheelonly", respectively, in %post when the package
+is first installed.  This avoids a race and fail-open behavior.
 
 * Thu Aug 22 2002 Solar Designer <solar@owl.openwall.com>
 - Use pam_motd with login.
