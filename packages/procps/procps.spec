@@ -1,4 +1,4 @@
-# $Id: Owl/packages/procps/Attic/procps.spec,v 1.18 2005/01/14 03:27:53 galaxy Exp $
+# $Id: Owl/packages/procps/Attic/procps.spec,v 1.19 2005/01/20 01:47:40 solar Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
@@ -8,7 +8,7 @@ License: GPL and LGPL
 Group: System Environment/Base
 URL: http://procps.sf.net
 Source: ftp://sunsite.unc.edu/pub/Linux/system/status/ps/procps-%version.tar.gz
-Patch0: procps-2.0.6-owl-alt-stale.diff
+Patch0: procps-2.0.6-owl-stale.diff
 Patch1: procps-2.0.7-owl-locale.diff
 Patch2: procps-2.0.7-owl-meminfo-fixes.diff
 Patch3: procps-2.0.7-owl-no-catman-cleanup.diff
@@ -40,19 +40,20 @@ top, pgrep, pkill, uptime, vmstat, w, and watch.
 rm -rf %buildroot
 mkdir -p %buildroot{/bin,/%_lib,/sbin,%_bindir,/usr/X11R6/bin,%_mandir/{man1,man5,man8}}
 %__make install \
-    DESTDIR="%buildroot" \
-    MANDIR="%_mandir" \
-    USRBINDIR="%buildroot%_bindir" \
-    PROCDIR="%buildroot%_bindir" \
-    SHLIBDIR="%buildroot/%_lib" \
-    INSTALLBIN="install -m 0755" \
-    INSTALLSCT="install -m 0755" \
-    INSTALLMAN="install -m 0644" \
-    OWNERGROUP=""
+	DESTDIR="%buildroot" \
+	MANDIR="%_mandir" \
+	USRBINDIR="%buildroot%_bindir" \
+	PROCDIR="%buildroot%_bindir" \
+	SHLIBDIR="%buildroot/%_lib" \
+	INSTALLBIN="install -m 755" \
+	INSTALLSCT="install -m 755" \
+	INSTALLMAN="install -m 644" \
+	OWNERGROUP=""
 chmod 755 %buildroot/{%_lib,bin,sbin,%_bindir}/*
 
-# XXX: (GM): Remove unpackaged files (check later)
+# Remove unpackaged files
 rm %buildroot/usr/X11R6/bin/XConsole
+# We use kill(1) from util-linux
 rm %buildroot%_bindir/kill
 rm %buildroot%_mandir/man1/kill.1*
 
@@ -95,7 +96,7 @@ rm %buildroot%_mandir/man1/kill.1*
 
 %changelog
 * Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.0.7-owl7
-- Added gcc343-fixes patch to solve issues after gcc upgrade.
+- Added a patch to solve issues after gcc upgrade.
 - Cleaned up the spec.
 
 * Fri May 14 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.0.7-owl6
