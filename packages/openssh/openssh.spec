@@ -3,22 +3,26 @@
 Summary: OpenSSH free Secure Shell (SSH) implementation
 Name: openssh
 Version: %{oversion}
-Release: 1owl
+Release: 2owl
 URL: http://www.openssh.com/
 Source0: http://violet.ibs.com.au/openssh/files/openssh-%{oversion}.tar.gz
 Source1: sshd.pam
 Source2: sshd.init
 Patch0: openssh-2.1.1p2-owl-buildroot.diff
+Patch1: openssh-2.1.1p2-owl-crypt-hack.diff
+Patch2: openssh-2.1.1p2-owl-pam_userpass.diff
+Patch3: openssh-2.1.1p2-owl-config.diff
 Copyright: BSD
 Group: Applications/Internet
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Obsoletes: ssh
-PreReq: openssl >= 0.9.5a
-Requires: openssl >= 0.9.5a
+PreReq: openssl >= 0.9.5a-1owl
+Requires: openssl >= 0.9.5a-1owl
 BuildPreReq: perl
 BuildPreReq: openssl-devel
 BuildPreReq: zlib-devel
 BuildPreReq: tcp_wrappers
+BuildPreReq: pam >= 0.72-8owl
 
 %package clients
 Summary: OpenSSH Secure Shell protocol clients
@@ -70,8 +74,7 @@ arbitrary TCP/IP ports can also be forwarded over the secure channel.
 
 OpenSSH is OpenBSD's rework of the last free version of SSH, bringing it
 up to date in terms of security and features, as well as removing all 
-patented algorithms to seperate libraries (OpenSSL).
-
+patented algorithms to seperate libraries (OpenSSL).  
 This package contains the secure shell daemon. The sshd is the server 
 part of the secure shell protocol and allows ssh clients to connect to 
 your host.
@@ -79,8 +82,20 @@ your host.
 %changelog
 * Sun Jul  9 2000 Solar Designer <solar@false.com>
 - Imported current Damien Miller's spec file, removed the X11-specific
-stuff, fixed buildroot issues.  sshd.pam and sshd.init are now taken
-from separate files, not the original package.
+stuff, fixed buildroot issues.
+- sshd.pam and sshd.init are now taken from separate files, not the
+original package.
+- Added -lcrypt so that PAM modules may access crypt(3); the OpenSSL
+package should also have a patch applied so that it doesn't export its
+crypt() function as a symbol, but only #define it in the appropriate
+header file.  Other things might break (look for "DES corruption" in
+ChangeLog), but this is better than getting failed authentication with
+modern hashes and I believe current glibc is careful not to export
+internal functions and use weak aliases when exporting things.
+- Patched PAM authentication to use pam_userpass rather than assume
+that modules can only ask for a password.
+- Changed default ssh*_config.
+- non-SUID installation by default.
 
 * Mon Jun 12 2000 Damien Miller <djm@mindrot.org>
 - Glob manpages to catch compressed files
@@ -113,6 +128,9 @@ from separate files, not the original package.
 
 %setup -q
 %patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" \
@@ -167,7 +185,7 @@ fi
 
 %files clients
 %defattr(-,root,root)
-%attr(4755,root,root) /usr/bin/ssh
+%attr(0755,root,root) /usr/bin/ssh
 %attr(0755,root,root) /usr/bin/ssh-agent
 %attr(0755,root,root) /usr/bin/ssh-add
 %attr(0644,root,root) /usr/man/man1/ssh.1*
