@@ -1,9 +1,9 @@
-# $Id: Owl/packages/bzip2/bzip2.spec,v 1.8 2002/02/01 21:02:24 solar Exp $
+# $Id: Owl/packages/bzip2/bzip2.spec,v 1.9 2002/02/01 21:04:15 solar Exp $
 
 Summary: A file compression utility.
 Name: bzip2
 Version: 1.0.2
-Release: owl0
+Release: owl1
 License: BSD
 Group: Applications/File
 URL: http://sources.redhat.com/bzip2/
