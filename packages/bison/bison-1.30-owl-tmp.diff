@@ -1,0 +1,31 @@
+--- bison-1.30/configure.orig	Mon Nov  5 21:20:35 2001
++++ bison-1.30/configure	Mon Nov  5 21:23:30 2001
+@@ -8913,25 +8913,12 @@
+ # Create a temporary directory, and hook for its removal unless debugging.
+ $debug ||
+ {
+-  trap 'exit_status=$?; rm -rf $tmp && exit $exit_status' 0
+-  trap '{ (exit 1); exit 1; }' 1 2 13 15
++  trap 'exit_status=$?; rm -rf $tmp && exit $exit_status' EXIT
++  trap '{ (exit 1); exit 1; }' HUP INT PIPE TERM
+ }
+ 
+ # Create a (secure) tmp directory for tmp files.
+-: ${TMPDIR=/tmp}
+-{
+-  tmp=`(umask 077 && mktemp -d -q "$TMPDIR/csXXXXXX") 2>/dev/null` &&
+-  test -n "$tmp" && test -d "$tmp"
+-}  ||
+-{
+-  tmp=$TMPDIR/cs$$-$RANDOM
+-  (umask 077 && mkdir $tmp)
+-} ||
+-{
+-   echo "$me: cannot create a temporary directory in $TMPDIR" >&2
+-   { (exit 1); exit 1; }
+-}
+-
++tmp="`mktemp -dt cs.XXXXXXXXXX`" || exit 1
+ _ACEOF
+ 
+ cat >>$CONFIG_STATUS <<_ACEOF

@@ -12,6 +12,9 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/11/08	Package: bison
+Updated to 1.30.
+
 2001/11/04	Package: pam_passwdqc
 Updated to 0.4 which permits for stacking of more than one instance of
 the module (no statics).
@@ -395,4 +398,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.40 2001/11/04 00:56:57 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.41 2001/11/07 23:42:37 solar Exp $
