@@ -1,24 +1,23 @@
-# $Id: Owl/packages/diffutils/diffutils.spec,v 1.7 2003/10/29 18:51:11 solar Exp $
+# $Id: Owl/packages/diffutils/diffutils.spec,v 1.8 2003/10/29 18:56:15 solar Exp $
 
 Summary: A GNU collection of diff utilities.
 Name: diffutils
 Version: 2.7
-Release: owl24
+Release: owl25
 License: GPL
 Group: Applications/Text
 URL: http://www.gnu.org/software/diffutils/diffutils.html
 Source0: ftp://ftp.gnu.org/gnu/diffutils/diffutils-%version.tar.gz
 Source1: cmp.1
-Source2: diff.1
-Source3: diff3.1
-Source4: sdiff.1
+Source2: diff3.1
+Source3: sdiff.1
 Patch0: diffutils-2.7-immunix-owl-tmp.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
 
 %description
-Diffutils includes four utilities: diff, cmp, diff3 and sdiff. Diff
+Diffutils includes four utilities: diff, cmp, diff3, and sdiff.  diff
 compares two files and shows the differences, line by line.  The cmp
 command shows the offset and line numbers where two files differ, or
 cmp can show the characters that differ between the two files.  The
@@ -43,8 +42,8 @@ rm -rf $RPM_BUILD_ROOT
 
 cd $RPM_BUILD_ROOT
 mkdir -p .%_mandir/man1
-for manpage in %SOURCE1 %SOURCE3 %SOURCE4; do
-	install -m 0644 ${manpage} .%_mandir/man1
+for manpage in cmp.1 diff3.1 sdiff.1; do
+	install -m 644 $RPM_SOURCE_DIR/$manpage .%_mandir/man1/
 done
 
 %post
@@ -65,6 +64,9 @@ fi
 %_infodir/diff.info*
 
 %changelog
+* Wed Oct 29 2003 Solar Designer <solar@owl.openwall.com> 2.7-owl25
+- Dropped diff.1 from this package as it exists in man-pages.
+
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 2.7-owl24
 - Deal with info dir entries such that the menu looks pretty.
 
