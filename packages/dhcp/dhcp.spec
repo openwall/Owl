@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.18 2003/09/19 08:59:20 schmidt Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.19 2003/09/29 22:51:47 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -72,6 +72,10 @@ subnet.  The DHCP relay takes care of this for the client.
 %patch3 -p1
 
 %{expand:%%define optflags %optflags -Wall -Wno-unused}
+
+%ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
+%{expand:%%define optflags %optflags -DPTRSIZE_64BIT}
+%endif
 
 %build
 ./configure --copts "$RPM_OPT_FLAGS"
@@ -165,6 +169,9 @@ fi
 %{_mandir}/man8/dhcrelay.8*
 
 %changelog
+* Tue Sep 30 2003 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl4
+- Define PTRSIZE_64BIT when building for Alpha.
+
 * Fri Sep 19 2003 Matthias Schmidt <schmidt@owl.openwall.com> 3.0pl2-owl3
 - Fixed another four warnings on sparc.
 
