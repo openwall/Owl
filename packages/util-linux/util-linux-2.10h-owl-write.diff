@@ -1,5 +1,5 @@
 --- util-linux-2.10h.orig/misc-utils/write.c	Tue Mar 21 02:15:28 2000
-+++ util-linux-2.10h/misc-utils/write.c	Thu Jul 13 12:43:26 2000
++++ util-linux-2.10h/misc-utils/write.c	Wed Aug  2 21:09:43 2000
 @@ -70,6 +70,8 @@
  int term_chk(char *, int *, time_t *, int);
  int utmp_chk(char *, char *);
@@ -9,7 +9,19 @@
  
  int
  main(int argc, char **argv)
-@@ -297,12 +299,13 @@
+@@ -80,9 +82,11 @@
+ 	char tty[MAXPATHLEN], *mytty, *ttyname();
+ 	void done();
+ 
++#if 0
+ 	setlocale(LC_ALL, "");
+ 	bindtextdomain(PACKAGE, LOCALEDIR);
+ 	textdomain(PACKAGE);
++#endif
+ 
+ 	/* check that sender has write enabled */
+ 	if (isatty(fileno(stdin)))
+@@ -297,12 +301,13 @@
  	void done();
  
  	/* Determine our login name before the we reopen() stdout */
@@ -28,7 +40,7 @@
  
  	if (strlen(tty) + 6 > sizeof(path))
  		exit(1);
-@@ -322,8 +325,12 @@
+@@ -322,8 +327,12 @@
  	nows = ctime(&now);
  	nows[16] = '\0';
  	printf("\r\n\007\007\007");
@@ -43,7 +55,7 @@
  	printf("\r\n");
  
  	while (fgets(line, sizeof(line), stdin) != NULL)
-@@ -355,7 +362,7 @@
+@@ -355,7 +364,7 @@
  		if (c == '\n') {
  			PUTC('\r');
  			PUTC('\n');
