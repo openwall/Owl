@@ -1,4 +1,4 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.13 2002/03/23 21:22:27 solar Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.14 2002/03/24 19:22:30 solar Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
@@ -107,9 +107,8 @@ fi
 - Minor spec file cleanups.
 
 * Fri Mar 22 2002 Michail Litvak <mci@owl.openwall.com>
-- fix sa to display real time in seconds not cpu seconds,
-  also fix man and info pages
-- fixes to build with -Wall cleanly
+- Fixed sa(8) to properly report real time in minutes or seconds.
+- Fixes to build with -Wall cleanly.
 
 * Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
