@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.25 2002/08/03 03:30:13 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.26 2002/08/12 20:02:59 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
-Version: 0.9.6e
-Release: owl2
+Version: 0.9.6g
+Release: owl1
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
@@ -11,9 +11,7 @@ Source: ftp://ftp.openssl.org/source/%{name}-%{version}.tar.gz
 Patch0: openssl-0.9.6e-owl-crypt.diff
 Patch1: openssl-0.9.6a-owl-glibc-enable_secure.diff
 Patch2: openssl-0.9.6d-owl-Makefile.diff
-Patch3: openssl-0.9.6e-owl-release-date-fix.diff
 Patch10: openssl-0.9.6e-up-20020429-read-errors.diff
-Patch11: openssl-0.9.6e-cvs-20020802-asn1_lib.diff
 PreReq: /sbin/ldconfig
 Provides: SSL
 BuildRequires: perl
@@ -67,9 +65,7 @@ popd
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 %patch10 -p0
-%patch11 -p1
 
 %define openssldir /var/ssl
 %define opensslflags shared -DSSL_ALLOW_ADH --prefix=/usr
@@ -102,7 +98,7 @@ perl -pi -e "s/-O.(?: -fomit-frame-pointer)?(?: -m.86)?/${RPM_OPT_FLAGS}/" \
 %endif
 
 # Check these against the DIRS= line and "all" target in top-level Makefile
-# when updating to a new version of OpenSSL; with 0.9.6e the Makefile says:
+# when updating to a new version of OpenSSL; with 0.9.6g the Makefile says:
 # DIRS= crypto ssl rsaref $(SHLIB_MARK) apps test tools
 # all: clean-shared Makefile.ssl sub_all
 make Makefile.ssl
@@ -168,6 +164,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0644,root,root) %{_mandir}/man3/*
 
 %changelog
+* Mon Aug 12 2002 Solar Designer <solar@owl.openwall.com>
+- Updated to 0.9.6g dropping two patches.
+
 * Sat Aug 03 2002 Solar Designer <solar@owl.openwall.com>
 - Added two post-0.9.6e changes from the CVS which correct the recent ASN.1
 parsing vulnerability fixes.
