@@ -315,12 +315,6 @@ in place).
 Also provide a silo.conf and generic kernel configuration for SPARC.
 
 
-	owl-control.
-
-[PRIORITY: medium]
-Provide a control(8) manual page.
-
-
 	owl-dev.
 
 [PRIORITY: low]
@@ -621,4 +615,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.10 2002/12/30 21:54:57 solar Exp $
+$Id: Owl/doc/TODO,v 1.11 2003/01/08 02:26:30 solar Exp $
