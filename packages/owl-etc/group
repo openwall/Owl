@@ -33,3 +33,5 @@ klogd:x:180:
 postfix:x:182:
 postman:x:183:
 popa3d:x:184:
+xntpd:x:185:
+scanlogd:x:199:
