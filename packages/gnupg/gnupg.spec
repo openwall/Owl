@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gnupg/gnupg.spec,v 1.16 2003/05/11 21:25:08 mci Exp $
+# $Id: Owl/packages/gnupg/gnupg.spec,v 1.17 2003/05/14 17:50:18 solar Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
@@ -83,7 +83,7 @@ fi
 %changelog
 * Sun May 11 2003 Michail Litvak <mci@owl.openwall.com> 1.2.2-owl1
 - 1.2.2 (Fixed key validity bug)
-- builded with --included-gettext
+- built with --included-gettext
 - spec file cleanups
 
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
