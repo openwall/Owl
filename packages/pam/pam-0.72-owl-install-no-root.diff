@@ -1,0 +1,12 @@
+diff -urN pam-0.72.orig/modules/pam_unix/Makefile pam-0.72/modules/pam_unix/Makefile
+--- pam-0.72.orig/modules/pam_unix/Makefile	Thu Jan 20 02:07:28 2000
++++ pam-0.72/modules/pam_unix/Makefile	Sat Jul  8 00:38:41 2000
+@@ -145,7 +145,7 @@
+ 	ln -sf $(LIBSHARED) $(FAKEROOT)$(SECUREDIR)/pam_unix_passwd.so
+ 	ln -sf $(LIBSHARED) $(FAKEROOT)$(SECUREDIR)/pam_unix_session.so
+ endif
+-	install -m 4555 -o root -g root $(CHKPWD) $(FAKEROOT)$(SUPLEMENTED)
++	install -m 700 $(CHKPWD) $(FAKEROOT)$(SUPLEMENTED)
+ 
+ remove:
+ 	cd $(FAKEROOT)$(SECUREDIR) && rm -f $(LIBSHARED)

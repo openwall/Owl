@@ -1,0 +1,326 @@
+diff -urN pam-0.72.orig/modules/pam_pwdb/Makefile pam-0.72/modules/pam_pwdb/Makefile
+--- pam-0.72.orig/modules/pam_pwdb/Makefile	Mon Jan 31 22:04:09 2000
++++ pam-0.72/modules/pam_pwdb/Makefile	Sat Jul  8 00:33:47 2000
+@@ -52,9 +52,8 @@
+ LIBOBJD = $(addprefix dynamic/,$(LIBOBJ))
+ #LIBOBJS = $(addprefix static/,$(LIBOBJ))
+ LIBDEPS = pam_unix_acct.-c pam_unix_auth.-c pam_unix_passwd.-c \
+-	pam_unix_sess.-c pam_unix_pwupd.-c support.-c bigcrypt.-c
++	pam_unix_sess.-c pam_unix_pwupd.-c support.-c
+ 
+-PLUS += md5_good.o md5_broken.o md5_crypt_good.o md5_crypt_broken.o
+ CFLAGS += $(EXTRAS)
+ 
+ ifdef DYNAMIC
+@@ -77,11 +76,10 @@
+ 	@echo "*** Building PAM_pwdb module..."
+ 	@echo
+ 
+-$(CHKPWD): pwdb_chkpwd.o md5_good.o md5_broken.o \
+-           md5_crypt_good.o md5_crypt_broken.o
++$(CHKPWD): pwdb_chkpwd.o
+ 	$(CC) -o $(CHKPWD) $^ -lpwdb
+ 
+-pwdb_chkpwd.o: pwdb_chkpwd.c pam_unix_md.-c bigcrypt.-c
++pwdb_chkpwd.o: pwdb_chkpwd.c pam_unix_md.-c
+ 
+ md5_good.o: md5.c
+ 	$(CC) $(CFLAGS) $(CPPFLAGS) -DHIGHFIRST -D'MD5Name(x)=Good##x' \
+@@ -132,7 +130,7 @@
+ 	$(INSTALL) -m $(SHLIBMODE) $(LIBSHARED) $(FAKEROOT)$(SECUREDIR)
+ endif
+ 	$(MKDIR) $(FAKEROOT)$(SUPLEMENTED)
+-	$(INSTALL) -m 4555 -o root -g root $(CHKPWD) $(FAKEROOT)$(SUPLEMENTED)
++	$(INSTALL) -m 700 $(CHKPWD) $(FAKEROOT)$(SUPLEMENTED)
+ 
+ remove:
+ 	rm -f $(FAKEROOT)$(SECUREDIR)/$(TITLE).so
+diff -urN pam-0.72.orig/modules/pam_pwdb/pam_pwdb.c pam-0.72/modules/pam_pwdb/pam_pwdb.c
+--- pam-0.72.orig/modules/pam_pwdb/pam_pwdb.c	Mon Jan  3 22:01:53 2000
++++ pam-0.72/modules/pam_pwdb/pam_pwdb.c	Fri Jul  7 22:37:02 2000
+@@ -197,7 +197,7 @@
+ 
+     pwdb_start();
+     ctrl = set_ctrl(flags, argc, argv);
+-    retval = _unix_chauthtok(pamh, ctrl);
++    retval = _unix_chauthtok(pamh, ctrl, argc, argv);
+     pwdb_end();
+ 
+     D(("done."));
+diff -urN pam-0.72.orig/modules/pam_pwdb/pam_unix_md.-c pam-0.72/modules/pam_pwdb/pam_unix_md.-c
+--- pam-0.72.orig/modules/pam_pwdb/pam_unix_md.-c	Mon Jan  3 22:01:53 2000
++++ pam-0.72/modules/pam_pwdb/pam_unix_md.-c	Fri Jul  7 22:37:02 2000
+@@ -9,6 +9,9 @@
+  * software freely from the US, please do not send me any. (AGM)
+  */
+ 
++#include <crypt.h>
++
++#if 0
+ /* this should have been defined in a header file.. Why wasn't it? AGM */
+ extern char *crypt(const char *key, const char *salt);
+ 
+@@ -27,10 +30,12 @@
+ const static struct cfns cfn_list[N_MDS] = {
+     { "$1$", 3, Goodcrypt_md5 },
+ };
++#endif
+ 
+ static char *_pam_md(const char *key, const char *salt)
+ {
+     char *x,*e=NULL;
++#if 0
+     int i;
+ 
+     D(("called with key='%s', salt='%s'", key, salt));
+@@ -47,12 +52,16 @@
+     if ( i >= N_MDS ) {
+ 	e = bigcrypt(key, salt);      /* (defaults to standard algorithm) */
+     }
++#endif
++
++    e = crypt(key, salt);
+ 
+     x = x_strdup(e);                        /* put e in malloc()ed memory */
+     _pam_overwrite(e);                                        /* clean up */
+     return x;                           /* this must be deleted elsewhere */
+ }
+ 
++#if 0
+ #ifndef PWDB_NO_MD_COMPAT
+ static char *_pam_md_compat(const char *key, const char *salt)
+ {
+@@ -74,3 +83,4 @@
+     return x;                           /* this must be deleted elsewhere */
+ }
+ #endif /* PWDB_NO_MD_COMPAT */
++#endif
+diff -urN pam-0.72.orig/modules/pam_pwdb/pam_unix_passwd.-c pam-0.72/modules/pam_pwdb/pam_unix_passwd.-c
+--- pam-0.72.orig/modules/pam_pwdb/pam_unix_passwd.-c	Mon Jan  3 20:34:46 2000
++++ pam-0.72/modules/pam_pwdb/pam_unix_passwd.-c	Fri Jul  7 22:37:02 2000
+@@ -38,12 +38,20 @@
+ " - PAM_PWDB password module <morgan@parc.power.net>"
+ ;
+ 
++#include <string.h>
++#include <stdlib.h>
++#include <unistd.h>
++#define __USE_OW
++#include <crypt.h>
++
+ #include "pam_unix_pwupd.-c"
+ 
++#if 0
+ /* passwd/salt conversion macros */
+ 
+ #define ascii_to_bin(c) ((c)>='a'?(c-59):(c)>='A'?((c)-53):(c)-'.')
+ #define bin_to_ascii(c) ((c)>=38?((c)-38+'a'):(c)>=12?((c)-12+'A'):(c)+'.')
++#endif
+ 
+ /* data tokens */
+ 
+@@ -52,6 +60,28 @@
+ 
+ /* Implementation */
+ 
++static int read_loop(int fd, char *buffer, int count)
++{
++	int offset, block;
++
++	offset = 0;
++	while (count > 0) {
++		block = read(fd, &buffer[offset], count);
++
++		if (block < 0) {
++			if (errno == EINTR) continue;
++			return block;
++		}
++		if (!block) return offset;
++
++		offset += block;
++		count -= block;
++	}
++
++	return offset;
++}
++
++#if 0
+ /*
+  * i64c - convert an integer to a radix 64 character
+  */
+@@ -73,6 +103,7 @@
+         return ('a' - 38 + i);
+     return ('\0');
+ }
++#endif
+ 
+ /*
+  * FUNCTION: _pam_unix_chauthtok() 
+@@ -94,18 +125,39 @@
+  * in this release (.52) mostly for the purpose of discussion.
+  */
+ 
+-static int _unix_chauthtok(pam_handle_t *pamh, unsigned int ctrl)
++static int _unix_chauthtok(pam_handle_t *pamh, unsigned int ctrl,
++	int argc, const char **argv)
+ {
+     int retval;
+     unsigned int lctrl;
++    const char *prefix;
++    unsigned long count;
+ 
+     /* <DO NOT free() THESE> */
+     const char *user;
+-    const char *pass_old, *pass_new;
++    const char *pass_old;
++    char *pass_new;
+     /* </DO NOT free() THESE> */
+ 
+     D(("called"));
+ 
++    prefix = "";
++    count = 0;
++
++    while (argc-- > 0) {
++	if (!strncmp(*argv, "prefix=", 7)) {
++	    prefix = *argv + 7;
++	    unset(UNIX_MD5_PASS, ctrl);
++	} else
++	if (!strncmp(*argv, "count=", 6))
++	    count = strtoul(*argv + 6, NULL, 0);
++
++	++argv;
++    }
++
++    if (on(UNIX_MD5_PASS, ctrl))
++	prefix = "$1$";
++
+     /*
+      * First get the name of a user
+      */
+@@ -183,10 +235,12 @@
+ 	}
+ 
+     } else if ( on( UNIX__UPDATE, ctrl ) ) {
++#if 0
+ 	/* tpass is used below to store the _pam_md() return; it
+ 	 * should be _pam_delete()'d. */
+ 
+ 	char *tpass=NULL;     
++#endif
+ 
+ 	/*
+ 	 * obtain the proposed password
+@@ -235,7 +289,7 @@
+ 				      , "Enter new UNIX password: "
+ 				      , "Retype new UNIX password: "
+ 				      , _UNIX_NEW_AUTHTOK
+-				      , &pass_new );
++				      , (const char **)&pass_new );
+ 
+ 	if ( retval != PAM_SUCCESS ) {
+ 	    if ( on(UNIX_DEBUG,ctrl) ) {
+@@ -254,7 +308,8 @@
+ 	 * password is acceptable.
+ 	 */
+ 
+-	if (pass_new[0] == '\0') {     /* "\0" password = NULL */
++	/* "\0" password = NULL */
++	if (pass_new[0] == '\0' && on(UNIX__NONULL, ctrl)) {
+ 	    pass_new = NULL;
+ 	}
+ 
+@@ -262,7 +317,7 @@
+ 
+ 	if (retval != PAM_SUCCESS) {
+ 	    _log_err(LOG_NOTICE, "new password not acceptable");
+-	    pass_new = pass_old = NULL;	              /* tidy up */
++	    pass_new = NULL; pass_old = NULL;	           /* tidy up */
+ 	    return retval;
+ 	}
+ 
+@@ -278,6 +333,7 @@
+ 	 *       of password handling... no encryption needed..
+ 	 */
+ 
++#if 0
+ 	if ( on(UNIX_MD5_PASS, ctrl) ) {
+ 
+ 	    /*
+@@ -347,6 +403,39 @@
+ 		/* no longer need cleartext */
+ 		pass_new = tpass = _pam_md( pass_new, salt );
+ 	    }
++#endif
++	if (pass_new[0] != '\0') {
++		int fd;
++		char pool[16];
++		char *pw, *salt;
++
++		if ((fd = open("/dev/urandom", O_RDONLY)) < 0 ||
++		    read_loop(fd, pool, sizeof(pool)) != sizeof(pool)) {
++			if (fd >= 0) close(fd);
++			_log_err(LOG_CRIT, "failed to read /dev/urandom");
++			return PAM_ABORT;
++		}
++		close(fd);
++
++		salt = crypt_gensalt(prefix, count, pool, sizeof(pool));
++		memset(pool, 0, sizeof(pool));
++		if (!salt) {
++			_log_err(LOG_CRIT, "failed to generate salt");
++			return PAM_ABORT;
++		}
++
++		pw = pass_new;
++		pass_new = _pam_md(pw, salt);
++		_pam_delete(pw);
++		_pam_overwrite(salt);
++
++		if (pass_new && strchr(pass_new, ':'))
++			pass_new = _pam_delete(pass_new);
++
++		if (!pass_new) {
++			_log_err(LOG_CRIT, "failed to hash password");
++			return PAM_ABORT;
++		}
+ 	}
+ 
+ 	D(("password processed"));
+diff -urN pam-0.72.orig/modules/pam_pwdb/support.-c pam-0.72/modules/pam_pwdb/support.-c
+--- pam-0.72.orig/modules/pam_pwdb/support.-c	Mon Jan  3 21:08:45 2000
++++ pam-0.72/modules/pam_pwdb/support.-c	Fri Jul  7 23:17:54 2000
+@@ -228,7 +228,12 @@
+ 	}
+ 
+ 	if ( j >= UNIX_CTRLS_ ) {
+-	    _log_err(LOG_ERR, "unrecognized option [%s]",*argv);
++	    if (strncmp(*argv, "prefix=", 7) && strncmp(*argv, "count=", 6))
++		_log_err(LOG_ERR, "unrecognized option [%s]",*argv);
++	} else
++	if (j == UNIX_BIGCRYPT) {
++	    _log_err(LOG_ERR,
++		"bigcrypt shouldn't be used for new passwords", *argv);
+ 	} else {
+ 	    ctrl &= unix_args[j].mask;    /* for turning things off */
+ 	    ctrl |= unix_args[j].flag;    /* for turning things on  */
+@@ -521,6 +526,7 @@
+ 	    if ( pp != NULL && strcmp( pp, salt ) == 0 ) {
+ 		verify_result = PAM_SUCCESS;
+ 	    } else {
++#if 0
+ 		_pam_delete(pp);
+ 		D(("did not match"));
+ 		pp = _pam_md_compat(p, salt);
+@@ -528,8 +534,11 @@
+ 		if ( pp != NULL && strcmp( pp, salt ) == 0 ) {
+ 		    verify_result = PAM_SUCCESS;
+ 		} else {
++#endif
+ 		    verify_result = PAM_AUTH_ERR;
++#if 0
+ 		}
++#endif
+ 	    }
+ 	    D(("verify result is %s", pam_strerror(pamh, verify_result)));
+ 	    p = NULL; /* no longer needed here */

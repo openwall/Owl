@@ -1,0 +1,11 @@
+--- pam-0.72.orig/Makefile	Mon Jan  3 22:01:52 2000
++++ pam-0.72/Makefile	Fri Jul  7 23:51:44 2000
+@@ -44,7 +44,7 @@
+ # Note, these definitions are all "export"ed below...
+ 
+ HAVE_PWDBLIB=yes
+-HAVE_CRACKLIB=yes
++HAVE_CRACKLIB=no
+ HAVE_AFSLIBS=no
+ HAVE_KRBLIBS=no
+ 
