@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.24 2002/02/07 18:07:46 solar Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.25 2002/05/24 23:06:04 solar Exp $
 
 %define GCC_PREFIX /usr
 %define CPP_PREFIX /lib
@@ -12,7 +12,7 @@
 Summary: C compiler from the GNU Compiler Collection.
 Name: gcc
 Version: %{GCC_VERSION}
-Release: owl1
+Release: owl2
 Epoch: 1
 License: GPL
 Group: Development/Languages
@@ -176,6 +176,7 @@ mkdir obj-%{_target_platform}
 cd obj-%{_target_platform}
 
 CFLAGS="`echo "$RPM_OPT_FLAGS" | sed -e 's/-fno-rtti//g'` -fexceptions"
+export extra_c_flags="-O -fomit-frame-pointer"
 CFLAGS="$CFLAGS" \
 CXXFLAGS="$CFLAGS" \
 XCFLAGS="$CFLAGS" \
@@ -474,6 +475,10 @@ fi
 %endif
 
 %changelog
+* Sat May 25 2002 Solar Designer <solar@owl.openwall.com>
+- Do use some optimization when building the stage1 compiler to make our gcc
+builds faster.
+
 * Tue Jan 29 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions (but more cleanups are still needed).
 - Dropped the 2.95.2-specific patches entirely.
