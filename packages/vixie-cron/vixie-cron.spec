@@ -1,9 +1,9 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.16 2002/04/24 23:13:02 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.17 2002/05/08 22:21:01 solar Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
 Version: 3.0.2.7
-Release: owl13
+Release: owl14
 License: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%{version}.tar.gz
@@ -99,6 +99,12 @@ fi
 /etc/control.d/facilities/crontab
 
 %changelog
+* Thu May 09 2002 Solar Designer <solar@owl.openwall.com>
+- Ensure all files are closed in crontab(1) when the editor is run; this
+fixes the problem pointed out by Paul Starzetz on Bugtraq where crontab
+could leak read-only access to /etc/cron.{allow,deny} even if those files
+are made readable to just group crontab.
+
 * Thu Apr 25 2002 Solar Designer <solar@owl.openwall.com>
 - vitmp has been moved to /bin.
 
