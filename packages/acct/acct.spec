@@ -1,4 +1,4 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.11 2002/03/22 20:51:01 mci Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.12 2002/03/22 21:02:51 mci Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
@@ -28,8 +28,6 @@ summarizes information about previously executed commands.
 %prep
 %setup -q
 %patch -p1
-
-%{expand:%%define optflags %optflags -Wall}
 
 %build
 autoconf
