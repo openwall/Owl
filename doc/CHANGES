@@ -19,7 +19,8 @@ previous package version.  The issues are:
 1. The "from=" restriction in ~/.ssh/authorized_keys2 could fail to
 work when the file defines a mix of RSA and DSA keys.
 2. A documentation problem that the authorized_keys* options didn't
-restrict the use of sftp.  They do so now.
+restrict the use of sftp.  They do so now.  sftp has never been
+enabled on Owl by default (it is owl-control'able).
 3. As discovered by Yang Yu, the "echo simulation" traffic analysis
 countermeasure produced an extra echo packet for the carriage return
 after password entry.  That could serve as a traffic signature for
@@ -310,4 +311,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp@hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.26 2001/09/27 02:35:02 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.27 2001/09/27 17:22:18 solar Exp $
