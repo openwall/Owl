@@ -1,8 +1,8 @@
-# $Id: Owl/packages/iproute2/iproute2.spec,v 1.1 2001/12/28 10:15:45 mci Exp $
+# $Id: Owl/packages/iproute2/iproute2.spec,v 1.2 2001/12/28 10:30:51 solar Exp $
 
 %define snapshot ss010824
 
-Summary: Enhanced IP routing and network devices configuration tools
+Summary: Enhanced IP routing and network devices configuration tools.
 Name: iproute2
 Version: 2.4.7
 Release: 1owl
@@ -31,7 +31,7 @@ and packet scheduling.  This package includes the new utilities
 
 %build
 make KERNEL_INCLUDE=/usr/include \
-     CCOPTS="$RPM_OPT_FLAGS -D_GNU_SOURCE -O2 -Wstrict-prototypes -Wall -Werror"
+    CCOPTS="$RPM_OPT_FLAGS -D_GNU_SOURCE -O2 -Wstrict-prototypes -Wall -Werror"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -58,4 +58,4 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Tue Dec 28 2001 Michail Litvak <mci@owl.openwall.com>
 - spec-file based on RH's
-- added libnetlink.3 man page from SuSe
+- added libnetlink.3 man page from SuSE
