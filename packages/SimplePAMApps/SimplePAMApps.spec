@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.34 2004/11/23 22:40:44 mci Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.35 2005/01/12 15:35:51 galaxy Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
 Version: 0.60
-Release: owl22
+Release: owl23
 License: BSD or GPL
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
@@ -40,60 +40,67 @@ includes "login", "su", and "passwd".
 %build
 touch conf/.ignore_age
 CFLAGS="$RPM_OPT_FLAGS -Wall" ./configure --without-pniam --without-pwdb
-make
+%__make
 
 %install
 mkdir -p %buildroot/bin
 install -m 700 pamapps/{login/login,su/su} %buildroot/bin/
 
-mkdir -p %buildroot/usr/bin
-install -m 700 pamapps/passwd/passwd %buildroot/usr/bin/
+mkdir -p %buildroot%_bindir
+install -m 700 pamapps/passwd/passwd %buildroot%_bindir/
 
 mkdir -p %buildroot%_mandir/man1
 install -m 644 pamapps/{login/login.1,su/su.1,passwd/passwd.1} \
 	%buildroot%_mandir/man1/
 
-mkdir -p %buildroot/etc/pam.d
-install -m 600 $RPM_SOURCE_DIR/login.pam %buildroot/etc/pam.d/login
-install -m 600 $RPM_SOURCE_DIR/su.pam %buildroot/etc/pam.d/su
-install -m 600 $RPM_SOURCE_DIR/passwd.pam %buildroot/etc/pam.d/passwd
+mkdir -p %buildroot%_sysconfdir/pam.d
+install -m 600 $RPM_SOURCE_DIR/login.pam %buildroot%_sysconfdir/pam.d/login
+install -m 600 $RPM_SOURCE_DIR/su.pam %buildroot%_sysconfdir/pam.d/su
+install -m 600 $RPM_SOURCE_DIR/passwd.pam %buildroot%_sysconfdir/pam.d/passwd
 
-mkdir -p %buildroot/etc/control.d/facilities
+mkdir -p %buildroot%_sysconfdir/control.d/facilities
 install -m 700 $RPM_SOURCE_DIR/su.control \
-	%buildroot/etc/control.d/facilities/su
+	%buildroot%_sysconfdir/control.d/facilities/su
 install -m 700 $RPM_SOURCE_DIR/passwd.control \
-	%buildroot/etc/control.d/facilities/passwd
+	%buildroot%_sysconfdir/control.d/facilities/passwd
 
 %pre
 if [ $1 -ge 2 ]; then
-	/usr/sbin/control-dump passwd su
+	%_sbindir/control-dump passwd su
 fi
 
 %post
 if [ $1 -ge 2 ]; then
-	/usr/sbin/control-restore passwd su
-	if [ -d /etc/tcb -a -f /etc/shadow-pre-tcb -a ! -e /etc/shadow -a \
-	    "`/usr/sbin/control passwd`" = traditional ]; then
+	%_sbindir/control-restore passwd su
+	if [ -d %_sysconfdir/tcb -a -f %_sysconfdir/shadow-pre-tcb -a ! -e %_sysconfdir/shadow -a \
+	    "`%_sbindir/control passwd`" = traditional ]; then
 		echo "Setting passwd(1) file modes for tcb"
-		/usr/sbin/control passwd tcb
-		ls -l /usr/bin/passwd
+		%_sbindir/control passwd tcb
+		ls -l %_bindir/passwd
 	fi
 else
-	/usr/sbin/control passwd tcb
-	/usr/sbin/control su wheelonly
+	%_sbindir/control passwd tcb
+	%_sbindir/control su wheelonly
 fi
 
 %files
 %defattr(-,root,root)
 %doc Copyright Discussions
 %attr(0700,root,root) /bin/login
-%attr(0700,root,root) /bin/su
-%attr(0700,root,root) /usr/bin/passwd
+%attr(0700,root,root) %verify(not mode group) /bin/su
+%attr(0700,root,root) %verify(not mode group) %_bindir/passwd
 %_mandir/man1/*
-%config(noreplace) /etc/pam.d/*
-/etc/control.d/facilities/*
+%config(noreplace) %_sysconfdir/pam.d/login
+%config(noreplace) %verify(not mode group) %_sysconfdir/pam.d/passwd
+%config(noreplace) %verify(not size md5 mtime) %_sysconfdir/pam.d/su
+%_sysconfdir/control.d/facilities/*
 
 %changelog
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.60-owl23
+- Removed verification of permissions and group owner from su and passwd,
+since we are controlling them through control.
+- Cleaned up the spec.
+
 * Sun Feb 08 2004 Solar Designer <solar@owl.openwall.com> 0.60-owl22
 - In login and su, generate ut_id's consistently with libutempter and
 openssh (patch from Dmitry Levin of ALT Linux).
