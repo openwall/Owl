@@ -1,10 +1,10 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.18 2004/01/20 00:06:36 solar Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.19 2004/01/20 00:48:01 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
 
-# Set this if you're running kernel with enabled 'Destroy shared memory
-# segments not in use' (CONFIG_HARDEN_SHM) configuration option.
+# Set this if you're running kernel with enabled "Destroy shared memory
+# segments not in use" (CONFIG_HARDEN_SHM) configuration option.
 %define KERNEL_CONFIG_HARDEN_SHM 1
 
 Summary: The Perl programming language.
@@ -153,7 +153,7 @@ fix-config: \$(PHDIR)/Config.pm
 EOF
 
 # Don't leak information specific to the build system
-rm -f $RPM_BUILD_ROOT%_libdir/perl5/%version/%_arch-%_os/%_os/compile.ph
+rm -f $RPM_BUILD_ROOT%_libdir/perl5/%version/%_arch-%_os/linux/compile.ph
 %endif
 
 # Fix the rest of the stuff
