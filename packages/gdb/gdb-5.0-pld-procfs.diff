@@ -1,0 +1,8 @@
+--- gdb-5.0-/gdb/config/sparc/nm-linux.h	Tue Dec  7 04:56:12 1999
++++ gdb-5.0/gdb/config/sparc/nm-linux.h	Fri Nov 17 15:06:07 2000
+@@ -27,3 +27,5 @@
+ 
+ #define KERNEL_U_SIZE kernel_u_size()
+ extern int kernel_u_size PARAMS ((void));
++
++#undef USE_PROC_FS

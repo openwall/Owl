@@ -1,0 +1,76 @@
+diff -urN gdb-5.0.org/gdb/config.in gdb-5.0/gdb/config.in
+--- gdb-5.0.org/gdb/config.in	Fri Apr 14 12:40:00 2000
++++ gdb-5.0/gdb/config.in	Tue Sep  5 18:21:12 2000
+@@ -207,8 +207,8 @@
+ /* Define if you have the <ctype.h> header file.  */
+ #undef HAVE_CTYPE_H
+ 
+-/* Define if you have the <curses.h> header file.  */
+-#undef HAVE_CURSES_H
++/* Define if you have the <ncurses/curses.h> header file.  */
++#undef HAVE_NCURSES_CURSES_H
+ 
+ /* Define if you have the <endian.h> header file.  */
+ #undef HAVE_ENDIAN_H
+diff -urN gdb-5.0.org/gdb/configure.in gdb-5.0/gdb/configure.in
+--- gdb-5.0.org/gdb/configure.in	Tue Sep  5 18:19:34 2000
++++ gdb-5.0/gdb/configure.in	Tue Sep  5 18:20:44 2000
+@@ -97,7 +97,7 @@
+     AC_DEFINE(_MSE_INT_H)
+ esac; esac
+ 
+-AC_CHECK_HEADERS(ctype.h curses.h endian.h link.h thread_db.h proc_service.h \
++AC_CHECK_HEADERS(ctype.h ncurses/curses.h endian.h link.h thread_db.h proc_service.h \
+ 	memory.h objlist.h ptrace.h sgtty.h stddef.h stdlib.h \
+ 	string.h sys/procfs.h sys/ptrace.h sys/reg.h stdint.h \
+ 	term.h termio.h termios.h unistd.h wait.h sys/wait.h \
+diff -urN gdb-5.0.org/gdb/tui/tui.h gdb-5.0/gdb/tui/tui.h
+--- gdb-5.0.org/gdb/tui/tui.h	Tue Sep  5 18:19:34 2000
++++ gdb-5.0/gdb/tui/tui.h	Tue Sep  5 18:20:16 2000
+@@ -2,7 +2,7 @@
+ 
+ #ifndef TUI_H
+ #define TUI_H
+-#include <curses.h>
++#include <ncurses/curses.h>
+ 
+ #ifdef ANSI_PROTOTYPES
+ #include <stdarg.h>
+diff -urN gdb-5.0.org/gdb/tui/tuiGeneralWin.c gdb-5.0/gdb/tui/tuiGeneralWin.c
+--- gdb-5.0.org/gdb/tui/tuiGeneralWin.c	Tue Sep  5 18:19:34 2000
++++ gdb-5.0/gdb/tui/tuiGeneralWin.c	Tue Sep  5 18:20:25 2000
+@@ -3,7 +3,7 @@
+    ** This module supports general window behavior
+  */
+ 
+-#include <curses.h>
++#include <ncurses/curses.h>
+ #include "defs.h"
+ #include "tui.h"
+ #include "tuiData.h"
+diff -urN gdb-5.0.org/gdb/utils.c gdb-5.0/gdb/utils.c
+--- gdb-5.0.org/gdb/utils.c	Tue Sep  5 18:19:34 2000
++++ gdb-5.0/gdb/utils.c	Tue Sep  5 18:21:55 2000
+@@ -24,8 +24,8 @@
+ #include "gdb_string.h"
+ #include "event-top.h"
+ 
+-#ifdef HAVE_CURSES_H
+-#include <curses.h>
++#ifdef HAVE_NCURSES_CURSES_H
++#include <ncurses/curses.h>
+ #endif
+ #ifdef HAVE_TERM_H
+ #include <term.h>
+diff -urN gdb-5.0.org/gdb/tui/tui.c gdb-5.0/gdb/tui/tui.c
+--- gdb-5.0.org/gdb/tui/tui.c	Tue Sep  5 19:51:50 2000
++++ gdb-5.0/gdb/tui/tui.c	Tue Sep  5 19:52:17 2000
+@@ -7,7 +7,7 @@
+ #include <stdlib.h>
+ #include <ctype.h>
+ #include <malloc.h>
+-#include <curses.h>
++#include <ncurses/curses.h>
+ #ifdef HAVE_TERM_H
+ #include <term.h>
+ #endif

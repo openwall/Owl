@@ -1,0 +1,11 @@
+diff -urN gdb-5.0.org/gdb/Makefile.in gdb-5.0/gdb/Makefile.in
+--- gdb-5.0.org/gdb/Makefile.in	Tue Sep  5 21:41:32 2000
++++ gdb-5.0/gdb/Makefile.in	Tue Sep  5 21:42:55 2000
+@@ -354,6 +354,7 @@
+ 
+ FLAGS_TO_PASS = \
+ 	"prefix=$(prefix)" \
++	"infodir=$(infodir)" \
+ 	"exec_prefix=$(exec_prefix)" \
+ 	"against=$(against)" \
+ 	"AR=$(AR)" \

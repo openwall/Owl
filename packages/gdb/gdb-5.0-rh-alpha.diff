@@ -1,0 +1,38 @@
+--- gdb-5.0/gdb/alpha-nat.c.orig	Wed Oct  6 02:07:58 1999
++++ gdb-5.0/gdb/alpha-nat.c	Sat Jul  7 00:05:09 2001
+@@ -205,7 +205,7 @@
+ 
+ void
+ supply_gregset (gregsetp)
+-     gregset_t *gregsetp;
++     gdb_gregset_t *gregsetp;
+ {
+   register int regi;
+   register long *regp = ALPHA_REGSET_BASE (gregsetp);
+@@ -224,7 +224,7 @@
+ 
+ void
+ fill_gregset (gregsetp, regno)
+-     gregset_t *gregsetp;
++     gdb_gregset_t *gregsetp;
+      int regno;
+ {
+   int regi;
+@@ -245,7 +245,7 @@
+ 
+ void
+ supply_fpregset (fpregsetp)
+-     fpregset_t *fpregsetp;
++     gdb_fpregset_t *fpregsetp;
+ {
+   register int regi;
+   register long *regp = ALPHA_REGSET_BASE (fpregsetp);
+@@ -256,7 +256,7 @@
+ 
+ void
+ fill_fpregset (fpregsetp, regno)
+-     fpregset_t *fpregsetp;
++     gdb_fpregset_t *fpregsetp;
+      int regno;
+ {
+   int regi;

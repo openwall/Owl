@@ -1,0 +1,155 @@
+--- gdb-5.0/gdb/symtab.c.orig	Tue Apr  4 05:08:52 2000
++++ gdb-5.0/gdb/symtab.c	Sat Jul  7 00:08:19 2001
+@@ -310,6 +310,8 @@
+   char buf[20];
+   int len = (newname == NULL ? 0 : strlen (newname));
+ 
++  if (OPNAME_PREFIX_P (field_name))
++	  return physname;
+   is_full_physname_constructor =
+     ((physname[0] == '_' && physname[1] == '_' &&
+       (isdigit (physname[2]) || physname[2] == 'Q' || physname[2] == 't'))
+@@ -349,21 +351,6 @@
+ 		      + strlen (physname)
+ 		      + 1);
+ 
+-  /* Only needed for GNU-mangled names.  ANSI-mangled names
+-     work with the normal mechanisms.  */
+-  if (OPNAME_PREFIX_P (field_name))
+-    {
+-      const char *opname = cplus_mangle_opname (field_name + 3, 0);
+-      if (opname == NULL)
+-	error ("No mangling for \"%s\"", field_name);
+-      mangled_name_len += strlen (opname);
+-      mangled_name = (char *) xmalloc (mangled_name_len);
+-
+-      strncpy (mangled_name, field_name, 3);
+-      mangled_name[3] = '\0';
+-      strcat (mangled_name, opname);
+-    }
+-  else
+     {
+       mangled_name = (char *) xmalloc (mangled_name_len);
+       if (is_constructor)
+@@ -2533,6 +2520,7 @@
+   register struct minimal_symbol *msymbol;
+   char *copy;
+   struct symbol *sym_class;
++  int triedonce=0;
+   int i1;
+   int is_quoted;
+   int is_quote_enclosed;
+@@ -2610,7 +2598,6 @@
+    */
+   if (has_if)
+     *ii = ' ';
+-
+   /* Maybe we were called with a line range FILENAME:LINENUM,FILENAME:LINENUM
+      and we must isolate the first half.  Outer layers will call again later
+      for the second half.
+@@ -2643,13 +2630,26 @@
+     }
+   else
+     is_quote_enclosed = 0;
++tryagain:
+   for (; *p; p++)
+     {
+       if (p[0] == '<')
+ 	{
+ 	  char *temp_end = find_template_name_end (p);
+-	  if (!temp_end)
++	  if (!temp_end && !triedonce)
++	  {
++		  triedonce=1;
++		  is_quote_enclosed=1;
++		  p=*argptr;
++		  if (has_comma)
++			  *ii=',';
++		  s=NULL;
++		  goto tryagain;
++	   }
++	  else if (!temp_end && triedonce)
++	  {
+ 	    error ("malformed template specification in command");
++	  }
+ 	  p = temp_end;
+ 	}
+       /* Check for the end of the first half of the linespec.  End of line,
+@@ -2857,9 +2857,9 @@
+ 
+ 		      if (OPNAME_PREFIX_P (copy))
+ 			{
+-			  tmp = (char *) alloca (strlen (copy + 3) + 9);
++			  tmp = (char *) alloca (strlen (copy + 8) + 9);
+ 			  strcpy (tmp, "operator ");
+-			  strcat (tmp, copy + 3);
++			  strcat (tmp, copy + 8);
+ 			}
+ 		      else
+ 			tmp = copy;
+@@ -4257,16 +4257,19 @@
+       return NULL;
+     else
+       {
+-	/* It is not a quoted string.  Break it based on the characters
+-	   which are in symbols.  */
+-	while (p > text)
+-	  {
+-	    if (isalnum (p[-1]) || p[-1] == '_' || p[-1] == '\0')
+-	      --p;
+-	    else
+-	      break;
+-	  }
+-	sym_text = p;
++	      for (p = text; *p != '\0'; ++p)
++	      {
++		      if (!isprint(*p))
++			      break;
++	      }
++	      if (*p!='\0')
++	      {
++		    sym_text=p;
++	      }
++	      else
++	      {
++		     sym_text=text;
++	      } 
+       }
+   }
+ 
+--- gdb-5.0/gdb/symtab.h.orig	Mon Apr  3 07:47:27 2000
++++ gdb-5.0/gdb/symtab.h	Sat Jul  7 00:08:19 2001
+@@ -168,8 +168,10 @@
+    specified obstack. */
+ 
+ #define SYMBOL_INIT_DEMANGLED_NAME(symbol,obstack)			\
+-  do {									\
++ do {									\
+     char *demangled = NULL;						\
++    if (SYMBOL_LANGUAGE (symbol) == language_unknown)			\
++	    SYMBOL_LANGUAGE(symbol) = language_auto;			\
+     if (SYMBOL_LANGUAGE (symbol) == language_cplus			\
+ 	|| SYMBOL_LANGUAGE (symbol) == language_auto)			\
+       {									\
+@@ -222,11 +224,7 @@
+ 	    SYMBOL_CHILL_DEMANGLED_NAME (symbol) = NULL;		\
+ 	  }								\
+       }									\
+-    if (SYMBOL_LANGUAGE (symbol) == language_auto)			\
+-      {									\
+-	SYMBOL_LANGUAGE (symbol) = language_unknown;			\
+-      }									\
+-  } while (0)
++  } while (0) 
+ 
+ /* Macro that returns the demangled name for a symbol based on the language
+    for that symbol.  If no demangled name exists, returns NULL. */
+@@ -1051,7 +1049,7 @@
+    Note that this macro is g++ specific (FIXME). */
+ 
+ #define OPNAME_PREFIX_P(NAME) \
+-  ((NAME)[0] == 'o' && (NAME)[1] == 'p' && is_cplus_marker ((NAME)[2]))
++  (!strncmp(NAME,"operator",8))
+ 
+ /* Macro that yields non-zero value iff NAME is the prefix for C++ vtbl
+    names.  Note that this macro is g++ specific (FIXME).
