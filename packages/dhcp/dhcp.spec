@@ -1,11 +1,11 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.19 2003/09/29 22:51:47 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.20 2003/09/29 22:54:06 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
 Summary: Dynamic Host Configuration Protocol (DHCP) distribution.
 Name: dhcp
 Version: 3.0pl2
-Release: owl3
+Release: owl4
 License: ISC License
 Group: System Environment/Daemons
 URL: http://www.isc.org/products/DHCP/
