@@ -1,0 +1,59 @@
+diff -urp sysvinit-2.85.orig/src/killall5.c sysvinit-2.85/src/killall5.c
+--- sysvinit-2.85.orig/src/killall5.c	Mon Apr 14 09:59:11 2003
++++ sysvinit-2.85/src/killall5.c	Sun Apr 27 04:46:34 2003
+@@ -101,11 +101,11 @@ int mount_proc(void)
+ 	struct stat st;
+ 	pid_t pid, rc;
+ 	int wst;
+-	char *args[] = { "mount", "-t", "proc", "none", "/proc", NULL };
++	char *args[] = { "mount", "-t", "proc", "proc", "/proc", NULL };
+ 	int did_mount = 0;
+ 
+ 	/* Stat /proc/version to see if /proc is mounted. */
+-	if (stat("/proc/version", &st) < 0) {
++	if (stat("/proc/version", &st) < 0 && errno == ENOENT) {
+ 
+ 		/* It's not there, so mount it. */
+ 		if ((pid = fork()) < 0) {
+@@ -113,9 +113,6 @@ int mount_proc(void)
+ 			exit(1);
+ 		}
+ 		if (pid == 0) {
+-			/* Try a few mount binaries. */
+-			execv("/sbin/mount", args);
+-			execv("/etc/mount", args);
+ 			execv("/bin/mount", args);
+ 
+ 			/* Okay, I give up. */
+@@ -134,7 +131,10 @@ int mount_proc(void)
+ 
+ 	/* See if mount succeeded. */
+ 	if (stat("/proc/version", &st) < 0) {
+-		nsyslog(LOG_ERR, "/proc not mounted, failed to mount.");
++		if (errno == ENOENT)
++			nsyslog(LOG_ERR, "/proc not mounted, failed to mount");
++		else
++			nsyslog(LOG_ERR, "/proc unavailable");
+ 		exit(1);
+ 	}
+ 
+@@ -511,9 +511,6 @@ int main(int argc, char **argv)
+ 	/* Now connect to syslog. */
+ 	openlog(progname, LOG_CONS|LOG_PID, LOG_DAEMON);
+ 
+-	/* First get the /proc filesystem online. */
+-	mount_proc();
+-
+ 	/* Were we called as 'pidof' ? */
+ 	if (strcmp(progname, "pidof") == 0)
+ 		return main_pidof(argc, argv);
+@@ -524,6 +521,9 @@ int main(int argc, char **argv)
+ 		if (argv[1][0] == '-') (argv[1])++;
+ 		if ((sig = atoi(argv[1])) <= 0 || sig > 31) usage();
+ 	}
++
++	/* First get the /proc filesystem online. */
++	mount_proc();
+ 
+ 	/*
+ 	 *	Ignoring SIGKILL and SIGSTOP do not make sense, but

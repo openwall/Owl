@@ -1,4 +1,4 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.17 2003/04/27 03:07:08 solar Exp $
+# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.18 2003/04/27 05:32:12 solar Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
@@ -13,9 +13,9 @@ Patch2: sysvinit-2.85-owl-format.diff
 Patch3: sysvinit-2.85-alt-progname-umask.diff
 Patch4: sysvinit-2.85-alt-owl-start-stop-daemon.diff
 Patch5: sysvinit-2.85-alt-owl-bootlogd.diff
-Patch6: sysvinit-2.85-owl-mount-path.diff
+Patch6: sysvinit-2.85-owl-mount-proc.diff
 Patch7: sysvinit-2.85-owl-typos.diff
-Patch8: sysvinit-2.85-rh-alt-pidof.diff
+Patch8: sysvinit-2.85-rh-alt-owl-pidof.diff
 Patch9: sysvinit-2.85-rh-alt-owl-shutdown-log.diff
 Requires: /sbin/sulogin
 BuildRoot: /override/%{name}-%{version}
@@ -77,9 +77,21 @@ rm -rf $RPM_BUILD_ROOT
 # termination.  That delete is a filesystem write operation meaning that
 # the root filesystem would need to stay mounted read/write.  But we
 # absolutely want to be able to remount it read-only during shutdown,
-# with the init still alive!
+# possibly with the old init still alive!
 if [ -e /sbin/init -a ! -e /sbin/.init-working ]; then
 	ln /sbin/init /sbin/.init-working
+fi
+
+%post
+# If /proc is mounted and /sbin/.init-working is running, tell init to
+# invoke the replaced version of itself.
+if /sbin/pidof /sbin/.init-working &> /dev/null; then
+	/sbin/telinit u
+	sleep 1
+# If /sbin/.init-working is no longer running, remove it.
+	if ! /sbin/pidof /sbin/.init-working &> /dev/null; then
+		rm -f /sbin/.init-working
+	fi
 fi
 
 %files
@@ -110,6 +122,13 @@ fi
 * Sun Apr 27 2003 Solar Designer <solar@owl.openwall.com> 2.85-owl4
 - Wrote a new implementation of sulogin which is now packaged separately,
 so don't package sulogin here.
+- Don't mount /proc in pidof, and mount it as "proc" rather than "none"
+in killall5 such that umount and others can reasonably refer to it in
+error messages.
+- Have start-stop-daemon and pidof recognize deleted executables that
+were previously renamed to *-RPMDELETE (this is how RPM 3.0.x replaces
+files).
+- Actually start the new init on package upgrades, with "telinit u".
 
 * Thu Apr 24 2003 Solar Designer <solar@owl.openwall.com> 2.85-owl3
 - Fixed a bug in yesterday's update to start-stop-daemon's executable file

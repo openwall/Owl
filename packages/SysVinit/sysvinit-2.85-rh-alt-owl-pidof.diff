@@ -1,6 +1,6 @@
-diff -uprk.orig sysvinit-2.85.orig/src/killall5.c sysvinit-2.85/src/killall5.c
---- sysvinit-2.85.orig/src/killall5.c	2003-04-14 13:59:11 +0400
-+++ sysvinit-2.85/src/killall5.c	2003-04-20 21:45:43 +0400
+diff -urp sysvinit-2.85.orig/src/killall5.c sysvinit-2.85/src/killall5.c
+--- sysvinit-2.85.orig/src/killall5.c	Mon Apr 14 09:59:11 2003
++++ sysvinit-2.85/src/killall5.c	Sun Apr 27 04:53:18 2003
 @@ -46,6 +46,7 @@ char *Version = "@(#)killall5 2.85 14-Ap
  /* Info about a process. */
  typedef struct _proc_
@@ -32,7 +32,7 @@ diff -uprk.orig sysvinit-2.85.orig/src/killall5.c sysvinit-2.85/src/killall5.c
  			p->dev = st.st_dev;
  			p->ino = st.st_ino;
  		}
-@@ -354,6 +364,20 @@ PIDQ *pidof(char *prog)
+@@ -354,6 +364,23 @@ PIDQ *pidof(char *prog)
  	/* If we didn't find a match based on dev/ino, try the name. */
  	if (!foundone) {
  		for (p = plist; p; p = p->next) {
@@ -43,7 +43,10 @@ diff -uprk.orig sysvinit-2.85.orig/src/killall5.c sysvinit-2.85/src/killall5.c
 +					int len = strlen(prog);
 +					if (strncmp(prog, p->pathname, len))
 +						continue;
-+					if (strcmp(" (deleted)", p->pathname + len))
++					if (strcmp(" (deleted)",
++					    p->pathname + len) &&
++					    strcmp("-RPMDELETE (deleted)",
++					    p->pathname + len))
 +						continue;
 +				}
 +				add_pid_to_q(q, p);
