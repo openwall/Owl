@@ -12,4 +12,4 @@ service chargen-udp
 	wait		= yes
 	disable		= yes
 	port		= 19
-}                                                                               
+}

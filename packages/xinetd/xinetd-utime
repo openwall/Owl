@@ -12,4 +12,4 @@ service time-udp
 	wait		= yes
 	disable		= yes
 	port		= 37
-}                                                                               
+}

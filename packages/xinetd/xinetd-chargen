@@ -11,4 +11,4 @@ service chargen
 	user		= root
 	wait		= no
 	disable		= yes
-}                                                                               
+}
