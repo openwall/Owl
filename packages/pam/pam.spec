@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.7 2000/08/26 06:41:48 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.8 2000/08/26 07:02:55 solar Exp $
 
 Summary: A security tool which provides authentication for applications.
 Name: pam
@@ -37,20 +37,16 @@ make RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/usr/include/security
 mkdir -p $RPM_BUILD_ROOT/lib/security
+mkdir -p $RPM_BUILD_ROOT/usr/{include/security,man/man3,man/man8}
 make install FAKEROOT=$RPM_BUILD_ROOT LDCONFIG=:
+test -f $RPM_BUILD_ROOT/lib/security/pam_deny.so || exit 1
 install -m 644 libpamc/include/security/pam_client.h $RPM_BUILD_ROOT/usr/include/security
 install -d -m 755 $RPM_BUILD_ROOT/etc/pam.d
 install -m 644 other.pamd $RPM_BUILD_ROOT/etc/pam.d/other
-# make sure the modules built...
-[ -f $RPM_BUILD_ROOT/lib/security/pam_deny.so ] || {
-  echo "You have LITTLE or NOTHING in your /lib/security directory:"
-  echo $RPM_BUILD_ROOT/lib/security/*
-  echo ""
-  echo "Fix it before you install this package, while you still can!"
-  exit 1
-}
+install -m 644 doc/man/*.3 $RPM_BUILD_ROOT/usr/man/man3
+install -m 644 doc/man/*.8 $RPM_BUILD_ROOT/usr/man/man8
+gzip -9nf $RPM_BUILD_ROOT/usr/man/man[38]/*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -77,12 +73,14 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/security/group.conf
 %config /etc/security/limits.conf
 %config /etc/security/pam_env.conf
+/usr/man/man3/*
 /usr/man/man8/*
 
 %changelog
 * Sat Aug 26 2000 Solar Designer <solar@owl.openwall.com>
 - Disabled building of pam_console entirely to avoid the dependency on glib.
 - Removed the (bogus?) dependency on initscripts from this spec file.
+- Added packaging of man pages.
 
 * Tue Aug 08 2000 Solar Designer <solar@owl.openwall.com>
 - Removed pam_console and its related files.
