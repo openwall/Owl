@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vim/vim.spec,v 1.4 2001/01/06 14:43:14 solar Exp $
+# $Id: Owl/packages/vim/vim.spec,v 1.5 2001/02/13 09:29:17 kad Exp $
 
 %define vimversion vim60p
 
@@ -22,7 +22,7 @@
 Summary: 	The VIM editor.
 Name: 		vim
 Version: 	6.0
-Release: 	0.17owl
+Release: 	0.18owl
 Copyright: 	freeware
 Group: 		Applications/Editors
 Source0: 	ftp://ftp.vim.org/pub/vim/unreleased/unix/vim-%{version}p-src.tar.gz
@@ -165,7 +165,7 @@ make clean
 export ac_cv_func_mkstemp=yes \
 %configure \
 	--prefix='${DEST}'/usr \
-	--with-features=tiny \
+	--with-features=normal \
 	--disable-pythoninterp --disable-perlinterp --disable-tclinterp \
 	--with-x=no --enable-gui=no \
 	--with-tlib=termcap --disable-gpm \
