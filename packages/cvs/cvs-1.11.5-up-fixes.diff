@@ -1,4 +1,140 @@
-diff -ur cvs-1.11.5.orig/src/client.c cvs-1.11.5/src/client.c
+diff -urN cvs-1.11.5.orig/lib/Makefile.am cvs-1.11.5/lib/Makefile.am
+--- cvs-1.11.5.orig/lib/Makefile.am	Fri Sep 20 02:48:59 2002
++++ cvs-1.11.5/lib/Makefile.am	Wed Jun  2 21:55:10 2004
+@@ -84,6 +84,9 @@
+ 	build_lib.com \
+ 	xgssapi.h
+ 
++# For the xsize module from GNULIB.
++libcvs_a_SOURCES += xsize.h
++
+ # for backwards compatibility with the old makefiles
+ realclean: maintainer-clean
+ .PHONY: realclean
+diff -urN cvs-1.11.5.orig/lib/Makefile.in cvs-1.11.5/lib/Makefile.in
+--- cvs-1.11.5.orig/lib/Makefile.in	Thu Jan 16 21:36:42 2003
++++ cvs-1.11.5/lib/Makefile.in	Wed Jun  2 22:08:58 2004
+@@ -148,7 +148,8 @@
+ 	system.h \
+ 	wait.h \
+ 	xselect.h \
+-	xtime.h
++	xtime.h \
++	xsize.h
+ 
+ libcvs_a_LIBADD = @LIBOBJS@
+ 
+diff -urN cvs-1.11.5.orig/lib/xsize.h cvs-1.11.5/lib/xsize.h
+--- cvs-1.11.5.orig/lib/xsize.h	Thu Jan  1 00:00:00 1970
++++ cvs-1.11.5/lib/xsize.h	Wed Jun  2 22:25:07 2004
+@@ -0,0 +1,106 @@
++/* xsize.h -- Checked size_t computations.
++
++   Copyright (C) 2003 Free Software Foundation, Inc.
++
++   This program is free software; you can redistribute it and/or modify
++   it under the terms of the GNU General Public License as published by
++   the Free Software Foundation; either version 2, or (at your option)
++   any later version.
++
++   This program is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++   GNU General Public License for more details.
++
++   You should have received a copy of the GNU General Public License
++   along with this program; if not, write to the Free Software Foundation,
++   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
++
++#ifndef _XSIZE_H
++#define _XSIZE_H
++
++/* Get size_t.  */
++#include <stddef.h>
++
++/* Get SIZE_MAX.  */
++#include <limits.h>
++#include <stdint.h>
++
++/* The size of memory objects is often computed through expressions of
++   type size_t. Example:
++      void* p = malloc (header_size + n * element_size).
++   These computations can lead to overflow.  When this happens, malloc()
++   returns a piece of memory that is way too small, and the program then
++   crashes while attempting to fill the memory.
++   To avoid this, the functions and macros in this file check for overflow.
++   The convention is that SIZE_MAX represents overflow.
++   malloc (SIZE_MAX) is not guaranteed to fail -- think of a malloc
++   implementation that uses mmap --, it's recommended to use size_overflow_p()
++   or size_in_bounds_p() before invoking malloc().
++   The example thus becomes:
++      size_t size = xsum (header_size, xtimes (n, element_size));
++      void *p = (size_in_bounds_p (size) ? malloc (size) : NULL);
++*/
++
++/* Convert an arbitrary value >= 0 to type size_t.  */
++#define xcast_size_t(N) \
++  ((N) <= SIZE_MAX ? (size_t) (N) : SIZE_MAX)
++
++/* Sum of two sizes, with overflow check.  */
++static inline size_t
++#if __GNUC__ >= 3
++__attribute__ ((__pure__))
++#endif
++xsum (size_t size1, size_t size2)
++{
++  size_t sum = size1 + size2;
++  return (sum >= size1 ? sum : SIZE_MAX);
++}
++
++/* Sum of three sizes, with overflow check.  */
++static inline size_t
++#if __GNUC__ >= 3
++__attribute__ ((__pure__))
++#endif
++xsum3 (size_t size1, size_t size2, size_t size3)
++{
++  return xsum (xsum (size1, size2), size3);
++}
++
++/* Sum of four sizes, with overflow check.  */
++static inline size_t
++#if __GNUC__ >= 3
++__attribute__ ((__pure__))
++#endif
++xsum4 (size_t size1, size_t size2, size_t size3, size_t size4)
++{
++  return xsum (xsum (xsum (size1, size2), size3), size4);
++}
++
++/* Maximum of two sizes, with overflow check.  */
++static inline size_t
++#if __GNUC__ >= 3
++__attribute__ ((__pure__))
++#endif
++xmax (size_t size1, size_t size2)
++{
++  /* No explicit check is needed here, because for any n:
++     max (SIZE_MAX, n) == SIZE_MAX and max (n, SIZE_MAX) == SIZE_MAX.  */
++  return (size1 >= size2 ? size1 : size2);
++}
++
++/* Multiplication of a count with an element size, with overflow check.
++   The count must be >= 0 and the element size must be > 0.
++   This is a macro, not an inline function, so that it works correctly even
++   when N is of a wider tupe and N > SIZE_MAX.  */
++#define xtimes(N, ELSIZE) \
++  ((N) <= SIZE_MAX / (ELSIZE) ? (size_t) (N) * (ELSIZE) : SIZE_MAX)
++
++/* Check for overflow.  */
++#define size_overflow_p(SIZE) \
++  ((SIZE) == SIZE_MAX)
++/* Check against overflow.  */
++#define size_in_bounds_p(SIZE) \
++  ((SIZE) != SIZE_MAX)
++
++#endif /* _XSIZE_H */
+diff -urN cvs-1.11.5.orig/src/client.c cvs-1.11.5/src/client.c
 --- cvs-1.11.5.orig/src/client.c	Thu Jan 16 15:10:55 2003
 +++ cvs-1.11.5/src/client.c	Mon May 17 21:26:12 2004
 @@ -1050,6 +1050,19 @@
@@ -21,7 +157,123 @@ diff -ur cvs-1.11.5.orig/src/client.c cvs-1.11.5/src/client.c
      reposname = NULL;
      read_line (&reposname);
      assert (reposname != NULL);
-diff -ur cvs-1.11.5.orig/src/modules.c cvs-1.11.5/src/modules.c
+diff -urN cvs-1.11.5.orig/src/commit.c cvs-1.11.5/src/commit.c
+--- cvs-1.11.5.orig/src/commit.c	Thu Jan 16 15:10:55 2003
++++ cvs-1.11.5/src/commit.c	Wed Jun  2 21:40:32 2004
+@@ -480,7 +480,12 @@
+ 	   operate on, and only work with those files in the future.
+ 	   This saves time--we don't want to search the file system
+ 	   of the working directory twice.  */
+-	find_args.argv = (char **) xmalloc (find_args.argc * sizeof (char **));
++	if (size_overflow_p (xtimes (find_args.argc, sizeof (char **))))
++	{
++	    find_args.argc = 0;
++	    return 0;
++	}
++	find_args.argv = xmalloc (xtimes (find_args.argc, sizeof (char **)));
+ 	find_args.argc = 0;
+ 	walklist (find_args.ulist, copy_ulist, &find_args);
+ 
+diff -urN cvs-1.11.5.orig/src/cvs.h cvs-1.11.5/src/cvs.h
+--- cvs-1.11.5.orig/src/cvs.h	Sat Dec 28 18:01:30 2002
++++ cvs-1.11.5/src/cvs.h	Wed Jun  2 21:40:32 2004
+@@ -40,6 +40,10 @@
+ #include "popen.h"
+ #endif
+ 
++/* Begin GNULIB headers.  */
++#include "xsize.h"
++/* End GNULIB headers.  */
++
+ #ifdef STDC_HEADERS
+ #include <stdlib.h>
+ #else
+diff -urN cvs-1.11.5.orig/src/filesubr.c cvs-1.11.5/src/filesubr.c
+--- cvs-1.11.5.orig/src/filesubr.c	Tue Sep 24 20:47:09 2002
++++ cvs-1.11.5/src/filesubr.c	Wed Jun  2 21:40:32 2004
+@@ -984,8 +984,14 @@
+     char ***pargv;
+ {
+     int i;
++    if (size_overflow_p (xtimes (argc, sizeof (char *)))) {
++	*pargc = 0;
++	*pargv = NULL;
++	error (0, 0, "expand_wild: too many arguments");
++	return;
++    }
+     *pargc = argc;
+-    *pargv = (char **) xmalloc (argc * sizeof (char *));
++    *pargv = xmalloc (xtimes (argc, sizeof (char *)));
+     for (i = 0; i < argc; ++i)
+ 	(*pargv)[i] = xstrdup (argv[i]);
+ }
+diff -urN cvs-1.11.5.orig/src/history.c cvs-1.11.5/src/history.c
+--- cvs-1.11.5.orig/src/history.c	Tue Sep 24 20:47:09 2002
++++ cvs-1.11.5/src/history.c	Wed Jun  2 21:40:32 2004
+@@ -414,8 +414,11 @@
+ 		working = 1;
+ 		break;
+ 	    case 'X':			/* Undocumented debugging flag */
++#ifdef DEBUG
+ 		histfile = optarg;
++#endif
+ 		break;
++
+ 	    case 'D':			/* Since specified date */
+ 		if (*since_rev || *since_tag || *backto)
+ 		{
+@@ -890,9 +893,13 @@
+ {
+     if (user_count == user_max)
+     {
+-	user_max += USER_INCREMENT;
+-	user_list = (char **) xrealloc ((char *) user_list,
+-					(int) user_max * sizeof (char *));
++	user_max = xsum (user_max, USER_INCREMENT);
++	if (size_overflow_p (xtimes (user_max, sizeof (char *))))
++	{
++	    error (0, 0, "save_user: too many users");
++	    return;
++	}
++	user_list = xrealloc (user_list, xtimes (user_max, sizeof (char *)));
+     }
+     user_list[user_count++] = xstrdup (name);
+ }
+@@ -920,9 +927,13 @@
+ 
+     if (file_count == file_max)
+     {
+-	file_max += FILE_INCREMENT;
+-	file_list = (struct file_list_str *) xrealloc ((char *) file_list,
+-						   file_max * sizeof (*fl));
++	file_max = xsum (file_max, FILE_INCREMENT);
++	if (size_overflow_p (xtimes (file_max, sizeof (*fl))))
++	{
++	    error (0, 0, "save_file: too many files");
++	    return;
++	}
++	file_list = xrealloc (file_list, xtimes (file_max, sizeof (*fl)));
+     }
+     fl = &file_list[file_count++];
+     fl->l_file = cp = xmalloc (strlen (dir) + strlen (name) + 2);
+@@ -961,9 +972,13 @@
+ {
+     if (mod_count == mod_max)
+     {
+-	mod_max += MODULE_INCREMENT;
+-	mod_list = (char **) xrealloc ((char *) mod_list,
+-				       mod_max * sizeof (char *));
++	mod_max = xsum (mod_max, MODULE_INCREMENT);
++	if (size_overflow_p (xtimes (mod_max, sizeof (char *))))
++	{
++	    error (0, 0, "save_module: too many modules");
++	    return;
++	}
++	mod_list = xrealloc (mod_list, xtimes (mod_max, sizeof (char *)));
+     }
+     mod_list[mod_count++] = xstrdup (module);
+ }
+diff -urN cvs-1.11.5.orig/src/modules.c cvs-1.11.5/src/modules.c
 --- cvs-1.11.5.orig/src/modules.c	Thu Jun 21 21:23:09 2001
 +++ cvs-1.11.5/src/modules.c	Mon May 17 21:26:12 2004
 @@ -159,6 +159,24 @@
@@ -49,14 +301,155 @@ diff -ur cvs-1.11.5.orig/src/modules.c cvs-1.11.5/src/modules.c
      /* if this is a directory to ignore, add it to that list */
      if (mname[0] == '!' && mname[1] != '\0')
      {
-diff -ur cvs-1.11.5.orig/src/server.c cvs-1.11.5/src/server.c
+diff -urN cvs-1.11.5.orig/src/sanity.sh cvs-1.11.5/src/sanity.sh
+--- cvs-1.11.5.orig/src/sanity.sh	Thu Dec 19 15:38:32 2002
++++ cvs-1.11.5/src/sanity.sh	Wed Jun  2 23:14:15 2004
+@@ -3677,16 +3677,10 @@
+ 	  cd ../..
+ 
+ 	  mkdir 2; cd 2
+-	  # Leading slash strikes me as kind of oddball, but there is
+-	  # a special case for it in do_module.  And (in the case of
+-	  # "top", rather than "-c") it has worked in CVS 1.10.6 and
+-	  # presumably back to CVS 1.3 or so.
+-	  dotest spacefiles-9 "${testcvs} -q co -- /top" "U \./top"
+ 	  dotest spacefiles-10 "${testcvs} co -- ${dashb}" \
+ "${PROG} [a-z]*: Updating ${dashb}"
+ 	  dotest spacefiles-11 "${testcvs} -q co -- ${dashc}" "U \./${dashc}"
+ 	  rm ./${dashc}
+-	  dotest spacefiles-12 "${testcvs} -q co -- /${dashc}" "U \./${dashc}"
+ 	  dotest spacefiles-13 "${testcvs} -q co 'first dir'" \
+ "U first dir/a file"
+ 	  cd ..
+@@ -22888,36 +22882,38 @@
+ 	  dotest multiroot3-11 "${testcvs} -q diff dir1/file1 dir2/file2" ""
+ 
+ 	  # make sure we can't access across repositories
+-	  # FIXCVS: we probably shouldn't even create the local directories
+-	  # in this case, but we do, so deal with it.
+ 	  mkdir 1a
+ 	  cd 1a
+ 	  dotest_fail multiroot3-12 \
+-"${testcvs} -d ${CVSROOT1} -q co ../root2/dir2" \
+-"${PROG} [a-z]*: in directory \.\./root2/dir2:
+-${PROG} [a-z]*: .\.\..-relative repositories are not supported.
+-${PROG} \[[a-z]* aborted\]: illegal source repository"
+-	  rm -rf ../root2
++"$testcvs -d $CVSROOT1 -q co ../root2/dir2" \
++"$PROG \[checkout aborted\]: up-level in module reference (\`..') invalid: \`\.\./root2/dir2'\." \
++"$PROG \[server aborted\]: up-level in module reference (\`..') invalid: \`\.\./root2/dir2'\.
++$PROG \[checkout aborted\]: end of file from server (consult above messages if any)"
+ 	  dotest_fail multiroot3-13 \
+-"${testcvs} -d ${CVSROOT2} -q co ../root1/dir1" \
+-"${PROG} [a-z]*: in directory \.\./root1/dir1:
+-${PROG} [a-z]*: .\.\..-relative repositories are not supported.
+-${PROG} \[[a-z]* aborted\]: illegal source repository"
+-	  rm -rf ../root1
++"$testcvs -d $CVSROOT2 -q co ../root1/dir1" \
++"$PROG \[checkout aborted\]: up-level in module reference (\`..') invalid: \`\.\./root1/dir1'\." \
++"$PROG \[server aborted\]: up-level in module reference (\`..') invalid: \`\.\./root1/dir1'\.
++$PROG \[checkout aborted\]: end of file from server (consult above messages if any)"
+ 	  dotest_fail multiroot3-14 \
+-"${testcvs} -d ${CVSROOT1} -q co ./../root2/dir2" \
+-"${PROG} [a-z]*: in directory \./\.\./root2/dir2:
+-${PROG} [a-z]*: .\.\..-relative repositories are not supported.
+-${PROG} \[[a-z]* aborted\]: illegal source repository"
+-	  rm -rf ../root2
++"$testcvs -d $CVSROOT1 -q co ./../root2/dir2" \
++"$PROG \[checkout aborted\]: up-level in module reference (\`..') invalid: \`\./\.\./root2/dir2'\." \
++"$PROG \[server aborted\]: up-level in module reference (\`..') invalid: \`\./\.\./root2/dir2'\.
++$PROG \[checkout aborted\]: end of file from server (consult above messages if any)"
+ 	  dotest_fail multiroot3-15 \
+-"${testcvs} -d ${CVSROOT2} -q co ./../root1/dir1" \
+-"${PROG} [a-z]*: in directory \./\.\./root1/dir1:
+-${PROG} [a-z]*: .\.\..-relative repositories are not supported.
+-${PROG} \[[a-z]* aborted\]: illegal source repository"
+-	  rm -rf ../root1
+-
+-	  cd ../..
++"$testcvs -d $CVSROOT2 -q co ./../root1/dir1" \
++"$PROG \[checkout aborted\]: up-level in module reference (\`..') invalid: \`\./\.\./root1/dir1'\." \
++"$PROG \[server aborted\]: up-level in module reference (\`..') invalid: \`\./\.\./root1/dir1'\.
++$PROG \[checkout aborted\]: end of file from server (consult above messages if any)"
++	  dotest_fail multiroot3-16 \
++"$testcvs -d $CVSROOT1 -q co -p ../root2/dir2" \
++"$PROG \[checkout aborted\]: up-level in module reference (\`..') invalid: \`\.\./root2/dir2'\." \
++"$PROG \[server aborted\]: up-level in module reference (\`..') invalid: \`\.\./root2/dir2'\.
++$PROG \[checkout aborted\]: end of file from server (consult above messages if any)"
++	  dotest_fail multiroot3-17 \
++"$testcvs -d $CVSROOT1 -q co -p ./../root1/dir1" \
++"$PROG \[checkout aborted\]: up-level in module reference (\`..') invalid: \`\./\.\./root1/dir1'\." \
++"$PROG \[server aborted\]: up-level in module reference (\`..') invalid: \`\./\.\./root1/dir1'\.
++$PROG \[checkout aborted\]: end of file from server (consult above messages if any)"
+ 
+ 	  if $keep; then
+ 	    echo Keeping ${TESTDIR} and exiting due to --keep
+@@ -23739,6 +23735,27 @@
+ Directory .
+ ${TESTDIR}/crerepos/dir1
+ editors
++EOF
++
++	    # There used to be some exploits based on malformed Entry requests
++	    dotest server-17 "$testcvs server" \
++"E protocol error: Malformed Entry
++error  " <<EOF
++Root $TESTDIR/crerepos
++Directory .
++$TESTDIR/crerepos/dir1
++Entry X/file1/1.1////
++noop
++EOF
++
++	    dotest server-18 "$testcvs server" \
++"E protocol error: Malformed Entry
++error  " <<EOF
++Root $TESTDIR/crerepos
++Directory .
++$TESTDIR/crerepos/dir1
++Entry /CC/CC/CC
++noop
+ EOF
+ 
+ 	    if $keep; then
+diff -urN cvs-1.11.5.orig/src/server.c cvs-1.11.5/src/server.c
 --- cvs-1.11.5.orig/src/server.c	Thu Jan 16 15:10:55 2003
-+++ cvs-1.11.5/src/server.c	Mon May 17 21:26:35 2004
-@@ -1641,8 +1641,18 @@
++++ cvs-1.11.5/src/server.c	Wed Jun  2 22:05:09 2004
+@@ -920,7 +920,7 @@
+     int i;
+     char *p;
+ 
+-    if (lim < 0)
++    if (lim < 0 || lim > 10000)
+ 	return;
+     p = xmalloc (strlen (server_temp_dir) + 2 * lim + 10);
+     if (p == NULL)
+@@ -1625,8 +1625,7 @@
+     char *cp;
+     char *timefield;
+ 
+-    if (error_pending ())
+-	return;
++    if (error_pending ()) return;
+ 
+     if (outside_dir (arg))
+ 	return;
+@@ -1640,9 +1639,28 @@
+ 	    && strlen (arg) == cp - name
  	    && strncmp (arg, name, cp - name) == 0)
  	{
- 	    timefield = strchr (cp + 1, '/') + 1;
+-	    timefield = strchr (cp + 1, '/') + 1;
 -	    if (*timefield != '=')
++	    if (!(timefield = strchr (cp + 1, '/')) || *++timefield == '\0')
+ 	    {
++		/* We didn't find the record separator or it is followed by
++		 * the end of the string, so just exit.
++		 */
++		if (alloc_pending (80))
++		    sprintf (pending_error_text,
++		             "E Malformed Entry encountered.");
++		return;
++	    }
 +	    /* If the time field is not currently empty, then one of
 +	     * serve_modified, serve_is_modified, & serve_unchanged were
 +	     * already called for this file.  We would like to ignore the
@@ -66,13 +459,13 @@ diff -ur cvs-1.11.5.orig/src/server.c cvs-1.11.5/src/server.c
 +	     * for more.
 +	     */
 +	    if (*timefield == '/')
- 	    {
++	    {
 +		/* Copy forward one character.  Space was allocated for this
 +		 * already in serve_entry().  */
  		cp = timefield + strlen (timefield);
  		cp[1] = '\0';
  		while (cp > timefield)
-@@ -1650,8 +1660,17 @@
+@@ -1650,8 +1668,17 @@
  		    *cp = cp[-1];
  		    --cp;
  		}
@@ -91,11 +484,32 @@ diff -ur cvs-1.11.5.orig/src/server.c cvs-1.11.5/src/server.c
  	    break;
  	}
      }
-@@ -1685,8 +1704,18 @@
+@@ -1668,8 +1695,7 @@
+     /* Have we found this file in "entries" yet.  */
+     int found;
+ 
+-    if (error_pending ())
+-	return;
++    if (error_pending ()) return;
+ 
+     if (outside_dir (arg))
+ 	return;
+@@ -1684,9 +1710,28 @@
+ 	    && strlen (arg) == cp - name
  	    && strncmp (arg, name, cp - name) == 0)
  	{
- 	    timefield = strchr (cp + 1, '/') + 1;
+-	    timefield = strchr (cp + 1, '/') + 1;
 -	    if (!(timefield[0] == 'M' && timefield[1] == '/'))
++	    if (!(timefield = strchr (cp + 1, '/')) || *++timefield == '\0')
++	    {
++		/* We didn't find the record separator or it is followed by
++		 * the end of the string, so just exit.
++		 */
++		if (alloc_pending (80))
++		    sprintf (pending_error_text,
++		             "E Malformed Entry encountered.");
++		return;
++	    }
 +	    /* If the time field is not currently empty, then one of
 +	     * serve_modified, serve_is_modified, & serve_unchanged were
 +	     * already called for this file.  We would like to ignore the
@@ -111,7 +525,7 @@ diff -ur cvs-1.11.5.orig/src/server.c cvs-1.11.5/src/server.c
  		cp = timefield + strlen (timefield);
  		cp[1] = '\0';
  		while (cp > timefield)
-@@ -1694,8 +1723,17 @@
+@@ -1694,8 +1739,17 @@
  		    *cp = cp[-1];
  		    --cp;
  		}
@@ -130,3 +544,150 @@ diff -ur cvs-1.11.5.orig/src/server.c cvs-1.11.5/src/server.c
  	    if (kopt != NULL)
  	    {
  		if (alloc_pending (strlen (name) + 80))
+@@ -1750,8 +1804,29 @@
+ {
+     struct an_entry *p;
+     char *cp;
++    int i = 0;
+     if (error_pending()) return;
+-    p = (struct an_entry *) xmalloc (sizeof (struct an_entry));
++
++    /* Verify that the entry is well-formed.  This can avoid problems later.
++     * At the moment we only check that the Entry contains five slashes in
++     * approximately the correct locations since some of the code makes
++     * assumptions about this.
++     */
++    cp = arg;
++    if (*cp == 'D') cp++;
++    while (i++ < 5)
++    {
++	if (!cp || *cp != '/')
++	{
++	    if (alloc_pending (80))
++		sprintf (pending_error_text,
++			 "E protocol error: Malformed Entry");
++	    return;
++	}
++	cp = strchr (cp + 1, '/');
++    }
++
++    p = xmalloc (sizeof (struct an_entry));
+     if (p == NULL)
+     {
+ 	pending_error = ENOMEM;
+@@ -1983,6 +2058,9 @@
+     {
+ 	char *cp;
+ 
++	if (!data[0])
++	    goto error;
++
+ 	if (strchr (data, '+'))
+ 	    goto error;
+ 
+@@ -2115,6 +2193,14 @@
+ 
+     if (error_pending()) return;
+ 
++    if (argument_count >= 10000)
++    {
++	if (alloc_pending (80))
++	    sprintf (pending_error_text, 
++		     "E Protocol error: too many arguments");
++	return;
++    }
++
+     if (argument_vector_size <= argument_count)
+     {
+ 	argument_vector_size *= 2;
+@@ -2145,6 +2231,14 @@
+ 
+     if (error_pending()) return;
+ 
++    if (argument_count <= 1) 
++    {
++	if (alloc_pending (80))
++	    sprintf (pending_error_text,
++		     "E Protocol error: called argumentx without prior call to argument");
++	return;
++    }
++
+     p = argument_vector[argument_count - 1];
+     p = xrealloc (p, strlen (p) + 1 + strlen (arg) + 1);
+     if (p == NULL)
+@@ -2501,7 +2595,7 @@
+                     save some code here...  -kff */
+ 
+                  /* Chop newline by hand, for strcmp()'s sake. */
+-                 if (linebuf[num_red - 1] == '\n')
++                 if (num_red > 0 && linebuf[num_red - 1] == '\n')
+                      linebuf[num_red - 1] = '\0';
+ 
+                  if (strcmp (linebuf, CVS_Username) == 0)
+@@ -2556,7 +2650,7 @@
+          while ((num_red = getline (&linebuf, &linebuf_len, fp)) >= 0)
+          {
+              /* Chop newline by hand, for strcmp()'s sake. */
+-             if (linebuf[num_red - 1] == '\n')
++             if (num_red > 0 && linebuf[num_red - 1] == '\n')
+                  linebuf[num_red - 1] = '\0';
+ 
+              if (strcmp (linebuf, CVS_Username) == 0)
+diff -urN cvs-1.11.5.orig/src/wrapper.c cvs-1.11.5/src/wrapper.c
+--- cvs-1.11.5.orig/src/wrapper.c	Mon Jun 17 23:39:00 2002
++++ cvs-1.11.5/src/wrapper.c	Wed Jun  2 21:40:33 2004
+@@ -239,6 +239,30 @@
+ #endif /* SERVER_SUPPORT || CLIENT_SUPPORT */
+ 
+ /*
++ * Remove fmt str specifier other than %% or %s. And allow
++ * only max_s %s specifiers
++ */
++wrap_clean_fmt_str(char *fmt, int max_s)
++{
++    while (*fmt) {
++	if (fmt[0] == '%' && fmt[1])
++	{
++	    if (fmt[1] == '%') 
++		fmt++;
++	    else
++		if (fmt[1] == 's' && max_s > 0)
++		{
++		    max_s--;
++		    fmt++;
++		} else 
++		    *fmt = ' ';
++	}
++	fmt++;
++    }
++    return;
++}
++
++/*
+  * Open a file and read lines, feeding each line to a line parser. Arrange
+  * for keeping a temporary list of wrappers at the end, if the "temp"
+  * argument is set.
+@@ -558,9 +582,8 @@
+     args = xmalloc (strlen (e->tocvsFilter)
+ 		    + strlen (fileName)
+ 		    + strlen (buf));
+-    /* FIXME: sprintf will blow up if the format string contains items other
+-       than %s, or contains too many %s's.  We should instead be parsing
+-       e->tocvsFilter ourselves and giving a real error.  */
++
++    wrap_clean_fmt_str(e->tocvsFilter, 2);
+     sprintf (args, e->tocvsFilter, fileName, buf);
+     run_setup (args);
+     run_exec(RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL|RUN_REALLY );
+@@ -592,9 +615,8 @@
+ 
+     args = xmalloc (strlen (e->fromcvsFilter)
+ 		    + strlen (fileName));
+-    /* FIXME: sprintf will blow up if the format string contains items other
+-       than %s, or contains too many %s's.  We should instead be parsing
+-       e->fromcvsFilter ourselves and giving a real error.  */
++
++    wrap_clean_fmt_str(e->fromcvsFilter, 1);
+     sprintf (args, e->fromcvsFilter, fileName);
+     run_setup (args);
+     run_exec(RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL );
