@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.30 2005/01/14 03:27:51 galaxy Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.31 2005/01/18 13:44:09 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -44,7 +44,7 @@ Summary: The ISC DHCP server daemon.
 Group: System Environment/Daemons
 PreReq: %name = %version-%release
 PreReq: /sbin/chkconfig
-Requires: %_var/empty
+Requires: /var/empty
 Obsoletes: dhcpd
 
 %description server
@@ -59,7 +59,7 @@ functionality, with certain restrictions.
 Summary: The ISC DHCP relay.
 Group: System Environment/Daemons
 PreReq: %name = %version-%release
-Requires: %_var/empty
+Requires: /var/empty
 
 %description relay
 DHCP relay is the Internet Software Consortium (ISC) relay agent for
@@ -100,12 +100,12 @@ mkdir -p %buildroot/etc/{rc.d/init.d}
 cd %buildroot
 
 mkdir -p %buildroot/etc/{rc.d/init.d,sysconfig}
-mkdir -p %buildroot%_var/lib/dhcp/{dhcpd,dhclient}/state
+mkdir -p %buildroot/var/lib/dhcp/{dhcpd,dhclient}/state
 
 install -m 700 $RPM_SOURCE_DIR/dhcpd.init %buildroot/etc/rc.d/init.d/dhcpd
 
-touch %buildroot%_var/lib/dhcp/dhcpd/state/dhcpd.leases
-touch %buildroot%_var/lib/dhcp/dhclient/state/dhclient.leases
+touch %buildroot/var/lib/dhcp/dhcpd/state/dhcpd.leases
+touch %buildroot/var/lib/dhcp/dhclient/state/dhclient.leases
 
 cat <<EOF > %buildroot/etc/sysconfig/dhcpd
 # Additional command line options here
@@ -145,17 +145,17 @@ grep -q ^dhcp: /etc/passwd ||
 	useradd -g dhcp -u 188 -d / -s /bin/false -M dhcp
 
 %pre server
-rm -f %_var/run/dhcp.restart
+rm -f /var/run/dhcp.restart
 if [ $1 -ge 2 ]; then
-	/etc/rc.d/init.d/dhcpd status && touch %_var/run/dhcp.restart || :
+	/etc/rc.d/init.d/dhcpd status && touch /var/run/dhcp.restart || :
 	/etc/rc.d/init.d/dhcpd stop || :
 fi
 
 %post server
-if [ -f %_var/run/dhcp.restart ]; then
+if [ -f /var/run/dhcp.restart ]; then
 	/etc/rc.d/init.d/dhcpd start
 fi
-rm -f %_var/run/dhcp.restart
+rm -f /var/run/dhcp.restart
 
 %preun server
 if [ $1 -eq 0 ]; then
@@ -180,9 +180,9 @@ fi
 %_mandir/man5/dhclient.leases.5*
 %_mandir/man8/dhclient.8*
 %_mandir/man8/dhclient-script.8*
-%attr(0700,root,dhcp) %dir %_var/lib/dhcp/dhclient
-%attr(0700,root,dhcp) %dir %_var/lib/dhcp/dhclient/state
-%attr(0600,root,dhcp) %config %verify(not size md5 mtime) %_var/lib/dhcp/dhclient/state/dhclient.leases
+%attr(0700,root,dhcp) %dir /var/lib/dhcp/dhclient
+%attr(0700,root,dhcp) %dir /var/lib/dhcp/dhclient/state
+%attr(0600,root,dhcp) %config %verify(not size md5 mtime) /var/lib/dhcp/dhclient/state/dhclient.leases
 %endif
 
 %files server
@@ -193,8 +193,8 @@ fi
 %_mandir/man5/dhcpd.conf.5*
 %_mandir/man5/dhcpd.leases.5*
 %_mandir/man8/dhcpd.8*
-%attr(0750,root,dhcp) %dir %_var/lib/dhcp/dhcpd
-%attr(1770,root,dhcp) %dir %_var/lib/dhcp/dhcpd/state
+%attr(0750,root,dhcp) %dir /var/lib/dhcp/dhcpd
+%attr(1770,root,dhcp) %dir /var/lib/dhcp/dhcpd/state
 %attr(0600,dhcp,dhcp) %config %verify(not size md5 mtime) /var/lib/dhcp/dhcpd/state/dhcpd.leases
 
 %files relay
