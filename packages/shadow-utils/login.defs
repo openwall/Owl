@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/login.defs,v 1.4 2001/11/12 01:47:45 solar Exp $
+# $Id: Owl/packages/shadow-utils/login.defs,v 1.5 2001/11/12 01:54:03 solar Exp $
 #
 # Please refer to login.defs(5) for more information on this file, the
 # parameters which may be defined here and the corresponding programs.
@@ -80,10 +80,10 @@ CRYPT_ROUNDS		8
 #
 # Whether to use tcb password shadowing scheme.
 #
-#USE_TCB		yes
+USE_TCB			no
 
 #
 # Whether newly created tcb-style shadow files should be readable by
 # group "auth".
 #
-#TCB_AUTH_GROUP		yes
+TCB_AUTH_GROUP		no
