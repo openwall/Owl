@@ -1,0 +1,15 @@
+#!/bin/sh
+# $Id: Owl/packages/owl-control/control-restore,v 1.1 2002/11/03 01:24:35 solar Exp $
+
+STATUS_DIR=/var/run
+
+for FACILITY in "$@"; do
+	FILE="$STATUS_DIR/$FACILITY.control-status"
+	if [ -s "$FILE" ]; then
+		STATUS="`cat "$FILE"`"
+		if [ -n "$STATUS" -a "$STATUS" != unknown ]; then
+			/usr/sbin/control "$FACILITY" "$STATUS"
+		fi
+	fi
+	rm -f "$FILE"
+done

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-control/functions,v 1.4 2002/07/07 00:07:48 solar Exp $
+# $Id: Owl/packages/owl-control/functions,v 1.5 2002/11/03 01:24:35 solar Exp $
 
 function define()
 {
@@ -71,7 +71,7 @@ function control_fmode()
 			chown "$OWNER" "$FILE" || return 1
 			chmod "$FMODE" "$FILE" || return 1
 		else
-			echo "$0: Invalid mode: $REQUEST" >&2
+			echo "${0##*/}: Invalid mode: $REQUEST" >&2
 			return 1
 		fi
 		;;
@@ -101,7 +101,7 @@ function control_subst()
 	*)
 		SUBST="`validate "$REQUEST" && lookup NAME_TO_SUBST "$REQUEST"`"
 		if [ -z "$SUBST" ]; then
-			echo "$0: Invalid mode: $REQUEST" >&2
+			echo "${0##*/}: Invalid mode: $REQUEST" >&2
 			return 1
 		fi
 		TMPFILE="`mktemp "$FILE.control.XXXXXX"`" || return 1

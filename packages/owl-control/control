@@ -1,29 +1,35 @@
 #!/bin/sh
-# $Id: Owl/packages/owl-control/control,v 1.2 2000/08/11 03:53:54 solar Exp $
+# $Id: Owl/packages/owl-control/control,v 1.3 2002/11/03 01:24:35 solar Exp $
+
+FACILITIES_DIR=/etc/control.d/facilities
+
+function fatal()
+{
+	echo "${0##*/}: $*" >&2
+	exit 1
+}
 
 if [ $# -ge 1 ]; then
-	if [ -x "/etc/control.d/facilities/$1" ]; then
-		FACILITY="$1"
-		shift
-		/etc/control.d/facilities/$FACILITY "$*" || exit 1
+	FACILITY="$1"
+	shift
+	if [ -x "$FACILITIES_DIR/$FACILITY" ]; then
+		$FACILITIES_DIR/$FACILITY "$*" || exit 1
 		if [ -n "$*" -a "$*" != "list" -a "$*" != "status" ]; then
-			STATUS="`/etc/control.d/facilities/$FACILITY status`"
+			STATUS="`$FACILITIES_DIR/$FACILITY status`"
 			if [ "$STATUS" != "$*" ]; then
-				echo "Requested $*, got $STATUS"
-				exit 1
+				fatal "$FACILITY: Requested $*, got $STATUS"
 			fi
 		fi
 		exit 0
 	else
-		echo "$0: No such facility: $1"
-		exit 1
+		fatal "No such facility: $FACILITY"
 	fi
 fi
 
-ls -1 /etc/control.d/facilities/ |
+ls -1 $FACILITIES_DIR/ |
 while read FACILITY; do
-	test "${FACILITY%.*}" != "$FACILITY" && continue
-	LIST="`/etc/control.d/facilities/$FACILITY list`"
-	STATUS="`/etc/control.d/facilities/$FACILITY status`"
+	test "${FACILITY%.*}" = "$FACILITY" || continue
+	LIST="`$FACILITIES_DIR/$FACILITY list`"
+	STATUS="`$FACILITIES_DIR/$FACILITY status`"
 	printf "%-15s %-15s (%s)\n" "$FACILITY" "$STATUS" "$LIST"
 done

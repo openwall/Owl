@@ -1,0 +1,10 @@
+#!/bin/sh
+# $Id: Owl/packages/owl-control/control-dump,v 1.1 2002/11/03 01:24:35 solar Exp $
+
+STATUS_DIR=/var/run
+
+for FACILITY in "$@"; do
+	FILE="$STATUS_DIR/$FACILITY.control-status"
+	rm -f "$FILE"
+	/usr/sbin/control "$FACILITY" status > "$FILE" || rm -f "$FILE"
+done

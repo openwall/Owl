@@ -1,13 +1,15 @@
-# $Id: Owl/packages/owl-control/owl-control.spec,v 1.6 2002/07/07 00:07:48 solar Exp $
+# $Id: Owl/packages/owl-control/owl-control.spec,v 1.7 2002/11/03 01:24:35 solar Exp $
 
 Summary: A set of scripts to control installed system facilities.
 Name: owl-control
-Version: 0.3
+Version: 0.4
 Release: owl1
 License: public domain
 Group: System Environment/Base
-Source0: control
-Source1: functions
+Source0: functions
+Source1: control
+Source2: control-dump
+Source3: control-restore
 Requires: /bin/sh, /dev/null, sh-utils, fileutils, findutils
 Requires: sed, grep, mktemp
 BuildArchitectures: noarch
@@ -23,23 +25,26 @@ from package installation.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{etc/control.d/facilities,usr/sbin}
-cp $RPM_SOURCE_DIR/control $RPM_BUILD_ROOT/etc/
+mkdir -p $RPM_BUILD_ROOT{/etc/control.d/facilities,%{_sbindir}}
 cp $RPM_SOURCE_DIR/functions $RPM_BUILD_ROOT/etc/control.d/
-ln -s /etc/control $RPM_BUILD_ROOT/usr/sbin/control
+cp $RPM_SOURCE_DIR/control{,-dump,-restore} $RPM_BUILD_ROOT%{_sbindir}/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(0700,root,root)
-/etc/control
-/usr/sbin/control
 %dir /etc/control.d
 %dir /etc/control.d/facilities
 %attr(0600,root,root) /etc/control.d/functions
+%{_sbindir}/control*
 
 %changelog
+* Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
+- Imported some of the ALT Linux updates, including (modified versions of)
+the control-dump and control-restore scripts.
+- Install the scripts into %{_sbindir} directly, no more symlinks.
+
 * Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
 - Use grep -q in the provided shell functions.
 
