@@ -12,6 +12,9 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/11/13	Package: screen
+Updated to 3.9.10.
+
 2001/11/13	Package: mktemp
 Updated to 1.4 (uses $TMPDIR and a hard-coded template by default).
 
@@ -452,4 +455,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.46 2001/11/13 09:31:08 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.47 2001/11/13 15:26:30 solar Exp $
