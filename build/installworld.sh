@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/installworld.sh,v 1.19 2004/12/08 03:21:00 galaxy Exp $
+# $Id: Owl/build/installworld.sh,v 1.20 2004/12/25 18:09:41 galaxy Exp $
 
 . installworld.conf
 
@@ -109,7 +109,8 @@ if [ -f $ROOT/var/lib/rpm/packages.rpm -o -f $ROOT/var/lib/rpm/Packages ]; then
 	fi
 
 # XXX: Should check for errors (rpm's exit status).
-	LIBDB23_DEPS=$(echo `env - chroot $ROOT /bin/rpm -q --whatrequires libdb.so.2 libdb.so.3 2>/dev/null | sort -u | grep -vE '^(no package|rpm-|pam-|perl-|postfix-)'`)
+	CHROOT_BIN=$(which chroot 2>/dev/null)
+	LIBDB23_DEPS=$(echo `env - ${CHROOT_BIN:=/usr/sbin/chroot} $ROOT /bin/rpm -q --whatrequires libdb.so.2 libdb.so.3 2>/dev/null | sort -u | grep -vE '^(no package|rpm-|pam-|perl-|postfix-)'`)
 
 	if [ -n "$LIBDB23_DEPS" ]; then
 		cat << EOF
