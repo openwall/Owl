@@ -1,6 +1,6 @@
 diff -urN --show-c-function nc-3.2-owl-linux/usr.bin/nc/netcat.c nc-3.2-owl-fixes/usr.bin/nc/netcat.c
---- nc-3.2-owl-linux/usr.bin/nc/netcat.c	Sun Dec 29 23:50:35 2002
-+++ nc-3.2-owl-fixes/usr.bin/nc/netcat.c	Mon Dec 30 00:07:25 2002
+--- nc-3.2-owl-linux/usr.bin/nc/netcat.c	Sun Dec 29 20:50:35 2002
++++ nc-3.2-owl-fixes/usr.bin/nc/netcat.c	Sun Dec 29 21:07:25 2002
 @@ -277,11 +277,11 @@ main(int argc, char *argv[])
  				rv = recvfrom(s, buf, sizeof(buf), MSG_PEEK,
  				    (struct sockaddr *)&z, &len);
@@ -250,3 +250,15 @@ diff -urN --show-c-function nc-3.2-owl-linux/usr.bin/nc/netcat.c nc-3.2-owl-fixe
  	return (ret);
  }
  
+diff -urN --show-c-function nc-3.2-owl-linux/usr.bin/nc/socks.c nc-3.2-owl-fixes/usr.bin/nc/socks.c
+--- nc-3.2-owl-linux/usr.bin/nc/socks.c	Sun Dec 29 20:41:39 2002
++++ nc-3.2-owl-fixes/usr.bin/nc/socks.c	Sun Dec 29 21:24:13 2002
+@@ -102,7 +102,7 @@ socks_connect (char *host, char *port, s
+ 	else
+ 		proxyfd = remote_connect(proxyhost, SOCKS_PORT, proxyhints);
+ 
+-	if (!proxyfd)
++	if (proxyfd < 0)
+ 		return -1;
+ 
+ 	serveraddr = decode_addr (host);
