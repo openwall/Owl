@@ -1,4 +1,4 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.5 2001/03/10 17:19:22 mci Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.6 2001/03/10 18:23:01 solar Exp $
 
 Summary: A screen manager that supports multiple logins on one terminal.
 Name: screen
@@ -55,6 +55,7 @@ make CFLAGS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT/etc
 
 %makeinstall
 
