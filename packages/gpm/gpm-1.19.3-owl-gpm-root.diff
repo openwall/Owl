@@ -159,7 +159,7 @@ diff -urN gpm-1.19.3.orig/gpm-root.conf gpm-1.19.3/gpm-root.conf
  button 3 {
 diff -urN gpm-1.19.3.orig/gpm-root.y gpm-1.19.3/gpm-root.y
 --- gpm-1.19.3.orig/gpm-root.y	Wed Apr 19 09:48:41 2000
-+++ gpm-1.19.3/gpm-root.y	Tue Jun 26 03:52:05 2001
++++ gpm-1.19.3/gpm-root.y	Tue Jun 26 06:47:19 2001
 @@ -64,6 +64,8 @@
  #define VCS_MAJOR	7
  #endif
@@ -374,7 +374,17 @@ diff -urN gpm-1.19.3.orig/gpm-root.y gpm-1.19.3/gpm-root.y
  
    if (stat(cfgname,&buf)==-1)
      {
-@@ -972,12 +994,18 @@
+@@ -926,7 +948,9 @@
+          "Usage: %s [options]\n",prgname);
+   printf("  Valid options are\n"
+          "    -m <number-or-name>   modifier to use\n"
++#ifdef USER_CFG
+          "    -u                    inhibit user configuration files\n"
++#endif
+          "    -D                    don't auto-background and run as daemon\n"
+          "    -V <verbosity-delta>  increase amount of logged messages\n"
+          );
+@@ -972,12 +996,18 @@
    int opt;
    
    gpm_log_daemon = 1;
@@ -393,6 +403,34 @@ diff -urN gpm-1.19.3.orig/gpm-root.y gpm-1.19.3/gpm-root.y
          case 'D':  gpm_log_daemon = 0; break;
          case 'V': 
            gpm_debug_level += (0 == optarg ? 1 : strtol(optarg, 0, 0));
+@@ -1201,10 +1231,9 @@
+   int evflag;
+   int recursenow=0; /* not on first iteration */
+ 
+-  prgname=argv[0];
+-  setuid(0); /* if we're setuid, force it */
++  prgname = argv[0] ?: "gpm-root";
+ 
+-  if (getuid())
++  if (getuid() != 0 || getuid() != geteuid())
+     {
+       fprintf(stderr,"%s: Must be root\n", prgname);
+       exit(1);
+@@ -1285,7 +1314,13 @@
+     }
+   if (!vc)
+     {
+-      oops("can't open mouse connection");
++      fprintf(stderr,"%s: Can't open mouse connection\n",prgname);
++      exit (1);
++    }
++  if (gpm_fd == -2)
++    {
++      fprintf(stderr,"%s: Can't run in an xterm or rxvt\n",prgname);
++      exit(2);
+     }
+ 
+   conn.eventMask=~0; /* grab everything away form selection */
 diff -urN gpm-1.19.3.orig/special.c gpm-1.19.3/special.c
 --- gpm-1.19.3.orig/special.c	Tue Jan 18 00:34:00 2000
 +++ gpm-1.19.3/special.c	Tue Jun 26 02:33:16 2001

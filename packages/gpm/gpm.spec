@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gpm/gpm.spec,v 1.4 2001/06/26 00:31:29 solar Exp $
+# $Id: Owl/packages/gpm/gpm.spec,v 1.5 2001/06/26 03:05:44 solar Exp $
 
 # this defines the library version that this package builds.
 %define	LIBVER		1.18.0
@@ -14,10 +14,12 @@ Source1: gpm.init
 Patch0: gpm-1.19.3-rh-install-no-root.diff
 Patch1: gpm-1.19.3-rh-no-ps.diff
 Patch2: gpm-1.19.3-rh-doc.diff
-Patch3: gpm-1.19.3-immunix-owl-tmp.diff
-Patch4: gpm-1.19.3-rh-owl-socket-mode.diff
-Patch5: gpm-1.19.3-rh-gpm-root.diff
-Patch6: gpm-1.19.3-owl-gpm-root.diff
+Patch3: gpm-1.19.3-rh-owl-socket-mode.diff
+Patch4: gpm-1.19.3-rh-gpm-root.diff
+Patch5: gpm-1.19.3-owl-gpm-root.diff
+Patch6: gpm-1.19.3-immunix-owl-tmp.diff
+Patch7: gpm-1.19.3-owl-liblow.diff
+Patch8: gpm-1.19.3-owl-warnings.diff
 Prereq: /sbin/chkconfig /sbin/ldconfig /sbin/install-info /etc/rc.d/init.d
 BuildRequires: bison
 BuildRoot: /var/rpm-buildroot/%{name}-root
@@ -53,6 +55,8 @@ at the click of a mouse button.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
+%patch8 -p1
 
 %build
 autoconf
