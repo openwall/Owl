@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.19 2000/12/24 09:06:52 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.20 2001/01/18 04:20:49 solar Exp $
 
 Summary: Initial set of configuration files
 Name: owl-etc
-Version: 0.6
+Version: 0.7
 Release: 1owl
 Copyright: public domain
 Group: System Environment/Base
@@ -65,6 +65,9 @@ rm -rf $RPM_BUILD_ROOT
 %ghost /var/log/lastlog
 
 %changelog
+* Thu Jan 18 2001 Solar Designer <solar@owl.openwall.com>
+- Don't expire the initial (disabled) password of root and the pseudo-users.
+
 * Wed Dec 20 2000 Solar Designer <solar@owl.openwall.com>
 - Obsoletes: setup (yes, we can upgrade to this from RH).
 - Provide default hosts.allow and hosts.deny with useful comments.
