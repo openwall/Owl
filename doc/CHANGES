@@ -5,6 +5,18 @@ remains fixed; it's only the stable branch which has these changes.
 
 	Changes made between Owl 0.1-prerelease and Owl 0.1-stable.
 
+2001/06/27	Package: gpm
+SECURITY FIX	Severity: none to low, physical, active
+The mouse event handler gpm-root, if enabled, handled user-supplied
+configuration files unsafely, allowing a user with physical access to
+the mouse to gain root privileges on the running system.  gpm-root was
+never started on Owl by default, and has now been moved to a separate
+subpackage which would need to be explicitly enabled to build.  The
+support for user-supplied configuration files is now patched out and
+the documentation is updated accordingly.  Additionally, many gpm-root
+reliability bugs including the format string bug reported by Colin
+Phipps to Debian (http://bugs.debian.org/102031) have been fixed.
+
 2001/06/24	Owl/doc/CHANGES
 New file: the system-wide change log will now be maintained.
 
@@ -139,4 +151,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp@hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.2.2.1 2001/06/24 16:14:35 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.2.2.2 2001/06/27 01:22:45 solar Exp $

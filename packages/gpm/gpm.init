@@ -1,12 +1,10 @@
 #!/bin/sh
-# $Id: Owl/packages/gpm/gpm.init,v 1.6 2001/01/06 09:03:25 solar Exp $
+# $Id: Owl/packages/gpm/gpm.init,v 1.6.2.1 2001/06/27 01:22:46 solar Exp $
 #
 # chkconfig: 2345 85 15
 # description: \
-#	GPM adds mouse support to text-based Linux applications such \
-#	the Midnight Commander. Is also allows mouse-based console \
-#	cut-and-paste operations, and includes support for pop-up \
-#	menus on the console.
+#	gpm provides mouse support to text-based Linux applications as \
+#	well as console cut-and-paste operations using the mouse.
 #
 # processname: gpm
 # pidfile: /var/run/gpm.pid
