@@ -17,7 +17,7 @@ ftp://gd.tuwien.ac.at/opsys/linux/Owl/	(Österreich)
 	http://gd.tuwien.ac.at/opsys/linux/Owl/
 	rsync://gd.tuwien.ac.at/opsys/linux/Owl/
 ftp://ftp.mathematik.uni-marburg.de/pub/mirror/openwall/Owl/    (Deutschland)
-ftp://ftp.ca.openwall.com/pub/Owl/	(Kanada)
+ftp://ftp.busymonkey.org/pub/Owl/	(USA)
 ftp://ftp.wiretapped.net/pub/Owl/	(Australien)
 
 Für jedes Release von Owl gibt es ein eigenes Unterverzeichnis mit dem
@@ -67,4 +67,4 @@ Kompression zu benutzen, zum einen, wenn man direkt auf den anonymen CVS Server
 zugreift, mit der Option -z3 und/oder zum anderen wenn man "Compression yes"
 in der Konfigurationsdatei des SSH Clients einstellt.
 
-$Id: Owl/doc/de/DOWNLOAD,v 1.11 2003/01/09 18:46:49 schmidt Exp $
+$Id: Owl/doc/de/DOWNLOAD,v 1.12 2003/01/18 13:33:18 schmidt Exp $
