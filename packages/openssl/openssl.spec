@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.21 2002/05/29 02:09:13 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.22 2002/07/30 18:44:28 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
 Version: 0.9.6d
-Release: owl3
+Release: owl4
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
@@ -13,6 +13,7 @@ Patch1: openssl-0.9.6a-owl-glibc-enable_secure.diff
 Patch2: openssl-0.9.6d-owl-Makefile.diff
 Patch3: openssl-0.9.6d-owl-sparc-shared.diff
 Patch10: openssl-0.9.6d-ben-read-errors.diff
+Patch11: openssl-0.9.6d-up-20020727-security-fixes.diff
 PreReq: /sbin/ldconfig
 Provides: SSL
 BuildRequires: perl
@@ -68,6 +69,7 @@ popd
 %patch2 -p1
 %patch3 -p1
 %patch10 -p0
+%patch11 -p0
 
 %define openssldir /var/ssl
 %define opensslflags shared -DSSL_ALLOW_ADH --prefix=/usr
@@ -167,6 +169,13 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0644,root,root) /usr/man/man3/*
 
 %changelog
+* Tue Jul 30 2002 Solar Designer <solar@owl.openwall.com>
+- Applied the official patch with 4 security fixes to problems discovered
+by Ben Laurie and others of A.L. Digital Ltd and The Bunker under DARPA's
+CHATS program, by consultants at Neohapsis, and by Adi Stav and James Yonan.
+The patch has been prepared by Ben Laurie and Dr. Stephen Henson, with one
+of the fixes partly based on a version by Adi Stav.
+
 * Wed May 29 2002 Solar Designer <solar@owl.openwall.com>
 - Made shared library builds work on SPARC (again).
 - Moved the .so symlinks to devel subpackage.
