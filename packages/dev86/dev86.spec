@@ -1,9 +1,9 @@
-# $Id: Owl/packages/dev86/dev86.spec,v 1.14 2004/11/23 22:40:45 mci Exp $
+# $Id: Owl/packages/dev86/dev86.spec,v 1.15 2005/01/12 15:49:05 galaxy Exp $
 
 Summary: A real mode 80x86 assembler and linker.
 Name: dev86
 Version: 0.16.0
-Release: owl5
+Release: owl6
 License: GPL
 Group: Development/Languages
 Source: http://www.cix.co.uk/~mayday/dev86/Dev86src-%version.tar.gz
@@ -39,7 +39,16 @@ bootstrapping code, from their sources.
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-make <<!FooBar!
+CFLAGS="%optflags" \
+%__make \
+    CC="%__cc" \
+    PREFIX="%_prefix" \
+    BINDIR="%_bindir" \
+    LIBPRE="%_prefix" \
+    LIBDIR="%_libdir/bcc" \
+    MANDIR="%_mandir" \
+    ELKSSRC=.. \
+    <<!FooBar!
 5
 quit
 !FooBar!
@@ -47,18 +56,26 @@ quit
 %install
 rm -rf %buildroot
 
-make DIST=%buildroot MANDIR=%_mandir ELKSSRC=. install
+%__make install \
+    DIST="%buildroot" \
+    DISTPRE="%buildroot%_prefix"
 
-install -m 755 -s %buildroot/lib/elksemu %buildroot%_bindir
-rm -rf %buildroot/lib/
+# Build and install dis88
+%__make install-other \
+    CC="%__cc" \
+    DISTBIN="%buildroot%_bindir" \
+    DISTMAN="%buildroot%_mandir"
 
-pushd %buildroot/usr/bin
+install -m 755 -s %buildroot/%_lib/elksemu %buildroot%_bindir
+rm -rf %buildroot/%_lib/
+
+pushd %buildroot%_bindir
 rm -f nm86 size86
 ln -s objdump86 nm86
 ln -s objdump86 size86
 
 # Move header files out of /usr/include and into /usr/lib/bcc/include
-mv %buildroot/usr/include %buildroot%_libdir/bcc/
+mv %buildroot%_prefix/include %buildroot%_libdir/bcc/
 popd
 
 mv bootblocks/README README.bootblocks
@@ -71,7 +88,7 @@ mv bin86/README README.bin86
 mv bin86/ChangeLog ChangeLog.bin86
 
 %files
-%defattr(-,root,root,-)
+%defattr(-,root,root)
 %doc README MAGIC Contributors README.bootblocks README.copt README.dis88
 %doc README.elksemu README.unproto README.bin86-0.4 README.bin86 ChangeLog.bin86
 %dir %_libdir/bcc
@@ -86,6 +103,7 @@ mv bin86/ChangeLog ChangeLog.bin86
 %_bindir/objdump86
 %_bindir/nm86
 %_bindir/size86
+%_bindir/dis86
 %_libdir/bcc/bcc-cc1
 %_libdir/bcc/copt
 %_libdir/bcc/unproto
@@ -97,6 +115,13 @@ mv bin86/ChangeLog ChangeLog.bin86
 %_mandir/man1/*
 
 %changelog
+* Sun Jan 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.16.0-owl6
+- Made use of %__make and %__cc macros.
+- Added build of dis86 (it seems like we forgot it)
+- Optimized package build by issuing optflags to all compile stages which
+uses gcc.
+- Cleaned up the spec.
+
 * Fri Feb 27 2004 Michail Litvak <mci@owl.openwall.com> 0.16.0-owl5
 - Patch to fix errno.h usage (from RH).
 - add ar86 to file list.
