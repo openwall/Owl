@@ -1,0 +1,15 @@
+diff -ur pam-0.75.orig/libpam/pam_dispatch.c pam-0.75/libpam/pam_dispatch.c
+--- pam-0.75.orig/libpam/pam_dispatch.c	Tue Apr 24 02:32:19 2001
++++ pam-0.75/libpam/pam_dispatch.c	Mon Nov 19 04:04:45 2001
+@@ -130,9 +130,8 @@
+ 	    action = h->actions[cached_retval];
+ 	}
+ 
+-	D((stderr,
+-	   "use_cached_chain=%d action=%d cached_retval=%d retval=%d\n",
+-	   use_cached_chain, action, cached_retval, retval));
++	D(("use_cached_chain=%d action=%d cached_retval=%d retval=%d",
++	    use_cached_chain, action, cached_retval, retval));
+ 
+ 	/* decide what to do */
+ 	switch (action) {

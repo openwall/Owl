@@ -1,0 +1,54 @@
+diff -ur pam-0.75.orig/modules/pam_securetty/pam_securetty.c pam-0.75/modules/pam_securetty/pam_securetty.c
+--- pam-0.75.orig/modules/pam_securetty/pam_securetty.c	Fri Aug 10 23:23:16 2001
++++ pam-0.75/modules/pam_securetty/pam_securetty.c	Mon Nov 19 05:22:49 2001
+@@ -42,7 +42,7 @@
+     va_list args;
+ 
+     va_start(args, format);
+-    openlog("PAM-securetty", LOG_CONS|LOG_PID, LOG_AUTH);
++    openlog("pam_securetty", LOG_CONS|LOG_PID, LOG_AUTH);
+     vsyslog(err, format, args);
+     va_end(args);
+     closelog();
+@@ -92,16 +92,14 @@
+ 
+     retval = pam_get_user(pamh, &username, NULL);
+     if (retval != PAM_SUCCESS || username == NULL) {
+-	if (ctrl & PAM_DEBUG_ARG) {
+-            _pam_log(LOG_WARNING, "cannot determine username");
+-	}
++	_pam_log(LOG_WARNING, "cannot determine username");
+ 	return (retval == PAM_CONV_AGAIN
+ 		? PAM_INCOMPLETE:PAM_SERVICE_ERR);
+     }
+ 
+     user_pwd = getpwnam(username);
+     if (user_pwd == NULL) {
+-	return PAM_IGNORE;
++	return PAM_USER_UNKNOWN;
+     } else if (user_pwd->pw_uid != 0) { /* If the user is not root,
+ 					   securetty's does not apply
+ 					   to them */
+@@ -110,9 +108,7 @@
+ 
+     retval = pam_get_item(pamh, PAM_TTY, (const void **)&uttyname);
+     if (retval != PAM_SUCCESS || uttyname == NULL) {
+-        if (ctrl & PAM_DEBUG_ARG) {
+-            _pam_log(LOG_WARNING, "cannot determine user's tty");
+-	}
++        _pam_log(LOG_WARNING, "cannot determine user's tty");
+ 	return PAM_SERVICE_ERR;
+     }
+ 
+@@ -158,9 +154,8 @@
+     }
+     fclose(ttyfile);
+     if(retval) {
+-	if (ctrl & PAM_DEBUG_ARG)
+-	    _pam_log(LOG_WARNING, "access denied: tty '%s' is not secure !",
+-		     uttyname);
++	_pam_log(LOG_WARNING, "access denied: tty '%s' is not secure",
++	    uttyname);
+ 	retval = PAM_AUTH_ERR;
+     }
+     if ((retval == PAM_SUCCESS) && (ctrl & PAM_DEBUG_ARG))

@@ -1,0 +1,63 @@
+diff -ur pam-0.75.orig/libpam/pam_item.c pam-0.75/libpam/pam_item.c
+--- pam-0.75.orig/libpam/pam_item.c	Mon Jan 22 19:04:14 2001
++++ pam-0.75/libpam/pam_item.c	Mon Nov 19 04:37:23 2001
+@@ -54,10 +54,12 @@
+ 
+     case PAM_USER:
+ 	RESET(pamh->user, item);
++	pamh->former.fail_user = 0;
+ 	break;
+ 
+     case PAM_USER_PROMPT:
+ 	RESET(pamh->prompt, item);
++	pamh->former.fail_user = 0;
+ 	break;
+ 
+     case PAM_TTY:
+@@ -131,6 +133,7 @@
+ 		memcpy(tconv, item, sizeof(struct pam_conv));
+ 		_pam_drop(pamh->pam_conversation);
+ 		pamh->pam_conversation = tconv;
++		pamh->former.fail_user = 0;
+ 	    }
+ 	}
+         break;
+@@ -265,6 +268,9 @@
+ 	}
+     }
+ 
++    if (pamh->former.fail_user)
++	return pamh->former.fail_user;
++
+     /* If we are resuming an old conversation, we verify that the prompt
+        is the same.  Anything else is an error. */
+     if (pamh->former.want_user) {
+@@ -310,6 +316,7 @@
+ 	 */
+ 	D(("pam_get_user: no response provided"));
+ 	retval = PAM_CONV_ERR;
++	pamh->former.fail_user = retval;
+     } else if (retval == PAM_SUCCESS) {            /* copy the username */
+ 	/*
+ 	 * now we set the PAM_USER item -- this was missing from pre.53
+@@ -318,7 +325,8 @@
+ 	 */
+ 	RESET(pamh->user, resp->resp);
+ 	*user = pamh->user;
+-    }
++    } else
++	pamh->former.fail_user = retval;
+ 
+     if (resp) {
+ 	/*
+diff -ur pam-0.75.orig/libpam/pam_private.h pam-0.75/libpam/pam_private.h
+--- pam-0.75.orig/libpam/pam_private.h	Mon Apr 23 22:14:19 2001
++++ pam-0.75/libpam/pam_private.h	Mon Nov 19 04:31:22 2001
+@@ -121,6 +121,7 @@
+     int status;            /* the status before returning incomplete */
+ 
+ /* state info used by pam_get_user() function */
++    int fail_user;
+     int want_user;
+     char *prompt;          /* saved prompt information */
+ 

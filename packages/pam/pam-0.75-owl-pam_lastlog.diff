@@ -1,0 +1,151 @@
+diff -ur pam-0.75.orig/modules/pam_lastlog/pam_lastlog.c pam-0.75/modules/pam_lastlog/pam_lastlog.c
+--- pam-0.75.orig/modules/pam_lastlog/pam_lastlog.c	Mon Apr 23 22:14:19 2001
++++ pam-0.75/modules/pam_lastlog/pam_lastlog.c	Mon Nov 19 07:11:56 2001
+@@ -84,7 +84,7 @@
+     va_list args;
+ 
+     va_start(args, format);
+-    openlog("PAM-lastlog", LOG_CONS|LOG_PID, LOG_AUTH);
++    openlog("pam_lastlog", LOG_CONS|LOG_PID, LOG_AUTH);
+     vsyslog(err, format, args);
+     va_end(args);
+     closelog();
+@@ -98,10 +98,11 @@
+ #define LASTLOG_NEVER      010  /* display a welcome message for first login */
+ #define LASTLOG_DEBUG      020  /* send info to syslog(3) */
+ #define LASTLOG_QUIET      040  /* keep quiet about things */
++#define LASTLOG_WTMP      0100  /* log to wtmp as well as lastlog */
+ 
+ static int _pam_parse(int flags, int argc, const char **argv)
+ {
+-    int ctrl=(LASTLOG_DATE|LASTLOG_HOST|LASTLOG_LINE);
++    int ctrl=(LASTLOG_DATE|LASTLOG_HOST|LASTLOG_LINE|LASTLOG_WTMP);
+ 
+     /* does the appliction require quiet? */
+     if (flags & PAM_SILENT) {
+@@ -116,15 +117,17 @@
+ 	if (!strcmp(*argv,"debug")) {
+ 	    ctrl |= LASTLOG_DEBUG;
+ 	} else if (!strcmp(*argv,"nodate")) {
+-	    ctrl |= ~LASTLOG_DATE;
++	    ctrl &= ~LASTLOG_DATE;
+ 	} else if (!strcmp(*argv,"noterm")) {
+-	    ctrl |= ~LASTLOG_LINE;
++	    ctrl &= ~LASTLOG_LINE;
+ 	} else if (!strcmp(*argv,"nohost")) {
+-	    ctrl |= ~LASTLOG_HOST;
++	    ctrl &= ~LASTLOG_HOST;
+ 	} else if (!strcmp(*argv,"silent")) {
+ 	    ctrl |= LASTLOG_QUIET;
+ 	} else if (!strcmp(*argv,"never")) {
+ 	    ctrl |= LASTLOG_NEVER;
++	} else if (!strcmp(*argv,"nowtmp")) {
++	    ctrl &= ~LASTLOG_WTMP;
+ 	} else {
+ 	    _log_err(LOG_ERR,"unknown option; %s",*argv);
+ 	}
+@@ -216,12 +219,12 @@
+ 	if (announce & LASTLOG_DEBUG) {
+ 	    _log_err(LOG_DEBUG, "unable to open %s file", _PATH_LASTLOG);
+ 	}
+-	retval = PAM_PERM_DENIED;
++	retval = PAM_SYSTEM_ERR;
+     } else {
+-	int win;
++	int win, err;
+ 
+ 	/* read the lastlogin file - for this uid */
+-	(void) lseek(last_fd, sizeof(last_login) * (off_t) uid, SEEK_SET);
++	err = lseek(last_fd, sizeof(last_login) * (off_t) uid, SEEK_SET) < 0;
+ 
+ 	memset(&last_lock, 0, sizeof(last_lock));
+ 	last_lock.l_type = F_RDLCK;
+@@ -235,13 +238,12 @@
+ 	    sleep(LASTLOG_IGNORE_LOCK_TIME);
+ 	}
+ 
+-	win = ( read(last_fd, &last_login, sizeof(last_login))
+-		== sizeof(last_login) );
++	win = read(last_fd, &last_login, sizeof(last_login));
+ 
+ 	last_lock.l_type = F_UNLCK;
+ 	(void) fcntl(last_fd, F_SETLK, &last_lock);        /* unlock */
+ 
+-	if (!win) {
++	if (!err && !win) {
+ 	    D(("First login for user uid=%d", _PATH_LASTLOG, uid));
+ 	    if (announce & LASTLOG_DEBUG) {
+ 		_log_err(LOG_DEBUG, "creating lastlog for uid %d", uid);
+@@ -249,10 +251,12 @@
+ 	    memset(&last_login, 0, sizeof(last_login));
+ 	}
+ 
++	err |= win && win != sizeof(last_login);
++
+ 	/* rewind */
+-	(void) lseek(last_fd, sizeof(last_login) * (off_t) uid, SEEK_SET);
++	err |= lseek(last_fd, sizeof(last_login) * (off_t) uid, SEEK_SET) < 0;
+ 
+-	if (!(announce & LASTLOG_QUIET)) {
++	if (!err && !(announce & LASTLOG_QUIET)) {
+ 	    if (last_login.ll_time) {
+ 		char *the_time;
+ 		char *remark;
+@@ -260,7 +264,8 @@
+ 		the_time = ctime(&last_login.ll_time);
+ 		the_time[-1+strlen(the_time)] = '\0';    /* delete '\n' */
+ 
+-		remark = malloc(LASTLOG_MAXSIZE);
++		/* add a safety margin; this module is crappy either way */
++		remark = malloc(LASTLOG_MAXSIZE + 0x1000);
+ 		if (remark == NULL) {
+ 		    D(("no memory for last login remark"));
+ 		    retval = PAM_BUF_ERR;
+@@ -311,7 +316,8 @@
+ 	    } else if ((!last_login.ll_time) && (announce & LASTLOG_NEVER)) {
+ 		D(("this is the first time this user has logged in"));
+ 		retval = make_remark(pamh, announce, LASTLOG_NEVER_WELCOME);
+-	    }
++	    } else
++		retval = PAM_SUCCESS;
+ 	} else {
+ 	    D(("no text was requested"));
+ 	    retval = PAM_SUCCESS;
+@@ -368,7 +374,9 @@
+ 	    }
+ 
+ 	    D(("writing to the last_log file"));
+-	    (void) write(last_fd, &last_login, sizeof(last_login));
++	    if (!err)
++		err |= write(last_fd, &last_login, sizeof(last_login)) !=
++		    sizeof(last_login);
+ 
+ 	    last_lock.l_type = F_UNLCK;
+ 	    (void) fcntl(last_fd, F_SETLK, &last_lock);        /* unlock */
+@@ -377,10 +385,15 @@
+ 	    close(last_fd);                                  /* all done */
+ 	    D(("all done with last login"));
+ 
+-	    /* write wtmp entry for user */
+-	    logwtmp(last_login.ll_line, user, remote_host);
++	    if (announce & LASTLOG_WTMP) {
++		/* write wtmp entry for user */
++		logwtmp(last_login.ll_line, user, remote_host);
++	    }
+ 	    terminal_line = NULL;
+ 	    remote_host = NULL;
++
++	    if (err && retval == PAM_SUCCESS)
++		retval = PAM_SYSTEM_ERR;
+ 	}
+     }
+ 
+@@ -421,7 +434,7 @@
+     pwd = getpwnam(user);
+     if (pwd == NULL) {
+ 	D(("couldn't identify user %s", user));
+-	return PAM_CRED_INSUFFICIENT;
++	return PAM_USER_UNKNOWN;
+     }
+     uid = pwd->pw_uid;
+     pwd = NULL;                                         /* tidy up */

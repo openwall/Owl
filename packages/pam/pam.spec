@@ -1,19 +1,23 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.18 2001/11/16 03:03:47 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.19 2001/11/19 04:34:04 solar Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
 Version: 0.75
-Release: 13owl
+Release: 14owl
 License: GPL or BSD
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
 Source0: pam-redhat-%{version}-10.tar.bz2
 Source1: pam_listfile.c
 Patch0: pam-0.75-owl-tmp.diff
-Patch1: pam-0.75-owl-pam_pwdb.diff
-Patch2: pam-0.75-owl-pam_chroot.diff
-Patch3: pam-0.75-owl-no-cracklib.diff
-Patch4: pam-0.75-alt-read_string.diff
+Patch1: pam-0.75-owl-pam_get_user-cache-failures.diff
+Patch2: pam-0.75-owl-pam_dispatch-debugging.diff
+Patch9: pam-0.75-alt-read_string.diff
+Patch10: pam-0.75-owl-pam_pwdb.diff
+Patch11: pam-0.75-owl-pam_chroot.diff
+Patch12: pam-0.75-owl-pam_lastlog.diff
+Patch13: pam-0.75-owl-pam_securetty.diff
+Patch20: pam-0.75-owl-no-cracklib.diff
 Requires: glibc >= 2.1.3-13owl, pwdb >= 0.61-1owl
 # Just to make sure noone misses pam_unix, which is now provided by tcb
 Requires: tcb >= 0.9.5
@@ -55,8 +59,12 @@ ln -s ../../../libpam_misc/pam_misc.h libpam/include/security/pam_misc.h
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%patch4 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch20 -p1
 mkdir modules/READMEs
 for f in modules/pam_*/README; do
 	d="${f%/*}"
@@ -192,6 +200,15 @@ chgrp chkpwd /sbin/chkpwd.d && chmod 710 /sbin/chkpwd.d
 %doc doc/specs/rfc86.0.txt
 
 %changelog
+* Mon Nov 19 2001 Solar Designer <solar@owl.openwall.com>
+- Cache pam_get_user() failures such that the conversation function isn't
+called multiple times with the same prompt if pam_get_user() fails and is
+used by more than one module in the stack.
+- pam_lastlog: bug and reliability fixes (but the module is still dirty),
+"nowtmp" option to disable logging to wtmp when the program does that.
+- pam_securetty: be fail-close on user lookups, always log failures (not
+just with "debug").
+
 * Fri Nov 16 2001 Solar Designer <solar@owl.openwall.com>
 - Use the trigger on shadow-utils for possibly creating and making use of
 group chkpwd, not just for group shadow.  This makes no difference on Owl
