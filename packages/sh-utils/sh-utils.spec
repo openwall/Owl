@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sh-utils/Attic/sh-utils.spec,v 1.12 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/sh-utils/Attic/sh-utils.spec,v 1.13 2005/01/18 13:15:43 solar Exp $
 
 # The texinfo documentation for fileutils, sh-utils, and textutils is
 # currently provided by fileutils.
@@ -118,7 +118,7 @@ fi
 %_datadir/locale/*/*/*
 
 %changelog
-* Tue Jul 20 2004 Michail Litvak <mci@owl.openwall.com> 2.0-owl4 
+* Tue Jul 20 2004 Michail Litvak <mci@owl.openwall.com> 2.0-owl4
 - Use sed -i instead of perl.
 
 * Mon Aug 05 2002 Solar Designer <solar@owl.openwall.com> 2.0-owl3
