@@ -41,7 +41,7 @@
  .ti -2n
  \fB>\fP sets the (second) mark and writes the contents of the paste buffer to
 -the screen-exchange file (/tmp/screen-exchange per default) once copy-mode is 
-+the screen-exchange file ($HOME/.screen-exchange per default) once copy-mode is 
++the screen-exchange file ($HOME/.screen-exchange per default) once copy-mode is
  finished. 
  .br
  This example demonstrates how to dump the whole scrollback buffer 
@@ -50,7 +50,7 @@
  .I screen
  users with a 'message of the
 -day'. Typically installed in a global /local/etc/screenrc. 
-+day'. Typically installed in a global /etc/screenrc. 
++day'. Typically installed in a global /etc/screenrc.
  The option \*Q-n\*U may be used to suppress the line feed.
  See also \*Qsleep\*U.
  Echo is also useful for online checking of environment variables.
@@ -117,7 +117,7 @@
  When @code{screen} is invoked, it executes initialization commands from
  the files @file{.screenrc} in the user's home directory and
 -@file{/usr/local/etc/screenrc}.  These defaults can be overridden in the 
-+@file{/etc/screenrc}.  These defaults can be overridden in the 
++@file{/etc/screenrc}.  These defaults can be overridden in the
  following ways:
  For the global screenrc file @code{screen} searches for the environment
  variable @code{$SYSSCREENRC} (this override feature may be disabled at
@@ -161,7 +161,7 @@
  
 -@item /usr/tmp/screens/screen-exchange or
 -@itemx /tmp/screen-exchange
-+@item $HOME/.screen-exchange 
++@item $HOME/.screen-exchange
  @code{screen} interprocess communication buffer
  
  @item hardcopy.[0-9]
