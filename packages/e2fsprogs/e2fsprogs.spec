@@ -1,23 +1,23 @@
-# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.3 2000/08/08 02:07:05 solar Exp $
+# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.4 2002/01/30 10:14:45 mci Exp $
 
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
 Version: 1.18
-Release: 7owl
-Copyright: GPL
+Release: owl7
+License: GPL
 Group: System Environment/Base
 Source: ftp://sunsite.unc.edu/pub/Linux/system/filesystems/ext2/e2fsprogs-%{version}.tar.gz
 Patch0: ftp://ftp.cistron.nl/pub/people/miquels/misc/e2fsprogs-1.18-spinnerfix.diff
 Patch1: e2fsprogs-1.18-owl-lost+found-mode.diff
 Patch2: e2fsprogs-1.18-rh-debugfs-y2k.diff
 Patch3: e2fsprogs-1.18-rh-et.diff
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
-Prereq: /sbin/ldconfig
+PreReq: /sbin/ldconfig
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The e2fsprogs package contains a number of utilities for creating,
 checking, modifying and correcting any inconsistencies in second
-extended (ext2) filesystems.  E2fsprogs contains e2fsck (used to repair
+extended (ext2) filesystems.  e2fsprogs contains e2fsck (used to repair
 filesystem inconsistencies after an unclean shutdown), mke2fs (used to
 initialize a partition to contain an empty ext2 filesystem), debugfs
 (used to examine the internal structure of a filesystem, to manually
@@ -25,22 +25,15 @@ repair a corrupted filesystem or to create test cases for e2fsck), tune2fs
 (used to modify filesystem parameters) and most of the other core ext2fs
 filesystem utilities.
 
-You should install the e2fsprogs package if you need to manage the
-performance of an ext2 filesystem.
-
 %package devel
 Summary: Ext2 filesystem-specific static libraries and headers.
 Group: Development/Libraries
+PreReq: /sbin/install-info
 Requires: e2fsprogs
-Prereq: /sbin/install-info
 
 %description devel
 E2fsprogs-devel contains the libraries and header files needed to
 develop second extended (ext2) filesystem-specific programs.
-
-You should install e2fsprogs-devel if you want to develop ext2
-filesystem-specific programs.  If you install e2fsprogs-devel, you'll
-also want to install e2fsprogs.
 
 %prep
 %setup -q
@@ -72,8 +65,8 @@ rm -rf $RPM_BUILD_ROOT
 /sbin/install-info /usr/info/libext2fs.info.gz /usr/info/dir
 
 %postun devel
-if [ $1 = 0 ]; then
-    /sbin/install-info --delete /usr/info/libext2fs.info.gz /usr/info/dir
+if [ $1 -eq 0 ]; then
+	/sbin/install-info --delete /usr/info/libext2fs.info.gz /usr/info/dir
 fi
 
 %files
@@ -142,6 +135,9 @@ fi
 /usr/man/man3/com_err.3*
 
 %changelog
+* Wed Jan 30 2002 Michail Litval <mci@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Tue Aug 08 2000 Solar Designer <solar@owl.openwall.com>
 - Added a patch by Miquel van Smoorenburg to fix the progress indicator
 in e2fsck.
