@@ -1,5 +1,5 @@
 --- dev86-0.16.0/ar/ar.c.orig	Sun Dec  3 10:20:47 2000
-+++ dev86-0.16.0/ar/ar.c	Wed Mar 20 21:38:38 2002
++++ dev86-0.16.0/ar/ar.c	Thu Mar 21 09:00:06 2002
 @@ -252,7 +252,7 @@
  extern void extract_members ();
  
@@ -83,7 +83,35 @@
  #else
        struct timeval tv[2];
        tv[0].tv_sec = member.date;
-@@ -2053,7 +2054,7 @@
+@@ -1275,7 +1276,7 @@
+ {
+   struct mapelt *map = make_map (0);
+   char **p;
+-  struct mapelt *after_mapelt;
++  struct mapelt *after_mapelt = NULL;
+   struct mapelt mapstart;
+   struct mapelt *change_map;
+ 
+@@ -1337,7 +1338,7 @@
+ {
+   struct mapelt *map = make_map (1);
+   struct mapelt mapstart;
+-  struct mapelt *after_mapelt;
++  struct mapelt *after_mapelt = NULL;
+   struct mapelt *change_map;
+   char **p;
+   int changed;
+@@ -1364,8 +1365,7 @@
+ 
+   /* Failure to find specified "before" or "after" member
+      is a fatal error; the message has already been printed.  */
+-  if (after_mapelt == 0)
+-    exit (1);
++  if (!after_mapelt) exit (1);
+ 
+   changed = 0;
+   if (files != 0)
+@@ -2053,7 +2053,7 @@
  
  char *
  concat (s1, s2, s3)
@@ -118,7 +146,7 @@
  #include <sys/types.h>
  #include <sys/stat.h>
 --- dev86-0.16.0/copt/copt.c.orig	Fri Jul 23 10:47:43 1999
-+++ dev86-0.16.0/copt/copt.c	Wed Mar 20 16:19:23 2002
++++ dev86-0.16.0/copt/copt.c	Thu Mar 21 08:56:42 2002
 @@ -352,7 +352,7 @@
   */
  static long eval(char *str, int len)
@@ -128,6 +156,15 @@
    int state = 0;
    int i, varnum;
  
+@@ -438,7 +438,7 @@
+   char *cp, *oldpat;
+   long val;
+   int varnum;
+-  int len;
++  int len = 0;
+ 
+   while (*ins && *pat)
+   {
 @@ -811,7 +811,7 @@
  /*
   * Main program
