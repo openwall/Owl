@@ -1,0 +1,97 @@
+diff -ur sysvinit-2.85.orig/src/Makefile sysvinit-2.85/src/Makefile
+--- sysvinit-2.85.orig/src/Makefile	Tue Nov  6 11:58:16 2001
++++ sysvinit-2.85/src/Makefile	Sun Apr 27 01:59:12 2003
+@@ -8,18 +8,20 @@
+ # Version:	@(#)Makefile  2.83-3  06-Nov-2001  miquels@cistron.nl
+ #
+ 
+-CC	= cc
+-CFLAGS	= -Wall -O2 -D_GNU_SOURCE
++CC	= gcc
++CFLAGS	= -Wall -O2 -fomit-frame-pointer -D_GNU_SOURCE
+ LDFLAGS	= -s
+ STATIC	=
+ 
+-# For Debian we do not build all programs, otherwise we do.
+-ifeq ($(DEBIAN),)
++# For some known distributions we do not build all programs, otherwise we do.
+ PROGS	= init halt shutdown killall5 runlevel sulogin utmpdump \
+ 		last mesg wall
+-else
++ifeq ($(DISTRO),Debian)
+ PROGS	= init halt shutdown killall5 runlevel sulogin last mesg
+ endif
++ifeq ($(DISTRO),Owl)
++PROGS	= init halt shutdown killall5 runlevel last mesg wall
++endif
+ 
+ BIN_OWNER	= root
+ BIN_GROUP	= root
+@@ -27,7 +29,7 @@
+ INSTALL		= install -o $(BIN_OWNER) -g $(BIN_GROUP)
+ MANDIR		= /usr/share/man
+ 
+-# Additional libs for Gnu Libc
++# Additional libs for GNU libc.
+ ifneq ($(wildcard /usr/lib/libcrypt.a),)
+ LCRYPT		= -lcrypt
+ endif
+@@ -85,31 +87,38 @@
+ distclean:	clobber
+ 
+ install:
+-		$(INSTALL) -m 755 halt init killall5 sulogin \
+-			runlevel shutdown $(ROOT)/sbin
+-		# These are not installed by default
+-ifeq ($(DEBIAN),)
+-		$(INSTALL) -m 555 utmpdump wall $(ROOT)/usr/bin
+-endif
+-		# $(INSTALL) -m 755 etc/initscript.sample $(ROOT)/etc
+-		$(INSTALL) -m 755 mesg last $(ROOT)/usr/bin
+-		cd $(ROOT)/sbin; ln -sf halt reboot; chown $(BIN_COMBO) reboot
+-		cd $(ROOT)/sbin; ln -sf halt poweroff; chown $(BIN_COMBO) poweroff
+-		cd $(ROOT)/sbin; ln -sf init telinit; chown $(BIN_COMBO) telinit
+-		cd $(ROOT)/bin; ln -sf ../sbin/killall5 pidof; chown $(BIN_COMBO) pidof
+-		cd $(ROOT)/usr/bin; ln -sf last lastb; chown $(BIN_COMBO) lastb
+-		$(INSTALL) -m 644 initreq.h $(ROOT)/usr/include
+-		$(INSTALL) -m 644 ../man/*.8 $(ROOT)$(MANDIR)/man8
+-		$(INSTALL) -m 644 ../man/*.5 $(ROOT)$(MANDIR)/man5
+-ifeq ($(DEBIAN),)
+-		$(INSTALL) -m 644 ../man/wall.1 $(ROOT)$(MANDIR)/man1
++		$(INSTALL) -m 700 halt init killall5 shutdown $(ROOT)/sbin/
++		$(INSTALL) -m 755 runlevel $(ROOT)/sbin/
++		$(INSTALL) -m 755 mesg last $(ROOT)/usr/bin/
++ifneq ($(DISTRO),Owl)
++		$(INSTALL) -m 700 sulogin $(ROOT)/sbin/
++endif
++ifeq ($(DISTRO),)
++		$(INSTALL) -m 755 utmpdump $(ROOT)/usr/bin/
++endif
++ifneq ($(DISTRO),Debian)
++		$(INSTALL) -m 700 wall $(ROOT)/usr/bin/
++endif
++		# $(INSTALL) -m 755 etc/initscript.sample $(ROOT)/etc/
++		ln -sf halt $(ROOT)/sbin/reboot
++		ln -sf halt $(ROOT)/sbin/poweroff
++		ln -sf init $(ROOT)/sbin/telinit
++		ln -sf ../sbin/killall5 $(ROOT)/sbin/pidof
++		ln -sf last $(ROOT)/usr/bin/lastb
++		$(INSTALL) -m 644 initreq.h $(ROOT)/usr/include/
++		$(INSTALL) -m 644 ../man/*.8 $(ROOT)$(MANDIR)/man8/
++		$(INSTALL) -m 644 ../man/*.5 $(ROOT)$(MANDIR)/man5/
++ifneq ($(DISTRO),Debian)
++		$(INSTALL) -m 644 ../man/wall.1 $(ROOT)$(MANDIR)/man1/
+ endif
+ 		$(INSTALL) -m 644 ../man/last.1 ../man/lastb.1 ../man/mesg.1 \
+-			$(ROOT)$(MANDIR)/man1
++			$(ROOT)$(MANDIR)/man1/
++ifeq ($(ROOT),)
+ 		#
+-		# This part is skipped on debian systems, the
++		# This part is skipped on Debian systems, the
+ 		# debian.preinst script takes care of it.
+ 		@if [ ! -p /dev/initctl ]; then \
+ 		 echo "Creating /dev/initctl"; \
+ 		 rm -f /dev/initctl; \
+ 		 mknod -m 600 /dev/initctl p; fi
++endif

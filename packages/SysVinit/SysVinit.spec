@@ -1,33 +1,35 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.15 2003/04/23 22:14:10 solar Exp $
+# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.16 2003/04/27 02:29:23 solar Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
 Version: 2.85
-Release: owl3
+Release: owl4
 License: GPL
 Group: System Environment/Base
 Source: ftp://ftp.cistron.nl/pub/people/miquels/sysvinit/sysvinit-%{version}.tar.gz
-Patch0: sysvinit-2.85-owl-wall-longjmp-clobbering.diff
-Patch1: sysvinit-2.85-owl-format.diff
-Patch2: sysvinit-2.85-alt-progname-umask.diff
-Patch3: sysvinit-2.85-owl-alt-sulogin.diff
+Patch0: sysvinit-2.85-owl-Makefile.diff
+Patch1: sysvinit-2.85-owl-wall-longjmp-clobbering.diff
+Patch2: sysvinit-2.85-owl-format.diff
+Patch3: sysvinit-2.85-alt-progname-umask.diff
 Patch4: sysvinit-2.85-alt-owl-start-stop-daemon.diff
 Patch5: sysvinit-2.85-alt-owl-bootlogd.diff
 Patch6: sysvinit-2.85-owl-mount-path.diff
 Patch7: sysvinit-2.85-owl-typos.diff
 Patch8: sysvinit-2.85-rh-alt-pidof.diff
 Patch9: sysvinit-2.85-rh-alt-owl-shutdown-log.diff
+Requires: /sbin/sulogin
 BuildRoot: /override/%{name}-%{version}
 
 %description
-The SysVinit package contains a group of processes that control
-the very basic functions of your system.  SysVinit includes the init
+The SysVinit package contains a group of programs that control the
+very basic functions of your system.  SysVinit includes the init
 program, the first program started by the Linux kernel when the
 system boots.  init then controls the startup, running and shutdown
 of all other programs.
 
 %prep
 %setup -q -n sysvinit-%{version}
+rm man/sulogin.8
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -42,18 +44,19 @@ of all other programs.
 %{expand:%%define optflags %optflags -Wall -D_GNU_SOURCE}
 
 %build
-make -C src CC=gcc CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-s -static" init
-make -C src CC=gcc CFLAGS="$RPM_OPT_FLAGS"
-make -C src CC=gcc CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-s -lutil" bootlogd
+make -C src CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-s -static" init
+make -C src CFLAGS="$RPM_OPT_FLAGS" DISTRO=Owl
+make -C src CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-s -lutil" bootlogd
 cd contrib
 gcc start-stop-daemon.c -o start-stop-daemon -s $RPM_OPT_FLAGS
 
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/{dev,sbin,usr/bin,%{_mandir}/man{1,5,8}}
-mkdir -p $RPM_BUILD_ROOT/{etc,bin,usr/include}
+mkdir -p $RPM_BUILD_ROOT/usr/include
 
 make -C src install \
+	DISTRO=Owl \
 	ROOT=$RPM_BUILD_ROOT \
 	MANDIR=%{_mandir} \
 	BIN_OWNER=`id -nu` \
@@ -89,7 +92,6 @@ fi
 /sbin/poweroff
 /sbin/reboot
 /sbin/shutdown
-/sbin/sulogin
 /sbin/telinit
 /sbin/bootlogd
 %defattr(0755,root,root)
@@ -105,6 +107,10 @@ fi
 %attr(0600,root,root) /dev/initctl
 
 %changelog
+* Sun Apr 27 2003 Solar Designer <solar@owl.openwall.com>
+- Wrote a new implementation of sulogin which is now packaged separately,
+so don't package sulogin here.
+
 * Thu Apr 24 2003 Solar Designer <solar@owl.openwall.com>
 - Fixed a bug in yesterday's update to start-stop-daemon's executable file
 matching, thanks to Dmitry V. Levin.
