@@ -1,17 +1,18 @@
-# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.7 2001/04/08 16:55:32 solar Exp $
+# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.8 2001/11/01 01:34:29 solar Exp $
 
-Summary: Initial set of device files and MAKEDEV, a script to manage them
+Summary: Initial set of device files and MAKEDEV, a script to manage them.
 Name: owl-dev
-Version: 0.5
-Release: 2owl
-Copyright: public domain
+Version: 0.6
+Release: 1owl
+License: public domain
 Group: System Environment/Base
 Source: MAKEDEV-2.5.2.tar.gz
 Patch: MAKEDEV-2.5.2-owl.diff
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
-Requires: owl-etc fileutils sh-utils
-Obsoletes: MAKEDEV dev
+PreReq: grep, shadow-utils
+Requires: owl-etc, fileutils, sh-utils
+Obsoletes: MAKEDEV, dev
 BuildArchitectures: noarch
+BuildRoot: /override/%{name}-%{version}
 
 %description
 Unix-like operating systems use a special kind of filesystem entries
@@ -49,14 +50,21 @@ find $RPM_BUILD_ROOT/dev ! -type d -size 0 | \
 rm -rf $RPM_BUILD_ROOT
 
 %post
+grep -q ^audio: /etc/group || groupadd -g 120 audio
+grep -q ^video: /etc/group || groupadd -g 121 video
+grep -q ^radio: /etc/group || groupadd -g 122 radio
+
 cd /dev
 ./MAKEDEV -p generic
 
 %files -f filelist
 
 %changelog
+* Thu Nov 01 2001 Solar Designer <solar@owl.openwall.com>
+- audio, video and radio groups to manage access to devices.
+
 * Sun Apr 08 2001 Solar Designer <solar@owl.openwall.com>
-- Obsoletes: MAKEDEV dev
+- Obsoletes: MAKEDEV, dev
 
 * Sun Mar 04 2001 Solar Designer <solar@owl.openwall.com>
 - USB printers and mice.

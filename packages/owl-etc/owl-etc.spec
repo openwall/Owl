@@ -1,10 +1,10 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.31 2001/10/10 14:36:49 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.32 2001/11/01 01:34:29 solar Exp $
 
-Summary: Initial set of configuration files
+Summary: Initial set of configuration files.
 Name: owl-etc
-Version: 0.17
+Version: 0.18
 Release: 1owl
-Copyright: public domain
+License: public domain
 Group: System Environment/Base
 Source0: passwd
 Source1: shadow
@@ -22,11 +22,11 @@ Source41: bashrc
 Source42: inputrc
 Source50: csh.login
 Source51: csh.cshrc
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
 BuildArchitectures: noarch
 BuildRequires: fileutils >= 4.0.27
 Obsoletes: setup
 Provides: setup
+BuildRoot: /override/%{name}-%{version}
 
 %description
 Initial set of configuration files to be placed into /etc.
@@ -65,6 +65,9 @@ rm -rf $RPM_BUILD_ROOT
 %ghost /var/log/lastlog
 
 %changelog
+* Thu Nov 01 2001 Solar Designer <solar@owl.openwall.com>
+- audio, video and radio groups to manage access to devices.
+
 * Wed Oct 10 2001 Solar Designer <solar@owl.openwall.com>
 - Use "proc" and "devpts" as fstab keywords for /proc and /dev/pts as
 "none" could cause confusing messages from umount(8).

@@ -23,6 +23,9 @@ ftp:x:50:
 nobody:x:99:
 users:x:100:
 proc:x:110:
+audio:x:120:
+video:x:121:
+radio:x:122:
 sources:x:150:
 build:x:151:
 crontab:x:160:
