@@ -12,6 +12,18 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/06/21 -
+2002/06/22	Owl/build/buildworld.{sh,conf}, Owl/build/Makefile,
+		Owl/doc/BUILD
+SRPMs are no longer built by default, the old behavior may be restored
+by setting BUILDSOURCE=yes in buildworld.conf.  Owl does not use SRPMs
+for anything.  The build environment now looks for binary packages to
+determine which sources and foreign source packages need to be built.
+Individual packages, both native and foreign, may now be (re-)built
+with "make PACKAGE=..." as documented in Owl/doc/BUILD.  When building
+on SMP, the number of processors will now be detected automatically
+unless specified explicitly in buildworld.conf.
+
 2002/06/13	Owl/doc/de/*
 New files: German translations of the documentation, from Matthias
 Schmidt <schmidt at owl.openwall.com>.
@@ -750,4 +762,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.103 2002/06/22 08:46:52 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.104 2002/06/22 09:19:16 solar Exp $
