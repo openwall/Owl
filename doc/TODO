@@ -106,14 +106,6 @@ outside of the intended directory tree.  This has been dealt with in
 tar already.
 
 
-	cvs.
-
-[PRIORITY: low]
-[ASSIGNED: Simon B]
-Package it, reviewing and importing some of the fixes found in at
-least OpenBSD, ALT Linux and Red Hat Linux.
-
-
 	dhcp.
 
 [PRIORITY: low]
@@ -584,4 +576,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.20 2003/04/27 12:03:41 solar Exp $
+$Id: Owl/doc/TODO,v 1.21 2003/05/01 00:22:35 solar Exp $
