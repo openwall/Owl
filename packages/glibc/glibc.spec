@@ -1,11 +1,11 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.5 2000/08/06 02:24:42 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.6 2000/08/26 01:02:41 solar Exp $
 
 %define BUILD_PROFILE	'no'
 
 Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
-Release: 4owl
+Release: 5owl
 Copyright: LGPL
 Group: System Environment/Libraries
 Source0: glibc-2.1.3.tar.gz
@@ -35,6 +35,9 @@ Patch18: glibc-2.1.3-mdk-ldd.diff
 Patch19: glibc-2.1.3-rh-time.diff
 Patch20: glibc-2.1.3-rh-timezone.diff
 Patch21: glibc-2.1.3-rh-syslog.diff
+Patch22: glibc-2.1.3-cvs-20000824-locale.diff
+Patch23: glibc-2.1.3-cvs-20000824-unsetenv.diff
+Patch24: glibc-2.1.3-cvs-20000824-md5-align-clean.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Autoreq: false
 %ifarch alpha
@@ -43,11 +46,11 @@ Provides: ld.so.2
 
 %description
 The glibc package contains standard libraries which are used by
-multiple programs on the system. In order to save disk space and
+multiple programs on the system.  In order to save disk space and
 memory, as well as to make upgrading easier, common system code is
-kept in one place and shared between programs. This particular package
+kept in one place and shared between programs.  This particular package
 contains the most important sets of shared libraries: the standard C
-library and the standard math library. Without these two libraries, a
+library and the standard math library.  Without these two libraries, a
 Linux system will not function.  The glibc package also contains
 national language (locale) support and timezone databases.
 
@@ -113,6 +116,10 @@ need to install the glibc-profile program.
 %patch19 -p1
 %patch20 -p1
 %patch21 -p1
+%patch22 -p1
+%patch23 -p1
+cd md5-crypt
+%patch24 -p2
 
 %build
 rm -rf build-$RPM_ARCH-linux
@@ -254,6 +261,9 @@ rm -f *.filelist*
 %endif
 
 %changelog
+* Fri Aug 25 2000 Solar Designer <solar@owl.openwall.com>
+- Back-ported 3 security-related fixes from the CVS version.
+
 * Sun Aug 06 2000 Solar Designer <solar@owl.openwall.com>
 - Added FreeSec (as a patch) to support extended/new-style/BSDI password
 hashes in crypt(3) (but not in the reentrant versions; this is a hack).
