@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vim/vim.spec,v 1.15 2004/01/29 03:42:02 solar Exp $
+# $Id: Owl/packages/vim/vim.spec,v 1.16 2004/01/29 03:44:01 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -28,7 +28,7 @@ Patch2: vim-6.1-rh-fix-keys.diff
 Patch3: vim-6.1-rh-owl-xxd-locale.diff
 Patch4: vim-6.1-rh-owl-spec-syntax.diff
 Patch5: vim-6.1-owl-tmp.diff
-Patch6: vim-6.1-owl-perl-var-clash.diff
+Patch6: vim-6.1-owl-perl-clash.diff
 Requires: mktemp >= 1:1.3.1
 BuildRequires: perl
 %if %BUILD_USE_GPM
