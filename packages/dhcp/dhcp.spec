@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.11 2003/09/14 10:44:54 schmidt Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.12 2003/09/14 13:07:41 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -85,14 +85,13 @@ make install DESTDIR=$RPM_BUILD_ROOT MANDIR=%{_mandir}
 
 cd $RPM_BUILD_ROOT
 
-mkdir -p $RPM_BUILD_ROOT/{etc/rc.d/init.d,etc/sysconfig,var/lib/dhcp/}
-mkdir -p $RPM_BUILD_ROOT/var/lib/dhcp/{dhcpd/state,dhcrelay/state,dhclient/state}
+mkdir -p $RPM_BUILD_ROOT/etc/{rc.d/init.d,sysconfig}
+mkdir -p $RPM_BUILD_ROOT/var/lib/dhcp/{dhcpd,dhcrelay,dhclient}/state
 
 install -m 700 $RPM_SOURCE_DIR/dhcpd.init $RPM_BUILD_ROOT/etc/rc.d/init.d/dhcpd
 install -m 644 $RPM_SOURCE_DIR/dhcpd.conf.sample $RPM_BUILD_ROOT/
 
-touch $RPM_BUILD_ROOT/var/lib/dhcp/dhcpd/state/dhcpd.leases
-touch $RPM_BUILD_ROOT/var/lib/dhcp/dhclient/state/dhclient.leases
+touch $RPM_BUILD_ROOT/var/lib/dhcp/{dhcpd,dhclient}/state/dhcpd.leases
 
 cat <<EOF > $RPM_BUILD_ROOT/etc/sysconfig/dhcpd
 # Additional command line options here
@@ -142,9 +141,8 @@ fi
 %{_mandir}/man5/dhclient.leases.5*
 %{_mandir}/man8/dhclient.8*
 %{_mandir}/man8/dhclient-script.8*
-# XXX: wrong
 %attr(0700,root,dhcp) %dir /var/lib/dhcp/dhclient
-%attr(1770,root,dhcp) %dir /var/lib/dhcp/dhclient/state
+%attr(0700,root,dhcp) %dir /var/lib/dhcp/dhclient/state
 %attr(0600,root,dhcp) %config /var/lib/dhcp/dhclient/state/dhclient.leases
 %endif
 

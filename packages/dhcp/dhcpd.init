@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/dhcp/dhcpd.init,v 1.5 2003/09/14 10:44:54 schmidt Exp $
+# $Id: Owl/packages/dhcp/dhcpd.init,v 1.6 2003/09/14 13:07:41 solar Exp $
 #
 # chkconfig: 2345 60 40
 # description: \
@@ -24,7 +24,7 @@ OWL_STARTUP_ENABLE=1
 case "$1" in
 start)
 	daemon --pidfile /var/run/dhcpd.pid --expect-user dhcp \
-		dhcpd -u dhcp -j /var/lib/dhcp $DHCPDARGS
+		dhcpd -u dhcp -j /var/lib/dhcp/dhcpd $DHCPDARGS
 	;;
 stop)
 	killproc --pidfile /var/run/dhcpd.pid --expect-user dhcp dhcpd

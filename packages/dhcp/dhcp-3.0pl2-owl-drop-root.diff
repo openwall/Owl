@@ -6,12 +6,12 @@ diff -urpN dhcp-3.0pl2.orig/includes/cf/linux.h dhcp-3.0pl2/includes/cf/linux.h
  
  #ifndef _PATH_DHCPD_DB
 -#define _PATH_DHCPD_DB		"/var/state/dhcp/dhcpd.leases"
-+#define _PATH_DHCPD_DB		"/dhcpd/state/dhcpd.leases"
++#define _PATH_DHCPD_DB		"/state/dhcpd.leases"
  #endif
  
  #ifndef _PATH_DHCLIENT_DB
 -#define _PATH_DHCLIENT_DB	"/var/state/dhcp/dhclient.leases"
-+#define _PATH_DHCLIENT_DB	"/dhclient/state/dhclient.leases"
++#define _PATH_DHCLIENT_DB	"/var/lib/dhcp/dhclient/state/dhclient.leases"
  #endif
  
  /* Varargs stuff... */
@@ -42,7 +42,7 @@ diff -urpN dhcp-3.0pl2.orig/relay/dhcrelay.8 dhcp-3.0pl2/relay/dhcrelay.8
 +.B -u
 +option for the dedicated pseudo-user and additional
 +.B -j
-+for the chroot path (e.g. /var/lib/dhcp).
++for the chroot path (e.g. /var/lib/dhcp/dhcrelay).
  .SH RELAY AGENT INFORMATION OPTIONS
  If the
  .B -a
@@ -126,7 +126,7 @@ diff -urpN dhcp-3.0pl2.orig/relay/dhcrelay.c dhcp-3.0pl2/relay/dhcrelay.c
  
 +	/* chroot if possible */	
 +	if (server_user && !server_jail) {
-+		if (drop_root(server_user, "/var/lib/dhcp") < 0)
++		if (drop_root(server_user, "/var/lib/dhcp/dhcrelay") < 0)
 +			log_fatal("dhcrelay: Failed to drop root.");
 +	}
 +	else if (server_jail && !server_user)
@@ -183,7 +183,7 @@ diff -urpN dhcp-3.0pl2.orig/server/dhcpd.8 dhcp-3.0pl2/server/dhcpd.8
 +.PP
 +To run the DHCP server in a chrooted jail, specify the \fB-u\fR
 +option with the dedicated pseudo-user and additional \fB-j\fR with the
-+chroot path (e.g. /var/lib/dhcp).
++chroot path (e.g. /var/lib/dhcp/dhcpd).
 +.PP
  .SH CONFIGURATION
  The syntax of the dhcpd.conf(5) file is discussed seperately.   This
@@ -287,7 +287,7 @@ diff -urpN dhcp-3.0pl2.orig/server/dhcpd.c dhcp-3.0pl2/server/dhcpd.c
  
 +	if (pidfilewritten) {
 +		if (server_user && !server_jail) {
-+			if (drop_root(server_user, "/var/lib/dhcp") < 0)
++			if (drop_root(server_user, "/var/lib/dhcp/dhcpd") < 0)
 +				log_fatal("dhcpd: Failed to drop root.");
 +		}
 +		else if (server_jail && !server_user)
@@ -306,7 +306,7 @@ diff -urpN dhcp-3.0pl2.orig/server/dhcpd.c dhcp-3.0pl2/server/dhcpd.c
  			pidfilewritten = 1;
  		}
 +		if (server_user && !server_jail) {
-+			if (drop_root(server_user, "/var/lib/dhcp") < 0)
++			if (drop_root(server_user, "/var/lib/dhcp/dhcpd") < 0)
 +				log_fatal("dhcpd: Failed to drop root.");
 +		}
 +		else if (server_jail && !server_user)
