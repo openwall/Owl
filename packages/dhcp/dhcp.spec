@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.22 2003/10/29 18:51:10 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.23 2003/10/30 08:39:20 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -27,7 +27,7 @@ DHCP protocol.
 %package client
 Summary: The ISC DHCP client.
 Group: System Enviroment/Base
-PreReq: dhcp = %version-%release
+PreReq: %name = %version-%release
 Obsoletes: dhcpcd
 
 %description client
@@ -40,7 +40,7 @@ fail, by statically assigning an address.
 %package server
 Summary: The ISC DHCP server daemon.
 Group: System Environment/Daemons
-PreReq: dhcp = %version-%release
+PreReq: %name = %version-%release
 PreReq: /sbin/chkconfig
 Requires: /var/empty
 Obsoletes: dhcpd
@@ -56,7 +56,7 @@ functionality, with certain restrictions.
 %package relay
 Summary: The ISC DHCP relay.
 Group: System Environment/Daemons
-PreReq: dhcp = %version-%release
+PreReq: %name = %version-%release
 Requires: /var/empty
 
 %description relay

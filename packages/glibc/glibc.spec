@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.55 2003/10/29 18:02:12 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.56 2003/10/30 08:39:20 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -104,7 +104,7 @@ executables.
 %package profile
 Summary: The GNU libc libraries, including support for gprof profiling.
 Group: Development/Libraries
-Requires: glibc = %version-%release
+Requires: %name = %version-%release
 
 %description profile
 The glibc-profile package includes the GNU libc libraries and support

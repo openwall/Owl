@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ncurses/ncurses.spec,v 1.19 2003/10/29 17:52:25 solar Exp $
+# $Id: Owl/packages/ncurses/ncurses.spec,v 1.20 2003/10/30 08:39:20 solar Exp $
 
 %define major 5
 %define oldmajor 4
@@ -32,7 +32,7 @@ discontinued 4.4BSD classic curses library.
 %package devel
 Summary: The development files for applications which use ncurses.
 Group: Development/Libraries
-Requires: ncurses = %version-%release
+Requires: %name = %version-%release
 AutoReq: false
 
 %description devel
@@ -42,7 +42,7 @@ the ncurses CRT screen handling and optimization package.
 %package compat
 Summary: ncurses compatibility for ncurses 4.x
 Group: System Environment/Libraries
-Requires: ncurses = %version-%release
+Requires: %name = %version-%release
 Provides: libform.so.%oldmajor, libmenu.so.%oldmajor
 Provides: libncurses.so.%oldmajor, libpanel.so.%oldmajor
 

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bzip2/bzip2.spec,v 1.12 2003/10/29 18:37:48 solar Exp $
+# $Id: Owl/packages/bzip2/bzip2.spec,v 1.13 2003/10/30 08:39:19 solar Exp $
 
 Summary: A file compression utility.
 Name: bzip2
@@ -29,7 +29,7 @@ compression capability.
 %package devel
 Summary: Header files and libraries for developing apps which will use bzip2.
 Group: Development/Libraries
-Requires: bzip2 = %version-%release
+Requires: %name = %version-%release
 
 %description devel
 Header files and a static library of bzip2 functions, for developing apps
