@@ -51,14 +51,13 @@ you actually convert the system into Owl with multiple iterations of
 Here are some build times (hours:minutes), so that you know what to
 expect:
 
-Dual Pentium III, 1.266 GHz, 2 GB		0:29
-Dual Pentium III, 1 GHz, 2 GB			0:36
-Dual Pentium III, 800 MHz, 512 MB		0:45
+Quad Pentium 4, 2 GHz, 2 GB			0:21
+Dual Pentium III, 1.266 GHz, 2 GB		0:30
+Dual Pentium III, 800 MHz, 512 MB		0:47
 Athlon, 1 GHz, 256 MB				1:10
-Dual Celeron (Mendocino), 433 MHz, 256 MB	1:20
 Pentium III, 700 MHz, 192 MB			1:35
-UltraSparc IIi, 400 MHz, 256 MB			3:45
-Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB	5:20
+UltraSparc IIi, 400 MHz, 256 MB			3:50
+Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB	5:30
 
 (Yes, gcc is this hungry and slow on Alpha.)
 
@@ -111,4 +110,4 @@ where "name" is the name of the source package.  For foreign packages
 (SRPMs) built with the Owl build environment you also need to include
 the version number part in "name".
 
-$Id: Owl/doc/BUILD,v 1.17 2002/07/12 04:49:32 solar Exp $
+$Id: Owl/doc/BUILD,v 1.18 2002/08/20 16:16:08 solar Exp $

@@ -53,14 +53,13 @@ convertissiez effectivement le système en Owl avec plusieurs itérations de
 Voici quelques temps de compilation (heures:minutes), ainsi vous savez à
 quoi vous attendre :
 
-Dual Pentium III, 1.266 GHz, 2 GB		0:29
-Dual Pentium III, 1 GHz, 2 GB			0:36
-Dual Pentium III, 800 MHz, 512 MB		0:45
+Quad Pentium 4, 2 GHz, 2 GB			0:21
+Dual Pentium III, 1.266 GHz, 2 GB		0:30
+Dual Pentium III, 800 MHz, 512 MB		0:47
 Athlon, 1 GHz, 256 MB				1:10
-Dual Celeron (Mendocino), 433 MHz, 256 MB	1:20
 Pentium III, 700 MHz, 192 MB			1:35
-UltraSparc IIi, 400 MHz, 256 MB			3:45
-Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB	5:20
+UltraSparc IIi, 400 MHz, 256 MB			3:50
+Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB	5:30
 
 (Oui, gcc est si gourmand et lent sur Alpha.)
 
@@ -122,4 +121,4 @@ dépendances automatiques de compilation pour les re-compilations comme un
 bogue dans l'environnement de compilation. Nous fixerons ceci
 éventuellement.
 
-$Id: Owl/doc/fr/BUILD,v 1.3 2002/06/14 01:57:09 solar Exp $
+$Id: Owl/doc/fr/BUILD,v 1.4 2002/08/20 16:16:08 solar Exp $
