@@ -92,11 +92,18 @@ runs to the parent shell manually.
 8. Use tabs to indent conditional blocks and continuation lines in
 scripts.
 
-9. Use -eq to compare numeric values (in particular, the $1 argument
-that RPM itself passes to scripts, and don't place the $1 in quotes).
+9. Use -eq or -ne and not = or != to compare numeric values.  In
+particular, this applies to the $1 argument that RPM itself passes to
+scripts.  And don't place the $1 in quotes, the package has to trust
+its package manager to pass it the correct input anyway.
 
 10. In %changelog entry dates, use two digits for day of month with a
 leading zero if necessary.
+
+11. In %changelog, when adding new entries do specify the current
+package Version and Release after the e-mail address, like this:
+
+* Mon Mar 10 2003 Solar Designer <solar@owl.openwall.com> 0.6.2-owl1
 
 
 	Patch file naming.
@@ -156,4 +163,4 @@ options:
 This does not exactly match our preferred coding style and thus isn't
 to be used on sources already in Owl.
 
-$Id: Owl/doc/CONVENTIONS,v 1.13 2002/07/29 22:12:36 solar Exp $
+$Id: Owl/doc/CONVENTIONS,v 1.14 2003/03/28 01:11:25 solar Exp $
