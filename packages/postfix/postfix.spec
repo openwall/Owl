@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.11 2002/07/07 00:07:48 solar Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.12 2002/09/02 20:24:25 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
@@ -7,7 +7,7 @@ Name: postfix
 %define original_version %{original_date}-%{original_pl}
 %define package_version %{original_date}_%{original_pl}
 Version: %{package_version}
-Release: owl2
+Release: owl3
 License: IBM Public License
 Group: System Environment/Daemons
 Source0: ftp://ftp.sunet.se/pub/unix/mail/postfix/official/%{name}-%{original_version}.tar.gz
@@ -22,7 +22,7 @@ Patch20: postfix-19991231-pl10-owl-INSTALL.diff
 Patch21: postfix-19991231-pl10-owl-config.diff
 PreReq: /sbin/chkconfig, grep, shadow-utils
 Requires: owl-control >= 0.2, owl-control < 2.0
-Conflicts: sendmail
+Conflicts: sendmail, qmail
 Provides: MTA, smtpd, smtpdaemon
 Obsoletes: sendmail-cf, sendmail-doc
 BuildRoot: /override/%{name}-%{version}
@@ -175,6 +175,9 @@ fi
 %files -f filelist
 
 %changelog
+* Tue Sep 03 2002 Solar Designer <solar@owl.openwall.com>
+- Conflicts: qmail
+
 * Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
 - Use grep -q in %pre.
 
