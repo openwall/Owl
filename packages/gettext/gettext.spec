@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gettext/gettext.spec,v 1.1 2000/10/18 17:31:54 solar Exp $
+# $Id: Owl/packages/gettext/gettext.spec,v 1.2 2000/10/18 23:46:50 solar Exp $
 
 Summary: GNU libraries and utilities for producing multi-lingual messages.
 Name: 	 gettext
@@ -7,6 +7,7 @@ Release: 24owl
 License: GPL
 Group: 	 Development/Tools
 Source:  ftp://alpha.gnu.org/pub/gnu/%{name}-%{version}.tar.gz
+Patch0:  gettext-0.10.35-owl-sanitize-environ.diff
 Patch1:  gettext-0.10.35-rh-getline.diff
 Patch2:  gettext-0.10.35-rh-hacks.diff
 Patch3:  gettext-0.10.35-rh-aclocaldir.diff
@@ -34,6 +35,7 @@ gettext.
 %prep
 rm -rf %{buildroot}
 %setup -q
+%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -42,6 +44,7 @@ rm -rf %{buildroot}
 %patch6 -p1
 
 %build
+unset LINGUAS || :
 libtoolize --copy --force
 aclocal
 automake
@@ -84,6 +87,11 @@ exit 0
 %{_datadir}/emacs/site-lisp/*
 
 %changelog
+* Thu Oct 19 2000 Solar Designer <solar@owl.openwall.com>
+- Added a security patch for the (largely unused) libintl sources that
+get installed into /usr/share/gettext/intl
+- unset LINGUAS
+
 * Sun Sep 24 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import spec from RH 
 - little sprintf/snprintf fix.

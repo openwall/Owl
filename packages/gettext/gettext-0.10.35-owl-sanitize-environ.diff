@@ -1,0 +1,64 @@
+diff -ur gettext-0.10.35.orig/intl/cat-compat.c gettext-0.10.35/intl/cat-compat.c
+--- gettext-0.10.35.orig/intl/cat-compat.c	Fri Aug  1 17:06:05 1997
++++ gettext-0.10.35/intl/cat-compat.c	Thu Oct 19 03:25:29 2000
+@@ -89,7 +89,7 @@
+ 	lang = getenv ("LANG");
+     }
+ #endif
+-  if (lang == NULL || lang[0] == '\0')
++  if (lang == NULL || lang[0] == '\0' || lang[0] == '.' || strchr(lang, '/'))
+     lang = "C";
+ 
+   /* See whether name of currently used domain is asked.  */
+@@ -156,7 +156,7 @@
+   new_val_len = sizeof ("NLSPATH=") - 1 + strlen (dirname)
+ 		+ sizeof ("/%L/LC_MESSAGES/%N.cat");
+ 
+-  old_val = getenv ("NLSPATH");
++  old_val = __secure_getenv ("NLSPATH");
+   if (old_val == NULL || old_val[0] == '\0')
+     {
+       old_val = NULL;
+diff -ur gettext-0.10.35.orig/intl/dcgettext.c gettext-0.10.35/intl/dcgettext.c
+--- gettext-0.10.35.orig/intl/dcgettext.c	Tue Apr 28 01:12:33 1998
++++ gettext-0.10.35/intl/dcgettext.c	Thu Oct 19 03:30:33 2000
+@@ -550,8 +550,9 @@
+   /* The highest priority value is the `LANGUAGE' environment
+      variable.  This is a GNU extension.  */
+   retval = getenv ("LANGUAGE");
+-  if (retval != NULL && retval[0] != '\0')
+-    return retval;
++  if (retval != NULL && retval[0] != '\0' &&
++    retval[0] != '.' && !strchr(retval, '/'))
++      return retval;
+ 
+   /* `LANGUAGE' is not set.  So we have to proceed with the POSIX
+      methods of looking to `LC_ALL', `LC_xxx', and `LANG'.  On some
+@@ -561,18 +562,21 @@
+ #else
+   /* Setting of LC_ALL overwrites all other.  */
+   retval = getenv ("LC_ALL");
+-  if (retval != NULL && retval[0] != '\0')
+-    return retval;
++  if (retval != NULL && retval[0] != '\0' &&
++    retval[0] != '.' && !strchr(retval, '/'))
++      return retval;
+ 
+   /* Next comes the name of the desired category.  */
+   retval = getenv (categoryname);
+-  if (retval != NULL && retval[0] != '\0')
+-    return retval;
++  if (retval != NULL && retval[0] != '\0' &&
++    retval[0] != '.' && !strchr(retval, '/'))
++      return retval;
+ 
+   /* Last possibility is the LANG environment variable.  */
+   retval = getenv ("LANG");
+-  if (retval != NULL && retval[0] != '\0')
+-    return retval;
++  if (retval != NULL && retval[0] != '\0' &&
++    retval[0] != '.' && !strchr(retval, '/'))
++      return retval;
+ 
+   /* We use C as the default domain.  POSIX says this is implementation
+      defined.  */
