@@ -1,9 +1,9 @@
-# $Id: Owl/packages/netlist/Attic/netlist.spec,v 1.8 2004/11/23 22:40:47 mci Exp $
+# $Id: Owl/packages/netlist/Attic/netlist.spec,v 1.9 2005/01/12 16:40:05 galaxy Exp $
 
 Summary: A program to list active Internet connections and sockets.
 Name: netlist
 Version: 2.0
-Release: owl2
+Release: owl3
 License: distributable
 Group: System Environment/Base
 URL: http://www.openwall.com/linux/
@@ -25,7 +25,7 @@ LICENSE for information on this and other licensing conditions.
 %setup -q
 
 %build
-make CFLAGS="-c -Wall $RPM_OPT_FLAGS"
+%__make CFLAGS="-c -Wall $RPM_OPT_FLAGS"
 
 %install
 rm -rf %buildroot
@@ -38,10 +38,14 @@ grep -q '^proc:[^:]*:110:' /etc/group && \
 %files
 %defattr(-,root,root)
 %doc LICENSE
-/usr/bin/netlist
+%verify(not mode group) %_bindir/netlist
 %_mandir/man1/netlist.1*
 
 %changelog
+* Mon Jun 02 2003 Solar Designer <solar@owl.openwall.com> 2.0-owl3
+- Removed verify checks for size and group owner due to %post.
+- Cleaned up the spec.
+
 * Mon Jun 02 2003 Solar Designer <solar@owl.openwall.com> 2.0-owl2
 - Added URL.
 
