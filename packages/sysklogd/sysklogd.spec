@@ -1,9 +1,9 @@
-# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.2 2000/09/20 01:58:55 solar Exp $
+# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.3 2000/12/01 21:18:37 solar Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
 Version: 1.3.31
-Release: 2owl
+Release: 3owl
 Copyright: BSD for syslogd and GPL for klogd
 Group: System Environment/Daemons
 Source0: ftp://sunsite.unc.edu/pub/Linux/system/daemons/sysklogd-1.3-31.tar.gz
@@ -75,6 +75,11 @@ rm -rf $RPM_BUILD_ROOT
 grep ^klogd: /etc/group &> /dev/null || groupadd -g 180 klogd
 grep ^klogd: /etc/passwd &> /dev/null ||
 	useradd -g klogd -u 180 -d / -s /bin/false -M klogd
+rm -f /var/run/syslog.restart
+if [ $1 -ge 2 ]; then
+	/etc/rc.d/init.d/syslog status && touch /var/run/syslog.restart || :
+	/etc/rc.d/init.d/syslog stop || :
+fi
 
 %post
 for n in /var/log/{kernel,messages,maillog,cron}
@@ -84,9 +89,16 @@ do
 	chmod 600 $n
 done
 /sbin/chkconfig --add syslog
+if [ -f /var/run/syslog.restart ]; then
+	/etc/rc.d/init.d/syslog start
+elif [ -f /var/run/syslogd.pid -o -f /var/run/klogd.pid ]; then
+	/etc/rc.d/init.d/syslog restart
+fi
+rm -f /var/run/syslog.restart
 
 %preun
-if [ $1 = 0 ]; then
+if [ $1 -eq 0 ]; then
+	/etc/rc.d/init.d/syslog stop
 	/sbin/chkconfig --del syslog
 fi
 
@@ -106,6 +118,10 @@ fi
 /usr/man/*/*
 
 %changelog
+* Fri Dec 01 2000 Solar Designer <solar@owl.openwall.com>
+- Adjusted syslog.init for owl-startup.
+- Restart after package upgrades in an owl-startup compatible way.
+
 * Wed Sep 20 2000 Solar Designer <solar@owl.openwall.com>
 - Run klogd as a non-root user.
 
