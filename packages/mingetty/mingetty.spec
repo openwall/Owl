@@ -1,9 +1,9 @@
-# $Id: Owl/packages/mingetty/mingetty.spec,v 1.7 2003/10/30 21:15:46 solar Exp $
+# $Id: Owl/packages/mingetty/mingetty.spec,v 1.8 2003/12/18 00:07:16 mci Exp $
 
 Summary: A compact getty program for virtual consoles only.
 Name: mingetty
 Version: 0.9.4
-Release: owl13
+Release: owl14
 License: GPL
 Group: System Environment/Base
 Source0: ftp://jurix.jura.uni-sb.de/pub/linux/source/system/daemons/mingetty-0.9.4.tar.gz
@@ -44,6 +44,9 @@ install -m 644 mingetty.8 $RPM_BUILD_ROOT%_mandir/man8/
 %_mandir/man8/mingetty.8*
 
 %changelog
+* Thu Dec 18 2003 Michail Litvak <mci@owl.openwall.com> 0.9.4-owl14
+- Fix Y2K bug in -suse.diff (Thanks to Ilya Andreiv)
+
 * Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com> 0.9.4-owl13
 - Enforce our new spec file conventions.
 
