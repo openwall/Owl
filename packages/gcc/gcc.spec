@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.35 2005/01/12 16:02:41 galaxy Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.36 2005/01/14 21:36:24 galaxy Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -38,7 +38,7 @@
 Summary: C compiler from the GNU Compiler Collection.
 Name: gcc
 Version: 3.4.3
-Release: owl0
+Release: owl1
 Epoch: 1
 License: GPL
 Group: Development/Languages
@@ -455,13 +455,14 @@ rm -rf %buildroot
 
 # Fix some things.
 
+ln -s gcc %buildroot%_bindir/cc
 %if %BUILD_GXX
 #echo ".so g++.1" > %buildroot%_mandir/man1/c++.1
 %endif
 
 %if %BUILD_G77
-#ln -s g77 %buildroot%_bindir/f77
-#echo ".so g77.1" > %buildroot%_mandir/man1/f77.1
+ln -s g77 %buildroot%_bindir/f77
+echo ".so g77.1" > %buildroot%_mandir/man1/f77.1
 %endif
 
 %if %BUILD_CXX_COMPAT
@@ -568,6 +569,7 @@ fi
 
 %files
 %defattr(-,root,root)
+%_bindir/cc
 %_bindir/gcc
 %_bindir/gccbug
 %_bindir/gcov
@@ -730,6 +732,8 @@ fi
 %endif
 
 %changelog
+* Fri Jan 14 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.4.3-owl1
+- Reverted the change with removing symbolic links from gcc to cc.
 * Thu Jan 06 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.4.3-owl0
 - Updated to 3.4.3.
 - Enabled autotools magic, it works as expected.
