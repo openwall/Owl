@@ -1,9 +1,9 @@
-# $Id: Owl/packages/logrotate/logrotate.spec,v 1.4 2001/11/27 11:26:47 solar Exp $
+# $Id: Owl/packages/logrotate/logrotate.spec,v 1.5 2002/02/05 20:07:13 mci Exp $
 
 Summary: Rotates, compresses, removes and mails system log files.
 Name: logrotate
 Version: 3.5.9
-Release: 2owl
+Release: owl2
 License: GPL
 Group: System Environment/Base
 Source: logrotate-%{version}.tar.bz2
@@ -65,6 +65,9 @@ fi
 %attr(0700,root,root) /var/lib/logrotate
 
 %changelog
+* Tue Feb 05 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions
+
 * Tue Nov 27 2001 Solar Designer <solar@owl.openwall.com>
 - Corrected the man page for our status file path.
 - Use $TMPDIR.
