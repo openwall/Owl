@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/openssh/sshd.init,v 1.5 2003/10/20 04:59:21 solar Exp $
+# $Id: Owl/packages/openssh/sshd.init,v 1.6 2003/10/24 04:02:26 solar Exp $
 #
 # chkconfig: 2345 55 25
 # description: \
@@ -8,9 +8,6 @@
 #	secure encrypted communications between two untrusted hosts \
 #	over an insecure network.
 # processname: sshd
-# config: /etc/ssh/ssh_host_key
-# config: /etc/ssh/ssh_host_key.pub
-# config: /etc/ssh/ssh_random_seed
 # config: /etc/ssh/sshd_config
 # pidfile: /var/run/sshd.pid
 
@@ -19,8 +16,24 @@
 
 OWL_STARTUP_ENABLE=1
 
+function keygen_1()
+{
+	local TYPE=$1 FILE=$2
+	if [ ! -s $FILE ]; then
+		ssh-keygen -t $TYPE -C $TYPE -N '' -f $FILE
+	fi
+}
+
+function keygen()
+{
+	keygen_1 rsa1 /etc/ssh/ssh_host_key &&
+		keygen_1 dsa /etc/ssh/ssh_host_dsa_key &&
+		keygen_1 rsa /etc/ssh/ssh_host_rsa_key
+}
+
 case "$1" in
 start)
+	keygen || exit
 	if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
 		daemon --pidfile /var/run/sshd.pid --expect-user root sshd
 	else
@@ -55,8 +68,11 @@ reload)
 		killproc sshd -HUP
 	fi
 	;;
+keygen)
+	keygen
+	;;
 *)
-	echo "Usage: sshd {start|stop|status|restart|reload}"
+	echo "Usage: sshd {start|stop|status|restart|reload|keygen}"
 	exit 1
 esac
 

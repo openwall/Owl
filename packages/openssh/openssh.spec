@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.66 2003/10/24 00:38:24 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.67 2003/10/24 04:02:26 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
@@ -164,15 +164,7 @@ if [ $1 -ge 2 ]; then
 fi
 
 %post server
-if [ ! -f /etc/ssh/ssh_host_key -o ! -s /etc/ssh/ssh_host_key ]; then
-	/usr/bin/ssh-keygen -t rsa1 -f /etc/ssh/ssh_host_key -N '' -C rsa1 >&2
-fi
-if [ ! -f /etc/ssh/ssh_host_dsa_key -o ! -s /etc/ssh/ssh_host_dsa_key ]; then
-	/usr/bin/ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N '' -C dsa >&2
-fi
-if [ ! -f /etc/ssh/ssh_host_rsa_key -o ! -s /etc/ssh/ssh_host_rsa_key ]; then
-	/usr/bin/ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' -C rsa >&2
-fi
+/etc/rc.d/init.d/sshd keygen
 if [ $1 -ge 2 ]; then
 	/usr/sbin/control-restore sftp
 fi
@@ -239,6 +231,7 @@ fi
 %changelog
 * Fri Oct 24 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl6
 - Explain how to enable the SFTP server with control(8).
+- Generate SSH host keys at startup if needed (for use with bootable CDs).
 
 * Wed Oct 22 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl5
 - Set comments in SSH host keys to key type instead of to hostname as the
