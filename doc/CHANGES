@@ -12,6 +12,27 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/06/27 -
+2002/07/06	Package: openssh
+SECURITY FIX	Severity: none to high, remote, active
+Updated to 3.4p1 with a lot of additional modifications to restore
+most of the functionality lost or broken with the recent rushed update
+to 3.3p1 and to be safer.  Please refer to change log for the package
+for details.  OpenSSH 3.4p1 fixes the lack of bound checking resulting
+in an integer and buffer overflow with the PAMAuthenticationViaKbdInt
+code (and thus potentially allowing for a remote server compromise).
+On Owl, PAMAuthenticationViaKbdInt has always defaulted to no and is
+in fact not supported by our PAM configuration file for OpenSSH.  A
+comment in /etc/ssh/sshd_config incorrectly seemed to imply that
+PAMAuthenticationViaKbdInt defaulted to yes, which was never the case.
+That comment has since been corrected.
+
+2002/07/06	Package: pam
+pam_limits will now support stacking for account management (as well
+as for session setup), be fail-close on configuration file reads, and
+report the "too many logins" via PAM conversation rather than direct
+printf(3).  The first change is needed for the new OpenSSH package.
+
 2002/07/04 -
 2002/07/05	Package: glibc
 SECURITY FIX	Severity: none to high, remote, passive
@@ -28,7 +49,8 @@ IDs to make it generate different sequences of IDs in forked processes
 pool (based on feedback from Michael Tokarev), and properly reseed
 when chrooted.
 
-2002/06/23	Packages: openssh, owl-etc
+2002/06/23 -
+2002/06/25	Packages: openssh, owl-etc
 Updated OpenSSH to 3.3p1 with privilege separation enabled by default
 and a patch to make it work on Linux 2.2 (as well as 2.4).
 
@@ -782,4 +804,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.107 2002/07/05 16:41:16 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.108 2002/07/07 01:15:50 solar Exp $
