@@ -1,9 +1,9 @@
-# $Id: Owl/packages/diffutils/diffutils.spec,v 1.1 2000/08/09 00:51:27 kad Exp $
+# $Id: Owl/packages/diffutils/diffutils.spec,v 1.2 2001/01/03 08:00:16 solar Exp $
 
 Summary: A GNU collection of diff utilities.
 Name: 		diffutils
 Version: 	2.7
-Release: 	21owl
+Release: 	22owl
 Group: 		Applications/Text
 URL: 		http://www.gnu.org/software/diffutils/diffutils.html
 Source: 	ftp://ftp.gnu.org/gnu/diffutils/diffutils-%{version}.tar.gz
@@ -11,6 +11,7 @@ Source1: 	cmp.1
 Source2: 	diff.1
 Source3:	diff3.1
 Source4: 	sdiff.1
+Patch0:		diffutils-2.7-immunix-owl-tmp.diff
 License: 	GPL
 Prefix: 	%{_prefix}
 Prereq: 	/sbin/install-info
@@ -31,6 +32,7 @@ Install diffutils if you need to compare text files.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 autoconf
@@ -41,21 +43,19 @@ make PR_PROGRAM=%{_bindir}/pr
 rm -rf $RPM_BUILD_ROOT
 %makeinstall
 
-( cd $RPM_BUILD_ROOT
-  gzip -9nf .%{_infodir}/diff*
-  mkdir -p .%{_mandir}/man1
-  for manpage in %{SOURCE1} %{SOURCE3} %{SOURCE4}
-  do
-    install -m 0644 ${manpage} .%{_mandir}/man1
-  done
-)
+cd $RPM_BUILD_ROOT
+gzip -9nf .%{_infodir}/diff*
+mkdir -p .%{_mandir}/man1
+for manpage in %{SOURCE1} %{SOURCE3} %{SOURCE4}; do
+	install -m 0644 ${manpage} .%{_mandir}/man1
+done
 
 %post
 /sbin/install-info %{_infodir}/diff.info.gz %{_infodir}/dir --entry="* diff: (diff).                 The GNU diff."
 
 %preun
-if [ $1 = 0 ]; then
-    /sbin/install-info --delete %{_infodir}/diff.info.gz %{_infodir}/dir --entry="* diff: (diff).                 The GNU diff."
+if [ $1 -eq 0 ]; then
+	/sbin/install-info --delete %{_infodir}/diff.info.gz %{_infodir}/dir --entry="* diff: (diff).                 The GNU diff."
 fi
 
 %clean
@@ -69,7 +69,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_infodir}/diff.info*gz
 
 %changelog
-* Sun Aug  6 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Wed Jan 03 2001 Solar Designer <solar@owl.openwall.com>
+- Fixed the unsafe temporary file creation discovered by the Immunix team
+and reported to vendor-sec by Greg KH <greg@wirex.com>.
+
+* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import spec from RH
 
 * Wed Jul 12 2000 Prospector <bugzilla@redhat.com>

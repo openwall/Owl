@@ -1,0 +1,38 @@
+diff -ur diffutils-2.7.orig/sdiff.c diffutils-2.7/sdiff.c
+--- diffutils-2.7.orig/sdiff.c	Sat Oct  1 08:14:15 1994
++++ diffutils-2.7/sdiff.c	Wed Jan  3 08:23:50 2001
+@@ -43,7 +43,7 @@
+ static char const *edbin = DEFAULT_EDITOR_PROGRAM;
+ static char const **diffargv;
+ 
+-static char *tmpname;
++static char tmpname[32];
+ static int volatile tmpmade;
+ 
+ #if HAVE_FORK
+@@ -935,13 +935,19 @@
+ 	case 'q':
+ 	  return 0;
+ 	case 'e':
+-	  if (! tmpname && ! (tmpname = private_tempnam ()))
+-	    perror_fatal ("temporary file name");
+-
+-	  tmpmade = 1;
+-
+ 	  {
+-	    FILE *tmp = ck_fopen (tmpname, "w+");
++	    int tfd;
++	    FILE *tmp;
++
++	    strcpy (tmpname, "/tmp/sdiff.XXXXXX");
++	    tfd = mkstemp(tmpname);
++	    if (tfd == -1)
++	      perror_fatal ("temporary file name");
++	    tmp = fdopen (tfd, "w+");
++	    if (tmp == NULL)
++	      perror_fatal ("temporary file name");
++ 
++	    tmpmade = 1;
+ 
+ 	    if (cmd1 == 'l' || cmd1 == 'b')
+ 	      lf_copy (left, lenl, tmp);
