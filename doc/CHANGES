@@ -5,6 +5,24 @@ remains fixed; it's only the stable branch which has these changes.
 
 	Changes made between Owl 0.1-prerelease and Owl 0.1-stable.
 
+2001/12/14	Package: glibc
+SECURITY FIX	Severity: none to high, remote, active
+Back-ported a glob(3) buffer overflow fix from the CVS.  The bug has
+been discovered and an initial patch produced by Flavio Veloso of
+Magnux.  While no Owl package is known to be affected by this glibc
+bug, it is likely that it may result in a security hole with certain
+third-party software such as FTP servers which support globbing and
+make use of the glob(3) interface.  At the same time, asprintf(3) and
+vasprintf(3) have been modified to behave on errors and match the
+semantics of Todd Miller's implementation found on *BSD, the uses by
+glibc itself will now handle possible errors, -- thanks to Dmitry V.
+Levin of ALT Linux for discovering and looking into these issues.
+syslog(3) will no longer blindly trust __progname for the syslog ident
+if called by a SUID/SGID program without a preceding call to
+openlog(3).  Certain minor corrections to the crypt(3) manual page
+have been applied.  In general, the package has been mostly synced
+with Owl-current, except for one fix specific to the Alpha.
+
 2001/12/12	Package: openssh
 SECURITY FIX	Severity: none to high, local, active
 Updated to 3.0.2p1 which fixes a security problem with UseLogin where,
@@ -288,4 +306,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.2.2.15 2001/12/12 20:19:53 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.2.2.16 2001/12/14 19:43:32 solar Exp $

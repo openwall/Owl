@@ -1,13 +1,13 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.17.2.1 2001/06/23 13:43:42 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.17.2.2 2001/12/14 19:43:32 solar Exp $
 
-%define BUILD_PROFILE	'no'
+%define BUILD_PROFILE 0
 
 Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
-%define crypt_bf_version 0.4.1
-Release: 15owl
-Copyright: LGPL
+%define crypt_bf_version 0.4.2
+Release: 16.0.1.1owl
+License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%{version}.tar.gz
 Source1: glibc-linuxthreads-%{version}.tar.gz
@@ -22,6 +22,9 @@ Patch2: glibc-2.1.3-owl-sanitize-env.diff
 Patch3: glibc-2.1.3-owl-res_randomid.diff
 Patch4: glibc-2.1.3-owl-iscntrl.diff
 Patch5: glibc-2.1.3-openbsd-freebsd-owl-fts.diff
+Patch6: glibc-2.1.3-owl-quota.diff
+Patch7: glibc-2.1.3-owl-syslog-ident.diff
+Patch8: glibc-2.1.3-owl-alt-asprintf-error-handling.diff
 Patch10: glibc-2.1.3-rh-libnoversion.diff
 Patch11: glibc-2.1.3-rh-paths.diff
 Patch12: glibc-2.1.3-rh-linuxthreads.diff
@@ -44,11 +47,12 @@ Patch41: glibc-2.1.3-cvs-20000824-unsetenv.diff
 Patch42: glibc-2.1.3-cvs-20000824-md5-align-clean.diff
 Patch43: glibc-2.1.3-cvs-20000926-tmp-warnings.diff
 Patch44: glibc-2.1.3-cvs-20010109-dl.diff
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
-Autoreq: false
+Patch45: glibc-2.1.3-cvs-20011129-glob.diff
+AutoReq: false
 %ifarch alpha
 Provides: ld.so.2
 %endif
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The glibc package contains standard libraries which are used by
@@ -64,10 +68,10 @@ national language (locale) support and timezone databases.
 Summary: Header and object files for development using standard C libraries.
 Group: Development/Libraries
 Conflicts: texinfo < 3.11
-Prereq: /sbin/install-info
-Prereq: kernel-headers
+PreReq: /sbin/install-info
+PreReq: kernel-headers
 Requires: kernel-headers >= 2.2.1
-Autoreq: true
+AutoReq: true
 
 %description devel
 The glibc-devel package contains the header and object files necessary
@@ -80,7 +84,7 @@ executables.
 Install glibc-devel if you are going to develop programs which will
 use the standard C libraries.
 
-%if "%{BUILD_PROFILE}"=="'yes'"
+%if %BUILD_PROFILE
 %package profile
 Summary: The GNU libc libraries, including support for gprof profiling.
 Group: Development/Libraries
@@ -98,7 +102,7 @@ If you are going to use the gprof program to profile a program, you'll
 need to install the glibc-profile program.
 %endif
 
-# Use %optflags_lib for this package if defined.
+# Use optflags_lib for this package if defined.
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 
 %prep
@@ -113,6 +117,9 @@ cp $RPM_SOURCE_DIR/crypt_freesec.c crypt/sysdeps/unix/
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
@@ -137,6 +144,7 @@ cd md5-crypt
 cd ..
 %patch43 -p1
 %patch44 -p1
+%patch45 -p1
 %ifarch sparcv9
 echo 'ASFLAGS-.os += -Wa,-Av8plusa' >> sysdeps/sparc/sparc32/elf/Makefile
 %endif
@@ -145,7 +153,7 @@ echo 'ASFLAGS-.os += -Wa,-Av8plusa' >> sysdeps/sparc/sparc32/elf/Makefile
 rm -rf build-$RPM_ARCH-linux
 mkdir build-$RPM_ARCH-linux
 cd build-$RPM_ARCH-linux
-%if "%{BUILD_PROFILE}"=="'yes'"
+%if %BUILD_PROFILE
 CFLAGS="-g $RPM_OPT_FLAGS" ../configure --prefix=/usr \
 	--enable-add-ons=yes --without-cvs \
 	%_target_platform
@@ -165,19 +173,15 @@ cd build-$RPM_ARCH-linux && \
     cd ..
 
 # the man pages for linuxthreads and crypt_blowfish require special attention
-make -C linuxthreads/man
 mkdir -p $RPM_BUILD_ROOT/usr/man/man3
+make -C linuxthreads/man
 install -m 0644 linuxthreads/man/*.3thr $RPM_BUILD_ROOT/usr/man/man3
+make -C crypt_blowfish-%{crypt_bf_version} man
 install -m 0644 crypt_blowfish-%{crypt_bf_version}/*.3 \
 	$RPM_BUILD_ROOT/usr/man/man3
-gzip -9nvf $RPM_BUILD_ROOT/usr/man/man3/*
-for f in \
-    crypt_r crypt_rn crypt_ra \
-    crypt_gensalt crypt_gensalt_rn crypt_gensalt_ra; do
-	ln -s crypt.3.gz $RPM_BUILD_ROOT/usr/man/man3/${f}.3.gz
-done
 
-gzip -9nvf $RPM_BUILD_ROOT/usr/info/libc*
+# Have to compress them explicitly for the filelists we build
+gzip -9nf $RPM_BUILD_ROOT/usr/{man/man3/*,info/libc*}
 
 ln -sf libbsd-compat.a $RPM_BUILD_ROOT/usr/lib/libbsd.a
 
@@ -215,7 +219,7 @@ sed "s|^$RPM_BUILD_ROOT||" < rpm.filelist.in |
 	grep -v '^%config /etc/nsswitch.conf' | \
 	sort > rpm.filelist
 
-%if "%{BUILD_PROFILE}"=="'yes'"
+%if %BUILD_PROFILE
 grep '/usr/lib/lib.*_p\.a' < rpm.filelist > profile.filelist
 %endif
 
@@ -261,7 +265,6 @@ cp crypt_blowfish-%{crypt_bf_version}/{README,LINKS,PERFORMANCE} \
 	documentation/crypt_blowfish-%{crypt_bf_version}
 
 %post -p /sbin/ldconfig
-
 %postun -p /sbin/ldconfig
 
 %post devel
@@ -273,7 +276,7 @@ if [ $1 -eq 0 ]; then
 fi
 
 %clean
-rm -rf "$RPM_BUILD_ROOT"
+rm -rf $RPM_BUILD_ROOT
 rm -f *.filelist*
 
 %files -f rpm.filelist
@@ -288,12 +291,25 @@ rm -f *.filelist*
 %files -f devel.filelist devel
 %defattr(-,root,root)
 
-%if "%{BUILD_PROFILE}"=="'yes'"
+%if %BUILD_PROFILE
 %files -f profile.filelist profile
 %defattr(-,root,root)
 %endif
 
 %changelog
+* Fri Dec 14 2001 Solar Designer <solar@owl.openwall.com>
+- Back-ported a glob(3) buffer overflow fix from the CVS; the bug has been
+discovered and an initial patch produced by Flavio Veloso of Magnux.
+- Applied fixes to vasprintf(3) (thus affecting asprintf(3) as well) to
+make it behave on errors, changed the semantics to match Todd Miller's
+implementation on *BSD, fixed uses of [v]asprintf(3) in glibc itself to
+handle possible errors.  Thanks to Dmitry V. Levin of ALT Linux for
+discovering and looking into these issues.
+- If syslog(3) is called by a SUID/SGID program without a preceding call to
+openlog(3), don't blindly trust __progname for the syslog ident.
+- Corrected the declaration of struct dqstats in <sys/quota.h>.
+- Updated to crypt_blowfish-0.4.2 (more man page fixes).
+
 * Sun Jun 03 2001 Solar Designer <solar@owl.openwall.com>
 - Sync the fts(3) routines with current OpenBSD and FreeBSD; this is
 triggered by Nick Cleaton's report of yet another FTS vulnerability
@@ -326,7 +342,7 @@ until we add a configuration file, but well...).
 - 'ASFLAGS-.os += -Wa,-Av8plusa' for sparcv9.
 
 * Thu Sep 07 2000 Solar Designer <solar@owl.openwall.com>
-- Added %optflags_lib support and %_target_platform to configure.
+- Added optflags_lib support and _target_platform to configure.
 
 * Fri Sep 01 2000 Solar Designer <solar@owl.openwall.com>
 - One more security fix (locale once again) from the CVS version.
