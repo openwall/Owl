@@ -12,6 +12,11 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/05/25 -
+2002/05/27	Package: popa3d
+Added two interoperability fixes.  Please refer to change log for the
+package for details.
+
 2002/05/27	kernel
 Updated to Linux 2.2.21-ow1.  This changes certain permissions on
 /proc entries, fixes the getcwd(2) instance of the d_path() truncation
@@ -700,4 +705,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.90 2002/05/27 09:32:57 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.91 2002/05/27 16:10:37 solar Exp $
