@@ -1,9 +1,9 @@
-# $Id: Owl/packages/quota/quota.spec,v 1.10 2001/07/01 20:21:55 mci Exp $
+# $Id: Owl/packages/quota/quota.spec,v 1.11 2001/07/06 03:50:56 solar Exp $
 
 Name: quota
 Summary: System administration tools for monitoring users' disk usage.
 Version: 2.00
-Release: 5owl
+Release: 6owl
 Copyright: BSD
 Source0: ftp://ftp.cistron.nl/pub/people/mvw/quota/%{name}-2.00.tar.gz
 Group: System Environment/Base
@@ -11,7 +11,7 @@ Patch0: quota-2.00-pld-owl-man.diff
 Patch1: quota-2.00-owl-install-no-root.diff
 Patch2: quota-2.00-owl-tmp.diff
 BuildRoot: /var/rpm-buildroot/%{name}-root
-BuildPreReq: e2fsprogs-devel
+BuildRequires: e2fsprogs-devel, glibc >= 2.1.3-17owl
 
 %description
 The quota package contains system administration tools for monitoring
@@ -28,7 +28,7 @@ usage.
 
 %build
 %configure
-make
+make CC=gcc
 
 %install
 rm -rf ${RPM_BUILD_ROOT}
@@ -65,6 +65,10 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man8/setquota.8*
 
 %changelog
+* Fri Jul 06 2001 Solar Designer <solar@owl.openwall.com>
+- New release number for upgrades after building against glibc >= 2.1.3-17owl
+which includes corrected declaration of struct dqstats in <sys/quota.h>.
+
 * Sun Jul 01 2001 Michail Litvak <mci@owl.openwall.com>
 - pack only *.html in doc/
 - man pages fixes

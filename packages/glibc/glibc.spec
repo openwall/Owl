@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.20 2001/06/13 03:40:55 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.21 2001/07/06 03:50:56 solar Exp $
 
 %define BUILD_PROFILE	'no'
 
@@ -6,7 +6,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
 %define crypt_bf_version 0.4.1
-Release: 16owl
+Release: 17owl
 Copyright: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%{version}.tar.gz
@@ -22,6 +22,7 @@ Patch2: glibc-2.1.3-owl-sanitize-env.diff
 Patch3: glibc-2.1.3-owl-res_randomid.diff
 Patch4: glibc-2.1.3-owl-iscntrl.diff
 Patch5: glibc-2.1.3-openbsd-freebsd-owl-fts.diff
+Patch6: glibc-2.1.3-owl-quota.diff
 Patch10: glibc-2.1.3-rh-libnoversion.diff
 Patch11: glibc-2.1.3-rh-paths.diff
 Patch12: glibc-2.1.3-rh-linuxthreads.diff
@@ -99,7 +100,7 @@ If you are going to use the gprof program to profile a program, you'll
 need to install the glibc-profile program.
 %endif
 
-# Use %optflags_lib for this package if defined.
+# Use optflags_lib for this package if defined.
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 
 %prep
@@ -114,6 +115,7 @@ cp $RPM_SOURCE_DIR/crypt_freesec.c crypt/sysdeps/unix/
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
@@ -296,6 +298,9 @@ rm -f *.filelist*
 %endif
 
 %changelog
+* Fri Jul 06 2001 Solar Designer <solar@owl.openwall.com>
+- Corrected the declaration of struct dqstats in <sys/quota.h>.
+
 * Wed Jun 13 2001 Solar Designer <solar@owl.openwall.com>
 - Back-ported a patch from the CVS to handle unaligned relocations on Alpha.
 References:
@@ -337,7 +342,7 @@ until we add a configuration file, but well...).
 - 'ASFLAGS-.os += -Wa,-Av8plusa' for sparcv9.
 
 * Thu Sep 07 2000 Solar Designer <solar@owl.openwall.com>
-- Added %optflags_lib support and %_target_platform to configure.
+- Added optflags_lib support and _target_platform to configure.
 
 * Fri Sep 01 2000 Solar Designer <solar@owl.openwall.com>
 - One more security fix (locale once again) from the CVS version.
