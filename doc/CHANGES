@@ -12,6 +12,9 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/09/17	kernel
+Updated to 2.2.22-ow1.
+
 2002/09/10	kernel
 SECURITY FIX	Severity: high, local, active
 Updated to Linux 2.2.21-ow2 which includes many security fixes for
@@ -933,4 +936,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.131 2002/09/10 06:24:42 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.132 2002/09/17 20:10:13 solar Exp $
