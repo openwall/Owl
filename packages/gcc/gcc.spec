@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.10 2000/10/21 14:47:20 kad Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.11 2000/10/29 17:23:22 solar Exp $
 
 %define GCC_PREFIX /usr
 %define CPP_PREFIX /lib
@@ -341,7 +341,7 @@ if [ "$1" = "0" ]; then
 fi
 /sbin/ldconfig
 
-%ifarch i386 i486 i586 k6 i686 alpha sparc
+%ifarch i386 i486 i586 k6 i686
 
 %post -n libstdc++-compat
 if ! grep '^%{GCC_PREFIX}/lib$' /etc/ld.so.conf > /dev/null 2>&1; then
@@ -414,7 +414,7 @@ fi
 %dir %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/include
 %{GCC_PREFIX}/lib/gcc-lib/%{_target_platform}/%{GCC_VERSION}/libstdc++.so
 
-%ifarch i386 i486 i586 k6 i686 alpha
+%ifarch i386 i486 i586 k6 i686
 %files -n libstdc++-compat
 %defattr(-,root,root)
 %{GCC_PREFIX}/lib/libstdc++.so.2.7.2.8
@@ -422,13 +422,6 @@ fi
 %{GCC_PREFIX}/lib/libstdc++-2-libc6.1-1-2.9.0.so
 %{GCC_PREFIX}/lib/libstdc++.so.2.9.dummy
 %{GCC_PREFIX}/lib/libstdc++.so.2.9
-%endif
-
-%ifarch sparc
-%files -n libstdc++-compat
-%{GCC_PREFIX}/lib/libstdc++.so.2.8.0
-%{GCC_PREFIX}/lib/libstdc++-2-libc6.1-1-2.9.0.so
-%{GCC_PREFIX}/lib/libstdc++-libc6.1-1.so.2
 %endif
 
 %files -n libstdc++-devel
@@ -513,6 +506,9 @@ fi
 %endif
 
 %changelog
+* Sun Oct 29 2000 Solar Designer <solar@owl.openwall.com>
+- libstdc++-compat is for x86 only, corrected the %ifarch's.
+
 * Sat Oct 21 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - texconfig bug hack
 
