@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.45 2005/01/14 03:27:53 galaxy Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.46 2005/01/20 05:00:53 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
@@ -28,6 +28,7 @@ Patch6: shadow-4.0.4.1-owl-userdel-path_prefix.diff
 Patch7: shadow-4.0.4.1-owl-pam_chauthtok.diff
 Patch8: shadow-4.0.4.1-owl-usermod-update-lstchg.diff
 Patch9: shadow-4.0.4.1-owl-usergroupname_max.diff
+Patch10: shadow-4.0.4.1-owl-malloc-cast.diff
 Patch19: shadow-4.0.4.1-rh-owl-redhat.diff
 Patch20: shadow-4.0.4.1-owl-man.diff
 Patch21: shadow-4.0.4.1-owl-create-mailbox.diff
@@ -37,7 +38,6 @@ Patch24: shadow-4.0.4.1-owl-newgrp.diff
 Patch30: shadow-4.0.4.1-owl-tcb.diff
 Patch40: shadow-4.0.4.1-alt-man.diff
 Patch41: shadow-4.0.4.1-alt-configure.diff
-Patch42: shadow-4.0.4.1-owl-malloc-cast.diff
 Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: pam, tcb >= 0.9.8, pam_userpass >= 0.5
 BuildRequires: libtool, gettext = 0.14.1, automake, autoconf
@@ -63,6 +63,7 @@ shadow password files.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 %patch19 -p1
 %patch20 -p1
 %patch21 -p1
@@ -72,7 +73,6 @@ shadow password files.
 %patch30 -p1
 %patch40 -p1
 %patch41 -p1
-%patch42 -p1
 
 find . -name '*.orig' -delete
 
