@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.12 2002/02/07 01:19:23 solar Exp $
+# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.13 2002/06/09 00:48:02 solar Exp $
 
 Summary: Initial set of device files and MAKEDEV, a script to manage them.
 Name: owl-dev
-Version: 0.6
-Release: owl3
+Version: 0.7
+Release: owl1
 License: public domain
 Group: System Environment/Base
 Source: MAKEDEV-2.5.2.tar.gz
@@ -27,8 +27,10 @@ initial set of device files to be placed into /dev.  It also provides
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/dev
+mkdir -p -m 700 $RPM_BUILD_ROOT/dev
+mkdir -p $RPM_BUILD_ROOT%{_mandir}/man8
 install -m 700 MAKEDEV $RPM_BUILD_ROOT/dev/
+install -m 644 MAKEDEV.man $RPM_BUILD_ROOT%{_mandir}/man8/MAKEDEV.8
 
 # Create regular files with the proper names and permissions (not device
 # files, yet).  This idea (but not the implementation) is taken from iNs.
@@ -36,13 +38,18 @@ cd $RPM_BUILD_ROOT/dev
 ./MAKEDEV --touch generic
 
 # Restrict the permissions as we don't set the correct groups, yet
-chmod -R go-rwx $RPM_BUILD_ROOT/dev
+find $RPM_BUILD_ROOT/dev ! -type d -size 0 -print0 | xargs -0 chmod go-rwx
 
 # Build the filelist
 cd $RPM_BUILD_DIR/MAKEDEV-2.5.2
-echo '%defattr(-,root,root)' > filelist
+cat > filelist << EOF
+%defattr(-,root,root)
+%{_mandir}/man8/MAKEDEV.8*
+EOF
 find $RPM_BUILD_ROOT/dev ! -type d ! -size 0 | \
 	sed "s,^$RPM_BUILD_ROOT,," >> filelist
+find $RPM_BUILD_ROOT/dev -type d -mindepth 1 | \
+	sed "s,^$RPM_BUILD_ROOT,%ghost %dir ," >> filelist
 find $RPM_BUILD_ROOT/dev ! -type d -size 0 | \
 	sed "s,^$RPM_BUILD_ROOT,%ghost %verify(not group mode rdev) ," \
 	>> filelist
@@ -56,11 +63,21 @@ grep -q ^video: /etc/group || groupadd -g 121 video
 grep -q ^radio: /etc/group || groupadd -g 122 radio
 
 cd /dev || exit 1
+echo "Creating device files"
 /dev/MAKEDEV -p generic
 
 %files -f filelist
 
 %changelog
+* Sun Jun 09 2002 Solar Designer <solar@owl.openwall.com>
+- Support Linux 2.4.x's /proc/devices entries.
+- Support and create frame buffer devices.
+- Support up to 8 IDE controllers (16 devices).
+- Create device files for 8 IDE devices by default.
+- Echo a message when running the script in %post.
+- Install the MAKEDEV(8) man page.
+- List /dev subdirectories in the package.
+
 * Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions.
 

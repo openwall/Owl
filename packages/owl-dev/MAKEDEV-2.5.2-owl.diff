@@ -1,11 +1,11 @@
 diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
 --- MAKEDEV-2.5.2.orig/MAKEDEV	Thu Mar  2 01:16:37 2000
-+++ MAKEDEV-2.5.2/MAKEDEV	Thu Nov  1 04:21:49 2001
++++ MAKEDEV-2.5.2/MAKEDEV	Sun Jun  9 04:11:29 2002
 @@ -1,6 +1,11 @@
  #!/bin/bash -
  
 -RCSID='$Id: MAKEDEV 2.3 1997/09/29 19:03:13 johnsonm Exp $'
-+VERSION='MAKEDEV 2.5.2-0.6-1owl (unofficial, see the source for details)'
++VERSION='MAKEDEV 2.5.2-0.7-1owl (unofficial, see the source for details)'
 +
 +# This version of MAKEDEV is based on work of many people.  The script was
 +# initially written by Nick Holloway, and then maintained by Michael K.
@@ -121,7 +121,27 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		fi
  	fi
  }
-@@ -146,9 +175,9 @@
+@@ -110,16 +139,16 @@
+ 		eval echo "\${#I}"
+ 	}
+ 	suffix () {
+-	    eval echo "\${1#$2}"
++		eval echo "\${1#$2}"
+ 	}
+ 	strip () {
+ 		eval echo "\${1% $2 *} \${1#* $2 }"
+ 	}
+ 	first () {
+-	    eval echo "\${1:0:1}"
++		eval echo "\${1:0:1}"
+ 	}
+ 	second () {
+-	    eval echo "\${1:1:1}"
++		eval echo "\${1:1:1}"
+ 	}
+ else
+ 	math () {
+@@ -146,21 +175,35 @@
  #---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#
  
  devices=
@@ -133,7 +153,51 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  else
  	exec 3<$procfs/devices
  	while read major device <&3
-@@ -202,7 +231,6 @@
+ 	do
+-		case "$major" in
+-			Character|Block|'')
++		case "$device" in
++			pty/m%d)
++				device=pty
++				;;
++			pty/s%d)
++				device=ttyp
++				;;
++			tts/%d)
++				device=ttyS
+ 				;;
+-			*)
+-				eval "major_$device=$major"
+-				devices="$devices $device"
++			cua/%d)
++				device=cua
++				;;
++			pts/%d)
++				device=pts
++				;;
++			*/*|*%*|devices:|'')
++				continue
+ 				;;
+ 		esac
++		eval "major_$device=$major"
++		devices="$devices $device"
+ 	done
+ 	exec 3<&-
+ fi
+@@ -188,7 +231,11 @@
+ 			ide1)	echo hdc hdd ;;
+ 			ide2)	echo hde hdf ;;
+ 			ide3)	echo hdg hdh ;;
+-			sd)	echo sda sdb sdc sdd ;;
++			ide4)	echo hdi hdj ;;
++			ide5)	echo hdk hdl ;;
++			ide6)	echo hdm hdn ;;
++			ide7)	echo hdo hdp ;;
++			sd)	echo sda sdb sdc sdd sde sdf sdg sdh ;;
+ 			sr)	echo scd0 ;;
+ 			st)	echo st0 ;;
+ 			xd)	echo xda xdb ;;
+@@ -202,7 +249,6 @@
  			sound)		echo audio ;;
  			logiscan)	echo logiscan ;;
  			ac4096)		echo ac4096 ;;
@@ -141,7 +205,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  			sbpcd | sbpcd[123])	echo $1 ;;
  			joystick)	echo js ;;
  			apm_bios)	echo apm ;;
-@@ -222,44 +250,57 @@
+@@ -222,44 +268,58 @@
  do
  	case $arg in
  	generic)
@@ -160,7 +224,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
 +		$0 $opts std || exit 1
 +		$0 $opts fd || exit 1
 +		$0 $opts fd0 fd1 || exit 1
-+		$0 $opts hda hdb hdc hdd || exit 1
++		$0 $opts hda hdb hdc hdd hde hdf hdg hdh || exit 1
 +		$0 $opts xda xdb || exit 1
 +		$0 $opts sda sdb sdc sdd sde sdf sdg sdh || exit 1
 +		$0 $opts st0 st1 || exit 1
@@ -177,6 +241,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
 +		$0 $opts par || exit 1
 +		$0 $opts audio || exit 1
 +		$0 $opts usb || exit 1
++		$0 $opts fb || exit 1
  		;;
  	local)
 -		$0.local $opts
@@ -221,7 +286,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		# console
  		makedev tty0 c 4 0 $cons
  		makedev console c 5 1 $cons
-@@ -302,7 +343,15 @@
+@@ -302,7 +362,15 @@
  		do
  			ptysufs="$ptysufs pty$i"
  		done
@@ -238,7 +303,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		;;
  	cyclades|ttyC)
  		major1=`Major ttyC 19` || continue
-@@ -531,9 +580,11 @@
+@@ -531,9 +599,11 @@
  		major=`Major mouse 10` || continue
  		makedev logimouse c $major 0 $mouse
  		makedev psmouse   c $major 1 $mouse
@@ -250,7 +315,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		;;
  	js)
  		major=`Major Joystick` || continue
-@@ -585,12 +636,12 @@
+@@ -585,12 +655,12 @@
  		makedev ${arg}H1600 b $major `math $base + 124` $floppy
  		;;
  	hd[a-b])
@@ -265,7 +330,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		do
  			makedev hd$unit$part b $major `math $base + $part` $disk
  		done
-@@ -601,7 +652,7 @@
+@@ -601,7 +671,7 @@
  		base=`index cd $unit`
  		base=`math $base \* 64`
  		makedev hd$unit b $major $base $disk
@@ -274,7 +339,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		do
  			makedev hd$unit$part b $major `expr $base + $part` $disk
  		done
-@@ -612,7 +663,7 @@
+@@ -612,7 +682,7 @@
  		base=`index ef $unit`
  		base=`math $base \* 64`
  		makedev hd$unit b $major $base $disk
@@ -283,16 +348,68 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		do
  			makedev hd$unit$part b $major `expr $base + $part` $disk
  		done
-@@ -623,7 +674,7 @@
+@@ -623,7 +693,51 @@
  		base=`index gh $unit`
  		base=`math $base \* 64`
  		makedev hd$unit b $major $base $disk
 -		for part in 1 2 3 4 5 6 7 8 # 9 10 11 12 13 14 15 16 17 18 19 20
 +		for part in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
++		do
++			makedev hd$unit$part b $major `expr $base + $part` $disk
++		done
++		;;
++	hd[i-j])
++		major=`Major ide4 56` || continue
++		unit=`suffix $arg hd`
++		base=`index ij $unit`
++		base=`math $base \* 64`
++		makedev hd$unit b $major $base $disk
++		for part in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
++		do
++			makedev hd$unit$part b $major `expr $base + $part` $disk
++		done
++		;;
++	hd[k-l])
++		major=`Major ide5 57` || continue
++		unit=`suffix $arg hd`
++		base=`index kl $unit`
++		base=`math $base \* 64`
++		makedev hd$unit b $major $base $disk
++		for part in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
++		do
++			makedev hd$unit$part b $major `expr $base + $part` $disk
++		done
++		;;
++	hd[m-n])
++		major=`Major ide6 88` || continue
++		unit=`suffix $arg hd`
++		base=`index mn $unit`
++		base=`math $base \* 64`
++		makedev hd$unit b $major $base $disk
++		for part in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
++		do
++			makedev hd$unit$part b $major `expr $base + $part` $disk
++		done
++		;;
++	hd[o-p])
++		major=`Major ide7 89` || continue
++		unit=`suffix $arg hd`
++		base=`index op $unit`
++		base=`math $base \* 64`
++		makedev hd$unit b $major $base $disk
++		for part in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
  		do
  			makedev hd$unit$part b $major `expr $base + $part` $disk
  		done
-@@ -649,7 +700,7 @@
+@@ -632,7 +746,6 @@
+ 		major=`Major ht0 37` || continue
+ 		# Only one IDE tape drive is currently supported; ht0.
+ 		makedev ht0 c $major 0 $tape
+-		makedev ht0 c $major 0 $tape
+ 		makedev nht0 c $major 128 $tape
+ 		;;
+ 	pt)
+@@ -649,7 +762,7 @@
  		base=`index abcd $unit`
  		base=`math $base \* 64`
  		makedev xd$unit b $major $base $disk
@@ -301,7 +418,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		do
  			makedev xd$unit$part b $major `expr $base + $part` $disk
  		done
-@@ -665,7 +716,7 @@
+@@ -665,7 +778,7 @@
                          base=`math $base \- 256`
                  fi
  		makedev sd$unit b $major $base $disk
@@ -310,7 +427,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		do
  			minor=`expr $base + $part`
  			makedev sd$unit$part b $major $minor $disk
-@@ -758,14 +809,14 @@
+@@ -758,14 +871,14 @@
  		done
  		;;
  	loop)
@@ -327,7 +444,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		for part in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
  		do
  			makedev md$part b $major $part $disk
-@@ -919,15 +970,15 @@
+@@ -919,15 +1032,15 @@
  		minor=0
  		until [ $minor -gt 63 ]
  		do
@@ -347,7 +464,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  			minor=`math $minor + 1`
  		done
  		symlink video video0
-@@ -937,13 +988,13 @@
+@@ -937,13 +1050,13 @@
  		minor=0
  		until [ $minor -gt 1 ]
  		do
@@ -364,7 +481,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		;;
  	i2c)
  		major=`Major i2c 89` || continue
-@@ -1042,9 +1093,18 @@
+@@ -1042,9 +1155,25 @@
  		major=`Major dcf` || continue
  		makedev $arg c $major 0 $system
  		;;
@@ -383,10 +500,17 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
 +			makedev usb/lp$i    c $major $i $printer
 +			makedev usb/mouse$i c $major `math $i + 16` $mouse
 +		done
++		;;
++	fb)
++		major=`Major fb 29`
++		for i in 0 1 2 3 # up to 7
++		do
++			makedev fb$i c $major `math $i \* 32` $private
++		done
  		;;
  	update)
  		if [ ! "$devices" ]
-@@ -1080,8 +1140,8 @@
+@@ -1080,8 +1209,8 @@
  			exec 3<&-
  		fi
  		create="$create "`cvt $devs`
