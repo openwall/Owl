@@ -1,0 +1,29 @@
+#!/bin/sh
+# $Id: Owl/packages/util-linux/mount.control,v 1.1 2000/08/16 02:03:30 solar Exp $
+
+. /etc/control.d/functions
+
+BINARY_MOUNT=/bin/mount
+BINARY_UMOUNT=/bin/umount
+
+new_fmode public 4711 root root
+new_fmode restricted 700 root root
+
+case "$*" in
+list)
+	echo "$NAME_LIST"
+	;;
+status|'')
+	STATUS_MOUNT="`control_fmode "$BINARY_MOUNT" status`" || exit 1
+	STATUS_UMOUNT="`control_fmode "$BINARY_UMOUNT" status`" || exit 1
+	if [ -n "$STATUS_MOUNT" -a "$STATUS_MOUNT" = "$STATUS_UMOUNT" ]; then
+		echo "$STATUS_MOUNT"
+	else
+		echo "unknown"
+	fi
+	;;
+*)
+	control_fmode "$BINARY_MOUNT" "$*" || exit 1
+	control_fmode "$BINARY_UMOUNT" "$*" || exit 1
+	;;
+esac

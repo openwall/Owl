@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.6 2000/08/02 17:56:30 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.7 2000/08/16 02:03:30 solar Exp $
 
 %define BUILD_MOUNT	'yes'
 %define BUILD_LOSETUP	'yes'
@@ -6,17 +6,22 @@
 Summary: A collection of basic system utilities.
 Name: util-linux
 Version: 2.10h
-Release: 4owl
+Release: 5owl
 Copyright: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%{version}.tar.gz
 Source1: chsh-chfn.pam
+Source2: chsh-chfn.control
+Source3: mount.control
+Source4: newgrp.control
+Source5: write.control
 Patch0: util-linux-2.10h-owl-MCONFIG.diff
 Patch1: util-linux-2.10h-owl-Makefiles.diff
 Patch2: util-linux-2.10h-owl-restrict-locale.diff
 Patch3: util-linux-2.10h-owl-write.diff
 Patch4: util-linux-2.10h-rh-locale-overflow.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
+Requires: owl-control < 2.0
 Obsoletes: fdisk tunelp
 %ifarch sparc alpha
 Obsoletes: clock
@@ -83,14 +88,23 @@ done
 
 strip $RPM_BUILD_ROOT/sbin/fdisk || :
 
-install -m 600 ${RPM_SOURCE_DIR}/chsh-chfn.pam $RPM_BUILD_ROOT/etc/pam.d/chsh
-install -m 600 ${RPM_SOURCE_DIR}/chsh-chfn.pam $RPM_BUILD_ROOT/etc/pam.d/chfn
-
 rm -f $RPM_BUILD_ROOT/sbin/clock
 ln -s hwclock $RPM_BUILD_ROOT/sbin/clock
 
 # We do not want dependencies on csh
 chmod 644 $RPM_BUILD_ROOT/usr/lib/getopt/*
+
+install -m 600 ${RPM_SOURCE_DIR}/chsh-chfn.pam $RPM_BUILD_ROOT/etc/pam.d/chsh
+install -m 600 ${RPM_SOURCE_DIR}/chsh-chfn.pam $RPM_BUILD_ROOT/etc/pam.d/chfn
+
+mkdir -p $RPM_BUILD_ROOT/etc/control.d/facilities
+cd $RPM_BUILD_ROOT/etc/control.d/facilities
+install -m 700 ${RPM_SOURCE_DIR}/chsh-chfn.control chsh
+sed 's,/usr/bin/chsh,/usr/bin/chfn,' < chsh > chfn
+chmod 700 chfn
+install -m 700 ${RPM_SOURCE_DIR}/mount.control mount
+install -m 700 ${RPM_SOURCE_DIR}/newgrp.control newgrp
+install -m 700 ${RPM_SOURCE_DIR}/write.control write
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -254,6 +268,11 @@ rm -rf $RPM_BUILD_ROOT
 %doc fdisk/sfdisk.examples
 %endif
 
+/etc/control.d/facilities/chsh
+/etc/control.d/facilities/chfn
+/etc/control.d/facilities/newgrp
+/etc/control.d/facilities/write
+
 %if "%{BUILD_MOUNT}"=="'yes'"
 %files -n mount
 %defattr(-,root,root)
@@ -267,6 +286,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/man/man8/swapoff.8*
 /usr/man/man8/swapon.8*
 /usr/man/man8/umount.8*
+/etc/control.d/facilities/mount
 %endif
 
 %if "%{BUILD_LOSETUP}"=="'yes'"
@@ -277,6 +297,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Wed Aug 16 2000 Solar Designer <solar@owl.openwall.com>
+- owl-control support for chsh, chfn, newgrp, write, and mount/umount.
+
 * Wed Aug 02 2000 Solar Designer <solar@owl.openwall.com>
 - Disabled locale support in write(1) entirely for security reasons
 (dangerous printf formats, control characters, anonymous messages).
