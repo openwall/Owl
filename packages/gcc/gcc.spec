@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.28 2002/08/26 15:56:03 mci Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.29 2002/08/27 18:25:00 solar Exp $
 
 %define GCC_PREFIX /usr
 %define CPP_PREFIX /lib
@@ -165,7 +165,9 @@ rm -f gcc/java/config-lang.in
 %endif
 
 %build
-rm gcc/{gcc,cpp}.info
+# There're currently no pre-compiled versions of these texinfo files
+# included, should uncomment if that changes.
+#rm gcc/{gcc,cpp}.info
 %ifarch sparcv9
 %define _target_platform sparc-%{_vendor}-%{_target_os}
 %endif
