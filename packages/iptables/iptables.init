@@ -1,19 +1,16 @@
 #!/bin/sh
-# $Id: Owl/packages/iptables/iptables.init,v 1.1 2003/08/20 13:18:00 mci Exp $
+# $Id: Owl/packages/iptables/iptables.init,v 1.2 2003/08/22 00:50:54 solar Exp $
 #
 # chkconfig: 2345 08 92
 # description: \
-#		ipchains is an interface to the Linux IP packet filtering code.
+#	ipchains is an interface to the Linux IP packet filtering code.
 # config: /etc/sysconfig/iptables
 
 IPTABLES=/sbin/iptables
 IPTABLES_CONFIG=/etc/sysconfig/iptables
 
-if [ ! -x $IPTABLES ]; then
-	exit 0
-fi
-
-iftable() {
+function iftable()
+{
 	if fgrep -qsx $1 /proc/net/ip_tables_names; then
 		$IPTABLES -t "$@"
 	fi
@@ -23,38 +20,37 @@ case "$1" in
 start|restart|reload)
 	if [ -s "$IPTABLES_CONFIG" ]; then
 		tables=`cat /proc/net/ip_tables_names 2>/dev/null`
-	    echo "Flushing all current rules and user defined chains"
-		for t in $tables ; do
+		echo "Flushing all current rules and user defined chains"
+		for t in $tables; do
 			$IPTABLES -t $t -F
 		done
 		$IPTABLES -F
 
-        echo "Clearing all current rules and user defined chains"
-		for t in $tables ; do
+		echo "Clearing all current rules and user defined chains"
+		for t in $tables; do
 			$IPTABLES -t $t -X
 		done
 		$IPTABLES -X
 
-		for t in $tables ; do
+		for t in $tables; do
 			$IPTABLES -t $t -Z
 		done
 
-	    echo "Applying iptables firewall rules"
-        grep -Ev '^[[:space:]]*#|^[[:space:]]*$' "$IPTABLES_CONFIG" |
+		echo "Applying iptables firewall rules"
+		grep -Ev '^[[:space:]]*#|^[[:space:]]*$' "$IPTABLES_CONFIG" |
 			/sbin/iptables-restore -c
-	
 	fi
 	;;
 stop)
 	tables=`cat /proc/net/ip_tables_names 2>/dev/null`
 	echo "Flushing all chains"
-	for t in $tables ; do
+	for t in $tables; do
 		$IPTABLES -t $t -F
 	done
 	$IPTABLES -F
 
 	echo "Removing user defined chains"
-	for t in $tables ; do
+	for t in $tables; do
 		$IPTABLES -t $t -X
 	done
 	$IPTABLES -X
@@ -103,7 +99,7 @@ panic)
 		iftable mangle -F PREROUTING &&
 		iftable mangle -F OUTPUT
 
-    echo "Removing user defined chains"
+	echo "Removing user defined chains"
 	iftable iftable filter -X &&
 		iftable nat -X &&
 		iftable mangle -X
@@ -112,10 +108,10 @@ save)
 	echo "Saving current rules to $IPTABLES_CONFIG"
 	touch "$IPTABLES_CONFIG"
 	chmod 600 "$IPTABLES_CONFIG"
-	/sbin/iptables-save -c > "$IPTABLES_CONFIG"  2>/dev/null
+	/sbin/iptables-save -c > "$IPTABLES_CONFIG" 2>/dev/null
 	;;
 *)
-	echo "Usage: $0 {start|stop|restart|status|panic|save}"
+	echo "Usage: $0 {start|stop|restart|reload|status|panic|save}"
 	exit 1
 esac
 

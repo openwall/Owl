@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iptables/iptables.spec,v 1.1 2003/08/20 13:18:00 mci Exp $
+# $Id: Owl/packages/iptables/iptables.spec,v 1.2 2003/08/22 00:50:54 solar Exp $
 
 Summary: Tools for managing Linux kernel packet filtering capabilities.
 Name: iptables
@@ -6,10 +6,10 @@ Version: 1.2.8
 Release: owl1
 License: GPL
 Group: System Environment/Base
-URL: http://www.netfilter.org/
+URL: http://www.netfilter.org
 Source0: http://www.netfilter.org/files/%{name}-%{version}.tar.bz2
 Source1: iptables.init
-Requires: chkconfig
+PreReq: chkconfig
 BuildRequires: kernel-headers >= 2.4.0
 BuildRoot: /override/%{name}-%{version}
 
@@ -19,16 +19,17 @@ Linux kernel.
 
 %prep
 %setup -q
-
-# XXX Fix NETLINK script detection name
 mv extensions/.NETLINK.test extensions/.NETLINK-test
 
 %build
 OPT="$RPM_OPT_FLAGS"
-make COPT_FLAGS="$RPM_OPT_FLAGS" LIBDIR=/%{_lib} iptables-save iptables-restore all
+make iptables-save iptables-restore all \
+	COPT_FLAGS="$RPM_OPT_FLAGS" LIBDIR=/%{_lib}
 
 %install
-make install DESTDIR=%{buildroot} LIBDIR=/%{_lib} BINDIR=/sbin MANDIR=%{_mandir}
+make install \
+	DESTDIR=$RPM_BUILD_ROOT \
+	LIBDIR=/%{_lib} BINDIR=/sbin MANDIR=%{_mandir}
 mkdir -p $RPM_BUILD_ROOT/etc/rc.d/init.d
 install -m 755 $RPM_SOURCE_DIR/iptables.init \
 	$RPM_BUILD_ROOT/etc/rc.d/init.d/iptables
