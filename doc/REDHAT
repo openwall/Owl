@@ -1,0 +1,118 @@
+This file lists known issues with using packages from or intended for
+Red Hat Linux 9 on Owl.  The names of affected Red Hat Linux packages,
+if applicable and known, are given in braces.
+
+
+	Packages providing cron jobs (slocate).
+
+Owl provides the following directories specified by LSB 1.3:
+
+/etc/cron.d
+/etc/cron.daily
+/etc/cron.weekly
+/etc/cron.monthly
+
+It also provides the directory /etc/cron.hourly found on Red Hat
+Linux.
+
+Both Red Hat Linux and Owl will only process scripts placed in these
+directories if the filenames satisfy certain criteria.  Red Hat Linux
+uses a list of taboo suffixes, which includes "~" (editor backup
+files), ".rpmsave", ".rpmnew", and a number of others.  Owl uses a
+different approach which is to skip over filenames which contain
+disallowed characters and most importantly dots ('.'), thereby being
+safer against processing undesired files.  Unfortunately, certain Red
+Hat Linux packages are known to provide cron job files with dots in
+their names.  In particular, this is the case for Red Hat's slocate
+package.  The workaround is to rename the files after package
+installation.
+
+Owl's behavior is described in man pages for crond(8) and
+run-parts(8).
+
+
+	Device file permissions (mc).
+
+Owl does not provide a pseudo-user "vcsa" (which is capable of direct
+access to virtual terminals on Red Hat Linux) and does not make
+/dev/ttyp* world-accessible.  These differences from Red Hat Linux are
+known to break Ctrl-O and the screensaver in Red Hat's package of
+Midnight Commander (mc).  No workaround is recommended; mc needs to be
+taught to use Unix98 ptys instead of /dev/ttyp*.
+
+
+	No pam_console (XFree86-*).
+
+Owl does not provide the pam_console module.  Red Hat's packages of
+XFree86 X servers are known to provide PAM configuration files which
+rely on pam_console.  The workaround is to replace the invocation of
+pam_console with invocations of another module suitable for your
+particular setup, e.g. with pam_listfile.  You need to replace the
+pam_console line in /etc/pam.d/xserver with:
+
+auth       required	/lib/security/pam_listfile.so item=user sense=allow onerr=fail file=/etc/xserver.allow
+
+Then you list the users which need to run X in /etc/xserver.allow.
+
+
+	pam_pwdb is not tcb-aware (Red Hat Linux 6.2 and below).
+
+The pam_pwdb module, provided for backwards compatibility with Red Hat
+Linux 6.2, is not aware of our new password shadowing scheme.  Thus,
+if you install packages from or intended for Red Hat Linux 6.2 or
+below which use PAM for authentication and you do use /etc/tcb, these
+packages will not work right.  The workaround is to edit their PAM
+configuration files to use pam_tcb instead of pam_pwdb.
+
+
+	Password checking helpers (xlock*).
+
+On Red Hat Linux, the PAM modules' helper programs used to check a
+user's own password are world-accessible.  On Owl, they're restricted
+to group chkpwd.  This means that certain programs which need the
+functionality need to be granted this new privilege.  This is known to
+be needed for PAM-aware X screen locking programs such as the one
+coming from package xlockmore.  To make it work on Owl, it needs to be
+made SGID to group chkpwd, like this:
+
+-rwx--s--x    1 root     chkpwd     751328 Mar 30  2001 /usr/X11R6/bin/xlock
+
+
+	No rpm-python subpackage (rpm-python).
+
+As we don't provide Python as part of Owl, we also build RPM without
+support for Python language bindings.  Moreover, Red Hat's rpm-python
+subpackage might not install correctly in conjunction with our main
+RPM package due to RPM version differences.
+
+
+	The Owl slang package is lacking UTF-8 support.
+
+On Red Hat Linux, UTF-8 support is added into S-Lang with a patch.  We
+don't do that.  If another package requires S-Lang with UTF-8 support,
+the workaround is simply to replace our slang package with Red Hat's.
+There're no dependencies on our version of slang within Owl itself.
+
+
+	No NPTL support in glibc.
+
+Red Hat Linux 9 provides the newer Native POSIX Thread Library (NPTL)
+in their glibc (C library) package.  We continue to provide the older
+LinuxThreads library which is still the one found in the latest
+official version of glibc as of the time of this writing (glibc
+version 2.3.2).  Also, NPTL would require support from the kernel
+which we currently do not provide.
+
+We're currently unaware of a Red Hat Linux 9 or any other package
+which would fail to work without NPTL.  This is no surprise because
+Red Hat Linux itself provides fallback libraries for the case when
+support for NPTL is not available in the running Linux kernel, and
+their packages are thus meant to work with the non-NPTL libraries as
+well.
+
+The one problem we are aware of and have resolved is the source code
+for recent versions of RPM (newer than the one used in RHL 9)
+requiring NPTL.  We have resolved that dependency on NPTL in our build
+of RPM.
+
+$Id: Owl/doc/REDHAT,v 1.1 2004/11/02 22:54:01 solar Exp $
