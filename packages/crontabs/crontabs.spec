@@ -1,14 +1,15 @@
-# $Id: Owl/packages/crontabs/crontabs.spec,v 1.1 2001/05/15 08:09:51 mci Exp $
+# $Id: Owl/packages/crontabs/crontabs.spec,v 1.2 2001/05/16 17:45:25 mci Exp $
 
 Summary: System crontab files used to schedule the execution of programs.
 Name: crontabs
 Version: 2.0
-Release: 1owl
+Release: 2owl
 Copyright: GPL
 Group: System Environment/Base
-Source0: run-parts.tar.gz
+Source0: run-parts-1.15.tar.gz
 Source1: crontab
-Patch0: run-parts-owl-writeloop.diff
+Patch0: run-parts-1.15-owl-writeloop.diff
+Patch1: run-parts-1.15-owl-ulimit.diff
 BuildRoot: /var/rpm-buildroot/%{name}-%{version}
 
 %description
@@ -27,11 +28,12 @@ The crontabs package handles a basic system function, so it should be
 installed on your system.
 
 %prep
-%setup -n run-parts
+%setup -n run-parts-1.15
 %patch0 -p1
+%patch1 -p1
 
 %build
-make run-parts CFLAGS="$RPM_OPT_FLAGS -Wall"
+gcc run-parts.c -o run-parts $RPM_OPT_FLAGS -Wall -s
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -58,6 +60,11 @@ rm -rf $RPM_BUILD_ROOT
 %dir /etc/cron.monthly
 
 %changelog
+* Thu May 16 2001 Michail Litvak <mci@owl.openwall.com>
+- run-parts source archive renamed to name with version
+- ulimit patching extracted to separate patch (and improved)
+- use gcc instead of make
+
 * Thu May 15 2001 Michail Litvak <mci@owl.openwall.com>
 - basically imported from RH, but run-parts imported
   from Debian (debianutils)
