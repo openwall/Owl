@@ -1,0 +1,14 @@
+--- mutt-1.4/configure.in.orig	Wed May 29 13:29:26 2002
++++ mutt-1.4/configure.in	Wed Sep 25 05:44:56 2002
+@@ -387,11 +387,6 @@
+         exit (1);
+ }], mutt_cv_groupwrite=yes, mutt_cv_groupwrite=no, mutt_cv_groupwrite=no)])
+ 
+-                if test $mutt_cv_groupwrite = yes; then
+-                        AC_DEFINE(USE_DOTLOCK,1,[ Define to use dotlocking for mailboxes. ])
+-                        AC_DEFINE(USE_SETGID,1,[ Define if mutt should run setgid "mail". ])
+-                        mutt_cv_setgid=yes
+-                fi
+         fi
+ fi
+ 

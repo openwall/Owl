@@ -1,0 +1,23 @@
+---  mutt-1.4.orig/muttbug.sh.in	29 Aug 2002 09:36:22 -0000
++++  mutt-1.4/muttbug.sh.in	15 Jan 2003 11:25:49 -0000
+@@ -85,15 +85,10 @@
+ exec > /dev/tty
+ exec < /dev/tty
+ 
+-SCRATCH=${TMPDIR-/tmp}/`basename $0`.`hostname`.$$
+-
+-mkdir ${SCRATCH} || \
+-{ 
+-	echo "`basename $0`: Can't create temporary directory." >& 2 ; 
+-	exit 1 ; 
+-}
+-
+-trap "rm -r -f ${SCRATCH} ; trap '' 0 ; exit" 0 1 2
++SCRATCH=
++trap 'rm -rf $SCRATCH' EXIT
++trap 'rm -rf $SCRATCH; exit 1' HUP INT TERM
++SCRATCH=$(mktemp -td `basename $0`-`hostname`.XXXXXX) || exit 1
+ 
+ TEMPLATE=${SCRATCH}/template.txt
+ 
+
