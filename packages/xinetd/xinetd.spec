@@ -1,11 +1,11 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.10 2001/07/28 16:17:43 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.11 2001/08/29 22:17:28 solar Exp $
 
 %define NEED_PYTHON 'no'
 
 Summary: The extended Internet services daemon
 Name: xinetd
-Version: 2.3.0
-Release: 3owl
+Version: 2.3.3
+Release: 1owl
 License: BSD with minor restrictions
 Group: System Environment/Daemons
 Source0: http://www.xinetd.org/xinetd-%{version}.tar.gz
@@ -20,7 +20,6 @@ Source8: xinetd-echo
 Source9: xinetd-uecho
 Source10: xinetd-chargen
 Source11: xinetd-uchargen
-Patch0: xinetd-2.3.0-owl-audit.diff
 Provides: inetd
 Prereq: /sbin/chkconfig /etc/init.d
 BuildRequires: tcp_wrappers
@@ -44,7 +43,6 @@ limits on the number of servers that can be started, among other things.
 
 %prep
 %setup -q
-%patch -p1
 
 %{expand:%%define optflags %optflags -Wall -Wno-unused -Wno-switch}
 
@@ -111,6 +109,10 @@ fi
 %config /etc/xinetd.d/*
 
 %changelog
+* Thu Aug 30 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 2.3.3.
+- Dropped the big -audit patch all of which went into xinetd 2.3.1+.
+
 * Sat Jul 28 2001 Solar Designer <solar@owl.openwall.com>
 - Handle the case of nonexistent /etc/sysconfig/network correctly.
 - Don't -stayalive, we may invent a reload-or-start option instead.
