@@ -1,50 +1,43 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.14 2001/07/06 05:50:57 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.15 2001/11/12 01:57:59 solar Exp $
 
-%define BUILD_MOUNT	'yes'
-%define BUILD_LOSETUP	'yes'
-%define BUILD_CHSH_CHFN	'no'
-%define BUILD_VIPW_VIGR	'no'
-%define BUILD_CRYPTO	'yes'
-
-%define base_version	2.10r
-%define crypto_version	2.2.18.3
+%define BUILD_MOUNT 1
+%define BUILD_LOSETUP 1
+%define BUILD_CRYPTO 1
 
 Summary: A collection of basic system utilities.
 Name: util-linux
-%if "%{BUILD_CRYPTO}"=="'yes'"
+%define base_version 2.10r
+%define crypto_version 2.2.18.3
+%if %BUILD_CRYPTO
 Version: %{base_version}.%{crypto_version}
 %else
 Version: %{base_version}
 %endif
-Release: 3owl
-Copyright: distributable
+Release: 4owl
+License: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%{base_version}.tar.bz2
-Source1: chsh-chfn.pam
-Source2: chsh-chfn.control
-Source3: mount.control
-Source4: newgrp.control
-Source5: write.control
+Source1: mount.control
+Source2: write.control
 Patch0: util-linux-2.10r-owl-MCONFIG.diff
 Patch1: util-linux-2.10r-owl-Makefiles.diff
-Patch2: util-linux-2.10r-owl-restrict-locale.diff
-Patch3: util-linux-2.10r-owl-write.diff
-Patch4: util-linux-2.10r-owl-alpha-hwclock-usage.diff
-Patch5: util-linux-2.10r-rh-locale-overflow.diff
+Patch2: util-linux-2.10r-owl-write.diff
+Patch3: util-linux-2.10r-owl-alpha-hwclock-usage.diff
+Patch4: util-linux-2.10r-rh-locale-overflow.diff
 Patch10: util-linux-2.10r-%{crypto_version}-int.diff
 Patch11: util-linux-2.10r-%{crypto_version}-int-owl-fixes.diff
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: owl-control < 2.0
 Obsoletes: fdisk tunelp
 %ifarch sparc alpha
 Obsoletes: clock
 %endif
+BuildRoot: /override/%{name}-%{version}
 
 %description
-The util-linux package contains a large variety of low-level system
+The util-linux package contains a wide variety of low-level system
 utilities that are necessary for a Linux system to function.
 
-%if "%{BUILD_MOUNT}"=="'yes'"
+%if %BUILD_MOUNT
 %package -n mount
 Summary: Programs for mounting and unmounting filesystems.
 Group: System Environment/Base
@@ -55,11 +48,11 @@ programs.  Accessible files on your system are arranged in one big
 tree or hierarchy.  These files can be spread out over several
 devices.  The mount command attaches a filesystem on some device to
 your system's file tree.  The umount command detaches a filesystem
-from the tree.  Swapon and swapoff, respectively, specify and disable
+from the tree.  swapon and swapoff, respectively, specify and disable
 devices and files for paging and swapping.
 %endif
 
-%if "%{BUILD_LOSETUP}"=="'yes'"
+%if %BUILD_LOSETUP
 %package -n losetup
 Summary: Programs for setting up and configuring loopback devices.
 Group: System Environment/Base
@@ -67,7 +60,7 @@ Group: System Environment/Base
 %description -n losetup
 Linux supports a special block device called the loop device, which maps
 a normal file onto a virtual block device.  This allows for the file to
-be used as a "virtual file system".  Losetup is used to associate loop
+be used as a "virtual file system".  losetup is used to associate loop
 devices with regular files or block devices, to detach loop devices and
 to query the status of a loop device.
 %endif
@@ -79,8 +72,7 @@ to query the status of a loop device.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
-%if "%{BUILD_CRYPTO}"=="'yes'"
+%if %BUILD_CRYPTO
 %patch10 -p1
 %patch11 -p1
 %endif
@@ -88,47 +80,25 @@ to query the status of a loop device.
 %build
 unset LINGUAS || :
 ./configure
-make RPM_OPT_FLAGS="$RPM_OPT_FLAGS" 
+make RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{bin,sbin,etc/pam.d}
+mkdir -p $RPM_BUILD_ROOT/{bin,sbin}
 mkdir -p $RPM_BUILD_ROOT/usr/{bin,info,lib,man/man1,man/man6,man/man8,sbin}
 
 make install DESTDIR=$RPM_BUILD_ROOT
 
-gzip -9nf $RPM_BUILD_ROOT/usr/info/ipc.info
-gzip -9nf $RPM_BUILD_ROOT/usr/man/man*/*
-
-for i in /usr/bin/chfn /usr/bin/chsh /usr/bin/newgrp ; do
-	strip $RPM_BUILD_ROOT/$i
-done
-
-strip $RPM_BUILD_ROOT/sbin/fdisk || :
-
-rm -f $RPM_BUILD_ROOT/sbin/clock
-ln -s hwclock $RPM_BUILD_ROOT/sbin/clock
+ln -sf hwclock $RPM_BUILD_ROOT/sbin/clock
 
 # We do not want dependencies on csh
 chmod 644 $RPM_BUILD_ROOT/usr/share/misc/getopt/*
-
-%if "%{BUILD_CHSH_CHFN}"=="'yes'"
-install -m 600 ${RPM_SOURCE_DIR}/chsh-chfn.pam $RPM_BUILD_ROOT/etc/pam.d/chsh
-install -m 600 ${RPM_SOURCE_DIR}/chsh-chfn.pam $RPM_BUILD_ROOT/etc/pam.d/chfn
-%endif
 
 mkdir -p $RPM_BUILD_ROOT/etc/control.d/facilities
 cd $RPM_BUILD_ROOT/etc/control.d/facilities
 
 install -m 700 ${RPM_SOURCE_DIR}/mount.control mount
-install -m 700 ${RPM_SOURCE_DIR}/newgrp.control newgrp
 install -m 700 ${RPM_SOURCE_DIR}/write.control write
-
-%if "%{BUILD_CHSH_CHFN}"=="'yes'"
-install -m 700 ${RPM_SOURCE_DIR}/chsh-chfn.control chsh
-sed 's,/usr/bin/chsh,/usr/bin/chfn,' < chsh > chfn
-chmod 700 chfn
-%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -142,11 +112,6 @@ rm -rf $RPM_BUILD_ROOT
 
 /usr/sbin/tunelp
 /usr/man/man8/tunelp.8*
-
-%if "%{BUILD_CHSH_CHFN}"=="'yes'"
-%config /etc/pam.d/chfn
-%config /etc/pam.d/chsh
-%endif
 
 /sbin/fdisk
 %ifarch %ix86 alpha armv4l
@@ -172,23 +137,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/bin/ddate
 /usr/man/man1/ddate.1*
 
-%attr(700,root,root)	/usr/bin/newgrp
-/usr/man/man1/newgrp.1*
-
-%if "%{BUILD_CHSH_CHFN}"=="'yes'"
-%attr(700,root,root)	/usr/bin/chfn
-%attr(700,root,root)	/usr/bin/chsh
-/usr/man/man1/chfn.1*
-/usr/man/man1/chsh.1*
-%endif
-
-%if "%{BUILD_VIPW_VIGR}"=="'yes'"
-%attr(700,root,root)	/usr/sbin/vipw
-%attr(700,root,root)	/usr/sbin/vigr
-/usr/man/man8/vipw.8*
-/usr/man/man8/vigr.8*
-%endif
-
 /bin/kill
 /usr/bin/cal
 /usr/bin/logger
@@ -198,7 +146,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/bin/script
 /usr/bin/setterm
 /usr/bin/whereis
-%attr(2711,root,tty)	/usr/bin/write
+%attr(2711,root,tty) /usr/bin/write
 /usr/bin/getopt
 /usr/man/man1/cal.1*
 /usr/man/man1/kill.1*
@@ -298,14 +246,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc fdisk/sfdisk.examples
 %endif
 
-%if "%{BUILD_CHSH_CHFN}"=="'yes'"
-/etc/control.d/facilities/chsh
-/etc/control.d/facilities/chfn
-%endif
-/etc/control.d/facilities/newgrp
 /etc/control.d/facilities/write
 
-%if "%{BUILD_MOUNT}"=="'yes'"
+%if %BUILD_MOUNT
 %files -n mount
 %defattr(-,root,root)
 %attr(700,root,root) /bin/mount
@@ -321,7 +264,7 @@ rm -rf $RPM_BUILD_ROOT
 /etc/control.d/facilities/mount
 %endif
 
-%if "%{BUILD_LOSETUP}"=="'yes'"
+%if %BUILD_LOSETUP
 %files -n losetup
 %defattr(-,root,root)
 /sbin/losetup
@@ -329,6 +272,12 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Mon Nov 12 2001 Solar Designer <solar@owl.openwall.com>
+- newgrp is now built from shadow-utils, for gshadow support.
+- Dropped the support for building of chsh, chfn, vipw, vigr, and newgrp
+entirely (including owl-control files and a security patch, which may be
+restored from the CVS if needed) as it's not going to be updated.
+
 * Wed Apr 18 2001 Solar Designer <solar@owl.openwall.com>
 - Added crypto code from the international kernel patch (2.2.18.3), with
 minor changes.
