@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gdb/gdb.spec,v 1.15 2004/07/10 23:49:04 solar Exp $
+# $Id: Owl/packages/gdb/gdb.spec,v 1.16 2004/09/10 07:23:05 galaxy Exp $
 
 Summary: A GNU source-level debugger for C, C++ and Fortran.
 Name: gdb
@@ -61,6 +61,31 @@ rm $RPM_BUILD_ROOT%_infodir/bfd*
 rm $RPM_BUILD_ROOT%_infodir/standard*
 rm -r $RPM_BUILD_ROOT/usr/include/
 rm -r $RPM_BUILD_ROOT/usr/lib/lib{bfd*,opcodes*}
+
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot%_libdir/libiberty.a
+rm %buildroot%_libdir/libmmalloc.a
+rm %buildroot%_infodir/annotate.info*
+rm %buildroot%_infodir/configure.info*
+rm %buildroot%_infodir/dir
+rm %buildroot%_datadir/locale/da/LC_MESSAGES/bfd.mo
+rm %buildroot%_datadir/locale/da/LC_MESSAGES/opcodes.mo
+rm %buildroot%_datadir/locale/de/LC_MESSAGES/opcodes.mo
+rm %buildroot%_datadir/locale/es/LC_MESSAGES/bfd.mo
+rm %buildroot%_datadir/locale/es/LC_MESSAGES/opcodes.mo
+rm %buildroot%_datadir/locale/fr/LC_MESSAGES/bfd.mo
+rm %buildroot%_datadir/locale/fr/LC_MESSAGES/opcodes.mo
+rm %buildroot%_datadir/locale/id/LC_MESSAGES/opcodes.mo
+rm %buildroot%_datadir/locale/ja/LC_MESSAGES/bfd.mo
+rm %buildroot%_datadir/locale/nl/LC_MESSAGES/opcodes.mo
+rm %buildroot%_datadir/locale/pt_BR/LC_MESSAGES/opcodes.mo
+rm %buildroot%_datadir/locale/ro/LC_MESSAGES/bfd.mo
+rm %buildroot%_datadir/locale/ro/LC_MESSAGES/opcodes.mo
+rm %buildroot%_datadir/locale/sv/LC_MESSAGES/bfd.mo
+rm %buildroot%_datadir/locale/sv/LC_MESSAGES/opcodes.mo
+rm %buildroot%_datadir/locale/tr/LC_MESSAGES/bfd.mo
+rm %buildroot%_datadir/locale/tr/LC_MESSAGES/opcodes.mo
+rm %buildroot%_datadir/locale/zh_CN/LC_MESSAGES/bfd.mo
 
 %post
 /sbin/install-info %_infodir/gdb.info %_infodir/dir

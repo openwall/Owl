@@ -1,4 +1,4 @@
-# $Id: Owl/packages/elinks/elinks.spec,v 1.12 2004/02/06 00:04:04 mci Exp $
+# $Id: Owl/packages/elinks/elinks.spec,v 1.13 2004/09/10 07:22:40 galaxy Exp $
 
 Summary: Lynx-like text WWW browser with many features.
 Name: elinks
@@ -61,6 +61,9 @@ pushd $RPM_BUILD_ROOT
 ln -sf elinks .%_bindir/links
 ln -s elinks.1 .%_mandir/man1/links.1
 popd
+
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot%_datadir/locale/locale.alias
 
 %find_lang %name
 

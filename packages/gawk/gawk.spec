@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gawk/gawk.spec,v 1.11 2003/10/30 08:39:20 solar Exp $
+# $Id: Owl/packages/gawk/gawk.spec,v 1.12 2004/09/10 07:22:50 galaxy Exp $
 
 %define BUILD_PROFILE 0
 
@@ -65,6 +65,12 @@ cd bin
 ln -sf ../../bin/gawk ../usr/bin/awk
 ln -sf ../../bin/gawk ../usr/bin/gawk
 mv $RPM_BUILD_ROOT/bin/pgawk $RPM_BUILD_ROOT/usr/bin/
+
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot/bin/gawk-3.1.1
+rm %buildroot/bin/pgawk-3.1.1
+rm %buildroot%_bindir/pgawk
+rm %buildroot%_infodir/gawkinet.info*
 
 %post
 /sbin/install-info %_infodir/gawk.info.gz %_infodir/dir

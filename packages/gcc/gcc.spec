@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.31 2004/09/03 18:37:20 galaxy Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.32 2004/09/10 07:23:02 galaxy Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -409,6 +409,10 @@ find $RPM_BUILD_ROOT%_libdir/gcc-lib/%_target_platform/%version/include \
 # Remove unpackaged files
 rm $RPM_BUILD_ROOT%_bindir/c++filt
 rm $RPM_BUILD_ROOT%_libdir/libiberty.a
+
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot%_datadir/locale/de/LC_MESSAGES/libstdc++.mo
+rm %buildroot%_datadir/locale/fr/LC_MESSAGES/libstdc++.mo
 
 %post
 /sbin/install-info --info-dir=%_infodir %_infodir/gcc.info.gz

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/findutils/findutils.spec,v 1.7 2003/10/29 19:08:28 solar Exp $
+# $Id: Owl/packages/findutils/findutils.spec,v 1.8 2004/09/10 07:22:48 galaxy Exp $
 
 Summary: The GNU versions of find utilities (find and xargs).
 Name: findutils
@@ -40,6 +40,31 @@ make
 %install
 rm -rf $RPM_BUILD_ROOT
 %makeinstall
+
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot%_bindir/locate
+rm %buildroot%_bindir/updatedb
+rm %buildroot/usr/libexec/bigram
+rm %buildroot/usr/libexec/code
+rm %buildroot/usr/libexec/frcode
+rm %buildroot%_infodir/dir
+rm %buildroot%_datadir/locale/da/LC_MESSAGES/findutils.mo
+rm %buildroot%_datadir/locale/de/LC_MESSAGES/findutils.mo
+rm %buildroot%_datadir/locale/es/LC_MESSAGES/findutils.mo
+rm %buildroot%_datadir/locale/et/LC_MESSAGES/findutils.mo
+rm %buildroot%_datadir/locale/fr/LC_MESSAGES/findutils.mo
+rm %buildroot%_datadir/locale/gl/LC_MESSAGES/findutils.mo
+rm %buildroot%_datadir/locale/id/LC_MESSAGES/findutils.mo
+rm %buildroot%_datadir/locale/it/LC_MESSAGES/findutils.mo
+rm %buildroot%_datadir/locale/ko/LC_MESSAGES/findutils.mo
+rm %buildroot%_datadir/locale/nl/LC_MESSAGES/findutils.mo
+rm %buildroot%_datadir/locale/pl/LC_MESSAGES/findutils.mo
+rm %buildroot%_datadir/locale/pt_BR/LC_MESSAGES/findutils.mo
+rm %buildroot%_datadir/locale/ru/LC_MESSAGES/findutils.mo
+rm %buildroot%_datadir/locale/sv/LC_MESSAGES/findutils.mo
+rm %buildroot%_mandir/man1/locate.1*
+rm %buildroot%_mandir/man1/updatedb.1*
+rm %buildroot%_mandir/man5/locatedb.5*
 
 %post
 /sbin/install-info %_infodir/find.info.gz %_infodir/dir
