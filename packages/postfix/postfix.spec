@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.1 2000/11/21 19:49:45 solar Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.2 2000/11/22 17:13:50 solar Exp $
 
 Summary: Postfix mail system
 Name: postfix
@@ -7,17 +7,23 @@ Name: postfix
 %define original_version %{original_date}-%{original_pl}
 %define package_version %{original_date}_%{original_pl}
 Version: %{package_version}
-Release: 1owl
+Release: 2owl
 Copyright: IBM Public License
 Group: System Environment/Daemons
 Source0: ftp://ftp.sunet.se/pub/unix/mail/postfix/official/%{name}-%{original_version}.tar.gz
 Source1: aliases
 Source2: postfix.init
-Patch0: postfix-19991231-pl10-owl-INSTALL.diff
-Patch1: postfix-19991231-pl10-owl-config.diff
+Source3: postfix.control
+Patch0: postfix-19991231-pl10-owl-classless.diff
+Patch1: postfix-19991231-pl10-owl-sparse-hack.diff
+Patch2: postfix-19991231-pl10-owl-postfix-script.diff
+Patch10: postfix-19991231-pl10-owl-INSTALL.diff
+Patch11: postfix-19991231-pl10-owl-config.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Provides: MTA smtpd smtpdaemon
 Conflicts: sendmail
+Requires: owl-control >= 0.2, owl-control < 2.0
+Prereq: /sbin/chkconfig, /dev/null, grep, shadow-utils
 
 %description
 Postfix is Wietse Venema's attempt to provide an alternative to the
@@ -29,6 +35,9 @@ compatible enough to not upset your users.
 %setup -q -n %{name}-%{original_version}
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
+%patch10 -p1
+%patch11 -p1
 
 %build
 make OPT="$RPM_OPT_FLAGS"
@@ -70,13 +79,16 @@ test -f flag.0
 
 pushd $RPM_BUILD_ROOT
 
-rm etc/postfix/install.cf
+rm etc/postfix/{install.cf,postfix-script-{diff,*sgid}}
 
 install -m 644 $RPM_SOURCE_DIR/aliases etc/postfix/
 ln -s /etc/postfix/aliases{,.db} etc/
 
 mkdir -p etc/rc.d/init.d
 install -m 700 $RPM_SOURCE_DIR/postfix.init etc/rc.d/init.d/postfix
+
+mkdir -p etc/control.d/facilities
+install -m 700 $RPM_SOURCE_DIR/postfix.control etc/control.d/facilities/postfix
 
 mkdir -p usr/lib
 ln -s /usr/sbin/sendmail usr/lib/sendmail
@@ -145,16 +157,25 @@ grep ^postman: /etc/passwd &> /dev/null ||
 %preun
 /usr/sbin/postfix stop
 /sbin/chkconfig --del postfix
-
-%postun
+sleep 1
+/usr/sbin/postfix drain &> /dev/null
 rm -f /etc/postfix/aliases.db
-rm -f /var/spool/postfix/pid/*
 find /var/spool/postfix \( -type p -o -type s \) -delete
-rmdir /var/spool/postfix/{*,}
+rm -f /var/spool/postfix/{pid,etc,lib}/*
+rmdir /var/spool/postfix/[^m]*
 
 %files -f filelist
 
 %changelog
+* Wed Nov 22 2000 Solar Designer <solar@owl.openwall.com>
+- Restrict relaying to the host's own addresses only by default.
+- Ignore sparse .forward files on filesystems which allow for this.
+- /var/spool/postfix/pid/ is now only writable by root.
+- Run whatever possible chroot'ed (many of the processes keep root
+privileges in their real and/or saved ID's and pseudo-user postfix
+is shared with non-chroot'ed processes, so this is breakable).
+- Wrote postfix.control to enable/disable the SMTP server.
+
 * Tue Nov 21 2000 Solar Designer <solar@owl.openwall.com>
 - Wrote this spec file.
 - Took postfix.init from Simon J Mudd's package with minor changes.
