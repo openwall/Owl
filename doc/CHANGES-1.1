@@ -12,6 +12,13 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.0 and Owl-current.
 
+2002/11/03	Packages: owl-control,
+		iputils, openssh, postfix, shadow-utils, SimplePAMApps,
+		traceroute, util-linux, vixie-cron
+Keep owl-control settings over package upgrades (and thus over "make
+installworld" runs as well).  Some of the owl-control scripts updates
+have been imported back from ALT Linux.
+
 2002/10/21 -
 2002/10/24	Packages: shadow-utils, tcb
 Merged enhancements which remove the 32K users limit when /etc/tcb is
@@ -20,4 +27,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.1 2002/10/24 06:30:35 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.2 2002/11/03 05:10:25 solar Exp $
