@@ -1,9 +1,9 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.29 2003/08/10 00:01:22 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.30 2003/10/29 16:10:59 solar Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
 Version: 0.75
-Release: owl20
+Release: owl21
 %define rh_version %{version}-10
 License: GPL or BSD
 Group: System Environment/Base
@@ -27,8 +27,7 @@ PreReq: /sbin/ldconfig
 Requires: glibc-crypt_blowfish, pwdb >= 0.61-1owl
 # Just to make sure noone misses pam_unix, which is now provided by tcb
 Requires: tcb >= 0.9.5
-Provides: pam <= 0.75-14owl, pam >= 0.75-owl14
-BuildRequires: glibc-crypt_blowfish
+BuildRequires: glibc-crypt_blowfish-devel
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -209,6 +208,11 @@ chgrp chkpwd %{_libexecdir}/chkpwd && chmod 710 %{_libexecdir}/chkpwd
 %doc doc/specs/rfc86.0.txt
 
 %changelog
+* Wed Oct 29 2003 Solar Designer <solar@owl.openwall.com> 0.75-owl21
+- Require glibc-crypt_blowfish-devel for builds.
+- Dropped the obsolete "Provides: pam <= 0.75-14owl" tag which was needed
+during our transition to the new Release numbering scheme.
+
 * Sun Aug 10 2003 Solar Designer <solar@owl.openwall.com> 0.75-owl20
 - pam_limits: don't invoke setrlimit(2) on limits which are not set
 explicitly as simply resetting RLIMIT_FSIZE to what appears to be its
