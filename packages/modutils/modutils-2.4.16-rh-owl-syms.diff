@@ -61,11 +61,11 @@
  Show all the unresolved symbols for each module.
  .TP
 +.BR \-i ", " \-\-ignore-versions
-+Ignore symbol versions when building dependency list. This is useful
++Ignore symbol versions when building dependency list.  This is useful
 +especially if you use a versioned kernel and want to build dependencies
 +against a System.map file (see the
 +.B \-F
-+option). Use this with care, because if the symbol versions don't match,
++option).  Use this with care, because if the symbol versions don't match,
 +.B modprobe
 +or
 +.B insmod
@@ -80,9 +80,9 @@
  symbols.  However you can use a
  .I System.map
  even with versioned symbols.
-+For compatibility,                                                            
-+.B "\-m kernelsyms"                                                           
-+is identical to                                                               
++For compatibility,
++.B "\-m kernelsyms"
++is identical to
 +.B "\-F kernelsyms"
  .SH CONFIGURATION
  The behavior of
