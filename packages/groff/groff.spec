@@ -1,4 +1,4 @@
-# $Id: Owl/packages/groff/groff.spec,v 1.8 2001/05/05 20:03:42 solar Exp $
+# $Id: Owl/packages/groff/groff.spec,v 1.9 2001/05/06 13:52:51 solar Exp $
 
 %define BUILD_USE_X	'no'
 %define BUILD_CURRENT	'no'
@@ -6,7 +6,7 @@
 Summary: A document formatting system.
 Name: 		groff
 Version: 	1.17
-Release: 	1owl
+Release: 	2owl
 Copyright: 	GPL
 Group: 		System Environment/Base
 Source0: 	ftp://ftp.gnu.org/gnu/groff/groff-%{version}.tar.gz
@@ -166,6 +166,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %endif
 
 %changelog
+* Sun May 06 2001 Solar Designer <solar@owl.openwall.com>
+- README.A4 updates (mention grops -g and a4.tmac).
+
 * Sat May 05 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 1.17.
 - Reviewed post-1.17 changes, included one tiny and obviously correct

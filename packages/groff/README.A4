@@ -1,16 +1,25 @@
-The postscript (and hplj) output drivers for groff lack support for printing
-on A4 paper. Setting up for A4 paper is not documented for groff.
+With the -g option, grops will generate PostScript code that guesses
+the page height.  This allows documents to be printed on both Letter
+(8.5x11) and A4 paper without change.
+
+There's the a4.tmac macro file for specifying A4 paper format.  Read
+the comment inside that file for usage instructions.
+
+Below are the older A4 setup instructions with minor updates:
+
+The PostScript (and HPLJ) output drivers for groff lack support for printing
+on A4 paper.  Setting up for A4 paper is not documented for groff.
 
 The following file could be supplied with the groff distribution to support
 the use of A4 paper (used in much of the world instead of the Letter format
 used widely in the US).  This is a modified version of
-	/usr/lib/groff/font/devps/DESC.
+	/usr/share/groff/*/font/devps/DESC.
 I don't know the best way to set this up at install time.
 
 In my system, I have both files (DESC.a4 and DESC.letter) and a symlink from
 DESC to the correct one).  The modifications are to the "unitwidth" (reduced
-from 1000 to 970, and "paperlength" (increased from 792000 to 841888). The
-hplj output driver needs a similar fix, but the parameters are different.
+from 1000 to 970, and "paperlength" (increased from 792000 to 841890).  The
+HPLJ output driver needs a similar fix, but the parameters are different.
 
 -Doug-
 
@@ -28,5 +37,5 @@ fonts 9 0 0 0 0 0 SS S ZD ZDR
 tcommand
 postpro grops
 broken 7
-paperlength 841888
-print lpr       
+paperlength 841890
+print lpr
