@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.52 2002/11/03 04:39:28 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.53 2002/12/19 19:22:54 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.4p1
-Release: owl6
+Release: owl7
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -32,7 +32,7 @@ BuildRequires: openssl-devel >= 0.9.6b-1owl
 BuildRequires: pam-devel
 BuildRequires: perl
 BuildRequires: zlib-devel
-BuildRequires: tcp_wrappers
+BuildRequires: tcp_wrappers >= 7.6-owl2
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -223,6 +223,10 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Thu Dec 19 2002 Solar Designer <solar@owl.openwall.com>
+- New release number for linking against tcp_wrappers with Steve Grubb's
+error handling fix.
+
 * Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
 - Dump/restore the owl-control setting for sftp on package upgrades.
 

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.19 2002/10/28 16:32:08 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.20 2002/12/19 19:22:54 solar Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
 Version: 2.3.9
-Release: owl2
+Release: owl3
 License: BSD with minor restrictions
 Group: System Environment/Daemons
 URL: http://www.xinetd.org
@@ -21,7 +21,7 @@ Source10: xinetd-uchargen
 PreReq: /sbin/chkconfig
 Provides: inetd
 Obsoletes: inetd
-BuildRequires: tcp_wrappers
+BuildRequires: tcp_wrappers >= 7.6-owl2
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -104,6 +104,10 @@ fi
 %{_mandir}/*/*
 
 %changelog
+* Thu Dec 19 2002 Solar Designer <solar@owl.openwall.com>
+- New release number for linking against tcp_wrappers with Steve Grubb's
+error handling fix.
+
 * Mon Oct 28 2002 Solar Designer <solar@owl.openwall.com>
 - Build with load averages support.
 
