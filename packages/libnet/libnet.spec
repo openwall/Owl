@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libnet/libnet.spec,v 1.4 2002/02/04 17:23:22 solar Exp $
+# $Id: Owl/packages/libnet/libnet.spec,v 1.5 2002/02/04 17:28:01 solar Exp $
 
 Summary: "libpwrite" Network Routine Library.
 Name: libnet
@@ -25,7 +25,7 @@ link layer as well as a host of supplementary and complementary
 functionality.
 
 %package devel
-Summary: Header files and development documentation for libnet
+Summary: Header files and development documentation for libnet.
 Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 
