@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.7 2001/07/26 12:08:42 mci Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.8 2001/07/27 20:13:48 solar Exp $
 
 Summary: Owl configuration tool
 Name: owl-setup
 Version: 0.4
-release: 3owl
+Release: 3owl
 Copyright: mostly public domain, passwdlg is under GPL
 Group: System Environment/Base
 Source0: Makefile
