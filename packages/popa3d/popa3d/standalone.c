@@ -45,7 +45,7 @@ typedef volatile sig_atomic_t va_int;
  */
 static struct {
 	struct in_addr addr;		/* Source IP address */
-	va_int pid;			/* PID of the server, or 0 for none */
+	volatile int pid;		/* PID of the server, or 0 for none */
 	clock_t start;			/* When the server was started */
 	clock_t log;			/* When we've last logged a failure */
 } sessions[MAX_SESSIONS];
@@ -54,7 +54,7 @@ static va_int child_blocked;		/* We use blocking to avoid races */
 static va_int child_pending;		/* Are any dead children waiting? */
 
 /*
- * SIGCHLD handler; can also be called directly with a zero signum.
+ * SIGCHLD handler.
  */
 static void handle_child(int signum)
 {
@@ -77,7 +77,7 @@ static void handle_child(int signum)
 		}
 	}
 
-	if (signum) signal(SIGCHLD, handle_child);
+	signal(SIGCHLD, handle_child);
 
 	errno = saved_errno;
 }
@@ -161,7 +161,7 @@ int main(void)
 
 	while (1) {
 		child_blocked = 0;
-		if (child_pending) handle_child(0);
+		if (child_pending) raise(SIGCHLD);
 
 		if (new > 0)
 		if (close(new)) return log_error("close");
