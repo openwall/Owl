@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ltrace/ltrace.spec,v 1.3 2001/01/14 14:07:14 solar Exp $
+# $Id: Owl/packages/ltrace/ltrace.spec,v 1.4 2001/01/14 20:58:45 mci Exp $
 
 Summary: Tracks runtime library calls from dynamically linked executables.
 Name: ltrace
@@ -11,6 +11,7 @@ Source: ftp://ftp.debian.org/debian/dists/potato/main/source/utils/ltrace_%{vers
 Patch0: ltrace-0.3.10-rh-sparc.diff
 Patch1: ltrace-0.3.10-rh-mandir.diff
 Patch2: ltrace-0.3.10-rh-nsyscals0.diff
+Patch3: ltrace-0.3.10-rh-strlen.diff
 Prefix: %{_prefix}
 BuildRoot: /var/rpm-buildroot/%{name}-root
 
@@ -33,6 +34,7 @@ execution of processes.
 
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 %configure
@@ -53,6 +55,11 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/ltrace.conf
 
 %changelog
+* Sun Jan 14 2001 Michail Litvak <mci@owl.openwall.com>
+- extracted from sparc patch - ltrace-0.3.10-rh-strlen.diff
+  (it useful for any arch)
+- fixed some type cast in sparc patch
+
 * Sun Jan 14 2001 Solar Designer <solar@owl.openwall.com>
 - i386 -> %ix86
 

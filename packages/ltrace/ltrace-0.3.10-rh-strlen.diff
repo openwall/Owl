@@ -1,0 +1,10 @@
+--- ltrace.conf.orig	Sun Dec 19 18:52:49 1999
++++ ltrace.conf	Sun Jan 14 20:50:38 2001
+@@ -162,6 +162,7 @@
+ uint strspn(string,string);
+ uint strcspn(string,string);
+ string strstr(string,string);
++int strlen(string);
+ 
+ ; sys/ioctl.h
+ int ioctl(int, int, addr);
