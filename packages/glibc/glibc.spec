@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.31 2002/06/12 07:36:04 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.32 2002/07/04 14:52:51 mci Exp $
 
 %define BUILD_PROFILE 0
 
@@ -6,7 +6,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
 %define crypt_bf_version 0.4.3
-Release: owl21
+Release: owl22
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%{version}.tar.gz
@@ -27,9 +27,10 @@ Patch7: glibc-2.1.3-owl-tmp.diff
 Patch8: glibc-2.1.3-owl-vitmp.diff
 Patch9: glibc-2.1.3-owl-glibcbug-COMMAND.diff
 Patch10: glibc-2.1.3-owl-syslog-ident.diff
-Patch11: glibc-2.1.3-mjt-owl-syslog-timestamp.diff
-Patch12: glibc-2.1.3-owl-alt-asprintf-error-handling.diff
-Patch13: glibc-2.1.3-openbsd-freebsd-owl-fts.diff
+Patch11: glibc-2.1.3-owl-info-fix.diff
+Patch12: glibc-2.1.3-mjt-owl-syslog-timestamp.diff
+Patch13: glibc-2.1.3-owl-alt-asprintf-error-handling.diff
+Patch14: glibc-2.1.3-openbsd-freebsd-owl-fts.diff
 Patch20: glibc-2.1.3-rh-libnoversion.diff
 Patch21: glibc-2.1.3-rh-paths.diff
 Patch22: glibc-2.1.3-rh-linuxthreads.diff
@@ -125,6 +126,7 @@ cp $RPM_SOURCE_DIR/crypt_freesec.c crypt/sysdeps/unix/
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
+%patch14 -p1
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
@@ -302,6 +304,9 @@ fi
 %endif
 
 %changelog
+* Thu Jul 04 2002 Michail Litvak <mci@owl.openwall.com>
+- patch to build with new texinfo
+
 * Wed Jun 12 2002 Solar Designer <solar@owl.openwall.com>
 - ldd(1) will no longer try to invoke programs directly, even when it
 seems like that would work.  The dynamic linker will be invoked as a

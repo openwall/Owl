@@ -1,0 +1,15 @@
+--- glibc-2.1.3/manual/stdio.texi.orig	Tue Jul  2 18:50:08 2002
++++ glibc-2.1.3/manual/stdio.texi	Tue Jul  2 18:59:21 2002
+@@ -2487,9 +2487,9 @@
+ If you are trying to read input that doesn't match a single, fixed
+ pattern, you may be better off using a tool such as Flex to generate a
+ lexical scanner, or Bison to generate a parser, rather than using
+-@code{scanf}.  For more information about these tools, see @ref{, , ,
+-flex.info, Flex: The Lexical Scanner Generator}, and @ref{, , ,
+-bison.info, The Bison Reference Manual}.
++@code{scanf}.  For more information about these tools, see @inforef{
++Top, Flex: The Lexical Scanner Generator, flex}, and @inforef{
++Top, The Bison Reference Manual, bison}.
+ 
+ @node Input Conversion Syntax
+ @subsection Input Conversion Syntax
