@@ -1,9 +1,9 @@
-# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.9 2003/08/22 01:44:39 solar Exp $
+# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.10 2003/09/15 17:16:04 solar Exp $
 
 Summary: Tools for managing ipchains packet filtering rules.
 Name: ipchains
 Version: 1.3.10
-Release: owl11
+Release: owl12
 License: GPL
 Group: System Environment/Base
 URL: http://netfilter.samba.org/ipchains/
@@ -77,6 +77,9 @@ fi
 %{_mandir}/man*/*
 
 %changelog
+* Mon Sep 15 2003 Solar Designer <solar@owl.openwall.com> 1.3.10-owl12
+- In "stop", only try to do anything if ipchains is supported by kernel.
+
 * Fri Aug 22 2003 Solar Designer <solar@owl.openwall.com> 1.3.10-owl11
 - Corrected the package summary and description to note the difference
 from iptables.

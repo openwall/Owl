@@ -1,9 +1,9 @@
-# $Id: Owl/packages/iptables/iptables.spec,v 1.5 2003/08/22 02:00:47 solar Exp $
+# $Id: Owl/packages/iptables/iptables.spec,v 1.6 2003/09/15 17:16:04 solar Exp $
 
 Summary: Tools for managing Netfilter/iptables packet filtering rules.
 Name: iptables
 Version: 1.2.8
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 URL: http://www.netfilter.org
@@ -57,6 +57,9 @@ fi
 /%{_lib}/iptables/libipt*
 
 %changelog
+* Mon Sep 15 2003 Solar Designer <solar@owl.openwall.com> 1.2.8-owl2
+- In "stop", only try to do anything if iptables is supported by kernel.
+
 * Fri Aug 22 2003 Solar Designer <solar@owl.openwall.com> 1.2.8-owl1
 - Further cleanups and changes for consistency with the ipchains package.
 
