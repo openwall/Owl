@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.15 2002/08/11 23:20:27 solar Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.16 2003/07/04 16:13:08 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -6,7 +6,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.6.0
-Release: owl12
+Release: owl13
 Epoch: 1
 License: GPL
 Group: Development/Languages
@@ -25,6 +25,7 @@ Patch7: perl-5.6.0-alt-owl-perldoc-tmp.diff
 Patch8: perl-5.6.0-owl-tmp.diff
 Patch9: perl-5.6.0-owl-vitmp.diff
 Patch10: perl-5.6.0-up-owl-glob-bound.diff
+Patch11: perl-5.6.0-owl-getpwent.diff
 Provides: perl <= %{version}
 Obsoletes: perl-MD5
 BuildRequires: rpm >= 3.0.5
@@ -81,6 +82,7 @@ cp $RPM_SOURCE_DIR/perlcc.PL utils/
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 
 find . -name '*.orig' -print0 | xargs -r0 rm -v --
 
@@ -196,7 +198,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/*/*
 
 %changelog
-* Sun Aug 11 2002 Solar Designer <solar@owl.openwall.com>
+* Fri Jul 04 2003 Solar Designer <solar@owl.openwall.com> 5.6.0-owl13
+- Corrected the Perl getpwent() to not rely on getspent(3) returning
+entries in the same order as getpwent(3) does; this actually makes a
+difference with /etc/tcb and likely with non-files password databases.
+
+* Sun Aug 11 2002 Solar Designer <solar@owl.openwall.com> 5.6.0-owl12
 - Back-ported bound checking fixes for File::Glob from Perl 5.8.0.
 Thanks to Pavel Kankovsky for the report and to Michael Tokarev for
 discussing other possible approaches to fixing this.
