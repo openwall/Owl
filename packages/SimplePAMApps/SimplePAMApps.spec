@@ -1,4 +1,4 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.19 2002/03/01 20:06:30 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.20 2002/03/01 20:10:15 solar Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
@@ -19,7 +19,7 @@ Patch2: SimplePAMApps-0.60-owl-su.diff
 Patch3: SimplePAMApps-0.60-owl-ut_id.diff
 Requires: tcb, pam_passwdqc >= 0.2, pam_mktemp
 Requires: owl-control < 2.0
-Provides: SimplePAMApps <= 0.60-13owl
+Provides: SimplePAMApps <= 0.60-13owl, SimplePAMApps >= 0.60-owl13
 Obsoletes: passwd
 BuildRoot: /override/%{name}-%{version}
 
