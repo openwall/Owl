@@ -1,0 +1,32 @@
+--- lilo-21.4/geometry.c.broken	Mon Jun 19 16:38:28 2000
++++ lilo-21.4/geometry.c	Mon Jun 19 16:38:39 2000
+@@ -13,6 +13,8 @@
+ #include <sys/stat.h>
+ #include <sys/ioctl.h>
+ 
++#define _LINUX_STRING_H_
++
+ #include <linux/fs.h>
+ #include <linux/fd.h>
+ #include <linux/hdreg.h>
+--- lilo-21.4/partition.c.broken	Mon Jun 19 16:39:23 2000
++++ lilo-21.4/partition.c	Mon Jun 19 16:39:36 2000
+@@ -12,6 +12,8 @@
+ #include <errno.h>
+ #include <sys/stat.h>
+ 
++#define _LINUX_STRING_H_
++
+ #include <linux/fs.h>
+ 
+ #include "config.h"
+--- lilo-21.4/test.c.broken	Mon Jun 19 16:39:42 2000
++++ lilo-21.4/test.c	Mon Jun 19 16:39:53 2000
+@@ -3,6 +3,7 @@
+ #include <fcntl.h>
+ #include <sys/stat.h>
+ #include <sys/ioctl.h>
++#define _LINUX_STRING_H_
+ #include <linux/fs.h>
+ 
+ 

@@ -1,0 +1,27 @@
+--- lilo-21.4.4/geometry.c.sa5300	Tue Aug  1 18:01:31 2000
++++ lilo-21.4.4/geometry.c	Tue Aug  1 18:06:19 2000
+@@ -344,6 +344,14 @@
+ 	case COMPAQ_SMART2_MAJOR+5:
+ 	case COMPAQ_SMART2_MAJOR+6:
+ 	case COMPAQ_SMART2_MAJOR+7:
++        case COMPAQ_CISS_MAJOR+0:
++        case COMPAQ_CISS_MAJOR+1:
++        case COMPAQ_CISS_MAJOR+2:
++        case COMPAQ_CISS_MAJOR+3:
++        case COMPAQ_CISS_MAJOR+4:
++        case COMPAQ_CISS_MAJOR+5:
++        case COMPAQ_CISS_MAJOR+6:
++        case COMPAQ_CISS_MAJOR+7:
+ 	    geo->device = 0x80+last_dev(MAJOR_HD,64)+(MINOR(device) >> 4);
+ 	    if (ioctl(fd,HDIO_GETGEO,&hdprm) < 0)
+ 		die("geo_query_dev HDIO_GETGEO (dev 0x%04x): %s",device,
+--- lilo-21.4.4/lilo.h.sa5300	Tue Aug  1 18:07:37 2000
++++ lilo-21.4.4/lilo.h	Tue Aug  1 18:08:05 2000
+@@ -43,6 +43,7 @@
+ #define MAJOR_IDE5	55 /* IDE on fifth interface */
+ #define MAJOR_IDE6	57 /* IDE on sixth interface */
+ #define COMPAQ_SMART2_MAJOR	72 /* First Smart/2 Major */
++#define COMPAQ_CISS_MAJOR      104 /* First CCISS Major */
+ 
+ #define MAX_IMAGES      ((SECTOR_SIZE*2-2)/sizeof(IMAGE_DESCR))
+ 			  /* maximum number of images */
