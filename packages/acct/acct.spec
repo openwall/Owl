@@ -1,9 +1,9 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.14 2002/03/24 19:22:30 solar Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.15 2002/08/05 16:44:29 solar Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
 Version: 6.3.5
-Release: owl8
+Release: owl9
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.red-bean.com/pub/noel/%{name}-%{version}.tar.gz
@@ -51,7 +51,7 @@ install -m 755 $RPM_SOURCE_DIR/acct.init $RPM_BUILD_ROOT/etc/rc.d/init.d/acct
 install -m 644 $RPM_SOURCE_DIR/acct.logrotate \
 	$RPM_BUILD_ROOT/etc/logrotate.d/acct
 
-# move accton to /sbin -- leave historical symlink
+# Move accton to /sbin -- leave historical symlink
 mv $RPM_BUILD_ROOT%{_sbindir}/accton $RPM_BUILD_ROOT/sbin/accton
 ln -s ../../sbin/accton $RPM_BUILD_ROOT%{_sbindir}/accton
 
@@ -70,9 +70,16 @@ rm -rf $RPM_BUILD_ROOT
 %post
 # We need this hack to get rid of an old, incorrect accounting info entry
 # when installing over older versions of Red Hat Linux.
-cp -p /etc/info-dir /etc/info-dir.new &&
-grep -v '* accounting: (psacct)' < /etc/info-dir > /etc/info-dir.new &&
-mv -f /etc/info-dir.new /etc/info-dir
+if grep -q '^* accounting: (psacct)' %{_infodir}/dir; then
+	INFODIRFILE=%{_infodir}/dir
+	if test -L $INFODIRFILE; then
+		INFODIRFILE="`readlink $INFODIRFILE`"
+	fi
+	cp -p $INFODIRFILE $INFODIRFILE.rpmtmp &&
+	grep -v '^* accounting: (psacct)' $INFODIRFILE > $INFODIRFILE.rpmtmp &&
+	mv $INFODIRFILE.rpmtmp $INFODIRFILE
+fi
+
 /sbin/install-info %{_infodir}/accounting.info.gz %{_infodir}/dir --entry="* accounting: (accounting).            The GNU Process Accounting Suite."
 
 for f in %{_var}/account/{pacct,usracct,savacct}; do
@@ -102,6 +109,9 @@ fi
 %{_infodir}/*
 
 %changelog
+* Mon Aug 05 2002 Solar Designer <solar@owl.openwall.com>
+- Use a more generic script to remove the obsolete info dir entry.
+
 * Sun Mar 24 2002 Solar Designer <solar@owl.openwall.com>
 - Heavy documentation corrections and cleanups (both man pages and texinfo).
 - Minor spec file cleanups.
