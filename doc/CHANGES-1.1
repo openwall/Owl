@@ -12,6 +12,13 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.0 and Owl-current.
 
+2003/04/12	Packages: pam_userpass, openssh, popa3d, screen,
+		shadow-utils, vsftpd;
+		Owl/build/installorder.conf
+Moved the common pam_userpass PAM conversation function into a
+library, libpam_userpass (both shared and static versions are built).
+This is due to work by Dmitry V. Levin of ALT Linux.
+
 2003/04/12	Package: openssl
 SECURITY FIX	Severity: medium, remote, active
 Updated to 0.9.6j which adds two security fixes.  One of the fixes is
@@ -260,4 +267,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.40 2003/04/12 05:10:00 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.41 2003/04/12 15:23:37 solar Exp $
