@@ -1,9 +1,9 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.22 2002/08/26 17:26:26 mci Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.23 2003/01/17 01:27:34 solar Exp $
 
 Summary: A screen manager that supports multiple sessions on one terminal.
 Name: screen
 Version: 3.9.10
-Release: owl4
+Release: owl5
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%{version}.tar.gz
@@ -19,10 +19,13 @@ Patch7: screen-3.9.10-rh-doc.diff
 Patch8: screen-3.9.9-owl-telnet.diff
 Patch9: screen-3.9.10-owl-tmp.diff
 Patch10: screen-3.9.10-owl-no-fault-handler.diff
+Patch11: screen-3.9.11-alt-utempter.diff
 PreReq: /sbin/install-info
-Requires: tcb, pam_userpass, utempter >= 0.5.2-owl6
+Requires: tcb, pam_userpass, libutempter
+# Just in case this is built with an older version of RPM package.
+Requires: libutempter.so.0(UTEMPTER_1.1)
 Prefix: %{_prefix}
-BuildRequires: pam-devel, utempter
+BuildRequires: pam-devel, libutempter-devel
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -44,6 +47,7 @@ but want to use more than one session.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -91,7 +95,7 @@ fi
 %triggerin -- tcb >= 0.9.7.1
 ln -f %{_libexecdir}/chkpwd/tcb_chkpwd %{_libexecdir}/screen/
 
-%triggerin -- utempter >= 0.5.2-owl6
+%triggerin -- libutempter >= 1.1.0-owl1
 ln -f %{_libexecdir}/utempter/utempter %{_libexecdir}/screen/
 
 %triggerpostun -- tcb
@@ -99,7 +103,7 @@ if [ ! -e %{_libexecdir}/chkpwd/tcb_chkpwd ]; then
 	rm -f %{_libexecdir}/screen/tcb_chkpwd
 fi
 
-%triggerpostun -- utempter
+%triggerpostun -- libutempter
 if [ ! -e %{_libexecdir}/utempter/utempter ]; then
 	rm -f %{_libexecdir}/screen/utempter
 fi
@@ -115,6 +119,9 @@ fi
 %attr(710,root,screen) %dir %{_libexecdir}/screen
 
 %changelog
+* Wed Dec 25 2002 Dmitry V. Levin <ldv@altlinux.org> 3.9.10-owl5
+- Migrated to libutempter.
+
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
 - Deal with info dir entries such that the menu looks pretty.
 
