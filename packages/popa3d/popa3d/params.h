@@ -127,8 +127,9 @@
  * Introduce some sane limits on the mailbox size in order to prevent
  * a single huge mailbox from stopping the entire POP service.
  */
-#define MAX_MAILBOX_MESSAGES		100000
-#define MAX_MAILBOX_BYTES		100000000
+#define MAX_MAILBOX_MESSAGES		200000
+#define MAX_MAILBOX_OPEN_BYTES		200000000
+#define MAX_MAILBOX_WORK_BYTES		250000000
 
 #if !VIRTUAL_ONLY
 
