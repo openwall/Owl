@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bzip2/bzip2.spec,v 1.14 2004/02/10 23:55:29 mci Exp $
+# $Id: Owl/packages/bzip2/bzip2.spec,v 1.15 2004/02/11 21:42:23 solar Exp $
 
 Summary: A file compression utility.
 Name: bzip2
@@ -50,7 +50,7 @@ make CFLAGS="$RPM_OPT_FLAGS -D_FILE_OFFSET_BITS=64"
 %install
 rm -rf $RPM_BUILD_ROOT
 
-make install PREFIX=$RPM_BUILD_ROOT/usr MANDIR=${RPM_BUILD_ROOT}%_mandir
+make install PREFIX=$RPM_BUILD_ROOT/usr MANDIR=$RPM_BUILD_ROOT%_mandir
 make -f Makefile-libbz2_so install PREFIX=$RPM_BUILD_ROOT/usr
 
 # Hack!
@@ -74,7 +74,7 @@ ln -s libbz2.so.%version $RPM_BUILD_ROOT%_libdir/libbz2.so.0
 
 %changelog
 * Mon Feb 09 2004 Michail Litvak <mci@owl.openwall.com> 1.0.2-owl2
-- Use rpm macros instead just paths.
+- Use RPM macros instead of explicit paths.
 
 * Fri Feb 01 2002 Solar Designer <solar@owl.openwall.com> 1.0.2-owl1
 - Updated to 1.0.2.

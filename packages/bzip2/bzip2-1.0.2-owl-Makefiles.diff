@@ -75,7 +75,7 @@
 +	install -m 755 libbz2.so.1.0.2 $(PREFIX)/lib/
 +	ln -sf libbz2.so.1.0.2 $(PREFIX)/lib/libbz2.so.1
 +	ln -sf libbz2.so.1 $(PREFIX)/lib/libbz2.so
-+ 
++
 +clean:
 +	rm -f $(OBJS) bzip2.o libbz2.so.1.0.2 bzip2-shared
  
