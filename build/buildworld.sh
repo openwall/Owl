@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.23 2002/06/22 07:22:56 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.24 2002/06/22 07:40:04 solar Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -166,48 +166,11 @@ function build_foreign()
 	rm -rf $WORK/BUILD/*
 }
 
-function detect()
-{
-	local MACHINE
-
-	MACHINE=`uname -m` || MACHINE="unknown"
-
-	case "$MACHINE" in
-	*86)
-		ARCHITECTURE=i386
-		;;
-	sparc*)
-		ARCHITECTURE=sparc
-		;;
-	alpha)
-		ARCHITECTURE=alpha
-		;;
-	esac
-}
-
 function builder()
 {
 	local NUMBER SOURCE SPEC
 
 	NUMBER=$1
-
-	test -n "$ARCHITECTURE" || detect
-
-	if [ -n "$ARCHITECTURE" ]; then
-		TARGET="--target ${ARCHITECTURE}-unknown-linux"
-		BUILDARCH="$ARCHITECTURE"
-	else
-		TARGET=
-		BUILDARCH="%_arch"
-	fi
-
-	if [ "$ARCHITECTURE" = "sparc" -o "$ARCHITECTURE" = "sparcv9" ]; then
-		PERSONALITY=sparc32
-	else
-		PERSONALITY=
-	fi
-
-	test -n "$BUILDHOST" || BUILDHOST="`hostname -f`"
 
 	log "#$NUMBER: Scanning native"
 
@@ -253,6 +216,46 @@ function builder()
 
 	log "#$NUMBER: Finished"
 	exit 0
+}
+
+function detect_arch()
+{
+	local MACHINE
+
+	MACHINE=`uname -m` || MACHINE="unknown"
+
+	case "$MACHINE" in
+	*86)
+		ARCHITECTURE=i386
+		;;
+	sparc*)
+		ARCHITECTURE=sparc
+		;;
+	alpha)
+		ARCHITECTURE=alpha
+		;;
+	esac
+}
+
+function detect()
+{
+	test -n "$ARCHITECTURE" || detect_arch
+
+	if [ -n "$ARCHITECTURE" ]; then
+		TARGET="--target ${ARCHITECTURE}-unknown-linux"
+		BUILDARCH="$ARCHITECTURE"
+	else
+		TARGET=
+		BUILDARCH="%_arch"
+	fi
+
+	if [ "$ARCHITECTURE" = "sparc" -o "$ARCHITECTURE" = "sparcv9" ]; then
+		PERSONALITY=sparc32
+	else
+		PERSONALITY=
+	fi
+
+	test -n "$BUILDHOST" || BUILDHOST="`hostname -f`"
 }
 
 function check_includes()
@@ -309,14 +312,15 @@ echo "`date '+%Y %b %e %H:%M:%S'`: Started" >> logs/buildworld
 log "Removing stale temporary files"
 rm -rf tmp-work rpm-work-[1-9]* native-work foreign-work
 
-sanity_check
-
 trap clean_death HUP INT TERM
+
+detect
+sanity_check
 
 NUMBER=1
 while [ $NUMBER -le $PROCESSORS ]; do
 	mkdir -p rpm-work-$NUMBER/{BUILD,SOURCES,SPECS,SRPMS}
-	mkdir -p rpm-work-$NUMBER/RPMS/{noarch,i386,i686,alpha,sparc,sparcv9}
+	mkdir -p rpm-work-$NUMBER/RPMS/{noarch,i386,i686,sparc,sparcv9,alpha}
 	NUMBER=$[$NUMBER + 1]
 done
 
