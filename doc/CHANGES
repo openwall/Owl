@@ -12,6 +12,10 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/11/16	Packages: SimplePAMApps, openssh, popa3d, screen,
+		owl-setup
+Use pam_tcb instead of pam_pwdb.
+
 2001/11/15	Packages: pam, tcb
 No longer build pam_unix, the tcb package will provide compatibility
 symlinks instead.
@@ -459,4 +463,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.48 2001/11/15 04:45:06 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.49 2001/11/16 03:09:22 solar Exp $

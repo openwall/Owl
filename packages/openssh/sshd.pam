@@ -1,11 +1,11 @@
 #%PAM-1.0
-# $Id: Owl/packages/openssh/sshd.pam,v 1.6 2000/12/20 00:02:04 solar Exp $
-auth       required     /lib/security/pam_userpass.so
-auth       required     /lib/security/pam_pwdb.so shadow nodelay use_first_pass
-auth       required     /lib/security/pam_nologin.so
-account    required     /lib/security/pam_pwdb.so
-password   required     /lib/security/pam_passwdqc.so min=disabled,24,12,8,7 max=40 passphrase=3 match=4 similar=deny random=42 enforce=everyone retry=3
-password   required     /lib/security/pam_pwdb.so use_authtok shadow prefix=$2a$ count=8
-session    required     /lib/security/pam_pwdb.so
-session    required     /lib/security/pam_limits.so
-session    required     /lib/security/pam_mktemp.so
+# $Id: Owl/packages/openssh/sshd.pam,v 1.7 2001/11/16 03:09:22 solar Exp $
+auth       required	/lib/security/pam_userpass.so
+auth       required	/lib/security/pam_tcb.so use_first_pass shadow fork nodelay
+auth       required	/lib/security/pam_nologin.so
+account    required	/lib/security/pam_tcb.so shadow fork
+password   required	/lib/security/pam_passwdqc.so min=disabled,24,12,8,7 max=40 passphrase=3 match=4 similar=deny random=42 enforce=everyone retry=3
+password   required	/lib/security/pam_tcb.so use_authtok shadow fork prefix=$2a$ count=8
+session    required	/lib/security/pam_tcb.so
+session    required	/lib/security/pam_limits.so
+session    required	/lib/security/pam_mktemp.so

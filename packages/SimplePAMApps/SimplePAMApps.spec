@@ -1,11 +1,12 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.14 2001/04/01 15:12:45 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.15 2001/11/16 03:09:22 solar Exp $
 
-Summary: Simple PAM-based Applications
+Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
 Version: 0.60
-Release: 11owl
-Copyright: BSD or GNU GPL
+Release: 12owl
+License: BSD or GPL
 Group: Utilities/System
+URL: http://www.kernel.org/pub/linux/libs/pam/
 Source0: SimplePAMApps-0.60.tar.gz
 Source1: login.pam
 Source2: su.pam
@@ -17,10 +18,9 @@ Patch1: SimplePAMApps-0.60-owl-login.diff
 Patch2: SimplePAMApps-0.60-owl-su-no-tty.diff
 Patch3: SimplePAMApps-0.60-owl-stdarg.diff
 Patch4: SimplePAMApps-0.60-owl-passwd-no-tty.diff
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
-Requires: pam >= 0.58, pam_passwdqc >= 0.2, pam_mktemp, owl-control < 2.0
+Requires: pam, tcb, pam_passwdqc >= 0.2, pam_mktemp, owl-control < 2.0
 Obsoletes: passwd
-URL: http://parc.power.net/morgan/Linux-PAM/index.html
+BuildRoot: /override/%{name}-%{version}
 
 %description
 These are applications for use with the Linux-PAM library.  This package
@@ -34,9 +34,6 @@ includes "login", "su", and "passwd".
 %patch3 -p1
 %patch4 -p1
 
-echo Checking distribution
-make check
-
 %build
 touch conf/.ignore_age
 CFLAGS="$RPM_OPT_FLAGS -Wall" ./configure
@@ -44,19 +41,14 @@ make
 
 %install
 mkdir -p $RPM_BUILD_ROOT/bin
-install -m 755 pamapps/login/login $RPM_BUILD_ROOT/bin
-install -m 755 pamapps/su/su $RPM_BUILD_ROOT/bin
+install -m 700 pamapps/{login/login,su/su} $RPM_BUILD_ROOT/bin/
 
 mkdir -p $RPM_BUILD_ROOT/usr/bin
-install -m 755 pamapps/passwd/passwd $RPM_BUILD_ROOT/usr/bin
-
-strip $RPM_BUILD_ROOT/bin/* $RPM_BUILD_ROOT/usr/bin/*
+install -m 700 pamapps/passwd/passwd $RPM_BUILD_ROOT/usr/bin/
 
 mkdir -p $RPM_BUILD_ROOT/usr/man/man1
-install -m 0444 pamapps/login/login.1 $RPM_BUILD_ROOT/usr/man/man1
-install -m 0444 pamapps/su/su.1 $RPM_BUILD_ROOT/usr/man/man1
-install -m 0444 pamapps/passwd/passwd.1 $RPM_BUILD_ROOT/usr/man/man1
-gzip -9nf $RPM_BUILD_ROOT/usr/man/man1/*
+install -m 0644 pamapps/{login/login.1,su/su.1,passwd/passwd.1} \
+	$RPM_BUILD_ROOT/usr/man/man1/
 
 mkdir -p $RPM_BUILD_ROOT/etc/pam.d
 install -m 600 %{SOURCE1} $RPM_BUILD_ROOT/etc/pam.d/login
@@ -72,6 +64,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
+%doc Copyright Discussions
 %attr(0700,root,root) /bin/login
 /usr/man/man1/login.1*
 %config(noreplace) /etc/pam.d/login
@@ -83,10 +76,12 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) /etc/pam.d/passwd
 /etc/control.d/facilities/su
 /etc/control.d/facilities/passwd
-%doc pgp.keys.asc Copyright conf/pam.conf conf/pam.d/
-%doc README CHANGELOG* NOTES.su Discussions
 
 %changelog
+* Fri Nov 16 2001 Solar Designer <solar@owl.openwall.com>
+- Use pam_tcb.
+- Dropped outdated documentation.
+
 * Sun Apr 01 2001 Solar Designer <solar@owl.openwall.com>
 - Use pam_limits with login and su.
 - passwd: line-buffer stdout.

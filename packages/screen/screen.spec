@@ -1,9 +1,9 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.18 2001/11/13 14:45:02 solar Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.19 2001/11/16 03:09:22 solar Exp $
 
 Summary: A screen manager that supports multiple sessions on one terminal.
 Name: screen
 Version: 3.9.10
-Release: 1owl
+Release: 2owl
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%{version}.tar.gz
@@ -18,9 +18,10 @@ Patch6: screen-3.9.9-rh-deletehack.diff
 Patch7: screen-3.9.9-rh-docbug.diff
 Patch8: screen-3.9.9-owl-telnet.diff
 Patch9: screen-3.9.10-owl-tmp.diff
+Requires: tcb, pam_userpass, utempter
+PreReq: /sbin/install-info
 Prefix: %{_prefix}
 BuildRequires: pam-devel >= 0.75-11owl
-PreReq: /sbin/install-info, pam_userpass, utempter
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -41,6 +42,8 @@ but want to use more than one session.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+
+%{expand:%%define optflags %optflags -Wall}
 
 %build
 autoconf
@@ -88,6 +91,10 @@ fi
 %config(noreplace) /etc/pam.d/screen
 
 %changelog
+* Fri Nov 16 2001 Solar Designer <solar@owl.openwall.com>
+- Use pam_tcb.
+- Build with -Wall.
+
 * Tue Nov 13 2001 Solar Designer <solar@owl.openwall.com>
 - Corrected the package description.
 

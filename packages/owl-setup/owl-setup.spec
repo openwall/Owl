@@ -1,10 +1,10 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.10 2001/10/08 21:44:21 mci Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.11 2001/11/16 03:09:22 solar Exp $
 
-Summary: Owl configuration tool
+Summary: Owl configuration tool.
 Name: owl-setup
 Version: 0.6
-Release: 1owl
-Copyright: mostly public domain, passwdlg is under GPL
+Release: 2owl
+License: mostly public domain, passwdlg is under GPL
 Group: System Environment/Base
 Source0: Makefile
 Source1: passwdlg.c
@@ -14,11 +14,12 @@ Source4: owl-setup
 Source5: mkfstab
 Source6: netcfg
 Source10: README
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: owl-startup
 Requires: dialog
 Requires: bash >= 2.0, sh-utils, util-linux, sed, mktemp
+Requires: tcb
 Conflicts: setuptool
+BuildRoot: /override/%{name}-%{version}
 
 %description
 This is a configuration tool to initially setup fstab, networking,
@@ -58,6 +59,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc README
 
 %changelog
+* Fri Nov 16 2001 Solar Designer <solar@owl.openwall.com>
+- Use pam_tcb.
+
 * Tue Oct 09 2001 Michail Litvak <mci@owl.openwall.com>
 - configure network interface and gateway separately
 

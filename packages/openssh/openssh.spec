@@ -1,9 +1,11 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.28 2001/10/07 11:06:45 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.29 2001/11/16 03:09:22 solar Exp $
 
 Summary: The OpenSSH implementation of SSH.
 Name: openssh
 Version: 2.9.9p2
-Release: 3owl
+Release: 4owl
+License: BSD
+Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
 Source0: ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-%{version}.tar.gz
 Source1: sshd.pam
@@ -18,31 +20,29 @@ Patch3: openssh-2.9.9p2-owl-scp-stalltime.diff
 Patch4: openssh-2.9.9p2-owl-drop-groups.diff
 Patch5: openssh-2.9.9p2-owl-openssl-version-check.diff
 Patch6: openssh-2.9.9p2-cvs-20010928-fixes.diff
-License: BSD
-Group: Applications/Internet
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
-Obsoletes: ssh
-Requires: pam_mktemp
+Requires: tcb, pam_mktemp
 PreReq: openssl >= 0.9.6b-1owl
 PreReq: openssl < 0.9.7
-BuildPreReq: openssl-devel >= 0.9.6b-1owl
-BuildPreReq: pam-devel >= 0.75-11owl
-BuildPreReq: perl
-BuildPreReq: zlib-devel
-BuildPreReq: tcp_wrappers
+Obsoletes: ssh
+BuildRequires: openssl-devel >= 0.9.6b-1owl
+BuildRequires: pam-devel >= 0.75-11owl
+BuildRequires: perl
+BuildRequires: zlib-devel
+BuildRequires: tcp_wrappers
+BuildRoot: /override/%{name}-%{version}
 
 %package clients
 Summary: OpenSSH clients.
-Requires: openssh = %{version}-%{release}
 Group: Applications/Internet
+Requires: openssh = %{version}-%{release}
 Obsoletes: ssh-clients
 
 %package server
 Summary: The OpenSSH server daemon.
 Group: System Environment/Daemons
-Obsoletes: ssh-server
 PreReq: openssh = %{version}-%{release}
 PreReq: chkconfig >= 0.9, pam_userpass, /dev/urandom
+Obsoletes: ssh-server
 
 %description
 SSH (Secure Shell) is a program for logging into a remote machine and for
@@ -194,6 +194,9 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Fri Nov 16 2001 Solar Designer <solar@owl.openwall.com>
+- Use pam_tcb.
+
 * Sun Oct 07 2001 Solar Designer <solar@owl.openwall.com>
 - Updates to appl_userpass.c to support building against Linux-PAM 0.74+.
 

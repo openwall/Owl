@@ -1,9 +1,9 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.9 2001/10/28 01:56:12 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.10 2001/11/16 03:09:22 solar Exp $
 
 Summary: Post Office Protocol server.
 Name: popa3d
 Version: 0.5
-Release: 1owl
+Release: 2owl
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
 Source0: ftp://ftp.openwall.com/pub/projects/popa3d/popa3d-%{version}.tar.gz
@@ -11,9 +11,9 @@ Source1: params.h
 Source2: popa3d.pam
 Source3: popa3d.init
 Source4: popa3d.xinetd
-Buildroot: /override/%{name}-%{version}
-Requires: /var/empty, pam_userpass, xinetd
-Prereq: /sbin/chkconfig, /dev/null, grep, shadow-utils
+Requires: /var/empty, tcb, pam_userpass, xinetd
+PreReq: /sbin/chkconfig, /dev/null, grep, shadow-utils
+BuildRoot: /override/%{name}-%{version}
 
 %description
 popa3d is a tiny Post Office Protocol version 3 (POP3) server with
@@ -72,6 +72,9 @@ fi
 %doc DESIGN LICENSE
 
 %changelog
+* Fri Nov 16 2001 Solar Designer <solar@owl.openwall.com>
+- Use pam_tcb.
+
 * Sun Oct 28 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 0.5 which adds a popa3d(8) man page.
 
