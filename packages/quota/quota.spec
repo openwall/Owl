@@ -1,4 +1,4 @@
-# $Id: Owl/packages/quota/quota.spec,v 1.3 2001/06/25 07:41:19 mci Exp $
+# $Id: Owl/packages/quota/quota.spec,v 1.4 2001/06/25 08:17:39 mci Exp $
 
 Name: quota
 Summary: System administration tools for monitoring users' disk usage.
@@ -8,8 +8,9 @@ Copyright: BSD
 Source0: ftp://ftp.cistron.nl/pub/people/mvw/quota/%{name}-2.00.tar.gz
 Group: System Environment/Base
 Patch0: quota-2.00-pld-man.diff
+Patch1: quota-2.00-owl-makefile.diff
 BuildRoot: /var/rpm-buildroot/%{name}-root
-#BuildPreReq: e2fsprogs-devel
+BuildPreReq: e2fsprogs-devel
 
 %description
 The quota package contains system administration tools for monitoring
@@ -21,6 +22,7 @@ usage.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 %configure
@@ -61,6 +63,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %changelog
 * Mon Jun 25 2001 Michail Litvak <mci@owl.openwall.com>
 - some spec cleanups
+- patch to allow building to non-root user
 
 * Sun Jun 24 2001 Michail Litvak <mci@owl.openwall.com>
 - Imported from RH
