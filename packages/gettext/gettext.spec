@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gettext/gettext.spec,v 1.3 2002/02/03 09:08:00 mci Exp $
+# $Id: Owl/packages/gettext/gettext.spec,v 1.4 2002/02/03 17:25:18 solar Exp $
 
 Summary: GNU libraries and utilities for producing multi-lingual messages.
 Name: gettext
@@ -68,7 +68,7 @@ fi
 %files
 %defattr(-,root,root)
 %{_bindir}/*
-%{_infodir}/*info*
+%{_infodir}/*.info*
 %{_datadir}/gettext
 %{_datadir}/locale/*/LC_MESSAGES/*
 %{_datadir}/aclocal/*
@@ -84,5 +84,5 @@ get installed into /usr/share/gettext/intl
 - unset LINGUAS
 
 * Sun Sep 24 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
-- import spec from RH 
+- import spec from RH
 - little sprintf/snprintf fix.

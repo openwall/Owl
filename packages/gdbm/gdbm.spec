@@ -1,21 +1,21 @@
-# $Id: Owl/packages/gdbm/gdbm.spec,v 1.2 2002/02/03 08:56:01 mci Exp $
+# $Id: Owl/packages/gdbm/gdbm.spec,v 1.3 2002/02/03 17:20:54 solar Exp $
 
 Summary: A GNU set of database routines which use extensible hashing.
 Name: gdbm
 Version: 1.8.0
 Release: owl6
 License: GPL
-Source: ftp://ftp.gnu.org/pub/gnu/gdbm-%{version}.tar.gz
+Group: System Environment/Libraries
+Source: ftp://ftp.gnu.org/pub/gnu/gdbm/gdbm-%{version}.tar.gz
 Patch0: gdbm-1.8.0-rh-header.diff
 Patch1: gdbm-1.8.0-rh-fhs.diff
 Patch2: gdbm-1.8.0-rh-cflags.diff
-Group: System Environment/Libraries
 Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
 
 %description
 gdbm is a GNU database indexing library, including routines which use
-extensible hashing.  gdbm works in a similar way to standard UNIX dbm
+extensible hashing.  gdbm works in a similar way to standard Unix dbm
 routines.  gdbm is useful for developers who write C applications and
 need access to a simple and efficient database or who are building C
 applications which will use such a database.
@@ -52,7 +52,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %makeinstall install-compat
 
-pushd $RPM_BUILD_ROOT
+cd $RPM_BUILD_ROOT
 ln -sf gdbm/gdbm.h .%{_oldincludedir}/gdbm.h
 ln -sf libgdbm.so.2.0.0 .%{_libdir}/libgdbm.so
 
@@ -60,7 +60,6 @@ ln -sf libgdbm.so.2.0.0 .%{_libdir}/libgdbm.so
 rm -rf $RPM_BUILD_ROOT
 
 %post -p /sbin/ldconfig
-
 %postun -p /sbin/ldconfig
 
 %post devel
