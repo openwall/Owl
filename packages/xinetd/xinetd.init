@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/xinetd/xinetd.init,v 1.4 2001/01/06 09:03:25 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.init,v 1.5 2001/07/28 16:17:43 solar Exp $
 #
 # chkconfig: 345 56 50
 # description: \
@@ -22,7 +22,7 @@ test -f /etc/sysconfig/network && . /etc/sysconfig/network
 
 case "$1" in
 start|restart)
-	test ${NETWORKING} = "yes" || exit 0
+	test "$NETWORKING" = "yes" || exit 0
 	test -x /usr/sbin/xinetd -a -f /etc/xinetd.conf || exit 1
 esac
 
@@ -30,9 +30,9 @@ case "$1" in
 start)
 	if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
 		daemon --pidfile /var/run/xinetd.pid --expect-user root \
-			-- xinetd -stayalive -reuse -pidfile /var/run/xinetd.pid
+			-- xinetd -reuse -pidfile /var/run/xinetd.pid
 	else
-		daemon xinetd -stayalive -reuse -pidfile /var/run/xinetd.pid
+		daemon xinetd -reuse -pidfile /var/run/xinetd.pid
 	fi
 	;;
 stop)

@@ -1,11 +1,11 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.9 2001/07/22 10:36:59 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.10 2001/07/28 16:17:43 solar Exp $
 
 %define NEED_PYTHON 'no'
 
 Summary: The extended Internet services daemon
 Name: xinetd
 Version: 2.3.0
-Release: 2owl
+Release: 3owl
 License: BSD with minor restrictions
 Group: System Environment/Daemons
 Source0: http://www.xinetd.org/xinetd-%{version}.tar.gz
@@ -111,6 +111,10 @@ fi
 %config /etc/xinetd.d/*
 
 %changelog
+* Sat Jul 28 2001 Solar Designer <solar@owl.openwall.com>
+- Handle the case of nonexistent /etc/sysconfig/network correctly.
+- Don't -stayalive, we may invent a reload-or-start option instead.
+
 * Sun Jul 22 2001 Solar Designer <solar@owl.openwall.com>
 - Updated the -audit patch based on results of testing by Michail Litvak
 <mci@owl.openwall.com>, by ALT Linux Team, and at DataForce ISP.
