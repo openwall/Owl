@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.60 2004/09/10 07:23:36 galaxy Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.61 2004/09/30 01:12:45 galaxy Exp $
 
 %define BUILD_PROFILE 0
 
@@ -6,7 +6,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.3.2
 %define crypt_bf_version 0.4.6
-Release: owl0.7
+Release: owl0.8
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%version.tar.bz2
@@ -89,6 +89,28 @@ gprof to profile a program, your program needs to use the GNU libc
 libraries included in glibc-profile (instead of the standard GNU libc
 libraries included in the glibc package).
 %endif
+
+%package compat-fake
+Summary: Fake package to help upgrade glibc from 2.1.3 to 2.3+
+Name: glibc-compat-libdb
+Version: 2.3.2
+Release: owl0.fake
+License: GPL
+Group: System Environment/Libraries
+AutoReqProv: false
+Provides: libdb.so.2
+Provides: libdb.so.2(GLIBC_2.0)
+Provides: libdb.so.3
+Provides: libdb.so.3(GLIBC_2.1)
+BuildArch: noarch
+
+%description compat-fake
+This package solves the problem with upgrading glibc 2.1.3 -based Owl to
+glibc 2.3+ version by reporting necessary Provides to RPM. All packages
+in glibc 2.3+ -based Owl doesn't rely on libdb.so.2 and libdb.so.3, if
+you have a package which uses these libraries - you have to recompile
+that package against db package supplied with Owl or create compatibility
+package with necessary binaries.
 
 # Use optflags_lib for this package if defined.
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
@@ -315,7 +337,12 @@ fi
 %defattr(-,root,root)
 %endif
 
+%files compat-fake
+
 %changelog
+* Thu Sep 30 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl0.8
+- Added compat-fake sub-package to help upgrade procedure
+
 * Sat Mar 20 2004 Solar Designer <solar@owl.openwall.com> 2.3.2-owl0.7
 - Corrections to BUILD_PROFILE support.
 
