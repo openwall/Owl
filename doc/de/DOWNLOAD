@@ -45,4 +45,18 @@ will, braucht man beides: den CVS tree und den Quellcode.
 Mehr Dokumentation (inklusive BUILD und INSTALL) gibt es im CVS tree unter
 Owl/doc/.
 
-$Id: Owl/doc/de/DOWNLOAD,v 1.5 2002/06/26 08:18:34 schmidt Exp $
+Alternativ kann man an den CVS tree (neben der Möglichkeit die snapshots für
+eine bestimmte Sparte als native.tar.gz von einem unserer oben aufgeführten
+FTP Spiegel-Server herunter zuladen) über unseren anonymen CVS Server
+kommen:
+
+CVSROOT=:pserver:anoncvs:anoncvs@anoncvs.owl.openwall.com:/cvs
+
+oder über SSH mit den folgenden Einstellungen:
+
+CVS_RSH=ssh
+CVSROOT=anoncvs@anoncvs.owl.openwall.com:/cvs
+
+Das Passwort ist "anoncvs" und der Modulname ist "Owl".
+
+$Id: Owl/doc/de/DOWNLOAD,v 1.6 2002/07/12 16:04:16 schmidt Exp $

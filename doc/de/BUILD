@@ -17,10 +17,10 @@ man es erstellen, den Pseudo-Benutzer "build" anlegen, vorzugsweise
 mit UID 151 und GID 150 ("sources") und ihm das Verzeichnis mittels
 "chown" zur Verfügung stellen.
 
-Das CVS Archiv ist in /usr/src/world anzulegen. Meistens wird dies schon
-erledigt wenn die Datei native.tar.gz, die auf den FTP-Servern er-
-hältlich ist, entpackt wird. Man erhält dann ein "native" Verzeichnis und
-einen symbolischen Link zum Makefile.
+Das CVS Archiv ist in /usr/src/world anzulegen. Der einfachste Weg um das
+zu tun ist die Datei native.tar.gz, die auf den FTP-Servern erhältlich ist,
+zu entpacken. Man erhält dann ein "native" Verzeichnis und einen
+symbolischen Link zum Makefile.
 
 Um aus den Quellen zu übersetzen, erstellt man das "sources" Verzeichnis
 ebenfalls in /usr/src/world.
@@ -115,4 +115,4 @@ Individuelle Pakete können wieder- oder neuübersetzt werden, indem man
 Für fremde Pakete (SRPMs) die mit der Owl-Arbeitsumgebung erstellt worden
 sind, muss man zusätzlich die Versionsnummer in "name" einfügen.
 
-$Id: Owl/doc/de/BUILD,v 1.7 2002/06/22 15:02:23 schmidt Exp $
+$Id: Owl/doc/de/BUILD,v 1.8 2002/07/12 16:04:16 schmidt Exp $
