@@ -1,17 +1,17 @@
-# $Id: Owl/packages/dialog/dialog.spec,v 1.7 2001/06/13 14:39:59 mci Exp $
+# $Id: Owl/packages/dialog/dialog.spec,v 1.8 2002/01/24 17:31:28 solar Exp $
 
 Summary: A utility for creating TTY dialog boxes.
 Name: dialog
 Version: 0.9a
-%define original_date	20010527
-Release: 9owl
-Copyright: GPL
+%define original_date 20010527
+Release: owl9
+License: GPL
 Group: Applications/System
 Source: ftp://dickey.his.com/dialog/%{name}-%{version}-%{original_date}.tgz
 Patch0: dialog-0.9a-owl-pwdbox.diff
 Patch1: dialog-0.9a-alt-locale.diff
 Patch2: dialog-0.9a-owl-fselect.diff
-BuildRoot: /var/rpm-buildroot/%{name}-root
+BuildRoot: /override/%{name}-%{version}
 
 %description
 Displays user-friendly dialog boxes from shell scripts.
@@ -32,10 +32,9 @@ The following types of boxes are at your disposal:
   tail             Allows viewing the end of files (tail) that auto updates
   background tail  Similar to tail but runs in the background.
   calendar         A calendar box displays month, day and year in
-		   separately  adjustable  windows
-  timebox	   A dialog is displayed which allows  you  to  select
-                   hour,  minute  and  second.
-
+		   separately adjustable windows
+  timebox	   A dialog is displayed which allows you to select
+                   hour, minute and second.
 
 %prep
 %setup -q -n %{name}-%{version}-%{original_date}
@@ -62,6 +61,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dialog.*
 
 %changelog
+* Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Sun Jun 13 2001 Michail Litvak <mci@owl.openwall.com>
 - patch to fix bug with fselect mouse lock-up
 
@@ -79,40 +81,3 @@ rm -rf $RPM_BUILD_ROOT
 - Imported from RH
 - New upstream release
 - Added patch to display '*' in passwordbox
-
-* Mon Aug  7 2000 Bill Nottingham <notting@redhat.com>
-- fix one of the examples (#14073)
-
-* Wed Jul 12 2000 Prospector <bugzilla@redhat.com>
-- automatic rebuild
-
-* Wed Apr  5 2000 Bill Nottingham <notting@redhat.com>
-- rebuild against current ncurses/readline
-
-* Thu Feb  3 2000 Bill Nottingham <notting@redhat.com>
-- handle compressed man pages
-
-* Thu Jan 20 2000 Bill Nottingham <notting@redhat.com>
-- fix loop patch for reading from pipe
-
-* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com> 
-- auto rebuild in the new build environment (release 14)
-
-* Fri Dec 18 1998 Bill Nottingham <notting@redhat.com>
-- build for 6.0
-
-* Tue Aug 11 1998 Jeff Johnson <jbj@redhat.com>
-- build root
-
-* Thu May 7 1998 Michael Maher <mike@redhat.com> 
-- Added Sean Reifschneider <jafo@tummy.com> patches for 
-  infinite loop problems.
-
-* Fri Apr 24 1998 Prospector System <bugs@redhat.com>
-- translations modified for de, fr, tr
-
-* Wed Apr 15 1998 Erik Troan <ewt@redhat.com>
-- built against new ncurses
-
-* Thu Jul 10 1997 Erik Troan <ewt@redhat.com>
-- built against glibc
