@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gpm/gpm.spec,v 1.6 2001/06/27 00:12:54 solar Exp $
+# $Id: Owl/packages/gpm/gpm.spec,v 1.7 2001/10/06 01:17:15 solar Exp $
 
 # this defines the library version that this package builds.
 %define	LIBVER		1.18.0
@@ -6,21 +6,20 @@
 
 Summary: A mouse server for the Linux console.
 Name: gpm
-Version: 1.19.3
-Release: 8owl
+Version: 1.19.6
+Release: 1owl
 License: GPL
 Group: System Environment/Daemons
-Source0: ftp://ftp.systemy.it/pub/develop/%{name}-%{version}.tar.gz
+Source0: ftp://ftp.systemy.it/pub/develop/%{name}-%{version}.tar.bz2
 Source1: gpm.init
-Patch0: gpm-1.19.3-rh-install-no-root.diff
-Patch1: gpm-1.19.3-rh-no-ps.diff
-Patch2: gpm-1.19.3-rh-doc.diff
-Patch3: gpm-1.19.3-rh-owl-socket-mode.diff
-Patch4: gpm-1.19.3-rh-gpm-root.diff
-Patch5: gpm-1.19.3-owl-gpm-root.diff
-Patch6: gpm-1.19.3-immunix-owl-tmp.diff
-Patch7: gpm-1.19.3-owl-liblow.diff
-Patch8: gpm-1.19.3-owl-warnings.diff
+Patch0: gpm-1.19.6-rh-no-ps.diff
+Patch1: gpm-1.19.6-rh-owl-socket-mode.diff
+Patch2: gpm-1.19.6-rh-gpm-root.diff
+Patch3: gpm-1.19.6-owl-gpm-root.diff
+Patch4: gpm-1.19.6-owl-liblow.diff
+Patch5: gpm-1.19.6-owl-tmp.diff
+Patch6: gpm-1.19.6-owl-warnings.diff
+Patch7: gpm-1.19.6-owl-doc-mkinstalldirs.diff
 Prereq: /sbin/chkconfig /sbin/ldconfig /sbin/install-info /etc/rc.d/init.d
 BuildRequires: bison
 BuildRoot: /var/rpm-buildroot/%{name}-root
@@ -59,42 +58,31 @@ at the click of a mouse button.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
-%patch8 -p1
 
 %build
-autoconf
-CFLAGS="-D_GNU_SOURCE $RPM_OPT_FLAGS" \
-	lispdir=%{buildroot}%{_datadir}/emacs/site-lisp \
-	%configure
-rm gpm-root.c doc/*.[178] doc/gpm.info
+%configure
 make CFLAGS="" CPPFLAGS=""
 
 %install
-rm -rf %{buildroot}
-mkdir -p %{buildroot}%{_sysconfdir}
+rm -rf $RPM_BUILD_ROOT
+mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}
 
-PATH=/sbin:/usr/sbin:$PATH
+%makeinstall
 
-mkdir -p %{buildroot}%{_datadir}/emacs/site-lisp
-%makeinstall lispdir=%{buildroot}%{_datadir}/emacs/site-lisp
+install -m 644 doc/gpm-root.1 ${RPM_BUILD_ROOT}%{_mandir}/man1
+install -m 644 conf/gpm-root.conf ${RPM_BUILD_ROOT}%{_sysconfdir}
 
-install -m 644 doc/gpm-root.1 %{buildroot}%{_mandir}/man1
-install -m 644 gpm-root.conf %{buildroot}%{_sysconfdir}
-install -s -m 755 hltest %{buildroot}%{_bindir}
-make t-mouse.el t-mouse.elc
-cp t-mouse.el* %{buildroot}%{_datadir}/emacs/site-lisp
+cd $RPM_BUILD_ROOT
 
-pushd %{buildroot}
 chmod +x .%{_libdir}/libgpm.so.%{LIBVER}
 ln -sf libgpm.so.%{LIBVER} .%{_libdir}/libgpm.so
 gzip -9nf .%{_infodir}/gpm.info*
-popd
 
-mkdir -p %{buildroot}%{_sysconfdir}/rc.d/init.d
-install -m 755 $RPM_SOURCE_DIR/gpm.init %{buildroot}%{_sysconfdir}/rc.d/init.d/gpm
+mkdir -p .%{_sysconfdir}/rc.d/init.d
+install -m 755 $RPM_SOURCE_DIR/gpm.init .%{_sysconfdir}/rc.d/init.d/gpm
 
 %clean
-rm -rf %{buildroot}
+rm -rf $RPM_BUILD_ROOT
 
 %pre
 rm -f /var/run/gpm.restart
@@ -126,11 +114,8 @@ fi
 
 %files
 %defattr(-,root,root)
+%{_sbindir}/gpm
 %{_bindir}/mev
-%{_bindir}/hltest
-/usr/sbin/gpm
-%{_datadir}/emacs/site-lisp/t-mouse.el
-%{_datadir}/emacs/site-lisp/t-mouse.elc
 %{_infodir}/gpm.info*
 %{_mandir}/man1/mev.1*
 %{_mandir}/man8/gpm.8*
@@ -147,11 +132,15 @@ fi
 %files root
 %defattr(-,root,root)
 %config %{_sysconfdir}/gpm-root.conf
-%{_bindir}/gpm-root
+%{_sbindir}/gpm-root
 %{_mandir}/man1/gpm-root.1*
 %endif
 
 %changelog
+* Sat Oct 06 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 1.19.6.
+- Dropped hltest, t-mouse.el* (gpm itself is broken enough).
+
 * Wed Jun 27 2001 Solar Designer <solar@owl.openwall.com>
 - Disabled packaging gpm-root by default.
 

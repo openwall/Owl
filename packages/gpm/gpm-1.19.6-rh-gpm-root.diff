@@ -1,6 +1,6 @@
-diff -ur gpm-1.19.3.orig/gpm-root.y gpm-1.19.3/gpm-root.y
---- gpm-1.19.3.orig/gpm-root.y	Wed Apr 19 09:48:41 2000
-+++ gpm-1.19.3/gpm-root.y	Tue Jun 26 01:55:18 2001
+diff -ur gpm-1.19.6.orig/src/gpm-root.y gpm-1.19.6/src/gpm-root.y
+--- gpm-1.19.6.orig/src/gpm-root.y	Sun Sep 23 23:00:03 2001
++++ gpm-1.19.6/src/gpm-root.y	Sat Oct  6 03:29:01 2001
 @@ -50,6 +50,7 @@
  #include <linux/vt.h>       /* VT_ACTIVATE */
  #include <linux/keyboard.h> /* K_SHIFT */

@@ -1,0 +1,16 @@
+diff -ur gpm-1.19.6.orig/doc/Makefile.in gpm-1.19.6/doc/Makefile.in
+--- gpm-1.19.6.orig/doc/Makefile.in	Thu Oct  4 00:51:46 2001
++++ gpm-1.19.6/doc/Makefile.in	Sat Oct  6 04:00:15 2001
+@@ -85,9 +85,9 @@
+ 
+ # install & uninstall
+ 
+-installdirs:	
+-	$(SHELL) $(top_builddir)/mkinstalldirs \
+-		$(man1dir) $(man7dir) $(man8dir) $(infodir)	
++installdirs:
++	$(SHELL) $(top_builddir)/contrib/scripts/mkinstalldirs \
++		$(man1dir) $(man7dir) $(man8dir) $(infodir)
+ 
+ install:	all installdirs
+ 	$(INSTALL_DATA) -m 644 mev.1          $(man1dir)
