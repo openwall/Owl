@@ -3,8 +3,12 @@
 Rate-limit the "sessions limit reached" log message similarly to the
 per-source one; spotted by Michael Tokarev.
 
-Started maintaining this change log due to popular demand, including
-information on a few past versions.
+Started maintaining this change log (including information on a few
+past versions), due to popular demand.  Added a separate file with
+contact information (homepage, mailing list, author e-mail address,
+commercial support).  Updated the installation instructions to note
+the importance of authentication and locking method choice, added
+instructions on the use of xinetd and popa3d's standalone mode.
 
 
 	Changes made between 0.6 and 0.6.1 (2003/03/02).
@@ -62,4 +66,4 @@ code size.
 Added a popa3d(8) manual page based on the one Camiel Dobbelaar wrote
 for OpenBSD.
 
-$Id: Owl/packages/popa3d/popa3d/CHANGES,v 1.2 2003/03/10 00:31:28 solar Exp $
+$Id: Owl/packages/popa3d/popa3d/CHANGES,v 1.3 2003/03/10 01:28:34 solar Exp $
