@@ -34,13 +34,13 @@ pour installer les packages binaires.
 
 Pour (re-)compiler Owl depuis les sources, vous aurez besoin :
 
-d'au moins de 500Mo d'espace disque libre sous /usr/src/world utilisables
+d'au moins de 500 Mo d'espace disque libre sous /usr/src/world utilisables
 durant les compilations;
 
 d'au moins 64 Mo de mémoire physique (il est possible de compiler sur moins
 avec suffisamment d'espace de swap, mais vous ne devriez pas);
 
-d'au moins 160Mo de mémoire virtuelle en compilant sur et pour un Alpha;
+d'au moins 160 Mo de mémoire virtuelle en compilant sur et pour un Alpha;
 
 de 1 à 5 heures de temps CPU, sur un système moderne (au moment de cette
 écriture).
@@ -53,12 +53,12 @@ convertissiez effectivement le système en Owl avec plusieurs itérations de
 Voici quelques temps de compilation (heures:minutes), ainsi vous savez à
 quoi vous attendre :
 
-Dual Pentium III, 800 MHz, 512 MB:              0:40
-Dual Pentium III, 700 MHz, 1 GB:                0:45
-Dual Celeron (Mendocino), 433 MHz, 256 MB       1:20
-Pentium III, 550 MHz, 64 MB:                    2:00
-UltraSparc IIi, 440 MHz, 256 MB:                3:20
-Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB:     5:00
+Dual Pentium III, 800 MHz, 512 MB:		0:40
+Dual Pentium III, 700 MHz, 1 GB:		0:45
+Dual Celeron (Mendocino), 433 MHz, 256 MB	1:20
+Pentium III, 550 MHz, 64 MB:			2:00
+UltraSparc IIi, 440 MHz, 256 MB:		3:20
+Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB:	5:00
 
 (Oui, gcc est si gourmand et lent sur Alpha.)
 
@@ -120,4 +120,4 @@ dépendances automatiques de compilation pour les re-compilations comme un
 bogue dans l'environnement de compilation. Nous fixerons ceci
 éventuellement.
 
-$Id: Owl/doc/fr/BUILD,v 1.1 2001/05/15 04:25:15 solar Exp $
+$Id: Owl/doc/fr/BUILD,v 1.2 2001/05/15 04:57:31 solar Exp $
