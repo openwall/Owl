@@ -1,9 +1,9 @@
-# $Id: Owl/packages/iputils/iputils.spec,v 1.12 2003/10/17 21:59:21 solar Exp $
+# $Id: Owl/packages/iputils/iputils.spec,v 1.13 2003/10/21 18:32:29 mci Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
 Version: ss020927
-Release: owl1
+Release: owl2
 License: mostly BSD, some GPL
 Group: Applications/Internet
 Source0: ftp://ftp.inr.ac.ru/ip-routing/%{name}-%{version}.tar.gz
@@ -90,6 +90,10 @@ fi
 /etc/control.d/facilities/ping
 
 %changelog
+* Thu Oct 21 2003 Michail Litvak <mci@owl.openwall.com> 020927-owl2
+- reduce -owl-socketbits.diff to include only sockaddr_storage
+difinition, because previous version broke tracepath.
+
 * Thu Oct 16 2003 Michail Litvak <mci@owl.openwall.com> 020927-owl1
 - ss020927
 - Fixed building with kernel >= 2.4.22.
