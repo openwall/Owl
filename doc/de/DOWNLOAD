@@ -56,7 +56,8 @@ Owl/doc/.
 Alternativ kann man an den CVS tree (neben der Möglichkeit die snapshots für
 eine bestimmte Sparte als native.tar.gz von einem unserer oben aufgeführten
 FTP Spiegel-Server herunter zuladen) über unseren anonymen CVS Server
-kommen:
+kommen. Um via pserver an den CVS Server zu kommen, muss die CVSROOT Variable
+wie folgt gesetzt werden:
 
 CVSROOT=:pserver:anoncvs:anoncvs@anoncvs.owl.openwall.com:/cvs
 
@@ -70,4 +71,8 @@ Kompression zu benutzen, zum einen, wenn man direkt auf den anonymen CVS Server
 zugreift, mit der Option -z3 und/oder zum anderen wenn man "Compression yes"
 in der Konfigurationsdatei des SSH Clients einstellt.
 
-$Id: Owl/doc/de/DOWNLOAD,v 1.21 2004/04/22 17:49:18 solar Exp $
+Wir bieten zudem auch ein CVSweb-Interface an:
+
+http://cvsweb.openwall.com
+
+$Id: Owl/doc/de/DOWNLOAD,v 1.22 2004/06/13 10:10:52 schmidt Exp $
