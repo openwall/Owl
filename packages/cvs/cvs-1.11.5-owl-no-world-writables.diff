@@ -1,0 +1,38 @@
+diff -ur cvs-1.11.5.orig/src/mkmodules.c cvs-1.11.5/src/mkmodules.c
+--- cvs-1.11.5.orig/src/mkmodules.c	Fri Sep  7 14:22:39 2001
++++ cvs-1.11.5/src/mkmodules.c	Wed Apr 30 23:12:10 2003
+@@ -725,10 +725,6 @@
+     (void) sprintf (newpag, "%s.pag", temp);
+     (void) sprintf (newdb, "%s.db", temp);
+ 
+-    (void) chmod (newdir, 0666);
+-    (void) chmod (newpag, 0666);
+-    (void) chmod (newdb, 0666);
+-
+     /* don't mess with me */
+     SIG_beginCrSect ();
+ 
+@@ -949,11 +945,6 @@
+ 	fp = open_file (info, "w");
+ 	if (fclose (fp) < 0)
+ 	    error (1, errno, "cannot close %s", info);
+- 
+-        /* Make the new history file world-writeable, since every CVS
+-           user will need to be able to write to it.  We use chmod()
+-           because xchmod() is too shy. */
+-        chmod (info, 0666);
+     }
+ 
+     /* Make an empty val-tags file to prevent problems creating it later.  */
+@@ -967,11 +958,6 @@
+ 	fp = open_file (info, "w");
+ 	if (fclose (fp) < 0)
+ 	    error (1, errno, "cannot close %s", info);
+- 
+-        /* Make the new val-tags file world-writeable, since every CVS
+-           user will need to be able to write to it.  We use chmod()
+-           because xchmod() is too shy. */
+-        chmod (info, 0666);
+     }
+ 
+     free (info);

@@ -1,18 +1,20 @@
-# $Id: Owl/packages/cvs/cvs.spec,v 1.5 2003/04/29 01:39:17 solar Exp $
+# $Id: Owl/packages/cvs/cvs.spec,v 1.6 2003/04/30 23:57:51 solar Exp $
 
 Summary: A version control system.
 Name: cvs
 Version: 1.11.5
-Release: owl0.5
+Release: owl0.6
 License: GPL
 Group: Development/Tools
 URL: http://www.cvshome.org
 Source: ftp://ftp.cvshome.com/pub/%{name}-%{version}/%{name}-%{version}.tar.bz2
-Patch0: cvs-1.11.5-owl-zlib.diff
-Patch1: cvs-1.11.5-owl-no-checkin-update-prog.diff
-Patch2: cvs-1.11.5-owl-tmp.diff
-Patch3: cvs-1.11.5-owl-vitmp.diff
-Patch4: cvs-1.11.5-owl-fixes.diff
+Patch0: cvs-1.11.5-owl-tmp.diff
+Patch1: cvs-1.11.5-owl-vitmp.diff
+Patch2: cvs-1.11.5-owl-fixes.diff
+Patch3: cvs-1.11.5-owl-zlib.diff
+Patch4: cvs-1.11.5-owl-no-checkin-update-prog.diff
+Patch5: cvs-1.11.5-owl-no-world-writables.diff
+Patch10: cvs-1.11.5-alt-mdk-owl-canonicalize.diff
 PreReq: /sbin/install-info
 Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
@@ -39,6 +41,8 @@ release.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
+%patch10 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -83,9 +87,9 @@ fi
 %{_datadir}/cvs
 
 %changelog
-* Tue Apr 29 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl0.5
-- Many more updates to the temporary file handling patch, making it twice
-bigger.
+* Thu May 01 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl0.6
+- Re-worked the temporary file handling patch to make it actually do what
+it was supposed to and cover more scripts and the documentation.
 - Force configure to use /tmp for the default temporary file directory,
 and not pick and store $TMPDIR that was set at build time.
 - Use vitmp with cvsbug, rcs-to-cvs, and cvs itself.
@@ -93,11 +97,9 @@ and not pick and store $TMPDIR that was set at build time.
 - Patched 47 gcc -Wall warnings (all of them), including some real bugs.
 - chmod -x most scripts in contrib/ to prevent bogus dependencies on perl
 and csh.
-
-* Sun Apr 27 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl0.2
-- Re-worked much of the temporary file handling patch to make it actually
-do at least some of what it was supposed to; also patched the fail-open
-use in configure.
+- Patched cvs to not create world-writable files (val-tags, dbm).
+- Canonicalize paths to avoid a failed assertion on "cvs rdiff" and maybe
+other commands if $CVSROOT contains symlinks.
 
 * Mon Mar 24 2003 Simon B <simonb@owl.openwall.com> 1.11.5-owl0.1
 - Pulled in mktemp fixes from ALT Linux
