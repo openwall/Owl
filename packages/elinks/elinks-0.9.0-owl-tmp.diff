@@ -1,0 +1,122 @@
+--- elinks-0.9.0/src/sched/download.c.orig	Mon Dec 22 02:15:02 2003
++++ elinks-0.9.0/src/sched/download.c	Tue Jan 20 22:56:04 2004
+@@ -536,24 +536,21 @@
+ 	unsigned char *wd;
+ 	int h = -1;
+ 	int saved_errno;
+-#ifdef NO_FILE_SECURITY
+-	int sf = 0;
+-#else
+-	int sf = cdf_hop->safe;
+-#endif
+ 
+ 	if (!file) goto finish;
+ 
+ 	wd = get_cwd();
+ 	set_cwd(term->cwd);
+ 
+-	/* O_APPEND means repositioning at the end of file before each write(),
+-	 * thus ignoring seek()s and that can hide mysterious bugs. IMHO.
+-	 * --pasky */
+-	h = open(file, O_CREAT | O_WRONLY | (resume ? 0 : O_TRUNC)
+-			| (sf && !resume ? O_EXCL : 0),
+-		 sf ? 0600 : 0666);
+-	saved_errno = errno; /* Saved in case of ... --Zas */
++	if (cdf_hop->safe) {
++		h = mkstemp(file);
++	} else {
++		/* O_APPEND means repositioning at the end of file before each write(),
++		 * thus ignoring seek()s and that can hide mysterious bugs. IMHO.
++		 * --pasky */
++		h = open(file, O_CREAT | O_WRONLY | (resume ? 0 : O_TRUNC), 0666);
++		saved_errno = errno; /* Saved in case of ... --Zas */
++	}
+ 
+ 	if (wd) {
+ 		set_cwd(wd);
+@@ -600,38 +597,6 @@
+ }
+ 
+ 
+-static unsigned char *
+-get_temp_name(unsigned char *url)
+-{
+-	struct string name;
+-	unsigned char *extension;
+-	/* FIXME
+-	 * We use tempnam() here, which is unsafe (race condition), for now.
+-	 * This should be changed at some time, but it needs an in-depth work
+-	 * of whole download code. --Zas */
+-	unsigned char *nm = tempnam(NULL, ELINKS_TEMPNAME_PREFIX);
+-
+-	if (!nm) return NULL;
+-
+-	if (!init_string(&name)) {
+-		mem_free(nm);
+-		return NULL;
+-	}
+-
+-	add_to_string(&name, nm);
+-	free(nm);
+-
+-	extension = get_extension_from_url(url);
+-	if (extension) {
+-		add_char_to_string(&name, '.');
+-		add_shell_safe_to_string(&name, extension, strlen(extension));
+-		mem_free(extension);
+-	}
+-
+-	return name.source;
+-}
+-
+-
+ unsigned char *
+ subst_file(unsigned char *prog, unsigned char *file)
+ {
+@@ -778,6 +743,7 @@
+ {
+ 	struct tq *tq = data;
+ 	struct codw_hop *codw_hop;
++	struct string tmpstr;
+ 
+ 	if (!tq->url) return;
+ 
+@@ -788,13 +754,14 @@
+ 	}
+ 
+ 	if (tq->prog) {
+-		/* FIXME: get_temp_name() calls tempnam(). --Zas */
+-		file = get_temp_name(tq->url);
+-		if (!file) {
++		if(!init_string(&tmpstr)) {
+ 			mem_free(codw_hop);
+ 			tp_cancel(tq);
+ 			return;
+ 		}
++		add_to_string(&tmpstr, getenv("TMPDIR") ?: "/tmp");
++		add_to_string(&tmpstr, "/linksXXXXXX");
++		file = tmpstr.source;
+ 	}
+ 
+ 	codw_hop->tq = tq;
+@@ -832,9 +799,9 @@
+ 	file_download->ses = codw_hop->tq->ses;
+ 
+ 	if (codw_hop->tq->prog) {
+-		file_download->prog = subst_file(codw_hop->tq->prog, codw_hop->file);
++		file_download->prog = subst_file(codw_hop->tq->prog, codw_hop->real_file);
+ 		file_download->delete = 1;
+-		mem_free(codw_hop->file);
++		mem_free(codw_hop->real_file);
+ 		mem_free(codw_hop->tq->prog);
+ 		codw_hop->tq->prog = NULL;
+ 	}
+@@ -854,7 +821,7 @@
+ 
+ cancel:
+ 	tp_cancel(codw_hop->tq);
+-	if (codw_hop->tq->prog && codw_hop->file) mem_free(codw_hop->file);
++	if (codw_hop->tq->prog && codw_hop->real_file) mem_free(codw_hop->real_file);
+ 	if (file_download) {
+ 		if (file_download->url) mem_free(file_download->url);
+ 		mem_free(file_download);
