@@ -1,9 +1,9 @@
-# $Id: Owl/packages/cvs/cvs.spec,v 1.18 2003/12/12 17:37:34 solar Exp $
+# $Id: Owl/packages/cvs/cvs.spec,v 1.19 2004/04/13 20:37:51 mci Exp $
 
 Summary: A version control system.
 Name: cvs
 Version: 1.11.5
-Release: owl4
+Release: owl5
 License: GPL
 Group: Development/Tools
 URL: http://www.cvshome.org
@@ -15,7 +15,7 @@ Patch3: cvs-1.11.5-owl-zlib.diff
 Patch4: cvs-1.11.5-owl-no-checkin-update-prog.diff
 Patch5: cvs-1.11.5-owl-no-world-writables.diff
 Patch10: cvs-1.11.5-alt-mdk-owl-canonicalize.diff
-Patch20: cvs-1.11.5-up-20031118-reject-absolute-module-paths.diff
+Patch20: cvs-1.11.5-up-fixes.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
 BuildRequires: mktemp >= 1:1.3.1
@@ -60,7 +60,7 @@ Additional scripts for the Concurrent Versions System (CVS).
 %patch4 -p1
 %patch5 -p1
 %patch10 -p1
-%patch20 -p0
+%patch20 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -109,6 +109,11 @@ fi
 %_datadir/cvs
 
 %changelog
+* Tue Apr 13 2004 Michail Litvak <mci@owl.openwall.com> 1.11.5-owl5
+- Patch to fix CVS pserver client side remote exploit.
+- Fixed that using the -p option to cvs checkout sidesteps the
+check that verifies the path isn't outside the repository.
+
 * Fri Dec 12 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl4
 - Back-ported a patch from CVS 1.11.10 to reject absolute module paths.
 

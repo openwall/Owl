@@ -1,0 +1,49 @@
+--- cvs-1.11.5/src/client.c.orig	Thu Jan 16 17:10:55 2003
++++ cvs-1.11.5/src/client.c	Tue Apr 13 02:42:10 2004
+@@ -1050,6 +1050,19 @@
+     char *rdirp;
+     int reposdirname_absolute;
+ 
++    /* For security reasons, if PATHNAME is absolute or attempts to ascend
++     * outside of the current sandbox, we abort.  The server should not send us
++     * anything but relative paths which remain inside the sandbox here.
++     * Anything less means a trojan CVS server could create and edit arbitrary
++     * files on the client.
++     */
++    if (isabsolute (pathname) || pathname_levels (pathname) > 0)
++    {
++	error (0, 0,
++		"Server attempted to update a file via an invalid pathname:");
++	error (1, 0, "`%s'.", pathname);
++    }
++
+     reposname = NULL;
+     read_line (&reposname);
+     assert (reposname != NULL);
+--- cvs-1.11.5/src/modules.c.orig	Fri Jun 22 00:23:09 2001
++++ cvs-1.11.5/src/modules.c	Tue Apr 13 03:08:35 2004
+@@ -159,6 +159,24 @@
+     }
+ #endif
+ 
++    /* Don't process absolute directories.  Anything else could be a security
++     * problem.  Before this check was put in place:
++     *
++     *   $ cvs -d:fork:/cvsroot co /foo
++     *   cvs server: warning: cannot make directory CVS in /: Permission denied
++     *   cvs [server aborted]: cannot make directory /foo: Permission denied
++     *   $
++     */
++    if (isabsolute (mname))
++	error (1, 0, "Absolute module reference invalid: `%s'", mname);
++
++    /* Similarly for directories that attempt to step above the root of the
++     * repository.
++     */
++    if (pathname_levels (mname) > 0)
++	error (1, 0, "up-level in module reference (`..') invalid: `%s'.",
++		mname);
++
+     /* if this is a directory to ignore, add it to that list */
+     if (mname[0] == '!' && mname[1] != '\0')
+     {
