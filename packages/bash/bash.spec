@@ -1,9 +1,9 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.3 2000/09/07 01:15:39 solar Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.4 2000/10/28 16:02:18 solar Exp $
 
 Version: 	2.04
 Name: 		bash
 Summary: 	The GNU Bourne Again shell (bash) version %{version}.
-Release: 	9owl
+Release: 	10owl
 Group: 		System Environment/Shells
 Copyright: 	GPL
 Source0:	ftp://ftp.gnu.org/gnu/bash/bash-%{version}.tar.gz
@@ -57,7 +57,6 @@ echo %{version} > _distribution
 echo %{release} | sed -e "s/[A-Za-z]//g" > _patchlevel
 
 %build
-
 %configure
 make
 
@@ -121,51 +120,32 @@ install -c -m644 %{SOURCE3} \
 install -c -m644 %{SOURCE4} \
 	$RPM_BUILD_ROOT/etc/skel/.bash_logout
 
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 # ***** bash doesn't use install-info. It's always listed in %{_infodir}/dir
 # to prevent prereq loops
 
-%post
-
-HASBASH2=""
-HASBASH=""
-HASSH=""
-
+%triggerin -- libtermcap
 if [ ! -f /etc/shells ]; then
-	> /etc/shells
+	echo "/bin/sh" >> /etc/shells
+	echo "/bin/bash" >> /etc/shells
+	echo "/bin/bash2" >> /etc/shells
+elif [ -x /bin/grep ]; then
+	grep '^/bin/sh$' /etc/shells &> /dev/null || \
+		echo "/bin/sh" >> /etc/shells
+	grep '^/bin/bash$' /etc/shells &> /dev/null || \
+		echo "/bin/bash" >> /etc/shells
+	grep '^/bin/bash2$' /etc/shells &> /dev/null || \
+		echo "/bin/bash2" >> /etc/shells
 fi
 
-(while read line ; do
-	if [ $line = /bin/bash ]; then
-		HASBASH=1
-	elif [ $line = /bin/sh ]; then
-		HASSH=1
-	elif [ $line = /bin/bash2 ]; then
-		HASBASH2=1
-	fi
- done
-
- if [ -z "$HASBASH2" ]; then
-	echo "/bin/bash2" >> /etc/shells
- fi
- if [ -z "$HASBASH" ]; then
-	echo "/bin/bash" >> /etc/shells
- fi
- if [ -z "$HASSH" ]; then
-	echo "/bin/sh" >> /etc/shells
-fi) < /etc/shells
-
-
-%postun
-if [ "$1" = 0 ]; then
-	# is "rm -f /etc/shells" better?
-	grep -v '^/bin/bash2$' < /etc/shells | \
-		grep -v '^/bin/bash$' | \
-		grep -v '^/bin/sh$' > /etc/shells.new
-	mv /etc/shells.new /etc/shells
+%preun
+if [ "$1" = 0 -a -x /bin/grep ]; then
+	grep -vE '^/bin/sh$|^/bin/bash$|^/bin/bash2$' \
+		/etc/shells > /etc/shells.bash-un
+	mv /etc/shells.bash-un /etc/shells
+	test -s /etc/shells || rm /etc/shells
 fi
 
 %files -f man.pages
@@ -175,7 +155,6 @@ fi
 %doc examples/bashdb/ examples/functions/ examples/misc/
 %doc examples/scripts.noah/ examples/scripts.v2/ examples/scripts/
 %doc examples/startup-files/
-#%config /etc/bashrc
 %config /etc/skel
 /bin/sh
 /bin/bash
@@ -191,6 +170,12 @@ fi
 %doc doc/*.ps doc/*.0 doc/*.html doc/article.txt
 
 %changelog
+* Sat Oct 28 2000 Solar Designer <solar@owl.openwall.com>
+- Use %triggerin to create /etc/shells when libtermcap is installed, as
+the commands require a working bash already.
+- %postun -> %preun.
+- "%triggerin -- libtermcap" and "%preun" script cleanups.
+
 * Thu Sep 07 2000 Solar Designer <solar@owl.openwall.com>
 - Workaround for glibc builds (allow '-' in identifiers in the exportstr
 code, which is new for bash 2.04).
