@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/iptables/iptables.init,v 1.2 2003/08/22 00:50:54 solar Exp $
+# $Id: Owl/packages/iptables/iptables.init,v 1.3 2003/08/22 01:41:21 solar Exp $
 #
 # chkconfig: 2345 08 92
 # description: \
@@ -19,7 +19,7 @@ function iftable()
 case "$1" in
 start|restart|reload)
 	if [ -s "$IPTABLES_CONFIG" ]; then
-		tables=`cat /proc/net/ip_tables_names 2>/dev/null`
+		tables=`cat /proc/net/ip_tables_names`
 		echo "Flushing all current rules and user defined chains"
 		for t in $tables; do
 			$IPTABLES -t $t -F
@@ -37,7 +37,7 @@ start|restart|reload)
 		done
 
 		echo "Applying iptables firewall rules"
-		grep -Ev '^[[:space:]]*#|^[[:space:]]*$' "$IPTABLES_CONFIG" |
+		grep -Ev '^#|^[[:space:]]*$' "$IPTABLES_CONFIG" |
 			/sbin/iptables-restore -c
 	fi
 	;;
@@ -69,7 +69,7 @@ stop)
 		iftable mangle -P FORWARD ACCEPT
 	;;
 status)
-	tables=`cat /proc/net/ip_tables_names 2>/dev/null`
+	tables=`cat /proc/net/ip_tables_names`
 	for t in $tables; do
 		echo $"Table: $t"
 		$IPTABLES -t $t --list
@@ -108,11 +108,11 @@ save)
 	echo "Saving current rules to $IPTABLES_CONFIG"
 	touch "$IPTABLES_CONFIG"
 	chmod 600 "$IPTABLES_CONFIG"
-	/sbin/iptables-save -c > "$IPTABLES_CONFIG" 2>/dev/null
+	/sbin/iptables-save -c > "$IPTABLES_CONFIG"
 	;;
 *)
-	echo "Usage: $0 {start|stop|restart|reload|status|panic|save}"
+	echo "Usage: iptables {start|stop|restart|reload|status|panic|save}"
 	exit 1
 esac
 
-exit 0
+exit $?
