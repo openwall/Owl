@@ -1,9 +1,9 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.23 2004/11/23 22:40:44 mci Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.24 2005/01/12 15:37:39 galaxy Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
 Version: 6.3.5
-Release: owl13
+Release: owl14
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.red-bean.com/pub/noel/%name-%version.tar.gz
@@ -37,26 +37,26 @@ rm accounting.info
 %configure
 sed -i 's,/\* #undef HAVE_LINUX_ACCT_H \*/,#define HAVE_LINUX_ACCT_H,' config.h
 touch texinfo.tex
-make
+%__make
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot/etc/{rc.d/init.d,logrotate.d}
+mkdir -p %buildroot%_sysconfdir/{rc.d/init.d,logrotate.d}
 mkdir -p %buildroot{/sbin,%_bindir,%_sbindir,%_mandir}
 mkdir -p %buildroot%_var/account
 %makeinstall
 install -m 644 $RPM_SOURCE_DIR/dump-acct.8 %buildroot%_mandir/man8/
 install -m 644 $RPM_SOURCE_DIR/dump-utmp.8 %buildroot%_mandir/man8/
-install -m 755 $RPM_SOURCE_DIR/acct.init %buildroot/etc/rc.d/init.d/acct
+install -m 755 $RPM_SOURCE_DIR/acct.init %buildroot%_sysconfdir/rc.d/init.d/acct
 install -m 644 $RPM_SOURCE_DIR/acct.logrotate \
-	%buildroot/etc/logrotate.d/acct
+	%buildroot%_sysconfdir/logrotate.d/acct
 
 # Move accton to /sbin -- leave historical symlink
 mv %buildroot%_sbindir/accton %buildroot/sbin/accton
 ln -s ../../sbin/accton %buildroot%_sbindir/accton
 
 # Because of the last command conflicting with the one from SysVinit
-mv %buildroot/usr/bin/last %buildroot/usr/bin/last-acct
+mv %buildroot%_bindir/last %buildroot%_bindir/last-acct
 mv %buildroot%_mandir/man1/last.1 \
 	%buildroot%_mandir/man1/last-acct.1
 
@@ -95,12 +95,11 @@ fi
 
 %files
 %defattr(-,root,root)
-%dir /var/account
-%ghost %attr(0600,root,root) /var/account/pacct
-%ghost %attr(0600,root,root) /var/account/usracct
-%ghost %attr(0600,root,root) /var/account/savacct
-%attr(0644,root,root) %config(noreplace) /etc/logrotate.d/*
-%config /etc/rc.d/init.d/acct
+%ghost %attr(0600,root,root) %_var/account/pacct
+%ghost %attr(0600,root,root) %_var/account/usracct
+%ghost %attr(0600,root,root) %_var/account/savacct
+%attr(0644,root,root) %config(noreplace) %_sysconfdir/logrotate.d/*
+%config %_sysconfdir/rc.d/init.d/acct
 /sbin/accton
 %_sbindir/*
 %_bindir/*
@@ -108,6 +107,11 @@ fi
 %_infodir/*
 
 %changelog
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 6.3.5-owl14
+- /var/account is owned by owl-hier and use more restrictive permissions,
+so I've removed it from this package.
+- Cleaned up the spec for consistency.
+
 * Wed Jul 21 2004 Michail Litvak <mci@owl.openwall.com> 6.3.5-owl13
 - Use sed -i.
 
