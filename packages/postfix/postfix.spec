@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.19 2003/10/30 21:15:47 solar Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.20 2003/11/27 23:09:15 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
@@ -7,7 +7,7 @@ Name: postfix
 %define original_version %original_date-%original_pl
 %define package_version %{original_date}_%original_pl
 Version: %package_version
-Release: owl7
+Release: owl8
 License: IBM Public License
 Group: System Environment/Daemons
 Source0: ftp://ftp.sunet.se/pub/unix/mail/postfix/official/%name-%original_version.tar.gz
@@ -183,12 +183,16 @@ if [ $1 -eq 0 ]; then
 	rm -f /etc/postfix/aliases.db
 	find /var/spool/postfix \( -type p -o -type s \) -delete
 	rm -f /var/spool/postfix/{pid,etc,lib}/*
-	rmdir /var/spool/postfix/[^m]*
+	rmdir /var/spool/postfix/[^m]* || :
 fi
 
 %files -f filelist
 
 %changelog
+* Fri Nov 28 2003 Solar Designer <solar@owl.openwall.com> 19991231_pl13-owl8
+- Continue on possible errors from the rmdir in %preun such that it is still
+possible to uninstall; thanks to Maciek Pasternacki for reporting this.
+
 * Fri Oct 24 2003 Solar Designer <solar@owl.openwall.com> 19991231_pl13-owl7
 - Explain how to enable the SMTP server with control(8).
 
