@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.6 2000/12/04 17:53:07 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.7 2000/12/04 18:18:28 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
 Version: 0.3
-Release: 1owl
+Release: 2owl
 Copyright: GPL
 Group: System Environment/Base
 Source0: initscripts-5.00.tar.gz
@@ -19,7 +19,7 @@ Obsoletes: initscripts
 Requires: SysVinit, /sbin/start-stop-daemon
 Requires: bash >= 2.0, sh-utils
 Requires: mingetty, e2fsprogs >= 1.15, util-linux, net-tools
-Requires: gawk, sed, mktemp, console-tools
+Requires: gawk, sed, mktemp
 Prereq: /sbin/chkconfig
 
 %description
@@ -132,6 +132,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Mon Dec 04 2000 Solar Designer <solar@owl.openwall.com>
 - Obsoletes: initscripts
+- Don't require console-tools for now.
 - Create wtmp and utmp in %post.
 - Enable swapping into files.
 - Save dmesg on boot.
