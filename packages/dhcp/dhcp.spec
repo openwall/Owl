@@ -1,11 +1,11 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.16 2003/09/15 12:33:38 schmidt Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.17 2003/09/15 17:25:55 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
 Summary: Dynamic Host Configuration Protocol (DHCP) distribution.
 Name: dhcp
 Version: 3.0pl2
-Release: owl1
+Release: owl2
 License: ISC License
 Group: System Environment/Daemons
 URL: http://www.isc.org/products/DHCP/
@@ -16,7 +16,6 @@ Patch0: dhcp-3.0pl2-owl-man.diff
 Patch1: dhcp-3.0pl2-owl-drop-root.diff
 Patch2: dhcp-3.0pl2-rh-owl-script.diff
 Patch3: dhcp-3.0pl2-owl-warnings.diff
-PreReq: /sbin/chkconfig, /etc/rc.d/init.d
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -115,7 +114,6 @@ if [ $1 -ge 2 ]; then
 fi
 
 %post server
-/sbin/chkconfig --add dhcpd
 if [ -f /var/run/dhcp.restart ]; then
 	/etc/rc.d/init.d/dhcpd start
 fi
@@ -167,11 +165,15 @@ fi
 %{_mandir}/man8/dhcrelay.8*
 
 %changelog
+* Mon Sep 15 2003 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl2
+- Don't set dhcpd to be started at system boot by default.
+- dhcrelay chroots now to /var/empty.
+
 * Mon Sep 15 2003 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl1
 - Create the pseudo-user/group in the common package.
 
 * Sun Sep 14 2003 Matthias Schmidt <schmidt@owl.openwall.com> 3.0pl2-owl0.4
-- Create two subdirectories for dhcpd and dhclient under /var/lib/dhcp
+- Create three subdirectories for dhcpd and dhclient under /var/lib/dhcp
 
 * Tue Sep 09 2003 Matthias Schmidt <schmidt@owl.openwall.com> 3.0pl2-owl0.3
 - Minor changes in the drop-root patch
