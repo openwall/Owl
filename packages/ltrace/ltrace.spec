@@ -1,19 +1,19 @@
-# $Id: Owl/packages/ltrace/ltrace.spec,v 1.11 2001/10/25 13:47:18 mci Exp $
+# $Id: Owl/packages/ltrace/ltrace.spec,v 1.12 2002/02/06 07:43:02 mci Exp $
 
 Summary: Tracks runtime library calls from dynamically linked executables.
 Name: ltrace
 Version: 0.3.10
-Release: 8owl
-Copyright: GPL
+Release: owl8
+License: GPL
 Group: Development/Debuggers
-ExclusiveArch: %ix86 sparc sparcv9
 Source: ftp://ftp.debian.org/debian/dists/potato/main/source/utils/ltrace_%{version}.tar.gz
 Patch0: ltrace-0.3.10-rh-sparc.diff
 Patch1: ltrace-0.3.10-rh-mandir.diff
 Patch2: ltrace-0.3.10-rh-nsyscals0.diff
 Patch3: ltrace-0.3.10-rh-strlen.diff
 Prefix: %{_prefix}
-BuildRoot: /var/rpm-buildroot/%{name}-root
+ExclusiveArch: %ix86, sparc, sparcv9
+BuildRoot: /override/%{name}-%{version}
 
 %description
 ltrace is a debugging program which runs a specified command until the
@@ -22,16 +22,12 @@ records both the dynamic library calls called by the executed process
 and the signals received by the executed process.  ltrace can also
 intercept and print system calls executed by the process.
 
-You should install ltrace if you need a sysadmin tool for tracking the
-execution of processes.
-
 %prep
 %setup -q
 
 %ifarch sparc sparcv9
 %patch0 -p1
 %endif
-
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -56,6 +52,9 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/ltrace.conf
 
 %changelog
+* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions
+
 * Thu Oct 25 2001 Michail Litvak <mci@owl.openwall.com>
 - fix dangling symlink
 
