@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.2 2000/09/03 20:59:14 kad Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.3 2000/09/03 21:24:56 solar Exp $
 
 Summary: 	The Perl programming language.
 Name: 		perl
@@ -19,7 +19,7 @@ Patch4: 	perl-5.6.0-rh-root.diff
 Patch5: 	perl-5.6.0-rh-fhs.diff
 Patch6: 	perl-5.6.0-rh-buildroot.diff
 Obsoletes: 	perl-MD5
-Buildroot: 	/vaar/rpm-buildroot/%{name}-root
+Buildroot: 	/var/rpm-buildroot/%{name}-root
 BuildPreReq: 	gawk, grep, tcsh
 Epoch: 		1
 
