@@ -1,10 +1,10 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.8 2000/11/13 03:39:31 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.9 2001/04/14 18:15:44 solar Exp $
 
 %define libmaj 0
 %define libmin 9
 %define librel 5
 %define librev a
-Release: 3owl
+Release: 4owl
 
 %define openssldir /var/ssl
 
@@ -71,14 +71,17 @@ static libraries and header files required when developing applications.
 
 perl util/perlpath.pl /usr/bin/perl
 
-%ifarch i386 i486 i586 i686
+%ifarch %ix86
 ./Configure %{CONFIG_FLAGS} --openssldir=%{openssldir} linux-elf
 %endif
 %ifarch ppc
 ./Configure %{CONFIG_FLAGS} --openssldir=%{openssldir} linux-ppc
 %endif
-%ifarch alpha
-./Configure %{CONFIG_FLAGS} --openssldir=%{openssldir} linux-alpha
+%ifarch alpha alphaev5
+./Configure %{CONFIG_FLAGS} --openssldir=%{openssldir} linux-alpha-gcc
+%endif
+%ifarch alphaev56 alphapca56 alphaev6 alphaev67
+./Configure %{CONFIG_FLAGS} --openssldir=%{openssldir} linux-alpha+bwx-gcc
 %endif
 %ifarch sparc
 ./Configure %{CONFIG_FLAGS} --openssldir=%{openssldir} linux-sparcv8
@@ -155,6 +158,10 @@ ldconfig
 ldconfig
 
 %changelog
+* Sat Apr 14 2001 Solar Designer <solar@owl.openwall.com>
+- Support Alpha targets.
+- Use the %ix86 macro.
+
 * Mon Nov 13 2000 Solar Designer <solar@owl.openwall.com>
 - Support SPARC targets (32-bit only at this time).
 
