@@ -1,0 +1,35 @@
+--- openssl-0.9.7c/Makefile.org.orig	Mon Aug 11 13:37:17 2003
++++ openssl-0.9.7c/Makefile.org	Wed Mar  3 18:47:50 2004
+@@ -10,6 +10,7 @@
+ SHLIB_MAJOR=
+ SHLIB_MINOR=
+ SHLIB_EXT=
++SHLIB_SOVERSION=4
+ PLATFORM=dist
+ OPTIONS=
+ CONFIGURE_ARGS=
+@@ -284,11 +285,11 @@
+ 	fi; \
+ 	( set -x; ${CC} ${SHARED_LDFLAGS} \
+ 		-shared -o lib$$i.so.${SHLIB_MAJOR}.${SHLIB_MINOR} \
+-		-Wl,-soname=lib$$i.so.${SHLIB_MAJOR}.${SHLIB_MINOR} \
++		-Wl,-soname=lib$$i.so.${SHLIB_SOVERSION} \
+ 		-Wl,-Bsymbolic \
+ 		-Wl,--whole-archive lib$$i.a \
+ 		-Wl,--no-whole-archive $$libs ${EX_LIBS} -lc ) || exit 1; \
+-	libs="-l$$i $$libs"; \
++	libs="lib$$i.so.${SHLIB_MAJOR}.${SHLIB_MINOR} $$libs"; \
+ 	done
+ 
+ DETECT_GNU_LD=(${CC} -Wl,-V /dev/null 2>&1 | grep '^GNU ld' )>/dev/null
+--- openssl-0.9.7c/Configure.orig	Sun Sep 28 18:07:01 2003
++++ openssl-0.9.7c/Configure	Wed Mar  3 18:47:50 2004
+@@ -1259,7 +1259,7 @@
+ 	elsif ($shared_extension ne "" && $shared_extension =~ /^\.s([ol])\.[^\.]*\.[^\.]*$/)
+ 		{
+ 		my $sotmp = $1;
+-		s/^SHARED_LIBS_LINK_EXTS=.*/SHARED_LIBS_LINK_EXTS=.s$sotmp.\$(SHLIB_MAJOR) .s$sotmp/;
++		s/^SHARED_LIBS_LINK_EXTS=.*/SHARED_LIBS_LINK_EXTS=.s$sotmp.\$(SHLIB_SOVERSION) .s$sotmp/;
+ 		}
+ 	elsif ($shared_extension ne "" && $shared_extension =~ /^\.[^\.]*\.[^\.]*\.dylib$/)
+ 		{

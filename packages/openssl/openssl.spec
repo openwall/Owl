@@ -1,17 +1,17 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.38 2004/03/18 01:09:25 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.39 2004/09/10 07:27:59 galaxy Exp $
+
+%define soversion 4
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
-Version: 0.9.6m
+Version: 0.9.7d
 Release: owl1
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
 Source: ftp://ftp.openssl.org/source/%name-%version.tar.gz
-Patch0: openssl-0.9.6e-owl-crypt.diff
-Patch1: openssl-0.9.6a-owl-glibc-enable_secure.diff
-Patch10: openssl-0.9.6e-up-20020429-read-errors.diff
-Patch20: openssl-0.9.6h-owl-Makefile.diff
+Patch0: openssl-0.9.7c-owl-glibc-enable_secure.diff
+Patch1: openssl-0.9.7c-rh-soversion.diff
 PreReq: /sbin/ldconfig
 Provides: SSL
 BuildRequires: perl
@@ -59,16 +59,14 @@ libraries and header files required when developing applications.
 %prep
 %setup -q
 # XXX: don't rebuild some files at make install time
-pushd crypto/objects/
+pushd crypto/objects
 touch -r objects.pl *.h
 popd
 %patch0 -p1
 %patch1 -p1
-%patch10 -p0
-%patch20 -p1
 
-%define openssldir /var/ssl
-%define opensslflags shared -DSSL_ALLOW_ADH --prefix=/usr
+%define openssldir %_datadir/ssl
+%define opensslflags shared -DSSL_ALLOW_ADH --prefix=%_prefix
 
 %build
 perl -pi -e "s/-O.(?: -fomit-frame-pointer)?(?: -m.86)?/$RPM_OPT_FLAGS/" \
@@ -97,19 +95,9 @@ perl -pi -e "s/-O.(?: -fomit-frame-pointer)?(?: -m.86)?/$RPM_OPT_FLAGS/" \
 ./Configure %opensslflags --openssldir=%openssldir linux-sparcv9
 %endif
 
-# Check these against the DIRS= line and "all" target in top-level Makefile
-# when updating to a new version of OpenSSL; with 0.9.6h the Makefile says:
-# DIRS= crypto ssl rsaref $(SHLIB_MARK) apps test tools
-# all: clean-shared Makefile.ssl sub_all
-make Makefile.ssl
-make sub_all DIRS="crypto ssl"
-LD_LIBRARY_PATH=`pwd` make sub_all DIRS="apps tools"
-
-if [ ! -x /usr/bin/bc ]; then
-	perl -pi -e 's/^test_bn:/test_bn_unused:/' test/Makefile.ssl
-	echo 'test_bn:' >> test/Makefile.ssl
-fi
-LD_LIBRARY_PATH=`pwd` make tests
+LD_LIBRARY_PATH=`pwd` make
+LD_LIBRARY_PATH=`pwd` make rehash
+LD_LIBRARY_PATH=`pwd` make test
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -121,6 +109,17 @@ LD_LIBRARY_PATH=`pwd` ldd $RPM_BUILD_ROOT/usr/bin/openssl | tee openssl.libs
 grep -qw libssl openssl.libs
 grep -qw libcrypto openssl.libs
 
+%define solibbase %(echo %version | sed 's/[[:alpha:]]//g')
+
+mkdir -p $RPM_BUILD_ROOT/%_lib
+mv $RPM_BUILD_ROOT/usr/lib/lib*.so.%solibbase $RPM_BUILD_ROOT/%_lib/
+rename so.%solibbase so.%version $RPM_BUILD_ROOT/%_lib/*.so.%solibbase
+for lib in $RPM_BUILD_ROOT/%_lib/*.so.%version; do
+	chmod 755 $lib
+	ln -sf ../../%_lib/`basename $lib` $RPM_BUILD_ROOT%_libdir/`basename ${lib} .%version`
+	ln -sf ../../%_lib/`basename $lib` $RPM_BUILD_ROOT%_libdir/`basename ${lib} .%version`.%soversion
+done
+
 # Rename man pages
 mv $RPM_BUILD_ROOT%_mandir/man1/{,ssl}passwd.1
 mv $RPM_BUILD_ROOT%_mandir/man3/{,ssl}err.3
@@ -129,6 +128,15 @@ mv $RPM_BUILD_ROOT%_mandir/man3/{,ssl}rand.3
 # Make backwards-compatibility symlink to ssleay
 ln -s openssl $RPM_BUILD_ROOT/usr/bin/ssleay
 
+pushd $RPM_BUILD_ROOT%_datadir/ssl/misc
+mv CA.sh CA
+popd
+
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot%_datadir/ssl/misc/CA.pl
+rm %buildroot%_datadir/ssl/misc/der_chop
+
+
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
@@ -136,12 +144,11 @@ ln -s openssl $RPM_BUILD_ROOT/usr/bin/ssleay
 %defattr(0644,root,root,0755)
 %doc CHANGES CHANGES.SSLeay LICENSE NEWS README
 %doc doc
-
-%attr(0755,root,root) /usr/bin/*
-%attr(0755,root,root) /usr/lib/*.so.*
-%attr(0755,root,root) %openssldir/misc/*
+%attr(0755,root,root) %_bindir/*
+%attr(0755,root,root) /%_lib/*.so.%version
+%attr(0755,root,root) %openssldir/misc/CA
+%attr(0755,root,root) %openssldir/misc/c_*
 %attr(0644,root,root) %_mandir/man[157]/*
-
 %config %attr(0644,root,root) %openssldir/openssl.cnf
 %dir %attr(0755,root,root) %openssldir/certs
 %dir %attr(0755,root,root) %openssldir/lib
@@ -154,11 +161,28 @@ ln -s openssl $RPM_BUILD_ROOT/usr/bin/ssleay
 %attr(0755,root,root) /usr/lib/*.so
 %dir %attr(0755,root,root) /usr/include/openssl
 %attr(0644,root,root) /usr/include/openssl/*
+# XXX: we don't have a package providing /usr/lib/pkgconfig directory
+%attr(0644,root,root) /usr/lib/pkgconfig/openssl.pc
 %attr(0644,root,root) %_mandir/man3/*
 
 %changelog
-* Thu Mar 18 2004 Solar Designer <solar@owl.openwall.com> 0.9.6m-owl1
-- Updated to 0.9.6m.
+* Thu Mar 18 2004 Michail Litvak <mci@owl.openwall.com> 0.9.7d-owl1
+- 0.9.7d
+
+* Thu Mar 18 2004 Solar Designer <solar@owl.openwall.com> 0.9.7c-owl3
+- Spec file cleanups for issues introduced with the update to 0.9.7+.
+
+* Tue Mar 04 2004 Michail Litvak <mci@owl.openwall.com> 0.9.7c-owl2
+- Apply RH's soname convention.
+- Move libs to /lib and place symlinks to /usr/lib.
+
+* Tue Mar 02 2004 Michail Litvak <mci@owl.openwall.com> 0.9.7c-owl1
+- 0.9.7c
+- Removed patches included by upstream.
+- Patch to fix man-pages generation.
+- Add /usr/lib/pkgconfig/openssl.pc to the development section.
+- Set openssl dir to datadir not to /var.
+- Don't install perl scripts (RH install it into openssl-perl package).
 
 * Fri Jan 16 2004 Michail Litvak <mci@owl.openwall.com> 0.9.6l-owl2
 - Make /usr/include/openssl directory owned by this package.
