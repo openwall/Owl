@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ncurses/ncurses.spec,v 1.18 2003/10/29 17:40:54 solar Exp $
+# $Id: Owl/packages/ncurses/ncurses.spec,v 1.19 2003/10/29 17:52:25 solar Exp $
 
 %define major 5
 %define oldmajor 4
@@ -6,7 +6,7 @@
 Summary: A CRT screen handling and optimization package.
 Name: ncurses
 Version: 5.2
-Release: owl9
+Release: owl10
 License: distributable
 Group: System Environment/Libraries
 URL: http://dickey.his.com/ncurses/ncurses.html
@@ -132,7 +132,11 @@ ln -s libpanel.so.%version $RPM_BUILD_ROOT/usr/lib/libpanel.so.%oldmajor
 /usr/lib/lib*.so.%{oldmajor}*
 
 %changelog
-* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
+* Wed Oct 29 2003 Solar Designer <solar@owl.openwall.com> 5.2-owl10
+- Don't keep ESC characters in resetall script source, use echo -e instead.
+- Eliminated unneeded curly braces with RPM macros and dropped %clean.
+
+* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com> 5.2-owl9
 - Enforce our new spec file conventions
 
 * Mon Jun 25 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
