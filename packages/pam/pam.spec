@@ -1,9 +1,9 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.13 2001/07/06 03:22:42 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.14 2001/07/30 02:32:32 solar Exp $
 
 Summary: A security tool which provides authentication for applications.
 Name: pam
 Version: 0.72
-Release: 13owl
+Release: 14owl
 Copyright: GPL or BSD
 Group: System Environment/Base
 Source0: pam-redhat-%{version}.tar.gz
@@ -100,6 +100,10 @@ grep ^chkpwd: /etc/group &>/dev/null || groupadd -g 163 chkpwd
 /usr/man/man8/*
 
 %changelog
+* Mon Jul 30 2001 Solar Designer <solar@owl.openwall.com>
+- Fixed a double-free bug in pam_pwdb which caused it to segfault after
+successful password changes in some cases.  The bug was specific to Owl.
+
 * Sat May 05 2001 Solar Designer <solar@owl.openwall.com>
 - Minor updates to use crypt_blowfish interfaces in the now officially
 documented ways.

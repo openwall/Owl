@@ -12,6 +12,13 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/07/30	Package: pam
+RELIABILITY FIX: Fixed a double-free bug in pam_pwdb which caused it
+to segfault after successful password changes in some cases.  The bug
+was specific to Owl. :-(  Fortunately, this had no security impact as
+the memory area was zeroed out before the second call to free(3) such
+that no user input would reach it.
+
 2001/07/28	Package: owl-cdrom
 New package: directory hierarchy changes and additional files needed
 for Owl bootable CD-ROM's.
@@ -263,4 +270,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp@hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.17 2001/07/28 16:23:16 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.18 2001/07/30 02:32:32 solar Exp $
