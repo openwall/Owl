@@ -1,8 +1,8 @@
-# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.9 2002/04/01 20:34:24 solar Exp $
+# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.10 2002/04/25 18:04:24 solar Exp $
 
 Summary: Pluggable private /tmp space support for interactive (shell) sessions.
 Name: pam_mktemp
-Version: 0.2.3
+Version: 0.2.4
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
@@ -29,6 +29,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 mkdir -p -m 711 /tmp/.private
+
+%triggerin -- e2fsprogs
 test -d /tmp/.private -a -O /tmp/.private && chattr +a /tmp/.private || :
 
 %files
@@ -37,6 +39,10 @@ test -d /tmp/.private -a -O /tmp/.private && chattr +a /tmp/.private || :
 /lib/security/pam_mktemp.so
 
 %changelog
+* Thu Apr 25 2002 Solar Designer <solar@owl.openwall.com>
+- Use a trigger on e2fsprogs, don't assume that chattr(1) is available
+at the time this package is installed.
+
 * Tue Apr 02 2002 Solar Designer <solar@owl.openwall.com>
 - Use '=' instead of '.set' to declare the alias.
 
