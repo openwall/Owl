@@ -1,4 +1,4 @@
-# $Id: Owl/packages/logrotate/logrotate.spec,v 1.5 2002/02/05 20:07:13 mci Exp $
+# $Id: Owl/packages/logrotate/logrotate.spec,v 1.6 2002/02/06 07:39:41 mci Exp $
 
 Summary: Rotates, compresses, removes and mails system log files.
 Name: logrotate
@@ -13,7 +13,7 @@ Patch2: logrotate-3.5.9-owl-man.diff
 Patch3: logrotate-3.5.9-owl-fchmod-fchown-race.diff
 Patch4: logrotate-3.5.9-owl-tmp.diff
 Requires: crontabs
-BuildPreReq: popt
+BuildRequires: popt
 BuildRoot: /override/%{name}-%{version}
 
 %description
