@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gpm/gpm.spec,v 1.20 2005/01/14 03:27:51 galaxy Exp $
+# $Id: Owl/packages/gpm/gpm.spec,v 1.21 2005/01/20 03:51:28 solar Exp $
 
 # This defines the library version that this package builds.
 %define LIBVER 1.18.0
@@ -82,7 +82,7 @@ cd %buildroot
 chmod +x .%_libdir/libgpm.so.%LIBVER
 ln -sf libgpm.so.%LIBVER .%_libdir/libgpm.so
 # XXX: (GM): We have to create .so.1 ourselves, but this is a dirty hack.
-#            It's need to be re-implemented to reflect major version changes.
+# It needs to be re-implemented to reflect major version changes.
 ln -sf libgpm.so.%LIBVER .%_libdir/libgpm.so.1
 
 mkdir -p etc/rc.d/init.d
@@ -153,8 +153,7 @@ fi
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.19.6-owl5
 - Added libgpm.so.1 to the list of packaged files since it's created
 by ldconfig anyway, but now we have a track where this file comes from.
-- Added gcc343-fixes patch to deal with "label at end of compound statement"
-issue.
+- Added a patch to deal with "label at end of compound statement" issue.
 
 * Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 1.19.6-owl4
 - Remove unpackaged files.
