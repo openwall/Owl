@@ -1,15 +1,16 @@
-# $Id: Owl/packages/sh-utils/Attic/sh-utils.spec,v 1.1 2000/07/12 04:14:00 solar Exp $
+# $Id: Owl/packages/sh-utils/Attic/sh-utils.spec,v 1.2 2000/07/26 22:36:48 solar Exp $
 
 Summary: A set of GNU utilities commonly used in shell scripts.
 Name: sh-utils
 Version: 2.0
-Release: 1owl
+Release: 2owl
 Copyright: GPL
 Group: System Environment/Shells
 Source: ftp://ftp.gnu.org/pub/gnu/sh-utils/sh-utils-%{version}.tar.gz
 Patch0: sh-utils-2.0-owl-no-su-hostname.diff
-Patch1: sh-utils-2.0-rh-cest.diff
-Patch2: sh-utils-2.0-rh-utmp.diff
+Patch1: sh-utils-2.0-owl-false.diff
+Patch2: sh-utils-2.0-rh-cest.diff
+Patch3: sh-utils-2.0-rh-utmp.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Prereq: /sbin/install-info
 
@@ -42,6 +43,7 @@ indefinitely).
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 # XXX docs should say /var/run/[uw]tmp not /etc/[uw]tmp
 perl -pi -e 's,/etc/utmp,/var/run/utmp,g' doc/sh-utils.texi man/logname.1 man/users.1 man/who.1
@@ -101,7 +103,10 @@ fi
 /usr/info/sh-utils.info.gz
 
 %changelog
-* Wed Jul 12 2000 Solar Designer <solar@false.com>
+* Wed Jul 26 2000 Solar Designer <solar@owl.openwall.com>
+- Replaced true and false with the assembly version.
+
+* Wed Jul 12 2000 Solar Designer <solar@owl.openwall.com>
 - Imported this spec from RH, removed su and the PAM patches (as we're
 using SimplePAMApps instead).
 
