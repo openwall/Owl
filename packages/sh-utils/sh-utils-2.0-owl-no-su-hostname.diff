@@ -1,0 +1,19 @@
+diff -ur sh-utils-2.0.orig/src/Makefile.in sh-utils-2.0/src/Makefile.in
+--- sh-utils-2.0.orig/src/Makefile.in	Sat Aug 14 19:42:37 1999
++++ sh-utils-2.0/src/Makefile.in	Wed Jul 12 07:50:31 2000
+@@ -107,13 +107,13 @@
+ AUTOMAKE_OPTIONS = ansi2knr
+ 
+ EXTRAdir = $(bindir)
+-EXTRA_PROGRAMS = chroot hostid nice stty uname uptime su
++EXTRA_PROGRAMS = chroot hostid nice stty uname uptime
+ EXTRA_SCRIPTS = nohup
+ 
+ bin_SCRIPTS = groups @OPTIONAL_BIN_ZCRIPTS@
+ 
+ bin_PROGRAMS = basename date dirname echo env expr factor false \
+-  hostname id logname pathchk pinky printenv printf pwd seq \
++  id logname pathchk pinky printenv printf pwd seq \
+   sleep tee test true tty users who whoami yes @OPTIONAL_BIN_PROGS@
+ 
+ 
