@@ -1,0 +1,116 @@
+diff -urN libpcap-cvs20001101.org/Makefile.in libpcap-cvs20001101/Makefile.in
+--- libpcap-cvs20001101.org/Makefile.in	Wed Nov  1 15:44:01 2000
++++ libpcap-cvs20001101/Makefile.in	Wed Nov  1 15:52:55 2000
+@@ -41,6 +41,14 @@
+ # You shouldn't need to edit anything below.
+ #
+ 
++MAJ=0
++MIN=6
++VERSION=$(MAJ).$(MIN)
++LIBNAME=pcap
++LIBRARY=lib$(LIBNAME).a
++SOLIBRARY=lib$(LIBNAME).so
++SHAREDLIB=lib$(LIBNAME).so.$(VERSION)
++
+ CC = @CC@
+ CCOPT = @V_CCOPT@
+ INCLS = -I. @V_INCLS@
+@@ -48,6 +56,7 @@
+ 
+ # Standard CFLAGS
+ CFLAGS = $(CCOPT) $(INCLS) $(DEFS)
++CFLAGS_SHAREDLIB = -shared -Wl,-soname,$(SOLIBRARY).$(MAJ)
+ 
+ INSTALL = @INSTALL@
+ INSTALL_PROGRAM = @INSTALL_PROGRAM@
+@@ -69,6 +78,10 @@
+ 	@rm -f $@
+ 	$(CC) $(CFLAGS) -c $(srcdir)/$*.c
+ 
++%_pic.o: %.c
++	@rm -f $@
++	$(CC) -fPIC $(CFLAGS) -c -o $@ $(srcdir)/$*.c
++
+ PSRC =	pcap-@V_PCAP@.c
+ CSRC =	pcap.c inet.c gencode.c optimize.c nametoaddr.c \
+ 	etherent.c savefile.c bpf_filter.c bpf_image.c bpf_dump.c
+@@ -80,6 +93,7 @@
+ # We would like to say "OBJ = $(SRC:.c=.o)" but Ultrix's make cannot
+ # hack the extra indirection
+ OBJ =	$(PSRC:.c=.o) $(CSRC:.c=.o) $(GENSRC:.c=.o) # $(LIBOBJS)
++OBJ_PIC =      $(PSRC:.c=_pic.o) $(CSRC:.c=_pic.o) $(GENSRC:.c=_pic.o)
+ HDR =	pcap.h pcap-int.h pcap-namedb.h pcap-nit.h pcap-pf.h \
+ 	ethertype.h gencode.h gnuc.h
+ GENHDR = \
+@@ -91,15 +105,22 @@
+ TAGFILES = \
+ 	$(SRC) $(HDR) $(TAGHDR)
+ 
+-CLEANFILES = $(OBJ) libpcap.a $(GENSRC) $(GENHDR) lex.yy.c
++CLEANFILES = $(OBJ) $(OBJ_PIC) libpcap.* $(GENSRC) $(GENHDR) lex.yy.c
+ 
+-all: libpcap.a
++all: $(LIBRARY) $(SHAREDLIB)
+ 
+-libpcap.a: $(OBJ)
++$(LIBRARY): $(OBJ)
+ 	@rm -f $@
+ 	ar rc $@ $(OBJ)
+ 	$(RANLIB) $@
+ 
++$(SHAREDLIB): $(OBJ_PIC)
++	-@rm -f $@
++	-@rm -f $(SOLIBRARY) $(SOLIBRARY).$(MAJ)
++	$(CC) $(CFLAGS_SHAREDLIB) -o $(SHAREDLIB) $(OBJ_PIC) -lc
++	ln -s $(SHAREDLIB) $(SOLIBRARY).$(MAJ)
++	ln -s $(SOLIBRARY).$(MAJ) $(SOLIBRARY)
++
+ scanner.c: $(srcdir)/scanner.l
+ 	@rm -f $@
+ 	$(LEX) -t $< > $$$$.$@; mv $$$$.$@ $@
+@@ -107,6 +128,9 @@
+ scanner.o: scanner.c tokdefs.h
+ 	$(CC) $(CFLAGS) -c scanner.c
+ 
++scanner_pic.o: scanner.c tokdefs.h
++	$(CC) -fPIC $(CFLAGS) -c -o $@ scanner.c
++
+ tokdefs.h: grammar.c
+ grammar.c: $(srcdir)/grammar.y
+ 	@rm -f grammar.c tokdefs.h
+@@ -118,9 +142,16 @@
+ 	@rm -f $@
+ 	$(CC) $(CFLAGS) -Dyylval=pcap_lval -c grammar.c
+ 
++grammar_pic.o: grammar.c
++	@rm -f $@
++	$(CC) -fPIC $(CFLAGS) -Dyylval=pcap_lval -c -o $@ grammar.c
++
+ version.o: version.c
+ 	$(CC) $(CFLAGS) -c version.c
+ 
++version_pic.o: version.c
++	$(CC) -fPIC $(CFLAGS) -c -o $@ version.c
++
+ snprintf.o: $(srcdir)/../tcpdump/missing/snprintf.c
+ 	$(CC) $(CFLAGS) -o $@ -c $(srcdir)/../tcpdump/missing/snprintf.c
+ 
+@@ -135,11 +166,16 @@
+ bpf_filter.o: bpf_filter.c
+ 	$(CC) $(CFLAGS) -c bpf_filter.c
+ 
+-install:
++bpf_filter_pic.o: $(srcdir)/bpf/net/bpf_filter.c
++	$(CC) -fPIC $(CFLAGS) -c $(srcdir)/bpf/net/bpf_filter.c -o bpf_filter_pic.o
++
++install: $(LIBRARY) $(SHAREDLIB)
+ 	[ -d $(DESTDIR)$(libdir) ] || \
+ 	    (mkdir -p $(DESTDIR)$(libdir); chmod 755 $(DESTDIR)$(libdir))
+ 	$(INSTALL_DATA) libpcap.a $(DESTDIR)$(libdir)/libpcap.a
+ 	$(RANLIB) $(DESTDIR)$(libdir)/libpcap.a
++	$(INSTALL) -m 755 $(SHAREDLIB) $(DESTDIR)$(libdir)
++	ln -sf $(SHAREDLIB) $(DESTDIR)$(libdir)/$(SOLIBRARY)
+ 	[ -d $(DESTDIR)$(includedir) ] || \
+ 	    (mkdir -p $(DESTDIR)$(includedir); chmod 755 $(DESTDIR)$(includedir))
+ 	$(INSTALL_DATA) $(srcdir)/pcap.h $(DESTDIR)$(includedir)/pcap.h

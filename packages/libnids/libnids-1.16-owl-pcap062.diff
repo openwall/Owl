@@ -1,0 +1,94 @@
+--- src/libnids.c.orig	Wed Apr 11 17:41:57 2001
++++ src/libnids.c	Wed Apr 11 18:17:36 2001
+@@ -22,11 +22,7 @@
+ #include "util.h"
+ #include "nids.h"
+ 
+-#if (HAVE_NEW_PCAP)
+-#include <linux/if_packet.h>
+ extern int set_all_promisc();
+-extern int pcap_open_live_new(u_char *, int, int, int,u_char *, int, u_short, void *);
+-#endif
+ 
+ #define int_ntoa(x)	inet_ntoa(*((struct in_addr *)&x))
+ extern int ip_options_compile(char *);
+@@ -158,17 +154,16 @@
+ pcap_hand(u_char *par, struct pcap_pkthdr *hdr, u_char *data)
+ {
+   struct proc_node *i;
+-
+   /* Only handle IP packets below. */
+   if (linktype == DLT_EN10MB && (data[12] != 8 || data[13] != 0))
+     return;
+-  #if ( HAVE_NEW_PCAP )
++#if 0
+   /* let's get rid of duplicate packets on loopback */
+   if (hdr->pkt_type==PACKET_OUTGOING) {
+   	 struct ip * iph = (struct ip *)(data + linkoffset);
+   	 if (ntohl(iph->ip_dst.s_addr) == 0x7f000001) return;
+   }
+-  #endif	  
++#endif
+   for (i = ip_frag_procs; i; i = i->next)
+     (i->item) (data + linkoffset, hdr->len - linkoffset);
+ }
+@@ -336,26 +331,20 @@
+ 
+   device = nids_params.device;
+   if (!strcmp(device,"all")) {
+-  #if (HAVE_NEW_PCAP)
+-      if ((desc=(pcap_t *)pcap_open_live_new(0, 16384, -2, 1000, nids_errbuf, 0, 0, 0)) == NULL )
++      if ((desc=pcap_open_live("any", 16384, 0, 1024, nids_errbuf)) == NULL )
+ 	return 0;
++	linkoffset=16;
++	linktype=0;
+       if (nids_params.promisc && !set_all_promisc())
+       {
+         nids_errbuf[0]=0;
+         strncat(nids_errbuf, strerror(errno), sizeof(nids_errbuf) - 1);
+       	return 0;
+       }	
+-  #else
+-      strcpy(nids_errbuf,"Unable to sniff on all devices - install new libpcap");
+-      return 0;
+-  #endif
+   } else            
+   if ((desc = pcap_open_live(device, 16384, nids_params.promisc!=0, 1024, nids_errbuf)) == NULL)
+     return 0;
+-  #if (HAVE_NEW_PCAP)
+-  	/* and somehow broken...*/
+-  	if (!nids_params.pcap_filter) nids_params.pcap_filter="";
+-  #endif  
++//  	if (!nids_params.pcap_filter) nids_params.pcap_filter="";
+   if (nids_params.pcap_filter != NULL) {
+ //    u_int net, mask=0;
+   u_int mask=0;
+@@ -368,6 +357,7 @@
+     if (pcap_setfilter(desc, &fcode) == -1)
+       return 0;
+   }
++  if (strcmp(device,"all")) {
+   switch ((linktype = pcap_datalink(desc))) {
+   case DLT_EN10MB:
+     linkoffset = 14;
+@@ -389,6 +379,7 @@
+     linktype = DLT_EN10MB;
+     linkoffset = 14;
+     break;
++  }
+   }
+   if (nids_params.dev_addon == -1) {
+     if (linktype == DLT_EN10MB)
+--- src/allpromisc.c.orig	Wed Apr 11 17:41:31 2001
++++ src/allpromisc.c	Wed Apr 11 17:41:51 2001
+@@ -1,5 +1,4 @@
+ #include "nids.h"
+-#if (HAVE_NEW_PCAP)
+ #include <sys/socket.h>
+ #include <netinet/in.h>
+ #include <net/if.h>
+@@ -27,4 +26,3 @@
+ 	return 1;
+ }
+ 
+-#endif

@@ -1,0 +1,108 @@
+--- libnids-1.16/src/Makefile.in.orig	Thu Jun 22 18:18:20 2000
++++ libnids-1.16/src/Makefile.in	Wed Apr 11 19:14:00 2001
+@@ -13,8 +13,13 @@
+ libdir		= @libdir@
+ mandir		= @mandir@
+ 
++LIBSTATIC	= libnids.a
++LIBMAJ		= libnids.so.1
++LIBSHARED	= libnids.so.1.16
++
+ CC		= @CC@
+ CFLAGS		= @CFLAGS@ -Wall -DHAVE_ICMPHDR=@ICMPHEADER@ -DHAVE_TCP_STATES=@TCPSTATES@ -DHAVE_BSD_UDPHDR=@HAVE_BSD_UDPHDR@
++CFLAGSSHARED	= @CFLAGS@ -Wall -DHAVE_ICMPHDR=@ICMPHEADER@ -DHAVE_TCP_STATES=@TCPSTATES@ -DHAVE_BSD_UDPHDR=@HAVE_BSD_UDPHDR@ -shared -Wl,-soname,$(LIBMAJ)
+ LDFLAGS		= @LDFLAGS@
+ 
+ PCAPINC		= @PCAPINC@
+@@ -24,28 +29,41 @@
+ LNETLIB		= @LNETLIB@
+ 
+ INCS		= $(PCAPINC) $(LNETINC)
+-#LIBS		= $(PCAPLIB) $(LNETLIB) @LIBS@
+-LIBS		= @LIBS@
++LIBS		= $(PCAPLIB) $(LNETLIB) @LIBS@
++#LIBS		= @LIBS@
+ RANLIB		= @RANLIB@
+ INSTALL		= @INSTALL@
+ 
+ OBJS		= checksum.o ip_fragment.o ip_options.o killtcp.o \
+ 		  libnids.o scan.o tcp.o util.o allpromisc.o hash.o
+ 
++OBJSSHARE	= checksum_pic.o ip_fragment_pic.o ip_options_pic.o \
++		  killtcp_pic.o libnids_pic.o scan_pic.o tcp_pic.o \
++		  util_pic.o allpromisc_pic.o hash_pic.o
+ .c.o:
+ 	$(CC) -c $(CFLAGS) -I. $(INCS) $<
+ 
+-all: libnids.a
++%_pic.o: %.c
++	$(CC) -fPIC $(CFLAGS) -I. $(INCS) -c $< -o $@
++
+ 
+-libnids.a: $(OBJS)
++all: $(LIBSTATIC) $(LIBSHARED)
++
++$(LIBSTATIC): $(OBJS)
+ 	ar -cr $@ $(OBJS)
+ 	$(RANLIB) $@
+ 
++$(LIBSHARED): $(OBJSSHARE)
++	$(CC) $(CFLAGSSHARED) -o $(LIBSHARED) $(OBJSSHARE) $(LIBS) $(LNETLIB) $(PCAPLIB)
++
+ install: libnids.a
+ 	../mkinstalldirs $(install_prefix)$(libdir)
+ 	../mkinstalldirs $(install_prefix)$(includedir)
+ 	../mkinstalldirs $(install_prefix)$(mandir)/man3
+ 	$(INSTALL) -c -m 644 libnids.a $(install_prefix)$(libdir)
++	$(INSTALL) -c -m 755 $(LIBSHARED) $(install_prefix)$(libdir)
++	ln -s -f $(LIBSHARED) $(install_prefix)$(libdir)/$(LIBMAJ)
++	ln -s -f $(LIBMAJ) $(install_prefix)$(libdir)/libnids.so
+ 	$(INSTALL) -c -m 644 nids.h $(install_prefix)$(includedir)
+ 	$(INSTALL) -c -m 644 libnids.3 $(install_prefix)$(mandir)/man3
+ 
+--- libnids-1.16/Makefile.in.orig	Sun Jun 18 17:47:12 2000
++++ libnids-1.16/Makefile.in	Wed Apr 11 19:10:39 2001
+@@ -3,7 +3,7 @@
+ #
+ # Dug Song <dugsong@monkey.org>
+ 
+-SUBDIRS	= src samples
++SUBDIRS	= src
+ 
+ all install clean:
+ 	for dir in $(SUBDIRS) ; do (cd $$dir ; $(MAKE) $@) ; done
+--- libnids-1.16/configure.in.orig	Mon Sep 25 16:57:09 2000
++++ libnids-1.16/configure.in	Wed Apr 11 19:10:39 2001
+@@ -88,13 +88,13 @@
+      ;;
+   *)
+      AC_MSG_RESULT($withval)
+-     if test -f $withval/include/libnet.h -a -f $withval/lib/libnet.a; then
++     if test -f $withval/include/libnet.h -a -f $withval/lib/libnet.so; then
+         owd=`pwd`
+         if cd $withval; then withval=`pwd`; cd $owd; fi
+-	CFLAGS="$CFLAGS `$withval/libnet-config --defines`"
++	CFLAGS="$CFLAGS `/usr/bin/libnet-config --defines`"
+ 	LNETINC="-I$withval/include"
+-	LNETLIB="-L$withval/lib -lnet"
+-	LDFLAGS="$LDFLAGS -L$withval/lib"
++	LNETLIB="`/usr/bin/libnet-config --libs`"
++	LDFLAGS="$LDFLAGS `/usr/bin/libnet-config --libs`"
+      else
+         AC_ERROR(libnet.h or libnet.a not found in $withval)
+      fi
+@@ -103,11 +103,11 @@
+ [ if test -f ${prefix}/include/libnet.h; then
+      CFLAGS="$CFLAGS `${prefix}/bin/libnet-config --defines`"
+      LNETINC="-I${prefix}/include"
+-     LNETLIB="-L${prefix}/lib -lnet"
+-     LDFLAGS="$LDFLAGS -L${prefix}/lib"
++     LNETLIB="`/usr/bin/libnet-config --libs`"
++     LDFLAGS="$LDFLAGS `/usr/bin/libnet-config --libs`"
+   elif test -f /usr/include/libnet.h; then
+      CFLAGS="$CFLAGS `libnet-config --defines`"
+-     LNETLIB="-lnet"
++     LNETLIB="`/usr/bin/libnet-config --libs`"
+   else
+      AC_ERROR(libnet not found)
+   fi
