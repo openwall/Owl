@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.12 2001/11/12 01:47:45 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.13 2001/11/12 02:18:45 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
@@ -129,7 +129,8 @@ grep -q ^shadow: /etc/group || groupadd -g 42 shadow
 if grep -q '^shadow:[^:]*:42:' /etc/group; then
 	chgrp shadow /etc/shadow && chmod 440 /etc/shadow
 	chgrp shadow /etc/login.defs && chmod 640 /etc/login.defs
-	chgrp shadow /etc/pam.d/chage && chmod 640 /etc/pam.d/chage
+	chgrp shadow /etc/pam.d/chage-chfn-chsh && \
+		chmod 640 /etc/pam.d/chage-chfn-chsh
 fi
 
 %files
