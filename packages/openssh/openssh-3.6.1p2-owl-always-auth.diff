@@ -1,7 +1,7 @@
 diff -urp openssh-3.6.1p2.orig/auth-passwd.c openssh-3.6.1p2/auth-passwd.c
 --- openssh-3.6.1p2.orig/auth-passwd.c	Tue Apr 29 09:12:08 2003
-+++ openssh-3.6.1p2/auth-passwd.c	Mon Jun  2 01:56:14 2003
-@@ -124,6 +124,17 @@ auth_password(Authctxt *authctxt, const 
++++ openssh-3.6.1p2/auth-passwd.c	Mon Nov  3 12:34:49 2003
+@@ -124,6 +124,22 @@ auth_password(Authctxt *authctxt, const 
  	if (*password == '\0' && options.permit_empty_passwd == 0)
  		ok = 0;
  
@@ -12,8 +12,13 @@ diff -urp openssh-3.6.1p2.orig/auth-passwd.c openssh-3.6.1p2/auth-passwd.c
 +	 * producing delays on authentication failure, -- it wouldn't do that
 +	 * for valid passwords and it has no way to know we will fail due to
 +	 * a reason external to PAM.
++	 *
++	 * As a special case, we (unfortunately) have to always pass empty
++	 * passwords into PAM to not produce failed authentication warnings
++	 * as empty passwords are tried automatically.  This is meant to work
++	 * with pam_tcb's blank_nolog option or equivalent.
 +	 */
-+	if (!ok)
++	if (!ok && *password != '\0')
 +		password = "\b\n\r\177INCORRECT";
 +
  #if defined(USE_PAM)

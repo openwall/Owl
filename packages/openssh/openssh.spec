@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.69 2003/10/30 21:15:47 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.70 2003/11/03 12:41:07 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl6
+Release: owl7
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -228,6 +228,11 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Mon Nov 03 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl7
+- Always pass empty passwords into PAM to not produce failed authentication
+warnings as empty passwords are tried automatically; this fixes the bug
+introduced in the patch in 3.6.1p2-owl1.
+
 * Fri Oct 24 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl6
 - Explain how to enable the SFTP server with control(8).
 - Generate SSH host keys at startup if needed (for use with bootable CDs).
