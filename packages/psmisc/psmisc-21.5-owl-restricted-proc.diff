@@ -24,7 +24,7 @@ diff -puNr psmisc-21.5.orig/src/pstree.c psmisc-21.5/src/pstree.c
 +      {
 +        PROC *walk;
 +        for (walk = list; walk; walk = walk->next)
-+          if (!walk->parent) dump_tree(walk,0,1,1,1,0,0);
++          if (!walk->parent) dump_tree(walk, 0, 1, 1, 1, 0, 0);
 +      }
 +  }
    else
