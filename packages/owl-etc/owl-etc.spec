@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.14 2000/12/05 00:27:11 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.15 2000/12/06 11:56:47 solar Exp $
 
 Summary: Initial set of configuration files
 Name: owl-etc
-Version: 0.3
+Version: 0.4
 Release: 1owl
 Copyright: public domain
 Group: System Environment/Base
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(755,root,root) /etc/profile.d
 
 %changelog
+* Wed Dec 06 2000 Solar Designer <solar@owl.openwall.com>
+- popa3d user/group.
+
 * Mon Dec 04 2000 Solar Designer <solar@owl.openwall.com>
 - utmp group.
 - Keep the initial shadow file here rather than use pwconv.
