@@ -1,0 +1,98 @@
+diff -ur procps-2.0.6.orig/oldps.c procps-2.0.6/oldps.c
+--- procps-2.0.6.orig/oldps.c	Wed Mar 17 02:06:38 1999
++++ procps-2.0.6/oldps.c	Tue May  2 05:24:13 2000
+@@ -239,7 +239,7 @@
+     /* NOTE:  all but option parsing has really been done to enable
+      * multiple uid/tty/state filtering as well as multiple pid filtering
+      */
+-    pflags = PROC_ANYTTY;	/* defaults */
++    pflags = PROC_FILLSTAT | PROC_ANYTTY;	/* defaults */
+ 
+     if (!CL_kern_comm)	pflags |= PROC_FILLCMD;  	 /* verbosity flags */
+     if (CL_fmt == PS_M) pflags |= PROC_FILLMEM;
+diff -ur procps-2.0.6.orig/proc/readproc.c procps-2.0.6/proc/readproc.c
+--- procps-2.0.6.orig/proc/readproc.c	Wed Oct 27 23:15:50 1999
++++ procps-2.0.6/proc/readproc.c	Tue May  2 05:24:13 2000
+@@ -306,6 +306,7 @@
+     static char path[32], sbuf[512];	/* bufs for stat,statm */
+     int allocated = 0, matched = 0;	/* flags */
+     proc_t *p = NULL;
++    int pid = 0;
+ 
+     /* loop until a proc matching restrictions is found or no more processes */
+     /* I know this could be a while loop -- this way is easier to indent ;-) */
+@@ -317,7 +318,7 @@
+     if (Do(PID)) {
+ 	if (!*PT->pids)			/* set to next item in pids */
+ 	    return NULL;
+-	sprintf(path, "/proc/%d", *(PT->pids)++);
++	sprintf(path, "/proc/%d", (pid = *(PT->pids)++));
+ 	matched = 1;
+     } else {					/* get next numeric /proc ent */
+ 	while ((ent = readdir(PT->procfs)) &&
+@@ -326,6 +327,7 @@
+ 	if (!ent || !ent->d_name)
+ 	    return NULL;
+ 	sprintf(path, "/proc/%s", ent->d_name);
++	if (!Do(FILLSTAT)) pid = atoi(ent->d_name);
+     }
+     if (stat(path, &sb) == -1)		/* no such dirent (anymore) */
+ 	goto next_proc;
+@@ -338,9 +340,12 @@
+     }
+     p->euid = sb.st_uid;			/* need a way to get real uid */
+ 
+-    if ((file2str(path, "stat", sbuf, sizeof sbuf)) == -1)
++    if ((file2str(path, "stat", sbuf, sizeof sbuf)) != -1)
++	stat2proc(sbuf, p);		/* parse /proc/#/stat */
++    else if (Do(FILLSTAT))
+ 	goto next_proc;			/* error reading /proc/#/stat */
+-    stat2proc(sbuf, p);				/* parse /proc/#/stat */
++    else
++	p->pid = pid;
+ 
+     if (!matched && Do(TTY) && !XinL(dev_t, p->tty, PT->ttys))
+ 	goto next_proc;			/* not one of the requested ttys */
+@@ -406,6 +411,7 @@
+     static char path[32], sbuf[512];	/* bufs for stat,statm */
+     int allocated = 0 /* , matched = 0 */ ;	/* flags */
+     proc_t *p = NULL;
++    int pid = 0;
+ 
+     /* loop until a proc matching restrictions is found or no more processes */
+     /* I know this could be a while loop -- this way is easier to indent ;-) */
+@@ -420,6 +426,7 @@
+ 	if (!ent || !ent->d_name)
+ 	    return NULL;
+ 	sprintf(path, "/proc/%s", ent->d_name);
++	if (!Do(FILLSTAT)) pid = atoi(ent->d_name);
+ 
+     if (stat(path, &sb) == -1)		/* no such dirent (anymore) */
+ 	goto next_proc;
+@@ -430,9 +437,12 @@
+     }
+     p->euid = sb.st_uid;			/* need a way to get real uid */
+ 
+-    if ((file2str(path, "stat", sbuf, sizeof sbuf)) == -1)
++    if ((file2str(path, "stat", sbuf, sizeof sbuf)) != -1)
++	stat2proc(sbuf, p);		/* parse /proc/#/stat */
++    else if (Do(FILLSTAT))
+ 	goto next_proc;			/* error reading /proc/#/stat */
+-    stat2proc(sbuf, p);				/* parse /proc/#/stat */
++    else
++	p->pid = pid;
+ 
+ /*    if (Do(FILLMEM)) {*/				/* read, parse /proc/#/statm */
+ 	if ((file2str(path, "statm", sbuf, sizeof sbuf)) != -1 )
+diff -ur procps-2.0.6.orig/top.c procps-2.0.6/top.c
+--- procps-2.0.6.orig/top.c	Tue Nov  2 18:44:58 1999
++++ procps-2.0.6/top.c	Tue May  2 05:24:13 2000
+@@ -1102,7 +1102,7 @@
+     static int first=0;
+ 
+     if (first==0) {
+-	proc_flags=PROC_FILLMEM|PROC_FILLCMD|PROC_FILLUSR;
++	proc_flags=PROC_FILLSTAT|PROC_FILLMEM|PROC_FILLCMD|PROC_FILLUSR;
+ 	if (monpids_index)
+ 	    proc_flags |= PROC_PID;
+ 	p_table=readproctab2(proc_flags, p_table, monpids);

@@ -1,0 +1,12 @@
+--- procps-2.0.6.orig/watch.c	Tue Sep 28 19:13:09 1999
++++ procps-2.0.6/watch.c	Wed Jul  5 12:39:12 2000
+@@ -15,8 +15,8 @@
+ 
+ #include <ctype.h>
+ #include <getopt.h>
+-#include <ncurses.h>
+ #include <signal.h>
++#include <ncurses.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
