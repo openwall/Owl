@@ -1,4 +1,4 @@
-# $Id: Owl/packages/elinks/elinks.spec,v 1.8 2004/01/28 02:42:21 solar Exp $
+# $Id: Owl/packages/elinks/elinks.spec,v 1.9 2004/01/28 03:41:13 solar Exp $
 
 Summary: Lynx-like text WWW browser with many features.
 Name: elinks
@@ -9,10 +9,11 @@ Group: Applications/Internet
 URL: http://elinks.or.cz
 Source: http://elinks.or.cz/download/%name-%version.tar.bz2
 Patch0: elinks-0.9.1-owl-config.diff
-Patch1: elinks-0.9.1-owl-tmp.diff
-Patch2: elinks-0.9.1-owl-vitmp.diff
-Patch3: elinks-0.9.1-owl-no-xterm-title.diff
-Patch4: elinks-0.9.1-owl-external-programs.diff
+Patch1: elinks-0.9.1-owl-config-handling.diff
+Patch2: elinks-0.9.1-owl-tmp.diff
+Patch3: elinks-0.9.1-owl-vitmp.diff
+Patch4: elinks-0.9.1-owl-no-xterm-title.diff
+Patch5: elinks-0.9.1-owl-external-programs.diff
 Patch10: elinks-0.9.1-owl-man.diff
 Requires: gpm, zlib, bzip2, openssl
 Provides: links
@@ -39,9 +40,11 @@ It is in no way associated with Twibright Labs and their Links version.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 %patch10 -p1
 
 %build
+export ac_cv_header_expat_h=no \
 %configure \
 	--with-gpm --with-zlib --with-bzlib --with-openssl \
 	--without-guile --without-lua --without-gnutls --without-x \
