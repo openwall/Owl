@@ -21,24 +21,24 @@ f_network=`mktemp $F_NETWORK.XXXXXX` || exit 1
 ##
 function input_ip
 {
-    local ip
-    ip="$2"
-    while :; do
-        $DIALOG --backtitle "$TITLE" \
-		--title 'Network configuration' \
-		--inputbox "$1" 0 0 "$ip" 2>$dlgresult || return 1
-        ip="`cat $dlgresult`"
-        [ -n "$ip" ] || return 0
+	local ip
+	ip="$2"
+	while :; do
+		$DIALOG --backtitle "$TITLE" \
+			--title 'Network configuration' \
+			--inputbox "$1" 0 0 "$ip" 2>$dlgresult || return 1
+		ip="`cat $dlgresult`"
+		[ -n "$ip" ] || return 0
 
-        $IPCALC "$ip" &> /dev/null
-        if [ $? -ne 0 ]; then
-            $DIALOG --backtitle "$TITLE" \
-		    --title 'Network configuration' \
-		    --title 'Error'  --msgbox "\nBad IP address $ip\n" 0 0
-        else
-            return 0
-        fi
-    done
+		$IPCALC "$ip" &> /dev/null
+		if [ $? -ne 0 ]; then
+			$DIALOG --backtitle "$TITLE" \
+				--title 'Network configuration' \
+				--title 'Error'  --msgbox "\nBad IP address $ip\n" 0 0
+		else
+			return 0
+		fi
+	done
 }
 
 ##
@@ -48,14 +48,14 @@ function input_ip
 ##
 set_hostname()
 {
-    $DIALOG --backtitle "$TITLE" \
-	    --title 'Network configuration' \
-            --clear \
-            --inputbox "Host name:" 0 0 $HOSTNAME \
-            2> $dlgresult || return
+	$DIALOG --backtitle "$TITLE" \
+		--title 'Network configuration' \
+		--clear \
+		--inputbox "Host name:" 0 0 $HOSTNAME \
+		2> $dlgresult || return
 
-    HOSTNAME="`cat $dlgresult`"
-    DOMAIN="`echo "$HOSTNAME" | sed 's/^[^.]*\.//'`"
+	HOSTNAME="`cat $dlgresult`"
+	DOMAIN="`echo "$HOSTNAME" | sed 's/^[^.]*\.//'`"
 }
 
 ##
@@ -65,34 +65,34 @@ set_hostname()
 ##
 function set_dns
 {
-    local i tmp n
+	local i tmp n
 
-    while :; do
-        i=1
-        tmp=
-        while [ $i -le $MAXNS ]; do
-            tmp=" $tmp $i '${DNS[$i]:-<empty>}'"
-            ((i+=1))
-        done
-        tmp="$tmp '----' '-------------------'"
-        tmp="$tmp 'Exit' 'Return to main menu'"
+	while :; do
+		i=1
+		tmp=
+		while [ $i -le $MAXNS ]; do
+			tmp=" $tmp $i '${DNS[$i]:-<empty>}'"
+			((i+=1))
+		done
+		tmp="$tmp '----' '-------------------'"
+		tmp="$tmp 'Exit' 'Return to main menu'"
 
-        eval "$DIALOG --backtitle '$TITLE'\
-		      --title 'Network configuration' \
-                      --menu 'Nameservers' 0 0 0 " "$tmp" 2> $dlgresult || break
-        n="`cat $dlgresult`"
+		eval "$DIALOG --backtitle '$TITLE'\
+			--title 'Network configuration' \
+			--menu 'Nameservers' 0 0 0 " "$tmp" 2> $dlgresult || break
+		n="`cat $dlgresult`"
 
-        case "$n" in
-            [0-9])
-                input_ip 'Address of DNS server' "${DNS[$n]}" || continue
-                DNS[$n]="`cat $dlgresult`"
-            ;;
+		case "$n" in
+			[0-9])
+				input_ip 'Address of DNS server' "${DNS[$n]}" || continue
+				DNS[$n]="`cat $dlgresult`"
+			;;
 
-            Exit)
-                break
-            ;;
-        esac
-    done
+			Exit)
+				break
+			;;
+		esac
+	done
 }
 
 ##
@@ -102,34 +102,33 @@ function set_dns
 ##
 function config_eth
 {
-    local tmp_ip
+	local tmp_ip
 
-    test -n "$NETDEV" || NETDEV=eth0
-    $DIALOG --backtitle "$TITLE" \
-	    --title 'Network configuration' \
-	    --clear --inputbox 'Network device' 0 0 "$NETDEV" 2> $dlgresult || return
-    DEV="`cat $dlgresult`"
+	test -n "$NETDEV" || NETDEV=eth0
+	$DIALOG --backtitle "$TITLE" \
+		--title 'Network configuration' \
+		--clear --inputbox 'Network device' 0 0 "$NETDEV" 2> $dlgresult || return
+	DEV="`cat $dlgresult`"
 
-    input_ip 'Local IP address' "$IPADDR" || return
-    tmp_ip="`cat $dlgresult`"
+	input_ip 'Local IP address' "$IPADDR" || return
+	tmp_ip="`cat $dlgresult`"
 
-    if [ "$tmp_ip" != "$IPADDR" ]; then
-        IPADDR="$tmp_ip"
-        unset -v NETMASK NETWORK BROADCAST
-    fi
+	if [ "$tmp_ip" != "$IPADDR" ]; then
+		IPADDR="$tmp_ip"
+		unset -v NETMASK NETWORK BROADCAST
+	fi
 
-    [ -n "$NETMASK" ] || eval "`$IPCALC --netmask $IPADDR`"
-    input_ip 'Netmask' "$NETMASK" || return
-    NETMASK="`cat $dlgresult`"
+	[ -n "$NETMASK" ] || eval "`$IPCALC --netmask $IPADDR`"
+	input_ip 'Netmask' "$NETMASK" || return
+	NETMASK="`cat $dlgresult`"
 
-    [ -n "$NETWORK" ] || eval "`$IPCALC --network $IPADDR $NETMASK`"
-    input_ip 'Network address' "$NETWORK" || return
-    NETWORK="`cat $dlgresult`"
+	[ -n "$NETWORK" ] || eval "`$IPCALC --network $IPADDR $NETMASK`"
+	input_ip 'Network address' "$NETWORK" || return
+	NETWORK="`cat $dlgresult`"
 
-    [ -n "$BROADCAST" ] || eval "`$IPCALC --broadcast $IPADDR $NETMASK`"
-    input_ip 'Broadcast address' "$BROADCAST" || return
-    BROADCAST="`cat $dlgresult`"
-
+	[ -n "$BROADCAST" ] || eval "`$IPCALC --broadcast $IPADDR $NETMASK`"
+	input_ip 'Broadcast address' "$BROADCAST" || return
+	BROADCAST="`cat $dlgresult`"
 }
 
 ##
@@ -140,26 +139,26 @@ function config_eth
 function config_gw
 {
 
-   if [ -z "$NETDEV" ]; then
-	$DIALOG --backtitle "$TITLE"\
-		--title 'Error'\
-		--msgbox "No configured network interfaces found" 0 0
-	return
-   else
-	$DIALOG --backtitle "$TITLE"\
-		--title 'Gateway configuration'\
-		--yesno "Use $NETDEV as gateway interface ?" 0 0
-
-	if [ $? -ne 1 ]; then
-   	     GATEWAYDEV=$NETDEV
-
-	     input_ip 'Gateway address' "$GATEWAY" || return
-   	     GATEWAY="`cat $dlgresult`"
+	if [ -z "$NETDEV" ]; then
+		$DIALOG --backtitle "$TITLE" \
+			--title 'Error' \
+			--msgbox "No configured network interfaces found" 0 0
+		return
 	else
-	     GATEWAYDEV=''
-	     GATEWAY=''
+		$DIALOG --backtitle "$TITLE" \
+			--title 'Gateway configuration' \
+			--yesno "Use $NETDEV as gateway interface ?" 0 0
+
+		if [ $? -ne 1 ]; then
+			GATEWAYDEV=$NETDEV
+
+			input_ip 'Gateway address' "$GATEWAY" || return
+			GATEWAY="`cat $dlgresult`"
+		else
+			GATEWAYDEV=''
+			GATEWAY=''
+		fi
 	fi
-   fi
 
 }
 
@@ -170,8 +169,8 @@ function config_gw
 ##
 function display_netcfg
 {
-    IFS=$'\n'
-    txt="
+	IFS=$'\n'
+	txt="
 Continue with these settings?
 -----------------------------
 
@@ -187,9 +186,9 @@ Network:        $NETWORK
 Netmask:        $NETMASK
 Broadcast:      $BROADCAST
 "
-    unset IFS
-    $DIALOG --cr-wrap --backtitle "$TITLE" --title 'Network configuration' \
-            --yesno "$txt" 0 0
+	unset IFS
+	$DIALOG --cr-wrap --backtitle "$TITLE" --title 'Network configuration' \
+		--yesno "$txt" 0 0
 }
 
 ##
@@ -199,15 +198,15 @@ Broadcast:      $BROADCAST
 ##
 function write_network_yes
 {
-    echo "\
+	echo "\
 NETWORKING=yes
 HOSTNAME=$HOSTNAME
 DOMAINNAME=$DOMAIN" > "$1"
-[ -z $GATEWAY ] || echo "GATEWAY=$GATEWAY" >> "$1"
-[ -z $GATEWAYDEV ] || echo "GATEWAYDEV=$GATEWAYDEV" >> "$1"
+	[ -z $GATEWAY ] || echo "GATEWAY=$GATEWAY" >> "$1"
+	[ -z $GATEWAYDEV ] || echo "GATEWAYDEV=$GATEWAYDEV" >> "$1"
 
 # ifcfg-
-    echo "\
+	echo "\
 DEVICE=$NETDEV
 IPADDR=$IPADDR
 NETMASK=$NETMASK
@@ -224,7 +223,7 @@ ONBOOT=yes" > $NET_SCRIPTS_PATH/ifcfg-$NETDEV
 ##
 function write_network_no
 {
-    echo "\
+	echo "\
 NETWORKING=no
 HOSTNAME=$HOSTNAME
 DOMAINNAME=$DOMAIN" > "$1"
@@ -236,48 +235,48 @@ DOMAINNAME=$DOMAIN" > "$1"
 ##
 function gen_netcfg
 {
-    local n txt
+	local n txt
 
-    # resolv.conf
-    [ -n "$DOMAIN" ] && echo -e "domain\t$DOMAIN" >> $f_resolv_conf
+	# resolv.conf
+	[ -n "$DOMAIN" ] && echo -e "domain\t$DOMAIN" >> $f_resolv_conf
 
-    if [ ${#DNS[*]} -gt 0 ]; then
-	for n in ${DNS[*]}; do
-	    [ -n "$n" ] && echo -e "nameserver\t$n" >> $f_resolv_conf
-	done
-	chmod 644 $f_resolv_conf
-	mv -f $f_resolv_conf $F_RESOLV_CONF
-    fi
+	if [ ${#DNS[*]} -gt 0 ]; then
+		for n in ${DNS[*]}; do
+	    	[ -n "$n" ] && echo -e "nameserver\t$n" >> $f_resolv_conf
+		done
+		chmod 644 $f_resolv_conf
+		mv -f $f_resolv_conf $F_RESOLV_CONF
+	fi
 
-    # hosts
-    echo -e "127.0.0.1\tlocalhost" > $f_hosts
-    [ -n "$IPADDR" -a -n "$HOSTNAME" -a "$HOSTNAME" != 'localhost' ] &&
-	echo -e "$IPADDR\t$HOSTNAME" >> $f_hosts
-    chmod 644 $f_hosts
-    mv -f $f_hosts $F_HOSTS
+	# hosts
+	echo -e "127.0.0.1\tlocalhost" > $f_hosts
+	[ -n "$IPADDR" -a -n "$HOSTNAME" -a "$HOSTNAME" != 'localhost' ] &&
+		echo -e "$IPADDR\t$HOSTNAME" >> $f_hosts
+	chmod 644 $f_hosts
+	mv -f $f_hosts $F_HOSTS
 
-    # network
-    if [ -n "$IPADDR"     -a\
-	 -n "$NETDEV" 	  -a\
-	 -n "$NETMASK"    -a\
-	 -n "$BROADCAST"  -a\
-	 -n "$NETWORK" ];
-    then
-	write_network_yes $f_network
-    else
+	# network
+	if [ -n "$IPADDR"     -a\
+		-n "$NETDEV" 	  -a\
+		-n "$NETMASK"    -a\
+		-n "$BROADCAST"  -a\
+		-n "$NETWORK" ];
+	then
+		write_network_yes $f_network
+	else
 
-	txt="
+		txt="
 You forgot to set some network-related parameters.
 Networking will be off.
 "
-	$DIALOG --backtitle "$TITLE"\
-		--title 'Error'\
-		--yesno "$txt" 0 0 || return 1
-	write_network_no $f_network
-    fi
-    mv -f $f_network $F_NETWORK
+		$DIALOG --backtitle "$TITLE"\
+			--title 'Error'\
+			--yesno "$txt" 0 0 || return 1
+		write_network_no $f_network
+	fi
+	mv -f $f_network $F_NETWORK
 
-    return 0
+	return 0
 }
 
 ##
@@ -286,42 +285,42 @@ Networking will be off.
 ##
 
 while :; do
-    $DIALOG --backtitle "$TITLE" --clear --title 'Network configuration' \
-            --menu '' 0 0 0 \
-            Hostname 'Set hostname' \
-            DNS      'Set DNS servers (resolv.conf)' \
-            Network  'Network device setup' \
-	    Gateway  'Gateway setup' \
-	    Save     'Write settings' \
-            Exit     'Exit without saving' 2> $dlgresult || exit
+	$DIALOG --backtitle "$TITLE" --clear --title 'Network configuration' \
+		--menu '' 0 0 0 \
+		Hostname 'Set hostname' \
+		DNS      'Set DNS servers (resolv.conf)' \
+		Network  'Network device setup' \
+		Gateway  'Gateway setup' \
+		Save     'Write settings' \
+		Exit     'Exit without saving' 2> $dlgresult || exit
 
-    TASK="`cat $dlgresult`"
+	TASK="`cat $dlgresult`"
 
-    case "$TASK" in
-        Hostname)
-            set_hostname
-        ;;
+	case "$TASK" in
+		Hostname)
+			set_hostname
+		;;
 
-        DNS)
-            set_dns
-        ;;
+		DNS)
+			set_dns
+		;;
 
-        Network)
-            config_eth
-        ;;
+		Network)
+			config_eth
+		;;
 
-        Gateway)
-            config_gw
-        ;;
+		Gateway)
+			config_gw
+		;;
 
-	Save)
-            display_netcfg || continue
-            gen_netcfg || continue
-	    exit 0
-	;;
+		Save)
+			display_netcfg || continue
+			gen_netcfg || continue
+			exit 0
+		;;
 
-        Exit)
-            exit 0
-        ;;
-    esac
+		Exit)
+			exit 0
+		;;
+	esac
 done
