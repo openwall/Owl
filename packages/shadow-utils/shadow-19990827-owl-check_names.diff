@@ -11,14 +11,14 @@
 +	 * [a-z_][a-z0-9_-]*
  	 */
 -	if (!*name || !isalpha(*name))
-+	if (!*name || !((*name >='a' && *name <='z') || *name == '_'))
++	if (!*name || !((*name >= 'a' && *name <= 'z') || *name == '_'))
  		return 0;
  
  	while (*name) {
 -		if (*name == ':' || *name == ',' ||
 -		    *name == '\n' || !isprint(*name))
-+		if (!((*name >='a' && *name <='z') ||
-+		    (*name >='0' && *name <='9') ||
++		if (!((*name >= 'a' && *name <= 'z') ||
++		    (*name >= '0' && *name <= '9') ||
 +		    (*name == '_') || (*name == '-'))
  			return 0;
  
@@ -36,7 +36,7 @@
  	 */
  	if (strlen(name) > sizeof(ut.ut_user))
 +#else
-+        if (strlen(name) > 8)
++	if (strlen(name) > 8)
 +#endif
  		return 0;
  
