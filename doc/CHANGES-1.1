@@ -1,0 +1,23 @@
+This file lists the major changes made between the last released
+version of Owl and Owl-current.  While some of the changes listed here
+may also be made to a stable branch, the complete lists of stable
+branch changes are included with those branches and as errata for the
+corresponding Owl releases only.
+
+This is very far from an exhaustive list of changes.  Small changes to
+individual packages won't be mentioned here unless they fix a security
+or a critical reliability problem.  They are, however, mentioned in
+change logs for the packages themselves.
+
+
+	Changes made between Owl 1.0 and Owl-current.
+
+2002/10/21 -
+2002/10/24	Packages: shadow-utils, tcb
+Merged enhancements which remove the 32K users limit when /etc/tcb is
+in use, documented them in tcb(5) and login.defs(5) manual pages.
+Modified the tcb_chkpwd helper binary interface to support multiple
+users per UID (the username is now passed as well).  Most of this was
+prepared by August but delayed until after Owl 1.0 release.
+
+$Id: Owl/doc/CHANGES-1.1,v 1.1 2002/10/24 06:30:35 solar Exp $
