@@ -1,11 +1,11 @@
-# $Id: Owl/packages/bzip2/bzip2.spec,v 1.6 2002/01/24 16:30:18 solar Exp $
+# $Id: Owl/packages/bzip2/bzip2.spec,v 1.7 2002/01/28 19:23:23 solar Exp $
 
 %define bz2libver 1.0.0
 
 Summary: A file compression utility.
 Name: bzip2
 Version: 1.0.1
-Release: owl5
+Release: owl6
 License: BSD
 Group: Applications/File
 URL: http://sources.redhat.com/bzip2/
@@ -60,8 +60,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %makeinstall
 
-cp %SOURCE1 ${RPM_BUILD_ROOT}%{_bindir}
-chmod 0755 ${RPM_BUILD_ROOT}%{_bindir}/bzgrep
+install -m 755 $RPM_SOURCE_DIR/bzgrep ${RPM_BUILD_ROOT}%{_bindir}
 
 # Hack!
 ln -s libbz2.so.%{bz2libver} ${RPM_BUILD_ROOT}%{_libdir}/libbz2.so.0
