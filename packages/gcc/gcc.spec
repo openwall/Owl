@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.25 2002/05/24 23:06:04 solar Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.26 2002/05/28 17:18:16 solar Exp $
 
 %define GCC_PREFIX /usr
 %define CPP_PREFIX /lib
@@ -12,7 +12,7 @@
 Summary: C compiler from the GNU Compiler Collection.
 Name: gcc
 Version: %{GCC_VERSION}
-Release: owl2
+Release: owl3
 Epoch: 1
 License: GPL
 Group: Development/Languages
@@ -23,6 +23,7 @@ Patch0: gcc-2.95.3-rh-warn.diff
 Patch1: gcc-2.95.2-owl-disable-dvi.diff
 Patch2: gcc-2.95.2-owl-texconfig-bug.diff
 Patch3: gcc-2.95.3-owl-sparcv9-LONG_MAX.diff
+Patch4: gcc-2.95.3-owl-sparc-library-path.diff
 PreReq: /sbin/install-info
 Requires: binutils >= 2.9.1.0.25
 Requires: cpp = %{GCC_VERSION}
@@ -141,6 +142,7 @@ Brazil, Korea, and other places.
 %patch1 -p0
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 # Remove bison-generated files - we want bison 1.28+'ish versions...
 for i in gcc/cp/parse gcc/c-parse gcc/cexp gcc/java/parse-scan gcc/java/parse gcc/objc/objc-parse; do
@@ -475,6 +477,12 @@ fi
 %endif
 
 %changelog
+* Tue May 28 2002 Solar Designer <solar@owl.openwall.com>
+- Don't override the linker's default library path for elf32_sparc, place
+/lib64 before /usr/lib64 in the path for elf64_sparc; this is needed to
+support dynamic linking with libraries from packages which only place the
+.so's in /lib (/lib64), not /usr/lib (/usr/lib64).
+
 * Sat May 25 2002 Solar Designer <solar@owl.openwall.com>
 - Do use some optimization when building the stage1 compiler to make our gcc
 builds faster.

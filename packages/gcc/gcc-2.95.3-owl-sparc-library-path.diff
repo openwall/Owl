@@ -1,0 +1,58 @@
+--- gcc-2.95.3/gcc/config/sparc/linux.h.orig	Mon Dec 18 17:05:59 2000
++++ gcc-2.95.3/gcc/config/sparc/linux.h	Tue May 28 19:55:35 2002
+@@ -155,7 +155,7 @@
+ #undef  LINK_SPEC
+ #ifdef USE_GNULIBC_1
+ #ifndef LINUX_DEFAULT_ELF
+-#define LINK_SPEC "-m elf32_sparc -Y P,/usr/lib %{shared:-shared} \
++#define LINK_SPEC "-m elf32_sparc %{shared:-shared} \
+   %{!shared: \
+     %{!ibcs: \
+       %{!static: \
+@@ -163,7 +163,7 @@
+         %{!dynamic-linker:-dynamic-linker /lib/elf/ld-linux.so.1} \
+         %{!rpath:-rpath /lib/elf/}} %{static:-static}}}"
+ #else
+-#define LINK_SPEC "-m elf32_sparc -Y P,/usr/lib %{shared:-shared} \
++#define LINK_SPEC "-m elf32_sparc %{shared:-shared} \
+   %{!shared: \
+     %{!ibcs: \
+       %{!static: \
+@@ -172,7 +172,7 @@
+         %{static:-static}}}"
+ #endif
+ #else
+-#define LINK_SPEC "-m elf32_sparc -Y P,/usr/lib %{shared:-shared} \
++#define LINK_SPEC "-m elf32_sparc %{shared:-shared} \
+   %{!shared: \
+     %{!ibcs: \
+       %{!static: \
+--- gcc-2.95.3/gcc/config/sparc/linux64.h.orig	Thu Dec 17 00:13:13 1998
++++ gcc-2.95.3/gcc/config/sparc/linux64.h	Tue May 28 19:57:00 2002
+@@ -185,7 +185,7 @@
+   { "link_arch_default", LINK_ARCH_DEFAULT_SPEC },	  \
+   { "link_arch",	 LINK_ARCH_SPEC },
+     
+-#define LINK_ARCH32_SPEC "-m elf32_sparc -Y P,/usr/lib %{shared:-shared} \
++#define LINK_ARCH32_SPEC "-m elf32_sparc %{shared:-shared} \
+   %{!shared: \
+     %{!ibcs: \
+       %{!static: \
+@@ -194,7 +194,7 @@
+         %{static:-static}}} \
+ "
+ 
+-#define LINK_ARCH64_SPEC "-m elf64_sparc -Y P,/usr/lib64 %{shared:-shared} \
++#define LINK_ARCH64_SPEC "-m elf64_sparc -Y P,/lib64,/usr/lib64 %{shared:-shared} \
+   %{!shared: \
+     %{!ibcs: \
+       %{!static: \
+@@ -246,7 +246,7 @@
+ #else /* !SPARC_BI_ARCH */
+ 
+ #undef LINK_SPEC
+-#define LINK_ARCH_SPEC "-m elf64_sparc -Y P,/usr/lib64 %{shared:-shared} \
++#define LINK_ARCH_SPEC "-m elf64_sparc -Y P,/lib64,/usr/lib64 %{shared:-shared} \
+   %{!shared: \
+     %{!ibcs: \
+       %{!static: \
