@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.58 2003/04/18 12:09:24 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.59 2003/05/29 01:10:54 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p1
-Release: owl3
+Release: owl4
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -225,6 +225,9 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Thu May 29 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p1-owl4
+- write_to=tcb
+
 * Fri Apr 18 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p1-owl3
 - Added back the now more complete patch to always run PAM with password
 authentication, even for non-existent or not allowed usernames.

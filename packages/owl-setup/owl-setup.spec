@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.20 2003/04/17 12:56:33 solar Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.21 2003/05/29 01:10:54 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 0.12
+Version: 0.13
 Release: owl1
 License: mostly public domain, passwdlg is under GPL
 Group: System Environment/Base
@@ -58,7 +58,10 @@ rm -rf $RPM_BUILD_ROOT
 /usr/sbin/setup
 
 %changelog
-* Thu Apr 17 2003 Solar Designer <solar@owl.openwall.com>
+* Thu May 29 2003 Solar Designer <solar@owl.openwall.com> 0.13-owl1
+- write_to=tcb
+
+* Thu Apr 17 2003 Solar Designer <solar@owl.openwall.com> 0.12-owl1
 - Use /lib/kbd, not /usr/lib/kbd.
 
 * Fri Oct 04 2002 Michail Litvak <mci@owl.openwall.com>

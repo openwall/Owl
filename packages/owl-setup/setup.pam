@@ -1,7 +1,7 @@
 #%PAM-1.0
-# $Id: Owl/packages/owl-setup/Attic/setup.pam,v 1.2 2001/11/16 03:09:22 solar Exp $
+# $Id: Owl/packages/owl-setup/Attic/setup.pam,v 1.3 2003/05/29 01:10:54 solar Exp $
 auth       required	/lib/security/pam_deny.so
 account    required	/lib/security/pam_deny.so
 password   required	/lib/security/pam_passwdqc.so min=disabled,24,12,8,7 max=40 passphrase=3 match=4 similar=deny random=42 enforce=everyone retry=10
-password   required	/lib/security/pam_tcb.so use_authtok shadow prefix=$2a$ count=8
+password   required	/lib/security/pam_tcb.so use_authtok shadow write_to=tcb prefix=$2a$ count=8
 session    required	/lib/security/pam_deny.so

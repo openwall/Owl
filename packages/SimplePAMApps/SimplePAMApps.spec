@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.28 2003/04/17 14:12:59 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.29 2003/05/29 01:10:54 solar Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
 Version: 0.60
-Release: owl19
+Release: owl20
 License: BSD or GPL
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
@@ -76,7 +76,7 @@ fi
 if [ $1 -ge 2 ]; then
 	/usr/sbin/control-restore passwd su
 else
-	/usr/sbin/control passwd traditional
+	/usr/sbin/control passwd tcb
 	/usr/sbin/control su wheelonly
 fi
 
@@ -91,6 +91,10 @@ fi
 /etc/control.d/facilities/*
 
 %changelog
+* Thu May 29 2003 Solar Designer <solar@owl.openwall.com> 0.60-owl20
+- write_to=tcb
+- passwd(1) file modes now default to tcb.
+
 * Thu Apr 17 2003 Solar Designer <solar@owl.openwall.com> 0.60-owl19
 - Pass prefix= and count= to pam_tcb also for authentication such that it
 can use this information to reduce timing leaks.
