@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libnids/libnids.spec,v 1.11 2004/02/17 00:07:50 solar Exp $
+# $Id: Owl/packages/libnids/libnids.spec,v 1.12 2004/02/18 07:12:19 solar Exp $
 
 Summary: NIDS E-component.
 Name: libnids
@@ -9,7 +9,7 @@ License: GPL
 Group: System Environment/Libraries
 URL: http://libnids.sourceforge.net
 Source: %name-%version.tar.gz
-Patch0: libnids-1.18-snax-prism.diff
+Patch0: libnids-1.18-owl-snax-prism.diff
 PreReq: /sbin/ldconfig
 BuildRequires: autoconf, libpcap-devel, libnet-devel
 BuildRoot: /override/%name-%version
@@ -59,7 +59,11 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/lib*.a
 
 %changelog
-* Mon Feb 16 2004 Simon Baker <simonb@owl.openwall.com> 1:1.18-owl2
+* Wed Feb 18 2004 Solar Designer <solar@owl.openwall.com> 1:1.18-owl2
+- Replaced the Prism patch with a version from Nergal; the previous patch
+broke things for (at least) PPP interfaces.
+
+* Mon Feb 16 2004 Simon Baker <simonb@owl.openwall.com>
 - Added prism wireless capabilities patch from Snax (snax@shmoo.com)
 
 * Wed Oct 15 2003 Rafal Wojtczuk <nergal@owl.openwall.com> 1:1.18-owl1
