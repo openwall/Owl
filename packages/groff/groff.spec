@@ -1,4 +1,4 @@
-# $Id: Owl/packages/groff/groff.spec,v 1.13 2002/01/08 17:59:05 solar Exp $
+# $Id: Owl/packages/groff/groff.spec,v 1.14 2002/02/03 21:47:33 mci Exp $
 
 %define BUILD_USE_X 0
 %define BUILD_CURRENT 0
@@ -6,7 +6,7 @@
 Summary: A document formatting system.
 Name: groff
 Version: 1.17.2
-Release: 2owl
+Release: owl2
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.gnu.org/gnu/groff/groff-%{version}.tar.gz
@@ -157,6 +157,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Sun Feb 03 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions
+
 * Fri Dec 21 2001 Solar Designer <solar@owl.openwall.com>
 - Patched two buffer overflow bugs in grn(1) discovered by zen-parse.
 - Made the configure script fail-close on the temporary directory creation,

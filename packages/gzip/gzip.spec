@@ -1,21 +1,21 @@
-# $Id: Owl/packages/gzip/gzip.spec,v 1.5 2001/09/29 00:26:03 solar Exp $
+# $Id: Owl/packages/gzip/gzip.spec,v 1.6 2002/02/03 21:50:32 mci Exp $
 
 Summary: The GNU data compression program.
 Name: gzip
 Version: 1.3
-Release: 14owl
+Release: owl14
 License: GPL
 Group: Applications/File
+URL: http://www.gzip.org
 Source: ftp://alpha.gnu.org/gnu/gzip/gzip-%{version}.tar.gz
 Patch0: gzip-1.3-openbsd-owl-tmp.diff
 Patch1: gzip-1.2.4-rh-zforce.diff
 Patch2: gzip-1.2.4a-rh-dirinfo.diff
 Patch3: gzip-1.3-rh-stderr.diff
 Patch4: gzip-1.3-rh-zgreppipe.diff
-URL: http://www.gzip.org
 Prereq: /sbin/install-info
 Requires: mktemp >= 1:1.0
-Buildroot: /var/rpm-buildroot/gzip-%{version}-root
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The gzip package contains the popular GNU gzip data compression
@@ -45,8 +45,6 @@ for i in zcmp zegrep zforce zless znew gzexe zdiff zfgrep zgrep zmore; do
 	mv $RPM_BUILD_ROOT/bin/$i $RPM_BUILD_ROOT/usr/bin/$i
 done
 
-gzip -9nf $RPM_BUILD_ROOT%{_infodir}/gzip.info*
-
 cat > $RPM_BUILD_ROOT/usr/bin/zless <<EOF
 #!/bin/sh
 /bin/zcat "\$@" | /usr/bin/less
@@ -73,6 +71,9 @@ fi
 %{_infodir}/gzip.info*
 
 %changelog
+* Sun Feb 03 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions
+
 * Sat Sep 29 2001 Solar Designer <solar@owl.openwall.com>
 - Synced with Todd's latest fixes: re-create the temporary file in gzexe
 safely when run on multiple files, support GZIP="--suffix .suf" in znew.

@@ -1,30 +1,30 @@
-# $Id: Owl/packages/gnupg/gnupg.spec,v 1.6 2001/05/30 02:10:38 solar Exp $
+# $Id: Owl/packages/gnupg/gnupg.spec,v 1.7 2002/02/03 21:20:05 mci Exp $
 
-Summary: 	A GNU utility for secure communication and data storage.
-Name: 		gnupg
-Version:	1.0.6
-Release: 	1owl
-Copyright:	GPL
-Group: 		Applications/Cryptography
-Source0: 	ftp://ftp.gnupg.org/pub/gcrypt/gnupg/%{name}-%{version}.tar.gz
-Patch0:		gnupg-1.0.2-rh-locale.diff
-Patch1:		gnupg-1.0.4-cvs-secret-key-checks.diff
-URL: 		http://www.gnupg.org/
-Provides: 	gpg openpgp
-BuildRoot: 	/var/rpm-buildroot/%{name}-root
+Summary: A GNU utility for secure communication and data storage.
+Name: gnupg
+Version: 1.0.6
+Release: owl1
+License: GPL
+Group: Applications/Cryptography
+URL: http://www.gnupg.org/
+Source: ftp://ftp.gnupg.org/pub/gcrypt/gnupg/%{name}-%{version}.tar.gz
+Patch0: gnupg-1.0.2-rh-locale.diff
+Patch1: gnupg-1.0.4-cvs-secret-key-checks.diff
+Provides: gpg, openpgp
+BuildRoot: /override/%{name}-%{version}
 
 %description
 GnuPG (GNU Privacy Guard) is a GNU utility for encrypting data and
-creating digital signatures. GnuPG has advanced key management
+creating digital signatures.  GnuPG has advanced key management
 capabilities and is compliant with the proposed OpenPGP Internet
-standard described in RFC2440. Since GnuPG doesn't use any patented
+standard described in RFC2440.  Since GnuPG doesn't use any patented
 algorithm, it is not compatible with any version of PGP2 (PGP2.x uses
 only IDEA for symmetric-key encryption, which is patented worldwide).
 
 %prep
 %setup -q
-%patch0 -p1 -b .locale
-%patch1 -p0 -b .rsacheck
+%patch0 -p1
+%patch1 -p0
 
 %build
 unset LINGUAS || :
@@ -35,9 +35,9 @@ make
 rm -rf $RPM_BUILD_ROOT
 
 %install
-%{makeinstall}
+%makeinstall
 sed 's^\.\./g[0-9\.]*/^^g' tools/lspgpot > lspgpot
-install -m755 lspgpot $RPM_BUILD_ROOT%{_bindir}/lspgpot
+install -m 755 lspgpot $RPM_BUILD_ROOT%{_bindir}/lspgpot
 
 # Strip files otherwise not touched
 strip $RPM_BUILD_ROOT/usr/lib/gnupg/*
@@ -58,6 +58,9 @@ strip $RPM_BUILD_ROOT/usr/lib/gnupg/*
 %{_mandir}/man1/gpgv.*
 
 %changelog
+* Sun Feb 03 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions
+
 * Wed May 30 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 1.0.6.
 
@@ -73,50 +76,3 @@ strip $RPM_BUILD_ROOT/usr/lib/gnupg/*
 
 * Wed Oct 25 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import from RH
-
-* Thu Oct 19 2000 Nalin Dahyabhai <nalin@redhat.com>
-- fix a bug preventing creation of .gnupg directories
-
-* Wed Oct 18 2000 Nalin Dahyabhai <nalin@redhat.com>
-- add patch to recognize AES signatures properly (#19312)
-- add gpgv to the package
-
-* Tue Oct 17 2000 Nalin Dahyabhai <nalin@redhat.com>
-- update to 1.0.4 to get security fix
-
-* Tue Oct 10 2000 Nalin Dahyabhai <nalin@redhat.com>
-- fix man page typos (#18797)
-
-* Thu Sep 21 2000 Nalin Dahyabhai <nalin@redhat.com>
-- update to 1.0.3
-- switch to bundled copy of the man page
-
-* Wed Aug 30 2000 Matt Wilson <msw@redhat.com>
-- rebuild to cope with glibc locale binary incompatibility, again
-
-* Wed Aug 16 2000 Nalin Dahyabhai <nalin@redhat.com>
-- revert locale patch (#16222)
-
-* Tue Aug 15 2000 Nalin Dahyabhai <nalin@redhat.com>
-- set all locale data instead of LC_MESSAGES and LC_TIME (#16222)
-
-* Sun Jul 23 2000 Nalin Dahyabhai <nalin@redhat.com>
-- update to 1.0.2
-
-* Wed Jul 19 2000 Jakub Jelinek <jakub@redhat.com>
-- rebuild to cope with glibc locale binary incompatibility
-
-* Thu Jul 13 2000 Prospector <bugzilla@redhat.com>
-- automatic rebuild
-
-* Wed Jul 12 2000 Nalin Dahyabhai <nalin@redhat.com>
-- include lspgpot (#13772)
-
-* Mon Jun  5 2000 Nalin Dahyabhai <nalin@redhat.com>
-- rebuild in new build environment
-
-* Fri Feb 18 2000 Bill Nottingham <notting@redhat.com>
-- build of 1.0.1
-
-* Fri Sep 10 1999 Cristian Gafton <gafton@redhat.com>
-- version 1.0.0 build for 6.1us

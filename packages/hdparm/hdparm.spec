@@ -1,14 +1,14 @@
-# $Id: Owl/packages/hdparm/hdparm.spec,v 1.4 2001/03/31 09:45:24 mci Exp $
+# $Id: Owl/packages/hdparm/hdparm.spec,v 1.5 2002/02/03 21:54:54 mci Exp $
 
 Summary: A utility for displaying and/or setting hard disk parameters.
 Name: hdparm
 Version: 4.1
-Release: 4owl
-Copyright: BSD
+Release: owl4
+License: BSD
 Group: Applications/System
 Source: http://www.ibiblio.org/pub/Linux/system/hardware/%{name}-%{version}.tar.gz
 Prefix: %{_prefix}
-Buildroot: /var/rpm-buildroot/%{name}-root
+BuildRoot: /override/%{name}-%{version}
 
 %description
 hdparm - get/set hard disk parameters for IDE drives.
@@ -37,6 +37,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/hdparm.8*
 
 %changelog
+* Sun Feb 03 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions
+
 * Sat Mar 31 2001 Michail Litvak <mci@owl.openwall.com>
 - description fix
 
