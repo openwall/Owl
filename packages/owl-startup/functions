@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-startup/functions,v 1.4 2001/03/28 08:42:44 solar Exp $
+# $Id: Owl/packages/owl-startup/functions,v 1.5 2001/05/29 21:23:59 solar Exp $
 #
 # Functions defined in this file are used by many /etc/init.d scripts;
 # they offer some limited Red Hat compatibility.
@@ -77,7 +77,9 @@ function daemon()
 		echo "Starting $BASENAME"
 	fi
 
-# Disable coredumps (this is probably redundant).
+# Use a safe umask and don't do coredumps (this is redundant when running
+# from rc.sysinit).
+	umask 077
 	ulimit -Sc 0
 
 # Actually start the daemon.
