@@ -1,0 +1,19 @@
+#!/bin/sh
+# $Id: Owl/packages/owl-startup/single,v 1.1 2000/12/07 19:31:57 solar Exp $
+#
+# This file is executed by init(8) upon entering runlevel 1 (single user).
+# It should be installed into /etc/rc.d/rc1.d as S99single.
+#
+# Original author:
+#               Miquel van Smoorenburg <miquels@cistron.nl>
+#
+
+# Kill all processes.
+echo "Sending all processes the TERM signal"
+killall5 "-`kill -l TERM`"
+sleep 5
+echo "Sending all processes the KILL signal"
+killall5 "-`kill -l KILL`"
+
+echo "Entering single-user mode..."
+exec init -t1 S

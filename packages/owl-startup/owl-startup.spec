@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.9 2000/12/07 18:31:48 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.10 2000/12/07 19:31:57 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.4
+Version: 0.5
 Release: 1owl
 Copyright: GPL
 Group: System Environment/Base
@@ -12,7 +12,8 @@ Source2: rc.sysinit
 Source3: rc
 Source4: functions
 Source5: halt
-Source6: clock
+Source6: single
+Source7: clock
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Provides: initscripts-5.00
 Obsoletes: initscripts
@@ -60,12 +61,13 @@ install -m 600 $RPM_SOURCE_DIR/inittab etc/
 install -m 700 $RPM_SOURCE_DIR/rc.sysinit etc/rc.d/
 install -m 700 $RPM_SOURCE_DIR/rc etc/rc.d/
 install -m 644 $RPM_SOURCE_DIR/functions etc/rc.d/init.d/
-install -m 700 $RPM_SOURCE_DIR/halt etc/rc.d/init.d/
-install -m 700 $RPM_SOURCE_DIR/clock etc/rc.d/init.d/
+install -m 700 $RPM_SOURCE_DIR/{halt,single,clock} etc/rc.d/init.d/
 install -m 700 /dev/null etc/rc.d/rc.local
 
 ln -s ../init.d/halt etc/rc.d/rc0.d/S01halt
 ln -s ../init.d/halt etc/rc.d/rc6.d/S01reboot
+
+ln -s ../init.d/single etc/rc.d/rc1.d/S99single
 
 ln -s ../rc.local etc/rc.d/rc2.d/S99local
 ln -s ../rc.local etc/rc.d/rc3.d/S99local
@@ -106,6 +108,7 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/rc.d/rc
 /etc/rc.d/init.d/functions
 %config /etc/rc.d/init.d/halt
+%config /etc/rc.d/init.d/single
 %config /etc/rc.d/init.d/clock
 %dir /etc/rc.d
 %dir /etc/rc.d/rc*.d
@@ -137,6 +140,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Thu Dec 07 2000 Solar Designer <solar@owl.openwall.com>
 - Added --pidfile and --expect-user to daemon(), killproc(), and status().
+- Added single and symlinked it as rc1.d/S99single.
 
 * Mon Dec 04 2000 Solar Designer <solar@owl.openwall.com>
 - Obsoletes: initscripts
