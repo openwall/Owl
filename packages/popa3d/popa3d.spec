@@ -1,8 +1,8 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.27 2002/09/23 23:06:03 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.28 2003/01/26 17:10:52 solar Exp $
 
 Summary: Post Office Protocol (POP3) server.
 Name: popa3d
-Version: 0.5.9
+Version: 0.5.9.1
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
@@ -72,6 +72,10 @@ fi
 %doc DESIGN LICENSE
 
 %changelog
+* Sun Jan 26 2003 Solar Designer <solar@owl.openwall.com>
+- Corrected the message size reporting bug introduced with 0.4.9.3 and
+now reported on popa3d-users by Nuno Teixeira.
+
 * Sun Sep 08 2002 Solar Designer <solar@owl.openwall.com>
 - Avoid non-ANSI/ISO C constructs.
 - Deal with file sizes beyond what will fit in unsigned long reasonably.

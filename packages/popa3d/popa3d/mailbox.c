@@ -227,6 +227,7 @@ static int mailbox_parse(int init)
 				if (!msg.data_offset) break;
 				msg.raw_size = offset - msg.raw_offset;
 				msg.data_size = offset - body - msg.data_offset;
+				msg.size -= body << 1;
 				MD5_Final(msg.hash, &hash);
 				if (db_op(&msg)) break;
 			}
@@ -319,6 +320,7 @@ static int mailbox_parse(int init)
 		if (!msg.data_offset) return 1;
 		msg.raw_size = offset - msg.raw_offset;
 		msg.data_size = offset - (blank & body) - msg.data_offset;
+		msg.size -= (blank & body) << 1;
 		MD5_Final(msg.hash, &hash);
 		if (db_op(&msg)) return 1;
 
