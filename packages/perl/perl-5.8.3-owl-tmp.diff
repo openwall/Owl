@@ -30,9 +30,39 @@ diff -ur perl-5.8.3.orig/ext/DB_File/DB_File.pm perl-5.8.3/ext/DB_File/DB_File.p
      $fd = $db->fd;
      open(DB_FH, "+<&=$fd") || die "dup $!";
      flock (DB_FH, LOCK_EX) || die "flock: $!";
+diff -ur perl-5.8.3.orig/ext/Devel/PPPort/PPPort.pm perl-5.8.3/ext/Devel/PPPort/PPPort.pm
+--- perl-5.8.3.orig/ext/Devel/PPPort/PPPort.pm	Mon Jan 19 18:46:25 2004
++++ perl-5.8.3/ext/Devel/PPPort/PPPort.pm	Sun Jan 25 16:16:53 2004
+@@ -349,13 +349,13 @@
+ 	}
+ 	
+ 	if ($changes) {
+-		open(OUT,">/tmp/ppport.h.$$");
++		open(OUT,"ppport.h.$$");
+ 		print OUT $c;
+ 		close(OUT);
+-		open(DIFF, "diff -u $filename /tmp/ppport.h.$$|");
+-		while (<DIFF>) { s!/tmp/ppport\.h\.$$!$filename.patched!; print STDOUT; }
++		open(DIFF, "diff -u $filename ppport.h.$$|");
++		while (<DIFF>) { s!ppport\.h\.$$!$filename.patched!; print STDOUT; }
+ 		close(DIFF);
+-		unlink("/tmp/ppport.h.$$");
++		unlink("ppport.h.$$");
+ 	} else {
+ 		print "Looks OK\n";
+ 	}
 diff -ur perl-5.8.3.orig/ext/IO/t/io_unix.t perl-5.8.3/ext/IO/t/io_unix.t
 --- perl-5.8.3.orig/ext/IO/t/io_unix.t	Tue Sep 30 17:10:17 2003
-+++ perl-5.8.3/ext/IO/t/io_unix.t	Mon Jan 19 20:14:08 2004
++++ perl-5.8.3/ext/IO/t/io_unix.t	Sun Jan 25 16:17:43 2004
+@@ -24,7 +24,7 @@
+ 	elsif ($^O eq 'os2') {
+ 	    require IO::Socket;
+ 
+-	    eval {IO::Socket::pack_sockaddr_un('/tmp/foo') || 1}
++	    eval {IO::Socket::pack_sockaddr_un('/foo/bar') || 1}
+ 	      or $@ !~ /not implemented/ or
+ 		$reason = 'compiled without TCP/IP stack v4';
+ 	} elsif ($^O =~ m/^(?:qnx|nto|vos)$/ ) {
 @@ -37,7 +37,7 @@
      }
  }
@@ -54,6 +84,42 @@ diff -ur perl-5.8.3.orig/ext/ODBM_File/ODBM_File.xs perl-5.8.3/ext/ODBM_File/ODB
  #endif
  
  #include <fcntl.h>
+diff -ur perl-5.8.3.orig/ext/POSIX/POSIX.pod perl-5.8.3/ext/POSIX/POSIX.pod
+--- perl-5.8.3.orig/ext/POSIX/POSIX.pod	Tue Sep 30 17:10:22 2003
++++ perl-5.8.3/ext/POSIX/POSIX.pod	Sun Jan 25 16:19:16 2004
+@@ -417,9 +417,9 @@
+ uses file descriptors such as those obtained by calling C<POSIX::open>.
+ 
+ The following will determine the maximum length of the longest allowable
+-pathname on the filesystem which holds C</tmp/foo>.
++pathname on the filesystem which holds C</var/foo>.
+ 
+-	$fd = POSIX::open( "/tmp/foo", &POSIX::O_RDONLY );
++	$fd = POSIX::open( "/var/foo", &POSIX::O_RDONLY );
+ 	$path_max = POSIX::fpathconf( $fd, &POSIX::_PC_PATH_MAX );
+ 
+ Returns C<undef> on failure.
+@@ -919,7 +919,7 @@
+ 
+ Open a directory for reading.
+ 
+-	$dir = POSIX::opendir( "/tmp" );
++	$dir = POSIX::opendir( "/var" );
+ 	@files = POSIX::readdir( $dir );
+ 	POSIX::closedir( $dir );
+ 
+@@ -930,9 +930,9 @@
+ Retrieves the value of a configurable limit on a file or directory.
+ 
+ The following will determine the maximum length of the longest allowable
+-pathname on the filesystem which holds C</tmp>.
++pathname on the filesystem which holds C</var>.
+ 
+-	$path_max = POSIX::pathconf( "/tmp", &POSIX::_PC_PATH_MAX );
++	$path_max = POSIX::pathconf( "/var", &POSIX::_PC_PATH_MAX );
+ 
+ Returns C<undef> on failure.
+ 
 diff -ur perl-5.8.3.orig/ext/Socket/Socket.pm perl-5.8.3/ext/Socket/Socket.pm
 --- perl-5.8.3.orig/ext/Socket/Socket.pm	Tue Sep 30 17:10:25 2003
 +++ perl-5.8.3/ext/Socket/Socket.pm	Mon Jan 19 20:14:11 2004
@@ -68,6 +134,47 @@ diff -ur perl-5.8.3.orig/ext/Socket/Socket.pm perl-5.8.3/ext/Socket/Socket.pm
      connect(Socket_Handle,$sun);
  
  =head1 DESCRIPTION
+diff -ur perl-5.8.3.orig/ext/Storable/Storable.pm perl-5.8.3/ext/Storable/Storable.pm
+--- perl-5.8.3.orig/ext/Storable/Storable.pm	Mon Jan 19 18:46:25 2004
++++ perl-5.8.3/ext/Storable/Storable.pm	Sun Jan 25 16:24:24 2004
+@@ -786,10 +786,10 @@
+ 
+ 	%color = ('Blue' => 0.1, 'Red' => 0.8, 'Black' => 0, 'White' => 1);
+ 
+-	store(\%color, '/tmp/colors') or die "Can't store %a in /tmp/colors!\n";
++	store(\%color, '/var/run/colors') or die "Can't store %a in /var/run/colors!\n";
+ 
+-	$colref = retrieve('/tmp/colors');
+-	die "Unable to retrieve from /tmp/colors!\n" unless defined $colref;
++	$colref = retrieve('/var/run/colors');
++	die "Unable to retrieve from /var/run/colors!\n" unless defined $colref;
+ 	printf "Blue is still %lf\n", $colref->{'Blue'};
+ 
+ 	$colref2 = dclone(\%color);
+diff -ur perl-5.8.3.orig/ext/Time/HiRes/Makefile.PL perl-5.8.3/ext/Time/HiRes/Makefile.PL
+--- perl-5.8.3.orig/ext/Time/HiRes/Makefile.PL	Tue Oct 28 20:35:51 2003
++++ perl-5.8.3/ext/Time/HiRes/Makefile.PL	Sun Jan 25 16:27:01 2004
+@@ -71,19 +71,11 @@
+ # without changing it, and then I'd always forget to change it before a
+ # release. Sorry, Edward :)
+ 
+-sub TMPDIR {
+-    my $TMPDIR =
+-	(grep(defined $_ && -d $_ && -w _,
+-	      ((defined $ENV{'TMPDIR'} ? $ENV{'TMPDIR'} : undef),
+-	       qw(/var/tmp /usr/tmp /tmp c:/temp))))[0];
+-    $TMPDIR || die "Cannot find writable temporary directory.\n";
+-}
+-
+ sub try_compile_and_link {
+     my ($c, %args) = @_;
+ 
+     my ($ok) = 0;
+-    my ($tmp) = (($^O eq 'VMS') ? "sys\$scratch:tmp$$" : TMPDIR() . '/' . "tmp$$");
++    my ($tmp) = "tmp$$";
+     local(*TMPC);
+ 
+     my $obj_ext = $Config{obj_ext} || ".o";
 diff -ur perl-5.8.3.orig/lib/CGI/Cookie.pm perl-5.8.3/lib/CGI/Cookie.pm
 --- perl-5.8.3.orig/lib/CGI/Cookie.pm	Mon Jan 19 18:46:25 2004
 +++ perl-5.8.3/lib/CGI/Cookie.pm	Mon Jan 19 20:14:11 2004
@@ -80,9 +187,34 @@ diff -ur perl-5.8.3.orig/lib/CGI/Cookie.pm perl-5.8.3/lib/CGI/Cookie.pm
         %cookies = parse CGI::Cookie($COOKIES);
  
  If you are in a mod_perl environment, you can save some overhead by
+diff -ur perl-5.8.3.orig/lib/CGI.pm perl-5.8.3/lib/CGI.pm
+--- perl-5.8.3.orig/lib/CGI.pm	Mon Jan 19 18:46:25 2004
++++ perl-5.8.3/lib/CGI.pm	Sun Jan 25 16:45:26 2004
+@@ -2,6 +2,9 @@
+ require 5.004;
+ use Carp 'croak';
+ 
++# XXX: The temporary file handling implemented in here is crap.  It should
++# be re-done making use of File::Temp.
++
+ # See the bottom of this file for the POD documentation.  Search for the
+ # string '=head'.
+ 
+diff -ur perl-5.8.3.orig/lib/CPAN.pm perl-5.8.3/lib/CPAN.pm
+--- perl-5.8.3.orig/lib/CPAN.pm	Tue Sep 30 17:10:44 2003
++++ perl-5.8.3/lib/CPAN.pm	Sun Jan 25 16:46:02 2004
+@@ -2273,7 +2273,7 @@
+ # If more accuracy is wanted/needed, Chris Leach sent me this patch...
+ 
+  # > *** /install/perl/live/lib/CPAN.pm-	Wed Sep 24 13:08:48 1997
+- # > --- /tmp/cp	Wed Sep 24 13:26:40 1997
++ # > --- cp	Wed Sep 24 13:26:40 1997
+  # > ***************
+  # > *** 1562,1567 ****
+  # > --- 1562,1580 ----
 diff -ur perl-5.8.3.orig/lib/ExtUtils/MakeMaker.pm perl-5.8.3/lib/ExtUtils/MakeMaker.pm
 --- perl-5.8.3.orig/lib/ExtUtils/MakeMaker.pm	Fri Oct 31 22:03:49 2003
-+++ perl-5.8.3/lib/ExtUtils/MakeMaker.pm	Mon Jan 19 20:14:11 2004
++++ perl-5.8.3/lib/ExtUtils/MakeMaker.pm	Sun Jan 25 16:48:00 2004
 @@ -1013,7 +1013,7 @@
  The Makefile to be produced may be altered by adding arguments of the
  form C<KEY=VALUE>. E.g.
@@ -91,6 +223,23 @@ diff -ur perl-5.8.3.orig/lib/ExtUtils/MakeMaker.pm perl-5.8.3/lib/ExtUtils/MakeM
 +  perl Makefile.PL PREFIX=~/myperl5
  
  Other interesting targets in the generated Makefile are
+ 
+@@ -1355,13 +1355,13 @@
+ 
+ This is the root directory into which the code will be installed.  It
+ I<prepends itself to the normal prefix>.  For example, if your code
+-would normally go into /usr/local/lib/perl you could set DESTDIR=/tmp/
+-and installation would go into /tmp/usr/local/lib/perl.
++would normally go into /usr/local/lib/perl you could set DESTDIR=/other/
++and installation would go into /other/usr/local/lib/perl.
+ 
+ This is primarily of use for people who repackage Perl modules.
+ 
+ NOTE: Due to the nature of make, it is important that you put the trailing
+-slash on your DESTDIR.  "/tmp/" not "/tmp".
++slash on your DESTDIR.  "/other/" not "/other".
+ 
+ =item DIR
  
 diff -ur perl-5.8.3.orig/lib/ExtUtils/instmodsh perl-5.8.3/lib/ExtUtils/instmodsh
 --- perl-5.8.3.orig/lib/ExtUtils/instmodsh	Tue Sep 30 17:10:47 2003
@@ -126,6 +275,100 @@ diff -ur perl-5.8.3.orig/lib/ExtUtils/instmodsh perl-5.8.3/lib/ExtUtils/instmods
           last CASE;
           };
        $reply eq 'v' and do
+diff -ur perl-5.8.3.orig/lib/Memoize/t/tie.t perl-5.8.3/lib/Memoize/t/tie.t
+--- perl-5.8.3.orig/lib/Memoize/t/tie.t	Tue Sep 30 17:10:58 2003
++++ perl-5.8.3/lib/Memoize/t/tie.t	Sun Jan 25 16:54:31 2004
+@@ -29,14 +29,7 @@
+   $_[0]+1;
+ }
+ 
+-if (eval {require File::Spec::Functions}) {
+-  File::Spec::Functions->import('tmpdir', 'catfile');
+-  $tmpdir = tmpdir();
+-} else {
+-  *catfile = sub { join '/', @_ };
+-  $tmpdir = $ENV{TMP} || $ENV{TMPDIR} || '/tmp';
+-}
+-$file = catfile($tmpdir, "md$$");
++$file = "md$$";
+ @files = ($file, "$file.db", "$file.dir", "$file.pag");
+ 1 while unlink @files;
+ 
+diff -ur perl-5.8.3.orig/lib/Memoize/t/tie_gdbm.t perl-5.8.3/lib/Memoize/t/tie_gdbm.t
+--- perl-5.8.3.orig/lib/Memoize/t/tie_gdbm.t	Tue Sep 30 17:10:58 2003
++++ perl-5.8.3/lib/Memoize/t/tie_gdbm.t	Sun Jan 25 16:53:07 2004
+@@ -26,13 +26,7 @@
+ 
+ print "1..4\n";
+ 
+-if (eval {require File::Spec::Functions}) {
+- File::Spec::Functions->import();
+-} else {
+-  *catfile = sub { join '/', @_ };
+-}
+-$tmpdir = $ENV{TMP} || $ENV{TMPDIR} ||  '/tmp';  
+-$file = catfile($tmpdir, "md$$");
++$file = "md$$";
+ 1 while unlink $file, "$file.dir", "$file.pag";
+ tryout('GDBM_File', $file, 1);  # Test 1..4
+ 1 while unlink $file, "$file.dir", "$file.pag";
+diff -ur perl-5.8.3.orig/lib/Memoize/t/tie_ndbm.t perl-5.8.3/lib/Memoize/t/tie_ndbm.t
+--- perl-5.8.3.orig/lib/Memoize/t/tie_ndbm.t	Tue Sep 30 17:10:59 2003
++++ perl-5.8.3/lib/Memoize/t/tie_ndbm.t	Sun Jan 25 16:53:56 2004
+@@ -28,14 +28,7 @@
+ 
+ print "1..4\n";
+ 
+-
+-if (eval {require File::Spec::Functions}) {
+- File::Spec::Functions->import();
+-} else {
+-  *catfile = sub { join '/', @_ };
+-}
+-$tmpdir = $ENV{TMP} || $ENV{TMPDIR} ||  '/tmp';  
+-$file = catfile($tmpdir, "md$$");
++$file = "md$$";
+ 1 while unlink $file, "$file.dir", "$file.pag";
+ tryout('Memoize::NDBM_File', $file, 1);  # Test 1..4
+ 1 while unlink $file, "$file.dir", "$file.pag";
+diff -ur perl-5.8.3.orig/lib/Memoize/t/tie_sdbm.t perl-5.8.3/lib/Memoize/t/tie_sdbm.t
+--- perl-5.8.3.orig/lib/Memoize/t/tie_sdbm.t	Tue Sep 30 17:10:59 2003
++++ perl-5.8.3/lib/Memoize/t/tie_sdbm.t	Sun Jan 25 16:52:33 2004
+@@ -28,14 +28,7 @@
+ 
+ print "1..4\n";
+ 
+-if (eval {require File::Spec::Functions}) {
+- File::Spec::Functions->import('tmpdir', 'catfile');
+- $tmpdir = tmpdir();
+-} else {
+- *catfile = sub { join '/', @_ };
+-  $tmpdir = $ENV{TMP} || $ENV{TMPDIR} || '/tmp';
+-}
+-$file = catfile($tmpdir, "md$$");
++$file = "md$$";
+ 1 while unlink $file, "$file.dir", "$file.pag";
+ tryout('Memoize::SDBM_File', $file, 1);  # Test 1..4
+ 1 while unlink $file, "$file.dir", "$file.pag";
+diff -ur perl-5.8.3.orig/lib/Memoize/t/tie_storable.t perl-5.8.3/lib/Memoize/t/tie_storable.t
+--- perl-5.8.3.orig/lib/Memoize/t/tie_storable.t	Tue Sep 30 17:10:59 2003
++++ perl-5.8.3/lib/Memoize/t/tie_storable.t	Sun Jan 25 16:53:25 2004
+@@ -33,14 +33,7 @@
+ 
+ print "1..4\n";
+ 
+-
+-if (eval {require File::Spec::Functions}) {
+- File::Spec::Functions->import();
+-} else {
+-  *catfile = sub { join '/', @_ };
+-}
+-$tmpdir = $ENV{TMP} || $ENV{TMPDIR} ||  '/tmp';  
+-$file = catfile($tmpdir, "storable$$");
++$file = "storable$$";
+ 1 while unlink $file;
+ tryout('Memoize::Storable', $file, 1);  # Test 1..4
+ 1 while unlink $file;
 diff -ur perl-5.8.3.orig/lib/Shell.pm perl-5.8.3/lib/Shell.pm
 --- perl-5.8.3.orig/lib/Shell.pm	Tue Sep 30 17:11:05 2003
 +++ perl-5.8.3/lib/Shell.pm	Mon Jan 19 20:14:11 2004
@@ -199,6 +442,37 @@ diff -ur perl-5.8.3.orig/lib/perl5db.pl perl-5.8.3/lib/perl5db.pl
  
              # Rendezvous and get the filehandles.
              my $term_rv = new Term::Rendezvous $rv;
+diff -ur perl-5.8.3.orig/mpeix/nm perl-5.8.3/mpeix/nm
+--- perl-5.8.3.orig/mpeix/nm	Tue Sep 30 17:11:39 2003
++++ perl-5.8.3/mpeix/nm	Sun Jan 25 16:55:26 2004
+@@ -22,12 +22,12 @@
+ # I wanted to pipe this into awk, but it fell victim to a known pipe/streams
+ # bug on my multiprocessor machine.
+ 
+-callci xeq linkedit.pub.sys \"$LIST\" >/tmp/nm.$$
++callci xeq linkedit.pub.sys \"$LIST\" >nm.$$
+ 
+ /bin/awk '\
+     / data  univ / { printf "%-20s|%10s|%-6s|%-7s|%s\n",$1,$5,"extern","data","?"} \
+-    / entry univ / { printf "%-20s|%10s|%-6s|%-7s|%s\n",$1,$7,"extern","entry","?"}' /tmp/nm.$$
++    / entry univ / { printf "%-20s|%10s|%-6s|%-7s|%s\n",$1,$7,"extern","entry","?"}' nm.$$
+ 
+-rm -f /tmp/nm.$$
++rm -f nm.$$
+ 
+ exit 0
+diff -ur perl-5.8.3.orig/mpeix/relink perl-5.8.3/mpeix/relink
+--- perl-5.8.3.orig/mpeix/relink	Tue Sep 30 17:11:39 2003
++++ perl-5.8.3/mpeix/relink	Sun Jan 25 16:55:44 2004
+@@ -14,7 +14,7 @@
+ 
+ echo "Creating $RAND.sl...\n"
+ 
+-TEMP=/tmp/perlmpe.$$
++TEMP=perlmpe.$$
+ 
+ rm -f $TEMP $RAND.a $RAND.sl
+ 
 diff -ur perl-5.8.3.orig/perly.fixer perl-5.8.3/perly.fixer
 --- perl-5.8.3.orig/perly.fixer	Tue Sep 30 17:11:42 2003
 +++ perl-5.8.3/perly.fixer	Mon Jan 19 20:14:11 2004
@@ -211,6 +485,56 @@ diff -ur perl-5.8.3.orig/perly.fixer perl-5.8.3/perly.fixer
  
  inputh=`echo $input|sed 's:\.c$:.h:'`
  if grep '^#ifdef PERL_CORE' $inputh; then
+diff -ur perl-5.8.3.orig/pod/perl571delta.pod perl-5.8.3/pod/perl571delta.pod
+--- perl-5.8.3.orig/pod/perl571delta.pod	Tue Sep 30 17:11:44 2003
++++ perl-5.8.3/pod/perl571delta.pod	Sun Jan 25 16:57:40 2004
+@@ -771,17 +771,17 @@
+ If your file system supports symbolic links you can build Perl outside
+ of the source directory by
+ 
+-	mkdir /tmp/perl/build/directory
+-	cd /tmp/perl/build/directory
++	mkdir perl/build/directory
++	cd perl/build/directory
+ 	sh /path/to/perl/source/Configure -Dmksymlinks ...
+ 
+-This will create in /tmp/perl/build/directory a tree of symbolic links
++This will create in perl/build/directory a tree of symbolic links
+ pointing to files in /path/to/perl/source.  The original files are left
+ unaffected.  After Configure has finished you can just say
+ 
+ 	make all test
+ 
+-and Perl will be built and tested, all in /tmp/perl/build/directory.
++and Perl will be built and tested, all in perl/build/directory.
+ 
+ =back
+ 
+diff -ur perl-5.8.3.orig/pod/perl58delta.pod perl-5.8.3/pod/perl58delta.pod
+--- perl-5.8.3.orig/pod/perl58delta.pod	Mon Jan 19 18:46:25 2004
++++ perl-5.8.3/pod/perl58delta.pod	Sun Jan 25 16:58:03 2004
+@@ -1905,17 +1905,17 @@
+ If your file system supports symbolic links, you can build Perl outside
+ of the source directory by
+ 
+-	mkdir /tmp/perl/build/directory
+-	cd /tmp/perl/build/directory
++	mkdir perl/build/directory
++	cd perl/build/directory
+ 	sh /path/to/perl/source/Configure -Dmksymlinks ...
+ 
+-This will create in /tmp/perl/build/directory a tree of symbolic links
++This will create in perl/build/directory a tree of symbolic links
+ pointing to files in /path/to/perl/source.  The original files are left
+ unaffected.  After Configure has finished, you can just say
+ 
+ 	make all test
+ 
+-and Perl will be built and tested, all in /tmp/perl/build/directory.
++and Perl will be built and tested, all in perl/build/directory.
+ [561]
+ 
+ =item *
 diff -ur perl-5.8.3.orig/pod/perldbmfilter.pod perl-5.8.3/pod/perldbmfilter.pod
 --- perl-5.8.3.orig/pod/perldbmfilter.pod	Tue Sep 30 17:11:45 2003
 +++ perl-5.8.3/pod/perldbmfilter.pod	Mon Jan 19 20:14:11 2004
@@ -246,8 +570,16 @@ diff -ur perl-5.8.3.orig/pod/perldebug.pod perl-5.8.3/pod/perldebug.pod
  
 diff -ur perl-5.8.3.orig/pod/perlfaq5.pod perl-5.8.3/pod/perlfaq5.pod
 --- perl-5.8.3.orig/pod/perlfaq5.pod	Mon Jan 19 18:46:25 2004
-+++ perl-5.8.3/pod/perlfaq5.pod	Mon Jan 19 20:14:11 2004
-@@ -427,8 +427,8 @@
++++ perl-5.8.3/pod/perlfaq5.pod	Sun Jan 25 16:59:15 2004
+@@ -141,6 +141,7 @@
+ 	    my $count = 0;
+ 	    until (defined(fileno(FH)) || $count++ > 100) {
+ 		$base_name =~ s/-(\d+)$/"-" . (1 + $1)/e;
++		# O_EXCL is required for security reasons.
+ 		sysopen(FH, $base_name, O_WRONLY|O_EXCL|O_CREAT);
+ 	    }
+ 	    if (defined(fileno(FH))
+@@ -427,8 +428,8 @@
  
  To open a file without blocking, creating if necessary:
  
@@ -258,7 +590,7 @@ diff -ur perl-5.8.3.orig/pod/perlfaq5.pod perl-5.8.3/pod/perlfaq5.pod
  
  Be warned that neither creation nor deletion of files is guaranteed to
  be an atomic operation over NFS.  That is, two processes might both
-@@ -924,7 +924,7 @@
+@@ -924,7 +925,7 @@
  If you check L<perlfunc/open>, you'll see that several of the ways
  to call open() should do the trick.  For example:
  
@@ -327,6 +659,21 @@ diff -ur perl-5.8.3.orig/pod/perlipc.pod perl-5.8.3/pod/perlipc.pod
 +    my $NAME = 'catsock';
      my $uaddr = sockaddr_un($NAME);
      my $proto = getprotobyname('tcp');
+ 
+diff -ur perl-5.8.3.orig/pod/perllexwarn.pod perl-5.8.3/pod/perllexwarn.pod
+--- perl-5.8.3.orig/pod/perllexwarn.pod	Tue Sep 30 17:11:48 2003
++++ perl-5.8.3/pod/perllexwarn.pod	Sun Jan 25 17:02:14 2004
+@@ -381,9 +381,9 @@
+     sub open {
+         my $path = shift ;
+         if ($path !~ m#^/#) {
+-            warnings::warn("changing relative path to /tmp/")
++            warnings::warn("changing relative path to /var/abc")
+                 if warnings::enabled();
+-            $path = "/tmp/$path" ; 
++            $path = "/var/abc/$path";
+         }
+     }
  
 diff -ur perl-5.8.3.orig/pod/perlobj.pod perl-5.8.3/pod/perlobj.pod
 --- perl-5.8.3.orig/pod/perlobj.pod	Mon Jan 19 18:46:25 2004
