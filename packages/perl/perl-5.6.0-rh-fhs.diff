@@ -1,0 +1,46 @@
+--- perl-5.6.0/hints/linux.sh	Sat Jun 17 14:42:21 2000
++++ perl-5.6.0/hints/linux.sh	Sat Jun 17 14:48:36 2000
+@@ -27,11 +27,11 @@
+ # If you want to link against such a library, you must install the development
+ # version of the package.
+ #
+-# These packages use a -dev naming convention in both Debian and Red Hat:
++# These packages use a -dev naming convention in Debian and -devel in Red Hat:
+ #   libgdbmg1  (non-development version of GNU libc 2-linked GDBM library)
+ #   libgdbmg1-dev (development version of GNU libc 2-linked GDBM library)
+ # So make sure that for any libraries you wish to link Perl with under
+-# Debian or Red Hat you have the -dev packages installed.
++# Debian or Red Hat you have the -dev[el] packages installed.
+ #
+ # Some operating systems (e.g., Solaris 2.6) will link to a versioned shared
+ # library implicitly.  For example, on Solaris, `ld foo.o -lgdbm' will find an
+@@ -291,3 +291,8 @@
+ 	;;
+ esac
+ EOCBU
++
++# FHS wants man pages under /usr/share/man, so...
++# (Owl) But we use /usr/man
++man1dir='/usr/man/man1';
++man3dir='/usr/man/man3';
+--- perl-5.6.0./lib/ExtUtils/MM_Unix.pm	Sat Jun 17 17:19:24 2000
++++ perl-5.6.0./lib/ExtUtils/MM_Unix.pm	Sat Jun 17 17:19:24 2000
+@@ -1873,14 +1873,14 @@
+ 	    $self->prefixify($install_variable,$search_prefix,$replace_prefix);
+ 	}
+     }
+-    my $funkymandir = $self->catdir($configure_prefix,"lib","perl5","man");
++    my $funkymandir = $self->catdir($configure_prefix,"man");
+     $funkymandir = '' unless -d $funkymandir;
+     $search_prefix = $funkymandir || $self->catdir($configure_prefix,"man");
+-    if (-d $self->catdir($self->{PREFIX},"lib","perl5", "man")) {
+-	$replace_prefix = $self->catdir(qq[\$\(PREFIX\)],"lib", "perl5", "man");
++    if (-d $self->catdir($self->{PREFIX},"man")) {
++	$replace_prefix = $self->catdir(qq[\$\(PREFIX\)],"man");
+     }
+     else {
+-	$replace_prefix = $self->catdir(qq[\$\(PREFIX\)],"man");
++	$replace_prefix = $self->catdir(qq[\$\(PREFIX\)],"man");
+     }
+     for $install_variable (qw/
+ 			   INSTALLMAN1DIR

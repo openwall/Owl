@@ -1,0 +1,20 @@
+--- perl5.005_02/Configure.buildsys	Fri Aug  7 17:38:53 1998
++++ perl5.005_02/Configure	Fri Dec  4 17:11:54 1998
+@@ -1139,17 +1139,6 @@
+ 	;;
+ esac
+ 
+-: Sanity checks
+-case "$fastread$alldone" in
+-yescont|yesexit) ;;
+-*)
+-	if test ! -t 0; then
+-		echo "Say 'sh Configure', not 'sh <Configure'"
+-		exit 1
+-	fi
+-	;;
+-esac
+-
+ exec 4>&1
+ case "$silent" in
+ true) exec 1>/dev/null;;
