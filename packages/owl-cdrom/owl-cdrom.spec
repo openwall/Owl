@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.21 2003/10/30 21:15:47 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.22 2003/12/19 14:26:21 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 0.8
+Version: 0.9
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -82,6 +82,10 @@ fi
 %dir /owl
 
 %changelog
+* Fri Dec 19 2003 Solar Designer <solar@owl.openwall.com> 0.9-owl1
+- Linux 2.4.23-ow1 + cryptoloop (w/ AES compiled in).
+- Support Silicon Image SATA controllers (CONFIG_BLK_DEV_SIIMAGE).
+
 * Tue Oct 21 2003 Solar Designer <solar@owl.openwall.com> 0.8-owl1
 - Switch to using the new SYM53C8XX driver which supports the whole range
 of PCI SCSI controllers from NCR / Symbios Logic SCSI-2 to new LSI Logic
