@@ -1,14 +1,14 @@
-# $Id: Owl/packages/tcsh/tcsh.spec,v 1.5 2000/12/17 02:46:35 solar Exp $
+# $Id: Owl/packages/tcsh/tcsh.spec,v 1.6 2001/06/20 13:16:39 mci Exp $
 
 %define	_bindir	/bin
 
 Summary: 	An enhanced version of csh, the C shell.
 Name: 		tcsh
-Version: 	6.10
-Release: 	3owl
-Copyright: 	distributable
+Version: 	6.10.01
+Release: 	1owl
+Copyright: 	BSD
 Group: 		System Environment/Shells
-Source: 	ftp://ftp.astron.com/pub/tcsh/tcsh-%{version}.tar.gz
+Source: 	ftp://ftp.fujitsu.co.jp/pub/misc/shells/tcsh/%{name}-%{version}.tgz
 Patch0:		tcsh-6.10.00-rh-utmp.diff
 Patch1: 	tcsh-6.09.00-rh-termios_hack.diff
 Patch2: 	tcsh-6.09.00-rh-locale.diff
@@ -27,7 +27,7 @@ spelling correction, a history mechanism, job control and a C language
 like syntax.
 
 %prep
-%setup -q -n %{name}-%{version}.00
+%setup -q
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -40,10 +40,11 @@ test -x %{__perl} && %{__perl} tcsh.man2html tcsh.man || :
 
 %install
 rm -rf ${RPM_BUILD_ROOT}
-mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man1 ${RPM_BUILD_ROOT}%{_bindir}
-install -m 755 -s tcsh ${RPM_BUILD_ROOT}%{_bindir}/tcsh
-install -m 644 tcsh.man ${RPM_BUILD_ROOT}%{_mandir}/man1/tcsh.1
+
+install -m 755 -D -s tcsh ${RPM_BUILD_ROOT}%{_bindir}/tcsh
+install -m 644 -D tcsh.man ${RPM_BUILD_ROOT}%{_mandir}/man1/tcsh.1
 ln -sf tcsh ${RPM_BUILD_ROOT}%{_bindir}/csh
+ln -sf tcsh.1 ${RPM_BUILD_ROOT}%{_mandir}/man1/csh.1
 nroff -me eight-bit.me > eight-bit.txt
 
 for i in de es fr gr_GR it ja
@@ -61,13 +62,8 @@ install -m 644 tcsh.ja.cat ${RPM_BUILD_ROOT}%{_datadir}/locale/ja/LC_MESSAGES/tc
 rm -rf ${RPM_BUILD_ROOT}
 
 %post
-if [ ! -f /etc/shells ]; then
-    echo "%{_bindir}/tcsh" >> /etc/shells
-    echo "%{_bindir}/csh" >> /etc/shells
-else
-    grep '^%{_bindir}/tcsh$' /etc/shells > /dev/null || echo "%{_bindir}/tcsh" >> /etc/shells
-    grep '^%{_bindir}/csh$' /etc/shells > /dev/null || echo "%{_bindir}/csh" >> /etc/shells
-fi
+if ! grep -qs '^/bin/csh$' /etc/shells; then echo /bin/csh >>/etc/shells; fi
+if ! grep -qs '^/bin/tcsh$' /etc/shells; then echo /bin/tcsh >>/etc/shells; fi
 
 %postun
 if [ ! -x %{_bindir}/tcsh ]; then
@@ -84,6 +80,10 @@ fi
 %{_datadir}/locale/*/LC_MESSAGES/tcsh*
 
 %changelog
+* Wed Jun 20 2001 Michail Litvak <mci@owl.openwall.com>
+- updated to 6.10.01
+- some spec cleanups
+
 * Sun Dec 17 2000 Solar Designer <solar@owl.openwall.com>
 - Build HTML docs correctly (the script was trying to be too smart and
 behaved differently when not run on a tty).
@@ -126,7 +126,7 @@ for the unsafe /tmp access reported on Bugtraq by proton.
 * Sat Sep 25 1999 Michael K. Johnson <johnsonm@redhat.com>
 - fix $shell by using --bindir
 
-* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com> 
+* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com>
 - auto rebuild in the new build environment (release 5)
 
 * Wed Feb 24 1999 Cristian Gafton <gafton@redhat.com>
