@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.30 2003/01/17 01:14:43 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.31 2003/10/29 17:25:23 solar Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -138,6 +138,7 @@ function build_native()
 		test "$BUILDSOURCE" = "yes" && rm -rf $WORK/SRPMS/*
 		log "#$NUMBER: Failed $PACKAGE"
 	fi
+	rm -rf $WORK/buildroot
 	rm -rf $WORK/BUILD/*
 	rm $WORK/SOURCES/*
 	cd $HOME/native-work || exit 1
