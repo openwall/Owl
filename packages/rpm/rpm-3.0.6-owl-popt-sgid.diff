@@ -1,0 +1,59 @@
+diff -ur rpm-3.0.6.orig/popt/findme.c rpm-3.0.6/popt/findme.c
+--- rpm-3.0.6.orig/popt/findme.c	Wed Jun 14 12:34:49 2000
++++ rpm-3.0.6/popt/findme.c	Wed Apr 30 17:46:22 2003
+@@ -6,7 +6,7 @@
+ #include "findme.h"
+ 
+ const char * findProgramPath(const char * argv0) {
+-    char * path = getenv("PATH");
++    char * path = __secure_getenv("PATH");
+     char * pathbuf;
+     char * start, * chptr;
+     char * buf;
+diff -ur rpm-3.0.6.orig/popt/popt.c rpm-3.0.6/popt/popt.c
+--- rpm-3.0.6.orig/popt/popt.c	Mon Sep 11 15:42:16 2000
++++ rpm-3.0.6/popt/popt.c	Wed Apr 30 17:46:55 2003
+@@ -238,7 +238,7 @@
+     }
+     pos++;
+ 
+-    argv[pos] = findProgramPath(con->os->argv[0]);
++    argv[pos] = findProgramPath(con->os->argv[0]) ?: con->os->argv[0];
+     if (argv[pos]) pos++;
+     argv[pos++] = ";";
+ 
+@@ -254,7 +254,8 @@
+     argv[pos++] = NULL;
+ 
+ #ifdef __hpux
+-    setresuid(getuid(), getuid(),-1);
++    setresgid(getgid(), getgid(), -1);
++    setresuid(getuid(), getuid(), -1);
+ #else
+ /*
+  * XXX " ... on BSD systems setuid() should be preferred over setreuid()"
+@@ -262,8 +263,10 @@
+  * XXX	from Norbert Warmuth <nwarmuth@privat.circular.de>
+  */
+ #if defined(HAVE_SETUID)
++    setgid(getgid());
+     setuid(getuid());
+ #elif defined (HAVE_SETREUID)
++    setregid(getgid(), getgid());
+     setreuid(getuid(), getuid()); /*hlauer: not portable to hpux9.01 */
+ #else
+     ; /* Can't drop privileges */
+diff -ur rpm-3.0.6.orig/popt/poptconfig.c rpm-3.0.6/popt/poptconfig.c
+--- rpm-3.0.6.orig/popt/poptconfig.c	Wed Jun 14 12:34:49 2000
++++ rpm-3.0.6/popt/poptconfig.c	Wed Apr 30 17:35:46 2003
+@@ -122,9 +122,8 @@
+ 
+     rc = poptReadConfigFile(con, "/etc/popt");
+     if (rc) return rc;
+-    if (getuid() != geteuid()) return 0;
+ 
+-    if ((home = getenv("HOME"))) {
++    if ((home = __secure_getenv("HOME"))) {
+ 	fn = alloca(strlen(home) + 20);
+ 	strcpy(fn, home);
+ 	strcat(fn, "/.popt");

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.26 2003/02/22 23:49:55 mci Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.27 2003/05/14 23:59:14 solar Exp $
 
 Summary: The Red Hat package management system.
 Name: rpm
 Version: 3.0.6
-Release: owl5
+Release: owl6
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-3.0.x/rpm-%{version}.tar.gz
@@ -18,6 +18,7 @@ Patch5: rpm-3.0.5-owl-gendiff.diff
 Patch6: rpm-3.0.6-owl-buildhost.diff
 Patch7: rpm-3.0.6-owl-macros.diff
 Patch8: rpm-3.0.6-alt-owl-autodeps-symbol-versioning.diff
+Patch9: rpm-3.0.6-owl-popt-sgid.diff
 Patch10: rpm-3.0.6-owl-rpmrc.diff
 PreReq: /sbin/ldconfig
 PreReq: gawk, fileutils, textutils, sh-utils, mktemp
@@ -89,6 +90,7 @@ EOF
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 %patch10 -p1
 
 %define _noVersionedDependencies 1
@@ -236,6 +238,9 @@ fi
 %{__prefix}/include/popt.h
 
 %changelog
+* Wed Apr 30 2003 Solar Designer <solar@owl.openwall.com> 3.0.6-owl6
+- In popt, handle uses from SGID apps in the same way as from SUID ones.
+
 * Sun Feb 23 2003 Michail Litvak <mci@owl.openwall.com>
 - Fixed misplaced semicolon in /usr/lib/rpm/macros file
   (Thanks to Oleg Lukashin)
