@@ -1,19 +1,20 @@
-# $Id: Owl/packages/dev86/dev86.spec,v 1.12 2004/02/15 22:02:20 mci Exp $
+# $Id: Owl/packages/dev86/dev86.spec,v 1.13 2004/03/12 18:09:53 solar Exp $
 
 Summary: A real mode 80x86 assembler and linker.
 Name: dev86
 Version: 0.16.0
-Release: owl4
+Release: owl5
 License: GPL
 Group: Development/Languages
 Source: http://www.cix.co.uk/~mayday/dev86/Dev86src-%version.tar.gz
 Patch0: dev86-0.16.0-rh-install-no-root.diff
 Patch1: dev86-0.16.0-rh-no-bcc.diff
 Patch2: dev86-0.16.0-rh-paths.diff
-Patch3: dev86-0.16.0-owl-kinclude.diff
-Patch4: dev86-0.16.0-owl-optflags.diff
-Patch5: dev86-0.16.0-owl-warnings.diff
-Patch6: dev86-0.16.0-owl-Makefile.diff
+Patch3: dev86-0.16.0-rh-errno.diff
+Patch4: dev86-0.16.0-owl-kinclude.diff
+Patch5: dev86-0.16.0-owl-optflags.diff
+Patch6: dev86-0.16.0-owl-warnings.diff
+Patch7: dev86-0.16.0-owl-Makefile.diff
 Obsoletes: bin86
 ExclusiveArch: %ix86
 BuildRoot: /override/%name-%version
@@ -33,6 +34,7 @@ bootstrapping code, from their sources.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -79,6 +81,7 @@ mv bin86/ChangeLog ChangeLog.bin86
 %_bindir/bcc
 %_bindir/as86
 %_bindir/as86_encap
+%_bindir/ar86
 %_bindir/ld86
 %_bindir/objdump86
 %_bindir/nm86
@@ -94,6 +97,10 @@ mv bin86/ChangeLog ChangeLog.bin86
 %_mandir/man1/*
 
 %changelog
+* Fri Feb 27 2004 Michail Litvak <mci@owl.openwall.com> 0.16.0-owl5
+- Patch to fix errno.h usage (from RH).
+- add ar86 to file list.
+
 * Sun Feb 15 2004 Michail Litvak <mci@owl.openwall.com> 0.16.0-owl4
 - Correctly install documentation files from subdirectories
 (rename dir/README to README.dir)
