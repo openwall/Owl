@@ -1,4 +1,4 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.11 2001/08/29 22:17:28 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.12 2001/08/29 22:38:38 solar Exp $
 
 %define NEED_PYTHON 'no'
 
@@ -20,6 +20,7 @@ Source8: xinetd-echo
 Source9: xinetd-uecho
 Source10: xinetd-chargen
 Source11: xinetd-uchargen
+Patch0: xinetd-2.3.3-owl-pidfile.diff
 Provides: inetd
 Prereq: /sbin/chkconfig /etc/init.d
 BuildRequires: tcp_wrappers
@@ -43,6 +44,7 @@ limits on the number of servers that can be started, among other things.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %{expand:%%define optflags %optflags -Wall -Wno-unused -Wno-switch}
 
@@ -112,6 +114,7 @@ fi
 * Thu Aug 30 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 2.3.3.
 - Dropped the big -audit patch all of which went into xinetd 2.3.1+.
+- Added the unlinking of PID file when exiting due to no services.
 
 * Sat Jul 28 2001 Solar Designer <solar@owl.openwall.com>
 - Handle the case of nonexistent /etc/sysconfig/network correctly.
