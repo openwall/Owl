@@ -1,4 +1,4 @@
-# $Id: Owl/packages/quota/quota.spec,v 1.17 2002/04/24 23:12:34 solar Exp $
+# $Id: Owl/packages/quota/quota.spec,v 1.18 2003/10/30 21:15:48 solar Exp $
 
 Summary: System administration tools for monitoring users' disk usage.
 Name: quota
@@ -6,13 +6,13 @@ Version: 2.00
 Release: owl8
 License: BSD
 Group: System Environment/Base
-Source: ftp://ftp.cistron.nl/pub/people/mvw/quota/%{name}-%{version}.tar.gz
+Source: ftp://ftp.cistron.nl/pub/people/mvw/quota/%name-%version.tar.gz
 Patch0: quota-2.00-pld-owl-man.diff
 Patch1: quota-2.00-owl-install-no-root.diff
 Patch2: quota-2.00-owl-tmp.diff
 Patch3: quota-2.00-owl-vitmp.diff
 BuildRequires: e2fsprogs-devel
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The quota package contains system administration tools for monitoring
@@ -33,36 +33,33 @@ make CC=gcc
 rm -rf $RPM_BUILD_ROOT
 
 mkdir -p $RPM_BUILD_ROOT/sbin
-mkdir -p ${RPM_BUILD_ROOT}%{_bindir}
-mkdir -p ${RPM_BUILD_ROOT}%{_sbindir}
-mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man{1,2,3,8}
+mkdir -p $RPM_BUILD_ROOT%_bindir
+mkdir -p $RPM_BUILD_ROOT%_sbindir
+mkdir -p $RPM_BUILD_ROOT%_mandir/man{1,2,3,8}
 
 %makeinstall root_sbindir=$RPM_BUILD_ROOT/sbin DEF_BIN_MODE=755
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
 %doc doc/*.html
 %doc warnquota.conf
 /sbin/*
-%{_bindir}/*
-%{_sbindir}/edquota
-%{_sbindir}/quotastats
-%{_sbindir}/repquota
-%{_sbindir}/setquota
-%{_sbindir}/warnquota
-%{_mandir}/man1/quota.1*
-%{_mandir}/man2/quotactl.2*
-%{_mandir}/man8/edquota.8*
-%{_mandir}/man8/quotacheck.8*
-%{_mandir}/man8/quotaon.8*
-%{_mandir}/man8/repquota.8*
-%{_mandir}/man8/setquota.8*
+%_bindir/*
+%_sbindir/edquota
+%_sbindir/quotastats
+%_sbindir/repquota
+%_sbindir/setquota
+%_sbindir/warnquota
+%_mandir/man1/quota.1*
+%_mandir/man2/quotactl.2*
+%_mandir/man8/edquota.8*
+%_mandir/man8/quotacheck.8*
+%_mandir/man8/quotaon.8*
+%_mandir/man8/repquota.8*
+%_mandir/man8/setquota.8*
 
 %changelog
-* Thu Apr 25 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Apr 25 2002 Solar Designer <solar@owl.openwall.com> 2.00-owl8
 - vitmp has been moved to /bin.
 
 * Sun Apr 21 2002 Solar Designer <solar@owl.openwall.com>

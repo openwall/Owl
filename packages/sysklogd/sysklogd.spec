@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.10 2003/08/10 01:09:10 solar Exp $
+# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.11 2003/10/30 21:15:49 solar Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
@@ -7,7 +7,7 @@ Release: owl5
 License: BSD for syslogd and GPL for klogd
 Group: System Environment/Daemons
 URL: http://www.infodrom.org/projects/sysklogd/
-Source0: http://www.infodrom.org/projects/sysklogd/download/%{name}-%{version}.tar.gz
+Source0: http://www.infodrom.org/projects/sysklogd/download/%name-%version.tar.gz
 Source1: syslog.conf
 Source2: syslog.init
 Source3: syslog.logrotate
@@ -23,7 +23,7 @@ Patch8: sysklogd-1.4.1-caen-owl-syslogd-bind.diff
 Patch9: sysklogd-1.4.1-caen-owl-syslogd-drop-root.diff
 PreReq: shadow-utils, grep, fileutils, /sbin/chkconfig
 Requires: logrotate, /var/empty
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The sysklogd package contains two system utilities (syslogd and klogd)
@@ -61,9 +61,6 @@ mkdir -p etc/{rc.d/init.d,logrotate.d}
 install -m 644 $RPM_SOURCE_DIR/syslog.conf etc/syslog.conf
 install -m 755 $RPM_SOURCE_DIR/syslog.init etc/rc.d/init.d/syslog
 install -m 644 $RPM_SOURCE_DIR/syslog.logrotate etc/logrotate.d/syslog
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %pre
 grep -q ^klogd: /etc/group || groupadd -g 180 klogd

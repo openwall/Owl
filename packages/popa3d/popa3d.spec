@@ -1,4 +1,4 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.37 2003/06/02 03:38:44 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.38 2003/10/30 21:15:47 solar Exp $
 
 Summary: Post Office Protocol (POP3) server.
 Name: popa3d
@@ -7,7 +7,7 @@ Release: owl3
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
 URL: http://www.openwall.com/popa3d/
-Source0: ftp://ftp.openwall.com/pub/projects/popa3d/popa3d-%{version}.tar.gz
+Source0: ftp://ftp.openwall.com/pub/projects/popa3d/popa3d-%version.tar.gz
 Source1: params.h
 Source2: popa3d.pam
 Source3: popa3d.init
@@ -15,7 +15,7 @@ Source4: popa3d.xinetd
 PreReq: /sbin/chkconfig, grep, shadow-utils
 Requires: /var/empty, tcb, pam_userpass, xinetd
 BuildRequires: pam-devel, pam_userpass-devel
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 popa3d is a tiny Post Office Protocol version 3 (POP3) server with
@@ -41,9 +41,6 @@ install -m 700 $RPM_SOURCE_DIR/popa3d.init \
 	$RPM_BUILD_ROOT/etc/rc.d/init.d/popa3d
 install -m 600 $RPM_SOURCE_DIR/popa3d.xinetd \
 	$RPM_BUILD_ROOT/etc/xinetd.d/popa3d
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %pre
 grep -q ^popa3d: /etc/group || groupadd -g 184 popa3d

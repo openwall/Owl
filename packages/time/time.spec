@@ -1,4 +1,4 @@
-# $Id: Owl/packages/time/time.spec,v 1.3 2002/08/26 17:37:03 mci Exp $
+# $Id: Owl/packages/time/time.spec,v 1.4 2003/10/30 21:15:49 solar Exp $
 
 Summary: A GNU utility for monitoring a program's use of system resources.
 Name: time
@@ -6,13 +6,13 @@ Version: 1.7
 Release: owl14
 License: GPL
 Group: Applications/System
-Source0: ftp://ftp.gnu.org/gnu/time/time-%{version}.tar.gz
+Source0: ftp://ftp.gnu.org/gnu/time/time-%version.tar.gz
 Source1: time.1
 Patch0: time-1.7-deb-make_quiet.diff
 Patch1: time-1.7-mdk-info.diff
 Patch2: time-1.7-deb-info_quiet.diff
-Prefix: %{_prefix}
-BuildRoot: /override/%{name}-%{version}
+Prefix: %_prefix
+BuildRoot: /override/%name-%version
 
 %description
 The GNU time utility runs another program, collects information about
@@ -33,31 +33,28 @@ make LDFLAGS=-s
 rm -rf $RPM_BUILD_ROOT
 %makeinstall
 
-mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man1
-install -m 644 $RPM_SOURCE_DIR/time.1 ${RPM_BUILD_ROOT}%{_mandir}/man1/
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT%_mandir/man1
+install -m 644 $RPM_SOURCE_DIR/time.1 $RPM_BUILD_ROOT%_mandir/man1/
 
 %post
-/sbin/install-info %{_infodir}/time.info.gz %{_infodir}/dir \
+/sbin/install-info %_infodir/time.info.gz %_infodir/dir \
 	--entry="* time: (time).                                 GNU time Utility"
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/time.info.gz %{_infodir}/dir \
+	/sbin/install-info --delete %_infodir/time.info.gz %_infodir/dir \
 		--entry="* time: (time).                                 GNU time Utility"
 fi
 
 %files
 %defattr(-,root,root)
 %doc NEWS README
-%{_bindir}/time
-%{_infodir}/time.info*
-%{_mandir}/*/*
+%_bindir/time
+%_infodir/time.info*
+%_mandir/*/*
 
 %changelog
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1.7-owl14
 - Deal with info dir entries such that the menu looks pretty.
 
 * Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>

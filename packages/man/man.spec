@@ -1,4 +1,4 @@
-# $Id: Owl/packages/man/man.spec,v 1.9 2003/09/04 23:19:15 solar Exp $
+# $Id: Owl/packages/man/man.spec,v 1.10 2003/10/30 21:15:46 solar Exp $
 
 Summary: A set of documentation tools: man, apropos and whatis.
 Name: man
@@ -6,12 +6,12 @@ Version: 1.5l
 Release: owl2
 License: GPL
 Group: System Environment/Base
-Source: ftp://ftp.win.tue.nl/pub/linux-local/utils/man/man-%{version}.tar.gz
+Source: ftp://ftp.win.tue.nl/pub/linux-local/utils/man/man-%version.tar.gz
 Patch0: man-1.5l-owl-makewhatis.diff
 Patch1: man-1.5l-owl-latin1.diff
 Patch2: man-1.5l-owl-bound.diff
 Requires: groff, mktemp >= 1:1.3.1, findutils >= 1:4.1.5-owl4
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The man package includes three tools for finding information and/or
@@ -49,9 +49,6 @@ done
 # symlinks for manpath
 ln -s man usr/bin/manpath
 ln -s man.1 usr/man/man1/manpath.1
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 # Clean up accumulated cat litter.
 %preun

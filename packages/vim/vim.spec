@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vim/vim.spec,v 1.13 2003/03/14 23:35:54 mci Exp $
+# $Id: Owl/packages/vim/vim.spec,v 1.14 2003/10/30 21:15:49 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -8,15 +8,15 @@ Summary: The VIM editor.
 Name: vim
 %define major 6
 %define minor 1
-%define alpha %{nil}
+%define alpha %nil
 %define patchlevel 386
-%define vimdir vim%{major}%{minor}%{alpha}
-Version: %{major}.%{minor}%{?patchlevel:.%patchlevel}
+%define vimdir vim%major%minor%alpha
+Version: %major.%minor%{?patchlevel:.%patchlevel}
 Release: owl1
 License: Charityware
 Group: Applications/Editors
-Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%{major}.%{minor}%{alpha}.tar.bz2
-Source1: vim-%{major}.%{minor}-%{version}.bz2
+Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%major.%minor%alpha.tar.bz2
+Source1: vim-%major.%minor-%version.bz2
 Source2: vitmp.c
 Source3: vitmp.1
 Source4: vimrc
@@ -39,7 +39,7 @@ BuildRequires: python-devel
 %if %BUILD_USE_X
 BuildRequires: gtk+-devel
 %endif
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 VIM (VIsual editor iMproved) is an updated and improved version of the
@@ -104,7 +104,7 @@ with a graphical interface and mouse support.
 %endif
 
 %prep
-%setup -q -n %{vimdir}
+%setup -q -n %vimdir
 {
 	bzcat %SOURCE1 || touch failed
 } | patch -p0
@@ -147,8 +147,8 @@ export ac_cv_func_mkstemp=yes \
 	--with-x=yes --enable-gui=gnome \
 	--exec-prefix=/usr/X11R6 \
 	--enable-xim --enable-multibyte \
-	--enable-fontset %{pythonflag} %{gpmflag}
-make VIMRUNTIMEDIR=/usr/share/vim/%{vimdir} COMPILEDBY=build@%{buildhost}
+	--enable-fontset %pythonflag %gpmflag
+make VIMRUNTIMEDIR=/usr/share/vim/%vimdir COMPILEDBY=build@%buildhost
 mv vim gvim
 make clean
 %endif
@@ -160,8 +160,8 @@ export ac_cv_func_mkstemp=yes \
 	--enable-perlinterp --disable-tclinterp \
 	--with-x=no --enable-gui=no \
 	--exec-prefix=/usr --enable-multibyte \
-	--enable-fontset %{pythonflag} %{gpmflag}
-make VIMRUNTIMEDIR=/usr/share/vim/%{vimdir} COMPILEDBY=build@%{buildhost}
+	--enable-fontset %pythonflag %gpmflag
+make VIMRUNTIMEDIR=/usr/share/vim/%vimdir COMPILEDBY=build@%buildhost
 mv vim vim-enhanced
 make clean
 
@@ -173,7 +173,7 @@ export ac_cv_func_mkstemp=yes \
 	--with-x=no --enable-gui=no \
 	--with-tlib=termcap --disable-gpm \
 	--exec-prefix=/
-make VIMRUNTIMEDIR=/usr/share/vim/%{vimdir} COMPILEDBY=build@%{buildhost}
+make VIMRUNTIMEDIR=/usr/share/vim/%vimdir COMPILEDBY=build@%buildhost
 
 gcc $RPM_OPT_FLAGS -Wall -s $RPM_SOURCE_DIR/vitmp.c -o vitmp
 
@@ -194,7 +194,7 @@ install -m 755 gvim $RPM_BUILD_ROOT/usr/X11R6/bin/
 %endif
 
 install -m 755 vitmp $RPM_BUILD_ROOT/bin/
-install -m 644 $RPM_SOURCE_DIR/vitmp.1 $RPM_BUILD_ROOT%{_mandir}/man1/
+install -m 644 $RPM_SOURCE_DIR/vitmp.1 $RPM_BUILD_ROOT%_mandir/man1/
 
 pushd $RPM_BUILD_ROOT
 mv bin/vim bin/vi
@@ -207,23 +207,23 @@ ln -sf vi bin/rview
 ln -sf vim usr/bin/ex
 ln -sf vim usr/bin/rvim
 ln -sf vim usr/bin/vimdiff
-perl -pi -e "s,$RPM_BUILD_ROOT,," .%{_mandir}/man1/{vim,vimtutor}.1
-rm .%{_mandir}/man1/rvim.1
-ln -sf vim.1 .%{_mandir}/man1/vi.1
-ln -sf vim.1 .%{_mandir}/man1/rvi.1
-ln -sf vim.1 .%{_mandir}/man1/rvim.1
-ln -sf vim.1 .%{_mandir}/man1/vimdiff.1
+perl -pi -e "s,$RPM_BUILD_ROOT,," .%_mandir/man1/{vim,vimtutor}.1
+rm .%_mandir/man1/rvim.1
+ln -sf vim.1 .%_mandir/man1/vi.1
+ln -sf vim.1 .%_mandir/man1/rvi.1
+ln -sf vim.1 .%_mandir/man1/rvim.1
+ln -sf vim.1 .%_mandir/man1/vimdiff.1
 
 %if %BUILD_USE_X
 ln -sf gvim usr/X11R6/bin/vimx
 ln -sf gvim usr/X11R6/bin/gview
 ln -sf gvim usr/X11R6/bin/gex
 ln -sf gvim usr/X11R6/bin/evim
-ln -sf vim.1 .%{_mandir}/man1/gvim.1
-ln -sf vim.1 .%{_mandir}/man1/vimx.1
-ln -sf vim.1 .%{_mandir}/man1/gview.1
-ln -sf vim.1 .%{_mandir}/man1/gex.1
-ln -sf vim.1 .%{_mandir}/man1/evim.1
+ln -sf vim.1 .%_mandir/man1/gvim.1
+ln -sf vim.1 .%_mandir/man1/vimx.1
+ln -sf vim.1 .%_mandir/man1/gview.1
+ln -sf vim.1 .%_mandir/man1/gex.1
+ln -sf vim.1 .%_mandir/man1/evim.1
 mkdir -p etc/X11/applnk/Applications
 cp $RPM_SOURCE_DIR/gvim.desktop etc/X11/applnk/Applications/
 %endif
@@ -231,25 +231,22 @@ cp $RPM_SOURCE_DIR/gvim.desktop etc/X11/applnk/Applications/
 install -m 644 $RPM_SOURCE_DIR/vimrc usr/share/vim/
 
 # Dependency cleanups
-chmod 644 usr/share/vim/%{vimdir}/{doc/vim2html.pl,tools/{*.pl,vim132}}
+chmod 644 usr/share/vim/%vimdir/{doc/vim2html.pl,tools/{*.pl,vim132}}
 popd
 chmod 644 ../runtime/doc/vim2html.pl
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files common
 %defattr(-,root,root)
 %doc README
 /usr/bin/xxd
 /usr/share/vim
-%{_mandir}/man1/vim.*
-%{_mandir}/man1/vi.*
-%{_mandir}/man1/ex.*
-%{_mandir}/man1/view.*
-%{_mandir}/man1/rvi.*
-%{_mandir}/man1/rview.*
-%{_mandir}/man1/xxd.*
+%_mandir/man1/vim.*
+%_mandir/man1/vi.*
+%_mandir/man1/ex.*
+%_mandir/man1/view.*
+%_mandir/man1/rvi.*
+%_mandir/man1/rview.*
+%_mandir/man1/xxd.*
 
 %files small
 %defattr(-,root,root)
@@ -259,14 +256,14 @@ rm -rf $RPM_BUILD_ROOT
 /bin/rvi
 /bin/rview
 /bin/vitmp
-%{_mandir}/man1/vitmp.*
+%_mandir/man1/vitmp.*
 
 %files enhanced
 %defattr(-,root,root)
 /usr/bin/vim
 /usr/bin/ex
 /usr/bin/vimtutor
-%{_mandir}/man1/vimtutor.*
+%_mandir/man1/vimtutor.*
 
 %if %BUILD_USE_X
 %files X11
@@ -277,15 +274,15 @@ rm -rf $RPM_BUILD_ROOT
 /usr/X11R6/bin/gview
 /usr/X11R6/bin/gex
 /usr/X11R6/bin/evim
-%{_mandir}/man1/gvim.*
-%{_mandir}/man1/vimx.*
-%{_mandir}/man1/gview.*
-%{_mandir}/man1/gex.*
-%{_mandir}/man1/evim.*
+%_mandir/man1/gvim.*
+%_mandir/man1/vimx.*
+%_mandir/man1/gview.*
+%_mandir/man1/gex.*
+%_mandir/man1/evim.*
 %endif
 
 %changelog
-* Sat Mar 15 2003 Michail Litvak <mci@owl.openwall.com>
+* Sat Mar 15 2003 Michail Litvak <mci@owl.openwall.com> 6.1.386-owl1
 - Updated to patchlevel 386
 
 * Thu Apr 25 2002 Solar Designer <solar@owl.openwall.com>

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/raidtools/Attic/raidtools.spec,v 1.1 2003/09/29 21:44:47 mci Exp $
+# $Id: Owl/packages/raidtools/Attic/raidtools.spec,v 1.2 2003/10/30 21:15:48 solar Exp $
 
 Summary: Tools for creating and maintaining software RAID devices.
 Name: raidtools
@@ -6,7 +6,7 @@ Version: 1.00.3
 Release: owl1
 License: GPL
 Group: System Environment/Base
-Source0: http://people.redhat.com/mingo/raidtools/raidtools-%{version}.tar.gz
+Source0: http://people.redhat.com/mingo/raidtools/raidtools-%version.tar.gz
 # http://unthought.net/Software-RAID.HOWTO/Software-RAID.HOWTO.txt
 Source1: Software-RAID.HOWTO.txt.bz2
 Patch0: raidtools-1.00.3-owl-Makefile.diff
@@ -16,7 +16,7 @@ Patch3: raidtools-1.00.3-deb-man.diff
 Patch4: raidtools-1.00.3-deb-fixes.diff
 Obsoletes: md, md-tools
 BuildRequires: popt
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The raidtools package includes the tools you need to set up and
@@ -39,17 +39,14 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make install_bin install_doc ROOTDIR=$RPM_BUILD_ROOT MAN=%{_mandir}
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+make install_bin install_doc ROOTDIR=$RPM_BUILD_ROOT MAN=%_mandir
 
 %files
 %defattr(-,root,root)
 %doc README raidreconf-HOWTO *.sample
 %doc Software-RAID.HOWTO.*
 /sbin/*
-%{_mandir}/man*/*
+%_mandir/man*/*
 
 %changelog
 * Wed Sep 10 2003 Michail Litvak <mci@owl.openwall.com> 1.00.3-owl1

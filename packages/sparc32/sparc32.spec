@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sparc32/Attic/sparc32.spec,v 1.5 2003/07/31 19:28:23 solar Exp $
+# $Id: Owl/packages/sparc32/Attic/sparc32.spec,v 1.6 2003/10/30 21:15:49 solar Exp $
 
 Summary: A SPARC32 compilation environment.
 Name: sparc32
@@ -9,7 +9,7 @@ Group: System Environment/Kernel
 Source: sparc32-1.1.tgz
 Patch0: sparc32-1.1-owl-fixes.diff
 ExclusiveArch: sparc sparcv9 sparc64
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 sparc32 is a simple utility for compiling SPARC32 packages on SPARC64
@@ -28,9 +28,6 @@ gcc $RPM_OPT_FLAGS sparc32.c -s -o sparc32
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr/{bin,man/man8}
 make install PREFIX=$RPM_BUILD_ROOT
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mktemp/mktemp.spec,v 1.8 2003/04/02 13:57:43 solar Exp $
+# $Id: Owl/packages/mktemp/mktemp.spec,v 1.9 2003/10/30 21:15:46 solar Exp $
 
 Summary: A small utility for safely making temporary files.
 Name: mktemp
@@ -8,8 +8,8 @@ Epoch: 1
 License: BSD
 Group: System Environment/Base
 URL: http://www.mktemp.org
-Source: ftp://ftp.mktemp.org/pub/mktemp/mktemp-%{version}.tar.gz
-BuildRoot: /override/%{name}-%{version}
+Source: ftp://ftp.mktemp.org/pub/mktemp/mktemp-%version.tar.gz
+BuildRoot: /override/%name-%version
 
 %description
 mktemp is an utility to be used by shell scripts and other programs to
@@ -27,9 +27,6 @@ make
 %install
 %makeinstall
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %files
 %defattr(-,root,root)
 %doc LICENSE README RELEASE_NOTES
@@ -37,7 +34,7 @@ rm -rf $RPM_BUILD_ROOT
 %_mandir/man1/mktemp.*
 
 %changelog
-* Wed Apr 02 2003 Solar Designer <solar@owl.openwall.com> 1.5-owl1
+* Wed Apr 02 2003 Solar Designer <solar@owl.openwall.com> 1:1.5-owl1
 - Updated to 1.5.
 
 * Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>

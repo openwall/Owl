@@ -1,4 +1,4 @@
-# $Id: Owl/packages/nmap/nmap.spec,v 1.4 2003/10/26 17:41:52 solar Exp $
+# $Id: Owl/packages/nmap/nmap.spec,v 1.5 2003/10/30 21:15:47 solar Exp $
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
@@ -7,14 +7,14 @@ Release: owl2
 License: GPL
 Group: Applications/System
 URL: http://www.insecure.org/nmap/
-Source: http://download.insecure.org/nmap/dist/nmap-%{version}.tar.bz2
+Source: http://download.insecure.org/nmap/dist/nmap-%version.tar.bz2
 Patch0: nmap-3.48-alt-owl-libpcap.diff
 Patch1: nmap-3.48-alt-owl-no-local-libs.diff
 Patch2: nmap-3.48-up-no-external-libpcre.diff
 Patch3: nmap-3.48-alt-owl-drop-root.diff
 Requires: /var/empty
 BuildRequires: openssl-devel, libpcap-devel, libcap-devel
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 Nmap is an utility for network exploration or security auditing.  It
@@ -40,10 +40,7 @@ make LIBS='-lm -lssl -lcrypto -lpcap -lcap -lnbase -lnsock libpcre/libpcre.a'
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%makeinstall nmapdatadir=$RPM_BUILD_ROOT%{_datadir}/%{name}
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+%makeinstall nmapdatadir=$RPM_BUILD_ROOT%_datadir/%name
 
 %pre
 grep -q ^nmap: /etc/group || groupadd -g 189 nmap
@@ -53,9 +50,9 @@ grep -q ^nmap: /etc/passwd ||
 %files
 %defattr(-,root,root)
 %doc COPYING CHANGELOG HACKING docs/{README,*.{txt,html}}
-%attr(750,root,wheel) %{_bindir}/nmap
-%{_mandir}/man1/nmap.1*
-%{_datadir}/nmap
+%attr(750,root,wheel) %_bindir/nmap
+%_mandir/man1/nmap.1*
+%_datadir/nmap
 
 %changelog
 * Sun Oct 26 2003 Solar Designer <solar@owl.openwall.com> 3.48-owl2

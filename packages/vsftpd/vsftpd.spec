@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.9 2003/10/26 13:18:31 solar Exp $
+# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.10 2003/10/30 21:15:50 solar Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
@@ -19,7 +19,7 @@ Patch2: vsftpd-1.2.1pre1-owl-warnings.diff
 Requires: xinetd, logrotate, pam_userpass, tcb, /var/empty
 Provides: ftpserver
 BuildRequires: pam-devel, pam_userpass-devel
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 vsftpd is a File Transfer Protocol (FTP) server.  The "vs" stands for
@@ -40,19 +40,16 @@ make CFLAGS="$RPM_OPT_FLAGS -Wall" LIBS="-lcap -lpam -lpam_userpass"
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/{usr/sbin,etc/{pam.d,xinetd.d,logrotate.d}}
-mkdir -p $RPM_BUILD_ROOT%{_mandir}/man{5,8}
+mkdir -p $RPM_BUILD_ROOT%_mandir/man{5,8}
 install -m 700 vsftpd $RPM_BUILD_ROOT/usr/sbin/
 install -m 600 vsftpd.conf $RPM_BUILD_ROOT/etc/
-install -m 644 vsftpd.conf.5 $RPM_BUILD_ROOT/%{_mandir}/man5/
-install -m 644 vsftpd.8 $RPM_BUILD_ROOT/%{_mandir}/man8/
+install -m 644 vsftpd.conf.5 $RPM_BUILD_ROOT%_mandir/man5/
+install -m 644 vsftpd.8 $RPM_BUILD_ROOT%_mandir/man8/
 cd $RPM_SOURCE_DIR
 install -m 600 vsftpd.pam $RPM_BUILD_ROOT/etc/pam.d/vsftpd
 install -m 600 vsftpd.xinetd $RPM_BUILD_ROOT/etc/xinetd.d/vsftpd
 install -m 600 vsftpd.logrotate $RPM_BUILD_ROOT/etc/logrotate.d/vsftpd
 touch $RPM_BUILD_ROOT/etc/ftpusers
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %pre
 grep -q ^vsftpd: /etc/group || groupadd -g 187 vsftpd
@@ -78,8 +75,8 @@ mkdir -m 755 /home/ftp &> /dev/null || :
 %config(noreplace) /etc/xinetd.d/vsftpd
 %config(noreplace) /etc/logrotate.d/vsftpd
 %ghost %config %attr(0600,root,root) /etc/ftpusers
-%{_mandir}/man5/vsftpd.conf.5*
-%{_mandir}/man8/vsftpd.8*
+%_mandir/man5/vsftpd.conf.5*
+%_mandir/man8/vsftpd.8*
 
 %changelog
 * Sun Oct 26 2003 Solar Designer <solar@owl.openwall.com> 1.2.1-owl0.1

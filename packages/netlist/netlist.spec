@@ -1,4 +1,4 @@
-# $Id: Owl/packages/netlist/Attic/netlist.spec,v 1.6 2003/06/02 03:27:24 solar Exp $
+# $Id: Owl/packages/netlist/Attic/netlist.spec,v 1.7 2003/10/30 21:15:47 solar Exp $
 
 Summary: A program to list active Internet connections and sockets.
 Name: netlist
@@ -7,8 +7,8 @@ Release: owl2
 License: distributable
 Group: System Environment/Base
 URL: http://www.openwall.com/linux/
-Source: ftp://ftp.openwall.com/pub/patches/linux/contrib/netlist-%{version}.tar.gz
-BuildRoot: /override/%{name}-%{version}
+Source: ftp://ftp.openwall.com/pub/patches/linux/contrib/netlist-%version.tar.gz
+BuildRoot: /override/%name-%version
 
 %description
 When run by a non-privileged user, netlist lists active Internet
@@ -31,9 +31,6 @@ make CFLAGS="-c -Wall $RPM_OPT_FLAGS"
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT BINDIR=%_bindir MANDIR=%_mandir
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %post
 grep -q '^proc:[^:]*:110:' /etc/group && \
 	chgrp proc %_bindir/netlist && chmod 2711 %_bindir/netlist
@@ -42,7 +39,7 @@ grep -q '^proc:[^:]*:110:' /etc/group && \
 %defattr(-,root,root)
 %doc LICENSE
 /usr/bin/netlist
-%{_mandir}/man1/netlist.1*
+%_mandir/man1/netlist.1*
 
 %changelog
 * Mon Jun 02 2003 Solar Designer <solar@owl.openwall.com> 2.0-owl2

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.23 2003/10/25 08:31:00 solar Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.24 2003/10/30 21:15:47 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -19,7 +19,7 @@ Requires: dialog
 Requires: tcb, kbd
 Requires: owl-startup
 Conflicts: setuptool
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 This is a configuration tool to initially setup fstab, networking,
@@ -45,9 +45,6 @@ install -m 700 $RPM_SOURCE_DIR/mkfstab $RPM_BUILD_ROOT/usr/lib/owl-setup/
 install -m 700 $RPM_SOURCE_DIR/netcfg $RPM_BUILD_ROOT/usr/lib/owl-setup/
 install -m 644 $RPM_SOURCE_DIR/README $RPM_BUILD_ROOT/usr/lib/owl-setup/
 ln -s ../../usr/lib/owl-setup/owl-setup $RPM_BUILD_ROOT/usr/sbin/setup
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)

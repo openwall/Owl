@@ -1,4 +1,4 @@
-# $Id: Owl/packages/modutils/modutils.spec,v 1.16 2002/06/12 21:24:14 solar Exp $
+# $Id: Owl/packages/modutils/modutils.spec,v 1.17 2003/10/30 21:15:46 solar Exp $
 
 Summary: Kernel module utilities.
 Name: modutils
@@ -6,7 +6,7 @@ Version: 2.4.16
 Release: owl1
 License: GPL
 Group: System Environment/Kernel
-Source: ftp://ftp.kernel.org/pub/linux/utils/kernel/modutils/v2.4/modutils-%{version}.tar.bz2
+Source: ftp://ftp.kernel.org/pub/linux/utils/kernel/modutils/v2.4/modutils-%version.tar.bz2
 Patch0: modutils-2.4.16-alt-GPL.diff
 Patch1: modutils-2.4.16-alt-modprobe-bL.diff
 Patch2: modutils-2.4.16-alt-owl-aliases.diff
@@ -14,7 +14,7 @@ Patch3: modutils-2.4.16-rh-owl-syms.diff
 Patch4: modutils-2.4.16-owl-warnings.diff
 PreReq: /sbin/chkconfig
 Obsoletes: modules
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The modutils package includes the various programs needed for automatic
@@ -34,7 +34,7 @@ modules are device drivers and filesystems, as well as some other things.
 
 %build
 %ifarch sparcv9
-%define _target_platform sparc-%{_vendor}-%{_target_os}
+%define _target_platform sparc-%_vendor-%_target_os
 %endif
 # Build a statically-linked version of insmod (and symlinks to it) to
 # satisfy Red Hat's mkinitrd.
@@ -48,9 +48,6 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/sbin
 %makeinstall sbindir=$RPM_BUILD_ROOT/sbin
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %post
 if [ -x /etc/rc.d/init.d/kerneld ]; then
 	/sbin/chkconfig --del kerneld
@@ -63,10 +60,10 @@ fi
 %defattr(-,root,root)
 %doc README CREDITS TODO ChangeLog example/kallsyms.c include/kallsyms.h
 /sbin/*
-%{_mandir}/*/*
+%_mandir/*/*
 
 %changelog
-* Mon Jun 10 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Jun 10 2002 Michail Litvak <mci@owl.openwall.com> 2.4.16-owl1
 - v2.4.16
 - reviewed patches, added patches from ALT
 - build with -Wall

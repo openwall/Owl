@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.16 2003/07/04 16:13:08 solar Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.17 2003/10/30 21:15:47 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -10,7 +10,7 @@ Release: owl13
 Epoch: 1
 License: GPL
 Group: Development/Languages
-Source0: ftp://ftp.perl.org/pub/CPAN/src/perl-%{version}.tar.gz
+Source0: ftp://ftp.perl.org/pub/CPAN/src/perl-%version.tar.gz
 Source1: ftp://ftp.perl.org/pub/CPAN/modules/by-module/Digest/Digest-MD5-2.09.tar.gz
 Source2: ftp://ftp.perl.org/pub/CPAN/modules/by-module/File/File-Temp-0.12.tar.gz
 Source10: perlcc.PL
@@ -26,11 +26,11 @@ Patch8: perl-5.6.0-owl-tmp.diff
 Patch9: perl-5.6.0-owl-vitmp.diff
 Patch10: perl-5.6.0-up-owl-glob-bound.diff
 Patch11: perl-5.6.0-owl-getpwent.diff
-Provides: perl <= %{version}
+Provides: perl <= %version
 Obsoletes: perl-MD5
 BuildRequires: rpm >= 3.0.5
 BuildRequires: gawk, grep, tcsh
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 # Provide Perl-specific find-{provides,requires}.
 %define	__find_provides	/usr/lib/rpm/find-provides.perl
@@ -92,13 +92,13 @@ sh Configure \
 	-des \
 	-O \
 	-Dnewmyuname="`uname -mrs`" \
-	-Dmyhostname=%{buildhost} \
+	-Dmyhostname=%buildhost \
 	-Doptimize="$RPM_OPT_FLAGS" \
-	-Dcc='%{__cc}' \
+	-Dcc='%__cc' \
 	-Dcccdlflags='-fPIC' \
-	-Dinstallprefix=$RPM_BUILD_ROOT%{_prefix} \
-	-Dprefix=%{_prefix} \
-	-Darchname=%{_arch}-%{_os} \
+	-Dinstallprefix=$RPM_BUILD_ROOT%_prefix \
+	-Dprefix=%_prefix \
+	-Darchname=%_arch-%_os \
 %ifarch sparc sparcv9
 	-Ud_longdbl \
 %endif
@@ -125,8 +125,8 @@ done
 rm -rf $RPM_BUILD_ROOT
 
 make install
-mkdir -p ${RPM_BUILD_ROOT}%{_bindir}
-install -m 755 utils/pl2pm ${RPM_BUILD_ROOT}%{_bindir}/
+mkdir -p $RPM_BUILD_ROOT%_bindir
+install -m 755 utils/pl2pm $RPM_BUILD_ROOT%_bindir/
 
 %if %BUILD_PH
 # Generate *.ph files with a trick.  Is this sick or what?
@@ -143,25 +143,25 @@ make all -f - <<EOF
 %if %BUILD_PH_ALL
 PKGS	= \$(shell rpm -qa | sed -n 's/\(^.*-devel\)-[0-9.]\+-owl[0-9]\+\$$/\1/p' | sort) \
 	  binutils popt pwdb
-STDH	= \$(filter %{_includedir}/%%.h, \$(shell rpm -ql \$(PKGS); echo %{_includedir}/{linux,asm*,scsi}/*.h))
+STDH	= \$(filter %_includedir/%%.h, \$(shell rpm -ql \$(PKGS); echo %_includedir/{linux,asm*,scsi}/*.h))
 %else
 PKGS	= glibc-devel
-STDH	= \$(filter %{_includedir}/%%.h, \$(shell rpm -ql \$(PKGS); echo %{_includedir}/{linux,asm*}/*.h))
+STDH	= \$(filter %_includedir/%%.h, \$(shell rpm -ql \$(PKGS); echo %_includedir/{linux,asm*}/*.h))
 %endif
 GCCDIR	= \$(shell gcc --print-file-name include)
 GCCH	= \$(filter \$(GCCDIR)/%%.h, \$(shell rpm -ql gcc))
 
-PERLLIB = \$(RPM_BUILD_ROOT)%{_libdir}/perl5/%{version}
-PERL	= PERL5LIB=\$(PERLLIB) \$(RPM_BUILD_ROOT)%{_bindir}/perl
+PERLLIB = \$(RPM_BUILD_ROOT)%_libdir/perl5/%version
+PERL	= PERL5LIB=\$(PERLLIB) \$(RPM_BUILD_ROOT)%_bindir/perl
 PHDIR	= \$(PERLLIB)/\${RPM_ARCH}-linux
-H2PH	= \$(PERL) \$(RPM_BUILD_ROOT)%{_bindir}/h2ph -d \$(PHDIR)/
+H2PH	= \$(PERL) \$(RPM_BUILD_ROOT)%_bindir/h2ph -d \$(PHDIR)/
 
 all: std-headers gcc-headers fix-config
 
 std-headers: \$(STDH)
 	# PKGS=\$(PKGS)
 	# STDH=\$(STDH)
-	cd %{_includedir} && \$(H2PH) \$(STDH:%{_includedir}/%%=%%)
+	cd %_includedir && \$(H2PH) \$(STDH:%_includedir/%%=%%)
 
 gcc-headers: \$(GCCH)
 	cd \$(GCCDIR) && \$(H2PH) \$(GCCH:\$(GCCDIR)/%%=%%)
@@ -171,7 +171,7 @@ fix-config: \$(PHDIR)/Config.pm
 EOF
 
 # Don't leak information specific to the build system
-rm -f $RPM_BUILD_ROOT%{_libdir}/perl5/%{version}/%{_arch}-linux/linux/compile.ph
+rm -f $RPM_BUILD_ROOT%_libdir/perl5/%version/%_arch-linux/linux/compile.ph
 %endif
 
 # Now pay attention to the extra modules
@@ -184,18 +184,15 @@ done
 popd
 
 # Fix the rest of the stuff
-find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
+find $RPM_BUILD_ROOT%_libdir/perl* -name .packlist -o -name perllocal.pod | \
 	xargs ./perl -i -p -e "s|$RPM_BUILD_ROOT||g;" $packlist
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
 %doc Artistic Copying AUTHORS README README.Y2K
-%{_bindir}/*
-%{_libdir}/*
-%{_mandir}/*/*
+%_bindir/*
+%_libdir/*
+%_mandir/*/*
 
 %changelog
 * Fri Jul 04 2003 Solar Designer <solar@owl.openwall.com> 5.6.0-owl13
@@ -246,7 +243,7 @@ build system's last kernel compile.
 - Enforce our new spec file conventions.
 
 * Mon Sep 18 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
-- specify cc=%{__cc}; continue to let cpp sort itself out
+- specify cc=%__cc; continue to let cpp sort itself out
 - switch shadow support on (RH bug #8646)
 
 * Wed Sep 06 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>

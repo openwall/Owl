@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tar/tar.spec,v 1.14 2002/10/01 00:10:14 solar Exp $
+# $Id: Owl/packages/tar/tar.spec,v 1.15 2003/10/30 21:15:49 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
@@ -6,7 +6,7 @@ Version: 1.13.19
 Release: owl4
 License: GPL
 Group: Applications/Archiving
-Source0: ftp://alpha.gnu.org/pub/gnu/tar/tar-%{version}.tar.gz
+Source0: ftp://alpha.gnu.org/pub/gnu/tar/tar-%version.tar.gz
 Source1: tar.1
 Patch0: tar-1.13.19-owl-verify-looping-fix.diff
 Patch1: tar-1.13.19-mdk-Iy.diff
@@ -19,7 +19,7 @@ Patch7: tar-1.13.19-owl-dot-dot.diff
 Patch8: tar-1.13.19-owl-symlinks.diff
 Patch9: tar-1.13.19-up-relativize-links.diff
 PreReq: /sbin/install-info, grep
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The GNU tar program saves many files together into one archive and can
@@ -56,49 +56,46 @@ make LIBS=-lbsd
 rm -rf $RPM_BUILD_ROOT
 
 make install \
-	prefix=$RPM_BUILD_ROOT%{_prefix} \
+	prefix=$RPM_BUILD_ROOT%_prefix \
 	bindir=$RPM_BUILD_ROOT/bin \
 	libexecdir=$RPM_BUILD_ROOT/sbin \
-	mandir=$RPM_BUILD_ROOT%{_mandir} \
-	infodir=$RPM_BUILD_ROOT%{_infodir}
+	mandir=$RPM_BUILD_ROOT%_mandir \
+	infodir=$RPM_BUILD_ROOT%_infodir
 ln -s tar $RPM_BUILD_ROOT/bin/gtar
 
-mkdir -p $RPM_BUILD_ROOT%{_mandir}/man1
-install -m 644 $RPM_SOURCE_DIR/tar.1 $RPM_BUILD_ROOT%{_mandir}/man1/
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT%_mandir/man1
+install -m 644 $RPM_SOURCE_DIR/tar.1 $RPM_BUILD_ROOT%_mandir/man1/
 
 %post
 # Get rid of an old, incorrect info entry when replacing older versions
 # of the package.
-INFODIRFILE=%{_infodir}/dir
+INFODIRFILE=%_infodir/dir
 if grep -q '^Tar: ' $INFODIRFILE; then
 	if test -L $INFODIRFILE; then
-		INFODIRFILE="`find %{_infodir} -name dir -printf '%%l'`"
+		INFODIRFILE="`find %_infodir -name dir -printf '%%l'`"
 	fi
 	cp -p $INFODIRFILE $INFODIRFILE.rpmtmp &&
 	grep -v '^Tar: ' $INFODIRFILE > $INFODIRFILE.rpmtmp &&
 	mv $INFODIRFILE.rpmtmp $INFODIRFILE
 fi
 
-/sbin/install-info %{_infodir}/tar.info.gz %{_infodir}/dir
+/sbin/install-info %_infodir/tar.info.gz %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/tar.info.gz %{_infodir}/dir
+	/sbin/install-info --delete %_infodir/tar.info.gz %_infodir/dir
 fi
 
 %files
 %defattr(-,root,root)
 /bin/tar
 /bin/gtar
-%{_mandir}/man1/tar.1*
-%{_infodir}/tar.info*
-%{_prefix}/share/locale/*/LC_MESSAGES/*
+%_mandir/man1/tar.1*
+%_infodir/tar.info*
+%_prefix/share/locale/*/LC_MESSAGES/*
 
 %changelog
-* Sat Sep 28 2002 Solar Designer <solar@owl.openwall.com>
+* Sat Sep 28 2002 Solar Designer <solar@owl.openwall.com> 1.13.19-owl4
 - Fixed the contains_dot_dot() bug introduced in 1.13.19 and discovered by
 3APA3A; thanks to Mark J Cox of Red Hat and Bencsath Boldizsar for further
 analysis:

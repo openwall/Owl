@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mutt/mutt.spec,v 1.7 2003/10/20 01:38:58 solar Exp $
+# $Id: Owl/packages/mutt/mutt.spec,v 1.8 2003/10/30 21:15:46 solar Exp $
 
 Summary: A feature-rich text-based mail user agent.
 Name: mutt
@@ -15,7 +15,7 @@ Patch2: mutt-1.4.1-owl-tmp.diff
 Requires: mktemp >= 1:1.3.1
 Conflicts: mutt-us
 Provides: mutt-i
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 Mutt is a feature-rich text-based mail user agent.  Mutt supports local
@@ -31,11 +31,11 @@ and more.
 %patch2 -p1
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" ./prepare --prefix=%{_prefix} \
+CFLAGS="$RPM_OPT_FLAGS" ./prepare --prefix=%_prefix \
 	--with-sharedir=/etc --sysconfdir=/etc \
-	--with-docdir=%{_docdir}/mutt-%{version} \
-	--with-mandir=%{_mandir} \
-	--with-infodir=%{_infodir} \
+	--with-docdir=%_docdir/mutt-%version \
+	--with-mandir=%_mandir \
+	--with-infodir=%_infodir \
 	--enable-pop --enable-imap \
 	--with-ssl \
 	--disable-domain \
@@ -48,31 +48,28 @@ rm -rf $RPM_BUILD_ROOT
 %makeinstall \
 	sharedir=$RPM_BUILD_ROOT/etc \
 	sysconfdir=$RPM_BUILD_ROOT/etc \
-	docdir=$RPM_BUILD_ROOT%{_docdir}/mutt-%{version} \
+	docdir=$RPM_BUILD_ROOT%_docdir/mutt-%version \
 	install
 
 # We like GPG here.
 cat contrib/gpg.rc $RPM_SOURCE_DIR/Muttrc-color >> $RPM_BUILD_ROOT/etc/Muttrc
 
-%find_lang %{name}
+%find_lang %name
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
-%files -f %{name}.lang
+%files -f %name.lang
 %defattr(-,root,root)
 %config /etc/Muttrc
 %doc doc/*.txt
 %doc contrib/*.rc README* contrib/sample.* NEWS TODO
 %doc COPYRIGHT doc/manual.txt contrib/language* mime.types
-%{_bindir}/mutt
-%{_bindir}/muttbug
-%{_bindir}/flea
-%{_bindir}/pgpring
-%{_bindir}/pgpewrap
-%{_mandir}/man1/mutt.*
-%{_mandir}/man5/muttrc.*
-%{_mandir}/man1/flea.*
+%_bindir/mutt
+%_bindir/muttbug
+%_bindir/flea
+%_bindir/pgpring
+%_bindir/pgpewrap
+%_mandir/man1/mutt.*
+%_mandir/man5/muttrc.*
+%_mandir/man1/flea.*
 
 %changelog
 * Mon Oct 20 2003 Solar Designer <solar@owl.openwall.com> 1.4.1-owl2

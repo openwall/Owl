@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.16 2003/10/25 08:21:58 solar Exp $
+# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.17 2003/10/30 21:15:47 solar Exp $
 
 Summary: Initial set of device files and MAKEDEV, a script to manage them.
 Name: owl-dev
@@ -12,7 +12,7 @@ PreReq: grep
 PreReq: owl-etc >= 0.18-owl1, fileutils, sh-utils
 Obsoletes: MAKEDEV, dev
 BuildArchitectures: noarch
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 Unix-like operating systems use a special kind of filesystem entries
@@ -28,9 +28,9 @@ initial set of device files to be placed into /dev.  It also provides
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p -m 700 $RPM_BUILD_ROOT/dev
-mkdir -p $RPM_BUILD_ROOT%{_mandir}/man8
+mkdir -p $RPM_BUILD_ROOT%_mandir/man8
 install -m 700 MAKEDEV $RPM_BUILD_ROOT/dev/
-install -m 644 MAKEDEV.man $RPM_BUILD_ROOT%{_mandir}/man8/MAKEDEV.8
+install -m 644 MAKEDEV.man $RPM_BUILD_ROOT%_mandir/man8/MAKEDEV.8
 
 # Create regular files with the proper names and permissions (not device
 # files, yet).  This idea (but not the implementation) is taken from iNs.
@@ -44,7 +44,7 @@ find $RPM_BUILD_ROOT/dev ! -type d -size 0 -print0 | xargs -0 chmod go-rwx
 cd $RPM_BUILD_DIR/MAKEDEV-2.5.2
 cat > filelist << EOF
 %defattr(-,root,root)
-%{_mandir}/man8/MAKEDEV.8*
+%_mandir/man8/MAKEDEV.8*
 EOF
 find $RPM_BUILD_ROOT/dev ! -type d ! -size 0 | \
 	sed "s,^$RPM_BUILD_ROOT,," >> filelist
@@ -53,9 +53,6 @@ find $RPM_BUILD_ROOT/dev -type d -mindepth 1 | \
 find $RPM_BUILD_ROOT/dev ! -type d -size 0 | \
 	sed "s,^$RPM_BUILD_ROOT,%ghost %verify(not group mode rdev) ," \
 	>> filelist
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %post
 grep -q ^audio: /etc/group || groupadd -g 120 audio

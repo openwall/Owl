@@ -1,4 +1,4 @@
-# $Id: Owl/packages/slang/Attic/slang.spec,v 1.6 2002/10/12 10:37:57 solar Exp $
+# $Id: Owl/packages/slang/Attic/slang.spec,v 1.7 2003/10/30 21:15:49 solar Exp $
 
 Summary: The shared library for the S-Lang extension language.
 Name: slang
@@ -7,12 +7,12 @@ Release: owl2
 License: GPL
 Group: System Environment/Libraries
 URL: http://www.s-lang.org
-Source: ftp://ftp.jedsoft.org/pub/davis/slang/v1.4/slang-%{version}.tar.bz2
+Source: ftp://ftp.jedsoft.org/pub/davis/slang/v1.4/slang-%version.tar.bz2
 Patch0: slang-1.4.6-owl-fixes.diff
 Patch1: slang-1.4.6-owl-tmp.diff
 PreReq: /sbin/ldconfig
 BuildRequires: perl
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 S-Lang is an interpreted language and a programming library.  The
@@ -25,7 +25,7 @@ to recode S-Lang procedures in C if you need to.
 %package devel
 Summary: The static library and header files for development using S-Lang.
 Group: Development/Libraries
-Requires: %{name} = %{version}-%{release}
+Requires: %name = %version-%release
 
 %description devel
 This package contains the S-Lang extension language static libraries
@@ -34,7 +34,7 @@ applications.  Documentation which may help you write S-Lang based
 applications is also included.
 
 %prep
-%setup -q -n slang-%{version}
+%setup -q -n slang-%version
 %patch0 -p1
 %patch1 -p1
 
@@ -42,7 +42,7 @@ applications is also included.
 perl -pi -e 's/(ELF_CFLAGS=".*)-O2(.*)/$1'"$RPM_OPT_FLAGS"'$2/' configure
 export ac_cv_func_snprintf=yes ac_cv_func_vsnprintf=yes \
 %configure \
-	--includedir=%{_includedir}/slang \
+	--includedir=%_includedir/slang \
 	--enable-warnings
 make elf all
 
@@ -51,28 +51,25 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr/include/slang
 
 %makeinstall \
-	install_lib_dir=$RPM_BUILD_ROOT%{_libdir} \
-	install_include_dir=$RPM_BUILD_ROOT%{_includedir}/slang install-elf
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+	install_lib_dir=$RPM_BUILD_ROOT%_libdir \
+	install_include_dir=$RPM_BUILD_ROOT%_includedir/slang install-elf
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
 %files
 %defattr(-,root,root)
-%{_libdir}/libslang.so.*
+%_libdir/libslang.so.*
 
 %files devel
 %defattr(-,root,root)
 %doc doc/*
-%{_libdir}/libslang.a
-%{_libdir}/libslang.so
-%{_includedir}/slang
+%_libdir/libslang.a
+%_libdir/libslang.so
+%_includedir/slang
 
 %changelog
-* Sat Oct 12 2002 Solar Designer <solar@owl.openwall.com>
+* Sat Oct 12 2002 Solar Designer <solar@owl.openwall.com> 1.4.6-owl2
 - Updated to 1.4.6.
 - Reviewed all of the library code for environment variable uses and
 restricted those which would be unsafe in SUID/SGID programs.

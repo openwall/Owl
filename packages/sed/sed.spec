@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sed/sed.spec,v 1.4 2002/08/26 17:30:23 mci Exp $
+# $Id: Owl/packages/sed/sed.spec,v 1.5 2003/10/30 21:15:48 solar Exp $
 
 Summary: A GNU stream text editor.
 Name: sed
@@ -6,11 +6,11 @@ Version: 3.02
 Release: owl9
 License: GPL
 Group: Applications/Text
-Source: ftp://ftp.gnu.org/gnu/sed/sed-%{version}.tar.gz
-Patch: sed-3.02-owl-info.diff 
+Source: ftp://ftp.gnu.org/gnu/sed/sed-%version.tar.gz
+Patch: sed-3.02-owl-info.diff
 PreReq: /sbin/install-info
-Prefix: %{_prefix}
-BuildRoot: /override/%{name}-%{version}
+Prefix: %_prefix
+BuildRoot: /override/%name-%version
 
 %description
 The sed (Stream EDitor) editor is a stream or batch (non-interactive)
@@ -34,28 +34,25 @@ rm -rf $RPM_BUILD_ROOT
 %makeinstall
 
 cd $RPM_BUILD_ROOT
-mv .%{_bindir} bin
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+mv .%_bindir bin
 
 %post
-/sbin/install-info %{_infodir}/sed.info.gz %{_infodir}/dir
+/sbin/install-info %_infodir/sed.info.gz %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/sed.info.gz %{_infodir}/dir
+	/sbin/install-info --delete %_infodir/sed.info.gz %_infodir/dir
 fi
 
 %files
 %defattr(-,root,root)
 %doc ANNOUNCE BUGS NEWS README TODO
 /bin/sed
-%{_infodir}/*.info*
-%{_mandir}/man*/*
+%_infodir/*.info*
+%_mandir/man*/*
 
 %changelog
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 3.02-owl9
 - Deal with info dir entries such that the menu looks pretty.
 
 * Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com>

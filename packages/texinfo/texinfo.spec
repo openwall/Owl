@@ -1,4 +1,4 @@
-# $Id: Owl/packages/texinfo/texinfo.spec,v 1.13 2002/11/22 20:25:48 solar Exp $
+# $Id: Owl/packages/texinfo/texinfo.spec,v 1.14 2003/10/30 21:15:49 solar Exp $
 
 Summary: Tools needed to create Texinfo format documentation files.
 Name: texinfo
@@ -6,7 +6,7 @@ Version: 4.2
 Release: owl3
 License: GPL
 Group: Applications/Publishing
-Source0: ftp://ftp.gnu.org/gnu/texinfo/texinfo-%{version}.tar.gz
+Source0: ftp://ftp.gnu.org/gnu/texinfo/texinfo-%version.tar.gz
 Source1: info-dir
 Patch0: texinfo-4.2-owl-texindex-tmp.diff
 Patch1: texinfo-4.2-owl-alt-texi2dvi-tmp.diff
@@ -16,9 +16,9 @@ Patch4: texinfo-4.2-rh-owl-data_size-fix.diff
 Patch5: texinfo-4.2-deb-fixes.diff
 Patch6: texinfo-4.2-owl-info.diff
 PreReq: /sbin/install-info
-Prefix: %{_prefix}
+Prefix: %_prefix
 Requires: mktemp >= 1:1.3.1
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %define __spec_install_post /usr/lib/rpm/brp-strip \; /usr/lib/rpm/brp-strip-comment-note
 
@@ -49,7 +49,7 @@ browser program for viewing Info files.
 
 %build
 unset LINGUAS || :
-%configure --mandir=%{_mandir} --infodir=%{_infodir}
+%configure --mandir=%_mandir --infodir=%_infodir
 make
 gzip -9nf ChangeLog
 
@@ -61,51 +61,48 @@ mkdir -p $RPM_BUILD_ROOT/{etc,sbin}
 
 cd $RPM_BUILD_ROOT
 install -m 644 $RPM_SOURCE_DIR/info-dir etc/info-dir
-ln -sf /etc/info-dir ${RPM_BUILD_ROOT}%{_infodir}/dir
-mv .%{_prefix}/bin/install-info sbin/
-gzip -9nf .%{_infodir}/*info*
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+ln -sf /etc/info-dir $RPM_BUILD_ROOT%_infodir/dir
+mv .%_prefix/bin/install-info sbin/
+gzip -9nf .%_infodir/*info*
 
 %post
-/sbin/install-info %{_infodir}/texinfo.gz %{_infodir}/dir
+/sbin/install-info %_infodir/texinfo.gz %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/texinfo.gz %{_infodir}/dir
+	/sbin/install-info --delete %_infodir/texinfo.gz %_infodir/dir
 fi
 
 %post -n info
-/sbin/install-info %{_infodir}/info-stnd.info.gz %{_infodir}/dir
+/sbin/install-info %_infodir/info-stnd.info.gz %_infodir/dir
 
 %preun -n info
 if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete \
-		%{_infodir}/info-stnd.info.gz %{_infodir}/dir
+		%_infodir/info-stnd.info.gz %_infodir/dir
 fi
 
 %files
 %defattr(-,root,root)
 %doc AUTHORS ChangeLog* INTRODUCTION NEWS README TODO
 %doc info/README
-%{_prefix}/bin/makeinfo
-%{_prefix}/bin/texindex
-%{_prefix}/bin/texi2dvi
-%{_infodir}/texinfo*
-%{_prefix}/share/locale/*/*/*
+%_prefix/bin/makeinfo
+%_prefix/bin/texindex
+%_prefix/bin/texi2dvi
+%_infodir/texinfo*
+%_prefix/share/locale/*/*/*
 
 %files -n info
 %defattr(-,root,root)
 %config(noreplace) /etc/info-dir
-%config(noreplace) %{_infodir}/dir
-%{_prefix}/bin/info
-%{_infodir}/info.info*
-%{_infodir}/info-stnd.info*
+%config(noreplace) %_infodir/dir
+%_prefix/bin/info
+%_infodir/info.info*
+%_infodir/info-stnd.info*
 /sbin/install-info
 
 %changelog
-* Fri Nov 22 2002 Solar Designer <solar@owl.openwall.com>
+* Fri Nov 22 2002 Solar Designer <solar@owl.openwall.com> 4.2-owl3
 - Corrected the path to bzcat, thanks to (GalaxyMaster).
 
 * Tue Aug 27 2002 Solar Designer <solar@owl.openwall.com>

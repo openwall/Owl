@@ -1,4 +1,4 @@
-# $Id: Owl/packages/textutils/Attic/textutils.spec,v 1.10 2003/10/25 08:57:04 solar Exp $
+# $Id: Owl/packages/textutils/Attic/textutils.spec,v 1.11 2003/10/30 21:15:49 solar Exp $
 
 # The texinfo documentation for fileutils, sh-utils, and textutils is
 # currently provided by fileutils.
@@ -10,14 +10,14 @@ Version: 2.0.11
 Release: owl3
 License: GPL
 Group: Applications/Text
-Source: ftp://alpha.gnu.org/gnu/fetish/textutils-%{version}.tar.gz
+Source: ftp://alpha.gnu.org/gnu/fetish/textutils-%version.tar.gz
 Patch0: textutils-2.0.11-owl-tmp.diff
 Patch1: textutils-2.0.11-owl-sort-size.diff
 %if %BUILD_INFO
 PreReq: /sbin/install-info
 %endif
 BuildRequires: libtool
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 A set of GNU utilities for modifying the contents of files, including
@@ -42,41 +42,38 @@ rm -rf $RPM_BUILD_ROOT
 
 cd $RPM_BUILD_ROOT
 mkdir bin
-mv .%{_bindir}/{cat,cut,sort} bin/
-ln -s ../../bin/cut .%{_bindir}/
-test -r .%{_bindir}/cut
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+mv .%_bindir/{cat,cut,sort} bin/
+ln -s ../../bin/cut .%_bindir/
+test -r .%_bindir/cut
 
 %if %BUILD_INFO
 %post
-/sbin/install-info %{_infodir}/textutils.info.gz %{_infodir}/dir
+/sbin/install-info %_infodir/textutils.info.gz %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete \
-		%{_infodir}/textutils.info.gz %{_infodir}/dir
+		%_infodir/textutils.info.gz %_infodir/dir
 fi
 %else
 %pre
 /sbin/install-info --quiet --delete \
-	%{_infodir}/textutils.info.gz %{_infodir}/dir
+	%_infodir/textutils.info.gz %_infodir/dir
 %endif
 
 %files
 %defattr(-,root,root)
 %doc AUTHORS COPYING NEWS README THANKS TODO
 /bin/*
-%{_bindir}/*
-%{_mandir}/*/*
+%_bindir/*
+%_mandir/*/*
 %if %BUILD_INFO
-%{_infodir}/textutils.info*
+%_infodir/textutils.info*
 %endif
-%{_datadir}/locale/*/*/*
+%_datadir/locale/*/*/*
 
 %changelog
-* Mon Aug 05 2002 Solar Designer <solar@owl.openwall.com>
+* Mon Aug 05 2002 Solar Designer <solar@owl.openwall.com> 2.0.11-owl3
 - No longer provide texinfo documentation, it is now a part of fileutils.
 - Use _*dir, configure, and makeinstall RPM macros.
 - Moved cut(1) to /bin for compatibility with Red Hat Linux.

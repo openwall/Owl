@@ -1,4 +1,4 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.27 2003/09/12 03:59:55 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.28 2003/10/30 21:15:50 solar Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
@@ -7,7 +7,7 @@ Release: owl3
 License: BSD with minor restrictions
 Group: System Environment/Daemons
 URL: http://www.xinetd.org
-Source0: http://www.xinetd.org/xinetd-%{version}.tar.gz
+Source0: http://www.xinetd.org/xinetd-%version.tar.gz
 Source1: xinetd.init
 Source2: xinetd.conf
 Source3: xinetd-ttime
@@ -25,7 +25,7 @@ PreReq: /sbin/chkconfig
 Provides: inetd
 Obsoletes: inetd
 BuildRequires: tcp_wrappers >= 7.6-owl2
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 xinetd performs the same function as inetd: it starts programs that
@@ -58,7 +58,7 @@ make
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/etc/{rc.d/init.d,xinetd.d}
 %makeinstall \
-	DAEMONDIR=$RPM_BUILD_ROOT%{_sbindir} MANDIR=$RPM_BUILD_ROOT%{_mandir}
+	DAEMONDIR=$RPM_BUILD_ROOT%_sbindir MANDIR=$RPM_BUILD_ROOT%_mandir
 
 cd $RPM_BUILD_ROOT
 
@@ -73,10 +73,7 @@ install -m 644 $RPM_SOURCE_DIR/xinetd-uecho etc/xinetd.d/echo-udp
 install -m 644 $RPM_SOURCE_DIR/xinetd-chargen etc/xinetd.d/chargen
 install -m 644 $RPM_SOURCE_DIR/xinetd-uchargen etc/xinetd.d/chargen-udp
 
-rm .%{_sbindir}/{itox,xconv.pl} .%{_mandir}/man8/{itox,xconv.pl}.8*
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+rm .%_sbindir/{itox,xconv.pl} .%_mandir/man8/{itox,xconv.pl}.8*
 
 %pre
 rm -f /var/run/xinetd.restart
@@ -106,8 +103,8 @@ fi
 %config(noreplace) /etc/xinetd.conf
 %config(noreplace) /etc/xinetd.d/*
 %config /etc/rc.d/init.d/xinetd
-%{_sbindir}/*
-%{_mandir}/*/*
+%_sbindir/*
+%_mandir/*/*
 
 %changelog
 * Fri Sep 12 2003 Solar Designer <solar@owl.openwall.com> 2.3.12-owl3

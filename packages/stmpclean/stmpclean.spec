@@ -1,4 +1,4 @@
-# $Id: Owl/packages/stmpclean/stmpclean.spec,v 1.5 2003/06/11 22:23:09 solar Exp $
+# $Id: Owl/packages/stmpclean/stmpclean.spec,v 1.6 2003/10/30 21:15:49 solar Exp $
 
 Summary: A safe temporary directory cleaner.
 Name: stmpclean
@@ -7,13 +7,13 @@ Release: owl1
 License: BSD
 Group: System Environment/Base
 URL: http://www.internet2.edu/~shalunov/stmpclean/
-Source0: http://www.internet2.edu/~shalunov/stmpclean/%{name}-%{version}.tar.gz
+Source0: http://www.internet2.edu/~shalunov/stmpclean/%name-%version.tar.gz
 Source1: stmpclean.cron
 Patch0: stmpclean-0.3-owl-fixes.diff
 PreReq: /etc/cron.daily
 Provides: tmpwatch
 Obsoletes: tmpwatch
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The stmpclean utility removes old files (and old empty directories)
@@ -29,19 +29,16 @@ make CFLAGS="$RPM_OPT_FLAGS -Wall" stmpclean
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT SBINDIR=%{_sbindir} MANDIR=%{_mandir}
+make install DESTDIR=$RPM_BUILD_ROOT SBINDIR=%_sbindir MANDIR=%_mandir
 cd $RPM_BUILD_ROOT
 mkdir -p etc/cron.daily
 install -m 700 $RPM_SOURCE_DIR/stmpclean.cron etc/cron.daily/stmpclean
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %files
 %defattr(-,root,root)
 %doc README FAQ
-%{_sbindir}/*
-%{_mandir}/*
+%_sbindir/*
+%_mandir/*
 /etc/cron.daily/stmpclean
 
 %changelog

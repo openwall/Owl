@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mingetty/mingetty.spec,v 1.6 2002/02/04 10:28:40 solar Exp $
+# $Id: Owl/packages/mingetty/mingetty.spec,v 1.7 2003/10/30 21:15:46 solar Exp $
 
 Summary: A compact getty program for virtual consoles only.
 Name: mingetty
@@ -12,7 +12,7 @@ Patch1: mingetty-0.9.4-owl-bound.diff
 Patch2: mingetty-0.9.4-owl-logname.diff
 Patch3: mingetty-0.9.4-owl-syslog.diff
 Requires: SimplePAMApps >= 0.60-owl13
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The mingetty program is a lightweight, minimalist getty program for
@@ -32,22 +32,19 @@ make CFLAGS="-D_GNU_SOURCE -Wall $RPM_OPT_FLAGS"
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/sbin
-mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man8
+mkdir -p $RPM_BUILD_ROOT%_mandir/man8
 
 install -m 755 mingetty $RPM_BUILD_ROOT/sbin/
-install -m 644 mingetty.8 ${RPM_BUILD_ROOT}%{_mandir}/man8/
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+install -m 644 mingetty.8 $RPM_BUILD_ROOT%_mandir/man8/
 
 %files
 %defattr(-,root,root)
 %doc ANNOUNCE COPYING CHANGES
 /sbin/mingetty
-%{_mandir}/man8/mingetty.8*
+%_mandir/man8/mingetty.8*
 
 %changelog
-* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
+* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com> 0.9.4-owl13
 - Enforce our new spec file conventions.
 
 * Mon Sep 25 2000 Solar Designer <solar@owl.openwall.com>

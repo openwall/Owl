@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sh-utils/Attic/sh-utils.spec,v 1.7 2003/10/25 08:57:50 solar Exp $
+# $Id: Owl/packages/sh-utils/Attic/sh-utils.spec,v 1.8 2003/10/30 21:15:48 solar Exp $
 
 # The texinfo documentation for fileutils, sh-utils, and textutils is
 # currently provided by fileutils.
@@ -10,7 +10,7 @@ Version: 2.0
 Release: owl3
 License: GPL
 Group: System Environment/Shells
-Source: ftp://ftp.gnu.org/gnu/sh-utils/sh-utils-%{version}.tar.gz
+Source: ftp://ftp.gnu.org/gnu/sh-utils/sh-utils-%version.tar.gz
 Patch0: sh-utils-2.0-owl-no-su-hostname.diff
 Patch1: sh-utils-2.0-owl-false.diff
 Patch2: sh-utils-2.0-rh-cest.diff
@@ -19,7 +19,7 @@ Patch3: sh-utils-2.0-rh-utmp.diff
 PreReq: /sbin/install-info
 %endif
 BuildRequires: perl
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The GNU shell utilities are a set of useful system utilities which are
@@ -72,50 +72,47 @@ rm -rf $RPM_BUILD_ROOT
 cd $RPM_BUILD_ROOT
 mkdir bin
 for i in basename date echo false nice pwd sleep stty true uname env; do
-	mv .%{_bindir}/$i bin/
+	mv .%_bindir/$i bin/
 done
 
-ln -s ../../bin/env .%{_bindir}/
-test -r .%{_bindir}/env
+ln -s ../../bin/env .%_bindir/
+test -r .%_bindir/env
 
-ln -s test .%{_bindir}/[
+ln -s test .%_bindir/[
 
-mkdir -p .%{_sbindir}
-mv .%{_bindir}/chroot .%{_sbindir}/
-rm .%{_bindir}/uptime
-rm .%{_mandir}/man1/{hostname,su}.1
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+mkdir -p .%_sbindir
+mv .%_bindir/chroot .%_sbindir/
+rm .%_bindir/uptime
+rm .%_mandir/man1/{hostname,su}.1
 
 %if %BUILD_INFO
 %post
-/sbin/install-info %{_infodir}/sh-utils.info.gz %{_infodir}/dir
+/sbin/install-info %_infodir/sh-utils.info.gz %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/sh-utils.info.gz %{_infodir}/dir
+	/sbin/install-info --delete %_infodir/sh-utils.info.gz %_infodir/dir
 fi
 %else
 %pre
 /sbin/install-info --quiet --delete \
-	%{_infodir}/sh-utils.info.gz %{_infodir}/dir
+	%_infodir/sh-utils.info.gz %_infodir/dir
 %endif
 
 %files
 %defattr(-,root,root)
 %doc COPYING NEWS README THANKS TODO
 /bin/*
-%{_bindir}/*
-%{_sbindir}/chroot
-%{_mandir}/man*/*
+%_bindir/*
+%_sbindir/chroot
+%_mandir/man*/*
 %if %BUILD_INFO
-%{_infodir}/sh-utils.info*
+%_infodir/sh-utils.info*
 %endif
-%{_datadir}/locale/*/*/*
+%_datadir/locale/*/*/*
 
 %changelog
-* Mon Aug 05 2002 Solar Designer <solar@owl.openwall.com>
+* Mon Aug 05 2002 Solar Designer <solar@owl.openwall.com> 2.0-owl3
 - No longer provide texinfo documentation, it is now a part of fileutils.
 - Do package locale data.
 - Use _*dir, configure, and makeinstall RPM macros.

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/termcap/termcap.spec,v 1.2 2002/02/04 08:59:59 solar Exp $
+# $Id: Owl/packages/termcap/termcap.spec,v 1.3 2003/10/30 21:15:49 solar Exp $
 
 Summary: The terminal feature database used by certain applications.
 Name: termcap
@@ -8,7 +8,7 @@ License: public domain
 Group: System Environment/Base
 Source: http://www.tuxedo.org/~esr/terminfo/termtypes.tc.gz
 BuildArchitectures: noarch
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The termcap package provides the /etc/termcap file.  /etc/termcap is a
@@ -21,14 +21,11 @@ etc.).
 mkdir -p $RPM_BUILD_ROOT/etc
 zcat $RPM_SOURCE_DIR/termtypes.tc.gz > $RPM_BUILD_ROOT/etc/termcap
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %files
 %config %attr(0644,root,root) /etc/termcap
 
 %changelog
-* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
+* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com> 11.0.1-owl1
 - Enforce our new spec file conventions.
 
 * Tue Aug 08 2000 Solar Designer <solar@owl.openwall.com>

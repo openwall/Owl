@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.54 2003/10/26 17:42:36 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.55 2003/10/30 21:15:47 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
@@ -28,7 +28,7 @@ Provides: setup
 AutoReq: false
 BuildRequires: fileutils >= 4.0.27, rpm >= 3.0.6-owl8
 BuildArchitectures: noarch
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %define shadow_initial_sha1 87b2b95772ae5ae8de701a850fd0e468592ae1c4
 
@@ -43,9 +43,6 @@ touch etc/motd var/log/lastlog
 # Hack, don't want to list all sources
 cp -rL $RPM_SOURCE_DIR/* etc/
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %triggerin -- shadow-utils
 function pause()
 {
@@ -58,7 +55,7 @@ function pause()
 # as provided by this package.
 if [ -e /etc/shadow.rpmnew -o ! -e /etc/shadow ]; then
 	SHADOW_INITIAL=no
-elif [ "`sha1sum < /etc/shadow`" = "%{shadow_initial_sha1}  -" ]; then
+elif [ "`sha1sum < /etc/shadow`" = "%shadow_initial_sha1  -" ]; then
 	SHADOW_INITIAL=yes
 else
 	SHADOW_INITIAL=no

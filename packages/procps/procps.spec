@@ -1,4 +1,4 @@
-# $Id: Owl/packages/procps/Attic/procps.spec,v 1.9 2003/10/25 09:42:00 solar Exp $
+# $Id: Owl/packages/procps/Attic/procps.spec,v 1.10 2003/10/30 21:15:47 solar Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
@@ -7,14 +7,14 @@ Release: owl3
 License: GPL and LGPL
 Group: System Environment/Base
 URL: http://procps.sf.net
-Source: ftp://sunsite.unc.edu/pub/Linux/system/status/ps/procps-%{version}.tar.gz
+Source: ftp://sunsite.unc.edu/pub/Linux/system/status/ps/procps-%version.tar.gz
 Patch0: procps-2.0.6-owl-alt-stale.diff
 Patch1: procps-2.0.7-owl-locale.diff
 Patch2: procps-2.0.7-owl-meminfo-fixes.diff
 Patch3: procps-2.0.7-owl-no-catman-cleanup.diff
 Patch4: procps-2.0.7-owl-top-ticks.diff
 PreReq: /sbin/ldconfig
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The procps package contains a set of system utilities which provide
@@ -38,16 +38,13 @@ mkdir -p $RPM_BUILD_ROOT/{bin,lib,sbin,usr/{bin,X11R6/bin,man/{man1,man5,man8}}}
 make DESTDIR=$RPM_BUILD_ROOT OWNERGROUP= install
 chmod 755 $RPM_BUILD_ROOT/{lib,bin,sbin,usr/bin}/*
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
 %files
 %defattr(-,root,root)
 %doc NEWS BUGS TODO
-/lib/libproc.so.%{version}
+/lib/libproc.so.%version
 /bin/ps
 /sbin/sysctl
 /usr/bin/oldps

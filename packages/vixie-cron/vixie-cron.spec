@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.22 2003/01/28 23:21:18 mci Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.23 2003/10/30 21:15:49 solar Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
@@ -6,17 +6,17 @@ Version: 3.0.2.7
 Release: owl17
 License: distributable
 Group: System Environment/Base
-Source0: vixie-cron-%{version}.tar.gz
+Source0: vixie-cron-%version.tar.gz
 Source1: vixie-cron.init
 Source2: crontab.control
-Patch0: vixie-cron-%{version}-owl-linux.diff
-Patch1: vixie-cron-%{version}-owl-sgid-crontab.diff
-Patch2: vixie-cron-%{version}-owl-crond.diff
-Patch3: vixie-cron-%{version}-owl-vitmp.diff
-Patch4: vixie-cron-%{version}-openbsd-sigchld.diff
+Patch0: vixie-cron-%version-owl-linux.diff
+Patch1: vixie-cron-%version-owl-sgid-crontab.diff
+Patch2: vixie-cron-%version-owl-crond.diff
+Patch3: vixie-cron-%version-owl-vitmp.diff
+Patch4: vixie-cron-%version-openbsd-sigchld.diff
 PreReq: owl-control >= 0.4, owl-control < 2.0
 PreReq: /sbin/chkconfig, grep, shadow-utils
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 cron is a daemon that runs specified programs at scheduled times.  This
@@ -39,17 +39,17 @@ make -C usr.sbin/cron CFLAGS="-c -I. -I../../include $RPM_OPT_FLAGS" \
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr/{bin,sbin}
-mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man{1,5,8}
+mkdir -p $RPM_BUILD_ROOT%_mandir/man{1,5,8}
 mkdir -p -m 700 $RPM_BUILD_ROOT/var/spool/cron
 mkdir -p -m 755 $RPM_BUILD_ROOT/etc/cron.d
 
 install -m 700 usr.sbin/cron/crontab $RPM_BUILD_ROOT/usr/bin/
 install -m 700 usr.sbin/cron/crond $RPM_BUILD_ROOT/usr/sbin/
 
-install -m 644 usr.sbin/cron/crontab.1 ${RPM_BUILD_ROOT}%{_mandir}/man1/
-install -m 644 usr.sbin/cron/crontab.5 ${RPM_BUILD_ROOT}%{_mandir}/man5/
-install -m 644 usr.sbin/cron/cron.8 ${RPM_BUILD_ROOT}%{_mandir}/man8/
-ln -s cron.8 ${RPM_BUILD_ROOT}%{_mandir}/man8/crond.8
+install -m 644 usr.sbin/cron/crontab.1 $RPM_BUILD_ROOT%_mandir/man1/
+install -m 644 usr.sbin/cron/crontab.5 $RPM_BUILD_ROOT%_mandir/man5/
+install -m 644 usr.sbin/cron/cron.8 $RPM_BUILD_ROOT%_mandir/man8/
+ln -s cron.8 $RPM_BUILD_ROOT%_mandir/man8/crond.8
 
 install -m 700 -D $RPM_SOURCE_DIR/vixie-cron.init \
 	$RPM_BUILD_ROOT/etc/rc.d/init.d/crond
@@ -57,9 +57,6 @@ install -m 700 -D $RPM_SOURCE_DIR/vixie-cron.init \
 mkdir -p $RPM_BUILD_ROOT/etc/control.d/facilities
 install -m 700 $RPM_SOURCE_DIR/crontab.control \
 	$RPM_BUILD_ROOT/etc/control.d/facilities/crontab
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %pre
 grep -q ^crontab: /etc/group || groupadd -g 160 crontab
@@ -96,17 +93,17 @@ fi
 %defattr(-,root,root)
 /usr/sbin/crond
 %attr(700,root,root) /usr/bin/crontab
-%{_mandir}/man*/*
+%_mandir/man*/*
 %dir %attr(1730,root,crontab) /var/spool/cron
 %dir /etc/cron.d
 %config /etc/rc.d/init.d/crond
 /etc/control.d/facilities/crontab
 
 %changelog
-* Wed Jan 29 2003 Michail Litvak <mci@owl.openwall.com>
-- Added patch from OpenBSD to setting SIG_DFL action instead
-SIG_IGN for SIGCHLD signal; this fixes the problem with perl's
-scripts which runs from cron.
+* Wed Jan 29 2003 Michail Litvak <mci@owl.openwall.com> 3.0.2.7-owl17
+- Added patch from OpenBSD for setting SIG_DFL action instead of SIG_IGN
+for SIGCHLD signal; this fixes the problem with Perl's scripts which run
+from cron.
 
 * Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
 - Dump/restore the owl-control setting for crontab on package upgrades.

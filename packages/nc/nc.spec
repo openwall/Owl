@@ -1,4 +1,4 @@
-# $Id: Owl/packages/nc/nc.spec,v 1.4 2003/01/23 22:40:41 mci Exp $
+# $Id: Owl/packages/nc/nc.spec,v 1.5 2003/10/30 21:15:47 solar Exp $
 
 Summary: Reads and writes data across network connections using TCP or UDP.
 Name: nc
@@ -6,11 +6,11 @@ Version: 3.2
 Release: owl2
 License: BSD
 Group: Applications/Internet
-Source: nc-%{version}-20021213.tar.bz2
+Source: nc-%version-20021213.tar.bz2
 Patch0: nc-3.2-owl-linux.diff
 Patch1: nc-3.2-owl-ipv4-default.diff
 Patch2: nc-3.2-owl-fixes.diff
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The nc package contains netcat (the program is actually nc), a simple
@@ -32,22 +32,19 @@ CFLAGS="-c $RPM_OPT_FLAGS" make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%{_bindir}
-mkdir -p $RPM_BUILD_ROOT%{_mandir}/man1
+mkdir -p $RPM_BUILD_ROOT%_bindir
+mkdir -p $RPM_BUILD_ROOT%_mandir/man1
 
-install -m 755 usr.bin/nc/nc $RPM_BUILD_ROOT%{_bindir}/
-install -m 644 usr.bin/nc/nc.1 $RPM_BUILD_ROOT%{_mandir}/man1/
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+install -m 755 usr.bin/nc/nc $RPM_BUILD_ROOT%_bindir/
+install -m 644 usr.bin/nc/nc.1 $RPM_BUILD_ROOT%_mandir/man1/
 
 %files
 %defattr(-,root,root)
-%{_bindir}/nc
-%{_mandir}/man1/nc.1*
+%_bindir/nc
+%_mandir/man1/nc.1*
 
 %changelog
-* Fri Jan 24 2003 Michail Litvak <mci@owl.openwall.com>
+* Fri Jan 24 2003 Michail Litvak <mci@owl.openwall.com> 3.2-owl2
 - Updated -owl-fixes. Initialize len argument before accept(),
   handle accept()'s errors.
 

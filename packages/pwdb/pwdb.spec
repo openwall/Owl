@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pwdb/Attic/pwdb.spec,v 1.7 2002/02/07 18:20:20 solar Exp $
+# $Id: Owl/packages/pwdb/Attic/pwdb.spec,v 1.8 2003/10/30 21:15:48 solar Exp $
 
 Summary: The password database library.
 Name: pwdb
@@ -6,7 +6,7 @@ Version: 0.61.1
 Release: owl2
 License: GPL or BSD
 Group: System Environment/Base
-Source: pwdb-%{version}.tar.gz
+Source: pwdb-%version.tar.gz
 Patch0: pwdb-0.61-owl-fgets.diff
 Patch1: pwdb-0.61-owl-clean.diff
 Patch2: pwdb-0.61-owl-backup.diff
@@ -14,7 +14,7 @@ Patch3: pwdb-0.61-owl-sprintf.diff
 Patch4: pwdb-0.61-owl-sp_flag.diff
 Patch5: pwdb-0.61-koni-owl-memory-leaks.diff
 PreReq: /sbin/ldconfig
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The pwdb package contains libpwdb, the password database library.
@@ -59,9 +59,6 @@ make install \
 
 install -m 644 conf/pwdb.conf $RPM_BUILD_ROOT/etc/pwdb.conf
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
@@ -72,10 +69,10 @@ rm -rf $RPM_BUILD_ROOT
 /usr/include/pwdb
 /lib/libpwdb.a
 /lib/libpwdb.so
-/lib/libpwdb.so.%{version}
+/lib/libpwdb.so.%version
 
 %changelog
-* Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com>
+* Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com> 0.61.1-owl2
 - Enforce our new spec file conventions.
 
 * Mon Jul 30 2001 Solar Designer <solar@owl.openwall.com>

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.29 2003/05/26 23:06:00 solar Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.30 2003/10/30 21:15:48 solar Exp $
 
 Summary: The Red Hat package management system.
 Name: rpm
@@ -6,7 +6,7 @@ Version: 3.0.6
 Release: owl8
 License: GPL
 Group: System Environment/Base
-Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-3.0.x/rpm-%{version}.tar.gz
+Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-3.0.x/rpm-%version.tar.gz
 Source1: rpminit
 Source2: rpminit.1
 Patch0: rpm-3.0.6-owl-topdir.diff
@@ -29,7 +29,7 @@ Conflicts: patch < 2.5
 # XXX the libio interface is incompatible in glibc 2.2
 Conflicts: glibc >= 2.1.90
 BuildRequires: bzip2 >= 0.9.0c-2, zlib >= 1.1.3-owl12
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The RPM Package Manager (RPM) is a powerful command line driven
@@ -41,7 +41,7 @@ the package like its version, a description, etc.
 %package devel
 Summary: Development files for applications which will manipulate RPM packages.
 Group: Development/Libraries
-Requires: rpm = %{version}-%{release}, popt
+Requires: %name = %version-%release, popt
 
 %description devel
 This package contains the RPM C library and header files.  These
@@ -54,7 +54,7 @@ to function.
 %package build
 Summary: Scripts and executable programs used to build packages.
 Group: Development/Tools
-Requires: rpm = %{version}-%{release}
+Requires: %name = %version-%release
 
 %description build
 This package contains scripts and executable programs that are used to
@@ -105,21 +105,21 @@ EOF
 
 # Not yet.
 #%define __share /share
-%define __share %{nil}
+%define __share %nil
 
-%define __mandir %{__prefix}%{__share}/man
+%define __mandir %__prefix%__share/man
 
 %build
 unset LINGUAS || :
 autoconf
 automake
 CFLAGS="$RPM_OPT_FLAGS" ./configure \
-	--prefix=%{__prefix} \
+	--prefix=%__prefix \
 	--sysconfdir=/etc \
 	--localstatedir=/var \
-	--infodir='${prefix}%{__share}/info' \
-	--mandir='${prefix}%{__share}/man' \
-	--build=%{_arch}-unknown-linux
+	--infodir='${prefix}%__share/info' \
+	--mandir='${prefix}%__share/man' \
+	--build=%_arch-unknown-linux
 make
 
 %install
@@ -128,17 +128,14 @@ rm -rf $RPM_BUILD_ROOT
 make DESTDIR="$RPM_BUILD_ROOT" install
 mkdir -p $RPM_BUILD_ROOT/etc/rpm
 
-install -m 755 $RPM_SOURCE_DIR/rpminit $RPM_BUILD_ROOT%{__prefix}/bin/
-install -m 644 $RPM_SOURCE_DIR/rpminit.1 $RPM_BUILD_ROOT%{_mandir}/man1/
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+install -m 755 $RPM_SOURCE_DIR/rpminit $RPM_BUILD_ROOT%__prefix/bin/
+install -m 644 $RPM_SOURCE_DIR/rpminit.1 $RPM_BUILD_ROOT%_mandir/man1/
 
 %post
 /sbin/ldconfig
 /bin/rpm --initdb
-if [ ! -e /etc/rpm/macros -a -e /etc/rpmrc -a -f %{__prefix}/lib/rpm/convertrpmrc.sh ]; then
-	sh %{__prefix}/lib/rpm/convertrpmrc.sh &> /dev/null
+if [ ! -e /etc/rpm/macros -a -e /etc/rpmrc -a -f %__prefix/lib/rpm/convertrpmrc.sh ]; then
+	sh %__prefix/lib/rpm/convertrpmrc.sh &> /dev/null
 fi
 
 %postun -p /sbin/ldconfig
@@ -151,95 +148,95 @@ fi
 %doc RPM-PGP-KEY RPM-GPG-KEY CHANGES GROUPS doc/manual/*
 /bin/rpm
 %dir /etc/rpm
-%{__prefix}/bin/rpm2cpio
-%{__prefix}/bin/rpminit
-%{__prefix}/bin/gendiff
-%{__prefix}/lib/librpm.so.*
-%{__prefix}/lib/librpmbuild.so.*
+%__prefix/bin/rpm2cpio
+%__prefix/bin/rpminit
+%__prefix/bin/gendiff
+%__prefix/lib/librpm.so.*
+%__prefix/lib/librpmbuild.so.*
 
-%{__prefix}/lib/rpm/brp-*
-%{__prefix}/lib/rpm/config.guess
-%{__prefix}/lib/rpm/config.sub
-%{__prefix}/lib/rpm/convertrpmrc.sh
-%{__prefix}/lib/rpm/find-prov.pl
-%{__prefix}/lib/rpm/find-provides
-%{__prefix}/lib/rpm/find-req.pl
-%{__prefix}/lib/rpm/find-requires
-%{__prefix}/lib/rpm/macros
-%{__prefix}/lib/rpm/mkinstalldirs
-%{__prefix}/lib/rpm/rpmpopt
-%{__prefix}/lib/rpm/rpmrc
+%__prefix/lib/rpm/brp-*
+%__prefix/lib/rpm/config.guess
+%__prefix/lib/rpm/config.sub
+%__prefix/lib/rpm/convertrpmrc.sh
+%__prefix/lib/rpm/find-prov.pl
+%__prefix/lib/rpm/find-provides
+%__prefix/lib/rpm/find-req.pl
+%__prefix/lib/rpm/find-requires
+%__prefix/lib/rpm/macros
+%__prefix/lib/rpm/mkinstalldirs
+%__prefix/lib/rpm/rpmpopt
+%__prefix/lib/rpm/rpmrc
 
 %ifarch %ix86
-%{__prefix}/lib/rpm/i*86*
+%__prefix/lib/rpm/i*86*
 %endif
 %ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
-%{__prefix}/lib/rpm/alpha*
+%__prefix/lib/rpm/alpha*
 %endif
 %ifarch sparc sparcv9 sparc64
-%{__prefix}/lib/rpm/sparc*
+%__prefix/lib/rpm/sparc*
 %endif
 %ifarch ia64
-%{__prefix}/lib/rpm/ia64*
+%__prefix/lib/rpm/ia64*
 %endif
 %ifarch powerpc ppc
-%{__prefix}/lib/rpm/ppc*
+%__prefix/lib/rpm/ppc*
 %endif
 
 # Disabled.
-#%dir %{__prefix}/src/RPM
-#%dir %{__prefix}/src/RPM/BUILD
-#%dir %{__prefix}/src/RPM/SPECS
-#%dir %{__prefix}/src/RPM/SOURCES
-#%dir %{__prefix}/src/RPM/SRPMS
-#%dir %{__prefix}/src/RPM/RPMS
-#%{__prefix}/src/RPM/RPMS/*
+#%dir %__prefix/src/RPM
+#%dir %__prefix/src/RPM/BUILD
+#%dir %__prefix/src/RPM/SPECS
+#%dir %__prefix/src/RPM/SOURCES
+#%dir %__prefix/src/RPM/SRPMS
+#%dir %__prefix/src/RPM/RPMS
+#%__prefix/src/RPM/RPMS/*
 
-%{__prefix}/*/locale/*/LC_MESSAGES/rpm.mo
-%{__mandir}/man[18]/*.[18]*
-%lang(pl) %{__mandir}/pl/man[18]/*.[18]*
-%lang(ru) %{__mandir}/ru/man[18]/*.[18]*
-%lang(sk) %{__mandir}/sk/man[18]/*.[18]*
+%__prefix/*/locale/*/LC_MESSAGES/rpm.mo
+%__mandir/man[18]/*.[18]*
+%lang(pl) %__mandir/pl/man[18]/*.[18]*
+%lang(ru) %__mandir/ru/man[18]/*.[18]*
+%lang(sk) %__mandir/sk/man[18]/*.[18]*
 
 %files build
 %defattr(-,root,root)
-%{__prefix}/lib/rpm/check-prereqs
-%{__prefix}/lib/rpm/cpanflute
-%{__prefix}/lib/rpm/find-lang.sh
-%{__prefix}/lib/rpm/find-provides.perl
-%{__prefix}/lib/rpm/find-requires.perl
-%{__prefix}/lib/rpm/get_magic.pl
-%{__prefix}/lib/rpm/getpo.sh
-%{__prefix}/lib/rpm/http.req
-%{__prefix}/lib/rpm/magic.prov
-%{__prefix}/lib/rpm/magic.req
-%{__prefix}/lib/rpm/perl.prov
-%{__prefix}/lib/rpm/perl.req
-%{__prefix}/lib/rpm/rpmdiff
-%{__prefix}/lib/rpm/rpmdiff.cgi
-%{__prefix}/lib/rpm/u_pkg.sh
+%__prefix/lib/rpm/check-prereqs
+%__prefix/lib/rpm/cpanflute
+%__prefix/lib/rpm/find-lang.sh
+%__prefix/lib/rpm/find-provides.perl
+%__prefix/lib/rpm/find-requires.perl
+%__prefix/lib/rpm/get_magic.pl
+%__prefix/lib/rpm/getpo.sh
+%__prefix/lib/rpm/http.req
+%__prefix/lib/rpm/magic.prov
+%__prefix/lib/rpm/magic.req
+%__prefix/lib/rpm/perl.prov
+%__prefix/lib/rpm/perl.req
+%__prefix/lib/rpm/rpmdiff
+%__prefix/lib/rpm/rpmdiff.cgi
+%__prefix/lib/rpm/u_pkg.sh
 
 %files devel
 %defattr(-,root,root)
-%{__prefix}/include/rpm
-%{__prefix}/lib/librpm.a
-%{__prefix}/lib/librpm.la
-%{__prefix}/lib/librpm.so
-%{__prefix}/lib/librpmbuild.a
-%{__prefix}/lib/librpmbuild.la
-%{__prefix}/lib/librpmbuild.so
+%__prefix/include/rpm
+%__prefix/lib/librpm.a
+%__prefix/lib/librpm.la
+%__prefix/lib/librpm.so
+%__prefix/lib/librpmbuild.a
+%__prefix/lib/librpmbuild.la
+%__prefix/lib/librpmbuild.so
 
 %files -n popt
 %defattr(-,root,root)
-%{__prefix}/lib/libpopt.so.*
-%{__prefix}/*/locale/*/LC_MESSAGES/popt.mo
-%{__mandir}/man3/popt.3*
+%__prefix/lib/libpopt.so.*
+%__prefix/*/locale/*/LC_MESSAGES/popt.mo
+%__mandir/man3/popt.3*
 
 # XXX These may end up in popt-devel but it hardly seems worth the effort now.
-%{__prefix}/lib/libpopt.a
-%{__prefix}/lib/libpopt.la
-%{__prefix}/lib/libpopt.so
-%{__prefix}/include/popt.h
+%__prefix/lib/libpopt.a
+%__prefix/lib/libpopt.la
+%__prefix/lib/libpopt.so
+%__prefix/include/popt.h
 
 %changelog
 * Tue May 27 2003 Solar Designer <solar@owl.openwall.com> 3.0.6-owl8

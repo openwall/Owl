@@ -1,4 +1,4 @@
-# $Id: Owl/packages/procmail/procmail.spec,v 1.5 2002/10/04 07:56:19 solar Exp $
+# $Id: Owl/packages/procmail/procmail.spec,v 1.6 2003/10/30 21:15:47 solar Exp $
 
 Summary: The procmail mail processing program.
 Name: procmail
@@ -6,11 +6,11 @@ Version: 3.15.2
 Release: owl2
 License: GPL or Artistic License
 Group: System Environment/Daemons
-Source: ftp://ftp.procmail.org/pub/procmail/procmail-%{version}.tar.gz
+Source: ftp://ftp.procmail.org/pub/procmail/procmail-%version.tar.gz
 Patch0: procmail-3.15.2-owl-config.diff
 Patch1: procmail-3.15.2-owl-fixes.diff
 BuildRequires: mktemp >= 1:1.3.1
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 procmail is a mail processing program which can be used to filter,
@@ -31,26 +31,23 @@ make \
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man{1,5}}
+mkdir -p $RPM_BUILD_ROOT{%_bindir,%_mandir/man{1,5}}
 
 make install \
-	BASENAME=$RPM_BUILD_ROOT%{_prefix} \
-	MANDIR=$RPM_BUILD_ROOT%{_mandir}
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+	BASENAME=$RPM_BUILD_ROOT%_prefix \
+	MANDIR=$RPM_BUILD_ROOT%_mandir
 
 %files
 %defattr(-,root,root)
 %doc FAQ HISTORY README KNOWN_BUGS FEATURES COPYING Artistic examples
-%attr(755,root,root) %{_bindir}/formail
-%attr(755,root,root) %{_bindir}/lockfile
-%attr(755,root,root) %{_bindir}/mailstat
-%attr(755,root,root) %{_bindir}/procmail
-%{_mandir}/man[15]/*
+%attr(755,root,root) %_bindir/formail
+%attr(755,root,root) %_bindir/lockfile
+%attr(755,root,root) %_bindir/mailstat
+%attr(755,root,root) %_bindir/procmail
+%_mandir/man[15]/*
 
 %changelog
-* Fri Oct 04 2002 Solar Designer <solar@owl.openwall.com>
+* Fri Oct 04 2002 Solar Designer <solar@owl.openwall.com> 3.15.2-owl2
 - Corrected the mansed script "fix", thanks to Dmitry V. Levin of ALT Linux
 for pointing out that it was broken.
 

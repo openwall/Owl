@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mtree/mtree.spec,v 1.6 2002/07/28 05:48:48 solar Exp $
+# $Id: Owl/packages/mtree/mtree.spec,v 1.7 2003/10/30 21:15:46 solar Exp $
 
 Summary: Map a directory hierarchy.
 Name: mtree
@@ -6,11 +6,11 @@ Version: 3.1
 Release: owl1
 License: BSD
 Group: System Environment/Base
-Source: mtree-%{version}-20020728.tar.bz2
+Source: mtree-%version-20020728.tar.bz2
 Patch0: mtree-3.1-owl-linux.diff
 Requires: openssl
 BuildRequires: openssl-devel
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The utility mtree compares the file hierarchy rooted in the current
@@ -28,20 +28,17 @@ CFLAGS="-c $RPM_OPT_FLAGS" make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT{%{_sbindir},%{_mandir}/man8}
-install -m 755 usr.sbin/mtree/mtree $RPM_BUILD_ROOT%{_sbindir}/
-install -m 644 usr.sbin/mtree/mtree.8 $RPM_BUILD_ROOT%{_mandir}/man8/
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT{%_sbindir,%_mandir/man8}
+install -m 755 usr.sbin/mtree/mtree $RPM_BUILD_ROOT%_sbindir/
+install -m 644 usr.sbin/mtree/mtree.8 $RPM_BUILD_ROOT%_mandir/man8/
 
 %files
 %defattr(-,root,root)
-%{_sbindir}/mtree
-%{_mandir}/man8/mtree.8*
+%_sbindir/mtree
+%_mandir/man8/mtree.8*
 
 %changelog
-* Sun Jul 28 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Jul 28 2002 Solar Designer <solar@owl.openwall.com> 3.1-owl1
 - Updated to version from current OpenBSD (post-3.1).
 
 * Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>

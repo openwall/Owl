@@ -1,4 +1,4 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.26 2003/04/17 14:12:59 solar Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.27 2003/10/30 21:15:48 solar Exp $
 
 Summary: A screen manager that supports multiple sessions on one terminal.
 Name: screen
@@ -6,7 +6,7 @@ Version: 3.9.10
 Release: owl7
 License: GPL
 Group: Applications/System
-Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%{version}.tar.gz
+Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%version.tar.gz
 Source1: screen.pam
 Patch0: screen-3.9.9-owl-os.diff
 Patch1: screen-3.9.9-owl-config.diff
@@ -24,9 +24,9 @@ PreReq: /sbin/install-info
 Requires: tcb, pam_userpass, libutempter
 # Just in case this is built with an older version of RPM package.
 Requires: libutempter.so.0(UTEMPTER_1.1)
-Prefix: %{_prefix}
+Prefix: %_prefix
 BuildRequires: pam-devel, pam_userpass-devel, libutempter-devel
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The screen utility allows you to have multiple interactive sessions on
@@ -66,57 +66,54 @@ mkdir -p $RPM_BUILD_ROOT/etc/pam.d
 %makeinstall
 
 pushd $RPM_BUILD_ROOT
-rm -f .%{_bindir}/screen.old .%{_bindir}/screen
-mv .%{_bindir}/screen-%{version} .%{_bindir}/screen
+rm -f .%_bindir/screen.old .%_bindir/screen
+mv .%_bindir/screen-%version .%_bindir/screen
 popd
 
 install -m 644 etc/etcscreenrc $RPM_BUILD_ROOT/etc/screenrc
 install -m 644 $RPM_SOURCE_DIR/screen.pam $RPM_BUILD_ROOT/etc/pam.d/screen
 
-mkdir -p $RPM_BUILD_ROOT%{_libexecdir}/screen
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT%_libexecdir/screen
 
 %pre
 grep -q ^screen: /etc/group || groupadd -g 165 screen
 
 %post
-/sbin/install-info %{_infodir}/screen.info.gz %{_infodir}/dir \
+/sbin/install-info %_infodir/screen.info.gz %_infodir/dir \
 	--entry="* screen: (screen).                             Terminal multiplexer."
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/screen.info.gz %{_infodir}/dir \
+	/sbin/install-info --delete %_infodir/screen.info.gz %_infodir/dir \
 		--entry="* screen: (screen).                             Terminal multiplexer."
-	rm -f %{_libexecdir}/screen/{tcb_chkpwd,utempter}
+	rm -f %_libexecdir/screen/{tcb_chkpwd,utempter}
 fi
 
 %triggerin -- tcb >= 0.9.7.1
-ln -f %{_libexecdir}/chkpwd/tcb_chkpwd %{_libexecdir}/screen/
+ln -f %_libexecdir/chkpwd/tcb_chkpwd %_libexecdir/screen/
 
 %triggerin -- libutempter >= 1.1.0-owl1
-ln -f %{_libexecdir}/utempter/utempter %{_libexecdir}/screen/
+ln -f %_libexecdir/utempter/utempter %_libexecdir/screen/
 
 %triggerpostun -- tcb
-if [ ! -e %{_libexecdir}/chkpwd/tcb_chkpwd ]; then
-	rm -f %{_libexecdir}/screen/tcb_chkpwd
+if [ ! -e %_libexecdir/chkpwd/tcb_chkpwd ]; then
+	rm -f %_libexecdir/screen/tcb_chkpwd
 fi
 
 %triggerpostun -- libutempter
-if [ ! -e %{_libexecdir}/utempter/utempter ]; then
-	rm -f %{_libexecdir}/screen/utempter
+if [ ! -e %_libexecdir/utempter/utempter ]; then
+	rm -f %_libexecdir/screen/utempter
 fi
 
 %files
 %defattr(-,root,root)
 %doc NEWS README doc/FAQ doc/README.DOTSCREEN etc/screenrc
-%attr(2711,root,screen) %{_bindir}/screen
-%{_mandir}/man1/screen.1.*
-%{_infodir}/screen.info*
+%attr(2711,root,screen) %_bindir/screen
+%_mandir/man1/screen.1.*
+%_infodir/screen.info*
 %config(noreplace) /etc/screenrc
 %config(noreplace) /etc/pam.d/screen
-%attr(710,root,screen) %dir %{_libexecdir}/screen
+%attr(710,root,screen) %dir %_libexecdir/screen
 
 %changelog
 * Thu Apr 17 2003 Solar Designer <solar@owl.openwall.com> 3.9.10-owl7

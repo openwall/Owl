@@ -1,16 +1,16 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.18 2003/10/25 08:50:03 solar Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.19 2003/10/30 21:15:47 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
 %define original_date 19991231
 %define original_pl pl13
-%define original_version %{original_date}-%{original_pl}
-%define package_version %{original_date}_%{original_pl}
-Version: %{package_version}
+%define original_version %original_date-%original_pl
+%define package_version %{original_date}_%original_pl
+Version: %package_version
 Release: owl7
 License: IBM Public License
 Group: System Environment/Daemons
-Source0: ftp://ftp.sunet.se/pub/unix/mail/postfix/official/%{name}-%{original_version}.tar.gz
+Source0: ftp://ftp.sunet.se/pub/unix/mail/postfix/official/%name-%original_version.tar.gz
 Source1: aliases
 Source2: postfix.init
 Source3: postfix.control
@@ -27,7 +27,7 @@ Requires: owl-control >= 0.4, owl-control < 2.0
 Conflicts: sendmail, qmail
 Provides: MTA, smtpd, smtpdaemon
 Obsoletes: sendmail-cf, sendmail-doc
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 Postfix is Wietse Venema's attempt to provide an alternative to the
@@ -36,7 +36,7 @@ administer, and hopefully secure, while at the same time being sendmail
 compatible enough to not upset your users.
 
 %prep
-%setup -q -n %{name}-%{original_version}
+%setup -q -n %name-%original_version
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -143,9 +143,6 @@ find $RPM_BUILD_ROOT ! -type d |
 	sort |
 	comm -23 - filelist.plain |
 	sed -e 's,^/etc,%config &,' -e 's,/usr/man/.*$,&*,' >> filelist
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %pre
 grep -q ^postdrop: /etc/group || groupadd -g 161 postdrop

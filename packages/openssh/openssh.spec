@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.68 2003/10/24 04:16:26 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.69 2003/10/30 21:15:47 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
@@ -7,7 +7,7 @@ Release: owl6
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
-Source0: ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-%{version}.tar.gz
+Source0: ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-%version.tar.gz
 Source1: sshd.pam
 Source2: sshd.init
 Source3: ssh_config
@@ -36,7 +36,7 @@ BuildRequires: pam-devel, pam_userpass-devel
 BuildRequires: perl
 BuildRequires: zlib-devel
 BuildRequires: tcp_wrappers >= 7.6-owl2
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 SSH (Secure Shell) is a program for logging into a remote machine and for
@@ -56,7 +56,7 @@ install openssh-clients, openssh-server, or both.
 %package clients
 Summary: OpenSSH clients.
 Group: Applications/Internet
-Requires: openssh = %{version}-%{release}
+Requires: %name = %version-%release
 Obsoletes: ssh-clients
 
 %description clients
@@ -76,7 +76,7 @@ to SSH servers.
 %package server
 Summary: The OpenSSH server daemon.
 Group: System Environment/Daemons
-PreReq: openssh = %{version}-%{release}
+PreReq: %name = %version-%release
 PreReq: /sbin/chkconfig, grep, shadow-utils, /dev/urandom
 Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: /var/empty, tcb, pam_userpass, pam_mktemp
@@ -116,8 +116,8 @@ rm -r autom4te.cache
 %patch14 -p1
 
 %define _sysconfdir /etc/ssh
-%{expand:%%define _datadir %{_datadir}/ssh}
-%{expand:%%define _libexecdir %{_libexecdir}/ssh}
+%{expand:%%define _datadir %_datadir/ssh}
+%{expand:%%define _libexecdir %_libexecdir/ssh}
 
 %build
 export LIBS="-lcrypt -lpam -lpam_misc -lpam_userpass"
@@ -146,9 +146,6 @@ install -m 600 $RPM_SOURCE_DIR/sshd_config $RPM_BUILD_ROOT/etc/ssh/
 mkdir -p $RPM_BUILD_ROOT/etc/control.d/facilities
 install -m 700 $RPM_SOURCE_DIR/sftp.control \
 	$RPM_BUILD_ROOT/etc/control.d/facilities/sftp
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %pre server
 grep -q ^sshd: /etc/group || groupadd -g 74 sshd
@@ -193,11 +190,11 @@ fi
 %doc README CREDITS LICENCE ChangeLog
 %attr(0755,root,root) /usr/bin/scp
 %attr(0755,root,root) /usr/bin/ssh-keygen
-%attr(0644,root,root) %{_mandir}/man1/scp.1*
-%attr(0644,root,root) %{_mandir}/man1/ssh-keygen.1*
+%attr(0644,root,root) %_mandir/man1/scp.1*
+%attr(0644,root,root) %_mandir/man1/ssh-keygen.1*
 %attr(0755,root,root) %dir /etc/ssh
 %attr(0600,root,root) %config(noreplace) /etc/ssh/moduli
-%attr(0755,root,root) %dir %{_libexecdir}
+%attr(0755,root,root) %dir %_libexecdir
 
 %files clients
 %defattr(-,root,root)
@@ -206,25 +203,25 @@ fi
 %attr(0755,root,root) /usr/bin/ssh-agent
 %attr(0755,root,root) /usr/bin/ssh-keyscan
 %attr(0755,root,root) /usr/bin/sftp
-%attr(0700,root,root) %{_libexecdir}/ssh-keysign
-%attr(0644,root,root) %{_mandir}/man1/ssh.1*
-%attr(0644,root,root) %{_mandir}/man1/ssh-add.1*
-%attr(0644,root,root) %{_mandir}/man1/ssh-agent.1*
-%attr(0644,root,root) %{_mandir}/man1/ssh-keyscan.1*
-%attr(0644,root,root) %{_mandir}/man1/sftp.1*
-%attr(0644,root,root) %{_mandir}/man5/ssh_config.5*
-%attr(0644,root,root) %{_mandir}/man8/ssh-keysign.8*
+%attr(0700,root,root) %_libexecdir/ssh-keysign
+%attr(0644,root,root) %_mandir/man1/ssh.1*
+%attr(0644,root,root) %_mandir/man1/ssh-add.1*
+%attr(0644,root,root) %_mandir/man1/ssh-agent.1*
+%attr(0644,root,root) %_mandir/man1/ssh-keyscan.1*
+%attr(0644,root,root) %_mandir/man1/sftp.1*
+%attr(0644,root,root) %_mandir/man5/ssh_config.5*
+%attr(0644,root,root) %_mandir/man8/ssh-keysign.8*
 %attr(0644,root,root) %config(noreplace) /etc/ssh/ssh_config
 %attr(-,root,root) /usr/bin/slogin
-%attr(-,root,root) %{_mandir}/man1/slogin.1*
+%attr(-,root,root) %_mandir/man1/slogin.1*
 
 %files server
 %defattr(-,root,root)
 %attr(0700,root,root) /usr/sbin/sshd
-%attr(0755,root,root) %{_libexecdir}/sftp-server
-%attr(0644,root,root) %{_mandir}/man5/sshd_config.5*
-%attr(0644,root,root) %{_mandir}/man8/sshd.8*
-%attr(0644,root,root) %{_mandir}/man8/sftp-server.8*
+%attr(0755,root,root) %_libexecdir/sftp-server
+%attr(0644,root,root) %_mandir/man5/sshd_config.5*
+%attr(0644,root,root) %_mandir/man8/sshd.8*
+%attr(0644,root,root) %_mandir/man8/sftp-server.8*
 %attr(0600,root,root) %config(noreplace) /etc/ssh/sshd_config
 %attr(0600,root,root) %config(noreplace) /etc/pam.d/sshd
 %attr(0700,root,root) %config /etc/rc.d/init.d/sshd

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-control/owl-control.spec,v 1.10 2003/04/18 13:16:08 solar Exp $
+# $Id: Owl/packages/owl-control/owl-control.spec,v 1.11 2003/10/30 21:15:47 solar Exp $
 
 Summary: A set of scripts to control installed system facilities.
 Name: owl-control
@@ -16,7 +16,7 @@ Source6: control-restore.8
 Requires: /bin/sh, /dev/null, sh-utils, fileutils, findutils
 Requires: sed, grep, mktemp
 BuildArchitectures: noarch
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The scripts included in this package provide a common interface to
@@ -28,21 +28,18 @@ from package installation.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT{/etc/control.d/facilities,%{_sbindir},%{_mandir}/man8}
+mkdir -p $RPM_BUILD_ROOT{/etc/control.d/facilities,%_sbindir,%_mandir/man8}
 cp $RPM_SOURCE_DIR/functions $RPM_BUILD_ROOT/etc/control.d/
-cp $RPM_SOURCE_DIR/control{,-dump,-restore} $RPM_BUILD_ROOT%{_sbindir}/
-cp $RPM_SOURCE_DIR/control{,-dump,-restore}.8 $RPM_BUILD_ROOT%{_mandir}/man8/
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+cp $RPM_SOURCE_DIR/control{,-dump,-restore} $RPM_BUILD_ROOT%_sbindir/
+cp $RPM_SOURCE_DIR/control{,-dump,-restore}.8 $RPM_BUILD_ROOT%_mandir/man8/
 
 %files
 %defattr(0700,root,root)
 %dir /etc/control.d
 %dir /etc/control.d/facilities
 %attr(0600,root,root) /etc/control.d/functions
-%{_sbindir}/control*
-%attr(0644,root,root) %{_mandir}/man8/control*
+%_sbindir/control*
+%attr(0644,root,root) %_mandir/man8/control*
 
 %changelog
 * Fri Apr 18 2003 Solar Designer <solar@owl.openwall.com> 0.6-owl1
@@ -56,7 +53,7 @@ apropos(1).
 - Imported some of the ALT Linux updates, including (modified versions of)
 the control-dump and control-restore scripts.
 - In control_subst(), don't rewrite files when the new setting is the same.
-- Install the scripts into %{_sbindir} directly, no more symlinks.
+- Install the scripts into %_sbindir directly, no more symlinks.
 
 * Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
 - Use grep -q in the provided shell functions.

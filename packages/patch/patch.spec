@@ -1,4 +1,4 @@
-# $Id: Owl/packages/patch/patch.spec,v 1.4 2002/02/07 01:43:43 solar Exp $
+# $Id: Owl/packages/patch/patch.spec,v 1.5 2003/10/30 21:15:47 solar Exp $
 
 Summary: The GNU patch command, for modifying/upgrading files.
 Name: patch
@@ -6,12 +6,12 @@ Version: 2.5.4
 Release: owl6
 License: GPL
 Group: Development/Tools
-Source: ftp://ftp.gnu.org/gnu/patch/patch-%{version}.tar.gz
+Source: ftp://ftp.gnu.org/gnu/patch/patch-%version.tar.gz
 Patch0: patch-2.5.4-mdk-sigsegv.diff
 Patch1: patch-2.5.4-rh-stderr.diff
 Patch2: patch-2.5.4-owl-backup.diff
-Prefix: %{_prefix}
-BuildRoot: /override/%{name}-%{version}
+Prefix: %_prefix
+BuildRoot: /override/%name-%version
 
 %description
 The patch program applies diff files to originals.  The diff command
@@ -41,17 +41,14 @@ make "CFLAGS=$RPM_OPT_FLAGS -D_GNU_SOURCE -W -Wall" LDFLAGS=-s
 rm -rf $RPM_BUILD_ROOT
 %makeinstall
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %files
 %defattr(-,root,root)
 %doc NEWS README AUTHORS ChangeLog
-%{_bindir}/*
-%{_mandir}/*/*
+%_bindir/*
+%_mandir/*/*
 
 %changelog
-* Thu Feb 07 2002 Michail Litvak <mci@owl.openwall.com>
+* Thu Feb 07 2002 Michail Litvak <mci@owl.openwall.com> 2.5.4-owl6
 - Enforce our new spec file conventions.
 
 * Wed Dec 20 2000 Michail Litvak <mci@owl.openwall.com>

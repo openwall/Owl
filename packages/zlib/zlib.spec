@@ -1,4 +1,4 @@
-# $Id: Owl/packages/zlib/zlib.spec,v 1.7 2003/05/15 00:44:51 solar Exp $
+# $Id: Owl/packages/zlib/zlib.spec,v 1.8 2003/10/30 21:15:50 solar Exp $
 
 Summary: The zlib compression and decompression library.
 Name: zlib
@@ -7,12 +7,12 @@ Release: owl3
 License: BSD
 Group: System Environment/Libraries
 URL: http://www.gzip.org/zlib/
-Source: ftp://ftp.info-zip.org/pub/infozip/zlib/zlib-%{version}.tar.bz2
+Source: ftp://ftp.info-zip.org/pub/infozip/zlib/zlib-%version.tar.bz2
 Patch0: zlib-1.1.4-owl-gzprintf-bound.diff
 Patch1: zlib-1.1.4-alt-gzio.diff
 PreReq: /sbin/ldconfig
-Prefix: %{_prefix}
-BuildRoot: /override/%{name}-%{version}
+Prefix: %_prefix
+BuildRoot: /override/%name-%version
 
 %description
 The zlib compression library provides in-memory compression and
@@ -40,28 +40,25 @@ library.
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" ./configure --shared --prefix=%{_prefix}
+CFLAGS="$RPM_OPT_FLAGS" ./configure --shared --prefix=%_prefix
 make
 # now build the static lib
-CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix}
+CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%_prefix
 make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%{_prefix}
+mkdir -p $RPM_BUILD_ROOT%_prefix
 
-CFLAGS="$RPM_OPT_FLAGS" ./configure --shared --prefix=%{_prefix}
-make install prefix=$RPM_BUILD_ROOT%{_prefix}
+CFLAGS="$RPM_OPT_FLAGS" ./configure --shared --prefix=%_prefix
+make install prefix=$RPM_BUILD_ROOT%_prefix
 
-CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix}
-make install prefix=$RPM_BUILD_ROOT%{_prefix}
+CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%_prefix
+make install prefix=$RPM_BUILD_ROOT%_prefix
 
-install -m 644 zutil.h $RPM_BUILD_ROOT%{_includedir}/
-mkdir -p $RPM_BUILD_ROOT%{_mandir}/man3
-install -m 644 zlib.3 $RPM_BUILD_ROOT%{_mandir}/man3/
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+install -m 644 zutil.h $RPM_BUILD_ROOT%_includedir/
+mkdir -p $RPM_BUILD_ROOT%_mandir/man3
+install -m 644 zlib.3 $RPM_BUILD_ROOT%_mandir/man3/
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -69,15 +66,15 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 %doc README
-%{_libdir}/libz.so.*
+%_libdir/libz.so.*
 
 %files devel
 %defattr(-,root,root)
 %doc ChangeLog algorithm.txt
-%{_libdir}/*.a
-%{_libdir}/*.so
-%{_includedir}/*
-%{_mandir}/man3/zlib.3*
+%_libdir/*.a
+%_libdir/*.so
+%_includedir/*
+%_mandir/man3/zlib.3*
 
 %changelog
 * Thu May 15 2003 Solar Designer <solar@owl.openwall.com> 1.1.4-owl3

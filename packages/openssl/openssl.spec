@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.34 2003/09/30 22:33:55 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.35 2003/10/30 21:15:47 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
@@ -7,7 +7,7 @@ Release: owl1
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
-Source: ftp://ftp.openssl.org/source/%{name}-%{version}.tar.gz
+Source: ftp://ftp.openssl.org/source/%name-%version.tar.gz
 Patch0: openssl-0.9.6e-owl-crypt.diff
 Patch1: openssl-0.9.6a-owl-glibc-enable_secure.diff
 Patch10: openssl-0.9.6e-up-20020429-read-errors.diff
@@ -15,7 +15,7 @@ Patch20: openssl-0.9.6h-owl-Makefile.diff
 PreReq: /sbin/ldconfig
 Provides: SSL
 BuildRequires: perl
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The OpenSSL Project is a collaborative effort to develop a robust,
@@ -37,7 +37,7 @@ libraries and tools.
 %package devel
 Summary: Secure Sockets Layer and cryptography static libraries and headers.
 Group: Development/Libraries
-Requires: openssl = %{version}-%{release}
+Requires: %name = %version-%release
 
 %description devel
 The OpenSSL Project is a collaborative effort to develop a robust,
@@ -71,30 +71,30 @@ popd
 %define opensslflags shared -DSSL_ALLOW_ADH --prefix=/usr
 
 %build
-perl -pi -e "s/-O.(?: -fomit-frame-pointer)?(?: -m.86)?/${RPM_OPT_FLAGS}/" \
+perl -pi -e "s/-O.(?: -fomit-frame-pointer)?(?: -m.86)?/$RPM_OPT_FLAGS/" \
 	Configure
 
 %ifarch %ix86
 %ifarch i386
-./Configure %{opensslflags} --openssldir=%{openssldir} 386 linux-elf
+./Configure %opensslflags --openssldir=%openssldir 386 linux-elf
 %else
-./Configure %{opensslflags} --openssldir=%{openssldir} linux-elf
+./Configure %opensslflags --openssldir=%openssldir linux-elf
 %endif
 %endif
 %ifarch ppc
-./Configure %{opensslflags} --openssldir=%{openssldir} linux-ppc
+./Configure %opensslflags --openssldir=%openssldir linux-ppc
 %endif
 %ifarch alpha alphaev5
-./Configure %{opensslflags} --openssldir=%{openssldir} linux-alpha-gcc
+./Configure %opensslflags --openssldir=%openssldir linux-alpha-gcc
 %endif
 %ifarch alphaev56 alphapca56 alphaev6 alphaev67
-./Configure %{opensslflags} --openssldir=%{openssldir} linux-alpha+bwx-gcc
+./Configure %opensslflags --openssldir=%openssldir linux-alpha+bwx-gcc
 %endif
 %ifarch sparc
-./Configure %{opensslflags} --openssldir=%{openssldir} linux-sparcv8
+./Configure %opensslflags --openssldir=%openssldir linux-sparcv8
 %endif
 %ifarch sparcv9
-./Configure %{opensslflags} --openssldir=%{openssldir} linux-sparcv9
+./Configure %opensslflags --openssldir=%openssldir linux-sparcv9
 %endif
 
 # Check these against the DIRS= line and "all" target in top-level Makefile
@@ -113,7 +113,7 @@ LD_LIBRARY_PATH=`pwd` make tests
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make install MANDIR=%{_mandir} INSTALL_PREFIX="$RPM_BUILD_ROOT"
+make install MANDIR=%_mandir INSTALL_PREFIX="$RPM_BUILD_ROOT"
 
 # Fail if the openssl binary is statically linked against OpenSSL at this
 # stage (which could happen if "make install" caused anything to rebuild).
@@ -122,15 +122,12 @@ grep -qw libssl openssl.libs
 grep -qw libcrypto openssl.libs
 
 # Rename man pages
-mv $RPM_BUILD_ROOT%{_mandir}/man1/{,ssl}passwd.1
-mv $RPM_BUILD_ROOT%{_mandir}/man3/{,ssl}err.3
-mv $RPM_BUILD_ROOT%{_mandir}/man3/{,ssl}rand.3
+mv $RPM_BUILD_ROOT%_mandir/man1/{,ssl}passwd.1
+mv $RPM_BUILD_ROOT%_mandir/man3/{,ssl}err.3
+mv $RPM_BUILD_ROOT%_mandir/man3/{,ssl}rand.3
 
 # Make backwards-compatibility symlink to ssleay
 ln -s openssl $RPM_BUILD_ROOT/usr/bin/ssleay
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -142,21 +139,21 @@ rm -rf $RPM_BUILD_ROOT
 
 %attr(0755,root,root) /usr/bin/*
 %attr(0755,root,root) /usr/lib/*.so.*
-%attr(0755,root,root) %{openssldir}/misc/*
-%attr(0644,root,root) %{_mandir}/man[157]/*
+%attr(0755,root,root) %openssldir/misc/*
+%attr(0644,root,root) %_mandir/man[157]/*
 
-%config %attr(0644,root,root) %{openssldir}/openssl.cnf
-%dir %attr(0755,root,root) %{openssldir}/certs
-%dir %attr(0755,root,root) %{openssldir}/lib
-%dir %attr(0755,root,root) %{openssldir}/misc
-%dir %attr(0700,root,root) %{openssldir}/private
+%config %attr(0644,root,root) %openssldir/openssl.cnf
+%dir %attr(0755,root,root) %openssldir/certs
+%dir %attr(0755,root,root) %openssldir/lib
+%dir %attr(0755,root,root) %openssldir/misc
+%dir %attr(0700,root,root) %openssldir/private
 
 %files devel
 %defattr(0644,root,root,0755)
 %attr(0644,root,root) /usr/lib/*.a
 %attr(0755,root,root) /usr/lib/*.so
 %attr(0644,root,root) /usr/include/openssl/*
-%attr(0644,root,root) %{_mandir}/man3/*
+%attr(0644,root,root) %_mandir/man3/*
 
 %changelog
 * Wed Oct 01 2003 Solar Designer <solar@owl.openwall.com> 0.9.6k-owl1

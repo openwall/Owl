@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.38 2003/10/25 08:33:12 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.39 2003/10/30 21:15:47 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -23,7 +23,7 @@ Requires: gawk, sed, mktemp
 Requires: /sbin/sysctl
 Provides: initscripts
 Obsoletes: initscripts
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 The scripts used to boot your system, change runlevels, and shut the
@@ -79,9 +79,6 @@ ln -s ../rc.local etc/rc.d/rc5.d/S99local
 touch var/log/wtmp var/run/utmp
 
 mkdir -p var/run/netreport
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %post
 f=/var/log/lastlog

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.14 2003/10/25 09:21:47 solar Exp $
+# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.15 2003/10/30 21:15:47 solar Exp $
 
 Summary: Initial directory hierarchy.
 Name: owl-hier
@@ -12,7 +12,7 @@ Provides: filesystem
 Obsoletes: filesystem
 BuildRequires: mtree
 BuildArchitectures: noarch
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 This package contains the initial directory hierarchy for Owl, and
@@ -65,9 +65,6 @@ done | sort > filelist.remove
 
 sort filelist.mtree |
 comm -3 - filelist.remove >> filelist
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files -f filelist
 

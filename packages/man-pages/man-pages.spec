@@ -1,4 +1,4 @@
-# $Id: Owl/packages/man-pages/man-pages.spec,v 1.15 2003/04/17 12:57:11 solar Exp $
+# $Id: Owl/packages/man-pages/man-pages.spec,v 1.16 2003/10/30 21:15:46 solar Exp $
 
 Summary: Manual (man) pages from the Linux Documentation Project.
 Name: man-pages
@@ -6,7 +6,7 @@ Version: 1.52
 Release: owl3
 License: distributable
 Group: Documentation
-Source0: ftp://ftp.win.tue.nl/pub/linux-local/manpages/man-pages-%{version}.tar.gz
+Source0: ftp://ftp.win.tue.nl/pub/linux-local/manpages/man-pages-%version.tar.gz
 Source1: rpcgen.1
 Source2: getent.1
 Source3: iconv.1
@@ -23,7 +23,7 @@ Patch2: man-pages-1.52-owl-cc-ld.so.diff
 Patch3: man-pages-1.52-owl-uselib.diff
 AutoReqProv: false
 BuildArchitectures: noarch
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 A large collection of man pages (documentation) from the Linux
@@ -87,24 +87,21 @@ rm -fv man8/nscd.8
 %install
 rm -rf $RPM_BUILD_ROOT
 
-mkdir -p $RPM_BUILD_ROOT%{_mandir}
+mkdir -p $RPM_BUILD_ROOT%_mandir
 for n in 1 2 3 4 5 6 7 8; do
-	mkdir $RPM_BUILD_ROOT%{_mandir}/man$n
+	mkdir $RPM_BUILD_ROOT%_mandir/man$n
 done
 for n in man?/*; do
-	cp -a $n $RPM_BUILD_ROOT%{_mandir}/$n
+	cp -a $n $RPM_BUILD_ROOT%_mandir/$n
 done
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(0644,root,root,0755)
-%doc README man-pages-%{version}.Announce
-%{_mandir}/man*/*
+%doc README man-pages-%version.Announce
+%_mandir/man*/*
 
 %changelog
-* Thu Apr 17 2003 Solar Designer <solar@owl.openwall.com>
+* Thu Apr 17 2003 Solar Designer <solar@owl.openwall.com> 1.52-owl3
 - console-tools has been replaced with kbd, so let's package console(4)
 from here now.
 

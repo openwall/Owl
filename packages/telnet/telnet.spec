@@ -1,4 +1,4 @@
-# $Id: Owl/packages/telnet/telnet.spec,v 1.4 2002/02/04 09:16:08 solar Exp $
+# $Id: Owl/packages/telnet/telnet.spec,v 1.5 2003/10/30 21:15:49 solar Exp $
 
 Summary: The client program for the telnet remote login protocol.
 Name: telnet
@@ -6,7 +6,7 @@ Version: 3.0
 Release: owl1
 License: BSD
 Group: Applications/Internet
-Source0: telnet-%{version}-20011117.tar.bz2
+Source0: telnet-%version-20011117.tar.bz2
 Source1: telnetd.xinetd
 Patch0: telnet-3.0-owl-linux.diff
 Patch1: telnet-3.0-owl-no-mini_inetd.diff
@@ -14,7 +14,7 @@ Patch2: telnet-3.0-owl-ipv4-only.diff
 Patch10: telnet-3.0-rh-env.diff
 Patch20: telnet-3.0-owl-drop-root.diff
 BuildRequires: ncurses-devel
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 Telnet is a popular protocol for logging into remote systems over the
@@ -44,21 +44,18 @@ CFLAGS="-c $RPM_OPT_FLAGS" make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p ${RPM_BUILD_ROOT}%{_bindir}
+mkdir -p $RPM_BUILD_ROOT%_bindir
 mkdir -p $RPM_BUILD_ROOT/usr/libexec
-mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man{1,8}
+mkdir -p $RPM_BUILD_ROOT%_mandir/man{1,8}
 
-install -m 755 usr.bin/telnet/telnet ${RPM_BUILD_ROOT}%{_bindir}/
-install -m 644 usr.bin/telnet/telnet.1 ${RPM_BUILD_ROOT}%{_mandir}/man1/
+install -m 755 usr.bin/telnet/telnet $RPM_BUILD_ROOT%_bindir/
+install -m 644 usr.bin/telnet/telnet.1 $RPM_BUILD_ROOT%_mandir/man1/
 install -m 700 libexec/telnetd/telnetd $RPM_BUILD_ROOT/usr/libexec/
-install -m 644 libexec/telnetd/telnetd.8 ${RPM_BUILD_ROOT}%{_mandir}/man8/
+install -m 644 libexec/telnetd/telnetd.8 $RPM_BUILD_ROOT%_mandir/man8/
 
 mkdir -p $RPM_BUILD_ROOT/etc/xinetd.d
 install -m 600 $RPM_SOURCE_DIR/telnetd.xinetd \
 	$RPM_BUILD_ROOT/etc/xinetd.d/telnetd
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %pre server
 grep -q ^telnetd: /etc/group || groupadd -g 186 telnetd
@@ -67,17 +64,17 @@ grep -q ^telnetd: /etc/passwd ||
 
 %files
 %defattr(-,root,root)
-%{_bindir}/telnet
-%{_mandir}/man1/telnet.1*
+%_bindir/telnet
+%_mandir/man1/telnet.1*
 
 %files server
 %defattr(-,root,root)
 %config(noreplace) /etc/xinetd.d/telnetd
 /usr/libexec/telnetd
-%{_mandir}/man8/telnetd.8*
+%_mandir/man8/telnetd.8*
 
 %changelog
-* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
+* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com> 3.0-owl1
 - Enforce our new spec file conventions.
 
 * Sun Nov 25 2001 Solar Designer <solar@owl.openwall.com>
