@@ -1,4 +1,4 @@
-# $Id: Owl/packages/kernel/kernel.spec,v 1.12 2003/07/31 15:43:48 solar Exp $
+# $Id: Owl/packages/kernel/kernel.spec,v 1.13 2003/10/29 19:28:02 solar Exp $
 
 Summary: Fake Linux kernel package for Red Hat Linux compatibility.
 Name: kernel
@@ -9,11 +9,11 @@ Group: System Environment/Base
 Source: BuildASM-sparc.sh
 PreReq: basesystem
 %ifarch sparc sparcv9
-BuildArchitectures: %{_arch}
+BuildArchitectures: %_arch
 %else
 BuildArchitectures: noarch
 %endif
-BuildRoot: /override/%{name}-%{version}
+BuildRoot: /override/%name-%version
 
 %description
 This package exists for Red Hat Linux compatibility only.  It doesn't
