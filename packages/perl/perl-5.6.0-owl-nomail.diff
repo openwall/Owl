@@ -1,0 +1,18 @@
+--- perl/perl.c	Sat Mar 18 01:35:15 2000
++++ perl/perl.c	Wed Sep  6 22:23:24 2000
+@@ -2758,6 +2758,7 @@
+ 	    if (tmpstatbuf.st_dev != PL_statbuf.st_dev ||
+ 		tmpstatbuf.st_ino != PL_statbuf.st_ino) {
+ 		(void)PerlIO_close(PL_rsfp);
++#if 0
+ 		if (PL_rsfp = PerlProc_popen("/bin/mail root","w")) {	/* heh, heh */
+ 		    PerlIO_printf(PL_rsfp,
+ "User %"Uid_t_f" tried to run dev %ld ino %ld in place of dev %ld ino %ld!\n\
+@@ -2768,6 +2769,7 @@
+ 			PL_statbuf.st_uid, PL_statbuf.st_gid);
+ 		    (void)PerlProc_pclose(PL_rsfp);
+ 		}
++#endif
+ 		Perl_croak(aTHX_ "Permission denied\n");
+ 	    }
+ 	    if (

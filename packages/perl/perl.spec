@@ -1,10 +1,10 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.3 2000/09/03 21:24:56 solar Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.4 2000/09/06 18:30:24 kad Exp $
 
 Summary: 	The Perl programming language.
 Name: 		perl
 %define 	perlver 5.6.0
 Version: 	%{perlver}
-Release: 	7owl
+Release: 	8owl
 Copyright: 	GPL
 Group: 		Development/Languages
 Source0:	ftp://ftp.perl.org/pub/perl/CPAN/src/perl-%{perlver}.tar.gz
@@ -18,6 +18,7 @@ Patch3: 	perl-5.6.0-rh-prereq.diff
 Patch4: 	perl-5.6.0-rh-root.diff
 Patch5: 	perl-5.6.0-rh-fhs.diff
 Patch6: 	perl-5.6.0-rh-buildroot.diff
+Patch7:		perl-5.6.0-owl-nomail.diff
 Obsoletes: 	perl-MD5
 Buildroot: 	/var/rpm-buildroot/%{name}-root
 BuildPreReq: 	gawk, grep, tcsh
@@ -73,6 +74,7 @@ tar xzf %{SOURCE1} -C modules
 %patch4 -p1 -b .root
 %patch5 -p1 -b .fhs
 %patch6 -p1 -b .buildroot
+%patch7 -p1 -b .nomail
 
 find . -name \*.orig -exec rm -fv {} \;
 
@@ -171,6 +173,9 @@ chmod 400 $RPM_BUILD_ROOT%{_prefix}/bin/suidperl
 %{_mandir}/*/*
 
 %changelog
+* Wed Sep  6 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- no mail in suidperl
+
 * Sun Sep  3 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import from RH
 - MD5 -> Digest::MD5
