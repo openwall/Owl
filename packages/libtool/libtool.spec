@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libtool/libtool.spec,v 1.2 2001/05/06 14:57:42 solar Exp $
+# $Id: Owl/packages/libtool/libtool.spec,v 1.3 2001/05/06 14:59:55 solar Exp $
 
 Summary: The GNU libtool, which simplifies the use of shared libraries.
 Name: 		libtool
@@ -80,7 +80,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %post
 /sbin/install-info %{_infodir}/libtool.info.gz %{_infodir}/dir
 # XXX hack alert
-cd %{_defaultdocdir}/libtool-%{version}/demo ||cd %{_prefix}/doc/libtool-%{version}/demo || exit 0
+cd %{_defaultdocdir}/libtool-%{version}/demo || cd %{_prefix}/doc/libtool-%{version}/demo || exit 0
 umask 022
 libtoolize --copy --force
 aclocal
