@@ -1,5 +1,5 @@
 --- gdb-5.0/gdb/lin-thread.c.orig	Fri Apr 14 14:40:00 2000
-+++ gdb-5.0/gdb/lin-thread.c	Thu Jul 12 06:43:50 2001
++++ gdb-5.0/gdb/lin-thread.c	Thu Jul 12 07:09:00 2001
 @@ -944,10 +944,10 @@
      }
  
@@ -27,7 +27,7 @@
  
  /* This function handles the global parts of disabling thread events.
 --- gdb-5.0/libiberty/pexecute.c.orig	Tue Feb 22 19:14:35 2000
-+++ gdb-5.0/libiberty/pexecute.c	Thu Jul 12 06:49:06 2001
++++ gdb-5.0/libiberty/pexecute.c	Thu Jul 12 07:09:00 2001
 @@ -697,6 +697,7 @@
      }
  
@@ -45,3 +45,14 @@
        fprintf (stderr, "%s: ", this_pname);
        fprintf (stderr, install_error_msg, program);
        fprintf (stderr, ": %s\n", xstrerror (errno));
+--- gdb-5.0/libiberty/vfork.c.orig	Mon May  3 11:28:54 1999
++++ gdb-5.0/libiberty/vfork.c	Thu Jul 12 07:09:47 2001
+@@ -1,6 +1,8 @@
+ /* Emulate vfork using just plain fork, for systems without a real vfork.
+    This function is in the public domain. */
+ 
++#include <unistd.h>
++
+ int
+ vfork ()
+ {
