@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.5 2001/02/10 00:00:05 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.6 2001/03/10 18:59:54 kad Exp $
 
 %define BUILD_CHSH_CHFN	'yes'
 %define BUILD_VIPW_VIGR	'yes'
@@ -6,7 +6,7 @@
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 19990827
-Release: 13owl
+Release: 14owl
 Serial: 1
 Source0: ftp://ftp.ists.pwr.wroc.pl/pub/linux/shadow/shadow-%{version}.tar.gz
 Source1: login.defs
@@ -19,6 +19,7 @@ Patch0: shadow-19990827-rh-redhat.diff
 Patch1: shadow-19990827-owl-man.diff
 Patch2: shadow-19990827-owl-restrict-locale.diff
 Patch3: shadow-19990827-owl-chage-ro-no-lock.diff
+Patch4: shadow-19990827-owl-check_names.diff
 Copyright: BSD
 Group: System Environment/Base
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
@@ -150,6 +151,9 @@ grep -q '^shadow:[^:]*:42:' /etc/group && \
 %endif
 
 %changelog
+* Sat Mar 10 2001 Alexandr D. Kanevskiy <kad@owl.openwall.ru>
+- restrictions to username/groupname
+
 * Sat Feb 10 2001 Solar Designer <solar@owl.openwall.com>
 - shadow group.
 - Don't lock password files with "chage -l" (this is read-only access).
