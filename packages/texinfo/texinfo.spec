@@ -1,4 +1,4 @@
-# $Id: Owl/packages/texinfo/texinfo.spec,v 1.10 2002/08/26 18:35:29 mci Exp $
+# $Id: Owl/packages/texinfo/texinfo.spec,v 1.11 2002/08/27 18:37:00 solar Exp $
 
 Summary: Tools needed to create Texinfo format documentation files.
 Name: texinfo
@@ -47,7 +47,6 @@ browser program for viewing Info files.
 %patch6 -p1
 
 %build
-rm doc/{info,info-stnd}.info
 unset LINGUAS || :
 %configure --mandir=%{_mandir} --infodir=%{_infodir}
 make
