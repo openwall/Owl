@@ -1,4 +1,4 @@
-# $Id: Owl/packages/elftoaout/elftoaout.spec,v 1.2 2001/01/09 02:43:17 kad Exp $
+# $Id: Owl/packages/elftoaout/elftoaout.spec,v 1.3 2001/01/10 05:01:29 solar Exp $
 
 Summary: A utility for converting ELF binaries to a.out binaries.
 Name: 		elftoaout
@@ -12,12 +12,10 @@ BuildRoot:      /var/rpm-buildroot/%{name}-root
 
 %description
 The elftoaout utility converts a static ELF binary to a static a.out
-binary.  If you're using an ELF system (i.e., Red Hat Linux) on a SPARC,
-you'll need to run elftoaout on the kernel image so that the SPARC PROM
-can netboot the image.
+binary.  If you're using Linux on a SPARC, you'll need to run elftoaout
+on the kernel image so that the SPARC PROM can netboot the image.
 
-If you're installing Red Hat Linux on a SPARC, you'll need to install the
-elftoaout package.
+elftoaout is also used to build the SPARC boot loader (SILO).
 
 %prep
 %setup -q
@@ -58,7 +56,7 @@ rm -rf $RPM_BUILD_ROOT
 * Tue Feb 22 2000 Bill Nottingham <notting@redhat.com>
 - handle compressed manpages
 
-* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com> 
+* Sun Mar 21 1999 Cristian Gafton <gafton@redhat.com>
 - auto rebuild in the new build environment (release 3)
 
 * Sun Jan 17 1999 Jeff Johnson <jbj@redhat.com>
