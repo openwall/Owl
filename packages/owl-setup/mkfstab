@@ -107,11 +107,20 @@ if $FDISK -l 2>&1 | grep /proc/partitions &> /dev/null; then
     mount /proc && UMOUNT_PROC=yes
 fi
 
-$FDISK -l | grep '^/dev' | sed -e 's/\*//g' |
+$FDISK -l | grep '^/dev' | sed -e 's/  */ /g' |
     while read STR; do
-        dev="`echo $STR | cut -d ' '  -f1`"
-        id="`echo $STR | cut -d ' '  -f5`"
-        descr="`echo $STR | cut -d ' '  -f6-`"
+
+	echo "$STR" | cut -d ' ' -f2 | grep -E '[0-9]+' &>/dev/null
+
+     	if [ $? -eq 0 ]; then
+            o=0
+     	else
+            o=1
+     	fi
+
+        dev="`echo "$STR" | cut -d ' '  -f1`"
+        id="`echo "$STR" | cut -d ' '  -f$[5+$o]`"
+        descr="`echo "$STR" | cut -d ' '  -f$[6+$o]-`"
 
         # Type 82, may mean Solaris
         if [ "$id" = '82' ]; then
