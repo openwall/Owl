@@ -721,7 +721,7 @@ diff -ur cvs-1.11.5.orig/src/logmsg.c cvs-1.11.5/src/logmsg.c
      if (*messagep)
 diff -ur cvs-1.11.5.orig/src/sanity.sh cvs-1.11.5/src/sanity.sh
 --- cvs-1.11.5.orig/src/sanity.sh	Thu Dec 19 15:38:32 2002
-+++ cvs-1.11.5/src/sanity.sh	Sun Apr 27 13:25:26 2003
++++ cvs-1.11.5/src/sanity.sh	Mon Apr 28 21:37:30 2003
 @@ -176,8 +176,8 @@
  #     So this would be lost if everything was `pwd`-based.  I suppose
  #     if we wanted to get baroque we could start making symlinks
@@ -733,7 +733,7 @@ diff -ur cvs-1.11.5.orig/src/sanity.sh cvs-1.11.5/src/sanity.sh
  
  # Now:
  #	1) Set TESTDIR if it's not set already
-@@ -185,25 +185,31 @@
+@@ -185,25 +185,37 @@
  #	3) Create $TESTDIR
  #	4) Normalize TESTDIR with `cd && (/bin/pwd || pwd)`
  #	   (This will match CVS output later)
@@ -754,28 +754,32 @@ diff -ur cvs-1.11.5.orig/src/sanity.sh cvs-1.11.5/src/sanity.sh
  # wouldn't appreciate that.
 -mkdir ${TESTDIR} || exit 1
 -cd ${TESTDIR} || exit 1
--TESTDIR=`(/bin/pwd || pwd) 2>/dev/null`
 +  mkdir $TESTDIR || exit 1
-+  cd $TESTDIR || exit 1
-+  TESTDIR=`(/bin/pwd || pwd) 2>/dev/null`
 +else
 +  TESTDIR=
 +  trap 'cd "$TESTDIR/.."; rm -rf -- "$TESTDIR"' EXIT
 +  trap 'trap - EXIT; cd "$TESTDIR/.."; rm -rf -- "$TESTDIR"; exit 1' HUP INT QUIT TERM
 +  TESTDIR="`mktemp -td cvs-sanity.XXXXXXXXXX`" || exit
 +fi
++cd $TESTDIR || exit 1
++touch $TESTDIR/cvs-sanity-testdir
+ TESTDIR=`(/bin/pwd || pwd) 2>/dev/null`
++if test -e $TESTDIR/cvs-sanity-testdir; then
++    :
++else
++    echo "Unable to expand any possible symlinks in TESTDIR." >&2
++    exit 1
++fi
  # Ensure $TESTDIR is absolute
--if test -z "${TESTDIR}" || echo "${TESTDIR}" |grep '^[^/]'; then
-+if test -z "$TESTDIR" || echo "$TESTDIR" |grep '^[^/]'; then
+ if test -z "${TESTDIR}" || echo "${TESTDIR}" |grep '^[^/]'; then
      echo "Unable to resolve TESTDIR to an absolute directory." >&2
      exit 1
  fi
 -cd ${TESTDIR}
-+cd $TESTDIR || exit 1
  
  # Make sure various tools work the way we expect, or try to find
  # versions that do.
-@@ -732,14 +738,16 @@
+@@ -732,14 +744,16 @@
  	DIR_2=$2
  
  	cd $DIR_1
@@ -787,7 +791,7 @@ diff -ur cvs-1.11.5.orig/src/sanity.sh cvs-1.11.5/src/sanity.sh
  	cd $OLDPWD
  	cd $DIR_2
 -	find . -print | fgrep -v /CVS | sort > /tmp/dc$$d2
-+        dcd2="$TESTDIR/dcd2"
++	dcd2="$TESTDIR/dcd2"
 +	find . -print | fgrep -v /CVS | sort > "$dcd2"
  
 -	if diff /tmp/dc$$d1 /tmp/dc$$d2 >/dev/null 2>&1
@@ -795,7 +799,7 @@ diff -ur cvs-1.11.5.orig/src/sanity.sh cvs-1.11.5/src/sanity.sh
  	then
  		:
  	else
-@@ -754,8 +762,8 @@
+@@ -754,8 +768,8 @@
  				return 1
  			fi
  		fi
@@ -806,7 +810,7 @@ diff -ur cvs-1.11.5.orig/src/sanity.sh cvs-1.11.5/src/sanity.sh
  	return 0
  }
  
-@@ -24057,7 +24065,7 @@
+@@ -24057,7 +24071,7 @@
  fi
  
  # Remove the test directory, but first change out of it.
