@@ -1,0 +1,134 @@
+--- autoconf-2.59/config/config.guess.orig	Thu Oct 23 14:28:51 2003
++++ autoconf-2.59/config/config.guess	Thu Feb 26 01:02:38 2004
+@@ -101,13 +101,9 @@
+ # Portable tmp directory creation inspired by the Autoconf team.
+ 
+ set_cc_for_build='
+-trap "exitcode=\$?; (rm -f \$tmpfiles 2>/dev/null; rmdir \$tmp 2>/dev/null) && exit \$exitcode" 0 ;
+-trap "rm -f \$tmpfiles 2>/dev/null; rmdir \$tmp 2>/dev/null; exit 1" 1 2 13 15 ;
+-: ${TMPDIR=/tmp} ;
+- { tmp=`(umask 077 && mktemp -d -q "$TMPDIR/cgXXXXXX") 2>/dev/null` && test -n "$tmp" && test -d "$tmp" ; } ||
+- { test -n "$RANDOM" && tmp=$TMPDIR/cg$$-$RANDOM && (umask 077 && mkdir $tmp) ; } ||
+- { tmp=$TMPDIR/cg-$$ && (umask 077 && mkdir $tmp) && echo "Warning: creating insecure temp directory" >&2 ; } ||
+- { echo "$me: cannot create a temporary directory in $TMPDIR" >&2 ; exit 1 ; } ;
++trap "exitcode=\$?; (rm -f \$tmpfiles 2>/dev/null; rmdir \$tmp 2>/dev/null) && exit \$exitcode" EXIT ;
++trap "rm -f \$tmpfiles 2>/dev/null; rmdir \$tmp 2>/dev/null; exit 1" PIPE HUP INT TERM ;
++tmp="`mktemp -dt cg.XXXXXXXXXX`" || exit 1 ;
+ dummy=$tmp/dummy ;
+ tmpfiles="$dummy.c $dummy.o $dummy.rel $dummy" ;
+ case $CC_FOR_BUILD,$HOST_CC,$CC in
+--- autoconf-2.59/lib/Autom4te/General.pm.orig	Thu Aug 21 17:45:30 2003
++++ autoconf-2.59/lib/Autom4te/General.pm	Thu Feb 26 01:06:11 2004
+@@ -305,19 +305,10 @@
+ sub mktmpdir ($)
+ {
+   my ($signature) = @_;
+-  my $TMPDIR = $ENV{'TMPDIR'} || '/tmp';
+ 
+   # If mktemp supports dirs, use it.
+-  $tmp = `(umask 077 &&
+-	   mktemp -d -q "$TMPDIR/${signature}XXXXXX") 2>/dev/null`;
++  $tmp = `mktemp -dt ${signature}XXXXXXXXXX` or die;
+   chomp $tmp;
+-
+-  if (!$tmp || ! -d $tmp)
+-    {
+-      $tmp = "$TMPDIR/$signature" . int (rand 10000) . ".$$";
+-      mkdir $tmp, 0700
+-	or croak "$me: cannot create $tmp: $!\n";
+-    }
+ 
+   print STDERR "$me:$$: working in $tmp\n"
+     if $debug;
+--- autoconf-2.59/lib/m4sugar/m4sh.m4.orig	Thu Feb 26 00:46:37 2004
++++ autoconf-2.59/lib/m4sugar/m4sh.m4	Thu Feb 26 00:51:18 2004
+@@ -818,24 +818,12 @@
+ [# Create a temporary directory, and hook for its removal unless debugging.
+ $debug ||
+ {
+-  trap 'exit_status=$?; rm -rf $tmp && exit $exit_status' 0
+-  trap 'AS_EXIT([1])' 1 2 13 15
++  trap 'exit_status=$?; rm -rf $tmp && exit $exit_status' EXIT
++  trap 'AS_EXIT([1])' PIPE HUP INT TERM
+ }
+ 
+ # Create a (secure) tmp directory for tmp files.
+-m4_if([$2], [], [: ${TMPDIR=/tmp}])
+-{
+-  tmp=`(umask 077 && mktemp -d -q "m4_default([$2], [$TMPDIR])/$1XXXXXX") 2>/dev/null` &&
+-  test -n "$tmp" && test -d "$tmp"
+-}  ||
+-{
+-  tmp=m4_default([$2], [$TMPDIR])/$1$$-$RANDOM
+-  (umask 077 && mkdir $tmp)
+-} ||
+-{
+-   echo "$me: cannot create a temporary directory in m4_default([$2], [$TMPDIR])" >&2
+-   AS_EXIT
+-}dnl
++tmp="`mktemp -dt cs.XXXXXXXXXX`" || exit 1
+ ])# AS_TMPDIR
+ 
+ 
+--- autoconf-2.59/lib/autoconf/specific.m4.orig	Tue Sep  9 08:38:11 2003
++++ autoconf-2.59/lib/autoconf/specific.m4	Thu Feb 26 01:11:44 2004
+@@ -193,17 +193,6 @@
+ 
+ # AC_SYS_LONG_FILE_NAMES
+ # ----------------------
+-# Security: use a temporary directory as the most portable way of
+-# creating files in /tmp securely.  Removing them leaves a race
+-# condition, set -C is not portably guaranteed to use O_EXCL, so still
+-# leaves a race, and not all systems have the `mktemp' utility.  We
+-# still test for existence first in case of broken systems where the
+-# mkdir succeeds even when the directory exists.  Broken systems may
+-# retain a race, but they probably have other security problems
+-# anyway; this should be secure on well-behaved systems.  In any case,
+-# use of `mktemp' is probably inappropriate here since it would fail in
+-# attempting to create different file names differing after the 14th
+-# character on file systems without long file names.
+ AC_DEFUN([AC_SYS_LONG_FILE_NAMES],
+ [AC_CACHE_CHECK(for long file names, ac_cv_sys_long_file_names,
+ [ac_cv_sys_long_file_names=yes
+@@ -223,10 +212,7 @@
+   ac_tmpdirs='/tmp /var/tmp /usr/tmp'
+ fi
+ for ac_dir in  . $ac_tmpdirs `eval echo $prefix/lib $exec_prefix/lib` ; do
+-  test -d $ac_dir || continue
+-  test -w $ac_dir || continue # It is less confusing to not echo anything here.
+-  ac_xdir=$ac_dir/cf$$
+-  (umask 077 && mkdir $ac_xdir 2>/dev/null) || continue
++  ac_xdir="`mktemp -p $ac_dir -dq cfXXXXXX`" || continue
+   ac_tf1=$ac_xdir/conftest9012345
+   ac_tf2=$ac_xdir/conftest9012346
+   (echo 1 >$ac_tf1) 2>/dev/null
+--- autoconf-2.59/configure.orig	Thu Nov  6 09:33:28 2003
++++ autoconf-2.59/configure	Thu Feb 26 01:17:31 2004
+@@ -2652,24 +2652,12 @@
+ # Create a temporary directory, and hook for its removal unless debugging.
+ $debug ||
+ {
+-  trap 'exit_status=$?; rm -rf $tmp && exit $exit_status' 0
+-  trap '{ (exit 1); exit 1; }' 1 2 13 15
++  trap 'exit_status=$?; rm -rf $tmp && exit $exit_status' EXIT
++  trap '{ (exit 1); exit 1; }'  PIPE HUP INT TERM
+ }
+ 
+ # Create a (secure) tmp directory for tmp files.
+-
+-{
+-  tmp=`(umask 077 && mktemp -d -q "./confstatXXXXXX") 2>/dev/null` &&
+-  test -n "$tmp" && test -d "$tmp"
+-}  ||
+-{
+-  tmp=./confstat$$-$RANDOM
+-  (umask 077 && mkdir $tmp)
+-} ||
+-{
+-   echo "$me: cannot create a temporary directory in ." >&2
+-   { (exit 1); exit 1; }
+-}
++tmp="`mktemp -d ./confstat.XXXXXXXXXX`" || exit 1
+ 
+ _ACEOF
+ 

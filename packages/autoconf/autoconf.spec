@@ -1,18 +1,17 @@
-# $Id: Owl/packages/autoconf/autoconf.spec,v 1.5 2003/10/29 18:12:27 solar Exp $
+# $Id: Owl/packages/autoconf/autoconf.spec,v 1.6 2004/09/10 07:16:47 galaxy Exp $
 
 Summary: A GNU tool for automatically configuring source code.
 Name: autoconf
-Version: 2.13
-Release: owl10
+Version: 2.59
+Release: owl0.1
 License: GPL
 Group: Development/Tools
-Source: ftp://ftp.gnu.org/gnu/autoconf/autoconf-%version.tar.gz
-Patch0: autoconf-2.12-rh-race.diff
-Patch1: autoconf-2.13-rh-mawk.diff
-Patch2: autoconf-2.13-rh-notmp.diff
-Patch3: autoconf-2.13-owl-info.diff
+Source: ftp://ftp.gnu.org/gnu/autoconf/autoconf-%version.tar.bz2
+Patch0: autoconf-2.59-owl-awk.diff 
+Patch1: autoconf-2.59-owl-tmp.diff
 PreReq: /sbin/install-info
 Requires: gawk, m4, mktemp, perl, textutils
+Requires: mktemp >= 1:1.3.1
 BuildArchitectures: noarch
 BuildRoot: /override/%name-%version
 
@@ -28,11 +27,8 @@ portable and configurable software.
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
 
 %build
-rm autoconf.info
 %configure
 make
 
@@ -45,7 +41,9 @@ mkdir -p $RPM_BUILD_ROOT%_infodir
 # We don't want to include the standards.info stuff in the package,
 # because it comes from binutils...
 rm -f $RPM_BUILD_ROOT%_infodir/standards*
-cp install-sh $RPM_BUILD_ROOT%_datadir/autoconf
+
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot%_infodir/dir
 
 %post
 /sbin/install-info %_infodir/autoconf.info.gz %_infodir/dir
@@ -60,8 +58,13 @@ fi
 %_bindir/*
 %_infodir/*.info*
 %_datadir/autoconf
+%_mandir/man1/*
 
 %changelog
+* Wed Feb 25 2004 Michail Litvak <mci@owl.openwall.com> 2.59-owl0.1
+- 2.59
+- Patch to use mktemp in a fail-close way.
+
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 2.13-owl10
 - Deal with info dir entries such that the menu looks pretty.
 
