@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.44 2005/02/28 07:36:01 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.45 2005/04/05 15:10:42 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.37.6
+Version: 1.6.37.7
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -74,6 +74,9 @@ cp -a john-1.6/doc/* doc/john-1.6/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Tue Apr 05 2005 Solar Designer <solar@owl.openwall.com> 1.6.37.7-owl1
+- Further bitslice DES set_key*() optimizations.
+
 * Mon Feb 28 2005 Solar Designer <solar@owl.openwall.com> 1.6.37.6-owl1
 - Generic bitslice DES set_key*() optimizations.
 - Further AltiVec optimizations for LM hashes.
