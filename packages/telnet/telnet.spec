@@ -1,9 +1,9 @@
-# $Id: Owl/packages/telnet/telnet.spec,v 1.3 2001/11/25 02:38:49 solar Exp $
+# $Id: Owl/packages/telnet/telnet.spec,v 1.4 2002/02/04 09:16:08 solar Exp $
 
 Summary: The client program for the telnet remote login protocol.
 Name: telnet
 Version: 3.0
-Release: 1owl
+Release: owl1
 License: BSD
 Group: Applications/Internet
 Source0: telnet-%{version}-20011117.tar.bz2
@@ -77,6 +77,9 @@ grep -q ^telnetd: /etc/passwd ||
 %{_mandir}/man8/telnetd.8*
 
 %changelog
+* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Sun Nov 25 2001 Solar Designer <solar@owl.openwall.com>
 - Do telnet protocol handling as a dedicated pseudo-user and in a chroot
 jail.  This uses the approach introduced by Chris Evans in his NetKit

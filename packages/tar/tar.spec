@@ -1,9 +1,9 @@
-# $Id: Owl/packages/tar/tar.spec,v 1.4 2001/07/10 12:57:55 solar Exp $
+# $Id: Owl/packages/tar/tar.spec,v 1.5 2002/02/04 09:54:56 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
 Version: 1.13.19
-Release: 1owl
+Release: owl1
 License: GPL
 Group: Applications/Archiving
 Source0: ftp://alpha.gnu.org/pub/gnu/tar/tar-%{version}.tar.gz
@@ -14,9 +14,8 @@ Patch2: tar-1.13.19-rh-fail.diff
 Patch3: tar-1.13.19-rh-owl-unreadable-segfault.diff
 Patch4: tar-1.13.19-rh-autoconf.diff
 Patch5: tar-1.13.19-rh-owl-no-librt.diff
-
-Prereq: /sbin/install-info
-Buildroot: /var/rpm-buildroot/%{name}-root
+PreReq: /sbin/install-info
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The GNU tar program saves many files together into one archive and can
@@ -45,25 +44,19 @@ make LIBS=-lbsd
 %install
 rm -rf $RPM_BUILD_ROOT
 
-make prefix=${RPM_BUILD_ROOT}%{_prefix} \
-    bindir=${RPM_BUILD_ROOT}/bin \
-    libexecdir=${RPM_BUILD_ROOT}/sbin \
-    mandir=${RPM_BUILD_ROOT}%{_mandir} \
-    infodir=${RPM_BUILD_ROOT}%{_infodir} \
-	install
-ln -s tar ${RPM_BUILD_ROOT}/bin/gtar
-
-pushd $RPM_BUILD_ROOT
-for dir in ./bin ./sbin .%{_prefix}/bin .%{_prefix}/libexec; do
-	test -d $dir || continue
-	strip $dir/* || :
-done
-gzip -9nf .%{_infodir}/tar.info*
-rm -f .%{_infodir}/dir
-popd
+make install \
+	prefix=${RPM_BUILD_ROOT}%{_prefix} \
+	bindir=${RPM_BUILD_ROOT}/bin \
+	libexecdir=${RPM_BUILD_ROOT}/sbin \
+	mandir=${RPM_BUILD_ROOT}%{_mandir} \
+	infodir=${RPM_BUILD_ROOT}%{_infodir}
+ln -s tar $RPM_BUILD_ROOT/bin/gtar
 
 mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man1
-install -c -m 644 ${RPM_SOURCE_DIR}/tar.1 ${RPM_BUILD_ROOT}%{_mandir}/man1
+install -m 644 ${RPM_SOURCE_DIR}/tar.1 ${RPM_BUILD_ROOT}%{_mandir}/man1/
+
+%clean
+rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/install-info %{_infodir}/tar.info.gz %{_infodir}/dir
@@ -72,9 +65,6 @@ install -c -m 644 ${RPM_SOURCE_DIR}/tar.1 ${RPM_BUILD_ROOT}%{_mandir}/man1
 if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %{_infodir}/tar.info.gz %{_infodir}/dir
 fi
-
-%clean
-rm -rf ${RPM_BUILD_ROOT}
 
 %files
 %defattr(-,root,root)
@@ -85,6 +75,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_prefix}/share/locale/*/LC_MESSAGES/*
 
 %changelog
+* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Tue Jul 10 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 1.13.19.
 - Fixed the looping on verify bug.

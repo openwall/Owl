@@ -1,9 +1,9 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.19 2001/11/19 04:34:04 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.20 2002/02/04 10:02:07 solar Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
 Version: 0.75
-Release: 14owl
+Release: owl14
 License: GPL or BSD
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
@@ -18,12 +18,12 @@ Patch11: pam-0.75-owl-pam_chroot.diff
 Patch12: pam-0.75-owl-pam_lastlog.diff
 Patch13: pam-0.75-owl-pam_securetty.diff
 Patch20: pam-0.75-owl-no-cracklib.diff
-Requires: glibc >= 2.1.3-13owl, pwdb >= 0.61-1owl
+Requires: glibc-crypt_blowfish, pwdb >= 0.61-1owl
 # Just to make sure noone misses pam_unix, which is now provided by tcb
 Requires: tcb >= 0.9.5
 BuildRequires: glibc-devel >= 2.1.3-13owl
 BuildRoot: /override/%{name}-%{version}
- 
+
 %description
 Linux-PAM (Pluggable Authentication Modules for Linux) is a suite of
 libraries that enable the local system administrator to choose how
@@ -200,6 +200,9 @@ chgrp chkpwd /sbin/chkpwd.d && chmod 710 /sbin/chkpwd.d
 %doc doc/specs/rfc86.0.txt
 
 %changelog
+* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Mon Nov 19 2001 Solar Designer <solar@owl.openwall.com>
 - Cache pam_get_user() failures such that the conversation function isn't
 called multiple times with the same prompt if pam_get_user() fails and is

@@ -1,15 +1,15 @@
-# $Id: Owl/packages/utempter/Attic/utempter.spec,v 1.2 2001/02/25 18:25:38 solar Exp $
+# $Id: Owl/packages/utempter/Attic/utempter.spec,v 1.3 2002/02/04 08:07:29 solar Exp $
 
 Summary: A privileged helper for utmp/wtmp updates.
 Name: utempter
 Version: 0.5.2
-Release: 5owl
+Release: owl5
 License: GPL
 Group: System Environment/Base
 Source: utempter-%{version}.tar.gz
-Prereq: grep, /usr/sbin/groupadd, /sbin/ldconfig
+PreReq: grep, /usr/sbin/groupadd, /sbin/ldconfig
 Prefix: %{_prefix}
-BuildRoot: /var/rpm-buildroot/%{name}-root
+BuildRoot: /override/%{name}-%{version}
 
 %description
 utempter is a privileged helper which allows terminal emulators such
@@ -24,7 +24,6 @@ make RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
 %install
 rm -rf $RPM_BUILD_ROOT
 make PREFIX=$RPM_BUILD_ROOT install
-strip $RPM_BUILD_ROOT/usr/sbin/utempter
 mkdir -p $RPM_BUILD_ROOT/usr/sbin/utempter.d/
 mv $RPM_BUILD_ROOT/usr/sbin/utempter $RPM_BUILD_ROOT/usr/sbin/utempter.d/
 ln -s utempter.d/utempter $RPM_BUILD_ROOT/usr/sbin/utempter
@@ -33,10 +32,9 @@ ln -s utempter.d/utempter $RPM_BUILD_ROOT/usr/sbin/utempter
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-grep ^utempter: /etc/group &>/dev/null || groupadd -g 162 utempter
+grep -q ^utempter: /etc/group || groupadd -g 162 utempter
 
 %post -p /sbin/ldconfig
-
 %postun -p /sbin/ldconfig
 
 %files
@@ -49,6 +47,9 @@ grep ^utempter: /etc/group &>/dev/null || groupadd -g 162 utempter
 /usr/sbin/utempter
 
 %changelog
+* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Sun Feb 25 2001 Solar Designer <solar@owl.openwall.com>
 - Various spec file cleanups.
 - Corrected the package description.
@@ -58,21 +59,3 @@ grep ^utempter: /etc/group &>/dev/null || groupadd -g 162 utempter
 - added utempter group
 - utempter binary moved to /usr/sbin/utempter.d/
   owned by group utempter with 710 permissions
-
-* Thu Jul 13 2000 Prospector <bugzilla@redhat.com>
-- automatic rebuild
-
-* Sat Jun 17 2000 Matt Wilson <msw@redhat.com>
-- defattr root
-
-* Thu Feb 24 2000 Erik Troan <ewt@redhat.com>
-- added LGPL notice
-
-* Mon Sep 13 1999 Bill Nottingham <notting@redhat.com>
-- strip utempter
-
-* Mon Aug 30 1999 Bill Nottingham <notting@redhat.com>
-- add utmp as group 22
-
-* Fri Jun  4 1999 Jeff Johnson <jbj@redhat.com>
-- ignore SIGCHLD while processing utmp.

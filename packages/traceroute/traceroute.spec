@@ -1,10 +1,10 @@
-# $Id: Owl/packages/traceroute/traceroute.spec,v 1.2 2001/03/08 16:43:31 solar Exp $
+# $Id: Owl/packages/traceroute/traceroute.spec,v 1.3 2002/02/04 08:21:13 solar Exp $
 
 Summary: Traces the route taken by packets over a TCP/IP network.
 Name: traceroute
 Version: 1.4a12
-Release: 2owl
-Copyright: BSD
+Release: owl2
+License: BSD
 Group: Applications/Internet
 Source0: ftp://ftp.ee.lbl.gov/traceroute-%{version}.tar.gz
 Source1: traceroute.control
@@ -12,8 +12,8 @@ Patch0: traceroute-1.4a12-owl-install-no-root.diff
 Patch1: traceroute-1.4a12-owl-tim-chris-fixes.diff
 Patch2: traceroute-1.4a12-owl-force-linux.diff
 Prefix: %{_prefix}
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: owl-control < 2.0
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The traceroute utility displays the route used by IP packets on their
@@ -39,8 +39,6 @@ mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man8
 
 make DESTDIR=${RPM_BUILD_ROOT} install install-man
 
-strip $RPM_BUILD_ROOT%{_sbindir}/* || :
-
 mkdir -p $RPM_BUILD_ROOT/etc/control.d/facilities
 install -m 700 %{SOURCE1} $RPM_BUILD_ROOT/etc/control.d/facilities/traceroute
 
@@ -49,11 +47,14 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%attr(4711,root,root)	%{_sbindir}/traceroute
+%attr(4711,root,root) %{_sbindir}/traceroute
 %{_mandir}/man8/*
 /etc/control.d/facilities/traceroute
 
 %changelog
+* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Thu Mar 08 2001 Solar Designer <solar@owl.openwall.com>
 - Use bind(2) for the actual source address restriction (but leave the loop
 such that the right source address is tried in case of multiple A records).
