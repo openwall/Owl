@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.28 2005/01/20 04:47:54 solar Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.29 2005/02/06 04:08:24 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -17,7 +17,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.8.3
-Release: owl3
+Release: owl4
 Epoch: 1
 License: GPL
 Group: Development/Languages
@@ -25,12 +25,14 @@ Source: ftp://ftp.perl.org/pub/CPAN/src/perl-%version.tar.bz2
 Patch0: perl-5.8.3-owl-disable-suidperl.diff
 Patch1: perl-5.8.3-owl-tmp.diff
 Patch2: perl-5.8.3-owl-vitmp.diff
+Patch3: perl-5.8.3-owl-rmtree.diff
 %if %KERNEL_CONFIG_HARDEN_SHM
 Patch10: perl-5.8.3-owl-tests-shm.diff
 %endif
 Patch20: perl-5.8.3-alt-AnyDBM_File-DB_File.diff
 Patch21: perl-5.8.3-alt-MM-uninst.diff
 Patch22: perl-5.8.3-alt-deb-perldoc-INC.diff
+Patch23: perl-5.8.3-mdk-suidperl.diff
 Patch30: perl-5.8.3-rh-lpthread.diff
 Provides: perl(:WITH_PERLIO)
 %if %BUILD_THREADS
@@ -115,12 +117,14 @@ introduce security holes.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 %if %KERNEL_CONFIG_HARDEN_SHM
 %patch10 -p1
 %endif
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
+%patch23 -p1
 %patch30 -p1
 
 # Remove files with known temporary file handling issues that we don't
@@ -270,6 +274,9 @@ find %buildroot%_libdir/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Sun Feb 06 2005 Solar Designer <solar@owl.openwall.com> 1:5.8.3-owl4
+- File::Path::rmtree and suidperl PERLIO_DEBUG security fixes.
+
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1:5.8.3-owl3
 - Removed unneeded BuildRequires for tcsh.
 - Reflected Epoch in the %changelog.
