@@ -1,4 +1,4 @@
-# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.23 2005/03/25 15:12:49 solar Exp $
+# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.24 2005/03/25 15:19:32 solar Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -17,9 +17,9 @@ Release: owl1
 License: GPL
 Group: System Environment/Base
 Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
-Patch0: e2fsprogs-1.36-owl-fixes.diff
-Patch1: e2fsprogs-1.36-owl-tests.diff
-Patch2: e2fsprogs-1.36-owl-blkid-env.diff
+Patch0: e2fsprogs-1.37-owl-fixes.diff
+Patch1: e2fsprogs-1.37-owl-tests.diff
+Patch2: e2fsprogs-1.37-owl-blkid-env.diff
 PreReq: /sbin/ldconfig
 BuildRoot: /override/%name-%version
 
