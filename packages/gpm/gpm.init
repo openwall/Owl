@@ -1,12 +1,13 @@
-#!/bin/bash
-#
-# $Id: Owl/packages/gpm/gpm.init,v 1.3 2001/01/05 17:45:57 kad Exp $
+#!/bin/sh
+# $Id: Owl/packages/gpm/gpm.init,v 1.4 2001/01/05 18:04:15 kad Exp $
 #
 # chkconfig: 2345 85 15
-# description: GPM adds mouse support to text-based Linux applications such \
-#              the Midnight Commander. Is also allows mouse-based console \
-#              cut-and-paste operations, and includes support for pop-up \
-#              menus on the console.
+# description: \
+#       GPM adds mouse support to text-based Linux applications such \
+#       the Midnight Commander. Is also allows mouse-based console \
+#       cut-and-paste operations, and includes support for pop-up \
+#       menus on the console.
+#
 # processname: gpm
 # pidfile: /var/run/gpm.pid
 # config: /etc/sysconfig/mouse
@@ -19,16 +20,15 @@ OWL_STARTUP_ENABLE=1
 MOUSECFG=/etc/sysconfig/mouse
 
 case "$1" in
-  start)
+start)
 	if [ -f "$MOUSECFG" ]; then
 		. "$MOUSECFG"
 	else
-		echo "(no mouse is configured)"
-		exit 0
+		MOUSETYPE="none"
 	fi
-
+    
 	if [ "$MOUSETYPE" = "none" ]; then
-		echo "(no mouse is configured)"
+		echo "Not starting gpm (no mouse is configured)"
 		exit 0
 	fi
 
@@ -37,33 +37,33 @@ case "$1" in
 	fi
 
 	if [ -n "$MOUSETYPE" ]; then
-	    GPM_ARG="-t $MOUSETYPE"
+		GPM_ARG="-t $MOUSETYPE"
 	else 
-	    GPM_ARG=""
+		GPM_ARG=""
 	fi
 
         if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
-	    daemon --pidfile /var/run/gpm.pid --expect-user root \
-	        gpm -- "$GPM_ARG"
+		daemon --pidfile /var/run/gpm.pid --expect-user root \
+			gpm -- "$GPM_ARG"
 	else
-	    daemon gpm "$GPM_ARG"
+		daemon gpm "$GPM_ARG"
 	fi
 	;;
-  stop)
+stop)
         if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
-            killproc --pidfile /var/run/gpm.pid --expect-user root gpm        
+        	killproc --pidfile /var/run/gpm.pid --expect-user root gpm        
         else
-            killproc gpm
+        	killproc gpm
         fi
 	;;
-  restart|reload)
+restart|reload)
         $0 stop
 	$0 start
 	;;
-  status)
+status)
         status --pidfile /var/run/gpm.pid --expect-user root gpm
 	;;
-  *)
+*)
 	echo "Usage: gpm {start|stop|restart|status}"
 	exit 1
 esac
