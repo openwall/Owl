@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.47 2003/05/29 01:29:45 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.48 2003/05/29 01:44:56 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
@@ -70,11 +70,11 @@ if [ $SHADOW_INITIAL = yes -a ! -e /etc/tcb -a \
 	echo "No existing password shadowing found, will use /etc/tcb."
 	/sbin/tcb_convert && rm /etc/shadow
 # Updating an install that uses tcb?
-elif [ $SHADOW_INITIAL = yes -a -d /etc/tcb ]; then
+elif [ \( $SHADOW_INITIAL = yes -o ! -e /etc/shadow \) -a -d /etc/tcb ]; then
 	echo "OK, already using /etc/tcb."
-	rm /etc/shadow
+	rm -f /etc/shadow
 # Updating an install that uses shadow?
-elif [ $SHADOW_INITIAL = no -a ! -e /etc/tcb ]; then
+elif [ $SHADOW_INITIAL = no -a -f /etc/shadow -a ! -e /etc/tcb ]; then
 	if [ -e /etc/nsswitch.conf.rpmnew ]; then
 		cat << EOF
 This system appears to be using /etc/shadow.  Conversion to /etc/tcb
@@ -116,7 +116,7 @@ EOF
 	fi
 	pause
 # Updating a misconfigured install?
-elif [ $SHADOW_INITIAL = no -a -e /etc/tcb ]; then
+elif [ $SHADOW_INITIAL = no -a -e /etc/shadow -a -e /etc/tcb ]; then
 	cat << EOF
 This system appears to be misconfigured: both /etc/shadow and /etc/tcb
 exist.  It may be in an inconsistent state now, please complete the
