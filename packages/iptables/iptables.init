@@ -1,0 +1,122 @@
+#!/bin/sh
+# $Id: Owl/packages/iptables/iptables.init,v 1.1 2003/08/20 13:18:00 mci Exp $
+#
+# chkconfig: 2345 08 92
+# description: \
+#		ipchains is an interface to the Linux IP packet filtering code.
+# config: /etc/sysconfig/iptables
+
+IPTABLES=/sbin/iptables
+IPTABLES_CONFIG=/etc/sysconfig/iptables
+
+if [ ! -x $IPTABLES ]; then
+	exit 0
+fi
+
+iftable() {
+	if fgrep -qsx $1 /proc/net/ip_tables_names; then
+		$IPTABLES -t "$@"
+	fi
+}
+
+case "$1" in
+start|restart|reload)
+	if [ -s "$IPTABLES_CONFIG" ]; then
+		tables=`cat /proc/net/ip_tables_names 2>/dev/null`
+	    echo "Flushing all current rules and user defined chains"
+		for t in $tables ; do
+			$IPTABLES -t $t -F
+		done
+		$IPTABLES -F
+
+        echo "Clearing all current rules and user defined chains"
+		for t in $tables ; do
+			$IPTABLES -t $t -X
+		done
+		$IPTABLES -X
+
+		for t in $tables ; do
+			$IPTABLES -t $t -Z
+		done
+
+	    echo "Applying iptables firewall rules"
+        grep -Ev '^[[:space:]]*#|^[[:space:]]*$' "$IPTABLES_CONFIG" |
+			/sbin/iptables-restore -c
+	
+	fi
+	;;
+stop)
+	tables=`cat /proc/net/ip_tables_names 2>/dev/null`
+	echo "Flushing all chains"
+	for t in $tables ; do
+		$IPTABLES -t $t -F
+	done
+	$IPTABLES -F
+
+	echo "Removing user defined chains"
+	for t in $tables ; do
+		$IPTABLES -t $t -X
+	done
+	$IPTABLES -X
+
+	echo "Resetting built-in chains to the default ACCEPT policy"
+	iftable filter -P INPUT ACCEPT &&
+		iftable filter -P OUTPUT ACCEPT &&
+		iftable filter -P FORWARD ACCEPT &&
+		iftable nat -P PREROUTING ACCEPT &&
+		iftable nat -P POSTROUTING ACCEPT &&
+		iftable nat -P OUTPUT ACCEPT &&
+		iftable mangle -P PREROUTING ACCEPT &&
+		iftable mangle -P POSTROUTING ACCEPT &&
+		iftable mangle -P INPUT ACCEPT &&
+		iftable mangle -P OUTPUT ACCEPT &&
+		iftable mangle -P FORWARD ACCEPT
+	;;
+status)
+	tables=`cat /proc/net/ip_tables_names 2>/dev/null`
+	for t in $tables; do
+		echo $"Table: $t"
+		$IPTABLES -t $t --list
+	done
+	;;
+panic)
+	echo "Changing target policies to DROP"
+	iftable filter -P INPUT DROP &&
+		iftable filter -P FORWARD DROP &&
+		iftable filter -P OUTPUT DROP &&
+		iftable nat -P PREROUTING DROP &&
+		iftable nat -P POSTROUTING DROP &&
+		iftable nat -P OUTPUT DROP &&
+		iftable mangle -P PREROUTING DROP &&
+		iftable mangle -P OUTPUT DROP &&
+		iftable mangle -P POSTROUTING DROP &&
+		iftable mangle -P INPUT DROP &&
+		iftable mangle -P FORWARD DROP
+
+	echo "Flushing all chains"
+	iftable filter -F INPUT &&
+		iftable filter -F FORWARD &&
+		iftable filter -F OUTPUT &&
+		iftable nat -F PREROUTING &&
+		iftable nat -F POSTROUTING &&
+		iftable nat -F OUTPUT &&
+		iftable mangle -F PREROUTING &&
+		iftable mangle -F OUTPUT
+
+    echo "Removing user defined chains"
+	iftable iftable filter -X &&
+		iftable nat -X &&
+		iftable mangle -X
+	;;
+save)
+	echo "Saving current rules to $IPTABLES_CONFIG"
+	touch "$IPTABLES_CONFIG"
+	chmod 600 "$IPTABLES_CONFIG"
+	/sbin/iptables-save -c > "$IPTABLES_CONFIG"  2>/dev/null
+	;;
+*)
+	echo "Usage: $0 {start|stop|restart|status|panic|save}"
+	exit 1
+esac
+
+exit 0
