@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vim/vim.spec,v 1.11 2002/04/24 23:11:34 solar Exp $
+# $Id: Owl/packages/vim/vim.spec,v 1.12 2002/04/25 18:20:33 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -12,7 +12,7 @@ Name: vim
 %define patchlevel 18
 %define vimdir vim%{major}%{minor}%{alpha}
 Version: %{major}.%{minor}%{?patchlevel:.%patchlevel}
-Release: owl2
+Release: owl3
 License: Charityware
 Group: Applications/Editors
 Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%{major}.%{minor}%{alpha}.tar.bz2
@@ -132,7 +132,12 @@ install -m 644 $RPM_SOURCE_DIR/README .
 
 %build
 cd src
+
+mv configure configure.save
 autoconf
+sed -e 's+\./config.log+auto/config.log+' configure > auto/configure
+chmod 755 auto/configure
+mv -f configure.save configure
 
 %if %BUILD_USE_X
 export ac_cv_func_mkstemp=yes \
@@ -284,6 +289,7 @@ rm -rf $RPM_BUILD_ROOT
 - vitmp moved from /usr/libexec to /bin and now has a man page.
 - Additional temporary file handling fixes to vim and its scripts (but not
 the documentation yet).
+- Run autoconf in the same way that vim Makefiles would.
 
 * Fri Apr 19 2002 Solar Designer <solar@owl.openwall.com>
 - Updated to 6.1 patchlevel 18, reviewing the patches in Rawhide and taking
