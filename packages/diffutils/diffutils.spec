@@ -1,4 +1,4 @@
-# $Id: Owl/packages/diffutils/diffutils.spec,v 1.6 2002/08/26 15:24:56 mci Exp $
+# $Id: Owl/packages/diffutils/diffutils.spec,v 1.7 2003/10/29 18:51:11 solar Exp $
 
 Summary: A GNU collection of diff utilities.
 Name: diffutils
@@ -7,15 +7,15 @@ Release: owl24
 License: GPL
 Group: Applications/Text
 URL: http://www.gnu.org/software/diffutils/diffutils.html
-Source0: ftp://ftp.gnu.org/gnu/diffutils/diffutils-%{version}.tar.gz
+Source0: ftp://ftp.gnu.org/gnu/diffutils/diffutils-%version.tar.gz
 Source1: cmp.1
 Source2: diff.1
 Source3: diff3.1
 Source4: sdiff.1
 Patch0: diffutils-2.7-immunix-owl-tmp.diff
 PreReq: /sbin/install-info
-Prefix: %{_prefix}
-BuildRoot: /override/%{name}-%{version}
+Prefix: %_prefix
+BuildRoot: /override/%name-%version
 
 %description
 Diffutils includes four utilities: diff, cmp, diff3 and sdiff. Diff
@@ -35,40 +35,37 @@ to merge two files interactively.
 %build
 autoconf
 %configure
-make PR_PROGRAM=%{_bindir}/pr
+make PR_PROGRAM=%_bindir/pr
 
 %install
 rm -rf $RPM_BUILD_ROOT
 %makeinstall
 
 cd $RPM_BUILD_ROOT
-mkdir -p .%{_mandir}/man1
-for manpage in %{SOURCE1} %{SOURCE3} %{SOURCE4}; do
-	install -m 0644 ${manpage} .%{_mandir}/man1
+mkdir -p .%_mandir/man1
+for manpage in %SOURCE1 %SOURCE3 %SOURCE4; do
+	install -m 0644 ${manpage} .%_mandir/man1
 done
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %post
-/sbin/install-info %{_infodir}/diff.info.gz %{_infodir}/dir \
+/sbin/install-info %_infodir/diff.info.gz %_infodir/dir \
 	--entry="* diff: (diff).                                 The GNU diff."
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %{_infodir}/diff.info.gz %{_infodir}/dir \
+	/sbin/install-info --delete %_infodir/diff.info.gz %_infodir/dir \
 		--entry="* diff: (diff).                                 The GNU diff."
 fi
 
 %files
 %defattr(-,root,root)
 %doc NEWS README
-%{_bindir}/*
-%{_mandir}/*/*
-%{_infodir}/diff.info*
+%_bindir/*
+%_mandir/*/*
+%_infodir/diff.info*
 
 %changelog
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 2.7-owl24
 - Deal with info dir entries such that the menu looks pretty.
 
 * Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
