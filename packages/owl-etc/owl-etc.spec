@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.7 2000/10/28 01:11:16 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.8 2000/11/21 19:35:05 solar Exp $
 
 Summary: Initial set of configuration files
 Name: owl-etc
@@ -52,6 +52,9 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(755,root,root) /etc/profile.d
 
 %changelog
+* Tue Nov 21 2000 Solar Designer <solar@owl.openwall.com>
+- More pseudo-users/groups: klogd, postfix, postdrop, postman.
+
 * Sun Aug 20 2000 Solar Designer <solar@owl.openwall.com>
 - crontab user/group.
 
