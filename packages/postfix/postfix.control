@@ -1,0 +1,22 @@
+#!/bin/sh
+# $Id: Owl/packages/postfix/postfix.control,v 1.1 2000/11/22 17:07:13 solar Exp $
+
+. /etc/control.d/functions
+
+CONFIG=/etc/postfix/master.cf
+
+new_subst server \
+	'^smtp[[:space:]]+inet' \
+	's,^#\(smtp[[:space:]]\+inet\),\1,'
+new_subst local \
+	'^#smtp[[:space:]]+inet' \
+	's,^\(smtp[[:space:]]\+inet\),#\1,'
+
+control_subst "$CONFIG" "$*" || exit 1
+
+case "$*" in
+server|local)
+	/usr/sbin/postfix reload &> /dev/null
+	exit 0
+	;;
+esac
