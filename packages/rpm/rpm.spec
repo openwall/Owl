@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.41 2004/12/09 20:06:07 solar Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.42 2004/12/19 15:21:23 galaxy Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -11,7 +11,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl2
+Release: owl1
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -51,7 +51,6 @@ Patch25: rpm-4.2-owl-db-open.diff
 Patch26: rpm-4.2-owl-rpmdb-pthread.diff
 Patch27: rpm-4.2-owl-db1-addon.diff
 Patch28: rpm-4.2-owl-fix-configure.diff
-Patch29: rpm-4.2-owl-psm_process-chroot.diff
 
 PreReq: /sbin/ldconfig
 PreReq: sh-utils, fileutils, mktemp, gawk
@@ -156,10 +155,10 @@ rm -r tests
 %patch26 -p1
 %patch27 -p1
 %patch28 -p1
-%patch29 -p1
 
 # Prepare libelf archive and save it with headers to the tools subdirectory
 pushd elfutils
+export CFLAGS="-O0 -Wall -g"
 export CFLAGS="${CFLAGS:-%optflags}"
 ./configure
 %__make AM_CFLAGS="$CFLAGS" -C libelf libelf.a
@@ -453,10 +452,6 @@ fi
 %__includedir/popt.h
 
 %changelog
-* Wed Dec 08 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl2
-- Fixed a bug with not doing chroot() before resolving name to uid using
-getpwnam() [psm_process-chroot patch]
-
 * Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 4.2-owl1
 - Corrected the long text messages for consistency with owl-etc.
 - Set Release to -owl1 such that we can make this public.
