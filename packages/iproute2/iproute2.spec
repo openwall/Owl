@@ -1,11 +1,11 @@
-# $Id: Owl/packages/iproute2/iproute2.spec,v 1.2 2001/12/28 10:30:51 solar Exp $
+# $Id: Owl/packages/iproute2/iproute2.spec,v 1.3 2001/12/28 17:56:50 mci Exp $
 
 %define snapshot ss010824
 
 Summary: Enhanced IP routing and network devices configuration tools.
 Name: iproute2
 Version: 2.4.7
-Release: 1owl
+Release: 2owl
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.inr.ac.ru/ip-routing/%name-%version-now-%snapshot.tar.gz
@@ -13,6 +13,7 @@ Source1: libnetlink.3
 Patch0: iproute2-2.4.7-rh-config.diff
 Patch1: iproute2-2.4.7-rh-promisc-allmulti.diff
 Patch2: iproute2-2.4.7-pld-owl-ll_types_proto.diff
+Provides: iproute = %{version}
 Obsoletes: iproute
 BuildRoot: /override/%{name}-%{version}
 
