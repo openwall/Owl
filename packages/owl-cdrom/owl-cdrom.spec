@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.23 2004/02/05 04:29:25 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.24 2004/04/18 04:44:11 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 0.10
+Version: 0.11
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -82,6 +82,12 @@ fi
 %dir /owl
 
 %changelog
+* Sun Apr 18 2004 Solar Designer <solar@owl.openwall.com> 0.11-owl1
+- Updated to Linux 2.4.26-ow1.
+- Include the Broadcom Tigon3 Gigabit Ethernet driver and the BusLogic
+SCSI controller driver (the latter is apparently needed under VMWare).
+- Dropped support for IrDA to make room for the above.
+
 * Thu Feb 05 2004 Solar Designer <solar@owl.openwall.com> 0.10-owl1
 - In lilo.conf, pass the "rootfstype=iso9660" kernel option to get rid of
 the ugly error message resulting from the kernel trying FAT first; thanks
