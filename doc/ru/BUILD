@@ -53,10 +53,10 @@ UID 151 и GID 150 ("sources"), и сделать этого пользователя владельцем
 Ниже приведен ряд значений времени сборки (часы:минуты), чтобы вы могли
 примерно представить себе, чего следует ожидать:
 
-Quad Pentium 4, 2 GHz, 2 GB			0:21
+Dual Pentium 4 (Xeon), 2.666 GHz, 2 GB		0:20
+Quad Pentium 4 (Dual Xeon), 2 GHz, 2 GB		0:22
 Dual Pentium III, 1.266 GHz, 2 GB		0:30
-Dual Pentium III, 800 MHz, 512 MB		0:47
-Athlon, 1 GHz, 256 MB				1:10
+Athlon XP 2000+, 1.666 GHz, 512 MB		0:45
 Pentium III, 700 MHz, 192 MB			1:35
 UltraSparc IIi, 400 MHz, 256 MB			3:50
 Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB	5:30
@@ -115,4 +115,4 @@ installorder.conf перед тем, как попробовать проделать эту операцию.
 (SRPM), собираемых с помощью системы сборки Owl, вам следует также
 указать в названии номер версии.
 
-$Id: Owl/doc/ru/BUILD,v 1.4 2002/10/12 07:22:02 gremlin Exp $
+$Id: Owl/doc/ru/BUILD,v 1.5 2003/05/16 12:26:43 solar Exp $
