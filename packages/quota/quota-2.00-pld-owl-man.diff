@@ -84,17 +84,17 @@
  .SH "SEE ALSO"
 -quota(1), quotactl(2), fstab(5), quotaon(8), quotaoff(8), edquota(8), 
 -repquota(8), fsck(8), efsck(8), e2fsck(8), xfsck(8)
-+.BR quota(1),
-+.BR quotactl(2),
-+.BR fstab(5),
-+.BR quotaon(8),
-+.BR quotaoff(8),
-+.BR edquota(8),
-+.BR repquota(8),
-+.BR fsck(8),
-+.BR efsck(8),
-+.BR e2fsck(8),
-+.BR xfsck(8)
++.BR quota (1),
++.BR quotactl (2),
++.BR fstab (5),
++.BR e2fsck (8),
++.BR edquota (8),
++.BR efsck (8),
++.BR fsck (8),
++.BR quotaon (8),
++.BR quotaoff (8),
++.BR repquota (8),
++.BR xfsck (8)
  .SH FILES
  .I "quota.user, quota.group, /etc/fstab"
  .SH "AUTHOR"

@@ -1,12 +1,36 @@
---- quota-2.00/edquota.c.orig	Wed Jun 27 00:25:05 2001
-+++ quota-2.00/edquota.c	Wed Jun 27 00:34:32 2001
-@@ -171,7 +171,10 @@
+--- quota-2.00/edquota.c.orig	Mon Sep 18 09:38:41 2000
++++ quota-2.00/edquota.c	Sun Jul  1 01:01:00 2001
+@@ -65,7 +65,7 @@
+ #include "pot.h"
+ 
+ static char *qfextension[] = INITQFNAMES;
+-static char tmpfil[] = _PATH_TMP "EdP.aXXXXXX";
++static char tmppat[] = "EdP.aXXXXXX";
+ 
+ #define   FOUND   0x01
+ 
+@@ -99,7 +99,7 @@
+    extern int optind;
+    long id, protoid;
+    int quotatype, tmpfd;
+-   char *protoname, ch;
++   char *protoname, ch, *tmpfil;
+    int tflag = 0, pflag = 0, nflag = 0;
+     
+    gettexton();
+@@ -170,8 +170,16 @@
+       exit(0);
     }
  
++
++   tmpfil = strdup(__secure_getenv("TMPDIR") ?: _PATH_TMP);
++   tmpfil = (char *)realloc(tmpfil, strlen(tmpfil) + strlen(tmppat) + 1);
++   strncat(tmpfil, tmppat, strlen(tmppat));
++   
     umask(077);
 -   tmpfd = mkstemp(tmpfil);
-+   if((tmpfd = mkstemp(tmpfil)) < 0) {
-+      fprintf(stderr, _("mkstemp: %m\n"));
++   if ((tmpfd = mkstemp(tmpfil)) < 0) {
++      perror("mkstemp");
 +      exit(1);
 +   }
     fchown(tmpfd, getuid(), getgid());

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/quota/quota.spec,v 1.6 2001/06/27 14:54:37 mci Exp $
+# $Id: Owl/packages/quota/quota.spec,v 1.7 2001/07/01 11:05:27 mci Exp $
 
 Name: quota
 Summary: System administration tools for monitoring users' disk usage.
 Version: 2.00
-Release: 2owl
+Release: 3owl
 Copyright: BSD
 Source0: ftp://ftp.cistron.nl/pub/people/mvw/quota/%{name}-2.00.tar.gz
 Group: System Environment/Base
@@ -44,7 +44,7 @@ mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man{1,2,3,8}
 rm -rf ${RPM_BUILD_ROOT}
 
 %files
-%doc doc/*
+%doc doc/*html
 %defattr(-,root,root)
 /sbin/*
 %{_bindir}/*
@@ -64,12 +64,17 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man8/setquota.8*
 
 %changelog
+* Sun Jul 01 2001 Michail Litvak <mci@owl.openwall.com>
+- pack only *html in doc/
+- man pages fixes
+- added TMPDIR support to edquota
+
 * Wed Jun 27 2001 Michail Litvak <mci@owl.openwall.com>
 - more fixes in mans and docs
 - patch to catch error from mkstemp
 - include doc/ subdir into package
 
-* Mon Jun  25 2001 Michail Litvak <mci@owl.openwall.com>
+* Mon Jun 25 2001 Michail Litvak <mci@owl.openwall.com>
 - some spec cleanups
 - patch to allow building to non-root user
 
