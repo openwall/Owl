@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.19 2002/05/12 02:31:31 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.20 2002/05/23 08:22:28 mci Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
 Version: 0.9.6d
-Release: owl1
+Release: owl2
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
@@ -58,9 +58,10 @@ libraries and header files required when developing applications.
 
 %prep
 %setup -q
-# XXX: should investigate and deal with this properly
-touch now
-find -type f -print0 | xargs -0 touch -r now
+# XXX: don't rebuild some files at make install time
+pushd crypto/objects/
+touch -r objects.pl *.h
+popd
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
