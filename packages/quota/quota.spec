@@ -1,9 +1,9 @@
-# $Id: Owl/packages/quota/quota.spec,v 1.9 2001/07/01 20:20:06 mci Exp $
+# $Id: Owl/packages/quota/quota.spec,v 1.10 2001/07/01 20:21:55 mci Exp $
 
 Name: quota
 Summary: System administration tools for monitoring users' disk usage.
 Version: 2.00
-Release: 4owl
+Release: 5owl
 Copyright: BSD
 Source0: ftp://ftp.cistron.nl/pub/people/mvw/quota/%{name}-2.00.tar.gz
 Group: System Environment/Base
