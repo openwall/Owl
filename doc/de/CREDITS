@@ -7,9 +7,13 @@ Rafal Wojtczuk <nergal@owl.openwall.com>
 
 Französische Übersetzung und Überprüfung der Dokumentation:
 
-Denis Ducamp <Denis.Ducamp@hsc.fr>
+Denis Ducamp <ducamp@owl.openwall.com>
+
+Deutsche Übersetzung:
+
+Matthias Schmidt <schmidt@owl.openwall.com>
 
 Das Virtual Unix Project hat die erste Unterstützung für Owl
 gespendet.
 
-$Id: Owl/doc/de/CREDITS,v 1.2 2002/06/12 23:24:03 solar Exp $
+$Id: Owl/doc/de/CREDITS,v 1.3 2002/06/13 11:20:08 schmidt Exp $
