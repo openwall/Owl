@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.12 2002/07/17 02:15:48 solar Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.13 2002/07/18 06:28:54 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -6,7 +6,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.6.0
-Release: owl9.7
+Release: owl10
 Epoch: 1
 License: GPL
 Group: Development/Languages
@@ -194,6 +194,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/*/*
 
 %changelog
+* Thu Jul 18 2002 Solar Designer <solar@owl.openwall.com>
+- Patched c2ph and lib/ExtUtils/inst to use File::Temp, and the inst to
+work with GNU tar.
+- Patched lib/dotsh.pl to use a pipe instead of a temporary file (which
+used to be created unsafely) and lib/perl5db.pl to not use /tmp/perldbtty$$.
+- Applied many fixes to documentation and code comments to not suggest bad
+practices on the use of temporary files.
+
 * Tue Jul 16 2002 Solar Designer <solar@owl.openwall.com>
 - Package File::Temp as needed for the modified perldoc.
 - Replaced perlcc with the version that uses File::Temp, from Perl 5.6.1.
