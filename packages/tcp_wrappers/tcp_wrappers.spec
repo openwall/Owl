@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tcp_wrappers/tcp_wrappers.spec,v 1.7 2004/05/19 12:29:30 solar Exp $
+# $Id: Owl/packages/tcp_wrappers/tcp_wrappers.spec,v 1.8 2004/05/19 12:38:08 solar Exp $
 
 Summary: A security tool which acts as a wrapper for network services.
 Name: tcp_wrappers
@@ -12,7 +12,7 @@ Patch1: tcp_wrappers_7.6-openbsd-owl-cleanups.diff
 Patch2: tcp_wrappers_7.6-openbsd-owl-ip-options.diff
 Patch3: tcp_wrappers_7.6-owl-safe_finger.diff
 Patch4: tcp_wrappers_7.6-steveg-owl-match.diff
-Patch5: tcp_wrappers_7.6-alt-fix_options.diff
+#Patch5: tcp_wrappers_7.6-alt-fix_options.diff
 Patch6: tcp_wrappers_7.6-alt-shared.diff
 BuildRoot: /override/%name-%version
 
@@ -27,7 +27,7 @@ can monitor and filter incoming requests for network services.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
+#%patch5 -p1
 %patch6 -p1
 
 %build
@@ -59,7 +59,11 @@ ln -s hosts_access.5 $RPM_BUILD_ROOT%_mandir/man5/hosts.deny.5
 %_mandir/man*/*
 
 %changelog
-* Wed Apr 21 2004 Michail Litvak <mci@owl.openwall.com> 7.6-owl4
+* Wed May 19 Solar Designer <solar@owl.openwall.com> 7.6-owl4
+- Do not apply the patch for building with new glibc just yet as it breaks
+things for glibc 2.1.3.
+
+* Wed Apr 21 2004 Michail Litvak <mci@owl.openwall.com> 7.6-owl3.2
 - Build shared library (patch from ALT).
 
 * Fri Feb 27 2004 Michail Litvak <mci@owl.openwall.com> 7.6-owl3.1
