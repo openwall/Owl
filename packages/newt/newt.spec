@@ -1,4 +1,4 @@
-# $Id: Owl/packages/newt/Attic/newt.spec,v 1.7 2002/02/06 18:43:04 mci Exp $
+# $Id: Owl/packages/newt/Attic/newt.spec,v 1.8 2002/02/06 18:52:46 solar Exp $
 
 Summary: A development library for text mode user interfaces.
 Name: newt
@@ -16,7 +16,7 @@ BuildRoot: /override/%{name}-%{version}
 
 %package devel
 Summary: Newt windowing toolkit development files.
-Requires: slang-devel, %{name} = %{version}
+Requires: slang-devel, %{name} = %{version}-%{release}
 Group: Development/Libraries
 
 %description
@@ -40,10 +40,8 @@ the slang library.
 %patch1 -p1
 
 %build
-# gpm support seems to smash the stack w/ we use help in anaconda??
-#./configure --with-gpm-support
 autoconf
-./configure 
+./configure
 make
 make shared
 
@@ -57,12 +55,7 @@ make instroot=$RPM_BUILD_ROOT install-sh
 rm -rf $RPM_BUILD_ROOT
 
 %post -p /sbin/ldconfig
-
 %postun -p /sbin/ldconfig
-
-%post devel -p /sbin/ldconfig
-
-%postun devel -p /sbin/ldconfig
 
 %files
 %defattr (-,root,root)
@@ -72,7 +65,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr (-,root,root)
-%doc tutorial.sgml 
+%doc tutorial.sgml
 /usr/include/newt.h
 /usr/lib/libnewt.a
 /usr/lib/libnewt.so

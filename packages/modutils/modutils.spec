@@ -1,4 +1,4 @@
-# $Id: Owl/packages/modutils/modutils.spec,v 1.8 2002/02/06 17:20:13 mci Exp $
+# $Id: Owl/packages/modutils/modutils.spec,v 1.9 2002/02/06 18:45:35 solar Exp $
 
 Summary: Kernel module utilities.
 Name: modutils
@@ -81,7 +81,7 @@ allow for the use of sparcv9 optflags while not confusing configure.
 * Wed Oct 18 2000 Solar Designer <solar@owl.openwall.com>
 - Removed /etc/cron.d/kmod
 
-* Sun Oct  1 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
-- import spec from RH 
+* Sun Oct 01 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- import spec from RH
 - fix aliases
 - v2.3.17

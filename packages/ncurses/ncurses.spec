@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ncurses/ncurses.spec,v 1.15 2002/02/06 18:10:41 mci Exp $
+# $Id: Owl/packages/ncurses/ncurses.spec,v 1.16 2002/02/06 18:45:35 solar Exp $
 
 %define major 5
 %define oldmajor 4
@@ -6,7 +6,7 @@
 Summary: A CRT screen handling and optimization package.
 Name: ncurses
 Version: 5.2
-Release: owl8.1
+Release: owl9
 License: distributable
 Group: System Environment/Libraries
 URL: http://dickey.his.com/ncurses/ncurses.html
@@ -31,8 +31,8 @@ discontinued 4.4BSD classic curses library.
 %package devel
 Summary: The development files for applications which use ncurses.
 Group: Development/Libraries
+Requires: ncurses = %{version}-%{release}
 AutoReq: false
-Requires: ncurses = %{PACKAGE_VERSION}
 
 %description devel
 The header files and libraries for developing applications that use
@@ -41,7 +41,7 @@ the ncurses CRT screen handling and optimization package.
 %package compat
 Summary: ncurses compatibility for ncurses 4.x
 Group: System Environment/Libraries
-Requires: ncurses = %{PACKAGE_VERSION}
+Requires: ncurses = %{version}-%{release}
 Provides: libform.so.%{oldmajor}, libmenu.so.%{oldmajor}
 Provides: libncurses.so.%{oldmajor}, libpanel.so.%{oldmajor}
 
@@ -77,14 +77,14 @@ rm -rf $RPM_BUILD_ROOT
 	ticdir=$RPM_BUILD_ROOT/usr/share/terminfo
 ln -s ../l/linux $RPM_BUILD_ROOT/usr/share/terminfo/c/console
 ln -s ncurses/curses.h $RPM_BUILD_ROOT/usr/include/ncurses.h
-for I in curses unctrl eti form menu panel term ; do
+for I in curses unctrl eti form menu panel term; do
 	ln -sf ncurses/$I.h $RPM_BUILD_ROOT/usr/include/$I.h
 done
 
 %ifarch sparc sparcv9 sparc64
-install -c -m 644 $RPM_SOURCE_DIR/ncurses-linux \
+install -m 644 $RPM_SOURCE_DIR/ncurses-linux \
 	$RPM_BUILD_ROOT/usr/share/terminfo/l/linux
-install -c -m 644 $RPM_SOURCE_DIR/ncurses-linux-m \
+install -m 644 $RPM_SOURCE_DIR/ncurses-linux-m \
 	$RPM_BUILD_ROOT/usr/share/terminfo/l/linux-m
 %endif
 
@@ -92,7 +92,7 @@ strip -R .comment --strip-unneeded $RPM_BUILD_ROOT/usr/lib/*.so.[0-9].*
 make clean -C test
 
 # the resetall script
-install -c -m 755 $RPM_SOURCE_DIR/ncurses-resetall.sh \
+install -m 755 $RPM_SOURCE_DIR/ncurses-resetall.sh \
 	$RPM_BUILD_ROOT/usr/bin/resetall
 
 # compat links
@@ -105,13 +105,12 @@ ln -s libpanel.so.%{version} $RPM_BUILD_ROOT/usr/lib/libpanel.so.%{oldmajor}
 rm -rf $RPM_BUILD_ROOT
 
 %post -p /sbin/ldconfig
-
 %postun -p /sbin/ldconfig
 
 %files
 %defattr(-,root,root)
 %attr(755,root,root) /usr/lib/lib*.so.%{major}*
-%doc README ANNOUNCE 
+%doc README ANNOUNCE
 %doc doc/html/announce.html
 %{_datadir}/terminfo
 %{_datadir}/tabset
@@ -166,7 +165,7 @@ and had a race, anyway.
 - Added a patch to fix potential problems found during a mini-audit.
 
 * Sat Nov 04 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
-- new compat 
+- new compat
 
 * Wed Oct 25 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - ncurses 5.2 and compat.

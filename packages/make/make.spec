@@ -1,4 +1,4 @@
-# $Id: Owl/packages/make/make.spec,v 1.3 2002/02/06 16:18:21 mci Exp $
+# $Id: Owl/packages/make/make.spec,v 1.4 2002/02/06 16:39:25 solar Exp $
 
 Summary: A GNU tool which simplifies the build process for users.
 Name: make
@@ -27,11 +27,8 @@ make
 
 %install
 rm -f $RPM_BUILD_ROOT
-
 %makeinstall
-
-cd $RPM_BUILD_ROOT
-ln -sf make .%{_bindir}/gmake
+ln -sf make ${RPM_BUILD_ROOT}%{_bindir}/gmake
 
 %clean
 rm -rf $RPM_BUILD_ROOT

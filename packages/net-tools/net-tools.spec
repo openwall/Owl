@@ -1,4 +1,4 @@
-# $Id: Owl/packages/net-tools/net-tools.spec,v 1.3 2002/02/06 18:24:43 mci Exp $
+# $Id: Owl/packages/net-tools/net-tools.spec,v 1.4 2002/02/06 18:45:35 solar Exp $
 
 Summary: The basic tools for setting up networking.
 Name: net-tools
@@ -20,8 +20,8 @@ networking: ethers, route and others.
 %setup -q
 %patch0 -p1
 
-cp $RPM_SOURCE_DIR/net-tools-1.57-config.h ./config.h
-cp $RPM_SOURCE_DIR/net-tools-1.57-config.make ./config.make
+cp $RPM_SOURCE_DIR/net-tools-1.57-config.h config.h
+cp $RPM_SOURCE_DIR/net-tools-1.57-config.make config.make
 
 %build
 make COPTS="$RPM_OPT_FLAGS -D_GNU_SOURCE -Wall"

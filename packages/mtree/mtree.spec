@@ -1,6 +1,6 @@
-# $Id: Owl/packages/mtree/mtree.spec,v 1.4 2002/02/06 17:32:43 mci Exp $
+# $Id: Owl/packages/mtree/mtree.spec,v 1.5 2002/02/06 18:45:35 solar Exp $
 
-Summary: Map a directory hierarchy
+Summary: Map a directory hierarchy.
 Name: mtree
 Version: 2.7
 Release: owl2

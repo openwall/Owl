@@ -1,4 +1,4 @@
-# $Id: Owl/packages/m4/m4.spec,v 1.4 2002/02/06 07:50:06 mci Exp $
+# $Id: Owl/packages/m4/m4.spec,v 1.5 2002/02/06 16:34:18 solar Exp $
 
 Summary: The GNU macro processor.
 Name: m4
@@ -14,7 +14,7 @@ Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
 
 %description
-A GNU implementation of the traditional UNIX macro processor.  m4 is
+A GNU implementation of the traditional Unix macro processor.  m4 is
 useful for writing text files which can be logically parsed, and is used
 by many programs as part of their build process.  m4 has built-in
 functions for including files, running shell commands, doing arithmetic,

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/man-pages/man-pages.spec,v 1.11 2002/02/06 16:56:02 mci Exp $
+# $Id: Owl/packages/man-pages/man-pages.spec,v 1.12 2002/02/06 18:45:35 solar Exp $
 
 Summary: Manual (man) pages from the Linux Documentation Project.
 Name: man-pages
@@ -6,7 +6,7 @@ Version: 1.39
 Release: owl4
 License: distributable
 Group: Documentation
-Source0: ftp://ftp.win.tue.nl/pub/linux-local/manpages/man-pages-%{version}.tar.gz 
+Source0: ftp://ftp.win.tue.nl/pub/linux-local/manpages/man-pages-%{version}.tar.gz
 Source1: rpcgen.1
 Source2: ldd.1
 Source3: getent.1
@@ -26,9 +26,9 @@ Patch2: man-pages-1.39-rh-owl-roffix.diff
 Patch3: man-pages-1.39-owl-ccldso.diff
 Patch4: man-pages-1.39-owl-uselib.diff
 Patch5: man-pages-1.39-owl-pwrite.diff
-Autoreqprov: false
+AutoReqProv: false
 BuildArchitectures: noarch
-Buildroot: /override/%{name}-%{version}
+BuildRoot: /override/%{name}-%{version}
 
 %description
 A large collection of man pages (documentation) from the Linux
@@ -43,23 +43,23 @@ administration (intro only).
 %prep
 %setup -q
 
-cp $RPM_SOURCE_DIR/rpcgen.1 man1
-cp $RPM_SOURCE_DIR/ldd.1 man1
-cp $RPM_SOURCE_DIR/getent.1 man1
-cp $RPM_SOURCE_DIR/iconv.1 man1
-cp $RPM_SOURCE_DIR/locale.1 man1
-cp $RPM_SOURCE_DIR/localedef.1 man1
-cp $RPM_SOURCE_DIR/sprof.1 man1
+cp $RPM_SOURCE_DIR/rpcgen.1 man1/
+cp $RPM_SOURCE_DIR/ldd.1 man1/
+cp $RPM_SOURCE_DIR/getent.1 man1/
+cp $RPM_SOURCE_DIR/iconv.1 man1/
+cp $RPM_SOURCE_DIR/locale.1 man1/
+cp $RPM_SOURCE_DIR/localedef.1 man1/
+cp $RPM_SOURCE_DIR/sprof.1 man1/
 
-cp $RPM_SOURCE_DIR/getcontext.2 man2
-cp $RPM_SOURCE_DIR/setcontext.2 man2
-cp $RPM_SOURCE_DIR/sigaltstack.2 man2
+cp $RPM_SOURCE_DIR/getcontext.2 man2/
+cp $RPM_SOURCE_DIR/setcontext.2 man2/
+cp $RPM_SOURCE_DIR/sigaltstack.2 man2/
 
-cp $RPM_SOURCE_DIR/ld-linux.so.8 man8
-cp $RPM_SOURCE_DIR/ldconfig.8 man8
-cp $RPM_SOURCE_DIR/rpcinfo.8 man8
+cp $RPM_SOURCE_DIR/ld-linux.so.8 man8/
+cp $RPM_SOURCE_DIR/ldconfig.8 man8/
+cp $RPM_SOURCE_DIR/rpcinfo.8 man8/
 
-%patch0 -p1 
+%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -141,7 +141,7 @@ fix our paths anyway.
 - added man for ld-linux.so
 - remove time.1 (it is in time package)
 - man-pages-extralocale.tar.bz2, man2.tar.gz replaced
-  by just non packed files (is better for storing in CVS) 
+  by just non packed files (is better for storing in CVS)
 - patch to replace cc(1) -> gcc(1), ld.so -> ld-linux.so
 
 * Fri Apr 27 2001 Michail Litvak <mci@owl.openwall.com>
