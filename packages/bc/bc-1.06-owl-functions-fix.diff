@@ -1,0 +1,27 @@
+--- bc-1.06/bc/load.c.orig	Thu Dec  7 15:50:01 2000
++++ bc-1.06/bc/load.c	Thu Dec  7 16:03:29 2000
+@@ -156,7 +156,9 @@
+   long  label_no;
+   long  vaf_name;	/* variable, array or function number. */
+   long  func;
+-  program_counter save_adr;
++
++  /* static: functions may be split over multiple calls to load_code(). */
++  static program_counter save_adr = {-1, -1};
+ 
+   /* Initialize. */
+   str = code;
+@@ -278,8 +280,13 @@
+ 		break;
+ 		
+ 	      case ']':  /* A function end */
++		if (save_adr.pc_func == -1) {
++		  fprintf(stderr, "']': not in a 'F'(unction).\n");
++		  exit(1);
++		}
+ 		functions[load_adr.pc_func].f_defined = TRUE;
+ 		load_adr = save_adr;
++		save_adr.pc_func = -1;
+ 		break;
+ 
+ 	      case 'C':  /* Call a function. */

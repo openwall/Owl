@@ -1,13 +1,14 @@
-# $Id: Owl/packages/bc/bc.spec,v 1.2 2000/12/05 09:24:37 mci Exp $
+# $Id: Owl/packages/bc/bc.spec,v 1.3 2000/12/07 13:12:34 solar Exp $
 
 Summary: GNU's bc (a numeric processing language) and dc (a calculator).
 Name: bc
 Version: 1.06
-Release: 1owl
+Release: 2owl
 Copyright: GPL
 Group: Applications/Engineering
 Source: ftp://ftp.gnu.org/gnu/bc/bc-%{version}.tar.gz
 Patch0: bc-1.06-owl-no_info_dir.diff
+Patch1: bc-1.06-owl-functions-fix.diff
 Prereq: /sbin/install-info grep
 Prefix: %{_prefix}
 Buildroot: /var/rpm-buildroot/%{name}-root
@@ -23,13 +24,14 @@ Install the bc package if you need its number handling capabilities or
 if you would like to use its text mode calculator.
 
 %prep
-%setup -q 
+%setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 #autoconf
 %configure --with-readline
-make 
+make
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -65,6 +67,10 @@ fi
 %{_infodir}/*
 
 %changelog
+* Thu Dec 07 2000 Solar Designer <solar@owl.openwall.com>
+- Fixed a bug in the loading of functions (this affected primarily the
+built-in math library).
+
 * Mon Nov 21 2000 Michail Litvak <mci@owl.openwall.com>
 - Updated to 1.06 version
 - added patch to avoid creation of dir file
