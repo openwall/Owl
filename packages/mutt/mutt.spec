@@ -1,9 +1,9 @@
-# $Id: Owl/packages/mutt/mutt.spec,v 1.10 2004/01/30 23:47:36 solar Exp $
+# $Id: Owl/packages/mutt/mutt.spec,v 1.11 2004/02/12 23:38:58 mci Exp $
 
 Summary: A feature-rich text-based mail user agent.
 Name: mutt
-Version: 1.4.1
-Release: owl3
+Version: 1.4.2.1
+Release: owl1
 License: GPL
 Group: Applications/Internet
 URL: http://www.mutt.org
@@ -11,8 +11,7 @@ Source0: ftp://ftp.mutt.org/mutt/mutt-%{version}i.tar.gz
 Source1: Muttrc-color
 Patch0: mutt-1.4-owl-no-sgid.diff
 Patch1: mutt-1.4-owl-muttbug-tmp.diff
-Patch2: mutt-1.4.1-owl-tmp.diff
-Patch3: mutt-1.4.1-cvs-20020213-bound.diff
+Patch2: mutt-1.4.2.1-owl-tmp.diff
 Requires: mktemp >= 1:1.3.1
 Conflicts: mutt-us
 Provides: mutt-i
@@ -30,7 +29,6 @@ and more.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" ./prepare --prefix=%_prefix \
@@ -74,6 +72,9 @@ cat contrib/gpg.rc $RPM_SOURCE_DIR/Muttrc-color >> $RPM_BUILD_ROOT/etc/Muttrc
 %_mandir/man1/flea.*
 
 %changelog
+* Fri Feb 13 2004 Michail Litvak <mci@owl.openwall.com> 1.4.2.1-owl1
+- 1.4.2.1 (remove -cvs patch included into release)
+
 * Fri Jan 30 2004 Michail Litvak <mci@owl.openwall.com> 1.4.1-owl3
 - Patch (from Mutt's CVS) to fix Mutt crash on certain e-mails; this can
 occur when an UTF-8 locale is used on wide (more than ~120 columns)
