@@ -1,11 +1,11 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.20 2003/09/29 22:54:06 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.21 2003/10/11 21:32:56 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
 Summary: Dynamic Host Configuration Protocol (DHCP) distribution.
 Name: dhcp
 Version: 3.0pl2
-Release: owl4
+Release: owl5
 License: ISC License
 Group: System Environment/Daemons
 URL: http://www.isc.org/products/DHCP/
@@ -42,6 +42,7 @@ Summary: The ISC DHCP server daemon.
 Group: System Environment/Daemons
 PreReq: dhcp = %{version}-%{release}
 PreReq: /sbin/chkconfig
+Requires: /var/empty
 Obsoletes: dhcpd
 
 %description server
@@ -56,6 +57,7 @@ functionality, with certain restrictions.
 Summary: The ISC DHCP relay.
 Group: System Environment/Daemons
 PreReq: dhcp = %{version}-%{release}
+Requires: /var/empty
 
 %description relay
 DHCP relay is the Internet Software Consortium (ISC) relay agent for
@@ -169,6 +171,9 @@ fi
 %{_mandir}/man8/dhcrelay.8*
 
 %changelog
+* Sun Oct 12 2003 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl5
+- Require /var/empty in server and relay subpackages (from Maxim Timofeyev).
+
 * Tue Sep 30 2003 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl4
 - Define PTRSIZE_64BIT when building for Alpha.
 
