@@ -15,4 +15,4 @@ authentication module should be stacked after pam_userpass and told to
 use the authentication token (password) provided by pam_userpass.
 
 -- 
-Solar Designer <solar@openwall.com>
+Solar Designer <solar at openwall.com>

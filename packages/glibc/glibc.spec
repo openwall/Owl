@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.78 2005/01/19 20:07:46 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.79 2005/01/20 04:13:50 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -478,7 +478,7 @@ fixed this issue.
 
 * Wed Dec 08 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl2
 - Fixed <sys/quota.h> types (we were using types from linux/types.h instead
-of sys/types). Thanks goes to Sergio <sergio@openwall.com>.
+of sys/types). Thanks goes to Sergio <sergio at openwall.com>.
 
 * Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 2.3.2-owl1
 - Corrected the -compat-fake sub-package description.
