@@ -1,13 +1,17 @@
-# $Id: Owl/packages/kernel/kernel.spec,v 1.13 2003/10/29 19:28:02 solar Exp $
+# $Id: Owl/packages/kernel/kernel.spec,v 1.14 2004/03/13 12:58:41 solar Exp $
 
 Summary: Fake Linux kernel package for Red Hat Linux compatibility.
 Name: kernel
 Version: %(sed -n 's,^#define UTS_RELEASE "\(2\.[2-9]\.[0-9]\+\).*$,\1fake,p' < /usr/include/linux/version.h)
-Release: owl3
+Release: owl4
 License: public domain
 Group: System Environment/Base
 Source: BuildASM-sparc.sh
 PreReq: basesystem
+Provides: kernel-drm = 4.1.0
+Provides: kernel-drm = 4.2.0
+Provides: kernel-drm = 4.2.99.3
+Provides: kernel-drm = 4.3.0
 %ifarch sparc sparcv9
 BuildArchitectures: %_arch
 %else
@@ -58,6 +62,9 @@ test -L /usr/include/asm && rm -f /usr/include/asm || :
 %endif
 
 %changelog
+* Sat Mar 13 2004 Michail Litvak <mci@owl.openwall.com> 2.2+.x-owl4
+- Provide kernel-drm for compatibility with RH.
+
 * Thu Jul 31 2003 Solar Designer <solar@owl.openwall.com> 2.2+.x-owl3
 - Set this package's version to match the actual kernel headers used
 (this is especially important on SPARC).
