@@ -1,9 +1,9 @@
-# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.8 2002/08/26 18:12:26 mci Exp $
+# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.9 2003/10/25 09:31:29 solar Exp $
 
 Summary: A basic system library for accessing the termcap database.
 Name: libtermcap
 Version: 2.0.8
-Release: owl4
+Release: owl5
 License: LGPL
 Group: System Environment/Libraries
 Source: ftp://sunsite.unc.edu/pub/Linux/GCC/termcap-2.0.8.tar.gz
@@ -55,17 +55,17 @@ make CFLAGS="$RPM_OPT_FLAGS -I."
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/{usr/lib,usr/include,etc,lib}
-mkdir -p ${RPM_BUILD_ROOT}%{_infodir}
+mkdir -p $RPM_BUILD_ROOT%{_infodir}
 
 export PATH=/sbin:$PATH
 make prefix=$RPM_BUILD_ROOT/usr install
 
-install -m 644 termcap.info* ${RPM_BUILD_ROOT}%{_infodir}/
+install -m 644 termcap.info* $RPM_BUILD_ROOT%{_infodir}/
 
 cd $RPM_BUILD_ROOT
 mv usr/lib/libtermcap.so* lib/
 ln -sf libtermcap.so.2.0.8 lib/libtermcap.so.2
-ln -sf /lib/libtermcap.so.2.0.8 usr/lib/libtermcap.so
+ln -sf ../../lib/libtermcap.so.2.0.8 usr/lib/libtermcap.so
 strip -R .comments --strip-unneeded lib/libtermcap.so.2.0.8
 
 %clean
@@ -96,7 +96,10 @@ fi
 /usr/include/termcap.h
 
 %changelog
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Sat Oct 25 2003 Solar Designer <solar@owl.openwall.com> 2.0.8-owl5
+- Make the /usr/lib/libtermcap.so symlink relative.
+
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 2.0.8-owl4
 - Deal with info dir entries such that the menu looks pretty.
 
 * Tue Feb 05 2002 Michail Litvak <mci@owl.openwall.com>
