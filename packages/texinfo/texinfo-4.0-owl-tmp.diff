@@ -61,8 +61,8 @@
 +  retries = 0x1000;
 +  do
 +    {
-+      if (mktemp (tempdir) == NULL)
-+        fatal ("mktemp: %s: %s", tempdir, strerror (errno));
++      if (mktemp (tempdir) == NULL || !tempdir[0])
++        fatal ("mktemp failed for %s", tempdir);
 +      if (mkdir (tempdir, 0700) == 0) break;
 +      if (errno != EEXIST || !--retries)
 +        fatal ("mkdir: %s: %s", tempdir, strerror (errno));
