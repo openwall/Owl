@@ -1,4 +1,4 @@
-# $Id: Owl/packages/quota/quota.spec,v 1.21 2005/01/12 16:51:58 galaxy Exp $
+# $Id: Owl/packages/quota/quota.spec,v 1.22 2005/01/14 03:30:38 galaxy Exp $
 
 Summary: System administration tools for monitoring users' disk usage.
 Name: quota
@@ -65,8 +65,7 @@ rm %buildroot%_datadir/locale/pl/LC_MESSAGES/quota.mo
 
 %changelog
 * Tue Jan 11 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.11-owl2
-- Added autoreconf before configure to update configure to the current
-state.
+- Used %%__cc and %%__cpp macros.
 
 * Sat Feb 28 2004 Michail Litvak <mci@owl.openwall.com> 3.11-owl1
 - 3.11
