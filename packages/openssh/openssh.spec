@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.59 2003/05/29 01:10:54 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.60 2003/06/02 02:09:10 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
-Version: 3.6.1p1
-Release: owl4
+Version: 3.6.1p2
+Release: owl1
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -15,7 +15,7 @@ Source4: sshd_config
 Source5: sftp.control
 Patch0: openssh-3.6.1p1-owl-warnings.diff
 Patch1: openssh-3.6.1p1-owl-hide-unknown.diff
-Patch2: openssh-3.6.1p1-owl-always-auth.diff
+Patch2: openssh-3.6.1p2-owl-always-auth.diff
 Patch3: openssh-3.6.1p1-owl-pam_userpass.diff
 Patch4: openssh-3.6.1p1-owl-fatal_cleanups.diff
 Patch5: openssh-3.6.1p1-owl-drop-groups.diff
@@ -25,11 +25,10 @@ Patch8: openssh-3.6.1p1-owl-password-changing.diff
 Patch9: openssh-3.6.1p1-owl-openssl-version-check.diff
 Patch10: openssh-3.6.1p1-owl-scp-sftp-stalltime.diff
 Patch11: openssh-3.6.1p1-owl-ssh-agent-dumpable.diff
-PreReq: openssl >= 0.9.6b-1owl
 PreReq: openssl < 0.9.7
 Requires: pam >= 0.75-owl16
 Obsoletes: ssh
-BuildRequires: openssl-devel >= 0.9.6b-1owl
+BuildRequires: openssl-devel
 BuildRequires: pam-devel, pam_userpass-devel
 BuildRequires: perl
 BuildRequires: zlib-devel
@@ -96,7 +95,7 @@ clients to connect to your host.
 
 %prep
 %setup -q
-rm -r autom4te-*.cache
+rm -r autom4te.cache
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -225,6 +224,12 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Mon Jun 02 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl1
+- Updated to 3.6.1p2.
+- When we know we're going to fail authentication for reasons external
+to PAM, pass there a hopefully incorrect password to have it behave the
+same for correct and incorrect passwords.
+
 * Thu May 29 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p1-owl4
 - write_to=tcb
 

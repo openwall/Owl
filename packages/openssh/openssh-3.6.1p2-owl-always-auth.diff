@@ -1,0 +1,21 @@
+diff -urp openssh-3.6.1p2.orig/auth-passwd.c openssh-3.6.1p2/auth-passwd.c
+--- openssh-3.6.1p2.orig/auth-passwd.c	Tue Apr 29 09:12:08 2003
++++ openssh-3.6.1p2/auth-passwd.c	Mon Jun  2 01:56:14 2003
+@@ -124,6 +124,17 @@ auth_password(Authctxt *authctxt, const 
+ 	if (*password == '\0' && options.permit_empty_passwd == 0)
+ 		ok = 0;
+ 
++	/*
++	 * Don't let them observe a difference between correct and incorrect
++	 * passwords for an account if logging in under that account is not
++	 * permitted.  This is especially important with Linux-PAM optionally
++	 * producing delays on authentication failure, -- it wouldn't do that
++	 * for valid passwords and it has no way to know we will fail due to
++	 * a reason external to PAM.
++	 */
++	if (!ok)
++		password = "\b\n\r\177INCORRECT";
++
+ #if defined(USE_PAM)
+ 	return auth_pam_password(authctxt, password) && ok;
+ #elif defined(HAVE_OSF_SIA)
