@@ -1,6 +1,15 @@
 diff -ur SimplePAMApps-0.60.orig/pamapps/su/su.c SimplePAMApps-0.60/pamapps/su/su.c
 --- SimplePAMApps-0.60.orig/pamapps/su/su.c	Thu Feb 18 15:29:50 1999
-+++ SimplePAMApps-0.60/pamapps/su/su.c	Sun Oct 29 00:07:35 2000
++++ SimplePAMApps-0.60/pamapps/su/su.c	Sun Oct 29 00:41:27 2000
+@@ -380,7 +380,7 @@
+ 	if (terminal) {
+ 	    retval = pam_set_item(pamh, PAM_TTY, (const void *)terminal);
+ 	} else {
+-	    retval = PAM_PERM_DENIED;                /* how did we get here? */
++	    if (getuid() != 0) retval = PAM_PERM_DENIED;
+ 	}
+ 	terminal = NULL;
+     }
 @@ -389,8 +389,6 @@
  	const char *ruser = getlogin();      /* Who is running this program? */
  	if (ruser) {
