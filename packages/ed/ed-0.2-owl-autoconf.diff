@@ -1,0 +1,12 @@
+--- ed-0.2/configure.in.orig    Sat Nov 19 12:38:00 1994
++++ ed-0.2/configure.in Wed Feb 25 21:36:04 2004
+@@ -15,7 +15,8 @@
+ AC_FUNC_VPRINTF
+ AC_FUNC_ALLOCA
+ if test "$ALLOCA" = alloca.o; then
+-  AC_SUBST(LIBOBJS)LIBOBJS="$LIBOBJS xmalloc.o error.o"
++  AC_LIBOBJ([xmalloc])
++  AC_LIBOBJ([error])
+ fi
+ 
+ AC_OUTPUT(Makefile)

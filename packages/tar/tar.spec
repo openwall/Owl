@@ -1,9 +1,9 @@
-# $Id: Owl/packages/tar/tar.spec,v 1.15 2003/10/30 21:15:49 solar Exp $
+# $Id: Owl/packages/tar/tar.spec,v 1.16 2004/09/10 07:32:13 galaxy Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
 Version: 1.13.19
-Release: owl4
+Release: owl4.2
 License: GPL
 Group: Applications/Archiving
 Source0: ftp://alpha.gnu.org/pub/gnu/tar/tar-%version.tar.gz
@@ -18,6 +18,8 @@ Patch6: tar-1.13.19-owl-info.diff
 Patch7: tar-1.13.19-owl-dot-dot.diff
 Patch8: tar-1.13.19-owl-symlinks.diff
 Patch9: tar-1.13.19-up-relativize-links.diff
+Patch10: tar-1.13.19-owl-autotools.diff
+Patch11: tar-1.13.19-owl-po.diff
 PreReq: /sbin/install-info, grep
 BuildRoot: /override/%name-%version
 
@@ -42,29 +44,30 @@ backups.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
+%patch11 -p1
 
 %{expand:%%define optflags %optflags -Wall -Dlint}
 
 %build
 rm doc/tar.info
 unset LINGUAS || :
+aclocal
+automake -a
 autoconf
-%configure --bindir=/bin --libexecdir=/sbin
-make LIBS=-lbsd
+%define _bindir /bin
+%define _libexecdir /sbin
+%configure
+%__make LIBS=-lbsd all check
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %buildroot
 
-make install \
-	prefix=$RPM_BUILD_ROOT%_prefix \
-	bindir=$RPM_BUILD_ROOT/bin \
-	libexecdir=$RPM_BUILD_ROOT/sbin \
-	mandir=$RPM_BUILD_ROOT%_mandir \
-	infodir=$RPM_BUILD_ROOT%_infodir
-ln -s tar $RPM_BUILD_ROOT/bin/gtar
+%makeinstall
+ln -sf tar %buildroot/bin/gtar
 
-mkdir -p $RPM_BUILD_ROOT%_mandir/man1
-install -m 644 $RPM_SOURCE_DIR/tar.1 $RPM_BUILD_ROOT%_mandir/man1/
+mkdir -p %buildroot%_mandir/man1
+install -m 644 $RPM_SOURCE_DIR/tar.1 %buildroot%_mandir/man1/
 
 %post
 # Get rid of an old, incorrect info entry when replacing older versions
@@ -93,8 +96,17 @@ fi
 %_mandir/man1/tar.1*
 %_infodir/tar.info*
 %_prefix/share/locale/*/LC_MESSAGES/*
+# excludes
+%exclude /sbin/rmt
+%exclude %_infodir/dir
 
 %changelog
+* Tue Mar 02 2004 Michail Litvak <mci@owl.openwall.com> 1.13.19-owl4.2
+- Fixed building with new gettext.
+
+* Fri Feb 27 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1.13.19-owl4.1
+- Fixed building with new autotools.
+
 * Sat Sep 28 2002 Solar Designer <solar@owl.openwall.com> 1.13.19-owl4
 - Fixed the contains_dot_dot() bug introduced in 1.13.19 and discovered by
 3APA3A; thanks to Mark J Cox of Red Hat and Bencsath Boldizsar for further

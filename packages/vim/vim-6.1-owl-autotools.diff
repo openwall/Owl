@@ -1,0 +1,88 @@
+--- vim61/src/configure.in	Sun Feb 29 08:53:44 2004
++++ vim61.orig/src/configure.in	Sun Feb 29 08:49:02 2004
+@@ -15,6 +15,7 @@ AC_PROG_CC	dnl required by almost everyt
+ AC_PROG_CPP	dnl required by header file checks
+ AC_ISC_POSIX	dnl required by AC_C_CROSS
+ AC_PROG_AWK	dnl required for "make html" in ../doc
++AC_PROG_EGREP	dnl required for tests
+ 
+ dnl Don't strip if we don't have it
+ AC_CHECK_PROG(STRIP, strip, strip, :)
+@@ -2095,71 +2096,12 @@ else
+ fi
+ 
+ dnl Check for dynamic linking loader
+-AC_CHECK_HEADER(dlfcn.h, DLL=dlfcn.h, AC_CHECK_HEADER(dl.h, DLL=dl.h))
+-if test x${DLL} = xdlfcn.h; then
+-  AC_DEFINE(HAVE_DLFCN_H, 1, [ Define if we have dlfcn.h. ])
+-  AC_MSG_CHECKING([for dlopen()])
+-  AC_TRY_LINK(,[
+-		extern void* dlopen();
+-		dlopen();
+-      ],
+-      AC_MSG_RESULT(yes);
+-	      AC_DEFINE(HAVE_DLOPEN, 1, [ Define if we have dlopen() ]),
+-      AC_MSG_RESULT(no);
+-	      AC_MSG_CHECKING([for dlopen() in -ldl])
+-	      olibs=$LIBS
+-	      LIBS="$LIBS -ldl"
+-	      AC_TRY_LINK(,[
+-				extern void* dlopen();
+-				dlopen();
+-		 ],
+-		 AC_MSG_RESULT(yes);
+-			  AC_DEFINE(HAVE_DLOPEN, 1, [ Define if we have dlopen() ]),
+-		 AC_MSG_RESULT(no);
+-			  LIBS=$olibs))
+-  dnl ReliantUNIX has dlopen() in libc but everything else in libdl
+-  dnl ick :-)
+-  AC_MSG_CHECKING([for dlsym()])
+-  AC_TRY_LINK(,[
+-		extern void* dlsym();
+-		dlsym();
+-      ],
+-      AC_MSG_RESULT(yes);
+-	      AC_DEFINE(HAVE_DLSYM, 1, [ Define if we have dlsym() ]),
+-      AC_MSG_RESULT(no);
+-	      AC_MSG_CHECKING([for dlsym() in -ldl])
+-	      olibs=$LIBS
+-	      LIBS="$LIBS -ldl"
+-	      AC_TRY_LINK(,[
+-				extern void* dlsym();
+-				dlsym();
+-		 ],
+-		 AC_MSG_RESULT(yes);
+-			  AC_DEFINE(HAVE_DLSYM, 1, [ Define if we have dlsym() ]),
+-		 AC_MSG_RESULT(no);
+-			  LIBS=$olibs))
+-elif test x${DLL} = xdl.h; then
+-  AC_DEFINE(HAVE_DL_H, 1, [ Define if we have dl.h. ])
+-  AC_MSG_CHECKING([for shl_load()])
+-  AC_TRY_LINK(,[
+-		extern void* shl_load();
+-		shl_load();
+-     ],
+-     AC_MSG_RESULT(yes);
+-	  AC_DEFINE(HAVE_SHL_LOAD, 1, [ Define if we have shl_load() ]),
+-     AC_MSG_RESULT(no);
+-	  AC_MSG_CHECKING([for shl_load() in -ldld])
+-	  olibs=$LIBS
+-	  LIBS="$LIBS -ldld"
+-	  AC_TRY_LINK(,[
+-			extern void* shl_load();
+-			shl_load();
+-	     ],
+-	     AC_MSG_RESULT(yes);
+-		  AC_DEFINE(HAVE_SHL_LOAD, 1, [ Define if we have shl_load() ]),
+-	     AC_MSG_RESULT(no);
+-		  LIBS=$olibs))
+-fi
++AC_CHECK_HEADERS([dlfcn.h], [], [])
++AC_CHECK_HEADERS([dl.h], [], [])
++AC_SEARCH_LIBS([dlopen], [dl], [], [], [])
++AC_SEARCH_LIBS([dlsym], [dl], [], [], [])
++AC_SEARCH_LIBS([shl_load], [dld], [], [], [])
++
+ AC_CHECK_HEADERS(setjmp.h)
+ 
+ dnl write output files

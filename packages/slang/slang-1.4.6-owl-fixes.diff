@@ -55,11 +55,12 @@ diff -ur slang-1.4.6.orig/src/slang.h slang-1.4.6/src/slang.h
 diff -ur slang-1.4.6.orig/src/sldisply.c slang-1.4.6/src/sldisply.c
 --- slang-1.4.6.orig/src/sldisply.c	Tue Oct  8 00:36:22 2002
 +++ slang-1.4.6/src/sldisply.c	Sat Oct 12 12:39:31 2002
-@@ -5,6 +5,7 @@
+@@ -5,6 +5,8 @@
   * License or the Perl Artistic License.
   */
  
 +#define _GNU_SOURCE
++extern int __libc_enable_secure;
  #include "slinclud.h"
  
  #include <time.h>
@@ -206,11 +207,12 @@ diff -ur slang-1.4.6.orig/src/slmisc.c slang-1.4.6/src/slmisc.c
 diff -ur slang-1.4.6.orig/src/sltermin.c slang-1.4.6/src/sltermin.c
 --- slang-1.4.6.orig/src/sltermin.c	Tue Oct  8 00:36:22 2002
 +++ slang-1.4.6/src/sltermin.c	Sat Oct 12 12:39:31 2002
-@@ -9,6 +9,7 @@
+@@ -9,6 +9,8 @@
   * License or the Perl Artistic License.
   */
  
 +#define _GNU_SOURCE
++extern int __libc_enable_secure;
  #include "slinclud.h"
  
  #include "slang.h"

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/tcsh/tcsh.spec,v 1.9 2003/10/30 21:15:49 solar Exp $
+# $Id: Owl/packages/tcsh/tcsh.spec,v 1.10 2004/09/10 07:32:37 galaxy Exp $
 
 Summary: An enhanced version of csh, the C shell.
 Name: tcsh
 Version: 6.10.01
-Release: owl2
+Release: owl2.1
 License: BSD
 Group: System Environment/Shells
 URL: http://www.primate.wisc.edu/software/csh-tcsh-book/
@@ -41,12 +41,36 @@ like syntax.
 %patch7 -p1
 %patch8 -p1
 
+cat > catalogs << EOF
+de ISO-8859-1 german
+el ISO-8859-7 greek
+en ISO-8859-1 C
+es ISO-8859-1 spanish
+et ISO-8859-1 et
+fi ISO-8859-1 finnish
+fr ISO-8859-1 french
+it ISO-8859-1 italian
+ja eucJP ja
+ru KOI8-R russian
+uk KOI8-U ukrainian
+EOF
+
+while read lang charset language; do
+	if ! grep -q '^$ codeset=' nls/$language/set1; then
+		echo '$ codeset='$charset      >  nls/$language/set1.codeset
+		cat nls/$language/set1         >> nls/$language/set1.codeset
+		cat nls/$language/set1.codeset >  nls/$language/set1
+		rm nls/$language/set1.codeset
+	fi
+done < catalogs
+
 %define	_bindir	/bin
 
 %build
 %configure
-make LIBES="-lnsl -ltermcap -lcrypt" all catalogs
+make LIBES="-lnsl -ltermcap -lcrypt" all
 test -x %__perl && %__perl tcsh.man2html tcsh.man || :
+make -C nls catalogs
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -57,22 +81,13 @@ ln -sf tcsh $RPM_BUILD_ROOT%_bindir/csh
 ln -sf tcsh.1 $RPM_BUILD_ROOT%_mandir/man1/csh.1
 nroff -me eight-bit.me > eight-bit.txt
 
-for i in de es fr gr_GR it ja
-do
-	mkdir -p $RPM_BUILD_ROOT%_datadir/locale/$i/LC_MESSAGES
-done
-install -m 644 tcsh.german.cat \
-	$RPM_BUILD_ROOT%_datadir/locale/de/LC_MESSAGES/tcsh
-install -m 644 tcsh.spanish.cat \
-	$RPM_BUILD_ROOT%_datadir/locale/es/LC_MESSAGES/tcsh
-install -m 644 tcsh.french.cat \
-	$RPM_BUILD_ROOT%_datadir/locale/fr/LC_MESSAGES/tcsh
-install -m 644 tcsh.greek.cat \
-	$RPM_BUILD_ROOT%_datadir/locale/gr_GR/LC_MESSAGES/tcsh
-install -m 644 tcsh.italian.cat \
-	$RPM_BUILD_ROOT%_datadir/locale/it/LC_MESSAGES/tcsh
-install -m 644 tcsh.ja.cat \
-	$RPM_BUILD_ROOT%_datadir/locale/ja/LC_MESSAGES/tcsh
+while read lang charset language; do
+	dest=$RPM_BUILD_ROOT%_datadir/locale/$lang/LC_MESSAGES
+	if test -f tcsh.$language.cat; then
+		mkdir -p $dest
+		install -m 644 tcsh.$language.cat $dest/tcsh
+	fi
+done < catalogs
 
 %post
 if ! grep -qs '^/bin/csh$' /etc/shells; then echo /bin/csh >> /etc/shells; fi
@@ -93,6 +108,9 @@ fi
 %_datadir/locale/*/LC_MESSAGES/tcsh*
 
 %changelog
+* Sat Feb 28 2004 Michail Litvak <mci@owl.openwall.com> 6.10.01-owl2.1
+- Fixed building with new glibc (fix from ALT's spec file).
+
 * Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com> 6.10.01-owl2
 - Enforce our new spec file conventions.
 

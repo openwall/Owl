@@ -1,15 +1,16 @@
-# $Id: Owl/packages/m4/m4.spec,v 1.10 2003/10/30 09:00:26 solar Exp $
+# $Id: Owl/packages/m4/m4.spec,v 1.11 2004/09/10 07:25:10 galaxy Exp $
 
 Summary: The GNU macro processor.
 Name: m4
 Version: 1.4
-Release: owl16
+Release: owl16.1
 License: GPL
 Group: Applications/Text
 Source: ftp://ftp.gnu.org/gnu/m4/m4-%version.tar.gz
 Patch0: m4-1.4-rh-glibc.diff
 Patch1: m4-1.4-owl-format.diff
 Patch2: m4-1.4-owl-info.diff
+Patch3: m4-1.4-owl-configure.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
@@ -27,10 +28,11 @@ not for running configure scripts.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 rm doc/m4.info
-autoconf
+autoreconf -f
 export ac_cv_func_mkstemp=yes \
 %configure
 make CFLAGS="$RPM_OPT_FLAGS" LDFLAGS=-s
@@ -54,6 +56,9 @@ fi
 %_infodir/*.info*
 
 %changelog
+* Thu Feb 26 2004 Michail Litvak <mci@owl.openwall.com> 1.4-owl16.1
+- Fixed building with new auto* tools.
+
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1.4-owl16
 - Deal with info dir entries such that the menu looks pretty.
 

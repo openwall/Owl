@@ -1,9 +1,9 @@
-# $Id: Owl/packages/ed/ed.spec,v 1.14 2003/10/29 19:04:58 solar Exp $
+# $Id: Owl/packages/ed/ed.spec,v 1.15 2004/09/10 07:22:21 galaxy Exp $
 
 Summary: The GNU line editor.
 Name: ed
 Version: 0.2
-Release: owl21
+Release: owl21.1
 License: GPL
 Group: Applications/Text
 Source: ftp://ftp.gnu.org/gnu/%name-%version.tar.gz
@@ -11,6 +11,7 @@ Patch0: ed-0.2-deb-mkfile.diff
 Patch1: ed-0.2-deb-parentheses.diff
 Patch2: ed-0.2-deb-owl-man.diff
 Patch3: ed-0.2-alt-tmp.diff
+Patch4: ed-0.2-owl-autoconf.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
@@ -27,6 +28,7 @@ such as vi and emacs.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 chmod 755 configure
@@ -57,6 +59,9 @@ fi
 %_mandir/*/*
 
 %changelog
+* Wed Feb 25 2004 Michail Litvak <mci@owl.openwall.com> 0.2-owl21.1
+- Fixed building with new auto* tools.
+
 * Wed Sep 04 2002 Michail Litvak <mci@owl.openwall.com> 0.2-owl21
 - Replace -owl-mkstemp.diff by more improved -alt-tmp.diff
 - add patch to fix man page

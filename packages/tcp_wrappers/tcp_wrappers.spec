@@ -1,9 +1,9 @@
-# $Id: Owl/packages/tcp_wrappers/tcp_wrappers.spec,v 1.9 2004/05/19 12:39:00 solar Exp $
+# $Id: Owl/packages/tcp_wrappers/tcp_wrappers.spec,v 1.10 2004/09/10 07:32:25 galaxy Exp $
 
 Summary: A security tool which acts as a wrapper for network services.
 Name: tcp_wrappers
 Version: 7.6
-Release: owl4
+Release: owl4.1
 License: distributable
 Group: System Environment/Daemons
 Source: ftp.porcupine.org/pub/security/tcp_wrappers_7.6.tar.gz
@@ -12,7 +12,7 @@ Patch1: tcp_wrappers_7.6-openbsd-owl-cleanups.diff
 Patch2: tcp_wrappers_7.6-openbsd-owl-ip-options.diff
 Patch3: tcp_wrappers_7.6-owl-safe_finger.diff
 Patch4: tcp_wrappers_7.6-steveg-owl-match.diff
-#Patch5: tcp_wrappers_7.6-alt-fix_options.diff
+Patch5: tcp_wrappers_7.6-alt-fix_options.diff
 Patch6: tcp_wrappers_7.6-alt-shared.diff
 BuildRoot: /override/%name-%version
 
@@ -27,7 +27,7 @@ can monitor and filter incoming requests for network services.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-#%patch5 -p1
+%patch5 -p1
 %patch6 -p1
 
 %build
@@ -59,6 +59,9 @@ ln -s hosts_access.5 $RPM_BUILD_ROOT%_mandir/man5/hosts.deny.5
 %_mandir/man*/*
 
 %changelog
+* Thu Sep 09 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 7.6-owl4.1
+- Re-enabled the patch for building with new glibc
+
 * Wed May 19 2004 Solar Designer <solar@owl.openwall.com> 7.6-owl4
 - Do not apply the patch for building with new glibc just yet as it breaks
 things for glibc 2.1.3.

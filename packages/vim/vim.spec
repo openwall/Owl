@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vim/vim.spec,v 1.17 2004/07/20 00:18:59 mci Exp $
+# $Id: Owl/packages/vim/vim.spec,v 1.18 2004/09/10 07:33:06 galaxy Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -12,7 +12,7 @@ Name: vim
 %define patchlevel 386
 %define vimdir vim%major%minor%alpha
 Version: %major.%minor%{?patchlevel:.%patchlevel}
-Release: owl3
+Release: owl3.1
 License: Charityware
 Group: Applications/Editors
 Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%major.%minor%alpha.tar.bz2
@@ -29,6 +29,7 @@ Patch3: vim-6.1-rh-owl-xxd-locale.diff
 Patch4: vim-6.1-rh-owl-spec-syntax.diff
 Patch5: vim-6.1-owl-tmp.diff
 Patch6: vim-6.1-owl-perl-clash.diff
+Patch7: vim-6.1-owl-autotools.diff
 Requires: mktemp >= 1:1.3.1
 BuildRequires: sed >= 4.0.9
 %if %BUILD_USE_GPM
@@ -117,6 +118,7 @@ test ! -e failed
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 rm src/auto/configure
 install -m 644 $RPM_SOURCE_DIR/README .
 
@@ -135,11 +137,10 @@ install -m 644 $RPM_SOURCE_DIR/README .
 %build
 cd src
 
-mv configure configure.save
+aclocal
 autoconf
 sed -e 's+\./config.log+auto/config.log+' configure > auto/configure
 chmod 755 auto/configure
-mv -f configure.save configure
 
 %if %BUILD_USE_X
 export ac_cv_func_mkstemp=yes \
@@ -150,66 +151,64 @@ export ac_cv_func_mkstemp=yes \
 	--exec-prefix=/usr/X11R6 \
 	--enable-xim --enable-multibyte \
 	--enable-fontset %pythonflag %gpmflag
-make VIMRUNTIMEDIR=/usr/share/vim/%vimdir COMPILEDBY=build@%buildhost
+%__make VIMRUNTIMEDIR=%_datadir/vim/%vimdir COMPILEDBY=build@%buildhost
 mv vim gvim
-make clean
+%__make clean
 %endif
 
 export ac_cv_func_mkstemp=yes \
 %configure \
-	--prefix=/usr \
 	--with-features=huge \
 	--enable-perlinterp --disable-tclinterp \
 	--with-x=no --enable-gui=no \
-	--exec-prefix=/usr --enable-multibyte \
+	--enable-multibyte \
 	--enable-fontset %pythonflag %gpmflag
-make VIMRUNTIMEDIR=/usr/share/vim/%vimdir COMPILEDBY=build@%buildhost
+%__make VIMRUNTIMEDIR=%_datadir/vim/%vimdir COMPILEDBY=build@%buildhost
 mv vim vim-enhanced
-make clean
+%__make clean
 
 export ac_cv_func_mkstemp=yes \
 %configure \
-	--prefix='${DEST}'/usr \
 	--with-features=small \
 	--disable-pythoninterp --disable-perlinterp --disable-tclinterp \
 	--with-x=no --enable-gui=no \
-	--with-tlib=termcap --disable-gpm \
-	--exec-prefix=/
-make VIMRUNTIMEDIR=/usr/share/vim/%vimdir COMPILEDBY=build@%buildhost
+	--with-tlib=termcap --disable-gpm 
+%__make VIMRUNTIMEDIR=%_datadir/vim/%vimdir COMPILEDBY=build@%buildhost
 
 gcc $RPM_OPT_FLAGS -Wall -s $RPM_SOURCE_DIR/vitmp.c -o vitmp
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT{/bin,/usr/{bin,share/vim}}
+rm -rf %buildroot
+mkdir -p %buildroot/bin
+mkdir -p %buildroot%_bindir
+mkdir -p %buildroot%_datadir/vim
 %if %BUILD_USE_X
-mkdir -p $RPM_BUILD_ROOT/usr/X11R6/bin
+mkdir -p %buildroot%_prefix/X11R6/bin
 %endif
 
 cd src
-%makeinstall BINDIR=/bin DESTDIR=$RPM_BUILD_ROOT
-mv $RPM_BUILD_ROOT/bin/xxd $RPM_BUILD_ROOT/usr/bin/
-make installmacros DESTDIR=$RPM_BUILD_ROOT
-install -m 755 vim-enhanced $RPM_BUILD_ROOT/usr/bin/vim
+%makeinstall installmacros BINDIR=/bin DESTDIR=%buildroot
+mv %buildroot/bin/xxd %buildroot%_bindir
+install -m 755 vim-enhanced %buildroot%_bindir/vim
 %if %BUILD_USE_X
-install -m 755 gvim $RPM_BUILD_ROOT/usr/X11R6/bin/
+install -m 755 gvim %buildroot%_prefix/X11R6/bin/
 %endif
 
-install -m 755 vitmp $RPM_BUILD_ROOT/bin/
-install -m 644 $RPM_SOURCE_DIR/vitmp.1 $RPM_BUILD_ROOT%_mandir/man1/
+install -m 755 vitmp %buildroot/bin/
+install -m 644 $RPM_SOURCE_DIR/vitmp.1 %buildroot%_mandir/man1/
 
-pushd $RPM_BUILD_ROOT
+pushd %buildroot
 mv bin/vim bin/vi
-mv bin/vimtutor usr/bin/
+mv bin/vimtutor .%_bindir
 rm bin/rvim
 ln -sf vi bin/view
 ln -sf vi bin/ex
 ln -sf vi bin/rvi
 ln -sf vi bin/rview
-ln -sf vim usr/bin/ex
-ln -sf vim usr/bin/rvim
-ln -sf vim usr/bin/vimdiff
-sed -i "s,$RPM_BUILD_ROOT,," .%_mandir/man1/{vim,vimtutor}.1
+ln -sf vim .%_bindir/ex
+ln -sf vim .%_bindir/rvim
+ln -sf vim .%_bindir/vimdiff
+sed -i "s,%buildroot,," .%_mandir/man1/{vim,vimtutor}.1
 rm .%_mandir/man1/rvim.1
 ln -sf vim.1 .%_mandir/man1/vi.1
 ln -sf vim.1 .%_mandir/man1/rvi.1
@@ -217,31 +216,34 @@ ln -sf vim.1 .%_mandir/man1/rvim.1
 ln -sf vim.1 .%_mandir/man1/vimdiff.1
 
 %if %BUILD_USE_X
-ln -sf gvim usr/X11R6/bin/vimx
-ln -sf gvim usr/X11R6/bin/gview
-ln -sf gvim usr/X11R6/bin/gex
-ln -sf gvim usr/X11R6/bin/evim
+ln -sf gvim .%_prefix/X11R6/bin/vimx
+ln -sf gvim .%_prefix/X11R6/bin/gview
+ln -sf gvim .%_prefix/X11R6/bin/gex
+ln -sf gvim .%_prefix/X11R6/bin/evim
 ln -sf vim.1 .%_mandir/man1/gvim.1
 ln -sf vim.1 .%_mandir/man1/vimx.1
 ln -sf vim.1 .%_mandir/man1/gview.1
 ln -sf vim.1 .%_mandir/man1/gex.1
 ln -sf vim.1 .%_mandir/man1/evim.1
-mkdir -p etc/X11/applnk/Applications
-cp $RPM_SOURCE_DIR/gvim.desktop etc/X11/applnk/Applications/
+mkdir -p .%_sysconfdir/X11/applnk/Applications
+cp $RPM_SOURCE_DIR/gvim.desktop .%_sysconfdir/X11/applnk/Applications/
+%else
+# XXX: investigate this -- (GM)
+rm -r .%_mandir/man1/evim.1*
 %endif
 
-install -m 644 $RPM_SOURCE_DIR/vimrc usr/share/vim/
+install -m 644 $RPM_SOURCE_DIR/vimrc .%_datadir/vim/
 
 # Dependency cleanups
-chmod 644 usr/share/vim/%vimdir/{doc/vim2html.pl,tools/{*.pl,vim132}}
+chmod 644 .%_datadir/vim/%vimdir/{doc/vim2html.pl,tools/{*.pl,vim132}}
 popd
 chmod 644 ../runtime/doc/vim2html.pl
 
 %files common
 %defattr(-,root,root)
 %doc README
-/usr/bin/xxd
-/usr/share/vim
+%_bindir/xxd
+%_datadir/vim
 %_mandir/man1/vim.*
 %_mandir/man1/vi.*
 %_mandir/man1/ex.*
@@ -262,20 +264,20 @@ chmod 644 ../runtime/doc/vim2html.pl
 
 %files enhanced
 %defattr(-,root,root)
-/usr/bin/vim
-/usr/bin/ex
-/usr/bin/vimtutor
+%_bindir/vim
+%_bindir/ex
+%_bindir/vimtutor
 %_mandir/man1/vimtutor.*
 
 %if %BUILD_USE_X
 %files X11
 %defattr(-,root,root)
-%config(missingok) /etc/X11/applnk/Applications/gvim.desktop
-/usr/X11R6/bin/gvim
-/usr/X11R6/bin/vimx
-/usr/X11R6/bin/gview
-/usr/X11R6/bin/gex
-/usr/X11R6/bin/evim
+%config(missingok) %_sysconfdir/X11/applnk/Applications/gvim.desktop
+%_prefix/X11R6/bin/gvim
+%_prefix/X11R6/bin/vimx
+%_prefix/X11R6/bin/gview
+%_prefix/X11R6/bin/gex
+%_prefix/X11R6/bin/evim
 %_mandir/man1/gvim.*
 %_mandir/man1/vimx.*
 %_mandir/man1/gview.*
@@ -284,6 +286,10 @@ chmod 644 ../runtime/doc/vim2html.pl
 %endif
 
 %changelog
+* Thu Sep 09 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 6.1.386-owl3.1
+- Patched to build with new autotools
+- Spec prepared for FHS moving
+
 * Tue Jul 20 2004 Michail Litvak <mci@owl.openwall.com> 6.1.386-owl3
 - Use sed -i instead of perl.
 
