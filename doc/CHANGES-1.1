@@ -338,7 +338,7 @@ kernel.  This version of the kernel also corrects "Etherleak" issues
 with a number of Ethernet drivers (a common class of vulnerabilities
 publicized by Ofir Arkin and Josh Anderson of @stake) and a local DoS
 vulnerability with mmap(2) of /proc/<pid>/mem files discovered by
-Michal Zalewski of Bindview.  Linux 2.2.25-ow1 patch makes the added
+Michal Zalewski of BindView.  Linux 2.2.25-ow1 patch makes the added
 RLIMIT_NPROC enforcement also work for 32-bit syscalls on sparc64
 (thanks to Brad Spengler for noticing that this was missing).
 References:
@@ -347,7 +347,7 @@ http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0127
 http://www.atstake.com/research/advisories/2003/a010603-1.txt
 http://www.kb.cert.org/vuls/id/412115
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0001
-http://razor.bindview.com/publish/advisories/adv_mmap.html
+http://www.bindview.com/Support/RAZOR/Advisories/2002/adv_mmap.cfm
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2002-1380
 
 2003/03/16	Package: man
@@ -523,4 +523,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.99.2.3 2004/05/10 18:53:33 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.99.2.4 2004/05/25 14:39:48 solar Exp $
