@@ -12,6 +12,12 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.0 and Owl-current.
 
+2002/12/17	Package: rpm
+Added rpminit(1), a script to setup a set of private directories for
+building RPM packages as the current user.  Changed the default rpmrc
+to use more optimal flags for our gcc (note that builds of Owl itself
+use a different set of optimization flags anyway).
+
 2002/12/14	Package: libnids
 Updated to 1.17.
 
@@ -68,4 +74,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.11 2002/12/14 15:45:43 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.12 2002/12/17 16:17:38 solar Exp $
