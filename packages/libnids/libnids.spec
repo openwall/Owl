@@ -1,9 +1,9 @@
-# $Id: Owl/packages/libnids/libnids.spec,v 1.6 2002/12/17 16:20:36 solar Exp $
+# $Id: Owl/packages/libnids/libnids.spec,v 1.7 2002/12/17 16:21:45 solar Exp $
 
 Summary: NIDS E-component.
 Name: libnids
 Version: 1.17
-Release: owl1
+Release: owl2
 Epoch: 1
 License: GPL
 Group: System Environment/Libraries
