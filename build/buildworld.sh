@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.4 2000/12/11 02:42:46 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.5 2000/12/16 20:51:23 solar Exp $
 
 REPOSITORY=Owl
 PACKAGES=$REPOSITORY/packages
@@ -19,12 +19,11 @@ function log()
 
 function build_native()
 {
-	local NUMBER PACKAGE DIR WORK
+	local NUMBER PACKAGE WORK
 
 	NUMBER=$1
 	PACKAGE=$2
 
-	DIR=.$NUMBER-$PACKAGE
 	WORK=$HOME/rpm-work-$NUMBER
 
 	log "#$NUMBER: Building $PACKAGE"
@@ -33,15 +32,14 @@ function build_native()
 		xargs -n 1 -i sh -c 'rpm2cpio {} | cpio -i 2>/dev/null'
 	ln -sf $SOURCES/$PACKAGES/$PACKAGE/* .
 	rm -f '*' || :
-	ln -sf $HOME/cvs-work/$PACKAGES/$DIR/* .
-	cd $HOME/cvs-work/$PACKAGES/$DIR || exit 1
+	ln -sf $CHECKOUT/$PACKAGES/$PACKAGE/* .
 	$TIME $PERSONALITY rpm -ba $PACKAGE.spec \
 		$TARGET \
 		--define "buildarch $BUILDARCH" \
 		--define "home $HOME" \
 		--define "number $NUMBER" \
 		&> $HOME/logs/$PACKAGE
-	cd $HOME/cvs-work/$PACKAGES || exit 1
+	cd $HOME/native-work || exit 1
 	mv $WORK/RPMS/*/* $HOME/RPMS/ &> /dev/null
 	mv $WORK/SRPMS/* $HOME/SRPMS/ &> /dev/null || \
 		log "#$NUMBER: Failed $PACKAGE"
@@ -116,9 +114,12 @@ function builder()
 
 	log "#$NUMBER: Scanning native"
 
-	ls | grep -v '^CVS$' |
+	cd $HOME/native-work || exit 1
+
+	ls $CHECKOUT/$PACKAGES/ | grep -v '^CVS$' |
 	while read PACKAGE; do
-		mv $PACKAGE .$NUMBER-$PACKAGE &> /dev/null || continue
+		mkdir .$PACKAGE &> /dev/null || continue
+		touch .$PACKAGE/$NUMBER
 		if [ -e $HOME/SRPMS/$PACKAGE-[0-9]*.src.rpm ]; then
 			log "#$NUMBER: Skipping $PACKAGE"
 		else
@@ -128,7 +129,7 @@ function builder()
 
 	log "#$NUMBER: Scanning foreign"
 
-	cd $HOME/foreign-work
+	cd $HOME/foreign-work || exit 1
 
 	ls $FOREIGN/ |
 	while read PACKAGE; do
@@ -178,7 +179,7 @@ function clean_death()
 	kill 0
 
 	cd $HOME || exit 1
-	rm -rf tmp-work rpm-work-[1-9]* cvs-work foreign-work
+	rm -rf tmp-work rpm-work-[1-9]* native-work foreign-work
 
 	echo "`date '+%Y %b %e %H:%M:%S'`: Interrupted" >> logs/buildworld
 	exit 0
@@ -193,7 +194,7 @@ mkdir -p RPMS SRPMS logs
 echo "`date '+%Y %b %e %H:%M:%S'`: Started" >> logs/buildworld
 
 log "Removing stale temporary files"
-rm -rf tmp-work rpm-work-[1-9]* cvs-work foreign-work
+rm -rf tmp-work rpm-work-[1-9]* native-work foreign-work
 
 sanity_check
 
@@ -206,17 +207,10 @@ while [ $NUMBER -le $PROCESSORS ]; do
 	NUMBER=$[$NUMBER + 1]
 done
 
-mkdir tmp-work cvs-work foreign-work || exit 1
+mkdir tmp-work native-work foreign-work || exit 1
+
 export TMPDIR=$HOME/tmp-work
-
-cd cvs-work || exit 1
-if [ -n "$CVSROOT" -a -z "$CHECKOUT" ]; then
-	cvs co $REPOSITORY 2>&1 >> $HOME/logs/buildworld || exit 1
-else
-	cp -al $CHECKOUT/$REPOSITORY .
-fi
-
-cd $PACKAGES || exit 1
+export TMP=$HOME/tmp-work
 
 NUMBER=1
 while [ $NUMBER -le $PROCESSORS ]; do
@@ -229,6 +223,6 @@ cd $HOME || exit 1
 wait
 
 log "Removing temporary files"
-rm -rf tmp-work cvs-work foreign-work
+rm -rf tmp-work native-work foreign-work
 
 echo "`date '+%Y %b %e %H:%M:%S'`: Finished" >> logs/buildworld
