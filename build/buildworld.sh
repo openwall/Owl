@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.9 2001/01/06 20:56:12 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.10 2001/04/14 01:25:24 solar Exp $
 
 REPOSITORY=Owl
 PACKAGES=$REPOSITORY/packages
@@ -92,7 +92,7 @@ function detect()
 
 function builder()
 {
-	local NUMBER
+	local NUMBER REGEX
 
 	NUMBER=$1
 
@@ -120,7 +120,8 @@ function builder()
 	while read PACKAGE; do
 		mkdir .$PACKAGE &> /dev/null || continue
 		touch .$PACKAGE/$NUMBER
-		if [ -e $HOME/SRPMS/$PACKAGE-[0-9]*.src.rpm ]; then
+		REGEX="^${PACKAGE}-[^-]*[0-9]\+[^-]*-[0-9][^-]*.src.rpm\$"
+		if [ -n "`ls $HOME/SRPMS/ | grep "$REGEX"`" ]; then
 			log "#$NUMBER: Skipping $PACKAGE"
 		else
 			build_native $NUMBER $PACKAGE
