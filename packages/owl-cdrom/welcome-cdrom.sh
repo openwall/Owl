@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-cdrom/welcome-cdrom.sh,v 1.2 2002/09/10 03:58:59 solar Exp $
+# $Id: Owl/packages/owl-cdrom/welcome-cdrom.sh,v 1.3 2003/10/19 21:31:14 solar Exp $
 
 echo
 echo 'Welcome to Openwall GNU/*/Linux (Owl)!'
@@ -11,7 +11,7 @@ test "`id -u`" = "0" || return 0
 
 WORLD=/usr/src/world
 KERNEL=/usr/src/kernel
-DOC=$WORLD/native/Owl/doc
+DOC="`echo $WORLD/native/Owl*/doc | sed 's/^.* \([^ ]*\)$/\1/'`"
 
 HAVE_SRCS=
 test -d $WORLD/native -a -d $WORLD/sources && HAVE_SRCS=yes
@@ -44,6 +44,11 @@ fi
 if [ -d $DOC ]; then
 	echo "There's documentation under $DOC:"
 	ls -x -I CVS $DOC
+	if [ -d $DOC/ru ]; then
+		echo
+		echo "To browse Russian documentation, set Cyrillic font with:"
+		echo "setfont -u koi8r koi8r-8x16"
+	fi
 	echo
 fi
 

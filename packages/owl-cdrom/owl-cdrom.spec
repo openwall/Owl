@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.15 2003/10/19 04:37:50 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.16 2003/10/19 21:31:14 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 0.6
+Version: 0.7
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -85,6 +85,10 @@ fi
 %dir /owl
 
 %changelog
+* Mon Oct 20 2003 Solar Designer <solar@owl.openwall.com> 0.7-owl1
+- In the "welcome" script, correctly locate documentation when multiple
+branches are available and explain how to set Cyrillic font.
+
 * Sun Oct 19 2003 Solar Designer <solar@owl.openwall.com> 0.6-owl1
 - Updated .config for Linux 2.4.22-ow1, require at least a Pentium (need
 TSC, and math emulation for older CPUs which could be missing a coprocessor
