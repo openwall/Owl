@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sh-utils/Attic/sh-utils.spec,v 1.4 2002/02/06 19:10:49 solar Exp $
+# $Id: Owl/packages/sh-utils/Attic/sh-utils.spec,v 1.5 2002/02/06 19:14:16 solar Exp $
 
 Summary: A set of GNU utilities commonly used in shell scripts.
 Name: sh-utils
@@ -73,7 +73,7 @@ done
 
 mv $RPM_BUILD_ROOT/usr/bin/chroot $RPM_BUILD_ROOT/usr/sbin/
 rm $RPM_BUILD_ROOT/usr/bin/uptime
-rm $RPM_BUILD_ROOT/usr/man/man1/{hostname,su,uptime}.1
+rm $RPM_BUILD_ROOT/usr/man/man1/{hostname,su}.1
 
 ln -sf test $RPM_BUILD_ROOT/usr/bin/[
 
