@@ -1,8 +1,8 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.16 2001/03/21 01:25:56 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.17 2001/03/23 00:10:43 solar Exp $
 
 Summary: OpenSSH free Secure Shell (SSH) implementation
 Name: openssh
-Version: 2.5.2p1
+Version: 2.5.2p2
 Release: 1owl
 URL: http://www.openssh.com/
 Source0: ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-%{version}.tar.gz
@@ -12,10 +12,8 @@ Source3: ssh_config
 Source4: sshd_config
 Patch0: openssh-2.5.1p1-owl-hide-unknown.diff
 Patch1: openssh-2.5.1p1-owl-always-auth.diff
-Patch2: openssh-2.5.1p1-owl-pam_chauthtok-no-loop.diff
-Patch3: openssh-2.5.2p1-owl-pam_userpass.diff
-Patch4: openssh-2.5.2p1-owl-pam-cleanup.diff
-Patch5: openssh-2.5.1p1-owl-scp-stalltime.diff
+Patch2: openssh-2.5.2p2-owl-pam_userpass.diff
+Patch3: openssh-2.5.1p1-owl-scp-stalltime.diff
 Copyright: BSD
 Group: Applications/Internet
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
@@ -90,8 +88,6 @@ clients to connect to your host.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
-%patch5 -p1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" LIBS="-lcrypt -lpam -lpam_misc" ./configure \
@@ -183,6 +179,10 @@ fi
 %attr(0700,root,root) %config /etc/rc.d/init.d/sshd
 
 %changelog
+* Fri Mar 23 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 2.5.2p2.
+- Dropped two PAM patches (included in 2.5.2p2).
+
 * Wed Mar 21 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 2.5.2p1.
 - Patched a potential uninitialized reference in do_pam_cleanup_proc().
