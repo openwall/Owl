@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dev86/dev86.spec,v 1.8 2002/03/20 19:51:12 mci Exp $
+# $Id: Owl/packages/dev86/dev86.spec,v 1.9 2002/03/21 06:48:48 mci Exp $
 
 Summary: A real mode 80x86 assembler and linker.
 Name: dev86
@@ -31,6 +31,8 @@ bootstrapping code, from their sources.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+
+%{expand:%%define optflags %optflags -Wall}
 
 %build
 make <<!FooBar!
