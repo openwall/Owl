@@ -4,8 +4,8 @@
 #include <security/pam_appl.h>
 
 typedef struct {
-	char *user;
-	char *pass;
+	const char *user;
+	const char *pass;
 } pam_userpass_t;
 
 extern int pam_userpass_conv(int num_msg, const struct pam_message **msg,

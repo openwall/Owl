@@ -7,11 +7,13 @@
 
 #define SERVICE				"example_userpass"
 
-static char *auth_pam_userpass(char *user, char *pass)
+static char *auth_pam_userpass(const char *user, const char *pass)
 {
 	pam_handle_t *pamh;
 	pam_userpass_t userpass;
 	struct pam_conv conv = {pam_userpass_conv, &userpass};
+	const char *template;
+	char *retval;
 	int status;
 
 	userpass.user = user;
@@ -30,18 +32,18 @@ static char *auth_pam_userpass(char *user, char *pass)
 		return NULL;
 	}
 
-	status = pam_get_item(pamh, PAM_USER, (const void **)&user);
+	status = pam_get_item(pamh, PAM_USER, (const void **)&template);
 	if (status != PAM_SUCCESS) {
 		pam_end(pamh, status);
 		return NULL;
 	}
 
-	user = strdup(user);
+	retval = strdup(template);
 
 	if (pam_end(pamh, PAM_SUCCESS) != PAM_SUCCESS)
 		return NULL;
 
-	return user;
+	return retval;
 }
 
 int main(int argc, char **argv)
@@ -55,8 +57,7 @@ int main(int argc, char **argv)
 	}
 
 	user = auth_pam_userpass(argv[1], argv[2]);
-	printf(user ?
-		"User \"%s\"\n" : "Authentication failed\n", user);
+	printf(user ? "User \"%s\"\n" : "Authentication failed\n", user);
 
 	return 0;
 }

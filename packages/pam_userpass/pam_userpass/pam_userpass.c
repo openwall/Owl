@@ -96,7 +96,7 @@ PAM_EXTERN int pam_sm_setcred(pam_handle_t *pamh, int flags,
 #ifdef PAM_STATIC
 #define pam_sm_chauthtok pam_sm_authenticate
 #elif defined(__linux__) && defined(__ELF__)
-__asm__(".globl pam_sm_chauthtok; .set pam_sm_chauthtok, pam_sm_authenticate");
+__asm__(".globl pam_sm_chauthtok; pam_sm_chauthtok = pam_sm_authenticate");
 #else
 PAM_EXTERN int pam_sm_chauthtok(pam_handle_t *pamh, int flags,
 	int argc, const char **argv)
