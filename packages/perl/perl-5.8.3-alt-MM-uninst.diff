@@ -1,0 +1,12 @@
+diff -ur perl-5.8.3.orig/lib/ExtUtils/MM_Unix.pm perl-5.8.3/lib/ExtUtils/MM_Unix.pm
+--- perl-5.8.3.orig/lib/ExtUtils/MM_Unix.pm	Mon Jan 19 18:46:25 2004
++++ perl-5.8.3/lib/ExtUtils/MM_Unix.pm	Mon Jan 19 19:26:26 2004
+@@ -1968,7 +1968,7 @@
+     $self->{VERBINST}   ||= 0;
+     $self->{MOD_INSTALL} ||= 
+       $self->oneliner(<<'CODE', ['-MExtUtils::Install']);
+-install({@ARGV}, '$(VERBINST)', 0, '$(UNINST)');
++install({@ARGV}, '$(VERBINST)', 0, $(UNINST));
+ CODE
+     $self->{DOC_INSTALL} ||= 
+       '$(PERLRUN) "-MExtUtils::Command::MM" -e perllocal_install';

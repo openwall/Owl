@@ -1,32 +1,31 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.17 2003/10/30 21:15:47 solar Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.18 2004/01/20 00:06:36 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
 
+# Set this if you're running kernel with enabled 'Destroy shared memory
+# segments not in use' (CONFIG_HARDEN_SHM) configuration option.
+%define KERNEL_CONFIG_HARDEN_SHM 1
+
 Summary: The Perl programming language.
 Name: perl
-Version: 5.6.0
-Release: owl13
+Version: 5.8.3
+Release: owl0
 Epoch: 1
 License: GPL
 Group: Development/Languages
-Source0: ftp://ftp.perl.org/pub/CPAN/src/perl-%version.tar.gz
-Source1: ftp://ftp.perl.org/pub/CPAN/modules/by-module/Digest/Digest-MD5-2.09.tar.gz
-Source2: ftp://ftp.perl.org/pub/CPAN/modules/by-module/File/File-Temp-0.12.tar.gz
-Source10: perlcc.PL
-Patch0: perl-5.6.0-rh-install-man.diff
-Patch1: perl-5.6.0-rh-fhs.diff
-Patch2: perl-5.6.0-rh-buildroot.diff
-Patch3: perl-5.6.0-rh-prereq.diff
-Patch4: perl-5.6.0-rh-no-db.diff
-Patch5: perl-5.6.0-owl-no-mail.diff
-Patch6: perl-5.6.0-owl-disable-suidperl.diff
-Patch7: perl-5.6.0-alt-owl-perldoc-tmp.diff
-Patch8: perl-5.6.0-owl-tmp.diff
-Patch9: perl-5.6.0-owl-vitmp.diff
-Patch10: perl-5.6.0-up-owl-glob-bound.diff
-Patch11: perl-5.6.0-owl-getpwent.diff
-Provides: perl <= %version
+Source: ftp://ftp.perl.org/pub/CPAN/src/perl-%version.tar.bz2
+Patch0: perl-5.8.3-owl-disable-suidperl.diff
+Patch1: perl-5.8.3-owl-tmp.diff
+Patch2: perl-5.8.3-owl-vitmp.diff
+%if %KERNEL_CONFIG_HARDEN_SHM
+Patch10: perl-5.8.3-owl-tests-shm.diff
+%endif
+Patch20: perl-5.8.3-alt-no-previous-perl.diff
+Patch21: perl-5.8.3-alt-AnyDBM_File-DB_File.diff
+Patch22: perl-5.8.3-alt-MM-uninst.diff
+Patch23: perl-5.8.3-alt-deb-perldoc-INC.diff
+
 Obsoletes: perl-MD5
 BuildRequires: rpm >= 3.0.5
 BuildRequires: gawk, grep, tcsh
@@ -49,13 +48,21 @@ scripts.
 
 %prep
 %setup -q
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%if %KERNEL_CONFIG_HARDEN_SHM
+%patch10 -p1
+%endif
+%patch20 -p1
+%patch21 -p1
+%patch22 -p1
+%patch23 -p1
+
 # Remove files with known temporary file handling issues that we don't
 # package or use anyway.
-REMOVE_FILES='
-	INSTALL
-	makeaperl.SH perly.fixer
-	ext/SDBM_File/sdbm/grind ext/ODBM_File/ODBM_File.xs
-	eg/g/gsh eg/g/gcp.man'
+REMOVE_FILES='INSTALL makeaperl.SH perly.fixer ext/SDBM_File/sdbm/grind'
+chmod u+w $REMOVE_FILES
 rm $REMOVE_FILES
 mv MANIFEST MANIFEST.orig
 for f in $REMOVE_FILES; do
@@ -64,31 +71,9 @@ done | sed 's/\./\\./' | grep -vEf - MANIFEST.orig > MANIFEST
 # Satisfy a make dependency
 touch makeaperl.SH
 
-mkdir modules
-tar xzf %SOURCE1 -C modules
-tar xzf %SOURCE2 -C modules
-
-rm utils/perlcc.PL
-cp $RPM_SOURCE_DIR/perlcc.PL utils/
-
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
-%patch11 -p1
-
-find . -name '*.orig' -print0 | xargs -r0 rm -v --
-
 %build
 rm -rf $RPM_BUILD_ROOT
-sh Configure \
+%_buildshell Configure \
 	-des \
 	-O \
 	-Dnewmyuname="`uname -mrs`" \
@@ -108,25 +93,21 @@ sh Configure \
 	-Di_ndbm \
 	-Di_gdbm \
 	-Di_shadow \
+	-Dman1dir=%_mandir/man1 \
+	-Dman3dir=%_mandir/man3 \
 	-Dman3ext=3pm \
 	-Uuselargefiles
-make
+%__make
 
-# Build the modules we have
-cd modules
-for module in *; do
-	cd $module
-	../../perl -I../../lib Makefile.PL
-	make
-	cd ..
-done
+# Some of the tests create temporary files without due care, need to fix
+# them first.
+#%__make test
 
 %install
 rm -rf $RPM_BUILD_ROOT
-
-make install
-mkdir -p $RPM_BUILD_ROOT%_bindir
-install -m 755 utils/pl2pm $RPM_BUILD_ROOT%_bindir/
+%__make install
+%__mkdir_p $RPM_BUILD_ROOT%_bindir
+%__install -m 755 utils/pl2pm $RPM_BUILD_ROOT%_bindir/
 
 %if %BUILD_PH
 # Generate *.ph files with a trick.  Is this sick or what?
@@ -139,7 +120,7 @@ install -m 755 utils/pl2pm $RPM_BUILD_ROOT%_bindir/
 # It also is non-obvious whether any of this needs to be done during the
 # package build at all.
 #
-make all -f - <<EOF
+%__make all -f - <<EOF
 %if %BUILD_PH_ALL
 PKGS	= \$(shell rpm -qa | sed -n 's/\(^.*-devel\)-[0-9.]\+-owl[0-9]\+\$$/\1/p' | sort) \
 	  binutils popt pwdb
@@ -153,7 +134,7 @@ GCCH	= \$(filter \$(GCCDIR)/%%.h, \$(shell rpm -ql gcc))
 
 PERLLIB = \$(RPM_BUILD_ROOT)%_libdir/perl5/%version
 PERL	= PERL5LIB=\$(PERLLIB) \$(RPM_BUILD_ROOT)%_bindir/perl
-PHDIR	= \$(PERLLIB)/\${RPM_ARCH}-linux
+PHDIR	= \$(PERLLIB)/%_arch-%_os
 H2PH	= \$(PERL) \$(RPM_BUILD_ROOT)%_bindir/h2ph -d \$(PHDIR)/
 
 all: std-headers gcc-headers fix-config
@@ -161,6 +142,7 @@ all: std-headers gcc-headers fix-config
 std-headers: \$(STDH)
 	# PKGS=\$(PKGS)
 	# STDH=\$(STDH)
+	# H2PH=\$(H2PH)
 	cd %_includedir && \$(H2PH) \$(STDH:%_includedir/%%=%%)
 
 gcc-headers: \$(GCCH)
@@ -171,17 +153,8 @@ fix-config: \$(PHDIR)/Config.pm
 EOF
 
 # Don't leak information specific to the build system
-rm -f $RPM_BUILD_ROOT%_libdir/perl5/%version/%_arch-linux/linux/compile.ph
+rm -f $RPM_BUILD_ROOT%_libdir/perl5/%version/%_arch-%_os/%_os/compile.ph
 %endif
-
-# Now pay attention to the extra modules
-pushd modules
-for module in *; do
-	eval $(../perl -V:installarchlib)
-	mkdir -p $RPM_BUILD_ROOT/$installarchlib
-	make -C $module install
-done
-popd
 
 # Fix the rest of the stuff
 find $RPM_BUILD_ROOT%_libdir/perl* -name .packlist -o -name perllocal.pod | \
@@ -195,6 +168,25 @@ find $RPM_BUILD_ROOT%_libdir/perl* -name .packlist -o -name perllocal.pod | \
 %_mandir/*/*
 
 %changelog
+* Tue Jan 20 2004 Solar Designer <solar@owl.openwall.com> 5.8.3-owl0
+- Updated to 5.8.3.
+- Reviewed all the patches, re-generated those which are to remain, applied
+various corrections to the patches and the spec file.
+
+* Thu Dec 25 2003 (GalaxyMaster) <galaxy@owl.openwall.com> 5.8.2-owl0
+- Updated to 5.8.2.
+- Dropped patches incorporated into mainstream (rh-buildroot, rh-fhs,
+rh-installman-man, rh-no-db, rh-prereq, up-owl-glob-bound).
+- Dropped owl-getpwent patch due to rewrite of pp_sys.c such that it
+no longer uses getspent(3).
+- Dropped alt-owl-perldoc-tmp due to rewrite of perldoc.PL (it uses module
+Pod::Perldoc, which deals with temporary files via File::Temp).
+- Dropped perlcc.PL source (it was a back-port from Perl 5.6.1 to 5.6.0).
+- Added patches from ALT Linux perl package.
+- Added patch to skip taint tests which use shared memory segments
+(they will fail on system with CONFIG_HARDEN_SHM).
+- Reviewed Owl patches and corrected some of them to suit the new version.
+
 * Fri Jul 04 2003 Solar Designer <solar@owl.openwall.com> 5.6.0-owl13
 - Corrected the Perl getpwent() to not rely on getspent(3) returning
 entries in the same order as getpwent(3) does; this actually makes a

@@ -1,0 +1,12 @@
+diff -ur perl-5.8.3.orig/utils/perlbug.PL perl-5.8.3/utils/perlbug.PL
+--- perl-5.8.3.orig/utils/perlbug.PL	Tue Sep 30 17:12:10 2003
++++ perl-5.8.3/utils/perlbug.PL	Mon Jan 19 18:52:53 2004
+@@ -261,7 +261,7 @@
+ 	|| ($Is_VMS && "edit/tpu")
+ 	|| ($Is_MSWin32 && "notepad")
+ 	|| ($Is_MacOS && '')
+-	|| "vi";
++	|| "vitmp";
+ 
+     # Not OK - provide build failure template by finessing OK report
+     if ($::opt_n) {

@@ -1,42 +1,7 @@
-diff -ur perl-5.6.0.orig/Configure perl-5.6.0/Configure
---- perl-5.6.0.orig/Configure	Wed Mar 22 23:36:37 2000
-+++ perl-5.6.0/Configure	Wed Jul 17 05:12:23 2002
-@@ -23,7 +23,7 @@
- # Generated on Wed Mar 22 19:13:31 EET 2000 [metaconfig 3.0 PL70]
- # (with additional metaconfig patches by perlbug@perl.com)
- 
--cat >/tmp/c1$$ <<EOF
-+cat >c1$$ <<EOF
- ARGGGHHHH!!!!!
- 
- SCO csh still thinks true is false.  Write to SCO today and tell them that next
-@@ -34,18 +34,18 @@
- 
- [End of diatribe. We now return you to your regularly scheduled programming...]
- EOF
--cat >/tmp/c2$$ <<EOF
-+cat >c2$$ <<EOF
- 
- OOPS!  You naughty creature!  You didn't run Configure with sh!
- I will attempt to remedy the situation by running sh for you...
- EOF
- 
--true || cat /tmp/c1$$ /tmp/c2$$
-+true || cat c1$$ c2$$
- true || exec sh $0 $argv:q
- 
--(exit $?0) || cat /tmp/c2$$
-+(exit $?0) || cat c2$$
- (exit $?0) || exec sh $0 $argv:q
--rm -f /tmp/c1$$ /tmp/c2$$
-+rm -f c1$$ c2$$
- 
- : compute my invocation name
- me=$0
-diff -ur perl-5.6.0.orig/ext/DB_File/DB_File.pm perl-5.6.0/ext/DB_File/DB_File.pm
---- perl-5.6.0.orig/ext/DB_File/DB_File.pm	Mon Jan 24 12:52:21 2000
-+++ perl-5.6.0/ext/DB_File/DB_File.pm	Thu Jul 18 09:12:04 2002
-@@ -1587,7 +1587,7 @@
+diff -ur perl-5.8.3.orig/ext/DB_File/DB_File.pm perl-5.8.3/ext/DB_File/DB_File.pm
+--- perl-5.8.3.orig/ext/DB_File/DB_File.pm	Mon Jan 19 18:46:25 2004
++++ perl-5.8.3/ext/DB_File/DB_File.pm	Mon Jan 19 20:14:11 2004
+@@ -1821,7 +1821,7 @@
      use DB_File ;
  
      my %hash ;
@@ -45,7 +10,7 @@ diff -ur perl-5.6.0.orig/ext/DB_File/DB_File.pm perl-5.6.0/ext/DB_File/DB_File.p
      unlink $filename ;
  
      my $db = tie %hash, 'DB_File', $filename, O_CREAT|O_RDWR, 0666, $DB_HASH 
-@@ -1628,7 +1628,7 @@
+@@ -1863,7 +1863,7 @@
      use strict ;
      use DB_File ;
      my %hash ;
@@ -54,20 +19,44 @@ diff -ur perl-5.6.0.orig/ext/DB_File/DB_File.pm perl-5.6.0/ext/DB_File/DB_File.p
      unlink $filename ;
  
  
-@@ -1659,8 +1659,8 @@
+@@ -1894,8 +1894,8 @@
  
  The locking technique went like this. 
  
--    $db = tie(%db, 'DB_File', '/tmp/foo.db', O_CREAT|O_RDWR, 0644)
+-    $db = tie(%db, 'DB_File', '/tmp/foo.db', O_CREAT|O_RDWR, 0666)
 -        || die "dbcreat /tmp/foo.db $!";
 +    $db = tie(%db, 'DB_File', '/var/run/foo.db', O_CREAT|O_RDWR, 0644)
 +        || die "dbcreat /var/run/foo.db $!";
      $fd = $db->fd;
      open(DB_FH, "+<&=$fd") || die "dup $!";
      flock (DB_FH, LOCK_EX) || die "flock: $!";
-diff -ur perl-5.6.0.orig/ext/Socket/Socket.pm perl-5.6.0/ext/Socket/Socket.pm
---- perl-5.6.0.orig/ext/Socket/Socket.pm	Mon Mar 13 13:32:17 2000
-+++ perl-5.6.0/ext/Socket/Socket.pm	Thu Jul 18 09:13:00 2002
+diff -ur perl-5.8.3.orig/ext/IO/t/io_unix.t perl-5.8.3/ext/IO/t/io_unix.t
+--- perl-5.8.3.orig/ext/IO/t/io_unix.t	Tue Sep 30 17:10:17 2003
++++ perl-5.8.3/ext/IO/t/io_unix.t	Mon Jan 19 20:14:08 2004
+@@ -37,7 +37,7 @@
+     }
+ }
+ 
+-$PATH = "/tmp/sock-$$";
++$PATH = "sock-$$";
+ 
+ # Test if we can create the file within the tmp directory
+ if (-e $PATH or not open(TEST, ">$PATH") and $^O ne 'os2') {
+diff -ur perl-5.8.3.orig/ext/ODBM_File/ODBM_File.xs perl-5.8.3/ext/ODBM_File/ODBM_File.xs
+--- perl-5.8.3.orig/ext/ODBM_File/ODBM_File.xs	Tue Sep 30 17:10:20 2003
++++ perl-5.8.3/ext/ODBM_File/ODBM_File.xs	Mon Jan 19 21:55:54 2004
+@@ -32,7 +32,7 @@
+  * Set DBM_BUG_DUPLICATE_FREE in the extension hint file.
+  */
+ /* Close the previous dbm, and fail to open a new dbm */
+-#define dbmclose()	((void) dbminit("/tmp/x/y/z/z/y"))
++#define dbmclose()	((void) dbminit("/nonexistent"))
+ #endif
+ 
+ #include <fcntl.h>
+diff -ur perl-5.8.3.orig/ext/Socket/Socket.pm perl-5.8.3/ext/Socket/Socket.pm
+--- perl-5.8.3.orig/ext/Socket/Socket.pm	Tue Sep 30 17:10:25 2003
++++ perl-5.8.3/ext/Socket/Socket.pm	Mon Jan 19 20:14:11 2004
 @@ -32,8 +32,8 @@
  
      $proto = getprotobyname('tcp');
@@ -79,10 +68,10 @@ diff -ur perl-5.6.0.orig/ext/Socket/Socket.pm perl-5.6.0/ext/Socket/Socket.pm
      connect(Socket_Handle,$sun);
  
  =head1 DESCRIPTION
-diff -ur perl-5.6.0.orig/lib/CGI/Cookie.pm perl-5.6.0/lib/CGI/Cookie.pm
---- perl-5.6.0.orig/lib/CGI/Cookie.pm	Sat Mar  4 07:26:54 2000
-+++ perl-5.6.0/lib/CGI/Cookie.pm	Thu Jul 18 09:14:12 2002
-@@ -352,7 +352,7 @@
+diff -ur perl-5.8.3.orig/lib/CGI/Cookie.pm perl-5.8.3/lib/CGI/Cookie.pm
+--- perl-5.8.3.orig/lib/CGI/Cookie.pm	Mon Jan 19 18:46:25 2004
++++ perl-5.8.3/lib/CGI/Cookie.pm	Mon Jan 19 20:14:11 2004
+@@ -407,7 +407,7 @@
  You may also retrieve cookies that were stored in some external
  form using the parse() class method:
  
@@ -90,11 +79,11 @@ diff -ur perl-5.6.0.orig/lib/CGI/Cookie.pm perl-5.6.0/lib/CGI/Cookie.pm
 +       $COOKIES = `cat /var/run/www/Cookie_stash`;
         %cookies = parse CGI::Cookie($COOKIES);
  
- =head2 Manipulating Cookies
-diff -ur perl-5.6.0.orig/lib/ExtUtils/MakeMaker.pm perl-5.6.0/lib/ExtUtils/MakeMaker.pm
---- perl-5.6.0.orig/lib/ExtUtils/MakeMaker.pm	Mon Feb 28 09:58:49 2000
-+++ perl-5.6.0/lib/ExtUtils/MakeMaker.pm	Thu Jul 18 09:15:37 2002
-@@ -895,7 +895,7 @@
+ If you are in a mod_perl environment, you can save some overhead by
+diff -ur perl-5.8.3.orig/lib/ExtUtils/MakeMaker.pm perl-5.8.3/lib/ExtUtils/MakeMaker.pm
+--- perl-5.8.3.orig/lib/ExtUtils/MakeMaker.pm	Fri Oct 31 22:03:49 2003
++++ perl-5.8.3/lib/ExtUtils/MakeMaker.pm	Mon Jan 19 20:14:11 2004
+@@ -1013,7 +1013,7 @@
  The Makefile to be produced may be altered by adding arguments of the
  form C<KEY=VALUE>. E.g.
  
@@ -103,9 +92,9 @@ diff -ur perl-5.6.0.orig/lib/ExtUtils/MakeMaker.pm perl-5.6.0/lib/ExtUtils/MakeM
  
  Other interesting targets in the generated Makefile are
  
-diff -ur perl-5.6.0.orig/lib/ExtUtils/inst perl-5.6.0/lib/ExtUtils/inst
---- perl-5.6.0.orig/lib/ExtUtils/inst	Sun Jan 23 15:12:17 2000
-+++ perl-5.6.0/lib/ExtUtils/inst	Thu Jul 18 09:24:44 2002
+diff -ur perl-5.8.3.orig/lib/ExtUtils/instmodsh perl-5.8.3/lib/ExtUtils/instmodsh
+--- perl-5.8.3.orig/lib/ExtUtils/instmodsh	Tue Sep 30 17:10:47 2003
++++ perl-5.8.3/lib/ExtUtils/instmodsh	Mon Jan 19 20:14:11 2004
 @@ -2,6 +2,7 @@
  
  use strict;
@@ -137,10 +126,10 @@ diff -ur perl-5.6.0.orig/lib/ExtUtils/inst perl-5.6.0/lib/ExtUtils/inst
           last CASE;
           };
        $reply eq 'v' and do
-diff -ur perl-5.6.0.orig/lib/Shell.pm perl-5.6.0/lib/Shell.pm
---- perl-5.6.0.orig/lib/Shell.pm	Mon Jan 24 13:15:43 2000
-+++ perl-5.6.0/lib/Shell.pm	Thu Jul 18 09:25:47 2002
-@@ -137,7 +137,7 @@
+diff -ur perl-5.8.3.orig/lib/Shell.pm perl-5.8.3/lib/Shell.pm
+--- perl-5.8.3.orig/lib/Shell.pm	Tue Sep 30 17:11:05 2003
++++ perl-5.8.3/lib/Shell.pm	Mon Jan 19 20:14:11 2004
+@@ -140,7 +140,7 @@
      sub ps;
      print ps -ww;
  
@@ -149,9 +138,9 @@ diff -ur perl-5.6.0.orig/lib/Shell.pm perl-5.6.0/lib/Shell.pm
  
  That's maybe too gonzo.  It actually exports an AUTOLOAD to the current
  package (and uncovered a bug in Beta 3, by the way).  Maybe the usual
-diff -ur perl-5.6.0.orig/lib/dotsh.pl perl-5.6.0/lib/dotsh.pl
---- perl-5.6.0.orig/lib/dotsh.pl	Mon Jul 26 09:03:47 1999
-+++ perl-5.6.0/lib/dotsh.pl	Thu Jul 18 09:34:36 2002
+diff -ur perl-5.8.3.orig/lib/dotsh.pl perl-5.8.3/lib/dotsh.pl
+--- perl-5.8.3.orig/lib/dotsh.pl	Tue Sep 30 17:11:16 2003
++++ perl-5.8.3/lib/dotsh.pl	Mon Jan 19 20:14:11 2004
 @@ -27,9 +27,9 @@
  #         dependent upon. These variables MUST be defined using shell syntax.
  #
@@ -187,30 +176,44 @@ diff -ur perl-5.6.0.orig/lib/dotsh.pl perl-5.6.0/lib/dotsh.pl
  
     foreach $key (keys(%ENV)) {
         $tmp .= "\$$key = \$ENV{'$key'};" if $key =~ /^[A-Za-z]\w*$/;
-diff -ur perl-5.6.0.orig/lib/perl5db.pl perl-5.6.0/lib/perl5db.pl
---- perl-5.6.0.orig/lib/perl5db.pl	Sun Mar 19 09:26:25 2000
-+++ perl-5.6.0/lib/perl5db.pl	Thu Jul 18 09:55:25 2002
-@@ -56,7 +56,7 @@
- # TTY  - the TTY to use for debugging i/o.
- #
- # noTTY - if set, goes in NonStop mode.  On interrupt if TTY is not set
--# uses the value of noTTY or "/tmp/perldbtty$$" to find TTY using
-+# uses the value of noTTY or "/var/run/perldbtty$$" to find TTY using
- # Term::Rendezvous.  Current variant is to have the name of TTY in this
- # file.
- #
-@@ -1746,7 +1746,7 @@
- 	    select($sel);
- 	} else {
- 	    eval "require Term::Rendezvous;" or die;
--	    my $rv = $ENV{PERLDB_NOTTY} || "/tmp/perldbtty$$";
-+	    my $rv = $ENV{PERLDB_NOTTY} || "/var/run/perldbtty$$";
- 	    my $term_rv = new Term::Rendezvous $rv;
- 	    $IN = $term_rv->IN;
- 	    $OUT = $term_rv->OUT;
-diff -ur perl-5.6.0.orig/pod/perldbmfilter.pod perl-5.6.0/pod/perldbmfilter.pod
---- perl-5.6.0.orig/pod/perldbmfilter.pod	Tue Mar 14 00:25:37 2000
-+++ perl-5.6.0/pod/perldbmfilter.pod	Thu Jul 18 09:53:55 2002
+diff -ur perl-5.8.3.orig/lib/perl5db.pl perl-5.8.3/lib/perl5db.pl
+--- perl-5.8.3.orig/lib/perl5db.pl	Mon Jan 19 18:46:25 2004
++++ perl-5.8.3/lib/perl5db.pl	Mon Jan 19 20:14:11 2004
+@@ -206,7 +206,7 @@
+ =item * noTTY 
+ 
+ if set, goes in NonStop mode.  On interrupt, if TTY is not set,
+-uses the value of noTTY or "/tmp/perldbtty$$" to find TTY using
++uses the value of noTTY or "/var/run/perldbtty$$" to find TTY using
+ Term::Rendezvous.  Current variant is to have the name of TTY in this
+ file.
+ 
+@@ -5689,8 +5689,8 @@
+         else {
+             eval "require Term::Rendezvous;" or die;
+             # See if we have anything to pass to Term::Rendezvous.
+-            # Use /tmp/perldbtty$$ if not.
+-            my $rv = $ENV{PERLDB_NOTTY} || "/tmp/perldbtty$$";
++            # Use /var/run/perldbtty$$ if not.
++            my $rv = $ENV{PERLDB_NOTTY} || "/var/run/perldbtty$$";
+ 
+             # Rendezvous and get the filehandles.
+             my $term_rv = new Term::Rendezvous $rv;
+diff -ur perl-5.8.3.orig/perly.fixer perl-5.8.3/perly.fixer
+--- perl-5.8.3.orig/perly.fixer	Tue Sep 30 17:11:42 2003
++++ perl-5.8.3/perly.fixer	Mon Jan 19 20:14:11 2004
+@@ -23,7 +23,7 @@
+ 
+ input=$1
+ output=$2
+-tmp=/tmp/f$$
++tmp=perly$$
+ 
+ inputh=`echo $input|sed 's:\.c$:.h:'`
+ if grep '^#ifdef PERL_CORE' $inputh; then
+diff -ur perl-5.8.3.orig/pod/perldbmfilter.pod perl-5.8.3/pod/perldbmfilter.pod
+--- perl-5.8.3.orig/pod/perldbmfilter.pod	Tue Sep 30 17:11:45 2003
++++ perl-5.8.3/pod/perldbmfilter.pod	Mon Jan 19 20:14:11 2004
 @@ -91,7 +91,7 @@
      use Fcntl ;
  
@@ -229,10 +232,10 @@ diff -ur perl-5.6.0.orig/pod/perldbmfilter.pod perl-5.6.0/pod/perldbmfilter.pod
      unlink $filename ;
  
  
-diff -ur perl-5.6.0.orig/pod/perldebug.pod perl-5.6.0/pod/perldebug.pod
---- perl-5.6.0.orig/pod/perldebug.pod	Thu Mar 23 08:28:27 2000
-+++ perl-5.6.0/pod/perldebug.pod	Thu Jul 18 09:54:43 2002
-@@ -630,7 +630,7 @@
+diff -ur perl-5.8.3.orig/pod/perldebug.pod perl-5.8.3/pod/perldebug.pod
+--- perl-5.8.3.orig/pod/perldebug.pod	Tue Sep 30 17:11:45 2003
++++ perl-5.8.3/pod/perldebug.pod	Mon Jan 19 20:14:11 2004
+@@ -700,7 +700,7 @@
  with two methods: C<IN> and C<OUT>.  These should return filehandles to use
  for debugging input and output correspondingly.  The C<new> method should
  inspect an argument containing the value of C<$ENV{PERLDB_NOTTY}> at
@@ -241,19 +244,10 @@ diff -ur perl-5.6.0.orig/pod/perldebug.pod perl-5.6.0/pod/perldebug.pod
  inspected for proper ownership, so security hazards are theoretically
  possible.
  
-diff -ur perl-5.6.0.orig/pod/perlfaq5.pod perl-5.6.0/pod/perlfaq5.pod
---- perl-5.6.0.orig/pod/perlfaq5.pod	Fri Mar  3 21:55:45 2000
-+++ perl-5.6.0/pod/perlfaq5.pod	Thu Jul 18 09:59:25 2002
-@@ -189,7 +189,7 @@
-     use POSIX qw(tmpnam);
- 
-     # try new temporary filenames until we get one that didn't already
--    # exist;  the check should be unnecessary, but you can't be too careful
-+    # exist;  the check and the O_EXCL are necessary
-     do { $name = tmpnam() }
-         until sysopen(FH, $name, O_RDWR|O_CREAT|O_EXCL);
- 
-@@ -546,8 +546,8 @@
+diff -ur perl-5.8.3.orig/pod/perlfaq5.pod perl-5.8.3/pod/perlfaq5.pod
+--- perl-5.8.3.orig/pod/perlfaq5.pod	Mon Jan 19 18:46:25 2004
++++ perl-5.8.3/pod/perlfaq5.pod	Mon Jan 19 20:14:11 2004
+@@ -427,8 +427,8 @@
  
  To open a file without blocking, creating if necessary:
  
@@ -264,7 +258,7 @@ diff -ur perl-5.6.0.orig/pod/perlfaq5.pod perl-5.6.0/pod/perlfaq5.pod
  
  Be warned that neither creation nor deletion of files is guaranteed to
  be an atomic operation over NFS.  That is, two processes might both
-@@ -1092,7 +1092,7 @@
+@@ -924,7 +924,7 @@
  If you check L<perlfunc/open>, you'll see that several of the ways
  to call open() should do the trick.  For example:
  
@@ -273,10 +267,10 @@ diff -ur perl-5.6.0.orig/pod/perlfaq5.pod perl-5.6.0/pod/perlfaq5.pod
      open(STDERR, ">&LOG");
  
  Or even with a literal numeric descriptor:
-diff -ur perl-5.6.0.orig/pod/perlfaq8.pod perl-5.6.0/pod/perlfaq8.pod
---- perl-5.6.0.orig/pod/perlfaq8.pod	Fri Mar  3 21:55:45 2000
-+++ perl-5.6.0/pod/perlfaq8.pod	Thu Jul 18 10:05:22 2002
-@@ -657,10 +657,10 @@
+diff -ur perl-5.8.3.orig/pod/perlfaq8.pod perl-5.8.3/pod/perlfaq8.pod
+--- perl-5.8.3.orig/pod/perlfaq8.pod	Tue Sep 30 17:11:46 2003
++++ perl-5.8.3/pod/perlfaq8.pod	Mon Jan 19 20:14:11 2004
+@@ -749,10 +749,10 @@
      while (<PH>) { }                            #    plus a read
  
  To read both a command's STDOUT and its STDERR separately, it's easiest
@@ -290,7 +284,7 @@ diff -ur perl-5.6.0.orig/pod/perlfaq8.pod perl-5.6.0/pod/perlfaq8.pod
  
  Ordering is important in all these examples.  That's because the shell
  processes file descriptor redirections in strictly left to right order.
-@@ -973,8 +973,8 @@
+@@ -1063,8 +1063,8 @@
  sysopen():
  
      use Fcntl;
@@ -299,12 +293,12 @@ diff -ur perl-5.6.0.orig/pod/perlfaq8.pod perl-5.6.0/pod/perlfaq8.pod
 +    sysopen(FH, "/foo/somefile", O_WRONLY|O_NDELAY|O_CREAT, 0644)
 +        or die "can't open /foo/somefile: $!":
  
+ =head2 How do I install a module from CPAN?
  
- 
-diff -ur perl-5.6.0.orig/pod/perlfunc.pod perl-5.6.0/pod/perlfunc.pod
---- perl-5.6.0.orig/pod/perlfunc.pod	Tue Mar 21 01:13:52 2000
-+++ perl-5.6.0/pod/perlfunc.pod	Thu Jul 18 10:06:23 2002
-@@ -2679,7 +2679,7 @@
+diff -ur perl-5.8.3.orig/pod/perlfunc.pod perl-5.8.3/pod/perlfunc.pod
+--- perl-5.8.3.orig/pod/perlfunc.pod	Mon Jan 19 18:46:25 2004
++++ perl-5.8.3/pod/perlfunc.pod	Mon Jan 19 20:14:11 2004
+@@ -2928,7 +2928,7 @@
      open(ARTICLE, "caesar <$article |")		# ditto
  	or die "Can't start caesar: $!";
  
@@ -312,11 +306,11 @@ diff -ur perl-5.6.0.orig/pod/perlfunc.pod perl-5.6.0/pod/perlfunc.pod
 +    open(EXTRACT, "|sort >Tmp$$")		# $$ is our process id
  	or die "Can't start sort: $!";
  
-     # process argument list of files along with any includes
-diff -ur perl-5.6.0.orig/pod/perlipc.pod perl-5.6.0/pod/perlipc.pod
---- perl-5.6.0.orig/pod/perlipc.pod	Sun Mar 19 10:18:09 2000
-+++ perl-5.6.0/pod/perlipc.pod	Thu Jul 18 10:07:21 2002
-@@ -845,7 +845,7 @@
+     # in memory files
+diff -ur perl-5.8.3.orig/pod/perlipc.pod perl-5.8.3/pod/perlipc.pod
+--- perl-5.8.3.orig/pod/perlipc.pod	Tue Sep 30 17:11:48 2003
++++ perl-5.8.3/pod/perlipc.pod	Mon Jan 19 20:14:11 2004
+@@ -1030,7 +1030,7 @@
      use strict;
      my ($rendezvous, $line);
  
@@ -325,8 +319,8 @@ diff -ur perl-5.6.0.orig/pod/perlipc.pod perl-5.6.0/pod/perlipc.pod
      socket(SOCK, PF_UNIX, SOCK_STREAM, 0)	|| die "socket: $!";
      connect(SOCK, sockaddr_un($rendezvous))	|| die "connect: $!";
      while (defined($line = <SOCK>)) {
-@@ -865,7 +865,7 @@
-     BEGIN { $ENV{PATH} = '/usr/ucb:/bin' }
+@@ -1051,7 +1051,7 @@
+     sub spawn;  # forward declaration
      sub logmsg { print "$0 $$: @_ at ", scalar localtime, "\n" }
  
 -    my $NAME = '/tmp/catsock';
@@ -334,10 +328,10 @@ diff -ur perl-5.6.0.orig/pod/perlipc.pod perl-5.6.0/pod/perlipc.pod
      my $uaddr = sockaddr_un($NAME);
      my $proto = getprotobyname('tcp');
  
-diff -ur perl-5.6.0.orig/pod/perlobj.pod perl-5.6.0/pod/perlobj.pod
---- perl-5.6.0.orig/pod/perlobj.pod	Fri Mar  3 21:55:45 2000
-+++ perl-5.6.0/pod/perlobj.pod	Thu Jul 18 10:07:52 2002
-@@ -521,15 +521,15 @@
+diff -ur perl-5.8.3.orig/pod/perlobj.pod perl-5.8.3/pod/perlobj.pod
+--- perl-5.8.3.orig/pod/perlobj.pod	Mon Jan 19 18:46:25 2004
++++ perl-5.8.3/pod/perlobj.pod	Mon Jan 19 20:14:11 2004
+@@ -535,15 +535,15 @@
      warn "time to die...";
      exit;
  
@@ -361,10 +355,10 @@ diff -ur perl-5.6.0.orig/pod/perlobj.pod perl-5.6.0/pod/perlobj.pod
      DESTROYING Subtle=SCALAR(0x8e57c) during global destruction.
  
  Notice that "global destruction" bit there?  That's the thread
-diff -ur perl-5.6.0.orig/pod/perlop.pod perl-5.6.0/pod/perlop.pod
---- perl-5.6.0.orig/pod/perlop.pod	Sun Mar 19 09:17:07 2000
-+++ perl-5.6.0/pod/perlop.pod	Thu Jul 18 10:09:23 2002
-@@ -1026,10 +1026,10 @@
+diff -ur perl-5.8.3.orig/pod/perlop.pod perl-5.8.3/pod/perlop.pod
+--- perl-5.8.3.orig/pod/perlop.pod	Mon Jan 19 18:46:25 2004
++++ perl-5.8.3/pod/perlop.pod	Mon Jan 19 20:14:11 2004
+@@ -1160,10 +1160,10 @@
      $output = `cmd 3>&1 1>&2 2>&3 3>&-`;
  
  To read both a command's STDOUT and its STDERR separately, it's easiest
@@ -378,10 +372,10 @@ diff -ur perl-5.6.0.orig/pod/perlop.pod perl-5.6.0/pod/perlop.pod
  
  Using single-quote as a delimiter protects the command from Perl's
  double-quote interpolation, passing it on to the shell instead:
-diff -ur perl-5.6.0.orig/pod/perlopentut.pod perl-5.6.0/pod/perlopentut.pod
---- perl-5.6.0.orig/pod/perlopentut.pod	Fri Mar  3 21:55:45 2000
-+++ perl-5.6.0/pod/perlopentut.pod	Thu Jul 18 10:08:38 2002
-@@ -142,11 +142,11 @@
+diff -ur perl-5.8.3.orig/pod/perlopentut.pod perl-5.8.3/pod/perlopentut.pod
+--- perl-5.8.3.orig/pod/perlopentut.pod	Tue Sep 30 17:11:49 2003
++++ perl-5.8.3/pod/perlopentut.pod	Mon Jan 19 20:14:11 2004
+@@ -192,11 +192,11 @@
      open(WTMP, "+< /usr/adm/wtmp") 
          || die "can't open /usr/adm/wtmp: $!";
  
@@ -397,10 +391,10 @@ diff -ur perl-5.6.0.orig/pod/perlopentut.pod perl-5.6.0/pod/perlopentut.pod
  
  The first one won't create a new file, and the second one will always
  clobber an old one.  The third one will create a new file if necessary
-diff -ur perl-5.6.0.orig/utils/c2ph.PL perl-5.6.0/utils/c2ph.PL
---- perl-5.6.0.orig/utils/c2ph.PL	Tue Jul 20 21:18:16 1999
-+++ perl-5.6.0/utils/c2ph.PL	Thu Jul 18 09:06:27 2002
-@@ -258,6 +258,7 @@
+diff -ur perl-5.8.3.orig/utils/c2ph.PL perl-5.8.3/utils/c2ph.PL
+--- perl-5.8.3.orig/utils/c2ph.PL	Tue Sep 30 17:12:10 2003
++++ perl-5.8.3/utils/c2ph.PL	Mon Jan 19 20:18:11 2004
+@@ -280,6 +280,7 @@
  
  $RCSID = '$Id: c2ph,v 1.7 95/10/28 10:41:47 tchrist Exp Locker: tchrist $';
  
@@ -408,13 +402,13 @@ diff -ur perl-5.6.0.orig/utils/c2ph.PL perl-5.6.0/utils/c2ph.PL
  
  ######################################################################
  
-@@ -446,6 +447,13 @@
+@@ -480,6 +481,13 @@
      printf "%-16s%-15s  %s\n", $var, eval "\$$var", $msg;
  }
  
 +sub safedir {
 +    $SAFEDIR = File::Temp::tempdir("c2ph.XXXXXX", TMPDIR => 1, CLEANUP => 1)
-+	unless (defined($SAFEDIR));
++      unless (defined($SAFEDIR));
 +}
 +
 +undef $SAFEDIR;
@@ -422,7 +416,7 @@ diff -ur perl-5.6.0.orig/utils/c2ph.PL perl-5.6.0/utils/c2ph.PL
  $recurse = 1;
  
  if (@ARGV) {
-@@ -461,14 +469,15 @@
+@@ -495,15 +503,15 @@
      }
      elsif (@ARGV == 1 && $ARGV[0] =~ /\.c$/) {
  	local($dir, $file) = $ARGV[0] =~ m#(.*/)?(.*)$#;
@@ -432,46 +426,48 @@ diff -ur perl-5.6.0.orig/utils/c2ph.PL perl-5.6.0/utils/c2ph.PL
  	$ARGV[0] =~ s/\.c$/.s/;
      }
      else {
--	$TMP = "/tmp/c2ph.$$.c";
+-	$TMPDIR = tempdir(CLEANUP => 1);
+-	$TMP = "$TMPDIR/c2ph.$$.c";
 +	&safedir;
 +	$TMP = "$SAFEDIR/c2ph.$$.c";
  	&system("cat @ARGV > $TMP") && exit 1;
--	&system("cd /tmp; $CC $CFLAGS $DEFINES $TMP") && exit 1;
+-	&system("cd $TMPDIR; $CC $CFLAGS $DEFINES $TMP") && exit 1;
 +	&system("cd $SAFEDIR && $CC $CFLAGS $DEFINES $TMP") && exit 1;
  	unlink $TMP;
  	$TMP =~ s/\.c$/.s/;
  	@ARGV = ($TMP);
-@@ -1239,7 +1248,8 @@
+@@ -1274,8 +1282,8 @@
  }
  
  sub compute_intrinsics {
--    local($TMP) = "/tmp/c2ph-i.$$.c";
+-    $TMPDIR ||= tempdir(CLEANUP => 1);
+-    local($TMP) = "$TMPDIR/c2ph-i.$$.c";
 +    &safedir;
 +    local($TMP) = "$SAFEDIR/c2ph-i.$$.c";
      open (TMP, ">$TMP") || die "can't open $TMP: $!";
      select(TMP);
  
-@@ -1267,7 +1277,7 @@
+@@ -1303,7 +1311,7 @@
      close TMP;
  
      select(STDOUT);
--    open(PIPE, "cd /tmp && $CC $TMP && /tmp/a.out|");
+-    open(PIPE, "cd $TMPDIR && $CC $TMP && $TMPDIR/a.out|");
 +    open(PIPE, "cd $SAFEDIR && $CC $TMP && $SAFEDIR/a.out|");
      while (<PIPE>) {
  	chop;
  	split(' ',$_,2);;
-@@ -1276,7 +1286,7 @@
+@@ -1312,7 +1320,7 @@
  	$intrinsics{$_[1]} = $template{$_[0]};
      }
      close(PIPE) || die "couldn't read intrinsics!";
--    unlink($TMP, '/tmp/a.out');
-+    unlink($TMP, "$SAFEDIR/a.out");
+-    unlink($TMP, '$TMPDIR/a.out');
++    unlink($TMP, '$SAFEDIR/a.out');
      print STDERR "done\n" if $trace;
  }
  
-diff -ur perl-5.6.0.orig/utils/perlbug.PL perl-5.6.0/utils/perlbug.PL
---- perl-5.6.0.orig/utils/perlbug.PL	Wed Mar 22 17:06:17 2000
-+++ perl-5.6.0/utils/perlbug.PL	Wed Jul 17 06:10:14 2002
+diff -ur perl-5.8.3.orig/utils/perlbug.PL perl-5.8.3/utils/perlbug.PL
+--- perl-5.8.3.orig/utils/perlbug.PL	Tue Sep 30 17:12:10 2003
++++ perl-5.8.3/utils/perlbug.PL	Mon Jan 19 20:14:11 2004
 @@ -78,7 +78,7 @@
  print OUT <<'!NO!SUBS!';
  
@@ -481,16 +477,12 @@ diff -ur perl-5.6.0.orig/utils/perlbug.PL perl-5.6.0/utils/perlbug.PL
  use Getopt::Std;
  use strict;
  
-@@ -892,14 +892,9 @@
+@@ -958,10 +958,9 @@
  }
  
  sub filename {
--    my $dir = $Is_VMS ? 'sys$scratch:'
--	: ($Is_MSWin32 && $ENV{'TEMP'}) ? $ENV{'TEMP'}
--        : $Is_MacOS ? $ENV{'TMPDIR'}
--	: '/tmp';
+-    my $dir = File::Spec->tmpdir();
 -    $filename = "bugrep0$$";
--#    $dir .= "\\" if $Is_MSWin32 and $dir !~ m|[\\/]$|;
 -    $filename++ while -e File::Spec->catfile($dir, $filename);
 -    $filename = File::Spec->catfile($dir, $filename);
 +    my ($fh, $filename) = File::Temp::tempfile(UNLINK => 1);
@@ -499,35 +491,3 @@ diff -ur perl-5.6.0.orig/utils/perlbug.PL perl-5.6.0/utils/perlbug.PL
  }
  
  sub paraprint {
-diff -ur perl-5.6.0.orig/x2p/s2p.PL perl-5.6.0/x2p/s2p.PL
---- perl-5.6.0.orig/x2p/s2p.PL	Sat Mar  4 07:26:55 2000
-+++ perl-5.6.0/x2p/s2p.PL	Wed Jul 17 06:03:24 2002
-@@ -113,6 +113,8 @@
- 
- =cut
- 
-+use File::Temp;
-+
- $indent = 4;
- $shiftwidth = 4;
- $l = '{'; $r = '}';
-@@ -137,8 +139,9 @@
- }
- 
- unless ($debug) {
--    open(BODY,"+>/tmp/sperl$$") ||
--      &Die("Can't open temp file: $!\n");
-+    my ($fh, $filename) = File::Temp::tempfile(UNLINK => 1);
-+    open(BODY, "+< $filename") || die "open: $!";
-+    close($fh);
- }
- 
- if (!$assumen && !$assumep) {
-@@ -369,7 +372,6 @@
- exit;
- 
- sub Cleanup {
--    unlink "/tmp/sperl$$";
- }
- sub Die {
-     &Cleanup;

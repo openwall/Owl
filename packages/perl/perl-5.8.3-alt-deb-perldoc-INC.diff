@@ -1,0 +1,17 @@
+In a Debian installation, not all directories in @INC need exist (the
+site directories for example are created on demand).
+
+Suggested by Joey Hess <joeyh@debian.org>.
+
+diff -ur perl-5.8.3.orig/lib/Pod/Perldoc.pm perl-5.8.3/lib/Pod/Perldoc.pm
+--- perl-5.8.3.orig/lib/Pod/Perldoc.pm	Mon Jan 19 18:46:25 2004
++++ perl-5.8.3/lib/Pod/Perldoc.pm	Mon Jan 19 19:05:28 2004
+@@ -1518,6 +1518,8 @@
+     $self->{'target'} = (splitdir $s)[-1];  # XXX: why not use File::Basename?
+     for ($i=0; $i<@dirs; $i++) {
+ 	$dir = $dirs[$i];
++	# Owl/ALT/Debian: some dirs in @INC are optional
++	next unless -d $dir;
+ 	($dir = VMS::Filespec::unixpath($dir)) =~ s!/\z!! if IS_VMS;
+ 	if (       (! $self->opt_m && ( $ret = $self->check_file($dir,"$s.pod")))
+ 		or ( $ret = $self->check_file($dir,"$s.pm"))
