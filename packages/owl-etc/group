@@ -25,5 +25,5 @@ build:x:151:
 crontab:x:160:
 postdrop:x:161:
 klogd:x:180:
-postfix:x:181:
-postman:x:182:
+postfix:x:182:
+postman:x:183:
