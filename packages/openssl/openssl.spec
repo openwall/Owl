@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.24 2002/07/31 01:53:54 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.25 2002/08/03 03:30:13 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
 Version: 0.9.6e
-Release: owl1
+Release: owl2
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
@@ -13,6 +13,7 @@ Patch1: openssl-0.9.6a-owl-glibc-enable_secure.diff
 Patch2: openssl-0.9.6d-owl-Makefile.diff
 Patch3: openssl-0.9.6e-owl-release-date-fix.diff
 Patch10: openssl-0.9.6e-up-20020429-read-errors.diff
+Patch11: openssl-0.9.6e-cvs-20020802-asn1_lib.diff
 PreReq: /sbin/ldconfig
 Provides: SSL
 BuildRequires: perl
@@ -68,6 +69,7 @@ popd
 %patch2 -p1
 %patch3 -p1
 %patch10 -p0
+%patch11 -p1
 
 %define openssldir /var/ssl
 %define opensslflags shared -DSSL_ALLOW_ADH --prefix=/usr
@@ -166,6 +168,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0644,root,root) %{_mandir}/man3/*
 
 %changelog
+* Sat Aug 03 2002 Solar Designer <solar@owl.openwall.com>
+- Added two post-0.9.6e changes from the CVS which correct the recent ASN.1
+parsing vulnerability fixes.
+
 * Wed Jul 31 2002 Solar Designer <solar@owl.openwall.com>
 - Updated to 0.9.6e, dropping the shared-on-SPARC and the official security
 patches (both are now included).
