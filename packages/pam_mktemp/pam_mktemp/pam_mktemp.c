@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000-2002 by Solar Designer. See LICENSE.
+ * Copyright (c) 2000-2002,2005 by Solar Designer. See LICENSE.
  */
 
 #include <stdio.h>
@@ -75,6 +75,7 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 	struct passwd *pw;
 	struct group *gr;
 	struct stat st;
+	const void *item;
 	const char *user;
 	char *userdir;
 	int usergroups;
@@ -83,9 +84,10 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 	if (geteuid() != 0)
 		return PAM_SESSION_ERR;
 
-	status = pam_get_item(pamh, PAM_USER, (const void **)&user);
+	status = pam_get_item(pamh, PAM_USER, &item);
 	if (status != PAM_SUCCESS)
 		return status;
+	user = item;
 
 /* "Can't happen" (the user should have been authenticated by now) */
 	if (user[0] == '.' || strchr(user, '/'))

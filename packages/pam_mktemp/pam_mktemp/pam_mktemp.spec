@@ -1,8 +1,8 @@
-# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.14 2004/11/23 22:40:48 mci Exp $
+# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.15 2005/03/25 20:33:45 solar Exp $
 
 Summary: Pluggable private /tmp space support for interactive (shell) sessions.
 Name: pam_mktemp
-Version: 0.2.5
+Version: 0.2.6
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
@@ -39,6 +39,9 @@ fi
 /lib/security/pam_mktemp.so
 
 %changelog
+* Fri Mar 25 2005 Solar Designer <solar@owl.openwall.com> 0.2.6-owl1
+- Corrected the source code to not break C strict aliasing rules.
+
 * Sun Nov 02 2003 Solar Designer <solar@owl.openwall.com> 0.2.5-owl1
 - Ignore errors from chattr as /tmp may be on tmpfs rather than ext[23]fs.
 - When compiling with gcc, also link with gcc.
