@@ -1,0 +1,13 @@
+diff -urN --exclude .cvsignore --exclude c_stubs --exclude redhat --exclude crypt --exclude glibc-compat glibc-2.1-cygnus/Makeconfig glibc-2.1-redhat/Makeconfig
+--- glibc-2.1-cygnus/Makeconfig	Tue Dec  7 11:50:17 1999
++++ glibc-2.1-redhat/Makeconfig	Mon Jan 10 17:11:06 2000
+@@ -789,7 +789,8 @@
+ 	       $(patsubst $<,/dev/null,$^) > $@-tmp
+ 	mv -f $@-tmp $@
+ 
+-all-Depend-files = $(wildcard $(..)*/Depend)
++all-Depend-files = $(wildcard $(patsubst %,$(..)%/Depend,$(add-ons)))
++
+ $(common-objpfx)sysd-sorted: $(..)scripts/gen-sorted.awk $(all-Depend-files) \
+ 			     $(common-objpfx)sysd-dirs $(..)Makeconfig
+ 	{ { dirs='$(patsubst $(..)%/Depend,$(..)%,$(filter %/Depend,$^))';\

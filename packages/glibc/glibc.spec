@@ -1,17 +1,33 @@
 Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
-Release: 1owl
+Release: 2owl
 Copyright: LGPL
 Group: System Environment/Libraries
 Source0: glibc-2.1.3.tar.gz
 Source1: glibc-linuxthreads-2.1.3.tar.gz
 Source2: glibc-crypt-2.1.tar.gz
 Source3: nsswitch.conf
+Source4: glibc-compat-2.1.3.tar.gz
 Patch0: glibc-2.1.3-owl-dl-open.diff
 Patch1: glibc-2.1.3-owl-malloc-check.diff
 Patch2: glibc-2.1.3-owl-res_randomid.diff
 Patch3: glibc-2.1.3-owl-blowfish.diff
+Patch4: glibc-2.1.3-rh-libnoversion.diff
+Patch5: glibc-2.1.3-rh-paths.diff
+Patch6: glibc-2.1.3-rh-linuxthreads.diff
+Patch7: glibc-2.1.3-rh-nis-malloc.diff
+Patch8: glibc-2.1.3-rh-c-type.diff
+Patch9: glibc-2.1.3-rh-cppfix.diff
+Patch10: glibc-2.1.3-rh-db2-closedir.diff
+Patch11: glibc-2.1.3-rh-glob.diff
+Patch12: glibc-2.1.3-rh-localedata.diff
+Patch13: glibc-2.1.3-rh-yp_xdr.diff
+Patch14: glibc-2.1.3-rh-makeconfig.diff
+Patch15: glibc-2.1.3-bcl-cyr-locale.diff
+
+
+
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Autoreq: false
 %ifarch alpha
@@ -65,17 +81,29 @@ If you are going to use the gprof program to profile a program, you'll
 need to install the glibc-profile program.
 
 %prep
-%setup -q -a 1 -a 2
+%setup -q -a 1 -a 2 -a 4
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
- 
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+
 %build
 rm -rf build-$RPM_ARCH-linux
 mkdir build-$RPM_ARCH-linux ; cd build-$RPM_ARCH-linux
 CFLAGS="-g $RPM_OPT_FLAGS" ../configure --prefix=/usr \
-	--enable-add-ons %{_target_cpu}-redhat-linux
+	--enable-add-ons=yes %{_target_cpu}-redhat-linux
 make MAKE='make -s'
 
 %install
@@ -201,6 +229,16 @@ rm -f *.filelist*
 %defattr(-,root,root)
 
 %changelog
+* Wed Jul 12 2000 Alexandr D. Kanevskiy <kad@openwall.com>
+- paths patch from RH
+- import libNoVersion from RH
+- import xdr_ypall patch (RH bug id #249)
+- import linuxthreads patches from RH
+- import nis malloc fixes from RH
+- import syslog fix from RH
+- import some little fixes from RH
+- import cp1251 locales from BCL
+
 * Sun Jun 18 2000 Solar Designer <solar@false.com>
 - import this spec from RH, and make it use the original glibc 2.1.3
   code with Owl patches only; libNoVersion and other RH hacks may be

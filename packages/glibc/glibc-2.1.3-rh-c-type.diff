@@ -1,0 +1,60 @@
+diff -urN glibc-2.1.3.orig/locale/C-ctype.c glibc-2.1.3.rh/locale/C-ctype.c
+--- glibc-2.1.3.orig/locale/C-ctype.c	Fri Feb 25 00:48:02 2000
++++ glibc-2.1.3.rh/locale/C-ctype.c	Wed Mar 15 18:57:08 2000
+@@ -370,13 +370,12 @@
+     { word: 1 },
+     { string: "ANSI_X3.4-1968" },
+ #if BYTE_ORDER == LITTLE_ENDIAN
+-    { string: NULL },
++    { string: NULL }, { string: NULL },
+ #endif
+     { string: (const char *) (_nl_C_LC_CTYPE_toupper + 128) },
+-    { string: NULL },
+     { string: (const char *) (_nl_C_LC_CTYPE_tolower + 128) }
+ #if BYTE_ORDER == BIG_ENDIAN
+-    { string: NULL },
++    , { string: NULL }, { string: NULL }
+ #endif
+   }
+ };
+diff -urN glibc-2.1.3.orig/locale/localeconv.c glibc-2.1.3.rh/locale/localeconv.c
+--- glibc-2.1.3.orig/locale/localeconv.c	Sat Feb 15 06:28:07 1997
++++ glibc-2.1.3.rh/locale/localeconv.c	Wed Mar 15 18:57:08 2000
+@@ -43,7 +43,7 @@
+   result.frac_digits = *(char *) _NL_CURRENT (LC_MONETARY, FRAC_DIGITS);
+   result.p_cs_precedes = *(char *) _NL_CURRENT (LC_MONETARY, P_CS_PRECEDES);
+   result.p_sep_by_space = *(char *) _NL_CURRENT (LC_MONETARY, P_SEP_BY_SPACE);
+-  result.n_cs_precedes = *(char *) _NL_CURRENT (LC_MONETARY, P_CS_PRECEDES);
++  result.n_cs_precedes = *(char *) _NL_CURRENT (LC_MONETARY, N_CS_PRECEDES);
+   result.n_sep_by_space = *(char *) _NL_CURRENT (LC_MONETARY, N_SEP_BY_SPACE);
+   result.p_sign_posn = *(char *) _NL_CURRENT (LC_MONETARY, P_SIGN_POSN);
+   result.n_sign_posn = *(char *) _NL_CURRENT (LC_MONETARY, N_SIGN_POSN);
+diff -urN glibc-2.1.3.orig/locale/programs/ld-ctype.c glibc-2.1.3.rh/locale/programs/ld-ctype.c
+--- glibc-2.1.3.orig/locale/programs/ld-ctype.c	Thu Feb 24 21:19:02 2000
++++ glibc-2.1.3.rh/locale/programs/ld-ctype.c	Thu Feb 24 21:32:16 2000
+@@ -493,12 +493,19 @@
+       if (elem < _NL_ITEM_INDEX (_NL_NUM_LC_CTYPE))
+ 	switch (elem)
+ 	  {
+-#define CTYPE_DATA(name, base, len)					      \
+-	  case _NL_ITEM_INDEX (name):					      \
+-	    iov[2 + elem + offset].iov_base = (base);			      \
+-	    iov[2 + elem + offset].iov_len = (len);			      \
+-	    if (elem + 1 < nelems)					      \
+-	      idx[elem + 1] = idx[elem] + iov[2 + elem + offset].iov_len;     \
++#define CTYPE_DATA(name, base, len)					      		\
++	  case _NL_ITEM_INDEX (name):					      		\
++	    if ( (len) % 4 == 0) {					      		\
++		iov[2 + elem + offset].iov_base = (base); 		      		\
++		iov[2 + elem + offset].iov_len = (len);			      		\
++	    } else {							      		\
++		iov[2 + elem + offset].iov_base = alloca (((len) + 3) & ~3);		\
++		memset (mempcpy (iov[2 + elem + offset].iov_base, (base), (len)),	\
++			'\0', 4 - ((len) & 3));						\
++		iov[2 + elem + offset].iov_len = ((len) + 3) & ~3;			\
++	    }										\
++	    if (elem + 1 < nelems)					      		\
++	      idx[elem + 1] = idx[elem] + iov[2 + elem + offset].iov_len;     		\
+ 	    break
+ 
+ 	  CTYPE_DATA (_NL_CTYPE_CLASS,
