@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mktemp/mktemp.spec,v 1.3 2001/06/28 23:32:26 solar Exp $
+# $Id: Owl/packages/mktemp/mktemp.spec,v 1.4 2001/06/28 23:38:30 solar Exp $
 
 Summary: A small utility for safely making /tmp files.
 Name: mktemp
@@ -20,7 +20,7 @@ Install the mktemp package if you need to use shell scripts or other
 programs which will create and use unique /tmp files.
 
 %prep
-%setup
+%setup -q
 
 %build
 %define _bindir /bin
