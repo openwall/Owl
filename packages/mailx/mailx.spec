@@ -1,20 +1,15 @@
-# $Id: Owl/packages/mailx/mailx.spec,v 1.1 2000/11/14 14:03:27 solar Exp $
-
-%define USE_LOCKSPOOL	'no'
+# $Id: Owl/packages/mailx/mailx.spec,v 1.2 2002/02/06 16:01:46 mci Exp $
 
 Summary: The /bin/mail program for sending e-mail messages.
 Name: mailx
 Version: 8.1.1.2.7
-Release: 1owl
-Copyright: BSD
+Release: owl1
+License: BSD
 Group: Applications/Internet
-Source0: mailx-%{version}.tar.gz
+Source: mailx-%{version}.tar.gz
 Patch0: mailx-8.1.1.2.7-owl-linux.diff
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
-BuildPreReq: groff
-%if "%{USE_LOCKSPOOL}"=="'yes'"
-Requires: lockspool
-%endif
+BuildRequires: groff
+BuildRoot: /override/%{name}-%{version}
 
 %description
 /bin/mail provides the traditional interface to reading and sending
@@ -26,18 +21,13 @@ e-mail messages.  It is often used in shell scripts.
 
 %build
 cd usr.bin/mail
-%if "%{USE_LOCKSPOOL}"=="'yes'"
-make CFLAGS="$RPM_OPT_FLAGS -c -Wall -Dlint -DUSE_LOCKSPOOL"
-%else
 make CFLAGS="$RPM_OPT_FLAGS -c -Wall -Dlint"
-%endif
 make -C USD.doc
 
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/{bin,etc,usr/man/man1,usr/share/misc}
 make -C usr.bin/mail install DESTDIR=$RPM_BUILD_ROOT
-gzip -9nf $RPM_BUILD_ROOT/usr/man/man1/*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -51,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc usr.bin/mail/USD.doc/USD.ps
 
 %changelog
+* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions
+
 * Tue Nov 14 2000 Solar Designer <solar@owl.openwall.com>
 - Ported /bin/mail from OpenBSD 2.7 to Linux.
 - Did various fixes, mostly to the way locking is done (uses fcntl locks
