@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.12 2002/09/02 20:24:25 solar Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.12.2.1 2002/10/13 13:16:49 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
@@ -7,7 +7,7 @@ Name: postfix
 %define original_version %{original_date}-%{original_pl}
 %define package_version %{original_date}_%{original_pl}
 Version: %{package_version}
-Release: owl3
+Release: owl4
 License: IBM Public License
 Group: System Environment/Daemons
 Source0: ftp://ftp.sunet.se/pub/unix/mail/postfix/official/%{name}-%{original_version}.tar.gz
@@ -17,6 +17,7 @@ Source3: postfix.control
 Patch0: postfix-19991231-pl10-owl-classless.diff
 Patch1: postfix-19991231-pl10-owl-sparse-hack.diff
 Patch2: postfix-19991231-pl13-snapshot-20011217-safe-opens.diff
+Patch3: postfix-19991231-pl13-owl-locking.diff
 Patch10: postfix-19991231-pl13-owl-postfix-script.diff
 Patch20: postfix-19991231-pl10-owl-INSTALL.diff
 Patch21: postfix-19991231-pl10-owl-config.diff
@@ -38,6 +39,7 @@ compatible enough to not upset your users.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 %patch10 -p1
 %patch20 -p1
 %patch21 -p1
@@ -175,6 +177,9 @@ fi
 %files -f filelist
 
 %changelog
+* Sun Oct 13 2002 Solar Designer <solar@owl.openwall.com>
+- Use fcntl locking, not flock.
+
 * Tue Sep 03 2002 Solar Designer <solar@owl.openwall.com>
 - Conflicts: qmail
 
