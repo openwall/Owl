@@ -1,4 +1,4 @@
-# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.12 2002/08/26 15:32:40 mci Exp $
+# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.13 2003/10/15 20:32:20 solar Exp $
 
 # The texinfo documentation for fileutils, sh-utils, and textutils is
 # currently provided by fileutils.
@@ -7,7 +7,7 @@
 Summary: The GNU versions of common file management utilities.
 Name: fileutils
 Version: 4.1.11
-Release: owl3
+Release: owl4
 License: GPL
 Group: Applications/File
 Source0: ftp://alpha.gnu.org/gnu/fetish/fileutils-%{version}.tar.bz2
@@ -23,6 +23,7 @@ Patch5: fileutils-4.1.11-alt-cp-force.diff
 Patch6: fileutils-4.1.11-alt-owl-chown.diff
 Patch7: fileutils-4.1.11-owl-fixes.diff
 Patch8: fileutils-4.1.11-owl-info.diff
+Patch9: fileutils-4.1.11-owl-ls-max-columns.diff
 %if %BUILD_INFO
 PreReq: /sbin/install-info
 %endif
@@ -56,6 +57,7 @@ timestamps), and vdir (provides long directory listings).
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 %{expand:%%define optflags %optflags -Wall -Dlint}
 
@@ -121,7 +123,13 @@ fi
 %{_datadir}/locale/*/*/*
 
 %changelog
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Thu Oct 16 2003 Solar Designer <solar@owl.openwall.com> 4.1.11-owl4
+- Place a limit on the number of columns in ls; previously, ls -w (and
+other equivalent invocations) could result in excessive memory
+consumption and even an integer overflow resulting in incorrect memory
+allocation (thanks to Georgi Guninski).
+
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 4.1.11-owl3
 - Deal with info dir entries such that the menu looks pretty.
 
 * Mon Aug 12 2002 Solar Designer <solar@owl.openwall.com>
