@@ -1,0 +1,25 @@
+diff -ur sysvinit-2.78.orig/contrib/start-stop-daemon.c sysvinit-2.78/contrib/start-stop-daemon.c
+--- sysvinit-2.78.orig/contrib/start-stop-daemon.c	Sun Jun 23 02:00:00 1996
++++ sysvinit-2.78/contrib/start-stop-daemon.c	Wed May 30 01:38:39 2001
+@@ -386,6 +386,8 @@
+ 	argc -= optind;
+ 	argv += optind;
+ 
++	umask(umask(077) | 022);
++
+ 	if (execname && stat(execname, &exec_stat))
+ 		fatal("stat %s: %s", execname, strerror(errno));
+ 
+diff -ur sysvinit-2.78.orig/src/init.c sysvinit-2.78/src/init.c
+--- sysvinit-2.78.orig/src/init.c	Fri Feb 11 14:17:02 2000
++++ sysvinit-2.78/src/init.c	Wed May 30 01:37:24 2001
+@@ -2449,7 +2449,8 @@
+   	p++;
+   else
+   	p = argv[0];
+-  	
++
++  umask(umask(077) | 022);
+ 
+   /*
+    *	Is this telinit or init ?

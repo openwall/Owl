@@ -1,14 +1,15 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.6 2000/12/10 03:39:38 solar Exp $
+# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.7 2001/05/29 21:42:01 solar Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
 Version: 2.78
-Release: 9owl
+Release: 10owl
 Copyright: GPL
 Group: System Environment/Base
 Source: ftp://ftp.cistron.nl/pub/people/miquels/sysvinit/sysvinit-%{version}.tar.gz
 Patch0: sysvinit-2.78-owl-bound-format.diff
 Patch1: sysvinit-2.78-owl-sulogin.diff
+Patch2: sysvinit-2.78-owl-umask.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 
 %description
@@ -22,6 +23,7 @@ of all other programs.
 %setup -q -n sysvinit-%{version}
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 make -C src CC=gcc CFLAGS="-Wall $RPM_OPT_FLAGS"
@@ -77,6 +79,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0600,root,root) /dev/initctl
 
 %changelog
+* Wed May 30 2001 Solar Designer <solar@owl.openwall.com>
+- Ensure the umask is no less restrictive than 022 when starting programs
+from init and start-stop-daemon.
+
 * Sun Dec 10 2000 Solar Designer <solar@owl.openwall.com>
 - Use getpass(3) in sulogin; the old code was unreliable.
 - Updated the sulogin man page (no fallback).
