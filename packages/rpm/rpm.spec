@@ -1,10 +1,12 @@
+# $Id: Owl/packages/rpm/rpm.spec,v 1.3 2000/07/20 21:01:51 kad Exp $
+
 %define NEED_PYTHON 'no'
 %define version 3.0.5
 
 Summary: The Red Hat package management system.
 Name: 		rpm
 Version: 	%{version}
-Release: 	7.0.8owl
+Release: 	7.0.8.1owl
 Group: 		System Environment/Base
 Source: 	ftp://ftp.rpm.org/pub/rpm/dist/rpm-3.0.x/rpm-%{version}.tar.gz
 Copyright: 	GPL
@@ -243,6 +245,10 @@ fi
 /usr/include/popt.h
 
 %changelog
+* Thu Jul 20 2000 Alexandr D. Kanevskiy <kad@openwall.com>
+- import from official RPM team test rpm.
+- disable Python module
+
 * Sun Jul 16 2000 Jeff Johnson <jbj@redhat.com>
 - remove (unused) RPMTAG_CAPABILITY.
 - remove (legacy) use of RPMTAG_{OBSOLETES,PROVIDES} internally.
@@ -283,44 +289,3 @@ fi
 - teach brp-compress about /usr/info and /usr/share/info as well.
 - update macros.in from rpm-4.0 (w/o dbi configuration).
 
-* Thu Mar 15 2000 Jeff Johnson <jbj@redhat.com>
-- portability: skip bzip2 if not available.
-- portability: skip gzseek if not available (zlib-1.0.4).
-- portability: skip personality if not available (linux).
-- portability: always include arpa/inet.h (HP-UX).
-- portability: don't use id -u (Brandon Allbery).
-- portability: don't chown/chgrp -h w/o lchown.
-- portability: splats in rpm.spec to find /usr/{share,local}/locale/*
-- fix: better filter in linux.req to avoid ARM specific objdump output.
-- fix: use glibc 2.1 glob/fnmatch everywhere.
-- fix: noLibio = 0 on Red Hat 4.x and 5.x.
-- fix: typo in autodeps/linux.req.
-
-* Thu Mar  2 2000 Jeff Johnson <jbj@redhat.com>
-- simpler hpux.prov script (Tim Mooney).
-
-* Wed Mar  1 2000 Jeff Johnson <jbj@redhat.com>
-- fix rpmmodule.so python bindings.
-
-* Sun Feb 27 2000 Jeff Johnson <jbj@redhat.com>
-- rpm-3.0.4 release candidate.
-
-* Fri Feb 25 2000 Jeff Johnson <jbj@redhat.com>
-- fix: filter excluded paths before adding install prefixes (#8709).
-- add i18n lookaside to PO catalogue(s) for i18n strings.
-- try for /etc/rpm/macros.specspo so that specspo autoconfigures rpm.
-- per-platform configuration factored into /usr/lib/rpm subdir.
-
-* Tue Feb 15 2000 Jeff Johnson <jbj@redhat.com>
-- new rpm-build package to isolate rpm dependencies on perl/bash2.
-- always remove duplicate identical package entries on --rebuilddb.
-- add scripts for autogenerating CPAN dependencies.
-
-* Wed Feb  9 2000 Jeff Johnson <jbj@redhat.com>
-- brp-compress deals with hard links correctly.
-
-* Mon Feb  7 2000 Jeff Johnson <jbj@redhat.com>
-- brp-compress deals with symlinks correctly.
-
-* Mon Jan 24 2000 Jeff Johnson <jbj@redhat.com>
-- explicitly expand file lists in writeRPM for rpmputtext.
