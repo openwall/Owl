@@ -1,0 +1,31 @@
+--- gdbm-1.8.0/Makefile.in.cflags	Tue Jun 12 19:50:21 2001
++++ gdbm-1.8.0/Makefile.in	Tue Jun 12 19:57:45 2001
+@@ -17,22 +17,23 @@
+ MAKEINFO = makeinfo
+ TEXI2DVI = texi2dvi
+ 
+-DEFS =
++DEFS = @DEFS@
+ 
+ # Where the system [n]dbm routines are...
+ LIBS = @LIBS@ -lc
+ 
+ # SunOS 4 users might wish to add '-fpcc-struct-return' to CFLAGS. see INSTALL.
+-CFLAGS = -O
+-LDFLAGS =
++CPPFLAGS = @CPPFLAGS@
++CFLAGS = @CFLAGS@
++LDFLAGS = @LDFLAGS@
+ 
+ # Common prefix for installation directories
+-prefix = /usr/local
++prefix = /usr
+ exec_prefix = $(prefix)
+ mandir = $(prefix)/man
+ 
+ # Directory in which to put libgdbm.a.
+-libdir = $(exec_prefix)/lib
++libdir = $(prefix)/lib
+ # The include directory for gdbm.h and dbm.h.
+ includedir = $(prefix)/include
+ # Info and man directories.
