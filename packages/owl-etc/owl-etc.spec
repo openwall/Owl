@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.17 2000/12/16 00:15:09 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.18 2000/12/20 18:49:36 solar Exp $
 
 Summary: Initial set of configuration files
 Name: owl-etc
-Version: 0.5
+Version: 0.6
 Release: 1owl
 Copyright: public domain
 Group: System Environment/Base
@@ -13,27 +13,30 @@ Source3: fstab
 Source10: securetty
 Source11: shells
 Source12: host.conf
-Source13: protocols
-Source14: services
-Source15: profile
-Source16: bashrc
-Source17: inputrc
-Source20: csh.login
-Source21: csh.cshrc
+Source20: protocols
+Source21: services
+Source30: hosts.allow
+Source31: hosts.deny
+Source40: profile
+Source41: bashrc
+Source42: inputrc
+Source50: csh.login
+Source51: csh.cshrc
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 BuildArchitectures: noarch
 BuildRequires: fileutils >= 4.0.27
-Conflicts: setup
+Obsoletes: setup
 
 %description
 Initial set of configuration files to be placed into /etc.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/etc/profile.d
-touch $RPM_BUILD_ROOT/etc/motd
+mkdir -p $RPM_BUILD_ROOT/{etc/profile.d,var/log}
+cd $RPM_BUILD_ROOT
+touch etc/motd var/log/lastlog
 # Hack, don't want to list all sources
-cp -rL $RPM_SOURCE_DIR/* $RPM_BUILD_ROOT/etc
+cp -rL $RPM_SOURCE_DIR/* etc/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -49,6 +52,8 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) /etc/host.conf
 %config /etc/protocols
 %config /etc/services
+%config(noreplace) /etc/hosts.allow
+%config(noreplace) /etc/hosts.deny
 %config(noreplace) /etc/profile
 %config(noreplace) /etc/bashrc
 %config /etc/inputrc
@@ -56,8 +61,16 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) /etc/csh.cshrc
 %config /etc/motd
 %dir %attr(755,root,root) /etc/profile.d
+%ghost /var/log/lastlog
 
 %changelog
+* Wed Dec 20 2000 Solar Designer <solar@owl.openwall.com>
+- Obsoletes: setup (yes, we can upgrade to this from RH).
+- Provide default hosts.allow and hosts.deny with useful comments.
+- Provide /var/log/lastlog as a ghost just so that it doesn't get removed
+when upgrading from Red Hat's "setup" package; the actual file is created
+by owl-startup.
+
 * Sat Dec 16 2000 Solar Designer <solar@owl.openwall.com>
 - Provide initial fstab here.
 - proc group.
