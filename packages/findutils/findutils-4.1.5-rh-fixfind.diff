@@ -1,0 +1,13 @@
+--- findutils-4.1.5/find/pred.c.perm	Tue Jun 27 14:40:26 2000
++++ findutils-4.1.5/find/pred.c	Tue Jun 27 14:47:39 2000
+@@ -1036,7 +1036,8 @@ pred_perm (char *pathname, struct stat *
+   switch (pred_ptr->args.perm.kind)
+     {
+     case PERM_AT_LEAST:
+-      return (~stat_buf->st_mode & pred_ptr->args.perm.val) != 0;
++      return (stat_buf->st_mode & pred_ptr->args.perm.val)
++	     == pred_ptr->args.perm.val;
+ 
+     case PERM_ANY:
+       return (stat_buf->st_mode & pred_ptr->args.perm.val) != 0;
+

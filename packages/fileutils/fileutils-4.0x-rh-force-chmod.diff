@@ -1,0 +1,10 @@
+--- fileutils-4.0x/src/install.c.specialbits	Thu Aug  3 13:04:54 2000
++++ fileutils-4.0x/src/install.c	Thu Aug  3 13:07:37 2000
+@@ -434,6 +434,7 @@
+ 	  errors |=
+ 	    make_path (file[i], mode, mode, owner_id, group_id, 0,
+ 		       (x.verbose ? _("creating directory %s") : NULL));
++	  if(errors==0) chmod(file[i], mode);
+ 	}
+     }
+   else

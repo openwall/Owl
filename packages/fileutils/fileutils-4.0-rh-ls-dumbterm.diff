@@ -1,0 +1,50 @@
+--- fileutils-4.0p/src/ls.c.foo	Thu Mar  2 23:05:05 2000
++++ fileutils-4.0p/src/ls.c	Thu Mar  2 23:33:34 2000
+@@ -72,6 +72,7 @@
+ 
+ #include "system.h"
+ #include <fnmatch.h>
++#include <termcap.h>
+ 
+ #include "argmatch.h"
+ #include "error.h"
+@@ -1194,7 +1195,9 @@
+ 
+ 	  print_with_color = (i == color_always
+ 			      || (i == color_if_tty
+-				  && isatty (STDOUT_FILENO)));
++				  && isatty (STDOUT_FILENO))
++			          && tgetent(NULL,getenv("TERM")) > 0
++				  && tgetstr("md",NULL) > 0);
+ 
+ 	  if (print_with_color)
+ 	    {
+--- fileutils-4.0p/src/Makefile.in.foo	Thu Mar  2 23:29:42 2000
++++ fileutils-4.0p/src/Makefile.in	Thu Mar  2 23:31:25 2000
+@@ -190,7 +190,7 @@
+ df_LDFLAGS = 
+ am_dir_OBJECTS =  ls$U.o ls-dir$U.o
+ dir_OBJECTS =  $(am_dir_OBJECTS)
+-dir_LDADD = $(LDADD)
++dir_LDADD = $(LDADD) -ltermcap
+ dir_DEPENDENCIES =  ../lib/libfetish.a
+ dir_LDFLAGS = 
+ dircolors_SOURCES = dircolors.c
+@@ -215,7 +215,7 @@
+ ln_LDFLAGS = 
+ am_ls_OBJECTS =  ls$U.o ls-ls$U.o
+ ls_OBJECTS =  $(am_ls_OBJECTS)
+-ls_LDADD = $(LDADD)
++ls_LDADD = $(LDADD) -ltermcap
+ ls_DEPENDENCIES =  ../lib/libfetish.a
+ ls_LDFLAGS = 
+ mkdir_SOURCES = mkdir.c
+@@ -265,7 +265,7 @@
+ touch_LDFLAGS = 
+ am_vdir_OBJECTS =  ls$U.o ls-vdir$U.o
+ vdir_OBJECTS =  $(am_vdir_OBJECTS)
+-vdir_LDADD = $(LDADD)
++vdir_LDADD = $(LDADD) -ltermcap
+ vdir_DEPENDENCIES =  ../lib/libfetish.a
+ vdir_LDFLAGS = 
+ COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)

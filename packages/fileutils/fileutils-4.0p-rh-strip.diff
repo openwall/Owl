@@ -1,0 +1,13 @@
+--- fileutils-4.0p/src/install.c.strip	Sun Feb  6 21:56:58 2000
++++ fileutils-4.0p/src/install.c	Sun Feb  6 21:57:58 2000
+@@ -668,8 +668,10 @@
+       /* Parent process. */
+       while (pid != wait (&status))	/* Wait for kid to finish. */
+ 	/* Do nothing. */ ;
++#if 0 /* We don't want to produce a fatal error just because strip failed. */
+       if (status)
+ 	error (1, 0, _("strip failed"));
++#endif
+       break;
+     }
+ }

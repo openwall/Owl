@@ -1,0 +1,20 @@
+diff -urN chkconfig-1.2.16.org/chkconfig.c chkconfig-1.2.16/chkconfig.c
+--- chkconfig-1.2.16.org/chkconfig.c	Thu Jul 13 22:42:54 2000
++++ chkconfig-1.2.16/chkconfig.c	Thu Oct  5 00:13:13 2000
+@@ -178,12 +178,12 @@
+     closedir(dir);
+ 	
+     if (isXinetdEnabled()) {
+-	    printf(_("xinetd based services:\n"));
+ 	    if (!(dir = opendir(XINETDDIR))) {
+-		    fprintf(stderr, _("failed to open directory %s: %s"),
+-			    XINETDDIR, strerror(err));
+-		    return 1;
++		    /*fprintf(stderr, _("failed to open directory %s: %s"),
++			    XINETDDIR, strerror(err));*/
++		    return 0;
+ 	    }
++	    printf(_("xinetd based services:\n"));
+ 	    while ((ent = readdir(dir))) {
+ 		    const char *dn;
+ 		    struct service s;

@@ -1,0 +1,28 @@
+--- gettext-0.10.35/src/po-lex.c-save	Wed Aug 23 14:52:53 2000
++++ gettext-0.10.35/src/po-lex.c	Wed Aug 23 14:54:47 2000
+@@ -268,6 +268,9 @@
+     case 'f':
+       return '\f';
+ 
++    case 'v':
++      return '\v';
++
+     case '\\':
+     case '"':
+       return c;
+@@ -327,6 +330,7 @@
+ 	    }
+ 	  break;
+ 	}
++      lex_ungetc (c);
+       return val;
+     }
+   po_gram_error (_("illegal control sequence"));
+@@ -356,6 +360,7 @@
+ 	case '\n':
+ 	case '\r':
+ 	case '\f':
++	case '\v':
+ 	  break;
+ 
+ 	case '#':
