@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.17 2003/06/29 15:04:36 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.18 2003/08/24 22:58:16 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.34
+Version: 1.6.34.1
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -77,6 +77,11 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Mon Aug 25 2003 Solar Designer <solar@owl.openwall.com> 1.6.34.1-owl1
+- Added an event logging framework; only session start/stop, cracking
+modes, and cracked login names are logged currently, but the plan is to
+log many more events in the future.
+
 * Sun Jun 29 2003 Solar Designer <solar@owl.openwall.com> 1.6.34-owl1
 - solaris-sparc64-cc, contributed by Thomas Nau.
 - Check for and report invalid MinLen / MaxLen settings.
