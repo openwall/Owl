@@ -1,23 +1,20 @@
-# $Id: Owl/packages/mktemp/mktemp.spec,v 1.5 2001/10/02 17:25:54 solar Exp $
+# $Id: Owl/packages/mktemp/mktemp.spec,v 1.6 2001/11/13 09:31:08 solar Exp $
 
-Summary: A small utility for safely making /tmp files.
+Summary: A small utility for safely making temporary files.
 Name: mktemp
 Epoch: 1
-Version: 1.3.1
+Version: 1.4
 Release: 1owl
 License: BSD
 Group: System Environment/Base
-Source: ftp://ftp.courtesan.com/pub/mktemp/mktemp-%{version}.tar.gz
 URL: http://www.courtesan.com/mktemp/
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
+Source: ftp://ftp.courtesan.com/pub/mktemp/mktemp-%{version}.tar.gz
+BuildRoot: /override/%{name}-%{version}
 
 %description
-The mktemp utility takes a given file name template and overwrites a
-portion of it to create a unique file name.  This allows shell scripts
-and other programs to safely create and use /tmp files.
-
-Install the mktemp package if you need to use shell scripts or other
-programs which will create and use unique /tmp files.
+The mktemp utility takes a given filename template and overwrites a
+portion of it to create a unique filename.  This allows shell scripts
+and other programs to safely create and use temporary files under /tmp.
 
 %prep
 %setup -q
@@ -40,6 +37,12 @@ rm -rf $RPM_BUILD_ROOT
 %_mandir/man1/mktemp.*
 
 %changelog
+* Tue Nov 13 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 1.4 release.
+
+* Thu Oct 04 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to a pre-1.4 (uses $TMPDIR and a hard-coded template by default).
+
 * Tue Oct 02 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 1.3.1 (built-in $TMPDIR support).
 
