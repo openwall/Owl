@@ -1,5 +1,5 @@
---- man-pages-1.35/man2/fcntl.2.orig	Wed Mar  7 19:56:37 2001
-+++ man-pages-1.35/man2/fcntl.2	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man2/fcntl.2.orig	Thu Jun  7 15:09:28 2001
++++ man-pages-1.38/man2/fcntl.2	Mon Jun 18 00:13:42 2001
 @@ -282,7 +282,13 @@
  .TP
  .B EBADF
@@ -15,8 +15,8 @@
  .TP
  .B EDEADLK
  It was detected that the specified
---- man-pages-1.35/man2/gettimeofday.2.orig	Fri Mar 16 19:11:07 2001
-+++ man-pages-1.35/man2/gettimeofday.2	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man2/gettimeofday.2.orig	Thu Jun  7 15:09:28 2001
++++ man-pages-1.38/man2/gettimeofday.2	Mon Jun 18 00:13:42 2001
 @@ -49,7 +49,7 @@
  .B gettimeofday
  and
@@ -49,8 +49,8 @@
  .B timezone 
  :
  .sp
---- man-pages-1.35/man2/shmget.2.orig	Thu Dec 28 18:22:37 2000
-+++ man-pages-1.35/man2/shmget.2	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man2/shmget.2.orig	Thu Jun  7 15:09:29 2001
++++ man-pages-1.38/man2/shmget.2	Mon Jun 18 00:13:42 2001
 @@ -245,7 +245,7 @@
  .TP
  .B SHMMNI
@@ -60,8 +60,8 @@
  .PP
  The implementation has no specific limits for the per process maximum
  number of shared memory segments
---- man-pages-1.35/man2/signal.2.orig	Sat Aug 12 08:02:27 2000
-+++ man-pages-1.35/man2/signal.2	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man2/signal.2.orig	Thu Jun  7 15:09:29 2001
++++ man-pages-1.38/man2/signal.2	Mon Jun 18 00:13:42 2001
 @@ -28,7 +28,9 @@
  .SH SYNOPSIS
  .B #include <signal.h>
@@ -183,11 +183,11 @@
  
  .SH "CONFORMING TO"
  ANSI C
---- man-pages-1.35/man2/vm86.2.orig	Sat Aug 12 08:05:41 2000
-+++ man-pages-1.35/man2/vm86.2	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man2/vm86.2.orig	Thu Jun  7 15:09:29 2001
++++ man-pages-1.38/man2/vm86.2	Mon Jun 18 00:13:42 2001
 @@ -25,13 +25,13 @@
  .\"
- .TH VM86 2 "17 July 1997" "Linux 2.1.15" "Linux Programmer's Manual"
+ .TH VM86 2 1997-07-17 "Linux 2.1.15" "Linux Programmer's Manual"
  .SH NAME
 -vm86old, vm86 \- enter virtual 8086 mode
 +vm86, vm86old \- enter virtual 8086 mode
@@ -211,8 +211,8 @@
  .SH "RETURN VALUE"
  On success, zero is returned.  On error, \-1 is returned, and
  .I errno
---- man-pages-1.35/man2/syscalls.2.orig	Sat Nov 27 17:38:42 1999
-+++ man-pages-1.35/man2/syscalls.2	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man2/syscalls.2.orig	Thu Jun  7 15:09:29 2001
++++ man-pages-1.38/man2/syscalls.2	Mon Jun 18 00:13:42 2001
 @@ -28,8 +28,7 @@
  .SH DESCRIPTION
  As of Linux 2.0.34, there are 164 system calls listed in
@@ -223,8 +223,8 @@
  
  _llseek(2),
  _newselect(2),
---- man-pages-1.35/man2/bind.2.orig	Sun Feb 18 15:14:29 2001
-+++ man-pages-1.35/man2/bind.2	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man2/bind.2.orig	Thu Jun  7 15:09:28 2001
++++ man-pages-1.38/man2/bind.2	Mon Jun 18 00:13:42 2001
 @@ -188,10 +188,9 @@
  .B ENOSR 
  general error conditions, and
@@ -239,8 +239,8 @@
  Unix-domain error conditions.
  .SH NOTE
  The third argument of
---- man-pages-1.35/man2/clone.2.orig	Sat Aug 12 08:09:18 2000
-+++ man-pages-1.35/man2/clone.2	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man2/clone.2.orig	Thu Jun  7 15:09:28 2001
++++ man-pages-1.38/man2/clone.2	Mon Jun 18 00:13:42 2001
 @@ -220,7 +220,7 @@
  intended to be portable.  For programming threaded applications
  (multiple threads of control in the same memory space), it is better
@@ -250,8 +250,8 @@
  .BR pthread_create (3thr).
  
  This manual page corresponds to kernels 2.0.x and 2.1.x, and to glibc
---- man-pages-1.35/man2/stat.2.orig	Mon Mar 12 01:20:06 2001
-+++ man-pages-1.35/man2/stat.2	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man2/stat.2.orig	Thu Jun  7 15:09:29 2001
++++ man-pages-1.38/man2/stat.2	Mon Jun 18 00:13:42 2001
 @@ -74,8 +74,8 @@
  is identical to stat, only the open file pointed to by 
  .I filedes
@@ -263,9 +263,9 @@
  .IR file_name .
  
  .PP
---- man-pages-1.35/man2/wait.2.orig	Tue Jul 25 10:57:00 2000
-+++ man-pages-1.35/man2/wait.2	Mon Apr 23 14:32:29 2001
-@@ -167,16 +167,12 @@
+--- man-pages-1.38/man2/wait.2.orig	Thu Jun  7 15:09:29 2001
++++ man-pages-1.38/man2/wait.2	Mon Jun 18 00:13:42 2001
+@@ -173,16 +173,12 @@
  .I options
  argument was invalid.
  .TP
@@ -284,8 +284,8 @@
  .SH "NOTES"
  The Single Unix Specification describes a flag SA_NOCLDWAIT (not present
  under Linux) such that if either this flag is set, or the action for
---- man-pages-1.35/man2/intro.2.orig	Sat Aug 12 15:02:49 2000
-+++ man-pages-1.35/man2/intro.2	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man2/intro.2.orig	Thu Jun  7 15:09:28 2001
++++ man-pages-1.38/man2/intro.2	Mon Jun 18 00:13:42 2001
 @@ -161,7 +161,7 @@
  IEEE Std 1003.1b-1993 (POSIX.1b standard) describing real-time facilities
  for portable operating systems, aka ISO/IEC 9945-1:1996, as elucidated in
@@ -295,8 +295,8 @@
  .TP
  SUS, SUSv2
  Single Unix Specification.
---- man-pages-1.35/man2/iopl.2.orig	Sat Nov 27 17:38:40 1999
-+++ man-pages-1.35/man2/iopl.2	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man2/iopl.2.orig	Thu Jun  7 15:09:28 2001
++++ man-pages-1.38/man2/iopl.2	Mon Jun 18 00:13:42 2001
 @@ -32,11 +32,11 @@
  .SH NAME
  iopl \- change I/O privilege level
@@ -331,8 +331,8 @@
 -Avoid the latter, it is available on i386 only.
  .SH "SEE ALSO"
  .BR ioperm (2)
---- man-pages-1.35/man2/pause.2.orig	Fri Sep  8 18:01:12 2000
-+++ man-pages-1.35/man2/pause.2	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man2/pause.2.orig	Thu Jun  7 15:09:29 2001
++++ man-pages-1.38/man2/pause.2	Mon Jun 18 00:13:42 2001
 @@ -60,7 +60,7 @@
  .B EINTR
  a signal was caught and the signal-catching function returned.
@@ -342,8 +342,8 @@
  .SH "SEE ALSO"
  .BR kill (2),
  .BR select (2),
---- man-pages-1.35/man2/ipc.2.orig	Sat Nov 27 17:38:40 1999
-+++ man-pages-1.35/man2/ipc.2	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man2/ipc.2.orig	Thu Jun  7 15:09:28 2001
++++ man-pages-1.38/man2/ipc.2	Mon Jun 18 00:13:42 2001
 @@ -30,7 +30,7 @@
  .BI "int ipc(unsigned int" " call, " "int" " first, " "int" " second, "
  .BI "int" " third, " "void *" "ptr, " "long" " fifth);"
@@ -365,8 +365,8 @@
  intended to be portable.
  .SH "SEE ALSO"
  .BR msgctl (2),
---- man-pages-1.35/man2/select.2.orig	Sun Mar 18 18:19:25 2001
-+++ man-pages-1.35/man2/select.2	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man2/select.2.orig	Thu Jun  7 15:09:29 2001
++++ man-pages-1.38/man2/select.2	Mon Jun 18 00:13:42 2001
 @@ -26,7 +26,7 @@
  .\" Modified 1993-07-24 by Rik Faith <faith@cs.unc.edu>
  .\" Modified 1995-05-18 by Jim Van Zandt <jrv@vanzandt.mv.com>
@@ -385,8 +385,8 @@
  zero, and a non-null
  .I timeout
  as a fairly portable way to sleep with subsecond precision.
---- man-pages-1.35/man2/close.2.orig	Fri Jan 12 18:00:52 2001
-+++ man-pages-1.35/man2/close.2	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man2/close.2.orig	Thu Jun  7 15:09:28 2001
++++ man-pages-1.38/man2/close.2	Mon Jun 18 00:13:42 2001
 @@ -89,7 +89,11 @@
  A successful close does not guarantee that the data has been successfully
  saved to disk, as the kernel defers writes. It is not common for a filesystem
@@ -400,39 +400,8 @@
  closer to that goal (it will depend on the disk hardware at this point).
  .SH "SEE ALSO"
  .BR open (2),
---- man-pages-1.35/man3/crypt.3.orig	Sat Nov 27 17:43:42 1999
-+++ man-pages-1.35/man3/crypt.3	Mon Apr 23 14:32:29 2001
-@@ -34,14 +34,12 @@
- .SH NAME
- crypt \- password and data encryption
- .SH SYNOPSIS
--.B #define _XOPEN_SOURCE
--.br
--.B #include <unistd.h>
-+.B #include <crypt.h>
- .sp
- .BI "char *crypt(const char *" key ", const char *" salt );
- .SH DESCRIPTION
- .B crypt
--is the password encryption function.  It is based on the Data Encryption
-+provides acess to two algoritms for password encryption.  One it's based on the Data Encryption
- Standard algorithm with variations intended (among other things) to
- discourage use of hardware implementations of a key search.
- .PP
-@@ -116,6 +114,11 @@
- .\" .PP
- .\" Making encrypted data computed using crypt() publically available has
- .\" to be considered insecure for the given reasons.
-+.PP
-+If the salt starts with \fI$1$\fR an MD5 based password hashing algoritm is
-+applied. The salt should consist off \fI$1$\fR followed with eight characters.
-+.PP
-+Programs using this function must be linked with -lcrypt.
- .SH "CONFORMING TO"
- SVID, X/OPEN, BSD 4.3
- .SH "SEE ALSO"
---- man-pages-1.35/man3/fflush.3.orig	Sat Dec 23 18:18:28 2000
-+++ man-pages-1.35/man3/fflush.3	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man3/fflush.3.orig	Thu Jun  7 15:04:28 2001
++++ man-pages-1.38/man3/fflush.3	Mon Jun 18 00:13:42 2001
 @@ -36,8 +36,8 @@
  .\"     @(#)fflush.3	5.4 (Berkeley) 6/29/91
  .\"
@@ -441,7 +410,7 @@
  .\" Modified 2000-07-22 by Nicolás Lichtmaier <nick@debian.org>
 +.\"      added note about fflush not ensuring the data is physically saved
  .\"
- .TH FFLUSH 3  "29 November 1993" "BSD MANPAGE" "Linux Programmer's Manual"
+ .TH FFLUSH 3  1993-11-29 "BSD MANPAGE" "Linux Programmer's Manual"
  .SH NAME
 @@ -82,7 +82,7 @@
  .BR write (2).
@@ -452,8 +421,8 @@
  only flushes the user space buffers provided by the C library.
  To ensure that the data is physically stored on disk
  the kernel buffers must be flushed too, e.g. with
---- man-pages-1.35/man3/ffs.3.orig	Sat Nov 27 17:43:43 1999
-+++ man-pages-1.35/man3/ffs.3	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man3/ffs.3.orig	Thu Jun  7 15:04:28 2001
++++ man-pages-1.38/man3/ffs.3	Mon Jun 18 00:13:42 2001
 @@ -40,6 +40,8 @@
  most significant position 32.
  .SH "RETURN VALUE"
@@ -465,8 +434,8 @@
 +BSD 4.3, SUSv2
 +.PP
 +According to SUSv2, this function is defined in <strings.h>.
---- man-pages-1.35/man3/dbopen.3.orig	Sat Nov 27 17:43:42 1999
-+++ man-pages-1.35/man3/dbopen.3	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man3/dbopen.3.orig	Thu Jun  7 15:04:27 2001
++++ man-pages-1.38/man3/dbopen.3	Mon Jun 18 00:13:42 2001
 @@ -41,6 +41,7 @@
  #include <sys/types.h>
  #include <limits.h>
@@ -493,8 +462,8 @@
  .ti +5
  u_int flags);
  int (*sync)(const DB *db, u_int flags);
---- man-pages-1.35/man3/printf.3.orig	Sun Dec 17 17:05:39 2000
-+++ man-pages-1.35/man3/printf.3	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man3/printf.3.orig	Thu Jun  7 15:04:29 2001
++++ man-pages-1.38/man3/printf.3	Mon Jun 18 00:13:42 2001
 @@ -44,6 +44,10 @@
  .BI "int sprintf(char *" str ", const char *" format ", ...);"
  .br
@@ -577,8 +546,8 @@
 -.PP
 -Some floating point conversions under early libc4
 -caused memory leaks.
---- man-pages-1.35/man3/scandir.3.orig	Sun Sep 24 21:20:33 2000
-+++ man-pages-1.35/man3/scandir.3	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man3/scandir.3.orig	Thu Jun  7 15:04:29 2001
++++ man-pages-1.38/man3/scandir.3	Mon Jun 18 00:35:09 2001
 @@ -28,13 +28,11 @@
  .\" Modified Thu Apr 11 17:11:33 1996 by Andries Brouwer (aeb@cwi.nl):
  .\"     Corrected type of compar routines, as suggested by
@@ -587,10 +556,10 @@
 -.\" Please do not `correct' the version here.
  .\" Modified Sun Sep 24 20:15:46 2000 by aeb, following Petter Reinholdtsen.
  .\"
- .TH SCANDIR 3  "11 April 1996" "GNU" "Linux Programmer's Manual"
+ .TH SCANDIR 3  1996-04-11 "GNU" "Linux Programmer's Manual"
  .SH NAME
 -scandir, alphasort \- scan a directory for matching entries
-+scandir, alphasort,versionsort \- scan a directory for matching entries
++scandir, alphasort, versionsort \- scan a directory for matching entries
  .SH SYNOPSIS
  .nf
  .B #include <dirent.h>
@@ -646,8 +615,8 @@
  or greater than zero if the first argument is considered to be 
  respectively less than, equal to, or greater than the second.
  .SH "ERRORS"
---- man-pages-1.35/man3/tsearch.3.orig	Sat Nov 27 17:43:49 1999
-+++ man-pages-1.35/man3/tsearch.3	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man3/tsearch.3.orig	Thu Jun  7 15:04:29 2001
++++ man-pages-1.38/man3/tsearch.3	Mon Jun 18 00:13:43 2001
 @@ -40,6 +40,13 @@
  .BI "void twalk (const void *" root ", void (*" action ") (const void *" nodep ,
  .BI "                                   const VISIT " which ,
@@ -745,8 +714,8 @@
  .SH "SEE ALSO"
  .BR qsort "(3), " bsearch "(3), " hsearch "(3), " lsearch "(3)"
  
---- man-pages-1.35/man3/__setfpucw.3.orig	Sat Aug 12 18:12:08 2000
-+++ man-pages-1.35/man3/__setfpucw.3	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man3/__setfpucw.3.orig	Thu Jun  7 15:04:27 2001
++++ man-pages-1.38/man3/__setfpucw.3	Mon Jun 18 00:13:43 2001
 @@ -44,6 +44,9 @@
  .IR feraiseexcept ,
  .IR fesetexceptflag ,
@@ -757,9 +726,9 @@
  .PP
  If direct acces to the FPU control word is still needed, the _FPU_GETCW
  and _FPU_SETCW macros from
---- man-pages-1.35/man3/gethostbyname.3.orig	Sat Aug 12 19:32:54 2000
-+++ man-pages-1.35/man3/gethostbyname.3	Mon Apr 23 14:32:29 2001
-@@ -40,6 +40,7 @@
+--- man-pages-1.38/man3/gethostbyname.3.orig	Thu Jun  7 15:04:28 2001
++++ man-pages-1.38/man3/gethostbyname.3	Mon Jun 18 00:13:43 2001
+@@ -41,6 +41,7 @@
  .B extern int h_errno;
  .sp
  .BI "struct hostent *gethostbyname(const char *" name );
@@ -767,8 +736,19 @@
  .sp
  .B #include <sys/socket.h> "      " /* for AF_INET */
  .BI "struct hostent *gethostbyaddr(const char *" addr ,
---- man-pages-1.35/man3/mkstemp.3.orig	Sat Nov 27 17:43:46 1999
-+++ man-pages-1.35/man3/mkstemp.3	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man3/swab.3.orig	Thu Jun  7 15:04:29 2001
++++ man-pages-1.38/man3/swab.3	Mon Jun 18 00:13:43 2001
+@@ -30,7 +30,7 @@
+ swab \- swap adjacent bytes
+ .SH SYNOPSIS
+ .nf
+-.B #include <string.h>
++.B #include <unistd.h>
+ .sp
+ .BI "void swab(const void *" from ", void *" to ", size_t " n );
+ .fi
+--- man-pages-1.38/man3/mkstemp.3.orig	Thu Jun  7 15:04:29 2001
++++ man-pages-1.38/man3/mkstemp.3	Mon Jun 18 00:13:43 2001
 @@ -65,8 +65,12 @@
  The old behaviour (creating a file with mode 0666) may be
  a security risk, especially since other Unix flavours use 0600,
@@ -783,16 +763,17 @@
  .SH NOTE
  The prototype is in
  .I <unistd.h>
---- man-pages-1.35/man3/strptime.3.orig	Sat Mar 17 19:57:20 2001
-+++ man-pages-1.35/man3/strptime.3	Mon Apr 23 14:41:48 2001
-@@ -21,14 +21,19 @@
+--- man-pages-1.38/man3/strptime.3.orig	Thu Jun  7 15:04:29 2001
++++ man-pages-1.38/man3/strptime.3	Mon Jun 18 00:43:06 2001
+@@ -20,6 +20,7 @@
+ .\" Formatted or processed versions of this manual, if unaccompanied by
  .\" the source, must acknowledge the copyright and authors of this work.
  .\"
- .\" Modified, jmv@lucifer.dorms.spbu.ru, 1999-11-08
 +.\" 1999-07-31: Nicolás Lichtmaier <nick@debian.org>
+ .\" Modified, jmv@lucifer.dorms.spbu.ru, 1999-11-08
  .\" Modified, aeb, 2000-04-07
  .\"
- .TH STRPTIME 3 "26 September 1994"  "GNU" "Linux Programmer's Manual"
+@@ -27,8 +28,12 @@
  .SH NAME
  strptime \- convert a string representation of time to a time tm structure
  .SH SYNOPSIS
@@ -807,8 +788,8 @@
  .B #include <time.h>
  .sp
  .BI "char *strptime(const char *" s ", const char *" format ,
---- man-pages-1.35/man3/strftime.3.orig	Sat Nov 27 17:43:49 1999
-+++ man-pages-1.35/man3/strftime.3	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man3/strftime.3.orig	Thu Jun  7 15:04:29 2001
++++ man-pages-1.38/man3/strftime.3	Mon Jun 18 00:13:43 2001
 @@ -67,6 +67,10 @@
  .B %C
  The century number (year/100) as a 2-digit integer. (SU)
@@ -820,8 +801,8 @@
  .B %d
  The day of the month as a decimal number (range 01 to 31).
  .TP
---- man-pages-1.35/man3/strtok.3.orig	Sat Jun 24 20:36:59 2000
-+++ man-pages-1.35/man3/strtok.3	Mon Apr 23 14:32:29 2001
+--- man-pages-1.38/man3/strtok.3.orig	Thu Jun  7 15:04:29 2001
++++ man-pages-1.38/man3/strtok.3	Mon Jun 18 00:13:43 2001
 @@ -58,7 +58,7 @@
  .I ptrptr
  parameter, must be the same while parsing the same string.
@@ -831,23 +812,13 @@
  .PP
  .RS
  These functions modify their first argument.
---- man-pages-1.35/man3/swab.3.orig	Sat Nov 27 17:43:49 1999
-+++ man-pages-1.35/man3/swab.3	Mon Apr 23 14:32:29 2001
-@@ -30,7 +30,7 @@
- swab \- swap adjacent bytes
- .SH SYNOPSIS
- .nf
--.B #include <string.h>
-+.B #include <unistd.h>
- .sp
- .BI "void swab(const void *" from ", void *" to ", size_t " n );
- .fi
---- man-pages-1.35/man3/readdir.3.orig	Sat Aug 12 23:40:05 2000
-+++ man-pages-1.35/man3/readdir.3	Mon Apr 23 14:32:29 2001
-@@ -27,10 +27,14 @@
+--- man-pages-1.38/man3/readdir.3.orig	Thu Jun  7 15:04:29 2001
++++ man-pages-1.38/man3/readdir.3	Mon Jun 18 00:32:46 2001
+@@ -26,11 +26,14 @@
+ .\"     386BSD man pages
  .\" Modified Sat Jul 24 16:09:49 1993 by Rik Faith (faith@cs.unc.edu)
  .\" Modified 11 June 1995 by Andries Brouwer (aeb@cwi.nl)
- .\" Modified 22 July 1996 by Andries Brouwer (aeb@cwi.nl)
+-.\" Modified 22 July 1996 by Andries Brouwer (aeb@cwi.nl)
 -.\" If a Debian maintainer sees this: the current Debian page
 -.\" shows an incorrect struct dirent.
 +.\" Modified 22 April 1996 by Martin Schulze (joey@Linux.de)
@@ -857,12 +828,12 @@
 +.\"   shows an incorrect struct dirent.
 +.\" - No, it doesn't.
  .\"
--.TH READDIR 3  "22 April 1996" "" "Linux Programmer's Manual"
-+.TH READDIR 3  "25 July 1997" "" "Linux Programmer's Manual"
+-.TH READDIR 3  1996-04-22 "" "Linux Programmer's Manual"
++.TH READDIR 3  1997-07-25 "" "Linux Programmer's Manual"
  .SH NAME
  readdir \- read a directory
  .SH SYNOPSIS
-@@ -50,14 +54,23 @@
+@@ -50,14 +53,23 @@
  The data returned by \fBreaddir()\fP is overwritten by subsequent
  calls to \fBreaddir()\fP for the same directory stream.
  .PP
@@ -893,7 +864,7 @@
  .SH "RETURN VALUE"
  The \fBreaddir()\fP function returns a pointer to a dirent structure, or
  NULL if an error occurs or end-of-file is reached.
-@@ -67,6 +80,19 @@
+@@ -67,6 +79,19 @@
  Invalid directory stream descriptor \fIdir\fP.
  .SH "CONFORMING TO"
  SVID 3, POSIX, BSD 4.3
@@ -913,33 +884,8 @@
  .SH "SEE ALSO"
  .BR read "(2), " opendir "(3), " closedir "(3), " rewinddir (3),
  .BR seekdir "(3), " telldir "(3), " scandir (3)
---- man-pages-1.35/man3/putenv.3.orig	Tue Apr 18 20:28:14 2000
-+++ man-pages-1.35/man3/putenv.3	Mon Apr 23 14:32:29 2001
-@@ -37,7 +37,7 @@
- .nf
- .B #include <stdlib.h>
- .sp
--.BI "int putenv(const char *" string );
-+.BI "int putenv(char *" string );
- .fi
- .SH DESCRIPTION
- The \fBputenv()\fP function adds or changes the value of environment
-@@ -88,4 +88,4 @@
- .BR getenv (3),
- .BR setenv (3),
- .BR unsetenv (3),
--.BR environ (5)
-+.BR environ (7)
---- man-pages-1.35/man3/getenv.3.orig	Sat Nov 27 17:43:44 1999
-+++ man-pages-1.35/man3/getenv.3	Mon Apr 23 14:32:29 2001
-@@ -49,4 +49,4 @@
- .BR putenv (3),
- .BR setenv (3),
- .BR unsetenv (3),
--.BR environ (5)
-+.BR environ (7)
---- man-pages-1.35/man3/fclose.3.orig	Fri Jan 12 18:08:54 2001
-+++ man-pages-1.35/man3/fclose.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/fclose.3.orig	Thu Jun  7 15:04:28 2001
++++ man-pages-1.38/man3/fclose.3	Mon Jun 18 00:13:43 2001
 @@ -36,8 +36,8 @@
  .\"     @(#)fclose.3	6.7 (Berkeley) 6/29/91
  .\"
@@ -948,10 +894,10 @@
  .\" Modified 2000-07-22 by Nicolás Lichtmaier <nick@debian.org>
 +.\"      added note about fclose not ensuring the data is physically saved
  .\"
- .TH FCLOSE 3  "29 November 1993" "BSD MANPAGE" "Linux Programmer's Manual"
+ .TH FCLOSE 3  1993-11-29 "BSD MANPAGE" "Linux Programmer's Manual"
  .SH NAME
---- man-pages-1.35/man3/stdio.3.orig	Sat Aug 12 23:24:15 2000
-+++ man-pages-1.35/man3/stdio.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/stdio.3.orig	Thu Jun  7 15:04:29 2001
++++ man-pages-1.38/man3/stdio.3	Mon Jun 18 00:13:43 2001
 @@ -208,9 +208,6 @@
  fgetc
  get next character or word from input stream
@@ -962,28 +908,8 @@
  fgetpos
  reposition a stream
  .TP
---- man-pages-1.35/man3/remove.3.orig	Sun Aug 13 01:33:19 2000
-+++ man-pages-1.35/man3/remove.3	Mon Apr 23 14:32:30 2001
-@@ -28,8 +28,6 @@
- .\" Edited into remove.3 shape by:
- .\" Graeme W. Wilford (G.Wilford@ee.surrey.ac.uk) on 13th July 1994
- .\"
--.\" If a Debian maintainer sees this: the current Debian page is wrong.
--.\"
- .TH REMOVE 3 "13 July 1994" Linux "GNU"
- .SH NAME
- remove \- delete a name and possibly the file it refers to
---- man-pages-1.35/man3/glob.3.orig	Sat Dec 23 18:21:52 2000
-+++ man-pages-1.35/man3/glob.3	Mon Apr 23 14:32:30 2001
-@@ -248,5 +248,4 @@
- .BR malloc (3),
- .BR opendir (3),
- .BR readdir (3),
--.BR wordexp (3),
--.BR glob (7)
-+.BR wordexp (3)
---- man-pages-1.35/man3/tempnam.3.orig	Sat Nov 27 17:43:49 1999
-+++ man-pages-1.35/man3/tempnam.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/tempnam.3.orig	Thu Jun  7 15:04:29 2001
++++ man-pages-1.38/man3/tempnam.3	Mon Jun 18 00:13:43 2001
 @@ -92,7 +92,7 @@
  The precise meaning of `appropriate' is undefined;
  it is unspecified how accessibility of a directory is determined.
@@ -993,8 +919,8 @@
  instead.
  .SH "CONFORMING TO"
  SVID 2, BSD 4.3
---- man-pages-1.35/man3/tmpnam.3.orig	Sat Nov 27 17:43:49 1999
-+++ man-pages-1.35/man3/tmpnam.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/tmpnam.3.orig	Thu Jun  7 15:04:29 2001
++++ man-pages-1.38/man3/tmpnam.3	Mon Jun 18 00:13:43 2001
 @@ -80,7 +80,7 @@
  the behaviour is implementation defined.
  .SH BUGS
@@ -1004,8 +930,8 @@
  instead.
  .SH "CONFORMING TO"
  SVID 2, POSIX, BSD 4.3, ISO 9899
---- man-pages-1.35/man3/ctime.3.orig	Mon Mar  6 02:04:16 2000
-+++ man-pages-1.35/man3/ctime.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/ctime.3.orig	Thu Jun  7 15:04:27 2001
++++ man-pages-1.38/man3/ctime.3	Mon Jun 18 00:13:43 2001
 @@ -163,5 +163,4 @@
  .SH "SEE ALSO"
  .BR date "(1), " gettimeofday "(2), " time "(2), " tzset (3),
@@ -1013,16 +939,16 @@
 -.BR strftime (3),
 -.BR newctime (3)
 +.BR strftime (3).
---- man-pages-1.35/man3/strdup.3.orig	Sat Nov 27 17:43:49 1999
-+++ man-pages-1.35/man3/strdup.3	Mon Apr 23 14:32:30 2001
-@@ -25,6 +25,7 @@
+--- man-pages-1.38/man3/strdup.3.orig	Thu Jun  7 15:04:29 2001
++++ man-pages-1.38/man3/strdup.3	Mon Jun 18 00:39:31 2001
+@@ -24,6 +24,7 @@
+ .\"     Linux libc source code
  .\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
  .\"     386BSD man pages
- .\" Modified Sun Jul 25 10:41:34 1993 by Rik Faith (faith@cs.unc.edu)
 +.\" 2001-02-25 - Added strndup. Nicolás Lichtmaier <nick@debian.org>
- .TH STRDUP 3  "April 12, 1993" "GNU" "Linux Programmer's Manual"
+ .\" Modified Sun Jul 25 10:41:34 1993 by Rik Faith (faith@cs.unc.edu)
+ .TH STRDUP 3  1993-04-12 "GNU" "Linux Programmer's Manual"
  .SH NAME
- strdup \- duplicate a string
 @@ -33,13 +34,24 @@
  .B #include <string.h>
  .sp
@@ -1058,8 +984,8 @@
 +is a GNU extension.
  .SH "SEE ALSO"
  .BR calloc "(3), " malloc "(3), " realloc "(3), " free (3)
---- man-pages-1.35/man3/regex.3.orig	Sat Nov 27 17:43:47 1999
-+++ man-pages-1.35/man3/regex.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/regex.3.orig	Thu Jun  7 15:04:29 2001
++++ man-pages-1.38/man3/regex.3	Mon Jun 18 00:13:43 2001
 @@ -33,6 +33,8 @@
  .SH NAME
  regcomp, regexec, regerror, regfree \- POSIX regex functions
@@ -1069,17 +995,8 @@
  .B #include <regex.h>
  .sp
  .xx \w'\fBint\ regcomp(\fR'u
---- man-pages-1.35/man3/setenv.3.orig	Sat Nov 27 17:43:48 1999
-+++ man-pages-1.35/man3/setenv.3	Mon Apr 23 14:32:30 2001
-@@ -55,5 +55,5 @@
- .SH "SEE ALSO"
- .BR getenv (3),
- .BR putenv (3),
--.BR environ (5)
-+.BR environ (7)
- 
---- man-pages-1.35/man3/iconv.3.orig	Mon Dec 11 14:46:44 2000
-+++ man-pages-1.35/man3/iconv.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/iconv.3.orig	Thu Jun  7 15:04:28 2001
++++ man-pages-1.38/man3/iconv.3	Mon Jun 18 00:13:43 2001
 @@ -19,7 +19,7 @@
  .B #include <iconv.h>
  .sp
@@ -1089,8 +1006,8 @@
  .BI "              char* * " outbuf ", size_t * "outbytesleft );
  .fi
  .SH DESCRIPTION
---- man-pages-1.35/man3/getloadavg.3.orig	Mon Apr 23 14:32:30 2001
-+++ man-pages-1.35/man3/getloadavg.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/getloadavg.3.orig	Mon Jun 18 00:13:43 2001
++++ man-pages-1.38/man3/getloadavg.3	Mon Jun 18 00:13:43 2001
 @@ -0,0 +1,68 @@
 +.\" Copyright (c) 1989, 1991, 1993
 +.\"	The Regents of the University of California.  All rights reserved.
@@ -1160,76 +1077,76 @@
 +.Fn getloadavg
 +function appeared in
 +.Bx 4.3 Reno .
---- man-pages-1.35/man3/vasprintf.3.orig	Mon Apr 23 14:32:30 2001
-+++ man-pages-1.35/man3/vasprintf.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/vasprintf.3.orig	Mon Jun 18 00:13:43 2001
++++ man-pages-1.38/man3/vasprintf.3	Mon Jun 18 00:13:43 2001
 @@ -0,0 +1 @@
 +.so man3/printf.3
---- man-pages-1.35/man3/asprintf.3.orig	Mon Apr 23 14:32:30 2001
-+++ man-pages-1.35/man3/asprintf.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/asprintf.3.orig	Mon Jun 18 00:13:43 2001
++++ man-pages-1.38/man3/asprintf.3	Mon Jun 18 00:13:43 2001
 @@ -0,0 +1 @@
 +.so man3/printf.3
---- man-pages-1.35/man3/dprintf.3.orig	Mon Apr 23 14:32:30 2001
-+++ man-pages-1.35/man3/dprintf.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/dprintf.3.orig	Mon Jun 18 00:13:43 2001
++++ man-pages-1.38/man3/dprintf.3	Mon Jun 18 00:13:43 2001
 @@ -0,0 +1 @@
 +.so man3/printf.3
---- man-pages-1.35/man3/vdprintf.3.orig	Mon Apr 23 14:32:30 2001
-+++ man-pages-1.35/man3/vdprintf.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/vdprintf.3.orig	Mon Jun 18 00:13:43 2001
++++ man-pages-1.38/man3/vdprintf.3	Mon Jun 18 00:13:43 2001
 @@ -0,0 +1 @@
 +.so man3/printf.3
---- man-pages-1.35/man3/xdr_accepted_reply.3.orig	Mon Apr 23 14:32:30 2001
-+++ man-pages-1.35/man3/xdr_accepted_reply.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/xdr_accepted_reply.3.orig	Mon Jun 18 00:13:43 2001
++++ man-pages-1.38/man3/xdr_accepted_reply.3	Mon Jun 18 00:13:43 2001
 @@ -0,0 +1 @@
 +.so man3/rpc.3
---- man-pages-1.35/man3/xdr_authunix_parms.3.orig	Mon Apr 23 14:32:30 2001
-+++ man-pages-1.35/man3/xdr_authunix_parms.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/xdr_authunix_parms.3.orig	Mon Jun 18 00:13:43 2001
++++ man-pages-1.38/man3/xdr_authunix_parms.3	Mon Jun 18 00:13:43 2001
 @@ -0,0 +1 @@
 +.so man3/rpc.3
---- man-pages-1.35/man3/xdr_callhdr.3.orig	Mon Apr 23 14:32:30 2001
-+++ man-pages-1.35/man3/xdr_callhdr.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/xdr_callhdr.3.orig	Mon Jun 18 00:13:43 2001
++++ man-pages-1.38/man3/xdr_callhdr.3	Mon Jun 18 00:13:43 2001
 @@ -0,0 +1 @@
 +.so man3/rpc.3
---- man-pages-1.35/man3/xdr_callmsg.3.orig	Mon Apr 23 14:32:30 2001
-+++ man-pages-1.35/man3/xdr_callmsg.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/xdr_callmsg.3.orig	Mon Jun 18 00:13:43 2001
++++ man-pages-1.38/man3/xdr_callmsg.3	Mon Jun 18 00:13:43 2001
 @@ -0,0 +1 @@
 +.so man3/rpc.3
---- man-pages-1.35/man3/xdr_opaque_auth.3.orig	Mon Apr 23 14:32:30 2001
-+++ man-pages-1.35/man3/xdr_opaque_auth.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/xdr_opaque_auth.3.orig	Mon Jun 18 00:13:43 2001
++++ man-pages-1.38/man3/xdr_opaque_auth.3	Mon Jun 18 00:13:43 2001
 @@ -0,0 +1 @@
 +.so man3/rpc.3
---- man-pages-1.35/man3/xdr_pmap.3.orig	Mon Apr 23 14:32:30 2001
-+++ man-pages-1.35/man3/xdr_pmap.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/xdr_pmap.3.orig	Mon Jun 18 00:13:43 2001
++++ man-pages-1.38/man3/xdr_pmap.3	Mon Jun 18 00:13:43 2001
 @@ -0,0 +1 @@
 +.so man3/rpc.3
---- man-pages-1.35/man3/xdr_pmaplist.3.orig	Mon Apr 23 14:32:30 2001
-+++ man-pages-1.35/man3/xdr_pmaplist.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/xdr_pmaplist.3.orig	Mon Jun 18 00:13:43 2001
++++ man-pages-1.38/man3/xdr_pmaplist.3	Mon Jun 18 00:13:43 2001
 @@ -0,0 +1 @@
 +.so man3/rpc.3
---- man-pages-1.35/man3/xdr_rejected_reply.3.orig	Mon Apr 23 14:32:30 2001
-+++ man-pages-1.35/man3/xdr_rejected_reply.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/xdr_rejected_reply.3.orig	Mon Jun 18 00:13:43 2001
++++ man-pages-1.38/man3/xdr_rejected_reply.3	Mon Jun 18 00:13:43 2001
 @@ -0,0 +1 @@
 +.so man3/rpc.3
---- man-pages-1.35/man3/xdr_replymsg.3.orig	Mon Apr 23 14:32:30 2001
-+++ man-pages-1.35/man3/xdr_replymsg.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/xdr_replymsg.3.orig	Mon Jun 18 00:13:43 2001
++++ man-pages-1.38/man3/xdr_replymsg.3	Mon Jun 18 00:13:43 2001
 @@ -0,0 +1 @@
 +.so man3/rpc.3
---- man-pages-1.35/man3/xprt_register.3.orig	Mon Apr 23 14:32:30 2001
-+++ man-pages-1.35/man3/xprt_register.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/xprt_register.3.orig	Mon Jun 18 00:13:43 2001
++++ man-pages-1.38/man3/xprt_register.3	Mon Jun 18 00:13:43 2001
 @@ -0,0 +1 @@
 +.so man3/rpc.3
---- man-pages-1.35/man3/xprt_unregister.3.orig	Mon Apr 23 14:32:30 2001
-+++ man-pages-1.35/man3/xprt_unregister.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/xprt_unregister.3.orig	Mon Jun 18 00:13:43 2001
++++ man-pages-1.38/man3/xprt_unregister.3	Mon Jun 18 00:13:43 2001
 @@ -0,0 +1 @@
 +.so man3/rpc.3
---- man-pages-1.35/man3/strndup.3.orig	Mon Apr 23 14:32:30 2001
-+++ man-pages-1.35/man3/strndup.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/strndup.3.orig	Mon Jun 18 00:13:43 2001
++++ man-pages-1.38/man3/strndup.3	Mon Jun 18 00:13:43 2001
 @@ -0,0 +1 @@
 +.so man3/strdup.3
---- man-pages-1.35/man3/versionsort.3.orig	Mon Apr 23 14:32:30 2001
-+++ man-pages-1.35/man3/versionsort.3	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man3/versionsort.3.orig	Mon Jun 18 00:13:43 2001
++++ man-pages-1.38/man3/versionsort.3	Mon Jun 18 00:13:43 2001
 @@ -0,0 +1 @@
 +.so man3/scandir.3
---- man-pages-1.35/man4/mem.4.orig	Sun Aug 13 02:38:48 2000
-+++ man-pages-1.35/man4/mem.4	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man4/mem.4.orig	Thu Jun  7 15:03:24 2001
++++ man-pages-1.38/man4/mem.4	Mon Jun 18 00:13:43 2001
 @@ -41,7 +41,7 @@
  .sp
  mknod -m 660 /dev/mem c 1 1
@@ -1248,8 +1165,8 @@
  .sp
  .RE
  .LP
---- man-pages-1.35/man4/sd.4.orig	Sun Dec 24 17:56:18 2000
-+++ man-pages-1.35/man4/sd.4	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man4/sd.4.orig	Thu Jun  7 15:03:24 2001
++++ man-pages-1.38/man4/sd.4	Mon Jun 18 00:13:43 2001
 @@ -122,5 +122,5 @@
  /dev/sd[a-h]: the whole device
  .br
@@ -1258,8 +1175,8 @@
 -.BR scsi (4)
 +.\" .SH "SEE ALSO"
 +.\" .BR scsi (4)
---- man-pages-1.35/man4/null.4.orig	Sun Aug 13 02:40:09 2000
-+++ man-pages-1.35/man4/null.4	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man4/null.4.orig	Thu Jun  7 15:03:24 2001
++++ man-pages-1.38/man4/null.4	Mon Jun 18 00:13:43 2001
 @@ -37,7 +37,7 @@
  .br
  mknod -m 666 /dev/zero c 1 5
@@ -1269,8 +1186,8 @@
  .sp
  .RE
  .SH NOTES
---- man-pages-1.35/man5/proc.5.orig	Sun Mar 18 15:04:39 2001
-+++ man-pages-1.35/man5/proc.5	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man5/proc.5.orig	Thu Jun  7 15:01:27 2001
++++ man-pages-1.38/man5/proc.5	Mon Jun 18 00:13:43 2001
 @@ -417,6 +417,9 @@
  .I locks
  This file shows current file locks.
@@ -1281,8 +1198,8 @@
  .I malloc
  This file is only present if CONFIGDEBUGMALLOC was defined during
  compilation.
---- man-pages-1.35/man5/charmap.5.orig	Sat Aug 12 16:34:08 2000
-+++ man-pages-1.35/man5/charmap.5	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man5/charmap.5.orig	Thu Jun  7 15:01:27 2001
++++ man-pages-1.38/man5/charmap.5	Mon Jun 18 00:13:43 2001
 @@ -26,10 +26,10 @@
  available characters and their encodings. All supported character
  sets should have the 
@@ -1298,19 +1215,8 @@
  .SH SYNTAX
  The charmap file starts with a header, that may consist of the
  following keywords:
---- man-pages-1.35/man5/resolver.5.orig	Sun Jun  4 14:44:27 2000
-+++ man-pages-1.35/man5/resolver.5	Mon Apr 23 14:32:30 2001
-@@ -16,7 +16,7 @@
- .\"	@(#)resolver.5	5.9 (Berkeley) 12/14/89
- .\"	$Id: resolver.5,v 8.3 1995/12/06 20:34:35 vixie Exp $
- .\"
--.TH RESOLVER 5 "November 11, 1993"
-+.TH RESOLVER 5 "November 11, 1993" "Debian GNU/Linux"
- .UC 4
- .SH NAME
- resolver \- resolver configuration file
---- man-pages-1.35/man7/suffixes.7.orig	Mon Jan 22 11:52:15 2001
-+++ man-pages-1.35/man7/suffixes.7	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man7/suffixes.7.orig	Thu Jun  7 14:56:37 2001
++++ man-pages-1.38/man7/suffixes.7	Mon Jun 18 00:13:43 2001
 @@ -264,8 +264,8 @@
   .z	File compressed using \fBpack\fP(1) (or an old \fBgzip\fP(1))
   .zip	\fBzip\fP(1) archive
@@ -1322,8 +1228,8 @@
  .TE
  .SH "CONFORMS TO"
  General UNIX conventions.
---- man-pages-1.35/man7/ip.7.orig	Sun Dec 31 02:34:44 2000
-+++ man-pages-1.35/man7/ip.7	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man7/ip.7.orig	Thu Jun  7 14:56:37 2001
++++ man-pages-1.38/man7/ip.7	Mon Jun 18 00:13:43 2001
 @@ -12,8 +12,6 @@
  .SH SYNOPSIS
  .B #include <sys/socket.h>
@@ -1333,8 +1239,8 @@
  .B #include <netinet/in.h>
  .sp
  .IB tcp_socket " = socket(PF_INET, SOCK_STREAM, 0);"
---- man-pages-1.35/man7/hier.7.orig	Sat Aug 12 15:45:23 2000
-+++ man-pages-1.35/man7/hier.7	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man7/hier.7.orig	Thu Jun  7 14:56:37 2001
++++ man-pages-1.38/man7/hier.7	Mon Jun 18 00:13:43 2001
 @@ -257,7 +257,7 @@
  .TP
  .I /usr/sbin
@@ -1375,8 +1281,8 @@
  .TP
  .I /var/lock
  Lock files are placed in this directory.  The naming convention for
---- man-pages-1.35/man7/man.7.orig	Sat Dec 23 18:30:25 2000
-+++ man-pages-1.35/man7/man.7	Mon Apr 23 14:32:30 2001
+--- man-pages-1.38/man7/man.7.orig	Thu Jun  7 14:56:37 2001
++++ man-pages-1.38/man7/man.7	Mon Jun 18 00:13:43 2001
 @@ -190,8 +190,8 @@
  It is extremely important that this format is followed, and that there is a
  backslash before the single dash which follows the command name.  This

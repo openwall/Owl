@@ -1,9 +1,9 @@
-# $Id: Owl/packages/man-pages/man-pages.spec,v 1.5 2001/05/04 14:43:20 solar Exp $
+# $Id: Owl/packages/man-pages/man-pages.spec,v 1.6 2001/06/17 22:27:18 mci Exp $
 
 Summary: Manual (man) pages from the Linux Documentation Project.
 Name: man-pages
-Version: 1.35
-Release: 4owl
+Version: 1.38
+Release: 1owl
 Copyright: distributable
 Group: Documentation
 Source0: ftp://ftp.win.tue.nl/pub/linux-local/manpages/man-pages-%{version}.tar.gz 
@@ -20,15 +20,13 @@ Source10: sigaltstack.2
 Source11: ld-linux.so.8
 Source12: ldconfig.8
 Source13: rpcinfo.8
-Patch1: man-pages-1.35-deb-misc.diff
-Patch2: man-pages-1.35-rh-ctype.diff
+Patch1: man-pages-1.38-deb-misc.diff
+Patch2: man-pages-1.38-rh-ctype.diff
 # temporarily disabled, we don't yet have these paths
 # Patch3: man-pages-1.35-rh-pathupdate.diff
-Patch4: man-pages-1.35-rh-unicodeurl.diff
-Patch5: man-pages-1.35-rh-roffix.diff
-Patch6: man-pages-1.35-rh-mssync.diff
-Patch7: man-pages-1.35-owl-ccldso.diff
-Patch8: man-pages-1.35-owl-uselib.diff
+Patch4: man-pages-1.38-rh-roffix.diff
+Patch5: man-pages-1.38-owl-ccldso.diff
+Patch6: man-pages-1.38-owl-uselib.diff
 Buildroot: /var/rpm-buildroot/%{name}-root
 Autoreqprov: false
 BuildArchitectures: noarch
@@ -68,8 +66,6 @@ cp %{SOURCE13} man8
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-%patch7 -p1
-%patch8 -p1
 
 %build
 rm -fv man1/README
@@ -130,6 +126,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man*/*
 
 %changelog
+* Mon Jun 18 2001 Michail Litvak <mci@owl.openwall.com>
+- updated to 1.38
+
 * Fri May 04 2001 Solar Designer <solar@owl.openwall.com>
 - crypt.3 is now a part of our glibc package due to crypt_blowfish.
 

@@ -1,6 +1,6 @@
---- man-pages-1.35/man2/execve.2.orig	Mon Apr 30 19:01:09 2001
-+++ man-pages-1.35/man2/execve.2	Mon Apr 30 19:01:48 2001
-@@ -71,7 +71,7 @@
+--- man-pages-1.38/man2/execve.2.orig	Thu Jun  7 15:09:28 2001
++++ man-pages-1.38/man2/execve.2	Sun Jun 17 18:16:48 2001
+@@ -72,7 +72,7 @@
  
  If the executable is an a.out dynamically-linked binary executable containing
  shared-library stubs, the Linux dynamic linker
@@ -9,14 +9,22 @@
  is called at the start of execution to bring needed shared libraries into core
  and link the executable with them.
  
-@@ -192,4 +192,4 @@
+@@ -193,4 +193,4 @@
  .BR fork (2),
  .BR execl (3),
  .BR environ (5),
 -.BR ld.so (8)
 +.BR ld-linux.so (8)
---- man-pages-1.35/man3/intro.3.orig	Mon Apr 30 18:55:43 2001
-+++ man-pages-1.35/man3/intro.3	Mon Apr 30 18:56:04 2001
+--- man-pages-1.38/man2/uselib.2.orig	Thu Jun  7 15:09:29 2001
++++ man-pages-1.38/man2/uselib.2	Sun Jun 17 18:16:48 2001
+@@ -64,4 +64,4 @@
+ .BR ldd (1),
+ .BR mmap (2),
+ .BR open (2),
+-.BR ld.so (8)
++.BR ld-linux.so (8)
+--- man-pages-1.38/man3/intro.3.orig	Thu Jun  7 15:04:28 2001
++++ man-pages-1.38/man3/intro.3	Sun Jun 17 18:16:48 2001
 @@ -33,7 +33,7 @@
  .IP (3C)
  These functions, the functions from chapter 2 and from chapter 3S are
@@ -35,8 +43,8 @@
  C compiler, which needs the option \fI\-lm\fP.
  .IP (3F)
  These functions are part of the FORTRAN library libF77.  There are no
---- man-pages-1.35/man3/stdio.3.orig	Mon Apr 30 18:56:42 2001
-+++ man-pages-1.35/man3/stdio.3	Mon Apr 30 18:57:03 2001
+--- man-pages-1.38/man3/stdio.3.orig	Thu Jun  7 15:04:29 2001
++++ man-pages-1.38/man3/stdio.3	Sun Jun 17 18:16:48 2001
 @@ -117,7 +117,7 @@
  library is a part of the library
  .B libc
@@ -46,8 +54,8 @@
  and
  .BR pc (1).
  The
---- man-pages-1.35/man3/dlopen.3.orig	Mon Apr 30 19:00:19 2001
-+++ man-pages-1.35/man3/dlopen.3	Mon Apr 30 19:00:39 2001
+--- man-pages-1.38/man3/dlopen.3.orig	Thu Jun  7 15:04:28 2001
++++ man-pages-1.38/man3/dlopen.3	Sun Jun 17 18:16:48 2001
 @@ -192,7 +192,7 @@
  The manual page was written by Adam Richter.
  .SH SEE ALSO

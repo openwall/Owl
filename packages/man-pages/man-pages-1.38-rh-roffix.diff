@@ -1,0 +1,72 @@
+--- man-pages-1.35/man1/rpcgen.1.rofffix	Tue Apr 22 10:54:22 1997
++++ man-pages-1.35/man1/rpcgen.1	Mon Apr  2 19:10:13 2001
+@@ -312,9 +312,7 @@
+ \f4\-l\f1,
+ \f4\-m\f1,
+ \f4\-n\f1,
+-\f4\-s\f1,
+-\f4\-s\Sc,
+-\f4\-s\Ss
++\f4\-s\f1
+ and
+ \f4\-t\f1
+ modes only).
+--- man-pages-1.38/man2/ioctl_list.2.orig	Thu Jun  7 15:09:28 2001
++++ man-pages-1.38/man2/ioctl_list.2	Mon Jun 18 00:03:10 2001
+@@ -543,8 +543,7 @@
+ pointers.  These are documented here in alphabetical order.
+ 
+ CDROMREADAUDIO takes an input pointer 'const struct cdrom_read_audio *'.
+-The 'buf' field points to an output buffer
+-of length 'nframes * CD_FRAMESIZE_RAW'.
++The 'buf' field points to an output buffer of length 'nframes * CD_FRAMESIZE_RAW'.
+ 
+ CDROMREADCOOKED, CDROMREADMODE1, CDROMREADMODE2, and CDROMREADRAW take
+ an input pointer 'const struct cdrom_msf *'.  They use the same pointer
+--- man-pages-1.38/man3/rpc.3.orig	Thu Jun  7 15:04:29 2001
++++ man-pages-1.38/man3/rpc.3	Mon Jun 18 00:06:07 2001
+@@ -342,7 +342,7 @@
+ only:
+ .IP
+ .nf
+-.ta +2.0i +2.0i +2.0i
++.ta T +2.0i
+ .SM CLSET_RETRY_TIMEOUT\s0	struct timeval	set the retry timeout
+ .SM CLGET_RETRY_TIMEOUT\s0	struct timeval	get the retry timeout
+ .fi
+--- man-pages-1.38/man7/mdoc.samples.7.orig	Thu Jun  7 14:56:37 2001
++++ man-pages-1.38/man7/mdoc.samples.7	Sun Jun 17 18:30:00 2001
+@@ -1647,6 +1647,22 @@
+ .Xr troff Ns / Ns Xr ditroff
+ output.
+ .Ss Return Values
++.de Rv
++.ie \\n(.$==0 \{\
++.tm Usage: .Rv [-std] (#\\n(.c)
++.\}
++.el \{\
++.       ds mN Rv
++.       if "\\$1"-std" \{\
++.       nr cH \\*(cH
++.       if (\\n(cH<1):(\\n(cH>8) .tm Usage: .Rv -std sections 2 and 3 only
++.               br
++\&The
++.Fn \\$2
++\&\\*(rV
++.       \}
++.\}
++..
+ The
+ .Ql \&.Rv
+ macro generates text for use in the
+--- man-pages-1.38/man7/regex.7.orig	Thu Jun  7 14:56:37 2001
++++ man-pages-1.38/man7/regex.7	Sun Jun 17 19:44:46 2001
+@@ -27,7 +27,7 @@
+ .\"
+ .\" In the default nroff environment there is no dagger \(dg.
+ .ie t .ds dg \(dg
+-.el .ds dg (!)
++.el .ds dg (*)
+ .TH REGEX 7 1994-02-07 
+ .SH NAME
+ regex \- POSIX 1003.2 regular expressions
