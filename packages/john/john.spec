@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.34 2004/06/13 15:37:33 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.35 2004/06/19 15:22:21 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.37.1
+Version: 1.6.37.2
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -74,6 +74,11 @@ cp -a john-1.6/doc/* doc/john-1.6/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Sat Jun 19 2004 Solar Designer <solar@owl.openwall.com> 1.6.37.2-owl1
+- "N passwords cracked" -> "N password hashes cracked" because there can be
+multiple hashes per password with LM or double-length DES-based crypt(3).
+- Updated some documentation files from John 1.6 and included them in doc/
+
 * Sun Jun 13 2004 Solar Designer <solar@owl.openwall.com> 1.6.37.1-owl1
 - Freeze the timestamps that are being logged for the duration of loading
 of password files; clock is reset to 0 or to the restore point when the
