@@ -1,9 +1,9 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.25 2002/07/06 21:18:13 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.26 2002/07/27 23:14:37 solar Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
 Version: 0.75
-Release: owl16
+Release: owl17
 %define rh_version %{version}-10
 License: GPL or BSD
 Group: System Environment/Base
@@ -13,6 +13,7 @@ Source1: pam_listfile.c
 Patch0: pam-0.75-owl-tmp.diff
 Patch1: pam-0.75-owl-pam_get_user-cache-failures.diff
 Patch2: pam-0.75-owl-pam_dispatch-debugging.diff
+Patch3: pam-0.75-owl-man.diff
 Patch9: pam-0.75-alt-read_string.diff
 Patch10: pam-0.75-owl-pam_pwdb.diff
 Patch11: pam-0.75-owl-pam_chroot.diff
@@ -63,6 +64,7 @@ ln -s ../../../libpam_misc/pam_misc.h libpam/include/security/pam_misc.h
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
@@ -102,8 +104,9 @@ mv $RPM_BUILD_ROOT/lib/*.a $RPM_BUILD_ROOT/%{_libdir}/
 mkdir -m 755 $RPM_BUILD_ROOT/etc/pam.d
 install -m 644 other.pamd $RPM_BUILD_ROOT/etc/pam.d/other
 
-mkdir -p $RPM_BUILD_ROOT%{_mandir}/man{3,8}
+mkdir -p $RPM_BUILD_ROOT%{_mandir}/man{3,5,8}
 install -m 644 doc/man/*.3 $RPM_BUILD_ROOT%{_mandir}/man3/
+install -m 644 doc/man/*.5 $RPM_BUILD_ROOT%{_mandir}/man5/
 install -m 644 doc/man/*.8 $RPM_BUILD_ROOT%{_mandir}/man8/
 
 rm -f doc/ps/missfont.log
@@ -182,6 +185,7 @@ chgrp chkpwd %{_libexecdir}/chkpwd && chmod 710 %{_libexecdir}/chkpwd
 %attr(644,root,root) %config(noreplace) /etc/security/pam_env.conf
 %attr(640,root,wheel) %config(noreplace) /etc/security/time.conf
 
+%{_mandir}/man5/*
 %{_mandir}/man8/*
 
 %files devel
@@ -201,6 +205,9 @@ chgrp chkpwd %{_libexecdir}/chkpwd && chmod 710 %{_libexecdir}/chkpwd
 %doc doc/specs/rfc86.0.txt
 
 %changelog
+* Sun Jul 28 2002 Solar Designer <solar@owl.openwall.com>
+- Moved pam.d and pam.conf man pages to section 5 where they belong.
+
 * Sat Jul 06 2002 Solar Designer <solar@owl.openwall.com>
 - pam_limits: support stacking for account management (as well as for
 session setup), be fail-close on configuration file reads, report the

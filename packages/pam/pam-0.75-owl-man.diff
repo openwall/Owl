@@ -1,0 +1,47 @@
+diff -urN pam-0.75.orig/doc/Makefile pam-0.75/doc/Makefile
+--- pam-0.75.orig/doc/Makefile	Mon Apr 23 22:14:19 2001
++++ pam-0.75/doc/Makefile	Sun Jul 28 03:06:50 2002
+@@ -88,6 +88,9 @@
+ 	cd man && for file in *.3 ; do \
+ 	  rm -f $(FAKEROOT)$(MANDIR)/man3/$$file ; \
+ 	done
++	cd man && for file in *.5 ; do \
++	  rm -f $(FAKEROOT)$(MANDIR)/man5/$$file ; \
++	done
+ 	cd man && for file in *.8 ; do \
+ 	  rm -f $(FAKEROOT)$(MANDIR)/man8/$$file ; \
+ 	done
+@@ -120,9 +123,12 @@
+ 	  install -m 644 $$file $(FAKEROOT)$(DOCDIR)/html ; \
+ 	done
+ endif
+-	mkdir -p $(FAKEROOT)$(MANDIR)/man{3,8}
++	mkdir -p $(FAKEROOT)$(MANDIR)/man{3,5,8}
+ 	for file in man/*.3 ; do \
+ 	  install -m 644 $$file $(FAKEROOT)$(MANDIR)/man3 ; \
++	done
++	for file in man/*.5 ; do \
++	  install -m 644 $$file $(FAKEROOT)$(MANDIR)/man5 ; \
+ 	done
+ 	for file in man/*.8 ; do \
+ 	  install -m 644 $$file $(FAKEROOT)$(MANDIR)/man8 ; \
+diff -urN pam-0.75.orig/doc/man/pam.conf.5 pam-0.75/doc/man/pam.conf.5
+--- pam-0.75.orig/doc/man/pam.conf.5	Thu Jan  1 03:00:00 1970
++++ pam-0.75/doc/man/pam.conf.5	Sun Jul 28 02:57:12 2002
+@@ -0,0 +1 @@
++.so man8/pam.8
+diff -urN pam-0.75.orig/doc/man/pam.conf.8 pam-0.75/doc/man/pam.conf.8
+--- pam-0.75.orig/doc/man/pam.conf.8	Mon Jan 22 19:04:14 2001
++++ pam-0.75/doc/man/pam.conf.8	Thu Jan  1 03:00:00 1970
+@@ -1 +0,0 @@
+-.so pam.8
+diff -urN pam-0.75.orig/doc/man/pam.d.5 pam-0.75/doc/man/pam.d.5
+--- pam-0.75.orig/doc/man/pam.d.5	Thu Jan  1 03:00:00 1970
++++ pam-0.75/doc/man/pam.d.5	Sun Jul 28 02:57:20 2002
+@@ -0,0 +1 @@
++.so man8/pam.8
+diff -urN pam-0.75.orig/doc/man/pam.d.8 pam-0.75/doc/man/pam.d.8
+--- pam-0.75.orig/doc/man/pam.d.8	Mon Jan 22 19:04:14 2001
++++ pam-0.75/doc/man/pam.d.8	Thu Jan  1 03:00:00 1970
+@@ -1 +0,0 @@
+-.so pam.8
