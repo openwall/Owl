@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gnupg/gnupg.spec,v 1.17 2003/05/14 17:50:18 solar Exp $
+# $Id: Owl/packages/gnupg/gnupg.spec,v 1.18 2003/05/15 00:31:23 solar Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
@@ -34,9 +34,9 @@ EOF
 %build
 unset LINGUAS || :
 %configure \
-		--with-included-gettext \
-		--with-static-rnd=linux \
-		--with-mailprog=/usr/sbin/sendmail
+	--with-included-gettext \
+	--with-static-rnd=linux \
+	--with-mailprog=/usr/sbin/sendmail
 make
 
 %install
@@ -66,6 +66,7 @@ fi
 %defattr(-,root,root)
 %doc AUTHORS COPYING ChangeLog NEWS PROJECTS README THANKS TODO
 %doc doc/{DETAILS,FAQ,HACKING,OpenPGP,*.html}
+%doc tools/convert-from-106
 
 %{_bindir}/gpg
 %{_bindir}/gpgv
