@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gawk/gawk.spec,v 1.6 2002/07/23 13:18:27 mci Exp $
+# $Id: Owl/packages/gawk/gawk.spec,v 1.7 2002/07/27 23:38:15 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -22,15 +22,13 @@ quick and easy text pattern matching and reformatting jobs.
 
 %if %BUILD_PROFILE
 %package profile
-Summary: The GNU version of the awk text processing utility with
-profiling support.
+Summary: The version of gawk with profiling support.
 Group: Development/Libraries
 
 %description profile
-The gawk-profile package includes pgawk (profiling gawk).
-pgawk is identical in every way to gawk, except that when it has
-finished running, it creates a profile of your program with program
-execution counts.
+The gawk-profile package includes pgawk (profiling gawk).  pgawk is
+identical in every way to gawk, except that when it has finished running,
+it creates a profile of your program with line execution counts.
 %endif
 
 %prep
@@ -99,7 +97,7 @@ fi
 
 %changelog
 * Mon Jul 23 2002 Michail Litvak <mci@owl.openwall.com>
-- Moved profiling gawk (pgawk) into separate package.
+- Moved profiling gawk (pgawk) into separate subpackage, not built by default.
 - Compress PostScript documentation.
 
 * Mon Jul 15 2002 Michail Litvak <mci@owl.openwall.com>
