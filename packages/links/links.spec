@@ -1,9 +1,9 @@
-# $Id: Owl/packages/links/Attic/links.spec,v 1.3 2001/06/04 08:17:19 mci Exp $
+# $Id: Owl/packages/links/Attic/links.spec,v 1.4 2001/06/05 19:57:12 mci Exp $
 
 Name: links
 Summary: Lynx-like text WWW browser with support for frames
 Version: 0.95
-Release: 3owl
+Release: 4owl
 Copyright: GPL
 Source: http://artax.karlin.mff.cuni.cz/~mikulas/links/download/%{name}-%{version}.tar.gz
 Group: Applications/Internet
@@ -19,8 +19,8 @@ correct table and frames rendering, international codepages and user
 interfaces, background downloads, multiple connected instances and it
 is small and fast.
 
-Links has preliminary support for password authentication (it works
-almost in every cases), cookies (in-memory only), and simple bookmarks.
+Links has preliminary support for password authentication, cookies
+(in-memory only), and simple bookmarks.
 
 It supports SSL, but it's still in the testing phase - if it breaks,
 don't use it. :-)
