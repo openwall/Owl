@@ -1,9 +1,9 @@
-# $Id: Owl/packages/cvs/cvs.spec,v 1.18.2.1 2004/04/13 21:54:50 solar Exp $
+# $Id: Owl/packages/cvs/cvs.spec,v 1.18.2.2 2004/05/17 22:13:28 solar Exp $
 
 Summary: A version control system.
 Name: cvs
 Version: 1.11.5
-Release: owl5
+Release: owl6
 License: GPL
 Group: Development/Tools
 URL: http://www.cvshome.org
@@ -109,6 +109,11 @@ fi
 %_datadir/cvs
 
 %changelog
+* Tue May 18 2004 Solar Designer <solar@owl.openwall.com> 1.11.5-owl6
+- Added Derek Robert Price's fix for the CVS server heap-based buffer
+overflow vulnerability in processing of malformed "Entry" lines in
+combination with "Is-modified" and "Unchanged" discovered by Stefan Esser.
+
 * Tue Apr 13 2004 Michail Litvak <mci@owl.openwall.com> 1.11.5-owl5
 - Patch to fix CVS pserver client side remote exploit.
 - Fixed that using the -p option to cvs checkout sidesteps the
