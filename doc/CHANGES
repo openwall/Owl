@@ -5,6 +5,16 @@ remains fixed; it's only the stable branch which has these changes.
 
 	Changes made between Owl 0.1-prerelease and Owl 0.1-stable.
 
+2001/09/27	Package: gzip
+SECURITY FIX	Severity: low, local, passive
+Patched unsafe temporary file handling in gzexe, zdiff, and znew based
+on work by Todd Miller of OpenBSD.
+
+(2001/06/29)
+2001/09/27	Package: mktemp
+Switched to packaging the portable mktemp, now that Todd Miller
+maintains it in addition to the OpenBSD-specific version. :-)
+
 2001/09/27	Package: openssh
 SECURITY FIX	Severity: low to high, remote, passive to active
 Updated to 2.9.9p2, which fixes three security issues compared to our
@@ -227,4 +237,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp@hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.2.2.10 2001/09/27 17:51:15 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.2.2.11 2001/09/28 01:45:56 solar Exp $

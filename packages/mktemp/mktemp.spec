@@ -1,14 +1,14 @@
-# $Id: Owl/packages/mktemp/mktemp.spec,v 1.2 2000/08/07 22:18:14 solar Exp $
+# $Id: Owl/packages/mktemp/mktemp.spec,v 1.2.2.1 2001/09/28 01:45:55 solar Exp $
 
 Summary: A small utility for safely making /tmp files.
 Name: mktemp
-Version: 2.7
+Epoch: 1
+Version: 1.2
 Release: 1owl
-Copyright: BSD
+License: BSD
 Group: System Environment/Base
-Source: mktemp-%{version}.tar.gz
-Patch0: mktemp-2.7-rh-owl-linux.diff
-Url: http://www.openbsd.org/
+Source: ftp://ftp.courtesan.com/pub/mktemp/mktemp-%{version}.tar.gz
+URL: http://www.courtesan.com/mktemp/
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 
 %description
@@ -20,26 +20,30 @@ Install the mktemp package if you need to use shell scripts or other
 programs which will create and use unique /tmp files.
 
 %prep
-%setup
-%patch -p1
+%setup -q
 
 %build
-make -C usr.bin/mktemp CFLAGS="-c $RPM_OPT_FLAGS"
+%define _bindir /bin
+%configure --with-man --with-random=/dev/urandom
+make
 
 %install
-mkdir -p $RPM_BUILD_ROOT/bin $RPM_BUILD_ROOT/usr/man/man1
-make -C usr.bin/mktemp FAKEROOT="$RPM_BUILD_ROOT" install
-gzip -9nf $RPM_BUILD_ROOT/usr/man/man1/mktemp.1
+%makeinstall
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-/bin/mktemp
-/usr/man/man1/mktemp.*
+%doc LICENSE README RELEASE_NOTES
+%_bindir/mktemp
+%_mandir/man1/mktemp.*
 
 %changelog
+* Fri Jun 29 2001 Solar Designer <solar@owl.openwall.com>
+- Packaged the portable mktemp, now that Todd Miller maintains it in
+addition to the OpenBSD-specific version. :-)
+
 * Tue Aug 08 2000 Solar Designer <solar@owl.openwall.com>
 - Updated to version from OpenBSD 2.7.
 - Added __attribute__ ((format ...)) to err() and "%s" to errx().
