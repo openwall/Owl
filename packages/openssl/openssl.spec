@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.40 2004/11/02 03:35:27 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.41 2004/11/02 04:53:17 solar Exp $
 
 %define soversion 4
 
@@ -124,13 +124,13 @@ done
 mv $RPM_BUILD_ROOT%_mandir/man1/{,ssl}passwd.1
 mv $RPM_BUILD_ROOT%_mandir/man3/{,ssl}err.3
 mv $RPM_BUILD_ROOT%_mandir/man3/{,ssl}rand.3
+# This one already exists as des_modes.7
+rm $RPM_BUILD_ROOT%_mandir/man7/"Modes of DES.7"
 
 # Make backwards-compatibility symlink to ssleay
 ln -s openssl $RPM_BUILD_ROOT/usr/bin/ssleay
 
-pushd $RPM_BUILD_ROOT%_datadir/ssl/misc
-mv CA.sh CA
-popd
+mv $RPM_BUILD_ROOT%_datadir/ssl/misc/CA{.sh,}
 
 # This script is obsolete and insecure.
 rm %buildroot%_datadir/ssl/misc/der_chop
@@ -144,7 +144,8 @@ rm %buildroot%_datadir/ssl/misc/der_chop
 %doc doc
 %attr(0755,root,root) %_bindir/*
 %attr(0755,root,root) /%_lib/*.so.%version
-%attr(0755,root,root) %openssldir/misc/CA{,.pl}
+%attr(0755,root,root) %openssldir/misc/CA
+%attr(0755,root,root) %openssldir/misc/CA.pl
 %attr(0755,root,root) %openssldir/misc/c_*
 %attr(0644,root,root) %_mandir/man[157]/*
 %config %attr(0644,root,root) %openssldir/openssl.cnf
@@ -167,6 +168,7 @@ rm %buildroot%_datadir/ssl/misc/der_chop
 * Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 0.9.7d-owl2
 - Do package CA.pl; we were packaging CA.pl.pod and CA.pl.1 anyway, and we
 had a dependency on Perl anyway (possibly something to be resolved later).
+- Remove "Modes of DES.7" man page name which confuses brp-compress.
 
 * Thu Mar 18 2004 Michail Litvak <mci@owl.openwall.com> 0.9.7d-owl1
 - 0.9.7d
