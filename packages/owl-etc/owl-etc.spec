@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.10 2000/11/23 15:54:46 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.11 2000/12/04 18:41:45 solar Exp $
 
 Summary: Initial set of configuration files
 Name: owl-etc
-Version: 0.1
+Version: 0.2
 Release: 1owl
 Copyright: public domain
 Group: System Environment/Base
@@ -53,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(755,root,root) /etc/profile.d
 
 %changelog
+* Mon Dec 04 2000 Solar Designer <solar@owl.openwall.com>
+- utmp group.
+
 * Tue Nov 21 2000 Solar Designer <solar@owl.openwall.com>
 - More pseudo-users/groups: klogd, postfix, postdrop, postman.
 

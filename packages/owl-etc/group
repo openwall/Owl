@@ -16,6 +16,7 @@ man:x:15:
 floppy:x:19:
 games:x:20:
 slocate:x:21:
+utmp:x:22:
 dip:x:40:
 ftp:x:50:
 nobody:x:99:
