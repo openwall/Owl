@@ -2,8 +2,8 @@
  * This is an OpenSSL-compatible implementation of the RSA Data Security,
  * Inc. MD5 Message-Digest Algorithm.
  *
- * Written by Solar Designer <solar@openwall.com> in 2001, and placed in
- * the public domain.  There's absolutely no warranty.
+ * Written by Solar Designer <solar at openwall.com> in 2001, and placed
+ * in the public domain.  There's absolutely no warranty.
  *
  * This differs from Colin Plumb's older public domain implementation in
  * that no 32-bit integer data type is required, there's no compile-time
