@@ -1,10 +1,10 @@
-# $Id: Owl/packages/iproute2/iproute2.spec,v 1.8 2002/02/12 10:44:55 solar Exp $
+# $Id: Owl/packages/iproute2/iproute2.spec,v 1.9 2002/04/01 16:06:05 solar Exp $
 
 Summary: Enhanced IP routing and network devices configuration tools.
 Name: iproute2
 Version: 2.4.7
 %define snapshot ss010824
-Release: owl3
+Release: owl4
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.inr.ac.ru/ip-routing/%name-%version-now-%snapshot.tar.gz
@@ -80,6 +80,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/*
 
 %changelog
+* Mon Apr 01 2002 Solar Designer <solar@owl.openwall.com>
+- More formatting fixes to ip.8; the tc*.8 man pages remain _very_ dirty.
+
 * Mon Feb 11 2002 Michail Litvak <mci@owl.openwall.com>
 - add manpages
 - add PostScript documentation

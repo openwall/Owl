@@ -1,9 +1,10 @@
-.TH IP 8 "17 January 2002" "iproute2" "Linux"
+.TH IP 8 "1 April 2002" "iproute2" "Linux"
 .SH NAME
+.hy 0
+.na
 ip \- show / manipulate routing, devices, policy routing and tunnels
 .SH SYNOPSIS
 
-.ad l
 .in +8
 .ti -8
 .B ip
@@ -38,18 +39,18 @@ maddr " | "  mroute " | " monitor " }"
 .br
 .BR multicast " { " on " | " off " } |"
 .br
-.B  txqueuelen
+.B txqueuelen
 .IR PACKETS " |"
 .br
-.B  name
+.B name
 .IR NEWNAME " |"
 .br
-.B  address
+.B address
 .IR LLADDR " |"
-.B  broadcast
+.B broadcast
 .IR LLADDR " |"
 .br
-.B  mtu
+.B mtu
 .IR MTU " }"
 
 .ti -8
@@ -63,25 +64,28 @@ maddr " | "  mroute " | " monitor " }"
 .ti -8
 .BR "ip addr" " { " show " | " flush " } [ " dev
 .IR STRING " ] [ "
-.B  scope
+.B scope
 .IR SCOPE-ID " ] [ "
-.B  to
+.B to
 .IR PREFIX " ] [ " FLAG-LIST " ] [ "
-.B  label
+.B label
 .IR PATTERN " ]"
 
 .ti -8
 .IR IFADDR " := " PREFIX " | " ADDR
-.B  peer
-.IR PREFIX " [ "
-.B  broadcast
-.IR ADDR " ] [ "
-.B  anycast
-.IR ADDR " ] [ "
-.B  label
-.IR STRING " ] [ "
-.B  scope
-.IR SCOPE-ID " ]"
+.BI peer " PREFIX"
+.br
+[
+.BI broadcast " ADDR"
+] [
+.BI anycast " ADDR"
+]
+.br
+[
+.BI label " STRING"
+] [
+.BI scope " SCOPE-ID"
+]
 
 .ti -8
 .IR SCOPE-ID " := "
@@ -99,86 +103,104 @@ tentative " | " deprecated " ]"
 .ti -8
 .BR "ip route" " { "
 .BR list " | " flush " } "
-.I  SELECTOR
+.I SELECTOR
 
 .ti -8
-.B  ip route get
-.IR ADDRESS " [ "
+.B ip route get
+.I ADDRESS
+[
 .BI from " ADDRESS " iif " STRING"
-.RB " ] [ " oif
-.IR STRING " ] [ "
-.B  tos
-.IR TOS " ]"
+]
+.br
+[
+.BI oif " STRING"
+] [
+.BI tos " TOS"
+]
 
 .ti -8
 .BR "ip route" " { " add " | " del " | " change " | " append " | "\
 replace " | " monitor " } "
-.I  ROUTE
+.I ROUTE
 
 .ti -8
 .IR SELECTOR " := "
 .RB "[ " root
 .IR PREFIX " ] [ "
-.B  match
+.B match
+.IR PREFIX " ]"
+.br
+[
+.B exact
 .IR PREFIX " ] [ "
-.B  exact
-.IR PREFIX " ] [ "
-.B  table
-.IR TABLE_ID " ] [ "
-.B  proto
+.B table
+.IR TABLE_ID " ]"
+.br
+[
+.B proto
 .IR RTPROTO " ] [ "
-.B  type
+.B type
 .IR TYPE " ] [ "
-.B  scope
+.B scope
 .IR SCOPE " ]"
 
 .ti -8
 .IR ROUTE " := " NODE_SPEC " [ " INFO_SPEC " ]"
 
 .ti -8
-.IR NODE_SPEC " := [ " TYPE " ] " PREFIX " ["
-.B  tos
+.IR NODE_SPEC " := [ " TYPE " ] " PREFIX
+.br
+[
+.B tos
 .IR TOS " ] [ "
-.B  table
+.B table
 .IR TABLE_ID " ] [ "
-.B  proto
-.IR RTPROTO " ] [ "
-.B  scope
+.B proto
+.IR RTPROTO " ]"
+.br
+[
+.B scope
 .IR SCOPE " ] [ "
-.B  metric
+.B metric
 .IR METRIC " ]"
 
 .ti -8
 .IR INFO_SPEC " := " "NH OPTIONS FLAGS" " ["
-.B  nexthop
+.B nexthop
 .IR NH " ] ..."
 
 .ti -8
 .IR NH " := [ "
-.B  via
+.B via
 .IR ADDRESS " ] [ "
-.B  dev
+.B dev
 .IR STRING " ] [ "
-.B  weight
+.B weight
 .IR NUMBER " ] " NHFLAGS
 
 .ti -8
 .IR OPTIONS " := " FLAGS " [ "
-.B  mtu
+.B mtu
 .IR NUMBER " ] [ "
-.B  advmss
+.B advmss
+.IR NUMBER " ]"
+.br
+[
+.B rtt
 .IR NUMBER " ] [ "
-.B  rtt
+.B rttvar
+.IR NUMBER " ]"
+.br
+[
+.B window
 .IR NUMBER " ] [ "
-.B  rttvar
-.IR NUMBER " ] [ "
-.B  window
-.IR NUMBER " ] [ "
-.B  cwnd
-.IR NUMBER " ] [ "
-.B  ssthresh
+.B cwnd
+.IR NUMBER " ]"
+.br
+[
+.B ssthresh
 .IR REALM " ] [ "
-.B  realms
+.B realms
 .IR REALM " ]"
 
 .ti -8
@@ -210,32 +232,39 @@ throw " | " unreachable " | " prohibit " | " blackhole " | " nat " ]"
 .IR NUMBER " ]"
 
 .ti -8
-.B  ip rule
-.RB " [ " list " | " add " | " del " ]"
-.I  SELECTOR ACTION
+.B ip rule
+.RB "[ " list " | " add " | " del " ]"
+.I SELECTOR ACTION
 
 .ti -8
 .IR SELECTOR " := [ "
-.B  from
+.B from
 .IR PREFIX " ] [ "
-.B  to
+.B to
 .IR PREFIX " ] [ "
-.B  tos
-.IR TOS " ] [ "
-.B  fwmark
+.B tos
+.IR TOS " ]"
+.br
+[
+.B fwmark
 .IR FWMARK " ] [ "
-.B  dev
+.B dev
 .IR STRING " ] [ "
-.B  pref
+.B pref
 .IR NUMBER " ]"
 
 .ti -8
 .IR ACTION " := [ "
-.B  table
+.B table
 .IR TABLE_ID " ] [ "
-.B  nat
-.IR ADDRESS " ] [ "
-.BR prohibit " | " reject " | " unreachable " ] [ " realms
+.B nat
+.IR ADDRESS " ]"
+.br
+[
+.BR prohibit " | " reject " | " unreachable " ]"
+.br
+[
+.B realms
 .RI "[" SRCREALM "/]" DSTREALM " ]"
 
 .ti -8
@@ -246,19 +275,19 @@ throw " | " unreachable " | " prohibit " | " blackhole " | " nat " ]"
 .ti -8
 .BR "ip neigh" " { " add " | " del " | " change " | " replace " } { "
 .IR ADDR " [ "
-.B  lladdr
+.B lladdr
 .IR LLADDR " ] [ "
 .BR nud " { " permanent " | " noarp " | " stale " | " reachable " } ] | " proxy
 .IR ADDR " } [ "
-.B  dev
+.B dev
 .IR DEV " ]"
 
 .ti -8
 .BR "ip neigh" " { " show " | " flush " } [ " to
 .IR PREFIX " ] [ "
-.B  dev
+.B dev
 .IR DEV " ] [ "
-.B  nud
+.B nud
 .IR STATE " ]"
 
 .ti -8
@@ -269,7 +298,7 @@ throw " | " unreachable " | " prohibit " | " blackhole " | " nat " ]"
 .br
 .RB "[ " remote
 .IR ADDR " ] [ "
-.B  local
+.B local
 .IR ADDR " ]"
 .br
 .RB "[ [" i "|" o "]" seq " ] [ [" i "|" o "]" key
@@ -278,7 +307,7 @@ throw " | " unreachable " | " prohibit " | " blackhole " | " nat " ]"
 .br
 .RB "[ " ttl
 .IR TTL " ] [ "
-.B  tos
+.B tos
 .IR TOS " ] [ "
 .RB "[" no "]" pmtudisc " ]"
 .br
@@ -311,9 +340,9 @@ throw " | " unreachable " | " prohibit " | " blackhole " | " nat " ]"
 .ti -8
 .BR "ip mroute show" " ["
 .IR PREFIX " ] [ "
-.B  from
+.B from
 .IR PREFIX " ] [ "
-.B  iif
+.B iif
 .IR DEVICE " ]"
 
 .ti -8
@@ -321,6 +350,7 @@ throw " | " unreachable " | " prohibit " | " blackhole " | " nat " ]"
 .IR LISTofOBJECTS " ]"
 .in -8
 .ad b
+.hy 1
 
 .SH OPTIONS
 
@@ -1732,7 +1762,7 @@ The
 .B iseq
 flag requires that all input packets are serialized.
 The
-.B  seq
+.B seq
 flag is equivalent to the combination
 .BR "iseq oseq" .
 .B This doesn't work.
