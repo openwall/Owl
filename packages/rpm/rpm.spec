@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.46 2005/01/12 16:52:42 galaxy Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.47 2005/03/22 14:49:15 solar Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -11,7 +11,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl3
+Release: owl4
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -202,7 +202,7 @@ rm -r file
 %define __datadir        %__prefix/share
 %define __sysconfdir     /etc
 %define __sharedstatedir %__prefix/com
-%define __localstatedir  %__var/%_lib
+%define __localstatedir  %__var
 %define __libdir         %__exec_prefix/%_lib
 %define __includedir     %__prefix/include
 %define __oldincludedir  /usr/include
@@ -455,6 +455,9 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Sun Mar 20 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl4
+- Fixed a bug with creating and packaging /var/lib/lib/rpm.
+
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl3
 - Applied rpmal-bounds patch to avoid going out of array bounds in the
 dependency checker.
