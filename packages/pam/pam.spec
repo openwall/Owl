@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.9 2000/09/16 12:34:11 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.10 2000/09/16 12:40:53 solar Exp $
 
 Summary: A security tool which provides authentication for applications.
 Name: pam
@@ -80,7 +80,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/man/man8/*
 
 %changelog
-* Fri Sep 16 2000 Solar Designer <solar@owl.openwall.com>
+* Sat Sep 16 2000 Solar Designer <solar@owl.openwall.com>
 - %optflags_lib support.
 
 * Sat Aug 26 2000 Solar Designer <solar@owl.openwall.com>
