@@ -12,6 +12,21 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/07/14 -
+2002/07/18	Package: perl
+SECURITY FIX	Severity: low, local, passive
+Added File::Temp module to the package and corrected unsafe temporary
+file handling in the Configure script, perldoc(1) (patch from ALT
+Linux), perlbug(1), perlcc(1) (by updating to the version from Perl
+5.6.1 which actually works), s2p(1), c2ph(1), dotsh.pl, perl5db.pl,
+and ExtUtils/inst (also making it work with GNU tar).  Applied many
+fixes to documentation and code comments to not suggest bad practices
+on the use of temporary files.  perlbug(1) will now default to using
+vitmp(1).  Corrected the generation of *.ph files and re-considered
+which C header files to process during package build by default.  The
+package will now try to no longer include information specific to the
+build system's last kernel compile.
+
 2002/07/13	Package: texinfo
 Updated to 4.2 with an additional temporary file handling fix to
 texi2dvi.
@@ -808,4 +823,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.110 2002/07/13 02:24:03 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.111 2002/07/18 07:35:34 solar Exp $
