@@ -1,8 +1,8 @@
-# $Id: Owl/packages/bison/bison.spec,v 1.9 2002/02/07 10:07:27 solar Exp $
+# $Id: Owl/packages/bison/bison.spec,v 1.10 2002/06/11 13:51:09 mci Exp $
 
 Summary: A GNU general-purpose parser generator.
 Name: bison
-Version: 1.32
+Version: 1.35
 Release: owl1
 License: GPL
 Group: Development/Tools
@@ -54,6 +54,9 @@ fi
 %{_bindir}/*
 
 %changelog
+* Tue Jun 11 2002 Michail Litvak <mci@owl.openwall.com>
+- 1.35
+
 * Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
 - Updated to 1.32.
 
