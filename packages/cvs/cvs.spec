@@ -1,9 +1,9 @@
-# $Id: Owl/packages/cvs/cvs.spec,v 1.4 2003/04/29 00:22:43 solar Exp $
+# $Id: Owl/packages/cvs/cvs.spec,v 1.5 2003/04/29 01:39:17 solar Exp $
 
 Summary: A version control system.
 Name: cvs
 Version: 1.11.5
-Release: owl0.4
+Release: owl0.5
 License: GPL
 Group: Development/Tools
 URL: http://www.cvshome.org
@@ -56,6 +56,10 @@ rm -rf $RPM_BUILD_ROOT
 
 %makeinstall
 
+cd $RPM_BUILD_ROOT
+find .%{_datadir}/cvs -type f -print0 | xargs -r0 chmod -x --
+chmod 755 .%{_datadir}/cvs/contrib/rcs2log
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -76,10 +80,10 @@ fi
 %{_bindir}/*
 %{_mandir}/*/*
 %{_infodir}/*.info*
-%{_datadir}/%{name}
+%{_datadir}/cvs
 
 %changelog
-* Tue Apr 29 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl0.4
+* Tue Apr 29 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl0.5
 - Many more updates to the temporary file handling patch, making it twice
 bigger.
 - Force configure to use /tmp for the default temporary file directory,
@@ -87,6 +91,8 @@ and not pick and store $TMPDIR that was set at build time.
 - Use vitmp with cvsbug, rcs-to-cvs, and cvs itself.
 - Enable mkstemp explicitly, not rely on configure.
 - Patched 47 gcc -Wall warnings (all of them), including some real bugs.
+- chmod -x most scripts in contrib/ to prevent bogus dependencies on perl
+and csh.
 
 * Sun Apr 27 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl0.2
 - Re-worked much of the temporary file handling patch to make it actually
