@@ -64,7 +64,7 @@ diff -ur openssh-3.4p1.orig/session.c openssh-3.4p1/session.c
  
 diff -ur openssh-3.4p1.orig/sshd.c openssh-3.4p1/sshd.c
 --- openssh-3.4p1.orig/sshd.c	Wed Jun 26 03:24:19 2002
-+++ openssh-3.4p1/sshd.c	Sat Jul  6 02:48:41 2002
++++ openssh-3.4p1/sshd.c	Sun Jul  7 07:04:55 2002
 @@ -303,9 +303,6 @@
  {
  	/* XXX no idea how fix this signal handler */
@@ -84,7 +84,15 @@ diff -ur openssh-3.4p1.orig/sshd.c openssh-3.4p1/sshd.c
  	}
  	return (NULL);
  }
-@@ -665,6 +664,8 @@
+@@ -630,6 +629,7 @@
+ 	if (authctxt->pw->pw_uid == 0 || options.use_login) {
+ #endif
+ 		/* File descriptor passing is broken or root login */
++		fatal_add_cleanup((void (*) (void *))packet_close, NULL);
+ 		monitor_apply_keystate(pmonitor);
+ 		use_privsep = 0;
+ 		return;
+@@ -665,6 +665,8 @@
  	/* Drop privileges */
  	do_setusercontext(authctxt->pw);
  
@@ -93,7 +101,7 @@ diff -ur openssh-3.4p1.orig/sshd.c openssh-3.4p1/sshd.c
  	/* It is safe now to apply the key state */
  	monitor_apply_keystate(pmonitor);
  }
-@@ -1483,9 +1484,11 @@
+@@ -1483,9 +1485,11 @@
  
  	packet_set_nonblocking();
  
