@@ -1,9 +1,9 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.21 2002/11/03 04:47:21 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.22 2003/01/28 23:21:18 mci Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
 Version: 3.0.2.7
-Release: owl16
+Release: owl17
 License: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%{version}.tar.gz
@@ -13,6 +13,7 @@ Patch0: vixie-cron-%{version}-owl-linux.diff
 Patch1: vixie-cron-%{version}-owl-sgid-crontab.diff
 Patch2: vixie-cron-%{version}-owl-crond.diff
 Patch3: vixie-cron-%{version}-owl-vitmp.diff
+Patch4: vixie-cron-%{version}-openbsd-sigchld.diff
 PreReq: owl-control >= 0.4, owl-control < 2.0
 PreReq: /sbin/chkconfig, grep, shadow-utils
 BuildRoot: /override/%{name}-%{version}
@@ -28,6 +29,7 @@ modifications by the NetBSD, OpenBSD, Red Hat, and Owl teams.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 make -C usr.sbin/cron CFLAGS="-c -I. -I../../include $RPM_OPT_FLAGS"
@@ -101,6 +103,11 @@ fi
 /etc/control.d/facilities/crontab
 
 %changelog
+* Wed Jan 29 2003 Michail Litvak <mci@owl.openwall.com>
+- Added patch from OpenBSD to setting SIG_DFL action instead
+SIG_IGN for SIGCHLD signal; this fixes the problem with perl's
+scripts which runs from cron.
+
 * Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
 - Dump/restore the owl-control setting for crontab on package upgrades.
 - Keep crontab at mode 700 ("restricted") in the package, but default
