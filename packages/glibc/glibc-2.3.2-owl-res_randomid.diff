@@ -1,70 +1,69 @@
-diff -urP glibc-2.1.3.orig/resolv/Makefile glibc-2.1.3/resolv/Makefile
---- glibc-2.1.3.orig/resolv/Makefile	Fri Nov 20 20:26:41 1998
-+++ glibc-2.1.3/resolv/Makefile	Wed Jul  3 20:56:34 2002
-@@ -25,7 +25,8 @@
- distribute := ../conf/portability.h mapv4v6addr.h mapv4v6hostent.h \
- 	      Banner res_hconf.h
+diff -uNrp glibc-2.3.2.orig/resolv/Makefile glibc-2.3.2/resolv/Makefile
+--- glibc-2.3.2.orig/resolv/Makefile	2004-03-08 02:34:13 +0000
++++ glibc-2.3.2/resolv/Makefile	2004-03-08 06:05:45 +0000
+@@ -30,7 +30,7 @@ distribute := ../conf/portability.h mapv
+ 	      Banner res_hconf.h res_debug.h README gai_misc.h ga_test.c
  
--routines := herror inet_addr inet_ntop inet_pton nsap_addr res_init res_hconf
-+routines := herror inet_addr inet_ntop inet_pton nsap_addr res_init res_hconf \
-+	    shuffle
+ routines := herror inet_addr inet_ntop inet_pton nsap_addr res_init \
+-	    res_hconf res_libc res-state
++	    res_hconf shuffle res_libc res-state
  
- tests = tst-aton
+ tests = tst-aton tst-leaks
  
-@@ -35,7 +36,8 @@
- extra-libs-others = $(extra-libs)
- libresolv-routines := gethnamaddr res_comp res_debug	\
+@@ -46,7 +46,7 @@ libresolv-routines := gethnamaddr res_co
  		      res_data res_mkquery res_query res_send		\
--		      inet_net_ntop inet_net_pton inet_neta base64
-+		      inet_net_ntop inet_net_pton inet_neta base64 \
-+		      shuffle
+ 		      inet_net_ntop inet_net_pton inet_neta base64	\
+ 		      ns_parse ns_name ns_netint ns_ttl ns_print	\
+-		      ns_samedomain
++		      ns_samedomain shuffle
  
- subdir-dirs = nss_dns
- vpath %.c nss_dns
-diff -urP glibc-2.1.3.orig/resolv/res_init.c glibc-2.1.3/resolv/res_init.c
---- glibc-2.1.3.orig/resolv/res_init.c	Thu Apr 29 02:34:01 1999
-+++ glibc-2.1.3/resolv/res_init.c	Wed Jul  3 20:56:34 2002
-@@ -646,11 +646,12 @@
+ libanl-routines := gai_cancel gai_error gai_misc gai_notify gai_suspend \
+ 		   getaddrinfo_a
+diff -uNrp glibc-2.3.2.orig/resolv/res_init.c glibc-2.3.2/resolv/res_init.c
+--- glibc-2.3.2.orig/resolv/res_init.c	2003-02-25 23:40:08 +0000
++++ glibc-2.3.2/resolv/res_init.c	2004-03-08 06:09:32 +0000
+@@ -517,12 +517,13 @@ net_mask(in)		/* XXX - should really use
  }
- #endif	/* NeXT */
+ #endif
  
 +extern unsigned int _shuffle_next();
 +
  u_int
- res_randomid()
- {
+ res_randomid(void) {
 -	struct timeval now;
 -
 -	__gettimeofday(&now, NULL);
 -	return (0xffff & (now.tv_sec ^ now.tv_usec ^ __getpid()));
 +/* We should probably randomize the port number as well, but this may be
 + * better done in the kernel */
-+	return _shuffle_next();
++       return _shuffle_next();
  }
-diff -urP glibc-2.1.3.orig/resolv/res_mkquery.c glibc-2.1.3/resolv/res_mkquery.c
---- glibc-2.1.3.orig/resolv/res_mkquery.c	Wed Oct  2 05:37:29 1996
-+++ glibc-2.1.3/resolv/res_mkquery.c	Wed Jul  3 20:56:34 2002
-@@ -76,6 +76,8 @@
- # include <../conf/options.h>
- #endif
+ #ifdef _LIBC
+ libc_hidden_def (__res_randomid)
+diff -uNrp glibc-2.3.2.orig/resolv/res_mkquery.c glibc-2.3.2/resolv/res_mkquery.c
+--- glibc-2.3.2.orig/resolv/res_mkquery.c	2000-07-19 21:38:15 +0000
++++ glibc-2.3.2/resolv/res_mkquery.c	2004-03-08 06:11:59 +0000
+@@ -83,6 +83,8 @@ static const char rcsid[] = "$BINDId: re
+ 
+ extern const char *_res_opcodes[];
  
 +extern unsigned int _shuffle_next();
 +
  /*
   * Form all types of queries.
   * Returns the size of the result or -1.
-@@ -112,7 +114,7 @@
+@@ -115,7 +117,7 @@ res_nmkquery(res_state statp,
  		return (-1);
- 	bzero(buf, HFIXEDSZ);
+ 	memset(buf, 0, HFIXEDSZ);
  	hp = (HEADER *) buf;
--	hp->id = htons(++_res.id);
-+	hp->id = htons(_res.id = _shuffle_next());
+-	hp->id = htons(++statp->id);
++	hp->id = htons(statp->id = _shuffle_next());
  	hp->opcode = op;
- 	hp->rd = (_res.options & RES_RECURSE) != 0;
+ 	hp->rd = (statp->options & RES_RECURSE) != 0;
  	hp->rcode = NOERROR;
-diff -urP glibc-2.1.3.orig/resolv/shuffle.c glibc-2.1.3/resolv/shuffle.c
---- glibc-2.1.3.orig/resolv/shuffle.c	Thu Jan  1 03:00:00 1970
-+++ glibc-2.1.3/resolv/shuffle.c	Wed Jul  3 21:55:41 2002
+diff -uNrp glibc-2.3.2.orig/resolv/shuffle.c glibc-2.3.2/resolv/shuffle.c
+--- glibc-2.3.2.orig/resolv/shuffle.c	1970-01-01 00:00:00 +0000
++++ glibc-2.3.2/resolv/shuffle.c	2004-03-08 05:38:13 +0000
 @@ -0,0 +1,257 @@
 +/*
 + * Written by Solar Designer and placed in the public domain.

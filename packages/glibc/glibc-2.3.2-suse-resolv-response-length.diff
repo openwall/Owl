@@ -1,9 +1,9 @@
-diff -ur glibc-2.1.3.orig/resolv/res_send.c glibc-2.1.3/resolv/res_send.c
---- glibc-2.1.3.orig/resolv/res_send.c	Sat Aug  7 07:16:16 1999
-+++ glibc-2.1.3/resolv/res_send.c	Tue Oct  1 02:31:05 2002
-@@ -498,6 +498,17 @@
- 					else
- 						break;
+diff -uNrp glibc-2.3.2.orig/resolv/res_send.c glibc-2.3.2/resolv/res_send.c
+--- glibc-2.3.2.orig/resolv/res_send.c	2004-03-09 10:32:05 +0000
++++ glibc-2.3.2/resolv/res_send.c	2004-03-09 11:51:34 +0000
+@@ -435,6 +435,17 @@ __libc_res_nsend(res_state statp, const 
+ 					needclose++;
+ 					break;
  				}
 +				/*
 +				 * Dirty fix - avoid read buffer overruns in
@@ -17,5 +17,5 @@ diff -ur glibc-2.1.3.orig/resolv/res_send.c glibc-2.1.3/resolv/res_send.c
 +				 */
 +				resplen = anssiz;
  			}
- 			/*
- 			 * The calling applicating has bailed out of
+ 		if (needclose)
+ 			res_nclose(statp);

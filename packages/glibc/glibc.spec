@@ -1,77 +1,43 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.59 2004/04/26 00:00:32 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.60 2004/09/10 07:23:36 galaxy Exp $
 
 %define BUILD_PROFILE 0
 
 Summary: The GNU libc libraries.
 Name: glibc
-Version: 2.1.3
+Version: 2.3.2
 %define crypt_bf_version 0.4.6
-Release: owl39
+Release: owl0.7
 License: LGPL
 Group: System Environment/Libraries
-Source0: glibc-%version.tar.gz
-Source1: glibc-linuxthreads-%version.tar.gz
-Source2: glibc-crypt-2.1.tar.gz
-Source3: glibc-compat-%version.tar.gz
-Source4: crypt_blowfish-%crypt_bf_version.tar.gz
-Source5: crypt_freesec.c
-Source6: crypt_freesec.h
-Patch0: glibc-2.1.3-owl-crypt_freesec.diff
-Patch1: glibc-2.1.3-owl-dl-open.diff
-Patch2: glibc-2.1.3-owl-sanitize-env.diff
-Patch3: glibc-2.1.3-owl-res_randomid.diff
-Patch4: glibc-2.1.3-owl-iscntrl.diff
-Patch5: glibc-2.1.3-owl-quota.diff
-Patch6: glibc-2.1.3-owl-ldd.diff
-Patch7: glibc-2.1.3-owl-tmp.diff
-Patch8: glibc-2.1.3-owl-vitmp.diff
-Patch9: glibc-2.1.3-owl-glibcbug-COMMAND.diff
-Patch10: glibc-2.1.3-owl-info.diff
-Patch11: glibc-2.1.3-owl-syslog-ident.diff
-Patch12: glibc-2.1.3-mjt-owl-syslog-timestamp.diff
-Patch13: glibc-2.1.3-owl-alt-asprintf-error-handling.diff
-Patch14: glibc-2.1.3-openbsd-freebsd-owl-fts.diff
-Patch15: glibc-2.1.3-owl-calloc-bound.diff
-Patch16: glibc-2.1.3-owl-xdr_array-bound.diff
-Patch17: glibc-2.1.3-owl-resolv-QFIXEDSZ-underfills.diff
-Patch18: glibc-2.1.3-owl-realpath-comments.diff
-Patch19: glibc-2.1.3-owl-malloc-unlink-sanity-check.diff
-Patch20: glibc-2.1.3-rh-libnoversion.diff
-Patch21: glibc-2.1.3-rh-paths.diff
-Patch22: glibc-2.1.3-rh-linuxthreads.diff
-Patch23: glibc-2.1.3-rh-nis-malloc.diff
-Patch24: glibc-2.1.3-rh-c-type.diff
-Patch25: glibc-2.1.3-rh-cppfix.diff
-Patch26: glibc-2.1.3-rh-db2-closedir.diff
-Patch27: glibc-2.1.3-rh-glob.diff
-Patch28: glibc-2.1.3-rh-localedata.diff
-Patch29: glibc-2.1.3-rh-yp_xdr.diff
-Patch30: glibc-2.1.3-rh-makeconfig.diff
-Patch31: glibc-2.1.3-rh-time.diff
-Patch32: glibc-2.1.3-rh-timezone.diff
-Patch33: glibc-2.1.3-rh-syslog.diff
-Patch40: glibc-2.1.3-bcl-cyr-locale.diff
-Patch41: glibc-2.1.3-mdk-fix-ucontext.diff
-Patch42: glibc-2.1.3-vine-compat-resolv.diff
-Patch43: glibc-2.1.3-suse-resolv-response-length.diff
-Patch50: glibc-2.1.3-cvs-20000827-locale.diff
-Patch51: glibc-2.1.3-cvs-20000824-unsetenv.diff
-Patch52: glibc-2.1.3-cvs-20000824-md5-align-clean.diff
-Patch53: glibc-2.1.3-cvs-20000926-tmp-warnings.diff
-Patch54: glibc-2.1.3-cvs-20010109-dl.diff
-Patch55: glibc-2.1.3-cvs-20000929-alpha-reloc.diff
-Patch56: glibc-2.1.3-cvs-20011129-glob.diff
-Patch57: glibc-2.1.3-cvs-20020702-resolv.diff
-Patch58: glibc-2.1.3-cvs-20021216-rh-xdrmem.diff
-Patch59: glibc-2.1.3-cvs-20000417-pthread_cond_wait.diff
-Patch60: glibc-2.1.3-cvs-20000706-lfs-endianness.diff
-PreReq: /sbin/ldconfig
+Source0: glibc-%version.tar.bz2
+Source1: glibc-linuxthreads-%version.tar.bz2
+Source2: crypt_blowfish-%crypt_bf_version.tar.gz
+Source3: crypt_freesec.c
+Source4: crypt_freesec.h
+Patch0: glibc-2.3.2-rh-27.9.7-wo-nptl.diff.bz2
+Patch10: glibc-2.3.2-owl-crypt_freesec.diff
+# XXX: (GM): ToDo: update sanitize-env patch to reflect all environment
+# variable uses found in the current version of glibc.
+Patch11: glibc-2.3.2-owl-sanitize-env.diff
+Patch12: glibc-2.3.2-owl-res_randomid.diff
+Patch13: glibc-2.3.2-owl-iscntrl.diff
+Patch14: glibc-2.3.2-owl-quota.diff
+Patch15: glibc-2.3.2-owl-ldd.diff
+Patch16: glibc-2.3.2-owl-tmp.diff
+Patch17: glibc-2.3.2-owl-vitmp.diff
+Patch18: glibc-2.3.2-owl-glibcbug-COMMAND.diff
+Patch19: glibc-2.3.2-owl-info.diff
+Patch20: glibc-2.3.2-owl-syslog-ident.diff
+Patch21: glibc-2.3.2-mjt-owl-syslog-timestamp.diff
+Patch22: glibc-2.3.2-owl-alt-asprintf-error-handling.diff
+Patch23: glibc-2.3.2-owl-alt-fts.diff
+Patch24: glibc-2.3.2-owl-resolv-QFIXEDSZ-underfills.diff
+Patch25: glibc-2.3.2-owl-realpath-comments.diff
+Patch26: glibc-2.3.2-owl-malloc-unlink-sanity-check.diff
+Patch30: glibc-2.3.2-suse-resolv-response-length.diff
 Requires: /etc/nsswitch.conf
-%ifarch alpha
-Provides: ld.so.2
-%endif
-Provides: glibc-crypt_blowfish = %crypt_bf_version
-AutoReq: false
+Provides: glibc-crypt_blowfish = %crypt_bf_version, ldconfig
+Obsoletes: ldconfig
 BuildRoot: /override/%name-%version
 
 %description
@@ -84,6 +50,14 @@ library and the standard math library.  Without these two libraries, a
 Linux system will not function.  The glibc package also contains
 national language (locale) support and timezone databases.
 
+%package utils
+Summary: The GNU libc misc utilities
+Group: System Environment/Base
+Requires: %name >= %version
+
+%description utils
+The glibc-utils package contains miscellaneous glibc utilities.
+
 %package devel
 Summary: Header and object files for development using standard C libraries.
 Group: Development/Libraries
@@ -91,7 +65,6 @@ PreReq: /sbin/install-info
 Requires: kernel-headers >= 2.2.1
 Provides: glibc-crypt_blowfish-devel = %crypt_bf_version
 Conflicts: texinfo < 3.11
-AutoReq: true
 
 %description devel
 The glibc-devel package contains the header and object files necessary
@@ -121,21 +94,16 @@ libraries included in the glibc package).
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 
 %prep
-%setup -q -a 1 -a 2 -a 3 -a 4
+%setup -q -a 1 -a 2
 patch -p1 < crypt_blowfish-%crypt_bf_version/glibc-%version-crypt.diff
-mv crypt/sysdeps/unix/{crypt.h,gnu-crypt.h}
-mv crypt_blowfish-%crypt_bf_version/*.[chS] crypt/sysdeps/unix/
-cp $RPM_SOURCE_DIR/crypt_freesec.[ch] crypt/sysdeps/unix/
+mv crypt/{crypt.h,gnu-crypt.h}
+mv crypt_blowfish-%crypt_bf_version/*.[chS] crypt/
+cp %_sourcedir/crypt_freesec.[ch] crypt/
+
+# RH9 Update - begin
 %patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
+find . -name configure -exec touch {} \;
+# RH9 Update - finish
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
@@ -153,139 +121,148 @@ cp $RPM_SOURCE_DIR/crypt_freesec.[ch] crypt/sysdeps/unix/
 %patch24 -p1
 %patch25 -p1
 %patch26 -p1
-%patch27 -p1
-%patch28 -p1
-%patch29 -p1
 %patch30 -p1
-%patch31 -p1
-%patch32 -p1
-%patch33 -p1
-%patch40 -p1
-%patch41 -p1
-%patch42 -p1
-%patch43 -p1
-%patch50 -p1
-%patch51 -p1
-cd md5-crypt
-%patch52 -p2
-cd ..
-%patch53 -p1
-%patch54 -p1
-%patch55 -p1
-%patch56 -p1
-%patch57 -p1
-%patch58 -p1
-%patch59 -p1
-%patch60 -p1
-%ifarch sparcv9
-echo 'ASFLAGS-.os += -Wa,-Av8plusa' >> sysdeps/sparc/sparc32/elf/Makefile
-%endif
+# XXX: check sparcv9 builds and probably fix this for main Owl.
+#%ifarch sparcv9
+#echo 'ASFLAGS-.os += -Wa,-Av8plusa' >> sysdeps/sparc/sparc32/elf/Makefile
+#%endif
+
+cat > find_provides.sh << EOF
+#!/bin/sh
+/usr/lib/rpm/find-provides | fgrep -v GLIBC_PRIVATE
+exit 0
+EOF
+chmod +x find_provides.sh
+cat > find_requires.sh << EOF
+#!/bin/sh
+/usr/lib/rpm/find-requires | fgrep -v GLIBC_PRIVATE
+exit 0
+EOF
+chmod +x find_requires.sh
+
+%define __find_provides %_builddir/%name-%version/find_provides.sh
+%define __find_requires %_builddir/%name-%version/find_requires.sh
 
 %build
-rm manual/libc.info*
-rm -rf build-$RPM_ARCH-linux
-mkdir build-$RPM_ARCH-linux
-cd build-$RPM_ARCH-linux
-%if %BUILD_PROFILE
-CFLAGS="-g $RPM_OPT_FLAGS" ../configure --prefix=/usr \
-	--enable-add-ons=yes --without-cvs \
-	%_target_platform
-%else
-CFLAGS="-g $RPM_OPT_FLAGS" ../configure --prefix=/usr \
-	--enable-add-ons=yes --without-cvs --disable-profile \
-	%_target_platform
+# Remove precompiled info manuals to get fresh ones.
+# XXX: There're no precompiled info manuals included with current glibc.
+#rm manual/libc.info*
+# remove stamps
+rm manual/stamp-*
+
+rm -rf build-%_target_cpu-linux
+mkdir build-%_target_cpu-linux
+pushd build-%_target_cpu-linux
+CFLAGS="-g %optflags -DNDEBUG=1 -finline-limit=2000" \
+../configure \
+	--build=%_target_platform --target=%_target_platform \
+	--prefix=%_prefix \
+	--exec-prefix=%_exec_prefix \
+	--bindir=%_bindir \
+	--sbindir=%_sbindir \
+	--sysconfdir=%_sysconfdir \
+	--datadir=%_datadir \
+	--includedir=%_includedir \
+	--libdir=%_libdir \
+	--libexecdir=%_libexecdir \
+	--localstatedir=%_localstatedir \
+	--sharedstatedir=%_sharedstatedir \
+	--mandir=%_mandir \
+	--infodir=%_infodir \
+%if !%BUILD_PROFILE
+	--disable-profile \
 %endif
-make MAKE='make -s'
+	--enable-add-ons \
+	--without-cvs \
+	--without-__thread
+%__make MAKE="%__make -s"
+popd
+
+%__make -C linuxthreads/man
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT
-make install_root=$RPM_BUILD_ROOT install -C build-$RPM_ARCH-linux
+rm -rf %buildroot
+mkdir -p %buildroot
+%__make install_root=%buildroot install -C build-$RPM_ARCH-linux
 pushd build-$RPM_ARCH-linux
-make install_root=$RPM_BUILD_ROOT install-locales -C ../localedata objdir=`pwd`
+%__make install_root=%buildroot install-locales -C ../localedata objdir=`pwd`
 popd
 
 # The man pages for linuxthreads and crypt_blowfish require special attention
-mkdir -p $RPM_BUILD_ROOT/usr/man/man3
+mkdir -p %buildroot%_mandir/man3
 make -C linuxthreads/man
-install -m 0644 linuxthreads/man/*.3thr $RPM_BUILD_ROOT/usr/man/man3
+install -m 644 linuxthreads/man/*.3thr %buildroot%_mandir/man3/
 make -C crypt_blowfish-%crypt_bf_version man
-install -m 0644 crypt_blowfish-%crypt_bf_version/*.3 \
-	$RPM_BUILD_ROOT/usr/man/man3
+install -m 644 crypt_blowfish-%crypt_bf_version/*.3 %buildroot%_mandir/man3/
 
-# Have to compress them explicitly for the filelists we build
-gzip -9nf $RPM_BUILD_ROOT/usr/{man/man3/*,info/libc*}
+ln -s libbsd-compat.a %buildroot%_libdir/libbsd.a
 
-ln -sf libbsd-compat.a $RPM_BUILD_ROOT/usr/lib/libbsd.a
+# /etc/localtime - we're proud of our timezone
+rm %buildroot%_sysconfdir/localtime
+cp %buildroot%_datadir/zoneinfo/Europe/Moscow %buildroot%_sysconfdir/localtime
 
-# Take care of setuids
-chmod 755 $RPM_BUILD_ROOT/usr/libexec/pt_chown
+# Create empty ldconfig configuration file
+> %buildroot%_sysconfdir/ld.so.conf
 
 # The database support
-mkdir -p $RPM_BUILD_ROOT/var/db
-install -m 644 nss/db-Makefile $RPM_BUILD_ROOT/var/db/Makefile
-
-# Backwards compatibility only and unaudited
-rm -f $RPM_BUILD_ROOT/usr/sbin/utmpd
-
-# Strip binaries
-strip $RPM_BUILD_ROOT/sbin/* || :
-strip $RPM_BUILD_ROOT/usr/bin/* || :
-strip $RPM_BUILD_ROOT/usr/sbin/* || :
+#mkdir -p %buildroot/var/db
+#install -m 644 nss/db-Makefile %buildroot/var/db/Makefile
 
 # BUILD THE FILE LIST
-find $RPM_BUILD_ROOT -type f -or -type l |
-	sed -e 's|.*/etc|%config &|' > rpm.filelist.in
-for n in /usr/share /usr/include; do
-    find ${RPM_BUILD_ROOT}${n} -type d | \
-	sed "s/^/%dir /" >> rpm.filelist.in
+find %buildroot -type f -or -type l |
+	sed -e 's|.*%_sysconfdir|%config &|' > rpm.filelist.in
+for n in %_includedir %_libdir %_datadir; do
+    find %buildroot$n -type d |
+	sed 's/^/%dir /' >> rpm.filelist.in
 done
 
 # primary filelist
-sed "s|^$RPM_BUILD_ROOT||" < rpm.filelist.in |
-	sed "s| $RPM_BUILD_ROOT| |" | \
-	grep -v '^%dir /usr/share$' | \
-	grep -v '^%config /etc/localtime' | \
+sed "s|^%buildroot||" < rpm.filelist.in |
+	sed "s| %buildroot| |" | \
+	grep -v '^%dir %_includedir$' | \
+	grep -v '^%dir %_libdir$' | \
+	grep -v '^%dir %_datadir$' | \
+	grep -v '^%dir %_mandir$' | \
+	grep -v '^%dir %_infodir$' | \
+	grep -v '^%config %_sysconfdir/' | \
 	sort > rpm.filelist
 
 %if %BUILD_PROFILE
-grep '/usr/lib/lib.*_p\.a' < rpm.filelist > profile.filelist
+grep '%_libdir/lib.*_p\.a' < rpm.filelist > profile.filelist
 %endif
 
-egrep "(/usr/include)|(/usr/info)" < rpm.filelist |
-	grep -v /usr/info/dir > devel.filelist
+egrep "(%_includedir)|(%_infodir)" < rpm.filelist |
+	grep -v "%_infodir/dir" |
+	grep -v "\.info-" |
+	sed -e 's|\.info.*$|&\*|' > devel.filelist
 
 mv rpm.filelist rpm.filelist.full
-grep -v '/usr/lib/lib.*_p.a' rpm.filelist.full |
-	egrep -v "(/usr/include)|(/usr/info)" > rpm.filelist
+grep -v '%_libdir/lib.*_p.a' rpm.filelist.full |
+	egrep -v "(%_includedir)|(%_infodir)" > rpm.filelist
 
-grep '/usr/lib/lib.*\.a' < rpm.filelist >> devel.filelist
-grep '/usr/lib/.*\.o' < rpm.filelist >> devel.filelist
-grep '/usr/lib/lib.*\.so' < rpm.filelist >> devel.filelist
-grep '/usr/man/man' < rpm.filelist >> devel.filelist
+grep '%_libdir/lib.*\.a' < rpm.filelist >> devel.filelist
+grep '%_libdir/.*\.o' < rpm.filelist >> devel.filelist
+grep '%_libdir/lib.*\.so' < rpm.filelist >> devel.filelist
+grep '%_mandir/man' < rpm.filelist | sed -e 's|$|\*|' >> devel.filelist
 
 mv rpm.filelist rpm.filelist.full
-grep -v '/usr/lib/lib.*\.a' < rpm.filelist.full |
-	grep -v '/usr/lib/.*\.o' |
-	grep -v '/usr/lib/lib.*\.so'|
-	grep -v '/usr/man/man' |
-	grep -v 'nscd' > rpm.filelist
-
-# /etc/localtime - we're proud of our timezone
-rm -f $RPM_BUILD_ROOT/etc/localtime
-cp -f $RPM_BUILD_ROOT/usr/share/zoneinfo/Europe/Moscow $RPM_BUILD_ROOT/etc/localtime
+grep -v '%_libdir/lib.*\.a' < rpm.filelist.full |
+	grep -v '%_bindir/' |
+	grep -v '%_sbindir/' |
+	grep -v '%_libdir/.*\.o' |
+	grep -v '%_libdir/lib.*\.so'|
+	grep -v '%_mandir/man' |
+	grep -v 'nscd' |
+	grep -v 'sln' > rpm.filelist
 
 # The last bit: more documentation
 rm -rf documentation
 mkdir documentation
-cp linuxthreads/ChangeLog  documentation/ChangeLog.threads
+cp linuxthreads/ChangeLog documentation/ChangeLog.threads
 cp linuxthreads/Changes documentation/Changes.threads
 cp linuxthreads/README documentation/README.threads
 cp linuxthreads/FAQ.html documentation/FAQ-threads.html
 cp -r linuxthreads/Examples documentation/examples.threads
-cp crypt/README documentation/README.crypt
-cp db2/README documentation/README.db2
-cp db2/mutex/README documentation/README.db2.mutex
 cp timezone/README documentation/README.timezone
 cp ChangeLog* documentation
 gzip -9nf documentation/ChangeLog*
@@ -293,36 +270,77 @@ mkdir documentation/crypt_blowfish-%crypt_bf_version
 cp crypt_blowfish-%crypt_bf_version/{README,LINKS,PERFORMANCE} \
 	documentation/crypt_blowfish-%crypt_bf_version
 
+# Final step: remove unpackaged files.
+rm %buildroot%_infodir/dir
+rm %buildroot%_sbindir/nscd
+rm %buildroot%_sbindir/nscd_nischeck
+
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
 %post devel
-/sbin/install-info /usr/info/libc.info.gz /usr/info/dir
+/sbin/install-info %_infodir/libc.info.gz %_infodir/dir
 
 %preun devel
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete /usr/info/libc.info.gz /usr/info/dir
+	/sbin/install-info --delete %_infodir/libc.info.gz %_infodir/dir
 fi
 
 %files -f rpm.filelist
 %defattr(-,root,root)
-%config(noreplace) /etc/localtime
 %doc README NEWS INSTALL FAQ BUGS NOTES PROJECTS
 %doc documentation/* README.libm
 %doc hesiod/README.hesiod
-%dir /var/db
+%doc crypt/README.ufc-crypt
+%config(noreplace) %_sysconfdir/localtime
+%ghost %config(noreplace) %_sysconfdir/ld.so.cache
+%config %_sysconfdir/ld.so.conf
+%config(noreplace) %_sysconfdir/rpc
+#%dir /var/db
+%if %BUILD_PROFILE
+%exclude %_libdir/*_p.a
+%endif
 
-%files -f devel.filelist devel
+%files utils
+%defattr(-,root,root)
+/sbin/sln
+%_bindir/*
+%_sbindir/*
+
+%files devel -f devel.filelist
 %defattr(-,root,root)
 
 %if %BUILD_PROFILE
-%files -f profile.filelist profile
+%files profile -f profile.filelist
 %defattr(-,root,root)
 %endif
 
 %changelog
-* Mon Apr 26 2004 Solar Designer <solar@owl.openwall.com> 2.1.3-owl39
-- crypt_blowfish 0.4.6 (for Owl, this is only a documentation update).
+* Sat Mar 20 2004 Solar Designer <solar@owl.openwall.com> 2.3.2-owl0.7
+- Corrections to BUILD_PROFILE support.
+
+* Wed Mar 10 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl0.6
+- Moved big rh9 patch to the sources
+- Split glibc utility programs into glibc-utils subpackage
+
+* Tue Mar 09 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl0.5
+- Updated patch set for 2.3.2 version
+
+* Thu Mar 04 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl0.4
+- Spec clean up, added documentation
+
+* Mon Mar 01 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl0.3
+- Prepared spec for FHS 2.2
+
+* Thu Feb 24 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl0.2
+- Cleaned up spec for building under "stage4" environment.
+
+* Thu Feb 19 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl0.1
+- Regenerated crypt_blowfish patch against this version of glibc
+
+* Mon Feb 16 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl0
+- Updated to the new version - 2.3.2 (official release); This cannot be used
+as primary glibc on system yet due to missing crypt_blowfish.
 
 * Mon Dec 08 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl38
 - Sanity check the forward and backward chunk pointers in dlmalloc's

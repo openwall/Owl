@@ -1,0 +1,43 @@
+diff -uNrp glibc-2.3.2.orig/io/fts.c glibc-2.3.2/io/fts.c
+--- glibc-2.3.2.orig/io/fts.c	2004-03-09 05:54:09 +0000
++++ glibc-2.3.2/io/fts.c	2004-03-09 10:16:06 +0000
+@@ -32,10 +32,11 @@ static char sccsid[] = "@(#)fts.c	8.6 (B
+ #endif /* LIBC_SCCS and not lint */
+ 
+ #include <sys/param.h>
+-#include <include/sys/stat.h>
+-#include <fcntl.h>
++#include <sys/stat.h>
++
+ #include <dirent.h>
+ #include <errno.h>
++#include <fcntl.h>
+ #include <fts.h>
+ #include <stdlib.h>
+ #include <string.h>
+diff -uNrp glibc-2.3.2.orig/io/fts.h glibc-2.3.2/io/fts.h
+--- glibc-2.3.2.orig/io/fts.h	2001-11-05 20:57:28 +0000
++++ glibc-2.3.2/io/fts.h	2004-03-09 10:16:06 +0000
+@@ -60,7 +60,7 @@ typedef struct {
+ #define	FTS_PHYSICAL	0x0010		/* physical walk */
+ #define	FTS_SEEDOT	0x0020		/* return dot and dot-dot */
+ #define	FTS_XDEV	0x0040		/* don't cross devices */
+-#define FTS_WHITEOUT	0x0080		/* return whiteout information */
++#define	FTS_WHITEOUT	0x0080		/* return whiteout information */
+ #define	FTS_OPTIONMASK	0x00ff		/* valid user option mask */
+ 
+ #define	FTS_NAMEONLY	0x0100		/* (private) child names only */
+@@ -102,11 +102,12 @@ typedef struct _ftsent {
+ #define	FTS_NSOK	11		/* no stat(2) requested */
+ #define	FTS_SL		12		/* symbolic link */
+ #define	FTS_SLNONE	13		/* symbolic link without target */
+-#define FTS_W		14		/* whiteout object */
++#define	FTS_W		14		/* whiteout object */
+ 	u_short fts_info;		/* user flags for FTSENT structure */
+ 
+ #define	FTS_DONTCHDIR	 0x01		/* don't chdir .. to the parent */
+ #define	FTS_SYMFOLLOW	 0x02		/* followed a symlink to get here */
++#define	FTS_ISW		 0x04		/* this is a whiteout object */
+ 	u_short fts_flags;		/* private flags for FTSENT structure */
+ 
+ #define	FTS_AGAIN	 1		/* read node again */

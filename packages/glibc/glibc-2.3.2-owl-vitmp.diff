@@ -1,7 +1,8 @@
---- glibc-2.1.3/glibcbug.in.orig	Wed Jun 12 10:48:56 2002
-+++ glibc-2.1.3/glibcbug.in	Wed Jun 12 10:57:10 2002
-@@ -40,8 +40,6 @@
- 
+diff -uNrp glibc-2.3.2.orig/glibcbug.in glibc-2.3.2/glibcbug.in
+--- glibc-2.3.2.orig/glibcbug.in	2004-03-08 08:18:25 +0000
++++ glibc-2.3.2/glibcbug.in	2004-03-08 08:25:21 +0000
+@@ -34,8 +34,6 @@ trap 'rm -f "$TEMP" "$TEMPx"' EXIT
+ BUGGLIBC="glibc-bug-reports-${RELEASE}@gnu.org"
  BUGADDR=${1-$BUGGLIBC}
  
 -: ${EDITOR=emacs}
@@ -9,7 +10,7 @@
  : ${USER=${LOGNAME-`whoami`}}
  
  # How to read the passwd database.
-@@ -87,14 +85,21 @@
+@@ -81,14 +79,21 @@ else
  fi
  
  # If they don't have a preferred editor set, then use

@@ -1,24 +1,24 @@
-diff -ur glibc-2.1.3.orig/glibcbug.in glibc-2.1.3/glibcbug.in
---- glibc-2.1.3.orig/glibcbug.in	Mon Aug 30 19:16:08 1999
-+++ glibc-2.1.3/glibcbug.in	Wed Jun 12 06:48:56 2002
-@@ -23,18 +23,14 @@
+diff -uNrp glibc-2.3.2.orig/glibcbug.in glibc-2.3.2/glibcbug.in
+--- glibc-2.3.2.orig/glibcbug.in	2002-07-16 18:13:13 +0000
++++ glibc-2.3.2/glibcbug.in	2004-03-08 08:18:25 +0000
+@@ -22,18 +22,14 @@ BUILD_OMITFP="@omitfp@"
+ BUILD_BOUNDED="@bounded@"
  BUILD_STATIC_NSS="@static_nss@"
- STDIO="@stdio@"
  
--TEMP=`mktemp -q /tmp/glibcbugXXXXXX 2>/dev/null`
+-TEMP=`mktemp -q ${TMPDIR-/tmp}/glibcbugXXXXXX 2>/dev/null`
 -if test $? -ne 0; then
--  TEMP=/tmp/glibcbug.$$
+-  TEMP=${TMPDIR-/tmp}/glibcbug.$$
 -  echo > $TEMP
 -  chmod 600 $TEMP
 -fi
--TEMPx=`mktemp -q /tmp/glibcbugXXXXXX 2>/dev/null`
+-TEMPx=`mktemp -q ${TMPDIR-/tmp}/glibcbugXXXXXX 2>/dev/null`
 -if test $? -ne 0; then
--  TEMPx=/tmp/glibcbug.$$.x
+-  TEMPx=${TMPDIR-/tmp}/glibcbug.$$.x
 -  echo > $TEMPx
 -  chmod 600 $TEMPx
 -fi
-+TEMP="`mktemp -t glibcbug.XXXXXXXXXX`" || exit 1
-+TEMPx="`mktemp -t glibcbug.XXXXXXXXXX`" || {
++TEMP="`mktemp -t glibcbugXXXXXXXXXX`" || exit 1
++TEMPx="`mktemp -t glibcbugXXXXXXXXXX`" || {
 +  rm -f "$TEMP"
 +  exit 1
 +}
@@ -26,9 +26,9 @@ diff -ur glibc-2.1.3.orig/glibcbug.in glibc-2.1.3/glibcbug.in
 +trap 'rm -f "$TEMP" "$TEMPx"; exit 1' HUP INT PIPE TERM
 +trap 'rm -f "$TEMP" "$TEMPx"' EXIT
  
- if test "$RELEASE" = "stable"; then
-   BUGGLIBC="bugs@gnu.org"
-@@ -48,10 +44,6 @@
+ BUGGLIBC="glibc-bug-reports-${RELEASE}@gnu.org"
+ BUGADDR=${1-$BUGGLIBC}
+@@ -42,10 +38,6 @@ BUGADDR=${1-$BUGGLIBC}
  
  : ${USER=${LOGNAME-`whoami`}}
  
@@ -39,7 +39,7 @@ diff -ur glibc-2.1.3.orig/glibcbug.in glibc-2.1.3/glibcbug.in
  # How to read the passwd database.
  PASSWD="cat /etc/passwd"
  
-@@ -78,8 +70,8 @@
+@@ -72,8 +64,8 @@ elif [ -f $HOME/.fullname ]; then
  else
    # Must use temp file due to incompatibilities in quoting behavior
    # and to protect shell metacharacters in the expansion of $LOGNAME
@@ -50,7 +50,7 @@ diff -ur glibc-2.1.3.orig/glibcbug.in glibc-2.1.3/glibcbug.in
  fi
  
  if [ -n "$ORGANIZATION" ]; then
-@@ -129,7 +121,7 @@
+@@ -123,7 +115,7 @@ HOW_TO_REPEAT_C='<code/input/activities 
  FIX_C='<how to correct or work around the problem, if known (multiple lines)>'
  
  
@@ -59,7 +59,7 @@ diff -ur glibc-2.1.3.orig/glibcbug.in glibc-2.1.3/glibcbug.in
  SEND-PR: -*- send-pr -*-
  SEND-PR: Lines starting with \`SEND-PR' will be removed automatically, as
  SEND-PR: will all comments (text enclosed in \`<' and \`>').
-@@ -178,12 +170,12 @@
+@@ -171,12 +163,12 @@ ${ORGANIZATION- $ORGANIZATION_C}
  	$FIX_C
  EOF
  
@@ -76,7 +76,7 @@ diff -ur glibc-2.1.3.orig/glibcbug.in glibc-2.1.3/glibcbug.in
  	echo "File not changed, no bug report submitted."
  	exit 1
  fi
-@@ -212,7 +204,7 @@
+@@ -205,7 +197,7 @@ while :; do
    # 1) Severity
    #
    PATTERN=">Severity:"
@@ -85,7 +85,7 @@ diff -ur glibc-2.1.3.orig/glibcbug.in glibc-2.1.3/glibcbug.in
    case "$SEVERITY" in
      ""|non-critical|serious|critical) CNT=`expr $CNT + 1` ;;
      *)  echo "$COMMAND: \`$SEVERITY' is not a valid value for \`Severity'."
-@@ -221,7 +213,7 @@
+@@ -214,7 +206,7 @@ while :; do
    # 2) Priority
    #
    PATTERN=">Priority:"
@@ -94,7 +94,7 @@ diff -ur glibc-2.1.3.orig/glibcbug.in glibc-2.1.3/glibcbug.in
    case "$PRIORITY" in
      ""|low|medium|high) CNT=`expr $CNT + 1` ;;
      *)  echo "$COMMAND: \`$PRIORITY' is not a valid value for \`Priority'."
-@@ -230,7 +222,7 @@
+@@ -223,7 +215,7 @@ while :; do
    # 3) Class
    #
    PATTERN=">Class:"
@@ -103,7 +103,7 @@ diff -ur glibc-2.1.3.orig/glibcbug.in glibc-2.1.3/glibcbug.in
    case "$CLASS" in
      ""|sw-bug|doc-bug|change-request|support) CNT=`expr $CNT + 1` ;;
      *)  echo "$COMMAND: \`$CLASS' is not a valid value for \`Class'."
-@@ -245,11 +237,11 @@
+@@ -238,11 +230,11 @@ while :; do
      case "$input" in
        a*)
  	echo "$COMMAND: problem report saved in $HOME/dead.glibcbug."
@@ -117,7 +117,7 @@ diff -ur glibc-2.1.3.orig/glibcbug.in glibc-2.1.3/glibcbug.in
          continue 2
          ;;
        s*)
-@@ -276,15 +268,15 @@
+@@ -269,15 +261,15 @@ sed  -e "
  /^>Description:/,/^>[A-Za-z-]*:/s;$DESCRIPTION_C;;
  /^>How-To-Repeat:/,/^>[A-Za-z-]*:/s;$HOW_TO_REPEAT_C;;
  /^>Fix:/,/^>[A-Za-z-]*:/s;$FIX_C;;
@@ -136,39 +136,27 @@ diff -ur glibc-2.1.3.orig/glibcbug.in glibc-2.1.3/glibcbug.in
  fi
  
  exit 0
-diff -ur glibc-2.1.3.orig/libio/oldtmpfile.c glibc-2.1.3/libio/oldtmpfile.c
---- glibc-2.1.3.orig/libio/oldtmpfile.c	Thu Dec 17 13:57:23 1998
-+++ glibc-2.1.3/libio/oldtmpfile.c	Sun Dec  7 11:32:07 2003
-@@ -32,7 +32,7 @@
+diff -uNrp glibc-2.3.2.orig/libio/oldtmpfile.c glibc-2.3.2/libio/oldtmpfile.c
+--- glibc-2.3.2.orig/libio/oldtmpfile.c	2002-04-08 07:02:09 +0000
++++ glibc-2.3.2/libio/oldtmpfile.c	2004-03-08 08:07:57 +0000
+@@ -35,7 +35,7 @@ __old_tmpfile (void)
    int fd;
    FILE *f;
  
 -  if (__path_search (buf, FILENAME_MAX, NULL, "tmpf", 0))
 +  if (__path_search (buf, FILENAME_MAX, NULL, "tmpf", 1))
      return NULL;
-   fd = __gen_tempname (buf, 1, 0);
+   fd = __gen_tempname (buf, __GT_FILE);
    if (fd < 0)
-diff -ur glibc-2.1.3.orig/stdio-common/tmpfile.c glibc-2.1.3/stdio-common/tmpfile.c
---- glibc-2.1.3.orig/stdio-common/tmpfile.c	Mon Dec 14 15:21:35 1998
-+++ glibc-2.1.3/stdio-common/tmpfile.c	Sun Dec  7 11:32:21 2003
-@@ -36,7 +36,7 @@
+diff -uNrp glibc-2.3.2.orig/sysdeps/generic/tmpfile.c glibc-2.3.2/sysdeps/generic/tmpfile.c
+--- glibc-2.3.2.orig/sysdeps/generic/tmpfile.c	2002-06-12 20:57:46 +0000
++++ glibc-2.3.2/sysdeps/generic/tmpfile.c	2004-03-08 08:21:53 +0000
+@@ -43,7 +43,7 @@ tmpfile (void)
    int fd;
    FILE *f;
  
 -  if (__path_search (buf, FILENAME_MAX, NULL, "tmpf", 0))
 +  if (__path_search (buf, FILENAME_MAX, NULL, "tmpf", 1))
      return NULL;
-   fd = __gen_tempname (buf, 1, 0);
-   if (fd < 0)
-diff -ur glibc-2.1.3.orig/stdio-common/tmpfile64.c glibc-2.1.3/stdio-common/tmpfile64.c
---- glibc-2.1.3.orig/stdio-common/tmpfile64.c	Mon Dec 14 15:21:36 1998
-+++ glibc-2.1.3/stdio-common/tmpfile64.c	Sun Dec  7 11:32:38 2003
-@@ -35,7 +35,7 @@
-   int fd;
-   FILE *f;
- 
--  if (__path_search (buf, FILENAME_MAX, NULL, "tmpf", 0))
-+  if (__path_search (buf, FILENAME_MAX, NULL, "tmpf", 1))
-     return NULL;
-   fd = __gen_tempname (buf, 1, 1);
+   fd = __gen_tempname (buf, GEN_THIS);
    if (fd < 0)

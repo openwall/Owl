@@ -1,0 +1,24 @@
+diff -uNrp glibc-2.3.2.orig/elf/ldd.bash.in glibc-2.3.2/elf/ldd.bash.in
+--- glibc-2.3.2.orig/elf/ldd.bash.in	2003-01-02 20:01:29 +0000
++++ glibc-2.3.2/elf/ldd.bash.in	2004-03-08 08:04:41 +0000
+@@ -141,8 +141,8 @@ warning: you do not have execution permi
+       ret=$?
+     fi
+     case $ret in
+-    0)
+-      eval $add_env '"$file"' || result=1
++    [02])
++      eval $add_env \${RTLD} '"$file"' || result=1
+       ;;
+     1)
+       # This can be a non-ELF binary or no binary at all.
+@@ -151,9 +151,6 @@ warning: you do not have execution permi
+ 	result=1
+       }
+       ;;
+-    2)
+-      eval $add_env \${RTLD} '"$file"' || result=1
+-      ;;
+     *)
+       echo 'ldd:' ${RTLD} $"exited with unknown exit code" "($ret)" >&2
+       exit 1

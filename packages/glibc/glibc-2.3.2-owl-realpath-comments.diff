@@ -1,14 +1,14 @@
-diff -ur glibc-2.1.3.orig/stdlib/stdlib.h glibc-2.1.3/stdlib/stdlib.h
---- glibc-2.1.3.orig/stdlib/stdlib.h	Thu Feb 24 19:19:03 2000
-+++ glibc-2.1.3/stdlib/stdlib.h	Sat Jun 28 15:02:29 2003
-@@ -580,18 +580,15 @@
+diff -uNrp glibc-2.3.2.orig/stdlib/stdlib.h glibc-2.3.2/stdlib/stdlib.h
+--- glibc-2.3.2.orig/stdlib/stdlib.h	2004-03-09 05:54:11 +0000
++++ glibc-2.3.2/stdlib/stdlib.h	2004-03-09 10:37:33 +0000
+@@ -699,18 +699,15 @@ __END_NAMESPACE_STD
  
  #ifdef	__USE_GNU
  /* Return a malloc'd string containing the canonical absolute name of the
 -   named file.  The last file name component need not exist, and may be a
 -   symlink to a nonexistent file.  */
 +   named file.  */
- extern char *canonicalize_file_name __P ((__const char *__name));
+ extern char *canonicalize_file_name (__const char *__name) __THROW;
  #endif
  
  #if defined __USE_BSD || defined __USE_XOPEN_EXTENDED
@@ -19,9 +19,9 @@ diff -ur glibc-2.1.3.orig/stdlib/stdlib.h glibc-2.1.3/stdlib/stdlib.h
 -   ENAMETOOLONG; if the name fits in fewer than PATH_MAX chars, returns the
 -   name in RESOLVED.  */
 +/* Return the canonical absolute name of file NAME.  If the canonical name
-+   is PATH_MAX chars or more, returns NULL with `errno' set to
++   is PATH_MAX chars or more, returns null with `errno' set to
 +   ENAMETOOLONG; if the name fits in fewer than PATH_MAX chars, returns
 +   the name in RESOLVED.  */
- extern char *realpath __P ((__const char *__restrict __name,
- 			    char *__restrict __resolved));
+ extern char *realpath (__const char *__restrict __name,
+ 		       char *__restrict __resolved) __THROW;
  #endif

@@ -1,0 +1,68 @@
+diff -uNrp glibc-2.3.2.orig/misc/syslog.c glibc-2.3.2/misc/syslog.c
+--- glibc-2.3.2.orig/misc/syslog.c	2004-03-08 08:55:38 +0000
++++ glibc-2.3.2/misc/syslog.c	2004-03-08 09:24:14 +0000
+@@ -54,11 +54,6 @@ static char sccsid[] = "@(#)syslog.c	8.4
+ #include <varargs.h>
+ #endif
+ 
+-#ifdef USE_IN_LIBIO
+-# include <libio/iolibio.h>
+-# define ftell(s) INTUSE(_IO_ftell) (s)
+-#endif
+-
+ static int	LogType = SOCK_DGRAM;	/* type of socket connection */
+ static int	LogFile = -1;		/* fd for log */
+ static int	connected;		/* have done connect */
+@@ -156,17 +151,17 @@ vsyslog(pri, fmt, ap)
+ 	register const char *fmt;
+ 	va_list ap;
+ {
+-	struct tm now_tm;
+ 	time_t now;
+ 	int fd;
+ 	FILE *f;
+ 	char *buf = 0;
+ 	size_t bufsize = 0;
+-	size_t prioff, msgoff;
++	size_t msgoff;
+  	struct sigaction action, oldaction;
+ 	struct sigaction *oldaction_ptr = NULL;
+  	int sigpipe;
+ 	int saved_errno = errno;
++	char ctimebuf[26];
+ 	char failbuf[3 * sizeof (pid_t) + sizeof "out of memory []"];
+ 
+ #define	INTERNALLOG	LOG_ERR|LOG_CONS|LOG_PERROR|LOG_PID
+@@ -211,18 +206,21 @@ vsyslog(pri, fmt, ap)
+ 	  }
+ 	else
+ 	  {
+-	    prioff = fprintf (f, "<%d>", pri);
++	    /*
++	     * XXX: syslogd may know better what the current time is.
++	     * User program may be running chrooted w/o proper localtime
++	     * description, or a user may prefer his own timezone. syslogd
++	     * is able to construct timestamp if there is no timestamp given
++	     * in a message.  So it may be a way better to NOT construct ANY
++	     * timestamp here and allow syslogd to figure out proper time
++	     * for us. When working with local syslogd (and it IS local
++	     * since we're using either /dev/log or localhost), message
++	     * should be picked up by syslogd very shortly.  And at least
++	     * timestamps in system logs will be in chronological order...
++	     * -- mjt.
++	     */
+ 	    (void) time (&now);
+-#ifdef USE_IN_LIBIO
+-	    f->_IO_write_ptr += strftime (f->_IO_write_ptr,
+-					  f->_IO_write_end - f->_IO_write_ptr,
+-					  "%h %e %T ",
+-					  __localtime_r (&now, &now_tm));
+-#else
+-	    f->__bufp += strftime (f->__bufp, f->__put_limit - f->__bufp,
+-				   "%h %e %T ", __localtime_r (&now, &now_tm));
+-#endif
+-	    msgoff = ftell (f);
++	    msgoff = fprintf (f, "<%d>%.15s ", pri, ctime_r(&now, ctimebuf) + 4);
+ 
+ 	    /* Protect against multiple users.  */
+ 	    __libc_cleanup_region_start (
