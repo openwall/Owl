@@ -1,4 +1,4 @@
-# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.9 2002/08/05 08:33:17 solar Exp $
+# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.10 2002/08/12 17:16:40 solar Exp $
 
 # The texinfo documentation for fileutils, sh-utils, and textutils is
 # currently provided by fileutils.
@@ -7,7 +7,7 @@
 Summary: The GNU versions of common file management utilities.
 Name: fileutils
 Version: 4.1.11
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/File
 Source0: ftp://alpha.gnu.org/gnu/fetish/fileutils-%{version}.tar.bz2
@@ -25,7 +25,7 @@ Patch7: fileutils-4.1.11-owl-fixes.diff
 %if %BUILD_INFO
 PreReq: /sbin/install-info
 %endif
-Conflicts: sh-utils < 2.0-owl3
+Conflicts: sh-utils < 2.0-owl3, textutils < 2.0.11-owl3
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -87,6 +87,8 @@ rm -rf $RPM_BUILD_ROOT
 	%{_infodir}/fileutils.info.gz %{_infodir}/dir
 /sbin/install-info --quiet --delete \
 	%{_infodir}/sh-utils.info.gz %{_infodir}/dir
+/sbin/install-info --quiet --delete \
+	%{_infodir}/textutils.info.gz %{_infodir}/dir
 
 %post
 /sbin/install-info %{_infodir}/coreutils.info.gz %{_infodir}/dir
@@ -116,6 +118,11 @@ fi
 %{_datadir}/locale/*/*/*
 
 %changelog
+* Mon Aug 12 2002 Solar Designer <solar@owl.openwall.com>
+- Handle SIGTSTP in the ls restore colors patch (from ALT Linux).
+- Two additional -Wall fixes for SPARC and Alpha (the issues were real).
+- Also remove the obsolete textutils info dir entry.
+
 * Sun Aug 04 2002 Solar Designer <solar@owl.openwall.com>
 - Updated to 4.1.11.
 - Reviewed all patches in current Red Hat and ALT Linux packages, imported

@@ -10,6 +10,32 @@ diff -ur fileutils-4.1.11.orig/src/ls.c fileutils-4.1.11/src/ls.c
    switch (sort_type)
      {
      case sort_none:
+diff -ur fileutils-4.1.11.orig/src/remove.c fileutils-4.1.11/src/remove.c
+--- fileutils-4.1.11.orig/src/remove.c	Mon Jul 22 14:27:24 2002
++++ fileutils-4.1.11/src/remove.c	Mon Aug 12 20:41:40 2002
+@@ -213,11 +213,11 @@
+ 
+   /* Pop off the specified length of pathname.  */
+   assert (obstack_object_size (&dir_stack) >= top_len);
+-  obstack_blank (&dir_stack, -top_len);
++  obstack_blank (&dir_stack, -(int)top_len);
+ 
+   /* Pop the length stack, too.  */
+   assert (obstack_object_size (&len_stack) >= sizeof (size_t));
+-  obstack_blank (&len_stack, (int) -(sizeof (size_t)));
++  obstack_blank (&len_stack, -(int)sizeof (size_t));
+ }
+ 
+ /* Copy the SRC_LEN bytes of data beginning at SRC into the DST_LEN-byte
+@@ -330,7 +330,7 @@
+   struct AD_ent *top = AD_stack_top ();
+   if (top->unremovable)
+     hash_free (top->unremovable);
+-  obstack_blank (&Active_dir, -sizeof (struct AD_ent));
++  obstack_blank (&Active_dir, -(int)sizeof (struct AD_ent));
+   pop_dir ();
+ }
+ 
 diff -ur fileutils-4.1.11.orig/src/shred.c fileutils-4.1.11/src/shred.c
 --- fileutils-4.1.11.orig/src/shred.c	Tue Jul  2 08:26:37 2002
 +++ fileutils-4.1.11/src/shred.c	Sun Aug  4 19:36:15 2002
@@ -42,3 +68,19 @@ diff -ur fileutils-4.1.11.orig/src/shred.c fileutils-4.1.11/src/shred.c
      {
        signal (SIGILL, old_handler[0]);
        signal (SIGSEGV, old_handler[1]);
+diff -ur fileutils-4.1.11.orig/src/stat.c fileutils-4.1.11/src/stat.c
+--- fileutils-4.1.11.orig/src/stat.c	Mon Jul 22 19:38:17 2002
++++ fileutils-4.1.11/src/stat.c	Mon Aug 12 20:45:23 2002
+@@ -351,9 +351,9 @@
+     return (char *) type;
+ 
+   {
+-    static char buf[sizeof "UNKNOWN (0x%x)" - 2
+-		    + 2 * sizeof (statfsbuf->f_type)];
+-    sprintf (buf, "UNKNOWN (0x%x)", statfsbuf->f_type);
++    static char buf[sizeof "UNKNOWN (0x%lx)" - 3
++		    + 2 * sizeof (unsigned long)];
++    sprintf (buf, "UNKNOWN (0x%lx)", (unsigned long)statfsbuf->f_type);
+     return buf;
+   }
+ # endif
