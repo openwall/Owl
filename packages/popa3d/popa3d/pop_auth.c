@@ -44,7 +44,7 @@ static struct pop_command pop_auth_commands[] = {
 	{"QUIT", pop_auth_quit},
 	{"USER", pop_auth_user},
 	{"PASS", pop_auth_pass},
-	{NULL}
+	{NULL, NULL}
 };
 
 int do_pop_auth(int channel)

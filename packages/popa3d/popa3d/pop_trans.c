@@ -185,7 +185,7 @@ static struct pop_command pop_trans_commands[] = {
 #if POP_SUPPORT_LAST
 	{"LAST", pop_trans_last},
 #endif
-	{NULL}
+	{NULL, NULL}
 };
 
 static int db_load(char *spool, char *mailbox)

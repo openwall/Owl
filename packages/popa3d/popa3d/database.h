@@ -5,8 +5,6 @@
 #ifndef _POP_DATABASE_H
 #define _POP_DATABASE_H
 
-#include "md5/md5.h"
-
 #include "params.h"
 
 /*
