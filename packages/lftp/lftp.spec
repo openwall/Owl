@@ -1,9 +1,9 @@
-# $Id: Owl/packages/lftp/lftp.spec,v 1.4 2001/03/21 08:47:39 mci Exp $
+# $Id: Owl/packages/lftp/lftp.spec,v 1.5 2001/03/23 00:46:24 solar Exp $
 
 Summary: sophisticated command line file transfer program
 Name: lftp
 Version: 2.3.8
-Release: 4owl
+Release: 5owl
 Copyright: GPL
 Source0: ftp://ftp.yars.free.net/pub/software/unix/net/ftp/client/lftp/%{name}-%{version}.tar.bz2
 Source1: lftpget.1
@@ -21,22 +21,22 @@ BuildPreReq: readline-devel
 BuildPreReq: openssl-devel
 
 %description
-Lftp is a file retrieving tool that supports FTP and HTTP protocols under
-both IPv4 and IPv6. Lftp has an amazing set of features, while preserving
+lftp is a file retrieving tool that supports FTP and HTTP protocols under
+both IPv4 and IPv6.  lftp has an amazing set of features, while preserving
 its interface as simple and easy as possible.
 
 The main two advantages over other ftp clients are reliability and ability
-to perform tasks in background. It will reconnect and reget the file being
-transferred if the connection broke. You can start a transfer in background
-and continue browsing on the ftp site. It does this all in one process. When
+to perform tasks in background.  It will reconnect and reget the file being
+transferred if the connection broke.  You can start a transfer in background
+and continue browsing the ftp site.  It does this all in one process.  When
 you have started background jobs and feel you are done, you can just exit
 lftp and it automatically moves to nohup mode and completes the transfers.
-It has also such nice features as reput and mirror. It can also download a
-file as soon as possible by using several connections at the same time.
+It also has such nice features as reput and mirror.  And it can download a
+file faster using multiple connections.
 
-Lftp can also be scripteable, it can be used to mirror sites, it let you
-copy files among remote servers (even between FTP and HTTP). It has an
-extensive online help. It supports bookmarks, and connecting to several
+lftp can also be scriptable, it can be used to mirror sites, it let you
+copy files among remote servers (even between FTP and HTTP).  It has an
+extensive online help.  It supports bookmarks, and connecting to several
 ftp/http sites at the same time.
 
 This package also includes ftpget and lftpget - simple non-interactive
@@ -44,7 +44,6 @@ tools for downloading files.
 
 %prep
 %setup -q
-
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -52,7 +51,6 @@ tools for downloading files.
 %patch4 -p1
 
 %build
-
 # Make sure that all message catalogs are built
 unset LINGUAS || :
 
@@ -68,6 +66,14 @@ install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/usr/man/man1/
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%post
+test -e /usr/bin/ftp || ln -s lftp /usr/bin/ftp
+
+%preun
+if [ $1 -eq 0 -a -L /usr/bin/ftp ]; then
+	rm /usr/bin/ftp
+fi
+
 %files
 %defattr(-,root,root)
 %doc ABOUT-NLS BUGS COPYING FAQ FEATURES NEWS README* THANKS TODO lftp.lsm
@@ -79,6 +85,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/locale/*/*/*
 
 %changelog
+* Fri Mar 23 2001 Solar Designer <solar@owl.openwall.com>
+- Corrected the package description.
+- Point /usr/bin/ftp to lftp if it doesn't exist when lftp is installed.
+
 * Wed Mar 21 2001 Michail Litvak <mci@owl.openwall.com>
 - change source from tar.gz to tar.bz2
 
