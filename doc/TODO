@@ -80,13 +80,6 @@ Update to latest release.
 Update these to latest releases once in a while.
 
 
-	console-tools.
-
-[PRIORITY: high]
-[ASSIGNED: mci@]
-Migrate to kbd or downgrade to 0.2.3.
-
-
 	cpio, tar.
 
 [PRIORITY: medium]
@@ -607,4 +600,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.16 2003/04/15 14:48:50 solar Exp $
+$Id: Owl/doc/TODO,v 1.17 2003/04/17 12:57:57 solar Exp $
