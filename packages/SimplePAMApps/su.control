@@ -1,0 +1,43 @@
+#!/bin/sh
+# $Id: Owl/packages/SimplePAMApps/su.control,v 1.1 2000/08/11 07:23:42 solar Exp $
+
+. /etc/control.d/functions
+
+CONFIG=/etc/pam.d/su
+BINARY=/bin/su
+
+new_subst public \
+	'^#auth *required */lib/security/pam_wheel\.so' \
+	's,^\(auth *required */lib/security/pam_wheel\.so\),#\1,'
+new_fmode public 4711 root root
+new_subst wheel \
+	'^auth *required */lib/security/pam_wheel\.so' \
+	's,^#\(auth *required */lib/security/pam_wheel\.so\),\1,'
+new_fmode wheelonly 4710 root wheel
+new_fmode restricted 700 root root
+
+case "$*" in
+list)
+	echo "$NAME_LIST"
+	;;
+status|'')
+	STATUS="`control_fmode "$BINARY" status`" || exit 1
+	if [ "$STATUS" = "public" ]; then
+		control_subst "$CONFIG" status || exit 1
+	else
+		test -n "$STATUS" && echo "$STATUS"
+	fi
+	;;
+public)
+	control_subst "$CONFIG" public || exit 1
+	control_fmode "$BINARY" public || exit 1
+	;;
+wheel)
+	control_subst "$CONFIG" wheel || exit 1
+	control_fmode "$BINARY" public || exit 1
+	;;
+*)
+	control_fmode "$BINARY" "$*" || exit 1
+	control_subst "$CONFIG" public || exit 1
+	;;
+esac
