@@ -5,6 +5,25 @@ remains fixed; it's only the stable branch which has these changes.
 
 	Changes made between Owl 0.1-prerelease and Owl 0.1-stable.
 
+(2002/07/30)
+2002/07/31	Package: openssl
+SECURITY FIX	Severity: high, remote, passive to active
+Applied the official patch with 4 security fixes to vulnerabilities
+discovered by Ben Laurie and others of A.L. Digital Ltd and The Bunker
+under DARPA's CHATS program, by consultants at Neohapsis, and by Adi
+Stav and James Yonan.  The patch has been prepared by Ben Laurie and
+Dr. Stephen Henson, with one of the fixes partly based on a version by
+Adi Stav, and back-ported to OpenSSL 0.9.6a by Ademar de Souza Reis
+Jr. of Conectiva.  The vulnerabilities affect only applications that
+use OpenSSL to provide SSL or TLS or use OpenSSL's ASN.1 parsing code
+on untrusted input.  It hasn't been fully researched whether OpenSSH
+is affected, but the ASN.1 parsing vulnerability may affect OpenSSH's
+implementation of SSH protocol 2 in both the server and the client.
+As Owl currently only includes SSL clients (lftp and links), only
+passive attacks are possible via the SSL/TLS vulnerabilities on
+default installs.  If, however, any SSL server software that uses
+OpenSSL is added, active attacks will likely become possible as well.
+
 (2002/02/11)
 2002/03/07	Package: zlib
 SECURITY FIX	Severity: high, remote, active
@@ -347,4 +366,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.2.2.22 2002/03/09 03:00:43 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.2.2.23 2002/07/31 00:44:34 solar Exp $
