@@ -1,12 +1,12 @@
-# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.12 2002/06/09 00:51:36 solar Exp $
+# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.13 2003/10/25 09:11:27 solar Exp $
 
 Summary: Initial directory hierarchy.
 Name: owl-hier
-Version: 0.5
+Version: 0.6
 Release: owl1
 License: public domain
 Group: System Environment/Base
-Source: special
+Source: base
 Requires: owl-etc
 Provides: filesystem
 Obsoletes: filesystem
@@ -29,14 +29,14 @@ sed \
 	-e "s/\(uname=\)root$/\1`id -un`/" \
 	-e "s/\(gname=\)root /\1`id -gn` /" \
 	-e "s/\(gname=\)root$/\1`id -gn`/" \
-	< $RPM_SOURCE_DIR/special |
+	< $RPM_SOURCE_DIR/base |
 		/usr/sbin/mtree -U
-ln -s /var/tmp usr/tmp
+ln -s ../var/tmp usr/tmp
 ln -s ../X11R6/bin usr/bin/X11
 ln -s ../X11R6/lib/X11 usr/lib/X11
 ln -s log var/adm
 ln -s spool/mail var/mail
-install -m 600 $RPM_SOURCE_DIR/special etc/mtree/
+install -m 600 $RPM_SOURCE_DIR/base etc/mtree/
 
 # Build the filelist
 cd $RPM_BUILD_DIR
@@ -72,7 +72,12 @@ rm -rf $RPM_BUILD_ROOT
 %files -f filelist
 
 %changelog
-* Sun Jun 09 2002 Solar Designer <solar@owl.openwall.com>
+* Sat Oct 25 2003 Solar Designer <solar@owl.openwall.com> 0.6-owl1
+- Renamed /etc/mtree/special to /etc/mtree/base; "special" is used on *BSD,
+but its meaning is different.
+- Make /usr/tmp symlink relative.
+
+* Sun Jun 09 2002 Solar Designer <solar@owl.openwall.com> 0.5-owl1
 - Don't list /dev/pts in here, it is a part of owl-dev.
 
 * Thu Feb 07 2002 Michail Litvak <mci@owl.openwall.com>
