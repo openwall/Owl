@@ -25,25 +25,12 @@ it fail-close on suEXEC.  Clone and maintain a version of suEXEC more
 friendly to virtual hosting.
 
 
-	autoconf, automake, libtool.
-
-[PRIORITY: low]
-Update to latest releases.  Fix whatever other packages this will
-break.  Should probably do some other core package updates first.
+	automake, libtool.
 
 [PRIORITY: medium]
 Deal with temporary file handling.  The RH-derived patch in libtool is
-fail-open on mktemp(1).  autoconf 2.52, if we update to it, would be
-fail-open on mktemp(1) in configure scripts it generates, so we'd need
-to fix that.  automake.texi suggests bad practices in both 1.4 and 1.5
-(look for "make DESTDIR=/tmp/staging install" and what follows).
-
-[PRIORITY: medium]
-[ASSIGNED: mci@]
-With our current libtool, some software (that is not a part of Owl)
-won't build unless one sets LTCONFIG_VERSION=1.3.5.  This needs to be
-investigated and dealt with in the libtool package itself (unless we
-update libtool first and the problem goes away).
+fail-open on mktemp(1).  automake.texi suggests bad practices (look for
+"make DESTDIR=/tmp/staging install" and what follows).
 
 
 	bash.
@@ -155,8 +142,7 @@ Update to 3.4+ and deal with whatever this will break.
 
 [PRIORITY: medium]
 [ASSIGNED: galaxy@, solar@]
-Once gcc is updated, update to 2.3.2+ with all the related auditing,
-porting, and fixing.
+Update to 2.3.3.
 
 [PRIORITY: medium]
 Develop safe log-and-exit function for use by the dlmalloc unlink()
@@ -427,20 +413,16 @@ version, only one such subtree will be dumped.
 
 	rpm.
 
-[PRIORITY: medium]
-Update to 4.x.  Migrate to paths required by FHS (in particular,
-/usr/share/{doc,man} rather than /usr/{doc,man}).  This needs to be
-done after or at the same time with the glibc update because before
-that it makes more sense to be package-compatible with RHL 6.x rather
-than with nothing at all.  Then fix all other packages that either get
-broken or are unaffected by the change here.
+[PRIORITY: high]
+Should be able to convert rpm 3.0.6's database to 4.2's db3 format.
 
 [PRIORITY: medium]
 Audit and correct rpm's temporary file handling and its support for
 package signature checking.
 
 [PRIORITY: low]
-Bug: "rpm --rebuilddb" is affected by umask.
+Bug: "rpm --rebuilddb" (used to be?) affected by umask.  Re-check and
+either fix or drop this TODO item.
 
 
 	shadow-utils.
@@ -471,7 +453,8 @@ can log both into wtmp.
 
 [PRIORITY: low]
 32-bit UID handling with Linux 2.4.x (should look at the package in
-ALT Linux first).
+ALT Linux first).  Is this maybe already solved with strace-4.5.1-owl2?
+Should double-check and update or drop this TODO item accordingly.
 
 [PRIORITY: low]
 Deal with incorrect pipe(2) reporting on Alpha.
@@ -556,4 +539,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.36 2004/09/07 19:23:54 solar Exp $
+$Id: Owl/doc/TODO,v 1.37 2004/09/16 23:52:34 solar Exp $
