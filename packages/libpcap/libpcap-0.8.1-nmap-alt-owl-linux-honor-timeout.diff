@@ -1,46 +1,60 @@
---- libpcap-0.8.1/pcap-linux.c.orig	Fri Nov 21 10:20:46 2003
-+++ libpcap-0.8.1/pcap-linux.c	Fri Feb 13 00:48:19 2004
-@@ -482,6 +482,44 @@
+diff -uprk.orig libpcap-0.8.1.orig/pcap-linux.c libpcap-0.8.1/pcap-linux.c
+--- libpcap-0.8.1.orig/pcap-linux.c	2003-11-21 13:20:46 +0300
++++ libpcap-0.8.1/pcap-linux.c	2004-01-09 21:41:44 +0300
+@@ -482,6 +482,57 @@ pcap_read_packet(pcap_t *handle, pcap_ha
  			handle->break_loop = 0;
  			return -2;
  		}
 +
-+ 		/*
-+ 		 * If the user specified a timeout in pcap_open_live(),
-+ 		 * we will honor the timeout and wait for specified time
-+ 		 * unless packets pending.
-+ 		 */
-+ 		if ((handle->fd >= 0) && (handle->md.timeout > 0)) {
-+ 			fd_set readfs;
-+ 			struct timeval tv;
-+ 			int retval;
-+ 
-+ 			FD_ZERO(&readfs);
-+ 			FD_SET(handle->fd, &readfs);
-+ 
-+ 			memset(&tv, 0, sizeof(tv));
-+ 			tv.tv_sec = handle->md.timeout / 1000;
-+ 			tv.tv_usec = (handle->md.timeout % 1000) * 1000;
-+ 
-+ 			while (1) {
-+ 				/*
-+ 				 * We can assume Linux select(2) behaviour:
-+ 				 * in case of error, readfs will be kept
-+ 				 * unchanged and tv will be updated.
-+ 				 */
-+ 				retval = select(handle->fd + 1,
-+ 				    &readfs, NULL, NULL, &tv);
-+ 				if (retval > 0)
-+ 					break;
-+ 				if (retval == 0)
-+ 					return 0;
-+ 				if (EINTR == errno)
-+ 					continue;
-+ 				snprintf(handle->errbuf, sizeof(handle->errbuf),
-+ 					 "select: %s", pcap_strerror(errno));
-+ 				return -1;
-+ 			}
-+ 		}
++		/*
++		 * If the user specified a timeout in pcap_open_live(),
++		 * we will honor the timeout and wait for specified time
++		 * unless packets pending.
++		 */
++		if ((handle->fd >= 0) && (handle->md.timeout > 0)) {
++			fd_set readfs;
++			struct timeval tv;
++			int retval;
++
++			FD_ZERO(&readfs);
++			FD_SET(handle->fd, &readfs);
++
++			memset(&tv, 0, sizeof(tv));
++			tv.tv_sec = handle->md.timeout / 1000;
++			tv.tv_usec = (handle->md.timeout % 1000) * 1000;
++
++			while (!handle->break_loop) {
++				/*
++				 * We can assume Linux select(2) behaviour:
++				 * in case of error, readfs will be kept
++				 * unchanged and tv will be updated.
++				 */
++				retval = select(handle->fd + 1,
++				    &readfs, NULL, NULL, &tv);
++				if (retval > 0)
++					break;
++				if (retval == 0)
++					return 0;
++				if (EINTR == errno)
++					continue;
++				snprintf(handle->errbuf, sizeof(handle->errbuf),
++					 "select: %s", pcap_strerror(errno));
++				return -1;
++			}
++
++			/*
++			 * Has "pcap_breakloop()" been called?
++			 */
++			if (handle->break_loop) {
++				/*
++				 * Yes - clear the flag that indicates that it
++				 * has, and return -2 as an indication that we
++				 * were told to break out of the loop.
++				 */
++				handle->break_loop = 0;
++				return -2;
++			}
++		}
 +
  		fromlen = sizeof(from);
  		packet_len = recvfrom(

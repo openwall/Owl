@@ -1,9 +1,9 @@
-# $Id: Owl/packages/libpcap/libpcap.spec,v 1.12 2004/02/15 16:44:14 mci Exp $
+# $Id: Owl/packages/libpcap/libpcap.spec,v 1.13 2004/02/19 16:24:45 mci Exp $
 
 Summary: Network packet capture library.
 Name: libpcap
 Version: 0.8.1
-Release: owl1
+Release: owl2
 Epoch: 2
 License: GPL
 Group: System Environment/Libraries
@@ -71,6 +71,9 @@ ln -s ../pcap-bpf.h $RPM_BUILD_ROOT%_includedir/net/bpf.h
 %_libdir/lib*.a
 
 %changelog
+* Thu Feb 19 2004 Michail Litvak <mci@owl.openwall.com> 2:0.8.1-owl2
+- Updated -nmap-alt-owl-linux-honor-timeout.diff patch.
+
 * Fri Feb 13 2004 Michail Litvak <mci@owl.openwall.com> 2:0.8.1-owl1
 - 0.8.1
 - provide %_includedir/net/bpf.h for compatibility.
