@@ -13,7 +13,7 @@ for the packages themselves.
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
 2002/06/27 -
-2002/07/06	Package: openssh
+2002/07/07	Package: openssh
 SECURITY FIX	Severity: none to high, remote, active
 Updated to 3.4p1 with a lot of additional modifications to restore
 most of the functionality lost or broken with the recent rushed update
@@ -804,4 +804,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.108 2002/07/07 01:15:50 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.109 2002/07/07 03:15:00 solar Exp $
