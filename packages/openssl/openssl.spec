@@ -1,21 +1,21 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.13 2001/07/11 02:03:16 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.14 2002/01/11 17:53:46 solar Exp $
 
 %define openssldir /var/ssl
 
-Summary: Secure Sockets Layer and cryptography libraries and tools
+Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
-Version: 0.9.6b
+Version: 0.9.6c
 Release: 1owl
-Source0: ftp://ftp.openssl.org/source/%{name}-%{version}.tar.gz
+License: distributable
+Group: System Environment/Libraries
+URL: http://www.openssl.org
+Source: ftp://ftp.openssl.org/source/%{name}-%{version}.tar.gz
 Patch0: openssl-0.9.5a-rh-config-path.diff
 Patch1: openssl-0.9.5a-owl-crypt.diff
 Patch2: openssl-0.9.6a-owl-glibc-enable_secure.diff
-Copyright: Freely distributable
-Group: System Environment/Libraries
 Provides: SSL
-URL: http://www.openssl.org/
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
-BuildPreReq: perl
+BuildRequires: perl
+BuildRoot: /override/%{name}-%{version}
 
 %description
 The OpenSSL Project is a collaborative effort to develop a robust,
@@ -52,8 +52,8 @@ Young and Tim J. Hudson.  The OpenSSL toolkit is licensed under an
 Apache-style licence, which basically means that you are free to get and
 use it for commercial and non-commercial purposes.
 
-This package contains the the OpenSSL cryptography and SSL/TLS
-static libraries and header files required when developing applications.
+This package contains the OpenSSL cryptography and SSL/TLS static
+libraries and header files required when developing applications.
 
 %prep
 %setup -q
@@ -63,8 +63,6 @@ static libraries and header files required when developing applications.
 
 %build
 %define CONFIG_FLAGS shared -DSSL_ALLOW_ADH --prefix=/usr
-
-perl util/perlpath.pl /usr/bin/perl
 
 perl -pi -e "s/-O.(?: -fomit-frame-pointer)?(?: -m.86)?/${RPM_OPT_FLAGS}/;" \
 	Configure
@@ -89,7 +87,7 @@ perl -pi -e "s/-O.(?: -fomit-frame-pointer)?(?: -m.86)?/${RPM_OPT_FLAGS}/;" \
 %endif
 
 # Check these against the DIRS= line and "all" target in top-level Makefile
-# when updating to a new version of OpenSSL; with 0.9.6b the Makefile says:
+# when updating to a new version of OpenSSL; with 0.9.6c the Makefile says:
 # DIRS= crypto ssl rsaref $(SHLIB_MARK) apps test tools
 # all: clean-shared Makefile.ssl sub_all
 make Makefile.ssl
@@ -107,19 +105,24 @@ LD_LIBRARY_PATH=`pwd` make tests
 rm -rf $RPM_BUILD_ROOT
 make install MANDIR=/usr/man INSTALL_PREFIX="$RPM_BUILD_ROOT"
 
+# Fail if the openssl binary is statically linked against OpenSSL at this
+# stage (which could happen if "make install" caused anything to rebuild).
+LD_LIBRARY_PATH=`pwd` ldd $RPM_BUILD_ROOT/usr/bin/openssl | tee openssl.libs
+grep -qw libssl openssl.libs
+grep -qw libcrypto openssl.libs
+
 # Rename manpages
 mv $RPM_BUILD_ROOT%{_mandir}/man1/passwd.1 \
 	$RPM_BUILD_ROOT%{_mandir}/man1/sslpasswd.1
 mv $RPM_BUILD_ROOT%{_mandir}/man3/rand.3 \
 	$RPM_BUILD_ROOT%{_mandir}/man3/sslrand.3
-gzip -9nf $RPM_BUILD_ROOT/usr/man/man*/*
 
 # Install RSAref stuff
 install -m 644 rsaref/rsaref.h $RPM_BUILD_ROOT/usr/include/openssl
 install -m 644 libRSAglue.a $RPM_BUILD_ROOT/usr/lib
 
 # Make backwards-compatibility symlink to ssleay
-ln -s /usr/bin/openssl $RPM_BUILD_ROOT/usr/bin/ssleay
+ln -s openssl $RPM_BUILD_ROOT/usr/bin/ssleay
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -146,13 +149,13 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0644,root,root) /usr/include/openssl/*
 %attr(0644,root,root) /usr/man/man3/*
 
-%post
-ldconfig
-
-%postun
-ldconfig
+%post -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
 
 %changelog
+* Wed Dec 26 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 0.9.6c.
+
 * Wed Jul 11 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 0.9.6b.
 
