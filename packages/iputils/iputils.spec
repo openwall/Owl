@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iputils/iputils.spec,v 1.9 2002/11/03 02:29:28 solar Exp $
+# $Id: Owl/packages/iputils/iputils.spec,v 1.10 2002/11/03 04:40:57 solar Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
@@ -13,7 +13,7 @@ Source3: ping.control
 Patch0: iputils-ss020124-rh-owl-cache-reverse-lookups.diff
 Patch1: iputils-ss020124-owl-warnings.diff
 Patch2: bonding-0.2-owl-ioctl.diff
-Requires: owl-control >= 0.4, owl-control < 2.0
+PreReq: owl-control >= 0.4, owl-control < 2.0
 Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
 

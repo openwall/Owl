@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.20 2002/11/03 03:36:20 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.21 2002/11/03 04:47:21 solar Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -28,7 +28,7 @@ Patch10: util-linux-2.10r-rh-locale-overflow.diff
 Patch20: util-linux-2.10r-%{crypto_version}-int.diff
 Patch21: util-linux-2.10r-%{crypto_version}-int-owl-fixes.diff
 PreReq: /sbin/install-info
-Requires: owl-control >= 0.4, owl-control < 2.0
+PreReq: owl-control >= 0.4, owl-control < 2.0
 Obsoletes: fdisk, tunelp
 %ifarch sparc alpha
 Obsoletes: clock
@@ -43,6 +43,7 @@ utilities that are necessary for a Linux system to function.
 %package -n mount
 Summary: Programs for mounting and unmounting filesystems.
 Group: System Environment/Base
+Requires: owl-control >= 0.4, owl-control < 2.0
 
 %description -n mount
 The mount package contains the mount, umount, swapon and swapoff

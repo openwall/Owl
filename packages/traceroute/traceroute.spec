@@ -1,4 +1,4 @@
-# $Id: Owl/packages/traceroute/traceroute.spec,v 1.6 2002/11/03 03:14:29 solar Exp $
+# $Id: Owl/packages/traceroute/traceroute.spec,v 1.7 2002/11/03 04:47:21 solar Exp $
 
 Summary: Traces the route taken by packets over a TCP/IP network.
 Name: traceroute
@@ -14,7 +14,7 @@ Patch2: traceroute-1.4a12-owl-force-linux.diff
 Patch3: traceroute-1.4a12-owl-sockaddr-vs-sockaddr_in.diff
 Patch4: traceroute-1.4a12-rh-unaligned.diff
 Prefix: %{_prefix}
-Requires: owl-control >= 0.4, owl-control < 2.0
+PreReq: owl-control >= 0.4, owl-control < 2.0
 BuildRoot: /override/%{name}-%{version}
 
 %description

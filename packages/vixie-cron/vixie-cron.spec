@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.20 2002/11/03 04:23:23 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.21 2002/11/03 04:47:21 solar Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
@@ -13,8 +13,8 @@ Patch0: vixie-cron-%{version}-owl-linux.diff
 Patch1: vixie-cron-%{version}-owl-sgid-crontab.diff
 Patch2: vixie-cron-%{version}-owl-crond.diff
 Patch3: vixie-cron-%{version}-owl-vitmp.diff
+PreReq: owl-control >= 0.4, owl-control < 2.0
 PreReq: /sbin/chkconfig, grep, shadow-utils
-Requires: owl-control >= 0.4, owl-control < 2.0
 BuildRoot: /override/%{name}-%{version}
 
 %description
