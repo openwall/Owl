@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.17 2003/10/20 01:57:40 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.18 2003/10/21 08:24:55 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 0.7
+Version: 0.8
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -85,6 +85,11 @@ fi
 %dir /owl
 
 %changelog
+* Tue Oct 21 2003 Solar Designer <solar@owl.openwall.com> 0.8-owl1
+- Switch to using the new SYM53C8XX driver which supports the whole range
+of PCI SCSI controllers from NCR / Symbios Logic SCSI-2 to new LSI Logic
+Ultra-160 ones.
+
 * Mon Oct 20 2003 Solar Designer <solar@owl.openwall.com> 0.7-owl1
 - In the "welcome" script, report the Owl version from /.Owl-CD-ROM,
 correctly locate documentation when multiple branches are available, and
