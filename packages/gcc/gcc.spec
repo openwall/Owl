@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.9 2000/10/20 07:19:14 kad Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.10 2000/10/21 14:47:20 kad Exp $
 
 %define GCC_PREFIX /usr
 %define CPP_PREFIX /lib
@@ -12,7 +12,7 @@
 Summary:	Various compilers (C, C++, Objective-C, f77, ...)
 Name:		gcc
 Version:	%{GCC_VERSION}
-Release:	4owl
+Release:	5owl
 Serial:		1
 Copyright:	GPL
 URL:		http://gcc.gnu.org
@@ -21,6 +21,7 @@ Source0:	ftp://ftp.gnu.org/pub/gnu/gcc/gcc-%{GCC_VERSION}.tar.gz
 Source1:	libstdc++-compat.tar.bz2
 Patch:		gcc-2.95.2-rh-warn.diff
 Patch1:		gcc-2.95.2-owl-disable-dvi.diff
+Patch2:		gcc-2.95.2-owl-texconfig-bug.diff
 Packager:	<kad@owl.openwall.com>
 Distribution:	Owl
 BuildRoot:	/var/rpm-buildroot/%{name}-root
@@ -161,6 +162,7 @@ being used in Europe, Brazil, Korea, and other places.
 
 %patch -p1
 %patch1 -p0
+%patch2 -p1
 
 # Remove bison-generated files - we want bison 1.28'ish versions...
 for i in gcc/cp/parse gcc/c-parse gcc/cexp gcc/java/parse-scan gcc/java/parse gcc/objc/objc-parse; do
@@ -511,6 +513,9 @@ fi
 %endif
 
 %changelog
+* Sat Oct 21 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- texconfig bug hack
+
 * Fri Oct 20 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - disable dvi generation
 

@@ -1,0 +1,22 @@
+--- gcc-2.95.2/texinfo/configure.org	Sat Oct 21 18:42:53 2000
++++ gcc-2.95.2/texinfo/configure	Sat Oct 21 18:43:45 2000
+@@ -1262,7 +1262,7 @@
+   echo "$ac_t""no" 1>&6
+ fi
+ 
+-$TEXCONFIG && eval `texconfig conf </dev/null | grep '^TEXMF='`
++$TEXCONFIG && eval `texconfig conf </dev/null 2>/dev/null | grep '^TEXMF='`
+ 
+ 
+ echo $ac_n "checking for POSIXized ISC""... $ac_c" 1>&6
+--- gcc-2.95.2/texinfo/configure.in.org	Sat Oct 21 18:42:49 2000
++++ gcc-2.95.2/texinfo/configure.in	Sat Oct 21 18:43:14 2000
+@@ -16,7 +16,7 @@
+ # We do this for the sake of a more helpful warning in doc/Makefile.
+ TEXMF='$(datadir)/texmf'
+ AC_CHECK_PROG(TEXCONFIG, texconfig, true, false)
+-$TEXCONFIG && eval `texconfig conf </dev/null | grep '^TEXMF='`
++$TEXCONFIG && eval `texconfig conf </dev/null 2>/dev/null | grep '^TEXMF='`
+ AC_SUBST(TEXMF)
+ 
+ AC_ISC_POSIX
