@@ -1,11 +1,11 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.11 2000/11/17 08:02:34 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.12 2001/01/02 07:21:46 solar Exp $
 
 %define BUILD_PROFILE	'no'
 
 Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
-Release: 8owl
+Release: 9owl
 Copyright: LGPL
 Group: System Environment/Libraries
 Source0: glibc-2.1.3.tar.gz
@@ -38,6 +38,7 @@ Patch21: glibc-2.1.3-rh-syslog.diff
 Patch22: glibc-2.1.3-cvs-20000827-locale.diff
 Patch23: glibc-2.1.3-cvs-20000824-unsetenv.diff
 Patch24: glibc-2.1.3-cvs-20000824-md5-align-clean.diff
+Patch25: glibc-2.1.3-cvs-20000926-tmp-warnings.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Autoreq: false
 %ifarch alpha
@@ -124,6 +125,7 @@ need to install the glibc-profile program.
 cd md5-crypt
 %patch24 -p2
 cd ..
+%patch25 -p1
 %ifarch sparcv9
 echo 'ASFLAGS-.os += -Wa,-Av8plusa' >> sysdeps/sparc/sparc32/elf/Makefile
 %endif
@@ -271,6 +273,9 @@ rm -f *.filelist*
 %endif
 
 %changelog
+* Tue Jan 02 2001 Solar Designer <solar@owl.openwall.com>
+- Back-ported the mktemp, tempnam, tmpnam, and tmpnam_r link_warning's.
+
 * Fri Nov 17 2000 Solar Designer <solar@owl.openwall.com>
 - 'ASFLAGS-.os += -Wa,-Av8plusa' for sparcv9.
 
