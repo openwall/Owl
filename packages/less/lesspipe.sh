@@ -17,17 +17,17 @@ lesspipe() {
   *.rpm) rpm -qpivl "$1" 2>/dev/null ;; # view contents of .rpm files
   *.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9|*.n|*.man)
     if file -L - < "$1" | grep troff &>/dev/null; then
-      cat "$1" | (cd / && groff -s -p -t -e -Tascii -mandoc -)
+      cat "$1" | (cd / && groff -s -p -t -e -Tlatin1 -mandoc -)
     fi ;;
   *.1.gz|*.2.gz|*.3.gz|*.4.gz|*.5.gz|*.6.gz|*.7.gz|*.8.gz|*.9.gz|*.n.gz|*.man.gz)
     if gzip -dc "$1" | file - | grep troff &>/dev/null; then
-      gzip -dc "$1" | (cd / && groff -s -p -t -e -Tascii -mandoc -)
+      gzip -dc "$1" | (cd / && groff -s -p -t -e -Tlatin1 -mandoc -)
     else
       gzip -dc "$1" 2>/dev/null
     fi ;;
   *.1.bz2|*.2.bz2|*.3.bz2|*.4.bz2|*.5.bz2|*.6.bz2|*.7.bz2|*.8.bz2|*.9.bz2|*.n.bz2|*.man.bz2)
     if bzip2 -dc "$1" | file - | grep troff &>/dev/null; then
-      bzip2 -dc "$1" | (cd / && groff -s -p -t -e -Tascii -mandoc -)
+      bzip2 -dc "$1" | (cd / && groff -s -p -t -e -Tlatin1 -mandoc -)
     else
       bzip2 -dc "$1" 2>/dev/null
     fi ;;

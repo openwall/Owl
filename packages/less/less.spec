@@ -1,9 +1,9 @@
-# $Id: Owl/packages/less/less.spec,v 1.5 2001/04/09 03:14:43 solar Exp $
+# $Id: Owl/packages/less/less.spec,v 1.6 2001/05/05 20:07:15 solar Exp $
 
 Summary: A text file browser similar to more, but better.
 Name: 		less
 Version: 	358
-Release: 	5owl
+Release: 	6owl
 License: 	GPL
 Group: 		Applications/Text
 Source0: 	ftp://ftp.gnu.org/pub/gnu/less/%{name}-%{version}.tar.gz
@@ -53,6 +53,9 @@ install -c -m 755 %{SOURCE3} $RPM_BUILD_ROOT/etc/profile.d
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Sat May 05 2001 Solar Designer <solar@owl.openwall.com>
+- Use -Tlatin1 with groff such that 8-bit man pages may be viewed.
+
 * Mon Apr 09 2001 Solar Designer <solar@owl.openwall.com>
 - Optimized line number calculation and forward searches, now 20 to 50%
 faster (but still a lot slower than wc and grep).
