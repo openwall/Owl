@@ -1,7 +1,7 @@
-diff -ur pam-0.75.orig/modules/pam_limits/pam_limits.c pam-0.75/modules/pam_limits/pam_limits.c
---- pam-0.75.orig/modules/pam_limits/pam_limits.c	Mon Apr 23 22:39:04 2001
-+++ pam-0.75/modules/pam_limits/pam_limits.c	Sun Jul  7 00:06:18 2002
-@@ -92,6 +92,50 @@
+diff -urp pam-0.75.orig/modules/pam_limits/pam_limits.c pam-0.75/modules/pam_limits/pam_limits.c
+--- pam-0.75.orig/modules/pam_limits/pam_limits.c	Mon Apr 23 18:39:04 2001
++++ pam-0.75/modules/pam_limits/pam_limits.c	Sat Aug  9 23:00:09 2003
+@@ -92,6 +92,50 @@ struct pam_limit_s {
  #include <grp.h>
  #endif
  
@@ -52,7 +52,7 @@ diff -ur pam-0.75.orig/modules/pam_limits/pam_limits.c pam-0.75/modules/pam_limi
  /* logging */
  static void _pam_log(int err, const char *format, ...)
  {
-@@ -454,8 +498,8 @@
+@@ -454,8 +498,8 @@ static int parse_config_file(const char 
          _pam_log(LOG_DEBUG,"reading settings from '%s'", CONF_FILE);
      fil = fopen(CONF_FILE, "r");
      if (fil == NULL) {
@@ -63,7 +63,18 @@ diff -ur pam-0.75.orig/modules/pam_limits/pam_limits.c pam-0.75/modules/pam_limi
      }
  #undef CONF_FILE
      
-@@ -575,7 +619,6 @@
+@@ -547,7 +591,9 @@ static int setup_limits(const char * una
+     for (i=0; i<RLIM_NLIMITS; i++) {
+         if (pl->limits[i].limit.rlim_cur > pl->limits[i].limit.rlim_max)
+             pl->limits[i].limit.rlim_cur = pl->limits[i].limit.rlim_max;
+-        retval |= setrlimit(i, &pl->limits[i].limit);
++	if (pl->limits[i].src_soft != LIMITS_DEF_NONE ||
++	    pl->limits[i].src_hard != LIMITS_DEF_NONE)
++		retval |= setrlimit(i, &pl->limits[i].limit);
+     }
+     
+     if (retval != PAM_SUCCESS)
+@@ -575,7 +621,6 @@ PAM_EXTERN int pam_sm_open_session(pam_h
      struct passwd *pwd;
      int ctrl;
      struct pam_limit_s pl;
@@ -71,7 +82,7 @@ diff -ur pam-0.75.orig/modules/pam_limits/pam_limits.c pam-0.75/modules/pam_limi
  
      D(("called."));
  
-@@ -599,7 +642,7 @@
+@@ -599,7 +644,7 @@ PAM_EXTERN int pam_sm_open_session(pam_h
      /* do not impose limits on UID 0 accounts */
      if (!pwd->pw_uid) {
          if (ctrl & PAM_DEBUG_ARG)
@@ -80,7 +91,7 @@ diff -ur pam-0.75.orig/modules/pam_limits/pam_limits.c pam-0.75/modules/pam_limi
                                  user_name);
          return PAM_SUCCESS;
      }
-@@ -607,7 +650,7 @@
+@@ -607,7 +652,7 @@ PAM_EXTERN int pam_sm_open_session(pam_h
      retval = init_limits(&pl);
      if (retval != PAM_SUCCESS) {
          _pam_log(LOG_WARNING, "cannot initialize");
@@ -89,7 +100,7 @@ diff -ur pam-0.75.orig/modules/pam_limits/pam_limits.c pam-0.75/modules/pam_limi
      }
  
      retval = parse_config_file(pwd->pw_name, ctrl, &pl);
-@@ -617,7 +660,7 @@
+@@ -617,7 +662,7 @@ PAM_EXTERN int pam_sm_open_session(pam_h
      }
      if (retval != PAM_SUCCESS) {
          _pam_log(LOG_WARNING, "error parsing the configuration file");
@@ -98,7 +109,7 @@ diff -ur pam-0.75.orig/modules/pam_limits/pam_limits.c pam-0.75/modules/pam_limi
      }
  
      if (ctrl & PAM_DO_SETREUID)
-@@ -625,15 +668,7 @@
+@@ -625,15 +670,7 @@ PAM_EXTERN int pam_sm_open_session(pam_h
  
      retval = setup_limits(pwd->pw_name, ctrl, &pl);
      if (retval & LOGIN_ERR) {
@@ -115,7 +126,7 @@ diff -ur pam-0.75.orig/modules/pam_limits/pam_limits.c pam-0.75/modules/pam_limi
          return PAM_PERM_DENIED;
      }
  
-@@ -648,14 +683,24 @@
+@@ -648,14 +685,24 @@ PAM_EXTERN int pam_sm_close_session(pam_
  }
  
  #ifdef PAM_STATIC

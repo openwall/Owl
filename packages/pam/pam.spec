@@ -1,9 +1,9 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.28 2003/07/22 10:53:28 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.29 2003/08/10 00:01:22 solar Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
 Version: 0.75
-Release: owl19
+Release: owl20
 %define rh_version %{version}-10
 License: GPL or BSD
 Group: System Environment/Base
@@ -209,6 +209,11 @@ chgrp chkpwd %{_libexecdir}/chkpwd && chmod 710 %{_libexecdir}/chkpwd
 %doc doc/specs/rfc86.0.txt
 
 %changelog
+* Sun Aug 10 2003 Solar Designer <solar@owl.openwall.com> 0.75-owl20
+- pam_limits: don't invoke setrlimit(2) on limits which are not set
+explicitly as simply resetting RLIMIT_FSIZE to what appears to be its
+current value may decrease the actual limit with LFS.
+
 * Tue Jul 22 2003 Solar Designer <solar@owl.openwall.com> 0.75-owl19
 - Patched pam_wheel to never rely on getlogin(3).
 
