@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.71 2004/05/19 12:42:35 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.72 2004/06/06 22:30:33 mci Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl8
+Release: owl9
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -28,6 +28,7 @@ Patch11: openssh-3.6.1p1-owl-ssh-agent-dumpable.diff
 Patch12: openssh-3.6.1p2-cvs-20030603-UseDNS.diff
 Patch13: openssh-3.6.1p2-cvs-20030916-buffer-channels-realloc.diff
 Patch14: openssh-3.6.1p2-owl-realloc.diff
+Patch15: openssh-3.6.1p2-cvs-20040401-scp-fix.diff
 PreReq: openssl >= 0.9.6, openssl < 0.9.7
 Requires: pam >= 0.75-owl16
 Obsoletes: ssh
@@ -115,6 +116,7 @@ rm -r autom4te.cache
 %patch12 -p1
 %patch13 -p0
 %patch14 -p1
+%patch15 -p1
 
 %define _sysconfdir /etc/ssh
 %{expand:%%define _datadir %_datadir/ssh}
@@ -229,6 +231,10 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Fri Jun 04 2004 Michail Litvak <mci@owl.openwall.com> 3.6.1p2-owl9
+- Fixed directory traversal vulnerability in scp which allows remote malicious
+servers to overwrite arbitrary files (CAN-2004-0175).
+
 * Mon May 03 2004 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl8
 - Bumped release to correctly reflect the rebuild against shared libwrap.
 
