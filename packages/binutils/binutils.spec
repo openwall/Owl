@@ -1,11 +1,14 @@
+# $Id: Owl/packages/binutils/binutils.spec,v 1.2 2000/07/29 12:32:16 kad Exp $
+
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.9.5.0.46
+Version: 2.10
 Release: 1owl
 Copyright: GPL
 Group: Development/Tools
 URL: http://sourceware.cygnus.com/binutils
-Source: ftp://ftp.valinux.com/pub/support/hjl/binutils/binutils-%{version}.tar.gz
+#Source: ftp://ftp.valinux.com/pub/support/hjl/binutils/binutils-%{version}.tar.gz
+Source: ftp://ftp.gnu.org/pub/gnu/binutils/binutils-%{version}.tar.gz
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 ExcludeArch: ia64
 
@@ -89,6 +92,9 @@ fi
 %{_infodir}/*info*
 
 %changelog
-* Tue Jul 18 2000 Alexandr D. Kanevskiy <kad@openwall.com>
+* Sat Jul 29 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- 2.10
+
+* Tue Jul 18 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - 2.9.5.0.46
 - import from spec from RH
