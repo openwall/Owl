@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.32 2004/09/10 07:15:47 galaxy Exp $
+# $Id: Owl/build/buildworld.sh,v 1.33 2005/04/01 23:12:31 solar Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -163,6 +163,8 @@ function build_foreign()
 		--define "buildhost $BUILDHOST" \
 		--define "home $HOME" \
 		--define "number $NUMBER" \
+		--define "_unpackaged_files_terminate_build 0" \
+		--define "_missing_doc_files_terminate_build 0" \
 		&> $HOME/logs/$PACKAGE < /dev/null;
 	then
 		mv $WORK/RPMS/*/* $HOME/RPMS/

@@ -1,7 +1,9 @@
-# $Id: Owl/build/.rpmmacros,v 1.7 2005/01/19 13:57:27 solar Exp $
+# $Id: Owl/build/.rpmmacros,v 1.8 2005/04/01 23:12:31 solar Exp $
 %_tmppath %home/tmp-work
 %_topdir %home/rpm-work-%number
 %buildroot %home/rpm-work-%number/buildroot
+%_unpackaged_files_terminate_build 1
+%_missing_doc_files_terminate_build 1
 # i386
 %optflags_lib_i386 -pipe -march=i386 -mtune=i686 -O2 -momit-leaf-frame-pointer -mpreferred-stack-boundary=3
 %optflags_bin_i386 -pipe -march=i386 -mtune=i686 -O2 -fomit-frame-pointer -mpreferred-stack-boundary=2
