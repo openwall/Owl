@@ -1,9 +1,9 @@
-# $Id: Owl/packages/tar/tar.spec,v 1.5 2002/02/04 09:54:56 solar Exp $
+# $Id: Owl/packages/tar/tar.spec,v 1.6 2002/08/05 15:47:34 mci Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
 Version: 1.13.19
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Archiving
 Source0: ftp://alpha.gnu.org/pub/gnu/tar/tar-%{version}.tar.gz
@@ -14,7 +14,8 @@ Patch2: tar-1.13.19-rh-fail.diff
 Patch3: tar-1.13.19-rh-owl-unreadable-segfault.diff
 Patch4: tar-1.13.19-rh-autoconf.diff
 Patch5: tar-1.13.19-rh-owl-no-librt.diff
-PreReq: /sbin/install-info
+Patch6: tar-1.13.19-owl-info.diff
+PreReq: /sbin/install-info, grep
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -34,11 +35,13 @@ backups.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 unset LINGUAS || :
 autoconf
 %configure --bindir=/bin --libexecdir=/sbin
+rm doc/tar.info*
 make LIBS=-lbsd
 
 %install
@@ -59,6 +62,11 @@ install -m 644 ${RPM_SOURCE_DIR}/tar.1 ${RPM_BUILD_ROOT}%{_mandir}/man1/
 rm -rf $RPM_BUILD_ROOT
 
 %post
+grep '^Tar' %{_infodir}/dir &>/dev/null
+if [ $? -eq 0 ]; then
+	mv %{_infodir}/dir %{_infodir}/dir.orig
+	grep -v '^Tar' %{_infodir}/dir.orig > %{_infodir}/dir
+fi
 /sbin/install-info %{_infodir}/tar.info.gz %{_infodir}/dir
 
 %preun
@@ -75,6 +83,9 @@ fi
 %{_prefix}/share/locale/*/LC_MESSAGES/*
 
 %changelog
+* Mon Aug 05 2002 Michail Litvak <mci@owl.openwall.com>
+- Fixed incorrect dir entry in info file.
+
 * Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 

@@ -1,0 +1,11 @@
+--- tar-1.13.19/doc/tar.texi.orig	Mon Aug  5 10:20:01 2002
++++ tar-1.13.19/doc/tar.texi	Mon Aug  5 16:45:46 2002
+@@ -465,7 +465,7 @@
+ 
+ @dircategory GNU Packages
+ @direntry
+-Tar: (tar).			Making tape (or disk) archives.
++* Tar: (tar).			Making tape (or disk) archives.
+ @end direntry
+ 
+ @dircategory Individual utilities
