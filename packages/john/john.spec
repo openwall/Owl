@@ -1,9 +1,9 @@
-# $Id: Owl/packages/john/john.spec,v 1.16 2003/06/02 03:20:32 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.17 2003/06/29 15:04:36 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.33
-Release: owl2
+Version: 1.6.34
+Release: owl1
 License: GPL
 Group: Applications/System
 URL: http://www.openwall.com/john/
@@ -14,7 +14,7 @@ BuildRoot: /override/%{name}-%{version}
 %description
 John the Ripper is a fast password cracker (password security auditing
 tool).  Its primary purpose is to detect weak Unix passwords, but a number
-of other hash types are supported as well. 
+of other hash types are supported as well.
 
 %prep
 %setup -q -a 1
@@ -77,6 +77,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Sun Jun 29 2003 Solar Designer <solar@owl.openwall.com> 1.6.34-owl1
+- solaris-sparc64-cc, contributed by Thomas Nau.
+- Check for and report invalid MinLen / MaxLen settings.
+
 * Mon Jun 02 2003 Solar Designer <solar@owl.openwall.com> 1.6.33-owl2
 - Added URL.
 
