@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.5 2000/12/04 15:31:28 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.6 2000/12/04 17:53:07 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.2
-Release: 4owl
+Version: 0.3
+Release: 1owl
 Copyright: GPL
 Group: System Environment/Base
 Source0: initscripts-5.00.tar.gz
@@ -76,8 +76,8 @@ mkdir -p var/run/netreport
 %post
 for f in /var/log/wtmp /var/run/utmp; do
 	test -e $f && continue || :
-	chown root.utmp $f
-	chmod 664 $f
+	touch $f
+	chown root.utmp $f && chmod 664 $f
 done
 
 /sbin/chkconfig --add random
@@ -133,6 +133,8 @@ rm -rf $RPM_BUILD_ROOT
 * Mon Dec 04 2000 Solar Designer <solar@owl.openwall.com>
 - Obsoletes: initscripts
 - Create wtmp and utmp in %post.
+- Enable swapping into files.
+- Save dmesg on boot.
 
 * Sun Dec 03 2000 Solar Designer <solar@owl.openwall.com>
 - No longer require glib for builds.

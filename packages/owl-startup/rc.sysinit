@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/owl-startup/rc.sysinit,v 1.1 2000/11/28 22:48:33 solar Exp $
+# $Id: Owl/packages/owl-startup/rc.sysinit,v 1.2 2000/12/04 17:53:07 solar Exp $
 
 # Set the initial default search path for use by startup scripts.
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
@@ -84,6 +84,9 @@ mount -f /
 echo "Mounting local filesystems"
 mount -a -t nonfs,smbfs,ncpfs
 
+# Enable swapping into files.
+swapon -a &> /dev/null
+
 # Update quotas if fsck corrected any filesystem errors.
 if [ $STATUS -eq 1 -a -x /sbin/quotacheck ]; then
 	echo "Checking filesystem quotas"
@@ -98,7 +101,13 @@ fi
 
 # Remove stale PID files, possibly create utmp and wtmp, reset utmp.
 rm -f /var/run/*.pid /var/lock/subsys/*
-test -e /var/run/utmp || install -m 664 -o root -g utmp /dev/null /var/run/utmp
-test -e /var/log/wtmp || install -m 664 -o root -g utmp /dev/null /var/log/wtmp
+for f in /var/log/wtmp /var/run/utmp; do
+	test -e $f && continue
+	touch $f
+	chown root.utmp $f && chmod 664 $f
+done
 > /var/run/utmp
-test -e /var/run/utmpx && > /var/run/utmpx
+test -f /var/run/utmpx && > /var/run/utmpx
+
+# Save a copy of the boot messages.
+dmesg > /var/run/dmesg.boot
