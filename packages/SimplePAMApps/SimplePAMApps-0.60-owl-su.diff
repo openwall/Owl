@@ -1,6 +1,6 @@
 diff -ur SimplePAMApps-0.60.orig/pamapps/lib/wtmp-gate.c SimplePAMApps-0.60/pamapps/lib/wtmp-gate.c
 --- SimplePAMApps-0.60.orig/pamapps/lib/wtmp-gate.c	Wed Nov 25 15:33:32 1998
-+++ SimplePAMApps-0.60/pamapps/lib/wtmp-gate.c	Mon Nov 19 06:54:45 2001
++++ SimplePAMApps-0.60/pamapps/lib/wtmp-gate.c	Mon Nov 19 07:47:15 2001
 @@ -35,6 +35,7 @@
          *err_descr = pam_strerror(pamh, retval);
          return -1;
@@ -19,7 +19,7 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/lib/wtmp-gate.c SimplePAMApps-0.60/pama
          utmp_do_close_session(terminal, callname, err_descr);
 diff -ur SimplePAMApps-0.60.orig/pamapps/su/su.c SimplePAMApps-0.60/pamapps/su/su.c
 --- SimplePAMApps-0.60.orig/pamapps/su/su.c	Thu Feb 18 15:29:50 1999
-+++ SimplePAMApps-0.60/pamapps/su/su.c	Mon Nov 19 06:56:35 2001
++++ SimplePAMApps-0.60/pamapps/su/su.c	Mon Nov 19 07:48:08 2001
 @@ -18,9 +18,10 @@
  #define DEFAULT_SHELL             "/bin/sh"
  #define SLEEP_TO_KILL_CHILDREN    3  /* seconds to wait after SIGTERM before
@@ -32,6 +32,24 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/su/su.c SimplePAMApps-0.60/pamapps/su/s
  #include <signal.h>
  #include <stdio.h>
  #include <sys/stat.h>
+@@ -75,7 +76,7 @@
+ /* ------ the application itself -------------- */
+ /* -------------------------------------------- */
+ 
+-void main(int argc, char *argv[])
++int main(int argc, char *argv[])
+ {
+     int retcode, is_login, status;
+     int retval, final_retval; /* PAM_xxx return values */
+@@ -293,7 +294,7 @@
+     if (reset_terminal_modes() != 0 && !status)
+ 	status = 1;
+ 
+-    exit(status);                 /* transparent exit */
++    return status;
+ }
+ 
+ /* -------------------------------------------- */
 @@ -380,7 +381,7 @@
  	if (terminal) {
  	    retval = pam_set_item(pamh, PAM_TTY, (const void *)terminal);

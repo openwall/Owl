@@ -1,6 +1,6 @@
 diff -ur SimplePAMApps-0.60.orig/Discussions SimplePAMApps-0.60/Discussions
 --- SimplePAMApps-0.60.orig/Discussions	Sun Mar 28 12:15:58 1999
-+++ SimplePAMApps-0.60/Discussions	Mon Nov 19 06:16:58 2001
++++ SimplePAMApps-0.60/Discussions	Mon Nov 19 07:49:43 2001
 @@ -9,6 +9,10 @@
     login command line.  People haven't agreed how to solve the problem.  I
     need to think more.
@@ -14,7 +14,7 @@ diff -ur SimplePAMApps-0.60.orig/Discussions SimplePAMApps-0.60/Discussions
     discussion.  Such a protection makes a sense only if all ways for brute
 diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapps/login/login.c
 --- SimplePAMApps-0.60.orig/pamapps/login/login.c	Sun Mar 28 12:17:11 1999
-+++ SimplePAMApps-0.60/pamapps/login/login.c	Mon Nov 19 06:48:13 2001
++++ SimplePAMApps-0.60/pamapps/login/login.c	Mon Nov 19 07:50:27 2001
 @@ -35,6 +35,7 @@
  #include <termios.h>
  #include <unistd.h>
@@ -84,6 +84,15 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  /*
   * set up the conversation timeout facilities.
   */
+@@ -146,7 +165,7 @@
+  *  This function is to be used in cases of programmer error.
+  */
+ 
+-static void serious_abort(const char *s)
++static void serious_abort(void)
+ {
+     if (pamh != NULL)
+         (void) pam_end(pamh, PAM_ABORT);
 @@ -155,19 +174,11 @@
  #endif
  
@@ -352,18 +361,22 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamapp
  	    break;
  	}
  	state = LOGIN_STATE_SESSION_OPENED;
-@@ -654,18 +641,24 @@
- 	    serious_abort("shell failed to execute");
- 	}
+@@ -651,7 +638,13 @@
+ 	    login_invoke_shell(shell, uid);                    /* never returns */
  
+ 	    D(("this should not have returned"));
+-	    serious_abort("shell failed to execute");
++	    serious_abort();
++	}
++
 +	if (child == -1) {
 +		log("fork: %m");
 +		fprintf(stderr, "Failed to create a shell process\n");
 +		break;
-+	}
-+
+ 	}
+ 
  	retval = utmp_open_session(pamh, getpid(), &place, &err_descr);
- 	if (retval < 0) 
+@@ -659,13 +652,13 @@
  	{
  	    delay = 60;
  	    pam_retval = PAM_ABORT;

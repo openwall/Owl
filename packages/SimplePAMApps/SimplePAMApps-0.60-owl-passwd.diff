@@ -1,6 +1,15 @@
 diff -ur SimplePAMApps-0.60.orig/pamapps/passwd/passwd.c SimplePAMApps-0.60/pamapps/passwd/passwd.c
 --- SimplePAMApps-0.60.orig/pamapps/passwd/passwd.c	Thu Feb 18 15:29:43 1999
-+++ SimplePAMApps-0.60/pamapps/passwd/passwd.c	Mon Nov 19 06:52:18 2001
++++ SimplePAMApps-0.60/pamapps/passwd/passwd.c	Mon Nov 19 07:51:57 2001
+@@ -49,7 +49,7 @@
+ 
+ /* ------- the application itself -------- */
+ 
+-void main(int argc, const char **argv)
++int main(int argc, const char **argv)
+ {
+     const char *service, *user, *suffix;
+     int passwd_flags, retval;
 @@ -81,32 +81,28 @@
      }
  
@@ -58,9 +67,10 @@ diff -ur SimplePAMApps-0.60.orig/pamapps/passwd/passwd.c SimplePAMApps-0.60/pama
  	(void) pam_end(pamh,PAM_SUCCESS);
  	pamh = NULL;
      }
--
+ 
 -    if (retval != PAM_SUCCESS)
 -	fprintf(stderr, "passwd: %s\n", pam_strerror(pamh, retval));
- 
-     exit(1);
+-
+-    exit(1);
++    return 1;
  }
