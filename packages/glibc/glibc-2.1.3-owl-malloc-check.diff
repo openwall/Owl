@@ -1,0 +1,28 @@
+--- glibc-2.1.3.orig/malloc/malloc.c	Wed Feb 23 07:02:55 2000
++++ glibc-2.1.3/malloc/malloc.c	Mon Jun 12 14:57:54 2000
+@@ -1709,6 +1709,16 @@
+   tsd_setspecific(arena_key, (Void_t *)&main_arena);
+   thread_atfork(ptmalloc_lock_all, ptmalloc_unlock_all, ptmalloc_init_all);
+ #if defined _LIBC || defined MALLOC_HOOKS
++  if (__libc_enable_secure) {
++/* Unset these in case we're SUID/SGID, but are going to switch to matching
++ * real and effective ID's and exec another binary with this code. It would
++ * be better to solve this the OpenBSD way, with issetugid(2). */
++    unsetenv("MALLOC_TRIM_THRESHOLD_");
++    unsetenv("MALLOC_TOP_PAD_");
++    unsetenv("MALLOC_MMAP_THRESHOLD_");
++    unsetenv("MALLOC_MMAP_MAX_");
++    unsetenv("MALLOC_CHECK_");
++  }
+   if((s = __secure_getenv("MALLOC_TRIM_THRESHOLD_")))
+     mALLOPt(M_TRIM_THRESHOLD, atoi(s));
+   if((s = __secure_getenv("MALLOC_TOP_PAD_")))
+@@ -1717,7 +1727,7 @@
+     mALLOPt(M_MMAP_THRESHOLD, atoi(s));
+   if((s = __secure_getenv("MALLOC_MMAP_MAX_")))
+     mALLOPt(M_MMAP_MAX, atoi(s));
+-  s = getenv("MALLOC_CHECK_");
++  s = __secure_getenv("MALLOC_CHECK_");
+ #ifndef NO_THREADS
+   __malloc_hook = save_malloc_hook;
+   __free_hook = save_free_hook;
