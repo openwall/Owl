@@ -1,13 +1,16 @@
+# $Id: Owl/packages/procps/Attic/procps.spec,v 1.2 2000/11/13 02:42:28 solar Exp $
+
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
 Version: 2.0.6
-Release: 1owl
+Release: 2owl
 Copyright: GPL and LGPL
 Group: System Environment/Base
 Source: ftp://sunsite.unc.edu/pub/Linux/system/status/ps/procps-%{version}.tar.gz
 Patch0: procps-2.0.6-ins-noroot.diff
 Patch1: procps-2.0.6-owl-alt-stale.diff
 Patch2: procps-2.0.6-owl-glibc-2.1.3-hack.diff
+Patch3: procps-2.0.6-rh-longlong.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 
 %description
@@ -20,6 +23,7 @@ top, uptime, vmstat, w, and watch.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 make CC="gcc $RPM_OPT_FLAGS" LDFLAGS=-s
@@ -77,9 +81,12 @@ rm -rf $RPM_BUILD_ROOT
 /usr/man/man8/sysctl.8.gz
 
 %changelog
-* Wed Jul  5 2000 Solar Designer <solar@false.com>
+* Mon Nov 13 2000 Solar Designer <solar@owl.openwall.com>
+- Added a patch from Red Hat to prevent divide by zero on big-endian.
+
+* Wed Jul 05 2000 Solar Designer <solar@owl.openwall.com>
 - Imported this spec from iNs/Linux, cleaned it up a bit, and added the
-  patch for alternative stale utmp entry checking.
+patch for alternative stale utmp entry checking.
 
 * Thu Feb 17 2000  Francis J. Lacoste <francis.lacoste@iNsu.COM> 
   [2.0.6-1i]
