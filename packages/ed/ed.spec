@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ed/ed.spec,v 1.2 2000/11/23 09:07:51 mci Exp $
+# $Id: Owl/packages/ed/ed.spec,v 1.3 2000/11/23 13:38:03 mci Exp $
 
 Summary: The GNU line editor.
 Name: ed
@@ -9,7 +9,7 @@ Group: Applications/Text
 Source: ftp://ftp.gnu.org/gnu/%{name}-%{version}.tar.gz
 Patch0: ed-0.2-deb-mkfile.diff
 Patch1: ed-0.2-deb-parentheses.diff
-Patch2: ed-0.2-deb-tmpnam.diff
+Patch2: ed-0.2-owl-mkstemp.diff
 Prereq: /sbin/install-info
 Prefix: %{_prefix}
 Buildroot: /var/rpm-buildroot/%{name}-root
