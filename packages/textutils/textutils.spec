@@ -1,8 +1,8 @@
-# $Id: Owl/packages/textutils/Attic/textutils.spec,v 1.2 2000/08/09 00:51:27 kad Exp $
+# $Id: Owl/packages/textutils/Attic/textutils.spec,v 1.3 2000/10/25 19:06:41 kad Exp $
 
 Summary: A set of GNU text file modifying utilities.
 Name: 		textutils
-Version: 	2.0g
+Version: 	2.0.8
 Release: 	1owl
 Copyright: 	GPL
 Group: 		Applications/Text
@@ -63,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/locale/*/*/*
 
 %changelog
+* Wed Oct 25 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- 2.0.8 (+sha1sum)
+
 * Sun Jul 30 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - imported from RH
 
