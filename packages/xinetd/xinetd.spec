@@ -1,9 +1,9 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.21 2003/01/18 08:15:04 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.22 2003/02/24 21:38:17 mci Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
 Version: 2.3.10
-Release: owl1
+Release: owl2
 License: BSD with minor restrictions
 Group: System Environment/Daemons
 URL: http://www.xinetd.org
@@ -18,7 +18,8 @@ Source7: xinetd-echo
 Source8: xinetd-uecho
 Source9: xinetd-chargen
 Source10: xinetd-uchargen
-Patch0: xinetd-2.3.10-owl-fixes.diff
+Patch0: xinetd-2.3.10-owl-alt-fixes.diff
+Patch1: xinetd-2.3.10-steveg-tcpmux.diff
 PreReq: /sbin/chkconfig
 Provides: inetd
 Obsoletes: inetd
@@ -42,6 +43,7 @@ limits on the number of servers that can be started, among other things.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %{expand:%%define optflags %optflags -Wall -Wno-unused -Wno-switch}
 
@@ -106,6 +108,12 @@ fi
 %{_mandir}/*/*
 
 %changelog
+* Mon Feb 24 2003 Michail Litvak <mci@owl.openwall.com>
+- TCPMUX parser updates. -Steve Grubb                                    
+- TCPMUX was causing core dumps due to changes made in 2.3.10's          
+  child_process(), reverted changes. -Philip Armstrong 
+- Fix from ALT Linux Team (fixed a bounds check in Sdone())
+
 * Sat Jan 18 2003 Solar Designer <solar@owl.openwall.com>
 - Updated to 2.3.10, with its meaningless change to Sdone() reverted.
 

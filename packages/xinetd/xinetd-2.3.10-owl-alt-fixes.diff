@@ -1,12 +1,22 @@
 diff -ur xinetd-2.3.10.orig/libs/src/sio/siosup.c xinetd-2.3.10/libs/src/sio/siosup.c
 --- xinetd-2.3.10.orig/libs/src/sio/siosup.c	Tue Dec  3 22:08:42 2002
 +++ xinetd-2.3.10/libs/src/sio/siosup.c	Sat Jan 18 11:02:05 2003
-@@ -766,7 +766,7 @@
+@@ -764,9 +764,16 @@
+  */
+ int Sdone( int fd )
  {
-    __sio_descriptor_t *dp = &__sio_descriptors[ fd ] ;
+-   __sio_descriptor_t *dp = &__sio_descriptors[ fd ] ;
++   __sio_descriptor_t *dp ;
  
 -   if ( fd >= __sio_n_descriptors || fd < __sio_n_descriptors || ! DESCRIPTOR_INITIALIZED( dp ) )
-+   if ( fd >= __sio_n_descriptors || ! DESCRIPTOR_INITIALIZED( dp ) )
++   if ( fd < 0 || fd >= __sio_n_descriptors )
++   {
++      errno = EBADF ;
++      return( SIO_ERR ) ;
++   }
++
++   dp = &__sio_descriptors[ fd ] ;
++   if ( ! DESCRIPTOR_INITIALIZED( dp ) )
     {
        errno = EBADF ;
        return( SIO_ERR ) ;

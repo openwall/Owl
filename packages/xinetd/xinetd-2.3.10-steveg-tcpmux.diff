@@ -1,0 +1,69 @@
+--- xinetd-2.3.10/xinetd/child.c.orig	Mon Nov 18 23:57:27 2002
++++ xinetd-2.3.10/xinetd/child.c	Sun Feb 23 03:07:13 2003
+@@ -270,7 +270,6 @@
+    connection_s            *cp  = SERVER_CONNECTION( serp ) ;
+    struct service_config   *scp = SVC_CONF( sp ) ;
+    const char              *func = "child_process" ;
+-   int                      i;
+ 
+    signal_default_state();
+ 
+@@ -283,12 +282,6 @@
+    signals_pending[0] = -1;
+    signals_pending[1] = -1;
+ 
+-   for( i = 0; i < pset_count( SERVICES( ps ) ); i++ ) {
+-      struct service *tmpser = pset_pointer( SERVICES( ps ), i );
+-      if( SVC_FD( tmpser ) != SVC_FD( sp ) ) {
+-          svc_release( tmpser );
+-      }
+-   }
+    close(0);
+    close(1);
+    close(2);
+--- xinetd-2.3.10/xinetd/confparse.c.orig	Sat Jan  4 21:31:27 2003
++++ xinetd-2.3.10/xinetd/confparse.c	Sun Feb 23 03:07:13 2003
+@@ -637,6 +637,25 @@
+          return( FAILED ) ;
+    }
+ 
++   if ( SC_IS_MUXCLIENT( scp ) ) 
++   {
++	   if ( !SC_IS_UNLISTED( scp ) )
++	   {
++               msg(LOG_ERR, func, 
++                   "Service: %s (tcpmux) should have UNLISTED in type.",
++		   scp->sc_name);
++	       return( FAILED );
++	   }
++	   
++	   if (!EQ("tcp", scp->sc_protocol.name))
++	   {
++               msg(LOG_ERR, func, 
++                   "Service: %s (tcpmux) should have tcp in protocol.",
++		   scp->sc_name);
++	       return( FAILED );
++	   }
++   }
++
+ /* #ifndef NO_RPC */
+ #if defined(HAVE_RPC_RPCENT_H) || defined(HAVE_NETDB_H)
+    if ( SC_IS_RPC( scp ) && !SC_IS_UNLISTED( scp ) )
+@@ -666,7 +685,7 @@
+ 	   * proper protocol for the given service. 
+            * We don't need to check MUXCLIENTs - they aren't in /etc/services.
+            */
+-          if ( SC_SPECIFIED( scp, A_PROTOCOL ) && ! SC_IS_MUXCLIENT( scp ) )
++          if ( SC_SPECIFIED( scp, A_PROTOCOL ) )
+           {
+              sep = getservbyname( scp->sc_name, scp->sc_protocol.name ) ;
+              if ( (sep == NULL) )
+--- xinetd-2.3.10/CHANGELOG.orig	Sun Jan 12 00:29:34 2003
++++ xinetd-2.3.10/CHANGELOG	Sun Feb 23 03:19:20 2003
+@@ -809,3 +809,6 @@
+ 		- Andrey Alekseyev
+ 	Fix a reconfig timing issue.
+ 		- Andrey Alekseyev
++	TCPMUX parser updates. -Steve Grubb
++	TCPMUX was causing core dumps due to changes made in 2.3.10's 
++		child_process(), reverted changes. -Philip Armstrong
