@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-control/owl-control.spec,v 1.9 2003/01/08 02:07:12 solar Exp $
+# $Id: Owl/packages/owl-control/owl-control.spec,v 1.10 2003/04/18 13:16:08 solar Exp $
 
 Summary: A set of scripts to control installed system facilities.
 Name: owl-control
-Version: 0.5
+Version: 0.6
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -45,6 +45,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0644,root,root) %{_mandir}/man8/control*
 
 %changelog
+* Fri Apr 18 2003 Solar Designer <solar@owl.openwall.com> 0.6-owl1
+- Avoid *roff commands within .SH NAME to not confuse makewhatis and
+apropos(1).
+
 * Wed Jan 08 2003 Solar Designer <solar@owl.openwall.com>
 - Wrote control(8) and control-dump(8) manual pages.
 
