@@ -1,8 +1,8 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.17 2002/09/19 19:57:41 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.18 2002/09/28 07:03:28 solar Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
-Version: 2.3.8
+Version: 2.3.9
 Release: owl1
 License: BSD with minor restrictions
 Group: System Environment/Daemons
@@ -18,7 +18,6 @@ Source7: xinetd-echo
 Source8: xinetd-uecho
 Source9: xinetd-chargen
 Source10: xinetd-uchargen
-Patch0: xinetd-2.3.8-owl-fixes.diff
 PreReq: /sbin/chkconfig
 Provides: inetd
 Obsoletes: inetd
@@ -41,7 +40,6 @@ limits on the number of servers that can be started, among other things.
 
 %prep
 %setup -q
-%patch0 -p1
 
 %{expand:%%define optflags %optflags -Wall -Wno-unused -Wno-switch}
 
@@ -106,6 +104,9 @@ fi
 %{_mandir}/*/*
 
 %changelog
+* Sat Sep 28 2002 Solar Designer <solar@owl.openwall.com>
+- Updated to 2.3.9, dropping the patch (included).
+
 * Thu Sep 19 2002 Solar Designer <solar@owl.openwall.com>
 - Updated to 2.3.8 with a new set of minor fixes.
 
