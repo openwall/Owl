@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.10 2002/07/16 18:54:04 solar Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.11 2002/07/17 00:23:44 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -6,13 +6,14 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.6.0
-Release: owl9.4
+Release: owl9.6
 Epoch: 1
 License: GPL
 Group: Development/Languages
 Source0: ftp://ftp.perl.org/pub/CPAN/src/perl-%{version}.tar.gz
 Source1: ftp://ftp.perl.org/pub/CPAN/modules/by-module/Digest/Digest-MD5-2.09.tar.gz
 Source2: ftp://ftp.perl.org/pub/CPAN/modules/by-module/File/File-Temp-0.12.tar.gz
+Source10: perlcc.PL
 Patch0: perl-5.6.0-rh-install-man.diff
 Patch1: perl-5.6.0-rh-fhs.diff
 Patch2: perl-5.6.0-rh-buildroot.diff
@@ -64,6 +65,9 @@ mkdir modules
 tar xzf %SOURCE1 -C modules
 tar xzf %SOURCE2 -C modules
 
+rm utils/perlcc.PL
+cp $RPM_SOURCE_DIR/perlcc.PL utils/
+
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -103,11 +107,10 @@ sh Configure \
 make
 
 # Build the modules we have
-MainDir=`pwd`
 cd modules
 for module in *; do
 	cd $module
-	$MainDir/perl -I$MainDir/lib Makefile.PL
+	../../perl -I../../lib Makefile.PL
 	make
 	cd ..
 done
@@ -166,10 +169,9 @@ rm ${RPM_BUILD_ROOT}%{_libdir}/perl5/%{version}/%{_arch}-linux/linux/compile.ph
 %endif
 
 # Now pay attention to the extra modules
-MainDir=`pwd`
 pushd modules
 for module in *; do
-	eval $($MainDir/perl '-V:installarchlib')
+	eval $(../perl -V:installarchlib)
 	mkdir -p $RPM_BUILD_ROOT/$installarchlib
 	make -C $module install
 done
@@ -184,6 +186,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
+%doc Artistic Copying AUTHORS README README.Y2K
 %{_bindir}/*
 %{_libdir}/*
 %{_mandir}/*/*
@@ -191,6 +194,8 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Tue Jul 16 2002 Solar Designer <solar@owl.openwall.com>
 - Package File::Temp as needed for the modified perldoc.
+- Replaced perlcc with the version that uses File::Temp, from Perl 5.6.1.
+- Package some plaintext documentation.
 - Only generate *.ph files out of gcc, glibc and kernel headers (but not
 SCSI ones) by default.
 
