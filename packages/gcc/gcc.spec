@@ -1,33 +1,70 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.30 2003/10/29 19:22:05 solar Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.31 2004/09/03 18:37:20 galaxy Exp $
 
-%define GCC_PREFIX /usr
-%define CPP_PREFIX /lib
-%define GCC_VERSION 2.95.3
-%define STDC_VERSION 2.10.0
-
+# The only supported frontend for now is GXX.
+# G77, JAVA, and OBJC frontends build, but were not tested.
+# Ada95 is not supported yet (and does not build).
+# Testsuite is not supported because of its requirement for additional
+# packages to run (dejagnu, tcl, expect).
+%define BUILD_GXX 1
+%define BUILD_G77 0
+%define BUILD_JAVA 0
 %define BUILD_OBJC 0
-%define BUILD_F77 0
-%define BUILD_CHILL 0
+%define BUILD_ADA 0
+%define BUILD_TESTSUITE 0
+
+# Do we need libstdc++-compat libraries?
+%define BUILD_CXX_COMPAT 1
+
+# If this variable is set to non-zero, then all support libraries
+# will be placed into %_libdir/gcc-lib/%_target_platform/%_version
+# sub-directory (allowing to have several binary incompatible
+# versions of compilers).
+%define USE_VERSION_SPECIFIC_LIBS 0
+
+# Use or not Boehm's Garbage Collector in ObjC compiler frontend.
+# Note: Boehm's GC is included in Java frontend source tarball, we
+# may find a nice solution in the future to enable builds of ObjC
+# frontend with this GC without requiring Java frontend build.
+%define USE_BOEHM_GC 0
 
 Summary: C compiler from the GNU Compiler Collection.
 Name: gcc
-Version: %GCC_VERSION
-Release: owl5
+Version: 3.2.2
+Release: owl1.6
 Epoch: 1
 License: GPL
 Group: Development/Languages
 URL: http://gcc.gnu.org
-Source0: ftp://ftp.gnu.org/gnu/gcc/gcc-%GCC_VERSION.tar.gz
-Source1: libstdc++-compat.tar.bz2
-Patch0: gcc-2.95.3-rh-warn.diff
-Patch1: gcc-2.95.2-owl-disable-dvi.diff
-Patch2: gcc-2.95.2-owl-texconfig-bug.diff
-Patch3: gcc-2.95.3-owl-sparcv9-LONG_MAX.diff
-Patch4: gcc-2.95.3-owl-sparc-library-path.diff
-Patch5: gcc-2.95.3-owl-info.diff
-PreReq: /sbin/install-info
-Requires: binutils >= 2.9.1.0.25
-Requires: cpp = %GCC_VERSION
+Source0: ftp://ftp.gnu.org/gnu/gcc/gcc-core-%version.tar.bz2
+%if %BUILD_ADA
+Source1: ftp://ftp.gnu.org/gnu/gcc/gcc-ada-%version.tar.bz2
+%endif
+%if %BUILD_GXX
+Source2: ftp://ftp.gnu.org/gnu/gcc/gcc-g++-%version.tar.bz2
+%endif
+%if %BUILD_G77
+Source3: ftp://ftp.gnu.org/gnu/gcc/gcc-g77-%version.tar.bz2
+%endif
+%if %BUILD_JAVA
+Source4: ftp://ftp.gnu.org/gnu/gcc/gcc-java-%version.tar.bz2
+%endif
+%if %BUILD_OBJC
+Source5: ftp://ftp.gnu.org/gnu/gcc/gcc-objc-%version.tar.bz2
+%endif
+%if %BUILD_TESTSUITE
+Source6: ftp://ftp.gnu.org/gnu/gcc/gcc-testsuite-%version.tar.bz2
+%endif
+%if %BUILD_CXX_COMPAT
+# 2.7.2.8, 2.8.0, 2.9.0 (Red Hat Linux 6.2 and below)
+Source7: libstdc++-compat.tar.bz2
+# 2.95.3 (Owl 1.0, 1.1)
+Source8: libstdc++-compat-2.95.3-i386.tar.bz2
+%endif
+PreReq: /sbin/ldconfig, /sbin/install-info
+# This is the version of binutils we have tested this package with; older
+# ones might work, but were not tested.
+Requires: binutils >= 2.10.1.0.4
+Requires: cpp = %version-%release
 Obsoletes: egcs
 BuildRoot: /override/%name-%version
 
@@ -38,7 +75,7 @@ as well as documentation which is not limited to just the C compiler.
 %package -n cpp
 Summary: GNU C preprocessor.
 Group: Development/Languages
-PreReq: /sbin/ldconfig, /sbin/install-info
+PreReq: /sbin/install-info
 
 %description -n cpp
 cpp (or cccp) is the GNU C Compatible Compiler Preprocessor.  cpp is a
@@ -46,10 +83,11 @@ macro processor which is used automatically by the C compiler to
 transform program source before actual compilation.  cpp may also be
 used independently from the C compiler and the C language.
 
+%if %BUILD_GXX
 %package c++
 Summary: C++ support for gcc.
 Group: Development/Languages
-Requires: gcc = %GCC_VERSION, cpp = %GCC_VERSION
+Requires: gcc = %version-%release, cpp = %version-%release
 Obsoletes: egcs-c++
 
 %description c++
@@ -62,8 +100,7 @@ programs is available as a separate binary package.
 %package -n libstdc++
 Summary: GNU C++ library.
 Group: System Environment/Libraries
-PreReq: /sbin/ldconfig, grep, fileutils
-Provides: libstdc++-libc6.1-1.so.2, libstdc++-libc6.1-2.so.3, libstdc++.so.2.9
+PreReq: /sbin/ldconfig
 Obsoletes: gcc-libstdc++
 
 %description -n libstdc++
@@ -71,15 +108,17 @@ The libstdc++ package contains a snapshot of the GCC Standard C++
 Library v3, an ongoing project to implement the ISO 14882 Standard C++
 library.
 
+%if %BUILD_CXX_COMPAT
 %ifarch %ix86
 %package -n libstdc++-compat
 Summary: Old GNU C++ libraries for binary compatibility.
 Group: System Environment/Libraries
-PreReq: /sbin/ldconfig, grep, fileutils
+PreReq: /sbin/ldconfig
 
 %description -n libstdc++-compat
 This package includes the old shared libraries necessary to run C++
 applications built against the libraries.
+%endif
 %endif
 
 %package -n libstdc++-devel
@@ -90,12 +129,14 @@ Obsoletes: gcc-libstdc++-devel
 %description -n libstdc++-devel
 This is the GNU implementation of the standard C++ libraries.  This
 package includes the header files and libraries needed for C++ development.
+%endif
 
 %if %BUILD_OBJC
 %package objc
 Summary: Objective C support for gcc.
 Group: Development/Languages
-Requires: gcc = %GCC_VERSION, cpp = %GCC_VERSION
+PreReq: /sbin/ldconfig
+Requires: gcc = %version-%release, cpp = %version-%release
 Obsoletes: egcs-objc
 
 %description objc
@@ -105,12 +146,12 @@ language, mainly used on systems running NeXTSTEP.  This package does
 not include the standard Objective C object library.
 %endif
 
-%if %BUILD_F77
+%if %BUILD_G77
 %package g77
 Summary: Fortran 77 support for gcc.
 Group: Development/Languages
-PreReq: /sbin/install-info
-Requires: gcc = %GCC_VERSION
+PreReq: /sbin/ldconfig, /sbin/install-info
+Requires: gcc = %version-%release
 Obsoletes: egcs-g77
 
 %description g77
@@ -118,369 +159,505 @@ This package contains the Fortran 77 compiler from the GNU Compiler
 Collection.
 %endif
 
-%if %BUILD_CHILL
-%package chill
-Summary: CHILL support for gcc.
+%if %BUILD_JAVA
+%package java
+Summary: Java support for gcc.
 Group: Development/Languages
-PreReq: /sbin/install-info
-Requires: gcc = %GCC_VERSION
+PreReq: /sbin/ldconfig, /sbin/install-info
+Requires: gcc = %version-%release
 
-%description chill
-This package adds support for compiling CHILL programs with the GNU
+%description java
+This package adds support for compiling Java programs with the GNU
 compiler.
+%endif
 
-CHILL is the "CCITT High-Level Language", where CCITT is the old
-name for what is now ITU, the International Telecommunications Union.
-It is a language in the Modula2 family, and targets many of the same
-applications as Ada (especially large embedded systems).  Chill was
-never used much in the United States, but is still being used in Europe,
-Brazil, Korea, and other places.
+%if %BUILD_ADA
+%package ada
+Summary: ADA support for gcc.
+Group: Development/Languages
+PreReq: /sbin/ldconfig
+Requires: gcc = %version-%release
+
+%description ada
+This package adds support for compiling ADA programs with the GNU
+compiler.
+%endif
+
+%if %USE_VERSION_SPECIFIC_LIBS
+%define version_libdir %_libdir/gcc-lib/%_target_platform/%version
+%else
+%define version_libdir %_libdir
 %endif
 
 %prep
-%setup -q -n gcc-%GCC_VERSION -a 1
-%patch0 -p1
-%patch1 -p0
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-
-# Remove bison-generated files - we want bison 1.28+'ish versions...
-for i in gcc/cp/parse gcc/c-parse gcc/cexp gcc/java/parse-scan gcc/java/parse gcc/objc/objc-parse; do
-	rm -f $i.c
-done
-
-# Remove unneeded languages.
-rm -f gcc/java/config-lang.in
-
-%if !%BUILD_OBJC
-	rm -f gcc/objc/config-lang.in
+%if %BUILD_ADA
+	echo "Sorry, but building Ada95 GCC frontend is not supported by"
+	echo "Openwall team."
+	exit 1
 %endif
-%if !%BUILD_F77
-	rm -f gcc/f/config-lang.in
+
+%setup -q
+
+%if %BUILD_ADA
+%setup -q -T -D -b 1
 %endif
-%if !%BUILD_CHILL
-	rm -f gcc/ch/config-lang.in
+
+%if %BUILD_GXX
+%setup -q -T -D -b 2
+%if %BUILD_CXX_COMPAT
+%setup -q -n %name-%version -T -D -a 7
+# These will be overridden by the next tarball.
+rm compat/i386/libstdc++-libc6.1-1.so.2
+rm compat/i386/libstdc++.so.2.9
+rm compat/i386/libstdc++.so.2.9.dummy
+%setup -q -n %name-%version -T -D -a 8
+%endif
+%endif
+
+%if %BUILD_G77
+%setup -q -T -D -b 3
+%endif
+
+%if %BUILD_JAVA
+%setup -q -T -D -b 4
+%endif
+
+%if %BUILD_OBJC
+%setup -q -T -D -b 5
+%endif
+
+%if %BUILD_TESTSUITE
+%setup -q -T -D -b 6
 %endif
 
 %build
-# There're currently no pre-compiled versions of these texinfo files
-# included, should uncomment if that changes.
-#rm gcc/{gcc,cpp}.info
+# XXX: This does not work with new autotools and is presently not needed.
+%if 0
+# Rebuild configure(s) and Makefile(s) if templates are newer...
+for f in */acinclude.m4; do
+	pushd "${f%/*}"
+# Run aclocal & autoconf only if files aclocal.m4 and configure.in exist
+# and acinclude.m4 is newer than aclocal.m4.
+	if [ -f aclocal.m4 -a -f configure.in -a acinclude.m4 -nt aclocal.m4 ]
+	then
+		aclocal
+		autoconf
+	fi
+	popd
+done
+for f in */configure.in; do
+	pushd "${f%/*}"
+	[ configure.in -nt configure ] && autoconf && autoheader
+	popd
+done
+for f in */Makefile.am; do
+	pushd "${f%/*}"
+	[ Makefile.am -nt Makefile.in ] && automake
+	popd
+done
+%endif
+
 %ifarch sparcv9
 %define _target_platform sparc-%_vendor-%_target_os
 %endif
 %ifarch sparc sparcv9
-# pthreads are currently not supported on sparc
-ENABLE_THREADS=''
+# pthreads are currently not supported on SPARC.
+%define threads	single
 %else
-ENABLE_THREADS='--enable-threads=posix'
+%define threads posix
 %endif
 
+# We will build this software outside source tree as recommended by INSTALL/*
 rm -rf obj-%_target_platform
 mkdir obj-%_target_platform
 cd obj-%_target_platform
 
-CFLAGS="`echo "$RPM_OPT_FLAGS" | sed -e 's/-fno-rtti//g'` -fexceptions"
-export extra_c_flags="-O -fomit-frame-pointer"
-CFLAGS="$CFLAGS" \
-CXXFLAGS="$CFLAGS" \
+CFLAGS="$RPM_OPT_FLAGS" \
+CXXFLAGS="`echo "$RPM_OPT_FLAGS" | sed -e 's/-fno-rtti//g'`" \
+GCJFLAGS="$CFLAGS" \
 XCFLAGS="$CFLAGS" \
 TCFLAGS="$CFLAGS" \
 ../configure \
-	--prefix=%GCC_PREFIX \
-	--mandir=$RPM_BUILD_ROOT%_mandir \
-	--infodir=$RPM_BUILD_ROOT%_infodir \
-	--enable-shared --enable-haifa $ENABLE_THREADS \
-	--host=%_target_platform
-touch ../gcc/c-gperf.h
+	--prefix=%_prefix \
+	--exec-prefix=%_exec_prefix \
+	--bindir=%_bindir \
+	--libdir=%_libdir \
+	--with-slib=/lib \
+	--infodir=%_infodir \
+	--mandir=%_mandir \
+	--with-gxx-include-dir=%_includedir/g++-v3 \
+	--enable-shared \
+	--enable-threads=%threads \
+%if %USE_VERSION_SPECIFIC_LIBS
+	--enable-version-specific-runtime-libs \
+%endif
+	--disable-checking \
+	--enable-nls \
+	--enable-c-mbchar \
+	--enable-long-long \
+	--enable-__cxa_atexit \
+%if %USE_BOEHM_GC
+	--enable-objc-gc \
+%endif
+	--host=%_target_platform \
+	--build=%_target_platform \
+	--target=%_target_platform
 
-make bootstrap-lean
+%__make bootstrap-lean STAGE1_CFLAGS="-O -fomit-frame-pointer" \
+	BOOT_CFLAGS="$RPM_OPT_FLAGS"
 
-# Copy various doc files here and there
+# Copy various doc files here and there.
 cd ..
-mkdir -p rpm.doc/libstdc++ rpm.doc/g77 rpm.doc/chill rpm.doc/objc
+mkdir -p rpm-doc/gcc
+install -p gcc/*ChangeLog* gcc/NEWS rpm-doc/gcc/
+install -p BUGS COPYING* FAQ GNATS MAINTAINERS README gcc/SERVICE rpm-doc/gcc/
 
-pushd libio
-for i in ChangeLog*; do
-	cp -p $i ../rpm.doc/libstdc++/$i.libio
-done
-popd
+%if %BUILD_GXX
+mkdir -p rpm-doc/g++
+install -p gcc/cp/{ChangeLog*,NEWS} rpm-doc/g++/
 
-pushd libstdc++
-for i in ChangeLog*; do
-	cp -p $i ../rpm.doc/libstdc++/$i.libstdc++
-done
-popd
+mkdir -p rpm-doc/libstdc++
+install -p libstdc++-v3/{ChangeLog*,README} rpm-doc/libstdc++/
+%endif
 
-pushd gcc/f
-for i in ChangeLog*; do
-	cp -p $i ../../rpm.doc/g77/$i.f
-done
-popd
-
+%if %BUILD_G77
+mkdir -p rpm-doc/g77
+install -p gcc/f/{ChangeLog*,NEWS,README,BUGS} rpm-doc/g77/
 pushd libf2c
-for i in ChangeLog*; do
-	cp -p $i ../rpm.doc/g77/$i.libf2c
+for i in ChangeLog* README *.netlib; do
+	install -p $i ../rpm-doc/g77/$i.libf2c
 done
 popd
+%endif
 
-pushd gcc/ch
-for i in ChangeLog*; do
-	cp -p $i ../../rpm.doc/chill/$i.ch
+%if %BUILD_JAVA
+mkdir -p rpm-doc/java
+install -p gcc/java/ChangeLog* libjava/doc/cni* rpm-doc/java/
+pushd libffi
+for i in ChangeLog* README LICENSE; do
+	install -p $i ../rpm-doc/java/$i.libffi
 done
 popd
-
-pushd libchill
-for i in ChangeLog*; do
-	cp -p $i ../rpm.doc/chill/$i.libchill
+pushd libjava
+for i in ChangeLog* README NEWS THANKS HACKING LIBGCJ_LICENSE; do
+	install -p $i ../rpm-doc/java/$i.libjava
 done
 popd
+%endif
 
-pushd gcc/objc
-for i in README*; do
-	cp -p $i ../../rpm.doc/objc/$i.objc
-done
-popd
-
+%if %BUILD_OBJC
+mkdir -p rpm-doc/objc
+install -p gcc/objc/README* rpm-doc/objc/
 pushd libobjc
-for i in README*; do
-	cp -p $i ../rpm.doc/objc/$i.libobjc
+for i in ChangeLog* README* THREADS*; do
+	install -p $i ../rpm-doc/java/$i.libobjc
 done
 popd
+%endif
+
+%if %BUILD_ADA
+mkdir -p rpm-doc/ada
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
 cd obj-%_target_platform
-make prefix=$RPM_BUILD_ROOT%GCC_PREFIX install
+%__make	DESTDIR=$RPM_BUILD_ROOT install
 
-FULLVER=`$RPM_BUILD_ROOT%GCC_PREFIX/bin/%_target_platform-gcc --version | \
-	cut -d' ' -f1`
-FULLPATH=$(dirname $RPM_BUILD_ROOT%GCC_PREFIX/lib/gcc-lib/%_target_platform/$FULLVER/cc1)
+FULLVER=`$RPM_BUILD_ROOT%_bindir/%_target_platform-gcc -dumpversion`
+FULLPATH=$(dirname $RPM_BUILD_ROOT%_libdir/gcc-lib/%_target_platform/$FULLVER/cc1)
 
-# fix some things
-ln -sf gcc $RPM_BUILD_ROOT%GCC_PREFIX/bin/cc
-ln -sf gcc.1 $RPM_BUILD_ROOT%GCC_PREFIX/man/man1/cc.1
-rm -f $RPM_BUILD_ROOT%GCC_PREFIX/info/dir
-%if %BUILD_F77
-ln -sf g77 $RPM_BUILD_ROOT%GCC_PREFIX/bin/f77
+# Fix some things.
+ln -s gcc $RPM_BUILD_ROOT%_bindir/cc
+echo ".so gcc.1" > $RPM_BUILD_ROOT%_mandir/man1/cc.1
+
+%if %BUILD_GXX
+echo ".so g++.1" > $RPM_BUILD_ROOT%_mandir/man1/c++.1
+%endif
+
+%if %BUILD_G77
+ln -s g77 $RPM_BUILD_ROOT%_bindir/f77
+echo ".so g77.1" > $RPM_BUILD_ROOT%_mandir/man1/f77.1
 %endif
 
 mkdir -p $RPM_BUILD_ROOT/lib
-ln -sf ../${FULLPATH##$RPM_BUILD_ROOT/}/cpp0 $RPM_BUILD_ROOT/lib/cpp
-ln -sf cccp.1 $RPM_BUILD_ROOT%GCC_PREFIX/man/man1/cpp.1
+ln -s ../${FULLPATH##$RPM_BUILD_ROOT/}/cpp0 $RPM_BUILD_ROOT/lib/cpp
 
+%if %BUILD_CXX_COMPAT
 %ifarch %ix86
-# install the compatibility libstdc++ library
-test -d ../compat/i386 && install -m 755 ../compat/i386/* $RPM_BUILD_ROOT%GCC_PREFIX/lib/
+cp -d --preserve=timestamps ../compat/i386/* $RPM_BUILD_ROOT%_libdir/
+%endif
 %endif
 
 cd ..
-cat >gcc-filelist <<EOF
-%defattr(-,root,root)
-%GCC_PREFIX/bin/gcc
-%GCC_PREFIX/bin/cc
-%GCC_PREFIX/bin/protoize
-%GCC_PREFIX/bin/unprotoize
-%GCC_PREFIX/bin/gcov
-%GCC_PREFIX/bin/%_target_platform-gcc
-%GCC_PREFIX/man/man1/gcc.1*
-%GCC_PREFIX/man/man1/cc.1*
-%GCC_PREFIX/info/gcc*
-%dir %GCC_PREFIX/lib/gcc-lib
-%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform
-%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION
-%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include
-%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/cc1
-%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/collect2
-%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/crt*.o
-%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/libgcc.a
-%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/SYSCALLS.c.X
-%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/specs
-%doc gcc/README* gcc/*ChangeLog*
-EOF
+echo '%defattr(-,root,root)' > gcc-fixinc-filelist
+# First, we make a directory list and prepend each directory with properly
+# attributes...
+find $RPM_BUILD_ROOT%_libdir/gcc-lib/%_target_platform/%version/include \
+	-type d -print | \
+	sed "s#^$RPM_BUILD_ROOT#%dir %attr(0755,root,root) #g" | \
+	egrep -v '^((objc)|(exception)|(typeinfo)|(new(\.h)?))$' >> \
+		gcc-fixinc-filelist
+# Second, we just create a filelist (assuming default attributes)
+find $RPM_BUILD_ROOT%_libdir/gcc-lib/%_target_platform/%version/include \
+	-type f -print | \
+	sed "s#^$RPM_BUILD_ROOT##g" | \
+	egrep -v '^((objc)|(exception)|(typeinfo)|(new(\.h)?))$' >> \
+		gcc-fixinc-filelist
 
-(cd $RPM_BUILD_ROOT%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include &&
-	ls | egrep -v '^((objc)|(exception)|(typeinfo)|(new(\.h)?))$'
-) | sed 's|^|%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include/|' \
-	>>gcc-filelist
-
-# This is required for the old Red Hat Linux 6 based programs ...
-cd $RPM_BUILD_ROOT/usr/lib
-ln -sf libstdc++-3-libc6.1-2-2.10.0.so libstdc++-libc6.1-1.so.2
-ln -sf libstdc++-3-libc6.1-2-2.10.0.so libstdc++-libc6.1-1.1.so.2
-ln -sf libstdc++-3-libc6.1-2-2.10.0.so libstdc++.so.2.9
+# Remove unpackaged files
+rm $RPM_BUILD_ROOT%_bindir/c++filt
+rm $RPM_BUILD_ROOT%_libdir/libiberty.a
 
 %post
-/sbin/install-info %_infodir/gcc.info.gz %_infodir/dir
+/sbin/install-info --info-dir=%_infodir %_infodir/gcc.info.gz
+/sbin/install-info --info-dir=%_infodir %_infodir/gccint.info.gz
+/sbin/ldconfig
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/gcc.info.gz %_infodir/dir
+	/sbin/install-info --delete --info-dir=%_infodir %_infodir/gccint.info.gz
+	/sbin/install-info --delete --info-dir=%_infodir %_infodir/gcc.info.gz
 fi
 
-%post -n libstdc++
-if ! grep -qs '^%GCC_PREFIX/lib$' /etc/ld.so.conf; then
-	echo %GCC_PREFIX/lib >> /etc/ld.so.conf
-fi
-/sbin/ldconfig
-
-%postun -n libstdc++
-if [ $1 -eq 0 ]; then
-	grep -v "%GCC_PREFIX/lib" /etc/ld.so.conf > /etc/ld.so.conf.new &&
-	mv -f /etc/ld.so.conf.new /etc/ld.so.conf
-fi
-/sbin/ldconfig
-
-%ifarch %ix86
-%post -n libstdc++-compat
-if ! grep -qs '^%GCC_PREFIX/lib$' /etc/ld.so.conf; then
-	echo %GCC_PREFIX/lib >>/etc/ld.so.conf
-fi
-/sbin/ldconfig
-
-%postun -n libstdc++-compat
-if [ $1 -eq 0 ]; then
-	grep -v "%GCC_PREFIX/lib" /etc/ld.so.conf > /etc/ld.so.conf.new &&
-	mv -f /etc/ld.so.conf.new /etc/ld.so.conf
-fi
-/sbin/ldconfig
-%endif
+%postun -p /sbin/ldconfig
 
 %post -n cpp
-/sbin/install-info %_infodir/cpp.info.gz %_infodir/dir
+/sbin/install-info --info-dir=%_infodir %_infodir/cpp.info.gz
+/sbin/install-info --info-dir=%_infodir %_infodir/cppinternals.info.gz
 
 %preun -n cpp
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/cpp.info.gz %_infodir/dir
+	/sbin/install-info --delete --info-dir=%_infodir %_infodir/cppinternals.info.gz
+	/sbin/install-info --delete --info-dir=%_infodir %_infodir/cpp.info.gz
 fi
+
+%if %BUILD_GXX
+%post -n libstdc++ -p /sbin/ldconfig
+%postun -n libstdc++ -p /sbin/ldconfig
+%if %BUILD_CXX_COMPAT
+%ifarch %ix86
+%post -n libstdc++-compat -p /sbin/ldconfig
+%postun -n libstdc++-compat -p /sbin/ldconfig
+%endif
+%endif
+%endif
+
+%if %BUILD_G77
+%post g77
+/sbin/install-info --info-dir=%_infodir %_infodir/g77.info.gz
 /sbin/ldconfig
 
-%files -f gcc-filelist
+%preun g77
+if [ $1 -eq 0 ]; then
+	/sbin/install-info --delete --info-dir=%_infodir %_infodir/g77.info.gz
+fi
+
+%postun g77 -p /sbin/ldconfig
+%endif
+
+%if %BUILD_OBJC
+%post objc -p /sbin/ldconfig
+%postun objc -p /sbin/ldconfig
+%endif
+
+%if %BUILD_JAVA
+%post java
+/sbin/install-info --info-dir=%_infodir %_infodir/gcj.info.gz
+/sbin/ldconfig
+
+%preun java
+if [ $1 -eq 0 ]; then
+	/sbin/install-info --delete --info-dir=%_infodir %_infodir/gcj.info.gz
+fi
+
+%postun java -p /sbin/ldconfig
+%endif
+
+%if %BUILD_ADA
+%post ada -p /sbin/ldconfig
+%postun ada -p /sbin/ldconfig
+%endif
+
+%files -f gcc-fixinc-filelist
+%defattr(-,root,root)
+%_bindir/cc
+%attr(0755,root,root) %_bindir/gcc
+%attr(0755,root,root) %_bindir/gccbug
+%attr(0755,root,root) %_bindir/gcov
+%attr(0755,root,root) %_bindir/%_target_platform-gcc
+%_infodir/gcc.info*
+%_infodir/gccint.info*
+%dir %_libdir/gcc-lib
+%dir %_libdir/gcc-lib/%_target_platform
+%dir %_libdir/gcc-lib/%_target_platform/%version
+%attr(0755,root,root) %_libdir/gcc-lib/%_target_platform/%version/cc1
+%attr(0755,root,root) %_libdir/gcc-lib/%_target_platform/%version/collect2
+%_libdir/gcc-lib/%_target_platform/%version/crt*.o
+%_libdir/gcc-lib/%_target_platform/%version/libgcc*.a
+%version_libdir/libgcc*.so*
+%_libdir/gcc-lib/%_target_platform/%version/specs
+#dir %_libdir/gcc-lib/%_target_platform/%version/include
+%_mandir/man1/cc.1*
+%_mandir/man1/gcc.1*
+%_mandir/man1/gcov.1*
+%_mandir/man7/fsf-funding.7*
+%_mandir/man7/gfdl.7*
+%_mandir/man7/gpl.7*
+%_datadir/locale/*/LC_MESSAGES/gcc.mo
+%doc rpm-doc/gcc/*
 
 %files -n cpp
 %defattr(-,root,root)
-%CPP_PREFIX/cpp
-%GCC_PREFIX/man/man1/cpp.1*
-%GCC_PREFIX/man/man1/cccp.1*
-%GCC_PREFIX/info/cpp.info*.gz
-%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/cpp0
+%attr(0755,root,root) %_bindir/cpp
+%_infodir/cpp.info*
+%_infodir/cppinternals.info*
+%dir %_libdir/gcc-lib
+%dir %_libdir/gcc-lib/%_target_platform
+%dir %_libdir/gcc-lib/%_target_platform/%version
+%attr(0755,root,root) %_libdir/gcc-lib/%_target_platform/%version/cpp0
+%attr(0755,root,root) %_libdir/gcc-lib/%_target_platform/%version/tradcpp0
+%_mandir/man1/cpp.1*
+/lib/cpp
 
+%if %BUILD_GXX
 %files c++
 %defattr(-,root,root)
-%GCC_PREFIX/man/man1/g++.1*
-%GCC_PREFIX/bin/g++
-%GCC_PREFIX/bin/c++
-%dir %GCC_PREFIX/lib/gcc-lib
-%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform
-%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION
-%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include
-%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/cc1plus
-%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include/exception
-%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include/new
-%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include/new.h
-%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include/typeinfo
+%attr(0755,root,root) %_bindir/?++
+%attr(0755,root,root) %_bindir/%_target_platform-?++
+%attr(0755,root,root) %_libdir/gcc-lib/%_target_platform/%version/cc1plus
+%_mandir/man1/?++.1*
 %doc gcc/cp/ChangeLog*
+%doc rpm-doc/g++/*
 
 %files -n libstdc++
 %defattr(-,root,root)
-%GCC_PREFIX/lib/libstdc++-3-libc*-%STDC_VERSION.so
-%GCC_PREFIX/lib/libstdc++-libc*.so.3
-%GCC_PREFIX/lib/libstdc++-libc*.so.2
-%GCC_PREFIX/lib/libstdc++.so.2.9
-%dir %GCC_PREFIX/lib/gcc-lib
-%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform
-%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION
-%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include
-%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/libstdc++.so
+%version_libdir/libstdc++.so.[^2]*
+%doc rpm-doc/libstdc++/*
+%doc libstdc++-v3/docs/html
 
+%if %BUILD_CXX_COMPAT
 %ifarch %ix86
 %files -n libstdc++-compat
 %defattr(-,root,root)
-%GCC_PREFIX/lib/libstdc++.so.2.7.2.8
-%GCC_PREFIX/lib/libstdc++.so.2.8.0
-%GCC_PREFIX/lib/libstdc++-2-libc6.1-1-2.9.0.so
-%GCC_PREFIX/lib/libstdc++.so.2.9.dummy
-%GCC_PREFIX/lib/libstdc++.so.2.9
+%_libdir/libstdc++.so.2.7.2.8
+%_libdir/libg++.so.2.7.2.8
+%_libdir/libstdc++.so.2.8.0
+%_libdir/libstdc++.so.2.9
+%_libdir/libstdc++-*libc6*.so*
+%endif
 %endif
 
 %files -n libstdc++-devel
 %defattr(-,root,root)
-%GCC_PREFIX/lib/libstdc++-3-libc*-%STDC_VERSION.a
-%GCC_PREFIX/lib/libstdc++-libc*.a.3
-%GCC_PREFIX/include/g++-3
-%dir %GCC_PREFIX/lib/gcc-lib
-%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform
-%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION
-%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include
-%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/libstdc++.a
-%doc rpm.doc/libstdc++/*
+%_includedir/g++-v3
+%version_libdir/libs*++.*a
+%attr(0755,root,root) %version_libdir/libstdc++.so
+%endif
+
+%if %BUILD_G77
+%files g77
+%defattr(-,root,root)
+%attr(0755,root,root) %_bindir/?77
+%_infodir/g77*
+%version_libdir/libfrt*.*a
+%version_libdir/libg2c*.*a
+%attr(0755,root,root) %version_libdir/libg2c*.so*
+%attr(0755,root,root) %_libdir/gcc-lib/%_target_platform/%version/f771
+%_mandir/man1/?77.1*
+%_libdir/gcc-lib/%_target_platform/%version/include/g2c.h
+%doc rpm-doc/g77/*
+%endif
 
 %if %BUILD_OBJC
 %files objc
 %defattr(-,root,root)
-%dir %GCC_PREFIX/lib/gcc-lib
-%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform
-%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION
-%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include
-%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/cc1obj
-%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/libobjc.a
-%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include/objc
-%doc rpm.doc/objc/*
-%doc libobjc/THREADS* libobjc/ChangeLog
+%_libdir/gcc-lib/%_target_platform/%version/include/objc
+%version_libdir/libobjc*.*a
+%attr(0755,root,root) %version_libdir/libobjc*.so*
+%attr(0755,root,root) %_libdir/gcc-lib/%_target_platform/%version/cc1obj
+%doc rpm-doc/objc/*
 %endif
 
-%if %BUILD_F77
-%post g77
-/sbin/install-info %_infodir/g77.info.gz %_infodir/dir
-
-%preun g77
-if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/g77.info.gz %_infodir/dir
-fi
-
-%files g77
+%if %BUILD_JAVA
+%files java
 %defattr(-,root,root)
-%GCC_PREFIX/bin/g77
-%GCC_PREFIX/bin/f77
-%GCC_PREFIX/info/g77*
-%dir %GCC_PREFIX/lib/gcc-lib
-%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform
-%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION
-%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include
-%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/f771
-%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/libg2c.a
-%GCC_PREFIX/man/man1/g77.1*
-%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include/g2c.h
-%doc gcc/f/README rpm.doc/g77/*
+%attr(0755,root,root) %_bindir/addr2name.awk
+%attr(0755,root,root) %_bindir/g?j*
+%attr(0755,root,root) %_bindir/grepjar
+%attr(0755,root,root) %_bindir/j*
+%attr(0755,root,root) %_bindir/rmi*
+%_includedir/gcj
+%_includedir/gnu
+%_includedir/java
+%_includedir/javax
+%_includedir/org
+%_includedir/gc*.h
+%_includedir/j*.h
+%_infodir/gcj*.info*
+%version_libdir/libgcj*.*a
+%attr(0755,root,root) %version_libdir/libgcj*.so*
+%version_libdir/libgcj.spec
+%_libdir/security
+%attr(0755,root,root) %_libdir/gcc-lib/%_target_platform/%version/j*
+%_libdir/gcc-lib/%_target_platform/%version/include/gcj
+%_mandir/man1/g?j*.1*
+%_mandir/man1/j*.1*
+%_mandir/man1/rmi*.1*
+%_datadir/java
+%doc rpm-doc/java/*
 %endif
 
-%if %BUILD_CHILL
-%post chill
-/sbin/install-info %_infodir/chill.info.gz %_infodir/dir
-
-%preun chill
-if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/chill.info.gz %_infodir/dir
-fi
-
-%files chill
+%if %BUILD_ADA
+%files ada
 %defattr(-,root,root)
-%GCC_PREFIX/bin/chill
-%GCC_PREFIX/info/chill*
-%dir %GCC_PREFIX/lib/gcc-lib
-%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform
-%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION
-%dir %GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/include
-%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/cc1chill
-%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/chill*.o
-%GCC_PREFIX/lib/gcc-lib/%_target_platform/%GCC_VERSION/libchill.a
-%doc gcc/ch/README gcc/ch/chill.brochure rpm.doc/chill/*
+%doc rpm-doc/ada/*
 %endif
 
 %changelog
+* Thu Sep 02 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.2.2-owl1.6
+- Imported into Owl-current
+- Removed duplicate entry in filelist for include directory
+
+* Tue May 25 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.2.2-owl1.6
+- Fixed a typo in spec file
+
+* Tue Apr 20 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.2.2-owl1.5
+- Additional optimization fixes for build process (using STAGE1_CFLAGS and
+BOOT_CFLAGS)
+- Moved extraction of '-fno-rtti' to CXXFLAGS, because this is C++ options
+
+* Fri Apr 16 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.2.2-owl1.4
+- Removed extra_c_flags and "XXX:" comment from spec file
+- Passing "-O -fomit-frame-pointers" in CFLAGS variable to improve build times
+
+* Thu Feb 26 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.2.2-owl1.3
+- Removed wchar patch as we are building against glibc 2.3.2
+
+* Thu Feb 26 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.2.2-owl1.2
+- Temporarily disabled regeneration of configure due to conflict with new
+autotools.
+
+* Mon Feb 23 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.2.2-owl1.1
+- Fixed permission of %_libdir/gcc-lib/%_target_platform/%version/include/*
+directories
+- Removed unpackaged files to make RPM4 happy :)
+
+* Thu Feb 05 2004 Solar Designer <solar@owl.openwall.com> 1:3.2.2-owl1
+- Added libstdc++ compatibility libraries for gcc 2.95.3 as a separate
+source tarball.
+
+* Tue Feb 03 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.2.2-owl0.3
+- Cleaned up the spec file (reordered scripts & files sections).
+- Avoid using of subshells in build section to not mask possible errors.
+
+* Mon Feb 02 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.2.2-owl0.2
+- Added a patch to enable limited wchar support.
+
+* Fri Jan 30 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.2.2-owl0.1
+- Updated to 3.2.2 version.
+
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1:2.95.3-owl5
 - Deal with info dir entries such that the menu looks pretty.
 
