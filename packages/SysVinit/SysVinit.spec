@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.9 2002/02/07 01:47:15 solar Exp $
+# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.10 2002/02/12 22:57:54 solar Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
 Version: 2.78
-Release: owl10
+Release: owl11
 License: GPL
 Group: System Environment/Base
 Source: ftp://ftp.cistron.nl/pub/people/miquels/sysvinit/sysvinit-%{version}.tar.gz
@@ -51,6 +51,17 @@ mv $RPM_BUILD_ROOT/usr/share/man $RPM_BUILD_ROOT/usr/man
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%pre
+# This is tricky.  We don't want to let RPM unlink the old init as that
+# would actually leave it pending for delete on process termination.
+# That delete is a filesystem write operation meaning that the root
+# filesystem would need to stay mounted read/write.  But we absolutely
+# want to be able to remount it read-only during shutdown, with the
+# init still alive!
+if [ -e /sbin/init -a ! -e /sbin/.init-working ]; then
+	mv /sbin/init /sbin/.init-working
+fi
+
 %files
 %defattr(-,root,root)
 %doc doc/Propaganda doc/Install
@@ -78,6 +89,11 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0600,root,root) /dev/initctl
 
 %changelog
+* Wed Feb 13 2002 Solar Designer <solar@owl.openwall.com>
+- Don't unlink the old init(8) on package upgrades as that would actually
+leave it pending for delete on process termination and prevent remounting
+the filesystem read-only during shutdown.
+
 * Tue Feb 05 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 
