@@ -1,8 +1,8 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.19 2002/06/22 08:50:32 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.20 2002/06/22 08:52:41 solar Exp $
 
 Summary: Post Office Protocol server.
 Name: popa3d
-Version: 0.5.1.2
+Version: 0.5.1.3
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
@@ -72,6 +72,10 @@ fi
 %doc DESIGN LICENSE
 
 %changelog
+* Sat Jun 22 2002 Solar Designer <solar@owl.openwall.com>
+- Style change with plural form of abbreviations (ID's -> IDs) in the
+documentation and source code comments.
+
 * Mon May 27 2002 Solar Designer <solar@owl.openwall.com>
 - Workaround a bug in certain versions of Microsoft Outlook Express
 (reported) where the client would abort on body-less messages which are
