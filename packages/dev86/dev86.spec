@@ -1,9 +1,9 @@
-# $Id: Owl/packages/dev86/dev86.spec,v 1.10 2003/10/29 18:51:10 solar Exp $
+# $Id: Owl/packages/dev86/dev86.spec,v 1.11 2004/02/11 00:13:56 mci Exp $
 
 Summary: A real mode 80x86 assembler and linker.
 Name: dev86
 Version: 0.16.0
-Release: owl2
+Release: owl3
 License: GPL
 Group: Development/Languages
 Source: http://www.cix.co.uk/~mayday/Dev86src-%version.tar.gz
@@ -13,6 +13,7 @@ Patch2: dev86-0.16.0-rh-paths.diff
 Patch3: dev86-0.16.0-owl-kinclude.diff
 Patch4: dev86-0.16.0-owl-optflags.diff
 Patch5: dev86-0.16.0-owl-warnings.diff
+Patch6: dev86-0.16.0-owl-Makefile.diff
 Obsoletes: bin86
 ExclusiveArch: %ix86
 BuildRoot: /override/%name-%version
@@ -31,6 +32,7 @@ bootstrapping code, from their sources.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -43,9 +45,9 @@ quit
 %install
 rm -rf $RPM_BUILD_ROOT
 
-make DIST=$RPM_BUILD_ROOT MANDIR=$RPM_BUILD_ROOT/%_mandir ELKSSRC=. install
+make DIST=$RPM_BUILD_ROOT MANDIR=%_mandir ELKSSRC=. install
 
-install -m 755 -s $RPM_BUILD_ROOT/lib/elksemu $RPM_BUILD_ROOT/usr/bin/
+install -m 755 -s $RPM_BUILD_ROOT/lib/elksemu $RPM_BUILD_ROOT%_bindir
 rm -rf $RPM_BUILD_ROOT/lib/
 
 cd $RPM_BUILD_ROOT/usr/bin
@@ -54,34 +56,37 @@ ln -s objdump86 nm86
 ln -s objdump86 size86
 
 # Move header files out of /usr/include and into /usr/lib/bcc/include
-mv $RPM_BUILD_ROOT/usr/include $RPM_BUILD_ROOT/usr/lib/bcc/
+mv $RPM_BUILD_ROOT/usr/include $RPM_BUILD_ROOT%_libdir/bcc/
 
 %files
 %defattr(-,root,root,-)
 %doc README MAGIC Contributors bootblocks/README copt/README dis88/README
 %doc elksemu/README unproto/README bin86/README-0.4 bin86/README bin86/ChangeLog
-%dir /usr/lib/bcc
-%dir /usr/lib/bcc/i86
-%dir /usr/lib/bcc/i386
-%dir /usr/lib/bcc/include
-/usr/bin/bcc
-/usr/bin/as86
-/usr/bin/as86_encap
-/usr/bin/ld86
-/usr/bin/objdump86
-/usr/bin/nm86
-/usr/bin/size86
-/usr/lib/bcc/bcc-cc1
-/usr/lib/bcc/copt
-/usr/lib/bcc/unproto
-/usr/lib/bcc/i86/*
-/usr/lib/bcc/i386/*
-/usr/lib/liberror.txt
-/usr/lib/bcc/include/*
-/usr/bin/elksemu
+%dir %_libdir/bcc
+%dir %_libdir/bcc/i86
+%dir %_libdir/bcc/i386
+%dir %_libdir/bcc/include
+%_bindir/bcc
+%_bindir/as86
+%_bindir/as86_encap
+%_bindir/ld86
+%_bindir/objdump86
+%_bindir/nm86
+%_bindir/size86
+%_libdir/bcc/bcc-cc1
+%_libdir/bcc/copt
+%_libdir/bcc/unproto
+%_libdir/bcc/i86/*
+%_libdir/bcc/i386/*
+%_libdir/liberror.txt
+%_libdir/bcc/include/*
+%_bindir/elksemu
 %_mandir/man1/*
 
 %changelog
+* Mon Feb 09 2004 Michail Litvak <mci@owl.openwall.com> 0.16.0-owl3
+- Use rpm macros instead just paths.
+
 * Thu Mar 20 2002 Michail Litvak <mci@owl.openwall.com> 0.16.0-owl2
 - fixes to build with -Wall without warnings
 

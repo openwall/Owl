@@ -1,9 +1,9 @@
-# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.13 2003/10/29 19:04:58 solar Exp $
+# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.14 2004/02/11 00:36:46 mci Exp $
 
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
 Version: 1.27
-Release: owl4
+Release: owl5
 License: GPL
 Group: System Environment/Base
 Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
@@ -68,7 +68,7 @@ make install install-libs DESTDIR="$RPM_BUILD_ROOT" \
 %postun -p /sbin/ldconfig
 
 %post devel
-/sbin/install-info /usr/info/libext2fs.info.gz /usr/info/dir
+/sbin/install-info %_infodir/libext2fs.info.gz /usr/info/dir
 
 %postun devel
 if [ $1 -eq 0 ]; then
@@ -91,7 +91,7 @@ fi
 /sbin/mkfs.ext2
 /sbin/mkfs.ext3
 /sbin/tune2fs
-/usr/sbin/mklost+found
+%_sbindir/mklost+found
 
 /lib/libcom_err.so.*
 /lib/libe2p.so.*
@@ -99,9 +99,9 @@ fi
 /lib/libss.so.*
 /lib/libuuid.so.*
 
-/usr/bin/chattr
-/usr/bin/lsattr
-/usr/bin/uuidgen
+%_bindir/chattr
+%_bindir/lsattr
+%_bindir/uuidgen
 %_mandir/man1/chattr.1*
 %_mandir/man1/lsattr.1*
 %_mandir/man1/uuidgen.1*
@@ -132,31 +132,34 @@ fi
 
 %files devel
 %defattr(-,root,root)
-/usr/info/libext2fs.info*
-/usr/bin/compile_et
-/usr/bin/mk_cmds
+%_infodir/libext2fs.info*
+%_bindir/compile_et
+%_bindir/mk_cmds
 
-/usr/lib/libcom_err.a
-/usr/lib/libcom_err.so
-/usr/lib/libe2p.a
-/usr/lib/libe2p.so
-/usr/lib/libext2fs.a
-/usr/lib/libext2fs.so
-/usr/lib/libss.a
-/usr/lib/libss.so
-/usr/lib/libuuid.a
-/usr/lib/libuuid.so
+%_libdir/libcom_err.a
+%_libdir/libcom_err.so
+%_libdir/libe2p.a
+%_libdir/libe2p.so
+%_libdir/libext2fs.a
+%_libdir/libext2fs.so
+%_libdir/libss.a
+%_libdir/libss.so
+%_libdir/libuuid.a
+%_libdir/libuuid.so
 
-/usr/share/et
-/usr/share/ss
-/usr/include/et
-/usr/include/ext2fs
-/usr/include/ss
-/usr/include/uuid
+%_datadir/et
+%_datadir/ss
+%_includedir/et
+%_includedir/ext2fs
+%_includedir/ss
+%_includedir/uuid
 %_mandir/man1/compile_et.1*
 %_mandir/man3/com_err.3*
 
 %changelog
+* Mon Feb 09 2004 Michail Litvak <mci@owl.openwall.com> 1.27-owl5
+- Use rpm macros instead just paths.
+
 * Sat Oct 12 2002 Solar Designer <solar@owl.openwall.com> 1.27-owl4
 - Dropped the mke2fs lost+found permissions patch (leaving only the hunks
 for e2fsck and mklost+found) as it's no longer needed with 1.27.

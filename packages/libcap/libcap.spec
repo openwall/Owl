@@ -1,9 +1,9 @@
-# $Id: Owl/packages/libcap/libcap.spec,v 1.5 2003/11/10 00:00:19 solar Exp $
+# $Id: Owl/packages/libcap/libcap.spec,v 1.6 2004/02/11 00:39:28 mci Exp $
 
 Summary: Library for getting and setting POSIX.1e capabilities.
 Name: libcap
 Version: 1.10
-Release: owl2
+Release: owl3
 License: GPL
 Group: System Environment/Libraries
 URL: http://www.kernel.org/pub/linux/libs/security/linux-privs/
@@ -57,7 +57,7 @@ make COPTFLAG="$RPM_OPT_FLAGS -D_GNU_SOURCE" DEBUG= LDFLAGS= WARNINGS=
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make install FAKEROOT=$RPM_BUILD_ROOT
+make install FAKEROOT=$RPM_BUILD_ROOT MANDIR=${RPM_BUILD_ROOT}%_mandir
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -80,6 +80,9 @@ make install FAKEROOT=$RPM_BUILD_ROOT
 %_mandir/man3/*
 
 %changelog
+* Mon Feb 09 2004 Michail Litvak <mci@owl.openwall.com> 1.10-owl3
+- Use rpm macros instead just paths.
+
 * Thu Nov 06 2003 Dmitry V. Levin <ldv@owl.openwall.com> 1.10-owl2
 - Do not override capget and capset symbols defined in glibc.
 - Build the shared library with -fPIC.

@@ -1,0 +1,45 @@
+--- dev86-0.16.0/makefile.in.orig	Sat Jan  6 14:20:47 2001
++++ dev86-0.16.0/makefile.in	Mon Feb  9 00:18:50 2004
+@@ -102,6 +102,7 @@
+ LIBPRE=	 %LIBPRE%
+ BINDIR=	 %BINDIR%
+ LIBDIR=  %LIBDIR%
++MANDIR=  %MANDIR%
+ 
+ #ifdef GNUMAKE
+ export ELKSSRC
+@@ -110,6 +111,7 @@
+ DISTBIN= $(DIST)$(BINDIR)
+ DISTLIB= $(DIST)$(LIBDIR)
+ DISTPRE= $(DIST)$(LIBPRE)
++DISTMAN= $(DIST)$(MANDIR)
+ 
+ # Others to install
+ OTHERS=  tests dis88 doselks bootblocks
+@@ -214,7 +216,7 @@
+ #endif
+ 
+ install-man:
+-	-$(MAKEC) man MANDIR=$(DIST)$(PREFIX)/man install
++	-$(MAKEC) man MANDIR=$(DISTMAN) install
+ 
+ install-lib: lib/lib0-done lib/lib2-done
+ 	install -d $(DISTLIB)/i86
+--- dev86-0.16.0/Makefile.orig	Sat May 12 07:03:01 2001
++++ dev86-0.16.0/Makefile	Mon Feb  9 00:20:05 2004
+@@ -14,6 +14,7 @@
+ LIBPRE=  $(PREFIX)/bcc
+ BINDIR=	 $(PREFIX)/bin
+ LIBDIR=  $(LIBPRE)/lib/bcc
++MANDIR=  $(PREFIX)/man
+ CFLAGS=  -O
+ 
+ # Some makes take the last of a list as the default ...
+@@ -39,6 +40,7 @@
+ 	    -e "s:%LIBPRE%:$(LIBPRE):" \
+ 	    -e "s:%BINDIR%:$(BINDIR):" \
+ 	    -e "s:%LIBDIR%:$(LIBDIR):" \
++	    -e "s:%MANDIR%:$(MANDIR):" \
+ 	    -e "s:%ELKSSRC%:$(ELKSSRC):" \
+ 	    -e "s:%CC%:$(CC):" \
+ 	    -e "s:%CFLAGS%:$(CFLAGS):" \
