@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iputils/iputils.spec,v 1.8 2002/11/03 01:47:28 solar Exp $
+# $Id: Owl/packages/iputils/iputils.spec,v 1.9 2002/11/03 02:29:28 solar Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
@@ -71,6 +71,8 @@ fi
 %post
 if [ $1 -ge 2 ]; then
 	/usr/sbin/control-restore ping
+else
+	/usr/sbin/control ping public
 fi
 
 %files
@@ -78,8 +80,8 @@ fi
 %doc RELNOTES bonding*/README.ifenslave
 %{_sbindir}/arping
 %{_sbindir}/clockdiff
-%attr(4711,root,root) /bin/ping
 /sbin/ifenslave
+%attr(700,root,root) /bin/ping
 %{_sbindir}/ping6
 %{_sbindir}/tracepath
 %{_sbindir}/tracepath6
@@ -91,6 +93,10 @@ fi
 %changelog
 * Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
 - Dump/restore the owl-control setting for ping on package upgrades.
+- Keep ping at mode 700 ("restricted") in the package, but default it to
+"public" in %post when the package is first installed.  This avoids a
+race and fail-open behavior where a "restricted" ping could be "public"
+during package upgrades.
 
 * Mon Jun 03 2002 Solar Designer <solar@owl.openwall.com>
 - Patched ifenslave to use the SIOCBOND* ioctl's instead of the obsolete
