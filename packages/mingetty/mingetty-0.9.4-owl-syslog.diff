@@ -1,0 +1,49 @@
+diff -ur mingetty-0.9.4.bound/mingetty.c mingetty-0.9.4/mingetty.c
+--- mingetty-0.9.4.bound/mingetty.c	Mon Sep 25 22:40:50 2000
++++ mingetty-0.9.4/mingetty.c	Mon Sep 25 22:52:23 2000
+@@ -88,36 +88,33 @@
+ static void error (const char *fmt, ...)
+ {
+ 	va_list va_alist;
+-	char buf[256], *bp;
+-#ifndef	USE_SYSLOG
+-	int fd;
+-#endif
+ 
+ #ifdef USE_SYSLOG
+-	buf[0] = '\0';
+-	bp = buf;
++	openlog (progname, LOG_PID, LOG_AUTH);
++	va_start (va_alist, fmt);
++	vsyslog (LOG_ERR, fmt, va_alist);
++	va_end (va_alist);
++	closelog ();
+ #else
++	char buf[256], *bp;
++	int fd;
++
+ 	buf[0] = '\0';
+ 	strncat (buf, progname, sizeof(buf) - 5);
+ 	strcat (buf, ": ");
+ 	bp = buf + strlen (buf);
+-#endif
+ 
+ 	va_start (va_alist, fmt);
+ 	vsnprintf (bp, sizeof(buf) - (bp - buf) - 2, fmt, va_alist);
+ 	va_end (va_alist);
+ 
+-#ifdef	USE_SYSLOG
+-	openlog (progname, LOG_PID, LOG_AUTH);
+-	syslog (LOG_ERR, buf);
+-	closelog ();
+-#else
+ 	strcat (bp, "\r\n");
+ 	if ((fd = open ("/dev/console", 1)) >= 0) {
+ 		write (fd, buf, strlen (buf));
+ 		close (fd);
+ 	}
+ #endif
++
+ 	exit (1);
+ }
+ 
