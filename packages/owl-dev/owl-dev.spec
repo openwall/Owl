@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.13 2002/06/09 00:48:02 solar Exp $
+# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.14 2003/07/24 21:15:12 solar Exp $
 
 Summary: Initial set of device files and MAKEDEV, a script to manage them.
 Name: owl-dev
-Version: 0.7
+Version: 0.8
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -69,7 +69,10 @@ echo "Creating device files"
 %files -f filelist
 
 %changelog
-* Sun Jun 09 2002 Solar Designer <solar@owl.openwall.com>
+* Fri Jul 25 2003 Solar Designer <solar@owl.openwall.com> 0.8-owl1
+- /dev/openprom.
+
+* Sun Jun 09 2002 Solar Designer <solar@owl.openwall.com> 0.7-owl1
 - Support Linux 2.4.x's /proc/devices entries.
 - Support and create frame buffer devices.
 - Support up to 8 IDE controllers (16 devices).
