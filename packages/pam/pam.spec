@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.5 2000/08/07 23:35:32 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.6 2000/08/26 06:20:16 solar Exp $
 
 Summary: A security tool which provides authentication for applications.
 Name: pam
@@ -13,7 +13,7 @@ Patch1: pam-0.72-owl-pam_pwdb-expiration.diff
 Patch2: pam-0.72-owl-no-cracklib.diff
 Patch3: pam-0.72-owl-install-no-root.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
-Requires: pwdb >= 0.54-2, initscripts >= 3.94
+Requires: pwdb >= 0.61-1owl
 Obsoletes: pamconfig
 Url: http://www.us.kernel.org/pub/linux/libs/pam/index.html
 
