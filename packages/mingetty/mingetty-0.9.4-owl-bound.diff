@@ -54,7 +54,7 @@ diff -ur mingetty-0.9.4.suse/mingetty.c mingetty-0.9.4/mingetty.c
 -			} else if (!isprint (c))
 +			} else
 +			if (!isalnum (c) && c != '_' &&
-+			    (c != '-' || bp > logname))
++			    (c != '-' || bp == logname))
  				error ("%s: invalid character for login name",
  								tty);
  			else if (bp - logname >= sizeof (logname) - 1)
