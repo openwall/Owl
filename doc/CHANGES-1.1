@@ -13,9 +13,22 @@ change logs for the packages themselves.
 	Changes made between Owl 1.0 and Owl-current.
 
 2003/11/29	kernel
-Updated to Linux 2.4.23-ow1.  The reporting of returns onto stack has
-been made more verbose.  The kernel will now retry attempts to open
-the root filesystem device if the first attempt fails.
+SECURITY FIX	Severity: high, local, active
+Updated to Linux 2.4.23-ow1.  Linux 2.4.23 includes a fix to a
+vulnerability in the brk(2) system call discovered by Andrew Morton
+which allowed user-space processes to access the kernel's data
+structures and thus gain root access.  Linux 2.2.x kernels are not
+affected.  The Linux 2.4.22-ow1 kernel image used in Owl-current ISO
+images and CDs dated 2003/10/21 through 2003/11/03 did contain the
+additional brk(2) fix and thus is not affected.  However that fix is
+not a part of the published Linux 2.4.22-ow1 source code patch meaning
+that custom builds of Linux 2.4.22-ow1 are affected and need to be
+upgraded to 2.4.23-ow1.  Additionally, this update of the kernel patch
+makes the reporting of returns onto stack more verbose and makes the
+kernel retry attempts to open the root filesystem device if the first
+attempt fails.
+Reference:
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2003-0961
 
 2003/11/29	Package: gnupg
 SECURITY FIX	Severity: medium, remote, passive
@@ -490,4 +503,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.92 2003/12/01 22:34:41 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.93 2003/12/01 22:51:10 solar Exp $
