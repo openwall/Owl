@@ -116,7 +116,7 @@ tar already.
 	cvs.
 
 [PRIORITY: low]
-[ASSIGNED: Camiel]
+[ASSIGNED: Simon B]
 Package it, reviewing and importing some of the fixes found in at
 least OpenBSD, ALT Linux and Red Hat Linux.
 
@@ -274,7 +274,8 @@ sure that everything works, the temporary files are dealt with safely
 
 [PRIORITY: medium]
 Mutt appears to sometimes send control characters found in a message
-to the terminal: should investigate what's at fault and fix that.
+to the terminal (LC_CTYPE=koi8-r): should investigate what's at fault
+and fix that.
 
 [PRIORITY: low]
 [ASSIGNED: Jarno]
@@ -552,7 +553,8 @@ careful about timings).
 
 [PRIORITY: medium]
 In wall(1), don't trust utmp for writing into arbitrary files (or
-someone who gained group utmp access may extend it to root).
+someone who gained group utmp access may extend it to root).  This has
+been done in ALT Linux, should import their patch.
 
 
 	tcb.
@@ -619,4 +621,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.13 2003/01/20 19:05:56 solar Exp $
+$Id: Owl/doc/TODO,v 1.14 2003/03/28 03:13:22 solar Exp $
