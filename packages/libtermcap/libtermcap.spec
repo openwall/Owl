@@ -1,9 +1,9 @@
-# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.7 2002/02/07 18:07:47 solar Exp $
+# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.8 2002/08/26 18:12:26 mci Exp $
 
 Summary: A basic system library for accessing the termcap database.
 Name: libtermcap
 Version: 2.0.8
-Release: owl3
+Release: owl4
 License: LGPL
 Group: System Environment/Libraries
 Source: ftp://sunsite.unc.edu/pub/Linux/GCC/termcap-2.0.8.tar.gz
@@ -75,12 +75,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %trigger -- info >= 3.12
 /sbin/install-info %{_infodir}/termcap.info.gz %{_infodir}/dir \
-	--entry="* Termcap: (termcap).               The GNU termcap library."
+	--entry="* Termcap: (termcap).                           The GNU termcap library."
 
 %postun
 if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %{_infodir}/termcap.info.gz %{_infodir}/dir \
-		--entry="* Termcap: (termcap).               The GNU termcap library."
+		--entry="* Termcap: (termcap).                           The GNU termcap library."
 fi
 /sbin/ldconfig
 
@@ -96,6 +96,9 @@ fi
 /usr/include/termcap.h
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Tue Feb 05 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions
 

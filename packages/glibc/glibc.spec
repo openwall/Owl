@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.39 2002/08/06 13:28:31 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.40 2002/08/26 16:07:56 mci Exp $
 
 %define BUILD_PROFILE 0
 
@@ -6,7 +6,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
 %define crypt_bf_version 0.4.4
-Release: owl26
+Release: owl27
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%{version}.tar.gz
@@ -167,6 +167,7 @@ echo 'ASFLAGS-.os += -Wa,-Av8plusa' >> sysdeps/sparc/sparc32/elf/Makefile
 %endif
 
 %build
+rm manual/{stdio,libc}.info
 rm -rf build-$RPM_ARCH-linux
 mkdir build-$RPM_ARCH-linux
 cd build-$RPM_ARCH-linux
@@ -314,6 +315,9 @@ fi
 %endif
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Tue Aug 06 2002 Solar Designer <solar@owl.openwall.com>
 - Updated the recent calloc(3) patch to conform to POSIX-2001 wrt the
 behavior on elsize == 0.  Pointed out by Sebastian Krahmer of SuSE.

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/readline/readline.spec,v 1.9 2002/02/07 18:06:39 solar Exp $
+# $Id: Owl/packages/readline/readline.spec,v 1.10 2002/08/26 17:04:18 mci Exp $
 
 Summary: A library for editing typed in command lines.
 Name: readline
 Version: 4.1
-Release: owl8
+Release: owl9
 License: GPL
 Group: System Environment/Libraries
 Source: ftp://ftp.gnu.org/gnu/readline-%{version}.tar.gz
@@ -12,6 +12,7 @@ Patch1: readline-4.1-deb-doc_makefile.diff
 Patch2: readline-4.1-deb-inputrc.diff
 Patch3: readline-4.1-deb-del_bcksp.diff
 Patch4: readline-4.1-deb-char.diff
+Patch5: readline-4.1-owl-info.diff
 PreReq: /sbin/ldconfig, /sbin/install-info
 Provides: libreadline.so.3, libreadline.so.3.0
 Prefix: %{_prefix}
@@ -45,10 +46,12 @@ command line interface for users.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
+rm doc/{hist,readline,rluserman}.info
 %configure
-make all shared CFLAGS="$RPM_OPT_FLAGS"
+make all shared documentation CFLAGS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -103,6 +106,9 @@ fi
 %doc %{_docdir}/examples/*
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 

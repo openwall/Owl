@@ -1,9 +1,9 @@
-# $Id: Owl/packages/texinfo/texinfo.spec,v 1.9 2002/07/13 01:18:29 solar Exp $
+# $Id: Owl/packages/texinfo/texinfo.spec,v 1.10 2002/08/26 18:35:29 mci Exp $
 
 Summary: Tools needed to create Texinfo format documentation files.
 Name: texinfo
 Version: 4.2
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Publishing
 Source0: ftp://ftp.gnu.org/gnu/texinfo/texinfo-%{version}.tar.gz
@@ -14,6 +14,7 @@ Patch2: texinfo-4.2-rh-texi2dvi-fileext.diff
 Patch3: texinfo-4.2-mdk-alt-bz2-support.diff
 Patch4: texinfo-4.2-rh-owl-data_size-fix.diff
 Patch5: texinfo-4.2-deb-fixes.diff
+Patch6: texinfo-4.2-owl-info.diff
 PreReq: /sbin/install-info
 Prefix: %{_prefix}
 Requires: mktemp >= 1:1.3.1
@@ -43,8 +44,10 @@ browser program for viewing Info files.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
+rm doc/{info,info-stnd}.info
 unset LINGUAS || :
 %configure --mandir=%{_mandir} --infodir=%{_infodir}
 make
@@ -102,6 +105,9 @@ fi
 /sbin/install-info
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Sat Jul 13 2002 Solar Designer <solar@owl.openwall.com>
 - Require mktemp >= 1:1.3.1 as needed by the updated patches.
 - Package the ChangeLog gzipped as it grew too large.

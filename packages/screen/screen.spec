@@ -1,9 +1,9 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.21 2002/05/19 03:59:54 solar Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.22 2002/08/26 17:26:26 mci Exp $
 
 Summary: A screen manager that supports multiple sessions on one terminal.
 Name: screen
 Version: 3.9.10
-Release: owl3
+Release: owl4
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%{version}.tar.gz
@@ -79,12 +79,12 @@ grep -q ^screen: /etc/group || groupadd -g 165 screen
 
 %post
 /sbin/install-info %{_infodir}/screen.info.gz %{_infodir}/dir \
-	--entry="* screen: (screen).             Terminal multiplexer."
+	--entry="* screen: (screen).                             Terminal multiplexer."
 
 %preun
 if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %{_infodir}/screen.info.gz %{_infodir}/dir \
-		--entry="* screen: (screen).             Terminal multiplexer."
+		--entry="* screen: (screen).                             Terminal multiplexer."
 	rm -f %{_libexecdir}/screen/{tcb_chkpwd,utempter}
 fi
 
@@ -115,6 +115,9 @@ fi
 %attr(710,root,screen) %dir %{_libexecdir}/screen
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Sun May 19 2002 Solar Designer <solar@owl.openwall.com>
 - Grant screen access to both chkpwd and utempter helpers via a group
 screen restricted directory and hard links.

@@ -1,5 +1,5 @@
---- glibc-2.1.3/manual/stdio.texi.orig	Tue Jul  2 18:50:08 2002
-+++ glibc-2.1.3/manual/stdio.texi	Tue Jul  2 18:59:21 2002
+--- glibc-2.1.3/manual/stdio.texi.orig	Wed Feb 23 10:02:56 2000
++++ glibc-2.1.3/manual/stdio.texi	Fri Aug 23 23:51:14 2002
 @@ -2487,9 +2487,9 @@
  If you are trying to read input that doesn't match a single, fixed
  pattern, you may be better off using a tool such as Flex to generate a
@@ -13,3 +13,14 @@
  
  @node Input Conversion Syntax
  @subsection Input Conversion Syntax
+--- glibc-2.1.3/manual/libc.texinfo.orig	Mon Mar 15 13:10:49 1999
++++ glibc-2.1.3/manual/libc.texinfo	Fri Aug 23 23:52:54 2002
+@@ -7,7 +7,7 @@
+ @comment Tell install-info what to do.
+ @dircategory GNU libraries
+ @direntry
+-* Libc: (libc).                 C library.
++* Libc: (libc).                                 C library.
+ @end direntry
+ 
+ @c This tells texinfo.tex to use the real section titles in xrefs in

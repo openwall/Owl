@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gpm/gpm.spec,v 1.12 2002/02/07 18:07:46 solar Exp $
+# $Id: Owl/packages/gpm/gpm.spec,v 1.13 2002/08/26 16:16:00 mci Exp $
 
 # this defines the library version that this package builds.
 %define LIBVER 1.18.0
@@ -7,7 +7,7 @@
 Summary: A mouse server for the Linux console.
 Name: gpm
 Version: 1.19.6
-Release: owl2
+Release: owl3
 License: GPL
 Group: System Environment/Daemons
 Source0: ftp://arcana.linux.it/pub/gpm/%{name}-%{version}.tar.bz2
@@ -20,6 +20,7 @@ Patch4: gpm-1.19.6-owl-liblow.diff
 Patch5: gpm-1.19.6-owl-tmp.diff
 Patch6: gpm-1.19.6-owl-warnings.diff
 Patch7: gpm-1.19.6-owl-doc-mkinstalldirs.diff
+Patch8: gpm-1.19.6-owl-info.diff
 PreReq: /sbin/chkconfig, /sbin/ldconfig, /sbin/install-info
 BuildRequires: bison
 BuildRoot: /override/%{name}-%{version}
@@ -58,6 +59,7 @@ at the click of a mouse button.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 %build
 %configure
@@ -135,6 +137,9 @@ fi
 %endif
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Sun Feb 03 2002 Michail Litvak <mci@owl.openwall.com>
 - Fix source URL
 - Enforce our new spec file conventions

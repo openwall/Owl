@@ -1,9 +1,9 @@
-# $Id: Owl/packages/gzip/gzip.spec,v 1.8 2002/07/07 00:22:12 solar Exp $
+# $Id: Owl/packages/gzip/gzip.spec,v 1.9 2002/08/26 16:38:56 mci Exp $
 
 Summary: The GNU data compression program.
 Name: gzip
 Version: 1.3
-Release: owl15
+Release: owl16
 License: GPL
 Group: Applications/File
 URL: http://www.gzip.org
@@ -30,6 +30,7 @@ program and its associated scripts to manage compressed files.
 %patch4 -p1
 
 %build
+rm gzip.info
 %configure --bindir=/bin
 make
 make gzip.info
@@ -71,6 +72,9 @@ fi
 %{_infodir}/gzip.info*
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
 - Use grep -q in zforce, zgrep.
 - Use mktemp -t rather than substitute $TMPDIR manually in gzexe, zdiff.

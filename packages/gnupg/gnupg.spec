@@ -1,9 +1,9 @@
-# $Id: Owl/packages/gnupg/gnupg.spec,v 1.14 2002/05/19 03:46:15 solar Exp $
+# $Id: Owl/packages/gnupg/gnupg.spec,v 1.15 2002/08/26 16:09:13 mci Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
 Version: 1.0.7
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Cryptography
 URL: http://www.gnupg.org
@@ -49,16 +49,16 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/install-info %{_infodir}/gpg.info.gz %{_infodir}/dir \
-	--entry "* GnuPG: (gpg).                                Encryption and signing tool."
+	--entry "* GnuPG: (gpg).                                 Encryption and signing tool."
 /sbin/install-info %{_infodir}/gpgv.info.gz %{_infodir}/dir \
-	--entry "* gpgv: (gpgv).                                GnuPG signature verification tool."
+	--entry "* gpgv: (gpgv).                                 GnuPG signature verification tool."
 
 %preun
 if [ $1 -eq 0 ]; then
         /sbin/install-info --delete %{_infodir}/gpg.info.gz %{_infodir}/dir \
-		--entry "* GnuPG: (gpg).                                Encryption and signing tool."
+		--entry "* GnuPG: (gpg).                                 Encryption and signing tool."
         /sbin/install-info --delete %{_infodir}/gpgv.info.gz %{_infodir}/dir \
-		--entry "* gpgv: (gpgv).                                GnuPG signature verification tool."
+		--entry "* gpgv: (gpgv).                                 GnuPG signature verification tool."
 fi
 
 %files
@@ -78,6 +78,9 @@ fi
 %{_infodir}/gpgv.*
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Fri May 17 2002 Michail Litvak <mci@owl.openwall.com>
 - 1.0.7
 - updated -fw-secret-key-checks patch (by Florian Weimer,

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/time/time.spec,v 1.2 2002/02/04 08:28:10 solar Exp $
+# $Id: Owl/packages/time/time.spec,v 1.3 2002/08/26 17:37:03 mci Exp $
 
 Summary: A GNU utility for monitoring a program's use of system resources.
 Name: time
 Version: 1.7
-Release: owl13
+Release: owl14
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.gnu.org/gnu/time/time-%{version}.tar.gz
@@ -41,12 +41,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/install-info %{_infodir}/time.info.gz %{_infodir}/dir \
-	--entry="* time: (time).		GNU time Utility"
+	--entry="* time: (time).                                 GNU time Utility"
 
 %preun
 if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %{_infodir}/time.info.gz %{_infodir}/dir \
-		--entry="* time: (time).		GNU time Utility"
+		--entry="* time: (time).                                 GNU time Utility"
 fi
 
 %files
@@ -57,6 +57,9 @@ fi
 %{_mandir}/*/*
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 

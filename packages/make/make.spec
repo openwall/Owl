@@ -1,9 +1,9 @@
-# $Id: Owl/packages/make/make.spec,v 1.4 2002/02/06 16:39:25 solar Exp $
+# $Id: Owl/packages/make/make.spec,v 1.5 2002/08/26 16:54:17 mci Exp $
 
 Summary: A GNU tool which simplifies the build process for users.
 Name: make
 Version: 3.79.1
-Release: owl3
+Release: owl4
 License: GPL
 Group: Development/Tools
 Source: ftp://ftp.gnu.org/gnu/make/make-%{version}.tar.gz
@@ -35,12 +35,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/install-info %{_infodir}/make.info.gz %{_infodir}/dir \
-	--entry="* GNU make: (make).           The GNU make utility."
+	--entry="* GNU make: (make).                             The GNU make utility."
 
 %preun
 if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %{_infodir}/make.info.gz %{_infodir}/dir \
-		--entry="* GNU make: (make).           The GNU make utility."
+		--entry="* GNU make: (make).                             The GNU make utility."
 fi
 
 %files
@@ -51,6 +51,9 @@ fi
 %{_infodir}/*.info*
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions
 

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/gdbm/gdbm.spec,v 1.6 2002/02/07 18:07:46 solar Exp $
+# $Id: Owl/packages/gdbm/gdbm.spec,v 1.7 2002/08/26 16:05:57 mci Exp $
 
 Summary: A GNU set of database routines which use extensible hashing.
 Name: gdbm
 Version: 1.8.0
-Release: owl6
+Release: owl7
 License: GPL
 Group: System Environment/Libraries
 Source: ftp://ftp.gnu.org/gnu/gdbm/gdbm-%{version}.tar.gz
@@ -63,12 +63,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %post devel
 /sbin/install-info %{_infodir}/gdbm.info.gz %{_infodir}/dir \
-	--entry="* gdbm: (gdbm).                   The GNU Database."
+	--entry="* gdbm: (gdbm).                                 The GNU Database."
 
 %preun devel
 if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %{_infodir}/gdbm.info.gz %{_infodir}/dir \
-		--entry="* gdbm: (gdbm).                   The GNU Database."
+		--entry="* gdbm: (gdbm).                                 The GNU Database."
 fi
 
 %files
@@ -87,6 +87,9 @@ fi
 %{_mandir}/man3/*
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Fri Feb 01 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions
 - include text docs in binary package

@@ -1,13 +1,14 @@
-# $Id: Owl/packages/grep/grep.spec,v 1.5 2002/02/04 17:13:24 solar Exp $
+# $Id: Owl/packages/grep/grep.spec,v 1.6 2002/08/26 16:26:27 mci Exp $
 
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
 Version: 2.4.2
-Release: owl1
+Release: owl2
 Epoch: 1
 License: GPL
 Group: Applications/Text
 Source: ftp://ftp.gnu.org/gnu/grep/grep-%{version}.tar.gz
+Patch: grep-2.4.2-owl-info.diff
 PreReq: /sbin/install-info
 Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
@@ -20,8 +21,10 @@ include grep, egrep and fgrep.
 
 %prep
 %setup -q
+%patch -p1
 
 %build
+rm doc/grep.info
 unset LINGUAS || :
 %configure
 make
@@ -54,6 +57,9 @@ fi
 %{_prefix}/share/locale/*/*/grep.*
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Sun Feb 03 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions
 

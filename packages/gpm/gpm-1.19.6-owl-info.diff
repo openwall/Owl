@@ -1,0 +1,11 @@
+--- gpm-1.19.6/doc/doc.gpm.in.orig	Thu Oct  4 01:35:54 2001
++++ gpm-1.19.6/doc/doc.gpm.in	Fri Aug 23 23:55:26 2002
+@@ -37,7 +37,7 @@
+ @format
+ @dircategory Miscellaneous
+ @direntry
+-* Gpm: (gpm).   A server wich hands mouse events to non-X programs.
++* Gpm: (gpm).                                   A server wich hands mouse events to non-X programs.
+ @end direntry
+ @end format
+ @end ifinfo

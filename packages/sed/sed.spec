@@ -1,12 +1,13 @@
-# $Id: Owl/packages/sed/sed.spec,v 1.3 2002/02/06 19:21:28 solar Exp $
+# $Id: Owl/packages/sed/sed.spec,v 1.4 2002/08/26 17:30:23 mci Exp $
 
 Summary: A GNU stream text editor.
 Name: sed
 Version: 3.02
-Release: owl8
+Release: owl9
 License: GPL
 Group: Applications/Text
 Source: ftp://ftp.gnu.org/gnu/sed/sed-%{version}.tar.gz
+Patch: sed-3.02-owl-info.diff 
 PreReq: /sbin/install-info
 Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
@@ -20,8 +21,10 @@ specified in a script file or from the command line.
 
 %prep
 %setup -q
+%patch -p1
 
 %build
+rm doc/sed.info
 %configure
 make
 
@@ -52,6 +55,9 @@ fi
 %{_mandir}/man*/*
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 

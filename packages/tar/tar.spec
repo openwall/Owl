@@ -1,9 +1,9 @@
-# $Id: Owl/packages/tar/tar.spec,v 1.9 2002/08/06 14:07:31 solar Exp $
+# $Id: Owl/packages/tar/tar.spec,v 1.10 2002/08/26 17:33:26 mci Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
 Version: 1.13.19
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/Archiving
 Source0: ftp://alpha.gnu.org/pub/gnu/tar/tar-%{version}.tar.gz
@@ -92,6 +92,9 @@ fi
 %{_prefix}/share/locale/*/LC_MESSAGES/*
 
 %changelog
+* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+- Deal with info dir entries such that the menu looks pretty.
+
 * Mon Aug 05 2002 Michail Litvak <mci@owl.openwall.com>
 - Fixed incorrect dir entry in info file.
 
