@@ -1,0 +1,12 @@
+diff -ur vsftpd-1.0.1.orig/sysdeputil.c vsftpd-1.0.1/sysdeputil.c
+--- vsftpd-1.0.1.orig/sysdeputil.c	Wed Nov 14 00:12:54 2001
++++ vsftpd-1.0.1/sysdeputil.c	Sun Dec 16 07:33:08 2001
+@@ -42,7 +42,7 @@
+ #define VSF_SYSDEP_HAVE_PAM
+ #define VSF_SYSDEP_HAVE_SHADOW
+ #define VSF_SYSDEP_HAVE_USERSHELL
+-#define VSF_SYSDEP_HAVE_LIBCAP
++#undef VSF_SYSDEP_HAVE_LIBCAP
+ 
+ /* BEGIN config */
+ #if defined(__linux__) && !defined(__ia64__) && !defined(__s390__)

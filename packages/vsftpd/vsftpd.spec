@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.1 2001/12/16 04:19:52 solar Exp $
+# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.2 2001/12/16 04:36:17 solar Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
@@ -12,6 +12,7 @@ Source2: vsftpd.xinetd
 Source3: vsftpd.logrotate
 Patch0: vsftpd-1.0.1-owl-alt-defaults.diff
 Patch1: vsftpd-1.0.1-owl-pam_userpass.diff
+Patch2: vsftpd-1.0.1-owl-no-libcap.diff
 Requires: xinetd, logrotate, pam_userpass, tcb, /var/empty
 Provides: ftpserver
 BuildRequires: pam-devel
@@ -27,6 +28,7 @@ program has been carefully designed to be resilient to attack.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 make CFLAGS="$RPM_OPT_FLAGS -Wall" LIBS="-lpam"
