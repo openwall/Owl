@@ -12,6 +12,9 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/06/23	Packages: openssh, owl-etc
+Updated OpenSSH to 3.3p1 with privilege separation.
+
 2002/06/21 -
 2002/06/22	Owl/build/buildworld.{sh,conf}, Owl/build/Makefile,
 		Owl/doc/BUILD
@@ -537,7 +540,7 @@ New package: the GNU debugger.
 New package: a tool to detect and log TCP port scans.
 
 2001/07/11	Packages: openssl, openssh
-Updated to OpenSSL 0.9.6b.
+Updated OpenSSL to 0.9.6b.
 
 2001/07/10	Package: tar
 RELIABILITY FIX: There was a bug which caused tar to loop endlessly on
@@ -762,4 +765,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.104 2002/06/22 09:19:16 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.105 2002/06/23 17:02:38 solar Exp $
