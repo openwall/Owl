@@ -147,15 +147,15 @@ Update to latest release.
 	gcc.
 
 [PRIORITY: medium]
-[ASSIGNED: Galaxy, solar@]
-Update to 3.2.1+ and deal with whatever this will break.
+[ASSIGNED: galaxy@, solar@]
+Update to 3.4+ and deal with whatever this will break.
 
 
 	glibc.
 
 [PRIORITY: medium]
-[ASSIGNED: solar@]
-Once gcc is updated, update to 2.3.1+ with all the related auditing,
+[ASSIGNED: galaxy@, solar@]
+Once gcc is updated, update to 2.3.2+ with all the related auditing,
 porting, and fixing.
 
 [PRIORITY: medium]
@@ -254,7 +254,7 @@ sure that everything works, the temporary files are dealt with safely
 (as seen from the strace output), and all of them are removed on exit.
 
 [PRIORITY: low]
-[ASSIGNED: Jarno]
+[ASSIGNED: jhuuskon@]
 Consider enhancements from VVV (http://mutt.org.ua).
 
 
@@ -309,8 +309,8 @@ Migrate to MAKEDEV-C with proper modifications.
 Replace with a full-featured installer which would have the ability to
 guide through the installation process, including disk partitioning,
 filesystem creation, "make installworld" and optionally building and
-installing a kernel.  Might move from the current shell + dialog to C
-or even C++ and cdk (which would then be packaged).
+installing a kernel.  Might move from the current shell & dialog to
+C & cdk or even C++ & ndk++ (which would then be packaged).
 
 
 	owl-startup.
@@ -531,11 +531,13 @@ Use mkdtemp(3) for the directory after the glibc update.
 
 	vixie-cron.
 
-[PRIORITY: low]
-Sync with current OpenBSD (now based on Vixie Cron 4.0b1).
-
 [PRIORITY: medium]
-Open PAM sessions for cron jobs such that resource limits are set.
+[ASSIGNED: jhuuskon@, solar@]
+Sync with current OpenBSD (now based on Vixie Cron 4.0b1).  Open PAM
+sessions for cron jobs such that resource limits are set.  This is now
+implemented in ALT Linux's package, so we need to import from there.
+
+[PRIORITY: low]
 Reject or support long usernames in crontab(1).
 
 
@@ -554,4 +556,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.35 2004/01/28 04:07:09 solar Exp $
+$Id: Owl/doc/TODO,v 1.36 2004/09/07 19:23:54 solar Exp $
