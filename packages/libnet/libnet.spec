@@ -1,9 +1,9 @@
-# $Id: Owl/packages/libnet/libnet.spec,v 1.7 2003/10/30 09:00:25 solar Exp $
+# $Id: Owl/packages/libnet/libnet.spec,v 1.8 2004/02/15 23:24:11 mci Exp $
 
 Summary: "libpwrite" Network Routine Library.
 Name: libnet
 Version: 1.0.2a
-Release: owl2
+Release: owl3
 Epoch: 1
 License: BSD
 Group: System Environment/Libraries
@@ -66,7 +66,7 @@ ln -sf libnet.so $RPM_BUILD_ROOT%_libdir/libpwrite
 
 %files devel
 %defattr(644,root,root,755)
-%doc doc/* README
+%doc doc README
 %attr(755,root,root) %_libdir/lib*.so
 %attr(755,root,root) %_bindir/*
 %_includedir/*.h
@@ -75,6 +75,9 @@ ln -sf libnet.so $RPM_BUILD_ROOT%_libdir/libpwrite
 %_libdir/lib*.a
 
 %changelog
+* Mon Feb 16 2004 Michail Litvak <mci@owl.openwall.com> 1:1.0.2a-owl3
+- Correctly install documentation from doc/ subdirectory.
+
 * Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com> 1:1.0.2a-owl2
 - Enforce our new spec file conventions
 
