@@ -1,9 +1,9 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.32 2003/10/30 21:13:16 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.33 2004/03/12 18:50:11 solar Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
 Version: 0.75
-Release: owl21
+Release: owl23
 %define rh_version %version-10
 License: GPL or BSD
 Group: System Environment/Base
@@ -99,10 +99,17 @@ make modules libpam libpamc libpam_misc
 rm -rf $RPM_BUILD_ROOT
 make install THINGSTOMAKE='modules libpam libpamc libpam_misc'
 
+mkdir -p $RPM_BUILD_ROOT/etc/security
 install -m 644 modules/pam_chroot/chroot.conf $RPM_BUILD_ROOT/etc/security/
 
-mkdir -p $RPM_BUILD_ROOT/%_libdir
-mv $RPM_BUILD_ROOT/lib/*.a $RPM_BUILD_ROOT/%_libdir/
+mkdir -p $RPM_BUILD_ROOT%_libdir
+mv $RPM_BUILD_ROOT/lib/*.a $RPM_BUILD_ROOT%_libdir/
+
+# Move .so to %_libdir to make life easier
+for link in libpam libpamc libpam_misc; do
+	rm $RPM_BUILD_ROOT/lib/$link.so
+	ln -sf /lib/$link.so.%version $RPM_BUILD_ROOT%_libdir/$link.so
+done
 
 mkdir -m 755 $RPM_BUILD_ROOT/etc/pam.d
 install -m 644 other.pamd $RPM_BUILD_ROOT/etc/pam.d/other
@@ -190,9 +197,9 @@ chgrp chkpwd %_libexecdir/chkpwd && chmod 710 %_libexecdir/chkpwd
 
 %files devel
 %defattr(-,root,root)
-/lib/libpam.so
-/lib/libpamc.so
-/lib/libpam_misc.so
+%_libdir/libpam.so
+%_libdir/libpamc.so
+%_libdir/libpam_misc.so
 %_libdir/libpam.a
 %_libdir/libpamc.a
 %_libdir/libpam_misc.a
@@ -205,6 +212,12 @@ chgrp chkpwd %_libexecdir/chkpwd && chmod 710 %_libexecdir/chkpwd
 %doc doc/specs/rfc86.0.txt
 
 %changelog
+* Tue Feb 24 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 0.75-owl23
+- Moved /lib/*.so to %_libdir where corresponding static archives live
+
+* Thu Feb 19 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 0.75-owl22
+- Created missing /etc/security directory
+
 * Wed Oct 29 2003 Solar Designer <solar@owl.openwall.com> 0.75-owl21
 - Require glibc-crypt_blowfish-devel for builds.
 - Dropped the obsolete "Provides: pam <= 0.75-14owl" tag which was needed
