@@ -1,5 +1,5 @@
---- vixie-cron-3.0.2.7/usr.sbin/cron/database.c.orig	Mon Jul 16 11:36:12 2001
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/database.c	Tue Jul 17 23:49:24 2001
+--- vixie-cron-3.0.2.7/usr.sbin/cron/database.c.orig	Thu Jul 19 00:44:08 2001
++++ vixie-cron-3.0.2.7/usr.sbin/cron/database.c	Thu Jul 19 00:52:49 2001
 @@ -36,6 +36,17 @@
  					     struct stat *,
  					     cron_db *, cron_db *));
@@ -74,7 +74,7 @@
  	new_db.head = new_db.tail = NULL;
  
  	if (syscron_stat.st_mtime) {
-@@ -91,34 +106,46 @@
+@@ -91,36 +106,46 @@
  				&new_db, old_db);
  	}
  
@@ -95,58 +95,63 @@
 -		 * because we would otherwise waste two guaranteed calls
 -		 * to getpwnam() for . and .., and also because user names
 -		 * starting with a period are just too nasty to consider.
-+	p = spools;
-+	while (p->path) {
-+		if (!(dir = opendir(p->path))) {
-+			log_it("CRON", getpid(), "OPENDIR FAILED", p->path);
-+			(void) exit(ERROR_EXIT);
-+		}
-+
-+		while (NULL != (dp = readdir(dir))) {
-+			char	fname[MAXNAMLEN+1],
-+				tabname[MAXPATHLEN];
-+
-+			/* Don't try to parse any files containing a dot ('.')
-+			 * or ending with a tilde ('~'). This catches the case of 
-+			 * '.' and '..', as well as preventing the parsing of 
-+			 * many editor files, temporary files and those saved by RPM
-+			 * package upgrades.
-+			 */
-+			if ( !dp->d_name[0] /* Shouldn't happen */ || 
-+			      strchr(dp->d_name, '.') ||
-+			      dp->d_name[strlen(dp->d_name)-1] == '~')
-+				continue;
-+
-+			if (strlen(dp->d_name) > sizeof(fname) - 1) continue;
-+			(void) strcpy(fname, dp->d_name);
-+			snprintf(tabname, sizeof(tabname), "%s/%s", p->path, fname);
-+			if (strlen(tabname) >= sizeof(tabname) - 1) continue;
-+
-+			process_crontab(p->uname ? p->uname : fname,
-+					p->fname ? p->fname : fname,
-+					tabname,
-+					&statbuf, &new_db, old_db);
-+		}
-+		closedir(dir);
-+		/* we used to keep this dir open all the time, for the sake of
-+		 * efficiency.  however, we need to close it in every fork, and
-+		 * we fork a lot more often than the mtime of the dir changes.
- 		 */
+-		 */
 -		if (dp->d_name[0] == '.')
 -			continue;
- 
+-
+-		if (strlen(dp->d_name) > sizeof(fname) - 1) continue;
 -		(void) strcpy(fname, dp->d_name);
--		sprintf(tabname, CRON_TAB(fname));
+-		snprintf(tabname, sizeof(tabname), CRON_TAB(fname));
+-		if (strlen(tabname) >= sizeof(tabname) - 1) continue;
 -
 -		process_crontab(fname, fname, tabname,
 -				&statbuf, &new_db, old_db);
-+		p++;
- 	}
+-	}
 -	closedir(dir);
++	p = spools;
++ 	while (p->path) {
++ 		if (!(dir = opendir(p->path))) {
++ 			log_it("CRON", getpid(), "OPENDIR FAILED", p->path);
++ 			(void) exit(ERROR_EXIT);
++ 		}
++ 
++ 		while (NULL != (dp = readdir(dir))) {
++ 			char	fname[MAXNAMLEN+1],
++ 				tabname[MAXPATHLEN];
++ 
++ 			/* Don't try to parse any files containing a dot ('.')
++ 			 * or ending with a tilde ('~'). This catches the case
++			 * of '.' and '..', as well as preventing the parsing
++			 * of many editor files, temporary files and those
++			 * saved by RPM package upgrades.
++ 			 */
++ 			if ( !dp->d_name[0] /* Shouldn't happen */ || 
++ 			      strchr(dp->d_name, '.') ||
++ 			      dp->d_name[strlen(dp->d_name)-1] == '~')
++ 				continue;
++ 
++ 			if (strlen(dp->d_name) > sizeof(fname) - 1) continue;
++ 			(void) strcpy(fname, dp->d_name);
++ 			snprintf(tabname, sizeof(tabname), "%s/%s", p->path, fname);
++ 			if (strlen(tabname) >= sizeof(tabname) - 1) continue;
++ 
++ 			process_crontab(p->uname ? p->uname : fname,
++ 					p->fname ? p->fname : fname,
++ 					tabname,
++ 					&statbuf, &new_db, old_db);
++ 		}
++ 		closedir(dir);
++ 		/* we used to keep this dir open all the time, for the sake of
++ 		 * efficiency.  however, we need to close it in every fork, and
++ 		 * we fork a lot more often than the mtime of the dir changes.
++  		 */
++  
++ 		p++;
++  	}
  
  	/* if we don't do this, then when our children eventually call
  	 * getpwnam() in do_command.c's child_process to verify MAILTO=,
-@@ -141,7 +168,6 @@
+@@ -143,7 +168,6 @@
  	*old_db = new_db;
  	Debug(DLOAD, ("load_database is done\n"))
  }
@@ -154,8 +159,8 @@
  
  void
  link_user(db, u)
---- vixie-cron-3.0.2.7/usr.sbin/cron/cron.8.orig	Tue Mar 21 02:56:25 2000
-+++ vixie-cron-3.0.2.7/usr.sbin/cron/cron.8	Tue Jul 17 23:59:27 2001
+--- vixie-cron-3.0.2.7/usr.sbin/cron/cron.8.orig	Thu Jul 19 00:44:08 2001
++++ vixie-cron-3.0.2.7/usr.sbin/cron/cron.8	Thu Jul 19 00:44:17 2001
 @@ -45,8 +45,11 @@
  .Nm
  also searches for

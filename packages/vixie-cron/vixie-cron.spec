@@ -1,9 +1,9 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.9 2001/07/17 21:47:42 mci Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.10 2001/07/18 22:16:20 mci Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron)
 Name: vixie-cron
 Version: 3.0.2.7
-Release: 9owl
+Release: 10owl
 Copyright: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%{version}.tar.gz
@@ -22,7 +22,7 @@ times.  This package contains Paul Vixie's implementation of cron, with
 significant modifications by the NetBSD, OpenBSD, Red Hat, and Owl teams.
 
 %prep
-%setup
+%setup -q
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
