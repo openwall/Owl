@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.56 2004/09/10 07:28:23 galaxy Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.57 2004/11/02 03:45:53 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
 Version: 0.29
-Release: owl1
+Release: owl2
 License: public domain
 Group: System Environment/Base
 Source0: passwd
@@ -40,15 +40,11 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/{etc/profile.d,var/log}
 cd $RPM_BUILD_ROOT
 touch etc/motd var/log/lastlog
-# Hack, don't want to list all sources
-cp -rL $RPM_SOURCE_DIR/* etc/
-
-# XXX: (GM): Remove unpackaged files (check later)
-rm %buildroot/etc/CVS/Entries
-rm %buildroot/etc/CVS/Repository
-rm %buildroot/etc/CVS/Root
-rmdir %buildroot/etc/CVS
-rm %buildroot/etc/owl-etc.spec
+install -p $RPM_SOURCE_DIR/{passwd,shadow,group,fstab} etc/
+install -p $RPM_SOURCE_DIR/{securetty,shells,host.conf,nsswitch.conf} etc/
+install -p $RPM_SOURCE_DIR/{protocols,services,hosts.{allow,deny}} etc/
+install -p $RPM_SOURCE_DIR/{profile,bashrc,inputrc} etc/
+install -p $RPM_SOURCE_DIR/{csh.{login,cshrc}} etc/
 
 %triggerin -- shadow-utils
 function pause()
@@ -144,7 +140,7 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 %verify(not md5 size mtime) %config(noreplace) /etc/passwd
 %verify(not md5 size mtime) %config(noreplace) %attr(400,root,root) /etc/shadow
 %verify(not md5 size mtime) %config(noreplace) /etc/group
-%verify(not md5 size mtime) %config(noreplace) %attr(644,root,root) /etc/fstab
+%verify(not md5 size mtime) %config(noreplace) /etc/fstab
 %config(noreplace) %attr(600,root,root) /etc/securetty
 %config(noreplace) /etc/shells
 %config(noreplace) /etc/host.conf
@@ -163,6 +159,10 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 %ghost /var/log/lastlog
 
 %changelog
+* Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 0.29-owl2
+- Do install all sources explicitly (and do not pick anything else which
+might happen to be in RPM's source dir).
+
 * Sun Oct 26 2003 Solar Designer <solar@owl.openwall.com> 0.29-owl1
 - nmap user/group.
 
