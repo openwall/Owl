@@ -1,0 +1,35 @@
+--- m4-1.4/src/m4.h.orig	Tue Feb  6 12:26:50 2001
++++ m4-1.4/src/m4.h	Tue Feb  6 12:54:05 2001
+@@ -128,7 +128,11 @@
+ #define obstack_chunk_free	xfree
+ 
+ /* Other library routines.  */
+-void error _((int, int, const char *, ...));
++void error _((int, int, const char *, ...))
++#ifdef __GNUC__
++__attribute__ ((format (printf, 3, 4)))
++#endif
++;
+ 
+ /* Those must come first.  */
+ typedef void builtin_func ();
+--- m4-1.4/src/m4.c.orig	Tue Feb  6 11:34:09 2001
++++ m4-1.4/src/m4.c	Tue Feb  6 12:38:15 2001
+@@ -369,7 +369,7 @@
+ 
+       case 'o':
+ 	if (!debug_set_output (optarg))
+-	  error (0, errno, optarg);
++	  error (0, errno, "%s", optarg);
+ 	break;
+ 
+       case 's':
+@@ -466,7 +466,7 @@
+ 	    fp = path_search (argv[optind]);
+ 	    if (fp == NULL)
+ 	      {
+-		error (0, errno, argv[optind]);
++		error (0, errno, "%s", argv[optind]);
+ 		continue;
+ 	      }
+ 	    else

@@ -1,13 +1,14 @@
-# $Id: Owl/packages/m4/m4.spec,v 1.2 2001/01/06 14:42:39 solar Exp $
+# $Id: Owl/packages/m4/m4.spec,v 1.3 2001/02/06 11:41:54 mci Exp $
 
 Summary: The GNU macro processor.
 Name: 		m4
 Version: 	1.4
-Release: 	14owl
+Release: 	15owl
 Copyright: 	GPL
 Group:		Applications/Text
 Source: 	ftp://ftp.gnu.org/gnu/m4/m4-%{version}.tar.gz
-Patch: 		m4-1.4-rh-glibc.diff
+Patch0:		m4-1.4-rh-glibc.diff
+Patch1:         m4-1.4-owl-format.diff
 Buildroot: 	/var/rpm-buildroot/%{name}-root
 Prereq: 	/sbin/install-info
 Prefix: 	/usr
@@ -26,7 +27,8 @@ Install m4 if you need a macro processor.
 rm -rf $RPM_BUILD_ROOT
 
 %setup
-%patch -p1
+%patch0 -p1
+%patch1 -p1
 
 %build
 autoconf
@@ -57,6 +59,10 @@ fi
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Tue Feb 06 2001 Michail Litvak <mci@owl.openwall.com>
+- Fixed format bug in error
+- added __attribute__ ((format(...))) for error
+
 * Sat Jan 06 2001 Solar Designer <solar@owl.openwall.com>
 - Enable mkstemp explicitly, not rely on configure.
 
