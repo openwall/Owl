@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tar/tar.spec,v 1.1 2000/08/09 00:51:27 kad Exp $
+# $Id: Owl/packages/tar/tar.spec,v 1.2 2000/08/09 03:38:59 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: 		tar
@@ -37,9 +37,6 @@ the rmt package.
 unset LINGUAS || :
 %define optflags $RPM_OPT_FLAGS -DHAVE_STRERROR -D_GNU_SOURCE
 %configure --bindir=/bin --libexecdir=/sbin
-%ifarch ia64
-patch -p1 < %{PATCH3}
-%endif
 make LIBS=-lbsd
 %else
 %configure
@@ -106,7 +103,7 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %changelog
 * Sun Aug  6 2000 Alexandr D. Kanevsiy <kad@owl.openwall.com>
-- improt from RH
+- import from RH
 - fix URL
 
 * Wed Jul 12 2000 Prospector <bugzilla@redhat.com>
