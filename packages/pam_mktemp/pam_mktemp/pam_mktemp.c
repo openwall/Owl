@@ -54,8 +54,6 @@ static int ext2fs_chflags(const char *name, int set, int reset)
 		retval = -1;
 	return retval;
 }
-#else
-#define ext2fs_chflags(name, set, reset)
 #endif
 
 static int assign(pam_handle_t *pamh, const char *name, const char *value)
@@ -127,9 +125,9 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
  * anything in the directory or rename/unlink it and we can play safely.
  */
 
-	if (ext2fs_chflags(PRIVATE_PREFIX, EXT2_APPEND_FL, 0) &&
-	    errno != EOPNOTSUPP)
-		return PAM_SESSION_ERR;
+#ifdef __linux__
+	ext2fs_chflags(PRIVATE_PREFIX, EXT2_APPEND_FL, 0);
+#endif
 
 	userdir = alloca(strlen(PRIVATE_PREFIX) + strlen(user) + 2);
 	if (!userdir)
@@ -140,10 +138,12 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 	if (mkdir(userdir, 01700) && errno != EEXIST)
 		return PAM_SESSION_ERR;
 
+#ifdef __linux__
 	/* Don't let the append-only flag get inherited from the parent
 	 * directory. */
 	if (ext2fs_chflags(userdir, 0, EXT2_APPEND_FL) && errno != EOPNOTSUPP)
 		return PAM_SESSION_ERR;
+#endif
 
 	if (usergroups) {
 		if (chown(userdir, 0, pw->pw_gid) ||
