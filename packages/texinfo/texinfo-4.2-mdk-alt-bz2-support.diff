@@ -47,7 +47,7 @@
 -#endif
 +    *compression_program = "/bin/zcat";
 +  else if (data[0] == 'B' && data[1] == 'Z' && (data[2] == 'h' || data[2] == '0'))
-+    *compression_program = "/bin/bzcat";
++    *compression_program = "/usr/bin/bzcat";
    else
      *compression_program = NULL;
  

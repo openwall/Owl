@@ -1,9 +1,9 @@
-# $Id: Owl/packages/texinfo/texinfo.spec,v 1.12 2002/08/27 19:13:08 solar Exp $
+# $Id: Owl/packages/texinfo/texinfo.spec,v 1.13 2002/11/22 20:25:48 solar Exp $
 
 Summary: Tools needed to create Texinfo format documentation files.
 Name: texinfo
 Version: 4.2
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/Publishing
 Source0: ftp://ftp.gnu.org/gnu/texinfo/texinfo-%{version}.tar.gz
@@ -105,6 +105,9 @@ fi
 /sbin/install-info
 
 %changelog
+* Fri Nov 22 2002 Solar Designer <solar@owl.openwall.com>
+- Corrected the path to bzcat, thanks to (GalaxyMaster).
+
 * Tue Aug 27 2002 Solar Designer <solar@owl.openwall.com>
 - PreReq: gzip in info subpackage as required for the new texinfo
 (install-info now invokes external *zcat instead of using zlib).
