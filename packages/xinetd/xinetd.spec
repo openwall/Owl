@@ -1,11 +1,11 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.8 2001/06/29 20:29:20 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.9 2001/07/22 10:36:59 solar Exp $
 
 %define NEED_PYTHON 'no'
 
 Summary: The extended Internet services daemon
 Name: xinetd
 Version: 2.3.0
-Release: 1owl
+Release: 2owl
 License: BSD with minor restrictions
 Group: System Environment/Daemons
 Source0: http://www.xinetd.org/xinetd-%{version}.tar.gz
@@ -20,6 +20,7 @@ Source8: xinetd-echo
 Source9: xinetd-uecho
 Source10: xinetd-chargen
 Source11: xinetd-uchargen
+Patch0: xinetd-2.3.0-owl-audit.diff
 Provides: inetd
 Prereq: /sbin/chkconfig /etc/init.d
 BuildRequires: tcp_wrappers
@@ -43,11 +44,13 @@ limits on the number of servers that can be started, among other things.
 
 %prep
 %setup -q
+%patch -p1
+
+%{expand:%%define optflags %optflags -Wall -Wno-unused -Wno-switch}
 
 %build
-autoconf
 %configure --with-libwrap
-make CC=gcc
+make
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -100,8 +103,7 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc INSTALL xinetd/CHANGELOG xinetd/COPYRIGHT README xinetd/sample.conf
-
+%doc README AUDIT xinetd/CHANGELOG xinetd/COPYRIGHT xinetd/sample.conf
 %config /etc/xinetd.conf
 /usr/sbin/*
 %{_mandir}/*/*
@@ -109,6 +111,15 @@ fi
 %config /etc/xinetd.d/*
 
 %changelog
+* Sun Jul 22 2001 Solar Designer <solar@owl.openwall.com>
+- Updated the -audit patch based on results of testing by Michail Litvak
+<mci@owl.openwall.com>, by ALT Linux Team, and at DataForce ISP.
+
+* Thu Jul 05 2001 Solar Designer <solar@owl.openwall.com>
+- Applied _many_ security and reliability fixes (in fact so many that
+there have to be new bugs as well and testing is needed), see AUDIT.
+The patch is 100 KB large.
+
 * Fri Jun 29 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 2.3.0, which fixes the problem with xinetd's string handling
 routines discovered by Sebastian Krahmer of SuSE Security Team.

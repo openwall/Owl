@@ -1,0 +1,3401 @@
+diff -urN xinetd-2.3.0.orig/AUDIT xinetd-2.3.0/AUDIT
+--- xinetd-2.3.0.orig/AUDIT	Thu Jan  1 03:00:00 1970
++++ xinetd-2.3.0/AUDIT	Sat Jul  7 09:10:35 2001
+@@ -0,0 +1,173 @@
++This is the xinetd-2.3.0 audit status.  The audit has been performed
++in order to make the Owl (http://www.openwall.com/Owl/) xinetd package
++reasonably secure and of course with the hope that others will find
++the results and patches useful as well.
++
++Much of xinetd's logic is left unaudited (other than for generic bug
++classes listed below).  In particular, this applies to all network
++access control checks.
++
++To summarize the results, xinetd may be reasonably safe to use with
++these patches, but the code remains far from clean and certain bugs
++are there by design.
++
++The format of this list is one item per line, with subitems indented.
++If a line doesn't start with a '+', that item hasn't been completed
++(audited and/or patched).
++
++None of the PATCH'es are a part of xinetd-2.3.0; they will be in the
++Owl package and hopefully will get incorporated into future versions
++of xinetd.
++
++-- 
++Solar Designer <solar@openwall.com>
++
+++BUGS	strx_* functions (danger: don't always NUL-terminate)
+++PATCH		bug: shouldn't write NUL when len <= 0
+++PATCH		may overflow with huge precision values (bad for format bugs)
+++BUGS	strx_* calls: some assume NUL-termination, but none look dangerous
+++PATCH		__xlog_explain_errno forgets to update size
+++PATCH		child.c: child_process may not NUL-terminate name
+++PATCH		init.c: syscall_failed may not NUL-terminate err
+++PATCH		shutdown.c: safe, but should use print_buf_size-1
+++PATCH		signals.c: sig_name should use sizeof(signame_buf)-1
+++OK	str_* calls
+++OK		none :-)
+++OK	strcat, strcpy calls (testsuite calls not checked)
+++OK	strn* calls
+++PATCH		some inefficient, but correct
+++BUGS	memcpy, memmove, bcopy calls
+++PATCH		addr.c: addrlist_dump() copies ipv6 address into ipv4 struct
+++PATCH		addr.c: host_addr() trusts hep->h_length from gethostbyname()
+++PATCH		parsers.c: redir_parser() wouldn't build/work when NO_INET_ATON
+++PATCH		parsers.c: redir_parser() wrongly relies on sizeof(he->h_addr)
+++PATCH		parsers.c: bind_parser() same as the above
++		the use of sizeof() is inconsistent (not always of dst arg)
+++PATCH		should change bcopy to memcpy/memmove as appropriate
+++BUGS	sio_memcopy calls
+++OK		sio.c
+++BUGS		siosup.c is too complicated in its handling of data sizes
+++OK			expand() is only called with old_size < new_size
+++?			buffer_setup() isn't obviously correct, but is safe
+++OK			__sio_extend_buffer is correct
+++PATCH				comment to sio.h: aux buffer is right below buf
+++PATCH			__sio_get_events may cause bufentries < 0 (->overflow)
+++OK	conn_setaddr calls: safe, but could use sizeof((cp)->co_remote_address)
+++OK	sprintf calls
+++BUGS	sscanf calls
+++PATCH		addr.c: explicit_mask() has single-byte overflow of saddr[]
+++BUGS	formats
+++OK		fprintf, sprintf, fscanf, sscanf
+++OK		syslog (but relies on %.*s for non-NUL-terminated buffers)
+++OK		strx_*
+++OK		svc_logprint, prepare_buffer
+++BUGS		msg, parsemsg
+++PATCH			intcommon.c: int_init() passes fmt as wrong arg
+++PATCH			(non-security) should never have '\n' in format
+++OK		tabprint
+++OK		Sprint
+++OK		ostimer.c: terminate
+++PATCH		xlog_write() is called on untrusted input w/o XLOG_NO_ERRNO
+++OK	ident -- looks mostly safe
+++OK		SIGALRM + longjmp() used safely:
+++OK			no static accesses, no stdio between START/STOP_TIMER
+++OK			immediate return on timeout (-> no clobbering issues)
+++OK			signal mask after longjmp() is unimportant
+++PATCH			could be safer to also reset SIGALRM handler
+++PATCH		verify_line() modifies buf, which is then logged on error
++		will log control chars from remote
+++BUGS	builtins
+++OK		time, daytime, sensor: NO_FORK && stream (safe: FNDELAY)
+++PATCH		accept() return value never checked
+++PATCH		bad_port_check(): should deny all <1024 (53/udp is just as bad)
+++PATCH		stream_daytime writes to wrong fd when wait = yes (gets EPIPE)
+++PATCH		*_time sends sizeof(time_t): wrong on at least linux-alpha
++		xadmin_handler(): the command parser is unreliable (use sio?)
+++BUGS	record (shutdown.c)
++		connect_back may be used for portscanning of own machine
++		write() return values not checked
+++PATCH		will only handle traditional (obsolete) crypt(3) hashes
++		special.c: stream_shutdown() will log control chars from remote
++	intercept (int[.c]*, {tcp,udp}int.c) -- checked for generic bugs ONLY
++		tcpint.c: si_exit() may leave open fd from accept()
+++BUGS	signal races, longjmp clobbering
+++BUGS		__ostimer_interrupt:
+++PATCH			call_level should be volatile
+++PATCH			should use &ret_env, not (char *)ret_env (may differ)
+++BUGS			ret_env modified non-atomically (with 2 TIMER_LONGJMP's)
+++PATCH				should set have_env before and make it volatile
+++PATCH			may leave an altered signal mask on longjmp()
++				should fallback to plain longjmp in configure
+++OK			__ostimer_{add,remove} only called with signals blocked
+++OK			timer_s fields not volatile, safe due to block _calls_
+++BUGS		check uses of TIMER_LONGJMP flag
+++BUGS			confparse.c: get_conf() may jump out of malloc(), etc
++				no other uses, perhaps just disable CONF_TIMEOUT
+++OK		ident.c: mostly safe (see above)
+++BUGS		signals.c: bad_signal(): only on crashes, so not a big issue
+++PATCH			*count should be volatile to really avoid looping
++			does calls which may cause another SIGSEGV w/o a bug
+++PATCH			may leave an altered signal mask on longjmp()
+++BUGS		signals.c: general_handler()
++			sio and non-reentrant libc calls on unexpected signal
+++BUGS		signals.c: handle_signal(), my_handler(): events may be lost
++			my_handler may be re-entered, but M_SET isn't atomic:
++				should split ps.flags into int-per-flag
+++OK		main.c: main(): setjmp() placed in a way avoiding clobbering
+++BUGS		access.c: parent_access_control(), alrm_ena() (cps feature)
++			alrm_ena() may cause re-entry into syslog(), etc
++			SIGALRM handler may be never reset, or --
++			the handler and/or alarm may be reset for other needs
++				should use the timer queues, not OS timers
+++BUGS		int.c: int_sighandler(), intcommon.c: int_init()
++			int_sighandler() may cause re-entry into msg(), etc
++				installed for multiple signals, doesn't block
++				may interrupt msg() in main and cause re-entry
+++PATCH		redirect.c: redir_sigpipe() should use _exit(2), not exit(3)
+++BUGS	fd_set overflows
++		intcommon.c: sets INT_REMOTE(ip) w/o fd_set size check
++			{tcp,udp}int.c: si_mux(), di_mux() FD_SET w/o fd check
++		internals.c: socket_mask_copy w/o fd checks
++		main_loop(): select() on read_mask w/o fd checks
++		service.c: svc_activate(): could check ps.rws.mask_max here
++		(many files) all references to ps.rws.socket_mask are unchecked
++		redirect.c: redir_handler() no checks for rdfd, msfd
++		should use fd_grow similarly to OpenBSD inetd
+++PATCH		workaround: reduce RLIMIT_NOFILE to FD_SETSIZE
+++BUGS	__sio_descriptors overflows
+++PATCH		sio functions forget to check fd against n_descriptors
+++BUGS	get_fd_limit(), Smorefds()
+++PATCH		assume RLIMIT_NOFILE is small (not RLIM_INFINITY)
+++OK		orig_max_descriptors and max_descriptors are rlim_t, not int
+++BUGS	potential fd leaks to services
+++PATCH		init.c: setup_file_descriptors() relies on the rlimit only
++		returns from close() never checked -- fixed the worst one
+++BUGS	child.c: set_credentials()
+++PATCH		should fail if !ps.ros.is_superuser && user/group requested
+++OK		is otherwise fail-close and resets groups (fixed long ago)
+++BUGS	gethostby*, getaddrinfo (some are common with memcpy bugs)
+++PATCH		addr.c: host_addr() trusts hep->h_length from gethostbyname()
++		addr.c: host_addr() INET6 doesn't check res->ai_family
++		parsers.c: {redir,bind}_parser() don't check res->ai_family
+++PATCH		parsers.c: redir_parser() wrongly relies on sizeof(he->h_addr)
+++PATCH		parsers.c: bind_parser() same as the above
+++PATCH	getpwnam unnecessarily leaves password hashes in address space on BSD
++---
+++PATCH	gcc format attributes
+++	build with gcc -Wall -Wcast-align (x86, alpha) -- mostly clean
+++PATCH		many unused vars with ipv6
+++PATCH		parsers.c, inet.c: stores strtol() to int, then needs long
+++PATCH		several format strings don't match arguments
+++	build with ccc -msg_enable level4 or higher
+++PATCH		CC= from configure doesn't get into Makefile's
++		lots of warnings (250 KB of output), the code is just not clean
+++PATCH			some really need fixing
++-	use wrapper functions around either strx_* or vsnprintf()?
+++		not a good idea, tested strx_* against snprintf instead
++?	define strz_* wrappers around strx_*, which would always NUL-terminate
+++PATCH	atoi -> strtol with long to int overflow checks
++---
++	should limit logging rate (= rate of permitted sessions, popa3d-like)
++	should drop privileges for ident lookups, builtins, and records
++	should have options to build --without-{ident,builtins,record,intercept}
++		should generate manpages accordingly
+diff -urN xinetd-2.3.0.orig/CHANGELOG xinetd-2.3.0/CHANGELOG
+--- xinetd-2.3.0.orig/CHANGELOG	Fri Jun 29 20:20:48 2001
++++ xinetd-2.3.0/CHANGELOG	Thu Jul  5 08:27:43 2001
+@@ -568,3 +568,7 @@
+ 2.3.0
+ 	Fixed a bounds checking case in str* functions.
+ 		Pointed out by Sebastian Krahmer.
++2.3.0-2owl
++	Applied _many_ security and reliability fixes (in fact so many
++	that there have to be new bugs as well and testing is needed),
++	see AUDIT. -Solar Designer
+diff -urN xinetd-2.3.0.orig/Makefile.in xinetd-2.3.0/Makefile.in
+--- xinetd-2.3.0.orig/Makefile.in	Mon May 14 23:06:01 2001
++++ xinetd-2.3.0/Makefile.in	Thu Jul  5 05:54:26 2001
+@@ -23,8 +23,8 @@
+ LIB_DEFS = @DEFS@ 
+ PROG_DEFS = -DNO_TIMERS @DEFS@
+ 
+-LIBMAKEDEFS = CFLAGS='$(CFLAGS) -I../../include'
+-PROGMAKEDEFS = CFLAGS='$(CFLAGS) -I../libs/include' LDFLAGS='-L../libs/lib'
++LIBMAKEDEFS = CC=$(CC) CFLAGS='$(CFLAGS) -I../../include'
++PROGMAKEDEFS = CC=$(CC) CFLAGS='$(CFLAGS) -I../libs/include' LDFLAGS='-L../libs/lib'
+ 
+ MANDATORY_LIBS		= sio str misc xlog pset pq timer
+ 
+@@ -33,13 +33,12 @@
+ build: makelibs makeprog
+ 
+ makeprog:
+-	cd xinetd ; \
+-	make $(PROGMAKEDEFS)
++	$(MAKE) -C xinetd $(PROGMAKEDEFS)
+ 
+ makelibs:
+ 	for lib in $(MANDATORY_LIBS) ; do \
+-		( cd libs/src/$$lib ; make $(LIBMAKEDEFS) install ) \
+-	; done
++		$(MAKE) -C libs/src/$$lib $(LIBMAKEDEFS) install; \
++	done
+ 
+ install: build
+ 	for i in $(DAEMONDIR) $(BINDIR) $(MANDIR)/man5 $(MANDIR)/man8 ; do \
+@@ -68,23 +67,21 @@
+ 	rm -f config.cache config.log Makefile config.status xinetd/itox
+ 	rm -f config.h @srcdir@/libs/include/*
+ 	for lib in $(ALL_LIBS) ; do \
+-		(cd @srcdir@/libs/src/$$lib ; make distclean ; ) \
+-	; done
+-	cd xinetd ; make distclean
++		$(MAKE) -C @srcdir@/libs/src/$$lib distclean ; \
++	done
++	$(MAKE) -C xinetd distclean
+ 
+ clean: cleanlibs cleanprog 
+ 	rm -f @srcdir@/libs/lib/*.a 
+ 
+ cleanlibs:
+ 	for lib in $(ALL_LIBS) ; do \
+-		(cd @srcdir@/libs/src/$$lib ; make clean ; ) \
+-	; done
++		$(MAKE) -C @srcdir@/libs/src/$$lib clean ; \
++	done
+ 
+ cleanprog:
+-	cd xinetd ; make clean
++	$(MAKE) -C xinetd clean
+ 
+ spotless: clean
+ 	rm -f @srcdir@/libs/include/*.h @srcdir@/libs/man/*.3
+ 	cd libs ; for i in lib include man ; do rm $$i/* ; done
+-
+-
+diff -urN xinetd-2.3.0.orig/libs/man/strprint.3 xinetd-2.3.0/libs/man/strprint.3
+--- xinetd-2.3.0.orig/libs/man/strprint.3	Fri Jun 29 20:17:00 2001
++++ xinetd-2.3.0/libs/man/strprint.3	Thu Jul  5 07:39:02 2001
+@@ -97,10 +97,14 @@
+ is that the latter take an extra argument, the size of the buffer, so
+ that they will never write beyond the end of the buffer. Writing
+ beyond the end of the buffer is possible with the \fIstr_*\fR functions.
+-Invoking any of the \fIstrx_*\fR functions with the
++Previously, invoking any of the \fIstrx_*\fR functions with the
+ .I len
+ argument set to 0
+-is the same as calling the equivalent \fIstr_*\fR function.
++used to be the same as calling the equivalent \fIstr_*\fR function.
++This dangerous behavior has since been changed and now the \fIstrx_*\fR
++functions don't touch the buffer when
++.I len
++is 0 or negative.
+ .LP
+ All functions will append a
+ .SM NUL
+diff -urN xinetd-2.3.0.orig/libs/man/timer.3 xinetd-2.3.0/libs/man/timer.3
+--- xinetd-2.3.0.orig/libs/man/timer.3	Fri Jun 29 20:17:24 2001
++++ xinetd-2.3.0/libs/man/timer.3	Thu Jul  5 07:39:08 2001
+@@ -160,7 +160,7 @@
+ (*ta_func)() ;
+ .IP void
+ *ta_arg ;
+-.IP jmp_buf
++.IP sigjmp_buf
+ ta_env ;
+ .RE
+ } ;
+@@ -205,7 +205,7 @@
+ of the same type will be blocked while the function is running.
+ .TP
+ .SB TIMER_LONGJMP
+-A longjmp(3) will be performed using
++A siglongjmp(3) will be performed using
+ .I ta_env
+ after the action associated with the timer is performed.
+ .LP
+diff -urN xinetd-2.3.0.orig/libs/src/pq/hpq.c xinetd-2.3.0/libs/src/pq/hpq.c
+--- xinetd-2.3.0.orig/libs/src/pq/hpq.c	Tue Jun 19 04:09:26 2001
++++ xinetd-2.3.0/libs/src/pq/hpq.c	Thu Jul  5 06:55:17 2001
+@@ -102,7 +102,7 @@
+ 
+ 	i = hp->cur_size++ ;
+ 	parent = PARENT( i ) ;
+-	while ( i > 0 && (*hp->is_better)( object, hp->objects[ parent ] ) )
++	while ( i != 0 && (*hp->is_better)( object, hp->objects[ parent ] ) )
+ 	{
+ 		hp->objects[ i ] = hp->objects[ parent ] ;
+ 		i = parent ;
+diff -urN xinetd-2.3.0.orig/libs/src/sio/impl.h xinetd-2.3.0/libs/src/sio/impl.h
+--- xinetd-2.3.0.orig/libs/src/sio/impl.h	Thu Jun 14 18:51:20 2001
++++ xinetd-2.3.0/libs/src/sio/impl.h	Thu Jul  5 02:07:29 2001
+@@ -170,6 +170,11 @@
+ 
+ #define IO_SETUP( fd, dp, type, ev )														\
+ 			{																							\
++				if ( fd >= __sio_n_descriptors )												\
++				{																						\
++					errno = EBADF ;																\
++					return( ev ) ;																	\
++				}																						\
+ 				if ( DESCRIPTOR_INITIALIZED( dp ) ) 										\
+ 				{																						\
+ 					if ( dp->stream_type != type )											\
+diff -urN xinetd-2.3.0.orig/libs/src/sio/sio.c xinetd-2.3.0/libs/src/sio/sio.c
+--- xinetd-2.3.0.orig/libs/src/sio/sio.c	Mon May 14 23:06:01 2001
++++ xinetd-2.3.0/libs/src/sio/sio.c	Thu Jul  5 02:13:42 2001
+@@ -43,7 +43,7 @@
+ 	register int nbytes ;
+ {
+ 	register __sio_descriptor_t *dp = &__sio_descriptors[ fd ] ;
+-	register __sio_od_t *odp = ODP( dp ) ;
++	register __sio_od_t *odp ;
+ 	register int b_transferred ;
+ 	register int b_avail ;
+ 	int total_b_transferred ;
+@@ -55,6 +55,7 @@
+ #endif
+ 
+ 	IO_SETUP( fd, dp, __SIO_OUTPUT_STREAM, SIO_ERR ) ;
++	odp = ODP( dp ) ;
+ 	ASSERT( odp->start <= odp->nextb && odp->nextb <= odp->buf_end ) ;
+ 
+ 	b_avail = odp->buf_end - odp->nextb ;
+@@ -122,13 +123,14 @@
+ 	char c ;
+ {
+ 	register __sio_descriptor_t *dp = &__sio_descriptors[ fd ] ;
+-	register __sio_od_t *odp = ODP( dp ) ;
++	register __sio_od_t *odp ;
+ 
+ #ifdef EVENTS
+ 	EVENT( fd, EV_SPUTC ) ;
+ #endif
+ 	
+ 	IO_SETUP( fd, dp, __SIO_OUTPUT_STREAM, SIO_ERR ) ;
++	odp = ODP( dp ) ;
+ 	ASSERT( odp->start <= odp->nextb && odp->nextb <= odp->buf_end ) ;
+ 
+ 	/*
+@@ -171,7 +173,7 @@
+ 	int nbytes ;
+ {
+ 	register __sio_descriptor_t *dp = &__sio_descriptors[ fd ] ;
+-	register __sio_id_t *idp = IDP( dp ) ;
++	register __sio_id_t *idp ;
+ 	register int b_transferred ;
+ 	int b_read ;
+ 	int total_b_transferred ;
+@@ -182,6 +184,7 @@
+ #endif
+ 
+ 	IO_SETUP( fd, dp, __SIO_INPUT_STREAM, SIO_ERR ) ;
++	idp = IDP( dp ) ;
+ 	ASSERT( idp->start <= idp->nextb && idp->nextb <= idp->end ) ;
+ 
+ 	b_left = idp->end - idp->nextb ;
+@@ -230,7 +233,7 @@
+ 	int fd ;
+ {
+ 	register __sio_descriptor_t *dp = &__sio_descriptors[ fd ] ;
+-	register __sio_id_t *idp = IDP( dp ) ;
++	register __sio_id_t *idp ;
+ 	register char *cp ;
+ 	register char *line_start ;
+ 	register int b_left ;
+@@ -241,6 +244,7 @@
+ #endif
+ 
+ 	IO_SETUP( fd, dp, __SIO_INPUT_STREAM, NULL ) ;
++	idp = IDP( dp ) ;
+ 	ASSERT( idp->start <= idp->nextb && idp->nextb <= idp->end ) ;
+ 
+ #ifdef HAVE_MMAP
+@@ -339,13 +343,14 @@
+ 	int fd ;
+ {
+ 	register __sio_descriptor_t *dp = &__sio_descriptors[ fd ] ;
+-	register __sio_id_t *idp = IDP( dp ) ;
++	register __sio_id_t *idp ;
+ 
+ #ifdef EVENTS
+ 	EVENT( fd, EV_SGETC ) ;
+ #endif
+ 
+ 	IO_SETUP( fd, dp, __SIO_INPUT_STREAM, SIO_ERR ) ;
++	idp = IDP( dp ) ;
+ 	ASSERT( idp->start <= idp->nextb && idp->nextb <= idp->end ) ;
+ 	if ( idp->nextb >= idp->end )
+ 	{
+@@ -365,7 +370,7 @@
+ 	long *lenp ;
+ {
+ 	register __sio_descriptor_t *dp = &__sio_descriptors[ fd ] ;
+-	register __sio_id_t *idp = IDP( dp ) ;
++	register __sio_id_t *idp ;
+ 	register int b_read ;
+ 	register char *p ;
+ 
+@@ -374,6 +379,7 @@
+ #endif
+ 
+ 	IO_SETUP( fd, dp, __SIO_INPUT_STREAM, NULL ) ;
++	idp = IDP( dp ) ;
+ 	ASSERT( idp->start <= idp->nextb && idp->nextb <= idp->end ) ;
+ 	if ( idp->nextb >= idp->end )
+ 	{
+@@ -406,20 +412,29 @@
+ 	int type ;
+ {
+ 	register __sio_descriptor_t *dp = &__sio_descriptors[ fd ] ; 
+-	register __sio_id_t *idp = IDP( dp ) ;
++	register __sio_id_t *idp ;
+ 	int retval = 0 ;
+ 
+ #ifdef EVENTS
+ 	EVENT( fd, EV_SUNDO ) ;
+ #endif
+ 
++	if ( fd >= __sio_n_descriptors ) {
++		errno = EBADF ;
++		return( SIO_ERR ) ;
++	}
++
+ 	CONTROL_SETUP( dp, __SIO_INPUT_STREAM, SIO_ERR ) ;
+ 
+ 	/*
+ 	 * Undo works only for fd's used for input
+ 	 */
+-	if ( dp->stream_type != __SIO_INPUT_STREAM )
++	if ( dp->stream_type != __SIO_INPUT_STREAM ) {
++		errno = EINVAL ;
+ 		return( SIO_ERR ) ;
++	}
++
++	idp = IDP( dp ) ;
+ 
+ 	/*
+ 	 * Check if the operation makes sense; if so, do it, otherwise ignore it
+@@ -442,6 +457,7 @@
+ 			break ;
+ 		
+ 		default:
++			errno = EINVAL ;
+ 			retval = SIO_ERR ;
+ 			break ;
+ 	}
+@@ -473,7 +489,7 @@
+    if ( fd == SIO_FLUSH_ALL )
+    {
+       for ( fd = 0, dp = __sio_descriptors ;
+-				fd < N_SIO_DESCRIPTORS ;
++				fd < __sio_n_descriptors ;
+ 				dp++, fd++ )
+          if ( DESCRIPTOR_INITIALIZED( dp ) &&
+ 							dp->stream_type == __SIO_OUTPUT_STREAM )
+@@ -482,6 +498,11 @@
+    }
+    else
+    {
++      if ( fd >= __sio_n_descriptors ) {
++         errno = EBADF ;
++         return( SIO_ERR ) ;
++      }
++
+       dp = &__sio_descriptors[ fd ] ;
+ 
+ 		CONTROL_SETUP( dp, __SIO_OUTPUT_STREAM, SIO_ERR ) ;
+@@ -553,6 +574,11 @@
+ 	EVENT( in_fd, EV_STIE ) ;
+ #endif
+ 
++	if ( in_fd >= __sio_n_descriptors || out_fd >= __sio_n_descriptors ) {
++		errno = EBADF ;
++		return( SIO_ERR ) ;
++	}
++
+ 	/*
+ 	 * Check if the out_fd is open
+ 	 */
+@@ -621,6 +647,11 @@
+ #ifdef EVENTS
+ 	EVENT( fd, EV_SUNTIE ) ;
+ #endif
++
++	if ( fd >= __sio_n_descriptors ) {
++		errno = EBADF ;
++		return( SIO_ERR ) ;
++	}
+ 
+ 	CONTROL_SETUP( dp, __SIO_INPUT_STREAM, SIO_ERR ) ;
+ 	
+diff -urN xinetd-2.3.0.orig/libs/src/sio/sio.h xinetd-2.3.0/libs/src/sio/sio.h
+--- xinetd-2.3.0.orig/libs/src/sio/sio.h	Thu Jun 14 18:13:08 2001
++++ xinetd-2.3.0/libs/src/sio/sio.h	Thu Jul  5 05:34:32 2001
+@@ -56,9 +56,10 @@
+ {
+ 	/*
+ 	 * buf:		points to the buffer area.
+-	 *				When doing memory mapping, it is equal to the unit 
+-	 *				from which we are reading. When doing buffered I/O
+-	 *				it points to the primary buffer.
++	 *		When doing memory mapping, it is equal to the unit
++	 *		from which we are reading. When doing buffered I/O
++	 *		it points to the primary buffer. The auxiliary
++	 *		buffer is right below buf and is of the same size.
+ 	 */
+ 	char *buf ;
+ 	unsigned buffer_size ;
+@@ -130,13 +131,15 @@
+ /*
+  * The array of descriptors (as many as available file descriptors)
+  */
++extern int __sio_n_descriptors ;
+ extern __sio_descriptor_t *__sio_descriptors ;
+ 
+ 
+ /*
+  * Internally used macros
+  */
+-#define __SIO_FD_INITIALIZED( fd )	(__sio_descriptors[ fd ].initialized)
++#define __SIO_FD_INITIALIZED( fd ) \
++	(fd < __sio_n_descriptors && __sio_descriptors[ fd ].initialized)
+ #define __SIO_ID( fd )	(__sio_descriptors[ fd ].descriptor.input_descriptor)
+ #define __SIO_OD( fd )	(__sio_descriptors[ fd ].descriptor.output_descriptor)
+ #define __SIO_MUST_FLUSH( od, ch )				\
+@@ -227,8 +230,18 @@
+  */
+ int Swrite ( int fd, char *buf, int nbytes );
+ int Sputc  ( int fd, char c ) ;
+-int Sprint ( int fd, register char *format, ... ) ;
+-int Sprintv ( int fd, char *format, va_list ap ) ;
++int Sprint ( int fd, register char *format, ... )
++#ifdef __GNUC__
++	__attribute__ ((format (printf, 2, 3)));
++#else
++	;
++#endif
++int Sprintv ( int fd, char *format, va_list ap )
++#ifdef __GNUC__
++	__attribute__ ((format (printf, 2, 0)));
++#else
++	;
++#endif
+ 
+ /*
+  * other functions
+diff -urN xinetd-2.3.0.orig/libs/src/sio/sioconf.h xinetd-2.3.0/libs/src/sio/sioconf.h
+--- xinetd-2.3.0.orig/libs/src/sio/sioconf.h	Thu Jun 14 19:23:57 2001
++++ xinetd-2.3.0/libs/src/sio/sioconf.h	Thu Jul  5 03:51:29 2001
+@@ -88,7 +88,11 @@
+  */
+ #ifndef N_SIO_DESCRIPTORS
+ #include <sys/param.h>
++#ifdef OPEN_MAX
++#define N_SIO_DESCRIPTORS		OPEN_MAX
++#else
+ #define N_SIO_DESCRIPTORS		NOFILE
++#endif
+ #endif
+ 
+ 
+diff -urN xinetd-2.3.0.orig/libs/src/sio/siosup.c xinetd-2.3.0/libs/src/sio/siosup.c
+--- xinetd-2.3.0.orig/libs/src/sio/siosup.c	Thu Jun 14 19:01:54 2001
++++ xinetd-2.3.0/libs/src/sio/siosup.c	Thu Jul  5 07:25:44 2001
+@@ -25,7 +25,7 @@
+ #endif
+ 
+ static __sio_descriptor_t static_descriptor_array[ N_SIO_DESCRIPTORS ] ;
+-static int n_descriptors = N_SIO_DESCRIPTORS ;
++int __sio_n_descriptors = N_SIO_DESCRIPTORS ;
+ __sio_descriptor_t *__sio_descriptors = static_descriptor_array ;
+ 
+ PRIVATE void terminate(char *s);
+@@ -164,7 +164,7 @@
+ 		map_unit_size = page_size * PAGES_MAPPED ;
+ 		if ( map_unit_size < SIO_BUFFER_SIZE )
+ 		{
+-			if ( map_unit_size > 0 && SIO_BUFFER_SIZE % map_unit_size == 0 )
++			if ( map_unit_size != 0 && SIO_BUFFER_SIZE % map_unit_size == 0 )
+ 				map_unit_size = SIO_BUFFER_SIZE ;
+ 			else
+ 				map_unit_size = page_size ;
+@@ -309,7 +309,7 @@
+ 	 * If there is more, map it in the second unit.
+ 	 */
+ 	bytes_left = mapped_length - bytes_in_unit ;
+-	if ( bytes_left > 0 )
++	if ( bytes_left != 0 )
+ 	{
+ 		mdp->second_unit.addr 			= addr + bytes_in_unit ;
+ 		mdp->second_unit.mapped_bytes = bytes_left ;
+@@ -345,7 +345,7 @@
+ 	EVENT( fd, EV_MAP_UNIT ) ;
+ #endif
+ 
+-	if ( bytes_to_map > 0 )
++	if ( bytes_to_map != 0 )
+ 	{
+ 		if ( SIO_MMAP( mup->addr, bytes_to_map,
+ 															fd, mdp->file_offset ) == MAP_FAILED )
+@@ -515,6 +515,12 @@
+ 	EVENT( fd, EV_SIO_INIT ) ;
+ #endif
+ 
++	if ( fd >= __sio_n_descriptors )
++	{
++		errno = EBADF ;
++		return( SIO_ERR ) ;
++	}
++
+ 	if ( fstat( fd, &st ) == -1 )
+ 		return( SIO_ERR ) ;
+ 
+@@ -819,7 +825,7 @@
+ 	EVENT( fd, EV_SDONE ) ;
+ #endif
+ 
+-	if ( ! DESCRIPTOR_INITIALIZED( dp ) )
++	if ( fd >= __sio_n_descriptors || ! DESCRIPTOR_INITIALIZED( dp ) )
+ 	{
+ 		errno = EBADF ;
+ 		return( SIO_ERR ) ;
+@@ -893,18 +899,26 @@
+ 
+ PRIVATE int get_fd_limit(void)
+ {
++	int max;
+ #ifdef RLIMIT_NOFILE
++	struct rlimit rl;
++#endif
+ 
+-	struct rlimit rl ;
+-
+-	(void) getrlimit( RLIMIT_NOFILE, &rl ) ;
+-	return( rl.rlim_cur ) ;
+-
++#ifdef _SC_OPEN_MAX
++	max = sysconf(_SC_OPEN_MAX);
++	if (max < N_SIO_DESCRIPTORS)
++		max = N_SIO_DESCRIPTORS;
+ #else
++	max = N_SIO_DESCRIPTORS;
++#endif
+ 
+-	return( N_SIO_DESCRIPTORS ) ;
+-
++#ifdef RLIMIT_NOFILE
++	/* No need to waste memory on fd's this process can't obtain */
++	if (getrlimit(RLIMIT_NOFILE, &rl) == 0 && max > rl.rlim_max)
++		max = rl.rlim_max;
+ #endif
++
++	return max;
+ }
+ 
+ /*
+@@ -921,11 +935,11 @@
+ 	unsigned new_size, old_size ;
+ 	int n_fds = get_fd_limit() ;
+ 
+-	if ( n_fds <= n_descriptors )
++	if ( n_fds <= __sio_n_descriptors )
+ 		return( 0 ) ;
+ 
+ #ifdef EVENTS
+-	old_size = n_descriptors * sizeof( events_s ) ;
++	old_size = __sio_n_descriptors * sizeof( events_s ) ;
+ 	new_size = n_fds * sizeof( events_s ) ;
+ 	is_static = ( __sio_events == static___sio_events ) ;
+ 	p = expand( (char *)__sio_events, old_size, new_size, is_static ) ;
+@@ -941,13 +955,13 @@
+ 	{
+ 		int i ;
+ 
+-		for ( i = n_descriptors ; i < n_fds ; i++ )
++		for ( i = __sio_n_descriptors ; i < n_fds ; i++ )
+ 			__sio_events[i].codes = NULL ;
+ 	}
+ #endif	/* EVENTS */
+ 
+ #ifdef HAVE_MMAP
+-	old_size = n_descriptors * sizeof( mapd_s ) ;
++	old_size = __sio_n_descriptors * sizeof( mapd_s ) ;
+ 	new_size = n_fds * sizeof( mapd_s ) ;
+ 	is_static = ( mmap_descriptors == static_mapd_array ) ;
+ 	p = expand( (char *)mmap_descriptors, old_size, new_size, is_static ) ;
+@@ -956,7 +970,7 @@
+ 	mmap_descriptors = (mapd_s *) p ;
+ #endif	/* HAVE_MMAP */
+ 	
+-	old_size = n_descriptors * sizeof( __sio_descriptor_t ) ;
++	old_size = __sio_n_descriptors * sizeof( __sio_descriptor_t ) ;
+ 	new_size = n_fds * sizeof( __sio_descriptor_t ) ;
+ 	is_static =  ( __sio_descriptors == static_descriptor_array ) ;
+ 	p = expand( (char *)__sio_descriptors, old_size, new_size, is_static ) ;
+@@ -964,7 +978,7 @@
+ 		return( SIO_ERR ) ;
+ 	__sio_descriptors = (__sio_descriptor_t *) p ;
+ 
+-	n_descriptors = n_fds ;
++	__sio_n_descriptors = n_fds ;
+ 	return( 0 ) ;
+ }
+ 
+@@ -1043,7 +1057,7 @@
+ 	bufentries -= range1 ;
+ 	ADD( evp->start, move_entries ) ;
+ 
+-	if ( bufentries == 0 || range2 == 0 )
++	if ( bufentries <= 0 || range2 == 0 )
+ 		return( cc_total ) ;
+ 
+ 	move_entries = MIN( range2, bufentries ) ;
+diff -urN xinetd-2.3.0.orig/libs/src/sio/sprint.c xinetd-2.3.0/libs/src/sio/sprint.c
+--- xinetd-2.3.0.orig/libs/src/sio/sprint.c	Thu Jan  1 06:55:09 1970
++++ xinetd-2.3.0/libs/src/sio/sprint.c	Thu Jul  5 02:14:41 2001
+@@ -30,6 +30,7 @@
+ #define S_NULL_LEN			6
+ 
+ #define FLOAT_DIGITS			6
++#define MAX_FLOAT_DIGITS		17
+ #define EXPONENT_LENGTH			10
+ 
+ /*
+@@ -103,7 +104,7 @@
+  */
+ #define FIX_PRECISION( adjust, precision, s, s_len )			\
+ 	if ( adjust )							\
+-		while ( s_len < precision )				\
++		while ( s_len < precision && s_len < NUM_BUF_SIZE - 2 )	\
+ 		{							\
+ 			*--s = '0' ;					\
+ 			s_len++ ;					\
+@@ -139,11 +140,12 @@
+ int Sprint( int fd, char *fmt, ...) 
+ {
+ 	__sio_descriptor_t *dp = &__sio_descriptors[ fd ] ;
+-	__sio_od_t *odp = ODP( dp ) ;
++	__sio_od_t *odp ;
+ 	int cc ;
+ 	va_list ap ;
+ 
+ 	IO_SETUP( fd, dp, __SIO_OUTPUT_STREAM, SIO_ERR ) ;
++	odp = ODP( dp ) ;
+ 
+ 	va_start( ap, fmt ) ;
+ 	cc = __sio_converter( odp, fd, fmt, ap ) ;
+@@ -158,9 +160,10 @@
+ int Sprintv( int fd, char *fmt, va_list ap)
+ {
+ 	__sio_descriptor_t *dp = &__sio_descriptors[ fd ] ;
+-	__sio_od_t *odp = ODP( dp ) ;
++	__sio_od_t *odp ;
+ 
+ 	IO_SETUP( fd, dp, __SIO_OUTPUT_STREAM, SIO_ERR ) ;
++	odp = ODP( dp ) ;
+ 	return( __sio_converter( odp, fd, fmt, ap ) ) ;
+ }
+ 
+@@ -178,7 +181,10 @@
+ 	char *s = buf ;
+ 	char *p = NULL ;
+ 	int decimal_point ;
+-		
++
++	if ( precision > MAX_FLOAT_DIGITS )
++		precision = MAX_FLOAT_DIGITS ;
++
+ 	if ( format == 'f' )
+ 		p = (char *)fcvt( num, precision, &decimal_point, is_negative ) ;
+ 	else /* either e or E format */
+@@ -455,13 +461,9 @@
+ 				}
+ 				else
+ 					adjust_width = NO ;
+-				
++
+ 				/*
+-				 * Check if a precision was specified
+-				 *
+-				 * XXX: an unreasonable amount of precision may be specified
+-				 *		  resulting in overflow of num_buf. Currently we
+-				 *		  ignore this possibility.
++				 * Check if a precision was specified.
+ 				 */
+ 				if ( *fmt == '.' )
+ 				{
+@@ -608,6 +610,8 @@
+ 						precision = FLOAT_DIGITS ;
+ 					else if ( precision == 0 )
+ 						precision = 1 ;
++					if ( precision > MAX_FLOAT_DIGITS )
++						precision = MAX_FLOAT_DIGITS ;
+ 					/*
+ 					 * We use &num_buf[ 1 ], so that we have room for the sign
+ 					 */
+@@ -725,8 +729,12 @@
+ 				s++ ;
+ 			}
+ 
++			/*
++			 * Ignore pad_char for right padding, as padding
++			 * with zeroes would produce a different number.
++			 */
+ 			if ( adjust_width && adjust == LEFT && min_width > s_len )
+-				PAD( min_width, s_len, pad_char ) ;
++				PAD( min_width, s_len, ' ' ) ;
+ 		}
+ 		fmt++ ;
+ 	}
+diff -urN xinetd-2.3.0.orig/libs/src/str/str.h xinetd-2.3.0/libs/src/str/str.h
+--- xinetd-2.3.0.orig/libs/src/str/str.h	Sat Jun 16 18:22:03 2001
++++ xinetd-2.3.0/libs/src/str/str.h	Sat Jul  7 08:18:45 2001
+@@ -14,25 +14,36 @@
+ 
+ #include <stdarg.h>
+ 
++#ifdef __GNUC__
++#define PRINTF_FORMAT(n, m) \
++	__attribute__ ((format (printf, n, m)))
++#else
++#define PRINTF_FORMAT(n, m)
++#endif
+ 
+ /*
+  * strprint(3) functions
+  */
+-char *str_sprint ( char *buf, char *fmt, ... ) ;
+-int str_nprint ( char *buf, char *fmt, ... ) ;
+-void str_print ( int *count, char *buf, char *fmt, ... ) ;
++char *str_sprint ( char *buf, char *fmt, ... ) PRINTF_FORMAT(2, 3);
++int str_nprint ( char *buf, char *fmt, ... ) PRINTF_FORMAT(2, 3);
++void str_print ( int *count, char *buf, char *fmt, ... ) PRINTF_FORMAT(3, 4);
+ 
+-char *str_sprintv ( char *buf, char *fmt, va_list ) ;
+-int str_nprintv ( char *buf, char *fmt, va_list ) ;
+-void str_printv ( int *count, char *buf, char *fmt, va_list ) ;
++char *str_sprintv ( char *buf, char *fmt, va_list ) PRINTF_FORMAT(2, 0);
++int str_nprintv ( char *buf, char *fmt, va_list ) PRINTF_FORMAT(2, 0);
++void str_printv ( int *count, char *buf, char *fmt, va_list )
++	PRINTF_FORMAT(3, 0);
+ 
+-char *strx_sprint ( char *buf, int len, char *fmt, ... ) ;
+-int strx_nprint ( char *buf, int len, char *fmt, ... ) ;
+-void strx_print ( int *count, char *buf, int len, char *fmt, ... ) ;
++char *strx_sprint ( char *buf, int len, char *fmt, ... ) PRINTF_FORMAT(3, 4);
++int strx_nprint ( char *buf, int len, char *fmt, ... ) PRINTF_FORMAT(3, 4);
++void strx_print ( int *count, char *buf, int len, char *fmt, ... )
++	PRINTF_FORMAT(4, 5);
+ 
+-char *strx_sprintv ( char *buf, int len, char *fmt, va_list ) ;
+-int strx_nprintv ( char *buf, int len, char *fmt, va_list ) ;
+-void strx_printv ( int *cnt, char *buf, int len, char *fmt, va_list ) ;
++char *strx_sprintv ( char *buf, int len, char *fmt, va_list )
++	PRINTF_FORMAT(3, 0);
++int strx_nprintv ( char *buf, int len, char *fmt, va_list )
++	PRINTF_FORMAT(3, 0);
++void strx_printv ( int *cnt, char *buf, int len, char *fmt, va_list )
++	PRINTF_FORMAT(4, 0);
+ 
+ 
+ /*
+diff -urN xinetd-2.3.0.orig/libs/src/str/strprint.3 xinetd-2.3.0/libs/src/str/strprint.3
+--- xinetd-2.3.0.orig/libs/src/str/strprint.3	Mon May 14 23:06:01 2001
++++ xinetd-2.3.0/libs/src/str/strprint.3	Thu Jul  5 00:11:43 2001
+@@ -97,10 +97,14 @@
+ is that the latter take an extra argument, the size of the buffer, so
+ that they will never write beyond the end of the buffer. Writing
+ beyond the end of the buffer is possible with the \fIstr_*\fR functions.
+-Invoking any of the \fIstrx_*\fR functions with the
++Previously, invoking any of the \fIstrx_*\fR functions with the
+ .I len
+ argument set to 0
+-is the same as calling the equivalent \fIstr_*\fR function.
++used to be the same as calling the equivalent \fIstr_*\fR function.
++This dangerous behavior has since been changed and now the \fIstrx_*\fR
++functions don't touch the buffer when
++.I len
++is 0 or negative.
+ .LP
+ All functions will append a
+ .SM NUL
+diff -urN xinetd-2.3.0.orig/libs/src/str/strprint.c xinetd-2.3.0/libs/src/str/strprint.c
+--- xinetd-2.3.0.orig/libs/src/str/strprint.c	Wed Jun 27 07:19:05 2001
++++ xinetd-2.3.0/libs/src/str/strprint.c	Wed Jul  4 22:45:26 2001
+@@ -78,7 +78,6 @@
+ 	va_list ap ;
+ 
+ 	if (len <= 0) {
+-		*buf = 0;
+ 		return buf;
+ 	}
+ 	va_start( ap, format ) ;
+@@ -95,7 +94,6 @@
+ 	va_list ap ;
+ {
+ 	if (len <= 0) {
+-		*buf = 0;
+ 		return buf;
+ 	}
+ 	strx_printv( INT_NULL, buf, len, format, ap ) ;
+@@ -109,7 +107,6 @@
+ 	va_list ap ;
+ 
+ 	if (len <= 0) {
+-		*buf = 0;
+ 		return 0;
+ 	}
+ 	va_start( ap, format ) ;
+@@ -124,7 +121,6 @@
+ 	int cc ;
+ 
+ 	if (len <= 0) {
+-		*buf = 0;
+ 		return 0;
+ 	}
+ 	strx_printv( &cc, buf, len, format, ap ) ;
+diff -urN xinetd-2.3.0.orig/libs/src/timer/ostimer.c xinetd-2.3.0/libs/src/timer/ostimer.c
+--- xinetd-2.3.0.orig/libs/src/timer/ostimer.c	Tue Jun  5 19:12:48 2001
++++ xinetd-2.3.0/libs/src/timer/ostimer.c	Fri Jul 13 16:59:23 2001
+@@ -53,7 +53,11 @@
+ 
+ #ifndef NO_TERMINATION
+ 
+-PRIVATE void terminate( char *fmt, ... )
++PRIVATE void
++#ifdef __GNUC__
++__attribute__ ((format (printf, 1, 2)))
++#endif
++terminate( char *fmt, ... )
+ {
+    va_list ap ;
+ 
+@@ -110,9 +114,12 @@
+  *			the timer functions are running. Is there a good reason for this ?
+  *			(probably because we have to allow interrupts of other timer types).
+  */
+-static int call_level ;
+-static int have_env ;
+-static jmp_buf ret_env ;
++#ifndef __sig_atomic_t_defined
++#define __sig_atomic_t int
++#endif
++static volatile __sig_atomic_t call_level ;
++static volatile __sig_atomic_t have_env ;
++static sigjmp_buf ret_env ;
+ 
+ #define MAX_EXPIRED					20
+ 
+@@ -240,9 +247,9 @@
+ 		if ( __timer_invoke( tp ) != DESTROYED &&
+ 					! have_env && ( tp->t_action.ta_flags & TIMER_LONGJMP ) )
+ 		{
+-			(void) memcpy( (char *)ret_env,
+-						(char *)tp->t_action.ta_env, sizeof( jmp_buf ) ) ;
+ 			have_env = TRUE ;
++			(void) memcpy(&ret_env,
++				&tp->t_action.ta_env, sizeof( ret_env ) ) ;
+ 		}
+    }
+ 
+@@ -254,7 +261,7 @@
+ 	if ( call_level == 0 && have_env )
+ 	{
+ 		have_env = FALSE ;
+-		longjmp( ret_env, 1 ) ;
++		siglongjmp( ret_env, 1 ) ;
+ 	}
+ }
+ 
+@@ -275,7 +282,7 @@
+ 	if ( __timer_invoke( tp ) != DESTROYED &&
+ 				call_level == 0 && ! have_env &&
+ 							( tp->t_action.ta_flags & TIMER_LONGJMP ) )
+-		longjmp( tp->t_action.ta_env, 1 ) ;
++		siglongjmp( tp->t_action.ta_env, 1 ) ;
+ }
+ 
+ 
+diff -urN xinetd-2.3.0.orig/libs/src/timer/timer.3 xinetd-2.3.0/libs/src/timer/timer.3
+--- xinetd-2.3.0.orig/libs/src/timer/timer.3	Mon May 14 23:06:01 2001
++++ xinetd-2.3.0/libs/src/timer/timer.3	Thu Jul  5 01:36:16 2001
+@@ -160,7 +160,7 @@
+ (*ta_func)() ;
+ .IP void
+ *ta_arg ;
+-.IP jmp_buf
++.IP sigjmp_buf
+ ta_env ;
+ .RE
+ } ;
+@@ -205,7 +205,7 @@
+ of the same type will be blocked while the function is running.
+ .TP
+ .SB TIMER_LONGJMP
+-A longjmp(3) will be performed using
++A siglongjmp(3) will be performed using
+ .I ta_env
+ after the action associated with the timer is performed.
+ .LP
+diff -urN xinetd-2.3.0.orig/libs/src/timer/timer_defs.h xinetd-2.3.0/libs/src/timer/timer_defs.h
+--- xinetd-2.3.0.orig/libs/src/timer/timer_defs.h	Mon May 14 23:06:01 2001
++++ xinetd-2.3.0/libs/src/timer/timer_defs.h	Thu Jul  5 01:32:36 2001
+@@ -51,7 +51,7 @@
+ 	int		ta_flags ;
+ 	void		(*ta_func)() ;
+ 	void		*ta_arg ;
+-	jmp_buf	ta_env ;
++	sigjmp_buf	ta_env ;
+ };
+ 
+ typedef void *timer_h ;
+diff -urN xinetd-2.3.0.orig/libs/src/xlog/util.c xinetd-2.3.0/libs/src/xlog/util.c
+--- xinetd-2.3.0.orig/libs/src/xlog/util.c	Sat Jun 16 18:24:41 2001
++++ xinetd-2.3.0/libs/src/xlog/util.c	Thu Jul  5 06:32:41 2001
+@@ -38,21 +38,8 @@
+ 
+ char *__xlog_explain_errno( char *buf, unsigned *size )
+ {
+-	strx_nprint(buf, *size, "%s (errno = %d)", strerror(errno), errno);
+-#if 0
+-	if ( errno < sys_nerr )
+-	{
+-		register int len ;
+-
+-		(void) strncpy( buf, strerror( errno ), (int)*size ) ;
+-		for ( len = 0 ; len < *size ; len++ )
+-			if ( buf[ len ] == NUL )
+-				break ;
+-		*size = len ;
+-	}
+-	else
+-		(void) strx_nprint( buf, *size, "errno = %d", errno ) ;
+-#endif
++	strx_print((int *)size, buf, *size,
++		"%s (errno = %d)", strerror(errno), errno);
+ 	return( buf ) ;
+ }
+ 
+diff -urN xinetd-2.3.0.orig/xinetd/CHANGELOG xinetd-2.3.0/xinetd/CHANGELOG
+--- xinetd-2.3.0.orig/xinetd/CHANGELOG	Fri Jun 29 20:20:48 2001
++++ xinetd-2.3.0/xinetd/CHANGELOG	Thu Jul  5 08:27:43 2001
+@@ -568,3 +568,7 @@
+ 2.3.0
+ 	Fixed a bounds checking case in str* functions.
+ 		Pointed out by Sebastian Krahmer.
++2.3.0-2owl
++	Applied _many_ security and reliability fixes (in fact so many
++	that there have to be new bugs as well and testing is needed),
++	see AUDIT. -Solar Designer
+diff -urN xinetd-2.3.0.orig/xinetd/addr.c xinetd-2.3.0/xinetd/addr.c
+--- xinetd-2.3.0.orig/xinetd/addr.c	Sat Jun 16 15:39:53 2001
++++ xinetd-2.3.0/xinetd/addr.c	Thu Jul  5 06:47:00 2001
+@@ -18,6 +18,7 @@
+ #include <stdlib.h>
+ #include <unistd.h>
+ #include <sys/param.h>
++#include <assert.h>
+ #include "config.h"
+ #if defined(HAVE_ARPA_INET_H)
+ #include <arpa/inet.h>
+@@ -87,8 +88,7 @@
+    int i;
+    int bytes = bits/8;
+    int remain = bits - (bytes * 8);
+-   char *func = "xsetmask";
+-   
++
+    bzero(mask, len);
+ 
+    /* This may be wrong for bigendian... */
+@@ -205,7 +205,7 @@
+          struct hostent *hep = NULL;
+          char *hname = NULL;
+       
+-         hep = gethostbyaddr((char *)addr, 4, AF_INET);
++         hep = gethostbyaddr((char *)addr, sizeof(struct in_addr), AF_INET);
+          if( hep == NULL ) {
+             if( memcmp(&remote_addr, &(cap->addr), sizeof(cap->addr)) == 0 )
+                return TRUE;
+@@ -227,7 +227,8 @@
+             if( hcp != NULL ) {
+                int j;
+                for( j=0; hcp->h_addr_list[j] != NULL; j++){
+-                  if( memcmp( (struct in_addr *)hcp->h_addr_list[j], hep->h_addr, 4) == 0 )
++                  if( memcmp( hcp->h_addr_list[j], hep->h_addr,
++                      sizeof(struct in_addr) ) == 0 )
+                      return TRUE ;
+                }
+             }
+@@ -249,7 +250,9 @@
+ void addrlist_dump( pset_h addr_list, int fd )
+ {
+    unsigned u, num ;
++#ifndef INET6
+    struct in_addr inaddr ;
++#endif
+ 
+    num = pset_count( addr_list );
+    for ( u = 0 ; u < num ; u++ )
+@@ -259,8 +262,6 @@
+ 
+ #ifndef INET6
+       inaddr.s_addr = htonl(cap->addr) ;
+-#else
+-      memcpy(&inaddr, &(cap->addr), sizeof(cap->addr));
+ #endif
+ 
+       if ( cap->addr_type == NUMERIC_ADDR )
+@@ -368,29 +369,25 @@
+ PRIVATE result_e explicit_mask( char *str_addr, statfunc op, pset_h addr_list)
+ {
+    struct comp_addr         ca ;
+-   char newaddr[16];
+    int val;
+-   unsigned a, b, c, d; 
+-   int mask;
+-   char tmpaddr[MAXHOSTNAMELEN+1];
++   unsigned mask;
++#ifndef INET6
++   char newaddr[16];
++   unsigned a, b, c, d;
+    struct in_addr t_addr;
++#endif
+ 
+    if (strchr(str_addr, '{'))  /* Don't even try factorized */
+       return CANT_PARSE ;
+-   strncpy(tmpaddr, str_addr, sizeof(tmpaddr)-1);
+-   tmpaddr[sizeof(tmpaddr)-1] = '\0';
++
+ #ifdef INET6
+ {
+    char saddr[INET6_ADDRSTRLEN];
+    char v6addr[46];
+    bzero(saddr, INET6_ADDRSTRLEN);
+ 
+-   /* Ugly hack, but sscanf doesn't like the '/' */
+-   for( a=0; a < strlen(tmpaddr); a++ ) {
+-      if( tmpaddr[a] == '/' )
+-         tmpaddr[a] = ' ';
+-   }
+-   val = sscanf(tmpaddr, "%46s %d", saddr, &mask);
++   assert(sizeof(saddr) >= 46);
++   val = sscanf(str_addr, "%45[^/]/%u", saddr, &mask);
+ 
+    /* If v6 address fails, assume it is a v4 address, mapp it and try again */
+    if( inet_pton(AF_INET6, saddr, &ca.addr) != 1 ) {
+@@ -417,7 +414,7 @@
+    return( ( (*op)( addr_list, &ca ) == OK ) ? PARSED : ERROR ) ;
+ }
+ #else
+-   val = sscanf(tmpaddr, "%d.%d.%d.%d/%d", &a, &b, &c, &d, &mask);
++   val = sscanf(str_addr, "%u.%u.%u.%u/%u", &a, &b, &c, &d, &mask);
+    if( val < 5 )
+       return CANT_PARSE ;
+ 
+@@ -439,18 +436,16 @@
+    }
+    else
+    {
+-      uint32_t i, n;
++      uint32_t i;
++      unsigned n;
+ 
+       ca.addr_type = NET_ADDR ;
+-   
+-      /* this is binary 100000000000000000000000000000000 */
+-      /* i = 2147483648; */
+-      /* A much more reliable method */
+-      i = ( 1 << ((sizeof(i)*8)-1));
++
++      i = 0x80000000U;
+       ca.mask = 0;
+ 
+       /* Go through and set each bit to 1 */
+-      for( n=mask; n > 0 ; n--)
++      for( n=mask; n != 0 ; n--)
+       {
+          ca.mask |= i;
+          i /= 2;
+@@ -472,7 +467,10 @@
+  */
+ PRIVATE result_e net_addr( char *str_addr, statfunc op, pset_h addr_list )
+ {
+-
++#ifdef INET6
++   /* Not yet implemented */
++   return(CANT_PARSE);
++#else
+    /*
+     *
+     *  The following table demonstrates how the mask is determined
+@@ -486,7 +484,7 @@
+     *        10000       FFFFFF   FFFFFF00
+     *        1000000     FFFFFFFF FFFFFFFF
+     */
+-   static struct { int lim, mask, shift ; } net_to_mask[] =
++   static struct { uint32_t lim, mask, shift ; } net_to_mask[] =
+    {
+       { 0,            0xFF000000,   24  },
+       { 0xFF,         0xFFFF0000,   16  },
+@@ -499,16 +497,8 @@
+    uint32_t                 net_num ;
+    int                      i ;
+    char                     *func = "net_addr" ;
+-   char                     tmpaddr[MAXHOSTNAMELEN+1];
+ 
+-#ifdef INET6
+-   /* Not yet implemented */
+-   return(CANT_PARSE);
+-#else
+-
+-   strncpy(tmpaddr, str_addr, sizeof(tmpaddr)-1);
+-   tmpaddr[sizeof(tmpaddr)-1] = '\0';
+-   nep = getnetbyname( tmpaddr ) ;
++   nep = getnetbyname( str_addr ) ;
+    if ( nep == NULL || nep->n_addrtype != AF_INET || nep->n_net == 0 )
+       return( CANT_PARSE ) ;
+ 
+@@ -517,7 +507,7 @@
+       if ( net_to_mask[ i ].mask == 0 )
+       {
+          msg( LOG_CRIT, func,
+-            "INTERNAL ERROR: Cannot process net number %ld", net_num ) ;
++            "INTERNAL ERROR: Cannot process net number %u", net_num ) ;
+          return( ERROR ) ;
+       }
+       if ( net_to_mask[i].lim < net_num && net_num <= net_to_mask[i+1].lim )
+@@ -539,11 +529,14 @@
+                                status_e (*op)(), 
+                                pset_h addr_list )
+ {
++#ifdef INET6
++   /* Not yet implemented */
++   return CANT_PARSE;
++#else
+    uint32_t addr;
+    uint32_t mask ;
+    struct in_addr t_addr;
+    struct comp_addr ca ;
+-   char tmpaddr[MAXHOSTNAMELEN+1];
+ 
+    if (strchr(str_addr, '/')) /* Don't even try explicit masks */
+       return CANT_PARSE;
+@@ -552,14 +545,7 @@
+    if(strchr(str_addr, '{'))  /* Don't even try factorized */
+       return CANT_PARSE;
+ 
+-   strncpy(tmpaddr, str_addr, sizeof(tmpaddr)-1);
+-   tmpaddr[sizeof(tmpaddr)-1] = '\0';
+-#ifdef INET6
+-   /* Not yet implemented */
+-   return CANT_PARSE;
+-#else
+-
+-   if ( inet_aton( tmpaddr, &t_addr ) == 0)
++   if ( inet_aton( str_addr, &t_addr ) == 0)
+       return CANT_PARSE;
+ 
+    addr = ntohl(t_addr.s_addr);
+@@ -591,15 +577,10 @@
+  */
+ PRIVATE result_e host_addr( char *str_addr, status_e (*op)(), pset_h addr_list )
+ {
+-   struct hostent *hep ;
+-   struct comp_addr ca ;
+-   char **ap ;
+-   char tmpaddr[MAXHOSTNAMELEN+1];
+-
++   struct comp_addr ca;
+ 
+ #ifdef INET6
+    struct addrinfo hints, *res, *ressave;
+-   struct sockaddr_in6 remsa;
+    char v6addr[46];
+    int n;
+ 
+@@ -611,13 +592,10 @@
+    hints.ai_flags = AI_CANONNAME;
+    hints.ai_family = AF_INET6;
+ 
+-   strncpy(tmpaddr, str_addr, sizeof(tmpaddr)-1);
+-   tmpaddr[sizeof(tmpaddr)-1] = '\0';
+-
+-   if( (n = getaddrinfo(tmpaddr, NULL, &hints, &res)) < 0 ) {
++   if( (n = getaddrinfo(str_addr, NULL, &hints, &res)) < 0 ) {
+       hints.ai_family = AF_INET;
+ 
+-      if( (n = getaddrinfo(tmpaddr, NULL, &hints, &res)) < 0 ) 
++      if( (n = getaddrinfo(str_addr, NULL, &hints, &res)) < 0 ) 
+          return CANT_PARSE;
+ 
+       bzero(v6addr, 46);
+@@ -648,6 +626,9 @@
+    freeaddrinfo(res);
+    return( PARSED );
+ #else
++   struct hostent *hep;
++   char **ap;
++
+    if (strchr(str_addr, '/')) /* Don't even try explicit masks */
+       return CANT_PARSE;
+    if(strchr(str_addr, '{'))  /* Don't even try factorized */
+@@ -655,26 +636,25 @@
+    if(strchr(str_addr, ':'))  /* Don't even try IPv6 if machine is dual boot */
+       return CANT_PARSE;
+ 
+-   strncpy(tmpaddr, str_addr, sizeof(tmpaddr)-1);
+-   tmpaddr[sizeof(tmpaddr)-1] = '\0';
+-
+-   if( tmpaddr[0] == '.' ) {
++   if( str_addr[0] == '.' ) {
+       ca.addr_type = HOST_ADDR;
+-      strncpy(ca.name, tmpaddr, sizeof(ca.name)-1) ;
++      /* XXX: does this really need to be NUL-padded? */
++      strncpy(ca.name, str_addr, sizeof(ca.name)-1) ;
+       ca.name[sizeof(ca.name)-1] = '\0';
+       if ( (*op)( addr_list, &ca ) == FAILED )
+          return( ERROR ) ;
+       return( PARSED );
+    }
+ 
+-   hep = gethostbyname( tmpaddr ) ;
++   hep = gethostbyname( str_addr ) ;
+    if ( hep == NULL || hep->h_addrtype != AF_INET ) {
+       return( CANT_PARSE ) ;
+    }
+ 
+-   strncpy(ca.name, tmpaddr, sizeof(ca.name)-1) ;
++   /* XXX: does this really need to be NUL-padded? */
++   strncpy(ca.name, str_addr, sizeof(ca.name)-1) ;
+    ca.name[sizeof(ca.name)-1] = '\0';
+-   if( isdigit(tmpaddr[strlen(tmpaddr)-1]) ) 
++   if( str_addr[0] != NUL && isdigit(str_addr[strlen(str_addr)-1]) ) 
+       ca.addr_type = NUMERIC_ADDR;
+    else 
+       ca.addr_type = HOST_ADDR ;
+@@ -683,10 +663,13 @@
+    {
+       struct in_addr inaddr ;
+ 
++      if ( hep->h_length != sizeof(inaddr) )
++         return( CANT_PARSE ) ;
++
+       /*
+        * Copy the address to avoid alignment problems
+        */
+-      (void) memcpy( (char *) &inaddr, *ap, hep->h_length ) ;
++      (void) memcpy( &inaddr, *ap, sizeof(inaddr) ) ;
+ 
+       ca.addr = ntohl( inaddr.s_addr ) ; 
+       ca.mask = 0xFFFFFFFF ;
+@@ -709,6 +692,10 @@
+                                   status_e (*op)(), 
+                                   pset_h addr_list )
+ {
++#ifdef INET6
++   /* Not implemented */
++   return(CANT_PARSE);
++#else
+    char               *p ;
+    char               *fact_start ;
+    int                pass ;
+@@ -718,11 +705,6 @@
+    uint32_t           addr = 0 ;
+    struct comp_addr   ca ;
+    char               *func = "factorized_addr" ;
+-
+-#ifdef INET6
+-   /* Not implemented */
+-   return(CANT_PARSE);
+-#else
+ 
+    for ( p = str_addr ; *p != OPEN_CURLY_BRACKET ; last = *p++ )
+    {
+diff -urN xinetd-2.3.0.orig/xinetd/builtins.c xinetd-2.3.0/xinetd/builtins.c
+--- xinetd-2.3.0.orig/xinetd/builtins.c	Wed Jun 20 05:01:42 2001
++++ xinetd-2.3.0/xinetd/builtins.c	Thu Jul  5 07:06:36 2001
+@@ -46,7 +46,7 @@
+ PRIVATE void stream_servers(struct server *) ;
+ PRIVATE void stream_services(struct server *) ;
+ PRIVATE void xadmin_handler(struct server *) ;
+-PRIVATE int bad_port_check(struct sockaddr *);
++PRIVATE int bad_port_check(struct sockaddr *, char *);
+ 
+ /*
+  * SG - This is the call sequence to get to a built-in service
+@@ -121,12 +121,14 @@
+    int    descriptor = SERVER_FD( serp ) ;
+    struct service *svc = SERVER_SERVICE( serp ) ;;
+ 
+-   if( SVC_WAITS( svc ) )
++   if( SVC_WAITS( svc ) ) {
+       descriptor = accept(descriptor, NULL, NULL);
++      if ( descriptor == -1 ) return;
++   }
+ 
+    for ( ;; )
+    {
+-      cc = read( descriptor, buf, BUFFER_SIZE ) ;
++      cc = read( descriptor, buf, sizeof( buf ) ) ;
+       if ( cc == 0 )
+          break ;
+       if ( cc == -1 ) {
+@@ -143,14 +145,13 @@
+       close(descriptor);
+ }
+ 
+-/* For internal UDP services, make sure we don't respond to
+- * ports our ports on other servers.  This can cause looping.
++/* For internal UDP services, make sure we don't respond to our ports
++ * on other servers and to low ports of other services (such as DNS).
++ * This can cause looping.
+  */
+-PRIVATE int bad_port_check(struct sockaddr *sa)
++PRIVATE int bad_port_check( struct sockaddr *sa, char *func )
+ {
+-   uint16_t bad_ports[] = { 7, 9, 13, 19, 37, 0 };
+    uint16_t port = 0;
+-   int i;
+ 
+    if( ((struct sockaddr_in *)sa)->sin_family == AF_INET )
+       port = ntohs(((struct sockaddr_in *)sa)->sin_port);
+@@ -158,13 +159,13 @@
+    else if( ((struct sockaddr_in6 *)sa)->sin6_family == AF_INET6 )
+       port = ntohs(((struct sockaddr_in6 *)sa)->sin6_port);
+ #endif
+-   else
+-      return(-1);
+ 
+-   for( i=0; bad_ports[i] != 0; i++ ) {
+-      if( port == bad_ports[i] ) {
+-         return (-1);
+-      }
++   if ( port < 1024 ) {
++      if( ((struct sockaddr_in *)sa)->sin_family == AF_INET )
++         msg(LOG_WARNING, func,
++            "Possible Denial of Service attack from %s %d",
++            xntoa(sa), port);
++      return (-1);
+    }
+ 
+    return (0);
+@@ -185,14 +186,7 @@
+ 
+    cc = recvfrom( descriptor, buf, sizeof( buf ), 0, SA( &lsin ), &sin_len ) ;
+    if ( cc != -1 ) {
+-      if( bad_port_check(SA(&lsin)) != 0 ) {
+-         if( ((struct sockaddr_in *)&lsin)->sin_family == AF_INET)
+-            msg(LOG_WARNING, func, 
+-            "Possible Denial of Service attack from %s %d",
+-            xntoa(SA(&lsin)), 
+-            ntohs(((struct sockaddr_in *)&lsin)->sin_port));
+-         return;
+-      }
++      if( bad_port_check(SA(&lsin), func) != 0 ) return;
+       (void) sendto( descriptor, buf, cc, 0, SA( &lsin ), sizeof( lsin ) ) ;
+    }
+ }
+@@ -204,8 +198,10 @@
+    int    descriptor = SERVER_FD( serp ) ;
+    struct service *svc = SERVER_SERVICE( serp ) ;;
+ 
+-   if( SVC_WAITS( svc ) )
++   if( SVC_WAITS( svc ) ) {
+       descriptor = accept(descriptor, NULL, NULL);
++      if ( descriptor == -1 ) return;
++   }
+    for ( ;; )
+    {
+       cc = read( descriptor, buf, sizeof( buf ) ) ;
+@@ -274,10 +270,12 @@
+    int    descriptor = SERVER_FD( serp ) ;
+    struct service *svc = SERVER_SERVICE( serp ) ;;
+ 
+-   if( SVC_WAITS( svc ) )
++   if( SVC_WAITS( svc ) ) {
+       descriptor = accept(descriptor, NULL, NULL);
++      if ( descriptor == -1 ) return;
++   }
+    daytime_protocol( time_buf, &buflen ) ;
+-   (void) write_buf( SERVER_FD( serp ), time_buf, buflen ) ;
++   (void) write_buf( descriptor, time_buf, buflen ) ;
+    if( SVC_WAITS( svc ) )
+       close(descriptor);
+ }
+@@ -300,17 +298,10 @@
+             SA( &lsin ), &sin_len ) == -1 )
+       return ;
+ 
+-   if( bad_port_check(SA(&lsin)) != 0 ) {
+-      if( ((struct sockaddr_in *)&lsin)->sin_family == AF_INET )
+-         msg(LOG_WARNING, func, 
+-            "Possible Denial of Service attack from %s %d", 
+-            xntoa(SA(&lsin)), 
+-            ntohs(((struct sockaddr_in *)&lsin)->sin_port));
+-      return;
+-   }
++   if( bad_port_check(SA(&lsin), func) != 0 ) return;
+ 
+    daytime_protocol( time_buf, &buflen ) ;
+-   
++
+    (void) sendto( descriptor, time_buf, buflen, 0, SA(&lsin), sizeof( lsin ) ) ;
+ }
+ 
+@@ -318,29 +309,35 @@
+ #define TIME_OFFSET         2208988800UL
+ 
+ /*
+- * We always report the time using network-byte-order
++ * We always report the time as 32 bits in network-byte-order
+  */
+-PRIVATE void time_protocol( time_t *timep )
++PRIVATE void time_protocol( unsigned char *timep )
+ {
+    time_t now ;
++   unsigned long base1900;
+ 
+    (void) time( &now ) ;
+-   *timep = now + TIME_OFFSET ;
+-   *timep = htonl( *timep ) ;
++   base1900 = (unsigned long)now + TIME_OFFSET ;
++   timep[0] = base1900 >> 24;
++   timep[1] = base1900 >> 16;
++   timep[2] = base1900 >> 8;
++   timep[3] = base1900;
+ }
+ 
+ 
+ PRIVATE void stream_time( struct server *serp )
+ {
+-   time_t now ;
++   unsigned char time_buf[4];
+    int descriptor = SERVER_FD( serp );
+    struct service *svc = SERVER_SERVICE( serp );
+ 
+-   if( SVC_WAITS( svc ) )
++   if( SVC_WAITS( svc ) ) {
+       descriptor = accept(descriptor, NULL, NULL);
++      if ( descriptor == -1 ) return;
++   }
+ 
+-   time_protocol( &now ) ;
+-   (void) write_buf( descriptor, (char *) &now, sizeof( now ) ) ;
++   time_protocol( time_buf ) ;
++   (void) write_buf( descriptor, (char *) time_buf, 4 ) ;
+ 
+    if( SVC_WAITS( svc ) )
+       close(descriptor);
+@@ -350,7 +347,7 @@
+ PRIVATE void dgram_time( struct server *serp )
+ {
+    char     buf[ 1 ] ;
+-   time_t   now ;
++   unsigned char time_buf[4];
+ #ifdef INET6
+    struct sockaddr_in6 lsin ;
+ #else
+@@ -363,17 +360,10 @@
+    if ( recvfrom( fd, buf, sizeof( buf ), 0, SA( &lsin ), &sin_len ) == -1 )
+       return ;
+ 
+-   if( bad_port_check(SA(&lsin)) != 0 ) {
+-      if( ((struct sockaddr_in *)&lsin)->sin_family == AF_INET )
+-         msg(LOG_WARNING, func, 
+-            "Possible Denial of Service attack from %s %d", 
+-            xntoa(SA(&lsin)), 
+-            ntohs(((struct sockaddr_in *)&lsin)->sin_port));
+-      return;
+-   }
++   if( bad_port_check(SA(&lsin), func) != 0 ) return;
+ 
+-   time_protocol( &now ) ;
+-   (void) sendto( fd, (char *) &now, sizeof( now ), 0, SA( &lsin ), sin_len ) ;
++   time_protocol( time_buf ) ;
++   (void) sendto( fd, (char *) time_buf, 4, 0, SA( &lsin ), sin_len ) ;
+ }
+ 
+ 
+@@ -404,7 +394,7 @@
+       char *p ;
+ 
+       for ( p = ring_buf, ch = ASCII_START ;
+-            p < &ring_buf[ RING_BUF_SIZE ] ; p++ )
++            p <= &ring_buf[ RING_BUF_SIZE - 1 ] ; p++ )
+       {
+          *p = ch++ ;
+          if ( ch == ASCII_END )
+@@ -417,7 +407,7 @@
+    buf[ line_len+1 ] = '\n' ;
+ 
+    ring++ ;
+-   if ( &ring_buf[ RING_BUF_SIZE ] - ring < LINE_LENGTH )
++   if ( &ring_buf[ RING_BUF_SIZE - 1 ] - ring + 1 < LINE_LENGTH )
+       ring = ring_buf ;
+    return( buf ) ;
+ }
+@@ -429,8 +419,10 @@
+    int    descriptor = SERVER_FD( serp ) ;
+    struct service *svc = SERVER_SERVICE( serp );
+ 
+-   if( SVC_WAITS( svc ) )
++   if( SVC_WAITS( svc ) ) {
+       descriptor = accept(descriptor, NULL, NULL);
++      if ( descriptor == -1 ) return;
++   }
+ 
+    (void) shutdown( descriptor, 0 ) ;
+    for ( ;; )
+@@ -467,14 +459,7 @@
+    bad_variable = 1 ;      /* this will cause a compilation error */
+ #endif
+ 
+-   if( bad_port_check(SA(&lsin)) != 0 ) {
+-      if( ((struct sockaddr_in *)&lsin)->sin_family == AF_INET )
+-         msg(LOG_WARNING, func, 
+-            "Possible Denial of Service attack from %s %d", 
+-            xntoa(SA(&lsin)), 
+-            ntohs(((struct sockaddr_in *)&lsin)->sin_port));
+-      return;
+-   }
++   if( bad_port_check(SA(&lsin), func) != 0 ) return;
+ 
+    for ( p = buf ; left > 2 ; left -= len, p += len )
+    {
+@@ -665,6 +650,9 @@
+          }
+       }
+    }
++   /* XXX: NOTREACHED (the compiler agrees) */
++#if 0
+    Sprint(descriptor, "exiting\n");
+    Sflush(descriptor);
++#endif
+ }
+diff -urN xinetd-2.3.0.orig/xinetd/child.c xinetd-2.3.0/xinetd/child.c
+--- xinetd-2.3.0.orig/xinetd/child.c	Wed Jun 20 15:50:44 2001
++++ xinetd-2.3.0/xinetd/child.c	Thu Jul  5 02:33:14 2001
+@@ -241,20 +241,19 @@
+ #endif   /* ! NO_INITGROUPS */
+       }
+       else
+-         msg( LOG_WARNING, func, "can't change gid; not superuser" ) ;
++      {
++         msg( LOG_ERR, func,
++            "user or group specified, but not running as root" ) ;
++         _exit( 1 );
++      }
+    }
+ 
+    if ( SC_SPECIFIED( scp, A_USER ) ) {
+-      if ( ps.ros.is_superuser )
++      if ( setuid( SC_UID( scp ) ) == -1 )
+       {
+-         if ( setuid( SC_UID( scp ) ) == -1 )
+-         {
+-            msg( LOG_ERR, func, "setuid failed: %m" ) ;
+-            _exit( 1 ) ;
+-         }
++         msg( LOG_ERR, func, "setuid failed: %m" ) ;
++         _exit( 1 ) ;
+       }
+-      else
+-         msg( LOG_WARNING, func, "can't change uid; not superuser" ) ;
+    }
+ 
+    if ( SC_SPECIFIED( scp, A_UMASK ) ) 
+@@ -353,7 +352,7 @@
+        *            <program_name> <service-id> interceptor
+        */
+       if ( SC_IS_INTERCEPTED( scp ) )
+-         strx_print( INT_NULL, name, sizeof( name ),
++         strx_print( INT_NULL, name, sizeof( name ) - 1,
+                            "%s %s interceptor", program_name, SC_ID( scp ) ) ;
+       else
+       {
+diff -urN xinetd-2.3.0.orig/xinetd/confparse.c xinetd-2.3.0/xinetd/confparse.c
+--- xinetd-2.3.0.orig/xinetd/confparse.c	Wed Jun 20 10:53:40 2001
++++ xinetd-2.3.0/xinetd/confparse.c	Thu Jul  5 02:19:23 2001
+@@ -57,7 +57,7 @@
+ 
+    if( SC_NAMEINARGS( scp ) ) {
+       if( !SC_SPECIFIED(scp, A_SERVER_ARGS ) ){
+-         msg(LOG_ERR, func, "Must specify server args if using NAMEINARGS flag\n");
++         msg(LOG_ERR, func, "Must specify server args if using NAMEINARGS flag");
+          return( FAILED );
+       }
+ 
+@@ -564,7 +564,7 @@
+    
+    if ( timeout )
+    {
+-      if ( setjmp( ta.ta_env ) )
++      if ( sigsetjmp( ta.ta_env, 1 ) )
+       {
+          parse_end() ;
+          return( FAILED ) ;
+diff -urN xinetd-2.3.0.orig/xinetd/connection.c xinetd-2.3.0/xinetd/connection.c
+--- xinetd-2.3.0.orig/xinetd/connection.c	Wed Jun 20 05:02:26 2001
++++ xinetd-2.3.0/xinetd/connection.c	Thu Jul  5 06:53:18 2001
+@@ -261,7 +261,11 @@
+ 
+    tabprint( fd, 1, "service = %s\n", SVC_ID( cp->co_sp ) ) ;
+    tabprint( fd, 1, "descriptor = %d\n", cp->co_descriptor ) ;
+-   tabprint( fd, 1, "flags = %#x\n", cp->co_flags ) ;
++#if defined(__GNUC__) && !defined(__arch64__) && !defined(__alpha__)
++   tabprint( fd, 1, "flags = %#llx\n", cp->co_flags ) ;
++#else
++   tabprint( fd, 1, "flags = %#lx\n", cp->co_flags ) ;
++#endif
+    tabprint( fd, 1, "remote_address = %s,%d\n",
+       inet_ntoa( cp->co_remote_address.sin_addr ),
+                               ntohs( cp->co_remote_address.sin_port ) ) ;
+@@ -269,7 +273,7 @@
+    for ( u = 0 ; u < cp->co_alternative_count ; u++ )
+       Sprint( fd, " %s", SVC_ID( cp->co_alternatives[ u ] ) ) ;
+    Sputchar( fd, '\n' ) ;
+-   if ( cp->co_alternative_count > 0 )
++   if ( cp->co_alternative_count != 0 )
+       tabprint( fd, 1, "next alternative service = %s\n",
+             SVC_ID( cp->co_alternatives[ cp->co_next_alternative ] ) ) ;
+ #endif
+diff -urN xinetd-2.3.0.orig/xinetd/defs.h xinetd-2.3.0/xinetd/defs.h
+--- xinetd-2.3.0.orig/xinetd/defs.h	Thu Jun 14 19:29:09 2001
++++ xinetd-2.3.0/xinetd/defs.h	Sat Jul  7 07:59:07 2001
+@@ -156,10 +156,17 @@
+ 
+ extern struct debug debug ;
+ 
+-void     tabprint( int fd, int tab_level, char *fmt, ...);
++void     tabprint( int fd, int tab_level, char *fmt, ...)
++#ifdef __GNUC__
++	__attribute__ ((format (printf, 3, 4)));
++#else
++	;
++#endif
+ void     no_control_tty();
+ status_e write_buf( int, char *, int );
+ void     drain( int );
++int      parse_int( char *, int, int, int * );
++int      parse_base10( char *, int * );
+ void     init_daemon( int argc, char *argv[] );
+ void     init_services();
+ void     enable_periodic_check( unsigned );
+diff -urN xinetd-2.3.0.orig/xinetd/env.c xinetd-2.3.0/xinetd/env.c
+--- xinetd-2.3.0.orig/xinetd/env.c	Mon May 14 23:06:01 2001
++++ xinetd-2.3.0/xinetd/env.c	Thu Jul  5 00:59:50 2001
+@@ -178,7 +178,7 @@
+                return( FAILED ) ;
+             
+             case ENV_EBADSTRING:
+-               msg( LOG_ERR, func, "Bad environment string: %s\n", p ) ;
++               msg( LOG_ERR, func, "Bad environment string: %s", p ) ;
+                break ;
+          }
+    }
+diff -urN xinetd-2.3.0.orig/xinetd/ident.c xinetd-2.3.0/xinetd/ident.c
+--- xinetd-2.3.0.orig/xinetd/ident.c	Fri Jun 15 05:42:39 2001
++++ xinetd-2.3.0/xinetd/ident.c	Sat Jul  7 08:42:17 2001
+@@ -44,7 +44,7 @@
+ static jmp_buf env ;
+ 
+ 
+-PRIVATE void sigalrm_handler()
++PRIVATE void sigalrm_handler( int signum )
+ {
+ 	longjmp( env, 1 ) ;
+ }
+@@ -158,8 +158,10 @@
+ 
+ 	if ( connect( sd, SA( &sin_contact ), sizeof( sin_contact ) ) == -1 )
+ 	{
+-		if ( timeout )
++		if ( timeout ) {
+ 			STOP_TIMER() ;
++			signal ( SIGALRM, SIG_DFL ) ;
++		}
+ 		return( IDR_NOSERVER ) ;
+ 	}
+ 
+@@ -167,19 +169,23 @@
+ 		"%d,%d\r\n", remote_port, local_port ) ;
+ 	if ( write_buf( sd, buf, cc ) == FAILED )
+ 	{
+-		if ( timeout )
++		if ( timeout ) {
+ 			STOP_TIMER() ;
++			signal ( SIGALRM, SIG_DFL ) ;
++		}
+ 		return( IDR_ERROR ) ;
+ 	}
+ 
+ 	p = get_line( sd, buf, sizeof( buf ) ) ;
+ 
+-	if ( timeout )
++	if ( timeout ) {
+ 		STOP_TIMER() ;
++		signal ( SIGALRM, SIG_DFL ) ;
++	}
+ 
+ 	if ( p == NULL )
+ 		return( IDR_RESPERR ) ;
+-	
++
+ 	/*
+ 	 * Verify that the received line is OK
+ 	 */
+@@ -201,6 +207,7 @@
+ {
+ 	char	*p ;
+ 	char	*start = line ;
++	int	port;
+ 
+ 	/*
+ 	 * Verify port numbers
+@@ -209,17 +216,23 @@
+ 	if ( p == NULL )
+ 		return( NULL ) ;
+ 	*p = NUL ;
+-	if ( atoi( start ) != remote_port )
++	if ( parse_base10( start, &port ) || port != remote_port ) {
++		*p = ',' ;
+ 		return( NULL ) ;
+-	
++	}
++	*p = ',' ;
++
+ 	start = p+1 ;
+ 	p = strchr( start, ':' ) ;
+ 	if ( p == NULL )
+ 		return( NULL ) ;
+ 	*p = NUL ;
+-	if ( atoi( start ) != local_port )
++	if ( parse_base10( start, &port ) || port != local_port ) {
++		*p = ':' ;
+ 		return( NULL ) ;
+-	
++	}
++	*p = ':' ;
++
+ 	/*
+ 	 * Look for the 'USERID' string
+ 	 */
+@@ -245,7 +258,7 @@
+ 		return( NULL ) ;
+ 	return( p ) ;
+ }
+-	
++
+ 
+ /*
+  * Get a line terminated by CR-LF.
+diff -urN xinetd-2.3.0.orig/xinetd/includedir.c xinetd-2.3.0/xinetd/includedir.c
+--- xinetd-2.3.0.orig/xinetd/includedir.c	Wed Jun 20 18:54:20 2001
++++ xinetd-2.3.0/xinetd/includedir.c	Thu Jul  5 01:02:04 2001
+@@ -17,6 +17,7 @@
+ #include "conf.h"
+ #include "parse.h"
+ #include "str.h"
++#include "defs.h"
+ 
+ #if !defined(NAME_MAX)
+ 	#ifdef FILENAME_MAX
+@@ -26,8 +27,11 @@
+ 	#endif
+ #endif
+ 
+-static int compfunc( char **a, char **b )
++static int compfunc( const void *_a, const void *_b )
+ {
++	char **a = (char **)_a;
++	char **b = (char **)_b;
++
+ 	if( a == NULL || a[0] == NULL )
+ 		return -1;
+ 	if( b == NULL || b[0] == NULL )
+@@ -56,7 +60,7 @@
+ 	len_sn = strlen(service_name);
+ 	filename = (char *)malloc(len_sn + NAME_MAX + 2);
+ 	if (! filename) {
+-		parsemsg( LOG_ERR, func, "includedir: Out of memory\n");
++		parsemsg( LOG_ERR, func, ES_NOMEM );
+ 		return;
+ 	}
+ 	dirfp = opendir(service_name);
+@@ -69,7 +73,7 @@
+ 	while ((direntry = readdir(dirfp))) {
+ 		storename = new_string(direntry->d_name);
+ 		if( storename == NULL ) {
+-			parsemsg( LOG_ERR, func, "Out of memory\n" );
++			parsemsg( LOG_ERR, func, ES_NOMEM );
+ 			return;
+ 		}
+ 		pset_add(dir_list, storename);
+@@ -99,7 +103,7 @@
+ 			service_name, storename);
+ 
+ 		if( lstat(filename, &sb) < 0 ) {
+-			parsemsg( LOG_ERR, func, "Unable to stat includedir file %s\n", filename);
++			parsemsg( LOG_ERR, func, "Unable to stat includedir file %s", filename);
+ 			continue;
+ 		}
+ 	
+diff -urN xinetd-2.3.0.orig/xinetd/inet.c xinetd-2.3.0/xinetd/inet.c
+--- xinetd-2.3.0.orig/xinetd/inet.c	Sat Jun 16 18:43:39 2001
++++ xinetd-2.3.0/xinetd/inet.c	Sat Jul  7 08:02:09 2001
+@@ -139,18 +139,19 @@
+          /* uh oh */
+       }
+ 
+-      rpcmin = atoi(rpcvers);
+-      if( (rpcmin == LONG_MIN) || (rpcmin == LONG_MAX) ) {
+-         pset_destroy(args);
+-         return -1;
+-         /* Uh oh */
+-      }
++      p = strchr(rpcvers, '-');
++      if( p && parse_int(rpcvers, 10, '-', &rpcmin) == 0 ) {
++         if( parse_base10(p + 1, &rpcmax) || rpcmin > rpcmax ) {
++            pset_destroy(args);
++            return -1;
++         }
++      } else {
++         if( parse_base10(rpcvers, &rpcmin) ) {
++            pset_destroy(args);
++            return -1;
++         }
+ 
+-      rpcmax = atoi(rpcvers+2);
+-      if( (rpcmax == LONG_MIN) || (rpcmax == LONG_MAX) ) {
+-         pset_destroy(args);
+-         return -1;
+-         /* Uh oh */
++         rpcmax = rpcmin;
+       }
+ 
+       /* now have min and max rpc versions */
+@@ -230,6 +231,7 @@
+       sc_free(scp);
+       return -1;
+    }
++   str_fill( pw->pw_passwd, ' ' );
+ 
+    scp->sc_uid = pw->pw_uid;
+    scp->sc_user_gid = pw->pw_gid;
+diff -urN xinetd-2.3.0.orig/xinetd/init.c xinetd-2.3.0/xinetd/init.c
+--- xinetd-2.3.0.orig/xinetd/init.c	Fri Jun 15 05:12:36 2001
++++ xinetd-2.3.0/xinetd/init.c	Thu Jul  5 05:14:43 2001
+@@ -31,10 +31,6 @@
+ #include "special.h"
+ #include "conf.h"
+ 
+-#ifdef NO_GETDTABLESIZE
+-#define getdtablesize()         64
+-#endif
+-
+ struct module
+ {
+    char *name ;
+@@ -91,7 +87,7 @@
+       if ( errno < sys_nerr )
+          err = sys_errlist[ errno ] ;
+       else
+-         err = strx_sprint( errno_buf, sizeof( errno_buf ),
++         err = strx_sprint( errno_buf, sizeof( errno_buf ) - 1,
+                                                 "errno = %d", errno ) ;
+ #endif
+       Sprint( STDERR_FD, "%s: %s failed: %s\n", program_name, call, err ) ;
+@@ -105,23 +101,32 @@
+  * Close all descriptors except STDERR_FD. We need this to report
+  * errors and the process pid of the daemon.
+  * Open all descriptors in the range 0..MAX_PASS_FD (except STDERR_FD)
+- * to the root directory.
++ * to /dev/null.
+  * STDERR_FD should not be 0.
+  */
+ PRIVATE void setup_file_descriptors()
+ {
+    int   fd ;
+    int   new ;
+-   int   root_fd ;
+-   int   n_descriptors = getdtablesize() ;
++   int   null_fd ;
++   char *func = "setup_file_descriptors" ;
++
++   if ( Smorefds() == SIO_ERR )
++   {
++      msg( LOG_CRIT, func, "Smorefds: %m" ) ;
++      exit( 1 ) ;
++   }
+ 
+    /*
+     * Close all unneeded descriptors
+     */
+-   for ( fd = 0 ; fd < n_descriptors ; fd++ )
+-      if ( fd != STDERR_FD )
+-         (void) close( fd ) ;
+-   
++   for ( fd = STDERR_FD + 1 ; fd < __sio_n_descriptors ; fd++ )
++      if ( close( fd ) && errno != EBADF )
++      {
++         msg( LOG_CRIT, func, "close: %m" ) ;
++         exit( 1 ) ;
++      }
++
+    /*
+     * Check if the STDERR_FD descriptor is open.
+     */
+@@ -132,19 +137,19 @@
+       (void) close( new ) ;
+    }
+ 
+-   if ( ( root_fd = open( "/", O_RDONLY ) ) == -1 )
+-      syscall_failed( "open of '/'" ) ;
++   if ( ( null_fd = open( "/dev/null", O_RDONLY ) ) == -1 )
++      syscall_failed( "open of '/dev/null'" ) ;
+ 
+    for ( fd = 0 ; fd <= MAX_PASS_FD ; fd++ )
+    {
+       if ( have_stderr && fd == STDERR_FD )
+          continue ;
+-      if ( fd != root_fd && dup2( root_fd, fd ) == -1 )
++      if ( fd != null_fd && dup2( null_fd, fd ) == -1 )
+          syscall_failed( "dup2" ) ;
+    }
+ 
+-   if ( root_fd > MAX_PASS_FD )
+-      (void) close( root_fd ) ;
++   if ( null_fd > MAX_PASS_FD )
++      (void) close( null_fd ) ;
+ }
+ 
+ 
+@@ -152,7 +157,6 @@
+ PRIVATE void set_fd_limit()
+ {
+ #ifdef RLIMIT_NOFILE
+-
+    struct rlimit rl ;
+    char *func = "set_fd_limit" ;
+ 
+@@ -168,24 +172,26 @@
+    ps.ros.orig_max_descriptors = rl.rlim_cur ;
+    ps.ros.max_descriptors = rl.rlim_max ;
+ 
++   /* XXX: a dumb way to prevent fd_set overflow possibilities; the rest
++    * of xinetd should be changed to use an OpenBSD inetd-like fd_grow(). */
++   if ( rl.rlim_max > FD_SETSIZE )
++      rl.rlim_max = FD_SETSIZE;
++
+    rl.rlim_cur = rl.rlim_max ;
+    if ( setrlimit( RLIMIT_NOFILE, &rl ) == -1 )
+    {
+-      msg(LOG_CRIT, func, "setrlimit failed\n");
++      msg(LOG_CRIT, func, "setrlimit failed");
+       ps.ros.max_descriptors = ps.ros.orig_max_descriptors ;
+       return ;
+    }
+ 
+-   if ( Smorefds() == SIO_ERR )
+-   {
+-      msg( LOG_CRIT, func, "Smorefds: %m" ) ;
+-      exit( 1 ) ;
+-   }
+-
+-#else      /* ! RLIMIT_NOFILE */
+-
+-   ps.ros.max_descriptors = getdtablesize() ;
+-
++   /* Handle RLIM_INFINITY */
++   if ( ps.ros.orig_max_descriptors > __sio_n_descriptors )
++      ps.ros.orig_max_descriptors = __sio_n_descriptors ;
++   if ( ps.ros.max_descriptors > __sio_n_descriptors )
++      ps.ros.max_descriptors = __sio_n_descriptors ;
++#else    /* ! RLIMIT_NOFILE */
++   ps.ros.max_descriptors = __sio_n_descriptors ;
+ #endif   /* RLIMIT_NOFILE */
+ }
+ 
+diff -urN xinetd-2.3.0.orig/xinetd/intcommon.c xinetd-2.3.0/xinetd/intcommon.c
+--- xinetd-2.3.0.orig/xinetd/intcommon.c	Thu Jun 14 19:31:44 2001
++++ xinetd-2.3.0/xinetd/intcommon.c	Thu Jul  5 00:58:11 2001
+@@ -92,7 +92,7 @@
+     */
+    if ( SERVER_SERVICE( serp ) != SERVER_CONNSERVICE( serp ) )
+    {
+-      msg( LOG_ERR, "server service (%s) != connection service (%s)",
++      msg( LOG_ERR, func, "server service (%s) != connection service (%s)",
+                            SVC_ID( SERVER_SERVICE( serp ) ),
+                               SVC_ID( SERVER_CONNSERVICE( serp ) ) ) ;
+       exit( 1 ) ;
+diff -urN xinetd-2.3.0.orig/xinetd/internals.c xinetd-2.3.0/xinetd/internals.c
+--- xinetd-2.3.0.orig/xinetd/internals.c	Fri Jun 15 15:45:46 2001
++++ xinetd-2.3.0/xinetd/internals.c	Thu Jul  5 07:04:27 2001
+@@ -205,8 +205,8 @@
+             SHUTDOWN_SERVICE( ps ) != NULL ? "enabled" : "not enabled" ) ;
+    Sputchar( dump_fd, '\n' ) ;
+ 
+-   Sprint( dump_fd, "max_descriptors = %d\n", ps.ros.max_descriptors ) ;
+-   Sprint( dump_fd, "process_limit = %d\n", ps.ros.process_limit ) ;
++   Sprint( dump_fd, "max_descriptors = %d\n", (int)ps.ros.max_descriptors ) ;
++   Sprint( dump_fd, "process_limit = %d\n", (int)ps.ros.process_limit ) ;
+    Sprint( dump_fd, "config_file = %s\n", ps.ros.config_file ) ;
+    if ( debug.on )
+       Sprint( dump_fd, "debug_fd = %d\n", debug.fd ) ;
+@@ -323,7 +323,7 @@
+          error_count++ ;
+       }
+ 
+-   if ( error_count > 0 )
++   if ( error_count != 0 )
+       msg( LOG_WARNING, func,
+             "Consistency check detected %d errors", error_count ) ;
+    else
+@@ -385,7 +385,7 @@
+ 
+    if ( SVC_WAITS( sp ) )
+    {
+-      bool_int has_servers = ( running_servers + retry_servers > 0 ) ;
++      bool_int has_servers = ( running_servers + retry_servers != 0 ) ;
+ 
+       if ( has_servers && FD_ISSET( sd, &ps.rws.socket_mask ) )
+       {
+@@ -468,7 +468,7 @@
+ 
+    if ( ! refcount > 0 )
+    {
+-      msg( LOG_ERR, func, "%s service has bad refcount: %d\n",
++      msg( LOG_ERR, func, "%s service has bad refcount: %d",
+                sid, refcount ) ;
+       errors++ ;
+    }
+diff -urN xinetd-2.3.0.orig/xinetd/itox.c xinetd-2.3.0/xinetd/itox.c
+--- xinetd-2.3.0.orig/xinetd/itox.c	Sat Jun 16 17:38:56 2001
++++ xinetd-2.3.0/xinetd/itox.c	Thu Jul  5 07:05:19 2001
+@@ -18,6 +18,7 @@
+ #define TCPD_NAME						"tcpd"
+ 
+ #include <string.h>
++#include <stdlib.h>
+ #include "sio.h"
+ #include "str.h"
+ #include "misc.h"
+@@ -26,6 +27,8 @@
+ char *strchr() ;
+ #endif
+ 
++extern char *basename(char *path); /* <libgen.h> or <string.h> */
++
+ str_h strp ;
+ int line_count ;
+ PRIVATE void print_line( char *name, char *value );
+@@ -156,7 +159,7 @@
+ 		else
+ 		{
+ 			char *server_path = word ;		/* from inetd.conf */
+-			char *server_of_server_path = (char *)basename( server_path ) ;
++			char *server_of_server_path = basename( server_path ) ;
+ 			char *server_name = next_word( "server name" ) ;
+ 			char *server ;						/* for xinetd config file */
+ 
+diff -urN xinetd-2.3.0.orig/xinetd/log.c xinetd-2.3.0/xinetd/log.c
+--- xinetd-2.3.0.orig/xinetd/log.c	Sat Jun 16 01:08:58 2001
++++ xinetd-2.3.0/xinetd/log.c	Sat Jul  7 09:08:52 2001
+@@ -73,10 +73,10 @@
+ 
+    if ( ! SVC_LOGS_ON_SUCCESS( sp ) )
+       return ;
+-   
++
+    bufsize = sizeof( buf ) ;
+    len = 0 ;
+-   
++
+    cc = strx_nprint( buf, bufsize, "%s: %s", START_ENTRY, SC_ID( scp ) ) ;
+    len += cc ;
+    bufsize -= cc ;
+@@ -92,7 +92,7 @@
+    len += cc ;
+    bufsize -= cc ;
+ 
+-   xlog_write( sp->svc_log, buf, len, XLOG_NOFLAGS ) ;
++   xlog_write( sp->svc_log, buf, len, XLOG_NO_ERRNO ) ;
+ }
+ 
+ 
+@@ -111,10 +111,10 @@
+    struct service_config   *scp = SVC_CONF( sp ) ;
+    int                     len = 0 ;
+    int                     cc ;
+-   
++
+    if ( ! SVC_LOGS_ON_FAILURE( sp ) )
+       return ;
+-   
++
+    bufsize = sizeof( buf ) ;
+    cc = strx_nprint( buf, bufsize, "%s: %s", FAIL_ENTRY, SC_ID( scp ) ) ;
+    len += cc ;
+@@ -129,7 +129,7 @@
+    len += cc ;
+    bufsize -= cc ;
+ 
+-   xlog_write( sp->svc_log, buf, len, XLOG_NOFLAGS ) ;
++   xlog_write( sp->svc_log, buf, len, XLOG_NO_ERRNO ) ;
+ }
+ 
+ 
+@@ -140,14 +140,9 @@
+                         connection_s *cp )
+ {
+    int len = 0 ;
+-   int cc ;
+ 
+    if ( M_IS_SET( *logmask, LO_HOST ) )
+-   {
+-      cc = strx_nprint( &buf[ len ], bufsize, " from=%s", conn_addrstr( cp ) ) ;
+-      len += cc ;
+-      bufsize -= cc ;
+-   }
++      len = strx_nprint( buf, bufsize, " from=%s", conn_addrstr( cp ) ) ;
+    return( len ) ;
+ }
+ 
+@@ -219,12 +214,12 @@
+       time_t current_time ;
+ 
+       (void) time( &current_time ) ;
+-      cc = strx_nprint( &buf[ len ], bufsize, " duration=%d(sec)", 
+-                           current_time - SERVER_STARTTIME( serp ) ) ;
++      cc = strx_nprint( &buf[ len ], bufsize, " duration=%ld(sec)",
++         (long)(current_time - SERVER_STARTTIME( serp )) ) ;
+       len += cc ;
+       bufsize -= cc ;
+    }
+-   xlog_write( sp->svc_log, buf, len, XLOG_NOFLAGS ) ;
++   xlog_write( sp->svc_log, buf, len, XLOG_NO_ERRNO ) ;
+ }
+ 
+ 
+@@ -249,6 +244,5 @@
+    va_start( ap, fmt ) ;
+    cc = strx_nprintv( &buf[ len ], bufsize-len, fmt, ap ) ;
+    va_end( ap ) ;
+-   xlog_write( sp->svc_log, buf, len+cc, XLOG_NO_SIZECHECK ) ;
++   xlog_write( sp->svc_log, buf, len+cc, XLOG_NO_ERRNO | XLOG_NO_SIZECHECK ) ;
+ }
+-
+diff -urN xinetd-2.3.0.orig/xinetd/log.h xinetd-2.3.0/xinetd/log.h
+--- xinetd-2.3.0.orig/xinetd/log.h	Sat Jun 16 01:08:36 2001
++++ xinetd-2.3.0/xinetd/log.h	Thu Jul  5 05:32:15 2001
+@@ -57,7 +57,12 @@
+ void log_end() ;
+ 
+ char *xntoa(struct sockaddr *);
+-void msg( int, char *, char *, ...);
++void msg( int, char *, char *, ...)
++#ifdef __GNUC__
++	__attribute__ ((format (printf, 3, 4)));
++#else
++	;
++#endif
+ void out_of_memory(char *) ;
+ void msg_suspend();
+ void msg_resume();
+diff -urN xinetd-2.3.0.orig/xinetd/logctl.c xinetd-2.3.0/xinetd/logctl.c
+--- xinetd-2.3.0.orig/xinetd/logctl.c	Mon May 14 23:06:01 2001
++++ xinetd-2.3.0/xinetd/logctl.c	Thu Jul  5 07:46:42 2001
+@@ -154,7 +154,7 @@
+ 
+    if ( xh == NULL )      /* shouldn't be NULL but just in case */
+    {
+-      msg( LOG_NOTICE, func, "%s called with NULL handle", func ) ;
++      msg( LOG_NOTICE, func, "called with NULL handle" ) ;
+       return ;
+    }
+ 
+diff -urN xinetd-2.3.0.orig/xinetd/main.c xinetd-2.3.0/xinetd/main.c
+--- xinetd-2.3.0.orig/xinetd/main.c	Sat Jun 16 18:19:14 2001
++++ xinetd-2.3.0/xinetd/main.c	Thu Jul  5 02:19:31 2001
+@@ -80,7 +80,7 @@
+     * that setjmp is not guaranteed to restore register values which
+     * can cause a problem for register variables
+     */
+-   if ( setjmp( ps.rws.env ) == 0 )
++   if ( sigsetjmp( ps.rws.env, 1 ) == 0 )
+       ps.rws.env_is_valid = TRUE ;
+ 
+    main_loop() ;
+diff -urN xinetd-2.3.0.orig/xinetd/msg.c xinetd-2.3.0/xinetd/msg.c
+--- xinetd-2.3.0.orig/xinetd/msg.c	Fri Jun 15 04:59:39 2001
++++ xinetd-2.3.0/xinetd/msg.c	Fri Jul 13 17:00:14 2001
+@@ -143,12 +143,16 @@
+ /*
+  * The size argument is a value-result argument
+  */
+-PRIVATE int prepare_buffer( int level, 
+-                            char *func, 
+-                            char *buf, 
+-                            unsigned size, 
+-                            char *fmt, 
+-                            va_list ap )
++PRIVATE int
++#ifdef __GNUC__
++__attribute__ ((format (printf, 5, 0)))
++#endif
++prepare_buffer( int level,
++                char *func,
++                char *buf,
++                unsigned size,
++                char *fmt,
++                va_list ap )
+ {
+    int         cc ;
+    char        *bufstart   = buf ;
+diff -urN xinetd-2.3.0.orig/xinetd/options.c xinetd-2.3.0/xinetd/options.c
+--- xinetd-2.3.0.orig/xinetd/options.c	Sat Jun 16 18:32:01 2001
++++ xinetd-2.3.0/xinetd/options.c	Sat Jul  7 08:03:05 2001
+@@ -12,6 +12,7 @@
+ #include <string.h>
+ #include "sio.h"
+ #include "str.h"
++#include "defs.h"
+ 
+ /*
+  * $Id: options.c,v 1.1.1.1 1999/10/12 17:28:59 bbraun Exp $
+@@ -46,7 +47,7 @@
+ 
+ int opt_recognize( int argc, char *argv[] )
+ {
+-   int arg ;
++   int arg, arg_1 ;
+ 
+    program_name = strrchr( argv[ 0 ], '/' ) ;
+    program_name = ( program_name == NULL ) ? argv[ 0 ] : program_name + 1 ;
+@@ -83,14 +84,18 @@
+          {
+             if ( ++arg == argc )
+                usage() ;
+-            limit_option_arg_1 = atoi( argv[ arg ] ) ;
++            if ( parse_int( argv[ arg ], 10, NUL, &arg_1 ) || arg_1 < 0 )
++               usage() ;
++            limit_option_arg_1 = arg_1 ;
+             limit_option = 1 ;
+          }
+          else if ( strcmp( &argv[ arg ][ 1 ], "loop" ) == 0 ) 
+          {
+             if ( ++arg == argc )
+                usage() ;
+-            loop_option_arg_1 = atoi( argv[ arg ] ) ;
++            if ( parse_int( argv[ arg ], 10, NUL, &arg_1 ) || arg_1 < 0 )
++               usage() ;
++            loop_option_arg_1 = arg_1 ;
+             loop_option = 1 ;
+          }
+          else if ( strcmp( &argv[ arg ][ 1 ], "pidfile" ) == 0 ){
+@@ -105,21 +110,27 @@
+          {
+             if ( ++arg == argc )
+                usage() ;
+-            logprocs_option_arg_1 = atoi( argv[ arg ] ) ;
++            if ( parse_int( argv[ arg ], 10, NUL, &arg_1 ) || arg_1 < 0 )
++               usage() ;
++            logprocs_option_arg_1 = arg_1 ;
+             logprocs_option = 1 ;
+          }
+          else if ( strcmp( &argv[ arg ][ 1 ], "shutdownprocs" ) == 0 ) 
+          {
+             if ( ++arg == argc )
+                usage() ;
+-            shutdownprocs_option_arg_1 = atoi( argv[ arg ] ) ;
++            if ( parse_int( argv[ arg ], 10, NUL, &arg_1 ) || arg_1 < 0 )
++               usage() ;
++            shutdownprocs_option_arg_1 = arg_1 ;
+             shutdownprocs_option = 1 ;
+          }
+          else if ( strcmp( &argv[ arg ][ 1 ], "cc" ) == 0 ) 
+          {
+             if ( ++arg == argc )
+                usage() ;
+-            cc_option_arg_1 = atoi( argv[ arg ] ) ;
++            if ( parse_int( argv[ arg ], 10, NUL, &arg_1 ) || arg_1 < 0 )
++               usage() ;
++            cc_option_arg_1 = arg_1 ;
+             cc_option = 1 ;
+          }
+          else if ( strcmp( &argv[ arg ][ 1 ], "inet-compat" ) == 0 )
+diff -urN xinetd-2.3.0.orig/xinetd/parse.h xinetd-2.3.0/xinetd/parse.h
+--- xinetd-2.3.0.orig/xinetd/parse.h	Thu Jun 14 19:29:51 2001
++++ xinetd-2.3.0/xinetd/parse.h	Thu Jul  5 06:03:56 2001
+@@ -46,7 +46,12 @@
+ 
+ void parse_conf_file( int, struct configuration *);
+ void parse_end() ;
+-void parsemsg( int, char *, char *, ...);
++void parsemsg( int, char *, char *, ...)
++#ifdef __GNUC__
++	__attribute__ ((format (printf, 3, 4)));
++#else
++	;
++#endif
+ 
+ int line_has_only_1_char( char *, char );
+ char *next_line( int );
+diff -urN xinetd-2.3.0.orig/xinetd/parsers.c xinetd-2.3.0/xinetd/parsers.c
+--- xinetd-2.3.0.orig/xinetd/parsers.c	Wed Jun 20 19:00:30 2001
++++ xinetd-2.3.0/xinetd/parsers.c	Sat Jul  7 08:05:50 2001
+@@ -54,7 +54,6 @@
+ 
+ extern env_h std_env ;
+ 
+-
+ /*
+  * Find the flags corresponding to strings in "values" and apply
+  * them to "*maskp" (apply means add or remove depending on "op")
+@@ -135,22 +134,31 @@
+ {
+    struct rpc_data *rdp = SC_RPCDATA( scp ) ;
+    char *version = (char *) pset_pointer( values, 0 ) ;
++   int min_version, max_version;
+    char *p = strchr( version, '-' ) ;
+    char *func = "rpc_version_parser" ;
+ 
+    if ( p == NULL )
+-      rdp->rd_min_version = rdp->rd_max_version = atoi( version ) ;
++   {
++      if ( parse_base10(version, &min_version) )
++         max_version = min_version - 1;
++      else
++         max_version = min_version;
++   }
+    else
+    {
+       *p = NUL ;
+-      rdp->rd_min_version = atoi( version ) ;
+-      rdp->rd_max_version = atoi( p+1 ) ;
+-      if ( rdp->rd_min_version > rdp->rd_max_version )
+-      {
+-         parsemsg( LOG_ERR, func, "bad version range: %s", version ) ;
+-         return( FAILED ) ;
+-      }
++      if ( parse_base10(version, &min_version) ||
++           parse_base10(version, &max_version) )
++         max_version = min_version - 1;
+    }
++   if ( min_version > max_version )
++   {
++      parsemsg( LOG_ERR, func, "bad version range: %s", version ) ;
++      return( FAILED ) ;
++   }
++   rdp->rd_min_version = min_version;
++   rdp->rd_max_version = max_version;
+    return( OK ) ;
+ }
+ 
+@@ -159,8 +167,12 @@
+                             struct service_config *scp, 
+                             enum assign_op op )
+ {
+-   SC_RPCDATA( scp )->rd_program_number = 
+-                           atoi( (char *) pset_pointer( values, 0 ) ) ;
++   int num;
++
++   /* XXX: error message */
++   if ( parse_base10((char *) pset_pointer( values, 0 ), &num) )
++      return( FAILED );
++   SC_RPCDATA( scp )->rd_program_number = num;
+    return( OK ) ;
+ }
+ 
+@@ -222,7 +234,8 @@
+       parsemsg( LOG_ERR, func, "Unknown user: %s", user ) ;
+       return( FAILED ) ;
+    }
+-   
++   str_fill( pw->pw_passwd, ' ' );
++
+    scp->sc_uid = pw->pw_uid ;
+    scp->sc_user_gid = pw->pw_gid ;
+    return( OK ) ;
+@@ -393,11 +406,11 @@
+       scp->sc_instances = UNLIMITED ;
+    else
+    {
+-      scp->sc_instances = atoi( instances ) ;
+-      if ( scp->sc_instances < 0 )
++      if ( parse_base10(instances, &scp->sc_instances) ||
++           scp->sc_instances < 0 )
+       {
+          parsemsg( LOG_ERR, func,
+-            "Number of instances is negative: %s", instances ) ;
++            "Number of instances is invalid: %s", instances ) ;
+          return( FAILED ) ;
+       }
+    }
+@@ -416,10 +429,10 @@
+       scp->sc_per_source = UNLIMITED;
+    else
+    {
+-      scp->sc_per_source = atoi( per_source ) ;
+-      if ( scp->sc_per_source < 0 )
++      if ( parse_base10(per_source, &scp->sc_per_source) ||
++           scp->sc_per_source < 0 )
+       {
+-         parsemsg( LOG_ERR, func, "Number of per source instances is negative: %s", per_source ) ;
++         parsemsg( LOG_ERR, func, "Number of per source instances is invalid: %s", per_source ) ;
+          return( FAILED );
+       }
+    }
+@@ -433,33 +446,31 @@
+ {
+    char *cps = (char *) pset_pointer(values, 0);
+    char *waittime = (char *) pset_pointer(values, 1);
++   int waittime_int;
+ #ifdef NO_TIMERS
+    parsemsg(LOG_ERR, "cps_parser", "Timers not supported on this OS, cps directive will be ignored");
+ #endif
+ 
+    if( cps == NULL || waittime == NULL ) {
+-      parsemsg(LOG_ERR, "cps_parser", "NULL options specified in cps\n");
++      parsemsg(LOG_ERR, "cps_parser", "NULL options specified in cps");
+       return( FAILED );
+    }
+-   scp->sc_time_conn_max = strtol(cps, NULL, 10);
+-   if( scp->sc_time_conn_max == LONG_MIN || 
+-      scp->sc_time_conn_max == LONG_MAX ) {
+-
+-      parsemsg(LOG_ERR, "cps_parser", "cps arguement not a number\n");
++   if( parse_base10(cps, &scp->sc_time_conn_max) ) {
++      parsemsg(LOG_ERR, "cps_parser", "cps argument not a number");
+       scp->sc_time_conn_max = 0;
+       scp->sc_time_wait = 0;
+       return(FAILED);
+    }
+-   scp->sc_time_wait = strtol(waittime, NULL, 10);
+-   if( scp->sc_time_wait == LONG_MIN || scp->sc_time_wait == LONG_MAX ) {
+-      parsemsg(LOG_ERR, "cps_parser", "cps time arguement not a number\n");
++   if( parse_base10(waittime, &waittime_int) ) {
++      parsemsg(LOG_ERR, "cps_parser", "cps time argument not a number");
+       scp->sc_time_conn_max = 0;
+       scp->sc_time_wait = 0;
+       return(FAILED);
+    }
++   scp->sc_time_wait = waittime_int;
+ 
+    if( scp->sc_time_conn_max < 0 || scp->sc_time_wait < 0 ) {
+-      parsemsg(LOG_ERR, "cps_parser", "cps arguements invalid\n");
++      parsemsg(LOG_ERR, "cps_parser", "cps arguments invalid");
+       scp->sc_time_conn_max = 0;
+       scp->sc_time_wait = 0;
+       return(FAILED);
+@@ -490,12 +501,13 @@
+                       struct service_config *scp, 
+                       enum assign_op op )
+ {
+-   unsigned long port = atoi( (char *) pset_pointer( values, 0 ) ) ;
++   int port ;
+    char *func = "port_parser" ;
+ 
+-   if ( port >= PORT_MAX )
++   if ( parse_base10((char *) pset_pointer( values, 0 ), &port) ||
++        port < 0 || port >= PORT_MAX )
+    {
+-      parsemsg( LOG_ERR, func, "port number exceeds %d", PORT_MAX-1 ) ;
++      parsemsg( LOG_ERR, func, "port number is invalid" ) ;
+       return( FAILED ) ;
+    }
+    scp->sc_port = port ;
+@@ -539,7 +551,7 @@
+ 
+    NEW_SET( scp->sc_env_var_defs, 5, 5 ) ;
+ 
+-   if ( op == SET_EQ && pset_count( scp->sc_env_var_defs ) > 0 )
++   if ( op == SET_EQ && pset_count( scp->sc_env_var_defs ) != 0 )
+    {
+       pset_apply( scp->sc_env_var_defs, free, NULL ) ;
+       pset_clear( scp->sc_env_var_defs ) ;
+@@ -668,28 +680,48 @@
+  * Interpret a number of the form: <num>[m|M|k|K]
+  * m and M mean megabytes, k and K mean kilobytes, nothing means bytes
+  */
+-PRIVATE unsigned get_limit( char *limitstr )
++PRIVATE int get_limit( char *limit_str, rlim_t *res )
+ {
+-   int multiplier ;
+-   char *p = limitstr + strlen( limitstr ) - 1;
+-   while ( isspace( *p ) )
+-      p --;
++   int limit_int;
++   int multiplier;
++   char *p;
++
++   if (*limit_str == NUL) {
++      *res = 0;
++      return -1;
++   }
+ 
+-   if (*p == 'k' || *p == 'K')
++   p = limit_str + strlen( limit_str ) - 1;
++   while ( p > limit_str && isspace( *p ) )
++      p--;
++
++   if (*p == 'k' || *p == 'K') {
++      *p = NUL;
+       multiplier = 1024;
+-   else if (*p == 'm' || *p == 'M')
++   } else if (*p == 'm' || *p == 'M') {
++      *p = NUL;
+       multiplier = 1024 * 1024;
+-   else
++   } else
+       multiplier = 1;
+ 
+-   return( (unsigned) atoi( limitstr ) * multiplier ) ;
++   if (parse_base10(limit_str, &limit_int)) {
++      *res = 0;
++      return -1;
++   }
++
++   *res = (rlim_t)limit_int * multiplier;
++   if (*res / multiplier != limit_int) {
++      *res = 0;
++      return -1;
++   }
++
++   return 0;
+ }
+ 
+ 
+ PRIVATE status_e parse_filelog( struct filelog *flp, pset_h values )
+ {
+-   unsigned      soft_limit ;
+-   unsigned      hard_limit ;
++   rlim_t        soft_limit, hard_limit ;
+    char         *file ;
+    unsigned      count = pset_count( values ) ;
+    char         *func = "parse_filelog" ;
+@@ -712,10 +744,9 @@
+     */
+    if ( count > 2 )
+    {
+-      soft_limit = get_limit( (char *) pset_pointer( values, 2 ) ) ;
+-      if ( soft_limit == 0 )
++      if ( get_limit( (char *) pset_pointer( values, 2 ), &soft_limit ) )
+       {
+-         parsemsg( LOG_ERR, func, "soft limit is 0" ) ;
++         parsemsg( LOG_ERR, func, "soft limit is invalid" ) ;
+          free( file ) ;
+          return( FAILED ) ;
+       }
+@@ -730,12 +761,17 @@
+        */
+       if ( count == 4 )
+       {
+-         hard_limit = get_limit( (char *) pset_pointer( values, 3 ) ) ;
++         if ( get_limit( (char *) pset_pointer( values, 3 ), &hard_limit) )
++         {
++            parsemsg( LOG_ERR, func, "hard limit is invalid" ) ;
++            free( file ) ;
++            return( FAILED ) ;
++         }
+          if ( hard_limit < soft_limit )
+          {
+             parsemsg( LOG_ERR, func,
+-               "hard limit (%d) is less than soft limit (%d)",
+-                     hard_limit, soft_limit ) ;
++               "hard limit (%lu) is less than soft limit (%lu)",
++                     (unsigned long)hard_limit, (unsigned long)soft_limit ) ;
+             free( file ) ;
+             return( FAILED ) ;
+          }
+@@ -924,13 +960,13 @@
+ 
+    if( pset_pointer(values, 0) == NULL )
+    {
+-      msg(LOG_ERR, func, "%s: pset_pointer returned null\n", func);
++      msg(LOG_ERR, func, "pset_pointer returned NULL");
+       return FAILED;
+    }
+ 
+    scp->sc_banner = new_string( pset_pointer(values,0) );
+    if( scp->sc_banner == NULL ) {
+-      msg(LOG_ERR, func, "%s: Out of memory\n", func);
++      msg(LOG_ERR, func, ES_NOMEM);
+       return FAILED;
+    }
+ 
+@@ -944,13 +980,13 @@
+    char *func = "banner_success_parser";
+ 
+    if( pset_pointer(values, 0) == NULL ) {
+-      msg(LOG_ERR, func, "%s: pset_pointer returned null.\n", func);
++      msg(LOG_ERR, func, "pset_pointer returned NULL");
+       return FAILED;
+    }
+ 
+    scp->sc_banner_success = new_string(pset_pointer(values,0) );
+    if( scp->sc_banner_success == NULL ) {
+-      msg(LOG_ERR, func, "%s: Out of memory.\n", func);
++      msg(LOG_ERR, func, ES_NOMEM);
+       return FAILED;
+    }
+ 
+@@ -964,13 +1000,13 @@
+    char *func = "banner_fail_parser";
+ 
+    if( pset_pointer(values, 0) == NULL ) {
+-      msg(LOG_ERR, func, "%s: pset_pointer returned NULL\n", func);
++      msg(LOG_ERR, func, "pset_pointer returned NULL");
+       return FAILED;
+    }
+ 
+    scp->sc_banner_fail = new_string(pset_pointer(values,0) );
+    if( scp->sc_banner_fail == NULL ) {
+-      msg(LOG_ERR, func, "%s: Out of memory\n", func);
++      msg(LOG_ERR, func, ES_NOMEM);
+       return FAILED;
+    }
+ 
+@@ -986,12 +1022,12 @@
+    char *adr = (char *)pset_pointer(values, 0);
+ 
+    if( sscanf(adr, "%lf", &scp->sc_max_load) < 1 ) {
+-      msg(LOG_ERR, func, "error reading max_load argument\n");
++      msg(LOG_ERR, func, "error reading max_load argument");
+       return FAILED;
+    }
+ 
+    if( scp->sc_max_load == 0 ) {
+-      msg(LOG_ERR, func, "error parsing max_load arguement\n");
++      msg(LOG_ERR, func, "error parsing max_load argument");
+       return FAILED;
+    }
+ 
+@@ -1004,22 +1040,24 @@
+                       enum assign_op op)
+ {
+    char *adr = (char *)pset_pointer(values, 0);
+-   char *foo;
+    char *uptmp;
++   int uptmp_int;
+ #ifdef INET6
+    char v6addr[46];
+-   struct addrinfo hints, *res, *ressave;
++   struct addrinfo hints, *res;
+    int n;
+    char *func="redir_parser";
+ 
++   /* XXX: error checks */
+    uptmp = pset_pointer(values, 1);
+-   scp->sc_redir_port = strtol(uptmp, NULL, 10);
++   parse_base10(uptmp, &uptmp_int);
++   scp->sc_redir_port = uptmp_int;
+ 
+    scp->sc_redir_addr = (struct in6_addr *)malloc(sizeof(struct in6_addr));
+ 
+    if( scp->sc_redir_addr == NULL )
+    {
+-      msg(LOG_ERR, func, "Cant allocate space for redir addr");
++      msg(LOG_ERR, func, "can't allocate space for redir addr");
+       return FAILED;
+    }
+ 
+@@ -1027,10 +1065,10 @@
+    hints.ai_flags = AI_CANONNAME;
+    hints.ai_family = AF_INET6;
+ 
+-   if( (n = getaddrinfo(adr, NULL, &hints, &res)) < 0 ) {
++   if( (n = getaddrinfo(adr, NULL, &hints, &res ) ) < 0 ) {
+       hints.ai_family = AF_INET;
+       if( (n = getaddrinfo(adr, NULL, &hints, &res ) ) < 0 ) {
+-         msg(LOG_ERR, func, "%s: Trying IPv4 name failed", func);
++         msg(LOG_ERR, func, "Trying IPv4 name failed");
+          return FAILED;
+       }
+ 
+@@ -1041,13 +1079,13 @@
+       freeaddrinfo(res);
+ 
+       if( (n = getaddrinfo(v6addr, NULL, &hints, &res)) < 0 ) {
+-         msg(LOG_ERR, func, "%s: bad address", func);
++         msg(LOG_ERR, func, "bad address");
+          return FAILED;
+       }
+    }
+ 
+    if( (res == NULL) || (res->ai_addr == NULL) ) {
+-      msg(LOG_ERR, func, "%s: no addresses returned", func);
++      msg(LOG_ERR, func, "no addresses returned");
+       return FAILED;
+    }
+       
+@@ -1056,10 +1094,13 @@
+    return OK;
+ 
+ #else
++   char *foo;
+    struct hostent *he;
+ 
++   /* XXX: error checks */
+    uptmp = pset_pointer(values, 1);
+-   scp->sc_redir_port = strtol(uptmp, NULL, 10);
++   parse_base10(uptmp, &uptmp_int);
++   scp->sc_redir_port = uptmp_int;
+    scp->sc_redir_addr = (struct in_addr *)malloc(sizeof(struct in_addr));
+ 
+    if( scp->sc_redir_addr == NULL )
+@@ -1069,11 +1110,12 @@
+    }
+ 
+    he = gethostbyname(adr);
+-   if( he == NULL )
++   if ( he == NULL ||
++        he->h_addrtype != AF_INET ||
++        he->h_length != sizeof(struct in_addr) )
+    {
+-#if defined(NO_INET_ATON)
+-      tempaddr = inet_addr(adr);
+-      bcopy(&tempaddr, scp->sc_redir_addr, sizeof(tempaddr));
++#ifdef NO_INET_ATON
++      scp->sc_redir_addr.s_addr = inet_addr(adr);
+ #else
+       if( inet_aton(adr, scp->sc_redir_addr) < 1 )
+       {
+@@ -1086,7 +1128,7 @@
+    else
+    {
+       /* gethostbyname succeeded */
+-      bcopy(he->h_addr, scp->sc_redir_addr, sizeof(he->h_addr));
++      memcpy(scp->sc_redir_addr, he->h_addr, sizeof(struct in_addr));
+    }
+ 
+    foo = xntoa( SA(scp->sc_redir_addr) );
+@@ -1107,10 +1149,8 @@
+                       enum assign_op op)
+ {
+    char *adr = (char *)pset_pointer(values, 0);
+-   char *foo;
+-#ifdef INET6
+    char *func = "bind_parser";
+-   unsigned long tempaddr;
++#ifdef INET6
+    int n;
+    char v6addr[46];
+    struct addrinfo hints, *res;
+@@ -1119,7 +1159,7 @@
+ 
+    if( scp->sc_bind_addr == NULL )
+    {
+-      msg(LOG_ERR, func, "%s: cant allocate space for bind addr\n", func);
++      msg(LOG_ERR, func, "can't allocate space for bind addr");
+       return FAILED;
+    }
+ 
+@@ -1130,7 +1170,7 @@
+    if( (n = getaddrinfo(adr, NULL, &hints, &res ) ) < 0 ) {
+       hints.ai_family = AF_INET;
+       if( (n = getaddrinfo(adr, NULL, &hints, &res ) ) < 0 ) {
+-         msg(LOG_ERR, func, "%s: Trying IPv4 name failed\n", func);
++         msg(LOG_ERR, func, "Trying IPv4 name failed");
+          return FAILED;
+       }
+ 
+@@ -1140,13 +1180,13 @@
+       freeaddrinfo(res);
+ 
+       if( (n = getaddrinfo(v6addr, NULL, &hints, &res ) ) < 0 ) {
+-         msg(LOG_ERR, func, "%s: bad address", func);
++         msg(LOG_ERR, func, "bad address");
+          return FAILED;
+       }
+    }
+ 
+    if( ( res == NULL ) || ( res->ai_addr == NULL ) ) {
+-      msg(LOG_ERR, func, "%s: no addresses returned", func);
++      msg(LOG_ERR, func, "no addresses returned");
+       return FAILED;
+    }
+ 
+@@ -1155,22 +1195,24 @@
+    freeaddrinfo(res);
+    return OK;
+ #else
++   char *foo;
+    struct hostent *he;
+ 
+    scp->sc_bind_addr = (struct in_addr *)malloc(sizeof(struct in_addr));
+ 
+    if( scp->sc_bind_addr == NULL )
+    {
+-      parsemsg(LOG_ERR, "bind_parser", "Cant allocate space for bind addr");
++      msg(LOG_ERR, func, "can't allocate space for bind addr");
+       return FAILED;
+    }
+ 
+    he = gethostbyname(adr);
+-   if( he == NULL )
++   if ( he == NULL ||
++        he->h_addrtype != AF_INET ||
++        he->h_length != sizeof(struct in_addr) )
+    {
+-#if defined(NO_INET_ATON)
+-      tempaddr = inet_addr(adr);
+-      bcopy(&tempaddr, scp->sc_bind_addr, sizeof(tempaddr));
++#ifdef NO_INET_ATON
++      scp->sc_bind_addr.s_addr = inet_addr(adr);
+ #else
+       if( inet_aton(adr, scp->sc_bind_addr) < 1 )
+       {
+@@ -1183,7 +1225,7 @@
+    else
+    {
+       /* gethostbyname succeeded, so we now have the address */
+-      bcopy(he->h_addr, scp->sc_bind_addr, sizeof(he->h_addr));
++      memcpy(scp->sc_bind_addr, he->h_addr, sizeof(struct in_addr));
+    }
+ 
+    foo = inet_ntoa(*scp->sc_bind_addr);
+@@ -1225,7 +1267,9 @@
+                       struct service_config *scp, 
+                       enum assign_op op )
+ {
+-   scp->sc_nice = atoi( (char *) pset_pointer( values, 0 ) ) ;
++   /* XXX: error message */
++   if ( parse_base10((char *) pset_pointer( values, 0 ), &scp->sc_nice) )
++      return( FAILED );
+    return( OK ) ;
+ }
+ 
+@@ -1241,11 +1285,10 @@
+       scp->sc_rlim_as = RLIM_INFINITY ;
+    else
+    {
+-      scp->sc_rlim_as = (rlim_t) get_limit( mem );
+-      if ( scp->sc_rlim_as < 0 )
++      if ( get_limit ( mem, &scp->sc_rlim_as) )
+       {
+          parsemsg( LOG_ERR, func,
+-            "Address space limit is negative: %s", mem ) ;
++            "Address space limit is invalid: %s", mem ) ;
+          return( FAILED ) ;
+       }
+    }
+@@ -1258,20 +1301,21 @@
+                           struct service_config *scp, 
+                           enum assign_op op )
+ {
+-   char *mem = (char *) pset_pointer( values, 0 ) ;
++   char *cpu_str = (char *) pset_pointer( values, 0 ) ;
++   int cpu_int;
+    char *func = "rlim_cpu_parser" ;
+ 
+-   if ( EQ( mem, "UNLIMITED" ) )
++   if ( EQ( cpu_str, "UNLIMITED" ) )
+       scp->sc_rlim_cpu = RLIM_INFINITY ;
+    else
+    {
+-      scp->sc_rlim_cpu = (rlim_t) atoi( mem ) ;
+-      if ( scp->sc_rlim_cpu < 0 )
++      if ( parse_base10(cpu_str, &cpu_int) || cpu_int < 0 )
+       {
+          parsemsg( LOG_ERR, func,
+-            "CPU limit is negative: %s", mem ) ;
++            "CPU limit is invalid: %s", cpu_str ) ;
+          return( FAILED ) ;
+       }
++      scp->sc_rlim_cpu = (rlim_t) cpu_int ;
+    }
+    return( OK ) ;
+ }
+@@ -1289,11 +1333,10 @@
+       scp->sc_rlim_data = RLIM_INFINITY ;
+    else
+    {
+-      scp->sc_rlim_data = (rlim_t) get_limit( mem ) ;
+-      if ( scp->sc_rlim_data < 0 )
++      if ( get_limit ( mem, &scp->sc_rlim_data ) )
+       {
+          parsemsg( LOG_ERR, func,
+-            "Data limit is negative: %s", mem ) ;
++            "Data limit is invalid: %s", mem ) ;
+          return( FAILED ) ;
+       }
+    }
+@@ -1313,11 +1356,10 @@
+       scp->sc_rlim_rss = RLIM_INFINITY ;
+    else
+    {
+-      scp->sc_rlim_rss = (rlim_t) get_limit( mem ) ;
+-      if ( scp->sc_rlim_rss < 0 )
++      if ( get_limit ( mem, &scp->sc_rlim_rss ) )
+       {
+          parsemsg( LOG_ERR, func,
+-            "RSS limit is negative: %s", mem ) ;
++            "RSS limit is invalid: %s", mem ) ;
+          return( FAILED ) ;
+       }
+    }
+@@ -1337,11 +1379,10 @@
+       scp->sc_rlim_stack = RLIM_INFINITY ;
+    else
+    {
+-      scp->sc_rlim_stack = (rlim_t) get_limit( mem ) ;
+-      if ( scp->sc_rlim_stack < 0 )
++      if ( get_limit ( mem, &scp->sc_rlim_stack ) )
+       {
+          parsemsg( LOG_ERR, func,
+-            "Stack limit is negative: %s", mem ) ;
++            "Stack limit is invalid: %s", mem ) ;
+          return( FAILED ) ;
+       }
+    }
+@@ -1359,8 +1400,9 @@
+       scp->sc_deny_time = -1 ;
+    else if ( EQ( deny_time, "NEVER" ) )
+       scp->sc_deny_time = 0 ;
+-   else
+-      scp->sc_deny_time = atoi( deny_time ) ;
++   /* XXX: error message */
++   else if ( parse_base10( deny_time, &scp->sc_deny_time ) )
++      return( FAILED );
+    return( OK ) ;
+ }
+ 
+@@ -1368,16 +1410,17 @@
+                        struct service_config *scp, 
+                        enum assign_op op )
+ {
+-   char *umaskstr = (char *)pset_pointer(values, 0);
+-
+-   scp->sc_umask = strtol(umaskstr, NULL, 8);
+-   if( errno == ERANGE )
+-      return( FAILED );
++   char *umask_str = (char *)pset_pointer(values, 0);
++   int umask_int;
+ 
+-   if( scp->sc_umask < 0)
++   if( parse_int(umask_str, 8, -1, &umask_int) ||
++       umask_int < 0 || umask_int > 0777)
+    {
+-      parsemsg(LOG_ERR, "umask_parser", "umask arguement not a number.\n");
++      parsemsg(LOG_ERR, "umask_parser", "umask argument is invalid");
+       return FAILED ;
+    }
++
++   scp->sc_umask = umask_int;
++
+    return( OK );
+ }
+diff -urN xinetd-2.3.0.orig/xinetd/redirect.c xinetd-2.3.0/xinetd/redirect.c
+--- xinetd-2.3.0.orig/xinetd/redirect.c	Mon May 14 23:06:01 2001
++++ xinetd-2.3.0/xinetd/redirect.c	Thu Jul  5 06:37:40 2001
+@@ -47,10 +47,10 @@
+  * longer available for reading or writing.
+  * So, we send a HUP to the child process, wait(), then exit.
+  */
+-void redir_sigpipe() 
++void redir_sigpipe( int signum ) 
+ {
+ 	close(RedirServerFd);
+-	exit(0);
++	_exit(0);
+ }
+ 
+ /* Do the redirection of a service */
+@@ -139,7 +139,7 @@
+ 		FD_SET(RedirServerFd, &msfd);
+ 
+ 		while(1) {
+-			(void)bcopy(&msfd, &rdfd, sizeof(fd_set));
++			memcpy(&rdfd, &msfd, sizeof(rdfd));
+ 			if (select(maxfd + 1, &rdfd, (fd_set *)0, (fd_set *)0, timep) <= 0) {
+ 				/* place for timeout code, currently does not time out */
+ 				break;
+diff -urN xinetd-2.3.0.orig/xinetd/service.c xinetd-2.3.0/xinetd/service.c
+--- xinetd-2.3.0.orig/xinetd/service.c	Wed Jun 20 16:09:10 2001
++++ xinetd-2.3.0/xinetd/service.c	Thu Jul  5 01:05:56 2001
+@@ -691,7 +691,7 @@
+       int bannerfd = open(scp->sc_banner, O_RDONLY);
+ 
+       if( bannerfd < 0 ) {
+-         msg( LOG_ERR, func, "service = %s, open of banner %s failed\n", SVC_ID( sp ), scp->sc_banner);
++         msg( LOG_ERR, func, "service = %s, open of banner %s failed", SVC_ID( sp ), scp->sc_banner);
+          return(-1);
+       }
+ 
+@@ -734,7 +734,7 @@
+ 
+       if( bannerfd < 0 )
+       {
+-         msg( LOG_ERR, func, "service = %s, open of banner %s failed\n", 
++         msg( LOG_ERR, func, "service = %s, open of banner %s failed", 
+             SVC_ID( sp ), scp->sc_banner_fail);
+          return(-1);
+       }
+@@ -778,7 +778,7 @@
+       int bannerfd = open(scp->sc_banner_success, O_RDONLY);
+    
+       if( bannerfd < 0 ) {
+-         msg( LOG_ERR, func, "service = %s, open of banner %s failed\n", SVC_ID( sp ), scp->sc_banner_success);
++         msg( LOG_ERR, func, "service = %s, open of banner %s failed", SVC_ID( sp ), scp->sc_banner_success);
+          return(-1);
+       }
+    
+diff -urN xinetd-2.3.0.orig/xinetd/service.h xinetd-2.3.0/xinetd/service.h
+--- xinetd-2.3.0.orig/xinetd/service.h	Wed Jun 20 05:21:50 2001
++++ xinetd-2.3.0/xinetd/service.h	Thu Jul  5 07:21:15 2001
+@@ -133,7 +133,7 @@
+ 
+ #define svc_dec_running_servers( sp )                                         \
+    {                                                                          \
+-      if ( SVC_RUNNING_SERVERS( sp ) > 0 )                                    \
++      if ( SVC_RUNNING_SERVERS( sp ) != 0 )                                   \
+          (sp)->svc_running_servers-- ;                                        \
+       else                                                                    \
+          msg( LOG_ERR, func,                                                  \
+diff -urN xinetd-2.3.0.orig/xinetd/servicedefs.h xinetd-2.3.0/xinetd/servicedefs.h
+--- xinetd-2.3.0.orig/xinetd/servicedefs.h	Sun May 20 20:18:45 2001
++++ xinetd-2.3.0/xinetd/servicedefs.h	Thu Jul  5 05:38:40 2001
+@@ -27,7 +27,12 @@
+ void               svc_log_success(struct service *, connection_s *, pid_t) ;
+ void               svc_log_failure(struct service *, connection_s *, access_e) ;
+ void               svc_log_exit(struct service *, struct server *) ;
+-void               svc_logprint(struct service *, char *, char *, ...);
++void               svc_logprint(struct service *, char *, char *, ...)
++#ifdef __GNUC__
++	__attribute__ ((format (printf, 3, 4)));
++#else
++	;
++#endif
+ void               svc_postmortem(struct service *, struct server *) ;
+ 
+ idresult_e log_remote_user(struct server *, unsigned);
+diff -urN xinetd-2.3.0.orig/xinetd/shutdown.c xinetd-2.3.0/xinetd/shutdown.c
+--- xinetd-2.3.0.orig/xinetd/shutdown.c	Tue Jun 19 03:51:41 2001
++++ xinetd-2.3.0/xinetd/shutdown.c	Sat Jul  7 08:06:13 2001
+@@ -237,7 +237,7 @@
+ 
+    /*
+     * Get a socket for the new connection.
+-    * For the shell service, the socket must have a proviliged local port
++    * For the shell service, the socket must have a priviliged local port.
+     */
+    if ( id == SD_SHELL )
+    {
+@@ -305,12 +305,18 @@
+ 
+       if ( i == 0 && ( id == SD_SHELL || id == SD_EXEC ) )
+       {
+-         uint16_t port = atoi( strings[ 0 ] ) ;
++         int port;
++
++         if (parse_base10(strings[ 0 ], &port) || port <= 0 || port > 0xffff)
++         {
++            *pp = rs_explain( RS_BADCONN ) ;
++            return( FAILED ) ;
++         }
+ 
+          if ( debug.on )
+             msg( LOG_DEBUG, func, "port for new connection = %d", port ) ;
+ 
+-         if ( port != 0 && connect_back( id, sd, port ) == -1 )
++         if ( connect_back( id, sd, port ) == -1 )
+          {
+             *pp = rs_explain( RS_BADCONN ) ;
+             return( FAILED ) ;
+@@ -346,7 +352,7 @@
+    print_buf_size = total_len + 100 ;
+    print_buf = malloc( print_buf_size ) ;
+    if ( print_buf != NULL )
+-      *pp = strx_sprint( print_buf, print_buf_size,
++      *pp = strx_sprint( print_buf, print_buf_size - 1,
+                   "remote_user=%s local_user=%s tty=%s",
+                      strings[ 1 ], strings[ 2 ], strings[ 3 ] ) ;
+    else
+@@ -354,16 +360,14 @@
+ }
+ 
+ 
+-   
++
+ #define REXEC_ARGS         4
+-#define SALT_LEN            2
+ 
+ PRIVATE void rexec_shutdown( int sd, char **pp )
+ {
+    char            *print_buf ;
+    unsigned         print_buf_size ;
+    char            *password ;
+-   char             salt[ SALT_LEN ] ;
+    struct passwd   *pw ;
+    char            *verify ;
+    unsigned         total_len ;
+@@ -374,7 +378,7 @@
+ 
+    (void) write( sd, &error_indication, 1 ) ;
+    (void) write( sd, error_message, strlen( error_message ) + 1 ) ;
+-   
++
+    if ( pp == NULL )
+       return ;
+ 
+@@ -389,11 +393,12 @@
+    pw = getpwnam( strings[ 1 ] ) ;
+    if ( pw != NULL )
+    {
+-      strncpy( salt, pw->pw_passwd, SALT_LEN )[ SALT_LEN ] = NUL ;
+-      if ( EQ( crypt( password, salt ), pw->pw_passwd ) )
++      if ( EQ( crypt( password, pw->pw_passwd ), pw->pw_passwd ) )
+          verify = "ok" ;
+       else
+          verify = "failed" ;
++      crypt( "INCORRECT", pw->pw_passwd );
++      str_fill( pw->pw_passwd, ' ' );
+    }
+    else
+       verify = "baduser" ;
+@@ -403,7 +408,7 @@
+    print_buf_size = total_len + 100 ;
+    print_buf = malloc( print_buf_size ) ;
+    if ( print_buf != NULL )
+-      *pp = strx_sprint( print_buf, print_buf_size, 
++      *pp = strx_sprint( print_buf, print_buf_size - 1, 
+                      "remote_user=%s verify=%s command=%s",
+                                  strings[ 1 ], verify, strings[ 3 ] ) ;
+    else
+@@ -429,15 +434,15 @@
+ 
+    if ( pp == NULL )
+       return ;
+-   
++
+    if ( rservices_common( SD_SHELL, sd,
+                RSH_ARGS, limits, strings, &total_len, pp ) == FAILED )
+       return ;
+-   
++
+    print_buf_size = total_len + 100 ;
+    print_buf = malloc( print_buf_size ) ;
+    if ( print_buf != NULL )
+-      *pp = strx_sprint( print_buf, print_buf_size,
++      *pp = strx_sprint( print_buf, print_buf_size - 1,
+                "remote_user=%s local_user=%s command=%s",
+                      strings[ 1 ], strings[ 2 ], strings[ 3 ] ) ;
+    else
+@@ -452,7 +457,7 @@
+ 
+    if ( pp == NULL )
+       return ;
+-   
++
+    line = Srdline( sd ) ;
+    if ( line == NULL )
+    {
+diff -urN xinetd-2.3.0.orig/xinetd/signals.c xinetd-2.3.0/xinetd/signals.c
+--- xinetd-2.3.0.orig/xinetd/signals.c	Mon May 14 23:06:01 2001
++++ xinetd-2.3.0/xinetd/signals.c	Thu Jul  5 01:39:09 2001
+@@ -289,8 +289,8 @@
+ PRIVATE void bad_signal()
+ {
+    static time_t   interval_start ;
+-   static int      interval_signal_count ;
+-   static int      total_signal_count ;
++   static volatile int interval_signal_count ;
++   static volatile int total_signal_count ;
+    time_t          current_time ;
+    char            *func = "bad_signal" ;
+ 
+@@ -317,7 +317,7 @@
+             interval_start = current_time ;
+             interval_signal_count = 1 ;
+             msg( LOG_ERR, func, "Resetting..." ) ;
+-            longjmp( ps.rws.env, 1 ) ;
++            siglongjmp( ps.rws.env, 1 ) ;
+             /* NOTREACHED */
+          }
+          msg( LOG_CRIT, func,
+@@ -342,10 +342,10 @@
+ #if defined(HAVE_STRSIGNAL)
+    /* Use strsignal and remove the old sys_siglist stuff */
+    if ( sig < NSIG )
+-      return( strx_sprint( signame_buf, sizeof( signame_buf ),
++      return( strx_sprint( signame_buf, sizeof( signame_buf ) - 1,
+                "%d (%s)", sig, strsignal(sig) ) ) ;
+ #endif
+-   return( strx_sprint( signame_buf, sizeof( signame_buf ), "%d", sig ) ) ;
++   return( strx_sprint( signame_buf, sizeof( signame_buf ) - 1, "%d", sig ) ) ;
+ }
+ 
+ 
+diff -urN xinetd-2.3.0.orig/xinetd/state.h xinetd-2.3.0/xinetd/state.h
+--- xinetd-2.3.0.orig/xinetd/state.h	Wed Jun 20 05:21:50 2001
++++ xinetd-2.3.0/xinetd/state.h	Thu Jul  5 07:32:52 2001
+@@ -29,8 +29,8 @@
+ 
+ struct read_only_state
+ {
+-   rlim_t      orig_max_descriptors ; /* before we change the resource limit */
+-   rlim_t      max_descriptors ;      /* as returned by getdtablesize()       */
++   rlim_t      orig_max_descriptors ; /* original soft rlimit                */
++   rlim_t      max_descriptors ;      /* original hard rlimit or OPEN_MAX    */
+    rlim_t      process_limit ;        /* if 0, there is no limit             */
+    unsigned    loop_rate ;
+    char       *config_file ;
+@@ -50,7 +50,7 @@
+ 
+ struct read_write_state
+ {
+-   rlim_t           descriptors_free ;
++   int              descriptors_free ;     /* may be negative (reserved)    */
+    int              available_services ;   /* # of available services       */
+    int              active_services ;      /* services with descriptors set */
+                                            /* in socket mask                */
+@@ -63,7 +63,7 @@
+    struct service  *shutdown ;
+    struct defaults  defs ;
+    xlog_h           program_log ;
+-   jmp_buf          env ;
++   sigjmp_buf       env ;
+    bool_int         env_is_valid ;
+ } ;
+ 
+diff -urN xinetd-2.3.0.orig/xinetd/util.c xinetd-2.3.0/xinetd/util.c
+--- xinetd-2.3.0.orig/xinetd/util.c	Wed Jun 20 05:03:39 2001
++++ xinetd-2.3.0/xinetd/util.c	Sat Jul  7 08:11:12 2001
+@@ -9,6 +9,7 @@
+ 
+ #include "config.h"
+ #include <sys/types.h>
++#include <ctype.h>
+ #include <stdlib.h>
+ #include <unistd.h>
+ #if defined (HAVE_SYS_SOCKET_H)
+@@ -243,3 +244,40 @@
+          msg( LOG_WARNING, "drain", "recv: %m" ) ;
+ }
+ 
++/*
++ * Convert string to an int detecting errors.
++ */
++int parse_int(char *str, int base, int term, int *res)
++{
++	unsigned char *endptr;
++	long strtol_res;
++
++/* SUSv2 says:
++ * "Because 0, LONG_MIN and LONG_MAX are returned on error and are also
++ * valid returns on success, an application wishing to check for error
++ * situations should set errno to 0, then call strtol(), then check errno." */
++	errno = 0;
++	strtol_res = strtol(str, (char **)&endptr, base);
++
++	if (errno == 0 && *str != NUL) {
++		/* Special case: -1 means allow trailing whitespace */
++		if (term == -1) {
++			while (*endptr != NUL && isspace(*endptr))
++				endptr++;
++			term = NUL;
++		}
++
++		if (*endptr == term) {
++			*res = strtol_res;
++			return 0;
++		}
++	}
++
++	*res = 0;
++	return -1;
++}
++
++int parse_base10(char *str, int *res)
++{
++	return parse_int(str, 10, -1, res);
++}
+diff -urN xinetd-2.3.0.orig/xinetd/xgetloadavg.c xinetd-2.3.0/xinetd/xgetloadavg.c
+--- xinetd-2.3.0.orig/xinetd/xgetloadavg.c	Thu May 17 02:48:48 2001
++++ xinetd-2.3.0/xinetd/xgetloadavg.c	Wed Jul  4 07:18:35 2001
+@@ -4,7 +4,7 @@
+  * and conditions for redistribution.
+  */
+ /* This file contains OS dependant implementations of xgetloadavg().
+- * xgetloadavg takes no arguements and simply returns the 1 minute
++ * xgetloadavg takes no arguments and simply returns the 1 minute
+  * load average of the machine as a double.
+  * Feel free to add implementations here, please update configure.in
+  * to define HAVE_LOADAVG.  Defining this macro enables the option
