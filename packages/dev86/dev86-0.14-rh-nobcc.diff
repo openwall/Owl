@@ -1,0 +1,11 @@
+--- linux-86/Makefile.djb	Mon Sep 20 16:51:12 1999
++++ linux-86/Makefile	Mon Sep 20 16:51:51 1999
+@@ -11,9 +11,9 @@
+ 
+ ELKSSRC= /usr/src/elks
+ PREFIX=  /usr
+-LIBPRE=  $(PREFIX)/bcc
++LIBPRE=  $(PREFIX)
+ BINDIR=	 $(PREFIX)/bin
+ LIBDIR=  $(LIBPRE)/lib/bcc
+ CFLAGS=  -O

@@ -1,0 +1,26 @@
+--- linux-86/elksemu/Makefile.oot	Tue Sep  7 11:42:08 1999
++++ linux-86/elksemu/Makefile	Tue Sep  7 11:42:40 1999
+@@ -43,7 +43,7 @@
+ # The kernel patch or module _requires_ this location.
+ install: elksemu
+ 	install -d $(DIST)/lib
+-	install -s -o root -g root -m 4555 elksemu $(DIST)/lib/elksemu
++	install -s 555 elksemu $(DIST)/lib/elksemu
+ 
+ clean realclean:
+ 	rm -f $(OBJ) elksemu call_tab.v defn_tab.v
+--- linux-86/makefile.in.oot	Fri Jul 23 03:56:41 1999
++++ linux-86/makefile.in	Tue Sep  7 11:42:04 1999
+@@ -71,9 +71,9 @@
+ #endif
+ 
+ # Alter these if for some reason you don't want this done as root.
+-INDAT=-o root -g root -m 644
+-INEXE=-o root -g root -m 755 -s
+-INSCR=-o root -g root -m 755
++INDAT=-m 644
++INEXE=-m 755 -s
++INSCR=-m 755
+ 
+ #ifdef GNUMAKE
+ all: check_config bcc unproto copt as86 ar86 ld86 objdump86 \

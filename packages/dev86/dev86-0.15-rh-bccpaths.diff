@@ -1,0 +1,12 @@
+diff -uNr linux-86/bcc/bcc.c linux-86-bccpaths/bcc/bcc.c
+--- linux-86/bcc/bcc.c	Sat Feb  7 06:01:44 1998
++++ linux-86-bccpaths/bcc/bcc.c	Fri Feb  4 19:50:25 2000
+@@ -80,7 +80,7 @@
+ #else
+ #define STANDARD_EXEC_PREFIX_2	"/usr/bin/"
+ #endif
+-#define DEFAULT_INCLUDE         "-I~/include"
++#define DEFAULT_INCLUDE         "-I~/lib/bcc/include"
+ #define DEFAULT_LIBDIR0         "-L~/lib/bcc/i86/"
+ #define DEFAULT_LIBDIR3         "-L~/lib/bcc/i386/"
+ #define OPTIM_RULES    		"-d~/lib/bcc/i86"
