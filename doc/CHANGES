@@ -5,6 +5,9 @@ remains fixed; it's only the stable branch which has these changes.
 
 	Changes made between Owl 0.1-prerelease and Owl 0.1-stable.
 
+2001/06/29	Owl/doc/fr/*
+Updated French translations, from Denis Ducamp.
+
 2001/06/27	Package: gpm
 SECURITY FIX	Severity: none to low, physical, active
 The mouse event handler gpm-root, if enabled, handled user-supplied
@@ -151,4 +154,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp@hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.2.2.2 2001/06/27 01:22:45 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.2.2.3 2001/06/29 13:30:00 solar Exp $

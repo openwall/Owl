@@ -1,18 +1,35 @@
-Owl est actuellement disponible depuis les miroirs officiels suivants :
+Le site web de Owl est :
 
-ftp://ftp.ca.openwall.com/pub/Owl/ (Canada)
-ftp://ftp.pl.openwall.com/pub/Owl/ (Pologne)
-ftp://ftp.ru.openwall.com/pub/Owl/ (Russie)
-ftp://ftp.wiretapped.net/pub/Owl/ (Australie)
+http://www.openwall.com/Owl/
+
+Owl peut être téléchargé depuis les miroirs officiels suivants :
+
+ftp://ftp.ca.openwall.com/pub/Owl/	(Canada)
+ftp://ftp.pl.openwall.com/pub/Owl/	(Pologne)
+ftp://ftp.ru.openwall.com/pub/Owl/	(Russie)
+ftp://ftp.ua.openwall.com/pub/Owl/	(Ukraine)
+ftp://ftp.cz.openwall.com/pub/Owl/	(République Tchèque)
+ftp://ftp.wiretapped.net/pub/Owl/	(Australie)
 
 Il y a un sous-répertoire pour chaque version ou branche Owl, avec les
 contenus suivants :
 
 native.tar.gz		l'arbre CVS (spécifications de compilation et patches)
 sources			l'arbre des sources (archives originales, etc)
-Owl.mtree		les spécifications mtree(8) pour ci-dessus
 kernel			les sources du noyau et les patches recommandés
+Owl.mtree		les spécifications mtree(8) pour ci-dessus
 i386, sparc, sparcv9	les packages binaires Owl
+
+Quelques uns des sous-répertoires peuvent utiliser des liens symboliques
+vers des fichiers communs à plusieurs branches Owl. Ainsi, pour télécharger
+juste une branche vous pouvez avoir besoin de dire à votre client FTP de
+déréférencer les liens symboliques. Avec lftp (qui fait partie de Owl),
+utilisez la commane "mirror -L".
+
+Les spécifications mtree(8) pour les versions de Owl sont signées. La clé
+publique PGP correspondante est disponible depuis :
+
+http://www.openwall.com/signatures/
 
 Vous aurez toujours besoin de l'arbre CVS, -- même si vous choisissez
 d'installer seulement les packages binaires. Afin de (re-)compiler Owl
@@ -21,4 +38,4 @@ depuis les sources, vous aurez besoin des deux arbres CVS et sources.
 Plus de documentations (incluant BUILD et INSTALL) sont accessibles dans
 l'arbre CVS, dans Owl/doc/.
 
-$Id: Owl/doc/fr/DOWNLOAD,v 1.1.2.1 2001/06/23 09:54:55 solar Exp $
+$Id: Owl/doc/fr/DOWNLOAD,v 1.1.2.2 2001/06/29 13:30:00 solar Exp $
