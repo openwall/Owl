@@ -1,0 +1,60 @@
+diff -ur nmap-3.48.orig/Makefile.in nmap-3.48/Makefile.in
+--- nmap-3.48.orig/Makefile.in	Mon Oct  6 08:23:20 2003
++++ nmap-3.48/Makefile.in	Sat Oct 11 19:16:43 2003
+@@ -16,9 +16,7 @@
+ CC = @CC@
+ CXX = @CXX@
+ CCOPT = 
+-LIBPCAPDIR = @libpcapdir@
+ LIBPCREDIR = @LIBPCREDIR@
+-INCLS = -I$(LIBPCAPDIR) 
+ DEFS = @DEFS@ -DNMAP_VERSION=\"$(NMAP_VERSION)\" -DNMAP_NAME=\"$(NMAP_NAME)\" -DNMAP_URL=\"$(NMAP_URL)\" -DNMAP_PLATFORM=\"$(NMAP_PLATFORM)\" -DNMAPDATADIR=\"$(nmapdatadir)\"
+ # For mtrace debugging -- see MTRACE define in main.cc for instructions
+ # Should only be enabled during debugging and not in any real release.
+@@ -63,9 +61,6 @@
+ 
+ $(LIBPCREDIR)/libpcre.a: $(LIBPCREDIR)/Makefile FORCE
+ 	@echo Compiling libpcre; cd $(LIBPCREDIR) && $(MAKE)
+-
+-$(LIBPCAPDIR)/libpcap.a: $(LIBPCAPDIR)/Makefile FORCE
+-	@echo Compiling libpcap; cd $(LIBPCAPDIR) && $(MAKE)
+ 
+ $(NBASEDIR)/libnbase.a: $(NBASEDIR)/Makefile FORCE
+ 	@echo Compiling libnbase;
+diff -ur nmap-3.48.orig/configure nmap-3.48/configure
+--- nmap-3.48.orig/configure	Wed Sep 24 07:08:23 2003
++++ nmap-3.48/configure	Sat Oct 11 19:16:43 2003
+@@ -5419,9 +5419,6 @@
+     LDFLAGS="-L$libpcapdir $LDFLAGS"
+     CXXFLAGS="$CXXFLAGS -I$libpcapdir"
+   fi
+-  PCAP_DEPENDS='$(LIBPCAPDIR)/libpcap.a'
+-  PCAP_CLEAN="pcap_clean"
+-  PCAP_DIST_CLEAN="pcap_dist_clean"
+ fi
+ 
+ 
+diff -ur nmap-3.48.orig/configure.ac nmap-3.48/configure.ac
+--- nmap-3.48.orig/configure.ac	Wed Sep 24 07:01:33 2003
++++ nmap-3.48/configure.ac	Sat Oct 11 19:16:43 2003
+@@ -300,10 +300,6 @@
+   esac]
+ )
+ 
+-if test $linux = yes; then
+-  have_libpcap=no
+-fi
+-
+ if test $needs_cpp_precomp = yes; then
+   CXXFLAGS="-no-cpp-precomp $CXXFLAGS"
+ fi
+@@ -366,9 +362,6 @@
+     LDFLAGS="-L$libpcapdir $LDFLAGS"
+     CXXFLAGS="$CXXFLAGS -I$libpcapdir"
+   fi
+-  PCAP_DEPENDS='$(LIBPCAPDIR)/libpcap.a'
+-  PCAP_CLEAN="pcap_clean"
+-  PCAP_DIST_CLEAN="pcap_dist_clean"
+ fi
+ 
+ AC_SUBST(PCAP_DEPENDS)

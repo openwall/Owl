@@ -1,0 +1,78 @@
+diff -ur nmap-3.48.orig/configure nmap-3.48/configure
+--- nmap-3.48.orig/configure	Wed Sep 24 07:08:23 2003
++++ nmap-3.48/configure	Sat Oct 11 19:29:24 2003
+@@ -1296,16 +1296,6 @@
+    user_localdirs=0
+ fi;
+ 
+-if test "$user_localdirs" = 1; then
+-   if test -d /usr/local/lib; then
+-     LDFLAGS="$LDFLAGS -L/usr/local/lib"
+-     fi
+-   if test -d /usr/local/include; then
+-     CFLAGS="$CFLAGS -I/usr/local/include"
+-     CXXFLAGS="$CFLAGS -I/usr/local/include"
+-   fi
+-fi
+-
+ libpcapdir=libpcap-possiblymodified
+ 
+ 
+diff -ur nmap-3.48.orig/configure.ac nmap-3.48/configure.ac
+--- nmap-3.48.orig/configure.ac	Wed Sep 24 07:01:33 2003
++++ nmap-3.48/configure.ac	Sat Oct 11 19:29:24 2003
+@@ -17,16 +17,6 @@
+     ],
+   [ user_localdirs=0 ] )
+ 
+-if test "$user_localdirs" = 1; then
+-   if test -d /usr/local/lib; then
+-     LDFLAGS="$LDFLAGS -L/usr/local/lib"
+-     fi
+-   if test -d /usr/local/include; then
+-     CFLAGS="$CFLAGS -I/usr/local/include"
+-     CXXFLAGS="$CFLAGS -I/usr/local/include"
+-   fi
+-fi
+-
+ libpcapdir=libpcap-possiblymodified
+ AC_SUBST(libpcapdir)
+ 
+diff -ur nmap-3.48.orig/nbase/configure nmap-3.48/nbase/configure
+--- nmap-3.48.orig/nbase/configure	Fri Oct  3 08:33:24 2003
++++ nmap-3.48/nbase/configure	Sat Oct 11 19:29:24 2003
+@@ -1285,15 +1285,6 @@
+    user_localdirs=0
+ fi;
+ 
+-if test "$user_localdirs" = 1; then
+-   if test -d /usr/local/lib; then
+-     LDFLAGS="$LDFLAGS -L/usr/local/lib"
+-     fi
+-   if test -d /usr/local/include; then
+-     CFLAGS="$CFLAGS -I/usr/local/include"
+-   fi
+-fi
+-
+           ac_config_headers="$ac_config_headers nbase_config.h"
+ 
+ 
+diff -ur nmap-3.48.orig/nbase/configure.ac nmap-3.48/nbase/configure.ac
+--- nmap-3.48.orig/nbase/configure.ac	Fri Oct  3 08:32:15 2003
++++ nmap-3.48/nbase/configure.ac	Sat Oct 11 19:29:24 2003
+@@ -25,15 +25,6 @@
+     ],
+   [ user_localdirs=0 ] )
+ 
+-if test "$user_localdirs" = 1; then
+-   if test -d /usr/local/lib; then
+-     LDFLAGS="$LDFLAGS -L/usr/local/lib"
+-     fi
+-   if test -d /usr/local/include; then
+-     CFLAGS="$CFLAGS -I/usr/local/include"
+-   fi
+-fi
+-
+ dnl use config.h instad of -D macros
+ AC_CONFIG_HEADER(nbase_config.h)
+ 

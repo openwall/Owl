@@ -1,0 +1,71 @@
+diff -ur nmap-3.48.orig/configure nmap-3.48/configure
+--- nmap-3.48.orig/configure	Wed Sep 24 07:08:23 2003
++++ nmap-3.48/configure	Sat Oct 11 19:22:01 2003
+@@ -857,7 +857,7 @@
+   --without-nmapfe    skip nmapfe X-window GUI
+   --with-openssl=DIR    Use optional openssl libs and includes from DIR/lib/ and DIR/include/openssl/)
+   --with-libpcap=DIR    Look for pcap in DIR/include and DIR/libs
+-  --with-libpcre=DIR    Use an existing (compiled) pcre lib from DIR/include and DIR/lib)
++  --with-libpcre=DIR    Use an existing (compiled) pcre lib from DIR/include and DIR/lib.  Specify --with-libpcre=included to always use the version included with Nmap
+   --with-libnbase=DIR     Look for nbase include/libs in DIR
+   --with-libnsock=DIR     Compile and link to libnsock in DIR
+ 
+@@ -5430,6 +5430,7 @@
+ 
+ 
+ have_pcre=no
++requested_included_pcre=no
+ LIBPCREDIR=libpcre
+ 
+ # First we test whether they specified libpcre explicitly
+@@ -5440,6 +5441,9 @@
+     case "$with_libpcre" in
+   yes)
+     ;;
++  included)
++    requested_included_pcre=yes
++    ;;
+   *)
+     CXXFLAGS="-I$with_libpcre/include $CXXFLAGS"
+     LDFLAGS="-L$with_libpcre/lib $LDFLAGS"
+@@ -5450,7 +5454,7 @@
+ fi;
+ 
+ # If they didn't specify it, we try to find it
+-if test $have_pcre != yes ; then
++if test $have_pcre != yes -a $requested_included_pcre != yes ; then
+   if test "${ac_cv_header_pcre_h+set}" = set; then
+   echo "$as_me:$LINENO: checking for pcre.h" >&5
+ echo $ECHO_N "checking for pcre.h... $ECHO_C" >&6
+diff -ur nmap-3.48.orig/configure.ac nmap-3.48/configure.ac
+--- nmap-3.48.orig/configure.ac	Wed Sep 24 07:01:33 2003
++++ nmap-3.48/configure.ac	Sat Oct 11 19:22:01 2003
+@@ -377,14 +377,18 @@
+ AC_SUBST(LIBPCAP_LIBS)
+ 
+ have_pcre=no
++requested_included_pcre=no
+ LIBPCREDIR=libpcre
+ 
+ # First we test whether they specified libpcre explicitly
+ AC_ARG_WITH(libpcre,
+-[  --with-libpcre=DIR    Use an existing (compiled) pcre lib from DIR/include and DIR/lib)],
++[  --with-libpcre=DIR    Use an existing (compiled) pcre lib from DIR/include and DIR/lib.  Specify --with-libpcre=included to always use the version included with Nmap],
+ [  case "$with_libpcre" in
+   yes)
+     ;;
++  included)
++    requested_included_pcre=yes
++    ;;
+   *)
+     CXXFLAGS="-I$with_libpcre/include $CXXFLAGS"
+     LDFLAGS="-L$with_libpcre/lib $LDFLAGS"
+@@ -394,7 +398,7 @@
+ )
+ 
+ # If they didn't specify it, we try to find it
+-if test $have_pcre != yes ; then
++if test $have_pcre != yes -a $requested_included_pcre != yes ; then
+   AC_CHECK_HEADER(pcre.h,
+     AC_CHECK_LIB(pcre, pcre_version, [have_pcre=yes ]),
+     [AC_CHECK_HEADERS(pcre/pcre.h, 
