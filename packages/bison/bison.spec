@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bison/bison.spec,v 1.10 2002/06/11 13:51:09 mci Exp $
+# $Id: Owl/packages/bison/bison.spec,v 1.11 2002/06/11 14:10:04 mci Exp $
 
 Summary: A GNU general-purpose parser generator.
 Name: bison
@@ -24,6 +24,7 @@ to be very proficient in C programming to be able to program with Bison.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
