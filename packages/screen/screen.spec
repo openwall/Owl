@@ -1,4 +1,4 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.30 2004/09/10 07:30:08 galaxy Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.31 2004/11/02 03:53:17 solar Exp $
 
 Summary: A screen manager that supports multiple sessions on one terminal.
 Name: screen
@@ -73,7 +73,7 @@ install -m 644 $RPM_SOURCE_DIR/screen.pam $RPM_BUILD_ROOT/etc/pam.d/screen
 
 mkdir -p $RPM_BUILD_ROOT%_libexecdir/screen
 
-# XXX: (GM): Remove unpackaged files (check later)
+# Remove unpackaged files
 rm %buildroot%_infodir/dir
 
 %pre

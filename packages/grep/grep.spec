@@ -1,4 +1,4 @@
-# $Id: Owl/packages/grep/grep.spec,v 1.8 2004/09/10 07:23:56 galaxy Exp $
+# $Id: Owl/packages/grep/grep.spec,v 1.9 2004/11/02 03:10:03 solar Exp $
 
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
@@ -38,7 +38,7 @@ mkdir -p $RPM_BUILD_ROOT/bin
 mv $RPM_BUILD_ROOT%_prefix/bin/* $RPM_BUILD_ROOT/bin/
 rm -rf $RPM_BUILD_ROOT%_prefix/bin
 
-# XXX: (GM): Remove unpackaged files (check later)
+# Remove unpackaged files
 rm %buildroot%_infodir/dir
 
 %post

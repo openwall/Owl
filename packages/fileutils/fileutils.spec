@@ -1,4 +1,4 @@
-# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.15 2004/09/10 07:22:44 galaxy Exp $
+# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.16 2004/11/02 02:54:47 solar Exp $
 
 # The texinfo documentation for fileutils, sh-utils, and textutils is
 # currently provided by fileutils.
@@ -83,7 +83,7 @@ mkdir -p etc/profile.d
 install -c -m 644 $RPM_SOURCE_DIR/DIR_COLORS etc/
 install -c -m 755 $RPM_SOURCE_DIR/colorls.{c,}sh etc/profile.d/
 
-# XXX: (GM): Remove unpackaged files (check later)
+# Remove unpackaged files
 rm %buildroot%_infodir/dir
 
 %if %BUILD_INFO
