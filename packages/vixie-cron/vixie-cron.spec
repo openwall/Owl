@@ -1,9 +1,9 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.24 2004/09/10 07:33:13 galaxy Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.25 2004/11/02 04:12:23 solar Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
 Version: 3.0.2.7
-Release: owl17.1
+Release: owl18
 License: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%version.tar.gz
@@ -100,8 +100,8 @@ fi
 /etc/control.d/facilities/crontab
 
 %changelog
-* Sun Feb 29 2004 Michail Litvak <mci@owl.openwall.com> 3.0.2.7-owl17.1
-- Fixed -owl-linux.diff to build on glibc 2.3.2
+* Sun Feb 29 2004 Michail Litvak <mci@owl.openwall.com> 3.0.2.7-owl18
+- Fixed -owl-linux.diff to build on glibc 2.3.2.
 
 * Wed Jan 29 2003 Michail Litvak <mci@owl.openwall.com> 3.0.2.7-owl17
 - Added patch from OpenBSD for setting SIG_DFL action instead of SIG_IGN
