@@ -1,0 +1,70 @@
+--- links-0.95/session.c.orig	Sat Jun  2 14:01:24 2001
++++ links-0.95/session.c	Sat Jun  2 18:12:14 2001
+@@ -578,11 +578,7 @@
+ 	unsigned char *wd;
+ 	int h;
+ 	int i;
+-#ifdef NO_FILE_SECURITY
+-	int sf = 0;
+-#else
+-	int sf = safe;
+-#endif
++
+ 	wd = get_cwd();
+ 	set_cwd(term->cwd);
+ 	if (file[0] == '~' && dir_sep(file[1])) {
+@@ -595,7 +591,8 @@
+ 			}
+ 		}
+ 	}
+-	h = open(file, O_CREAT|O_WRONLY|O_TRUNC|(sf?O_EXCL:0), sf ? 0600 : 0666);
++	if (safe) h = mkstemp(file);
++	else h = open(file, O_CREAT|O_WRONLY|O_TRUNC, 0666);
+ 	if (wd) set_cwd(wd), mem_free(wd);
+ 	if (h == -1) {
+ 		unsigned char *msg = stracpy(file);
+@@ -618,27 +615,6 @@
+ 	return h;
+ }
+ 
+-unsigned char *get_temp_name(unsigned char *url)
+-{
+-	int l, nl;
+-	unsigned char *name, *fn, *fnn, *fnnn, *s;
+-	unsigned char *nm = tempnam(NULL, "links");
+-	if (!nm) return NULL;
+-	name = init_str();
+-	nl = 0;
+-	add_to_str(&name, &nl, nm);
+-	free(nm);
+-	get_filename_from_url(url, &fn, &l);
+-	fnnn = NULL;
+-	for (fnn = fn; fnn < fn + l; fnn++) if (*fnn == '.') fnnn = fnn;
+-	if (fnnn && (s = memacpy(fnnn, l - (fnnn - fn)))) {
+-		check_shell_security(&s);
+-		add_to_str(&name, &nl, s);
+-		mem_free(s);
+-	}
+-	return name;
+-}
+-
+ unsigned char *subst_file(unsigned char *prog, unsigned char *file)
+ {
+ 	unsigned char *n = init_str();
+@@ -686,11 +662,14 @@
+ void continue_download(struct session *ses, unsigned char *file)
+ {
+ 	struct download *down;
+-	int h;
++	int h, len;
+ 	unsigned char *url = ses->tq_url;
+ 	if (!url) return;
+ 	if (ses->tq_prog) {
+-		if (!(file = get_temp_name(url))) {
++		file = init_str();
++		len = 0;
++		add_to_str(&file, &len, "/tmp/linksXXXXXX");
++		if (!file) {
+ 			tp_cancel(ses);
+ 			return;
+ 		}
