@@ -1,8 +1,8 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.1 2003/09/09 05:58:22 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.2 2003/09/09 05:59:25 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
-Summary: Dynamic Host Configuration Protocol (DHCP) Distribution.
+Summary: Dynamic Host Configuration Protocol (DHCP) distribution.
 Name: dhcp
 Version: 3.0pl2
 Release: owl1
@@ -16,13 +16,12 @@ Patch0: dhcp-3.0pl2-owl-man.diff
 Patch1: dhcp-3.0pl2-owl-drop-root.diff
 Patch2: dhcp-3.0pl2-rh-owl-script.diff
 PreReq: /sbin/chkconfig, /etc/rc.d/init.d
-Obsoletes: dhcp, dhcpd
 BuildRoot: /override/%{name}-%{version}
 
 %description
-The ISC Dynamic Host Configuration Protocol Distribution provides
-a freely redistributable reference implementation of all aspects
-of the DHCP protocol.
+The ISC Dynamic Host Configuration Protocol distribution provides a
+freely redistributable reference implementation of all aspects of the
+DHCP protocol.
 
 %if %BUILD_DHCP_CLIENT
 %package client
@@ -32,10 +31,10 @@ Requires: dhcp = %{version}-%{release}
 Obsoletes: dhcpcd
 
 %description client
-The Internet Software Consortium DHCP Client, dhclient, provides
-a means for configuring one or more network interfaces using the
-Dynamic Host Configuration Protocol, BOOTP protocol, or if these
-protocols fail, by statically assigning an address.
+The Internet Software Consortium DHCP Client, dhclient, provides a
+means for configuring one or more network interfaces using the Dynamic
+Host Configuration Protocol, BOOTP protocol, or if these protocols
+fail, by statically assigning an address.
 %endif
 
 %package server
@@ -43,15 +42,15 @@ Summary: The ISC DHCP server daemon.
 Group: System Environment/Daemons
 PreReq: dhcp = %{version}-%{release}
 PreReq: /sbin/chkconfig
-Obsoletes: dhcp, dhcpd
+Obsoletes: dhcpd
 
 %description server
-The Internet Software Consortium DHCP Server, dhcpd, implements
-the Dynamic Host Configuration Protocol (DHCP) and the Internet
-Bootstrap Protocol (BOOTP).  DHCP allows hosts on a TCP/IP network
-to request and be assigned IP addresses, and also to discover
-information about the network to which they are attached.  BOOTP
-provides similar functionality, with certain restrictions.
+The Internet Software Consortium DHCP Server, dhcpd, implements the
+Dynamic Host Configuration Protocol (DHCP) and the Internet Bootstrap
+Protocol (BOOTP).  DHCP allows hosts on a TCP/IP network to request
+and be assigned IP addresses, and also to discover information about
+the network to which they are attached.  BOOTP provides similar
+functionality, with certain restrictions.
 
 %package relay
 Summary: The ISC DHCP relay.
@@ -96,7 +95,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %pre server
 grep -q ^dhcpd: /etc/group || groupadd -g 188 dhcpd
-grep -q ^dhcpd: /etc/passwd || useradd -g dhcpd -u 188 -d / -s /bin/false -M dhcpd
+grep -q ^dhcpd: /etc/passwd ||
+	useradd -g dhcpd -u 188 -d / -s /bin/false -M dhcpd
 rm -f /var/run/dhcp.restart
 if [ $1 -ge 2 ]; then
 	/etc/rc.d/init.d/dhcpd status && touch /var/run/dhcp.restart || :
@@ -154,4 +154,3 @@ fi
 - Initial release (3.0pl2)
 - chroot patch for dhcpd and dhcrelay
 - Modified a client-patch from Red Hat
-
