@@ -1,0 +1,11 @@
+--- openssl-0.9.6h/Makefile.org.orig	Thu Nov 14 15:40:49 2002
++++ openssl-0.9.6h/Makefile.org	Thu Dec 12 21:58:13 2002
+@@ -196,7 +196,7 @@
+ # When we're prepared to use shared libraries in the programs we link here
+ # we might remove 'clean-shared' from the targets to perform at this stage
+ 
+-all: clean-shared Makefile.ssl sub_all
++all: Makefile.ssl sub_all
+ 
+ sub_all:
+ 	@for i in $(DIRS); \

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.29 2002/12/12 17:33:44 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.30 2002/12/12 19:20:57 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
@@ -11,6 +11,7 @@ Source: ftp://ftp.openssl.org/source/%{name}-%{version}.tar.gz
 Patch0: openssl-0.9.6e-owl-crypt.diff
 Patch1: openssl-0.9.6a-owl-glibc-enable_secure.diff
 Patch10: openssl-0.9.6e-up-20020429-read-errors.diff
+Patch20: openssl-0.9.6h-owl-Makefile.diff
 PreReq: /sbin/ldconfig
 Provides: SSL
 BuildRequires: perl
@@ -64,6 +65,7 @@ popd
 %patch0 -p1
 %patch1 -p1
 %patch10 -p0
+%patch20 -p1
 
 %define openssldir /var/ssl
 %define opensslflags shared -DSSL_ALLOW_ADH --prefix=/usr
@@ -101,7 +103,7 @@ perl -pi -e "s/-O.(?: -fomit-frame-pointer)?(?: -m.86)?/${RPM_OPT_FLAGS}/" \
 # all: clean-shared Makefile.ssl sub_all
 make Makefile.ssl
 make sub_all DIRS="crypto ssl"
-LD_LIBRARY_PATH=`pwd` make sub_all DIRS="apps test tools"
+LD_LIBRARY_PATH=`pwd` make sub_all DIRS="apps tools"
 
 if [ ! -x /usr/bin/bc ]; then
 	perl -pi -e 's/^test_bn:/test_bn_unused:/' test/Makefile.ssl
@@ -159,6 +161,8 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Thu Dec 12 2002 Solar Designer <solar@owl.openwall.com>
 - Updated to 0.9.6h.
+- Dropped clean-shared for the "all" target (invoked by "tests" and
+"install"), it resulted in re-linking of shared libraries at best.
 
 * Fri Nov 15 2002 Solar Designer <solar@owl.openwall.com>
 - Dropped the patch removing -Wl,-Bsymbolic which is no longer needed with
