@@ -11,7 +11,7 @@
 #elif !defined(_MD5_H)
 #define _MD5_H
 
-/* Any 32-bit or wider integer data type will do */
+/* Any 32-bit or wider unsigned integer data type will do */
 typedef unsigned long MD5_u32plus;
 
 typedef struct {

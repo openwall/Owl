@@ -33,8 +33,8 @@ void pop_clean(void)
 
 int pop_sane(void)
 {
-	return (unsigned int)pop_buffer.size <= sizeof(pop_buffer.data) &&
-	    (unsigned int)pop_buffer.ptr <= (unsigned int)pop_buffer.size;
+	return pop_buffer.size <= sizeof(pop_buffer.data) &&
+	    pop_buffer.ptr <= pop_buffer.size;
 }
 
 static void pop_timeout(int signum)
@@ -43,24 +43,28 @@ static void pop_timeout(int signum)
 	siglongjmp(pop_timed_out, 1);
 }
 
-static int pop_fetch(void)
+static void pop_fetch(void)
 {
+	int size;
+
 	signal(SIGALRM, pop_timeout);
 	alarm(POP_TIMEOUT);
 
-	pop_buffer.size = read(0, pop_buffer.data, sizeof(pop_buffer.data));
+	size = read(0, pop_buffer.data, sizeof(pop_buffer.data));
 
 	alarm(0);
 	signal(SIGALRM, SIG_DFL);
 
 	pop_buffer.ptr = 0;
-	return pop_buffer.size <= 0;
+	pop_buffer.size = (size >= 0) ? size : 0;
 }
 
 static int pop_get_char(void)
 {
-	if (pop_buffer.ptr >= pop_buffer.size)
-	if (pop_fetch()) return -1;
+	if (pop_buffer.ptr >= pop_buffer.size) {
+		pop_fetch();
+		if (!pop_buffer.size) return -1;
+	}
 
 	return (unsigned char)pop_buffer.data[pop_buffer.ptr++];
 }
@@ -211,7 +215,7 @@ int pop_reply_error(void)
 	return pop_reply("-ERR");
 }
 
-int pop_reply_multiline(int fd, long size, int lines)
+int pop_reply_multiline(int fd, unsigned long size, int lines)
 {
 	char *in_buffer, *out_buffer;
 	char *in, *out;

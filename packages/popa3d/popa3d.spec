@@ -1,8 +1,8 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.22 2002/07/06 23:54:21 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.23 2002/08/02 06:52:58 solar Exp $
 
 Summary: Post Office Protocol (POP3) server.
 Name: popa3d
-Version: 0.5.1.4
+Version: 0.5.1.5
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
@@ -72,6 +72,12 @@ fi
 %doc DESIGN LICENSE
 
 %changelog
+* Fri Aug 02 2002 Solar Designer <solar@owl.openwall.com>
+- Use unsigned integer types where integer overflows are possible and
+post-checked for; ISO C 99 leaves the behavior on integer overflow for
+signed integer types undefined.
+- Use unsigned long for file and message sizes and file offsets.
+
 * Sun Jun 30 2002 Solar Designer <solar@owl.openwall.com>
 - Mention "POP3" in ".SH NAME" in the man page such that "apropos POP3"
 will catch it, as suggested by Phil Pennock.

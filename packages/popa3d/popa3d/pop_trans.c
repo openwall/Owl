@@ -25,8 +25,34 @@ static int pop_trans_noop(char *params)
 static int pop_trans_stat(char *params)
 {
 	if (params) return POP_ERROR;
-	if (pop_reply("+OK %d %ld", db.visible_count, db.visible_size))
+	if (pop_reply("+OK %u %lu", db.visible_count, db.visible_size))
 		return POP_CRASH_NETFAIL;
+	return POP_QUIET;
+}
+
+static int pop_trans_list_or_uidl_all(int uidl)
+{
+	unsigned int number;
+	struct db_message *msg;
+
+	if (pop_reply_ok()) return POP_CRASH_NETFAIL;
+	for (number = 1; number <= db.total_count; number++) {
+		msg = db.array[number - 1];
+		if (msg->flags & MSG_DELETED) continue;
+		if (uidl) {
+			if (pop_reply("%u "
+			    "%02x%02x%02x%02x%02x%02x%02x%02x",
+			    number,
+			    msg->hash[3], msg->hash[2],
+			    msg->hash[1], msg->hash[0],
+			    msg->hash[7], msg->hash[6],
+			    msg->hash[5], msg->hash[4]))
+				return POP_CRASH_NETFAIL;
+		} else
+			if (pop_reply("%u %lu", number, msg->size))
+				return POP_CRASH_NETFAIL;
+	}
+	if (pop_reply_terminate()) return POP_CRASH_NETFAIL;
 	return POP_QUIET;
 }
 
@@ -35,46 +61,26 @@ static int pop_trans_list_or_uidl(char *params, int uidl)
 	int number;
 	struct db_message *msg;
 
-	if (params) {
-		number = pop_get_int(&params);
-		if (number < 1 || number > db.total_count || params)
-			return POP_ERROR;
-		msg = db.array[number - 1];
-		if (msg->flags & MSG_DELETED) return POP_ERROR;
-		if (uidl) {
-			if (pop_reply("+OK %d "
-			    "%02x%02x%02x%02x%02x%02x%02x%02x",
-			    number,
-			    msg->hash[3], msg->hash[2],
-			    msg->hash[1], msg->hash[0],
-			    msg->hash[7], msg->hash[6],
-			    msg->hash[5], msg->hash[4]))
-				return POP_CRASH_NETFAIL;
-		} else
-			if (pop_reply("+OK %d %ld", number, msg->size))
-				return POP_CRASH_NETFAIL;
-		return POP_QUIET;
-	}
+	if (!params)
+		return pop_trans_list_or_uidl_all(uidl);
 
-	if (pop_reply_ok()) return POP_CRASH_NETFAIL;
-	for (number = 1; number <= db.total_count; number++) {
-		msg = db.array[number - 1];
-		if (msg->flags & MSG_DELETED) continue;
-		if (uidl) {
-			if (pop_reply("%d "
-			    "%02x%02x%02x%02x%02x%02x%02x%02x",
-			    number,
-			    msg->hash[3], msg->hash[2],
-			    msg->hash[1], msg->hash[0],
-			    msg->hash[7], msg->hash[6],
-			    msg->hash[5], msg->hash[4]))
-				return POP_CRASH_NETFAIL;
-		} else
-			if (pop_reply("%d %ld", number, msg->size))
-				return POP_CRASH_NETFAIL;
-	}
-	if (pop_reply_terminate()) return POP_CRASH_NETFAIL;
-
+	number = pop_get_int(&params);
+	if (number < 1 || number > db.total_count || params)
+		return POP_ERROR;
+	msg = db.array[number - 1];
+	if (msg->flags & MSG_DELETED) return POP_ERROR;
+	if (uidl) {
+		if (pop_reply("+OK %d "
+		    "%02x%02x%02x%02x%02x%02x%02x%02x",
+		    number,
+		    msg->hash[3], msg->hash[2],
+		    msg->hash[1], msg->hash[0],
+		    msg->hash[7], msg->hash[6],
+		    msg->hash[5], msg->hash[4]))
+			return POP_CRASH_NETFAIL;
+	} else
+		if (pop_reply("+OK %d %lu", number, msg->size))
+			return POP_CRASH_NETFAIL;
 	return POP_QUIET;
 }
 
@@ -161,7 +167,7 @@ static int pop_trans_rset(char *params)
 static int pop_trans_last(char *params)
 {
 	if (params) return POP_ERROR;
-	if (pop_reply("+OK %d", db.last)) return POP_CRASH_NETFAIL;
+	if (pop_reply("+OK %u", db.last)) return POP_CRASH_NETFAIL;
 	return POP_QUIET;
 }
 #endif
@@ -210,7 +216,7 @@ int do_pop_trans(char *spool, char *mailbox)
 		return 0;
 	}
 
-	syslog(SYSLOG_PRI_LO, "%d message%s (%ld byte%s) loaded",
+	syslog(SYSLOG_PRI_LO, "%u message%s (%lu byte%s) loaded",
 		db.total_count, db.total_count == 1 ? "" : "s",
 		db.total_size, db.total_size == 1 ? "" : "s");
 
@@ -228,7 +234,7 @@ int do_pop_trans(char *spool, char *mailbox)
 			break;
 		}
 
-		syslog(SYSLOG_PRI_LO, "%d (%ld) deleted, %d (%ld) left",
+		syslog(SYSLOG_PRI_LO, "%u (%lu) deleted, %u (%lu) left",
 			db.total_count - db.visible_count,
 			db.total_size - db.visible_size,
 			db.visible_count,
