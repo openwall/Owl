@@ -1,0 +1,6 @@
+/var/log/vsftpd {
+	# vsftpd doesn't handle SIGHUP
+	notifempty
+	missingok
+	nocompress
+}

@@ -1,0 +1,13 @@
+# default: off
+# description: An FTP server
+
+service ftp
+{
+	socket_type	= stream
+	protocol	= tcp
+	user		= root
+	wait		= no
+	rlimit_as	= 16M
+	server		= /usr/sbin/vsftpd
+	disable         = yes
+}

@@ -1,0 +1,164 @@
+diff -urN vsftpd-1.0.1.orig/Makefile vsftpd-1.0.1/Makefile
+--- vsftpd-1.0.1.orig/Makefile	Tue Oct  9 01:35:27 2001
++++ vsftpd-1.0.1/Makefile	Sun Dec 16 04:24:14 2001
+@@ -12,7 +12,8 @@
+ 		postprivparent.o logging.o str.o netstr.o sysstr.o strlist.o \
+     dirchange.o filestr.o parseconf.o secutil.o \
+     ascii.o oneprocess.o twoprocess.o privops.o \
+-    sysutil.o sysdeputil.o
++    sysutil.o sysdeputil.o \
++    appl_userpass.o
+ 
+ .c.o:
+ 	$(CC) -c $*.c $(CFLAGS) $(IFLAGS)
+diff -urN vsftpd-1.0.1.orig/_pam_userpass.h vsftpd-1.0.1/_pam_userpass.h
+--- vsftpd-1.0.1.orig/_pam_userpass.h	Thu Jan  1 03:00:00 1970
++++ vsftpd-1.0.1/_pam_userpass.h	Fri Apr  7 07:16:11 2000
+@@ -0,0 +1,12 @@
++#ifndef __PAM_USERPASS_H
++#define __PAM_USERPASS_H
++
++#define USERPASS_AGENT_ID		"userpass"
++#define USERPASS_AGENT_ID_LENGTH	8
++
++#define USERPASS_USER_MASK		0x03
++#define USERPASS_USER_REQUIRED		1
++#define USERPASS_USER_KNOWN		2
++#define USERPASS_USER_FIXED		3
++
++#endif
+diff -urN vsftpd-1.0.1.orig/appl_userpass.c vsftpd-1.0.1/appl_userpass.c
+--- vsftpd-1.0.1.orig/appl_userpass.c	Thu Jan  1 03:00:00 1970
++++ vsftpd-1.0.1/appl_userpass.c	Sun Dec 16 04:25:40 2001
+@@ -0,0 +1,59 @@
++#include <string.h>
++#include <stdlib.h>
++
++#include <security/pam_appl.h>
++#include <security/pam_client.h>
++
++#ifndef PAM_BP_RCONTROL
++/* Linux-PAM prior to 0.74 */
++#define PAM_BP_RCONTROL	PAM_BP_CONTROL
++#define PAM_BP_WDATA	PAM_BP_DATA
++#define PAM_BP_RDATA	PAM_BP_DATA
++#endif
++
++#include "_pam_userpass.h"
++#include "pam_userpass.h"
++
++int pam_userpass_conv(int num_msg, const struct pam_message **msg,
++	struct pam_response **resp, void *appdata_ptr)
++{
++	pam_userpass_t *userpass = (pam_userpass_t *)appdata_ptr;
++	pamc_bp_t prompt;
++	const char *input;
++	char *output;
++	char flags;
++
++	if (num_msg != 1 || msg[0]->msg_style != PAM_BINARY_PROMPT)
++		return PAM_CONV_ERR;
++
++	prompt = (pamc_bp_t)msg[0]->msg;
++	input = PAM_BP_RDATA(prompt);
++
++	if (PAM_BP_RCONTROL(prompt) != PAM_BPC_SELECT ||
++	    strncmp(input, USERPASS_AGENT_ID "/", USERPASS_AGENT_ID_LENGTH + 1))
++		return PAM_CONV_ERR;
++
++	flags = input[USERPASS_AGENT_ID_LENGTH + 1];
++	input += USERPASS_AGENT_ID_LENGTH + 1 + 1;
++
++	if ((flags & USERPASS_USER_MASK) == USERPASS_USER_FIXED &&
++	    strcmp(input, userpass->user))
++		return PAM_CONV_AGAIN;
++
++	if (!(*resp = malloc(sizeof(struct pam_response))))
++		return PAM_CONV_ERR;
++
++	prompt = NULL;
++	PAM_BP_RENEW(&prompt, PAM_BPC_DONE,
++		strlen(userpass->user) + 1 + strlen(userpass->pass));
++	output = PAM_BP_WDATA(prompt);
++
++	strcpy(output, userpass->user);
++	output += strlen(output) + 1;
++	memcpy(output, userpass->pass, strlen(userpass->pass));
++
++	(*resp)[0].resp_retcode = 0;
++	(*resp)[0].resp = (char *)prompt;
++
++	return PAM_SUCCESS;
++}
+diff -urN vsftpd-1.0.1.orig/pam_userpass.h vsftpd-1.0.1/pam_userpass.h
+--- vsftpd-1.0.1.orig/pam_userpass.h	Thu Jan  1 03:00:00 1970
++++ vsftpd-1.0.1/pam_userpass.h	Sat Nov 10 23:53:51 2001
+@@ -0,0 +1,14 @@
++#ifndef _PAM_USERPASS_H
++#define _PAM_USERPASS_H
++
++#include <security/pam_appl.h>
++
++typedef struct {
++	const char *user;
++	const char *pass;
++} pam_userpass_t;
++
++extern int pam_userpass_conv(int num_msg, const struct pam_message **msg,
++	struct pam_response **resp, void *appdata_ptr);
++
++#endif
+diff -urN vsftpd-1.0.1.orig/sysdeputil.c vsftpd-1.0.1/sysdeputil.c
+--- vsftpd-1.0.1.orig/sysdeputil.c	Wed Nov 14 00:12:54 2001
++++ vsftpd-1.0.1/sysdeputil.c	Sun Dec 16 04:30:59 2001
+@@ -15,6 +15,8 @@
+ #include "defs.h"
+ #include "tunables.h"
+ 
++#include "pam_userpass.h"
++
+ /* For Linux, this adds nothing :-) */
+ #include "port/porting_junk.h"
+ 
+@@ -218,9 +220,7 @@
+ 
+ #else /* VSF_SYSDEP_HAVE_PAM */
+ 
+-static struct mystr s_pword_str;
+-static int pam_conv_func(int nmsg, const struct pam_message** p_msg,
+-                         struct pam_response** p_reply, void* p_addata);
++static pam_userpass_t userpass;
+ 
+ int
+ vsf_sysdep_check_auth(const struct mystr* p_user_str,
+@@ -231,10 +231,11 @@
+   pam_handle_t* pamh = 0;
+   struct pam_conv the_conv =
+   {
+-    &pam_conv_func,
+-    0
++    pam_userpass_conv,
++    &userpass
+   };
+-  str_copy(&s_pword_str, p_pass_str);
++  userpass.user = str_getbuf(p_user_str);
++  userpass.pass = str_getbuf(p_pass_str);
+   retval = pam_start(tunable_pam_service_name,
+                      str_getbuf(p_user_str), &the_conv, &pamh);
+   if (retval != PAM_SUCCESS)
+@@ -277,6 +278,7 @@
+   return 1;
+ }
+ 
++#if 0
+ static int
+ pam_conv_func(int nmsg, const struct pam_message** p_msg,
+               struct pam_response** p_reply, void* p_addata)
+@@ -312,6 +314,7 @@
+   *p_reply = p_resps;
+   return PAM_SUCCESS;
+ }
++#endif
+ 
+ #endif /* VSF_SYSDEP_HAVE_PAM */
+ 

@@ -1,0 +1,213 @@
+diff -ur vsftpd-1.0.1.orig/tunables.c vsftpd-1.0.1/tunables.c
+--- vsftpd-1.0.1.orig/tunables.c	Thu Nov  8 04:24:53 2001
++++ vsftpd-1.0.1/tunables.c	Sun Dec 16 06:41:31 2001
+@@ -50,19 +50,19 @@
+ unsigned int tunable_anon_max_rate = 0;
+ unsigned int tunable_local_max_rate = 0;
+ 
+-const char* tunable_secure_chroot_dir = "/usr/share/empty";
++const char* tunable_secure_chroot_dir = "/var/empty";
+ const char* tunable_ftp_username = "ftp";
+ const char* tunable_chown_username = "root";
+-const char* tunable_xferlog_file = "/var/log/vsftpd.log";
++const char* tunable_xferlog_file = "/var/log/vsftpd";
+ const char* tunable_message_file = ".message";
+ /* XXX -> "secure"? */
+-const char* tunable_nopriv_user = "nobody";
++const char* tunable_nopriv_user = "vsftpd";
+ const char* tunable_ftpd_banner = 0;
+-const char* tunable_banned_email_file = "/etc/vsftpd.banned_emails";
+-const char* tunable_chroot_list_file = "/etc/vsftpd.chroot_list";
+-const char* tunable_pam_service_name = "ftp";
++const char* tunable_banned_email_file = "/etc/vsftpd/banned_emails";
++const char* tunable_chroot_list_file = "/etc/vsftpd/chroot_list";
++const char* tunable_pam_service_name = "vsftpd";
+ const char* tunable_guest_username = "ftp";
+-const char* tunable_userlist_file = "/etc/vsftpd.user_list";
++const char* tunable_userlist_file = "/etc/vsftpd/user_list";
+ const char* tunable_anon_root = 0;
+ const char* tunable_local_root = 0;
+ 
+diff -ur vsftpd-1.0.1.orig/vsftpd.conf vsftpd-1.0.1/vsftpd.conf
+--- vsftpd-1.0.1.orig/vsftpd.conf	Tue Jul 31 01:51:07 2001
++++ vsftpd-1.0.1/vsftpd.conf	Sun Dec 16 06:55:15 2001
+@@ -1,13 +1,10 @@
+-# Example config file /etc/vsftpd.conf
+-#
+-# The default compiled in settings are very paranoid. This sample file
+-# loosens things up a bit, to make the ftp daemon more usable.
++# The configuration file for vsftpd.
+ #
+ # Allow anonymous FTP?
+-anonymous_enable=YES
++anonymous_enable=NO
+ #
+-# Uncomment this to allow local users to log in.
+-#local_enable=YES
++# Allow local users to log in?
++local_enable=NO
+ #
+ # Uncomment this to enable any form of FTP write command.
+ #write_enable=YES
+@@ -32,9 +29,20 @@
+ # Activate logging of uploads/downloads.
+ xferlog_enable=YES
+ #
++# Uncomment this to disallow the PORT method of obtaining a data connection.
++#port_enable=NO
++#
++# Uncomment this to disallow the PASV method of obtaining a data connection.
++#pasv_enable=NO
++#
+ # Make sure PORT transfer connections originate from port 20 (ftp-data).
+ connect_from_port_20=YES
+ #
++# The port range to allocate for PASV-style data connections.
++# Can be used to specify a narrow port range to assist firewalling.
++pasv_min_port=49152
++pasv_max_port=65535
++#
+ # If you want, you can arrange for uploaded anonymous files to be owned by
+ # a different user. Note! Using "root" for uploaded files is not
+ # recommended!
+@@ -43,7 +51,7 @@
+ #
+ # You may override where the log file goes if you like. The default is shown
+ # below.
+-#xferlog_file=/var/log/vsftpd.log
++#xferlog_file=/var/log/vsftpd
+ #
+ # If you want, you can have your log file in standard ftpd xferlog format
+ #xferlog_std_format=YES
+@@ -56,7 +64,7 @@
+ #
+ # It is recommended that you define on your system a unique user which the
+ # ftp server can use as a totally isolated and unprivileged user.
+-#nopriv_user=ftpsecure
++#nopriv_user=vsftpd
+ #
+ # Enable this and the server will recognise asynchronous ABOR requests. Not
+ # recommended for security (the code is non-trivial). Not enabling it,
+@@ -73,8 +81,8 @@
+ # to enable ASCII uploads (to prevent uploaded scripts etc. from breaking),
+ # without the DoS risk of SIZE and ASCII downloads. ASCII mangling should be
+ # on the client anyway..
+-#ascii_upload_enable=YES
+-#ascii_download_enable=YES
++ascii_upload_enable=YES
++ascii_download_enable=YES
+ #
+ # You may fully customise the login banner string:
+ #ftpd_banner=Welcome to blah FTP service.
+@@ -83,18 +91,20 @@
+ # useful for combatting certain DoS attacks.
+ #deny_email_enable=YES
+ # (default follows)
+-#banned_email_file=/etc/vsftpd.banned_emails
++#banned_email_file=/etc/vsftpd/banned_emails
+ #
+ # You may specify an explicit list of local users to chroot() to their home
+ # directory. If chroot_local_user is YES, then this list becomes a list of
+ # users to NOT chroot().
++# Warning: these features have non-trivial security implications, especially
++# if the users also have shell access. Only enable if you know what you are
++# doing (and you probably don't).
+ #chroot_list_enable=YES
+ # (default follows)
+-#chroot_list_file=/etc/vsftpd.chroot_list
++#chroot_list_file=/etc/vsftpd/chroot_list
+ #
+ # You may activate the "-R" option to the builtin ls. This is disabled by
+ # default to avoid remote users being able to cause excessive I/O on large
+ # sites. However, some broken FTP clients such as "ncftp" and "mirror" assume
+ # the presence of the "-R" option, so there is a strong case for enabling it.
+ #ls_recurse_enable=YES
+-
+diff -ur vsftpd-1.0.1.orig/vsftpd.conf.5 vsftpd-1.0.1/vsftpd.conf.5
+--- vsftpd-1.0.1.orig/vsftpd.conf.5	Thu Nov  8 04:30:21 2001
++++ vsftpd-1.0.1/vsftpd.conf.5	Sun Dec 16 06:41:31 2001
+@@ -109,7 +109,7 @@
+ different if chroot_local_user is set to YES. In this case, the list becomes
+ a list of users which are NOT to be placed in a chroot() jail.
+ By default, the file containing this list is
+-/etc/vsftpd.chroot_list, but you may override this with the
++/etc/vsftpd/chroot_list, but you may override this with the
+ .BR chroot_list_file
+ setting.
+ 
+@@ -135,7 +135,7 @@
+ .B deny_email_enable
+ If activated, you may provide a list of anonymous password e-mail responses
+ which cause login to be denied. By default, the file containing this list is
+-/etc/vsftpd.banned_emails, but you may override this with the
++/etc/vsftpd/banned_emails, but you may override this with the
+ .BR banned_email_file
+ setting.
+ 
+@@ -249,7 +249,7 @@
+ .TP
+ .B xferlog_enable
+ If enabled, a log file will be maintained detailling uploads and downloads.
+-By default, this file will be placed at /var/log/vsftpd.log, but this location
++By default, this file will be placed at /var/log/vsftpd, but this location
+ may be overridden using the configuration setting
+ .BR xferlog_file .
+ 
+@@ -355,7 +355,7 @@
+ .BR deny_email_enable
+ is enabled.
+ 
+-Default: /etc/vsftpd.banned_emails
++Default: /etc/vsftpd/banned_emails
+ .TP
+ .B chown_username
+ This is the name of the user who is given ownership of anonymously uploaded
+@@ -374,7 +374,7 @@
+ .BR chroot_local_user
+ is disabled.
+ 
+-Default: /etc/vsftpd.chroot_list
++Default: /etc/vsftpd/chroot_list
+ .TP
+ .B guest_username
+ See the boolean setting
+@@ -417,26 +417,26 @@
+ than nobody. The user nobody tends to be used for rather a lot of important
+ things on most machines.
+ 
+-Default: nobody
++Default: vsftpd
+ .TP
+ .B pam_service_name
+ This string is the name of the PAM service vsftpd will use.
+ 
+-Default: ftp
++Default: vsftpd
+ .TP
+ .B secure_chroot_dir
+ This option should be the name of a directory which is empty. Also, the
+ directory should not be writable by the ftp user. This directory is used
+ as a secure chroot() jail at times vsftpd does not require filesystem access.
+ 
+-Default: /usr/share/empty
++Default: /var/empty
+ .TP
+ .B userlist_file
+ This option is the name of the file loaded when the
+ .BR userlist_enable
+ option is active.
+ 
+-Default: /etc/vsftpd.user_list
++Default: /etc/vsftpd/user_list
+ .TP
+ .B xferlog_file
+ This option is the name of the file to which we write the transfer log. The
+@@ -444,7 +444,7 @@
+ .BR xferlog_enable
+ is set.
+ 
+-Default: /var/log/vsftpd.log
++Default: /var/log/vsftpd
+ 
+ .SH AUTHOR
+ chris@scary.beasts.org

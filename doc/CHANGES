@@ -12,6 +12,9 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/12/16	Package: vsftpd
+New package: a File Transfer Protocol (FTP) server.
+
 2001/12/14	Package: glibc
 SECURITY FIX	Severity: none to high, remote, active
 Back-ported a glob(3) buffer overflow fix from the CVS.  The bug has
@@ -509,4 +512,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.56 2001/12/14 19:32:22 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.57 2001/12/16 04:19:52 solar Exp $
