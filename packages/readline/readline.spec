@@ -1,9 +1,9 @@
-# $Id: Owl/packages/readline/readline.spec,v 1.13 2003/10/30 21:15:48 solar Exp $
+# $Id: Owl/packages/readline/readline.spec,v 1.14 2004/01/15 22:45:17 mci Exp $
 
 Summary: A library for editing typed in command lines.
 Name: readline
 Version: 4.1
-Release: owl9
+Release: owl10
 License: GPL
 Group: System Environment/Libraries
 Source: ftp://ftp.gnu.org/gnu/readline-%version.tar.gz
@@ -99,12 +99,15 @@ fi
 
 %files devel
 %defattr(-,root,root)
+%doc examples/
 %_includedir/readline
 %_libdir/lib*.a
 %_libdir/lib*.so
-%doc %_docdir/examples/*
 
 %changelog
+* Thu Jan 15 2004 Michail Litvak <mci@owl.openwall.com> 4.1-owl10
+- Put examples to right place.
+
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 4.1-owl9
 - Deal with info dir entries such that the menu looks pretty.
 
