@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.29 2001/11/16 03:09:22 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.30 2001/12/12 18:31:54 solar Exp $
 
-Summary: The OpenSSH implementation of SSH.
+Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
-Version: 2.9.9p2
-Release: 4owl
+Version: 3.0.2p1
+Release: 1owl
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -13,13 +13,12 @@ Source2: sshd.init
 Source3: ssh_config
 Source4: sshd_config
 Source5: sftp.control
-Patch0: openssh-2.9.9p2-owl-hide-unknown.diff
-Patch1: openssh-2.9.9p2-owl-always-auth.diff
-Patch2: openssh-2.9.9p2-owl-pam_userpass.diff
-Patch3: openssh-2.9.9p2-owl-scp-stalltime.diff
-Patch4: openssh-2.9.9p2-owl-drop-groups.diff
-Patch5: openssh-2.9.9p2-owl-openssl-version-check.diff
-Patch6: openssh-2.9.9p2-cvs-20010928-fixes.diff
+Patch0: openssh-3.0.2p1-owl-hide-unknown.diff
+Patch1: openssh-3.0.2p1-owl-always-auth.diff
+Patch2: openssh-3.0.2p1-owl-pam_userpass.diff
+Patch3: openssh-3.0.2p1-owl-scp-stalltime.diff
+Patch4: openssh-3.0.2p1-owl-drop-groups.diff
+Patch5: openssh-3.0.2p1-owl-openssl-version-check.diff
 Requires: tcb, pam_mktemp
 PreReq: openssl >= 0.9.6b-1owl
 PreReq: openssl < 0.9.7
@@ -95,7 +94,6 @@ clients to connect to your host.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p3
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" LIBS="-lcrypt -lpam -lpam_misc" ./configure \
@@ -194,6 +192,9 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Wed Dec 12 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 3.0.2p1.
+
 * Fri Nov 16 2001 Solar Designer <solar@owl.openwall.com>
 - Use pam_tcb.
 

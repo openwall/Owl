@@ -1,7 +1,7 @@
-diff -ur openssh-2.9.9p2.orig/sshd.c openssh-2.9.9p2/sshd.c
---- openssh-2.9.9p2.orig/sshd.c	Tue Sep 18 08:03:04 2001
-+++ openssh-2.9.9p2/sshd.c	Thu Sep 27 04:31:56 2001
-@@ -782,6 +782,9 @@
+diff -ur openssh-3.0.2p1.orig/sshd.c openssh-3.0.2p1/sshd.c
+--- openssh-3.0.2p1.orig/sshd.c	Mon Nov 12 03:07:12 2001
++++ openssh-3.0.2p1/sshd.c	Wed Dec 12 19:37:30 2001
+@@ -784,6 +784,9 @@
  		log_stderr = 1;
  	log_init(__progname, options.log_level, options.log_facility, log_stderr);
  

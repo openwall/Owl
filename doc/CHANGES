@@ -12,6 +12,14 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/12/12	Package: openssh
+SECURITY FIX	Severity: none to high, local, active
+Updated to 3.0.2p1 which fixes a security problem with UseLogin where,
+if UseLogin is enabled in the sshd configuration, a local user could
+gain root access by passing arbitrary environment variable settings to
+login(1) via authorized_keys file options.  UseLogin has never been
+enabled on Owl by default and its use is discouraged.
+
 2001/12/10	Package: ipchains
 New package: an interface to the Linux IP packet filtering code.
 
@@ -488,4 +496,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.54 2001/12/10 01:38:27 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.55 2001/12/12 18:18:38 solar Exp $
