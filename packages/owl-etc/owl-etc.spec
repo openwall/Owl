@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.43 2003/05/26 23:10:05 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.44 2003/05/29 00:24:39 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
-Version: 0.26
+Version: 0.27
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -47,6 +47,15 @@ cp -rL $RPM_SOURCE_DIR/* etc/
 rm -rf $RPM_BUILD_ROOT
 
 %triggerin -- tcb
+function pause()
+{
+	if tty -s; then
+		echo
+		echo "Install will continue in 10 seconds..."
+		sleep 10
+	fi
+}
+
 # Determine whether the current /etc/shadow matches the initial version
 # as provided by this package.
 if [ -e /etc/shadow.rpmnew ]; then
@@ -57,9 +66,68 @@ else
 	SHADOW_INITIAL=no
 fi
 
+# New install?
+if [ $SHADOW_INITIAL = yes -a ! -e /etc/tcb -a \
+    ! -e /etc/nsswitch.conf.rpmnew ]; then
+	echo "No existing password shadowing found, will use /etc/tcb."
+	/sbin/tcb_convert && rm /etc/shadow
 # Updating an install that uses tcb?
-if [ $SHADOW_INITIAL = yes -a -d /etc/tcb ]; then
+elif [ $SHADOW_INITIAL = yes -a -d /etc/tcb ]; then
+	echo "OK, already using /etc/tcb."
 	rm /etc/shadow
+# Updating an install that uses shadow?
+elif [ $SHADOW_INITIAL = no -a ! -e /etc/tcb ]; then
+	if [ -e /etc/nsswitch.conf.rpmnew ]; then
+		cat << EOF
+This system appears to be using /etc/shadow.  Conversion to /etc/tcb
+is desired, but /etc/nsswitch.conf appears to have been modified locally
+preventing automatic conversion.  You'll need to either convert this
+system to /etc/tcb manually or knowingly keep it with /etc/shadow
+(which is also non-default with a number of other configuration files).
+Please refer to tcb_convert(8) for instructions.
+EOF
+	else
+		cat << EOF
+This system appears to be using /etc/shadow and will now be converted
+to /etc/tcb.
+
+EOF
+		if /sbin/tcb_convert; then
+			echo "tcb_convert succeeded"
+			rm -f /etc/shadow.rpmnew
+			mv -v /etc/shadow /etc/shadow-pre-tcb
+			chmod -v go-rwx /etc/shadow*
+			cat << EOF
+
+The old shadow file and any its backups have been left around - be sure
+to remove them once you're positive the conversion has succeeded.
+EOF
+		else
+			cat << EOF
+tcb_convert FAILED
+
+Your system may be in an inconsistent state now, please perform the
+conversion to /etc/tcb manually.  See tcb_convert(8) for instructions.
+EOF
+		fi
+	fi
+	pause
+# Updating a misconfigured install?
+elif [ $SHADOW_INITIAL = no -a -e /etc/tcb ]; then
+	cat << EOF
+This system appears to be misconfigured: both /etc/shadow and /etc/tcb
+exist.  It may be in an inconsistent state now, please complete the
+conversion to /etc/tcb manually.  See tcb_convert(8) for instructions.
+EOF
+	pause
+# Possible other misconfigurations.
+else
+	cat << EOF
+This system's local user authentication appears to be misconfigured.
+You might need to convert it to /etc/tcb manually, see tcb_convert(8)
+for instructions.
+EOF
+	pause
 fi
 
 rm -f /etc/{passwd,shadow,group}.rpmnew
@@ -88,6 +156,9 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 %ghost /var/log/lastlog
 
 %changelog
+* Thu May 29 2003 Solar Designer <solar@owl.openwall.com> 0.27-owl1
+- tcb is now the default and automatic conversion to it is attempted.
+
 * Tue May 27 2003 Solar Designer <solar@owl.openwall.com> 0.26-owl1
 - When updating an install that uses tcb, don't install the initial
 /etc/shadow (rm it on a trigger).
