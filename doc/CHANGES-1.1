@@ -12,6 +12,19 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.0 and Owl-current.
 
+2003/09/17	Package: openssh
+SECURITY FIX	Severity: medium, remote, active
+Multiple memory management errors have been discovered in OpenSSH, and
+this update corrects 6 such real or potential errors based on an
+exhaustive review of the OpenSSH source code for uses of *realloc()
+functions.  At this time, it is uncertain whether and which of these
+bugs are exploitable.  If exploits are possible, due to privilege
+separation, the worst direct impact should be limited to arbitrary
+code execution under the sshd pseudo-user account restricted within
+the chroot jail /var/empty, or under the logged in user account.
+Reference:
+http://www.openssh.com/txt/buffer.adv
+
 2003/08/24 -
 2003/09/15	Package: john
 Added an event logging framework.
@@ -396,4 +409,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.73 2003/09/15 08:39:35 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.74 2003/09/17 08:03:37 solar Exp $
