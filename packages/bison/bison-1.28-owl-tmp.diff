@@ -1,0 +1,92 @@
+diff -ur bison-1.28.orig/src/files.c bison-1.28/src/files.c
+--- bison-1.28.orig/src/files.c	Wed May 19 15:43:04 1999
++++ bison-1.28/src/files.c	Wed Jan  3 09:06:44 2001
+@@ -42,6 +42,7 @@
+ #endif
+ 
+ #include <stdio.h>
++#include <stdlib.h>
+ 
+ #ifdef HAVE_UNISTD_H
+ #include <unistd.h>
+@@ -76,15 +77,12 @@
+ 
+ extern int noparserflag;
+ 
+-extern char	*mktemp();	/* So the compiler won't complain */
+-extern char	*getenv();
+-extern void	perror();
+-
+ char *stringappend PARAMS((char *, int, char *));
+ void openfiles PARAMS((void));
+ void open_extra_files PARAMS((void));
+ FILE *tryopen PARAMS((char *, char *));	/* This might be a good idea */
+ int tryclose PARAMS((FILE *));
++FILE *trytemp PARAMS((char *));
+ void done PARAMS((int));
+ 
+ extern char *program_name;
+@@ -274,13 +272,6 @@
+   tmpattrsfile = mktemp(stringappend(tmp_base, tmp_len, "atXXXXXX"));
+   tmptabfile = mktemp(stringappend(tmp_base, tmp_len, "taXXXXXX"));
+   tmpdefsfile = mktemp(stringappend(tmp_base, tmp_len, "deXXXXXX"));
+-#else
+-  if (! noparserflag)
+-    actfile = mktemp(stringappend(tmp_base, tmp_len, "act.XXXXXX"));
+-  tmpattrsfile = mktemp(stringappend(tmp_base, tmp_len, "attrs.XXXXXX"));
+-  tmptabfile = mktemp(stringappend(tmp_base, tmp_len, "tab.XXXXXX"));
+-  tmpdefsfile = mktemp(stringappend(tmp_base, tmp_len, "defs.XXXXXX"));
+-#endif /* not MSDOS */
+ 
+   if (! noparserflag)
+     faction = tryopen(actfile, "w+");
+@@ -292,13 +283,25 @@
+       defsfile = stringappend(name_base, base_length, ".h");
+       fdefines = tryopen(tmpdefsfile, "w+");
+     }
++#else
++  if (! noparserflag)
++    faction = trytemp(actfile = stringappend(tmp_base, tmp_len, "act.XXXXXX"));
++  fattrs = trytemp(tmpattrsfile = stringappend(tmp_base, tmp_len, "attrs.XXXXXX"));
++  ftable = trytemp(tmptabfile = stringappend(tmp_base, tmp_len, "tab.XXXXXX"));
++  if (definesflag)
++    {
++      defsfile = stringappend(name_base, base_length, ".h");
++      fdefines = trytemp(tmpdefsfile = stringappend(tmp_base, tmp_len, "defs.XXXXXX"));
++    }
++#endif /* not MSDOS */
+ 
+ #if !(defined (MSDOS) || (defined(_WIN32) && !defined(__CYGWIN32__)))
+   if (! noparserflag)
+     unlink(actfile);
+   unlink(tmpattrsfile);
+   unlink(tmptabfile);
+-  unlink(tmpdefsfile);
++  if (definesflag)
++    unlink(tmpdefsfile);
+ #endif /* MSDOS || (_WIN32 && !__CYGWIN32__) */
+ 
+ 	/* These are opened by `done' or `open_extra_files', if at all */
+@@ -401,6 +404,22 @@
+       done (2);
+     }
+   return result;
++}
++
++FILE *
++trytemp (char *template)
++{
++  int fd;
++  FILE *ptr;
++
++  if ((fd = mkstemp(template)) == -1 || (ptr = fdopen(fd, "r+")) == NULL)
++    {
++      fprintf(stderr, "%s: ", program_name);
++      perror("mkstemp");
++      if (fd != -1) unlink(template);
++      done(2);
++    }
++  return ptr;
+ }
+ 
+ void

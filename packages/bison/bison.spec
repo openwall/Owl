@@ -1,12 +1,13 @@
-# $Id: Owl/packages/bison/bison.spec,v 1.1 2000/08/09 00:51:27 kad Exp $
+# $Id: Owl/packages/bison/bison.spec,v 1.2 2001/01/03 08:01:16 solar Exp $
 
 Summary: A GNU general-purpose parser generator.
 Name: 		bison
 Version: 	1.28
-Release: 	5owl
+Release: 	6owl
 Copyright: 	GPL
 Group: 		Development/Tools
 Source: 	ftp://ftp.gnu.org/pub/gnu/bison/bison-%{version}.tar.gz
+Patch0:		bison-1.28-owl-tmp.diff
 Prereq: 	/sbin/install-info
 BuildRoot: 	/var/rpm-buildroot/%{name}-root
 
@@ -26,8 +27,10 @@ since it is used to build many C programs.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
+export ac_cv_func_mkstemp=yes \
 %configure --datadir=%{_libdir}
 make LDFLAGS=-s
 
@@ -56,7 +59,10 @@ fi
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
-* Sun Aug  6 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Wed Jan 03 2001 Solar Designer <solar@owl.openwall.com>
+- Patch to create temporary files safely.
+
+* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import from RH
 - fix URL
 
@@ -102,4 +108,3 @@ rm -rf $RPM_BUILD_ROOT
 
 * Mon Jun 02 1997 Erik Troan <ewt@redhat.com>
 - built against glibc
-
