@@ -421,21 +421,6 @@ diff -urN vixie-cron-3.0.2.7.orig/usr.sbin/cron/crontab.c vixie-cron-3.0.2.7.lin
  		fprintf(stderr, "%s: error renaming %s to %s\n",
  			ProgramName, TempFilename, n);
  		perror("rename");
-diff -urN vixie-cron-3.0.2.7.orig/usr.sbin/cron/database.c vixie-cron-3.0.2.7.linux/usr.sbin/cron/database.c
---- vixie-cron-3.0.2.7.orig/usr.sbin/cron/database.c	Fri Jan 23 01:55:55 1998
-+++ vixie-cron-3.0.2.7.linux/usr.sbin/cron/database.c	Sat Aug 19 11:49:06 2000
-@@ -112,8 +112,10 @@
- 		if (dp->d_name[0] == '.')
- 			continue;
- 
-+		if (strlen(dp->d_name) > sizeof(fname) - 1) continue;
- 		(void) strcpy(fname, dp->d_name);
--		sprintf(tabname, CRON_TAB(fname));
-+		snprintf(tabname, sizeof(tabname), CRON_TAB(fname));
-+		if (strlen(tabname) >= sizeof(tabname) - 1) continue;
- 
- 		process_crontab(fname, fname, tabname,
- 				&statbuf, &new_db, old_db);
 diff -urN vixie-cron-3.0.2.7.orig/usr.sbin/cron/do_command.c vixie-cron-3.0.2.7.linux/usr.sbin/cron/do_command.c
 --- vixie-cron-3.0.2.7.orig/usr.sbin/cron/do_command.c	Fri Sep  3 07:05:13 1999
 +++ vixie-cron-3.0.2.7.linux/usr.sbin/cron/do_command.c	Sun Aug 20 09:37:06 2000

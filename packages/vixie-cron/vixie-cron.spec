@@ -1,9 +1,9 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.7 2000/12/01 18:02:05 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.8 2001/07/16 21:58:20 mci Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron)
 Name: vixie-cron
 Version: 3.0.2.7
-Release: 7owl
+Release: 8owl
 Copyright: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%{version}.tar.gz
@@ -11,6 +11,7 @@ Source1: vixie-cron.init
 Source2: crontab.control
 Patch0: vixie-cron-%{version}-owl-linux.diff
 Patch1: vixie-cron-%{version}-owl-sgid-crontab.diff
+Patch2: vixie-cron-3.0.2.7-owl-crond.diff
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: owl-control < 2.0
 Prereq: /sbin/chkconfig, /dev/null, grep, shadow-utils
@@ -24,6 +25,7 @@ significant modifications by the NetBSD, OpenBSD, Red Hat, and Owl teams.
 %setup
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 make -C usr.sbin/cron CFLAGS="-c -I. -I../../include $RPM_OPT_FLAGS"
@@ -35,6 +37,8 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr/{bin,man/man{1,5,8},sbin}
 mkdir -p $RPM_BUILD_ROOT/etc/rc.d/{init.d,rc{0,1,2,3,4,5,6}.d}
 mkdir -p -m 700 $RPM_BUILD_ROOT/var/spool/cron
+
+mkdir -p -m 755 $RPM_BUILD_ROOT/etc/cron.d
 
 install -m 700 usr.sbin/cron/crontab $RPM_BUILD_ROOT/usr/bin
 install -m 700 usr.sbin/cron/crond $RPM_BUILD_ROOT/usr/sbin
@@ -97,6 +101,7 @@ fi
 /usr/man/man5/crontab.*
 /usr/man/man1/crontab.*
 %dir %attr(1730,root,crontab) /var/spool/cron
+%dir /etc/cron.d 
 %config(missingok) /etc/rc.d/rc0.d/K60crond
 %config(missingok) /etc/rc.d/rc1.d/K60crond
 %config(missingok) /etc/rc.d/rc2.d/S40crond
@@ -107,6 +112,9 @@ fi
 /etc/control.d/facilities/crontab
 
 %changelog
+* Mon Jul 16 2001 Michail Litvak <mci@owl.openwall.com>
+- Patch to support /etc/cron.d dir
+
 * Fri Dec 01 2000 Solar Designer <solar@owl.openwall.com>
 - Adjusted vixie-cron.init for owl-startup.
 - Restart crond after package upgrades in an owl-startup compatible way.
