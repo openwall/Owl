@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.42 2003/05/26 23:08:22 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.43 2003/05/26 23:10:05 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
@@ -26,7 +26,7 @@ Source51: csh.cshrc
 Obsoletes: setup
 Provides: setup
 AutoReq: false
-BuildRequires: fileutils >= 4.0.27
+BuildRequires: fileutils >= 4.0.27, rpm >= 3.0.6-owl8
 BuildArchitectures: noarch
 BuildRoot: /override/%{name}-%{version}
 
