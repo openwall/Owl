@@ -1,58 +1,31 @@
 #!/bin/sh
-# $Id: Owl/packages/ipchains/Attic/ipchains.init,v 1.1 2001/12/09 22:28:35 mci Exp $
-#
-# ipchains	Manage ipchains rules
+# $Id: Owl/packages/ipchains/Attic/ipchains.init,v 1.2 2001/12/10 01:30:26 solar Exp $
 #
 # chkconfig: 2345 08 92
 # description: \
-#	Linux IP Firewalling Chains is the Linux kernel packet \
-#	filtering code. Ipchains allows you to set up firewalls \
-#	and IP masquerading.
+#	ipchains is an interface to the Linux IP packet filtering code.
 # config: /etc/sysconfig/ipchains
 
-NETCONFIG=/etc/sysconfig/network
+# Get config.
+test -f /etc/sysconfig/network && . /etc/sysconfig/network
+
 IPCHAINS=/sbin/ipchains
-
-[ -s $NETCONFIG ] &&
-	. $NETCONFIG &&
-	[ "$NETWORKING" != no ] &&
-	[ -x $IPCHAINS ] || exit
-
 IPCHAINS_CONFIG=/etc/sysconfig/ipchains
-LOCKFILE=/var/lock/subsys/ipchains
-RETVAL=0
 
-KERNELMAJ=`uname -r | sed                   -e 's,\..*,,'`
-KERNELMIN=`uname -r | sed -e 's,[^\.]*\.,,' -e 's,\..*,,'`
-
-[ "$KERNELMAJ" -ge 2 ] || exit
-[ "$KERNELMAJ" -gt 2 -o "$KERNELMIN" -ge 2 ] || exit
-
-if [ "$KERNELMAJ" -eq 2 -a "$KERNELMIN" -eq 4 ]; then
-	if [ ! -f /proc/net/ip_fwchains ]; then
-		modprobe ipchains &>/dev/null || exit
-	fi
-fi
-
-start()
-{
-	if [ -s "$IPCHAINS_CONFIG" ]; then
+case "$1" in
+start|restart|reload)
+	if [ "$NETWORKING" != "no" -a -s "$IPCHAINS_CONFIG" ]; then
 		echo "Flushing all current rules and user defined chains"
 		$IPCHAINS -F
 		echo "Clearing all current rules and user defined chains"
 		$IPCHAINS -X
 		$IPCHAINS -Z
 		echo "Applying ipchains firewall rules"
-		grep -v "^[[:space:]]*#" "$IPCHAINS_CONFIG" | grep -v '^[[:space:]]*$' | /sbin/ipchains-restore -p -f
-
-		RETVAL=$?
-		[ $RETVAL -eq 0 ] && touch "$LOCKFILE"
+		grep -Ev '^[[:space:]]*#|^[[:space:]]*$' "$IPCHAINS_CONFIG" |
+			/sbin/ipchains-restore -p -f
 	fi
-	return $RETVAL
-}
-
-stop()
-{
+	;;
+stop)
 	echo "Flushing all chains"
 	$IPCHAINS -F
 	echo "Removing user defined chains"
@@ -61,14 +34,12 @@ stop()
 	$IPCHAINS -P input ACCEPT &&
 		$IPCHAINS -P forward ACCEPT &&
 		$IPCHAINS -P output ACCEPT
-	RETVAL=$?
-	[ $RETVAL -eq 0 ] && rm -f "$LOCKFILE"
-	return $RETVAL
-}
-
-panic()
-{
-	echo "Changing target policies to DENY"	
+	;;
+status)
+	$IPCHAINS -nL
+	;;
+panic)
+	echo "Changing target policies to DENY"
 	$IPCHAINS -P input DENY &&
 		$IPCHAINS -P forward DENY &&
 		$IPCHAINS -P output DENY
@@ -77,37 +48,14 @@ panic()
         $IPCHAINS -F
 	echo "Removing user defined chains"
 	$IPCHAINS -X
-	return $RETVAL
-}
-
-save()
-{
-        touch "$IPCHAINS_CONFIG"
-        chmod 600 "$IPCHAINS_CONFIG"
-        /sbin/ipchains-save >"$IPCHAINS_CONFIG"  2>/dev/null
-	return $?
-}
-
-case "$1" in
-	start|restart|reload)
-		start
-		;;
-	stop)
-		stop
-		;;
-	status)
-		$IPCHAINS -nL
-		RETVAL=$?
-		;;
-	panic)
-		panic
-		;;
-	save)
-		save
-		;;
-	*)
-		echo "Usage: ${0##*/} {start|stop|restart|status|panic|save}"
-		RETVAL=1
+	exit $RETVAL
+	;;
+save)
+	touch "$IPCHAINS_CONFIG"
+	chmod 600 "$IPCHAINS_CONFIG"
+	/sbin/ipchains-save > "$IPCHAINS_CONFIG" 2>/dev/null
+	;;
+*)
+	echo "Usage: ipchains {start|stop|restart|reload|status|panic|save}"
+	exit 1
 esac
-
-exit $RETVAL

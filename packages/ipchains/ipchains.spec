@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.1 2001/12/09 22:28:35 mci Exp $
+# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.2 2001/12/10 01:30:26 solar Exp $
 
 Summary: Tools for managing Linux kernel packet filtering capabilities.
 Name: ipchains
@@ -9,7 +9,7 @@ Group: System Environment/Base
 URL: http://netfilter.samba.org/ipchains/
 Source0: http://netfilter.samba.org/ipchains/%{name}-%{version}.tar.gz
 Source1: http://netfilter.samba.org/ipchains/ipchains-scripts-1.1.2.tar.gz
-Source2: http://netfilter.samba.org/ipchains/HOWTO.txt
+Source2: http://netfilter.samba.org/ipchains/HOWTO.txt.gz
 Source3: ipchains.init
 Patch0: ipchains-1.3.10-rh-install-no-root.diff
 Patch1: ipchains-1.3.10-rh-owl-man.diff
@@ -19,16 +19,16 @@ Obsoletes: ipfwadm, ipchains-scripts
 BuildRoot: /override/%{name}-%{version}
 
 %description
-Ipchains is used to set up, maintain, and inspect the IP
-firewall rules in the Linux kernel.  This package contain
-ipchains, ipchains-save, ipchains-restore and ipfwadm-wrapper.
+ipchains is used to set up, maintain, and inspect the IP packet filtering
+rules in the Linux kernel.  This package contains ipchains, ipchains-save,
+ipchains-restore and ipfwadm-wrapper.
 
 %prep
 %setup -q -a 1
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-install -m 644 $RPM_SOURCE_DIR/HOWTO.txt .
+install -m 644 $RPM_SOURCE_DIR/HOWTO.txt.gz .
 
 %build
 make clean
@@ -39,16 +39,16 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/{sbin,%{_mandir}/man{4,8}}
 
 make install SBIN=$RPM_BUILD_ROOT/sbin MANDIR=$RPM_BUILD_ROOT/%{_mandir}
-pushd ipchains-scripts-1.1.2/
-cp {ipchains-restore,ipchains-save} $RPM_BUILD_ROOT/sbin
+pushd ipchains-scripts-1.1.2
+cp ipchains-restore ipchains-save $RPM_BUILD_ROOT/sbin/
 cp ipfwadm-wrapper $RPM_BUILD_ROOT/sbin/ipfwadm
 ln -sf ipfwadm $RPM_BUILD_ROOT/sbin/ipfwadm-wrapper
-cp *.8 $RPM_BUILD_ROOT/%{_mandir}/man8
+cp *.8 $RPM_BUILD_ROOT/%{_mandir}/man8/
 popd
 
 install -d -m 755 $RPM_BUILD_ROOT/etc/rc.d/init.d
-install -m 755 $RPM_SOURCE_DIR/ipchains.init\
-               $RPM_BUILD_ROOT/etc/rc.d/init.d/ipchains
+install -m 755 $RPM_SOURCE_DIR/ipchains.init \
+	$RPM_BUILD_ROOT/etc/rc.d/init.d/ipchains
 
 gzip -9nf ipchains-quickref.ps
 
@@ -65,13 +65,18 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc *.txt
+%doc *.txt*
 %doc COPYING README ipchains-quickref.ps.gz
 %attr(755,root,root) %config /etc/rc.d/init.d/ipchains
 /sbin/*
 %{_mandir}/man*/*
 
 %changelog
+* Mon Dec 10 2001 Solar Designer <solar@owl.openwall.com>
+- More cleanups to the startup script.
+- Corrected the package description.
+- Compressed the HOWTO.
+
 * Thu Dec 09 2001 Michail Litvak <mci@owl.openwall.com>
 - imported from RH
 - some spec and ipchains.init cleanups
