@@ -414,10 +414,6 @@ Should be able to convert rpm 3.0.6's database to 4.2's db3 format.
 Audit and correct rpm's temporary file handling and its support for
 package signature checking.
 
-[PRIORITY: low]
-Bug: "rpm --rebuilddb" (used to be?) affected by umask.  Re-check and
-either fix or drop this TODO item.
-
 
 	shadow-utils.
 
@@ -533,4 +529,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.39 2004/09/26 04:55:56 solar Exp $
+$Id: Owl/doc/TODO,v 1.40 2004/09/26 21:14:04 solar Exp $
