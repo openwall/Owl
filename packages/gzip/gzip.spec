@@ -1,9 +1,9 @@
-# $Id: Owl/packages/gzip/gzip.spec,v 1.9 2002/08/26 16:38:56 mci Exp $
+# $Id: Owl/packages/gzip/gzip.spec,v 1.10 2002/08/27 19:25:56 solar Exp $
 
 Summary: The GNU data compression program.
 Name: gzip
 Version: 1.3
-Release: owl16
+Release: owl17
 License: GPL
 Group: Applications/File
 URL: http://www.gzip.org
@@ -13,7 +13,6 @@ Patch1: gzip-1.3-rh-owl-zforce.diff
 Patch2: gzip-1.3-rh-owl-zgrep.diff
 Patch3: gzip-1.3-rh-stderr.diff
 Patch4: gzip-1.3-rh-info.diff
-Prereq: /sbin/install-info
 Requires: mktemp >= 1:1.3.1
 BuildRoot: /override/%{name}-%{version}
 
@@ -55,7 +54,7 @@ chmod 755 $RPM_BUILD_ROOT/usr/bin/zless
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post
+%triggerin -- info
 /sbin/install-info %{_infodir}/gzip.info.gz %{_infodir}/dir
 
 %preun
@@ -72,6 +71,10 @@ fi
 %{_infodir}/gzip.info*
 
 %changelog
+* Tue Aug 27 2002 Solar Designer <solar@owl.openwall.com>
+- Use a trigger instead of a dependency on /sbin/install-info to avoid a
+dependency loop with the new texinfo.
+
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
 - Deal with info dir entries such that the menu looks pretty.
 
