@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/installworld.sh,v 1.16 2004/11/02 00:36:40 solar Exp $
+# $Id: Owl/build/installworld.sh,v 1.17 2004/11/03 06:40:03 solar Exp $
 
 . installworld.conf
 
@@ -86,8 +86,6 @@ mkdir -p tmp-work $ROOT/$HOME/tmp-work
 export TMPDIR=$HOME/tmp-work
 export TMP=$HOME/tmp-work
 
-setup_rpm
-
 if [ -f $ROOT/var/lib/rpm/packages.rpm -o -f $ROOT/var/lib/rpm/Packages ]; then
 	if [ -f $ROOT/var/lib/rpm/packages.rpm -a \
 	    -s $ROOT/var/lib/rpm/Packages -a \
@@ -101,38 +99,33 @@ if [ -f $ROOT/var/lib/rpm/packages.rpm -o -f $ROOT/var/lib/rpm/Packages ]; then
 		log "Found empty $ROOT/var/lib/rpm/Packages, removed"
 		rm $ROOT/var/lib/rpm/Packages
 	fi
+
 # First of all, we will do the check that no user packages make use of
 # libdb.so.2 and libdb.so.3 from glibc 2.1.3. For that task we have to
-# use system RPM and, if we cannot access it - we will fail.
-	if ! type rpm &> /dev/null; then
-		log "Cannot find system RPM, aborting"
+# use the target system's RPM.
+	if [ ! -x $ROOT/bin/rpm ]; then
+		log "Found an RPM database but no RPM binary, aborting"
 		exit 1
 	fi
 
-	LIBDB2_DEPS=$(rpm --root $ROOT -q --whatrequires libdb.so.2 2>/dev/null | grep -vE "^(no package|rpm-)")
-	LIBDB3_DEPS=$(rpm --root $ROOT -q --whatrequires libdb.so.3 2>/dev/null | grep -vE "^(no package|pam-|perl-|postfix-)")
+# XXX: Should check for errors (rpm's exit status).
+	LIBDB23_DEPS=$(echo `chroot $ROOT /bin/rpm -q --whatrequires libdb.so.2 libdb.so.3 2>/dev/null | sort -u | grep -vE '^(no package|rpm-|pam-|perl-|postfix-)'`)
 
-	if [ -n "$LIBDB2_DEPS" -o -n "$LIBDB3_DEPS" ]; then
+	if [ -n "$LIBDB23_DEPS" ]; then
 		cat << EOF
 Warning!
 We found that upgrade procedure will break packages listed below, because
 of the absence of libdb.so.2 and libdb.so.3 support in our supplied glibc:
+
 EOF
-		if [ -n "$LIBDB2_DEPS" ]; then
-			echo -e "\nPackages depending on libdb.so.2:"
-			for pkg in $LIBDB2_DEPS; do echo "$pkg"; done
-		fi
-		if [ -n "$LIBDB3_DEPS" ]; then
-			echo -e "\nPackages depending on libdb.so.3:"
-			for pkg in $LIBDB3_DEPS; do echo "$pkg"; done
-		fi
+		echo "$LIBDB23_DEPS"
 		cat << EOF
 
 Please resolve this issue before running Owl upgrade procedure again.
 
 You can try to remove the problematic packages from the system with:
 
-	# rpm --root $ROOT -e $LIBDB2_DEPS $LIBDB3_DEPS
+	# chroot $ROOT /bin/rpm -e $LIBDB23_DEPS
 
 This command will fail if other packages depend on those requiring the
 old versions of libdb.  If so, remove those other packages in a similar
@@ -142,10 +135,14 @@ EOF
 		exit 1
 	fi
 
+	setup_rpm
+
 	log "Rebuilding RPM database"
 	$RPMD $RPM_FLAGS --root $ROOT --rebuilddb || exit 1
 	NEED_FAKE=yes
 else
+	setup_rpm
+
 	log "Initializing RPM database"
 	mkdir -m 755 -p $ROOT/var/lib/rpm
 	$RPMD $RPM_FLAGS --root $ROOT --initdb || exit 1
