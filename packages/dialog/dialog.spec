@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dialog/dialog.spec,v 1.10 2003/01/09 23:23:21 mci Exp $
+# $Id: Owl/packages/dialog/dialog.spec,v 1.11 2003/01/10 01:47:11 solar Exp $
 
 Summary: A utility for creating TTY dialog boxes.
 Name: dialog
@@ -30,11 +30,11 @@ The following types of boxes are at your disposal:
   radiolist        Checklist style box allowing single selections
   gauge            Typical "progress report" style box
   tail             Allows viewing the end of files (tail) that auto updates
-  background tail  Similar to tail but runs in the background.
+  background tail  Similar to tail but runs in the background
   calendar         A calendar box displays month, day and year in
                    separately adjustable windows
-  timebox	       A dialog is displayed which allows you to select
-                   hour, minute and second.
+  timebox          A dialog is displayed which allows you to select
+                   hour, minute and second
 
 %prep
 %setup -q -n %{name}-%{version}-%{original_date}
