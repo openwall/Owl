@@ -1,5 +1,5 @@
---- ed-0.2.orig/ed.1
-+++ ed-0.2/ed.1
+--- ed-0.2/ed.1.orig	Sat Nov 19 14:38:00 1994
++++ ed-0.2/ed.1	Thu Sep  5 09:10:07 2002
 @@ -196,14 +196,14 @@
  The last line in the buffer.
  
@@ -130,3 +130,17 @@
  Writes the addressed lines to the standard input of
  .IR `!command' ,
  (see the
+@@ -1004,10 +1004,10 @@
+ 
+ .SH SEE ALSO
+ 
+-.IR vi (1),
+ .IR sed (1),
+-.IR regex (3),
+-.IR sh (1).
++.IR sh (1),
++.IR vi (1),
++.IR regex (3).
+ 
+ USD:12-13
+ 
