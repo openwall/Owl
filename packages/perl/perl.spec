@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.24 2004/09/10 07:28:57 galaxy Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.25 2004/11/02 03:48:33 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -17,7 +17,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.8.3
-Release: owl1.4
+Release: owl2
 Epoch: 1
 License: GPL
 Group: Development/Languages
@@ -270,9 +270,9 @@ find $RPM_BUILD_ROOT%_libdir/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
-* Fri Mar 19 2004 Michail Litvak <mci@owl.openwall.com> 5.8.3-owl1.4
-- Deal with automatic requires
-- Add some Provides, which is undetected automatically.
+* Fri Mar 19 2004 Michail Litvak <mci@owl.openwall.com> 5.8.3-owl2
+- Deal with automatic requires.
+- Add some Provides, which were undetected automatically.
 
 * Fri Mar 19 2004 Solar Designer <solar@owl.openwall.com> 5.8.3-owl1.3
 - Dropped the AutoReq: false
