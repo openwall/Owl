@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-hier/Attic/special,v 1.3 2000/09/04 17:28:51 solar Exp $
+# $Id: Owl/packages/owl-hier/Attic/special,v 1.4 2000/12/05 00:45:02 solar Exp $
 
 # /
 /set type=file uname=root gname=root mode=0755
@@ -458,7 +458,7 @@ cache		type=dir
 
 
 # /var/db
-db		type=dir mode=0700
+db		type=dir mode=0755
 # /var/db
 ..
 
