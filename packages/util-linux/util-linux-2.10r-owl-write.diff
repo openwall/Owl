@@ -1,46 +1,141 @@
---- util-linux-2.10r.orig/misc-utils/write.c	Tue Mar 21 02:15:28 2000
-+++ util-linux-2.10r/misc-utils/write.c	Wed Aug  2 21:09:43 2000
-@@ -79,9 +79,11 @@
+diff -ur util-linux-2.10r.orig/lib/carefulputc.c util-linux-2.10r/lib/carefulputc.c
+--- util-linux-2.10r.orig/lib/carefulputc.c	Thu Nov  9 20:57:28 2000
++++ util-linux-2.10r/lib/carefulputc.c	Sun Jan 28 06:23:32 2001
+@@ -15,8 +15,8 @@
+ 	if (c == '\007' || c == '\t' || c == '\r' || c == '\n' ||
+ 	    (!iso8859x_iscntrl(c) && (isprint(c) || isspace(c))))
+ 		ret = putc(c, fp);
+-	else if ((c & 0x80) || !isprint(c^0x40))
+-		ret = fprintf(fp, "\\%3o", (unsigned char) c);
++	else if ((c & 0x80) || iso8859x_iscntrl(c^0x40) || !isprint(c^0x40))
++		ret = fprintf(fp, "\\%3o", (unsigned char) c) > 0 ? 0 : EOF;
+ 	else {
+ 		ret = putc('^', fp);
+ 		if (ret != EOF)
+diff -ur util-linux-2.10r.orig/misc-utils/write.c util-linux-2.10r/misc-utils/write.c
+--- util-linux-2.10r.orig/misc-utils/write.c	Thu Nov  9 18:40:00 2000
++++ util-linux-2.10r/misc-utils/write.c	Sun Jan 28 08:15:41 2001
+@@ -46,6 +46,7 @@
+  */
+ 
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <unistd.h>
+ #include <utmp.h>
+ #include <errno.h>
+@@ -55,6 +56,7 @@
+ #include <string.h>
+ #include <locale.h>
+ #include <signal.h>
++#include <limits.h>
+ #include <sys/param.h>
+ #include <sys/signal.h>
+ #include <sys/stat.h>
+@@ -66,7 +68,7 @@
+ #include "nls.h"
+  
+ void search_utmp(char *, char *, char *, uid_t);
+-void do_write(char *, char *, uid_t);
++void do_write(char *, char *, char *, uid_t);
+ void wr_fputs(char *);
+ static void done(int);
+ int term_chk(char *, int *, time_t *, int);
+@@ -79,9 +81,13 @@
  	int msgsok, myttyfd;
  	char tty[MAXPATHLEN], *mytty;
  
+-	setlocale(LC_ALL, "");
++	unsetenv("TZ");
++
++	setlocale(LC_CTYPE, "");
 +#if 0
- 	setlocale(LC_ALL, "");
  	bindtextdomain(PACKAGE, LOCALEDIR);
  	textdomain(PACKAGE);
 +#endif
  
  	/* check that sender has write enabled */
  	if (isatty(fileno(stdin)))
-@@ -293,12 +297,13 @@
- 	char path[MAXPATHLEN], host[MAXHOSTNAMELEN], line[512];
+@@ -120,7 +126,7 @@
+ 	switch (argc) {
+ 	case 2:
+ 		search_utmp(argv[1], tty, mytty, myuid);
+-		do_write(tty, mytty, myuid);
++		do_write(argv[1], tty, mytty, myuid);
+ 		break;
+ 	case 3:
+ 		if (!strncmp(argv[2], "/dev/", 5))
+@@ -139,7 +145,7 @@
+ 			    argv[1], argv[2]);
+ 			exit(1);
+ 		}
+-		do_write(argv[2], mytty, myuid);
++		do_write(argv[1], argv[2], mytty, myuid);
+ 		break;
+ 	default:
+ 		(void)fprintf(stderr, _("usage: write user [tty]\n"));
+@@ -286,20 +292,34 @@
+ /*
+  * do_write - actually make the connection
+  */
+-void do_write(char *tty, char *mytty, uid_t myuid) {
+-	char *login, *pwuid, *nows;
++void do_write(char *user, char *tty, char *mytty, uid_t myuid) {
++	char *login, *pwuid, *nows, *prompt, *prefix;
+ 	struct passwd *pwd;
+ 	time_t now;
+-	char path[MAXPATHLEN], host[MAXHOSTNAMELEN], line[512];
++	char path[MAXPATHLEN], host[MAXHOSTNAMELEN], line[BUFSIZ + 1];
  
  	/* Determine our login name(s) before the we reopen() stdout */
--	if ((pwd = getpwuid(myuid)) != NULL)
--		pwuid = pwd->pw_name;
+ 	if ((pwd = getpwuid(myuid)) != NULL)
+ 		pwuid = pwd->pw_name;
 -	else
 -		pwuid = "???";
--	if ((login = getlogin()) == NULL)
--		login = pwuid;
-+	login = getlogin();
-+        if (!(pwd = getpwuid(myuid))) {
-+                perror("getpwuid");
-+                exit(1);
++	else {
++		perror("getpwuid");
++		pwuid = alloca(4 + sizeof(myuid) * CHAR_BIT / 3 + 1 + 1);
++		if (!pwuid) exit(1);
++		sprintf(pwuid, "UID %u", myuid);
 +	}
-+        if (!login)
-+                login = pwd->pw_name;
+ 	if ((login = getlogin()) == NULL)
+ 		login = pwuid;
  
++	if (isatty(STDIN_FILENO)) {
++		prompt = alloca(strlen(user) + 2 + 1);
++		if (!prompt) exit(1);
++		sprintf(prompt, "%s> ", user);
++	} else
++		prompt = "";
++	prefix = alloca(strlen(login) + 3 + 1);
++	if (!prefix) exit(1);
++	sprintf(prefix, "<%s> ", login);
++
  	if (strlen(tty) + 6 > sizeof(path))
  		exit(1);
-@@ -319,9 +324,9 @@
- 	nows = ctime(&now);
- 	nows[16] = '\0';
- 	printf("\r\n\007\007\007");
--	if (strcmp(login, pwuid))
-+	if (strcmp(login, pwd->pw_name))
- 		(void)printf(_("Message from %s@%s (as %s) on %s at %s ..."),
--			     login, host, pwuid, mytty, nows + 11);
-+			     login, host, pwd->pw_name, mytty, nows + 11);
- 	else
- 		(void)printf(_("Message from %s@%s on %s at %s ..."),
+ 	(void)sprintf(path, "/dev/%s", tty);
+@@ -327,8 +347,16 @@
  			     login, host, mytty, nows + 11);
+ 	printf("\r\n");
+ 
+-	while (fgets(line, sizeof(line), stdin) != NULL)
++	fprintf(stderr, "%s", prompt);
++	while (fgets(line, sizeof(line), stdin) != NULL) {
++		wr_fputs(prefix);
+ 		wr_fputs(line);
++		if (!strchr(line, '\n')) {
++			wr_fputs("\n");
++			fputc('\n', stderr);
++		}
++		fprintf(stderr, "%s", prompt);
++	}
+ }
+ 
+ /*
+@@ -337,6 +365,7 @@
+ static void
+ done(int dummy) {
+ 	(void)printf("EOF\r\n");
++	if (isatty(STDIN_FILENO)) fputc('\n', stderr);
+ 	exit(0);
+ }
+ 
