@@ -1,0 +1,20 @@
+--- traceroute-1.4a12/traceroute.c.orig	Thu Dec 14 11:04:50 2000
++++ traceroute-1.4a12/traceroute.c	Mon Apr  1 14:55:56 2002
+@@ -271,7 +271,7 @@
+ struct outdata {
+ 	u_char seq;		/* sequence number of this packet */
+ 	u_char ttl;		/* ttl packet left with */
+-	struct timeval tv;	/* time packet left */
++	struct timeval tv __attribute__((packed)); /* time packet left */
+ };
+ 
+ #ifndef HAVE_ICMP_NEXTMTU
+@@ -938,7 +938,7 @@
+ 	/* Payload */
+ 	outdata->seq = seq;
+ 	outdata->ttl = ttl;
+-	outdata->tv = *tp;
++	memcpy(&outdata->tv, tp, sizeof(outdata->tv));
+ 
+ 	if (useicmp)
+ 		outicmp->icmp_seq = htons(seq);
