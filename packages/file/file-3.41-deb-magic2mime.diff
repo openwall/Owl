@@ -1,5 +1,5 @@
---- file-3.28.orig/magic2mime
-+++ file-3.28/magic2mime
+--- file-3.41/magic2mime.orig	Mon Feb 16 01:18:53 1998
++++ file-3.41/magic2mime	Wed Mar  5 02:07:59 2003
 @@ -1,4 +1,4 @@
 -#! /usr/local/bin/perl
 +#! /usr/bin/perl -w
@@ -36,7 +36,7 @@
 -    '^MPEG', 'video/mpeg',
 -    '^Apple QuickTime movie', 'video/quicktime',
 +	'^Rich Text Format data' => 'text/richtext',
-+	'^HTML document text' => 'text/html',
++	'^(ASCII |ISO-8859 )?HTML document text' => 'text/html',
 +	'^exported SGML document text' => 'text/sgml',
 +	'mail text' => 'message/rfc822',
 +	'news text' => 'message/news',
@@ -105,9 +105,9 @@
 -	undef $mimetype; # hack
    }
  0;
---- file-3.28.orig/magic2mime.man
-+++ file-3.28/magic2mime.man
-@@ -0,0 +1,26 @@
+--- file-3.41/magic2mime.man.orig	Wed Mar  5 02:07:59 2003
++++ file-3.41/magic2mime.man	Wed Mar  5 02:07:59 2003
+@@ -0,0 +1,30 @@
 +.\" Manpage written by Nicolás Lichtmaier <nick@debian.org>
 +.TH FILE __CSECTION__ "January 1999" "Debian/GNU Linux"
 +.SH NAME
@@ -133,4 +133,8 @@
 +.SH BUGS
 +This program depends on exact output from the
 +.BR file (__CSECTION__)
-+command.
++command. Don't use this command, use
++.BR file (1)
++with the
++.B \-i
++option. This command might be removed in the future.
