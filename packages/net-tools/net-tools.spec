@@ -1,4 +1,4 @@
-# $Id: Owl/packages/net-tools/net-tools.spec,v 1.9 2005/01/12 16:37:59 galaxy Exp $
+# $Id: Owl/packages/net-tools/net-tools.spec,v 1.10 2005/01/20 04:26:55 solar Exp $
 
 Summary: The basic tools for setting up networking.
 Name: net-tools
@@ -11,7 +11,6 @@ Source1: net-tools-1.57-config.h
 Source2: net-tools-1.57-config.make
 Patch0: net-tools-1.56-rh-fhs.diff
 Patch1: net-tools-1.57-owl-fixes.diff
-Patch2: net-tools-1.57-owl-gcc343-fixes.diff
 BuildRoot: /override/%name-%version
 
 %description
@@ -22,7 +21,6 @@ networking: ethers, route and others.
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 cp $RPM_SOURCE_DIR/net-tools-1.57-config.h config.h
 cp $RPM_SOURCE_DIR/net-tools-1.57-config.make config.make
@@ -101,8 +99,7 @@ rm %buildroot%_mandir/pt_BR/man8/route.8*
 
 %changelog
 * Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.57-owl3
-- Added gcc343-fixes patch to deal with "label at end of compound statment"
-issue.
+- Added a fix to the "label at end of compound statement" issue.
 
 * Sun Nov 28 2004 Michail Litvak <mci@owl.openwall.com> 1.57-owl2
 - Fixed building with 2.4.28 kernel.
