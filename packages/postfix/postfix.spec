@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.17 2003/10/25 08:38:36 solar Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.18 2003/10/25 08:50:03 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
@@ -100,9 +100,10 @@ install -m 700 $RPM_SOURCE_DIR/postfix.control etc/control.d/facilities/postfix
 mkdir -p usr/lib
 ln -s ../sbin/sendmail usr/lib/sendmail
 
-# Shorten the symlink
-rm usr/bin/mailq
+# Shorten the symlinks
+rm usr/bin/{mailq,newaliases}
 ln -s ../sbin/sendmail usr/bin/mailq
+ln -s ../sbin/sendmail usr/bin/newaliases
 
 chmod go-r usr/sbin/postdrop
 
