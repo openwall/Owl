@@ -233,7 +233,7 @@ function gen_netcfg
     else
 
 	txt="
-You forget to set some network related pameters.
+You forgot to set some network-related parameters.
 Networking will be off.
 "
 	$DIALOG --backtitle "$TITLE"\
