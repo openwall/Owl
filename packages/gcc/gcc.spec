@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.36 2005/01/14 21:36:24 galaxy Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.37 2005/01/14 21:38:40 galaxy Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -734,6 +734,7 @@ fi
 %changelog
 * Fri Jan 14 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.4.3-owl1
 - Reverted the change with removing symbolic links from gcc to cc.
+
 * Thu Jan 06 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.4.3-owl0
 - Updated to 3.4.3.
 - Enabled autotools magic, it works as expected.
