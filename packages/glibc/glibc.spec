@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.82 2005/01/20 05:38:32 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.83 2005/01/20 06:33:27 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -316,10 +316,10 @@ ln -s libbsd-compat.a %buildroot%_libdir/libbsd.a
 # Relocate shared libraries used by catchsegv, memusage and xtrace
 mv %buildroot/lib/lib{memusage,pcprofile,SegFault}.so %buildroot%_libdir/
 
-# /etc/localtime - we're proud of our timezone
-# ... yes, but we are setting it through setup utility.
-#rm %buildroot/etc/localtime
-#cp %buildroot%_datadir/zoneinfo/Europe/Moscow %buildroot/etc/localtime
+# Replace the symlink with the actual file.  It will need to be replaced
+# when our setup program is run anyway, but doing it here is safer.
+rm %buildroot/etc/localtime
+cp -a %buildroot%_datadir/zoneinfo/Factory %buildroot/etc/localtime
 
 # Create default ldconfig configuration file
 echo "include /etc/ld.so.conf.d/*.conf" > %buildroot/etc/ld.so.conf
@@ -453,24 +453,20 @@ fi
 - Many post-update corrections.
 
 * Sun Jan 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.3.2004061600-owl1
-- Removed commented out block in %%post.
-
-* Sun Jan 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.3.2004061600-owl0
 - Updated to CVS version 2.3.3 (2004061600).
 - Spec file was revised and reworked.
 - Imported a bunch of patches from ALT Linux.
 - Owl patches were revised and regenerated against new version (if necessary).
 - Dropped realpath-comments patch (this functionality is implemented).
 - Added tmp-scripts patch to deal with tmp file handling issues in the scripts.
-- sanitize-env patch was revised and reworked to embrace all issues it have
+- sanitize-env patch was revised and reworked to embrace all issues it has
 to deal with.
 - Added BUILD_LOCALES and BUILD_LOCALES_UTF8 macros to control building of
 locales. BUILD_LOCALES support is incomplete yet, we will divide our glibc
 into functional sub-packages soon and generation of locales package will be
 controled through BUILD_LOCALES macro.
 - Added rpmgen-cpp patch to avoid hardcoding of path to cpp binary. This
-patch also replaces execv() to execvp() to search for cpp binary through the
-path.
+patch also replaces execv() to execvp() to search for cpp binary in PATH.
 - Cleaned up the spec.
 
 * Wed Dec 25 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl3
