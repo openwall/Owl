@@ -1,18 +1,18 @@
-diff -urN openssh-2.5.2p2-owl-always-auth/Makefile.in openssh-2.5.2p2/Makefile.in
---- openssh-2.5.2p2-owl-always-auth/Makefile.in	Wed Mar 21 05:12:12 2001
-+++ openssh-2.5.2p2/Makefile.in	Fri Mar 23 02:55:43 2001
-@@ -48,7 +48,7 @@
+diff -urN openssh-2.9p1-owl-always-auth/Makefile.in openssh-2.9p1-owl-pam_userpass/Makefile.in
+--- openssh-2.9p1-owl-always-auth/Makefile.in	Fri Apr 27 04:31:08 2001
++++ openssh-2.9p1-owl-pam_userpass/Makefile.in	Sun May  6 23:12:56 2001
+@@ -49,7 +49,7 @@
  
- SSHOBJS= ssh.o sshconnect.o sshconnect1.o sshconnect2.o readconf.o clientloop.o
+ SSHOBJS= ssh.o sshconnect.o sshconnect1.o sshconnect2.o sshtty.o readconf.o clientloop.o
  
--SSHDOBJS= sshd.o auth.o auth1.o auth2.o auth-chall.o auth2-chall.o auth-rhosts.o auth-options.o auth-krb4.o auth-pam.o auth2-pam.o auth-passwd.o auth-rsa.o auth-rh-rsa.o auth-sia.o dh.o sshpty.o sshlogin.o loginrec.o servconf.o serverloop.o md5crypt.o session.o groupaccess.o
-+SSHDOBJS= sshd.o auth.o auth1.o auth2.o auth-chall.o auth2-chall.o auth-rhosts.o auth-options.o auth-krb4.o auth-pam.o appl_userpass.o auth2-pam.o auth-passwd.o auth-rsa.o auth-rh-rsa.o auth-sia.o dh.o sshpty.o sshlogin.o loginrec.o servconf.o serverloop.o md5crypt.o session.o groupaccess.o
+-SSHDOBJS= sshd.o auth.o auth1.o auth2.o auth-chall.o auth2-chall.o auth-rhosts.o auth-options.o auth-krb4.o auth-pam.o auth2-pam.o auth-passwd.o auth-rsa.o auth-rh-rsa.o auth-sia.o sshpty.o sshlogin.o loginrec.o servconf.o serverloop.o md5crypt.o session.o groupaccess.o
++SSHDOBJS= sshd.o auth.o auth1.o auth2.o auth-chall.o auth2-chall.o auth-rhosts.o auth-options.o auth-krb4.o auth-pam.o appl_userpass.o auth2-pam.o auth-passwd.o auth-rsa.o auth-rh-rsa.o auth-sia.o sshpty.o sshlogin.o loginrec.o servconf.o serverloop.o md5crypt.o session.o groupaccess.o
  
- TROFFMAN	= scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.8 sftp-server.8 sftp.1
- CATMAN		= scp.0 ssh-add.0 ssh-agent.0 ssh-keygen.0 ssh-keyscan.0 ssh.0 sshd.0 sftp-server.0 sftp.0
-diff -urN openssh-2.5.2p2-owl-always-auth/_pam_userpass.h openssh-2.5.2p2/_pam_userpass.h
---- openssh-2.5.2p2-owl-always-auth/_pam_userpass.h	Thu Jan  1 03:00:00 1970
-+++ openssh-2.5.2p2/_pam_userpass.h	Fri Mar 23 02:55:43 2001
+ MANPAGES	= scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.8.out sftp-server.8.out sftp.1.out
+ MANPAGES_IN	= scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.8 sftp-server.8 sftp.1
+diff -urN openssh-2.9p1-owl-always-auth/_pam_userpass.h openssh-2.9p1-owl-pam_userpass/_pam_userpass.h
+--- openssh-2.9p1-owl-always-auth/_pam_userpass.h	Thu Jan  1 03:00:00 1970
++++ openssh-2.9p1-owl-pam_userpass/_pam_userpass.h	Sun May  6 23:06:55 2001
 @@ -0,0 +1,12 @@
 +#ifndef __PAM_USERPASS_H
 +#define __PAM_USERPASS_H
@@ -26,9 +26,9 @@ diff -urN openssh-2.5.2p2-owl-always-auth/_pam_userpass.h openssh-2.5.2p2/_pam_u
 +#define USERPASS_USER_FIXED		3
 +
 +#endif
-diff -urN openssh-2.5.2p2-owl-always-auth/appl_userpass.c openssh-2.5.2p2/appl_userpass.c
---- openssh-2.5.2p2-owl-always-auth/appl_userpass.c	Thu Jan  1 03:00:00 1970
-+++ openssh-2.5.2p2/appl_userpass.c	Fri Mar 23 02:55:43 2001
+diff -urN openssh-2.9p1-owl-always-auth/appl_userpass.c openssh-2.9p1-owl-pam_userpass/appl_userpass.c
+--- openssh-2.9p1-owl-always-auth/appl_userpass.c	Thu Jan  1 03:00:00 1970
++++ openssh-2.9p1-owl-pam_userpass/appl_userpass.c	Sun May  6 23:06:55 2001
 @@ -0,0 +1,51 @@
 +#include <string.h>
 +#include <stdlib.h>
@@ -81,9 +81,9 @@ diff -urN openssh-2.5.2p2-owl-always-auth/appl_userpass.c openssh-2.5.2p2/appl_u
 +
 +	return PAM_SUCCESS;
 +}
-diff -urN openssh-2.5.2p2-owl-always-auth/auth-pam.c openssh-2.5.2p2/auth-pam.c
---- openssh-2.5.2p2-owl-always-auth/auth-pam.c	Fri Mar 23 02:54:35 2001
-+++ openssh-2.5.2p2/auth-pam.c	Fri Mar 23 02:56:27 2001
+diff -urN openssh-2.9p1-owl-always-auth/auth-pam.c openssh-2.9p1-owl-pam_userpass/auth-pam.c
+--- openssh-2.9p1-owl-always-auth/auth-pam.c	Sun May  6 23:00:17 2001
++++ openssh-2.9p1-owl-pam_userpass/auth-pam.c	Sun May  6 23:13:43 2001
 @@ -33,6 +33,9 @@
  #include "canohost.h"
  #include "readpass.h"
@@ -91,10 +91,10 @@ diff -urN openssh-2.5.2p2-owl-always-auth/auth-pam.c openssh-2.5.2p2/auth-pam.c
 +#include <security/pam_misc.h>
 +#include "pam_userpass.h"
 +
- RCSID("$Id: auth-pam.c,v 1.31.2.1 2001/03/21 02:12:13 djm Exp $");
+ extern char *__progname;
  
- #define NEW_AUTHTOK_MSG \
-@@ -42,13 +45,13 @@
+ RCSID("$Id: auth-pam.c,v 1.37 2001/04/23 18:38:37 stevesk Exp $");
+@@ -44,13 +47,13 @@
  	struct pam_response **resp, void *appdata_ptr);
  
  /* module-local variables */
@@ -110,7 +110,7 @@ diff -urN openssh-2.5.2p2-owl-always-auth/auth-pam.c openssh-2.5.2p2/auth-pam.c
  
  /* states for do_pam_conversation() */
  enum { INITIAL_LOGIN, OTHER } pamstate = INITIAL_LOGIN;
-@@ -80,18 +83,20 @@
+@@ -82,18 +85,20 @@
   * PAM conversation function.
   * There are two states this can run in.
   *
@@ -138,7 +138,7 @@ diff -urN openssh-2.5.2p2-owl-always-auth/auth-pam.c openssh-2.5.2p2/auth-pam.c
  	struct pam_response *reply;
  	int count;
  	char buf[1024];
-@@ -167,6 +172,7 @@
+@@ -169,6 +174,7 @@
  	*resp = reply;
  
  	return PAM_SUCCESS;
@@ -146,7 +146,7 @@ diff -urN openssh-2.5.2p2-owl-always-auth/auth-pam.c openssh-2.5.2p2/auth-pam.c
  }
  
  /* Called at exit to cleanly shutdown PAM */
-@@ -217,7 +223,8 @@
+@@ -219,7 +225,8 @@
  	if (*password == '\0' && options.permit_empty_passwd == 0)
  		return 0;
  
@@ -156,9 +156,9 @@ diff -urN openssh-2.5.2p2-owl-always-auth/auth-pam.c openssh-2.5.2p2/auth-pam.c
  
  	pamstate = INITIAL_LOGIN;
  	pam_retval = do_pam_authenticate(0);
-diff -urN openssh-2.5.2p2-owl-always-auth/pam_userpass.h openssh-2.5.2p2/pam_userpass.h
---- openssh-2.5.2p2-owl-always-auth/pam_userpass.h	Thu Jan  1 03:00:00 1970
-+++ openssh-2.5.2p2/pam_userpass.h	Fri Mar 23 02:55:43 2001
+diff -urN openssh-2.9p1-owl-always-auth/pam_userpass.h openssh-2.9p1-owl-pam_userpass/pam_userpass.h
+--- openssh-2.9p1-owl-always-auth/pam_userpass.h	Thu Jan  1 03:00:00 1970
++++ openssh-2.9p1-owl-pam_userpass/pam_userpass.h	Sun May  6 23:06:55 2001
 @@ -0,0 +1,14 @@
 +#ifndef _PAM_USERPASS_H
 +#define _PAM_USERPASS_H

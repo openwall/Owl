@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/sshd_config,v 1.5 2001/03/21 01:23:52 solar Exp $
+# $Id: Owl/packages/openssh/sshd_config,v 1.6 2001/05/06 23:51:18 solar Exp $
 
 # This is the sshd server system-wide configuration file.  See sshd(8)
 # for more information.
@@ -22,6 +22,7 @@ StrictModes yes
 X11Forwarding yes
 X11DisplayOffset 10
 PrintMotd yes
+PrintLastLog yes
 KeepAlive yes
 
 # Logging
@@ -32,6 +33,8 @@ RhostsAuthentication no
 #
 # For this to work you will also need host keys in /etc/ssh_known_hosts
 RhostsRSAAuthentication no
+# Similar to RhostsRSAAuthentication, for protocol version 2
+HostbasedAuthentication no
 #
 RSAAuthentication yes
 
@@ -39,12 +42,12 @@ RSAAuthentication yes
 PasswordAuthentication yes
 PermitEmptyPasswords no
 
-# Comment to enable PAM interactive authentication
-ChallengeResponseAuthentication no
+# Warning: enabling this may bypass the setting of PasswordAuthentication
+PAMAuthenticationViaKbdInt no
 
 CheckMail no
 UseLogin no
 #MaxStartups 10:30:60
 
-# Uncomment if you want to enable sftp
+# Uncomment this if you want to enable sftp
 #Subsystem	sftp	/usr/libexec/ssh/sftp-server

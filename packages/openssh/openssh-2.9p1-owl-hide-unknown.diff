@@ -1,7 +1,7 @@
-diff -ur openssh-2.5.1p1.orig/auth.c openssh-2.5.1p1/auth.c
---- openssh-2.5.1p1.orig/auth.c	Thu Feb 15 06:08:27 2001
-+++ openssh-2.5.1p1/auth.c	Wed Feb 28 08:32:22 2001
-@@ -208,8 +208,10 @@
+diff -ur openssh-2.9p1.orig/auth.c openssh-2.9p1-owl-hide-unknown/auth.c
+--- openssh-2.9p1.orig/auth.c	Tue Mar 20 01:15:57 2001
++++ openssh-2.9p1-owl-hide-unknown/auth.c	Sun May  6 22:47:49 2001
+@@ -191,8 +191,10 @@
  	authlog("%s %s for %s%.100s from %.200s port %d%s",
  	    authmsg,
  	    method,
@@ -14,9 +14,9 @@ diff -ur openssh-2.5.1p1.orig/auth.c openssh-2.5.1p1/auth.c
  	    get_remote_ipaddr(),
  	    get_remote_port(),
  	    info);
-diff -ur openssh-2.5.1p1.orig/auth.h openssh-2.5.1p1/auth.h
---- openssh-2.5.1p1.orig/auth.h	Sun Feb 18 09:01:00 2001
-+++ openssh-2.5.1p1/auth.h	Wed Feb 28 08:32:22 2001
+diff -ur openssh-2.9p1.orig/auth.h openssh-2.9p1-owl-hide-unknown/auth.h
+--- openssh-2.9p1.orig/auth.h	Fri Apr 13 03:34:35 2001
++++ openssh-2.9p1-owl-hide-unknown/auth.h	Sun May  6 22:47:49 2001
 @@ -40,6 +40,7 @@
  	int success;
  	int postponed;
@@ -25,9 +25,9 @@ diff -ur openssh-2.5.1p1.orig/auth.h openssh-2.5.1p1/auth.h
  	int attempt;
  	int failures;
  	char *user;
-diff -ur openssh-2.5.1p1.orig/auth1.c openssh-2.5.1p1/auth1.c
---- openssh-2.5.1p1.orig/auth1.c	Sun Feb 18 09:01:00 2001
-+++ openssh-2.5.1p1/auth1.c	Wed Feb 28 08:32:22 2001
+diff -ur openssh-2.9p1.orig/auth1.c openssh-2.9p1-owl-hide-unknown/auth1.c
+--- openssh-2.9p1.orig/auth1.c	Sat Mar 24 03:37:59 2001
++++ openssh-2.9p1-owl-hide-unknown/auth1.c	Sun May  6 22:47:49 2001
 @@ -386,6 +386,7 @@
  
  	/* Verify that the user is a valid user. */
@@ -45,10 +45,10 @@ diff -ur openssh-2.5.1p1.orig/auth1.c openssh-2.5.1p1/auth1.c
  
  #ifdef USE_PAM
  	if (pw)
-diff -ur openssh-2.5.1p1.orig/auth2.c openssh-2.5.1p1/auth2.c
---- openssh-2.5.1p1.orig/auth2.c	Sun Feb 18 22:13:33 2001
-+++ openssh-2.5.1p1/auth2.c	Wed Feb 28 08:32:22 2001
-@@ -190,6 +190,7 @@
+diff -ur openssh-2.9p1.orig/auth2.c openssh-2.9p1-owl-hide-unknown/auth2.c
+--- openssh-2.9p1.orig/auth2.c	Wed Apr 25 16:44:15 2001
++++ openssh-2.9p1-owl-hide-unknown/auth2.c	Mon May  7 03:11:53 2001
+@@ -203,6 +203,7 @@
  		/* setup auth context */
  		struct passwd *pw = NULL;
  		pw = getpwnam(user);
@@ -56,13 +56,13 @@ diff -ur openssh-2.5.1p1.orig/auth2.c openssh-2.5.1p1/auth2.c
  		if (pw && allowed_user(pw) && strcmp(service, "ssh-connection")==0) {
  			authctxt->pw = pwcopy(pw);
  			authctxt->valid = 1;
-@@ -198,12 +199,14 @@
+@@ -211,12 +212,13 @@
  			start_pam(pw->pw_name);
  #endif
  		} else {
+-			log("input_userauth_request: illegal user %s", user);
 +			authctxt->pw = NULL;
 +			authctxt->valid = 0;
- 			log("input_userauth_request: illegal user %s", user);
  #ifdef USE_PAM
  			start_pam("NOUSER");
  #endif

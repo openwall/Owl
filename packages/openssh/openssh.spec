@@ -1,32 +1,31 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.19 2001/04/22 02:32:30 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.20 2001/05/06 23:51:18 solar Exp $
 
 Summary: OpenSSH free Secure Shell (SSH) implementation
 Name: openssh
-Version: 2.5.2p2
-Release: 3owl
+Version: 2.9p1
+Release: 0.4owl
 URL: http://www.openssh.com/
 Source0: ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-%{version}.tar.gz
 Source1: sshd.pam
 Source2: sshd.init
 Source3: ssh_config
 Source4: sshd_config
-Patch0: openssh-2.5.1p1-owl-hide-unknown.diff
-Patch1: openssh-2.5.1p1-owl-always-auth.diff
-Patch2: openssh-2.5.2p2-owl-pam_userpass.diff
+Source5: sftp.control
+Patch0: openssh-2.9p1-owl-hide-unknown.diff
+Patch1: openssh-2.9p1-owl-always-auth.diff
+Patch2: openssh-2.9p1-owl-pam_userpass.diff
 Patch3: openssh-2.5.1p1-owl-scp-stalltime.diff
-Patch4: openssh-2.5.2p2-cvs-20010329-compat-aes.diff
 Copyright: BSD
 Group: Applications/Internet
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Obsoletes: ssh
-PreReq: openssl >= 0.9.6a-1owl
-Requires: openssl >= 0.9.6a-1owl
 Requires: pam_mktemp
+PreReq: openssl >= 0.9.6a-1owl
+BuildPreReq: openssl-devel >= 0.9.6a-1owl
+BuildPreReq: pam >= 0.72-8owl
 BuildPreReq: perl
-BuildPreReq: openssl-devel
 BuildPreReq: zlib-devel
 BuildPreReq: tcp_wrappers
-BuildPreReq: pam >= 0.72-8owl
 
 %package clients
 Summary: OpenSSH Secure Shell protocol clients
@@ -89,7 +88,6 @@ clients to connect to your host.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-patch -l -p3 < %{PATCH4}
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" LIBS="-lcrypt -lpam -lpam_misc" ./configure \
@@ -111,6 +109,8 @@ install -m 600 %{SOURCE1} $RPM_BUILD_ROOT/etc/pam.d/sshd
 install -m 700 %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/sshd
 install -m 644 %{SOURCE3} $RPM_BUILD_ROOT/etc/ssh/ssh_config
 install -m 600 %{SOURCE4} $RPM_BUILD_ROOT/etc/ssh/sshd_config
+mkdir -p $RPM_BUILD_ROOT/etc/control.d/facilities
+install -m 700 %{SOURCE5} $RPM_BUILD_ROOT/etc/control.d/facilities/sftp
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -179,8 +179,13 @@ fi
 %attr(0600,root,root) %config(noreplace) /etc/ssh/sshd_config
 %attr(0600,root,root) %config(noreplace) /etc/pam.d/sshd
 %attr(0700,root,root) %config /etc/rc.d/init.d/sshd
+%attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Sun May 06 2001 Solar Designer <solar@owl.openwall.com>
+- Updated to 2.9p1.
+- Added sftp.control.
+
 * Sun Apr 22 2001 Solar Designer <solar@owl.openwall.com>
 - New release number for upgrades after building against OpenSSL 0.9.6a.
 
