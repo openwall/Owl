@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.24 2002/06/22 07:40:04 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.25 2002/06/22 08:03:06 solar Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -237,9 +237,27 @@ function detect_arch()
 	esac
 }
 
+function detect_proc()
+{
+	case "$ARCHITECTURE" in
+	sparc*)
+		PROCESSORS="`sed -n
+			's/^ncpus active[[:space:]]\+: \([0-9]\+\)$/\1/p'`"
+		;;
+	*)
+		PROCESSORS="`grep -cw ^processor /proc/cpuinfo`"
+		;;
+	esac
+
+	test -n "$PROCESSORS" || PROCESSORS=1
+	test "$PROCESSORS" -ge 1 || PROCESSORS=1
+}
+
 function detect()
 {
 	test -n "$ARCHITECTURE" || detect_arch
+	test -n "$PROCESSORS" || detect_proc
+	test -n "$BUILDHOST" || BUILDHOST="`hostname -f`"
 
 	if [ -n "$ARCHITECTURE" ]; then
 		TARGET="--target ${ARCHITECTURE}-unknown-linux"
@@ -254,8 +272,6 @@ function detect()
 	else
 		PERSONALITY=
 	fi
-
-	test -n "$BUILDHOST" || BUILDHOST="`hostname -f`"
 }
 
 function check_includes()
