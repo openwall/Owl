@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.6 2000/10/28 23:30:49 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.7 2000/10/28 23:59:25 solar Exp $
 
 %define libmaj 0
 %define libmin 9
@@ -133,7 +133,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(0755,root,root) %{openssldir}/certs
 %dir %attr(0755,root,root) %{openssldir}/lib
 %dir %attr(0755,root,root) %{openssldir}/misc
-%dir %attr(0750,root,root) %{openssldir}/private
+%dir %attr(0700,root,root) %{openssldir}/private
 
 %files devel
 %defattr(0644,root,root,0755)
