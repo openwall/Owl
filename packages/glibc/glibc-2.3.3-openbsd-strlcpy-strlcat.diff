@@ -43,7 +43,7 @@ diff -uprk.orig glibc-2.3.3-200404190147.orig/string/strlcat.c glibc-2.3.3-20040
 +/*	$OpenBSD: strlcat.c,v 1.11 2003/06/17 21:56:24 millert Exp $	*/
 +
 +/*
-+ * Copyright (c) 1998 Todd C. Miller <Todd.Miller@courtesan.com>
++ * Copyright (c) 1998 Todd C. Miller <Todd.Miller at courtesan.com>
 + *
 + * Permission to use, copy, modify, and distribute this software for any
 + * purpose with or without fee is hereby granted, provided that the above
@@ -106,7 +106,7 @@ diff -uprk.orig glibc-2.3.3-200404190147.orig/string/strlcpy.c glibc-2.3.3-20040
 +/*	$OpenBSD: strlcpy.c,v 1.8 2003/06/17 21:56:24 millert Exp $	*/
 +
 +/*
-+ * Copyright (c) 1998 Todd C. Miller <Todd.Miller@courtesan.com>
++ * Copyright (c) 1998 Todd C. Miller <Todd.Miller at courtesan.com>
 + *
 + * Permission to use, copy, modify, and distribute this software for any
 + * purpose with or without fee is hereby granted, provided that the above
@@ -165,8 +165,8 @@ diff -uprk.orig glibc-2.3.3-200404190147.orig/string/Versions glibc-2.3.3-200404
      # x*
      __xpg_strerror_r;
    }
-+  GLIBC_2.2.5 {
-+    # imported from OpenBSD.
++  GLIBC_STRLC {
++    # Imported from OpenBSD.
 +    strlcat; strlcpy;
 +  }
  }
