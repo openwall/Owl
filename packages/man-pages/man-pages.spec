@@ -1,9 +1,9 @@
-# $Id: Owl/packages/man-pages/man-pages.spec,v 1.9 2001/09/12 21:02:38 mci Exp $
+# $Id: Owl/packages/man-pages/man-pages.spec,v 1.10 2001/09/14 13:52:12 solar Exp $
 
 Summary: Manual (man) pages from the Linux Documentation Project.
 Name: man-pages
 Version: 1.39
-Release: 3owl
+Release: 4owl
 Copyright: distributable
 Group: Documentation
 Source0: ftp://ftp.win.tue.nl/pub/linux-local/manpages/man-pages-%{version}.tar.gz 
@@ -20,14 +20,12 @@ Source10: sigaltstack.2
 Source11: ld-linux.so.8
 Source12: ldconfig.8
 Source13: rpcinfo.8
-Patch1: man-pages-1.39-deb-misc.diff
-Patch2: man-pages-1.39-rh-ctype.diff
-# temporarily disabled, we don't yet have these paths
-# Patch3: man-pages-1.35-rh-pathupdate.diff
-Patch4: man-pages-1.39-rh-roffix.diff
-Patch5: man-pages-1.39-owl-ccldso.diff
-Patch6: man-pages-1.39-owl-uselib.diff
-Patch7: man-pages-1.39-owl-pwrite.diff
+Patch0: man-pages-1.39-deb-misc.diff
+Patch1: man-pages-1.39-rh-ctype.diff
+Patch2: man-pages-1.39-rh-owl-roffix.diff
+Patch3: man-pages-1.39-owl-ccldso.diff
+Patch4: man-pages-1.39-owl-uselib.diff
+Patch5: man-pages-1.39-owl-pwrite.diff
 Buildroot: /var/rpm-buildroot/%{name}-root
 Autoreqprov: false
 BuildArchitectures: noarch
@@ -61,13 +59,12 @@ cp %{SOURCE11} man8
 cp %{SOURCE12} man8
 cp %{SOURCE13} man8
 
-%patch1 -p1 
+%patch0 -p1 
+%patch1 -p1
 %patch2 -p1
-# %patch3 -p1
+%patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
-%patch7 -p1
 
 %build
 rm -fv man1/README
@@ -117,6 +114,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man*/*
 
 %changelog
+* Fri Sep 14 2001 Solar Designer <solar@owl.openwall.com>
+- Corrected .Bl/.El usage in mdoc.samples.7
+- Dropped the RH paths patch entirely, it will need to be updated once we
+fix our paths anyway.
+
 * Wed Sep 05 2001 Michail Litvak <mci@owl.openwall.com>
 - updated to 1.39
 - patch to add reference pwrite.2 -> pread.2

@@ -1,0 +1,75 @@
+diff -ur man-pages-1.39.orig/man2/ioctl_list.2 man-pages-1.39/man2/ioctl_list.2
+--- man-pages-1.39.orig/man2/ioctl_list.2	Thu Jul 26 01:38:02 2001
++++ man-pages-1.39/man2/ioctl_list.2	Fri Sep 14 17:22:54 2001
+@@ -543,8 +543,7 @@
+ pointers.  These are documented here in alphabetical order.
+ 
+ CDROMREADAUDIO takes an input pointer 'const struct cdrom_read_audio *'.
+-The 'buf' field points to an output buffer
+-of length 'nframes * CD_FRAMESIZE_RAW'.
++The 'buf' field points to an output buffer of length 'nframes * CD_FRAMESIZE_RAW'.
+ 
+ CDROMREADCOOKED, CDROMREADMODE1, CDROMREADMODE2, and CDROMREADRAW take
+ an input pointer 'const struct cdrom_msf *'.  They use the same pointer
+diff -ur man-pages-1.39.orig/man3/rpc.3 man-pages-1.39/man3/rpc.3
+--- man-pages-1.39.orig/man3/rpc.3	Mon Jun 11 02:58:22 2001
++++ man-pages-1.39/man3/rpc.3	Fri Sep 14 17:22:54 2001
+@@ -342,7 +342,7 @@
+ only:
+ .IP
+ .nf
+-.ta +2.0i +2.0i +2.0i
++.ta T +2.0i
+ .SM CLSET_RETRY_TIMEOUT\s0	struct timeval	set the retry timeout
+ .SM CLGET_RETRY_TIMEOUT\s0	struct timeval	get the retry timeout
+ .fi
+diff -ur man-pages-1.39.orig/man7/mdoc.samples.7 man-pages-1.39/man7/mdoc.samples.7
+--- man-pages-1.39.orig/man7/mdoc.samples.7	Mon Jun 11 03:13:28 2001
++++ man-pages-1.39/man7/mdoc.samples.7	Fri Sep 14 16:11:29 2001
+@@ -1659,10 +1659,10 @@
+ will generate the following text:
+ .Pp
+ .\" fake chapter 3 to avoid error message from Rv
+-.ds cH 3
++.ds section 3
+ .Rv -std atexit
+ .\" and back to 7 again
+-.ds cH 7
++.ds section 7
+ .Pp
+ The
+ .Fl std
+@@ -2422,6 +2422,7 @@
+ .It Fl bullet
+ .It Fl item
+ .It Fl enum
++.El
+ These three are the simplest types of lists.
+ Once the
+ .Ql ".Bl"
+@@ -2471,11 +2472,13 @@
+ Bullet two here.
+ .El
+ .Pp
++.Bl -ohang -compact
+ .It Fl tag
+ .It Fl diag
+ .It Fl hang
+ .It Fl ohang
+ .It Fl inset
++.El
+ These list-types collect arguments specified with the
+ .Ql \&.It
+ macro and create a label which may be
+diff -ur man-pages-1.39.orig/man7/regex.7 man-pages-1.39/man7/regex.7
+--- man-pages-1.39.orig/man7/regex.7	Mon Jun 11 03:13:28 2001
++++ man-pages-1.39/man7/regex.7	Fri Sep 14 17:22:54 2001
+@@ -27,7 +27,7 @@
+ .\"
+ .\" In the default nroff environment there is no dagger \(dg.
+ .ie t .ds dg \(dg
+-.el .ds dg (!)
++.el .ds dg (*)
+ .TH REGEX 7 1994-02-07 
+ .SH NAME
+ regex \- POSIX 1003.2 regular expressions
