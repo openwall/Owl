@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.18 2002/10/04 20:28:30 mci Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.19 2002/10/05 16:36:24 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -59,7 +59,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Fri Oct 04 2002 Michail Litvak <mci@owl.openwall.com>
-- Suppport for LILO boot loader configuration
+- Support for LILO boot loader configuration.
 
 * Fri Sep 06 2002 Michail Litvak <mci@owl.openwall.com>
 - Support for keyboard layout configuration
