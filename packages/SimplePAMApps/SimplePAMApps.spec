@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.3 2000/08/11 07:23:42 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.4 2000/08/23 16:02:30 solar Exp $
 
 Summary: Simple PAM-based Applications
 Name: SimplePAMApps
 Version: 0.60
-Release: 3owl
+Release: 4owl
 Copyright: BSD or GNU GPL
 Group: Utilities/System
 Source0: SimplePAMApps-0.60.tar.gz
@@ -67,19 +67,22 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %attr(0700,root,root) /bin/login
 /usr/man/man1/login.1*
-/etc/pam.d/login
+%config(noreplace) /etc/pam.d/login
 %attr(4710,root,wheel) /bin/su
 /usr/man/man1/su.1*
-/etc/pam.d/su
+%config(noreplace) /etc/pam.d/su
 %attr(4711,root,root) /usr/bin/passwd
 /usr/man/man1/passwd.1*
-/etc/pam.d/passwd
+%config(noreplace) /etc/pam.d/passwd
 /etc/control.d/facilities/su
 /etc/control.d/facilities/passwd
 %doc pgp.keys.asc Copyright conf/pam.conf conf/pam.d/
 %doc README CHANGELOG* NOTES.su Discussions
 
 %changelog
+* Wed Aug 23 2000 Solar Designer <solar@owl.openwall.com>
+- %config(noreplace) for /etc/pam.d files.
+
 * Fri Aug 11 2000 Solar Designer <solar@owl.openwall.com>
 - Added owl-control support for su and passwd.
 
