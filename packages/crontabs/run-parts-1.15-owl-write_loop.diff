@@ -1,13 +1,10 @@
---- run-parts-1.15/run-parts.c.orig	Mon Jan  8 04:57:18 2001
-+++ run-parts-1.15/run-parts.c	Thu May 10 18:35:56 2001
-@@ -139,6 +139,32 @@
+diff -ur run-parts-1.15.races/run-parts.c run-parts-1.15/run-parts.c
+--- run-parts-1.15.races/run-parts.c	Fri May 25 02:50:16 2001
++++ run-parts-1.15/run-parts.c	Fri May 25 02:51:29 2001
+@@ -140,6 +140,29 @@
    }
  }
  
-+/*
-+ *  Taken from John the Ripper by Solar Designer
-+ */
-+
 +int write_loop(int fd, char *buffer, int count)
 +{
 +  int offset, block;
@@ -20,7 +17,7 @@
 + * failed to do its job, unless we were interrupted by a signal. */
 +    if (block < 0) {
 +      if (errno == EINTR) continue;
-+        return block;
++      return block;
 +    }
 +
 +    offset += block;
@@ -30,10 +27,11 @@
 +/* Should be equal to the requested size, unless our kernel got crazy. */
 +  return offset;
 +}
++
+ jmp_buf sigchld_jmp;
+ volatile int sigchld_jmp_enable;
  
- /* We have to abort the select() call in run_part when we receive a
-  * SIGCHLD signal. We can't simply ignore it, so we do nothing.
-@@ -220,7 +246,7 @@
+@@ -240,7 +263,7 @@
  	      fflush(stdout);
  	      printflag = 1;
  	    }
@@ -42,7 +40,7 @@
  	  }
  	  else if (c == 0) {
  	    close(pout[0]);
-@@ -235,7 +261,7 @@
+@@ -255,7 +278,7 @@
  	      fflush(stderr);
  	      printflag = 1;
  	    }

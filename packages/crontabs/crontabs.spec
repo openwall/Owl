@@ -1,15 +1,16 @@
-# $Id: Owl/packages/crontabs/crontabs.spec,v 1.3 2001/05/17 06:35:15 mci Exp $
+# $Id: Owl/packages/crontabs/crontabs.spec,v 1.4 2001/05/24 22:59:07 solar Exp $
 
 Summary: System crontab files used to schedule the execution of programs.
 Name: crontabs
 Version: 2.0
-Release: 3owl
+Release: 4owl
 Copyright: GPL
 Group: System Environment/Base
 Source0: run-parts-1.15.tar.gz
 Source1: crontab
-Patch0: run-parts-1.15-owl-writeloop.diff
-Patch1: run-parts-1.15-owl-umask.diff
+Patch0: run-parts-1.15-owl-umask.diff
+Patch1: run-parts-1.15-owl-races.diff
+Patch2: run-parts-1.15-owl-write_loop.diff
 BuildRoot: /var/rpm-buildroot/%{name}-%{version}
 
 %description
@@ -31,6 +32,7 @@ installed on your system.
 %setup -n run-parts-1.15
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 gcc run-parts.c -o run-parts $RPM_OPT_FLAGS -Wall -s
@@ -40,7 +42,6 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/etc/cron.{hourly,daily,weekly,monthly}
 mkdir -p $RPM_BUILD_ROOT/usr/bin
 mkdir -p $RPM_BUILD_ROOT%{_mandir}/man8/
-
 
 install -m 644 $RPM_SOURCE_DIR/crontab $RPM_BUILD_ROOT/etc/
 install -m 755 run-parts $RPM_BUILD_ROOT/usr/bin/
@@ -60,6 +61,9 @@ rm -rf $RPM_BUILD_ROOT
 %dir /etc/cron.monthly
 
 %changelog
+* Fri May 25 2001 Solar Designer <solar@owl.openwall.com>
+- Fixed SIGCHLD races in run-parts (the code is still far from clean).
+
 * Thu May 16 2001 Michail Litvak <mci@owl.openwall.com>
 - run-parts source archive renamed to name with version
 - umask patching extracted to separate patch (and improved)
