@@ -1,9 +1,9 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.8 2001/04/12 03:06:07 solar Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.9 2001/04/14 01:12:05 solar Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
 Version: 6.3.5
-Release: 5owl
+Release: 6owl
 Copyright: GPL
 Group: Applications/System
 Source0: ftp://ftp.red-bean.com/pub/noel/%{name}-%{version}.tar.gz
@@ -64,7 +64,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 # we need this hack to get rid of an old, incorrect accounting info entry.
-grep -v '* accounting: (psacct)' < /etc/info-dir > /etc/info-dir.new
+cp -p /etc/info-dir /etc/info-dir.new &&
+grep -v '* accounting: (psacct)' < /etc/info-dir > /etc/info-dir.new &&
 mv -f /etc/info-dir.new /etc/info-dir
 /sbin/install-info %{_infodir}/accounting.info.gz %{_infodir}/dir --entry="* accounting: (accounting).            The GNU Process Accounting Suite."
 
@@ -95,6 +96,9 @@ fi
 %{_infodir}/*
 
 %changelog
+* Sat Apr 14 2001 Solar Designer <solar@owl.openwall.com>
+- Preserve permissions of /etc/info-dir when modifying it in %post.
+
 * Thu Apr 12 2001 Solar Designer <solar@owl.openwall.com>
 - acct.logrotate: nocreate (we create the file from the postrotate script).
 
