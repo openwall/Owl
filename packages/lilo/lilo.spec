@@ -1,19 +1,20 @@
-# $Id: Owl/packages/lilo/lilo.spec,v 1.4 2000/12/11 06:30:59 solar Exp $
+# $Id: Owl/packages/lilo/lilo.spec,v 1.5 2001/07/23 14:25:48 solar Exp $
 
-Summary: 	The boot loader for Linux and other operating systems.
-Name: 		lilo
-Version: 	21.6
-Release: 	3owl
-ExclusiveArch: 	%ix86
-Copyright: 	MIT
-Group: 		System Environment/Base
-Source: 	ftp://sunsite.unc.edu/pub/Linux/system/boot/lilo/%{name}-%{version}.tar.gz
-Source1: 	keytab-lilo.c
-Patch1: 	lilo-21-rh-broken-headers.diff
-Patch2: 	lilo-21.4.4-rh-sa5300.diff
-Patch3: 	lilo-21.4.4-rh-i2o.diff
-Buildroot: 	/var/rpm-buildroot/%{name}-root
-BuildRequires: 	fileutils dev86
+Summary: The boot loader for Linux and other operating systems.
+Name: lilo
+Version: 21.6
+Release: 4owl
+ExclusiveArch: %ix86
+License: MIT
+Group: System Environment/Base
+Source0: ftp://sunsite.unc.edu/pub/Linux/system/boot/lilo/%{name}-%{version}.tar.gz
+Source1: keytab-lilo.c
+Patch0: lilo-21.6-owl-loop-floppy.diff
+Patch1: lilo-21-rh-broken-headers.diff
+Patch2: lilo-21.4.4-rh-sa5300.diff
+Patch3: lilo-21.4.4-rh-i2o.diff
+Buildroot: /var/rpm-buildroot/%{name}-root
+BuildRequires: fileutils dev86
 
 %description
 LILO (LInux LOader) is a basic system program which boots your Linux
@@ -23,14 +24,15 @@ can also boot other operating systems.
 
 %prep
 %setup -q
+%patch0 -p1
 # work around broken kernel headers
 %patch1 -p1 -b .broken
 %patch2 -p1 -b .sa5300
 %patch3 -p1 -b .i2o
 
 %build
-make
-gcc $RPM_OPT_FLAGS -o keytab-lilo %{SOURCE1}
+make CC=gcc CFLAGS="$RPM_OPT_FLAGS -Wall"
+gcc $RPM_OPT_FLAGS -Wall -s -o keytab-lilo $RPM_SOURCE_DIR/keytab-lilo.c
 #make -C doc || :
 #dvips doc/user.dvi -o doc/User_Guide.ps
 #dvips doc/tech.dvi -o doc/Technical_Guide.ps
@@ -64,6 +66,11 @@ test -f /etc/lilo.conf && /sbin/lilo || :
 %{_mandir}/*/*
 
 %changelog
+* Mon Jul 23 2001 Solar Designer <solar@owl.openwall.com>
+- Support 1.44 MB floppy disk images via loopback block devices such that
+no physical floppy disk is needed when preparing bootable CD's with LILO.
+- Use RPM_OPT_FLAGS.
+
 * Mon Dec 11 2000 Solar Designer <solar@owl.openwall.com>
 - Run lilo in %post in case the (physical) location of /boot/boot.b or
 whatever else LILO depends on has changed with our upgrade.
