@@ -1,16 +1,16 @@
-# $Id: Owl/packages/dialog/dialog.spec,v 1.4 2001/06/10 01:17:49 mci Exp $
+# $Id: Owl/packages/dialog/dialog.spec,v 1.5 2001/06/10 07:16:43 mci Exp $
 
 Summary: A utility for creating TTY dialog boxes.
 Name: dialog
 Version: 0.9a
 %define original_date	20010527
-Release: 6owl
+Release: 7owl
 Copyright: GPL
 Group: Applications/System
 Source: ftp://dickey.his.com/dialog/%{name}-%{version}-%{original_date}.tgz
 Patch0: dialog-0.9a-owl-pwdbox.diff
-Patch1: dialog-0.9a-asp-locale.diff
-Patch2: dialog-0.9a-asp-tmpdir.diff
+Patch1: dialog-0.9a-alt-locale.diff
+Patch2: dialog-0.9a-alt-tmpdir.diff
 BuildRoot: /var/rpm-buildroot/%{name}-root
 
 %description
@@ -64,7 +64,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Sun Jun 10 2001 Michail Litvak <mci@owl.openwall.com>
 - Updated to new version
-- imported patches from ASP Linux
+- imported patches from ALT Linux
 
 * Thu Dec 28 2000 Michail Litvak <mci@owl.openwall.com>
 - Updated to new snapshot for fix file locking problem
