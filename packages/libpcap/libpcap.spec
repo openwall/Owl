@@ -1,15 +1,16 @@
-# $Id: Owl/packages/libpcap/libpcap.spec,v 1.6 2002/09/16 12:11:37 mci Exp $
+# $Id: Owl/packages/libpcap/libpcap.spec,v 1.7 2003/06/02 03:09:12 solar Exp $
 
 Summary: Network packet capture library.
 Name: libpcap
 Version: 0.6.2
-Release: owl2
+Release: owl3
 Epoch: 2
 License: GPL
 Group: System Environment/Libraries
 Source: http://www.tcpdump.org/release/%{name}-%{version}.tar.gz
 Patch0: libpcap-0.6.2-pld-shared.diff
 Patch1: libpcap-0.6.2-cvs-20020712-buffer.diff
+Patch2: libpcap-0.6.2-nmap-alt-linux-honor-timeout.diff
 PreReq: /sbin/ldconfig
 BuildRequires: flex, bison
 BuildRoot: /override/%{name}-%{version}
@@ -34,6 +35,7 @@ Header files and development documentation for libpcap.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 %configure \
@@ -69,7 +71,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/lib*.a
 
 %changelog
-* Mon Sep 16 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Jun 02 2003 Solar Designer <solar@owl.openwall.com> 2:0.6.2-owl3
+- Added a patch for timeout handling on Linux from Nmap with minor
+modifications by ALT Linux team.
+
+* Mon Sep 16 2002 Michail Litvak <mci@owl.openwall.com> 2:0.6.2-owl2
 - Back-ported a possible buffer overflow fix from the CVS; This fixes
 a bug wherein "live_open_new()" wasn't making the buffer size the maximum
 of "enough to hold packets of the MTU obtained from the socket" and

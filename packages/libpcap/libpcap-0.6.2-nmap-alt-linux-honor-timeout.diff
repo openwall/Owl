@@ -1,0 +1,41 @@
+diff -urp libpcap-0.6.2.orig/pcap-linux.c libpcap-0.6.2/pcap-linux.c
+--- libpcap-0.6.2.orig/pcap-linux.c	Thu Jan 18 03:59:56 2001
++++ libpcap-0.6.2/pcap-linux.c	Mon Jun  2 03:01:52 2003
+@@ -288,6 +288,37 @@ pcap_read_packet(pcap_t *handle, pcap_ha
+ 	offset = 0;
+ #endif
+ 
++	/* If the user specified a timeout in pcap_open_live(),
++	 * we will honor the timeout and wait for specified time
++	 * unless packets pending.
++	 */
++	if ((handle->fd >= 0) && (handle->md.timeout > 0)) {
++		fd_set readfs;
++		struct timeval tv;
++
++		FD_ZERO(&readfs);
++		FD_SET(handle->fd, &readfs);
++
++		memset(&tv, 0, sizeof(tv));
++		tv.tv_sec = handle->md.timeout / 1000;
++		tv.tv_usec = (handle->md.timeout % 1000) * 1000;
++
++		for (;;) {
++			/*
++			 * We can assume Linux select(2) behaviour:
++			 * in case of error, readfs will be kept unchanged
++			 * and tv will be updated.
++			 */
++			if (select(handle->fd + 1, &readfs, NULL, NULL, &tv) >= 0)
++				break;
++			if (EINTR == errno)
++				continue;
++			snprintf(handle->errbuf, sizeof(handle->errbuf),
++				 "select: %s", pcap_strerror(errno));
++			return -1;
++		}
++	}
++
+ 	/* Receive a single packet from the kernel */
+ 
+ 	do {
