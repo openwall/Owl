@@ -1,0 +1,160 @@
+diff -uNrp rpm-4.2/Makefile.am rpm-4.2.lite/Makefile.am
+--- rpm-4.2/Makefile.am	2004-03-13 02:11:49 +0000
++++ rpm-4.2.lite/Makefile.am	2004-03-13 02:15:48 +0000
+@@ -14,7 +14,7 @@ EXTRA_DIST = CHANGES CREDITS Doxyheader 
+ 	po/*.in po/*.po po/rpm.pot \
+ 	rpm.magic rpmpopt-$(VERSION) rpmqv.c rpm.c
+ 
+-SUBDIRS = intl po @WITH_ZLIB_SUBDIR@ @WITH_ELFUTILS_SUBDIR@ file @WITH_DB_SUBDIR@ popt beecrypt rpmio rpmdb lib build misc @WITH_PYTHON_SUBDIR@ tools scripts tests doc .
++SUBDIRS = intl po @WITH_ZLIB_SUBDIR@ @WITH_DB_SUBDIR@ popt beecrypt rpmio rpmdb lib build misc @WITH_PYTHON_SUBDIR@ tools scripts tests doc .
+ 
+ INCLUDES = \
+ 	-I$(top_srcdir)/build \
+@@ -23,7 +23,6 @@ INCLUDES = \
+ 	-I$(top_srcdir)/rpmio \
+ 	-I$(top_srcdir)/beecrypt \
+ 	-I$(top_srcdir)/popt \
+-	@WITH_LIBELF_INCLUDE@ \
+ 	@INCPATH@
+ 
+ staticLDFLAGS = @LDFLAGS_STATIC@ @LDFLAGS_NPTL@
+@@ -116,7 +115,6 @@ lint:
+ 		`make -s sources -C rpmdb` \
+ 		`make -s sources -C rpmio` \
+ 		`make -s sources -C beecrypt` \
+-		`make -s sources -C file` \
+ 		`make -s sources -C popt`
+ 
+ CVSTAG = r$(subst .,-,$(VERSION))
+diff -uNrp rpm-4.2/Makefile.in rpm-4.2.lite/Makefile.in
+--- rpm-4.2/Makefile.in	Thu Mar 13 16:52:12 2003
++++ rpm-4.2.lite/Makefile.in	Tue Feb  3 19:30:08 2004
+@@ -219,7 +219,7 @@ EXTRA_DIST = CHANGES CREDITS Doxyheader 
+ 	rpm.magic rpmpopt-$(VERSION) rpmqv.c rpm.c
+ 
+ 
+-SUBDIRS = intl po @WITH_ZLIB_SUBDIR@ @WITH_ELFUTILS_SUBDIR@ file @WITH_DB_SUBDIR@ popt beecrypt rpmio rpmdb lib build misc @WITH_PYTHON_SUBDIR@ tools scripts tests doc .
++SUBDIRS = intl po @WITH_ZLIB_SUBDIR@ @WITH_ELFUTILS_SUBDIR@ @WITH_DB_SUBDIR@ popt beecrypt rpmio rpmdb lib build misc @WITH_PYTHON_SUBDIR@ tools scripts tests doc .
+ 
+ INCLUDES = \
+ 	-I$(top_srcdir)/build \
+diff -uNrp rpm-4.2/build/Makefile.am rpm-4.2.lite/build/Makefile.am
+--- rpm-4.2/build/Makefile.am	Thu Mar  6 21:48:37 2003
++++ rpm-4.2.lite/build/Makefile.am	Wed Feb  4 14:30:21 2004
+@@ -34,11 +34,6 @@ librpmbuild_la_LDFLAGS = -release @VERSI
+ 	$(top_builddir)/rpmio/librpmio.la \
+ 	@WITH_LIBELF_LIB@
+ 
+-rpmfile.h:
+-	@ln -sf $(top_builddir)/file/file.h $@
+-
+-files.c rpmfc.c: rpmfile.h
+-
+ clean-local:
+ 	rm -f *.o rpmfile.h # .created $(FILELOBJS)
+ 
+diff -uNrp rpm-4.2/build/Makefile.in rpm-4.2.lite/build/Makefile.in
+--- rpm-4.2/build/Makefile.in	Mon Mar 10 19:09:38 2003
++++ rpm-4.2.lite/build/Makefile.in	Wed Feb  4 14:30:36 2004
+@@ -549,11 +549,6 @@ uninstall-am: uninstall-info-am uninstal
+ 	uninstall-usrlibLTLIBRARIES
+ 
+ 
+-rpmfile.h:
+-	@ln -sf $(top_builddir)/file/file.h $@
+-
+-files.c rpmfc.c: rpmfile.h
+-
+ clean-local:
+ 	rm -f *.o rpmfile.h # .created $(FILELOBJS)
+ 
+diff -uNrp rpm-4.2/build/rpmfile.h rpm-4.2.lite/build/rpmfile.h
+--- rpm-4.2/build/rpmfile.h	Thu Jan 23 21:54:12 2003
++++ rpm-4.2.lite/build/rpmfile.h	Wed Feb  4 14:33:54 2004
+@@ -28,6 +28,7 @@
+ 
+ #ifndef __file_h__
+ #define __file_h__
++#include <stdint.h>
+ 
+ /*@-redef@*/
+ 
+diff -uNrp rpm-4.2/rpmio/Makefile.am rpm-4.2.lite/rpmio/Makefile.am
+--- rpm-4.2/rpmio/Makefile.am	Thu Mar  6 21:48:13 2003
++++ rpm-4.2.lite/rpmio/Makefile.am	Tue Feb  3 19:38:35 2004
+@@ -31,7 +31,7 @@ librpmio_la_SOURCES = \
+ 	rpmio.c rpmlog.c rpmmalloc.c \
+ 	rpmpgp.c rpmrpc.c strcasecmp.c stubs.c url.c ugid.c
+ librpmio_la_LDFLAGS = -release @VERSION@ \
+-	$(top_builddir)/file/libfmagic.la \
++	libfmagic.la \
+ 	@WITH_ZLIB_LIB@ \
+ 	-lrt -lpthread
+ librpmio_la_LIBADD = $(BEECRYPTLOBJS)
+diff -uNrp rpm-4.2/rpmio/Makefile.in rpm-4.2.lite/rpmio/Makefile.in
+--- rpm-4.2/rpmio/Makefile.in	Mon Mar 10 19:09:43 2003
++++ rpm-4.2.lite/rpmio/Makefile.in	Tue Feb  3 19:38:43 2004
+@@ -237,7 +237,7 @@ librpmio_la_SOURCES = \
+ 	rpmpgp.c rpmrpc.c strcasecmp.c stubs.c url.c ugid.c
+ 
+ librpmio_la_LDFLAGS = -release @VERSION@ \
+-	$(top_builddir)/file/libfmagic.la \
++	libfmagic.la \
+ 	@WITH_ZLIB_LIB@ \
+ 	-lrt -lpthread
+ 
+diff -uNrp rpm-4.2/tools/Makefile.am rpm-4.2.lite/tools/Makefile.am
+--- rpm-4.2/tools/Makefile.am	Fri Mar  7 18:21:19 2003
++++ rpm-4.2.lite/tools/Makefile.am	Wed Feb  4 19:09:10 2004
+@@ -37,6 +37,7 @@ convertdb1_SOURCES =	convertdb1.c
+ 
+ debugedit_SOURCES =	debugedit.c hashtab.c
+ debugedit_LDADD =	@LDFLAGS_STATIC@ @WITH_LIBELF_LIB@ \
++	libelf.a \
+ 	$(top_builddir)/popt/libpopt.la
+ 
+ javadeps_SOURCES =	javadeps.c
+@@ -47,10 +48,6 @@ rpmcache_SOURCES =	rpmcache.c
+ rpmdeps_SOURCES =	rpmdeps.c
+ rpmdeps_LDADD =		$(top_builddir)/build/librpmbuild.la
+ #rpmdeps_LDFLAGS =	$(staticLDFLAGS)
+-
+-rpmfile.c: $(top_builddir)/file/file.c
+-	rm -f $@
+-	ln -s $< $@
+ 
+ rpmfile_SOURCES =	rpmfile.c
+ rpmfile_LDADD =		$(top_builddir)/rpmio/librpmio.la
+diff -uNrp rpm-4.2/tools/Makefile.in rpm-4.2.lite/tools/Makefile.in
+--- rpm-4.2/tools/Makefile.in	Mon Mar 10 19:09:45 2003
++++ rpm-4.2.lite/tools/Makefile.in	Wed Feb  4 19:08:58 2004
+@@ -243,6 +243,7 @@ convertdb1_SOURCES = convertdb1.c
+ 
+ debugedit_SOURCES = debugedit.c hashtab.c
+ debugedit_LDADD = @LDFLAGS_STATIC@ @WITH_LIBELF_LIB@ \
++	libelf.a \
+ 	$(top_builddir)/popt/libpopt.la
+ 
+ 
+@@ -706,9 +707,6 @@ uninstall-am: uninstall-binPROGRAMS unin
+ 
+ #rpmdeps_LDFLAGS =	$(staticLDFLAGS)
+ 
+-rpmfile.c: $(top_builddir)/file/file.c
+-	rm -f $@
+-	ln -s $< $@
+ #rpmsort_LDFLAGS =	$(staticLDFLAGS)
+ 
+ $(PROGRAMS): $(LDADD)
+diff -uNrp rpm-4.2/tools/rpmfile.c rpm-4.2.lite/tools/rpmfile.c
+--- rpm-4.2/tools/rpmfile.c	Wed Feb  4 14:39:42 2004
++++ rpm-4.2.lite/tools/rpmfile.c	Wed Feb  4 14:39:55 2004
+@@ -26,7 +26,7 @@
+  */
+ 
+ #include "system.h"
+-#include "file.h"
++#include "rpmfile.h"
+ #include "patchlevel.h"
+ #include "debug.h"
+ 

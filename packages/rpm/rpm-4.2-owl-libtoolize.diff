@@ -1,0 +1,22 @@
+--- rpm-4.2.orig/rpmio/Makefile.am	Sat Mar 13 17:31:57 2004
++++ rpm-4.2/rpmio/Makefile.am	Sat Mar 13 17:55:09 2004
+@@ -20,7 +20,7 @@ pkginc_HEADERS = \
+ 	ugid.h
+ noinst_HEADERS = rpmio_internal.h
+ 
+-BEECRYPTLOBJS = $(shell cat $(top_builddir)/beecrypt/listobjs)
++BEECRYPTLOBJS = $(patsubst %,$(top_builddir)/beecrypt/%,$(shell cat $(top_builddir)/beecrypt/listobjs))
+ 
+ LDFLAGS = -L$(DESTDIR)$(usrlibdir)
+ 
+--- rpm-4.2.orig/rpmdb/Makefile.am	Thu Mar  6 21:59:16 2003
++++ rpm-4.2/rpmdb/Makefile.am	Sat Mar 13 17:55:45 2004
+@@ -36,7 +36,7 @@ mylibs = librpmdb.la
+ 
+ LIBS =
+ 
+-DB3LOBJS = $(shell cat $(top_builddir)/$(WITH_DB_SUBDIR)/db3lobjs)
++DB3LOBJS = $(patsubst %,$(top_builddir)/$(WITH_DB_SUBDIR)/%,$(shell cat $(top_builddir)/$(WITH_DB_SUBDIR)/db3lobjs))
+ 
+ LDFLAGS = -L$(DESTDIR)$(usrlibdir)
+ 

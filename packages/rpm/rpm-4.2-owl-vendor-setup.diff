@@ -1,0 +1,81 @@
+diff -uNrp rpm-4.2.orig/installplatform rpm-4.2/installplatform
+--- rpm-4.2.orig/installplatform	Wed Mar  3 16:54:38 2004
++++ rpm-4.2/installplatform	Wed Mar  3 19:59:32 2004
+@@ -95,6 +95,9 @@ for SUBST in $SUBSTS ; do
+   redhat)
+     VENDORSED='-e s,^@redhat@,,'
+     ;;
++  openwall)
++    VENDORSED='-e s,^@openwall@,,'
++    ;;
+   esac
+ 
+   cat $PLATFORM \
+diff -uNrp rpm-4.2.orig/platform rpm-4.2/platform
+--- rpm-4.2.orig/platform	Mon Mar 10 19:10:29 2003
++++ rpm-4.2/platform	Wed Mar  3 20:09:21 2004
+@@ -142,3 +142,19 @@
+ @mandrake@%_gamesdir	games
+ @mandrake@%_gamesbindir   %{_prefix}/%{_gamesdir}
+ @mandrake@%_gamesdatadir  %{_datadir}/%{_gamesdir}
++
++@openwall@#---------------------------------------------------------------------
++@openwall@#	Expanded at end of %prep
++@openwall@#
++@openwall@%__id_u		%{__id} -u
++@openwall@%__chown_Rhf	%{__chown} -Rhf
++@openwall@%__chgrp_Rhf	%{__chgrp} -Rhf
++@openwall@%_fixowner	[ `%{__id_u}` = '0' ] && %{__chown_Rhf} root
++@openwall@%_fixgroup	[ `%{__id_u}` = '0' ] && %{__chgrp_Rhf} root
++@openwall@%_fixperms	%{__chmod} -Rf a+rX,g-w,o-w
++@openwall@#---------------------------------------------------------------------
++@openwall@#	Always use %defattr(-,root,root) in %files (added in rpm-4.0.4)
++@openwall@#
++@openwall@#%files(n:f:)	%%files%{?-f: -f %{-f*}}%{?-n: -n %{-n*}} %{?1}\
++@openwall@#%defattr(-,root,root,-)\
++@openwall@#%{nil}
+diff -uNrp rpm-4.2.orig/platform.in rpm-4.2/platform.in
+--- rpm-4.2.orig/platform.in	Wed Jan  8 20:30:50 2003
++++ rpm-4.2/platform.in	Wed Mar  3 20:08:06 2004
+@@ -142,3 +142,19 @@
+ @mandrake@%_gamesdir	games
+ @mandrake@%_gamesbindir   %{_prefix}/%{_gamesdir}
+ @mandrake@%_gamesdatadir  %{_datadir}/%{_gamesdir}
++
++@openwall@#---------------------------------------------------------------------
++@openwall@#	Expanded at end of %prep
++@openwall@#
++@openwall@%__id_u		@__ID_U@
++@openwall@%__chown_Rhf	@__CHOWN_RHF@
++@openwall@%__chgrp_Rhf	@__CHGRP_RHF@
++@openwall@%_fixowner	[ `%{__id_u}` = '0' ] && %{__chown_Rhf} root
++@openwall@%_fixgroup	[ `%{__id_u}` = '0' ] && %{__chgrp_Rhf} @ROOT_GROUP@
++@openwall@%_fixperms	%{__chmod} -Rf @FIXPERMS@
++@openwall@#---------------------------------------------------------------------
++@openwall@#	Always use %defattr(-,root,root) in %files (added in rpm-4.0.4)
++@openwall@#
++@openwall@#%files(n:f:)	%%files%{?-f: -f %{-f*}}%{?-n: -n %{-n*}} %{?1}\
++@openwall@#%defattr(-,root,root,-)\
++@openwall@#%{nil}
+diff -uNrp rpm-4.2.orig/configure rpm-4.2/configure
+--- rpm-4.2.orig/configure	Mon Mar 10 19:09:49 2003
++++ rpm-4.2/configure	Fri Mar  5 05:44:32 2004
+@@ -23226,6 +23226,7 @@ unknown|pc|ibm|redhat|pld|mandrake|conec
+ 	test -f /etc/conectiva-release &&	RPMCANONVENDOR=conectiva
+ 	test -f /etc/lvr-release &&		RPMCANONVENDOR=lvr
+ 	test -f /etc/yellowdog-release &&	RPMCANONVENDOR=yellowdog
++	test -f /etc/owl-setup.conf &&		RPMCANONVENDOR=openwall
+ 	;;
+ esac
+ RPMCANONOS="$build_os_noversion"
+diff -uNrp rpm-4.2.orig/configure.ac rpm-4.2/configure.ac
+--- rpm-4.2.orig/configure.ac	Fri Feb 14 22:53:37 2003
++++ rpm-4.2/configure.ac	Fri Mar  5 05:45:25 2004
+@@ -1154,6 +1154,7 @@ unknown|pc|ibm|redhat|pld|mandrake|conec
+ 	test -f /etc/conectiva-release &&	RPMCANONVENDOR=conectiva
+ 	test -f /etc/lvr-release &&		RPMCANONVENDOR=lvr
+ 	test -f /etc/yellowdog-release &&	RPMCANONVENDOR=yellowdog
++	test -f /etc/owl-setup.conf &&		RPMCANONVENDOR=openwall
+ 	;;
+ esac
+ RPMCANONOS="$build_os_noversion"

@@ -1,0 +1,13 @@
+diff -uNrp rpm-4.2.orig/elfutils/config.h.in rpm-4.2/elfutils/config.h.in
+--- rpm-4.2.orig/elfutils/config.h.in	Mon Mar 10 19:13:43 2003
++++ rpm-4.2/elfutils/config.h.in	Thu Feb 12 16:20:44 2004
+@@ -139,3 +139,9 @@
+ # define INTDEF(name) /* empty */
+ #endif
+ 
++/* Tell the compiler when a conditional or integer expression is
++   almost always true or almost always false.  */
++#ifndef HAVE_BUILTIN_EXPECT
++# define __builtin_expect(expr, val) (expr)
++#endif
++

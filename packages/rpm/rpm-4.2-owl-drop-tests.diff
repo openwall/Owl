@@ -1,0 +1,34 @@
+diff -uNrp rpm-4.2.orig/Makefile.am rpm-4.2/Makefile.am
+--- rpm-4.2.orig/Makefile.am	Sat Mar 13 17:57:32 2004
++++ rpm-4.2/Makefile.am	Sat Mar 13 18:15:45 2004
+@@ -14,7 +14,7 @@ EXTRA_DIST = CHANGES CREDITS Doxyheader 
+ 	po/*.in po/*.po po/rpm.pot \
+ 	rpm.magic rpmpopt-$(VERSION) rpmqv.c rpm.c
+ 
+-SUBDIRS = intl po @WITH_ZLIB_SUBDIR@ @WITH_DB_SUBDIR@ popt beecrypt rpmio rpmdb lib build misc @WITH_PYTHON_SUBDIR@ tools scripts tests doc .
++SUBDIRS = intl po @WITH_ZLIB_SUBDIR@ @WITH_DB_SUBDIR@ popt beecrypt rpmio rpmdb lib build misc @WITH_PYTHON_SUBDIR@ tools scripts doc .
+ 
+ INCLUDES = \
+ 	-I$(top_srcdir)/build \
+diff -uNrp rpm-4.2.orig/configure.ac rpm-4.2/configure.ac
+--- rpm-4.2.orig/configure.ac	Sat Mar 13 17:57:32 2004
++++ rpm-4.2/configure.ac	Sat Mar 13 18:17:07 2004
+@@ -1212,10 +1212,6 @@ AC_DEFINE_UNQUOTED(FINDPROVIDES, "$FINDP
+ 	[Full path to find-provides script (usually /usr/lib/rpm/find-provides)])
+ AC_SUBST(FINDPROVIDES)
+ 
+-testdir="`pwd`/tests"
+-dnl AC_DEFINE_UNQUOTED(testdir, "$testdir")
+-AC_SUBST(testdir)
+-
+ AC_SUBST(INCPATH)
+ AC_SUBST(LIBMISC)
+ 
+@@ -1234,7 +1230,6 @@ AC_OUTPUT([ Doxyfile Makefile rpmrc macr
+ 	scripts/Makefile scripts/brp-redhat
+ 	scripts/macros.perl scripts/macros.php scripts/macros.python
+ 	tools/Makefile
+-	tests/Makefile tests/rpmrc tests/macros tests/hello-test/Makefile
+ 	misc/Makefile intl/Makefile po/Makefile.in
+ 	doc/Makefile
+ 	doc/manual/Makefile

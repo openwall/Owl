@@ -1,0 +1,29 @@
+diff -uNrp rpm-4.2.orig/lib/fsm.c rpm-4.2/lib/fsm.c
+--- rpm-4.2.orig/lib/fsm.c	2003-03-03 19:38:32 +0000
++++ rpm-4.2/lib/fsm.c	2004-03-13 17:17:16 +0000
+@@ -1233,10 +1233,13 @@ static int fsmMkdirs(/*@special@*/ FSM_t
+ 		/* Move pre-existing path marker forward. */
+ 		fsm->dnlx[dc] = (te - dn);
+ 	    } else if (rc == CPIOERR_LSTAT_FAILED) {
++		mode_t saved_mask;
+ 		rpmfi fi = fsmGetFi(fsm);
+ 		*te = '\0';
+ 		st->st_mode = S_IFDIR | (fi->dperms & 07777);
++		saved_mask = umask(022); /* (GM): XXX: This is a hack */
+ 		rc = fsmStage(fsm, FSM_MKDIR);
++		(void) umask(saved_mask);
+ 		if (!rc)
+ 		    rpmMessage(RPMMESS_DEBUG,
+ 			_("%s directory created with perms %04o.\n"),
+diff -uNrp rpm-4.2.orig/rpmio/rpmio.c rpm-4.2/rpmio/rpmio.c
+--- rpm-4.2.orig/rpmio/rpmio.c	2003-02-15 19:30:06 +0000
++++ rpm-4.2/rpmio/rpmio.c	2004-03-13 16:58:50 +0000
+@@ -3005,7 +3005,7 @@ FD_t Fopen(const char *path, const char 
+ {
+     char stdio[20], other[20];
+     const char *end = NULL;
+-    mode_t perms = 0666;
++    mode_t perms = 0600;
+     int flags;
+     FD_t fd;
+ 

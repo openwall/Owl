@@ -1,0 +1,44 @@
+--- rpm-4.2.orig/lib/transaction.c	Wed May  5 14:04:35 2004
++++ rpm-4.2/lib/transaction.c	Wed May  5 14:59:25 2004
+@@ -1036,6 +1036,15 @@ int rpmtsRun(rpmts ts, rpmps okProbs, rp
+ 	/* Open database RDWR for installing packages. */
+ 	if (rpmtsOpenDB(ts, dbmode))
+ 	    return -1;	/* XXX W2DO? */
++
++	/* Open ALL indexes before chroot() call. We need this because libdb's
++	 * environment saves the full path to the opened file in corresponding
++	 * mpool structure, so when we call db_fini() later, we will encounter
++	 * problems if we mix opening of index files inside and outside chroot.
++	 * -- (GM)
++	 */
++	if (rpmdbOpenAll(rpmtsGetRdb(ts)))
++	    return -1;  /* XXX W2DO? */
+     }
+ 
+     ts->ignoreSet = ignoreSet;
+--- rpm-4.2.orig/rpmdb/db3.c	Thu Mar 13 16:44:14 2003
++++ rpm-4.2/rpmdb/db3.c	Thu May  6 00:32:38 2004
+@@ -365,14 +365,21 @@ static int db_init(dbiIndex dbi, const c
+ 	    xx = cvtdberr(dbi, "dbenv->set_mp_mmapsize", xx, _debug);
+ 	}
+ 	if (dbi->dbi_tmpdir) {
+-	    const char * root;
+ 	    const char * tmpdir;
++#if 0
++	    const char * root;
+ 
+ 	    root = (dbi->dbi_root ? dbi->dbi_root : rpmdb->db_root);
+ 	    if ((root[0] == '/' && root[1] == '\0') || rpmdb->db_chrootDone)
+ 		root = NULL;
++#endif
+ /*@-mods@*/
+-	    tmpdir = rpmGenPath(root, dbi->dbi_tmpdir, NULL);
++	    /* Don't mess with the tmpdir on open (we are opening database
++	     * outside the chroot()): if we are not chrooted, then we use
++	     * system's tmpdir; but when we are chrooted - we use the same
++	     * tmpdir under the chroot. There must be no other choices -- (GM).
++	     */
++	    tmpdir = rpmGenPath(NULL, dbi->dbi_tmpdir, NULL);
+ /*@=mods@*/
+ 	    xx = dbenv->set_tmp_dir(dbenv, tmpdir);
+ 	    xx = cvtdberr(dbi, "dbenv->set_tmp_dir", xx, _debug);

@@ -1,0 +1,50 @@
+diff -uNrp rpm-4.2.orig/scripts/brp-strip-shared rpm-4.2/scripts/brp-strip-shared
+--- rpm-4.2.orig/scripts/brp-strip-shared	Fri Nov 15 17:52:51 2002
++++ rpm-4.2/scripts/brp-strip-shared	Sat Feb 14 19:02:54 2004
+@@ -14,5 +14,5 @@ for f in `find $RPM_BUILD_ROOT -type f -
+         grep -v "^${RPM_BUILD_ROOT}/\?usr/lib/debug"  | \
+ 	grep ' shared object,' | \
+-	sed -n -e 's/^\(.*\):[ 	]*ELF.*, not stripped/\1/p'`; do
++	sed -n -e 's/^\(.*\):.*[[:space:]]ELF.*, not stripped/\1/p'`; do
+-	strip --strip-unneeded $f
++	strip --strip-unneeded $f || :
+ done
+diff -uNrp rpm-4.2/scripts/brp-strip-static-archive rpm-4.2.orig/scripts/brp-strip-static-archive
+--- rpm-4.2.orig/scripts/brp-strip-static-archive	Wed Jan  8 20:29:08 2003
++++ rpm-4.2/scripts/brp-strip-static-archive	Sat Feb 14 19:03:16 2004
+@@ -8,6 +8,6 @@ fi
+ for f in `find $RPM_BUILD_ROOT -type f -a -exec file {} \; | \
+         grep -v "^${RPM_BUILD_ROOT}/\?usr/lib/debug"  | \
+ 	grep 'current ar archive' | \
+-	sed -n -e 's/^\(.*\):[ 	]*current ar archive/\1/p'`; do
+-	strip -g $f
++	sed -n -e 's/^\(.*\):.*[[:space:]]current ar archive[[:space:]]*/\1/p'`; do
++	strip -g $f || :
+ done
+diff -uNrp rpm-4.2.orig/scripts/brp-strip rpm-4.2/scripts/brp-strip
+--- rpm-4.2.orig/scripts/brp-strip	Fri Nov 15 17:52:51 2002
++++ rpm-4.2/scripts/brp-strip	Wed Mar  3 19:39:33 2004
+@@ -8,6 +8,6 @@ fi
+ for f in `find $RPM_BUILD_ROOT -type f \( -perm -0100 -or -perm -0010 -or -perm -0001 \) -exec file {} \; | \
+         grep -v "^${RPM_BUILD_ROOT}/\?usr/lib/debug"  | \
+ 	grep -v ' shared object,' | \
+-	sed -n -e 's/^\(.*\):[ 	]*ELF.*, not stripped/\1/p'`; do
+-	strip -g $f || :
++	sed -n -e 's/^\(.*\):.*[[:space:]]ELF.*, not stripped/\1/p'`; do
++	strip $f || :
+ done
+diff -uNrp rpm-4.2.orig/scripts/brp-strip-comment-note rpm-4.2/scripts/brp-strip-comment-note
+--- rpm-4.2.orig/scripts/brp-strip-comment-note	Fri Nov 15 17:52:51 2002
++++ rpm-4.2/scripts/brp-strip-comment-note	Wed Mar  3 19:42:10 2004
+@@ -8,9 +8,9 @@ fi
+ # for already stripped elf files in the build root
+ for f in `find $RPM_BUILD_ROOT -type f \( -perm -0100 -or -perm -0010 -or -perm -0001 \) -exec file {} \; | \
+         grep -v "^${RPM_BUILD_ROOT}/\?usr/lib/debug"  | \
+-	sed -n -e 's/^\(.*\):[ 	]*ELF.*, stripped/\1/p'`; do
++	sed -n -e 's/^\(.*\):.*[[:space:]]ELF.*, stripped/\1/p'`; do
+ 	note="-R .note"
+-	if objdump -h $f | grep '^[ 	]*[0-9]*[ 	]*.note[ 	]' -A 1 | \
++	if objdump -h $f | grep '^[[:space:]]*[0-9]*[[:space:]]*.note[[:space:]]' -A 1 | \
+ 		grep ALLOC >/dev/null; then
+ 		note=
+ 	fi

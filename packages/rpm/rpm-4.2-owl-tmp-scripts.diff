@@ -1,0 +1,336 @@
+diff -uNrp rpm-4.2.orig/db/dist/buildrel rpm-4.2/db/dist/buildrel
+--- rpm-4.2.orig/db/dist/buildrel	Fri Sep 20 14:02:18 2002
++++ rpm-4.2/db/dist/buildrel	Sat Feb 14 14:23:19 2004
+@@ -22,8 +22,8 @@ cd $D/dist && sh s_all
+ cd $D && cvs -q commit
+ 
+ # Copy a development tree into a release tree.
+-setenv R /var/tmp/db-$VERSION
+-rm -rf $R && mkdir -p $R
++setenv R "`mktemp -t -d -q db-$VERSION.XXXXXX`"
++test -d $R || exit 1
+ cd $D && tar cf - \
+ `cvs -q status | sed -n -e "/Repository/s;.*/CVSROOT/db/;;" -e "s/,v//p"` | \
+ (cd $R && tar xpf -)
+diff -uNrp rpm-4.2.orig/db/dist/s_crypto rpm-4.2/db/dist/s_crypto
+--- rpm-4.2.orig/db/dist/s_crypto	Fri Sep 20 14:02:22 2002
++++ rpm-4.2/db/dist/s_crypto	Sat Feb 14 14:32:02 2004
+@@ -5,10 +5,6 @@
+ 
+ d=..
+ 
+-t=/tmp/__db_a
+-trap 'rm -f $t ; exit 0' 0
+-trap 'rm -f $t ; exit 1' 1 2 3 13 15
+-
+ if ! test -d $d/crypto; then
+ 	echo "s_crypto: no crypto sources found in the source tree."
+ 	exit 1
+diff -uNrp rpm-4.2.orig/db/dist/s_include rpm-4.2/db/dist/s_include
+--- rpm-4.2.orig/db/dist/s_include	Wed Aug 14 19:52:38 2002
++++ rpm-4.2/db/dist/s_include	Sat Feb 14 14:12:19 2004
+@@ -59,10 +59,10 @@ tail()
+ #	1 external prototype file
+ #	1 internal #define file
+ #	N internal prototype files
+-e_dfile=/tmp/__db_c.$$
+-e_pfile=/tmp/__db_a.$$
+-i_dfile=/tmp/__db_d.$$
+-i_pfile=/tmp/__db_b.$$
++e_dfile="`mktemp -t __db_c.XXXXXX`"
++e_pfile="`mktemp -t __db_a.XXXXXX`"
++i_dfile="`mktemp -t __db_d.XXXXXX`"
++i_pfile="`mktemp -t __db_b.XXXXXX`"
+ trap 'rm -f $e_dfile $e_pfile $i_dfile $i_pfile; exit 0' 0 1 2 3 13 15
+ 
+ head defonly space _DB_EXT_DEF_IN_ > $e_dfile
+diff -uNrp rpm-4.2.orig/db/dist/s_java rpm-4.2/db/dist/s_java
+--- rpm-4.2.orig/db/dist/s_java	Fri Sep 20 14:02:22 2002
++++ rpm-4.2/db/dist/s_java	Sat Feb 14 14:14:40 2004
+@@ -7,9 +7,9 @@ msgjava="/* DO NOT EDIT: automatically b
+ 
+ . RELEASE
+ 
+-t=/tmp/__java
+-c=/tmp/__javajnic
+-h=/tmp/__javajnih
++t="`mktemp -t __java.XXXXXX`"
++c="`mktemp -t __javajnic.XXXXXX`"
++h="`mktemp -t __javajnih.XXXXXX`"
+ trap 'rm -f $t $c $h; exit 0' 0 1 2 3 13 15
+ 
+ # Build DbConstants.java.
+diff -uNrp rpm-4.2.orig/db/dist/s_javah rpm-4.2/db/dist/s_javah
+--- rpm-4.2.orig/db/dist/s_javah	Thu Sep 19 20:33:51 2002
++++ rpm-4.2/db/dist/s_javah	Sat Feb 14 14:30:56 2004
+@@ -19,12 +19,10 @@ CLASSPATH=
+ D=com.sleepycat.db
+ CLASSES="$D.Dbc $D.DbEnv $D.Db $D.DbLock $D.DbLogc $D.DbLsn $D.Dbt $D.DbTxn $D.xa.DbXAResource"
+ 
+-d=/tmp/__javah
++d="`mktemp -t -d -q __javah.XXXXXX`"
+ c=$d/classes
+ trap 'rm -rf $d; exit 0' 0 1 2 3 13 15
+ 
+-rm -rf $d
+-mkdir $d || exit 1
+ mkdir $c || exit 1
+ 
+ # Make skeleton versions of XA classes and interfaces
+diff -uNrp rpm-4.2.orig/db/dist/s_readme rpm-4.2/db/dist/s_readme
+--- rpm-4.2.orig/db/dist/s_readme	Wed Aug 14 19:52:38 2002
++++ rpm-4.2/db/dist/s_readme	Sat Feb 14 14:14:14 2004
+@@ -5,7 +5,7 @@
+ 
+ d=..
+ 
+-t=/tmp/__t
++t="`mktemp -t __t.XXXXXX`"
+ trap 'rm -f $t; exit 0' 0 1 2 3 13 15
+ 
+ . RELEASE
+diff -uNrp rpm-4.2.orig/db/dist/s_recover rpm-4.2/db/dist/s_recover
+--- rpm-4.2.orig/db/dist/s_recover	Wed Aug 14 19:52:38 2002
++++ rpm-4.2/db/dist/s_recover	Sat Feb 14 14:16:28 2004
+@@ -3,11 +3,11 @@
+ #
+ # Build the automatically generated logging/recovery files.
+ 
+-tmp=/tmp/__db_a
+-loglist=/tmp/__db_b
+-source=/tmp/__db_c
+-header=/tmp/__db_d
+-template=/tmp/__db_e
++tmp="`mktemp -t __db_a.XXXXXX'"
++loglist="`mktemp -t __db_b.XXXXXX'"
++source="`mktemp -t __db_c.XXXXXX'"
++header="`mktemp -t __db_d.XXXXXX'"
++template="`mktemp -t __db_e.XXXXXX'"
+ 
+ trap 'rm -f $tmp $loglist $source $header $template; exit 1' 1 2 3 13 15
+ trap 'rm -f $tmp $loglist $source $header $template; exit 0' 0
+diff -uNrp rpm-4.2.orig/db/dist/s_rpc rpm-4.2/db/dist/s_rpc
+--- rpm-4.2.orig/db/dist/s_rpc	Fri Sep 20 14:02:22 2002
++++ rpm-4.2/db/dist/s_rpc	Sat Feb 14 14:17:13 2004
+@@ -7,7 +7,7 @@ echo "Building RPC client/server files"
+ 
+ . ./RELEASE
+ 
+-t=/tmp/__db_a
++t="`mktemp -t __db_a.XXXXXX`"
+ trap 'rm -f $t ; exit 0' 0
+ trap 'rm -f $t ; exit 1' 1 2 3 13 15
+ 
+diff -uNrp rpm-4.2.orig/db/dist/s_test rpm-4.2/db/dist/s_test
+--- rpm-4.2.orig/db/dist/s_test	Wed Aug 14 19:52:38 2002
++++ rpm-4.2/db/dist/s_test	Sat Feb 14 14:17:35 2004
+@@ -6,7 +6,7 @@
+ msg1="# Automatically built by dist/s_test; may require local editing."
+ msg2="# Automatically built by dist/s_test; may require local editing."
+ 
+-t=/tmp/__t
++t="`mktemp -t __t.XXXXXX`"
+ trap 'rm -f $t; exit 0' 0 1 2 3 13 15
+ 
+ . RELEASE
+diff -uNrp rpm-4.2.orig/db/dist/s_vxworks rpm-4.2/db/dist/s_vxworks
+--- rpm-4.2.orig/db/dist/s_vxworks	Fri Sep 20 14:02:22 2002
++++ rpm-4.2/db/dist/s_vxworks	Sat Feb 14 14:18:40 2004
+@@ -7,9 +7,9 @@ msgc="/* DO NOT EDIT: automatically buil
+ 
+ . RELEASE
+ 
+-s=/tmp/__db_a
+-t=/tmp/__db_b
+-vxfilelist=/tmp/__db_c
++s="`mktemp -t __db_a.XXXXXX`"
++t="`mktemp -t __db_b.XXXXXX`"
++vxfilelist="`mktemp -t __db_c.XXXXXX`"
+ 
+ trap 'rm -f $s $t $vxfilelist ; exit 0' 0
+ trap 'rm -f $s $t $vxfilelist ; exit 1' 1 2 3 13 15
+diff -uNrp rpm-4.2.orig/db/dist/s_win32 rpm-4.2/db/dist/s_win32
+--- rpm-4.2.orig/db/dist/s_win32	Wed Aug 14 19:52:38 2002
++++ rpm-4.2/db/dist/s_win32	Sat Feb 14 14:38:52 2004
+@@ -8,9 +8,8 @@ msgw="; DO NOT EDIT: automatically built
+ 
+ . RELEASE
+ 
+-s=/tmp/__db_a$$
+-t=/tmp/__db_b$$
+-rm -f $s $t
++s="`mktemp -t __db_a.XXXXXX`"
++t="`mktemp -t __db_b.XXXXXX`"
+ 
+ trap 'rm -f $s $t ; exit 1' 1 2 3 13 15
+ 
+diff -uNrp rpm-4.2.orig/db/dist/s_win32_dsp rpm-4.2/db/dist/s_win32_dsp
+--- rpm-4.2.orig/db/dist/s_win32_dsp	Wed Aug 14 19:52:38 2002
++++ rpm-4.2/db/dist/s_win32_dsp	Sat Feb 14 14:20:31 2004
+@@ -50,7 +50,7 @@ create_dsp()
+     rm -f $dspoutput.insert $dspoutput.new
+ }
+ 
+-TMPA=/tmp/swin32dsp$$a
++TMPA="`mktemp -t swin32dsp.XXXXXX`"
+ trap "rm -f $TMPA; exit 1" 1 2 3 15
+ 
+ # create a copy of the srcfiles with comments and empty lines removed.
+diff -uNrp rpm-4.2.orig/db/dist/vx_buildcd rpm-4.2/db/dist/vx_buildcd
+--- rpm-4.2.orig/db/dist/vx_buildcd	Thu Jan 17 20:10:28 2002
++++ rpm-4.2/db/dist/vx_buildcd	Sat Feb 14 14:29:28 2004
+@@ -20,9 +20,9 @@ mkdir $D/docs $D/windlink $D/windlink/sl
+ ln -s $B/docs $symdoc
+ ln -s $B $symdb
+ 
+-s=/tmp/__db_a
+-t=/tmp/__db_b
+-
++s="`mktemp -t __db_a.XXXXXX`"
++t="`mktemp -t __db_b.XXXXXX`"
++trap 'rm -f $tmp $s $t; exit 0' 0 1 2 3 13 15
+ #
+ # Remove the old CD directory if it is there.
+ if test -d $C; then
+@@ -37,7 +37,6 @@ fi
+ # That is bad, but Tornado insists on putting them in
+ # whenever you add new files.
+ #
+-rm -f $t
+ f=`find $B/build_vxworks -name \*.wpj -print`
+ for i in $f; do
+ 	grep -l -- "$B" $i >> $t
+diff -uNrp rpm-4.2.orig/installplatform rpm-4.2/installplatform
+--- rpm-4.2.orig/installplatform	Mon Jan  6 17:32:46 2003
++++ rpm-4.2/installplatform	Sat Feb 14 16:00:40 2004
+@@ -13,7 +13,9 @@ else
+     DEFAULTDOCDIR='%{_usr}/doc'
+ fi
+ 
+-TEMPRC="/tmp/rpmrc.$$"
++TEMPRC="`mktemp -t rpmrc.XXXXXX`"
++trap 'rm -f $TEMPRC; exit 1' 1 2 3 13 15
++trap 'rm -f $TEMPRC; exit 0' 0
+ cat << E_O_F > $TEMPRC
+ include:	$RPMRC
+ macrofiles:	$MACROS
+diff -uNrp rpm-4.2.orig/scripts/check-files rpm-4.2/scripts/check-files
+--- rpm-4.2.orig/scripts/check-files	Wed Jul 31 17:51:50 2002
++++ rpm-4.2/scripts/check-files	Sat Feb 14 14:43:19 2004
+@@ -10,9 +10,10 @@ RPM_BUILD_ROOT=$1
+ 
+ [ ! -d "$RPM_BUILD_ROOT" ] && exit 1
+ 
+-[ "$TMPDIR" ] || TMPDIR=/tmp
+-FILES_DISK=`mktemp $TMPDIR/rpmXXXXXX`
+-FILES_RPM=`mktemp $TMPDIR/rpmXXXXXX`
++FILES_DISK=`mktemp -t rpmXXXXXX`
++FILES_RPM=`mktemp -t rpmXXXXXX`
++trap 'rm -f $FILES_DISK $FILES_RPM; exit 1' 1 2 3 13 15
++trap 'rm -f $FILES_DISK $FILES_RPM; exit 0' 0
+ 
+ find $RPM_BUILD_ROOT -type f | LC_ALL=C sort > $FILES_DISK
+ LC_ALL=C sort > $FILES_RPM
+@@ -21,5 +22,3 @@ for f in `diff "$FILES_DISK" "$FILES_RPM
+ 	echo $f | sed -e "s#^$RPM_BUILD_ROOT#   #g"
+ done
+ 
+-rm -f $FILES_DISK
+-rm -f $FILES_RPM
+diff -uNrp rpm-4.2.orig/scripts/convertrpmrc.sh rpm-4.2/scripts/convertrpmrc.sh
+--- rpm-4.2.orig/scripts/convertrpmrc.sh	Thu Jan 27 22:38:41 2000
++++ rpm-4.2/scripts/convertrpmrc.sh	Sat Feb 14 14:44:25 2004
+@@ -9,9 +9,6 @@ RPMRC=$1
+ [ -z "$RPMRC" ] && RPMRC=/etc/rpmrc
+ MACROS=$2
+ [ -z "$MACROS" ] && MACROS=/etc/rpm/macros
+-# for testing
+-#RPMRC=/tmp/rpmrc
+-#MACROS=/tmp/macros
+ 
+ [ -f $RPMRC ] || exit 0
+ 
+@@ -27,7 +24,7 @@ DIRN="`dirname $MACROS`"
+   exit 1
+ }
+ 
+-TMP=$(mktemp /tmp/rpmrc.XXXXXX) || {
++TMP=$(mktemp -t rpmrc.XXXXXX) || {
+   echo could not create temp file 1>&2
+   exit 1
+ }
+diff -uNrp rpm-4.2.orig/scripts/tgpg rpm-4.2/scripts/tgpg
+--- rpm-4.2.orig/scripts/tgpg	Sun Dec 29 21:51:01 2002
++++ rpm-4.2/scripts/tgpg	Sat Feb 14 15:38:45 2004
+@@ -8,9 +8,10 @@ do
+ 	exit 1
+     fi
+ 
+-    plaintext=`mktemp /tmp/tgpg-$$.XXXXXX`
+-    detached=`mktemp /tmp/tgpg-$$.XXXXXX`
+-
++    plaintext=`mktemp -t tgpg-$$.XXXXXX`
++    detached=`mktemp -t tgpg-$$.XXXXXX`
++    trap 'rm -f $tmp $plaintext $detached; exit 1' 1 2 3 13 15
++    trap 'rm -f $tmp $plaintext $detached; exit 0' 0
+ # --- Extract detached signature
+     rpm -qp -vv --qf '%{siggpg:armor}' $pkg > $detached
+ 
+diff -uNrp rpm-4.2.orig/scripts/vpkg-provides.sh rpm-4.2/scripts/vpkg-provides.sh
+--- rpm-4.2.orig/scripts/vpkg-provides.sh	Thu Mar 15 18:32:57 2001
++++ rpm-4.2/scripts/vpkg-provides.sh	Sat Feb 14 15:50:10 2004
+@@ -232,11 +232,10 @@ fi
+ 
+ 
+ 
+-provides_tmp=/tmp/provides.$$
+-if test -f $provides_tmp ; then
+-	echo "$provides_tmp already exists.  Exiting."
+-	exit 11
+-fi
++provides_tmp="`mktemp -t provides.XXXXXX`"
++sum_tmp="`mktemp -t sum.XXXXXX`"
++trap 'rm -f $provides_tmp $sum_tmp; exit 1' 1 2 3 13 15
++trap 'rm -f $provides_tmp $sum_tmp; exit 0' 0
+ 
+ #
+ # iterate through all the directories in shlib_dirs, looking for shared
+@@ -247,12 +246,6 @@ do
+ 	find $d -type f -print 2>/dev/null | egrep -v \'$ignore_dirs\' | $find_provides >> $provides_tmp
+ done
+ 
+-sum_tmp=/tmp/sum.$$
+-if test -f $sum_tmp ; then
+-	echo "$sum_tmp already exists.  Exiting."
+-	exit 11
+-fi
+-
+ #
+ # iterate through all the directories in shlib_dirs, record the sum
+ #
+@@ -344,20 +337,13 @@ cat <<_EIEIO_
+ 
+ %verifyscript
+ 
+-PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/ucb:/usr/bsd
++PATH=/bin:/usr/local/bin:/usr/bin:/sbin:/usr/local/sbin:/usr/sbin
+ export PATH
+ 
+-sum_current_tmp=/tmp/rpm.sum.current.\$\$
+-if test -f \$sum_current_tmp ; then
+-	echo "\$sum_current_tmp already exists.  Exiting."
+-	exit 11
+-fi
+-
+-sum_package_tmp=/tmp/rpm.sum.package.\$\$
+-if test -f \$sum_package_tmp ; then
+-	echo "\$sum_package_tmp already exists.  Exiting."
+-	exit 11
+-fi
++sum_current_tmp="\`mktemp -t rpm.sum.current.XXXXXX\`"
++sum_package_tmp="\`mktemp -t rpm.sum.package.XXXXXX\`"
++trap 'rm -f \$sum_current_tmp \$sum_package_tmp; exit 1' 1 2 3 13 15
++trap 'rm -f \$sum_current_tmp \$sum_package_tmp; exit 0' 0
+ 
+ for d in `echo $shlib_dirs | sed -e 's/:/ /g'`
+ do

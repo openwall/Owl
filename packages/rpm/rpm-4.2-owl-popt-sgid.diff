@@ -1,0 +1,54 @@
+diff -uNrp rpm-4.2.orig/popt/findme.c rpm-4.2/popt/findme.c
+--- rpm-4.2.orig/popt/findme.c	Thu Aug 22 16:34:48 2002
++++ rpm-4.2/popt/findme.c	Wed Mar  3 18:47:26 2004
+@@ -10,7 +10,7 @@
+ #include "findme.h"
+ 
+ const char * findProgramPath(const char * argv0) {
+-    char * path = getenv("PATH");
++    char * path = __secure_getenv("PATH");
+     char * pathbuf;
+     char * start, * chptr;
+     char * buf;
+diff -uNrp rpm-4.2.orig/popt/popt.c rpm-4.2/popt/popt.c
+--- rpm-4.2.orig/popt/popt.c	Thu Aug 22 16:34:48 2002
++++ rpm-4.2/popt/popt.c	Wed Mar  3 19:19:38 2004
+@@ -410,7 +410,7 @@ static int execCommand(poptContext con)
+     argv[argc] = NULL;
+ 
+ #ifdef __hpux
+-    rc = setresuid(getuid(), getuid(),-1);
++    rc = (setresgid(getgid(), getgid(),-1)|setresuid(getuid(), getuid(),-1));
+     if (rc) return POPT_ERROR_ERRNO;
+ #else
+ /*
+@@ -419,10 +419,11 @@ static int execCommand(poptContext con)
+  * XXX	from Norbert Warmuth <nwarmuth@privat.circular.de>
+  */
+ #if defined(HAVE_SETUID)
+-    rc = setuid(getuid());
++    rc = (setgid(getgid())|setuid(getuid()));
+     if (rc) return POPT_ERROR_ERRNO;
+ #elif defined (HAVE_SETREUID)
+-    rc = setreuid(getuid(), getuid()); /*hlauer: not portable to hpux9.01 */
++    /*hlauer: not portable to hpux9.01 */
++    rc = (setregid(getgid(), getgid())|setreuid(getuid(), getuid()));
+     if (rc) return POPT_ERROR_ERRNO;
+ #else
+     ; /* Can't drop privileges */
+diff -uNrp rpm-4.2.orig/popt/poptconfig.c rpm-4.2/popt/poptconfig.c
+--- rpm-4.2.orig/popt/poptconfig.c	Thu Aug 22 16:34:48 2002
++++ rpm-4.2/popt/poptconfig.c	Wed Mar  3 19:21:50 2004
+@@ -174,11 +174,8 @@ int poptReadDefaultConfig(poptContext co
+ 
+     rc = poptReadConfigFile(con, "/etc/popt");
+     if (rc) return rc;
+-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+-    if (getuid() != geteuid()) return 0;
+-#endif
+ 
+-    if ((home = getenv("HOME"))) {
++    if ((home = __secure_getenv("HOME"))) {
+ 	fn = alloca(strlen(home) + 20);
+ 	strcpy(fn, home);
+ 	strcat(fn, "/.popt");

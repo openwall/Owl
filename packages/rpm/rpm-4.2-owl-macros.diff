@@ -1,0 +1,77 @@
+diff -uNrp rpm-4.2.orig/macros.in rpm-4.2/macros.in
+--- rpm-4.2.orig/macros.in	Wed Mar  5 00:13:11 2003
++++ rpm-4.2/macros.in	Tue Mar  2 17:26:19 2004
+@@ -164,11 +164,11 @@ package or when debugging this package.\
+ #	The directory where newly built source packages will be written.
+ %_srcrpmdir		%{_topdir}/SRPMS
+ 
+-#	Directory where temporaray files can be created.
++#	Directory where temporary files can be created.
+ %_tmppath		%{_var}/tmp
+ 
+ #	Path to top of build area.
+-%_topdir		%{_usrsrc}/redhat
++%_topdir		%{_usrsrc}/.rpm.d
+ 
+ #	The path to the unzip executable (legacy, use %{__unzip} instead).
+ %_unzipbin		%{__unzip}
+@@ -272,8 +272,8 @@ package or when debugging this package.\
+ #		"w9.gzdio"	gzip level 9 (default).
+ #		"w9.bzdio"	bzip2 level 9.
+ #
+-#%_source_payload	w9.gzdio
+-#%_binary_payload	w9.gzdio
++%_source_payload	w9.bzdio
++%_binary_payload	w9.bzdio
+ 
+ #	The signature to use and the location of configuration files for
+ #	signing packages with PGP.
+@@ -321,7 +321,7 @@ package or when debugging this package.\
+ 
+ #
+ # Use internal dependency generator rather than external helpers?
+-%_use_internal_dependency_generator	1
++%_use_internal_dependency_generator	0
+ 
+ #
+ # Path to scripts to autogenerate package dependencies,
+@@ -698,14 +698,14 @@ package or when debugging this package.\
+ #	Note: These values are specific to my machine, and most certainly
+ #	are incorrect for any non-redhat.com machine. The macros are
+ #	included here only to document the macro names and usage.
+-%_bhpath        file://localhost/mnt/dist
+-%_bhcoll        @(7.3|7.2|7.1|7.1sbe|7.1k|7.0|7.01j|7.0j|7.0sbe|7.0tc|6.2|6.2ha|6.2ee|6.1|6.0|5.2|5.1|5.0)
+-%_bhN           @(SRPMS|i386|alpha|sparc|s390|ia64)
+-%_bhVR          RedHat
+-%_bhA           RPMS
++#%_bhpath        file://localhost/mnt/dist
++#%_bhcoll        @(7.3|7.2|7.1|7.1sbe|7.1k|7.0|7.01j|7.0j|7.0sbe|7.0tc|6.2|6.2ha|6.2ee|6.1|6.0|5.2|5.1|5.0)
++#%_bhN           @(SRPMS|i386|alpha|sparc|s390|ia64)
++#%_bhVR          RedHat
++#%_bhA           RPMS
+ 
+ #	The cache database directory.
+-%_cache_dbpath		/var/spool/up2date/cache
++#%_cache_dbpath		/var/spool/up2date/cache
+ 
+ #==============================================================================
+ # ---- per-platform macros.
+@@ -903,15 +903,15 @@ package or when debugging this package.\
+ %_sbindir		%{_exec_prefix}/sbin
+ %_libexecdir		%{_exec_prefix}/libexec
+ %_datadir		%{_prefix}/share
+-%_sysconfdir		%{_prefix}/etc
++%_sysconfdir		/etc
+ %_sharedstatedir	%{_prefix}/com
+ %_localstatedir		%{_prefix}/var
+ %_lib			lib
+ %_libdir		%{_exec_prefix}/%{_lib}
+ %_includedir		%{_prefix}/include
+ %_oldincludedir		/usr/include
+-%_infodir		%{_prefix}/info
+-%_mandir		%{_prefix}/man
++%_infodir		%{_prefix}/share/info
++%_mandir		%{_prefix}/share/man
+ 
+ #==============================================================================
+ # ---- config.guess platform macros.

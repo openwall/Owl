@@ -1,0 +1,44 @@
+diff -puNr rpm-4.2.orig/rpmdb/db3.c rpm-4.2/rpmdb/db3.c
+--- rpm-4.2.orig/rpmdb/db3.c	Thu Mar 13 16:44:14 2003
++++ rpm-4.2/rpmdb/db3.c	Tue Sep  7 21:21:35 2004
+@@ -20,6 +20,8 @@ static int _debug = 1;	/* XXX if < 0 deb
+ 
+ #include "debug.h"
+ 
++#include "../db3/db_config.h" /* (GM): to reflect db3 configuration */
++
+ /*@access rpmdb @*/
+ /*@access dbiIndex @*/
+ /*@access dbiIndexSet @*/
+@@ -213,6 +215,7 @@ static int db3_fsync_disable(/*@unused@*
+     return 0;
+ }
+ 
++#if HAVE_MUTEX_PTHREADS
+ #if HAVE_LIBPTHREAD
+ #if HAVE_PTHREAD_H
+ #include <pthread.h>
+@@ -261,6 +264,7 @@ static int db3_pthread_nptl(void)
+     return ret;
+ }
+ #endif
++#endif /* HAVE_MUTEX_PTHREADS */
+ 
+ /*@-moduncon@*/ /* FIX: annotate db3 methods */
+ static int db_init(dbiIndex dbi, const char * dbhome,
+@@ -977,6 +981,7 @@ static int db3open(rpmdb rpmdb, rpmTag r
+      */
+     if (dbi->dbi_use_dbenv) {
+ 
++#if HAVE_MUTEX_PTHREADS
+ #if HAVE_LIBPTHREAD
+ 	if (rpmdb->db_dbenv == NULL) {
+ 	    /* Set DB_PRIVATE if posix mutexes are not shared. */
+@@ -987,6 +992,7 @@ static int db3open(rpmdb rpmdb, rpmTag r
+ 	    }
+ 	}
+ #endif
++#endif /* HAVE_MUTEX_PTHREADS */
+ 
+ 	if (access(dbhome, W_OK) == -1) {
+ 

@@ -1,0 +1,44 @@
+diff -uNrp rpm-4.2.orig/scripts/find-prov.pl rpm-4.2/scripts/find-prov.pl
+--- rpm-4.2.orig/scripts/find-prov.pl	Fri Nov 12 21:26:04 1999
++++ rpm-4.2/scripts/find-prov.pl	Sat Feb 14 13:46:37 2004
+@@ -108,14 +108,14 @@ case $file in 
+ 
+ 
+ *lib*.so*)
+-    /usr/ucb/file -L $file 2>/dev/null | \
++    /usr/lib/rpm/rpmfile -L $file 2>/dev/null | \
+ 	grep "ELF.*dynamic lib" | cut -d: -f1 | \
+     	xargs -n 1 basename | print_deps --identifier so;
+ 
+     # keep this for backward compatibility till we have converted
+     # everything.
+ 
+-    /usr/ucb/file -L $file 2>/dev/null | \
++    /usr/lib/rpm/rpmfile -L $file 2>/dev/null | \
+ 	grep "ELF.*dynamic lib" | cut -d: -f1 | \
+     	xargs -n 1 basename;
+ ;;
+diff -uNrp rpm-4.2.orig/scripts/find-req.pl rpm-4.2/scripts/find-req.pl
+--- rpm-4.2.orig/scripts/find-req.pl	Fri Nov 12 21:26:04 1999
++++ rpm-4.2/scripts/find-req.pl	Sat Feb 14 13:47:30 2004
+@@ -190,7 +190,7 @@ case $file in 
+ 
+ *)
+ 
+-    /usr/ucb/file -L $file 2>/dev/null | grep executable | cut -d: -f1 |\
++    /usr/lib/rpm/rpmfile -L $file 2>/dev/null | grep executable | cut -d: -f1 |\
+  xargs ldd 2>/dev/null | awk '/\=\>/ { print $1 }' | xargs -n 1 basename;
+ 
+     echo $file | egrep '\.((cgi)|(ps)|(pdf)|(png)|(jpg)|(gif)|(tiff)|(tif)|(xbm)|(html)|(htm)|(shtml)|(jhtml))$' | xargs cat | httprequires
+diff -uNrp rpm-4.2.orig/scripts/rpmdb_loadcvt rpm-4.2/scripts/rpmdb_loadcvt
+--- rpm-4.2.orig/scripts/rpmdb_loadcvt	Sat Mar  1 00:23:03 2003
++++ rpm-4.2/scripts/rpmdb_loadcvt	Sat Feb 14 13:47:52 2004
+@@ -49,7 +49,7 @@ rm -f $rpmdb/__db*
+ 
+ for dbfile in $dbfiles
+ do
+-    echo " `/usr/bin/file $dbfile`"
++    echo " `/usr/lib/rpm/rpmfile $dbfile`"
+ 
+     $dbdump $dbfile | $dbload $dbfile-N || {
+ 	echo "Failed conversion:"

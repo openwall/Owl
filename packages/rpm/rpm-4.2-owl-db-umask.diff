@@ -1,0 +1,21 @@
+diff -uNrp rpm-4.2.orig/db/os/os_handle.c rpm-4.2/db/os/os_handle.c
+--- rpm-4.2.orig/db/os/os_handle.c	Wed Aug 14 19:54:27 2002
++++ rpm-4.2/db/os/os_handle.c	Mon Feb 16 15:51:47 2004
+@@ -50,6 +50,8 @@ __os_openhandle(dbenv, name, flags, mode
+ 	}
+ 
+ 	for (nrepeat = 1; nrepeat < 4; ++nrepeat) {
++		/* This is a dirty hack to avoid umasking of permission bits */
++		mode_t old_umask = umask(022);
+ 		ret = 0;
+ #ifdef	HAVE_VXWORKS
+ 		/*
+@@ -107,7 +109,7 @@ __os_openhandle(dbenv, name, flags, mode
+ #else
+ 		fhp->fd = open(name, flags, mode);
+ #endif
+-
++		umask(old_umask); /* restore original umask */
+ 		if (fhp->fd == -1) {
+ 			/*
+ 			 * If it's a "temporary" error, we retry up to 3 times,

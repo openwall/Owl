@@ -1,0 +1,12 @@
+diff -uNrp rpm-4.2.orig/autodeps/linux.req rpm-4.2/autodeps/linux.req
+--- rpm-4.2.orig/autodeps/linux.req	Fri Nov 15 17:45:42 2002
++++ rpm-4.2/autodeps/linux.req	Wed Mar  3 17:15:25 2004
+@@ -110,7 +110,7 @@ for f in $liblist $exelist ; do
+ 	    sub(/:/, "", $3);
+ 	    LIBNAME=$3;
+ 	}
+-	(START==2) && (LIBNAME!="") && ($4!="") && (($4~/^GLIBC_*/) || ($4~/^GCC_*/)) {
++	(START==2) && (LIBNAME!="") && ($4!="") && ($4!="") {
+ 	    print LIBNAME "(" $4 ")'$lib64'";
+ 	}
+     '

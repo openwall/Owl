@@ -1,0 +1,57 @@
+diff -uNrp rpm-4.2.orig/Makefile.am rpm-4.2/Makefile.am
+--- rpm-4.2.orig/Makefile.am	Mon Mar 10 19:35:20 2003
++++ rpm-4.2/Makefile.am	Sun Feb  8 14:27:06 2004
+@@ -68,7 +68,7 @@ rpmb.o:	rpmqv.c
+ 	$(COMPILE) -DIAM_RPMBT -o $@ -c rpmqv.c
+ 
+ rpmd_SOURCES =
+-rpmd_LDFLAGS =		$(myLDFLAGS)
++rpmd_LDFLAGS =		$(myLDFLAGS) $(staticLDFLAGS)
+ rpmd_LDADD =		rpmd.o $(myLDADD)
+ rpmd.o:	rpmqv.c
+ 	$(COMPILE) -DIAM_RPMDB -o $@ -c rpmqv.c
+@@ -88,7 +88,7 @@ rpmk.o:	rpmqv.c
+ 
+ rpmq_SOURCES =
+ rpmq_LDFLAGS =		$(myLDFLAGS)
+-rpmq_LDADD =		rpmq.o $(top_builddir)/build/librpmbuild.la $(myLDADD)
++rpmq_LDADD =		rpmq.o $(top_builddir)/build/.libs/librpmbuild.a $(myLDADD)
+ rpmq.o:	rpmqv.c
+ 	$(COMPILE) -DIAM_RPMQV -o $@ -c rpmqv.c
+ 
+diff -uNrp rpm-4.2.orig/Makefile.in rpm-4.2/Makefile.in
+--- rpm-4.2.orig/Makefile.in	Sun Feb  8 14:03:54 2004
++++ rpm-4.2/Makefile.in	Sun Feb  8 14:26:20 2004
+@@ -281,7 +281,7 @@ rpmk_LDADD = rpmk.o $(myLDADD)
+ 
+ rpmq_SOURCES = 
+ rpmq_LDFLAGS = $(myLDFLAGS)
+-rpmq_LDADD = rpmq.o $(top_builddir)/build/librpmbuild.la $(myLDADD)
++rpmq_LDADD = rpmq.o $(top_builddir)/build/.libs/librpmbuild.a $(myLDADD)
+ 
+ rpm2cpio_SOURCES = rpm2cpio.c
+ rpm2cpio_LDFLAGS = $(myLDFLAGS)
+diff -uNrp rpm-4.2.orig/tools/Makefile.am rpm-4.2/tools/Makefile.am
+--- rpm-4.2.orig/tools/Makefile.am	Sun Feb  8 14:03:54 2004
++++ rpm-4.2/tools/Makefile.am	Sun Feb  8 14:28:14 2004
+@@ -46,7 +46,7 @@ rpmcache_SOURCES =	rpmcache.c
+ #rpmcache_LDFLAGS =	$(staticLDFLAGS)
+ 
+ rpmdeps_SOURCES =	rpmdeps.c
+-rpmdeps_LDADD =		$(top_builddir)/build/librpmbuild.la
++rpmdeps_LDADD =		$(top_builddir)/build/librpmbuild.la $(top_builddir)/build/.libs/librpmbuild.a
+ #rpmdeps_LDFLAGS =	$(staticLDFLAGS)
+ 
+ rpmfile_SOURCES =	rpmfile.c
+diff -uNrp rpm-4.2.orig/tools/Makefile.in rpm-4.2/tools/Makefile.in
+--- rpm-4.2.orig/tools/Makefile.in	Sun Feb  8 14:03:54 2004
++++ rpm-4.2/tools/Makefile.in	Sun Feb  8 14:28:53 2004
+@@ -253,7 +253,7 @@ rpmcache_SOURCES = rpmcache.c
+ 
+ #rpmcache_LDFLAGS =	$(staticLDFLAGS)
+ rpmdeps_SOURCES = rpmdeps.c
+-rpmdeps_LDADD = $(top_builddir)/build/librpmbuild.la
++rpmdeps_LDADD = $(top_builddir)/build/librpmbuild.la $(top_builddir)/build/.libs/librpmbuild.a
+ 
+ rpmfile_SOURCES = rpmfile.c
+ rpmfile_LDADD = $(top_builddir)/rpmio/librpmio.la

@@ -1,0 +1,13 @@
+diff -uNrp rpm-4.2.orig/build/parseScript.c rpm-4.2/build/parseScript.c
+--- rpm-4.2.orig/build/parseScript.c	Sun Jun 23 17:47:58 2002
++++ rpm-4.2/build/parseScript.c	Wed Mar  3 17:55:08 2004
+@@ -261,7 +261,8 @@ int parseScript(Spec spec, int parsePart
+     stripTrailingBlanksStringBuf(sb);
+     p = getStringBuf(sb);
+ 
+-    (void) addReqProv(spec, pkg->header, (tagflags | RPMSENSE_INTERP), progArgv[0], NULL, 0);
++    if (pkg->autoReq)
++	(void) addReqProv(spec, pkg->header, (tagflags | RPMSENSE_INTERP), progArgv[0], NULL, 0);
+ 
+     /* Trigger script insertion is always delayed in order to */
+     /* get the index right.                                   */

@@ -1,0 +1,12 @@
+diff -uNrp rpm-4.2.orig/rpmio/rpmerr.h rpm-4.2/rpmio/rpmerr.h
+--- rpm-4.2.orig/rpmio/rpmerr.h	Thu Jul 18 23:09:22 2002
++++ rpm-4.2/rpmio/rpmerr.h	Wed Mar  3 14:44:19 2004
+@@ -69,7 +69,7 @@ typedef enum rpmerrCode_e {
+ /*    	RPMERR_BADOS    = _em(33),  bad architecture or arch mismatch */
+     RPMMESS_BACKUP	= _em(34),  /*!< backup made during [un]install */
+ /*@=enummemuse@*/
+-    RPMERR_MTAB		= _em(35),  /*!< failed to read mount table */
++    RPMERR_MTAB		= _dm(35),  /*!< failed to read mount table */
+     RPMERR_STAT		= _em(36),  /*!< failed to stat something */
+     RPMERR_BADDEV	= _em(37),  /*!< file on device not listed in mtab */
+ /*@-enummemuse@*/

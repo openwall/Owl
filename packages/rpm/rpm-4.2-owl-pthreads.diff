@@ -1,0 +1,39 @@
+diff -uNrp rpm-4.2.orig/rpmdb/db3.c rpm-4.2/rpmdb/db3.c
+--- rpm-4.2.orig/rpmdb/db3.c	Tue Feb  3 11:31:42 2004
++++ rpm-4.2/rpmdb/db3.c	Tue Feb  3 11:50:36 2004
+@@ -218,6 +218,15 @@ static int db3_fsync_disable(/*@unused@*
+ #include <pthread.h>
+ #endif
+ 
++/*
++ * Unfortunately, db3.c is not using db_config.h from the db3
++ * subdirectory and linking fails due to unresolved symbols if
++ * pthreads library doesn't contain pthread_[cond|mutex]attr_setpshared()
++ * functions.
++ */
++#ifndef HAVE_MUTEX_THREAD_ONLY
++#define HAVE_MUTEX_THREAD_ONLY	1
++#endif
+ /**
+  * Check that posix mutexes are shared.
+  * @return		0 == shared.
+@@ -242,7 +242,9 @@ static int db3_pthread_nptl(void)
+ 
+     ret = pthread_mutexattr_init(&mutexattr);
+     if (ret == 0) {
++#ifndef HAVE_MUTEX_THREAD_ONLY
+ 	ret = pthread_mutexattr_setpshared(&mutexattr, PTHREAD_PROCESS_SHARED);
++#endif
+ 	mutexattrp = &mutexattr;
+     }
+ 
+@@ -247,7 +249,9 @@ static int db3_pthread_nptl(void)
+ 
+     ret = pthread_condattr_init(&condattr);
+     if (ret == 0) {
++#ifndef HAVE_MUTEX_THREAD_ONLY
+ 	ret = pthread_condattr_setpshared(&condattr, PTHREAD_PROCESS_SHARED);
++#endif
+ 	condattrp = &condattr;
+     }
+ 

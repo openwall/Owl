@@ -1,0 +1,13 @@
+Allows to link to internal librpm.so even if librpm.so exists in /usr/lib
+diff -puNr rpm-4.2.orig/build/Makefile.in rpm-4.2/build/Makefile.in
+--- rpm-4.2.orig/build/Makefile.in	Fri Feb  6 14:55:01 2004
++++ rpm-4.2/build/Makefile.in	Fri Feb  6 20:59:31 2004
+@@ -223,7 +223,7 @@ pkgincdir = $(pkgincludedir)
+ pkginc_HEADERS = rpmbuild.h rpmfc.h rpmfile.h rpmspec.h
+ noinst_HEADERS = buildio.h
+ 
+-LDFLAGS = -L$(DESTDIR)$(usrlibdir)
++LDFLAGS = -L$(top_builddir)/lib/.libs -L$(DESTDIR)$(usrlibdir)
+ 
+ usrlibdir = $(libdir)@MARK64@
+ usrlib_LTLIBRARIES = librpmbuild.la

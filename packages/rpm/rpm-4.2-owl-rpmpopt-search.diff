@@ -1,0 +1,57 @@
+diff -uNrp rpm-4.2.orig/lib/poptALL.c rpm-4.2/lib/poptALL.c
+--- rpm-4.2.orig/lib/poptALL.c	Tue Dec 10 15:54:33 2002
++++ rpm-4.2/lib/poptALL.c	Mon Feb  9 18:22:19 2004
+@@ -355,7 +355,14 @@ rpmcliInit(int argc, char *const argv[],
+ /*@-nullpass -temptrans@*/
+     optCon = poptGetContext(__progname, argc, (const char **)argv, optionsTable, 0);
+ /*@=nullpass =temptrans@*/
+-    (void) poptReadConfigFile(optCon, LIBRPMALIAS_FILENAME);
++    {
++        char *rpmAlias_filename = NULL;
++        if ((rpmAlias_filename = getenv("RPMALIAS_FILENAME")) == NULL) {
++            poptReadConfigFile(optCon, LIBRPMALIAS_FILENAME);
++        } else {
++            poptReadConfigFile(optCon, rpmAlias_filename);
++        }
++    }
+     (void) poptReadDefaultConfig(optCon, 1);
+     poptSetExecPath(optCon, RPMCONFIGDIR, 1);
+ 
+diff -uNrp rpm-4.2.orig/rpm.c rpm-4.2/rpm.c
+--- rpm-4.2.orig/rpm.c	Tue May 14 19:22:27 2002
++++ rpm-4.2/rpm.c	Mon Feb  9 18:20:34 2004
+@@ -684,7 +684,14 @@ int main(int argc, const char ** argv)
+     /* Make a first pass through the arguments, looking for --rcfile */
+     /* We need to handle that before dealing with the rest of the arguments. */
+     optCon = poptGetContext("rpm", argc, argv, optionsTable, 0);
+-    poptReadConfigFile(optCon, LIBRPMALIAS_FILENAME);
++    {
++	char *rpmAlias_filename = NULL;
++	if ((rpmAlias_filename = getenv("RPMALIAS_FILENAME")) == NULL) {
++	    poptReadConfigFile(optCon, LIBRPMALIAS_FILENAME);
++	} else {
++	    poptReadConfigFile(optCon, rpmAlias_filename);
++	}
++    }
+     poptReadDefaultConfig(optCon, 1);
+     poptSetExecPath(optCon, RPMCONFIGDIR, 1);
+ 
+diff -uNrp rpm-4.2.orig/rpmqv.c rpm-4.2/rpmqv.c
+--- rpm-4.2.orig/rpmqv.c	Tue Jan 28 12:23:39 2003
++++ rpm-4.2/rpmqv.c	Mon Feb  9 18:21:56 2004
+@@ -283,7 +283,14 @@ int main(int argc, const char ** argv)
+     /*@-nullpass -temptrans@*/
+     optCon = poptGetContext(__progname, argc, argv, optionsTable, 0);
+     /*@=nullpass =temptrans@*/
+-    (void) poptReadConfigFile(optCon, LIBRPMALIAS_FILENAME);
++    {
++        char *rpmAlias_filename = NULL;
++        if ((rpmAlias_filename = getenv("RPMALIAS_FILENAME")) == NULL) {
++            poptReadConfigFile(optCon, LIBRPMALIAS_FILENAME);
++        } else {
++            poptReadConfigFile(optCon, rpmAlias_filename);
++        }
++    }
+     (void) poptReadDefaultConfig(optCon, 1);
+     poptSetExecPath(optCon, RPMCONFIGDIR, 1);
+ 

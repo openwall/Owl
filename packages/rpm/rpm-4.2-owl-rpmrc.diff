@@ -1,0 +1,53 @@
+diff -uNrp rpm-4.2.orig/rpmrc.in rpm-4.2/rpmrc.in
+--- rpm-4.2.orig/rpmrc.in	Fri Jan 10 20:34:26 2003
++++ rpm-4.2/rpmrc.in	Wed Mar  3 20:24:12 2004
+@@ -11,24 +11,35 @@
+ #############################################################
+ # Values for RPM_OPT_FLAGS for various platforms
+ 
+-optflags: i386 -O2 -g -march=i386 -mcpu=i686
+-optflags: i486 -O2 -g -march=i486
+-optflags: i586 -O2 -g -march=i586
+-optflags: i686 -O2 -g -march=i686
+-optflags: athlon -O2 -g -march=athlon
++# i386 and i486 assume that such packages will most of the time be run
++# on a i686+ and are only built for the older architecture flavors for
++# compatibility.  i586 is actually for the original Intel Pentium and
++# shouldn't be used on anything else (it should be slower than i386 or
++# i486 if wrongly used on the Pentium Pro to Pentium III).  If in doubt,
++# use i386 which is the safe choice and is reasonably good for all.
++optflags: i386 -g -pipe -march=i386 -mcpu=i686 -O2 -momit-leaf-frame-pointer -mpreferred-stack-boundary=3
++optflags: i486 -g -march=i486 -mcpu=i686 -O2 -momit-leaf-frame-pointer -mpreferred-stack-boundary=3
++optflags: i586 -g -march=i586 -O2 -momit-leaf-frame-pointer -mpreferred-stack-boundary=3
++optflags: i686 -g -march=i686 -O2 -momit-leaf-frame-pointer -mpreferred-stack-boundary=3
++optflags: athlon -g -march=athlon -O2 -momit-leaf-frame-pointer -mpreferred-stack-boundary=3
+ optflags: ia64 -O2 -g
+ optflags: x86_64 -O2 -g
+ 
+-optflags: alpha -O2 -g -mieee
+-optflags: alphaev5 -O2 -g -mieee -mcpu=ev5
+-optflags: alphaev56 -O2 -g -mieee -mcpu=ev56
+-optflags: alphapca56 -O2 -g -mieee -mcpu=pca56
+-optflags: alphaev6 -O2 -g -mieee -mcpu=ev6
+-optflags: alphaev67 -O2 -g -mieee -mcpu=ev67
++# The official RPM starting with 3.0.5 uses -mieee on Alpha by default.
++# We don't as to not kill floating-point performance, but packages which
++# care might want to add that flag themselves.
++optflags: alpha -O2 -g -pipe -mcpu=ev4
++optflags: alphaev5 -O2 -g -pipe -mcpu=ev5
++optflags: alphaev56 -O2 -g -pipe -mcpu=ev56
++optflags: alphapca56 -O2 -g -pipe -mcpu=pca56
++optflags: alphaev6 -O2 -g -pipe -mcpu=ev6
++optflags: alphaev67 -O2 -g -pipe -mcpu=ev67
+ 
+-optflags: sparc -O2 -g -m32 -mtune=ultrasparc
+-optflags: sparcv9 -O2 -g -m32 -mcpu=ultrasparc
+-optflags: sparc64 -O2 -g -m64 -mcpu=ultrasparc
++# Note: we set plain "sparc" to require SPARC V8.  With the official RPM,
++# it would also work for V7.
++optflags: sparc -O2 -g -pipe -m32 -mcpu=v8 -mtune=ultrasparc
++optflags: sparcv9 -O2 -g -pipe -m32 -mcpu=ultrasparc
++optflags: sparc64 -O2 -g -pipe -m64 -mcpu=ultrasparc
+ 
+ optflags: m68k -O2 -g -fomit-frame-pointer
+ 

@@ -1,0 +1,24 @@
+diff -uNrp rpm-4.2.orig/po/Makefile.in.in rpm-4.2/po/Makefile.in.in
+--- rpm-4.2.orig/po/Makefile.in.in	2002-08-10 21:48:47 +0400
++++ rpm-4.2/po/Makefile.in.in	2004-03-13 22:33:17 +0300
+@@ -29,7 +29,7 @@ gettextsrcdir = $(datadir)/gettext/po
+ INSTALL = @INSTALL@
+ INSTALL_DATA = @INSTALL_DATA@
+ MKINSTALLDIRS = @MKINSTALLDIRS@
+-mkinstalldirs = $(SHELL) `case "$(MKINSTALLDIRS)" in /*) echo "$(MKINSTALLDIRS)" ;; *) echo "$(top_builddir)/$(MKINSTALLDIRS)" ;; esac`
++mkinstalldirs = $(SHELL) "$(MKINSTALLDIRS)"
+ 
+ CC = @CC@
+ GMSGFMT = @GMSGFMT@
+diff -uNrp rpm-4.2.orig/popt/po/Makefile.in.in rpm-4.2/popt/po/Makefile.in.in
+--- rpm-4.2.orig/popt/po/Makefile.in.in	2002-08-10 20:38:17 +0400
++++ rpm-4.2/popt/po/Makefile.in.in	2004-03-13 22:33:40 +0300
+@@ -29,7 +29,7 @@ gettextsrcdir = $(datadir)/gettext/po
+ INSTALL = @INSTALL@
+ INSTALL_DATA = @INSTALL_DATA@
+ MKINSTALLDIRS = @MKINSTALLDIRS@
+-mkinstalldirs = $(SHELL) `case "$(MKINSTALLDIRS)" in /*) echo "$(MKINSTALLDIRS)" ;; *) echo "$(top_builddir)/$(MKINSTALLDIRS)" ;; esac`
++mkinstalldirs = $(SHELL) "$(MKINSTALLDIRS)"
+ 
+ CC = @CC@
+ GMSGFMT = @GMSGFMT@

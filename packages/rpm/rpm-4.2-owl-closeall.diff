@@ -1,0 +1,171 @@
+diff -uNrp rpm-4.2.orig/build/build.c rpm-4.2/build/build.c
+--- rpm-4.2.orig/build/build.c	Tue Dec 24 06:00:41 2002
++++ rpm-4.2/build/build.c	Wed Mar  3 15:03:01 2004
+@@ -218,6 +218,11 @@ fprintf(stderr, "*** addMacros\n");
+     rpmMessage(RPMMESS_NORMAL, _("Executing(%s): %s\n"), name, buildCmd);
+     if (!(child = fork())) {
+ 
++	if (close_all()) {
++		perror("close");
++		_exit(-1);
++	}
++
+ 	/*@-mods@*/
+ 	errno = 0;
+ 	/*@=mods@*/
+diff -uNrp rpm-4.2.orig/build/rpmfc.c rpm-4.2/build/rpmfc.c
+--- rpm-4.2.orig/build/rpmfc.c	Mon Jan 20 22:16:09 2003
++++ rpm-4.2/build/rpmfc.c	Wed Mar  3 15:06:39 2004
+@@ -92,6 +92,12 @@ static StringBuf getOutputFrom(/*@null@*
+                         argv[0], (unsigned)getpid());
+ 
+ 	unsetenv("MALLOC_CHECK_");
++
++	if (close_all()) {
++		perror("close");
++		_exit(RPMERR_EXEC);
++	}
++
+ 	(void) execvp(argv[0], (char *const *)argv);
+ 	/* XXX this error message is probably not seen. */
+ 	rpmError(RPMERR_EXEC, _("Couldn't exec %s: %s\n"),
+diff -uNrp rpm-4.2.orig/lib/Makefile.am rpm-4.2/lib/Makefile.am
+--- rpm-4.2.orig/lib/Makefile.am	Thu Mar  6 21:48:26 2003
++++ rpm-4.2/lib/Makefile.am	Wed Mar  3 15:10:39 2004
+@@ -29,7 +29,7 @@ LDFLAGS = -L$(DESTDIR)$(usrlibdir)
+ usrlibdir = $(libdir)@MARK64@
+ usrlib_LTLIBRARIES = librpm.la
+ librpm_la_SOURCES = \
+-	cpio.c depends.c formats.c fs.c fsm.c getdate.c \
++	cpio.c closeall.c depends.c formats.c fs.c fsm.c getdate.c \
+ 	manifest.c misc.c package.c \
+ 	poptALL.c poptI.c poptQV.c psm.c query.c \
+ 	rpmal.c rpmchecksig.c rpmds.c rpmfi.c rpminstall.c \
+diff -uNrp rpm-4.2.orig/lib/Makefile.in rpm-4.2/lib/Makefile.in
+--- rpm-4.2.orig/lib/Makefile.in	Mon Mar 10 19:09:41 2003
++++ rpm-4.2/lib/Makefile.in	Wed Mar  3 15:59:50 2004
+@@ -235,7 +235,7 @@ LDFLAGS = -L$(DESTDIR)$(usrlibdir)
+ usrlibdir = $(libdir)@MARK64@
+ usrlib_LTLIBRARIES = librpm.la
+ librpm_la_SOURCES = \
+-	cpio.c depends.c formats.c fs.c fsm.c getdate.c \
++	cpio.c closeall.c depends.c formats.c fs.c fsm.c getdate.c \
+ 	manifest.c misc.c package.c \
+ 	poptALL.c poptI.c poptQV.c psm.c query.c \
+ 	rpmal.c rpmchecksig.c rpmds.c rpmfi.c rpminstall.c \
+@@ -257,7 +257,7 @@ CONFIG_CLEAN_FILES =
+ LTLIBRARIES = $(usrlib_LTLIBRARIES)
+ 
+ librpm_la_LIBADD =
+-am_librpm_la_OBJECTS = cpio.lo depends.lo formats.lo fs.lo fsm.lo \
++am_librpm_la_OBJECTS = cpio.lo closeall.lo depends.lo formats.lo fs.lo fsm.lo \
+ 	getdate.lo manifest.lo misc.lo package.lo poptALL.lo poptI.lo \
+ 	poptQV.lo psm.lo query.lo rpmal.lo rpmchecksig.lo rpmds.lo \
+ 	rpmfi.lo rpminstall.lo rpmlead.lo rpmlibprov.lo rpmps.lo \
+@@ -270,7 +270,7 @@ DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(
+ CPPFLAGS = @CPPFLAGS@
+ depcomp = $(SHELL) $(top_srcdir)/depcomp
+ am__depfiles_maybe = depfiles
+-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/cpio.Plo ./$(DEPDIR)/depends.Plo \
++@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/cpio.Plo ./$(DEPDIR)/closeall.Plo ./$(DEPDIR)/depends.Plo \
+ @AMDEP_TRUE@	./$(DEPDIR)/formats.Plo ./$(DEPDIR)/fs.Plo \
+ @AMDEP_TRUE@	./$(DEPDIR)/fsm.Plo ./$(DEPDIR)/getdate.Plo \
+ @AMDEP_TRUE@	./$(DEPDIR)/manifest.Plo ./$(DEPDIR)/misc.Plo \
+@@ -348,6 +348,7 @@ distclean-compile:
+ 	-rm -f *.tab.c
+ 
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpio.Plo@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/closeall.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/depends.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/formats.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fs.Plo@am__quote@
+diff -uNrp rpm-4.2.orig/lib/closeall.c rpm-4.2/lib/closeall.c
+--- rpm-4.2.orig/lib/closeall.c	Thu Jan  1 00:00:00 1970
++++ rpm-4.2/lib/closeall.c	Wed Mar  3 15:14:24 2004
+@@ -0,0 +1,28 @@
++#include <unistd.h>
++#include <errno.h>
++
++#ifdef __linux__
++#include <linux/limits.h>
++#endif
++
++int close_all()
++{
++	int fd, max;
++
++	max = sysconf(_SC_OPEN_MAX);
++	if (max <= 0)
++		return -1;
++
++#ifdef __linux__
++	if (max < NR_OPEN)
++		max = NR_OPEN;
++#endif
++
++	for (fd = 3; fd < max; fd++) {
++		if (close(fd) && errno != EBADF)
++			return -1;
++	}
++
++	return 0;
++}
++
+diff -uNrp rpm-4.2.orig/lib/psm.c rpm-4.2/lib/psm.c
+--- rpm-4.2.orig/lib/psm.c	Thu Mar  6 17:37:18 2003
++++ rpm-4.2/lib/psm.c	Wed Mar  3 15:23:22 2004
+@@ -989,6 +989,12 @@ if (_psm_debug)
+ fprintf(stderr, "      Exec: %s \"%s\"\n", sln, argv[0]);
+ /*@=modfilesys@*/
+ 	    unsetenv("MALLOC_CHECK_");
++
++	    if (close_all()) {
++		    perror("close");
++		    _exit(-1);
++	    }
++
+ 	    xx = execv(argv[0], (char *const *)argv);
+ 	    break;
+ 	default:
+diff -uNrp rpm-4.2.orig/rpm.c rpm-4.2/rpm.c
+--- rpm-4.2.orig/rpm.c	Wed Mar  3 14:30:52 2004
++++ rpm-4.2/rpm.c	Wed Mar  3 15:26:05 2004
+@@ -1096,6 +1096,10 @@ int main(int argc, const char ** argv)
+ 	    close(p[1]);
+ 	    dup2(p[0], STDIN_FILENO);
+ 	    close(p[0]);
++	    if (close_all()) {
++		    perror("close");
++		    _exit(-1);
++	    }
+ 	    execl("/bin/sh", "/bin/sh", "-c", pipeOutput, NULL);
+ 	    fprintf(stderr, _("exec failed\n"));
+ 	}
+diff -uNrp rpm-4.2.orig/rpmdb/legacy.c rpm-4.2/rpmdb/legacy.c
+--- rpm-4.2.orig/rpmdb/legacy.c	Wed Dec 18 22:40:19 2002
++++ rpm-4.2/rpmdb/legacy.c	Wed Mar  3 15:30:53 2004
+@@ -127,6 +127,10 @@ static int open_dso(const char * path, /
+ 		av[ac-1] = path;
+ 		av[ac] = NULL;
+ 		unsetenv("MALLOC_CHECK_");
++		if (close_all()) {
++			perror("check");
++			_exit(-1);
++		}
+ 		xx = execve(av[0], (char *const *)av+1, environ);
+ 	    }
+ 	    _exit(127);
+diff -uNrp rpm-4.2.orig/rpmqv.c rpm-4.2/rpmqv.c
+--- rpm-4.2.orig/rpmqv.c	Wed Mar  3 14:30:52 2004
++++ rpm-4.2/rpmqv.c	Wed Mar  3 15:27:29 2004
+@@ -608,6 +608,10 @@ int main(int argc, const char ** argv)
+ 	    (void) close(p[1]);
+ 	    (void) dup2(p[0], STDIN_FILENO);
+ 	    (void) close(p[0]);
++	    if (close_all()) {
++		    perror("close");
++		    _exit(-1);
++	    }
+ 	    (void) execl("/bin/sh", "/bin/sh", "-c", rpmcliPipeOutput, NULL);
+ 	    fprintf(stderr, _("exec failed\n"));
+ 	}

@@ -1,0 +1,20 @@
+diff -uNrp rpm-4.2.orig/lib/transaction.c rpm-4.2/lib/transaction.c
+--- rpm-4.2.orig/lib/transaction.c	Mon Mar  3 17:18:36 2003
++++ rpm-4.2/lib/transaction.c	Fri Mar 19 22:22:50 2004
+@@ -1561,8 +1561,14 @@ rpmMessage(RPMMESS_DEBUG, _("computing f
+ 	     * If install failed, then we shouldn't erase.
+ 	     */
+ 	    if (rpmteDependsOnKey(p) != lastFailKey) {
+-		if (rpmpsmStage(psm, PSM_PKGERASE))
+-		    ourrc++;
++		/*
++		 * (GM): XXX: If we check for exit code from PSM, we will
++		 *            get instant errors when upgrading a package with
++		 *            an Obsoletes tag pointing to an uninstalled
++		 *            package. If we don't check for exit code from
++		 *            the PSM - we lack reporting of DB access errors.
++		 */
++		(void) rpmpsmStage(psm, PSM_PKGERASE);
+ 	    }
+ 	    /*@switchbreak@*/ break;
+ 	}
