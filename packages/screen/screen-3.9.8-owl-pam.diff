@@ -186,8 +186,8 @@
 +	  status = pam_end(pamh, PAM_SUCCESS);
 +	  if (status == PAM_SUCCESS) 
 +	    {
-+	       memset(cp1,0,strlen(cp1));
-+	       userpass.pass = NULL; 
++              memset(cp1,0,strlen(cp1));
++              userpass.pass = NULL; 
 +	       break;
 +	    }
 +	}

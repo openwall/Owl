@@ -1,9 +1,9 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.2 2001/03/08 00:01:36 mci Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.3 2001/03/10 15:36:02 mci Exp $
 
 Summary: A screen manager that supports multiple logins on one terminal.
 Name: screen
 Version: 3.9.8
-Release: 4owl
+Release: 5owl
 Copyright: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%{version}.tar.gz
@@ -16,6 +16,7 @@ Patch4: screen-3.9.8-deb-pty.diff
 Patch5: screen-3.9.8-deb-owl-mans.diff
 Patch6: screen-3.9.8-rh-deletehack.diff
 Patch7: screen-3.9.8-rh-docbug.diff
+Patch8: screen-3.9.8-owl-telnet.diff
 Prefix: %{_prefix}
 BuildRoot: /var/rpm-buildroot/%{name}-root
 Prereq: /sbin/install-info, pam_userpass, utempter
@@ -42,6 +43,7 @@ support multiple logins on one terminal.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 %build
 
@@ -64,10 +66,10 @@ mv .%{_bindir}/screen-%{version} .%{_bindir}/screen
 strip .%{_bindir}/screen
 popd
 
-install -c -m 0444 etc/etcscreenrc $RPM_BUILD_ROOT/etc/screenrc
-install -c -m 0644 etc/screenrc $RPM_BUILD_ROOT/etc/skel/.screenrc
+install -c -m 444 etc/etcscreenrc $RPM_BUILD_ROOT/etc/screenrc
+install -c -m 644 etc/screenrc $RPM_BUILD_ROOT/etc/skel/.screenrc
 install -d $RPM_BUILD_ROOT/etc/pam.d
-install -m 600 %{SOURCE1} $RPM_BUILD_ROOT/etc/pam.d/screen
+install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/etc/pam.d/screen
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -76,29 +78,33 @@ rm -rf $RPM_BUILD_ROOT
 /sbin/install-info %{_infodir}/screen.info.gz %{_infodir}/dir --entry="* screen: (screen).             Terminal multiplexer."
 
 %preun
-if [ $1 = 0 ]; then
-    /sbin/install-info --delete %{_infodir}/screen.info.gz %{_infodir}/dir --entry="* screen: (screen).             Terminal multiplexer."
+if [ $1 -eq 0 ]; then
+	/sbin/install-info --delete %{_infodir}/screen.info.gz %{_infodir}/dir --entry="* screen: (screen).             Terminal multiplexer."
 fi
 
 %files
 %defattr(-,root,root)
 %doc NEWS README FAQ doc/README.DOTSCREEN
 
-%attr(2755,root,utempter) %{_bindir}/screen
+%attr(2711,root,utempter) %{_bindir}/screen
 %{_mandir}/man1/screen.*
 %{_infodir}/screen.info*
 
 %config /etc/screenrc
 %config /etc/skel/.screenrc
-%attr(0644,root,root) %config(noreplace) /etc/pam.d/screen
+%config(noreplace) /etc/pam.d/screen
 
 %changelog
+* Sat Mar 10 2001 Michail Litvak <mci@owl.openwall.com>
+- added patch to builtin telnet (bcopy->memmove)
+- spec, patches cleanups
+ 
 * Thu Mar 08 2001 Michail Litvak <mci@owl.openwall.com>
-- Many patches removed and other has reworked
+- Many patches removed and other reworked
 
 * Sat Mar 03 2001 Michail Litvak <mci@owl.openwall.com>
 - Added patches imported from Debian, RedHat
-- PAM support for screen locking over pam_userpass
+- PAM support for screen locking via pam_userpass
 
 * Wed Jan 10 2001 Tim Waugh <twaugh@redhat.com>
 - Rebuild, which will hopefully fix bug #22537

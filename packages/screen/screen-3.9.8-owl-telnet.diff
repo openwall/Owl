@@ -1,0 +1,49 @@
+--- screen-3.9.8/teln.c.orig	Sat Mar 10 15:53:23 2001
++++ screen-3.9.8/teln.c	Sat Mar 10 16:15:47 2001
+@@ -145,11 +145,17 @@
+ 	  Msg(0, "unknown host: %s", *args);
+ 	  return -1;
+         }
+-      bcopy((char *)hp->h_addr,(char *)&p->w_telsa.sin_addr.s_addr, hp->h_length);
++      if (hp->h_length != sizeof(p->w_telsa.sin_addr.s_addr) ||
++          hp->h_addrtype != AF_INET)
++	{
++	  Msg(0, "Bad address type for %s", hp->h_name);
++	  return -1;
++	}
++      memmove((char *)&p->w_telsa.sin_addr.s_addr,(char *)hp->h_addr,hp->h_length);
+       p->w_telsa.sin_family = hp->h_addrtype;
+     }
+   p->w_telsa.sin_port = htons(port);
+-    if (port != TEL_DEFPORT)
++  if (port != TEL_DEFPORT)
+     sprintf(buf, "Trying %s %d...", inet_ntoa(p->w_telsa.sin_addr), port);
+   else
+     sprintf(buf, "Trying %s...", inet_ntoa(p->w_telsa.sin_addr));
+@@ -275,7 +281,7 @@
+ 	      break;
+ 	    }
+ 	  if (l)
+-	    bcopy(p, p + 1, l);
++	    memmove(p + 1, p, l);
+ 	  if (c == TC_IAC)
+ 	    *p++ = c;
+ 	  else if (c == '\r')
+@@ -364,7 +370,7 @@
+ 	      if (free-- > 0)
+ 		{
+ 		  if (len)
+-		    bcopy(rp, rp + 1, len);
++		    memmove(rp + 1, rp, len);
+ 		  rp++;
+ 		  *wp++ = '\r';
+ 		}
+@@ -392,7 +398,7 @@
+       Msg(0, "Warning: telnet protocol overrun!");
+       return;
+     }
+-  bcopy(str, p->w_inbuf + p->w_inlen, len);
++  memcpy(p->w_inbuf + p->w_inlen, str, len);
+   p->w_inlen += len;
+ }
+ 
