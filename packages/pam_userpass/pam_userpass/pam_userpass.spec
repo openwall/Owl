@@ -1,13 +1,13 @@
-# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.6 2001/11/09 02:18:09 solar Exp $
+# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.7 2002/02/06 22:38:06 mci Exp $
 
 Summary: Pluggable authentication module for USER/PASS-style protocols.
 Name: pam_userpass
 Version: 0.5
-Release: 1owl
+Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
 Source: pam_userpass-%{version}.tar.gz
-BuildPreReq: pam >= 0.72-8owl
+BuildRequires: pam >= 0.72-owl8
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -36,6 +36,9 @@ rm -rf $RPM_BUILD_ROOT
 /lib/security/pam_userpass.so
 
 %changelog
+* Thu Feb 07 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Fri Nov 09 2001 Solar Designer <solar@owl.openwall.com>
 - 0.5: provide a pam_sm_chauthtok as well, currently only supporting
 password changes which don't require the old password to be passed.

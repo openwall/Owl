@@ -1,17 +1,17 @@
-# $Id: Owl/packages/owl-control/owl-control.spec,v 1.3 2000/11/22 17:04:26 solar Exp $
+# $Id: Owl/packages/owl-control/owl-control.spec,v 1.4 2002/02/06 22:01:52 mci Exp $
 
 Summary: A set of scripts to control installed system facilities.
 Name: owl-control
 Version: 0.2
-Release: 1owl
-Copyright: public domain
+Release: owl1
+License: public domain
 Group: System Environment/Base
 Source0: control
 Source1: functions
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: /bin/sh, /dev/null, sh-utils, fileutils, findutils
 Requires: sed, grep, mktemp
 BuildArchitectures: noarch
+Buildroot: /override/%{name}-%{version}
 
 %description
 The scripts included in this package provide a common interface to
@@ -40,6 +40,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0600,root,root) /etc/control.d/functions
 
 %changelog
+* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Wed Nov 22 2000 Solar Designer <solar@owl.openwall.com>
 - Support extended regexp's in control_subst().
 

@@ -1,15 +1,15 @@
-# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.10 2001/11/18 20:46:45 solar Exp $
+# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.11 2002/02/06 22:05:23 mci Exp $
 
 Summary: Initial set of device files and MAKEDEV, a script to manage them.
 Name: owl-dev
 Version: 0.6
-Release: 3owl
+Release: owl3
 License: public domain
 Group: System Environment/Base
 Source: MAKEDEV-2.5.2.tar.gz
 Patch: MAKEDEV-2.5.2-owl.diff
 PreReq: grep
-PreReq: owl-etc >= 0.18-1owl, fileutils, sh-utils
+PreReq: owl-etc >= 0.18-owl1, fileutils, sh-utils
 Obsoletes: MAKEDEV, dev
 BuildArchitectures: noarch
 BuildRoot: /override/%{name}-%{version}
@@ -61,6 +61,9 @@ cd /dev || exit 1
 %files -f filelist
 
 %changelog
+* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Sun Nov 18 2001 Solar Designer <solar@owl.openwall.com>
 - Don't verify file type (as well as permissions, because of an RPM
 limitation), device, and group for the device files.

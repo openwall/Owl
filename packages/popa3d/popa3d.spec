@@ -1,9 +1,9 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.10 2001/11/16 03:09:22 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.11 2002/02/06 22:52:45 mci Exp $
 
 Summary: Post Office Protocol server.
 Name: popa3d
 Version: 0.5
-Release: 2owl
+Release: owl2
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
 Source0: ftp://ftp.openwall.com/pub/projects/popa3d/popa3d-%{version}.tar.gz
@@ -11,8 +11,8 @@ Source1: params.h
 Source2: popa3d.pam
 Source3: popa3d.init
 Source4: popa3d.xinetd
-Requires: /var/empty, tcb, pam_userpass, xinetd
 PreReq: /sbin/chkconfig, /dev/null, grep, shadow-utils
+Requires: /var/empty, tcb, pam_userpass, xinetd
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -72,6 +72,9 @@ fi
 %doc DESIGN LICENSE
 
 %changelog
+* Thu Feb 07 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Fri Nov 16 2001 Solar Designer <solar@owl.openwall.com>
 - Use pam_tcb.
 

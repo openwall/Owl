@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.35 2001/12/16 04:13:07 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.36 2002/02/06 22:07:22 mci Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
 Version: 0.21
-Release: 1owl
+Release: owl1
 License: public domain
 Group: System Environment/Base
 Source0: passwd
@@ -24,8 +24,8 @@ Source50: csh.login
 Source51: csh.cshrc
 Obsoletes: setup
 Provides: setup
-BuildArchitectures: noarch
 BuildRequires: fileutils >= 4.0.27
+BuildArchitectures: noarch
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -65,6 +65,9 @@ rm -rf $RPM_BUILD_ROOT
 %ghost /var/log/lastlog
 
 %changelog
+* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Sun Dec 16 2001 Solar Designer <solar@owl.openwall.com>
 - vsftpd user/group.
 

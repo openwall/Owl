@@ -1,9 +1,9 @@
-# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.2 2001/11/09 03:12:18 solar Exp $
+# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.3 2002/02/06 22:34:16 mci Exp $
 
 Summary: Pluggable private /tmp space support for interactive (shell) sessions.
 Name: pam_mktemp
 Version: 0.1
-Release: 1owl
+Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
 Source: pam_mktemp-%{version}.tar.gz
@@ -36,6 +36,9 @@ mkdir -p -m 711 /tmp/.private
 /lib/security/pam_mktemp.so
 
 %changelog
+* Thu Feb 07 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Fri Nov 09 2001 Solar Designer <solar@owl.openwall.com>
 - Support stacking for account management as well as for session setup.
 - No longer set LYNX_TEMP_SPACE.

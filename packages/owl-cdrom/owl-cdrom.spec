@@ -1,16 +1,16 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.5 2001/11/25 23:52:48 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.6 2002/02/06 21:59:22 mci Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROM's.
 Name: owl-cdrom
 Version: 0.3
-Release: 1owl
+Release: owl1
 License: public domain
 Group: System Environment/Base
 Source0: rc.ramdisk
 Source1: lilo.conf
 Source2: dot-config
 Source3: floppy.update
-Requires: owl-startup >= 0.8-1owl
+Requires: owl-startup >= 0.8-owl1
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -81,6 +81,9 @@ rm -rf $RPM_BUILD_ROOT
 %dir /owl
 
 %changelog
+* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions
+
 * Mon Nov 26 2001 Solar Designer <solar@owl.openwall.com>
 - Updated .config for Linux 2.2.20-ow1.
 

@@ -1,11 +1,11 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.14 2002/01/11 17:53:46 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.15 2002/02/06 21:39:00 mci Exp $
 
 %define openssldir /var/ssl
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
 Version: 0.9.6c
-Release: 1owl
+Release: owl1
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
@@ -38,6 +38,7 @@ libraries and tools.
 Summary: Secure Sockets Layer and cryptography static libraries and headers
 Group: Development/Libraries
 Requires: openssl
+
 %description devel
 The OpenSSL Project is a collaborative effort to develop a robust,
 commercial-grade, fully featured, and Open Source toolkit implementing the
@@ -153,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Wed Dec 26 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 0.9.6c.
 

@@ -1,18 +1,18 @@
-# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.9 2001/09/25 21:59:24 solar Exp $
+# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.10 2002/02/06 22:14:48 mci Exp $
 
-Summary: Initial directory hierarchy
+Summary: Initial directory hierarchy.
 Name: owl-hier
 Version: 0.4
-Release: 1owl
+Release: owl1
 License: public domain
 Group: System Environment/Base
 Source: special
-Buildroot: /var/rpm-buildroot/%{name}-%{version}
-BuildPreReq: mtree
 Requires: owl-etc
-Obsoletes: filesystem
 Provides: filesystem
+Obsoletes: filesystem
+BuildRequires: mtree
 BuildArchitectures: noarch
+BuildRoot: /override/%{name}-%{version}
 
 %description
 This package contains the initial directory hierarchy for Owl, and
@@ -29,14 +29,14 @@ sed \
 	-e "s/\(uname=\)root$/\1`id -un`/" \
 	-e "s/\(gname=\)root /\1`id -gn` /" \
 	-e "s/\(gname=\)root$/\1`id -gn`/" \
-	< %{SOURCE0} |
+	< $RPM_SOURCE_DIR/special |
 		/usr/sbin/mtree -U
 ln -s /var/tmp usr/tmp
 ln -s ../X11R6/bin usr/bin/X11
 ln -s ../X11R6/lib/X11 usr/lib/X11
 ln -s log var/adm
 ln -s spool/mail var/mail
-cp %{SOURCE0} etc/mtree
+cp $RPM_SOURCE_DIR/special etc/mtree
 chmod 600 etc/mtree/special
 
 # Build the filelist
@@ -73,6 +73,9 @@ rm -rf $RPM_BUILD_ROOT
 %files -f filelist
 
 %changelog
+* Thu Feb 07 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Tue Sep 25 2001 Solar Designer <solar@owl.openwall.com>
 - Provide /var/empty, which is a better choice than /usr/share/empty as
 /usr/share is intended to be NFS-(un)mountable.  /var/empty is going to
