@@ -1,15 +1,15 @@
-# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.8 2001/11/01 01:34:29 solar Exp $
+# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.9 2001/11/05 08:54:14 solar Exp $
 
 Summary: Initial set of device files and MAKEDEV, a script to manage them.
 Name: owl-dev
 Version: 0.6
-Release: 1owl
+Release: 2owl
 License: public domain
 Group: System Environment/Base
 Source: MAKEDEV-2.5.2.tar.gz
 Patch: MAKEDEV-2.5.2-owl.diff
-PreReq: grep, shadow-utils
-Requires: owl-etc, fileutils, sh-utils
+PreReq: grep
+PreReq: owl-etc >= 0.18-1owl, fileutils, sh-utils
 Obsoletes: MAKEDEV, dev
 BuildArchitectures: noarch
 BuildRoot: /override/%{name}-%{version}
@@ -54,12 +54,17 @@ grep -q ^audio: /etc/group || groupadd -g 120 audio
 grep -q ^video: /etc/group || groupadd -g 121 video
 grep -q ^radio: /etc/group || groupadd -g 122 radio
 
-cd /dev
-./MAKEDEV -p generic
+cd /dev || exit 1
+/dev/MAKEDEV -p generic
 
 %files -f filelist
 
 %changelog
+* Mon Nov 05 2001 Solar Designer <solar@owl.openwall.com>
+- Don't PreReq: shadow-utils, the post-install script is smart enough
+to not depend on groupadd when the groups already exist (which is the
+case for new installs due to owl-etc).
+
 * Thu Nov 01 2001 Solar Designer <solar@owl.openwall.com>
 - audio, video and radio groups to manage access to devices.
 
