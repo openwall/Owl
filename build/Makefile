@@ -1,8 +1,9 @@
-# $Id: Owl/build/Makefile,v 1.4 2000/12/03 23:01:25 solar Exp $
+# $Id: Owl/build/Makefile,v 1.5 2000/12/03 23:07:38 solar Exp $
 
 default: buildworld
 
 checkout:
+	mkdir -p checkout
 	cd checkout && cvs co Owl
 
 symlinks:
