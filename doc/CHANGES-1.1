@@ -12,6 +12,19 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.0 and Owl-current.
 
+2003/03/15	Package: vim
+Updated to 6.1 patchlevel 386.  This includes a fix for Georgi
+Guninski's discovery of a particular way to abuse vim's modelines to
+execute arbitrary shell commands from a specially crafted text file
+when it is loaded into vim and to bypass vim's restricted mode.  Note
+that vim's modelines have always been disabled on Owl by default (with
+a setting in /usr/share/vim/vimrc) and even this fix is no guarantee
+modelines will be safe to use or the restricted mode safe to rely upon
+in the future.
+References:
+http://www.guninski.com/vim1.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2002-1377
+
 2003/03/02 -
 2003/03/10	Package: popa3d
 Rate-limit the "sessions limit reached" log message similarly to the
@@ -162,4 +175,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.29 2003/03/10 02:13:53 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.30 2003/03/15 15:35:24 solar Exp $
