@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.9 2001/11/05 08:54:14 solar Exp $
+# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.10 2001/11/18 20:46:45 solar Exp $
 
 Summary: Initial set of device files and MAKEDEV, a script to manage them.
 Name: owl-dev
 Version: 0.6
-Release: 2owl
+Release: 3owl
 License: public domain
 Group: System Environment/Base
 Source: MAKEDEV-2.5.2.tar.gz
@@ -44,7 +44,8 @@ echo '%defattr(-,root,root)' > filelist
 find $RPM_BUILD_ROOT/dev ! -type d ! -size 0 | \
 	sed "s,^$RPM_BUILD_ROOT,," >> filelist
 find $RPM_BUILD_ROOT/dev ! -type d -size 0 | \
-	sed "s,^$RPM_BUILD_ROOT,%ghost ," >> filelist
+	sed "s,^$RPM_BUILD_ROOT,%ghost %verify(not group mode rdev) ," \
+	>> filelist
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -60,6 +61,10 @@ cd /dev || exit 1
 %files -f filelist
 
 %changelog
+* Sun Nov 18 2001 Solar Designer <solar@owl.openwall.com>
+- Don't verify file type (as well as permissions, because of an RPM
+limitation), device, and group for the device files.
+
 * Mon Nov 05 2001 Solar Designer <solar@owl.openwall.com>
 - Don't PreReq: shadow-utils, the post-install script is smart enough
 to not depend on groupadd when the groups already exist (which is the
