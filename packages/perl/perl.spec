@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.1 2000/09/03 20:52:58 kad Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.2 2000/09/03 20:59:14 kad Exp $
 
 Summary: 	The Perl programming language.
 Name: 		perl
@@ -159,7 +159,7 @@ popd
 find $RPM_BUILD_ROOT%{_libdir}/perl* -name .packlist -o -name perllocal.pod | \
 xargs ./perl -i -p -e "s|$RPM_BUILD_ROOT||g;" $packlist
 
-chmod 0 $RPM_BUILD_ROOT%{_prefix}/bin/suidperl
+chmod 400 $RPM_BUILD_ROOT%{_prefix}/bin/suidperl
 
 %clean
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
@@ -175,7 +175,7 @@ chmod 0 $RPM_BUILD_ROOT%{_prefix}/bin/suidperl
 - import from RH
 - MD5 -> Digest::MD5
 - /usr/man/man*
-- suidperl mode 0
+- suidperl default mode 400
 
 * Tue Jul 18 2000 Nalin Dahyabhai <nalin@redhat.com>
 - strip buildroot from perl pods (#14040)
