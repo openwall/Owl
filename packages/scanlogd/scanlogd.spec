@@ -1,8 +1,8 @@
-# $Id: Owl/packages/scanlogd/Attic/scanlogd.spec,v 1.5 2003/10/30 21:15:48 solar Exp $
+# $Id: Owl/packages/scanlogd/Attic/scanlogd.spec,v 1.6 2004/05/23 04:57:10 solar Exp $
 
 Summary: A tool to detect and log TCP port scans.
 Name: scanlogd
-Version: 2.2.1
+Version: 2.2.2
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
@@ -61,6 +61,11 @@ fi
 %config /etc/rc.d/init.d/scanlogd
 
 %changelog
+* Sun May 23 2004 Solar Designer <solar@owl.openwall.com> 2.2.2-owl1
+- #include <stdlib.h> for exit(3) (apparently this is actually needed on
+FreeBSD).
+- Obfuscated e-mail addresses in the man page and sources.
+
 * Wed May 08 2002 Solar Designer <solar@owl.openwall.com> 2.2.1-owl1
 - Start after syslogd.
 - Don't abuse glibc-internal __feature macros.
