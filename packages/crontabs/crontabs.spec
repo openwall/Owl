@@ -1,4 +1,4 @@
-# $Id: Owl/packages/crontabs/crontabs.spec,v 1.11 2005/01/14 03:27:50 galaxy Exp $
+# $Id: Owl/packages/crontabs/crontabs.spec,v 1.12 2005/01/18 13:31:47 solar Exp $
 
 Summary: System crontab files used to schedule the execution of programs.
 Name: crontabs
@@ -62,7 +62,7 @@ install -m 644 run-parts.8 %buildroot%_mandir/man8/
 %changelog
 * Fri Jan 07 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.0-owl5
 - Added fixes patch to deal with issues after gcc upgrade.
-- Used %%__cc to chose C compiler.
+- Use %%__cc macro to choose C compiler.
 - Removed "-s" option from compilation process since we are using brp- scripts.
 
 * Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com> 2.0-owl4
