@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.16 2002/02/04 07:38:38 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.17 2002/10/12 06:17:35 solar Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -13,7 +13,7 @@ Version: %{base_version}.%{crypto_version}
 %else
 Version: %{base_version}
 %endif
-Release: owl5
+Release: owl6
 License: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%{base_version}.tar.bz2
@@ -23,9 +23,10 @@ Patch0: util-linux-2.10r-owl-MCONFIG.diff
 Patch1: util-linux-2.10r-owl-Makefiles.diff
 Patch2: util-linux-2.10r-owl-write.diff
 Patch3: util-linux-2.10r-owl-alpha-hwclock-usage.diff
-Patch4: util-linux-2.10r-rh-locale-overflow.diff
-Patch10: util-linux-2.10r-%{crypto_version}-int.diff
-Patch11: util-linux-2.10r-%{crypto_version}-int-owl-fixes.diff
+Patch4: util-linux-2.10r-owl-mtab-umask.diff
+Patch10: util-linux-2.10r-rh-locale-overflow.diff
+Patch20: util-linux-2.10r-%{crypto_version}-int.diff
+Patch21: util-linux-2.10r-%{crypto_version}-int-owl-fixes.diff
 PreReq: /sbin/install-info
 Requires: owl-control < 2.0
 Obsoletes: fdisk, tunelp
@@ -73,9 +74,10 @@ to query the status of a loop device.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%if %BUILD_CRYPTO
 %patch10 -p1
-%patch11 -p1
+%if %BUILD_CRYPTO
+%patch20 -p1
+%patch21 -p1
 %endif
 
 %build
@@ -283,6 +285,10 @@ fi
 %endif
 
 %changelog
+* Sat Oct 12 2002 Solar Designer <solar@owl.openwall.com>
+- Use umask 077 when creating mtab files (to be chmod'ed later) to avoid
+the race pointed out by Olaf Kirch of SuSE.
+
 * Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
 - Install the info dir entry for ipc.
 - Enforce our new spec file conventions.
