@@ -207,13 +207,6 @@ obtains fcntl() and dot-locks is compatible with that of Postfix and
 procmail.
 
 
-	make.
-
-[PRIORITY: low]
-[ASSIGNED: Andreas Ericsson]
-Update to latest release.
-
-
 	man.
 
 [PRIORITY: low]
@@ -540,4 +533,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.38 2004/09/23 20:43:29 solar Exp $
+$Id: Owl/doc/TODO,v 1.39 2004/09/26 04:55:56 solar Exp $
