@@ -1,4 +1,4 @@
-# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.5 2002/01/31 23:27:45 mci Exp $
+# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.6 2002/02/01 15:28:39 solar Exp $
 
 Summary: The GNU versions of common file management utilities.
 Name: fileutils
@@ -48,11 +48,8 @@ timestamps), and vdir (provides long directory listings).
 
 %build
 unset LINGUAS || :
-%ifos linux
 %define _exec_prefix /
-%endif
 %configure
-
 make
 
 %install
@@ -61,19 +58,16 @@ rm -rf $RPM_BUILD_ROOT
 
 cd $RPM_BUILD_ROOT
 
-%ifos linux
 mkdir -p .%{_prefix}/bin
 for i in dir dircolors du install mkfifo shred vdir
 do
-	mv -f ./bin/$i .%{_prefix}/bin/$i
+	mv -f bin/$i .%{_prefix}/bin/
 done
-strip -R .comment ./bin/* || :
-%endif
 
-mkdir -p ./etc/profile.d
-install -c -m 644 $RPM_SOURCE_DIR/DIR_COLORS ./etc
-install -c -m 755 $RPM_SOURCE_DIR/colorls.sh ./etc/profile.d
-install -c -m 755 $RPM_SOURCE_DIR/colorls.csh ./etc/profile.d
+mkdir -p etc/profile.d
+install -c -m 644 $RPM_SOURCE_DIR/DIR_COLORS etc/
+install -c -m 755 $RPM_SOURCE_DIR/colorls.sh etc/profile.d/
+install -c -m 755 $RPM_SOURCE_DIR/colorls.csh etc/profile.d/
 
 install -c -m 644 $RPM_SOURCE_DIR/shred.1 $RPM_BUILD_ROOT/%{_mandir}/man1/
 
@@ -84,7 +78,7 @@ rm -rf $RPM_BUILD_ROOT
 /sbin/install-info %{_infodir}/fileutils.info.gz %{_infodir}/dir
 
 %preun
-if [ $1 = 0 ]; then
+if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %{_infodir}/fileutils.info.gz %{_infodir}/dir
 fi
 
@@ -94,9 +88,7 @@ fi
 %config %{_sysconfdir}/DIR_COLORS
 %config %{_sysconfdir}/profile.d/*
 
-%ifos linux
 %{_exec_prefix}/bin/*
-%endif
 %{_prefix}/bin/*
 %{_mandir}/man*/*
 
@@ -105,8 +97,8 @@ fi
 
 %changelog
 * Fri Feb 01 2002 Michail Litvak <mci@owl.openwall.com>
-- Enforce oour new spec file conventions.
-- Changed %SOURCE* to explicit $RPM_SOURCE_DIR/*
+- Enforce our new spec file conventions.
+- Changed SOURCE* to explicit $RPM_SOURCE_DIR/*
 
 * Thu Nov 30 2000 Solar Designer <solar@owl.openwall.com>
 - Avoid listing %{_sysconfdir}/profile.d (the directory itself).

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/file/file.spec,v 1.2 2002/01/31 23:07:00 mci Exp $
+# $Id: Owl/packages/file/file.spec,v 1.3 2002/02/01 15:28:38 solar Exp $
 
 Summary: A utility for determining file types.
 Name: file
@@ -30,7 +30,6 @@ different graphics formats.
 %patch4 -p1
 
 %build
-
 automake
 %configure
 make LDFLAGS=-s
@@ -38,8 +37,7 @@ make LDFLAGS=-s
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p ${RPM_BUILD_ROOT}%{_bindir}
-mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man1
-mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man5
+mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man{1,5}
 mkdir -p ${RPM_BUILD_ROOT}%{_datadir}
 
 %makeinstall

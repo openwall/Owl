@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gdb/gdb.spec,v 1.8 2002/02/01 16:05:45 mci Exp $
+# $Id: Owl/packages/gdb/gdb.spec,v 1.9 2002/02/01 16:54:29 solar Exp $
 
 Summary: A GNU source-level debugger for C, C++ and Fortran.
 Name: gdb
@@ -6,7 +6,7 @@ Version: 5.0
 Release: owl8
 License: GPL
 Group: Development/Debuggers
-Source0: ftp://sourceware.cygnus.com/pub/gdb/releases/gdb-%{version}.tar.bz2
+Source: ftp://sourceware.cygnus.com/pub/gdb/releases/gdb-%{version}.tar.bz2
 Patch0: gdb-5.0-pld-procfs.diff
 Patch1: gdb-5.0-pld-info.diff
 Patch2: gdb-5.0-pld-gettext.diff
@@ -67,8 +67,6 @@ make install install-info \
 	infodir=$RPM_BUILD_ROOT%{_infodir} \
 	mandir=$RPM_BUILD_ROOT%{_mandir} \
 	DESTDIR=$RPM_BUILD_ROOT
-
-rm -f $RPM_BUILD_ROOT%{_infodir}/dir $RPM_BUILD_ROOT%{_infodir}/dir.info*
 
 # These are part of binutils
 rm -f $RPM_BUILD_ROOT%{_infodir}/bfd*

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gawk/gawk.spec,v 1.3 2002/02/01 10:45:17 mci Exp $
+# $Id: Owl/packages/gawk/gawk.spec,v 1.4 2002/02/01 15:28:39 solar Exp $
 
 Summary: The GNU version of the awk text processing utility.
 Name: gawk
@@ -17,7 +17,7 @@ BuildRequires: texinfo
 BuildRoot: /override/%{name}-%{version}
 
 %description
-The gawk packages contains the GNU version of awk, a text processing
+The gawk package contains the GNU version of awk, a text processing
 utility.  Awk interprets a special-purpose programming language to do
 quick and easy text pattern matching and reformatting jobs.
 
@@ -78,5 +78,5 @@ patch from Jarno Huuskonen.
 - Make sure gawk.info and igawk.sh are re-generated from gawk.texi on
 package builds.
 
-* Sun Oct  1 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Oct 01 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import spec from RH

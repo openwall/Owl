@@ -1,10 +1,10 @@
-# $Id: Owl/packages/flex/flex.spec,v 1.2 2002/02/01 09:52:37 mci Exp $
+# $Id: Owl/packages/flex/flex.spec,v 1.3 2002/02/01 15:28:39 solar Exp $
 
 Summary: A tool for creating scanners (text pattern recognizers).
 Name: flex
 Version: 2.5.4a
-License: owl11
-Copyright: GPL
+Release: owl11
+License: GPL
 Group: Development/Tools
 Source: ftp://ftp.gnu.org/pub/non-gnu/flex/flex-%{version}.tar.gz
 Patch0: flex-2.5.4a-rh-skel.diff
