@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/owl-cdrom/rc.ramdisk,v 1.2 2001/07/27 20:49:03 solar Exp $
+# $Id: Owl/packages/owl-cdrom/rc.ramdisk,v 1.3 2001/09/16 00:36:18 solar Exp $
 
 echo "Setting up a RAM disk"
 
@@ -9,6 +9,7 @@ mount -n /dev/ram0 /ram
 tar cf - -C /rom \
     --exclude ./var/lib \
     --exclude ./etc/termcap \
+    --exclude ./world \
     . |
 	tar xf - -C /ram
 
@@ -16,6 +17,12 @@ ln -s /rom/var/lib /ram/var/
 ln -s /rom/etc/termcap /ram/etc/
 
 sed 's,^,/ram/dev/,' < /rom/etc/securetty > /ram/etc/securetty
+
+if [ -e /rom/world/Makefile ]; then
+	mkdir -m 750 /ram/world
+	chown build. /ram/world
+	ln -s /rom/world/* /ram/world/
+fi
 
 # Enter /ram into mtab.
 > /etc/mtab

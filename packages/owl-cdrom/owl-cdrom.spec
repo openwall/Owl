@@ -1,12 +1,15 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.2 2001/07/28 16:22:04 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.3 2001/09/16 00:36:18 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROM's.
 Name: owl-cdrom
-Version: 0.0
-Release: 2owl
-License: GPL
+Version: 0.1
+Release: 1owl
+License: public domain
 Group: System Environment/Base
 Source0: rc.ramdisk
+Source1: lilo.conf
+Source2: dot-config
+Source3: floppy.update
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Requires: owl-startup >= 0.8-1owl
 
@@ -16,12 +19,15 @@ startup scripts needed for Owl bootable CD-ROM's.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{etc/rc.d,rom,ram}
+mkdir -p $RPM_BUILD_ROOT/{etc/rc.d,boot,rom,ram,owl}
 
 cd $RPM_BUILD_ROOT
 touch .Owl-CD-ROM
 install -m 700 $RPM_SOURCE_DIR/rc.ramdisk etc/rc.d/
-ln -s ../rom/{dev,etc,home,root,tmp,var} ram/
+install -m 600 $RPM_SOURCE_DIR/lilo.conf etc/
+install -m 600 $RPM_SOURCE_DIR/dot-config boot/.config
+install -m 700 $RPM_SOURCE_DIR/floppy.update boot/
+ln -s ../rom/{dev,etc,home,root,tmp,var,world} ram/
 
 %pre
 if [ "$CDROM" != "yes" ]; then
@@ -41,6 +47,10 @@ for DIR in dev etc home root tmp var; do
 	ln -s ram/$DIR /
 done
 
+test -d /usr/src/world -a ! -e /rom/world
+mv /usr/src/world /rom/
+ln -s ../../ram/world /usr/src/
+
 %preun
 set -e
 
@@ -50,6 +60,10 @@ if [ $1 -eq 0 ]; then
 		rm /$DIR
 		mv /rom/$DIR /
 	done
+
+	test -L /usr/src/world -a -d /rom/world
+	rm /usr/src/world
+	mv /rom/world /usr/src/
 fi
 
 %clean
@@ -59,10 +73,20 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 /.Owl-CD-ROM
 %config /etc/rc.d/rc.ramdisk
+%config /etc/lilo.conf
+%config /boot/.config
+/boot/floppy.update
 %dir /rom
 /ram
+%dir /owl
 
 %changelog
+* Sat Sep 15 2001 Solar Designer <solar@owl.openwall.com>
+- Packaged lilo.conf, .config, and a script to create or update floppy
+images for use with CD-ROM's.
+- Move /usr/src/world to /ram such that "make installworld" may create
+its symlinks and write to its log file.
+
 * Sat Jul 28 2001 Solar Designer <solar@owl.openwall.com>
 - Require CDROM=yes such that this package isn't installed by mistake.
 

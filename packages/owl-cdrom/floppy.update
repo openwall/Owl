@@ -1,0 +1,16 @@
+#!/bin/sh
+# $Id: Owl/packages/owl-cdrom/Attic/floppy.update,v 1.1 2001/09/16 00:36:18 solar Exp $
+
+set -e
+
+dd if=/dev/zero of=floppy.image bs=18k count=80
+/sbin/mke2fs -m 0 -F floppy.image
+
+mount floppy.image /mnt/floppy -oloop=/dev/loop0
+trap 'umount /mnt/floppy' EXIT HUP INT TERM
+
+mkdir -m 700 /mnt/floppy/boot
+cp -p /boot/boot.b /mnt/floppy/boot/
+cp -p bzImage /mnt/floppy/boot/
+
+/sbin/lilo -C ../etc/lilo.conf
