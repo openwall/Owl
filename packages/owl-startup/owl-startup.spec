@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.25 2002/02/07 21:04:23 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.26 2002/02/12 23:14:48 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.11
+Version: 0.12
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -142,6 +142,11 @@ fi
 %doc redhat
 
 %changelog
+* Wed Feb 13 2002 Solar Designer <solar@owl.openwall.com>
+- Remove the old init that might be left from possible package upgrades.
+Please refer to the comments in rc.sysinit and in the pre-install script
+of SysVinit for details on why this approach is required.
+
 * Thu Feb 07 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions.
 

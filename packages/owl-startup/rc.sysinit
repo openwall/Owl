@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/owl-startup/rc.sysinit,v 1.10 2001/12/09 18:41:58 solar Exp $
+# $Id: Owl/packages/owl-startup/rc.sysinit,v 1.11 2002/02/12 23:14:48 solar Exp $
 
 # Set the initial default search path for use by startup scripts.
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
@@ -125,6 +125,11 @@ if [ -x /sbin/quotaon ]; then
 	echo "Turning on quotas for local filesystems"
 	quotaon -a
 fi
+
+# Remove the old init that might be left from possible package upgrades.
+# We absolutely have to do this such that possible future upgrades know
+# that /sbin/init is the working binary again.
+rm -f /sbin/.init-working
 
 # Remove stale PID files, possibly create utmp and wtmp, reset utmp.
 rm -f /var/run/*.pid /var/lock/subsys/*
