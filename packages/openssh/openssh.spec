@@ -1,11 +1,11 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.11 2000/12/23 08:27:12 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.12 2001/01/26 02:01:51 solar Exp $
 
 # Version of OpenSSH
 %define oversion 2.3.0p1
 Summary: OpenSSH free Secure Shell (SSH) implementation
 Name: openssh
 Version: %{oversion}
-Release: 4owl
+Release: 5owl
 URL: http://www.openssh.com/
 Source0: http://violet.ibs.com.au/openssh/files/openssh-%{oversion}.tar.gz
 Source1: sshd.pam
@@ -15,6 +15,7 @@ Source4: sshd_config
 Patch0: openssh-2.3.0p1-owl-pam_userpass.diff
 Patch1: openssh-2.3.0p1-owl-hide-unknown.diff
 Patch2: openssh-2.3.0p1-owl-client_version-nul.diff
+Patch3: openssh-2.3.0p1-owl-traffic-analysis.diff
 Copyright: BSD
 Group: Applications/Internet
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
@@ -88,6 +89,7 @@ clients to connect to your host.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" LIBS="-lcrypt -lpam -lpam_misc" ./configure \
@@ -173,6 +175,11 @@ fi
 %attr(0700,root,root) %config /etc/rc.d/init.d/sshd
 
 %changelog
+* Fri Jan 26 2001 Solar Designer <solar@owl.openwall.com>
+- Added a patch to reduce the impact of traffic analysis by padding initial
+login passwords for SSH-1 and simulating echo during interactive sessions.
+(Thanks to Dug Song for updating the patch to current OpenSSH.)
+
 * Wed Dec 20 2000 Solar Designer <solar@owl.openwall.com>
 - Use pam_mktemp.
 
