@@ -1,0 +1,65 @@
+	Changes made between 0.6.1 and 0.6.2 (2003/03/09).
+
+Rate-limit the "sessions limit reached" log message similarly to the
+per-source one; spotted by Michael Tokarev.
+
+Started maintaining this change log due to popular demand, including
+information on a few past versions.
+
+
+	Changes made between 0.6 and 0.6.1 (2003/03/02).
+
+Ensure proper logging of abnormally terminated sessions: distinguish
+server failures from external modification to the mailbox by other
+instances of popa3d or other MUAs.  Previously, if external mailbox
+modification would occur during processing of a RETR command, popa3d
+could improperly log a "server failure" (0.6) or even a "premature
+disconnect" (older versions).
+
+Added version.c and the -V option to print out version information.
+
+
+	Changes made between 0.5.9 and 0.6 (2003/02/20).
+
+Corrected the message size reporting bug introduced with 0.4.9.3 and
+now reported on popa3d-users by Nuno Teixeira.  The only known POP3
+client known to complain about this is fetchmail, and it would get the
+mail correctly anyway.
+
+
+	Changes made between 0.5.1 and 0.5.9 (2002/09/24).
+
+Correctness and interoperability fixes.  This includes a workaround
+for an Outlook Express client bug which would show up on body-less
+messages.
+
+
+	Changes made between 0.5 and 0.5.1 (2002/04/17).
+
+Re-worked all of the UIDL calculation, adding support for multi-line
+headers and re-considering which headers to use.
+
+Let the local delivery agent help generate unique IDs by setting the
+X-Delivery-ID: header.
+
+
+	Changes made between 0.4 and 0.5 (2001/10/28).
+
+Added PAM support (old-fashioned or via Linux-PAM binary prompts),
+choice for fcntl(2) and/or flock(2) locking, qmail-style ~/Mailbox
+support, improved logging, optional libwrap support, virtual domain
+support hooks.
+
+Parts of the daemon code are now run in a chroot jail (/var/empty).
+
+The inetd vs. standalone mode setting is now run-time configurable.
+
+The GNU MD5 routines have been replaced with own public domain
+implementation to relax the license for the entire package (now BSD
+and (L)GPL-compatible), solve certain portability issues, and reduce
+code size.
+
+Added a popa3d(8) manual page based on the one Camiel Dobbelaar wrote
+for OpenBSD.
+
+$Id: Owl/packages/popa3d/popa3d/CHANGES,v 1.1 2003/03/09 22:48:01 solar Exp $
