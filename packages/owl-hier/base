@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-hier/Attic/special,v 1.9 2002/06/09 00:51:36 solar Exp $
+# $Id: Owl/packages/owl-hier/base,v 1.1 2003/10/25 09:12:10 solar Exp $
 
 # /
 /set type=file uname=root gname=root mode=0755
