@@ -1,0 +1,117 @@
+diff -uprk.orig sysvinit-2.85.orig/contrib/start-stop-daemon.c sysvinit-2.85/contrib/start-stop-daemon.c
+--- sysvinit-2.85.orig/contrib/start-stop-daemon.c	1996-06-23 02:00:00 +0400
++++ sysvinit-2.85/contrib/start-stop-daemon.c	2003-04-20 21:35:59 +0400
+@@ -32,7 +32,7 @@ static const char *cmdname = NULL;
+ static char *execname = NULL;
+ static char *startas = NULL;
+ static const char *pidfile = NULL;
+-static const char *progname = "";
++extern const char *__progname;
+ 
+ static struct stat exec_stat;
+ 
+@@ -71,7 +71,7 @@ fatal(const char *format, ...)
+ {
+ 	va_list arglist;
+ 
+-	fprintf(stderr, "%s: ", progname);
++	fprintf(stderr, "%s: ", __progname);
+ 	va_start(arglist, format);
+ 	vfprintf(stderr, format, arglist);
+ 	va_end(arglist);
+@@ -137,8 +137,8 @@ static void
+ badusage(const char *msg)
+ {
+ 	if (msg && *msg)
+-		fprintf(stderr, "%s: %s\n", progname, msg);
+-	fprintf(stderr, "Try `%s --help' for more information.\n", progname);
++		fprintf(stderr, "%s: %s\n", __progname, msg);
++	fprintf(stderr, "Try `%s --help' for more information.\n", __progname);
+ 	exit(2);
+ }
+ 
+@@ -366,7 +366,7 @@ do_stop(void)
+ 			push(&killed, p->pid);
+ 		else
+ 			printf("%s: warning: failed to kill %d: %s\n",
+-			       progname, p->pid, strerror(errno));
++			       __progname, p->pid, strerror(errno));
+ 	}
+ 	if (quietmode < 0 && killed) {
+ 		printf("stopped %s (pid", what);
+@@ -380,7 +380,7 @@ do_stop(void)
+ int
+ main(int argc, char **argv)
+ {
+-	progname = argv[0];
++	umask(umask(077) | 022);
+ 
+ 	parse_options(argc, argv);
+ 	argc -= optind;
+diff -uprk.orig sysvinit-2.85.orig/src/init.c sysvinit-2.85/src/init.c
+--- sysvinit-2.85.orig/src/init.c	2003-04-15 15:16:41 +0400
++++ sysvinit-2.85/src/init.c	2003-04-20 21:35:59 +0400
+@@ -2402,16 +2402,19 @@ int init_main()
+   /*NOTREACHED*/
+ }
+ 
++extern const char *__progname;
++
+ /*
+  * Tell the user about the syntax we expect.
+  */
+-void Usage(char *s)
++__attribute__ ((noreturn))
++void Usage(const char *s)
+ {
+   fprintf(stderr, "Usage: %s 0123456SsQqAaBbCcUu\n", s);
+   exit(1);
+ }
+ 
+-int telinit(char *progname, int argc, char **argv)
++int telinit(const char *progname, int argc, char **argv)
+ {
+ #ifdef TELINIT_USES_INITLVL
+ 	FILE			*fp;
+@@ -2420,6 +2423,9 @@ int telinit(char *progname, int argc, ch
+ 	struct sigaction	sa;
+ 	int			f, fd;
+ 
++	if (!argc)
++		Usage(progname);
++
+ 	while((f = getopt(argc, argv, "t:")) != EOF) switch(f) {
+ 		case 't':
+ 			sltime = atoi(optarg);
+@@ -2483,20 +2489,14 @@ int telinit(char *progname, int argc, ch
+  */
+ int main(int argc, char **argv)
+ {
+-	char			*p;
+ 	int			f;
+ 	int			isinit;
+ 
+-	/* Get my own name */
+-	if ((p = strrchr(argv[0], '/')) != NULL)
+-  		p++;
+-	else
+-  		p = argv[0];
+-	umask(022);
++	umask(umask(077) | 022);
+ 
+ 	/* Quick check */
+ 	if (geteuid() != 0) {
+-		fprintf(stderr, "%s: must be superuser.\n", p);
++		fprintf(stderr, "%s: must be superuser.\n", __progname);
+ 		exit(1);
+ 	}
+ 
+@@ -2509,7 +2509,7 @@ int main(int argc, char **argv)
+ 			isinit = 1;
+ 			break;
+ 	}
+-	if (!isinit) exit(telinit(p, argc, argv));
++	if (!isinit) exit(telinit(__progname, argc, argv));
+ 
+ 	/*
+ 	 *	Check for re-exec

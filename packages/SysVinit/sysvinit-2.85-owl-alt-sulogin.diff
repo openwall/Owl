@@ -1,0 +1,261 @@
+diff -urp sysvinit-2.85.orig/man/sulogin.8 sysvinit-2.85/man/sulogin.8
+--- sysvinit-2.85.orig/man/sulogin.8	Mon Sep 11 12:19:25 2000
++++ sysvinit-2.85/man/sulogin.8	Tue Apr 22 21:00:17 2003
+@@ -3,7 +3,6 @@
+ sulogin -- Single-user login
+ .SH SYNOPSIS
+ .B sulogin
+-.RB [ " -e " ]
+ .RB [ " -p " ]
+ .RB [ " -t timeout " ]
+ .RB [ " tty-device " ]
+@@ -35,8 +34,7 @@ prompt, the system will (continue to) bo
+ .SH ENVIRONMENT VARIABLES
+ \fIsulogin\fP looks for the environment variable \fBSUSHELL\fP or
+ \fBsushell\fP to determine what shell to start. If the environment variable
+-is not set, it will try to execute root's shell from /etc/passwd. If that
+-fails it will fall back to \fB/bin/sh\fP.
++is not set, it will try to execute root's shell from /etc/passwd.
+ .PP
+ This is very valuable together with the \fB-b\fP flag to init. To boot
+ the system into single user mode, with the root file system mounted read/write,
+@@ -44,17 +42,6 @@ using a special "failsafe" shell that is
+ is valid for the LILO bootprompt)
+ .PP
+ boot: linux -b rw sushell=/sbin/sash
+-.SH FALLBACK METHODS
+-\fIsulogin\fP checks the root password using the standard methods first.
+-If the \fB-e\fP option was specified,
+-\fIsulogin\fP examines the next files to find the root password. If
+-they are damaged, or non-existant, it will use fallback methods that
+-even go so far as to provide you with a shell prompt without asking
+-for the root password if they are irrepairably damaged.
+-.PP
+-/etc/passwd,
+-.br
+-/etc/shadow (if present)
+ .SH AUTHOR
+ Miquel van Smoorenburg <miquels@cistron.nl>
+ .SH SEE ALSO
+diff -urp sysvinit-2.85.orig/src/sulogin.c sysvinit-2.85/src/sulogin.c
+--- sysvinit-2.85.orig/src/sulogin.c	Mon Apr 14 09:53:49 2003
++++ sysvinit-2.85/src/sulogin.c	Tue Apr 22 21:22:05 2003
+@@ -20,6 +20,7 @@
+ #include <unistd.h>
+ #include <fcntl.h>
+ #include <signal.h>
++#include <setjmp.h>
+ #include <pwd.h>
+ #include <shadow.h>
+ #include <termios.h>
+@@ -28,11 +29,13 @@
+ #  include <crypt.h>
+ #endif
+ 
++#if 0
+ #define CHECK_DES	1
+ #define CHECK_MD5	1
+ 
+ #define F_PASSWD	"/etc/passwd"
+ #define F_SHADOW	"/etc/shadow"
++#endif
+ #define BINSH		"/bin/sh"
+ 
+ char *Version = "@(#)sulogin 2.85 14-Apr-2003 miquels@cistron.nl";
+@@ -40,6 +43,8 @@ char *Version = "@(#)sulogin 2.85 14-Apr
+ int timeout = 0;
+ int profile = 0;
+ 
++static sigjmp_buf timed_out;
++
+ #if 0
+ /*
+  *	Fix the tty modes and set reasonable defaults.
+@@ -85,8 +90,11 @@ void fixtty(void)
+  */
+ void alrm_handler()
+ {
++	signal(SIGALRM, SIG_DFL);
++	siglongjmp(timed_out, 1);
+ }
+ 
++#if 0
+ /*
+  *	See if an encrypted password is valid. The encrypted
+  *	password is checked for traditional-style DES and
+@@ -134,19 +142,22 @@ void set(char **var, char *val)
+ {
+ 	if (val) *var = val;
+ }
++#endif
+ 
+ /*
+  *	Get the root password entry.
+  */
+-struct passwd *getrootpwent(int try_manually)
++struct passwd *getrootpwent(void)
+ {
+-	static struct passwd pwd;
+ 	struct passwd *pw;
+ 	struct spwd *spw;
++#if 0
++	static struct passwd pwd;
+ 	FILE *fp;
+ 	static char line[256];
+ 	static char sline[256];
+ 	char *p;
++#endif
+ 
+ 	/*
+ 	 *	First, we try to get the password the standard
+@@ -156,6 +167,10 @@ struct passwd *getrootpwent(int try_manu
+ 	    !strcmp(pw->pw_passwd, "x") &&
+ 	    (spw = getspnam("root")))
+ 		pw->pw_passwd = spw->sp_pwdp;
++
++	return pw;
++
++#if 0
+ 	if (pw || !try_manually) return pw;
+ 
+ 	/*
+@@ -234,6 +249,7 @@ struct passwd *getrootpwent(int try_manu
+ 		fprintf(stderr, "%s: root password garbled\n", F_SHADOW);
+ 		strcpy(pwd.pw_passwd, ""); }
+ 	return &pwd;
++#endif
+ }
+ 
+ /*
+@@ -242,6 +258,34 @@ struct passwd *getrootpwent(int try_manu
+  */
+ char *getpasswd(char *crypted)
+ {
++	char *pass;
++	struct termios tty;
++
++	if (timeout) {
++		tcgetattr(0, &tty);
++		if (sigsetjmp(timed_out, 1)) {
++			tcsetattr(0, TCSANOW, &tty);
++			puts("\nTimed out");
++			return NULL;
++		}
++		signal(SIGALRM, alrm_handler);
++		alarm(timeout);
++	}
++
++	pass = getpass(crypted[0] ?
++		"Give root password for maintenance\n"
++		"(or type Control-D for normal startup): " :
++		"Press Enter for maintenance\n"
++		"(or type Control-D for normal startup): ");
++
++	if (timeout) {
++		alarm(0);
++		signal(SIGALRM, SIG_DFL);
++	}
++
++	return pass;
++
++#if 0
+ 	struct sigaction sa;
+ 	struct termios old, tty;
+ 	static char pass[128];
+@@ -251,7 +295,7 @@ char *getpasswd(char *crypted)
+ 	if (crypted[0])
+ 		printf("Give root password for maintenance\n");
+ 	else
+-		printf("Press enter for maintenance\n");
++		printf("Press Enter for maintenance\n");
+ 	printf("(or type Control-D for normal startup): ");
+ 	fflush(stdout);
+ 
+@@ -282,6 +326,7 @@ char *getpasswd(char *crypted)
+ 	printf("\n");
+ 
+ 	return ret;
++#endif
+ }
+ 
+ /*
+@@ -334,39 +379,36 @@ void sushell(struct passwd *pwd)
+ 	execl(sushell, shell, NULL);
+ 	perror(sushell);
+ 
++#if 0
+ 	setenv("SHELL", BINSH, 1);
+ 	execl(BINSH, profile ? "-sh" : "sh", NULL);
+ 	perror(BINSH);
++#endif
+ }
+ 
+ void usage(void)
+ {
+-	fprintf(stderr, "Usage: sulogin [-e] [-p] [-t timeout] [tty device]\n");
++	fprintf(stderr, "Usage: sulogin [-p] [-t timeout] [tty device]\n");
+ }
+ 
+ int main(int argc, char **argv)
+ {
+ 	char *tty = NULL;
+-	char *p;
+ 	struct passwd *pwd;
+ 	int c, fd = -1;
+-	int opt_e = 0;
+ 	pid_t pid, pgrp, ppgrp, ttypgrp;
+ 
+ 	/*
+ 	 *	See if we have a timeout flag.
+ 	 */
+ 	opterr = 0;
+-	while((c = getopt(argc, argv, "ept:")) != EOF) switch(c) {
++	while((c = getopt(argc, argv, "pt:")) != EOF) switch(c) {
+ 		case 't':
+ 			timeout = atoi(optarg);
+ 			break;
+ 		case 'p':
+ 			profile = 1;
+ 			break;
+-		case 'e':
+-			opt_e = 1;
+-			break;
+ 		default:
+ 			usage();
+ 			/* Do not exit! */
+@@ -428,7 +470,7 @@ int main(int argc, char **argv)
+ 	/*
+ 	 *	Get the root password.
+ 	 */
+-	if ((pwd = getrootpwent(opt_e)) == NULL) {
++	if ((pwd = getrootpwent()) == NULL) {
+ 		fprintf(stderr, "sulogin: cannot open password database!\n");
+ 		sleep(2);
+ 	}
+@@ -436,17 +478,21 @@ int main(int argc, char **argv)
+ 	/*
+ 	 *	Ask for the password.
+ 	 */
+-	while(pwd) {
+-		if ((p = getpasswd(pwd->pw_passwd)) == NULL) break;
+-		if (pwd->pw_passwd[0] == 0 ||
+-		    strcmp(crypt(p, pwd->pw_passwd), pwd->pw_passwd) == 0)
++	while (1) {
++		const char *p = getpasswd(pwd->pw_passwd);
++		if ( !p || (pwd->pw_passwd[0] && !p[0]) )
++			break;
++		if ( !(pwd->pw_passwd[0] || p[0]) ||
++		    !strcmp(crypt(p, pwd->pw_passwd), pwd->pw_passwd) )
+ 			sushell(pwd);
+-		printf("Login incorrect.\n");
++		else
++			puts("Login incorrect.");
+ 	}
+ 
+ 	/*
+ 	 *	User pressed Control-D.
+ 	 */
++	putchar('\n');
+ 	return 0;
+ }
+ 

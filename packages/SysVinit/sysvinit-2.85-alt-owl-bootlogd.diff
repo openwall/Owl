@@ -1,0 +1,34 @@
+diff -urp sysvinit-2.85.orig/src/bootlogd.c sysvinit-2.85/src/bootlogd.c
+--- sysvinit-2.85.orig/src/bootlogd.c	Sun Dec  9 14:01:28 2001
++++ sysvinit-2.85/src/bootlogd.c	Tue Apr 22 21:58:09 2003
+@@ -49,7 +49,7 @@ char *Version = "@(#) bootlogd 2.79 11-S
+ #  define TIOCTTYGSTRUCT_HACK	1
+ #endif
+ 
+-#define LOGFILE	"/var/log/boot.log"
++#define LOGFILE	"/var/log/boot"
+ 
+ char ringbuf[32768];
+ char *endptr = ringbuf + sizeof(ringbuf);
+@@ -122,8 +122,10 @@ int findtty(char *res, int rlen, dev_t d
+ 	} else if (strlen(ent->d_name) >= rlen) {
+ 		fprintf(stderr, "bootlogd: console device name too long\n");
+ 		r = -1;
+-	} else
+-		strcpy(res, ent->d_name);
++	} else {
++		res[0] = '\0';
++		strncat(res, ent->d_name, rlen - 1);
++	}
+ 	closedir(dir);
+ 
+ 	return r;
+@@ -146,7 +148,7 @@ int consolename(char *res, int rlen)
+ 	int		offset = -1;
+ #endif
+ #ifdef TIOCGDEV
+-	kdev_t		kdev;
++	unsigned int	kdev;
+ #endif
+ 
+ 	fstat(0, &st);

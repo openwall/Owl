@@ -1,15 +1,22 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.12 2002/02/14 08:17:36 solar Exp $
+# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.13 2003/04/22 22:50:04 solar Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
-Version: 2.78
-Release: owl12
+Version: 2.85
+Release: owl1
 License: GPL
 Group: System Environment/Base
 Source: ftp://ftp.cistron.nl/pub/people/miquels/sysvinit/sysvinit-%{version}.tar.gz
-Patch0: sysvinit-2.78-owl-bound-format.diff
-Patch1: sysvinit-2.78-owl-sulogin.diff
-Patch2: sysvinit-2.78-owl-umask.diff
+Patch0: sysvinit-2.85-owl-wall-longjmp-clobbering.diff
+Patch1: sysvinit-2.85-owl-format.diff
+Patch2: sysvinit-2.85-alt-progname-umask.diff
+Patch3: sysvinit-2.85-owl-alt-sulogin.diff
+Patch4: sysvinit-2.85-alt-owl-start-stop-daemon.diff
+Patch5: sysvinit-2.85-alt-owl-bootlogd.diff
+Patch6: sysvinit-2.85-owl-mount-path.diff
+Patch7: sysvinit-2.85-owl-typos.diff
+Patch8: sysvinit-2.85-rh-alt-pidof.diff
+Patch9: sysvinit-2.85-rh-alt-owl-shutdown-log.diff
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -24,8 +31,15 @@ of all other programs.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
 
-%{expand:%%define optflags %optflags -Wall}
+%{expand:%%define optflags %optflags -Wall -D_GNU_SOURCE}
 
 %build
 make -C src CC=gcc CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-s -static" init
@@ -36,20 +50,20 @@ gcc start-stop-daemon.c -o start-stop-daemon -s $RPM_OPT_FLAGS
 
 %install
 rm -rf $RPM_BUILD_ROOT
-for I in sbin usr/bin usr/share/man/man{1,3,5,8} etc var/run dev; do
-	mkdir -p $RPM_BUILD_ROOT/$I
-done
-make -C src ROOT=$RPM_BUILD_ROOT BIN_OWNER=`id -nu` BIN_GROUP=`id -ng` install
+mkdir -p $RPM_BUILD_ROOT/{dev,sbin,usr/bin,%{_mandir}/man{1,5,8}}
+mkdir -p $RPM_BUILD_ROOT/{etc,bin,usr/include}
 
-install -m 700 src/bootlogd $RPM_BUILD_ROOT/sbin
-install -m 700 contrib/start-stop-daemon $RPM_BUILD_ROOT/sbin
+make -C src install \
+	ROOT=$RPM_BUILD_ROOT \
+	MANDIR=%{_mandir} \
+	BIN_OWNER=`id -nu` \
+	BIN_GROUP=`id -ng`
+
+install -m 700 src/bootlogd $RPM_BUILD_ROOT/sbin/
+install -m 700 contrib/start-stop-daemon $RPM_BUILD_ROOT/sbin/
 
 mkfifo -m 600 $RPM_BUILD_ROOT/dev/initctl
 ln -sf killall5 $RPM_BUILD_ROOT/sbin/pidof
-
-chmod 755 $RPM_BUILD_ROOT/usr/bin/utmpdump
-
-mv $RPM_BUILD_ROOT/usr/share/man $RPM_BUILD_ROOT/usr/man
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -67,9 +81,8 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc doc/Propaganda doc/Install
-%doc doc/sysvinit-%{version}.lsm contrib/start-stop-daemon.README
-%doc doc/bootlogd.README
+%doc doc/sysvinit-%{version}.lsm
+%doc contrib/start-stop-daemon.README doc/bootlogd.README
 %defattr(0700,root,root)
 /sbin/halt
 /sbin/init
@@ -80,18 +93,24 @@ fi
 /sbin/telinit
 /sbin/bootlogd
 %defattr(0755,root,root)
-/sbin/start-stop-daemon
 /sbin/killall5
 /sbin/pidof
 /sbin/runlevel
+/sbin/start-stop-daemon
 /usr/bin/last
 /usr/bin/lastb
 /usr/bin/mesg
 %attr(0700,root,tty) /usr/bin/wall
-%attr(0644,root,root) /usr/man/*/*
+%attr(0644,root,root) %{_mandir}/man*/*
 %attr(0600,root,root) /dev/initctl
 
 %changelog
+* Wed Apr 23 2003 Solar Designer <solar@owl.openwall.com>
+- Updated to 2.85 (which includes most of our old patches plus quite a few
+from ALT Linux).
+- Added more patches from ALT and Red Hat Linux, including for executable
+file path matching in start-stop-daemon and pidof(8), with minor changes.
+
 * Wed Feb 13 2002 Solar Designer <solar@owl.openwall.com>
 - Don't unlink the old /sbin/init on package upgrades as that would actually
 leave it pending for delete on process termination and prevent remounting

@@ -1,0 +1,256 @@
+diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-2.85/contrib/start-stop-daemon.c
+--- sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c	Tue Apr 22 21:31:25 2003
++++ sysvinit-2.85/contrib/start-stop-daemon.c	Tue Apr 22 21:41:54 2003
+@@ -12,13 +12,14 @@
+ #include <stdarg.h>
+ #include <signal.h>
+ #include <errno.h>
++#include <error.h>
+ #include <sys/stat.h>
+ #include <dirent.h>
+ #include <unistd.h>
+ #include <getopt.h>
+ #include <pwd.h>
+ 
+-#define VERSION "version 0.3, 1996-06-05"
++#define VERSION "Version 0.3+ALT/OW, 2003-04-23"
+ 
+ static int testmode = 0;
+ static int quietmode = 0;
+@@ -44,53 +45,39 @@ struct pid_list {
+ static struct pid_list *found = NULL;
+ static struct pid_list *killed = NULL;
+ 
+-static void *xmalloc(int size);
+-static void push(struct pid_list **list, int pid);
+-static void do_help(void);
+-static void parse_options(int argc, char * const *argv);
+-static int pid_is_exec(int pid, const struct stat *esb);
+-static int pid_is_user(int pid, int uid);
+-static int pid_is_cmd(int pid, const char *name);
+-static void check(int pid);
+-static void do_pidfile(const char *name);
+-static void do_procfs(void);
+-static void do_stop(void);
+-
+-#ifdef __GNUC__
+-static void fatal(const char *format, ...)
+-	__attribute__((noreturn, format(printf, 1, 2)));
+-static void badusage(const char *msg)
+-	__attribute__((noreturn));
+-#else
+-static void fatal(const char *format, ...);
+-static void badusage(const char *msg);
+-#endif
+-
+-static void
+-fatal(const char *format, ...)
++static void *
++xmalloc (size_t size)
+ {
+-	va_list arglist;
++	void   *r = malloc (size);
+ 
+-	fprintf(stderr, "%s: ", __progname);
+-	va_start(arglist, format);
+-	vfprintf(stderr, format, arglist);
+-	va_end(arglist);
+-	putc('\n', stderr);
+-	exit(2);
++	if (!r)
++		error (2, errno, "malloc");
++	return r;
+ }
+ 
+-
+-static void *
+-xmalloc(int size)
++static char *
++xstrdup (const char *s)
+ {
+-	void *ptr;
++	char   *r = strdup (s);
+ 
+-	ptr = malloc(size);
+-	if (ptr)
+-		return ptr;
+-	fatal("malloc(%d) failed", size);
++	if (!r)
++		error (2, errno, "strdup");
++	return r;
+ }
+ 
++static char *
++__attribute__ ((__format__ (__printf__, 2, 3)))
++xasprintf (char **ptr, const char *fmt, ...)
++{
++	va_list arg;
++
++	va_start (arg, fmt);
++	if (vasprintf (ptr, fmt, arg) < 0)
++		error (2, errno, "vasprintf");
++	va_end (arg);
++
++	return *ptr;
++}
+ 
+ static void
+ push(struct pid_list **list, int pid)
+@@ -108,7 +95,7 @@ static void
+ do_help(void)
+ {
+ 	printf("\
+-start-stop-daemon for Debian Linux - small and fast C version written by\n\
++start-stop-daemon for Linux - small and fast C version written by\n\
+ Marek Michalkiewicz <marekm@i17linuxb.ists.pwr.wroc.pl>, public domain.\n"
+ VERSION "\n\
+ \n\
+@@ -134,6 +121,7 @@ Exit status:  0 = done  1 = nothing done
+ 
+ 
+ static void
++__attribute__((noreturn))
+ badusage(const char *msg)
+ {
+ 	if (msg && *msg)
+@@ -234,15 +222,40 @@ parse_options(int argc, char * const *ar
+ 
+ 
+ static int
+-pid_is_exec(int pid, const struct stat *esb)
++pid_is_exec(int pid, const struct stat *esb, const char *exec)
+ {
+ 	struct stat sb;
+ 	char buf[32];
++	char value[PATH_MAX];
++	int rc;
++
++	if (!esb || !exec)
++		return 0;
+ 
+ 	sprintf(buf, "/proc/%d/exe", pid);
++
+ 	if (stat(buf, &sb) != 0)
+ 		return 0;
+-	return (sb.st_dev == esb->st_dev && sb.st_ino == esb->st_ino);
++
++	if (sb.st_dev == esb->st_dev && sb.st_ino == esb->st_ino)
++		return 1;
++
++	if ((rc = readlink(buf, value, sizeof(value) - 1)) > 0)
++	{
++		value[rc] = '\0';
++		if (!strcmp(exec, value))
++			return 1;
++		else
++		{
++			int len = strlen(exec);
++
++			if ((rc > len) && !strncmp(exec, value, len) &&
++			    !strcmp(" (deleted)", value + len))
++				return 1;
++		}
++	}
++
++	return 0;
+ }
+ 
+ 
+@@ -287,7 +300,7 @@ pid_is_cmd(int pid, const char *name)
+ static void
+ check(int pid)
+ {
+-	if (execname && !pid_is_exec(pid, &exec_stat))
++	if (execname && !pid_is_exec(pid, &exec_stat, execname))
+ 		return;
+ 	if (userspec && !pid_is_user(pid, user_id))
+ 		return;
+@@ -321,7 +334,7 @@ do_procfs(void)
+ 
+ 	procdir = opendir("/proc");
+ 	if (!procdir)
+-		fatal("opendir /proc: %s", strerror(errno));
++		error(2, errno, "opendir: /proc");
+ 
+ 	foundany = 0;
+ 	while ((entry = readdir(procdir)) != NULL) {
+@@ -332,26 +345,26 @@ do_procfs(void)
+ 	}
+ 	closedir(procdir);
+ 	if (!foundany)
+-		fatal("nothing in /proc - not mounted?");
++		error(2, 0, "nothing in /proc - not mounted?");
+ }
+ 
+ 
+ static void
+ do_stop(void)
+ {
+-	char what[1024];
++	char *what;
+ 	struct pid_list *p;
+ 
+ 	if (cmdname)
+-		strcpy(what, cmdname);
++		what = xstrdup(cmdname);
+ 	else if (execname)
+-		strcpy(what, execname);
++		what = xstrdup(execname);
+ 	else if (pidfile)
+-		sprintf(what, "process in pidfile `%s'", pidfile);
++		xasprintf(&what, "process in pidfile `%s'", pidfile);
+ 	else if (userspec)
+-		sprintf(what, "process(es) owned by `%s'", userspec);
++		xasprintf(&what, "process(es) owned by `%s'", userspec);
+ 	else
+-		fatal("internal error, please report");
++		error(2, 0, "internal error, please report");
+ 
+ 	if (!found) {
+ 		if (quietmode <= 0)
+@@ -365,8 +378,8 @@ do_stop(void)
+ 		else if (kill(p->pid, signal_nr) == 0)
+ 			push(&killed, p->pid);
+ 		else
+-			printf("%s: warning: failed to kill %d: %s\n",
+-			       __progname, p->pid, strerror(errno));
++			error(0, errno, "warning: failed to send signal %d to %d",
++			      signal_nr, p->pid);
+ 	}
+ 	if (quietmode < 0 && killed) {
+ 		printf("stopped %s (pid", what);
+@@ -374,6 +387,8 @@ do_stop(void)
+ 			printf(" %d", p->pid);
+ 		printf(").\n");
+ 	}
++
++	free(what);
+ }
+ 
+ 
+@@ -387,14 +402,14 @@ main(int argc, char **argv)
+ 	argv += optind;
+ 
+ 	if (execname && stat(execname, &exec_stat))
+-		fatal("stat %s: %s", execname, strerror(errno));
++		error(2, errno, "stat: %s", execname);
+ 
+ 	if (userspec && sscanf(userspec, "%d", &user_id) != 1) {
+ 		struct passwd *pw;
+ 
+ 		pw = getpwnam(userspec);
+ 		if (!pw)
+-			fatal("user `%s' not found\n", userspec);
++			error(2, 0, "user `%s' not found", userspec);
+ 
+ 		user_id = pw->pw_uid;
+ 	}
+@@ -425,6 +440,6 @@ main(int argc, char **argv)
+ 		printf("starting %s ...\n", startas);
+ 	*--argv = startas;
+ 	execv(startas, argv);
+-	fatal("unable to start %s: %s", startas, strerror(errno));
++	error(2, errno, "execv: %s", startas);
++	return 2;
+ }
+-
