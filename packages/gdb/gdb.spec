@@ -1,9 +1,9 @@
-# $Id: Owl/packages/gdb/gdb.spec,v 1.7 2001/07/12 04:39:42 solar Exp $
+# $Id: Owl/packages/gdb/gdb.spec,v 1.8 2002/02/01 16:05:45 mci Exp $
 
 Summary: A GNU source-level debugger for C, C++ and Fortran.
 Name: gdb
 Version: 5.0
-Release: 8owl
+Release: owl8
 License: GPL
 Group: Development/Debuggers
 Source0: ftp://sourceware.cygnus.com/pub/gdb/releases/gdb-%{version}.tar.bz2
@@ -14,10 +14,10 @@ Patch3: gdb-5.0-pld-ncurses.diff
 Patch4: gdb-5.0-pld-readline.diff
 Patch5: gdb-5.0-rh-symchanges.diff
 Patch6: gdb-5.0-owl-warnings.diff
-Buildroot: /var/rpm-buildroot/%{name}-root
+PreReq: /sbin/install-info
 BuildRequires: ncurses-devel >= 5.0
 BuildRequires: readline-devel >= 4.1
-Prereq: /sbin/install-info
+BuildRoot: /override/%{name}-%{version}
 
 %description
 GDB is a full featured, command driven debugger.  GDB allows you to
@@ -104,6 +104,9 @@ fi
 %{_infodir}/mmalloc.info*
 
 %changelog
+* Fri Feb 01 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Thu Jul 12 2001 Solar Designer <solar@owl.openwall.com>
 - Corrected the package description.
 - Corrected Alpha builds.
