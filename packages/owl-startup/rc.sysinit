@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/owl-startup/rc.sysinit,v 1.5 2001/07/27 20:49:03 solar Exp $
+# $Id: Owl/packages/owl-startup/rc.sysinit,v 1.6 2001/07/27 20:52:27 solar Exp $
 
 # Set the initial default search path for use by startup scripts.
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
@@ -78,13 +78,13 @@ if [ $STATUS -gt 1 ]; then
 	reboot -f
 fi
 
-echo "Remounting root filesystem in read-write mode"
-mount -n -o remount,rw /
-
-# Enter / into mtab.
 if [ ! -e /.Owl-CD-ROM ]; then
+	echo "Remounting root filesystem in read-write mode"
+	mount -n -o remount,rw /
+
 	> /etc/mtab
 fi
+# Enter / into mtab.
 mount -f /
 
 # Mount all local filesystems, including procfs.
