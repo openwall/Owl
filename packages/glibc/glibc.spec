@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.74 2005/01/14 21:39:23 galaxy Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.75 2005/01/14 21:42:30 galaxy Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -450,10 +450,10 @@ fi
 %files compat-fake
 
 %changelog
-* Sun Jun 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.3-owl1.2004061600
+* Sun Jun 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.3.2004061600-owl1
 - Removed commented out block in %%post.
 
-* Sun Jun 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.3-owl0.2004061600
+* Sun Jun 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.3.2004061600-owl0
 - Updated to CVS version 2.3.3 (2004061600).
 - Spec file was revised and reworked.
 - Imported a bunch of patches from ALT Linux.
