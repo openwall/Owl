@@ -1,4 +1,4 @@
-# $Id: Owl/packages/nc/nc.spec,v 1.2 2002/12/29 21:16:14 solar Exp $
+# $Id: Owl/packages/nc/nc.spec,v 1.3 2002/12/29 21:40:38 solar Exp $
 
 Summary: Reads and writes data across network connections using TCP or UDP.
 Name: nc
@@ -13,11 +13,11 @@ Patch2: nc-3.2-owl-fixes.diff
 BuildRoot: /override/%{name}-%{version}
 
 %description
-The nc package contains Netcat (the program is actually nc), a simple
+The nc package contains netcat (the program is actually nc), a simple
 utility for reading and writing data across network connections, using
-the TCP or UDP protocols.  Netcat is intended to be a reliable back-end
+the TCP or UDP protocols.  netcat is intended to be a reliable back-end
 tool which can be used directly or easily driven by other programs and
-scripts.  Netcat is also a feature-rich network debugging and exploration
+scripts.  netcat is also a feature-rich network debugging and exploration
 tool, since it can create many different connections and has many
 built-in capabilities.
 
