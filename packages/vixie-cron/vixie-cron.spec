@@ -1,9 +1,9 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.6 2000/12/01 16:35:19 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.7 2000/12/01 18:02:05 solar Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron)
 Name: vixie-cron
 Version: 3.0.2.7
-Release: 6owl
+Release: 7owl
 Copyright: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%{version}.tar.gz
@@ -66,15 +66,26 @@ rm -rf $RPM_BUILD_ROOT
 grep ^crontab: /etc/group &> /dev/null || groupadd -g 160 crontab
 grep ^crontab: /etc/passwd &> /dev/null ||
 	useradd -g crontab -u 160 -d / -s /bin/false -M crontab
+rm -f /var/run/crond.restart
+if [ $1 -ge 2 ]; then
+	/etc/rc.d/init.d/crond status && touch /var/run/crond.restart || :
+	/etc/rc.d/init.d/crond stop || :
+fi
 
 %post
 grep ^crontab: /etc/group &> /dev/null || chmod 700 /usr/bin/crontab
 /sbin/chkconfig --add crond
-test -r /var/run/crond.pid && /etc/rc.d/init.d/crond restart >&2 || :
+if [ -f /var/run/crond.restart ]; then
+	/etc/rc.d/init.d/crond start
+elif [ -f /var/run/crond.pid ]; then
+	/etc/rc.d/init.d/crond restart
+fi
+rm -f /var/run/crond.restart
 
 %preun
-if [ $1 = 0 ]; then
-    /sbin/chkconfig --del crond
+if [ $1 -eq 0 ]; then
+	/etc/rc.d/init.d/crond stop || :
+	/sbin/chkconfig --del crond
 fi
 
 %files
@@ -98,6 +109,7 @@ fi
 %changelog
 * Fri Dec 01 2000 Solar Designer <solar@owl.openwall.com>
 - Adjusted vixie-cron.init for owl-startup.
+- Restart crond after package upgrades in an owl-startup compatible way.
 
 * Sat Oct 28 2000 Solar Designer <solar@owl.openwall.com>
 - Added "|| :" to the test in %post, as it should return success to RPM.
