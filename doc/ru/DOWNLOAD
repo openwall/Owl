@@ -10,13 +10,11 @@ Owl доступна на следующих официальных зеркалах:
 ftp://ftp1.ru.openwall.com/pub/Owl/	(Россия)
 ftp://ftp2.ru.openwall.com/pub/Owl/	(Россия)
 ftp://ftp.pl.openwall.com/pub/Owl/	(Польша)
-ftp://ftp.ua.openwall.com/pub/Owl/	(Украина)
 ftp://ftp.cz.openwall.com/pub/Owl/	(Чешская Республика)
 ftp://gd.tuwien.ac.at/opsys/linux/Owl/	(Австрия)
 	http://gd.tuwien.ac.at/opsys/linux/Owl/
 	rsync://gd.tuwien.ac.at/opsys/linux/Owl/
 ftp://ftp.mathematik.uni-marburg.de/pub/mirror/openwall/Owl/	(Германия)
-ftp://ftp.busymonkey.org/pub/Owl/	(США)
 ftp://ftp.wiretapped.net/pub/Owl/	(Австралия)
 
 Каждому релизу или ветке Owl соответствует отдельный каталог со
@@ -62,4 +60,4 @@ CVSROOT=anoncvs@anoncvs.owl.openwall.com:/cvs
 использовать сжатие при любом способе доступа - обычно посредством
 указания опции -z3 для CVS или включив сжатие в настройках SSH-клиента.
 
-$Id: Owl/doc/ru/DOWNLOAD,v 1.5 2003/01/18 09:54:05 solar Exp $
+$Id: Owl/doc/ru/DOWNLOAD,v 1.6 2003/01/22 12:11:29 solar Exp $

@@ -10,13 +10,11 @@ Owl can be downloaded from the following official mirrors:
 ftp://ftp1.ru.openwall.com/pub/Owl/	(Russia)
 ftp://ftp2.ru.openwall.com/pub/Owl/	(Russia)
 ftp://ftp.pl.openwall.com/pub/Owl/	(Poland)
-ftp://ftp.ua.openwall.com/pub/Owl/	(Ukraine)
 ftp://ftp.cz.openwall.com/pub/Owl/	(Czech Republic)
 ftp://gd.tuwien.ac.at/opsys/linux/Owl/	(Austria)
 	http://gd.tuwien.ac.at/opsys/linux/Owl/
 	rsync://gd.tuwien.ac.at/opsys/linux/Owl/
 ftp://ftp.mathematik.uni-marburg.de/pub/mirror/openwall/Owl/	(Germany)
-ftp://ftp.busymonkey.org/pub/Owl/	(USA)
 ftp://ftp.wiretapped.net/pub/Owl/	(Australia)
 
 There's a subdirectory for each Owl release or branch, with the
@@ -62,4 +60,4 @@ compression with either method of access to the anonymous CVS server,
 typically by specifying the -z3 option to CVS and/or "Compression yes"
 in the SSH client's configuration file.
 
-$Id: Owl/doc/DOWNLOAD,v 1.19 2003/01/06 17:11:41 solar Exp $
+$Id: Owl/doc/DOWNLOAD,v 1.20 2003/01/22 12:11:29 solar Exp $
