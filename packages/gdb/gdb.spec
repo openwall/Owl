@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gdb/gdb.spec,v 1.11 2003/10/29 19:22:05 solar Exp $
+# $Id: Owl/packages/gdb/gdb.spec,v 1.12 2003/10/29 19:29:54 solar Exp $
 
 Summary: A GNU source-level debugger for C, C++ and Fortran.
 Name: gdb
@@ -65,8 +65,8 @@ rm -rf $RPM_BUILD_ROOT
 make install install-info \
 	prefix=$RPM_BUILD_ROOT%_prefix \
 	bindir=$RPM_BUILD_ROOT%_bindir \
-        includedir=$RPM_BUILD_ROOT%_includedir \
-        libdir=$RPM_BUILD_ROOT%_libdir \
+	includedir=$RPM_BUILD_ROOT%_includedir \
+	libdir=$RPM_BUILD_ROOT%_libdir \
 	infodir=$RPM_BUILD_ROOT%_infodir \
 	mandir=$RPM_BUILD_ROOT%_mandir \
 	DESTDIR=$RPM_BUILD_ROOT
