@@ -1,0 +1,96 @@
+--- modutils-2.4.16/insmod/modprobe.c.orig	Thu Jan 31 15:19:17 2002
++++ modutils-2.4.16/insmod/modprobe.c	Mon Jun 10 00:45:53 2002
+@@ -86,6 +86,7 @@
+ static char *conf_file = NULL;
+ static int runit = 1;
+ static int quiet = 0;
++static int listonly = 0;
+ static int debug = 0;
+ 
+ static NODE *in_kernel;
+@@ -975,6 +976,11 @@
+ 	int used_ex = 0;
+ 	const char *ex;
+ 
++	if (listonly) {
++		printf("%s\n", desc->kname);
++		return 0;
++	}
++
+ 	/* Something new for us to do? Or is the module already installed... */
+ 	if (desc == NULL || strcmp(desc->objkey, "null") == 0 ||
+ 	    (runit && lookup_key(in_kernel, desc->kname) != NULL))
+@@ -1466,11 +1472,13 @@
+ 		"\n"
+ 		"options:\n"
+ 		"\t-a, --all                  Load _all_ matching modules\n"
++		"\t-b, --basedir              Use an image of a module tree.\n"
+ 		"\t-c, --showconfig           Show current configuration\n"
+ 		"\t-d, --debug                Print debugging information\n"
+ 		"\t-h, --help                 Print this message\n"
+ 		"\t-k, --autoclean            Set 'autoclean' on loaded modules\n"
+ 		"\t-l, --list                 List matching modules\n"
++		"\t-L, --listonly             Only list modules required to satisfy dependencies\n"
+ 		"\t-n, --show                 Don't actually perform the action\n"
+ 		"\t-q, --quiet                Quiet operation\n"
+ 		"\t-r, --remove               Remove module (stacks) or do autoclean\n"
+@@ -1487,6 +1495,7 @@
+ 	int ret = 0;
+ 	int loadall = 0; /* Load only one module out of a list */
+ 	char *type = NULL; /* Search in all path[] */
++	char *base_dir = "";
+ 	int remove = 0;
+ 	int showconfig = 0;
+ 	int list = 0;
+@@ -1495,9 +1504,11 @@
+ 	struct option long_opts[] = {
+ 		{"type", 1, 0, 't'},
+ 		{"all", 0, 0, 'a'},
++		{"basedir", 1, 0, 'b'},
+ 		{"debug", 0, 0, 'd'},
+ 		{"showconfig", 0, 0, 'c'},
+ 		{"list", 0, 0, 'l'},
++		{"listonly", 0, 0, 'L'},
+ 		{"show", 0, 0, 'n'},
+ 		{"remove", 0, 0, 'r'},
+ 		{"verbose", 0, 0, 'v'},
+@@ -1553,7 +1564,7 @@
+ 	if (safemode)
+ 		--argc;		/* Do not scan last parameter in getopt */
+ 
+-	while ((o = getopt_long(argc, argv, "t:acdhlnqrvksC:V",
++	while ((o = getopt_long(argc, argv, "t:ab:cdhlLnqrvksC:V",
+ 				&long_opts[0], NULL)) != EOF) {
+ 		switch (o) {
+ 		case 't': /* type of module */
+@@ -1564,6 +1575,10 @@
+ 			loadall = 1;
+ 			break;
+ 
++		case 'b':
++			base_dir = optarg;
++			break;
++
+ 		case 'c':
+ 			showconfig = 1;
+ 			break;
+@@ -1579,6 +1594,10 @@
+ 			list = 1;
+ 			break;
+ 
++		case 'L':
++			listonly = 1;
++			break;
++
+ 		case 'n':
+ 			runit = 0;
+ 			break;
+@@ -1625,7 +1644,7 @@
+ 	}
+ 	/* else */
+ 
+-	if (config_read(1, NULL, "", conf_file) == -1)
++	if (config_read(1, NULL, base_dir, conf_file) == -1)
+ 		return -1;
+ 	/* else */
+ 	new_NODE("null", "null", &in_depfile);

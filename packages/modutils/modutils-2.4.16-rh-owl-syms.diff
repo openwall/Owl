@@ -1,0 +1,89 @@
+--- modutils-2.4.16/depmod/depmod.c.orig	Sun Apr 28 10:53:35 2002
++++ modutils-2.4.16/depmod/depmod.c	Mon Jun 10 00:36:58 2002
+@@ -1540,7 +1540,9 @@
+ 		{"errsyms", 0, 0, 'e'},
+ 		{"filesyms", 1, 0, 'F'},
+ 		{"help", 0, 0, 'h'},
++		{"ignore-versions", 0, 0, 'i'},
+ 		{"show", 0, 0, 'n'},
++		{"system-map", 1, 0, 'm'}, /* backward compatibility, same as 'F' */
+ 		{"quick", 0, 0, 'A'},
+ 		{"quiet", 0, 0, 'q'},
+ 		{"syslog", 0, 0, 's'},
+@@ -1553,7 +1555,7 @@
+ 
+ 	error_file = "depmod";
+ 
+-	while ((o = getopt_long(argc, argv, "aAb:C:eF:hnqsvVru",
++	while ((o = getopt_long(argc, argv, "aAb:C:eF:himnqsvVru",
+ 				&long_opts[0], NULL)) != EOF) {
+ 		switch (o) {
+ 		case 'A':
+@@ -1576,10 +1578,16 @@
+ 			return 0;
+ 			break;
+ 
++		case 'i':
++			ignore_suffix = 1;
++			break;
++
+ 		case 'C':
+ 			conf_file = optarg;
+ 			break;
+ 
++		case 'm':
++			error("Warning: -m is deprecated; please use -F.");
+ 		case 'F':
+ 			file_syms = optarg;
+ 			break;
+@@ -1626,7 +1634,7 @@
+ 	argc -= optind;
+ 	argv += optind;
+ 
+-	ignore_suffix = file_syms != NULL;
++	ignore_suffix += (file_syms != NULL);
+ 
+ 	if (stdmode || argc == 0) {
+ 		/* option -a is the default without arguments */
+--- modutils-2.4.16/man/depmod.8.orig	Sun Apr 28 12:39:21 2002
++++ modutils-2.4.16/man/depmod.8	Mon Jun 10 00:33:39 2002
+@@ -8,7 +8,7 @@
+ depmod \- handle dependency descriptions for loadable kernel modules
+ .SH SYNOPSIS
+ .B depmod
+-[\-aA] [\-ehnqrsuvV]
++[\-aA] [\-eihnqrsuvV]
+ .RI [\-C\  configfile "] [\-F\ " kernelsyms "] [\-b " basedirectory ]
+ .RI [ forced_version ]
+ .br
+@@ -86,6 +86,19 @@
+ .BR \-e ", " \-\-errsyms
+ Show all the unresolved symbols for each module.
+ .TP
++.BR \-i ", " \-\-ignore-versions
++Ignore symbol versions when building dependency list. This is useful
++especially if you use a versioned kernel and want to build dependencies
++against a System.map file (see the
++.B \-F
++option). Use this with care, because if the symbol versions don't match,
++.B modprobe
++or
++.B insmod
++won't be able to load the modules eventhough
++.B depmod
++succeeds.
++.TP
+ .BR \-h ", " \-\-help
+ Display a summary of options and immediately exit.
+ .TP
+@@ -196,6 +209,10 @@
+ symbols.  However you can use a
+ .I System.map
+ even with versioned symbols.
++For compatibility,                                                            
++.B "\-m kernelsyms"                                                           
++is identical to                                                               
++.B "\-F kernelsyms"
+ .SH CONFIGURATION
+ The behavior of
+ .B depmod

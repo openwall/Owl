@@ -1,0 +1,30 @@
+--- modutils-2.4.16/insmod/insmod.c.orig	Sun Apr 28 11:00:14 2002
++++ modutils-2.4.16/insmod/insmod.c	Mon Jun 10 08:47:02 2002
+@@ -1602,7 +1602,7 @@
+ 	int force_kallsyms = 0;
+ 	int persist_parms = 0;	/* does module have persistent parms? */
+ 	int i;
+-	int gpl;
++	int gpl_status, gpl;
+ 
+ 	error_file = "insmod";
+ 
+@@ -1799,7 +1799,8 @@
+ 		obj_set_symbol_compare(f, ncv_strcmp, ncv_symbol_hash);
+ 
+ 	/* Let the module know about the kernel symbols.  */
+-	gpl = obj_gpl_license(f, NULL) == 0;
++	gpl_status = obj_gpl_license(f, NULL);
++	gpl = (gpl_status == 0);
+ 	add_kernel_symbols(f, gpl);
+ 
+ #ifdef	ARCH_ppc64
+@@ -1826,7 +1827,7 @@
+ 
+ 	arch_create_got(f);     /* DEPMOD */
+ 	if (!obj_check_undefineds(f, quiet)) {	/* DEPMOD, obj_clear_undefineds */
+-		if (!gpl && !quiet) {
++		if ( !quiet && gpl_status >= 2 ) {
+ 			if (gplonly_seen)
+ 				error("\n"
+ 				      "Hint: You are trying to load a module without a GPL compatible license\n"

@@ -1,14 +1,16 @@
-# $Id: Owl/packages/modutils/modutils.spec,v 1.10 2002/02/07 00:49:45 solar Exp $
+# $Id: Owl/packages/modutils/modutils.spec,v 1.11 2002/06/11 08:17:33 mci Exp $
 
 Summary: Kernel module utilities.
 Name: modutils
-Version: 2.3.21
+Version: 2.4.16
 Release: owl1
 License: GPL
 Group: System Environment/Kernel
-Source: ftp://ftp.kernel.org/pub/linux/utils/kernel/modutils/v2.3/modutils-%{version}.tar.gz
-Patch0: modutils-2.3.17-owl-alias.diff
-Patch1: modutils-2.3.17-rh-systemmap.diff
+Source: ftp://ftp.kernel.org/pub/linux/utils/kernel/modutils/v2.4/modutils-%{version}.tar.gz
+Patch0: modutils-2.4.16-alt-GPL.diff
+Patch1: modutils-2.4.16-alt-modprobe-bL.diff
+Patch2: modutils-2.4.16-alt-owl-aliases.diff
+Patch3: modutils-2.4.16-rh-owl-syms.diff
 PreReq: /sbin/chkconfig
 Obsoletes: modules
 BuildRoot: /override/%{name}-%{version}
@@ -23,13 +25,16 @@ modules are device drivers and filesystems, as well as some other things.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
+%patch3 -p1
+
+%{expand:%%define optflags %optflags -Wall}
 
 %build
 %ifarch sparcv9
 %define _target_platform sparc-%{_vendor}-%{_target_os}
 %endif
-%configure --disable-compat-2-0 --disable-kerneld --enable-insmod-static \
-	--exec_prefix=/
+%configure --disable-compat-2-0 --disable-kerneld --exec_prefix=/
 make dep all
 
 %install
@@ -37,7 +42,12 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/sbin
 %makeinstall sbindir=$RPM_BUILD_ROOT/sbin
 
-find $RPM_BUILD_ROOT/sbin -type l -a -name '*.static' -print0 | xargs -r0 rm --
+rm -f $RPM_BUILD_ROOT%_mandir/man8/{kdstat,kerneld}.8                          
+                                                                               
+# security hole, works poorly anyway                                           
+rm -f $RPM_BUILD_ROOT/sbin/request-route
+
+touch $RPM_BUILD_ROOT/etc/modules.conf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -52,10 +62,17 @@ fi
 
 %files
 %defattr(-,root,root)
+%doc README CREDITS TODO ChangeLog example/kallsyms.c include/kallsyms.h
+%config(noreplace) /etc/modules.conf
 /sbin/*
 %{_mandir}/*/*
 
 %changelog
+* Mon Jun 10 2002 Michail Litvak <mci@owl.openwall.com>
+- v2.4.16
+- reviewed patches, added patches from ALT
+- build with -Wall
+
 * Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions
 

@@ -1,0 +1,81 @@
+--- modutils-2.4.16/util/alias.h.orig	Sun Apr 28 11:00:14 2002
++++ modutils-2.4.16/util/alias.h	Mon Jun 10 00:16:43 2002
+@@ -116,6 +116,7 @@
+ 	"char-major-10-144 nvram",	/* from Tigran Aivazian <tigran@sco.COM> */
+ 	"char-major-10-157 applicom",	/* from David Woodhouse <dwmw2@infradead.org> */
+ 	"char-major-10-175 agpgart",    /* /dev/agpgart GART AGP mapping access */
++	"char-major-10-181 toshiba",	/* /dev/toshiba - for Toshiba notebooks */
+ 	"char-major-10-184 microcode",	/* Tigran Aivazian <tigran@veritas.com> */
+ 
+ 	"char-major-14 soundcore",
+@@ -141,6 +142,7 @@
+ 	"char-major-108 ppp_generic",
+ 	"char-major-109 lvm-mod",
+ 	"char-major-161 ircomm-tty",
++	"char-major-195 NVdriver",
+ 	"char-major-200 vxspec",
+ 
+ 	"dos msdos",
+@@ -162,7 +164,7 @@
+ 				/* PF_BRIDGE	7  Multiprotocol bridge */
+ 				/* PF_AAL5	8  Reserved for Werner's ATM */
+ 				/* PF_X25	9  Reserved for X.25 project */
+-	"net-pf-10 off",	/* PF_INET6	10 IP version 6 */
++	"net-pf-10 ipv6",	/* PF_INET6	10 IP version 6 */
+ 
+ 	/* next two from <dairiki@matthews.dairiki.org>  Thanks! */
+ 	"net-pf-17 af_packet",
+@@ -197,12 +199,36 @@
+ 	"ppp-compress-24 ppp_deflate",
+ 	"ppp-compress-26 ppp_deflate",
+ 
++	/* crypto patch support */
++	"loop-xfer-gen-0 loop_gen",
++	"loop-xfer-gen-10 loop_gen",
++	"cipher-2 des",
++	"cipher-4 blowfish",
++	"cipher-6 idea",
++	"cipher-7 serp6f",
++	"cipher-8 mars6",
++	"cipher-11 rc62",
++	"cipher-15 dfc2",
++	"cipher-16 rijndael",
++	"cipher-17 rc5",
++
+ #ifndef __sparc__
+ 	"parport_lowlevel parport_pc",
+ #else
+         "parport_lowlevel parport_ax",
+ #endif
+ 
++	/* To be able to attach some dongles */
++	"irlan0 irlan",
++	"irda-dongle-0 tekram",
++	"irda-dongle-1 esi",
++	"irda-dongle-2 actisys",
++	"irda-dongle-3 actisys",
++	"irda-dongle-4 girbil",
++	"irda-dongle-5 litelink",
++	"irda-dongle-6 airport",
++	"irda-dongle-7 old_belkin",
++
+ 	"usbdevfs usbcore",
+ 
+ 	NULL			/* marks the end of the list! */
+@@ -227,6 +253,8 @@
+  */
+ char *above[] =
+ {
++	"hid keybdev mousedev",                                                                             
++	"wacom evdev",
+ 	NULL			/* marks the end of the list! */
+ };
+ 
+@@ -247,6 +275,7 @@
+  */
+ char *prune[] =
+ {
++	".rhkmvtag",
+ 	"modules.dep",
+ 	"modules.generic_string",
+ 	"modules.pcimap",
