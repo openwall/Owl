@@ -1,14 +1,15 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.16 2000/12/11 04:21:15 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.17 2000/12/16 00:15:09 solar Exp $
 
 Summary: Initial set of configuration files
 Name: owl-etc
-Version: 0.4
-Release: 2owl
+Version: 0.5
+Release: 1owl
 Copyright: public domain
 Group: System Environment/Base
 Source0: passwd
 Source1: shadow
 Source2: group
+Source3: fstab
 Source10: securetty
 Source11: shells
 Source12: host.conf
@@ -42,6 +43,7 @@ rm -rf $RPM_BUILD_ROOT
 %verify(not md5 size mtime) %config(noreplace) /etc/passwd
 %verify(not md5 size mtime) %config(noreplace) %attr(400,root,root) /etc/shadow
 %verify(not md5 size mtime) %config(noreplace) /etc/group
+%verify(not md5 size mtime) %config(noreplace) %attr(600,root,root) /etc/fstab
 %attr(600,root,root) /etc/securetty
 %config /etc/shells
 %config(noreplace) /etc/host.conf
@@ -56,6 +58,10 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(755,root,root) /etc/profile.d
 
 %changelog
+* Sat Dec 16 2000 Solar Designer <solar@owl.openwall.com>
+- Provide initial fstab here.
+- proc group.
+
 * Mon Dec 11 2000 Solar Designer <solar@owl.openwall.com>
 - Conflicts: setup
 
