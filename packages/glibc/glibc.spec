@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.67 2004/12/25 20:33:16 galaxy Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.68 2004/12/25 20:53:11 galaxy Exp $
 
 %define BUILD_PROFILE 0
 
@@ -337,7 +337,7 @@ fi
 %files compat-fake
 
 %changelog
-* Wed Dec 08 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl3
+* Wed Dec 25 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl3
 - Fixed compat-fake's provides to deal with Owl 1.1 release upgrades
 
 * Wed Dec 08 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl2
