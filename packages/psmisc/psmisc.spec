@@ -1,12 +1,13 @@
-# $Id: Owl/packages/psmisc/psmisc.spec,v 1.8 2005/02/18 23:48:08 galaxy Exp $
+# $Id: Owl/packages/psmisc/psmisc.spec,v 1.9 2005/02/21 01:14:10 solar Exp $
 
 Summary: Utilities for managing processes on your system.
 Name: psmisc
 Version: 21.5
-Release: owl0
+Release: owl1
 License: BSD
 Group: Applications/System
-Source: ftp://prdownloads.sourceforge.net/psmisc/psmisc-%version.tar.gz
+URL: http://psmisc.sourceforge.net
+Source: http://prdownloads.sourceforge.net/psmisc/psmisc-%version.tar.gz
 Patch0: psmisc-21.5-owl-termcap.diff
 Patch1: psmisc-21.5-owl-restricted-proc.diff
 BuildRoot: /override/%name-%version
@@ -44,6 +45,9 @@ rm -rf %buildroot
 %_mandir/man1/pstree.1*
 
 %changelog
+* Mon Feb 21 2005 Solar Designer <solar@owl.openwall.com> 21.5-owl1
+- Added URL tag, corrected Source URL.
+
 * Sat Feb 19 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 21.5-owl0
 - Updated to 21.5.
 - Dropped unneeded Makefile patch.
