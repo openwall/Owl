@@ -1,12 +1,13 @@
-# $Id: Owl/packages/gpm/gpm.spec,v 1.5 2001/06/26 03:05:44 solar Exp $
+# $Id: Owl/packages/gpm/gpm.spec,v 1.6 2001/06/27 00:12:54 solar Exp $
 
 # this defines the library version that this package builds.
 %define	LIBVER		1.18.0
+%define BUILD_GPM_ROOT	'no'
 
 Summary: A mouse server for the Linux console.
 Name: gpm
 Version: 1.19.3
-Release: 7owl
+Release: 8owl
 License: GPL
 Group: System Environment/Daemons
 Source0: ftp://ftp.systemy.it/pub/develop/%{name}-%{version}.tar.gz
@@ -37,6 +38,7 @@ Group: Development/Libraries
 The gpm-devel package contains the libraries and header files needed
 for the development of mouse driven programs for the console.
 
+%if "%{BUILD_GPM_ROOT}"=="'yes'"
 %package root
 Requires: %{name} = %{version}-%{release}
 Summary: A mouse server add-on which draws pop-up menus on the console.
@@ -45,6 +47,7 @@ Group: System Environment/Daemons
 %description root
 The gpm-root program allows pop-up menus to appear on a text console
 at the click of a mouse button.
+%endif
 
 %prep
 %setup -q
@@ -140,13 +143,18 @@ fi
 %{_libdir}/libgpm.a
 %{_libdir}/libgpm.so
 
+%if "%{BUILD_GPM_ROOT}"=="'yes'"
 %files root
 %defattr(-,root,root)
 %config %{_sysconfdir}/gpm-root.conf
 %{_bindir}/gpm-root
 %{_mandir}/man1/gpm-root.1*
+%endif
 
 %changelog
+* Wed Jun 27 2001 Solar Designer <solar@owl.openwall.com>
+- Disabled packaging gpm-root by default.
+
 * Tue Jun 26 2001 Solar Designer <solar@owl.openwall.com>
 - Moved gpm-root to a separate subpackage.
 - Disabled support for ~/.gpm-root because of too many security issues
