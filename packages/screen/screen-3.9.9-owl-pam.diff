@@ -1,22 +1,22 @@
---- screen-3.9.8/Makefile.in.orig	Fri Sep  1 19:07:26 2000
-+++ screen-3.9.8/Makefile.in	Tue Mar  6 17:42:53 2001
-@@ -50,12 +50,12 @@
+--- screen-3.9.9/Makefile.in.orig	Fri May 25 17:50:54 2001
++++ screen-3.9.9/Makefile.in	Tue Jun 12 22:23:30 2001
+@@ -52,12 +52,12 @@
  
  CFILES=	screen.c ansi.c fileio.c mark.c misc.c resize.c socket.c \
  	search.c tty.c term.c window.c utmp.c loadav.c putenv.c help.c \
 -	termcap.c input.c attacher.c pty.c process.c display.c comm.c \
 +	termcap.c input.c attacher.c appl_userpass.c pty.c process.c display.c comm.c \
  	kmapdef.c acls.c braille.c braille_tsi.c logfile.c layer.c \
- 	sched.c teln.c nethack.c
+ 	sched.c teln.c nethack.c utf8.c
  OFILES=	screen.o ansi.o fileio.o mark.o misc.o resize.o socket.o \
  	search.o tty.o term.o window.o utmp.o loadav.o putenv.o help.o \
 -	termcap.o input.o attacher.o pty.o process.o display.o comm.o \
 +	termcap.o input.o attacher.o appl_userpass.o pty.o process.o display.o comm.o \
  	kmapdef.o acls.o braille.o braille_tsi.o logfile.o layer.o \
- 	sched.o teln.o nethack.o
+ 	sched.o teln.o nethack.o utf8.o
  
---- screen-3.9.8.orig/_pam_userpass.h	Thu Jan  1 03:00:00 1970
-+++ screen-3.9.8/_pam_userpass.h	Sat Mar  3 13:12:49 2001
+--- screen-3.9.9/_pam_userpass.h.orig	Tue Jun 12 22:21:41 2001
++++ screen-3.9.9/_pam_userpass.h	Tue Jun 12 22:21:41 2001
 @@ -0,0 +1,12 @@
 +#ifndef __PAM_USERPASS_H
 +#define __PAM_USERPASS_H
@@ -30,8 +30,8 @@
 +#define USERPASS_USER_FIXED		3
 +
 +#endif
---- screen-3.9.8.orig/appl_userpass.c	Thu Jan  1 03:00:00 1970
-+++ screen-3.9.8/appl_userpass.c	Sat Mar  3 13:12:49 2001
+--- screen-3.9.9/appl_userpass.c.orig	Tue Jun 12 22:21:41 2001
++++ screen-3.9.9/appl_userpass.c	Tue Jun 12 22:21:41 2001
 @@ -0,0 +1,51 @@
 +#include <string.h>
 +#include <stdlib.h>
@@ -84,28 +84,19 @@
 +
 +	return PAM_SUCCESS;
 +}
---- screen-3.9.8/attacher.c.orig	Sun Jul  2 20:30:16 2000
-+++ screen-3.9.8/attacher.c	Thu Mar  8 00:04:54 2001
+--- screen-3.9.9/attacher.c.orig	Sat Apr 28 16:26:42 2001
++++ screen-3.9.9/attacher.c	Tue Jun 12 22:21:41 2001
 @@ -33,6 +33,9 @@
  #include "screen.h"
  #include "extern.h"
-
+ 
 +#include <security/pam_appl.h>
 +#include "pam_userpass.h"
 +
  #include <pwd.h>
  
  static sigret_t AttacherSigInt __P(SIGPROTOARG);
-@@ -350,7 +353,7 @@
- 
- 
- #if defined(DEBUG) || !defined(DO_NOT_POLL_MASTER)
--static int AttacherPanic;
-+static int AttacherPanic = 0;
- #endif
- 
- #ifdef DEBUG
-@@ -718,40 +721,20 @@
+@@ -720,40 +723,20 @@
      }
  }				/* LockTerminal */
  
@@ -155,7 +146,7 @@
  
    debug("screen_builtin_lck looking in gcos field\n");
    strncpy(fullname, ppp->pw_gecos, sizeof(fullname) - 9);
-@@ -780,16 +763,28 @@
+@@ -782,16 +765,28 @@
            AttacherFinit(SIGARG);
            /* NOTREACHED */
          }
@@ -194,10 +185,9 @@
        debug("screen_builtin_lck: NO!!!!!\n");
      }
    debug("password ok.\n");
-
---- screen-3.9.8/configure.in.orig	Wed Jun 14 17:04:17 2000
-+++ screen-3.9.8/configure.in	Wed Mar  7 19:33:51 2001
-@@ -1042,6 +1042,8 @@
+--- screen-3.9.9/configure.in.orig	Thu May 17 20:00:19 2001
++++ screen-3.9.9/configure.in	Tue Jun 12 22:21:42 2001
+@@ -1080,6 +1080,8 @@
  )
  fi
  
@@ -206,8 +196,8 @@
  dnl AC_CHECK_HEADER(shadow.h, AC_DEFINE(SHADOWPW))
  AC_CHECKING(getspnam)
  AC_TRY_LINK([#include <shadow.h>], [getspnam("x");],AC_DEFINE(SHADOWPW))
---- screen-3.9.8.orig/pam_userpass.h	Thu Jan  1 03:00:00 1970
-+++ screen-3.9.8/pam_userpass.h	Sat Mar  3 13:12:51 2001
+--- screen-3.9.9/pam_userpass.h.orig	Tue Jun 12 22:21:42 2001
++++ screen-3.9.9/pam_userpass.h	Tue Jun 12 22:21:42 2001
 @@ -0,0 +1,14 @@
 +#ifndef _PAM_USERPASS_H
 +#define _PAM_USERPASS_H

@@ -1,26 +1,26 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.9 2001/03/19 02:53:49 solar Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.10 2001/06/12 22:30:53 mci Exp $
 
 Summary: A screen manager that supports multiple logins on one terminal.
 Name: screen
-Version: 3.9.8
-Release: 9owl
+Version: 3.9.9
+Release: 1owl
 Copyright: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%{version}.tar.gz
 Source1: screen.pam
-Patch0: screen-3.9.8-deb-rh-os.diff
-Patch1: screen-3.9.8-owl-config.diff
-Patch2: screen-3.9.8-owl-pam.diff
-Patch3: screen-3.9.8-deb-owl-bufferfile.diff
-Patch4: screen-3.9.8-deb-pty.diff
-Patch5: screen-3.9.8-deb-owl-mans.diff
-Patch6: screen-3.9.8-rh-deletehack.diff
-Patch7: screen-3.9.8-rh-docbug.diff
-Patch8: screen-3.9.8-owl-telnet.diff
+Patch0: screen-3.9.9-deb-rh-os.diff
+Patch1: screen-3.9.9-owl-config.diff
+Patch2: screen-3.9.9-owl-pam.diff
+Patch3: screen-3.9.9-deb-owl-bufferfile.diff
+Patch4: screen-3.9.9-deb-pty.diff
+Patch5: screen-3.9.9-deb-owl-mans.diff
+Patch6: screen-3.9.9-rh-deletehack.diff
+Patch7: screen-3.9.9-rh-docbug.diff
+Patch8: screen-3.9.9-owl-telnet.diff
 Prefix: %{_prefix}
 BuildRoot: /var/rpm-buildroot/%{name}-root
 Prereq: /sbin/install-info, pam_userpass, utempter
-BuildPreReq: pam >= 0.72-8owl
+BuildPreReq: pam >= 0.72
 
 %description
 The screen utility allows you to have multiple logins on just one
@@ -92,6 +92,9 @@ fi
 %config(noreplace) /etc/pam.d/screen
 
 %changelog
+* Wed Jun 13 2001 Michail Litvak <mci@owl.openwall.com>
+- updated to 3.9.9
+
 * Mon Mar 19 2001 Solar Designer <solar@owl.openwall.com>
 - screen.pam: explicit pam_deny for everything but authentication.
 

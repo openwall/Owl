@@ -1,6 +1,6 @@
---- screen-3.9.8/teln.c.orig	Sun Jul  9 23:22:23 2000
-+++ screen-3.9.8/teln.c	Sat Mar 10 18:52:58 2001
-@@ -145,11 +145,18 @@
+--- screen-3.9.9/teln.c.orig	Sat Apr 28 16:26:43 2001
++++ screen-3.9.9/teln.c	Tue Jun 12 17:46:15 2001
+@@ -144,11 +144,18 @@
  	  Msg(0, "unknown host: %s", *args);
  	  return -1;
          }
@@ -21,7 +21,7 @@
      sprintf(buf, "Trying %s %d...", inet_ntoa(p->w_telsa.sin_addr), port);
    else
      sprintf(buf, "Trying %s...", inet_ntoa(p->w_telsa.sin_addr));
-@@ -275,7 +282,7 @@
+@@ -274,7 +281,7 @@
  	      break;
  	    }
  	  if (l)
@@ -30,7 +30,7 @@
  	  if (c == TC_IAC)
  	    *p++ = c;
  	  else if (c == '\r')
-@@ -364,7 +371,7 @@
+@@ -363,7 +370,7 @@
  	      if (free-- > 0)
  		{
  		  if (len)
@@ -39,7 +39,7 @@
  		  rp++;
  		  *wp++ = '\r';
  		}
-@@ -392,7 +399,7 @@
+@@ -391,7 +398,7 @@
        Msg(0, "Warning: telnet protocol overrun!");
        return;
      }

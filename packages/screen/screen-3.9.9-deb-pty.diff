@@ -1,6 +1,6 @@
---- screen-3.9.8/pty.c.orig	Sun Jul  2 20:31:22 2000
-+++ screen-3.9.8/pty.c	Mon Mar  5 16:34:20 2001
-@@ -242,11 +242,15 @@
+--- screen-3.9.9/pty.c.orig	Sat Apr 28 16:26:43 2001
++++ screen-3.9.9/pty.c	Tue Jun 12 00:15:20 2001
+@@ -243,11 +243,15 @@
  {
    register int f;
    char *m, *ptsname();
