@@ -1,17 +1,16 @@
-# $Id: Owl/packages/logrotate/logrotate.spec,v 1.6 2002/02/06 07:39:41 mci Exp $
+# $Id: Owl/packages/logrotate/logrotate.spec,v 1.7 2002/03/11 21:21:23 mci Exp $
 
 Summary: Rotates, compresses, removes and mails system log files.
 Name: logrotate
-Version: 3.5.9
-Release: owl2
+Version: 3.6.2
+Release: owl1
 License: GPL
 Group: System Environment/Base
 Source: logrotate-%{version}.tar.bz2
-Patch0: logrotate-3.5.9-cvs-20011126.diff
-Patch1: logrotate-3.5.9-owl-commands-paths.diff
-Patch2: logrotate-3.5.9-owl-man.diff
-Patch3: logrotate-3.5.9-owl-fchmod-fchown-race.diff
-Patch4: logrotate-3.5.9-owl-tmp.diff
+Patch0: logrotate-3.6.2-owl-commands-paths.diff
+Patch1: logrotate-3.6.2-owl-man.diff
+Patch2: logrotate-3.6.2-owl-fchmod-fchown-race.diff
+Patch3: logrotate-3.6.2-owl-tmp.diff
 Requires: crontabs
 BuildRequires: popt
 BuildRoot: /override/%{name}-%{version}
@@ -30,7 +29,6 @@ logrotate runs as a daily cron job.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
 
 %build
 make CC=gcc RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
@@ -59,12 +57,16 @@ fi
 %files
 %attr(0700,root,root) /usr/sbin/logrotate
 %attr(0644,root,root) %{_mandir}/man8/logrotate.8*
-%attr(0600,root,root) %config /etc/logrotate.conf
+%attr(0600,root,root) %config(noreplace) /etc/logrotate.conf
 %attr(0700,root,root) %dir /etc/logrotate.d
 %attr(0700,root,root) /etc/cron.daily/logrotate
 %attr(0700,root,root) /var/lib/logrotate
 
 %changelog
+* Mon Mar 11 2002 Michail Litvak <mci@owl.openwall.com>
+- 3.6.2
+- noreplace config file
+
 * Tue Feb 05 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions
 

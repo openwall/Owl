@@ -1,0 +1,36 @@
+--- logrotate-3.6.2/logrotate.8.orig	Tue Jan 29 22:20:03 2002
++++ logrotate-3.6.2/logrotate.8	Mon Mar 11 17:53:33 2002
+@@ -1,4 +1,4 @@
+-.TH LOGROTATE 8 "Wed Nov 28 2001" "Red Hat Linux" "System Administor's Manual"
++.TH LOGROTATE 8 "Wed Nov 28 2001" "Red Hat Linux" "System Administrator's Manual"
+ .UC 4
+ .SH NAME
+ logrotate \- rotates, compresses, and mails system logs
+@@ -94,6 +94,7 @@
+ /var/log/news/* {
+     monthly
+     rotate 2
++    olddir /var/log/news/old
+     missingok
+     postrotate
+ 	kill -HUP `cat /var/run/inn.pid`
+@@ -130,6 +131,10 @@
+ considered a single rotation directive and if errors occur for more then
+ one file, the log files are not compressed.
+ 
++Please use wildcards with caution.  If you specify *, \fBlogrotate\fR will
++rotate all files, including previously rotated ones.  A way around this
++is to use the \fBolddir\fR directive or a more exact wildcard (such as *.log).
++
+ Here is more information on the directives which may be included in
+ a \fBlogrotate\fR configuration file:
+ 
+@@ -348,7 +353,7 @@
+ This is the number to use as the base for rotation. For example, if
+ you specify 0 the logs will be created with a .0 extension as the are
+ rotated from the original log file.  If you specify 9, log files will
+-start with end with .9, skipping 0-8.  Files will still be rotated the
++be created with a .9, skipping 0-8.  Files will still be rotated the
+ number of times specified with the \fBcount\fR directive.
+ 
+ .TP

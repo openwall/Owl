@@ -1,28 +1,6 @@
-diff -ur logrotate-3.5.9.orig/Makefile logrotate-3.5.9/Makefile
---- logrotate-3.5.9.orig/Makefile	Thu Jun 21 22:17:52 2001
-+++ logrotate-3.5.9/Makefile	Tue Nov 27 14:23:52 2001
-@@ -55,17 +55,6 @@
- cvstag:
- 	cvs tag -F $(CVSTAG) .
- 
--archive: cvstag
--	@rm -rf /tmp/logrotate-$(VERSION) /tmp/logrotate
--	@cd /tmp; cvs export -r$(CVSTAG) logrotate; mv logrotate logrotate-$(VERSION)
--	@cd /tmp/logrotate-$(VERSION)
--	@cd /tmp; tar czSpf logrotate-$(VERSION).tar.gz logrotate-$(VERSION)
--	@rm -rf /tmp/logrotate-$(VERSION)
--	@cp /tmp/logrotate-$(VERSION).tar.gz .
--	@rm -f /tmp/logrotate-$(VERSION).tar.gz
--	@echo " "
--	@echo "The final archive is ./logrotate-$(VERSION).tar.gz."
--
- ifeq (.depend,$(wildcard .depend))
- include .depend
- endif
-diff -ur logrotate-3.5.9.orig/logrotate.c logrotate-3.5.9/logrotate.c
---- logrotate-3.5.9.orig/logrotate.c	Thu Aug  2 21:08:23 2001
-+++ logrotate-3.5.9/logrotate.c	Tue Nov 27 14:23:56 2001
-@@ -62,8 +62,7 @@
+--- logrotate-3.6.2/logrotate.c.orig	Tue Jan 29 22:27:17 2002
++++ logrotate-3.6.2/logrotate.c	Mon Mar 11 00:15:35 2002
+@@ -65,8 +65,7 @@
  
  static int runScript(char * logfn, char * script) {
      int fd;
@@ -32,7 +10,7 @@ diff -ur logrotate-3.5.9.orig/logrotate.c logrotate-3.5.9/logrotate.c
      int rc;
  
      if (debug) {
-@@ -72,22 +71,26 @@
+@@ -75,22 +74,26 @@
  	return 0;
      }
  
@@ -68,7 +46,7 @@ diff -ur logrotate-3.5.9.orig/logrotate.c logrotate-3.5.9/logrotate.c
  	return -1;
      }
  
-@@ -98,6 +101,7 @@
+@@ -101,6 +104,7 @@
      rc = system(cmd);
  
      unlink(filespec);
