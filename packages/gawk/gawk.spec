@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gawk/gawk.spec,v 1.7 2002/07/27 23:38:15 solar Exp $
+# $Id: Owl/packages/gawk/gawk.spec,v 1.8 2002/07/27 23:52:31 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -23,7 +23,8 @@ quick and easy text pattern matching and reformatting jobs.
 %if %BUILD_PROFILE
 %package profile
 Summary: The version of gawk with profiling support.
-Group: Development/Libraries
+Group: Development/Tools
+Requires: gawk = %{version}-%{release}
 
 %description profile
 The gawk-profile package includes pgawk (profiling gawk).  pgawk is
