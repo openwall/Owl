@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.11 2001/11/16 03:09:22 solar Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.12 2002/02/06 22:20:44 mci Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
 Version: 0.6
-Release: 2owl
+Release: owl2
 License: mostly public domain, passwdlg is under GPL
 Group: System Environment/Base
 Source0: Makefile
@@ -59,6 +59,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc README
 
 %changelog
+* Thu Feb 07 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Fri Nov 16 2001 Solar Designer <solar@owl.openwall.com>
 - Use pam_tcb.
 

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.22 2001/12/09 17:59:39 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.23 2002/02/06 22:29:59 mci Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
 Version: 0.11
-Release: 1owl
+Release: owl1
 License: GPL
 Group: System Environment/Base
 Source0: initscripts-5.00.tar.gz
@@ -142,6 +142,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc redhat
 
 %changelog
+* Thu Feb 07 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Sun Dec 09 2001 Solar Designer <solar@owl.openwall.com>
 - Support rc.modules, run depmod -a.
 
