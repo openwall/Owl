@@ -1,9 +1,9 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.32 2003/12/12 18:50:44 solar Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.33 2004/01/15 23:19:05 mci Exp $
 
 Summary: The Red Hat package management system.
 Name: rpm
 Version: 3.0.6
-Release: owl10
+Release: owl11
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-3.0.x/rpm-%version.tar.gz
@@ -158,6 +158,7 @@ fi
 %__prefix/lib/librpm.so.*
 %__prefix/lib/librpmbuild.so.*
 
+%dir %__prefix/lib/rpm
 %__prefix/lib/rpm/brp-*
 %__prefix/lib/rpm/config.guess
 %__prefix/lib/rpm/config.sub
@@ -243,6 +244,9 @@ fi
 %__prefix/include/popt.h
 
 %changelog
+* Fri Jan 16 2004 Michail Litvak <mci@owl.openwall.com> 3.0.6-owl11
+- Make /usr/lib/rpm directory owned by this package.
+
 * Fri Dec 12 2003 Solar Designer <solar@owl.openwall.com> 3.0.6-owl10
 - In brp-strip*, use sed expressions which allow SUID/SGID binaries to get
 stripped.
