@@ -12,6 +12,10 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2002/06/10 -
+2002/06/13	Package: modutils
+Updated to 2.4.16.
+
 2002/06/12	Package: glibc
 ldd(1) will no longer try to invoke programs directly, even when it
 seems like that would work.  The dynamic linker will be invoked as a
@@ -742,4 +746,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.99 2002/06/12 07:40:03 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.100 2002/06/12 21:28:56 solar Exp $
