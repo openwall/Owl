@@ -10,9 +10,10 @@ adresse haben, falls technische Probleme oder signifikante
 Änderungen der untenstehenden Voraussetzungen auftreten.
 
 Die bevorzugte Methode für einen Owl mirror vom primären
-feed (ftp.feed.openwall.com) aus ist lftp 2.3.8 zu benutzen,
-vorzugsweise das Owl-Paket. (Spätere Versionen besitzen
-einen bekannten Bug, an dem gearbeitet wird).
+feed (ftp.feed.openwall.com) aus ist lftp zu benutzen,
+vorzugsweise das Owl-Paket. (Spätere Versionen haben
+einen bekannten Bug, aber 2.6.x und neuer funktionieren
+einwandfrei).
 
 Wichtig ist, dass passives FTP benutzt wird. lftp benutzt
 diesen Modus standardmässig, aber andere Programme eventuell
@@ -49,4 +50,4 @@ keine anderen, möglicherweise gefährlichen Dienste anbietet.
 von Owl sind, ist das in Ordnung). In Ausnahmen kann der
 Server andere Inhalte hosten.
 
-$Id: Owl/doc/de/MIRRORING,v 1.4 2004/02/05 04:36:11 solar Exp $
+$Id: Owl/doc/de/MIRRORING,v 1.5 2004/02/05 13:55:38 schmidt Exp $
