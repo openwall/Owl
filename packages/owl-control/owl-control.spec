@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-control/owl-control.spec,v 1.2 2000/08/11 03:54:29 solar Exp $
+# $Id: Owl/packages/owl-control/owl-control.spec,v 1.3 2000/11/22 17:04:26 solar Exp $
 
 Summary: A set of scripts to control installed system facilities.
 Name: owl-control
-Version: 0.1
+Version: 0.2
 Release: 1owl
 Copyright: public domain
 Group: System Environment/Base
@@ -40,6 +40,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0600,root,root) /etc/control.d/functions
 
 %changelog
+* Wed Nov 22 2000 Solar Designer <solar@owl.openwall.com>
+- Support extended regexp's in control_subst().
+
 * Fri Aug 11 2000 Solar Designer <solar@owl.openwall.com>
 - Various important changes to the provided shell functions.
 - Wrote the package description.
