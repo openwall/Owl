@@ -1,4 +1,4 @@
-# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.19 2005/01/14 03:27:51 galaxy Exp $
+# $Id: Owl/packages/fileutils/Attic/fileutils.spec,v 1.20 2005/01/18 13:57:07 solar Exp $
 
 # The texinfo documentation for fileutils, sh-utils, and textutils is
 # currently provided by fileutils.
@@ -24,7 +24,6 @@ Patch6: fileutils-4.1.11-alt-owl-chown.diff
 Patch7: fileutils-4.1.11-owl-fixes.diff
 Patch8: fileutils-4.1.11-owl-info.diff
 Patch9: fileutils-4.1.11-owl-ls-max-columns.diff
-Patch10: fileutils-4.1.11-owl-gcc343-fixes.diff
 %if %BUILD_INFO
 PreReq: /sbin/install-info
 %endif
@@ -59,7 +58,6 @@ timestamps), and vdir (provides long directory listings).
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
-%patch10 -p1
 
 %{expand:%%define optflags %optflags -Wall -Dlint}
 
