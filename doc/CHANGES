@@ -12,6 +12,11 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/11/08	Package: netlist
+New package: a program for regular users to list their active Internet
+connections and listening sockets despite possible access restrictions
+on /proc.
+
 2001/11/08	Package: glibc
 If syslog(3) is called by a SUID/SGID program without a preceding call
 to openlog(3), don't blindly trust __progname for the syslog ident.
@@ -411,4 +416,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.42 2001/11/08 01:19:15 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.43 2001/11/08 03:22:02 solar Exp $
