@@ -1,0 +1,12 @@
+diff -ur openssl-0.9.5a.orig/apps/ca.c openssl-0.9.5a/apps/ca.c
+--- openssl-0.9.5a.orig/apps/ca.c	Tue Mar 14 02:54:04 2000
++++ openssl-0.9.5a/apps/ca.c	Sun Jul  9 08:06:28 2000
+@@ -98,7 +98,7 @@
+ #define PROG ca_main
+ 
+ #define BASE_SECTION	"ca"
+-#define CONFIG_FILE "openssl.cnf"
++#define CONFIG_FILE "/etc/openssl.cnf"
+ 
+ #define ENV_DEFAULT_CA		"default_ca"
+ 

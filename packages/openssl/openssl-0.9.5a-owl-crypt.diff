@@ -1,0 +1,25 @@
+diff -ur openssl-0.9.5a.orig/crypto/des/des.h openssl-0.9.5a/crypto/des/des.h
+--- openssl-0.9.5a.orig/crypto/des/des.h	Mon Mar 20 01:13:51 2000
++++ openssl-0.9.5a/crypto/des/des.h	Sun Jul  9 08:22:32 2000
+@@ -191,7 +191,8 @@
+ char *des_fcrypt(const char *buf,const char *salt, char *ret);
+ char *des_crypt(const char *buf,const char *salt);
+ #if !defined(PERL5) && !defined(__FreeBSD__) && !defined(NeXT)
+-char *crypt(const char *buf,const char *salt);
++char *_openssl_crypt(const char *buf,const char *salt);
++#define crypt _openssl_crypt
+ #endif
+ void des_ofb_encrypt(const unsigned char *in,unsigned char *out,int numbits,
+ 		     long length,des_key_schedule schedule,des_cblock *ivec);
+diff -ur openssl-0.9.5a.orig/crypto/des/fcrypt.c openssl-0.9.5a/crypto/des/fcrypt.c
+--- openssl-0.9.5a.orig/crypto/des/fcrypt.c	Mon Mar 20 01:13:51 2000
++++ openssl-0.9.5a/crypto/des/fcrypt.c	Sun Jul  9 08:28:55 2000
+@@ -62,7 +62,7 @@
+ 	DES_LONG Eswap0, DES_LONG Eswap1);
+ 
+ #if !defined(PERL5) && !defined(__FreeBSD__) && !defined(NeXT)
+-char *crypt(const char *buf, const char *salt)
++char *_openssl_crypt(const char *buf, const char *salt)
+ 	{
+ 	return(des_crypt(buf, salt));
+ 	}

@@ -1,0 +1,12 @@
+diff -ur openssl-0.9.5a.orig/tools/c_rehash openssl-0.9.5a/tools/c_rehash
+--- openssl-0.9.5a.orig/tools/c_rehash	Sat Apr  1 15:23:06 2000
++++ openssl-0.9.5a/tools/c_rehash	Sun Jul  9 08:05:29 2000
+@@ -8,7 +8,7 @@
+ 	OPENSSL='openssl'
+ 	export OPENSSL
+ fi
+-DIR=/usr/local/ssl
++DIR=/usr
+ PATH=$DIR/bin:$PATH
+ 
+ if [ ! -f "$OPENSSL" ]; then
