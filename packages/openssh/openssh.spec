@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.65 2003/10/22 08:33:03 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.66 2003/10/24 00:38:24 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl5
+Release: owl6
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -183,6 +183,10 @@ elif [ -f /var/run/sshd.pid ]; then
 	/etc/rc.d/init.d/sshd restart
 fi
 rm -f /var/run/sshd.restart
+if [ "`/usr/sbin/control sftp`" = off ]; then
+	echo -n "SFTP server not enabled by default, use "
+	echo "\"control sftp on\" to enable"
+fi
 
 %preun server
 if [ $1 -eq 0 ]; then
@@ -233,6 +237,9 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Fri Oct 24 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl6
+- Explain how to enable the SFTP server with control(8).
+
 * Wed Oct 22 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl5
 - Set comments in SSH host keys to key type instead of to hostname as the
 latter would leak the hostname when doing chrooted installs for other
