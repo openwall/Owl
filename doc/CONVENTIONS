@@ -2,6 +2,74 @@ This file explains some of the conventions to follow for those wishing
 to contribute to the project.
 
 
+	RPM spec files.
+
+Our conventions for RPM spec files are quite similar to Red Hat's, but
+a few differences and additional requirements for native Owl packages
+do exist.
+
+1. Start the spec file with a comment containing the CVS Id keyword,
+followed by an empty line.
+
+2. The preferred tag names (whenever synonyms exist) and order of tags
+is: Summary, Name, Version, Release, Epoch, License, Group, URL,
+Source*, Patch*, PreReq, Requires, Conflicts, Provides, Obsoletes,
+Auto*, Prefix, BuildRequires, BuildArchitectures, ExcludeArch,
+ExclusiveArch, BuildRoot.  Other tags we (currently) don't use.
+
+3. The correct BuildRoot tag for an Owl package is:
+
+	BuildRoot: /override/%{name}-%{version}
+
+Our build environment will override the BuildRoot regardless of this
+tag, but setting it in this way will remind people to override the
+BuildRoot for manual builds of the package, especially on non-Owl.
+
+4. Separate tag names and values you set them to with a single space
+character.  Use commas (also followed by a space) to separate items in
+dependency lists.
+
+5. Our build environment sets the C/C++ compiler optimization flags in
+%optflags in a way that is optimal for compiling standalone programs
+and doesn't produce too much warnings with typical source files.  When
+building libraries, another set of optimization flags may be used by
+placing the following two lines right before the %build section:
+
+	# Use optflags_lib for this package if defined.
+	%{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
+
+This will disable optimizations that would prevent debugging of
+programs linked against the libraries (even when the programs
+themselves are correctly built for debugging) and, on the x86, will
+ensure stack alignment suitable for efficient floating-point and MMX
+operations that a program linked against the library may do.  (The
+latter is just to be friendly to third-party programs.  We don't have
+a noticeable amount of floating-point math in programs that are a part
+of Owl and thus we don't do the extra stack alignment when building
+our programs.  But libraries need to be different because of possible
+callbacks.)
+
+It also is recommended that you make the source files clean enough to
+not produce a single compiler warning when building with "gcc -Wall".
+If you do, then the right way to pass the -Wall is in most cases by
+placing the following line right before the %build section:
+
+	%{expand:%%define optflags %optflags -Wall}
+
+6. Subshells in build, pre/post-install/uninstall, and trigger scripts
+are to be avoided by all means as they mask possible errors.  If you
+intended to use a subshell to temporarily change current directory,
+use pushd and popd commands instead.  If you really must use a
+subshell, it is suggested that you propagate the status of commands it
+runs to the parent shell manually.
+
+7. Use tabs to indent conditional blocks and continuation lines in
+scripts.
+
+8. Use -eq to compare numeric values (in particular, the $1 argument
+that RPM itself passes to the scripts).  Don't place the $1 in quotes.
+
+
 	Patch file naming.
 
 Use the following syntax for patch file names:
@@ -34,6 +102,6 @@ This is NOT to suggest you should try to arrange your modifications
 such that the patch files fit one of these categories.  In fact, it is
 often preferable to do things differently.  This is just to say that
 if you happen to have a patch file that matches one of the categories,
-name it accordingly (such as, "-tmp-" and not, say, "-mkstemp-").
+name it accordingly (such as, "tmp" and not, say, "mkstemp").
 
-$Id: Owl/doc/CONVENTIONS,v 1.1 2001/11/21 07:15:16 solar Exp $
+$Id: Owl/doc/CONVENTIONS,v 1.2 2001/11/22 06:59:22 solar Exp $
