@@ -1,12 +1,12 @@
-# $Id: Owl/packages/dev86/dev86.spec,v 1.11 2004/02/11 00:13:56 mci Exp $
+# $Id: Owl/packages/dev86/dev86.spec,v 1.12 2004/02/15 22:02:20 mci Exp $
 
 Summary: A real mode 80x86 assembler and linker.
 Name: dev86
 Version: 0.16.0
-Release: owl3
+Release: owl4
 License: GPL
 Group: Development/Languages
-Source: http://www.cix.co.uk/~mayday/Dev86src-%version.tar.gz
+Source: http://www.cix.co.uk/~mayday/dev86/Dev86src-%version.tar.gz
 Patch0: dev86-0.16.0-rh-install-no-root.diff
 Patch1: dev86-0.16.0-rh-no-bcc.diff
 Patch2: dev86-0.16.0-rh-paths.diff
@@ -50,18 +50,28 @@ make DIST=$RPM_BUILD_ROOT MANDIR=%_mandir ELKSSRC=. install
 install -m 755 -s $RPM_BUILD_ROOT/lib/elksemu $RPM_BUILD_ROOT%_bindir
 rm -rf $RPM_BUILD_ROOT/lib/
 
-cd $RPM_BUILD_ROOT/usr/bin
+pushd $RPM_BUILD_ROOT/usr/bin
 rm -f nm86 size86
 ln -s objdump86 nm86
 ln -s objdump86 size86
 
 # Move header files out of /usr/include and into /usr/lib/bcc/include
 mv $RPM_BUILD_ROOT/usr/include $RPM_BUILD_ROOT%_libdir/bcc/
+popd
+
+mv bootblocks/README README.bootblocks
+mv copt/README README.copt
+mv dis88/README README.dis88
+mv elksemu/README README.elksemu
+mv unproto/README README.unproto
+mv bin86/README-0.4 README.bin86-0.4
+mv bin86/README README.bin86
+mv bin86/ChangeLog ChangeLog.bin86
 
 %files
 %defattr(-,root,root,-)
-%doc README MAGIC Contributors bootblocks/README copt/README dis88/README
-%doc elksemu/README unproto/README bin86/README-0.4 bin86/README bin86/ChangeLog
+%doc README MAGIC Contributors README.bootblocks README.copt README.dis88
+%doc README.elksemu README.unproto README.bin86-0.4 README.bin86 ChangeLog.bin86
 %dir %_libdir/bcc
 %dir %_libdir/bcc/i86
 %dir %_libdir/bcc/i386
@@ -84,6 +94,10 @@ mv $RPM_BUILD_ROOT/usr/include $RPM_BUILD_ROOT%_libdir/bcc/
 %_mandir/man1/*
 
 %changelog
+* Sun Feb 15 2004 Michail Litvak <mci@owl.openwall.com> 0.16.0-owl4
+- Correctly install documentation files from subdirectories
+(rename dir/README to README.dir)
+
 * Mon Feb 09 2004 Michail Litvak <mci@owl.openwall.com> 0.16.0-owl3
 - Use rpm macros instead just paths.
 
