@@ -1,7 +1,9 @@
 #!/bin/sh
-# $Id: Owl/build/installworld.sh,v 1.5 2001/04/12 05:03:01 solar Exp $
+# $Id: Owl/build/installworld.sh,v 1.5.2.1 2001/06/21 08:09:28 solar Exp $
 
 . installworld.conf
+
+RPMS=$HOME/RPMS
 
 function log()
 {
