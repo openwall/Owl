@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.5 2001/07/25 19:42:31 solar Exp $
+# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.6 2001/07/27 19:39:20 solar Exp $
 
 Summary: Initial directory hierarchy
 Name: owl-hier
 Version: 0.1
-Release: 2owl
+Release: 1owl
 Copyright: public domain
 Group: System Environment/Base
 Source: special
@@ -69,17 +69,9 @@ comm -3 - filelist.remove >> filelist
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post
-chmod 755 /
-chown root.root /
-
 %files -f filelist
 
 %changelog
-* Wed Jul 25 2001 Solar Designer <solar@owl.openwall.com>
-- Ensure proper permissions on / itself (useful when installing without
-allocating a separate disk partition, such as for chroot jails or CD's).
-
 * Sat Mar 31 2001 Solar Designer <solar@owl.openwall.com>
 - Provide /usr/share/empty (an always-empty directory for chroots).
 
