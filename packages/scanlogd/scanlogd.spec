@@ -1,8 +1,8 @@
-# $Id: Owl/packages/scanlogd/Attic/scanlogd.spec,v 1.6 2004/05/23 04:57:10 solar Exp $
+# $Id: Owl/packages/scanlogd/Attic/scanlogd.spec,v 1.7 2004/06/02 00:38:57 solar Exp $
 
 Summary: A tool to detect and log TCP port scans.
 Name: scanlogd
-Version: 2.2.2
+Version: 2.2.3
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
@@ -61,6 +61,12 @@ fi
 %config /etc/rc.d/init.d/scanlogd
 
 %changelog
+* Wed Jun 02 2004 Solar Designer <solar@owl.openwall.com> 2.2.3-owl1
+- Use Pavel Kankovsky's smart pcap expression, with a minor enhancement.
+- Explained "any" and "all" magic device names in a comment in params.h.
+- Dropped the rlog stuff; librlog was never released.
+- chroot to /var/empty.
+
 * Sun May 23 2004 Solar Designer <solar@owl.openwall.com> 2.2.2-owl1
 - #include <stdlib.h> for exit(3) (apparently this is actually needed on
 FreeBSD).
