@@ -1,6 +1,6 @@
 diff -ur shadow-4.0.0.orig/src/chage.c shadow-4.0.0/src/chage.c
 --- shadow-4.0.0.orig/src/chage.c	Mon Oct  9 22:39:50 2000
-+++ shadow-4.0.0/src/chage.c	Sun Nov  4 07:55:27 2001
++++ shadow-4.0.0/src/chage.c	Sun Jul 21 19:11:25 2002
 @@ -65,7 +65,6 @@
  #endif	/* SHADOWPWD */
  
@@ -18,14 +18,14 @@ diff -ur shadow-4.0.0.orig/src/chage.c shadow-4.0.0/src/chage.c
  static long	mindays;
  static long	maxdays;
  static long	lastday;
-@@ -400,6 +401,7 @@
+@@ -399,6 +400,7 @@
+ #else
  	char	new_age[5];
  #endif
- 	uid_t ruid;
 +	int amroot, pwrw;
+ 	uid_t ruid;
  	const struct passwd *pw;
  	struct passwd pwent;
- 	char	name[BUFSIZ];
 @@ -551,18 +553,28 @@
  	}
  
