@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cpio/cpio.spec,v 1.10 2003/10/19 18:27:16 solar Exp $
+# $Id: Owl/packages/cpio/cpio.spec,v 1.11 2003/10/25 08:43:12 solar Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
@@ -68,8 +68,8 @@ mkdir -p $RPM_BUILD_ROOT%{_mandir}/man8/
 install -m 644 rmt.8 $RPM_BUILD_ROOT%{_mandir}/man8/
 
 mkdir -p $RPM_BUILD_ROOT/{etc,sbin}
-ln -s /usr/libexec/rmt $RPM_BUILD_ROOT/etc/
-ln -s /usr/libexec/rmt $RPM_BUILD_ROOT/sbin/
+ln -s ../usr/libexec/rmt $RPM_BUILD_ROOT/etc/
+ln -s ../usr/libexec/rmt $RPM_BUILD_ROOT/sbin/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
