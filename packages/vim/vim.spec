@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vim/vim.spec,v 1.14 2003/10/30 21:15:49 solar Exp $
+# $Id: Owl/packages/vim/vim.spec,v 1.15 2004/01/29 03:42:02 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -12,7 +12,7 @@ Name: vim
 %define patchlevel 386
 %define vimdir vim%major%minor%alpha
 Version: %major.%minor%{?patchlevel:.%patchlevel}
-Release: owl1
+Release: owl2
 License: Charityware
 Group: Applications/Editors
 Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%major.%minor%alpha.tar.bz2
@@ -28,6 +28,7 @@ Patch2: vim-6.1-rh-fix-keys.diff
 Patch3: vim-6.1-rh-owl-xxd-locale.diff
 Patch4: vim-6.1-rh-owl-spec-syntax.diff
 Patch5: vim-6.1-owl-tmp.diff
+Patch6: vim-6.1-owl-perl-var-clash.diff
 Requires: mktemp >= 1:1.3.1
 BuildRequires: perl
 %if %BUILD_USE_GPM
@@ -115,6 +116,7 @@ test ! -e failed
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 rm src/auto/configure
 install -m 644 $RPM_SOURCE_DIR/README .
 
@@ -282,6 +284,9 @@ chmod 644 ../runtime/doc/vim2html.pl
 %endif
 
 %changelog
+* Thu Jan 29 2004 Solar Designer <solar@owl.openwall.com> 6.1.386-owl2
+- Included patch by galaxy@ to resolve a name clash with Perl 5.8.3.
+
 * Sat Mar 15 2003 Michail Litvak <mci@owl.openwall.com> 6.1.386-owl1
 - Updated to patchlevel 386
 
