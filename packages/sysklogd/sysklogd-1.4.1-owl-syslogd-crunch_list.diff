@@ -1,6 +1,6 @@
 diff -ur sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
 --- sysklogd-1.4.1.orig/syslogd.c	Sun Mar 11 19:40:10 2001
-+++ sysklogd-1.4.1/syslogd.c	Sun Apr 18 01:35:41 2004
++++ sysklogd-1.4.1/syslogd.c	Sun Apr 18 01:42:21 2004
 @@ -1254,30 +1254,26 @@
  crunch_list(list)
  	char *list;
@@ -25,9 +25,10 @@ diff -ur sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  		p++; 
 -	}
  	
- 	/* count delimiters to calculate elements */
+-	/* count delimiters to calculate elements */
 -	for (count=i=0; p[i]; i++)
 -		if (p[i] == LIST_DELIMITER) count++;
++	/* count delimiters to calculate the number of elements */
 +	for (n = i = 0; p[i]; i++)
 +		if (p[i] == LIST_DELIMITER) n++;
  	
@@ -45,10 +46,12 @@ diff -ur sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  	 */
 -	count = 0;
 -	while ((q=strchr(p, LIST_DELIMITER))) {
+-		result[count] = (char *) malloc((q - p + 1) * sizeof(char));
+-		if (result[count] == NULL) {
 +	m = 0;
 +	while ((q = strchr(p, LIST_DELIMITER)) && m < n) {
- 		result[count] = (char *) malloc((q - p + 1) * sizeof(char));
- 		if (result[count] == NULL) {
++		result[m] = (char *) malloc((q - p + 1) * sizeof(char));
++		if (result[m] == NULL) {
  			printf ("Sorry, can't get enough memory, exiting.\n");
 -			exit(0);
 +			exit(1);
