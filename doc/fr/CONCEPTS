@@ -20,9 +20,7 @@ ou développés pour les autres distributions Linux majeures, telles que Linux
 Red Hat.
 
 De plus, étant une plate-forme pour serveurs, Owl inclura un ensemble
-grandissant de services Internet intégrés. Seulement quelques uns sont
-disponibles avec l'avant-première, mais c'est le premier secteur sur lequel
-nous travaillerons.
+grandissant de services Internet intégrés.
 
 Owl inclus un environnement de compilation complet pour re-compiler le
 système entier depuis les sources avec une simple commande ("make
@@ -132,4 +130,4 @@ dans la plupart des cas il sera possible d'installer des applications
 empaquetées pour une version récente de Linux Red Hat (actuellement, ceci
 s'applique à Linux Red Hat 6.x) sur Owl.
 
-$Id: Owl/doc/fr/CONCEPTS,v 1.3 2002/10/14 08:52:25 ducamp Exp $
+$Id: Owl/doc/fr/CONCEPTS,v 1.4 2003/05/08 17:19:10 solar Exp $
