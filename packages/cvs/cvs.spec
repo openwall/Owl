@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cvs/cvs.spec,v 1.14 2003/06/28 13:35:57 solar Exp $
+# $Id: Owl/packages/cvs/cvs.spec,v 1.15 2003/06/28 14:43:46 solar Exp $
 
 Summary: A version control system.
 Name: cvs
@@ -111,11 +111,13 @@ fi
 
 %changelog
 * Sat Jun 28 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl3
-- Updated the canonicalize patch to avoid using _GNU_SOURCE and rather
+- Updated the canonicalize patch to avoid using _GNU_SOURCE but rather
 declare the prototype for canonicalize_file_name() explicitly.  With
 _GNU_SOURCE, we could get function prototype conflicts on certain other
 glibc functions that cvs overrides (this actually caused the package to
 not build on Alpha).
+- Handle the special case when the last path component doesn't yet exist
+and thus can't be canonicalized.
 
 * Thu May 01 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl2
 - BuildRequires: mktemp >= 1:1.3.1 (but don't yet require mktemp for the

@@ -36,7 +36,7 @@ diff -urp cvs-1.11.5.orig/src/root.c cvs-1.11.5/src/root.c
  }
 diff -urp cvs-1.11.5.orig/src/server.c cvs-1.11.5/src/server.c
 --- cvs-1.11.5.orig/src/server.c	Thu Jan 16 15:10:55 2003
-+++ cvs-1.11.5/src/server.c	Sat Jun 28 13:25:06 2003
++++ cvs-1.11.5/src/server.c	Sat Jun 28 14:24:29 2003
 @@ -16,6 +16,8 @@
  #include "getline.h"
  #include "buffer.h"
@@ -46,11 +46,36 @@ diff -urp cvs-1.11.5.orig/src/server.c cvs-1.11.5/src/server.c
  #if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
  # ifdef HAVE_GSSAPI
  /* This stuff isn't included solely with SERVER_SUPPORT since some of these
-@@ -1151,6 +1153,14 @@ serve_directory (arg)
+@@ -1151,6 +1153,39 @@ serve_directory (arg)
      status = buf_read_line (buf_from_net, &repos, (int *) NULL);
      if (status == 0)
      {
 +	char *real_repos = canonicalize_file_name (repos);
++
++	/* The last path component may not exist when adding a directory.  */
++	if (!real_repos)
++	{
++	    char *last = strrchr (repos, '/');
++
++	    if (last)
++	    {
++		char *real_path;
++
++		*last = '\0';
++		real_path = canonicalize_file_name (repos);
++		*last = '/';
++
++		if (real_path)
++		{
++		    real_repos = realloc(real_path,
++			strlen(real_path) + strlen(last) + 1);
++		    if (real_repos)
++			strcat(real_repos, last);
++		    else
++			free (real_path);
++		}
++	    }
++	}
 +
 +	if (real_repos)
 +	{
