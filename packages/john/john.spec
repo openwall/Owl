@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.21 2003/09/18 10:30:51 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.22 2003/09/22 12:21:33 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.36
+Version: 1.6.36.1
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -77,6 +77,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Mon Sep 22 2003 Solar Designer <solar@owl.openwall.com> 1.6.36.1-owl1
+- Support OpenBSD/x86 w/ ELF binaries (Makefile patch by demon).
+
 * Thu Sep 18 2003 Solar Designer <solar@owl.openwall.com> 1.6.36-owl1
 - Corrected the generic and SPARC make targets broken with 1.6.34.2.
 
