@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.39 2005/01/18 14:16:48 solar Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.40 2005/01/19 14:31:19 solar Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -38,7 +38,7 @@
 Summary: C compiler from the GNU Compiler Collection.
 Name: gcc
 Version: 3.4.3
-Release: owl1
+Release: owl2
 Epoch: 1
 License: GPL
 Group: Development/Languages
@@ -127,6 +127,7 @@ library.
 %if %BUILD_CXX_COMPAT
 %ifarch %ix86
 %if !%BUILD_CXX_COMPAT_SEPARATE
+
 %package -n libstdc++-compat
 Summary: Old GNU C++ libraries for binary compatibility.
 Group: System Environment/Libraries
@@ -135,7 +136,9 @@ PreReq: /sbin/ldconfig
 %description -n libstdc++-compat
 This package includes the old shared libraries necessary to run C++
 applications built against the libraries.
+
 %else # BUILD_CXX_COMPAT_SEPARATE
+
 %if %BUILD_CXX_COMPAT_V2
 %package -n libstdc++-v2-compat
 Summary: Old GNU C++ libraries (V2) for binary compatibility.
@@ -148,11 +151,14 @@ applications built against the libraries. This package contains
 libstdc++ library versions 2.7.2.8, 2.8.0, and 2.9.0 and is used to
 upgrade Red Hat Linux 6.2 and below.
 %endif # BUILD_CXX_COMPAT_V2
+
 %if %BUILD_CXX_COMPAT_V3
 %package -n libstdc++-v3-compat
 Summary: Old GNU C++ libraries (V3) for binary compatibility.
 Group: System Environment/Libraries
 PreReq: /sbin/ldconfig
+Provides: libstdc++-compat
+Obsoletes: libstdc++-compat
 
 %description -n libstdc++-v3-compat
 This package includes the old shared libraries necessary to run C++
@@ -160,6 +166,7 @@ applications built against the libraries. This package contains
 libstdc++ library version 2.10.0 and is used to upgrade systems running
 Openwall GNU/*/Linux versions 1.0 and 1.1.
 %endif # BUILD_CXX_COMPAT_V3
+
 %if %BUILD_CXX_COMPAT_V5
 %package -n libstdc++-v5-compat
 Summary: Old GNU C++ libraries (V5) for binary compatibility.
@@ -172,6 +179,7 @@ applications built against the libraries. This package contains
 libstdc++ library version 5.0.2 and used to upgrade systems running
 Openwall GNU/*/Linux based on glibc 3.2.2 only.
 %endif # BUILD_CXX_COMPAT_V5
+
 %endif # BUILD_CXX_COMPAT_SEPARATE
 %endif # arch ix86
 %endif # BUILD_CXX_COMPAT
@@ -735,6 +743,10 @@ fi
 %endif
 
 %changelog
+* Wed Jan 19 2005 Solar Designer <solar@owl.openwall.com> 1:3.4.3-owl2
+- Provide/obsolete libstdc++-compat in libstdc++-v3-compat.
+- Restored the cc(1) and c++(1) man pages.
+
 * Fri Jan 14 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.4.3-owl1
 - Reverted the change with removing symbolic links from gcc to cc.
 - Fixed missed compile flags for target compiler.
