@@ -1,9 +1,9 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.41 2004/11/11 19:04:26 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.42 2004/11/26 15:06:59 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.4.1
-Release: owl4
+Release: owl6
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -18,12 +18,12 @@ Source7: chfn.control
 Source8: chsh.control
 Source9: gpasswd.control
 Source10: newgrp.control
-Patch0: shadow-4.0.4.1-owl-check-reads.diff
-Patch1: shadow-4.0.4.1-owl-usermod-unlock.diff
-Patch2: shadow-4.0.4.1-owl-tmp.diff
-Patch3: shadow-4.0.4.1-owl-pam-auth.diff
-Patch4: shadow-4.0.4.1-owl-chage-drop-priv.diff
-Patch5: shadow-4.0.4.1-owl-chage-ro-no-lock.diff
+Patch0: shadow-4.0.4.1-cvs-20041008-userdel.diff
+Patch1: shadow-4.0.4.1-owl-check-reads.diff
+Patch2: shadow-4.0.4.1-owl-usermod-unlock.diff
+Patch3: shadow-4.0.4.1-owl-tmp.diff
+Patch4: shadow-4.0.4.1-owl-pam-auth.diff
+Patch5: shadow-4.0.4.1-owl-chage-drop-priv.diff
 Patch6: shadow-4.0.4.1-owl-userdel-path_prefix.diff
 Patch7: shadow-4.0.4.1-owl-pam_chauthtok.diff
 Patch8: shadow-4.0.4.1-owl-usermod-update-lstchg.diff
@@ -35,6 +35,8 @@ Patch22: shadow-4.0.4.1-owl-restrict-locale.diff
 Patch23: shadow-4.0.4.1-owl-crypt_gensalt.diff
 Patch24: shadow-4.0.4.1-owl-newgrp.diff
 Patch30: shadow-4.0.4.1-owl-tcb.diff
+Patch40: shadow-4.0.4.1-alt-man.diff
+Patch41: shadow-4.0.4.1-alt-configure.diff
 Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: pam, tcb >= 0.9.8, pam_userpass >= 0.5
 BuildRequires: libtool, gettext = 0.14.1, automake, autoconf
@@ -50,7 +52,7 @@ shadow password files.
 
 %prep
 %setup -q -n shadow-%version
-%patch0 -p1
+%patch0 -p0
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -67,6 +69,8 @@ shadow password files.
 %patch23 -p1
 %patch24 -p1
 %patch30 -p1
+%patch40 -p1
+%patch41 -p1
 
 find . -name '*.orig' -delete
 
@@ -81,7 +85,8 @@ aclocal -I m4
 automake -a
 autoheader
 autoconf
-CFLAGS="$RPM_OPT_FLAGS -DEXTRA_CHECK_HOME_DIR -DSHADOWTCB -D_GNU_SOURCE" \
+#CFLAGS="$RPM_OPT_FLAGS -DEXTRA_CHECK_HOME_DIR -DSHADOWTCB -D_GNU_SOURCE" \
+CFLAGS="$RPM_OPT_FLAGS -DEXTRA_CHECK_HOME_DIR -DSHADOWTCB" \
 %configure \
 	--disable-desrpc --disable-shared \
 	--with-libcrypt --with-libpam --without-libcrack
@@ -229,6 +234,17 @@ fi
 %exclude %_mandir/man8/mkpasswd*
 
 %changelog
+* Fri Nov 26 2004 Solar Designer <solar@owl.openwall.com> 2:4.0.4.1-owl6
+- Report /etc/login.defs open/read errors to stderr, not only to syslog.
+- Merged some enhancements/corrections from ALT Linux: document the
+restrictions on valid user/group names in useradd.8 and groupadd.8,
+hard-code the path to passwd(1) (don't let configure pick the wrong path
+when building on a system without our SimplePAMApps package installed).
+- Compiler warning fixes.
+
+* Fri Nov 26 2004 Dmitry V. Levin <ldv@owl.openwall.com> 2:4.0.4.1-owl5
+- Backported patch from shadow cvs, to fix userdel(8) return value.
+
 * Thu Nov 11 2004 Juan M. Bello Rivas <jmbr@owl.openwall.com> 2:4.0.4.1-owl4
 - Added the USERNAME_MAX and GROUPNAME_MAX options.
 - Placed the "usermod -p" patch higher in the patch list.
