@@ -1,4 +1,4 @@
-# $Id: Owl/packages/grep/grep.spec,v 1.2 2002/02/03 21:41:56 mci Exp $
+# $Id: Owl/packages/grep/grep.spec,v 1.3 2002/02/04 06:50:08 solar Exp $
 
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
@@ -36,18 +36,18 @@ rm -rf $RPM_BUILD_ROOT%{_prefix}/bin
 rm -rf $RPM_BUILD_ROOT
 
 %post
-/sbin/install-info --quiet --info-dir=%{_infodir} %{_infodir}/grep.info.gz
+/sbin/install-info %{_infodir}/grep.info.gz %{_infodir}/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --quiet --info-dir=%{_infodir} --delete %{_infodir}/grep.info.gz
+	/sbin/install-info --delete %{_infodir}/grep.info.gz %{_infodir}/dir
 fi
 
 %files
 %defattr(-,root,root)
 %doc ABOUT-NLS AUTHORS THANKS TODO NEWS README ChangeLog
 %{_prefix}/bin/*
-%{_infodir}/*.info.gz
+%{_infodir}/*.info*
 %{_mandir}/*/*
 %{_prefix}/share/locale/*/*/grep.*
 

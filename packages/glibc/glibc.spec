@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.24 2002/02/04 07:34:29 mci Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.25 2002/02/04 07:50:24 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -49,11 +49,11 @@ Patch43: glibc-2.1.3-cvs-20000926-tmp-warnings.diff
 Patch44: glibc-2.1.3-cvs-20010109-dl.diff
 Patch45: glibc-2.1.3-cvs-20000929-alpha-reloc.diff
 Patch46: glibc-2.1.3-cvs-20011129-glob.diff
-AutoReq: false
 %ifarch alpha
 Provides: ld.so.2
 %endif
 Provides: glibc-crypt_blowfish = %{crypt_bf_version}
+AutoReq: false
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -83,9 +83,6 @@ will use the standard C libraries, your system needs to have these
 standard header and object files available in order to create the
 executables.
 
-Install glibc-devel if you are going to develop programs which will
-use the standard C libraries.
-
 %if %BUILD_PROFILE
 %package profile
 Summary: The GNU libc libraries, including support for gprof profiling.
@@ -99,9 +96,6 @@ which functions are calling other functions during execution.  To use
 gprof to profile a program, your program needs to use the GNU libc
 libraries included in glibc-profile (instead of the standard GNU libc
 libraries included in the glibc package).
-
-If you are going to use the gprof program to profile a program, you'll
-need to install the glibc-profile program.
 %endif
 
 # Use optflags_lib for this package if defined.
@@ -171,9 +165,9 @@ make MAKE='make -s'
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT
 make install_root=$RPM_BUILD_ROOT install -C build-$RPM_ARCH-linux
-cd build-$RPM_ARCH-linux && \
-    make install_root=$RPM_BUILD_ROOT install-locales -C ../localedata objdir=`pwd` && \
-    cd ..
+pushd build-$RPM_ARCH-linux
+make install_root=$RPM_BUILD_ROOT install-locales -C ../localedata objdir=`pwd`
+popd
 
 # the man pages for linuxthreads and crypt_blowfish require special attention
 mkdir -p $RPM_BUILD_ROOT/usr/man/man3
@@ -207,9 +201,9 @@ strip $RPM_BUILD_ROOT/usr/bin/* || :
 strip $RPM_BUILD_ROOT/usr/sbin/* || :
 
 # BUILD THE FILE LIST
-find $RPM_BUILD_ROOT -type f -or -type l | 
+find $RPM_BUILD_ROOT -type f -or -type l |
 	sed -e 's|.*/etc|%config &|' > rpm.filelist.in
-for n in /usr/share /usr/include; do 
+for n in /usr/share /usr/include; do
     find ${RPM_BUILD_ROOT}${n} -type d | \
 	sed "s/^/%dir /" >> rpm.filelist.in
 done
@@ -226,11 +220,11 @@ sed "s|^$RPM_BUILD_ROOT||" < rpm.filelist.in |
 grep '/usr/lib/lib.*_p\.a' < rpm.filelist > profile.filelist
 %endif
 
-egrep "(/usr/include)|(/usr/info)" < rpm.filelist | 
+egrep "(/usr/include)|(/usr/info)" < rpm.filelist |
 	grep -v /usr/info/dir > devel.filelist
 
 mv rpm.filelist rpm.filelist.full
-grep -v '/usr/lib/lib.*_p.a' rpm.filelist.full | 
+grep -v '/usr/lib/lib.*_p.a' rpm.filelist.full |
 	egrep -v "(/usr/include)|(/usr/info)" > rpm.filelist
 
 grep '/usr/lib/lib.*\.a' < rpm.filelist >> devel.filelist
@@ -242,7 +236,7 @@ mv rpm.filelist rpm.filelist.full
 grep -v '/usr/lib/lib.*\.a' < rpm.filelist.full |
 	grep -v '/usr/lib/.*\.o' |
 	grep -v '/usr/lib/lib.*\.so'|
-	grep -v '/usr/man/man' | 
+	grep -v '/usr/man/man' |
 	grep -v 'nscd' > rpm.filelist
 
 # /etc/localtime - we're proud of our timezone
