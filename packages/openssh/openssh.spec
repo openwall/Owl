@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.75 2004/11/23 22:40:47 mci Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.76 2005/01/12 16:41:07 galaxy Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl11
+Release: owl12
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -82,7 +82,7 @@ PreReq: %name = %version-%release
 PreReq: /sbin/chkconfig, grep, shadow-utils, /dev/urandom
 Requires: tcp_wrappers >= 7.6-owl3.2
 Requires: owl-control >= 0.4, owl-control < 2.0
-Requires: /var/empty, tcb, pam_userpass, pam_mktemp
+Requires: %_var/empty, tcb, pam_userpass, pam_mktemp
 Obsoletes: ssh-server
 
 %description server
@@ -120,7 +120,7 @@ rm -r autom4te.cache
 %patch15 -p1
 %patch16 -p1
 
-%define _sysconfdir /etc/ssh
+%{expand:%%define _sysconfdir %_sysconfdir/ssh}
 %{expand:%%define _datadir %_datadir/ssh}
 %{expand:%%define _libexecdir %_libexecdir/ssh}
 
@@ -130,17 +130,17 @@ export LIBS="-lcrypt -lpam -lpam_misc -lpam_userpass"
 	--with-pam \
 	--with-tcp-wrappers \
 	--with-ipv4-default \
-	--with-default-path=/bin:/usr/bin:/usr/local/bin \
-	--with-privsep-path=/var/empty \
+	--with-default-path=/bin:%_bindir:/usr/local/bin \
+	--with-privsep-path=%_var/empty \
 	--with-privsep-user=sshd
 %ifarch alphaev56 alphapca56 alphaev6 alphaev67
-make deattack.o CFLAGS="$RPM_OPT_FLAGS -mcpu=ev5 -Wall"
+%__make deattack.o CFLAGS="$RPM_OPT_FLAGS -mcpu=ev5 -Wall"
 %endif
-make
+%__make
 
 %install
 rm -rf %buildroot
-make install DESTDIR=%buildroot
+%__make install DESTDIR=%buildroot
 
 install -d %buildroot/etc/pam.d
 install -d %buildroot/etc/rc.d/init.d
@@ -161,11 +161,11 @@ grep -q ^sshd: /etc/passwd || useradd -g sshd -u 74 -d / -s /bin/false -M sshd
 rm -f /var/run/sshd.restart
 if [ $1 -ge 2 ]; then
 # XXX: "sshd -t" invoked at this point only validates the old configuration.
-	if /usr/sbin/sshd -t; then
+	if %_sbindir/sshd -t; then
 		/etc/rc.d/init.d/sshd status && touch /var/run/sshd.restart || :
 		/etc/rc.d/init.d/sshd stop || :
 	fi
-	/usr/sbin/control-dump sftp
+	%_sbindir/control-dump sftp
 fi
 
 %post server
@@ -173,7 +173,7 @@ if [ "$MAKE_CDROM" != yes ]; then
 	/etc/rc.d/init.d/sshd keygen
 fi
 if [ $1 -ge 2 ]; then
-	/usr/sbin/control-restore sftp
+	%_sbindir/control-restore sftp
 fi
 /sbin/chkconfig --add sshd
 if [ -f /var/run/sshd.restart ]; then
@@ -182,7 +182,7 @@ elif [ -f /var/run/sshd.pid ]; then
 	/etc/rc.d/init.d/sshd restart
 fi
 rm -f /var/run/sshd.restart
-if [ "`/usr/sbin/control sftp`" = off ]; then
+if [ "`%_sbindir/control sftp`" = off ]; then
 	echo -n "SFTP server not enabled by default, use "
 	echo "\"control sftp on\" to enable"
 fi
@@ -196,8 +196,8 @@ fi
 %files
 %defattr(-,root,root)
 %doc README CREDITS LICENCE ChangeLog
-%attr(0755,root,root) /usr/bin/scp
-%attr(0755,root,root) /usr/bin/ssh-keygen
+%attr(0755,root,root) %_bindir/scp
+%attr(0755,root,root) %_bindir/ssh-keygen
 %attr(0644,root,root) %_mandir/man1/scp.1*
 %attr(0644,root,root) %_mandir/man1/ssh-keygen.1*
 %attr(0755,root,root) %dir /etc/ssh
@@ -206,11 +206,11 @@ fi
 
 %files clients
 %defattr(-,root,root)
-%attr(0755,root,root) /usr/bin/ssh
-%attr(0755,root,root) /usr/bin/ssh-add
-%attr(0755,root,root) /usr/bin/ssh-agent
-%attr(0755,root,root) /usr/bin/ssh-keyscan
-%attr(0755,root,root) /usr/bin/sftp
+%attr(0755,root,root) %_bindir/ssh
+%attr(0755,root,root) %_bindir/ssh-add
+%attr(0755,root,root) %_bindir/ssh-agent
+%attr(0755,root,root) %_bindir/ssh-keyscan
+%attr(0755,root,root) %_bindir/sftp
 %attr(0700,root,root) %_libexecdir/ssh-keysign
 %attr(0644,root,root) %_mandir/man1/ssh.1*
 %attr(0644,root,root) %_mandir/man1/ssh-add.1*
@@ -220,22 +220,26 @@ fi
 %attr(0644,root,root) %_mandir/man5/ssh_config.5*
 %attr(0644,root,root) %_mandir/man8/ssh-keysign.8*
 %attr(0644,root,root) %config(noreplace) /etc/ssh/ssh_config
-%attr(-,root,root) /usr/bin/slogin
+%attr(-,root,root) %_bindir/slogin
 %attr(-,root,root) %_mandir/man1/slogin.1*
 
 %files server
 %defattr(-,root,root)
-%attr(0700,root,root) /usr/sbin/sshd
+%attr(0700,root,root) %_sbindir/sshd
 %attr(0755,root,root) %_libexecdir/sftp-server
 %attr(0644,root,root) %_mandir/man5/sshd_config.5*
 %attr(0644,root,root) %_mandir/man8/sshd.8*
 %attr(0644,root,root) %_mandir/man8/sftp-server.8*
-%attr(0600,root,root) %config(noreplace) /etc/ssh/sshd_config
+%attr(0600,root,root) %config(noreplace) %verify(not size md5 mtime) /etc/ssh/sshd_config
 %attr(0600,root,root) %config(noreplace) /etc/pam.d/sshd
 %attr(0700,root,root) %config /etc/rc.d/init.d/sshd
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.6.1p2-owl12
+- Removed verify checks for sshd_config which is under owl-control.
+- Cleaned up the spec a little.
+
 * Wed Nov 03 2004 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl11
 - Sanitize packet types early on.
 
