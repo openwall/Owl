@@ -1,26 +1,35 @@
-# $Id: Owl/packages/man-pages/man-pages.spec,v 1.1 2001/04/28 10:22:26 mci Exp $
+# $Id: Owl/packages/man-pages/man-pages.spec,v 1.2 2001/04/30 18:03:09 mci Exp $
 
 Summary: Man (manual) pages from the Linux Documentation Project.
 Name: man-pages
 Version: 1.35
-Release: 1owl
+Release: 2owl
 Copyright: distributable
 Group: Documentation
 Source0: ftp://ftp.win.tue.nl/pub/linux-local/manpages/man-pages-%{version}.tar.gz 
 Source1: rpcgen.1
 Source2: ldd.1
-Source3: ldconfig.8
-Source4: man-pages-extralocale.tar.bz2
-Source5: man2.tar.gz
+Source3: getent.1
+Source4: iconv.1
+Source5: locale.1
+Source6: localedef.1
+Source7: sprof.1
+Source8: getcontext.2
+Source9: setcontext.2
+Source10: sigaltstack.2
+Source11: ld-linux.so.8
+Source12: ldconfig.8
+Source13: rpcinfo.8
 Patch1: man-pages-1.35-deb-misc.diff
 Patch2: man-pages-1.35-rh-ctype.diff
-Patch3: man-pages-1.35-rh-pathupdate.diff
+# temporary disabled, now we haven't this paths
+# Patch3: man-pages-1.35-rh-pathupdate.diff
 Patch4: man-pages-1.35-rh-unicodeurl.diff
 Patch5: man-pages-1.35-rh-roffix.diff
 Patch6: man-pages-1.35-rh-mssync.diff
+Patch7: man-pages-1.35-owl-ccldso.diff
 Buildroot: /var/rpm-buildroot/%{name}-root
 Autoreqprov: false
-BuildRequires: bzip2
 BuildArchitectures: noarch
 
 %description
@@ -34,19 +43,31 @@ packages, etc. (e.g., nroff, ascii); and Section 8, system
 administration (intro only).
 
 %prep
-%setup -q -a 5
+%setup -q
 
-tar xIf %{SOURCE4}
 cp -a %{SOURCE1} man1
 cp -a %{SOURCE2} man1
-cp -a %{SOURCE3} man8
+cp -a %{SOURCE3} man1
+cp -a %{SOURCE4} man1
+cp -a %{SOURCE5} man1
+cp -a %{SOURCE6} man1
+cp -a %{SOURCE7} man1
+
+cp -a %{SOURCE8} man2
+cp -a %{SOURCE9} man2
+cp -a %{SOURCE10} man2
+
+cp -a %{SOURCE11} man8
+cp -a %{SOURCE12} man8
+cp -a %{SOURCE13} man8
 
 %patch1 -p1 
 %patch2 -p1
-%patch3 -p1
+# %patch3 -p1
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %build
 rm -fv man1/README
@@ -81,6 +102,11 @@ rm -f man3/infnan.3
 # Part of mount
 rm -fv man5/fstab.5
 
+# Part of time
+rm -fv man1/time.1
+
+# find . -name "*sudo*" -exec rm {} \;
+
 %install
 rm -rf $RPM_BUILD_ROOT
 
@@ -101,6 +127,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man*/*
 
 %changelog
+* Mon Apr 30 2001 Michail Litvak <mci@owl.openwall.com>
+- Disabled patch 3 (now we haven't this paths)
+- added man for ld-linux.so
+- remove time.1 (it is in time package)
+- man-pages-extralocale.tar.bz2, man2.tar.gz replaced
+  by just non packed files (this better for storing in CVS) 
+- patch to replace cc(1) -> gcc(1), ld.so -> ld-linux.so
+
 * Fri Apr 27 2001 Michail Litvak <mci@owl.openwall.com>
 - Imported from RH 7.1
 - added patch from Debian

@@ -1,0 +1,142 @@
+.TH ld-linux.so 8 "30 October 2000"
+.SH NAME
+ld-linux.so \- dynamic linker/loader
+.SH DESCRIPTION
+.B ld-linux.so
+loads the shared libraries needed by a program, prepares the program
+to run, and then runs it.
+Unless explicitly specified via the
+.B \-static
+option to
+.B ld
+during compilation, all Linux programs are incomplete and require 
+further linking at run time.
+.PP
+The necessary shared libraries needed by the program are searched for 
+in the following order
+.IP o
+Using the DT_RPATH dynamic section attribute of the binary if present and
+DT_RUNPATH attribute does not exist.
+.IP o
+Using the environment variable
+.B LD_LIBRARY_PATH .
+Except if the executable is a setuid/setgid binary, in which case it
+is ignored.
+.IP o
+Using the DT_RUNPATH dynamic section attribute of the binary if present.
+.IP o
+From the cache file
+.BR /etc/ld.so.cache
+which contains a compiled list of candidate libraries previously found
+in the augmented library path. If, however, the binary was linked with
+.B -z nodeflib
+linker option, libraries in the default library paths are skipped.
+.IP o
+In the default path
+.BR /lib ,
+and then
+.BR /usr/lib .
+If the binary was linked with
+.B -z nodeflib
+linker option, this step is skipped.
+.SH SYNOPSIS
+The dynamic linker can be run either indirectly through running some
+dynamically linked program or library (in which case no command line options
+to the dynamic linker can be passed and the dynamic linker which is stored
+in the
+.B .interp
+section of the program is executed) or directly by running:
+.P
+.B /lib/ld-linux.so.*
+[OPTIONS] [PROGRAM [ARGUMENTS]]
+.SH COMMAND LINE OPTIONS
+.TP
+.B --list
+List all dependencies and how they are resolved.
+.TP
+.B --verify
+Verify that program is dynamically linked and this dynamic linker can handle
+it.
+.TP
+.B --library-path PATH
+Override
+.B LD_LIBRARY_PATH
+environment variable setting (see below).
+.TP
+.B --ignore-rpath LIST
+Ignore RPATH and RUNPATH information in object names in LIST.
+.SH ENVIRONMENT
+.TP
+.B LD_LIBRARY_PATH
+A colon-separated list of directories in which to search for
+ELF libraries at execution-time.
+Similar to the 
+.B PATH
+environment variable.
+.TP
+.B LD_PRELOAD
+A whitespace-separated list of additional, user-specified, ELF shared 
+libraries to be loaded before all others.
+This can be used to selectively override functions in other shared libraries.
+For setuid/setgid ELF binaries, only libraries in the standard search
+directories that are also setuid will be loaded.
+.TP
+.B LD_TRACE_LOADED_OBJECTS
+If set to non-empty string, causes the program to list its dynamic library
+dependencies, as if run by ldd, instead of running normally.
+.TP
+.B LD_BIND_NOW
+If set to non-empty string, causes the dynamic linker to resolve all symbols
+at program startup instead of deferring function call resolval to the point
+when they are first referenced.
+.TP
+.B LD_WARN
+If set to non-empty string, warn about unresolved symbols.
+.TP
+.B LD_DEBUG
+Output verbose debugging information about the dynamic linker.
+If set to
+.B all
+prints all debugging information it has, if set to
+.B help
+prints a help message about which categories can be specified in this
+environment variable.
+.TP
+.B LD_DEBUG_OUTPUT
+File where
+.B LD_DEBUG
+output should be fed into, default is standard output. LD_DEBUG_OUTPUT
+is ignored for setuid/setgid binaries.
+.TP
+.B LD_VERBOSE
+If set to non-empty string, output symbol versioning information about the
+program if querying information about the program (ie. either
+.B LD_TRACE_LOADED_OBJECTS
+has been set, or
+.B --list
+or
+.B --verify
+options have been given to the dynamic linker).
+.SH FILES
+.PD 0
+.B /lib/ld-linux.so.*
+ELF dynamic linker/loader
+.TP
+.B /etc/ld.so.cache
+File containing a compiled list of directories in which to search for
+libraries and an ordered list of candidate libraries.
+.TP
+.B /etc/ld.so.preload
+File containing a whitespace separated list of ELF shared libraries to
+be loaded before the program.
+libraries and an ordered list of candidate libraries.
+.TP
+.B lib*.so*
+shared libraries
+.PD
+.SH SEE ALSO
+.BR ldd (1),
+.BR ldconfig (8).
+.SH AUTHORS
+Roland McGrath, Ulrich Drepper and others.
+This man page is derived from libc 5 ld.so manual page.

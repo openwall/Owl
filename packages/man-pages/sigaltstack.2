@@ -1,0 +1,82 @@
+.TH SIGALTSTACK 2 "20 September 1999" "Red Hat Linux 6.1" "Linux Programmer's Manual"
+.SH NAME
+sigaltstack \- get or set alternate signal stack content 
+.SH SYNOPSIS
+.B #include <signal.h>
+.sp
+.BI "int sigaltstack(const stack_t *" ss, " stack_t *" oss ); 
+.sp
+where:
+.TP
+\fIss\fP
+points to a signalstack structure defined in <signal.h> containing stack
+content after the call. 
+.TP
+\fIoss\fP
+if not NULL, points to a signalstack structure containing stack content before
+the call. 
+.SH DESCRIPTION 
+\fIsigaction\fP(2) may indicate that a signal should execute on an alternate
+stack. Where this is the case, \fBsigaltstack\fP(2) stores the signal in an
+alternate stack structure \fIss\fP where its execution status may be examined
+prior to processing.
+.PP
+.PP
+The sigaltstack struct is defined in <signal.h>
+as follows:
+.sp
+.RS
+.nf
+
+    void       *ss_sp     /* SVID3 uses caddr_t ss_sp
+    int        ss_flags
+    size_t     ss_size
+.fi
+.RE
+where:
+.TP
+\fIss_sp\fP
+points to the stack structure.
+.TP
+\fIss_flags\fP
+specifies the stack state to SS_DISABLE or SS_ONSTACK as follows:
+.sp
+If \fIss\fP is not NULL,the new state may be set to SS_DISABLE, which
+specifies that the stack is to be disabled and ss_sp and ss_size
+are ignored.  If SS_DISABLE is not set, the stack will be enabled.
+.sp
+If \fIoss\fP is not NULL, the stack state may be either SS_ONSTACK or
+SS_DISABLE. The value SS_ONSTACK indicates that the process is
+currently executing on the alternate stack and that any attempt
+to modify it during execution will fail.  The value SS_DISABLE
+indicates that the current signal stack is disabled.
+.TP
+\fIss_size\fP
+specifies the size of the stack.
+.PP
+The value SIGSTKSZ defines the average number of bytes used when allocating
+an alternate stack area.  The value MINSIGSTKSZ defines the minimum stack
+size for a signal handler.  When processing an alternate stack size, your
+program should include these values in the stack requirement to plan for
+the overhead of the operating system.
+.SH RETURN VALUES
+\fBsigaltstack\fP(2) returns 0 on success and -1 on failure. 
+.SH ERRORS
+\fBsigaltstack\fP(2) sets  errno for the following conditions:
+.TP
+EINVAL
+\fIss\fP is not a null pointer the \fIss_flags\fP member
+pointed to by \fIss\fP contains flags other than SS_DISABLE.
+.TP
+ENOMEM
+The size of the alternate stack area is less than MINSIGSTKSZ.
+.TP
+EPERM
+An attempt was made to modify an active stack.
+.SH STANDARDS
+This function comforms to: XPG4-UNIX.
+.SH SEE ALSO
+.\" Add ucontext(5) and standards(5) if/when they're written.
+\fBgetcontext\fP(2),
+\fBsigaction\fP(2),
+\fBsigsetjmp\fP(3).

@@ -1,0 +1,59 @@
+.TH GETCONTEXT 2 "20 September 1999" "Red Hat Linux 6.1" "Linux Programmer's Manual"
+.SH NAME
+getcontext, setcontext \- get or set the user context 
+.SH SYNOPSIS
+.B #include <ucontext.h>
+.sp
+.BI "int getcontext(ucontext_t *" ucp ); 
+.br
+.BI "int setcontext(const ucontext_t *" ucp );
+.sp
+where:
+.TP
+\fIucp\fP
+points to a structure defined in <ucontext.h> containing the signal mask,
+execution stack, and machine registers.
+.SH DESCRIPTION 
+\fBgetcontext\fP(2) gets the current context of the calling process, storing it
+in the ucontext struct pointed to by \fIucp\fP.
+.PP
+\fBsetcontext\fP(2) sets the context of the calling process to the state stored
+in the ucontext struct pointed to by \fIucp\fP. The struct must either have
+been created by \fBgetcontext\fP(2) or have been passed as the third parameter
+of the \fBsigaction\fP(2) signal handler.
+.PP
+The ucontext struct created by \fBgetcontext\fP(2) is defined in <ucontext.h>
+as follows:
+.sp
+.RS
+.nf
+typedef struct ucontext
+  {
+      unsigned long int uc_flags;
+      struct ucontext *uc_link;
+      stack_t uc_stack;
+      mcontext_t uc_mcontext;
+      __sigset_t uc_sigmask;
+      struct _fpstate __fpregs_mem;
+    } ucontext_t;
+.fi
+.RE
+.SH RETURN VALUES
+\fBgetcontext\fP(2) returns 0 on success and -1 on failure. 
+\fBsetcontext\fP(2) does not return a value on success and returns -1 on
+failure. 
+.SH STANDARDS
+These functions comform to: XPG4-UNIX.
+.SH NOTES
+When a signal handler executes, the current user context is saved and a new
+context is created by the kernel.  If the calling process leaves the signal
+handler using \fBlongjmp\fP(2), the original context cannot be restored, and the
+result of future calls to \fBgetcontext\fP(2) are unpredictable. To avoid
+this problem, use \fBsiglongjmp\fP(2) or \fBsetcontext\fP(2) in signal
+handlers instead of \fBlongjmp\fP(2).
+.SH SEE ALSO
+\fBsigaction\fP(2),
+\fBsigaltstack\fP(2),
+\fBsigprocmask\fP(2),
+\fBsigsetjmp\fP(3),
+\fBsetjmp\fP(3).
