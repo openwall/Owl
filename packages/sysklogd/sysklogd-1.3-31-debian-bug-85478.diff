@@ -1,0 +1,59 @@
+--- sysklogd-1.4/klogd.c	Mon Sep 18 11:34:11 2000
++++ sysklogd-1.4.1/klogd.c	Sun Mar 11 22:40:10 2001
+@@ -281,7 +291,7 @@
+ 		terminate = 0,
+ 		caught_TSTP = 0,
+ 		reload_symbols = 0,
+-		console_log_level = 6;
++		console_log_level = -1;
+ 
+ static int	use_syscall = 0,
+ 		one_shot = 0,
+@@ -499,7 +509,8 @@
+ 
+ 
+ 	/* Set level of kernel console messaging.. */
+-	if ( (ksyslog(8, NULL, console_log_level) < 0) && \
++	if ( (console_log_level != -1)
++	&& (ksyslog(8, NULL, console_log_level) < 0) && \
+ 	     (errno == EINVAL) )
+ 	{
+ 		/*
+@@ -739,6 +749,15 @@
+ 		  break;  /* full line_buff or end of input buffer */
+                }
+ 
++               if( *ptr == '\0' )  /* zero byte */
++               {
++                  ptr++;	/* skip zero byte */
++                  space -= 1;
++                  len   -= 1;
++
++		  break;
++	       }
++
+                if( *ptr == '\n' )  /* newline */
+                {
+                   ptr++;	/* skip newline */
+@@ -926,8 +945,8 @@
+ 		fprintf(stderr, "klogd: Error return from sys_sycall: " \
+ 			"%d - %s\n", errno, strerror(errno));
+ 	}
+-	
+-	LogLine(log_buffer, rdcnt);
++	else
++		LogLine(log_buffer, rdcnt);
+ 	return;
+ }
+ 
+@@ -951,8 +970,8 @@
+ 		Syslog(LOG_ERR, "Cannot read proc file system: %d - %s.", \
+ 		       errno, strerror(errno));
+ 	}
+-	
+-	LogLine(log_buffer, rdcnt);
++	else
++		LogLine(log_buffer, rdcnt);
+ 
+ 	return;
+ }
