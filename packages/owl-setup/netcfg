@@ -7,7 +7,7 @@ dlgresult=''
 f_resolv_conf=''
 f_hosts=''
 f_network=''
-trap rm -f '$dlgresult $f_resolv_conf $f_hosts $f_network' EXIT HUP INT TERM
+trap 'rm -f $dlgresult $f_resolv_conf $f_hosts $f_network' EXIT HUP INT TERM
 dlgresult=`mktemp /var/run/owl-setup.XXXXXX` || exit 1
 f_resolv_conf=`mktemp $F_RESOLV_CONF.XXXXXX` || exit 1
 f_hosts=`mktemp $F_HOSTS.XXXXXX` || exit 1
