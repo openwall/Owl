@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gnupg/gnupg.spec,v 1.18 2003/05/15 00:31:23 solar Exp $
+# $Id: Owl/packages/gnupg/gnupg.spec,v 1.19 2003/05/16 13:10:24 mci Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
@@ -79,6 +79,7 @@ fi
 %{_infodir}/gpg.*
 %{_infodir}/gpgv.*
 %{_libexecdir}/*
+%dir %{_datadir}/gnupg
 %config(noreplace) %{_datadir}/gnupg/options.skel
 
 %changelog
