@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gnupg/gnupg.spec,v 1.11 2002/05/18 22:53:24 mci Exp $
+# $Id: Owl/packages/gnupg/gnupg.spec,v 1.12 2002/05/18 23:28:52 mci Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
@@ -51,7 +51,7 @@ rm -rf $RPM_BUILD_ROOT
 /sbin/install-info %{_infodir}/gpg.info.gz %{_infodir}/dir \
 	--entry "* GnuPG: (gpg).                                Encryption and signing tool."
 /sbin/install-info %{_infodir}/gpgv.info.gz %{_infodir}/dir \
-	--entry "* gpgv: (gpgv).                                Signature verification tool."
+	--entry "* GnuPG: (gpgv).                                Signature verification tool."
 
 %preun
 if [ $1 -eq 0 ]; then
@@ -59,7 +59,7 @@ if [ $1 -eq 0 ]; then
 	--entry "* GnuPG: (gpg).                                Encryption and signing tool."
 
         /sbin/install-info --delete %{_infodir}/gpgv.info.gz %{_infodir}/dir \
-	--entry "* gpgv: (gpgv).                                Signature verification tool."
+	--entry "* GnuPG: (gpgv).                                Signature verification tool."
 
 fi
 
