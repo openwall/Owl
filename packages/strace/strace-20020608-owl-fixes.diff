@@ -1,6 +1,30 @@
+diff -ur strace-20020608.orig/defs.h strace-20020608/defs.h
+--- strace-20020608.orig/defs.h	Thu May 30 04:48:52 2002
++++ strace-20020608/defs.h	Sat Jun  8 21:06:47 2002
+@@ -395,6 +395,9 @@
+ extern void printsock P((struct tcb *, long, int));
+ extern void print_sock_optmgmt P((struct tcb *, long, int));
+ extern void printrusage P((struct tcb *, long));
++#ifdef LINUX_64BIT
++extern void printrusage32 P((struct tcb *, long));
++#endif
+ extern int clearbpt P((struct tcb *));
+ extern int setbpt P((struct tcb *));
+ extern int sigishandled P((struct tcb *, int));
+diff -ur strace-20020608.orig/desc.c strace-20020608/desc.c
+--- strace-20020608.orig/desc.c	Thu May 30 04:48:52 2002
++++ strace-20020608/desc.c	Sat Jun  8 21:03:11 2002
+@@ -540,6 +540,7 @@
+ }
+ 
+ #ifdef ALPHA
++int
+ sys_osf_select(tcp)
+ struct tcb *tcp;
+ {
 diff -ur strace-20020608.orig/file.c strace-20020608/file.c
 --- strace-20020608.orig/file.c	Thu May 30 04:48:52 2002
-+++ strace-20020608/file.c	Sat Jun  8 06:14:02 2002
++++ strace-20020608/file.c	Sat Jun  8 21:04:01 2002
 @@ -40,6 +40,7 @@
  #include <linux/types.h>
  #include <linux/dirent.h>
@@ -34,18 +58,21 @@ diff -ur strace-20020608.orig/file.c strace-20020608/file.c
  	    break;
      }
      if (!abbrev(tcp)) {
-@@ -1921,7 +1924,7 @@
+@@ -1921,8 +1924,9 @@
  		struct dirent64 *d = (struct dirent64 *) &buf[i];
  #ifdef linux
  		if (!abbrev(tcp)) {
 -			tprintf("%s{d_ino=%lu, d_off=%lu, ",
+-				i ? " " : "", d->d_ino, d->d_off);
 +			tprintf("%s{d_ino=%lu, d_off=%llu, ",
- 				i ? " " : "", d->d_ino, d->d_off);
++				i ? " " : "",
++				d->d_ino, (unsigned long long)d->d_off);
  			tprintf("d_reclen=%u, d_name=\"%s\"}",
  				d->d_reclen, d->d_name);
+ 		}
 diff -ur strace-20020608.orig/linux/syscall.h strace-20020608/linux/syscall.h
 --- strace-20020608.orig/linux/syscall.h	Thu May 30 04:48:52 2002
-+++ strace-20020608/linux/syscall.h	Sat Jun  8 06:14:02 2002
++++ strace-20020608/linux/syscall.h	Sat Jun  8 21:02:26 2002
 @@ -83,7 +83,7 @@
  int sys_rt_sigtimedwait(), sys_prctl(), sys_poll(), sys_vfork();
  int sys_sendfile(), sys_old_mmap(), sys_stat64(), sys_lstat64(), sys_fstat64();
@@ -57,7 +84,7 @@ diff -ur strace-20020608.orig/linux/syscall.h strace-20020608/linux/syscall.h
  /* sys_socketcall subcalls */
 diff -ur strace-20020608.orig/process.c strace-20020608/process.c
 --- strace-20020608.orig/process.c	Thu May 30 04:48:52 2002
-+++ strace-20020608/process.c	Sat Jun  8 06:14:02 2002
++++ strace-20020608/process.c	Sat Jun  8 21:02:26 2002
 @@ -484,6 +484,7 @@
  	return 0;
  }
@@ -86,7 +113,7 @@ diff -ur strace-20020608.orig/process.c strace-20020608/process.c
  int
 diff -ur strace-20020608.orig/syscall.c strace-20020608/syscall.c
 --- strace-20020608.orig/syscall.c	Thu May 30 04:48:52 2002
-+++ strace-20020608/syscall.c	Sat Jun  8 06:14:02 2002
++++ strace-20020608/syscall.c	Sat Jun  8 21:02:26 2002
 @@ -455,8 +455,7 @@
  };
  #endif /* FREEBSD */
@@ -168,7 +195,7 @@ diff -ur strace-20020608.orig/syscall.c strace-20020608/syscall.c
  		sparc_socket_decode (tcp);
 diff -ur strace-20020608.orig/util.c strace-20020608/util.c
 --- strace-20020608.orig/util.c	Thu May 30 04:48:52 2002
-+++ strace-20020608/util.c	Sat Jun  8 06:13:05 2002
++++ strace-20020608/util.c	Sat Jun  8 21:02:26 2002
 @@ -69,7 +69,19 @@
  
  #if defined(LINUX) && defined(SPARC)

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/strace/strace.spec,v 1.7 2002/06/08 02:07:56 solar Exp $
+# $Id: Owl/packages/strace/strace.spec,v 1.8 2002/06/08 17:14:06 solar Exp $
 
 Summary: Tracks and displays system calls associated with a running process.
 Name: strace
 Version: 4.4
-Release: owl1
+Release: owl2
 License: BSD
 Group: Development/Debuggers
 URL: http://www.liacs.nl/~wichert/strace/
