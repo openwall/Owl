@@ -1,25 +1,27 @@
-# $Id: Owl/packages/ncurses/ncurses.spec,v 1.20 2003/10/30 08:39:20 solar Exp $
+# $Id: Owl/packages/ncurses/ncurses.spec,v 1.21 2004/05/14 01:30:25 galaxy Exp $
 
 %define major 5
 %define oldmajor 4
 
+%define BUILD_CXX 0
+%define BUILD_GPM 0
+
 Summary: A CRT screen handling and optimization package.
 Name: ncurses
-Version: 5.2
-Release: owl10
+Version: 5.4
+Release: owl0.4
 License: distributable
 Group: System Environment/Libraries
 URL: http://dickey.his.com/ncurses/ncurses.html
-Source0: ftp://dickey.his.com/ncurses/ncurses-%version.tar.gz
+Source0: ftp://invisible-island.net/%name/%name-%version.tar.gz
 Source1: ncurses-linux
 Source2: ncurses-linux-m
 Source3: ncurses-resetall.sh
-Patch0: ftp://dickey.his.com/ncurses/5.2/ncurses-5.2-20001028.patch.gz
-Patch1: ftp://dickey.his.com/ncurses/5.2/ncurses-5.2-20001104.patch.gz
-Patch2: ncurses-5.2-owl-glibc-enable_secure.diff
-Patch3: ncurses-5.2-owl-fixes.diff
-Patch4: ncurses-5.2-rh-typo.diff
-Patch5: ncurses-5.2-rh-tput-S.diff
+Patch0: ftp://invisible-island.net/%name/%version/ncurses-5.4-20040424-patch.sh.bz2
+Patch1: ftp://invisible-island.net/%name/%version/ncurses-5.4-20040501.patch.gz
+Patch2: ftp://invisible-island.net/%name/%version/ncurses-5.4-20040508.patch.gz
+Patch10: ncurses-5.4-owl-glibc-enable_secure.diff
+Patch11: ncurses-5.4-owl-fixes.diff
 PreReq: /sbin/ldconfig
 BuildRoot: /override/%name-%version
 
@@ -55,46 +57,104 @@ built against Red Hat Linux 6.2.
 
 %prep
 %setup -q -n ncurses-%version
+rm -r $RPM_BUILD_DIR/%name-%version/doc/html/ada
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
+%patch10 -p1
+%patch11 -p1
 
 %build
-CFLAGS="%optflags -DPURE_TERMINFO"
-%define optflags $CFLAGS
 export ac_cv_func_mkstemp=yes \
 %configure \
-	--with-normal --with-shared --without-debug --without-profile \
-	--without-cxx --without-ada \
-	--disable-root-environ --with-ospeed=speed_t
-make
+	--program-transform-name= \
+	--with-normal \
+	--with-shared \
+	--without-debug \
+	--without-profile \
+%if %BUILD_CXX
+	--with-cxx \
+%else
+	--without-cxx \
+%endif
+	--without-ada \
+	--disable-root-environ \
+	--with-ospeed=speed_t \
+	--with-termlib \
+%if %BUILD_GPM
+	--with-gpm \
+%else
+	--without-gpm \
+%endif
+	--enable-symlinks \
+	--with-manpage-format=normal \
+	--with-manpage-aliases \
+	--without-manpage-symlinks \
+	--enable-const \
+	--enable-hard-tabs \
+	--enable-no-padding \
+	--enable-sigwinch \
+	--enable-echo \
+	--enable-warnings \
+	--disable-termcap \
+	--disable-rpath
+%__make
+
+%if %BUILD_CXX
+# Build C++ shared library
+pushd lib
+g++ -shared -Wl,-soname,libncurses++.so.5 -o libncurses++.so.%version \
+	-Wl,-whole-archive libncurses++.a -Wl,-no-whole-archive \
+	-L. -lform -lmenu -lpanel -lncurses -ltinfo
+popd
+
+# Build C++ demonstration program
+rm -f c++/demo
+%__make -C c++
+%endif
+
+# Let's run test-suite
+TERMINFO=$RPM_BUILD_ROOT%_datadir/terminfo %__make -C test
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%makeinstall includedir=$RPM_BUILD_ROOT/usr/include/ncurses \
-	ticdir=$RPM_BUILD_ROOT/usr/share/terminfo
-ln -s ../l/linux $RPM_BUILD_ROOT/usr/share/terminfo/c/console
-ln -s ncurses/curses.h $RPM_BUILD_ROOT/usr/include/ncurses.h
+%makeinstall \
+	includedir=$RPM_BUILD_ROOT%_includedir/%name \
+	ticdir=$RPM_BUILD_ROOT%_datadir/terminfo
+
+# Clean up after make install - tack man page lands into the wrong place
+mv $RPM_BUILD_ROOT%_mandir/tack.1* $RPM_BUILD_ROOT%_mandir/man1/
+
+ln -s ../l/linux $RPM_BUILD_ROOT%_datadir/terminfo/c/console
+ln -s ncurses/curses.h $RPM_BUILD_ROOT%_includedir/ncurses.h
 for I in curses unctrl eti form menu panel term; do
-	ln -sf ncurses/$I.h $RPM_BUILD_ROOT/usr/include/$I.h
+	ln -s ncurses/$I.h $RPM_BUILD_ROOT%_includedir/$I.h
 done
 
 %ifarch sparc sparcv9 sparc64
+# XXX (GM): Warning: I cannot test if this block is necessary for current version of ncurses
 install -m 644 $RPM_SOURCE_DIR/ncurses-linux \
-	$RPM_BUILD_ROOT/usr/share/terminfo/l/linux
+	$RPM_BUILD_ROOT%_datadir/terminfo/l/linux
 install -m 644 $RPM_SOURCE_DIR/ncurses-linux-m \
-	$RPM_BUILD_ROOT/usr/share/terminfo/l/linux-m
+	$RPM_BUILD_ROOT%_datadir/terminfo/l/linux-m
 %endif
 
-strip -R .comment --strip-unneeded $RPM_BUILD_ROOT/usr/lib/*.so.[0-9].*
-make clean -C test
+%if %BUILD_CXX
+# Install C++ shared library
+install -p -m 755 lib/libncurses++.so.%version $RPM_BUILD_ROOT%_libdir/
+ln -s libncurses++.so.%version $RPM_BUILD_ROOT%_libdir/libncurses++.so.5
+ln -s libncurses++.so.5 $RPM_BUILD_ROOT%_libdir/libncurses++.so
+
+# Prepare C++ doc directory
+mkdir -p rpm-doc/c++
+install -p -m 644 c++/{NEWS,PROBLEMS,README-first} rpm-doc/c++/
+%endif
+
+%__make clean -C test
 
 # the resetall script
 install -m 755 $RPM_SOURCE_DIR/ncurses-resetall.sh \
-	$RPM_BUILD_ROOT/usr/bin/resetall
+	$RPM_BUILD_ROOT%_bindir/resetall
 
 # compat links
 ln -s libform.so.%version $RPM_BUILD_ROOT/usr/lib/libform.so.%oldmajor
@@ -107,9 +167,12 @@ ln -s libpanel.so.%version $RPM_BUILD_ROOT/usr/lib/libpanel.so.%oldmajor
 
 %files
 %defattr(-,root,root)
-%attr(755,root,root) /usr/lib/lib*.so.%{major}*
-%doc README ANNOUNCE
+%attr(755,root,root) %_libdir/lib*.so.%{major}*
+%doc README NEWS TO-DO ANNOUNCE
 %doc doc/html/announce.html
+%if %BUILD_CXX
+%doc rpm-doc/c++
+%endif
 %_datadir/terminfo
 %_datadir/tabset
 %_bindir/*
@@ -119,9 +182,10 @@ ln -s libpanel.so.%version $RPM_BUILD_ROOT/usr/lib/libpanel.so.%oldmajor
 
 %files devel
 %defattr(-,root,root)
-%doc c++ test
-%doc doc/html/hackguide.html
-%doc doc/html/ncurses-intro.html
+%doc doc/html/{hackguide,ncurses-intro}.html
+%if %BUILD_CXX
+%doc c++/demo.cc
+%endif
 %_libdir/lib*.so
 %_libdir/lib*.a
 %_includedir/*
@@ -129,9 +193,34 @@ ln -s libpanel.so.%version $RPM_BUILD_ROOT/usr/lib/libpanel.so.%oldmajor
 
 %files compat
 %defattr(-,root,root)
-/usr/lib/lib*.so.%{oldmajor}*
+%_libdir/lib*.so.%{oldmajor}*
 
 %changelog
+* Fri May 14 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 5.4-owl0.4
+- Updated patch-set from official site
+
+* Wed Mar 17 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 5.4-owl0.3
+- Removed unneeded libraries strip -- it will be done by brp- scripts
+- Fixed packaging problem for c++ documentation
+
+* Wed Mar 10 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 5.4-owl0.2
+- turned off building of C++ library by default.
+- turned off linking with gpm by default (we need to review Makefiles to
+link this library only where needed, but not to every binary we build).
+
+* Fri Mar 05 2004 Michail Litvak <mci@owl.openwall.com> 5.4-owl0.1
+- 5.4
+- 20040214 + 20040221 + 20040228 patches
+
+* Wed Jan 28 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 5.3-owl0.1
+- Cleaned up the spec file (removed unneeded macros)
+
+* Tue Jan 20 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 5.3-owl0
+- Updated to the 5.3 version with 20040117 patch
+- Cleaned up the spec (by using macros)
+- Dropped rh-typo and rh-tput-S patches (already in upstream)
+- owl-fixes patch shrinked (all previous owl-fixes already in upstream)
+
 * Wed Oct 29 2003 Solar Designer <solar@owl.openwall.com> 5.2-owl10
 - Don't keep ESC characters in resetall script source, use echo -e instead.
 - Eliminated unneeded curly braces with RPM macros and dropped %clean.

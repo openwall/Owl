@@ -1,0 +1,11 @@
+--- ncurses-5.4/ncurses/tinfo/comp_error.c.orig	Sat Sep  7 20:05:07 2002
++++ ncurses-5.4/ncurses/tinfo/comp_error.c	Tue Jan 20 20:00:09 2004
+@@ -63,7 +63,7 @@
+     if (termtype != 0) {
+ 	termtype[0] = '\0';
+ 	if (name)
+-	    strncat(termtype, name, MAX_NAME_SIZE);
++	    strncat(termtype, name, sizeof(termtype) - 1);
+     }
+ }
+ 

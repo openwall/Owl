@@ -1,0 +1,31 @@
+--- ncurses-5.4/ncurses/tinfo/access.c.orig	Sat Jul  5 19:31:28 2003
++++ ncurses-5.4/ncurses/tinfo/access.c	Fri Mar  5 23:35:36 2004
+@@ -30,6 +30,9 @@
+  *  Author: Thomas E. Dickey <dickey@clark.net> 1998,2000,2001              *
+  ****************************************************************************/
+ 
++#define _GNU_SOURCE
++#include <unistd.h>
++
+ #include <curses.priv.h>
+ #include <tic.h>
+ #include <nc_alloc.h>
+@@ -112,6 +115,9 @@
+ }
+ 
+ #ifndef USE_ROOT_ENVIRON
++
++extern int __libc_enable_secure;
++
+ /*
+  * Returns true if we allow application to use environment variables that are
+  * used for searching lists of directories, etc.
+@@ -119,6 +125,8 @@
+ NCURSES_EXPORT(int)
+ _nc_env_access(void)
+ {
++    if (__libc_enable_secure)
++	return FALSE;
+ #if HAVE_ISSETUGID
+     if (issetugid())
+ 	return FALSE;
