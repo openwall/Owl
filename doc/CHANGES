@@ -32,6 +32,7 @@ References:
 http://marc.theaimsgroup.com/?l=bugtraq&m=99496364810666
 http://mail.gnu.org/pipermail/bug-gnu-utils/2002-May/000827.html
 http://marc.theaimsgroup.com/?l=bugtraq&m=103314336129887
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2001-1267
 http://marc.theaimsgroup.com/?l=bugtraq&m=90674255917321
 https://listman.redhat.com/pipermail/roswell-list/2001-August/001286.html
 
@@ -963,4 +964,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.136 2002/09/28 12:43:01 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.137 2002/09/29 05:42:52 solar Exp $

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tar/tar.spec,v 1.12 2002/09/28 12:43:01 solar Exp $
+# $Id: Owl/packages/tar/tar.spec,v 1.13 2002/09/29 05:42:52 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
@@ -105,6 +105,7 @@ analysis:
 http://marc.theaimsgroup.com/?l=bugtraq&m=99496364810666
 http://mail.gnu.org/pipermail/bug-gnu-utils/2002-May/000827.html
 http://marc.theaimsgroup.com/?l=bugtraq&m=103314336129887
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2001-1267
 1.13.17 and 1.13.18 had this right.
 - Fixed another 1.13.19's bug which effectively disabled the symlink safety
 introduced in 1.13.18; this avoids the problem described by Willy TARREAU
