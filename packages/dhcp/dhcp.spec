@@ -1,11 +1,11 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.17 2003/09/15 17:25:55 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.18 2003/09/19 08:59:20 schmidt Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
 Summary: Dynamic Host Configuration Protocol (DHCP) distribution.
 Name: dhcp
 Version: 3.0pl2
-Release: owl2
+Release: owl3
 License: ISC License
 Group: System Environment/Daemons
 URL: http://www.isc.org/products/DHCP/
@@ -165,6 +165,9 @@ fi
 %{_mandir}/man8/dhcrelay.8*
 
 %changelog
+* Fri Sep 19 2003 Matthias Schmidt <schmidt@owl.openwall.com> 3.0pl2-owl3
+- Fixed another four warnings on sparc.
+
 * Mon Sep 15 2003 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl2
 - Don't set dhcpd to be started at system boot by default.
 - dhcrelay chroots now to /var/empty.
