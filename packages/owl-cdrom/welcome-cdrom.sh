@@ -1,6 +1,7 @@
-# $Id: Owl/packages/owl-cdrom/welcome-cdrom.sh,v 1.4 2003/10/20 01:57:40 solar Exp $
+# $Id: Owl/packages/owl-cdrom/welcome-cdrom.sh,v 1.5 2003/10/20 02:03:04 solar Exp $
 
 CD=/.Owl-CD-ROM
+VERSION=
 if [ -s $CD -a -r $CD ]; then
 	VERSION=" `cat $CD`"
 fi
