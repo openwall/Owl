@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.23 2001/12/14 19:32:22 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.24 2002/02/04 07:34:29 mci Exp $
 
 %define BUILD_PROFILE 0
 
@@ -6,7 +6,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: 2.1.3
 %define crypt_bf_version 0.4.2
-Release: 19owl
+Release: owl19
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%{version}.tar.gz
@@ -53,6 +53,7 @@ AutoReq: false
 %ifarch alpha
 Provides: ld.so.2
 %endif
+Provides: glibc-crypt_blowfish = %{crypt_bf_version}
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -299,6 +300,9 @@ rm -f *.filelist*
 %endif
 
 %changelog
+* Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com>
+- Enforce our new spec file conventions.
+
 * Fri Dec 14 2001 Solar Designer <solar@owl.openwall.com>
 - Back-ported a glob(3) buffer overflow fix from the CVS; the bug has been
 discovered and an initial patch produced by Flavio Veloso of Magnux.
