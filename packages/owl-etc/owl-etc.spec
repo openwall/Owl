@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.30 2001/10/08 06:16:16 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.31 2001/10/10 14:36:49 solar Exp $
 
 Summary: Initial set of configuration files
 Name: owl-etc
-Version: 0.16
+Version: 0.17
 Release: 1owl
 Copyright: public domain
 Group: System Environment/Base
@@ -65,6 +65,10 @@ rm -rf $RPM_BUILD_ROOT
 %ghost /var/log/lastlog
 
 %changelog
+* Wed Oct 10 2001 Solar Designer <solar@owl.openwall.com>
+- Use "proc" and "devpts" as fstab keywords for /proc and /dev/pts as
+"none" could cause confusing messages from umount(8).
+
 * Mon Oct 08 2001 Solar Designer <solar@owl.openwall.com>
 - syslogd user/group.
 
