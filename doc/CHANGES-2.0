@@ -14,7 +14,7 @@ change logs for the packages themselves.
 
 2004/06/07	Package: openssh
 SECURITY FIX	Severity: high, remote, passive
-Fixed directory traversal vulnerability in scp which allows malicious
+Fixed directory traversal vulnerability in scp which allowed malicious
 SSH servers to overwrite arbitrary files on the client system.
 Reference:
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0175
@@ -150,4 +150,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.34 2004/06/07 00:22:38 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.35 2004/06/07 01:07:41 solar Exp $
