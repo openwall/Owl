@@ -1,14 +1,15 @@
-# $Id: Owl/packages/gnupg/gnupg.spec,v 1.22 2003/10/29 19:22:05 solar Exp $
+# $Id: Owl/packages/gnupg/gnupg.spec,v 1.23 2003/11/28 23:25:10 mci Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
 Version: 1.2.2
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/Cryptography
 URL: http://www.gnupg.org
 Source: ftp://ftp.gnupg.org/GnuPG/gnupg/%name-%version.tar.bz2
 Patch0: gnupg-1.2.2-fw-secret-key-checks.diff
+Patch1: gnupg-1.2.2-ds-no-elgamal.diff
 PreReq: /sbin/install-info
 Provides: gpg, openpgp
 BuildRequires: zlib-devel, bison, texinfo
@@ -30,6 +31,7 @@ all:
 install:
 EOF
 %patch0 -p1
+%patch1 -p1
 
 %build
 unset LINGUAS || :
@@ -80,6 +82,11 @@ fi
 %config(noreplace) %_datadir/gnupg/options.skel
 
 %changelog
+* Sat Nov 29 2003 Michail Litvak <mci@owl.openwall.com> 1.2.2-owl3
+- Added patch by David Shaw to disable the ability to create signatures
+using the ElGamal sign+encrypt (type 20) keys as well as to remove
+the option to create such keys.
+
 * Fri May 16 2003 Michail Litvak <mci@owl.openwall.com> 1.2.2-owl2
 - %dir %_datadir/gnupg
 
