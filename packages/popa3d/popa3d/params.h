@@ -139,7 +139,8 @@
  * AUTH_PASSWD		Use getpwnam(3) only, for *BSD or readable passwd;
  * AUTH_SHADOW		Use shadow passwords directly (not via PAM);
  * AUTH_PAM		Use PAM in the old-fashioned way;
- * AUTH_PAM_USERPASS	Talk to pam_userpass via Linux-PAM binary prompts.
+ * AUTH_PAM_USERPASS	Talk to pam_userpass via Linux-PAM binary prompts
+ * USE_LIBPAM_USERPASS	...and use libpam_userpass.
  *
  * Note that there's no built-in password aging support.
  */
@@ -147,6 +148,7 @@
 #define AUTH_SHADOW			1
 #define AUTH_PAM			0
 #define AUTH_PAM_USERPASS		0
+#define USE_LIBPAM_USERPASS		0
 
 #if AUTH_PAM || AUTH_PAM_USERPASS
 #define AUTH_PAM_SERVICE		POP_SERVER

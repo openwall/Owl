@@ -1,9 +1,9 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.23 2003/01/17 01:27:34 solar Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.24 2003/04/12 13:32:14 solar Exp $
 
 Summary: A screen manager that supports multiple sessions on one terminal.
 Name: screen
 Version: 3.9.10
-Release: owl5
+Release: owl6
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%{version}.tar.gz
@@ -25,7 +25,7 @@ Requires: tcb, pam_userpass, libutempter
 # Just in case this is built with an older version of RPM package.
 Requires: libutempter.so.0(UTEMPTER_1.1)
 Prefix: %{_prefix}
-BuildRequires: pam-devel, libutempter-devel
+BuildRequires: pam-devel, pam_userpass-devel, libutempter-devel
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -119,6 +119,9 @@ fi
 %attr(710,root,screen) %dir %{_libexecdir}/screen
 
 %changelog
+* Mon Apr 07 2003 Dmitry V. Levin <ldv@altlinux.org> 3.9.10-owl6
+- Updated pam_userpass support: build with libpam_userpass.
+
 * Wed Dec 25 2002 Dmitry V. Levin <ldv@altlinux.org> 3.9.10-owl5
 - Migrated to libutempter.
 

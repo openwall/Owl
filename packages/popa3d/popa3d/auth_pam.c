@@ -24,6 +24,11 @@
 #endif
 typedef linux_const void *pam_item_t;
 
+#if USE_LIBPAM_USERPASS
+#include <security/pam_userpass.h>
+
+#else
+
 #if AUTH_PAM_USERPASS
 #include <security/pam_client.h>
 
@@ -129,6 +134,7 @@ static int pam_userpass_conv(int num_msg, linux_const struct pam_message **msg,
 
 	return PAM_SUCCESS;
 }
+#endif /* USE_LIBPAM_USERPASS */
 
 static int is_user_known(char *user)
 {

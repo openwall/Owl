@@ -1,95 +1,15 @@
 diff -urN shadow-4.0.0-owl-no-tcb/lib/Makefile.am shadow-4.0.0/lib/Makefile.am
 --- shadow-4.0.0-owl-no-tcb/lib/Makefile.am	Sat Oct  6 19:35:26 2001
 +++ shadow-4.0.0/lib/Makefile.am	Tue Aug 20 14:19:27 2002
-@@ -11,6 +11,9 @@
+@@ -11,6 +11,8 @@
  	$(top_builddir)/libmisc/libmisc.la
  
  libshadow_la_SOURCES = \
-+	appl_userpass.c \
 +	pam_chpw.c \
 +	tcbfuncs.c \
  	commonio.c \
  	commonio.h \
  	defines.h \
-diff -urN shadow-4.0.0-owl-no-tcb/lib/_pam_userpass.h shadow-4.0.0/lib/_pam_userpass.h
---- shadow-4.0.0-owl-no-tcb/lib/_pam_userpass.h	Thu Jan  1 00:00:00 1970
-+++ shadow-4.0.0/lib/_pam_userpass.h	Tue Aug 20 14:19:27 2002
-@@ -0,0 +1,12 @@
-+#ifndef __PAM_USERPASS_H
-+#define __PAM_USERPASS_H
-+
-+#define USERPASS_AGENT_ID		"userpass"
-+#define USERPASS_AGENT_ID_LENGTH	8
-+
-+#define USERPASS_USER_MASK		0x03
-+#define USERPASS_USER_REQUIRED		1
-+#define USERPASS_USER_KNOWN		2
-+#define USERPASS_USER_FIXED		3
-+
-+#endif
-diff -urN shadow-4.0.0-owl-no-tcb/lib/appl_userpass.c shadow-4.0.0/lib/appl_userpass.c
---- shadow-4.0.0-owl-no-tcb/lib/appl_userpass.c	Thu Jan  1 00:00:00 1970
-+++ shadow-4.0.0/lib/appl_userpass.c	Tue Aug 20 14:19:27 2002
-@@ -0,0 +1,59 @@
-+#include <string.h>
-+#include <stdlib.h>
-+
-+#include <security/pam_appl.h>
-+#include <security/pam_client.h>
-+
-+#ifndef PAM_BP_RCONTROL
-+/* Linux-PAM prior to 0.74 */
-+#define PAM_BP_RCONTROL	PAM_BP_CONTROL
-+#define PAM_BP_WDATA	PAM_BP_DATA
-+#define PAM_BP_RDATA	PAM_BP_DATA
-+#endif
-+
-+#include "_pam_userpass.h"
-+#include "pam_userpass.h"
-+
-+int pam_userpass_conv(int num_msg, const struct pam_message **msg,
-+	struct pam_response **resp, void *appdata_ptr)
-+{
-+	pam_userpass_t *userpass = (pam_userpass_t *)appdata_ptr;
-+	pamc_bp_t prompt;
-+	const char *input;
-+	char *output;
-+	char flags;
-+
-+	if (num_msg != 1 || msg[0]->msg_style != PAM_BINARY_PROMPT)
-+		return PAM_CONV_ERR;
-+
-+	prompt = (pamc_bp_t)msg[0]->msg;
-+	input = PAM_BP_RDATA(prompt);
-+
-+	if (PAM_BP_RCONTROL(prompt) != PAM_BPC_SELECT ||
-+	    strncmp(input, USERPASS_AGENT_ID "/", USERPASS_AGENT_ID_LENGTH + 1))
-+		return PAM_CONV_ERR;
-+
-+	flags = input[USERPASS_AGENT_ID_LENGTH + 1];
-+	input += USERPASS_AGENT_ID_LENGTH + 1 + 1;
-+
-+	if ((flags & USERPASS_USER_MASK) == USERPASS_USER_FIXED &&
-+	    strcmp(input, userpass->user))
-+		return PAM_CONV_AGAIN;
-+
-+	if (!(*resp = malloc(sizeof(struct pam_response))))
-+		return PAM_CONV_ERR;
-+
-+	prompt = NULL;
-+	PAM_BP_RENEW(&prompt, PAM_BPC_DONE,
-+		strlen(userpass->user) + 1 + strlen(userpass->pass));
-+	output = PAM_BP_WDATA(prompt);
-+
-+	strcpy(output, userpass->user);
-+	output += strlen(output) + 1;
-+	memcpy(output, userpass->pass, strlen(userpass->pass));
-+
-+	(*resp)[0].resp_retcode = 0;
-+	(*resp)[0].resp = (char *)prompt;
-+
-+	return PAM_SUCCESS;
-+}
 diff -urN shadow-4.0.0-owl-no-tcb/lib/commonio.c shadow-4.0.0/lib/commonio.c
 --- shadow-4.0.0-owl-no-tcb/lib/commonio.c	Sun Nov 11 06:48:15 2001
 +++ shadow-4.0.0/lib/commonio.c	Tue Aug 20 14:19:27 2002
@@ -211,13 +131,12 @@ diff -urN shadow-4.0.0-owl-no-tcb/lib/getdef.c shadow-4.0.0/lib/getdef.c
 diff -urN shadow-4.0.0-owl-no-tcb/lib/pam_chpw.c shadow-4.0.0/lib/pam_chpw.c
 --- shadow-4.0.0-owl-no-tcb/lib/pam_chpw.c	Thu Jan  1 00:00:00 1970
 +++ shadow-4.0.0/lib/pam_chpw.c	Tue Aug 20 14:19:27 2002
-@@ -0,0 +1,39 @@
+@@ -0,0 +1,38 @@
 +#include <stdio.h>
 +#include <stdlib.h>
 +#include <string.h>
 +
-+#include <security/pam_appl.h>
-+#include "pam_userpass.h"
++#include <security/pam_userpass.h>
 +
 +int do_pam_chpass(const char *service, const char *user, const char *pass)
 +{
@@ -260,24 +179,6 @@ diff -urN shadow-4.0.0-owl-no-tcb/lib/pam_chpw.h shadow-4.0.0/lib/pam_chpw.h
 +
 +extern int do_pam_chpass(const char *service,
 +	const char *user, const char *pass);
-+
-+#endif
-diff -urN shadow-4.0.0-owl-no-tcb/lib/pam_userpass.h shadow-4.0.0/lib/pam_userpass.h
---- shadow-4.0.0-owl-no-tcb/lib/pam_userpass.h	Thu Jan  1 00:00:00 1970
-+++ shadow-4.0.0/lib/pam_userpass.h	Tue Aug 20 14:19:27 2002
-@@ -0,0 +1,14 @@
-+#ifndef _PAM_USERPASS_H
-+#define _PAM_USERPASS_H
-+
-+#include <security/pam_appl.h>
-+
-+typedef struct {
-+	const char *user;
-+	const char *pass;
-+} pam_userpass_t;
-+
-+extern int pam_userpass_conv(int num_msg, const struct pam_message **msg,
-+	struct pam_response **resp, void *appdata_ptr);
 +
 +#endif
 diff -urN shadow-4.0.0-owl-no-tcb/lib/shadowio.c shadow-4.0.0/lib/shadowio.c
@@ -1068,7 +969,7 @@ diff -urN shadow-4.0.0-owl-no-tcb/man/login.defs.5 shadow-4.0.0/man/login.defs.5
 diff -urN shadow-4.0.0-owl-no-tcb/src/Makefile.am shadow-4.0.0/src/Makefile.am
 --- shadow-4.0.0-owl-no-tcb/src/Makefile.am	Sat Oct  6 19:46:49 2001
 +++ shadow-4.0.0/src/Makefile.am	Tue Aug 20 14:19:27 2002
-@@ -36,7 +36,8 @@
+@@ -36,9 +36,10 @@
  suidubins = chage chfn chsh expiry gpasswd newgrp passwd
  
  LDADD = $(top_builddir)/libmisc/libmisc.la \
@@ -1076,8 +977,20 @@ diff -urN shadow-4.0.0-owl-no-tcb/src/Makefile.am shadow-4.0.0/src/Makefile.am
 +	$(top_builddir)/lib/libshadow.la \
 +	-ltcb
  
- chpasswd_LDADD = $(LDADD) $(LIBPAM)
+-chpasswd_LDADD = $(LDADD) $(LIBPAM)
++chpasswd_LDADD = $(LDADD) $(LIBPAM) -lpam_userpass
  chage_LDADD    = $(LDADD) $(LIBPAM)
+ chfn_LDADD     = $(LDADD) $(LIBPAM)
+ chsh_LDADD     = $(LDADD) $(LIBPAM)
+@@ -47,7 +48,7 @@
+ groupdel_LDADD = $(LDADD) $(LIBPAM)
+ groupmod_LDADD = $(LDADD) $(LIBPAM)
+ login_LDADD    = $(LDADD) $(LIBPAM)
+-newusers_LDADD = $(LDADD) $(LIBPAM)
++newusers_LDADD = $(LDADD) $(LIBPAM) -lpam_userpass
+ passwd_LDADD   = $(LDADD) $(LIBPAM) $(LIBCRACK)
+ su_LDADD       = $(LDADD) $(LIBPAM)
+ useradd_LDADD  = $(LDADD) $(LIBPAM)
 diff -urN shadow-4.0.0-owl-no-tcb/src/chage.c shadow-4.0.0/src/chage.c
 --- shadow-4.0.0-owl-no-tcb/src/chage.c	Sun Nov 11 06:49:15 2001
 +++ shadow-4.0.0/src/chage.c	Tue Aug 20 14:19:27 2002

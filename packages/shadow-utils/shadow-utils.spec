@@ -1,9 +1,9 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.23 2002/11/03 02:13:10 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.24 2003/04/12 13:30:10 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.0
-Release: owl7
+Release: owl8
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -38,7 +38,7 @@ Patch30: shadow-4.0.0-owl-tcb.diff
 Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: pam, tcb >= 0.9.8, pam_userpass >= 0.5
 BuildRequires: libtool, gettext, automake, autoconf
-BuildRequires: pam-devel, tcb-devel
+BuildRequires: pam-devel, pam_userpass-devel, tcb-devel
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -192,6 +192,9 @@ fi
 /etc/control.d/facilities/*
 
 %changelog
+* Mon Apr 07 2003 Dmitry V. Levin <ldv@altlinux.org> 2:4.0.0-owl8
+- Updated pam_userpass support: build with libpam_userpass.
+
 * Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
 - Dump/restore the owl-control settings for chage, chfn, chsh, gpasswd,
 and newgrp on package upgrades.

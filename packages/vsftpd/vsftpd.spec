@@ -1,9 +1,9 @@
-# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.5 2002/04/02 10:18:00 solar Exp $
+# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.6 2003/04/12 14:08:08 solar Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
 Version: 1.0.2
-Release: owl0.1
+Release: owl0.2
 License: GPL
 Group: System Environment/Daemons
 # The primary site for releases is ftp://ferret.lmh.ox.ac.uk/pub/linux/
@@ -12,11 +12,11 @@ Source1: vsftpd.pam
 Source2: vsftpd.xinetd
 Source3: vsftpd.logrotate
 Patch0: vsftpd-1.0.2-owl-alt-defaults.diff
-Patch1: vsftpd-1.0.1-owl-pam_userpass.diff
+Patch1: vsftpd-1.0.2-owl-pam_userpass.diff
 Patch2: vsftpd-1.0.1-owl-no-libcap.diff
 Requires: xinetd, logrotate, pam_userpass, tcb, /var/empty
 Provides: ftpserver
-BuildRequires: pam-devel
+BuildRequires: pam-devel, pam_userpass-devel
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -32,7 +32,7 @@ program has been carefully designed to be resilient to attack.
 %patch2 -p1
 
 %build
-make CFLAGS="$RPM_OPT_FLAGS -Wall" LIBS="-lpam"
+make CFLAGS="$RPM_OPT_FLAGS -Wall" LIBS="-lpam -lpam_userpass"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -77,6 +77,9 @@ mkdir -m 755 /home/ftp &> /dev/null || :
 %{_mandir}/man8/vsftpd.8*
 
 %changelog
+* Thu Apr 03 2003 Dmitry V. Levin <ldv@altlinux.org> 1.0.2-owl0.2
+- Updated pam_userpass support: build with libpam_userpass.
+
 * Tue Apr 02 2002 Solar Designer <solar@owl.openwall.com>
 - Updated to 1.0.2pre3.
 - Set hide_ids to YES.

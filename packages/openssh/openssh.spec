@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.54 2003/04/08 02:18:27 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.55 2003/04/12 13:36:55 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p1
-Release: owl1
+Release: owl2
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -29,7 +29,7 @@ PreReq: openssl < 0.9.7
 Requires: pam >= 0.75-owl16
 Obsoletes: ssh
 BuildRequires: openssl-devel >= 0.9.6b-1owl
-BuildRequires: pam-devel
+BuildRequires: pam-devel, pam_userpass-devel
 BuildRequires: perl
 BuildRequires: zlib-devel
 BuildRequires: tcp_wrappers >= 7.6-owl2
@@ -113,7 +113,7 @@ rm -r autom4te-*.cache
 %{expand:%%define _libexecdir %{_libexecdir}/ssh}
 
 %build
-export LIBS="-lcrypt -lpam -lpam_misc"
+export LIBS="-lcrypt -lpam -lpam_misc -lpam_userpass"
 %configure \
 	--with-pam \
 	--with-tcp-wrappers \
@@ -223,6 +223,9 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Tue Apr 08 2003 Dmitry V. Levin <ldv@altlinux.org> 3.6.1p1-owl2
+- Updated pam_userpass support: build with libpam_userpass.
+
 * Tue Apr 08 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p1-owl1
 - Updated to 3.6.1p1.
 - Make ssh-agent protect itself by setting prctl(PR_SET_DUMPABLE, 0) on

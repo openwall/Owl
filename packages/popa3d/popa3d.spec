@@ -1,8 +1,8 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.33 2003/03/10 01:32:08 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.34 2003/04/12 14:49:04 solar Exp $
 
 Summary: Post Office Protocol (POP3) server.
 Name: popa3d
-Version: 0.6.2
+Version: 0.6.3
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
@@ -13,6 +13,7 @@ Source3: popa3d.init
 Source4: popa3d.xinetd
 PreReq: /sbin/chkconfig, grep, shadow-utils
 Requires: /var/empty, tcb, pam_userpass, xinetd
+BuildRequires: pam-devel, pam_userpass-devel
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -24,7 +25,8 @@ security as its primary design goal.
 cp $RPM_SOURCE_DIR/params.h params.h
 
 %build
-make CFLAGS="-c -Wall $RPM_OPT_FLAGS -DHAVE_PROGNAME" LIBS="-lpam"
+make CFLAGS="-c -Wall $RPM_OPT_FLAGS -DHAVE_PROGNAME" \
+	LIBS="-lpam -lpam_userpass"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -72,6 +74,9 @@ fi
 %doc CHANGES CONTACT DESIGN LICENSE
 
 %changelog
+* Mon Apr 07 2003 Dmitry V. Levin <ldv@altlinux.org> 0.6.3-owl1
+- Updated pam_userpass support: build with libpam_userpass.
+
 * Mon Mar 10 2003 Solar Designer <solar@owl.openwall.com> 0.6.2-owl1
 - Rate-limit the "sessions limit reached" log message similarly to the
 per-source one; spotted by Michael Tokarev.
