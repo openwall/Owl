@@ -1,9 +1,9 @@
-# $Id: Owl/packages/links/Attic/links.spec,v 1.8 2001/07/27 21:35:37 mci Exp $
+# $Id: Owl/packages/links/Attic/links.spec,v 1.9 2001/07/27 21:52:56 mci Exp $
 
 Name: links
 Summary: Lynx-like text WWW browser with support for frames
 Version: 0.96
-Release: 1owl
+Release: 2owl
 Copyright: GPL
 Source: http://artax.karlin.mff.cuni.cz/~mikulas/links/download/%{name}-%{version}.tar.gz
 Group: Applications/Internet
@@ -33,6 +33,7 @@ don't use it. :-)
 
 %build
 %configure --with-ssl
+make
 
 %install
 rm -rf $RPM_BUILD_ROOT
