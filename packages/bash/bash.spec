@@ -1,9 +1,9 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.4 2000/10/28 16:02:18 solar Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.5 2000/12/11 03:51:10 solar Exp $
 
 Version: 	2.04
 Name: 		bash
 Summary: 	The GNU Bourne Again shell (bash) version %{version}.
-Release: 	10owl
+Release: 	11owl
 Group: 		System Environment/Shells
 Copyright: 	GPL
 Source0:	ftp://ftp.gnu.org/gnu/bash/bash-%{version}.tar.gz
@@ -18,6 +18,7 @@ Patch3: 	bash-2.04-rh-requires.diff
 Patch4: 	bash-2.04-rh-bash1_compat.diff
 Patch5: 	bash-2.04-rh-shellfunc.diff
 Patch6:		bash-2.04-owl-glibc-build-hack.diff
+Patch7:		bash-2.04-owl-tmp.diff
 Prefix: 	%{_prefix}
 Requires: 	mktemp
 Provides: 	bash2
@@ -53,6 +54,7 @@ Again shell version %{version}.
 %patch4 -p1 -b .compat
 %patch5 -p1 -b .shellfunc
 %patch6 -p1
+%patch7 -p1
 echo %{version} > _distribution
 echo %{release} | sed -e "s/[A-Za-z]//g" > _patchlevel
 
@@ -104,21 +106,20 @@ s:^:%{_mandir}/man1/:
 s/$/.1*/
 ' > ../man.pages
 
-{ cd $RPM_BUILD_ROOT
-  mkdir ./bin
-  mv ./usr/bin/bash ./bin
-  ln -sf bash ./bin/bash2
-  ln -sf bash ./bin/sh
-  strip ./bin/* || :
-  gzip -9nf .%{_infodir}/bash.info
-  rm -f .%{_infodir}/dir
-}
-mkdir -p $RPM_BUILD_ROOT/etc/skel
-install -c -m644 %{SOURCE2} $RPM_BUILD_ROOT/etc/skel/.bashrc
-install -c -m644 %{SOURCE3} \
-	$RPM_BUILD_ROOT/etc/skel/.bash_profile
-install -c -m644 %{SOURCE4} \
-	$RPM_BUILD_ROOT/etc/skel/.bash_logout
+cd $RPM_BUILD_ROOT
+
+mkdir ./bin
+mv ./usr/bin/bash ./bin
+ln -sf bash ./bin/bash2
+ln -sf bash ./bin/sh
+strip ./bin/* || :
+gzip -9nf .%{_infodir}/bash.info
+rm -f .%{_infodir}/dir
+
+mkdir -p ./etc/skel
+install -c -m 644 %{SOURCE2} ./etc/skel/.bashrc
+install -c -m 644 %{SOURCE3} ./etc/skel/.bash_profile
+install -c -m 644 %{SOURCE4} ./etc/skel/.bash_logout
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -170,6 +171,9 @@ fi
 %doc doc/*.ps doc/*.0 doc/*.html doc/article.txt
 
 %changelog
+* Mon Dec 11 2000 Solar Designer <solar@owl.openwall.com>
+- Some /tmp fixes (the old code was mostly safe, though).
+
 * Sat Oct 28 2000 Solar Designer <solar@owl.openwall.com>
 - Use %triggerin to create /etc/shells when libtermcap is installed, as
 the commands require a working bash already.

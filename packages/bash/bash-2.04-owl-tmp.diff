@@ -1,0 +1,98 @@
+diff -ur bash-2.04.orig/error.c bash-2.04/error.c
+--- bash-2.04.orig/error.c	Thu Aug  5 15:04:01 1999
++++ bash-2.04/error.c	Mon Dec 11 06:40:06 2000
+@@ -463,6 +463,7 @@
+ 
+ /* A trace function for silent debugging -- doesn't require a control
+    terminal. */
++/* Unused. */
+ void
+ #if defined (PREFER_STDARG)
+ trace (const char *format, ...)
+@@ -476,7 +477,7 @@
+   static FILE *tracefp = (FILE *)NULL;
+ 
+   if (tracefp == NULL)
+-    tracefp = fopen("/tmp/bash-trace.log", "a+");
++    tracefp = fopen("/var/run/bash-trace.log", "a+");
+ 
+   if (tracefp == NULL)
+     tracefp = stderr;
+diff -ur bash-2.04.orig/lib/malloc/malloc.c bash-2.04/lib/malloc/malloc.c
+--- bash-2.04.orig/lib/malloc/malloc.c	Fri Oct  1 23:39:32 1999
++++ bash-2.04/lib/malloc/malloc.c	Mon Dec 11 06:40:33 2000
+@@ -928,7 +928,8 @@
+   _print_malloc_stats (s, stderr);
+ }
+ 
+-#define TRACEROOT "/var/tmp/maltrace/trace."
++/* This is actually never used in bash. */
++#define TRACEROOT "/var/run/maltrace/trace."
+ extern char *inttostr ();
+ 
+ void
+diff -ur bash-2.04.orig/redir.c bash-2.04/redir.c
+--- bash-2.04.orig/redir.c	Fri Dec 31 19:59:02 1999
++++ bash-2.04/redir.c	Mon Dec 11 06:29:01 2000
+@@ -24,6 +24,8 @@
+ #endif /* _AIX && RISC6000 && !__GNUC__ */
+ 
+ #include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
+ #include "bashtypes.h"
+ #ifndef _MINIX
+ #  include <sys/file.h>
+@@ -304,17 +306,9 @@
+ {
+   char filename[24];
+   int r, fd, fd2;
+-  static int fnum = 0;
+ 
+-  do
+-    {
+-      /* Make the filename for the temp file. */
+-      sprintf (filename, "/tmp/t%d-%d-sh", (int)getpid (), fnum++);
+-
+-      /* Make sure we open it exclusively. */
+-      fd = open (filename, O_TRUNC | O_WRONLY | O_CREAT | O_EXCL, 0600);
+-    }
+-  while (fd < 0 && errno == EEXIST);
++  strcpy (filename, "/tmp/sh-hd-XXXXXX");
++  fd = mkstemp (filename);
+ 
+   /* If we failed for some reason other than the file existing, abort */
+   if (fd < 0)
+diff -ur bash-2.04.orig/subst.c bash-2.04/subst.c
+--- bash-2.04.orig/subst.c	Tue Mar 14 18:42:02 2000
++++ bash-2.04/subst.c	Mon Dec 11 06:25:13 2000
+@@ -2998,12 +2998,24 @@
+ {
+   char *tname;
+ 
+-  tname = mktemp (savestring ("/tmp/sh-np-XXXXXX"));
+-  if (mkfifo (tname, 0600) < 0)
++  do
+     {
+-      free (tname);
+-      return ((char *)NULL);
+-    }
++      if (!mktemp (tname = savestring ("/tmp/sh-np-XXXXXX")))
++	{
++	  free (tname);
++	  return ((char *)NULL);
++	}
++      if (mkfifo (tname, 0600) < 0)
++	{
++	  if (errno == EEXIST)
++	    {
++	      free (tname);
++	      continue;
++	    }
++	  free (tname);
++	  return ((char *)NULL);
++	}
++    } while (0);
+ 
+   add_fifo_list (tname);
+   return (tname);
