@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.70 2003/11/03 12:41:07 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.71 2004/05/19 12:42:35 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl7
+Release: owl8
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -28,14 +28,14 @@ Patch11: openssh-3.6.1p1-owl-ssh-agent-dumpable.diff
 Patch12: openssh-3.6.1p2-cvs-20030603-UseDNS.diff
 Patch13: openssh-3.6.1p2-cvs-20030916-buffer-channels-realloc.diff
 Patch14: openssh-3.6.1p2-owl-realloc.diff
-PreReq: openssl < 0.9.7
+PreReq: openssl >= 0.9.6, openssl < 0.9.7
 Requires: pam >= 0.75-owl16
 Obsoletes: ssh
 BuildRequires: openssl-devel
 BuildRequires: pam-devel, pam_userpass-devel
 BuildRequires: perl
 BuildRequires: zlib-devel
-BuildRequires: tcp_wrappers >= 7.6-owl2
+BuildRequires: tcp_wrappers >= 7.6-owl3.2
 BuildRoot: /override/%name-%version
 
 %description
@@ -78,6 +78,7 @@ Summary: The OpenSSH server daemon.
 Group: System Environment/Daemons
 PreReq: %name = %version-%release
 PreReq: /sbin/chkconfig, grep, shadow-utils, /dev/urandom
+Requires: tcp_wrappers >= 7.6-owl3.2
 Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: /var/empty, tcb, pam_userpass, pam_mktemp
 Obsoletes: ssh-server
@@ -228,6 +229,9 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Mon May 03 2004 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl8
+- Bumped release to correctly reflect the rebuild against shared libwrap.
+
 * Mon Nov 03 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl7
 - Always pass empty passwords into PAM to not produce failed authentication
 warnings as empty passwords are tried automatically; this fixes the bug

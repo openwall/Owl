@@ -1,9 +1,9 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.28 2003/10/30 21:15:50 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.29 2004/05/19 12:42:35 solar Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
 Version: 2.3.12
-Release: owl3
+Release: owl4
 License: BSD with minor restrictions
 Group: System Environment/Daemons
 URL: http://www.xinetd.org
@@ -22,9 +22,10 @@ Patch0: xinetd-2.3.12-owl-fixes.diff
 Patch1: xinetd-2.3.12-cvs-20030815-success_log_options.diff
 Patch2: xinetd-2.3.12-cvs-20030903-Smorefds.diff
 PreReq: /sbin/chkconfig
+Requires: tcp_wrappers >= 7.6-owl3.2
 Provides: inetd
 Obsoletes: inetd
-BuildRequires: tcp_wrappers >= 7.6-owl2
+BuildRequires: tcp_wrappers >= 7.6-owl3.2
 BuildRoot: /override/%name-%version
 
 %description
@@ -107,6 +108,9 @@ fi
 %_mandir/*/*
 
 %changelog
+* Mon May 03 2004 Solar Designer <solar@owl.openwall.com> 2.3.12-owl4
+- Bumped release to correctly reflect the rebuild against shared libwrap.
+
 * Fri Sep 12 2003 Solar Designer <solar@owl.openwall.com> 2.3.12-owl3
 - Another fix from the CVS (originally submitted by Red Hat):
 Occasionally, Smorefds didn't allocate more fds as expected.
