@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.20 2002/06/21 14:45:13 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.21 2002/06/21 15:51:30 solar Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -42,9 +42,39 @@ function spec()
 	echo "$SPEC"
 }
 
+function binaries()
+{
+	local SPEC SOURCE
+
+	SPEC=$1
+	SOURCE=$2
+
+	if grep -q '^%files[[:space:]]*$' $SPEC; then
+		rpm -q --specfile $SPEC
+	else
+		rpm -q --specfile $SPEC | grep -v "^${SOURCE}-[^-]*-[^-]*\$"
+	fi
+}
+
+function built()
+{
+	local SPEC SOURCE BINARY REGEX
+
+	SPEC=$1
+	SOURCE=$2
+
+	binaries $SPEC $SOURCE |
+	while read BINARY; do
+		REGEX="^${BINARY}\.[^.]*\.rpm\$"
+		if [ -z "`ls $HOME/RPMS/ | grep "$REGEX"`" ]; then
+			return 1
+		fi
+	done
+}
+
 function build_native()
 {
-	local NUMBER PACKAGE WORK NAME VERSION ARCHIVE SPEC
+	local NUMBER PACKAGE WORK NAME VERSION ARCHIVE
 
 	NUMBER=$1
 	PACKAGE=$2
@@ -73,7 +103,7 @@ function build_native()
 	rm -f '*' || :
 	ln -sf $NATIVE/$PACKAGES/$PACKAGE/* .
 	test -e $PACKAGE.spec || ln -s "`spec $PACKAGE`" $PACKAGE.spec
-	$TIME $PERSONALITY rpm -bb $PACKAGE.spec \
+	if $TIME $PERSONALITY rpm -bb $PACKAGE.spec \
 		$TARGET \
 		--define "distribution $NATIVE_DISTRIBUTION" \
 		--define "vendor $NATIVE_VENDOR" \
@@ -81,13 +111,17 @@ function build_native()
 		--define "buildhost $BUILDHOST" \
 		--define "home $HOME" \
 		--define "number $NUMBER" \
-		&> $HOME/logs/$PACKAGE < /dev/null || \
+		&> $HOME/logs/$PACKAGE < /dev/null;
+	then
+		mv $WORK/RPMS/*/* $HOME/RPMS/
+		mv $WORK/SRPMS/* $HOME/SRPMS/ &> /dev/null
+	else
+		rm -rf $WORK/RPMS/* $WORK/SRPMS/*
 		log "#$NUMBER: Failed $PACKAGE"
-	cd $HOME/native-work || exit 1
-	mv $WORK/RPMS/*/* $HOME/RPMS/ &> /dev/null
-	mv $WORK/SRPMS/* $HOME/SRPMS/ &> /dev/null
+	fi
 	rm -rf $WORK/BUILD/*
 	rm $WORK/SOURCES/*
+	cd $HOME/native-work || exit 1
 }
 
 function build_foreign()
@@ -100,17 +134,17 @@ function build_foreign()
 	WORK=$HOME/rpm-work-$NUMBER
 
 	log "#$NUMBER: Building $PACKAGE"
-	$TIME $PERSONALITY rpm --rebuild $FOREIGN/$PACKAGE.src.rpm \
+	if $TIME $PERSONALITY rpm --rebuild $FOREIGN/${PACKAGE}.src.rpm \
 		$TARGET \
 		--define "buildarch $BUILDARCH" \
 		--define "buildhost $BUILDHOST" \
 		--define "home $HOME" \
 		--define "number $NUMBER" \
-		&> $HOME/logs/$PACKAGE < /dev/null
-	if mv $WORK/RPMS/*/* $HOME/RPMS/ &> /dev/null; then
-		ln $FOREIGN/$PACKAGE.src.rpm $HOME/SRPMS/ &> /dev/null ||
-		cp $FOREIGN/$PACKAGE.src.rpm $HOME/SRPMS/
+		&> $HOME/logs/$PACKAGE < /dev/null;
+	then
+		mv $WORK/RPMS/*/* $HOME/RPMS/
 	else
+		rm -rf $WORK/RPMS/*
 		log "#$NUMBER: Failed $PACKAGE"
 	fi
 	rm -rf $WORK/BUILD/*
@@ -137,7 +171,7 @@ function detect()
 
 function builder()
 {
-	local NUMBER SOURCE BINARY SPEC REGEX
+	local NUMBER SOURCE SPEC
 
 	NUMBER=$1
 
@@ -169,23 +203,10 @@ function builder()
 		test -n "$SPEC" || continue
 		mkdir .${SOURCE} &> /dev/null || continue
 		touch .${SOURCE}/$NUMBER
-		if grep -q '^%files[[:space:]]*$' $SPEC; then
-			REGEX='^$'
-		else
-			REGEX="^${SOURCE}-[^-]*-[^-]*\$"
-		fi
-		rpm -q --specfile $SPEC | grep -v "$REGEX" |
-		while read BINARY; do
-			REGEX="^${BINARY}\.[^.]*\.rpm\$"
-			if [ -z "`ls $HOME/RPMS/ | grep "$REGEX"`" ]; then
-				touch .${SOURCE}/do
-				break
-			fi
-		done
-		if [ -e .${SOURCE}/do ]; then
-			build_native $NUMBER $SOURCE
-		else
+		if built $SPEC $SOURCE; then
 			log "#$NUMBER: Skipping $SOURCE"
+		else
+			build_native $NUMBER $SOURCE
 		fi
 	done
 
@@ -197,8 +218,12 @@ function builder()
 	while read SOURCE; do
 		SOURCE=`basename $SOURCE .src.rpm`
 		mkdir .${SOURCE} &> /dev/null || continue
-		touch .${SOURCE}/$NUMBER
-		if [ -e $HOME/SRPMS/$SOURCE.src.rpm ]; then
+		cd .${SOURCE} || exit 1
+		touch $NUMBER
+		rpm2cpio $FOREIGN/${SOURCE}.src.rpm | cpio -i --quiet '*.spec'
+		cd $HOME/foreign-work || exit 1
+		SPEC=$HOME/foreign-work/.${SOURCE}/*.spec
+		if built $SPEC $SOURCE; then
 			log "#$NUMBER: Skipping $SOURCE"
 		else
 			build_foreign $NUMBER $SOURCE
