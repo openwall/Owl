@@ -12,6 +12,9 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/11/27	Package: logrotate
+Updated to 3.5.9 with additional corrections.
+
 2001/11/25	Package: telnet
 New package: Telnet protocol client and server ported from OpenBSD
 (post-3.0), with significant modifications.  The Telnet protocol
@@ -482,4 +485,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.52 2001/11/25 03:04:54 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.53 2001/11/27 11:31:59 solar Exp $
