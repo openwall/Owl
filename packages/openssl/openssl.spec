@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.26 2002/08/12 20:02:59 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.27 2002/09/24 23:09:14 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
 Version: 0.9.6g
-Release: owl1
+Release: owl2
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
@@ -103,7 +103,6 @@ perl -pi -e "s/-O.(?: -fomit-frame-pointer)?(?: -m.86)?/${RPM_OPT_FLAGS}/" \
 # all: clean-shared Makefile.ssl sub_all
 make Makefile.ssl
 make sub_all DIRS="crypto ssl rsaref"
-make build-shared
 LD_LIBRARY_PATH=`pwd` make sub_all DIRS="apps test tools"
 
 if [ ! -x /usr/bin/bc ]; then
@@ -164,6 +163,11 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0644,root,root) %{_mandir}/man3/*
 
 %changelog
+* Wed Sep 25 2002 Solar Designer <solar@owl.openwall.com>
+- Don't do an explicit "make build-shared", it's not needed and could only
+cause harm (link libssl against libcrypto statically), but luckily didn't;
+pointed out by Dmitry V. Levin of ALT Linux.
+
 * Mon Aug 12 2002 Solar Designer <solar@owl.openwall.com>
 - Updated to 0.9.6g dropping two patches.
 
