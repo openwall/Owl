@@ -1,9 +1,9 @@
-# $Id: Owl/packages/tar/tar.spec,v 1.16 2004/09/10 07:32:13 galaxy Exp $
+# $Id: Owl/packages/tar/tar.spec,v 1.17 2004/11/02 04:05:55 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
 Version: 1.13.19
-Release: owl4.2
+Release: owl5
 License: GPL
 Group: Applications/Archiving
 Source0: ftp://alpha.gnu.org/pub/gnu/tar/tar-%version.tar.gz
@@ -96,12 +96,11 @@ fi
 %_mandir/man1/tar.1*
 %_infodir/tar.info*
 %_prefix/share/locale/*/LC_MESSAGES/*
-# excludes
 %exclude /sbin/rmt
 %exclude %_infodir/dir
 
 %changelog
-* Tue Mar 02 2004 Michail Litvak <mci@owl.openwall.com> 1.13.19-owl4.2
+* Tue Mar 02 2004 Michail Litvak <mci@owl.openwall.com> 1.13.19-owl5
 - Fixed building with new gettext.
 
 * Fri Feb 27 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1.13.19-owl4.1
