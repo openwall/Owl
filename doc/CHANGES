@@ -12,6 +12,28 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/10/18	kernel
+SECURITY FIX	Severity: low to high, local, active
+A new revision of the Openwall Linux kernel patch, 2.2.19-ow3, is now
+available.  It contains fixes for two Linux kernel vulnerabilities
+discovered by Rafal Wojtczuk <nergal at owl.openwall.com> and is
+strongly recommended for use with Owl.  One of the vulnerabilities
+affected SUID/SGID execution by processes being traced with ptrace(2).
+It was possible to trick the kernel into recognizing an unsuspecting
+SUID root program as the (privileged) tracer process.  Then, if that
+program would execute a program supplied by the malicious user (with
+the user's credentials), the user's program would inherit the ability
+to trace.  Fortunately, there's no program that would meet all of the
+requirements for this attack in the default Owl install.  However,
+certain supported non-default configurations of Owl are affected.  In
+particular, if newgrp(1) is made available to untrusted users (which
+is a supported owl-control setting) or certain third-party software
+which contains SUID root binaries is installed, the vulnerability may
+become exploitable and result in a local root compromise.  The other
+vulnerability allowed for an effective local DoS attack by causing the
+kernel to spend an almost arbitrary amount of time on dereferencing a
+single symlink, without giving a chance for processes to run.
+
 2001/10/08	Packages: sysklogd, owl-etc
 Updated sysklogd to 1.4.1.  Based the new klogd drop root patch on one
 from CAEN Linux.  Added syslogd patches derived from CAEN Linux to
@@ -243,9 +265,9 @@ Red Hat Linux derived patch.  Minor man page fixes.
 2001/06/11	Package: openssh
 SECURITY FIX	Severity: low, local, active
 Switch credentials when cleaning up temporary files and sockets to fix
-the vulnerability reported by zen-parse@gmx.net on Bugtraq which could
-allow a local user to remove files named "cookies" located anywhere on
-the system.  The patch is by Markus Friedl (intended for testing only)
+the vulnerability reported by zen-parse on Bugtraq which could allow a
+local user to remove files named "cookies" located anywhere on the
+system.  The patch is by Markus Friedl (intended for testing only)
 with a later OpenSSH CVS change added and two bugs fixed.
 
 2001/06/10 -
@@ -343,6 +365,6 @@ we've released.  Thus, this isn't a security update.
 
 2001/05/15	Owl/doc/fr/*
 New files: French translations of the documentation, from Denis Ducamp
-<Denis.Ducamp@hsc.fr>.
+<Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.34 2001/10/08 06:20:28 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.35 2001/10/18 10:58:29 solar Exp $
