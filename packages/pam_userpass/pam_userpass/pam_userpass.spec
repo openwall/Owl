@@ -1,12 +1,13 @@
-# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.10 2002/04/01 20:23:07 solar Exp $
+# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.11 2003/04/12 13:11:14 solar Exp $
 
 Summary: Pluggable authentication module for USER/PASS-style protocols.
 Name: pam_userpass
-Version: 0.5.1
+Version: 0.9
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
-Source: pam_userpass-%{version}.tar.gz
+URL: http://www.openwall.com/pam/
+Source: ftp://ftp.openwall.com/pub/projects/pam/modules/%{name}/%{name}-%{version}.tar.gz
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -16,6 +17,15 @@ a username/password pair.  This module doesn't do any actual
 authentication, -- other modules, such as pam_tcb, should be stacked
 after it to provide the authentication.
 
+%package devel
+Summary: Libraries and header files for developing pam_userpass-aware applications.
+Group: Development/Libraries
+Requires: %{name} = %{version}-%{release}, pam-devel
+
+%description devel
+This package contains development libraries and header files
+required for building pam_userpass-aware applications.
+
 %prep
 %setup -q
 
@@ -24,17 +34,32 @@ make CFLAGS="-c -Wall -fPIC -Iinclude $RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make install FAKEROOT=$RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%post -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
 
 %files
 %defattr(-,root,root)
 %doc LICENSE README
 /lib/security/pam_userpass.so
+%_libdir/*.so.*
+
+%files devel
+%defattr(-,root,root)
+%_libdir/*.so
+%_libdir/*.a
+%_includedir/security/*
 
 %changelog
+* Wed Apr 02 2003 Dmitry V. Levin <ldv@altlinux.org> 0.9-owl1
+- Added libpam_userpass library, in shared and static forms.
+- Packaged development libraries and header files in separate
+subpackage, pam_userpass-devel.
+
 * Tue Apr 02 2002 Solar Designer <solar@owl.openwall.com>
 - 0.5.1: use const within the declaration of pam_userpass_t, use '='
 instead of '.set' to declare the alias.

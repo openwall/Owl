@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <security/pam_appl.h>
-
 #include <security/pam_userpass.h>
 
 #define SERVICE				"example_userpass"
