@@ -1,4 +1,4 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.3 2000/12/15 03:22:13 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.4 2000/12/15 03:59:50 solar Exp $
 
 %define NEED_PYTHON 'no'
 
@@ -22,9 +22,8 @@ Source10: 	xinetd-chargen
 Source11: 	xinetd-uchargen
 Patch0: 	xinetd-2.1.8.9pre10-rh-skipjunkfiles.diff
 Provides: 	inetd
-Prereq: 	/sbin/chkconfig /etc/init.d /sbin/service
+Prereq: 	/sbin/chkconfig /etc/init.d
 BuildRequires: 	tcp_wrappers
-Requires: 	filesystem >= 2.0.1
 URL: 		http://www.xinetd.org/
 BuildRoot: 	/var/rpm-buildroot/%{name}-root
 Obsoletes: 	inetd
