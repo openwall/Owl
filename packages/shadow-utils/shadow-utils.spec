@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.28 2003/05/29 01:10:54 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.29 2003/05/29 01:17:55 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
@@ -194,6 +194,7 @@ fi
 %changelog
 * Thu May 29 2003 Solar Designer <solar@owl.openwall.com> 2:4.0.0-owl11
 - write_to=tcb
+- USE_TCB yes
 
 * Thu Apr 17 2003 Solar Designer <solar@owl.openwall.com> 2:4.0.0-owl10
 - Pass prefix= and count= to pam_tcb also for authentication such that it
