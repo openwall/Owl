@@ -170,24 +170,24 @@
 -            break;
 -        }
 +
-+      userpass.user=ppp->pw_name;
-+      userpass.pass=cp1;
++      userpass.user = ppp->pw_name;
++      userpass.pass = cp1;
 +
 +      status = pam_start("screen", ppp->pw_name, &conv, &pamh);
 +
-+      if (status == PAM_SUCCESS) 
++      if (status == PAM_SUCCESS)
 +	{
-+	  if ((status = pam_authenticate(pamh, 0)) != PAM_SUCCESS) 
++	  if ((status = pam_authenticate(pamh, 0)) != PAM_SUCCESS)
 +            {
 +	       pam_end(pamh, status);
-+	       continue;	       
++	       continue;
 +	    }
 +
 +	  status = pam_end(pamh, PAM_SUCCESS);
-+	  if (status == PAM_SUCCESS) 
++	  if (status == PAM_SUCCESS)
 +	    {
-+              memset(cp1,0,strlen(cp1));
-+              userpass.pass = NULL; 
++	       memset(cp1, 0, strlen(cp1));
++	       userpass.pass = NULL;
 +	       break;
 +	    }
 +	}
@@ -201,7 +201,7 @@
  )
  fi
  
-+AC_CHECK_LIB(pam, pam_start, LIBS="$LIBS -lpam -lpam_misc -ldl",AC_MSG_ERROR(pam required!!!))
++AC_CHECK_LIB(pam, pam_start, LIBS="$LIBS -lpam -lpam_misc -ldl",AC_MSG_ERROR(pam required!))
 +
  dnl AC_CHECK_HEADER(shadow.h, AC_DEFINE(SHADOWPW))
  AC_CHECKING(getspnam)
