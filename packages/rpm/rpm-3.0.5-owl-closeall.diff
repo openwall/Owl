@@ -1,0 +1,184 @@
+diff -urN rpm-3.0.5/build/build.c rpm-3.0.5.kad/build/build.c
+--- rpm-3.0.5/build/build.c	Wed Jun 14 15:34:28 2000
++++ rpm-3.0.5.kad/build/build.c	Sun Sep  3 20:20:16 2000
+@@ -189,6 +189,11 @@
+     rpmMessage(RPMMESS_NORMAL, _("Executing(%s): %s\n"), name, buildCmd);
+     if (!(child = fork())) {
+ 
++        if (close_all()) {
++            perror("close");
++            _exit(-1);
++        }
++							
+ 	errno = 0;
+ 	execvp(argv[0], (char *const *)argv);
+ 
+diff -urN rpm-3.0.5/build/files.c rpm-3.0.5.kad/build/files.c
+--- rpm-3.0.5/build/files.c	Mon Jul 10 00:33:49 2000
++++ rpm-3.0.5.kad/build/files.c	Sun Sep  3 20:20:16 2000
+@@ -1557,10 +1557,15 @@
+ 
+ 	close(toProg[0]);
+ 	close(fromProg[1]);
+-
++							
+ 	if (dir) {
+ 	    chdir(dir);
+ 	}
++
++        if (close_all()) {
++            perror("close");
++            _exit(RPMERR_EXEC);
++        }
+ 	
+ 	execvp(argv[0], argv);
+ 	/* XXX this error message is probably not seen. */
+diff -urN rpm-3.0.5/lib/Makefile.am rpm-3.0.5.kad/lib/Makefile.am
+--- rpm-3.0.5/lib/Makefile.am	Sun Jul 16 21:49:43 2000
++++ rpm-3.0.5.kad/lib/Makefile.am	Sun Sep  3 20:21:00 2000
+@@ -17,7 +17,7 @@
+ 
+ lib_LTLIBRARIES = librpm.la
+ librpm_la_SOURCES = \
+-	cpio.c dbindex.c depends.c falloc.c \
++	cpio.c closeall.c dbindex.c depends.c falloc.c \
+ 	formats.c fprint.c fs.c hash.c header.c install.c \
+ 	lookup.c macro.c md5.c md5sum.c \
+ 	messages.c misc.c package.c problems.c query.c \
+diff -urN rpm-3.0.5/lib/closeall.c rpm-3.0.5.kad/lib/closeall.c
+--- rpm-3.0.5/lib/closeall.c	Thu Jan  1 03:00:00 1970
++++ rpm-3.0.5.kad/lib/closeall.c	Sun Sep  3 20:20:16 2000
+@@ -0,0 +1,27 @@
++#include <unistd.h>
++#include <errno.h>
++
++#ifdef __linux__
++#include <linux/limits.h>
++#endif
++
++int close_all()
++{
++	int fd, max;
++
++	max = sysconf(_SC_OPEN_MAX);
++	if (max <= 0)
++		return -1;
++
++#ifdef __linux__
++	if (max < NR_OPEN)
++		max = NR_OPEN;
++#endif
++
++	for (fd = 3; fd < max; fd++) {
++		if (close(fd) && errno != EBADF)
++			return -1;
++	}
++
++	return 0;
++}
+diff -urN rpm-3.0.5/lib/signature.c rpm-3.0.5.kad/lib/signature.c
+--- rpm-3.0.5/lib/signature.c	Wed Jun 14 15:34:31 2000
++++ rpm-3.0.5.kad/lib/signature.c	Sun Sep  3 20:20:16 2000
+@@ -243,6 +243,12 @@
+ 	dup2(inpipe[0], 3);
+ 	close(inpipe[1]);
+ 
++        /* Problem ???
++        if (close_all()) {
++            perror("close");
++            _exit(RPMERR_EXEC);
++        } */
++
+ 	dosetenv("PGPPASSFD", "3", 1);
+ 	if (pgp_path && *pgp_path != '%')
+ 	    dosetenv("PGPPATH", pgp_path, 1);
+@@ -335,6 +340,12 @@
+ 	dup2(inpipe[0], 3);
+ 	close(inpipe[1]);
+ 
++        /* Problem ???
++        if (close_all()) {
++	    perror("close");
++	    _exit(RPMERR_EXEC);
++	} */
++
+ 	if (gpg_path && *gpg_path != '%')
+ 	    dosetenv("GNUPGHOME", gpg_path, 1);
+ 	execlp("gpg", "gpg",
+@@ -521,6 +531,12 @@
+ 	close(STDOUT_FILENO);	/* XXX unnecessary */
+ 	dup2(outpipe[1], STDOUT_FILENO);
+ 
++        /* Problem ???
++        if (close_all()) {
++	    perror("close");
++	    _exit(RPMERR_EXEC);
++	} */
++
+ 	if (pgp_path && *pgp_path != '%')
+ 	    dosetenv("PGPPATH", pgp_path, 1);
+ 
+@@ -616,6 +631,12 @@
+ 	/* gpg version 0.9 sends its output to stderr. */
+ 	dup2(outpipe[1], STDERR_FILENO);
+ 
++        /* Problem ???
++        if (close_all()) {
++	    perror("close");
++	    _exit(RPMERR_EXEC);
++	} */
++
+ 	if (gpg_path && *gpg_path != '%')
+ 	    dosetenv("GNUPGHOME", gpg_path, 1);
+ 
+@@ -672,6 +692,11 @@
+ 	    dup2(fd, STDOUT_FILENO);
+ 	    close(fd);
+ 	}
++        /* Problem ???
++        if (close_all()) {
++            perror("close");
++            _exit(RPMERR_EXEC);
++        } */
+ 	dup2(passPhrasePipe[0], 3);
+ 
+ 	switch (sigTag) {
+diff -urN rpm-3.0.5/lib/uninstall.c rpm-3.0.5.kad/lib/uninstall.c
+--- rpm-3.0.5/lib/uninstall.c	Mon Jul 10 21:30:45 2000
++++ rpm-3.0.5.kad/lib/uninstall.c	Sun Sep  3 20:20:16 2000
+@@ -335,7 +335,11 @@
+ 	close(pipes[1]);
+ 	dup2(pipes[0], STDIN_FILENO);
+ 	close(pipes[0]);
+-
++        if (close_all()) {
++	    perror("close");
++	    _exit(-1);
++	}
++					
+ 	if (errfd != NULL) {
+ 	    if (Fileno(errfd) != STDERR_FILENO)
+ 		dup2(Fileno(errfd), STDERR_FILENO);
+diff -urN rpm-3.0.5/rpm.c rpm-3.0.5.kad/rpm.c
+--- rpm-3.0.5/rpm.c	Sat Jul 22 14:50:23 2000
++++ rpm-3.0.5.kad/rpm.c	Sun Sep  3 20:20:16 2000
+@@ -191,6 +191,8 @@
+  { 0, 0, 0, 0, 0,	NULL, NULL }
+ };
+ 
++extern int close_all();
++
+ #ifdef __MINT__
+ /* MiNT cannot dynamically increase the stack.  */
+ long _stksize = 64 * 1024L;
+@@ -1191,6 +1193,10 @@
+ 	    close(p[1]);
+ 	    dup2(p[0], STDIN_FILENO);
+ 	    close(p[0]);
++	    if (close_all()) {
++	        perror("close");
++	        _exit(-1);
++	    }
+ 	    execl("/bin/sh", "/bin/sh", "-c", pipeOutput, NULL);
+ 	    fprintf(stderr, _("exec failed\n"));
+ 	}
