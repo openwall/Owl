@@ -209,9 +209,6 @@ procmail.
 
 	man.
 
-[PRIORITY: high]
-Correct the placement of man's own man pages to adhere to FHS 2.2.
-
 [PRIORITY: low]
 Allocate a pseudo-user and group for makewhatis, have makewhatis
 results go under a separate directory writable by the group.  Provide
@@ -535,4 +532,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.45 2004/11/07 21:22:05 solar Exp $
+$Id: Owl/doc/TODO,v 1.46 2004/11/09 13:45:14 solar Exp $
