@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.2 2000/12/01 18:19:55 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.3 2000/12/01 22:22:53 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
 Version: 0.2
-Release: 1owl
+Release: 2owl
 Copyright: GPL
 Group: System Environment/Base
 Source0: initscripts-5.00.tar.gz
@@ -64,9 +64,11 @@ mkdir -p var/run/netreport
 /sbin/chkconfig --add netfs
 
 %preun
-/sbin/chkconfig --del random
-/sbin/chkconfig --del network
-/sbin/chkconfig --del netfs
+if [ $1 -eq 0 ]; then
+	/sbin/chkconfig --del random
+	/sbin/chkconfig --del network
+	/sbin/chkconfig --del netfs
+fi
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -109,6 +111,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Fri Dec 01 2000 Solar Designer <solar@owl.openwall.com>
 - Correctly report non-default signals in killproc().
+- %preun: only when last instance is uninstalled.
 
 * Wed Nov 29 2000 Solar Designer <solar@owl.openwall.com>
 - Initial version, still uses a lot from RH initscripts.
