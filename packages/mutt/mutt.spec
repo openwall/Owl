@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mutt/mutt.spec,v 1.11 2004/02/12 23:38:58 mci Exp $
+# $Id: Owl/packages/mutt/mutt.spec,v 1.12 2004/09/10 07:26:39 galaxy Exp $
 
 Summary: A feature-rich text-based mail user agent.
 Name: mutt
@@ -53,6 +53,12 @@ rm -rf $RPM_BUILD_ROOT
 
 # We like GPG here.
 cat contrib/gpg.rc $RPM_SOURCE_DIR/Muttrc-color >> $RPM_BUILD_ROOT/etc/Muttrc
+
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot/etc/mime.types
+rm %buildroot%_mandir/man1/mutt_dotlock.1*
+rm %buildroot%_mandir/man1/muttbug.1*
+rm %buildroot%_mandir/man5/mbox.5*
 
 %find_lang %name
 

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/man/man.spec,v 1.11 2004/07/20 22:11:47 mci Exp $
+# $Id: Owl/packages/man/man.spec,v 1.12 2004/09/10 07:25:23 galaxy Exp $
 
 Summary: A set of documentation tools: man, apropos and whatis.
 Name: man
@@ -49,6 +49,10 @@ done
 # symlinks for manpath
 ln -s man usr/bin/manpath
 ln -s man.1 usr/man/man1/manpath.1
+
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot%_bindir/man2dvi
+rm %buildroot/usr/man/man8/makewhatis.8*
 
 # Clean up accumulated cat litter.
 %preun

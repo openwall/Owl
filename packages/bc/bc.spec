@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bc/bc.spec,v 1.7 2004/02/20 01:57:45 mci Exp $
+# $Id: Owl/packages/bc/bc.spec,v 1.8 2004/09/10 07:17:25 galaxy Exp $
 
 Summary: GNU's bc (a numeric processing language) and dc (a calculator).
 Name: bc
@@ -36,6 +36,9 @@ make
 rm -rf $RPM_BUILD_ROOT
 
 %makeinstall
+
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot%_infodir/dir
 
 %post
 /sbin/install-info %_infodir/bc.info.gz %_infodir/dir

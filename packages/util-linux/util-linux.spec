@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.25 2003/11/09 19:11:59 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.26 2004/09/10 07:32:53 galaxy Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -91,6 +91,26 @@ cd $RPM_BUILD_ROOT/etc/control.d/facilities
 
 install -m 700 $RPM_SOURCE_DIR/mount.control mount
 install -m 700 $RPM_SOURCE_DIR/write.control write
+
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot/sbin/agetty
+rm %buildroot/sbin/mkfs.bfs
+rm %buildroot/sbin/pivot_root
+rm %buildroot%_bindir/chfn
+rm %buildroot%_bindir/chsh
+rm %buildroot%_bindir/newgrp
+rm %buildroot%_bindir/raw
+rm %buildroot%_sbindir/vipw
+rm %buildroot%_mandir/man1/chfn.1*
+rm %buildroot%_mandir/man1/chsh.1*
+rm %buildroot%_mandir/man1/newgrp.1*
+rm %buildroot%_mandir/man8/agetty.8*
+rm %buildroot%_mandir/man8/mkfs.bfs.8*
+rm %buildroot%_mandir/man8/pivot_root.8*
+rm %buildroot%_mandir/man8/raw.8*
+rm %buildroot%_mandir/man8/sln.8*
+rm %buildroot%_mandir/man8/vigr.8*
+rm %buildroot%_mandir/man8/vipw.8*
 
 %pre
 if [ $1 -ge 2 ]; then

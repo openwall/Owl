@@ -1,4 +1,4 @@
-# $Id: Owl/packages/net-tools/net-tools.spec,v 1.5 2003/10/30 21:15:47 solar Exp $
+# $Id: Owl/packages/net-tools/net-tools.spec,v 1.6 2004/09/10 07:26:46 galaxy Exp $
 
 Summary: The basic tools for setting up networking.
 Name: net-tools
@@ -32,6 +32,49 @@ mkdir -p $RPM_BUILD_ROOT/{bin,sbin}
 mkdir -p $RPM_BUILD_ROOT%_mandir/man{1,5,8}
 
 make BASEDIR=$RPM_BUILD_ROOT mandir=%_mandir install
+
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot%_datadir/locale/cs/LC_MESSAGES/net-tools.mo
+rm %buildroot%_datadir/locale/de/LC_MESSAGES/net-tools.mo
+rm %buildroot%_datadir/locale/et_EE/LC_MESSAGES/net-tools.mo
+rm %buildroot%_datadir/locale/fr/LC_MESSAGES/net-tools.mo
+rm %buildroot%_datadir/locale/pt_BR/LC_MESSAGES/net-tools.mo
+rm %buildroot%_mandir/de_DE/man1/dnsdomainname.1*
+rm %buildroot%_mandir/de_DE/man1/domainname.1*
+rm %buildroot%_mandir/de_DE/man1/hostname.1*
+rm %buildroot%_mandir/de_DE/man1/nisdomainname.1*
+rm %buildroot%_mandir/de_DE/man1/ypdomainname.1*
+rm %buildroot%_mandir/de_DE/man5/ethers.5*
+rm %buildroot%_mandir/de_DE/man8/arp.8*
+rm %buildroot%_mandir/de_DE/man8/ifconfig.8*
+rm %buildroot%_mandir/de_DE/man8/netstat.8*
+rm %buildroot%_mandir/de_DE/man8/plipconfig.8*
+rm %buildroot%_mandir/de_DE/man8/rarp.8*
+rm %buildroot%_mandir/de_DE/man8/route.8*
+rm %buildroot%_mandir/de_DE/man8/slattach.8*
+rm %buildroot%_mandir/fr_FR/man1/dnsdomainname.1*
+rm %buildroot%_mandir/fr_FR/man1/domainname.1*
+rm %buildroot%_mandir/fr_FR/man1/hostname.1*
+rm %buildroot%_mandir/fr_FR/man1/nisdomainname.1*
+rm %buildroot%_mandir/fr_FR/man1/ypdomainname.1*
+rm %buildroot%_mandir/fr_FR/man5/ethers.5*
+rm %buildroot%_mandir/fr_FR/man8/arp.8*
+rm %buildroot%_mandir/fr_FR/man8/ifconfig.8*
+rm %buildroot%_mandir/fr_FR/man8/netstat.8*
+rm %buildroot%_mandir/fr_FR/man8/plipconfig.8*
+rm %buildroot%_mandir/fr_FR/man8/rarp.8*
+rm %buildroot%_mandir/fr_FR/man8/route.8*
+rm %buildroot%_mandir/fr_FR/man8/slattach.8*
+rm %buildroot%_mandir/pt_BR/man1/dnsdomainname.1*
+rm %buildroot%_mandir/pt_BR/man1/domainname.1*
+rm %buildroot%_mandir/pt_BR/man1/hostname.1*
+rm %buildroot%_mandir/pt_BR/man1/nisdomainname.1*
+rm %buildroot%_mandir/pt_BR/man1/ypdomainname.1*
+rm %buildroot%_mandir/pt_BR/man8/arp.8*
+rm %buildroot%_mandir/pt_BR/man8/ifconfig.8*
+rm %buildroot%_mandir/pt_BR/man8/netstat.8*
+rm %buildroot%_mandir/pt_BR/man8/rarp.8*
+rm %buildroot%_mandir/pt_BR/man8/route.8*
 
 %files
 %defattr(-,root,root)

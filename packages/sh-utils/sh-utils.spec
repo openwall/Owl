@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sh-utils/Attic/sh-utils.spec,v 1.9 2004/07/20 00:10:33 mci Exp $
+# $Id: Owl/packages/sh-utils/Attic/sh-utils.spec,v 1.10 2004/09/10 07:30:16 galaxy Exp $
 
 # The texinfo documentation for fileutils, sh-utils, and textutils is
 # currently provided by fileutils.
@@ -84,6 +84,12 @@ mkdir -p .%_sbindir
 mv .%_bindir/chroot .%_sbindir/
 rm .%_bindir/uptime
 rm .%_mandir/man1/{hostname,su}.1
+
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot%_infodir/dir
+%if !%BUILD_INFO
+rm %buildroot%_infodir/sh-utils.info*
+%endif
 
 %if %BUILD_INFO
 %post

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/readline/readline.spec,v 1.17 2004/02/20 02:19:16 solar Exp $
+# $Id: Owl/packages/readline/readline.spec,v 1.18 2004/09/10 07:29:33 galaxy Exp $
 
 %define compat_list 3 3.0 4.0 4.1 4.2
 
@@ -86,6 +86,22 @@ for n in %name history; do
 		ln -s "$t" "$RPM_BUILD_ROOT%_libdir/lib$n.so.$v"
 	done
 done
+
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot%_datadir/doc/examples/Inputrc
+rm %buildroot%_datadir/doc/examples/Makefile
+rm %buildroot%_datadir/doc/examples/Makefile.in
+rm %buildroot%_datadir/doc/examples/excallback.c
+rm %buildroot%_datadir/doc/examples/fileman.c
+rm %buildroot%_datadir/doc/examples/histexamp.c
+rm %buildroot%_datadir/doc/examples/manexamp.c
+rm %buildroot%_datadir/doc/examples/readlinebuf.h
+rm %buildroot%_datadir/doc/examples/rl.c
+rm %buildroot%_datadir/doc/examples/rlcat.c
+rm %buildroot%_datadir/doc/examples/rlfe.c
+rm %buildroot%_datadir/doc/examples/rltest.c
+rm %buildroot%_datadir/doc/examples/rlversion.c
+rm %buildroot%_infodir/dir
 
 %post
 /sbin/ldconfig

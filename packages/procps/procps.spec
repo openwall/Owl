@@ -1,4 +1,4 @@
-# $Id: Owl/packages/procps/Attic/procps.spec,v 1.14 2004/05/14 14:24:12 solar Exp $
+# $Id: Owl/packages/procps/Attic/procps.spec,v 1.15 2004/09/10 07:29:08 galaxy Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
@@ -39,6 +39,11 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT{/bin,/lib,/sbin,/usr/{bin,X11R6/bin},%_mandir/{man1,man5,man8}}
 make DESTDIR=$RPM_BUILD_ROOT MANDIR=%_mandir OWNERGROUP= install
 chmod 755 $RPM_BUILD_ROOT/{lib,bin,sbin,usr/bin}/*
+
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot/usr/X11R6/bin/XConsole
+rm %buildroot%_bindir/kill
+rm %buildroot%_mandir/man1/kill.1*
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig

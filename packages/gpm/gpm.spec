@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gpm/gpm.spec,v 1.15 2003/10/29 19:22:05 solar Exp $
+# $Id: Owl/packages/gpm/gpm.spec,v 1.16 2004/09/10 07:23:53 galaxy Exp $
 
 # This defines the library version that this package builds.
 %define LIBVER 1.18.0
@@ -81,6 +81,14 @@ ln -sf libgpm.so.%LIBVER .%_libdir/libgpm.so
 
 mkdir -p .%_sysconfdir/rc.d/init.d
 install -m 755 $RPM_SOURCE_DIR/gpm.init .%_sysconfdir/rc.d/init.d/gpm
+
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot/etc/gpm-root.conf
+rm %buildroot%_bindir/disable-paste
+rm %buildroot%_sbindir/gpm-root
+rm %buildroot%_mandir/man1/gpm-root.1*
+rm %buildroot%_mandir/man1/mouse-test.1*
+rm %buildroot%_mandir/man7/gpm-types.7*
 
 %pre
 rm -f /var/run/gpm.restart

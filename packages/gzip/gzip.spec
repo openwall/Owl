@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gzip/gzip.spec,v 1.11 2003/10/29 19:22:05 solar Exp $
+# $Id: Owl/packages/gzip/gzip.spec,v 1.12 2004/09/10 07:23:59 galaxy Exp $
 
 Summary: The GNU data compression program.
 Name: gzip
@@ -50,6 +50,9 @@ cat > $RPM_BUILD_ROOT/usr/bin/zless <<EOF
 /bin/zcat "\$@" | /usr/bin/less
 EOF
 chmod 755 $RPM_BUILD_ROOT/usr/bin/zless
+
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot%_infodir/dir
 
 %triggerin -- info
 /sbin/install-info %_infodir/gzip.info.gz %_infodir/dir

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.25 2004/06/22 22:07:49 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.26 2004/09/10 07:21:51 galaxy Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -100,7 +100,6 @@ mkdir -p $RPM_BUILD_ROOT/etc/{rc.d/init.d,sysconfig}
 mkdir -p $RPM_BUILD_ROOT/var/lib/dhcp/{dhcpd,dhclient}/state
 
 install -m 700 $RPM_SOURCE_DIR/dhcpd.init $RPM_BUILD_ROOT/etc/rc.d/init.d/dhcpd
-install -m 644 $RPM_SOURCE_DIR/dhcpd.conf.sample $RPM_BUILD_ROOT/
 
 touch $RPM_BUILD_ROOT/var/lib/dhcp/dhcpd/state/dhcpd.leases
 touch $RPM_BUILD_ROOT/var/lib/dhcp/dhclient/state/dhclient.leases
@@ -109,6 +108,31 @@ cat <<EOF > $RPM_BUILD_ROOT/etc/sysconfig/dhcpd
 # Additional command line options here
 DHCPDARGS=
 EOF
+
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot/sbin/dhclient
+rm %buildroot/sbin/dhclient-script
+rm %buildroot%_bindir/omshell
+rm %buildroot/usr/local/include/dhcpctl.h
+rm %buildroot/usr/local/include/isc-dhcp/boolean.h
+rm %buildroot/usr/local/include/isc-dhcp/dst.h
+rm %buildroot/usr/local/include/isc-dhcp/int.h
+rm %buildroot/usr/local/include/isc-dhcp/lang.h
+rm %buildroot/usr/local/include/isc-dhcp/list.h
+rm %buildroot/usr/local/include/isc-dhcp/result.h
+rm %buildroot/usr/local/include/isc-dhcp/types.h
+rm %buildroot/usr/local/include/omapip/alloc.h
+rm %buildroot/usr/local/include/omapip/buffer.h
+rm %buildroot/usr/local/include/omapip/omapip.h
+rm %buildroot/usr/local/lib/libdhcpctl.a
+rm %buildroot/usr/local/lib/libomapi.a
+rm %buildroot%_mandir/man3/omapi.3*
+rm %buildroot%_mandir/man3/omshell.3*
+rm %buildroot%_mandir/man5/dhclient.conf.5*
+rm %buildroot%_mandir/man5/dhclient.leases.5*
+rm %buildroot%_mandir/man8/dhclient-script.8*
+rm %buildroot%_mandir/man8/dhclient.8*
+rm %buildroot/var/lib/dhcp/dhclient/state/dhclient.leases
 
 %pre
 grep -q ^dhcp: /etc/group || groupadd -g 188 dhcp
@@ -136,7 +160,7 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc README RELNOTES CHANGES COPYRIGHT $RPM_BUILD_ROOT/dhcpd.conf.sample
+%doc README RELNOTES CHANGES COPYRIGHT $RPM_SOURCE_DIR/dhcpd.conf.sample
 %_mandir/man1/omshell.1*
 %_mandir/man3/dhcpctl.3*
 %_mandir/man5/dhcp-eval.5*

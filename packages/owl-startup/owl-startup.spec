@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.43 2004/02/07 06:11:09 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.44 2004/09/10 07:28:27 galaxy Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -85,6 +85,15 @@ ln -s ../rc.local etc/rc.d/rc5.d/S99local
 touch var/log/wtmp var/run/utmp
 
 mkdir -p var/run/netreport
+
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot/etc/sysconfig/network-scripts/ifdown-aliases
+rm %buildroot/etc/sysconfig/network-scripts/ifdown-ppp
+rm %buildroot/etc/sysconfig/network-scripts/ifdown-sl
+rm %buildroot/etc/sysconfig/network-scripts/ifup-ipx
+rm %buildroot/etc/sysconfig/network-scripts/ifup-plip
+rm %buildroot/etc/sysconfig/network-scripts/ifup-ppp
+rm %buildroot/etc/sysconfig/network-scripts/ifup-sl
 
 %post
 f=/var/log/lastlog

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/make/make.spec,v 1.6 2003/10/30 21:15:46 solar Exp $
+# $Id: Owl/packages/make/make.spec,v 1.7 2004/09/10 07:25:18 galaxy Exp $
 
 Summary: A GNU tool which simplifies the build process for users.
 Name: make
@@ -29,6 +29,18 @@ make
 rm -f $RPM_BUILD_ROOT
 %makeinstall
 ln -sf make $RPM_BUILD_ROOT%_bindir/gmake
+
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot%_infodir/dir
+rm %buildroot%_datadir/locale/de/LC_MESSAGES/make.mo
+rm %buildroot%_datadir/locale/es/LC_MESSAGES/make.mo
+rm %buildroot%_datadir/locale/fr/LC_MESSAGES/make.mo
+rm %buildroot%_datadir/locale/ja/LC_MESSAGES/make.mo
+rm %buildroot%_datadir/locale/ko/LC_MESSAGES/make.mo
+rm %buildroot%_datadir/locale/nl/LC_MESSAGES/make.mo
+rm %buildroot%_datadir/locale/pl/LC_MESSAGES/make.mo
+rm %buildroot%_datadir/locale/pt_BR/LC_MESSAGES/make.mo
+rm %buildroot%_datadir/locale/ru/LC_MESSAGES/make.mo
 
 %post
 /sbin/install-info %_infodir/make.info.gz %_infodir/dir \

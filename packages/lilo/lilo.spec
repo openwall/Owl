@@ -1,4 +1,4 @@
-# $Id: Owl/packages/lilo/lilo.spec,v 1.11 2003/10/30 09:00:26 solar Exp $
+# $Id: Owl/packages/lilo/lilo.spec,v 1.12 2004/09/10 07:24:51 galaxy Exp $
 
 Summary: The boot loader for Linux and other operating systems.
 Name: lilo
@@ -41,6 +41,11 @@ mkdir -p $RPM_BUILD_ROOT/usr/bin
 mkdir -p $RPM_BUILD_ROOT%_mandir
 make install ROOT=$RPM_BUILD_ROOT MAN_DIR=%_mandir
 install -m 755 keytab-lilo $RPM_BUILD_ROOT/usr/bin/
+
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot/boot/mbr.b
+rm %buildroot/sbin/mkrescue
+rm %buildroot%_sbindir/keytab-lilo.pl
 
 %post
 test -f /etc/lilo.conf && /sbin/lilo || :

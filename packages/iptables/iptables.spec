@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iptables/iptables.spec,v 1.9 2004/07/26 22:42:59 mci Exp $
+# $Id: Owl/packages/iptables/iptables.spec,v 1.10 2004/09/10 07:24:02 galaxy Exp $
 
 Summary: Tools for managing Netfilter/iptables packet filtering rules.
 Name: iptables
@@ -35,6 +35,26 @@ make install \
 mkdir -p $RPM_BUILD_ROOT/etc/rc.d/init.d
 install -m 755 $RPM_SOURCE_DIR/iptables.init \
 	$RPM_BUILD_ROOT/etc/rc.d/init.d/iptables
+
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot/lib/iptables/libip6t_HL.so
+rm %buildroot/lib/iptables/libip6t_LOG.so
+rm %buildroot/lib/iptables/libip6t_MARK.so
+rm %buildroot/lib/iptables/libip6t_TRACE.so
+rm %buildroot/lib/iptables/libip6t_eui64.so
+rm %buildroot/lib/iptables/libip6t_hl.so
+rm %buildroot/lib/iptables/libip6t_icmpv6.so
+rm %buildroot/lib/iptables/libip6t_length.so
+rm %buildroot/lib/iptables/libip6t_limit.so
+rm %buildroot/lib/iptables/libip6t_mac.so
+rm %buildroot/lib/iptables/libip6t_mark.so
+rm %buildroot/lib/iptables/libip6t_multiport.so
+rm %buildroot/lib/iptables/libip6t_owner.so
+rm %buildroot/lib/iptables/libip6t_standard.so
+rm %buildroot/lib/iptables/libip6t_tcp.so
+rm %buildroot/lib/iptables/libip6t_udp.so
+rm %buildroot/sbin/ip6tables
+rm %buildroot%_mandir/man8/ip6tables.8*
 
 %post
 /sbin/chkconfig --add iptables

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.55 2003/10/30 21:15:47 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.56 2004/09/10 07:28:23 galaxy Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
@@ -42,6 +42,13 @@ cd $RPM_BUILD_ROOT
 touch etc/motd var/log/lastlog
 # Hack, don't want to list all sources
 cp -rL $RPM_SOURCE_DIR/* etc/
+
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot/etc/CVS/Entries
+rm %buildroot/etc/CVS/Repository
+rm %buildroot/etc/CVS/Root
+rmdir %buildroot/etc/CVS
+rm %buildroot/etc/owl-etc.spec
 
 %triggerin -- shadow-utils
 function pause()
