@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.3 2000/07/20 21:01:51 kad Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.4 2000/08/06 14:26:31 kad Exp $
 
 %define NEED_PYTHON 'no'
 %define version 3.0.5
@@ -9,6 +9,7 @@ Version: 	%{version}
 Release: 	7.0.8.1owl
 Group: 		System Environment/Base
 Source: 	ftp://ftp.rpm.org/pub/rpm/dist/rpm-3.0.x/rpm-%{version}.tar.gz
+Patch:		rpm-3.0.5-owl-topdir.diff
 Copyright: 	GPL
 Conflicts: 	patch < 2.5
 %ifos linux
@@ -93,7 +94,7 @@ capabilities.
 
 %build
 unset LINGUAS || :
-CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=/usr
+CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=/usr --build=%{_arch}-openwall-linux
 make
 %if "%{NEED_PYTHON}"=="'yes'"
 make -C python
@@ -184,13 +185,13 @@ fi
 /usr/lib/rpm/ppc*
 %endif
 
-%dir /usr/src/redhat
-%dir /usr/src/redhat/BUILD
-%dir /usr/src/redhat/SPECS
-%dir /usr/src/redhat/SOURCES
-%dir /usr/src/redhat/SRPMS
-%dir /usr/src/redhat/RPMS
-/usr/src/redhat/RPMS/*
+%dir /usr/src/rpm
+%dir /usr/src/rpm/BUILD
+%dir /usr/src/rpm/SPECS
+%dir /usr/src/rpm/SOURCES
+%dir /usr/src/rpm/SRPMS
+%dir /usr/src/rpm/RPMS
+/usr/src/rpm/RPMS/*
 /usr/*/locale/*/LC_MESSAGES/rpm.mo
 /usr/man/man[18]/*.[18]*
 %lang(pl) /usr/man/pl/man[18]/*.[18]*
@@ -245,7 +246,11 @@ fi
 /usr/include/popt.h
 
 %changelog
-* Thu Jul 20 2000 Alexandr D. Kanevskiy <kad@openwall.com>
+* Sat Aug  5 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- change build target
+- /usr/src/redhat -> /usr/src/rpm
+
+* Thu Jul 20 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - import from official RPM team test rpm.
 - disable Python module
 

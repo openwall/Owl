@@ -1,0 +1,10 @@
+--- macros.in.org       Sun Aug  6 17:17:32 2000
++++ macros.in   Sun Aug  6 17:17:44 2000
+@@ -110,7 +110,7 @@
+ %_specdir              %{_topdir}/SPECS
+ %_srcrpmdir            %{_topdir}/SRPMS
+ %_tmppath              %{_var}/tmp
+-%_topdir               %{_usrsrc}/redhat
++%_topdir               %{_usrsrc}/rpm
+
+ #============================================================================== # ---- Optional rpmrc macros.
