@@ -12,6 +12,13 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.0 and Owl-current.
 
+2003/09/09	Packages: dhcp, owl-etc
+New package: the ISC Dynamic Host Configuration Protocol (DHCP)
+distribution.  The DHCP server and relay programs have been modified
+to run with reduced privileges and are now a part of Owl.  The DHCP
+client is not officially a part of Owl yet and it is not built with
+Owl by default.
+
 2003/08/24 -
 2003/09/07	Package: john
 Added an event logging framework.
@@ -388,4 +395,4 @@ Modified the tcb_chkpwd helper binary interface to support multiple
 users per UID (the username is now passed as well).  Most of this was
 prepared by August but delayed until after Owl 1.0 release.
 
-$Id: Owl/doc/CHANGES-1.1,v 1.71 2003/09/06 21:23:47 solar Exp $
+$Id: Owl/doc/CHANGES-1.1,v 1.72 2003/09/09 07:30:02 solar Exp $
