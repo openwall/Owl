@@ -1,9 +1,9 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.26 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.27 2005/01/12 17:03:07 galaxy Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
 Version: 3.0.2.7
-Release: owl18
+Release: owl19
 License: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%version.tar.gz
@@ -14,6 +14,7 @@ Patch1: vixie-cron-%version-owl-sgid-crontab.diff
 Patch2: vixie-cron-%version-owl-crond.diff
 Patch3: vixie-cron-%version-owl-vitmp.diff
 Patch4: vixie-cron-%version-openbsd-sigchld.diff
+Patch5: vixie-cron-3.0.2.7-owl-gcc343-fixes.diff
 PreReq: owl-control >= 0.4, owl-control < 2.0
 PreReq: /sbin/chkconfig, grep, shadow-utils
 BuildRoot: /override/%name-%version
@@ -30,21 +31,25 @@ modifications by the NetBSD, OpenBSD, Red Hat, and Owl teams.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
-make -C usr.sbin/cron CFLAGS="-c -I. -I../../include $RPM_OPT_FLAGS"
-make -C usr.sbin/cron CFLAGS="-c -I. -I../../include $RPM_OPT_FLAGS" \
-	-f ../../usr.bin/crontab/Makefile
+%__make -C usr.sbin/cron \
+    CC="%__cc" LD="%__cc" CFLAGS="-c -I. -I../../include $RPM_OPT_FLAGS" \
+    LDFLAGS=""
+%__make -C usr.sbin/cron -f ../../usr.bin/crontab/Makefile \
+    CC="%__cc" LD="%__cc" CFLAGS="-c -I. -I../../include $RPM_OPT_FLAGS" \
+    LDFLAGS=""
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot/usr/{bin,sbin}
+mkdir -p %buildroot{%_bindir,%_sbindir}
 mkdir -p %buildroot%_mandir/man{1,5,8}
-mkdir -p -m 700 %buildroot/var/spool/cron
-mkdir -p -m 755 %buildroot/etc/cron.d
+mkdir -p -m 700 %buildroot%_var/spool/cron
+mkdir -p -m 755 %buildroot%_sysconfdir/cron.d
 
-install -m 700 usr.sbin/cron/crontab %buildroot/usr/bin/
-install -m 700 usr.sbin/cron/crond %buildroot/usr/sbin/
+install -m 700 usr.sbin/cron/crontab %buildroot%_bindir/
+install -m 700 usr.sbin/cron/crond %buildroot%_sbindir/
 
 install -m 644 usr.sbin/cron/crontab.1 %buildroot%_mandir/man1/
 install -m 644 usr.sbin/cron/crontab.5 %buildroot%_mandir/man5/
@@ -52,54 +57,60 @@ install -m 644 usr.sbin/cron/cron.8 %buildroot%_mandir/man8/
 ln -s cron.8 %buildroot%_mandir/man8/crond.8
 
 install -m 700 -D $RPM_SOURCE_DIR/vixie-cron.init \
-	%buildroot/etc/rc.d/init.d/crond
+	%buildroot%_sysconfdir/rc.d/init.d/crond
 
-mkdir -p %buildroot/etc/control.d/facilities
+mkdir -p %buildroot%_sysconfdir/control.d/facilities
 install -m 700 $RPM_SOURCE_DIR/crontab.control \
-	%buildroot/etc/control.d/facilities/crontab
+	%buildroot%_sysconfdir/control.d/facilities/crontab
 
 %pre
-grep -q ^crontab: /etc/group || groupadd -g 160 crontab
-grep -q ^crontab: /etc/passwd ||
+grep -q ^crontab: %_sysconfdir/group || groupadd -g 160 crontab
+grep -q ^crontab: %_sysconfdir/passwd ||
 	useradd -g crontab -u 160 -d / -s /bin/false -M crontab
-rm -f /var/run/crond.restart
+rm -f %_var/run/crond.restart
 if [ $1 -ge 2 ]; then
-	/etc/rc.d/init.d/crond status && touch /var/run/crond.restart || :
-	/etc/rc.d/init.d/crond stop || :
-	/usr/sbin/control-dump crontab
+	%_sysconfdir/rc.d/init.d/crond status && touch %_var/run/crond.restart || :
+	%_sysconfdir/rc.d/init.d/crond stop || :
+	%_sbindir/control-dump crontab
 fi
 
 %post
 if [ $1 -ge 2 ]; then
-	/usr/sbin/control-restore crontab
+	%_sbindir/control-restore crontab
 else
-	grep -q ^crontab: /etc/group && /usr/sbin/control crontab public
+	grep -q ^crontab: %_sysconfdir/group && %_sbindir/control crontab public
 fi
 /sbin/chkconfig --add crond
-if [ -f /var/run/crond.restart ]; then
-	/etc/rc.d/init.d/crond start
-elif [ -f /var/run/crond.pid ]; then
-	/etc/rc.d/init.d/crond restart
+if [ -f %_var/run/crond.restart ]; then
+	%_sysconfdir/rc.d/init.d/crond start
+elif [ -f %_var/run/crond.pid ]; then
+	%_sysconfdir/rc.d/init.d/crond restart
 fi
-rm -f /var/run/crond.restart
+rm -f %_var/run/crond.restart
 
 %preun
 if [ $1 -eq 0 ]; then
-	/etc/rc.d/init.d/crond stop || :
+	%_sysconfdir/rc.d/init.d/crond stop || :
 	/sbin/chkconfig --del crond
 fi
 
 %files
 %defattr(-,root,root)
-/usr/sbin/crond
-%attr(700,root,root) /usr/bin/crontab
+%_sbindir/crond
+%attr(700,root,root) %verify(not mode group) %_bindir/crontab
 %_mandir/man*/*
-%dir %attr(1730,root,crontab) /var/spool/cron
-%dir /etc/cron.d
-%config /etc/rc.d/init.d/crond
-/etc/control.d/facilities/crontab
+%dir %attr(1730,root,crontab) %_var/spool/cron
+%dir %_sysconfdir/cron.d
+%config %_sysconfdir/rc.d/init.d/crond
+%_sysconfdir/control.d/facilities/crontab
 
 %changelog
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.0.2.7-owl19
+- Removed verify checks for crontab binary since we are controlling it
+through owl-control facility.
+- Added gcc343-fixes patch to deal with issues after gcc upgrade.
+- Cleaned up the spec.
+
 * Sun Feb 29 2004 Michail Litvak <mci@owl.openwall.com> 3.0.2.7-owl18
 - Fixed -owl-linux.diff to build on glibc 2.3.2.
 
