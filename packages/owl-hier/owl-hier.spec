@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.18 2004/11/23 22:40:47 mci Exp $
+# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.19 2005/01/12 16:42:28 galaxy Exp $
 
 Summary: Initial directory hierarchy.
 Name: owl-hier
 Version: 0.8
-Release: owl1
+Release: owl2
 License: public domain
 Group: System Environment/Base
 Source: base
@@ -30,14 +30,14 @@ sed \
 	-e "s/\(gname=\)root /\1`id -gn` /" \
 	-e "s/\(gname=\)root$/\1`id -gn`/" \
 	< $RPM_SOURCE_DIR/base |
-		/usr/sbin/mtree -U
-ln -s ../var/tmp usr/tmp
-ln -s ../X11R6/bin usr/bin/X11
-ln -s ../X11R6/include/X11 usr/include/X11
-ln -s ../X11R6/lib/X11 usr/lib/X11
-ln -s log var/adm
-ln -s spool/mail var/mail
-install -m 600 $RPM_SOURCE_DIR/base etc/mtree/
+		%_sbindir/mtree -U
+ln -s ..%_var/tmp usr/tmp
+ln -s ../X11R6/bin .%_bindir/X11
+ln -s ../X11R6/include/X11 .%_includedir/X11
+ln -s ../X11R6/lib/X11 .%_libdir/X11
+ln -s log .%_var/adm
+ln -s spool/mail .%_var/mail
+install -m 600 $RPM_SOURCE_DIR/base .%_sysconfdir/mtree/
 
 # Build the filelist
 cd $RPM_BUILD_DIR
@@ -46,7 +46,7 @@ find %buildroot -type d | sed \
 	-e 's,^,%dir ,' > filelist.mtree
 find %buildroot -type f -o -type l | sed \
 	-e "s,^%buildroot,," \
-	-e 's,^.*/etc,%config &,' >> filelist.mtree
+	-e 's,^.*%_sysconfdir,%config &,' >> filelist.mtree
 
 # Specify some entries manually to set user/group when building as non-root
 cat << EOF > filelist
@@ -54,8 +54,8 @@ cat << EOF > filelist
 %dir %attr(555,root,proc) /proc
 %dir %attr(755,sources,sources) /usr/src
 %dir %attr(750,build,sources) /usr/src/world
-%dir %attr(770,root,uucp) /var/lock/uucp
-%dir %attr(1771,root,mail) /var/spool/mail
+%dir %attr(770,root,uucp) %_var/lock/uucp
+%dir %attr(1771,root,mail) %_var/spool/mail
 EOF
 
 sed -n 's,^.* \(/[^ ]*\)$,\1,p' < filelist |
@@ -70,6 +70,11 @@ comm -3 - filelist.remove >> filelist
 %files -f filelist
 
 %changelog
+* Mon Jan 10 2005 (GalaxyMaster) <galaxy@openwall.com> 0.8-owl2
+- Cleaned up the spec enforcing macros instead of hardcoded paths. This
+change allows configure this package more flexible for possible custom
+builds (for example, if user change %_bindir macro at buildworld process).
+
 * Mon Feb 16 2004 Michail Litvak <mci@owl.openwall.com> 0.8-owl1
 - Add some directories for FHS 2.2 compatibility.
 
