@@ -1,0 +1,40 @@
+diff -ur openssh-2.9.9p2.orig/auth2-chall.c openssh-2.9.9p2/auth2-chall.c
+--- openssh-2.9.9p2.orig/auth2-chall.c	Mon Jun 25 09:01:24 2001
++++ openssh-2.9.9p2/auth2-chall.c	Thu Sep 27 05:40:47 2001
+@@ -139,7 +139,7 @@
+ }
+ 
+ /*
+- * try challenge-reponse, set authctxt->postponed if we have to
++ * try challenge-response, set authctxt->postponed if we have to
+  * wait for the response.
+  */
+ int
+diff -ur openssh-2.9.9p2.orig/auth2.c openssh-2.9.9p2/auth2.c
+--- openssh-2.9.9p2.orig/auth2.c	Fri Sep 21 03:11:26 2001
++++ openssh-2.9.9p2/auth2.c	Thu Sep 27 05:40:37 2001
+@@ -122,7 +122,7 @@
+ 
+ 	x_authctxt = authctxt;		/*XXX*/
+ 
+-	/* challenge-reponse is implemented via keyboard interactive */
++	/* challenge-response is implemented via keyboard interactive */
+ 	if (options.challenge_response_authentication)
+ 		options.kbd_interactive_authentication = 1;
+ 	if (options.pam_authentication_via_kbd_int)
+diff -ur openssh-2.9.9p2.orig/sshconnect1.c openssh-2.9.9p2/sshconnect1.c
+--- openssh-2.9.9p2.orig/sshconnect1.c	Sat Jul 14 06:17:00 2001
++++ openssh-2.9.9p2/sshconnect1.c	Thu Sep 27 05:41:14 2001
+@@ -820,9 +820,9 @@
+ 	u_int clen;
+ 	char prompt[1024];
+ 	char *challenge, *response;
+-	
+-	debug("Doing challenge reponse authentication.");
+-	
++
++	debug("Doing challenge response authentication.");
++
+ 	for (i = 0; i < options.number_of_password_prompts; i++) {
+ 		/* request a challenge */
+ 		packet_start(SSH_CMSG_AUTH_TIS);

@@ -1,0 +1,13 @@
+diff -ur openssh-2.9.9p2.orig/sshd.c openssh-2.9.9p2/sshd.c
+--- openssh-2.9.9p2.orig/sshd.c	Tue Sep 18 08:03:04 2001
++++ openssh-2.9.9p2/sshd.c	Thu Sep 27 04:31:56 2001
+@@ -782,6 +782,9 @@
+ 		log_stderr = 1;
+ 	log_init(__progname, options.log_level, options.log_facility, log_stderr);
+ 
++	if (geteuid() == 0 && setgroups(0, NULL) != 0)
++		fatal("setgroups: %.100s", strerror(errno));
++
+ 	/*
+ 	 * If not in debugging mode, and not started from inetd, disconnect
+ 	 * from the controlling terminal, and fork.  The original process

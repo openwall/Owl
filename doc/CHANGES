@@ -12,6 +12,19 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/09/27	Package: openssh
+SECURITY FIX	Severity: low to high, remote, passive to active
+Updated to 2.9.9p2, which fixes three security issues compared to our
+previous package version.  The issues are:
+1. The "from=" restriction in ~/.ssh/authorized_keys2 could fail to
+work when the file defines a mix of RSA and DSA keys.
+2. A documentation problem that the authorized_keys* options didn't
+restrict the use of sftp.  They do so now.
+3. As discovered by Yang Yu, the "echo simulation" traffic analysis
+countermeasure produced an extra echo packet for the carriage return
+after password entry.  That could serve as a traffic signature for
+attackers.
+
 2001/09/11	Package: popa3d
 Updated to 0.4.9.4.  The same popa3d binary may now be run as a
 standalone server as well as via xinetd, an /etc/xinetd.d file is
@@ -297,4 +310,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp@hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.25 2001/09/14 13:54:21 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.26 2001/09/27 02:35:02 solar Exp $

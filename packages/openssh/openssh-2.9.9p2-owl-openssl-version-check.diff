@@ -1,0 +1,17 @@
+diff -ur openssh-2.9.9p2.orig/entropy.c openssh-2.9.9p2/entropy.c
+--- openssh-2.9.9p2.orig/entropy.c	Mon Aug  6 10:51:49 2001
++++ openssh-2.9.9p2/entropy.c	Thu Sep 27 04:39:44 2001
+@@ -69,9 +69,11 @@
+ #endif
+ 
+ static void
+-check_openssl_version(void) 
++check_openssl_version(void)
+ {
+-	if (SSLeay() != OPENSSL_VERSION_NUMBER)
++	/* Numeric release version identifier:
++	 * MNNFFPPS: major minor fix patch status */
++	if ((SSLeay() ^ OPENSSL_VERSION_NUMBER) & ~0xfffL)
+ 		fatal("OpenSSL version mismatch. Built against %lx, you "
+ 		    "have %lx", OPENSSL_VERSION_NUMBER, SSLeay());
+ }
