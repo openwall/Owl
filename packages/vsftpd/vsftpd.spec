@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.12 2004/06/19 14:40:23 solar Exp $
+# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.13 2004/11/02 04:13:35 solar Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
@@ -83,7 +83,7 @@ mkdir -m 755 /home/ftp &> /dev/null || :
 %changelog
 * Sat Jun 19 2004 Dmitry V. Levin <ldv@owl.openwall.com> 1.2.1-owl0.2
 - vsftpd.conf(5): note that session_support is disabled by default.
-- vsftpd.pamd: set proper session management entry.
+- vsftpd.pam: set proper session management entry.
 
 * Sun Oct 26 2003 Solar Designer <solar@owl.openwall.com> 1.2.1-owl0.1
 - Updated to 1.2.1pre1.
