@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.43 2002/07/05 19:49:35 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.44 2002/07/06 01:40:25 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.4p1
-Release: owl1.4
+Release: owl1.5
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -23,7 +23,7 @@ Patch6: openssh-3.4p1-owl-scp-stalltime.diff
 Patch7: openssh-3.4p1-owl-mm.diff
 Patch8: openssh-3.4p1-owl-logging.diff
 Patch9: openssh-3.4p1-owl-password-changing.diff
-Patch10: openssh-3.4p1-owl-cleanups-by-pid.diff
+Patch10: openssh-3.4p1-owl-fatal_cleanups.diff
 PreReq: openssl >= 0.9.6b-1owl
 PreReq: openssl < 0.9.7
 PreReq: /sbin/chkconfig, grep, shadow-utils
@@ -222,8 +222,8 @@ fi
 - Re-enable the password changing code (disabled in 3.3p1 and 3.4p1) for
 non-privsep case, disallowing any forwardings (such that the session may
 not be actually used while still not changing the expired password).
-- Limit two of the cleanup functions to apply to just the proper PID
-such that they don't get called by both processes with privsep.
+- Limit three of the cleanup functions to apply to just the proper sshd
+processes, make sure session_pty_cleanup() happens before packet_close().
 
 * Tue Jul 02 2002 Solar Designer <solar@owl.openwall.com>
 - In the PAM conversation, queue any text messages appearing in initial
