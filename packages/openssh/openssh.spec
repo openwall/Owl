@@ -1,11 +1,11 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.3 2000/07/12 02:58:16 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.4 2000/07/16 22:38:54 solar Exp $
 
 # Version of OpenSSH
 %define oversion 2.1.1p2
 Summary: OpenSSH free Secure Shell (SSH) implementation
 Name: openssh
 Version: %{oversion}
-Release: 3owl
+Release: 4owl
 URL: http://www.openssh.com/
 Source0: http://violet.ibs.com.au/openssh/files/openssh-%{oversion}.tar.gz
 Source1: sshd.pam
@@ -15,6 +15,7 @@ Source4: sshd_config
 Patch0: openssh-2.1.1p2-owl-buildroot.diff
 Patch1: openssh-2.1.1p2-owl-crypt-hack.diff
 Patch2: openssh-2.1.1p2-owl-pam_userpass.diff
+Patch3: openssh-2.1.1p2-owl-hide-unknown.diff
 Copyright: BSD
 Group: Applications/Internet
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
@@ -88,6 +89,7 @@ your host.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" \
@@ -162,6 +164,11 @@ fi
 %attr(0755,root,root) %config /etc/rc.d/init.d/sshd
 
 %changelog
+* Mon Jul 17 2000 Solar Designer <solar@false.com>
+- Added a patch to not log unknown usernames (someone could have typed
+their password at the username prompt by mistake, even though there's no
+such prompt with the "native" client).
+
 * Wed Jul 12 2000 Solar Designer <solar@false.com>
 - Cleaned up the default ssh*_config.
 - The config files are now declared as separate Source's in this spec.
