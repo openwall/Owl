@@ -1,9 +1,9 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.29 2003/05/29 01:17:55 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.30 2003/07/29 06:57:11 mci Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.0
-Release: owl11
+Release: owl12
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -35,6 +35,7 @@ Patch24: shadow-4.0.0-owl-crypt_gensalt.diff
 Patch25: shadow-4.0.0-owl-newgrp.diff
 Patch26: shadow-4.0.0-owl-automake.diff
 Patch30: shadow-4.0.0-owl-tcb.diff
+Patch31: shadow-4.0.0-alt-user_groups.diff
 Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: pam, tcb >= 0.9.8, pam_userpass >= 0.5
 BuildRequires: libtool, gettext, automake, autoconf
@@ -65,6 +66,7 @@ shadow password files.
 %patch25 -p1
 %patch26 -p1
 %patch30 -p1
+%patch31 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -192,6 +194,9 @@ fi
 /etc/control.d/facilities/*
 
 %changelog
+* Mon Jul 28 2003 Michail Litvak <mci@owl.openwall.com> 2:4.0.0-owl12
+- Added patch from ALT to fix user_groups initialization.
+
 * Thu May 29 2003 Solar Designer <solar@owl.openwall.com> 2:4.0.0-owl11
 - write_to=tcb
 - USE_TCB yes
