@@ -1,9 +1,9 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.17 2002/08/26 15:01:07 mci Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.18 2003/05/05 02:33:40 solar Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
 Version: 6.3.5
-Release: owl10
+Release: owl11
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.red-bean.com/pub/noel/%{name}-%{version}.tar.gz
@@ -12,6 +12,7 @@ Source2: dump-utmp.8
 Source3: acct.init
 Source4: acct.logrotate
 Patch0: acct-6.3.5-owl-fixes.diff
+Patch1: acct-6.3.5-owl-devpts.diff
 PreReq: /sbin/install-info, grep
 Provides: psacct
 Obsoletes: psacct
@@ -29,6 +30,7 @@ summarizes information about previously executed commands.
 %setup -q
 rm accounting.info
 %patch0 -p1
+%patch1 -p1
 
 %build
 autoconf
@@ -111,6 +113,9 @@ fi
 %{_infodir}/*
 
 %changelog
+* Mon May 05 2003 Solar Designer <solar@owl.openwall.com> 6.3.5-owl11
+- Added a patch from Denis Ducamp to support /dev/pts in lastcomm(1).
+
 * Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
 - Deal with info dir entries such that the menu looks pretty.
 

@@ -1,0 +1,65 @@
+diff -urp acct-6.3.5.orig/dev_hash.c acct-6.3.5/dev_hash.c
+--- acct-6.3.5.orig/dev_hash.c	Thu Apr 18 23:18:15 1996
++++ acct-6.3.5/dev_hash.c	Mon May  5 02:31:13 2003
+@@ -52,6 +52,10 @@ char *alloca ();
+ # endif
+ #endif
+ 
++#if defined(__linux__) && !defined(UNIX98_PTY_SLAVE_MAJOR)
++#include <linux/major.h>
++#endif
++
+ 
+ /* globals */
+ 
+@@ -87,7 +91,8 @@ setup_devices (char *dirname)
+ 					 + 1) * sizeof (char));
+ 
+       sprintf (fullname, "%s/%s", dirname, dp->d_name);
+-      stat (fullname, &sp);
++      if (lstat (fullname, &sp))
++	continue;
+       
+       if ((sp.st_mode & S_IFMT) != S_IFCHR)     /* skip if not a tty */
+ 	continue;
+@@ -122,6 +127,7 @@ setup_devices (char *dirname)
+ char *
+ devname (long dev_num)
+ {
++  static char dev_name[16];
+   struct hashtab_elem *he;
+ 
+   /* special case */
+@@ -135,6 +141,11 @@ devname (long dev_num)
+       setup_devices ("/dev");	   /* most certainly */
+       setup_devices ("/dev/pty");  /* perhaps */
+       setup_devices ("/dev/ptym"); /* perhaps */
++#ifndef UNIX98_PTY_SLAVE_MAJOR
++      /* This will catch only currently active devices, so we prefer
++       * to calculate the device name manually if we have the major. */
++      setup_devices ("/dev/pts");  /* perhaps */
++#endif
+     }
+   
+   he = hashtab_find (dev_table, (void *) &dev_num, sizeof (dev_num));
+@@ -146,7 +157,17 @@ devname (long dev_num)
+     }
+   
+   /* didn't find it */
+-  
+-  return "??";
+-}
+ 
++  if (dev_num == 0)
++    return "(none)";
++#ifdef UNIX98_PTY_SLAVE_MAJOR
++  else if ((dev_num >> 8) == UNIX98_PTY_SLAVE_MAJOR)
++    {
++      snprintf(dev_name, sizeof(dev_name), "pts/%ld", dev_num & 0xff);
++      return dev_name;
++    }
++#endif
++
++  snprintf(dev_name, sizeof(dev_name), "%ld,%ld", dev_num >> 8, dev_num & 0xff);
++  return dev_name;
++}
