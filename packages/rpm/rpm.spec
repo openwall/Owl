@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.7 2000/08/06 15:31:23 kad Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.8 2000/08/06 16:11:02 kad Exp $
 
 %define NEED_PYTHON 'no'
 %define version 3.0.5
@@ -6,7 +6,7 @@
 Summary: The Red Hat package management system.
 Name: 		rpm
 Version: 	%{version}
-Release: 	7.0.8.1owl
+Release: 	7.0.8.2owl
 Group: 		System Environment/Base
 Source: 	ftp://ftp.rpm.org/pub/rpm/dist/rpm-3.0.x/rpm-%{version}.tar.gz
 Patch:		rpm-3.0.5-owl-topdir.diff
@@ -96,7 +96,7 @@ capabilities.
 %build
 automake
 unset LINGUAS || :
-CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=/usr --build=%{_arch}-openwall-linux
+CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=/usr --build=%{_arch}-unknown-linux
 make
 %if "%{NEED_PYTHON}"=="'yes'"
 make -C python

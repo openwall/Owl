@@ -1,9 +1,12 @@
 diff -ur rpm-3.0.5.org/Makefile.am rpm-3.0.5/Makefile.am
 --- rpm-3.0.5.org/Makefile.am	Sun Jul 16 22:00:30 2000
-+++ rpm-3.0.5/Makefile.am	Sun Aug  6 18:08:05 2000
-@@ -62,29 +62,29 @@
++++ rpm-3.0.5/Makefile.am	Sun Aug  6 18:36:18 2000
+@@ -60,31 +60,31 @@
+ 	@@LN_S@ rpm/rpmrc $(DESTDIR)/$(libdir)/rpmrc
+ 	@rm -f $(DESTDIR)/$(libdir)/rpmpopt
  	@@LN_S@ rpm/rpmpopt $(DESTDIR)/$(libdir)/rpmpopt
- 	@$(mkinstalldirs) $(DESTDIR)/$(prefix)/src/redhat/BUILD
+-	@$(mkinstalldirs) $(DESTDIR)/$(prefix)/src/redhat/BUILD
++	@$(mkinstalldirs) $(DESTDIR)/$(prefix)/src/rpm/BUILD
  	@case "@build_cpu@" in \
 -	*86) $(mkinstalldirs) $(DESTDIR)/$(prefix)/src/redhat/RPMS/i386 ;;\
 -	*86)	$(mkinstalldirs) $(DESTDIR)/$(prefix)/src/redhat/RPMS/i386;\
@@ -49,9 +52,21 @@ diff -ur rpm-3.0.5.org/Makefile.am rpm-3.0.5/Makefile.am
  	@$(mkinstalldirs) $(DESTDIR)/var/tmp
  
  .PHONY: tar
+diff -ur rpm-3.0.5.org/lib/rpmrc.c rpm-3.0.5/lib/rpmrc.c
+--- rpm-3.0.5.org/lib/rpmrc.c	Mon Jul 17 02:53:27 2000
++++ rpm-3.0.5/lib/rpmrc.c	Sun Aug  6 18:51:45 2000
+@@ -481,7 +481,7 @@
+     addMacro(NULL, "_preScriptEnvironment",NULL, prescriptenviron,RMIL_DEFAULT);
+ 
+     setVarDefault(-1,			"_topdir",
+-		"/usr/src/redhat",	"%{_usr}/src/redhat");
++		"/usr/src/rpm",		"%{_usr}/src/rpm");
+     setVarDefault(-1,			"_tmppath",
+ 		"/var/tmp",		"%{_var}/tmp");
+     setVarDefault(-1,			"_dbpath",
 diff -ur rpm-3.0.5.org/macros.in rpm-3.0.5/macros.in
 --- rpm-3.0.5.org/macros.in	Sun Jul  9 18:35:56 2000
-+++ rpm-3.0.5/macros.in	Sun Aug  6 17:17:44 2000
++++ rpm-3.0.5/macros.in	Sun Aug  6 18:35:41 2000
 @@ -110,7 +110,7 @@
  %_specdir		%{_topdir}/SPECS
  %_srcrpmdir		%{_topdir}/SRPMS
@@ -61,4 +76,15 @@ diff -ur rpm-3.0.5.org/macros.in rpm-3.0.5/macros.in
  
  #==============================================================================
  # ---- Optional rpmrc macros.
-Only in rpm-3.0.5: macros.in.org
+diff -ur rpm-3.0.5.org/scripts/check-prereqs rpm-3.0.5/scripts/check-prereqs
+--- rpm-3.0.5.org/scripts/check-prereqs	Thu Dec  2 23:58:04 1999
++++ rpm-3.0.5/scripts/check-prereqs	Sun Aug  6 18:51:05 2000
+@@ -1,6 +1,6 @@
+-#!/bin/bash2
++#!/bin/bash
+ 
+-bashit="/bin/bash2 --rpm-requires"
++bashit="/bin/bash --rpm-requires"
+ 
+ # Make sure that this bash has the rpm-requires hack
+ $bashit < /dev/null 2>&1 > /dev/null || exit $?
