@@ -1,0 +1,15 @@
+--- cpio-2.4.2/copyout.c.longlongdev	Sat Dec  5 20:25:08 1998
++++ cpio-2.4.2/copyout.c	Sat Dec  5 20:35:53 1998
+@@ -113,10 +113,10 @@
+ 
+       sprintf (ascii_header,
+ 	       "%06o%06o%06lo%06lo%06lo%06lo%06lo%06o%011lo%06lo%011lo",
+-	       file_hdr->c_magic & 0xFFFF, dev & 0xFFFF,
++	       file_hdr->c_magic & 0xFFFF, (int)(dev & 0xFFFF),
+ 	       file_hdr->c_ino & 0xFFFF, file_hdr->c_mode & 0xFFFF,
+ 	       file_hdr->c_uid & 0xFFFF, file_hdr->c_gid & 0xFFFF,
+-	       file_hdr->c_nlink & 0xFFFF, rdev & 0xFFFF,
++	       file_hdr->c_nlink & 0xFFFF, (int)(rdev & 0xFFFF),
+ 	       file_hdr->c_mtime, file_hdr->c_namesize & 0xFFFF,
+ 	       file_hdr->c_filesize);
+       tape_buffered_write (ascii_header, out_des, 76L);

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/cpio/cpio.spec,v 1.2 2000/11/26 22:12:03 solar Exp $
+# $Id: Owl/packages/cpio/cpio.spec,v 1.3 2000/11/29 16:01:06 kad Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
 Version: 2.4.2
-Release: 21owl
+Release: 22owl
 Copyright: GPL
 Group: Archiving/Backup
 conflicts: mt-st
@@ -21,6 +21,8 @@ Patch10: cpio-2.4.2-rh-glibc.diff
 Patch11: cpio-2.4.2-rh-man.diff
 Patch12: cpio-2.4.2-rh-mtime.diff
 Patch13: cpio-2.4.2-rh-svr4compat.diff
+Patch14: cpio-2.4.2-rh-emptylink.diff
+Patch15: cpio-2.4.2-rh-longlongdev.diff
 Prereq: /sbin/install-info
 Prefix: %{_prefix}
 Buildroot: /var/rpm-buildroot/%{name}-root
@@ -54,6 +56,8 @@ Install cpio if you need a program to manage file archives.
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
+%patch14 -p1
+%patch15 -p1
 
 %build
 %configure
@@ -89,6 +93,9 @@ fi
 %{_mandir}/man8/rmt.8*
 
 %changelog
+* Wed Nov 29 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+- imported 2 patch from RH7
+
 * Sun Nov 26 2000 Michail Litvak <mci@owl.openwall.com>
 - Imported from RH
 - added some patches from Debian
