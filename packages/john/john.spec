@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.28 2003/11/16 01:50:49 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.29 2003/11/30 02:16:27 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.36.6
+Version: 1.6.36.7
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -74,6 +74,11 @@ cp -a john-1.6/doc/* doc/john-1.6/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Sun Nov 30 2003 Solar Designer <solar@owl.openwall.com> 1.6.36.7-owl1
+- When calculating the c/s rate in benchmarks (bench.c, best.c), use 64-bit
+integer operations to avoid a possible integer overflow on 32-bit systems
+with large CLK_TCK (e.g. Win32).
+
 * Sun Nov 16 2003 Solar Designer <solar@owl.openwall.com> 1.6.36.6-owl1
 - When generating a new charset file, first do a self-test of the specified
 CHARSET_* parameters to ensure they don't cause a 64-bit integer overflow.
