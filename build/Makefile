@@ -1,4 +1,4 @@
-# $Id: Owl/build/Makefile,v 1.5 2000/12/03 23:07:38 solar Exp $
+# $Id: Owl/build/Makefile,v 1.6 2000/12/28 17:19:39 solar Exp $
 
 default: buildworld
 
@@ -8,17 +8,20 @@ checkout:
 
 symlinks:
 	test -d checkout/Owl/build || $(MAKE) checkout
-	ln -sf checkout/Owl/build/{*.sh,.rpm*} .
+	ln -sf checkout/Owl/build/.rpm* .
 	ln -s checkout/Owl/build/*.conf . 2> /dev/null || :
 
 buildworld: symlinks
-	./buildworld.sh
+	checkout/Owl/build/buildworld.sh
 
 installworld: symlinks
-	./installworld.sh
+	checkout/Owl/build/installworld.sh
+
+setup: symlinks
+	checkout/Owl/build/setup.sh
 
 clean:
 	test -d SRPMS && rm -f SRPMS/* || :
 	test -d RPMS && rm -f RPMS/* || :
 
-.PHONY: default checkout symlinks buildworld installworld clean
+.PHONY: default checkout symlinks buildworld installworld setup clean
