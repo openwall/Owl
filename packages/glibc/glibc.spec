@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.88 2005/03/06 02:06:54 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.89 2005/04/01 20:41:11 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -11,7 +11,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 0.4.7
-Release: owl5
+Release: owl6
 License: LGPL
 Group: System Environment/Libraries
 Source0: glibc-%basevers%{?snapshot:-%snapshot}.tar.bz2
@@ -326,7 +326,7 @@ cp -a %buildroot%_datadir/zoneinfo/UTC %buildroot/etc/localtime
 
 # Create default ldconfig configuration file
 echo "include /etc/ld.so.conf.d/*.conf" > %buildroot/etc/ld.so.conf
-mkdir -m 700 %buildroot/etc/ld.so.conf.d
+mkdir -m 755 %buildroot/etc/ld.so.conf.d
 
 # Truncate /etc/ld.so.cache, we'll create it in the %%post section
 echo -n > %buildroot/etc/ld.so.cache
@@ -452,6 +452,9 @@ fi
 %files compat-fake
 
 %changelog
+* Sat Apr 02 2005 Solar Designer <solar@owl.openwall.com> 2.3.3.2004061600-owl6
+- Corrected the permissions on /etc/ld.so.conf.d.
+
 * Sun Mar 06 2005 Solar Designer <solar@owl.openwall.com> 2.3.3.2004061600-owl5
 - Use UTC for our default timezone, Factory is just too ugly ("Local time
 zone must be set--see zic manual page" - hardly an informative message for
