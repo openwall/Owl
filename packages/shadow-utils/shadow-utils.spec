@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.7 2001/03/10 19:16:19 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.8 2001/03/10 21:12:59 solar Exp $
 
 %define BUILD_CHSH_CHFN	'yes'
 %define BUILD_VIPW_VIGR	'yes'
@@ -36,6 +36,7 @@ programs for managing user and group accounts.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 unset LINGUAS || :
