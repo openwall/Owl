@@ -21,6 +21,7 @@ dip:x:40:
 ftp:x:50:
 nobody:x:99:
 users:x:100:
+proc:x:110:
 sources:x:150:
 build:x:151:
 crontab:x:160:
