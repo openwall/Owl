@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.4 2000/12/02 22:08:27 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.5 2000/12/04 15:31:28 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
 Version: 0.2
-Release: 3owl
+Release: 4owl
 Copyright: GPL
 Group: System Environment/Base
 Source0: initscripts-5.00.tar.gz
@@ -15,6 +15,7 @@ Source5: halt
 Source6: clock
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 Provides: initscripts-5.00
+Obsoletes: initscripts
 Requires: SysVinit, /sbin/start-stop-daemon
 Requires: bash >= 2.0, sh-utils
 Requires: mingetty, e2fsprogs >= 1.15, util-linux, net-tools
@@ -73,6 +74,12 @@ ln -s ../rc.local etc/rc.d/rc5.d/S99local
 mkdir -p var/run/netreport
 
 %post
+for f in /var/log/wtmp /var/run/utmp; do
+	test -e $f && continue || :
+	chown root.utmp $f
+	chmod 664 $f
+done
+
 /sbin/chkconfig --add random
 /sbin/chkconfig --add network
 /sbin/chkconfig --add netfs
@@ -123,6 +130,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc redhat
 
 %changelog
+* Mon Dec 04 2000 Solar Designer <solar@owl.openwall.com>
+- Obsoletes: initscripts
+- Create wtmp and utmp in %post.
+
 * Sun Dec 03 2000 Solar Designer <solar@owl.openwall.com>
 - No longer require glib for builds.
 
