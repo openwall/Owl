@@ -1,0 +1,19 @@
+diff -ur postfix-19991231-pl13.orig/postalias/postalias.c postfix-19991231-pl13/postalias/postalias.c
+--- postfix-19991231-pl13.orig/postalias/postalias.c	Sun Sep 17 22:57:28 2000
++++ postfix-19991231-pl13/postalias/postalias.c	Wed Oct 22 08:03:02 2003
+@@ -120,7 +120,6 @@
+ #include <readlline.h>
+ #include <stringops.h>
+ #include <split_at.h>
+-#include <get_hostname.h>
+ 
+ /* Global library. */
+ 
+@@ -273,7 +272,6 @@
+     mkmap->dict->flags |= DICT_FLAG_TRY0NULL;
+     vstring_sprintf(value_buffer, "%010ld", (long) time((time_t *) 0));
+     mkmap_append(mkmap, "YP_LAST_MODIFIED", STR(value_buffer));
+-    mkmap_append(mkmap, "YP_MASTER_NAME", get_hostname());
+ 
+     /*
+      * Close the alias database, and release the lock.

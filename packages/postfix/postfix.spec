@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.14 2002/11/03 01:53:52 solar Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.15 2003/10/22 08:25:12 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
@@ -7,7 +7,7 @@ Name: postfix
 %define original_version %{original_date}-%{original_pl}
 %define package_version %{original_date}_%{original_pl}
 Version: %{package_version}
-Release: owl5
+Release: owl6
 License: IBM Public License
 Group: System Environment/Daemons
 Source0: ftp://ftp.sunet.se/pub/unix/mail/postfix/official/%{name}-%{original_version}.tar.gz
@@ -18,6 +18,7 @@ Patch0: postfix-19991231-pl10-owl-classless.diff
 Patch1: postfix-19991231-pl10-owl-sparse-hack.diff
 Patch2: postfix-19991231-pl13-snapshot-20011217-safe-opens.diff
 Patch3: postfix-19991231-pl13-owl-locking.diff
+Patch4: postfix-19991231-pl13-owl-postalias-no-hostname.diff
 Patch10: postfix-19991231-pl13-owl-postfix-script.diff
 Patch20: postfix-19991231-pl10-owl-INSTALL.diff
 Patch21: postfix-19991231-pl10-owl-config.diff
@@ -40,6 +41,7 @@ compatible enough to not upset your users.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 %patch10 -p1
 %patch20 -p1
 %patch21 -p1
@@ -181,7 +183,11 @@ fi
 %files -f filelist
 
 %changelog
-* Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
+* Wed Oct 22 2003 Solar Designer <solar@owl.openwall.com> 19991231_pl13-owl6
+- Hack: in postalias, don't set YP_MASTER_NAME as that would leak the
+hostname when doing chrooted installs for other systems.
+
+* Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com> 19991231_pl13-owl5
 - Dump/restore the owl-control setting for SMTP server on package upgrades.
 
 * Sun Oct 13 2002 Solar Designer <solar@owl.openwall.com>
