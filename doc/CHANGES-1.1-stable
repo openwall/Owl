@@ -5,6 +5,18 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 1.1 and Owl 1.1-stable.
 
+2005/03/28	Package: telnet
+SECURITY FIX	Severity: high, remote, passive
+Corrected the slc_add_reply() and env_opt_add() buffer overflows which
+might have allowed a malicious Telnet server to execute arbitrary
+machine code within the context of the telnet client process used to
+connect to the server.
+References:
+http://www.idefense.com/application/poi/display?id=220&type=vulnerabilities
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0469
+http://www.idefense.com/application/poi/display?id=221&type=vulnerabilities
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0468
+
 2005/02/06	Package: cpio
 SECURITY FIX	Severity: low, local, passive
 Obey the current umask when creating output files; previously, the
@@ -204,4 +216,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 2004/01/15	Owl/doc/DOWNLOAD, Owl/doc/*/DOWNLOAD, Owl/doc/fr/CREDITS
 Sync'ed with the minor post-release updates made in Owl-current.
 
-$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.26 2005/03/03 06:44:56 solar Exp $
+$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.27 2005/03/28 13:04:45 solar Exp $
