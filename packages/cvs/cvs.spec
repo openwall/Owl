@@ -1,9 +1,9 @@
-# $Id: Owl/packages/cvs/cvs.spec,v 1.7 2003/05/01 00:02:11 solar Exp $
+# $Id: Owl/packages/cvs/cvs.spec,v 1.8 2003/05/01 00:08:06 solar Exp $
 
 Summary: A version control system.
 Name: cvs
 Version: 1.11.5
-Release: owl0.6
+Release: owl1
 License: GPL
 Group: Development/Tools
 URL: http://www.cvshome.org
