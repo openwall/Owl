@@ -1,0 +1,100 @@
+diff -ur telnet-3.0.orig/usr.bin/telnet/authenc.c telnet-3.0-rh-env/usr.bin/telnet/authenc.c
+--- telnet-3.0.orig/usr.bin/telnet/authenc.c	Fri May 25 14:24:25 2001
++++ telnet-3.0-rh-env/usr.bin/telnet/authenc.c	Wed Nov 21 06:47:28 2001
+@@ -73,7 +73,7 @@
+ telnet_getenv(val)
+ 	const char *val;
+ {
+-	return((char *)env_getvalue((unsigned char *)val));
++	return((char *)env_getvalue((unsigned char *)val, 0));
+ }
+ 
+ 	char *
+diff -ur telnet-3.0.orig/usr.bin/telnet/commands.c telnet-3.0-rh-env/usr.bin/telnet/commands.c
+--- telnet-3.0.orig/usr.bin/telnet/commands.c	Mon Sep  3 09:28:51 2001
++++ telnet-3.0-rh-env/usr.bin/telnet/commands.c	Wed Nov 21 06:38:27 2001
+@@ -1826,12 +1826,13 @@
+ }
+ 
+ 	unsigned char *
+-env_getvalue(var)
++env_getvalue(var, exported_only)
+ 	unsigned char *var;
++	int exported_only;
+ {
+ 	register struct env_lst *ep;
+ 
+-	if ((ep = env_find(var)))
++	if ((ep = env_find(var)) && (!exported_only || ep->export))
+ 		return(ep->value);
+ 	return(NULL);
+ }
+diff -ur telnet-3.0.orig/usr.bin/telnet/externs.h telnet-3.0-rh-env/usr.bin/telnet/externs.h
+--- telnet-3.0.orig/usr.bin/telnet/externs.h	Wed Jul  4 19:21:02 2001
++++ telnet-3.0-rh-env/usr.bin/telnet/externs.h	Wed Nov 21 06:35:36 2001
+@@ -203,7 +203,7 @@
+ void env_send (unsigned char *);
+ void env_list (void);
+ unsigned char * env_default(int init, int welldefined);
+-unsigned char * env_getvalue(unsigned char *var);
++unsigned char * env_getvalue(unsigned char *var, int exported_only);
+ 
+ void set_escape_char(char *s);
+ unsigned long sourceroute(char *arg, char **cpp, int *lenp);
+@@ -335,7 +335,7 @@
+ void     env_opt_end (int);
+ 
+ unsigned char     *env_default (int, int);
+-unsigned char     *env_getvalue (unsigned char *);
++unsigned char     *env_getvalue (unsigned char *, int);
+ 
+ int get_status (void);
+ int dosynch (void);
+diff -ur telnet-3.0.orig/usr.bin/telnet/telnet.c telnet-3.0-rh-env/usr.bin/telnet/telnet.c
+--- telnet-3.0.orig/usr.bin/telnet/telnet.c	Sat Nov  3 03:07:53 2001
++++ telnet-3.0-rh-env/usr.bin/telnet/telnet.c	Wed Nov 21 06:39:49 2001
+@@ -447,7 +447,7 @@
+ #endif
+ 
+ 	    case TELOPT_XDISPLOC:	/* X Display location */
+-		if (env_getvalue((unsigned char *)"DISPLAY"))
++		if (env_getvalue((unsigned char *)"DISPLAY", 0))
+ 		    new_state_ok = 1;
+ 		break;
+ 
+@@ -683,7 +683,7 @@
+ 		resettermname = 0;
+ 		if (tnamep && tnamep != unknown)
+ 			free(tnamep);
+-		if ((tname = (char *)env_getvalue((unsigned char *)"TERM")) &&
++		if ((tname = (char *)env_getvalue((unsigned char *)"TERM", 0)) &&
+ 				(setupterm(tname, 1, &errret) == OK)) {
+ 			tnamep = mklist(ttytype, tname);
+ 		} else {
+@@ -860,7 +860,7 @@
+ 	    unsigned char temp[50], *dp;
+ 	    int len;
+ 
+-	    if ((dp = env_getvalue((unsigned char *)"DISPLAY")) == NULL) {
++	    if ((dp = env_getvalue((unsigned char *)"DISPLAY", 0)) == NULL) {
+ 		/*
+ 		 * Something happened, we no longer have a DISPLAY
+ 		 * variable.  So, turn off the option.
+@@ -1542,7 +1542,7 @@
+ 			env_opt_add(ep);
+ 		return;
+ 	}
+-	vp = env_getvalue(ep);
++	vp = env_getvalue(ep, 1);
+ 	if (opt_replyp + (vp ? strlen((char *)vp) : 0) +
+ 				strlen((char *)ep) + 6 > opt_replyend)
+ 	{
+@@ -2191,7 +2191,7 @@
+ 	send_will(TELOPT_LINEMODE, 1);
+ 	send_will(TELOPT_NEW_ENVIRON, 1);
+ 	send_do(TELOPT_STATUS, 1);
+-	if (env_getvalue((unsigned char *)"DISPLAY"))
++	if (env_getvalue((unsigned char *)"DISPLAY", 0))
+ 	    send_will(TELOPT_XDISPLOC, 1);
+ 	if (binary)
+ 	    tel_enter_binary(binary);

@@ -1,0 +1,21 @@
+diff -ur telnet-3.0-owl-linux/usr.bin/telnet/commands.c telnet-3.0-owl-ipv4-only/usr.bin/telnet/commands.c
+--- telnet-3.0-owl-linux/usr.bin/telnet/commands.c	Wed Nov 21 05:29:38 2001
++++ telnet-3.0-owl-ipv4-only/usr.bin/telnet/commands.c	Sun Nov 25 04:46:42 2001
+@@ -2372,7 +2372,7 @@
+     {
+ 	hostname = hostp;
+ 	memset(&hints, 0, sizeof(hints));
+-	hints.ai_family = PF_UNSPEC;
++	hints.ai_family = AF_INET;
+ 	hints.ai_socktype = SOCK_STREAM;
+ 	hints.ai_flags = 0;
+ 	if (portp == NULL) {
+@@ -2416,7 +2416,7 @@
+ 	    struct addrinfo ahints, *ares;
+ 
+ 	    memset(&ahints, 0, sizeof(ahints));
+-	    ahints.ai_family = PF_UNSPEC;
++	    ahints.ai_family = AF_INET;
+ 	    ahints.ai_socktype = SOCK_STREAM;
+ 	    ahints.ai_flags = AI_PASSIVE;
+ 	    error = getaddrinfo(aliasp, "0", &ahints, &ares);

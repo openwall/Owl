@@ -1,0 +1,129 @@
+diff -ur telnet-3.0-owl-linux/libexec/telnetd/Makefile telnet-3.0-owl-no-mini_inetd/libexec/telnetd/Makefile
+--- telnet-3.0-owl-linux/libexec/telnetd/Makefile	Wed Nov 21 05:29:38 2001
++++ telnet-3.0-owl-no-mini_inetd/libexec/telnetd/Makefile	Sun Nov 25 04:46:07 2001
+@@ -18,7 +18,7 @@
+ PROG=	telnetd
+ 
+ SRCS=	authenc.c global.c slc.c state.c sys_term.c telnetd.c \
+-	termstat.c utility.c mini_inetd.c socket.c
++	termstat.c utility.c socket.c
+ 
+ SRCS += ../../lib/libc/string/strlcpy.c
+ 
+diff -ur telnet-3.0-owl-linux/libexec/telnetd/telnetd.8 telnet-3.0-owl-no-mini_inetd/libexec/telnetd/telnetd.8
+--- telnet-3.0-owl-linux/libexec/telnetd/telnetd.8	Wed Nov 21 06:14:01 2001
++++ telnet-3.0-owl-no-mini_inetd/libexec/telnetd/telnetd.8	Sun Nov 25 04:46:07 2001
+@@ -44,10 +44,8 @@
+ .Op Fl BUhkln
+ .Op Fl D Ar debugmode
+ .Op Fl S Ar tos
+-.Op Fl debug
+ .Op Fl L Ar /bin/login
+ .Op Fl y
+-.Op Ar port
+ .Sh DESCRIPTION
+ The
+ .Nm telnetd
+@@ -65,19 +63,6 @@
+ .Pa /etc/services
+ file (see
+ .Xr services 5 ) .
+-The
+-.Fl debug
+-option may be used to start up
+-.Nm telnetd
+-manually, instead of through
+-.Xr inetd 8 .
+-If started up this way, 
+-.Ar port
+-may be specified to run
+-.Nm telnetd
+-on an alternate
+-.Tn TCP
+-port number.
+ .Pp
+ The
+ .Nm telnetd
+diff -ur telnet-3.0-owl-linux/libexec/telnetd/telnetd.c telnet-3.0-owl-no-mini_inetd/libexec/telnetd/telnetd.c
+--- telnet-3.0-owl-linux/libexec/telnetd/telnetd.c	Sun Nov 25 04:44:22 2001
++++ telnet-3.0-owl-no-mini_inetd/libexec/telnetd/telnetd.c	Sun Nov 25 04:46:07 2001
+@@ -129,7 +129,9 @@
+ int	lowpty = 0, highpty;	/* low, high pty numbers */
+ #endif /* CRAY */
+ 
++#ifdef DEBUG
+ int debug = 0;
++#endif
+ int keepalive = 1;
+ char *progname;
+ #ifdef HAVE_CGETENT
+@@ -231,6 +233,7 @@
+ 
+ 	case 'B': /* BFTP mode is not supported any more */
+ 	    break;
++#ifdef DEBUG
+ 	case 'd':
+ 	    if (strcmp(optarg, "ebug") == 0) {
+ 		debug++;
+@@ -239,6 +242,7 @@
+ 	    usage();
+ 	    /* NOTREACHED */
+ 	    break;
++#endif
+ 
+ #ifdef DIAGNOSTICS
+ 	case 'D':
+@@ -370,6 +374,7 @@
+     argc -= optind;
+     argv += optind;
+ 
++#ifdef DEBUG
+     if (debug) {
+ 	int port = 0;
+ 	struct servent *sp;
+@@ -393,7 +398,9 @@
+ #endif
+ 	}
+ 	mini_inetd (port);
+-    } else if (argc > 0) {
++    } else
++#endif
++    if (argc > 0) {
+ 	usage();
+ 	/* NOT REACHED */
+     }
+@@ -493,7 +500,9 @@
+ #ifdef	AUTHENTICATION
+     fprintf(stderr, " [-a (debug|other|otp|user|valid|off|none)]\n\t");
+ #endif
++#ifdef DEBUG
+     fprintf(stderr, " [-debug]");
++#endif
+ #ifdef DIAGNOSTICS
+     fprintf(stderr, " [-D (options|report|exercise|netdata|ptydata)]\n\t");
+ #endif
+@@ -517,7 +526,11 @@
+     fprintf(stderr, " [-u utmp_hostname_length] [-U]");
+ #endif
+     fprintf(stderr, " [-U]");
++#ifdef DEBUG
+     fprintf(stderr, " [port]\n");
++#else
++    fprintf(stderr, "\n");
++#endif
+     exit(1);
+ }
+ 
+diff -ur telnet-3.0-owl-linux/libexec/telnetd/telnetd.h telnet-3.0-owl-no-mini_inetd/libexec/telnetd/telnetd.h
+--- telnet-3.0-owl-linux/libexec/telnetd/telnetd.h	Wed Nov 21 05:29:38 2001
++++ telnet-3.0-owl-no-mini_inetd/libexec/telnetd/telnetd.h	Sun Nov 25 04:46:07 2001
+@@ -245,6 +245,8 @@
+ ;
+ 
+ void esetenv(const char *, const char *, int);   
+-void mini_inetd(int);
+ void socket_set_reuseaddr (int, int);
+ 
++#ifdef DEBUG
++void mini_inetd(int);
++#endif

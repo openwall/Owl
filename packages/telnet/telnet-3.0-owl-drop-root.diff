@@ -1,0 +1,338 @@
+diff -ur telnet-3.0-owl-no-mini_inetd/libexec/telnetd/ext.h telnet-3.0-owl-drop-root/libexec/telnetd/ext.h
+--- telnet-3.0-owl-no-mini_inetd/libexec/telnetd/ext.h	Wed Nov 21 05:29:38 2001
++++ telnet-3.0-owl-drop-root/libexec/telnetd/ext.h	Sun Nov 25 04:47:24 2001
+@@ -122,8 +122,8 @@
+ void startslave (const char *host, const char *, int autologin, char *autoname);
+ void my_telnet (int f, int p, const char *, const char *, int, char *);
+ #else
+-void startslave (const char *host, int autologin, char *autoname);
+-void my_telnet (int f, int p, const char *, int, char *);
++void startslave (const char *host, int channel[2]);
++void my_telnet (int f, int p, const char *, int, char *, FILE *);
+ #endif
+ void init_env (void);
+ void start_login (const char *host, int autologin, char *name);
+diff -ur telnet-3.0-owl-no-mini_inetd/libexec/telnetd/state.c telnet-3.0-owl-drop-root/libexec/telnetd/state.c
+--- telnet-3.0-owl-no-mini_inetd/libexec/telnetd/state.c	Sun Nov 25 04:20:14 2001
++++ telnet-3.0-owl-drop-root/libexec/telnetd/state.c	Sun Nov 25 04:47:24 2001
+@@ -920,7 +920,7 @@
+ };
+ 
+ /* This list comes from Linux NetKit telnetd, version 0.17 */
+-static char *goodenv_table[] = {
++char *goodenv_table[] = {
+ 	"TERM",
+ 	"DISPLAY",
+ 	"USER",
+@@ -930,7 +930,7 @@
+ };
+ 
+ /* check that variable is safe to pass to login or shell */
+-static int
++int
+ envvarok(varp, valp)
+ 	char *varp, *valp;
+ {
+diff -ur telnet-3.0-owl-no-mini_inetd/libexec/telnetd/sys_term.c telnet-3.0-owl-drop-root/libexec/telnetd/sys_term.c
+--- telnet-3.0-owl-no-mini_inetd/libexec/telnetd/sys_term.c	Sun Nov 25 04:43:43 2001
++++ telnet-3.0-owl-drop-root/libexec/telnetd/sys_term.c	Sun Nov 25 04:49:01 2001
+@@ -1115,6 +1115,42 @@
+ }
+ #endif
+ 
++static int
++fgets0(char *s, int size, FILE *f)
++{
++    int i, c, trunc;
++
++    i = 0;
++    trunc = 0;
++    while ((c = getc(f)) != EOF && c)
++	if (i < size - 1)
++	    s[i++] = c;
++	else
++	    trunc = 1;
++    s[i] = 0;
++
++    if (c == EOF)
++	fatal(-1, "fgets0: Unexpected EOF");
++
++    return trunc;
++}
++
++extern char *goodenv_table[];
++extern int envvarok(char *varp, char *valp);
++
++static void
++fgetenv(FILE *f)
++{
++    char **name, value[0x100];
++
++    for (name = goodenv_table; *name; name++) {
++	if (fgets0(value, sizeof(value), f) || !value[0])
++	    continue;
++	if (envvarok(*name, value))
++	    setenv(*name, value, 1);
++    }
++}
++
+ /*
+  * startslave(host)
+  *
+@@ -1124,15 +1160,19 @@
+ 
+ /* ARGSUSED */
+ void
+-startslave(const char *host,
+-#ifdef PARENT_DOES_UTMP
+-	   const char *utmp_host,
+-#endif
+-	   int autologin, char *autoname)
++startslave(const char *host, int channel[2])
+ {
+     int i;
++    int autologin;
++    char autoname[9];
++    FILE *masterf;
++
++    autologin = -1; /* shouldn't be used */
++    autoname[0] = 0;
+ 
+ #ifdef AUTHENTICATION
++    autologin = AUTH_REJECT;
++
+     if (!autoname || !autoname[0])
+ 	autologin = 0;
+ 
+@@ -1185,6 +1225,27 @@
+ 	utmp_sig_notify(pid);
+ # endif	/* PARENT_DOES_UTMP */
+     } else {
++	close(channel[1]);
++
++	masterf = fdopen(channel[0], "r");
++	if (!masterf)
++	    fatalperror(-1, "fdopen");
++
++#ifdef AUTHENTICATION
++	if (fread(&autologin, sizeof(autologin), 1, masterf) != 1)
++	    fatalperror(-1, "fread");
++
++	if (fgets0(autoname, sizeof(autoname), masterf)) {
++	    /* Truncation of a username isn't safe */
++	    autologin = AUTH_REJECT;
++	    autoname[0] = 0;
++	}
++#endif
++
++	fgetenv(masterf);
++
++	fclose(masterf);
++
+ 	getptyslave();
+ #if defined(DCE)
+ 	/* if we authenticated via K5, try and join the PAG */
+diff -ur telnet-3.0-owl-no-mini_inetd/libexec/telnetd/telnetd.c telnet-3.0-owl-drop-root/libexec/telnetd/telnetd.c
+--- telnet-3.0-owl-no-mini_inetd/libexec/telnetd/telnetd.c	Sun Nov 25 04:46:07 2001
++++ telnet-3.0-owl-drop-root/libexec/telnetd/telnetd.c	Sun Nov 25 04:49:58 2001
+@@ -37,6 +37,8 @@
+ #include <fcntl.h>
+ #include <syslog.h>
+ #include <unistd.h>
++#include <pwd.h>
++#include <grp.h>
+ #include <sys/ioctl.h>
+ #include <sys/param.h> /* for MAXHOSTNAMELEN */
+ #include <netinet/in.h>
+@@ -139,6 +141,8 @@
+ char *gettytab[2] = { "/etc/gettytab", NULL };
+ #endif
+ 
++static int issue_fd;
++
+ static void usage (void);
+ 
+ /*
+@@ -457,7 +461,8 @@
+     }
+ #endif	/* _SC_CRAY_SECURE_SYS */
+ 
+-    openlog("telnetd", LOG_PID | LOG_ODELAY, LOG_DAEMON);
++    tzset();
++    openlog("telnetd", LOG_PID | LOG_NDELAY, LOG_DAEMON);
+     sa_size = sizeof (__ss);
+     if (getpeername(STDIN_FILENO, sa, &sa_size) < 0) {
+ 	fprintf(stderr, "%s: ", progname);
+@@ -734,6 +739,28 @@
+     return 1;
+ }
+ 
++static void
++drop_root(void)
++{
++    struct passwd *pw;
++
++    pw = getpwnam(TELNETD_USER);
++    if (!pw)
++	fatal(-1, "getpwnam: telnetd: No such user");
++
++    if (chroot(TELNETD_CHROOT))
++	fatalperror(-1, "chroot");
++    if (chdir("/"))
++	fatalperror(-1, "chdir");
++
++    if (setgroups(0, NULL))
++	fatalperror(-1, "setgroups");
++    if (setgid(pw->pw_gid))
++	fatalperror(-1, "setgid");
++    if (setuid(pw->pw_uid))
++	fatalperror(-1, "setuid");
++}
++
+ /*
+  * Get a pty, scan input lines.
+  */
+@@ -744,6 +771,8 @@
+     int ptynum;
+     char user_name[256];
+     int error;
++    int channel[2];
++    FILE *slavef;
+ 
+     /*
+      * Find an available pty to use.
+@@ -816,6 +845,20 @@
+     auth_encrypt_init(host_name, remote_host_name, "TELNETD", 1);
+ #endif
+ 
++    if (pipe(channel))
++	fatalperror(-1, "pipe");
++
++    startslave(remote_host_name, channel);
++    close(channel[0]);
++
++    issue_fd = open("/etc/issue.net", O_RDONLY);
++
++    drop_root();
++
++    slavef = fdopen(channel[1], "w");
++    if (!slavef)
++	fatalperror(-1, "fdopen");
++
+     init_env();
+     /*
+      * get terminal type.
+@@ -838,7 +881,7 @@
+ #ifdef PARENT_DOES_UTMP
+ 	      remote_utmp_name,
+ #endif
+-	      level, user_name);
++	      level, user_name, slavef);
+     /*NOTREACHED*/
+ }  /* end of doit */
+ 
+@@ -850,7 +893,10 @@
+     char buf[128];
+     char *p;
+ 
+-    f = fopen("/etc/issue.net", "r");
++    if (issue_fd < 0)
++	return;
++
++    f = fdopen(issue_fd, "r");
+     if (f) {
+ 	while (fgets(buf, sizeof(buf) - 1, f)) {
+ 	    p = strchr(buf, '\n');
+@@ -859,6 +905,21 @@
+ 	    writenet((unsigned char *)buf, strlen(buf));
+ 	}
+ 	fclose(f);
++    } else
++	close(issue_fd);
++}
++
++extern char *goodenv_table[];
++
++static void
++fputenv(FILE *f)
++{
++    char **name, *value;
++
++    for (name = goodenv_table; *name; name++) {
++	value = getenv(*name) ?: "";
++	if (fwrite(value, strlen(value) + 1, 1, f) != 1)
++	    fatalperror(-1, "fwrite");
+     }
+ }
+ 
+@@ -871,7 +932,8 @@
+ #ifdef PARENT_DOES_UTMP
+ 	  const char *utmp_host,
+ #endif
+-	  int level, char *autoname)
++	  int level, char *autoname,
++	  FILE *slavef)
+ {
+     int on = 1;
+ #ifdef HAVE_CGETENT
+@@ -880,7 +942,6 @@
+     char *buf;
+ #endif
+     int nfd;
+-    int startslave_called = 0;
+     time_t timeout;
+ 
+     /*
+@@ -1068,23 +1129,22 @@
+ 	output_data("td: Entering processing loop\r\n");
+     });
+ 
++#ifdef AUTHENTICATION
++    if (fwrite(&level, sizeof(level), 1, slavef) != 1 ||
++	fwrite(autoname, strlen(autoname) + 1, 1, slavef) != 1)
++	fatalperror(-1, "fwrite");
++#endif
++
++    fputenv(slavef);
++
++    fclose(slavef);
++
+ 
+     nfd = ((f > p) ? f : p) + 1;
+     timeout = time(NULL) + 5;
+     for (;;) {
+ 	fd_set ibits, obits, xbits;
+ 	int c;
+-
+-	/* wait for encryption to be turned on, but don't wait
+-           indefinitely */
+-	if(!startslave_called && (!encrypt_delay() || timeout > time(NULL))){
+-	    startslave_called = 1;
+-#ifdef PARENT_DOES_UTMP
+-	    startslave(host, utmp_host, level, autoname);
+-#else
+-	    startslave(host, level, autoname);
+-#endif
+-	}
+ 
+ 	if (ncc < 0 && pcc < 0)
+ 	    break;
+diff -ur telnet-3.0-owl-no-mini_inetd/libexec/telnetd/telnetd.h telnet-3.0-owl-drop-root/libexec/telnetd/telnetd.h
+--- telnet-3.0-owl-no-mini_inetd/libexec/telnetd/telnetd.h	Sun Nov 25 04:46:07 2001
++++ telnet-3.0-owl-drop-root/libexec/telnetd/telnetd.h	Sun Nov 25 04:47:24 2001
+@@ -58,8 +58,15 @@
+ #define HAVE_OPENPTY
+ #define HAVE_LOGWTMP
+ 
++#define TELNETD_USER			"telnetd"
++#define TELNETD_CHROOT			"/var/empty"
++
+ #if defined(_CRAY) || (defined(__hpux) && !defined(HAVE_UTMPX_H))
+ # define PARENT_DOES_UTMP
++#endif
++
++#ifdef PARENT_DOES_UTMP
++#error PARENT_DOES_UTMP would require root privileges to work
+ #endif
+ 
+ #ifdef HAVE_SYS_TYPES_H
