@@ -1,9 +1,9 @@
-# $Id: Owl/packages/tcsh/tcsh.spec,v 1.10 2004/09/10 07:32:37 galaxy Exp $
+# $Id: Owl/packages/tcsh/tcsh.spec,v 1.11 2004/11/02 04:08:29 solar Exp $
 
 Summary: An enhanced version of csh, the C shell.
 Name: tcsh
 Version: 6.10.01
-Release: owl2.1
+Release: owl3
 License: BSD
 Group: System Environment/Shells
 URL: http://www.primate.wisc.edu/software/csh-tcsh-book/
@@ -108,7 +108,7 @@ fi
 %_datadir/locale/*/LC_MESSAGES/tcsh*
 
 %changelog
-* Sat Feb 28 2004 Michail Litvak <mci@owl.openwall.com> 6.10.01-owl2.1
+* Sat Feb 28 2004 Michail Litvak <mci@owl.openwall.com> 6.10.01-owl3
 - Fixed building with new glibc (fix from ALT's spec file).
 
 * Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com> 6.10.01-owl2
