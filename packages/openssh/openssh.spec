@@ -1,21 +1,20 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.5 2000/07/23 16:55:46 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.6 2000/08/04 02:59:28 solar Exp $
 
 # Version of OpenSSH
-%define oversion 2.1.1p2
+%define oversion 2.1.1p4
 Summary: OpenSSH free Secure Shell (SSH) implementation
 Name: openssh
 Version: %{oversion}
-Release: 4owl
+Release: 1owl
 URL: http://www.openssh.com/
 Source0: http://violet.ibs.com.au/openssh/files/openssh-%{oversion}.tar.gz
 Source1: sshd.pam
 Source2: sshd.init
 Source3: ssh_config
 Source4: sshd_config
-Patch0: openssh-2.1.1p2-owl-buildroot.diff
-Patch1: openssh-2.1.1p2-owl-crypt-hack.diff
-Patch2: openssh-2.1.1p2-owl-pam_userpass.diff
-Patch3: openssh-2.1.1p2-owl-hide-unknown.diff
+Patch0: openssh-2.1.1p4-owl-crypt-hack.diff
+Patch1: openssh-2.1.1p4-owl-pam_userpass.diff
+Patch2: openssh-2.1.1p4-owl-hide-unknown.diff
 Copyright: BSD
 Group: Applications/Internet
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
@@ -89,7 +88,6 @@ your host.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" \
@@ -164,6 +162,9 @@ fi
 %attr(0755,root,root) %config /etc/rc.d/init.d/sshd
 
 %changelog
+* Fri Aug 04 2000 Solar Designer <solar@owl.openwall.com>
+- Updated to 2.1.1p4.
+
 * Sun Jul 23 2000 Solar Designer <solar@owl.openwall.com>
 - Added dependencies on pam_userpass and /dev/urandom into openssh-server.
 
