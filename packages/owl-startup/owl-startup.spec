@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.10 2000/12/07 19:31:57 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.11 2000/12/20 10:47:10 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -15,7 +15,7 @@ Source5: halt
 Source6: single
 Source7: clock
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
-Provides: initscripts-5.00
+Provides: initscripts
 Obsoletes: initscripts
 Requires: SysVinit, /sbin/start-stop-daemon
 Requires: bash >= 2.0, sh-utils
