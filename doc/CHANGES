@@ -13,7 +13,7 @@ for the packages themselves.
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
 2002/01/11	Package: openssl
-Updated to OpenSSL 0.9.6c.
+Updated to 0.9.6c.
 
 2001/12/22 -
 2001/12/26	Package: postfix
@@ -524,4 +524,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.59 2002/01/11 17:53:46 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.60 2002/01/14 03:19:36 solar Exp $
