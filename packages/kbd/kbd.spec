@@ -1,4 +1,4 @@
-# $Id: Owl/packages/kbd/kbd.spec,v 1.1 2003/04/16 22:14:58 mci Exp $
+# $Id: Owl/packages/kbd/kbd.spec,v 1.2 2003/04/17 10:41:17 solar Exp $
 
 Summary: Tools for configuring the console.
 Name: kbd
@@ -24,9 +24,9 @@ BuildRequires: bison, flex
 BuildRoot: /override/%{name}-%{version}
 
 %description
-This package contains tools for managing a Linux
-system's console's behavior, including the keyboard, the screen
-fonts, the virtual terminals and font files.
+This package contains tools for managing a Linux system's console's
+behavior, including the keyboard, the screen fonts, the virtual terminals,
+and font files.
 
 %prep
 %setup -q -a 1
@@ -55,7 +55,7 @@ rm -fv $RPM_BUILD_ROOT%{_bindir}/resizecons
 
 cd $RPM_BUILD_ROOT
 for binary in setfont dumpkeys kbd_mode unicode_start unicode_stop; do
-	mv ./%{_bindir}/$binary bin/
+	mv .%{_bindir}/$binary bin/
 done
 
 mkdir -p {sbin,etc/rc.d/init.d}
@@ -91,6 +91,6 @@ fi
 
 %changelog
 * Thu Apr 17 2003 Michail Litvak <mci@owl.openwall.com>
-- Obsoletes console-tools package, but derivate kbdtable.init from it.
+- Obsoletes console-tools package, but derive kbdtable.init from it.
 - spec based on RH
 - spec files cleanups
