@@ -1,14 +1,14 @@
-# $Id: Owl/packages/psmisc/psmisc.spec,v 1.3 2002/02/07 18:30:38 solar Exp $
+# $Id: Owl/packages/psmisc/psmisc.spec,v 1.4 2002/12/25 17:07:55 solar Exp $
 
 Summary: Utilities for managing processes on your system.
 Name: psmisc
 Version: 19
-Release: owl4
+Release: owl5
 License: BSD
 Group: Applications/System
 Source: ftp://lrcftp.epfl.ch/pub/linux/local/psmisc/psmisc-%{version}.tar.gz
-Patch0: psmisc-17-rh-buildroot.diff
-Patch1: psmisc-19-rh-noroot.diff
+Patch0: psmisc-19-owl-Makefile.diff
+Patch1: psmisc-19-owl-by-user.diff
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -25,18 +25,13 @@ of processes that are using specified files or filesystems.
 %patch1 -p1
 
 %build
-make CFLAGS="$RPM_OPT_FLAGS -D_GNU_SOURCE -DPSMISC_VERSION=\\\"`cat VERSION`\\\"" 'LDFLAGS=-s'
+CFLAGS="$RPM_OPT_FLAGS" make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/sbin
-mkdir -p $RPM_BUILD_ROOT/usr/bin
-mkdir -p $RPM_BUILD_ROOT/bin
-mkdir -p $RPM_BUILD_ROOT/%{_mandir}/man1
-make INSTPREFIX="$RPM_BUILD_ROOT" MANDIR="%{_mandir}/man1" install
-cd $RPM_BUILD_ROOT
-mv bin/fuser sbin/
-chmod 755 sbin/fuser usr/bin/killall usr/bin/pstree
+make install \
+	DESTDIR=$RPM_BUILD_ROOT \
+	EBINDIR=/sbin BINDIR=%{_bindir} MANDIR=%{_mandir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -45,13 +40,18 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %doc CHANGES COPYING README psmisc-%{version}.lsm
 /sbin/fuser
-/usr/bin/killall
-/usr/bin/pstree
+%{_bindir}/killall
+%{_bindir}/pstree
 %{_mandir}/man1/fuser.1*
 %{_mandir}/man1/killall.1*
 %{_mandir}/man1/pstree.1*
 
 %changelog
+* Wed Dec 25 2002 Solar Designer <solar@owl.openwall.com>
+- Fixed the segfault in pstree(1) when asked to report information for a
+user, but entry with PID 1 (init) is inaccessible, thanks to (GalaxyMaster).
+- Replaced two RH-derived Makefile patches with a much cleaner one.
+
 * Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com>
 - Enforce our new spec file conventions.
 - Package the documentation.

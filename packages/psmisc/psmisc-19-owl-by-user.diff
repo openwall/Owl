@@ -1,0 +1,38 @@
+diff -ur psmisc-19.orig/pstree.c psmisc-19/pstree.c
+--- psmisc-19.orig/pstree.c	Sat May  1 23:40:56 1999
++++ psmisc-19/pstree.c	Wed Dec 25 19:14:07 2002
+@@ -146,6 +146,17 @@
+ }
+ 
+ 
++static PROC *find_head(void)
++{
++    PROC *walk, *next;
++
++    if ((walk = list))
++	while ((next = walk->next))
++	    walk = next;
++    return walk;
++}
++
++
+ static PROC *new_proc(const char *comm,pid_t pid,uid_t uid)
+ {
+     PROC *new;
+@@ -367,6 +378,7 @@
+ {
+     const CHILD *walk;
+ 
++    if (!current) return;
+     if (current->uid == uid) {
+ 	if (dumped) putchar('\n');
+ 	dump_tree(current,0,1,1,1,uid,0);
+@@ -566,7 +578,7 @@
+     if (!pw)
+ 	dump_tree(find_proc(pid),0,1,1,1,0,0);
+     else {
+-	dump_by_user(find_proc(1),pw->pw_uid);
++	dump_by_user(find_head(),pw->pw_uid);
+ 	if (!dumped) {
+ 	    fprintf(stderr,"No processes found.\n");
+ 	    return 1;
