@@ -1,26 +1,28 @@
+# $Id: Owl/packages/gcc/gcc.spec,v 1.6 2000/07/21 02:30:12 solar Exp $
+
 %define GCC_PREFIX /usr
 %define CPP_PREFIX /lib
 %define GCC_VERSION 2.95.2
 %define STDC_VERSION 2.10.0
 
-%define BUILD_OBJC 	'yes'
-%define BUILD_F77	'yes'
-%define BUILD_CHILL 	'yes'
+%define BUILD_OBJC 	'no'
+%define BUILD_F77	'no'
+%define BUILD_CHILL 	'no'
 
 Summary:	Various compilers (C, C++, Objective-C, f77, ...)
-Name:           gcc
-Version:        %{GCC_VERSION}
-Release:        2owl
-Serial:         1
+Name:		gcc
+Version:	%{GCC_VERSION}
+Release:	2owl
+Serial:		1
 Copyright:	GPL
-URL:            http://gcc.gnu.org
+URL:		http://gcc.gnu.org
 Group:		Development/Languages
 Source0:	ftp://ftp.gnu.org/pub/gnu/gcc/gcc-%{GCC_VERSION}.tar.gz
 Source1:	libstdc++-compat.tar.bz2
 Patch:		gcc-2.95.2-rh-warn.diff
-Packager:       <kad@openwall.com>
-Distribution:   Owl
-BuildRoot:      /var/rpm-buildroot/%{name}-root
+Packager:	<kad@owl.openwall.com>
+Distribution:	Owl
+BuildRoot:	/var/rpm-buildroot/%{name}-root
 Obsoletes: 	egcs
 Requires: 	binutils >= 2.9.1.0.25
 Requires: 	cpp = %{GCC_VERSION}
@@ -33,7 +35,7 @@ this package in order to compile C/C++ code.
 %package c++
 Summary: 	C++ support for gcc
 Obsoletes: 	egcs-c++
-Group: 		Development/Languages
+Group:		Development/Languages
 Requires: 	gcc = %{GCC_VERSION}
 Requires: 	cpp = %{GCC_VERSION}
 
@@ -46,7 +48,7 @@ programs is available separately.
 
 %package -n libstdc++
 Summary: 	GNU c++ library
-Group: 		System Environment/Libraries
+Group:		System Environment/Libraries
 Obsoletes: 	gcc-libstdc++
 Provides: libstdc++-libc6.1-1.so.2 libstdc++-libc6.1-2.so.3 libstdc++.so.2.9
 
@@ -55,7 +57,7 @@ The libstdc++ package contains a snapshot of the GCC Standard C++
 Library v3, an ongoing project to implement the ISO 14882 Standard C++
 library.
 
-%ifarch i386 i486 i586 k6 i686 sparc alpha
+%ifarch i386 i486 i586 k6 i686
 
 %package -n libstdc++-compat
 Summary: GNU old c++ library
@@ -69,7 +71,7 @@ includes the old shared libraries necessary to run C++ applications.
 
 %package -n libstdc++-devel
 Summary: 	Header files and libraries for C++ development
-Group: 		Development/Libraries
+Group:		Development/Libraries
 Obsoletes: 	gcc-libstdc++-devel
 
 %description -n libstdc++-devel
@@ -79,7 +81,7 @@ development. This includes SGI's implementation of the STL.
 
 %package -n cpp
 Summary: 	The C Preprocessor.
-Group: 		Development/Languages
+Group:		Development/Languages
 Prereq: 	/sbin/install-info
 
 %description -n cpp
@@ -107,10 +109,10 @@ macros.
 %if "%{BUILD_OBJC}"=="'yes'"
 %package objc
 Summary: 	Objective C support for gcc
-Group:          Development/Languages
-Obsoletes:      egcs-objc
-Requires:       gcc = %{GCC_VERSION}
-Requires:       cpp = %{GCC_VERSION}
+Group:		Development/Languages
+Obsoletes:	egcs-objc
+Requires:	gcc = %{GCC_VERSION}
+Requires:	cpp = %{GCC_VERSION}
 
 %description objc
 This package adds Objective C support to the GNU C compiler. Objective
@@ -121,10 +123,10 @@ objective C object library.
 
 %if "%{BUILD_F77}"=="'yes'"
 %package g77
-Summary: 	Fortran 77 support for gcc
-Group:          Development/Languages
-Obsoletes: 	egcs-g77
-Requires:       gcc = %{GCC_VERSION}
+Summary:	Fortran 77 support for gcc
+Group:		Development/Languages
+Obsoletes:	egcs-g77
+Requires:	gcc = %{GCC_VERSION}
 
 %description g77
 This package adds support for compiling Fortran 77 programs with the GNU
@@ -135,9 +137,8 @@ compiler.
 %if "%{BUILD_CHILL}"=="'yes'"
 %package chill
 Summary: 	CHILL support for gcc
-Group:          Development/Languages
-Requires:       gcc = %{GCC_VERSION}
-#Obsoletes: 	gcc-CHILL
+Group:		Development/Languages
+Requires:	gcc = %{GCC_VERSION}
 
 %description chill
 This package adds support for compiling CHILL programs with the GNU
@@ -159,8 +160,8 @@ being used in Europe, Brazil, Korea, and other places.
 %setup -q -D -T -n gcc-%{GCC_VERSION}
 %patch -p1
 
-mkdir compat
-bzip2 -cd %{SOURCE1} | tar xv -C compat
+pwd
+bzip2 -cd %{SOURCE1} | tar xv
 
 # Remove bison-generated files - we want bison 1.28'ish versions...
 for i in gcc/cp/parse gcc/c-parse gcc/cexp gcc/java/parse-scan gcc/java/parse gcc/objc/objc-parse; do
@@ -213,24 +214,24 @@ done)
 	cp -p $i ../rpm.doc/libstdc++/$i.libstdc++
 done)
 (cd gcc/f; for i in ChangeLog*; do
-        cp -p $i ../../rpm.doc/g77/$i.f
+	cp -p $i ../../rpm.doc/g77/$i.f
 done)
 (cd libf2c; for i in ChangeLog*; do
-        cp -p $i ../rpm.doc/g77/$i.libf2c
+	cp -p $i ../rpm.doc/g77/$i.libf2c
 done)
 (cd gcc/ch; for i in ChangeLog*; do
-        cp -p $i ../../rpm.doc/chill/$i.ch
+	cp -p $i ../../rpm.doc/chill/$i.ch
 done)
 (cd libchill; for i in ChangeLog*; do
-        cp -p $i ../rpm.doc/chill/$i.libchill
+	cp -p $i ../rpm.doc/chill/$i.libchill
 done)
 (cd gcc/objc; for i in README*; do
-        cp -p $i ../../rpm.doc/objc/$i.objc
+	cp -p $i ../../rpm.doc/objc/$i.objc
 done)
 (cd libobjc; for i in README*; do
-        cp -p $i ../rpm.doc/objc/$i.libobjc
+	cp -p $i ../rpm.doc/objc/$i.libobjc
 done)
-						
+
 %install
 rm -fr $RPM_BUILD_ROOT
 
@@ -257,8 +258,11 @@ ln -sf ../${FULLPATH##$RPM_BUILD_ROOT/}/cpp $RPM_BUILD_ROOT/lib/cpp
 
 ln -sf cccp.1 $RPM_BUILD_ROOT%{GCC_PREFIX}/man/man1/cpp.1
 
-#install the compatibility libstdc++ library
-[ -d ../compat/$RPM_ARCH ] && install -m 755 ../compat/$RPM_ARCH/* $RPM_BUILD_ROOT%{GCC_PREFIX}/lib/
+%ifarch i386 i486 i586 k6 i686
+# install the compatibility libstdc++ library
+pwd
+test -d ../compat/i386 && install -m 755 ../compat/i386/* $RPM_BUILD_ROOT%{GCC_PREFIX}/lib/
+%endif
 
 cd ..
 cat >gcc-filelist <<EOF
@@ -305,12 +309,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/install-info \
-        --info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/gcc.info.gz
+	--info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/gcc.info.gz
 
 %preun
 if [ $1 = 0 ]; then
-   /sbin/install-info --delete \
-        --info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/gcc.info.gz
+    /sbin/install-info --delete \
+	--info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/gcc.info.gz
 fi
 
 %post -n libstdc++
@@ -349,7 +353,7 @@ fi
 
 %preun -n cpp
 if [ $1 = 0 ]; then
-   /sbin/install-info --delete \
+    /sbin/install-info --delete \
 	--info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/cpp.info.gz
 fi
 
@@ -476,12 +480,12 @@ fi
 %if "%{BUILD_CHILL}"=="'yes'"
 %post chill
 /sbin/install-info \
-        --info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/chill.info.bz2
+	--info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/chill.info.bz2
 
 %preun chill
 if [ $1 = 0 ]; then
-   /sbin/install-info --delete \
-        --info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/chill.info.bz2
+    /sbin/install-info --delete \
+	--info-dir=%{GCC_PREFIX}/info %{GCC_PREFIX}/info/chill.info.bz2
 fi
 
 %files chill
@@ -499,7 +503,7 @@ fi
 %endif
 
 %changelog
-* Sun Jul  9 2000 Alexandr D. Kanevskiy <kad@blackcatlinux.com>
+* Sun Jul  9 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - Imported from RH.
 
 * Sat Dec 11 1999 Bernhard Rosenkraenzer <bero@redhat.com>
