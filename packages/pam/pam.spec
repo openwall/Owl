@@ -1,9 +1,9 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.34 2004/11/23 22:40:47 mci Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.35 2005/01/12 16:43:32 galaxy Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
 Version: 0.75
-Release: owl23
+Release: owl24
 %define rh_version %version-10
 License: GPL or BSD
 Group: System Environment/Base
@@ -93,14 +93,14 @@ CFLAGS="$RPM_OPT_FLAGS -fPIC" \
 	--enable-fakeroot=%buildroot
 # List things to make explicitly to not make doc (corrupting the
 # pre-compiled docs if we don't have the tools).
-make modules libpam libpamc libpam_misc
+%__make modules libpam libpamc libpam_misc
 
 %install
 rm -rf %buildroot
-make install THINGSTOMAKE='modules libpam libpamc libpam_misc'
+%__make install THINGSTOMAKE='modules libpam libpamc libpam_misc'
 
-mkdir -p %buildroot/etc/security
-install -m 644 modules/pam_chroot/chroot.conf %buildroot/etc/security/
+mkdir -p %buildroot%_sysconfdir/security
+install -m 644 modules/pam_chroot/chroot.conf %buildroot%_sysconfdir/security/
 
 mkdir -p %buildroot%_libdir
 mv %buildroot/lib/*.a %buildroot%_libdir/
@@ -111,8 +111,8 @@ for link in libpam libpamc libpam_misc; do
 	ln -sf /lib/$link.so.%version %buildroot%_libdir/$link.so
 done
 
-mkdir -m 755 %buildroot/etc/pam.d
-install -m 644 other.pamd %buildroot/etc/pam.d/other
+mkdir -m 755 %buildroot%_sysconfdir/pam.d
+install -m 644 other.pamd %buildroot%_sysconfdir/pam.d/other
 
 mkdir -p %buildroot%_mandir/man{3,5,8}
 install -m 644 doc/man/*.3 %buildroot%_mandir/man3/
@@ -124,10 +124,10 @@ gzip -9nf doc/ps/*.ps
 gzip -9nf doc/txts/*.txt
 
 %triggerin -- shadow-utils
-grep -q '^shadow:[^:]*:42:' /etc/group && \
+grep -q '^shadow:[^:]*:42:' %_sysconfdir/group && \
 	chgrp shadow %_libexecdir/chkpwd/pwdb_chkpwd && \
 	chmod 2711 %_libexecdir/chkpwd/pwdb_chkpwd
-grep -q ^chkpwd: /etc/group || groupadd -g 163 chkpwd
+grep -q ^chkpwd: %_sysconfdir/group || groupadd -g 163 chkpwd
 chgrp chkpwd %_libexecdir/chkpwd && chmod 710 %_libexecdir/chkpwd
 
 %post -p /sbin/ldconfig
@@ -138,16 +138,16 @@ chgrp chkpwd %_libexecdir/chkpwd && chmod 710 %_libexecdir/chkpwd
 %doc Copyright
 %doc modules/READMEs/*
 
-%dir /etc/pam.d
-%config(noreplace) /etc/pam.d/other
-#%config(noreplace) /etc/pam.d/system-auth
+%dir %_sysconfdir/pam.d
+%config(noreplace) %_sysconfdir/pam.d/other
+#%config(noreplace) %_sysconfdir/pam.d/system-auth
 
 /lib/libpam.so.*
 /lib/libpamc.so.*
 /lib/libpam_misc.so.*
 
-%attr(700,root,root) %dir %_libexecdir/chkpwd
-%attr(700,root,root) %_libexecdir/chkpwd/pwdb_chkpwd
+%attr(700,root,root) %verify(not mode group) %dir %_libexecdir/chkpwd
+%attr(700,root,root) %verify(not mode group) %_libexecdir/chkpwd/pwdb_chkpwd
 
 /sbin/pam_tally
 
@@ -184,13 +184,13 @@ chgrp chkpwd %_libexecdir/chkpwd && chmod 710 %_libexecdir/chkpwd
 /lib/security/pam_xauth.so
 /lib/security/pam_filter
 
-%dir /etc/security
-%attr(640,root,wheel) %config(noreplace) /etc/security/access.conf
-%attr(640,root,wheel) %config(noreplace) /etc/security/chroot.conf
-%attr(640,root,wheel) %config(noreplace) /etc/security/group.conf
-%attr(640,root,wheel) %config(noreplace) /etc/security/limits.conf
-%attr(644,root,root) %config(noreplace) /etc/security/pam_env.conf
-%attr(640,root,wheel) %config(noreplace) /etc/security/time.conf
+%dir %_sysconfdir/security
+%attr(640,root,wheel) %config(noreplace) %_sysconfdir/security/access.conf
+%attr(640,root,wheel) %config(noreplace) %_sysconfdir/security/chroot.conf
+%attr(640,root,wheel) %config(noreplace) %_sysconfdir/security/group.conf
+%attr(640,root,wheel) %config(noreplace) %_sysconfdir/security/limits.conf
+%attr(644,root,root) %config(noreplace) %_sysconfdir/security/pam_env.conf
+%attr(640,root,wheel) %config(noreplace) %_sysconfdir/security/time.conf
 
 %_mandir/man5/*
 %_mandir/man8/*
@@ -203,7 +203,7 @@ chgrp chkpwd %_libexecdir/chkpwd && chmod 710 %_libexecdir/chkpwd
 %_libdir/libpam.a
 %_libdir/libpamc.a
 %_libdir/libpam_misc.a
-/usr/include/security/
+%_includedir/security/
 %_mandir/man3/*
 
 %files doc
@@ -212,6 +212,11 @@ chgrp chkpwd %_libexecdir/chkpwd && chmod 710 %_libexecdir/chkpwd
 %doc doc/specs/rfc86.0.txt
 
 %changelog
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.75-owl24
+- Removed permissions and group owner verify check for %_libexecdir/chkpwd
+due to %triggerin.
+- Cleaned up the spec.
+
 * Tue Feb 24 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 0.75-owl23
 - Moved /lib/*.so to %_libdir where corresponding static archives live
 
