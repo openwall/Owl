@@ -1,4 +1,4 @@
-# $Id: Owl/packages/console-tools/Attic/console-tools.spec,v 1.3 2000/12/15 02:00:00 solar Exp $
+# $Id: Owl/packages/console-tools/Attic/console-tools.spec,v 1.4 2000/12/15 02:06:35 solar Exp $
 
 %define CTVER	0.3.3
 %define	CDVER	1999.08.29
@@ -132,7 +132,7 @@ make CFLAGS="$RPM_OPT_FLAGS -D_GNU_SOURCE" LDFLAGS=-s prefix=/usr
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{usr,bin,rc.d/init.d}
+mkdir -p $RPM_BUILD_ROOT/{usr,bin,etc/rc.d/init.d}
 
 # Don't ship zero-length documentation
 find doc %{DATA}/doc -size 0b -type f -print0 | xargs -0 rm -f --
