@@ -1,9 +1,9 @@
-# $Id: Owl/packages/lilo/lilo.spec,v 1.3 2000/12/04 18:12:49 solar Exp $
+# $Id: Owl/packages/lilo/lilo.spec,v 1.4 2000/12/11 06:30:59 solar Exp $
 
 Summary: 	The boot loader for Linux and other operating systems.
 Name: 		lilo
 Version: 	21.6
-Release: 	2owl
+Release: 	3owl
 ExclusiveArch: 	%ix86
 Copyright: 	MIT
 Group: 		System Environment/Base
@@ -48,6 +48,9 @@ install -m644 %{SOURCE1} $RPM_BUILD_ROOT/boot/message
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%post
+test -f /etc/lilo.conf && /sbin/lilo || :
+
 %files
 %defattr(-,root,root)
 %doc README CHANGES COPYING INCOMPAT QuickInst
@@ -61,6 +64,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/*/*
 
 %changelog
+* Mon Dec 11 2000 Solar Designer <solar@owl.openwall.com>
+- Run lilo in %post in case the (physical) location of /boot/boot.b or
+whatever else LILO depends on has changed with our upgrade.
+
 * Mon Dec 04 2000 Solar Designer <solar@owl.openwall.com>
 - No longer require mkinitrd.
 
