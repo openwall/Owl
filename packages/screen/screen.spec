@@ -1,4 +1,4 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.6 2001/03/10 18:23:01 solar Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.7 2001/03/10 18:24:26 solar Exp $
 
 Summary: A screen manager that supports multiple logins on one terminal.
 Name: screen
@@ -89,7 +89,6 @@ fi
 %{_infodir}/screen.info*
 
 %config /etc/screenrc
-%config /etc/skel/.screenrc
 %config(noreplace) /etc/pam.d/screen
 
 %changelog
