@@ -1,0 +1,11 @@
+--- gcc/configure.in.org	Fri Oct 20 11:03:07 2000
++++ gcc/configure.in	Fri Oct 20 11:03:16 2000
+@@ -4226,7 +4226,7 @@
+ rm -f Make-hooks
+ touch Make-hooks
+ target_list="all.build all.cross start.encap rest.encap \
+-	info dvi \
++	info \
+ 	install-normal install-common install-info install-man \
+ 	uninstall distdir \
+ 	mostlyclean clean distclean extraclean maintainer-clean \
