@@ -1,9 +1,9 @@
-# $Id: Owl/packages/bison/bison.spec,v 1.5 2001/12/20 23:17:29 solar Exp $
+# $Id: Owl/packages/bison/bison.spec,v 1.6 2001/12/20 23:44:49 solar Exp $
 
 Summary: A GNU general-purpose parser generator.
 Name: bison
 Version: 1.30
-Release: 1owl
+Release: 2owl
 License: GPL
 Group: Development/Tools
 Source: ftp://ftp.gnu.org/pub/gnu/bison/bison-%{version}.tar.bz2
@@ -54,6 +54,9 @@ fi
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Fri Dec 21 2001 Solar Designer <solar@owl.openwall.com>
+- Corrected the dependency on mktemp(1) (it's only needed for builds).
+
 * Thu Nov 08 2001 Solar Designer <solar@owl.openwall.com>
 - Build with -Wall (surprisingly the code was clean enough already).
 
