@@ -1,10 +1,12 @@
+# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.3 2000/08/17 23:10:56 solar Exp $
+
 Summary: Pluggable authentication module for USER/PASS-style protocols
 Name: pam_userpass
-Version: 0.2
+Version: 0.3
 Release: 1owl
 Copyright: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
-Source: pam_userpass-0.2.tar.gz
+Source: pam_userpass-%{version}.tar.gz
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
 BuildPreReq: pam >= 0.72-8owl
 
@@ -30,9 +32,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%doc LICENSE
+%doc LICENSE README
 /lib/security/pam_userpass.so
 
 %changelog
-* Sun Jul  9 2000 Solar Designer <solar@false.com>
-- initial version
+* Fri Aug 18 2000 Solar Designer <solar@owl.openwall.com>
+- 0.3, added README.
+
+* Sun Jul 09 2000 Solar Designer <solar@owl.openwall.com>
+- Initial version.
