@@ -4,11 +4,16 @@ http://www.openwall.com/Owl/
 
 Owl can be downloaded from the following official mirrors:
 
-ftp://ftp.ca.openwall.com/pub/Owl/	(Canada)
+ftp://ftp1.ru.openwall.com/pub/Owl/	(Russia, Russian Express ISP)
+ftp://ftp2.ru.openwall.com/pub/Owl/	(Russia, DataForce ISP)
 ftp://ftp.pl.openwall.com/pub/Owl/	(Poland)
-ftp://ftp.ru.openwall.com/pub/Owl/	(Russia)
 ftp://ftp.ua.openwall.com/pub/Owl/	(Ukraine)
 ftp://ftp.cz.openwall.com/pub/Owl/	(Czech Republic)
+ftp://gd.tuwien.ac.at/opsys/linux/Owl/	(Austria)
+	http://gd.tuwien.ac.at/opsys/linux/Owl/
+	rsync://gd.tuwien.ac.at/opsys/linux/Owl/
+ftp://ftp.mathematik.uni-marburg.de/pub/mirror/openwall/Owl/	(Germany)
+ftp://ftp.ca.openwall.com/pub/Owl/	(Canada)
 ftp://ftp.wiretapped.net/pub/Owl/	(Australia)
 
 There's a subdirectory for each Owl release or branch, with the
@@ -18,7 +23,8 @@ native.tar.gz		CVS tree (build specifications and patches)
 sources			source tree (original tarballs, etc)
 kernel			kernel sources and recommended patches
 Owl.mtree		mtree(8) specification of the above
-i386, sparc, sparcv9	Owl binary packages
+i?86, sparc*, alpha*	Owl binary packages
+iso			ISO-9660 images of Owl CDs
 
 Some of the subdirectories may use symlinks to files common to several
 Owl branches.  Thus, to download just one Owl branch you may need to
@@ -37,4 +43,20 @@ need both the CVS and the source trees.
 More documentation (including BUILD and INSTALL) is available in the
 CVS tree, under Owl/doc/.
 
-$Id: Owl/doc/DOWNLOAD,v 1.4.2.1 2001/06/23 09:54:55 solar Exp $
+An alternative way to access the CVS tree (besides being able to
+obtain its snapshots for a certain release or branch as native.tar.gz
+from the FTP mirrors listed above) is via our anonymous CVS server:
+
+CVSROOT=:pserver:anoncvs:anoncvs@anoncvs.owl.openwall.com:/cvs
+
+or over SSH, with the following settings:
+
+CVS_RSH=ssh
+CVSROOT=anoncvs@anoncvs.owl.openwall.com:/cvs
+
+The password is "anoncvs" and the module name is "Owl".  You may use
+compression with either method of access to the anonymous CVS server,
+typically by specifying the -z3 to CVS and/or the -C option to the SSH
+client.
+
+$Id: Owl/doc/DOWNLOAD,v 1.4.2.2 2002/07/14 03:12:41 solar Exp $
