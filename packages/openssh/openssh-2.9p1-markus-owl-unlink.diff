@@ -51,7 +51,7 @@ diff -ur openssh-2.9p1.orig/channels.h openssh-2.9p1/channels.h
   * This starts forwarding authentication requests.
 diff -ur openssh-2.9p1.orig/session.c openssh-2.9p1/session.c
 --- openssh-2.9p1.orig/session.c	Wed Apr 18 19:29:34 2001
-+++ openssh-2.9p1/session.c	Mon Jun 11 03:02:37 2001
++++ openssh-2.9p1/session.c	Mon Jun 11 06:12:12 2001
 @@ -124,12 +124,15 @@
  void	session_set_fds(Session *s, int fdin, int fdout, int fderr);
  void	session_pty_cleanup(Session *s);
@@ -185,6 +185,15 @@ diff -ur openssh-2.9p1.orig/session.c openssh-2.9p1/session.c
  			return;
  
  		default:
+@@ -1419,7 +1393,7 @@
+ 			} else
+ 				fprintf(stderr, "Could not run %s\n",
+ 				    _PATH_SSH_SYSTEM_RC);
+-		} else if (do_xauth && options.xauth_location != NULL) {
++		} else if (s->display) {
+ 			/* Add authority data to .Xauthority if appropriate. */
+ 			char *screen = strchr(s->display, ':');
+ 
 @@ -1713,23 +1687,7 @@
  int
  session_x11_req(Session *s)
@@ -247,7 +256,16 @@ diff -ur openssh-2.9p1.orig/session.c openssh-2.9p1/session.c
  }
  
  int
-@@ -2055,11 +1992,57 @@
+@@ -1912,6 +1849,8 @@
+ 	 */
+ 	if (close(s->ptymaster) < 0)
+ 		error("close(s->ptymaster): %s", strerror(errno));
++
++	s->ttyfd = -1;
+ }
+ 
+ void
+@@ -2055,11 +1994,57 @@
  		setproctitle("%s@%s", s->pw->pw_name, session_tty_list());
  }
  

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.22 2001/06/10 23:24:12 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.23 2001/06/11 02:29:29 solar Exp $
 
 Summary: OpenSSH free Secure Shell (SSH) implementation
 Name: openssh
@@ -15,7 +15,7 @@ Patch0: openssh-2.9p1-owl-hide-unknown.diff
 Patch1: openssh-2.9p1-owl-always-auth.diff
 Patch2: openssh-2.9p1-owl-pam_userpass.diff
 Patch3: openssh-2.5.1p1-owl-scp-stalltime.diff
-Patch4: openssh-2.9p1-markus-unlink.diff
+Patch4: openssh-2.9p1-markus-owl-unlink.diff
 Copyright: BSD
 Group: Applications/Internet
 Buildroot: /var/rpm-buildroot/%{name}-%{version}
@@ -187,7 +187,7 @@ fi
 * Mon Jun 11 2001 Solar Designer <solar@owl.openwall.com>
 - Switch credentials when cleaning up temporary files and sockets to fix
 the vulnerability reported by zen-parse@gmx.net on Bugtraq; the patch is
-by Markus Friedl, with a later OpenSSH CVS change added.
+by Markus Friedl with a later OpenSSH CVS change added and two bugs fixed.
 
 * Sun May 06 2001 Solar Designer <solar@owl.openwall.com>
 - Updated to 2.9p1.
