@@ -12,6 +12,11 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2004/02/13	Package: mutt
+Updated to 1.4.2.1.  This release of Mutt is a security fix, but Owl
+was not affected with its current glibc because of the lack of UTF-8
+locales support.
+
 2004/02/08	Package: SimplePAMApps
 In login(1) and su(1), generate ut_id's consistently with libutempter
 and OpenSSH (patch from Dmitry V. Levin of ALT Linux).  This will make
@@ -50,4 +55,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.12 2004/02/08 20:33:18 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.13 2004/02/13 01:35:25 solar Exp $
