@@ -1,0 +1,21 @@
+diff -puNr rpm-4.2.orig/lib/rpmal.c rpm-4.2/lib/rpmal.c
+--- rpm-4.2.orig/lib/rpmal.c	Mon Mar  3 18:17:30 2003
++++ rpm-4.2/lib/rpmal.c	Tue Jan  4 23:09:09 2005
+@@ -658,7 +658,7 @@ rpmalAllFileSatisfiesDepend(const rpmal 
+ 
+     /*@-branchstate@*/ /* FIX: ret is a problem */
+     for (found = 0, ret = NULL;
+-	 die <= al->dirs + al->numDirs && dieCompare(die, dieNeedle) == 0;
++	 die < al->dirs + al->numDirs && dieCompare(die, dieNeedle) == 0;
+ 	 die++)
+     {
+ 
+@@ -752,7 +752,7 @@ rpmalAllSatisfiesDepend(const rpmal al, 
+ 
+     if (al->list != NULL)	/* XXX always true */
+     for (ret = NULL, found = 0;
+-	 match <= ai->index + ai->size && indexcmp(match, needle) == 0;
++	 match < ai->index + ai->size && indexcmp(match, needle) == 0;
+ 	 match++)
+     {
+ 	alp = al->list + alKey2Num(al, match->pkgKey);

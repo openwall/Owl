@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.45 2004/12/27 00:08:38 galaxy Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.46 2005/01/12 16:52:42 galaxy Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -11,7 +11,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl2
+Release: owl3
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -52,6 +52,7 @@ Patch26: rpm-4.2-owl-rpmdb-pthread.diff
 Patch27: rpm-4.2-owl-db1-addon.diff
 Patch28: rpm-4.2-owl-fix-configure.diff
 Patch29: rpm-4.2-owl-chroot-ugid.diff
+Patch30: rpm-4.2-owl-rpmal-bounds.diff
 
 PreReq: /sbin/ldconfig
 PreReq: sh-utils, fileutils, mktemp, gawk
@@ -157,6 +158,7 @@ rm -r tests
 %patch27 -p1
 %patch28 -p1
 %patch29 -p1
+%patch30 -p1
 
 # Prepare libelf archive and save it with headers to the tools subdirectory
 pushd elfutils
@@ -453,6 +455,10 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl3
+- Applied rpmal-bounds patch to avoid going out of array bounds in the
+dependency checker.
+
 * Sun Dec 26 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl2
 - Applied chroot-ugid patch to not rely on host OS provided NSS modules.
 
