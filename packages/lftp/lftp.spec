@@ -1,21 +1,16 @@
-# $Id: Owl/packages/lftp/lftp.spec,v 1.12 2002/02/07 01:47:15 solar Exp $
+# $Id: Owl/packages/lftp/lftp.spec,v 1.13 2003/06/01 22:25:37 mci Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
-Version: 2.3.8
-Release: owl6
+Version: 2.6.6
+Release: owl1
 License: GPL
 Group: Applications/Internet
 Source0: ftp://ftp.yars.free.net/pub/software/unix/net/ftp/client/lftp/%{name}-%{version}.tar.bz2
 Source1: lftpget.1
-Patch0: lftp-2.3.8-deb-conf.diff
-Patch1: lftp-2.3.8-deb-doc.diff
-Patch2: lftp-2.3.8-deb-makefile.diff
-Patch3: lftp-2.3.8-deb-po.diff
-Patch4: lftp-2.3.8-owl-addr.diff
-Requires: readline >= 4.1, openssl >= 0.9.5a-1owl
+Patch0: lftp-2.6.6-owl-n-option.diff
 Prefix: %{_prefix}
-BuildRequires: readline-devel, openssl-devel
+BuildRequires: openssl-devel
 BuildRoot: /override/%{name}-%{version}
 
 %description
@@ -43,23 +38,19 @@ tools for downloading files.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
 
 %build
 # Make sure that all message catalogs are built
 unset LINGUAS || :
 
 %define __libtoolize echo --
-%configure --with-modules --with-ssl
+%configure --with-modules --with-ssl --with-included-readline
 make CFLAGS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
 make install-strip DESTDIR=$RPM_BUILD_ROOT
-install -m 644 $RPM_SOURCE_DIR/lftpget.1 ${RPM_BUILD_ROOT}%{_mandir}/man1/
+install -m 644 $RPM_SOURCE_DIR/lftpget.1 $RPM_BUILD_ROOT%{_mandir}/man1/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -67,20 +58,20 @@ rm -rf $RPM_BUILD_ROOT
 %post
 if [ ! -e /usr/bin/ftp -a ! -e /usr/man/man1/ftp.1.gz ]; then
 	ln -s lftp /usr/bin/ftp
-	ln -s lftp.1.gz /usr/man/man1/ftp.1.gz
+	ln -s lftp.1.gz %{_mandir}/man1/ftp.1.gz
 fi
 
 %preun
 if [ $1 -eq 0 -a -L /usr/bin/ftp -a -L /usr/man/man1/ftp.1.gz ]; then
 	if cmp -s /usr/bin/ftp /usr/bin/lftp; then
 		rm /usr/bin/ftp
-		rm /usr/man/man1/ftp.1.gz
+		rm %{_mandir}/man1/ftp.1.gz
 	fi
 fi
 
 %files
 %defattr(-,root,root)
-%doc ABOUT-NLS BUGS COPYING FAQ FEATURES NEWS README* THANKS TODO lftp.lsm
+%doc BUGS COPYING FAQ FEATURES NEWS README* THANKS TODO lftp.lsm
 %config /etc/lftp.conf
 %attr(755,root,root) %{_bindir}/*
 %{_libdir}/*
@@ -89,6 +80,12 @@ fi
 %{_datadir}/locale/*/*/*
 
 %changelog
+* Mon Jun 02 2003 Michail Litvak <mci@owl.openwall.com> 2.6.6-owl1
+- 2.6.6
+- Removed outdated patches.
+- Built with included readline.
+- Patch to provide -n option for compatibility with old ftp.
+
 * Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com>
 - Enforce our new spec file conventions
 
