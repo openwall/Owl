@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.14 2003/07/24 21:15:12 solar Exp $
+# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.15 2003/07/31 08:37:03 solar Exp $
 
 Summary: Initial set of device files and MAKEDEV, a script to manage them.
 Name: owl-dev
-Version: 0.8
+Version: 0.9
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -69,6 +69,9 @@ echo "Creating device files"
 %files -f filelist
 
 %changelog
+* Thu Jul 31 2003 Solar Designer <solar@owl.openwall.com> 0.9-owl1
+- /dev/kbd.
+
 * Fri Jul 25 2003 Solar Designer <solar@owl.openwall.com> 0.8-owl1
 - /dev/openprom.
 
