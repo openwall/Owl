@@ -1,0 +1,18 @@
+--- libtool-1.5/ltmain.in.orig  2003-04-15 01:58:24 +0400
++++ libtool-1.5/ltmain.in       2003-12-02 13:11:54 +0300
+@@ -48,6 +48,15 @@
+   exit 0
+ fi
+ 
++# ensure that SED variable is defined.
++test -n "$SED" || SED=sed
++
++# ensure that EGREP variable is defined.
++test -n "$EGREP" || EGREP=egrep
++
++# ensure that max_cmd_len variable is defined.
++test -n "$max_cmd_len" || max_cmd_len=32768
++
+ # The name of this program.
+ progname=`$echo "$0" | ${SED} 's%^.*/%%'`
+ modename="$progname"

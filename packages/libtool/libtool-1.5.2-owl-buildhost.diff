@@ -1,0 +1,11 @@
+--- libtool-1.5.2/libtool.m4.orig	Fri Jan 23 08:07:04 2004
++++ libtool-1.5.2/libtool.m4	Tue Feb 24 15:28:25 2004
+@@ -3978,7 +3978,7 @@
+ # ### BEGIN LIBTOOL CONFIG],
+ [# ### BEGIN LIBTOOL TAG CONFIG: $tagname])
+ 
+-# Libtool was configured on host `(hostname || uname -n) 2>/dev/null | sed 1q`:
++# Libtool was configured as follows:
+ 
+ # Shell to use when invoking shell scripts.
+ SHELL=$lt_SHELL

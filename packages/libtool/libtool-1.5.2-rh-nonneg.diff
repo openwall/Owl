@@ -1,28 +1,28 @@
---- libtool-1.3.5/ltmain.in.sopwith	Thu Jul 13 17:34:43 2000
-+++ libtool-1.3.5/ltmain.in	Thu Jul 13 17:36:31 2000
-@@ -1656,7 +1656,7 @@
+--- libtool-1.5.2/ltmain.in.orig	Sun Jan 25 08:50:41 2004
++++ libtool-1.5.2/ltmain.in	Tue Feb 24 16:06:18 2004
+@@ -2925,7 +2925,7 @@
  
  	# Check that each of the things are valid numbers.
- 	case "$current" in
--	0 | [1-9] | [1-9][0-9]*) ;;
+ 	case $current in
+-	0 | [1-9] | [1-9][0-9] | [1-9][0-9][0-9]) ;;
 +	[0-9]*) ;;
  	*)
  	  $echo "$modename: CURRENT \`$current' is not a nonnegative integer" 1>&2
  	  $echo "$modename: \`$vinfo' is not valid version information" 1>&2
-@@ -1665,7 +1665,7 @@
+@@ -2934,7 +2934,7 @@
  	esac
  
- 	case "$revision" in
--	0 | [1-9] | [1-9][0-9]*) ;;
+ 	case $revision in
+-	0 | [1-9] | [1-9][0-9] | [1-9][0-9][0-9]) ;;
 +	[0-9]*) ;;
  	*)
  	  $echo "$modename: REVISION \`$revision' is not a nonnegative integer" 1>&2
  	  $echo "$modename: \`$vinfo' is not valid version information" 1>&2
-@@ -1674,7 +1674,7 @@
+@@ -2943,7 +2943,7 @@
  	esac
  
- 	case "$age" in
--	0 | [1-9] | [1-9][0-9]*) ;;
+ 	case $age in
+-	0 | [1-9] | [1-9][0-9] | [1-9][0-9][0-9]) ;;
 +	[0-9]*) ;;
  	*)
  	  $echo "$modename: AGE \`$age' is not a nonnegative integer" 1>&2

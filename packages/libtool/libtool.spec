@@ -1,17 +1,17 @@
-# $Id: Owl/packages/libtool/libtool.spec,v 1.8 2003/10/30 09:00:26 solar Exp $
+# $Id: Owl/packages/libtool/libtool.spec,v 1.9 2004/09/10 07:24:38 galaxy Exp $
 
 Summary: The GNU Libtool, which simplifies the use of shared libraries.
 Name: libtool
-Version: 1.3.5
-Release: owl11
+Version: 1.5.2
+Release: owl1.1
 License: GPL
 Group: Development/Tools
 Source: ftp://ftp.gnu.org/gnu/libtool/libtool-%version.tar.gz
-Patch0: libtool-1.2f-rh-cache.diff
-Patch1: libtool-1.3.5-rh-mktemp.diff
-Patch2: libtool-1.3.5-rh-nonneg.diff
-Patch3: libtool-1.3.5-owl-info.diff
-Patch4: libtool-1.3.5-owl-buildhost.diff
+Patch0: libtool-1.5.2-rh-mktemp.diff
+Patch1: libtool-1.5.2-rh-nonneg.diff
+Patch2: libtool-1.5.2-owl-info.diff
+Patch3: libtool-1.5.2-owl-buildhost.diff
+Patch4: libtool-1.5.2-alt-ltmain-legacy.diff
 PreReq: /sbin/install-info, autoconf, automake, m4, perl
 Requires: libtool-libs = %version-%release, mktemp
 Prefix: %_prefix
@@ -46,50 +46,30 @@ rm doc/libtool.info
 make -C doc
 make
 
+# XXX: make this ifdef'ed ?
+# make check
+
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT%_prefix
 
 %makeinstall
 
-cp install-sh missing mkinstalldirs demo/
-
-chmod -R u=rwX,go=rX demo
-
-cd $RPM_BUILD_ROOT
-# XXX remove zero length file
-rm -f .%_datadir/libtool/libltdl/stamp-h.in
-# XXX forcibly break hardlinks
-mv .%_datadir/libtool/libltdl .%_datadir/libtool/libltdl-X
-mkdir .%_prefix/share/libtool/libltdl
-cp .%_datadir/libtool/libltdl-X/* .%_datadir/libtool/libltdl
-rm -rf .%_prefix/share/libtool/libltdl-X
+# XXX: (GM): Remove unpackaged files (check later)
+rm %buildroot%_infodir/dir
 
 %post
 /sbin/install-info %_infodir/libtool.info.gz %_infodir/dir
-# XXX hack alert
-cd %_defaultdocdir/libtool-%version/demo || \
-cd %_prefix/doc/libtool-%version/demo || exit 0
-umask 022
-libtoolize --copy --force
-aclocal
-autoheader
-automake
-autoconf
 
 %preun
 if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %_infodir/libtool.info.gz %_infodir/dir
-# XXX hack alert
-	cd %_defaultdocdir/libtool-%version/demo || \
-	cd %_prefix/doc/libtool-%version/demo || exit 0
-	rm -f config.{guess,h.in,sub} lt{config,main.sh}
 fi
 
 %files
 %defattr(-,root,root)
 %doc AUTHORS COPYING INSTALL NEWS README
-%doc THANKS TODO ChangeLog demo
+%doc THANKS TODO ChangeLog
 %_bindir/*
 %_infodir/libtool.info*
 %_includedir/ltdl.h
@@ -97,12 +77,21 @@ fi
 %_libdir/libltdl.so
 %_libdir/libltdl.*a
 %_datadir/aclocal/libtool.m4
+%_datadir/aclocal/ltdl.m4
 
 %files libs
 %defattr(-,root,root)
 %_libdir/libltdl.so.*
 
 %changelog
+* Sat Mar 20 2004 Michail Litvak <mci@owl.openwall.com> 1.5.2-owl1.1
+- Don't install demo in docs, we can do make check if we need this.
+
+* Tue Feb 24 2004 Michail Litvak <mci@owl.openwall.com> 1.5.2-owl1
+- 1.5.2
+- Regenerate patches, some spec changes.
+- Add -alt-ltmain-legacy.diff
+
 * Wed Oct 22 2003 Solar Designer <solar@owl.openwall.com> 1.3.5-owl11
 - Prevent build host name leaks into the generated libtool script.
 
