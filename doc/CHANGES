@@ -12,6 +12,10 @@ for the packages themselves.
 
 	Changes made between Owl 0.1-prerelease and Owl-current.
 
+2001/10/24 -
+2001/10/27	Package: bash
+Updated to 2.05 with many additional fixes.
+
 2001/10/22	kernel
 RELIABILITY FIX: Updated to Linux 2.2.19-ow4 which fixes a symbol
 export issue introduced with 2.2.19-ow3 and moves the support for ELF
@@ -373,4 +377,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <Denis.Ducamp at hsc.fr>.
 
-$Id: Owl/doc/Attic/CHANGES,v 1.36 2001/10/22 15:01:41 solar Exp $
+$Id: Owl/doc/Attic/CHANGES,v 1.37 2001/10/27 17:42:46 solar Exp $
