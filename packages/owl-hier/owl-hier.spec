@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.15 2003/10/30 21:15:47 solar Exp $
+# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.16 2004/01/15 23:38:05 mci Exp $
 
 Summary: Initial directory hierarchy.
 Name: owl-hier
-Version: 0.6
+Version: 0.7
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -69,6 +69,9 @@ comm -3 - filelist.remove >> filelist
 %files -f filelist
 
 %changelog
+* Fri Jan 16 2004 Michail Litvak <mci@owl.openwall.com> 0.7-owl1
+- Added /usr/local/include.
+
 * Sat Oct 25 2003 Solar Designer <solar@owl.openwall.com> 0.6-owl1
 - Renamed /etc/mtree/special to /etc/mtree/base; "special" is used on *BSD,
 but its meaning is different.

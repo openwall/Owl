@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-hier/base,v 1.2 2003/10/25 09:21:47 solar Exp $
+# $Id: Owl/packages/owl-hier/base,v 1.3 2004/01/15 23:38:05 mci Exp $
 
 # /
 /set type=file uname=root gname=root mode=0755
@@ -250,6 +250,12 @@ etc		type=dir
 # /usr/local/games
 games		type=dir
 # /usr/local/games
+..
+
+
+# /usr/local/include
+include		type=dir
+# /usr/local/include
 ..
 
 
