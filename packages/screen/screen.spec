@@ -1,9 +1,9 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.14 2001/06/16 20:56:17 mci Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.15 2001/08/03 07:47:01 mci Exp $
 
 Summary: A screen manager that supports multiple logins on one terminal.
 Name: screen
 Version: 3.9.9
-Release: 4owl
+Release: 5owl
 Copyright: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%{version}.tar.gz
@@ -84,7 +84,7 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc NEWS README FAQ doc/README.DOTSCREEN etc/screenrc
+%doc NEWS README doc/FAQ doc/README.DOTSCREEN etc/screenrc
 
 %attr(2711,root,utempter) %{_bindir}/screen
 %{_mandir}/man1/screen.*
@@ -94,6 +94,9 @@ fi
 %config(noreplace) /etc/pam.d/screen
 
 %changelog
+* Fri Aug 03 2001 Michail Litvak <mci@owl.openwall.com>
+- install doc/FAQ as FAQ instead link to doc/FAQ
+
 * Wed Jun 13 2001 Michail Litvak <mci@owl.openwall.com>
 - updated to 3.9.9
 - patch configure to avoid non secure file creation in /tmp
