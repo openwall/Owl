@@ -721,7 +721,7 @@ diff -ur cvs-1.11.5.orig/src/logmsg.c cvs-1.11.5/src/logmsg.c
      if (*messagep)
 diff -ur cvs-1.11.5.orig/src/sanity.sh cvs-1.11.5/src/sanity.sh
 --- cvs-1.11.5.orig/src/sanity.sh	Thu Dec 19 15:38:32 2002
-+++ cvs-1.11.5/src/sanity.sh	Mon Apr 28 21:37:30 2003
++++ cvs-1.11.5/src/sanity.sh	Mon Apr 28 22:20:15 2003
 @@ -176,8 +176,8 @@
  #     So this would be lost if everything was `pwd`-based.  I suppose
  #     if we wanted to get baroque we could start making symlinks
@@ -733,7 +733,7 @@ diff -ur cvs-1.11.5.orig/src/sanity.sh cvs-1.11.5/src/sanity.sh
  
  # Now:
  #	1) Set TESTDIR if it's not set already
-@@ -185,25 +185,37 @@
+@@ -185,25 +185,41 @@
  #	3) Create $TESTDIR
  #	4) Normalize TESTDIR with `cd && (/bin/pwd || pwd)`
  #	   (This will match CVS output later)
@@ -755,10 +755,14 @@ diff -ur cvs-1.11.5.orig/src/sanity.sh cvs-1.11.5/src/sanity.sh
 -mkdir ${TESTDIR} || exit 1
 -cd ${TESTDIR} || exit 1
 +  mkdir $TESTDIR || exit 1
++fi
++if $keep; then
++  :
 +else
-+  TESTDIR=
 +  trap 'cd "$TESTDIR/.."; rm -rf -- "$TESTDIR"' EXIT
 +  trap 'trap - EXIT; cd "$TESTDIR/.."; rm -rf -- "$TESTDIR"; exit 1' HUP INT QUIT TERM
++fi
++if [ -z "$TESTDIR" ]; then
 +  TESTDIR="`mktemp -td cvs-sanity.XXXXXXXXXX`" || exit
 +fi
 +cd $TESTDIR || exit 1
@@ -779,7 +783,7 @@ diff -ur cvs-1.11.5.orig/src/sanity.sh cvs-1.11.5/src/sanity.sh
  
  # Make sure various tools work the way we expect, or try to find
  # versions that do.
-@@ -732,14 +744,16 @@
+@@ -732,14 +748,16 @@
  	DIR_2=$2
  
  	cd $DIR_1
@@ -799,7 +803,7 @@ diff -ur cvs-1.11.5.orig/src/sanity.sh cvs-1.11.5/src/sanity.sh
  	then
  		:
  	else
-@@ -754,8 +768,8 @@
+@@ -754,8 +772,8 @@
  				return 1
  			fi
  		fi
@@ -810,13 +814,13 @@ diff -ur cvs-1.11.5.orig/src/sanity.sh cvs-1.11.5/src/sanity.sh
  	return 0
  }
  
-@@ -24057,7 +24071,7 @@
+@@ -24055,9 +24073,5 @@
+   echo "Keeping ${TESTDIR} and exiting due to -k (keep) option."
+   exit 0
  fi
- 
- # Remove the test directory, but first change out of it.
+-
+-# Remove the test directory, but first change out of it.
 -cd `dirname ${TESTDIR}`
 -rm -rf ${TESTDIR}
-+cd "$TESTDIR/.."
-+rm -rf $TESTDIR
  
  # end of sanity.sh
