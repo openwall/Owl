@@ -1,16 +1,17 @@
-# $Id: Owl/packages/libnet/libnet.spec,v 1.1 2001/04/17 03:38:46 solar Exp $
+# $Id: Owl/packages/libnet/libnet.spec,v 1.2 2001/06/17 03:44:10 solar Exp $
 
 Summary:	"libpwrite" Network Routine Library
 Name:		libnet
 Version:	1.0.2a
-Release:	1owl
+Release:	2owl
 Epoch:		1
 License:	BSD
 Group:		Libraries
 Source0:	http://www.packetfactory.net/libnet/dist/%{name}-%{version}.tar.gz
-Patch0:		%{name}-%version-pld-shared.diff
+Patch0:		libnet-1.0.2a-pld-shared.diff
+Patch1:		libnet-1.0.2a-owl-alpha-targets.diff
 URL:		http://www.packetfactory.net/libnet/
-BuildRequires:	libpcap-devel
+BuildRequires:	libpcap-devel, autoconf
 BuildRoot:	/var/rpm-buildroot/%{name}-%{version}
 
 %description
@@ -34,8 +35,11 @@ Header files and development documentation for libnet.
 %prep
 %setup -q -n Libnet-%{version}
 %patch0 -p1
+%patch1 -p1
 
 %build
+aclocal
+autoconf
 %configure \
 	--with-pf_packet=yes
 %{__make} CFLAGS="$RPM_OPT_FLAGS"
@@ -74,6 +78,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/lib*.a
 
 %changelog
+* Sun Jun 17 2001 Solar Designer <solar@owl.openwall.com>
+- Support alpha* targets other than plain alpha (don't even try to check
+for unaligned accesses when building for an Alpha).
+
 * Tue Apr 17 2001 Solar Designer <solar@owl.openwall.com>
 - Minor spec file cleanups.
 

@@ -1,0 +1,11 @@
+--- Libnet-1.0.2a/acinclude.m4.orig	Tue Dec 12 21:31:54 2000
++++ Libnet-1.0.2a/acinclude.m4	Sun Jun 17 07:32:30 2001
+@@ -203,7 +203,7 @@
+     AC_CACHE_VAL(ac_cv_lbl_unaligned_fail,
+         [case "$target_cpu" in
+ 
+-        alpha|hp*|mips|sparc)
++        alpha*|hp*|mips|sparc)
+                 ac_cv_lbl_unaligned_fail=yes
+                 ;;
+ 
