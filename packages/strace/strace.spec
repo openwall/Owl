@@ -1,9 +1,9 @@
-# $Id: Owl/packages/strace/strace.spec,v 1.1 2001/01/23 10:03:44 mci Exp $
+# $Id: Owl/packages/strace/strace.spec,v 1.2 2001/01/25 13:57:17 mci Exp $
 
 Summary: Tracks and displays system calls associated with a running process.
 Name: strace
 Version: 4.2
-Release: 10owl 
+Release: 11owl 
 Copyright: distributable
 Group: Development/Debuggers
 Source: http://www.liacs.nl/~wichert/strace/strace-%{version}.tar.gz
@@ -12,6 +12,7 @@ Patch1: strace-4.2-deb-lfs.diff
 Patch2: strace-4.2-owl-timex.diff
 Patch3: strace-4.2-rh-stat64.diff
 Patch4: strace-4.2-rh-putmsg.diff
+Patch5: strace-4.2-owl-printsock.diff
 Prefix: %{_prefix}
 Buildroot: /var/rpm-buildroot/%{name}-root
 
@@ -35,6 +36,7 @@ received by a process.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 libtoolize --copy --force
@@ -61,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/strace.1*
 
 %changelog
+* Thu Jan 25 2001 Michail Litvak <mci@owl.openwall.com>
+- Added patch to fix printsock 
+
 * Mon Jan 23 2001 Michail Litvak <mci@owl.openwall.com>
 - Imported from RH
 - Removed most of 2.4 related patches...
