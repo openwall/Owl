@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iptables/iptables.spec,v 1.13 2005/01/14 03:27:52 galaxy Exp $
+# $Id: Owl/packages/iptables/iptables.spec,v 1.14 2005/01/14 16:45:14 galaxy Exp $
 
 %define BUILD_STATIC 0
 %define BUILD_IPV6 0
@@ -101,10 +101,14 @@ fi
 %defattr(-,root,root)
 /sbin/ip6tables*
 %_mandir/*/ip6tables.8*
-%if !%BUILD_STATIC
+# XXX: (GM): It seems like an RPM bug here. If I use following conditional
+#            statement, then RPM complains that there is an Boolean expression
+#            error, but in the main filelist I've used the very same
+#            construction and get no complains at all. I'll investigate this.
+#%%if !%BUILD_STATIC
 %dir /%_lib/iptables
 /%_lib/iptables/libip6t*
-%endif
+#%%endif
 %endif
 
 %changelog
