@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.20 2003/11/27 23:09:15 solar Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.21 2004/11/07 19:00:31 mci Exp $
 
 Summary: Postfix mail system.
 Name: postfix
@@ -7,7 +7,7 @@ Name: postfix
 %define original_version %original_date-%original_pl
 %define package_version %{original_date}_%original_pl
 Version: %package_version
-Release: owl8
+Release: owl9
 License: IBM Public License
 Group: System Environment/Daemons
 Source0: ftp://ftp.sunet.se/pub/unix/mail/postfix/official/%name-%original_version.tar.gz
@@ -20,10 +20,10 @@ Patch2: postfix-19991231-pl13-snapshot-20011217-safe-opens.diff
 Patch3: postfix-19991231-pl13-owl-locking.diff
 Patch4: postfix-19991231-pl13-owl-postalias-no-hostname.diff
 Patch10: postfix-19991231-pl13-owl-postfix-script.diff
-Patch20: postfix-19991231-pl10-owl-INSTALL.diff
-Patch21: postfix-19991231-pl10-owl-config.diff
+Patch20: postfix-19991231-pl10-owl-config.diff
 PreReq: /sbin/chkconfig, grep, shadow-utils
 Requires: owl-control >= 0.4, owl-control < 2.0
+BuildRequires: sed >= 4.0.9
 Conflicts: sendmail, qmail
 Provides: MTA, smtpd, smtpdaemon
 Obsoletes: sendmail-cf, sendmail-doc
@@ -44,7 +44,10 @@ compatible enough to not upset your users.
 %patch4 -p1
 %patch10 -p1
 %patch20 -p1
-%patch21 -p1
+
+sed -i  -e 's,^install_root=/,install_root=$RPM_BUILD_ROOT,' \
+	-e 's,^setgid=no,setgid=postdrop,' \
+	-e 's,^manpages=/usr/local/man,manpages=%_mandir,' INSTALL.sh
 
 %build
 make OPT="$RPM_OPT_FLAGS"
@@ -142,7 +145,7 @@ find $RPM_BUILD_ROOT ! -type d |
 	sed "s,^$RPM_BUILD_ROOT,," |
 	sort |
 	comm -23 - filelist.plain |
-	sed -e 's,^/etc,%config &,' -e 's,/usr/man/.*$,&*,' >> filelist
+	sed -e 's,^/etc,%config &,' -e 's,%_mandir/\(.*\)$,%_mandir/\1*,' >> filelist
 
 %pre
 grep -q ^postdrop: /etc/group || groupadd -g 161 postdrop
@@ -189,6 +192,9 @@ fi
 %files -f filelist
 
 %changelog
+* Sun Nov 07 2004 Michail Litvak <mci@owl.openwall.com> 19991231_pl13-owl9
+- Corrected the placement of man pages for FHS 2.2 compatibility.
+
 * Fri Nov 28 2003 Solar Designer <solar@owl.openwall.com> 19991231_pl13-owl8
 - Continue on possible errors from the rmdir in %preun such that it is still
 possible to uninstall; thanks to Maciek Pasternacki for reporting this.
