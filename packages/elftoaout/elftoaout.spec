@@ -1,4 +1,4 @@
-# $Id: Owl/packages/elftoaout/elftoaout.spec,v 1.1 2001/01/09 02:39:28 kad Exp $
+# $Id: Owl/packages/elftoaout/elftoaout.spec,v 1.2 2001/01/09 02:43:17 kad Exp $
 
 Summary: A utility for converting ELF binaries to a.out binaries.
 Name: 		elftoaout
@@ -6,7 +6,7 @@ Version:	2.3
 Release: 	1owl
 Copyright: 	GPL
 Group: 		System Environment/Kernel
-Source: 	ftp://sunsite.mff.cuni.cz/OS/Linux/Sparc/local/elftoaout/elftoaout-2.2.tgz
+Source: 	ftp://sunsite.mff.cuni.cz/OS/Linux/Sparc/local/elftoaout/elftoaout-%{version}.tgz
 ExclusiveArch:  sparc sparcv9 sparc64
 BuildRoot:      /var/rpm-buildroot/%{name}-root
 
@@ -46,14 +46,14 @@ rm -rf $RPM_BUILD_ROOT
 * Sun Jan  7 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
 - spec cleanup
 
-* Sat Jun  3 2000 Jakub Jelinek <jakub@redhat.com>
-- 2.3 - -c support by Pete Zaitcev
-
 * Wed Jul 12 2000 Prospector <bugzilla@redhat.com>
 - automatic rebuild
 
 * Sun Jun 18 2000 Matt Wilson <msw@redhat.com>
 - use %%{_mandir}
+
+* Sat Jun  3 2000 Jakub Jelinek <jakub@redhat.com>
+- 2.3 - -c support by Pete Zaitcev
 
 * Tue Feb 22 2000 Bill Nottingham <notting@redhat.com>
 - handle compressed manpages
