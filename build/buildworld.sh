@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.3 2000/12/10 01:26:36 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.4 2000/12/11 02:42:46 solar Exp $
 
 REPOSITORY=Owl
 PACKAGES=$REPOSITORY/packages
@@ -10,13 +10,17 @@ TIME=/usr/bin/time
 
 function log()
 {
-	MESSAGE=$1
+	local MESSAGE
+
+	MESSAGE="$1"
 
 	echo "`date +%H:%M:%S`: $MESSAGE" | tee -a $HOME/logs/buildworld
 }
 
 function build_native()
 {
+	local NUMBER PACKAGE DIR WORK
+
 	NUMBER=$1
 	PACKAGE=$2
 
@@ -47,6 +51,8 @@ function build_native()
 
 function build_foreign()
 {
+	local NUMBER PACKAGE WORK
+
 	NUMBER=$1
 	PACKAGE=$2
 
@@ -88,6 +94,8 @@ function detect()
 
 function builder()
 {
+	local NUMBER
+
 	NUMBER=$1
 
 	test -n "$ARCHITECTURE" || detect
@@ -170,7 +178,7 @@ function clean_death()
 	kill 0
 
 	cd $HOME || exit 1
-	rm -rf rpm-work-[1-9]* cvs-work foreign-work &> /dev/null
+	rm -rf tmp-work rpm-work-[1-9]* cvs-work foreign-work
 
 	echo "`date '+%Y %b %e %H:%M:%S'`: Interrupted" >> logs/buildworld
 	exit 0
@@ -185,7 +193,7 @@ mkdir -p RPMS SRPMS logs
 echo "`date '+%Y %b %e %H:%M:%S'`: Started" >> logs/buildworld
 
 log "Removing stale temporary files"
-rm -rf rpm-work-[1-9]* cvs-work foreign-work &> /dev/null
+rm -rf tmp-work rpm-work-[1-9]* cvs-work foreign-work
 
 sanity_check
 
@@ -198,13 +206,16 @@ while [ $NUMBER -le $PROCESSORS ]; do
 	NUMBER=$[$NUMBER + 1]
 done
 
-mkdir cvs-work foreign-work || exit 1
+mkdir tmp-work cvs-work foreign-work || exit 1
+export TMPDIR=$HOME/tmp-work
+
 cd cvs-work || exit 1
 if [ -n "$CVSROOT" -a -z "$CHECKOUT" ]; then
 	cvs co $REPOSITORY 2>&1 >> $HOME/logs/buildworld || exit 1
 else
 	cp -al $CHECKOUT/$REPOSITORY .
 fi
+
 cd $PACKAGES || exit 1
 
 NUMBER=1
@@ -218,6 +229,6 @@ cd $HOME || exit 1
 wait
 
 log "Removing temporary files"
-rm -rf cvs-work foreign-work &> /dev/null
+rm -rf tmp-work cvs-work foreign-work
 
 echo "`date '+%Y %b %e %H:%M:%S'`: Finished" >> logs/buildworld

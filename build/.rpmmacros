@@ -1,5 +1,6 @@
-# $Id: Owl/build/.rpmmacros,v 1.1 2000/12/03 21:26:16 solar Exp $
+# $Id: Owl/build/.rpmmacros,v 1.2 2000/12/11 02:42:46 solar Exp $
 %distribution Owl
+%_tmppath %{home}/tmp-work
 %_topdir %{home}/rpm-work-%{number}
 %buildroot %{home}/rpm-work-%{number}/buildroot
 # i386
