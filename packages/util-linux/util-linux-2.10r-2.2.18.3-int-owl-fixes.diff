@@ -1,7 +1,22 @@
 diff -ur util-linux-2.10r.int/mount/lomount.c util-linux-2.10r/mount/lomount.c
 --- util-linux-2.10r.int/mount/lomount.c	Wed Apr 18 08:55:42 2001
-+++ util-linux-2.10r/mount/lomount.c	Wed Apr 18 09:25:57 2001
-@@ -241,7 +241,7 @@
++++ util-linux-2.10r/mount/lomount.c	Wed Apr 18 10:17:55 2001
+@@ -35,6 +35,14 @@
+ extern void error (const char *fmt, ...);	/* idem */
+ 
+ #ifdef LOOP_SET_FD
++#ifndef LO_CRYPT_SERPENT
++/* These aren't defined with unpatched Linux 2.2.19 headers */
++#define LO_CRYPT_SERPENT  7
++#define LO_CRYPT_MARS	  8
++#define LO_CRYPT_RC6      11
++#define LO_CRYPT_DES_EDE3 12
++#define LO_CRYPT_DFC      15
++#endif
+ struct crypt_type_struct {
+ 	int id;
+ 	char *name;
+@@ -241,7 +249,7 @@
  		loopinfo.lo_encrypt_key_size = strlen(loopinfo.lo_encrypt_key);
  		break;
  	case LO_CRYPT_DES:
@@ -10,7 +25,7 @@ diff -ur util-linux-2.10r.int/mount/lomount.c util-linux-2.10r/mount/lomount.c
  		pass = getpass (_("Password: "));
  		strncpy (loopinfo.lo_encrypt_key, pass, 8);
  		loopinfo.lo_encrypt_key[8] = 0;
-@@ -267,7 +267,7 @@
+@@ -267,7 +275,7 @@
  	case LO_CRYPT_RC6:
  	case LO_CRYPT_DES_EDE3:
  	case LO_CRYPT_DFC:
