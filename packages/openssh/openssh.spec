@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.67 2003/10/24 04:02:26 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.68 2003/10/24 04:16:26 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
@@ -164,7 +164,9 @@ if [ $1 -ge 2 ]; then
 fi
 
 %post server
-/etc/rc.d/init.d/sshd keygen
+if [ "$MAKE_CDROM" != yes ]; then
+	/etc/rc.d/init.d/sshd keygen
+fi
 if [ $1 -ge 2 ]; then
 	/usr/sbin/control-restore sftp
 fi
