@@ -1,0 +1,46 @@
+diff -ur bonding-0.2.orig/ifenslave.c bonding-0.2/ifenslave.c
+--- bonding-0.2.orig/ifenslave.c	Wed Nov 24 21:54:20 1999
++++ bonding-0.2/ifenslave.c	Mon Jun  3 05:13:54 2002
+@@ -35,6 +35,7 @@
+ #include <asm/types.h>
+ #include <sys/socket.h>
+ #include <sys/ioctl.h>
++#include <linux/sockios.h>
+ #include <linux/if.h>
+ #include <linux/if_arp.h>
+ #include <linux/if_ether.h>
+@@ -165,10 +166,16 @@
+ 				printf("master has no hw address assigned; getting one from slave!\n");
+ 				strncpy(ifr2.ifr_name, master_ifname, IFNAMSIZ);
+ 				strncpy(ifr2.ifr_slave, slave_ifname, IFNAMSIZ);
++#ifdef SIOCBONDSETHWADDR
++				if (ioctl(skfd, SIOCBONDSETHWADDR, &ifr2) < 0) {
++					fprintf(stderr, 
++						"SIOCBONDSETHWADDR on %s failed: %s\n",
++#else
+ 				if (ioctl(skfd, BOND_SETHWADDR, &ifr2) < 0) {
+ 					fprintf(stderr, 
+-							"BOND_SETHWADDR on %s failed: %s\n", slave_ifname,
+-							strerror(errno));
++						"BOND_SETHWADDR on %s failed: %s\n",
++#endif
++						slave_ifname, strerror(errno));
+ 					return 1;
+ 				}
+ 				strncpy(if_hwaddr.ifr_name, master_ifname, IFNAMSIZ);
+@@ -340,8 +347,14 @@
+ 		if ( ! opt_r) {
+ 			strncpy(if_flags.ifr_name, master_ifname, IFNAMSIZ);
+ 			strncpy(if_flags.ifr_slave, slave_ifname, IFNAMSIZ);
++#ifdef SIOCBONDENSLAVE
++			if (ioctl(skfd, SIOCBONDENSLAVE, &if_flags) < 0) {
++				fprintf(stderr,	"SIOCBONDENSLAVE: %d (%s).\n",
++#else
+ 			if (ioctl(skfd, BOND_ENSLAVE, &if_flags) < 0) {
+-				fprintf(stderr,	"SIOCSIFSLAVE: %d (%s).\n", errno, strerror(errno));
++				fprintf(stderr,	"BOND_ENSLAVE: %d (%s).\n",
++#endif
++					errno, strerror(errno));
+ 			}
+ 		}
+ 	} while ( (slave_ifname = *spp++) != NULL);

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iputils/iputils.spec,v 1.6 2002/06/02 23:55:23 solar Exp $
+# $Id: Owl/packages/iputils/iputils.spec,v 1.7 2002/06/03 01:21:22 solar Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
@@ -12,6 +12,7 @@ Source2: bonding-0.2.tar.bz2
 Source3: ping.control
 Patch0: iputils-ss020124-rh-owl-cache-reverse-lookups.diff
 Patch1: iputils-ss020124-owl-warnings.diff
+Patch2: bonding-0.2-owl-ioctl.diff
 Requires: owl-control < 2.0
 Prefix: %{_prefix}
 BuildRoot: /override/%{name}-%{version}
@@ -27,6 +28,7 @@ you if that machine is alive and receiving network traffic.
 mv -f bonding-0.2/README bonding-0.2/README.ifenslave
 %patch0 -p1
 %patch1 -p1
+%patch2 -p0
 
 %build
 mv rdisc.c rdisc.c.orig
@@ -77,6 +79,10 @@ rm -rf $RPM_BUILD_ROOT
 /etc/control.d/facilities/ping
 
 %changelog
+* Mon Jun 03 2002 Solar Designer <solar@owl.openwall.com>
+- Patched ifenslave to use the SIOCBOND* ioctl's instead of the obsolete
+BOND_* ones when building with Linux 2.4+ kernel headers.
+
 * Wed May 30 2002 Michail Litvak <mci@owl.openwall.com>
 - ss020124
 - include man pages precompiled from sgml sources
