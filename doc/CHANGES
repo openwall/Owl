@@ -1,0 +1,187 @@
+This file lists the major changes made between Owl releases as well as
+between the last released version and Owl-current.  While some of the
+changes listed here may also be made to a stable branch, the complete
+lists of stable branch changes are included with those branches and as
+errata for the corresponding Owl releases only.
+
+This is very far from an exhaustive list of changes.  Small changes to
+individual packages won't be mentioned here unless they fix a security
+or a reliability problem.  They are, however, mentioned in change logs
+for the packages themselves.
+
+
+	Changes made between Owl 0.1-prerelease and Owl-current.
+
+2001/06/24	Owl/doc/CHANGES
+New file: the system-wide change log will now be maintained.
+
+2001/06/21	Owl build environment
+First attempt at supporting multiple branches.
+
+2001/06/21 -
+2001/06/23	Package: owl-setup
+RELIABILITY FIX: Set the domain in /etc/resolv.conf, ensure the newly
+created /etc/resolv.conf and /etc/hosts are mode 644.
+
+2001/06/20	Package: tcsh
+Updated to 6.10.01 which includes a number of minor bugfixes.
+
+2001/06/18	Package: pwdb
+Updated to 0.61.1 which adds some header files.
+
+2001/06/17	Package: libnet
+Support alpha* targets other than plain alpha (don't even try to check
+for unaligned accesses when building for an Alpha).
+
+2001/06/17	Package: man-pages
+Updated to 1.38.
+
+2001/06/15	Package: shadow-utils
+DOCUMENTATION FIX: Rewrote most of the login.defs(5) man page and
+enabled its packaging.  Added more defaults to /etc/login.defs, added
+a reference to login.defs(5).  Fixed a bug in the lastlog(8) man page
+reported by Jarno Huuskonen.
+
+2001/06/14	Package: openssh
+SECURITY FIX	Severity: none to low, remote, active
+Prevent additional timing leaks with null passwords (when allowed).
+The default OpenSSH server configuration on Owl doesn't allow null
+passwords, making this a non-issue (not that it's much of an issue
+either way).  When null passwords were allowed, the old package made
+it somewhat easier for a remote attacker to check whether a username
+is valid.
+
+2001/06/14	Package: pam_userpass
+RELIABILITY FIX: Deal with null passwords correctly.  Before this
+change null passwords wouldn't work even when allowed for a service.
+
+2001/06/13	Package: glibc
+Back-ported a patch from the CVS to handle unaligned relocations on
+Alpha.  Owl is now able to rebuild all of its packages on an Alpha
+without causing a single unaligned trap.
+References:
+http://bugs.debian.org/43401
+http://www.alphalinux.org/archives/debian-alpha/February2000/0183.html
+http://www.alphalinux.org/archives/debian-alpha/February2000/0197.html
+http://gcc.gnu.org/ml/gcc/1999-07n/msg00968.html
+http://gcc.gnu.org/ml/gcc/1999-07n/msg01041.html
+
+2001/06/12	Package: rpm
+Updated to 3.0.6.
+
+2001/06/12	Package: screen
+SECURITY FIX	Severity: low, local, passive
+Updated to 3.9.9, patched the unsafe temporary file handling in the
+configure script (which made it unsafe to _build_ screen).
+
+2001/06/12	Package: xinetd
+Updated to 2.1.8.9pre15.  With includedir, skip all files with names
+containing a dot ('.') or ending with a tilde ('~'); this replaces the
+Red Hat Linux derived patch.  Minor man page fixes.
+
+2001/06/11	Package: openssh
+SECURITY FIX	Severity: low, local, active
+Switch credentials when cleaning up temporary files and sockets to fix
+the vulnerability reported by zen-parse@gmx.net on Bugtraq which could
+allow a local user to remove files named "cookies" located anywhere on
+the system.  The patch is by Markus Friedl (intended for testing only)
+with a later OpenSSH CVS change added and two bugs fixed.
+
+2001/06/10 -
+2001/06/13	Package: dialog
+Updated to 0.9a-20010527 with minor bugfixes.
+
+2001/06/07	Package: links
+New package: a Lynx-like text WWW browser with support for frames.
+
+2001/06/04	Owl/doc/CONTACT
+New file: explains Owl public mailing lists (only owl-users at the
+moment) and e-mail contacts.
+
+2001/06/04	Package: logrotate
+Enabled the daily cron job now that we have /etc/cron.daily (finally).
+If log compression is requested, use gzip at its default compression
+level (no "-9").
+
+2001/06/03	Package: glibc
+SECURITY FIX	Severity: low to medium, local, passive or active
+Synced the fts(3) routines with current OpenBSD and FreeBSD; this is
+triggered by Nick Cleaton's report of yet another FTS vulnerability
+to FreeBSD, and a discussion with Kris Kennaway and Todd Miller.  It
+should no longer be possible to trick FTS into leaving the intended
+directory hierarchy, but DoS attacks on FTS itself remain possible.
+The FTS code is used by software ported from BSD, including the Owl
+mtree package.  GNU software uses other implementations, several of
+which will need fixing as well (our findutils package includes a fix
+since before the 0.1-prerelease, but there's room for improvement).
+
+2001/06/03	Package: glibc
+DOCUMENTATION FIX: Updated to crypt_blowfish-0.4.1 which includes a
+crypt.3 man page that is more friendly to makewhatis.
+
+2001/05/30	Package: gnupg
+SECURITY FIX	Severity: low to high, remote, passive
+Updated to 1.0.6, which includes a fix to the format string
+vulnerability discovered by fish stiqz of Synnergy Networks.  This
+vulnerability can allow a (possibly remote) attacker to execute
+arbitrary code as the user who attempted decryption of a specially
+crafted file.  While the potential impact of this vulnerability is
+high, the chances of its successful exploitation in a real-world
+attack are low due to technical and social reasons.
+
+2001/05/29	Packages: SysVinit, xinetd, owl-startup
+SECURITY FIX	Severity: none to medium, local, passive or active
+Ensure the umask is no less restrictive than 022 when starting
+programs from init, start-stop-daemon, and xinetd.  Set umask to 077
+in daemon() for the case when a service is started manually rather
+than from rc.sysinit.  Of these, only the xinetd behavior was a real
+vulnerability on setups we support (Owl with third-party services
+installed).  The change to init is only critical when running certain
+2.4.x Linux kernel versions, which we don't yet support.  The changes
+to start-stop-daemon and owl-startup are redundant.
+
+2001/05/27	Package: gawk
+SECURITY FIX	Severity: low, local, passive
+Patched unsafe temporary file handling in igawk, based on report and
+patch from Jarno Huuskonen (updated the igawk example in the texinfo
+documentation for gawk, which is used as the source for building the
+final igawk script).  This is a very minor security problem as igawk
+is hardly ever used.
+
+2001/05/27 -
+2001/06/19	Package: popa3d
+RELIABILITY FIX: Updated from an earlier development version to 0.4.9
+and later to 0.4.9.1.
+
+2001/05/23	Package: sysklogd
+SECURITY FIX	Severity: none to medium, local or remote, active
+Back-ported a klogd DoS fix from 1.4.1, thanks to the reports from
+Jarno Huuskonen and Thomas Roessler who initially reported the problem
+to Debian (see http://bugs.debian.org/85478).  The problem would only
+show up when the kernel or a kernel module incorrectly passes a NUL
+byte for logging.  Linux 2.2.19 isn't known to have bugs like this,
+some Linux 2.4.x kernels are.
+
+2001/05/18	Owl/doc/CREDITS
+New file: presents our development team and others involved with Owl.
+
+2001/05/18 -
+2001/05/25	Package: crontabs
+New package: system crontab files which provide the /etc/cron.daily,
+weekly, and monthly files as required by the LSB specification draft,
+plus /etc/cron.hourly found on Red Hat Linux.  The package is based on
+a modified version of the run-parts program derived from Debian.
+
+2001/05/18 -
+2001/06/12	Package: man
+Updated to 1.5i and later to 1.5i2.  These versions are meant to fix
+the published ways to attack man when it is installed SUID/SGID, but
+the fixes are imperfect by design.  Owl has never installed man SUID
+or SGID.  Additionally, our makewhatis script was fixed since before
+we've released.  Thus, this isn't a security update.
+
+2001/05/15	Owl/doc/fr/*
+New files: French translations of the documentation, from Denis Ducamp
+<Denis.Ducamp@hsc.fr>.
+
+$Id: Owl/doc/Attic/CHANGES,v 1.1 2001/06/24 02:28:38 solar Exp $
