@@ -12,6 +12,13 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2004/11/11	Package: shadow-utils
+"useradd" and related tools will now optionally allow user and group
+names longer than 8 characters, even though these may not be fully
+supported by the rest of Owl and by third-party software.  This is
+controlled with the added USERNAME_MAX and GROUPNAME_MAX settings in
+/etc/login.defs, both of which are documented in login.defs(5).
+
 2004/11/05	Package: modutils
 Updated to 2.4.27.
 
@@ -263,4 +270,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.54 2004/11/05 01:57:28 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.55 2004/11/11 20:38:44 solar Exp $
