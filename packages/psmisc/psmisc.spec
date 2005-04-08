@@ -1,10 +1,10 @@
-# $Id: Owl/packages/psmisc/psmisc.spec,v 1.11 2005/02/21 02:07:19 solar Exp $
+# $Id: Owl/packages/psmisc/psmisc.spec,v 1.12 2005/04/08 00:54:38 solar Exp $
 
 Summary: Utilities for managing processes on your system.
 Name: psmisc
 Version: 21.5
-Release: owl1
-License: BSD
+Release: owl2
+License: GPL
 Group: Applications/System
 URL: http://psmisc.sourceforge.net
 Source: http://prdownloads.sourceforge.net/psmisc/psmisc-%version.tar.gz
@@ -50,6 +50,9 @@ mv .%_bindir/fuser sbin/
 %_mandir/man1/pstree.1*
 
 %changelog
+* Fri Apr 08 2005 Solar Designer <solar@owl.openwall.com> 21.5-owl2
+- Updated the License tag - this code is now GPL'ed.
+
 * Mon Feb 21 2005 Solar Designer <solar@owl.openwall.com> 21.5-owl1
 - Added URL tag, corrected Source URL.
 - Moved fuser back to /sbin for RHL compatibility and since our current
