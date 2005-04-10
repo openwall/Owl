@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/dhcp/dhcpd.init,v 1.7 2005/04/10 17:50:45 solar Exp $
+# $Id: Owl/packages/dhcp/dhcpd.init,v 1.8 2005/04/10 18:01:38 solar Exp $
 #
 # chkconfig: 2345 60 40
 # description: \
@@ -29,7 +29,8 @@ start)
 	daemon --pidfile /var/run/dhcpd.pid --expect-user dhcp \
 		dhcpd -u dhcp -j /var/lib/dhcp/dhcpd $DHCPDARGS
 	STATUS=$?
-	if [ $? -ne 0 -a ! -e $DHCPD_CONF -a -e $DHCPD_CONF_SAMPLE ]; then
+	if [ $STATUS -ne 0 -a ! -e $DHCPD_CONF -a -e $DHCPD_CONF_SAMPLE ]; then
+		echo
 		echo -n "There's a sample configuration file under "
 		echo $DHCPD_CONF_SAMPLE
 	fi
