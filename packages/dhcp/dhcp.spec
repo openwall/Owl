@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.33 2005/04/10 16:16:40 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.34 2005/04/10 16:29:45 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -97,6 +97,8 @@ mkdir -p %buildroot/etc/{rc.d/init.d}
 	LIBMANDIR="%_mandir/man3" \
 	USRMANDIR="%_mandir/man1"
 
+install -m 644 -p $RPM_SOURCE_DIR/dhcpd.conf.sample .
+
 cd %buildroot
 
 mkdir -p %buildroot/etc/{rc.d/init.d,sysconfig}
@@ -165,7 +167,7 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc README RELNOTES CHANGES COPYRIGHT $RPM_SOURCE_DIR/dhcpd.conf.sample
+%doc README RELNOTES CHANGES COPYRIGHT dhcpd.conf.sample
 %_mandir/man1/omshell.1*
 %_mandir/man3/dhcpctl.3*
 %_mandir/man5/dhcp-eval.5*
@@ -206,6 +208,9 @@ fi
 * Sun Apr 10 2005 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl10
 - Re-worked the drop-root patch such that dhcpd and dhcrelay will drop
 privileges by default, adjusted the man pages accordingly.
+- Corrected the packaging of dhcpd.conf.sample (previously, when the package
+is built in our environment with rpm 4.2, a symlink would be picked instead
+of the actual file; this does not affect Owl 1.1-stable which uses rpm 3.0.6).
 - Build this package without optimizations based on strict aliasing rules
 (there were 33 gcc warnings).
 
