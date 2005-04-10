@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.37 2005/04/10 17:56:13 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.38 2005/04/10 18:29:27 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -25,6 +25,10 @@ BuildRoot: /override/%name-%version
 The ISC Dynamic Host Configuration Protocol distribution provides a
 freely redistributable reference implementation of all aspects of the
 DHCP protocol.
+
+Note that most of the actual functionality is provided by dhcp-client,
+dhcp-server, and dhcp-relay subpackages, while this package provides a
+handful of miscellaneous files only.
 
 %if %BUILD_DHCP_CLIENT
 %package client
@@ -115,8 +119,8 @@ cat << EOF > etc/sysconfig/dhcpd
 DHCPDARGS=
 EOF
 
-# Remove unpackaged files
-rm .%_bindir/omshell
+# Remove unpackaged files - development stuff
+rm .%_mandir/man3/dhcpctl.3*
 rm .%_mandir/man3/omapi.3*
 rm .%_mandir/man3/omshell.3*
 rm usr/local/include/dhcpctl.h
@@ -132,7 +136,9 @@ rm usr/local/include/omapip/buffer.h
 rm usr/local/include/omapip/omapip.h
 rm usr/local/lib/libdhcpctl.a
 rm usr/local/lib/libomapi.a
+
 %if !%BUILD_DHCP_CLIENT
+# Remove unpackaged files - the DHCP client
 rm sbin/dhclient
 rm sbin/dhclient-script
 rm .%_mandir/man5/dhclient.conf.5*
@@ -169,9 +175,8 @@ fi
 %files
 %defattr(-,root,root)
 %doc README RELNOTES CHANGES COPYRIGHT
-/etc/dhcpd.conf.sample
+%_bindir/omshell
 %_mandir/man1/omshell.1*
-%_mandir/man3/dhcpctl.3*
 %_mandir/man5/dhcp-eval.5*
 %_mandir/man5/dhcp-options.5*
 
@@ -193,6 +198,7 @@ fi
 %defattr(-,root,root)
 %config /etc/sysconfig/dhcpd
 %config /etc/rc.d/init.d/dhcpd
+/etc/dhcpd.conf.sample
 %_sbindir/dhcpd
 %_mandir/man5/dhcpd.conf.5*
 %_mandir/man5/dhcpd.leases.5*
@@ -212,11 +218,12 @@ fi
 privileges by default, adjusted the man pages accordingly.
 - Corrected the packaging of dhcpd.conf.sample, install it under /etc,
 have the startup script point the user at the sample file when needed.
-- Build this package without optimizations based on strict aliasing rules
-(there were 33 gcc warnings).
 - Provide the proper support contact (owl-users mailing list) since the ISC
 folks don't want to be bothered with questions on software that includes
 third-party modifications and that might not be based off their latest code.
+- Updated the lists of files to (not) package.
+- Build this package without optimizations based on strict aliasing rules
+(there were 33 gcc warnings).
 
 * Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.0pl2-owl9
 - Added fixes patch to deal with gcc post-upgrade issues.
