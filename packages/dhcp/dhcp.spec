@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.32 2005/04/10 12:52:42 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.33 2005/04/10 16:16:40 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -77,7 +77,7 @@ subnet.  The DHCP relay takes care of this for the client.
 %patch4 -p1
 %patch5 -p1
 
-%{expand:%%define optflags %optflags -Wall -Wno-unused}
+%{expand:%%define optflags %optflags -fno-strict-aliasing -Wall -Wno-unused}
 
 %ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
 %{expand:%%define optflags %optflags -DPTRSIZE_64BIT}
@@ -206,6 +206,8 @@ fi
 * Sun Apr 10 2005 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl10
 - Re-worked the drop-root patch such that dhcpd and dhcrelay will drop
 privileges by default, adjusted the man pages accordingly.
+- Build this package without optimizations based on strict aliasing rules
+(there were 33 gcc warnings).
 
 * Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.0pl2-owl9
 - Added fixes patch to deal with gcc post-upgrade issues.
