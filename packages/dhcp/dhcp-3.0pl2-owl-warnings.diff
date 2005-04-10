@@ -183,6 +183,17 @@ diff -urp dhcp-3.0pl2.orig/omapip/message.c dhcp-3.0pl2/omapip/message.c
  	omapi_object_type_t *type;
  
  	if (mo -> type != omapi_type_message)
+diff -urp dhcp-3.0pl2.orig/omapip/test.c dhcp-3.0pl2/omapip/test.c
+--- dhcp-3.0pl2.orig/omapip/test.c	Thu May 17 20:47:40 2001
++++ dhcp-3.0pl2/omapip/test.c	Sun Apr 10 16:06:51 2005
+@@ -45,6 +45,7 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <stdarg.h>
++#include <string.h>
+ #include <isc-dhcp/result.h>
+ #include <sys/time.h>
+ #include <omapip/omapip.h>
 diff -urp dhcp-3.0pl2.orig/relay/dhcrelay.c dhcp-3.0pl2/relay/dhcrelay.c
 --- dhcp-3.0pl2.orig/relay/dhcrelay.c	Thu Apr 19 16:48:53 2001
 +++ dhcp-3.0pl2/relay/dhcrelay.c	Sun Apr 10 12:43:19 2005
