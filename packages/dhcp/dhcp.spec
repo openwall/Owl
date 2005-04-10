@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.36 2005/04/10 17:50:45 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.37 2005/04/10 17:56:13 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -168,7 +168,8 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc README RELNOTES CHANGES COPYRIGHT dhcpd.conf.sample
+%doc README RELNOTES CHANGES COPYRIGHT
+/etc/dhcpd.conf.sample
 %_mandir/man1/omshell.1*
 %_mandir/man3/dhcpctl.3*
 %_mandir/man5/dhcp-eval.5*
