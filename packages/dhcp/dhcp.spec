@@ -1,11 +1,11 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.31 2005/01/18 13:44:09 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.32 2005/04/10 12:52:42 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
 Summary: Dynamic Host Configuration Protocol (DHCP) distribution.
 Name: dhcp
 Version: 3.0pl2
-Release: owl9
+Release: owl10
 License: ISC License
 Group: System Environment/Daemons
 URL: http://www.isc.org/products/DHCP/
@@ -203,6 +203,10 @@ fi
 %_mandir/man8/dhcrelay.8*
 
 %changelog
+* Sun Apr 10 2005 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl10
+- Re-worked the drop-root patch such that dhcpd and dhcrelay will drop
+privileges by default, adjusted the man pages accordingly.
+
 * Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.0pl2-owl9
 - Added fixes patch to deal with gcc post-upgrade issues.
 - Cleaned up the spec.

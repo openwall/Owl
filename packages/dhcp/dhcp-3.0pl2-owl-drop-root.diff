@@ -1,6 +1,6 @@
-diff -urpN dhcp-3.0pl2.orig/includes/cf/linux.h dhcp-3.0pl2/includes/cf/linux.h
---- dhcp-3.0pl2.orig/includes/cf/linux.h	Thu May 10 21:28:55 2001
-+++ dhcp-3.0pl2/includes/cf/linux.h	Sun Sep 14 17:07:06 2003
+diff -urp dhcp-3.0pl2.orig/includes/cf/linux.h dhcp-3.0pl2/includes/cf/linux.h
+--- dhcp-3.0pl2.orig/includes/cf/linux.h	Thu May 10 19:28:55 2001
++++ dhcp-3.0pl2/includes/cf/linux.h	Sun Apr 10 11:45:20 2005
 @@ -92,11 +92,11 @@ extern int h_errno;
     directory. */
  
@@ -15,9 +15,9 @@ diff -urpN dhcp-3.0pl2.orig/includes/cf/linux.h dhcp-3.0pl2/includes/cf/linux.h
  #endif
  
  /* Varargs stuff... */
-diff -urpN dhcp-3.0pl2.orig/relay/dhcrelay.8 dhcp-3.0pl2/relay/dhcrelay.8
---- dhcp-3.0pl2.orig/relay/dhcrelay.8	Thu Oct  4 23:47:39 2001
-+++ dhcp-3.0pl2/relay/dhcrelay.8	Mon Sep 15 11:56:15 2003
+diff -urp dhcp-3.0pl2.orig/relay/dhcrelay.8 dhcp-3.0pl2/relay/dhcrelay.8
+--- dhcp-3.0pl2.orig/relay/dhcrelay.8	Thu Oct  4 21:47:39 2001
++++ dhcp-3.0pl2/relay/dhcrelay.8	Sun Apr 10 12:30:19 2005
 @@ -79,6 +79,14 @@ dhcrelay - Dynamic Host Configuration Pr
  |
  .I discard
@@ -33,22 +33,36 @@ diff -urpN dhcp-3.0pl2.orig/relay/dhcrelay.8 dhcp-3.0pl2/relay/dhcrelay.8
  .I server0
  [
  .I ...serverN
-@@ -141,6 +149,12 @@ This can be unhelpful in a system startu
+@@ -141,6 +149,11 @@ This can be unhelpful in a system startu
  behaviour, specify the
  .B -q
  flag.
 +.PP
-+To run Dhcrelay in a chrooted jail, specify the
-+.B -u
-+option for the dedicated pseudo-user and additional
-+.B -j
-+for the chroot path (e.g. /var/empty).
++Upon startup, this version of dhcrelay will switch to a non-root
++pseudo-user and enter a chroot jail.  The default username (\fIdhcp\fR)
++and the default chroot jail directory path (\fI/var/empty\fR)
++may be overridden with the \fB-u\fR and \fB-j\fR options, respectively.
  .SH RELAY AGENT INFORMATION OPTIONS
  If the
  .B -a
-diff -urpN dhcp-3.0pl2.orig/relay/dhcrelay.c dhcp-3.0pl2/relay/dhcrelay.c
---- dhcp-3.0pl2.orig/relay/dhcrelay.c	Thu Apr 19 18:48:53 2001
-+++ dhcp-3.0pl2/relay/dhcrelay.c	Mon Sep 15 12:47:57 2003
+@@ -240,7 +253,12 @@ has been written for the Internet Softwa
+ by Ted Lemon in cooperation with Vixie
+ Enterprises.  To learn more about the Internet Software Consortium,
+ see
+-.B http://www.vix.com.
++.BR http://www.vix.com .
+ To learn more about Vixie
+ Enterprises, see
+-.B http://www.vix.com.
++.BR http://www.vix.com .
++.PP
++This version of dhcpd has been modified for Openwall GNU/*/Linux
++.RB ( http://www.openwall.com/Owl/ ).
++In particular, the privilege reduction functionality and the \fB-u\fR
++and \fB-j\fR options are Openwall extensions.
+diff -urp dhcp-3.0pl2.orig/relay/dhcrelay.c dhcp-3.0pl2/relay/dhcrelay.c
+--- dhcp-3.0pl2.orig/relay/dhcrelay.c	Thu Apr 19 16:48:53 2001
++++ dhcp-3.0pl2/relay/dhcrelay.c	Sun Apr 10 12:33:28 2005
 @@ -48,6 +48,12 @@ static char ocopyright[] =
  
  #include "dhcpd.h"
@@ -69,27 +83,27 @@ diff -urpN dhcp-3.0pl2.orig/relay/dhcrelay.c dhcp-3.0pl2/relay/dhcrelay.c
 +static int drop_root(char *server_user, char *server_jail)
 +{
 +	struct passwd *pw;
-+	
++
 +	if (!(pw = getpwnam(server_user)))
-+		return (-1);
++		return -1;
 +	if (!pw->pw_uid)
-+		return (-1);
++		return -1;
 +
 +	if (chroot(server_jail))
-+		return (-1);
++		return -1;
 +	if (chdir("/"))
-+		return (-1);
-+	
++		return -1;
++
 +#define group real_group
 +	if (initgroups(server_user, pw->pw_gid))
-+		return (-1);
++		return -1;
 +	if (setgid(pw->pw_gid))
-+		return (-1);
++		return -1;
 +#undef group
 +	if (setuid(pw->pw_uid))
-+		return (-1);
++		return -1;
 +
-+	return (0);
++	return 0;
 +}
 +
  int main (argc, argv, envp)
@@ -99,8 +113,8 @@ diff -urpN dhcp-3.0pl2.orig/relay/dhcrelay.c dhcp-3.0pl2/relay/dhcrelay.c
  	isc_result_t status;
  	char *s;
  
-+	char *server_user = NULL;
-+	char *server_jail = NULL;
++	char *server_user = "dhcp";
++	char *server_jail = "/var/empty";
 +
  	/* Make sure we have stdin, stdout and stderr. */
  	i = open ("/dev/null", O_RDWR);
@@ -120,27 +134,18 @@ diff -urpN dhcp-3.0pl2.orig/relay/dhcrelay.c dhcp-3.0pl2/relay/dhcrelay.c
  		} else if (!strcmp (argv [i], "-m")) {
  			if (++i == argc)
  				usage ();
-@@ -317,6 +360,19 @@ int main (argc, argv, envp)
+@@ -317,6 +360,10 @@ int main (argc, argv, envp)
  		pid = setsid ();
  	}
  
-+	/* chroot if possible */	
-+	if (server_user && !server_jail) {
-+		if (drop_root(server_user, "/var/empty") < 0)
-+			log_fatal("dhcrelay: Failed to drop root.");
-+	}
-+	else if (server_jail && !server_user)
-+		log_fatal("'-j' is only valid with '-u'");
-+	else {
-+		if (drop_root(server_user, server_jail) < 0)
-+			log_fatal("dhcrelay: Failed to drop root.");
-+	}
++	/* Drop root and enter a chroot jail. */
++	if (drop_root(server_user, server_jail))
++		log_fatal("Failed to drop root.");
 +
-+		
  	/* Start dispatching packets and timeouts... */
  	dispatch ();
  
-@@ -449,7 +505,7 @@ static void usage ()
+@@ -449,7 +496,7 @@ static void usage ()
  	log_fatal ("Usage: dhcrelay [-p <port>] [-d] [-D] [-i %s%s%s",
  	       "interface]\n                ",
  	       "[-q] [-a] [-A length] [-m append|replace|forward|discard]\n",
@@ -149,18 +154,9 @@ diff -urpN dhcp-3.0pl2.orig/relay/dhcrelay.c dhcp-3.0pl2/relay/dhcrelay.c
  }
  
  int write_lease (lease)
-@@ -637,7 +693,7 @@ int find_interface_by_agent_option (pack
- {
- 	int i = 0;
- 	u_int8_t *circuit_id = 0;
--	unsigned circuit_id_len;
-+	unsigned circuit_id_len = 0;
- 	struct interface_info *ip;
- 
- 	while (i < len) {
-diff -urpN dhcp-3.0pl2.orig/server/dhcpd.8 dhcp-3.0pl2/server/dhcpd.8
---- dhcp-3.0pl2.orig/server/dhcpd.8	Thu Oct  4 23:49:13 2001
-+++ dhcp-3.0pl2/server/dhcpd.8	Sun Sep 14 17:07:06 2003
+diff -urp dhcp-3.0pl2.orig/server/dhcpd.8 dhcp-3.0pl2/server/dhcpd.8
+--- dhcp-3.0pl2.orig/server/dhcpd.8	Thu Oct  4 21:49:13 2001
++++ dhcp-3.0pl2/server/dhcpd.8	Sun Apr 10 12:29:54 2005
 @@ -74,6 +74,14 @@ dhcpd - Dynamic Host Configuration Proto
  .I trace-playback-file
  ]
@@ -181,16 +177,25 @@ diff -urpN dhcp-3.0pl2.orig/server/dhcpd.8 dhcp-3.0pl2/server/dhcpd.8
  refuse to operate in playback mode unless you specify an alternate
  lease file.
 +.PP
-+To run the DHCP server in a chrooted jail, specify the \fB-u\fR
-+option with the dedicated pseudo-user and additional \fB-j\fR with the
-+chroot path (e.g. /var/lib/dhcp/dhcpd).
-+.PP
++Upon startup, this version of the DHCP server will switch to a non-root
++pseudo-user and enter a chroot jail.  The default username (\fIdhcp\fR)
++and the default chroot jail directory path (\fI/var/lib/dhcp/dhcpd\fR)
++may be overridden with the \fB-u\fR and \fB-j\fR options, respectively.
  .SH CONFIGURATION
  The syntax of the dhcpd.conf(5) file is discussed seperately.   This
  section should be used as an overview of the configuration process,
-diff -urpN dhcp-3.0pl2.orig/server/dhcpd.c dhcp-3.0pl2/server/dhcpd.c
---- dhcp-3.0pl2.orig/server/dhcpd.c	Wed Jan 15 00:02:33 2003
-+++ dhcp-3.0pl2/server/dhcpd.c	Mon Sep 15 12:47:38 2003
+@@ -737,3 +750,8 @@ Information about the Internet Software 
+ .B http://www.isc.org/isc\fR.
+ Information about Nominum and support contracts for DHCP and BIND can
+ be found at \fBhttp://www.nominum.com\fR.
++.PP
++This version of dhcpd has been modified for Openwall GNU/*/Linux
++.RB ( http://www.openwall.com/Owl/ ).
++In particular, the privilege reduction functionality and the \fB-u\fR
++and \fB-j\fR options are Openwall extensions.
+diff -urp dhcp-3.0pl2.orig/server/dhcpd.c dhcp-3.0pl2/server/dhcpd.c
+--- dhcp-3.0pl2.orig/server/dhcpd.c	Tue Jan 14 23:02:33 2003
++++ dhcp-3.0pl2/server/dhcpd.c	Sun Apr 10 12:03:58 2005
 @@ -55,6 +55,12 @@ static char url [] = "For info, please v
  #include "dhcpd.h"
  #include "version.h"
@@ -213,23 +218,23 @@ diff -urpN dhcp-3.0pl2.orig/server/dhcpd.c dhcp-3.0pl2/server/dhcpd.c
 +	struct passwd *pw;
 +
 +	if (!(pw = getpwnam(server_user)))
-+		return (-1);
++		return -1;
 +	if (!pw->pw_uid)
-+		return (-1);
++		return -1;
 +
 +	if (chroot(server_jail))
-+		return (-1);
++		return -1;
 +	if (chdir("/"))
-+		return (-1);
++		return -1;
 +#define group real_group
 +	if (initgroups(server_user, pw->pw_gid))
-+		return (-1);
++		return -1;
 +	if (setgid(pw->pw_gid))
-+		return (-1);
++		return -1;
 +#undef group
 +	if (setuid(pw->pw_uid))
-+		return (-1);
-+	return (0);
++		return -1;
++	return 0;
 +}
 +
  int main (argc, argv, envp)
@@ -239,9 +244,9 @@ diff -urpN dhcp-3.0pl2.orig/server/dhcpd.c dhcp-3.0pl2/server/dhcpd.c
  	char *traceoutfile = (char *)0;
  #endif
  
-+	char *server_user = NULL;
-+	char *server_jail = NULL;
-+	
++	char *server_user = "dhcp";
++	char *server_jail = "/var/lib/dhcp/dhcpd";
++
  	/* Make sure we have stdin, stdout and stderr. */
  	status = open ("/dev/null", O_RDWR);
  	if (status == 0)
@@ -281,40 +286,24 @@ diff -urpN dhcp-3.0pl2.orig/server/dhcpd.c dhcp-3.0pl2/server/dhcpd.c
  	/* Discover all the network interfaces and initialize them. */
  	discover_interfaces (DISCOVER_SERVER);
  
-@@ -565,6 +601,19 @@ int main (argc, argv, envp)
+@@ -565,6 +601,11 @@ int main (argc, argv, envp)
  			log_fatal ("There's already a DHCP server running.");
  	}
  
 +	if (pidfilewritten) {
-+		if (server_user && !server_jail) {
-+			if (drop_root(server_user, "/var/lib/dhcp/dhcpd") < 0)
-+				log_fatal("dhcpd: Failed to drop root.");
-+		}
-+		else if (server_jail && !server_user)
-+			log_fatal("'-j' is only valid with '-u'");
-+		else {
-+			if (drop_root(server_user, server_jail) < 0)
-+				log_fatal("dhcpd: Failed to drop root.");
-+		}
++		if (drop_root(server_user, server_jail))
++			log_fatal("Failed to drop root.");
 +	}
-+	
++
  	/* If we were requested to log to stdout on the command line,
  	   keep doing so; otherwise, stop. */
  	if (log_perror == -1)
-@@ -593,7 +642,24 @@ int main (argc, argv, envp)
+@@ -593,7 +634,16 @@ int main (argc, argv, envp)
  			close (i);
  			pidfilewritten = 1;
  		}
-+		if (server_user && !server_jail) {
-+			if (drop_root(server_user, "/var/lib/dhcp/dhcpd") < 0)
-+				log_fatal("dhcpd: Failed to drop root.");
-+		}
-+		else if (server_jail && !server_user)
-+			log_fatal("'-j' is only valid with '-u'");
-+		else {
-+			if (drop_root(server_user, server_jail) < 0)
-+				log_fatal("dhcpd: Failed to drop root.");
-+		}
++		if (drop_root(server_user, server_jail))
++			log_fatal("Failed to drop root.");
  	}
 +
 +	/* Start up the database... */
@@ -322,11 +311,11 @@ diff -urpN dhcp-3.0pl2.orig/server/dhcpd.c dhcp-3.0pl2/server/dhcpd.c
 +
 +	if (lftest)
 +		exit (0);
-+	
++
  #endif /* !DEBUG */
  
  #if defined (DEBUG_MEMORY_LEAKAGE) || defined (DEBUG_MALLOC_POOL) || \
-@@ -886,8 +952,9 @@ static void usage ()
+@@ -886,8 +936,9 @@ static void usage ()
  	log_info (copyright);
  	log_info (arr);
  
