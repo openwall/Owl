@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.35 2005/04/10 17:44:18 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.36 2005/04/10 17:50:45 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -99,48 +99,47 @@ mkdir -p %buildroot/etc/{rc.d/init.d}
 	LIBMANDIR="%_mandir/man3" \
 	USRMANDIR="%_mandir/man1"
 
-install -m 644 -p $RPM_SOURCE_DIR/dhcpd.conf.sample .
-
 cd %buildroot
 
-mkdir -p %buildroot/etc/{rc.d/init.d,sysconfig}
-mkdir -p %buildroot/var/lib/dhcp/{dhcpd,dhclient}/state
+mkdir -p etc/{rc.d/init.d,sysconfig}
+mkdir -p var/lib/dhcp/{dhcpd,dhclient}/state
 
-install -m 700 $RPM_SOURCE_DIR/dhcpd.init %buildroot/etc/rc.d/init.d/dhcpd
+install -m 700 $RPM_SOURCE_DIR/dhcpd.init etc/rc.d/init.d/dhcpd
+install -m 600 $RPM_SOURCE_DIR/dhcpd.conf.sample etc/
 
-touch %buildroot/var/lib/dhcp/dhcpd/state/dhcpd.leases
-touch %buildroot/var/lib/dhcp/dhclient/state/dhclient.leases
+touch var/lib/dhcp/dhcpd/state/dhcpd.leases
+touch var/lib/dhcp/dhclient/state/dhclient.leases
 
-cat <<EOF > %buildroot/etc/sysconfig/dhcpd
+cat << EOF > etc/sysconfig/dhcpd
 # Additional command line options here
 DHCPDARGS=
 EOF
 
 # Remove unpackaged files
-rm %buildroot%_bindir/omshell
-rm %buildroot%_mandir/man3/omapi.3*
-rm %buildroot%_mandir/man3/omshell.3*
-rm %buildroot/usr/local/include/dhcpctl.h
-rm %buildroot/usr/local/include/isc-dhcp/boolean.h
-rm %buildroot/usr/local/include/isc-dhcp/dst.h
-rm %buildroot/usr/local/include/isc-dhcp/int.h
-rm %buildroot/usr/local/include/isc-dhcp/lang.h
-rm %buildroot/usr/local/include/isc-dhcp/list.h
-rm %buildroot/usr/local/include/isc-dhcp/result.h
-rm %buildroot/usr/local/include/isc-dhcp/types.h
-rm %buildroot/usr/local/include/omapip/alloc.h
-rm %buildroot/usr/local/include/omapip/buffer.h
-rm %buildroot/usr/local/include/omapip/omapip.h
-rm %buildroot/usr/local/lib/libdhcpctl.a
-rm %buildroot/usr/local/lib/libomapi.a
+rm .%_bindir/omshell
+rm .%_mandir/man3/omapi.3*
+rm .%_mandir/man3/omshell.3*
+rm usr/local/include/dhcpctl.h
+rm usr/local/include/isc-dhcp/boolean.h
+rm usr/local/include/isc-dhcp/dst.h
+rm usr/local/include/isc-dhcp/int.h
+rm usr/local/include/isc-dhcp/lang.h
+rm usr/local/include/isc-dhcp/list.h
+rm usr/local/include/isc-dhcp/result.h
+rm usr/local/include/isc-dhcp/types.h
+rm usr/local/include/omapip/alloc.h
+rm usr/local/include/omapip/buffer.h
+rm usr/local/include/omapip/omapip.h
+rm usr/local/lib/libdhcpctl.a
+rm usr/local/lib/libomapi.a
 %if !%BUILD_DHCP_CLIENT
-rm %buildroot/sbin/dhclient
-rm %buildroot/sbin/dhclient-script
-rm %buildroot%_mandir/man5/dhclient.conf.5*
-rm %buildroot%_mandir/man5/dhclient.leases.5*
-rm %buildroot%_mandir/man8/dhclient.8*
-rm %buildroot%_mandir/man8/dhclient-script.8*
-rm %buildroot/var/lib/dhcp/dhclient/state/dhclient.leases
+rm sbin/dhclient
+rm sbin/dhclient-script
+rm .%_mandir/man5/dhclient.conf.5*
+rm .%_mandir/man5/dhclient.leases.5*
+rm .%_mandir/man8/dhclient.8*
+rm .%_mandir/man8/dhclient-script.8*
+rm var/lib/dhcp/dhclient/state/dhclient.leases
 %endif
 
 %pre
@@ -210,14 +209,13 @@ fi
 * Sun Apr 10 2005 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl10
 - Re-worked the drop-root patch such that dhcpd and dhcrelay will drop
 privileges by default, adjusted the man pages accordingly.
-- Corrected the packaging of dhcpd.conf.sample (previously, when the package
-is built in our environment with rpm 4.2, a symlink would be picked instead
-of the actual file; this does not affect Owl 1.1-stable which uses rpm 3.0.6).
+- Corrected the packaging of dhcpd.conf.sample, install it under /etc,
+have the startup script point the user at the sample file when needed.
 - Build this package without optimizations based on strict aliasing rules
 (there were 33 gcc warnings).
 - Provide the proper support contact (owl-users mailing list) since the ISC
 folks don't want to be bothered with questions on software that includes
-third-party modifications and might not be based off their latest code.
+third-party modifications and that might not be based off their latest code.
 
 * Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.0pl2-owl9
 - Added fixes patch to deal with gcc post-upgrade issues.

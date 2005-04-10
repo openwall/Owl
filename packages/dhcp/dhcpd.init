@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/dhcp/dhcpd.init,v 1.6 2003/09/14 13:07:41 solar Exp $
+# $Id: Owl/packages/dhcp/dhcpd.init,v 1.7 2005/04/10 17:50:45 solar Exp $
 #
 # chkconfig: 2345 60 40
 # description: \
@@ -21,10 +21,19 @@
 
 OWL_STARTUP_ENABLE=1
 
+DHCPD_CONF=/etc/dhcpd.conf
+DHCPD_CONF_SAMPLE=/etc/dhcpd.conf.sample
+
 case "$1" in
 start)
 	daemon --pidfile /var/run/dhcpd.pid --expect-user dhcp \
 		dhcpd -u dhcp -j /var/lib/dhcp/dhcpd $DHCPDARGS
+	STATUS=$?
+	if [ $? -ne 0 -a ! -e $DHCPD_CONF -a -e $DHCPD_CONF_SAMPLE ]; then
+		echo -n "There's a sample configuration file under "
+		echo $DHCPD_CONF_SAMPLE
+	fi
+	exit $STATUS
 	;;
 stop)
 	killproc --pidfile /var/run/dhcpd.pid --expect-user dhcp dhcpd
