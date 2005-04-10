@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.34 2005/04/10 16:29:45 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.35 2005/04/10 17:44:18 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -18,6 +18,7 @@ Patch2: dhcp-3.0pl2-rh-owl-script.diff
 Patch3: dhcp-3.0pl2-owl-warnings.diff
 Patch4: dhcp-3.0pl2-owl-bound.diff
 Patch5: dhcp-3.0pl2-owl-fixes.diff
+Patch6: dhcp-3.0pl2-owl-support-contact.diff
 BuildRoot: /override/%name-%version
 
 %description
@@ -76,6 +77,7 @@ subnet.  The DHCP relay takes care of this for the client.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %{expand:%%define optflags %optflags -fno-strict-aliasing -Wall -Wno-unused}
 
@@ -213,6 +215,9 @@ is built in our environment with rpm 4.2, a symlink would be picked instead
 of the actual file; this does not affect Owl 1.1-stable which uses rpm 3.0.6).
 - Build this package without optimizations based on strict aliasing rules
 (there were 33 gcc warnings).
+- Provide the proper support contact (owl-users mailing list) since the ISC
+folks don't want to be bothered with questions on software that includes
+third-party modifications and might not be based off their latest code.
 
 * Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.0pl2-owl9
 - Added fixes patch to deal with gcc post-upgrade issues.
