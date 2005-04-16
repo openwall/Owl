@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2005/04/16	kernel
+Updated to Linux 2.4.30-ow1.
+
 2005/04/10	Package: dhcp
 dhcpd(8) and dhcrelay(8) will now drop privileges by default (rather
 than only when the appropriate command line options are given).
@@ -387,4 +390,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.76 2005/04/10 18:41:27 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.77 2005/04/16 13:12:58 solar Exp $
