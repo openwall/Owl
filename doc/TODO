@@ -133,6 +133,13 @@ wrong for the assembly versions (we do not support any command-line
 options).  Update the documentation to match the reality.
 
 
+	findutils.
+
+[PRIORITY: medium]
+Update to 4.2.20+ dropping the -delete patch (a better version of it
+has been included upstream).
+
+
 	gdb.
 
 [PRIORITY: medium]
@@ -584,4 +591,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.59 2005/04/18 21:49:55 solar Exp $
+$Id: Owl/doc/TODO,v 1.60 2005/04/18 22:11:59 solar Exp $
