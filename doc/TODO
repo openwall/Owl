@@ -36,6 +36,7 @@ fail-open on mktemp(1).  automake.texi suggests bad practices (look for
 	bash.
 
 [PRIORITY: low]
+[ASSIGNED: galaxy@]
 Update to latest release (we're currently at 2.05, but 2.05b went out
 a long time ago), with our patches.  Make sure it still builds cleanly
 with -Wall (due to our patches).  Once again try to get our generic
@@ -45,20 +46,21 @@ response).
 
 	bind.
 
-[PRIORITY: low]
-[ASSIGNED: jhuuskon@]
+[PRIORITY: medium]
+[ASSIGNED: galaxy@]
 Package BIND 9.x, built without pthreads.  Use the query ID shuffle
 code from our glibc.  Allocate and use a pseudo-user, setup and use a
 chroot jail.  Ensure the PID file is dealt with safely (it shouldn't
 allow for named -> root attacks on BIND itself and on our startup
 scripts), preferably have it kept in the system's /var/run and as
-root.
+root.  (Jarno did some work on this.)
 
 
 	binutils.
 
-[PRIORITY: low]
-Update to latest release.
+[PRIORITY: medium]
+Update to latest release.  In particular, we need the "include"
+directive support in /etc/ld.so.conf.
 
 
 	bison, dialog, diffstat, diffutils, file, hdparm, man-pages.
@@ -94,6 +96,13 @@ outside of the intended directory tree.  This has been dealt with in
 tar already.
 
 
+	cvs.
+
+[PRIORITY: medium]
+Update to the latest 1.11.x or to 1.12.x.  It is starting to feel like
+a waste of time to continue back-porting security fixes to our 1.11.5.
+
+
 	dhcp.
 
 [PRIORITY: medium]
@@ -118,6 +127,11 @@ Update to coreutils (one package instead of three).
 Update DIR_COLORS from dircolors.hin.  In ls, dir, and vdir use
 __progname instead of separate binaries with hard-coded ls_mode.
 
+[PRIORITY: low]
+The man pages and texinfo documentation for true(1) and false(1) are
+wrong for the assembly versions (we do not support any command-line
+options).  Update the documentation to match the reality.
+
 
 	gdb.
 
@@ -132,10 +146,17 @@ Package a tool to trap unaligned accesses on Alpha.
 Update to latest release.
 
 
+	gettext.
+
+[PRIORITY: low]
+Split the appropriate files into a gettext-devel subpackage for Fedora
+compatibility.
+
+
 	glibc.
 
 [PRIORITY: medium]
-After upgrading to glibc 2.3.4, patch its __libc_message() to write to
+After upgrading to glibc 2.3.5, patch its __libc_message() to write to
 syslog by default (rather than as a fallback) and when doing so to
 connect to /dev/log and write there directly, without utilizing
 vsyslog(3) (which may use malloc()-family functions and thus is unsafe
@@ -188,6 +209,14 @@ items are in a separate non-public TODO list for just John.)
 [PRIORITY: low]
 [ASSIGNED: nergal@]
 Update to latest releases.
+
+
+	ltrace.
+
+[PRIORITY: medium]
+[ASSIGNED: mci@]
+Package libelf or elfutils.  Update ltrace to the new version to make
+it work again after our binutils update (which has already been made).
 
 
 	mailx.
@@ -290,7 +319,15 @@ C & cdk or even C++ & ndk++ (which would then be packaged).
 
 [PRIORITY: low]
 Replace all of the RH-derived networking scripts with our own (yet to
-be written).
+be written) or with etcnet:
+
+http://pilot.org.ua/etcnet/
+
+[PRIORITY: low]
+Unmount any tmpfs filesystems prior to invoking swapoff.  Otherwise,
+on swapoff, any swapped out data on tmpfs is first loaded into memory
+which may be taking a long time or may fail or cause other things to
+fail if there's insufficient physical memory available.
 
 
 	pam.
@@ -349,6 +386,10 @@ Solve the DoS-against-itself on the temporary file.
 	perl.
 
 [PRIORITY: low]
+Double-check the perl packages in Fedora and RHEL and likely bump
+Epoch to 2 in our package for compatibility.
+
+[PRIORITY: low]
 Re-implement temporary file handling in CGI.pm making use of File::Temp.
 
 [PRIORITY: low]
@@ -398,8 +439,29 @@ Update to 3.22+.
 	rpm.
 
 [PRIORITY: medium]
+[ASSIGNED: galaxy@]
+Should remove old files on "-U --force" even if package versions
+match.  Right now, when forcibly updating a package to what appears to
+be the same version, but the previously installed package contains
+files that no longer exist in the package being installed, the files
+are not removed from the system and become orphaned.
+
+[PRIORITY: medium]
+[ASSIGNED: galaxy@]
+Provide a safe default for %_repackage_dir; /var/tmp is not quite it.
+
+[PRIORITY: medium]
+[ASSIGNED: galaxy@]
+Set umask 022 for install scripts execution.
+
+[PRIORITY: medium]
 Audit and correct rpm's temporary file handling and its support for
 package signature checking.
+
+[PRIORITY: low]
+[ASSIGNED: galaxy@]
+Once we have a libelf or elfutils package (for ltrace), make rpm also
+use the system's libelf.
 
 
 	shadow-utils.
@@ -463,6 +525,15 @@ Pass IP addresses to login once it supports that.
 Re-enable IPv6 in the client once glibc is fixed.
 
 
+	tcb.
+
+[PRIORITY: medium]
+Fix the strict aliasing issues.
+
+[PRIORITY: low]
+Bump syslog priorities of many pam_tcb error messages.
+
+
 	traceroute.
 
 [PRIORITY: medium]
@@ -489,6 +560,12 @@ This is now implemented in ALT Linux's package, so we need to import
 from there.
 
 [PRIORITY: low]
+In crontab(1), automatically convert input files from DOS linefeeds
+whenever needed.  Alternatively, have crond(8) support crontab files
+with DOS linefeeds.  (This is starting to become a frequent problem in
+virtual hosting environments.)
+
+[PRIORITY: low]
 Reject or support long usernames in crontab(1).
 
 
@@ -507,4 +584,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.58 2005/03/14 06:03:11 solar Exp $
+$Id: Owl/doc/TODO,v 1.59 2005/04/18 21:49:55 solar Exp $
