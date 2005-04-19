@@ -1,19 +1,22 @@
-# $Id: Owl/packages/automake/automake.spec,v 1.10 2004/11/23 22:40:45 mci Exp $
+# $Id: Owl/packages/automake/automake.spec,v 1.11 2005/04/19 03:05:02 galaxy Exp $
 
-%define api_version 1.8
+%define BUILD_TEST 0
+
+%define api_version 1.9
 
 Summary: A GNU tool for automatically creating Makefiles.
 Name: automake
-Version: %{api_version}.3
+Version: %{api_version}.5
 Release: owl1
 License: GPL
 Group: Development/Tools
 URL: http://sourceware.cygnus.com/automake/
 Source: ftp://ftp.gnu.org/gnu/automake/automake-%version.tar.bz2
-Patch0: automake-1.8.2-owl-info.diff
+Patch0: automake-1.9.5-owl-info.diff
 PreReq: /sbin/install-info
 Requires: perl
 BuildRequires: autoconf >= 2.59
+BuildRequires: texinfo >= 4.8
 BuildArchitectures: noarch
 BuildRoot: /override/%name-%version
 
@@ -27,11 +30,16 @@ template files.
 
 %build
 %configure
-make
+%__make
+%if %BUILD_TEST
+%__make check
+%endif
 
 %install
 rm -rf %buildroot
 %makeinstall
+
+bzip2 -9f ChangeLog
 
 mkdir -p %buildroot%_datadir/aclocal
 
@@ -48,7 +56,7 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS COPYING ChangeLog INSTALL NEWS README THANKS TODO
+%doc AUTHORS COPYING ChangeLog.bz2 NEWS README THANKS TODO
 %_bindir/*
 %_infodir/*.info*
 %_datadir/automake-%api_version
@@ -56,6 +64,14 @@ fi
 %dir %_datadir/aclocal
 
 %changelog
+* Wed Mar 30 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.9.5-owl1
+- Updated to 1.9.5.
+- Added texinfo >= 4.8 to BuildRequires.
+- Changed make to %%__make in the spec file.
+- Removed INSTALL from documentation since it isn't needed there.
+- Compressed ChangeLog to save some space.
+- Added optional testsuite.
+
 * Sat Sep 11 2004 Solar Designer <solar@owl.openwall.com> 1.8.3-owl1
 - Make it official, and do not use RPM's exclude macro on info dir file just
 yet to avoid introducing additional chicken-egg problems.

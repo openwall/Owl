@@ -1,0 +1,18 @@
+diff -puNr automake-1.9.5.orig/doc/automake.texi automake-1.9.5/doc/automake.texi
+--- automake-1.9.5.orig/doc/automake.texi	Sat Feb 12 21:16:20 2005
++++ automake-1.9.5/doc/automake.texi	Tue Mar 29 23:02:25 2005
+@@ -34,12 +34,12 @@ published by the Free Software Foundatio
+ 
+ @dircategory Software development
+ @direntry
+-* automake: (automake).         Making Makefile.in's.
++* automake: (automake).                          Making Makefile.in's.
+ @end direntry
+ 
+ @dircategory Individual utilities
+ @direntry
+-* aclocal: (automake)Invoking aclocal.          Generating aclocal.m4.
++* aclocal: (automake)Invoking aclocal.           Generating aclocal.m4.
+ @end direntry
+ 
+ @titlepage
