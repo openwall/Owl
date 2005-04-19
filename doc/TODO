@@ -487,12 +487,14 @@ can log both into wtmp.
 	strace.
 
 [PRIORITY: low]
-32-bit UID handling with Linux 2.4.x (should look at the package in
-ALT Linux first).  Is this maybe already solved with strace-4.5.1-owl2?
-Should double-check and update or drop this TODO item accordingly.
+Update to 4.5.7+ with ALT's patches.
 
 [PRIORITY: low]
-Deal with incorrect pipe(2) reporting on Alpha.
+After the above update is complete, test 32-bit UIDs/GIDs reporting.
+
+[PRIORITY: low]
+After the update, also re-test pipe(2) reporting on Alpha and fix it
+if it's still incorrect.
 
 
 	sysklogd.
@@ -591,4 +593,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.60 2005/04/18 22:11:59 solar Exp $
+$Id: Owl/doc/TODO,v 1.61 2005/04/19 00:12:53 solar Exp $
