@@ -490,11 +490,8 @@ can log both into wtmp.
 Update to 4.5.7+ with ALT's patches.
 
 [PRIORITY: low]
-After the above update is complete, test 32-bit UIDs/GIDs reporting.
-
-[PRIORITY: low]
-After the update, also re-test pipe(2) reporting on Alpha and fix it
-if it's still incorrect.
+After the above update is complete, re-test pipe(2) reporting on Alpha
+and fix it if it's still incorrect.
 
 
 	sysklogd.
@@ -593,4 +590,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.61 2005/04/19 00:12:53 solar Exp $
+$Id: Owl/doc/TODO,v 1.62 2005/04/19 00:22:13 solar Exp $
