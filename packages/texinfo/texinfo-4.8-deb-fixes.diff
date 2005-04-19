@@ -1,0 +1,34 @@
+diff -puNr texinfo-4.8.orig/info/infodoc.c texinfo-4.8/info/infodoc.c
+--- texinfo-4.8.orig/info/infodoc.c	Wed Mar 30 02:29:00 2005
++++ texinfo-4.8/info/infodoc.c	Wed Mar 30 02:36:11 2005
+@@ -185,6 +185,10 @@ static char *info_help_keys_text[][2] = 
+ 
+ #endif /* !INFOKEY */
+ 
++static char *where_is_rep = (char *)NULL;
++static int where_is_rep_index = 0;
++static int where_is_rep_size = 0;
++
+ static char *where_is_internal (Keymap map, InfoCommand *cmd);
+ 
+ void
+@@ -334,6 +338,8 @@ create_internal_info_help_node (int help
+         {
+           InfoCommand *cmd = DocInfoCmd(&function_doc_array[i]);
+ 
++          where_is_rep_index = 0;
++
+           if (InfoFunction(cmd) != (VFunction *) info_do_lowercase_version
+               && !where_is_internal (info_keymap, cmd)
+               && !where_is_internal (echo_area_keymap, cmd))
+@@ -1052,10 +1058,6 @@ replace_in_documentation (char *string, 
+ 
+ /* Return a string of characters which could be typed from the keymap
+    MAP to invoke FUNCTION. */
+-static char *where_is_rep = (char *)NULL;
+-static int where_is_rep_index = 0;
+-static int where_is_rep_size = 0;
+-
+ char *
+ where_is (Keymap map, InfoCommand *cmd)
+ {

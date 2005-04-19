@@ -1,0 +1,27 @@
+diff -puNr texinfo-4.8.orig/util/texi2dvi texinfo-4.8/util/texi2dvi
+--- texinfo-4.8.orig/util/texi2dvi	Fri Dec 31 18:03:05 2004
++++ texinfo-4.8/util/texi2dvi	Wed Mar 30 02:03:38 2005
+@@ -94,7 +94,6 @@ recode=false
+ set_language=
+ textra=         # Extra TeX commands to insert in the input file.
+ textra_cmd=     # sed command to insert TEXTRA where appropriate
+-tmpdir=${TMPDIR:-/tmp}/t2d$$  # avoid collisions on 8.3 filesystems.
+ txincludes=     # TEXINPUTS extensions, with trailing colon
+ txiprereq=19990129 # minimum texinfo.tex version with macro expansion
+ verbose=false   # echo for verbose mode
+@@ -264,12 +263,11 @@ fi
+ 
+ 
+ # Prepare the temporary directory.  Remove it at exit, unless debugging.
++tmpdir=`mktemp -dt texi2dvi.XXXXXXXXXX` || exit 1
++
+ if test -z "$debug"; then
+-  trap "cd / && rm -rf $tmpdir" 0 1 2 15
++  trap "rm -rf -- $tmpdir" EXIT HUP INT TERM
+ fi
+-
+-# Create the temporary directory with strict rights
+-(umask 077 && mkdir $tmpdir) || exit 1
+ 
+ # Prepare the tools we might need.  This may be extra work in some
+ # cases, but improves the readability of the script.

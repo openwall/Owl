@@ -1,22 +1,26 @@
-$Id: dir,v 1.2 1996/09/24 18:43:01 karl Exp $
-This is the file .../info/dir, which contains the topmost node of the
-Info hierarchy.  The first time you invoke Info you start off
-looking at that node, which is (dir)Top.
+This is the file .../info/dir, which contains the
+topmost node of the Info hierarchy, called (dir)Top.
+The first time you invoke Info you start off looking at this node.
 
-File: dir	Node: Top	This is the top of the INFO tree
+File: dir,	Node: Top	This is the top of the INFO tree
 
-  This (the Directory node) gives a menu of major topics. 
+  This (the Directory node) gives a menu of major topics.
   Typing "q" exits, "?" lists all Info commands, "d" returns here,
   "h" gives a primer for first-timers,
-  "mEmacs<Return>" visits the Emacs topic, etc.
+  "mEmacs<Return>" visits the Emacs manual, etc.
 
   In Emacs, you can click mouse button 2 on a menu item or cross reference
   to select it.
 
-* Menu: 
+* Menu:
 
 Texinfo documentation system
-* Info: (info).                                 Documentation browsing system.
-
-Miscellaneous
-* bash: (bash).                                 The Bourne Again Shell.
+* Info: (info).         How to use the documentation browsing system.
+* Texinfo: (texinfo).           The GNU documentation format.
+* info standalone: (info-stnd).            Read Info documents without Emacs.
+* infokey: (info-stnd)Invoking infokey.    Compile Info customizations.
+* install-info: (texinfo)Invoking install-info. Update info/dir entries.
+* makeinfo: (texinfo)Invoking makeinfo.         Translate Texinfo source.
+* texi2dvi: (texinfo)Format with texi2dvi.      Print Texinfo documents.
+* texi2pdf: (texinfo)PDF Output.                PDF output for Texinfo.
+* texindex: (texinfo)Format with tex/texindex.  Sort Texinfo index files.

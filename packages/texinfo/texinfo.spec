@@ -1,26 +1,27 @@
-# $Id: Owl/packages/texinfo/texinfo.spec,v 1.19 2005/01/20 05:07:04 solar Exp $
+# $Id: Owl/packages/texinfo/texinfo.spec,v 1.20 2005/04/19 03:12:52 galaxy Exp $
+
+%define BUILD_TEST 1
 
 Summary: Tools needed to create Texinfo format documentation files.
 Name: texinfo
-Version: 4.2
-Release: owl4
+Version: 4.8
+Release: owl1
 License: GPL
 Group: Applications/Publishing
-Source0: ftp://ftp.gnu.org/gnu/texinfo/texinfo-%version.tar.gz
+Source0: ftp://ftp.gnu.org/gnu/texinfo/texinfo-%version.tar.bz2
 Source1: info-dir
-Patch0: texinfo-4.2-owl-texindex-tmp.diff
-Patch1: texinfo-4.2-owl-alt-texi2dvi-tmp.diff
-Patch2: texinfo-4.2-rh-texi2dvi-fileext.diff
-Patch3: texinfo-4.2-mdk-alt-bz2-support.diff
-Patch4: texinfo-4.2-rh-owl-data_size-fix.diff
-Patch5: texinfo-4.2-deb-fixes.diff
-Patch6: texinfo-4.2-owl-info.diff
+Patch0: texinfo-4.8-owl-texindex-tmp.diff
+Patch1: texinfo-4.8-owl-alt-texi2dvi-tmp.diff
+Patch2: texinfo-4.8-mdk-alt-bz2-support.diff
+Patch3: texinfo-4.2-rh-owl-data_size-fix.diff
+Patch4: texinfo-4.8-deb-fixes.diff
+Patch5: texinfo-4.8-owl-info.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
 Requires: mktemp >= 1:1.3.1
 BuildRoot: /override/%name-%version
 
-%define __spec_install_post %_libdir/rpm/brp-strip \; %_libdir/rpm/brp-strip-comment-note
+#%%define __spec_install_post %_libdir/rpm/brp-strip \; %_libdir/rpm/brp-strip-comment-note
 
 %description
 Texinfo is a documentation system that can produce both online
@@ -45,53 +46,46 @@ browser program for viewing Info files.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
+
+%{expand: %%define optflags %optflags -Wall}
 
 %build
 unset LINGUAS || :
+export LC_ALL=C
 %configure --mandir=%_mandir --infodir=%_infodir
 %__make
-gzip -9nf ChangeLog
+%if %BUILD_TEST
+%__make check
+%endif
+bzip2 -9f ChangeLog*
 
 %install
 rm -rf %buildroot
 mkdir -p %buildroot/{etc,sbin}
 
+export LC_ALL=C
 %makeinstall
 
 cd %buildroot
-install -m 644 $RPM_SOURCE_DIR/info-dir etc/info-dir
-ln -sf /etc/info-dir %buildroot%_infodir/dir
-mv .%_prefix/bin/install-info sbin/
-gzip -9nf .%_infodir/*info*
-
-# XXX: (GM): Remove unpackaged files (check later)
-rm %buildroot%_bindir/infokey
-rm %buildroot%_mandir/man1/info.1*
-rm %buildroot%_mandir/man1/install-info.1*
-rm %buildroot%_mandir/man1/makeinfo.1*
-rm %buildroot%_mandir/man1/texi2dvi.1*
-rm %buildroot%_mandir/man1/texindex.1*
-rm %buildroot%_mandir/man5/info.5*
-rm %buildroot%_mandir/man5/texinfo.5*
-rm %buildroot%_datadir/texinfo/texinfo.dtd
-rm %buildroot%_datadir/texinfo/texinfo.xsl
+mv .%_infodir/dir .%_sysconfdir/info-dir
+ln -s %_sysconfdir/info-dir %buildroot%_infodir/dir
+mv .%_bindir/install-info sbin/
 
 %post
-/sbin/install-info %_infodir/texinfo.gz %_infodir/dir
+/sbin/install-info %_infodir/texinfo.* %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/texinfo.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/texinfo.* %_infodir/dir
 fi
 
 %post -n info
-/sbin/install-info %_infodir/info-stnd.info.gz %_infodir/dir
+/sbin/install-info %_infodir/info-stnd.info.* %_infodir/dir
 
 %preun -n info
 if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete \
-		%_infodir/info-stnd.info.gz %_infodir/dir
+		%_infodir/info-stnd.info.* %_infodir/dir
 fi
 
 %files
@@ -101,19 +95,36 @@ fi
 %_prefix/bin/makeinfo
 %_prefix/bin/texindex
 %_prefix/bin/texi2dvi
+%_prefix/bin/texi2pdf
 %_infodir/texinfo*
 %_prefix/share/locale/*/*/*
+%_mandir/man1/makeinfo.1*
+%_mandir/man1/texi2dvi.1*
+%_mandir/man1/texindex.1*
+%_mandir/man5/texinfo.5*
+%_datadir/texinfo
 
 %files -n info
 %defattr(-,root,root)
-%config(noreplace) %verify(not size md5 mtime) /etc/info-dir
+%config(noreplace) %verify(not size md5 mtime) %_sysconfdir/info-dir
 %config(noreplace) %_infodir/dir
 %_prefix/bin/info
 %_infodir/info.info*
 %_infodir/info-stnd.info*
 /sbin/install-info
+%_bindir/infokey
+%_mandir/man1/info.1*
+%_mandir/man1/infokey.1*
+%_mandir/man1/install-info.1*
+%_mandir/man5/info.5*
+
 
 %changelog
+* Wed Mar 30 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.8-owl1
+- Updated to 4.8.
+- Set LC_ALL=C to use English in the produced files.
+- Reviewed unpackaged files and included them.
+
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl4
 - Removed verify checks for info-dir since it's heavily modified during
 the system lifetime.

@@ -1,0 +1,40 @@
+diff -puNr texinfo-4.8.orig/doc/info-stnd.texi texinfo-4.8/doc/info-stnd.texi
+--- texinfo-4.8.orig/doc/info-stnd.texi	Tue Dec 14 16:58:15 2004
++++ texinfo-4.8/doc/info-stnd.texi	Wed Mar 30 03:15:35 2005
+@@ -37,8 +37,9 @@ Software Foundation raise funds for GNU 
+ 
+ @dircategory Texinfo documentation system
+ @direntry
+-* info standalone: (info-stnd).            Read Info documents without Emacs.
+-* infokey: (info-stnd)Invoking infokey.    Compile Info customizations.
++* info standalone: (info-stnd).                 Read Info documents without
++                                                Emacs.
++* infokey: (info-stnd)Invoking infokey.         Compile Info customizations.
+ @end direntry
+ 
+ @titlepage
+diff -puNr texinfo-4.8.orig/doc/info.texi texinfo-4.8/doc/info.texi
+--- texinfo-4.8.orig/doc/info.texi	Wed Oct  6 21:29:48 2004
++++ texinfo-4.8/doc/info.texi	Wed Mar 30 03:15:52 2005
+@@ -39,7 +39,8 @@ license to the document, as described in
+ 
+ @dircategory Texinfo documentation system
+ @direntry
+-* Info: (info).         How to use the documentation browsing system.
++* Info: (info).                                 How to use the documentation
++                                                browsing system.
+ @end direntry
+ 
+ @titlepage
+diff -puNr texinfo-4.8.orig/doc/texinfo.txi texinfo-4.8/doc/texinfo.txi
+--- texinfo-4.8.orig/doc/texinfo.txi	Wed Dec 29 15:06:41 2004
++++ texinfo-4.8/doc/texinfo.txi	Wed Mar 30 03:10:55 2005
+@@ -56,7 +56,7 @@ Software Foundation raise funds for GNU 
+ 
+ @dircategory Texinfo documentation system
+ @direntry
+-* Texinfo: (texinfo).           The GNU documentation format.
++* Texinfo: (texinfo).                           The GNU documentation format.
+ * install-info: (texinfo)Invoking install-info. Update info/dir entries.
+ * texi2dvi: (texinfo)Format with texi2dvi.      Print Texinfo documents.
+ * texi2pdf: (texinfo)PDF Output.                PDF output for Texinfo.
