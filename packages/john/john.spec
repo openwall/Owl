@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.46 2005/04/17 19:25:32 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.47 2005/04/19 21:49:13 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.37.8
+Version: 1.6.37.9
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -74,6 +74,10 @@ cp -a john-1.6/doc/* doc/john-1.6/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Wed Apr 20 2005 Solar Designer <solar@owl.openwall.com> 1.6.37.9-owl1
+- Corrected handling of BSDI-style DES-based hashes and of 8-bit characters
+with traditional DES-based hashes; this was broken with the previous change.
+
 * Tue Apr 17 2005 Solar Designer <solar@owl.openwall.com> 1.6.37.8-owl1
 - Even more bitslice DES set_key*() optimizations: use a separate loop for
 undoing the old password beyond the new password's length (this simplifies
