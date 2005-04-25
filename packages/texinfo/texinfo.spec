@@ -1,4 +1,4 @@
-# $Id: Owl/packages/texinfo/texinfo.spec,v 1.21 2005/04/25 05:30:36 galaxy Exp $
+# $Id: Owl/packages/texinfo/texinfo.spec,v 1.22 2005/04/25 20:01:42 galaxy Exp $
 
 %define BUILD_TEST 1
 
@@ -121,7 +121,7 @@ fi
 
 
 %changelog
-* Wed Mar 30 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.8-owl2
+* Mon Apr 25 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.8-owl2
 - Fixed info files installation as suggested by Dmitry V. Levin.
 - Reverted back the removal of the __spec_install_post macro since its
 absence breaks the package build. We have to fix our rpm package first.
