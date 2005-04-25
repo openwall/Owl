@@ -1,11 +1,11 @@
-# $Id: Owl/packages/texinfo/texinfo.spec,v 1.20 2005/04/19 03:12:52 galaxy Exp $
+# $Id: Owl/packages/texinfo/texinfo.spec,v 1.21 2005/04/25 05:30:36 galaxy Exp $
 
 %define BUILD_TEST 1
 
 Summary: Tools needed to create Texinfo format documentation files.
 Name: texinfo
 Version: 4.8
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Publishing
 Source0: ftp://ftp.gnu.org/gnu/texinfo/texinfo-%version.tar.bz2
@@ -48,6 +48,7 @@ browser program for viewing Info files.
 %patch5 -p1
 
 %{expand: %%define optflags %optflags -Wall}
+%define __spec_install_post %_libdir/rpm/brp-strip \; %_libdir/rpm/brp-strip-comment-note
 
 %build
 unset LINGUAS || :
@@ -72,20 +73,20 @@ ln -s %_sysconfdir/info-dir %buildroot%_infodir/dir
 mv .%_bindir/install-info sbin/
 
 %post
-/sbin/install-info %_infodir/texinfo.* %_infodir/dir
+/sbin/install-info %_infodir/texinfo %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/texinfo.* %_infodir/dir
+	/sbin/install-info --delete %_infodir/texinfo %_infodir/dir
 fi
 
 %post -n info
-/sbin/install-info %_infodir/info-stnd.info.* %_infodir/dir
+/sbin/install-info %_infodir/info-stnd.info %_infodir/dir
 
 %preun -n info
 if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete \
-		%_infodir/info-stnd.info.* %_infodir/dir
+		%_infodir/info-stnd.info %_infodir/dir
 fi
 
 %files
@@ -120,6 +121,11 @@ fi
 
 
 %changelog
+* Wed Mar 30 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.8-owl2
+- Fixed info files installation as suggested by Dmitry V. Levin.
+- Reverted back the removal of the __spec_install_post macro since its
+absence breaks the package build. We have to fix our rpm package first.
+
 * Wed Mar 30 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.8-owl1
 - Updated to 4.8.
 - Set LC_ALL=C to use English in the produced files.
