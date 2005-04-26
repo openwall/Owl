@@ -533,9 +533,6 @@ Re-enable IPv6 in the client once glibc is fixed.
 
 	tcb.
 
-[PRIORITY: medium]
-Fix the strict aliasing issues.
-
 [PRIORITY: low]
 Bump syslog priorities of many pam_tcb error messages.
 
@@ -590,4 +587,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.62 2005/04/19 00:22:13 solar Exp $
+$Id: Owl/doc/TODO,v 1.63 2005/04/26 05:19:47 solar Exp $
