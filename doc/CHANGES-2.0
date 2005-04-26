@@ -12,8 +12,8 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
-2005/04/25	Package: automake
-Updated to 1.9.5.
+2005/04/25	Packages: automake, patchutils
+Updated automake to 1.9.5.
 
 2005/04/25	Package: texinfo
 Updated to 4.8.
@@ -402,4 +402,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.79 2005/04/26 02:17:55 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.80 2005/04/26 05:33:36 solar Exp $
