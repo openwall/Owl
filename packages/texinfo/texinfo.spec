@@ -1,4 +1,4 @@
-# $Id: Owl/packages/texinfo/texinfo.spec,v 1.22 2005/04/25 20:01:42 galaxy Exp $
+# $Id: Owl/packages/texinfo/texinfo.spec,v 1.23 2005/04/26 02:09:55 solar Exp $
 
 %define BUILD_TEST 1
 
@@ -118,7 +118,6 @@ fi
 %_mandir/man1/infokey.1*
 %_mandir/man1/install-info.1*
 %_mandir/man5/info.5*
-
 
 %changelog
 * Mon Apr 25 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.8-owl2
