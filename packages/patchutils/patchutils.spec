@@ -1,9 +1,9 @@
-# $Id: Owl/packages/patchutils/patchutils.spec,v 1.3 2004/11/28 18:47:17 solar Exp $
+# $Id: Owl/packages/patchutils/patchutils.spec,v 1.4 2005/04/26 05:32:44 solar Exp $
 
 Summary: Patchutils is a small collection of programs that operate on patch files.
 Name: patchutils
 Version: 0.2.30
-Release: owl3
+Release: owl4
 License: GPL
 Group: Applications/Text
 URL: http://cyberelk.net/tim/%name/
@@ -41,10 +41,8 @@ This version contains:
 %patch2 -p1
 
 %build
-autoconf
-aclocal
-automake -ia
 %configure
+%__make
 
 %install
 rm -rf %buildroot
@@ -57,6 +55,12 @@ rm -rf %buildroot
 %_mandir/*/*
 
 %changelog
+* Tue Apr 26 2005 Solar Designer <solar@owl.openwall.com> 0.2.30-owl4
+- Dropped the currently unneeded invocations of autoconf, aclocal, automake
+to make the package build with the new automake installed on the system.
+- Added an explicit invocation of make in %build, do not rely on make install
+to also build the programs.
+
 * Sun Nov 28 2004 Juan M. Bello Rivas <jmbr@owl.openwall.com> 0.2.30-owl3
 - Corrected two instances of calls to memory allocation functions where there
 was no check for their return values.
