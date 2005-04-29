@@ -1,11 +1,11 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.38 2005/04/10 18:29:27 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.39 2005/04/29 12:45:21 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
 Summary: Dynamic Host Configuration Protocol (DHCP) distribution.
 Name: dhcp
 Version: 3.0pl2
-Release: owl10
+Release: owl11
 License: ISC License
 Group: System Environment/Daemons
 URL: http://www.isc.org/products/DHCP/
@@ -161,6 +161,7 @@ if [ $1 -ge 2 ]; then
 fi
 
 %post server
+/sbin/chkconfig --add dhcpd
 if [ -f /var/run/dhcp.restart ]; then
 	/etc/rc.d/init.d/dhcpd start
 fi
@@ -213,6 +214,10 @@ fi
 %_mandir/man8/dhcrelay.8*
 
 %changelog
+* Fri Apr 29 2005 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl11
+- Do register dhcpd with chkconfig, but don't enable it for any runlevels
+by default.
+
 * Sun Apr 10 2005 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl10
 - Re-worked the drop-root patch such that dhcpd and dhcrelay will drop
 privileges by default, adjusted the man pages accordingly.

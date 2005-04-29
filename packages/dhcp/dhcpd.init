@@ -1,7 +1,7 @@
 #!/bin/sh
-# $Id: Owl/packages/dhcp/dhcpd.init,v 1.8 2005/04/10 18:01:38 solar Exp $
+# $Id: Owl/packages/dhcp/dhcpd.init,v 1.9 2005/04/29 12:45:21 solar Exp $
 #
-# chkconfig: 2345 60 40
+# chkconfig: - 60 40
 # description: \
 # 	The Internet Software Consortium DHCP Server, dhcpd, implements \
 # 	the Dynamic Host Configuration Protocol (DHCP) and the Internet \
