@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.39 2005/04/29 12:45:21 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.40 2005/04/29 12:48:49 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -19,6 +19,7 @@ Patch3: dhcp-3.0pl2-owl-warnings.diff
 Patch4: dhcp-3.0pl2-owl-bound.diff
 Patch5: dhcp-3.0pl2-owl-fixes.diff
 Patch6: dhcp-3.0pl2-owl-support-contact.diff
+PreReq: grep, shadow-utils
 BuildRoot: /override/%name-%version
 
 %description
@@ -48,7 +49,7 @@ fail, by statically assigning an address.
 Summary: The ISC DHCP server daemon.
 Group: System Environment/Daemons
 PreReq: %name = %version-%release
-PreReq: /sbin/chkconfig
+PreReq: /sbin/chkconfig, fileutils
 Requires: /var/empty
 Obsoletes: dhcpd
 
@@ -217,6 +218,9 @@ fi
 * Fri Apr 29 2005 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl11
 - Do register dhcpd with chkconfig, but don't enable it for any runlevels
 by default.
+- Added "PreReq: grep, shadow-utils" to the common "dhcp" subpackage (for
+grep, groupadd, useradd), "PreReq: fileutils" to the server subpackage (for
+rm, touch).
 
 * Sun Apr 10 2005 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl10
 - Re-worked the drop-root patch such that dhcpd and dhcrelay will drop
