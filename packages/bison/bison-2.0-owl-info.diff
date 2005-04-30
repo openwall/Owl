@@ -1,0 +1,13 @@
+diff -ur bison-2.0.orig/doc/bison.texinfo bison-2.0/doc/bison.texinfo
+--- bison-2.0.orig/doc/bison.texinfo	Wed Dec 22 21:09:51 2004
++++ bison-2.0/doc/bison.texinfo	Wed Apr 27 15:10:13 2005
+@@ -64,7 +64,8 @@
+ 
+ @dircategory GNU programming tools
+ @direntry
+-* bison: (bison).       @acronym{GNU} parser generator (Yacc replacement).
++* bison: (bison).                               @acronym{GNU} parser generator
++                                                (Yacc replacement).
+ @end direntry
+ 
+ @ifset shorttitlepage-enabled

@@ -1,13 +1,16 @@
-# $Id: Owl/packages/bison/bison.spec,v 1.19 2005/01/18 13:24:58 solar Exp $
+# $Id: Owl/packages/bison/bison.spec,v 1.20 2005/04/30 22:57:08 solar Exp $
+
+%define BUILD_TEST 0
 
 Summary: A GNU general-purpose parser generator.
 Name: bison
-Version: 1.35
-Release: owl4
+Version: 2.0
+Release: owl1
 License: GPL
 Group: Development/Tools
+URL: http://www.gnu.org/software/bison/
 Source: ftp://ftp.gnu.org/gnu/bison/bison-%version.tar.bz2
-Patch0: bison-1.30-owl-tmp.diff
+Patch0: bison-2.0-owl-info.diff
 PreReq: /sbin/install-info
 BuildRequires: mktemp >= 1:1.3.1
 BuildRoot: /override/%name-%version
@@ -29,21 +32,23 @@ to be very proficient in C programming to be able to program with Bison.
 %{expand:%%define optflags %optflags -Wall}
 
 %build
+autoreconf
 %configure
 %__make
+%if %BUILD_TEST
+%__make check
+%endif
 
 %install
 rm -rf %buildroot
 %makeinstall
 
 %post
-/sbin/install-info %_infodir/bison.info.gz %_infodir/dir \
-	--entry="* bison: (bison).                               The GNU parser generator."
+/sbin/install-info %_infodir/bison.info %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/bison.info.gz %_infodir/dir \
-		--entry="* bison: (bison).                               The GNU parser generator."
+	/sbin/install-info --delete %_infodir/bison.info %_infodir/dir
 fi
 
 %files
@@ -54,8 +59,17 @@ fi
 %_infodir/bison.info*
 %exclude %_infodir/dir
 %_bindir/*
+%_libdir/liby.a
 
 %changelog
+* Wed Apr 27 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.0-owl1
+- Adjusted post-/pre- scriptlets to not use an explicit compression suffix.
+
+* Mon Apr 04 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.0-owl0
+- Updated to 2.0.
+- Dropped -tmp patch; regenerate configure instead.
+- Added optional testsuite.
+
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.35-owl4
 - Fixed package filelist to include files which belong to this package only.
 - Use %%_datadir for data, not %%_libdir.
