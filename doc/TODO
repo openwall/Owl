@@ -163,6 +163,9 @@ compatibility.
 	glibc.
 
 [PRIORITY: medium]
+Update to glibc 2.3.5+.
+
+[PRIORITY: medium]
 After upgrading to glibc 2.3.5, patch its __libc_message() to write to
 syslog by default (rather than as a fallback) and when doing so to
 connect to /dev/log and write there directly, without utilizing
@@ -220,7 +223,7 @@ Update to latest releases.
 
 	ltrace.
 
-[PRIORITY: medium]
+[PRIORITY: high]
 [ASSIGNED: mci@]
 Package libelf or elfutils.  Update ltrace to the new version to make
 it work again after our binutils update (which has already been made).
@@ -445,13 +448,19 @@ Update to 3.22+.
 
 	rpm.
 
-[PRIORITY: medium]
+[PRIORITY: high]
 [ASSIGNED: galaxy@]
 Should remove old files on "-U --force" even if package versions
 match.  Right now, when forcibly updating a package to what appears to
 be the same version, but the previously installed package contains
 files that no longer exist in the package being installed, the files
 are not removed from the system and become orphaned.
+
+[PRIORITY: medium]
+[ASSIGNED: galaxy@]
+When comparing package versions on -U or -F, optionally take build
+dates into account.  That is, consider a newer build of the same
+package version/release to be a newer package.
 
 [PRIORITY: medium]
 [ASSIGNED: galaxy@]
@@ -533,7 +542,7 @@ Re-enable IPv6 in the client once glibc is fixed.
 
 	tcb.
 
-[PRIORITY: low]
+[PRIORITY: medium]
 Bump syslog priorities of many pam_tcb error messages.
 
 
@@ -587,4 +596,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.63 2005/04/26 05:19:47 solar Exp $
+$Id: Owl/doc/TODO,v 1.64 2005/05/01 18:03:32 solar Exp $
