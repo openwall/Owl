@@ -91,26 +91,47 @@ subshell or propagate the status of commands it runs to the parent
 shell manually.
 
 8. Use tabs to indent conditional blocks and continuation lines in
-scripts.
+scripts.  However, do not indent pushd ... popd "blocks".
 
 9. Use -eq or -ne and not = or != to compare numeric values.  In
 particular, this applies to the $1 argument that RPM itself passes to
 scripts.  And don't place the $1 in quotes, the package has to trust
 its package manager to pass it the correct input anyway.
 
-10. Use the %buildroot macro instead of $RPM_BUILD_ROOT.
+10. Use the %buildroot macro instead of $RPM_BUILD_ROOT.  Use the
+%_sourcedir macro instead of $RPM_SOURCE_DIR.  Do not refer to source
+files by number (e.g., with %SOURCE1), use %_sourcedir/WHATEVERFILE
+instead.
 
 11. Do use the appropriate RPM macros for invoking build tools which
 we might want to override (e.g., use %__make instead of just make, use
 %__cc instead of gcc, etc.)  However, do not use the macros for
 essential shell commands such as cp, mv, rm.
 
-12. In %changelog entry dates, use two digits for day of month with a
+12. Do not unnecessarily use "-f" (force) with shell commands,
+especially not with "rm".  Not using "-f" lets us catch rm's which
+become obsolete or need to be revised (e.g., because an unneeded file
+changed its name or location in a new upstream revision).  It also
+helps catch some build failures where other files could be missing
+from their expected locations as well.  If you do use "-f" for a
+reason, consider explaining the reason in a one-line comment right
+before the shell command.
+
+13. In %changelog entry dates, use two digits for day of month with a
 leading zero if necessary.  When adding new entries do specify the
 current package Version and Release after your e-mail address, like
 this:
 
 	* Wed Dec 01 2004 Your Name <you@example.com> 1.0-owl1
+
+14. As it relates to spec files portability, the current stance is to
+have our spec files either result in a reasonable build or fail to
+build entirely on systems other than Owl.  Some spec files (the ones
+which get into archives/*.tar.gz during Owl builds) are meant to be
+portable to non-Owl.  %clean sections should be omitted in all spec
+files, whether portable or not (they are not used by the Owl build
+environment and there's no major harm in not cleaning build files on
+other systems).
 
 
 	Patch file naming.
@@ -223,4 +244,4 @@ then require the proper version of mktemp(1):
 As usual, use Requires, PreReq, and/or BuildRequires depending on
 where in the package the uses of mktemp occur.
 
-$Id: Owl/doc/CONVENTIONS,v 1.24 2005/05/02 00:34:32 solar Exp $
+$Id: Owl/doc/CONVENTIONS,v 1.25 2005/05/02 01:11:02 solar Exp $
