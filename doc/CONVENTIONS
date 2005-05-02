@@ -124,7 +124,7 @@ abbreviation of the distribution name(s) the patch originates from,
 and WHAT is a description of what the patch is for or what it does.
 
 If a single patch file is based on pieces from more than one
-distribution, all are to be included in ORIGIN in order of relevance.
+distribution, all are to be included in ORIGIN, most relevant first.
 For patches developed as a part of Owl, ORIGIN is to be set to "owl".
 If a patch is derived from another distribution but with significant
 changes applied, ORIGIN should include "-owl-" as well (which would
@@ -135,6 +135,11 @@ this may be the case for various back-ports), ORIGIN should be set to
 usual description of the patch.  Patches from upstream maintainers
 that aren't (yet?) in the primary CVS repository (if one even exists)
 may have ORIGIN set to "up".
+
+For multi-word WHATs, separate the words with dashes.  Do not use
+underscores except when referring to an existing identifier (in which
+case the identifier is to be quoted verbatim, including any possible
+underscores and uppercase letters).
 
 There're also some common WHATs to use whenever applicable:
 
@@ -218,4 +223,4 @@ then require the proper version of mktemp(1):
 As usual, use Requires, PreReq, and/or BuildRequires depending on
 where in the package the uses of mktemp occur.
 
-$Id: Owl/doc/CONVENTIONS,v 1.23 2005/03/25 17:22:47 solar Exp $
+$Id: Owl/doc/CONVENTIONS,v 1.24 2005/05/02 00:34:32 solar Exp $
