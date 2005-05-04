@@ -1,13 +1,17 @@
-# $Id: Owl/packages/gettext/gettext.spec,v 1.7 2004/11/02 03:04:01 solar Exp $
+# $Id: Owl/packages/gettext/gettext.spec,v 1.8 2005/05/04 21:15:08 solar Exp $
 
 Summary: GNU libraries and utilities for producing multi-lingual messages.
 Name: gettext
 Version: 0.14.1
-Release: owl1
-License: GPL
+Release: owl2
+License: GPL/LGPL
 Group: Development/Tools
-Source: ftp://alpha.gnu.org/pub/gnu/%name-%version.tar.gz
+URL: http://www.gnu.org/software/gettext/
+Source: ftp://ftp.gnu.org/gnu/gettext/%name-%version.tar.gz
 Patch0: gettext-0.14.1-alt-gettextize-quiet.diff
+PreReq: /sbin/install-info
+Provides: %name-devel = %version-%release
+Provides: devel(libintl)
 BuildRoot: /override/%name-%version
 
 %description
@@ -27,7 +31,6 @@ programs.
 %patch0 -p1
 
 %build
-
 unset LINGUAS || :
 libtoolize --force --copy
 aclocal
@@ -59,15 +62,17 @@ mv %buildroot%_datadir/doc/libasprintf %buildroot%_docdir/%name-%version/
 # Remove unpackaged files
 rm %buildroot%_infodir/dir
 rm %buildroot%_datadir/locale/locale.alias
-# XXX: This one needs further thought.
+# This one is also in glibc
 rm %buildroot%_includedir/libintl.h
 
 %post
-/sbin/install-info --info-dir=%_infodir %_infodir/gettext.info.gz
+/sbin/install-info %_infodir/gettext.info %_infodir/dir
+/sbin/install-info %_infodir/autosprintf.info %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete --info-dir=%_infodir %_infodir/gettext.info.gz
+	/sbin/install-info --delete %_infodir/gettext.info %_infodir/dir
+	/sbin/install-info --delete %_infodir/autosprintf.info %_infodir/dir
 fi
 
 %files
@@ -85,12 +90,18 @@ fi
 #%_datadir/emacs/site-lisp/*
 
 %changelog
-* Wed Sep 08 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 0.14-owl1
+* Thu May 05 2005 Solar Designer <solar@owl.openwall.com> 0.14.1-owl2
+- "Provide" gettext-devel and devel(libintl) for Fedora compatibility.
+- Install autosprintf.info.
+- Corrected the Source URL, License.
+- Added URL.
+
+* Wed Sep 08 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 0.14.1-owl1
 - Changed %%exclude to removing the file in %%install section; this will
 allow to build this package under RPM3.
 
-* Wed Mar 17 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 0.14-owl0.1
-- Updated to 0.14
+* Wed Mar 17 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 0.14.1-owl0.1
+- Updated to 0.14.1
 - Cleaned up the spec (removed unneeded patches, fixed a typo)
 
 * Thu Feb 26 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 0.11.5-owl0.1
