@@ -91,6 +91,7 @@ moment and if chown() is done first it may mean that extra permissions
 are given to the file's group for a moment.  The right sequence is
 chmod() to a safe mode (0700 & mode), then chown(), then chmod().
 
+[ASSIGNED: ldv@]
 3. In cpio only: ways a malicious archive may specify that files go
 outside of the intended directory tree.  This has been dealt with in
 tar already.
@@ -163,6 +164,7 @@ compatibility.
 	glibc.
 
 [PRIORITY: medium]
+[ASSIGNED: ldv@]
 Update to glibc 2.3.5+.
 
 [PRIORITY: medium]
@@ -596,4 +598,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.64 2005/05/01 18:03:32 solar Exp $
+$Id: Owl/doc/TODO,v 1.65 2005/05/04 21:24:20 solar Exp $
