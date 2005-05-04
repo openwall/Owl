@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.49 2005/04/27 13:54:52 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.50 2005/05/04 16:55:27 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.37.11
+Version: 1.6.37.12
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -74,6 +74,9 @@ cp -a john-1.6/doc/* doc/john-1.6/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Wed May 04 2005 Solar Designer <solar@owl.openwall.com> 1.6.37.12-owl1
+- Further updates of the PPC make targets for Mac OS X 10.4+ and Linux/ppc64.
+
 * Wed Apr 27 2005 Solar Designer <solar@owl.openwall.com> 1.6.37.11-owl1
 - Fixed a long-standing bug in "unshadow" which showed up on recent OpenBSD.
 - Added the openbsd-x86-mmx-elf make target.
