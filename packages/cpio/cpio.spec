@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cpio/cpio.spec,v 1.16 2005/05/05 17:17:28 ldv Exp $
+# $Id: Owl/packages/cpio/cpio.spec,v 1.17 2005/05/05 17:29:59 ldv Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
@@ -6,11 +6,11 @@ Version: 2.6
 Release: owl1
 License: GPL
 Group: Applications/Archiving
-Url: http://www.gnu.org/software/cpio/
+URL: http://www.gnu.org/software/cpio/
 Source0: ftp://ftp.gnu.org/gnu/cpio-%version.tar.bz2
 Source1: rmt.8
 Patch0: cpio-2.6-cvs-20050131-umask.diff
-Patch1: cpio-2.6-cvs-2004122-configure-mt.diff
+Patch1: cpio-2.6-cvs-20041221-configure-mt.diff
 Patch10: cpio-2.6-alt-lstat.diff
 Patch11: cpio-2.6-alt-i18n.diff
 Patch12: cpio-2.6-alt-sparse.diff
@@ -118,6 +118,7 @@ fixes for race condition issues (CAN-2005-1111).
 and rmt(8) utilities.
 - Corrected info files installation.
 - Packaged cpio translations.
+- Added URL.
 
 * Sun Feb 06 2005 Solar Designer <solar@owl.openwall.com> 2.4.2-owl28
 - With "cpio -oO ...", postpone the setting of umask to 0 (yes, that's
