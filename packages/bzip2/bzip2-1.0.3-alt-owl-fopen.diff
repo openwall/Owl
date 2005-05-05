@@ -1,0 +1,46 @@
+diff -urp bzip2-1.0.3.orig/bzip2recover.c bzip2-1.0.3/bzip2recover.c
+--- bzip2-1.0.3.orig/bzip2recover.c	Tue Feb 15 16:20:57 2005
++++ bzip2-1.0.3/bzip2recover.c	Thu May  5 22:21:08 2005
+@@ -56,6 +56,8 @@
+ #include <errno.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <unistd.h>
++#include <fcntl.h>
+ 
+ 
+ /* This program records bit locations in the file to be recovered.
+@@ -301,6 +303,24 @@ Bool endsInBz2 ( Char* name )
+        name[n-1] == '2');
+ }
+ 
++/*---------------------------------------------*/
++/* Open an output file safely with O_EXCL and good permissions.
++   This avoids a race condition in older versions, in which
++   the file was first opened and then had its interim permissions
++   set safely.  We instead use open() to create the file with
++   the interim permissions required (rw-------).
++
++   For non-Unix platforms, if we are not worrying about
++   security issues, simple this simply behaves like fopen.
++*/
++static FILE* fopen_output_safely ( Char* name, const char* mode )
++{
++   int fh = open(name, O_WRONLY|O_CREAT|O_EXCL, S_IWUSR|S_IRUSR);
++   if (fh == -1) return NULL;
++   FILE* fp = fdopen(fh, mode);
++   if (fp == NULL) close(fh);
++   return fp;
++}
+ 
+ /*---------------------------------------------------*/
+ /*---                                             ---*/
+@@ -518,7 +538,7 @@ Int32 main ( Int32 argc, Char** argv )
+          fprintf ( stderr, "   writing block %d to `%s' ...\n",
+                            wrBlock+1, outFileName );
+ 
+-         outFile = fopen ( outFileName, "wb" );
++         outFile = fopen_output_safely ( outFileName, "wb" );
+          if (outFile == NULL) {
+             fprintf ( stderr, "%s: can't write `%s'\n",
+                       progName, outFileName );

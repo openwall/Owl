@@ -1,7 +1,7 @@
-diff -ur bzip2-1.0.2.orig/bzdiff bzip2-1.0.2/bzdiff
---- bzip2-1.0.2.orig/bzdiff	Sun Dec 30 05:12:35 2001
-+++ bzip2-1.0.2/bzdiff	Fri Feb  1 23:56:02 2002
-@@ -37,10 +37,9 @@
+diff -ur bzip2-1.0.3.orig/bzdiff bzip2-1.0.3/bzdiff
+--- bzip2-1.0.3.orig/bzdiff	Sat Oct  9 11:29:42 2004
++++ bzip2-1.0.3/bzdiff	Thu May  5 22:07:47 2005
+@@ -37,10 +37,6 @@
  	echo "Usage: $prog [${comp}_options] file [file]"
  	exit 1
  fi
@@ -9,23 +9,24 @@ diff -ur bzip2-1.0.2.orig/bzdiff bzip2-1.0.2/bzdiff
 -      echo 'cannot create a temporary file' >&2
 -      exit 1
 -}
-+tmp=
-+trap 'STAT=$?; rm -f "$tmp"; exit $STAT' EXIT HUP INT PIPE TERM
-+tmp="`mktemp -t bz.XXXXXXXXXX`" || exit 1
  set $FILES
  if test $# -eq 1; then
  	FILE=`echo "$1" | sed 's/.bz2$//'`
-@@ -53,10 +52,9 @@
+@@ -52,11 +48,13 @@
+         *.bz2)
                  case "$2" in
  	        *.bz2)
++			tmp="`mktemp -t bzdiff.XXXXXXXXXX`" || exit
++			trap 'rm -f -- "$tmp"' EXIT
++			trap 'trap - EXIT; rm -f -- "$tmp"; exit 1' HUP INT QUIT PIPE TERM
  			F=`echo "$2" | sed 's|.*/||;s|.bz2$||'`
 -                        bzip2 -cdfq "$2" > $tmp
 -                        bzip2 -cdfq "$1" | $comp $OPTIONS - $tmp
 -                        STAT="$?"
 -			/bin/rm -f $tmp;;
-+                        bzip2 -cdfq "$2" > "$tmp"
-+                        bzip2 -cdfq "$1" | $comp $OPTIONS - "$tmp"
-+                        STAT="$?";;
++			bzip2 -cdfq "$2" > "$tmp"
++			bzip2 -cdfq "$1" | $comp $OPTIONS - "$tmp"
++			STAT="$?";;
  
                  *)      bzip2 -cdfq "$1" | $comp $OPTIONS - "$2"
                          STAT="$?";;

@@ -1,15 +1,18 @@
-# $Id: Owl/packages/bzip2/bzip2.spec,v 1.16 2004/11/23 22:40:45 mci Exp $
+# $Id: Owl/packages/bzip2/bzip2.spec,v 1.17 2005/05/05 22:43:02 solar Exp $
 
-Summary: A file compression utility.
+Summary: An extremely powerful file compression utility.
 Name: bzip2
-Version: 1.0.2
-Release: owl2
+Version: 1.0.3
+Release: owl1
 License: BSD
 Group: Applications/File
-URL: http://sources.redhat.com/bzip2/
-Source: ftp://sources.redhat.com/pub/bzip2/v102/bzip2-%version.tar.gz
-Patch0: bzip2-1.0.2-owl-Makefiles.diff
-Patch1: bzip2-1.0.2-owl-tmp.diff
+URL: http://www.bzip.org
+Source: http://www.bzip.org/%version/%name-%version.tar.gz
+Patch0: bzip2-1.0.3-owl-Makefile.diff
+Patch1: bzip2-1.0.3-owl-tmp.diff
+Patch2: bzip2-1.0.3-alt-progname.diff
+Patch3: bzip2-1.0.3-alt-chmod-chown.diff
+Patch4: bzip2-1.0.3-alt-owl-fopen.diff
 PreReq: /sbin/ldconfig
 Requires: mktemp >= 1:1.3.1
 Provides: libbz2.so.0
@@ -39,6 +42,9 @@ which will use the library.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -73,6 +79,15 @@ ln -s libbz2.so.%version %buildroot%_libdir/libbz2.so.0
 %_libdir/*.so
 
 %changelog
+* Fri May 06 2005 Solar Designer <solar@owl.openwall.com> 1.0.3-owl1
+- Updated to 1.0.3.
+- Re-worked the bzdiff temporary file handling patch according to our new
+conventions and postponing the temporary file creation until it is certain
+that the file is actually needed (idea from ALT).
+- Imported several patches from ALT: the chmod/chown race condition fix
+(use fchmod/fchown instead), use safe initial output file permissions in
+bzip2recover, use program_invocation_short_name.
+
 * Mon Feb 09 2004 Michail Litvak <mci@owl.openwall.com> 1.0.2-owl2
 - Use RPM macros instead of explicit paths.
 
