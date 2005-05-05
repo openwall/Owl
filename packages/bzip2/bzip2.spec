@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bzip2/bzip2.spec,v 1.17 2005/05/05 22:43:02 solar Exp $
+# $Id: Owl/packages/bzip2/bzip2.spec,v 1.18 2005/05/05 22:51:23 solar Exp $
 
 Summary: An extremely powerful file compression utility.
 Name: bzip2
@@ -51,7 +51,7 @@ which will use the library.
 %build
 make -f Makefile-libbz2_so CFLAGS="$RPM_OPT_FLAGS -D_FILE_OFFSET_BITS=64 -fPIC"
 rm *.o
-make CFLAGS="$RPM_OPT_FLAGS -D_FILE_OFFSET_BITS=64"
+make CFLAGS="$RPM_OPT_FLAGS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE"
 
 %install
 rm -rf %buildroot
