@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2005/05/06	Package: bzip2
+Updated to 1.0.3.
+
 2005/05/05	Package: cpio
 SECURITY FIX	Severity: high, local, passive
 Updated to 2.6.  Added fixes for directory traversal (where a
@@ -414,4 +417,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.82 2005/05/05 18:40:24 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.83 2005/05/05 22:54:37 solar Exp $
