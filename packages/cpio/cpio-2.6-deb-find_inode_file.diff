@@ -1,0 +1,14 @@
+diff -uprk.orig cpio-2.6.orig/src/util.c cpio-2.6/src/util.c
+--- cpio-2.6.orig/src/util.c	2005-05-05 11:40:43 +0000
++++ cpio-2.6/src/util.c	2005-05-05 11:41:16 +0000
+@@ -699,8 +699,8 @@ find_inode_file (unsigned long node_num,
+ 	   temp = (temp + 1) % hash_size)
+ 	{
+ 	  if (hash_table[temp]->inode == node_num
+-	      && hash_table[start]->major_num == major_num
+-	      && hash_table[start]->minor_num == minor_num)
++	      && hash_table[temp]->major_num == major_num
++	      && hash_table[temp]->minor_num == minor_num)
+ 	    return hash_table[temp]->file_name;
+ 	}
+     }

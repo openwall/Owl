@@ -1,0 +1,109 @@
+diff -uprk.orig cpio-2.6.orig/src/extern.h cpio-2.6/src/extern.h
+--- cpio-2.6.orig/src/extern.h	2004-09-08 10:49:57 +0000
++++ cpio-2.6/src/extern.h	2005-05-04 14:51:31 +0000
+@@ -165,9 +165,9 @@ void tape_buffered_write P_((char *in_bu
+ void tape_buffered_read P_((char *in_buf, int in_des, long num_bytes));
+ int tape_buffered_peek P_((char *peek_buf, int in_des, int num_bytes));
+ void tape_toss_input P_((int in_des, long num_bytes));
+-void copy_files_tape_to_disk P_((int in_des, int out_des, long num_bytes));
+-void copy_files_disk_to_tape P_((int in_des, int out_des, long num_bytes, char *filename));
+-void copy_files_disk_to_disk P_((int in_des, int out_des, long num_bytes, char *filename));
++void copy_files_tape_to_disk P_((int in_des, int out_des, off_t num_bytes));
++void copy_files_disk_to_tape P_((int in_des, int out_des, off_t num_bytes, char *filename));
++void copy_files_disk_to_disk P_((int in_des, int out_des, off_t num_bytes, char *filename));
+ void warn_if_file_changed P_((char *file_name, unsigned long old_file_size,
+                               unsigned long old_file_mtime));
+ void create_all_directories P_((char *name));
+diff -uprk.orig cpio-2.6.orig/src/util.c cpio-2.6/src/util.c
+--- cpio-2.6.orig/src/util.c	2005-05-04 13:13:24 +0000
++++ cpio-2.6/src/util.c	2005-05-04 14:54:00 +0000
+@@ -211,7 +211,7 @@ tape_fill_input_buffer (int in_des, int 
+    Exit with an error if end of file is reached.  */
+ 
+ static int
+-disk_fill_input_buffer (int in_des, int num_bytes)
++disk_fill_input_buffer (int in_des, off_t num_bytes)
+ {
+   in_buff = input_buffer;
+   num_bytes = (num_bytes < DISK_IO_BLOCK_SIZE) ? num_bytes : DISK_IO_BLOCK_SIZE;
+@@ -408,12 +408,11 @@ tape_toss_input (int in_des, long num_by
+ }
+ 
+ static void
+-write_nuls_to_file (long num_bytes, int out_des, 
++write_nuls_to_file (off_t num_bytes, int out_des, 
+                     void (*writer) (char *in_buf, int out_des, long num_bytes))
+ {
+-  long	blocks;
++  off_t	blocks, i;
+   long	extra_bytes;
+-  long	i;
+ 
+   blocks = num_bytes / 512;
+   extra_bytes = num_bytes % 512;
+@@ -432,7 +431,7 @@ write_nuls_to_file (long num_bytes, int 
+    NUM_BYTES is the number of bytes to copy.  */
+ 
+ void
+-copy_files_tape_to_disk (int in_des, int out_des, long num_bytes)
++copy_files_tape_to_disk (int in_des, int out_des, off_t num_bytes)
+ {
+   long size;
+   long k;
+@@ -462,13 +461,13 @@ copy_files_tape_to_disk (int in_des, int
+    NUM_BYTES is the number of bytes to copy.  */
+ 
+ void
+-copy_files_disk_to_tape (int in_des, int out_des, long num_bytes,
++copy_files_disk_to_tape (int in_des, int out_des, off_t num_bytes,
+ 			 char *filename)
+ {
+   long size;
+   long k;
+   int rc;
+-  long original_num_bytes;
++  off_t original_num_bytes;
+ 
+   original_num_bytes = num_bytes;
+ 
+@@ -480,10 +479,10 @@ copy_files_disk_to_tape (int in_des, int
+ 	  num_bytes : DISK_IO_BLOCK_SIZE)))
+ 	  {
+ 	    if (rc > 0)
+-	      error (0, 0, _("File %s shrunk by %ld bytes, padding with zeros"),
++	      error (0, 0, _("File %s shrunk by %lld bytes, padding with zeros"),
+ 				filename, num_bytes);
+ 	    else
+-	      error (0, 0, _("Read error at byte %ld in file %s, padding with zeros"),
++	      error (0, 0, _("Read error at byte %lld in file %s, padding with zeros"),
+ 			original_num_bytes - num_bytes, filename);
+ 	    write_nuls_to_file (num_bytes, out_des, tape_buffered_write);
+ 	    break;
+@@ -509,12 +508,12 @@ copy_files_disk_to_tape (int in_des, int
+    NUM_BYTES is the number of bytes to copy.  */
+ 
+ void
+-copy_files_disk_to_disk (int in_des, int out_des, long num_bytes,
++copy_files_disk_to_disk (int in_des, int out_des, off_t num_bytes,
+ 			 char *filename)
+ {
+   long size;
+   long k;
+-  long original_num_bytes;
++  off_t original_num_bytes;
+   int rc;
+ 
+   original_num_bytes = num_bytes;
+@@ -524,10 +523,10 @@ copy_files_disk_to_disk (int in_des, int
+ 	if ((rc = disk_fill_input_buffer (in_des, num_bytes)))
+ 	  {
+ 	    if (rc > 0)
+-	      error (0, 0, _("File %s shrunk by %ld bytes, padding with zeros"),
++	      error (0, 0, _("File %s shrunk by %lld bytes, padding with zeros"),
+ 				filename, num_bytes);
+ 	    else
+-	      error (0, 0, _("Read error at byte %ld in file %s, padding with zeros"),
++	      error (0, 0, _("Read error at byte %lld in file %s, padding with zeros"),
+ 			original_num_bytes - num_bytes, filename);
+ 	    write_nuls_to_file (num_bytes, out_des, disk_buffered_write);
+ 	    break;

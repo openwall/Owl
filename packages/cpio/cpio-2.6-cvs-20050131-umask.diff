@@ -1,0 +1,40 @@
+2005-01-31  Sergey Poznyakoff  <gray@Mirddin.farlep.net>
+
+	* src/main.c (main): Remove umask(0). Fixes CAN-1999-1572.
+	* src/copypass.c (process_copy_pass): Set umask 0
+	* src/copyin.c (process_copy_in): Likewise
+
+--- src/copyin.c	11 Jan 2005 12:29:08 -0000	1.5
++++ src/copyin.c	31 Jan 2005 12:51:55 -0000	1.6
+@@ -1352,6 +1352,9 @@ process_copy_in ()
+   char skip_file;		/* Flag for use with patterns.  */
+   int i;			/* Loop index variable.  */
+ 
++  umask (0);                    /* Reset umask to preserve modes of
++				   created files  */
++  
+   /* Initialize the copy in.  */
+   if (pattern_file_name)
+     {
+--- src/copypass.c	11 Jan 2005 12:29:08 -0000	1.4
++++ src/copypass.c	31 Jan 2005 12:51:38 -0000	1.5
+@@ -51,6 +51,9 @@ process_copy_pass ()
+   int cdf_char;
+ #endif
+ 
++  umask (0);                    /* Reset umask to preserve modes of
++				   created files  */
++
+   /* Initialize the copy pass.  */
+   dirname_len = strlen (directory_name);
+   ds_init (&input_name, 128);
+--- src/main.c	11 Jan 2005 12:29:08 -0000	1.9
++++ src/main.c	31 Jan 2005 14:22:23 -0000	1.10
+@@ -735,7 +735,6 @@ main (int argc, char *argv[])
+   textdomain (PACKAGE);
+ 
+   program_name = argv[0];
+-  umask (0);
+ 
+ #ifdef __TURBOC__
+   _fmode = O_BINARY;		/* Put stdin and stdout in binary mode.  */

@@ -1,0 +1,36 @@
+diff -uprk.orig cpio-2.6.orig/configure.ac cpio-2.6/configure.ac
+--- cpio-2.6.orig/configure.ac	2004-12-20 10:46:30 +0000
++++ cpio-2.6/configure.ac	2005-01-31 22:29:47 +0000
+@@ -92,7 +92,7 @@ else
+   AC_CONFIG_LINKS(src/fnmatch.h:headers/fnmatch.h)
+ fi
+ 
+-AC_CHECK_FUNCS(lchown lstat endpwent endgrent)
++AC_CHECK_FUNCS(lchown lstat endpwent endgrent setlocale)
+ AC_FUNC_VPRINTF
+ AC_FUNC_ALLOCA
+ AC_CHECK_LIB(nsl, gethostname, [LIBS="$LIBS -lnsl"])
+diff -uprk.orig cpio-2.6.orig/src/main.c cpio-2.6/src/main.c
+--- cpio-2.6.orig/src/main.c	2004-11-23 00:42:18 +0000
++++ cpio-2.6/src/main.c	2005-01-31 22:29:47 +0000
+@@ -733,7 +733,7 @@ initialize_buffers ()
+ int
+ main (int argc, char *argv[])
+ {
+-#ifdef HAVE_LOCALE_H
++#ifdef HAVE_SETLOCALE
+   setlocale (LC_ALL, "");
+ #endif
+   bindtextdomain (PACKAGE, LOCALEDIR);
+diff -uprk.orig cpio-2.6.orig/src/mt.c cpio-2.6/src/mt.c
+--- cpio-2.6.orig/src/mt.c	2004-09-06 12:18:02 +0000
++++ cpio-2.6/src/mt.c	2005-01-31 22:29:47 +0000
+@@ -238,7 +238,7 @@ main (int argc, char **argv)
+   int i;
+   char *rsh_command_option = NULL;
+ 
+-#ifdef HAVE_LOCALE_H
++#ifdef HAVE_SETLOCALE
+   setlocale (LC_ALL, "");
+ #endif
+   bindtextdomain (PACKAGE, LOCALEDIR);

@@ -1,0 +1,170 @@
+diff -uprk.orig cpio-2.6.orig/rmt/rmt.c cpio-2.6/rmt/rmt.c
+--- cpio-2.6.orig/rmt/rmt.c	2004-09-06 13:49:41 +0000
++++ cpio-2.6/rmt/rmt.c	2005-05-05 15:18:34 +0000
+@@ -75,6 +75,33 @@ static FILE *debug_file;
+ #define	DEBUG2(File, Arg1, Arg2) \
+   if (debug_file) fprintf(debug_file, File, Arg1, Arg2)
+ 
++#define	DEBUG3(File, Arg1, Arg2, Arg3) \
++  if (debug_file) fprintf(debug_file, File, Arg1, Arg2, Arg3)
++
++/*
++ * Support for Sun's extended RMT protocol
++ */
++#define RMTI_VERSION	-1
++#define RMT_VERSION	1
++
++/* Extended 'i' commands */
++#define RMTI_CACHE	0
++#define RMTI_NOCACHE	1
++#define RMTI_RETEN	2
++#define RMTI_ERASE	3
++#define RMTI_EOM	4
++#define RMTI_NBSF	5
++
++/* Extended 's' comands */
++#define MTS_TYPE	'T'
++#define MTS_DSREG	'D'
++#define MTS_ERREG	'E'
++#define MTS_RESID	'R'
++#define MTS_FILENO	'F'
++#define MTS_BLKNO	'B'
++#define MTS_FLAGS	'f'
++#define MTS_BF		'b'
++
+ /* Return an error string, given an error number.  */
+ #if HAVE_STRERROR
+ # ifndef strerror
+@@ -480,17 +507,60 @@ top:
+       }
+ 
+     case 'I':
++    case 'i':
+       {
+ 	char operation_string[STRING_SIZE];
+ 	char count_string[STRING_SIZE];
++	struct mtop mtop;
+ 
+ 	get_string (operation_string);
+ 	get_string  (count_string);
+-	DEBUG2 ("rmtd: I %s %s\n", operation_string, count_string);
++	DEBUG3 ("rmtd: %c %s %s\n", command, operation_string, count_string);
++
++	mtop.mt_op = atoi (operation_string);
++
++	if (command == 'i') switch (mtop.mt_op)
++	{
++#ifdef MTCACHE
++	  case RMTI_CACHE:
++	    mtop.mt_op = MTCACHE;
++	    break;
++#endif
++#ifdef MTNOCACHE
++	  case RMTI_NOCACHE:
++	    mtop.mt_op = MTNOCACHE;
++	    break;
++#endif
++#ifdef MTRETEN
++	  case RMTI_RETEN:
++	    mtop.mt_op = MTRETEN;
++	    break;
++#endif
++#ifdef MTERASE
++	  case RMTI_ERASE:
++	    mtop.mt_op = MTERASE;
++	    break;
++#endif
++#ifdef MTEOM
++	  case RMTI_EOM:
++	    mtop.mt_op = MTEOM;
++	    break;
++#endif
++#ifdef MTNBSF
++	  case RMTI_NBSF:
++	    mtop.mt_op = MTNBSF;
++	    break;
++#endif
++	  default:
++	    errno = EINVAL;
++	    goto ioerror;
++	}
+ 
++	if (command == 'I' && mtop.mt_op == RMTI_VERSION)
++	  status = RMT_VERSION;
+ #ifdef MTIOCTOP
++	else
+ 	{
+-	  struct mtop mtop;
+ 	  const char *p;
+ 	  off_t count = 0;
+ 	  int negative;
+@@ -529,7 +599,6 @@ top:
+ 	      report_error_message (N_("Seek offset out of range"));
+ 	      return EXIT_FAILURE;
+ 	    }
+-	  mtop.mt_op = atoi (operation_string);
+ 
+ 	  if (ioctl (tape, MTIOCTOP, (char *) &mtop) < 0)
+ 	    goto ioerror;
+@@ -557,6 +626,61 @@ top:
+ 	goto top;
+       }
+ 
++    case 's':
++      {
++	char subcommand;
++	struct mtget operation;
++
++	DEBUG ("rmtd: s\n");
++
++	if (safe_read (STDIN_FILENO, &subcommand, 1) != 1)
++	  goto top;
++	
++#ifdef MTIOCGET
++	if (ioctl (tape, MTIOCGET, (char *) &operation) < 0)
++	  goto ioerror;
++#endif
++	switch (subcommand)
++	{
++	  case MTS_TYPE:
++	    status = operation.mt_type;
++	    break;
++
++	  case MTS_DSREG:
++	    status = operation.mt_dsreg;
++	    break;
++
++	  case MTS_ERREG:
++	    status = operation.mt_erreg;
++	    break;
++
++	  case MTS_RESID:
++	    status = operation.mt_resid;
++	    break;
++
++	  case MTS_FILENO:
++	    status = operation.mt_fileno;
++	    break;
++
++	  case MTS_BLKNO:
++	    status = operation.mt_blkno;
++	    break;
++
++	  case MTS_FLAGS:
++	    status = operation.mt_gstat;
++	    break;
++
++	  case MTS_BF:
++	    status = 0;
++	    break;
++
++	  default:
++	    errno = EINVAL;
++	    goto ioerror;
++	}
++	goto respond;
++      }
++
+     default:
+       DEBUG1 (_("rmtd: Garbage command %c\n"), command);
+ 

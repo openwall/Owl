@@ -1,0 +1,20 @@
+2004-12-21  Sergey Poznyakoff  <gray@Mirddin.farlep.net>
+
+	* configure.ac: New option --enable-mt
+
+--- cpio-2.6.orig/configure.ac	2004-12-20 10:46:30 +0000
++++ cpio-2.6/configure.ac	2004-12-21 08:54:32 +0000
+@@ -48,6 +48,13 @@ cpio_GNULIB
+ AC_SUBST(CPIO_MT_PROG)
+ PU_RMT
+ 
++AC_ARG_ENABLE(mt,
++ AC_HELP_STRING([--enable-mt], [Enable building of mt program]),
++ [case $enableval in
++  yes) CPIO_MT_PROG='mt$(EXEEXT)';;
++  no)  ;;
++  esac])
++
+ AC_CHECK_HEADERS(unistd.h stdlib.h string.h fcntl.h sys/io/trioctl.h utmp.h getopt.h locale.h libintl.h sys/wait.h utime.h)
+ AC_REPLACE_FUNCS(bcopy mkdir strdup strerror)
+ 

@@ -1,27 +1,31 @@
-# $Id: Owl/packages/cpio/cpio.spec,v 1.15 2005/02/06 02:27:12 solar Exp $
+# $Id: Owl/packages/cpio/cpio.spec,v 1.16 2005/05/05 17:17:28 ldv Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
-Version: 2.4.2
-Release: owl28
+Version: 2.6
+Release: owl1
 License: GPL
 Group: Applications/Archiving
-Source: ftp://ftp.gnu.org/gnu/cpio-%version.tar.gz
-Patch0: cpio-2.4.2-deb-cpio.diff
-Patch1: cpio-2.4.2-deb-mt_scsi.diff
-Patch2: cpio-2.4.2-deb-rmt.diff
-Patch3: cpio-2.4.2-deb-glibc21.diff
-Patch4: cpio-2.4.2-deb-cpio_man.diff
-Patch5: cpio-2.4.2-deb-mt_man.diff
-Patch6: cpio-2.4.2-deb-rmt_man.diff
-Patch7: cpio-2.4.2-deb-owl-info.diff
-Patch8: cpio-2.4.2-rh-fhs.diff
-Patch9: cpio-2.4.2-rh-glibc.diff
-Patch10: cpio-2.4.2-rh-man.diff
-Patch11: cpio-2.4.2-rh-mtime.diff
-Patch12: cpio-2.4.2-rh-svr4compat.diff
-Patch13: cpio-2.4.2-rh-lchown.diff
-Patch14: cpio-2.4.2-freebsd-umask.diff
+Url: http://www.gnu.org/software/cpio/
+Source0: ftp://ftp.gnu.org/gnu/cpio-%version.tar.bz2
+Source1: rmt.8
+Patch0: cpio-2.6-cvs-20050131-umask.diff
+Patch1: cpio-2.6-cvs-2004122-configure-mt.diff
+Patch10: cpio-2.6-alt-lstat.diff
+Patch11: cpio-2.6-alt-i18n.diff
+Patch12: cpio-2.6-alt-sparse.diff
+Patch13: cpio-2.6-alt-error-details.diff
+Patch14: cpio-2.6-alt-warnings.diff
+Patch15: cpio-2.6-alt-safer_name_suffix.diff
+Patch16: cpio-2.6-alt-chown-chmod.diff
+Patch17: cpio-2.6-rh-alt-lfs.diff
+Patch18: cpio-2.6-rh-svr4compat.diff
+Patch19: cpio-2.6-owl-info.diff
+Patch20: cpio-2.6-pld-alt-configure.diff
+Patch21: cpio-2.6-deb-find_inode_file.diff
+Patch22: cpio-2.6-owl-mt-argmatch.diff
+Patch23: cpio-2.6-deb-owl-mt-scsi.diff
+Patch24: cpio-2.6-deb-owl-rmt.diff
 PreReq: /sbin/install-info
 Provides: mt-st, rmt
 Prefix: %_prefix
@@ -41,25 +45,29 @@ and can read archives created on machines with a different byte-order.
 
 %prep
 %setup -q
-%patch0 -p1
+install -m644 %_sourcedir/rmt.8 .
+%patch0 -p0
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
-%patch14 -p5
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1
+%patch17 -p1
+%patch18 -p1
+%patch19 -p1
+%patch20 -p1
+%patch21 -p1
+%patch22 -p1
+%patch23 -p1
+%patch24 -p1
 
 %build
-rm cpio.info
-%configure
+# Several patches modify configure.ac
+%__autoconf
+%configure --enable-mt
 make LDFLAGS=-s
 
 %install
@@ -71,31 +79,46 @@ install -m 644 rmt.8 %buildroot%_mandir/man8/
 
 mkdir -p %buildroot/{etc,sbin}
 # Can't have relative symlinks out of /etc as it's moved under /ram on CDs
-ln -s /usr/libexec/rmt %buildroot/etc/
-ln -s ../usr/libexec/rmt %buildroot/sbin/
+ln -s %_libexecdir/rmt %buildroot/etc/
+ln -s ..%_libexecdir/rmt %buildroot/sbin/
+
+# Remove unpackaged files if any
+rm -f %buildroot%_infodir/dir
 
 %post
-/sbin/install-info %_infodir/cpio.info.gz %_infodir/dir
+/sbin/install-info %_infodir/cpio.info %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/cpio.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/cpio.info %_infodir/dir
 fi
 
 %files
 %defattr(-,root,root)
-%doc README NEWS
+%doc AUTHORS NEWS README THANKS
 /bin/cpio
 /bin/mt
-/usr/libexec/rmt
+%_libexecdir/rmt
 /sbin/rmt
 /etc/rmt
 %_infodir/cpio.*
 %_mandir/man1/cpio.1*
 %_mandir/man1/mt.1*
 %_mandir/man8/rmt.8*
+%_datadir/locale/*/LC_MESSAGES/cpio.mo
 
 %changelog
+* Thu May 05 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.6-owl1
+- Updated to 2.6.
+- Imported a bunch of patches from ALT's cpio-2.6-alt9 package,
+including fix for directory traversal issue (CAN-2005-1229) and
+fixes for race condition issues (CAN-2005-1111).
+- Reviewed Owl patches, removed obsolete ones.
+- Updated patches which introduce additional functionality to mt(1)
+and rmt(8) utilities.
+- Corrected info files installation.
+- Packaged cpio translations.
+
 * Sun Feb 06 2005 Solar Designer <solar@owl.openwall.com> 2.4.2-owl28
 - With "cpio -oO ...", postpone the setting of umask to 0 (yes, that's
 still far from perfect!) to until after the output file is created;

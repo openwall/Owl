@@ -1,0 +1,12 @@
+diff -uprk.orig cpio-2.6.orig/configure.ac cpio-2.6/configure.ac
+--- cpio-2.6.orig/configure.ac	2004-12-20 10:46:30 +0000
++++ cpio-2.6/configure.ac	2005-01-31 22:29:47 +0000
+@@ -92,7 +92,7 @@ else
+   AC_CONFIG_LINKS(src/fnmatch.h:headers/fnmatch.h)
+ fi
+ 
+-AC_CHECK_FUNCS(lchown endpwent endgrent)
++AC_CHECK_FUNCS(lchown lstat endpwent endgrent)
+ AC_FUNC_VPRINTF
+ AC_FUNC_ALLOCA
+ AC_CHECK_LIB(nsl, gethostname, [LIBS="$LIBS -lnsl"])

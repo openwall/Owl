@@ -1,0 +1,26 @@
+diff -urk.orig cpio-2.6.orig/doc/cpio.texi cpio-2.6/doc/cpio.texi
+--- cpio-2.6.orig/doc/cpio.texi	2003-11-17 22:42:30 +0000
++++ cpio-2.6/doc/cpio.texi	2004-12-20 20:36:20 +0000
+@@ -9,9 +9,10 @@
+ 
+ @ifinfo
+ @format
+-START-INFO-DIR-ENTRY
+-* cpio: (cpio).                 Making tape (or disk) archives.
+-END-INFO-DIR-ENTRY
++@dircategory File utilities:
++@direntry
++* cpio: (cpio).                                 Making tape (or disk) archives.
++@end direntry
+ @end format
+ @end ifinfo
+ 
+@@ -77,7 +78,7 @@
+ @ifinfo
+ @node Top, Introduction, (dir), (dir)
+ @comment  node-name,  next,  previous,  up
+-@top
++@top cpio
+ 
+ GNU cpio is a tool for creating and extracting archives, or copying
+ files from one place to another.  It handles a number of cpio formats as

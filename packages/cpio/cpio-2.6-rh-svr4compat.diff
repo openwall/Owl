@@ -1,0 +1,24 @@
+diff -uprk.orig cpio-2.6.orig/doc/cpio.texi cpio-2.6/doc/cpio.texi
+--- cpio-2.6.orig/doc/cpio.texi	2003-11-17 22:42:30 +0000
++++ cpio-2.6/doc/cpio.texi	2004-12-22 15:12:21 +0000
+@@ -351,7 +351,8 @@ block size is 512 bytes.
+ Set the I/O block size to BLOCK-SIZE * 512 bytes.
+ 
+ @item -c
+-Use the old portable (ASCII) archive format.
++Identical to "-H newc", use the new (SVR4) portable format.
++If you wish the old portable (ASCII) archive format, use "-H odc" instead.
+ 
+ @item -C IO-SIZE, --io-size=IO-SIZE
+ Set the I/O block size to IO-SIZE bytes.
+diff -uprk.orig cpio-2.6.orig/src/main.c cpio-2.6/src/main.c
+--- cpio-2.6.orig/src/main.c	2004-11-23 00:42:18 +0000
++++ cpio-2.6/src/main.c	2004-12-22 15:03:18 +0000
+@@ -302,6 +302,7 @@ parse_opt (int key, char *arg, struct ar
+     case 'c':		/* Use the old portable ASCII format.  */
+       if (archive_format != arf_unknown)
+ 	USAGE_ERROR ((0, 0, _("Archive format multiply defined")));
++#define SVR4_COMPAT
+ #ifdef SVR4_COMPAT
+       archive_format = arf_newascii; /* -H newc.  */
+ #else

@@ -1,5 +1,79 @@
---- cpio-2.4.2.orig/mt.c
-+++ cpio-2.4.2/mt.c
+diff -uprk.orig cpio-2.6.orig/doc/mt.1 cpio-2.6/doc/mt.1
+--- cpio-2.6.orig/doc/mt.1	2003-11-17 22:42:31 +0000
++++ cpio-2.6/doc/mt.1	2005-05-05 15:24:35 +0000
+@@ -93,6 +93,69 @@ Rewind the tape, then wind it to the end
+ then rewind it again.
+ .IP erase
+ Erase the tape.
++.IP fss
++(SCSI tapes) Forward space
++.I count
++setmarks.
++.IP bss
++(SCSI tapes) Backward space
++.I count
++setmarks.
++.IP "wset"
++(SCSI tapes) Write
++.I count
++setmarks at current position (only SCSI tape).
++.IP "eod, seod"
++Space to end of valid data.  Used on streamer tape
++drives to append data to the logical and of tape.
++.IP setblk
++(SCSI tapes) Set the block size of the drive to
++.I count
++bytes per record.
++.IP setdensity
++(SCSI tapes) Set the tape density code to
++.I count.
++The proper codes to use with each drive should be looked up from the
++drive documentation.
++.IP drvbuffer
++(SCSI tapes) Set the tape drive buffer code to
++.I number.
++The proper value for unbuffered operation is zero and "normal" buffered
++operation one. The meanings of other values can be found in the drive
++documentation or, in case of a SCSI-2 drive, from the SCSI-2 standard.
++.IP stoptions
++(SCSI tapes) Set the driver options bits to
++.I count
++for the device.
++The bits can be set by oring the following values: 1 to enable write
++buffering, 2 to enable asynchronous writes, 4 to enable read ahead,
++8 to enable debugging output (if it has been compiled to the driver).
++.IP stwrthreshold
++(SCSI tapes) The write threshold for the tape device is set to
++.I count
++kilobytes. The value must be smaller than or equal to the driver
++buffer size.
++.IP seek
++(SCSI tapes) Seek to the
++.I count
++block on the tape.  This operation is available on some
++Tandberg and Wangtek streamers and some SCSI-2 tape drives.
++.IP tell
++(SCSI tapes) Tell the current block on tape.  This operation is available on some
++Tandberg and Wangtek streamers and some SCSI-2 tape drives.
++.IP densities
++(SCSI tapes) Write explanation of some common density codes to
++standard output.
++.IP datcompression
++(some SCSI-2 DAT tapes) Inquire or set the compression status
++(on/off). If the
++.I count
++is one the compression status is printed. If the
++.I count
++is zero, compression is disabled. Otherwise, compression is
++enabled. The command uses the SCSI ioctl to read and write the Data
++Compression Characteristics mode page (15). ONLY ROOT CAN USE THIS
++COMMAND.
+ .PP
+ .B mt
+ exits with a status of 0 if the operation succeeded, 1 if the
+diff -uprk.orig cpio-2.6.orig/src/mt.c cpio-2.6/src/mt.c
+--- cpio-2.6.orig/src/mt.c	2005-05-05 15:24:10 +0000
++++ cpio-2.6/src/mt.c	2005-05-05 15:25:56 +0000
 @@ -16,6 +16,10 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
     */
@@ -58,15 +132,13 @@
  
     David MacKenzie <djm@gnu.ai.mit.edu> */
  
-@@ -97,6 +141,47 @@
- void perform_operation ();
- void print_status ();
- void usage ();
+@@ -105,6 +149,54 @@ int atoi ();
+ #if !HAVE_DECL_EXIT
+ void exit ();
+ #endif
 +#ifdef MTTELL
 +void print_position ();
 +#endif
-+
-+int do_dat_compression(char *dev, int fn, int count);
 +
 +#if defined(linux) || defined(__linux)
 +#define MTDATCOMP 1000		/* Random unused number.  */
@@ -98,7 +170,16 @@
 +  {0x15, "EXB-8500 (RLL 45434 bpi)"},
 +  {0x16, "MFM 10000 bpi"},
 +  {0x17, "MFM 42500 bpi"},
++  {0x18, "MFM 42500 bpi, 56 track pairs"},
++  {0x19, "DLTtape III/DLTtape IIIxt (62500 bpi)"},
++  {0x1A, "DLTtape IV (81633 bpi)"},
++  {0x22, "SLR4DC"},
 +  {0x24, "DDS-2"},
++  {0x45, "QIC-3095"},
++  {0x80, "DLTtape III/DLTtape IIIxt (62500 bpi)"},
++  {0x81, "DLTtape III/DLTtape IIIxt compressed (62500 bpi)"},
++  {0x82, "DLTtape IV (81633 bpi)"},
++  {0x83, "DLTtape IV compressed (81633 bpi)"},
 +  {140, "EXB-8505 compressed"},
 +  {144, "EXB-8205 compressed"},
 +  {-1, NULL}};
@@ -106,7 +187,7 @@
  
  char *opnames[] =
  {
-@@ -107,6 +192,8 @@
+@@ -115,6 +207,8 @@ char *opnames[] =
  #endif
  #ifdef MTEOM
    "eom",
@@ -115,7 +196,7 @@
  #endif
  #ifdef MTRETEN
    "retension",
-@@ -121,6 +208,39 @@
+@@ -129,6 +223,39 @@ char *opnames[] =
  #ifdef MTSEEK
    "seek",
  #endif
@@ -155,7 +236,7 @@
    NULL
  };
  
-@@ -134,6 +254,8 @@
+@@ -142,6 +269,8 @@ short operations[] =
  #endif
  #ifdef MTEOM
    MTEOM,
@@ -164,7 +245,7 @@
  #endif
  #ifdef MTRETEN
    MTRETEN,
-@@ -148,9 +270,68 @@
+@@ -156,6 +285,39 @@ short operations[] =
  #ifdef MTSEEK
    MTSEEK,
  #endif
@@ -204,6 +285,10 @@
    0
  };
  
+@@ -168,6 +330,32 @@ struct option longopts[] =
+   {NULL, 0, NULL, 0}
+ };
+ 
 +char *cbnames[] =
 +{
 +#ifdef MT_ST_BOOLEANS
@@ -230,159 +315,20 @@
 +  struct mt_tape_info tapes[] = MT_TAPE_INFO;
 +#endif
 +
- /* If nonzero, don't consider file names that contain a `:' to be
-    on remote hosts; all files are local.  Always zero for mt;
-    since when do local device names contain colons?  */
-@@ -159,6 +340,7 @@
- struct option longopts[] =
- {
-   {"file", 1, NULL, 'f'},
-+  {"rsh-command", 1, NULL, 1},
-   {"version", 0, NULL, 'V'},
-   {"help", 0, NULL, 'H'},
-   {NULL, 0, NULL, 0}
-@@ -178,12 +360,15 @@
-   char *tapedev;
-   int tapedesc;
-   int i;
-+  char *rsh_command_option = NULL;
+ /* The name this program was run with.  */
+ char *program_name;
  
-   program_name = argv[0];
-   tapedev = NULL;
-   count = 1;
- 
--  while ((i = getopt_long (argc, argv, "f:t:V:H", longopts, (int *) 0)) != -1)
-+  /* Debian hack: Fixed a bug in the -V flag.  This bug has been
-+     reported to "bug-gnu-utils@prep.ai.mit.edu".  -BEM */
-+  while ((i = getopt_long (argc, argv, "f:t:VH", longopts, (int *) 0)) != -1)
-     {
-       switch (i)
- 	{
-@@ -192,6 +377,10 @@
- 	  tapedev = optarg;
- 	  break;
- 
-+	case 1:
-+	  rsh_command_option = optarg;
-+	  break;
-+
- 	case 'V':
- 	  printf ("GNU mt %s", version_string);
- 	  exit (0);
-@@ -214,10 +403,22 @@
-     }
-   operation = operations[i];
- 
-+  i = argmatch (argv[optind], cbnames);
-+
-   if (++optind < argc)
-+    /* Debian hack: Replaced the atoi function call with strtol so
-+       that hexidecimal values can be used for the count parameter.
-+       This bug has been reported to "bug-gnu-utils@prep.ai.mit.edu".
-+       (97/12/5) -BEM */
-+#if defined(STDC_HEADERS)
-+    count = (int) strtol (argv[optind], NULL, 0);
-+#else
-     count = atoi (argv[optind]);
-+#endif
-   if (++optind < argc)
-     usage (stderr, 1);
-+  if (i >= 0)
-+    count |= count_bits[i];
- 
-   if (tapedev == NULL)
-     {
-@@ -230,27 +431,58 @@
- #endif
-     }
- 
-+#ifdef MTDENS
-+  if (operation == MTDENS)
-+    {
-+      printf("Some SCSI tape density codes:\ncode   explanation\n");
-+      for (i=0; density_tbl[i].code >= 0; i++)
-+	printf("0x%02x   %s\n", density_tbl[i].code, density_tbl[i].name);
-+      exit (0);
-+    }
-+#endif
-+
-   if ( (operation == MTWEOF)
- #ifdef MTERASE
-        || (operation == MTERASE)
- #endif
-+#ifdef MTWSM
-+       || (operation == MTWSM)
-+#endif
-+#ifdef MTSETDRVBUFFER
-+       || (operation == MTSETDRVBUFFER)
-+#endif
-+#ifdef MTDATCOMP
-+       || (operation == MTDATCOMP)
-+#endif
- 	)
--    tapedesc = rmtopen (tapedev, O_WRONLY, 0);
-+    tapedesc = rmtopen (tapedev, O_WRONLY, 0, rsh_command_option);
-   else
--    tapedesc = rmtopen (tapedev, O_RDONLY, 0);
-+    tapedesc = rmtopen (tapedev, O_RDONLY, 0, rsh_command_option);
-   if (tapedesc == -1)
-     error (1, errno, "%s", tapedev);
-   check_type (tapedev, tapedesc);
- 
--  if (operation == MTASF)
--    {
--      perform_operation (tapedev, tapedesc, MTREW, 1);
--      operation = MTFSF;
--    }
--  perform_operation (tapedev, tapedesc, operation, count);
--  if (operation == MTNOP)
--    print_status (tapedev, tapedesc);
--
-+#ifdef MTDATCOMP
-+  if (operation == MTDATCOMP)
-+    do_dat_compression(tapedev, tapedesc, count);
-+  else
-+#endif
-+#ifdef MTTELL
-+  if (operation == MTTELL)
-+    print_position (tapedev, tapedesc);
-+  else
-+#endif
-+  {
-+    if (operation == MTASF)
-+      {
-+	perform_operation (tapedev, tapedesc, MTREW, 1);
-+	operation = MTFSF;
-+      }
-+    perform_operation (tapedev, tapedesc, operation, count);
-+    if (operation == MTNOP)
-+      print_status (tapedev, tapedesc);
-+  }
-+  
-   if (rmtclose (tapedesc) == -1)
-     error (2, errno, "%s", tapedev);
- 
-@@ -283,10 +515,28 @@
- 
-   control.mt_op = op;
-   control.mt_count = count;
--  if (rmtioctl (desc, MTIOCTOP, &control))
-+  /* Debian hack: The rmtioctl function returns -1 in case of an
-+     error, not 0.  This bug has been reported to
-+     "bug-gnu-utils@prep.ai.mit.edu".  (96/7/10) -BEM */
-+  if (rmtioctl (desc, MTIOCTOP, &control) == -1)
+@@ -197,15 +385,56 @@ perform_operation (char *dev, int desc, 
      error (2, errno, "%s", dev);
  }
  
 +#ifdef MTTELL
 +void
-+print_position (dev, desc)
-+     char *dev;
-+     int desc;
++print_position (char *dev, int desc)
 +{
 +  struct mtpos position;
 +
-+  if (rmtioctl (desc, MTIOCPOS, &position) == -1)
++  if (rmtioctl (desc, MTIOCPOS, (char*)&position) == -1)
 +    error (2, errno, "%s", dev);
 +  printf("At block %d.\n", (int) position.mt_blkno);
 +
@@ -390,10 +336,12 @@
 +#endif
 +
  void
- print_status (dev, desc)
-      char *dev;
-@@ -297,7 +547,35 @@
-   if (rmtioctl (desc, MTIOCGET, &status))
+ print_status (char *dev, int desc)
+ {
+   struct mtget status;
+ 
+-  if (rmtioctl (desc, MTIOCGET, (char*)&status) == -1)
++  if (rmtioctl (desc, MTIOCGET, (char*)&status))
      error (2, errno, "%s", dev);
  
 -  printf ("drive type = %d\n", (int) status.mt_type);
@@ -429,7 +377,7 @@
  #if defined(hpux) || defined(__hpux)
    printf ("drive status (high) = %d\n", (int) status.mt_dsreg1);
    printf ("drive status (low) = %d\n", (int) status.mt_dsreg2);
-@@ -310,6 +588,60 @@
+@@ -218,6 +447,60 @@ print_status (char *dev, int desc)
    printf ("file number = %d\n", (int) status.mt_fileno);
    printf ("block number = %d\n", (int) status.mt_blkno);
  #endif
@@ -490,17 +438,10 @@
  }
  
  void
-@@ -318,7 +650,122 @@
-   int status;
- {
-   fprintf (fp, "\
--Usage: %s [-V] [-f device] [--file=device] [--help] [--version] operation [count]\n",
-+Usage: %s [-V] [-f device] [--file=device] [--rsh-command=command]\n\
-+\t[--help] [--version] operation [count]\n",
- 	   program_name);
+@@ -230,6 +513,118 @@ Usage: %s [-V] [-f device] [--file=devic
    exit (status);
  }
-+
+ 
 +#if defined(linux) || defined(__linux)
 +/*** Get and set the DAT compression (Mode Page 15) ***/
 +
@@ -565,11 +506,9 @@
 +  return 1;
 +}
 +
-+
 +int
 +do_dat_compression(char *dev, int fn, int count)
 +{
-+  int i;
 +  unsigned char buffer[30], mask[30];
 +
 +  if (!read_mode_page(fn, 0x0f, 16, buffer, 0)) {
@@ -578,13 +517,13 @@
 +
 +  if (count != 1) {
 +    if (read_mode_page(fn, 0x0f, 16, mask, 1))
-+      if (mask[4+2] & 0x80 == 0)
++      if ((mask[4+2] & 0x80) == 0)
 +        fprintf(stderr, "Device does not allow setting this parameter.\n");
 +    if (count == 0)
 +      buffer[4+2] &= 0x7f;
 +    else {
 +      buffer[4+2] |= 0x80;
-+      if (buffer[4+2+1] & 0x80 == 0) {
++      if ((buffer[4+2+1] & 0x80) == 0) {
 +        fprintf(stderr, "Warning: Decompression is disabled.  Enabling.\n");
 +        buffer[4+2+1] |= 0x80;
 +      }
@@ -614,3 +553,93 @@
 +  return 1;
 +}
 +#endif
++
+ int
+ main (int argc, char **argv)
+ {
+@@ -287,6 +682,8 @@ main (int argc, char **argv)
+     }
+   operation = operations[i];
+ 
++  i = argmatch (argv[optind], cbnames, NULL, 0);
++
+   if (++optind < argc)
+     /* Debian hack: Replaced the atoi function call with strtol so
+        that hexidecimal values can be used for the count parameter.
+@@ -300,6 +697,9 @@ main (int argc, char **argv)
+   if (++optind < argc)
+     usage (stderr, 1);
+ 
++  if (i >= 0)
++    count |= count_bits[i];
++
+   if (tapedev == NULL)
+     {
+       tapedev = getenv ("TAPE");
+@@ -311,10 +711,29 @@ main (int argc, char **argv)
+ #endif
+     }
+ 
++#ifdef MTDENS
++  if (operation == MTDENS)
++    {
++      printf("Some SCSI tape density codes:\ncode   explanation\n");
++      for (i=0; density_tbl[i].code >= 0; i++)
++	printf("0x%02x   %s\n", density_tbl[i].code, density_tbl[i].name);
++      exit (0);
++    }
++#endif
++
+   if ( (operation == MTWEOF)
+ #ifdef MTERASE
+        || (operation == MTERASE)
+ #endif
++#ifdef MTWSM
++       || (operation == MTWSM)
++#endif
++#ifdef MTSETDRVBUFFER
++       || (operation == MTSETDRVBUFFER)
++#endif
++#ifdef MTDATCOMP
++       || (operation == MTDATCOMP)
++#endif
+ 	)
+     tapedesc = rmtopen (tapedev, O_WRONLY, 0, rsh_command_option);
+   else
+@@ -323,15 +742,27 @@ main (int argc, char **argv)
+     error (1, errno, "%s", tapedev);
+   check_type (tapedev, tapedesc);
+ 
+-  if (operation == MTASF)
+-    {
+-      perform_operation (tapedev, tapedesc, MTREW, 1);
+-      operation = MTFSF;
+-    }
+-  perform_operation (tapedev, tapedesc, operation, count);
+-  if (operation == MTNOP)
+-    print_status (tapedev, tapedesc);
+-
++#ifdef MTDATCOMP
++  if (operation == MTDATCOMP)
++    do_dat_compression(tapedev, tapedesc, count);
++  else
++#endif
++#ifdef MTTELL
++  if (operation == MTTELL)
++    print_position (tapedev, tapedesc);
++  else
++#endif
++  {
++    if (operation == MTASF)
++      {
++	perform_operation (tapedev, tapedesc, MTREW, 1);
++	operation = MTFSF;
++      }
++    perform_operation (tapedev, tapedesc, operation, count);
++    if (operation == MTNOP)
++      print_status (tapedev, tapedesc);
++  }
++  
+   if (rmtclose (tapedesc) == -1)
+     error (2, errno, "%s", tapedev);
+ 
