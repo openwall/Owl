@@ -91,11 +91,6 @@ moment and if chown() is done first it may mean that extra permissions
 are given to the file's group for a moment.  The right sequence is
 chmod() to a safe mode (0700 & mode), then chown(), then chmod().
 
-[ASSIGNED: ldv@]
-3. In cpio only: ways a malicious archive may specify that files go
-outside of the intended directory tree.  This has been dealt with in
-tar already.
-
 
 	cvs.
 
@@ -139,6 +134,9 @@ options).  Update the documentation to match the reality.
 [PRIORITY: medium]
 Update to 4.2.20+ dropping the -delete patch (a better version of it
 has been included upstream).
+Update other packages in Owl (e.g. owl-control) to fix warnings generated
+by new find(1).
+See "Warning Messages" in findutils texinfo documentation for details.
 
 
 	gdb.
@@ -350,8 +348,8 @@ again or official Linux-PAM with its pre-compiled documentation and
 still adding a few modules from Red Hat's for compatibility.
 
 [PRIORITY: low]
-Add support for "include" directive per ALT Linux's proposal, using
-pam-0.77-alt-pam_include.patch.  Make other packages in Owl use it.
+After upgrading to pam-0.79+, make other packages in Owl use new "include"
+directive where appropriate.
 
 [PRIORITY: low]
 Move pam_pwdb (with its dependency on libpwdb) into a new pam-compat
@@ -598,4 +596,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.65 2005/05/04 21:24:20 solar Exp $
+$Id: Owl/doc/TODO,v 1.66 2005/05/05 18:12:27 ldv Exp $
