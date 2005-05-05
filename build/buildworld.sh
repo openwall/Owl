@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.33 2005/04/01 23:12:31 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.34 2005/05/05 21:53:33 solar Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -83,6 +83,7 @@ function built()
 	while read BINARY; do
 		REGEX="^${BINARY}\.[^.]*\.rpm\$"
 		if [ -z "`ls $HOME/RPMS/ | grep "$REGEX"`" ]; then
+			> /dev/null
 			return 1
 		fi
 	done
