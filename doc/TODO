@@ -84,12 +84,15 @@ and to mtree, both of which had similar issues.
 2. Races when extracting archives: whether it will be possible for an
 attacker to place [sym]links into directories being extracted such
 that files in them would go to the wrong place, -- for example, when
-restoring user home directories from a backup, as root.  Races between
-the calls to chmod() and chown(), -- if chmod() is done first, that
-would mean that permissions may be given to the wrong group for a
-moment and if chown() is done first it may mean that extra permissions
+restoring user home directories from a backup, as root.
+
+3. Races between the calls to open()/mkdir()/mknod(), chmod() and
+chown(), -- if chmod() is done before chown(), that would mean
+that permissions may be given to the wrong group for a moment
+and if chown() is done first it may mean that extra permissions
 are given to the file's group for a moment.  The right sequence is
-chmod() to a safe mode (0700 & mode), then chown(), then chmod().
+open()/mkdir()/mknod() using safe mode (~077 & mode), then chown(),
+then chmod().
 
 
 	cvs.
@@ -596,4 +599,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.66 2005/05/05 18:12:27 ldv Exp $
+$Id: Owl/doc/TODO,v 1.67 2005/05/06 13:14:10 ldv Exp $
