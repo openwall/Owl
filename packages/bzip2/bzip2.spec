@@ -1,20 +1,23 @@
-# $Id: Owl/packages/bzip2/bzip2.spec,v 1.18 2005/05/05 22:51:23 solar Exp $
+# $Id: Owl/packages/bzip2/bzip2.spec,v 1.19 2005/05/06 22:40:06 ldv Exp $
 
 Summary: An extremely powerful file compression utility.
 Name: bzip2
 Version: 1.0.3
-Release: owl1
+Release: owl2
 License: BSD
 Group: Applications/File
 URL: http://www.bzip.org
-Source: http://www.bzip.org/%version/%name-%version.tar.gz
-Patch0: bzip2-1.0.3-owl-Makefile.diff
+Source0: http://www.bzip.org/%version/%name-%version.tar.gz
+Source1: bzip2.texi
+Patch0: bzip2-1.0.3-alt-autotools.diff
 Patch1: bzip2-1.0.3-owl-tmp.diff
 Patch2: bzip2-1.0.3-alt-progname.diff
 Patch3: bzip2-1.0.3-alt-chmod-chown.diff
 Patch4: bzip2-1.0.3-alt-owl-fopen.diff
+Patch5: bzip2-1.0.3-alt-version.diff
 PreReq: /sbin/ldconfig
 Requires: mktemp >= 1:1.3.1
+# Provide this soname for backwards compatibility
 Provides: libbz2.so.0
 BuildRoot: /override/%name-%version
 
@@ -32,6 +35,7 @@ compression capability.
 %package devel
 Summary: Header files and libraries for developing apps which will use bzip2.
 Group: Development/Libraries
+PreReq: /sbin/install-info
 Requires: %name = %version-%release
 
 %description devel
@@ -45,25 +49,40 @@ which will use the library.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
+install -pm644 %_sourcedir/bzip2.texi .
+chmod u+x samples.sh
 
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-make -f Makefile-libbz2_so CFLAGS="$RPM_OPT_FLAGS -D_FILE_OFFSET_BITS=64 -fPIC"
-rm *.o
-make CFLAGS="$RPM_OPT_FLAGS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE"
+autoreconf -fisv
+%configure
+make
+make -k check
 
 %install
 rm -rf %buildroot
 
-make install PREFIX=%buildroot/usr MANDIR=%buildroot%_mandir
-make -f Makefile-libbz2_so install PREFIX=%buildroot/usr
+%makeinstall
 
-# Hack!
+# Provide this symlink for backwards compatibility
 ln -s libbz2.so.%version %buildroot%_libdir/libbz2.so.0
+
+# Remove unpackaged files
+rm %buildroot%_libdir/libbz2.la
+rm -f %buildroot%_infodir/dir
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
+
+%post devel
+/sbin/install-info %_infodir/bzip2.info %_infodir/dir
+
+%preun devel
+if [ $1 -eq 0 ]; then
+	/sbin/install-info --delete %_infodir/bzip2.info %_infodir/dir
+fi
 
 %files
 %defattr(-,root,root)
@@ -77,8 +96,15 @@ ln -s libbz2.so.%version %buildroot%_libdir/libbz2.so.0
 %_includedir/*
 %_libdir/*.a
 %_libdir/*.so
+%_infodir/bzip2.*
 
 %changelog
+* Sat May 07 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.0.3-owl2
+- Imported several patches from ALT: documentation in texinfo format,
+autotools support, change of bzip2 -h/-L/-V options behaviour to
+output to stdout instead of stderr and cause program exit (for -L/-V)
+without processing any more options.
+
 * Fri May 06 2005 Solar Designer <solar@owl.openwall.com> 1.0.3-owl1
 - Updated to 1.0.3.
 - Re-worked the bzdiff temporary file handling patch according to our new
