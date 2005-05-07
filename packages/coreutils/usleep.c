@@ -9,31 +9,38 @@
 #include <limits.h>
 #include <unistd.h>
 
-void
-usage(void)
+static void __attribute__ ((__noreturn__))
+usage (void)
 {
-	fprintf(stderr, "usage: %s [microseconds]\n",
-			program_invocation_short_name);
+	fprintf (stderr, "usage: %s [microseconds]\n",
+		 program_invocation_short_name);
 
-	exit(EXIT_FAILURE);
+	exit (EXIT_FAILURE);
 }
 
 int
-main(int argc, const char **argv)
+main (int argc, const char **argv)
 {
 	unsigned long delay = 1;
-	char *p = 0;
 
-	if(argc != 2)
-		usage();
+	if (argc > 2)
+		usage ();
 
-	delay = strtoul(argv[1], &p, 0);
-	if(*p || delay < 0 || delay == ULONG_MAX) {
-		error(0, EINVAL, "%s", argv[1]);
-		usage();
+	if (argc == 2)
+	{
+		char   *p = 0;
+
+		errno = 0;
+		delay = strtoul (argv[1], &p, 0);
+		if (!*argv[1] || *p || errno)
+		{
+			error (EXIT_SUCCESS, errno ? : EINVAL, "%s", argv[1]);
+			usage ();
+		}
 	}
 
-	usleep(delay);
+	if (usleep (delay))
+		error (EXIT_FAILURE, errno, "%s", argv[1]);
 
 	return EXIT_SUCCESS;
 }
