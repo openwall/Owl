@@ -1,0 +1,128 @@
+diff -uprk.orig coreutils-200411200857.orig/README coreutils-200411200857/README
+--- coreutils-200411200857.orig/README	2004-11-20 18:20:19 +0000
++++ coreutils-200411200857/README	2004-11-20 18:20:40 +0000
+@@ -12,8 +12,8 @@ The programs that can be built with this
+   ginstall groups head hostid hostname id join kill link ln logname ls
+   md5sum mkdir mkfifo mknod mksock mv nice nl nohup od paste pathchk pinky pr
+   printenv printf ptx pwd readlink rm rmdir seq sha1sum shred sleep sort
+-  split stat stty su sum sync tac tail tee test touch tr true tsort tty
+-  uname unexpand uniq unlink uptime users vdir wc who whoami yes
++  split stat stty sum sync tac tail tee test touch tr true tsort tty
++  uname unexpand uniq unlink users vdir wc who whoami yes
+ 
+ See the file NEWS for a list of major changes in the current release.
+ 
+diff -uprk.orig coreutils-200411200857.orig/man/Makefile.am coreutils-200411200857/man/Makefile.am
+--- coreutils-200411200857.orig/man/Makefile.am	2004-11-20 18:20:19 +0000
++++ coreutils-200411200857/man/Makefile.am	2004-11-20 18:20:40 +0000
+@@ -8,8 +8,8 @@ dist_man_MANS = \
+   ls.1 md5sum.1 mkdir.1 mkfifo.1 mknod.1 mksock.1 mv.1 nice.1 nl.1 nohup.1 od.1 \
+   paste.1 pathchk.1 pinky.1 pr.1 printenv.1 printf.1 ptx.1 pwd.1 readlink.1 \
+   rm.1 rmdir.1 seq.1 sha1sum.1 shred.1 sleep.1 sort.1 split.1 stat.1 stty.1 \
+-  su.1 sum.1 sync.1 tac.1 tail.1 tee.1 test.1 touch.1 tr.1 true.1 tsort.1 \
+-  tty.1 uname.1 unexpand.1 uniq.1 unlink.1 uptime.1 users.1 vdir.1 wc.1 \
++  sum.1 sync.1 tac.1 tail.1 tee.1 test.1 touch.1 tr.1 true.1 tsort.1 \
++  tty.1 uname.1 unexpand.1 uniq.1 unlink.1 users.1 vdir.1 wc.1 \
+   who.1 whoami.1 yes.1
+ 
+ man_aux = $(dist_man_MANS:.1=.x)
+diff -uprk.orig coreutils-200411200857.orig/po/POTFILES.in coreutils-200411200857/po/POTFILES.in
+--- coreutils-200411200857.orig/po/POTFILES.in	2004-09-22 20:20:29 +0000
++++ coreutils-200411200857/po/POTFILES.in	2004-11-20 18:20:40 +0000
+@@ -89,7 +89,6 @@ src/sort.c
+ src/split.c
+ src/stat.c
+ src/stty.c
+-src/su.c
+ src/sum.c
+ src/sync.c
+ src/system.h
+@@ -107,7 +106,6 @@ src/uname.c
+ src/unexpand.c
+ src/uniq.c
+ src/unlink.c
+-src/uptime.c
+ src/users.c
+ src/wc.c
+ src/who.c
+diff -uprk.orig coreutils-200411200857.orig/src/Makefile.am coreutils-200411200857/src/Makefile.am
+--- coreutils-200411200857.orig/src/Makefile.am	2004-11-20 18:20:19 +0000
++++ coreutils-200411200857/src/Makefile.am	2004-11-20 18:21:47 +0000
+@@ -1,6 +1,6 @@
+ ## Process this file with automake to produce Makefile.in -*-Makefile-*-
+ 
+-EXTRA_PROGRAMS = chroot df hostid nice pinky stty su uname uptime users who
++EXTRA_PROGRAMS = chroot df hostid nice pinky stty uname users who
+ 
+ bin_SCRIPTS = groups
+ bin_PROGRAMS = [ chgrp chown chmod cp dd dircolors du \
+@@ -72,10 +72,6 @@ nanosec_libs = \
+ sleep_LDADD = $(nanosec_libs)
+ tail_LDADD = $(nanosec_libs)
+ 
+-uptime_LDADD = $(LDADD) $(GETLOADAVG_LIBS)
+-
+-su_LDADD = $(LDADD) $(LIB_CRYPT)
+-
+ $(PROGRAMS): ../lib/libcoreutils.a
+ 
+ SUFFIXES = .sh
+@@ -90,49 +86,6 @@ SUFFIXES = .sh
+ 	chmod +x $@-t
+ 	mv $@-t $@
+ 
+-all-local: su$(EXEEXT)
+-
+-installed_su = $(DESTDIR)$(bindir)/`echo su|sed '$(transform)'`
+-
+-setuid_root_mode = a=rx,u+s
+-
+-INSTALL_SU = \
+-  p=su; \
+-  echo " $(INSTALL_PROGRAM) $$p $(installed_su)"; \
+-  $(INSTALL_PROGRAM) $$p $(installed_su); \
+-  echo " chown root $(installed_su)"; \
+-  chown root $(installed_su); \
+-  echo " chmod $(setuid_root_mode) $(installed_su)"; \
+-  chmod $(setuid_root_mode) $(installed_su)
+-
+-install-root: su$(EXEEXT)
+-	@$(INSTALL_SU)
+-
+-install-exec-local: su$(EXEEXT)
+-	@TMPFILE=$(DESTDIR)$(bindir)/.su-$$$$; \
+-	rm -f $$TMPFILE; \
+-	echo > $$TMPFILE; \
+-## See if we can create a setuid root executable in $(bindir).
+-## If not, then don't even try to install su.
+-	can_create_suid_root_executable=no; \
+-	chown root $$TMPFILE > /dev/null 2>&1 \
+-	  && chmod $(setuid_root_mode) $$TMPFILE > /dev/null 2>&1 \
+-	  && can_create_suid_root_executable=yes; \
+-	rm -f $$TMPFILE; \
+-	if test $$can_create_suid_root_executable = yes; then \
+-	  $(INSTALL_SU); \
+-	else \
+-	  echo "WARNING: insufficient access; not installing su"; \
+-	  echo "NOTE: to install su, run 'make install-root' as root"; \
+-	fi
+-
+-uninstall-local:
+-# Remove su only if it's one we installed.
+-	@if grep '$(GNU_PACKAGE)' $(installed_su) > /dev/null 2>&1; then \
+-	  echo "  rm -f $(installed_su)"; \
+-	  rm -f $(installed_su); \
+-	else :; fi
+-
+ # Use `ginstall' in the definition of PROGRAMS and in dependencies to avoid
+ # confusion with the `install' target.  The install rule transforms `ginstall'
+ # to install before applying any user-specified name transformations.
+@@ -259,7 +213,7 @@ check-AUTHORS: $(all_programs)
+ 	  ./$$exe --version				\
+ 	    |sed -n '/Written by /{ s//'"$$i"': /; s/,* and /, /; s/\.$$//; p; }'; \
+ 	done > $(au_actual)
+-	sed -n '/:/p' $(top_srcdir)/AUTHORS > $(au_dotdot)
++	sed -n '/:/p' $(top_srcdir)/AUTHORS |egrep -v '^(su|uptime): ' > $(au_dotdot)
+ 	diff $(au_actual) $(au_dotdot) && rm -f $(au_actual) $(au_dotdot)
+ 
+ # Make sure we don't define any S_IS* macros in src/*.c files.

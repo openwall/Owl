@@ -1,0 +1,33 @@
+--- coreutils-200504010740/src/ls.c.orig	2005-04-04 20:58:52 +0400
++++ coreutils-200504010740/src/ls.c	2005-04-04 20:58:52 +0400
+@@ -95,6 +95,7 @@ int wcwidth ();
+ 
+ #include "system.h"
+ #include <fnmatch.h>
++#include <termcap.h>
+ 
+ #include "acl.h"
+ #include "argmatch.h"
+@@ -1706,7 +1707,10 @@ decode_switches (int argc, char **argv)
+ 
+ 	    print_with_color = (i == color_always
+ 				|| (i == color_if_tty
+-				    && isatty (STDOUT_FILENO)));
++ 				    && isatty (STDOUT_FILENO)
++				    && getenv("TERM")
++ 			            && tgetent(NULL, getenv("TERM")) > 0
++ 				    && tgetstr("md", NULL) > 0));
+ 
+ 	    if (print_with_color)
+ 	      {
+--- coreutils-200504010740/src/Makefile.am.orig	2005-04-04 20:58:52 +0400
++++ coreutils-200504010740/src/Makefile.am	2005-04-04 21:00:33 +0400
+@@ -44,7 +44,7 @@ __LDADD = $(LDADD) $(LIB_EACCESS)
+ 
+ # for clock_gettime and fdatasync
+ dd_LDADD = $(LDADD) $(LIB_GETHRXTIME) $(LIB_FDATASYNC)
+-ls_LDADD = $(LDADD) $(LIB_CLOCK_GETTIME)
++ls_LDADD = $(LDADD) $(LIB_CLOCK_GETTIME) -ltermcap
+ pr_LDADD = $(LDADD) $(LIB_CLOCK_GETTIME)
+ shred_LDADD = $(LDADD) $(LIB_GETHRXTIME) $(LIB_FDATASYNC)
+ 

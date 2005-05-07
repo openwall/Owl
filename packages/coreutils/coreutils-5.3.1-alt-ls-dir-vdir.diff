@@ -1,0 +1,98 @@
+--- coreutils-200504010740/src/ls.c.orig	2005-04-04 20:57:04 +0400
++++ coreutils-200504010740/src/ls.c	2005-04-04 20:57:04 +0400
+@@ -119,9 +119,6 @@ int wcwidth ();
+ #include "xstrtol.h"
+ #include "xreadlink.h"
+ 
+-#define PROGRAM_NAME (ls_mode == LS_LS ? "ls" \
+-		      : (ls_mode == LS_MULTI_COL \
+-			 ? "dir" : "vdir"))
+ 
+ #define AUTHORS "Richard Stallman", "David MacKenzie"
+ 
+@@ -1348,21 +1345,20 @@ decode_switches (int argc, char **argv)
+ 
+   /* initialize all switches to default settings */
+ 
+-  switch (ls_mode)
++  if (!strcmp (program_invocation_short_name, "dir"))
+     {
+-    case LS_MULTI_COL:
+       /* This is for the `dir' program.  */
+       format = many_per_line;
+       set_quoting_style (NULL, escape_quoting_style);
+-      break;
+-
+-    case LS_LONG_FORMAT:
++    }
++  else if (!strcmp (program_invocation_short_name, "vdir"))
++    {
+       /* This is for the `vdir' program.  */
+       format = long_format;
+       set_quoting_style (NULL, escape_quoting_style);
+-      break;
+-
+-    case LS_LS:
++    }
++  else
++    {
+       /* This is for the `ls' program.  */
+       if (isatty (STDOUT_FILENO))
+ 	{
+@@ -1375,10 +1371,6 @@ decode_switches (int argc, char **argv)
+ 	  format = one_per_line;
+ 	  qmark_funny_chars = false;
+ 	}
+-      break;
+-
+-    default:
+-      abort ();
+     }
+ 
+   time_type = time_mtime;
+@@ -1758,7 +1750,7 @@ decode_switches (int argc, char **argv)
+ 
+ 	case_GETOPT_HELP_CHAR;
+ 
+-	case_GETOPT_VERSION_CHAR (PROGRAM_NAME, AUTHORS);
++	case_GETOPT_VERSION_CHAR (program_invocation_short_name, AUTHORS);
+ 
+ 	default:
+ 	  usage (LS_FAILURE);
+--- coreutils-200504010740/src/Makefile.am.orig	2005-04-04 20:57:04 +0400
++++ coreutils-200504010740/src/Makefile.am	2005-04-04 20:58:07 +0400
+@@ -44,11 +44,9 @@ __LDADD = $(LDADD) $(LIB_EACCESS)
+ 
+ # for clock_gettime and fdatasync
+ dd_LDADD = $(LDADD) $(LIB_GETHRXTIME) $(LIB_FDATASYNC)
+-dir_LDADD = $(LDADD) $(LIB_CLOCK_GETTIME)
+ ls_LDADD = $(LDADD) $(LIB_CLOCK_GETTIME)
+ pr_LDADD = $(LDADD) $(LIB_CLOCK_GETTIME)
+ shred_LDADD = $(LDADD) $(LIB_GETHRXTIME) $(LIB_FDATASYNC)
+-vdir_LDADD = $(LDADD) $(LIB_CLOCK_GETTIME)
+ 
+ ## If necessary, add -lm to resolve use of pow in lib/strtod.c.
+ sort_LDADD = $(LDADD) $(POW_LIB)
+@@ -89,6 +87,12 @@ SUFFIXES = .sh
+ 	chmod +x $@-t
+ 	mv $@-t $@
+ 
++dir: ls
++	ln -snf ls dir
++
++vdir: ls
++	ln -snf ls vdir
++
+ # Use `ginstall' in the definition of PROGRAMS and in dependencies to avoid
+ # confusion with the `install' target.  The install rule transforms `ginstall'
+ # to install before applying any user-specified name transformations.
+@@ -100,9 +104,6 @@ ginstall_SOURCES = install.c copy.c cp-h
+ __SOURCES = lbracket.c
+ 
+ cp_SOURCES = cp.c copy.c cp-hash.c
+-dir_SOURCES = ls.c ls-dir.c
+-vdir_SOURCES = ls.c ls-vdir.c
+-ls_SOURCES = ls.c ls-ls.c
+ chown_SOURCES = chown.c chown-core.c
+ chgrp_SOURCES = chgrp.c chown-core.c
+ 

@@ -1,0 +1,13 @@
+diff -uprk.orig coreutils-5.2.0.orig/src/install.c coreutils-5.2.0/src/install.c
+--- coreutils-5.2.0.orig/src/install.c	2004-02-07 18:41:12 +0300
++++ coreutils-5.2.0/src/install.c	2004-02-24 16:54:15 +0300
+@@ -531,7 +531,8 @@ strip (const char *path)
+       while (pid != wait (&status))	/* Wait for kid to finish. */
+ 	/* Do nothing. */ ;
+       if (status)
+-	error (EXIT_FAILURE, 0, _("strip failed"));
++	/* We don't want to produce a fatal error just because strip failed. */
++	error (EXIT_SUCCESS, 0, _("strip failed"));
+       break;
+     }
+ }

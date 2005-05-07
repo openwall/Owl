@@ -1,0 +1,18 @@
+.\" $Id: Owl/packages/coreutils/usleep.1,v 1.1 2005/05/07 15:55:43 ldv Exp $
+.\" usleep \- sleep some number of microseconds
+.TH usleep 1 "4 Mar 2001" "ALT Linux Team" "ALT Linux"
+.SH NAME
+usleep \- sleep some number of microseconds
+.SH SYNOPSIS
+.B usleep
+[\fInumber\fP]
+.SH DESCRIPTION
+.B usleep
+sleeps some number of microseconds.  The default is 1.
+.SH BUGS
+The sleep may be lengthened slightly by any system activity
+or by the time spent processing the call.
+.SH SEE ALSO
+.IR usleep (3)
+.SH AUTHOR
+Dmitry V. Levin <ldv@altlinux.org>

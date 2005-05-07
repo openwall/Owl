@@ -1,0 +1,528 @@
+diff -uprk.orig coreutils-200504010740.orig/configure.ac coreutils-200504010740/configure.ac
+--- coreutils-200504010740.orig/configure.ac	2005-03-22 18:09:54 +0300
++++ coreutils-200504010740/configure.ac	2005-04-12 17:10:03 +0400
+@@ -232,6 +232,8 @@ AC_CHECK_DECLS([strsignal, sys_siglist, 
+ # For src/kill.c and src/printf.c.
+ AC_CHECK_DECLS([strtoimax, strtoumax])
+ 
++gt_PREREQ_HOSTNAME
++
+ gl_LIB_CHECK
+ 
+ AM_GNU_GETTEXT([external], [need-ngettext])
+diff -uprk.orig coreutils-200504010740.orig/m4/hostname.m4 coreutils-200504010740/m4/hostname.m4
+--- coreutils-200504010740.orig/m4/hostname.m4	1970-01-01 03:00:00 +0300
++++ coreutils-200504010740/m4/hostname.m4	2005-04-12 17:10:03 +0400
+@@ -0,0 +1,26 @@
++# hostname.m4 serial 1 (gettext-0.11)
++dnl Copyright (C) 2001-2002 Free Software Foundation, Inc.
++dnl This file is free software; the Free Software Foundation
++dnl gives unlimited permission to copy and/or distribute it,
++dnl with or without modifications, as long as this notice is preserved.
++
++# Prerequisites of the hostname.c program.
++AC_DEFUN([gt_PREREQ_HOSTNAME],
++[
++  AC_CHECK_HEADERS(arpa/inet.h)
++  AC_CHECK_FUNCS(gethostname gethostbyname getdomainname setdomainname inet_ntop)
++
++  AC_MSG_CHECKING([for IPv6 sockets])
++  AC_CACHE_VAL(gt_cv_socket_ipv6,[
++    AC_TRY_COMPILE([
++#include <sys/types.h>
++#include <sys/socket.h>
++#include <netinet/in.h>],
++[int x = AF_INET6; struct in6_addr y; struct sockaddr_in6 z;],
++      gt_cv_socket_ipv6=yes, gt_cv_socket_ipv6=no)
++  ])
++  AC_MSG_RESULT($gt_cv_socket_ipv6)
++  if test $gt_cv_socket_ipv6 = yes; then
++    AC_DEFINE(HAVE_IPV6, 1, [Define if <sys/socket.h> defines AF_INET6.])
++  fi
++])
+diff -uprk.orig coreutils-200504010740.orig/src/hostname.c coreutils-200504010740/src/hostname.c
+--- coreutils-200504010740.orig/src/hostname.c	2004-11-17 03:56:25 +0300
++++ coreutils-200504010740/src/hostname.c	2005-04-13 03:53:10 +0400
+@@ -25,7 +25,9 @@
+ #include "system.h"
+ #include "long-options.h"
+ #include "error.h"
++#include "errno.h"
+ #include "quote.h"
++#include "xalloc.h"
+ #include "xgethostname.h"
+ 
+ /* The official name of this program (e.g., no `g' prefix).  */
+@@ -33,6 +35,148 @@
+ 
+ #define AUTHORS "Jim Meyering"
+ 
++/* Support for using gethostbyname().  */
++#if HAVE_GETHOSTBYNAME
++# include <sys/types.h>
++# include <sys/socket.h>	/* defines AF_INET, AF_INET6 */
++# include <netinet/in.h>	/* declares ntohs(), defines struct sockaddr_in */
++# if HAVE_ARPA_INET_H
++#  include <arpa/inet.h>	/* declares inet_ntoa(), inet_ntop() */
++# endif
++# if HAVE_IPV6
++#  if !defined(__CYGWIN__)	/* Cygwin has only s6_addr, no s6_addr16 */
++#   if defined(__APPLE__) && defined(__MACH__)	/* MacOS X */
++#    define in6_u __u6_addr
++#    define u6_addr16 __u6_addr16
++#   endif
++    /* Use s6_addr16 for portability.  See RFC 2553.  */
++#   ifndef s6_addr16
++#    define s6_addr16 in6_u.u6_addr16
++#   endif
++#   define HAVE_IN6_S6_ADDR16 1
++#  endif
++# endif
++# include <netdb.h>		/* defines struct hostent, declares gethostbyname() */
++#endif
++
++/* Converts an AF_INET address to a printable, presentable format.
++   BUFFER is an array with at least 15+1 bytes.  ADDR is 'struct in_addr'.  */
++#if HAVE_INET_NTOP
++# define ipv4_ntop(buffer,addr) \
++    inet_ntop (AF_INET, &addr, buffer, 15+1)
++#else
++# define ipv4_ntop(buffer,addr) \
++    strcpy (buffer, inet_ntoa (addr))
++#endif
++
++#if HAVE_IPV6
++/* Converts an AF_INET6 address to a printable, presentable format.
++   BUFFER is an array with at least 45+1 bytes.  ADDR is 'struct in6_addr'.  */
++# if HAVE_INET_NTOP
++#  define ipv6_ntop(buffer,addr) \
++     inet_ntop (AF_INET6, &addr, buffer, 45+1)
++# elif HAVE_IN6_S6_ADDR16
++#  define ipv6_ntop(buffer,addr) \
++     sprintf (buffer, "%x:%x:%x:%x:%x:%x:%x:%x", \
++	      ntohs ((addr).s6_addr16[0]), \
++	      ntohs ((addr).s6_addr16[1]), \
++	      ntohs ((addr).s6_addr16[2]), \
++	      ntohs ((addr).s6_addr16[3]), \
++	      ntohs ((addr).s6_addr16[4]), \
++	      ntohs ((addr).s6_addr16[5]), \
++	      ntohs ((addr).s6_addr16[6]), \
++	      ntohs ((addr).s6_addr16[7]))
++# else
++#  define ipv6_ntop(buffer,addr) \
++     sprintf (buffer, "%x:%x:%x:%x:%x:%x:%x:%x", \
++	      ((addr).s6_addr[0] << 8) | (addr).s6_addr[1], \
++	      ((addr).s6_addr[2] << 8) | (addr).s6_addr[3], \
++	      ((addr).s6_addr[4] << 8) | (addr).s6_addr[5], \
++	      ((addr).s6_addr[6] << 8) | (addr).s6_addr[7], \
++	      ((addr).s6_addr[8] << 8) | (addr).s6_addr[9], \
++	      ((addr).s6_addr[10] << 8) | (addr).s6_addr[11], \
++	      ((addr).s6_addr[12] << 8) | (addr).s6_addr[13], \
++	      ((addr).s6_addr[14] << 8) | (addr).s6_addr[15])
++# endif
++#endif
++
++/* Output format types.  */
++typedef enum
++{ default_format, short_format, domain_format, long_format, ip_format }
++output_format_t;
++
++/* Query name types.  */
++typedef enum
++{ host_query, dns_query, nis_query }
++query_name_t;
++
++/* Long options.  */
++static const struct option long_options[] = {
++  {"fqdn", no_argument, NULL, 'f'},
++  {"long", no_argument, NULL, 'f'},
++  {"ip-address", no_argument, NULL, 'i'},
++  {"short", no_argument, NULL, 's'},
++
++  {"dns", no_argument, NULL, 'd'},
++  {"domain", no_argument, NULL, 'd'},
++
++  {"nis", no_argument, NULL, 'y'},
++  {"yp", no_argument, NULL, 'y'},
++
++  {GETOPT_HELP_OPTION_DECL},
++  {GETOPT_VERSION_OPTION_DECL},
++  {NULL, 0, NULL, 0}
++};
++
++#ifndef INITIAL_DOMAINNAME_LENGTH
++# define INITIAL_DOMAINNAME_LENGTH 34
++#endif
++
++/* Return the current domainname in malloc'd storage.
++   If malloc fails, exit.
++   Upon any other failure, return NULL and set errno.  */
++char *
++xgetdomainname (void)
++{
++  char *domainname = NULL;
++  size_t size = INITIAL_DOMAINNAME_LENGTH;
++
++  while (1)
++    {
++      /* Use SIZE_1 here rather than SIZE to work around the bug in
++         SunOS 5.5's getdomainname whereby it NUL-terminates DOMAINNAME
++         even when the name is as long as the supplied buffer.  */
++      size_t size_1;
++
++      domainname = x2realloc (domainname, &size);
++      size_1 = size - 1;
++      domainname[size_1 - 1] = '\0';
++      errno = 0;
++
++#ifdef HAVE_GETDOMAINNAME
++      if (getdomainname (domainname, size_1) == 0)
++	{
++	  if (!domainname[size_1 - 1])
++	    break;
++	}
++      else
++#else
++      errno = ENOSYS;
++#endif
++      if (errno != 0 && errno != ENAMETOOLONG && errno != EINVAL
++	  /* OSX/Darwin does this when the buffer is not large enough */
++	  && errno != ENOMEM)
++	{
++	  int saved_errno = errno;
++	  free (domainname);
++	  errno = saved_errno;
++	  return NULL;
++	}
++    }
++
++  return domainname;
++}
++
+ #if HAVE_SETHOSTNAME && !defined sethostname
+ int sethostname ();
+ #endif
+@@ -48,14 +192,17 @@ sethostname (char *name, size_t namelen)
+   return (sysinfo (SI_SET_HOSTNAME, name, namelen) < 0 ? -1 : 0);
+ }
+ 
+-# define HAVE_SETHOSTNAME 1  /* Now we have it... */
++# define HAVE_SETHOSTNAME 1	/* Now we have it... */
+ #endif
+ 
+ /* The name this program was run with. */
+ char *program_name;
+ 
+-void
+-usage (int status)
++static void
++#if defined __GNUC__ && ((__GNUC__ == 2 && __GNUC_MINOR__ >= 5) || __GNUC__ > 2)
++  __attribute__ ((noreturn))
++#endif
++  usage (int status)
+ {
+   if (status != EXIT_SUCCESS)
+     fprintf (stderr, _("Try `%s --help' for more information.\n"),
+@@ -65,10 +212,19 @@ usage (int status)
+       printf (_("\
+ Usage: %s [NAME]\n\
+   or:  %s OPTION\n\
+-Print or set the hostname of the current system.\n\
++Print or set the hostname or domainname of the current system.\n\
++\n\
++Output format:\n\
++  -s, --short                 short host name\n\
++  -f, --fqdn, --long          long host name, includes fully qualified\n\
++                                domain name, and aliases\n\
++  -i, --ip-address            addresses for the hostname\n\
++  -d, --dns, --domain         DNS domain name\n\
++  -y, --yp, --nis             NIS/YP domain name\n\
++\n\
++Informative output:\n\
+ \n\
+-"),
+-             program_name, program_name);
++"), program_name, program_name);
+       fputs (HELP_OPTION_DESCRIPTION, stdout);
+       fputs (VERSION_OPTION_DESCRIPTION, stdout);
+       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+@@ -76,50 +232,258 @@ Print or set the hostname of the current
+   exit (status);
+ }
+ 
++static void print_name (query_name_t, output_format_t);
++static void set_name (query_name_t, const char *);
++
+ int
+ main (int argc, char **argv)
+ {
+-  char *hostname;
++  int optc;
++  output_format_t format = default_format;
++  query_name_t query = host_query;
+ 
+   initialize_main (&argc, &argv);
+-  program_name = argv[0];
++  program_name = program_invocation_short_name;
+   setlocale (LC_ALL, "");
+   bindtextdomain (PACKAGE, LOCALEDIR);
+   textdomain (PACKAGE);
+ 
+   atexit (close_stdout);
+ 
++  if (STREQ (program_name, "dnsdomainname"))
++    query = dns_query;
++
++  if (STREQ (program_name, "domainname")
++      || STREQ (program_name, "nisdomainname")
++      || STREQ (program_name, "ypdomainname"))
++    query = nis_query;
++
+   parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
+ 		      usage, AUTHORS, (char const *) NULL);
+-  if (getopt_long (argc, argv, "", NULL, NULL) != -1)
+-    usage (EXIT_FAILURE);
++
++  /* Parse command line options.  */
++  while ((optc =
++	  getopt_long (argc, argv, "dfisyhV", long_options, NULL)) != EOF)
++    switch (optc)
++      {
++      case 'f':
++	if (query != host_query || format != default_format)
++	  {
++	    error (0, 0, _("incompatible options"));
++	    usage (EXIT_FAILURE);
++	  }
++	format = long_format;
++	break;
++      case 's':
++	if (query != host_query || format != default_format)
++	  {
++	    error (0, 0, _("incompatible options"));
++	    usage (EXIT_FAILURE);
++	  }
++	format = short_format;
++	break;
++      case 'i':
++	if (query != host_query || format != default_format)
++	  {
++	    error (0, 0, _("incompatible options"));
++	    usage (EXIT_FAILURE);
++	  }
++	format = ip_format;
++	break;
++
++      case 'd':
++	if (query == nis_query || format != default_format)
++	  {
++	    error (0, 0, _("incompatible options"));
++	    usage (EXIT_FAILURE);
++	  }
++	query = dns_query;
++	break;
++
++      case 'y':
++	if (query == dns_query || format != default_format)
++	  {
++	    error (0, 0, _("incompatible options"));
++	    usage (EXIT_FAILURE);
++	  }
++	query = nis_query;
++	break;
++
++      case 'h':
++	case_GETOPT_HELP_CHAR;
++      case 'V':
++	case_GETOPT_VERSION_CHAR (PROGRAM_NAME, AUTHORS);
++      default:
++	usage (EXIT_FAILURE);
++	/* NOTREACHED */
++      }
+ 
+   if (argc == optind + 1)
++    set_name (query, argv[optind]);
++
++  else if (argc <= optind)
++    print_name (query, format);
++
++  else
+     {
+-#ifdef HAVE_SETHOSTNAME
+-      /* Set hostname to operand.  */
+-      char const *name = argv[optind];
+-      if (sethostname (name, strlen (name)) != 0)
+-	error (EXIT_FAILURE, errno, _("cannot set name to `%s'"), name);
+-#else
+-      error (EXIT_FAILURE, 0,
+-	     _("cannot set hostname; this system lacks the functionality"));
+-#endif
++      error (0, 0, _("extra operand %s"), quote (argv[optind + 1]));
++      usage (EXIT_FAILURE);
+     }
+ 
+-  if (argc <= optind)
++  exit (EXIT_SUCCESS);
++}
++
++static void
++print_hostname (output_format_t format)
++{
++  char *hostname;
++  char *dot;
++#if HAVE_GETHOSTBYNAME
++  struct hostent *h;
++  size_t i;
++#endif
++
++  hostname = xgethostname ();
++  if (hostname == NULL)
++    error (EXIT_FAILURE, errno, _("cannot determine hostname"));
++
++  switch (format)
+     {
+-      hostname = xgethostname ();
+-      if (hostname == NULL)
+-	error (EXIT_FAILURE, errno, _("cannot determine hostname"));
++    case default_format:
++      /* Print the hostname, as returned by the system call.  */
++      printf ("%s\n", hostname);
++      break;
++
++    case short_format:
++      /* Print only the part before the first dot.  */
++      dot = strchr (hostname, '.');
++      if (dot != NULL)
++	*dot = '\0';
++      printf ("%s\n", hostname);
++      break;
++
++    case domain_format:
++      /* Print only the part after the first dot.  */
++      dot = strchr (hostname, '.');
++      if (dot != NULL)
++	hostname = dot + 1;
+       printf ("%s\n", hostname);
++      break;
++
++    case long_format:
++      /* Look for netwide usable hostname using gethostbyname().  */
++#if HAVE_GETHOSTBYNAME
++      h = gethostbyname (hostname);
++      if (h != NULL)
++	printf ("%s\n", h->h_name);
++      else
++#endif
++	printf ("%s\n", hostname);
++      break;
++
++    case ip_format:
++      /* Look for netwide usable IP addresses using gethostbyname().  */
++#if HAVE_GETHOSTBYNAME
++      h = gethostbyname (hostname);
++      if (h != NULL && h->h_addr_list != NULL)
++	{
++	  bool found = false;
++	  for (i = 0; h->h_addr_list[i] != NULL; ++i)
++	    {
++#if HAVE_IPV6
++	      if (h->h_addrtype == AF_INET6)
++		{
++		  char buffer[45 + 1];
++		  ipv6_ntop (buffer,
++			     *(const struct in6_addr *) h->h_addr_list[i]);
++		  printf ("%s%s", (found ? " " : ""), buffer);
++		  found = true;
++		}
++	      else
++#endif
++	      if (h->h_addrtype == AF_INET)
++		{
++		  char buffer[15 + 1];
++		  ipv4_ntop (buffer,
++			     *(const struct in_addr *) h->h_addr_list[i]);
++		  printf ("%s%s", (found ? " " : ""), buffer);
++		  found = true;
++		}
++	    }
++	  if (found)
++	    putchar ('\n');
++	}
++#endif
++      break;
++    }
++}
++
++static void
++print_nisname (void)
++{
++  char *domainname;
++
++  domainname = xgetdomainname ();
++  if (domainname == NULL)
++    error (EXIT_FAILURE, errno, _("cannot determine domainname"));
++
++  printf ("%s\n", domainname);
++}
++
++static void
++print_name (query_name_t query, output_format_t format)
++{
++  switch (query)
++    {
++    case host_query:
++      print_hostname (format);
++      return;
++    case dns_query:
++      print_hostname (domain_format);
++      return;
++    case nis_query:
++      print_nisname ();
++      return;
+     }
++}
+ 
+-  if (optind + 1 < argc)
++static const char *
++name_of_query (query_name_t query)
++{
++  switch (query)
+     {
+-      error (0, 0, _("extra operand %s"), quote (argv[optind + 1]));
+-      usage (EXIT_FAILURE);
++    case host_query:
++      return "host";
++    case dns_query:
++      return "DNS domain";
++    case nis_query:
++      return "NIS domain";
++    default:
++      return "";
+     }
++}
+ 
+-  exit (EXIT_SUCCESS);
++static void
++set_name (query_name_t query, const char *name)
++{
++  switch (query)
++    {
++#ifdef HAVE_SETHOSTNAME
++    case host_query:
++      if (sethostname (name, strlen (name)) != 0)
++	error (EXIT_FAILURE, errno, _("cannot set %s name to `%s'"),
++	       name_of_query (query), name);
++      break;
++#endif
++#ifdef HAVE_SETDOMAINNAME
++    case nis_query:
++      if (setdomainname (name, strlen (name)) != 0)
++	error (EXIT_FAILURE, errno, _("cannot set %s name to `%s'"),
++	       name_of_query (query), name);
++      break;
++#endif
++    default:
++      error (EXIT_FAILURE, ENOSYS,
++	     _("cannot set %s name"), name_of_query (query));
++    }
+ }
