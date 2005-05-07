@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bzip2/bzip2.spec,v 1.20 2005/05/07 14:06:27 ldv Exp $
+# $Id: Owl/packages/bzip2/bzip2.spec,v 1.21 2005/05/07 14:17:20 ldv Exp $
 
 Summary: An extremely powerful file compression utility.
 Name: bzip2
@@ -106,6 +106,8 @@ fi
 autotools support, change of bzip2 -h/-L/-V options behaviour to
 output to stdout instead of stderr and cause program exit (for -L/-V)
 without processing any more options.
+- Converted bunzip2, bzcat, bzcmp, bzegrep, bzfgrep, and bzless
+utilities from hardlinks to symlinks.
 
 * Fri May 06 2005 Solar Designer <solar@owl.openwall.com> 1.0.3-owl1
 - Updated to 1.0.3.
