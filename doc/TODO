@@ -117,24 +117,10 @@ and in a chroot jail.  This requires privilege separation within the
 client (not easy).
 
 
-	fileutils, sh-utils, textutils.
-
-[PRIORITY: medium]
-[ASSIGNED: exon@]
-Update to coreutils (one package instead of three).
-
-Update DIR_COLORS from dircolors.hin.  In ls, dir, and vdir use
-__progname instead of separate binaries with hard-coded ls_mode.
-
-[PRIORITY: low]
-The man pages and texinfo documentation for true(1) and false(1) are
-wrong for the assembly versions (we do not support any command-line
-options).  Update the documentation to match the reality.
-
-
 	findutils.
 
 [PRIORITY: medium]
+[ASSIGNED: ldv@]
 Update to 4.2.20+ dropping the -delete patch (a better version of it
 has been included upstream).
 Update other packages in Owl (e.g. owl-control) to fix warnings generated
@@ -599,4 +585,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.67 2005/05/06 13:14:10 ldv Exp $
+$Id: Owl/doc/TODO,v 1.68 2005/05/07 16:10:13 ldv Exp $
