@@ -70,6 +70,20 @@ directive support in /etc/ld.so.conf.
 Update these to latest releases once in a while.
 
 
+	coreutils.
+
+[PRIORITY: low]
+The texinfo documentation for true(1) and false(1) is wrong for the
+assembly versions (we do not support any command-line options).
+Update the documentation to match the reality.
+
+[PRIORITY: low]
+[ASSIGNED: ldv@]
+Package coreutils' versions of kill(1), hostname(1), and usleep(1).
+Correct the other packages (util-linux, net-tools, and owl-startup) to
+no longer provide these programs.
+
+
 	cpio, tar.
 
 [PRIORITY: medium]
@@ -585,4 +599,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.68 2005/05/07 16:10:13 ldv Exp $
+$Id: Owl/doc/TODO,v 1.69 2005/05/07 22:20:33 solar Exp $
