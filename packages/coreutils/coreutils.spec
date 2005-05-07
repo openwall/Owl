@@ -1,4 +1,4 @@
-# $Id: Owl/packages/coreutils/coreutils.spec,v 1.1 2005/05/07 15:55:43 ldv Exp $
+# $Id: Owl/packages/coreutils/coreutils.spec,v 1.2 2005/05/07 16:37:57 solar Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
@@ -97,7 +97,7 @@ arbitrary limits.
 %patch22 -p1
 %patch23 -p1
 
-find -type f -name \*.orig -delete -print
+find -type f -name '*.orig' -delete -print
 
 # 2nd part of the posix2_version patch
 find src -type f -print0 |
@@ -165,7 +165,7 @@ done
 ln -sf ../../bin/ls %buildroot%_bindir/dir
 ln -sf ../../bin/ls %buildroot%_bindir/vdir
 
-# /bin/*domainname symlinks to hostname. Same man-page for all
+# /bin/*domainname symlinks to hostname - same man-page for all
 for n in dnsdomainname domainname nisdomainname ypdomainname; do
 	ln -s hostname %buildroot/bin/$n
 	echo '.so man1/hostname.1' >%buildroot%_mandir/man1/$n.1
@@ -195,15 +195,15 @@ done
 rm -f %buildroot%_infodir/dir
 
 ### Remove utilities and manpages which are still packaged within
-### another packages.
-# /bin/hostname and symlinks are also in net-tools yet
+### other packages.
+# /bin/hostname and symlinks to it are still in net-tools
 rm %buildroot{/bin,%_mandir/man1}/hostname*
 rm %buildroot{/bin,%_mandir/man1}/*domainname*
 
-# /bin/kill is also in util-linux yet
+# /bin/kill is also still in util-linux
 rm %buildroot{/bin,%_mandir/man1}/kill*
 
-# /bin/usleep is also in owl-startup yet
+# /bin/usleep is also still in owl-startup
 rm %buildroot{/bin,%_mandir/man1}/usleep*
 ###
 
