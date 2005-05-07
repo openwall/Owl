@@ -1,9 +1,9 @@
-# $Id: Owl/packages/coreutils/coreutils.spec,v 1.3 2005/05/07 20:05:46 ldv Exp $
+# $Id: Owl/packages/coreutils/coreutils.spec,v 1.4 2005/05/07 22:31:37 solar Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
 Version: 5.3.1
-Release: owl0.3
+Release: owl0.4
 License: GPL
 Group: System Environment/Base
 URL: http://www.gnu.org/software/%name/
@@ -236,6 +236,9 @@ fi
 %doc ChangeLog.bz2 NEWS.bz2 THANKS.bz2 AUTHORS README TODO
 
 %changelog
+* Sun May 08 2005 Solar Designer <solar@owl.openwall.com> 5.3.1-owl0.4
+- Miscellaneous corrections to usleep.c, usleep.1, true.1, and false.1.
+
 * Sat May 07 2005 Dmitry V. Levin <ldv@owl.openwall.com> 5.3.1-owl0.3
 - Enabled "make check" during build by default.
 - Corrected %%post/%%preun scripts.
