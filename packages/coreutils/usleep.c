@@ -2,6 +2,8 @@
  * Written by Dmitry V. Levin for ALT Linux and placed in the public domain.
  * Further modifications by Solar Designer for Openwall GNU/*/Linux, still
  * public domain.  There's absolutely no warranty.
+ *
+ * $Id: Owl/packages/coreutils/usleep.c,v 1.4 2005/05/07 21:48:56 solar Exp $
  */
 
 #ifndef _GNU_SOURCE
