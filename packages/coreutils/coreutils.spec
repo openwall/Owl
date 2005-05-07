@@ -1,4 +1,4 @@
-# $Id: Owl/packages/coreutils/coreutils.spec,v 1.2 2005/05/07 16:37:57 solar Exp $
+# $Id: Owl/packages/coreutils/coreutils.spec,v 1.3 2005/05/07 20:05:46 ldv Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
@@ -38,9 +38,9 @@ Patch12: coreutils-5.3.1-alt-ls-dir-vdir.diff
 Patch13: coreutils-5.3.0-alt-posix2_version.diff
 
 # other
-Patch20: coreutils-5.3.0-rh-owl-ls_default_time_style.diff
-Patch21: coreutils-5.2.0-rh-install_strip.diff
-Patch22: coreutils-5.3.1-rh-owl-alt-ls_dumbterm.diff
+Patch20: coreutils-5.3.0-rh-owl-ls-default-time-style.diff
+Patch21: coreutils-5.2.0-rh-install-strip.diff
+Patch22: coreutils-5.3.1-rh-owl-alt-ls-dumbterm.diff
 Patch23: coreutils-4.5.3-rh-langinfo.diff
 
 Provides: stat = %version, fileutils = %version, textutils = %version, sh-utils = %version
