@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bzip2/bzip2.spec,v 1.19 2005/05/06 22:40:06 ldv Exp $
+# $Id: Owl/packages/bzip2/bzip2.spec,v 1.20 2005/05/07 14:06:27 ldv Exp $
 
 Summary: An extremely powerful file compression utility.
 Name: bzip2
@@ -10,11 +10,12 @@ URL: http://www.bzip.org
 Source0: http://www.bzip.org/%version/%name-%version.tar.gz
 Source1: bzip2.texi
 Patch0: bzip2-1.0.3-alt-autotools.diff
-Patch1: bzip2-1.0.3-owl-tmp.diff
-Patch2: bzip2-1.0.3-alt-progname.diff
-Patch3: bzip2-1.0.3-alt-chmod-chown.diff
-Patch4: bzip2-1.0.3-alt-owl-fopen.diff
-Patch5: bzip2-1.0.3-alt-version.diff
+Patch1: bzip2-1.0.3-owl-Makefile.diff
+Patch2: bzip2-1.0.3-owl-tmp.diff
+Patch3: bzip2-1.0.3-alt-progname.diff
+Patch4: bzip2-1.0.3-alt-chmod-chown.diff
+Patch5: bzip2-1.0.3-alt-owl-fopen.diff
+Patch6: bzip2-1.0.3-alt-version.diff
 PreReq: /sbin/ldconfig
 Requires: mktemp >= 1:1.3.1
 # Provide this soname for backwards compatibility
@@ -50,6 +51,7 @@ which will use the library.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 install -pm644 %_sourcedir/bzip2.texi .
 chmod u+x samples.sh
 
