@@ -12,6 +12,11 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2005/05/07	Packages: coreutils, fileutils, sh-utils, textutils
+Replaced fileutils, sh-utils, and textutils with coreutils (a recent
+CVS snapshot, post-5.3.0, with patches as maintained in ALT Linux
+Sisyphus).
+
 2005/05/06	Package: bzip2
 Updated to 1.0.3.
 
@@ -417,4 +422,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.83 2005/05/05 22:54:37 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.84 2005/05/07 18:22:18 solar Exp $
