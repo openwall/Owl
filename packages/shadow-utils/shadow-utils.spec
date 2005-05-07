@@ -1,9 +1,9 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.46 2005/01/20 05:00:53 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.47 2005/05/07 22:37:16 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.4.1
-Release: owl7
+Release: owl8
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -153,7 +153,9 @@ fi
 %post
 grep -q ^shadow: /etc/group || groupadd -g 42 shadow
 if grep -q '^shadow:[^:]*:42:' /etc/group; then
-	chgrp -f shadow /etc/shadow && chmod 440 /etc/shadow || :
+	if [ -e /etc/shadow ]; then
+		chgrp shadow /etc/shadow && chmod 440 /etc/shadow
+	fi
 	chgrp shadow /etc/login.defs && chmod 640 /etc/login.defs
 	chgrp shadow /etc/pam.d/chage-chfn-chsh && \
 		chmod 640 /etc/pam.d/chage-chfn-chsh
@@ -235,6 +237,10 @@ fi
 %exclude %_mandir/man8/mkpasswd*
 
 %changelog
+* Sun May 08 2005 Solar Designer <solar@owl.openwall.com> 2:4.0.4.1-owl8
+- The new coreutils' version of chgrp(1) complains on non-existing files
+even when invoked with "-f", so test for /etc/shadow presence explicitly.
+
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2:4.0.4.1-owl7
 - Removed verify checks for file controlled via owl-control facility.
 - Fixed xmalloc.c to cast correct return type for malloc().
