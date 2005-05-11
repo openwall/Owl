@@ -4,7 +4,7 @@ http://www.openwall.com/popa3d/
 
 There's a mailing list where you can share your experience with popa3d
 and ask questions.  To subscribe, send an empty message to
-<popa3d-users-subscribe@lists.openwall.com>.  The list archives are
+<popa3d-users-subscribe at lists.openwall.com>.  The list archives are
 available on MARC:
 
 http://marc.theaimsgroup.com/?l=popa3d-users
@@ -25,4 +25,4 @@ consulting services.
 -- 
 Solar Designer <solar at openwall.com>
 
-$Id: Owl/packages/popa3d/popa3d/CONTACT,v 1.1 2003/03/10 01:20:34 solar Exp $
+$Id: Owl/packages/popa3d/popa3d/CONTACT,v 1.2 2005/05/11 01:20:33 solar Exp $

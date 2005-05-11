@@ -5,7 +5,7 @@ http://www.openwall.com/Owl/
 Es gibt eine Mailing-Liste, wo man seine Erfahrungen mit anderen
 Benutzern teilen kann und wo man die Möglichkeit hat, Fragen zu
 stellen. Um sich einzuschreiben, schickt man eine leere E-Mail an
-<owl-users-subscribe@lists.openwall.com>. Die Listen-Archive sind
+<owl-users-subscribe at lists.openwall.com>. Die Listen-Archive sind
 auf MARC verfügbar:
 
 http://marc.theaimsgroup.com/?l=owl-users
@@ -16,4 +16,4 @@ Zusätzlich zu der owl-users Liste hat man die Möglichkeit Kommentare
 Berichte über mögliche Sicherheitslücken bitte an
 <security at owl.openwall.com>, andere Bugs an <bugs at owl.openwall.com>.
 
-$Id: Owl/doc/de/CONTACT,v 1.4 2004/02/07 06:23:23 solar Exp $
+$Id: Owl/doc/de/CONTACT,v 1.5 2005/05/11 01:19:28 solar Exp $

@@ -4,8 +4,8 @@ http://www.openwall.com/Owl/
 
 Для обмена опытом по использованию Owl и обсуждения возникающих вопросов
 создан список рассылки. Чтобы подписаться, отправьте пустое сообщение по
-адресу owl-users-subscribe@lists.openwall.com. Архив списка доступен на
-MARC:
+адресу <owl-users-subscribe at lists.openwall.com>. Архив списка доступен
+на MARC:
 
 http://marc.theaimsgroup.com/?l=owl-users
 
@@ -17,4 +17,4 @@ http://marc.theaimsgroup.com/?l=owl-users
 отправлять на <security at owl.openwall.com>, а об остальных ошибках -
 на <bugs at owl.openwall.com>.
 
-$Id: Owl/doc/ru/CONTACT,v 1.4 2003/05/20 17:57:43 gremlin Exp $
+$Id: Owl/doc/ru/CONTACT,v 1.5 2005/05/11 01:19:28 solar Exp $
