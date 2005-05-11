@@ -1,9 +1,9 @@
-# $Id: Owl/packages/cpio/cpio.spec,v 1.17 2005/05/05 17:29:59 ldv Exp $
+# $Id: Owl/packages/cpio/cpio.spec,v 1.18 2005/05/11 14:34:11 ldv Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
 Version: 2.6
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/cpio/
@@ -18,14 +18,15 @@ Patch13: cpio-2.6-alt-error-details.diff
 Patch14: cpio-2.6-alt-warnings.diff
 Patch15: cpio-2.6-alt-safer_name_suffix.diff
 Patch16: cpio-2.6-alt-chown-chmod.diff
-Patch17: cpio-2.6-rh-alt-lfs.diff
-Patch18: cpio-2.6-rh-svr4compat.diff
-Patch19: cpio-2.6-owl-info.diff
-Patch20: cpio-2.6-pld-alt-configure.diff
-Patch21: cpio-2.6-deb-find_inode_file.diff
-Patch22: cpio-2.6-owl-mt-argmatch.diff
-Patch23: cpio-2.6-deb-owl-mt-scsi.diff
-Patch24: cpio-2.6-deb-owl-rmt.diff
+Patch17: cpio-2.6-alt-open-mkdir-mknod.diff
+Patch18: cpio-2.6-rh-alt-lfs.diff
+Patch19: cpio-2.6-rh-svr4compat.diff
+Patch20: cpio-2.6-owl-info.diff
+Patch21: cpio-2.6-pld-alt-configure.diff
+Patch22: cpio-2.6-deb-find_inode_file.diff
+Patch23: cpio-2.6-owl-mt-argmatch.diff
+Patch24: cpio-2.6-deb-owl-mt-scsi.diff
+Patch25: cpio-2.6-deb-owl-rmt.diff
 PreReq: /sbin/install-info
 Provides: mt-st, rmt
 Prefix: %_prefix
@@ -63,6 +64,7 @@ install -m644 %_sourcedir/rmt.8 .
 %patch22 -p1
 %patch23 -p1
 %patch24 -p1
+%patch25 -p1
 
 %build
 # Several patches modify configure.ac
@@ -108,6 +110,15 @@ fi
 %_datadir/locale/*/LC_MESSAGES/cpio.mo
 
 %changelog
+* Wed May 11 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.6-owl2
+- Imported patch from ALT that fixes three race condition issues
+while setting permissions in copy-in and copy-pass modes:
++ corrected open(2) calls to use O_EXCL;
++ corrected mkdir(2) and mknod(2) calls to use safe permissions;
++ corrected directory creation algorithm to chmod existing directory
+using safe mode before chown, for each directory which is going to
+be reused by cpio.
+
 * Thu May 05 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.6-owl1
 - Updated to 2.6.
 - Imported a bunch of patches from ALT's cpio-2.6-alt9 package,
