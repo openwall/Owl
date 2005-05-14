@@ -4,9 +4,9 @@
 	to NULL on any error.
 	* manual/stdio.texi: Reflect the change in asprintf API.
 
-diff -uprk.orig glibc-2.3.3-200406020600.orig/libio/vasprintf.c glibc-2.3.3-200406020600/libio/vasprintf.c
---- glibc-2.3.3-200406020600.orig/libio/vasprintf.c	2003-06-03 13:41:51 +0400
-+++ glibc-2.3.3-200406020600/libio/vasprintf.c	2004-06-03 01:50:21 +0400
+diff -uprk.orig glibc-2.3.5.orig/libio/vasprintf.c glibc-2.3.5/libio/vasprintf.c
+--- glibc-2.3.5.orig/libio/vasprintf.c	2004-09-26 05:10:53 +0000
++++ glibc-2.3.5/libio/vasprintf.c	2005-05-08 22:15:38 +0000
 @@ -48,7 +48,10 @@ _IO_vasprintf (result_ptr, format, args)
    _IO_size_t allocated;
    string = (char *) malloc (init_string_size);
@@ -26,10 +26,10 @@ diff -uprk.orig glibc-2.3.3-200406020600.orig/libio/vasprintf.c glibc-2.3.3-2004
 +      *result_ptr = NULL;
        return ret;
      }
-   /* Only use realloc if the size we need is of the same order of
-diff -uprk.orig glibc-2.3.3-200406020600.orig/manual/stdio.texi glibc-2.3.3-200406020600/manual/stdio.texi
---- glibc-2.3.3-200406020600.orig/manual/stdio.texi	2002-07-03 16:41:42 +0400
-+++ glibc-2.3.3-200406020600/manual/stdio.texi	2004-06-03 01:54:03 +0400
+   /* Only use realloc if the size we need is of the same (binary)
+diff -uprk.orig glibc-2.3.5.orig/manual/stdio.texi glibc-2.3.5/manual/stdio.texi
+--- glibc-2.3.5.orig/manual/stdio.texi	2002-06-30 03:35:21 +0000
++++ glibc-2.3.5/manual/stdio.texi	2005-05-08 22:15:38 +0000
 @@ -2397,7 +2397,9 @@ to the newly allocated string at that lo
  
  The return value is the number of characters allocated for the buffer, or

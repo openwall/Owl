@@ -1,6 +1,8 @@
---- glibc-2.3.3-200404190147.orig/linuxthreads/man/pthread_create.man	1998-03-11 15:42:23 +0300
-+++ glibc-2.3.3-200404190147/linuxthreads/man/pthread_create.man	2004-04-21 16:13:09 +0400
-@@ -31,10 +31,8 @@
+# Fix linuxthreads documentation.
+
+--- glibc-2.3.5/linuxthreads/man/pthread_create.man.orig	1998-03-11 12:42:23 +0000
++++ glibc-2.3.5/linuxthreads/man/pthread_create.man	2004-04-21 12:13:09 +0000
+@@ -31,10 +31,8 @@ error, a non-zero error code is returned
  .SH ERRORS
  .TP
  !EAGAIN!

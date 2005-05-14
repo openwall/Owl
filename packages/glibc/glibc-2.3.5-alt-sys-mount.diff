@@ -1,6 +1,8 @@
---- glibc-2.3.3-200404190147.orig/sysdeps/unix/sysv/linux/sys/mount.h	2001-07-06 08:56:21 +0400
-+++ glibc-2.3.3-200404190147/sysdeps/unix/sysv/linux/sys/mount.h	2004-04-21 16:18:22 +0400
-@@ -57,7 +57,7 @@
+# Fix sys/mount.h for gcc -pedantic support.
+
+--- glibc-2.3.5/sysdeps/unix/sysv/linux/sys/mount.h.orig	2004-09-23 14:06:51 +0000
++++ glibc-2.3.5/sysdeps/unix/sysv/linux/sys/mount.h	2005-05-08 21:54:40 +0000
+@@ -57,7 +57,7 @@ enum
  #define MS_NOATIME	MS_NOATIME
    MS_NODIRATIME = 2048,		/* Do not update directory access times.  */
  #define MS_NODIRATIME	MS_NODIRATIME

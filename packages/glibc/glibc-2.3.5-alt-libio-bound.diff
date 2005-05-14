@@ -1,6 +1,8 @@
-diff -uprk.orig glibc-2.3.3-200404190147.orig/libio/iofread.c glibc-2.3.3-200404190147/libio/iofread.c
---- glibc-2.3.3-200404190147.orig/libio/iofread.c	2003-08-29 23:58:27 +0400
-+++ glibc-2.3.3-200404190147/libio/iofread.c	2004-04-21 20:24:07 +0400
+# Check for potential integer overflow in fread*/fwrite*.
+
+diff -uprk.orig glibc-2.3.5.orig/libio/iofread.c glibc-2.3.5/libio/iofread.c
+--- glibc-2.3.5.orig/libio/iofread.c	2003-08-29 19:58:27 +0000
++++ glibc-2.3.5/libio/iofread.c	2004-04-21 16:24:07 +0000
 @@ -40,6 +40,11 @@ _IO_fread (buf, size, count, fp)
    CHECK_FILE (fp, 0);
    if (bytes_requested == 0)
@@ -13,9 +15,9 @@ diff -uprk.orig glibc-2.3.3-200404190147.orig/libio/iofread.c glibc-2.3.3-200404
    _IO_acquire_lock (fp);
    bytes_read = INTUSE(_IO_sgetn) (fp, (char *) buf, bytes_requested);
    _IO_release_lock (fp);
-diff -uprk.orig glibc-2.3.3-200404190147.orig/libio/iofread_u.c glibc-2.3.3-200404190147/libio/iofread_u.c
---- glibc-2.3.3-200404190147.orig/libio/iofread_u.c	2002-08-05 00:34:41 +0400
-+++ glibc-2.3.3-200404190147/libio/iofread_u.c	2004-04-21 20:25:21 +0400
+diff -uprk.orig glibc-2.3.5.orig/libio/iofread_u.c glibc-2.3.5/libio/iofread_u.c
+--- glibc-2.3.5.orig/libio/iofread_u.c	2002-08-04 20:34:41 +0000
++++ glibc-2.3.5/libio/iofread_u.c	2004-04-21 16:25:21 +0000
 @@ -42,6 +42,11 @@ fread_unlocked (buf, size, count, fp)
    CHECK_FILE (fp, 0);
    if (bytes_requested == 0)
@@ -28,9 +30,9 @@ diff -uprk.orig glibc-2.3.3-200404190147.orig/libio/iofread_u.c glibc-2.3.3-2004
    bytes_read = INTUSE(_IO_sgetn) (fp, (char *) buf, bytes_requested);
    return bytes_requested == bytes_read ? count : bytes_read / size;
  }
-diff -uprk.orig glibc-2.3.3-200404190147.orig/libio/iofwrite.c glibc-2.3.3-200404190147/libio/iofwrite.c
---- glibc-2.3.3-200404190147.orig/libio/iofwrite.c	2003-08-29 23:58:27 +0400
-+++ glibc-2.3.3-200404190147/libio/iofwrite.c	2004-04-21 20:23:46 +0400
+diff -uprk.orig glibc-2.3.5.orig/libio/iofwrite.c glibc-2.3.5/libio/iofwrite.c
+--- glibc-2.3.5.orig/libio/iofwrite.c	2003-08-29 19:58:27 +0000
++++ glibc-2.3.5/libio/iofwrite.c	2004-04-21 16:23:46 +0000
 @@ -40,6 +40,11 @@ _IO_fwrite (buf, size, count, fp)
    CHECK_FILE (fp, 0);
    if (request == 0)
@@ -43,9 +45,9 @@ diff -uprk.orig glibc-2.3.3-200404190147.orig/libio/iofwrite.c glibc-2.3.3-20040
    _IO_acquire_lock (fp);
    if (_IO_vtable_offset (fp) != 0 || _IO_fwide (fp, -1) == -1)
      written = _IO_sputn (fp, (const char *) buf, request);
-diff -uprk.orig glibc-2.3.3-200404190147.orig/libio/iofwrite_u.c glibc-2.3.3-200404190147/libio/iofwrite_u.c
---- glibc-2.3.3-200404190147.orig/libio/iofwrite_u.c	2002-08-05 00:35:23 +0400
-+++ glibc-2.3.3-200404190147/libio/iofwrite_u.c	2004-04-21 20:23:32 +0400
+diff -uprk.orig glibc-2.3.5.orig/libio/iofwrite_u.c glibc-2.3.5/libio/iofwrite_u.c
+--- glibc-2.3.5.orig/libio/iofwrite_u.c	2002-08-04 20:35:23 +0000
++++ glibc-2.3.5/libio/iofwrite_u.c	2004-04-21 16:23:32 +0000
 @@ -42,6 +42,11 @@ fwrite_unlocked (buf, size, count, fp)
    CHECK_FILE (fp, 0);
    if (request == 0)

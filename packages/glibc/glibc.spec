@@ -1,27 +1,29 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.89 2005/04/01 20:41:11 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.90 2005/05/14 00:41:23 ldv Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
 %define BUILD_LOCALES_UTF8 0
 
-%define basevers 2.3.3
-%define snapshot 200406160000
+%define basevers 2.3.5
+#%%define snapshot 20050427
 
 Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 0.4.7
-Release: owl6
+Release: owl1
 License: LGPL
 Group: System Environment/Libraries
-Source0: glibc-%basevers%{?snapshot:-%snapshot}.tar.bz2
+URL: http://www.gnu.org/software/%name/
+Source0: ftp://ftp.gnu.org/gnu/%name/glibc-%basevers%{?snapshot:-%snapshot}.tar.bz2
 %if %{?snapshot:0}%{!?snapshot:1}
-Source1: glibc-linuxthreads-%basevers.tar.bz2
+Source1: ftp://ftp.gnu.org/gnu/%name/glibc-linuxthreads-%basevers.tar.bz2
+Source2: ftp://ftp.gnu.org/gnu/%name/glibc-libidn-%basevers.tar.bz2
 %endif
-Source2: crypt_blowfish-%crypt_bf_version.tar.gz
-Source3: crypt_freesec.c
-Source4: crypt_freesec.h
-Source5: strlcpy.3
+Source3: crypt_blowfish-%crypt_bf_version.tar.gz
+Source4: crypt_freesec.c
+Source5: crypt_freesec.h
+Source6: strlcpy.3
 
 # Patches
 # -------
@@ -33,48 +35,46 @@ Source5: strlcpy.3
 # 400-... - Owl
 
 # CVS
-Patch0: glibc-2.3.3-cvs-200406170000-sched_setaffinity.diff
+Patch0: glibc-2.3.5-cvs-20050427-2_3-branch.diff
+Patch1: glibc-2.3.5-cvs-20050427-canonicalize.diff
 
 # RH
-Patch100: glibc-2.3.3-200406101000-redhat.diff
+Patch100: glibc-2.3.5-fedora.diff
 
 # SuSE
 Patch200: glibc-2.3.2-suse-resolv-response-length.diff
+Patch201: glibc-2.3.4-suse-getconf-default_output.diff
 
 # ALT
-Patch300: glibc-2.3.3-alt-doc-linuxthreads.diff
-Patch301: glibc-2.3.3-alt-string2.diff
-Patch302: glibc-2.3.3-alt-sys_mount.diff
-Patch303: glibc-2.3.3-openbsd-alt-sys_queue.diff
-Patch304: glibc-2.3.3-alt-getopt_optind.diff
-Patch305: glibc-2.3.3-alt-io_fts-cleanup.diff
-Patch306: glibc-2.3.3-alt-asprintf.diff
-Patch307: glibc-2.3.3-alt-realpath.diff
-Patch308: glibc-2.3.3-alt-libio.diff
-Patch309: glibc-2.3.3-openbsd-strlcpy-strlcat.diff
-Patch310: glibc-2.3.3-alt-iconv_prog-replace.diff
-Patch311: glibc-2.3.3-alt-i18n.diff
-Patch312: glibc-2.3.3-alt-relocate-helper-libs.diff
-Patch313: glibc-2.3.3-alt-linux-dl-execstack.diff
+Patch300: glibc-2.3.5-alt-doc-linuxthreads.diff
+Patch301: glibc-2.3.5-alt-string2.diff
+Patch302: glibc-2.3.5-alt-sys-mount.diff
+Patch303: glibc-2.3.5-openbsd-alt-sys-queue.diff
+Patch304: glibc-2.3.5-alt-getopt-optind.diff
+Patch305: glibc-2.3.5-alt-fts_palloc-cleanup.diff
+Patch306: glibc-2.3.5-alt-asprintf.diff
+Patch307: glibc-2.3.5-alt-libio-bound.diff
+Patch308: glibc-2.3.5-openbsd-strlcpy-strlcat.diff
+Patch309: glibc-2.3.5-alt-iconv_prog-replace.diff
+Patch310: glibc-2.3.5-alt-i18n.diff
+Patch311: glibc-2.3.5-alt-relocate-helper-libs.diff
+Patch312: glibc-2.3.5-alt-linux-dl-execstack.diff
+Patch313: glibc-2.3.5-alt-assume_kernel.diff
 
 # Owl
 Patch400: glibc-2.3.3-owl-crypt_freesec.diff
-Patch401: glibc-2.3.2-owl-res_randomid.diff
+Patch401: glibc-2.3.5-owl-alt-res_randomid.diff
 Patch402: glibc-2.3.2-owl-iscntrl.diff
 Patch403: glibc-2.3.2-owl-quota.diff
-Patch404: glibc-2.3.2-owl-ldd.diff
+Patch404: glibc-2.3.5-owl-alt-ldd.diff
 Patch405: glibc-2.3.3-owl-info.diff
-Patch406: glibc-2.3.3-owl-syslog-ident.diff
-Patch407: glibc-2.3.3-mjt-owl-syslog-timestamp.diff
-Patch408: glibc-2.3.3-owl-alt-fts.diff
-Patch409: glibc-2.3.2-owl-resolv-QFIXEDSZ-underfills.diff
-Patch410: glibc-2.3.2-owl-malloc-unlink-sanity-check.diff
-Patch411: glibc-2.3.3-owl-sanitize-env.diff
-Patch412: glibc-2.3.2-owl-tmpfile.diff
-Patch413: glibc-2.3.2-owl-vitmp.diff
-Patch414: glibc-2.3.2-owl-glibcbug-COMMAND.diff
-Patch415: glibc-2.3.3-owl-tmp-scripts.diff
-Patch416: glibc-2.3.3-owl-rpcgen-cpp.diff
+Patch406: glibc-2.3.5-owl-alt-syslog-ident.diff
+Patch407: glibc-2.3.5-mjt-owl-alt-syslog-timestamp.diff
+Patch408: glibc-2.3.5-owl-alt-resolv-QFIXEDSZ-underfills.diff
+Patch409: glibc-2.3.2-owl-tmpfile.diff
+Patch410: glibc-2.3.3-owl-tmp-scripts.diff
+Patch411: glibc-2.3.3-owl-rpcgen-cpp.diff
+Patch412: glibc-2.3.5-owl-alt-sanitize-env.diff
 
 Requires: /etc/nsswitch.conf
 Provides: glibc-crypt_blowfish = %crypt_bf_version, ldconfig
@@ -151,18 +151,26 @@ compatibility package with necessary binaries of old libdb libraries.
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 
 %prep
-%setup -q %{!?snapshot:-a 1} -a 2 -n %name-%basevers%{?snapshot:-%snapshot}
+%setup -q %{!?snapshot:-a 1 -a 2} -a 3 -n %name-%basevers%{?snapshot:-%snapshot}
 
 # CVS
-# set errno to EINVAL and return -1 if cpuset is wrongly set.
+# 20050427-2_3-branch
 %patch0 -p0
 
+# fix realpath(3) to return NULL and set errno to ENOTDIR for such
+# pathnames like "/path/to/existing-non-directory/"
+%patch1 -p0
+
 # RH
-%patch100 -p1
+# usual glibc-fedora.patch
+%patch100 -p0
 
 # SuSE
 # avoid read buffer overruns in apps using res_* calls
 %patch200 -p1
+
+# add -a option to getconf(1)
+%patch201 -p0
 
 # ALT
 # fix linuxthreads documentation
@@ -179,19 +187,20 @@ compatibility package with necessary binaries of old libdb libraries.
 %patch305 -p1
 # change asprintf/vasprintf error handling
 %patch306 -p1
-# fix realpath behaviour
-%patch307 -p1
 # check for potential integer overflow in fread*/fwrite*
-%patch308 -p1
+%patch307 -p1
 # import strlcpy/strlcat from OpenBSD
-%patch309 -p1
+%patch308 -p1
 # add "--replace" option to iconv utility
-%patch310 -p1
+%patch309 -p1
 # support more ru_* locales
-%patch311 -p1
+%patch310 -p1
 # relocate helper libraries from /lib to %_libdir
-%patch312 -p1
+%patch311 -p1
 # fix mprotect return code handling in _dl_make_stack_executable()
+%patch312 -p1
+# fix _dl_osversion_init(), _dl_non_dynamic_init() and
+# dl_main() functions to not assume too old kernel version
 %patch313 -p1
 
 # Owl
@@ -217,27 +226,16 @@ cp %_sourcedir/crypt_freesec.[ch] crypt/
 %patch406 -p1
 # use ctime_r() instead of strftime_r() in syslog(3)
 %patch407 -p1
-# (?) use sys/stat.h instead of include/sys/stat.h in the fts.h
-%patch408 -p1
 # avoid potential reads beyond end of undersized DNS responses
-%patch409 -p1
-# check the chunk pointers in dlmalloc's unlink() macro
-%patch410 -p1
-# sanitize the environment in a paranoid way
-%patch411 -p1
+%patch408 -p1
 # allow tmpfile(3) to use TMPDIR environment variable
-%patch412 -p1
-# glibcbug script is present only in release version
-%if %{?snapshot:0}%{!?snapshot:1}
-# use vitmp(1) as a default editor
-%patch413 -p1
-# fix for COMMAND variable in the glibcbug
-%patch414 -p1
-%endif
+%patch409 -p1
 # fix temporary file handling in the scripts
-%patch415 -p1
+%patch410 -p1
 # avoid hardcoding of cpp binary, use execvp instead of execv
-%patch416 -p1
+%patch411 -p1
+# sanitize the environment in a paranoid way
+%patch412 -p1
 
 # XXX: check sparcv9 builds and probably fix this.
 #%ifarch sparcv9
@@ -292,7 +290,7 @@ CFLAGS="-g %optflags -DNDEBUG=1 -finline-limit=2000" \
 %if !%BUILD_PROFILE
 	--disable-profile \
 %endif
-	--enable-add-ons=linuxthreads \
+	--enable-add-ons=linuxthreads,libidn \
 	--without-cvs \
 	--without-__thread
 
@@ -336,8 +334,12 @@ echo -n > %buildroot/etc/ld.so.cache
 #mkdir -p %buildroot/var/db
 #install -m 644 nss/db-Makefile %buildroot/var/db/Makefile
 
+# Do not package obsolete pt_chown helper
+rm %buildroot%_libexecdir/pt_chown
+
 # BUILD THE FILE LIST
 find %buildroot -type f -or -type l |
+	grep -v '^%buildroot%_libexecdir' |
 	sed -e 's|.*/etc|%config &|' > rpm.filelist.in
 for n in %_includedir %_libdir %_datadir; do
     find %buildroot$n -type d |
@@ -413,11 +415,11 @@ rm %buildroot%_sbindir/nscd_nischeck
 %postun -p /sbin/ldconfig
 
 %post devel
-/sbin/install-info %_infodir/libc.info.gz %_infodir/dir
+/sbin/install-info %_infodir/libc.info %_infodir/dir
 
 %preun devel
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/libc.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/libc.info %_infodir/dir
 fi
 
 %files -f rpm.filelist
@@ -437,6 +439,7 @@ fi
 
 %files utils
 %defattr(-,root,root)
+%_libexecdir/getconf
 /sbin/sln
 %_bindir/*
 %_sbindir/*
@@ -452,6 +455,14 @@ fi
 %files compat-fake
 
 %changelog
+* Fri May 13 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.3.5-owl1
+- Updated to 2.3.5 with changes from glibc-2_3-branch snapshot 20050427.
+- Included GNU Libidn add-on.
+- Updated patches which was imported from ALT.
+- Imported SuSE patch which adds -a option to getconf utility.
+- Disabled packaging of the obsolete pt_chown helper.
+- Corrected info files installation.
+
 * Sat Apr 02 2005 Solar Designer <solar@owl.openwall.com> 2.3.3.2004061600-owl6
 - Corrected the permissions on /etc/ld.so.conf.d.
 

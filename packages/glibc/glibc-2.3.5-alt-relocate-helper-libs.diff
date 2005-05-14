@@ -1,15 +1,17 @@
---- glibc-2.3.3-200404190147/debug/Makefile.orig	2001-08-30 02:45:25 +0400
-+++ glibc-2.3.3-200404190147/debug/Makefile	2004-04-21 17:42:48 +0400
-@@ -57,7 +57,7 @@
+# Relocate helper libraries from /%_lib to %_libdir.
+
+--- glibc-2.3.5/debug/Makefile.orig	2004-10-19 16:04:30 +0000
++++ glibc-2.3.5/debug/Makefile	2005-05-09 10:29:15 +0000
+@@ -72,7 +72,7 @@ include ../Rules
  
  $(objpfx)catchsegv: catchsegv.sh $(common-objpfx)soversions.mk \
  		    $(common-objpfx)config.make
--	sed -e 's|@VERSION@|$(version)|' -e 's|@SLIB@|$(slibdir)|' $< > $@.new
-+	sed -e 's|@VERSION@|$(version)|' -e 's|@SLIB@|$(libdir)|' $< > $@.new
+-	slibpfx=`echo $(slibdir)|sed 's/lib\(64\|\)$$/\\\\\\\\$$LIB/'`; \
++	slibpfx=`echo $(libdir)|sed 's/lib\(64\|\)$$/\\\\\\\\$$LIB/'`; \
+ 	sed -e 's|@VERSION@|$(version)|' -e "s|@SLIB@|$$slibpfx|" $< > $@.new
  	chmod 555 $@.new
  	mv -f $@.new $@
- 
-@@ -66,7 +66,7 @@
+@@ -82,7 +82,7 @@ $(objpfx)pcprofiledump: $(objpfx)pcprofi
  $(objpfx)xtrace: xtrace.sh
  	rm -f $@.new
  	sed -e 's|@BASH@|$(BASH)|' -e 's|@VERSION@|$(version)|' \
@@ -18,9 +20,9 @@
  	&& rm -f $@ && mv $@.new $@ && chmod +x $@
  
  # Depend on libc.so so a DT_NEEDED is generated in the shared objects.
---- glibc-2.3.3-200404190147/malloc/Makefile.orig	2003-09-30 06:09:22 +0400
-+++ glibc-2.3.3-200404190147/malloc/Makefile	2004-04-21 17:42:48 +0400
-@@ -129,7 +129,7 @@
+--- glibc-2.3.5/malloc/Makefile.orig	2004-12-15 18:44:07 +0000
++++ glibc-2.3.5/malloc/Makefile	2005-05-09 10:28:23 +0000
+@@ -130,7 +130,7 @@ $(objpfx)mtrace: mtrace.pl
  $(objpfx)memusage: memusage.sh
  	rm -f $@.new
  	sed -e 's|@BASH@|$(BASH)|' -e 's|@VERSION@|$(version)|' \

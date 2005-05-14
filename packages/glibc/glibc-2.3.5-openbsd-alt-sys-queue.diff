@@ -1,5 +1,7 @@
---- glibc-2.3.3-200404190147.orig/misc/sys/queue.h	1999-06-09 01:03:17 +0400
-+++ glibc-2.3.3-200404190147/misc/sys/queue.h	2004-04-08 16:08:21 +0400
+# Backport sys/queue.h from OpenBSD.
+
+--- glibc-2.3.5/misc/sys/queue.h.orig	1999-06-08 21:03:17 +0000
++++ glibc-2.3.5/misc/sys/queue.h	2004-04-08 12:08:21 +0000
 @@ -10,7 +10,7 @@
   * 2. Redistributions in binary form must reproduce the above copyright
   *    notice, this list of conditions and the following disclaimer in the
@@ -147,7 +149,7 @@
   * List definitions.
   */
  #define LIST_HEAD(name, type)						\
-@@ -69,6 +159,9 @@
+@@ -69,6 +159,9 @@ struct name {								\
  	struct type *lh_first;	/* first element */			\
  }
  
@@ -157,7 +159,7 @@
  #define LIST_ENTRY(type)						\
  struct {								\
  	struct type *le_next;	/* next element */			\
-@@ -76,35 +169,124 @@
+@@ -76,35 +169,124 @@ struct {								\
  }
  
  /*
@@ -291,7 +293,7 @@
   * Tail queue definitions.
   */
  #define TAILQ_HEAD(name, type)						\
-@@ -113,55 +295,99 @@
+@@ -113,55 +295,99 @@ struct name {								\
  	struct type **tqh_last;	/* addr of last next element */		\
  }
  
@@ -404,7 +406,7 @@
  
  /*
   * Circular queue definitions.
-@@ -172,6 +398,9 @@
+@@ -172,6 +398,9 @@ struct name {								\
  	struct type *cqh_last;		/* last element */		\
  }
  
@@ -414,7 +416,7 @@
  #define CIRCLEQ_ENTRY(type)						\
  struct {								\
  	struct type *cqe_next;		/* next element */		\
-@@ -179,63 +408,98 @@
+@@ -179,63 +408,98 @@ struct {								\
  }
  
  /*

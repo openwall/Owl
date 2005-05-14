@@ -1,0 +1,40 @@
+# Fix _dl_osversion_init(), _dl_non_dynamic_init() and
+# dl_main() functions to not assume too old kernel version.
+
+--- glibc-2.3.5/elf/dl-support.c.orig	2005-05-13 16:33:14 +0400
++++ glibc-2.3.5/elf/dl-support.c	2005-05-13 16:37:22 +0400
+@@ -311,7 +311,7 @@ _dl_non_dynamic_init (void)
+ 
+ #if defined (__i386__) && !defined (USE_TLS)
+   /* Load libs not using TLS.  */
+-  _dl_osversion = 0x20205;
++  { if (__LINUX_KERNEL_VERSION > 0) _dl_osversion = __LINUX_KERNEL_VERSION; }
+ #endif
+ 
+   /* Scan for a program header telling us the stack is nonexecutable.  */
+--- glibc-2.3.5/elf/rtld.c.orig	2005-05-13 16:33:14 +0400
++++ glibc-2.3.5/elf/rtld.c	2005-05-13 16:38:15 +0400
+@@ -1123,7 +1123,7 @@ of this helper program; chances are you 
+                                          + DT_VERSIONTAGIDX (DT_VERNEED)]
+                         == NULL, 0)
+       && main_map->l_info[DT_DEBUG])
+-    GLRO(dl_osversion) = 0x20205;
++    { if (__LINUX_KERNEL_VERSION > 0) GLRO(dl_osversion) = __LINUX_KERNEL_VERSION; }
+   else if ((__builtin_expect (mode, normal) != normal
+ 	    || main_map->l_info[ADDRIDX (DT_GNU_LIBLIST)] == NULL)
+ 	      /* Only binaries have DT_DEBUG dynamic tags...  */
+--- glibc-2.3.5/sysdeps/unix/sysv/linux/dl-librecon.h.orig	2005-05-11 20:57:58 +0400
++++ glibc-2.3.5/sysdeps/unix/sysv/linux/dl-librecon.h	2005-05-12 17:28:50 +0400
+@@ -40,7 +40,11 @@ _dl_osversion_init (char *assume_kernel)
+ 	break;
+     }
+   if (osversion)
+-    GLRO(dl_osversion) = osversion;
++    {
++      if (__LINUX_KERNEL_VERSION > 0 && osversion < __LINUX_KERNEL_VERSION)
++	osversion = __LINUX_KERNEL_VERSION;
++      GLRO(dl_osversion) = osversion;
++    }
+ }
+ 
+ /* Recognizing extra environment variables.  */

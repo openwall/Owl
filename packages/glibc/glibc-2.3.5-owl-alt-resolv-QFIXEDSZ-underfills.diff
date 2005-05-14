@@ -1,0 +1,24 @@
+--- glibc-2.3.5/resolv/res_send.c.orig	2004-10-24 13:14:41 +0400
++++ glibc-2.3.5/resolv/res_send.c	2005-05-13 17:22:11 +0400
+@@ -734,7 +734,9 @@ send_vc(res_state statp,
+ 		}
+ 	} else
+ 		len = resplen;
+-	if (len < HFIXEDSZ) {
++	if (len < HFIXEDSZ ||
++	    (len < HFIXEDSZ + QFIXEDSZ &&
++	    anssiz >= HFIXEDSZ + QFIXEDSZ)) {
+ 		/*
+ 		 * Undersized message.
+ 		 */
+@@ -951,7 +953,9 @@ send_dg(res_state statp,
+ 			return (0);
+ 		}
+ 		*gotsomewhere = 1;
+-		if (resplen < HFIXEDSZ) {
++		if (resplen < HFIXEDSZ ||
++		    (resplen < HFIXEDSZ + QFIXEDSZ &&
++		    anssiz >= HFIXEDSZ + QFIXEDSZ)) {
+ 			/*
+ 			 * Undersized message.
+ 			 */

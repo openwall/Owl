@@ -1,5 +1,7 @@
---- glibc-2.3.3-200404190147/io/fts.c.orig	2003-03-16 04:03:52 +0300
-+++ glibc-2.3.3-200404190147/io/fts.c	2004-04-21 18:33:29 +0400
+# Minor io/fts.c cleanup.
+
+--- glibc-2.3.5.orig/io/fts.c	2004-09-14 04:24:44 +0000
++++ glibc-2.3.5/io/fts.c	2005-05-08 22:12:28 +0000
 @@ -1031,10 +1031,7 @@ fts_palloc(sp, more)
  	 * We limit fts_pathlen to USHRT_MAX to be safe in both cases.
  	 */

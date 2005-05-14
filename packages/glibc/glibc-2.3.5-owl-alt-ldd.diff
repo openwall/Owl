@@ -1,0 +1,41 @@
+--- glibc-2.3.5/elf/ldd.bash.in.orig	2005-02-16 10:29:34 +0000
++++ glibc-2.3.5/elf/ldd.bash.in	2005-05-09 12:37:33 +0000
+@@ -148,8 +148,6 @@ for file do
+     echo "ldd: ${file}:" $"No such file or directory" >&2
+     result=1
+   elif test -r "$file"; then
+-    test -x "$file" || echo 'ldd:' $"\
+-warning: you do not have execution permission for" "\`$file'" >&2
+     RTLD=
+     for rtld in ${RTLDLIST}; do
+       if test -x $rtld; then
+@@ -167,17 +165,8 @@ warning: you do not have execution permi
+       ret=$?
+     fi
+     case $ret in
+-    0)
+-      # If the program exits with exit code 5, it means the process has been
+-      # invoked with __libc_enable_secure.  Fall back to running it through
+-      # the dynamic linker.
+-      try_trace "$file"
+-      rc=$?
+-      if [ $rc = 5 ]; then
+-	try_trace "$RTLD" "$file"
+-	rc=$?
+-      fi
+-      [ $rc = 0 ] || result=1
++    [02])
++      try_trace "$RTLD" "$file" || result=1
+       ;;
+     1)
+       # This can be a non-ELF binary or no binary at all.
+@@ -186,9 +175,6 @@ warning: you do not have execution permi
+ 	result=1
+       }
+       ;;
+-    2)
+-      try_trace "$RTLD" "$file" || result=1
+-      ;;
+     *)
+       echo 'ldd:' ${RTLD} $"exited with unknown exit code" "($ret)" >&2
+       exit 1

@@ -1,6 +1,8 @@
-diff -urN glibc-2.3.3-200406160000.orig/string/Makefile glibc-2.3.3-200406160000/string/Makefile
---- glibc-2.3.3-200406160000.orig/string/Makefile	Wed Apr 14 17:39:54 2004
-+++ glibc-2.3.3-200406160000/string/Makefile	Thu Mar  3 02:29:44 2005
+# Import strlcpy/strlcat from OpenBSD.
+
+diff -uprk.orig glibc-2.3.5.orig/string/Makefile glibc-2.3.5/string/Makefile
+--- glibc-2.3.5.orig/string/Makefile	2004-10-18 04:17:12 +0000
++++ glibc-2.3.5/string/Makefile	2005-05-08 22:25:39 +0000
 @@ -40,7 +40,13 @@
  				     addsep replace)			\
  		   envz basename					\
@@ -16,13 +18,13 @@ diff -urN glibc-2.3.3-200406160000.orig/string/Makefile glibc-2.3.3-200406160000
  
  # Gcc internally generates calls to unbounded memcpy and memset
  # for -fbounded-pointer compiles.  Glibc uses memchr for explicit checks.
-diff -urN glibc-2.3.3-200406160000.orig/string/string.h glibc-2.3.3-200406160000/string/string.h
---- glibc-2.3.3-200406160000.orig/string/string.h	Wed Apr 14 17:39:54 2004
-+++ glibc-2.3.3-200406160000/string/string.h	Thu Jan 20 06:14:26 2005
-@@ -329,6 +329,22 @@
-    terminating it with a '\0', and update *STRINGP to point past it.  */
+diff -uprk.orig glibc-2.3.5.orig/string/string.h glibc-2.3.5/string/string.h
+--- glibc-2.3.5.orig/string/string.h	2004-10-18 04:17:12 +0000
++++ glibc-2.3.5/string/string.h	2005-05-08 22:29:02 +0000
+@@ -348,6 +348,24 @@ extern int strncasecmp_l (__const char *
  extern char *strsep (char **__restrict __stringp,
- 		     __const char *__restrict __delim) __THROW;
+ 		     __const char *__restrict __delim)
+      __THROW __nonnull ((1, 2));
 +
 +/*
 + * Appends __src to string __dst of size __n (unlike strncat, __n is the
@@ -31,20 +33,22 @@ diff -urN glibc-2.3.3-200406160000.orig/string/string.h glibc-2.3.3-200406160000
 + * Returns strlen(__src) + MIN(__n, strlen(initial __dst)).
 + * If retval >= __n, truncation occurred.
 + */
-+extern size_t strlcat (char *__dst, __const char *__src, size_t __n) __THROW;
++extern size_t strlcat (char *__dst, __const char *__src, size_t __n)
++     __THROW __nonnull ((1, 2));
 +
 +/*
 + * Copy __src to string __dst of size __n.  At most __n-1 characters
 + * will be copied.  Always NUL terminates (unless __n == 0).
 + * Returns strlen(__src); if retval >= __n, truncation occurred.
 + */
-+extern size_t strlcpy (char *__dst, __const char *__src, size_t __n) __THROW;
++extern size_t strlcpy (char *__dst, __const char *__src, size_t __n)
++     __THROW __nonnull ((1, 2));
  #endif
  
  #ifdef	__USE_GNU
-diff -urN glibc-2.3.3-200406160000.orig/string/strlcat.c glibc-2.3.3-200406160000/string/strlcat.c
---- glibc-2.3.3-200406160000.orig/string/strlcat.c	Thu Jan  1 00:00:00 1970
-+++ glibc-2.3.3-200406160000/string/strlcat.c	Sat Nov  1 07:13:34 2003
+diff -uprk.orig glibc-2.3.5.orig/string/strlcat.c glibc-2.3.5/string/strlcat.c
+--- glibc-2.3.5.orig/string/strlcat.c	1970-01-01 00:00:00 +0000
++++ glibc-2.3.5/string/strlcat.c	2003-11-01 07:13:34 +0000
 @@ -0,0 +1,59 @@
 +/*	$OpenBSD: strlcat.c,v 1.11 2003/06/17 21:56:24 millert Exp $	*/
 +
@@ -105,9 +109,9 @@ diff -urN glibc-2.3.3-200406160000.orig/string/strlcat.c glibc-2.3.3-20040616000
 +
 +	return(dlen + (s - src));	/* count does not include NUL */
 +}
-diff -urN glibc-2.3.3-200406160000.orig/string/strlcpy.c glibc-2.3.3-200406160000/string/strlcpy.c
---- glibc-2.3.3-200406160000.orig/string/strlcpy.c	Thu Jan  1 00:00:00 1970
-+++ glibc-2.3.3-200406160000/string/strlcpy.c	Sat Nov  1 07:13:38 2003
+diff -uprk.orig glibc-2.3.5.orig/string/strlcpy.c glibc-2.3.5/string/strlcpy.c
+--- glibc-2.3.5.orig/string/strlcpy.c	1970-01-01 00:00:00 +0000
++++ glibc-2.3.5/string/strlcpy.c	2003-11-01 07:13:38 +0000
 @@ -0,0 +1,55 @@
 +/*	$OpenBSD: strlcpy.c,v 1.8 2003/06/17 21:56:24 millert Exp $	*/
 +

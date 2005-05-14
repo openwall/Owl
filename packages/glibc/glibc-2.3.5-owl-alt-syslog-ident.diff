@@ -1,7 +1,13 @@
-diff -puNr glibc-2.3.3-200406160000.orig/misc/syslog.c glibc-2.3.3-200406160000/misc/syslog.c
---- glibc-2.3.3-200406160000.orig/misc/syslog.c	Thu Apr 22 08:55:01 2004
-+++ glibc-2.3.3-200406160000/misc/syslog.c	Sat Jan  8 04:18:16 2005
-@@ -66,6 +66,7 @@ static int	LogFile = -1;		/* fd for log 
+2005-05-08  Solar Designer <solar@openwall.com>
+	    Dmitry V. Levin  <ldv@altlinux.org>
+
+	When vsyslog(3)/syslog(3) is called by a privileged program
+	without a preceding call to openlog(3), don't blindly trust
+	__progname for the syslog ident.
+
+--- glibc-2.3.5/sysdeps/generic/syslog.c.orig	2005-02-16 11:00:08 +0000
++++ glibc-2.3.5/sysdeps/generic/syslog.c	2005-05-08 22:39:40 +0000
+@@ -64,6 +64,7 @@ static int	LogFile = -1;		/* fd for log 
  static int	connected;		/* have done connect */
  static int	LogStat;		/* status bits, set by openlog() */
  static const char *LogTag;		/* string to tag the entry with */
@@ -9,7 +15,7 @@ diff -puNr glibc-2.3.3-200406160000.orig/misc/syslog.c glibc-2.3.3-200406160000/
  static int	LogFacility = LOG_USER;	/* default facility code */
  static int	LogMask = 0xff;		/* mask of priorities to be logged */
  extern char	*__progname;		/* Program name, from crt0. */
-@@ -124,6 +125,51 @@ syslog(pri, fmt, va_alist)
+@@ -129,6 +130,52 @@ syslog(pri, fmt, va_alist)
  }
  libc_hidden_def (syslog)
  
@@ -19,6 +25,7 @@ diff -puNr glibc-2.3.3-200406160000.orig/misc/syslog.c glibc-2.3.3-200406160000/
 +	char *ident, *safe_progname, *p;
 +	uid_t uid, euid;
 +	gid_t gid, egid;
++	int rc;
 +
 +	LogTagDynamic = NULL;
 +
@@ -27,7 +34,7 @@ diff -puNr glibc-2.3.3-200406160000.orig/misc/syslog.c glibc-2.3.3-200406160000/
 +		return;
 +	}
 +
-+	safe_progname = strdup(__progname);
++	safe_progname = strdup (__progname);
 +	if (!safe_progname) {
 +		LogTag = "NO MEMORY";
 +		return;
@@ -36,20 +43,20 @@ diff -puNr glibc-2.3.3-200406160000.orig/misc/syslog.c glibc-2.3.3-200406160000/
 +		if ((*p & 0x7f) < 0x20 || *p == 0x7f || *p == '"')
 +			*p = '?';
 +
-+	uid = getuid();
-+	euid = geteuid();
-+	gid = getgid();
-+	egid = getegid();
++	uid = getuid ();
++	euid = geteuid ();
++	gid = getgid ();
++	egid = getegid ();
 +	if (uid != euid || gid == egid)
-+		asprintf(&ident,
++		rc = __asprintf (&ident,
 +		    "UNSPECIFIED (__progname=\"%s\" uid=%u euid=%u)",
 +		    safe_progname, uid, euid);
 +	else
-+		asprintf(&ident,
++		rc = __asprintf (&ident,
 +		    "UNSPECIFIED (__progname=\"%s\" uid=%u gid=%u egid=%u)",
 +		    safe_progname, uid, gid, egid);
-+	free(safe_progname);
-+	if (!ident) {
++	free (safe_progname);
++	if (rc < 0) {
 +		LogTag = "NO MEMORY";
 +		return;
 +	}
@@ -61,9 +68,9 @@ diff -puNr glibc-2.3.3-200406160000.orig/misc/syslog.c glibc-2.3.3-200406160000/
  void
  vsyslog(pri, fmt, ap)
  	int pri;
-@@ -198,8 +244,17 @@ vsyslog(pri, fmt, ap)
- 				   "%h %e %T ", __localtime_r (&now, &now_tm));
- #endif
+@@ -201,8 +248,17 @@ vsyslog(pri, fmt, ap)
+ 					      __localtime_r (&now, &now_tm),
+ 					      &_nl_C_locobj);
  	    msgoff = ftell (f);
 +
 +	    /* Protect against multiple users and cancellation.  */
@@ -72,7 +79,7 @@ diff -puNr glibc-2.3.3-200406160000.orig/misc/syslog.c glibc-2.3.3-200406160000/
 +
  	    if (LogTag == NULL)
 -	      LogTag = __progname;
-+	      init_syslog_ident();
++	      init_syslog_ident ();
 +
 +	    /* Free the lock.  */
 +	    __libc_cleanup_pop (1);
@@ -80,7 +87,7 @@ diff -puNr glibc-2.3.3-200406160000.orig/misc/syslog.c glibc-2.3.3-200406160000/
  	    if (LogTag != NULL)
  	      fputs_unlocked (LogTag, f);
  	    if (LogStat & LOG_PID)
-@@ -263,7 +318,7 @@ vsyslog(pri, fmt, ap)
+@@ -268,7 +324,7 @@ vsyslog(pri, fmt, ap)
  
  	/* Get connected, output the message to the local logger. */
  	if (!connected)
@@ -89,26 +96,33 @@ diff -puNr glibc-2.3.3-200406160000.orig/misc/syslog.c glibc-2.3.3-200406160000/
  
  	/* If we have a SOCK_STREAM connection, also send ASCII NUL as
  	   a record terminator.  */
-@@ -317,8 +372,12 @@ static void
+@@ -282,7 +338,7 @@ vsyslog(pri, fmt, ap)
+ 		/* Try to reopen the syslog connection.  Maybe it went
+ 		   down.  */
+ 		closelog_internal ();
+-		openlog_internal(LogTag, LogStat | LOG_NDELAY, 0);
++		openlog_internal(NULL, LogStat | LOG_NDELAY, 0);
+ 	      }
+ 
+ 	    if (!connected || __send(LogFile, buf, bufsize, send_flags) < 0)
+@@ -324,8 +380,11 @@ static void
  internal_function
  openlog_internal(const char *ident, int logstat, int logfac)
  {
 -	if (ident != NULL)
 +	if (ident != NULL) {
-+		if (LogTagDynamic)
-+			free(LogTagDynamic);
++		free (LogTagDynamic);
 +		LogTagDynamic = NULL;
  		LogTag = ident;
 +	}
  	LogStat = logstat;
  	if (logfac != 0 && (logfac &~ LOG_FACMASK) == 0)
  		LogFacility = logfac;
-@@ -397,6 +456,9 @@ closelog ()
+@@ -408,6 +467,8 @@ closelog ()
    __libc_lock_lock (syslog_lock);
  
    closelog_internal ();
-+  if (LogTagDynamic)
-+    free(LogTagDynamic);
++  free (LogTagDynamic);
 +  LogTagDynamic = NULL;
    LogTag = NULL;
    LogType = SOCK_DGRAM; /* this is the default */

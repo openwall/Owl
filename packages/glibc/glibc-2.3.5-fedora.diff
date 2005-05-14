@@ -1,0 +1,2799 @@
+<This patch was produced by removing hunks not related to 2_3 branch from
+result of the following command:
+cvs diff -upN -r fedora-glibc-20050415T0909 -r fedora-glibc-2_3_5-1
+
+Index: ChangeLog.11
+===================================================================
+RCS file: /cvs/glibc/libc/ChangeLog.11,v
+retrieving revision 1.1
+retrieving revision 1.1.4.1
+diff -u -p -r1.1 -r1.1.4.1
+--- ChangeLog.11	10 Nov 2000 03:31:36 -0000	1.1
++++ ChangeLog.11	22 Sep 2004 21:20:47 -0000	1.1.4.1
+@@ -1352,6 +1352,11 @@
+ 	* sysdeps/unix/sysv/linux/mips/sys/tas.h: Add missing .mips0 at the
+ 	end of inline assembler code.
+ 
++2000-10-02  Jakub Jelinek  <jakub@redhat.com>
++
++	* sunrpc/svc_udp.c (svcudp_recv): Set msg_controllen to all
++	remaining xp_pad space.
++
+ 2000-10-02  Ulrich Drepper  <drepper@redhat.com>
+ 
+ 	* include/features.h [__USE_FILE_OFFSET && !__REDIRECT]: Define
+@@ -9280,6 +9285,12 @@
+ 	syscall.
+ 	* sysdeps/unix/sysv/linux/mips/truncate64.c: Likewise.
+ 
++2000-05-30  Jakub Jelinek  <jakub@redhat.com>
++
++	* resolv/res_query.c (res_nsearch): Remove unused variable
++	root_on_list. If dots >= statp->ndots and as is querydomain
++	fails, keep searching.
++
+ 2000-05-30  Ulrich Drepper  <drepper@redhat.com>
+ 
+ 	* sysdeps/unix/sysv/linux/alpha/oldglob.c (__old_glob): Loose __P.
+@@ -9480,6 +9491,11 @@
+ 	* sysdeps/i386/fpu/bits/mathinline.h: Define expm1 inline only if
+ 	__FAST_MATH__ is defined.
+ 
++2000-05-22  Jakub Jelinek  <jakub@redhat.com>
++
++	* sysdeps/i386/fpu/bits/mathinline.h (__expm1_code): Avoid using ?:
++	with omitted middle operand.
++
+ 2000-05-22  Andreas Jaeger  <aj@suse.de>
+ 
+ 	* math/Makefile: Add -D__FAST_MATH__ to CFLAGS-test-ifloat.c,
+@@ -9720,6 +9736,11 @@
+ 
+ 2000-05-17  Jakub Jelinek  <jakub@redhat.com>
+ 
++	* inet/rcmd.c (rcmd_af): If *ahost cannot be resolved, include
++	unresolved hostname in the message.
++
++2000-05-17  Jakub Jelinek  <jakub@redhat.com>
++
+ 	* sysdeps/arm/bits/huge_val.h (HUGE_VAL, HUGE_VALF): Add
+ 	__extension__ to hexadecimal floating constant notation.
+ 	* sysdeps/i386/bits/huge_val.h (HUGE_VAL, HUGE_VALF, HUGE_VALL):
+Index: ChangeLog.12
+===================================================================
+RCS file: /cvs/glibc/libc/ChangeLog.12,v
+retrieving revision 1.1
+retrieving revision 1.1.4.1
+diff -u -p -r1.1 -r1.1.4.1
+--- ChangeLog.12	16 Aug 2001 05:24:54 -0000	1.1
++++ ChangeLog.12	22 Sep 2004 21:20:47 -0000	1.1.4.1
+@@ -7729,6 +7729,13 @@
+ 
+ 	* Versions.def [ld]: Add GLIBC_2.2.1.
+ 
++2001-01-10  Jakub Jelinek  <jakub@redhat.com>
++
++	* malloc/memusage.c (me): If not SUID/SGID, allow creating new
++	$MEMUSAGE_OUTPUT file.
++	* sysdeps/generic/segfault.c (segfault.c): If not SUID/SGID, allow
++	creating new $SEGFAULT_OUTPUT_NAME file.
++
+ 2001-01-10  H.J. Lu  <hjl@gnu.org>
+ 
+ 	* elf/dl-libc.c (do_dlopen): Call DL_STATIC_INIT for static binaries.
+@@ -8130,6 +8137,11 @@
+ 	* sysdeps/powerpc/soft-fp/Versions: Likewise.
+ 	* sysdeps/sparc/sparc64/soft-fp/Versions: Likewise.
+ 
++2001-01-02  Jakub Jelinek  <jakub@redhat.com>
++
++	* locale/setlocale.c (setlocale): Don't allocate/free category name
++	unnecessarily.
++
+ 2001-01-02  Franz Sirl	<Franz.Sirl-kernel@lauterbach.com>
+ 
+ 	* sysdeps/powerpc/dl-machine.c (__process_machine_rela): Fix typo.
+Index: ChangeLog.15
+===================================================================
+RCS file: /cvs/glibc/libc/ChangeLog.15,v
+retrieving revision 1.1
+retrieving revision 1.1.6.2
+diff -u -p -r1.1 -r1.1.6.2
+--- ChangeLog.15	16 Feb 2005 07:34:17 -0000	1.1
++++ ChangeLog.15	3 Mar 2005 17:29:57 -0000	1.1.6.2
+@@ -477,6 +477,14 @@
+ 
+ 2004-11-26  Jakub Jelinek  <jakub@redhat.com>
+ 
++	* posix/Makefile (generated: Add getconf.speclist.
++	($(inst_libexecdir)/getconf): Use getconf.speclist instead of
++	getconf output.
++	($(objpfx)getconf.speclist): New rule.
++	* posix/getconf.speclist.h: New file.
++
++2004-11-26  Jakub Jelinek  <jakub@redhat.com>
++
+ 	* sysdeps/generic/unsecvars.h (UNSECURE_ENVVARS): Add GETCONF_DIR.
+ 
+ 2004-11-26  Kaz Kojima  <kkojima@rr.iij4u.or.jp>
+@@ -1103,6 +1111,16 @@
+ 	* sysdeps/generic/tempname.c (__path_search): Add missing argument
+ 	TRY_TMPDIR.
+ 
++2004-11-02  Jakub Jelinek  <jakub@redhat.com>
++
++	* include/features.h (__USE_FORTIFY_LEVEL): Also set for Red Hat
++	GCC 3.4.x-RH >= 3.4.2-8.
++	* libio/bits/features.h (printf, fprintf, vprintf, vfprintf): For
++	GCC 3.4.x-RH use __builtin___{,v}{,f}printf_chk instead of
++	__{,v}{,f}printf_chk.
++	* debug/tst-chk1.c (do_test): Deal with GCC 3.4.x-RH not
++	being able to recognize subobjects.
++
+ 2004-10-31  Mariusz Mazur <mmazur@kernel.pl>
+ 
+ 	* sysdeps/unix/sysv/linux/alpha/setregid.c: New file.
+@@ -1398,6 +1416,11 @@
+ 	* posix/execvp.c (execvp): Also ignore ENODEV and ETIMEDOUT errno
+ 	values.
+ 
++2004-10-20  Jakub Jelinek  <jakub@redhat.com>
++
++	* sysdeps/unix/sysv/linux/readonly-area.c (__readonly_area): If /proc
++	is not mounted, return 1.
++
+ 2004-10-20  Roland McGrath  <roland@redhat.com>
+ 
+ 	* Makeconfig ($(common-objpfx)shlib-versions.v.i): Check also
+@@ -1443,6 +1466,11 @@
+ 	* sysdeps/generic/readonly-area.c (__readonly_str): Renamed to ...
+ 	(__readonly_area): ... this.
+ 
++2004-10-19  Jakub Jelinek  <jakub@redhat.com>
++
++	* include/features.h (__USE_FORTIFY_LEVEL): Enable even with
++	Red Hat gcc4 4.0.0 and above.
++
+ 2004-10-18  Jakub Jelinek  <jakub@redhat.com>
+ 
+ 	* sysdeps/generic/strcpy_chk.c (__strcpy_chk): Speed up by checking
+Index: csu/elf-init.c
+===================================================================
+RCS file: /cvs/glibc/libc/csu/elf-init.c,v
+retrieving revision 1.5
+retrieving revision 1.3.2.3
+diff -u -p -r1.5 -r1.3.2.3
+--- csu/elf-init.c	14 Feb 2005 21:21:36 -0000	1.5
++++ csu/elf-init.c	3 Mar 2005 13:33:53 -0000	1.3.2.3
+@@ -44,6 +44,24 @@ extern void (*__init_array_start []) (vo
+ extern void (*__init_array_end []) (void) attribute_hidden;
+ extern void (*__fini_array_start []) (void) attribute_hidden;
+ extern void (*__fini_array_end []) (void) attribute_hidden;
++
++# if defined HAVE_VISIBILITY_ATTRIBUTE \
++     && (defined SHARED || defined LIBC_NONSHARED)
++#  define hidden_undef_2(x) #x
++#  define hidden_undef_1(x) hidden_undef_2 (x)
++#  define hidden_undef(x) \
++  __asm (hidden_undef_1 (ASM_GLOBAL_DIRECTIVE) " " #x); \
++  __asm (".hidden " #x);
++# else
++#  define hidden_undef(x)
++# endif
++
++hidden_undef (__preinit_array_start)
++hidden_undef (__preinit_array_end)
++hidden_undef (__init_array_start)
++hidden_undef (__init_array_end)
++hidden_undef (__fini_array_start)
++hidden_undef (__fini_array_end)
+ #endif
+ 
+ /* These function symbols are provided for the .init/.fini section entry
+Index: debug/tst-chk1.c
+===================================================================
+RCS file: /cvs/glibc/libc/debug/tst-chk1.c,v
+retrieving revision 1.7
+retrieving revision 1.1.2.10
+diff -u -p -r1.7 -r1.1.2.10
+--- debug/tst-chk1.c	19 Mar 2005 00:09:08 -0000	1.7
++++ debug/tst-chk1.c	19 Mar 2005 21:04:10 -0000	1.1.2.10
+@@ -17,6 +17,9 @@
+    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+    02111-1307 USA.  */
+ 
++/* Hack: make sure GCC doesn't know __chk_fail () will not return.  */
++#define __noreturn__
++
+ #include <fcntl.h>
+ #include <paths.h>
+ #include <setjmp.h>
+@@ -215,7 +218,7 @@ do_test (void)
+   if (memcmp (a.buf1, "aabcdabcjj", 10))
+     FAIL ();
+ 
+-#if __USE_FORTIFY_LEVEL < 2
++#if __USE_FORTIFY_LEVEL < 2 || !__GNUC_PREREQ (4, 0)
+   /* The following tests are supposed to crash with -D_FORTIFY_SOURCE=2
+      and sufficient GCC support, as the string operations overflow
+      from a.buf1 into a.buf2.  */
+@@ -314,7 +317,7 @@ do_test (void)
+   memset (a.buf1 + 9, 'j', l0 + 2);
+   CHK_FAIL_END
+ 
+-#if __USE_FORTIFY_LEVEL >= 2
++#if __USE_FORTIFY_LEVEL >= 2 && __GNUC_PREREQ (4, 0)
+ # define O 0
+ #else
+ # define O 1
+Index: elf/dl-support.c
+===================================================================
+RCS file: /cvs/glibc/libc/elf/dl-support.c,v
+retrieving revision 1.88
+retrieving revision 1.84.2.5
+diff -u -p -r1.88 -r1.84.2.5
+--- elf/dl-support.c	7 Apr 2005 20:57:04 -0000	1.88
++++ elf/dl-support.c	15 Apr 2005 09:32:44 -0000	1.84.2.5
+@@ -281,6 +281,11 @@ _dl_non_dynamic_init (void)
+   if (_dl_platform != NULL)
+     _dl_platformlen = strlen (_dl_platform);
+ 
++#if defined (__i386__) && !defined (USE_TLS)
++  /* Load libs not using TLS.  */
++  _dl_osversion = 0x20205;
++#endif
++
+   /* Scan for a program header telling us the stack is nonexecutable.  */
+   if (_dl_phdr != NULL)
+     for (uint_fast16_t i = 0; i < _dl_phnum; ++i)
+Index: elf/rtld.c
+===================================================================
+RCS file: /cvs/glibc/libc/elf/rtld.c,v
+retrieving revision 1.350
+retrieving revision 1.330.2.16
+diff -u -p -r1.350 -r1.330.2.16
+--- elf/rtld.c	20 Mar 2005 22:08:09 -0000	1.350
++++ elf/rtld.c	24 Mar 2005 08:18:54 -0000	1.330.2.16
+@@ -1252,6 +1252,53 @@ ld.so does not support TLS, but program 
+   ++GL(dl_ns)[LM_ID_BASE]._ns_nloaded;
+   ++GL(dl_load_adds);
+ 
++#if defined(__i386__)
++  /* Force non-TLS libraries for glibc 2.0 binaries
++     or if a buggy binary references non-TLS errno or h_errno.  */
++  if (__builtin_expect (main_map->l_info[DT_NUM + DT_THISPROCNUM
++                                         + DT_VERSIONTAGIDX (DT_VERNEED)]
++                        == NULL, 0)
++      && main_map->l_info[DT_DEBUG])
++    GLRO(dl_osversion) = 0x20205;
++  else if ((__builtin_expect (mode, normal) != normal
++	    || main_map->l_info[ADDRIDX (DT_GNU_LIBLIST)] == NULL)
++	      /* Only binaries have DT_DEBUG dynamic tags...  */
++	   && main_map->l_info[DT_DEBUG])
++    {
++      /* Workaround for buggy binaries.  This doesn't handle buggy
++	 libraries.  */
++      bool buggy = false;
++      const ElfW(Sym) *symtab = (const void *) D_PTR (main_map,
++                                                      l_info[DT_SYMTAB]);
++      const char *strtab = (const void *) D_PTR (main_map,
++                                                 l_info[DT_STRTAB]);
++      Elf_Symndx symidx;
++      for (symidx = main_map->l_buckets[0x6c994f % main_map->l_nbuckets];
++	   symidx != STN_UNDEF;
++	   symidx = main_map->l_chain[symidx])
++	{
++	  if (__builtin_expect (strcmp (strtab + symtab[symidx].st_name,
++					"errno") == 0, 0)
++	      && ELFW(ST_TYPE) (symtab[symidx].st_info) != STT_TLS)
++	    buggy = true;
++	}
++      for (symidx = main_map->l_buckets[0xe5c992f % main_map->l_nbuckets];
++	   symidx != STN_UNDEF;
++	   symidx = main_map->l_chain[symidx])
++	{
++	  if (__builtin_expect (strcmp (strtab + symtab[symidx].st_name,
++					"h_errno") == 0, 0)
++	      && ELFW(ST_TYPE) (symtab[symidx].st_info) != STT_TLS)
++	    buggy = true;
++	}
++      if (__builtin_expect (buggy, false) && GLRO(dl_osversion) > 0x20401)
++	{
++	  GLRO(dl_osversion) = 0x20401;
++	  _dl_error_printf ("Incorrectly built binary which accesses errno or h_errno directly. Needs to be fixed.\n");
++	}
++    }
++#endif
++
+   /* If LD_USE_LOAD_BIAS env variable has not been seen, default
+      to not using bias for non-prelinked PIEs and libraries
+      and using it for executables or prelinked PIEs or libraries.  */
+@@ -1589,6 +1636,57 @@ ERROR: ld.so: object '%s' cannot be load
+ 	}
+     }
+ 
++#if defined(__i386__) || defined(__alpha__) || (defined(__sparc__) && !defined(__arch64__))
++  /*
++   * Modifications by Red Hat Software
++   *
++   * Deal with the broken binaries from the non-versioned ages of glibc.
++   * If a binary does not have version information enabled, we assume that
++   * it is a glibc 2.0 binary and we load a compatibility library to try to
++   * overcome binary incompatibilities.
++   *			Blame: gafton@redhat.com
++   */
++#define LIB_NOVERSION "/lib/libNoVersion.so.1"
++
++  if (__builtin_expect (main_map->l_info[DT_NUM + DT_THISPROCNUM
++                                         + DT_VERSIONTAGIDX (DT_VERNEED)]
++                        == NULL, 0)
++      && (main_map->l_info[DT_DEBUG]
++          || !(GLRO(dl_debug_mask) & DL_DEBUG_PRELINK)))
++    {
++      struct stat test_st;
++      int test_fd;
++      int can_load;
++      
++      HP_TIMING_NOW (start);
++	   
++/*       _dl_sysdep_message("Loading compatibility library... ", NULL); */
++
++      can_load = 1;
++      test_fd = __open (LIB_NOVERSION, O_RDONLY);
++      if (test_fd < 0) {
++	  can_load = 0;
++/* 	  _dl_sysdep_message(" Can't find " LIB_NOVERSION "\n",  NULL); */
++      } else {
++	  if (__fxstat (_STAT_VER, test_fd, &test_st) < 0 || test_st.st_size == 0) {
++	      can_load = 0;
++/* 	      _dl_sysdep_message(" Can't stat " LIB_NOVERSION "\n",  NULL); */
++	  }
++      }
++      
++      if (test_fd >= 0) /* open did no fail.. */
++	  __close(test_fd); /* avoid fd leaks */
++
++      if (can_load != 0)
++	npreloads += do_preload (LIB_NOVERSION, main_map,
++				 "nonversioned binary");
++
++      HP_TIMING_NOW (stop);
++      HP_TIMING_DIFF (diff, start, stop);
++      HP_TIMING_ACCUM_NT (load_time, diff);
++    }
++#endif
++
+   if (__builtin_expect (GL(dl_rtld_map).l_next != NULL, 0))
+     {
+       /* Set up PRELOADS with a vector of the preloaded libraries.  */
+Index: elf/tst-tls10.h
+===================================================================
+RCS file: /cvs/glibc/libc/elf/tst-tls10.h,v
+retrieving revision 1.1
+retrieving revision 1.1.2.1
+diff -u -p -r1.1 -r1.1.2.1
+--- elf/tst-tls10.h	17 Apr 2003 19:19:01 -0000	1.1
++++ elf/tst-tls10.h	22 Sep 2004 21:20:48 -0000	1.1.2.1
+@@ -1,8 +1,8 @@
+ #include <tls.h>
+ #include <stdlib.h>
+ 
+-#if defined USE_TLS && defined HAVE___THREAD \
+-    && defined HAVE_TLS_MODEL_ATTRIBUTE
++#if defined USE_TLS \
++    && (0 || (defined HAVE___THREAD && defined HAVE_TLS_MODEL_ATTRIBUTE))
+ # define USE_TLS__THREAD
+ 
+ struct A
+Index: iconv/iconvconfig.c
+===================================================================
+RCS file: /cvs/glibc/libc/iconv/iconvconfig.c,v
+retrieving revision 1.23
+retrieving revision 1.19.2.4
+diff -u -p -r1.23 -r1.19.2.4
+--- iconv/iconvconfig.c	3 Mar 2005 08:28:02 -0000	1.23
++++ iconv/iconvconfig.c	3 Mar 2005 14:03:15 -0000	1.19.2.4
+@@ -1013,6 +1013,34 @@ next_prime (uint32_t seed)
+                               module name offset
+                          (following last entry with step count 0)
+ */
++
++static struct hash_entry *hash_table;
++static size_t hash_size;
++
++/* Function to insert the names.  */
++static void name_insert (const void *nodep, VISIT value, int level)
++{
++  struct name *name;
++  unsigned int idx;
++  unsigned int hval2;
++
++  if (value != leaf && value != postorder)
++    return;
++
++  name = *(struct name **) nodep;
++  idx = name->hashval % hash_size;
++  hval2 = 1 + name->hashval % (hash_size - 2);
++
++  while (hash_table[idx].string_offset != 0)
++    if ((idx += hval2) >= hash_size)
++      idx -= hash_size;
++
++  hash_table[idx].string_offset = strtaboffset (name->strent);
++
++  assert (name->module_idx != -1);
++  hash_table[idx].module_idx = name->module_idx;
++}
++
+ static int
+ write_output (void)
+ {
+@@ -1020,8 +1048,6 @@ write_output (void)
+   char *string_table;
+   size_t string_table_size;
+   struct gconvcache_header header;
+-  struct hash_entry *hash_table;
+-  size_t hash_size;
+   struct module_entry *module_table;
+   char *extra_table;
+   char *cur_extra_table;
+@@ -1034,31 +1060,6 @@ write_output (void)
+   char tmpfname[(output_file == NULL ? sizeof finalname : output_file_len + 1)
+ 		+ strlen (".XXXXXX")];
+ 
+-  /* Function to insert the names.  */
+-  auto void
+-  name_insert (const void *nodep, VISIT value, int level)
+-    {
+-      struct name *name;
+-      unsigned int idx;
+-      unsigned int hval2;
+-
+-      if (value != leaf && value != postorder)
+-	return;
+-
+-      name = *(struct name **) nodep;
+-      idx = name->hashval % hash_size;
+-      hval2 = 1 + name->hashval % (hash_size - 2);
+-
+-      while (hash_table[idx].string_offset != 0)
+-	if ((idx += hval2) >= hash_size)
+-	  idx -= hash_size;
+-
+-      hash_table[idx].string_offset = strtaboffset (name->strent);
+-
+-      assert (name->module_idx != -1);
+-      hash_table[idx].module_idx = name->module_idx;
+-    }
+-
+   /* Open the output file.  */
+   if (output_file == NULL)
+     {
+Index: include/features.h
+===================================================================
+RCS file: /cvs/glibc/libc/include/features.h,v
+retrieving revision 1.38
+retrieving revision 1.35.2.7
+diff -u -p -r1.38 -r1.35.2.7
+--- include/features.h	17 Feb 2005 01:10:58 -0000	1.38
++++ include/features.h	3 Mar 2005 14:03:16 -0000	1.35.2.7
+@@ -262,7 +262,13 @@
+ # define __USE_REENTRANT	1
+ #endif
+ 
+-#if _FORTIFY_SOURCE > 0 && __GNUC_PREREQ (4, 1) && __OPTIMIZE__ > 0
++#if _FORTIFY_SOURCE > 0 && __OPTIMIZE__ > 0 \
++    && (__GNUC_PREREQ (4, 1) \
++        || (defined __GNUC_RH_RELEASE__ && __GNUC_PREREQ (4, 0)) \
++        || (defined __GNUC_RH_RELEASE__ && __GNUC_PREREQ (3, 4) \
++            && __GNUC_MINOR__ == 4 \
++            && (__GNUC_PATCHLEVEL__ > 2 \
++                || (__GNUC_PATCHLEVEL__ == 2 && __GNUC_RH_RELEASE__ >= 8))))
+ # if _FORTIFY_SOURCE == 1
+ #  define __USE_FORTIFY_LEVEL 1
+ # elif _FORTIFY_SOURCE > 1
+Index: intl/locale.alias
+===================================================================
+RCS file: /cvs/glibc/libc/intl/locale.alias,v
+retrieving revision 1.23
+retrieving revision 1.23.2.1
+diff -u -p -r1.23 -r1.23.2.1
+--- intl/locale.alias	4 Dec 2003 07:57:47 -0000	1.23
++++ intl/locale.alias	22 Sep 2004 21:20:53 -0000	1.23.2.1
+@@ -58,8 +58,6 @@ korean		ko_KR.eucKR
+ korean.euc 	ko_KR.eucKR
+ ko_KR		ko_KR.eucKR
+ lithuanian      lt_LT.ISO-8859-13
+-no_NO		nb_NO.ISO-8859-1
+-no_NO.ISO-8859-1 nb_NO.ISO-8859-1
+ norwegian       nb_NO.ISO-8859-1
+ nynorsk		nn_NO.ISO-8859-1
+ polish          pl_PL.ISO-8859-2
+Index: libio/stdio.h
+===================================================================
+RCS file: /cvs/glibc/libc/libio/stdio.h,v
+retrieving revision 1.81
+retrieving revision 1.78.2.4
+diff -u -p -r1.81 -r1.78.2.4
+--- libio/stdio.h	7 Jan 2005 19:30:00 -0000	1.81
++++ libio/stdio.h	8 Feb 2005 10:04:09 -0000	1.78.2.4
+@@ -142,10 +142,12 @@ typedef _G_fpos64_t fpos64_t;
+ extern struct _IO_FILE *stdin;		/* Standard input stream.  */
+ extern struct _IO_FILE *stdout;		/* Standard output stream.  */
+ extern struct _IO_FILE *stderr;		/* Standard error output stream.  */
++#ifdef __STDC__
+ /* C89/C99 say they're macros.  Make them happy.  */
+ #define stdin stdin
+ #define stdout stdout
+ #define stderr stderr
++#endif
+ 
+ __BEGIN_NAMESPACE_STD
+ /* Remove file FILENAME.  */
+Index: libio/bits/stdio2.h
+===================================================================
+RCS file: /cvs/glibc/libc/libio/bits/stdio2.h,v
+retrieving revision 1.4
+retrieving revision 1.1.2.5
+diff -u -p -r1.4 -r1.1.2.5
+--- libio/bits/stdio2.h	19 Mar 2005 00:14:58 -0000	1.4
++++ libio/bits/stdio2.h	19 Mar 2005 20:18:03 -0000	1.1.2.5
+@@ -61,14 +61,25 @@ extern int __vfprintf_chk (FILE *__restr
+ extern int __vprintf_chk (int __flag, __const char *__restrict __format,
+ 			  _G_va_list __ap);
+ 
+-# define printf(...) \
++# if __GNUC_PREREQ (4, 0)
++#  define printf(...) \
+   __printf_chk (__USE_FORTIFY_LEVEL - 1, __VA_ARGS__)
+-# define fprintf(stream, ...) \
++#  define fprintf(stream, ...) \
+   __fprintf_chk (stream, __USE_FORTIFY_LEVEL - 1, __VA_ARGS__)
+-# define vprintf(format, ap) \
++#  define vprintf(format, ap) \
+   __vprintf_chk (__USE_FORTIFY_LEVEL - 1, format, ap)
+-# define vfprintf(stream, format, ap) \
++#  define vfprintf(stream, format, ap) \
+   __vfprintf_chk (stream, __USE_FORTIFY_LEVEL - 1, format, ap)
++# else
++#  define printf(...) \
++  __builtin___printf_chk (__USE_FORTIFY_LEVEL - 1, __VA_ARGS__)
++#  define fprintf(stream, ...) \
++  __builtin___fprintf_chk (stream, __USE_FORTIFY_LEVEL - 1, __VA_ARGS__)
++#  define vprintf(format, ap) \
++  __builtin___vprintf_chk (__USE_FORTIFY_LEVEL - 1, format, ap)
++#  define vfprintf(stream, format, ap) \
++  __builtin___vfprintf_chk (stream, __USE_FORTIFY_LEVEL - 1, format, ap)
++# endif
+ 
+ #endif
+ 
+Index: linuxthreads/ChangeLog
+===================================================================
+RCS file: /cvs/glibc/libc/linuxthreads/ChangeLog,v
+retrieving revision 1.844
+retrieving revision 1.817.2.21
+diff -u -p -r1.844 -r1.817.2.21
+--- linuxthreads/ChangeLog	31 Mar 2005 10:02:53 -0000	1.844
++++ linuxthreads/ChangeLog	1 Apr 2005 15:13:15 -0000	1.817.2.21
+@@ -801,6 +801,12 @@
+ 	(pthread_barrierattr_setpshared): Return EINVAL if pshared
+ 	is neither PTHREAD_PROCESS_PRIVATE nor PTHREAD_PROCESS_SHARED.
+ 
++2003-09-02  Jakub Jelinek  <jakub@redhat.com>
++
++	* sysdeps/sparc/tls.h (TLS_TCB_SIZE): If in ld.so and NPTL struct
++	pthread is bigger than struct _pthread_descr_struct, use NPTL struct
++	pthread size.
++
+ 2003-09-02  Ulrich Drepper  <drepper@redhat.com>
+ 
+ 	* sysdeps/unix/sysv/linux/i386/dl-sysdep.h
+@@ -933,6 +939,34 @@
+ 
+ 2003-07-22  Jakub Jelinek  <jakub@redhat.com>
+ 
++	* sysdeps/alpha/tls.h (TLS_INIT_TCB_SIZE, TLS_TCB_SIZE): Change to 0.
++	(TLS_INIT_TCB_ALIGN, TLS_TCB_ALIGN): Alignment of struct
++	_pthread_descr_struct.
++	(TLS_PRE_TCB_SIZE): Add sizeof (tcbhead_t) and pad to align.
++	If in ld.so and NPTL struct pthread is bigger than struct
++	_pthread_descr_struct, use NPTL struct pthread size.
++	(TLS_TCB_OFFSET): Define.
++	(INSTALL_DTV, INSTALL_NEW_DTV, GET_DTV, TLS_INIT_TP, THREAD_DTV,
++	THREAD_SELF, INIT_THREAD_SELF): Changed to match NPTL tls.h
++	definitions.
++	* sysdeps/i386/tls.h (TLS_TCB_SIZE): If in ld.so and NPTL struct
++	pthread is bigger than struct _pthread_descr_struct, use NPTL struct
++	pthread size.
++	* sysdeps/ia64/tls.h (TLS_PRE_TCB_SIZE): Likewise.
++	* sysdeps/powerpc/tls.h (TLS_PRE_TCB_SIZE): Likewise.
++	* sysdeps/s390/tls.h (TLS_TCB_SIZE): Likewise.
++	* sysdeps/sh/tls.h (TLS_PRE_TCB_SIZE): Likewise.
++	* sysdeps/x86_64/tls.h (TLS_TCB_SIZE): Likewise.
++	* sysdeps/pthread/Makefile (gen-as-const-headers): Add
++	nptl-struct-pthread.sym if nptl tree is present.
++	(before-compile): Add $(common-objpfx)nptl-struct-pthread.h
++	if nptl tree is not present.
++	(common-generated): Add nptl-struct-pthread.h.
++	($(common-objpfx)nptl-struct-pthread.h): New rule.
++	* sysdeps/pthread/nptl-struct-pthread.sym: New file.
++
++2003-07-22  Jakub Jelinek  <jakub@redhat.com>
++
+ 	* descr.h (struct _pthread_descr_struct): Provide p_res member
+ 	even if USE_TLS && HAVE___THREAD.
+ 	* sysdeps/pthread/res-state.c (__res_state): Return __resp
+Index: linuxthreads/Makefile
+===================================================================
+RCS file: /cvs/glibc/libc/linuxthreads/Makefile,v
+retrieving revision 1.98
+retrieving revision 1.94.2.5
+diff -u -p -r1.98 -r1.94.2.5
+--- linuxthreads/Makefile	7 Feb 2005 19:30:03 -0000	1.98
++++ linuxthreads/Makefile	8 Feb 2005 10:04:10 -0000	1.94.2.5
+@@ -245,15 +245,18 @@ $(addprefix $(objpfx), \
+   $(filter-out $(tests-static) $(tests-reverse) unload, \
+     $(tests) $(test-srcs))): $(objpfx)libpthread.so \
+ 			     $(objpfx)libpthread_nonshared.a
+-# $(objpfx)../libc.so is used instead of $(common-objpfx)libc.so,
++# $(objpfx)linklibc.so is used instead of $(common-objpfx)libc.so,
+ # since otherwise libpthread.so comes before libc.so when linking.
+ $(addprefix $(objpfx), $(tests-reverse)): \
+-  $(objpfx)../libc.so $(objpfx)libpthread.so \
++  $(objpfx)linklibc.so $(objpfx)libpthread.so \
+   $(objpfx)libpthread_nonshared.a
+ $(objpfx)../libc.so: $(common-objpfx)libc.so ;
+ $(addprefix $(objpfx),$(librt-tests)): $(common-objpfx)rt/librt.so
+ $(objpfx)unload: $(common-objpfx)dlfcn/libdl.so
+ $(objpfx)unload.out: $(objpfx)libpthread.so $(objpfx)libpthread_nonshared.a
++$(objpfx)linklibc.so: $(common-objpfx)libc.so
++	ln -s ../libc.so $@
++generated += libclink.so
+ else
+ $(addprefix $(objpfx),$(tests) $(test-srcs)): $(objpfx)libpthread.a
+ $(addprefix $(objpfx),$(librt-tests)): $(common-objpfx)rt/librt.a
+Index: linuxthreads/cancel.c
+===================================================================
+RCS file: /cvs/glibc/libc/linuxthreads/cancel.c,v
+retrieving revision 1.23
+retrieving revision 1.23.2.1
+diff -u -p -r1.23 -r1.23.2.1
+--- linuxthreads/cancel.c	22 Feb 2003 00:55:21 -0000	1.23
++++ linuxthreads/cancel.c	22 Sep 2004 21:20:55 -0000	1.23.2.1
+@@ -230,5 +230,6 @@ void __pthread_perform_cleanup(char *cur
+     }
+ 
+   /* And the TSD which needs special help.  */
++  THREAD_SETMEM (self, p_cancelstate, PTHREAD_CANCEL_DISABLE);
+   __libc_thread_freeres ();
+ }
+Index: linuxthreads/lockfile.c
+===================================================================
+RCS file: /cvs/glibc/libc/linuxthreads/lockfile.c,v
+retrieving revision 1.10
+retrieving revision 1.10.2.1
+diff -u -p -r1.10 -r1.10.2.1
+--- linuxthreads/lockfile.c	18 Dec 2002 01:16:46 -0000	1.10
++++ linuxthreads/lockfile.c	22 Sep 2004 21:20:55 -0000	1.10.2.1
+@@ -74,7 +74,11 @@ __fresetlockfiles (void)
+   __pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE_NP);
+ 
+   for (i = _IO_iter_begin(); i != _IO_iter_end(); i = _IO_iter_next(i))
+-    __pthread_mutex_init (_IO_iter_file(i)->_lock, &attr);
++    {
++      _IO_lock_t *_lock = _IO_iter_file(i)->_lock;
++      if (_lock)
++	__pthread_mutex_init (_lock, &attr);
++    }
+ 
+   __pthread_mutexattr_destroy (&attr);
+ 
+Index: linuxthreads/semaphore.h
+===================================================================
+RCS file: /cvs/glibc/libc/linuxthreads/semaphore.h,v
+retrieving revision 1.13
+retrieving revision 1.13.2.1
+diff -u -p -r1.13 -r1.13.2.1
+--- linuxthreads/semaphore.h	17 Apr 2004 23:01:39 -0000	1.13
++++ linuxthreads/semaphore.h	22 Sep 2004 21:20:55 -0000	1.13.2.1
+@@ -21,6 +21,7 @@
+ # define __need_timespec
+ # include <time.h>
+ #endif
++#include <bits/pthreadtypes.h>
+ 
+ #ifndef _PTHREAD_DESCR_DEFINED
+ /* Thread descriptors.  Needed for `sem_t' definition.  */
+Index: linuxthreads/tst-tls1.h
+===================================================================
+RCS file: /cvs/glibc/libc/linuxthreads/tst-tls1.h,v
+retrieving revision 1.1
+retrieving revision 1.1.2.1
+diff -u -p -r1.1 -r1.1.2.1
+--- linuxthreads/tst-tls1.h	2 Sep 2003 00:29:30 -0000	1.1
++++ linuxthreads/tst-tls1.h	22 Sep 2004 21:20:55 -0000	1.1.2.1
+@@ -2,7 +2,7 @@
+ #include <stdlib.h>
+ #include <tls.h>
+ 
+-#if USE_TLS && HAVE___THREAD
++#if USE_TLS && (0 || HAVE___THREAD)
+ 
+ struct tls_obj
+ {
+Index: linuxthreads/sysdeps/alpha/tls.h
+===================================================================
+RCS file: /cvs/glibc/libc/linuxthreads/sysdeps/alpha/tls.h,v
+retrieving revision 1.6
+retrieving revision 1.5.2.2
+diff -u -p -r1.6 -r1.5.2.2
+--- linuxthreads/sysdeps/alpha/tls.h	9 Jan 2005 20:01:12 -0000	1.6
++++ linuxthreads/sysdeps/alpha/tls.h	8 Feb 2005 10:04:11 -0000	1.5.2.2
+@@ -58,54 +58,76 @@ typedef struct
+ #  include <sysdep.h>
+ 
+ /* This is the size of the initial TCB.  */
+-#  define TLS_INIT_TCB_SIZE	sizeof (tcbhead_t)
++#  define TLS_INIT_TCB_SIZE	0
+ 
+ /* Alignment requirements for the initial TCB.  */
+-#  define TLS_INIT_TCB_ALIGN	__alignof__ (tcbhead_t)
++#  define TLS_INIT_TCB_ALIGN	__alignof__ (struct _pthread_descr_struct)
+ 
+ /* This is the size of the TCB.  */
+-#  define TLS_TCB_SIZE		sizeof (tcbhead_t)
++#  define TLS_TCB_SIZE		0
+ 
+ /* Alignment requirements for the TCB.  */
+-#  define TLS_TCB_ALIGN		__alignof__ (tcbhead_t)
++#  define TLS_TCB_ALIGN		__alignof__ (struct _pthread_descr_struct)
+ 
+ /* This is the size we need before TCB.  */
+-#  define TLS_PRE_TCB_SIZE	sizeof (struct _pthread_descr_struct)
++#  ifndef IS_IN_rtld
++#   define TLS_PRE_TCB_SIZE \
++  (sizeof (struct _pthread_descr_struct)				\
++   + ((sizeof (tcbhead_t) + TLS_TCB_ALIGN - 1) & ~(TLS_TCB_ALIGN - 1)))
++#  else
++#   include <nptl-struct-pthread.h>
++#   define TLS_PRE_TCB_SIZE \
++  ((sizeof (struct _pthread_descr_struct) > NPTL_STRUCT_PTHREAD_SIZE	\
++    ? sizeof (struct _pthread_descr_struct) : NPTL_STRUCT_PTHREAD_SIZE)	\
++   + ((sizeof (tcbhead_t) + TLS_TCB_ALIGN - 1) & ~(TLS_TCB_ALIGN - 1)))
++#  endif
+ 
+ /* The DTV is allocated at the TP; the TCB is placed elsewhere.  */
+ #  define TLS_DTV_AT_TP 1
+ 
++/* The following assumes that TP (R2 or R13) points to the end of the
++   TCB + 0x7000 (per the ABI).  This implies that TCB address is
++   TP - 0x7000.  As we define TLS_DTV_AT_TP we can
++   assume that the pthread struct is allocated immediately ahead of the
++   TCB.  This implies that the pthread_descr address is
++   TP - (TLS_PRE_TCB_SIZE + 0x7000).  */
++/* ??? PPC uses offset 0x7000; seems like a good idea for alpha too,
++   but binutils not yet changed to match.  */
++#  define TLS_TCB_OFFSET 0
++
+ /* Install the dtv pointer.  The pointer passed is to the element with
+    index -1 which contain the length.  */
+ #  define INSTALL_DTV(TCBP, DTVP) \
+-  (((tcbhead_t *) (TCBP))->dtv = (DTVP) + 1)
++  (((tcbhead_t *) (TCBP))[-1].dtv = (DTVP) + 1)
+ 
+ /* Install new dtv for current thread.  */
+ #  define INSTALL_NEW_DTV(DTV) \
+-  (((tcbhead_t *)__builtin_thread_pointer ())->dtv = (DTV))
++  (THREAD_DTV() = (DTV))
+ 
+ /* Return dtv of given thread descriptor.  */
+ #  define GET_DTV(TCBP) \
+-  (((tcbhead_t *) (TCBP))->dtv)
++  (((tcbhead_t *) (TCBP))[-1].dtv)
+ 
+ /* Code to initially initialize the thread pointer.  This might need
+    special attention since 'errno' is not yet available and if the
+    operation can cause a failure 'errno' must not be touched.  */
+ # define TLS_INIT_TP(TCBP, SECONDCALL) \
+-  (__builtin_set_thread_pointer (TCBP), 0)
++  (__builtin_set_thread_pointer ((void *) (TCBP) + TLS_TCB_OFFSET), NULL)
+ 
+ /* Return the address of the dtv for the current thread.  */
+ #  define THREAD_DTV() \
+-  (((tcbhead_t *)__builtin_thread_pointer ())->dtv)
++  (((tcbhead_t *) (__builtin_thread_pointer () - TLS_TCB_OFFSET))[-1].dtv)
+ 
+ /* Return the thread descriptor for the current thread.  */
+ #  undef THREAD_SELF
+ #  define THREAD_SELF \
+-  ((pthread_descr)__builtin_thread_pointer () - 1)
++  ((pthread_descr) (__builtin_thread_pointer () \
++		    - TLS_TCB_OFFSET - TLS_PRE_TCB_SIZE))
+ 
+ #  undef INIT_THREAD_SELF
+ #  define INIT_THREAD_SELF(DESCR, NR) \
+-  __builtin_set_thread_pointer ((struct _pthread_descr_struct *)(DESCR) + 1)
++  __builtin_set_thread_pointer ((char *)(DESCR) \
++				+ TLS_TCB_OFFSET + TLS_PRE_TCB_SIZE)
+ 
+ /* Get the thread descriptor definition.  */
+ #  include <linuxthreads/descr.h>
+Index: linuxthreads/sysdeps/i386/tls.h
+===================================================================
+RCS file: /cvs/glibc/libc/linuxthreads/sysdeps/i386/tls.h,v
+retrieving revision 1.38
+retrieving revision 1.35.2.5
+diff -u -p -r1.38 -r1.35.2.5
+--- linuxthreads/sysdeps/i386/tls.h	9 Jan 2005 20:01:13 -0000	1.38
++++ linuxthreads/sysdeps/i386/tls.h	8 Feb 2005 10:04:12 -0000	1.35.2.5
+@@ -86,7 +86,14 @@ typedef struct
+ #  define TLS_INIT_TCB_ALIGN __alignof__ (tcbhead_t)
+ 
+ /* This is the size of the TCB.  */
+-#  define TLS_TCB_SIZE sizeof (struct _pthread_descr_struct)
++#  ifndef IS_IN_rtld
++#   define TLS_TCB_SIZE sizeof (struct _pthread_descr_struct)
++#  else
++#   include <nptl-struct-pthread.h>
++#   define TLS_TCB_SIZE \
++  (sizeof (struct _pthread_descr_struct) > NPTL_STRUCT_PTHREAD_SIZE	\
++   ? sizeof (struct _pthread_descr_struct) : NPTL_STRUCT_PTHREAD_SIZE)
++#  endif
+ 
+ /* Alignment requirements for the TCB.  */
+ #  define TLS_TCB_ALIGN __alignof__ (struct _pthread_descr_struct)
+Index: linuxthreads/sysdeps/ia64/tls.h
+===================================================================
+RCS file: /cvs/glibc/libc/linuxthreads/sysdeps/ia64/tls.h,v
+retrieving revision 1.10
+retrieving revision 1.9.2.2
+diff -u -p -r1.10 -r1.9.2.2
+--- linuxthreads/sysdeps/ia64/tls.h	9 Jan 2005 20:01:13 -0000	1.10
++++ linuxthreads/sysdeps/ia64/tls.h	8 Feb 2005 10:04:14 -0000	1.9.2.2
+@@ -65,7 +65,14 @@ typedef struct
+ #  define TLS_TCB_SIZE sizeof (tcbhead_t)
+ 
+ /* This is the size we need before TCB.  */
+-#  define TLS_PRE_TCB_SIZE sizeof (struct _pthread_descr_struct)
++#  ifndef IS_IN_rtld
++#   define TLS_PRE_TCB_SIZE sizeof (struct _pthread_descr_struct)
++#  else
++#   include <nptl-struct-pthread.h>
++#   define TLS_PRE_TCB_SIZE \
++  (sizeof (struct _pthread_descr_struct) > NPTL_STRUCT_PTHREAD_SIZE	\
++   ? sizeof (struct _pthread_descr_struct) : NPTL_STRUCT_PTHREAD_SIZE)
++#  endif
+ 
+ /* Alignment requirements for the TCB.  */
+ #  define TLS_TCB_ALIGN __alignof__ (struct _pthread_descr_struct)
+Index: linuxthreads/sysdeps/powerpc/tls.h
+===================================================================
+RCS file: /cvs/glibc/libc/linuxthreads/sysdeps/powerpc/tls.h,v
+retrieving revision 1.9
+retrieving revision 1.8.2.2
+diff -u -p -r1.9 -r1.8.2.2
+--- linuxthreads/sysdeps/powerpc/tls.h	9 Jan 2005 20:01:14 -0000	1.9
++++ linuxthreads/sysdeps/powerpc/tls.h	8 Feb 2005 10:04:14 -0000	1.8.2.2
+@@ -69,11 +69,19 @@ typedef struct
+ #  define TLS_TCB_ALIGN		__alignof__ (struct _pthread_descr_struct)
+ 
+ /* This is the size we need before TCB.  */
+-#  define TLS_PRE_TCB_SIZE \
++#  ifndef IS_IN_rtld
++#   define TLS_PRE_TCB_SIZE \
+   (sizeof (struct _pthread_descr_struct)				      \
+    + ((sizeof (tcbhead_t) + TLS_TCB_ALIGN - 1) & ~(TLS_TCB_ALIGN - 1)))
++#  else
++#   include <nptl-struct-pthread.h>
++#   define TLS_PRE_TCB_SIZE \
++  ((sizeof (struct _pthread_descr_struct) > NPTL_STRUCT_PTHREAD_SIZE	      \
++    ? sizeof (struct _pthread_descr_struct) : NPTL_STRUCT_PTHREAD_SIZE)	      \
++   + ((sizeof (tcbhead_t) + TLS_TCB_ALIGN - 1) & ~(TLS_TCB_ALIGN - 1)))
++#  endif
+ 
+-/* The following assumes that TP (R2 or R13) is points to the end of the
++/* The following assumes that TP (R2 or R13) points to the end of the
+    TCB + 0x7000 (per the ABI).  This implies that TCB address is
+    TP - 0x7000.  As we define TLS_DTV_AT_TP we can
+    assume that the pthread_descr is allocated immediately ahead of the
+Index: linuxthreads/sysdeps/pthread/Makefile
+===================================================================
+RCS file: /cvs/glibc/libc/linuxthreads/sysdeps/pthread/Makefile,v
+retrieving revision 1.7
+retrieving revision 1.7.2.1
+diff -u -p -r1.7 -r1.7.2.1
+--- linuxthreads/sysdeps/pthread/Makefile	14 Aug 2003 00:14:22 -0000	1.7
++++ linuxthreads/sysdeps/pthread/Makefile	22 Sep 2004 21:20:56 -0000	1.7.2.1
+@@ -12,3 +12,15 @@ endif
+ ifeq ($(subdir),posix)
+ CFLAGS-confstr.c += -DLIBPTHREAD_VERSION="\"$(shell sed 's/\(.*\) by .*/\1/' ../linuxthreads/Banner)\""
+ endif
++
++ifeq ($(subdir),csu)
++# Find out the size of NPTL struct pthread
++ifneq (,$(wildcard $(..)nptl/descr.h))
++gen-as-const-headers += nptl-struct-pthread.sym
++else
++before-compile += $(common-objpfx)nptl-struct-pthread.h
++common-generated += nptl-struct-pthread.h
++$(common-objpfx)nptl-struct-pthread.h:
++	@echo '#define NPTL_STRUCT_PTHREAD_SIZE 0' > $@
++endif
++endif
+Index: linuxthreads/sysdeps/pthread/nptl-struct-pthread.sym
+===================================================================
+RCS file: linuxthreads/sysdeps/pthread/nptl-struct-pthread.sym
+diff -N linuxthreads/sysdeps/pthread/nptl-struct-pthread.sym
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ linuxthreads/sysdeps/pthread/nptl-struct-pthread.sym	22 Sep 2004 21:20:56 -0000	1.1.2.1
+@@ -0,0 +1,13 @@
++#ifdef HAVE_TLS_SUPPORT
++# ifndef HAVE_FORCED_UNWIND
++#  define HAVE_FORCED_UNWIND 1
++# endif
++# define __need_struct_pthread_size
++# include <nptl/descr.h>
++#endif
++
++--
++
++#ifdef HAVE_TLS_SUPPORT
++NPTL_STRUCT_PTHREAD_SIZE	sizeof (struct pthread)
++#endif
+Index: linuxthreads/sysdeps/s390/tls.h
+===================================================================
+RCS file: /cvs/glibc/libc/linuxthreads/sysdeps/s390/tls.h,v
+retrieving revision 1.4
+retrieving revision 1.3.2.2
+diff -u -p -r1.4 -r1.3.2.2
+--- linuxthreads/sysdeps/s390/tls.h	9 Jan 2005 20:01:14 -0000	1.4
++++ linuxthreads/sysdeps/s390/tls.h	8 Feb 2005 10:04:15 -0000	1.3.2.2
+@@ -77,7 +77,14 @@ typedef struct
+ #  define TLS_INIT_TCB_ALIGN __alignof__ (tcbhead_t)
+ 
+ /* This is the size of the TCB.  */
+-#  define TLS_TCB_SIZE sizeof (struct _pthread_descr_struct)
++#  ifndef IS_IN_rtld
++#   define TLS_TCB_SIZE sizeof (struct _pthread_descr_struct)
++#  else
++#   include <nptl-struct-pthread.h>
++#   define TLS_TCB_SIZE \
++  (sizeof (struct _pthread_descr_struct) > NPTL_STRUCT_PTHREAD_SIZE	\
++   ? sizeof (struct _pthread_descr_struct) : NPTL_STRUCT_PTHREAD_SIZE)
++#  endif
+ 
+ /* Alignment requirements for the TCB.  */
+ #  define TLS_TCB_ALIGN __alignof__ (struct _pthread_descr_struct)
+Index: linuxthreads/sysdeps/sh/tls.h
+===================================================================
+RCS file: /cvs/glibc/libc/linuxthreads/sysdeps/sh/tls.h,v
+retrieving revision 1.10
+retrieving revision 1.9.2.2
+diff -u -p -r1.10 -r1.9.2.2
+--- linuxthreads/sysdeps/sh/tls.h	9 Jan 2005 20:01:15 -0000	1.10
++++ linuxthreads/sysdeps/sh/tls.h	8 Feb 2005 10:04:15 -0000	1.9.2.2
+@@ -69,7 +69,14 @@ typedef struct
+ #  define TLS_TCB_SIZE sizeof (tcbhead_t)
+ 
+ /* This is the size we need before TCB.  */
+-#  define TLS_PRE_TCB_SIZE sizeof (struct _pthread_descr_struct)
++#  ifndef IS_IN_rtld
++#   define TLS_PRE_TCB_SIZE sizeof (struct _pthread_descr_struct)
++#  else
++#   include <nptl-struct-pthread.h>
++#   define TLS_PRE_TCB_SIZE \
++  (sizeof (struct _pthread_descr_struct) > NPTL_STRUCT_PTHREAD_SIZE	\
++   ? sizeof (struct _pthread_descr_struct) : NPTL_STRUCT_PTHREAD_SIZE)
++#  endif
+ 
+ /* Alignment requirements for the TCB.  */
+ #  define TLS_TCB_ALIGN __alignof__ (struct _pthread_descr_struct)
+Index: linuxthreads/sysdeps/sparc/tls.h
+===================================================================
+RCS file: /cvs/glibc/libc/linuxthreads/sysdeps/sparc/tls.h,v
+retrieving revision 1.4
+retrieving revision 1.3.2.2
+diff -u -p -r1.4 -r1.3.2.2
+--- linuxthreads/sysdeps/sparc/tls.h	9 Jan 2005 20:01:15 -0000	1.4
++++ linuxthreads/sysdeps/sparc/tls.h	8 Feb 2005 10:04:16 -0000	1.3.2.2
+@@ -69,7 +69,14 @@ typedef struct
+ #  define TLS_INIT_TCB_ALIGN __alignof__ (tcbhead_t)
+ 
+ /* This is the size of the TCB.  */
+-#  define TLS_TCB_SIZE sizeof (struct _pthread_descr_struct)
++#  ifndef IS_IN_rtld
++#   define TLS_TCB_SIZE sizeof (struct _pthread_descr_struct)
++#  else
++#   include <nptl-struct-pthread.h>
++#   define TLS_TCB_SIZE \
++  (sizeof (struct _pthread_descr_struct) > NPTL_STRUCT_PTHREAD_SIZE	\
++   ? sizeof (struct _pthread_descr_struct) : NPTL_STRUCT_PTHREAD_SIZE)
++#  endif
+ 
+ /* Alignment requirements for the TCB.  */
+ #  define TLS_TCB_ALIGN __alignof__ (struct _pthread_descr_struct)
+Index: linuxthreads/sysdeps/x86_64/tls.h
+===================================================================
+RCS file: /cvs/glibc/libc/linuxthreads/sysdeps/x86_64/tls.h,v
+retrieving revision 1.7
+retrieving revision 1.6.2.2
+diff -u -p -r1.7 -r1.6.2.2
+--- linuxthreads/sysdeps/x86_64/tls.h	9 Jan 2005 20:01:15 -0000	1.7
++++ linuxthreads/sysdeps/x86_64/tls.h	8 Feb 2005 10:04:16 -0000	1.6.2.2
+@@ -71,7 +71,14 @@ typedef struct
+ #  define TLS_INIT_TCB_ALIGN __alignof__ (tcbhead_t)
+ 
+ /* This is the size of the TCB.  */
+-#  define TLS_TCB_SIZE sizeof (struct _pthread_descr_struct)
++#  ifndef IS_IN_rtld
++#   define TLS_TCB_SIZE sizeof (struct _pthread_descr_struct)
++#  else
++#   include <nptl-struct-pthread.h>
++#   define TLS_TCB_SIZE \
++  (sizeof (struct _pthread_descr_struct) > NPTL_STRUCT_PTHREAD_SIZE	\
++   ? sizeof (struct _pthread_descr_struct) : NPTL_STRUCT_PTHREAD_SIZE)
++#  endif
+ 
+ /* Alignment requirements for the TCB.  */
+ #  define TLS_TCB_ALIGN __alignof__ (struct _pthread_descr_struct)
+Index: locale/iso-4217.def
+===================================================================
+RCS file: /cvs/glibc/libc/locale/iso-4217.def,v
+retrieving revision 1.16
+retrieving revision 1.15.2.2
+diff -u -p -r1.16 -r1.15.2.2
+--- locale/iso-4217.def	20 Mar 2005 04:14:36 -0000	1.16
++++ locale/iso-4217.def	24 Mar 2005 08:19:03 -0000	1.15.2.2
+@@ -8,6 +8,7 @@
+  *
+  * !!! The list has to be sorted !!!
+  */
++DEFINE_INT_CURR("ADP")		/* Andorran Peseta -> EUR  */
+ DEFINE_INT_CURR("AED")		/* United Arab Emirates Dirham  */
+ DEFINE_INT_CURR("AFA")		/* Afghanistan Afgani  */
+ DEFINE_INT_CURR("ALL")		/* Albanian Lek  */
+@@ -15,12 +16,14 @@ DEFINE_INT_CURR("AMD")		/* Armenia Dram 
+ DEFINE_INT_CURR("ANG")		/* Netherlands Antilles  */
+ DEFINE_INT_CURR("AOA")		/* Angolan Kwanza  */
+ DEFINE_INT_CURR("ARS")		/* Argentine Peso  */
++DEFINE_INT_CURR("ATS")		/* Austrian Schilling -> EUR  */
+ DEFINE_INT_CURR("AUD")		/* Australian Dollar  */
+ DEFINE_INT_CURR("AWG")		/* Aruba Guilder  */
+ DEFINE_INT_CURR("AZM")		/* Azerbaijan Manat  */
+ DEFINE_INT_CURR("BAK")		/* Bosnian and Herzegovina Convertible Mark  */
+ DEFINE_INT_CURR("BBD")		/* Barbados Dollar  */
+ DEFINE_INT_CURR("BDT")		/* Bangladesh Taka  */
++DEFINE_INT_CURR("BEF")		/* Belgian Franc -> EUR  */
+ DEFINE_INT_CURR("BGL")		/* Bulgarian Lev  */
+ DEFINE_INT_CURR("BHD")		/* Bahraini Dinar  */
+ DEFINE_INT_CURR("BIF")		/* Burundi Franc  */
+@@ -45,6 +48,7 @@ DEFINE_INT_CURR("CUP")		/* Cuban Peso  *
+ DEFINE_INT_CURR("CVE")		/* Cape Verde Escudo  */
+ DEFINE_INT_CURR("CYP")		/* Cypriot Pound  */
+ DEFINE_INT_CURR("CZK")		/* Czech Koruna  */
++DEFINE_INT_CURR("DEM")		/* German Mark -> EUR  */
+ DEFINE_INT_CURR("DJF")		/* Djibouti Franc  */
+ DEFINE_INT_CURR("DKK")		/* Danish Krone (Faroe Islands, Greenland)  */
+ DEFINE_INT_CURR("DOP")		/* Dominican Republic  */
+@@ -52,16 +56,20 @@ DEFINE_INT_CURR("DZD")		/* Algerian Dina
+ DEFINE_INT_CURR("EEK")		/* Estonian Kroon  */
+ DEFINE_INT_CURR("EGP")		/* Egyptian Pound  */
+ DEFINE_INT_CURR("ERN")		/* Eritrean Nakfa  */
++DEFINE_INT_CURR("ESP")		/* Spanish Peseta -> EUR  */
+ DEFINE_INT_CURR("ETB")		/* Ethiopian Birr  */
+ DEFINE_INT_CURR("EUR")		/* European Union Euro  */
++DEFINE_INT_CURR("FIM")		/* Finnish Markka -> EUR  */
+ DEFINE_INT_CURR("FJD")		/* Fiji Dollar  */
+ DEFINE_INT_CURR("FKP")		/* Falkland Islands Pound (Malvinas)  */
++DEFINE_INT_CURR("FRF")		/* French Franc -> EUR  */
+ DEFINE_INT_CURR("GBP")		/* British Pound  */
+ DEFINE_INT_CURR("GEL")		/* Georgia Lari  */
+ DEFINE_INT_CURR("GHC")		/* Ghana Cedi  */
+ DEFINE_INT_CURR("GIP")		/* Gibraltar Pound  */
+ DEFINE_INT_CURR("GMD")		/* Gambian Dalasi  */
+ DEFINE_INT_CURR("GNF")		/* Guinea Franc  */
++DEFINE_INT_CURR("GRD")		/* Greek Drachma -> EUR  */
+ DEFINE_INT_CURR("GTQ")		/* Guatemala Quetzal  */
+ DEFINE_INT_CURR("GYD")		/* Guyana Dollar  */
+ DEFINE_INT_CURR("HKD")		/* Hong Kong Dollar  */
+@@ -70,12 +78,14 @@ DEFINE_INT_CURR("HRK")		/* Croatia Kuna 
+ DEFINE_INT_CURR("HTG")		/* Haiti Gourde  */
+ DEFINE_INT_CURR("HUF")		/* Hungarian Forint  */
+ DEFINE_INT_CURR("IDR")		/* Indonesia Rupiah  */
++DEFINE_INT_CURR("IEP")		/* Irish Pound -> EUR  */
+ DEFINE_INT_CURR("ILS")		/* Israeli Shekel  */
+ DEFINE_INT_CURR("IMP")		/* Isle of Man Pounds  */
+ DEFINE_INT_CURR("INR")		/* Indian Rupee (Bhutan)  */
+ DEFINE_INT_CURR("IQD")		/* Iraqi Dinar  */
+ DEFINE_INT_CURR("IRR")		/* Iranian Rial  */
+ DEFINE_INT_CURR("ISK")		/* Iceland Krona  */
++DEFINE_INT_CURR("ITL")		/* Italian Lira -> EUR  */
+ DEFINE_INT_CURR("JMD")		/* Jamaican Dollar  */
+ DEFINE_INT_CURR("JOD")		/* Jordanian Dinar  */
+ DEFINE_INT_CURR("JPY")		/* Japanese Yen  */
+@@ -94,6 +104,7 @@ DEFINE_INT_CURR("LKR")		/* Sri Lankan Ru
+ DEFINE_INT_CURR("LRD")		/* Liberian Dollar  */
+ DEFINE_INT_CURR("LSL")		/* Lesotho Maloti  */
+ DEFINE_INT_CURR("LTL")		/* Lithuanian Litas  */
++DEFINE_INT_CURR("LUF")		/* Luxembourg Franc -> EUR  */
+ DEFINE_INT_CURR("LVL")		/* Latvia Lat  */
+ DEFINE_INT_CURR("LYD")		/* Libyan Arab Jamahiriya Dinar  */
+ DEFINE_INT_CURR("MAD")		/* Moroccan Dirham  */
+@@ -114,6 +125,7 @@ DEFINE_INT_CURR("MZM")		/* Mozambique Me
+ DEFINE_INT_CURR("NAD")		/* Namibia Dollar  */
+ DEFINE_INT_CURR("NGN")		/* Nigeria Naira  */
+ DEFINE_INT_CURR("NIO")		/* Nicaragua Cordoba Oro  */
++DEFINE_INT_CURR("NLG")		/* Netherlands Guilder -> EUR  */
+ DEFINE_INT_CURR("NOK")		/* Norwegian Krone  */
+ DEFINE_INT_CURR("NPR")		/* Nepalese Rupee  */
+ DEFINE_INT_CURR("NZD")		/* New Zealand Dollar  */
+@@ -124,6 +136,7 @@ DEFINE_INT_CURR("PGK")		/* Papau New Gui
+ DEFINE_INT_CURR("PHP")		/* Philippines Peso  */
+ DEFINE_INT_CURR("PKR")		/* Pakistan Rupee  */
+ DEFINE_INT_CURR("PLN")		/* Polish Zloty  */
++DEFINE_INT_CURR("PTE")		/* Portugese Escudo -> EUR  */
+ DEFINE_INT_CURR("PYG")		/* Paraguay Guarani  */
+ DEFINE_INT_CURR("QAR")		/* Qatar Rial  */
+ DEFINE_INT_CURR("ROL")		/* Romanian Leu  */
+Index: locale/programs/3level.h
+===================================================================
+RCS file: /cvs/glibc/libc/locale/programs/3level.h,v
+retrieving revision 1.5
+retrieving revision 1.5.2.1
+diff -u -p -r1.5 -r1.5.2.1
+--- locale/programs/3level.h	13 Jun 2003 20:45:38 -0000	1.5
++++ locale/programs/3level.h	22 Sep 2004 21:20:58 -0000	1.5.2.1
+@@ -204,6 +204,42 @@ CONCAT(TABLE,_iterate) (struct TABLE *t,
+ 	}
+     }
+ }
++
++/* GCC ATM seems to do a poor job with pointers to nested functions passed
++   to inlined functions.  Help it a little bit with this hack.  */
++#define wchead_table_iterate(tp, fn) \
++do									      \
++  {									      \
++    struct wchead_table *t = (tp);					      \
++    uint32_t index1;							      \
++    for (index1 = 0; index1 < t->level1_size; index1++)			      \
++      {									      \
++	uint32_t lookup1 = t->level1[index1];				      \
++	if (lookup1 != ((uint32_t) ~0))					      \
++	  {								      \
++	    uint32_t lookup1_shifted = lookup1 << t->q;			      \
++	    uint32_t index2;						      \
++	    for (index2 = 0; index2 < (1 << t->q); index2++)		      \
++	      {								      \
++		uint32_t lookup2 = t->level2[index2 + lookup1_shifted];	      \
++		if (lookup2 != ((uint32_t) ~0))				      \
++		  {							      \
++		    uint32_t lookup2_shifted = lookup2 << t->p;		      \
++		    uint32_t index3;					      \
++		    for (index3 = 0; index3 < (1 << t->p); index3++)	      \
++		      {							      \
++			struct element_t *lookup3			      \
++			  = t->level3[index3 + lookup2_shifted];	      \
++			if (lookup3 != NULL)				      \
++			  fn ((((index1 << t->q) + index2) << t->p) + index3, \
++			      lookup3);					      \
++		      }							      \
++		  }							      \
++	      }								      \
++	  }								      \
++      }									      \
++  } while (0)
++
+ #endif
+ 
+ #ifndef NO_FINALIZE
+Index: localedata/Makefile
+===================================================================
+RCS file: /cvs/glibc/libc/localedata/Makefile,v
+retrieving revision 1.101
+retrieving revision 1.101.2.1
+diff -u -p -r1.101 -r1.101.2.1
+--- localedata/Makefile	7 Aug 2004 23:38:13 -0000	1.101
++++ localedata/Makefile	22 Sep 2004 21:20:58 -0000	1.101.2.1
+@@ -222,6 +222,7 @@ $(INSTALL-SUPPORTED-LOCALES): install-lo
+ 	echo -n '...'; \
+ 	input=`echo $$locale | sed 's/\([^.]*\)[^@]*\(.*\)/\1\2/'`; \
+ 	$(LOCALEDEF) --alias-file=../intl/locale.alias \
++		     --no-archive \
+ 		     -i locales/$$input -c -f charmaps/$$charset \
+ 		     $(addprefix --prefix=,$(install_root)) $$locale; \
+ 	echo ' done'; \
+Index: localedata/SUPPORTED
+===================================================================
+RCS file: /cvs/glibc/libc/localedata/SUPPORTED,v
+retrieving revision 1.74
+retrieving revision 1.71.2.4
+diff -u -p -r1.74 -r1.71.2.4
+--- localedata/SUPPORTED	20 Mar 2005 04:16:36 -0000	1.74
++++ localedata/SUPPORTED	24 Mar 2005 08:19:04 -0000	1.71.2.4
+@@ -64,6 +64,7 @@ cy_GB.UTF-8/UTF-8 \
+ cy_GB/ISO-8859-14 \
+ da_DK.UTF-8/UTF-8 \
+ da_DK/ISO-8859-1 \
++da_DK.ISO-8859-15/ISO-8859-15 \
+ de_AT.UTF-8/UTF-8 \
+ de_AT/ISO-8859-1 \
+ de_AT@euro/ISO-8859-15 \
+@@ -90,6 +91,7 @@ en_DK.UTF-8/UTF-8 \
+ en_DK/ISO-8859-1 \
+ en_GB.UTF-8/UTF-8 \
+ en_GB/ISO-8859-1 \
++en_GB.ISO-8859-15/ISO-8859-15 \
+ en_HK.UTF-8/UTF-8 \
+ en_HK/ISO-8859-1 \
+ en_IE.UTF-8/UTF-8 \
+@@ -104,6 +106,7 @@ en_SG.UTF-8/UTF-8 \
+ en_SG/ISO-8859-1 \
+ en_US.UTF-8/UTF-8 \
+ en_US/ISO-8859-1 \
++en_US.ISO-8859-15/ISO-8859-15 \
+ en_ZA.UTF-8/UTF-8 \
+ en_ZA/ISO-8859-1 \
+ en_ZW.UTF-8/UTF-8 \
+@@ -244,6 +247,8 @@ nl_NL/ISO-8859-1 \
+ nl_NL@euro/ISO-8859-15 \
+ nn_NO.UTF-8/UTF-8 \
+ nn_NO/ISO-8859-1 \
++no_NO.UTF-8/UTF-8 \
++no_NO/ISO-8859-1 \
+ oc_FR/ISO-8859-1 \
+ om_ET/UTF-8 \
+ om_KE/ISO-8859-1 \
+@@ -283,6 +288,7 @@ sv_FI/ISO-8859-1 \
+ sv_FI@euro/ISO-8859-15 \
+ sv_SE.UTF-8/UTF-8 \
+ sv_SE/ISO-8859-1 \
++sv_SE.ISO-8859-15/ISO-8859-15 \
+ ta_IN/UTF-8 \
+ te_IN/UTF-8 \
+ tg_TJ/KOI8-T \
+Index: localedata/locales/cy_GB
+===================================================================
+RCS file: /cvs/glibc/libc/localedata/locales/cy_GB,v
+retrieving revision 1.4
+retrieving revision 1.3.2.2
+diff -u -p -r1.4 -r1.3.2.2
+--- localedata/locales/cy_GB	28 Sep 2004 04:37:33 -0000	1.4
++++ localedata/locales/cy_GB	29 Sep 2004 08:48:23 -0000	1.3.2.2
+@@ -248,8 +248,11 @@ mon         "<U0049><U006F><U006E><U0061
+ d_t_fmt     "<U0044><U0079><U0064><U0064><U0020><U0025><U0041><U0020><U0025><U0064><U0020><U006d><U0069><U0073><U0020><U0025><U0042><U0020><U0025><U0059><U0020><U0025><U0054><U0020><U0025><U005A>"
+ d_fmt       "<U0025><U0064><U002E><U0025><U006D><U002E><U0025><U0079>"
+ t_fmt       "<U0025><U0054>"
+-am_pm       "";""
+-t_fmt_ampm  ""
++am_pm       "<U0041><U004D>";"<U0050><U004D>"
++t_fmt_ampm  "<U0025><U006C><U003A><U0025><U004D><U003A><U0025><U0053><U0020><U0025><U0050><U0020><U0025><U005A>"
++date_fmt    "<U0025><U0061><U0020><U0025><U0062><U0020><U0025><U0065>/
++<U0020><U0025><U0048><U003A><U0025><U004D><U003A><U0025><U0053><U0020>/
++<U0025><U005A><U0020><U0025><U0059>"
+ END LC_TIME
+ 
+ LC_MESSAGES
+Index: localedata/locales/en_GB
+===================================================================
+RCS file: /cvs/glibc/libc/localedata/locales/en_GB,v
+retrieving revision 1.12
+retrieving revision 1.10.2.2
+diff -u -p -r1.12 -r1.10.2.2
+--- localedata/locales/en_GB	31 Oct 2004 23:42:26 -0000	1.12
++++ localedata/locales/en_GB	2 Nov 2004 12:25:47 -0000	1.10.2.2
+@@ -112,8 +112,8 @@ mon         "<U004A><U0061><U006E><U0075
+ d_t_fmt     "<U0025><U0061><U0020><U0025><U0064><U0020><U0025><U0062><U0020><U0025><U0059><U0020><U0025><U0054><U0020><U0025><U005A>"
+ d_fmt       "<U0025><U0064><U002F><U0025><U006D><U002F><U0025><U0079>"
+ t_fmt       "<U0025><U0054>"
+-am_pm       "";""
+-t_fmt_ampm  ""
++am_pm       "<U0041><U004D>";"<U0050><U004D>"
++t_fmt_ampm  "<U0025><U006C><U003A><U0025><U004D><U003A><U0025><U0053><U0020><U0025><U0050><U0020><U0025><U005A>"
+ date_fmt	"<U0025><U0061><U0020><U0025><U0062><U0020><U0025><U0065>/
+ <U0020><U0025><U0048><U003A><U0025><U004D><U003A><U0025><U0053><U0020>/
+ <U0025><U005A><U0020><U0025><U0059>"
+Index: localedata/locales/en_US
+===================================================================
+RCS file: /cvs/glibc/libc/localedata/locales/en_US,v
+retrieving revision 1.9
+retrieving revision 1.7.2.2
+diff -u -p -r1.9 -r1.7.2.2
+--- localedata/locales/en_US	31 Oct 2004 23:42:26 -0000	1.9
++++ localedata/locales/en_US	2 Nov 2004 12:25:47 -0000	1.7.2.2
+@@ -100,7 +100,6 @@ mon	"<U004A><U0061><U006E><U0075><U0061>
+ 	"<U004F><U0063><U0074><U006F><U0062><U0065><U0072>";/
+ 	"<U004E><U006F><U0076><U0065><U006D><U0062><U0065><U0072>";/
+ 	"<U0044><U0065><U0063><U0065><U006D><U0062><U0065><U0072>"
+-am_pm   "";""
+ % Appropriate date and time representation (%c)
+ %	"%a %d %b %Y %r %Z"
+ d_t_fmt "<U0025><U0061><U0020><U0025><U0064><U0020><U0025><U0062><U0020><U0025><U0059><U0020><U0025><U0072><U0020><U0025><U005A>"
+Index: localedata/locales/no_NO
+===================================================================
+RCS file: localedata/locales/no_NO
+diff -N localedata/locales/no_NO
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ localedata/locales/no_NO	22 Sep 2004 21:21:01 -0000	1.11.2.1
+@@ -0,0 +1,69 @@
++escape_char	/
++comment_char    %
++
++% Norwegian language locale for Norway
++% Source: Norsk Standardiseringsforbund
++% Address: University Library,
++%   Drammensveien 41, N-9242 Oslo, Norge
++% Contact: Kolbjoern Aamboe
++% Tel: +47 - 22859109
++% Fax: +47 - 22434497
++% Email: kolbjorn.aambo@usit.uio.no
++% Language: no
++% Territory: NO
++% Revision: 4.3
++% Date: 1996-10-15
++% Application: general
++% Users: general
++% Repertoiremap: mnemonic.ds
++% Charset: ISO-8859-1
++% Distribution and use is free, also
++% for commercial purposes.
++
++LC_IDENTIFICATION
++copy "nb_NO"
++END LC_IDENTIFICATION
++
++LC_COLLATE
++copy "nb_NO"
++END LC_COLLATE
++
++LC_CTYPE
++copy "nb_NO"
++END LC_CTYPE
++
++LC_MONETARY
++copy "nb_NO"
++END LC_MONETARY
++
++LC_NUMERIC
++copy "nb_NO"
++END LC_NUMERIC
++
++LC_TIME
++copy "nb_NO"
++END LC_TIME
++
++LC_MESSAGES
++copy "nb_NO"
++END LC_MESSAGES
++
++LC_PAPER
++copy "nb_NO"
++END LC_PAPER
++
++LC_TELEPHONE
++copy "nb_NO"
++END LC_TELEPHONE
++
++LC_MEASUREMENT
++copy "nb_NO"
++END LC_MEASUREMENT
++
++LC_NAME
++copy "nb_NO"
++END LC_NAME
++
++LC_ADDRESS
++copy "nb_NO"
++END LC_ADDRESS
+Index: localedata/locales/zh_TW
+===================================================================
+RCS file: /cvs/glibc/libc/localedata/locales/zh_TW,v
+retrieving revision 1.7
+retrieving revision 1.5.2.2
+diff -u -p -r1.7 -r1.5.2.2
+--- localedata/locales/zh_TW	31 Oct 2004 23:42:28 -0000	1.7
++++ localedata/locales/zh_TW	2 Nov 2004 12:25:57 -0000	1.5.2.2
+@@ -1,7 +1,7 @@
+ comment_char %
+ escape_char /
+ %
+-% Chinese language locale for Taiwan R.O.C.
++% Chinese language locale for Taiwan
+ % charmap: BIG5-CP950
+ %
+ % Original Author:
+@@ -17,7 +17,7 @@ escape_char /
+ % Reference:	http://wwwold.dkuug.dk/JTC1/SC22/WG20/docs/n690.pdf
+ 
+ LC_IDENTIFICATION
+-title      "Chinese locale for Taiwan R.O.C."
++title      "Chinese locale for Taiwan"
+ source     ""
+ address    ""
+ contact    ""
+@@ -25,7 +25,7 @@ email      "bug-glibc-locales@gnu.org"
+ tel        ""
+ fax        ""
+ language   "Chinese"
+-territory  "Taiwan R.O.C."
++territory  "Taiwan"
+ revision   "0.2"
+ date       "2000-08-02"
+ %
+Index: nptl/ChangeLog
+===================================================================
+RCS file: /cvs/glibc/libc/nptl/ChangeLog,v
+retrieving revision 1.771
+retrieving revision 1.706.2.41
+diff -u -p -r1.771 -r1.706.2.41
+--- nptl/ChangeLog	14 Apr 2005 21:37:37 -0000	1.771
++++ nptl/ChangeLog	15 Apr 2005 09:32:48 -0000	1.706.2.41
+@@ -593,6 +593,11 @@
+ 	Move definition inside libpthread, libc, librt check.  Provide
+ 	definition for rtld.
+ 
++2004-09-02  Jakub Jelinek  <jakub@redhat.com>
++
++	* pthread_cond_destroy.c (__pthread_cond_destroy): If there are
++	waiters, awake all waiters on the associated mutex.
++
+ 2004-09-02  Ulrich Drepper  <drepper@redhat.com>
+ 
+ 	* sysdeps/alpha/jmpbuf-unwind.h: Define __libc_unwind_longjmp.
+@@ -2667,6 +2672,11 @@
+ 
+ 	* Makefile [$(build-shared) = yes] (tests): Depend on $(test-modules).
+ 
++2003-07-22  Jakub Jelinek  <jakub@redhat.com>
++
++	* descr.h: Don't include lowlevellock.h, pthreaddef.h and dl-sysdep.h
++	if __need_struct_pthread_size, instead define lll_lock_t.
++
+ 2003-07-25  Jakub Jelinek  <jakub@redhat.com>
+ 
+ 	* tst-cancel17.c (do_test): Check if aio_cancel failed.
+Index: nptl/Makefile
+===================================================================
+RCS file: /cvs/glibc/libc/nptl/Makefile,v
+retrieving revision 1.166
+retrieving revision 1.157.2.9
+diff -u -p -r1.166 -r1.157.2.9
+--- nptl/Makefile	22 Dec 2004 20:07:09 -0000	1.166
++++ nptl/Makefile	6 Jan 2005 14:57:04 -0000	1.157.2.9
+@@ -499,15 +499,19 @@ $(addprefix $(objpfx), \
+     $(tests) $(xtests) $(test-srcs))): $(objpfx)libpthread.so \
+ 				       $(objpfx)libpthread_nonshared.a
+ $(objpfx)tst-unload: $(common-objpfx)dlfcn/libdl.so
+-# $(objpfx)../libc.so is used instead of $(common-objpfx)libc.so,
++# $(objpfx)linklibc.so is used instead of $(common-objpfx)libc.so,
+ # since otherwise libpthread.so comes before libc.so when linking.
+ $(addprefix $(objpfx), $(tests-reverse)): \
+-  $(objpfx)../libc.so $(objpfx)libpthread.so \
++  $(objpfx)linklibc.so $(objpfx)libpthread.so \
+   $(objpfx)libpthread_nonshared.a
+ $(objpfx)../libc.so: $(common-objpfx)libc.so ;
+ $(addprefix $(objpfx),$(tests-static) $(xtests-static)): $(objpfx)libpthread.a
+ 
+ $(objpfx)tst-atfork2.out: $(objpfx)tst-atfork2mod.so
++
++$(objpfx)linklibc.so: $(common-objpfx)libc.so
++	ln -s ../libc.so $@
++generated += libclink.so
+ else
+ $(addprefix $(objpfx),$(tests) $(test-srcs)): $(objpfx)libpthread.a
+ endif
+Index: nptl/descr.h
+===================================================================
+RCS file: /cvs/glibc/libc/nptl/descr.h,v
+retrieving revision 1.25
+retrieving revision 1.23.2.3
+diff -u -p -r1.25 -r1.23.2.3
+--- nptl/descr.h	12 Nov 2004 01:24:24 -0000	1.25
++++ nptl/descr.h	12 Nov 2004 16:56:12 -0000	1.23.2.3
+@@ -27,9 +27,13 @@
+ #include <sys/types.h>
+ #include <hp-timing.h>
+ #include <list.h>
++#ifdef __need_struct_pthread_size
++#define lll_lock_t int
++#else
+ #include <lowlevellock.h>
+ #include <pthreaddef.h>
+ #include <dl-sysdep.h>
++#endif
+ #include "../nptl_db/thread_db.h"
+ #include <tls.h>
+ #ifdef HAVE_FORCED_UNWIND
+Index: nptl/pthread_cond_destroy.c
+===================================================================
+RCS file: /cvs/glibc/libc/nptl/pthread_cond_destroy.c,v
+retrieving revision 1.5
+retrieving revision 1.5.2.1
+diff -u -p -r1.5 -r1.5.2.1
+--- nptl/pthread_cond_destroy.c	2 Sep 2004 18:45:37 -0000	1.5
++++ nptl/pthread_cond_destroy.c	22 Sep 2004 21:21:01 -0000	1.5.2.1
+@@ -44,15 +44,35 @@ __pthread_cond_destroy (cond)
+      broadcasted, but still are using the pthread_cond_t structure,
+      pthread_cond_destroy needs to wait for them.  */
+   unsigned int nwaiters = cond->__data.__nwaiters;
+-  while (nwaiters >= (1 << COND_CLOCK_BITS))
++
++  if (nwaiters >= (1 << COND_CLOCK_BITS))
+     {
+-      lll_mutex_unlock (cond->__data.__lock);
++      /* Wake everybody on the associated mutex in case there are
++         threads that have been requeued to it.
++         Without this, pthread_cond_destroy could block potentially
++         for a long time or forever, as it would depend on other
++         thread's using the mutex.
++         When all threads waiting on the mutex are woken up, pthread_cond_wait
++         only waits for threads to acquire and release the internal
++         condvar lock.  */
++      if (cond->__data.__mutex != NULL
++	  && cond->__data.__mutex != (void *) ~0l)
++	{
++	  pthread_mutex_t *mut = (pthread_mutex_t *) cond->__data.__mutex;
++	  lll_futex_wake (&mut->__data.__lock, INT_MAX);
++	}
++
++      do
++	{
++	  lll_mutex_unlock (cond->__data.__lock);
+ 
+-      lll_futex_wait (&cond->__data.__nwaiters, nwaiters);
++	  lll_futex_wait (&cond->__data.__nwaiters, nwaiters);
+ 
+-      lll_mutex_lock (cond->__data.__lock);
++	  lll_mutex_lock (cond->__data.__lock);
+ 
+-      nwaiters = cond->__data.__nwaiters;
++	  nwaiters = cond->__data.__nwaiters;
++	}
++      while (nwaiters >= (1 << COND_CLOCK_BITS));
+     }
+ 
+   return 0;
+Index: nptl/sysdeps/unix/sysv/linux/kernel-features.h
+===================================================================
+RCS file: nptl/sysdeps/unix/sysv/linux/kernel-features.h
+diff -N nptl/sysdeps/unix/sysv/linux/kernel-features.h
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ nptl/sysdeps/unix/sysv/linux/kernel-features.h	22 Sep 2004 21:21:02 -0000	1.1.2.1
+@@ -0,0 +1,6 @@
++#include_next <kernel-features.h>
++
++/* NPTL can always assume all clone thread flags work.  */
++#ifndef __ASSUME_CLONE_THREAD_FLAGS
++# define __ASSUME_CLONE_THREAD_FLAGS	1
++#endif
+Index: nscd/connections.c
+===================================================================
+RCS file: /cvs/glibc/libc/nscd/connections.c,v
+retrieving revision 1.66
+retrieving revision 1.55.2.7
+diff -u -p -r1.66 -r1.55.2.7
+--- nscd/connections.c	22 Feb 2005 22:52:32 -0000	1.66
++++ nscd/connections.c	3 Mar 2005 13:34:09 -0000	1.55.2.7
+@@ -21,6 +21,7 @@
+ #include <alloca.h>
+ #include <assert.h>
+ #include <atomic.h>
++#include <dlfcn.h>
+ #include <error.h>
+ #include <errno.h>
+ #include <fcntl.h>
+@@ -42,6 +43,7 @@
+ #include <sys/socket.h>
+ #include <sys/stat.h>
+ #include <sys/un.h>
++#include <gnu/lib-names.h>
+ 
+ #include "nscd.h"
+ #include "dbg_log.h"
+@@ -1472,19 +1474,39 @@ start_threads (void)
+   pthread_condattr_t condattr;
+   pthread_condattr_init (&condattr);
+ 
+-#if defined _POSIX_CLOCK_SELECTION && _POSIX_CLOCK_SELECTION >= 0 \
+-    && defined _POSIX_MONOTONIC_CLOCK && _POSIX_MONOTONIC_CLOCK >= 0
++#if defined _POSIX_MONOTONIC_CLOCK && _POSIX_MONOTONIC_CLOCK >= 0
+   /* Determine whether the monotonous clock is available.  */
+   struct timespec dummy;
+ # if _POSIX_MONOTONIC_CLOCK == 0
+   if (sysconf (_SC_MONOTONIC_CLOCK) > 0)
+ # endif
+-# if _POSIX_CLOCK_SELECTION == 0
+-    if (sysconf (_SC_CLOCK_SELECTION) > 0)
++    {
++# if defined _POSIX_CLOCK_SELECTION && _POSIX_CLOCK_SELECTION >= 0
++#  if _POSIX_CLOCK_SELECTION == 0
++      if (sysconf (_SC_CLOCK_SELECTION) > 0)
++#  endif
++        if (clock_getres (CLOCK_MONOTONIC, &dummy) == 0
++            && pthread_condattr_setclock (&condattr, CLOCK_MONOTONIC) == 0)
++          timeout_clock = CLOCK_MONOTONIC;
++# elif _POSIX_THREADS > 0
++      if (sysconf (_SC_CLOCK_SELECTION) > 0)
++        {
++          void *h = __libc_dlopen (LIBPTHREAD_SO);
++          int (*condattr_setclock) (pthread_condattr_t *, __clockid_t) = NULL;
++
++          if (h != NULL)
++            condattr_setclock = __libc_dlsym (h, "pthread_condattr_setclock");
++
++          if (condattr_setclock
++              && clock_getres (CLOCK_MONOTONIC, &dummy) == 0
++              && condattr_setclock (&condattr, CLOCK_MONOTONIC) == 0)
++            timeout_clock = CLOCK_MONOTONIC;
++
++          if (h != NULL)
++            __libc_dlclose (h);
++        }
+ # endif
+-      if (clock_getres (CLOCK_MONOTONIC, &dummy) == 0
+-	  && pthread_condattr_setclock (&condattr, CLOCK_MONOTONIC) == 0)
+-	timeout_clock = CLOCK_MONOTONIC;
++    }
+ #endif
+ 
+   pthread_cond_init (&readylist_cond, &condattr);
+@@ -1549,7 +1571,6 @@ start_threads (void)
+   main_loop_poll ();
+ }
+ 
+-
+ /* Look up the uid, gid, and supplementary groups to run nscd as. When
+    this function is called, we are not listening on the nscd socket yet so
+    we can just use the ordinary lookup functions without causing a lockup  */
+@@ -1618,3 +1639,18 @@ finish_drop_privileges (void)
+       exit (1);
+     }
+ }
++
++/* Handle the HUP signal which will force a dump of the cache */
++void
++sighup_handler (int signum)
++{
++    /* Prune the password database */
++    prune_cache (&dbs[pwddb], LONG_MAX);
++    
++    /* Prune the group database */
++    prune_cache (&dbs[grpdb], LONG_MAX);
++
++    /* Prune the host database */
++    prune_cache (&dbs[hstdb], LONG_MAX);
++}
++
+Index: nscd/nscd.c
+===================================================================
+RCS file: /cvs/glibc/libc/nscd/nscd.c,v
+retrieving revision 1.44
+retrieving revision 1.38.2.5
+diff -u -p -r1.44 -r1.38.2.5
+--- nscd/nscd.c	7 Feb 2005 22:51:22 -0000	1.44
++++ nscd/nscd.c	8 Feb 2005 10:04:34 -0000	1.38.2.5
+@@ -122,9 +122,16 @@ static struct argp argp =
+   options, parse_opt, NULL, doc,
+ };
+ 
++/* The SIGHUP handler is extern to this file */
++extern void sighup_handler(int signum);
++
+ /* True if only statistics are requested.  */
+ static bool get_stats;
+ 
++#ifdef atomic_init_nscd
++atomic_init_nscd
++#endif
++
+ int
+ main (int argc, char **argv)
+ {
+@@ -266,6 +273,7 @@ main (int argc, char **argv)
+   signal (SIGINT, termination_handler);
+   signal (SIGQUIT, termination_handler);
+   signal (SIGTERM, termination_handler);
++  signal (SIGHUP, sighup_handler);
+   signal (SIGPIPE, SIG_IGN);
+ 
+   /* Cleanup files created by a previous 'bind'.  */
+Index: nscd/nscd.conf
+===================================================================
+RCS file: /cvs/glibc/libc/nscd/nscd.conf,v
+retrieving revision 1.10
+retrieving revision 1.8.2.2
+diff -u -p -r1.10 -r1.8.2.2
+--- nscd/nscd.conf	3 Oct 2004 21:09:23 -0000	1.10
++++ nscd/nscd.conf	4 Oct 2004 08:56:17 -0000	1.8.2.2
+@@ -31,8 +31,8 @@
+ #	logfile			/var/log/nscd.log
+ #	threads			6
+ #	max-threads		128
+-#	server-user		nobody
+-#	stat-user		somebody
++	server-user		nscd
++#	stat-user		nocpulse
+ 	debug-level		0
+ #	reload-count		5
+ 	paranoia		no
+Index: nscd/nscd_conf.c
+===================================================================
+RCS file: /cvs/glibc/libc/nscd/nscd_conf.c,v
+retrieving revision 1.16
+retrieving revision 1.14.2.2
+diff -u -p -r1.16 -r1.14.2.2
+--- nscd/nscd_conf.c	3 Oct 2004 21:10:35 -0000	1.16
++++ nscd/nscd_conf.c	4 Oct 2004 08:56:17 -0000	1.14.2.2
+@@ -230,7 +230,10 @@ nscd_parse_file (const char *fname, stru
+ 		if (strcmp (arg2, "no") == 0)
+ 		  dbs[cnt].shared = 0;
+ 		else if (strcmp (arg2, "yes") == 0)
+-		  dbs[cnt].shared = 1;
++#ifndef atomic_supports_shared
++#define atomic_supports_shared 1
++#endif
++		  dbs[cnt].shared = atomic_supports_shared;
+ 		break;
+ 	      }
+ 	  if (cnt == lastdb)
+Index: posix/Makefile
+===================================================================
+RCS file: /cvs/glibc/libc/posix/Makefile,v
+retrieving revision 1.184
+retrieving revision 1.171.2.12
+diff -u -p -r1.184 -r1.171.2.12
+--- posix/Makefile	14 Apr 2005 21:19:34 -0000	1.184
++++ posix/Makefile	15 Apr 2005 09:32:51 -0000	1.171.2.12
+@@ -106,7 +106,8 @@ generated := $(addprefix wordexp-test-re
+ 	     bug-regex21-mem bug-regex21.mtrace \
+ 	     tst-rxspencer-mem tst-rxspencer.mtrace tst-getconf.out \
+ 	     tst-pcre-mem tst-pcre.mtrace tst-boost-mem tst-boost.mtrace \
+-	     bug-ga2.mtrace bug-ga2-mem bug-glob2.mtrace bug-glob2-mem
++	     bug-ga2.mtrace bug-ga2-mem bug-glob2.mtrace bug-glob2-mem \
++	     getconf.speclist
+ 
+ include ../Rules
+ 
+@@ -279,12 +280,16 @@ bug-glob2-ENV = MALLOC_TRACE=$(objpfx)bu
+ $(objpfx)bug-glob2-mem: $(objpfx)bug-glob2.out
+ 	$(common-objpfx)malloc/mtrace $(objpfx)bug-glob2.mtrace > $@
+ 
+-$(inst_libexecdir)/getconf: $(objpfx)getconf FORCE
++$(inst_libexecdir)/getconf: $(objpfx)getconf $(objpfx)getconf.speclist FORCE
+ 	$(addprefix $(..)./scripts/mkinstalldirs ,\
+ 		    $(filter-out $(wildcard $@),$@))
+-	for spec in `LC_ALL=C GETCONF_DIR=/dev/null \
+-		     $(run-program-prefix) $< \
+-		     _POSIX_V6_WIDTH_RESTRICTED_ENVS`; do \
+-		$(INSTALL_PROGRAM) $< $@/$$spec.new; \
+-		mv -f $@/$$spec.new $@/$$spec; \
++	for spec in `cat $(objpfx)getconf.speclist`; do \
++	  $(INSTALL_PROGRAM) $< $@/$$spec.new; \
++	  mv -f $@/$$spec.new $@/$$spec; \
+ 	done
++
++$(objpfx)getconf.speclist: getconf.speclist.h
++	$(CC) -E $(CFLAGS) $(CPPFLAGS) $< \
++	  | sed -n -e '/START_OF_STRINGS/,$${/POSIX_V6_/{s/^[^"]*"//;s/".*$$//;p}}' \
++	  > $@.new
++	mv -f $@.new $@
+Index: posix/getconf.speclist.h
+===================================================================
+RCS file: posix/getconf.speclist.h
+diff -N posix/getconf.speclist.h
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ posix/getconf.speclist.h	13 Dec 2004 23:32:37 -0000	1.1.2.2
+@@ -0,0 +1,15 @@
++#include <unistd.h>
++const char *START_OF_STRINGS =
++#if _POSIX_V6_ILP32_OFF32 == 1
++"POSIX_V6_ILP32_OFF32"
++#endif
++#if _POSIX_V6_ILP32_OFFBIG == 1
++"POSIX_V6_ILP32_OFFBIG"
++#endif
++#if _POSIX_V6_LP64_OFF64 == 1
++"POSIX_V6_LP64_OFF64"
++#endif
++#if _POSIX_V6_LPBIG_OFFBIG == 1
++"POSIX_V6_LPBIG_OFFBIG"
++#endif
++"";
+Index: sysdeps/i386/bits/atomic.h
+===================================================================
+RCS file: sysdeps/i386/bits/atomic.h
+diff -N sysdeps/i386/bits/atomic.h
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ sysdeps/i386/bits/atomic.h	5 Oct 2004 12:09:44 -0000	1.1.2.3
+@@ -0,0 +1,410 @@
++/* Copyright (C) 2002, 2003, 2004 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++   Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#include <stdint.h>
++
++
++typedef int8_t atomic8_t;
++typedef uint8_t uatomic8_t;
++typedef int_fast8_t atomic_fast8_t;
++typedef uint_fast8_t uatomic_fast8_t;
++
++typedef int16_t atomic16_t;
++typedef uint16_t uatomic16_t;
++typedef int_fast16_t atomic_fast16_t;
++typedef uint_fast16_t uatomic_fast16_t;
++
++typedef int32_t atomic32_t;
++typedef uint32_t uatomic32_t;
++typedef int_fast32_t atomic_fast32_t;
++typedef uint_fast32_t uatomic_fast32_t;
++
++typedef int64_t atomic64_t;
++typedef uint64_t uatomic64_t;
++typedef int_fast64_t atomic_fast64_t;
++typedef uint_fast64_t uatomic_fast64_t;
++
++typedef intptr_t atomicptr_t;
++typedef uintptr_t uatomicptr_t;
++typedef intmax_t atomic_max_t;
++typedef uintmax_t uatomic_max_t;
++
++
++#ifndef LOCK_PREFIX
++# ifdef UP
++#  define LOCK_PREFIX	/* nothing */
++# else
++#  define LOCK_PREFIX "lock;"
++# endif
++#endif
++
++/* i386 doesn't have cmpxchg* and xadd*.  Instead of being completely
++   non-atomic, atomic_* macros that are using solely i386 instructions
++   are using those atomic instructions and the remaining ones are
++   non-atomic.  When in nscd, use i486+ instructions if on i486+.  */
++
++#ifdef IS_IN_nscd
++
++extern int has_cmpxchg attribute_hidden;
++
++#define atomic_supports_shared has_cmpxchg
++
++#define atomic_init_nscd \
++int has_cmpxchg attribute_hidden;					      \
++static void __attribute__((constructor))				      \
++init_has_cmpxchg (void)							      \
++{									      \
++  int fl1, fl2;								      \
++  __asm__ ("pushfl; pushfl; popl %0; movl %0,%1; xorl %2,%0;"		      \
++	   "pushl %0; popfl; pushfl; popl %0; popfl"			      \
++	   : "=&r" (fl1), "=&r" (fl2) : "i" (0x00040000));		      \
++  if ((fl1 ^ fl2) & 0x00040000)						      \
++    has_cmpxchg = 1;							      \
++}
++
++# define __arch_compare_and_exchange_val_8_acq(mem, newval, oldval) \
++  ({ __typeof (*mem) ret;						      \
++     if (__builtin_expect (has_cmpxchg, 1))				      \
++       __asm __volatile (LOCK_PREFIX "cmpxchgb %b2, %1"			      \
++			 : "=a" (ret), "=m" (*mem)			      \
++			 : "q" (newval), "m" (*mem), "0" (oldval));	      \
++     else								      \
++       {								      \
++	 ret = *mem;							      \
++	 if (ret == oldval)						      \
++	   *mem = (newval);						      \
++       }								      \
++     ret; })
++
++# define __arch_compare_and_exchange_val_16_acq(mem, newval, oldval) \
++  ({ __typeof (*mem) ret;						      \
++     if (__builtin_expect (has_cmpxchg, 1))				      \
++       __asm __volatile (LOCK_PREFIX "cmpxchgw %w2, %1"			      \
++			 : "=a" (ret), "=m" (*mem)			      \
++			 : "r" (newval), "m" (*mem), "0" (oldval));	      \
++     else								      \
++       {								      \
++	 ret = *mem;							      \
++	 if (ret == oldval)						      \
++	   *mem = (newval);						      \
++       }								      \
++     ret; })
++
++# define __arch_compare_and_exchange_val_32_acq(mem, newval, oldval) \
++  ({ __typeof (*mem) ret;						      \
++     if (__builtin_expect (has_cmpxchg, 1))				      \
++       __asm __volatile (LOCK_PREFIX "cmpxchgl %2, %1"			      \
++			 : "=a" (ret), "=m" (*mem)			      \
++			 : "r" (newval), "m" (*mem), "0" (oldval));	      \
++     else								      \
++       {								      \
++	 ret = *mem;							      \
++	 if (ret == oldval)						      \
++	   *mem = (newval);						      \
++       }								      \
++     ret; })
++
++/* XXX We do not really need 64-bit compare-and-exchange.  At least
++   not in the moment.  */
++# define __arch_compare_and_exchange_val_64_acq(mem, newval, oldval) \
++  ({ __typeof (*mem) ret = *(mem); abort (); ret = (newval); ret = (oldval); })
++
++
++# define atomic_exchange_and_add(mem, value) \
++  ({ __typeof (*mem) __result;						      \
++     __typeof (value) __addval = (value);				      \
++     if (__builtin_expect (! has_cmpxchg, 0))				      \
++       {								      \
++	 __typeof (mem) __memp = (mem);					      \
++	 __result = *__memp;						      \
++	 *__memp += __addval;						      \
++       }								      \
++     else if (sizeof (*mem) == 1)					      \
++       __asm __volatile (LOCK_PREFIX "xaddb %b0, %1"			      \
++			 : "=r" (__result), "=m" (*mem)			      \
++			 : "0" (__addval), "m" (*mem));			      \
++     else if (sizeof (*mem) == 2)					      \
++       __asm __volatile (LOCK_PREFIX "xaddw %w0, %1"			      \
++			 : "=r" (__result), "=m" (*mem)			      \
++			 : "0" (__addval), "m" (*mem));			      \
++     else if (sizeof (*mem) == 4)					      \
++       __asm __volatile (LOCK_PREFIX "xaddl %0, %1"			      \
++			 : "=r" (__result), "=m" (*mem)			      \
++			 : "0" (__addval), "m" (*mem));			      \
++     else								      \
++       {								      \
++	 __typeof (mem) __memp = (mem);					      \
++	 __typeof (*mem) __tmpval;					      \
++	 __result = *__memp;						      \
++	 do								      \
++	   __tmpval = __result;						      \
++	 while ((__result = __arch_compare_and_exchange_val_64_acq	      \
++		 (__memp, __result + __addval, __result)) == __tmpval);	      \
++       }								      \
++     __result; })
++
++#else
++
++/* We have by default no support for atomic operations.  So define
++   them non-atomic.  If this is a problem somebody will have to come
++   up with real definitions.  */
++
++/* The only basic operation needed is compare and exchange.  */
++#define atomic_compare_and_exchange_val_acq(mem, newval, oldval) \
++  ({ __typeof (mem) __gmemp = (mem);					      \
++     __typeof (*mem) __gret = *__gmemp;					      \
++     __typeof (*mem) __gnewval = (newval);				      \
++									      \
++     if (__gret == (oldval))						      \
++       *__gmemp = __gnewval;						      \
++     __gret; })
++
++#define atomic_compare_and_exchange_bool_acq(mem, newval, oldval) \
++  ({ __typeof (mem) __gmemp = (mem);					      \
++     __typeof (*mem) __gnewval = (newval);				      \
++									      \
++     *__gmemp == (oldval) ? (*__gmemp = __gnewval, 0) : 1; })
++
++/* XXX We do not really need 64-bit compare-and-exchange.  At least
++   not in the moment.  */
++# define __arch_compare_and_exchange_val_64_acq(mem, newval, oldval) \
++  ({ __typeof (*mem) ret = *(mem); abort (); ret = (newval); ret = (oldval); })
++
++#endif
++
++/* Note that we need no lock prefix.  */
++#define atomic_exchange_acq(mem, newvalue) \
++  ({ __typeof (*mem) result;						      \
++     if (sizeof (*mem) == 1)						      \
++       __asm __volatile ("xchgb %b0, %1"				      \
++			 : "=r" (result), "=m" (*mem)			      \
++			 : "0" (newvalue), "m" (*mem));			      \
++     else if (sizeof (*mem) == 2)					      \
++       __asm __volatile ("xchgw %w0, %1"				      \
++			 : "=r" (result), "=m" (*mem)			      \
++			 : "0" (newvalue), "m" (*mem));			      \
++     else if (sizeof (*mem) == 4)					      \
++       __asm __volatile ("xchgl %0, %1"					      \
++			 : "=r" (result), "=m" (*mem)			      \
++			 : "0" (newvalue), "m" (*mem));			      \
++     else								      \
++       {								      \
++	 result = 0;							      \
++	 abort ();							      \
++       }								      \
++     result; })
++
++
++#define atomic_add(mem, value) \
++  (void) ({ if (__builtin_constant_p (value) && (value) == 1)		      \
++	      atomic_increment (mem);					      \
++	    else if (__builtin_constant_p (value) && (value) == -1)	      \
++	      atomic_decrement (mem);					      \
++	    else if (sizeof (*mem) == 1)				      \
++	      __asm __volatile (LOCK_PREFIX "addb %b1, %0"		      \
++				: "=m" (*mem)				      \
++				: "ir" (value), "m" (*mem));		      \
++	    else if (sizeof (*mem) == 2)				      \
++	      __asm __volatile (LOCK_PREFIX "addw %w1, %0"		      \
++				: "=m" (*mem)				      \
++				: "ir" (value), "m" (*mem));		      \
++	    else if (sizeof (*mem) == 4)				      \
++	      __asm __volatile (LOCK_PREFIX "addl %1, %0"		      \
++				: "=m" (*mem)				      \
++				: "ir" (value), "m" (*mem));		      \
++	    else							      \
++	      {								      \
++		__typeof (value) __addval = (value);			      \
++		__typeof (mem) __memp = (mem);				      \
++		__typeof (*mem) __oldval = *__memp;			      \
++		__typeof (*mem) __tmpval;				      \
++		do							      \
++		  __tmpval = __oldval;					      \
++		while ((__oldval = __arch_compare_and_exchange_val_64_acq     \
++		       (__memp, __oldval + __addval, __oldval)) == __tmpval); \
++	      }								      \
++	    })
++
++
++#define atomic_add_negative(mem, value) \
++  ({ unsigned char __result;						      \
++     if (sizeof (*mem) == 1)						      \
++       __asm __volatile (LOCK_PREFIX "addb %b2, %0; sets %1"		      \
++			 : "=m" (*mem), "=qm" (__result)		      \
++			 : "iq" (value), "m" (*mem));			      \
++     else if (sizeof (*mem) == 2)					      \
++       __asm __volatile (LOCK_PREFIX "addw %w2, %0; sets %1"		      \
++			 : "=m" (*mem), "=qm" (__result)		      \
++			 : "ir" (value), "m" (*mem));			      \
++     else if (sizeof (*mem) == 4)					      \
++       __asm __volatile (LOCK_PREFIX "addl %2, %0; sets %1"		      \
++			 : "=m" (*mem), "=qm" (__result)		      \
++			 : "ir" (value), "m" (*mem));			      \
++     else								      \
++       abort ();							      \
++     __result; })
++
++
++#define atomic_add_zero(mem, value) \
++  ({ unsigned char __result;						      \
++     if (sizeof (*mem) == 1)						      \
++       __asm __volatile (LOCK_PREFIX "addb %b2, %0; setz %1"		      \
++			 : "=m" (*mem), "=qm" (__result)		      \
++			 : "ir" (value), "m" (*mem));			      \
++     else if (sizeof (*mem) == 2)					      \
++       __asm __volatile (LOCK_PREFIX "addw %w2, %0; setz %1"		      \
++			 : "=m" (*mem), "=qm" (__result)		      \
++			 : "ir" (value), "m" (*mem));			      \
++     else if (sizeof (*mem) == 4)					      \
++       __asm __volatile (LOCK_PREFIX "addl %2, %0; setz %1"		      \
++			 : "=m" (*mem), "=qm" (__result)		      \
++			 : "ir" (value), "m" (*mem));			      \
++     else								      \
++       abort ();							      \
++     __result; })
++
++
++#define atomic_increment(mem) \
++  (void) ({ if (sizeof (*mem) == 1)					      \
++	      __asm __volatile (LOCK_PREFIX "incb %b0"			      \
++				: "=m" (*mem)				      \
++				: "m" (*mem));				      \
++	    else if (sizeof (*mem) == 2)				      \
++	      __asm __volatile (LOCK_PREFIX "incw %w0"			      \
++				: "=m" (*mem)				      \
++				: "m" (*mem));				      \
++	    else if (sizeof (*mem) == 4)				      \
++	      __asm __volatile (LOCK_PREFIX "incl %0"			      \
++				: "=m" (*mem)				      \
++				: "m" (*mem));				      \
++	    else							      \
++	      {								      \
++		__typeof (mem) __memp = (mem);				      \
++		__typeof (*mem) __oldval = *__memp;			      \
++		__typeof (*mem) __tmpval;				      \
++		do							      \
++		  __tmpval = __oldval;					      \
++		while ((__oldval = __arch_compare_and_exchange_val_64_acq     \
++		       (__memp, __oldval + 1, __oldval)) == __tmpval);	      \
++	      }								      \
++	    })
++
++
++#define atomic_increment_and_test(mem) \
++  ({ unsigned char __result;						      \
++     if (sizeof (*mem) == 1)						      \
++       __asm __volatile (LOCK_PREFIX "incb %0; sete %b1"		      \
++			 : "=m" (*mem), "=qm" (__result)		      \
++			 : "m" (*mem));					      \
++     else if (sizeof (*mem) == 2)					      \
++       __asm __volatile (LOCK_PREFIX "incw %0; sete %w1"		      \
++			 : "=m" (*mem), "=qm" (__result)		      \
++			 : "m" (*mem));					      \
++     else if (sizeof (*mem) == 4)					      \
++       __asm __volatile (LOCK_PREFIX "incl %0; sete %1"			      \
++			 : "=m" (*mem), "=qm" (__result)		      \
++			 : "m" (*mem));					      \
++     else								      \
++       abort ();							      \
++     __result; })
++
++
++#define atomic_decrement(mem) \
++  (void) ({ if (sizeof (*mem) == 1)					      \
++	      __asm __volatile (LOCK_PREFIX "decb %b0"			      \
++				: "=m" (*mem)				      \
++				: "m" (*mem));				      \
++	    else if (sizeof (*mem) == 2)				      \
++	      __asm __volatile (LOCK_PREFIX "decw %w0"			      \
++				: "=m" (*mem)				      \
++				: "m" (*mem));				      \
++	    else if (sizeof (*mem) == 4)				      \
++	      __asm __volatile (LOCK_PREFIX "decl %0"			      \
++				: "=m" (*mem)				      \
++				: "m" (*mem));				      \
++	    else							      \
++	      {								      \
++		__typeof (mem) __memp = (mem);				      \
++		__typeof (*mem) __oldval = *__memp;			      \
++		__typeof (*mem) __tmpval;				      \
++		do							      \
++		  __tmpval = __oldval;					      \
++		while ((__oldval = __arch_compare_and_exchange_val_64_acq     \
++		       (__memp, __oldval - 1, __oldval)) == __tmpval); 	      \
++	      }								      \
++	    })
++
++
++#define atomic_decrement_and_test(mem) \
++  ({ unsigned char __result;						      \
++     if (sizeof (*mem) == 1)						      \
++       __asm __volatile (LOCK_PREFIX "decb %b0; sete %1"		      \
++			 : "=m" (*mem), "=qm" (__result)		      \
++			 : "m" (*mem));					      \
++     else if (sizeof (*mem) == 2)					      \
++       __asm __volatile (LOCK_PREFIX "decw %w0; sete %1"		      \
++			 : "=m" (*mem), "=qm" (__result)		      \
++			 : "m" (*mem));					      \
++     else if (sizeof (*mem) == 4)					      \
++       __asm __volatile (LOCK_PREFIX "decl %0; sete %1"			      \
++			 : "=m" (*mem), "=qm" (__result)		      \
++			 : "m" (*mem));					      \
++     else								      \
++       abort ();							      \
++     __result; })
++
++
++#define atomic_bit_set(mem, bit) \
++  (void) ({ if (sizeof (*mem) == 1)					      \
++	      __asm __volatile (LOCK_PREFIX "orb %b2, %0"		      \
++				: "=m" (*mem)				      \
++				: "m" (*mem), "ir" (1 << (bit)));	      \
++	    else if (sizeof (*mem) == 2)				      \
++	      __asm __volatile (LOCK_PREFIX "orw %w2, %0"		      \
++				: "=m" (*mem)				      \
++				: "m" (*mem), "ir" (1 << (bit)));	      \
++	    else if (sizeof (*mem) == 4)				      \
++	      __asm __volatile (LOCK_PREFIX "orl %2, %0"		      \
++				: "=m" (*mem)				      \
++				: "m" (*mem), "ir" (1 << (bit)));	      \
++	    else							      \
++	      abort ();							      \
++	    })
++
++
++#define atomic_bit_test_set(mem, bit) \
++  ({ unsigned char __result;						      \
++     if (sizeof (*mem) == 1)						      \
++       __asm __volatile (LOCK_PREFIX "btsb %3, %1; setc %0"		      \
++			 : "=q" (__result), "=m" (*mem)			      \
++			 : "m" (*mem), "ir" (bit));			      \
++     else if (sizeof (*mem) == 2)					      \
++       __asm __volatile (LOCK_PREFIX "btsw %3, %1; setc %0"		      \
++			 : "=q" (__result), "=m" (*mem)			      \
++			 : "m" (*mem), "ir" (bit));			      \
++     else if (sizeof (*mem) == 4)					      \
++       __asm __volatile (LOCK_PREFIX "btsl %3, %1; setc %0"		      \
++			 : "=q" (__result), "=m" (*mem)			      \
++			 : "m" (*mem), "ir" (bit));			      \
++     else							      	      \
++       abort ();							      \
++     __result; })
++
++
++#define atomic_delay() asm ("rep; nop")
+Index: sysdeps/ia64/Makefile
+===================================================================
+RCS file: /cvs/glibc/libc/sysdeps/ia64/Makefile,v
+retrieving revision 1.10
+retrieving revision 1.10.2.1
+diff -u -p -r1.10 -r1.10.2.1
+--- sysdeps/ia64/Makefile	16 Aug 2004 06:46:14 -0000	1.10
++++ sysdeps/ia64/Makefile	22 Sep 2004 21:21:07 -0000	1.10.2.1
+@@ -12,8 +12,8 @@ elide-routines.os += hp-timing
+ 
+ ifeq (yes,$(build-shared))
+ # Compatibility
+-sysdep_routines += ia64libgcc
+-shared-only-routines += ia64libgcc
++sysdep_routines += libgcc-compat
++shared-only-routines += libgcc-compat
+ endif
+ endif
+ 
+Index: sysdeps/ia64/ia64libgcc.S
+===================================================================
+RCS file: /cvs/glibc/libc/sysdeps/ia64/ia64libgcc.S,v
+retrieving revision 1.2
+retrieving revision 1.2.2.1
+diff -u -p -r1.2 -r1.2.2.1
+--- sysdeps/ia64/ia64libgcc.S	11 May 2002 05:12:35 -0000	1.2
++++ sysdeps/ia64/ia64libgcc.S	22 Sep 2004 21:21:07 -0000	1.2.2.1
+@@ -1,350 +0,0 @@
+-/* From the Intel IA-64 Optimization Guide, choose the minimum latency
+-   alternative.  */
+-
+-#include <sysdep.h>
+-#undef ret
+-
+-#include <shlib-compat.h>
+-
+-#if SHLIB_COMPAT(libc, GLIBC_2_2, GLIBC_2_2_6)
+-
+-/* __divtf3
+-   Compute a 80-bit IEEE double-extended quotient.
+-   farg0 holds the dividend.  farg1 holds the divisor.  */
+-
+-ENTRY(___divtf3)
+-	cmp.eq p7, p0 = r0, r0
+-	frcpa.s0 f10, p6 = farg0, farg1
+-	;;
+-(p6)	cmp.ne p7, p0 = r0, r0
+-	.pred.rel.mutex p6, p7
+-(p6)	fnma.s1 f11 = farg1, f10, f1
+-(p6)	fma.s1 f12 = farg0, f10, f0
+-	;;
+-(p6)	fma.s1 f13 = f11, f11, f0
+-(p6)	fma.s1 f14 = f11, f11, f11
+-	;;
+-(p6)	fma.s1 f11 = f13, f13, f11
+-(p6)	fma.s1 f13 = f14, f10, f10
+-	;;
+-(p6)	fma.s1 f10 = f13, f11, f10
+-(p6)	fnma.s1 f11 = farg1, f12, farg0
+-	;;
+-(p6)	fma.s1 f11 = f11, f10, f12
+-(p6)	fnma.s1 f12 = farg1, f10, f1
+-	;;
+-(p6)	fma.s1 f10 = f12, f10, f10
+-(p6)	fnma.s1 f12 = farg1, f11, farg0
+-	;;
+-(p6)	fma.s0 fret0 = f12, f10, f11
+-(p7)	mov fret0 = f10
+-	br.ret.sptk rp
+-END(___divtf3)
+-	.symver ___divtf3, __divtf3@GLIBC_2.2
+-
+-/* __divdf3
+-   Compute a 64-bit IEEE double quotient.
+-   farg0 holds the dividend.  farg1 holds the divisor.  */
+-
+-ENTRY(___divdf3)
+-	cmp.eq p7, p0 = r0, r0
+-	frcpa.s0 f10, p6 = farg0, farg1
+-	;;
+-(p6)	cmp.ne p7, p0 = r0, r0
+-	.pred.rel.mutex p6, p7
+-(p6)	fmpy.s1 f11 = farg0, f10
+-(p6)	fnma.s1 f12 = farg1, f10, f1
+-	;;
+-(p6)	fma.s1 f11 = f12, f11, f11
+-(p6)	fmpy.s1 f13 = f12, f12
+-	;;
+-(p6)	fma.s1 f10 = f12, f10, f10
+-(p6)	fma.s1 f11 = f13, f11, f11
+-	;;
+-(p6)	fmpy.s1 f12 = f13, f13
+-(p6)	fma.s1 f10 = f13, f10, f10
+-	;;
+-(p6)	fma.d.s1 f11 = f12, f11, f11
+-(p6)	fma.s1 f10 = f12, f10, f10
+-	;;
+-(p6)	fnma.d.s1 f8 = farg1, f11, farg0
+-	;;
+-(p6)	fma.d fret0 = f8, f10, f11
+-(p7)	mov fret0 = f10
+-	br.ret.sptk rp
+-	;;
+-END(___divdf3)
+-	.symver	___divdf3, __divdf3@GLIBC_2.2
+-
+-/* __divsf3
+-   Compute a 32-bit IEEE float quotient.
+-   farg0 holds the dividend.  farg1 holds the divisor.  */
+-
+-ENTRY(___divsf3)
+-	cmp.eq p7, p0 = r0, r0
+-	frcpa.s0 f10, p6 = farg0, farg1
+-	;;
+-(p6)	cmp.ne p7, p0 = r0, r0
+-	.pred.rel.mutex p6, p7
+-(p6)	fmpy.s1 f8 = farg0, f10
+-(p6)	fnma.s1 f9 = farg1, f10, f1
+-	;;
+-(p6)	fma.s1 f8 = f9, f8, f8
+-(p6)	fmpy.s1 f9 = f9, f9
+-	;;
+-(p6)	fma.s1 f8 = f9, f8, f8
+-(p6)	fmpy.s1 f9 = f9, f9
+-	;;
+-(p6)	fma.d.s1 f10 = f9, f8, f8
+-	;;
+-(p6)	fnorm.s.s0 fret0 = f10
+-(p7)	mov fret0 = f10
+-	br.ret.sptk rp
+-	;;
+-END(___divsf3)
+-	.symver	___divsf3, __divsf3@GLIBC_2.2
+-
+-/* __divdi3
+-   Compute a 64-bit integer quotient.
+-   in0 holds the dividend.  in1 holds the divisor.  */
+-
+-ENTRY(___divdi3)
+-	.regstk 2,0,0,0
+-	/* Transfer inputs to FP registers.  */
+-	setf.sig f8 = in0
+-	setf.sig f9 = in1
+-	;;
+-	/* Convert the inputs to FP, so that they won't be treated as
+-	   unsigned.  */
+-	fcvt.xf f8 = f8
+-	fcvt.xf f9 = f9
+-	;;
+-	/* Compute the reciprocal approximation.  */
+-	frcpa.s1 f10, p6 = f8, f9
+-	;;
+-	/* 3 Newton-Raphson iterations.  */
+-(p6)	fnma.s1 f11 = f9, f10, f1
+-(p6)	fmpy.s1 f12 = f8, f10
+-	;;
+-(p6)	fmpy.s1 f13 = f11, f11
+-(p6)	fma.s1 f12 = f11, f12, f12
+-	;;
+-(p6)	fma.s1 f10 = f11, f10, f10
+-(p6)	fma.s1 f11 = f13, f12, f12
+-	;;
+-(p6)	fma.s1 f10 = f13, f10, f10
+-(p6)	fnma.s1 f12 = f9, f11, f8
+-	;;
+-(p6)	fma.s1 f10 = f12, f10, f11
+-	;;
+-	/* Round quotient to an integer.  */
+-	fcvt.fx.trunc.s1 f10 = f10
+-	;;
+-	/* Transfer result to GP registers.  */
+-	getf.sig ret0 = f10
+-	br.ret.sptk rp
+-	;;
+-END(___divdi3)
+-	.symver	___divdi3, __divdi3@GLIBC_2.2
+-
+-/* __moddi3
+-   Compute a 64-bit integer modulus.
+-   in0 holds the dividend (a).  in1 holds the divisor (b).  */
+-
+-ENTRY(___moddi3)
+-	.regstk 2,0,0,0
+-	/* Transfer inputs to FP registers.  */
+-	setf.sig f14 = in0
+-	setf.sig f9 = in1
+-	;;
+-	/* Convert the inputs to FP, so that they won't be treated as
+-	   unsigned.  */
+-	fcvt.xf f8 = f14
+-	fcvt.xf f9 = f9
+-	;;
+-	/* Compute the reciprocal approximation.  */
+-	frcpa.s1 f10, p6 = f8, f9
+-	;;
+-	/* 3 Newton-Raphson iterations.  */
+-(p6)	fmpy.s1 f12 = f8, f10
+-(p6)	fnma.s1 f11 = f9, f10, f1
+-	;;
+-(p6)	fma.s1 f12 = f11, f12, f12
+-(p6)	fmpy.s1 f13 = f11, f11
+-	;;
+-(p6)	fma.s1 f10 = f11, f10, f10
+-(p6)	fma.s1 f11 = f13, f12, f12
+-	;;
+-	sub in1 = r0, in1
+-(p6)	fma.s1 f10 = f13, f10, f10
+-(p6)	fnma.s1 f12 = f9, f11, f8
+-	;;
+-	setf.sig f9 = in1
+-(p6)	fma.s1 f10 = f12, f10, f11
+-	;;
+-	fcvt.fx.trunc.s1 f10 = f10
+-	;;
+-	/* r = q * (-b) + a  */
+-	xma.l f10 = f10, f9, f14
+-	;;
+-	/* Transfer result to GP registers.  */
+-	getf.sig ret0 = f10
+-	br.ret.sptk rp
+-	;;
+-END(___moddi3)
+-	.symver ___moddi3, __moddi3@GLIBC_2.2
+-
+-/* __udivdi3
+-   Compute a 64-bit unsigned integer quotient.
+-   in0 holds the dividend.  in1 holds the divisor.  */
+-
+-ENTRY(___udivdi3)
+-	.regstk 2,0,0,0
+-	/* Transfer inputs to FP registers.  */
+-	setf.sig f8 = in0
+-	setf.sig f9 = in1
+-	;;
+-	/* Convert the inputs to FP, to avoid FP software-assist faults.  */
+-	fcvt.xuf.s1 f8 = f8
+-	fcvt.xuf.s1 f9 = f9
+-	;;
+-	/* Compute the reciprocal approximation.  */
+-	frcpa.s1 f10, p6 = f8, f9
+-	;;
+-	/* 3 Newton-Raphson iterations.  */
+-(p6)	fnma.s1 f11 = f9, f10, f1
+-(p6)	fmpy.s1 f12 = f8, f10
+-	;;
+-(p6)	fmpy.s1 f13 = f11, f11
+-(p6)	fma.s1 f12 = f11, f12, f12
+-	;;
+-(p6)	fma.s1 f10 = f11, f10, f10
+-(p6)	fma.s1 f11 = f13, f12, f12
+-	;;
+-(p6)	fma.s1 f10 = f13, f10, f10
+-(p6)	fnma.s1 f12 = f9, f11, f8
+-	;;
+-(p6)	fma.s1 f10 = f12, f10, f11
+-	;;
+-	/* Round quotient to an unsigned integer.  */
+-	fcvt.fxu.trunc.s1 f10 = f10
+-	;;
+-	/* Transfer result to GP registers.  */
+-	getf.sig ret0 = f10
+-	br.ret.sptk rp
+-	;;
+-END(___udivdi3)
+-	.symver	___udivdi3, __udivdi3@GLIBC_2.2
+-
+-/* __umoddi3
+-   Compute a 64-bit unsigned integer modulus.
+-   in0 holds the dividend (a).  in1 holds the divisor (b).  */
+-
+-ENTRY(___umoddi3)
+-	.regstk 2,0,0,0
+-	/* Transfer inputs to FP registers.  */
+-	setf.sig f14 = in0
+-	setf.sig f9 = in1
+-	;;
+-	/* Convert the inputs to FP, to avoid FP software assist faults.  */
+-	fcvt.xuf.s1 f8 = f14
+-	fcvt.xuf.s1 f9 = f9
+-	;;
+-	/* Compute the reciprocal approximation.  */
+-	frcpa.s1 f10, p6 = f8, f9
+-	;;
+-	/* 3 Newton-Raphson iterations.  */
+-(p6)	fmpy.s1 f12 = f8, f10
+-(p6)	fnma.s1 f11 = f9, f10, f1
+-	;;
+-(p6)	fma.s1 f12 = f11, f12, f12
+-(p6)	fmpy.s1 f13 = f11, f11
+-	;;
+-(p6)	fma.s1 f10 = f11, f10, f10
+-(p6)	fma.s1 f11 = f13, f12, f12
+-	;;
+-	sub in1 = r0, in1
+-(p6)	fma.s1 f10 = f13, f10, f10
+-(p6)	fnma.s1 f12 = f9, f11, f8
+-	;;
+-	setf.sig f9 = in1
+-(p6)	fma.s1 f10 = f12, f10, f11
+-	;;
+-	/* Round quotient to an unsigned integer.  */
+-	fcvt.fxu.trunc.s1 f10 = f10
+-	;;
+-	/* r = q * (-b) + a  */
+-	xma.l f10 = f10, f9, f14
+-	;;
+-	/* Transfer result to GP registers.  */
+-	getf.sig ret0 = f10
+-	br.ret.sptk rp
+-	;;
+-END(___umoddi3)
+-	.symver	___umoddi3, __umoddi3@GLIBC_2.2
+-
+-/* __multi3
+-   Compute a 128-bit multiply of 128-bit multiplicands.
+-   in0/in1 holds one multiplicand (a), in2/in3 holds the other one (b).  */
+-
+-ENTRY(___multi3)
+-	.regstk 4,0,0,0
+-	setf.sig f6 = in1
+-	movl r19 = 0xffffffff
+-	setf.sig f7 = in2
+-	;;
+-	and r14 = r19, in0
+-	;;
+-	setf.sig f10 = r14
+-	and r14 = r19, in2
+-	xmpy.l f9 = f6, f7
+-	;;
+-	setf.sig f6 = r14
+-	shr.u r14 = in0, 32
+-	;;
+-	setf.sig f7 = r14
+-	shr.u r14 = in2, 32
+-	;;
+-	setf.sig f8 = r14
+-	xmpy.l f11 = f10, f6
+-	xmpy.l f6 = f7, f6
+-	;;
+-	getf.sig r16 = f11
+-	xmpy.l f7 = f7, f8
+-	;;
+-	shr.u r14 = r16, 32
+-	and r16 = r19, r16
+-	getf.sig r17 = f6
+-	setf.sig f6 = in0
+-	;;
+-	setf.sig f11 = r14
+-	getf.sig r21 = f7
+-	setf.sig f7 = in3
+-	;;
+-	xma.l f11 = f10, f8, f11
+-	xma.l f6 = f6, f7, f9
+-	;;
+-	getf.sig r18 = f11
+-	;;
+-	add r18 = r18, r17
+-	;;
+-	and r15 = r19, r18
+-	cmp.ltu p7, p6 = r18, r17
+-	;;
+-	getf.sig r22 = f6
+-(p7)	adds r14 = 1, r19
+-	;;
+-(p7)	add r21 = r21, r14
+-	shr.u r14 = r18, 32
+-	shl r15 = r15, 32
+-	;;
+-	add r20 = r21, r14
+-	;;
+-	add ret0 = r15, r16
+-	add ret1 = r22, r20
+-	br.ret.sptk rp
+-	;;
+-END(___multi3)
+-	.symver	___multi3, __multi3@GLIBC_2.2
+-
+-#endif
+Index: sysdeps/ia64/libgcc-compat.c
+===================================================================
+RCS file: sysdeps/ia64/libgcc-compat.c
+diff -N sysdeps/ia64/libgcc-compat.c
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ sysdeps/ia64/libgcc-compat.c	22 Sep 2004 21:21:08 -0000	1.1.2.1
+@@ -0,0 +1,84 @@
++/* pre-.hidden libgcc compatibility
++   Copyright (C) 2002 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++
++#include <stdint.h>
++#include <shlib-compat.h>
++
++#if SHLIB_COMPAT(libc, GLIBC_2_2, GLIBC_2_2_6)
++
++typedef int int128_t __attribute__((__mode__(TI)));
++
++extern long double __divtf3 (long double, long double) attribute_hidden;
++long double INTUSE (__divtf3) (long double x, long double y)
++{
++  return __divtf3 (x, y);
++}
++symbol_version (INTUSE (__divtf3), __divtf3, GLIBC_2.2);
++
++extern double __divdf3 (double, double) attribute_hidden;
++double INTUSE (__divdf3) (double x, double y)
++{
++  return __divdf3 (x, y);
++}
++symbol_version (INTUSE (__divdf3), __divdf3, GLIBC_2.2);
++
++extern float __divsf3 (float, float) attribute_hidden;
++float INTUSE (__divsf3) (float x, float y)
++{
++  return __divsf3 (x, y);
++}
++symbol_version (INTUSE (__divsf3), __divsf3, GLIBC_2.2);
++
++extern int64_t __divdi3 (int64_t, int64_t) attribute_hidden;
++int64_t INTUSE (__divdi3) (int64_t x, int64_t y)
++{
++  return __divdi3 (x, y);
++}
++symbol_version (INTUSE (__divdi3), __divdi3, GLIBC_2.2);
++
++extern int64_t __moddi3 (int64_t, int64_t) attribute_hidden;
++int64_t INTUSE (__moddi3) (int64_t x, int64_t y)
++{
++  return __moddi3 (x, y);
++}
++symbol_version (INTUSE (__moddi3), __moddi3, GLIBC_2.2);
++
++extern uint64_t __udivdi3 (uint64_t, uint64_t) attribute_hidden;
++uint64_t INTUSE (__udivdi3) (uint64_t x, uint64_t y)
++{
++  return __udivdi3 (x, y);
++}
++symbol_version (INTUSE (__udivdi3), __udivdi3, GLIBC_2.2);
++
++extern uint64_t __umoddi3 (uint64_t, uint64_t) attribute_hidden;
++uint64_t INTUSE (__umoddi3) (uint64_t x, uint64_t y)
++{
++  return __umoddi3 (x, y);
++}
++symbol_version (INTUSE (__umoddi3), __umoddi3, GLIBC_2.2);
++
++extern int128_t __multi3 (int128_t, int128_t) attribute_hidden;
++int128_t INTUSE (__multi3) (int128_t x, int128_t y)
++{
++  return __multi3 (x, y);
++}
++symbol_version (INTUSE (__multi3), __multi3, GLIBC_2.2);
++
++#endif
+Index: sysdeps/unix/nice.c
+===================================================================
+RCS file: /cvs/glibc/libc/sysdeps/unix/nice.c,v
+retrieving revision 1.6
+retrieving revision 1.6.2.1
+diff -u -p -r1.6 -r1.6.2.1
+--- sysdeps/unix/nice.c	28 Sep 2002 19:13:13 -0000	1.6
++++ sysdeps/unix/nice.c	22 Sep 2004 21:21:08 -0000	1.6.2.1
+@@ -41,7 +41,12 @@ nice (int incr)
+ 	__set_errno (save);
+     }
+ 
+-  result = setpriority (PRIO_PROCESS, 0, prio + incr);
++  prio += incr;
++  if (prio < PRIO_MIN)
++    prio = PRIO_MIN;
++  else if (prio >= PRIO_MAX)
++    prio = PRIO_MAX - 1;
++  result = setpriority (PRIO_PROCESS, 0, prio);
+   if (result != -1)
+     return getpriority (PRIO_PROCESS, 0);
+   else
+Index: sysdeps/unix/sysv/linux/paths.h
+===================================================================
+RCS file: /cvs/glibc/libc/sysdeps/unix/sysv/linux/paths.h,v
+retrieving revision 1.11
+retrieving revision 1.11.4.1
+diff -u -p -r1.11 -r1.11.4.1
+--- sysdeps/unix/sysv/linux/paths.h	15 Nov 2000 23:06:47 -0000	1.11
++++ sysdeps/unix/sysv/linux/paths.h	22 Sep 2004 21:21:08 -0000	1.11.4.1
+@@ -61,7 +61,7 @@
+ #define	_PATH_TTY	"/dev/tty"
+ #define	_PATH_UNIX	"/boot/vmlinux"
+ #define _PATH_UTMP	"/var/run/utmp"
+-#define	_PATH_VI	"/usr/bin/vi"
++#define	_PATH_VI	"/bin/vi"
+ #define _PATH_WTMP	"/var/log/wtmp"
+ 
+ /* Provide trailing slash, since mostly used for building pathnames. */
+Index: sysdeps/unix/sysv/linux/readonly-area.c
+===================================================================
+RCS file: /cvs/glibc/libc/sysdeps/unix/sysv/linux/readonly-area.c,v
+retrieving revision 1.1
+retrieving revision 1.1.2.2
+diff -u -p -r1.1 -r1.1.2.2
+--- sysdeps/unix/sysv/linux/readonly-area.c	18 Oct 2004 04:17:11 -0000	1.1
++++ sysdeps/unix/sysv/linux/readonly-area.c	20 Oct 2004 11:04:51 -0000	1.1.2.2
+@@ -33,7 +33,10 @@ __readonly_area (const char *ptr, size_t
+ 
+   FILE *fp = fopen ("/proc/self/maps", "rc");
+   if (fp == NULL)
+-    return -1;
++    /* We don't know.  Returning 1 here means that programs using %n
++       and -D_FORTIFY_SOURCE=2 will work even when /proc is not mounted,
++       but will allow %n even in writable areas.  */
++    return 1;
+ 
+   /* We need no locking.  */
+   __fsetlocking (fp, FSETLOCKING_BYCALLER);
+Index: sysdeps/unix/sysv/linux/tcsetattr.c
+===================================================================
+RCS file: /cvs/glibc/libc/sysdeps/unix/sysv/linux/tcsetattr.c,v
+retrieving revision 1.16
+retrieving revision 1.16.2.1
+diff -u -p -r1.16 -r1.16.2.1
+--- sysdeps/unix/sysv/linux/tcsetattr.c	10 Sep 2003 19:16:07 -0000	1.16
++++ sysdeps/unix/sysv/linux/tcsetattr.c	22 Sep 2004 21:21:08 -0000	1.16.2.1
+@@ -49,6 +49,7 @@ tcsetattr (fd, optional_actions, termios
+ {
+   struct __kernel_termios k_termios;
+   unsigned long int cmd;
++  int retval;
+ 
+   switch (optional_actions)
+     {
+@@ -80,6 +81,35 @@ tcsetattr (fd, optional_actions, termios
+   memcpy (&k_termios.c_cc[0], &termios_p->c_cc[0],
+ 	  __KERNEL_NCCS * sizeof (cc_t));
+ 
+-  return INLINE_SYSCALL (ioctl, 3, fd, cmd, &k_termios);
++  retval = INLINE_SYSCALL (ioctl, 3, fd, cmd, &k_termios);
++
++  if (retval == 0 && cmd == TCSETS)
++    {
++      /* The Linux kernel has a bug which silently ignore the invalid
++        c_cflag on pty. We have to check it here. */
++      int save = errno;
++      retval = INLINE_SYSCALL (ioctl, 3, fd, TCGETS, &k_termios);
++      if (retval)
++       {
++         /* We cannot verify if the setting is ok. We don't return
++            an error (?). */
++         __set_errno (save);
++         retval = 0;
++       }
++      else if ((termios_p->c_cflag & (PARENB | CREAD))
++              != (k_termios.c_cflag & (PARENB | CREAD))
++              || ((termios_p->c_cflag & CSIZE)
++                  && ((termios_p->c_cflag & CSIZE)
++                      != (k_termios.c_cflag & CSIZE))))
++       {
++         /* It looks like the Linux kernel silently changed the
++            PARENB/CREAD/CSIZE bits in c_cflag. Report it as an
++            error. */
++         __set_errno (EINVAL);
++         retval = -1;
++       }
++    }
++
++  return retval;
+ }
+ libc_hidden_def (tcsetattr)

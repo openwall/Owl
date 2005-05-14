@@ -1,16 +1,30 @@
-diff -uNrp glibc-2.3.2.orig/resolv/Makefile glibc-2.3.2/resolv/Makefile
---- glibc-2.3.2.orig/resolv/Makefile	2004-03-08 02:34:13 +0000
-+++ glibc-2.3.2/resolv/Makefile	2004-03-08 06:05:45 +0000
+# Improve res_randomid in the resolver.
+
+diff -uprk.orig glibc-2.3.5.orig/include/resolv.h glibc-2.3.5/include/resolv.h
+--- glibc-2.3.5.orig/include/resolv.h	2004-10-27 21:26:27 +0000
++++ glibc-2.3.5/include/resolv.h	2005-05-08 22:51:47 +0000
+@@ -46,6 +46,8 @@ extern void res_send_setqhook (res_send_
+ extern void res_send_setrhook (res_send_rhook __hook);
+ extern int res_ourserver_p (const res_state __statp,
+ 			    const struct sockaddr_in6 *__inp);
++extern unsigned _shuffle_next (void);
++
+ libc_hidden_proto (__res_ninit)
+ libc_hidden_proto (__res_maybe_init)
+ libc_hidden_proto (__res_nclose)
+diff -uprk.orig glibc-2.3.5.orig/resolv/Makefile glibc-2.3.5/resolv/Makefile
+--- glibc-2.3.5.orig/resolv/Makefile	2004-08-15 20:21:59 +0000
++++ glibc-2.3.5/resolv/Makefile	2005-05-08 22:51:47 +0000
 @@ -30,7 +30,7 @@ distribute := ../conf/portability.h mapv
  	      Banner res_hconf.h res_debug.h README gai_misc.h ga_test.c
  
  routines := herror inet_addr inet_ntop inet_pton nsap_addr res_init \
 -	    res_hconf res_libc res-state
-+	    res_hconf shuffle res_libc res-state
++	    res_hconf res_libc res-state shuffle
  
  tests = tst-aton tst-leaks
- 
-@@ -46,7 +46,7 @@ libresolv-routines := gethnamaddr res_co
+ xtests = tst-leaks2
+@@ -49,7 +49,7 @@ libresolv-routines := gethnamaddr res_co
  		      res_data res_mkquery res_query res_send		\
  		      inet_net_ntop inet_net_pton inet_neta base64	\
  		      ns_parse ns_name ns_netint ns_ttl ns_print	\
@@ -19,58 +33,48 @@ diff -uNrp glibc-2.3.2.orig/resolv/Makefile glibc-2.3.2/resolv/Makefile
  
  libanl-routines := gai_cancel gai_error gai_misc gai_notify gai_suspend \
  		   getaddrinfo_a
-diff -uNrp glibc-2.3.2.orig/resolv/res_init.c glibc-2.3.2/resolv/res_init.c
---- glibc-2.3.2.orig/resolv/res_init.c	2003-02-25 23:40:08 +0000
-+++ glibc-2.3.2/resolv/res_init.c	2004-03-08 06:09:32 +0000
-@@ -517,12 +517,13 @@ net_mask(in)		/* XXX - should really use
- }
- #endif
+diff -uprk.orig glibc-2.3.5.orig/resolv/res_init.c glibc-2.3.5/resolv/res_init.c
+--- glibc-2.3.5.orig/resolv/res_init.c	2004-10-11 20:49:25 +0000
++++ glibc-2.3.5/resolv/res_init.c	2005-05-08 22:51:47 +0000
+@@ -537,10 +537,9 @@ net_mask(in)		/* XXX - should really use
  
-+extern unsigned int _shuffle_next();
-+
  u_int
  res_randomid(void) {
 -	struct timeval now;
 -
 -	__gettimeofday(&now, NULL);
 -	return (0xffff & (now.tv_sec ^ now.tv_usec ^ __getpid()));
-+/* We should probably randomize the port number as well, but this may be
-+ * better done in the kernel */
++/* We should probably randomize the port number as well,
++ * but this may be better done in the kernel */
 +       return _shuffle_next();
  }
  #ifdef _LIBC
  libc_hidden_def (__res_randomid)
-diff -uNrp glibc-2.3.2.orig/resolv/res_mkquery.c glibc-2.3.2/resolv/res_mkquery.c
---- glibc-2.3.2.orig/resolv/res_mkquery.c	2000-07-19 21:38:15 +0000
-+++ glibc-2.3.2/resolv/res_mkquery.c	2004-03-08 06:11:59 +0000
-@@ -83,6 +83,8 @@ static const char rcsid[] = "$BINDId: re
- 
- extern const char *_res_opcodes[];
- 
-+extern unsigned int _shuffle_next();
-+
- /*
-  * Form all types of queries.
-  * Returns the size of the result or -1.
-@@ -115,7 +117,7 @@ res_nmkquery(res_state statp,
- 		return (-1);
- 	memset(buf, 0, HFIXEDSZ);
- 	hp = (HEADER *) buf;
+diff -uprk.orig glibc-2.3.5.orig/resolv/res_mkquery.c glibc-2.3.5/resolv/res_mkquery.c
+--- glibc-2.3.5.orig/resolv/res_mkquery.c	2004-10-27 21:27:29 +0000
++++ glibc-2.3.5/resolv/res_mkquery.c	2005-05-08 22:55:39 +0000
+@@ -124,8 +124,8 @@ res_nmkquery(res_state statp,
+ 	   incremented by one after the initial randomization which
+ 	   still predictable if the application does multiple
+ 	   requests.  */
+-#if 0
 -	hp->id = htons(++statp->id);
++#if 1
 +	hp->id = htons(statp->id = _shuffle_next());
- 	hp->opcode = op;
- 	hp->rd = (statp->options & RES_RECURSE) != 0;
- 	hp->rcode = NOERROR;
-diff -uNrp glibc-2.3.2.orig/resolv/shuffle.c glibc-2.3.2/resolv/shuffle.c
---- glibc-2.3.2.orig/resolv/shuffle.c	1970-01-01 00:00:00 +0000
-+++ glibc-2.3.2/resolv/shuffle.c	2004-03-08 05:38:13 +0000
-@@ -0,0 +1,257 @@
+ #else
+ 	hp->id = htons(statp->id);
+ 	int randombits;
+diff -uprk.orig glibc-2.3.5.orig/resolv/shuffle.c glibc-2.3.5/resolv/shuffle.c
+--- glibc-2.3.5.orig/resolv/shuffle.c	1970-01-01 00:00:00 +0000
++++ glibc-2.3.5/resolv/shuffle.c	2004-04-22 21:14:03 +0000
+@@ -0,0 +1,258 @@
 +/*
 + * Written by Solar Designer and placed in the public domain.
 + */
 +
 +#include <unistd.h>
 +#include <fcntl.h>
++#include <resolv.h>
 +
 +#ifdef __linux__
 +#define DEVICE				"/dev/urandom"

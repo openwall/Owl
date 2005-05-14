@@ -1,6 +1,8 @@
---- glibc-2.3.3-200404240000/sysdeps/unix/sysv/linux/dl-execstack.c.orig	2004-04-22 12:55:06 +0400
-+++ glibc-2.3.3-200404240000/sysdeps/unix/sysv/linux/dl-execstack.c	2004-04-29 17:54:06 +0400
-@@ -81,7 +81,7 @@ _dl_make_stack_executable (void **stack_
+# Fix mprotect return code handling in _dl_make_stack_executable().
+
+--- glibc-2.3.5/sysdeps/unix/sysv/linux/dl-execstack.c.orig	2004-09-21 02:30:12 +0000
++++ glibc-2.3.5/sysdeps/unix/sysv/linux/dl-execstack.c	2005-05-09 10:49:50 +0000
+@@ -84,7 +84,7 @@ _dl_make_stack_executable (void **stack_
  	page -= size;
        else
  	{
@@ -9,7 +11,7 @@
  	    return errno;
  
  	  if (size == GLRO(dl_pagesize))
-@@ -134,7 +134,7 @@ _dl_make_stack_executable (void **stack_
+@@ -107,7 +107,7 @@ _dl_make_stack_executable (void **stack_
  	page += size;
        else
  	{

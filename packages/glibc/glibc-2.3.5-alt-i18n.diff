@@ -1,6 +1,8 @@
---- glibc-2.3.3-200404190147/localedata/SUPPORTED.orig	2004-04-22 17:09:19 +0400
-+++ glibc-2.3.3-200404190147/localedata/SUPPORTED	2004-04-22 17:07:56 +0400
-@@ -263,10 +263,12 @@
+# Support more ru_* locales.
+
+--- glibc-2.3.5/localedata/SUPPORTED.orig	2005-05-08 23:53:51 +0000
++++ glibc-2.3.5/localedata/SUPPORTED	2005-05-09 10:26:18 +0000
+@@ -262,10 +262,12 @@ pt_PT@euro/ISO-8859-15 \
  ro_RO.UTF-8/UTF-8 \
  ro_RO/ISO-8859-2 \
  ru_RU.KOI8-R/KOI8-R \
@@ -15,7 +17,7 @@
  se_NO/UTF-8 \
  sid_ET/UTF-8 \
  sk_SK.UTF-8/UTF-8 \
-@@ -304,7 +306,8 @@
+@@ -299,7 +301,8 @@ tr_TR.UTF-8/UTF-8 \
  tr_TR/ISO-8859-9 \
  tt_RU.UTF-8/UTF-8 \
  uk_UA.UTF-8/UTF-8 \

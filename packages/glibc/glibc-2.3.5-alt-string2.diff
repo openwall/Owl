@@ -1,6 +1,8 @@
---- glibc-2.3.3-200404190147/string/bits/string2.h.orig	2003-08-20 04:07:37 +0400
-+++ glibc-2.3.3-200404190147/string/bits/string2.h	2004-04-21 15:43:40 +0400
-@@ -122,54 +122,54 @@ __STRING2_COPY_TYPE (8);
+# Fix -Wpointer-arith issue in string2.h
+
+--- glibc-2.3.5/string/bits/string2.h.orig	2004-05-28 06:39:13 +0000
++++ glibc-2.3.5/string/bits/string2.h	2005-05-08 21:53:40 +0000
+@@ -123,54 +123,54 @@ __STRING2_COPY_TYPE (8);
         {								      \
         case 15:								      \
  	 __u->__ui = __c * 0x01010101;					      \
@@ -68,7 +70,7 @@
         case 4:								      \
  	 __u->__ui = __c * 0x01010101;					      \
         case 0:								      \
-@@ -249,47 +249,47 @@ __mempcpy_small (void *__dest1,
+@@ -254,47 +254,47 @@ __mempcpy_small (void *__dest1,
      {
      case 1:
        __u->__c = __src0_1;
@@ -130,7 +132,7 @@
        break;
      }
    return (void *) __u;
-@@ -376,7 +376,7 @@ __mempcpy_small (void *__dest, char __sr
+@@ -381,7 +381,7 @@ __mempcpy_small (void *__dest, char __sr
        __extension__ __u->__sca8 = __src8;
        break;
      }
@@ -139,7 +141,7 @@
  }
  #   endif
  #  endif
-@@ -438,7 +438,7 @@ __strcpy_small (char *__dest,
+@@ -451,7 +451,7 @@ __strcpy_small (char *__dest,
        break;
      case 3:
        __u->__usi = __src0_2;
@@ -148,7 +150,7 @@
        __u->__uc = '\0';
        break;
      case 4:
-@@ -446,24 +446,24 @@ __strcpy_small (char *__dest,
+@@ -459,24 +459,24 @@ __strcpy_small (char *__dest,
        break;
      case 5:
        __u->__ui = __src0_4;
@@ -178,7 +180,7 @@
        __u->__ui = __src4_4;
        break;
      }
-@@ -613,40 +613,40 @@ __stpcpy_small (char *__dest,
+@@ -628,40 +628,40 @@ __stpcpy_small (char *__dest,
        break;
      case 2:
        __u->__usi = __src0_2;

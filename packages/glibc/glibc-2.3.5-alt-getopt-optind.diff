@@ -1,5 +1,7 @@
---- glibc-2.3.3-200404190147.orig/posix/getopt.c	2004-03-11 02:13:26 +0300
-+++ glibc-2.3.3-200404190147/posix/getopt.c	2004-04-21 16:04:44 +0400
+# Set proper optind when argc < 1.
+
+--- glibc-2.3.5/posix/getopt.c.orig	2004-03-10 23:13:26 +0000
++++ glibc-2.3.5/posix/getopt.c	2004-04-21 12:04:44 +0000
 @@ -399,7 +399,10 @@ _getopt_internal_r (int argc, char *cons
      print_errors = 0;
  
