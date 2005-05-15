@@ -54,11 +54,10 @@ diff -uprk.orig glibc-2.3.5.orig/elf/dl-support.c glibc-2.3.5/elf/dl-support.c
 -	seen = -1;
 -	__libc_enable_secure = av->a_un.a_val;
 -	__libc_enable_secure_decided = 1;
-+	enable_secure = av->a_un.a_val;
++	enable_secure = av->a_un.a_val != 0;
  	break;
        }
--  if (seen == 0xf)
-+  if (seen & 0xf)
+   if (seen == 0xf)
      {
 -      __libc_enable_secure = uid != 0 || gid != 0;
 +      enable_secure |= ((uid != 0) << 1) | ((gid != 0) << 2);
