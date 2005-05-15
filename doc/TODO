@@ -166,15 +166,11 @@ compatibility.
 	glibc.
 
 [PRIORITY: medium]
-[ASSIGNED: ldv@]
-Update to glibc 2.3.5+.
-
-[PRIORITY: medium]
-After upgrading to glibc 2.3.5, patch its __libc_message() to write to
-syslog by default (rather than as a fallback) and when doing so to
-connect to /dev/log and write there directly, without utilizing
-vsyslog(3) (which may use malloc()-family functions and thus is unsafe
-to be invoked on a detected malloc inconsistency).
+Patch __libc_message() to write to syslog by default (rather than as
+a fallback) and when doing so to connect to /dev/log and write there
+directly, without utilizing vsyslog(3) (which may use malloc()-family
+functions and thus is unsafe to be invoked on a detected malloc
+inconsistency).
 
 [PRIORITY: low]
 Make mkstemp(3) and friends produce unpredictable filenames (not just
@@ -500,7 +496,7 @@ can log both into wtmp.
 	strace.
 
 [PRIORITY: low]
-Update to 4.5.7+ with ALT's patches.
+Update to 4.5.11+ with ALT's patches.
 
 [PRIORITY: low]
 After the above update is complete, re-test pipe(2) reporting on Alpha
@@ -564,7 +560,7 @@ ftp://ftp.lst.de/pub/people/okir/traceroute
 Update to latest 6.1 patchlevel.
 
 [PRIORITY: low]
-Use mkdtemp(3) for the directory after the glibc update.
+Use mkdtemp(3) for the directory.
 
 
 	vixie-cron.
@@ -600,4 +596,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.71 2005/05/11 14:52:42 ldv Exp $
+$Id: Owl/doc/TODO,v 1.72 2005/05/15 20:32:20 ldv Exp $
