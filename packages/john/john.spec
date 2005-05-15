@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.51 2005/05/11 03:05:47 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.52 2005/05/15 03:09:18 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.38
+Version: 1.6.38.1
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -74,6 +74,10 @@ cp -a john-1.6/doc/* doc/john-1.6/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Sun May 15 2005 Solar Designer <solar@owl.openwall.com> 1.6.38.1-owl1
+- Added a sample case toggler for cracking MD4-based NT hashes (with the
+contributed patch), given NTLM hashes.
+
 * Wed May 04 2005 Solar Designer <solar@owl.openwall.com> 1.6.38-owl1
 - Further updates of the PPC make targets for Mac OS X 10.4+ and Linux/ppc64.
 
