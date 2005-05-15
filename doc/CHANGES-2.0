@@ -12,6 +12,17 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2005/04/16 -
+2005/05/15	kernel
+SECURITY FIX	Severity: high, local, active
+Updated to Linux 2.4.30-ow1 and later to 2.4.30-ow3.  Linux 2.4.30
+(and thus 2.4.30-ow1) includes a hardening change which makes the ELF
+core dump vulnerability discovered by Paul Starzetz unexploitable.
+Linux 2.4.30-ow3 includes a real fix for said vulnerability.
+References:
+http://www.isec.pl/vulnerabilities/isec-0023-coredump.txt
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-1263
+
 2005/05/07	Packages: coreutils, fileutils, sh-utils, textutils,
 		shadow-utils; Owl/build/installorder.conf
 Replaced fileutils, sh-utils, and textutils with coreutils (a recent
@@ -44,9 +55,6 @@ Updated to 4.8.
 Implemented a number of bitslice DES set_key*() optimizations
 resulting in speedups for LM hashes, as well as for traditional
 DES-based crypt(3) hashes when only a handful of hashes are loaded.
-
-2005/04/16	kernel
-Updated to Linux 2.4.30-ow1.
 
 2005/04/10	Package: dhcp
 dhcpd(8) and dhcrelay(8) will now drop privileges by default (rather
@@ -423,4 +431,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.85 2005/05/07 22:52:08 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.86 2005/05/15 04:28:13 solar Exp $
