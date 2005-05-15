@@ -1,20 +1,8 @@
-# Introduce and export __locale_getenv.
 # Sanitize the environment in a paranoid way.
 
-diff -uprk.orig glibc-2.3.5.orig/abilist/libc.abilist glibc-2.3.5/abilist/libc.abilist
---- glibc-2.3.5.orig/abilist/libc.abilist	2003-04-02 04:39:52 +0000
-+++ glibc-2.3.5/abilist/libc.abilist	2005-05-09 11:10:02 +0000
-@@ -255,6 +255,7 @@ GLIBC_2.0 i.86-.*-linux.*/notls i.86-.*-
-  __libc_realloc F
-  __libc_start_main F
-  __libc_valloc F
-+ __locale_getenv F
-  __lseek F
-  __lxstat F
-  __mbrlen F
 diff -uprk.orig glibc-2.3.5.orig/argp/argp-help.c glibc-2.3.5/argp/argp-help.c
---- glibc-2.3.5.orig/argp/argp-help.c	2004-06-01 22:15:24 +0000
-+++ glibc-2.3.5/argp/argp-help.c	2005-05-09 11:10:02 +0000
+--- glibc-2.3.5.orig/argp/argp-help.c	2004-06-02 02:15:24 +0400
++++ glibc-2.3.5/argp/argp-help.c	2005-05-14 23:03:58 +0400
 @@ -166,7 +166,7 @@ static const struct uparam_name uparam_n
  static void
  fill_in_uparams (const struct argp_state *state)
@@ -25,18 +13,10 @@ diff -uprk.orig glibc-2.3.5.orig/argp/argp-help.c glibc-2.3.5/argp/argp-help.c
  #define SKIPWS(p) do { while (isspace (*p)) p++; } while (0);
  
 diff -uprk.orig glibc-2.3.5.orig/catgets/catgets.c glibc-2.3.5/catgets/catgets.c
---- glibc-2.3.5.orig/catgets/catgets.c	2002-05-15 03:46:42 +0000
-+++ glibc-2.3.5/catgets/catgets.c	2005-05-09 11:10:02 +0000
-@@ -44,13 +44,12 @@ catopen (const char *cat_name, int flag)
- 	env_var = setlocale (LC_MESSAGES, NULL);
-       else
- 	/* Use the LANG environment variable.  */
--	env_var = getenv ("LANG");
-+	env_var = __locale_getenv ("LANG");
- 
--      if (env_var == NULL || *env_var == '\0'
--	  || (__libc_enable_secure && strchr (env_var, '/') != NULL))
-+      if (env_var == NULL || *env_var == '\0')
+--- glibc-2.3.5.orig/catgets/catgets.c	2002-05-15 07:46:42 +0400
++++ glibc-2.3.5/catgets/catgets.c	2005-05-14 23:03:58 +0400
+@@ -50,7 +50,7 @@ catopen (const char *cat_name, int flag)
+ 	  || (__libc_enable_secure && strchr (env_var, '/') != NULL))
  	env_var = "C";
  
 -      nlspath = getenv ("NLSPATH");
@@ -45,8 +25,8 @@ diff -uprk.orig glibc-2.3.5.orig/catgets/catgets.c glibc-2.3.5/catgets/catgets.c
  	{
  	  /* Append the system dependent directory.  */
 diff -uprk.orig glibc-2.3.5.orig/debug/pcprofile.c glibc-2.3.5/debug/pcprofile.c
---- glibc-2.3.5.orig/debug/pcprofile.c	2001-07-06 04:54:45 +0000
-+++ glibc-2.3.5/debug/pcprofile.c	2004-06-11 08:41:25 +0000
+--- glibc-2.3.5.orig/debug/pcprofile.c	2001-07-06 08:54:45 +0400
++++ glibc-2.3.5/debug/pcprofile.c	2005-05-14 23:03:58 +0400
 @@ -38,7 +38,7 @@ install (void)
  {
    /* See whether the environment variable `PCPROFILE_OUTPUT' is defined.
@@ -57,29 +37,36 @@ diff -uprk.orig glibc-2.3.5.orig/debug/pcprofile.c glibc-2.3.5/debug/pcprofile.c
    if (outfile != NULL && *outfile != '\0')
      {
 diff -uprk.orig glibc-2.3.5.orig/elf/dl-support.c glibc-2.3.5/elf/dl-support.c
---- glibc-2.3.5.orig/elf/dl-support.c	2005-05-09 11:07:47 +0000
-+++ glibc-2.3.5/elf/dl-support.c	2005-05-09 11:22:41 +0000
-@@ -207,15 +207,18 @@ _dl_aux_init (ElfW(auxv_t) *av)
- 	gid ^= av->a_un.a_val;
+--- glibc-2.3.5.orig/elf/dl-support.c	2005-05-14 23:02:47 +0400
++++ glibc-2.3.5/elf/dl-support.c	2005-05-14 23:47:39 +0400
+@@ -159,6 +159,7 @@ void
+ internal_function
+ _dl_aux_init (ElfW(auxv_t) *av)
+ {
++  int enable_secure = 0;
+   int seen = 0;
+   uid_t uid = 0;
+   gid_t gid = 0;
+@@ -208,14 +209,13 @@ _dl_aux_init (ElfW(auxv_t) *av)
  	seen |= 8;
  	break;
-+#if 0
        case AT_SECURE:
- 	seen = -1;
- 	__libc_enable_secure = av->a_un.a_val;
- 	__libc_enable_secure_decided = 1;
+-	seen = -1;
+-	__libc_enable_secure = av->a_un.a_val;
+-	__libc_enable_secure_decided = 1;
++	enable_secure = av->a_un.a_val;
  	break;
-+#endif
        }
-   if (seen == 0xf)
+-  if (seen == 0xf)
++  if (seen & 0xf)
      {
 -      __libc_enable_secure = uid != 0 || gid != 0;
-+      __libc_enable_secure = uid != 0;
-+      __libc_enable_secure |= (gid != 0) << 1;
++      enable_secure |= ((uid != 0) << 1) | ((gid != 0) << 2);
++      __libc_enable_secure = enable_secure;
        __libc_enable_secure_decided = 1;
      }
  }
-@@ -232,19 +235,19 @@ _dl_non_dynamic_init (void)
+@@ -232,19 +232,19 @@ _dl_non_dynamic_init (void)
    if (!_dl_pagesize)
      _dl_pagesize = __getpagesize ();
  
@@ -105,7 +92,7 @@ diff -uprk.orig glibc-2.3.5.orig/elf/dl-support.c glibc-2.3.5/elf/dl-support.c
    if (_dl_profile_output == NULL || _dl_profile_output[0] == '\0')
      _dl_profile_output
        = &"/var/tmp\0/var/profile"[__libc_enable_secure ? 9 : 0];
-@@ -257,6 +260,8 @@ _dl_non_dynamic_init (void)
+@@ -257,6 +257,8 @@ _dl_non_dynamic_init (void)
  	EXTRA_UNSECURE_ENVVARS
  #endif
  	;
@@ -114,13 +101,13 @@ diff -uprk.orig glibc-2.3.5.orig/elf/dl-support.c glibc-2.3.5/elf/dl-support.c
        const char *cp = unsecure_envvars;
  
        while (cp < unsecure_envvars + sizeof (unsecure_envvars))
-@@ -265,8 +270,31 @@ _dl_non_dynamic_init (void)
+@@ -265,8 +267,31 @@ _dl_non_dynamic_init (void)
  	  cp = (const char *) __rawmemchr (cp, '\0') + 1;
  	}
  
 -      if (__access ("/etc/suid-debug", F_OK) != 0)
 -	__unsetenv ("MALLOC_CHECK_");
-+      if (__libc_enable_secure & 1)
++      if (__libc_enable_secure & 2)
 +	{
 +	  static const char unsecure_uid_envvars[] =
 +	    UNSECURE_UID_ENVVARS;
@@ -149,8 +136,8 @@ diff -uprk.orig glibc-2.3.5.orig/elf/dl-support.c glibc-2.3.5/elf/dl-support.c
  
  #ifdef DL_PLATFORM_INIT
 diff -uprk.orig glibc-2.3.5.orig/elf/rtld.c glibc-2.3.5/elf/rtld.c
---- glibc-2.3.5.orig/elf/rtld.c	2005-05-09 11:07:47 +0000
-+++ glibc-2.3.5/elf/rtld.c	2005-05-09 11:40:00 +0000
+--- glibc-2.3.5.orig/elf/rtld.c	2005-05-14 23:02:47 +0400
++++ glibc-2.3.5/elf/rtld.c	2005-05-14 23:48:57 +0400
 @@ -2191,6 +2191,7 @@ process_envvars (enum mode *modep)
    GLRO(dl_profile_output)
      = &"/var/tmp\0/var/profile"[INTUSE(__libc_enable_secure) ? 9 : 0];
@@ -226,7 +213,7 @@ diff -uprk.orig glibc-2.3.5.orig/elf/rtld.c glibc-2.3.5/elf/rtld.c
  	}
 -      while (*nextp != '\0');
 +
-+      if (__builtin_expect (INTUSE(__libc_enable_secure) & 1, 0))
++      if (__builtin_expect (INTUSE(__libc_enable_secure) & 2, 0))
 +	{
 +	  static const char unsecure_uid_envvars[] =
 +	    UNSECURE_UID_ENVVARS;
@@ -253,8 +240,8 @@ diff -uprk.orig glibc-2.3.5.orig/elf/rtld.c glibc-2.3.5/elf/rtld.c
        if (__access ("/etc/suid-debug", F_OK) != 0)
          {
 diff -uprk.orig glibc-2.3.5.orig/gmon/gmon.c glibc-2.3.5/gmon/gmon.c
---- glibc-2.3.5.orig/gmon/gmon.c	2004-09-14 04:24:43 +0000
-+++ glibc-2.3.5/gmon/gmon.c	2005-05-09 11:10:02 +0000
+--- glibc-2.3.5.orig/gmon/gmon.c	2004-09-14 08:24:43 +0400
++++ glibc-2.3.5/gmon/gmon.c	2005-05-14 23:03:59 +0400
 @@ -326,8 +326,8 @@ write_gmon (void)
  # define O_NOFOLLOW	0
  #endif
@@ -267,55 +254,32 @@ diff -uprk.orig glibc-2.3.5.orig/gmon/gmon.c glibc-2.3.5/gmon/gmon.c
  	size_t len = strlen (env);
  	char buf[len + 20];
 diff -uprk.orig glibc-2.3.5.orig/iconv/gconv_cache.c glibc-2.3.5/iconv/gconv_cache.c
---- glibc-2.3.5.orig/iconv/gconv_cache.c	2003-06-11 21:38:47 +0000
-+++ glibc-2.3.5/iconv/gconv_cache.c	2005-05-09 11:10:02 +0000
+--- glibc-2.3.5.orig/iconv/gconv_cache.c	2003-06-12 01:38:47 +0400
++++ glibc-2.3.5/iconv/gconv_cache.c	2005-05-14 23:03:59 +0400
 @@ -55,7 +55,7 @@ __gconv_load_cache (void)
  
    /* We cannot use the cache if the GCONV_PATH environment variable is
       set.  */
 -  __gconv_path_envvar = getenv ("GCONV_PATH");
-+  __gconv_path_envvar = __locale_getenv ("GCONV_PATH");
++  __gconv_path_envvar = __secure_getenv ("GCONV_PATH");
    if (__gconv_path_envvar != NULL)
      return -1;
  
-diff -uprk.orig glibc-2.3.5.orig/include/stdlib.h glibc-2.3.5/include/stdlib.h
---- glibc-2.3.5.orig/include/stdlib.h	2004-09-07 17:04:23 +0000
-+++ glibc-2.3.5/include/stdlib.h	2005-05-09 11:10:02 +0000
-@@ -29,6 +29,7 @@ libc_hidden_proto (qecvt_r)
- libc_hidden_proto (qfcvt_r)
- libc_hidden_proto (lrand48_r)
- libc_hidden_proto (wctomb)
-+libc_hidden_proto (__locale_getenv)
- libc_hidden_proto (__secure_getenv)
- libc_hidden_proto (__strtof_internal)
- libc_hidden_proto (__strtod_internal)
-diff -uprk.orig glibc-2.3.5.orig/intl/dcigettext.c glibc-2.3.5/intl/dcigettext.c
---- glibc-2.3.5.orig/intl/dcigettext.c	2004-09-26 04:44:38 +0000
-+++ glibc-2.3.5/intl/dcigettext.c	2005-05-09 11:10:02 +0000
-@@ -1104,7 +1104,7 @@ guess_category_value (category, category
-   /* The highest priority value is the `LANGUAGE' environment
-      variable.  But we don't use the value if the currently selected
-      locale is the C locale.  This is a GNU extension.  */
--  language = getenv ("LANGUAGE");
-+  language = __locale_getenv ("LANGUAGE");
-   if (language != NULL && language[0] == '\0')
-     language = NULL;
- 
 diff -uprk.orig glibc-2.3.5.orig/intl/loadmsgcat.c glibc-2.3.5/intl/loadmsgcat.c
---- glibc-2.3.5.orig/intl/loadmsgcat.c	2004-09-26 05:06:56 +0000
-+++ glibc-2.3.5/intl/loadmsgcat.c	2005-05-09 11:10:02 +0000
+--- glibc-2.3.5.orig/intl/loadmsgcat.c	2004-09-26 09:06:56 +0400
++++ glibc-2.3.5/intl/loadmsgcat.c	2005-05-14 23:03:59 +0400
 @@ -816,7 +816,7 @@ _nl_init_domain_conv (domain_file, domai
  	    outcharset = domainbinding->codeset;
  	  else
  	    {
 -	      outcharset = getenv ("OUTPUT_CHARSET");
-+	      outcharset = __locale_getenv ("OUTPUT_CHARSET");
++	      outcharset = __secure_getenv ("OUTPUT_CHARSET");
  	      if (outcharset == NULL || outcharset[0] == '\0')
  		{
  # ifdef _LIBC
 diff -uprk.orig glibc-2.3.5.orig/io/getdirname.c glibc-2.3.5/io/getdirname.c
---- glibc-2.3.5.orig/io/getdirname.c	2001-07-06 04:54:53 +0000
-+++ glibc-2.3.5/io/getdirname.c	2004-06-11 08:41:25 +0000
+--- glibc-2.3.5.orig/io/getdirname.c	2001-07-06 08:54:53 +0400
++++ glibc-2.3.5/io/getdirname.c	2005-05-14 23:03:59 +0400
 @@ -31,7 +31,7 @@ get_current_dir_name (void)
    char *pwd;
    struct stat64 dotstat, pwdstat;
@@ -326,8 +290,8 @@ diff -uprk.orig glibc-2.3.5.orig/io/getdirname.c glibc-2.3.5/io/getdirname.c
        && stat64 (".", &dotstat) == 0
        && stat64 (pwd, &pwdstat) == 0
 diff -uprk.orig glibc-2.3.5.orig/libidn/toutf8.c glibc-2.3.5/libidn/toutf8.c
---- glibc-2.3.5.orig/libidn/toutf8.c	2004-03-08 20:52:56 +0000
-+++ glibc-2.3.5/libidn/toutf8.c	2004-06-11 08:41:25 +0000
+--- glibc-2.3.5.orig/libidn/toutf8.c	2004-03-08 23:52:56 +0300
++++ glibc-2.3.5/libidn/toutf8.c	2005-05-14 23:03:59 +0400
 @@ -71,7 +71,7 @@
  const char *
  stringprep_locale_charset (void)
@@ -337,33 +301,9 @@ diff -uprk.orig glibc-2.3.5.orig/libidn/toutf8.c glibc-2.3.5/libidn/toutf8.c
  
    if (charset && *charset)
      return charset;
-diff -uprk.orig glibc-2.3.5.orig/locale/findlocale.c glibc-2.3.5/locale/findlocale.c
---- glibc-2.3.5.orig/locale/findlocale.c	2003-06-11 21:49:52 +0000
-+++ glibc-2.3.5/locale/findlocale.c	2005-05-09 11:10:02 +0000
-@@ -78,16 +78,14 @@ _nl_find_locale (const char *locale_path
-     {
-       /* The user decides which locale to use by setting environment
- 	 variables.  */
--      *name = getenv ("LC_ALL");
-+      *name = __locale_getenv ("LC_ALL");
-       if (*name == NULL || (*name)[0] == '\0')
--	*name = getenv (_nl_category_names[category]);
-+	*name = __locale_getenv (_nl_category_names[category]);
-       if (*name == NULL || (*name)[0] == '\0')
--	*name = getenv ("LANG");
-+	*name = __locale_getenv ("LANG");
-     }
- 
--  if (*name == NULL || (*name)[0] == '\0'
--      || (__builtin_expect (__libc_enable_secure, 0)
--	  && strchr (*name, '/') != NULL))
-+  if (*name == NULL || (*name)[0] == '\0')
-     *name = (char *) _nl_C_name;
- 
-   if (__builtin_expect (strcmp (*name, _nl_C_name), 1) == 0
 diff -uprk.orig glibc-2.3.5.orig/locale/newlocale.c glibc-2.3.5/locale/newlocale.c
---- glibc-2.3.5.orig/locale/newlocale.c	2004-07-16 19:05:49 +0000
-+++ glibc-2.3.5/locale/newlocale.c	2005-05-09 11:10:02 +0000
+--- glibc-2.3.5.orig/locale/newlocale.c	2004-07-16 23:05:49 +0400
++++ glibc-2.3.5/locale/newlocale.c	2005-05-14 23:03:59 +0400
 @@ -104,7 +104,7 @@ __newlocale (int category_mask, const ch
    locale_path = NULL;
    locale_path_len = 0;
@@ -374,8 +314,8 @@ diff -uprk.orig glibc-2.3.5.orig/locale/newlocale.c glibc-2.3.5/locale/newlocale
      {
        if (__argz_create_sep (locpath_var, ':',
 diff -uprk.orig glibc-2.3.5.orig/locale/setlocale.c glibc-2.3.5/locale/setlocale.c
---- glibc-2.3.5.orig/locale/setlocale.c	2004-08-04 21:55:05 +0000
-+++ glibc-2.3.5/locale/setlocale.c	2005-05-09 11:10:02 +0000
+--- glibc-2.3.5.orig/locale/setlocale.c	2004-08-05 01:55:05 +0400
++++ glibc-2.3.5/locale/setlocale.c	2005-05-14 23:03:59 +0400
 @@ -237,7 +237,7 @@ setlocale (int category, const char *loc
    locale_path = NULL;
    locale_path_len = 0;
@@ -386,8 +326,8 @@ diff -uprk.orig glibc-2.3.5.orig/locale/setlocale.c glibc-2.3.5/locale/setlocale
      {
        if (__argz_create_sep (locpath_var, ':',
 diff -uprk.orig glibc-2.3.5.orig/malloc/arena.c glibc-2.3.5/malloc/arena.c
---- glibc-2.3.5.orig/malloc/arena.c	2005-03-07 22:46:24 +0000
-+++ glibc-2.3.5/malloc/arena.c	2005-05-09 11:10:02 +0000
+--- glibc-2.3.5.orig/malloc/arena.c	2005-03-08 01:46:24 +0300
++++ glibc-2.3.5/malloc/arena.c	2005-05-14 23:03:59 +0400
 @@ -456,10 +456,10 @@ ptmalloc_init (void)
  #  undef NO_STARTER
  # endif
@@ -420,8 +360,8 @@ diff -uprk.orig glibc-2.3.5.orig/malloc/arena.c glibc-2.3.5/malloc/arena.c
  		  if (memcmp (envline, "TRIM_THRESHOLD_", 15) == 0)
  		    mALLOPt(M_TRIM_THRESHOLD, atoi(&envline[16]));
 diff -uprk.orig glibc-2.3.5.orig/malloc/memusage.c glibc-2.3.5/malloc/memusage.c
---- glibc-2.3.5.orig/malloc/memusage.c	2004-08-10 04:11:50 +0000
-+++ glibc-2.3.5/malloc/memusage.c	2005-05-09 11:10:02 +0000
+--- glibc-2.3.5.orig/malloc/memusage.c	2004-08-10 08:11:50 +0400
++++ glibc-2.3.5/malloc/memusage.c	2005-05-14 23:03:59 +0400
 @@ -193,7 +193,7 @@ int_handler (int signo)
  static void
  me (void)
@@ -468,8 +408,8 @@ diff -uprk.orig glibc-2.3.5.orig/malloc/memusage.c glibc-2.3.5/malloc/memusage.c
      }
  }
 diff -uprk.orig glibc-2.3.5.orig/nis/nis_defaults.c glibc-2.3.5/nis/nis_defaults.c
---- glibc-2.3.5.orig/nis/nis_defaults.c	2004-10-24 20:28:28 +0000
-+++ glibc-2.3.5/nis/nis_defaults.c	2005-05-09 12:25:05 +0000
+--- glibc-2.3.5.orig/nis/nis_defaults.c	2004-10-25 00:28:28 +0400
++++ glibc-2.3.5/nis/nis_defaults.c	2005-05-14 23:03:59 +0400
 @@ -379,7 +379,7 @@ __nis_default_owner (char *defaults)
      }
    else
@@ -510,8 +450,8 @@ diff -uprk.orig glibc-2.3.5.orig/nis/nis_defaults.c glibc-2.3.5/nis/nis_defaults
  
    return result;
 diff -uprk.orig glibc-2.3.5.orig/nis/nis_local_names.c glibc-2.3.5/nis/nis_local_names.c
---- glibc-2.3.5.orig/nis/nis_local_names.c	2004-10-24 20:28:28 +0000
-+++ glibc-2.3.5/nis/nis_local_names.c	2005-05-09 11:26:35 +0000
+--- glibc-2.3.5.orig/nis/nis_local_names.c	2004-10-25 00:28:28 +0400
++++ glibc-2.3.5/nis/nis_local_names.c	2005-05-14 23:03:59 +0400
 @@ -30,7 +30,7 @@ nis_local_group (void)
  
    char *cptr;
@@ -522,8 +462,8 @@ diff -uprk.orig glibc-2.3.5.orig/nis/nis_local_names.c glibc-2.3.5/nis/nis_local
      {
        char *cp = stpcpy (__nisgroup, cptr);
 diff -uprk.orig glibc-2.3.5.orig/nis/nis_subr.c glibc-2.3.5/nis/nis_subr.c
---- glibc-2.3.5.orig/nis/nis_subr.c	2004-10-24 20:28:28 +0000
-+++ glibc-2.3.5/nis/nis_subr.c	2005-05-09 11:10:02 +0000
+--- glibc-2.3.5.orig/nis/nis_subr.c	2004-10-25 00:28:28 +0400
++++ glibc-2.3.5/nis/nis_subr.c	2005-05-14 23:03:59 +0400
 @@ -152,7 +152,7 @@ nis_getnames (const_nis_name name)
      }
  
@@ -534,8 +474,8 @@ diff -uprk.orig glibc-2.3.5.orig/nis/nis_subr.c glibc-2.3.5/nis/nis_subr.c
      path = strdupa ("$");
    else
 diff -uprk.orig glibc-2.3.5.orig/posix/execvp.c glibc-2.3.5/posix/execvp.c
---- glibc-2.3.5.orig/posix/execvp.c	2005-05-09 11:07:47 +0000
-+++ glibc-2.3.5/posix/execvp.c	2005-05-09 11:31:08 +0000
+--- glibc-2.3.5.orig/posix/execvp.c	2005-05-14 23:02:42 +0400
++++ glibc-2.3.5/posix/execvp.c	2005-05-14 23:03:59 +0400
 @@ -87,19 +87,18 @@ execvp (file, argv)
      }
    else
@@ -562,8 +502,8 @@ diff -uprk.orig glibc-2.3.5.orig/posix/execvp.c glibc-2.3.5/posix/execvp.c
  	}
  
 diff -uprk.orig glibc-2.3.5.orig/resolv/res_hconf.c glibc-2.3.5/resolv/res_hconf.c
---- glibc-2.3.5.orig/resolv/res_hconf.c	2004-06-01 22:17:39 +0000
-+++ glibc-2.3.5/resolv/res_hconf.c	2005-05-09 11:10:02 +0000
+--- glibc-2.3.5.orig/resolv/res_hconf.c	2004-06-02 02:17:39 +0400
++++ glibc-2.3.5/resolv/res_hconf.c	2005-05-14 23:03:59 +0400
 @@ -431,7 +431,7 @@ do_init (void)
  
    memset (&_res_hconf, '\0', sizeof (_res_hconf));
@@ -611,8 +551,8 @@ diff -uprk.orig glibc-2.3.5.orig/resolv/res_hconf.c glibc-2.3.5/resolv/res_hconf
      {
        _res_hconf.num_trimdomains = 0;
 diff -uprk.orig glibc-2.3.5.orig/resolv/res_init.c glibc-2.3.5/resolv/res_init.c
---- glibc-2.3.5.orig/resolv/res_init.c	2005-05-09 11:07:47 +0000
-+++ glibc-2.3.5/resolv/res_init.c	2005-05-09 11:10:02 +0000
+--- glibc-2.3.5.orig/resolv/res_init.c	2005-05-14 23:02:48 +0400
++++ glibc-2.3.5/resolv/res_init.c	2005-05-14 23:03:59 +0400
 @@ -201,7 +201,7 @@ __res_vinit(res_state statp, int preinit
  #endif
  
@@ -632,8 +572,8 @@ diff -uprk.orig glibc-2.3.5.orig/resolv/res_init.c glibc-2.3.5/resolv/res_init.c
  	statp->options |= RES_INIT;
  	return (0);
 diff -uprk.orig glibc-2.3.5.orig/resolv/res_query.c glibc-2.3.5/resolv/res_query.c
---- glibc-2.3.5.orig/resolv/res_query.c	2004-10-18 05:09:59 +0000
-+++ glibc-2.3.5/resolv/res_query.c	2005-05-09 11:10:02 +0000
+--- glibc-2.3.5.orig/resolv/res_query.c	2004-10-18 09:09:59 +0400
++++ glibc-2.3.5/resolv/res_query.c	2005-05-14 23:03:59 +0400
 @@ -453,7 +453,7 @@ res_hostalias(const res_state statp, con
  
  	if (statp->options & RES_NOALIASES)
@@ -643,21 +583,9 @@ diff -uprk.orig glibc-2.3.5.orig/resolv/res_query.c glibc-2.3.5/resolv/res_query
  	if (file == NULL || (fp = fopen(file, "r")) == NULL)
  		return (NULL);
  	setbuf(fp, NULL);
-diff -uprk.orig glibc-2.3.5.orig/stdlib/Versions glibc-2.3.5/stdlib/Versions
---- glibc-2.3.5.orig/stdlib/Versions	2004-05-03 21:25:53 +0000
-+++ glibc-2.3.5/stdlib/Versions	2005-05-09 11:10:02 +0000
-@@ -90,6 +90,8 @@ libc {
-     # used by new G++ ABI
-     __cxa_atexit; __cxa_finalize;
-   }
-+  GLIBC_2.2.4 {
-+    __locale_getenv;
-   GLIBC_2.3 {
-     # Silent change in SUS.
-     realpath;
 diff -uprk.orig glibc-2.3.5.orig/stdlib/fmtmsg.c glibc-2.3.5/stdlib/fmtmsg.c
---- glibc-2.3.5.orig/stdlib/fmtmsg.c	2005-02-16 10:37:10 +0000
-+++ glibc-2.3.5/stdlib/fmtmsg.c	2005-05-09 11:10:02 +0000
+--- glibc-2.3.5.orig/stdlib/fmtmsg.c	2005-02-16 13:37:10 +0300
++++ glibc-2.3.5/stdlib/fmtmsg.c	2005-05-14 23:03:59 +0400
 @@ -226,8 +226,8 @@ fmtmsg (long int classification, const c
  static void
  init (void)
@@ -669,51 +597,9 @@ diff -uprk.orig glibc-2.3.5.orig/stdlib/fmtmsg.c glibc-2.3.5/stdlib/fmtmsg.c
  
    if (msgverb_var != NULL && msgverb_var[0] != '\0')
      {
-diff -uprk.orig glibc-2.3.5.orig/stdlib/secure-getenv.c glibc-2.3.5/stdlib/secure-getenv.c
---- glibc-2.3.5.orig/stdlib/secure-getenv.c	2002-08-03 06:29:26 +0000
-+++ glibc-2.3.5/stdlib/secure-getenv.c	2005-05-09 11:10:02 +0000
-@@ -18,6 +18,7 @@
- 
- #include <stdlib.h>
- #include <unistd.h>
-+#include <string.h>
- 
- /* Some programs and especially the libc itself have to be careful
-    what values to accept from the environment.  This special version
-@@ -29,3 +30,15 @@ __secure_getenv (name)
-   return __libc_enable_secure ? NULL : getenv (name);
- }
- libc_hidden_def (__secure_getenv)
-+
-+char *
-+__locale_getenv (name)
-+     const char *name;
-+{
-+  char *value = getenv (name);
-+  if ( value &&
-+      __libc_enable_secure && (('.' == value[0]) || strchr(value, '/')) )
-+    return NULL;
-+  return value;
-+}
-+libc_hidden_def (__locale_getenv)
-diff -uprk.orig glibc-2.3.5.orig/stdlib/stdlib.h glibc-2.3.5/stdlib/stdlib.h
---- glibc-2.3.5.orig/stdlib/stdlib.h	2004-12-01 19:54:34 +0000
-+++ glibc-2.3.5/stdlib/stdlib.h	2005-05-09 11:10:02 +0000
-@@ -658,6 +658,11 @@ __END_NAMESPACE_STD
-    programs is running with SUID or SGID enabled.  */
- extern char *__secure_getenv (__const char *__name) __THROW __nonnull ((1));
- 
-+/* This function is similar to the above but returns NULL if the
-+   programs is running with SUID or SGID enabled and value starts
-+   with "." symbol or contains "/" symbols.  */
-+extern char *__locale_getenv (__const char *__name) __THROW;
-+
- #if defined __USE_SVID || defined __USE_XOPEN
- /* The SVID says this is in <stdio.h>, but this seems a better place.	*/
- /* Put STRING, which is of the form "NAME=VALUE", in the environment.
 diff -uprk.orig glibc-2.3.5.orig/sunrpc/rpc_svcout.c glibc-2.3.5/sunrpc/rpc_svcout.c
---- glibc-2.3.5.orig/sunrpc/rpc_svcout.c	2004-10-17 14:59:39 +0000
-+++ glibc-2.3.5/sunrpc/rpc_svcout.c	2005-05-09 11:10:02 +0000
+--- glibc-2.3.5.orig/sunrpc/rpc_svcout.c	2004-10-17 18:59:39 +0400
++++ glibc-2.3.5/sunrpc/rpc_svcout.c	2005-05-14 23:03:59 +0400
 @@ -901,7 +901,7 @@ write_pm_most (const char *infile, int n
    f_print (fout, "\t\t_rpcpmstart = 1;\n");
    if (logflag)
@@ -724,34 +610,91 @@ diff -uprk.orig glibc-2.3.5.orig/sunrpc/rpc_svcout.c glibc-2.3.5/sunrpc/rpc_svco
    print_err_message ("\t\t\t");
    f_print (fout, "\t\t} else if ((nconf = getnetconfigent(netid)) == NULL) {\n");
 diff -uprk.orig glibc-2.3.5.orig/sysdeps/generic/dl-sysdep.c glibc-2.3.5/sysdeps/generic/dl-sysdep.c
---- glibc-2.3.5.orig/sysdeps/generic/dl-sysdep.c	2004-11-06 00:24:47 +0000
-+++ glibc-2.3.5/sysdeps/generic/dl-sysdep.c	2005-05-09 11:10:02 +0000
-@@ -192,7 +192,7 @@ _dl_sysdep_start (void **start_argptr,
- 
-       /* If one of the two pairs of IDs does not match this is a setuid
- 	 or setgid run.  */
--      INTUSE(__libc_enable_secure) = uid | gid;
-+      INTUSE(__libc_enable_secure) = (uid != 0) | ((gid != 0) << 1);
-     }
+--- glibc-2.3.5.orig/sysdeps/generic/dl-sysdep.c	2004-11-06 03:24:47 +0300
++++ glibc-2.3.5/sysdeps/generic/dl-sysdep.c	2005-05-14 23:37:18 +0400
+@@ -83,14 +83,13 @@ _dl_sysdep_start (void **start_argptr,
+   ElfW(Word) phnum = 0;
+   ElfW(Addr) user_entry;
+   ElfW(auxv_t) *av;
+-#ifdef HAVE_AUX_SECURE
++  int enable_secure = 0;
++#if 0
+ # define set_seen(tag) (tag)	/* Evaluate for the side effects.  */
+-# define set_seen_secure() ((void) 0)
+ #else
+   uid_t uid = 0;
+   gid_t gid = 0;
+   unsigned int seen = 0;
+-# define set_seen_secure() (seen = -1)
+ # ifdef HAVE_AUX_XID
+ #  define set_seen(tag) (tag)	/* Evaluate for the side effects.  */
+ # else
+@@ -129,7 +128,6 @@ _dl_sysdep_start (void **start_argptr,
+ 	_dl_base_addr = av->a_un.a_val;
+ 	break;
+ #endif
+-#ifndef HAVE_AUX_SECURE
+       case AT_UID:
+       case AT_EUID:
+ 	uid ^= av->a_un.a_val;
+@@ -138,12 +136,8 @@ _dl_sysdep_start (void **start_argptr,
+       case AT_EGID:
+ 	gid ^= av->a_un.a_val;
+ 	break;
+-#endif
+       case AT_SECURE:
+-#ifndef HAVE_AUX_SECURE
+-	seen = -1;
+-#endif
+-	INTUSE(__libc_enable_secure) = av->a_un.a_val;
++	enable_secure = av->a_un.a_val;
+ 	break;
+       case AT_PLATFORM:
+ 	GLRO(dl_platform) = av->a_un.a_ptr;
+@@ -176,8 +170,6 @@ _dl_sysdep_start (void **start_argptr,
+   DL_SYSDEP_OSCHECK (dl_fatal);
  #endif
  
+-#ifndef HAVE_AUX_SECURE
+-  if (seen != -1)
+     {
+       /* Fill in the values we have not gotten from the kernel through the
+ 	 auxiliary vector.  */
+@@ -189,12 +181,11 @@ _dl_sysdep_start (void **start_argptr,
+       SEE (GID, gid, gid);
+       SEE (EGID, gid, egid);
+ # endif
+-
+-      /* If one of the two pairs of IDs does not match this is a setuid
+-	 or setgid run.  */
+-      INTUSE(__libc_enable_secure) = uid | gid;
+     }
+-#endif
++  /* If one of the two pairs of IDs does not match
++     this is a setuid or setgid run.  */
++  enable_secure |= ((uid != 0) << 1) | ((gid != 0) << 2);
++  INTUSE(__libc_enable_secure) = enable_secure;
+ 
+ #ifndef HAVE_AUX_PAGESIZE
+   if (GLRO(dl_pagesize) == 0)
 diff -uprk.orig glibc-2.3.5.orig/sysdeps/generic/enbl-secure.c glibc-2.3.5/sysdeps/generic/enbl-secure.c
---- glibc-2.3.5.orig/sysdeps/generic/enbl-secure.c	2003-05-06 06:33:13 +0000
-+++ glibc-2.3.5/sysdeps/generic/enbl-secure.c	2005-05-09 11:10:02 +0000
-@@ -32,6 +32,8 @@ void
+--- glibc-2.3.5.orig/sysdeps/generic/enbl-secure.c	2003-05-06 10:33:13 +0400
++++ glibc-2.3.5/sysdeps/generic/enbl-secure.c	2005-05-14 23:30:02 +0400
+@@ -32,6 +32,9 @@ void
  __libc_init_secure (void)
  {
    if (__libc_enable_secure_decided == 0)
 -    __libc_enable_secure = (__geteuid () != __getuid ()
 -			    || __getegid () != __getgid ());
 +    {
-+      __libc_enable_secure = __geteuid () != __getuid ();
-+      __libc_enable_secure |= (__getegid () != __getgid ()) << 1;
++      __libc_enable_secure =
++	((__geteuid () != __getuid ()) << 1) |
++	((__getegid () != __getgid ()) << 2);
 +    }
  }
 diff -uprk.orig glibc-2.3.5.orig/sysdeps/generic/glob.c glibc-2.3.5/sysdeps/generic/glob.c
---- glibc-2.3.5.orig/sysdeps/generic/glob.c	2004-10-27 18:21:02 +0000
-+++ glibc-2.3.5/sysdeps/generic/glob.c	2005-05-09 11:10:02 +0000
+--- glibc-2.3.5.orig/sysdeps/generic/glob.c	2004-10-27 22:21:02 +0400
++++ glibc-2.3.5/sysdeps/generic/glob.c	2005-05-14 23:03:59 +0400
 @@ -171,7 +171,7 @@ extern int errno;
  # define	ANSI_STRING
  #else	/* No standard headers.  */
@@ -771,8 +714,8 @@ diff -uprk.orig glibc-2.3.5.orig/sysdeps/generic/glob.c glibc-2.3.5/sysdeps/gene
  	  if (home_dir == NULL || home_dir[0] == '\0')
  	    home_dir = "SYS:";
 diff -uprk.orig glibc-2.3.5.orig/sysdeps/generic/segfault.c glibc-2.3.5/sysdeps/generic/segfault.c
---- glibc-2.3.5.orig/sysdeps/generic/segfault.c	2004-10-14 02:22:13 +0000
-+++ glibc-2.3.5/sysdeps/generic/segfault.c	2005-05-09 11:10:02 +0000
+--- glibc-2.3.5.orig/sysdeps/generic/segfault.c	2004-10-14 06:22:13 +0400
++++ glibc-2.3.5/sysdeps/generic/segfault.c	2005-05-14 23:03:59 +0400
 @@ -149,7 +149,7 @@ __attribute__ ((constructor))
  install_handler (void)
  {
@@ -801,9 +744,9 @@ diff -uprk.orig glibc-2.3.5.orig/sysdeps/generic/segfault.c glibc-2.3.5/sysdeps/
      {
        int ret = access (name, R_OK | W_OK);
 diff -uprk.orig glibc-2.3.5.orig/sysdeps/generic/unsecvars.h glibc-2.3.5/sysdeps/generic/unsecvars.h
---- glibc-2.3.5.orig/sysdeps/generic/unsecvars.h	2004-12-07 06:54:31 +0000
-+++ glibc-2.3.5/sysdeps/generic/unsecvars.h	2005-05-09 12:28:02 +0000
-@@ -2,23 +2,83 @@
+--- glibc-2.3.5.orig/sysdeps/generic/unsecvars.h	2004-12-07 09:54:31 +0300
++++ glibc-2.3.5/sysdeps/generic/unsecvars.h	2005-05-14 23:03:59 +0400
+@@ -2,23 +2,82 @@
     all stuffed in a single string which means they have to be terminated
     with a '\0' explicitly.  */
  #define UNSECURE_ENVVARS \
@@ -831,8 +774,8 @@ diff -uprk.orig glibc-2.3.5.orig/sysdeps/generic/unsecvars.h glibc-2.3.5/sysdeps
 +  "GCONV_PATH\0"							\
 +  "GETCONF_DIR\0"							\
 +  "GMON_OUT_PREFIX\0"							\
-+  "HES_DOMAIN\0"							\
 +  "HESIOD_CONFIG\0"							\
++  "HES_DOMAIN\0"							\
 +  "HOSTALIASES\0"							\
 +  "LD_BIND_NOT\0"							\
 +  "LD_BIND_NOW\0"							\
@@ -891,24 +834,23 @@ diff -uprk.orig glibc-2.3.5.orig/sysdeps/generic/unsecvars.h glibc-2.3.5/sysdeps
 +#define RESTRICTED_ENVVARS \
 +  "LANG\0"								\
 +  "LANGUAGE\0"								\
-+  "LINGUAS\0"								\
-+  "LC_CTYPE\0"								\
-+  "LC_NUMERIC\0"							\
-+  "LC_TIME\0"								\
-+  "LC_COLLATE\0"							\
-+  "LC_MONETARY\0"							\
-+  "LC_MESSAGES\0"							\
-+  "LC_PAPER\0"								\
-+  "LC_NAME\0"								\
 +  "LC_ADDRESS\0"							\
-+  "LC_TELEPHONE\0"							\
-+  "LC_MEASUREMENT\0"							\
-+  "LC_IDENTIFICATION\0"							\
 +  "LC_ALL\0"								\
++  "LC_COLLATE\0"							\
++  "LC_CTYPE\0"								\
++  "LC_IDENTIFICATION\0"							\
++  "LC_MEASUREMENT\0"							\
++  "LC_MESSAGES\0"							\
++  "LC_MONETARY\0"							\
++  "LC_NAME\0"								\
++  "LC_NUMERIC\0"							\
++  "LC_PAPER\0"								\
++  "LC_TELEPHONE\0"							\
++  "LC_TIME\0"								\
 +  "LC_XXX\0"
 diff -uprk.orig glibc-2.3.5.orig/sysdeps/generic/wordexp.c glibc-2.3.5/sysdeps/generic/wordexp.c
---- glibc-2.3.5.orig/sysdeps/generic/wordexp.c	2005-02-16 10:56:31 +0000
-+++ glibc-2.3.5/sysdeps/generic/wordexp.c	2005-05-09 11:10:02 +0000
+--- glibc-2.3.5.orig/sysdeps/generic/wordexp.c	2005-02-16 13:56:31 +0300
++++ glibc-2.3.5/sysdeps/generic/wordexp.c	2005-05-14 23:03:59 +0400
 @@ -315,7 +315,7 @@ parse_tilde (char **word, size_t *word_l
  	 results are unspecified.  We do a lookup on the uid if
  	 HOME is unset. */
@@ -937,8 +879,8 @@ diff -uprk.orig glibc-2.3.5.orig/sysdeps/generic/wordexp.c glibc-2.3.5/sysdeps/g
    if (!ifs)
      /* IFS unset - use <space><tab><newline>. */
 diff -uprk.orig glibc-2.3.5.orig/sysdeps/posix/spawni.c glibc-2.3.5/sysdeps/posix/spawni.c
---- glibc-2.3.5.orig/sysdeps/posix/spawni.c	2004-09-12 18:05:00 +0000
-+++ glibc-2.3.5/sysdeps/posix/spawni.c	2005-05-09 11:10:02 +0000
+--- glibc-2.3.5.orig/sysdeps/posix/spawni.c	2004-09-12 22:05:00 +0400
++++ glibc-2.3.5/sysdeps/posix/spawni.c	2005-05-14 23:03:59 +0400
 @@ -216,16 +216,15 @@ __spawni (pid_t *pid, const char *file,
      }
  
@@ -962,9 +904,9 @@ diff -uprk.orig glibc-2.3.5.orig/sysdeps/posix/spawni.c glibc-2.3.5/sysdeps/posi
  
    len = strlen (file) + 1;
 diff -uprk.orig glibc-2.3.5.orig/sysdeps/unix/sysv/linux/dl-librecon.h glibc-2.3.5/sysdeps/unix/sysv/linux/dl-librecon.h
---- glibc-2.3.5.orig/sysdeps/unix/sysv/linux/dl-librecon.h	2004-03-05 10:14:48 +0000
-+++ glibc-2.3.5/sysdeps/unix/sysv/linux/dl-librecon.h	2005-05-09 11:10:02 +0000
-@@ -53,7 +53,7 @@ _dl_osversion_init (char *assume_kernel)
+--- glibc-2.3.5.orig/sysdeps/unix/sysv/linux/dl-librecon.h	2005-05-14 23:02:47 +0400
++++ glibc-2.3.5/sysdeps/unix/sysv/linux/dl-librecon.h	2005-05-14 23:03:59 +0400
+@@ -57,7 +57,7 @@ _dl_osversion_init (char *assume_kernel)
  
  #define DL_OSVERSION_INIT \
    do {									      \
@@ -973,8 +915,9 @@ diff -uprk.orig glibc-2.3.5.orig/sysdeps/unix/sysv/linux/dl-librecon.h glibc-2.3
      if (assume_kernel)							      \
        _dl_osversion_init (assume_kernel);				      \
    } while (0)
---- glibc-2.3.5/sysdeps/unix/sysv/linux/i386/dl-librecon.h.orig	2004-10-14 05:53:55 +0400
-+++ glibc-2.3.5/sysdeps/unix/sysv/linux/i386/dl-librecon.h	2005-05-09 11:10:02 +0000
+diff -uprk.orig glibc-2.3.5.orig/sysdeps/unix/sysv/linux/i386/dl-librecon.h glibc-2.3.5/sysdeps/unix/sysv/linux/i386/dl-librecon.h
+--- glibc-2.3.5.orig/sysdeps/unix/sysv/linux/i386/dl-librecon.h	2004-10-14 05:53:55 +0400
++++ glibc-2.3.5/sysdeps/unix/sysv/linux/i386/dl-librecon.h	2005-05-14 23:03:59 +0400
 @@ -57,6 +57,7 @@
  /* Extra unsecure variables.  The names are all stuffed in a single
     string which means they have to be terminated with a '\0' explicitly.  */
@@ -984,8 +927,8 @@ diff -uprk.orig glibc-2.3.5.orig/sysdeps/unix/sysv/linux/dl-librecon.h glibc-2.3
    "LD_AOUT_PRELOAD\0"
  
 diff -uprk.orig glibc-2.3.5.orig/time/getdate.c glibc-2.3.5/time/getdate.c
---- glibc-2.3.5.orig/time/getdate.c	2003-09-04 08:25:11 +0000
-+++ glibc-2.3.5/time/getdate.c	2005-05-09 11:10:02 +0000
+--- glibc-2.3.5.orig/time/getdate.c	2003-09-04 12:25:11 +0400
++++ glibc-2.3.5/time/getdate.c	2005-05-14 23:03:59 +0400
 @@ -115,7 +115,7 @@ __getdate_r (const char *string, struct 
    struct stat64 st;
    int mday_ok = 0;
@@ -996,8 +939,8 @@ diff -uprk.orig glibc-2.3.5.orig/time/getdate.c glibc-2.3.5/time/getdate.c
      return 1;
  
 diff -uprk.orig glibc-2.3.5.orig/time/tzfile.c glibc-2.3.5/time/tzfile.c
---- glibc-2.3.5.orig/time/tzfile.c	2004-11-20 20:23:03 +0000
-+++ glibc-2.3.5/time/tzfile.c	2005-05-09 11:10:02 +0000
+--- glibc-2.3.5.orig/time/tzfile.c	2004-11-20 23:23:03 +0300
++++ glibc-2.3.5/time/tzfile.c	2005-05-14 23:03:59 +0400
 @@ -133,7 +133,7 @@ __tzfile_read (const char *file, size_t 
        unsigned int len, tzdir_len;
        char *new, *tmp;
@@ -1008,8 +951,8 @@ diff -uprk.orig glibc-2.3.5.orig/time/tzfile.c glibc-2.3.5/time/tzfile.c
  	{
  	  tzdir = default_tzdir;
 diff -uprk.orig glibc-2.3.5.orig/time/tzset.c glibc-2.3.5/time/tzset.c
---- glibc-2.3.5.orig/time/tzset.c	2004-12-06 22:50:41 +0000
-+++ glibc-2.3.5/time/tzset.c	2005-05-09 11:27:52 +0000
+--- glibc-2.3.5.orig/time/tzset.c	2004-12-07 01:50:41 +0300
++++ glibc-2.3.5/time/tzset.c	2005-05-14 23:03:59 +0400
 @@ -158,8 +158,11 @@ tzset_internal (always, explicit)
      return;
    is_initialized = 1;
@@ -1017,10 +960,10 @@ diff -uprk.orig glibc-2.3.5.orig/time/tzset.c glibc-2.3.5/time/tzset.c
 -  /* Examine the TZ environment variable.  */
 -  tz = getenv ("TZ");
 +  /* Examine the TZ environment variable.  This doesn't really have to be
-+     a __locale_getenv() call as __tzfile_read() tries to only read files
++     a __secure_getenv() call as __tzfile_read() tries to only read files
 +     found under a trusted directory, but this helps reduce the amount of
 +     security-critical code.  */
-+  tz = __locale_getenv ("TZ");
++  tz = __secure_getenv ("TZ");
    if (tz == NULL && !explicit)
      /* Use the site-wide default.  This is a file name which means we
         would not see changes to the file if we compare only the file

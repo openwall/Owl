@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.90 2005/05/14 00:41:23 ldv Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.91 2005/05/15 19:44:16 ldv Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -11,7 +11,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 0.4.7
-Release: owl1
+Release: owl2
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/%name/
@@ -455,10 +455,16 @@ fi
 %files compat-fake
 
 %changelog
+* Sun May 15 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.3.5-owl2
+- Reworked sanitize-env patch to take into account AT_SECURE value
+of the auxiliary vector in addition to AT_*ID values.
+- Removed unneeded __locale_getenv() function which was introduced
+in 2.3.3.2004061600-owl1.
+
 * Fri May 13 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.3.5-owl1
 - Updated to 2.3.5 with changes from glibc-2_3-branch snapshot 20050427.
-- Included GNU Libidn add-on.
-- Updated patches which was imported from ALT.
+- Enabled GNU Libidn add-on.
+- Updated patches which were imported from ALT.
 - Imported SuSE patch which adds -a option to getconf utility.
 - Disabled packaging of the obsolete pt_chown helper.
 - Corrected info files installation.
