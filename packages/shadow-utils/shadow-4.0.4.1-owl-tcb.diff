@@ -2015,7 +2015,7 @@ diff -uNrp shadow-4.0.4.1.orig/src/userdel.c shadow-4.0.4.1/src/userdel.c
  #include "prototypes.h"
  #include "defines.h"
  #include "getdef.h"
-@@ -698,6 +706,45 @@ static struct pam_conv conv = {
+@@ -698,6 +706,44 @@ static struct pam_conv conv = {
  	misc_conv, NULL
  };
  #endif				/* USE_PAM */
@@ -2054,7 +2054,6 @@ diff -uNrp shadow-4.0.4.1.orig/src/userdel.c shadow-4.0.4.1/src/userdel.c
 +			user_name, strerror(errno));
 +		ret = 1;
 +	}
-+	free(buf);
 +	return ret;
 +}
 +#endif
