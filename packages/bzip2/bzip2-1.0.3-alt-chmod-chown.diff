@@ -1,5 +1,6 @@
---- bzip2-1.0.3/bzip2.c.orig	2005-04-10 00:06:41 +0400
-+++ bzip2-1.0.3/bzip2.c	2005-04-10 00:22:28 +0400
+diff -uprk.orig bzip2-1.0.3.orig/bzip2.c bzip2-1.0.3/bzip2.c
+--- bzip2-1.0.3.orig/bzip2.c	2005-05-16 12:55:40 +0000
++++ bzip2-1.0.3/bzip2.c	2005-05-16 12:56:36 +0000
 @@ -459,12 +459,6 @@ void compressStream ( FILE *stream, FILE
     if (ferror(zStream)) goto errhandler_io;
     ret = fflush ( zStream );
@@ -26,7 +27,15 @@
     if (verbosity >= 2) fprintf ( stderr, "\n    " );
     return True;
  
-@@ -1132,7 +1120,7 @@ void saveInputFileMetaInfo ( Char *srcNa
+@@ -616,7 +604,6 @@ Bool uncompressStream ( FILE *zStream, F
+          compressedStreamEOF();
+       case BZ_DATA_ERROR_MAGIC:
+          if (zStream != stdin) fclose(zStream);
+-         if (stream != stdout) fclose(stream);
+          if (streamNo == 1) {
+             return False;
+          } else {
+@@ -1132,7 +1119,7 @@ void saveInputFileMetaInfo ( Char *srcNa
  
  
  static 
@@ -35,7 +44,7 @@
  {
  #  if BZ_UNIX
     IntNative      retVal;
-@@ -1141,13 +1129,13 @@ void applySavedMetaInfoToOutputFile ( Ch
+@@ -1141,13 +1128,13 @@ void applySavedMetaInfoToOutputFile ( Ch
     uTimBuf.actime = fileMetaInfo.st_atime;
     uTimBuf.modtime = fileMetaInfo.st_mtime;
  
@@ -51,7 +60,7 @@
     /* chown() will in many cases return with EPERM, which can
        be safely ignored.
     */
-@@ -1369,11 +1357,10 @@ void compress ( Char *name )
+@@ -1369,11 +1356,10 @@ void compress ( Char *name )
     outputHandleJustInCase = outStr;
     deleteOutputOnInterrupt = True;
     compressStream ( inStr, outStr );
@@ -64,7 +73,7 @@
        deleteOutputOnInterrupt = False;
        if ( !keepInputFiles ) {
           IntNative retVal = remove ( inName );
-@@ -1381,6 +1368,9 @@ void compress ( Char *name )
+@@ -1381,6 +1367,9 @@ void compress ( Char *name )
        }
     }
  
@@ -74,7 +83,7 @@
     deleteOutputOnInterrupt = False;
  }
  
-@@ -1546,12 +1536,11 @@ void uncompress ( Char *name )
+@@ -1546,12 +1535,11 @@ void uncompress ( Char *name )
     outputHandleJustInCase = outStr;
     deleteOutputOnInterrupt = True;
     magicNumberOK = uncompressStream ( inStr, outStr );
@@ -88,7 +97,7 @@
           deleteOutputOnInterrupt = False;
           if ( !keepInputFiles ) {
              IntNative retVal = remove ( inName );
-@@ -1566,6 +1555,10 @@ void uncompress ( Char *name )
+@@ -1566,6 +1554,10 @@ void uncompress ( Char *name )
           ERROR_IF_NOT_ZERO ( retVal );
        }
     }

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/bzip2/bzip2.spec,v 1.21 2005/05/07 14:17:20 ldv Exp $
+# $Id: Owl/packages/bzip2/bzip2.spec,v 1.22 2005/05/16 13:27:30 ldv Exp $
 
 Summary: An extremely powerful file compression utility.
 Name: bzip2
 Version: 1.0.3
-Release: owl2
+Release: owl3
 License: BSD
 Group: Applications/File
 URL: http://www.bzip.org
@@ -101,6 +101,9 @@ fi
 %_infodir/bzip2.*
 
 %changelog
+* Mon May 16 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.0.3-owl3
+- Fixed double fclose bug in bunzip2 introduced in 1.0.3-owl1.
+
 * Sat May 07 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.0.3-owl2
 - Imported several patches from ALT: documentation in texinfo format,
 autotools support, change of bzip2 -h/-L/-V options behaviour to
