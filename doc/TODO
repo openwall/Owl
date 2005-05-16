@@ -69,6 +69,11 @@ directive support in /etc/ld.so.conf.
 [ASSIGNED: mci@]
 Update these to latest releases once in a while.
 
+[PRIORITY: medium]
+[ASSIGNED: ldv@]
+Update diffutils to a version producing the same format diff files as
+the one currently in ALT Sisyphus.
+
 
 	coreutils.
 
@@ -596,4 +601,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.72 2005/05/15 20:32:20 ldv Exp $
+$Id: Owl/doc/TODO,v 1.73 2005/05/16 19:49:56 solar Exp $
