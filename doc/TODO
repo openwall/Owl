@@ -317,7 +317,10 @@ Also provide a silo.conf and generic kernel configuration for SPARC.
 
 [PRIORITY: low]
 [ASSIGNED: mci@]
-Migrate to MAKEDEV-C with proper modifications.
+Migrate to MAKEDEV-C with proper modifications.  Alternatively, if
+we'd only support Linux 2.6.x+ by the time, consider using udev:
+
+http://www.kernel.org/pub/linux/utils/kernel/hotplug/udev.html
 
 
 	owl-setup.
@@ -342,7 +345,8 @@ http://pilot.org.ua/etcnet/
 Unmount any tmpfs filesystems prior to invoking swapoff.  Otherwise,
 on swapoff, any swapped out data on tmpfs is first loaded into memory
 which may be taking a long time or may fail or cause other things to
-fail if there's insufficient physical memory available.
+fail if there's insufficient physical memory available.  In case we'd
+be supporting udev, make an exception for /dev.
 
 
 	pam.
@@ -601,4 +605,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.73 2005/05/16 19:49:56 solar Exp $
+$Id: Owl/doc/TODO,v 1.74 2005/05/16 23:33:08 solar Exp $
