@@ -12,6 +12,10 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2005/05/06 -
+2005/05/16	Package: bzip2
+Updated to 1.0.3.
+
 2005/05/15	Package: glibc
 Updated to 2.3.5 with post-release changes from 2.3-branch, patches
 from ALT Linux, Red Hat Fedora, and SuSE, and with our modifications.
@@ -27,16 +31,8 @@ References:
 http://www.isec.pl/vulnerabilities/isec-0023-coredump.txt
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-1263
 
-2005/05/07	Packages: coreutils, fileutils, sh-utils, textutils,
-		shadow-utils; Owl/build/installorder.conf
-Replaced fileutils, sh-utils, and textutils with coreutils (a recent
-CVS snapshot, post-5.3.0, with patches as maintained in ALT Linux
-Sisyphus).
-
-2005/05/06	Package: bzip2
-Updated to 1.0.3.
-
-2005/05/05	Package: cpio
+2005/05/05 -
+2005/05/11	Package: cpio
 SECURITY FIX	Severity: high, local, passive
 Updated to 2.6.  Added fixes for directory traversal (where a
 malicious archive could specify files to be extracted to outside of
@@ -44,6 +40,12 @@ the intended directory tree) and for certain race condition issues.
 References:
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-1229
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-1111
+
+2005/05/07	Packages: coreutils, fileutils, sh-utils, textutils,
+		shadow-utils; Owl/build/installorder.conf
+Replaced fileutils, sh-utils, and textutils with coreutils (a recent
+CVS snapshot, post-5.3.0, with patches as maintained in ALT Linux
+Sisyphus).
 
 2005/04/30	Package: bison
 Updated to 2.0.
@@ -435,4 +437,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.87 2005/05/15 04:32:56 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.88 2005/05/16 23:14:28 solar Exp $
