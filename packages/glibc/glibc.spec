@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.91 2005/05/15 19:44:16 ldv Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.92 2005/05/16 19:47:35 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -11,7 +11,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 0.4.7
-Release: owl2
+Release: owl3
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/%name/
@@ -455,6 +455,12 @@ fi
 %files compat-fake
 
 %changelog
+* Mon May 16 2005 Solar Designer <solar@owl.openwall.com> 2.3.5-owl3
+- Further changes to the sanitize-env patch: set the default (undecided)
+value of __libc_enable_secure to 0x7fffffff, make sure bit 0 is always set
+the same as it used to be in unpatched glibc, be safe in case the kernel
+passes multiple instances of AT_*ID.
+
 * Sun May 15 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.3.5-owl2
 - Reworked sanitize-env patch to take into account AT_SECURE value
 of the auxiliary vector in addition to AT_*ID values.
