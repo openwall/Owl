@@ -1,9 +1,9 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.47 2005/05/07 22:37:16 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.48 2005/05/16 13:26:09 ldv Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.4.1
-Release: owl8
+Release: owl9
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -237,6 +237,9 @@ fi
 %exclude %_mandir/man8/mkpasswd*
 
 %changelog
+* Mon May 16 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2:4.0.4.1-owl9
+- Fixed double free bug in userdel_rm_tcbdir().
+
 * Sun May 08 2005 Solar Designer <solar@owl.openwall.com> 2:4.0.4.1-owl8
 - The new coreutils' version of chgrp(1) complains on non-existing files
 even when invoked with "-f", so test for /etc/shadow presence explicitly.
