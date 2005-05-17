@@ -1,17 +1,18 @@
-# $Id: Owl/packages/diffutils/diffutils.spec,v 1.10 2004/11/23 22:40:45 mci Exp $
+# $Id: Owl/packages/diffutils/diffutils.spec,v 1.11 2005/05/17 15:13:29 ldv Exp $
 
 Summary: A GNU collection of diff utilities.
 Name: diffutils
-Version: 2.7
-Release: owl25
+Version: 2.8.7
+Release: owl1
 License: GPL
 Group: Applications/Text
-URL: http://www.gnu.org/software/diffutils/diffutils.html
-Source0: ftp://ftp.gnu.org/gnu/diffutils/diffutils-%version.tar.gz
-Source1: cmp.1
-Source2: diff3.1
-Source3: sdiff.1
-Patch0: diffutils-2.7-immunix-owl-tmp.diff
+URL: http://www.gnu.org/software/diffutils/
+Source0: ftp://alpha.gnu.org/pub/gnu/%name/%name-%version.tar.gz
+Patch0: diffutils-2.8.7-owl-info.diff
+Patch1: diffutils-2.8.7-rh-warnings.diff
+Patch2: diffutils-2.8.7-alt-tmp.diff
+Patch3: diffutils-2.8.7-alt-i18n.diff
+Patch4: diffutils-2.8.7-alt-backup_suffix.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
@@ -30,40 +31,51 @@ to merge two files interactively.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
 
 %build
-autoconf
+# Disable nanoseconds in diff output.
+export ac_cv_struct_st_mtim_nsec=no ac_cv_search_clock_gettime='none required'
+# Predefine location of the pr utility.
+export PR_PROGRAM=%_bindir/pr
 %configure
-make PR_PROGRAM=%_bindir/pr
+make
 
 %install
 rm -rf %buildroot
 %makeinstall
 
-cd %buildroot
-mkdir -p .%_mandir/man1
-for manpage in cmp.1 diff3.1 sdiff.1; do
-	install -m 644 $RPM_SOURCE_DIR/$manpage .%_mandir/man1/
-done
+# Remove unpackaged files if any
+rm -f %buildroot%_infodir/dir
 
 %post
-/sbin/install-info %_infodir/diff.info.gz %_infodir/dir \
-	--entry="* diff: (diff).                                 The GNU diff."
+/sbin/install-info %_infodir/diff.info %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/diff.info.gz %_infodir/dir \
-		--entry="* diff: (diff).                                 The GNU diff."
+	/sbin/install-info --delete %_infodir/diff.info %_infodir/dir
 fi
 
 %files
 %defattr(-,root,root)
-%doc NEWS README
+%doc AUTHORS NEWS README THANKS
 %_bindir/*
 %_mandir/*/*
 %_infodir/diff.info*
+%_datadir/locale/*/LC_MESSAGES/diffutils.mo
+# diff(1) manpage still lives in man-pages package
+%exclude %_mandir/man1/diff.*
 
 %changelog
+* Tue May 17 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.8.7-owl1
+- Updated to 2.8.7.
+- Imported a bunch of patches from ALT's diffutils-2.8.7-alt1 package.
+- Corrected info files installation.
+- Packaged diffutils translations.
+
 * Wed Oct 29 2003 Solar Designer <solar@owl.openwall.com> 2.7-owl25
 - Dropped diff.1 from this package as it exists in man-pages.
 

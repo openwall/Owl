@@ -1,0 +1,11 @@
+--- diffutils-2.8.7/po/ru.po.orig	2004-04-13 07:07:56 +0000
++++ diffutils-2.8.7/po/ru.po	2005-05-17 11:35:43 +0000
+@@ -447,7 +447,7 @@ msgstr "%s %s различаются: байт %s, стро
+ #: src/cmp.c:545
+ #, c-format
+ msgid "cmp: EOF on %s\n"
+-msgstr "cmp: коней файла в %s\n"
++msgstr "cmp: конец файла в %s\n"
+ 
+ #: src/diff.c:322
+ #, c-format

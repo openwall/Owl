@@ -1,0 +1,83 @@
+--- diffutils-2.8.7/src/diff.c.orig	2004-04-12 07:44:35 +0000
++++ diffutils-2.8.7/src/diff.c	2005-05-17 11:54:30 +0000
+@@ -62,6 +62,9 @@ static void try_help (char const *, char
+ static void check_stdout (void);
+ static void usage (void);
+ 
++/* Backup suffix, if any.  */
++static char *backup_suffix;
++
+ /* If comparing directories, compare their common subdirectories
+    recursively.  */
+ static bool recursive;
+@@ -137,7 +140,7 @@ exclude_options (void)
+ }
+ 
+ static char const shortopts[] =
+-"0123456789abBcC:dD:eEfF:hHiI:lL:nNpPqrsS:tTuU:vwW:x:X:y";
++"0123456789abBcC:dD:eEfF:hHiI:k:lL:nNpPqrsS:tTuU:vwW:x:X:y";
+ 
+ /* Values for long options that do not have single-letter equivalents.  */
+ enum
+@@ -187,6 +190,7 @@ static char const line_format_option[][s
+ 
+ static struct option const longopts[] =
+ {
++  {"backup", 2, 0, 'k'},
+   {"binary", 0, 0, BINARY_OPTION},
+   {"brief", 0, 0, 'q'},
+   {"changed-group-format", 1, 0, CHANGED_GROUP_FORMAT_OPTION},
+@@ -400,6 +404,14 @@ main (int argc, char **argv)
+ 	  add_regexp (&ignore_regexp_list, optarg);
+ 	  break;
+ 
++	case 'k':
++	  /* Backup mode: if backup suffix specified, compare files
++	     against backups with that suffix.  */
++	  backup_suffix = optarg ?: ".orig";
++	  recursive = true;
++	  new_file = true;
++	  break;
++
+ 	case 'l':
+ 	  if (!pr_program[0])
+ 	    try_help ("pagination not supported on this host", 0);
+@@ -751,16 +763,25 @@ main (int argc, char **argv)
+ 	  }
+       else
+ 	{
+-	  if (argc - optind != 2)
++	  if (argc - optind != 1 + !backup_suffix)
+ 	    {
+-	      if (argc - optind < 2)
++	      if (argc - optind < 1 + !backup_suffix)
+ 		try_help ("missing operand after `%s'", argv[argc - 1]);
+ 	      else
+-		try_help ("extra operand `%s'", argv[optind + 2]);
++		try_help ("extra operand `%s'", argv[optind + 1 + !backup_suffix]);
+ 	    }
+ 
+-	  exit_status = compare_files ((struct comparison *) 0,
+-				       argv[optind], argv[optind + 1]);
++	  if (backup_suffix)
++	    {
++	      char bak[strlen (argv[optind]) + strlen (backup_suffix) + 1];
++	      strcpy (bak, argv[optind]);
++	      strcat (bak, backup_suffix);
++	      exit_status = compare_files ((struct comparison *) 0,
++					   bak, argv[optind]);
++	    }
++	  else
++	    exit_status = compare_files ((struct comparison *) 0,
++					 argv[optind], argv[optind + 1]);
+ 	}
+     }
+ 
+@@ -915,6 +936,7 @@ static char const * const option_help_ms
+   N_("-N  --new-file  Treat absent files as empty."),
+   N_("--unidirectional-new-file  Treat absent first files as empty."),
+   N_("-s  --report-identical-files  Report when two files are the same."),
++  N_("-k SUF  --backup[=SUF]  Compare file(s) against backup(s) ending in SUF."),
+   N_("-x PAT  --exclude=PAT  Exclude files that match PAT."),
+   N_("-X FILE  --exclude-from=FILE  Exclude files that match any pattern in FILE."),
+   N_("-S FILE  --starting-file=FILE  Start with FILE when comparing directories."),

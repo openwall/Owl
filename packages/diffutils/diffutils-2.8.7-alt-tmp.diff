@@ -1,0 +1,21 @@
+--- diffutils-2.8.7/src/sdiff.c.orig	2004-04-12 07:44:35 +0000
++++ diffutils-2.8.7/src/sdiff.c	2005-05-17 12:58:44 +0000
+@@ -990,13 +990,13 @@ edit (struct line_filter *left, char con
+ 	    int fd;
+ 
+ 	    if (tmpname)
+-	      tmp = fopen (tmpname, "w");
+-	    else
+ 	      {
+-		if ((fd = temporary_file ()) < 0)
+-		  perror_fatal ("mkstemp");
+-		tmp = fdopen (fd, "w");
++		unlink (tmpname);
++		free (tmpname);
+ 	      }
++	    if ((fd = temporary_file ()) < 0)
++	      perror_fatal ("mkstemp");
++	    tmp = fdopen (fd, "w");
+ 
+ 	    if (! tmp)
+ 	      perror_fatal (tmpname);
