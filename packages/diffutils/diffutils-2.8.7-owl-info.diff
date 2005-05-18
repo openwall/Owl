@@ -1,0 +1,11 @@
+--- diffutils-2.8.7/doc/diff.texi.orig	2004-04-12 11:44:35 +0400
++++ diffutils-2.8.7/doc/diff.texi	2005-05-17 17:20:55 +0400
+@@ -46,7 +46,7 @@
+ 
+ @dircategory Text creation and manipulation
+ @direntry
+-* Diff: (diff).                 Comparing and merging files.
++* Diff: (diff).                                 Comparing and merging files.
+ @end direntry
+ 
+ @titlepage
