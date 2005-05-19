@@ -1,18 +1,21 @@
-# $Id: Owl/packages/gzip/gzip.spec,v 1.14 2004/11/23 22:40:46 mci Exp $
+# $Id: Owl/packages/gzip/gzip.spec,v 1.15 2005/05/19 21:04:26 ldv Exp $
 
 Summary: The GNU data compression program.
 Name: gzip
-Version: 1.3
-Release: owl17
+Version: 1.3.5
+Release: owl1
 License: GPL
 Group: Applications/File
-URL: http://www.gzip.org
+URL: http://www.gnu.org/software/%name/
 Source: ftp://alpha.gnu.org/gnu/gzip/gzip-%version.tar.gz
-Patch0: gzip-1.3-openbsd-owl-tmp.diff
-Patch1: gzip-1.3-rh-owl-zforce.diff
-Patch2: gzip-1.3-rh-owl-zgrep.diff
-Patch3: gzip-1.3-rh-stderr.diff
-Patch4: gzip-1.3-rh-info.diff
+Patch0: gzip-1.3.5-owl-info.diff
+Patch1: gzip-1.3.5-alt-basename.diff
+Patch2: gzip-1.3.5-openbsd-owl-alt-tmp.diff
+Patch3: gzip-1.3.5-rh-alt-stderr.diff
+Patch4: gzip-1.3.5-rh-owl-alt-zgrep.diff
+Patch5: gzip-1.3.5-deb-alt-signal.diff
+Patch6: gzip-1.3.5-deb-alt-original-filename.diff
+Patch7: gzip-1.3.5-alt-copy_stat.diff
 Requires: mktemp >= 1:1.3.1
 BuildRoot: /override/%name-%version
 
@@ -27,50 +30,78 @@ program and its associated scripts to manage compressed files.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
 
 %build
-rm gzip.info
 %configure --bindir=/bin
 make
-make gzip.info
+bzip2 -9fk ChangeLog
 
 %install
 rm -rf %buildroot
-%makeinstall bindir=%buildroot/bin gzip.info
-mkdir -p %buildroot/usr/bin
-ln -sf ../../bin/gzip %buildroot/usr/bin/gzip
-ln -sf ../../bin/gunzip %buildroot/usr/bin/gunzip
+%makeinstall bindir=%buildroot/bin
+mkdir -p %buildroot%_bindir
 
 for i in zcmp zegrep zforce zless znew gzexe zdiff zfgrep zgrep zmore; do
-	mv %buildroot/bin/$i %buildroot/usr/bin/$i
+	mv %buildroot/bin/$i %buildroot%_bindir/
 done
 
-cat > %buildroot/usr/bin/zless <<EOF
-#!/bin/sh
-/bin/zcat "\$@" | /usr/bin/less
-EOF
-chmod 755 %buildroot/usr/bin/zless
+# replace hardlinks with symlinks
+ln -sf gzip %buildroot/bin/gunzip
+ln -sf gzip %buildroot/bin/zcat
+ln -sf zdiff %buildroot%_bindir/zcmp
+ln -sf zgrep %buildroot%_bindir/zegrep
+ln -sf zgrep %buildroot%_bindir/zfgrep
 
-# Remove unpackaged files
-rm %buildroot%_infodir/dir
+# add compatibility symlinks
+for i in gzip gunzip; do
+	ln -s ../../bin/gzip %buildroot%_bindir/$i
+done
+
+# add missing manpages
+echo '.so man1/zgrep.1' >%buildroot%_mandir/man1/zegrep.1
+echo '.so man1/zgrep.1' >%buildroot%_mandir/man1/zfgrep.1
+
+cat > %buildroot%_bindir/zless <<EOF
+#!/bin/sh
+/bin/zcat "\$@" | %_bindir/less
+EOF
+chmod 755 %buildroot%_bindir/zless
+
+# Remove unpackaged files if any
+rm -f %buildroot%_infodir/dir
 
 %triggerin -- info
-/sbin/install-info %_infodir/gzip.info.gz %_infodir/dir
+/sbin/install-info %_infodir/gzip.info %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/gzip.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/gzip.info %_infodir/dir
 fi
 
 %files
 %defattr(-,root,root)
-%doc NEWS README AUTHORS ChangeLog THANKS TODO
+%doc AUTHORS ChangeLog.bz2 NEWS README THANKS TODO
 /bin/*
-/usr/bin/*
+%_bindir/*
 %_mandir/*/*
 %_infodir/gzip.info*
 
 %changelog
+* Thu May 19 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.3.5-owl1
+- Updated to 1.3.5.
+- Reviewed Owl patches, removed obsolete ones.
+- Imported a bunch of patches from ALT's gzip-1.3.5-alt1 package,
+including fix for directory traversal issue in "gunzip -N"
+(CAN-2005-1228), fix for race condition in file permission handling code
+of gzip and gunzip (CAN-2005-0988), and fix of zgrep utility to properly
+sanitize arguments (CAN-2005-0758).
+- Added zegrep(1) and zfgrep(1) manpage links.
+- Corrected info files installation.
+- Updated URL.
+
 * Tue Aug 27 2002 Solar Designer <solar@owl.openwall.com> 1.3-owl17
 - Use a trigger instead of a dependency on /sbin/install-info to avoid a
 dependency loop with the new texinfo.

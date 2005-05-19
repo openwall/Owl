@@ -1,0 +1,31 @@
+diff -upk.orig gzip-1.3.5.orig/gzip.c gzip-1.3.5/gzip.c
+--- gzip-1.3.5.orig/gzip.c	2005-05-19 16:39:33 +0000
++++ gzip-1.3.5/gzip.c	2005-05-19 16:51:00 +0000
+@@ -47,6 +47,7 @@ static char rcsid[] = "$Id: gzip.c,v 0.2
+ #include <signal.h>
+ #include <sys/stat.h>
+ #include <errno.h>
++#include <string.h>
+ 
+ #include "tailor.h"
+ #include "gzip.h"
+@@ -1318,7 +1319,7 @@ local int get_method(in)
+ 	    } else {
+ 		/* Copy the base name. Keep a directory prefix intact. */
+                 char *p = base_name (ofname);
+-                char *base = p;
++                char *base = p, *base2;
+ 		for (;;) {
+ 		    *p = (char)get_char();
+ 		    if (*p++ == '\0') break;
+@@ -1326,7 +1327,9 @@ local int get_method(in)
+ 			error("corrupted input -- file name too large");
+ 		    }
+ 		}
+-                /* If necessary, adapt the name to local OS conventions: */
++		base2 = base_name (base);
++		memmove (base, base2, strlen (base2) + 1);
++		/* If necessary, adapt the name to local OS conventions: */
+                 if (!list) {
+                    MAKE_LEGAL_NAME(base);
+ 		   if (base) list=0; /* avoid warning about unused variable */

@@ -1,0 +1,107 @@
+diff -upk.orig gzip-1.3.5.orig/gzexe.in gzip-1.3.5/gzexe.in
+--- gzip-1.3.5.orig/gzexe.in	2005-05-19 14:04:03 +0000
++++ gzip-1.3.5/gzexe.in	2005-05-19 14:05:03 +0000
+@@ -36,10 +36,10 @@
+ PATH="BINDIR:$PATH"
+ x="${0##*/}"
+ if test $# = 0; then
+-  echo compress executables. original file foo is renamed to foo~
+-  echo usage: ${x} [-d] files...
+-  echo   "   -d  decompress the executables"
+-  exit 1
++  echo "compress executables. original file foo is renamed to foo~" >&2
++  echo "Usage: ${x} [-d] files..." >&2
++  echo "   -d  decompress the executables" >&2
++  exit 2
+ fi
+ 
+ decomp=0
+diff -upk.orig gzip-1.3.5.orig/zdiff.in gzip-1.3.5/zdiff.in
+--- gzip-1.3.5.orig/zdiff.in	2005-05-19 14:04:03 +0000
++++ gzip-1.3.5/zdiff.in	2005-05-19 14:04:17 +0000
+@@ -32,7 +32,7 @@ do
+     esac
+ done
+ if test -z "$FILES"; then
+-	echo "Usage: $prog [${comp}_options] file [file]"
++	echo "Usage: $prog [${comp}_options] file [file]" >&2
+ 	exit 2
+ fi
+ set $FILES
+@@ -64,6 +64,6 @@ elif test $# -eq 2; then
+                 esac;;
+ 	esac
+ else
+-	echo "Usage: $prog [${comp}_options] file [file]"
++	echo "Usage: $prog [${comp}_options] file [file]" >&2
+ 	exit 2
+ fi
+diff -upk.orig gzip-1.3.5.orig/zforce.in gzip-1.3.5/zforce.in
+--- gzip-1.3.5.orig/zforce.in	2005-05-19 14:04:03 +0000
++++ gzip-1.3.5/zforce.in	2005-05-19 14:06:07 +0000
+@@ -29,9 +29,9 @@
+ PATH="BINDIR:$PATH"; export PATH
+ x="${0##*/}"
+ if test $# = 0; then
+-  echo "force a '.gz' extension on all gzip files"
+-  echo usage: $x files...
+-  exit 1
++  echo "force a '.gz' extension on all gzip files" >&2
++  echo "Usage: $x files..." >&2
++  exit 2
+ fi
+ 
+ res=0
+diff -upk.orig gzip-1.3.5.orig/zgrep.in gzip-1.3.5/zgrep.in
+--- gzip-1.3.5.orig/zgrep.in	2005-05-19 14:04:03 +0000
++++ gzip-1.3.5/zgrep.in	2005-05-19 14:04:17 +0000
+@@ -81,8 +81,8 @@ while test $# -ne 0; do
+ done
+ 
+ if test -z "$pat"; then
+-  echo "grep through gzip files"
+-  echo "usage: $prog [grep_options] pattern [files]"
++  echo "grep through gzip files" >&2
++  echo "Usage: $prog [grep_options] pattern [files]" >&2
+   exit 2
+ fi
+ 
+diff -upk.orig gzip-1.3.5.orig/zmore.in gzip-1.3.5/zmore.in
+--- gzip-1.3.5.orig/zmore.in	2005-05-19 14:04:03 +0000
++++ gzip-1.3.5/zmore.in	2005-05-19 14:06:00 +0000
+@@ -41,7 +41,8 @@ fi
+ 
+ if test $# = 0; then
+     if test -t 0; then
+-	echo usage: ${0##*/} files...
++	echo "Usage: ${0##*/} files..." >&2
++	exit 2
+     else
+ 	gzip -cdfq | eval ${PAGER-more}
+     fi
+diff -upk.orig gzip-1.3.5.orig/znew.in gzip-1.3.5/znew.in
+--- gzip-1.3.5.orig/znew.in	2005-05-19 14:04:03 +0000
++++ gzip-1.3.5/znew.in	2005-05-19 14:05:54 +0000
+@@ -51,14 +51,14 @@ do
+ done
+ 
+ if test $# -eq 0; then
+-  echo "recompress .Z files into $ext (gzip) files"
+-  echo usage: ${0##*/} "[-tv9KP]" file.Z...
+-  echo "  -t tests the new files before deleting originals"
+-  echo "  -v be verbose"
+-  echo "  -9 use the slowest compression method (optimal compression)"
+-  echo "  -K keep a .Z file when it is smaller than the $ext file"
+-  echo "  -P use pipes for the conversion $warn"
+-  exit 1
++  echo "recompress .Z files into $ext (gzip) files" >&2
++  echo "Usage: ${0##*/} [-tv9KP] file.Z..." >&2
++  echo "  -t tests the new files before deleting originals" >&2
++  echo "  -v be verbose" >&2
++  echo "  -9 use the slowest compression method (optimal compression)" >&2
++  echo "  -K keep a .Z file when it is smaller than the $ext file" >&2
++  echo "  -P use pipes for the conversion $warn" >&2
++  exit 2
+ fi
+ 
+ opt=`echo "$opt" | sed -e 's/ //g' -e 's/-//g'`

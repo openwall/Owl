@@ -1,0 +1,140 @@
+diff -upk.orig gzip-1.3.5.orig/gzip.c gzip-1.3.5/gzip.c
+--- gzip-1.3.5.orig/gzip.c	2002-09-28 07:38:43 +0000
++++ gzip-1.3.5/gzip.c	2005-05-19 16:31:13 +0000
+@@ -249,7 +249,7 @@ off_t total_in;		    /* input bytes for 
+ off_t total_out;	    /* output bytes for all files */
+ char ifname[MAX_PATH_LEN]; /* input file name */
+ char ofname[MAX_PATH_LEN]; /* output file name */
+-int  remove_ofname = 0;	   /* remove output file on error */
++volatile sig_atomic_t remove_ofname = 0; /* remove output file on error */
+ struct stat istat;         /* status for input file */
+ int  ifd;                  /* input file descriptor */
+ int  ofd;                  /* output file descriptor */
+@@ -290,6 +290,8 @@ struct option longopts[] =
+ 
+ /* local functions */
+ 
++local RETSIGTYPE abort_gzip_signal OF((void));
++local void do_remove    OF((void));
+ local void usage        OF((void));
+ local void help         OF((void));
+ local void license      OF((void));
+@@ -309,7 +311,7 @@ local int  get_method   OF((int in));
+ local void do_list      OF((int ifd, int method));
+ local int  check_ofname OF((void));
+ local void copy_stat    OF((struct stat *ifstat));
+-local void do_exit      OF((int exitcode));
++local void do_exit      OF((int exitcode)) ATTRIBUTE_NORETURN;
+       int main          OF((int argc, char **argv));
+ int (*work) OF((int infile, int outfile)) = zip; /* function to call */
+ 
+@@ -464,16 +466,16 @@ int main (argc, argv)
+ 
+     foreground = signal(SIGINT, SIG_IGN) != SIG_IGN;
+     if (foreground) {
+-	(void) signal (SIGINT, (sig_type)abort_gzip);
++	(void) signal (SIGINT, (sig_type)abort_gzip_signal);
+     }
+ #ifdef SIGTERM
+     if (signal(SIGTERM, SIG_IGN) != SIG_IGN) {
+-	(void) signal(SIGTERM, (sig_type)abort_gzip);
++	(void) signal(SIGTERM, (sig_type)abort_gzip_signal);
+     }
+ #endif
+ #ifdef SIGHUP
+     if (signal(SIGHUP, SIG_IGN) != SIG_IGN) {
+-	(void) signal(SIGHUP,  (sig_type)abort_gzip);
++	(void) signal(SIGHUP,  (sig_type)abort_gzip_signal);
+     }
+ #endif
+ 
+@@ -580,7 +582,7 @@ int main (argc, argv)
+ #ifdef SIGPIPE
+     /* Ignore "Broken Pipe" message with --quiet */
+     if (quiet && signal (SIGPIPE, SIG_IGN) != SIG_IGN)
+-      signal (SIGPIPE, (sig_type) abort_gzip);
++      signal (SIGPIPE, (sig_type) abort_gzip_signal);
+ #endif
+ 
+     /* By default, save name and timestamp on compression but do not
+@@ -926,13 +928,13 @@ local int create_outfile()
+ 	    return ERROR;
+ 	}
+ 	/* Create the output file */
+-	remove_ofname = 1;
+ 	ofd = OPEN(ofname, flags, RW_USER);
+ 	if (ofd == -1) {
+ 	    progerror(ofname);
+ 	    close(ifd);
+ 	    return ERROR;
+ 	}
++	remove_ofname = 1;
+ 
+ 	/* Check for name truncation on new file (1234567890123.gz) */
+ #ifdef NO_FSTAT
+@@ -1842,13 +1844,30 @@ local void do_exit(exitcode)
+ }
+ 
+ /* ========================================================================
+- * Signal and error handler.
++ * Unlink the output file if necessary.
+  */
+-RETSIGTYPE abort_gzip()
++local void do_remove(void)
+ {
+-   if (remove_ofname) {
+-       close(ofd);
+-       xunlink (ofname);
+-   }
++    if (remove_ofname) {
++	remove_ofname = 0;
++	xunlink (ofname);
++    }
++}
++
++/* ========================================================================
++ * Error handler.
++ */
++void abort_gzip(void)
++{
++   do_remove();
+    do_exit(ERROR);
+ }
++
++/* ========================================================================
++ * Signal handler.
++ */
++RETSIGTYPE abort_gzip_signal()
++{
++   do_remove();
++   _exit(ERROR);
++}
+diff -upk.orig gzip-1.3.5.orig/gzip.h gzip-1.3.5/gzip.h
+--- gzip-1.3.5.orig/gzip.h	2001-10-01 06:53:41 +0000
++++ gzip-1.3.5/gzip.h	2005-05-19 16:07:40 +0000
+@@ -43,6 +43,16 @@
+ 
+ #define local static
+ 
++# ifndef __attribute__
++#  if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 8) || __STRICT_ANSI__
++#   define __attribute__(x)
++#  endif
++# endif
++
++# ifndef ATTRIBUTE_NORETURN
++#  define ATTRIBUTE_NORETURN __attribute__ ((__noreturn__))
++# endif
++
+ typedef unsigned char  uch;
+ typedef unsigned short ush;
+ typedef unsigned long  ulg;
+@@ -272,7 +282,7 @@ extern int unpack     OF((int in, int ou
+ extern int unlzh      OF((int in, int out));
+ 
+ 	/* in gzip.c */
+-RETSIGTYPE abort_gzip OF((void));
++extern void abort_gzip OF((void)) ATTRIBUTE_NORETURN;
+ 
+         /* in deflate.c */
+ void lm_init OF((int pack_level, ush *flags));
