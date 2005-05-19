@@ -211,23 +211,6 @@ field widths.
 Keep it to latest release.
 
 
-	gzip.
-
-[PRIORITY: medium]
-[ASSIGNED: ldv@]
-
-1. Imran Ghory discovered a race condition in the file permission restore
-code of gzip and gunzip.  While a user was compressing or decompressing
-a file, a local attacker with write permissions in the directory of that
-file could replace the target file with e.g. a hard link (CAN-2005-0988).
-
-2. Ulf Harnhammar found a directory traversal vulnerability when gunzip
-was used with the -N option.  An attacker could exploit this to create
-files in an arbitrary directory with the permissions of a user if he
-tricked this user to decompress a specially crafted gzip file using the
--N option (CAN-2005-1228).
-
-
 	john.
 
 [PRIORITY: medium]
@@ -623,4 +606,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.77 2005/05/18 14:32:20 solar Exp $
+$Id: Owl/doc/TODO,v 1.78 2005/05/19 21:07:28 ldv Exp $
