@@ -12,14 +12,14 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
-2005/05/19	Package: gzip
+2005/05/20	Packages: gzip, bzip2
 SECURITY FIX	Severity: low, local, passive
-Updated to 1.3.5.  Added fixes for directory traversal (where a
-malicious gzipped file could specify file name to be extracted to
-outside of the intended directory tree when gunzip was used with
-the -N option), for race condition in the file permission handling
-code of gzip and gunzip, and fix of zgrep utility to properly
-sanitize arguments.
+Updated gzip to 1.3.5.  Added fixes for directory traversal in
+gunzip (where a malicious gzipped file could specify file name
+to be extracted to outside of the intended directory tree when
+gunzip was used with the -N option), for race condition in the file
+permission handling code of gzip and gunzip, and fix of zgrep and
+bzgrep utilities to properly sanitize arguments.
 References:
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-1228
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0988
@@ -453,4 +453,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.90 2005/05/19 21:07:28 ldv Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.91 2005/05/20 23:28:05 ldv Exp $
