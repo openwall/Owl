@@ -1,9 +1,9 @@
-# $Id: Owl/packages/bzip2/bzip2.spec,v 1.22 2005/05/16 13:27:30 ldv Exp $
+# $Id: Owl/packages/bzip2/bzip2.spec,v 1.23 2005/05/20 23:22:43 ldv Exp $
 
 Summary: An extremely powerful file compression utility.
 Name: bzip2
 Version: 1.0.3
-Release: owl3
+Release: owl4
 License: BSD
 Group: Applications/File
 URL: http://www.bzip.org
@@ -72,6 +72,7 @@ rm -rf %buildroot
 ln -s libbz2.so.%version %buildroot%_libdir/libbz2.so.0
 
 # Remove unpackaged files
+rm %buildroot{%_bindir,%_mandir/man1}/{bzcmp,bzdiff,bzgrep,bzfgrep,bzegrep,bzmore,bzless}*
 rm %buildroot%_libdir/libbz2.la
 rm -f %buildroot%_infodir/dir
 
@@ -101,6 +102,10 @@ fi
 %_infodir/bzip2.*
 
 %changelog
+* Fri May 20 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.0.3-owl4
+- Relocated bzcmp, bzdiff, bz*grep, bzmore and bzless to gzip package
+which provides better versions of these utilities now.
+
 * Mon May 16 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.0.3-owl3
 - Fixed double fclose bug in bunzip2 introduced in 1.0.3-owl1.
 
