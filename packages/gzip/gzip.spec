@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gzip/gzip.spec,v 1.15 2005/05/19 21:04:26 ldv Exp $
+# $Id: Owl/packages/gzip/gzip.spec,v 1.16 2005/05/20 23:21:29 ldv Exp $
 
 Summary: The GNU data compression program.
 Name: gzip
@@ -16,7 +16,10 @@ Patch4: gzip-1.3.5-rh-owl-alt-zgrep.diff
 Patch5: gzip-1.3.5-deb-alt-signal.diff
 Patch6: gzip-1.3.5-deb-alt-original-filename.diff
 Patch7: gzip-1.3.5-alt-copy_stat.diff
+Patch8: gzip-1.3.5-alt-bzip2.diff
 Requires: mktemp >= 1:1.3.1
+# due to bz*grep, bzcmp, bzdiff, bzmore and bzless
+Conflicts: bzip2 < 0:1.0.3-owl4
 BuildRoot: /override/%name-%version
 
 %description
@@ -33,6 +36,7 @@ program and its associated scripts to manage compressed files.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 %build
 %configure --bindir=/bin
@@ -55,20 +59,39 @@ ln -sf zdiff %buildroot%_bindir/zcmp
 ln -sf zgrep %buildroot%_bindir/zegrep
 ln -sf zgrep %buildroot%_bindir/zfgrep
 
-# add compatibility symlinks
+# compatibility symlinks
 for i in gzip gunzip; do
 	ln -s ../../bin/gzip %buildroot%_bindir/$i
 done
 
-# add missing manpages
+# additional utilities
+ln -s zdiff %buildroot%_bindir/bzcmp
+ln -s zdiff %buildroot%_bindir/bzdiff
+ln -s zgrep %buildroot%_bindir/bzgrep
+ln -s zgrep %buildroot%_bindir/bzegrep
+ln -s zgrep %buildroot%_bindir/bzfgrep
+ln -s zmore %buildroot%_bindir/bzmore
+
+# additional manpages
 echo '.so man1/zgrep.1' >%buildroot%_mandir/man1/zegrep.1
 echo '.so man1/zgrep.1' >%buildroot%_mandir/man1/zfgrep.1
+echo '.so man1/zgrep.1' >%buildroot%_mandir/man1/bzgrep.1
+echo '.so man1/zgrep.1' >%buildroot%_mandir/man1/bzegrep.1
+echo '.so man1/zgrep.1' >%buildroot%_mandir/man1/bzfgrep.1
+echo '.so man1/zdiff.1' >%buildroot%_mandir/man1/bzcmp.1
+echo '.so man1/zdiff.1' >%buildroot%_mandir/man1/bzdiff.1
+echo '.so man1/zmore.1' >%buildroot%_mandir/man1/bzmore.1
+echo '.so man1/zless.1' >%buildroot%_mandir/man1/bzless.1
 
 cat > %buildroot%_bindir/zless <<EOF
 #!/bin/sh
 /bin/zcat "\$@" | %_bindir/less
 EOF
-chmod 755 %buildroot%_bindir/zless
+cat > %buildroot%_bindir/bzless <<EOF
+#!/bin/sh
+/bin/bzcat "\$@" | %_bindir/less
+EOF
+chmod 755 %buildroot%_bindir/{,b}zless
 
 # Remove unpackaged files if any
 rm -f %buildroot%_infodir/dir
@@ -90,7 +113,7 @@ fi
 %_infodir/gzip.info*
 
 %changelog
-* Thu May 19 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.3.5-owl1
+* Fri May 20 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.3.5-owl1
 - Updated to 1.3.5.
 - Reviewed Owl patches, removed obsolete ones.
 - Imported a bunch of patches from ALT's gzip-1.3.5-alt1 package,
@@ -98,6 +121,9 @@ including fix for directory traversal issue in "gunzip -N"
 (CAN-2005-1228), fix for race condition in file permission handling code
 of gzip and gunzip (CAN-2005-0988), and fix of zgrep utility to properly
 sanitize arguments (CAN-2005-0758).
+- Changed zgrep, zdiff and zmore utilities to handle also functionality
+of bz*grep, bzdiff and bzmore utilities, packaged bz*grep, bzcmp, bzdiff,
+bzmore and bzless within this package.
 - Added zegrep(1) and zfgrep(1) manpage links.
 - Corrected info files installation.
 - Updated URL.

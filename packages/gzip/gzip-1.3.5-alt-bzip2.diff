@@ -1,0 +1,330 @@
+diff -upk.orig gzip-1.3.5.orig/zdiff.1 gzip-1.3.5/zdiff.1
+--- gzip-1.3.5.orig/zdiff.1	1993-06-16 16:35:26 +0000
++++ gzip-1.3.5/zdiff.1	2005-05-20 14:12:44 +0000
+@@ -10,35 +10,52 @@ zcmp, zdiff \- compare compressed files
+ [ diff_options ] file1
+ [ file2 ]
+ .SH DESCRIPTION
+-.I  Zcmp
++.B zcmp
+ and 
+-.I zdiff
++.B zdiff
+ are used to invoke the
+-.I cmp
++.B cmp
+ or the
+-.I diff
++.B diff
+ program on compressed files.  All options specified are passed directly to
+-.I cmp
++.B cmp
+ or
+-.IR diff "."
++.BR diff .
+ If only 1 file is specified, then the files compared are
+ .I file1
+ and an uncompressed
+-.IR file1 ".gz."
++.I file1
++without
++.I .gz.
++or
++.I .bz2.
++suffix.
+ If two files are specified, then they are uncompressed if necessary and fed to
+-.I cmp
++.B cmp
+ or
+-.IR diff "."
++.BR diff .
+ The exit status from 
+-.I cmp
++.B cmp
+ or
+-.I diff
++.B diff
+ is preserved.
+-.SH "SEE ALSO"
+-cmp(1), diff(1), zmore(1), zgrep(1), znew(1), zforce(1), gzip(1), gzexe(1)
+ .SH BUGS
+ Messages from the
+-.I cmp
++.B cmp
+ or
+-.I diff
++.B diff
+ programs refer to temporary filenames instead of those specified.
++.SH "SEE ALSO"
++.BR cmp (1),
++.BR diff (1),
++.BR zless (1),
++.BR bzless (1),
++.BR zmore (1),
++.BR bzmore (1),
++.BR zgrep (1),
++.BR bzgrep (1),
++.BR znew (1),
++.BR zforce (1),
++.BR gzip (1),
++.BR bzip2 (1),
++.BR gzexe (1).
+diff -upk.orig gzip-1.3.5.orig/zdiff.in gzip-1.3.5/zdiff.in
+--- gzip-1.3.5.orig/zdiff.in	2005-05-20 12:32:12 +0000
++++ gzip-1.3.5/zdiff.in	2005-05-20 14:02:04 +0000
+@@ -37,31 +37,58 @@ if test -z "$FILES"; then
+ fi
+ set $FILES
+ if test $# -eq 1; then
+-	FILE=`echo "$1" | sed 's/[-.][zZtga]*$//'`
+-	gzip -cd "$1" | $comp $OPTIONS - "$FILE"
++	case "$1" in
++		*[-.]gz* | *[-.][zZ] | *.t[ga]z)
++			compressor=gzip
++			FILE=`printf %s "$1" | sed 's/[-.][zZtga]*$//'`
++			;;
++		*.bz2)
++			compressor=bzip2
++			FILE=`printf %s "$1" | sed 's/.bz2$//'`
++			;;
++		*)
++			FILE="$1"
++			;;
++	esac
++	if test "$1" = "$FILE"; then
++		echo "${prog}: file \`$1' has unrecognized suffix" >&2
++		exit 2
++	fi
++	$compressor -cd "$1" | $comp $OPTIONS - "$FILE"
+ 
+ elif test $# -eq 2; then
+ 	case "$1" in
+-        *[-.]gz* | *[-.][zZ] | *.t[ga]z)
+-                case "$2" in
+-	        *[-.]gz* | *[-.][zZ] | *.t[ga]z)
+-			F=`echo "$2" | sed 's|.*/||;s|[-.][zZtga]*||'`
+-			TF=`/bin/mktemp -t "$F".XXXXXXXXXX` || exit 1
++		*[-.]gz* | *[-.][zZ] | *.t[ga]z)
++			compressor1=gzip ;;
++		*.bz2)
++			compressor1=bzip2 ;;
++		*)
++			compressor1=cat ;;
++	esac
++	case "$2" in
++		*[-.]gz* | *[-.][zZ] | *.t[ga]z)
++			compressor2=gzip ;;
++		*.bz2)
++			compressor2=bzip2 ;;
++		*)
++			compressor2=cat ;;
++	esac
++	case "$compressor1$compressor2" in
++		catcat)
++			$comp $OPTIONS "$1" "$2" ;;
++		*cat)
++			$compressor1 -cdfq "$1" | $comp $OPTIONS - "$2" ;;
++		cat*)
++                        $compressor2 -cdfq "$2" | $comp $OPTIONS "$1" - ;;
++		*)
++			TF=`/bin/mktemp -t zdiff.XXXXXXXXXX` || exit 1
+ 			trap 'trap - EXIT; rm -f "$TF"; exit 2' EXIT HUP INT PIPE TERM
+-			gzip -cdfq "$2" > "$TF" || exit
+-                        gzip -cdfq "$1" | $comp $OPTIONS - "$TF"
++			$compressor2 -cdfq "$2" > "$TF" || exit
++			$compressor1 -cdfq "$1" | $comp $OPTIONS - "$TF"
+                         STAT="$?"
+ 			rm -f "$TF" || STAT=2
+ 			trap - EXIT HUP INT PIPE TERM
+-			exit $STAT;;
+-
+-                *)      gzip -cdfq "$1" | $comp $OPTIONS - "$2";;
+-                esac;;
+-        *)      case "$2" in
+-	        *[-.]gz* | *[-.][zZ] | *.t[ga]z)
+-                        gzip -cdfq "$2" | $comp $OPTIONS "$1" -;;
+-                *)      $comp $OPTIONS "$1" "$2";;
+-                esac;;
++			exit $STAT ;;
+ 	esac
+ else
+ 	echo "Usage: $prog [${comp}_options] file [file]" >&2
+diff -upk.orig gzip-1.3.5.orig/zgrep.1 gzip-1.3.5/zgrep.1
+--- gzip-1.3.5.orig/zgrep.1	1993-06-16 15:31:53 +0000
++++ gzip-1.3.5/zgrep.1	2005-05-20 12:52:55 +0000
+@@ -6,39 +6,90 @@ zgrep \- search possibly compressed file
+ [ grep_options ]
+ .BI  [\ -e\ ] " pattern"
+ .IR filename ".\|.\|."
++.br
++.B zegrep
++[ grep_options ]
++.BI  [\ -e\ ] " pattern"
++.IR filename ".\|.\|."
++.br
++.B zfgrep
++[ grep_options ]
++.BI  [\ -e\ ] " pattern"
++.IR filename ".\|.\|."
++.br
++.B bzgrep
++[ grep_options ]
++.BI  [\ -e\ ] " pattern"
++.IR filename ".\|.\|."
++.br
++.B bzegrep
++[ grep_options ]
++.BI  [\ -e\ ] " pattern"
++.IR filename ".\|.\|."
++.br
++.B bzfgrep
++[ grep_options ]
++.BI  [\ -e\ ] " pattern"
++.IR filename ".\|.\|."
+ .SH DESCRIPTION
+-.IR  Zgrep
++.B  zgrep
+ is used to invoke the
+-.I grep
++.B grep
+ on compress'ed or gzip'ed files. All options specified are passed directly to
+-.I grep.
++.BR grep .
+ If no file is specified, then the standard input is decompressed
+ if necessary and fed to grep.
+ Otherwise the given files are uncompressed if necessary and fed to
+-.I grep.
++.BR grep .
+ .PP
+ If
+-.I zgrep
++.B zgrep
+ is invoked as
+-.I zegrep
++.B zegrep
+ or
+-.I zfgrep
++.B zfgrep
+ then
+-.I egrep
++.B egrep
+ or
+-.I fgrep
++.B fgrep
+ is used instead of
+-.I grep.
+-If the GREP environment variable is set,
+-.I zgrep
++.BR grep .
++If the
++.I GREP
++environment variable is set,
++.B zgrep
+ uses it as the
+-.I grep
++.B grep
+ program to be invoked. For example:
+ 
+     for sh:  GREP=fgrep  zgrep string files
+     for csh: (setenv GREP fgrep; zgrep string files)
++.PP
++If
++.B zgrep
++is invoked as
++.BR bzgrep ,
++.B bzegrep
++or
++.B bzfgrep
++then
++.B bzip2
++is used instead of
++.BR gzip .
+ .SH AUTHOR
+ Charles Levert (charles@comm.polymtl.ca)
+ .SH "SEE ALSO"
+-grep(1), egrep(1), fgrep(1), zdiff(1), zmore(1), znew(1), zforce(1),
+-gzip(1), gzexe(1)
++.BR grep (1),
++.BR egrep (1),
++.BR fgrep (1),
++.BR zdiff (1),
++.BR bzdiff (1),
++.BR zless (1),
++.BR bzless (1),
++.BR zmore (1),
++.BR bzmore (1),
++.BR znew (1),
++.BR zforce (1),
++.BR gzip (1),
++.BR bzip2 (1),
++.BR gzexe (1).
+diff -upk.orig gzip-1.3.5.orig/zgrep.in gzip-1.3.5/zgrep.in
+--- gzip-1.3.5.orig/zgrep.in	2005-05-20 12:32:12 +0000
++++ gzip-1.3.5/zgrep.in	2005-05-20 12:54:12 +0000
+@@ -26,6 +26,10 @@ PATH="BINDIR:$PATH"; export PATH
+ 
+ prog="${0##*/}"
+ case "$prog" in
++	bz*)	compressor=bzip2 ;;
++	*)	compressor=gzip ;;
++esac
++case "$prog" in
+ 	*egrep)	grep=${EGREP-egrep}	;;
+ 	*fgrep)	grep=${FGREP-fgrep}	;;
+ 	*)	grep=${GREP-grep}	;;
+@@ -81,20 +85,20 @@ while test $# -ne 0; do
+ done
+ 
+ if test -z "$pat"; then
+-  echo "grep through gzip files" >&2
++  echo "grep through $compressor files" >&2
+   echo "Usage: $prog [grep_options] pattern [files]" >&2
+   exit 2
+ fi
+ 
+ if test $# -eq 0; then
+-  gzip -cdfq | $grep $opt "$pat"
++  $compressor -cdfq | $grep $opt "$pat"
+   exit $?
+ fi
+ 
+ res=0
+ trap break PIPE
+ for i do
+-  gzip -cdfq "$i" |
++  $compressor -cdfq "$i" |
+     if test $files_with_matches -eq 1; then
+       $grep -q $opt "$pat" && printf '%s\n' "$i"
+     elif test $files_without_matches -eq 1; then
+diff -upk.orig gzip-1.3.5.orig/zmore.in gzip-1.3.5/zmore.in
+--- gzip-1.3.5.orig/zmore.in	2005-05-20 21:51:30 +0000
++++ gzip-1.3.5/zmore.in	2005-05-20 22:10:05 +0000
+@@ -20,6 +20,10 @@
+ # 02111-1307, USA.
+ 
+ PATH="BINDIR:$PATH"; export PATH
++case "${0##*/}" in
++	bz*)	compressor=bzip2 ;;
++	*)	compressor=gzip ;;
++esac
+ if test "`echo -n a`" = "-n a"; then
+   # looks like a SysV system:
+   n1=''; n2='\c'
+@@ -44,7 +48,7 @@ if test $# = 0; then
+ 	echo "Usage: ${0##*/} files..." >&2
+ 	exit 2
+     else
+-	gzip -cdfq | eval ${PAGER-more}
++	$compressor -cdfq | eval ${PAGER-more}
+     fi
+ else
+     FIRST=1
+@@ -63,7 +67,7 @@ else
+ 	fi
+ 	if test "$ANS" != 's'; then
+ 		echo "------> $FILE <------"
+-		gzip -cdfq "$FILE" | eval ${PAGER-more}
++		$compressor -cdfq "$FILE" | eval ${PAGER-more}
+ 	fi
+ 	if test -t 1; then
+ 		FIRST=0
