@@ -28,9 +28,9 @@ diff -upk.orig gzip-1.3.5.orig/zdiff.1 gzip-1.3.5/zdiff.1
 -.IR file1 ".gz."
 +.I file1
 +without
-+.I .gz.
++.I .gz
 +or
-+.I .bz2.
++.I .bz2
 +suffix.
  If two files are specified, then they are uncompressed if necessary and fed to
 -.I cmp
@@ -68,7 +68,7 @@ diff -upk.orig gzip-1.3.5.orig/zdiff.1 gzip-1.3.5/zdiff.1
 +.BR zforce (1),
 +.BR gzip (1),
 +.BR bzip2 (1),
-+.BR gzexe (1).
++.BR gzexe (1)
 diff -upk.orig gzip-1.3.5.orig/zdiff.in gzip-1.3.5/zdiff.in
 --- gzip-1.3.5.orig/zdiff.in	2005-05-20 12:32:12 +0000
 +++ gzip-1.3.5/zdiff.in	2005-05-20 14:02:04 +0000
@@ -125,7 +125,7 @@ diff -upk.orig gzip-1.3.5.orig/zdiff.in gzip-1.3.5/zdiff.in
 +		*cat)
 +			$compressor1 -cdfq "$1" | $comp $OPTIONS - "$2" ;;
 +		cat*)
-+                        $compressor2 -cdfq "$2" | $comp $OPTIONS "$1" - ;;
++			$compressor2 -cdfq "$2" | $comp $OPTIONS "$1" - ;;
 +		*)
 +			TF=`/bin/mktemp -t zdiff.XXXXXXXXXX` || exit 1
  			trap 'trap - EXIT; rm -f "$TF"; exit 2' EXIT HUP INT PIPE TERM
@@ -257,7 +257,7 @@ diff -upk.orig gzip-1.3.5.orig/zgrep.1 gzip-1.3.5/zgrep.1
 +.BR zforce (1),
 +.BR gzip (1),
 +.BR bzip2 (1),
-+.BR gzexe (1).
++.BR gzexe (1)
 diff -upk.orig gzip-1.3.5.orig/zgrep.in gzip-1.3.5/zgrep.in
 --- gzip-1.3.5.orig/zgrep.in	2005-05-20 12:32:12 +0000
 +++ gzip-1.3.5/zgrep.in	2005-05-20 12:54:12 +0000
