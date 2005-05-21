@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gzip/gzip.spec,v 1.17 2005/05/21 00:18:49 ldv Exp $
+# $Id: Owl/packages/gzip/gzip.spec,v 1.18 2005/05/21 00:23:16 ldv Exp $
 
 Summary: The GNU data compression program.
 Name: gzip
@@ -26,9 +26,7 @@ program and its associated scripts to manage compressed files.
 %package utils
 Summary: Utilities for handy use of the GNU gzip.
 Group: Applications/File
-Requires: %name = %version-%release, bzip2, mktemp >= 1:1.3.1
-# due to bz*grep, bzcmp, bzdiff, bzmore and bzless
-Conflicts: bzip2 < 0:1.0.3-owl4
+Requires: %name = %version-%release, bzip2 >= 0:1.0.3-owl4, mktemp >= 1:1.3.1
 
 %description utils
 This package contains additional utilities for the popular
