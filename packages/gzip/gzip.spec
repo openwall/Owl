@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gzip/gzip.spec,v 1.16 2005/05/20 23:21:29 ldv Exp $
+# $Id: Owl/packages/gzip/gzip.spec,v 1.17 2005/05/21 00:18:49 ldv Exp $
 
 Summary: The GNU data compression program.
 Name: gzip
@@ -17,14 +17,22 @@ Patch5: gzip-1.3.5-deb-alt-signal.diff
 Patch6: gzip-1.3.5-deb-alt-original-filename.diff
 Patch7: gzip-1.3.5-alt-copy_stat.diff
 Patch8: gzip-1.3.5-alt-bzip2.diff
-Requires: mktemp >= 1:1.3.1
-# due to bz*grep, bzcmp, bzdiff, bzmore and bzless
-Conflicts: bzip2 < 0:1.0.3-owl4
 BuildRoot: /override/%name-%version
 
 %description
 The gzip package contains the popular GNU gzip data compression
 program and its associated scripts to manage compressed files.
+
+%package utils
+Summary: Utilities for handy use of the GNU gzip.
+Group: Applications/File
+Requires: %name = %version-%release, bzip2, mktemp >= 1:1.3.1
+# due to bz*grep, bzcmp, bzdiff, bzmore and bzless
+Conflicts: bzip2 < 0:1.0.3-owl4
+
+%description utils
+This package contains additional utilities for the popular
+GNU gzip and bzip2 data compression programs.
 
 %prep
 %setup -q
@@ -108,9 +116,18 @@ fi
 %defattr(-,root,root)
 %doc AUTHORS ChangeLog.bz2 NEWS README THANKS TODO
 /bin/*
-%_bindir/*
-%_mandir/*/*
+%_bindir/g*zip
+%_mandir/*/g*zip.*
+%_mandir/*/zcat.*
 %_infodir/gzip.info*
+
+%files utils
+%defattr(-,root,root)
+%_bindir/*
+%_mandir/man1/*
+%exclude %_bindir/g*zip
+%exclude %_mandir/*/g*zip.*
+%exclude %_mandir/*/zcat.*
 
 %changelog
 * Fri May 20 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.3.5-owl1
@@ -123,7 +140,7 @@ of gzip and gunzip (CAN-2005-0988), and fix of zgrep utility to properly
 sanitize arguments (CAN-2005-0758).
 - Changed zgrep, zdiff and zmore utilities to handle also functionality
 of bz*grep, bzdiff and bzmore utilities, packaged bz*grep, bzcmp, bzdiff,
-bzmore and bzless within this package.
+bzmore and bzless within separate subpackage, gzip-utils.
 - Added zegrep(1) and zfgrep(1) manpage links.
 - Corrected info files installation.
 - Updated URL.
