@@ -36,19 +36,9 @@ diff -upk.orig glibc-2.3.5.orig/debug/pcprofile.c glibc-2.3.5/debug/pcprofile.c
  
    if (outfile != NULL && *outfile != '\0')
      {
-diff -upk.orig glibc-2.3.5.orig/elf/Versions glibc-2.3.5/elf/Versions
---- glibc-2.3.5.orig/elf/Versions	2005-05-17 12:42:39 +0000
-+++ glibc-2.3.5/elf/Versions	2005-05-17 14:32:29 +0000
-@@ -56,5 +56,6 @@ ld {
-     _dl_make_stack_executable;
-     # Only here for gdb while a better method is developed.
-     _dl_debug_state;
-+    __libc_security_mask;
-   }
- }
 diff -upk.orig glibc-2.3.5.orig/elf/dl-support.c glibc-2.3.5/elf/dl-support.c
---- glibc-2.3.5.orig/elf/dl-support.c	2005-05-17 12:42:39 +0000
-+++ glibc-2.3.5/elf/dl-support.c	2005-05-17 14:10:03 +0000
+--- glibc-2.3.5.orig/elf/dl-support.c	2004-11-06 00:24:49 +0000
++++ glibc-2.3.5/elf/dl-support.c	2005-05-23 01:53:37 +0000
 @@ -159,6 +159,7 @@ void
  internal_function
  _dl_aux_init (ElfW(auxv_t) *av)
@@ -166,9 +156,9 @@ diff -upk.orig glibc-2.3.5.orig/elf/dl-support.c glibc-2.3.5/elf/dl-support.c
  
  #ifdef DL_PLATFORM_INIT
 diff -upk.orig glibc-2.3.5.orig/elf/rtld.c glibc-2.3.5/elf/rtld.c
---- glibc-2.3.5.orig/elf/rtld.c	2005-05-17 12:42:39 +0000
-+++ glibc-2.3.5/elf/rtld.c	2005-05-17 14:00:07 +0000
-@@ -2191,6 +2191,7 @@ process_envvars (enum mode *modep)
+--- glibc-2.3.5.orig/elf/rtld.c	2005-04-06 02:49:51 +0000
++++ glibc-2.3.5/elf/rtld.c	2005-05-23 01:53:37 +0000
+@@ -2093,6 +2093,7 @@ process_envvars (enum mode *modep)
    GLRO(dl_profile_output)
      = &"/var/tmp\0/var/profile"[INTUSE(__libc_enable_secure) ? 9 : 0];
  
@@ -176,7 +166,7 @@ diff -upk.orig glibc-2.3.5.orig/elf/rtld.c glibc-2.3.5/elf/rtld.c
    while ((envline = _dl_next_ld_env_entry (&runp)) != NULL)
      {
        size_t len = 0;
-@@ -2252,8 +2253,7 @@ process_envvars (enum mode *modep)
+@@ -2154,8 +2155,7 @@ process_envvars (enum mode *modep)
  	case 9:
  	  /* Test whether we want to see the content of the auxiliary
  	     array passed up from the kernel.  */
@@ -186,7 +176,7 @@ diff -upk.orig glibc-2.3.5.orig/elf/rtld.c glibc-2.3.5/elf/rtld.c
  	    _dl_show_auxv ();
  	  break;
  
-@@ -2266,8 +2266,7 @@ process_envvars (enum mode *modep)
+@@ -2168,8 +2168,7 @@ process_envvars (enum mode *modep)
  
  	case 11:
  	  /* Path where the binary is found.  */
@@ -196,7 +186,7 @@ diff -upk.orig glibc-2.3.5.orig/elf/rtld.c glibc-2.3.5/elf/rtld.c
  	    GLRO(dl_origin_path) = &envline[12];
  	  break;
  
-@@ -2286,8 +2285,7 @@ process_envvars (enum mode *modep)
+@@ -2188,8 +2187,7 @@ process_envvars (enum mode *modep)
  	      break;
  	    }
  
@@ -206,7 +196,7 @@ diff -upk.orig glibc-2.3.5.orig/elf/rtld.c glibc-2.3.5/elf/rtld.c
  	    GLRO(dl_dynamic_weak) = 1;
  	  break;
  
-@@ -2297,15 +2295,13 @@ process_envvars (enum mode *modep)
+@@ -2199,15 +2197,13 @@ process_envvars (enum mode *modep)
  #ifdef EXTRA_LD_ENVVARS_13
  	  EXTRA_LD_ENVVARS_13
  #endif
@@ -224,7 +214,7 @@ diff -upk.orig glibc-2.3.5.orig/elf/rtld.c glibc-2.3.5/elf/rtld.c
  	      && envline[15] != '\0')
  	    GLRO(dl_profile_output) = &envline[15];
  	  break;
-@@ -2349,16 +2345,39 @@ process_envvars (enum mode *modep)
+@@ -2251,16 +2247,39 @@ process_envvars (enum mode *modep)
  	EXTRA_UNSECURE_ENVVARS
  #endif
  	UNSECURE_ENVVARS;
@@ -269,6 +259,16 @@ diff -upk.orig glibc-2.3.5.orig/elf/rtld.c glibc-2.3.5/elf/rtld.c
  
        if (__access ("/etc/suid-debug", F_OK) != 0)
          {
+diff -upk.orig glibc-2.3.5.orig/elf/Versions glibc-2.3.5/elf/Versions
+--- glibc-2.3.5.orig/elf/Versions	2004-10-19 22:20:33 +0000
++++ glibc-2.3.5/elf/Versions	2005-05-23 01:53:37 +0000
+@@ -56,5 +56,6 @@ ld {
+     _dl_make_stack_executable;
+     # Only here for gdb while a better method is developed.
+     _dl_debug_state;
++    __libc_security_mask;
+   }
+ }
 diff -upk.orig glibc-2.3.5.orig/gmon/gmon.c glibc-2.3.5/gmon/gmon.c
 --- glibc-2.3.5.orig/gmon/gmon.c	2004-09-14 04:24:43 +0000
 +++ glibc-2.3.5/gmon/gmon.c	2005-05-17 13:53:18 +0000
@@ -520,8 +520,8 @@ diff -upk.orig glibc-2.3.5.orig/nis/nis_subr.c glibc-2.3.5/nis/nis_subr.c
      path = strdupa ("$");
    else
 diff -upk.orig glibc-2.3.5.orig/posix/execvp.c glibc-2.3.5/posix/execvp.c
---- glibc-2.3.5.orig/posix/execvp.c	2005-05-17 12:42:39 +0000
-+++ glibc-2.3.5/posix/execvp.c	2005-05-17 13:53:18 +0000
+--- glibc-2.3.5.orig/posix/execvp.c	2005-02-26 01:02:17 +0000
++++ glibc-2.3.5/posix/execvp.c	2005-05-23 01:53:37 +0000
 @@ -87,19 +87,18 @@ execvp (file, argv)
      }
    else
@@ -597,8 +597,8 @@ diff -upk.orig glibc-2.3.5.orig/resolv/res_hconf.c glibc-2.3.5/resolv/res_hconf.
      {
        _res_hconf.num_trimdomains = 0;
 diff -upk.orig glibc-2.3.5.orig/resolv/res_init.c glibc-2.3.5/resolv/res_init.c
---- glibc-2.3.5.orig/resolv/res_init.c	2005-05-17 12:42:39 +0000
-+++ glibc-2.3.5/resolv/res_init.c	2005-05-17 13:53:18 +0000
+--- glibc-2.3.5.orig/resolv/res_init.c	2004-10-11 20:49:25 +0000
++++ glibc-2.3.5/resolv/res_init.c	2005-05-23 01:53:37 +0000
 @@ -201,7 +201,7 @@ __res_vinit(res_state statp, int preinit
  #endif
  
@@ -777,8 +777,8 @@ diff -upk.orig glibc-2.3.5.orig/sysdeps/generic/enbl-secure.c glibc-2.3.5/sysdep
 +    }
  }
 diff -upk.orig glibc-2.3.5.orig/sysdeps/generic/glob.c glibc-2.3.5/sysdeps/generic/glob.c
---- glibc-2.3.5.orig/sysdeps/generic/glob.c	2005-05-17 12:42:39 +0000
-+++ glibc-2.3.5/sysdeps/generic/glob.c	2005-05-17 13:53:18 +0000
+--- glibc-2.3.5.orig/sysdeps/generic/glob.c	2004-10-27 18:21:02 +0000
++++ glibc-2.3.5/sysdeps/generic/glob.c	2005-05-23 01:53:37 +0000
 @@ -171,7 +171,7 @@ extern int errno;
  # define	ANSI_STRING
  #else	/* No standard headers.  */
@@ -988,9 +988,9 @@ diff -upk.orig glibc-2.3.5.orig/sysdeps/posix/spawni.c glibc-2.3.5/sysdeps/posix
  
    len = strlen (file) + 1;
 diff -upk.orig glibc-2.3.5.orig/sysdeps/unix/sysv/linux/dl-librecon.h glibc-2.3.5/sysdeps/unix/sysv/linux/dl-librecon.h
---- glibc-2.3.5.orig/sysdeps/unix/sysv/linux/dl-librecon.h	2005-05-17 12:42:39 +0000
-+++ glibc-2.3.5/sysdeps/unix/sysv/linux/dl-librecon.h	2005-05-17 13:53:18 +0000
-@@ -57,7 +57,7 @@ _dl_osversion_init (char *assume_kernel)
+--- glibc-2.3.5.orig/sysdeps/unix/sysv/linux/dl-librecon.h	2004-03-05 10:14:48 +0000
++++ glibc-2.3.5/sysdeps/unix/sysv/linux/dl-librecon.h	2005-05-23 01:53:37 +0000
+@@ -53,7 +53,7 @@ _dl_osversion_init (char *assume_kernel)
  
  #define DL_OSVERSION_INIT \
    do {									      \
