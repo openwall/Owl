@@ -38,7 +38,7 @@ diff -upk.orig glibc-2.3.5.orig/debug/pcprofile.c glibc-2.3.5/debug/pcprofile.c
      {
 diff -upk.orig glibc-2.3.5.orig/elf/dl-support.c glibc-2.3.5/elf/dl-support.c
 --- glibc-2.3.5.orig/elf/dl-support.c	2004-11-06 00:24:49 +0000
-+++ glibc-2.3.5/elf/dl-support.c	2005-05-23 01:53:37 +0000
++++ glibc-2.3.5/elf/dl-support.c	2005-05-23 02:18:40 +0000
 @@ -159,6 +159,7 @@ void
  internal_function
  _dl_aux_init (ElfW(auxv_t) *av)
@@ -297,12 +297,12 @@ diff -upk.orig glibc-2.3.5.orig/iconv/gconv_cache.c glibc-2.3.5/iconv/gconv_cach
  
 diff -upk.orig glibc-2.3.5.orig/include/unistd.h glibc-2.3.5/include/unistd.h
 --- glibc-2.3.5.orig/include/unistd.h	2004-06-30 07:35:39 +0000
-+++ glibc-2.3.5/include/unistd.h	2005-05-17 14:16:26 +0000
++++ glibc-2.3.5/include/unistd.h	2005-05-23 02:16:28 +0000
 @@ -141,10 +141,12 @@ libc_hidden_proto (__sbrk)
     and some functions contained in the C library ignore various
     environment variables that normally affect them.  */
  extern int __libc_enable_secure attribute_relro;
-+extern int __libc_security_mask attribute_relro;
++extern unsigned int __libc_security_mask attribute_relro;
  extern int __libc_enable_secure_decided;
  #ifdef IS_IN_rtld
  /* XXX The #ifdef should go.  */
@@ -657,12 +657,15 @@ diff -upk.orig glibc-2.3.5.orig/sunrpc/rpc_svcout.c glibc-2.3.5/sunrpc/rpc_svcou
    f_print (fout, "\t\t} else if ((nconf = getnetconfigent(netid)) == NULL) {\n");
 diff -upk.orig glibc-2.3.5.orig/sysdeps/generic/dl-sysdep.c glibc-2.3.5/sysdeps/generic/dl-sysdep.c
 --- glibc-2.3.5.orig/sysdeps/generic/dl-sysdep.c	2004-11-06 00:24:47 +0000
-+++ glibc-2.3.5/sysdeps/generic/dl-sysdep.c	2005-05-17 14:45:04 +0000
-@@ -50,6 +50,8 @@ ElfW(Addr) _dl_base_addr;
++++ glibc-2.3.5/sysdeps/generic/dl-sysdep.c	2005-05-23 02:19:02 +0000
+@@ -48,8 +48,10 @@ extern void __libc_check_standard_fds (v
+ #ifdef NEED_DL_BASE_ADDR
+ ElfW(Addr) _dl_base_addr;
  #endif
- int __libc_enable_secure attribute_relro = 0;
+-int __libc_enable_secure attribute_relro = 0;
++int __libc_enable_secure attribute_relro = 1;
  INTVARDEF(__libc_enable_secure)
-+int __libc_security_mask attribute_relro = 0;
++int __libc_security_mask attribute_relro = 0x7fffffff;
 +INTVARDEF(__libc_security_mask)
  int __libc_multiple_libcs = 0;	/* Defining this here avoids the inclusion
  				   of init-first.  */
@@ -755,7 +758,7 @@ diff -upk.orig glibc-2.3.5.orig/sysdeps/generic/dl-sysdep.c glibc-2.3.5/sysdeps/
    if (GLRO(dl_pagesize) == 0)
 diff -upk.orig glibc-2.3.5.orig/sysdeps/generic/enbl-secure.c glibc-2.3.5/sysdeps/generic/enbl-secure.c
 --- glibc-2.3.5.orig/sysdeps/generic/enbl-secure.c	2003-05-06 06:33:13 +0000
-+++ glibc-2.3.5/sysdeps/generic/enbl-secure.c	2005-05-17 14:10:17 +0000
++++ glibc-2.3.5/sysdeps/generic/enbl-secure.c	2005-05-23 02:21:09 +0000
 @@ -27,11 +27,17 @@
  int __libc_enable_secure_decided;
  /* Safest assumption, if somehow the initializer isn't run.  */
@@ -770,10 +773,10 @@ diff -upk.orig glibc-2.3.5.orig/sysdeps/generic/enbl-secure.c glibc-2.3.5/sysdep
 -			    || __getegid () != __getgid ());
 +    {
 +      __libc_security_mask =
-+	1 |
 +	((__geteuid () != __getuid ()) << 1) |
 +	((__getegid () != __getgid ()) << 2);
 +      __libc_enable_secure = __libc_security_mask != 0;
++      __libc_security_mask |= __libc_enable_secure;
 +    }
  }
 diff -upk.orig glibc-2.3.5.orig/sysdeps/generic/glob.c glibc-2.3.5/sysdeps/generic/glob.c
