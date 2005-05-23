@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.93 2005/05/17 16:40:37 ldv Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.94 2005/05/23 03:16:29 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -11,7 +11,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 0.4.7
-Release: owl4
+Release: owl5
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/%name/
@@ -455,6 +455,12 @@ fi
 %files compat-fake
 
 %changelog
+* Mon May 23 2005 Solar Designer <solar@owl.openwall.com> 2.3.5-owl5
+- Even more changes to the sanitize-env patch: corrected the way
+__libc_enable_secure is set in __libc_init_secure() if still undecided at
+that point, provide safe defaults for __libc_enable_secure and
+__libc_security_mask in sysdeps/generic/dl-sysdep.c.
+
 * Tue May 17 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.3.5-owl4
 - Further changes to the sanitize-env patch: left
 __libc_enable_secure a boolean variable; instead, introduced an
