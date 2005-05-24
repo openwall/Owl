@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.49 2005/05/24 03:45:20 galaxy Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.50 2005/05/24 04:59:13 galaxy Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -163,7 +163,8 @@ fi
 
 %changelog
 * Tue May 24 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.23-owl3
-- Fixed a typo in /etc/rc.d/init.d/network which breaks static routes logic.
+- Fixed a typo in /etc/rc.d/init.d/network which used to break the static
+routes logic.
 
 * Mon Jan 10 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.23-owl2
 - Made use of %%__cc and %%__make macros.
