@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.48 2005/01/20 04:43:47 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.49 2005/05/24 03:45:20 galaxy Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
 Version: 0.23
-Release: owl2
+Release: owl3
 License: GPL
 Group: System Environment/Base
 Source0: initscripts-5.00.tar.gz
@@ -17,6 +17,7 @@ Source7: clock
 Source8: service
 Source9: sysctl.conf
 Patch0: initscripts-5.00-owl-dhclient.diff
+Patch1: initscripts-5.00-owl-network-typo.diff
 PreReq: /sbin/chkconfig
 Requires: SysVinit, msulogin, /sbin/start-stop-daemon
 Requires: bash >= 2.0, sh-utils
@@ -34,6 +35,7 @@ system down cleanly.
 %prep
 %setup -q -n initscripts-5.00
 %patch -p1
+%patch1 -p1
 
 %build
 %__make -C src CC="%__cc" CFLAGS="$RPM_OPT_FLAGS" usleep ipcalc
@@ -160,6 +162,9 @@ fi
 %doc redhat
 
 %changelog
+* Tue May 24 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.23-owl3
+- Fixed a typo in /etc/rc.d/init.d/network which breaks static routes logic.
+
 * Mon Jan 10 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.23-owl2
 - Made use of %%__cc and %%__make macros.
 - Cleaned up the spec.

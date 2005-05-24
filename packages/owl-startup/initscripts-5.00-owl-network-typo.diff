@@ -1,0 +1,12 @@
+diff -ur initscripts-5.00.orig/rc.d/init.d/network initscripts-5.00/rc.d/init.d/network
+--- initscripts-5.00.orig/rc.d/init.d/network	2000-03-07 16:30:13 +0000
++++ initscripts-5.00/rc.d/init.d/network	2005-05-24 03:36:39 +0000
+@@ -69,7 +69,7 @@
+ 	# Add non interface-specific static-routes.
+ 	if [ -f /etc/sysconfig/static-routes ]; then
+ 	   grep "^any" /etc/sysconfig/static-routes | while read ignore type dest netmask mask gw gateway; do
+-	      [ "${gateway}" != "${gateway##[0-9}" ] && \
++	      [ -n "$gateway" ] && \
+ 	      	/sbin/route add -$type $dest $netmask $mask $gw $gateway
+ 	   done
+ 	fi    
