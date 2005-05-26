@@ -25,19 +25,6 @@ it fail-close on suEXEC.  Clone and maintain a version of suEXEC more
 friendly to virtual hosting.
 
 
-	automake, libtool.
-
-[PRIORITY: medium]
-[ASSIGNED: ldv@]
-Deal with temporary file handling.  The RH-derived patch in libtool is
-fail-open on mktemp(1).  automake.texi suggests bad practices (look for
-"make DESTDIR=/tmp/staging install" and what follows).
-
-[PRIORITY: medium]
-[ASSIGNED: ldv@]
-Update libtool to 1.5.12+ for the ld.so.conf include syntax.
-
-
 	bash.
 
 [PRIORITY: low]
@@ -241,6 +228,18 @@ items are in a separate non-public TODO list for just John.)
 [PRIORITY: low]
 [ASSIGNED: nergal@]
 Update to latest releases.
+
+
+	libtool.
+
+[PRIORITY: medium]
+[ASSIGNED: ldv@]
+Update libtool to 1.5.12+ for the ld.so.conf include syntax.
+
+[PRIORITY: medium]
+[ASSIGNED: ldv@]
+Deal with temporary file handling.  The RH-derived patch in libtool is
+fail-open on mktemp(1).
 
 
 	ltrace.
@@ -623,4 +622,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.81 2005/05/26 08:06:01 solar Exp $
+$Id: Owl/doc/TODO,v 1.82 2005/05/26 14:26:37 solar Exp $
