@@ -64,8 +64,17 @@ root.  (Jarno did some work on this.)
 	binutils.
 
 [PRIORITY: medium]
+[ASSIGNED: ldv@]
 Update to latest release.  In particular, we need the "include"
 directive support in /etc/ld.so.conf.
+
+[PRIORITY: medium]
+[ASSIGNED: ldv@]
+Deal with the BFD overflows once things stabilize (both the binutils
+update for Owl and the BFD fixes being worked on by others):
+
+http://bugs.gentoo.org/show_bug.cgi?id=91398
+http://sources.redhat.com/ml/binutils/2005-05/msg00699.html
 
 
 	bison, dialog, diffstat, diffutils, file, hdparm, man-pages.
@@ -151,14 +160,22 @@ See "Warning Messages" in findutils texinfo documentation for details.
 	gdb.
 
 [PRIORITY: medium]
+[ASSIGNED: ldv@]
+Update to latest release.
+
+[PRIORITY: medium]
+[ASSIGNED: ldv@]
+Deal with the vulnerabilities indentified by Gentoo once there's a
+definitive fix for the BFD overflows:
+
+http://www.gentoo.org/security/en/glsa/glsa-200505-15.xml
+
+[PRIORITY: medium]
 Investigate and deal with fd leaks into traced programs.
 
 [PRIORITY: low]
 [ASSIGNED: solar@]
 Package a tool to trap unaligned accesses on Alpha.
-
-[PRIORITY: low]
-Update to latest release.
 
 
 	gettext.
@@ -606,4 +623,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.80 2005/05/20 23:28:05 ldv Exp $
+$Id: Owl/doc/TODO,v 1.81 2005/05/26 08:06:01 solar Exp $
