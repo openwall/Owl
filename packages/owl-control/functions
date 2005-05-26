@@ -1,8 +1,9 @@
-# $Id: Owl/packages/owl-control/functions,v 1.7 2003/10/24 00:01:45 solar Exp $
+# $Id: Owl/packages/owl-control/functions,v 1.8 2005/05/26 16:46:43 ldv Exp $
 
 function define()
 {
-	eval "$1_$2='$3'"
+	local arg=$(printf %s "$3" | sed -e 's/["$`\]/\\&/g')
+	eval "$1_$2=\"$arg\""
 }
 
 function lookup()
@@ -12,7 +13,7 @@ function lookup()
 
 function validate()
 {
-	echo "$1" | grep -q '^[a-z0-9_]*$'
+	printf %s "$1" | grep -q '^[a-z0-9_]*$'
 }
 
 function register()
@@ -43,7 +44,7 @@ function stat()
 	local BASEPATH
 
 	BASEPATH="`echo "$PATHNAME" | sed 's,/[^/]*$,,'`"
-	find "$BASEPATH" -path "$PATHNAME" -maxdepth 1 -printf '%m_%u_%g'
+	find "$BASEPATH" -maxdepth 1 -path "$PATHNAME" -printf '%m_%u_%g'
 }
 
 function control_fmode()
