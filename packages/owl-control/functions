@@ -1,8 +1,11 @@
-# $Id: Owl/packages/owl-control/functions,v 1.8 2005/05/26 16:46:43 ldv Exp $
+# $Id: Owl/packages/owl-control/functions,v 1.9 2005/05/26 20:06:11 ldv Exp $
 
 function define()
 {
-	local arg=$(printf %s "$3" | sed -e 's/["$`\]/\\&/g')
+	local arg="$3"
+	if [ -z "${arg##*[\"\$\`\\]*}" ]; then
+		arg=$(printf %s "$arg" | sed -e 's/["$`\]/\\&/g')
+	fi
 	eval "$1_$2=\"$arg\""
 }
 
