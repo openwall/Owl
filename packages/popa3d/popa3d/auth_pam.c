@@ -154,7 +154,8 @@ struct passwd *auth_userpass(char *user, char *pass, int *known)
 	pam_handle_t *pamh;
 	pam_userpass_t userpass;
 	struct pam_conv conv = {pam_userpass_conv, &userpass};
-	char *template;
+	pam_item_t item;
+	lo_const char *template;
 	int status;
 
 	*known = 0;
@@ -179,12 +180,13 @@ struct passwd *auth_userpass(char *user, char *pass, int *known)
 		return NULL;
 	}
 
-	status = pam_get_item(pamh, PAM_USER, (pam_item_t *)&template);
+	status = pam_get_item(pamh, PAM_USER, &item);
 	if (status != PAM_SUCCESS) {
 		pam_end(pamh, status);
 		*known = is_user_known(user);
 		return NULL;
 	}
+	template = item;
 
 	template = strdup(template);
 
