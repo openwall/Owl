@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-control/functions,v 1.10 2005/05/26 20:22:22 ldv Exp $
+# $Id: Owl/packages/owl-control/functions,v 1.11 2005/05/26 22:01:52 ldv Exp $
 
 function define()
 {
@@ -21,7 +21,7 @@ function validate()
 
 function register()
 {
-	test -z "`lookup REGISTERED "$1"`" || return
+	eval "test -z \"\$REGISTERED_$1\"" || return
 	define REGISTERED "$1" yes
 	test -z "$NAME_LIST" && NAME_LIST="$1" || NAME_LIST="$NAME_LIST $1"
 }
