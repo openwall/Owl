@@ -1,17 +1,21 @@
-# $Id: Owl/packages/libtool/libtool.spec,v 1.10 2004/11/23 22:40:46 mci Exp $
+# $Id: Owl/packages/libtool/libtool.spec,v 1.11 2005/05/26 14:43:22 ldv Exp $
+
+%define BUILD_TEST 0
 
 Summary: The GNU Libtool, which simplifies the use of shared libraries.
 Name: libtool
-Version: 1.5.2
-Release: owl1.1
+Version: 1.5.18
+Release: owl1
 License: GPL
 Group: Development/Tools
+URL: http://www.gnu.org/software/libtool/
 Source: ftp://ftp.gnu.org/gnu/libtool/libtool-%version.tar.gz
-Patch0: libtool-1.5.2-rh-mktemp.diff
-Patch1: libtool-1.5.2-rh-nonneg.diff
-Patch2: libtool-1.5.2-owl-info.diff
-Patch3: libtool-1.5.2-owl-buildhost.diff
-Patch4: libtool-1.5.2-alt-ltmain-legacy.diff
+Patch0: libtool-1.5.18-alt-tmp.diff
+Patch1: libtool-1.5.18-owl-info.diff
+Patch2: libtool-1.5.18-owl-buildhost.diff
+Patch3: libtool-1.5.18-alt-deb-link_all_deplibs.diff
+Patch4: libtool-1.5.18-alt-ltmain-legacy.diff
+Patch5: libtool-1.5.18-alt-ld.so.conf.diff
 PreReq: /sbin/install-info, autoconf, automake, m4, perl
 Requires: libtool-libs = %version-%release, mktemp
 Prefix: %_prefix
@@ -37,6 +41,7 @@ shared libraries.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 rm doc/libtool.info
@@ -45,9 +50,10 @@ rm doc/libtool.info
 
 make -C doc
 make
-
-# XXX: make this ifdef'ed ?
-# make check
+%if %BUILD_TEST
+%__make check
+%endif
+bzip2 -9fk ChangeLog
 
 %install
 rm -rf %buildroot
@@ -55,21 +61,20 @@ mkdir -p %buildroot%_prefix
 
 %makeinstall
 
-# XXX: (GM): Remove unpackaged files (check later)
-rm %buildroot%_infodir/dir
+# Remove unpackaged files if any
+rm -f %buildroot%_infodir/dir
 
 %post
-/sbin/install-info %_infodir/libtool.info.gz %_infodir/dir
+/sbin/install-info %_infodir/libtool.info %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/libtool.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/libtool.info %_infodir/dir
 fi
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS COPYING INSTALL NEWS README
-%doc THANKS TODO ChangeLog
+%doc AUTHORS COPYING NEWS README THANKS TODO ChangeLog.bz2
 %_bindir/*
 %_infodir/libtool.info*
 %_includedir/ltdl.h
@@ -84,6 +89,13 @@ fi
 %_libdir/libltdl.so.*
 
 %changelog
+* Thu May 26 2005 Dmitry V. Levin <ldv@altlinux.org> 1.5.18-owl1
+- Updated to 1.5.18, reviewed and updated patches.
+- Applied changed from Debian and ALT: do not add the contents of
+dependency_libs to the link line when linking programs.
+- Corrected info files installation.
+- Added URL.
+
 * Sat Mar 20 2004 Michail Litvak <mci@owl.openwall.com> 1.5.2-owl1.1
 - Don't install demo in docs, we can do make check if we need this.
 

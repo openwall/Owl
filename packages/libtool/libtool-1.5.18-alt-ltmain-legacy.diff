@@ -1,0 +1,21 @@
+--- libtool-1.5.18/ltmain.in.orig	2005-05-04 19:13:00 +0000
++++ libtool-1.5.18/ltmain.in	2005-05-26 11:24:10 +0000
+@@ -33,6 +33,18 @@ basename="s,^.*/,,g"
+ # function.
+ progpath="$0"
+ 
++# ensure that SED variable is defined.
++test -n "$SED" || SED=sed
++
++# ensure that EGREP variable is defined.
++test -n "$EGREP" || EGREP=egrep
++
++# ensure that max_cmd_len variable is defined.
++test -n "$max_cmd_len" || max_cmd_len=32768
++
++# ensure that shrext_cmds variable is defined.
++test -n "$shrext_cmds" || shrext_cmds=.so
++
+ # The name of this program:
+ progname=`echo "$progpath" | $SED $basename`
+ modename="$progname"

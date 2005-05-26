@@ -1,6 +1,6 @@
---- libtool-1.5.2/libtool.m4.orig	Fri Jan 23 08:07:04 2004
-+++ libtool-1.5.2/libtool.m4	Tue Feb 24 15:28:25 2004
-@@ -3978,7 +3978,7 @@
+--- libtool-1.5.18/libtool.m4.orig	2005-05-15 13:41:23 +0000
++++ libtool-1.5.18/libtool.m4	2005-05-26 11:22:33 +0000
+@@ -4108,7 +4108,7 @@ available_tags=
  # ### BEGIN LIBTOOL CONFIG],
  [# ### BEGIN LIBTOOL TAG CONFIG: $tagname])
  

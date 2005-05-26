@@ -1,5 +1,5 @@
---- libtool-1.5.2/doc/libtool.texi.orig	Fri Jan 23 08:05:23 2004
-+++ libtool-1.5.2/doc/libtool.texi	Tue Feb 24 15:31:54 2004
+--- libtool-1.5.18/doc/libtool.texi.orig	2005-05-15 12:48:37 +0400
++++ libtool-1.5.18/doc/libtool.texi	2005-05-26 17:13:24 +0400
 @@ -13,7 +13,8 @@
  
  @dircategory GNU programming tools
