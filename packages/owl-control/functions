@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-control/functions,v 1.11 2005/05/26 22:01:52 ldv Exp $
+# $Id: Owl/packages/owl-control/functions,v 1.12 2005/05/26 23:03:56 ldv Exp $
 
 function define()
 {
@@ -11,7 +11,7 @@ function define()
 
 function lookup()
 {
-	eval "echo \$$1_$2"
+	eval "$1=\"\$$2_$3\""
 }
 
 function validate()
@@ -21,7 +21,9 @@ function validate()
 
 function register()
 {
-	eval "test -z \"\$REGISTERED_$1\"" || return
+	local value=
+	lookup value REGISTERED "$1"
+	[ -z "$value" ] || return
 	define REGISTERED "$1" yes
 	test -z "$NAME_LIST" && NAME_LIST="$1" || NAME_LIST="$NAME_LIST $1"
 }
@@ -44,9 +46,7 @@ function new_subst()
 function stat()
 {
 	local PATHNAME="$1"
-	local BASEPATH
-
-	BASEPATH="${PATHNAME%/*}"
+	local BASEPATH="${PATHNAME%/*}"
 	find "$BASEPATH" -maxdepth 1 -path "$PATHNAME" -printf '%m_%u_%g'
 }
 
@@ -61,7 +61,8 @@ function control_fmode()
 		;;
 	status|'')
 		STAT="`stat "$FILE"`"
-		NAME="`validate "$STAT" && lookup FMODE_OWNER_TO_NAME "$STAT"`"
+		NAME=
+		validate "$STAT" && lookup NAME FMODE_OWNER_TO_NAME "$STAT"
 		if [ -n "$NAME" ]; then
 			echo "$NAME"
 		else
@@ -69,8 +70,12 @@ function control_fmode()
 		fi
 		;;
 	*)
-		FMODE="`validate "$REQUEST" && lookup NAME_TO_FMODE "$REQUEST"`"
-		OWNER="`validate "$REQUEST" && lookup NAME_TO_OWNER "$REQUEST"`"
+		FMODE=
+		OWNER=
+		if validate "$REQUEST"; then
+			lookup FMODE NAME_TO_FMODE "$REQUEST"
+			lookup OWNER NAME_TO_OWNER "$REQUEST"
+		fi
 		if [ -n "$FMODE" -a -n "$OWNER" ]; then
 			chown "$OWNER" "$FILE" || return 1
 			chmod "$FMODE" "$FILE" || return 1
@@ -93,7 +98,7 @@ function control_subst()
 		;;
 	status|'')
 		for NAME in $NAME_LIST; do
-			REGEX="`lookup NAME_TO_REGEX "$NAME"`"
+			lookup REGEX NAME_TO_REGEX "$NAME"
 			test -n "$REGEX" || continue
 			if grep -Eq "$REGEX" "$FILE"; then
 				echo "$NAME"
@@ -103,7 +108,8 @@ function control_subst()
 		echo "unknown"
 		;;
 	*)
-		SUBST="`validate "$REQUEST" && lookup NAME_TO_SUBST "$REQUEST"`"
+		SUBST=
+		validate "$REQUEST" && lookup SUBST NAME_TO_SUBST "$REQUEST"
 		if [ -z "$SUBST" ]; then
 			echo "${0##*/}: Invalid mode: $REQUEST" >&2
 			return 1
