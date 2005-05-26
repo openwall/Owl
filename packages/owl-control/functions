@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-control/functions,v 1.9 2005/05/26 20:06:11 ldv Exp $
+# $Id: Owl/packages/owl-control/functions,v 1.10 2005/05/26 20:22:22 ldv Exp $
 
 function define()
 {
@@ -46,7 +46,7 @@ function stat()
 	local PATHNAME="$1"
 	local BASEPATH
 
-	BASEPATH="`echo "$PATHNAME" | sed 's,/[^/]*$,,'`"
+	BASEPATH="${PATHNAME%/*}"
 	find "$BASEPATH" -maxdepth 1 -path "$PATHNAME" -printf '%m_%u_%g'
 }
 
