@@ -1,0 +1,26 @@
+--- automake-1.9.5/doc/automake.texi.orig	2005-02-12 21:16:20 +0000
++++ automake-1.9.5/doc/automake.texi	2005-05-23 14:05:11 +0000
+@@ -5691,17 +5691,16 @@ path is prefixed with the value of @samp
+ into the install area.  Here is an example of typical DESTDIR usage:
+ 
+ @example
+-mkdir /tmp/staging &&
+-make DESTDIR=/tmp/staging install
++DESTDIR="$(mktemp -dt staging.XXXXXXXXXX)" &&
++make DESTDIR="$DESTDIR" install
+ @end example
+ 
+-The @command{mkdir} command avoids a security problem if the attacker
+-creates a symbolic link from @file{/tmp/staging} to a victim area;
++The @command{mktemp} command creats temporary directory in secure manner;
+ then @command{make} places install objects in a directory tree built under
+-@file{/tmp/staging}.  If @file{/gnu/bin/foo} and
++@file{$DESTDIR}.  If @file{/gnu/bin/foo} and
+ @file{/gnu/share/aclocal/foo.m4} are to be installed, the above command
+-would install @file{/tmp/staging/gnu/bin/foo} and
+-@file{/tmp/staging/gnu/share/aclocal/foo.m4}.
++would install @file{$DESTDIR/gnu/bin/foo} and
++@file{$DESTDIR/gnu/share/aclocal/foo.m4}.
+ 
+ This feature is commonly used to build install images and packages.  For
+ more information, see @ref{Makefile Conventions, , , standards, The GNU

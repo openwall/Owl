@@ -1,4 +1,4 @@
-# $Id: Owl/packages/automake/automake.spec,v 1.11 2005/04/19 03:05:02 galaxy Exp $
+# $Id: Owl/packages/automake/automake.spec,v 1.12 2005/05/26 13:21:42 ldv Exp $
 
 %define BUILD_TEST 0
 
@@ -7,12 +7,13 @@
 Summary: A GNU tool for automatically creating Makefiles.
 Name: automake
 Version: %{api_version}.5
-Release: owl1
+Release: owl2
 License: GPL
 Group: Development/Tools
-URL: http://sourceware.cygnus.com/automake/
+URL: http://www.gnu.org/software/automake/
 Source: ftp://ftp.gnu.org/gnu/automake/automake-%version.tar.bz2
 Patch0: automake-1.9.5-owl-info.diff
+Patch1: automake-1.9.5-owl-tmp.diff
 PreReq: /sbin/install-info
 Requires: perl
 BuildRequires: autoconf >= 2.59
@@ -27,6 +28,7 @@ template files.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 %configure
@@ -34,24 +36,23 @@ template files.
 %if %BUILD_TEST
 %__make check
 %endif
+bzip2 -9fk ChangeLog
 
 %install
 rm -rf %buildroot
 %makeinstall
 
-bzip2 -9f ChangeLog
-
 mkdir -p %buildroot%_datadir/aclocal
 
-# Remove unpackaged files
-rm %buildroot%_infodir/dir
+# Remove unpackaged files if any
+rm -f %buildroot%_infodir/dir
 
 %post
-/sbin/install-info %_infodir/automake.info.gz %_infodir/dir
+/sbin/install-info %_infodir/automake.info %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/automake.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/automake.info %_infodir/dir
 fi
 
 %files
@@ -64,6 +65,11 @@ fi
 %dir %_datadir/aclocal
 
 %changelog
+* Thu May 26 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.9.5-owl2
+- Fixed temporary directory handling issue in texinfo documentation
+examples.
+- Corrected info files installation.
+
 * Wed Mar 30 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.9.5-owl1
 - Updated to 1.9.5.
 - Added texinfo >= 4.8 to BuildRequires.
