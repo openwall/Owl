@@ -1,4 +1,4 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.43 2005/05/26 16:09:53 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.44 2005/05/26 16:24:45 solar Exp $
 
 Summary: Post Office Protocol (POP3) server.
 Name: popa3d
@@ -23,11 +23,12 @@ security as its primary design goal.
 
 %prep
 %setup -q
-cp $RPM_SOURCE_DIR/params.h params.h
+cp %_sourcedir/params.h params.h
+
+%{expand:%%define optflags %optflags -Wall -DHAVE_PROGNAME}
 
 %build
-make CFLAGS="-Wall $RPM_OPT_FLAGS -DHAVE_PROGNAME" \
-	LIBS="-lpam -lpam_userpass"
+make CFLAGS="%optflags" LIBS="-lpam -lpam_userpass"
 
 %install
 rm -rf %buildroot
@@ -35,11 +36,11 @@ rm -rf %buildroot
 make install DESTDIR=%buildroot SBINDIR=%_sbindir MANDIR=%_mandir
 
 mkdir -p %buildroot/etc/{pam.d,rc.d/init.d,xinetd.d}
-install -m 600 $RPM_SOURCE_DIR/popa3d.pam \
+install -m 600 %_sourcedir/popa3d.pam \
 	%buildroot/etc/pam.d/popa3d
-install -m 700 $RPM_SOURCE_DIR/popa3d.init \
+install -m 700 %_sourcedir/popa3d.init \
 	%buildroot/etc/rc.d/init.d/popa3d
-install -m 600 $RPM_SOURCE_DIR/popa3d.xinetd \
+install -m 600 %_sourcedir/popa3d.xinetd \
 	%buildroot/etc/xinetd.d/popa3d
 
 %pre
@@ -53,6 +54,7 @@ if [ $1 -ge 2 ]; then
 fi
 
 %post
+/sbin/chkconfig --add popa3d
 test -f /var/run/popa3d.restart && /etc/rc.d/init.d/popa3d start || :
 rm -f /var/run/popa3d.restart
 
@@ -79,6 +81,9 @@ to the conversation function because of differences in the layout of the
 "msg" parameter.
 - Bumped the default limits to values that are way too high for most
 systems.
+- Do register popa3d with chkconfig, but don't enable it for any runlevels
+by default.
+- Updated this spec file to our current conventions.
 
 * Thu Jul 22 2004 Solar Designer <solar@owl.openwall.com> 0.6.4.1-owl1
 - Bugfix: actually zeroize the context structure in MD5_Final().  Thanks
