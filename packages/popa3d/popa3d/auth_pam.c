@@ -17,12 +17,13 @@
 
 #include <security/pam_appl.h>
 
-#if defined(__sun__) && !defined(LINUX_PAM)
-#define linux_const			/* Sun's PAM doesn't use const here */
+#if (defined(__sun) || defined(__hpux)) && \
+    !defined(LINUX_PAM) && !defined(_OPENPAM)
+#define lo_const			/* Sun's PAM doesn't use const here */
 #else
-#define linux_const			const
+#define lo_const			const
 #endif
-typedef linux_const void *pam_item_t;
+typedef lo_const void *pam_item_t;
 
 #if USE_LIBPAM_USERPASS
 #include <security/pam_userpass.h>
@@ -53,7 +54,7 @@ typedef struct {
 	char *pass;
 } pam_userpass_t;
 
-static int pam_userpass_conv(int num_msg, linux_const struct pam_message **msg,
+static int pam_userpass_conv(int num_msg, lo_const struct pam_message **msg,
 	struct pam_response **resp, void *appdata_ptr)
 {
 	pam_userpass_t *userpass = (pam_userpass_t *)appdata_ptr;
