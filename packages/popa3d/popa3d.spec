@@ -1,4 +1,4 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.44 2005/05/26 16:24:45 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.45 2005/05/26 16:30:09 solar Exp $
 
 Summary: Post Office Protocol (POP3) server.
 Name: popa3d
@@ -28,12 +28,12 @@ cp %_sourcedir/params.h params.h
 %{expand:%%define optflags %optflags -Wall -DHAVE_PROGNAME}
 
 %build
-make CFLAGS="%optflags" LIBS="-lpam -lpam_userpass"
+%__make CFLAGS="%optflags" LIBS="-lpam -lpam_userpass"
 
 %install
 rm -rf %buildroot
 
-make install DESTDIR=%buildroot SBINDIR=%_sbindir MANDIR=%_mandir
+%__make install DESTDIR=%buildroot SBINDIR=%_sbindir MANDIR=%_mandir
 
 mkdir -p %buildroot/etc/{pam.d,rc.d/init.d,xinetd.d}
 install -m 600 %_sourcedir/popa3d.pam \
