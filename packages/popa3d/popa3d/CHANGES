@@ -1,3 +1,19 @@
+	Changes made between 0.6.4.1 and 1.0 (2005/05/26).
+
+Corrected the source code to not break C strict aliasing rules (this
+only affected auth_pam.c).
+
+With Sun PAM (Solaris, HP-UX), insist on only one PAM message per call
+to the conversation function because of differences in the layout of
+the "msg" parameter.
+
+Bumped the default limits to values that are way too high for most
+systems (I'm sure these will still be insufficient for some, though,
+but hopefully those systems actually got experienced sysadmins).
+Added comments suggesting that these defaults be decreased on
+particular installs.
+
+
 	Changes made between 0.6.4 and 0.6.4.1 (2004/07/22).
 
 Bugfix: actually zeroize the context structure in MD5_Final().  Thanks
@@ -85,4 +101,4 @@ code size.
 Added a popa3d(8) manual page based on the one Camiel Dobbelaar wrote
 for OpenBSD.
 
-$Id: Owl/packages/popa3d/popa3d/CHANGES,v 1.6 2004/07/22 19:00:51 solar Exp $
+$Id: Owl/packages/popa3d/popa3d/CHANGES,v 1.7 2005/05/26 16:01:15 solar Exp $

@@ -1,8 +1,8 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.42 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.43 2005/05/26 16:09:53 solar Exp $
 
 Summary: Post Office Protocol (POP3) server.
 Name: popa3d
-Version: 0.6.4.1
+Version: 1.0
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
@@ -72,6 +72,14 @@ fi
 %doc CHANGES CONTACT DESIGN LICENSE
 
 %changelog
+* Thu May 26 2005 Solar Designer <solar@owl.openwall.com> 1.0-owl1
+- Corrected the source code to not break C strict aliasing rules.
+- With Sun PAM (Solaris, HP-UX), insist on only one PAM message per call
+to the conversation function because of differences in the layout of the
+"msg" parameter.
+- Bumped the default limits to values that are way too high for most
+systems.
+
 * Thu Jul 22 2004 Solar Designer <solar@owl.openwall.com> 0.6.4.1-owl1
 - Bugfix: actually zeroize the context structure in MD5_Final().  Thanks
 to Andrey Panin and Timo Sirainen for bringing this to my attention.  This
