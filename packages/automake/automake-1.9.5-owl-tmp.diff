@@ -12,7 +12,7 @@
  
 -The @command{mkdir} command avoids a security problem if the attacker
 -creates a symbolic link from @file{/tmp/staging} to a victim area;
-+The @command{mktemp} command creats temporary directory in secure manner;
++The @command{mktemp} command creates a temporary directory in a secure manner;
  then @command{make} places install objects in a directory tree built under
 -@file{/tmp/staging}.  If @file{/gnu/bin/foo} and
 +@file{$DESTDIR}.  If @file{/gnu/bin/foo} and
