@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.50 2005/05/24 04:59:13 galaxy Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.51 2005/05/26 04:57:30 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.23
-Release: owl3
+Version: 0.24
+Release: owl1
 License: GPL
 Group: System Environment/Base
 Source0: initscripts-5.00.tar.gz
@@ -162,7 +162,7 @@ fi
 %doc redhat
 
 %changelog
-* Tue May 24 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.23-owl3
+* Tue May 24 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.24-owl1
 - Fixed a typo in /etc/rc.d/init.d/network which used to break the static
 routes logic.
 
