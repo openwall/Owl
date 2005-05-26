@@ -50,9 +50,13 @@
 /*
  * Limit the number of POP sessions we can handle at a time to reduce
  * the impact of connection flood DoS attacks.
+ *
+ * The defaults are rather large. It is recommended that you decrease
+ * MAX_SESSIONS and MAX_SESSIONS_PER_SOURCE to 100 and 10, respectively,
+ * if that would be sufficient for your users.
  */
-#define MAX_SESSIONS			100
-#define MAX_SESSIONS_PER_SOURCE		10
+#define MAX_SESSIONS			500
+#define MAX_SESSIONS_PER_SOURCE		50
 #define MAX_BACKLOG			5
 #define MIN_DELAY			10
 
@@ -126,10 +130,16 @@
 /*
  * Introduce some sane limits on the mailbox size in order to prevent
  * a single huge mailbox from stopping the entire POP service.
+ *
+ * The defaults are rather large (2 GB filled with messages as small as
+ * 1 KB each). It is recommended that you decrease MAX_MAILBOX_MESSAGES,
+ * MAX_MAILBOX_OPEN_BYTES, and MAX_MAILBOX_WORK_BYTES to, say, 100000,
+ * 100000000 (100 MB), and 150000000 (150 MB), respectively, if that
+ * would be sufficient for your users.
  */
-#define MAX_MAILBOX_MESSAGES		200000
-#define MAX_MAILBOX_OPEN_BYTES		200000000
-#define MAX_MAILBOX_WORK_BYTES		250000000
+#define MAX_MAILBOX_MESSAGES		2097152
+#define MAX_MAILBOX_OPEN_BYTES		2147483647
+#define MAX_MAILBOX_WORK_BYTES		2147483647
 
 #if !VIRTUAL_ONLY
 
