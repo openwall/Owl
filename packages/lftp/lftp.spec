@@ -1,16 +1,15 @@
-# $Id: Owl/packages/lftp/lftp.spec,v 1.23 2004/11/23 22:40:46 mci Exp $
+# $Id: Owl/packages/lftp/lftp.spec,v 1.24 2005/05/26 05:19:38 solar Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
-Version: 2.6.10
-Release: owl3
+Version: 2.6.12
+Release: owl1
 License: GPL
 Group: Applications/Internet
 URL: http://lftp.yar.ru
 Source0: ftp://ftp.yars.free.net/pub/software/unix/net/ftp/client/lftp/%name-%version.tar.bz2
 Source1: lftpget.1
 Patch0: lftp-2.6.9-owl-n-option.diff
-Patch1: lftp-2.6.10-rh-handle-malformed-http.diff
 Prefix: %_prefix
 BuildRequires: openssl-devel, readline-devel >= 4.3
 BuildRoot: /override/%name-%version
@@ -40,23 +39,21 @@ downloading files.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 
 %build
 # Make sure that all message catalogs are built
 unset LINGUAS || :
-
-%define __libtoolize echo --
 %configure --with-modules --with-ssl
-make CFLAGS="$RPM_OPT_FLAGS"
+%__make
 
 %install
 rm -rf %buildroot
-make install-strip DESTDIR=%buildroot
+%makeinstall
 
-find %buildroot%_libdir/%name/ -type f -name \*.la -print -delete
+# Remove unpackaged files
+find %buildroot%_libdir/%name -type f -name '*.la' -print -delete
 
-install -m 644 $RPM_SOURCE_DIR/lftpget.1 %buildroot%_mandir/man1/
+install -m 644 %_sourcedir/lftpget.1 %buildroot%_mandir/man1/
 
 %post
 if [ ! -e /usr/bin/ftp -a ! -e %_mandir/man1/ftp.1.gz ]; then
@@ -76,13 +73,19 @@ fi
 %defattr(-,root,root)
 %doc BUGS COPYING FAQ FEATURES NEWS README* THANKS TODO lftp.lsm
 %config /etc/lftp.conf
-%attr(755,root,root) %_bindir/*
-%_libdir/*
-%_mandir/man*/*
-%attr(-,root,root) %_datadir/lftp
-%_datadir/locale/*/*/*
+%_bindir/*
+%_libdir/lftp
+%_mandir/man1/lftp*
+%_datadir/lftp
+%_datadir/locale/*/LC_MESSAGES/lftp.mo
 
 %changelog
+* Tue May 10 2005 Andreas Ericsson <exon@owl.openwall.com> 2.6.12-owl1
+- 2.6.12, fixes hang on copying zero length file with the mirror command.
+- Removed malformed-http patch which is now included upstream.
+- Enforced recent CONVENTIONS additions.
+- Be specific in %%files section.
+
 * Fri Feb 20 2004 Michail Litvak <mci@owl.openwall.com> 2.6.10-owl3
 - Build with system readline.
 
