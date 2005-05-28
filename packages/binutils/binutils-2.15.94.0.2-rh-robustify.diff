@@ -1,0 +1,208 @@
+bfd/
+2005-05-25  Jakub Jelinek  <jakub@redhat.com>
+
+	* elfcode.h (elf_object_p): Fail if e_shoff != 0, e_shnum == 0 and
+	first shdr has sh_size == 0.  Fail if e_shnum is large to cause
+	arithmetic overflow when allocating the i_shdr array.
+	Sanity check sh_link and sh_info fields.  Fix e_shstrndx sanity check.
+
+2005-05-18  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* elf.c (group_signature): Check if the symbol table section is
+	correct.
+
+2005-05-17  Tavis Ormandy <taviso@gentoo.org>
+
+	* elf.c (bfd_section_from_shdr): Add sanity check when parsing
+	dynamic sections.
+
+2005-05-09  Alan Modra  <amodra@bigpond.net.au>
+
+	* elfcode.h (elf_object_p): Add more sanity checks on elf header.
+
+binutils/
+2005-05-24  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* readelf.c (process_section_groups): Check if the section member
+	index is valid.
+
+--- bfd/elf.c.jj	2005-02-07 14:42:44.000000000 -0500
++++ bfd/elf.c	2005-05-25 09:51:36.000000000 -0400
+@@ -443,8 +443,11 @@ group_signature (bfd *abfd, Elf_Internal
+   Elf_External_Sym_Shndx eshndx;
+   Elf_Internal_Sym isym;
+ 
+-  /* First we need to ensure the symbol table is available.  */
+-  if (! bfd_section_from_shdr (abfd, ghdr->sh_link))
++  /* First we need to ensure the symbol table is available.  Make sure
++     that it is a symbol table section.  */
++  hdr = elf_elfsections (abfd) [ghdr->sh_link];
++  if (hdr->sh_type != SHT_SYMTAB
++      || ! bfd_section_from_shdr (abfd, ghdr->sh_link))
+     return NULL;
+ 
+   /* Go read the symbol.  */
+@@ -1755,6 +1758,9 @@ bfd_section_from_shdr (bfd *abfd, unsign
+     case SHT_DYNAMIC:	/* Dynamic linking information.  */
+       if (! _bfd_elf_make_section_from_shdr (abfd, hdr, name))
+ 	return FALSE;
++      if (hdr->sh_link > elf_numsections (abfd)
++	  || elf_elfsections (abfd)[hdr->sh_link] == NULL)
++	return FALSE;
+       if (elf_elfsections (abfd)[hdr->sh_link]->sh_type != SHT_STRTAB)
+ 	{
+ 	  Elf_Internal_Shdr *dynsymhdr;
+--- bfd/elfcode.h.jj	2005-02-07 14:42:44.000000000 -0500
++++ bfd/elfcode.h	2005-05-25 13:09:21.000000000 -0400
+@@ -33,7 +33,7 @@ Foundation, Inc., 59 Temple Place - Suit
+ /* Problems and other issues to resolve.
+ 
+    (1)	BFD expects there to be some fixed number of "sections" in
+-        the object file.  I.E. there is a "section_count" variable in the
++	the object file.  I.E. there is a "section_count" variable in the
+ 	bfd structure which contains the number of sections.  However, ELF
+ 	supports multiple "views" of a file.  In particular, with current
+ 	implementations, executable files typically have two tables, a
+@@ -612,8 +612,13 @@ elf_object_p (bfd *abfd)
+ 
+   if (i_ehdrp->e_shoff != 0)
+     {
++      bfd_signed_vma where = i_ehdrp->e_shoff;
++
++      if (where != (file_ptr) where)
++	goto got_wrong_format_error;
++
+       /* Seek to the section header table in the file.  */
+-      if (bfd_seek (abfd, (file_ptr) i_ehdrp->e_shoff, SEEK_SET) != 0)
++      if (bfd_seek (abfd, (file_ptr) where, SEEK_SET) != 0)
+ 	goto got_no_match;
+ 
+       /* Read the first section header at index 0, and convert to internal
+@@ -625,11 +630,46 @@ elf_object_p (bfd *abfd)
+       /* If the section count is zero, the actual count is in the first
+ 	 section header.  */
+       if (i_ehdrp->e_shnum == SHN_UNDEF)
+-	i_ehdrp->e_shnum = i_shdr.sh_size;
++	{
++	  i_ehdrp->e_shnum = i_shdr.sh_size;
++	  if (i_ehdrp->e_shnum != i_shdr.sh_size
++	      || i_ehdrp->e_shnum == 0)
++	    goto got_wrong_format_error;
++	}
+ 
+       /* And similarly for the string table index.  */
+       if (i_ehdrp->e_shstrndx == SHN_XINDEX)
+-	i_ehdrp->e_shstrndx = i_shdr.sh_link;
++	{
++	  i_ehdrp->e_shstrndx = i_shdr.sh_link;
++	  if (i_ehdrp->e_shstrndx != i_shdr.sh_link)
++	    goto got_wrong_format_error;
++	}
++
++      /* Sanity check that we can read all of the section headers.
++	 It ought to be good enough to just read the last one.  */
++      if (i_ehdrp->e_shnum != 1)
++	{
++	  /* Check that we don't have a totally silly number of sections.  */
++	  if (i_ehdrp->e_shnum > (unsigned int) -1 / sizeof (x_shdr)
++	      || i_ehdrp->e_shnum > (unsigned int) -1 / sizeof (i_shdr))
++	    goto got_wrong_format_error;
++
++	  where += (i_ehdrp->e_shnum - 1) * sizeof (x_shdr);
++	  if (where != (file_ptr) where)
++	    goto got_wrong_format_error;
++	  if ((bfd_size_type) where <= i_ehdrp->e_shoff)
++	    goto got_wrong_format_error;
++
++	  if (bfd_seek (abfd, (file_ptr) where, SEEK_SET) != 0)
++	    goto got_no_match;
++	  if (bfd_bread (&x_shdr, sizeof x_shdr, abfd) != sizeof (x_shdr))
++	    goto got_no_match;
++
++	  /* Back to where we were.  */
++	  where = i_ehdrp->e_shoff + sizeof (x_shdr);
++	  if (bfd_seek (abfd, (file_ptr) where, SEEK_SET) != 0)
++	    goto got_no_match;
++	}
+     }
+ 
+   /* Allocate space for a copy of the section header table in
+@@ -673,6 +713,20 @@ elf_object_p (bfd *abfd)
+ 	    goto got_no_match;
+ 	  elf_swap_shdr_in (abfd, &x_shdr, i_shdrp + shindex);
+ 
++	  /* Sanity check sh_link and sh_info.  */
++	  if (i_shdrp[shindex].sh_link >= num_sec
++	      || (i_shdrp[shindex].sh_link >= SHN_LORESERVE
++		  && i_shdrp[shindex].sh_link <= SHN_HIRESERVE))
++	    goto got_wrong_format_error;
++
++	  if (((i_shdrp[shindex].sh_flags & SHF_INFO_LINK)
++	       || i_shdrp[shindex].sh_type == SHT_RELA
++	       || i_shdrp[shindex].sh_type == SHT_REL)
++	      && (i_shdrp[shindex].sh_info >= num_sec
++		  || (i_shdrp[shindex].sh_info >= SHN_LORESERVE
++		      && i_shdrp[shindex].sh_info <= SHN_HIRESERVE)))
++	    goto got_wrong_format_error;
++
+ 	  /* If the section is loaded, but not page aligned, clear
+ 	     D_PAGED.  */
+ 	  if (i_shdrp[shindex].sh_size != 0
+@@ -685,6 +739,17 @@ elf_object_p (bfd *abfd)
+ 	}
+     }
+ 
++  /* A further sanity check.  */
++  if (i_ehdrp->e_shnum != 0)
++    {
++      if (i_ehdrp->e_shstrndx >= elf_numsections (abfd)
++	  || (i_ehdrp->e_shstrndx >= SHN_LORESERVE
++	      && i_ehdrp->e_shstrndx <= SHN_HIRESERVE))
++	goto got_wrong_format_error;
++    }
++  else if (i_ehdrp->e_shstrndx != 0)
++    goto got_wrong_format_error;
++
+   /* Read in the program headers.  */
+   if (i_ehdrp->e_phnum == 0)
+     elf_tdata (abfd)->phdr = NULL;
+@@ -1042,7 +1107,7 @@ elf_slurp_symbol_table (bfd *abfd, asymb
+ 	     symcount);
+ 
+ 	  /* Slurp in the symbols without the version information,
+-             since that is more helpful than just quitting.  */
++	     since that is more helpful than just quitting.  */
+ 	  verhdr = NULL;
+ 	}
+ 
+@@ -1107,7 +1172,7 @@ elf_slurp_symbol_table (bfd *abfd, asymb
+ 	    sym->symbol.section = bfd_abs_section_ptr;
+ 
+ 	  /* If this is a relocatable file, then the symbol value is
+-             already section relative.  */
++	     already section relative.  */
+ 	  if ((abfd->flags & (EXEC_P | DYNAMIC)) != 0)
+ 	    sym->symbol.value -= sym->symbol.section->vma;
+ 
+--- binutils/readelf.c.jj	2005-02-18 01:14:30.000000000 -0500
++++ binutils/readelf.c	2005-05-25 13:09:39.000000000 -0400
+@@ -4067,6 +4067,19 @@ process_section_groups (FILE *file)
+ 	      entry = byte_get (indices, 4);
+ 	      indices += 4;
+ 
++	      if (entry >= elf_header.e_shnum)
++		{
++		  error (_("section [%5u] in group section [%5u] > maximum section [%5u]\n"),
++			 entry, i, elf_header.e_shnum - 1);
++		  continue;
++		}
++	      else if (entry >= SHN_LORESERVE && entry <= SHN_HIRESERVE)
++		{
++		  error (_("invalid section [%5u] in group section [%5u]\n"),
++			 entry, i);
++		  continue;
++		}
++
+ 	      if (section_headers_groups [SECTION_HEADER_INDEX (entry)]
+ 		  != NULL)
+ 		{

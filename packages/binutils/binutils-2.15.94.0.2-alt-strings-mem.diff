@@ -1,0 +1,14 @@
+--- binutils-2.15.94.0.2/binutils/strings.c.orig	2004-11-22 23:33:31 +0300
++++ binutils-2.15.94.0.2/binutils/strings.c	2005-03-17 00:42:21 +0300
+@@ -326,9 +326,9 @@ strings_a_section (bfd *abfd, asection *
+   if ((sect->flags & DATA_FLAGS) == DATA_FLAGS)
+     {
+       bfd_size_type sz = bfd_get_section_size (sect);
+-      void *mem = xmalloc (sz);
++      void *mem = malloc (sz);
+ 
+-      if (bfd_get_section_contents (abfd, sect, mem, (file_ptr) 0, sz))
++      if (mem && bfd_get_section_contents (abfd, sect, mem, (file_ptr) 0, sz))
+ 	{
+ 	  got_a_section = TRUE;
+ 	  print_strings (file, (FILE *) NULL, sect->filepos, 0, sz, mem);

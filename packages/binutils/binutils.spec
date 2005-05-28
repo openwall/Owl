@@ -1,4 +1,4 @@
-# $Id: Owl/packages/binutils/binutils.spec,v 1.13 2004/05/09 16:50:58 solar Exp $
+# $Id: Owl/packages/binutils/binutils.spec,v 1.14 2005/05/28 15:14:27 ldv Exp $
 
 %define BUILD_HJL 1
 
@@ -8,7 +8,7 @@
 
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.15.90.0.3
+Version: 2.15.94.0.2.2
 Release: owl1
 License: GPL
 Group: Development/Tools
@@ -18,16 +18,16 @@ Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%version.tar.bz2
 %else
 Source: ftp://ftp.gnu.org/gnu/binutils/binutils-%version.tar.gz
 %endif
-Patch0: binutils-2.14.90.0.8-owl-info.diff
-Patch1: binutils-2.14.90.0.8-owl-searchpath.diff
-Patch10: binutils-2.15.90.0.3-rh-eh-frame-ro.diff
-Patch11: binutils-2.15.90.0.3-rh-place-orphan.diff
-Patch12: binutils-2.15.90.0.3-rh-relro.diff
-Patch13: binutils-2.15.90.0.3-rh-tbss.diff
-%ifarch sparc
-Patch14: binutils-2.15.90.0.3-rh-sparc1.diff
-Patch15: binutils-2.15.90.0.3-rh-sparc2.diff
-%endif
+Patch0: binutils-2.15.94.0.2-rh-script-as-needed.diff
+Patch1: binutils-2.15.94.0.2-rh-strip-dynamic.diff
+Patch2: binutils-2.15.93.0.2-rh-readelf-bound.diff
+Patch3: binutils-2.15.94.0.2-rh-gcc4.diff
+Patch4: binutils-2.15.94.0.2-rh-arhdr.diff
+Patch5: binutils-2.15.94.0.2-rh-ld-speedup.diff
+Patch6: binutils-2.15.94.0.2-rh-robustify.diff
+Patch7: binutils-2.15.94.0.2-alt-strings-mem.diff
+Patch8: binutils-2.15.94.0.2-owl-searchpath.diff
+Patch9: binutils-2.14.90.0.8-owl-info.diff
 PreReq: /sbin/ldconfig, /sbin/install-info
 ExcludeArch: ia64
 BuildRoot: /override/%name-%version
@@ -49,16 +49,16 @@ addresses to file and line).
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
-%patch10 -p0
-%patch11 -p0
-%patch12 -p0
-%patch13 -p0
-%ifarch sparc
-%patch14 -p0
-%patch15 -p0
-%endif
+%patch0 -p0
+%patch1 -p0
+%patch2 -p0
+%patch3 -p0
+%patch4 -p0
+%patch5 -p0
+%patch6 -p0
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
 
 # Apply additional Linux patches.
 %_buildshell patches/README
@@ -124,28 +124,28 @@ install -m 644 ../include/libiberty.h %buildroot%_includedir/
 
 chmod +x %buildroot%_libdir/lib*.so*
 
-# Remove unpackaged files
-rm %buildroot%_infodir/dir
+# Remove unpackaged files if any
+rm -f %buildroot%_infodir/dir
 
 cd ..
 
 %post
 /sbin/ldconfig
-/sbin/install-info --info-dir=%_infodir %_infodir/as.info.gz
-/sbin/install-info --info-dir=%_infodir %_infodir/bfd.info.gz
-/sbin/install-info --info-dir=%_infodir %_infodir/binutils.info.gz
-/sbin/install-info --info-dir=%_infodir %_infodir/gprof.info.gz
-/sbin/install-info --info-dir=%_infodir %_infodir/ld.info.gz
-/sbin/install-info --info-dir=%_infodir %_infodir/standards.info.gz
+/sbin/install-info --info-dir=%_infodir %_infodir/as.info
+/sbin/install-info --info-dir=%_infodir %_infodir/bfd.info
+/sbin/install-info --info-dir=%_infodir %_infodir/binutils.info
+/sbin/install-info --info-dir=%_infodir %_infodir/gprof.info
+/sbin/install-info --info-dir=%_infodir %_infodir/ld.info
+/sbin/install-info --info-dir=%_infodir %_infodir/standards.info
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete --info-dir=%_infodir %_infodir/as.info.gz
-	/sbin/install-info --delete --info-dir=%_infodir %_infodir/bfd.info.gz
-	/sbin/install-info --delete --info-dir=%_infodir %_infodir/binutils.info.gz
-	/sbin/install-info --delete --info-dir=%_infodir %_infodir/gprof.info.gz
-	/sbin/install-info --delete --info-dir=%_infodir %_infodir/ld.info.gz
-	/sbin/install-info --delete --info-dir=%_infodir %_infodir/standards.info.gz
+	/sbin/install-info --delete --info-dir=%_infodir %_infodir/as.info
+	/sbin/install-info --delete --info-dir=%_infodir %_infodir/bfd.info
+	/sbin/install-info --delete --info-dir=%_infodir %_infodir/binutils.info
+	/sbin/install-info --delete --info-dir=%_infodir %_infodir/gprof.info
+	/sbin/install-info --delete --info-dir=%_infodir %_infodir/ld.info
+	/sbin/install-info --delete --info-dir=%_infodir %_infodir/standards.info
 fi
 
 %postun -p /sbin/ldconfig
@@ -162,6 +162,15 @@ fi
 %_datadir/locale/*/LC_MESSAGES/*.mo
 
 %changelog
+* Sat May 28 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.15.94.0.2.2-owl1
+- Updated to 2.15.94.0.2.2
+- Updated set of Red Hat patches.
+- Imported patches from Red Hat that add sanity checks to BFD library
+and readelf utility (CAN-2005-1704), and fix several potential stack
+buffer overflows in readelf utility.
+- Imported patch from ALT that fixes OOM handling in strings utility.
+- Corrected info files installation.
+
 * Fri May 07 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.15.90.0.3-owl1
 - Updated to 2.15.90.0.3
 

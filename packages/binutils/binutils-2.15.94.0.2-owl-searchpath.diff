@@ -1,7 +1,6 @@
-diff -urpN binutils-2.14.90.0.8.orig/ld/ldfile.c binutils-2.14.90.0.8/ld/ldfile.c
---- binutils-2.14.90.0.8.orig/ld/ldfile.c	Wed Jan 14 21:07:52 2004
-+++ binutils-2.14.90.0.8/ld/ldfile.c	Sat Jan 24 21:26:59 2004
-@@ -287,6 +287,19 @@ ldfile_try_open_bfd (const char *attempt
+--- binutils-2.15.94.0.2.2/ld/ldfile.c.orig	2004-11-22 20:33:32 +0000
++++ binutils-2.15.94.0.2.2/ld/ldfile.c	2005-05-28 10:28:45 +0000
+@@ -294,6 +294,19 @@ ldfile_try_open_bfd (const char *attempt
  /* Search for and open the file specified by ENTRY.  If it is an
     archive, use ARCH, LIB and SUFFIX to modify the file name.  */
  
@@ -21,7 +20,7 @@ diff -urpN binutils-2.14.90.0.8.orig/ld/ldfile.c binutils-2.14.90.0.8/ld/ldfile.
  bfd_boolean
  ldfile_open_file_search (const char *arch,
  			 lang_input_statement_type *entry,
-@@ -295,6 +308,10 @@ ldfile_open_file_search (const char *arc
+@@ -302,6 +315,10 @@ ldfile_open_file_search (const char *arc
  {
    search_dirs_type *search;
  
@@ -32,7 +31,7 @@ diff -urpN binutils-2.14.90.0.8.orig/ld/ldfile.c binutils-2.14.90.0.8/ld/ldfile.
    /* If this is not an archive, try to open it in the current
       directory first.  */
    if (! entry->is_archive)
-@@ -323,7 +340,6 @@ ldfile_open_file_search (const char *arc
+@@ -330,7 +347,6 @@ ldfile_open_file_search (const char *arc
  
    for (search = search_head; search != NULL; search = search->next)
      {
@@ -40,7 +39,7 @@ diff -urpN binutils-2.14.90.0.8.orig/ld/ldfile.c binutils-2.14.90.0.8/ld/ldfile.
  
        if (entry->dynamic && ! link_info.relocatable)
  	{
-@@ -334,28 +350,55 @@ ldfile_open_file_search (const char *arc
+@@ -341,28 +357,55 @@ ldfile_open_file_search (const char *arc
  	    }
  	}
  
@@ -83,8 +82,7 @@ diff -urpN binutils-2.14.90.0.8.orig/ld/ldfile.c binutils-2.14.90.0.8/ld/ldfile.
 -	}
 +          if (ldfile_try_open_bfd (string, entry))
 +	    {
- 
--      free (string);
++
 +	      if (!bfd_close(entry->the_bfd))
 +	        {
 +		  einfo (_("%F%P: error closing bfd: %s\n"), entry->filename);
@@ -103,7 +101,8 @@ diff -urpN binutils-2.14.90.0.8.orig/ld/ldfile.c binutils-2.14.90.0.8/ld/ldfile.
 +	    free (string);
 +        }	
 +    }
-+
+ 
+-      free (string);
 +  /*
 +   * if control gets here this means that we haven't found shared object
 +   * and have to try to link against archive whose name we saved previously.

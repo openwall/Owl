@@ -1,0 +1,174 @@
+2005-03-06  Jakub Jelinek  <jakub@redhat.com>
+
+	* opncls.c (opncls_bread, opncls_bclose): Fix if pread resp.
+	close is a function like macro in system headers.
+
+2005-02-17  Alan Modra  <amodra@bigpond.net.au>
+
+        * tc.h (struct relax_type, relax_typeS): Move from here..
+        * as.h: ..to here.
+
+2005-01-11  Alan Modra  <amodra@bigpond.net.au>
+
+	* configure.host: Correct sed patterns for last change.
+
+2005-01-10  Greg Schaffer  <gschafer@zip.com.au>
+
+	* configure.host (linux targets): Use "${CC} -dumpspecs" instead
+	of "${CC} --print-file-name=specs" to appease GCC versions >= 4.0.
+	(ia64-*-aix): Delete - this target is obsolete, and would be
+	broken by this patch.
+
+--- bfd/opncls.c.jj	2004-11-22 15:33:31.000000000 -0500
++++ bfd/opncls.c	2005-03-06 08:30:16.000000000 -0500
+@@ -405,7 +405,7 @@ static file_ptr
+ opncls_bread (struct bfd *abfd, void *buf, file_ptr nbytes)
+ {
+   struct opncls *vec = abfd->iostream;
+-  file_ptr nread = vec->pread (abfd, vec->stream, buf, nbytes, vec->where);
++  file_ptr nread = (vec->pread) (abfd, vec->stream, buf, nbytes, vec->where);
+   if (nread < 0)
+     return nread;
+   vec->where += nread;
+@@ -428,7 +428,7 @@ opncls_bclose (struct bfd *abfd)
+      free it.  */
+   int status = 0;
+   if (vec->close != NULL)
+-    status = vec->close (abfd, vec->stream);
++    status = (vec->close) (abfd, vec->stream);
+   abfd->iostream = NULL;
+   return status;
+ }
+--- gas/tc.h.jj	2004-11-22 15:33:31.000000000 -0500
++++ gas/tc.h	2005-03-06 08:36:38.000000000 -0500
+@@ -24,25 +24,6 @@
+ 
+ extern const pseudo_typeS md_pseudo_table[];
+ 
+-/* JF moved this here from as.h under the theory that nobody except MACHINE.c
+-   and write.c care about it anyway.  */
+-
+-struct relax_type
+-{
+-  /* Forward reach. Signed number. > 0.  */
+-  long rlx_forward;
+-  /* Backward reach. Signed number. < 0.  */
+-  long rlx_backward;
+-
+-  /* Bytes length of this address.  */
+-  unsigned char rlx_length;
+-
+-  /* Next longer relax-state.  0 means there is no 'next' relax-state.  */
+-  relax_substateT rlx_more;
+-};
+-
+-typedef struct relax_type relax_typeS;
+-
+ extern const int md_reloc_size;	/* Size of a relocation record.  */
+ 
+ char * md_atof (int, char *, int *);
+--- gas/as.h.jj	2004-09-15 15:05:03.000000000 -0400
++++ gas/as.h	2005-03-06 08:37:19.000000000 -0500
+@@ -397,6 +397,22 @@ typedef unsigned int relax_substateT;
+ /* Enough bits for address, but still an integer type.
+    Could be a problem, cross-assembling for 64-bit machines.  */
+ typedef addressT relax_addressT;
++
++struct relax_type
++{
++  /* Forward reach. Signed number. > 0.  */
++  long rlx_forward;
++  /* Backward reach. Signed number. < 0.  */
++  long rlx_backward;
++
++  /* Bytes length of this address.  */
++  unsigned char rlx_length;
++
++  /* Next longer relax-state.  0 means there is no 'next' relax-state.  */
++  relax_substateT rlx_more;
++};
++
++typedef struct relax_type relax_typeS;
+ 
+ /* main program "as.c" (command arguments etc).  */
+ 
+--- ld/configure.host	6 Jan 2005 18:05:17 -0000	1.37
++++ ld/configure.host	11 Jan 2005 09:36:46 -0000	1.39
+@@ -33,7 +33,7 @@ case "${host}" in
+   ;;
+ 
+ *-*-linux*)
+-  HOSTING_CRT0='-dynamic-linker `egrep "ld[^ ]*\.so" \`${CC} --print-file-name=specs\` | sed -e "s,.*-dynamic-linker[ 	][ 	]*\(.*/ld[^ ]*\.so..\).*,\1,"` `${CC} --print-file-name=crt1.o` `${CC} --print-file-name=crti.o` `if [ -f ../gcc/crtbegin.o ]; then echo ../gcc/crtbegin.o; else ${CC} --print-file-name=crtbegin.o; fi`'
++  HOSTING_CRT0='-dynamic-linker `specs=\`${CC} --print-file-name=specs\`; { if [ x"$specs" = xspecs ]; then ${CC} -dumpspecs; else cat "$specs"; fi; } | egrep "ld[^ ]*\.so" | sed -e "s,.*-dynamic-linker[ 	][ 	]*\(.*/ld[^ ]*\.so..\).*,\1,"` `${CC} --print-file-name=crt1.o` `${CC} --print-file-name=crti.o` `if [ -f ../gcc/crtbegin.o ]; then echo ../gcc/crtbegin.o; else ${CC} --print-file-name=crtbegin.o; fi`'
+   HOSTING_LIBS='-L`dirname \`${CC} --print-file-name=libc.so\`` '"$HOSTING_LIBS"' `if [ -f ../gcc/crtend.o ]; then echo ../gcc/crtend.o; else ${CC} --print-file-name=crtend.o; fi` `${CC} --print-file-name=crtn.o`'
+   ;;
+ 
+@@ -145,11 +145,6 @@ ia64-*-linux-gnu*)
+   HOSTING_CRT0=`echo "$HOSTING_CRT0" | sed -e "s,ld\[^ \]*\*,ld-linux-ia64,g"`
+   ;;
+ 
+-ia64-*-aix*)
+-  HOSTING_CRT0='-dynamic-linker `egrep "libc.so" \`${CC} --print-file-name=specs\` | sed -e "s,.*-dynamic-linker[ 	][ 	]*\(.*/libc.so..\).*,\1,"` `${CC} --print-file-name=crt1.o` `${CC} --print-file-name=crti.o` `if [ -f ../gcc/crtbegin.o ]; then echo ../gcc/crtbegin.o; else ${CC} --print-file-name=crtbegin.o; fi`'
+-  HOSTING_LIBS='-L`dirname \`${CC} --print-file-name=libc.so\`` '"$HOSTING_LIBS"' `if [ -f ../gcc/crtend.o ]; then echo ../gcc/crtend.o; else ${CC} --print-file-name=crtend.o; fi` `${CC} --print-file-name=crtn.o`'
+-  ;;
+-
+ mips*-sgi-irix4* | mips*-sgi-irix5*)
+   HOSTING_CRT0=/usr/lib/crt1.o
+   HOSTING_LIBS="$HOSTING_LIBS"' /usr/lib/crtn.o'
+@@ -161,11 +156,11 @@ mips*-sgi-irix6*)
+   ;;
+ 
+ mips*-*-linux-gnu*)
+-  HOSTING_CRT0=`echo "$HOSTING_CRT0" | sed -e "s,\\\`egrep.*\"\\\`,/lib/ld.so.1,"`
++  HOSTING_CRT0=`echo "$HOSTING_CRT0" | sed -e "s,\\\`specs.*\"\\\`,/lib/ld.so.1,"`
+   ;;
+ 
+ m68*-*-linux-gnu*)
+-  HOSTING_CRT0=`echo "$HOSTING_CRT0" | sed -e "s,\\\`egrep.*\"\\\`,/lib/ld.so.1,"`
++  HOSTING_CRT0=`echo "$HOSTING_CRT0" | sed -e "s,\\\`specs.*\"\\\`,/lib/ld.so.1,"`
+   ;;
+ 
+ m68*-motorola-sysv)
+@@ -189,19 +184,19 @@ m88*-motorola-sysv3)
+   ;;
+ 
+ powerpc64*-*-linux-gnu*)
+-  HOSTING_CRT0=`echo "$HOSTING_CRT0" | sed -e "s,\\\`egrep.*\"\\\`,/lib64/ld64.so.1,"`
++  HOSTING_CRT0=`echo "$HOSTING_CRT0" | sed -e "s,\\\`specs.*\"\\\`,/lib64/ld64.so.1,"`
+   ;;
+ 
+ powerpc*-*-linux-gnu*)
+-  HOSTING_CRT0=`echo "$HOSTING_CRT0" | sed -e "s,\\\`egrep.*\"\\\`,/lib/ld.so.1,"`
++  HOSTING_CRT0=`echo "$HOSTING_CRT0" | sed -e "s,\\\`specs.*\"\\\`,/lib/ld.so.1,"`
+   ;;
+ 
+ s390x-*-linux-gnu*)
+-  HOSTING_CRT0=`echo "$HOSTING_CRT0" | sed -e "s,\\\`egrep.*\"\\\`,/lib/ld64.so.1,"`
++  HOSTING_CRT0=`echo "$HOSTING_CRT0" | sed -e "s,\\\`specs.*\"\\\`,/lib/ld64.so.1,"`
+   ;;
+ 
+ s390-*-linux-gnu*)
+-  HOSTING_CRT0=`echo "$HOSTING_CRT0" | sed -e "s,\\\`egrep.*\"\\\`,/lib/ld.so.1,"`
++  HOSTING_CRT0=`echo "$HOSTING_CRT0" | sed -e "s,\\\`specs.*\"\\\`,/lib/ld.so.1,"`
+   ;;
+ 
+ sparc-*-solaris2*)
+@@ -215,15 +210,15 @@ sparc64-*-solaris2* | sparcv9-*-solaris2
+   ;;
+ 
+ sparc-*-linux-gnu*)
+-  HOSTING_CRT0=`echo "$HOSTING_CRT0" | sed -e "s,\\\`egrep.*\"\\\`,/lib/ld-linux.so.2,"`
++  HOSTING_CRT0=`echo "$HOSTING_CRT0" | sed -e "s,\\\`specs.*\"\\\`,/lib/ld-linux.so.2,"`
+   ;;
+ 
+ sparc64-*-linux-gnu*)
+-  HOSTING_CRT0=`echo "$HOSTING_CRT0" | sed -e "s,\\\`egrep.*\"\\\`,/lib64/ld-linux.so.2,"`
++  HOSTING_CRT0=`echo "$HOSTING_CRT0" | sed -e "s,\\\`specs.*\"\\\`,/lib64/ld-linux.so.2,"`
+   ;;
+ 
+ x86_64-*-linux-gnu*)
+-  HOSTING_CRT0=`echo "$HOSTING_CRT0" | sed -e "s,\\\`egrep.*\"\\\`,/lib64/ld-linux-x86-64.so.2,"`
++  HOSTING_CRT0=`echo "$HOSTING_CRT0" | sed -e "s,\\\`specs.*\"\\\`,/lib64/ld-linux-x86-64.so.2,"`
+   ;;
+ 
+ *-*-freebsd* | *-*-kfreebsd*-gnu)
