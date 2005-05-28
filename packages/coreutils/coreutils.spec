@@ -1,9 +1,9 @@
-# $Id: Owl/packages/coreutils/coreutils.spec,v 1.4 2005/05/07 22:31:37 solar Exp $
+# $Id: Owl/packages/coreutils/coreutils.spec,v 1.5 2005/05/28 16:57:59 galaxy Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
 Version: 5.3.1
-Release: owl0.4
+Release: owl0.5
 License: GPL
 Group: System Environment/Base
 URL: http://www.gnu.org/software/%name/
@@ -61,7 +61,7 @@ Obsoletes: stat, fileutils, textutils, sh-utils
 
 PreReq: /sbin/install-info
 # due to sed -i
-BuildRequires: sed >= 4.1.1
+BuildRequires: sed >= 4.1.1, bison >= 2.0
 
 BuildRoot: /override/%name-%version
 
@@ -236,6 +236,9 @@ fi
 %doc ChangeLog.bz2 NEWS.bz2 THANKS.bz2 AUTHORS README TODO
 
 %changelog
+* Sat May 28 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 5.3.1-owl0.5
+- Added bison >= 2.0 dependency to BuildRequires.
+
 * Sun May 08 2005 Solar Designer <solar@owl.openwall.com> 5.3.1-owl0.4
 - Miscellaneous corrections to usleep.c, usleep.1, true.1, and false.1.
 
