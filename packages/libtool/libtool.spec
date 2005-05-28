@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libtool/libtool.spec,v 1.13 2005/05/28 10:41:45 ldv Exp $
+# $Id: Owl/packages/libtool/libtool.spec,v 1.14 2005/05/28 10:55:26 ldv Exp $
 
 %define BUILD_TEST 0
 
@@ -91,7 +91,7 @@ fi
 %changelog
 * Thu May 26 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.5.18-owl1
 - Updated to 1.5.18, reviewed and updated patches.
-- Applied change from Debian and ALT: do not add the contents of
+- Applied a change from Debian and ALT: do not add the contents of
 dependency_libs to the link line when linking programs.
 - Corrected info files installation.
 - Added URL.
