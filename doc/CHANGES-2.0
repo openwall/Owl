@@ -12,14 +12,17 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
-2005/05/28	Package: binutils
+2005/05/28 -
+2005/05/29	Packages: binutils, gdb
 SECURITY FIX	Severity: high, local, passive
-Updated to 2.15.94.0.2.2.  Added sanity checks to BFD library and
-readelf utility to avoid integer overflows (where a specially crafted
-object file may lead to a heap-based buffer overflow), and fixes for
-potential stack-based buffer overflows in readelf utility.
-Reference:
+Updated binutils to 2.15.94.0.2.2 and gdb to 6.3.  Added sanity
+checks to BFD library and readelf utility to avoid integer overflows
+(where a specially crafted object file may lead to a heap-based buffer
+overflow), fixes for potential stack-based buffer overflows in
+readelf utility, and fix for .gdbinit issue in gdb.
+References:
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-1704
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-1705
 
 2005/05/26	Package: libtool
 Updated to 1.5.18.
@@ -469,4 +472,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.97 2005/05/28 22:39:16 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.98 2005/05/29 17:49:23 ldv Exp $

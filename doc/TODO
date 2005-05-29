@@ -131,17 +131,6 @@ See "Warning Messages" in findutils texinfo documentation for details.
 	gdb.
 
 [PRIORITY: medium]
-[ASSIGNED: ldv@]
-Update to latest release.
-
-[PRIORITY: medium]
-[ASSIGNED: ldv@]
-Deal with the vulnerabilities indentified by Gentoo once there's a
-definitive fix for the BFD overflows:
-
-http://www.gentoo.org/security/en/glsa/glsa-200505-15.xml
-
-[PRIORITY: medium]
 Investigate and deal with fd leaks into traced programs.
 
 [PRIORITY: low]
@@ -594,4 +583,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.84 2005/05/28 16:40:27 ldv Exp $
+$Id: Owl/doc/TODO,v 1.85 2005/05/29 17:49:23 ldv Exp $
