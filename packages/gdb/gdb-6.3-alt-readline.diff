@@ -1,0 +1,50 @@
+--- gdb-6.3/configure.in.orig	2004-11-08 19:26:28 +0300
++++ gdb-6.3/configure.in	2004-12-20 20:50:23 +0300
+@@ -136,7 +136,7 @@
+ 
+ # these libraries are used by various programs built for the host environment
+ #
+-host_libs="intl mmalloc libiberty opcodes bfd readline tcl tk itcl libgui zlib libcpp"
++host_libs="intl mmalloc libiberty opcodes bfd tcl tk itcl libgui zlib libcpp"
+ 
+ # these tools are built for the host environment
+ # Note, the powerpc-eabi build depends on sim occurring before gdb in order to
+--- gdb-6.3/configure.orig	2004-10-12 23:40:03 +0000
++++ gdb-6.3/configure	2004-12-20 20:50:23 +0300
+@@ -889,7 +889,7 @@ build_tools="build-texinfo build-byacc b
+ 
+ # these libraries are used by various programs built for the host environment
+ #
+-host_libs="intl mmalloc libiberty opcodes bfd readline tcl tk itcl libgui zlib libcpp"
++host_libs="intl mmalloc libiberty opcodes bfd tcl tk itcl libgui zlib libcpp"
+ 
+ # these tools are built for the host environment
+ # Note, the powerpc-eabi build depends on sim occurring before gdb in order to
+--- gdb-6.3.orig/gdb/doc/Makefile.in	2004-01-21 21:44:52 +0300
++++ gdb-6.3/gdb/doc/Makefile.in	2004-04-06 16:10:25 +0400
+@@ -58,7 +58,7 @@ TEXI2DVI=texi2dvi
+ 
+ # Where is the source dir for the READLINE library doc?  
+ # Traditionally readline is in .. or .
+-READLINE_DIR = ${gdbdir}/../readline/doc
++READLINE_DIR = ${gdbdir}/../readline-doc
+ 
+ # The GDB/MI docs come from a sibling directory ../mi
+ GDBMI_DIR = ${gdbdir}/mi
+--- gdb-6.3/gdb/Makefile.in.orig	2004-11-04 05:18:49 +0300
++++ gdb-6.3/gdb/Makefile.in	2004-12-20 20:49:03 +0300
+@@ -121,10 +121,10 @@
+ BFD_CFLAGS = -I$(BFD_DIR) -I$(BFD_SRC)
+ 
+ # Where is the READLINE library?  Typically in ../readline.
+-READLINE_DIR = ../readline
+-READLINE = $(READLINE_DIR)/libreadline.a
+-READLINE_SRC = $(srcdir)/$(READLINE_DIR)
+-READLINE_CFLAGS = -I$(READLINE_SRC)/..
++READLINE_DIR = /usr/include/readline
++READLINE = -lreadline
++READLINE_SRC = $(READLINE_DIR)
++READLINE_CFLAGS =
+ 
+ WARN_CFLAGS = @WARN_CFLAGS@
+ WERROR_CFLAGS = @WERROR_CFLAGS@

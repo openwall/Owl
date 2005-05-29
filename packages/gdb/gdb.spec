@@ -1,15 +1,24 @@
-# $Id: Owl/packages/gdb/gdb.spec,v 1.18 2005/01/14 03:27:51 galaxy Exp $
+# $Id: Owl/packages/gdb/gdb.spec,v 1.19 2005/05/29 17:41:53 ldv Exp $
 
 Summary: A GNU source-level debugger for C, C++ and Fortran.
 Name: gdb
-Version: 6.1.1
-Release: owl2
+Version: 6.3
+Release: owl1
 License: GPL
 Group: Development/Debuggers
 URL: http://www.gnu.org/software/gdb/
 Source: ftp://ftp.gnu.org/pub/gnu/gdb/gdb-%version.tar.bz2
-Patch0: gdb-6.1.1-deb-owl-readline.diff
-Patch1: gdb-6.1.1-owl-info.diff
+Patch0: gdb-6.3-alt-readline.diff
+Patch1: gdb-6.3-owl-info.diff
+Patch2: gdb-6.3-deb-thread-db.diff
+Patch3: gdb-6.3-deb-tracepoint.diff
+Patch4: gdb-6.3-deb-cp_pass_by_reference.diff
+Patch5: gdb-6.3-deb-tracefork.diff
+Patch6: gdb-6.3-deb-bfd_close.diff
+Patch7: gdb-6.3-rh-inheritance.diff
+Patch8: gdb-6.3-rh-gdbtypes.diff
+Patch9: gdb-6.3-cvs-20050526-bfd.diff
+Patch10: gdb-6.3-gentoo-alt-gdbinit.diff
 PreReq: /sbin/install-info
 BuildRequires: ncurses-devel >= 5.0
 BuildRequires: readline-devel >= 4.3
@@ -25,21 +34,28 @@ supported compiler, such as those from the GNU Compiler Collection.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
 
 %build
-rm gdb/doc/{gdb,stabs,gdbint}.info
-rm mmalloc/mmalloc.info
+# readline texinfo files are needed to generate gdb documentation
+mv readline/doc readline-doc
+
+rm -rf readline dejagnu tcl expect
+rm gdb/doc/*.info*
 
 export ac_cv_func_vfork_works=no
-./configure \
-	--prefix=%_prefix \
-	--sysconfdir=%_sysconfdir \
-	--mandir=%_mandir \
-	--infodir=%_infodir \
-	--enable-nls \
-	--without-included-gettext \
-	--enable-gdbmi \
-	%_target_platform
+%configure \
+	--host=%{_target_platform} \
+	--build=%{_target_platform} \
+	--without-included-gettext
 
 %__make
 %__make info
@@ -57,48 +73,29 @@ rm -rf %buildroot
 	DESTDIR=%buildroot
 
 # These are part of binutils
-rm %buildroot%_infodir/bfd*
-rm %buildroot%_infodir/standard*
-rm -r %buildroot/usr/include/
-rm -r %buildroot/usr/lib/lib{bfd*,opcodes*}
+rm -r %buildroot%_includedir
+rm %buildroot%_infodir/{annotate,bfd,configure,standard}*
+rm %buildroot%_libdir/lib{bfd,iberty,opcodes}*
 
-# XXX: (GM): Remove unpackaged files (check later)
-rm %buildroot%_libdir/libiberty.a
-rm %buildroot%_libdir/libmmalloc.a
-rm %buildroot%_infodir/annotate.info*
-rm %buildroot%_infodir/configure.info*
-rm %buildroot%_infodir/dir
-rm %buildroot%_datadir/locale/da/LC_MESSAGES/bfd.mo
-rm %buildroot%_datadir/locale/da/LC_MESSAGES/opcodes.mo
-rm %buildroot%_datadir/locale/de/LC_MESSAGES/opcodes.mo
-rm %buildroot%_datadir/locale/es/LC_MESSAGES/bfd.mo
-rm %buildroot%_datadir/locale/es/LC_MESSAGES/opcodes.mo
-rm %buildroot%_datadir/locale/fr/LC_MESSAGES/bfd.mo
-rm %buildroot%_datadir/locale/fr/LC_MESSAGES/opcodes.mo
-rm %buildroot%_datadir/locale/id/LC_MESSAGES/opcodes.mo
-rm %buildroot%_datadir/locale/ja/LC_MESSAGES/bfd.mo
-rm %buildroot%_datadir/locale/nl/LC_MESSAGES/opcodes.mo
-rm %buildroot%_datadir/locale/pt_BR/LC_MESSAGES/opcodes.mo
-rm %buildroot%_datadir/locale/ro/LC_MESSAGES/bfd.mo
-rm %buildroot%_datadir/locale/ro/LC_MESSAGES/opcodes.mo
-rm %buildroot%_datadir/locale/sv/LC_MESSAGES/bfd.mo
-rm %buildroot%_datadir/locale/sv/LC_MESSAGES/opcodes.mo
-rm %buildroot%_datadir/locale/tr/LC_MESSAGES/bfd.mo
-rm %buildroot%_datadir/locale/tr/LC_MESSAGES/opcodes.mo
-rm %buildroot%_datadir/locale/zh_CN/LC_MESSAGES/bfd.mo
+# Remove unpackaged files if any
+rm -f %buildroot%_infodir/dir
+rm %buildroot%_datadir/locale/*/LC_MESSAGES/{bfd,opcodes}.mo
+
+%pre
+if [ $1 -ge 1 -a -f %_infodir/mmalloc.info.gz ]; then
+	/sbin/install-info --delete %_infodir/mmalloc.info %_infodir/dir ||:
+fi
 
 %post
 /sbin/install-info %_infodir/gdb.info %_infodir/dir
-/sbin/install-info %_infodir/gdbint.info.gz %_infodir/dir
-/sbin/install-info %_infodir/mmalloc.info.gz %_infodir/dir
-/sbin/install-info %_infodir/stabs.info.gz %_infodir/dir
+/sbin/install-info %_infodir/gdbint.info %_infodir/dir
+/sbin/install-info %_infodir/stabs.info %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/gdb.info.gz %_infodir/dir
-	/sbin/install-info --delete %_infodir/gdbint.info.gz %_infodir/dir
-	/sbin/install-info --delete %_infodir/mmalloc.info.gz %_infodir/dir
-	/sbin/install-info --delete %_infodir/stabs.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/gdb.info %_infodir/dir
+	/sbin/install-info --delete %_infodir/gdbint.info %_infodir/dir
+	/sbin/install-info --delete %_infodir/stabs.info %_infodir/dir
 fi
 
 %files
@@ -109,9 +106,16 @@ fi
 %_infodir/gdb.info*
 %_infodir/gdbint.info*
 %_infodir/stabs.info*
-%_infodir/mmalloc.info*
 
 %changelog
+* Sun May 29 2005 Dmitry V. Levin <ldv@owl.openwall.com> 6.3-owl1
+- Updated to 6.3
+- Imported a bunch of patches from Debian's gdb-6.3-5 package.
+- Backported patch from upstream that adds sanity checks to BFD library
+(CAN-2005-1704).
+- Imported patch from Gentoo that fixes .gdbinit issue (CAN-2005-1705).
+- Corrected info files installation.
+
 * Fri Jan 15 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 6.1.1-owl2
 - Used %%__make macro instead of plain "make".
 
