@@ -482,7 +482,8 @@ can log both into wtmp.
 
 	strace.
 
-[PRIORITY: low]
+[PRIORITY: medium]
+[ASSIGNED: ldv@]
 Update to 4.5.11+ with ALT's patches.
 
 [PRIORITY: low]
@@ -583,4 +584,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.85 2005/05/29 17:49:23 ldv Exp $
+$Id: Owl/doc/TODO,v 1.86 2005/05/31 15:34:43 ldv Exp $
