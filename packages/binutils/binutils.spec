@@ -1,4 +1,4 @@
-# $Id: Owl/packages/binutils/binutils.spec,v 1.14 2005/05/28 15:14:27 ldv Exp $
+# $Id: Owl/packages/binutils/binutils.spec,v 1.15 2005/06/02 14:23:40 ldv Exp $
 
 %define BUILD_HJL 1
 
@@ -9,7 +9,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.15.94.0.2.2
-Release: owl1
+Release: owl2
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils/
@@ -162,6 +162,9 @@ fi
 %_datadir/locale/*/LC_MESSAGES/*.mo
 
 %changelog
+* Thu Jun 02 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.15.94.0.2.2-owl2
+- Updated strings-mem patch.
+
 * Sat May 28 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.15.94.0.2.2-owl1
 - Updated to 2.15.94.0.2.2
 - Updated set of Red Hat patches.

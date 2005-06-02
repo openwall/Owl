@@ -1,14 +1,78 @@
---- binutils-2.15.94.0.2/binutils/strings.c.orig	2004-11-22 23:33:31 +0300
-+++ binutils-2.15.94.0.2/binutils/strings.c	2005-03-17 00:42:21 +0300
-@@ -326,9 +326,9 @@ strings_a_section (bfd *abfd, asection *
+2005-05-29  Dmitry V. Levin  <ldv@altlinux.org>
+
+	* binutils/strings.c (file_namesize_t): New typedef.
+	(strings_a_section): Skip sections with size greater or equal
+	to file size.
+	(strings_object_file): Pass file_namesize_t argument to
+	strings_a_section() per bfd_map_over_sections().
+
+--- binutils-2.15.94.0.2.2/binutils/strings.c.orig	2004-11-22 20:33:31 +0000
++++ binutils-2.15.94.0.2.2/binutils/strings.c	2005-05-29 10:30:54 +0000
+@@ -151,6 +151,12 @@
+   {NULL, 0, NULL, 0}
+ };
+ 
++typedef struct
++{
++  const char *name;
++  bfd_size_type size;
++} file_namesize_t;
++
+ static void strings_a_section (bfd *, asection *, void *);
+ static bfd_boolean strings_object_file (const char *);
+ static bfd_boolean strings_file (char *file);
+@@ -319,14 +325,31 @@
+    set `got_a_section' and print the strings in it.  */
+ 
+ static void
+-strings_a_section (bfd *abfd, asection *sect, void *filearg)
++strings_a_section (bfd *abfd, asection *sect, void *namesize)
+ {
+-  const char *file = (const char *) filearg;
+-
    if ((sect->flags & DATA_FLAGS) == DATA_FLAGS)
      {
++      const char *file = ((file_namesize_t *) namesize)->name;
++      bfd_size_type *sizep = &((file_namesize_t *) namesize)->size;
        bfd_size_type sz = bfd_get_section_size (sect);
 -      void *mem = xmalloc (sz);
-+      void *mem = malloc (sz);
++      void *mem;
++      
++      if (sz <= 0)
++	return;
++
++      if (*sizep == 0)
++        {
++	  struct stat st;
++
++	  if (bfd_stat(abfd, &st))
++	    return;
++	  *sizep = st.st_size;
++	}
++
++      if (sz >= *sizep)
++	return;
++
++      mem = xmalloc (sz);
  
--      if (bfd_get_section_contents (abfd, sect, mem, (file_ptr) 0, sz))
-+      if (mem && bfd_get_section_contents (abfd, sect, mem, (file_ptr) 0, sz))
+       if (bfd_get_section_contents (abfd, sect, mem, (file_ptr) 0, sz))
  	{
- 	  got_a_section = TRUE;
- 	  print_strings (file, (FILE *) NULL, sect->filepos, 0, sz, mem);
+@@ -346,6 +369,7 @@
+ static bfd_boolean
+ strings_object_file (const char *file)
+ {
++  file_namesize_t namesize;
+   bfd *abfd = bfd_openr (file, target);
+ 
+   if (abfd == NULL)
+@@ -362,7 +386,9 @@ strings_object_file (const char *file)
+     }
+ 
+   got_a_section = FALSE;
+-  bfd_map_over_sections (abfd, strings_a_section, (void *) file);
++  namesize.name = file;
++  namesize.size = 0;
++  bfd_map_over_sections (abfd, strings_a_section, (void *) &namesize);
+ 
+   if (!bfd_close (abfd))
+     {
