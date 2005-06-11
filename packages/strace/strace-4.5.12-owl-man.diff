@@ -1,7 +1,7 @@
-diff -uprk.orig strace-4.5.1.orig/strace.1 strace-4.5.1/strace.1
---- strace-4.5.1.orig/strace.1	2003-10-22 10:16:32 +0400
-+++ strace-4.5.1/strace.1	2003-12-15 00:32:29 +0300
-@@ -556,11 +556,10 @@ a non-setuid version of
+diff -upk.orig strace-4.5.12.orig/strace.1 strace-4.5.12/strace.1
+--- strace-4.5.12.orig/strace.1	2005-06-08 08:59:46 +0000
++++ strace-4.5.12/strace.1	2005-06-10 11:43:05 +0000
+@@ -560,11 +560,10 @@ a non-setuid version of
  .B strace
  for ordinary lusers to use.
  .SH "SEE ALSO"

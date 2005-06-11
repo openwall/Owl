@@ -1,19 +1,18 @@
-# $Id: Owl/packages/strace/strace.spec,v 1.12 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/strace/strace.spec,v 1.13 2005/06/11 17:47:44 ldv Exp $
 
 Summary: Tracks and displays system calls associated with a running process.
 Name: strace
-Version: 4.5.1
-Release: owl2
+Version: 4.5.12
+Release: owl1
 License: BSD
 Group: Development/Debuggers
-URL: http://www.liacs.nl/~wichert/strace/
+URL: http://sourceforge.net/projects/strace/
 Source: http://prdownloads.sourceforge.net/%name/%name-%version.tar.bz2
-Patch0: strace-4.5.1-owl-alt-fixes.diff
-Patch1: strace-4.5.1-owl-man.diff
-Patch2: strace-4.5.1-alt-pipe-setlinebuf.diff
-Patch3: strace-4.5.1-alt-trace-coredump.diff
-Patch4: strace-4.5.1-alt-keep_status.diff
-Patch5: strace-4.5.1-owl-quota.diff
+Patch0: strace-4.5.12-alt-TF.diff
+Patch1: strace-4.5.12-alt-TD.diff
+Patch2: strace-4.5.12-owl-man.diff
+Patch3: strace-4.5.12-owl-quota.diff
+Patch4: strace-4.5.12-alt-keep_status.diff
 BuildRoot: /override/%name-%version
 
 %package graph
@@ -39,11 +38,11 @@ commands do.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
 
 %build
-%GNUconfigure
+%configure
 make
+bzip2 -9fk ChangeLog
 
 %install
 rm -rf %buildroot
@@ -54,7 +53,7 @@ mkdir -p %buildroot%_prefix/bin
 %files
 %defattr(-,root,root)
 %doc COPYRIGHT CREDITS PORTING README README-linux TODO
-%doc ChangeLog NEWS
+%doc ChangeLog.bz2 NEWS
 %_prefix/bin/strace
 %_mandir/man1/strace.1*
 
@@ -63,6 +62,11 @@ mkdir -p %buildroot%_prefix/bin
 %_prefix/bin/strace-graph
 
 %changelog
+* Sat Jun 11 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.5.12-owl1
+- Updated to 4.5.12.
+- Reviewed Owl patches, removed obsolete ones.
+- Imported a bunch of patches from ALT's strace-4.5.12-alt1 package.
+
 * Wed Mar 10 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.5.1-owl2
 - Added a dirty patch to switch strace to using kernel version of quota.h
 (this allows to recognize both types of quota version). This patch must be
