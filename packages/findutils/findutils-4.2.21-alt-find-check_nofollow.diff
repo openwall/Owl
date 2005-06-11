@@ -1,0 +1,25 @@
+diff -upk.orig findutils-4.2.21.orig/find/find.c findutils-4.2.21/find/find.c
+--- findutils-4.2.21.orig/find/find.c	2005-06-07 22:18:41 +0000
++++ findutils-4.2.21/find/find.c	2005-06-10 13:46:51 +0000
+@@ -352,7 +352,7 @@ get_info (const char *pathname,
+ 
+ /* Determine if we can use O_NOFOLLOW.
+  */
+-#if defined(O_NOFOLLOW)
++#if defined(O_NOFOLLOW) && defined(CHECK_NOFOLLOW)
+ static boolean 
+ check_nofollow(void)
+ {
+@@ -398,8 +398,12 @@ main (int argc, char **argv)
+    * if we call it after setlocale().
+    */
+ #ifdef O_NOFOLLOW
++#ifdef CHECK_NOFOLLOW
+   options.open_nofollow_available = check_nofollow();
+ #else
++  options.open_nofollow_available = true;
++#endif /* CHECK_NOFOLLOW */
++#else
+   options.open_nofollow_available = false;
+ #endif
+ 

@@ -1,0 +1,784 @@
+# Локализация findutils 4.2.21
+# Copyright (C) 1997, 1998, 1999, 2000 Free Software Foundation, Inc.
+# Denis Perchine <dyp@perchine.com>, 1997, 1998, 1999, 2000.
+# Dmitry V. Levin <ldv@altlinux.org>, 2004, 2005.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: findutils 4.2.21\n"
+"Report-Msgid-Bugs-To: bug-findutils@gnu.org\n"
+"POT-Creation-Date: 2005-06-08 12:56+0400\n"
+"PO-Revision-Date: 2005-06-08 12:56+0400\n"
+"Last-Translator: Dmitry V. Levin <ldv@altlinux.org>\n"
+"Language-Team: Russian <ru@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=koi8-r\n"
+"Content-Transfer-Encoding: 8-bit\n"
+
+#: gnulib/lib/argmatch.c:137
+#, c-format
+msgid "invalid argument %s for %s"
+msgstr "неверный аргумент %s у %s"
+
+#: gnulib/lib/argmatch.c:138
+#, c-format
+msgid "ambiguous argument %s for %s"
+msgstr "неоднозначный аргумент %s у %s"
+
+#: gnulib/lib/argmatch.c:157
+#, c-format
+msgid "Valid arguments are:"
+msgstr "Допустимые аргументы:"
+
+#: gnulib/lib/error.c:121
+msgid "Unknown system error"
+msgstr "Неизвестная системная ошибка"
+
+#: gnulib/lib/getopt.c:551 gnulib/lib/getopt.c:570
+#, c-format
+msgid "%s: option `%s' is ambiguous\n"
+msgstr "%s: ключ `%s' неоднозначен\n"
+
+#: gnulib/lib/getopt.c:603 gnulib/lib/getopt.c:607
+#, c-format
+msgid "%s: option `--%s' doesn't allow an argument\n"
+msgstr "%s: ключ `--%s' используется без аргумента\n"
+
+#: gnulib/lib/getopt.c:616 gnulib/lib/getopt.c:621
+#, c-format
+msgid "%s: option `%c%s' doesn't allow an argument\n"
+msgstr "%s: ключ `%c%s' используется без аргумента\n"
+
+#: gnulib/lib/getopt.c:667 gnulib/lib/getopt.c:689 gnulib/lib/getopt.c:1020
+#: gnulib/lib/getopt.c:1042
+#, c-format
+msgid "%s: option `%s' requires an argument\n"
+msgstr "%s: ключ `%s' требует аргумент\n"
+
+#: gnulib/lib/getopt.c:727 gnulib/lib/getopt.c:730
+#, c-format
+msgid "%s: unrecognized option `--%s'\n"
+msgstr "%s: неизвестный ключ `--%s'\n"
+
+#: gnulib/lib/getopt.c:738 gnulib/lib/getopt.c:741
+#, c-format
+msgid "%s: unrecognized option `%c%s'\n"
+msgstr "%s: неизвестный ключ `%c%s'\n"
+
+#: gnulib/lib/getopt.c:796 gnulib/lib/getopt.c:799
+#, c-format
+msgid "%s: illegal option -- %c\n"
+msgstr "%s: недопустимый ключ -- %c\n"
+
+#: gnulib/lib/getopt.c:805 gnulib/lib/getopt.c:808
+#, c-format
+msgid "%s: invalid option -- %c\n"
+msgstr "%s: неверный ключ -- %c\n"
+
+#: gnulib/lib/getopt.c:863 gnulib/lib/getopt.c:882 gnulib/lib/getopt.c:1095
+#: gnulib/lib/getopt.c:1116
+#, c-format
+msgid "%s: option requires an argument -- %c\n"
+msgstr "%s: ключ требует аргумент -- %c\n"
+
+#: gnulib/lib/getopt.c:935 gnulib/lib/getopt.c:954
+#, c-format
+msgid "%s: option `-W %s' is ambiguous\n"
+msgstr "%s: ключ `-W %s' неоднозначен\n"
+
+#: gnulib/lib/getopt.c:978 gnulib/lib/getopt.c:999
+#, c-format
+msgid "%s: option `-W %s' doesn't allow an argument\n"
+msgstr "%s: ключ `-W %s' используется без аргумента\n"
+
+#: gnulib/lib/human.c:486
+msgid "block size"
+msgstr "размер блока"
+
+#: gnulib/lib/quotearg.c:240
+msgid "`"
+msgstr "`"
+
+#: gnulib/lib/quotearg.c:241
+msgid "'"
+msgstr "'"
+
+#: gnulib/lib/regex.c:1302
+msgid "Success"
+msgstr "Успех"
+
+#: gnulib/lib/regex.c:1305
+msgid "No match"
+msgstr "Нет совпадений"
+
+#: gnulib/lib/regex.c:1308
+msgid "Invalid regular expression"
+msgstr "Неверное регулярное выражение"
+
+#: gnulib/lib/regex.c:1311
+msgid "Invalid collation character"
+msgstr "Неверный знак сопоставления"
+
+#: gnulib/lib/regex.c:1314
+msgid "Invalid character class name"
+msgstr "Неверное имя класса знаков"
+
+#: gnulib/lib/regex.c:1317
+msgid "Trailing backslash"
+msgstr "Завершающий обратный слэш"
+
+#: gnulib/lib/regex.c:1320
+msgid "Invalid back reference"
+msgstr "Неверная обратная ссылка"
+
+#: gnulib/lib/regex.c:1323
+msgid "Unmatched [ or [^"
+msgstr "Несбалансированная [ или [^"
+
+#: gnulib/lib/regex.c:1326
+msgid "Unmatched ( or \\("
+msgstr "Несбалансированная ( или \\("
+
+#: gnulib/lib/regex.c:1329
+msgid "Unmatched \\{"
+msgstr "Несбалансированная \\{"
+
+#: gnulib/lib/regex.c:1332
+msgid "Invalid content of \\{\\}"
+msgstr "Неверное содержимое \\{\\}"
+
+#: gnulib/lib/regex.c:1335
+msgid "Invalid range end"
+msgstr "Неверный конец промежутка"
+
+#: gnulib/lib/regex.c:1338
+msgid "Memory exhausted"
+msgstr "Не хватает памяти"
+
+#: gnulib/lib/regex.c:1341
+msgid "Invalid preceding regular expression"
+msgstr "Неверное предшествующее регулярное выражение"
+
+#: gnulib/lib/regex.c:1344
+msgid "Premature end of regular expression"
+msgstr "Неожиданный конец регулярного выражения"
+
+#: gnulib/lib/regex.c:1347
+msgid "Regular expression too big"
+msgstr "Регулярное выражение слишком большое"
+
+#: gnulib/lib/regex.c:1350
+msgid "Unmatched ) or \\)"
+msgstr "Несбалансированная ) или \\)"
+
+#: gnulib/lib/regex.c:7919
+msgid "No previous regular expression"
+msgstr "Нет предыдущего регулярного выражения"
+
+#: gnulib/lib/rpmatch.c:70
+msgid "^[yY]"
+msgstr ""
+
+#: gnulib/lib/rpmatch.c:73
+msgid "^[nN]"
+msgstr ""
+
+#: find/util.c:92
+msgid "oops -- invalid default insertion of and!"
+msgstr "оопс -- неверная вставка по умолчанию оператора 'И' (and)"
+
+#: find/util.c:151
+#, c-format
+msgid "Usage: %s [-H] [-L] [-P] [path...] [expression]\n"
+msgstr "Использование: %s [-H] [-L] [-P] [путь...] [выражение]\n"
+
+#: find/find.c:452
+msgid ""
+"The environment variable FIND_BLOCK_SIZE is not supported, the only thing "
+"that affects the block size is the POSIXLY_CORRECT environment variable"
+msgstr ""
+"Переменная среды FIND_BLOCK_SIZE не поддерживается, единственным фактором, "
+"влияющим на размер блока, является переменная среды POSIXLY_CORRECT"
+
+#: find/find.c:517
+msgid "paths must precede expression"
+msgstr "пути должны быть указаны перед выражением"
+
+#: find/find.c:522
+#, c-format
+msgid "invalid predicate `%s'"
+msgstr "неверный предикат `%s'"
+
+#: find/find.c:528
+#, c-format
+msgid "missing argument to `%s'"
+msgstr "отсутствует аргумент у `%s'"
+
+#: find/find.c:530
+#, c-format
+msgid "invalid argument `%s' to `%s'"
+msgstr "неверный аргумент `%s' у `%s'"
+
+#: find/find.c:572
+msgid "unexpected extra predicate"
+msgstr "непредвиденный лишний предикат"
+
+#: find/find.c:624 find/find.c:627
+msgid "cannot get current directory"
+msgstr "не могу получить текущий каталог"
+
+#: find/find.c:795
+#, c-format
+msgid "Warning: filesystem %s has recently been unmounted."
+msgstr "Предупреждение: файловая система %s была недавно размонтирована."
+
+#: find/find.c:805
+#, c-format
+msgid "Warning: filesystem %s has recently been mounted."
+msgstr "Предупреждение: файловая система %s была недавно cмонтирована."
+
+#: find/find.c:899
+#, c-format
+msgid ""
+"%s%s changed during execution of %s (old device number %ld, new device "
+"number %ld, filesystem type is %s) [ref %ld]"
+msgstr ""
+"%s%s изменился во время выполнения %s (прежний номер устройства %ld, новый "
+"номер устройства %ld, тип файловой системы %s) [строка %ld]"
+
+#: find/find.c:936
+#, c-format
+msgid ""
+"%s%s changed during execution of %s (old inode number %ld, new inode number %"
+"ld, filesystem type is %s) [ref %ld]"
+msgstr ""
+"%s%s изменился во время выполнения %s (прежний номер inode %ld, новый номер "
+"inode %ld, тип файловой системы %s) [строка %ld]"
+
+#: find/find.c:1461
+#, c-format
+msgid ""
+"Symbolic link `%s' is part of a loop in the directory hierarchy; we have "
+"already visited the directory to which it points."
+msgstr ""
+"Символическая ссылка `%s' является элеменом цикла в файловой структуре; тот "
+"каталог, на который эта ссылка указывает, уже был обработан."
+
+#: find/find.c:1476
+#, c-format
+msgid ""
+"Filesystem loop detected; `%s' has the same device number and inode as a "
+"directory which is %d %s."
+msgstr ""
+"Обнаружен цикл в файловой системе; у `%s' тот же номер устройства и inode, "
+"что и у каталога, расположенного %d %s."
+
+#: find/find.c:1480
+msgid "level higher in the filesystem hierarchy"
+msgstr "уровнем выше в файловой структуре"
+
+#: find/find.c:1481
+msgid "levels higher in the filesystem hierarchy"
+msgstr "уровнями выше в файловой структуре"
+
+#: find/find.c:1862
+#, c-format
+msgid ""
+"WARNING: Hard link count is wrong for %s: this may be a bug in your "
+"filesystem driver.  Automatically turning on find's -noleaf option.  Earlier "
+"results may have failed to include directories that should have been "
+"searched."
+msgstr ""
+"Предупреждение: неправильное значение счётчика ссылок у %s: вероятно, "
+"вследствие ошибки драйвера файловой системы.  Автоматически включён режим -"
+"noleaf работы find.  Возможно, что некоторые каталоги не были обработаны."
+
+#: find/fstype.c:231
+msgid "unknown"
+msgstr "неизвестный"
+
+#: find/parser.c:327
+#, c-format
+msgid ""
+"warning: you have specified the %s option after a non-option argument %s, "
+"but options are not positional (%s affects tests specified before it as well "
+"as those specified after it).  Please specify options before other "
+"arguments.\n"
+msgstr ""
+"предупреждение: параметр %s указан после выражения %s, однако параметры не "
+"являются перемещаемыми (%s влияет на выражения, указанные как до, так и "
+"после этого параметра).  Рекомендуется указывать параметры до прочих "
+"аргументов.\n"
+
+#: find/parser.c:565
+msgid ""
+"warning: the -d option is deprecated; please use -depth instead, because the "
+"latter is a POSIX-compliant feature."
+msgstr ""
+"предупреждение: ключ -d упразднён; вместо него рекомендуется использовать -"
+"depth, соответствующий стандарту POSIX."
+
+#: find/parser.c:735
+#, c-format
+msgid "Usage: %s [path...] [expression]\n"
+msgstr "Использование: %s [путь...] [выражение]\n"
+
+#: find/parser.c:737
+msgid ""
+"\n"
+"default path is the current directory; default expression is -print\n"
+"expression may consist of: operators, options, tests, and actions:\n"
+msgstr ""
+"\n"
+"путь по умолчанию: текущий подкаталог; выражение по умолчанию: -print\n"
+"выражения могут состоять из операторов, ключей, проверок и действий:\n"
+
+#: find/parser.c:740
+msgid ""
+"operators (decreasing precedence; -and is implicit where no others are "
+"given):\n"
+"      ( EXPR )   ! EXPR   -not EXPR   EXPR1 -a EXPR2   EXPR1 -and EXPR2\n"
+"      EXPR1 -o EXPR2   EXPR1 -or EXPR2   EXPR1 , EXPR2\n"
+msgstr ""
+"операторов (в нисходящем порядке; -and берется по умолчанию, если не дано "
+"других):\n"
+"      ( EXPR )   ! EXPR   -not EXPR   EXPR1 -a EXPR2   EXPR1 -and EXPR2\n"
+"      EXPR1 -o EXPR2   EXPR1 -or EXPR2   EXPR1 , EXPR2\n"
+
+#: find/parser.c:744
+msgid ""
+"positional options (always true): -daystart -follow\n"
+"normal options (always true, specified before other expressions):\n"
+"      -depth --help -maxdepth LEVELS -mindepth LEVELS -mount -noleaf\n"
+"      --version -xdev -ignore_readdir_race -noignore_readdir_race\n"
+msgstr ""
+"позиционных ключей (всегда true): -daystart -follow\n"
+"обычные ключи (всегда true, указываются перед выражениями других типов):\n"
+"      -depth --help -maxdepth LEVELS -mindepth LEVELS -mount -noleaf\n"
+"      --version -xdev -ignore_readdir_race -noignore_readdir_race\n"
+
+#: find/parser.c:749
+msgid ""
+"tests (N can be +N or -N or N): -amin N -anewer FILE -atime N -cmin N\n"
+"      -cnewer FILE -ctime N -empty -false -fstype TYPE -gid N -group NAME\n"
+"      -ilname PATTERN -iname PATTERN -inum N -iwholename PATTERN -iregex "
+"PATTERN\n"
+"      -links N -lname PATTERN -mmin N -mtime N -name PATTERN -newer FILE"
+msgstr ""
+"проверок (N может быть +N или -N или N): -amin N -anewer FILE -atime N -cmin "
+"N\n"
+"      -cnewer FILE -ctime N -empty -false -fstype TYPE -gid N -group NAME\n"
+"      -ilname PATTERN -iname PATTERN -inum N -iwholename PATTERN -iregex "
+"PATTERN\n"
+"      -links N -lname PATTERN -mmin N -mtime N -name PATTERN -newer FILE"
+
+#: find/parser.c:754
+msgid ""
+"      -nouser -nogroup -path PATTERN -perm [+-]MODE -regex PATTERN\n"
+"      -wholename PATTERN -size N[bcwkMG] -true -type [bcdpflsD] -uid N\n"
+"      -used N -user NAME -xtype [bcdpfls]\n"
+msgstr ""
+"      -nouser -nogroup -path PATTERN -perm [+-]MODE -regex PATTERN\n"
+"      -wholename PATTERN -size N[bcwkMG] -true -type [bcdpflsD] -uid N\n"
+"      -used N -user NAME -xtype [bcdpfls]\n"
+
+#: find/parser.c:758
+msgid ""
+"actions: -delete -exec COMMAND ; -exec COMMAND {} + -execdir COMMAND ;\n"
+"      -execdir COMMAND {} + -fls FILE -fprint FILE -fprint0 FILE\n"
+"      -fprintf FILE FORMAT -ls -ok COMMAND ; -ok COMMAND {} + -okdir "
+"COMMAND ;\n"
+"      -okdir COMMAND {} + -print -print0 -printf FORMAT -prune -quit\n"
+msgstr ""
+"действий: -delete -exec COMMAND ; -exec COMMAND {} + -execdir COMMAND ;\n"
+"      -execdir COMMAND {} + -fls FILE -fprint FILE -fprint0 FILE\n"
+"      -fprintf FILE FORMAT -ls -ok COMMAND ; -ok COMMAND {} + -okdir "
+"COMMAND ;\n"
+"      -okdir COMMAND {} + -print -print0 -printf FORMAT -prune -quit\n"
+
+#: find/parser.c:763
+msgid ""
+"Report (and track progress on fixing) bugs via the findutils bug-reporting\n"
+"page at http://savannah.gnu.org/ or, if you have no web access, by sending\n"
+"email to <bug-findutils@gnu.org>."
+msgstr ""
+"Сообщайте об ошибках в программе find (и отслеживайте исправление этих "
+"ошибок) через веб-страницу пакета findutils на http://savannah.gnu.org/ или "
+"посредством электронной почты по адресу списка рассылки <bug-findutils@gnu."
+"org>."
+
+#: find/parser.c:794
+msgid "sanity check of the fnmatch() library function failed."
+msgstr ""
+
+#: find/parser.c:809
+#, c-format
+msgid ""
+"warning: Unix filenames usually don't contain slashes (though pathnames "
+"do).  That means that '%s %s' will probably evaluate to false all the time "
+"on this system.  You might find the '-wholename' test more useful, or "
+"perhaps '-samefile'.  Alternatively, if you are using GNU grep, you could "
+"use 'find ... -print0 | grep -FzZ %s'."
+msgstr ""
+"предупреждение: имена файлов, в отличие от полных путей, не содержат "
+"слэшей. Это значит, что значение вычисления предиката '%s %s' всегда будет "
+"равно false.  Возможно, вы найдёте предикаты '-wholename' и '-samefile' "
+"более полезными для обработки полных путей.  В качестве альтернативы "
+"можно попробовать и 'find ... -print0 | grep -FzZ %s'."
+
+#: find/parser.c:851
+msgid ""
+"warning: the predicate -ipath is deprecated; please use -iwholename instead."
+msgstr ""
+"предупреждение: предикат -ipath упразднён; вместо него рекомендуется "
+"использовать -iwholename."
+
+#: find/parser.c:1284
+#, c-format
+msgid "invalid mode `%s'"
+msgstr "неверный режим '%s'"
+
+#: find/parser.c:1437
+msgid "invalid null argument to -size"
+msgstr "отсутствует аргумент у -size"
+
+#: find/parser.c:1483
+#, c-format
+msgid "invalid -size type `%c'"
+msgstr "неверный тип '%c' для -size"
+
+#: find/parser.c:1600
+#, c-format
+msgid "GNU find version %s\n"
+msgstr "GNU find версии %s\n"
+
+#: find/parser.c:1601
+#, c-format
+msgid "Features enabled: "
+msgstr "Дополнительные возможности: "
+
+#: find/parser.c:1841
+#, c-format
+msgid "warning: unrecognized escape `\\%c'"
+msgstr "предупреждение: нераспознаваемая последовательность '\\%c'"
+
+#: find/parser.c:1887
+#, c-format
+msgid "warning: unrecognized format directive `%%%c'"
+msgstr "предyпреждение: нераспознаваемый формат директивы '%%%c'"
+
+#: find/parser.c:1993
+#, c-format
+msgid ""
+"The current directory is included in the PATH environment variable, which is "
+"insecure in combination with the %s action of find.  Please remove the "
+"current directory from your $PATH (that is, remove \".\" or leading or "
+"trailing colons)"
+msgstr ""
+"Значение переменной среды PATH содержит текущий каталог, что небезопасно в "
+"сочетании с действием %s утилиты find.  Текущий каталог следует удалить из "
+"$PATH (т.е. удалить \".\" и/или двоеточия в начале и/или конце строки)"
+
+#: find/parser.c:2079
+msgid ""
+"You may not use {} within the utility name for -execdir and -okdir, because "
+"this is a potential security problem."
+msgstr ""
+"Использование {} недопустимо в имени программы в сочетании с действиями -"
+"execdir и -okdir утилиты find, поскольку это небезопасно."
+
+#: find/parser.c:2102
+#, c-format
+msgid "Only one instance of {} is supported with -exec%s ... +"
+msgstr ""
+"Строка {} может быть указана не более одного раза при использовании -exec%"
+"s ... +"
+
+#: find/pred.c:1154
+#, c-format
+msgid "< %s ... %s > ? "
+msgstr "< %s ... %s > ? "
+
+#: find/pred.c:1538 xargs/xargs.c:983
+msgid "cannot fork"
+msgstr "не могу создать процесс"
+
+#: find/pred.c:1578
+#, c-format
+msgid "error waiting for %s"
+msgstr "ошибка ожидания %s"
+
+#: find/pred.c:1586
+#, c-format
+msgid "%s terminated by signal %d"
+msgstr "%s прерван сигналом номер %d"
+
+#: find/tree.c:67 find/tree.c:72 find/tree.c:119 find/tree.c:158
+msgid "invalid expression"
+msgstr "неверное выражение"
+
+#: find/tree.c:76
+msgid ""
+"invalid expression; you have used a binary operator with nothing before it."
+msgstr ""
+"неверное выражение; попытка использовать бинарный оператор с одним "
+"аргументом."
+
+#: find/tree.c:80
+msgid "invalid expression; you have too many ')'"
+msgstr "неверное выражение; слишком много символов ')'"
+
+#: find/tree.c:99
+msgid ""
+"invalid expression; I was expecting to find a ')' somewhere but did not see "
+"one."
+msgstr "неверное выражение; не хватает символа ')'"
+
+#: find/tree.c:104 find/tree.c:326
+msgid "oops -- invalid expression type!"
+msgstr "оопс -- неверный тип выражения!"
+
+#: find/tree.c:173
+#, c-format
+msgid "oops -- invalid expression type (%d)!"
+msgstr "оопс -- неверный тип выражения (%d)!"
+
+#: find/tree.c:457
+msgid "oops -- invalid expression type in mark_stat!"
+msgstr "оопс -- неверный тип выражения в mark_stat!"
+
+#: find/tree.c:493
+msgid "oops -- invalid expression type in mark_type!"
+msgstr "оопс -- неверный тип выражения в mark_type!"
+
+#: locate/code.c:127
+#, c-format
+msgid ""
+"Usage: %s [--version | --help]\n"
+"or     %s most_common_bigrams < file-list > locate-database\n"
+msgstr ""
+"Использование: %s [--version | --help]\n"
+"или            %s most_common_bigrams < список > закодированный_список\n"
+
+#: locate/code.c:131 locate/locate.c:990 xargs/xargs.c:1177
+msgid ""
+"\n"
+"Report bugs to <bug-findutils@gnu.org>.\n"
+msgstr ""
+"\n"
+"Сообщайте об ошибках по адресу списка рассылки <bug-findutils@gnu.org>.\n"
+
+#: locate/code.c:165
+#, c-format
+msgid "GNU findutils version %s\n"
+msgstr "GNU findutils версии %s\n"
+
+#: locate/locate.c:143
+msgid "days"
+msgstr "дней"
+
+#: locate/locate.c:654
+#, c-format
+msgid "Locate database size: %s bytes\n"
+msgstr "Размер базы данных locate: %s байт\n"
+
+#: locate/locate.c:658
+#, c-format
+msgid "Filenames: %s "
+msgstr "Имена файлов: %s "
+
+#: locate/locate.c:661
+#, c-format
+msgid "with a cumulative length of %s bytes"
+msgstr "суммарной длины %s байт"
+
+#: locate/locate.c:665
+#, c-format
+msgid ""
+"\n"
+"\tof which %s contain whitespace, "
+msgstr ""
+"\n"
+"\tиз которых %s содержат пробельные символы, "
+
+#: locate/locate.c:668
+#, c-format
+msgid ""
+"\n"
+"\t%s contain newline characters, "
+msgstr ""
+"\n"
+"\t%s содержат символы новой строки, "
+
+#: locate/locate.c:671
+#, c-format
+msgid ""
+"\n"
+"\tand %s contain characters with the high bit set.\n"
+msgstr ""
+"\n"
+"\tи %s содержат 8-битные символы с установленным старшим битом.\n"
+
+#: locate/locate.c:676
+#, c-format
+msgid "Compression ratio %4.2f%%\n"
+msgstr "Коэффициент сжатия %4.2f%%\n"
+
+#: locate/locate.c:854
+#, c-format
+msgid "warning: database `%s' is more than %d %s old"
+msgstr "предупреждение: база данных '%s' устарела более чем на %d %s"
+
+#: locate/locate.c:878
+#, c-format
+msgid "Database %s is in the %s format.\n"
+msgstr "База данных %s в формате %s.\n"
+
+#: locate/locate.c:880
+msgid "old"
+msgstr ""
+
+#: locate/locate.c:924
+#, c-format
+msgid "locate database `%s' is corrupt or invalid"
+msgstr "база данных `%s' испорчена или неверна"
+
+#: locate/locate.c:983
+#, c-format
+msgid ""
+"Usage: %s [-d path | --database=path] [-e | -E | --[non-]existing]\n"
+"      [-i | --ignore-case] [-w | --wholename] [-b | --basename] \n"
+"      [--limit=N | -l N] [-S | --statistics] [-0 | --null] [-c | --count]\n"
+"      [-P | -H | --nofollow] [-L | --follow] [-m | --mmap ] [ -s | --"
+"stdio ]\n"
+"      [-p | --print] [-r | --regex ] [--version] [--help] pattern...\n"
+msgstr ""
+"Использование: %s [-d path | --database=path] [-e | -E | --[non-]existing]\n"
+"      [-i | --ignore-case] [-w | --wholename] [-b | --basename] \n"
+"      [--limit=N | -l N] [-S | --statistics] [-0 | --null] [-c | --count]\n"
+"      [-P | -H | --nofollow] [-L | --follow] [-m | --mmap ] [ -s | --"
+"stdio ]\n"
+"      [-p | --print] [-r | --regex ] [--version] [--help] шаблон...\n"
+
+#: locate/locate.c:1094
+#, c-format
+msgid "GNU locate version %s\n"
+msgstr "GNU locate версии %s\n"
+
+#: locate/locate.c:1129
+msgid "argument to --limit"
+msgstr "аргумент у --limit"
+
+#: xargs/xargs.c:389
+msgid "environment is too large for exec"
+msgstr "окружение слишком велико для исполнения"
+
+#: xargs/xargs.c:502
+#, c-format
+msgid "GNU xargs version %s\n"
+msgstr "GNU xargs версии %s\n"
+
+#: xargs/xargs.c:522
+#, c-format
+msgid "Cannot open input file `%s'"
+msgstr "Не удалось открыть на чтение файл `%s'"
+
+#: xargs/xargs.c:548
+#, c-format
+msgid "Reducing arg_max (%ld) to arg_size (%ld)\n"
+msgstr "Уменьшаю arg_max (%ld) до значения arg_size (%ld)\n"
+
+#: xargs/xargs.c:557
+#, c-format
+msgid "Your environment variables take up %ld bytes\n"
+msgstr "Переменные окружения занимают %ld байт\n"
+
+#: xargs/xargs.c:560
+#, c-format
+msgid "POSIX lower and upper limits on argument length: %ld, %ld\n"
+msgstr "верхняя и нижняя границы на длину аргумента согласно POSIX: %ld, %ld\n"
+
+#: xargs/xargs.c:564
+#, c-format
+msgid "Maximum length of command we could actually use: %ld\n"
+msgstr "Максимальная длина комманды, которую можно использовать: %ld\n"
+
+#: xargs/xargs.c:567
+#, c-format
+msgid "Size of command buffer we are actually using: %ld\n"
+msgstr "Размер используемого буфера для комманды: %ld\n"
+
+#: xargs/xargs.c:676 xargs/xargs.c:831 xargs/xargs.c:888
+msgid "argument line too long"
+msgstr "строка аргументов слишком велика"
+
+#: xargs/xargs.c:732 xargs/xargs.c:813
+#, c-format
+msgid ""
+"unmatched %s quote; by default quotes are special to xargs unless you use "
+"the -0 option"
+msgstr ""
+"Несбалансированная %s кавычка; кавычки можно использовать только совместно с "
+"ключём -0"
+
+#: xargs/xargs.c:733 xargs/xargs.c:814
+msgid "double"
+msgstr "двойная"
+
+#: xargs/xargs.c:733 xargs/xargs.c:814
+msgid "single"
+msgstr "одинарная"
+
+#: xargs/xargs.c:1058
+msgid "error waiting for child process"
+msgstr "ошибка ожидания дочернего процесса"
+
+#: xargs/xargs.c:1074
+#, c-format
+msgid "%s: exited with status 255; aborting"
+msgstr "%s: завершен со статусом 255; прерываюсь"
+
+#: xargs/xargs.c:1076
+#, c-format
+msgid "%s: stopped by signal %d"
+msgstr "%s: остановлен сигналом номер %d"
+
+#: xargs/xargs.c:1078
+#, c-format
+msgid "%s: terminated by signal %d"
+msgstr "%s: завершен сигналом номер %d"
+
+#: xargs/xargs.c:1117
+#, c-format
+msgid "%s: invalid number for -%c option\n"
+msgstr "%s: неверное число для ключа -%c\n"
+
+#: xargs/xargs.c:1124
+#, c-format
+msgid "%s: value for -%c option should be >= %ld\n"
+msgstr "%s: значение для ключа -%c должно быть >= %ld\n"
+
+#: xargs/xargs.c:1138
+#, c-format
+msgid "%s: value for -%c option should be < %ld\n"
+msgstr "%s: значение для ключа -%c должно быть < %ld\n"
+
+#: xargs/xargs.c:1169
+#, c-format
+msgid ""
+"Usage: %s [-0prtx] [-e[eof-str]] [-i[replace-str]] [-l[max-lines]]\n"
+"       [-n max-args] [-s max-chars] [-P max-procs] [--null] [--eof[=eof-"
+"str]]\n"
+"       [--replace[=replace-str]] [--max-lines[=max-lines]] [--interactive]\n"
+"       [--max-chars=max-chars] [--verbose] [--exit] [--max-procs=max-procs]\n"
+"       [--max-args=max-args] [--no-run-if-empty] [--arg-file=file]\n"
+"       [--version] [--help] [command [initial-arguments]]\n"
+msgstr ""
+"Использование: %s [-0prtx] [-e[eof-str]] [-i[replace-str]] [-l[max-lines]]\n"
+"       [-n max-args] [-s max-chars] [-P max-procs] [--null] [--eof[=eof-"
+"str]]\n"
+"       [--replace[=replace-str]] [--max-lines[=max-lines]] [--interactive]\n"
+"       [--max-chars=max-chars] [--verbose] [--exit] [--max-procs=max-procs]\n"
+"       [--max-args=max-args] [--no-run-if-empty] [--arg-file=file]\n"
+"       [--version] [--help] [команда [начальные-аргументы]]\n"
+

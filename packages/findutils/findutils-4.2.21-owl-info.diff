@@ -1,0 +1,19 @@
+--- findutils-4.2.21.orig/doc/find.texi	2005-06-10 13:41:50 +0000
++++ findutils-4.2.21/doc/find.texi	2005-06-10 14:13:23 +0000
+@@ -14,14 +14,13 @@
+ 
+ @dircategory Basics
+ @direntry
+-* Finding files: (find).        Operating on files matching certain criteria.
++* Finding files: (find).                        Operating on files matching
++                                                certain criteria.
+ @end direntry
+ 
+ @dircategory Individual utilities
+ @direntry
+ * find: (find)Invoking find.                    Finding and acting on files.
+-* locate: (find)Invoking locate.                Finding files in a database.
+-* updatedb: (find)Invoking updatedb.            Building the locate database.
+ * xargs: (find)Invoking xargs.                  Operating on many files.
+ @end direntry
+ 
