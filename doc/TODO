@@ -117,17 +117,6 @@ and in a chroot jail.  This requires privilege separation within the
 client (not easy).
 
 
-	findutils.
-
-[PRIORITY: medium]
-[ASSIGNED: ldv@]
-Update to 4.2.20+ dropping the -delete patch (a better version of it
-has been included upstream).
-Update other packages in Owl (e.g. owl-control) to fix warnings generated
-by new find(1).
-See "Warning Messages" in findutils texinfo documentation for details.
-
-
 	gdb.
 
 [PRIORITY: medium]
@@ -482,13 +471,8 @@ can log both into wtmp.
 
 	strace.
 
-[PRIORITY: medium]
-[ASSIGNED: ldv@]
-Update to 4.5.11+ with ALT's patches.
-
 [PRIORITY: low]
-After the above update is complete, re-test pipe(2) reporting on Alpha
-and fix it if it's still incorrect.
+Re-test pipe(2) reporting on Alpha and fix it if it's still incorrect.
 
 
 	sysklogd.
@@ -584,4 +568,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.86 2005/05/31 15:34:43 ldv Exp $
+$Id: Owl/doc/TODO,v 1.87 2005/06/11 17:49:40 ldv Exp $
