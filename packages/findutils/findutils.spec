@@ -1,4 +1,4 @@
-# $Id: Owl/packages/findutils/findutils.spec,v 1.10 2005/06/11 17:46:51 ldv Exp $
+# $Id: Owl/packages/findutils/findutils.spec,v 1.11 2005/06/12 13:25:19 ldv Exp $
 
 Summary: The GNU versions of find utilities (find and xargs).
 Name: findutils
@@ -33,10 +33,9 @@ install -pm644 %_sourcedir/findutils-ru.po po/ru.po
 %patch1 -p1
 %patch2 -p1
 
-%{expand:%%define optflags %optflags -Wall}
-
 %build
-# do not build locale subdirectory
+%{expand:%%define optflags %optflags -Wall}
+# do not build locate subdirectory
 sed -i 's/ locate / /' Makefile*
 %configure
 make -C po update-po
@@ -71,7 +70,7 @@ fi
 * Sat Jun 11 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1:4.2.21-owl1
 - Updated to 4.2.21.
 - Reviewed Owl patches, removed obsolete ones.
-- Imported two patches and updated russian translation from ALT's
+- Imported two patches and updated Russian translation from ALT's
 findutils-4.2.21-alt2 package.
 - Corrected info files installation.
 - Packaged findutils translations.
