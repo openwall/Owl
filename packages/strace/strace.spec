@@ -1,4 +1,4 @@
-# $Id: Owl/packages/strace/strace.spec,v 1.13 2005/06/11 17:47:44 ldv Exp $
+# $Id: Owl/packages/strace/strace.spec,v 1.14 2005/06/12 13:28:09 ldv Exp $
 
 Summary: Tracks and displays system calls associated with a running process.
 Name: strace
@@ -40,6 +40,7 @@ commands do.
 %patch4 -p1
 
 %build
+%{expand:%%define optflags %optflags -Wall}
 %configure
 make
 bzip2 -9fk ChangeLog
