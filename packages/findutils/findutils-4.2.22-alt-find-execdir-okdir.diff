@@ -4,10 +4,10 @@
 	* find/parser.c (parse_help): Mention -execdir and -ordir options.
 	* doc/find.texi, find/find.1: Additionally document new options.
 
-diff -upk.orig findutils-4.2.21.orig/doc/find.texi findutils-4.2.21/doc/find.texi
---- findutils-4.2.21.orig/doc/find.texi	2005-06-07 22:34:05 +0000
-+++ findutils-4.2.21/doc/find.texi	2005-06-10 13:41:50 +0000
-@@ -2006,10 +2006,10 @@ find bills -type f | xargs -iXX sort -o 
+diff -upk.orig findutils-4.2.22.orig/doc/find.texi findutils-4.2.22/doc/find.texi
+--- findutils-4.2.22.orig/doc/find.texi	2005-06-12 21:47:02 +0000
++++ findutils-4.2.22/doc/find.texi	2005-06-13 10:09:35 +0000
+@@ -2015,10 +2015,10 @@ find bills -type f | xargs -iXX sort -o 
  @end example
  
  @noindent
@@ -20,7 +20,7 @@ diff -upk.orig findutils-4.2.21.orig/doc/find.texi findutils-4.2.21/doc/find.tex
  @end example
  @end table
  
-@@ -2017,14 +2017,24 @@ find bills -type f -exec sort -o '@{@}.s
+@@ -2026,14 +2026,24 @@ find bills -type f -exec sort -o '@{@}.s
  @subsection Querying
  
  To ask the user whether to execute a command on a single file, you can
@@ -48,7 +48,7 @@ diff -upk.orig findutils-4.2.21.orig/doc/find.texi findutils-4.2.21/doc/find.tex
  When processing multiple files with a single command, to query the user
  you give @code{xargs} the following option.  When using this option, you
  might find it useful to control the number of files processed per
-@@ -2297,7 +2307,7 @@ the file name contains a character with 
+@@ -2306,7 +2316,7 @@ the file name contains a character with 
  strip it off.  A more reliable way is:
  
  @example
@@ -57,7 +57,7 @@ diff -upk.orig findutils-4.2.21.orig/doc/find.texi findutils-4.2.21/doc/find.tex
  @end example
  
  @noindent
-@@ -2316,18 +2326,18 @@ have found that its inode number is 1234
+@@ -2325,18 +2335,18 @@ have found that its inode number is 1234
  whether to remove it:
  
  @example
@@ -79,21 +79,21 @@ diff -upk.orig findutils-4.2.21.orig/doc/find.texi findutils-4.2.21/doc/find.tex
  @end example
  
  @node Fixing Permissions
-diff -upk.orig findutils-4.2.21.orig/find/find.1 findutils-4.2.21/find/find.1
---- findutils-4.2.21.orig/find/find.1	2005-06-07 22:18:41 +0000
-+++ findutils-4.2.21/find/find.1	2005-06-10 13:41:50 +0000
-@@ -988,7 +988,7 @@ Determines the locale to be used for int
+diff -upk.orig findutils-4.2.22.orig/find/find.1 findutils-4.2.22/find/find.1
+--- findutils-4.2.22.orig/find/find.1	2005-06-12 19:25:23 +0000
++++ findutils-4.2.22/find/find.1	2005-06-13 10:12:02 +0000
+@@ -993,7 +993,7 @@ Determines the locale to be used for int
  Determines the location of the internationalisation message catalogues.
  .IP PATH
- Affects the directores which are searched to find the executables 
+ Affects the directories which are searched to find the executables 
 -invoked by `\-exec' and `\-ok'.
 +invoked by `\-exec', `\-execdir', `\-ok' and `\-okdir'.
  .IP POSIXLY_CORRECT
  Determines the block size used by `-ls'.
  .IP TZ
-diff -upk.orig findutils-4.2.21.orig/find/parser.c findutils-4.2.21/find/parser.c
---- findutils-4.2.21.orig/find/parser.c	2005-06-07 22:18:41 +0000
-+++ findutils-4.2.21/find/parser.c	2005-06-10 13:41:50 +0000
+diff -upk.orig findutils-4.2.22.orig/find/parser.c findutils-4.2.22/find/parser.c
+--- findutils-4.2.22.orig/find/parser.c	2005-06-07 22:18:41 +0000
++++ findutils-4.2.22/find/parser.c	2005-06-10 13:41:50 +0000
 @@ -756,9 +756,10 @@ tests (N can be +N or -N or N): -amin N 
        -wholename PATTERN -size N[bcwkMG] -true -type [bcdpflsD] -uid N\n\
        -used N -user NAME -xtype [bcdpfls]\n"));

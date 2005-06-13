@@ -1,8 +1,8 @@
-# $Id: Owl/packages/findutils/findutils.spec,v 1.11 2005/06/12 13:25:19 ldv Exp $
+# $Id: Owl/packages/findutils/findutils.spec,v 1.12 2005/06/13 10:21:58 ldv Exp $
 
 Summary: The GNU versions of find utilities (find and xargs).
 Name: findutils
-Version: 4.2.21
+Version: 4.2.22
 Release: owl1
 Epoch: 1
 License: GPL
@@ -10,7 +10,7 @@ Group: Applications/File
 URL: http://www.gnu.org/software/%name/
 Source0: ftp://alpha.gnu.org/gnu/%name/%name-%version.tar.gz
 Source1: findutils-ru.po
-Patch0: findutils-4.2.21-alt-find-execdir-okdir.diff
+Patch0: findutils-4.2.22-alt-find-execdir-okdir.diff
 Patch1: findutils-4.2.21-alt-find-check_nofollow.diff
 Patch2: findutils-4.2.21-owl-info.diff
 PreReq: /sbin/install-info
@@ -67,6 +67,9 @@ fi
 %_datadir/locale/*/LC_MESSAGES/findutils.mo
 
 %changelog
+* Mon Jun 13 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1:4.2.22-owl1
+- Updated to 4.2.22.
+
 * Sat Jun 11 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1:4.2.21-owl1
 - Updated to 4.2.21.
 - Reviewed Owl patches, removed obsolete ones.
