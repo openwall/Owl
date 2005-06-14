@@ -12,6 +12,12 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2005/06/14	Packages: elfutils-libelf, ltrace
+New package: elfutils-libelf provides a library for reading and writing
+ELF files on a high level.  Updated ltrace to 0.3.36 (making use of
+libelf).  This makes ltrace work for program binaries built with recent
+versions of binutils.
+
 2005/06/11 -
 2005/06/13	Package: findutils
 Updated to 4.2.22.
@@ -479,4 +485,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.101 2005/06/13 10:23:50 ldv Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.102 2005/06/14 15:29:35 solar Exp $
