@@ -192,14 +192,6 @@ items are in a separate non-public TODO list for just John.)
 Update to latest releases.
 
 
-	ltrace.
-
-[PRIORITY: high]
-[ASSIGNED: mci@]
-Package libelf or elfutils.  Update ltrace to the new version to make
-it work again after our binutils update (which has already been made).
-
-
 	mailx.
 
 [PRIORITY: low]
@@ -452,8 +444,7 @@ package signature checking.
 
 [PRIORITY: low]
 [ASSIGNED: galaxy@]
-Once we have a libelf or elfutils package (for ltrace), make rpm also
-use the system's libelf.
+Make rpm also use the system's libelf.
 
 
 	shadow-utils.
@@ -568,4 +559,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.87 2005/06/11 17:49:40 ldv Exp $
+$Id: Owl/doc/TODO,v 1.88 2005/06/14 15:30:31 solar Exp $
