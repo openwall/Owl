@@ -1,15 +1,15 @@
-# $Id: Owl/packages/elfutils-libelf/elfutils-libelf.spec,v 1.1 2005/06/14 14:25:31 mci Exp $
+# $Id: Owl/packages/elfutils-libelf/elfutils-libelf.spec,v 1.2 2005/06/14 15:02:47 solar Exp $
 
 Summary: Library to read and write ELF files.
 Name: elfutils-libelf
 Version: 0.108
 Release: owl1
 License: GPL
-Group: Development/Tools
+Group: System Environment/Libraries
 Source: elfutils-%version.tar.gz
 Patch0: elfutils-0.108-rh-robustify.diff
 Patch1: elfutils-0.108-owl-fixes.diff
-Obsoletes: libelf, libelf-devel
+Obsoletes: libelf
 BuildRequires: bison >= 1.35
 BuildRequires: flex >= 2.5.4a
 BuildRequires: gcc >= 3.4
@@ -22,10 +22,10 @@ this package to read internals of ELF files.  The programs of the
 elfutils package use it also to generate new ELF files.
 
 %package devel
-Summary: Development support for libelf
-Group: Development/Tools
-Requires: elfutils-libelf = %version-%release
-Conflicts: libelf-devel
+Summary: Development support for libelf.
+Group: Development/Libraries
+Requires: %name = %version-%release
+Obsoletes: libelf-devel
 
 %description devel
 The elfutils-libelf-devel package contains the libraries to create
@@ -39,10 +39,8 @@ different sections of an ELF file.
 %patch1 -p1
 
 %build
-
 %configure --enable-shared
-cd libelf
-make
+%__make -C libelf
 
 %install
 rm -rf %buildroot
