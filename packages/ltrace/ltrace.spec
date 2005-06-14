@@ -1,19 +1,17 @@
-# $Id: Owl/packages/ltrace/ltrace.spec,v 1.18 2005/01/20 04:08:30 solar Exp $
+# $Id: Owl/packages/ltrace/ltrace.spec,v 1.19 2005/06/14 14:32:39 mci Exp $
 
 Summary: Tracks runtime library calls from dynamically linked executables.
 Name: ltrace
-Version: 0.3.10
-Release: owl9
+Version: 0.3.36
+Release: owl1
 License: GPL
 Group: Development/Debuggers
-Source: ftp://ftp.debian.org/debian/dists/potato/main/source/utils/ltrace_%version.tar.gz
-Patch0: ltrace-0.3.10-rh-sparc.diff
-Patch1: ltrace-0.3.10-rh-mandir.diff
-Patch2: ltrace-0.3.10-rh-nsyscals0.diff
-Patch3: ltrace-0.3.10-rh-strlen.diff
-Patch4: ltrace-0.3.10-owl-fixes.diff
+Source: ftp://ftp.debian.org/debian/pool/main/l/ltrace/ltrace_%version.orig.tar.gz
+Patch0: ltrace-0.3.36-alt-install-no-root.diff
+Patch1: ltrace-0.3.36-owl-version.diff
 Prefix: %_prefix
-ExclusiveArch: %ix86 sparc sparcv9
+BuildRequires: elfutils-libelf-devel
+ExclusiveArch: %ix86 alpha sparc sparcv9
 BuildRoot: /override/%name-%version
 
 %description
@@ -25,14 +23,8 @@ intercept and print system calls invoked by the process.
 
 %prep
 %setup -q
-
-%ifarch sparc sparcv9
 %patch0 -p1
-%endif
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
 
 %build
 %configure
@@ -41,7 +33,6 @@ intercept and print system calls invoked by the process.
 %install
 %__make DESTDIR=%buildroot mandir=%_mandir install
 rm -rf %buildroot%_prefix/doc
-mv -f debian/changelog ChangeLog
 
 %files
 %defattr(-,root,root)
@@ -51,6 +42,11 @@ mv -f debian/changelog ChangeLog
 %config /etc/ltrace.conf
 
 %changelog
+* Mon Jun 13 2005 Michail Litvak <mci@owl.openwall.com> 0.3.36-owl1
+- 0.3.36
+- Dropped outdated patches, imported -no-root-install patch from ALT.
+- Patch to correct version reported by ltrace -V.
+
 * Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.3.10-owl9
 - Added a patch to deal with "label at end of compound statement" issue.
 - Cleaned up the spec.
