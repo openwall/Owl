@@ -1,9 +1,9 @@
-# $Id: Owl/packages/strace/strace.spec,v 1.14 2005/06/12 13:28:09 ldv Exp $
+# $Id: Owl/packages/strace/strace.spec,v 1.15 2005/06/18 14:02:57 ldv Exp $
 
 Summary: Tracks and displays system calls associated with a running process.
 Name: strace
 Version: 4.5.12
-Release: owl1
+Release: owl2
 License: BSD
 Group: Development/Debuggers
 URL: http://sourceforge.net/projects/strace/
@@ -11,7 +11,7 @@ Source: http://prdownloads.sourceforge.net/%name/%name-%version.tar.bz2
 Patch0: strace-4.5.12-alt-TF.diff
 Patch1: strace-4.5.12-alt-TD.diff
 Patch2: strace-4.5.12-owl-man.diff
-Patch3: strace-4.5.12-owl-quota.diff
+Patch3: strace-4.5.12-alt-quotactl.diff
 Patch4: strace-4.5.12-alt-keep_status.diff
 BuildRoot: /override/%name-%version
 
@@ -39,8 +39,10 @@ commands do.
 %patch3 -p1
 %patch4 -p1
 
-%build
 %{expand:%%define optflags %optflags -Wall}
+
+%build
+autoreconf -fisv
 %configure
 make
 bzip2 -9fk ChangeLog
@@ -63,6 +65,9 @@ mkdir -p %buildroot%_prefix/bin
 %_prefix/bin/strace-graph
 
 %changelog
+* Sat Jun 18 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.5.12-owl2
+- Implemented more elaborate quotactl(2) deparser.
+
 * Sat Jun 11 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.5.12-owl1
 - Updated to 4.5.12.
 - Reviewed Owl patches, removed obsolete ones.
