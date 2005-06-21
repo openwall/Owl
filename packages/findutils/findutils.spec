@@ -1,19 +1,18 @@
-# $Id: Owl/packages/findutils/findutils.spec,v 1.13 2005/06/16 17:47:16 ldv Exp $
+# $Id: Owl/packages/findutils/findutils.spec,v 1.14 2005/06/21 17:00:07 ldv Exp $
 
 Summary: The GNU versions of find utilities (find and xargs).
 Name: findutils
-Version: 4.2.22
-Release: owl2
+Version: 4.2.23
+Release: owl1
 Epoch: 1
 License: GPL
 Group: Applications/File
 URL: http://www.gnu.org/software/%name/
-Source0: ftp://alpha.gnu.org/gnu/%name/%name-%version.tar.gz
+Source0: ftp://ftp.gnu.org/gnu/%name/%name-%version.tar.gz
 Source1: findutils-ru.po
-Patch0: findutils-4.2.22-alt-find-execdir-okdir.diff
+Patch0: findutils-4.2.22-alt-warnings.diff
 Patch1: findutils-4.2.21-alt-find-check_nofollow.diff
 Patch2: findutils-4.2.21-owl-info.diff
-Patch3: findutils-4.2.22-alt-warnings.diff
 PreReq: /sbin/install-info
 # due to sed -i
 BuildRequires: sed >= 4.1.1
@@ -33,7 +32,6 @@ install -pm644 %_sourcedir/findutils-ru.po po/ru.po
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -70,6 +68,9 @@ fi
 %_datadir/locale/*/LC_MESSAGES/findutils.mo
 
 %changelog
+* Tue Jun 21 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1:4.2.23-owl1
+- Updated to 4.2.23.
+
 * Thu Jun 16 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1:4.2.22-owl2
 - Fixed few harmless compilation warnings.
 

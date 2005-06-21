@@ -1,14 +1,14 @@
-# Локализация findutils 4.2.21
+# Локализация findutils 4.2.23
 # Copyright (C) 1997, 1998, 1999, 2000 Free Software Foundation, Inc.
 # Denis Perchine <dyp@perchine.com>, 1997, 1998, 1999, 2000.
 # Dmitry V. Levin <ldv@altlinux.org>, 2004, 2005.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: findutils 4.2.21\n"
+"Project-Id-Version: findutils 4.2.23\n"
 "Report-Msgid-Bugs-To: bug-findutils@gnu.org\n"
-"POT-Creation-Date: 2005-06-08 12:56+0400\n"
-"PO-Revision-Date: 2005-06-08 12:56+0400\n"
+"POT-Creation-Date: 2005-06-21 16:17+0400\n"
+"PO-Revision-Date: 2005-06-21 01:28+0400\n"
 "Last-Translator: Dmitry V. Levin <ldv@altlinux.org>\n"
 "Language-Team: Russian <ru@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -255,7 +255,7 @@ msgstr ""
 "%s%s изменился во время выполнения %s (прежний номер inode %ld, новый номер "
 "inode %ld, тип файловой системы %s) [строка %ld]"
 
-#: find/find.c:1461
+#: find/find.c:1473
 #, c-format
 msgid ""
 "Symbolic link `%s' is part of a loop in the directory hierarchy; we have "
@@ -264,7 +264,7 @@ msgstr ""
 "Символическая ссылка `%s' является элеменом цикла в файловой структуре; тот "
 "каталог, на который эта ссылка указывает, уже был обработан."
 
-#: find/find.c:1476
+#: find/find.c:1488
 #, c-format
 msgid ""
 "Filesystem loop detected; `%s' has the same device number and inode as a "
@@ -273,15 +273,15 @@ msgstr ""
 "Обнаружен цикл в файловой системе; у `%s' тот же номер устройства и inode, "
 "что и у каталога, расположенного %d %s."
 
-#: find/find.c:1480
+#: find/find.c:1492
 msgid "level higher in the filesystem hierarchy"
 msgstr "уровнем выше в файловой структуре"
 
-#: find/find.c:1481
+#: find/find.c:1493
 msgid "levels higher in the filesystem hierarchy"
 msgstr "уровнями выше в файловой структуре"
 
-#: find/find.c:1862
+#: find/find.c:1913
 #, c-format
 msgid ""
 "WARNING: Hard link count is wrong for %s: this may be a bug in your "
@@ -384,19 +384,17 @@ msgstr ""
 
 #: find/parser.c:758
 msgid ""
-"actions: -delete -exec COMMAND ; -exec COMMAND {} + -execdir COMMAND ;\n"
-"      -execdir COMMAND {} + -fls FILE -fprint FILE -fprint0 FILE\n"
-"      -fprintf FILE FORMAT -ls -ok COMMAND ; -ok COMMAND {} + -okdir "
-"COMMAND ;\n"
-"      -okdir COMMAND {} + -print -print0 -printf FORMAT -prune -quit\n"
+"actions: -delete -print0 -printf FORMAT -fprintf FILE FORMAT -print \n"
+"      -fprint0 FILE -fprint FILE -ls -fls FILE -prune -quit\n"
+"      -exec COMMAND ; -exec COMMAND {} + -ok COMMAND ;\n"
+"      -execdir COMMAND ; -execdir COMMAND {} + -okdir COMMAND ;\n"
 msgstr ""
-"действий: -delete -exec COMMAND ; -exec COMMAND {} + -execdir COMMAND ;\n"
-"      -execdir COMMAND {} + -fls FILE -fprint FILE -fprint0 FILE\n"
-"      -fprintf FILE FORMAT -ls -ok COMMAND ; -ok COMMAND {} + -okdir "
-"COMMAND ;\n"
-"      -okdir COMMAND {} + -print -print0 -printf FORMAT -prune -quit\n"
+"действий: -delete -print0 -printf FORMAT -fprintf FILE FORMAT -print \n"
+"      -fprint0 FILE -fprint FILE -ls -fls FILE -prune -quit\n"
+"      -exec COMMAND ; -exec COMMAND {} + -ok COMMAND ;\n"
+"      -execdir COMMAND ; -execdir COMMAND {} + -okdir COMMAND ;\n"
 
-#: find/parser.c:763
+#: find/parser.c:764
 msgid ""
 "Report (and track progress on fixing) bugs via the findutils bug-reporting\n"
 "page at http://savannah.gnu.org/ or, if you have no web access, by sending\n"
@@ -407,11 +405,11 @@ msgstr ""
 "посредством электронной почты по адресу списка рассылки <bug-findutils@gnu."
 "org>."
 
-#: find/parser.c:794
+#: find/parser.c:795
 msgid "sanity check of the fnmatch() library function failed."
 msgstr ""
 
-#: find/parser.c:809
+#: find/parser.c:810
 #, c-format
 msgid ""
 "warning: Unix filenames usually don't contain slashes (though pathnames "
@@ -420,54 +418,54 @@ msgid ""
 "perhaps '-samefile'.  Alternatively, if you are using GNU grep, you could "
 "use 'find ... -print0 | grep -FzZ %s'."
 msgstr ""
-"предупреждение: имена файлов, в отличие от полных путей, не содержат "
-"слэшей. Это значит, что значение вычисления предиката '%s %s' всегда будет "
-"равно false.  Возможно, вы найдёте предикаты '-wholename' и '-samefile' "
-"более полезными для обработки полных путей.  В качестве альтернативы "
-"можно попробовать и 'find ... -print0 | grep -FzZ %s'."
+"предупреждение: имена файлов, в отличие от полных путей, не содержат слэшей. "
+"Это значит, что значение вычисления предиката '%s %s' всегда будет равно "
+"false.  Возможно, вы найдёте предикаты '-wholename' и '-samefile' более "
+"полезными для обработки полных путей.  В качестве альтернативы можно "
+"попробовать и 'find ... -print0 | grep -FzZ %s'."
 
-#: find/parser.c:851
+#: find/parser.c:852
 msgid ""
 "warning: the predicate -ipath is deprecated; please use -iwholename instead."
 msgstr ""
 "предупреждение: предикат -ipath упразднён; вместо него рекомендуется "
 "использовать -iwholename."
 
-#: find/parser.c:1284
+#: find/parser.c:1285
 #, c-format
 msgid "invalid mode `%s'"
 msgstr "неверный режим '%s'"
 
-#: find/parser.c:1437
+#: find/parser.c:1438
 msgid "invalid null argument to -size"
 msgstr "отсутствует аргумент у -size"
 
-#: find/parser.c:1483
+#: find/parser.c:1484
 #, c-format
 msgid "invalid -size type `%c'"
 msgstr "неверный тип '%c' для -size"
 
-#: find/parser.c:1600
+#: find/parser.c:1601
 #, c-format
 msgid "GNU find version %s\n"
 msgstr "GNU find версии %s\n"
 
-#: find/parser.c:1601
+#: find/parser.c:1602
 #, c-format
 msgid "Features enabled: "
 msgstr "Дополнительные возможности: "
 
-#: find/parser.c:1841
+#: find/parser.c:1842
 #, c-format
 msgid "warning: unrecognized escape `\\%c'"
 msgstr "предупреждение: нераспознаваемая последовательность '\\%c'"
 
-#: find/parser.c:1887
+#: find/parser.c:1888
 #, c-format
 msgid "warning: unrecognized format directive `%%%c'"
 msgstr "предyпреждение: нераспознаваемый формат директивы '%%%c'"
 
-#: find/parser.c:1993
+#: find/parser.c:1994
 #, c-format
 msgid ""
 "The current directory is included in the PATH environment variable, which is "
@@ -479,7 +477,7 @@ msgstr ""
 "сочетании с действием %s утилиты find.  Текущий каталог следует удалить из "
 "$PATH (т.е. удалить \".\" и/или двоеточия в начале и/или конце строки)"
 
-#: find/parser.c:2079
+#: find/parser.c:2080
 msgid ""
 "You may not use {} within the utility name for -execdir and -okdir, because "
 "this is a potential security problem."
@@ -487,7 +485,7 @@ msgstr ""
 "Использование {} недопустимо в имени программы в сочетании с действиями -"
 "execdir и -okdir утилиты find, поскольку это небезопасно."
 
-#: find/parser.c:2102
+#: find/parser.c:2103
 #, c-format
 msgid "Only one instance of {} is supported with -exec%s ... +"
 msgstr ""
@@ -560,7 +558,7 @@ msgstr ""
 "Использование: %s [--version | --help]\n"
 "или            %s most_common_bigrams < список > закодированный_список\n"
 
-#: locate/code.c:131 locate/locate.c:990 xargs/xargs.c:1177
+#: locate/code.c:131 locate/locate.c:1067 xargs/xargs.c:1177
 msgid ""
 "\n"
 "Report bugs to <bug-findutils@gnu.org>.\n"
@@ -573,26 +571,31 @@ msgstr ""
 msgid "GNU findutils version %s\n"
 msgstr "GNU findutils версии %s\n"
 
-#: locate/locate.c:143
+#: locate/locate.c:153
 msgid "days"
 msgstr "дней"
 
-#: locate/locate.c:654
+#: locate/locate.c:522
+#, c-format
+msgid "locate database `%s' is corrupt or invalid"
+msgstr "база данных `%s' испорчена или неверна"
+
+#: locate/locate.c:758
 #, c-format
 msgid "Locate database size: %s bytes\n"
 msgstr "Размер базы данных locate: %s байт\n"
 
-#: locate/locate.c:658
+#: locate/locate.c:762
 #, c-format
 msgid "Filenames: %s "
 msgstr "Имена файлов: %s "
 
-#: locate/locate.c:661
+#: locate/locate.c:765
 #, c-format
 msgid "with a cumulative length of %s bytes"
 msgstr "суммарной длины %s байт"
 
-#: locate/locate.c:665
+#: locate/locate.c:769
 #, c-format
 msgid ""
 "\n"
@@ -601,7 +604,7 @@ msgstr ""
 "\n"
 "\tиз которых %s содержат пробельные символы, "
 
-#: locate/locate.c:668
+#: locate/locate.c:772
 #, c-format
 msgid ""
 "\n"
@@ -610,7 +613,7 @@ msgstr ""
 "\n"
 "\t%s содержат символы новой строки, "
 
-#: locate/locate.c:671
+#: locate/locate.c:775
 #, c-format
 msgid ""
 "\n"
@@ -619,31 +622,32 @@ msgstr ""
 "\n"
 "\tи %s содержат 8-битные символы с установленным старшим битом.\n"
 
-#: locate/locate.c:676
+#: locate/locate.c:780
 #, c-format
 msgid "Compression ratio %4.2f%%\n"
 msgstr "Коэффициент сжатия %4.2f%%\n"
 
-#: locate/locate.c:854
+#: locate/locate.c:824
+msgid "warning: the locate database can only be read from stdin once."
+msgstr ""
+"предупреждение: базу данных можно прочитать из стандартного ввода только "
+"один раз."
+
+#: locate/locate.c:845
 #, c-format
 msgid "warning: database `%s' is more than %d %s old"
 msgstr "предупреждение: база данных '%s' устарела более чем на %d %s"
 
-#: locate/locate.c:878
+#: locate/locate.c:1007
 #, c-format
 msgid "Database %s is in the %s format.\n"
 msgstr "База данных %s в формате %s.\n"
 
-#: locate/locate.c:880
+#: locate/locate.c:1009
 msgid "old"
 msgstr ""
 
-#: locate/locate.c:924
-#, c-format
-msgid "locate database `%s' is corrupt or invalid"
-msgstr "база данных `%s' испорчена или неверна"
-
-#: locate/locate.c:983
+#: locate/locate.c:1059
 #, c-format
 msgid ""
 "Usage: %s [-d path | --database=path] [-e | -E | --[non-]existing]\n"
@@ -651,21 +655,23 @@ msgid ""
 "      [--limit=N | -l N] [-S | --statistics] [-0 | --null] [-c | --count]\n"
 "      [-P | -H | --nofollow] [-L | --follow] [-m | --mmap ] [ -s | --"
 "stdio ]\n"
-"      [-p | --print] [-r | --regex ] [--version] [--help] pattern...\n"
+"      [-A | --all] [-p | --print] [-r | --regex ] [--version] [--help]\n"
+"      pattern...\n"
 msgstr ""
 "Использование: %s [-d path | --database=path] [-e | -E | --[non-]existing]\n"
 "      [-i | --ignore-case] [-w | --wholename] [-b | --basename] \n"
 "      [--limit=N | -l N] [-S | --statistics] [-0 | --null] [-c | --count]\n"
 "      [-P | -H | --nofollow] [-L | --follow] [-m | --mmap ] [ -s | --"
 "stdio ]\n"
-"      [-p | --print] [-r | --regex ] [--version] [--help] шаблон...\n"
+"      [-A | --all] [-p | --print] [-r | --regex ] [--version] [--help]\n"
+"      шаблон...\n"
 
-#: locate/locate.c:1094
+#: locate/locate.c:1177
 #, c-format
 msgid "GNU locate version %s\n"
 msgstr "GNU locate версии %s\n"
 
-#: locate/locate.c:1129
+#: locate/locate.c:1212
 msgid "argument to --limit"
 msgstr "аргумент у --limit"
 
@@ -781,4 +787,3 @@ msgstr ""
 "       [--max-chars=max-chars] [--verbose] [--exit] [--max-procs=max-procs]\n"
 "       [--max-args=max-args] [--no-run-if-empty] [--arg-file=file]\n"
 "       [--version] [--help] [команда [начальные-аргументы]]\n"
-
