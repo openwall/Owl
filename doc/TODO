@@ -58,6 +58,7 @@ Update these to latest releases once in a while.
 	coreutils.
 
 [PRIORITY: low]
+[ASSIGNED: ldv@]
 The texinfo documentation for true(1) and false(1) is wrong for the
 assembly versions (we do not support any command-line options).
 Update the documentation to match the reality.
@@ -98,6 +99,7 @@ using safe mode (~077 & mode), then chown(), then chmod().
 	cvs.
 
 [PRIORITY: medium]
+[ASSIGNED: ldv@]
 Update to the latest 1.11.x or to 1.12.x.  It is starting to feel like
 a waste of time to continue back-porting security fixes to our 1.11.5.
 
@@ -262,7 +264,7 @@ it might be).
 	openssl.
 
 [PRIORITY: medium]
-[ASSIGNED: solar@]
+[ASSIGNED: solar@, ldv@]
 Keep OpenSSL to latest in a branch.
 
 
@@ -311,11 +313,13 @@ be supporting udev, make an exception for /dev.
 	pam.
 
 [PRIORITY: medium]
+[ASSIGNED: ldv@]
 Update to latest release (with our modifications), either Red Hat's
 again or official Linux-PAM with its pre-compiled documentation and
 still adding a few modules from Red Hat's for compatibility.
 
 [PRIORITY: low]
+[ASSIGNED: ldv@]
 After upgrading to pam-0.79+, make other packages in Owl use new "include"
 directive where appropriate.
 
@@ -388,9 +392,11 @@ Separate, currently non-public, TODO lists exist.
 	postfix.
 
 [PRIORITY: medium]
+[ASSIGNED: ldv@]
 Update to latest release, considering a number of patches and add-ons.
 
 [PRIORITY: medium]
+[ASSIGNED: ldv@]
 Restrict queue views and runs.
 
 [PRIORITY: medium]
@@ -529,7 +535,7 @@ Use mkdtemp(3) for the directory.
 	vixie-cron.
 
 [PRIORITY: medium]
-[ASSIGNED: jmbr@, solar@]
+[ASSIGNED: jmbr@, ldv@, solar@]
 Open PAM sessions for cron jobs such that resource limits are set.
 This is now implemented in ALT Linux's package, so we need to import
 from there.
@@ -559,4 +565,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.88 2005/06/14 15:30:31 solar Exp $
+$Id: Owl/doc/TODO,v 1.89 2005/06/21 21:19:23 ldv Exp $
