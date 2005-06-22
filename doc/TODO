@@ -534,12 +534,6 @@ Use mkdtemp(3) for the directory.
 
 	vixie-cron.
 
-[PRIORITY: medium]
-[ASSIGNED: ldv@]
-Open PAM sessions for cron jobs such that resource limits are set.
-This is now implemented in ALT Linux's package, so we need to import
-from there.
-
 [PRIORITY: low]
 In crontab(1), automatically convert input files from DOS linefeeds
 whenever needed.  Alternatively, have crond(8) support crontab files
@@ -565,4 +559,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.90 2005/06/21 22:35:40 ldv Exp $
+$Id: Owl/doc/TODO,v 1.91 2005/06/22 15:14:51 ldv Exp $
