@@ -205,7 +205,7 @@ diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/config.h vixie-cron-4.1.20
  #endif
  
  			/*
-@@ -78,21 +78,23 @@
+@@ -78,18 +78,20 @@
  			 * are both defined, then logging will go to both
  			 * places.
  			 */
@@ -229,11 +229,7 @@ diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/config.h vixie-cron-4.1.20
 +/*#define BSD_AUTH*/ 			/*-*/
  
  			/* if your OS has a getloadavg() function */
--#define HAVE_GETLOADAVG			/*-*/
-+#undef HAVE_GETLOADAVG			/*-*/
- 
- 			/* maximum load at which batch jobs will still run */
- #define BATCH_MAXLOAD	1.5		/*-*/
+ #define HAVE_GETLOADAVG			/*-*/
 diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/cron.8 vixie-cron-4.1.20040916/usr.sbin/cron/cron.8
 --- vixie-cron-4.1.20040916.orig/usr.sbin/cron/cron.8	Thu Jun  3 19:56:09 2004
 +++ vixie-cron-4.1.20040916/usr.sbin/cron/cron.8	Sun Feb 20 15:50:10 2005

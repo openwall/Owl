@@ -1,15 +1,16 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.35 2005/03/14 05:33:47 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.36 2005/06/22 15:04:32 ldv Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
 Version: 4.1.20040916
-Release: owl1
+Release: owl2
 License: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%version.tar.bz2
 Source1: vixie-cron.init
 Source2: crontab.control
 Source3: at.control
+Source4: crond.pam
 Patch0: vixie-cron-4.1.20040916-alt-warnings.diff
 Patch1: vixie-cron-4.1.20040916-owl-alt-linux.diff
 Patch2: vixie-cron-4.1.20040916-owl-vitmp.diff
@@ -17,8 +18,9 @@ Patch3: vixie-cron-4.1.20040916-owl-crond.diff
 Patch4: vixie-cron-4.1.20040916-alt-owl-Makefile.diff
 Patch5: vixie-cron-4.1.20040916-alt-progname.diff
 Patch6: vixie-cron-4.1.20040916-alt-sigpipe.diff
-Patch7: vixie-cron-4.1.20040916-alt-setlocale.diff
-Patch8: vixie-cron-4.1.20040916-alt-children.diff
+Patch7: vixie-cron-4.1.20040916-alt-pam.diff
+Patch8: vixie-cron-4.1.20040916-alt-setlocale.diff
+Patch9: vixie-cron-4.1.20040916-alt-children.diff
 PreReq: owl-control >= 0.4, owl-control < 2.0
 PreReq: /sbin/chkconfig, grep, shadow-utils
 Provides: at
@@ -41,6 +43,9 @@ modifications by the NetBSD, OpenBSD, Red Hat, ALT, and Owl teams.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
+
+%{expand:%%define optflags %optflags -Wall}
 
 %build
 for dir in usr.sbin/cron usr.bin/crontab usr.bin/at; do
@@ -66,14 +71,13 @@ popd
 ln -s cron.8 %buildroot%_mandir/man8/crond.8
 ln -s at.1 %buildroot%_mandir/man1/batch.1
 
-install -m 700 -D $RPM_SOURCE_DIR/vixie-cron.init \
+install -pD -m700 %_sourcedir/vixie-cron.init \
 	%buildroot/etc/rc.d/init.d/crond
-
-mkdir -p %buildroot/etc/control.d/facilities
-install -m 700 $RPM_SOURCE_DIR/crontab.control \
+install -pD -m700 %_sourcedir/crontab.control \
 	%buildroot/etc/control.d/facilities/crontab
-install -m 700 $RPM_SOURCE_DIR/at.control \
+install -pD -m700 %_sourcedir/at.control \
 	%buildroot/etc/control.d/facilities/at
+install -pD -m600 %_sourcedir/crond.pam %buildroot/etc/pam.d/crond
 
 touch %buildroot/etc/{at,cron}.{allow,deny}
 
@@ -132,6 +136,7 @@ fi
 %dir %attr(3730,root,crontab) /var/spool/cron
 %dir %attr(1770,root,crontab) /var/spool/at
 %dir /etc/cron.d
+%config(noreplace) /etc/pam.d/crond
 %config /etc/rc.d/init.d/crond
 /etc/control.d/facilities/crontab
 /etc/control.d/facilities/at
@@ -139,6 +144,11 @@ fi
 %attr(640,root,crontab) %config(noreplace) /etc/*.deny
 
 %changelog
+* Wed Jun 22 2005 Dmitry V. Levin <ldv@altlinux.org> 4.1.20040916-owl2
+- Imported patch from ALT that implements PAM accounting and session
+management support.
+- Enabled use of getloadavg(3).
+
 * Mon Mar 14 2005 Solar Designer <solar@owl.openwall.com> 4.1.20040916-owl1
 - Applied many assorted corrections and cleanups.
 

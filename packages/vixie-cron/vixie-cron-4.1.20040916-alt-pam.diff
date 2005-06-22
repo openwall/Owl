@@ -1,0 +1,519 @@
+diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/atrun.c vixie-cron-4.1.20040916/usr.sbin/cron/atrun.c
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/atrun.c	2004-11-03 01:29:37 +0300
++++ vixie-cron-4.1.20040916/usr.sbin/cron/atrun.c	2004-11-03 01:32:26 +0300
+@@ -241,9 +241,9 @@ run_job(atjob *job, char *atfile)
+ 	WAIT_T waiter;
+ 	size_t nread;
+ 	char *cp, *ep, mailto[MAX_UNAME], buf[BUFSIZ];
+-	int fd, always_mail;
++	int fd, always_mail, retval = OK_EXIT;
+ 	int output_pipe[2];
+-	char *nargv[2], *nenvp[1];
++	char *nargv[2], *nenvp[1] = { 0 }, **envp = nenvp;
+ 
+ 	Debug(DPROC, ("[%ld] run_job('%s')\n", (long)getpid(), atfile))
+ 
+@@ -389,11 +389,21 @@ run_job(atjob *job, char *atfile)
+ 
+ 	pipe(output_pipe);	/* child's stdout/stderr */
+ 
++#ifdef USE_PAM
++	if (!cron_pam_start(pw->pw_name))
++		_exit(ERROR_EXIT);
++
++	if (!(envp = cron_pam_getenvlist(envp))) {
++		retval = ERROR_EXIT;
++		goto run_job_end;
++	}
++#endif
++
+ 	/* Fork again, child will run the job, parent will catch output. */
+-	switch ((pid = fork())) {
++	switch ((pid = xfork(pw->pw_uid))) {
+ 	case -1:
+-		log_it("CRON", getpid(), "error", "can't fork");
+-		_exit(ERROR_EXIT);
++		retval = ERROR_EXIT;
++		goto run_job_end;
+ 		/*NOTREACHED*/
+ 	case 0:
+ 		Debug(DPROC, ("[%ld] grandchild process fork()'ed\n",
+@@ -469,6 +479,11 @@ run_job(atjob *job, char *atfile)
+ #if (defined(BSD)) && (BSD >= 199103)
+ 		setlogin(pw->pw_name);
+ #endif
++#ifdef USE_PAM
++		if (!cron_pam_setcred())
++			_exit(ERROR_EXIT);
++		cron_pam_child_close();
++#endif
+ 		if (setuid(pw->pw_uid)) {
+ 			fprintf(stderr, "unable to set uid to %lu\n",
+ 			    (unsigned long)pw->pw_uid);
+@@ -502,8 +517,7 @@ run_job(atjob *job, char *atfile)
+ 		 */
+ 		nargv[0] = "sh";
+ 		nargv[1] = NULL;
+-		nenvp[0] = NULL;
+-		if (execve(_PATH_BSHELL, nargv, nenvp) != 0) {
++		if (execve(_PATH_BSHELL, nargv, envp) != 0) {
+ 			perror("execve: " _PATH_BSHELL);
+ 			_exit(ERROR_EXIT);
+ 		}
+@@ -526,7 +540,8 @@ run_job(atjob *job, char *atfile)
+ 
+ 	if ((fp = fdopen(output_pipe[READ_PIPE], "r")) == NULL) {
+ 		perror("fdopen");
+-		(void) _exit(ERROR_EXIT);
++		retval = ERROR_EXIT;
++		goto run_job_end;
+ 	}
+ 	nread = fread(buf, 1, sizeof(buf), fp);
+ 	if (nread != 0 || always_mail) {
+@@ -544,11 +559,13 @@ run_job(atjob *job, char *atfile)
+ 		if (snprintf(mailcmd, sizeof mailcmd,  MAILFMT,
+ 		    MAILARG) >= sizeof mailcmd) {
+ 			fprintf(stderr, "mailcmd too long\n");
+-			(void) _exit(ERROR_EXIT);
++			retval = ERROR_EXIT;
++			goto run_job_end;
+ 		}
+ 		if (!(mail = cron_popen(mailcmd, "w", pw))) {
+ 			perror(mailcmd);
+-			(void) _exit(ERROR_EXIT);
++			retval = ERROR_EXIT;
++			goto run_job_end;
+ 		}
+ 		fprintf(mail, "From: %s (Atrun Service)\n", pw->pw_name);
+ 		fprintf(mail, "To: %s\n", mailto);
+@@ -603,7 +620,12 @@ run_job(atjob *job, char *atfile)
+ 			break;
+ 		}
+ 	}
+-	_exit(OK_EXIT);
++
++run_job_end:
++#ifdef USE_PAM
++	cron_pam_finish();
++#endif
++	_exit(retval);
+ 
+ bad_file:
+ 	log_it(pw->pw_name, getpid(), "BAD FILE FORMAT", atfile);
+diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/config.h vixie-cron-4.1.20040916/usr.sbin/cron/config.h
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/config.h	2004-11-03 01:29:37 +0300
++++ vixie-cron-4.1.20040916/usr.sbin/cron/config.h	2004-11-03 01:32:26 +0300
+@@ -93,6 +93,8 @@
+ #undef BSD_AUTH
+ /*#define BSD_AUTH*/ 			/*-*/
+ 
++#define USE_PAM	1			/*-*/
++
+ 			/* if your OS has a getloadavg() function */
+ #define HAVE_GETLOADAVG			/*-*/
+ 
+diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/do_command.c vixie-cron-4.1.20040916/usr.sbin/cron/do_command.c
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/do_command.c	2004-11-03 01:29:37 +0300
++++ vixie-cron-4.1.20040916/usr.sbin/cron/do_command.c	2004-11-03 01:32:26 +0300
+@@ -27,10 +27,12 @@ static char const rcsid[] = "$OpenBSD: d
+ 
+ #include "cron.h"
+ 
+-static void		child_process(entry *, user *);
++static int		child_process(entry *, user *);
+ 
+ void
+ do_command(entry *e, user *u) {
++	int retval;
++
+ 	Debug(DPROC, ("[%ld] do_command(%s, (%s,%lu,%lu))\n",
+ 		      (long)getpid(), e->cmd, u->name,
+ 		      (u_long)e->pwd->pw_uid, (u_long)e->pwd->pw_gid))
+@@ -49,10 +51,10 @@ do_command(entry *e, user *u) {
+ 	case 0:
+ 		/* child process */
+ 		acquire_daemonlock(1);
+-		child_process(e, u);
+-		Debug(DPROC, ("[%ld] child process done, exiting\n",
+-			      (long)getpid()))
+-		_exit(OK_EXIT);
++		retval = child_process(e, u);
++		Debug(DPROC, ("[%ld] child process done (rc=%d), exiting\n",
++			      (long)getpid(), retval))
++		_exit(retval);
+ 		break;
+ 	default:
+ 		/* parent process */
+@@ -61,11 +63,13 @@ do_command(entry *e, user *u) {
+ 	Debug(DPROC, ("[%ld] main process returning to work\n",(long)getpid()))
+ }
+ 
+-static void
++static int
+ child_process(entry *e, user *u) {
+ 	int stdin_pipe[2], stdout_pipe[2];
+ 	char *input_data, *usernm, *mailto;
+ 	int children = 0;
++	char **envp = e->envp;
++	int retval = OK_EXIT;
+ 
+ 	Debug(DPROC, ("[%ld] child_process('%s')\n", (long)getpid(), e->cmd))
+ 
+@@ -77,7 +81,7 @@ child_process(entry *e, user *u) {
+ 	/* discover some useful and important environment settings
+ 	 */
+ 	usernm = e->pwd->pw_name;
+-	mailto = env_get("MAILTO", e->envp);
++	mailto = env_get("MAILTO", envp);
+ 
+ 	/* our parent is watching for our death by catching SIGCHLD.  we
+ 	 * do not care to watch for our children's deaths this way -- we
+@@ -128,12 +132,22 @@ child_process(entry *e, user *u) {
+ 		*p = '\0';
+ 	}
+ 
++#ifdef USE_PAM
++	if (!cron_pam_start(usernm))
++		return ERROR_EXIT;
++
++	if (!(envp = cron_pam_getenvlist(envp))) {
++		retval = ERROR_EXIT;
++		goto child_process_end;
++	}
++#endif
++
+ 	/* fork again, this time so we can exec the user's command.
+ 	 */
+-	switch (fork()) {
++	switch (xfork(e->pwd->pw_uid)) {
+ 	case -1:
+-		log_it("CRON", getpid(), "error", "can't fork");
+-		exit(ERROR_EXIT);
++		retval = ERROR_EXIT;
++		goto child_process_end;
+ 		/*NOTREACHED*/
+ 	case 0:
+ 		Debug(DPROC, ("[%ld] grandchild process fork()'ed\n",
+@@ -225,10 +239,10 @@ child_process(entry *e, user *u) {
+ 			 * we just added one via login.conf, add it to
+ 			 * the crontab environment.
+ 			 */
+-			if (env_get("PATH", e->envp) == NULL && environ != NULL) {
++			if (env_get("PATH", envp) == NULL && environ != NULL) {
+ 				for (p = environ; *p; p++) {
+ 					if (strncmp(*p, "PATH=", 5) == 0) {
+-						e->envp = env_set(e->envp, *p);
++						envp = env_set(envp, *p);
+ 						break;
+ 					}
+ 				}
+@@ -243,6 +257,11 @@ child_process(entry *e, user *u) {
+ #if (defined(BSD)) && (BSD >= 199103)
+ 		setlogin(usernm);
+ #endif /* BSD */
++#ifdef USE_PAM
++		if (!cron_pam_setcred())
++			_exit(ERROR_EXIT);
++		cron_pam_child_close();
++#endif
+ 		if (setuid(e->pwd->pw_uid)) {
+ 			fprintf(stderr,
+ 			    "unable to set uid to %lu\n",
+@@ -251,7 +270,7 @@ child_process(entry *e, user *u) {
+ 		}
+ 
+ #endif /* LOGIN_CAP */
+-		chdir(env_get("HOME", e->envp));
++		chdir(env_get("HOME", envp));
+ 
+ 		(void) signal(SIGPIPE, SIG_DFL);
+ 		(void) signal(SIGUSR1, SIG_DFL);
+@@ -260,7 +279,7 @@ child_process(entry *e, user *u) {
+ 		 * Exec the command.
+ 		 */
+ 		{
+-			char	*shell = env_get("SHELL", e->envp);
++			char	*shell = env_get("SHELL", envp);
+ 
+ # if DEBUGGING
+ 			if (DebugFlags & DTEST) {
+@@ -271,7 +290,7 @@ child_process(entry *e, user *u) {
+ 				_exit(OK_EXIT);
+ 			}
+ # endif /*DEBUGGING*/
+-			execle(shell, shell, "-c", e->cmd, (char *)NULL, e->envp);
++			execle(shell, shell, "-c", e->cmd, (char *)NULL, envp);
+ 			fprintf(stderr, "execle: couldn't exec `%s'\n", shell);
+ 			perror("execle");
+ 			_exit(ERROR_EXIT);
+@@ -307,7 +326,7 @@ child_process(entry *e, user *u) {
+ 	 * we would block here.  thus we must fork again.
+ 	 */
+ 
+-	if (*input_data && fork() == 0) {
++	if (*input_data && xfork(e->pwd->pw_uid) == 0) {
+ 		FILE *out = fdopen(stdin_pipe[WRITE_PIPE], "w");
+ 		int need_newline = FALSE;
+ 		int escaped = FALSE;
+@@ -316,6 +335,12 @@ child_process(entry *e, user *u) {
+ 		Debug(DPROC, ("[%ld] child2 sending data to grandchild\n",
+ 			      (long)getpid()))
+ 
++#ifdef USE_PAM
++		cron_pam_child_close();
++#else
++		log_close();
++#endif
++
+ 		/* close the pipe we don't use, since we inherited it and
+ 		 * are part of its reference count now.
+ 		 */
+@@ -410,11 +435,13 @@ child_process(entry *e, user *u) {
+ 				if (snprintf(mailcmd, sizeof mailcmd,  MAILFMT,
+ 				    MAILARG) >= sizeof mailcmd) {
+ 					fprintf(stderr, "mailcmd too long\n");
+-					(void) _exit(ERROR_EXIT);
++					retval = ERROR_EXIT;
++					goto child_process_end;
+ 				}
+ 				if (!(mail = cron_popen(mailcmd, "w", e->pwd))) {
+ 					perror(mailcmd);
+-					(void) _exit(ERROR_EXIT);
++					retval = ERROR_EXIT;
++					goto child_process_end;
+ 				}
+ 				fprintf(mail, "From: root (Cron Daemon)\n");
+ 				fprintf(mail, "To: %s\n", mailto);
+@@ -425,7 +452,7 @@ child_process(entry *e, user *u) {
+ 				fprintf(mail, "Date: %s\n",
+ 					arpadate(&StartTime));
+ #endif /*MAIL_DATE*/
+-				for (env = e->envp;  *env;  env++)
++				for (env = envp;  *env;  env++)
+ 					fprintf(mail, "X-Cron-Env: <%s>\n",
+ 						*env);
+ 				fprintf(mail, "\n");
+@@ -506,6 +533,12 @@ child_process(entry *e, user *u) {
+ 			Debug(DPROC, (", dumped core"))
+ 		Debug(DPROC, ("\n"))
+ 	}
++
++child_process_end:
++#ifdef USE_PAM
++	cron_pam_finish();
++#endif
++	return retval;
+ }
+ 
+ int
+diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/funcs.h vixie-cron-4.1.20040916/usr.sbin/cron/funcs.h
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/funcs.h	2004-11-03 01:29:37 +0300
++++ vixie-cron-4.1.20040916/usr.sbin/cron/funcs.h	2004-11-03 01:32:26 +0300
+@@ -79,3 +79,12 @@ FILE		*cron_popen(char *, char *, struct
+ #ifndef HAVE_TM_GMTOFF
+ long		get_gmtoff(time_t *, struct tm *);
+ #endif
++
++extern pid_t xfork (uid_t uid);
++#ifdef USE_PAM
++extern int cron_pam_start (const char *user);
++extern int cron_pam_setcred (void);
++extern void cron_pam_finish (void);
++extern void cron_pam_child_close (void);
++extern char **cron_pam_getenvlist (char **envp);
++#endif
+diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/Makefile vixie-cron-4.1.20040916/usr.sbin/cron/Makefile
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/Makefile	2004-11-03 01:29:37 +0300
++++ vixie-cron-4.1.20040916/usr.sbin/cron/Makefile	2004-11-03 01:32:26 +0300
+@@ -2,8 +2,9 @@
+ 
+ PROG=	crond
+ SRCS=	cron.c database.c user.c entry.c job.c do_command.c \
+-	misc.c env.c popen.c atrun.c closeall.c  ../../lib/libc/gen/pw_dup.c
++	misc.c env.c popen.c atrun.c closeall.c pam_auth.c ../../lib/libc/gen/pw_dup.c
+ CFLAGS+=-I${.CURDIR}
++LDFLAGS+=-lpam
+ MAN=	cron.8
+ 
+ #.include <bsd.prog.mk>
+diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/pam_auth.c vixie-cron-4.1.20040916/usr.sbin/cron/pam_auth.c
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/pam_auth.c	1970-01-01 03:00:00 +0300
++++ vixie-cron-4.1.20040916/usr.sbin/cron/pam_auth.c	2004-11-03 01:32:26 +0300
+@@ -0,0 +1,153 @@
++#include "cron.h"
++
++pid_t
++xfork (uid_t uid)
++{
++	pid_t   pid;
++	int     saved_errno = 0;
++	uid_t   saved_ruid = getuid ();
++	uid_t   saved_euid = geteuid ();
++
++	if (setresuid (uid, uid, -1))
++	{
++		log_it ("CRON", getpid (), "xfork: seteuid failed",
++			strerror (errno));
++		return -1;
++	}
++	if ((pid = fork ()) == -1)
++	{
++		saved_errno = errno;
++		log_it ("CRON", getpid (), "fork failed", strerror (errno));
++	}
++	if (setresuid (saved_ruid, saved_euid, -1))
++	{
++		if (!pid)
++			_exit (1);
++		log_it ("CRON", getpid (), "xfork: seteuid failed",
++			strerror (errno));
++		return -1;
++	}
++	if (saved_errno)
++		errno = saved_errno;
++	return pid;
++}
++
++#ifdef USE_PAM
++
++#include <security/pam_appl.h>
++
++static pam_handle_t *pamh = 0;
++static const struct pam_conv cron_conv = { 0 };
++
++int
++cron_pam_start (const char *user)
++{
++	int     retval;
++
++	if (pamh)
++		return 0;
++
++	retval = pam_start ("crond", user, &cron_conv, &pamh);
++	log_close ();
++	if (retval != PAM_SUCCESS)
++	{
++		pamh = 0;
++		log_it ("CRON", getpid (), "pam_start failed",
++			pam_strerror (pamh, retval));
++		return 0;
++	}
++	retval = pam_authenticate (pamh, PAM_SILENT);
++	log_close ();
++	if (retval != PAM_SUCCESS)
++	{
++		log_it ("CRON", getpid (), "pam_authenticate failed",
++			pam_strerror (pamh, retval));
++		pam_end (pamh, retval);
++		pamh = 0;
++		return 0;
++	}
++	retval = pam_acct_mgmt (pamh, PAM_SILENT);
++	log_close ();
++	if (retval != PAM_SUCCESS)
++	{
++		log_it ("CRON", getpid (), "pam_acct_mgmt failed",
++			pam_strerror (pamh, retval));
++		pam_end (pamh, retval);
++		pamh = 0;
++		return 0;
++	}
++	retval = pam_open_session (pamh, PAM_SILENT);
++	log_close ();
++	if (retval != PAM_SUCCESS)
++	{
++		log_it ("CRON", getpid (), "pam_open_session failed",
++			pam_strerror (pamh, retval));
++		pam_end (pamh, retval);
++		pamh = 0;
++		return 0;
++	}
++
++	return 1;
++}
++
++int
++cron_pam_setcred (void)
++{
++	int     retval;
++
++	if (!pamh)
++		return 0;
++
++	retval = pam_setcred (pamh, PAM_ESTABLISH_CRED | PAM_SILENT);
++	log_close ();
++	if (retval != PAM_SUCCESS)
++	{
++		log_it ("CRON", getpid (), "pam_setcred failed",
++			pam_strerror (pamh, retval));
++		pam_end (pamh, retval);
++		pamh = 0;
++		log_close ();
++		return 0;
++	}
++
++	return 1;
++}
++
++void
++cron_pam_finish (void)
++{
++	if (!pamh)
++		return;
++
++	pam_close_session (pamh, 0);
++	pam_end (pamh, 0);
++	pamh = 0;
++	log_close ();
++}
++
++#ifndef PAM_DATA_SILENT
++#define PAM_DATA_SILENT 0
++#endif
++
++void
++cron_pam_child_close (void)
++{
++	pam_end (pamh, PAM_DATA_SILENT);
++	pamh = 0;
++	log_close ();
++}
++
++char  **
++cron_pam_getenvlist (char **envp)
++{
++	if (!pamh || !envp)
++		return 0;
++
++	for (; *envp; ++envp)
++		if (pam_putenv (pamh, *envp) != PAM_SUCCESS)
++			return 0;
++
++	return pam_getenvlist (pamh);
++}
++
++#endif /* USE_PAM */
+diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/popen.c vixie-cron-4.1.20040916/usr.sbin/cron/popen.c
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/popen.c	2003-06-02 08:39:45 +0400
++++ vixie-cron-4.1.20040916/usr.sbin/cron/popen.c	2004-11-03 01:32:26 +0300
+@@ -85,7 +85,7 @@ cron_popen(char *program, char *type, st
+ 			break;
+ 	argv[MAX_ARGV-1] = NULL;
+ 
+-	switch (pid = fork()) {
++	switch (pid = xfork(pw->pw_uid)) {
+ 	case -1:			/* error */
+ 		(void)close(pdes[0]);
+ 		(void)close(pdes[1]);
+@@ -111,6 +111,11 @@ cron_popen(char *program, char *type, st
+ #if (defined(BSD)) && (BSD >= 199103)
+ 			setlogin(pw->pw_name);
+ #endif /* BSD */
++#ifdef USE_PAM
++			if (!cron_pam_setcred())
++				_exit(1);
++			cron_pam_child_close();
++#endif
+ 			if (setuid(pw->pw_uid)) {
+ 				fprintf(stderr,
+ 				    "unable to set uid for %s\n",

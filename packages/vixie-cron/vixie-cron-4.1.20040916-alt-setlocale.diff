@@ -1,6 +1,6 @@
-diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/cron.c vixie-cron-4.1.20040916/usr.sbin/cron/cron.c
---- vixie-cron-4.1.20040916.orig/usr.sbin/cron/cron.c	Sun Feb 20 16:04:35 2005
-+++ vixie-cron-4.1.20040916/usr.sbin/cron/cron.c	Sun Feb 20 16:02:30 2005
+diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/cron.c vixie-cron-4.1.20040916/usr.sbin/cron/cron.c
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/cron.c	2004-11-03 01:37:36 +0300
++++ vixie-cron-4.1.20040916/usr.sbin/cron/cron.c	2004-11-03 01:38:00 +0300
 @@ -76,7 +76,9 @@ main(int argc, char *argv[]) {
  	ProgramName = program_invocation_short_name;
  	FixedName = "crond";
@@ -11,10 +11,10 @@ diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/cron.c vixie-cron-4.1.2004
  
  #if defined(BSD)
  	setlinebuf(stdout);
-diff -urpN vixie-cron-4.1.20040916.orig/usr.sbin/cron/crontab.c vixie-cron-4.1.20040916/usr.sbin/cron/crontab.c
---- vixie-cron-4.1.20040916.orig/usr.sbin/cron/crontab.c	Sun Feb 20 16:04:35 2005
-+++ vixie-cron-4.1.20040916/usr.sbin/cron/crontab.c	Sun Feb 20 16:02:30 2005
-@@ -82,7 +82,9 @@ main(int argc, char *argv[]) {
+diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/crontab.c vixie-cron-4.1.20040916/usr.sbin/cron/crontab.c
+--- vixie-cron-4.1.20040916.orig/usr.sbin/cron/crontab.c	2004-11-03 01:37:36 +0300
++++ vixie-cron-4.1.20040916/usr.sbin/cron/crontab.c	2004-11-03 01:38:00 +0300
+@@ -83,7 +83,9 @@ main(int argc, char *argv[]) {
  	ProgramName = argv[0];
  	FixedName = "crontab";
  

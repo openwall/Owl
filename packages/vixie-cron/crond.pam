@@ -1,0 +1,7 @@
+#%PAM-1.0
+auth       required	/lib/security/pam_rootok.so
+account    required	/lib/security/pam_tcb.so shadow fork
+password   required	/lib/security/pam_deny.so
+session    required	/lib/security/pam_tcb.so
+session    required	/lib/security/pam_limits.so
+session    required	/lib/security/pam_mktemp.so
