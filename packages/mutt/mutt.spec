@@ -1,9 +1,9 @@
-# $Id: Owl/packages/mutt/mutt.spec,v 1.13 2004/11/23 22:40:47 mci Exp $
+# $Id: Owl/packages/mutt/mutt.spec,v 1.14 2005/06/24 23:42:59 ldv Exp $
 
 Summary: A feature-rich text-based mail user agent.
 Name: mutt
 Version: 1.4.2.1
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Internet
 URL: http://www.mutt.org
@@ -78,6 +78,9 @@ rm %buildroot%_mandir/man5/mbox.5*
 %_mandir/man1/flea.*
 
 %changelog
+* Sat Jun 25 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.4.2.1-owl2
+- Rebuilt with libssl.so.5.
+
 * Fri Feb 13 2004 Michail Litvak <mci@owl.openwall.com> 1.4.2.1-owl1
 - 1.4.2.1 (remove -cvs patch included into release)
 

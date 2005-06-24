@@ -1,9 +1,9 @@
-# $Id: Owl/packages/lftp/lftp.spec,v 1.24 2005/05/26 05:19:38 solar Exp $
+# $Id: Owl/packages/lftp/lftp.spec,v 1.25 2005/06/24 23:36:05 ldv Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
 Version: 2.6.12
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Internet
 URL: http://lftp.yar.ru
@@ -51,7 +51,7 @@ rm -rf %buildroot
 %makeinstall
 
 # Remove unpackaged files
-find %buildroot%_libdir/%name -type f -name '*.la' -print -delete
+find %buildroot%_libdir/lftp -type f -name '*.la' -delete -print
 
 install -m 644 %_sourcedir/lftpget.1 %buildroot%_mandir/man1/
 
@@ -80,6 +80,9 @@ fi
 %_datadir/locale/*/LC_MESSAGES/lftp.mo
 
 %changelog
+* Sat Jun 25 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.6.12-owl2
+- Rebuilt with libssl.so.5.
+
 * Tue May 10 2005 Andreas Ericsson <exon@owl.openwall.com> 2.6.12-owl1
 - 2.6.12, fixes hang on copying zero length file with the mirror command.
 - Removed malformed-http patch which is now included upstream.

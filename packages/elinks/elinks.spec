@@ -1,9 +1,9 @@
-# $Id: Owl/packages/elinks/elinks.spec,v 1.15 2004/11/23 22:40:45 mci Exp $
+# $Id: Owl/packages/elinks/elinks.spec,v 1.16 2005/06/24 23:36:05 ldv Exp $
 
 Summary: Lynx-like text WWW browser with many features.
 Name: elinks
 Version: 0.9.1
-Release: owl4
+Release: owl5
 License: GPL
 Group: Applications/Internet
 URL: http://elinks.or.cz
@@ -76,6 +76,9 @@ rm %buildroot%_datadir/locale/locale.alias
 %_mandir/man?/*
 
 %changelog
+* Sat Jun 25 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.9.1-owl5
+- Rebuilt with libssl.so.5.
+
 * Fri Feb 06 2004 Michail Litvak <mci@owl.openwall.com> 0.9.1-owl4
 - Fix yet another bug in -owl-tmp patch (Thanks to Maxim Timofeyev).
 
