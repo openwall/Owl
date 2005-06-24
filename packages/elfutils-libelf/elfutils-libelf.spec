@@ -1,9 +1,9 @@
-# $Id: Owl/packages/elfutils-libelf/elfutils-libelf.spec,v 1.2 2005/06/14 15:02:47 solar Exp $
+# $Id: Owl/packages/elfutils-libelf/elfutils-libelf.spec,v 1.3 2005/06/24 23:06:42 ldv Exp $
 
 Summary: Library to read and write ELF files.
 Name: elfutils-libelf
 Version: 0.108
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Libraries
 Source: elfutils-%version.tar.gz
@@ -44,8 +44,7 @@ different sections of an ELF file.
 
 %install
 rm -rf %buildroot
-cd libelf
-%makeinstall
+%makeinstall -C libelf
 
 # XXX: Remove unpackaged files (check later)
 rm %buildroot%_includedir/elfutils/elf-knowledge.h
@@ -56,7 +55,7 @@ rm %buildroot%_includedir/elfutils/elf-knowledge.h
 %files
 %defattr(-,root,root)
 %_libdir/libelf-%version.so
-%attr(755,root,root) %_libdir/libelf*.so.*
+%_libdir/libelf*.so.*
 
 %files devel
 %defattr(-,root,root)
@@ -64,9 +63,12 @@ rm %buildroot%_includedir/elfutils/elf-knowledge.h
 %_includedir/gelf.h
 %_includedir/nlist.h
 %_libdir/libelf.a
-%attr(755,root,root) %_libdir/libelf.so
+%_libdir/libelf.so
 
 %changelog
+* Fri Jun 24 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.108-owl2
+- Corrected library symlinks packaging.
+
 * Mon Jun 13 2005 Michail Litvak <mci@owl.openwall.com> 0.108-owl1
 - Reworked spec from RH - build only elfutils-libelf and elfutils-libelf-devel.
 - Patch to fix compilation on Owl.
