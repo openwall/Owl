@@ -263,8 +263,7 @@ it might be).
 
 	openssl.
 
-[PRIORITY: medium]
-[ASSIGNED: ldv@]
+[PRIORITY: low]
 Keep OpenSSL to latest in a branch.
 
 
@@ -559,4 +558,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.91 2005/06/22 15:14:51 ldv Exp $
+$Id: Owl/doc/TODO,v 1.92 2005/06/24 18:05:54 ldv Exp $
