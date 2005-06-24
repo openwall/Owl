@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.77 2005/01/20 04:35:07 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.78 2005/06/24 23:35:24 ldv Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl12
+Release: owl13
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -235,6 +235,9 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Sat Jun 25 2005 Dmitry V. Levin <ldv@owl.openwall.com> 3.6.1p2-owl13
+- Rebuilt with libcrypto.so.5.
+
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.6.1p2-owl12
 - Removed verify checks for sshd_config which is under owl-control.
 - Cleaned up the spec a little.

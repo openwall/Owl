@@ -1,9 +1,9 @@
-# $Id: Owl/packages/mtree/mtree.spec,v 1.12 2005/01/20 04:03:00 solar Exp $
+# $Id: Owl/packages/mtree/mtree.spec,v 1.13 2005/06/24 23:35:24 ldv Exp $
 
 Summary: Map a directory hierarchy.
 Name: mtree
 Version: 3.1
-Release: owl3
+Release: owl4
 License: BSD
 Group: System Environment/Base
 Source: mtree-%version-20020728.tar.bz2
@@ -40,6 +40,9 @@ install -m 644 usr.sbin/mtree/mtree.8 %buildroot%_mandir/man8/
 %_mandir/man8/mtree.8*
 
 %changelog
+* Sat Jun 25 2005 Dmitry V. Levin <ldv@altlinux.org> 3.1-owl4
+- Rebuilt with libcrypto.so.5.
+
 * Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.1-owl3
 - Made use of %__cc macro
 - Added a patch to deal with "label at end of compound statement" issue.
