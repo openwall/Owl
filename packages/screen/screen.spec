@@ -1,9 +1,9 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.33 2005/01/12 16:53:41 galaxy Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.34 2005/06/24 22:29:54 ldv Exp $
 
 Summary: A screen manager that supports multiple sessions on one terminal.
 Name: screen
 Version: 4.0.2
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%version.tar.gz
@@ -120,6 +120,9 @@ fi
 %ghost %_libexecdir/screen/utempter
 
 %changelog
+* Sat Jun 25 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.0.2-owl3
+- Do not link with -lelf even if the library is available during build.
+
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.0.2-owl2
 - Fixed orphaned files in %_libexecdir/screen created by %triggerin.
 - Removed unneeded rm -f of %_bindir/screen{,.old}
