@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.36 2005/06/22 15:04:32 ldv Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.37 2005/06/24 17:05:10 ldv Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
@@ -144,7 +144,7 @@ fi
 %attr(640,root,crontab) %config(noreplace) /etc/*.deny
 
 %changelog
-* Wed Jun 22 2005 Dmitry V. Levin <ldv@altlinux.org> 4.1.20040916-owl2
+* Wed Jun 22 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.1.20040916-owl2
 - Imported patch from ALT that implements PAM accounting and session
 management support.
 - Enabled use of getloadavg(3).
