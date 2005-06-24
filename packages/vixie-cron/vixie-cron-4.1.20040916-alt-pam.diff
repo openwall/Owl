@@ -352,7 +352,7 @@ diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/pam_auth.c vixie-cron
 +
 +	if (setresuid (uid, uid, -1))
 +	{
-+		log_it ("CRON", getpid (), "xfork: seteuid failed",
++		log_it ("CRON", getpid (), "xfork: setresuid failed",
 +			strerror (errno));
 +		return -1;
 +	}
@@ -365,7 +365,7 @@ diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/pam_auth.c vixie-cron
 +	{
 +		if (!pid)
 +			_exit (1);
-+		log_it ("CRON", getpid (), "xfork: seteuid failed",
++		log_it ("CRON", getpid (), "xfork: setresuid failed",
 +			strerror (errno));
 +		return -1;
 +	}
@@ -378,7 +378,7 @@ diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/pam_auth.c vixie-cron
 +
 +#include <security/pam_appl.h>
 +
-+static pam_handle_t *pamh = 0;
++static pam_handle_t *pamh = NULL;
 +static const struct pam_conv cron_conv = { 0 };
 +
 +int
@@ -393,7 +393,7 @@ diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/pam_auth.c vixie-cron
 +	log_close ();
 +	if (retval != PAM_SUCCESS)
 +	{
-+		pamh = 0;
++		pamh = NULL;
 +		log_it ("CRON", getpid (), "pam_start failed",
 +			pam_strerror (pamh, retval));
 +		return 0;
@@ -405,7 +405,7 @@ diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/pam_auth.c vixie-cron
 +		log_it ("CRON", getpid (), "pam_authenticate failed",
 +			pam_strerror (pamh, retval));
 +		pam_end (pamh, retval);
-+		pamh = 0;
++		pamh = NULL;
 +		return 0;
 +	}
 +	retval = pam_acct_mgmt (pamh, PAM_SILENT);
@@ -415,7 +415,7 @@ diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/pam_auth.c vixie-cron
 +		log_it ("CRON", getpid (), "pam_acct_mgmt failed",
 +			pam_strerror (pamh, retval));
 +		pam_end (pamh, retval);
-+		pamh = 0;
++		pamh = NULL;
 +		return 0;
 +	}
 +	retval = pam_open_session (pamh, PAM_SILENT);
@@ -425,7 +425,7 @@ diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/pam_auth.c vixie-cron
 +		log_it ("CRON", getpid (), "pam_open_session failed",
 +			pam_strerror (pamh, retval));
 +		pam_end (pamh, retval);
-+		pamh = 0;
++		pamh = NULL;
 +		return 0;
 +	}
 +
@@ -447,7 +447,7 @@ diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/pam_auth.c vixie-cron
 +		log_it ("CRON", getpid (), "pam_setcred failed",
 +			pam_strerror (pamh, retval));
 +		pam_end (pamh, retval);
-+		pamh = 0;
++		pamh = NULL;
 +		log_close ();
 +		return 0;
 +	}
@@ -463,7 +463,7 @@ diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/pam_auth.c vixie-cron
 +
 +	pam_close_session (pamh, 0);
 +	pam_end (pamh, 0);
-+	pamh = 0;
++	pamh = NULL;
 +	log_close ();
 +}
 +
@@ -475,7 +475,7 @@ diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/pam_auth.c vixie-cron
 +cron_pam_child_close (void)
 +{
 +	pam_end (pamh, PAM_DATA_SILENT);
-+	pamh = 0;
++	pamh = NULL;
 +	log_close ();
 +}
 +
