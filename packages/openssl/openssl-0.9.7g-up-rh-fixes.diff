@@ -1,0 +1,330 @@
+Various fixes backported from upstream:
+* missing parentheses
+* uninitialized BN_MONT_CTX
+* new function BN_MONT_CTX_set_locked, to set montgomery parameters in a threadsafe manner.
+  Modify or add calls to use it in rsa, dsa and dh algorithms.
+* memory leak (BIO_free_all needs pointer to first BIO)
+
+openssl/crypto/bio/bss_conn.c     1.22.2.2 -> 1.22.2.3
+
+--- openssl/crypto/bio/bss_conn.c 2003/12/27 14:40:49 1.22.2.2
++++ openssl/crypto/bio/bss_conn.c 2005/04/27 07:59:17 1.22.2.3
+@@ -469,7 +469,7 @@
+ 		break;
+ 	case BIO_C_DO_STATE_MACHINE:
+ 		/* use this one to start the connection */
+-		if (!data->state != BIO_CONN_S_OK)
++		if (!(data->state != BIO_CONN_S_OK))
+ 			ret=(long)conn_state(b,data);
+ 		else
+ 			ret=1;
+
+openssl/crypto/bn/bn.h     1.66.2.3 -> 1.66.2.4
+
+--- openssl/crypto/bn/bn.h 2003/04/02 09:50:53 1.66.2.3
++++ openssl/crypto/bn/bn.h 2005/04/22 13:17:45 1.66.2.4
+@@ -434,6 +434,8 @@
+ void BN_MONT_CTX_free(BN_MONT_CTX *mont);
+ int BN_MONT_CTX_set(BN_MONT_CTX *mont,const BIGNUM *mod,BN_CTX *ctx);
+ BN_MONT_CTX *BN_MONT_CTX_copy(BN_MONT_CTX *to,BN_MONT_CTX *from);
++BN_MONT_CTX *BN_MONT_CTX_set_locked(BN_MONT_CTX **pmont, int lock,
++					const BIGNUM *mod, BN_CTX *ctx);
+ 
+ BN_BLINDING *BN_BLINDING_new(BIGNUM *A,BIGNUM *Ai,BIGNUM *mod);
+ void BN_BLINDING_free(BN_BLINDING *b);
+
+openssl/crypto/bn/bn_mont.c     1.30.2.2 -> 1.30.2.3
+
+--- openssl/crypto/bn/bn_mont.c 2004/12/05 01:04:36 1.30.2.2
++++ openssl/crypto/bn/bn_mont.c 2005/04/22 13:17:45 1.30.2.3
+@@ -347,3 +347,23 @@
+ 	return(to);
+ 	}
+ 
++BN_MONT_CTX *BN_MONT_CTX_set_locked(BN_MONT_CTX **pmont, int lock,
++					const BIGNUM *mod, BN_CTX *ctx)
++	{
++	if (*pmont)
++		return *pmont;
++	CRYPTO_w_lock(lock);
++	if (!*pmont)
++		{
++		*pmont = BN_MONT_CTX_new();
++		if (*pmont && !BN_MONT_CTX_set(*pmont, mod, ctx))
++			{
++			BN_MONT_CTX_free(*pmont);
++			*pmont = NULL;
++			}
++		}
++	CRYPTO_w_unlock(lock);
++	return *pmont;
++	}
++		
++
+
+openssl/crypto/dh/dh_key.c     1.16.2.3 -> 1.16.2.4
+
+--- openssl/crypto/dh/dh_key.c 2004/06/19 13:15:34 1.16.2.3
++++ openssl/crypto/dh/dh_key.c 2005/04/22 13:17:45 1.16.2.4
+@@ -105,7 +105,7 @@
+ 	int generate_new_key=0;
+ 	unsigned l;
+ 	BN_CTX *ctx;
+-	BN_MONT_CTX *mont;
++	BN_MONT_CTX *mont=NULL;
+ 	BIGNUM *pub_key=NULL,*priv_key=NULL;
+ 
+ 	ctx = BN_CTX_new();
+@@ -128,13 +128,15 @@
+ 	else
+ 		pub_key=dh->pub_key;
+ 
+-	if ((dh->method_mont_p == NULL) && (dh->flags & DH_FLAG_CACHE_MONT_P))
++
++	if (dh->flags & DH_FLAG_CACHE_MONT_P)
+ 		{
+-		if ((dh->method_mont_p=(char *)BN_MONT_CTX_new()) != NULL)
+-			if (!BN_MONT_CTX_set((BN_MONT_CTX *)dh->method_mont_p,
+-				dh->p,ctx)) goto err;
++		mont = BN_MONT_CTX_set_locked(
++				(BN_MONT_CTX **)&dh->method_mont_p,
++				CRYPTO_LOCK_DH, dh->p, ctx);
++		if (!mont)
++			goto err;
+ 		}
+-	mont=(BN_MONT_CTX *)dh->method_mont_p;
+ 
+ 	if (generate_new_key)
+ 		{
+@@ -160,7 +162,7 @@
+ static int compute_key(unsigned char *key, const BIGNUM *pub_key, DH *dh)
+ 	{
+ 	BN_CTX *ctx;
+-	BN_MONT_CTX *mont;
++	BN_MONT_CTX *mont=NULL;
+ 	BIGNUM *tmp;
+ 	int ret= -1;
+ 
+@@ -174,14 +176,16 @@
+ 		DHerr(DH_F_DH_COMPUTE_KEY,DH_R_NO_PRIVATE_VALUE);
+ 		goto err;
+ 		}
+-	if ((dh->method_mont_p == NULL) && (dh->flags & DH_FLAG_CACHE_MONT_P))
++
++	if (dh->flags & DH_FLAG_CACHE_MONT_P)
+ 		{
+-		if ((dh->method_mont_p=(char *)BN_MONT_CTX_new()) != NULL)
+-			if (!BN_MONT_CTX_set((BN_MONT_CTX *)dh->method_mont_p,
+-				dh->p,ctx)) goto err;
++		mont = BN_MONT_CTX_set_locked(
++				(BN_MONT_CTX **)&dh->method_mont_p,
++				CRYPTO_LOCK_DH, dh->p, ctx);
++		if (!mont)
++			goto err;
+ 		}
+ 
+-	mont=(BN_MONT_CTX *)dh->method_mont_p;
+ 	if (!dh->meth->bn_mod_exp(dh, tmp, pub_key, dh->priv_key,dh->p,ctx,mont))
+ 		{
+ 		DHerr(DH_F_DH_COMPUTE_KEY,ERR_R_BN_LIB);
+
+openssl/crypto/dsa/dsa_ossl.c     1.12.2.6 -> 1.12.2.7
+
+--- openssl/crypto/dsa/dsa_ossl.c 2004/05/11 12:45:16 1.12.2.6
++++ openssl/crypto/dsa/dsa_ossl.c 2005/04/22 13:17:46 1.12.2.7
+@@ -198,11 +198,12 @@
+ 		if (!BN_rand_range(&k, dsa->q)) goto err;
+ 	while (BN_is_zero(&k));
+ 
+-	if ((dsa->method_mont_p == NULL) && (dsa->flags & DSA_FLAG_CACHE_MONT_P))
++	if (dsa->flags & DSA_FLAG_CACHE_MONT_P)
+ 		{
+-		if ((dsa->method_mont_p=(char *)BN_MONT_CTX_new()) != NULL)
+-			if (!BN_MONT_CTX_set((BN_MONT_CTX *)dsa->method_mont_p,
+-				dsa->p,ctx)) goto err;
++		if (!BN_MONT_CTX_set_locked((BN_MONT_CTX **)&dsa->method_mont_p,
++						CRYPTO_LOCK_DSA,
++						dsa->p, ctx))
++			goto err;
+ 		}
+ 
+ 	/* Compute r = (g^k mod p) mod q */
+@@ -275,13 +276,15 @@
+ 	/* u2 = r * w mod q */
+ 	if (!BN_mod_mul(&u2,sig->r,&u2,dsa->q,ctx)) goto err;
+ 
+-	if ((dsa->method_mont_p == NULL) && (dsa->flags & DSA_FLAG_CACHE_MONT_P))
++
++	if (dsa->flags & DSA_FLAG_CACHE_MONT_P)
+ 		{
+-		if ((dsa->method_mont_p=(char *)BN_MONT_CTX_new()) != NULL)
+-			if (!BN_MONT_CTX_set((BN_MONT_CTX *)dsa->method_mont_p,
+-				dsa->p,ctx)) goto err;
++		mont = BN_MONT_CTX_set_locked(
++					(BN_MONT_CTX **)&dsa->method_mont_p,
++					CRYPTO_LOCK_DSA, dsa->p, ctx);
++		if (!mont)
++			goto err;
+ 		}
+-	mont=(BN_MONT_CTX *)dsa->method_mont_p;
+ 
+ #if 0
+ 	{
+
+openssl/crypto/rsa/rsa_eay.c     1.28.2.9 -> 1.28.2.10
+
+--- openssl/crypto/rsa/rsa_eay.c 2004/05/11 12:45:46 1.28.2.9
++++ openssl/crypto/rsa/rsa_eay.c 2005/04/22 13:17:46 1.28.2.10
+@@ -145,30 +145,13 @@
+ 		goto err;
+ 		}
+ 
+-	if ((rsa->_method_mod_n == NULL) && (rsa->flags & RSA_FLAG_CACHE_PUBLIC))
++	if (rsa->flags & RSA_FLAG_CACHE_PUBLIC)
+ 		{
+-		BN_MONT_CTX* bn_mont_ctx;
+-		if ((bn_mont_ctx=BN_MONT_CTX_new()) == NULL)
++		if (!BN_MONT_CTX_set_locked(&rsa->_method_mod_n,
++					CRYPTO_LOCK_RSA, rsa->n, ctx))
+ 			goto err;
+-		if (!BN_MONT_CTX_set(bn_mont_ctx,rsa->n,ctx))
+-			{
+-			BN_MONT_CTX_free(bn_mont_ctx);
+-			goto err;
+-			}
+-		if (rsa->_method_mod_n == NULL) /* other thread may have finished first */
+-			{
+-			CRYPTO_w_lock(CRYPTO_LOCK_RSA);
+-			if (rsa->_method_mod_n == NULL)
+-				{
+-				rsa->_method_mod_n = bn_mont_ctx;
+-				bn_mont_ctx = NULL;
+-				}
+-			CRYPTO_w_unlock(CRYPTO_LOCK_RSA);
+-			}
+-		if (bn_mont_ctx)
+-			BN_MONT_CTX_free(bn_mont_ctx);
+ 		}
+-		
++
+ 	if (!rsa->meth->bn_mod_exp(&ret,&f,rsa->e,rsa->n,ctx,
+ 		rsa->_method_mod_n)) goto err;
+ 
+@@ -534,30 +517,14 @@
+ 		}
+ 
+ 	/* do the decrypt */
+-	if ((rsa->_method_mod_n == NULL) && (rsa->flags & RSA_FLAG_CACHE_PUBLIC))
++
++	if (rsa->flags & RSA_FLAG_CACHE_PUBLIC)
+ 		{
+-		BN_MONT_CTX* bn_mont_ctx;
+-		if ((bn_mont_ctx=BN_MONT_CTX_new()) == NULL)
++		if (!BN_MONT_CTX_set_locked(&rsa->_method_mod_n,
++					CRYPTO_LOCK_RSA, rsa->n, ctx))
+ 			goto err;
+-		if (!BN_MONT_CTX_set(bn_mont_ctx,rsa->n,ctx))
+-			{
+-			BN_MONT_CTX_free(bn_mont_ctx);
+-			goto err;
+-			}
+-		if (rsa->_method_mod_n == NULL) /* other thread may have finished first */
+-			{
+-			CRYPTO_w_lock(CRYPTO_LOCK_RSA);
+-			if (rsa->_method_mod_n == NULL)
+-				{
+-				rsa->_method_mod_n = bn_mont_ctx;
+-				bn_mont_ctx = NULL;
+-				}
+-			CRYPTO_w_unlock(CRYPTO_LOCK_RSA);
+-			}
+-		if (bn_mont_ctx)
+-			BN_MONT_CTX_free(bn_mont_ctx);
+ 		}
+-		
++
+ 	if (!rsa->meth->bn_mod_exp(&ret,&f,rsa->e,rsa->n,ctx,
+ 		rsa->_method_mod_n)) goto err;
+ 
+@@ -604,55 +571,14 @@
+ 
+ 	if (rsa->flags & RSA_FLAG_CACHE_PRIVATE)
+ 		{
+-		if (rsa->_method_mod_p == NULL)
+-			{
+-			BN_MONT_CTX* bn_mont_ctx;
+-			if ((bn_mont_ctx=BN_MONT_CTX_new()) == NULL)
+-				goto err;
+-			if (!BN_MONT_CTX_set(bn_mont_ctx,rsa->p,ctx))
+-				{
+-				BN_MONT_CTX_free(bn_mont_ctx);
+-				goto err;
+-				}
+-			if (rsa->_method_mod_p == NULL) /* other thread may have finished first */
+-				{
+-				CRYPTO_w_lock(CRYPTO_LOCK_RSA);
+-				if (rsa->_method_mod_p == NULL)
+-					{
+-					rsa->_method_mod_p = bn_mont_ctx;
+-					bn_mont_ctx = NULL;
+-					}
+-				CRYPTO_w_unlock(CRYPTO_LOCK_RSA);
+-				}
+-			if (bn_mont_ctx)
+-				BN_MONT_CTX_free(bn_mont_ctx);
+-			}
+-
+-		if (rsa->_method_mod_q == NULL)
+-			{
+-			BN_MONT_CTX* bn_mont_ctx;
+-			if ((bn_mont_ctx=BN_MONT_CTX_new()) == NULL)
+-				goto err;
+-			if (!BN_MONT_CTX_set(bn_mont_ctx,rsa->q,ctx))
+-				{
+-				BN_MONT_CTX_free(bn_mont_ctx);
+-				goto err;
+-				}
+-			if (rsa->_method_mod_q == NULL) /* other thread may have finished first */
+-				{
+-				CRYPTO_w_lock(CRYPTO_LOCK_RSA);
+-				if (rsa->_method_mod_q == NULL)
+-					{
+-					rsa->_method_mod_q = bn_mont_ctx;
+-					bn_mont_ctx = NULL;
+-					}
+-				CRYPTO_w_unlock(CRYPTO_LOCK_RSA);
+-				}
+-			if (bn_mont_ctx)
+-				BN_MONT_CTX_free(bn_mont_ctx);
+-			}
++		if (!BN_MONT_CTX_set_locked(&rsa->_method_mod_p,
++					CRYPTO_LOCK_RSA, rsa->p, ctx))
++			goto err;
++		if (!BN_MONT_CTX_set_locked(&rsa->_method_mod_q,
++					CRYPTO_LOCK_RSA, rsa->q, ctx))
++			goto err;
+ 		}
+-		
++
+ 	if (!BN_mod(&r1,I,rsa->q,ctx)) goto err;
+ 	if (!rsa->meth->bn_mod_exp(&m1,&r1,rsa->dmq1,rsa->q,ctx,
+ 		rsa->_method_mod_q)) goto err;
+
+openssl/crypto/pkcs7/pk7_smime.c     1.18.2.3 -> 1.18.2.4
+
+--- openssl/crypto/pkcs7/pk7_smime.c 2005/02/14 21:54:29 1.18.2.3
++++ openssl/crypto/pkcs7/pk7_smime.c 2005/05/17 05:52:18 1.18.2.4
+@@ -296,11 +296,9 @@
+ 	
+ 	if (tmpin == indata)
+ 		{
+-		if(indata) BIO_pop(p7bio);
+-		BIO_free_all(p7bio);
++		if (indata) BIO_pop(p7bio);
+ 		}
+-	else
+-		BIO_free_all(tmpin);
++	BIO_free_all(p7bio);
+ 
+ 	sk_X509_free(signers);
+ 

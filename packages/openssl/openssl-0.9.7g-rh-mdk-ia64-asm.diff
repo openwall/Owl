@@ -1,0 +1,19 @@
+diff -upk.orig openssl-0.9.7g.orig/crypto/bn/bn_lcl.h openssl-0.9.7g/crypto/bn/bn_lcl.h
+--- openssl-0.9.7g.orig/crypto/bn/bn_lcl.h	2004-01-29 09:41:01 +0000
++++ openssl-0.9.7g/crypto/bn/bn_lcl.h	2005-06-17 14:08:49 +0000
+@@ -230,6 +230,15 @@ struct bignum_ctx
+ 	     : "r"(a), "r"(b));		\
+ 	ret;			})
+ #  endif	/* compiler */
++# elif defined(__ia64) && defined(SIXTY_FOUR_BIT_LONG)
++#  if defined(__GNUC__)
++#   define BN_UMULT_HIGH(a,b)  ({      \
++	register BN_ULONG ret;          \
++	asm ("xmpy.hu %0 = %1, %2"      \
++	    : "=f"(ret)                \
++	    : "f"(a), "f"(b));         \
++	ret;                                      
++#  endif       /* compiler */
+ # elif defined(__x86_64) && defined(SIXTY_FOUR_BIT_LONG)
+ #  if defined(__GNUC__)
+ #   define BN_UMULT_HIGH(a,b)	({	\

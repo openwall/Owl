@@ -1,20 +1,24 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.42 2004/11/23 22:40:47 mci Exp $
-
-%define soversion 4
+# $Id: Owl/packages/openssl/openssl.spec,v 1.43 2005/06/24 18:03:06 ldv Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
-Version: 0.9.7d
-Release: owl2
+Version: 0.9.7g
+Release: owl1
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
 Source: ftp://ftp.openssl.org/source/%name-%version.tar.gz
-Patch0: openssl-0.9.7c-owl-glibc-enable_secure.diff
-Patch1: openssl-0.9.7c-rh-soversion.diff
-PreReq: /sbin/ldconfig
+Patch0: openssl-0.9.7g-owl-alt-issetugid.diff
+Patch1: openssl-0.9.7g-mdk-alt-Makefile.diff
+Patch2: openssl-0.9.7g-rh-alt-soversion.diff
+Patch3: openssl-0.9.7g-rh-mdk-ia64-asm.diff
+Patch4: openssl-0.9.7g-rh-version-engines.diff
+Patch5: openssl-0.9.7g-up-rh-fixes.diff
+Patch6: openssl-0.9.7g-rh-consttime.diff
 Provides: SSL
 BuildRequires: perl
+# Due to sed -i.
+BuildRequires: sed >= 4.1.1
 BuildRoot: /override/%name-%version
 
 %description
@@ -58,20 +62,31 @@ libraries and header files required when developing applications.
 
 %prep
 %setup -q
-# XXX: don't rebuild some files at make install time
-pushd crypto/objects
-touch -r objects.pl *.h
-popd
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+
+# Avoid conflict with pow10(3).
+sed -i s/pow10/pow10i/ crypto/bio/b_print.c
+
+# Correct compilation options.
+perl -pi -e "s/-O.(?: -fomit-frame-pointer)?(?: -m.86)?/$RPM_OPT_FLAGS/" \
+	Configure
+
+# Correct shared library name.
+sed -i 's/\\\$(SHLIB_MAJOR)\.\\\$(SHLIB_MINOR)/\\$(VERSION)/g' Configure
+sed -i 's/\${SHLIB_MAJOR}\.\${SHLIB_MINOR}/\${VERSION}/g' Makefile.org
 
 %define openssldir %_datadir/ssl
 %define opensslflags shared -DSSL_ALLOW_ADH --prefix=%_prefix
 
-%build
-perl -pi -e "s/-O.(?: -fomit-frame-pointer)?(?: -m.86)?/$RPM_OPT_FLAGS/" \
-	Configure
+%{expand:%%define optflags %optflags -Wall -Wa,--noexecstack}
 
+%build
 %ifarch %ix86
 %ifarch i386
 ./Configure %opensslflags --openssldir=%openssldir 386 linux-elf
@@ -95,13 +110,22 @@ perl -pi -e "s/-O.(?: -fomit-frame-pointer)?(?: -m.86)?/$RPM_OPT_FLAGS/" \
 ./Configure %opensslflags --openssldir=%openssldir linux-sparcv9
 %endif
 
-LD_LIBRARY_PATH=`pwd` make
+LD_LIBRARY_PATH=`pwd` make SLIB=%_lib
+touch -r libcrypto.so.%version libcrypto-stamp
+touch -r libssl.so.%version libssl-stamp
 LD_LIBRARY_PATH=`pwd` make rehash
 LD_LIBRARY_PATH=`pwd` make test
 
 %install
 rm -rf %buildroot
-make install MANDIR=%_mandir INSTALL_PREFIX="%buildroot"
+make install SLIB=%_lib MANDIR=%_mandir INSTALL_PREFIX="%buildroot"
+
+# Fail if one of shared libraries was rebuit.
+if [ libcrypto.so.%version -nt libcrypto-stamp -o \
+     libssl.so.%version -nt libssl-stamp ]; then
+	echo 'Shared library was rebuilt by "make install".'
+	exit 1
+fi
 
 # Fail if the openssl binary is statically linked against OpenSSL at this
 # stage (which could happen if "make install" caused anything to rebuild).
@@ -109,31 +133,32 @@ LD_LIBRARY_PATH=`pwd` ldd %buildroot/usr/bin/openssl | tee openssl.libs
 grep -qw libssl openssl.libs
 grep -qw libcrypto openssl.libs
 
-%define solibbase %(echo %version | sed 's/[[:alpha:]]//g')
-
-mkdir -p %buildroot/%_lib
-mv %buildroot/usr/lib/lib*.so.%solibbase %buildroot/%_lib/
-rename so.%solibbase so.%version %buildroot/%_lib/*.so.%solibbase
-for lib in %buildroot/%_lib/*.so.%version; do
-	chmod 755 $lib
-	ln -sf ../../%_lib/`basename $lib` %buildroot%_libdir/`basename ${lib} .%version`
-	ln -sf ../../%_lib/`basename $lib` %buildroot%_libdir/`basename ${lib} .%version`.%soversion
+# Relocate shared libraries from %_libdir/ to /%_lib/.
+mkdir %buildroot/%_lib
+for f in %buildroot%_libdir/*.so; do
+	t=`objdump -p "$f" |awk '/SONAME/ {print $2}'`
+	[ -n "$t" ]
+	ln -sf ../../%_lib/"$t" "$f"
 done
+mv %buildroot%_libdir/*.so.* %buildroot/%_lib/
 
-# Rename man pages
+# Remove fips fingerprint script.
+rm %buildroot%_bindir/openssl_fips_fingerprint
+
+# Rename man pages.
 mv %buildroot%_mandir/man1/{,ssl}passwd.1
 mv %buildroot%_mandir/man3/{,ssl}err.3
 mv %buildroot%_mandir/man3/{,ssl}rand.3
-# This one already exists as des_modes.7
-rm %buildroot%_mandir/man7/"Modes of DES.7"
 
-# Make backwards-compatibility symlink to ssleay
+# Make backwards-compatibility symlink to ssleay.
 ln -s openssl %buildroot/usr/bin/ssleay
 
 mv %buildroot%_datadir/ssl/misc/CA{.sh,}
 
-# This script is obsolete and insecure.
-rm %buildroot%_datadir/ssl/misc/der_chop
+# Do not package .pod documentation files.
+mkdir docs
+cp -a doc docs/
+rm -rf docs/doc/{apps,crypto,ssl}
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -141,23 +166,23 @@ rm %buildroot%_datadir/ssl/misc/der_chop
 %files
 %defattr(0644,root,root,0755)
 %doc CHANGES CHANGES.SSLeay LICENSE NEWS README
-%doc doc
+%doc docs/doc
 %attr(0755,root,root) %_bindir/*
-%attr(0755,root,root) /%_lib/*.so.%version
+%attr(-,root,root) /%_lib/*.so.?
+%attr(0755,root,root) /%_lib/*.so.?.*
 %attr(0755,root,root) %openssldir/misc/CA
 %attr(0755,root,root) %openssldir/misc/CA.pl
 %attr(0755,root,root) %openssldir/misc/c_*
 %attr(0644,root,root) %_mandir/man[157]/*
 %config %attr(0644,root,root) %openssldir/openssl.cnf
 %dir %attr(0755,root,root) %openssldir/certs
-%dir %attr(0755,root,root) %openssldir/lib
 %dir %attr(0755,root,root) %openssldir/misc
 %dir %attr(0700,root,root) %openssldir/private
 
 %files devel
 %defattr(0644,root,root,0755)
-%attr(0644,root,root) /usr/lib/*.a
-%attr(0755,root,root) /usr/lib/*.so
+%attr(-,root,root) %_libdir/*.so
+%attr(0644,root,root) %_libdir/*.a
 %dir %attr(0755,root,root) /usr/include/openssl
 %attr(0644,root,root) /usr/include/openssl/*
 # XXX: we don't have a package providing /usr/lib/pkgconfig directory
@@ -165,6 +190,16 @@ rm %buildroot%_datadir/ssl/misc/der_chop
 %attr(0644,root,root) %_mandir/man3/*
 
 %changelog
+* Fri Jun 24 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.9.7g-owl1
+- Updated to 0.9.7g.
+- Imported a bunch of patches from RH's openssl-0.9.7f-7 and ALT's
+openssl-0.9.7g-alt1 packages, including new constant time/memory access
+mod_exp implementation for private key operations, to mitigate timing
+attack (CAN-2005-0109).
+- Changed soname to match RH's soname convention.
+- Packaged soname symlinks along with shared libraries.
+- Removed documentation in .pod format.
+
 * Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 0.9.7d-owl2
 - Do package CA.pl; we were packaging CA.pl.pod and CA.pl.1 anyway, and we
 had a dependency on Perl anyway (possibly something to be resolved later).
