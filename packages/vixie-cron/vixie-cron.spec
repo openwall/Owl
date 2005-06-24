@@ -1,9 +1,9 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.37 2005/06/24 17:05:10 ldv Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.38 2005/06/24 23:49:49 ldv Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
 Version: 4.1.20040916
-Release: owl2
+Release: owl3
 License: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%version.tar.bz2
@@ -144,6 +144,9 @@ fi
 %attr(640,root,crontab) %config(noreplace) /etc/*.deny
 
 %changelog
+* Sat Jun 25 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.1.20040916-owl3
+- Fixed typo in two error messages introduced by PAM support patch.
+
 * Wed Jun 22 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.1.20040916-owl2
 - Imported patch from ALT that implements PAM accounting and session
 management support.
