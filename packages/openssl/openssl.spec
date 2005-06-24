@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.43 2005/06/24 18:03:06 ldv Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.44 2005/06/24 23:39:44 ldv Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
@@ -16,6 +16,8 @@ Patch4: openssl-0.9.7g-rh-version-engines.diff
 Patch5: openssl-0.9.7g-up-rh-fixes.diff
 Patch6: openssl-0.9.7g-rh-consttime.diff
 Provides: SSL
+# For backwards compatibility.
+Provides: libcrypto.so.4, libssl.so.4  
 BuildRequires: perl
 # Due to sed -i.
 BuildRequires: sed >= 4.1.1
@@ -141,6 +143,10 @@ for f in %buildroot%_libdir/*.so; do
 	ln -sf ../../%_lib/"$t" "$f"
 done
 mv %buildroot%_libdir/*.so.* %buildroot/%_lib/
+
+# For backwards compatibility.
+ln -s libcrypto.so.5 %buildroot/%_lib/libcrypto.so.4
+ln -s libssl.so.5 %buildroot/%_lib/libssl.so.4
 
 # Remove fips fingerprint script.
 rm %buildroot%_bindir/openssl_fips_fingerprint
