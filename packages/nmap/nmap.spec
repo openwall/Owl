@@ -1,4 +1,4 @@
-# $Id: Owl/packages/nmap/nmap.spec,v 1.8 2005/06/24 23:36:36 ldv Exp $
+# $Id: Owl/packages/nmap/nmap.spec,v 1.9 2005/06/25 22:34:41 ldv Exp $
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
@@ -13,7 +13,7 @@ Patch1: nmap-3.48-alt-owl-no-local-libs.diff
 Patch2: nmap-3.48-up-no-external-libpcre.diff
 Patch3: nmap-3.48-alt-owl-drop-root.diff
 Requires: /var/empty
-BuildRequires: openssl-devel, libpcap-devel, libcap-devel
+BuildRequires: openssl-devel >= 0.9.7g-owl1, libpcap-devel, libcap-devel
 BuildRoot: /override/%name-%version
 
 %description

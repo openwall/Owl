@@ -1,4 +1,4 @@
-# $Id: Owl/packages/lftp/lftp.spec,v 1.25 2005/06/24 23:36:05 ldv Exp $
+# $Id: Owl/packages/lftp/lftp.spec,v 1.26 2005/06/25 22:34:41 ldv Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
@@ -11,7 +11,7 @@ Source0: ftp://ftp.yars.free.net/pub/software/unix/net/ftp/client/lftp/%name-%ve
 Source1: lftpget.1
 Patch0: lftp-2.6.9-owl-n-option.diff
 Prefix: %_prefix
-BuildRequires: openssl-devel, readline-devel >= 4.3
+BuildRequires: openssl-devel >= 0.9.7g-owl1, readline-devel >= 4.3
 BuildRoot: /override/%name-%version
 
 %description

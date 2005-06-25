@@ -1,4 +1,4 @@
-# $Id: Owl/packages/elinks/elinks.spec,v 1.16 2005/06/24 23:36:05 ldv Exp $
+# $Id: Owl/packages/elinks/elinks.spec,v 1.17 2005/06/25 22:34:41 ldv Exp $
 
 Summary: Lynx-like text WWW browser with many features.
 Name: elinks
@@ -19,7 +19,7 @@ Patch10: elinks-0.9.1-owl-man.diff
 Requires: gpm, zlib, bzip2, openssl
 Provides: links
 Obsoletes: links
-BuildRequires: gpm-devel, zlib-devel, bzip2-devel, openssl-devel
+BuildRequires: gpm-devel, zlib-devel, bzip2-devel, openssl-devel >= 0.9.7g-owl1
 BuildRoot: /override/%name-%version
 
 %description

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.78 2005/06/24 23:35:24 ldv Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.79 2005/06/25 22:34:41 ldv Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
@@ -33,7 +33,7 @@ Patch16: openssh-3.6.1p2-owl-sanitize-packet-types.diff
 PreReq: openssl >= 0.9.7, openssl < 0.9.8
 Requires: pam >= 0.75-owl16
 Obsoletes: ssh
-BuildRequires: openssl-devel
+BuildRequires: openssl-devel >= 0.9.7g-owl1
 BuildRequires: pam-devel, pam_userpass-devel
 BuildRequires: perl
 BuildRequires: zlib-devel

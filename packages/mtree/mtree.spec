@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mtree/mtree.spec,v 1.14 2005/06/24 23:41:03 ldv Exp $
+# $Id: Owl/packages/mtree/mtree.spec,v 1.15 2005/06/25 22:34:41 ldv Exp $
 
 Summary: Map a directory hierarchy.
 Name: mtree
@@ -10,7 +10,7 @@ Source: mtree-%version-20020728.tar.bz2
 Patch0: mtree-3.1-owl-linux.diff
 Patch1: mtree-3.1-owl-fixes.diff
 Requires: openssl
-BuildRequires: openssl-devel
+BuildRequires: openssl-devel >= 0.9.7g-owl1
 BuildRoot: /override/%name-%version
 
 %description

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mutt/mutt.spec,v 1.14 2005/06/24 23:42:59 ldv Exp $
+# $Id: Owl/packages/mutt/mutt.spec,v 1.15 2005/06/25 22:34:41 ldv Exp $
 
 Summary: A feature-rich text-based mail user agent.
 Name: mutt
@@ -15,6 +15,7 @@ Patch2: mutt-1.4.2.1-owl-tmp.diff
 Requires: mktemp >= 1:1.3.1
 Conflicts: mutt-us
 Provides: mutt-i
+BuildRequires: openssl-devel >= 0.9.7g-owl1
 BuildRoot: /override/%name-%version
 
 %description
