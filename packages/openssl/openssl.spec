@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.44 2005/06/24 23:39:44 ldv Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.45 2005/06/25 00:35:59 ldv Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
@@ -168,6 +168,10 @@ rm -rf docs/doc/{apps,crypto,ssl}
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
+
+%triggerpostun -- %name < 0:0.9.7g-owl1
+ln -sf libcrypto.so.5 /%_lib/libcrypto.so.4
+ln -sf libssl.so.5 /%_lib/libssl.so.4
 
 %files
 %defattr(0644,root,root,0755)
