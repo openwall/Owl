@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.52 2005/04/02 00:13:38 solar Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.53 2005/06/25 00:41:18 ldv Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -11,7 +11,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl6
+Release: owl7
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -236,6 +236,7 @@ done
 aclocal
 automake -f
 autoconf
+ac_cv_header_libelf_h=no ac_cv_header_gelf_h=no \
 ./configure \
 	--prefix=%__prefix \
 	--sysconfdir=%__sysconfdir \
@@ -457,6 +458,9 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Sat Jun 25 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.2-owl7
+- Do not use system's libelf even if the library is available during build.
+
 * Sat Apr 02 2005 Solar Designer <solar@owl.openwall.com> 4.2-owl6
 - Allow unpackaged files and missing docs by default for building legacy
 third-party packages (our build environment overrides this for native ones).
