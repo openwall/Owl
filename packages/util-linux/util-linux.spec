@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.29 2005/01/14 03:27:53 galaxy Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.30 2005/06/28 18:53:48 ldv Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -7,7 +7,7 @@
 Summary: A collection of basic system utilities.
 Name: util-linux
 Version: 2.11z
-Release: owl3
+Release: owl4
 License: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%version.tar.bz2
@@ -17,6 +17,7 @@ Patch0: util-linux-2.11z-owl-MCONFIG.diff
 Patch1: util-linux-2.11z-owl-Makefile.diff
 Patch2: util-linux-2.11z-owl-write.diff
 Patch3: util-linux-2.11z-owl-mtab-umask.diff
+Patch4: util-linux-2.11z-owl-warnings.diff
 %if %BUILD_CRYPTO
 Patch10: util-linux-2.11z-crypto-v3.diff.bz2
 %endif
@@ -67,6 +68,7 @@ to query the status of a loop device.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 %if %BUILD_CRYPTO
 %patch10 -p1
 %endif
@@ -323,6 +325,9 @@ fi
 %endif
 
 %changelog
+* Tue Jun 28 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.11z-owl4
+- Corrected the source code to not break C strict aliasing rules.
+
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.11z-owl3
 - Supplied %%__cc to make.
 - Removed verify checks for files under the "control" utility.
