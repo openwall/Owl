@@ -1,0 +1,17 @@
+--- xinetd-2.3.13.orig/xinetd/parsers.c	2004-01-22 01:34:57 +0300
++++ xinetd-2.3.13/xinetd/parsers.c	2005-03-22 15:16:50 +0300
+@@ -1051,6 +1051,14 @@ static status_e parse_inet_addresses( ps
+          return( FAILED );
+       }
+    }
++
++   if ( pset_count( addr_set ) == 0 )
++   {
++      addrlist_free( addr_set );
++      pset_destroy( addr_set );
++      *addr_list = NULL;
++   }
++
+    return( OK ) ;
+ }
+ 

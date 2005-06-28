@@ -1,0 +1,22 @@
+diff -upk.orig xinetd-2.3.13.orig/xinetd/init.c xinetd-2.3.13/xinetd/init.c
+--- xinetd-2.3.13.orig/xinetd/init.c	2003-09-06 14:41:59 +0000
++++ xinetd-2.3.13/xinetd/init.c	2005-06-28 17:04:03 +0000
+@@ -316,6 +316,7 @@ void init_daemon( int argc, char *argv[]
+ 
+    setup_file_descriptors() ;
+    ps.ros.config_file = DEFAULT_CONFIG_FILE ;
++   ps.ros.pid_file = DEFAULT_PID_FILE ;
+    (void) opt_recognize( argc, argv ) ;
+ 
+    /*
+diff -upk.orig xinetd-2.3.13.orig/xinetd/xconfig.h xinetd-2.3.13/xinetd/xconfig.h
+--- xinetd-2.3.13.orig/xinetd/xconfig.h	2003-02-19 17:29:28 +0000
++++ xinetd-2.3.13/xinetd/xconfig.h	2003-08-25 10:28:59 +0000
+@@ -30,6 +30,7 @@
+ 
+ 
+ #define DEFAULT_CONFIG_FILE			"/etc/xinetd.conf"
++#define DEFAULT_PID_FILE			"/var/run/xinetd.pid"
+ 
+ /*
+  * This is the facility used by xinetd to log syslog messages

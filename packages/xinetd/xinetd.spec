@@ -1,9 +1,9 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.30 2004/11/23 22:40:50 mci Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.31 2005/06/28 18:47:28 ldv Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
-Version: 2.3.12
-Release: owl4
+Version: 2.3.13
+Release: owl1
 License: BSD with minor restrictions
 Group: System Environment/Daemons
 URL: http://www.xinetd.org
@@ -18,9 +18,10 @@ Source7: xinetd-echo
 Source8: xinetd-uecho
 Source9: xinetd-chargen
 Source10: xinetd-uchargen
-Patch0: xinetd-2.3.12-owl-fixes.diff
-Patch1: xinetd-2.3.12-cvs-20030815-success_log_options.diff
-Patch2: xinetd-2.3.12-cvs-20030903-Smorefds.diff
+Patch0: xinetd-2.3.13-cvs-20050330-fixes.diff
+Patch1: xinetd-2.3.13-owl-fixes.diff
+Patch2: xinetd-2.3.13-alt-pidfile.diff
+Patch3: xinetd-2.3.13-alt-parse_inet_addresses.diff
 PreReq: /sbin/chkconfig
 Requires: tcp_wrappers >= 7.6-owl3.2
 Provides: inetd
@@ -47,6 +48,7 @@ limits on the number of servers that can be started, among other things.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %{expand:%%define optflags %optflags -Wall -W -Wno-unused -Wno-switch}
 
@@ -108,6 +110,12 @@ fi
 %_mandir/*/*
 
 %changelog
+* Tue Jun 28 2005 Dmitry V. Levin <ldv@altlinux.org> 2.3.13-owl1
+- Updated to 2.3.13.
+- Backported bug fixes from cvs snapshot 20050330.
+- Applied two patches from ALT's xinetd-2.3.13-alt3 package.
+- Fixed compilation warnings.
+
 * Mon May 03 2004 Solar Designer <solar@owl.openwall.com> 2.3.12-owl4
 - Bumped release to correctly reflect the rebuild against shared libwrap.
 

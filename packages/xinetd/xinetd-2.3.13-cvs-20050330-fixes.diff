@@ -1,0 +1,513 @@
+diff -upk.orig xinetd-2.3.13.orig/CHANGELOG xinetd-2.3.13/CHANGELOG
+--- xinetd-2.3.13.orig/CHANGELOG	2004-01-22 20:29:18 +0000
++++ xinetd-2.3.13/CHANGELOG	2005-03-30 23:17:56 +0000
+@@ -886,3 +886,16 @@ This file describes the changes to xinet
+ 	Updated rpm.spec file and added default config files to contrib 
+ 		directory. -Steve Grubb
+ 	Allow group & user to be specified by numeric value. -Steve Grubb
++
++cvs-devel
++	Applied patch from Art Haas for gcc 3.5 compat.
++	Flush the descriptor after writing a banner. -Jay Fenlason
++	Don't assume char is signed in the udp drain() function -Don Provan
++	If log remote user is on, a descriptor between 0-2 is likely to
++		be opened. Call msg_suspend before dup'ing socket to
++		avoid this bug. -Glen Johnson
++	Added confparse() RPC patch from RedHat's RHEL4 srpm.
++	Fixed some service release bugs with accesses to dangling pointers.
++	Updated BACKLOG to 64 from 7
++	Updated xconv.pl to understand ":" in inetd.conf files from
++		FreeBSD ports patch.
+diff -upk.orig xinetd-2.3.13.orig/xinetd/addr.c xinetd-2.3.13/xinetd/addr.c
+--- xinetd-2.3.13.orig/xinetd/addr.c	2003-10-17 18:01:20 +0000
++++ xinetd-2.3.13/xinetd/addr.c	2005-04-08 21:23:07 +0000
+@@ -190,9 +190,9 @@ int addrlist_match( const pset_h addr_li
+                   return( u+1 );
+             }
+             else {  /* NET_ADDR */ 
+-               if ( xmatch( SAIN6(addr)->sin6_addr.s6_addr, 
+-	                (char *)&(cap->m.mask6), 
+-			(char *)&(cap->a.addr6), 16) == TRUE )
++               if ( xmatch( (const char *)SAIN6(addr)->sin6_addr.s6_addr, 
++	                (const char *)&(cap->m.mask6), 
++			(const char *)&(cap->a.addr6), 16) == TRUE )
+                   return( u+1 );
+             }
+          } 
+diff -upk.orig xinetd-2.3.13.orig/xinetd/builtins.c xinetd-2.3.13/xinetd/builtins.c
+--- xinetd-2.3.13.orig/xinetd/builtins.c	2004-01-24 21:32:45 +0000
++++ xinetd-2.3.13/xinetd/builtins.c	2005-04-08 21:23:07 +0000
+@@ -188,7 +188,7 @@ static void dgram_echo( const struct ser
+    char            buf[ DATAGRAM_SIZE ] ;
+    union xsockaddr lsin;
+    int             cc ;
+-   unsigned int    sin_len = 0;
++   socklen_t       sin_len = 0;
+    int             descriptor = SERVER_FD( serp ) ;
+    const char     *func = "dgram_echo";
+ 
+@@ -310,7 +310,7 @@ static void dgram_daytime( const struct 
+ {
+    char            time_buf[ BUFFER_SIZE ] ;
+    union xsockaddr lsin ;
+-   unsigned int    sin_len     = 0 ;
++   socklen_t       sin_len     = 0 ;
+    unsigned int    buflen      = sizeof( time_buf ) ;
+    int             descriptor  = SERVER_FD( serp ) ;
+    const char     *func       = "dgram_daytime";
+@@ -379,7 +379,7 @@ static void dgram_time( const struct ser
+    char     buf[ 1 ] ;
+    unsigned char time_buf[4];
+    union xsockaddr lsin ;
+-   unsigned int    sin_len = 0 ;
++   socklen_t       sin_len = 0 ;
+    int             fd      = SERVER_FD( serp ) ;
+    const char     *func    = "dgram_daytime";
+ 
+@@ -485,7 +485,7 @@ static void dgram_chargen( const struct 
+    char            *p ;
+    unsigned int    len ;
+    union xsockaddr lsin ;
+-   unsigned int    sin_len = 0 ;
++   socklen_t       sin_len = 0 ;
+    int             fd      = SERVER_FD( serp ) ;
+    unsigned int    left    = sizeof( buf ) ;
+    const char     *func    = "dgram_chargen";
+diff -upk.orig xinetd-2.3.13.orig/xinetd/child.c xinetd-2.3.13/xinetd/child.c
+--- xinetd-2.3.13.orig/xinetd/child.c	2003-08-06 06:12:10 +0000
++++ xinetd-2.3.13/xinetd/child.c	2004-12-23 21:46:02 +0000
+@@ -77,10 +77,19 @@ void exec_server( const struct server *s
+    if ( debug.on )
+       msg( LOG_DEBUG, func, "duping %d", descriptor ) ;
+ 
++   /*
++    * If server_loguser flag is on, then syslog may have opened fd 0, 1, or
++    * 2. We call msg_suspend() now so that the logging system doesn't use 
++    * the dup'ed descriptor.
++    */
++
++   msg_suspend() ;
++
+    for ( fd = 0 ; fd <= MAX_PASS_FD ; fd++ )
+    {
+       if ( dup2( descriptor, fd ) == -1 )
+       {
++   	 msg_resume();
+          msg( LOG_ERR, func,
+                "dup2( %d, %d ) failed: %m", descriptor, fd ) ;
+          _exit( 1 ) ;
+@@ -137,10 +146,14 @@ void exec_server( const struct server *s
+    (void) Sclose( descriptor ) ;
+ 
+ #ifndef solaris
++#if !defined(HAVE_SETSID)
++   msg_resume();
++#endif
+    no_control_tty() ;
++#if !defined(HAVE_SETSID)
++   msg_suspend();
++#endif
+ #endif
+-
+-   msg_suspend() ;
+ 
+    (void) execve( server, SC_SERVER_ARGV( scp ),
+              env_getvars( SC_ENV( scp )->env_handle ) ) ;
+diff -upk.orig xinetd-2.3.13.orig/xinetd/confparse.c xinetd-2.3.13/xinetd/confparse.c
+--- xinetd-2.3.13.orig/xinetd/confparse.c	2003-10-17 19:05:05 +0000
++++ xinetd-2.3.13/xinetd/confparse.c	2005-04-08 21:35:48 +0000
+@@ -488,7 +488,7 @@ static void remove_disabled_services( st
+ /*
+  * Check if all required attributes have been specified
+  */
+-static status_e service_attr_check( const struct service_config *scp )
++static status_e service_attr_check( struct service_config *scp )
+ {
+    mask_t         necessary_and_specified ;
+    mask_t         necessary_and_missing ;
+@@ -632,6 +632,18 @@ static status_e check_entry( struct serv
+           */
+          continue;
+       }
++#if defined(HAVE_RPC_RPCENT_H) || defined(HAVE_NETDB_H)
++      if ( SC_IS_RPC( scp ) && SC_IS_RPC ( tmp_scp ) )
++      {
++         const struct rpc_data *rdp1 = SC_RPCDATA( scp ) ;
++         const struct rpc_data *rdp2 = SC_RPCDATA( tmp_scp ) ;
++         if ( rdp1->rd_program_number != rdp2->rd_program_number )
++           continue;
++        if ( rdp1->rd_min_version > rdp2->rd_max_version ||
++             rdp1->rd_max_version < rdp2->rd_min_version )
++          continue;
++      }
++#endif
+       if (diff) 
+          msg( LOG_ERR, func, 
+          "service: %s id: %s is unique but its identical to "
+diff -upk.orig xinetd-2.3.13.orig/xinetd/connection.c xinetd-2.3.13/xinetd/connection.c
+--- xinetd-2.3.13.orig/xinetd/connection.c	2004-01-05 03:24:18 +0000
++++ xinetd-2.3.13/xinetd/connection.c	2005-03-29 16:03:00 +0000
+@@ -85,7 +85,7 @@ static status_e get_connection( struct s
+          int af = AF_INET;
+          if( setsockopt(cp->co_descriptor, IPPROTO_IPV6,
+                IPV6_ADDRFORM, &af, sizeof( af ) ) ) {
+-            msg( LOG_WARNING, func, "service %s, IPV6_ADDRFORM setsockopt() failed: %m", SVC_ID( sp) );
++            if( debug.on ) msg( LOG_WARNING, func, "service %s, IPV6_ADDRFORM setsockopt() failed: %m", SVC_ID( sp) );
+          }
+       }
+ 
+@@ -173,8 +173,10 @@ void conn_free( connection_s *cp, int re
+    if( (SVC_SOCKET_TYPE( sp ) == SOCK_DGRAM) && (SVC_IS_ACTIVE( sp )) )
+       drain( cp->co_descriptor ) ;
+ 
+-   if ( SVC_RELE( sp ) == 0 )
++   if ( SVC_RELE( sp ) == 0 ) {
+       pset_remove( SERVICES( ps ), sp ) ;
++      svc_release( sp );
++   }
+    cp->co_sp = NULL;
+ 
+    CONN_CLOSE( cp ) ;
+diff -upk.orig xinetd-2.3.13.orig/xinetd/defs.h xinetd-2.3.13/xinetd/defs.h
+--- xinetd-2.3.13.orig/xinetd/defs.h	2003-05-08 14:52:24 +0000
++++ xinetd-2.3.13/xinetd/defs.h	2005-03-29 15:50:34 +0000
+@@ -9,7 +9,7 @@
+ #define DEFS_H
+ 
+ /*
+- * $Id: defs.h,v 1.2 2003/05/08 14:52:24 steveg Exp $
++ * $Id: defs.h,v 1.3 2005/03/29 15:50:34 bbraun Exp $
+  */
+ 
+ 
+@@ -108,7 +108,7 @@ union xsockaddr {
+ /*
+  * Used for listen(2)
+  */
+-#define LISTEN_BACKLOG               7
++#define LISTEN_BACKLOG               64
+ 
+ /*
+  * When explicit values are given for enum's, that is because the structures 
+diff -upk.orig xinetd-2.3.13.orig/xinetd/int.c xinetd-2.3.13/xinetd/int.c
+--- xinetd-2.3.13.orig/xinetd/int.c	2003-05-31 15:03:52 +0000
++++ xinetd-2.3.13/xinetd/int.c	2005-04-08 21:23:07 +0000
+@@ -109,7 +109,7 @@ static int get_server_socket( struct int
+    struct service *sp = SERVER_SERVICE( INT_SERVER( ip ) ) ;
+    union xsockaddr *sinp = INT_LOCALADDR( ip ) ;
+    int sd ;
+-   unsigned int size ;
++   socklen_t size ;
+    const char *func = "get_server_socket" ;
+ 
+    if( SC_IPV6(SVC_CONF(sp)) ) {
+diff -upk.orig xinetd-2.3.13.orig/xinetd/parsers.c xinetd-2.3.13/xinetd/parsers.c
+--- xinetd-2.3.13.orig/xinetd/parsers.c	2004-01-21 22:34:57 +0000
++++ xinetd-2.3.13/xinetd/parsers.c	2005-04-08 21:23:07 +0000
+@@ -281,7 +281,7 @@ status_e user_parser( pset_h values, 
+    if (parse_all_digits(user) == TRUE)
+    {   /* We will assume the number is a valid user. This is a workaround
+           for some Solaris systems that have problems doing getgr*. */
+-      if (parse_base10(user, &SC_UID(scp)))
++      if (parse_base10(user, (int *)&SC_UID(scp)))
+       {
+          parsemsg( LOG_ERR, func, "Error parsing user as a number: %s", user ) ;
+          return( FAILED ) ;
+@@ -316,7 +316,7 @@ status_e group_parser( pset_h values, 
+    if (parse_all_digits(group_ptr) == TRUE)
+    {   /* We will assume the number is a valid group. This is a workaround
+           for some Solaris systems that have problems doing getgr*. */
+-      if (parse_base10(group_ptr, &SC_GID(scp)))
++      if (parse_base10(group_ptr, (int *)&SC_GID(scp)))
+       {
+          parsemsg( LOG_ERR, func, "Error parsing group as a number: %s", group_ptr ) ;
+          return( FAILED ) ;
+diff -upk.orig xinetd-2.3.13.orig/xinetd/reconfig.c xinetd-2.3.13/xinetd/reconfig.c
+--- xinetd-2.3.13.orig/xinetd/reconfig.c	2003-12-24 15:45:48 +0000
++++ xinetd-2.3.13/xinetd/reconfig.c	2005-04-12 19:40:00 +0000
+@@ -134,10 +134,11 @@ void hard_reconfig( void )
+          /*
+           * Procedure for disabling a service:
+           *
+-          *      a. Terminate running servers and cancel retry attempts, in case
++          *      a. Deactivate the service to prevent new connections
++          *      b. Terminate running servers and cancel retry attempts, in case
+           *         of reconfiguration
+-          *      b. Deactivate the service
+           */
++         svc_deactivate( osp ) ;
+          terminate_servers( osp ) ;
+          cancel_service_retries( osp ) ;
+ 
+@@ -145,11 +146,14 @@ void hard_reconfig( void )
+           * Deactivate the service; the service will be deleted only
+           * if its reference count drops to 0.
+           */
+-         svc_deactivate( osp ) ;
++         /* Always remove the service, even if not all the children
++          * have been killed, or there are other references.
++          */
++         psi_remove( iter ) ;
+          msg( LOG_NOTICE, func, "service %s deactivated", sid ) ;
+-         if ( SVC_RELE( osp ) == 0 )
+-            psi_remove( iter ) ;
+-         else
++         if ( SVC_RELE( osp ) == 0 ) {
++            svc_release( osp );
++         } else
+             msg( LOG_ERR, func, "Errors deactivating service %s", sid ) ;
+          dropped_services++ ;
+       }
+@@ -234,12 +238,18 @@ static void sendsig( struct server *serp
+          tv.tv_usec = 500000; /* half a second */
+          for (i=0; i<8; i++)
+          {
+-            int wret = waitpid(pid, NULL, WNOHANG);
+-	    if (wret == pid)
++            if( server_lookup(pid) == NULL )
+ 	    {
+ 	       killed = 1;
+ 	       break;
+-	    }
++	    } else {
++               int wret = waitpid(pid, NULL, WNOHANG);
++	       if (wret == pid) {
++	          killed = 1;
++	          break;
++               }
++               server_end(serp);
++            }
+ 	 
+ 	    /* May not have responded to TERM, send a KILL */
+ 	    if ( i == 5)
+@@ -256,12 +266,10 @@ static void sendsig( struct server *serp
+          if (!killed)
+             msg( LOG_ERR, func, "Server %d did not exit after SIGKILL", 
+ 	          pid ) ;
+-         else {
+-            struct server *tmp_serp;
+-            if( (tmp_serp = server_lookup(pid)) != NULL ) {
+-               server_end(tmp_serp);
+-            }
+-         }
++         /* no need to server_end() here.  The killed process will generate
++          * a sigchld, which will invoke the signal handler, and clean things
++          * up there.
++          */
+       }
+    } 
+    else if ( pid != 0 )
+@@ -281,8 +289,11 @@ static void deliver_signal( struct servi
+       struct server *serp ;
+ 
+       serp = SERP( pset_pointer( SERVERS( ps ), u ) ) ;
+-      if ( SERVER_SERVICE( serp ) == sp )
++      if ( SERVER_SERVICE( serp ) == sp ) {
+          sendsig( serp, sig ) ;
++         if ( (sig == SIGTERM) || (sig == SIGKILL) )
++            u--;
++      }
+    }
+ }
+ 
+diff -upk.orig xinetd-2.3.13.orig/xinetd/server.c xinetd-2.3.13/xinetd/server.c
+--- xinetd-2.3.13.orig/xinetd/server.c	2003-08-06 06:12:10 +0000
++++ xinetd-2.3.13/xinetd/server.c	2005-03-29 15:50:34 +0000
+@@ -89,8 +89,11 @@ void server_release( struct server *serp
+    int              count = SVC_RELE( sp ) ;
+ 
+    pset_remove(SERVERS(ps), serp);
+-   if ( count == 0 && ! SC_IS_SPECIAL( SVC_CONF( sp ) ) )
+-      pset_remove( SERVICES( ps ), sp ) ;
++   if ( count == 0 ) {
++      if( ! SC_IS_SPECIAL( SVC_CONF( sp ) )  )
++         pset_remove( SERVICES( ps ), sp ) ;
++      svc_release( sp );
++   }
+    
+    CLEAR( *serp ) ;
+    FREE_SERVER( serp ) ;
+diff -upk.orig xinetd-2.3.13.orig/xinetd/service.c xinetd-2.3.13/xinetd/service.c
+--- xinetd-2.3.13.orig/xinetd/service.c	2003-11-16 12:44:10 +0000
++++ xinetd-2.3.13/xinetd/service.c	2005-04-08 21:23:07 +0000
+@@ -162,7 +162,7 @@ static status_e set_fd_modes( struct ser
+ static status_e activate_rpc( struct service *sp )
+ {
+    union xsockaddr        tsin;
+-   unsigned int           sin_len = sizeof(tsin);
++   socklen_t              sin_len = sizeof(tsin);
+    unsigned long          vers ;
+    struct service_config *scp = SVC_CONF( sp ) ;
+    struct rpc_data       *rdp = SC_RPCDATA( scp ) ;
+@@ -654,6 +654,7 @@ static int banner_always( const struct s
+       }
+ 
+       Sclose(bannerfd);
++      Sflush ( cp->co_descriptor );
+    }
+ 
+    return(0);
+@@ -694,6 +695,7 @@ static int banner_fail( const struct ser
+       }
+ 
+       Sclose(bannerfd);
++      Sflush ( cp->co_descriptor );
+    }
+ 
+    return(0);
+@@ -732,6 +734,7 @@ static int banner_success( const struct 
+       }
+ 
+       Sclose(bannerfd);
++      Sflush ( cp->co_descriptor );
+    }
+    return(0);
+ }
+@@ -764,8 +767,8 @@ static status_e failed_service(struct se
+                return FAILED;
+ 
+             if ( last == NULL ) {
+-               last = SAIN( SVC_LAST_DGRAM_ADDR(sp) ) = 
+-		  SAIN( calloc( 1, sizeof(union xsockaddr) ) );
++               last = SAIN( calloc( 1, sizeof(union xsockaddr) ) );
++	       SVC_LAST_DGRAM_ADDR(sp) = (union xsockaddr *)last;
+             }
+ 
+             (void) time( &current_time ) ;
+@@ -791,8 +794,8 @@ static status_e failed_service(struct se
+                return FAILED;
+ 
+ 	    if( last == NULL ) {
+-               last = SAIN6(SVC_LAST_DGRAM_ADDR(sp)) = 
+-		  SAIN6(calloc( 1, sizeof(union xsockaddr) ) );
++               last = SAIN6(calloc( 1, sizeof(union xsockaddr) ) );
++	       SVC_LAST_DGRAM_ADDR( sp ) = (union xsockaddr *)last;
+             }
+ 
+             (void) time( &current_time ) ;
+@@ -890,7 +893,9 @@ void svc_postmortem( struct service *sp,
+             drain( cp->co_descriptor ) ;
+          free(cp);
+          cp = NULL;
+-         SVC_RELE( sp );
++         if( SVC_RELE( sp ) == 0 )
++            svc_release( sp ); /* shouldn't be 0, but should remove from
++                                * pset if it is... */
+       }
+       svc_resume(sp);
+    }
+diff -upk.orig xinetd-2.3.13.orig/xinetd/service.h xinetd-2.3.13/xinetd/service.h
+--- xinetd-2.3.13.orig/xinetd/service.h	2003-08-06 06:12:10 +0000
++++ xinetd-2.3.13/xinetd/service.h	2005-03-29 15:50:34 +0000
+@@ -19,7 +19,7 @@
+ #include "server.h"
+ 
+ /*
+- * $Id: service.h,v 1.4 2003/08/06 06:12:10 bbraun Exp $
++ * $Id: service.h,v 1.5 2005/03/29 15:50:34 bbraun Exp $
+  */
+ 
+ 
+@@ -118,8 +118,7 @@ struct service
+  * Reference counting macros
+  */
+ #define SVC_HOLD( sp )            (sp)->svc_ref_count++
+-#define SVC_RELE( sp )   \
+-   ( ( (sp)->svc_ref_count <= 1 ) ? svc_release( sp ) : --(sp)->svc_ref_count )
++#define SVC_RELE( sp )            ( --(sp)->svc_ref_count )
+ 
+ 
+ #define SVC_INTERNAL( sp, serp )     SC_INTERNAL( SVC_CONF( sp ), serp )
+diff -upk.orig xinetd-2.3.13.orig/xinetd/util.c xinetd-2.3.13/xinetd/util.c
+--- xinetd-2.3.13.orig/xinetd/util.c	2004-01-21 22:34:57 +0000
++++ xinetd-2.3.13/xinetd/util.c	2005-04-08 21:23:07 +0000
+@@ -234,16 +234,22 @@ void tabprint( int fd, int tab_level, co
+ void drain( int sd )
+ {
+    char buf[ 256 ] ; /* This size is arbitrarily chosen */
+-   char cc ;
++   int ret ;
+    int old_val ;
+ 
+    /* Put in non-blocking mode so we don't hang. */
+    old_val = fcntl( sd, F_GETFL, FNDELAY );
+-   fcntl( sd, F_SETFL, FNDELAY );
++   if ( fcntl( sd, F_SETFL, FNDELAY ) < 0 )
++   {
++      if ( debug.on )
++         msg( LOG_DEBUG, "drain",
++              "UDP socket could not be made non-blocking: %m" ) ;
++      return;
++   }
+ 
+    do {
+-      cc = recv( sd, buf, sizeof( buf ), 0 ) ;
+-   } while (cc > 0);
++      ret = recv( sd, buf, sizeof( buf ), 0 ) ;
++   } while (ret > 0);
+ 
+    /* Restore the value since the connection will be freed, not closed. */
+    if (old_val >= 0)
+@@ -258,7 +264,7 @@ void drain( int sd )
+  */
+ int parse_int(const char *str, int base, int term, int *res)
+ {
+-	unsigned char *endptr;
++	char *endptr;
+ 	long strtol_res;
+ 
+ /* SUSv2 says:
+diff -upk.orig xinetd-2.3.13.orig/xinetd/xconv.pl xinetd-2.3.13/xinetd/xconv.pl
+--- xinetd-2.3.13.orig/xinetd/xconv.pl	2003-02-27 22:16:25 +0000
++++ xinetd-2.3.13/xinetd/xconv.pl	2005-03-29 15:50:34 +0000
+@@ -5,7 +5,7 @@
+ # * and conditions for redistribution.
+ # */
+ 
+-# $RCSid = "$Id: xconv.pl,v 1.2 2003/02/27 22:16:25 steveg Exp $";
++# $RCSid = "$Id: xconv.pl,v 1.3 2005/03/29 15:50:34 bbraun Exp $";
+ 
+ sub print_header;
+ sub print_defaults;
+@@ -45,7 +45,7 @@ while( <STDIN> ) {
+ 	} else {
+ 		print "\twait        = yes\n";
+ 	}
+-	@user = split /\./, $command[4];
++	@user = split /[:\.]/, $command[4];
+ 	print "\tuser        = $user[0]\n";
+ 	if( defined $user[1] ) {
+ 		print "\tgroup       = $user[1]\n";
+diff -upk.orig xinetd-2.3.13.orig/xinetd/xinetd.conf.man xinetd-2.3.13/xinetd/xinetd.conf.man
+--- xinetd-2.3.13.orig/xinetd/xinetd.conf.man	2004-01-21 22:34:57 +0000
++++ xinetd-2.3.13/xinetd/xinetd.conf.man	2005-03-03 16:54:08 +0000
+@@ -3,7 +3,7 @@
+ .\"All rights reserved.  The file named COPYRIGHT specifies the terms 
+ .\"and conditions for redistribution.
+ .\"
+-.\" $Id: xinetd.conf.man,v 1.16 2004/01/21 22:34:57 steveg Exp $
++.\" $Id: xinetd.conf.man,v 1.17 2005/03/03 16:54:08 bbraun Exp $
+ .TH XINETD.CONF 5 "14 June 2001"
+ .\" *************************** NAME *********************************
+ .SH NAME
+@@ -207,7 +207,8 @@ If a group is not specified, the group
+ of \fIuser\fP will be used (from 
+ .I /etc/passwd).
+ This attribute is ineffective if the effective user ID 
+-of \fBxinetd\fP is not super-user.
++of \fBxinetd\fP is not super-user and if the \fBgroups\fP attribute
++is not set to 'yes'.
+ .TP
+ .B instances
+ determines the number of servers that can be simultaneously active
+@@ -501,7 +502,9 @@ only avaliable if xinetd was configured 
+ .B groups
+ Takes either "yes" or "no".  If the groups attribute is set to
+ "yes", then the server is executed with access to the groups that the
+-server's effective UID has access to.  If the groups attribute is set 
++server's effective UID has access to.  Alternatively, if the \fBgroup\fP
++attribute is set, the server is executed with access to the groups
++specified.  If the groups attribute is set 
+ to "no", then the server runs with no supplementary groups.  This
+ attribute must be set to "yes" for many BSD systems.  This attribute
+ can be set in the defaults section as well.

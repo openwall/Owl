@@ -1,0 +1,62 @@
+diff -upk.orig xinetd-2.3.13.orig/xinetd/sensor.c xinetd-2.3.13/xinetd/sensor.c
+--- xinetd-2.3.13.orig/xinetd/sensor.c	2003-08-06 06:12:10 +0000
++++ xinetd-2.3.13/xinetd/sensor.c	2005-06-28 16:11:39 +0000
+@@ -100,21 +100,22 @@ void process_sensor( const struct servic
+ 	 {
+ 	    /* Here again, eh?...update time stamp. */
+             char *exp_time;
+-	    time_t stored_time;
++	    int stored_time;
+ 
+ 	    item_matched--; /* Is # plus 1, to even get here must be >= 1 */
+             exp_time = pset_pointer( global_no_access_time, item_matched ) ;
+             if (exp_time == NULL)
+                return ;
+ 
+-            if ( parse_base10(exp_time, (int *)&stored_time) )
++            if ( parse_base10(exp_time, &stored_time) == 0)
+             {  /* if never let them off, bypass */
+                if (stored_time != -1)
+                {
+                   time_t nowtime, new_time;
+ 
+                   nowtime = time(NULL);
+-                  new_time = (time_t)nowtime+(60*SC_DENY_TIME(SVC_CONF(sp)));                     if (difftime(new_time, (time_t)stored_time) > 0.0)
++                  new_time = (time_t)nowtime+(60*SC_DENY_TIME(SVC_CONF(sp)));
++		  if (difftime(new_time, (time_t)stored_time) > 0.0)
+ 	          {   /* new_time is longer save it   */
+ 		     char time_buf[40], *new_exp_time;
+ 
+@@ -168,12 +169,14 @@ static void scrub_global_access_list( vo
+       for (u=0; u < count; u++)
+       {
+          char *exp_time;
+-         time_t stored_time;
++         int stored_time;
+ 	 
+ 	 exp_time = pset_pointer( global_no_access_time, u ) ;
+-         stored_time = atol(exp_time);
+ 
+-	 if (stored_time == -1)   /* never let them off   */
++	 if (exp_time == NULL)
++	    continue;
++
++	 if (parse_base10(exp_time, &stored_time) || stored_time == -1)   /* never let them off   */
+ 	    continue;
+ 
+ 	 if (difftime(nowtime, (time_t)stored_time) >= 0.0)
+diff -upk.orig xinetd-2.3.13.orig/xinetd/util.c xinetd-2.3.13/xinetd/util.c
+--- xinetd-2.3.13.orig/xinetd/util.c	2005-06-28 15:56:26 +0000
++++ xinetd-2.3.13/xinetd/util.c	2005-06-28 15:59:44 +0000
+@@ -284,6 +284,11 @@ int parse_int(const char *str, int base,
+ 
+ 		if (*endptr == term) {
+ 			*res = strtol_res;
++			if ((long)*res  != strtol_res) {
++				*res = 0;
++				errno = ERANGE;
++				return -1;
++			}
+ 			return 0;
+ 		}
+ 	}
