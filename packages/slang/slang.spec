@@ -1,9 +1,9 @@
-# $Id: Owl/packages/slang/Attic/slang.spec,v 1.13 2005/01/12 16:58:28 galaxy Exp $
+# $Id: Owl/packages/slang/Attic/slang.spec,v 1.14 2005/06/28 18:58:45 ldv Exp $
 
 Summary: The shared library for the S-Lang extension language.
 Name: slang
 Version: 1.4.6
-Release: owl5
+Release: owl6
 License: GPL
 Group: System Environment/Libraries
 URL: http://www.s-lang.org
@@ -37,6 +37,8 @@ applications is also included.
 %setup -q -n slang-%version
 %patch0 -p1
 %patch1 -p1
+
+%{expand:%%define optflags %optflags -fno-strict-aliasing}
 
 %build
 sed -i 's,\(ELF_CFLAGS=".*\)-O2\(.*\),\1'"$RPM_OPT_FLAGS"'\2,' configure
@@ -87,6 +89,9 @@ rm %buildroot/usr/doc/slang/slangfun.txt
 %_includedir/slang
 
 %changelog
+* Tue Jun 28 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.4.6-owl6
+- Build this package without optimizations based on strict aliasing rules.
+
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.4.6-owl5
 - Fix for orphaned %_libdir/libslang.so.1 produced by ldconfig in the %post.
 

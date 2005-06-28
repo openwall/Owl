@@ -1,9 +1,9 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.36 2005/01/14 03:27:53 galaxy Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.37 2005/06/28 18:58:45 ldv Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
 Version: 0.75
-Release: owl24
+Release: owl25
 %define rh_version %version-10
 License: GPL or BSD
 Group: System Environment/Base
@@ -53,9 +53,6 @@ Group: Documentation
 This package contains the main Linux-PAM documentation in text, HTML, and
 PostScript formats.
 
-# Use optflags_lib for this package if defined.
-%{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
-
 %prep
 %setup -q
 rm -r modules/pam_{console,cracklib,unix}
@@ -81,6 +78,11 @@ for f in modules/pam_*/README; do
 	install -p -m 644 "$f" "modules/READMEs/README.${d##*/}"
 done
 autoconf
+
+# Use optflags_lib for this package if defined.
+%{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
+# Build this package without optimizations based on strict aliasing rules.
+%{expand:%%define optflags %optflags -fno-strict-aliasing}
 
 %build
 CFLAGS="$RPM_OPT_FLAGS -fPIC" \
@@ -212,6 +214,9 @@ chgrp chkpwd %_libexecdir/chkpwd && chmod 710 %_libexecdir/chkpwd
 %doc doc/specs/rfc86.0.txt
 
 %changelog
+* Tue Jun 28 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.75-owl25
+- Build this package without optimizations based on strict aliasing rules.
+
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.75-owl24
 - Removed permissions and group owner verify check for %_libexecdir/chkpwd
 due to %%triggerin.

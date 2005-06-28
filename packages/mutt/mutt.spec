@@ -1,9 +1,9 @@
-# $Id: Owl/packages/mutt/mutt.spec,v 1.15 2005/06/25 22:34:41 ldv Exp $
+# $Id: Owl/packages/mutt/mutt.spec,v 1.16 2005/06/28 18:58:45 ldv Exp $
 
 Summary: A feature-rich text-based mail user agent.
 Name: mutt
 Version: 1.4.2.1
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/Internet
 URL: http://www.mutt.org
@@ -30,6 +30,8 @@ and more.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+
+%{expand:%%define optflags %optflags -fno-strict-aliasing}
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" ./prepare --prefix=%_prefix \
@@ -79,6 +81,9 @@ rm %buildroot%_mandir/man5/mbox.5*
 %_mandir/man1/flea.*
 
 %changelog
+* Tue Jun 28 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.4.2.1-owl3
+- Build this package without optimizations based on strict aliasing rules.
+
 * Sat Jun 25 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.4.2.1-owl2
 - Rebuilt with libssl.so.5.
 

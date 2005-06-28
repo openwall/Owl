@@ -1,9 +1,9 @@
-# $Id: Owl/packages/procmail/procmail.spec,v 1.7 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/procmail/procmail.spec,v 1.8 2005/06/28 18:58:45 ldv Exp $
 
 Summary: The procmail mail processing program.
 Name: procmail
 Version: 3.15.2
-Release: owl2
+Release: owl3
 License: GPL or Artistic License
 Group: System Environment/Daemons
 Source: ftp://ftp.procmail.org/pub/procmail/procmail-%version.tar.gz
@@ -22,12 +22,14 @@ may be installed as the local delivery agent.
 %patch0 -p1
 %patch1 -p1
 
+%{expand:%%define optflags %optflags -fno-strict-aliasing -Wall -Wno-comment -Wno-parentheses}
+
 %build
 make \
 	LOCKINGTEST=100 \
 	SEARCHLIBS="-lm -lnsl -ldl" \
 	CC=gcc \
-	CFLAGS0="$RPM_OPT_FLAGS -Wall -Wno-comment -Wno-parentheses"
+	CFLAGS0="$RPM_OPT_FLAGS"
 
 %install
 rm -rf %buildroot
@@ -47,6 +49,9 @@ make install \
 %_mandir/man[15]/*
 
 %changelog
+* Tue Jun 28 2005 Dmitry V. Levin <ldv@owl.openwall.com> 3.15.2-owl3
+- Build this package without optimizations based on strict aliasing rules.
+
 * Fri Oct 04 2002 Solar Designer <solar@owl.openwall.com> 3.15.2-owl2
 - Corrected the mansed script "fix", thanks to Dmitry V. Levin of ALT Linux
 for pointing out that it was broken.

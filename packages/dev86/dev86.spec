@@ -1,9 +1,9 @@
-# $Id: Owl/packages/dev86/dev86.spec,v 1.17 2005/01/18 13:38:47 solar Exp $
+# $Id: Owl/packages/dev86/dev86.spec,v 1.18 2005/06/28 18:58:45 ldv Exp $
 
 Summary: A real mode 80x86 assembler and linker.
 Name: dev86
 Version: 0.16.0
-Release: owl6
+Release: owl7
 License: GPL
 Group: Development/Languages
 Source: http://www.cix.co.uk/~mayday/dev86/Dev86src-%version.tar.gz
@@ -36,7 +36,7 @@ bootstrapping code, from their sources.
 %patch6 -p1
 %patch7 -p1
 
-%{expand:%%define optflags %optflags -Wall}
+%{expand:%%define optflags %optflags -fno-strict-aliasing -Wall}
 
 %build
 CFLAGS="%optflags" \
@@ -115,6 +115,9 @@ mv bin86/ChangeLog ChangeLog.bin86
 %_mandir/man1/*
 
 %changelog
+* Tue Jun 28 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.16.0-owl7
+- Build this package without optimizations based on strict aliasing rules.
+
 * Sun Jan 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.16.0-owl6
 - Made use of %%__make and %%__cc macros.
 - Added build of dis86 (it seems like we forgot it).
