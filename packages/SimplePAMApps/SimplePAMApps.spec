@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.36 2005/01/14 03:27:35 galaxy Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.37 2005/06/28 18:53:10 ldv Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
 Version: 0.60
-Release: owl23
+Release: owl24
 License: BSD or GPL
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
@@ -19,6 +19,7 @@ Patch2: SimplePAMApps-0.60-owl-alt-su.diff
 Patch3: SimplePAMApps-0.60-owl-alt-login-su-ut_id.diff
 Patch4: SimplePAMApps-0.60-alt-owl-login-su-env.diff
 Patch5: SimplePAMApps-0.60-alt-login-su-strip-argv0.diff
+Patch6: SimplePAMApps-0.60-alt-owl-warnings.diff
 PreReq: owl-control >= 0.4, owl-control < 2.0
 Requires: tcb, pam_passwdqc >= 0.2, pam_mktemp
 Obsoletes: passwd
@@ -36,10 +37,13 @@ includes "login", "su", and "passwd".
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
+
+%{expand:%%define optflags %optflags -Wall}
 
 %build
 touch conf/.ignore_age
-CFLAGS="$RPM_OPT_FLAGS -Wall" ./configure --without-pniam --without-pwdb
+CFLAGS="$RPM_OPT_FLAGS" ./configure --without-pniam --without-pwdb
 %__make
 
 %install
@@ -96,6 +100,9 @@ fi
 /etc/control.d/facilities/*
 
 %changelog
+* Tue Jun 28 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.60-owl24
+- Fixed compilation warnings.
+
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.60-owl23
 - Removed verification of permissions and group owner from su and passwd,
 since we are controlling them through control.

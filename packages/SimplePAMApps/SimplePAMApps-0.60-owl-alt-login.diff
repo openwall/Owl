@@ -152,7 +152,7 @@ diff -urp SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamap
 +#ifdef __GNUC__
 +__attribute__ ((format (printf, 1, 2)))
 +#endif
-+static void log(const char *format, ...)
++static void logit(const char *format, ...)
 +{
 +    va_list args;
 +
@@ -258,7 +258,7 @@ diff -urp SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamap
 -	    }
 +    do {
 +	if (chdir(DEFAULT_HOME)) {
-+	    log("chdir: " DEFAULT_HOME ": %m");
++	    logit("chdir: " DEFAULT_HOME ": %m");
 +	    break;
  	}
 +	pw_dir = strdup(pam_getenv(pamh, "HOME"));
@@ -274,7 +274,7 @@ diff -urp SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamap
  	    delay = STANDARD_DELAY;
  	    pam_retval = PAM_BUF_ERR;
 -	    (void) fprintf (stderr, "unable to build shell arguments");
-+	    log("unable to build shell arguments");
++	    logit("unable to build shell arguments");
  	    break;
  	}
  
@@ -289,7 +289,7 @@ diff -urp SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamap
  	{
  	    delay = STANDARD_DELAY;
 -	    (void) fprintf (stderr, "environment corrupt; sorry..");
-+	    log("environment corrupt");
++	    logit("environment corrupt");
  	    break;
  	}
  
@@ -301,7 +301,7 @@ diff -urp SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamap
 +	    delay = STANDARD_DELAY;
  	    pam_retval = retval;
 -	    (void) fprintf (stderr, "login failed to release authenticator");
-+	    log("login failed to release authenticator");
++	    logit("login failed to release authenticator");
  	    break;
  	}
  
@@ -311,7 +311,7 @@ diff -urp SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamap
  	    delay = STANDARD_DELAY;
 -	    (void) fprintf (stderr, "Failed to find `%s' group\n", 
 -							TERMINAL_GROUP);
-+	    log("failed to find `%s' group", TERMINAL_GROUP);
++	    logit("failed to find `%s' group", TERMINAL_GROUP);
  	    break;
  	}
  
@@ -320,7 +320,7 @@ diff -urp SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamap
  	{
  	    delay = STANDARD_DELAY;
 -	    (void) fprintf (stderr, "Failed to change access permission	to terminal %s\n", terminal_name);
-+	    log("failed to change access permission to terminal %s",
++	    logit("failed to change access permission to terminal %s",
 +		terminal_name);
  	    break;
  	}
@@ -338,12 +338,12 @@ diff -urp SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamap
  	if (setuid(uid) != 0) {
 -	    (void) fprintf(stderr, "su: cannot assume uid\n");
 -	    exit(1);
-+	    log("cannot assume uid");
++	    logit("cannot assume uid");
 +	    break;
 +	}
 +
 +	if (!pw_dir || *pw_dir == '\0' || chdir(pw_dir)) {
-+	    log("cannot enter home directory");
++	    logit("cannot enter home directory");
 +	    chdir(DEFAULT_HOME);
  	}
  
@@ -377,7 +377,7 @@ diff -urp SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamap
  	    delay = 10;
  	    pam_retval = PAM_SUCCESS;
 -	    (void) fprintf (stderr, "unable to attach to terminal\n");
-+	    log("unable to attach to terminal");
++	    logit("unable to attach to terminal");
  	    err_descr = "terminal error";
  	    break;
  	}
@@ -394,7 +394,7 @@ diff -urp SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamap
              pam_retval = PAM_ABORT;
 -            (void) fprintf (stderr, "Problem initializing;\n\t%s\n", 
 -							pwdb_strerror(retval));
-+            log("pwdb_start: %s", pwdb_strerror(retval));
++            logit("pwdb_start: %s", pwdb_strerror(retval));
  	    err_descr = "start error";
              break;
  	}
@@ -404,7 +404,7 @@ diff -urp SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamap
  	    pam_retval = retval;
 -	    (void) fprintf (stderr, "Error initializing;\n\t%s\n", 
 -						pam_strerror(pamh,retval));
-+	    log("pam_start: %s", pam_strerror(pamh,retval));
++	    logit("pam_start: %s", pam_strerror(pamh,retval));
  	    err_descr = "start error";
  	    break;
  	}
@@ -415,7 +415,7 @@ diff -urp SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamap
 -	    (void) fprintf (stderr, "Internal failure;\n\t%s\n", 
 -						pam_strerror(pamh,retval));
  	    err_descr = "environment setting error";
-+	    log("%s: %s", err_descr, pam_strerror(pamh,retval));
++	    logit("%s: %s", err_descr, pam_strerror(pamh,retval));
  	    break;
  	}
  	state = LOGIN_STATE_ENV_INITIALIZED;
@@ -443,7 +443,7 @@ diff -urp SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamap
 -	    (void) fprintf (stderr, "Login failure;\n\t%s\n", 
 -						pam_strerror(pamh,retval));
  	    err_descr = "authentication failure";
-+	    log("%s: %s", err_descr, pam_strerror(pamh,retval));
++	    logit("%s: %s", err_descr, pam_strerror(pamh,retval));
  	    break;
  	}
  	state = LOGIN_STATE_AUTHEN_SUCCESS;
@@ -454,7 +454,7 @@ diff -urp SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamap
 -	    (void) fprintf (stderr, "Error opening session;\n\t%s\n", 
 -						pam_strerror(pamh,retval));
  	    err_descr = "unable to open session";
-+	    log("%s: %s", err_descr, pam_strerror(pamh,retval));
++	    logit("%s: %s", err_descr, pam_strerror(pamh,retval));
  	    break;
  	}
  	state = LOGIN_STATE_SESSION_OPENED;
@@ -467,7 +467,7 @@ diff -urp SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamap
 +	}
 +
 +	if (child == -1) {
-+		log("fork: %m");
++		logit("fork: %m");
 +		fprintf(stderr, "Failed to create a shell process\n");
 +		break;
  	}
@@ -478,14 +478,14 @@ diff -urp SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamap
  	    delay = 60;
  	    pam_retval = PAM_ABORT;
 -	    printf ("login: %s: %s\n", place, err_descr);
-+	    log("%s: %s", place, err_descr);
++	    logit("%s: %s", place, err_descr);
  	    err_descr = "error opening utmp session";
  	    break;
  	}
  	else if (retval > 0) 
  	{
 -	    (void) fprintf (stderr, "login: %s: %s\n", place, err_descr);
-+	    log("%s: %s", place, err_descr);
++	    logit("%s: %s", place, err_descr);
  	    err_descr = NULL;
  	}
  	state = LOGIN_STATE_UTMP_OPENED;
@@ -494,14 +494,14 @@ diff -urp SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamap
  		delay = 60;
  		pam_retval = PAM_ABORT;
 -		(void) fprintf (stderr, "login: %s: %s\n", place, err_descr);
-+		log("%s: %s", place, err_descr);
++		logit("%s: %s", place, err_descr);
  		err_descr = "error closing utmp session";
  		break;
  	    }
  	    else if (retval > 0)
  	    { 
 -		(void) fprintf(stderr, "login: %s: %s\n", place, err_descr);
-+		log("%s: %s", place, err_descr);
++		logit("%s: %s", place, err_descr);
  		err_descr = NULL;
  	    }
  	}
@@ -510,7 +510,7 @@ diff -urp SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamap
  	    retval = pam_setcred(pamh, PAM_DELETE_CRED);
  	    if (retval != PAM_SUCCESS) 
 -		(void) fprintf(stderr, "WARNING: could not delete credentials\n\t%s\n", pam_strerror(pamh,retval));
-+		log("could not delete credentials: %s",
++		logit("could not delete credentials: %s",
 +		    pam_strerror(pamh,retval));
  	}
  
@@ -526,7 +526,7 @@ diff -urp SimplePAMApps-0.60.orig/pamapps/login/login.c SimplePAMApps-0.60/pamap
 -    else
 -	(void) fprintf (stderr, "%s\n", GOODBYE_MESSAGE); 
 +    if (err_descr != NULL) {
-+	log("%s: %s", place, err_descr);
++	logit("%s: %s", place, err_descr);
 +	return retcode;
 +    }
 +#ifdef GOODBYE_MESSAGE
