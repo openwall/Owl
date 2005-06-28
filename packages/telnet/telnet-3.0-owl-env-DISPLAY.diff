@@ -10,7 +10,7 @@ diff -urp telnet-3.0.orig/usr.bin/telnet/telnet.c telnet-3.0-owl-env/usr.bin/tel
  #include "telnet_locl.h"
  #include <curses.h>
  #include <term.h>
-@@ -857,10 +859,15 @@ suboption()
+@@ -857,10 +859,17 @@ suboption()
  	if (SB_EOF())
  	    return;
  	if (SB_GET() == TELQUAL_SEND) {
@@ -21,15 +21,17 @@ diff -urp telnet-3.0.orig/usr.bin/telnet/telnet.c telnet-3.0-owl-env/usr.bin/tel
  
 -	    if ((dp = env_getvalue((unsigned char *)"DISPLAY")) == NULL) {
 +	    if ((dp = env_getvalue((unsigned char *)"DISPLAY"))) {
-+		len = asprintf((char **)&temp,
-+		    "%c%c%c%c%s%c%c", IAC, SB, TELOPT_XDISPLOC,
-+		    TELQUAL_IS, dp, IAC, SE);
++		char *t;
++		len = asprintf(&t, "%c%c%c%c%s%c%c",
++			       IAC, SB, TELOPT_XDISPLOC,
++			       TELQUAL_IS, dp, IAC, SE);
++		temp = (unsigned char *)t;
 +	    }
 +	    if (len < 0) {
  		/*
  		 * Something happened, we no longer have a DISPLAY
  		 * variable.  So, turn off the option.
-@@ -868,16 +875,13 @@ suboption()
+@@ -868,16 +877,13 @@ suboption()
  		send_wont(TELOPT_XDISPLOC, 1);
  		break;
  	    }

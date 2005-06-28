@@ -1,9 +1,9 @@
-# $Id: Owl/packages/telnet/telnet.spec,v 1.7 2005/03/28 12:57:20 solar Exp $
+# $Id: Owl/packages/telnet/telnet.spec,v 1.8 2005/06/28 18:51:55 ldv Exp $
 
 Summary: The client program for the telnet remote login protocol.
 Name: telnet
 Version: 3.0
-Release: owl2
+Release: owl3
 License: BSD
 Group: Applications/Internet
 Source0: telnet-%version-20011117.tar.bz2
@@ -43,6 +43,8 @@ will support remote logins into the host machine.
 %patch12 -p1
 %patch20 -p1
 
+%{expand:%%define optflags %optflags -Wall}
+
 %build
 CFLAGS="-c $RPM_OPT_FLAGS" make
 
@@ -78,6 +80,9 @@ grep -q ^telnetd: /etc/passwd ||
 %_mandir/man8/telnetd.8*
 
 %changelog
+* Tue Jun 28 2005 Dmitry V. Levin <ldv@owl.openwall.com> 3.0-owl3
+- Build with -Wall; fixed compilation warnings.
+
 * Thu Mar 17 2005 Solar Designer <solar@owl.openwall.com> 3.0-owl2
 - Introduced the appropriate bounds checking into slc_add_reply() and
 env_opt_add() (both are in the telnet client only).
