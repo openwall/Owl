@@ -1,33 +1,62 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.22 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.23 2005/06/30 18:18:30 ldv Exp $
 
 Summary: Postfix mail system.
 Name: postfix
-%define original_date 19991231
-%define original_pl pl13
-%define original_version %original_date-%original_pl
-%define package_version %{original_date}_%original_pl
-Version: %package_version
-Release: owl9
+Version: 2.2.4
+Release: owl1
+Epoch: 1
 License: IBM Public License
 Group: System Environment/Daemons
-Source0: ftp://ftp.sunet.se/pub/unix/mail/postfix/official/%name-%original_version.tar.gz
+URL: http://www.postfix.org/
+Source0: ftp://ftp.porcupine.org/mirrors/postfix-release/official/%name-%version.tar.gz
 Source1: aliases
 Source2: postfix.init
 Source3: postfix.control
-Patch0: postfix-19991231-pl10-owl-classless.diff
-Patch1: postfix-19991231-pl10-owl-sparse-hack.diff
-Patch2: postfix-19991231-pl13-snapshot-20011217-safe-opens.diff
-Patch3: postfix-19991231-pl13-owl-locking.diff
-Patch4: postfix-19991231-pl13-owl-postalias-no-hostname.diff
-Patch10: postfix-19991231-pl13-owl-postfix-script.diff
-Patch20: postfix-19991231-pl10-owl-config.diff
+Source4: postfix-master-chrootify.awk
+Source5: postfix-master-comment.awk
+Source6: postfix-lorder.sh
+Source7: postfix-oclosure.sh
+Patch0: postfix-2.2.4-owl-sparse-hack.diff
+Patch1: postfix-2.2.4-mjt-var_command_maxtime.diff
+Patch2: postfix-2.2.4-alt-check-warn.diff
+Patch3: postfix-2.2.4-alt-install.diff
+Patch4: postfix-2.2.4-alt-owl-defaults.diff
+Patch5: postfix-2.2.4-alt-owl-filelist.diff
+Patch6: postfix-2.2.4-alt-post-install.diff
+Patch7: postfix-2.2.4-alt-owl-config.diff
+Patch8: postfix-2.2.4-alt-owl-shared.diff
+Patch9: postfix-2.2.4-owl-postfix-script.diff
+Patch10: postfix-2.2.4-deb-man.diff
 PreReq: /sbin/chkconfig, grep, shadow-utils
 Requires: owl-control >= 0.4, owl-control < 2.0
-BuildRequires: sed >= 4.0.9
+BuildRequires: sed >= 4.1.1
 Conflicts: sendmail, qmail
 Provides: MTA, smtpd, smtpdaemon
 Obsoletes: sendmail-cf, sendmail-doc
 BuildRoot: /override/%name-%version
+
+# Configuration definitions below are here for both customization
+# and to simplify building list of files for a package.
+
+%define queue_directory /var/spool/postfix
+%define config_directory /etc/postfix
+
+%define daemon_directory %_libexecdir/postfix
+%define program_directory %daemon_directory
+%define command_directory %_sbindir
+
+%define newaliases_path %_bindir/newaliases
+%define mailq_path %_bindir/mailq
+%define sendmail_path %_sbindir/sendmail
+
+%define docdir %_docdir/%name-%version
+%define manpage_directory %_mandir
+%define html_directory %docdir/html
+%define readme_directory %config_directory/README_FILES
+
+%define restart_flag /var/run/%name.restart
+%define libpostfix lib%name-%version.so
+%define libpostfix_dict lib%{name}_dict-%version.so
 
 %description
 Postfix is Wietse Venema's attempt to provide an alternative to the
@@ -36,116 +65,180 @@ administer, and hopefully secure, while at the same time being sendmail
 compatible enough to not upset your users.
 
 %prep
-%setup -q -n %name-%original_version
+%setup -q
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
 %patch10 -p1
-%patch20 -p1
 
-sed -i  -e 's,^install_root=/,install_root=%buildroot,' \
-	-e 's,^setgid=no,setgid=postdrop,' \
-	-e 's,^manpages=/usr/local/man,manpages=%_mandir,' INSTALL.sh
+install -p -m644 %_sourcedir/aliases conf/
+
+# Add objs and objs-print makefile targets.
+sed -i 's/^update /&objs /' Makefile.in
+sed -i 's/^# do not edit below this line/objs: $(OBJS)\n\nobjs-print: objs\n\tls -1 $(OBJS)\n\n&/' \
+	src/*/Makefile.in
+
+# Correct master.cf
+awk -f %_sourcedir/postfix-master-chrootify.awk <conf/master.cf >conf/master.cf.new
+mv conf/master.cf.new conf/master.cf
+awk -f %_sourcedir/postfix-master-comment.awk <conf/master.cf >conf/master.cf.new
+mv conf/master.cf.new conf/master.cf
+sed -i 's,^\(smtp[[:space:]]\+inet[[:space:]]\+.*[[:space:]]\+smtpd[[:space:]]*\)$,#\1,' \
+	conf/master.cf
+
+# Remove license, makedefs.out, html documentation, man pages,
+# readme files and sample files from the master list.
+sed -i '/\(LICENSE\|makedefs\.out\|\(html\|manpage\|readme\|sample\)_directory\)/ d' \
+	conf/postfix-files
+rm conf/LICENSE
 
 %build
-make OPT="$RPM_OPT_FLAGS"
+export MAKEFLAGS="$MAKEFLAGS DEF_MAIL_VERSION=%version"
+OPT="$RPM_OPT_FLAGS -Wall -Wno-comment"
+CCARGS="\
+ -DDEF_COMMAND_DIR=\\\"%command_directory\\\" \
+ -DDEF_CONFIG_DIR=\\\"%config_directory\\\" \
+ -DDEF_DAEMON_DIR=\\\"%daemon_directory\\\" \
+ -DDEF_HTML_DIR=\\\"%html_directory\\\" \
+ -DDEF_MAILQ_PATH=\\\"%mailq_path\\\" \
+ -DDEF_MANPAGE_DIR=\\\"%manpage_directory\\\" \
+ -DDEF_NEWALIAS_PATH=\\\"%newaliases_path\\\" \
+ -DDEF_PROGRAM_DIR=\\\"%program_directory\\\" \
+ -DDEF_QUEUE_DIR=\\\"%queue_directory\\\" \
+ -DDEF_README_DIR=\\\"%readme_directory\\\" \
+ -DDEF_SAMPLE_DIR=\\\"%readme_directory\\\" \
+ -DDEF_SENDMAIL_PATH=\\\"%sendmail_path\\\" \
+"
+DICT_LIBS="-ldl -ldb"
+DICT_ARGS="$CCARGS"
+SYSLIBS="-lnsl -lresolv"
+
+pushd src
+
+# 0. Prepare.
+%__make	-C .. \
+	tidy makefiles \
+	SYSLIBS="$SYSLIBS" \
+	AUXLIBS= \
+	CCARGS="$DICT_ARGS -UUSE_TLS" \
+	OPT="$OPT" \
+	DEBUG= \
+	NO_IPV6=1
+
+# 1. build all static libs objects with -fPIC.
+%__make -C .. \
+	update DEBUG='-fPIC' PROG= \
+	DIRS="src/util src/global src/dns src/master src/tls"
+
+# 2. separate libs objects into dict-dependent and others.
+for a in */*.a; do
+	ar t "$a" |
+		sed -ne "s,.*,${a%/*}/&,p"
+done | sort -u >postfix_all_obj.list
+sh %_sourcedir/postfix-lorder.sh `cat postfix_all_obj.list` |
+	sort -u |
+	sort -k2,2 >postfix_lorder.list
+printf '%s\n%s\n' util/dict_{c,}db.o |
+	sh %_sourcedir/postfix-oclosure.sh postfix_lorder.list >postfix_dict_obj.list
+join -v1 postfix_all_obj.list postfix_dict_obj.list >postfix_common_obj.list
+
+# 3. build %libpostfix shared library.
+gcc -shared -o ../lib/%libpostfix \
+	-Wl,-O1 -Wl,-soname,%libpostfix \
+	$SYSLIBS \
+	`cat postfix_common_obj.list`
+ln -s %libpostfix ../lib/libpostfix.so
+
+# 4. build %libpostfix_dict shared library.
+gcc -shared -o ../lib/%libpostfix_dict \
+	-Wl,-O1 -Wl,-soname,%libpostfix_dict \
+	`cat postfix_dict_obj.list` \
+	$DICT_LIBS ../lib/libpostfix.so
+ln -s %libpostfix_dict ../lib/libpostfix_dict.so
+
+# 5. build applications objects.
+%__make -C .. objs
+
+# 6. build dict-dependent applications with %libpostfix and %libpostfix_dict.
+dict_build_dirs=
+for d in *; do
+	[ -f "$d/Makefile" ] || continue
+	sh %_sourcedir/postfix-lorder.sh `cat postfix_dict_obj.list` \
+	             `MAKEFLAGS= %__make -C "$d" -s objs-print |sed -e "s,^,$d/,"` |
+		sort -u |
+		sort -k2,2 |
+		join -1 1 -2 2 -o 2.1 postfix_dict_obj.list - |
+		sort -u |join -v1 - postfix_dict_obj.list |
+		fgrep -qs "$d"/ || continue
+	dict_build_dirs="$dict_build_dirs src/$d"
+done
+%__make -C .. \
+	LIBS='../../lib/libpostfix.so ../../lib/libpostfix_dict.so' \
+	DIRS="$dict_build_dirs" \
+	SYSLIBS= \
+	AUXLIBS= \
+	#
+
+# 7. build other applications with %libpostfix only.
+%__make -C .. \
+	LIBS=../../lib/libpostfix.so \
+	SYSLIBS= \
+	AUXLIBS= \
+	#
+
+popd # src
+
+%__make manpages
+
+bzip2 -9fk HISTORY
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot
+mkdir -p %buildroot{%_libdir,%_mandir}
 
-yes '' | {
-	function chowngrp()
-	{
-		local list mode
+install -p -m755 lib/%libpostfix lib/%libpostfix_dict %buildroot%_libdir/
 
-		list=$1
-		shift
-		mode=$1
-		while shift; do
-			echo "$1 $mode" |
-			sed -n "s,^%buildroot,,p" >> $list
-		done
-	}
+echo '%defattr (-,root,root)' >postfix.files
+# Postfix's postfix-install script accept various parameters both in
+# command line and as environment variables.  Better to reset environment
+# here, so no locally-set variable will give any surprise.
+env -i "LD_LIBRARY_PATH=%buildroot%_libdir" \
+	sh postfix-install -non-interactive \
+		install_root=%buildroot \
+		tempdir=%_tmppath
 
-	function chown()
-	{
-		chowngrp filelist.user $*
-	}
+install -pD -m700 %_sourcedir/postfix.init \
+	%buildroot/etc/rc.d/init.d/postfix
+install -pD -m700 %_sourcedir/postfix.control \
+	%buildroot/etc/control.d/facilities/postfix
 
-	function chgrp()
-	{
-		chowngrp filelist.group $*
-	}
+cp -a man/man{1,5,8} %buildroot%manpage_directory/
 
-	rm -f filelist.* flag.*
-	. INSTALL.sh
-	touch flag.$?
-}
+install -p -m755 auxiliary/qshape/qshape.pl %buildroot%_bindir/qshape
+install -p -m755 auxiliary/rmail/rmail %buildroot%_bindir/
 
-test -f flag.0
+ln -s ../sbin/sendmail %buildroot%_libdir/sendmail
 
-pushd %buildroot
+rmdir %buildroot%config_directory/README_FILES
+ln -s ../..%docdir/{LICENSE,README_FILES} %buildroot%config_directory/
 
-rm etc/postfix/{install.cf,postfix-script-{diff,*sgid}}
-
-install -m 644 $RPM_SOURCE_DIR/aliases etc/postfix/
-ln -s postfix/aliases{,.db} etc/
-
-mkdir -p etc/rc.d/init.d
-install -m 700 $RPM_SOURCE_DIR/postfix.init etc/rc.d/init.d/postfix
-
-mkdir -p etc/control.d/facilities
-install -m 700 $RPM_SOURCE_DIR/postfix.control etc/control.d/facilities/postfix
-
-mkdir -p usr/lib
-ln -s ../sbin/sendmail usr/lib/sendmail
+ln -s postfix/aliases %buildroot/etc/
+ln -s postfix/aliases.db %buildroot/etc/
 
 # Shorten the symlinks
-rm usr/bin/{mailq,newaliases}
-ln -s ../sbin/sendmail usr/bin/mailq
-ln -s ../sbin/sendmail usr/bin/newaliases
+rm %buildroot%_bindir/{mailq,newaliases}
+ln -s ../sbin/sendmail %buildroot%_bindir/mailq
+ln -s ../sbin/sendmail %buildroot%_bindir/newaliases
 
-chmod go-r usr/sbin/postdrop
-
-popd
-
-cat > filelist << EOF
-%defattr (-,root,root)
-%doc 0README BEWARE COMPATIBILITY DEBUG_README HISTORY LICENSE RELEASE_NOTES
-%doc RESTRICTION_CLASS TODO UUCP_README
-%doc examples html
-EOF
-
-cat filelist.{user,group} | sed 's/ .*$//' | sort -u > filelist.plain
-
-while read filename; do
-	test -e ${RPM_BUILD_ROOT}${filename}
-	user="`sed -n "s,^$filename \(.*\)\$,\1,p" < filelist.user`"
-	test -n "$user" || user=root
-	group="`sed -n "s,^$filename \(.*\)\$,\1,p" < filelist.group`"
-	test -n "$group" || group=root
-	if [ -d ${RPM_BUILD_ROOT}${filename} ]; then
-		echo "%dir %attr(-,$user,$group) $filename"
-	else
-		echo "%attr(-,$user,$group) $filename"
-	fi
-done < filelist.plain >> filelist
-
-find %buildroot -type d |
-	sed "s,^%buildroot,," |
-	sort |
-	comm -23 - filelist.plain |
-	grep '/postfix$' |
-	sed 's,^,%dir ,' >> filelist
-
-find %buildroot ! -type d |
-	sed "s,^%buildroot,," |
-	sort |
-	comm -23 - filelist.plain |
-	sed -e 's,^/etc,%config &,' -e 's,%_mandir/\(.*\)$,%_mandir/\1*,' >> filelist
+# Chrooted environment
+touch %buildroot%queue_directory/etc/{hosts,localtime,services,{host,nsswitch,resolv}.conf}
 
 %pre
 grep -q ^postdrop: /etc/group || groupadd -g 161 postdrop
@@ -157,21 +250,23 @@ grep -q ^postfix: /etc/passwd ||
 grep -q ^postman: /etc/group || groupadd -g 183 postman
 grep -q ^postman: /etc/passwd ||
 	useradd -g postman -u 183 -d / -s /bin/false -M postman
-rm -f /var/run/postfix.restart
+rm -f %restart_flag
 if [ $1 -ge 2 ]; then
-	/usr/sbin/postfix stop && touch /var/run/postfix.restart || :
+	%command_directory/postfix stop && touch %restart_flag || :
 	/usr/sbin/control-dump postfix
 fi
 
 %post
-/usr/sbin/postalias /etc/postfix/aliases
-/usr/sbin/postfix check
+/sbin/ldconfig
+%config_directory/post-install upgrade-package
+%command_directory/postalias %config_directory/aliases
+%command_directory/postfix check
 if [ $1 -ge 2 ]; then
 	/usr/sbin/control-restore postfix
 fi
 /sbin/chkconfig --add postfix
-test -f /var/run/postfix.restart && /usr/sbin/postfix start || :
-rm -f /var/run/postfix.restart
+[ -f %restart_flag ] && %command_directory/postfix start || :
+rm -f %restart_flag
 if [ "`/usr/sbin/control postfix`" = local ]; then
 	echo -n "SMTP server not enabled by default, use "
 	echo "\"control postfix server\" to enable"
@@ -179,19 +274,47 @@ fi
 
 %preun
 if [ $1 -eq 0 ]; then
-	/usr/sbin/postfix stop || :
+	%command_directory/postfix stop || :
 	/sbin/chkconfig --del postfix
 	sleep 1
-	/usr/sbin/postfix drain &> /dev/null || :
-	rm -f /etc/postfix/aliases.db
-	find /var/spool/postfix \( -type p -o -type s \) -delete
-	rm -f /var/spool/postfix/{pid,etc,lib}/*
-	rmdir /var/spool/postfix/[^m]* || :
+	%command_directory/postfix drain &> /dev/null || :
+	rm -f %config_directory/aliases.db
+	find %queue_directory \( -type p -o -type s \) -delete
+	rm -f %queue_directory/{pid,etc,lib}/*
 fi
 
-%files -f filelist
+%postun -p /sbin/ldconfig
+
+%files -f postfix.files
+%defattr (-,root,root)
+%doc *README* COMPATIBILITY HISTORY.bz2 LICENSE PORTING RELEASE_NOTES
+%doc examples html
+%doc %config_directory/LICENSE
+%doc %config_directory/README_FILES
+%config /etc/rc.d/init.d/postfix
+/etc/control.d/facilities/*
+/etc/aliases
+/etc/aliases.db
+%_libdir/%libpostfix
+%_libdir/%libpostfix_dict
+%_libdir/sendmail
+%_bindir/mailq
+%_bindir/newaliases
+%_bindir/qshape
+%_bindir/rmail
+%_mandir/man?/*
+%attr(644,root,root) %verify(not md5 mtime size) %ghost %queue_directory/etc/*
 
 %changelog
+* Thu Jun 30 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1:2.2.4-owl1
+- Updated to 2.2.4.
+- Reviewed Owl patches, removed obsolete ones.
+- Imported shared build model and adopted a bunch of patches from ALT's
+postfix-2.2.4-alt2 package, including following defaults changes:
+alias_database = hash:/etc/postfix/aliases,
+alias_maps = hash:/etc/postfix/aliases,
+mynetworks_style = host.
+
 * Sun Nov 07 2004 Michail Litvak <mci@owl.openwall.com> 19991231_pl13-owl9
 - Corrected the placement of man pages for FHS 2.2 compatibility.
 

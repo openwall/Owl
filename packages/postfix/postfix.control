@@ -1,16 +1,16 @@
 #!/bin/sh
-# $Id: Owl/packages/postfix/postfix.control,v 1.1 2000/11/22 17:07:13 solar Exp $
+# $Id: Owl/packages/postfix/postfix.control,v 1.2 2005/06/30 18:18:30 ldv Exp $
 
 . /etc/control.d/functions
 
 CONFIG=/etc/postfix/master.cf
 
 new_subst server \
-	'^smtp[[:space:]]+inet' \
-	's,^#\(smtp[[:space:]]\+inet\),\1,'
+	'^smtp[[:space:]]+inet[[:space:]]+' \
+	's,^#\(smtp[[:space:]]\+inet[[:space:]]\+\),\1,'
 new_subst local \
-	'^#smtp[[:space:]]+inet' \
-	's,^\(smtp[[:space:]]\+inet\),#\1,'
+	'^#smtp[[:space:]]+inet[[:space:]]+' \
+	's,^\(smtp[[:space:]]\+inet[[:space:]]\+\),#\1,'
 
 control_subst "$CONFIG" "$*" || exit 1
 

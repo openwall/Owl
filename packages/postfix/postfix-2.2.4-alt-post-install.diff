@@ -1,0 +1,101 @@
+diff -upk.orig postfix-2.2.4.orig/conf/post-install postfix-2.2.4/conf/post-install
+--- postfix-2.2.4.orig/conf/post-install	2005-04-15 11:52:19 +0000
++++ postfix-2.2.4/conf/post-install	2005-06-29 17:23:26 +0000
+@@ -459,7 +459,7 @@ test -n "$create" && {
+ 	# Create missing directories with proper owner/group/mode settings.
+ 	if [ -n "$create" -a "$type" = "d" -a -n "$create_flag" -a ! -d "$path" ]
+ 	then
+-	    mkdir $path || exit 1
++	    mkdir -m700 -- $path || exit 1
+ 	    set_permission=1
+ 	# Update all owner/group/mode settings.
+ 	elif [ -n "$set_perms" ]
+@@ -471,13 +471,13 @@ test -n "$create" && {
+ 	    set_permission=1
+ 	fi
+ 	test -n "$set_permission" && {
+-	    chown $recursive $owner $path || exit 1
++	    chown $recursive $owner -- $path || exit 1
+ 	    test -z "$group" || chgrp $recursive $group $path || exit 1
+ 	    if [ "$type" = "d" -a -n "$recursive" ]
+ 	    then
+-		find $path -type d -exec chmod $mode "{}" ";"
++		find $path -type d -exec chmod $mode -- "{}" ";"
+ 	    else
+-		chmod $mode $path
++		chmod $mode -- $path
+ 	    fi || exit 1
+ 	}
+     done
+@@ -493,7 +493,7 @@ test -n "$upgrade_conf" && {
+     grep '^relay' $config_directory/master.cf >/dev/null || {
+ 	echo Editing $config_directory/master.cf, adding missing entry for relay service
+ 	cat >>$config_directory/master.cf <<EOF || exit 1
+-relay	  unix	-	-	n	-	-	smtp
++relay	  unix	-	-	-	-	-	smtp
+ EOF
+     }
+ 
+@@ -502,7 +502,7 @@ EOF
+     grep '^flush.*flush' $config_directory/master.cf >/dev/null || {
+ 	echo Editing $config_directory/master.cf, adding missing entry for flush service
+ 	cat >>$config_directory/master.cf <<EOF || exit 1
+-flush     unix  -       -       n       1000?   0       flush
++flush     unix  -       -       -       1000?   0       flush
+ EOF
+     }
+ 
+@@ -511,7 +511,7 @@ EOF
+     grep 'trace.*bounce' $config_directory/master.cf >/dev/null || {
+ 	echo Editing $config_directory/master.cf, adding missing entry for trace service
+ 	cat >>$config_directory/master.cf <<EOF || exit 1
+-trace	  unix	-	-	n	-	0	bounce
++trace	  unix	-	-	-	-	0	bounce
+ EOF
+     }
+ 
+@@ -520,7 +520,7 @@ EOF
+     grep '^verify.*verify' $config_directory/master.cf >/dev/null || {
+ 	echo Editing $config_directory/master.cf, adding missing entry for verify service
+ 	cat >>$config_directory/master.cf <<EOF || exit 1
+-verify	  unix	-	-	n	-	1	verify
++verify	  unix	-	-	-	-	1	verify
+ EOF
+     }
+ 
+@@ -612,7 +612,7 @@ EOF
+     grep '^anvil.*anvil' $config_directory/master.cf >/dev/null || {
+ 	echo Editing $config_directory/master.cf, adding missing entry for anvil service
+ 	cat >>$config_directory/master.cf <<EOF || exit 1
+-anvil	  unix	-	-	n	-	1	anvil
++anvil	  unix	-	-	-	-	1	anvil
+ EOF
+     }
+ 
+@@ -621,7 +621,7 @@ EOF
+     grep '^scache.*scache' $config_directory/master.cf >/dev/null || {
+ 	echo Editing $config_directory/master.cf, adding missing entry for scache service
+ 	cat >>$config_directory/master.cf <<EOF || exit 1
+-scache	  unix	-	-	n	-	1	scache
++scache	  unix	-	-	-	-	1	scache
+ EOF
+     }
+ 
+@@ -630,7 +630,7 @@ EOF
+     grep '^discard.*discard' $config_directory/master.cf >/dev/null || {
+ 	echo Editing $config_directory/master.cf, adding missing entry for discard service
+ 	cat >>$config_directory/master.cf <<EOF || exit 1
+-discard	  unix	-	-	n	-	-	discard
++discard	  unix	-	-	-	-	-	discard
+ EOF
+     }
+ 
+@@ -653,7 +653,7 @@ EOF
+     grep '^tlsmgr.*tlsmgr' $config_directory/master.cf >/dev/null || {
+ 	echo Editing $config_directory/master.cf, adding missing entry for tlsmgr service
+ 	cat >>$config_directory/master.cf <<EOF || exit 1
+-tlsmgr    unix  -       -       n       1000?   1       tlsmgr
++tlsmgr    unix  -       -       -       1000?   1       tlsmgr
+ EOF
+     }
+ 

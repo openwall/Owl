@@ -1,0 +1,90 @@
+--- postfix-2.2.4/conf/postfix-files.orig	2005-03-14 13:13:16 +0000
++++ postfix-2.2.4/conf/postfix-files	2005-06-30 12:54:25 +0000
+@@ -43,7 +43,7 @@
+ #
+ $config_directory:d:root:-:755:u
+ $daemon_directory:d:root:-:755:u
+-$queue_directory:d:root:-:755:uc
++$queue_directory:d:root:-:711:uc
+ $sample_directory:d:root:-:755:o
+ $readme_directory:d:root:-:755
+ $html_directory:d:root:-:755
+@@ -52,13 +52,15 @@ $queue_directory/bounce:d:$mail_owner:-:
+ $queue_directory/corrupt:d:$mail_owner:-:700:ucr
+ $queue_directory/defer:d:$mail_owner:-:700:ucr
+ $queue_directory/deferred:d:$mail_owner:-:700:ucr
++$queue_directory/etc:d:root:-:711:uc
+ $queue_directory/flush:d:$mail_owner:-:700:ucr
+ $queue_directory/hold:d:$mail_owner:-:700:ucr
+ $queue_directory/incoming:d:$mail_owner:-:700:ucr
++$queue_directory/lib:d:root:-:711:uc
++$queue_directory/maildrop:d:$mail_owner:$setgid_group:1730:uc
+ $queue_directory/private:d:$mail_owner:-:700:uc
+-$queue_directory/maildrop:d:$mail_owner:$setgid_group:730:uc
+ $queue_directory/public:d:$mail_owner:$setgid_group:710:uc
+-$queue_directory/pid:d:root:-:755:uc
++$queue_directory/pid:d:root:-:700:uc
+ $queue_directory/saved:d:$mail_owner:-:700:ucr
+ $queue_directory/trace:d:$mail_owner:-:700:ucr
+ $daemon_directory/anvil:f:root:-:755
+@@ -70,7 +72,6 @@ $daemon_directory/flush:f:root:-:755
+ $daemon_directory/lmtp:f:root:-:755
+ $daemon_directory/local:f:root:-:755
+ $daemon_directory/master:f:root:-:755
+-$daemon_directory/oqmgr:f:root:-:755
+ $daemon_directory/pickup:f:root:-:755
+ $daemon_directory/pipe:f:root:-:755
+ $daemon_directory/proxymap:f:root:-:755
+@@ -85,7 +86,6 @@ $daemon_directory/tlsmgr:f:root:-:755
+ $daemon_directory/trivial-rewrite:f:root:-:755
+ $daemon_directory/verify:f:root:-:755
+ $daemon_directory/virtual:f:root:-:755
+-$daemon_directory/nqmgr:h:$daemon_directory/qmgr
+ $command_directory/postalias:f:root:-:755
+ $command_directory/postcat:f:root:-:755
+ $command_directory/postconf:f:root:-:755
+@@ -95,8 +95,8 @@ $command_directory/postlock:f:root:-:755
+ $command_directory/postlog:f:root:-:755
+ $command_directory/postmap:f:root:-:755
+ $command_directory/postsuper:f:root:-:755
+-$command_directory/postdrop:f:root:$setgid_group:2755:u
+-$command_directory/postqueue:f:root:$setgid_group:2755:u
++$command_directory/postdrop:f:root:$setgid_group:2711:u
++$command_directory/postqueue:f:root:$setgid_group:2711:u
+ $sendmail_path:f:root:-:755
+ $newaliases_path:l:$sendmail_path
+ $mailq_path:l:$sendmail_path
+@@ -113,18 +113,18 @@ $config_directory/install.cf:f:root:-:64
+ $config_directory/main.cf:f:root:-:644:p
+ $config_directory/main.cf.default:f:root:-:644
+ $config_directory/makedefs.out:f:root:-:644
+-$config_directory/master.cf:f:root:-:644:p
++$config_directory/master.cf:f:root:-:600:p
+ $config_directory/pcre_table:f:root:-:644:o
+-$config_directory/postfix-files:f:root:-:644
++$config_directory/postfix-files:f:root:-:600
+ $config_directory/regexp_table:f:root:-:644:o
+ $config_directory/relocated:f:root:-:644:p
+ $config_directory/tcp_table:f:root:-:644:o
+ $config_directory/transport:f:root:-:644:p
+ $config_directory/virtual:f:root:-:644:p
+-$config_directory/postfix-script:f:root:-:755
+-$config_directory/postfix-script-sgid:f:root:-:755:o
+-$config_directory/postfix-script-nosgid:f:root:-:755:o
+-$config_directory/post-install:f:root:-:755
++$config_directory/postfix-script:f:root:-:700
++$config_directory/postfix-script-sgid:f:root:-:700:o
++$config_directory/postfix-script-nosgid:f:root:-:700:o
++$config_directory/post-install:f:root:-:700
+ $manpage_directory/man1/mailq.1:f:root:-:644
+ $manpage_directory/man1/newaliases.1:f:root:-:644
+ $manpage_directory/man1/postalias.1:f:root:-:644
+@@ -169,8 +169,6 @@ $manpage_directory/man8/flush.8:f:root:-
+ $manpage_directory/man8/lmtp.8:f:root:-:644
+ $manpage_directory/man8/local.8:f:root:-:644
+ $manpage_directory/man8/master.8:f:root:-:644
+-$manpage_directory/man8/nqmgr.8:f:root:-:644:o
+-$manpage_directory/man8/oqmgr.8:f:root:-:644:
+ $manpage_directory/man8/pickup.8:f:root:-:644
+ $manpage_directory/man8/pipe.8:f:root:-:644
+ $manpage_directory/man8/proxymap.8:f:root:-:644

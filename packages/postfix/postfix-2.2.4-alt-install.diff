@@ -1,0 +1,66 @@
+diff -upk.orig postfix-2.2.4.orig/postfix-install postfix-2.2.4/postfix-install
+--- postfix-2.2.4.orig/postfix-install	2005-02-02 21:39:36 +0000
++++ postfix-2.2.4/postfix-install	2005-06-23 12:36:10 +0000
+@@ -602,7 +602,17 @@ do
+     # Skip over files that must be preserved.
+ 
+     case $flags in
+-    *p*) eval test -f $install_root$path && {
++    *p*) if [ -n "$install_root" ]; then
++	      inst_mode=$mode
++	      eval inst_owner=$owner
++	      [ "$inst_owner" != '-' ] || inst_owner=root
++	      eval inst_group=$group
++	      [ "$inst_group" != '-' ] || inst_group=root
++	      eval inst_path=$path
++	      inst_config='%config(noreplace)'
++	      [ -z "${inst_path##no*}" ] || echo "%attr($inst_mode,$inst_owner,$inst_group) $inst_config $inst_path" >>postfix.files
++	  fi
++	  eval test -f $install_root$path && {
+ 	    eval echo "Skipping $install_root$path..."
+ 	    continue
+ 	 };;
+@@ -626,7 +636,12 @@ do
+ 	[$]*) eval group=$group;;
+ 	   -) group=;;
+ 	esac;;
+-     *) case $mode in
++     *) inst_mode=$mode
++	eval inst_owner=$owner
++	[ "$inst_owner" != '-' ] || inst_owner=root
++	eval inst_group=$group
++	[ "$inst_group" != '-' ] || inst_group=root
++	case $mode in
+ 	[1-7]755) mode=755;;
+ 	esac
+ 	owner=
+@@ -638,7 +653,11 @@ do
+ 
+      # Create/update directory.
+ 
+-     d) eval path=$install_root$path
++     d) if [ -n "$install_root" ]; then
++	    eval inst_path=$path
++	    [ -z "${inst_path##no*}" ] || echo "%dir %attr($inst_mode,$inst_owner,$inst_group) $inst_path" >>postfix.files
++	fi
++	eval path=$install_root$path
+ 	test "$path" = "${install_root}no" -o -d $path || {
+ 	    mkdir -p $path || exit 1
+ 	    test -z "$owner" || chown $owner $path || exit 1
+@@ -649,7 +668,15 @@ do
+ 
+      # Create/update regular file.
+ 
+-     f) echo $path | (IFS=/ read prefix file; IFS="$BACKUP_IFS"
++     f) if [ -n "$install_root" ]; then
++	    eval inst_path=$path
++	    if [ -n "${inst_path##no*}" ]; then
++		[ -z "${inst_path##/etc/*}" ] && inst_config='%config' || inst_config=
++		[ -n "$flags" -a -z "${flags##*p*}" ] || [ -z "${inst_path##/usr/share/man/*}" ] ||
++		    echo "%attr($inst_mode,$inst_owner,$inst_group) $inst_config $inst_path" >>postfix.files
++	    fi
++	fi
++	echo $path | (IFS=/ read prefix file; IFS="$BACKUP_IFS"
+ 	case $prefix in
+ 	'$daemon_directory')
+ 	    compare_or_replace $mode "$owner" "$group" libexec/$file \

@@ -1,7 +1,7 @@
-diff -ur postfix-19991231-pl10.orig/local/dotforward.c postfix-19991231-pl10/local/dotforward.c
---- postfix-19991231-pl10.orig/local/dotforward.c	Fri Dec 10 02:04:40 1999
-+++ postfix-19991231-pl10/local/dotforward.c	Wed Nov 22 18:26:20 2000
-@@ -224,6 +224,17 @@
+diff -upk.orig postfix-2.2.4.orig/src/local/dotforward.c postfix-2.2.4/src/local/dotforward.c
+--- postfix-2.2.4.orig/src/local/dotforward.c	2002-11-16 19:59:39 +0000
++++ postfix-2.2.4/src/local/dotforward.c	2005-02-26 22:49:30 +0000
+@@ -235,6 +235,17 @@ int     deliver_dotforward(LOCAL_STATE s
  		msg_warn("file %s is world writable", STR(path));
  	    } else if ((fd = open_as(STR(path), O_RDONLY, 0, usr_attr.uid, usr_attr.gid)) < 0) {
  		msg_warn("cannot open file %s: %m", STR(path));

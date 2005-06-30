@@ -1,0 +1,20 @@
+--- postfix-2.2.4/conf/postfix-script.orig	2005-02-04 01:05:21 +0000
++++ postfix-2.2.4/conf/postfix-script	2005-06-30 12:57:11 +0000
+@@ -184,6 +184,17 @@ check-fatal)
+ 		exit 1
+ 	}
+ 
++	# Update the chroot jail
++	for src in /etc/{hosts,localtime,services,{host,nsswitch,resolv}.conf} \
++	    /lib/libnss_dns{-2.*.so,.so.2}; do
++		test -e "$src" || continue
++		dst="${queue_directory}${src}"
++		cmp -s "$src" "$dst" && continue
++		$WARN "updating $dst"
++		cp -a "$src" "${dst}.tmp"
++		mv -f "${dst}.tmp" "$dst"
++	done
++
+ 	# See if all queue files are in the right place. This is slow.
+ 	# We must scan all queues for mis-named queue files before the
+ 	# mail system can run.

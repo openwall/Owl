@@ -1,0 +1,23 @@
+diff -upk.orig postfix-2.2.4.orig/conf/postfix-script postfix-2.2.4/conf/postfix-script
+--- postfix-2.2.4.orig/conf/postfix-script	2005-02-04 01:05:21 +0000
++++ postfix-2.2.4/conf/postfix-script	2005-06-23 12:34:29 +0000
+@@ -239,10 +239,15 @@ check-warn)
+ 	do
+ 		test -d $dir && find $dir -type f -print | while read path
+ 		do
+-			test -f /$path && {
+-			    cmp -s $path /$path || 
+-				$WARN $queue_directory/$path and /$path differ
+-			}
++			if [ -e "/$path" ]; then
++				cmp -s "$path" "/$path" || 
++				    $WARN "$queue_directory/$path and /$path differ"
++			elif [ -e "/usr/$path" ]; then
++				cmp -s "$path" "/usr/$path" || 
++				    $WARN "$queue_directory/$path and /usr/$path differ"
++			else
++				$WARN "$queue_directory/$path has no original source"
++			fi
+ 		done
+ 	done
+ 
