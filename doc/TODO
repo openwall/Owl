@@ -525,7 +525,8 @@ ftp://ftp.lst.de/pub/people/okir/traceroute
 	vim.
 
 [PRIORITY: low]
-Update to latest 6.1 patchlevel.
+[ASSIGNED: mci@]
+Update to latest 6.3 patchlevel.
 
 [PRIORITY: low]
 Use mkdtemp(3) for the directory.
@@ -558,4 +559,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.93 2005/07/01 11:43:24 ldv Exp $
+$Id: Owl/doc/TODO,v 1.94 2005/07/01 17:30:22 solar Exp $
