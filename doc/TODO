@@ -392,7 +392,7 @@ Separate, currently non-public, TODO lists exist.
 
 [PRIORITY: medium]
 [ASSIGNED: ldv@]
-Update to latest release, considering a number of patches and add-ons.
+Consider a number of patches and add-ons.
 
 [PRIORITY: medium]
 [ASSIGNED: ldv@]
@@ -558,4 +558,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.92 2005/06/24 18:05:54 ldv Exp $
+$Id: Owl/doc/TODO,v 1.93 2005/07/01 11:43:24 ldv Exp $
