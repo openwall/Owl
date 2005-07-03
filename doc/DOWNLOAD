@@ -11,7 +11,6 @@ ftp://mirror.sg.depaul.edu/pub/security/openwall.com/Owl/	(USA)
 ftp://ftp1.msk.ru.openwall.com/pub/Owl/	(Moscow, Russia)
 ftp://ftp2.msk.ru.openwall.com/pub/Owl/	(Moscow, Russia)
 ftp://ftp.spb.ru.openwall.com/pub/Owl/	(St. Petersburg, Russia)
-ftp://ftp.pl.openwall.com/pub/Owl/	(Poland)
 ftp://ftp.man.szczecin.pl/pub/Linux/Owl/	(Poland)
 ftp://ftp.se.openwall.com/pub/Owl/	(Sweden)
 ftp://ftp.cz.openwall.com/pub/Owl/	(Czech Republic)
@@ -72,4 +71,4 @@ Finally, the CVSweb interface is provided at:
 
 http://cvsweb.openwall.com
 
-$Id: Owl/doc/DOWNLOAD,v 1.28 2004/06/06 03:28:44 solar Exp $
+$Id: Owl/doc/DOWNLOAD,v 1.29 2005/07/03 17:57:46 solar Exp $

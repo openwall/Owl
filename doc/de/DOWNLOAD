@@ -11,7 +11,6 @@ geladen werden:
 ftp://ftp1.msk.ru.openwall.com/pub/Owl/	(Moskau, Russland)
 ftp://ftp2.msk.ru.openwall.com/pub/Owl/	(Moskau, Russland)
 ftp://ftp.spb.ru.openwall.com/pub/Owl/	(St. Petersburg, Russland)
-ftp://ftp.pl.openwall.com/pub/Owl/	(Polen)
 ftp://ftp.man.szczecin.pl/pub/Linux/Owl/	(Polen)
 ftp://ftp.se.openwall.com/pub/Owl/	(Schweden)
 ftp://ftp.cz.openwall.com/pub/Owl/	(Tschechien)
@@ -75,4 +74,4 @@ Wir bieten zudem auch ein CVSweb-Interface an:
 
 http://cvsweb.openwall.com
 
-$Id: Owl/doc/de/DOWNLOAD,v 1.22 2004/06/13 10:10:52 schmidt Exp $
+$Id: Owl/doc/de/DOWNLOAD,v 1.23 2005/07/03 17:57:46 solar Exp $

@@ -10,7 +10,6 @@ Owl доступна на следующих официальных зеркалах:
 ftp://ftp1.msk.ru.openwall.com/pub/Owl/	(Россия - Москва)
 ftp://ftp2.msk.ru.openwall.com/pub/Owl/	(Россия - Москва)
 ftp://ftp.spb.ru.openwall.com/pub/Owl/	(Россия - Санкт-Петербург)
-ftp://ftp.pl.openwall.com/pub/Owl/	(Польша)
 ftp://ftp.man.szczecin.pl/pub/Linux/Owl/	(Польша)
 ftp://ftp.se.openwall.com/pub/Owl/	(Швеция)
 ftp://ftp.cz.openwall.com/pub/Owl/	(Чешская Республика)
@@ -70,4 +69,4 @@ CVSROOT=anoncvs@anoncvs.owl.openwall.com:/cvs
 
 Интерфейс CVSweb доступен по адресу http://cvsweb.openwall.com
 
-$Id: Owl/doc/ru/DOWNLOAD,v 1.17 2004/06/12 08:39:55 gremlin Exp $
+$Id: Owl/doc/ru/DOWNLOAD,v 1.18 2005/07/03 17:57:46 solar Exp $
