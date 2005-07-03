@@ -1,9 +1,9 @@
-# $Id: Owl/packages/coreutils/coreutils.spec,v 1.6 2005/05/28 19:50:21 galaxy Exp $
+# $Id: Owl/packages/coreutils/coreutils.spec,v 1.7 2005/07/03 19:47:23 solar Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
 Version: 5.3.1
-Release: owl0.5
+Release: owl0.6
 License: GPL
 Group: System Environment/Base
 URL: http://www.gnu.org/software/%name/
@@ -20,9 +20,10 @@ Source1: exit.S
 Source2: true.1
 Source3: false.1
 
-# shell profile settings for colorized ls output
+# shell profile settings and configuration file for colorized ls output
 Source10: colorls.sh
 Source11: colorls.csh
+Source12: DIR_COLORS
 
 # usleep source and manpage
 Source20: usleep.c
@@ -145,10 +146,10 @@ bzip2 -9fk ChangeLog NEWS THANKS
 rm -rf %buildroot
 %makeinstall
 
-# color-ls profile settings
+# color-ls shell profile settings and configuration file
 mkdir -p %buildroot/etc/profile.d
-install -pm644 src/dircolors.hin %buildroot/etc/DIR_COLORS
 install -pm755 %_sourcedir/colorls.{,c}sh %buildroot/etc/profile.d/
+install -pm644 %_sourcedir/DIR_COLORS %buildroot/etc/
 
 # %_bindir -> /bin path relocations
 mkdir -p %buildroot/bin
@@ -236,6 +237,9 @@ fi
 %doc ChangeLog.bz2 NEWS.bz2 THANKS.bz2 AUTHORS README TODO
 
 %changelog
+* Sun Jul 03 2005 Solar Designer <solar@owl.openwall.com> 5.3.1-owl0.6
+- Enable color ls on ttys by default (like we did in fileutils package).
+
 * Sat May 28 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 5.3.1-owl0.5
 - Added bison >= 2.0 and automake >= 1.9.5 dependencies to BuildRequires.
 

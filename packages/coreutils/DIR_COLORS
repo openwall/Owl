@@ -1,8 +1,19 @@
 # Configuration file for dircolors, a utility to help you set the
 # LS_COLORS environment variable used by GNU ls with the --color option.
 
-# The keywords COLOR, OPTIONS, and EIGHTBIT (honored by the
-# slackware version of dircolors) are recognized but ignored.
+# This file goes in the /etc directory, and must be world readable.
+# You can copy this file to .dircolors in your $HOME directory to override
+# the system defaults.  This is handled by the /etc/profile.d/colorls.sh
+# and /etc/profile.d/colorls.csh scripts.
+
+# COLOR needs one of these arguments:
+# 'tty' colorizes output to ttys, but not pipes.
+# 'all' adds color characters to all output.
+# 'none' shuts colorization off.
+COLOR tty
+
+# The keywords OPTIONS and EIGHTBIT (honored by the Slackware version of
+# dircolors) are recognized but ignored.
 
 # Below, there should be one TERM entry for each termtype that is colorizable
 TERM linux
