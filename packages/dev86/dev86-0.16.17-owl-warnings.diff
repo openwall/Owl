@@ -1,0 +1,92 @@
+--- dev86-0.16.17/bcc/dbprintf.c.orig	2004-06-20 17:14:58 +0000
++++ dev86-0.16.17/bcc/dbprintf.c	2005-06-30 09:38:45 +0000
+@@ -1,6 +1,8 @@
+ 
+ #include <sys/types.h>
+ #include <fcntl.h>
++#include <unistd.h>
++#include <string.h>
+ 
+ #if defined(__STDC__) && !defined(__FIRST_ARG_IN_AX__)
+ #include <stdarg.h>
+@@ -10,6 +12,8 @@
+ #define va_strt(p,i) va_start(p)
+ #endif
+ 
++int vdbprintf(__const char *fmt, va_list ap);
++
+ #if defined(__STDC__) && !defined(__FIRST_ARG_IN_AX__)
+ int dbprintf(const char * fmt, ...)
+ #else
+@@ -42,7 +46,7 @@ register va_list ap;
+    char padch=' ';
+    int  minsize, maxsize;
+ 
+-   while(c=*fmt++)
++   while((c=*fmt++))
+    {
+       count++;
+       if(c!='%')
+--- dev86-0.16.17/cpp/cpp.c.orig	2004-06-20 11:11:25 +0000
++++ dev86-0.16.17/cpp/cpp.c	2005-06-30 09:34:36 +0000
+@@ -1271,6 +1271,7 @@ int is_vararg;
+    arg_list = malloc(sizeof(struct arg_store) * arg_count);
+    memset(arg_list, 0, sizeof(struct arg_store) * arg_count);
+ 
++   cc = len = 0;
+    for(ac=0; *data_str && ac < arg_count; data_str++) {
+       if( *data_str == ',' ) { ac++; continue; }
+ 
+--- dev86-0.16.17/dis88/dis.h.orig	2005-07-01 21:20:04 +0000
++++ dev86-0.16.17/dis88/dis.h	2005-07-01 21:20:28 +0000
+@@ -163,7 +163,7 @@
+ _PROTOTYPE(void mjhand, (int j ));
+ 
+ /* dismain.c */
+-_PROTOTYPE(void main, (int argc, char **argv ));
++_PROTOTYPE(int main, (int argc, char **argv ));
+ 
+ /* distabs.c */
+ _PROTOTYPE(char *getnam, (int k ));
+--- dev86-0.16.17/dis88/dismain.c.orig	2005-07-01 21:20:16 +0000
++++ dev86-0.16.17/dis88/dismain.c	2005-07-01 21:20:39 +0000
+@@ -538,7 +538,7 @@ static void disbss()
+   *                                                         *
+   * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+ 
+-void
++int
+ main(argc,argv)
+ 
+    int argc;                  /* Command-line args from OS  */
+--- dev86-0.16.17/ld/dumps.c.orig	2003-10-07 08:02:28 +0000
++++ dev86-0.16.17/ld/dumps.c	2005-06-30 09:38:23 +0000
+@@ -2,6 +2,7 @@
+ 
+ /* Copyright (C) 1994 Bruce Evans */
+ 
++#include <string.h>
+ #include "const.h"
+ #include "obj.h"
+ #include "type.h"
+--- dev86-0.16.17/ld/ld.c.orig	2004-01-21 21:17:09 +0000
++++ dev86-0.16.17/ld/ld.c	2005-06-30 09:46:17 +0000
+@@ -33,6 +33,8 @@ PRIVATE char *libs[MAX_LIBS] = {
+ };
+ PRIVATE int lastlib = NR_STDLIBS;
+ 
++EXTERN void ld86r(int argc, char ** argv); 
++
+ FORWARD char *buildname P((char *pre, char *mid, char *suf));
+ FORWARD char *expandlib P((char *fn));
+ 
+--- dev86-0.16.17/ld/mkar.c.orig	2004-06-20 07:23:27 +0000
++++ dev86-0.16.17/ld/mkar.c	2005-06-30 10:03:01 +0000
+@@ -11,6 +11,7 @@
+ #endif
+ 
+ #include "ar.h"
++#include "type.h"
+ 
+ static struct ar_hdr arbuf;
+ 

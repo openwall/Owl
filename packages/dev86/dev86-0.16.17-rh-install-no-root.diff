@@ -1,0 +1,11 @@
+--- dev86-0.16.17/elksemu/Makefile.orig	2004-10-02 13:58:49 +0000
++++ dev86-0.16.17/elksemu/Makefile	2005-06-30 10:46:34 +0000
+@@ -42,7 +42,7 @@
+ # to redirect.
+ install: elksemu
+ 	install -d $(DIST)/lib
+-	install -s -o root -g root -m 4555 elksemu $(DIST)/lib/elksemu
++	install -s 555 elksemu $(DIST)/lib/elksemu
+ 
+ clean realclean:
+ 	rm -f $(OBJ) binfmt_elks.o elksemu call_tab.v defn_tab.v efile.h

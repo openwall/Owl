@@ -1,0 +1,11 @@
+--- dev86-0.16.17/dis88/Makefile.orig	2005-06-30 14:51:15 +0000
++++ dev86-0.16.17/dis88/Makefile	2005-06-30 14:51:36 +0000
+@@ -38,7 +38,7 @@
+ 
+ install:	dis88
+ 	install -m 755 -s dis88   $(DIST)$(PREFIX)/bin/dis86
+-	install -m 644    dis88.1 $(DIST)$(PREFIX)/man/man1/dis86.1
++	install -m 644    dis88.1 $(DIST)$(MANDIR)/man1/dis86.1
+ 
+ $(OBJ): dis.h a.out.h
+ 

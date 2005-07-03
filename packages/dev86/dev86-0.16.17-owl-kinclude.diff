@@ -1,6 +1,6 @@
---- dev86-0.16.0/libc/kinclude/Makefile.orig	Sat Aug 16 11:26:04 1997
-+++ dev86-0.16.0/libc/kinclude/Makefile	Thu Jan  3 17:32:10 2002
-@@ -6,11 +6,11 @@
+--- dev86-0.16.17/libc/kinclude/Makefile.orig	2003-01-29 19:40:25 +0000
++++ dev86-0.16.17/libc/kinclude/Makefile	2005-06-30 11:26:36 +0000
+@@ -6,9 +6,9 @@
  	@:
  
  transfer:
@@ -8,17 +8,15 @@
 -	ln -s ../kinclude/linuxmt ../include
 -	ln -s ../kinclude/arch ../include
 +	-@rm -rf ../include/linuxmt ../include/arch
-+	cp -pr linuxmt ../include
-+	cp -pr arch ../include
- 	@touch Used
++	cp -pr ../kinclude/linuxmt ../include
++	cp -pr ../kinclude/arch ../include
  
  clean:
--	-@rm -f ../include/linuxmt ../include/arch
-+	-@rm -rf ../include/linuxmt ../include/arch
- 	-@rm -f Used
---- dev86-0.16.0/makefile.in.orig	Sat Jan  6 16:20:47 2001
-+++ dev86-0.16.0/makefile.in	Thu Jan  3 17:32:10 2002
-@@ -123,9 +123,9 @@
+-	-rm -f ../include/linuxmt ../include/arch
++	-rm -rf ../include/linuxmt ../include/arch
+--- dev86-0.16.17/makefile.in.orig	2004-10-02 13:00:53 +0000
++++ dev86-0.16.17/makefile.in	2005-06-30 11:24:47 +0000
+@@ -144,9 +144,9 @@
  	@rm -f include
  	@ln -s libc/include include 2>/dev/null || true
  #ifndef GNUMAKE
@@ -30,4 +28,4 @@
 +	@ cp -pr kinclude/arch    include/arch    2>/dev/null || true
  #endif
  
- bcc: bindir
+ bcc86: bindir

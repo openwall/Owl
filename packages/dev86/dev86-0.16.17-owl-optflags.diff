@@ -1,0 +1,11 @@
+--- dev86-0.16.17/makefile.in.orig	2005-07-01 08:10:02 +0000
++++ dev86-0.16.17/makefile.in	2005-07-01 08:14:35 +0000
+@@ -42,7 +42,7 @@
+ WALL  =-Wall -Wstrict-prototypes
+ 
+ CC	=%CC%
+-CFLAGS	=$(GCCFLAG) $(WALL) -O2 -g
++CFLAGS	=$(RPM_OPT_FLAGS)
+ #endif
+ 
+ #ifndef GNUMAKE

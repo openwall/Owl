@@ -1,20 +1,17 @@
-# $Id: Owl/packages/dev86/dev86.spec,v 1.18 2005/06/28 18:58:45 ldv Exp $
+# $Id: Owl/packages/dev86/dev86.spec,v 1.19 2005/07/03 20:55:27 mci Exp $
 
 Summary: A real mode 80x86 assembler and linker.
 Name: dev86
-Version: 0.16.0
-Release: owl7
+Version: 0.16.17
+Release: owl1
 License: GPL
 Group: Development/Languages
 Source: http://www.cix.co.uk/~mayday/dev86/Dev86src-%version.tar.gz
-Patch0: dev86-0.16.0-rh-install-no-root.diff
-Patch1: dev86-0.16.0-rh-no-bcc.diff
-Patch2: dev86-0.16.0-rh-paths.diff
-Patch3: dev86-0.16.0-rh-errno.diff
-Patch4: dev86-0.16.0-owl-kinclude.diff
-Patch5: dev86-0.16.0-owl-optflags.diff
-Patch6: dev86-0.16.0-owl-warnings.diff
-Patch7: dev86-0.16.0-owl-Makefile.diff
+Patch0: dev86-0.16.17-rh-install-no-root.diff
+Patch1: dev86-0.16.17-owl-kinclude.diff
+Patch2: dev86-0.16.17-owl-warnings.diff
+Patch3: dev86-0.16.17-owl-Makefile.diff
+Patch4: dev86-0.16.17-owl-optflags.diff
 Obsoletes: bin86
 ExclusiveArch: %ix86
 BuildRoot: /override/%name-%version
@@ -32,14 +29,10 @@ bootstrapping code, from their sources.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
 
-%{expand:%%define optflags %optflags -fno-strict-aliasing -Wall}
+%{expand:%%define optflags %optflags -fno-strict-aliasing -fno-builtin-exp2 -Wall}
 
 %build
-CFLAGS="%optflags" \
 %__make \
 	CC="%__cc" \
 	PREFIX="%_prefix" \
@@ -62,20 +55,13 @@ rm -rf %buildroot
 
 # Build and install dis88
 %__make install-other \
-	CC="%__cc" \
-	DISTBIN="%buildroot%_bindir" \
-	DISTMAN="%buildroot%_mandir"
-
-install -m 755 -s %buildroot/%_lib/elksemu %buildroot%_bindir
-rm -rf %buildroot/%_lib/
+	DIST="%buildroot" \
+	MANDIR="%_mandir"
 
 pushd %buildroot%_bindir
-rm -f nm86 size86
+rm nm86 size86
 ln -s objdump86 nm86
 ln -s objdump86 size86
-
-# Move header files out of /usr/include and into /usr/lib/bcc/include
-mv %buildroot%_prefix/include %buildroot%_libdir/bcc/
 popd
 
 mv bootblocks/README README.bootblocks
@@ -92,29 +78,24 @@ mv bin86/ChangeLog ChangeLog.bin86
 %doc README MAGIC Contributors README.bootblocks README.copt README.dis88
 %doc README.elksemu README.unproto README.bin86-0.4 README.bin86 ChangeLog.bin86
 %dir %_libdir/bcc
-%dir %_libdir/bcc/i86
-%dir %_libdir/bcc/i386
-%dir %_libdir/bcc/include
 %_bindir/bcc
 %_bindir/as86
-%_bindir/as86_encap
 %_bindir/ar86
 %_bindir/ld86
 %_bindir/objdump86
 %_bindir/nm86
 %_bindir/size86
 %_bindir/dis86
-%_libdir/bcc/bcc-cc1
-%_libdir/bcc/copt
-%_libdir/bcc/unproto
-%_libdir/bcc/i86/*
-%_libdir/bcc/i386/*
-%_libdir/liberror.txt
-%_libdir/bcc/include/*
+%_bindir/makeboot
 %_bindir/elksemu
+%_libdir/bcc/*
 %_mandir/man1/*
 
 %changelog
+* Thu Jun 30 2005 Michail Litvak <mci@owl.openwall.com> 0.16.17-owl1
+- 0.16.17
+- Dropped outdated patches, updated -owl-warnings patch.
+
 * Tue Jun 28 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.16.0-owl7
 - Build this package without optimizations based on strict aliasing rules.
 
