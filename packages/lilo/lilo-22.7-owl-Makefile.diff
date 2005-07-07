@@ -64,15 +64,6 @@ diff -ur lilo-22.7.orig/Makefile lilo-22.7/Makefile
  
  lilo.com:	dos/lilo.com
  	cp -uf $< $@
-@@ -293,7 +294,7 @@
- 	grep -v "0x" <Makefile >$(TMP)
- 	for i in $(CFILES) $(HFILES) ; do cat $$i >>$(TMP) ; done
- 	echo "#define CSOURCE " `./version $(TMP)` >>flags.i
--	rm -f $(TMP)
-+	rm -f -- $(TMP)
- 
- 
- dparam.com:	dparam.img
 @@ -303,10 +304,10 @@
  		cp -p dparam.S dparam.s
  
