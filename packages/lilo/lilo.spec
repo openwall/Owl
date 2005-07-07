@@ -1,16 +1,16 @@
-# $Id: Owl/packages/lilo/lilo.spec,v 1.16 2005/07/07 01:47:18 galaxy Exp $
+# $Id: Owl/packages/lilo/lilo.spec,v 1.17 2005/07/07 13:27:44 solar Exp $
 
-%define	BUILD_EXTERNAL_SUPPORT 0
+%define BUILD_EXTERNAL_SUPPORT 0
 
 Summary: The boot loader for Linux and other operating systems.
 Name: lilo
 Version: 22.7
-Release: owl0
+Release: owl1
 License: MIT
 Group: System Environment/Base
 Source0: ftp://sunsite.unc.edu/pub/Linux/system/boot/lilo/%name-%version.src.tar.gz
 Source1: keytab-lilo.c
-Patch0: lilo-22.7-owl-makefile.diff
+Patch0: lilo-22.7-owl-Makefile.diff
 Patch1: lilo-22.7-mdk-part.diff
 Patch2: lilo-22.7-alt-owl-fixes.diff
 Patch3: lilo-22.7-alt-owl-getopt.diff
@@ -85,7 +85,7 @@ test -f /etc/lilo.conf && /sbin/lilo || :
 %_mandir/*/*
 
 %changelog
-* Mon Jun 13 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 22.7-owl0
+* Mon Jun 13 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 22.7-owl1
 - Updated to 22.7.
 - Added a fix for a typo in the geometry.c file.
 - Added the %%BUILD_EXTERNAL_SUPPORT macro to control the creation of
