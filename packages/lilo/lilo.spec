@@ -1,4 +1,4 @@
-# $Id: Owl/packages/lilo/lilo.spec,v 1.17 2005/07/07 13:27:44 solar Exp $
+# $Id: Owl/packages/lilo/lilo.spec,v 1.18 2005/07/07 14:13:22 solar Exp $
 
 %define BUILD_EXTERNAL_SUPPORT 0
 
@@ -15,7 +15,6 @@ Patch1: lilo-22.7-mdk-part.diff
 Patch2: lilo-22.7-alt-owl-fixes.diff
 Patch3: lilo-22.7-alt-owl-getopt.diff
 Patch4: lilo-22.7-deb-owl-man.diff
-Patch5: lilo-22.7-owl-PAGE_SIZE.diff
 BuildRequires: coreutils, dev86
 ExclusiveArch: %ix86
 BuildRoot: /override/%name-%version
@@ -33,7 +32,6 @@ can also boot other operating systems.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
 
 %{expand: %%define optflags %optflags -Wall -Wno-long-long -pedantic}
 
@@ -92,10 +90,6 @@ test -f /etc/lilo.conf && /sbin/lilo || :
 /boot/* files, if this macro is set to 0 (default) then files will be
 compiled into the LILO bootloader.
 - Regenerated patches against new version.
-
-* Wed Jan 12 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 22.1-owl2
-- Added PAGE_SIZE patch to use getpagesize() from unistd.h.
-- Cleaned up the spec.
 
 * Thu Feb 14 2002 Michail Litvak <mci@owl.openwall.com> 22.1-owl1
 - 22.1
