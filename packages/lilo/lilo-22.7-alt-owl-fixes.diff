@@ -1,0 +1,176 @@
+diff -puNr lilo-22.7/cfg.c lilo-22.7.new/cfg.c
+--- lilo-22.7/cfg.c	2005-01-14 19:37:11 +0000
++++ lilo-22.7.new/cfg.c	2005-06-13 13:27:08 +0000
+@@ -257,7 +257,7 @@ int cfg_open(char *name)
+ }
+ 
+ 
+-void cfg_error(char *msg,...)
++void __attribute__ ((format (printf, 1, 2))) cfg_error(char *msg,...)
+ {
+     va_list ap;
+ 
+diff -puNr lilo-22.7/cfg.h lilo-22.7.new/cfg.h
+--- lilo-22.7/cfg.h	2004-08-21 18:12:04 +0000
++++ lilo-22.7.new/cfg.h	2005-06-13 13:27:08 +0000
+@@ -38,7 +38,7 @@ int cfg_open(char *name);
+ /* Opens the configuration file. Returns the file descriptor of the open
+    file. */
+ 
+-void cfg_error(char *msg,...);
++void cfg_error(char *msg,...) __attribute__ ((format (printf, 1, 2)));
+ 
+ /* Signals an error while parsing the configuration file and terminates the
+    program. */
+diff -puNr lilo-22.7/common.c lilo-22.7.new/common.c
+--- lilo-22.7/common.c	2005-02-22 20:22:28 +0000
++++ lilo-22.7.new/common.c	2005-06-13 13:27:08 +0000
+@@ -39,7 +39,7 @@ unsigned int prt_map[PRTMAP_SIZE+1];
+ int curr_prt_map;
+ #endif /* !__MSDOS__ */
+ 
+-/*volatile*/ void pdie(char *msg)
++/*volatile*/ void pdie(const char *msg)
+ {
+     fflush(stdout);
+ #if !__MSDOS__
+@@ -50,17 +50,19 @@ int curr_prt_map;
+     exit(1);
+ }
+ 
++extern const char *__progname;
+ 
+-/*volatile*/ void die(char *fmt,...)
++/*volatile*/ void __attribute__ ((format (printf, 1, 2))) die(const char *fmt,...)
+ {
+-    va_list ap;
++    va_list args;
+ 
+-    fflush(stdout);
+-    fprintf(errstd,"Fatal: ");       /* JRC */
+-    va_start(ap,fmt);
+-    vfprintf(errstd,fmt,ap);
+-    va_end(ap);
++    va_start(args,fmt);
++    fprintf(errstd,"%s: Fatal: ", __progname);
++    vfprintf(errstd,fmt,args);
++    va_end(args);
+-    fputc('\n',errstd);
++    fputs("\r\n",errstd);
++
++    fflush(errstd);
+     exit(1);
+ }
+ 
+diff -puNr lilo-22.7/common.h lilo-22.7.new/common.h
+--- lilo-22.7/common.h	2005-02-22 20:21:58 +0000
++++ lilo-22.7.new/common.h	2005-06-13 13:27:08 +0000
+@@ -388,11 +388,11 @@ extern char *identify;	/* in identify.c 
+ #define comma (cc(First)|cc(Second)|cc(Third)|cc(Bitmap)|cc(Chain)|cc(Mbr)|cc(Mbr2))
+ 
+ 
+-/*volatile*/ void pdie(char *msg);
++/*volatile*/ void pdie(const char *msg) __attribute__ ((noreturn));
+ /* Do a perror and then exit. */
+ 
+ 
+-/*volatile*/ void die(char *fmt,...);
++/*volatile*/ void die(const char *fmt,...) __attribute__ ((noreturn)) __attribute__ ((format (printf, 1, 2)));
+ /* fprintf an error message and then exit. */
+ 
+ 
+diff -puNr lilo-22.7/geometry.c lilo-22.7.new/geometry.c
+--- lilo-22.7/geometry.c	2005-02-23 05:37:52 +0000
++++ lilo-22.7.new/geometry.c	2005-06-13 13:27:08 +0000
+@@ -1002,7 +1002,7 @@ int pass;
+ } /* end of geo_get */
+ 
+ 
+-int geo_open(GEOMETRY *geo,char *name,int flags)
++int geo_open(GEOMETRY *geo,const char *name,int flags)
+ {
+     char *here;
+     int user_dev,block_size;
+diff -puNr lilo-22.7/geometry.h lilo-22.7.new/geometry.h
+--- lilo-22.7/geometry.h	2004-09-16 00:10:44 +0000
++++ lilo-22.7.new/geometry.h	2005-06-13 13:27:08 +0000
+@@ -115,7 +115,7 @@ void geo_get(GEOMETRY *geo,int device,in
+    is retrieved and the other geometry information is undefined. */
+ 
+ 
+-int geo_open(GEOMETRY *geo,char *name,int flags);
++int geo_open(GEOMETRY *geo,const char *name,int flags);
+ /* Opens the specified file or block device, obtains the necessary geometry
+    information and returns the file descriptor. If the name contains a BIOS
+    device specification (xxx:yyy), it is removed and stored in the geometry
+diff -puNr lilo-22.7/partition.c lilo-22.7.new/partition.c
+--- lilo-22.7/partition.c	2004-11-14 22:33:34 +0000
++++ lilo-22.7.new/partition.c	2005-06-13 13:27:08 +0000
+@@ -379,7 +379,7 @@ static void add_rule(unsigned char bios,
+     int i;
+ 
+     if (curr_prt_map == PRTMAP_SIZE)
+-	cfg_error("Too many change rules (more than %s)",PRTMAP_SIZE);
++	cfg_error("Too many change rules (more than %d)",PRTMAP_SIZE);
+     if (verbose >= 3)
+ 	printf("  Adding rule: disk 0x%02x, offset 0x%x, 0x%02x -> 0x%02x\n",
+ 	    bios,PART_TABLE_OFFSET+offset,expect,set);
+@@ -392,7 +392,7 @@ static void add_rule(unsigned char bios,
+ 	  (prt_map[i] >> 24) == expect)
+ 	    die("Redundant rule: disk 0x%02x, offset 0x%x: 0x%02x -> 0x%02x "
+ 	      "-> 0x%02x",bios,PART_TABLE_OFFSET+offset,
+-	     (prt_map[i] >> 16) & 0xff,expect,set);
++	     (unsigned int)(prt_map[i] >> 16) & 0xff,expect,set);
+     }
+     curr_prt_map++;
+ }
+diff -puNr lilo-22.7.orig/device.c lilo-22.7/device.c
+--- lilo-22.7.orig/device.c	2005-02-22 20:22:29 +0000
++++ lilo-22.7/device.c	2005-06-13 18:31:46 +0000
+@@ -626,7 +626,7 @@ unsigned int register_bios(int bios, int
+ 
+ 		*(int*)&buff.sector[PART_TABLE_OFFSET-6] = serial;
+ 		if (*(short*)&buff.sector[PART_TABLE_OFFSET - 2] == 0)
+-		    *(short*)&buff.sector[PART_TABLE_OFFSET - 2] = MAGIC_SERIAL;
++		    *(unsigned short*)&buff.sector[PART_TABLE_OFFSET - 2] = MAGIC_SERIAL;
+ 		if (verbose)
+ 		    printf("Assigning new Volume ID to (%04X) '%s'  ID = %08X\n",
+ 		    			device, dev.name, (int)serial);
+diff -puNr lilo-22.7.orig/geometry.c lilo-22.7/geometry.c
+--- lilo-22.7.orig/geometry.c	2005-06-13 18:17:39 +0000
++++ lilo-22.7/geometry.c	2005-06-13 18:28:27 +0000
+@@ -474,7 +474,7 @@ void evms_bmap(struct evms_get_bmap_t *e
+         char evms_blk[] = "/dev/evms/block_device";
+         struct evms_version_t evms_ver;
+ 
+-        // Open the EVMS device
++        /* Open the EVMS device */
+         if (evms_fd != -1)
+             close(evms_fd);
+ 
+@@ -482,11 +482,11 @@ void evms_bmap(struct evms_get_bmap_t *e
+         if (evms_fd < 0)
+             die("Can't open EVMS block device %s.\n", evms_blk);
+ 
+-        // Get EVMS ioctl version number.
++        /* Get EVMS ioctl version number. */
+         if (ioctl(evms_fd, EVMS_GET_IOCTL_VERSION, &evms_ver) < 0)
+             die("EVMS_GET_IOCTL_VERSION failed on %s.\n", evms_blk);
+ 
+-        // Check that the ioctl version is >= 7.1.0
++        /* Check that the ioctl version is >= 7.1.0 */
+         if (evms_ver.major < 7 ||
+             (evms_ver.major == 7 && evms_ver.minor < 1))
+             die("EVMS ioctl version %d.%d.%d does not support booting.\n",
+@@ -674,9 +674,9 @@ void geo_query_dev(GEOMETRY *geo,int dev
+ 	    if (max_partno[major] == 7)   goto MASK7;
+ 	    
+ 	    if (MAJOR(device)>=120 && MAJOR(device)<=127)
+-		die("Linux experimental device 0x04x needs to be defined.\n"
++		die("Linux experimental device %#04x needs to be defined.\n"
+ 		    "Check 'man lilo.conf' under 'disk=' and 'max-partitions='", device);
+-	    else die("Sorry, don't know how to handle device 0x%04x",device);
++	    else die("Sorry, don't know how to handle device %#04x",device);
+     }
+     if (get_all) dev_close(&dev);
+     if (verbose>=5) printf("exit geo_query_dev\n");

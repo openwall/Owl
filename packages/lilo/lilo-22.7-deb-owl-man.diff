@@ -1,0 +1,13 @@
+diff -ur lilo-22.7.orig/manPages/lilo.conf.5 lilo-22.7/manPages/lilo.conf.5
+--- lilo-22.7.orig/manPages/lilo.conf.5	2004-11-16 20:43:23 +0000
++++ lilo-22.7/manPages/lilo.conf.5	2005-06-13 18:51:24 +0000
+@@ -770,7 +770,8 @@
+ .BR ask :
+ stop and ask for user input (at boot time).
+ .sp
+-<number>: use the corresponding text mode. A list of available modes 
++<number>: use the corresponding text mode (can specify the number in decimal
++or in hex with the usual '0x' convention).  A list of available modes 
+ can be obtained by booting with
+ .I vga=ask
+ and pressing [Enter]. 

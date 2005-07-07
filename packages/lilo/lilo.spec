@@ -1,20 +1,22 @@
-# $Id: Owl/packages/lilo/lilo.spec,v 1.15 2005/01/20 04:01:13 solar Exp $
+# $Id: Owl/packages/lilo/lilo.spec,v 1.16 2005/07/07 01:47:18 galaxy Exp $
+
+%define	BUILD_EXTERNAL_SUPPORT 0
 
 Summary: The boot loader for Linux and other operating systems.
 Name: lilo
-Version: 22.1
-Release: owl1
+Version: 22.7
+Release: owl0
 License: MIT
 Group: System Environment/Base
-Source0: ftp://sunsite.unc.edu/pub/Linux/system/boot/lilo/%name-%version.tar.gz
+Source0: ftp://sunsite.unc.edu/pub/Linux/system/boot/lilo/%name-%version.src.tar.gz
 Source1: keytab-lilo.c
-Patch0: lilo-22.1-rh-broken-headers.diff
-Patch1: lilo-22.1-alt-part.diff
-Patch2: lilo-22.1-alt-owl-fixes.diff
-Patch3: lilo-22.1-alt-owl-getopt.diff
-Patch4: lilo-22.1-deb-owl-man.diff
-Patch5: lilo-22.1-owl-PAGE_SIZE.diff
-BuildRequires: fileutils, dev86
+Patch0: lilo-22.7-owl-makefile.diff
+Patch1: lilo-22.7-mdk-part.diff
+Patch2: lilo-22.7-alt-owl-fixes.diff
+Patch3: lilo-22.7-alt-owl-getopt.diff
+Patch4: lilo-22.7-deb-owl-man.diff
+Patch5: lilo-22.7-owl-PAGE_SIZE.diff
+BuildRequires: coreutils, dev86
 ExclusiveArch: %ix86
 BuildRoot: /override/%name-%version
 
@@ -33,12 +35,16 @@ can also boot other operating systems.
 %patch4 -p1
 %patch5 -p1
 
+%{expand: %%define optflags %optflags -Wall -Wno-long-long -pedantic}
+
 %build
-%__make CC="%__cc" OPT="$RPM_OPT_FLAGS -Wall" \
+# XXX: Do we need the DOS version of LILO and its diagnostic disk? -- (GM)
+%__make lilo \
+	CC="%__cc" OPT="%optflags -Wall" \
 	CFG_DIR="%_sysconfdir" \
 	BOOT_DIR="/boot"
 
-%__cc $RPM_OPT_FLAGS -Wall -s -o keytab-lilo $RPM_SOURCE_DIR/keytab-lilo.c
+%__cc %optflags -Wall -s -o keytab-lilo %_sourcedir/keytab-lilo.c
 
 %install
 rm -rf %buildroot
@@ -54,8 +60,10 @@ mkdir -p %buildroot%_mandir
 
 install -m 755 keytab-lilo %buildroot%_bindir/
 
-# XXX: (GM): Remove unpackaged files (check later)
+# Remove unpackaged files
+%if %BUILD_EXTERNAL_SUPPORT
 rm %buildroot/boot/mbr.b
+%endif
 rm %buildroot/sbin/mkrescue
 rm %buildroot%_sbindir/keytab-lilo.pl
 
@@ -68,13 +76,23 @@ test -f /etc/lilo.conf && /sbin/lilo || :
 %doc CHANGES COPYING INCOMPAT QuickInst
 %doc doc
 %_bindir/keytab-lilo
+%if %BUILD_EXTERNAL_SUPPORT
 /boot/boot*
 /boot/chain.b
 /boot/os2_d.b
+%endif
 /sbin/lilo
 %_mandir/*/*
 
 %changelog
+* Mon Jun 13 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 22.7-owl0
+- Updated to 22.7.
+- Added a fix for a typo in the geometry.c file.
+- Added the %%BUILD_EXTERNAL_SUPPORT macro to control the creation of
+/boot/* files, if this macro is set to 0 (default) then files will be
+compiled into the LILO bootloader.
+- Regenerated patches against new version.
+
 * Wed Jan 12 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 22.1-owl2
 - Added PAGE_SIZE patch to use getpagesize() from unistd.h.
 - Cleaned up the spec.

@@ -1,0 +1,97 @@
+diff -ur lilo-22.7.orig/Makefile lilo-22.7/Makefile
+--- lilo-22.7.orig/Makefile	2005-04-12 15:32:50 +0000
++++ lilo-22.7/Makefile	2005-06-01 14:29:03 +0000
+@@ -64,7 +64,7 @@
+ 
+ # set the compiler optimization level
+ 
+-OPT=-O
++OPT=$(RPM_OPT_FLAGS)
+ 
+ 
+ # End of configuration variables
+@@ -82,7 +82,7 @@
+ #  manpath | sed "s/:.*//"; else echo /usr/man; fi`
+ #
+ MAN_DIR=`if [ -f /usr/bin/manpath ]; then \
+-	manpath | sed "s/:.*//"; else echo /usr/man; fi`
++	manpath | sed "s/:.*//"; else echo /usr/share/man; fi`
+ BUILTIN=1
+ 
+ PCONFIG=$(KVER) $(LILO) `( if [ -r $$ROOT/etc/lilo.defines ]; then \
+@@ -100,7 +100,7 @@
+ LD86=ld86 -0
+ NASM=nasm
+ 
+-CFLAGS=$(OPT) -Wall -g $(PCONFIG)
++CFLAGS=$(OPT) $(PCONFIG)
+ LDFLAGS=#-Xlinker -qmagic
+ LIBS=
+ 
+@@ -124,7 +124,8 @@
+ .SUFFIXES:	.img .b .com .S .s
+ 
+ 
+-all: lilo bootsect.b diag1.img # OBSOLETE:  $(BOOTS) edit dparam.com activate
++all: lilo bootsect.b
++extras: diag1.img # OBSOLETE:  $(BOOTS) edit dparam.com activate
+ 	if [ -x /usr/bin/bcc -o -x /usr/local/bin/bcc ]; then \
+ 		make diagnostic; \
+ 		make dosexe; fi
+@@ -200,10 +201,10 @@
+ 		dd if=$*.img of=$*.b bs=32 skip=1
+ 
+ activate:	activate.c
+-		$(CC) -Wall -s -O -o activate activate.c $(LDFLAGS)
++		$(CC) $(CFLAGS) -o activate activate.c $(LDFLAGS)
+ 
+ edit:		$(EDIT)
+-		$(CC) -Wall -s -O -DSTANDALONE -o edit $(EDIT) $(LDFLAGS)
++		$(CC) $(CFLAGS) -DSTANDALONE -o edit $(EDIT) $(LDFLAGS)
+ 
+ loader.i:	mkloader first.b second.b third.b bitmap.b mbr.b \
+ 			chain.b os2_d.b mbr2.b
+@@ -267,10 +268,10 @@
+ pseudo3.b:	pseudo3.s
+ 
+ diagnose/test4.com: 	diagnose/test4.c
+-	cd diagnose; make all; cd ..
++	$(MAKE) -C diagnose all
+ 
+ diagnose/test5.com:	diagnose/test5.c
+-	cd diagnose; make all; cd ..
++	$(MAKE) -C diagnose all
+ 
+ diag1.img:	disk.com pseudo1.b
+ 	cat pseudo1.b disk.com >diag1.img
+@@ -282,7 +283,7 @@
+ 	cat pseudo3.b diagnose/test5.com >diag3.img
+ 
+ dos/lilo.com:
+-	cd dos; make -e CFLAGS="$(PCONFIG)" lilo.com; cd ..
++	$(MAKE) -C dos -e CFLAGS="$(PCONFIG)" lilo.com
+ 
+ lilo.com:	dos/lilo.com
+ 	cp -uf $< $@
+@@ -293,7 +294,7 @@
+ 	grep -v "0x" <Makefile >$(TMP)
+ 	for i in $(CFILES) $(HFILES) ; do cat $$i >>$(TMP) ; done
+ 	echo "#define CSOURCE " `./version $(TMP)` >>flags.i
+-	rm -f $(TMP)
++	rm -f -- $(TMP)
+ 
+ 
+ dparam.com:	dparam.img
+@@ -303,10 +304,10 @@
+ 		cp -p dparam.S dparam.s
+ 
+ lilo:		$(OBJS)
+-		$(CC) -o lilo $(LDFLAGS) $(OBJS) $(LIBS)
++		$(CC) $(CFLAGS) -o lilo $(LDFLAGS) $(OBJS) $(LIBS)
+ 
+ lilo-static:	$(OBJS)
+-		$(CC) -o lilo-static -static $(LDFLAGS) $(OBJS) $(LIBS)
++		$(CC) $(CFLAGS) -o lilo-static -static $(LDFLAGS) $(OBJS) $(LIBS)
+ 
+ boot-text.b:	first.b second.b
+ 		(dd if=first.b bs=512 conv=sync; dd if=second.b) >boot-text.b

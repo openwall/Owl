@@ -1,0 +1,20 @@
+diff -puNr lilo-22.7.orig/boot.c lilo-22.7/boot.c
+--- lilo-22.7.orig/boot.c	2005-02-21 21:24:10 +0000
++++ lilo-22.7/boot.c	2005-06-01 15:28:30 +0000
+@@ -318,6 +318,7 @@ void boot_other(char *loader,char *boot,
+ #endif
+     struct stat st;
+     char *pos;
++    char *vanilla_part = part;
+     int i, code;
+     int letter = 0;
+     int unsafe;
+@@ -378,7 +379,7 @@ void boot_other(char *loader,char *boot,
+ 
+     if (unsafe) {
+ 	(void) geo_open_boot(&geo,boot);
+-	if (part) die("TABLE and UNSAFE are mutually incompatible.");
++	if (vanilla_part) die("TABLE and UNSAFE are mutually incompatible.");
+     }
+     else {
+ 	b_fd = geo_open(&geo,boot,O_RDONLY);

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
@@ -16,7 +17,7 @@ static int table[TABLE_SIZE];
 
 struct hexbuf {
 	int ct;
-	int buf[1024];
+	unsigned int buf[1024];
 };
 
 struct map {
