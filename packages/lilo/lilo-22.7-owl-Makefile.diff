@@ -64,16 +64,3 @@ diff -ur lilo-22.7.orig/Makefile lilo-22.7/Makefile
  
  lilo.com:	dos/lilo.com
  	cp -uf $< $@
-@@ -303,10 +304,10 @@
- 		cp -p dparam.S dparam.s
- 
- lilo:		$(OBJS)
--		$(CC) -o lilo $(LDFLAGS) $(OBJS) $(LIBS)
-+		$(CC) $(CFLAGS) -o lilo $(LDFLAGS) $(OBJS) $(LIBS)
- 
- lilo-static:	$(OBJS)
--		$(CC) -o lilo-static -static $(LDFLAGS) $(OBJS) $(LIBS)
-+		$(CC) $(CFLAGS) -o lilo-static -static $(LDFLAGS) $(OBJS) $(LIBS)
- 
- boot-text.b:	first.b second.b
- 		(dd if=first.b bs=512 conv=sync; dd if=second.b) >boot-text.b
