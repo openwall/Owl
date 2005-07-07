@@ -1,15 +1,6 @@
 diff -ur lilo-22.7.orig/Makefile lilo-22.7/Makefile
 --- lilo-22.7.orig/Makefile	2005-04-12 15:32:50 +0000
 +++ lilo-22.7/Makefile	2005-06-01 14:29:03 +0000
-@@ -64,7 +64,7 @@
- 
- # set the compiler optimization level
- 
--OPT=-O
-+OPT=$(RPM_OPT_FLAGS)
- 
- 
- # End of configuration variables
 @@ -82,7 +82,7 @@
  #  manpath | sed "s/:.*//"; else echo /usr/man; fi`
  #
