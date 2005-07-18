@@ -1,9 +1,9 @@
-# $Id: Owl/packages/gzip/gzip.spec,v 1.18 2005/05/21 00:23:16 ldv Exp $
+# $Id: Owl/packages/gzip/gzip.spec,v 1.19 2005/07/18 16:40:29 solar Exp $
 
 Summary: The GNU data compression program.
 Name: gzip
 Version: 1.3.5
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/File
 URL: http://www.gnu.org/software/%name/
@@ -17,6 +17,7 @@ Patch5: gzip-1.3.5-deb-alt-signal.diff
 Patch6: gzip-1.3.5-deb-alt-original-filename.diff
 Patch7: gzip-1.3.5-alt-copy_stat.diff
 Patch8: gzip-1.3.5-alt-bzip2.diff
+Patch9: gzip-1.3.5-gentoo-huft_build-return.diff
 BuildRoot: /override/%name-%version
 
 %description
@@ -43,6 +44,7 @@ GNU gzip and bzip2 data compression programs.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 %build
 %configure --bindir=/bin
@@ -128,6 +130,9 @@ fi
 %exclude %_mandir/*/zcat.*
 
 %changelog
+* Mon Jul 18 2005 Solar Designer <solar@owl.openwall.com> 1.3.5-owl2
+- Fixed a segfault on invalid compressed data (patch from Gentoo).
+
 * Fri May 20 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.3.5-owl1
 - Updated to 1.3.5.
 - Reviewed Owl patches, removed obsolete ones.
