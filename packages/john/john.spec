@@ -1,4 +1,4 @@
-# $Id: Owl/packages/john/john.spec,v 1.53 2005/05/15 03:21:47 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.54 2005/07/18 15:38:21 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -46,6 +46,7 @@ make linux-ppc32 CFLAGS='%cflags'
 %endif
 
 %install
+rm -rf %buildroot
 mkdir -p %buildroot{%_bindir,%_datadir/john}
 install -m 700 run/john %buildroot%_bindir/
 cp -a run/un* %buildroot%_bindir/
