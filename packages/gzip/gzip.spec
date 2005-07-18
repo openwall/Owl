@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gzip/gzip.spec,v 1.19 2005/07/18 16:40:29 solar Exp $
+# $Id: Owl/packages/gzip/gzip.spec,v 1.20 2005/07/18 16:44:58 solar Exp $
 
 Summary: The GNU data compression program.
 Name: gzip
@@ -44,7 +44,7 @@ GNU gzip and bzip2 data compression programs.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
-%patch9 -p1
+%patch9 -p0
 
 %build
 %configure --bindir=/bin
