@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mutt/mutt.spec,v 1.17 2005/07/19 19:43:33 solar Exp $
+# $Id: Owl/packages/mutt/mutt.spec,v 1.18 2005/07/19 20:21:17 solar Exp $
 
 Summary: A feature-rich text-based mail user agent.
 Name: mutt
@@ -38,12 +38,8 @@ and more.
 %{expand:%%define optflags %optflags -fno-strict-aliasing}
 
 %build
-CFLAGS="%optflags" ./prepare \
-	--prefix=%_prefix \
-	--with-sharedir=/etc --sysconfdir=/etc \
+%configure \
 	--with-docdir=%_docdir/mutt-%version \
-	--with-mandir=%_mandir \
-	--with-infodir=%_infodir \
 	--enable-pop --enable-imap \
 	--with-ssl \
 	--disable-domain \
@@ -54,19 +50,16 @@ CFLAGS="%optflags" ./prepare \
 %install
 rm -rf %buildroot
 %makeinstall \
-	sharedir=%buildroot/etc \
-	sysconfdir=%buildroot/etc \
-	docdir=%buildroot%_docdir/mutt-%version \
-	install
+	docdir=%buildroot%_docdir/mutt-%version
 
 # We like GPG here.
-cat contrib/gpg.rc %_sourcedir/Muttrc-color >> %buildroot/etc/Muttrc
+cat contrib/gpg.rc %_sourcedir/Muttrc-color >> %buildroot/%_sysconfdir/Muttrc
 
 %find_lang %name
 
 %files -f %name.lang
 %defattr(-,root,root)
-%config /etc/Muttrc
+%config %_sysconfdir/Muttrc
 %doc doc/*.txt
 %doc contrib/*.rc README* contrib/sample.* NEWS TODO
 %doc COPYRIGHT doc/manual.txt contrib/language* mime.types
@@ -80,15 +73,17 @@ cat contrib/gpg.rc %_sourcedir/Muttrc-color >> %buildroot/etc/Muttrc
 %_mandir/man1/muttbug.*
 %_mandir/man5/mbox.*
 %_mandir/man5/muttrc.*
-%exclude /etc/mime.types
+%exclude %_sysconfdir/mime.types
 %exclude %_mandir/man1/mutt_dotlock.*
 
 %changelog
 * Tue Jul 19 2005 Solar Designer <solar@owl.openwall.com> 1.4.2.1-owl4
 - Extra buffer non-overflow safety for handler.c: mutt_decode_xbit().
-- Do package muttbug(1) (redirect to flea.1) and mbox(5) man pages.
 - Updated the SEE ALSO lists of all Mutt man pages according to Owl
 specifics.
+- Do package muttbug(1) (redirect to flea.1) and mbox(5) man pages.
+- Use the configure macro instead of the ./prepare script, do not pass
+obsolete settings into configure and makeinstall.
 
 * Tue Jun 28 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.4.2.1-owl3
 - Build this package without optimizations based on strict aliasing rules.
