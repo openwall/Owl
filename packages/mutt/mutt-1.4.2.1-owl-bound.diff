@@ -1,0 +1,31 @@
+diff -urp mutt-1.4.2.1.orig/handler.c mutt-1.4.2.1/handler.c
+--- mutt-1.4.2.1.orig/handler.c	Tue Mar 26 09:49:51 2002
++++ mutt-1.4.2.1/handler.c	Tue Jul 19 18:33:10 2005
+@@ -23,6 +23,8 @@
+ #include <sys/wait.h>
+ #include <sys/stat.h>
+ 
++#include <assert.h>
++
+ #include "mutt.h"
+ #include "mutt_curses.h"
+ #include "rfc1524.h"
+@@ -140,7 +142,17 @@ void mutt_decode_xbit (STATE *s, long le
+ 
+       bufi[l++] = c;
+       if (l == sizeof (bufi))
+-	convert_to_state (cd, bufi, &l, s);
++	{
++	  convert_to_state (cd, bufi, &l, s);
++	  /*
++	   * Make sure the call succeeded in doing what it was supposed to.
++	   * If not, it's probably a Mutt bug and reasonable error recovery
++	   * might not be possible, hence the assertion.  In non-debugging
++	   * builds, just exit the loop to ensure we don't overflow bufi[].
++	   */
++	  assert(l < sizeof (bufi));
++	  if (l >= sizeof (bufi)) break;
++	}
+     }
+ 
+     convert_to_state (cd, bufi, &l, s);
