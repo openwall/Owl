@@ -1,0 +1,116 @@
+diff -ur mutt-1.4.2.1.orig/doc/mbox.man mutt-1.4.2.1/doc/mbox.man
+--- mutt-1.4.2.1.orig/doc/mbox.man	Thu Aug 10 11:55:29 2000
++++ mutt-1.4.2.1/doc/mbox.man	Tue Jul 19 18:54:35 2005
+@@ -156,19 +156,14 @@
+ .SH
+ SEE ALSO
+ .PP
+-.BR elm (1),
+-.BR fcntl (2), 
+-.BR flock (2), 
+-.BR link (2),
+-.BR local (8), 
+ .BR mail (1), 
+-.BR maildir (5), 
+-.BR mail.local (8), 
+ .BR mutt (1),
+-.BR mutt_dotlock (1), 
+-.BR pine (1),
+ .BR procmail (1),
+-.BR sendmail (8)
++.BR sendmail (1),
++.BR fcntl (2), 
++.BR flock (2), 
++.BR link (2),
++.BR local (8)
+ .PP
+ D. Crocker, Standard for the format of ARPA Internet text messages,
+ RFC 822
+diff -ur mutt-1.4.2.1.orig/doc/mutt.man mutt-1.4.2.1/doc/mutt.man
+--- mutt-1.4.2.1.orig/doc/mutt.man	Wed Jul 24 08:41:31 2002
++++ mutt-1.4.2.1/doc/mutt.man	Tue Jul 19 18:57:06 2005
+@@ -169,16 +169,11 @@
+ GNU General Public License for more details.
+ .SH SEE ALSO
+ .PP
+-.BR curses (3),
+ .BR flea (1),
+-.BR mailcap (5),
+-.BR maildir (5),
+-.BR mbox (5),
+-.BR mutt_dotlock (1),
+-.BR muttrc (5),
+-.BR ncurses (3),
+ .BR sendmail (1),
+-.BR smail (1)
++.BR ncurses (3),
++.BR mbox (5),
++.BR muttrc (5)
+ .PP
+ Mutt Home Page: http://www.mutt.org/
+ .PP
+diff -ur mutt-1.4.2.1.orig/doc/muttbug.man mutt-1.4.2.1/doc/muttbug.man
+--- mutt-1.4.2.1.orig/doc/muttbug.man	Mon Jun 11 16:56:01 2001
++++ mutt-1.4.2.1/doc/muttbug.man	Tue Jul 19 18:55:47 2005
+@@ -181,15 +181,12 @@
+ .SH 
+ SEE ALSO
+ .PP
+-.BR dbx (1),
+ .BR gdb (1),
+-.BR lynx (1),
+ .BR mutt (1),
+-.BR muttrc (5),
+-.BR sdb (1),
+ .BR sendmail (1),
+ .BR uname (1),
+-.BR vi (1)
++.BR vi (1),
++.BR muttrc (5)
+ .PP
+ The mutt bug tracking system: http://bugs.guug.de/
+ .SH
+diff -ur mutt-1.4.2.1.orig/doc/muttrc.man mutt-1.4.2.1/doc/muttrc.man
+--- mutt-1.4.2.1.orig/doc/muttrc.man	Tue Jul 19 18:41:46 2005
++++ mutt-1.4.2.1/doc/muttrc.man	Tue Jul 19 19:00:41 2005
+@@ -4104,14 +4104,12 @@
+ .SH SEE ALSO
+ .PP
+ .BR iconv (1),
+-.BR iconv (3),
+-.BR mailcap (5),
+-.BR maildir (5),
+-.BR mbox (5),
+ .BR mutt (1),
++.BR iconv (3),
+ .BR printf (3),
+-.BR regex (7),
+-.BR strftime (3)
++.BR strftime (3),
++.BR mbox (5),
++.BR regex (7)
+ .PP
+ The Mutt Manual
+ .PP
+diff -ur mutt-1.4.2.1.orig/doc/muttrc.man.tail mutt-1.4.2.1/doc/muttrc.man.tail
+--- mutt-1.4.2.1.orig/doc/muttrc.man.tail	Wed Feb 14 23:35:35 2001
++++ mutt-1.4.2.1/doc/muttrc.man.tail	Tue Jul 19 19:21:23 2005
+@@ -2,14 +2,12 @@
+ .SH SEE ALSO
+ .PP
+ .BR iconv (1),
+-.BR iconv (3),
+-.BR mailcap (5),
+-.BR maildir (5),
+-.BR mbox (5),
+ .BR mutt (1),
++.BR iconv (3),
+ .BR printf (3),
+-.BR regex (7),
+-.BR strftime (3)
++.BR strftime (3),
++.BR mbox (5),
++.BR regex (7)
+ .PP
+ The Mutt Manual
+ .PP
