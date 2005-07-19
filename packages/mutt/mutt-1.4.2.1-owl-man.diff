@@ -1,3 +1,15 @@
+diff -ur mutt-1.4.2.1.orig/doc/Makefile.in mutt-1.4.2.1/doc/Makefile.in
+--- mutt-1.4.2.1.orig/doc/Makefile.in	Tue Nov  6 19:12:31 2001
++++ mutt-1.4.2.1/doc/Makefile.in	Tue Jul 19 20:07:22 2005
+@@ -73,7 +73,7 @@
+ 	$(top_srcdir)/mkinstalldirs $(DESTDIR)$(mandir)/man5
+ 	./instdoc $(srcdir)/mutt.man $(DESTDIR)$(mandir)/man1/mutt.1
+ 	./instdoc $(srcdir)/muttbug.man $(DESTDIR)$(mandir)/man1/flea.1
+-	echo ".so $(mandir)/man1/flea.1" > $(DESTDIR)$(mandir)/man1/muttbug.1
++	echo ".so man1/flea.1" > $(DESTDIR)$(mandir)/man1/muttbug.1
+ 	./instdoc $(srcdir)/dotlock.man \
+ 		$(DESTDIR)$(mandir)/man1/mutt_dotlock.1
+ 	./instdoc muttrc.man $(DESTDIR)$(mandir)/man5/muttrc.5
 diff -ur mutt-1.4.2.1.orig/doc/mbox.man mutt-1.4.2.1/doc/mbox.man
 --- mutt-1.4.2.1.orig/doc/mbox.man	Thu Aug 10 11:55:29 2000
 +++ mutt-1.4.2.1/doc/mbox.man	Tue Jul 19 18:54:35 2005
@@ -71,8 +83,8 @@ diff -ur mutt-1.4.2.1.orig/doc/muttbug.man mutt-1.4.2.1/doc/muttbug.man
  The mutt bug tracking system: http://bugs.guug.de/
  .SH
 diff -ur mutt-1.4.2.1.orig/doc/muttrc.man mutt-1.4.2.1/doc/muttrc.man
---- mutt-1.4.2.1.orig/doc/muttrc.man	Tue Jul 19 18:41:46 2005
-+++ mutt-1.4.2.1/doc/muttrc.man	Tue Jul 19 19:00:41 2005
+--- mutt-1.4.2.1.orig/doc/muttrc.man	Wed Feb 11 13:57:35 2004
++++ mutt-1.4.2.1/doc/muttrc.man	Tue Jul 19 20:06:46 2005
 @@ -4104,14 +4104,12 @@
  .SH SEE ALSO
  .PP
