@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mutt/mutt.spec,v 1.18 2005/07/19 20:21:17 solar Exp $
+# $Id: Owl/packages/mutt/mutt.spec,v 1.19 2005/07/19 20:36:40 solar Exp $
 
 Summary: A feature-rich text-based mail user agent.
 Name: mutt
@@ -38,6 +38,7 @@ and more.
 %{expand:%%define optflags %optflags -fno-strict-aliasing}
 
 %build
+aclocal -I m4
 %configure \
 	--with-docdir=%_docdir/mutt-%version \
 	--enable-pop --enable-imap \
