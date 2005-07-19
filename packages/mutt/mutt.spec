@@ -1,9 +1,9 @@
-# $Id: Owl/packages/mutt/mutt.spec,v 1.16 2005/06/28 18:58:45 ldv Exp $
+# $Id: Owl/packages/mutt/mutt.spec,v 1.17 2005/07/19 19:43:33 solar Exp $
 
 Summary: A feature-rich text-based mail user agent.
 Name: mutt
 Version: 1.4.2.1
-Release: owl3
+Release: owl4
 License: GPL
 Group: Applications/Internet
 URL: http://www.mutt.org
@@ -12,6 +12,8 @@ Source1: Muttrc-color
 Patch0: mutt-1.4-owl-no-sgid.diff
 Patch1: mutt-1.4-owl-muttbug-tmp.diff
 Patch2: mutt-1.4.2.1-owl-tmp.diff
+Patch3: mutt-1.4.2.1-owl-bound.diff
+Patch4: mutt-1.4.2.1-owl-man.diff
 Requires: mktemp >= 1:1.3.1
 Conflicts: mutt-us
 Provides: mutt-i
@@ -30,11 +32,14 @@ and more.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
+%patch4 -p1
 
 %{expand:%%define optflags %optflags -fno-strict-aliasing}
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" ./prepare --prefix=%_prefix \
+CFLAGS="%optflags" ./prepare \
+	--prefix=%_prefix \
 	--with-sharedir=/etc --sysconfdir=/etc \
 	--with-docdir=%_docdir/mutt-%version \
 	--with-mandir=%_mandir \
@@ -44,7 +49,7 @@ CFLAGS="$RPM_OPT_FLAGS" ./prepare --prefix=%_prefix \
 	--disable-domain \
 	--disable-flock --enable-fcntl \
 	--without-wc-funcs
-make
+%__make
 
 %install
 rm -rf %buildroot
@@ -55,13 +60,7 @@ rm -rf %buildroot
 	install
 
 # We like GPG here.
-cat contrib/gpg.rc $RPM_SOURCE_DIR/Muttrc-color >> %buildroot/etc/Muttrc
-
-# XXX: (GM): Remove unpackaged files (check later)
-rm %buildroot/etc/mime.types
-rm %buildroot%_mandir/man1/mutt_dotlock.1*
-rm %buildroot%_mandir/man1/muttbug.1*
-rm %buildroot%_mandir/man5/mbox.5*
+cat contrib/gpg.rc %_sourcedir/Muttrc-color >> %buildroot/etc/Muttrc
 
 %find_lang %name
 
@@ -76,11 +75,21 @@ rm %buildroot%_mandir/man5/mbox.5*
 %_bindir/flea
 %_bindir/pgpring
 %_bindir/pgpewrap
-%_mandir/man1/mutt.*
-%_mandir/man5/muttrc.*
 %_mandir/man1/flea.*
+%_mandir/man1/mutt.*
+%_mandir/man1/muttbug.*
+%_mandir/man5/mbox.*
+%_mandir/man5/muttrc.*
+%exclude /etc/mime.types
+%exclude %_mandir/man1/mutt_dotlock.*
 
 %changelog
+* Tue Jul 19 2005 Solar Designer <solar@owl.openwall.com> 1.4.2.1-owl4
+- Extra buffer non-overflow safety for handler.c: mutt_decode_xbit().
+- Do package muttbug(1) (redirect to flea.1) and mbox(5) man pages.
+- Updated the SEE ALSO lists of all Mutt man pages according to Owl
+specifics.
+
 * Tue Jun 28 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.4.2.1-owl3
 - Build this package without optimizations based on strict aliasing rules.
 
