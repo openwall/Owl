@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/installworld.sh,v 1.25 2005/01/20 06:37:24 solar Exp $
+# $Id: Owl/build/installworld.sh,v 1.26 2005/07/21 14:42:28 solar Exp $
 
 . installworld.conf
 
@@ -148,8 +148,8 @@ else
 	mkdir -m 755 -p $ROOT/var/lib/rpm
 	$RPMD $RPM_FLAGS --root $ROOT --initdb || exit 1
 
-	# XXX: (GM): This is a hack. We are cloning empty database file
-	# Packages to Providename to shut our RPM during installation
+# XXX: (GM): This is a hack. We are cloning empty database file Packages
+# to Providename to shut our RPM during installation.
 	cp -a $ROOT/var/lib/rpm/{Packages,Providename} || exit 1
 	$RPMD $RPM_FLAGS --root $ROOT --rebuilddb || exit 1
 
@@ -179,6 +179,8 @@ while read PACKAGES; do
 				;;
 			esac
 		fi
+# XXX: When multiple versions of a package are present, this will pick one
+# of those, but not always the latest one (not for "-owl9" vs. "-owl10").
 		REGEX="^${PACKAGE}-[^-]*[0-9][^-]*-[^-]*[0-9][^-]*\..*\.rpm\$"
 		FILE="`ls | grep "$REGEX" | tail -1`"
 		if [ -z "$FILE" ]; then
