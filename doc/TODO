@@ -286,11 +286,12 @@ http://www.kernel.org/pub/linux/utils/kernel/hotplug/udev.html
 	owl-setup.
 
 [PRIORITY: medium]
+[ASSIGNED: Croco]
 Replace with a full-featured installer which would have the ability to
 guide through the installation process, including disk partitioning,
 filesystem creation, "make installworld" and optionally building and
-installing a kernel.  Might move from the current shell & dialog to
-C & cdk or even C++ & ndk++ (which would then be packaged).
+installing a kernel.  Move from the current shell & dialog to C++ & ndk++
+(ndk++ would then be packaged).
 
 
 	owl-startup.
@@ -559,4 +560,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.94 2005/07/01 17:30:22 solar Exp $
+$Id: Owl/doc/TODO,v 1.95 2005/07/21 14:34:26 solar Exp $
