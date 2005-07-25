@@ -1,0 +1,301 @@
+diff -urp openssh-3.6.1p2.orig/kex.c openssh-3.6.1p2/kex.c
+--- openssh-3.6.1p2.orig/kex.c	Tue Apr  1 11:44:37 2003
++++ openssh-3.6.1p2/kex.c	Mon Jul 25 20:18:29 2005
+@@ -276,10 +276,12 @@ choose_comp(Comp *comp, char *client, ch
+ 	char *name = match_list(client, server, NULL);
+ 	if (name == NULL)
+ 		fatal("no matching comp found: client %s server %s", client, server);
+-	if (strcmp(name, "zlib") == 0) {
+-		comp->type = 1;
++	if (strcmp(name, "zlib@openssh.com") == 0) {
++		comp->type = COMP_DELAYED;
++	} else if (strcmp(name, "zlib") == 0) {
++		comp->type = COMP_ZLIB;
+ 	} else if (strcmp(name, "none") == 0) {
+-		comp->type = 0;
++		comp->type = COMP_NONE;
+ 	} else {
+ 		fatal("unsupported comp %s", name);
+ 	}
+diff -urp openssh-3.6.1p2.orig/kex.h openssh-3.6.1p2/kex.h
+--- openssh-3.6.1p2.orig/kex.h	Mon Feb 24 01:03:03 2003
++++ openssh-3.6.1p2/kex.h	Mon Jul 25 20:18:29 2005
+@@ -34,6 +34,10 @@
+ #define	KEX_DH1		"diffie-hellman-group1-sha1"
+ #define	KEX_DHGEX	"diffie-hellman-group-exchange-sha1"
+ 
++#define COMP_NONE	0
++#define COMP_ZLIB	1
++#define COMP_DELAYED	2
++
+ enum kex_init_proposals {
+ 	PROPOSAL_KEX_ALGS,
+ 	PROPOSAL_SERVER_HOST_KEY_ALGS,
+diff -urp openssh-3.6.1p2.orig/myproposal.h openssh-3.6.1p2/myproposal.h
+--- openssh-3.6.1p2.orig/myproposal.h	Thu Apr  4 22:10:39 2002
++++ openssh-3.6.1p2/myproposal.h	Mon Jul 25 20:18:29 2005
+@@ -32,7 +32,7 @@
+ 	"hmac-md5,hmac-sha1,hmac-ripemd160," \
+ 	"hmac-ripemd160@openssh.com," \
+ 	"hmac-sha1-96,hmac-md5-96"
+-#define	KEX_DEFAULT_COMP	"none,zlib"
++#define	KEX_DEFAULT_COMP	"none,zlib@openssh.com,zlib"
+ #define	KEX_DEFAULT_LANG	""
+ 
+ 
+diff -urp openssh-3.6.1p2.orig/packet.c openssh-3.6.1p2/packet.c
+--- openssh-3.6.1p2.orig/packet.c	Tue Apr  1 11:43:39 2003
++++ openssh-3.6.1p2/packet.c	Mon Jul 25 20:34:44 2005
+@@ -114,6 +114,12 @@ static int initialized = 0;
+ /* Set to true if the connection is interactive. */
+ static int interactive_mode = 0;
+ 
++/* Set to true if we are the server side. */
++static int server_side = 0;
++
++/* Set to true if we are authenticated. */
++static int after_authentication = 0;
++
+ /* Session key information for Encryption and MAC */
+ Newkeys *newkeys[MODE_MAX];
+ static u_int32_t read_seqnr = 0;
+@@ -602,7 +608,9 @@ set_newkeys(int mode)
+ 	/* Deleting the keys does not gain extra security */
+ 	/* memset(enc->iv,  0, enc->block_size);
+ 	   memset(enc->key, 0, enc->key_len); */
+-	if (comp->type != 0 && comp->enabled == 0) {
++	if ((comp->type == COMP_ZLIB ||
++	    (comp->type == COMP_DELAYED && after_authentication)) &&
++	    comp->enabled == 0) {
+ 		packet_init_compression();
+ 		if (mode == MODE_OUT)
+ 			buffer_compress_init_send(6);
+@@ -613,6 +621,34 @@ set_newkeys(int mode)
+ }
+ 
+ /*
++ * Delayed compression for SSH2 is enabled after authentication:
++ * This happans on the server side after a SSH2_MSG_USERAUTH_SUCCESS is sent,
++ * and on the client side after a SSH2_MSG_USERAUTH_SUCCESS is received.
++ */
++static void
++packet_enable_delayed_compress(void)
++{
++	Comp *comp = NULL;
++	int mode;
++
++	/*
++	 * Remember that we are past the authentication step, so rekeying
++	 * with COMP_DELAYED will turn on compression immediately.
++	 */
++	after_authentication = 1;
++	for (mode = 0; mode < MODE_MAX; mode++) {
++		comp = &newkeys[mode]->comp;
++		if (comp && !comp->enabled && comp->type == COMP_DELAYED) {
++			if (mode == MODE_OUT)
++				buffer_compress_init_send(6);
++			else
++				buffer_compress_init_recv();
++			comp->enabled = 1;
++		}
++	}
++}
++
++/*
+  * Finalize packet in SSH2 format (compress, mac, encrypt, enqueue)
+  */
+ static void
+@@ -721,6 +757,8 @@ packet_send2(void)
+ 
+ 	if (type == SSH2_MSG_NEWKEYS)
+ 		set_newkeys(MODE_OUT);
++	else if (type == SSH2_MSG_USERAUTH_SUCCESS && server_side)
++		packet_enable_delayed_compress();
+ }
+ 
+ void
+@@ -1007,6 +1045,8 @@ packet_read_poll2(u_int32_t *seqnr_p)
+ 	type = buffer_get_char(&incoming_packet);
+ 	if (type == SSH2_MSG_NEWKEYS)
+ 		set_newkeys(MODE_IN);
++	else if (type == SSH2_MSG_USERAUTH_SUCCESS && !server_side)
++		packet_enable_delayed_compress();
+ #ifdef PACKET_DEBUG
+ 	fprintf(stderr, "read/plain[%d]:\r\n", type);
+ 	buffer_dump(&incoming_packet);
+@@ -1412,4 +1452,16 @@ packet_send_ignore(int nbytes)
+ 		packet_put_char(rand & 0xff);
+ 		rand >>= 8;
+ 	}
++}
++
++void
++packet_set_server(void)
++{
++	server_side = 1;
++}
++
++void
++packet_set_authenticated(void)
++{
++	after_authentication = 1;
+ }
+diff -urp openssh-3.6.1p2.orig/packet.h openssh-3.6.1p2/packet.h
+--- openssh-3.6.1p2.orig/packet.h	Tue Apr  1 11:43:39 2003
++++ openssh-3.6.1p2/packet.h	Mon Jul 25 20:18:29 2005
+@@ -30,6 +30,8 @@ u_int	 packet_get_protocol_flags(void);
+ void     packet_start_compression(int);
+ void     packet_set_interactive(int);
+ int      packet_is_interactive(void);
++void     packet_set_server(void);
++void     packet_set_authenticated(void);
+ 
+ void     packet_start(u_char);
+ void     packet_put_char(int ch);
+diff -urp openssh-3.6.1p2.orig/servconf.c openssh-3.6.1p2/servconf.c
+--- openssh-3.6.1p2.orig/servconf.c	Mon Feb 24 01:04:34 2003
++++ openssh-3.6.1p2/servconf.c	Mon Jul 25 20:18:29 2005
+@@ -229,7 +229,7 @@ fill_default_server_options(ServerOption
+ 	if (options->use_login == -1)
+ 		options->use_login = 0;
+ 	if (options->compression == -1)
+-		options->compression = 1;
++		options->compression = COMP_DELAYED;
+ 	if (options->allow_tcp_forwarding == -1)
+ 		options->allow_tcp_forwarding = 1;
+ 	if (options->gateway_ports == -1)
+@@ -727,7 +727,23 @@ parse_flag:
+ 
+ 	case sCompression:
+ 		intptr = &options->compression;
+-		goto parse_flag;
++		arg = strdelim(&cp);
++		if (!arg || *arg == '\0')
++			fatal("%s line %d: missing yes/no/delayed "
++			    "argument.", filename, linenum);
++		value = 0;	/* silence compiler */
++		if (strcmp(arg, "delayed") == 0)
++			value = COMP_DELAYED;
++		else if (strcmp(arg, "yes") == 0)
++			value = COMP_ZLIB;
++		else if (strcmp(arg, "no") == 0)
++			value = COMP_NONE;
++		else
++			fatal("%s line %d: Bad yes/no/delayed "
++			    "argument: %s", filename, linenum, arg);
++		if (*intptr == -1)
++			*intptr = value;
++		break;
+ 
+ 	case sGatewayPorts:
+ 		intptr = &options->gateway_ports;
+diff -urp openssh-3.6.1p2.orig/session.c openssh-3.6.1p2/session.c
+--- openssh-3.6.1p2.orig/session.c	Fri Mar 21 01:18:09 2003
++++ openssh-3.6.1p2/session.c	Mon Jul 25 20:18:29 2005
+@@ -56,6 +56,7 @@ RCSID("$OpenBSD: session.c,v 1.154 2003/
+ #include "serverloop.h"
+ #include "canohost.h"
+ #include "session.h"
++#include "kex.h"
+ #include "monitor_wrap.h"
+ 
+ #ifdef HAVE_CYGWIN
+@@ -274,7 +275,7 @@ do_authenticated1(Authctxt *authctxt)
+ 				    compression_level);
+ 				break;
+ 			}
+-			if (!options.compression) {
++			if (options.compression == COMP_NONE) {
+ 				debug2("compression disabled");
+ 				break;
+ 			}
+diff -urp openssh-3.6.1p2.orig/sshconnect2.c openssh-3.6.1p2/sshconnect2.c
+--- openssh-3.6.1p2.orig/sshconnect2.c	Tue Apr  1 11:43:40 2003
++++ openssh-3.6.1p2/sshconnect2.c	Mon Jul 25 20:18:29 2005
+@@ -95,10 +95,10 @@ ssh_kex2(char *host, struct sockaddr *ho
+ 	    compat_cipher_proposal(myproposal[PROPOSAL_ENC_ALGS_STOC]);
+ 	if (options.compression) {
+ 		myproposal[PROPOSAL_COMP_ALGS_CTOS] =
+-		myproposal[PROPOSAL_COMP_ALGS_STOC] = "zlib,none";
++		myproposal[PROPOSAL_COMP_ALGS_STOC] = "zlib@openssh.com,zlib,none";
+ 	} else {
+ 		myproposal[PROPOSAL_COMP_ALGS_CTOS] =
+-		myproposal[PROPOSAL_COMP_ALGS_STOC] = "none,zlib";
++		myproposal[PROPOSAL_COMP_ALGS_STOC] = "none,zlib@openssh.com,zlib";
+ 	}
+ 	if (options.macs != NULL) {
+ 		myproposal[PROPOSAL_MAC_ALGS_CTOS] =
+diff -urp openssh-3.6.1p2.orig/sshd.c openssh-3.6.1p2/sshd.c
+--- openssh-3.6.1p2.orig/sshd.c	Mon Mar 10 00:38:10 2003
++++ openssh-3.6.1p2/sshd.c	Mon Jul 25 20:18:29 2005
+@@ -678,6 +678,12 @@ privsep_postauth(Authctxt *authctxt)
+ 
+ 	/* It is safe now to apply the key state */
+ 	monitor_apply_keystate(pmonitor);
++
++	/*
++	 * Tell the packet layer that authentication was successful, since
++	 * this information is not part of the key state.
++	 */
++	packet_set_authenticated();
+ }
+ 
+ static char *
+@@ -1434,6 +1440,7 @@ main(int ac, char **av)
+ 	 * not have a key.
+ 	 */
+ 	packet_set_connection(sock_in, sock_out);
++	packet_set_server();
+ 
+ 	remote_port = get_remote_port();
+ 	remote_ip = get_remote_ipaddr();
+@@ -1810,10 +1817,14 @@ do_ssh2_kex(void)
+ 		myproposal[PROPOSAL_MAC_ALGS_CTOS] =
+ 		myproposal[PROPOSAL_MAC_ALGS_STOC] = options.macs;
+ 	}
+-	if (!options.compression) {
++	if (options.compression == COMP_NONE) {
+ 		myproposal[PROPOSAL_COMP_ALGS_CTOS] =
+ 		myproposal[PROPOSAL_COMP_ALGS_STOC] = "none";
++	} else if (options.compression == COMP_DELAYED) {
++		myproposal[PROPOSAL_COMP_ALGS_CTOS] =
++		myproposal[PROPOSAL_COMP_ALGS_STOC] = "none,zlib@openssh.com";
+ 	}
++	
+ 	myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = list_hostkey_types();
+ 
+ 	/* start key exchange */
+diff -urp openssh-3.6.1p2.orig/sshd_config openssh-3.6.1p2/sshd_config
+--- openssh-3.6.1p2.orig/sshd_config	Fri Sep 27 03:21:58 2002
++++ openssh-3.6.1p2/sshd_config	Mon Jul 25 20:38:13 2005
+@@ -82,7 +82,7 @@
+ #UseLogin no
+ #UsePrivilegeSeparation yes
+ #PermitUserEnvironment no
+-#Compression yes
++#Compression delayed
+ 
+ #MaxStartups 10
+ # no default banner path
+diff -urp openssh-3.6.1p2.orig/sshd_config.5 openssh-3.6.1p2/sshd_config.5
+--- openssh-3.6.1p2.orig/sshd_config.5	Tue Apr  1 11:42:14 2003
++++ openssh-3.6.1p2/sshd_config.5	Mon Jul 25 20:18:29 2005
+@@ -173,13 +173,15 @@ The default value is 3. If
+ is left at the default, unresponsive ssh clients
+ will be disconnected after approximately 45 seconds.
+ .It Cm Compression
+-Specifies whether compression is allowed.
++Specifies whether compression is allowed, or delayed until
++the user has authenticated successfully.
+ The argument must be
+-.Dq yes
++.Dq yes ,
++.Dq delayed ,
+ or
+ .Dq no .
+ The default is
+-.Dq yes .
++.Dq delayed .
+ .It Cm DenyGroups
+ This keyword can be followed by a list of group name patterns, separated
+ by spaces.

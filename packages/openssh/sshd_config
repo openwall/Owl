@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/sshd_config,v 1.12 2003/07/21 21:19:23 solar Exp $
+# $Id: Owl/packages/openssh/sshd_config,v 1.13 2005/07/25 20:51:49 solar Exp $
 
 # This is the sshd server system-wide configuration file.  See
 # sshd_config(5) for more information.
@@ -64,7 +64,7 @@ X11Forwarding yes
 #UseLogin no
 #UsePrivilegeSeparation yes
 #PermitUserEnvironment no
-#Compression yes
+#Compression delayed
 
 #MaxStartups 10
 # There's no default banner path
