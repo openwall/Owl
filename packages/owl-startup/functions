@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-startup/functions,v 1.9 2002/12/12 16:45:06 solar Exp $
+# $Id: Owl/packages/owl-startup/functions,v 1.10 2005/07/27 07:04:08 galaxy Exp $
 #
 # Functions defined in this file are used by many /etc/rc.d/init.d scripts;
 # they offer some limited Red Hat compatibility.
@@ -135,17 +135,17 @@ function killproc()
 			DEFAULT=false
 			shift
 			;;
-		-*)
-			SIGNAL="${1##-}"
-			SIGNAL="`kill -l "$SIGNAL"`"
-			DEFAULT=false
-			shift
-			;;
 		--)
 			shift
 			test -z "$NAME" || return 1
 			NAME="$1"
 			break
+			;;
+		-*)
+			SIGNAL="${1##-}"
+			SIGNAL="`kill -l "$SIGNAL"`"
+			DEFAULT=false
+			shift
 			;;
 # Allow the process name to be in any argument for Red Hat compatibility.
 		*)

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.53 2005/05/27 12:14:24 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.54 2005/07/27 07:04:08 galaxy Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
 Version: 0.24
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 Source0: initscripts-5.00.tar.gz
@@ -162,6 +162,9 @@ fi
 %doc redhat
 
 %changelog
+* Wed Jul 27 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.24-owl2
+- Fixed killproc() argument parsing bug in %%_sysconfdir/init.d/rc.d/functions.
+
 * Tue May 24 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.24-owl1
 - Fixed a typo in /etc/rc.d/init.d/network which used to break the static
 routes logic. Thanks to DaNuk <noc at spacenet.ru> for pointing it out.
