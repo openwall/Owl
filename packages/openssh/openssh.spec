@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.80 2005/07/25 20:51:49 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.81 2005/07/27 20:33:34 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
@@ -31,6 +31,7 @@ Patch14: openssh-3.6.1p2-owl-realloc.diff
 Patch15: openssh-3.6.1p2-cvs-20040401-scp-fix.diff
 Patch16: openssh-3.6.1p2-owl-sanitize-packet-types.diff
 Patch17: openssh-3.6.1p2-cvs-20050725-ssh2-delayed-compression.diff
+Patch18: openssh-3.6.1p2-owl-ssh2-delayed-compression-fix.diff
 PreReq: openssl >= 0.9.7, openssl < 0.9.8
 Requires: pam >= 0.75-owl16
 Obsoletes: ssh
@@ -121,6 +122,7 @@ rm -r autom4te.cache
 %patch15 -p1
 %patch16 -p1
 %patch17 -p1
+%patch18 -p1
 
 %{expand:%%define _sysconfdir %_sysconfdir/ssh}
 %{expand:%%define _datadir %_datadir/ssh}
@@ -237,10 +239,11 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
-* Mon Jul 25 2005 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl14
+* Thu Jul 28 2005 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl14
 - Added delayed compression support for protocol 2 (a back-port of the
-changes committed into the OpenBSD CVS today), enabled by default.  Thanks
-to Markus Friedl for working on this and for bringing it to our attention.
+changes committed into the OpenBSD CVS recently, with a bugfix added),
+enabled by default.  Thanks to Markus Friedl for working on this and for
+bringing it to our attention.
 
 * Sat Jun 25 2005 Dmitry V. Levin <ldv@owl.openwall.com> 3.6.1p2-owl13
 - Rebuilt with libcrypto.so.5.

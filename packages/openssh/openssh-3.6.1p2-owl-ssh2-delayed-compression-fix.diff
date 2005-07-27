@@ -1,0 +1,11 @@
+diff -urp openssh-3.6.1p2-cvs-20050725-ssh2-delayed-compression/packet.c openssh-3.6.1p2/packet.c
+--- openssh-3.6.1p2-cvs-20050725-ssh2-delayed-compression/packet.c	Mon Jul 25 20:34:44 2005
++++ openssh-3.6.1p2/packet.c	Wed Jul 27 20:18:38 2005
+@@ -639,6 +639,7 @@ packet_enable_delayed_compress(void)
+ 	for (mode = 0; mode < MODE_MAX; mode++) {
+ 		comp = &newkeys[mode]->comp;
+ 		if (comp && !comp->enabled && comp->type == COMP_DELAYED) {
++			packet_init_compression();
+ 			if (mode == MODE_OUT)
+ 				buffer_compress_init_send(6);
+ 			else
