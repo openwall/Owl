@@ -12,6 +12,20 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2005/07/28	Package: openssh
+Added delayed compression support for SSH protocol 2 (a back-port of
+the changes committed into the OpenBSD CVS repository recently),
+enabled in sshd by default.  With the new default setting, sshd will
+only allow for compression to be enabled after authentication.
+Unfortunately, this requires SSH client support as well, meaning that
+old SSH protocol 2 clients will be unable to use compression with our
+new sshd at its default setting.  SSH protocol 1 has always insisted
+on authentication prior to compression and thus is unaffected by this
+change.  The rationale for the change is to reduce the exposure of
+potential vulnerabilities in the code associated with compression (in
+OpenSSH itself and in zlib).  Thanks to Markus Friedl for working on
+this and for bringing it to our attention.
+
 2005/07/07	Package: lilo
 Updated to 22.7.
 
@@ -505,4 +519,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.111 2005/07/07 01:49:10 galaxy Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.112 2005/07/27 22:06:01 solar Exp $
