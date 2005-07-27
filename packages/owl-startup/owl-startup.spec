@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.55 2005/07/27 10:11:44 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.56 2005/07/27 21:11:43 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.24
-Release: owl2
+Version: 0.25
+Release: owl1
 License: GPL
 Group: System Environment/Base
 Source0: initscripts-5.00.tar.gz
@@ -162,7 +162,7 @@ fi
 %doc redhat
 
 %changelog
-* Wed Jul 27 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.24-owl2
+* Wed Jul 27 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.25-owl1
 - Fixed killproc() argument parsing bug in /etc/rc.d/init.d/functions.
 
 * Tue May 24 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.24-owl1
