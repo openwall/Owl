@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.54 2005/07/27 07:04:08 galaxy Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.55 2005/07/27 10:11:44 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -163,7 +163,7 @@ fi
 
 %changelog
 * Wed Jul 27 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.24-owl2
-- Fixed killproc() argument parsing bug in %%_sysconfdir/init.d/rc.d/functions.
+- Fixed killproc() argument parsing bug in /etc/rc.d/init.d/functions.
 
 * Tue May 24 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.24-owl1
 - Fixed a typo in /etc/rc.d/init.d/network which used to break the static
