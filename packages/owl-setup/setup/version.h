@@ -1,3 +1,3 @@
-#ifndef OWLINST_VERSION
-#define OWLINST_VERSION "0.1.41"
+#ifndef SETUP_VERSION
+#define SETUP_VERSION "0.20"
 #endif

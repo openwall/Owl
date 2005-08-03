@@ -41,7 +41,7 @@ int main()
                         main_menu[i].comment,
                         true);
         }
-        mm->SetCaption("Openwall/*/Linux setup vers. " OWLINST_VERSION);
+        mm->SetCaption("Openwall GNU/*/Linux setup version " SETUP_VERSION);
         ScriptVariable choice = mm->Run();
         delete mm;
         if(choice == "") {

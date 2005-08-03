@@ -72,7 +72,7 @@ int main()
                 defval = main_menu[i].label;
         }
         mm->SetDefault(defval);
-        mm->SetCaption("Openwall/*/Linux installer vers. " OWLINST_VERSION);
+        mm->SetCaption("Openwall GNU/*/Linux installer version " SETUP_VERSION);
         ScriptVariable choice = mm->Run();
         delete mm;
         if(choice == "") {
