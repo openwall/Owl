@@ -1,60 +1,39 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.25 2004/11/23 22:40:47 mci Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.26 2005/08/03 18:38:09 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 0.14
+Version: 0.20
 Release: owl1
-License: mostly public domain, passwdlg is under GPL
+License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
-Source0: Makefile
-Source1: passwdlg.c
-Source2: setup.pam
-Source3: owl-setup.conf
-Source4: owl-setup
-Source5: mkfstab
-Source6: netcfg
-Source10: README
-Requires: bash >= 2.0, sh-utils, util-linux, sed, mktemp
-Requires: dialog
-Requires: tcb, kbd
-Requires: owl-startup
+Source: owl-setup-%version.tar.gz
+Requires: e2fsprogs, kbd, util-linux
 Conflicts: setuptool
 BuildRoot: /override/%name-%version
 
 %description
-This is a configuration tool to initially setup fstab, networking,
-root password, and timezone.  This is a temporary solution and will
-be replaced with a more consistent and reliable tool in the future.
+This is the installation and configuration tool for Owl.
 
 %prep
-%setup -n owl-setup -c -T
-cp $RPM_SOURCE_DIR/{Makefile,passwdlg.c,README} .
-chmod 644 README
+%setup -q
+
+%{expand:%%define optflags %optflags -Wall}
 
 %build
-make CFLAGS="$RPM_OPT_FLAGS -Wall"
+%__make CXXFLAGS="%optflags"
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot/{etc/pam.d,usr/lib/owl-setup,usr/sbin}
-install -m 600 $RPM_SOURCE_DIR/owl-setup.conf %buildroot/etc/
-install -m 700 passwdlg %buildroot/usr/lib/owl-setup/
-install -m 600 $RPM_SOURCE_DIR/setup.pam %buildroot/etc/pam.d/setup
-install -m 700 $RPM_SOURCE_DIR/owl-setup %buildroot/usr/lib/owl-setup/
-install -m 700 $RPM_SOURCE_DIR/mkfstab %buildroot/usr/lib/owl-setup/
-install -m 700 $RPM_SOURCE_DIR/netcfg %buildroot/usr/lib/owl-setup/
-install -m 644 $RPM_SOURCE_DIR/README %buildroot/usr/lib/owl-setup/
-ln -s ../../usr/lib/owl-setup/owl-setup %buildroot/usr/sbin/setup
+%__make install DESTDIR=%buildroot SBINDIR=%_sbindir
 
 %files
 %defattr(-,root,root)
-%doc README
-%config /etc/pam.d/setup
-%config /etc/owl-setup.conf
-/usr/lib/owl-setup
-/usr/sbin/setup
+%_sbindir/*
 
 %changelog
+* Wed Aug 03 2005 Solar Designer <solar@owl.openwall.com> 0.20-owl1
+- Replaced with Croco's new installer.
+
 * Mon Oct 20 2003 Solar Designer <solar@owl.openwall.com> 0.14-owl1
 - Corrected the path to loadkeys(1) (it broke with the move from console-tools
 to kbd).
