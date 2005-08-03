@@ -1,0 +1,46 @@
+#include <unistd.h>
+
+#include "iface.hpp"
+#include "cmd.hpp"
+#include "config.hpp"
+#include "state.hpp"
+
+   /* implemented in select_partitions.cpp */
+void unmount_all(OwlInstallInterface *the_iface);
+
+
+
+void reboot_it(OwlInstallInterface *the_iface)
+{
+    bool res = the_iface->YesNoMessage("Really reboot the system?");
+    if(!res) return;
+    the_iface->Notice("Unmounting partitions...");
+    unmount_all(the_iface);
+
+    ScriptVariable runlevel = get_runlevel();
+    the_iface->Notice(ScriptVariable(0, "Runlevel is [%s]...",
+                                        runlevel.c_str()));
+
+    bool r;
+    if(runlevel == "2" || runlevel == "3" ||
+       runlevel == "4" || runlevel == "5")
+    {
+        the_iface->Notice("Calling shutdown...");
+        ExecAndWait shut("/sbin/shutdown", "-r", "now", 0);
+        r = shut.Success();
+    } else {
+        the_iface->Notice("Doesn't seem to be multiuser, "
+                          "preparing for a hard reboot");
+        ExecAndWait(the_config->UmountPath().c_str(), "-far", 0);
+        ExecAndWait(the_config->MountPath().c_str(),
+                           "-no", "remount,ro", "/", 0);
+        ExecAndWait shut("/sbin/reboot", "-df", 0);
+        r = shut.Success();
+    }
+    if(r) {
+        the_iface->Notice("Rebooting the system, good bye");
+        while(1) pause();
+    } else {
+        the_iface->Message("Failed to proceed, please reboot manually");
+    }
+}
