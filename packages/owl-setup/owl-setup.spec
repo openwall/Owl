@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.26 2005/08/03 18:38:09 solar Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.27 2005/08/03 18:53:29 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -6,7 +6,7 @@ Version: 0.20
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
-Source: owl-setup-%version.tar.gz
+Source: setup-%version.tar.gz
 Requires: e2fsprogs, kbd, util-linux
 Conflicts: setuptool
 BuildRoot: /override/%name-%version
