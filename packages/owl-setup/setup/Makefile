@@ -53,7 +53,7 @@ install: $(PROJ)
 	$(INSTALL) -m 700 $(PROJ) $(DESTDIR)$(SBINDIR)/
 
 clean:
-	$(RM) *.o $(PROJ)
+	$(RM) $(PROJ) $(SETTLE_OBJS) $(SETUP_OBJS) deps.mk
 	$(MAKE) -C scriptpp clean
 	$(MAKE) -C ip4areas clean
 
