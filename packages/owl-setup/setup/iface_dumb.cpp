@@ -282,7 +282,7 @@ DumbOwlInstallInterface::YesNoCancelMessage(const ScriptVariable& msg)
         res.Tolower();
         if(res=="yes") return ync_yes;
         if(res=="no") return ync_no;
-        if(res==""||res==qs_cancel||res==qs_escape||res==qs_eof)
+        if(res=="cancel"||res==""||res==qs_cancel||res==qs_escape||res==qs_eof)
             return ync_cancel;
         printf("Please answer \"yes\", \"no\", or \"cancel\"\n");
     }
