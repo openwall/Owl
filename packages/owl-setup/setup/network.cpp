@@ -692,9 +692,7 @@ void configure_network(OwlInstallInterface *the_iface)
                 choice == OwlInstallInterface::qs_escape ||
                 choice == OwlInstallInterface::qs_cancel)
         {
-            YesNoCancelResult q =
-                the_iface->YesNoCancelMessage("Really quit without saving?");
-            if(q == ync_yes) break;
+            if (the_iface->YesNoMessage("Really quit without saving?")) break;
         }
         else if(choice == OwlInstallInterface::qs_eof)
         {
