@@ -287,11 +287,8 @@ http://www.kernel.org/pub/linux/utils/kernel/hotplug/udev.html
 
 [PRIORITY: medium]
 [ASSIGNED: Croco]
-Replace with a full-featured installer which would have the ability to
-guide through the installation process, including disk partitioning,
-filesystem creation, "make installworld" and optionally building and
-installing a kernel.  Move from the current shell & dialog to C++ & ndk++
-(ndk++ would then be packaged).
+Develop a ncurses-based window interface for the installer (use cdk?),
+while keeping the original dumb terminal interface as well.
 
 
 	owl-startup.
@@ -429,6 +426,8 @@ match.  Right now, when forcibly updating a package to what appears to
 be the same version, but the previously installed package contains
 files that no longer exist in the package being installed, the files
 are not removed from the system and become orphaned.
+Reference:
+https://bugzilla.redhat.com/bugzilla/show_bug.cgi?id=134388
 
 [PRIORITY: medium]
 [ASSIGNED: galaxy@]
@@ -456,7 +455,8 @@ Make rpm also use the system's libelf.
 	shadow-utils.
 
 [PRIORITY: low]
-Try to feed generic patches upstream.  Sync to the latest.
+Sync to the latest (will have to rework the man pages patches).  Try to
+feed generic patches upstream.
 
 
 	SimplePAMApps.
@@ -560,4 +560,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.95 2005/07/21 14:34:26 solar Exp $
+$Id: Owl/doc/TODO,v 1.96 2005/08/07 04:14:04 solar Exp $
