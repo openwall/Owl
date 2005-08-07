@@ -330,9 +330,9 @@ static ScriptVariable summary_net_config(NetconfInfo &info)
 
     ScriptVector dns;
     info.GetDnsServers(dns);
-    res += "Dns servers:     "; res += dns.Join(", "); res += "\n";
+    res += "DNS servers:     "; res += dns.Join(", "); res += "\n";
 #if 0
-    res += "IP v4 forwarding: ";
+    res += "IPv4 forwarding: ";
     res += info.IsForwardingEnabled() ? "enabled" : "disabled";
 #endif
 
@@ -468,11 +468,11 @@ static bool query_ip_and_mask(OwlInstallInterface *the_iface,
     }
 
     ScriptVariable newmask =
-        the_iface->QueryString("Enter netmask (e.g. /24 or 255.255.255.0)",
+        the_iface->QueryString("Enter netmask (e.g., /24 or 255.255.255.0)",
                                mask);
     if(newmask == OwlInstallInterface::qs_cancel) return false;
     if(IP4Mask(newmask.c_str()).IsInvalid()) {
-        the_iface->Message("Invalid mask");
+        the_iface->Message("Invalid netmask");
         return false;
     }
 
@@ -542,7 +542,7 @@ static void edit_interfaces(OwlInstallInterface* the_iface,
                 continue;
             }
             if(info.InterfaceExists(name)) {
-                the_iface->Message("Interface already exists, try edit...");
+                the_iface->Message("Interface already exists, try ``edit''");
                 continue;
             }
             ScriptVariable ip, mask;
@@ -631,7 +631,7 @@ void configure_network(OwlInstallInterface *the_iface)
     pm->AddItem("g", "Set default gateway");
     pm->AddItem("n", "Edit DNS servers");
 #if 0
-    pm->AddItem("f", "Toggle IP v4 forwarding");
+    pm->AddItem("f", "Toggle IPv4 forwarding");
 #endif
     pm->AddItem("s", "Save and return to main menu");
     pm->AddItem("x", "Return to main menu without saving");
@@ -645,7 +645,7 @@ void configure_network(OwlInstallInterface *the_iface)
         }
         else if(choice=="h") {
             ScriptVariable res =
-                the_iface->QueryString("Type the fully-qualified hostname",
+                the_iface->QueryString("Enter the fully-qualified hostname",
                                        info.GetFullHostname());
             if(res == OwlInstallInterface::qs_eof) {
                 return;
@@ -659,15 +659,16 @@ void configure_network(OwlInstallInterface *the_iface)
         }
         else if(choice=="g") {
             ScriptVariable res =
-                the_iface->QueryString("Type your gateway ip",
+                the_iface->QueryString("Enter your gateway IP address",
                                        info.GuessGateway());
             if(res == OwlInstallInterface::qs_eof) {
                 return;
             }
             if(res != OwlInstallInterface::qs_cancel) {
                 if(!info.SetGateway(res)) {
-                     the_iface->Message("Gateway invalid or is not "
-                                        "reachable via known interfaces");
+                     the_iface->Message("Gateway address is invalid or "
+                                        "it is not reachable via known "
+                                        "interfaces");
                 }
             }
         }
@@ -678,7 +679,7 @@ void configure_network(OwlInstallInterface *the_iface)
         else if(choice=="f") {
             bool ena = !info.IsForwardingEnabled();
             info.SetForwarding(ena);
-            the_iface->Message(ScriptVariable("IP v4 forwarding is ") +
+            the_iface->Message(ScriptVariable("IPv4 forwarding is ") +
                               ScriptVariable(ena ? "enabled" : "disabled"));
         }
 #endif

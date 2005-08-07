@@ -243,7 +243,7 @@ IfaceHierChoice* DumbOwlInstallInterface::CreateHierChoice() const
 
 void DumbOwlInstallInterface::Message(const ScriptVariable& msg)
 {
-    printf("\n%s\nPress return to continue...\n", msg.c_str());
+    printf("\n%s\nPress Enter to continue...\n", msg.c_str());
     int c;
     do { c = getchar(); } while(c!=EOF && c!='\n');
 }
@@ -284,7 +284,7 @@ DumbOwlInstallInterface::YesNoCancelMessage(const ScriptVariable& msg)
         if(res=="no") return ync_no;
         if(res==""||res==qs_cancel||res==qs_escape||res==qs_eof)
             return ync_cancel;
-        printf("Please answer ``yes'', ``no'' or ``cancel''\n");
+        printf("Please answer ``yes'', ``no'', or ``cancel''\n");
     }
 }
 
