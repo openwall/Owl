@@ -13,7 +13,7 @@ void run_shell(OwlInstallInterface *the_iface)
         s = "/bin/sh";
     }
     the_iface->ExecWindow("Running shell interpreter; "
-                          "type ``exit'' to leave it");
+                          "type \"exit\" to leave it");
     if(fork() == 0) {
         setenv("PS1", "# ", 1);
         execl(s, s, 0);

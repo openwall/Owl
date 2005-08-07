@@ -542,7 +542,7 @@ static void edit_interfaces(OwlInstallInterface* the_iface,
                 continue;
             }
             if(info.InterfaceExists(name)) {
-                the_iface->Message("Interface already exists, try ``edit''");
+                the_iface->Message("Interface already exists, try \"edit\"");
                 continue;
             }
             ScriptVariable ip, mask;

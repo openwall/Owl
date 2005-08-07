@@ -37,8 +37,8 @@ void repartition_hard_drive(OwlInstallInterface *the_iface)
         }
         the_iface->ExecWindow(ScriptVariable("Invoking ") +
                               the_config->FdiskPath() + " " + choice + "\n"
-                              "When you're done, type ``w'' to save changes "
-                              "or ``q'' to abort\n");
+                              "When you're done, type \"w\" to save changes "
+                              "or \"q\" to abort\n");
         ExecAndWait(the_config->FdiskPath().c_str(), choice.c_str(), 0);
         the_iface->CloseExecWindow();
     }

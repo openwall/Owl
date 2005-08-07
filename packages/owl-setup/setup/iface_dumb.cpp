@@ -267,7 +267,7 @@ bool DumbOwlInstallInterface::YesNoMessage(const ScriptVariable& msg)
         {
             return false;
         }
-        printf("Please answer ``yes'' or ``no''\n");
+        printf("Please answer \"yes\" or \"no\"\n");
     }
 }
 
@@ -284,7 +284,7 @@ DumbOwlInstallInterface::YesNoCancelMessage(const ScriptVariable& msg)
         if(res=="no") return ync_no;
         if(res==""||res==qs_cancel||res==qs_escape||res==qs_eof)
             return ync_cancel;
-        printf("Please answer ``yes'', ``no'', or ``cancel''\n");
+        printf("Please answer \"yes\", \"no\", or \"cancel\"\n");
     }
 }
 

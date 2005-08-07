@@ -72,7 +72,7 @@ void enumerate_owl_dirs3(ScriptVector &dirs,
         if(v[1] == the_config->OwlRoot() ||
            v[1].HasPrefix(the_config->OwlRoot()+"/"))
         {
-            v[1].Range(0,4).Erase(); // removed ``/owl''
+            v[1].Range(0,4).Erase(); // remove "/owl"
             if(v[1]=="") v[1] = "/";
             dirs.AddItem(v[1]);
             parts.AddItem(v[0]);
