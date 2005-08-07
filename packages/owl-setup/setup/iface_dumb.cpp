@@ -114,7 +114,7 @@ ScriptVariable DumbIfaceSingleChoice::Run()
             if(p->enabled) {
                 printf("[%s]\t%s\n", p->label.c_str(), p->comment.c_str());
                 choices += p->label;
-                choices += " ";
+                if (p->next) choices += " ";
             } else {
                 printf("----\t%s\n", p->comment.c_str());
             }
