@@ -306,10 +306,11 @@ DumbOwlInstallInterface::QueryString(const ScriptVariable& prompt,
                                  int_pr);
         }
 #else
-        printf("\n%*s\n%s ", margin - 2, int_pr, prompt.c_str());
+        printf("\n%*s\n%s", margin - 2, int_pr, prompt.c_str());
 #endif
         if(defval != "")
-            printf("[%s] ", defval.c_str());
+            printf(" [%s]", defval.c_str());
+        printf(": ");
         res = KeyboardRead();
         if(res == qs_redraw) continue;
         break;
