@@ -24,7 +24,7 @@ int main()
     };
     MainMenuItem main_menu[] = {
         { "k", "Select keyboard layout" },
-        { "p", "Root password" },
+        { "p", "Set root password" },
         { "z", "Select timezone" },
         { "n", "Configure network" },
         { "!", "Run shell" },
@@ -45,7 +45,7 @@ int main()
         ScriptVariable choice = mm->Run();
         delete mm;
         if(choice == "") {
-            the_interface->Notice("Seems to be end of file... exiting.");
+            the_interface->Notice("Got EOF, exiting...");
             return 1;
         } else
         if(choice == "k") {
@@ -68,10 +68,10 @@ int main()
             return 0;
         } else
         if(choice == OwlInstallInterface::qs_cancel) {
-            the_interface->Notice("Use \"x\" to exit, please");
+            the_interface->Notice("Please use \"x\" to exit");
         } else
         if(choice == OwlInstallInterface::qs_eof) {
-            the_interface->Notice("EOF on the terminal, exiting...");
+            the_interface->Notice("Got EOF, exiting...");
             return 1;
         } else {
             the_interface->Message("Warning: internal error (unknown choice)");

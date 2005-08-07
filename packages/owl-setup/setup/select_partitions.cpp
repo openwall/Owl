@@ -19,11 +19,11 @@ static void mount_at(OwlInstallInterface *the_iface,
     }
 
     IfaceSingleChoice *pm = the_iface->CreateSingleChoice();
-    pm->SetCaption(ScriptVariable("Do you want to format ")+part+"?");
+    pm->SetCaption(ScriptVariable("Do you want to format ") + part + "?");
 
     pm->AddItem("ext2", "Format as ext2 filesystem");
     pm->AddItem("ext3", "Format as ext3 filesystem");
-    pm->AddItem("no", "Don't format it! try mount now");
+    pm->AddItem("no", "Don't format it, try to mount now");
     pm->AddItem("q", "Quit/cancel");
 
     ScriptVariable choice = pm->Run();
@@ -38,9 +38,8 @@ static void mount_at(OwlInstallInterface *the_iface,
 
     if(choice != "no") {
         bool r = the_iface->YesNoMessage(
-            ScriptVariable("Warning! All the data at ")+part+
-            " will be lost!\nAre you really sure you want to format it?"
-        );
+            ScriptVariable("Warning: all data on ") + part + " will be lost!\n"
+                           "Are you really sure you want to format it?");
         if(!r) return;
     }
 
@@ -79,7 +78,7 @@ static void add_mount(OwlInstallInterface *the_iface,
     do {
         ScriptVariable prompt(0,
             "Please enter the mount point for %s "
-            "(e.g. /usr, /home, /var, ...)",
+            "(e.g., /var or /home)",
             part.c_str());
         mp = the_iface->QueryString(prompt);
         if(mp == "" ||

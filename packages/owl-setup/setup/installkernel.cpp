@@ -24,13 +24,13 @@ void install_kernel_and_lilo(OwlInstallInterface *the_iface)
 {
     ScriptVariable root_dev = get_root_device();
     if(root_dev == "") {
-        the_iface->Message("Unable to determine root device. Aborted");
+        the_iface->Message("Unable to determine root device.  Aborted.");
         return;
     }
 
-    the_iface->Notice("Now choose what device will hold your boot "
-                      "loader; e.g., /dev/hda for the first IDE disk "
-                      "or /dev/hda1 for its first partition");
+    the_iface->Notice("Now choose what device will hold your boot loader "
+                      "(e.g., /dev/hda for the first\n"
+                      "IDE disk).");
     ScriptVariable boot_dev =
         the_iface->QueryString("What is your boot device?");
     if(boot_dev == "" || boot_dev == OwlInstallInterface::qs_cancel
@@ -47,7 +47,8 @@ void install_kernel_and_lilo(OwlInstallInterface *the_iface)
 
     FILE* f = fopen(the_config->LiloconfFile().c_str(), "w");
     if(!f) {
-        the_iface->Message("Couldn't open your lilo.conf file");
+        the_iface->Message(ScriptVariable("Failed to open ") +
+                           the_config->LiloconfFile());
         return;
     }
     fprintf(f,
@@ -58,11 +59,12 @@ void install_kernel_and_lilo(OwlInstallInterface *the_iface)
             root_dev.c_str());
     fclose(f);
 
-    the_iface->ExecWindow("Executing lilo");
+    the_iface->ExecWindow(ScriptVariable("Invoking ") +
+                          the_config->LiloPath() +
+                          " within " + the_config->OwlRoot());
     ChrootExecWait lilo(the_config->OwlRoot().c_str(),
                         the_config->LiloPath().c_str(), 0);
     the_iface->CloseExecWindow();
     if(!lilo.Success())
-        the_iface->Message("Warning: lilo failed");
+        the_iface->Message("Warning: LILO failed");
 }
-

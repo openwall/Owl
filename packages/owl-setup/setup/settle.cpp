@@ -35,21 +35,21 @@ int main()
     };
     MainMenuItem main_menu[] = {
         { "f", "Repartition your hard drive",
-                               always_true, linux_partition_exists },
-        { "m", "Select&mount install partitions",
-                           linux_partition_exists, owl_dir_mounted  },
+            always_true, linux_partition_exists },
+        { "m", "Select & mount install partitions",
+            linux_partition_exists, owl_dir_mounted  },
         { "s", "Activate swap space", always_true, active_swap_exists },
         { "i", "Install packages", owl_dir_mounted, packages_installed },
         { "k", "Select keyboard layout",
-                           packages_installed, keyboard_selected },
-        { "p", "Root password", packages_installed, root_password_set },
+            packages_installed, keyboard_selected },
+        { "p", "Set root password", packages_installed, root_password_set },
         { "t", "Create /etc/fstab", packages_installed, fstab_exists },
         { "z", "Select timezone", packages_installed, timezone_selected },
         { "n", "Configure network", packages_installed, network_configured },
         { "b", "Install kernel and bootloader",
-                                   packages_installed, kernel_installed },
+            packages_installed, kernel_installed },
         { "r", "Reboot to the newly-installed system",
-                                   kernel_installed, always_false },
+            kernel_installed, always_false },
 
         { "!", "Run shell", always_true, always_false },
         { "x", "Exit", always_true, always_false },
@@ -76,7 +76,7 @@ int main()
         ScriptVariable choice = mm->Run();
         delete mm;
         if(choice == "") {
-            the_interface->Notice("Seems to be end of file... exiting.");
+            the_interface->Notice("Got EOF, exiting...");
             return 1;
         } else
         if(choice == "f") {
@@ -128,17 +128,17 @@ int main()
                     the_interface->Notice(ScriptVariable("Warning: ") +
                                           parts.Join(", ") +
                                           " are still mounted at " +
-                                          dirs.Join(", ") + " respectively");
+                                          dirs.Join(", ") + ", respectively");
                 }
             }
             the_interface->Notice("Exiting...");
             return 0;
         } else
         if(choice == OwlInstallInterface::qs_cancel) {
-            the_interface->Notice("Use \"x\" to exit, please");
+            the_interface->Notice("Please use \"x\" to exit");
         } else
         if(choice == OwlInstallInterface::qs_eof) {
-            the_interface->Notice("EOF on the terminal, exiting...");
+            the_interface->Notice("Got EOF, exiting...");
             return 1;
         } else {
             the_interface->Message("Warning: internal error (unknown choice)");

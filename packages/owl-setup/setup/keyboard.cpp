@@ -68,7 +68,8 @@ void select_keyboard_layout(OwlInstallInterface *the_iface)
     if(ok) {
         FILE* f = fopen(the_config->KeymapSysconf().c_str(), "w");
         if(!f) {
-            the_iface->Message("Couldn't open keymap file for writing");
+            the_iface->Message(ScriptVariable("Failed to open ") +
+                               the_config->KeymapSysconf() + " for writing");
             return;
         }
         fprintf(f, "KEYTABLE=%s\n", res[0].c_str());
@@ -76,14 +77,15 @@ void select_keyboard_layout(OwlInstallInterface *the_iface)
         the_iface->Message("Keyboard layout set");
         bool r = the_iface->YesNoMessage("Try to load it now?");
         if(r) {
-            the_iface->ExecWindow("Executing loadkeys");
+            the_iface->ExecWindow(ScriptVariable("Invoking ") +
+                                  the_config->LoadkeysPath() + " " + res[0]);
             ExecAndWait lk(the_config->LoadkeysPath().c_str(),
                            res[0].c_str(), 0);
             the_iface->CloseExecWindow();
             if(lk.Success()) {
-                the_iface->Message("Seems to be successfull");
+                the_iface->Message("Seems to be successful");
             } else {
-                the_iface->Message("Problems executing loadkeys");
+                the_iface->Message("Failed");
             }
         }
     }

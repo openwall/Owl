@@ -35,7 +35,7 @@ static void view_active(OwlInstallInterface *the_iface)
     enumerate_active_swaps(v);
     if(v.Length()<1) {
         the_iface->Message(
-           "No active swaps... you might want to activate some");
+           "No active swaps.  You might want to activate some.");
         return;
     }
     ScriptVariable msg("The following swaps are active: ");
@@ -58,7 +58,7 @@ static void swapoff_all(OwlInstallInterface *the_iface)
     for(int i=0; i<v.Length(); i++) {
         ExecAndWait s_off(the_config->SwapoffPath().c_str(), v[i].c_str(), 0);
         if(!s_off.Success())
-            the_iface->Message(ScriptVariable("swapoff failed for ")+v[i]);
+            the_iface->Message(ScriptVariable("swapoff failed for ") + v[i]);
     }
 }
 
@@ -82,16 +82,16 @@ static void swapon(OwlInstallInterface *the_iface, ScriptVariable& part)
     if(mk == ync_cancel) return;
     if(mk == ync_yes) {
         bool confirm =
-            the_iface->YesNoMessage("All data at the partition "
-                                    "will be destroyed. Really continue? ");
+            the_iface->YesNoMessage(ScriptVariable("All data on ") + part +
+                                    " will be destroyed.  Continue?");
         if(!confirm) return;
         ExecAndWait mks(the_config->MkswapPath().c_str(), part.c_str(), 0);
         if(!mks.Success())
-            the_iface->Message(ScriptVariable("mkswap failed for ")+part);
+            the_iface->Message(ScriptVariable("mkswap failed for ") + part);
     }
     ExecAndWait s_on(the_config->SwaponPath().c_str(), part.c_str(), 0);
     if(!s_on.Success())
-        the_iface->Message(ScriptVariable("swapon failed for ")+part);
+        the_iface->Message(ScriptVariable("swapon failed for ") + part);
 }
 
 void activate_swap(OwlInstallInterface *the_iface)
@@ -103,8 +103,8 @@ void activate_swap(OwlInstallInterface *the_iface)
         enumerate_available_swaps(avail);
         for(int i=0; i<avail.Length(); i++) {
             sm->AddItem(avail[i],
-                        ScriptVariable("Prepare&activate swap partition ")
-                        +avail[i]);
+                        ScriptVariable("Prepare & activate swap partition ") +
+                        avail[i]);
         }
 #if 0
         sm->AddItem("file", "Create/activate a swap file");
@@ -140,5 +140,3 @@ void activate_swap(OwlInstallInterface *the_iface)
         }
     }
 }
-
-

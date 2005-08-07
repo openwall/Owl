@@ -25,7 +25,7 @@ void reboot_it(OwlInstallInterface *the_iface)
     if(runlevel == "2" || runlevel == "3" ||
        runlevel == "4" || runlevel == "5")
     {
-        the_iface->Notice("Calling shutdown...");
+        the_iface->Notice("Invoking /sbin/shutdown -r now");
         ExecAndWait shut("/sbin/shutdown", "-r", "now", 0);
         r = shut.Success();
     } else {
@@ -34,6 +34,7 @@ void reboot_it(OwlInstallInterface *the_iface)
         ExecAndWait(the_config->UmountPath().c_str(), "-far", 0);
         ExecAndWait(the_config->MountPath().c_str(),
                            "-no", "remount,ro", "/", 0);
+        the_iface->Notice("Invoking /sbin/reboot -df");
         ExecAndWait shut("/sbin/reboot", "-df", 0);
         r = shut.Success();
     }

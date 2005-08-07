@@ -12,6 +12,6 @@ void install_packages(OwlInstallInterface *the_iface)
                 the_config->InstallWorldTarget().c_str(), 0);
     the_iface->CloseExecWindow();
     if(!mkinst.Success()) {
-        the_iface->Message("Problems during packages installation...");
+        the_iface->Message("There were problems during packages installation");
     }
 }

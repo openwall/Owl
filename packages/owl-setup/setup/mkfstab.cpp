@@ -20,7 +20,8 @@ static void generate_standard_fstab(OwlInstallInterface *the_iface)
 {
     FILE* f = fopen(the_config->FstabFile().c_str(), "w");
     if(!f) {
-        the_iface->Message("Couldn't open fstab for writing");
+        the_iface->Message(ScriptVariable("Failed to open ") +
+                           the_config->FstabFile() + " for writing");
         return;
     }
     ScriptVector dirs, parts, types;
@@ -36,8 +37,6 @@ static void generate_standard_fstab(OwlInstallInterface *the_iface)
         );
     }
 
-//    fprintf(f, "\n\n");
-
     ScriptVector swaps;
     enumerate_active_swaps(swaps);
     for(int i=0; i<swaps.Length(); i++) {
@@ -51,8 +50,6 @@ static void generate_standard_fstab(OwlInstallInterface *the_iface)
         );
     }
 
-//    fprintf(f, "\n\n");
-
     fputs(the_config->DefaultFstabContent().c_str(), f);
 
     fclose(f);
@@ -60,7 +57,7 @@ static void generate_standard_fstab(OwlInstallInterface *the_iface)
 
 static void edit_fstab(OwlInstallInterface *the_iface)
 {
-    the_iface->ExecWindow("Launching editor for your /etc/fstab");
+    the_iface->ExecWindow("Launching an editor on your /etc/fstab");
     ExecAndWait passwd(the_config->EditorPath().c_str(),
                        the_config->FstabFile().c_str(), 0);
     the_iface->CloseExecWindow();
@@ -70,10 +67,10 @@ void create_fstab(OwlInstallInterface *the_iface)
 {
     if(!fstab_exists()) {
         generate_standard_fstab(the_iface);
-        the_iface->Message("No /etc/fstab was found or it wasn't "
-                           "containing the root entry; I've just generated "
-                           "the one which includes your selected "
-                           "partitions and swaps");
+        the_iface->Message("No /etc/fstab was found or it didn't contain a "
+                           "root entry.  A new fstab file\n"
+                           "with your selected entries has just been "
+                           "generated.");
     }
 
     for(;;) {
