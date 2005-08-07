@@ -93,6 +93,7 @@ bool ReadStream::ReadLine(ScriptVector &target, int words,
             break;
         }
     }
+    if(i == 0) target[0] = ScriptVariable("");
     return true;
 }
 
