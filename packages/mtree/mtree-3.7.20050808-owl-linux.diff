@@ -151,8 +151,8 @@ diff -urpN mtree-3.7.20050808-fixes/usr.sbin/mtree/compare.c mtree-3.7.20050808-
  }
  
 diff -urpN mtree-3.7.20050808-fixes/usr.sbin/mtree/create.c mtree-3.7.20050808-linux/usr.sbin/mtree/create.c
---- mtree-3.7.20050808-fixes/usr.sbin/mtree/create.c	Mon Aug  8 15:14:52 2005
-+++ mtree-3.7.20050808-linux/usr.sbin/mtree/create.c	Mon Aug  8 15:16:46 2005
+--- mtree-3.7.20050808-fixes/usr.sbin/mtree/create.c	Mon Aug  8 15:25:04 2005
++++ mtree-3.7.20050808-linux/usr.sbin/mtree/create.c	Mon Aug  8 15:25:20 2005
 @@ -38,6 +38,7 @@ static const char rcsid[] = "$OpenBSD: c
  #endif
  #endif /* not lint */
@@ -326,7 +326,7 @@ diff -urpN mtree-3.7.20050808-fixes/usr.sbin/mtree/misc.c mtree-3.7.20050808-lin
  	{"ignore",	F_IGN,		0},
 diff -urpN mtree-3.7.20050808-fixes/usr.sbin/mtree/mtree.8 mtree-3.7.20050808-linux/usr.sbin/mtree/mtree.8
 --- mtree-3.7.20050808-fixes/usr.sbin/mtree/mtree.8	Thu Dec 30 10:01:47 2004
-+++ mtree-3.7.20050808-linux/usr.sbin/mtree/mtree.8	Mon Aug  8 14:05:41 2005
++++ mtree-3.7.20050808-linux/usr.sbin/mtree/mtree.8	Mon Aug  8 15:48:56 2005
 @@ -30,7 +30,7 @@
  .\"
  .\"     @(#)mtree.8	8.2 (Berkeley) 12/11/93
@@ -336,7 +336,21 @@ diff -urpN mtree-3.7.20050808-fixes/usr.sbin/mtree/mtree.8 mtree-3.7.20050808-li
  .Dt MTREE 8
  .Os
  .Sh NAME
-@@ -308,13 +308,16 @@ that
+@@ -162,13 +162,6 @@ The checksum of the file using the defau
+ the
+ .Xr cksum 1
+ utility.
+-.It Cm flags
+-The current file's flags (whitespace or comma separated) in symbolic form
+-as specified by
+-.Xr chflags 1 .
+-The string
+-.Dq none
+-may be used to indicate that no flags should be set on the file.
+ .It Cm gid
+ The file group as a numeric value.
+ .It Cm gname
+@@ -308,13 +301,16 @@ that
  .Cm sha1digest
  be run on the file systems, and a copy of the results stored on a different
  machine, or, at least, in encrypted form.
@@ -357,7 +371,7 @@ diff -urpN mtree-3.7.20050808-fixes/usr.sbin/mtree/mtree.8 mtree-3.7.20050808-li
  should be run against the on-line specifications.
  While it is possible for the bad guys to change the on-line specifications
  to conform to their modified binaries, it is believed to be
-@@ -333,17 +336,17 @@ distribution.
+@@ -333,17 +329,18 @@ distribution.
  .Sh SEE ALSO
  .Xr chgrp 1 ,
  .Xr chmod 1 ,
@@ -378,7 +392,8 @@ diff -urpN mtree-3.7.20050808-fixes/usr.sbin/mtree/mtree.8 mtree-3.7.20050808-li
 -.Xr hier 7 ,
 -.Xr chown 8
 +.Xr ripemd 3 ,
-+.Xr sha 3
++.Xr sha 3 ,
++.Xr hier 7
  .Sh HISTORY
  The
  .Nm mtree
