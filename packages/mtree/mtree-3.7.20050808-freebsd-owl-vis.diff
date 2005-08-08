@@ -38,20 +38,37 @@ diff -urpN mtree-3.7.20050808.orig/lib/libc/gen/vis.3 mtree-3.7.20050808-freebsd
  .It Dv VIS_TAB
 diff -urpN mtree-3.7.20050808.orig/lib/libc/gen/vis.c mtree-3.7.20050808-freebsd-vis/lib/libc/gen/vis.c
 --- mtree-3.7.20050808.orig/lib/libc/gen/vis.c	Fri Mar 25 15:38:47 2005
-+++ mtree-3.7.20050808-freebsd-vis/lib/libc/gen/vis.c	Mon Aug  8 16:35:01 2005
-@@ -53,7 +53,10 @@ static char rcsid[] = "$OpenBSD: vis.c,v
- char *
- vis(char *dst, int c, int flag, int nextc)
- {
--	if (isvisible(c)) {
-+	if ((flag & VIS_GLOB) &&
-+	    (c == '*' || c == '?' || c == '[' || c == '#'))
-+		;
-+	else if (isvisible(c)) {
- 		*dst++ = c;
- 		if (c == '\\' && (flag & VIS_NOSLASH) == 0)
- 			*dst++ = '\\';
-@@ -105,7 +108,7 @@ vis(char *dst, int c, int flag, int next
++++ mtree-3.7.20050808-freebsd-vis/lib/libc/gen/vis.c	Mon Aug  8 17:51:28 2005
+@@ -37,15 +37,19 @@ static char rcsid[] = "$OpenBSD: vis.c,v
+ #include <string.h>
+ #include <vis.h>
+ 
+-#define	isoctal(c)	(((u_char)(c)) >= '0' && ((u_char)(c)) <= '7')
+-#define isvisible(c)	(((u_int)(c) <= UCHAR_MAX && isascii((u_char)(c)) && \
+-				isgraph((u_char)(c))) ||		     \
+-				((flag & VIS_SP) == 0 && (c) == ' ') ||	     \
+-				((flag & VIS_TAB) == 0 && (c) == '\t') ||    \
+-				((flag & VIS_NL) == 0 && (c) == '\n') ||     \
+-				((flag & VIS_SAFE) && ((c) == '\b' ||	     \
+-				(c) == '\007' || (c) == '\r' ||		     \
+-				isgraph((u_char)(c)))))
++#define	isoctal(c) \
++	(((u_char)(c)) >= '0' && ((u_char)(c)) <= '7')
++#define isvisible(c) \
++	(((u_int)(c) <= UCHAR_MAX && isascii((u_char)(c))) &&		     \
++		(((((c) != '*' && (c) != '?' && (c) != '[' && (c) != '#') || \
++			(flag & VIS_GLOB) == 0) &&			     \
++			isgraph((u_char)(c))) ||			     \
++		((flag & VIS_SP) == 0 && (c) == ' ') ||			     \
++		((flag & VIS_TAB) == 0 && (c) == '\t') ||		     \
++		((flag & VIS_NL) == 0 && (c) == '\n') ||		     \
++		((flag & VIS_SAFE) && ((c) == '\b' ||			     \
++			(c) == '\007' || (c) == '\r' ||			     \
++			isgraph((u_char)(c))))))
+ 
+ /*
+  * vis - visually encode characters
+@@ -105,7 +109,7 @@ vis(char *dst, int c, int flag, int next
  			goto done;
  		}
  	}
