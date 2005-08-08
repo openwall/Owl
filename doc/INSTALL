@@ -37,24 +37,30 @@ multi-user mode (such as, operating from a remote workstation) or if
 you intend to actually use the CD-booted Owl without installing on a
 hard disk.
 
-To actually install Owl, proceed with the generic installation
-instructions, below.
+To actually install Owl, type:
+
+	settle
+
+This will invoke the installer that will guide you through the
+installation process.
+
+Please note that the installer currently does not install kernel
+sources or C headers (that you will need to build software from source
+on your newly installed system).  You're supposed to copy them off the
+CD manually.  (This is something we're planning to fix indeed.)
 
 
 	Using an existing Linux installation.
 
-Note: these requirements are only relevant to you if you chose to not
-install from an Owl CD for whatever reason.  Most people use a CD and
-don't need this.
+Note: these requirements and instructions are only relevant to you if
+you chose to not install from an Owl CD for whatever reason.  Most
+people use a CD and don't need this.
 
 A suitable Linux installation needs to offer some GNU tools and
 rpm2cpio.  It does not have to use RPM as its package manager.
 
 You need to prepare the usual /usr/src/world setup as explained in
-BUILD.  Then proceed with the generic installation instructions.
-
-
-	Generic installation instructions.
+BUILD.  Then proceed to install the new system:
 
 Use fdisk(8) to partition your disks for Owl as desired.  Use mkfs(8)
 and mkswap(8) to create filesystems and initialize swap space.  Use
@@ -68,16 +74,18 @@ If there are any problems during the "installworld" stage (watch for
 the "Failed" lines), correct their cause and re-run the command.
 
 Once the Owl userland is installed, you need to also install a kernel
-and configure a boot loader.  It is recommended that you build the
-kernel from source in order to better tune it to your needs.
+and configure a boot loader.  Owl currently does not provide a pre-built
+kernel other than on the CDs, so you will need to either build the
+kernel from source (recommended) or copy the kernel image (/boot/bzImage
+and /boot/System.map) off an Owl CD.
 
 Note that the kernel build and the boot loader setup need to be done
 chrooted to your newly installed userland:
 
 	chroot /owl
 
-Currently, Owl supports Linux 2.4.x kernels.  We recommend that you
-build the version provided with your copy of Owl.
+Currently, Owl supports Linux 2.4.x kernels.  We recommend that you use
+the version provided with your copy of Owl.
 
 You may choose to configure the boot loader available with Owl (LILO
 or SILO, depending on the architecture), or you may use a boot loader
@@ -86,4 +94,4 @@ already installed on the system (if any).
 Once the installation is complete, make sure to manually unmount the
 filesystems with umount(8) prior to rebooting the system.
 
-$Id: Owl/doc/INSTALL,v 1.13 2005/03/06 00:14:33 solar Exp $
+$Id: Owl/doc/INSTALL,v 1.14 2005/08/08 19:04:49 solar Exp $
