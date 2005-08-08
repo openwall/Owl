@@ -64,6 +64,9 @@ bool ReadStream::ReadLine(ScriptVector &target, int words,
                  const char *trimspaces)
 {
     ScriptVariable res;
+
+    target.Clear();
+
     if(!ReadLine(res)) return false;
 
     if(words == 1) { // special case
@@ -93,7 +96,6 @@ bool ReadStream::ReadLine(ScriptVector &target, int words,
             break;
         }
     }
-    if(i == 0) target[0] = ScriptVariable("");
     return true;
 }
 
