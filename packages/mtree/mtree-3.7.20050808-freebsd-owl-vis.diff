@@ -52,7 +52,7 @@ diff -urpN mtree-3.7.20050808.orig/lib/libc/gen/vis.c mtree-3.7.20050808-freebsd
 -				((flag & VIS_SAFE) && ((c) == '\b' ||	     \
 -				(c) == '\007' || (c) == '\r' ||		     \
 -				isgraph((u_char)(c)))))
-+#define	isoctal(c) \
++#define isoctal(c) \
 +	(((u_char)(c)) >= '0' && ((u_char)(c)) <= '7')
 +#define isvisible(c) \
 +	(((u_int)(c) <= UCHAR_MAX && isascii((u_char)(c))) &&		     \
