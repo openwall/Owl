@@ -151,8 +151,8 @@ diff -urpN mtree-3.7.20050808-fixes/usr.sbin/mtree/compare.c mtree-3.7.20050808-
  }
  
 diff -urpN mtree-3.7.20050808-fixes/usr.sbin/mtree/create.c mtree-3.7.20050808-linux/usr.sbin/mtree/create.c
---- mtree-3.7.20050808-fixes/usr.sbin/mtree/create.c	Mon Aug  8 14:00:39 2005
-+++ mtree-3.7.20050808-linux/usr.sbin/mtree/create.c	Mon Aug  8 08:43:12 2005
+--- mtree-3.7.20050808-fixes/usr.sbin/mtree/create.c	Mon Aug  8 15:14:52 2005
++++ mtree-3.7.20050808-linux/usr.sbin/mtree/create.c	Mon Aug  8 15:16:46 2005
 @@ -38,6 +38,7 @@ static const char rcsid[] = "$OpenBSD: c
  #endif
  #endif /* not lint */
@@ -174,7 +174,7 @@ diff -urpN mtree-3.7.20050808-fixes/usr.sbin/mtree/create.c mtree-3.7.20050808-l
  
  #define	INDENTNAMELEN	15
  #define	MAXLINELEN	80
-@@ -197,17 +196,16 @@ statf(int indent, FTSENT *p)
+@@ -200,17 +199,16 @@ statf(int indent, FTSENT *p)
  	if (keys & F_NLINK && p->fts_statp->st_nlink != 1)
  		output(indent, &offset, "nlink=%u", p->fts_statp->st_nlink);
  	if (keys & F_SIZE && S_ISREG(p->fts_statp->st_mode))
@@ -196,7 +196,7 @@ diff -urpN mtree-3.7.20050808-fixes/usr.sbin/mtree/create.c mtree-3.7.20050808-l
  	}
  	if (keys & F_MD5 && S_ISREG(p->fts_statp->st_mode)) {
  		char *md5digest, buf[MD5_DIGEST_STRING_LENGTH];
-@@ -247,6 +245,7 @@ statf(int indent, FTSENT *p)
+@@ -250,6 +248,7 @@ statf(int indent, FTSENT *p)
  		output(indent, &offset, "link=%s", escaped_name);
  		free(escaped_name);
  	}
@@ -204,7 +204,7 @@ diff -urpN mtree-3.7.20050808-fixes/usr.sbin/mtree/create.c mtree-3.7.20050808-l
  	if (keys & F_FLAGS && !S_ISLNK(p->fts_statp->st_mode)) {
  		char *file_flags;
  
-@@ -259,6 +258,7 @@ statf(int indent, FTSENT *p)
+@@ -262,6 +261,7 @@ statf(int indent, FTSENT *p)
  			output(indent, &offset, "flags=none");
  		free(file_flags);
  	}
