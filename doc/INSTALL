@@ -1,3 +1,9 @@
+The instructions below apply to Owl-current snapshots dated 2005/08/08
+and newer (until revised).  For older versions of Owl (such as the 1.1
+release), please refer to Owl/doc/INSTALL as included in the "native"
+tree for your version (that's /usr/src/world/native/Owl/doc/INSTALL on
+the CDs).
+
 Owl installation is currently more complicated than we'd like it to
 be.  This is going to change with future releases.
 
@@ -94,4 +100,4 @@ already installed on the system (if any).
 Once the installation is complete, make sure to manually unmount the
 filesystems with umount(8) prior to rebooting the system.
 
-$Id: Owl/doc/INSTALL,v 1.14 2005/08/08 19:04:49 solar Exp $
+$Id: Owl/doc/INSTALL,v 1.15 2005/08/08 19:20:59 solar Exp $
