@@ -1,5 +1,5 @@
-diff -urpN mtree-3.7.20050808.orig/lib/libc/gen/setmode.c mtree-3.7.20050808-fixes/lib/libc/gen/setmode.c
---- mtree-3.7.20050808.orig/lib/libc/gen/setmode.c	Tue Mar  1 13:51:47 2005
+diff -urpN mtree-3.7.20050808-freebsd-vis/lib/libc/gen/setmode.c mtree-3.7.20050808-fixes/lib/libc/gen/setmode.c
+--- mtree-3.7.20050808-freebsd-vis/lib/libc/gen/setmode.c	Tue Mar  1 13:51:47 2005
 +++ mtree-3.7.20050808-fixes/lib/libc/gen/setmode.c	Mon Aug  8 07:19:51 2005
 @@ -180,6 +180,8 @@ setmode(const char *p)
  	if (!*p)
@@ -10,8 +10,8 @@ diff -urpN mtree-3.7.20050808.orig/lib/libc/gen/setmode.c mtree-3.7.20050808-fix
  	/*
  	 * Get a copy of the mask for the permissions that are mask relative.
  	 * Flip the bits, we want what's not set.  Since it's possible that
-diff -urpN mtree-3.7.20050808.orig/usr.sbin/mtree/compare.c mtree-3.7.20050808-fixes/usr.sbin/mtree/compare.c
---- mtree-3.7.20050808.orig/usr.sbin/mtree/compare.c	Sun Nov 21 19:36:04 2004
+diff -urpN mtree-3.7.20050808-freebsd-vis/usr.sbin/mtree/compare.c mtree-3.7.20050808-fixes/usr.sbin/mtree/compare.c
+--- mtree-3.7.20050808-freebsd-vis/usr.sbin/mtree/compare.c	Sun Nov 21 19:36:04 2004
 +++ mtree-3.7.20050808-fixes/usr.sbin/mtree/compare.c	Mon Aug  8 13:59:53 2005
 @@ -226,7 +226,7 @@ typeerr:		LABEL;
  		}
@@ -22,9 +22,9 @@ diff -urpN mtree-3.7.20050808.orig/usr.sbin/mtree/compare.c mtree-3.7.20050808-f
  			LABEL;
  			(void)printf("%scksum: %s: %s\n",
  			    tab, p->fts_accpath, strerror(errno));
-diff -urpN mtree-3.7.20050808.orig/usr.sbin/mtree/create.c mtree-3.7.20050808-fixes/usr.sbin/mtree/create.c
---- mtree-3.7.20050808.orig/usr.sbin/mtree/create.c	Sun Nov 21 19:36:04 2004
-+++ mtree-3.7.20050808-fixes/usr.sbin/mtree/create.c	Mon Aug  8 15:14:52 2005
+diff -urpN mtree-3.7.20050808-freebsd-vis/usr.sbin/mtree/create.c mtree-3.7.20050808-fixes/usr.sbin/mtree/create.c
+--- mtree-3.7.20050808-freebsd-vis/usr.sbin/mtree/create.c	Sun Nov 21 19:36:04 2004
++++ mtree-3.7.20050808-fixes/usr.sbin/mtree/create.c	Mon Aug  8 16:56:53 2005
 @@ -70,7 +70,11 @@ static gid_t gid;
  static uid_t uid;
  static mode_t mode;
@@ -38,27 +38,20 @@ diff -urpN mtree-3.7.20050808.orig/usr.sbin/mtree/create.c mtree-3.7.20050808-fi
  static int	statd(FTS *, FTSENT *, uid_t *, gid_t *, mode_t *);
  static void	statf(int, FTSENT *);
  
-@@ -147,10 +151,16 @@ statf(int indent, FTSENT *p)
+@@ -145,8 +149,11 @@ statf(int indent, FTSENT *p)
+ 	escaped_name = malloc(esc_len);
+ 	if (escaped_name == NULL)
  		error("statf: %s", strerror(errno));
-  	strnvis(escaped_name, p->fts_name, esc_len, VIS_WHITE | VIS_OCTAL);
+- 	strnvis(escaped_name, p->fts_name, esc_len, VIS_WHITE | VIS_OCTAL);
++ 	strnvis(escaped_name, p->fts_name, esc_len,
++	    VIS_WHITE | VIS_OCTAL | VIS_GLOB);
  
--	if (iflag || S_ISDIR(p->fts_statp->st_mode))
--		offset = printf("%*s%s", indent, "", escaped_name);
-+	offset = indent;
-+	if (!iflag && !S_ISDIR(p->fts_statp->st_mode))
-+		offset += 4;
 +	/* XXX: printf() may return -1 on error, which is not correctly
 +	 * handled throughout this source file */
-+	printf("%*s", offset, "");
-+	if (escaped_name[0] == '#')
-+		offset += printf("\\043%s", escaped_name + 1);
+ 	if (iflag || S_ISDIR(p->fts_statp->st_mode))
+ 		offset = printf("%*s%s", indent, "", escaped_name);
  	else
--		offset = printf("%*s    %s", indent, "", escaped_name);
-+		offset += printf("%s", escaped_name);
- 
- 	free(escaped_name);
- 
-@@ -196,7 +206,7 @@ statf(int indent, FTSENT *p)
+@@ -196,7 +203,7 @@ statf(int indent, FTSENT *p)
  		    p->fts_statp->st_mtimespec.tv_sec,
  		    p->fts_statp->st_mtimespec.tv_nsec);
  	if (keys & F_CKSUM && S_ISREG(p->fts_statp->st_mode)) {
@@ -67,8 +60,8 @@ diff -urpN mtree-3.7.20050808.orig/usr.sbin/mtree/create.c mtree-3.7.20050808-fi
  		    crc(fd, &val, &len))
  			error("%s: %s", p->fts_accpath, strerror(errno));
  		(void)close(fd);
-diff -urpN mtree-3.7.20050808.orig/usr.sbin/mtree/extern.h mtree-3.7.20050808-fixes/usr.sbin/mtree/extern.h
---- mtree-3.7.20050808.orig/usr.sbin/mtree/extern.h	Sun Nov 21 19:36:04 2004
+diff -urpN mtree-3.7.20050808-freebsd-vis/usr.sbin/mtree/extern.h mtree-3.7.20050808-fixes/usr.sbin/mtree/extern.h
+--- mtree-3.7.20050808-freebsd-vis/usr.sbin/mtree/extern.h	Sun Nov 21 19:36:04 2004
 +++ mtree-3.7.20050808-fixes/usr.sbin/mtree/extern.h	Mon Aug  8 13:59:06 2005
 @@ -39,7 +39,11 @@ int		 compare(char *, struct _node *, st
  int		 dsort(const struct _ftsent **, const struct _ftsent **);
@@ -83,8 +76,8 @@ diff -urpN mtree-3.7.20050808.orig/usr.sbin/mtree/extern.h mtree-3.7.20050808-fi
  char		*inotype(u_int);
  u_int		 parsekey(char *, int *);
  char		*rlink(char *);
-diff -urpN mtree-3.7.20050808.orig/usr.sbin/mtree/mtree.h mtree-3.7.20050808-fixes/usr.sbin/mtree/mtree.h
---- mtree-3.7.20050808.orig/usr.sbin/mtree/mtree.h	Mon Jun  2 23:36:54 2003
+diff -urpN mtree-3.7.20050808-freebsd-vis/usr.sbin/mtree/mtree.h mtree-3.7.20050808-fixes/usr.sbin/mtree/mtree.h
+--- mtree-3.7.20050808-freebsd-vis/usr.sbin/mtree/mtree.h	Mon Jun  2 23:36:54 2003
 +++ mtree-3.7.20050808-fixes/usr.sbin/mtree/mtree.h	Mon Aug  8 13:58:18 2005
 @@ -35,6 +35,9 @@
  #include <string.h>
@@ -96,8 +89,8 @@ diff -urpN mtree-3.7.20050808.orig/usr.sbin/mtree/mtree.h mtree-3.7.20050808-fix
  #define	KEYDEFAULT \
  	(F_GID | F_MODE | F_NLINK | F_SIZE | F_SLINK | F_TIME | F_UID)
  
-diff -urpN mtree-3.7.20050808.orig/usr.sbin/mtree/spec.c mtree-3.7.20050808-fixes/usr.sbin/mtree/spec.c
---- mtree-3.7.20050808.orig/usr.sbin/mtree/spec.c	Sun Aug  1 18:32:20 2004
+diff -urpN mtree-3.7.20050808-freebsd-vis/usr.sbin/mtree/spec.c mtree-3.7.20050808-fixes/usr.sbin/mtree/spec.c
+--- mtree-3.7.20050808-freebsd-vis/usr.sbin/mtree/spec.c	Sun Aug  1 18:32:20 2004
 +++ mtree-3.7.20050808-fixes/usr.sbin/mtree/spec.c	Mon Aug  8 12:28:36 2005
 @@ -59,7 +59,7 @@ NODE *
  spec(void)
@@ -149,8 +142,8 @@ diff -urpN mtree-3.7.20050808.orig/usr.sbin/mtree/spec.c mtree-3.7.20050808-fixe
  
  #ifdef DEBUG
  		(void)fprintf(stderr, "line %d: {%s}\n", lineno, p);
-diff -urpN mtree-3.7.20050808.orig/usr.sbin/mtree/verify.c mtree-3.7.20050808-fixes/usr.sbin/mtree/verify.c
---- mtree-3.7.20050808.orig/usr.sbin/mtree/verify.c	Sun Nov 21 19:36:04 2004
+diff -urpN mtree-3.7.20050808-freebsd-vis/usr.sbin/mtree/verify.c mtree-3.7.20050808-fixes/usr.sbin/mtree/verify.c
+--- mtree-3.7.20050808-freebsd-vis/usr.sbin/mtree/verify.c	Sun Nov 21 19:36:04 2004
 +++ mtree-3.7.20050808-fixes/usr.sbin/mtree/verify.c	Mon Aug  8 13:55:55 2005
 @@ -163,6 +163,7 @@ miss(NODE *p, char *tail, size_t len)
  			continue;

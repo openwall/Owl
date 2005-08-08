@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mtree/mtree.spec,v 1.16 2005/08/08 14:33:32 solar Exp $
+# $Id: Owl/packages/mtree/mtree.spec,v 1.17 2005/08/08 17:20:25 solar Exp $
 
 Summary: Map a directory hierarchy.
 Name: mtree
@@ -7,8 +7,9 @@ Release: owl1
 License: BSD
 Group: System Environment/Base
 Source: mtree-%version.tar.bz2
-Patch0: mtree-3.7.20050808-owl-fixes.diff
-Patch1: mtree-3.7.20050808-owl-linux.diff
+Patch0: mtree-3.7.20050808-freebsd-owl-vis.diff
+Patch1: mtree-3.7.20050808-owl-fixes.diff
+Patch2: mtree-3.7.20050808-owl-linux.diff
 Requires: openssl
 BuildRequires: openssl-devel >= 0.9.7g-owl1
 BuildRoot: /override/%name-%version
@@ -24,6 +25,7 @@ missing from either the file hierarchy or the specification.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 CFLAGS="%optflags" %__make
@@ -42,10 +44,12 @@ install -m 644 usr.sbin/mtree/mtree.8 %buildroot%_mandir/man8/
 %changelog
 * Mon Aug 08 2005 Solar Designer <solar@owl.openwall.com> 3.7.20050808-owl1
 - Updated to version from current OpenBSD (post-3.7).
+- Added VIS_GLOB support into *vis(), originally by phk of FreeBSD.
 - Fixed a number of bugs in mtree spec file creation and parsing, including
-with processing of filenames starting with the hash character ('#'), of
-comment lines ending with a backslash ('\\'), and of files not ending with a
-linefeed; the fixes are generic and need to be fed back to *BSDs.
+with processing of filenames starting with the hash character ('#') or
+containing glob(3) wildcard characters, of comment lines ending with a
+backslash ('\\'), and of files not ending with a linefeed; the fixes are
+generic and need to be fed back to *BSDs.
 
 * Sat Jun 25 2005 Dmitry V. Levin <ldv@owl.openwall.com> 3.1-owl4
 - Rebuilt with libcrypto.so.5.
