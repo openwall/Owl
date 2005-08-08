@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.29 2005/08/03 19:00:22 solar Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.30 2005/08/08 18:34:53 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 0.20
+Version: 0.21
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -31,6 +31,9 @@ rm -rf %buildroot
 %_sbindir/*
 
 %changelog
+* Mon Aug 08 2005 Solar Designer <solar@owl.openwall.com> 0.21-owl1
+- Revised the user interface messages and applied various bugfixes.
+
 * Wed Aug 03 2005 Solar Designer <solar@owl.openwall.com> 0.20-owl1
 - Replaced with Croco's new installer.
 
