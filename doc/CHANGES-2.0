@@ -12,6 +12,21 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2005/08/08	Package: mtree
+Updated to version from current OpenBSD (post-3.7).  Fixed a number of
+bugs in mtree spec file creation and parsing, including with processing
+of filenames starting with the hash character ('#') or containing
+glob(3) wildcard characters, of comment lines ending with a backslash
+('\\'), and of files not ending with a linefeed
+
+2005/08/03 -
+2005/08/08	Package: owl-setup; Owl/doc/INSTALL
+The shell scripts based Owl setup utility has finally been replaced by
+the new installer written in C++.  There're two programs: "setup", which
+may be used to (re-)configure the current system (whether CD-booted or
+installed on a hard drive), and "settle", the Owl installer to be run
+off an Owl CD to install Owl on a hard drive.
+
 2005/07/28	Package: openssh
 Added delayed compression support for SSH protocol 2 (a back-port of
 the changes committed into the OpenBSD CVS repository recently),
@@ -519,4 +534,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.112 2005/07/27 22:06:01 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.113 2005/08/08 20:19:30 solar Exp $
