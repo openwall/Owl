@@ -24,7 +24,7 @@ diff -urpN mtree-3.7.20050808.orig/usr.sbin/mtree/compare.c mtree-3.7.20050808-f
  			    tab, p->fts_accpath, strerror(errno));
 diff -urpN mtree-3.7.20050808.orig/usr.sbin/mtree/create.c mtree-3.7.20050808-fixes/usr.sbin/mtree/create.c
 --- mtree-3.7.20050808.orig/usr.sbin/mtree/create.c	Sun Nov 21 19:36:04 2004
-+++ mtree-3.7.20050808-fixes/usr.sbin/mtree/create.c	Mon Aug  8 14:00:39 2005
++++ mtree-3.7.20050808-fixes/usr.sbin/mtree/create.c	Mon Aug  8 15:14:52 2005
 @@ -70,7 +70,11 @@ static gid_t gid;
  static uid_t uid;
  static mode_t mode;
@@ -38,25 +38,27 @@ diff -urpN mtree-3.7.20050808.orig/usr.sbin/mtree/create.c mtree-3.7.20050808-fi
  static int	statd(FTS *, FTSENT *, uid_t *, gid_t *, mode_t *);
  static void	statf(int, FTSENT *);
  
-@@ -147,10 +151,13 @@ statf(int indent, FTSENT *p)
+@@ -147,10 +151,16 @@ statf(int indent, FTSENT *p)
  		error("statf: %s", strerror(errno));
   	strnvis(escaped_name, p->fts_name, esc_len, VIS_WHITE | VIS_OCTAL);
  
 -	if (iflag || S_ISDIR(p->fts_statp->st_mode))
 -		offset = printf("%*s%s", indent, "", escaped_name);
--	else
--		offset = printf("%*s    %s", indent, "", escaped_name);
 +	offset = indent;
 +	if (!iflag && !S_ISDIR(p->fts_statp->st_mode))
 +		offset += 4;
 +	/* XXX: printf() may return -1 on error, which is not correctly
 +	 * handled throughout this source file */
-+	offset = printf("%*s%s%s", offset, "",
-+		escaped_name[0] == '#' ? "\\" : "", escaped_name);
++	printf("%*s%s", offset, "");
++	if (escaped_name[0] == '#')
++		offset += printf("\\043%s", escaped_name + 1);
+ 	else
+-		offset = printf("%*s    %s", indent, "", escaped_name);
++		offset += printf("%s", escaped_name);
  
  	free(escaped_name);
  
-@@ -196,7 +203,7 @@ statf(int indent, FTSENT *p)
+@@ -196,7 +206,7 @@ statf(int indent, FTSENT *p)
  		    p->fts_statp->st_mtimespec.tv_sec,
  		    p->fts_statp->st_mtimespec.tv_nsec);
  	if (keys & F_CKSUM && S_ISREG(p->fts_statp->st_mode)) {
