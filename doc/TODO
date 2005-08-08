@@ -217,7 +217,6 @@ makewhatis.
 	mtree.
 
 [PRIORITY: low]
-Correct the man page to not refer to chflags(1) (it's a BSD'ism).
 Support ext2fs flags.  Optionally don't store and ignore symlink
 permissions.  Optionally dereference symlinks.
 
@@ -560,4 +559,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.96 2005/08/07 04:14:04 solar Exp $
+$Id: Owl/doc/TODO,v 1.97 2005/08/08 18:15:06 solar Exp $
