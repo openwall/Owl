@@ -39,7 +39,8 @@ static int ext2fs_chflags(const char *name, int set, int reset)
 		return -1;
 
 	if (ioctl(fd, EXT2_IOC_GETFLAGS, &flags)) {
-		if (errno == ENOTTY) /* "Inappropriate ioctl for device" */
+		if ((errno == ENOTTY) /* Inappropriate ioctl for device */
+		    || (errno == ENOSYS)) /* Function not implemented */
 			errno = EOPNOTSUPP;
 		close(fd);
 		return -1;

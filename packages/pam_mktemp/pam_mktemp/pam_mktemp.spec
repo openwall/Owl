@@ -1,8 +1,8 @@
-# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.16 2005/03/25 21:08:26 solar Exp $
+# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.17 2005/08/10 21:44:41 ldv Exp $
 
 Summary: Pluggable private /tmp space support for interactive (shell) sessions.
 Name: pam_mktemp
-Version: 1.0
+Version: 1.0.1
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
@@ -39,6 +39,10 @@ fi
 /lib/security/pam_mktemp.so
 
 %changelog
+* Thu Aug 11 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.0.1-owl1
+- Added support of filesystem drivers which fail with ENOSYS error code
+in response to ioctl requests.
+
 * Fri Mar 25 2005 Solar Designer <solar@owl.openwall.com> 1.0-owl1
 - Corrected the source code to not break C strict aliasing rules.
 
