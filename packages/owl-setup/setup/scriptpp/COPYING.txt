@@ -1,0 +1,18 @@
+                          The ScriptPP library
+           (c) Andrey V. Stolyarov a.k.a. Croco, 2002-2005
+
+This library can be copied, used, modified and distributed in the
+strict accordance with GNU Lesser General Public License, v. 2.1,
+as published by Free Software Foundation. See the file LGPL.txt for
+details.
+
+All other possible rights are reserved; in no event can this library
+be used in a way other than GNU LGPL permits, unless explicitly
+permitted in written by the author.
+
+You can always get a fresh copy of the library at
+
+        http://www.croco.net/software/scriptpp
+
+
+

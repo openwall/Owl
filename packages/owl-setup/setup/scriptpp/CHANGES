@@ -1,0 +1,36 @@
+Version 0.2.12 (oficially released July 03, 2005)
+Version 0.2.11 (occasionally released with the icfp2005contest entry)
+   - minor syntactic fix to comply some standards...
+Version 0.2.10 (released June 11, 2005 as a part of Owlinst)
+   - ScriptVariable::Trim() added
+   - ScriptVariable::HasPrefix() added
+   - ScriptVector::Clear() added
+   - ScriptVector::operator[]() bug fixed
+   - ScriptVector::Remove() bug fixed
+   - ScriptVariable::Substring::{Move,Resize}() added
+   - some comments added
+   - COPYING files changed
+   - some obsoleted files removed
+   - friend directives fixed to comply to g++ 3.xx
+   - ScriptVariableImplementation simplified
+Version 0.2.02
+   - Toupper & Tolower now return *this for convenience
+Version 0.2.01
+   * in fact, there could be no difference at all, but the version
+     was prepared separately so the number was assigned to avoid possible
+     confusion
+Version 0.2
+   - ScriptWordVector and ScriptTokenVector classes added for convenience
+   - PrevToken, PrevWord methods added to the Iterator so that it can now
+     run backwards
+   - Strchr, Strrchr, Strstr added
+   - Substring::Substring(,pos,) for pos<0 is now meaningful (means -pos
+     positions from the end of the string).
+   - Fixed the problem with the NextToken iteration method in the situation
+     of an empty first token.
+   - Tolower function added
+   - Some doxygen-style comments added
+Version 0.1.01
+   - minor bugfix
+Version 0.1
+   - the very first one ever made available to anyone
