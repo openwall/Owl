@@ -1,4 +1,4 @@
-2003-12-15  Dmitry V. Levin <ldv@altlinux.org>
+2005-08-08  Dmitry V. Levin <ldv@altlinux.org>
 
 	Introduce -k option.
 	* strace.c (main, trace): Handle -k option.  When specified,
@@ -7,9 +7,9 @@
 	* strace.1: Document it.
 	Fixes RH#105371.
 
-diff -upk.orig strace-4.5.12.orig/strace.1 strace-4.5.12/strace.1
---- strace-4.5.12.orig/strace.1	2005-06-10 11:43:05 +0000
-+++ strace-4.5.12/strace.1	2005-06-10 11:55:00 +0000
+diff -upk.orig strace-4.5.13.orig/strace.1 strace-4.5.13/strace.1
+--- strace-4.5.13.orig/strace.1	2005-07-05 03:25:35 +0000
++++ strace-4.5.13/strace.1	2005-08-08 16:33:02 +0000
 @@ -43,7 +43,7 @@ strace \- trace system calls and signals
  .SH SYNOPSIS
  .B strace
@@ -31,9 +31,9 @@ diff -upk.orig strace-4.5.12.orig/strace.1 strace-4.5.12/strace.1
  .B \-r
  Print a relative timestamp upon entry to each system call.  This
  records the time difference between the beginning of successive
-diff -upk.orig strace-4.5.12.orig/strace.c strace-4.5.12/strace.c
---- strace-4.5.12.orig/strace.c	2005-06-08 18:02:40 +0000
-+++ strace-4.5.12/strace.c	2005-06-10 13:03:47 +0000
+diff -upk.orig strace-4.5.13.orig/strace.c strace-4.5.13/strace.c
+--- strace-4.5.13.orig/strace.c	2005-08-03 11:23:46 +0000
++++ strace-4.5.13/strace.c	2005-08-08 16:33:02 +0000
 @@ -71,6 +71,9 @@ int pflag_seen = 0;
  /* Sometimes we want to print only succeeding syscalls. */
  int not_failing_only = 0;
@@ -89,7 +89,7 @@ diff -upk.orig strace-4.5.12.orig/strace.c strace-4.5.12/strace.c
  }
  
  void
-@@ -2125,6 +2132,8 @@ Process %d attached (waiting for parent)
+@@ -2141,6 +2148,8 @@ Process %d attached (waiting for parent)
  			continue;
  		}
  		if (WIFSIGNALED(status)) {
@@ -98,7 +98,7 @@ diff -upk.orig strace-4.5.12.orig/strace.c strace-4.5.12/strace.c
  			if (!cflag
  			    && (qual_flags[WTERMSIG(status)] & QUAL_SIGNAL)) {
  				printleader(tcp);
-@@ -2144,6 +2153,8 @@ Process %d attached (waiting for parent)
+@@ -2160,6 +2169,8 @@ Process %d attached (waiting for parent)
  			continue;
  		}
  		if (WIFEXITED(status)) {

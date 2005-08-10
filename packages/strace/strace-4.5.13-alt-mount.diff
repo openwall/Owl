@@ -1,0 +1,40 @@
+2005-08-08  Dmitry V. Levin  <ldv@altlinux.org>
+
+	* system.c [LINUX] (MS_MGC_VAL): New macro.
+	[LINUX] (mount_flags): Add it.
+	[LINUX] (sys_mount): If neither MS_BIND nor MS_MOVE bits are
+        set in the flags argument, try to fetch data string.
+	Fixes RH#165377.
+
+diff -upk.orig strace-4.5.13.orig/system.c strace-4.5.13/system.c
+--- strace-4.5.13.orig/system.c	2005-06-01 19:22:06 +0000
++++ strace-4.5.13/system.c	2005-08-08 16:28:52 +0000
+@@ -53,6 +53,7 @@
+ #define MS_POSIXACL	(1<<16)	/* VFS does not apply the umask */
+ #define MS_ACTIVE	(1<<30)
+ #define MS_NOUSER	(1<<31)
++#define MS_MGC_VAL	0xc0ed0000	/* Magic flag number */
+ 
+ #include <sys/socket.h>
+ #include <netinet/in.h>
+@@ -79,6 +80,7 @@
+ #include <linux/sysctl.h>
+ 
+ static const struct xlat mount_flags[] = {
++	{ MS_MGC_VAL,	"MS_MGC_VAL"	},
+ 	{ MS_RDONLY,	"MS_RDONLY"	},
+ 	{ MS_NOSUID,	"MS_NOSUID"	},
+ 	{ MS_NODEV,	"MS_NODEV"	},
+@@ -113,7 +115,11 @@ struct tcb *tcp;
+ 			tprintf("%#lx", tcp->u_arg[2]);
+ 		tprintf(", ");
+ 		printflags(mount_flags, tcp->u_arg[3], "MS_???");
+-		tprintf(", %#lx", tcp->u_arg[4]);
++		tprintf(", ");
++		if ((tcp->u_arg[3] & (MS_BIND|MS_MOVE)) == 0)
++			printstr(tcp, tcp->u_arg[4], -1);
++		else
++			tprintf("%#lx", tcp->u_arg[4]);
+ 	}
+ 	return 0;
+ }

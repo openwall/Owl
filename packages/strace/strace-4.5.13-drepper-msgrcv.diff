@@ -1,0 +1,35 @@
+2005-07-31  Ulrich Drepper  <drepper@redhat.com>                                                           
+
+	* ipc.c (sys_msgrcv): Add entering handling and print first parameter
+	there.
+	Fixes RH#164757.
+
+diff -upk.orig strace-4.5.13.orig/ipc.c strace-4.5.13/ipc.c
+--- strace-4.5.13.orig/ipc.c	2005-08-08 16:54:31 +0000
++++ strace-4.5.13/ipc.c	2005-08-08 16:55:45 +0000
+@@ -232,12 +232,13 @@ struct tcb *tcp;
+ #endif
+ 
+ 
+-	if (exiting(tcp)) {
+-		tprintf("%lu", tcp->u_arg[0]);
++	if (entering(tcp)) {
++		tprintf("%lu, ", tcp->u_arg[0]);
++	} else {
+ #if defined LINUX && !defined X86_64
+ 		umove(tcp, tcp->u_arg[3], &tmp);
+ 		umove(tcp, (long) tmp.msgp, &mtype);
+-		tprintf(", {%lu, ", mtype);
++		tprintf("{%lu, ", mtype);
+ 		printstr(tcp, (long) (tmp.msgp) + sizeof(long),
+ 			tcp->u_arg[1]);
+ 		tprintf("}, %lu", tcp->u_arg[1]);
+@@ -246,7 +247,7 @@ struct tcb *tcp;
+ 		printflags(msg_flags, tcp->u_arg[2], "MSG_???");
+ #else /* !LINUX */
+ 		umove(tcp, tcp->u_arg[1], &mtype);
+-		tprintf(", {%lu, ", mtype);
++		tprintf("{%lu, ", mtype);
+ 		printstr(tcp, tcp->u_arg[1] + sizeof(long),
+ 			tcp->u_arg[2]);
+ 		tprintf("}, %lu", tcp->u_arg[2]);

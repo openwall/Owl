@@ -1,4 +1,4 @@
-2005-06-18  Dmitry V. Levin  <ldv@altlinux.org>
+2005-08-08  Dmitry V. Levin  <ldv@altlinux.org>
 
 	Implement detailed quotactl(2) deparser for Linux.
 	* Makefile.am (strace_SOURCES): Add quota.c.
@@ -6,9 +6,9 @@
 	* resource.c: Remove old quotactl(2) deparser.
 	Fixes RH#118696.
 
-diff -upk.orig strace-4.5.12.orig/Makefile.am strace-4.5.12/Makefile.am
---- strace-4.5.12.orig/Makefile.am	2004-07-12 07:53:35 +0000
-+++ strace-4.5.12/Makefile.am	2005-06-17 21:59:52 +0000
+diff -upk.orig strace-4.5.13.orig/Makefile.am strace-4.5.13/Makefile.am
+--- strace-4.5.13.orig/Makefile.am	2004-07-12 07:53:35 +0000
++++ strace-4.5.13/Makefile.am	2005-08-08 16:35:30 +0000
 @@ -13,7 +13,7 @@ AM_CFLAGS = $(WARNFLAGS)
  INCLUDES = -I$(OS)/$(ARCH) -I$(srcdir)/$(OS)/$(ARCH) -I$(OS) -I$(srcdir)/$(OS)
  
@@ -18,9 +18,9 @@ diff -upk.orig strace-4.5.12.orig/Makefile.am strace-4.5.12/Makefile.am
  		 resource.c signal.c sock.c system.c term.c time.c \
  		 proc.c stream.c
  noinst_HEADERS = defs.h
-diff -upk.orig strace-4.5.12.orig/quota.c strace-4.5.12/quota.c
---- strace-4.5.12.orig/quota.c	1970-01-01 00:00:00 +0000
-+++ strace-4.5.12/quota.c	2005-06-18 04:10:10 +0000
+diff -upk.orig strace-4.5.13.orig/quota.c strace-4.5.13/quota.c
+--- strace-4.5.13.orig/quota.c	1970-01-01 00:00:00 +0000
++++ strace-4.5.13/quota.c	2005-08-08 16:35:30 +0000
 @@ -0,0 +1,732 @@
 +/*
 + * Copyright (c) 1991, 1992 Paul Kranenburg <pk@cs.few.eur.nl>
@@ -52,7 +52,7 @@ diff -upk.orig strace-4.5.12.orig/quota.c strace-4.5.12/quota.c
 + * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 + * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 + *
-+ *	$Id: resource.c,v 1.13 2004/10/06 22:14:53 roland Exp $
++ *	$Id$
 + */
 +
 +#include "defs.h"
@@ -754,9 +754,9 @@ diff -upk.orig strace-4.5.12.orig/quota.c strace-4.5.12/quota.c
 +}
 +
 +#endif /* SUNOS4 || FREEBSD */
-diff -upk.orig strace-4.5.12.orig/resource.c strace-4.5.12/resource.c
---- strace-4.5.12.orig/resource.c	2005-06-17 21:06:27 +0000
-+++ strace-4.5.12/resource.c	2005-06-17 21:59:52 +0000
+diff -upk.orig strace-4.5.13.orig/resource.c strace-4.5.13/resource.c
+--- strace-4.5.13.orig/resource.c	2005-08-03 12:18:09 +0000
++++ strace-4.5.13/resource.c	2005-08-08 16:36:34 +0000
 @@ -36,11 +36,7 @@
  #ifdef LINUX
  #include <sys/times.h>
@@ -769,13 +769,14 @@ diff -upk.orig strace-4.5.12.orig/resource.c strace-4.5.12/resource.c
  #if defined(SVR4) || defined(FREEBSD)
  #include <sys/times.h>
  #include <sys/time.h>
-@@ -461,137 +457,3 @@ struct tcb *tcp;
+@@ -461,146 +457,3 @@ struct tcb *tcp;
  }
  
  #endif /* !SUNOS4 */
 -
 -#ifdef LINUX
 -
+-#define OLD_CMD(c)	((c)<<8)
 -#define NEW_CMD(c)      ((0x80<<16)+(c))
 -#define XQM_CMD(c)      (('X'<<8)+(c))
 -#define NEW_COMMAND(c) (( ((c) >> SUBCMDSHIFT) & (0x80 << 16)))
@@ -783,15 +784,15 @@ diff -upk.orig strace-4.5.12.orig/resource.c strace-4.5.12/resource.c
 -#define OLD_COMMAND(c) (!NEW_COMMAND(c) && !XQM_COMMAND(c))
 -
 -static const struct xlat quotacmds[] = {
--	{ Q_QUOTAON,	"Q_QUOTAON"	},
--	{ Q_QUOTAOFF,	"Q_QUOTAOFF"	},
--	{ Q_GETQUOTA,	"Q_GETQUOTA"	},
--	{ Q_SETQUOTA,	"Q_SETQUOTA"	},
--	{ Q_SETUSE,	"Q_SETUSE"	},
--	{ Q_SYNC,	"Q_SYNC"	},
--	{ Q_SETQLIM,	"Q_SETQLIM"	},
--	{ Q_GETSTATS,	"Q_GETSTATS"	},
--	{ Q_RSQUASH,	"Q_RSQUASH"	},
+-	{ OLD_CMD(0x1),	"Q_QUOTAON"	},
+-	{ OLD_CMD(0x2),	"Q_QUOTAOFF"	},
+-	{ OLD_CMD(0x3),	"Q_GETQUOTA"	},
+-	{ OLD_CMD(0x4),	"Q_SETQUOTA"	},
+-	{ OLD_CMD(0x5),	"Q_SETUSE"	},
+-	{ OLD_CMD(0x6),	"Q_SYNC"	},
+-	{ OLD_CMD(0x7),	"Q_SETQLIM"	},
+-	{ OLD_CMD(0x8),	"Q_GETSTATS"	},
+-	{ OLD_CMD(0x10),"Q_RSQUASH"	},
 -	{ NEW_CMD(0x1), "Q_SYNC"        },
 -	{ NEW_CMD(0x2), "Q_QUOTAON"     },
 -	{ NEW_CMD(0x3), "Q_QUOTAOFF"    },
@@ -840,21 +841,29 @@ diff -upk.orig strace-4.5.12.orig/resource.c strace-4.5.12/resource.c
 -
 -		if (!tcp->u_arg[3])
 -			tprintf("NULL");
--               else if (!verbose(tcp) || !OLD_COMMAND(cmd))
+-               else if (!verbose(tcp) ||
+-#ifdef HAVE_STRUCT_DQBLK_DQB_CURBLOCKS
+-			!
+-#endif
+-			OLD_COMMAND(cmd))
 -			tprintf("%#lx", tcp->u_arg[3]);
 -                else if (umoven(tcp, tcp->u_arg[3], sizeof(struct dqblk),
 -                    (char *) &dq) < 0)
 -                        tprintf("???");
 -		else {
 -                        tprintf("{");
--			tprintf("%u, ", dq.dqb_bhardlimit);
--			tprintf("%u, ", dq.dqb_bsoftlimit);
--			tprintf("%u, ", dq.dqb_curblocks);
--			tprintf("%u, ", dq.dqb_ihardlimit);
--			tprintf("%u, ", dq.dqb_isoftlimit);
--			tprintf("%u, ", dq.dqb_curinodes);
--			tprintf("%lu, ", dq.dqb_btime);
--			tprintf("%lu", dq.dqb_itime);
+-			tprintf("%llu, ", (unsigned long long) dq.dqb_bhardlimit);
+-			tprintf("%llu, ", (unsigned long long) dq.dqb_bsoftlimit);
+-#ifdef HAVE_STRUCT_DQBLK_DQB_CURBLOCKS
+-			tprintf("%llu, ", (unsigned long long) dq.dqb_curblocks);
+-#else
+-			tprintf("%llu, ", (unsigned long long) dq.dqb_curspace);
+-#endif
+-			tprintf("%llu, ", (unsigned long long) dq.dqb_ihardlimit);
+-			tprintf("%llu, ", (unsigned long long) dq.dqb_isoftlimit);
+-			tprintf("%llu, ", (unsigned long long) dq.dqb_curinodes);
+-			tprintf("%llu, ", (unsigned long long) dq.dqb_btime);
+-			tprintf("%llu", (unsigned long long) dq.dqb_itime);
 -                        tprintf("}");
 -		}
 -

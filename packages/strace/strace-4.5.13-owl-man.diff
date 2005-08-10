@@ -1,0 +1,25 @@
+2005-08-08  Dmitry V. Levin  <ldv@altlinux.org>
+
+	* strace.1: Update "SEE ALSO" links to reference to valid
+	manpages.
+	Patch from Michail Litvak <mci@owl.openwall.com>.
+	Fixes RH#165375.
+
+diff -upk.orig strace-4.5.13.orig/strace.1 strace-4.5.13/strace.1
+--- strace-4.5.13.orig/strace.1	2005-07-05 03:25:35 +0000
++++ strace-4.5.13/strace.1	2005-08-08 16:30:40 +0000
+@@ -560,11 +560,10 @@ a non-setuid version of
+ .B strace
+ for ordinary lusers to use.
+ .SH "SEE ALSO"
+-.BR ptrace (2),
+-.BR proc (4),
++.BR ltrace (1),
+ .BR time (1),
+-.BR trace (1),
+-.BR truss (1)
++.BR ptrace (2),
++.BR proc (5)
+ .SH NOTES
+ It is a pity that so much tracing clutter is produced by systems
+ employing shared libraries.
