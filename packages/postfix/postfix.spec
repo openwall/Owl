@@ -1,8 +1,8 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.23 2005/06/30 18:18:30 ldv Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.24 2005/08/11 17:49:34 ldv Exp $
 
 Summary: Postfix mail system.
 Name: postfix
-Version: 2.2.4
+Version: 2.2.5
 Release: owl1
 Epoch: 1
 License: IBM Public License
@@ -26,7 +26,7 @@ Patch6: postfix-2.2.4-alt-post-install.diff
 Patch7: postfix-2.2.4-alt-owl-config.diff
 Patch8: postfix-2.2.4-alt-owl-shared.diff
 Patch9: postfix-2.2.4-owl-postfix-script.diff
-Patch10: postfix-2.2.4-deb-man.diff
+Patch10: postfix-2.2.5-deb-man.diff
 PreReq: /sbin/chkconfig, grep, shadow-utils
 Requires: owl-control >= 0.4, owl-control < 2.0
 BuildRequires: sed >= 4.1.1
@@ -252,7 +252,11 @@ grep -q ^postman: /etc/passwd ||
 	useradd -g postman -u 183 -d / -s /bin/false -M postman
 rm -f %restart_flag
 if [ $1 -ge 2 ]; then
-	%command_directory/postfix stop && touch %restart_flag || :
+	if %command_directory/postfix stop ||
+	   /sbin/start-stop-daemon -q --stop --exec %daemon_directory/master \
+		--pidfile %queue_directory/pid/master.pid --user root; then
+		touch %restart_flag || :
+	fi
 	/usr/sbin/control-dump postfix
 fi
 
@@ -306,6 +310,12 @@ fi
 %attr(644,root,root) %verify(not md5 mtime size) %ghost %queue_directory/etc/*
 
 %changelog
+* Thu Aug 11 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1:2.2.5-owl1
+- Updated to 2.2.5.
+- Updated mantools/postlink patch from Debian.
+- Added workaround in %%pre script to stop Postfix even if old
+/usr/sbin/postfix program cannot stop the daemon during upgrade.
+
 * Thu Jun 30 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1:2.2.4-owl1
 - Updated to 2.2.4.
 - Reviewed Owl patches, removed obsolete ones.
