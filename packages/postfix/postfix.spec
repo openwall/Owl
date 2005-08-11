@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.24 2005/08/11 17:49:34 ldv Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.25 2005/08/11 18:25:07 ldv Exp $
 
 Summary: Postfix mail system.
 Name: postfix
@@ -315,6 +315,8 @@ fi
 - Updated mantools/postlink patch from Debian.
 - Added workaround in %%pre script to stop Postfix even if old
 /usr/sbin/postfix program cannot stop the daemon during upgrade.
+- Changed chroot jail update script to set world-readable permissions
+on files it copies.
 
 * Thu Jun 30 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1:2.2.4-owl1
 - Updated to 2.2.4.
