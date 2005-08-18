@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.17 2005/08/18 16:21:54 ldv Exp $
+# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.18 2005/08/18 16:32:45 ldv Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
@@ -116,7 +116,7 @@ fi
 
 %changelog
 * Thu Aug 18 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.4.1-owl9
-- Updated to post-1.4.1 cvs snapshot 20040627.
+- Updated to post-1.4.1 cvs snapshot 20050525.
 - Reviewed Owl patches, removed obsolete ones, rediffed all the rest.
 - Imported a bunch of patches from ALT's sysklogd-1.4.1-alt21 package,
 including redirection of standard descriptors to /dev/null in klogd and
