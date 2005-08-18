@@ -1,8 +1,8 @@
-# $Id: Owl/packages/libutempter/libutempter.spec,v 1.6 2004/11/23 22:40:46 mci Exp $
+# $Id: Owl/packages/libutempter/libutempter.spec,v 1.7 2005/08/18 18:16:03 ldv Exp $
 
 Summary: A privileged helper for utmp/wtmp updates.
 Name: libutempter
-Version: 1.1.1
+Version: 1.1.3
 Release: owl1
 License: LGPL
 Group: System Environment/Base
@@ -34,11 +34,11 @@ software.
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-make CC=gcc libexecdir="%_libexecdir"
+make CC=gcc libdir="%_libdir" libexecdir="%_libexecdir"
 
 %install
 rm -rf %buildroot
-make install DESTDIR="%buildroot" libexecdir="%_libexecdir"
+make install DESTDIR="%buildroot" libdir="%_libdir" libexecdir="%_libexecdir"
 strip %buildroot%_libexecdir/utempter/*
 
 %post -p /sbin/ldconfig
@@ -61,6 +61,10 @@ grep -q ^utempter: /etc/group || groupadd -g 162 utempter
 %_includedir/utempter.h
 
 %changelog
+* Thu Aug 18 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.1.3-owl1
+- Updated to 1.1.3: Added multilib support, restricted list of global
+symbols exported by the library.
+
 * Mon Feb 24 2003 Michail Litvak <mci@owl.openwall.com> 1.1.1-owl1
 - Updated to 1.1.1
   * Fri Feb 14 2003 Dmitry V. Levin <ldv@owl.openwall.com> 1.1.1-alt1
