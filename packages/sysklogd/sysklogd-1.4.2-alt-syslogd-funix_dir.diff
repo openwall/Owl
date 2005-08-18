@@ -1,0 +1,155 @@
+diff -upk.orig sysklogd-1.4.2.orig/sysklogd.8 sysklogd-1.4.2/sysklogd.8
+--- sysklogd-1.4.2.orig/sysklogd.8	2005-08-18 14:42:57 +0000
++++ sysklogd-1.4.2/sysklogd.8	2005-08-18 14:57:03 +0000
+@@ -10,6 +10,9 @@ sysklogd \- Linux system logging utiliti
+ .RB [ " \-a "
+ .I socket
+ ]
++.RB [ " \-A "
++.I directory
++]
+ .RB [ " \-d " ]
+ .RB [ " \-f "
+ .I config file
+@@ -95,6 +98,13 @@ within the syslogd.c source file.  An ex
+ described by the people from OpenBSD at
+ <http://www.guides.sk/psionic/dns/>.
+ .TP
++.BI "\-A " "directory"
++Using this argument you can specify directory with symlinks to
++additional sockets from that
++.B syslogd
++has to listen to.  This is convenient method if you're going to let
++several daemons run within different chrooted environments.
++.TP
+ .B "\-d"
+ Turns on debug mode.  Using this the daemon will not proceed a 
+ .BR fork (2)
+diff -upk.orig sysklogd-1.4.2.orig/syslogd.c sysklogd-1.4.2/syslogd.c
+--- sysklogd-1.4.2.orig/syslogd.c	2005-08-18 14:42:57 +0000
++++ sysklogd-1.4.2/syslogd.c	2005-08-18 14:51:39 +0000
+@@ -525,6 +525,7 @@ static char sccsid[] = "@(#)syslogd.c	5.
+ #include <arpa/inet.h>
+ #include <resolv.h>
+ 
++#include <dirent.h>
+ #include <pwd.h>
+ #include <grp.h>
+ 
+@@ -605,7 +606,7 @@ static int restart = 0;
+ #define MAXFUNIX	20
+ 
+ int nfunix = 1;
+-char *funixn[MAXFUNIX] = { _PATH_LOG };
++const char *funixn[MAXFUNIX] = { _PATH_LOG };
+ int funix[MAXFUNIX] = { -1, };
+ 
+ #ifdef UT_NAMESIZE
+@@ -853,6 +854,71 @@ static int drop_root(void)
+ 	return 0;
+ }
+ 
++static void add_funix_name(const char *fname)
++{
++	unsigned i;
++
++	for (i = 0; i < MAXFUNIX; ++i)
++		if (!strcmp(fname, funixn[i]))
++			return;
++
++	if (nfunix < MAXFUNIX)
++		funixn[nfunix++] = fname;
++	else
++		fprintf(stderr, "Out of descriptors, ignoring %s\n", fname);
++}
++
++static void add_funix_dir(const char *dname)
++{
++	DIR *dir;
++	struct dirent *entry;
++
++	if (chdir(dname))
++	{
++		fprintf(stderr, "chdir: %s: %s\n", dname, strerror(errno));
++		return;
++	}
++
++	if (!(dir = opendir(".")))
++	{
++		fprintf(stderr, "opendir: %s: %s\n", dname, strerror(errno));
++		chdir("/");
++		return;
++	}
++
++	while ((entry = readdir(dir)))
++	{
++		struct stat st;
++
++		if (strchr(entry->d_name, '.'))
++			continue;
++
++		if (lstat(entry->d_name, &st))
++			continue;
++
++		if (S_ISLNK(st.st_mode))
++		{
++			const char *name;
++			char buf[MAXPATHLEN];
++			int n = readlink(entry->d_name, buf, sizeof(buf));
++
++			if ((n <= 0) || (n >= sizeof(buf)) || (buf[0] != '/'))
++				continue;
++			buf[n] = '\0';
++
++			if ((name = strdup(buf)) == NULL) {
++				printf("Sorry, can't get enough memory, exiting.\n");
++				exit(1);
++			}
++			add_funix_name(name);
++		}
++	}
++
++	if (closedir(dir))
++		fprintf(stderr, "closedir: %s: %s\n", dname, strerror(errno));
++	chdir("/");
++}
++
+ int main(argc, argv)
+ 	int argc;
+ 	char **argv;
+@@ -897,6 +963,7 @@ int main(argc, argv)
+ 	extern int optind;
+ 	extern char *optarg;
+ 	int maxfds;
++	const char *funix_dir = "/etc/syslog.d";
+ 
+ #ifndef TESTING
+ 	chdir ("/");
+@@ -906,13 +973,13 @@ int main(argc, argv)
+ 		funix[i]  = -1;
+ 	}
+ 
+-	while ((ch = getopt(argc, argv, "a:dhf:i:j:l:m:np:rs:u:v")) != EOF)
++	while ((ch = getopt(argc, argv, "a:A:dhf:i:j:l:m:np:rs:u:v")) != EOF)
+ 		switch((char)ch) {
+ 		case 'a':
+-			if (nfunix < MAXFUNIX)
+-				funixn[nfunix++] = optarg;
+-			else
+-				fprintf(stderr, "Out of descriptors, ignoring %s\n", optarg);
++			add_funix_name(optarg);
++			break;
++		case 'A':
++			funix_dir = optarg;
+ 			break;
+ 		case 'd':		/* debug */
+ 			Debug = 1;
+@@ -979,6 +1046,8 @@ int main(argc, argv)
+ 		fputs("'-j' is only valid with '-u'", stderr);
+ 		exit(1);
+ 	}
++	if (funix_dir && *funix_dir)
++		add_funix_dir(funix_dir);
+ #ifndef TESTING
+ 	if ( !(Debug || NoFork) )
+ 	{

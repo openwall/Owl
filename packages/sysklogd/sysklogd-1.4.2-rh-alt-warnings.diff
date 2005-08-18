@@ -1,0 +1,56 @@
+diff -upk.orig sysklogd-1.4.2.orig/syslogd.c sysklogd-1.4.2/syslogd.c
+--- sysklogd-1.4.2.orig/syslogd.c	2005-05-25 18:08:30 +0000
++++ sysklogd-1.4.2/syslogd.c	2005-08-18 11:31:37 +0000
+@@ -670,8 +670,8 @@ struct filed {
+  * in seconds after previous message is logged.  After each flush,
+  * we move to the next interval until we reach the largest.
+  */
+-int	repeatinterval[] = { 30, 60 };	/* # of secs before flush */
+-#define	MAXREPEAT ((sizeof(repeatinterval) / sizeof(repeatinterval[0])) - 1)
++time_t	repeatinterval[] = { 30, 60 };	/* # of secs before flush */
++#define	MAXREPEAT ((int) ((sizeof(repeatinterval) / sizeof(repeatinterval[0])) - 1))
+ #define	REPEATTIME(f)	((f)->f_time + repeatinterval[(f)->f_repeatcount])
+ #define	BACKOFF(f)	{ if (++(f)->f_repeatcount > MAXREPEAT) \
+ 				 (f)->f_repeatcount = MAXREPEAT; \
+@@ -776,7 +776,7 @@ int main(int argc, char **argv);
+ char **crunch_list(char *list);
+ int usage(void);
+ void untty(void);
+-void printchopped(const char *hname, char *msg, int len, int fd);
++void printchopped(const char *hname, char *msg, size_t len, int fd);
+ void printline(const char *hname, char *msg);
+ void printsys(char *msg);
+ void logmsg(int pri, char *msg, const char *from, int flags);
+@@ -1393,7 +1393,7 @@ void untty()
+ void printchopped(hname, msg, len, fd)
+ 	const char *hname;
+ 	char *msg;
+-	int len;
++	size_t len;
+ 	int fd;
+ {
+ 	auto int ptlngth;
+@@ -1682,9 +1682,9 @@ void logmsg(pri, msg, from, flags)
+ 		    !strcmp(from, f->f_prevhost)) {
+ 			(void) strncpy(f->f_lasttime, timestamp, 15);
+ 			f->f_prevcount++;
+-			dprintf("msg repeated %d times, %ld sec of %d.\n",
++			dprintf("msg repeated %d times, %ld sec of %ld.\n",
+ 			    f->f_prevcount, now - f->f_time,
+-			    repeatinterval[f->f_repeatcount]);
++			    (long)repeatinterval[f->f_repeatcount]);
+ 			/*
+ 			 * If domark would have logged this by now,
+ 			 * flush it now (so we don't hold isolated messages),
+@@ -2159,9 +2159,9 @@ void domark()
+ 	for (f = Files; f; f = f->f_next) {
+ #endif
+ 		if (f->f_prevcount && now >= REPEATTIME(f)) {
+-			dprintf("flush %s: repeated %d times, %d sec.\n",
++			dprintf("flush %s: repeated %d times, %ld sec.\n",
+ 			    TypeNames[f->f_type], f->f_prevcount,
+-			    repeatinterval[f->f_repeatcount]);
++			    (long)repeatinterval[f->f_repeatcount]);
+ 			fprintlog(f, LocalHostName, 0, (char *)NULL);
+ 			BACKOFF(f);
+ 		}

@@ -1,0 +1,95 @@
+diff -upk.orig sysklogd-1.4.2.orig/sysklogd.8 sysklogd-1.4.2/sysklogd.8
+--- sysklogd-1.4.2.orig/sysklogd.8	2005-08-18 14:41:26 +0000
++++ sysklogd-1.4.2/sysklogd.8	2005-08-18 14:42:57 +0000
+@@ -2,7 +2,7 @@
+ .\" May be distributed under the GNU General Public License
+ .\" Sun Aug 30 11:35:55 MET: Martin Schulze: Updates
+ .\"
+-.TH SYSKLOGD 8 "8 October, 2001" "Version 1.4.1+CAEN/Owl" "Linux System Administration"
++.TH SYSKLOGD 8 "8 October, 2001" "Version 1.4.1+CAEN/Owl/ALT" "Linux System Administration"
+ .SH NAME
+ sysklogd \- Linux system logging utilities.
+ .SH SYNOPSIS
+@@ -35,6 +35,9 @@ sysklogd \- Linux system logging utiliti
+ .RB [ " \-u"
+ .IB username
+ ]
++.RB [ " \-j "
++.I chroot_dir
++]
+ .RB [ " \-v " ]
+ .LP
+ .SH DESCRIPTION
+@@ -177,6 +180,19 @@ however, after a
+ the files will be reopened as the non-privileged user.  You should
+ take this into account when deciding the ownership of the log files.
+ .TP
++.BI "\-j " chroot_dir
++Tells
++.B syslogd
++daemon to
++.BR chroot (2)
++into this directory after initializing.
++This option is only valid if the \-u option is also used to run
++.B syslogd
++without root privileges.
++Note that the use of this option will prevent
++.B SIGHUP
++from working which makes daemon reload practically impossible.
++.TP
+ .B "\-v"
+ Print version and exit.
+ .LP
+diff -upk.orig sysklogd-1.4.2.orig/syslogd.c sysklogd-1.4.2/syslogd.c
+--- sysklogd-1.4.2.orig/syslogd.c	2005-08-18 14:41:26 +0000
++++ sysklogd-1.4.2/syslogd.c	2005-08-18 14:42:57 +0000
+@@ -780,6 +780,7 @@ int	NoHops = 1;		/* Can we bounce syslog
+ 
+ char	*bind_addr = NULL;	/* bind UDP port to this interface only */
+ char	*server_user = NULL;	/* user name to run server as */
++char	*chroot_dir = NULL;	/* user name to run server as */
+ 
+ extern	int errno;
+ 
+@@ -840,6 +841,11 @@ static int drop_root(void)
+ 
+ 	if (!pw->pw_uid) return -1;
+ 
++	if (chroot_dir) {
++		if (chdir(chroot_dir)) return -1;
++		if (chroot(".")) return -1;
++	}
++
+ 	if (initgroups(server_user, pw->pw_gid)) return -1;
+ 	if (setgid(pw->pw_gid)) return -1;
+ 	if (setuid(pw->pw_uid)) return -1;
+@@ -900,7 +906,7 @@ int main(argc, argv)
+ 		funix[i]  = -1;
+ 	}
+ 
+-	while ((ch = getopt(argc, argv, "a:dhf:i:l:m:np:rs:u:v")) != EOF)
++	while ((ch = getopt(argc, argv, "a:dhf:i:j:l:m:np:rs:u:v")) != EOF)
+ 		switch((char)ch) {
+ 		case 'a':
+ 			if (nfunix < MAXFUNIX)
+@@ -925,6 +931,9 @@ int main(argc, argv)
+ 			}
+ 			bind_addr = optarg;
+ 			break;
++		case 'j':
++			chroot_dir = optarg;
++			break;
+ 		case 'l':
+ 			if (LocalHosts) {
+ 				fprintf(stderr, "Only one -l argument allowed, "
+@@ -966,6 +975,10 @@ int main(argc, argv)
+ 	if ((argc -= optind))
+ 		usage();
+ 
++	if (chroot_dir && !server_user) {
++		fputs("'-j' is only valid with '-u'", stderr);
++		exit(1);
++	}
+ #ifndef TESTING
+ 	if ( !(Debug || NoFork) )
+ 	{

@@ -1,0 +1,71 @@
+diff -upk.orig sysklogd-1.4.2.orig/syslogd.c sysklogd-1.4.2/syslogd.c
+--- sysklogd-1.4.2.orig/syslogd.c	2005-08-18 12:37:31 +0000
++++ sysklogd-1.4.2/syslogd.c	2005-08-18 13:24:31 +0000
+@@ -815,6 +815,16 @@ static int create_unix_socket(const char
+ static int create_inet_socket();
+ #endif
+ 
++static int set_nonblock_flag(int desc)
++{
++	int flags = fcntl(desc, F_GETFL, 0);
++
++	if ((flags == -1) || (flags & O_NONBLOCK))
++		return flags;
++
++	return fcntl(desc, F_SETFL, flags | O_NONBLOCK);
++}
++
+ int main(argc, argv)
+ 	int argc;
+ 	char **argv;
+@@ -1275,7 +1285,6 @@ static int create_inet_socket()
+ {
+ 	int fd, on = 1;
+ 	struct sockaddr_in sin;
+-	int sockflags;
+ 
+ 	fd = socket(AF_INET, SOCK_DGRAM, 0);
+ 	if (fd < 0) {
+@@ -1306,15 +1315,7 @@ static int create_inet_socket()
+ 	 * will stall until the timeout, and other processes trying to
+ 	 * log will also stall.
+ 	 */
+-	if ((sockflags = fcntl(fd, F_GETFL)) != -1) {
+-		sockflags |= O_NONBLOCK;
+-		/*
+-		 * SETFL could fail too, so get it caught by the subsequent
+-		 * error check.
+-		 */
+-		sockflags = fcntl(fd, F_SETFL, sockflags);
+-	}
+-	if (sockflags == -1) {
++	if (set_nonblock_flag(fd) == -1) {
+ 		logerror("fcntl(O_NONBLOCK), suspending inet");
+ 		close(fd);
+ 		return -1;
+@@ -1923,7 +1924,7 @@ void fprintlog(f, from, flags, msg)
+ 
+ 			/* If a named pipe is full, just ignore it for now
+ 			   - mrn 24 May 96 */
+-			if (f->f_type == F_PIPE && e == EAGAIN)
++			if ((f->f_type == F_PIPE || f->f_type == F_TTY) && e == EAGAIN)
+ 				break;
+ 
+ 			(void) close(f->f_file);
+@@ -1945,6 +1946,8 @@ void fprintlog(f, from, flags, msg)
+ 					untty();
+ 					goto again;
+ 				}
++				if (f->f_type == F_TTY)
++					(void) set_nonblock_flag(f->f_file);
+ 			} else {
+ 				f->f_type = F_UNUSED;
+ 				errno = e;
+@@ -2752,6 +2755,7 @@ void cfline(line, f)
+ 			break;
+ 		}
+ 		if (isatty(f->f_file)) {
++			(void) set_nonblock_flag(f->f_file);
+ 			f->f_type = F_TTY;
+ 			untty();
+ 		}

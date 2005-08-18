@@ -1,0 +1,12 @@
+diff -upk.orig sysklogd-1.4.2.orig/syslogd.c sysklogd-1.4.2/syslogd.c
+--- sysklogd-1.4.2.orig/syslogd.c	2005-08-18 13:24:31 +0000
++++ sysklogd-1.4.2/syslogd.c	2005-08-18 13:28:44 +0000
+@@ -2744,7 +2744,7 @@ void cfline(line, f)
+ 			f->f_type = F_PIPE;
+ 	        } else {
+ 			f->f_file = open(p, O_WRONLY|O_APPEND|O_CREAT|O_NOCTTY,
+-					 0644);
++					 0600);
+ 			f->f_type = F_FILE;
+ 		}
+ 		        

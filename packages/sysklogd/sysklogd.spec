@@ -1,9 +1,9 @@
-# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.16 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.17 2005/08/18 16:21:54 ldv Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
 Version: 1.4.1
-Release: owl8
+Release: owl9
 License: BSD for syslogd and GPL for klogd
 Group: System Environment/Daemons
 URL: http://www.infodrom.org/projects/sysklogd/
@@ -12,17 +12,20 @@ Source1: syslog.conf
 Source2: syslog.init
 Source3: syslog.logrotate
 Source4: syslog.sysconfig
-Patch0: sysklogd-1.3-31-rh-owl-Makefile.diff
-Patch1: sysklogd-1.3-31-rh-ksyslog-nul.diff
-Patch2: sysklogd-1.3-31-rh-utmp.diff
-Patch3: sysklogd-1.3-31-rh-ksymless.diff
-Patch4: sysklogd-1.4.1-owl-longjmp.diff
-Patch5: sysklogd-1.4.1-owl-syslogd-create-mode.diff
-Patch6: sysklogd-1.4.1-alt-owl-syslogd-killing.diff
-Patch7: sysklogd-1.4.1-caen-owl-klogd-drop-root.diff
-Patch8: sysklogd-1.4.1-caen-owl-syslogd-bind.diff
-Patch9: sysklogd-1.4.1-caen-owl-syslogd-drop-root.diff
-Patch10: sysklogd-1.4.1-owl-syslogd-crunch_list.diff
+Patch0: sysklogd-1.4.1-cvs-20050525.diff
+Patch1: sysklogd-1.4.2-rh-alt-warnings.diff
+Patch2: sysklogd-1.4.2-rh-ksymless.diff
+Patch3: sysklogd-1.4.2-owl-Makefile.diff
+Patch4: sysklogd-1.4.2-alt-format.diff
+Patch5: sysklogd-1.4.2-alt-redirect-std.diff
+Patch6: sysklogd-1.4.2-alt-syslogd-nonblock.diff
+Patch7: sysklogd-1.4.2-owl-syslogd-create-mode.diff
+Patch8: sysklogd-1.4.2-owl-syslogd-doexit.diff
+Patch9: sysklogd-1.4.2-caen-owl-klogd-drop-root.diff
+Patch10: sysklogd-1.4.2-caen-owl-syslogd-bind.diff
+Patch11: sysklogd-1.4.2-caen-owl-syslogd-drop-root.diff
+Patch12: sysklogd-1.4.2-alt-syslogd-chroot.diff
+Patch13: sysklogd-1.4.2-alt-syslogd-funix_dir.diff
 PreReq: shadow-utils, grep, fileutils, /sbin/chkconfig
 Requires: logrotate, /var/empty
 BuildRoot: /override/%name-%version
@@ -35,7 +38,7 @@ places according to a configuration file.
 
 %prep
 %setup -q
-%patch0 -p1
+%patch0 -p0
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -46,25 +49,28 @@ places according to a configuration file.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
 
 %build
-make CFLAGS="$RPM_OPT_FLAGS -Wall -DSYSV -D_FILE_OFFSET_BITS=64"
+make CFLAGS="%optflags -Wall -DSYSV -D_FILE_OFFSET_BITS=64"
 
 %install
 rm -rf %buildroot
 mkdir -p %buildroot{%_mandir/man{5,8},/sbin}
 
-%makeinstall TOPDIR=%buildroot MANDIR=%buildroot%_mandir
+%makeinstall prefix=%buildroot
 
 cd %buildroot
 
 chmod 700 sbin/*logd
 
-mkdir -p etc/{rc.d/init.d,logrotate.d,sysconfig}
-install -m 644 $RPM_SOURCE_DIR/syslog.conf etc/syslog.conf
-install -m 755 $RPM_SOURCE_DIR/syslog.init etc/rc.d/init.d/syslog
-install -m 644 $RPM_SOURCE_DIR/syslog.logrotate etc/logrotate.d/syslog
-install -m 600 $RPM_SOURCE_DIR/syslog.sysconfig etc/sysconfig/syslog
+mkdir -p etc/{rc.d/init.d,logrotate.d,syslog.d,sysconfig}
+install -m 644 %_sourcedir/syslog.conf etc/syslog.conf
+install -m 755 %_sourcedir/syslog.init etc/rc.d/init.d/syslog
+install -m 644 %_sourcedir/syslog.logrotate etc/logrotate.d/syslog
+install -m 600 %_sourcedir/syslog.sysconfig etc/sysconfig/syslog
 
 %pre
 grep -q ^klogd: /etc/group || groupadd -g 180 klogd
@@ -104,10 +110,20 @@ fi
 %config(noreplace) /etc/logrotate.d/syslog
 %config(noreplace) /etc/rc.d/init.d/syslog
 %config(noreplace) /etc/sysconfig/syslog
+%attr(700,root,root) %dir /etc/syslog.d
 /sbin/*
 %_mandir/*/*
 
 %changelog
+* Thu Aug 18 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.4.1-owl9
+- Updated to post-1.4.1 cvs snapshot 20040627.
+- Reviewed Owl patches, removed obsolete ones, rediffed all the rest.
+- Imported a bunch of patches from ALT's sysklogd-1.4.1-alt21 package,
+including redirection of standard descriptors to /dev/null in klogd and
+syslogd, nonblocking I/O on tty descriptors, new syslogd option "-A"
+can be used to specify directory with symlinks to additional sockets
+from that syslogd has to listen to, syslogd now can run chrooted.
+
 * Sun Apr 18 2004 Solar Designer <solar@owl.openwall.com> 1.4.1-owl8
 - Cleaned up the crunch_list() function in syslogd fixing the buffer overflow
 discovered by Steve Grubb and a number of other issues.

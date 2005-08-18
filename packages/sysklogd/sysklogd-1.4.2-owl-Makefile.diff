@@ -1,0 +1,24 @@
+diff -upk.orig sysklogd-1.4.2.orig/Makefile sysklogd-1.4.2/Makefile
+--- sysklogd-1.4.2.orig/Makefile	2004-04-29 11:04:03 +0000
++++ sysklogd-1.4.2/Makefile	2005-08-18 15:28:04 +0000
+@@ -11,7 +11,7 @@ LDFLAGS= -s
+ INSTALL = /usr/bin/install
+ 
+ # Destination paths, set prefix=/opt if required
+-BINDIR = $(prefix)/usr/sbin
++BINDIR = $(prefix)/sbin
+ MANDIR = $(prefix)/usr/share/man
+ 
+ # There is one report that under an all ELF system there may be a need to
+@@ -120,7 +120,7 @@ install_exec: syslogd klogd
+ 	${INSTALL} -m 500 -s klogd ${BINDIR}/klogd
+ 
+ install_man:
+-	${INSTALL} -o ${MAN_USER} -g ${MAN_GROUP} -m ${MAN_PERMS} sysklogd.8 ${MANDIR}/man8/sysklogd.8
+-	${INSTALL} -o ${MAN_USER} -g ${MAN_GROUP} -m ${MAN_PERMS} syslogd.8 ${MANDIR}/man8/syslogd.8
+-	${INSTALL} -o ${MAN_USER} -g ${MAN_GROUP} -m ${MAN_PERMS} syslog.conf.5 ${MANDIR}/man5/syslog.conf.5
+-	${INSTALL} -o ${MAN_USER} -g ${MAN_GROUP} -m ${MAN_PERMS} klogd.8 ${MANDIR}/man8/klogd.8
++	${INSTALL} -m ${MAN_PERMS} sysklogd.8 ${MANDIR}/man8/sysklogd.8
++	${INSTALL} -m ${MAN_PERMS} syslogd.8 ${MANDIR}/man8/syslogd.8
++	${INSTALL} -m ${MAN_PERMS} syslog.conf.5 ${MANDIR}/man5/syslog.conf.5
++	${INSTALL} -m ${MAN_PERMS} klogd.8 ${MANDIR}/man8/klogd.8

@@ -1,7 +1,7 @@
-diff -ur sysklogd-1.3-31.orig/klogd.c sysklogd-1.3-31/klogd.c
---- sysklogd-1.3-31.orig/klogd.c	Tue Jan 19 03:09:12 1999
-+++ sysklogd-1.3-31/klogd.c	Tue Sep 12 20:06:48 2000
-@@ -806,8 +806,7 @@
+diff -upk.orig sysklogd-1.4.2.orig/klogd.c sysklogd-1.4.2/klogd.c
+--- sysklogd-1.4.2.orig/klogd.c	2004-04-29 13:29:03 +0000
++++ sysklogd-1.4.2/klogd.c	2005-08-18 11:36:23 +0000
+@@ -890,8 +890,7 @@ static void LogLine(char *ptr, int len)
                 value  = strtoul(sym_start+1, (char **) 0, 16);
                 *(line-1) = '>';  /* put back delim */
  
@@ -11,7 +11,7 @@ diff -ur sysklogd-1.3-31.orig/klogd.c sysklogd-1.3-31/klogd.c
                 {
                    parse_state = PARSING_TEXT;
                    break;
-@@ -1058,8 +1057,11 @@
+@@ -1146,8 +1145,11 @@ int main(argc, argv)
  	if ( one_shot )
  	{
  		if (symbol_lookup) {
@@ -25,7 +25,7 @@ diff -ur sysklogd-1.3-31.orig/klogd.c sysklogd-1.3-31/klogd.c
  		}
  		if ( (logsrc = GetKernelLogSrc()) == kernel )
  			LogKernelLine();
-@@ -1074,8 +1076,11 @@
+@@ -1162,8 +1164,11 @@ int main(argc, argv)
  #endif
  	logsrc = GetKernelLogSrc();
  	if (symbol_lookup) {

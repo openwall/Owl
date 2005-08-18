@@ -1,0 +1,12 @@
+diff -upk.orig sysklogd-1.4.2.orig/syslogd.c sysklogd-1.4.2/syslogd.c
+--- sysklogd-1.4.2.orig/syslogd.c	2005-08-18 13:28:44 +0000
++++ sysklogd-1.4.2/syslogd.c	2005-08-18 14:33:22 +0000
+@@ -2280,7 +2280,7 @@ void die(sig)
+ void doexit(sig)
+ 	int sig;
+ {
+-	exit (0);
++	_exit(0);
+ }
+ #endif
+ 
