@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.18 2005/08/18 16:32:45 ldv Exp $
+# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.19 2005/08/21 02:38:40 solar Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
@@ -60,7 +60,7 @@ make CFLAGS="%optflags -Wall -DSYSV -D_FILE_OFFSET_BITS=64"
 rm -rf %buildroot
 mkdir -p %buildroot{%_mandir/man{5,8},/sbin}
 
-%makeinstall prefix=%buildroot
+%makeinstall prefix=%buildroot MANDIR=%buildroot%_mandir
 
 cd %buildroot
 
