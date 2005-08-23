@@ -1,0 +1,3211 @@
+Index: CHANGELOG
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/CHANGELOG,v
+retrieving revision 1.203
+retrieving revision 1.212
+diff -u -p -a -r1.203 -r1.212
+--- CHANGELOG	6 Jul 2005 08:07:32 -0000	1.203
++++ CHANGELOG	28 Jul 2005 10:16:55 -0000	1.212
+@@ -1,5 +1,5 @@
+ 
+-$Id: CHANGELOG,v 1.203 2005/07/06 08:07:32 kukuk Exp $
++$Id: CHANGELOG,v 1.212 2005/07/28 10:16:55 t8m Exp $
+ 
+ -----------------------------
+ 
+@@ -60,8 +60,20 @@ BerliOS Bugs are marked with (BerliOS #X
+ 
+ ====================================================================
+ 
+-0.80: please submit patches for this section with actual code/doc
++0.81: please submit patches for this section with actual code/doc
+       patches!
++* pam_umask: New module for setting umask from GECOS field, /etc/login.defs
++  or /etc/default/login (kukuk)
++* configure/pam_strerror: Remove old ugly-hack option for pam_strerror
++  interface change (kukuk)
++* configure.in: Fix AC_DEFINE usage for autoheader (kukuk)
++* configure.in/_pam_aconf.h.in: Remove feature.h inclusion (kukuk)
++* defs: Remove obsolete directory/content (kukuk)
++* Rename _pam_aconf.h.in to config.h (kukuk)
++* pam_unix: Don't ignore pam_get_item return value (kukuk)
++* pam_userdb: Fix regression - crash when crypt param not specified (t8m)
++
++0.80: Wed Jul 13 13:23:20 CEST 2005
+ * pam_tally: test for NULL data before dereferencing them (t8m)
+ * pam_unix: fix regression introduced in 0.78 - both NIS and local password
+   should be changed if possible (t8m)
+Index: Makefile
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/Makefile,v
+retrieving revision 1.12
+retrieving revision 1.13
+diff -u -p -a -r1.12 -r1.13
+--- Makefile	14 Oct 2004 14:47:53 -0000	1.12
++++ Makefile	20 Jul 2005 09:46:14 -0000	1.13
+@@ -1,5 +1,5 @@
+ ##
+-## $Id: Makefile,v 1.12 2004/10/14 14:47:53 kukuk Exp $
++## $Id: Makefile,v 1.13 2005/07/20 09:46:14 kukuk Exp $
+ ##
+ 
+ ## Note, ideally I would prefer it if this top level makefile did
+@@ -18,12 +18,12 @@ THINGSTOMAKE = libpam libpamc libpam_mis
+ all: $(THINGSTOMAKE)
+ 
+  # Let's get a dynamic libpam.so first
+- bootstrap-libpam: _pam_aconf.h prep
++ bootstrap-libpam: config.h prep
+ 	$(MAKE) -C libpam bootstrap-libpam
+ 
+ prep:
+ 	rm -f security
+-	ln -sf . security
++#	ln -sf . security
+ 
+ clean:
+ 	if [ ! -f Make.Rules ]; then touch Make.Rules ; fi
+@@ -31,19 +31,19 @@ clean:
+ 	rm -f security *~ *.orig *.rej #*#
+ 
+ distclean: clean
+-	rm -f Make.Rules _pam_aconf.h
++	rm -f Make.Rules config.h
+ 	rm -f config.status config.cache config.log core
+ 	rm -rf autom4te.cache/
+ 
+ maintainer-clean: distclean
+ 	@echo files should be ok for packaging now.
+ 
+-# NB _pam_aconf.h.in changes will remake this too
+-Make.Rules: configure Make.Rules.in _pam_aconf.h.in
++# NB config.h.in changes will remake this too
++Make.Rules: configure Make.Rules.in config.h.in
+ 	./config.status --recheck
+ 	./config.status
+ 
+-_pam_aconf.h: Make.Rules
++config.h: Make.Rules
+ 
+ configure: configure.in
+ 	@echo
+@@ -53,14 +53,14 @@ configure: configure.in
+ 	@rm -f configure
+ 	@exit 1
+ 
+-$(THINGSTOMAKE): _pam_aconf.h prep bootstrap-libpam
++$(THINGSTOMAKE): config.h prep bootstrap-libpam
+ 	$(MAKE) -C $@ all
+ 
+-install: _pam_aconf.h prep
++install: config.h prep
+ 	for x in $(THINGSTOMAKE) ; do $(MAKE) -C $$x install ; done
+ 
+ remove:
+-	rm -f $(FAKEROOT)$(INCLUDED)/_pam_aconf.h
++	rm -f $(FAKEROOT)$(INCLUDED)/config.h
+ 	for x in $(THINGSTOMAKE) ; do $(MAKE) -C $$x remove ; done
+ 
+ release:
+Index: _pam_aconf.h.in
+===================================================================
+RCS file: _pam_aconf.h.in
+diff -N _pam_aconf.h.in
+--- _pam_aconf.h.in	16 May 2005 11:03:03 -0000	1.13
++++ /dev/null	1 Jan 1970 00:00:00 -0000
+@@ -1,110 +0,0 @@
+-/*
+- * $Id: _pam_aconf.h.in,v 1.13 2005/05/16 11:03:03 kukuk Exp $
+- *
+- * 
+- */
+-
+-#ifndef PAM_ACONF_H
+-#define PAM_ACONF_H
+-
+-/* lots of stuff gets written to /tmp/pam-debug.log */
+-#undef DEBUG
+-
+-/* build libraries with different names (suffixed with 'd') */
+-#undef WITH_LIBDEBUG
+-
+-/* provide a global locking facility within libpam */
+-#undef PAM_LOCKING
+-
+-/* GNU systems as a class, all have the feature.h file */
+-#undef HAVE_FEATURES_H
+-#ifdef HAVE_FEATURES_H
+-# define _SVID_SOURCE
+-# define _BSD_SOURCE
+-# define _GNU_SOURCE
+-# include <features.h>
+-#endif /* HAVE_FEATURES_H */
+-
+-/* we have libcrack available */
+-#undef HAVE_LIBCRACK
+-
+-/* we have libcrypt - its not part of libc (do we need both definitions?) */
+-#undef HAVE_LIBCRYPT
+-#undef HAVE_CRYPT_H
+-
+-/* we have libndbm and/or libdb */
+-#undef HAVE_DB_H
+-#undef HAVE_NDBM_H
+-
+-/* have libfl (Flex) */
+-#undef HAVE_LIBFL
+-
+-/* have libnsl - instead of libc support */
+-#undef HAVE_LIBNSL
+-
+-/* have libpwdb - don't expect this to be important for much longer */
+-#undef HAVE_LIBPWDB
+-
+-/* have libselinux - SELinux is Linux special */
+-#undef HAVE_LIBSELINUX
+-
+-/* have gethostname() declared */
+-#undef HAVE_GETHOSTNAME
+-
+-#undef HAVE_GETTIMEOFDAY
+-#undef HAVE_MKDIR
+-#undef HAVE_SELECT
+-#undef HAVE_STRCSPN
+-#undef HAVE_STRDUP
+-#undef HAVE_STRERROR
+-#undef HAVE_STRSPN
+-#undef HAVE_STRSTR
+-#undef HAVE_STRTOL
+-#undef HAVE_UNAME
+-
+-/* Define if reentrant declarations of standard nss functions are available */
+-#undef HAVE_GETPWNAM_R
+-#undef HAVE_GETPWUID_R
+-#undef HAVE_GETSPNAM_R
+-#undef HAVE_GETGRNAM_R
+-#undef HAVE_GETGRGID_R
+-#undef HAVE_GETGROUPLIST
+-
+-/* ugly hack to partially support old pam_strerror syntax */
+-#undef UGLY_HACK_FOR_PRIOR_BEHAVIOR_SUPPORT
+-
+-/* read both confs - read /etc/pam.d and /etc/pam.conf in serial */
+-#undef PAM_READ_BOTH_CONFS
+-
+-#undef HAVE_PATHS_H
+-#ifdef HAVE_PATHS_H
+-#include <paths.h>
+-#endif
+-/* location of the mail spool directory */
+-#undef PAM_PATH_MAILDIR
+-
+-/* where should we include setfsuid's prototype from? If this is not
+-   defined, we get it from unistd.h */
+-#undef HAVE_SYS_FSUID_H
+-
+-/* Do we have inttypes.h for uint32_t */
+-#undef HAVE_INTTYPES_H
+-
+-/* track all memory allocations and liberations */
+-#undef MEMORY_DEBUG
+-#ifdef MEMORY_DEBUG
+-/*
+- * this is basically a hack - we need to include a semiarbitrary
+- * number of headers to ensure that we don't get silly prototype/macro
+- * confusion.
+- */
+-# include <string.h>
+-# include <stdlib.h>
+-# include <security/pam_malloc.h>
+-#endif /* MEMORY_DEBUG */
+-
+-/* the path, relative to SECUREDIR, where PAMs specific to this architecture
+- * can be found */
+-#undef _PAM_ISA
+-
+-#endif /* PAM_ACONF_H */
+Index: config.h.in
+===================================================================
+RCS file: config.h.in
+diff -N config.h.in
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ config.h.in	20 Jul 2005 14:52:38 -0000	1.2
+@@ -0,0 +1,286 @@
++/* config.h.in.  Generated from configure.in by autoheader.  */
++
++/* lots of stuff gets written to /tmp/pam-debug.log */
++#undef DEBUG
++
++/* Define to the type of elements in the array set by `getgroups'. Usually
++   this is either `int' or `gid_t'. */
++#undef GETGROUPS_T
++
++/* Define to 1 if you have the <crypt.h> header file. */
++#undef HAVE_CRYPT_H
++
++/* Define to 1 if you have the <db.h> header file. */
++#undef HAVE_DB_H
++
++/* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
++   */
++#undef HAVE_DIRENT_H
++
++/* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
++#undef HAVE_DOPRNT
++
++/* Define to 1 if you have the <fcntl.h> header file. */
++#undef HAVE_FCNTL_H
++
++/* Define to 1 if you have the `getgrgid_r' function. */
++#undef HAVE_GETGRGID_R
++
++/* Define to 1 if you have the `getgrnam_r' function. */
++#undef HAVE_GETGRNAM_R
++
++/* Define to 1 if you have the `getgrouplist' function. */
++#undef HAVE_GETGROUPLIST
++
++/* Define to 1 if you have the `gethostname' function. */
++#undef HAVE_GETHOSTNAME
++
++/* Define to 1 if you have the `getpwnam_r' function. */
++#undef HAVE_GETPWNAM_R
++
++/* Define to 1 if you have the `getpwuid_r' function. */
++#undef HAVE_GETPWUID_R
++
++/* Define to 1 if you have the `getspnam_r' function. */
++#undef HAVE_GETSPNAM_R
++
++/* Define to 1 if you have the `gettimeofday' function. */
++#undef HAVE_GETTIMEOFDAY
++
++/* Define to 1 if you have the <inittypes.h> header file. */
++#undef HAVE_INITTYPES_H
++
++/* Define to 1 if you have the <inttypes.h> header file. */
++#undef HAVE_INTTYPES_H
++
++/* Define to 1 if you have the <lastlog.h> header file. */
++#undef HAVE_LASTLOG_H
++
++/* Define to 1 if you have the `crack' library (-lcrack). */
++#undef HAVE_LIBCRACK
++
++/* Define to 1 if you have the `crypt' library (-lcrypt). */
++#undef HAVE_LIBCRYPT
++
++/* Define to 1 if you have the `db' library (-ldb). */
++#undef HAVE_LIBDB
++
++/* Define to 1 if you have the `fl' library (-lfl). */
++#undef HAVE_LIBFL
++
++/* Define to 1 if you have the `fl' library (-lfl). */
++#undef HAVE_LIBFLEX
++
++/* Define to 1 if you have the `l' library (-ll). */
++#undef HAVE_LIBLEX
++
++/* Define to 1 if you have the `ndbm' library (-lndbm). */
++#undef HAVE_LIBNDBM
++
++/* Define to 1 if you have the `nsl' library (-lnsl). */
++#undef HAVE_LIBNSL
++
++/* Define to 1 if you have the `pwdb' library (-lpwdb). */
++#undef HAVE_LIBPWDB
++
++/* Define to 1 if you have the `nsl' library (-lnsl). */
++#undef HAVE_LIBSELINUX
++
++/* Define to 1 if you have the `util' library (-lutil). */
++#undef HAVE_LIBUTIL
++
++/* Define to 1 if you have the <limits.h> header file. */
++#undef HAVE_LIMITS_H
++
++/* Define to 1 if you have the <malloc.h> header file. */
++#undef HAVE_MALLOC_H
++
++/* Define to 1 if you have the <memory.h> header file. */
++#undef HAVE_MEMORY_H
++
++/* Define to 1 if you have the `mkdir' function. */
++#undef HAVE_MKDIR
++
++/* Define to 1 if you have the <ndbm.h> header file. */
++#undef HAVE_NDBM_H
++
++/* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
++#undef HAVE_NDIR_H
++
++/* Define to 1 if you have the <paths.h> header file. */
++#undef HAVE_PATHS_H
++
++/* Define to 1 if you have the `select' function. */
++#undef HAVE_SELECT
++
++/* Define to 1 if you have the <stdint.h> header file. */
++#undef HAVE_STDINT_H
++
++/* Define to 1 if you have the <stdlib.h> header file. */
++#undef HAVE_STDLIB_H
++
++/* Define to 1 if you have the `strcspn' function. */
++#undef HAVE_STRCSPN
++
++/* Define to 1 if you have the `strdup' function. */
++#undef HAVE_STRDUP
++
++/* Define to 1 if you have the `strerror' function. */
++#undef HAVE_STRERROR
++
++/* Define to 1 if you have the <strings.h> header file. */
++#undef HAVE_STRINGS_H
++
++/* Define to 1 if you have the <string.h> header file. */
++#undef HAVE_STRING_H
++
++/* Define to 1 if you have the `strspn' function. */
++#undef HAVE_STRSPN
++
++/* Define to 1 if you have the `strstr' function. */
++#undef HAVE_STRSTR
++
++/* Define to 1 if you have the `strtol' function. */
++#undef HAVE_STRTOL
++
++/* Define to 1 if you have the <syslog.h> header file. */
++#undef HAVE_SYSLOG_H
++
++/* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
++   */
++#undef HAVE_SYS_DIR_H
++
++/* Define to 1 if you have the <sys/file.h> header file. */
++#undef HAVE_SYS_FILE_H
++
++/* Define to 1 if you have the <sys/fsuid.h> header file. */
++#undef HAVE_SYS_FSUID_H
++
++/* Define to 1 if you have the <sys/ioctl.h> header file. */
++#undef HAVE_SYS_IOCTL_H
++
++/* Define to 1 if you have the <sys/ndir.h> header file, and it defines `DIR'.
++   */
++#undef HAVE_SYS_NDIR_H
++
++/* Define to 1 if you have the <sys/stat.h> header file. */
++#undef HAVE_SYS_STAT_H
++
++/* Define to 1 if you have the <sys/time.h> header file. */
++#undef HAVE_SYS_TIME_H
++
++/* Define to 1 if you have the <sys/types.h> header file. */
++#undef HAVE_SYS_TYPES_H
++
++/* Define to 1 if you have <sys/wait.h> that is POSIX.1 compatible. */
++#undef HAVE_SYS_WAIT_H
++
++/* Define to 1 if you have the <termio.h> header file. */
++#undef HAVE_TERMIO_H
++
++/* Define to 1 if you have the `uname' function. */
++#undef HAVE_UNAME
++
++/* Define to 1 if you have the <unistd.h> header file. */
++#undef HAVE_UNISTD_H
++
++/* Define to 1 if you have the <utmpx.h> header file. */
++#undef HAVE_UTMPX_H
++
++/* Define to 1 if you have the <utmp.h> header file. */
++#undef HAVE_UTMP_H
++
++/* Define to 1 if you have the `vprintf' function. */
++#undef HAVE_VPRINTF
++
++/* Every malloc etc. call will be tracked */
++#undef MEMORY_DEBUG
++
++/* Define to the address where bug reports for this package should be sent. */
++#undef PACKAGE_BUGREPORT
++
++/* Define to the full name of this package. */
++#undef PACKAGE_NAME
++
++/* Define to the full name and version of this package. */
++#undef PACKAGE_STRING
++
++/* Define to the one symbol short name of this package. */
++#undef PACKAGE_TARNAME
++
++/* Define to the version of this package. */
++#undef PACKAGE_VERSION
++
++/* libpam should observe a global authentication lock */
++#undef PAM_LOCKING
++
++/* Path where mails are stored */
++#undef PAM_PATH_MAILDIR
++
++/* read both /etc/pam.d and /etc/pam.conf files */
++#undef PAM_READ_BOTH_CONFS
++
++/* Define to 1 if you have the ANSI C header files. */
++#undef STDC_HEADERS
++
++/* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
++#undef TIME_WITH_SYS_TIME
++
++/* Define to 1 if your <sys/time.h> declares `struct tm'. */
++#undef TM_IN_SYS_TIME
++
++/* build libraries with different names (suffixed with 'd') */
++#undef WITH_LIBDEBUG
++
++/* Build with prelude ids support */
++#undef WITH_PRELUDE
++
++/* Define to 1 if your processor stores words with the most significant byte
++   first (like Motorola and SPARC, unlike Intel and VAX). */
++#undef WORDS_BIGENDIAN
++
++/* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
++   `char[]'. */
++#undef YYTEXT_POINTER
++
++#ifdef ENABLE_NLS
++#include <libintl.h>
++#define _(msgid) dgettext("Linux-PAM", msgid)
++#define N_(msgid) msgid
++#else
++#define _(msgid) (msgid)
++#define N_(msgid) msgid
++#endif /* ENABLE_NLS */
++
++#ifdef MEMORY_DEBUG
++/*
++ * this is basically a hack - we need to include a semiarbitrary
++ * number of headers to ensure that we don't get silly prototype/macro
++ * confusion.
++ */
++# include <string.h>
++# include <stdlib.h>
++# include <security/pam_malloc.h>
++#endif /* MEMORY_DEBUG */
++
++/* Define to the path, relative to SECUREDIR, where PAMs specific to this
++   architecture can be found. */
++#undef _PAM_ISA
++
++/* Define to empty if `const' does not conform to ANSI C. */
++#undef const
++
++/* Define to `int' if <sys/types.h> doesn't define. */
++#undef gid_t
++
++/* Define to `long' if <sys/types.h> does not define. */
++#undef off_t
++
++/* Define to `int' if <sys/types.h> does not define. */
++#undef pid_t
++
++/* Define to `unsigned' if <sys/types.h> does not define. */
++#undef size_t
++
++/* Define to `int' if <sys/types.h> doesn't define. */
++#undef uid_t
+Index: configure
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/configure,v
+retrieving revision 1.39
+retrieving revision 1.45
+diff -u -p -a -r1.39 -r1.45
+--- configure	9 Jun 2005 17:29:18 -0000	1.39
++++ configure	20 Jul 2005 14:52:39 -0000	1.45
+@@ -854,7 +854,6 @@ Optional Features:
+   --enable-docdir=<path to store documentation in - /usr/share/doc/pam>
+   --enable-mandir=<path to store manuals in - /usr/share/man>
+   --enable-pamlocking      configure libpam to observe a global authentication lock
+-  --enable-uglyhack        configure libpam to try to honor old pam_strerror syntax
+   --enable-read-both-confs  read both /etc/pam.d and /etc/pam.conf files
+   --enable-static-libpam   build a libpam.a library
+   --disable-dynamic-libpam do not build a shared libpam library
+@@ -1315,23 +1314,15 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
+ 
+ 
+ 
+-          ac_config_headers="$ac_config_headers _pam_aconf.h"
++          ac_config_headers="$ac_config_headers config.h"
+ 
+ 
+ 
+ LIBPAM_VERSION_MAJOR=0
+-LIBPAM_VERSION_MINOR=80
++LIBPAM_VERSION_MINOR=81
+ 
+ 
+ 
+-cat >>confdefs.h <<\_ACEOF
+-#define LIBPAM_VERSION_MAJOR 1
+-_ACEOF
+-
+-cat >>confdefs.h <<\_ACEOF
+-#define LIBPAM_VERSION_MINOR 1
+-_ACEOF
+-
+ 
+ 
+ 
+@@ -2748,8 +2739,9 @@ fi
+ # Check whether --enable-debug or --disable-debug was given.
+ if test "${enable_debug+set}" = set; then
+   enableval="$enable_debug"
+-  WITH_DEBUG=yes ; cat >>confdefs.h <<\_ACEOF
+-#define DEBUG 1
++  WITH_DEBUG=yes ;
++cat >>confdefs.h <<\_ACEOF
++#define DEBUG
+ _ACEOF
+ 
+ else
+@@ -2760,8 +2752,9 @@ fi;
+ # Check whether --enable-memory-debug or --disable-memory-debug was given.
+ if test "${enable_memory_debug+set}" = set; then
+   enableval="$enable_memory_debug"
+-  WITH_MEMORY_DEBUG=yes ; cat >>confdefs.h <<\_ACEOF
+-#define MEMORY_DEBUG 1
++  WITH_MEMORY_DEBUG=yes ;
++cat >>confdefs.h <<\_ACEOF
++#define MEMORY_DEBUG
+ _ACEOF
+ 
+ else
+@@ -2769,11 +2762,14 @@ else
+ fi;
+ 
+ 
++
++
+ # Check whether --enable-libdebug or --disable-libdebug was given.
+ if test "${enable_libdebug+set}" = set; then
+   enableval="$enable_libdebug"
+-  WITH_LIBDEBUG=yes ; cat >>confdefs.h <<\_ACEOF
+-#define WITH_LIBDEBUG 1
++  WITH_LIBDEBUG=yes ;
++cat >>confdefs.h <<\_ACEOF
++#define WITH_LIBDEBUG
+ _ACEOF
+ 
+ else
+@@ -2784,8 +2780,9 @@ fi;
+ # Check whether --enable-prelude or --disable-prelude was given.
+ if test "${enable_prelude+set}" = set; then
+   enableval="$enable_prelude"
+-  WITH_PRELUDE=yes ; cat >>confdefs.h <<\_ACEOF
+-#define WITH_PRELUDE 1
++  WITH_PRELUDE=yes ;
++cat >>confdefs.h <<\_ACEOF
++#define WITH_PRELUDE
+ _ACEOF
+ 
+ else
+@@ -2873,8 +2870,9 @@ fi;
+ # Check whether --enable-pamlocking or --disable-pamlocking was given.
+ if test "${enable_pamlocking+set}" = set; then
+   enableval="$enable_pamlocking"
+-  WITH_PAMLOCKING=yes ; cat >>confdefs.h <<\_ACEOF
+-#define PAM_LOCKING 1
++  WITH_PAMLOCKING=yes ;
++cat >>confdefs.h <<\_ACEOF
++#define PAM_LOCKING
+ _ACEOF
+ 
+ else
+@@ -2882,20 +2880,12 @@ else
+ fi;
+ 
+ 
+-# Check whether --enable-uglyhack or --disable-uglyhack was given.
+-if test "${enable_uglyhack+set}" = set; then
+-  enableval="$enable_uglyhack"
+-  cat >>confdefs.h <<\_ACEOF
+-#define UGLY_HACK_FOR_PRIOR_BEHAVIOR_SUPPORT 1
+-_ACEOF
+-
+-fi;
+-
+ # Check whether --enable-read-both-confs or --disable-read-both-confs was given.
+ if test "${enable_read_both_confs+set}" = set; then
+   enableval="$enable_read_both_confs"
+-  cat >>confdefs.h <<\_ACEOF
+-#define PAM_READ_BOTH_CONFS 1
++
++cat >>confdefs.h <<\_ACEOF
++#define PAM_READ_BOTH_CONFS
+ _ACEOF
+ 
+ fi;
+@@ -3627,6 +3617,7 @@ fi
+ rm -f core *.core gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
+ fi
+ fi
++
+ cat >>confdefs.h <<_ACEOF
+ #define PAM_PATH_MAILDIR $pam_mail_spool
+ _ACEOF
+@@ -3911,8 +3902,10 @@ fi
+ echo "$as_me:$LINENO: result: $ac_cv_lib_crack_FascistCheck" >&5
+ echo "${ECHO_T}$ac_cv_lib_crack_FascistCheck" >&6
+ if test $ac_cv_lib_crack_FascistCheck = yes; then
+-  HAVE_LIBCRACK=yes ; cat >>confdefs.h <<\_ACEOF
+-#define HAVE_LIBCRACK 1
++  HAVE_LIBCRACK=yes ;
++
++cat >>confdefs.h <<\_ACEOF
++#define HAVE_LIBCRACK
+ _ACEOF
+ 
+ else
+@@ -3986,8 +3979,10 @@ fi
+ echo "$as_me:$LINENO: result: $ac_cv_lib_crypt_crypt" >&5
+ echo "${ECHO_T}$ac_cv_lib_crypt_crypt" >&6
+ if test $ac_cv_lib_crypt_crypt = yes; then
+-  HAVE_LIBCRYPT=yes ; cat >>confdefs.h <<\_ACEOF
+-#define HAVE_LIBCRYPT 1
++  HAVE_LIBCRYPT=yes ;
++
++cat >>confdefs.h <<\_ACEOF
++#define HAVE_LIBCRYPT
+ _ACEOF
+ 
+ else
+@@ -4060,8 +4055,10 @@ fi
+ echo "$as_me:$LINENO: result: $ac_cv_lib_util_logwtmp" >&5
+ echo "${ECHO_T}$ac_cv_lib_util_logwtmp" >&6
+ if test $ac_cv_lib_util_logwtmp = yes; then
+-  HAVE_LIBUTIL=yes ; cat >>confdefs.h <<\_ACEOF
+-#define HAVE_LIBUTIL 1
++  HAVE_LIBUTIL=yes ;
++
++cat >>confdefs.h <<\_ACEOF
++#define HAVE_LIBUTIL
+ _ACEOF
+ 
+ else
+@@ -4134,8 +4131,10 @@ fi
+ echo "$as_me:$LINENO: result: $ac_cv_lib_ndbm_dbm_store" >&5
+ echo "${ECHO_T}$ac_cv_lib_ndbm_dbm_store" >&6
+ if test $ac_cv_lib_ndbm_dbm_store = yes; then
+-  HAVE_LIBNDBM=yes ; cat >>confdefs.h <<\_ACEOF
+-#define HAVE_LIBNDBM 1
++  HAVE_LIBNDBM=yes ;
++
++cat >>confdefs.h <<\_ACEOF
++#define HAVE_LIBNDBM
+ _ACEOF
+ 
+ else
+@@ -4208,8 +4207,10 @@ fi
+ echo "$as_me:$LINENO: result: $ac_cv_lib_db_dbm_store" >&5
+ echo "${ECHO_T}$ac_cv_lib_db_dbm_store" >&6
+ if test $ac_cv_lib_db_dbm_store = yes; then
+-  HAVE_LIBDB=yes ; cat >>confdefs.h <<\_ACEOF
+-#define HAVE_LIBDB 1
++  HAVE_LIBDB=yes ;
++
++cat >>confdefs.h <<\_ACEOF
++#define HAVE_LIBDB
+ _ACEOF
+ 
+ else
+@@ -4282,8 +4283,10 @@ fi
+ echo "$as_me:$LINENO: result: $ac_cv_lib_db_db_create" >&5
+ echo "${ECHO_T}$ac_cv_lib_db_db_create" >&6
+ if test $ac_cv_lib_db_db_create = yes; then
+-  HAVE_LIBDB=yes ; cat >>confdefs.h <<\_ACEOF
+-#define HAVE_LIBDB 1
++  HAVE_LIBDB=yes ;
++
++cat >>confdefs.h <<\_ACEOF
++#define HAVE_LIBDB
+ _ACEOF
+ 
+ else
+@@ -4359,8 +4362,10 @@ echo "${ECHO_T}$ac_cv_lib_fl_yylex" >&6
+ if test $ac_cv_lib_fl_yylex = yes; then
+   yyterminate
+ else
+-  HAVE_LIBFL=yes ; cat >>confdefs.h <<\_ACEOF
+-#define HAVE_LIBFL 1
++  HAVE_LIBFL=yes ;
++
++cat >>confdefs.h <<\_ACEOF
++#define HAVE_LIBFL
+ _ACEOF
+ 
+ fi
+@@ -4431,8 +4436,10 @@ fi
+ echo "$as_me:$LINENO: result: $ac_cv_lib_nsl_yp_maplist" >&5
+ echo "${ECHO_T}$ac_cv_lib_nsl_yp_maplist" >&6
+ if test $ac_cv_lib_nsl_yp_maplist = yes; then
+-  HAVE_LIBNSL=yes ; cat >>confdefs.h <<\_ACEOF
+-#define HAVE_LIBNSL 1
++  HAVE_LIBNSL=yes ;
++
++cat >>confdefs.h <<\_ACEOF
++#define HAVE_LIBNSL
+ _ACEOF
+ 
+ else
+@@ -4506,8 +4513,10 @@ fi
+ echo "$as_me:$LINENO: result: $ac_cv_lib_selinux_getfilecon" >&5
+ echo "${ECHO_T}$ac_cv_lib_selinux_getfilecon" >&6
+ if test $ac_cv_lib_selinux_getfilecon = yes; then
+-  HAVE_LIBSELINUX=yes ; cat >>confdefs.h <<\_ACEOF
+-#define HAVE_LIBSELINUX 1
++  HAVE_LIBSELINUX=yes ;
++
++cat >>confdefs.h <<\_ACEOF
++#define HAVE_LIBSELINUX
+ _ACEOF
+ 
+ else
+@@ -4587,8 +4596,10 @@ fi
+ echo "$as_me:$LINENO: result: $ac_cv_lib_pwdb_pwdb_db_name" >&5
+ echo "${ECHO_T}$ac_cv_lib_pwdb_pwdb_db_name" >&6
+ if test $ac_cv_lib_pwdb_pwdb_db_name = yes; then
+-  HAVE_LIBPWDB=yes ; cat >>confdefs.h <<\_ACEOF
+-#define HAVE_LIBPWDB 1
++  HAVE_LIBPWDB=yes ;
++
++cat >>confdefs.h <<\_ACEOF
++#define HAVE_LIBPWDB
+ _ACEOF
+ 
+ else
+@@ -4663,8 +4674,10 @@ fi
+ echo "$as_me:$LINENO: result: $ac_cv_lib_fl_yywrap" >&5
+ echo "${ECHO_T}$ac_cv_lib_fl_yywrap" >&6
+ if test $ac_cv_lib_fl_yywrap = yes; then
+-  HAVE_LIBFLEX=yes ; cat >>confdefs.h <<\_ACEOF
+-#define HAVE_LIBFLEX 1
++  HAVE_LIBFLEX=yes ;
++
++cat >>confdefs.h <<\_ACEOF
++#define HAVE_LIBFLEX
+ _ACEOF
+ 
+ else
+@@ -4737,8 +4750,10 @@ fi
+ echo "$as_me:$LINENO: result: $ac_cv_lib_l_yywrap" >&5
+ echo "${ECHO_T}$ac_cv_lib_l_yywrap" >&6
+ if test $ac_cv_lib_l_yywrap = yes; then
+-  HAVE_LIBLEX=yes ; cat >>confdefs.h <<\_ACEOF
+-#define HAVE_LIBLEX 1
++  HAVE_LIBLEX=yes ;
++
++cat >>confdefs.h <<\_ACEOF
++#define HAVE_LIBLEX
+ _ACEOF
+ 
+ else
+@@ -5476,157 +5491,6 @@ done
+ 
+ 
+ 
+-for ac_header in features.h
+-do
+-as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
+-if eval "test \"\${$as_ac_Header+set}\" = set"; then
+-  echo "$as_me:$LINENO: checking for $ac_header" >&5
+-echo $ECHO_N "checking for $ac_header... $ECHO_C" >&6
+-if eval "test \"\${$as_ac_Header+set}\" = set"; then
+-  echo $ECHO_N "(cached) $ECHO_C" >&6
+-fi
+-echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_Header'}'`" >&5
+-echo "${ECHO_T}`eval echo '${'$as_ac_Header'}'`" >&6
+-else
+-  # Is the header compilable?
+-echo "$as_me:$LINENO: checking $ac_header usability" >&5
+-echo $ECHO_N "checking $ac_header usability... $ECHO_C" >&6
+-cat >conftest.$ac_ext <<_ACEOF
+-/* confdefs.h.  */
+-_ACEOF
+-cat confdefs.h >>conftest.$ac_ext
+-cat >>conftest.$ac_ext <<_ACEOF
+-/* end confdefs.h.  */
+-$ac_includes_default
+-#include <$ac_header>
+-_ACEOF
+-rm -f conftest.$ac_objext
+-if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+-  (eval $ac_compile) 2>conftest.er1
+-  ac_status=$?
+-  grep -v '^ *+' conftest.er1 >conftest.err
+-  rm -f conftest.er1
+-  cat conftest.err >&5
+-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+-  (exit $ac_status); } &&
+-	 { ac_try='test -z "$ac_c_werror_flag"
+-			 || test ! -s conftest.err'
+-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+-  (eval $ac_try) 2>&5
+-  ac_status=$?
+-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+-  (exit $ac_status); }; } &&
+-	 { ac_try='test -s conftest.$ac_objext'
+-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+-  (eval $ac_try) 2>&5
+-  ac_status=$?
+-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+-  (exit $ac_status); }; }; then
+-  ac_header_compiler=yes
+-else
+-  echo "$as_me: failed program was:" >&5
+-sed 's/^/| /' conftest.$ac_ext >&5
+-
+-ac_header_compiler=no
+-fi
+-rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+-echo "$as_me:$LINENO: result: $ac_header_compiler" >&5
+-echo "${ECHO_T}$ac_header_compiler" >&6
+-
+-# Is the header present?
+-echo "$as_me:$LINENO: checking $ac_header presence" >&5
+-echo $ECHO_N "checking $ac_header presence... $ECHO_C" >&6
+-cat >conftest.$ac_ext <<_ACEOF
+-/* confdefs.h.  */
+-_ACEOF
+-cat confdefs.h >>conftest.$ac_ext
+-cat >>conftest.$ac_ext <<_ACEOF
+-/* end confdefs.h.  */
+-#include <$ac_header>
+-_ACEOF
+-if { (eval echo "$as_me:$LINENO: \"$ac_cpp conftest.$ac_ext\"") >&5
+-  (eval $ac_cpp conftest.$ac_ext) 2>conftest.er1
+-  ac_status=$?
+-  grep -v '^ *+' conftest.er1 >conftest.err
+-  rm -f conftest.er1
+-  cat conftest.err >&5
+-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+-  (exit $ac_status); } >/dev/null; then
+-  if test -s conftest.err; then
+-    ac_cpp_err=$ac_c_preproc_warn_flag
+-    ac_cpp_err=$ac_cpp_err$ac_c_werror_flag
+-  else
+-    ac_cpp_err=
+-  fi
+-else
+-  ac_cpp_err=yes
+-fi
+-if test -z "$ac_cpp_err"; then
+-  ac_header_preproc=yes
+-else
+-  echo "$as_me: failed program was:" >&5
+-sed 's/^/| /' conftest.$ac_ext >&5
+-
+-  ac_header_preproc=no
+-fi
+-rm -f conftest.err conftest.$ac_ext
+-echo "$as_me:$LINENO: result: $ac_header_preproc" >&5
+-echo "${ECHO_T}$ac_header_preproc" >&6
+-
+-# So?  What about this header?
+-case $ac_header_compiler:$ac_header_preproc:$ac_c_preproc_warn_flag in
+-  yes:no: )
+-    { echo "$as_me:$LINENO: WARNING: $ac_header: accepted by the compiler, rejected by the preprocessor!" >&5
+-echo "$as_me: WARNING: $ac_header: accepted by the compiler, rejected by the preprocessor!" >&2;}
+-    { echo "$as_me:$LINENO: WARNING: $ac_header: proceeding with the compiler's result" >&5
+-echo "$as_me: WARNING: $ac_header: proceeding with the compiler's result" >&2;}
+-    ac_header_preproc=yes
+-    ;;
+-  no:yes:* )
+-    { echo "$as_me:$LINENO: WARNING: $ac_header: present but cannot be compiled" >&5
+-echo "$as_me: WARNING: $ac_header: present but cannot be compiled" >&2;}
+-    { echo "$as_me:$LINENO: WARNING: $ac_header:     check for missing prerequisite headers?" >&5
+-echo "$as_me: WARNING: $ac_header:     check for missing prerequisite headers?" >&2;}
+-    { echo "$as_me:$LINENO: WARNING: $ac_header: see the Autoconf documentation" >&5
+-echo "$as_me: WARNING: $ac_header: see the Autoconf documentation" >&2;}
+-    { echo "$as_me:$LINENO: WARNING: $ac_header:     section \"Present But Cannot Be Compiled\"" >&5
+-echo "$as_me: WARNING: $ac_header:     section \"Present But Cannot Be Compiled\"" >&2;}
+-    { echo "$as_me:$LINENO: WARNING: $ac_header: proceeding with the preprocessor's result" >&5
+-echo "$as_me: WARNING: $ac_header: proceeding with the preprocessor's result" >&2;}
+-    { echo "$as_me:$LINENO: WARNING: $ac_header: in the future, the compiler will take precedence" >&5
+-echo "$as_me: WARNING: $ac_header: in the future, the compiler will take precedence" >&2;}
+-    (
+-      cat <<\_ASBOX
+-## ------------------------------------------ ##
+-## Report this to the AC_PACKAGE_NAME lists.  ##
+-## ------------------------------------------ ##
+-_ASBOX
+-    ) |
+-      sed "s/^/$as_me: WARNING:     /" >&2
+-    ;;
+-esac
+-echo "$as_me:$LINENO: checking for $ac_header" >&5
+-echo $ECHO_N "checking for $ac_header... $ECHO_C" >&6
+-if eval "test \"\${$as_ac_Header+set}\" = set"; then
+-  echo $ECHO_N "(cached) $ECHO_C" >&6
+-else
+-  eval "$as_ac_Header=\$ac_header_preproc"
+-fi
+-echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_Header'}'`" >&5
+-echo "${ECHO_T}`eval echo '${'$as_ac_Header'}'`" >&6
+-
+-fi
+-if test `eval echo '${'$as_ac_Header'}'` = yes; then
+-  cat >>confdefs.h <<_ACEOF
+-#define `echo "HAVE_$ac_header" | $as_tr_cpp` 1
+-_ACEOF
+-
+-fi
+-
+-done
+-
+-
+-
+ for ac_header in crypt.h
+ do
+ as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
+@@ -7751,6 +7615,9 @@ fi
+ 
+ 
+ 
++
++
++
+           ac_config_files="$ac_config_files Make.Rules"
+ cat >confcache <<\_ACEOF
+ # This file is a shell script that caches the results of configure
+@@ -8278,7 +8145,7 @@ do
+   case "$ac_config_target" in
+   # Handling of arguments.
+   "Make.Rules" ) CONFIG_FILES="$CONFIG_FILES Make.Rules" ;;
+-  "_pam_aconf.h" ) CONFIG_HEADERS="$CONFIG_HEADERS _pam_aconf.h" ;;
++  "config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
+   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
+ echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
+    { (exit 1); exit 1; }; };;
+Index: configure.in
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/configure.in,v
+retrieving revision 1.40
+retrieving revision 1.46
+diff -u -p -a -r1.40 -r1.46
+--- configure.in	16 May 2005 11:03:03 -0000	1.40
++++ configure.in	20 Jul 2005 14:52:39 -0000	1.46
+@@ -2,19 +2,17 @@ dnl Process this file with autoconf to p
+ AC_INIT(conf/pam_conv1/pam_conv.y)
+ 
+ dnl The configuration header file
+-AC_CONFIG_HEADER(_pam_aconf.h)
++AC_CONFIG_HEADER(config.h)
+ 
+ dnl
+ dnl Release specific
+ dnl
+ 
+ LIBPAM_VERSION_MAJOR=0
+-LIBPAM_VERSION_MINOR=80
++LIBPAM_VERSION_MINOR=81
+ 
+ AC_SUBST(LIBPAM_VERSION_MAJOR)
+ AC_SUBST(LIBPAM_VERSION_MINOR)
+-AC_DEFINE(LIBPAM_VERSION_MAJOR)
+-AC_DEFINE(LIBPAM_VERSION_MINOR)
+ 
+ dnl
+ dnl By default, everything under PAM is installed under the root fs.
+@@ -63,24 +61,40 @@ dnl
+ dnl lots of debugging information goes to /tmp/pam-debug.log
+ AC_ARG_ENABLE(debug,
+ [  --enable-debug           specify you are building with debugging on],
+-	WITH_DEBUG=yes ; AC_DEFINE(DEBUG) , WITH_DEBUG=no)
++	WITH_DEBUG=yes ; AC_DEFINE([DEBUG],,
++		[lots of stuff gets written to /tmp/pam-debug.log]),
++		WITH_DEBUG=no)
+ AC_SUBST(WITH_DEBUG)
+ 
+ AC_ARG_ENABLE(memory-debug,
+ [  --enable-memory-debug    specify you want every malloc etc. call tracked],
+-	WITH_MEMORY_DEBUG=yes ; AC_DEFINE(MEMORY_DEBUG) , WITH_MEMORY_DEBUG=no)
++	WITH_MEMORY_DEBUG=yes ; AC_DEFINE([MEMORY_DEBUG],,
++		[Every malloc etc. call will be tracked]) , WITH_MEMORY_DEBUG=no)
+ AC_SUBST(WITH_MEMORY_DEBUG)
++AH_VERBATIM([_MEMORY_DEBUG],
++[#ifdef MEMORY_DEBUG
++/*
++ * this is basically a hack - we need to include a semiarbitrary
++ * number of headers to ensure that we don't get silly prototype/macro
++ * confusion.
++ */
++# include <string.h>
++# include <stdlib.h>
++# include <security/pam_malloc.h>
++#endif /* MEMORY_DEBUG */])
+ 
+ dnl build specially named libraries (for debugging purposes)
+ AC_ARG_ENABLE(libdebug,
+ [  --enable-libdebug        specify you are building debugging libraries],
+-	WITH_LIBDEBUG=yes ; AC_DEFINE(WITH_LIBDEBUG) , WITH_LIBDEBUG=no)
++	WITH_LIBDEBUG=yes ; AC_DEFINE([WITH_LIBDEBUG],,
++		[build libraries with different names (suffixed with 'd')]) , WITH_LIBDEBUG=no)
+ AC_SUBST(WITH_LIBDEBUG)
+ 
+ dnl have prelude support
+ AC_ARG_ENABLE(prelude,
+ [  --enable-prelude         build prelude ids support],
+-        WITH_PRELUDE=yes ; AC_DEFINE(WITH_PRELUDE), WITH_PRELUDE=no)
++        WITH_PRELUDE=yes ; AC_DEFINE([WITH_PRELUDE],,
++		[Build with prelude ids support]), WITH_PRELUDE=no)
+ AC_SUBST(WITH_PRELUDE)
+ 
+ dnl packaging convenience
+@@ -128,16 +142,15 @@ AC_SUBST(MANDIR)
+ 
+ AC_ARG_ENABLE(pamlocking,
+ [  --enable-pamlocking      configure libpam to observe a global authentication lock],
+-	WITH_PAMLOCKING=yes ; AC_DEFINE(PAM_LOCKING) , WITH_PAMLOCKING=no)
++	WITH_PAMLOCKING=yes ; AC_DEFINE([PAM_LOCKING],,
++		[libpam should observe a global authentication lock]),
++		WITH_PAMLOCKING=no)
+ AC_SUBST(WITH_PAMLOCKING)
+ 
+-AC_ARG_ENABLE(uglyhack,
+-[  --enable-uglyhack        configure libpam to try to honor old pam_strerror syntax],
+-	AC_DEFINE(UGLY_HACK_FOR_PRIOR_BEHAVIOR_SUPPORT))
+-
+ AC_ARG_ENABLE(read-both-confs,
+ [  --enable-read-both-confs  read both /etc/pam.d and /etc/pam.conf files],
+-	AC_DEFINE(PAM_READ_BOTH_CONFS))
++	AC_DEFINE([PAM_READ_BOTH_CONFS],,
++		[read both /etc/pam.d and /etc/pam.conf files]))
+ AC_SUBST(PAM_READ_BOTH_CONFS)
+ 
+ AC_ARG_ENABLE(static-libpam, [  --enable-static-libpam   build a libpam.a library],
+@@ -182,7 +195,8 @@ exit(1);
+ pam_mail_spool="\"/var/spool/mail\"",
+ pam_mail_spool="\"/var/spool/mail\"")
+ fi
+-AC_DEFINE_UNQUOTED(PAM_PATH_MAILDIR, $pam_mail_spool)
++AC_DEFINE_UNQUOTED(PAM_PATH_MAILDIR, $pam_mail_spool,
++	[Path where mails are stored])
+ 
+ dnl Checks for libraries.
+ AC_CHECK_LIB(c, __libc_sched_setscheduler, PAM_NEEDS_LIBC=, PAM_NEEDS_LIBC=-lc)
+@@ -200,34 +214,43 @@ dnl
+ dnl At least on Solaris, the existing libcrack must be dynamic.
+ dnl Ought to introduce a check for this.
+ dnl
+-AC_CHECK_LIB(crack, FascistCheck, HAVE_LIBCRACK=yes ; AC_DEFINE(HAVE_LIBCRACK),
++AC_CHECK_LIB(crack, FascistCheck, HAVE_LIBCRACK=yes ;
++	AC_DEFINE([HAVE_LIBCRACK],,[Define to 1 if you have the `crack' library (-lcrack).]),
+ 	HAVE_LIBCRACK=no)
+ AC_SUBST(HAVE_LIBCRACK)
+ 
+-AC_CHECK_LIB(crypt, crypt, HAVE_LIBCRYPT=yes ; AC_DEFINE(HAVE_LIBCRYPT),
++AC_CHECK_LIB(crypt, crypt, HAVE_LIBCRYPT=yes ;
++	AC_DEFINE([HAVE_LIBCRYPT],,[Define to 1 if you have the `crypt' library (-lcrypt).]),
+ 	HAVE_LIBCRYPT=no)
+ AC_SUBST(HAVE_LIBCRYPT)
+-AC_CHECK_LIB(util, logwtmp, HAVE_LIBUTIL=yes ; AC_DEFINE(HAVE_LIBUTIL),
++AC_CHECK_LIB(util, logwtmp, HAVE_LIBUTIL=yes ;
++	AC_DEFINE([HAVE_LIBUTIL],,[Define to 1 if you have the `util' library (-lutil).]),
+ 	HAVE_LIBUTIL=no)
+ AC_SUBST(HAVE_LIBUTIL)
+-AC_CHECK_LIB(ndbm, dbm_store, HAVE_LIBNDBM=yes ; AC_DEFINE(HAVE_LIBNDBM),
++AC_CHECK_LIB(ndbm, dbm_store, HAVE_LIBNDBM=yes ;
++	AC_DEFINE([HAVE_LIBNDBM],,[Define to 1 if you have the `ndbm' library (-lndbm).]),
+ 	HAVE_LIBNDBM=no)
+ AC_SUBST(HAVE_LIBNDBM)
+-AC_CHECK_LIB(db, dbm_store, HAVE_LIBDB=yes ; AC_DEFINE(HAVE_LIBDB),
++AC_CHECK_LIB(db, dbm_store, HAVE_LIBDB=yes ;
++	AC_DEFINE([HAVE_LIBDB],,[Define to 1 if you have the `db' library (-ldb).]),
+ 	HAVE_LIBDB=no)
+ if test x$HAVE_LIBDB != xyes ; then
+-	AC_CHECK_LIB(db, db_create, HAVE_LIBDB=yes ; AC_DEFINE(HAVE_LIBDB),
++	AC_CHECK_LIB(db, db_create, HAVE_LIBDB=yes ;
++	AC_DEFINE([HAVE_LIBDB],,[Define to 1 if you have the `db' library (-ldb).]),
+ 	HAVE_LIBDB=no)
+ fi
+ AC_SUBST(HAVE_LIBDB)
+-AC_CHECK_LIB(fl, yylex, yyterminate, HAVE_LIBFL=yes ; AC_DEFINE(HAVE_LIBFL),
++AC_CHECK_LIB(fl, yylex, yyterminate, HAVE_LIBFL=yes ;
++	AC_DEFINE([HAVE_LIBFL],,[Define to 1 if you have the `fl' library (-lfl).]),
+ 	HAVE_LIBFL=no)
+ AC_SUBST(HAVE_LIBFL)
+-AC_CHECK_LIB(nsl, yp_maplist, HAVE_LIBNSL=yes ; AC_DEFINE(HAVE_LIBNSL),
++AC_CHECK_LIB(nsl, yp_maplist, HAVE_LIBNSL=yes ;
++	AC_DEFINE([HAVE_LIBNSL],,[Define to 1 if you have the `nsl' library (-lnsl).]),
+ 	HAVE_LIBNSL=no)
+ AC_SUBST(HAVE_LIBNSL)
+ 
+-AC_CHECK_LIB(selinux, getfilecon, HAVE_LIBSELINUX=yes ; AC_DEFINE(HAVE_LIBSELINUX),
++AC_CHECK_LIB(selinux, getfilecon, HAVE_LIBSELINUX=yes ;
++	AC_DEFINE([HAVE_LIBSELINUX],,[Define to 1 if you have the `nsl' library (-lnsl).]),
+ 	HAVE_LIBSELINUX=no)
+ AC_SUBST(HAVE_LIBSELINUX)
+ 
+@@ -237,15 +260,18 @@ fi
+ if test $HAVE_LIBNSL = yes ; then
+ 	pwdblibs="$pwdblibs -lnsl"
+ fi
+-AC_CHECK_LIB(pwdb, pwdb_db_name, HAVE_LIBPWDB=yes ; AC_DEFINE(HAVE_LIBPWDB),
++AC_CHECK_LIB(pwdb, pwdb_db_name, HAVE_LIBPWDB=yes ;
++	AC_DEFINE([HAVE_LIBPWDB],,[Define to 1 if you have the `pwdb' library (-lpwdb).]),
+ 	HAVE_LIBPWDB=no,$pwdblibs)
+ AC_SUBST(HAVE_LIBPWDB)
+ unset pwdblibs
+ 
+-AC_CHECK_LIB(fl, yywrap, HAVE_LIBFLEX=yes ; AC_DEFINE(HAVE_LIBFLEX),
++AC_CHECK_LIB(fl, yywrap, HAVE_LIBFLEX=yes ;
++	AC_DEFINE([HAVE_LIBFLEX],,[Define to 1 if you have the `fl' library (-lfl).]),
+ 	HAVE_LIBFLEX=no)
+ AC_SUBST(HAVE_LIBFLEX)
+-AC_CHECK_LIB(l, yywrap, HAVE_LIBLEX=yes ; AC_DEFINE(HAVE_LIBLEX),
++AC_CHECK_LIB(l, yywrap, HAVE_LIBLEX=yes ;
++	AC_DEFINE([HAVE_LIBLEX],,[Define to 1 if you have the `l' library (-ll).]),
+ 	HAVE_LIBLEX=no)
+ AC_SUBST(HAVE_LIBLEX)
+ 
+@@ -255,9 +281,6 @@ AC_HEADER_STDC
+ AC_HEADER_SYS_WAIT
+ AC_CHECK_HEADERS(fcntl.h limits.h malloc.h sys/file.h sys/ioctl.h sys/time.h syslog.h termio.h unistd.h sys/fsuid.h inittypes.h)
+ 
+-dnl Linux wants features.h in some of the source files.
+-AC_CHECK_HEADERS(features.h)
+-
+ dnl For module/pam_cracklib
+ AC_CHECK_HEADERS(crypt.h)
+ 
+@@ -451,5 +474,15 @@ fi
+ AC_SUBST(PSER)
+ AC_SUBST(PS2PDF)
+ 
++AH_VERBATIM([_ENABLE_NLS],
++[#ifdef ENABLE_NLS
++#include <libintl.h>
++#define _(msgid) dgettext("Linux-PAM", msgid)
++#define N_(msgid) msgid
++#else
++#define _(msgid) (msgid)
++#define N_(msgid) msgid
++#endif /* ENABLE_NLS */])
++
+ dnl Files to be created from when we run configure
+ AC_OUTPUT(Make.Rules)
+Index: conf/install
+===================================================================
+RCS file: conf/install
+diff -N conf/install
+--- conf/install	20 Jun 2000 22:10:45 -0000	1.1.1.1
++++ /dev/null	1 Jan 1970 00:00:00 -0000
+@@ -1,178 +0,0 @@
+-#!/bin/sh
+-#
+-# [This file was lifted from an X distribution. There was no explicit
+-# copyright in the file, but the following text was associated with it.
+-# should anyone from the X Consortium wish to alter the following
+-# text. Please email <morgan@parc.power.net> Thanks. ]
+-#
+-# --------------------------
+-# The X Consortium maintains and distributes the X Window System and
+-# related software and documentation in coordinated releases. A release
+-# consists of two distinct parts:
+-# 
+-# 1) Specifications and Sample implementations of X Consortium
+-# standards, and
+-# 
+-# 2) software and documentation contributed by the general X Consortium
+-# community.
+-# 
+-# The timing and contents of a release are determined by the Consortium
+-# staff based on the needs and desires of the Members and the advice of
+-# the Advisory Board, tempered by the resource constraints of the
+-# Consortium.
+-# 
+-# Members have access to all X Consortium produced software and
+-# documentation prior to release to the public. Each Member can receive
+-# pre-releases and public releases at no charge. In addition, Members
+-# have access to software and documentation while it is under
+-# development, and can periodically request snapshots of the development
+-# system at no charge.
+-# 
+-# The X Consortium also maintains an electronic mail system for
+-# reporting problems with X Consortium produced software and
+-# documentation. Members have access to all bug reports, as well as all
+-# software patches as they are incrementally developed by the Consortium
+-# staff between releases.
+-# 
+-# In general, all materials included in X Consortium releases are
+-# copyrighted and contain permission notices granting unrestricted use,
+-# sales and redistribution rights provided that the copyrights and the
+-# permission notices are left intact. All materials are provided "as
+-# is," without express or implied warranty.
+-# --------------------------
+-#
+-# This accepts bsd-style install arguments and makes the appropriate calls
+-# to the System V install.
+-#
+-
+-flags=""
+-dst=""
+-src=""
+-dostrip=""
+-owner=""
+-mode=""
+-
+-while [ x$1 != x ]; do
+-    case $1 in 
+-	-c) shift
+-	    continue;;
+-
+-	-m) flags="$flags $1 $2 "
+-	    mode="$2"
+-	    shift
+-	    shift
+-	    continue;;
+-
+-	-o) flags="$flags -u $2 "
+-	    owner="$2"
+-	    shift
+-	    shift
+-	    continue;;
+-
+-	-g) flags="$flags $1 $2 "
+-	    shift
+-	    shift
+-	    continue;;
+-
+-	-s) dostrip="strip"
+-	    shift
+-	    continue;;
+-
+-	*)  if [ x$src = x ] 
+-	    then
+-		src=$1
+-	    else
+-		dst=$1
+-	    fi
+-	    shift
+-	    continue;;
+-    esac
+-done
+-
+-case "$mode" in
+-"")
+-	;;
+-*)
+-	case "$owner" in
+-	"")
+-		flags="$flags -u root"
+-		;;
+-	esac
+-	;;
+-esac
+-
+-if [ x$src = x ] 
+-then
+-	echo "$0:  no input file specified"
+-	exit 1
+-fi
+-
+-if [ x$dst = x ] 
+-then
+-	echo "$0:  no destination specified"
+-	exit 1
+-fi
+-
+-
+-# set up some variable to be used later
+-
+-rmcmd=""
+-srcdir="."
+-
+-# if the destination isn't a directory we'll need to copy it first
+-
+-if [ ! -d $dst ]
+-then
+-	dstbase=`basename $dst`
+-	cp $src /tmp/$dstbase
+-	rmcmd="rm -f /tmp/$dstbase"
+-	src=$dstbase
+-	srcdir=/tmp
+-	dst="`echo $dst | sed 's,^\(.*\)/.*$,\1,'`"
+-	if [ x$dst = x ]
+-	then
+-		dst="."
+-	fi
+-fi
+-
+-
+-# If the src file has a directory, copy it to /tmp to make install happy
+-
+-srcbase=`basename $src`
+-
+-if [ "$src" != "$srcbase" -a "$src" != "./$srcbase" ] 
+-then
+-	cp $src /tmp/$srcbase
+-	src=$srcbase
+-	srcdir=/tmp
+-	rmcmd="rm -f /tmp/$srcbase"
+-fi
+-
+-# do the actual install
+-
+-if [ -f /usr/sbin/install ]
+-then
+-	installcmd=/usr/sbin/install
+-elif [ -f /etc/install ]
+-then
+-	installcmd=/etc/install
+-else
+-	installcmd=install
+-fi
+-
+-# This rm is commented out because some people want to be able to
+-# install through symbolic links.  Uncomment it if it offends you.
+-rm -f $dst/$srcbase
+-(cd $srcdir ; $installcmd -f $dst $flags $src)
+-
+-if [ x$dostrip = xstrip ]
+-then
+-	strip $dst/$srcbase
+-fi
+-
+-# and clean up
+-
+-$rmcmd
+-
+-exit
+-
+Index: conf/mkdirp
+===================================================================
+RCS file: conf/mkdirp
+diff -N conf/mkdirp
+--- conf/mkdirp	20 Jun 2000 22:10:45 -0000	1.1.1.1
++++ /dev/null	1 Jan 1970 00:00:00 -0000
+@@ -1,50 +0,0 @@
+-#!/bin/sh
+-#
+-# this is a wrapper for difficult mkdir programs...
+-#
+-
+-for d in $*
+-do
+-	if [ ! -d $d ]; then
+-		mkdir -p $d
+-		if [ $? -ne 0 ]; then exit $? ; fi
+-	fi
+-done
+-
+-exit 0
+-
+-##########################################################################
+-# if your mkdir does not support the -p option delete the above lines and
+-# use what follows:
+---------------------
+-#!/bin/sh
+-
+-#VERBOSE=yes
+-Cwd=`pwd`
+-
+-for d in $*
+-do
+-	if [ "`echo $d|cut -c1`" != "/" ]; then 
+-		x=`pwd`/$d
+-	else
+-		x=$d
+-	fi
+-	x="`echo $x|sed -e 'yX/X X'`"
+-	cd /
+-	for s in $x
+-	do
+-		if [ -d $s ]; then
+-			if [ -n "$VERBOSE" ]; then echo -n "[$s/]"; fi
+-			cd $s
+-		else
+-			mkdir $s
+-			if [ $? -ne 0 ]; then exit $? ; fi
+-			if [ -n "$VERBOSE" ]; then echo -n "$s/"; fi
+-			cd $s
+-		fi
+-	done
+-	if [ -n "$VERBOSE" ]; then echo ; fi
+-	cd $Cwd
+-done
+-
+-exit 0
+Index: examples/xsh.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/examples/xsh.c,v
+retrieving revision 1.8
+retrieving revision 1.9
+diff -u -p -a -r1.8 -r1.9
+--- examples/xsh.c	9 Jun 2005 17:29:18 -0000	1.8
++++ examples/xsh.c	20 Jul 2005 09:46:16 -0000	1.9
+@@ -1,11 +1,11 @@
+ /*
+- * $Id: xsh.c,v 1.8 2005/06/09 17:29:18 kukuk Exp $
++ * $Id: xsh.c,v 1.9 2005/07/20 09:46:16 kukuk Exp $
+  */
+ 
+ /* Andrew Morgan (morgan@kernel.org) -- an example application
+  * that invokes a shell, based on blank.c */
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+Index: libpam/pam_handlers.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/libpam/pam_handlers.c,v
+retrieving revision 1.12
+retrieving revision 1.13
+diff -u -p -a -r1.12 -r1.13
+--- libpam/pam_handlers.c	7 Feb 2005 08:18:53 -0000	1.12
++++ libpam/pam_handlers.c	18 Jul 2005 12:30:01 -0000	1.13
+@@ -4,10 +4,12 @@
+  * created by Marc Ewing.
+  * Currently maintained by Andrew G. Morgan <morgan@kernel.org>
+  *
+- * $Id: pam_handlers.c,v 1.12 2005/02/07 08:18:53 kukuk Exp $
++ * $Id: pam_handlers.c,v 1.13 2005/07/18 12:30:01 kukuk Exp $
+  *
+  */
+ 
++#define _GNU_SOURCE /* for asprintf */
++
+ #include "pam_private.h"
+ 
+ #include <stdlib.h>
+Index: libpam/pam_private.h
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/libpam/pam_private.h,v
+retrieving revision 1.7
+retrieving revision 1.8
+diff -u -p -a -r1.7 -r1.8
+--- libpam/pam_private.h	29 Apr 2005 08:13:27 -0000	1.7
++++ libpam/pam_private.h	20 Jul 2005 09:46:16 -0000	1.8
+@@ -1,7 +1,7 @@
+ /*
+  * pam_private.h
+  *
+- * $Id: pam_private.h,v 1.7 2005/04/29 08:13:27 kukuk Exp $
++ * $Id: pam_private.h,v 1.8 2005/07/20 09:46:16 kukuk Exp $
+  *
+  * This is the Linux-PAM Library Private Header. It contains things
+  * internal to the Linux-PAM library. Things not needed by either an
+@@ -16,7 +16,7 @@
+ #ifndef _PAM_PRIVATE_H
+ #define _PAM_PRIVATE_H
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ /* this is not used at the moment --- AGM */
+ #define LIBPAM_VERSION (LIBPAM_VERSION_MAJOR*0x100 + LIBPAM_VERSION_MINOR)
+Index: libpam/pam_strerror.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/libpam/pam_strerror.c,v
+retrieving revision 1.4
+retrieving revision 1.6
+diff -u -p -a -r1.4 -r1.6
+--- libpam/pam_strerror.c	7 Jan 2005 15:31:26 -0000	1.4
++++ libpam/pam_strerror.c	20 Jul 2005 14:52:39 -0000	1.6
+@@ -1,93 +1,79 @@
+ /* pam_strerror.c */
+ 
+ /*
+- * $Id: pam_strerror.c,v 1.4 2005/01/07 15:31:26 t8m Exp $
++ * $Id: pam_strerror.c,v 1.6 2005/07/20 14:52:39 kukuk Exp $
+  */
+ 
+ #include "pam_private.h"
+ 
+ const char *pam_strerror(pam_handle_t *pamh, int errnum)
+ {
+-#ifdef UGLY_HACK_FOR_PRIOR_BEHAVIOR_SUPPORT  /* will be removed from v 1.0 */
+-
+-    int possible_error;
+-
+-    possible_error = (int) pamh;
+-    if (!(possible_error >= 0 && possible_error <= PAM_BAD_ITEM)) {
+-	possible_error = errnum;
+-    }
+-
+-/* mask standard behavior to use possible_error variable. */
+-#define errnum possible_error
+-
+-#endif /* UGLY_HACK_FOR_PRIOR_BEHAVIOR_SUPPORT */
+-
+     switch (errnum) {
+     case PAM_SUCCESS:
+-	return "Success";
++      return _("Success");
+     case PAM_ABORT:
+-	return "Critical error - immediate abort";
++      return _("Critical error - immediate abort");
+     case PAM_OPEN_ERR:
+-	return "dlopen() failure";
++      return _("dlopen() failure");
+     case PAM_SYMBOL_ERR:
+-	return "Symbol not found";
++      return _("Symbol not found");
+     case PAM_SERVICE_ERR:
+-	return "Error in service module";
++      return _("Error in service module");
+     case PAM_SYSTEM_ERR:
+-	return "System error";
++      return _("System error");
+     case PAM_BUF_ERR:
+-	return "Memory buffer error";
++      return _("Memory buffer error");
+     case PAM_PERM_DENIED:
+-	return "Permission denied";
++      return _("Permission denied");
+     case PAM_AUTH_ERR:
+-	return "Authentication failure";
++      return _("Authentication failure");
+     case PAM_CRED_INSUFFICIENT:
+-	return "Insufficient credentials to access authentication data";
++      return _("Insufficient credentials to access authentication data");
+     case PAM_AUTHINFO_UNAVAIL:
+-	return "Authentication service cannot retrieve authentication info.";
++      return _("Authentication service cannot retrieve authentication info.");
+     case PAM_USER_UNKNOWN:
+-	return "User not known to the underlying authentication module";
++      return _("User not known to the underlying authentication module");
+     case PAM_MAXTRIES:
+-	return "Have exhausted maximum number of retries for service.";
++      return _("Have exhausted maximum number of retries for service.");
+     case PAM_NEW_AUTHTOK_REQD:
+-	return "Authentication token is no longer valid; new one required.";
++      return _("Authentication token is no longer valid; new one required.");
+     case PAM_ACCT_EXPIRED:
+-	return "User account has expired";
++      return _("User account has expired");
+     case PAM_SESSION_ERR:
+-	return "Cannot make/remove an entry for the specified session";
++      return _("Cannot make/remove an entry for the specified session");
+     case PAM_CRED_UNAVAIL:
+-	return "Authentication service cannot retrieve user credentials";
++      return _("Authentication service cannot retrieve user credentials");
+     case PAM_CRED_EXPIRED:
+-	return "User credentials expired";
++      return _("User credentials expired");
+     case PAM_CRED_ERR:
+-	return "Failure setting user credentials";
++      return _("Failure setting user credentials");
+     case PAM_NO_MODULE_DATA:
+-	return "No module specific data is present";
++      return _("No module specific data is present");
+     case PAM_BAD_ITEM:
+-	return "Bad item passed to pam_*_item()";
++      return _("Bad item passed to pam_*_item()");
+     case PAM_CONV_ERR:
+-	return "Conversation error";
++      return _("Conversation error");
+     case PAM_AUTHTOK_ERR:
+-	return "Authentication token manipulation error";
++      return _("Authentication token manipulation error");
+     case PAM_AUTHTOK_RECOVER_ERR:
+-	return "Authentication information cannot be recovered";
++      return _("Authentication information cannot be recovered");
+     case PAM_AUTHTOK_LOCK_BUSY:
+-	return "Authentication token lock busy";
++      return _("Authentication token lock busy");
+     case PAM_AUTHTOK_DISABLE_AGING:
+-	return "Authentication token aging disabled";
++      return _("Authentication token aging disabled");
+     case PAM_TRY_AGAIN:
+-	return "Failed preliminary check by password service";
++      return _("Failed preliminary check by password service");
+     case PAM_IGNORE:
+-	return "The return value should be ignored by PAM dispatch";
++      return _("The return value should be ignored by PAM dispatch");
+     case PAM_MODULE_UNKNOWN:
+-	return "Module is unknown";
++      return _("Module is unknown");
+     case PAM_AUTHTOK_EXPIRED:
+-	return "Authentication token expired";
++      return _("Authentication token expired");
+     case PAM_CONV_AGAIN:
+-	return "Conversation is waiting for event";
++      return _("Conversation is waiting for event");
+     case PAM_INCOMPLETE:
+-	return "Application needs to call libpam again";
++      return _("Application needs to call libpam again");
+     }
+ 
+-    return "Unknown PAM error";
++    return _("Unknown PAM error");
+ }
+Index: libpam_misc/misc_conv.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/libpam_misc/misc_conv.c,v
+retrieving revision 1.7
+retrieving revision 1.9
+diff -u -p -a -r1.7 -r1.9
+--- libpam_misc/misc_conv.c	8 Apr 2005 15:08:17 -0000	1.7
++++ libpam_misc/misc_conv.c	20 Jul 2005 14:52:39 -0000	1.9
+@@ -1,12 +1,12 @@
+ /*
+- * $Id: misc_conv.c,v 1.7 2005/04/08 15:08:17 t8m Exp $
++ * $Id: misc_conv.c,v 1.9 2005/07/20 14:52:39 kukuk Exp $
+  *
+  * A generic conversation function for text based applications
+  *
+  * Written by Andrew Morgan <morgan@linux.kernel.org>
+  */
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #include <signal.h>
+ #include <stdio.h>
+@@ -32,8 +32,8 @@
+ time_t pam_misc_conv_warn_time = 0;                  /* time when we warn */
+ time_t pam_misc_conv_die_time  = 0;               /* time when we timeout */
+ 
+-const char *pam_misc_conv_warn_line = "..\a.Time is running out...\n";
+-const char *pam_misc_conv_die_line  = "..\a.Sorry, your time is up!\n";
++const char *pam_misc_conv_warn_line = N_("..\a.Time is running out...\n");
++const char *pam_misc_conv_die_line  = N_("..\a.Sorry, your time is up!\n");
+ 
+ int pam_misc_conv_died=0;       /* application can probe this for timeout */
+ 
+@@ -156,9 +156,9 @@ static int read_string(int echo, const c
+ 	 * the conversation without giving PAM a chance to clean up.
+ 	 */
+ 
+-	sigemptyset(&nset); 
+-	sigaddset(&nset, SIGINT); 
+-	sigaddset(&nset, SIGTSTP); 
++	sigemptyset(&nset);
++	sigaddset(&nset, SIGINT);
++	sigaddset(&nset, SIGTSTP);
+ 	(void) sigprocmask(SIG_BLOCK, &nset, &oset);
+ 
+     } else if (!echo) {
+@@ -331,8 +331,8 @@ int misc_conv(int num_msg, const struct 
+ 	    break;
+ 	}
+ 	default:
+-	    fprintf(stderr, "erroneous conversation (%d)\n"
+-		    ,msgm[count]->msg_style);
++	    fprintf(stderr, _("erroneous conversation (%d)\n"),
++		   msgm[count]->msg_style);
+ 	    goto failed_conversation;
+ 	}
+ 
+@@ -373,7 +373,7 @@ failed_conversation:
+ 	    case PAM_TEXT_INFO:
+ 		/* should not actually be able to get here... */
+ 		free(reply[count].resp);
+-	    }                                            
++	    }
+ 	    reply[count].resp = NULL;
+ 	}
+ 	/* forget reply too */
+@@ -383,4 +383,3 @@ failed_conversation:
+ 
+     return PAM_CONV_ERR;
+ }
+-
+Index: modules/pam_access/pam_access.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_access/pam_access.c,v
+retrieving revision 1.14
+retrieving revision 1.15
+diff -u -p -a -r1.14 -r1.15
+--- modules/pam_access/pam_access.c	9 Jun 2005 17:29:18 -0000	1.14
++++ modules/pam_access/pam_access.c	20 Jul 2005 09:46:16 -0000	1.15
+@@ -25,7 +25,7 @@
+  *************************************************************************
+  */
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+Index: modules/pam_cracklib/pam_cracklib.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_cracklib/pam_cracklib.c,v
+retrieving revision 1.10
+retrieving revision 1.11
+diff -u -p -a -r1.10 -r1.11
+--- modules/pam_cracklib/pam_cracklib.c	9 Jun 2005 17:29:18 -0000	1.10
++++ modules/pam_cracklib/pam_cracklib.c	20 Jul 2005 09:46:16 -0000	1.11
+@@ -1,6 +1,6 @@
+ /*
+  * pam_cracklib module
+- * $Id: pam_cracklib.c,v 1.10 2005/06/09 17:29:18 kukuk Exp $
++ * $Id: pam_cracklib.c,v 1.11 2005/07/20 09:46:16 kukuk Exp $
+  */
+ 
+ /*
+@@ -35,7 +35,7 @@
+  * S.A.G. in the section on the cracklib module.
+  */
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #include <stdio.h>
+ #ifdef HAVE_CRYPT_H
+Index: modules/pam_env/pam_env.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_env/pam_env.c,v
+retrieving revision 1.6
+retrieving revision 1.7
+diff -u -p -a -r1.6 -r1.7
+--- modules/pam_env/pam_env.c	9 Jun 2005 17:29:18 -0000	1.6
++++ modules/pam_env/pam_env.c	20 Jul 2005 09:46:17 -0000	1.7
+@@ -1,7 +1,7 @@
+ /* pam_mail module */
+ 
+ /*
+- * $Id: pam_env.c,v 1.6 2005/06/09 17:29:18 kukuk Exp $
++ * $Id: pam_env.c,v 1.7 2005/07/20 09:46:17 kukuk Exp $
+  *
+  * Written by Dave Kinchlea <kinch@kinch.ark.com> 1997/01/31
+  * Inspired by Andrew Morgan <morgan@kernel.org>, who also supplied the
+@@ -15,7 +15,7 @@
+ #define DEFAULT_ETC_ENVFILE     "/etc/environment"
+ #define DEFAULT_READ_ENVFILE    0
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #include <ctype.h>
+ #include <errno.h>
+Index: modules/pam_filter/pam_filter.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_filter/pam_filter.c,v
+retrieving revision 1.7
+retrieving revision 1.8
+diff -u -p -a -r1.7 -r1.8
+--- modules/pam_filter/pam_filter.c	9 Jun 2005 17:29:18 -0000	1.7
++++ modules/pam_filter/pam_filter.c	20 Jul 2005 09:46:17 -0000	1.8
+@@ -1,11 +1,11 @@
+ /*
+- * $Id: pam_filter.c,v 1.7 2005/06/09 17:29:18 kukuk Exp $
++ * $Id: pam_filter.c,v 1.8 2005/07/20 09:46:17 kukuk Exp $
+  *
+  * written by Andrew Morgan <morgan@transmeta.com> with much help from
+  * Richard Stevens' UNIX Network Programming book.
+  */
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #include <stdlib.h>
+ #include <syslog.h>
+Index: modules/pam_filter/upperLOWER/upperLOWER.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_filter/upperLOWER/upperLOWER.c,v
+retrieving revision 1.5
+retrieving revision 1.6
+diff -u -p -a -r1.5 -r1.6
+--- modules/pam_filter/upperLOWER/upperLOWER.c	22 Sep 2004 09:37:48 -0000	1.5
++++ modules/pam_filter/upperLOWER/upperLOWER.c	20 Jul 2005 09:46:17 -0000	1.6
+@@ -1,5 +1,5 @@
+ /*
+- * $Id: upperLOWER.c,v 1.5 2004/09/22 09:37:48 kukuk Exp $
++ * $Id: upperLOWER.c,v 1.6 2005/07/20 09:46:17 kukuk Exp $
+  *
+  * This is a sample filter program, for use with pam_filter (a module
+  * provided with Linux-PAM). This filter simply transposes upper and
+@@ -7,7 +7,7 @@
+  * it serves no purpose other than to annoy the user...
+  */
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #ifdef MEMORY_DEBUG
+ # undef exit
+Index: modules/pam_ftp/pam_ftp.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_ftp/pam_ftp.c,v
+retrieving revision 1.4
+retrieving revision 1.5
+diff -u -p -a -r1.4 -r1.5
+--- modules/pam_ftp/pam_ftp.c	9 Jun 2005 17:29:18 -0000	1.4
++++ modules/pam_ftp/pam_ftp.c	20 Jul 2005 09:46:17 -0000	1.5
+@@ -1,7 +1,7 @@
+ /* pam_ftp module */
+ 
+ /*
+- * $Id: pam_ftp.c,v 1.4 2005/06/09 17:29:18 kukuk Exp $
++ * $Id: pam_ftp.c,v 1.5 2005/07/20 09:46:17 kukuk Exp $
+  *
+  * Written by Andrew Morgan <morgan@linux.kernel.org> 1996/3/11
+  *
+@@ -14,7 +14,7 @@
+ /* the following is a password that "can't be correct" */
+ #define BLOCK_PASSWORD "\177BAD PASSWPRD\177"
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+Index: modules/pam_group/pam_group.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_group/pam_group.c,v
+retrieving revision 1.10
+retrieving revision 1.11
+diff -u -p -a -r1.10 -r1.11
+--- modules/pam_group/pam_group.c	9 Jun 2005 17:29:19 -0000	1.10
++++ modules/pam_group/pam_group.c	20 Jul 2005 09:46:17 -0000	1.11
+@@ -1,18 +1,20 @@
+ /* pam_group module */
+ 
+ /*
+- * $Id: pam_group.c,v 1.10 2005/06/09 17:29:19 kukuk Exp $
++ * $Id: pam_group.c,v 1.11 2005/07/20 09:46:17 kukuk Exp $
+  *
+  * Written by Andrew Morgan <morgan@linux.kernel.org> 1996/7/6
+  */
+ 
+ static const char rcsid[] =
+-"$Id: pam_group.c,v 1.10 2005/06/09 17:29:19 kukuk Exp $;\n"
++"$Id: pam_group.c,v 1.11 2005/07/20 09:46:17 kukuk Exp $;\n"
+ "Version 0.5 for Linux-PAM\n"
+ "Copyright (c) Andrew G. Morgan 1996 <morgan@linux.kernel.org>\n";
+ 
+ #define _BSD_SOURCE
+ 
++#include "config.h"
++
+ #include <sys/file.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+Index: modules/pam_issue/pam_issue.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_issue/pam_issue.c,v
+retrieving revision 1.10
+retrieving revision 1.11
+diff -u -p -a -r1.10 -r1.11
+--- modules/pam_issue/pam_issue.c	9 Jun 2005 17:29:19 -0000	1.10
++++ modules/pam_issue/pam_issue.c	20 Jul 2005 09:46:17 -0000	1.11
+@@ -17,6 +17,8 @@
+ #define _GNU_SOURCE
+ #define _BSD_SOURCE
+ 
++#include "config.h"
++
+ #include <string.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+Index: modules/pam_lastlog/pam_lastlog.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_lastlog/pam_lastlog.c,v
+retrieving revision 1.9
+retrieving revision 1.10
+diff -u -p -a -r1.9 -r1.10
+--- modules/pam_lastlog/pam_lastlog.c	9 Jun 2005 17:29:19 -0000	1.9
++++ modules/pam_lastlog/pam_lastlog.c	20 Jul 2005 09:46:17 -0000	1.10
+@@ -1,7 +1,7 @@
+ /* pam_lastlog module */
+ 
+ /*
+- * $Id: pam_lastlog.c,v 1.9 2005/06/09 17:29:19 kukuk Exp $
++ * $Id: pam_lastlog.c,v 1.10 2005/07/20 09:46:17 kukuk Exp $
+  *
+  * Written by Andrew Morgan <morgan@linux.kernel.org> 1996/3/11
+  *
+@@ -10,7 +10,7 @@
+  * present (login) service.
+  */
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #include <fcntl.h>
+ #include <time.h>
+Index: modules/pam_limits/pam_limits.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_limits/pam_limits.c,v
+retrieving revision 1.28
+retrieving revision 1.29
+diff -u -p -a -r1.28 -r1.29
+--- modules/pam_limits/pam_limits.c	6 Jul 2005 08:07:34 -0000	1.28
++++ modules/pam_limits/pam_limits.c	20 Jul 2005 09:46:17 -0000	1.29
+@@ -17,7 +17,7 @@
+ #error THIS CODE IS KNOWN TO WORK ONLY ON LINUX !!!
+ #endif
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #include <stdio.h>
+ #include <unistd.h>
+Index: modules/pam_listfile/pam_listfile.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_listfile/pam_listfile.c,v
+retrieving revision 1.8
+retrieving revision 1.9
+diff -u -p -a -r1.8 -r1.9
+--- modules/pam_listfile/pam_listfile.c	9 Jun 2005 17:29:19 -0000	1.8
++++ modules/pam_listfile/pam_listfile.c	20 Jul 2005 09:46:17 -0000	1.9
+@@ -1,5 +1,5 @@
+ /*
+- * $Id: pam_listfile.c,v 1.8 2005/06/09 17:29:19 kukuk Exp $
++ * $Id: pam_listfile.c,v 1.9 2005/07/20 09:46:17 kukuk Exp $
+  *
+  */
+ 
+@@ -10,7 +10,7 @@
+  * This code began life as the pam_rootok module.
+  */
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+Index: modules/pam_localuser/pam_localuser.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_localuser/pam_localuser.c,v
+retrieving revision 1.2
+retrieving revision 1.3
+diff -u -p -a -r1.2 -r1.3
+--- modules/pam_localuser/pam_localuser.c	12 Jan 2005 10:56:57 -0000	1.2
++++ modules/pam_localuser/pam_localuser.c	20 Jul 2005 09:46:17 -0000	1.3
+@@ -33,7 +33,7 @@
+  * OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
+-#include "../../_pam_aconf.h"
++#include "config.h"
+ 
+ #include <errno.h>
+ #include <limits.h>
+Index: modules/pam_mail/pam_mail.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_mail/pam_mail.c,v
+retrieving revision 1.8
+retrieving revision 1.9
+diff -u -p -a -r1.8 -r1.9
+--- modules/pam_mail/pam_mail.c	9 Jun 2005 17:29:19 -0000	1.8
++++ modules/pam_mail/pam_mail.c	20 Jul 2005 09:46:18 -0000	1.9
+@@ -1,14 +1,14 @@
+ /* pam_mail module */
+ 
+ /*
+- * $Id: pam_mail.c,v 1.8 2005/06/09 17:29:19 kukuk Exp $
++ * $Id: pam_mail.c,v 1.9 2005/07/20 09:46:18 kukuk Exp $
+  *
+  * Written by Andrew Morgan <morgan@linux.kernel.org> 1996/3/11
+  * $HOME additions by David Kinchlea <kinch@kinch.ark.com> 1997/1/7
+  * mailhash additions by Chris Adams <cadams@ro.com> 1998/7/11
+  */
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #include <ctype.h>
+ #include <pwd.h>
+Index: modules/pam_mkhomedir/pam_mkhomedir.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_mkhomedir/pam_mkhomedir.c,v
+retrieving revision 1.13
+retrieving revision 1.14
+diff -u -p -a -r1.13 -r1.14
+--- modules/pam_mkhomedir/pam_mkhomedir.c	3 Jul 2005 09:44:57 -0000	1.13
++++ modules/pam_mkhomedir/pam_mkhomedir.c	20 Jul 2005 09:46:18 -0000	1.14
+@@ -28,7 +28,10 @@
+  */
+ 
+ /* I want snprintf dammit */
+-#define _GNU_SOURCE 1
++#define _GNU_SOURCE
++
++#include "config.h"
++
+ #include <stdarg.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+Index: modules/pam_motd/pam_motd.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_motd/pam_motd.c,v
+retrieving revision 1.5
+retrieving revision 1.6
+diff -u -p -a -r1.5 -r1.6
+--- modules/pam_motd/pam_motd.c	9 Jun 2005 17:29:19 -0000	1.5
++++ modules/pam_motd/pam_motd.c	20 Jul 2005 09:46:18 -0000	1.6
+@@ -4,13 +4,13 @@
+  * Modified for pam_motd by Ben Collins <bcollins@debian.org>
+  *
+  * Based off of:
+- * $Id: pam_motd.c,v 1.5 2005/06/09 17:29:19 kukuk Exp $
++ * $Id: pam_motd.c,v 1.6 2005/07/20 09:46:18 kukuk Exp $
+  *
+  * Written by Michael K. Johnson <johnsonm@redhat.com> 1996/10/24
+  *
+  */
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #include <stdio.h>
+ #include <string.h>
+Index: modules/pam_pwdb/pam_pwdb.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_pwdb/pam_pwdb.c,v
+retrieving revision 1.3
+retrieving revision 1.5
+diff -u -p -a -r1.3 -r1.5
+--- modules/pam_pwdb/pam_pwdb.c	19 Nov 2000 23:54:04 -0000	1.3
++++ modules/pam_pwdb/pam_pwdb.c	26 Jul 2005 08:12:01 -0000	1.5
+@@ -1,5 +1,5 @@
+ /*
+- * $Id: pam_pwdb.c,v 1.3 2000/11/19 23:54:04 agmorgan Exp $
++ * $Id: pam_pwdb.c,v 1.5 2005/07/26 08:12:01 t8m Exp $
+  *
+  * This is the single file that will be compiled for pam_unix.
+  * it includes each of the modules that have beed defined in the .-c
+@@ -14,13 +14,13 @@
+  */
+ 
+ static const char rcsid[] =
+-"$Id: pam_pwdb.c,v 1.3 2000/11/19 23:54:04 agmorgan Exp $\n"
++"$Id: pam_pwdb.c,v 1.5 2005/07/26 08:12:01 t8m Exp $\n"
+ " - PWDB Pluggable Authentication module. <morgan@linux.kernel.org>"
+ ;
+ 
+ /* #define DEBUG */
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #include <sys/types.h>
+ #include <stdarg.h>
+@@ -98,11 +98,14 @@ PAM_EXTERN int pam_sm_setcred(pam_handle
+     pwdb_end();
+ 
+     if ( on(UNIX_LIKE_AUTH, ctrl) ) {
+-	int *pretval = &retval;
++	const void *pretval = NULL;
+ 
+ 	D(("recovering return code from auth call"));
+-	pam_get_data(pamh, "pwdb_setcred_return", (const void **) pretval);
+-	D(("recovered data indicates that old retval was %d", retval));
++	if ( pam_get_data(pamh, "pwdb_setcred_return", &pretval) 
++	    == PAM_SUCCESS ) {
++	    retval = (int)(long)pretval;
++	    D(("recovered data indicates that old retval was %d", retval));
++	}
+     }
+ 
+     return retval;
+Index: modules/pam_pwdb/pwdb_chkpwd.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_pwdb/pwdb_chkpwd.c,v
+retrieving revision 1.4
+retrieving revision 1.5
+diff -u -p -a -r1.4 -r1.5
+--- modules/pam_pwdb/pwdb_chkpwd.c	9 Dec 2001 21:44:58 -0000	1.4
++++ modules/pam_pwdb/pwdb_chkpwd.c	20 Jul 2005 09:46:18 -0000	1.5
+@@ -1,5 +1,5 @@
+ /*
+- * $Id: pwdb_chkpwd.c,v 1.4 2001/12/09 21:44:58 agmorgan Exp $
++ * $Id: pwdb_chkpwd.c,v 1.5 2005/07/20 09:46:18 kukuk Exp $
+  *
+  * This program is designed to run setuid(root) or with sufficient
+  * privilege to read all of the unix password databases. It is designed
+@@ -13,7 +13,7 @@
+  *
+  */
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #ifdef MEMORY_DEBUG
+ # undef exit
+Index: modules/pam_rhosts/pam_rhosts_auth.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_rhosts/pam_rhosts_auth.c,v
+retrieving revision 1.12
+retrieving revision 1.13
+diff -u -p -a -r1.12 -r1.13
+--- modules/pam_rhosts/pam_rhosts_auth.c	9 Jun 2005 17:29:19 -0000	1.12
++++ modules/pam_rhosts/pam_rhosts_auth.c	20 Jul 2005 09:46:18 -0000	1.13
+@@ -38,7 +38,7 @@
+  * SUCH DAMAGE.
+  */
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #define USER_RHOSTS_FILE "/.rhosts"     /* prefixed by user's home dir */
+ 
+Index: modules/pam_selinux/pam_selinux.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_selinux/pam_selinux.c,v
+retrieving revision 1.2
+retrieving revision 1.5
+diff -u -p -a -r1.2 -r1.5
+--- modules/pam_selinux/pam_selinux.c	9 Jun 2005 17:29:19 -0000	1.2
++++ modules/pam_selinux/pam_selinux.c	20 Jul 2005 14:52:39 -0000	1.5
+@@ -38,10 +38,7 @@
+  *
+  */
+ 
+-#define PAM_SM_AUTH
+-#define PAM_SM_SESSION
+-
+-#include "../../_pam_aconf.h"
++#include "config.h"
+ 
+ #include <errno.h>
+ #include <limits.h>
+@@ -55,14 +52,13 @@
+ #include <fcntl.h>
+ #include <linux/limits.h>
+ 
+-#include "../../_pam_aconf.h"
++#define PAM_SM_AUTH
++#define PAM_SM_SESSION
++
+ #include <security/pam_modules.h>
+ #include <security/_pam_macros.h>
+ #include <security/_pam_modutil.h>
+ 
+-#include <libintl.h>
+-#define _(x) gettext(x)
+-
+ #ifndef PAM_SELINUX_MAIN
+ #define MODULE "pam_selinux"
+ 
+@@ -140,7 +136,7 @@ select_context (pam_handle_t *pamh, secu
+       {
+ 	  int choice=0;
+ 	  int i;
+-	  char *prompt=_("Enter number of choice: ");
++	  const char *prompt=_("Enter number of choice: ");
+ 	  int len=strlen(prompt);
+ 	  char buf[PATH_MAX];
+ 
+@@ -167,11 +163,11 @@ select_context (pam_handle_t *pamh, secu
+         _pam_drop_reply(responses, 1);
+     } else {
+       if (debug)
+-	syslog(LOG_NOTICE, _("%s: bogus conversation function"),MODULE);
++	syslog(LOG_NOTICE, "%s: bogus conversation function",MODULE);
+     }
+   } else {
+     if (debug)
+-      syslog(LOG_NOTICE, _("%s: no conversation function"),MODULE);
++      syslog(LOG_NOTICE, "%s: no conversation function",MODULE);
+   }
+   return (security_context_t) strdup(contextlist[0]);
+ }
+@@ -250,11 +246,11 @@ manual_context (pam_handle_t *pamh, cons
+       } /* end while */
+     } else {
+       if (debug)
+-	syslog(LOG_NOTICE, _("%s: bogus conversation function"),MODULE);
++	syslog(LOG_NOTICE, "%s: bogus conversation function",MODULE);
+     }
+   } else {
+     if (debug)
+-      syslog(LOG_NOTICE, _("%s: no conversation function"),MODULE);
++      syslog(LOG_NOTICE, "%s: no conversation function",MODULE);
+   }
+   return NULL;
+ }
+@@ -277,7 +273,7 @@ static void security_restorelabel_tty(co
+   if (setfilecon(ptr, context) && errno != ENOENT)
+   {
+       syslog(LOG_NOTICE,
+-             _("Warning!  Could not relabel %s with %s, not relabeling.\n"),
++             "Warning!  Could not relabel %s with %s, not relabeling.\n",
+              ptr, context);
+   }
+ }
+@@ -301,14 +297,15 @@ static security_context_t security_label
+   if (getfilecon(ptr, &prev_context) < 0)
+   {
+       syslog(LOG_NOTICE,
+-           _("Warning!  Could not get current context for %s, not relabeling."),           ptr);
++	     "Warning!  Could not get current context for %s, not relabeling.",
++	     ptr);
+       return NULL;
+   }
+   if( security_compute_relabel(usercon,prev_context,SECCLASS_CHR_FILE,
+                                &newdev_context)!=0)
+   {
+     syslog(LOG_NOTICE,
+-           _("Warning!  Could not get new context for %s, not relabeling."),
++           "Warning!  Could not get new context for %s, not relabeling.",
+            ptr);
+     syslog(LOG_NOTICE, "usercon=%s, prev_context=%s\n", usercon, prev_context);
+     freecon(prev_context);
+@@ -318,7 +315,7 @@ static security_context_t security_label
+   if (status)
+   {
+       syslog(LOG_NOTICE,
+-             _("Warning!  Could not relabel %s with %s, not relabeling.%s"),
++             "Warning!  Could not relabel %s with %s, not relabeling.%s",
+              ptr,newdev_context,strerror(errno));
+       freecon(prev_context);
+       prev_context=NULL;
+@@ -359,11 +356,11 @@ verbose_message(pam_handle_t *pamh, char
+         _pam_drop_reply(responses, 1);
+     } else {
+       if (debug)
+-	syslog(LOG_NOTICE, _("%s: bogus conversation function"),MODULE);
++	syslog(LOG_NOTICE, "%s: bogus conversation function", MODULE);
+     }
+   } else {
+     if (debug)
+-      syslog(LOG_NOTICE,_("%s: no conversation function"),MODULE);
++      syslog(LOG_NOTICE, "%s: no conversation function", MODULE);
+   }
+ }
+ 
+@@ -436,13 +433,13 @@ pam_sm_open_session(pam_handle_t *pamh, 
+     if (has_tty) {
+       user_context = manual_context(pamh,username,debug);
+       if (user_context == NULL) {
+-	syslog (LOG_ERR, _("Unable to get valid context for %s"),
++	syslog (LOG_ERR, "Unable to get valid context for %s",
+ 		(const char *)username);
+ 	return PAM_AUTH_ERR;
+       }
+     } else {
+ 	syslog (LOG_ERR,
+-		_("Unable to get valid context for %s, No valid tty"),
++		"Unable to get valid context for %s, No valid tty",
+ 		(const char *)username);
+ 	return PAM_AUTH_ERR;
+     }
+@@ -479,13 +476,13 @@ pam_sm_open_session(pam_handle_t *pamh, 
+     verbose_message(pamh, msg, debug);
+   }
+   if (ret) {
+-    syslog(LOG_ERR, _("Error!  Unable to set %s executable context %s."),
++    syslog(LOG_ERR, "Error!  Unable to set %s executable context %s.",
+            (const char *)username, user_context);
+     freecon(user_context);
+     return PAM_AUTH_ERR;
+   } else {
+     if (debug)
+-      syslog(LOG_NOTICE, _("%s: set %s security context to %s"),MODULE,
++      syslog(LOG_NOTICE, "%s: set %s security context to %s", MODULE,
+              (const char *)username, user_context);
+   }
+   freecon(user_context);
+@@ -528,13 +525,13 @@ pam_sm_close_session(pam_handle_t *pamh,
+   status=setexeccon(prev_user_context);
+   freecon(prev_user_context);
+   if (status) {
+-    syslog(LOG_ERR, _("Error!  Unable to set executable context %s."),
++    syslog(LOG_ERR, "Error!  Unable to set executable context %s.",
+            prev_user_context);
+     return PAM_AUTH_ERR;
+   }
+ 
+   if (debug)
+-    syslog(LOG_NOTICE, _("%s: setcontext back to orginal"),MODULE);
++    syslog(LOG_NOTICE, "%s: setcontext back to orginal", MODULE);
+ 
+   return PAM_SUCCESS;
+ }
+Index: modules/pam_stress/pam_stress.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_stress/pam_stress.c,v
+retrieving revision 1.6
+retrieving revision 1.8
+diff -u -p -a -r1.6 -r1.8
+--- modules/pam_stress/pam_stress.c	9 Jun 2005 17:29:19 -0000	1.6
++++ modules/pam_stress/pam_stress.c	20 Jul 2005 14:52:40 -0000	1.8
+@@ -1,11 +1,11 @@
+ /* pam_stress module */
+ 
+-/* $Id: pam_stress.c,v 1.6 2005/06/09 17:29:19 kukuk Exp $
++/* $Id: pam_stress.c,v 1.8 2005/07/20 14:52:40 kukuk Exp $
+  *
+  * created by Andrew Morgan <morgan@linux.kernel.org> 1996/3/12
+  */
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #include <stdlib.h>
+ #include <stdio.h>
+@@ -478,8 +478,8 @@ int pam_sm_chauthtok(pam_handle_t *pamh,
+ 	       }
+ 	       pmsg[0] = &msg[0];
+ 	       msg[0].msg_style = PAM_TEXT_INFO;
+-#define _LOCAL_STRESS_COMMENT "Changing STRESS password for "
+-	       txt = (char *) malloc(sizeof(_LOCAL_STRESS_COMMENT)
++#define _LOCAL_STRESS_COMMENT _("Changing STRESS password for ")
++	       txt = (char *) malloc(strlen(_LOCAL_STRESS_COMMENT)
+ 				     +strlen(username)+1);
+ 	       strcpy(txt, _LOCAL_STRESS_COMMENT);
+ #undef _LOCAL_STRESS_COMMENT
+@@ -492,10 +492,10 @@ int pam_sm_chauthtok(pam_handle_t *pamh,
+ 
+ 	  pmsg[i] = &msg[i];
+ 	  msg[i].msg_style = PAM_PROMPT_ECHO_OFF;
+-	  msg[i++].msg = "Enter new STRESS password: ";
++	  msg[i++].msg = _("Enter new STRESS password: ");
+ 	  pmsg[i] = &msg[i];
+ 	  msg[i].msg_style = PAM_PROMPT_ECHO_OFF;
+-	  msg[i++].msg = "Retype new STRESS password: ";
++	  msg[i++].msg = _("Retype new STRESS password: ");
+ 	  resp = NULL;
+ 
+ 	  retval = converse(pamh,i,pmsg,&resp);
+@@ -523,8 +523,8 @@ int pam_sm_chauthtok(pam_handle_t *pamh,
+ 		    if (!(flags & PAM_SILENT) && !(ctrl & PAM_ST_NO_WARN)) {
+ 			 pmsg[0] = &msg[0];
+ 			 msg[0].msg_style = PAM_ERROR_MSG;
+-			 msg[0].msg = "Verification mis-typed; "
+-			      "password unchanged";
++			 msg[0].msg = _("Verification mis-typed; "
++					"password unchanged");
+ 			 resp = NULL;
+ 			 (void) converse(pamh,1,pmsg,&resp);
+ 			 if (resp) {
+Index: modules/pam_tally/pam_tally.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_tally/pam_tally.c,v
+retrieving revision 1.18
+retrieving revision 1.20
+diff -u -p -a -r1.18 -r1.20
+--- modules/pam_tally/pam_tally.c	9 Jun 2005 17:29:20 -0000	1.18
++++ modules/pam_tally/pam_tally.c	20 Jul 2005 14:52:40 -0000	1.20
+@@ -1,7 +1,7 @@
+ /*
+  * pam_tally.c
+  *
+- * $Id: pam_tally.c,v 1.18 2005/06/09 17:29:20 kukuk Exp $
++ * $Id: pam_tally.c,v 1.20 2005/07/20 14:52:40 kukuk Exp $
+  */
+ 
+ 
+@@ -14,7 +14,7 @@
+  * Audit option added for Tomas patch by Sebastien Tricaud <toady@gscore.org> 13 January 2005
+  */
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #if defined(MAIN) && defined(MEMORY_DEBUG)
+ # undef exit
+@@ -727,10 +727,10 @@ static int cline_quiet =  0;
+ 
+ static const char * pam_errors( int i ) {
+   switch (i) {
+-  case PAM_AUTH_ERR:     return "Authentication error";
+-  case PAM_SERVICE_ERR:  return "Service error";
+-  case PAM_USER_UNKNOWN: return "Unknown user";
+-  default:               return "Unknown error";
++  case PAM_AUTH_ERR:     return _("Authentication error");
++  case PAM_SERVICE_ERR:  return _("Service error");
++  case PAM_USER_UNKNOWN: return _("Unknown user");
++  default:               return _("Unknown error");
+   }
+ }
+ 
+@@ -744,11 +744,11 @@ static int getopts( int argc, char **arg
+     else if ( !strcmp (*argv,"--reset")   ) cline_reset=0;
+     else if ( !strncmp(*argv,"--reset=",8)) {
+       if ( sscanf(*argv+8,TALLY_FMT,&cline_reset) != 1 )
+-        fprintf(stderr,"%s: Bad number given to --reset=\n",pname), exit(0);
++        fprintf(stderr,_("%s: Bad number given to --reset=\n"),pname), exit(0);
+     }
+     else if ( !strcmp (*argv,"--quiet")   ) cline_quiet=1;
+     else {
+-      fprintf(stderr,"%s: Unrecognised option %s\n",pname,*argv);
++      fprintf(stderr,_("%s: Unrecognised option %s\n"),pname,*argv);
+       return FALSE;
+     }
+   }
+@@ -760,8 +760,8 @@ int main ( int argc, char **argv ) {
+   struct fail_s fs, *fsp = &fs;
+ 
+   if ( ! getopts( argc, argv+1 ) ) {
+-    printf("%s: [--file rooted-filename] [--user username] "
+-           "[--reset[=n]] [--quiet]\n",
++    printf(_("%s: [--file rooted-filename] [--user username] "
++	     "[--reset[=n]] [--quiet]\n"),
+            *argv);
+     exit(0);
+   }
+@@ -833,7 +833,7 @@ int main ( int argc, char **argv ) {
+     }
+     fclose(TALLY);
+     if ( cline_reset!=0 && cline_reset!=TALLY_HI ) {
+-      fprintf(stderr,"%s: Can't reset all users to non-zero\n",*argv);
++      fprintf(stderr,_("%s: Can't reset all users to non-zero\n"),*argv);
+     }
+     else if ( !cline_reset ) {
+       TALLY=fopen(cline_filename, "w");
+Index: modules/pam_time/pam_time.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_time/pam_time.c,v
+retrieving revision 1.6
+retrieving revision 1.7
+diff -u -p -a -r1.6 -r1.7
+--- modules/pam_time/pam_time.c	9 Jun 2005 17:29:20 -0000	1.6
++++ modules/pam_time/pam_time.c	20 Jul 2005 09:46:18 -0000	1.7
+@@ -1,7 +1,7 @@
+ /* pam_time module */
+ 
+ /*
+- * $Id: pam_time.c,v 1.6 2005/06/09 17:29:20 kukuk Exp $
++ * $Id: pam_time.c,v 1.7 2005/07/20 09:46:18 kukuk Exp $
+  *
+  * Written by Andrew Morgan <morgan@linux.kernel.org> 1996/6/22
+  * (File syntax and much other inspiration from the shadow package
+@@ -9,11 +9,11 @@
+  */
+ 
+ static const char rcsid[] =
+-"$Id: pam_time.c,v 1.6 2005/06/09 17:29:20 kukuk Exp $;\n"
++"$Id: pam_time.c,v 1.7 2005/07/20 09:46:18 kukuk Exp $;\n"
+ "\t\tVersion 0.22 for Linux-PAM\n"
+ "Copyright (C) Andrew G. Morgan 1996 <morgan@linux.kernel.org>\n";
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #include <sys/file.h>
+ #include <stdio.h>
+Index: modules/pam_umask/Makefile
+===================================================================
+RCS file: modules/pam_umask/Makefile
+diff -N modules/pam_umask/Makefile
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ modules/pam_umask/Makefile	14 Jul 2005 09:59:35 -0000	1.1
+@@ -0,0 +1,16 @@
++#
++# $Id: Makefile,v 1.1 2005/07/14 09:59:35 kukuk Exp $
++#
++# This Makefile controls a build process of pam_umask module for
++# Linux-PAM. You should not modify this Makefile (unless you know
++# what you are doing!).
++#
++
++include ../../Make.Rules
++
++TITLE=pam_umask
++
++DEFS=-DDEFAULT_CONF_FILE=\"/etc/login.defs\"
++CFLAGS += $(DEFS)
++
++include ../Simple.Rules
+Index: modules/pam_umask/README
+===================================================================
+RCS file: modules/pam_umask/README
+diff -N modules/pam_umask/README
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ modules/pam_umask/README	14 Jul 2005 09:59:35 -0000	1.1
+@@ -0,0 +1,14 @@
++This is the README for pam_umask
++--------------------------------
++
++pam_umask sets the set the file mode creation mask of the current
++environment. It tries to get the umask value from the following 
++files in the following priority:
++
++- umask= argument
++- umask= entry of the users GECOS field
++- pri= entry of the users GECOS field
++- ulimit= entry of the users GECOS field
++- UMASK= entry from /etc/default/login
++- UMASK entry from /etc/login.defs
++
+Index: modules/pam_umask/pam_umask.c
+===================================================================
+RCS file: modules/pam_umask/pam_umask.c
+diff -N modules/pam_umask/pam_umask.c
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ modules/pam_umask/pam_umask.c	20 Jul 2005 09:46:18 -0000	1.4
+@@ -0,0 +1,307 @@
++/*
++ * Copyright (c) 2005 Thorsten Kukuk <kukuk@thkukuk.de>
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, and the entire permission notice in its entirety,
++ *    including the disclaimer of warranties.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ * 3. The name of the author may not be used to endorse or promote
++ *    products derived from this software without specific prior
++ *    written permission.
++ *
++ * ALTERNATIVELY, this product may be distributed under the terms of
++ * the GNU Public License, in which case the provisions of the GPL are
++ * required INSTEAD OF the above restrictions.  (This clause is
++ * necessary due to a potential bad interaction between the GPL and
++ * the restrictions contained in a BSD-style copyright.)
++ *
++ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED
++ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
++ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
++ * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
++ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
++ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
++ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
++ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
++ * OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#define _GNU_SOURCE
++
++#include "config.h"
++
++#include <pwd.h>
++#include <grp.h>
++#include <stdio.h>
++#include <ctype.h>
++#include <string.h>
++#include <stdarg.h>
++#include <unistd.h>
++#include <stdlib.h>
++#include <sys/stat.h>
++#include <sys/types.h>
++#include <sys/resource.h>
++
++#define PAM_SM_SESSION
++
++#include <security/pam_modules.h>
++#include <security/_pam_modutil.h>
++
++struct options_t {
++  int debug;
++  int usergroups;
++  char *umask;
++};
++typedef struct options_t options_t;
++
++/* syslogging function for errors and other information */
++static void
++__pam_log (int err, const char *format,...)
++{
++  va_list args;
++  char *str;
++
++  va_start (args, format);
++  if (vasprintf (&str, format, args) < 0)
++    return;
++  syslog (err, "pam_umask: %s", str);
++  va_end (args);
++}
++
++static void
++parse_option (const char *argv, options_t *options)
++{
++  if (argv == NULL || argv[0] == '\0')
++    return;
++
++  if (strcasecmp (argv, "debug") == 0)
++    options->debug = 1;
++  else if (strncasecmp (argv, "umask=", 6) == 0)
++    options->umask = strdup (&argv[6]);
++  else if (strcasecmp (argv, "usergroups") == 0)
++    options->usergroups = 1;
++  else
++    __pam_log (LOG_ERR, "Unknown option: `%s'", argv);
++}
++
++static char *
++search_key (const char *filename)
++{
++  FILE *fp;
++  char *buf = NULL;
++  size_t buflen = 0;
++  char *retval = NULL;
++
++  fp = fopen (filename, "r");
++  if (NULL == fp)
++    return NULL;
++
++  while (!feof (fp))
++    {
++      char *tmp, *cp;
++#if defined(HAVE_GETLINE)
++      ssize_t n = getline (&buf, &buflen, fp);
++#elif defined (HAVE_GETDELIM)
++      ssize_t n = getdelim (&buf, &buflen, '\n', fp);
++#else
++      ssize_t n;
++
++      if (buf == NULL)
++        {
++          buflen = 8096;
++          buf = malloc (buflen);
++        }
++      buf[0] = '\0';
++      fgets (buf, buflen - 1, fp);
++      if (buf != NULL)
++        n = strlen (buf);
++      else
++        n = 0;
++#endif /* HAVE_GETLINE / HAVE_GETDELIM */
++      cp = buf;
++
++      if (n < 1)
++        break;
++
++      tmp = strchr (cp, '#');  /* remove comments */
++      if (tmp)
++        *tmp = '\0';
++      while (isspace ((int)*cp))    /* remove spaces and tabs */
++        ++cp;
++      if (*cp == '\0')        /* ignore empty lines */
++        continue;
++
++      if (cp[strlen (cp) - 1] == '\n')
++        cp[strlen (cp) - 1] = '\0';
++
++      tmp = strsep (&cp, " \t=");
++      if (cp != NULL)
++        while (isspace ((int)*cp) || *cp == '=')
++          ++cp;
++
++      if (strcasecmp (tmp, "UMASK") == 0)
++	{
++	  retval = strdup (cp);
++	  break;
++	}
++    }
++  fclose (fp);
++
++  if (buf)
++    free (buf);
++
++  return retval;
++}
++
++static int
++get_options (options_t *options, int argc, const char **argv)
++{
++  memset (options, 0, sizeof (options_t));
++  /* Parse parameters for module */
++  for ( ; argc-- > 0; argv++)
++    parse_option (*argv, options);
++
++  if (options->umask == NULL)
++    options->umask = search_key ("/etc/login.defs");
++  if (options->umask == NULL)
++    options->umask = search_key ("/etc/default/login");
++
++  return 0;
++}
++
++static void
++set_umask (const char *value)
++{
++  const char *value_orig = value;
++  mode_t mask;
++  char *endptr;
++
++  mask = strtol (value, &endptr, 8) & 0777;
++  if ((mask == 0) && (value_orig == endptr))
++    return;
++  umask (mask);
++  return;
++}
++
++/* Set the process nice, ulimit, and umask from the
++   password file entry.  */
++static void
++setup_limits_from_gecos (pam_handle_t *pamh, options_t *options,
++			 struct passwd *pw)
++{
++  char *cp;
++
++  if (options->usergroups)
++    {
++      /* if not root, and UID == GID, and username is the same as
++	 primary group name, set umask group bits to be the same as
++	 owner bits (examples: 022 -> 002, 077 -> 007).  */
++      if (pw->pw_uid != 0 && pw->pw_uid == pw->pw_gid)
++	{
++	  struct group *grp = _pammodutil_getgrgid (pamh, pw->pw_gid);
++	  if (grp && (strcmp (pw->pw_name, grp->gr_name) == 0))
++	    {
++	      mode_t oldmask = umask (0777);
++	      umask ((oldmask & ~070) | ((oldmask >> 3) & 070));
++	    }
++        }
++    }
++
++  /* See if the GECOS field contains values for NICE, UMASK or ULIMIT.  */
++  for (cp = pw->pw_gecos; cp != NULL; cp = strchr (cp, ','))
++    {
++      if (*cp == ',')
++	cp++;
++
++      if (strncasecmp (cp, "umask=", 6) == 0)
++	umask (strtol (cp + 6, NULL, 8) & 0777);
++      else if (strncasecmp (cp, "pri=", 4) == 0)
++	nice (strtol (cp + 4, NULL, 10));
++      else if (strncasecmp (cp, "ulimit=", 7) == 0)
++	{
++	  struct rlimit rlimit_fsize;
++	  rlimit_fsize.rlim_cur = 512L * strtol (cp + 7, NULL, 10);
++	  rlimit_fsize.rlim_max = rlimit_fsize.rlim_cur;
++	  setrlimit (RLIMIT_FSIZE, &rlimit_fsize);
++        }
++    }
++}
++
++
++PAM_EXTERN int
++pam_sm_open_session (pam_handle_t *pamh, int flags,
++                     int argc, const char **argv)
++{
++  struct passwd *pw;
++  options_t options;
++  const char *name;
++  int retval = PAM_SUCCESS;
++
++  get_options (&options, argc, argv);
++
++  /* get the user name. */
++  if ((retval = pam_get_user (pamh, &name, NULL)) != PAM_SUCCESS)
++    {
++      __pam_log (LOG_ERR, "pam_get_user failed: return %d", retval);
++      return (retval == PAM_CONV_AGAIN ? PAM_INCOMPLETE:retval);
++    }
++
++  if (name == NULL || name[0] == '\0')
++    {
++      if (name)
++        {
++          __pam_log (LOG_ERR, "bad username [%s]", name);
++          return PAM_USER_UNKNOWN;
++        }
++      return PAM_SERVICE_ERR;
++    }
++
++  pw = _pammodutil_getpwnam (pamh, name);
++  if (pw == NULL)
++    {
++      __pam_log (LOG_ERR, "account for %s not found", name);
++      return PAM_USER_UNKNOWN;
++    }
++
++  if (options.umask != NULL)
++    {
++      set_umask (options.umask);
++      free (options.umask);
++    }
++
++  setup_limits_from_gecos (pamh, &options, pw);
++
++  return retval;
++}
++
++PAM_EXTERN int
++pam_sm_close_session (pam_handle_t *pamh, int flags,
++		      int argc, const char **argv)
++{
++  return PAM_SUCCESS;
++}
++
++#ifdef PAM_STATIC
++
++/* static module data */
++
++struct pam_module _pam_umask_modstruct = {
++     "pam_umask",
++     NULL,
++     NULL,
++     NULL,
++     pam_sm_open_session,
++     pam_sm_close_session,
++     NULL
++};
++
++#endif
++
++/* end of module definition */
+Index: modules/pam_unix/pam_unix_acct.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_unix/pam_unix_acct.c,v
+retrieving revision 1.10
+retrieving revision 1.12
+diff -u -p -a -r1.10 -r1.12
+--- modules/pam_unix/pam_unix_acct.c	9 Jun 2005 17:29:20 -0000	1.10
++++ modules/pam_unix/pam_unix_acct.c	20 Jul 2005 14:52:41 -0000	1.12
+@@ -34,7 +34,7 @@
+  * OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #include <stdlib.h>
+ #include <stdio.h>
+@@ -193,7 +193,7 @@ PAM_EXTERN int pam_sm_acct_mgmt(pam_hand
+ 	time_t curdays;
+ 	struct spwd *spent;
+ 	struct passwd *pwent;
+-	char buf[80];
++	char buf[256];
+ 
+ 	D(("called."));
+ 
+@@ -265,7 +265,7 @@ PAM_EXTERN int pam_sm_acct_mgmt(pam_hand
+ 			 ,"account %s has expired (account expired)"
+ 			 ,uname);
+ 		_make_remark(pamh, ctrl, PAM_ERROR_MSG,
+-			    "Your account has expired; please contact your system administrator");
++			     _("Your account has expired; please contact your system administrator"));
+ 		D(("account expired"));
+ 		return PAM_ACCT_EXPIRED;
+ 	}
+@@ -274,7 +274,7 @@ PAM_EXTERN int pam_sm_acct_mgmt(pam_hand
+ 			 ,"expired password for user %s (root enforced)"
+ 			 ,uname);
+ 		_make_remark(pamh, ctrl, PAM_ERROR_MSG,
+-			    "You are required to change your password immediately (root enforced)");
++			     _("You are required to change your password immediately (root enforced)"));
+ 		D(("need a new password"));
+ 		return PAM_NEW_AUTHTOK_REQD;
+ 	}
+@@ -292,7 +292,7 @@ PAM_EXTERN int pam_sm_acct_mgmt(pam_hand
+ 		    ,"account %s has expired (failed to change password)"
+ 			 ,uname);
+ 		_make_remark(pamh, ctrl, PAM_ERROR_MSG,
+-			    "Your account has expired; please contact your system administrator");
++			     _("Your account has expired; please contact your system administrator"));
+ 		D(("account expired 2"));
+ 		return PAM_ACCT_EXPIRED;
+ 	}
+@@ -301,7 +301,7 @@ PAM_EXTERN int pam_sm_acct_mgmt(pam_hand
+ 			 ,"expired password for user %s (password aged)"
+ 			 ,uname);
+ 		_make_remark(pamh, ctrl, PAM_ERROR_MSG,
+-			    "You are required to change your password immediately (password aged)");
++			     _("You are required to change your password immediately (password aged)"));
+ 		D(("need a new password 2"));
+ 		return PAM_NEW_AUTHTOK_REQD;
+ 	}
+@@ -311,7 +311,7 @@ PAM_EXTERN int pam_sm_acct_mgmt(pam_hand
+ 		_log_err(LOG_DEBUG, pamh
+ 			 ,"password for user %s will expire in %d days"
+ 			 ,uname, daysleft);
+-		snprintf(buf, 80, "Warning: your password will expire in %d day%.2s",
++		snprintf(buf, sizeof (buf), _("Warning: your password will expire in %d day%.2s"),
+ 			 daysleft, daysleft == 1 ? "" : "s");
+ 		_make_remark(pamh, ctrl, PAM_TEXT_INFO, buf);
+ 	}
+Index: modules/pam_unix/pam_unix_auth.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_unix/pam_unix_auth.c,v
+retrieving revision 1.12
+retrieving revision 1.14
+diff -u -p -a -r1.12 -r1.14
+--- modules/pam_unix/pam_unix_auth.c	9 Jun 2005 17:29:20 -0000	1.12
++++ modules/pam_unix/pam_unix_auth.c	26 Jul 2005 06:40:44 -0000	1.14
+@@ -37,7 +37,7 @@
+ 
+ /* #define DEBUG */
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+@@ -207,8 +207,8 @@ PAM_EXTERN int pam_sm_setcred(pam_handle
+ 	D(("recovering return code from auth call"));
+ 	/* We will only find something here if UNIX_LIKE_AUTH is set --
+ 	   don't worry about an explicit check of argv. */
+-	pam_get_data(pamh, "unix_setcred_return", &pretval);
+-	if(pretval) {
++	if (pam_get_data(pamh, "unix_setcred_return", &pretval) == PAM_SUCCESS
++	    && pretval) {
+  	        retval = *(const int *)pretval;
+ 		pam_set_data(pamh, "unix_setcred_return", NULL, NULL);
+ 		D(("recovered data indicates that old retval was %d", retval));
+Index: modules/pam_unix/pam_unix_passwd.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_unix/pam_unix_passwd.c,v
+retrieving revision 1.26
+retrieving revision 1.28
+diff -u -p -a -r1.26 -r1.28
+--- modules/pam_unix/pam_unix_passwd.c	9 Jun 2005 17:29:20 -0000	1.26
++++ modules/pam_unix/pam_unix_passwd.c	20 Jul 2005 14:52:41 -0000	1.28
+@@ -35,7 +35,7 @@
+  * OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+@@ -815,7 +815,7 @@ static int _do_setpass(pam_handle_t* pam
+ 		clnt_destroy(clnt);
+ 		if (err || status) {
+ 			_make_remark(pamh, ctrl, PAM_TEXT_INFO,
+-				"NIS password could not be changed.");
++				_("NIS password could not be changed."));
+ 			retval = PAM_TRY_AGAIN;
+ 		}
+ #ifdef DEBUG
+@@ -959,7 +959,7 @@ static int _pam_unix_approve_pass(pam_ha
+ 			_log_err(LOG_DEBUG, pamh, "bad authentication token");
+ 		}
+ 		_make_remark(pamh, ctrl, PAM_ERROR_MSG, pass_new == NULL ?
+-			  "No password supplied" : "Password unchanged");
++			_("No password supplied") : _("Password unchanged"));
+ 		return PAM_AUTHTOK_ERR;
+ 	}
+ 	/*
+@@ -980,12 +980,12 @@ static int _pam_unix_approve_pass(pam_ha
+ 		D(("called cracklib [%s]", remark));
+ #else
+ 		if (strlen(pass_new) < 6)
+-			remark = "You must choose a longer password";
++		  remark = _("You must choose a longer password");
+ 		D(("length check [%s]", remark));
+ #endif
+ 		if (on(UNIX_REMEMBER_PASSWD, ctrl)) {
+ 			if ((retval = check_old_password(user, pass_new)) == PAM_AUTHTOK_ERR)
+-				remark = "Password has been already used. Choose another.";
++			  remark = _("Password has been already used. Choose another.");
+ 			if (retval == PAM_ABORT) {
+ 				_log_err(LOG_ERR, pamh, "can't open %s file to check old passwords",
+ 					OLD_PASSWORDS_FILE);
+@@ -1144,7 +1144,7 @@ PAM_EXTERN int pam_sm_chauthtok(pam_hand
+ 		if (retval == PAM_AUTHTOK_ERR) {
+ 			if (off(UNIX__IAMROOT, ctrl))
+ 				_make_remark(pamh, ctrl, PAM_ERROR_MSG,
+-					    "You must wait longer to change your password");
++					     _("You must wait longer to change your password"));
+ 			else
+ 				retval = PAM_SUCCESS;
+ 		}
+Index: modules/pam_unix/pam_unix_sess.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_unix/pam_unix_sess.c,v
+retrieving revision 1.5
+retrieving revision 1.6
+diff -u -p -a -r1.5 -r1.6
+--- modules/pam_unix/pam_unix_sess.c	23 Mar 2005 14:35:21 -0000	1.5
++++ modules/pam_unix/pam_unix_sess.c	20 Jul 2005 09:46:19 -0000	1.6
+@@ -1,5 +1,5 @@
+ /*
+- * $Id: pam_unix_sess.c,v 1.5 2005/03/23 14:35:21 t8m Exp $
++ * $Id: pam_unix_sess.c,v 1.6 2005/07/20 09:46:19 kukuk Exp $
+  *
+  * Copyright Alexander O. Yuriev, 1996.  All rights reserved.
+  * Copyright Jan Rêkorajski, 1999.  All rights reserved.
+@@ -36,7 +36,7 @@
+  * OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+Index: modules/pam_unix/support.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_unix/support.c,v
+retrieving revision 1.28
+retrieving revision 1.30
+diff -u -p -a -r1.28 -r1.30
+--- modules/pam_unix/support.c	8 Jul 2005 07:42:49 -0000	1.28
++++ modules/pam_unix/support.c	26 Jul 2005 06:40:44 -0000	1.30
+@@ -1,5 +1,5 @@
+ /*
+- * $Id: support.c,v 1.28 2005/07/08 07:42:49 t8m Exp $
++ * $Id: support.c,v 1.30 2005/07/26 06:40:44 kukuk Exp $
+  *
+  * Copyright information at end of file.
+  */
+@@ -19,6 +19,7 @@
+ #include <errno.h>
+ #include <signal.h>
+ #include <ctype.h>
++#include <sys/resource.h>
+ #include <rpcsvc/ypclnt.h>
+ 
+ #include <security/_pam_macros.h>
+@@ -815,8 +816,11 @@ int _unix_verify_password(pam_handle_t *
+ 				new->name = x_strdup(login_name);
+ 
+ 				/* any previous failures for this user ? */
+-				pam_get_data(pamh, data_name, &void_old);
+-				old = void_old;
++				if (pam_get_data(pamh, data_name, &void_old)
++				    == PAM_SUCCESS)
++				        old = void_old;
++				else
++				        old = NULL;
+ 
+ 				if (old != NULL) {
+ 					new->count = old->count + 1;
+Index: modules/pam_unix/unix_chkpwd.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_unix/unix_chkpwd.c,v
+retrieving revision 1.12
+retrieving revision 1.13
+diff -u -p -a -r1.12 -r1.13
+--- modules/pam_unix/unix_chkpwd.c	16 May 2005 11:03:03 -0000	1.12
++++ modules/pam_unix/unix_chkpwd.c	20 Jul 2005 09:46:19 -0000	1.13
+@@ -1,5 +1,5 @@
+ /*
+- * $Id: unix_chkpwd.c,v 1.12 2005/05/16 11:03:03 kukuk Exp $
++ * $Id: unix_chkpwd.c,v 1.13 2005/07/20 09:46:19 kukuk Exp $
+  *
+  * This program is designed to run setuid(root) or with sufficient
+  * privilege to read all of the unix password databases. It is designed
+@@ -13,7 +13,7 @@
+  *
+  */
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #ifdef MEMORY_DEBUG
+ # undef exit
+Index: modules/pam_unix/yppasswd_xdr.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_unix/yppasswd_xdr.c,v
+retrieving revision 1.2
+retrieving revision 1.3
+diff -u -p -a -r1.2 -r1.3
+--- modules/pam_unix/yppasswd_xdr.c	19 Nov 2000 23:54:05 -0000	1.2
++++ modules/pam_unix/yppasswd_xdr.c	20 Jul 2005 09:46:19 -0000	1.3
+@@ -10,7 +10,7 @@
+  * editied manually.
+  */
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #include <rpc/rpc.h>
+ #include <rpcsvc/yp_prot.h>
+Index: modules/pam_userdb/pam_userdb.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_userdb/pam_userdb.c,v
+retrieving revision 1.8
+retrieving revision 1.11
+diff -u -p -a -r1.8 -r1.11
+--- modules/pam_userdb/pam_userdb.c	9 Jun 2005 17:29:20 -0000	1.8
++++ modules/pam_userdb/pam_userdb.c	28 Jul 2005 10:16:55 -0000	1.11
+@@ -1,12 +1,12 @@
+ /* pam_userdb module */
+ 
+ /*
+- * $Id: pam_userdb.c,v 1.8 2005/06/09 17:29:20 kukuk Exp $
++ * $Id: pam_userdb.c,v 1.11 2005/07/28 10:16:55 t8m Exp $
+  * Written by Cristian Gafton <gafton@redhat.com> 1996/09/10
+  * See the end of the file for Copyright Information
+  */
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+@@ -18,6 +18,9 @@
+ #include <sys/stat.h>
+ #include <fcntl.h>
+ #include <errno.h>
++#ifdef HAVE_CRYPT_H
++#include <crypt.h>
++#endif
+ 
+ #include "pam_userdb.h"
+ 
+@@ -161,8 +164,8 @@ user_lookup (const char *database, const
+     }
+ 
+     if (ctrl & PAM_DEBUG_ARG) {
+-	_pam_log(LOG_INFO, "password in database is [%p]`%s', len is %d",
+-		 data.dptr, (char *) data.dptr, data.dsize);
++	_pam_log(LOG_INFO, "password in database is [%p]`%.*s', len is %d",
++		 data.dptr, data.dsize, (char *) data.dptr, data.dsize);
+     }
+ 
+     if (data.dptr != NULL) {
+@@ -174,7 +177,7 @@ user_lookup (const char *database, const
+ 	    return 0; /* found it, data contents don't matter */
+ 	}
+ 
+-	if (strncasecmp(cryptmode, "crypt", 5) == 0) {
++	if (cryptmode && strncasecmp(cryptmode, "crypt", 5) == 0) {
+ 
+ 	  /* crypt(3) password storage */
+ 
+@@ -216,7 +219,8 @@ user_lookup (const char *database, const
+ 	    compare = strncmp(data.dptr, pass, data.dsize);
+ 	}
+ 
+-	  if (strncasecmp(cryptmode, "none", 4) && ctrl & PAM_DEBUG_ARG) {
++	  if (cryptmode && strncasecmp(cryptmode, "none", 4) 
++		&& (ctrl & PAM_DEBUG_ARG)) {
+ 	    _pam_log(LOG_INFO, "invalid value for crypt parameter: %s",
+ 		     cryptmode);
+ 	    _pam_log(LOG_INFO, "defaulting to plaintext password mode");
+Index: modules/pam_xauth/pam_xauth.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_xauth/pam_xauth.c,v
+retrieving revision 1.6
+retrieving revision 1.7
+diff -u -p -a -r1.6 -r1.7
+--- modules/pam_xauth/pam_xauth.c	24 May 2005 12:04:21 -0000	1.6
++++ modules/pam_xauth/pam_xauth.c	20 Jul 2005 09:46:19 -0000	1.7
+@@ -33,9 +33,9 @@
+  * OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
+-/* "$Id: pam_xauth.c,v 1.6 2005/05/24 12:04:21 t8m Exp $" */
++/* "$Id: pam_xauth.c,v 1.7 2005/07/20 09:46:19 kukuk Exp $" */
+ 
+-#include "../../_pam_aconf.h"
++#include "config.h"
+ #include <sys/types.h>
+ #include <sys/fsuid.h>
+ #include <sys/wait.h>
+Index: modules/pammodutil/pammodutil.h
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pammodutil/pammodutil.h,v
+retrieving revision 1.2
+retrieving revision 1.3
+diff -u -p -a -r1.2 -r1.3
+--- modules/pammodutil/pammodutil.h	30 Mar 2005 10:42:54 -0000	1.2
++++ modules/pammodutil/pammodutil.h	20 Jul 2005 09:46:19 -0000	1.3
+@@ -2,12 +2,13 @@
+ #define PAMMODUTIL_H
+ 
+ /*
+- * $Id: pammodutil.h,v 1.2 2005/03/30 10:42:54 t8m Exp $
++ * $Id: pammodutil.h,v 1.3 2005/07/20 09:46:19 kukuk Exp $
+  *
+  * Copyright (c) 2001 Andrew Morgan <morgan@kernel.org>
+  */
+ 
+-#include <security/_pam_aconf.h>
++#include "config.h"
++
+ #include <security/_pam_macros.h>
+ #include <security/pam_modules.h>
+ #include <security/_pam_modutil.h>

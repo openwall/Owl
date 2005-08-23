@@ -1,28 +1,37 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.37 2005/06/28 18:58:45 ldv Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.38 2005/08/23 16:20:39 ldv Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
-Version: 0.75
-Release: owl25
-%define rh_version %version-10
+Version: 0.80
+Release: owl1
+%define rh_version %version-1
 License: GPL or BSD
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
-Source0: pam-redhat-%rh_version.tar.bz2
-Source1: pam_listfile.c
-Patch0: pam-0.75-owl-tmp.diff
-Patch1: pam-0.75-owl-pam_get_user-cache-failures.diff
-Patch2: pam-0.75-owl-pam_dispatch-debugging.diff
-Patch3: pam-0.75-owl-man.diff
-Patch9: pam-0.75-alt-read_string.diff
-Patch10: pam-0.75-owl-pam_pwdb.diff
-Patch11: pam-0.75-owl-pam_chroot.diff
-Patch12: pam-0.75-owl-pam_lastlog.diff
-Patch13: pam-0.75-owl-pam_securetty.diff
-Patch14: pam-0.75-owl-pam_limits.diff
-Patch15: pam-0.75-owl-pam_motd.diff
-Patch16: pam-0.75-owl-pam_wheel.diff
-Patch20: pam-0.75-owl-no-cracklib.diff
+Source0: ftp://ftp.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%version.tar.bz2
+Source1: ftp://ftp.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%version-docs.tar.bz2
+Source2: pam-redhat-%rh_version.tar.bz2
+Source3: pam_listfile.c
+Source4: modules.map
+Source5: other.pam
+Patch0: Linux-PAM-0.80-cvs-20050728.diff
+Patch1: Linux-PAM-0.80-owl-tmp.diff
+Patch2: Linux-PAM-0.80-owl-pam_get_user-cache-failures.diff
+Patch3: Linux-PAM-0.80-owl-man.diff
+Patch4: Linux-PAM-0.80-owl-pam_lastlog.diff
+Patch5: Linux-PAM-0.80-owl-pam_securetty.diff
+Patch6: Linux-PAM-0.80-owl-pam_limits.diff
+Patch7: Linux-PAM-0.80-owl-pam_motd.diff
+Patch8: Linux-PAM-0.80-owl-pam_wheel.diff
+Patch9: Linux-PAM-0.80-owl-configure.diff
+Patch10: Linux-PAM-0.80-owl-pam_filter.diff
+Patch11: Linux-PAM-0.80-owl-no-cracklib.diff
+Patch12: Linux-PAM-0.80-owl-pammodutil-attribute.diff
+Patch13: Linux-PAM-0.80-owl-log.diff
+Patch14: Linux-PAM-0.80-owl-pam_mkhomedir.diff
+Patch15: Linux-PAM-0.80-owl-converse.diff
+Patch16: Linux-PAM-0.80-owl-pam_pwdb.diff
+Patch17: Linux-PAM-0.79-ibm-man.diff
 PreReq: /sbin/ldconfig
 Requires: glibc-crypt_blowfish, pwdb >= 0.61-1owl
 # Just to make sure noone misses pam_unix, which is now provided by tcb
@@ -54,15 +63,19 @@ This package contains the main Linux-PAM documentation in text, HTML, and
 PostScript formats.
 
 %prep
-%setup -q
-rm -r modules/pam_{console,cracklib,unix}
-rm modules/pam_pwdb/{md5*,bigcrypt.*}
-cp $RPM_SOURCE_DIR/pam_listfile.c modules/pam_listfile/
-ln -s ../../../libpam_misc/pam_misc.h libpam/include/security/pam_misc.h
-%patch0 -p1
+%setup -q -n Linux-PAM-%version -a2
+%setup -qDT -n Linux-PAM-%version/doc -a1
+%setup -qDT -n Linux-PAM-%version
+
+%patch0 -p0
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
@@ -71,7 +84,24 @@ ln -s ../../../libpam_misc/pam_misc.h libpam/include/security/pam_misc.h
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
-%patch20 -p1
+%patch17 -p1
+
+# Remove unwanted modules.
+rm -r modules/pam_{console,cracklib,debug,loginuid,postgresok,radius,rps,selinux,timestamp,umask,unix}
+rm modules/pam_pwdb/{md5,bigcrypt.}*
+
+install -pm644 %_sourcedir/pam_listfile.c modules/pam_listfile/
+
+# Replace _pam_aconf.h with config.h
+grep -FZl _pam_aconf.h modules/*/*.c |
+	xargs -r0 sed -ie 's/_pam_aconf\.h/config.h/' --
+
+# Use version script during build of pam modules.
+install -pm644 %_sourcedir/modules.map modules/
+find modules -type f -print0 |
+	xargs -r0 grep -FlZ ' -o $@ $(LIBOBJD) ' |
+	xargs -r0 sed -ie 's| -o \$@ \$(LIBOBJD) | -Wl,--version-script=../modules.map&|' --
+
 mkdir modules/READMEs
 for f in modules/pam_*/README; do
 	d="${f%/*}"
@@ -81,45 +111,74 @@ autoconf
 
 # Use optflags_lib for this package if defined.
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
-# Build this package without optimizations based on strict aliasing rules.
-%{expand:%%define optflags %optflags -fno-strict-aliasing}
 
 %build
-CFLAGS="$RPM_OPT_FLAGS -fPIC" \
-./configure \
+autoreconf -fisv
+export ac_cv_lib_ndbm_dbm_store=no \
+	ac_cv_lib_db_dbm_store=no \
+	ac_cv_lib_selinux_getfilecon=no
+%configure \
 	--prefix=/ \
-	--sysconfdir=/etc \
-	--infodir=%_infodir \
-	--mandir=%_mandir \
+	--exec-prefix=/ \
+	--libdir=/%_lib \
+	--sbindir=/sbin \
 	--enable-static-libpam \
+	--disable-read-both-confs \
 	--enable-fakeroot=%buildroot
-# List things to make explicitly to not make doc (corrupting the
-# pre-compiled docs if we don't have the tools).
-%__make modules libpam libpamc libpam_misc
+%__make
 
 %install
 rm -rf %buildroot
-%__make install THINGSTOMAKE='modules libpam libpamc libpam_misc'
+%__make install
 
 mkdir -p %buildroot/etc/security
 install -m 644 modules/pam_chroot/chroot.conf %buildroot/etc/security/
 
+# Relocate development libraries from /%_lib/ to %_libdir/.
 mkdir -p %buildroot%_libdir
-mv %buildroot/lib/*.a %buildroot%_libdir/
-
-# Move .so to %_libdir to make life easier
-for link in libpam libpamc libpam_misc; do
-	rm %buildroot/lib/$link.so
-	ln -sf /lib/$link.so.%version %buildroot%_libdir/$link.so
+mv %buildroot/%_lib/*.*a %buildroot%_libdir/
+/sbin/ldconfig -nv %buildroot/%_lib
+for f in %buildroot/%_lib/*.so; do
+	t=`objdump -p "$f" |awk '/SONAME/ {print $2}'`
+	[ -n "$t" ]
+	ln -s ../../%_lib/"$t" "%buildroot%_libdir/${f##*/}"
+	rm -f "$f"
 done
 
-mkdir -m 755 %buildroot/etc/pam.d
-install -m 644 other.pamd %buildroot/etc/pam.d/other
+# Make sure that all modules are built.
+>check.log
+for d in modules/pam_*; do
+	[ -d "$d" ] || continue
+	m="${d##*/}"
+	! ls -1 "%buildroot/%_lib/security/$m"*.so 2>/dev/null || continue
+	echo "ERROR: $m module did not build." >&2
+	echo "$m" >>check.log
+done
+! [ -s check.log ] || exit 1
 
-mkdir -p %buildroot%_mandir/man{3,5,8}
-install -m 644 doc/man/*.3 %buildroot%_mandir/man3/
-install -m 644 doc/man/*.5 %buildroot%_mandir/man5/
-install -m 644 doc/man/*.8 %buildroot%_mandir/man8/
+# Make sure that no module exports symbols beyond standard set.
+>check.log
+for d in modules/pam_*; do
+	[ -d "$d" ] || continue
+	m="${d##*/}"
+	readelf -Ws "%buildroot/%_lib/security/$m"*.so |
+		grep -w GLOBAL |
+		grep -Ewv 'UND|pam_sm_(acct_mgmt|authenticate|chauthtok|close_session|open_session|setcred)'  ||
+			continue
+	echo "ERROR: $m module exports symbol(s) beyond standard set." >&2
+	echo "$m" >>check.log
+done
+! [ -s check.log ] || exit 1
+
+# Make sure that no shared object has undefined symbols.
+>check.log
+for f in %buildroot/%_lib/lib*.so.0 %buildroot/%_lib/security/pam*.so; do
+	LD_LIBRARY_PATH="%buildroot/%_lib" ldd -r "$f" 2>&1 >/dev/null |
+		tee -a check.log
+done
+! [ -s check.log ] || exit 1
+
+install -pD -m644 %_sourcedir/other.pam %buildroot/etc/pam.d/other
 
 rm -f doc/ps/missfont.log
 gzip -9nf doc/ps/*.ps
@@ -178,6 +237,7 @@ chgrp chkpwd %_libexecdir/chkpwd && chmod 710 %_libexecdir/chkpwd
 /lib/security/pam_shells.so
 /lib/security/pam_stack.so
 /lib/security/pam_stress.so
+/lib/security/pam_succeed_if.so
 /lib/security/pam_tally.so
 /lib/security/pam_time.so
 /lib/security/pam_userdb.so
@@ -214,6 +274,19 @@ chgrp chkpwd %_libexecdir/chkpwd && chmod 710 %_libexecdir/chkpwd
 %doc doc/specs/rfc86.0.txt
 
 %changelog
+* Tue Aug 23 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.80-owl1
+- Updated Linux-PAM to 0.80.
+- Updated pam-redhat to 0.80-1.
+- Reviewed patches, removed obsolete ones, updated all the rest.
+- Restricted list of global symbols exported by PAM modules to
+standard set of six pam_sm_* functions.
+- Changed modules logging to eliminate disunion in behaviour and
+avoid openlog/closelog calls for each logging function invocation.
+- Cleaned up conversation wrappers.
+- Added pam_sm_acct_mgmt for pam_mkhomedir module.
+- Implemented additional build sanity checks to ensure that all shared
+objects meet certain requirements.
+
 * Tue Jun 28 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.75-owl25
 - Build this package without optimizations based on strict aliasing rules.
 

@@ -1,0 +1,91 @@
+/tmp fixes in the documentation and debug code.
+
+diff -upk.orig Linux-PAM-0.80.orig/configure.in Linux-PAM-0.80/configure.in
+--- Linux-PAM-0.80.orig/configure.in	2005-08-03 15:07:41 +0000
++++ Linux-PAM-0.80/configure.in	2005-08-03 15:08:50 +0000
+@@ -58,11 +58,11 @@ dnl
+ dnl options and defaults
+ dnl
+ 
+-dnl lots of debugging information goes to /tmp/pam-debug.log
++dnl lots of debugging information goes to /var/run/pam-debug.log
+ AC_ARG_ENABLE(debug,
+ [  --enable-debug           specify you are building with debugging on],
+ 	WITH_DEBUG=yes ; AC_DEFINE([DEBUG],,
+-		[lots of stuff gets written to /tmp/pam-debug.log]),
++		[lots of stuff gets written to /var/run/pam-debug.log]),
+ 		WITH_DEBUG=no)
+ AC_SUBST(WITH_DEBUG)
+ 
+diff -upk.orig Linux-PAM-0.80.orig/doc/modules/pam_userdb.sgml Linux-PAM-0.80/doc/modules/pam_userdb.sgml
+--- Linux-PAM-0.80.orig/doc/modules/pam_userdb.sgml	2004-09-28 13:49:03 +0000
++++ Linux-PAM-0.80/doc/modules/pam_userdb.sgml	2005-08-03 15:08:12 +0000
+@@ -105,13 +105,13 @@ username/password pair in more than a da
+ 
+ This is a normal ftp configuration file (usually placed as <tt>/etc/pam.d/ftp</tt> 
+ on most systems) that will accept for login users whose username/password pairs are 
+-provided in the <tt>/tmp/dbtest.db</tt> file:
++provided in the <tt>/etc/dbtest.db</tt> file:
+ 
+ <tscreen>
+ <verb>
+ #%PAM-1.0
+ auth       required     pam_listfile.so item=user sense=deny file=/etc/ftpusers onerr=succeed
+-auth       sufficient   pam_userdb.so icase db=/tmp/dbtest
++auth       sufficient   pam_userdb.so icase db=/etc/dbtest
+ auth       required     pam_pwdb.so shadow nullok try_first_pass
+ auth       required     pam_shells.so
+ account    required     pam_pwdb.so
+diff -upk.orig Linux-PAM-0.80.orig/libpam/include/security/_pam_macros.h Linux-PAM-0.80/libpam/include/security/_pam_macros.h
+--- Linux-PAM-0.80.orig/libpam/include/security/_pam_macros.h	2000-12-04 18:31:56 +0000
++++ Linux-PAM-0.80/libpam/include/security/_pam_macros.h	2005-08-03 15:08:12 +0000
+@@ -73,11 +73,11 @@ do {                                    
+  * You have been warned :-) - CG
+  *
+  * to get automated debugging to the log file, it must be created manually.
+- * _PAM_LOGFILE must exist, mode 666
++ * _PAM_LOGFILE must exist and be writable to the programs you debug.
+  */
+ 
+ #ifndef _PAM_LOGFILE
+-#define _PAM_LOGFILE "/tmp/pam-debug.log"
++#define _PAM_LOGFILE "/var/run/pam-debug.log"
+ #endif
+ 
+ static void _pam_output_debug_info(const char *file, const char *fn
+diff -upk.orig Linux-PAM-0.80.orig/libpam_misc/Makefile Linux-PAM-0.80/libpam_misc/Makefile
+--- Linux-PAM-0.80.orig/libpam_misc/Makefile	2005-03-30 14:33:17 +0000
++++ Linux-PAM-0.80/libpam_misc/Makefile	2005-08-03 15:08:12 +0000
+@@ -2,7 +2,7 @@
+ # $Id: Makefile,v 1.9 2005/03/29 20:41:20 toady Exp $
+ #
+ 
+-# lots of debugging information goes to /tmp/pam-debug.log
++# lots of debugging information goes to /var/run/pam-debug.log
+ #MOREFLAGS += -D"DEBUG"
+ 
+ include ../Make.Rules
+diff -upk.orig Linux-PAM-0.80.orig/libpamc/Makefile Linux-PAM-0.80/libpamc/Makefile
+--- Linux-PAM-0.80.orig/libpamc/Makefile	2005-03-30 14:33:18 +0000
++++ Linux-PAM-0.80/libpamc/Makefile	2005-08-03 15:08:12 +0000
+@@ -2,7 +2,7 @@
+ # $Id: Makefile,v 1.8 2005/03/29 20:41:20 toady Exp $
+ #
+ 
+-# lots of debugging information goes to /tmp/pam-debug.log
++# lots of debugging information goes to /var/run/pam-debug.log
+ #MOREFLAGS += -D"DEBUG"
+ 
+ include ../Make.Rules
+diff -upk.orig Linux-PAM-0.80.orig/modules/pam_userdb/README Linux-PAM-0.80/modules/pam_userdb/README
+--- Linux-PAM-0.80.orig/modules/pam_userdb/README	2004-09-28 13:49:26 +0000
++++ Linux-PAM-0.80/modules/pam_userdb/README	2005-08-03 15:08:12 +0000
+@@ -51,7 +51,7 @@ MODULE SERVICES PROVIDED:
+ 	auth		_authentication and _setcred (blank)
+ 
+ EXAMPLE USE:
+-	auth  sufficient pam_userdb.so icase db=/tmp/dbtest.db
++	auth  sufficient pam_userdb.so icase db=/etc/dbtest.db
+ 
+ AUTHOR:
+ 	Cristian Gafton <gafton@redhat.com>

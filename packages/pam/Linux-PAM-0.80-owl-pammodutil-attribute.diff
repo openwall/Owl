@@ -1,0 +1,29 @@
+diff -upk.orig Linux-PAM-0.80.orig/modules/pammodutil/include/security/_pam_modutil.h Linux-PAM-0.80/modules/pammodutil/include/security/_pam_modutil.h
+--- Linux-PAM-0.80.orig/modules/pammodutil/include/security/_pam_modutil.h	2004-09-24 13:13:22 +0000
++++ Linux-PAM-0.80/modules/pammodutil/include/security/_pam_modutil.h	2005-08-09 11:20:16 +0000
+@@ -23,6 +23,25 @@
+ #include <shadow.h>
+ #include <sys/types.h>
+ 
++#if defined(__GNUC__) && defined(__GNUC_MINOR__)
++# define PAM_MODUTIL_GNUC_PREREQ(maj, min) \
++	((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
++#else
++# define PAM_MODUTIL_GNUC_PREREQ(maj, min) 0
++#endif
++
++#if PAM_MODUTIL_GNUC_PREREQ(2,5)
++# define PAM_MODUTIL_FORMAT(params) __attribute__((__format__ params))
++#else
++# define PAM_MODUTIL_FORMAT(params)
++#endif
++
++#if PAM_MODUTIL_GNUC_PREREQ(3,3)
++# define PAM_MODUTIL_NONNULL(params) __attribute__((__nonnull__ params))
++#else
++# define PAM_MODUTIL_NONNULL(params)
++#endif
++
+ extern struct passwd *_pammodutil_getpwnam(pam_handle_t *pamh,
+ 					   const char *user);
+ 

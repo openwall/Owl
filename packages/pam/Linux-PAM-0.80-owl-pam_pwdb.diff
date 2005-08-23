@@ -1,18 +1,22 @@
-diff -ur pam-0.75.orig/modules/pam_pwdb/Makefile pam-0.75/modules/pam_pwdb/Makefile
---- pam-0.75.orig/modules/pam_pwdb/Makefile	Fri Jan  5 01:51:31 2001
-+++ pam-0.75/modules/pam_pwdb/Makefile	Sun May 19 03:03:07 2002
-@@ -11,8 +11,8 @@
+diff -uprk.orig Linux-PAM-0.80.orig/modules/pam_pwdb/Makefile Linux-PAM-0.80/modules/pam_pwdb/Makefile
+--- Linux-PAM-0.80.orig/modules/pam_pwdb/Makefile	2005-05-19 15:19:50 +0000
++++ Linux-PAM-0.80/modules/pam_pwdb/Makefile	2005-08-23 13:24:07 +0000
+@@ -8,11 +8,13 @@
+ #
+ 
+ include ../../Make.Rules
++HEADER_DIRS += -I../pammodutil/include
++EXTRALS += -L../pammodutil -lpammodutil -L../../libpam -lpam
  
  ifeq ($(HAVE_LIBPWDB),yes)
  
--EXTRALS += -lpwdb 
+ EXTRALS += -lpwdb
 -EXTRAS += -DCHKPWD_HELPER=\"$(SUPLEMENTED)/$(CHKPWD)\"
-+EXTRALS += -lpwdb
-+EXTRAS += -DCHKPWD_HELPER=\"/usr/libexec/chkpwd/$(CHKPWD)\"
++EXTRAS += -fno-strict-aliasing -DCHKPWD_HELPER=\"/usr/libexec/chkpwd/$(CHKPWD)\"
  
- ifeq ($(HAVE_LIBCRYPT),yes)
-   EXTRALS += -lcrypt
-@@ -26,9 +26,8 @@
+ ifeq ($(HAVE_LIBSELINUX),yes)
+   EXTRALS += -lselinux
+@@ -33,9 +35,8 @@ LIBOBJ = $(TITLE).o
  LIBOBJD = $(addprefix dynamic/,$(LIBOBJ))
  #LIBOBJS = $(addprefix static/,$(LIBOBJ))
  LIBDEPS = pam_unix_acct.-c pam_unix_auth.-c pam_unix_passwd.-c \
@@ -23,21 +27,21 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/Makefile pam-0.75/modules/pam_pwdb/Makef
  CFLAGS += $(EXTRAS)
  
  ifdef DYNAMIC
-@@ -51,11 +50,10 @@
+@@ -58,11 +59,10 @@ info:
  	@echo "*** Building PAM_pwdb module..."
  	@echo
  
 -$(CHKPWD): pwdb_chkpwd.o md5_good.o md5_broken.o \
 -           md5_crypt_good.o md5_crypt_broken.o
 +$(CHKPWD): pwdb_chkpwd.o
- 	$(CC) -o $(CHKPWD) $^ -lpwdb
+ 	$(CC) $(CFLAGS) -o $(CHKPWD) $^ $(LDFLAGS) -lpwdb $(EXTRALS)
  
 -pwdb_chkpwd.o: pwdb_chkpwd.c pam_unix_md.-c bigcrypt.-c
 +pwdb_chkpwd.o: pwdb_chkpwd.c pam_unix_md.-c
  
  md5_good.o: md5.c
  	$(CC) $(CFLAGS) $(CPPFLAGS) -DHIGHFIRST -D'MD5Name(x)=Good##x' \
-@@ -105,12 +103,12 @@
+@@ -112,12 +112,12 @@ install: all
  ifdef DYNAMIC
  	$(INSTALL) -m $(SHLIBMODE) $(LIBSHARED) $(FAKEROOT)$(SECUREDIR)
  endif
@@ -53,10 +57,10 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/Makefile pam-0.75/modules/pam_pwdb/Makef
  
  clean:
  	rm -f $(CHKPWD) $(LIBOBJD) $(LIBOBJS) $(MOREDELS) core *~ *.o *.so
-diff -ur pam-0.75.orig/modules/pam_pwdb/pam_pwdb.c pam-0.75/modules/pam_pwdb/pam_pwdb.c
---- pam-0.75.orig/modules/pam_pwdb/pam_pwdb.c	Fri Jan  5 01:51:31 2001
-+++ pam-0.75/modules/pam_pwdb/pam_pwdb.c	Sun May 19 03:01:37 2002
-@@ -190,7 +190,7 @@
+diff -uprk.orig Linux-PAM-0.80.orig/modules/pam_pwdb/pam_pwdb.c Linux-PAM-0.80/modules/pam_pwdb/pam_pwdb.c
+--- Linux-PAM-0.80.orig/modules/pam_pwdb/pam_pwdb.c	2005-08-23 10:18:58 +0000
++++ Linux-PAM-0.80/modules/pam_pwdb/pam_pwdb.c	2005-08-23 10:21:57 +0000
+@@ -192,7 +192,7 @@ PAM_EXTERN int pam_sm_chauthtok(pam_hand
  
      pwdb_start();
      ctrl = set_ctrl(flags, argc, argv);
@@ -65,21 +69,94 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/pam_pwdb.c pam-0.75/modules/pam_pwdb/pam
      pwdb_end();
  
      D(("done."));
-diff -ur pam-0.75.orig/modules/pam_pwdb/pam_unix_acct.-c pam-0.75/modules/pam_pwdb/pam_unix_acct.-c
---- pam-0.75.orig/modules/pam_pwdb/pam_unix_acct.-c	Mon Jan 22 19:04:15 2001
-+++ pam-0.75/modules/pam_pwdb/pam_unix_acct.-c	Sun May 19 03:01:37 2002
-@@ -145,7 +145,7 @@
+diff -uprk.orig Linux-PAM-0.80.orig/modules/pam_pwdb/pam_unix_acct.-c Linux-PAM-0.80/modules/pam_pwdb/pam_unix_acct.-c
+--- Linux-PAM-0.80.orig/modules/pam_pwdb/pam_unix_acct.-c	2000-12-04 19:02:34 +0000
++++ Linux-PAM-0.80/modules/pam_pwdb/pam_unix_acct.-c	2005-08-23 13:22:13 +0000
+@@ -43,9 +43,9 @@ static int _shadow_acct_mgmt_exp(pam_han
+ 	    _log_err(LOG_NOTICE
+ 		     , "acct: account %s has expired (account expired)"
+ 		     , uname);
+-	    make_remark(pamh, ctrl, PAM_ERROR_MSG
+-			, "Your account has expired; "
+-			"please contact your system administrator");
++	    if (off(UNIX__QUIET, ctrl))
++		_pammodutil_error(pamh, "%s", "Your account has expired; "
++				  "please contact your system administrator");
+ 
+ 	    D(("account expired"));
+ 	    return PAM_ACCT_EXPIRED;
+@@ -86,9 +86,9 @@ static int _shadow_acct_mgmt_exp(pam_han
+ 		_log_err(LOG_NOTICE, "acct: account %s has expired "
+ 			 "(failed to change password)", uname);
+ 	    }
+-	    make_remark(pamh, ctrl, PAM_ERROR_MSG
+-			, "Your password has expired; "
+-			"please see your system administrator");
++	    if (off(UNIX__QUIET, ctrl))
++		_pammodutil_error(pamh, "%s", "Your password has expired; "
++				  "please contact your system administrator");
+ 
+ 	    D(("account expired2"));
+ 	    return PAM_ACCT_EXPIRED;
+@@ -109,9 +109,8 @@ static int _shadow_acct_mgmt_exp(pam_han
+ 		     , "acct: expired password for user %s (root enforced)"
+ 		     , uname);
+ 	}
+-	make_remark(pamh, ctrl, PAM_ERROR_MSG
+-		    , "You are required to change your password immediately"
+-	    );
++	if (off(UNIX__QUIET, ctrl))
++	    _pammodutil_error(pamh, "%s", "You are required to change your password immediately");
+ 
+ 	D(("need a new password"));
+ 	return PAM_NEW_AUTHTOK_REQD;
+@@ -125,8 +124,8 @@ static int _shadow_acct_mgmt_exp(pam_han
+ 		     , "acct: expired password for user %s (password aged)"
+ 		     , uname);
+ 	}
+-	make_remark(pamh, ctrl, PAM_ERROR_MSG
+-		    , "Your password has expired; please change it!");
++	if (off(UNIX__QUIET, ctrl))
++	    _pammodutil_error(pamh, "%s", "Your password has expired; please change it!");
+ 
+ 	D(("need a new password 2"));
+ 	return PAM_NEW_AUTHTOK_REQD;
+@@ -145,27 +144,17 @@ static int _shadow_acct_mgmt_exp(pam_han
  	warn_days = *((const int *) pwe->value);
  	(void) pwdb_entry_delete(&pwe);
  
 -	if ((daysleft <= warn_days) && (warn_days > 0)) {
+-	    char *s;
+-
 +	if ((daysleft <= warn_days) && (warn_days > 0) && daysleft >= 0) {
- 	    char *s;
- 
  	    if ( on(UNIX_DEBUG, ctrl) ) {
-diff -ur pam-0.75.orig/modules/pam_pwdb/pam_unix_md.-c pam-0.75/modules/pam_pwdb/pam_unix_md.-c
---- pam-0.75.orig/modules/pam_pwdb/pam_unix_md.-c	Mon Jan  3 22:01:53 2000
-+++ pam-0.75/modules/pam_pwdb/pam_unix_md.-c	Sun May 19 03:01:37 2002
+ 		_log_err(LOG_DEBUG
+ 			 , "acct: password for user %s will expire in %d days"
+ 			 , uname, daysleft);
+ 	    }
+ 
+-#define LocalComment "Warning: your password will expire in %d day%s"
+-	    if ((s = (char *) malloc(30+sizeof(LocalComment))) == NULL) {
+-		_log_err(LOG_CRIT, "malloc failure in " __FILE__);
+-		retval = PAM_BUF_ERR;
+-	    } else {
+-
+-		sprintf(s, LocalComment, daysleft, daysleft == 1 ? "":"s");
+-
+-		make_remark(pamh, ctrl, PAM_TEXT_INFO, s);
+-		free(s);
+-	    }
+-#undef LocalComment
++	    if (off(UNIX__QUIET, ctrl))
++		retval = _pammodutil_info(pamh,
++		    "Warning: your password will expire in %d day%s",
++		    daysleft, daysleft == 1 ? "":"s");
+ 	}
+     } else {
+ 	retval = PAM_SUCCESS;
+diff -uprk.orig Linux-PAM-0.80.orig/modules/pam_pwdb/pam_unix_md.-c Linux-PAM-0.80/modules/pam_pwdb/pam_unix_md.-c
+--- Linux-PAM-0.80.orig/modules/pam_pwdb/pam_unix_md.-c	2001-11-12 05:04:52 +0000
++++ Linux-PAM-0.80/modules/pam_pwdb/pam_unix_md.-c	2005-08-23 10:21:57 +0000
 @@ -9,6 +9,9 @@
   * software freely from the US, please do not send me any. (AGM)
   */
@@ -90,7 +167,7 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/pam_unix_md.-c pam-0.75/modules/pam_pwdb
  /* this should have been defined in a header file.. Why wasn't it? AGM */
  extern char *crypt(const char *key, const char *salt);
  
-@@ -27,10 +30,12 @@
+@@ -27,10 +30,12 @@ struct cfns {
  const static struct cfns cfn_list[N_MDS] = {
      { "$1$", 3, Goodcrypt_md5 },
  };
@@ -103,7 +180,7 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/pam_unix_md.-c pam-0.75/modules/pam_pwdb
      int i;
  
      D(("called with key='%s', salt='%s'", key, salt));
-@@ -47,12 +52,16 @@
+@@ -47,12 +52,16 @@ static char *_pam_md(const char *key, co
      if ( i >= N_MDS ) {
  	e = bigcrypt(key, salt);      /* (defaults to standard algorithm) */
      }
@@ -120,15 +197,15 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/pam_unix_md.-c pam-0.75/modules/pam_pwdb
  #ifndef PWDB_NO_MD_COMPAT
  static char *_pam_md_compat(const char *key, const char *salt)
  {
-@@ -74,3 +83,4 @@
+@@ -71,3 +80,4 @@ static char *_pam_md_compat(const char *
      return x;                           /* this must be deleted elsewhere */
  }
  #endif /* PWDB_NO_MD_COMPAT */
 +#endif
-diff -ur pam-0.75.orig/modules/pam_pwdb/pam_unix_passwd.-c pam-0.75/modules/pam_pwdb/pam_unix_passwd.-c
---- pam-0.75.orig/modules/pam_pwdb/pam_unix_passwd.-c	Mon Jan 22 19:04:15 2001
-+++ pam-0.75/modules/pam_pwdb/pam_unix_passwd.-c	Sun May 19 03:01:37 2002
-@@ -5,12 +5,20 @@
+diff -uprk.orig Linux-PAM-0.80.orig/modules/pam_pwdb/pam_unix_passwd.-c Linux-PAM-0.80/modules/pam_pwdb/pam_unix_passwd.-c
+--- Linux-PAM-0.80.orig/modules/pam_pwdb/pam_unix_passwd.-c	2001-11-12 06:57:38 +0000
++++ Linux-PAM-0.80/modules/pam_pwdb/pam_unix_passwd.-c	2005-08-23 10:46:06 +0000
+@@ -5,12 +5,20 @@ static const char rcsid_pass[] =
  " - PAM_PWDB password module <morgan@parc.power.net>"
  ;
  
@@ -149,36 +226,15 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/pam_unix_passwd.-c pam-0.75/modules/pam_
  
  /* data tokens */
  
-@@ -19,6 +27,28 @@
+@@ -19,6 +27,7 @@ static const char rcsid_pass[] =
  
  /* Implementation */
  
-+static int read_loop(int fd, char *buffer, int count)
-+{
-+	int offset, block;
-+
-+	offset = 0;
-+	while (count > 0) {
-+		block = read(fd, &buffer[offset], count);
-+
-+		if (block < 0) {
-+			if (errno == EINTR) continue;
-+			return block;
-+		}
-+		if (!block) return offset;
-+
-+		offset += block;
-+		count -= block;
-+	}
-+
-+	return offset;
-+}
-+
 +#if 0
  /*
   * i64c - convert an integer to a radix 64 character
   */
-@@ -40,6 +70,7 @@
+@@ -40,6 +49,7 @@ static int i64c(int i)
          return ('a' - 38 + i);
      return ('\0');
  }
@@ -186,7 +242,7 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/pam_unix_passwd.-c pam-0.75/modules/pam_
  
  /*
   * FUNCTION: _pam_unix_chauthtok() 
-@@ -61,18 +92,39 @@
+@@ -61,18 +71,39 @@ static int i64c(int i)
   * in this release (.52) mostly for the purpose of discussion.
   */
  
@@ -228,7 +284,7 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/pam_unix_passwd.-c pam-0.75/modules/pam_
      /*
       * First get the name of a user
       */
-@@ -150,10 +202,12 @@
+@@ -150,10 +181,12 @@ static int _unix_chauthtok(pam_handle_t 
  	}
  
      } else if ( on( UNIX__UPDATE, ctrl ) ) {
@@ -241,7 +297,7 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/pam_unix_passwd.-c pam-0.75/modules/pam_
  
  	/*
  	 * obtain the proposed password
-@@ -202,7 +256,7 @@
+@@ -202,7 +235,7 @@ static int _unix_chauthtok(pam_handle_t 
  				      , "Enter new UNIX password: "
  				      , "Retype new UNIX password: "
  				      , _UNIX_NEW_AUTHTOK
@@ -250,7 +306,7 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/pam_unix_passwd.-c pam-0.75/modules/pam_
  
  	if ( retval != PAM_SUCCESS ) {
  	    if ( on(UNIX_DEBUG,ctrl) ) {
-@@ -221,7 +275,8 @@
+@@ -221,7 +254,8 @@ static int _unix_chauthtok(pam_handle_t 
  	 * password is acceptable.
  	 */
  
@@ -260,7 +316,7 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/pam_unix_passwd.-c pam-0.75/modules/pam_
  	    pass_new = NULL;
  	}
  
-@@ -229,7 +284,7 @@
+@@ -229,7 +263,7 @@ static int _unix_chauthtok(pam_handle_t 
  
  	if (retval != PAM_SUCCESS) {
  	    _log_err(LOG_NOTICE, "new password not acceptable");
@@ -269,7 +325,7 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/pam_unix_passwd.-c pam-0.75/modules/pam_
  	    return retval;
  	}
  
-@@ -245,6 +300,7 @@
+@@ -247,6 +281,7 @@ static int _unix_chauthtok(pam_handle_t 
  	 *       of password handling... no encryption needed..
  	 */
  
@@ -277,7 +333,7 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/pam_unix_passwd.-c pam-0.75/modules/pam_
  	if ( on(UNIX_MD5_PASS, ctrl) ) {
  
  	    /*
-@@ -314,6 +370,39 @@
+@@ -316,6 +351,39 @@ static int _unix_chauthtok(pam_handle_t 
  		/* no longer need cleartext */
  		pass_new = tpass = _pam_md( pass_new, salt );
  	    }
@@ -288,7 +344,7 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/pam_unix_passwd.-c pam-0.75/modules/pam_
 +		char *pw, *salt;
 +
 +		if ((fd = open("/dev/urandom", O_RDONLY)) < 0 ||
-+		    read_loop(fd, pool, sizeof(pool)) != sizeof(pool)) {
++		    _pammodutil_read(fd, pool, sizeof(pool)) != sizeof(pool)) {
 +			if (fd >= 0) close(fd);
 +			_log_err(LOG_CRIT, "failed to read /dev/urandom");
 +			return PAM_ABORT;
@@ -317,10 +373,10 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/pam_unix_passwd.-c pam-0.75/modules/pam_
  	}
  
  	D(("password processed"));
-diff -ur pam-0.75.orig/modules/pam_pwdb/pwdb_chkpwd.c pam-0.75/modules/pam_pwdb/pwdb_chkpwd.c
---- pam-0.75.orig/modules/pam_pwdb/pwdb_chkpwd.c	Mon Apr 23 22:14:19 2001
-+++ pam-0.75/modules/pam_pwdb/pwdb_chkpwd.c	Sun May 19 03:01:37 2002
-@@ -108,7 +108,7 @@
+diff -uprk.orig Linux-PAM-0.80.orig/modules/pam_pwdb/pwdb_chkpwd.c Linux-PAM-0.80/modules/pam_pwdb/pwdb_chkpwd.c
+--- Linux-PAM-0.80.orig/modules/pam_pwdb/pwdb_chkpwd.c	2005-08-23 10:18:58 +0000
++++ Linux-PAM-0.80/modules/pam_pwdb/pwdb_chkpwd.c	2005-08-23 10:21:57 +0000
+@@ -113,7 +113,7 @@ int main(int argc, char **argv)
  	fprintf(stderr,
  		"This program is not designed for running in this way\n"
  		"-- the system administrator has been informed\n");
@@ -329,7 +385,7 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/pwdb_chkpwd.c pam-0.75/modules/pam_pwdb/
      }
  
      /*
-@@ -127,7 +127,7 @@
+@@ -132,7 +132,7 @@ int main(int argc, char **argv)
      if (retval != PWDB_SUCCESS) {
  	_log_err(LOG_ALERT, "could not identify user");
  	while (pwdb_end() != PWDB_SUCCESS);
@@ -338,7 +394,7 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/pwdb_chkpwd.c pam-0.75/modules/pam_pwdb/
      }
      if (argc == 2) {
  	if (pwdb_get_entry(pw, "user", &pwe) == PWDB_SUCCESS) {
-@@ -143,7 +143,7 @@
+@@ -148,7 +148,7 @@ int main(int argc, char **argv)
      }
  
      /* read the password from stdin (a pipe from the pam_pwdb module) */
@@ -347,7 +403,7 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/pwdb_chkpwd.c pam-0.75/modules/pam_pwdb/
      npass = read(STDIN_FILENO, pass, MAXPASS);
  
      if (npass < 0) {                             /* is it a valid password? */
-@@ -177,7 +177,7 @@
+@@ -182,7 +182,7 @@ int main(int argc, char **argv)
      
      /* return pass or fail */
  
@@ -356,10 +412,54 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/pwdb_chkpwd.c pam-0.75/modules/pam_pwdb/
  }
  
  /*
-diff -ur pam-0.75.orig/modules/pam_pwdb/support.-c pam-0.75/modules/pam_pwdb/support.-c
---- pam-0.75.orig/modules/pam_pwdb/support.-c	Mon Apr 23 22:39:04 2001
-+++ pam-0.75/modules/pam_pwdb/support.-c	Sun May 19 03:01:37 2002
-@@ -228,7 +228,12 @@
+diff -uprk.orig Linux-PAM-0.80.orig/modules/pam_pwdb/support.-c Linux-PAM-0.80/modules/pam_pwdb/support.-c
+--- Linux-PAM-0.80.orig/modules/pam_pwdb/support.-c	2004-09-15 12:06:17 +0000
++++ Linux-PAM-0.80/modules/pam_pwdb/support.-c	2005-08-23 13:21:29 +0000
+@@ -4,6 +4,8 @@
+  * Copyright information at end of file.
+  */
+ 
++#include <security/_pam_modutil.h>
++
+ /*
+  * here is the string to inform the user that the new passwords they
+  * typed were not the same.
+@@ -115,6 +117,10 @@ static const UNIX_Ctrls unix_args[UNIX_C
+ 
+ #define UNIX_DEFAULTS  (unix_args[UNIX__NONULL].flag)
+ 
++DEFINE_PAM_LOG("pam_pwdb")
++#define _log_err _pam_log
++
++#if 0
+ /* syslogging function for errors and other information */
+ 
+ static void _log_err(int err, const char *format, ...)
+@@ -127,6 +133,7 @@ static void _log_err(int err, const char
+     va_end(args);
+     closelog();
+ }
++#endif
+ 
+ /* this is a front-end for module-application conversations */
+ 
+@@ -162,6 +169,7 @@ static int converse(pam_handle_t *pamh, 
+     return retval;                  /* propagate error status */
+ }
+ 
++#if 0
+ static int make_remark(pam_handle_t *pamh, unsigned int ctrl
+ 		       , int type, const char *text)
+ {
+@@ -184,6 +192,7 @@ static int make_remark(pam_handle_t *pam
+     }
+     return retval;
+ }
++#endif
+ 
+ /*
+  * set the control flags for the UNIX module.
+@@ -230,7 +239,12 @@ static int set_ctrl(int flags, int argc,
  	}
  
  	if ( j >= UNIX_CTRLS_ ) {
@@ -369,11 +469,11 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/support.-c pam-0.75/modules/pam_pwdb/sup
 +	} else
 +	if (j == UNIX_BIGCRYPT) {
 +	    _log_err(LOG_ERR,
-+		"bigcrypt shouldn't be used for new passwords", *argv);
++		"bigcrypt shouldn't be used for new passwords");
  	} else {
  	    ctrl &= unix_args[j].mask;    /* for turning things off */
  	    ctrl |= unix_args[j].flag;    /* for turning things on  */
-@@ -374,8 +379,8 @@
+@@ -383,8 +397,8 @@ static int pwdb_run_helper_binary(pam_ha
  	while (pwdb_end() == PWDB_SUCCESS);
  
  	/* reopen stdin as pipe */
@@ -384,7 +484,7 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/support.-c pam-0.75/modules/pam_pwdb/sup
  
  	/* exec binary helper */
  	args[0] = x_strdup(CHKPWD_HELPER);
-@@ -385,20 +390,26 @@
+@@ -394,20 +408,26 @@ static int pwdb_run_helper_binary(pam_ha
  
  	/* should not get here: exit with error */
  	D(("helper binary is not available"));
@@ -416,7 +516,7 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/support.-c pam-0.75/modules/pam_pwdb/sup
      } else {
  	D(("fork failed"));
  	retval = PAM_AUTH_ERR;
-@@ -411,11 +422,14 @@
+@@ -421,11 +441,14 @@ static int pwdb_run_helper_binary(pam_ha
      return retval;
  }
  
@@ -430,8 +530,8 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/support.-c pam-0.75/modules/pam_pwdb/sup
 +    const struct passwd *libc_pw;
  
      const char *salt;
-     char *pp = NULL;
-@@ -475,7 +489,9 @@
+     char *pp;
+@@ -485,7 +508,9 @@ static int _unix_verify_password(pam_han
  
      retval = pwdb_get_entry(pw, "passwd", &pwe);
      if (retval != PWDB_SUCCESS) {
@@ -441,24 +541,45 @@ diff -ur pam-0.75.orig/modules/pam_pwdb/support.-c pam-0.75/modules/pam_pwdb/sup
 +	if (libc_pw && geteuid() != 0 && getuid() == libc_pw->pw_uid) {
  	    /* we are not root perhaps this is the reason? Run helper */
  	    D(("running helper binary"));
- 	    retval = pwdb_run_helper_binary(pamh, p, name);
-@@ -535,6 +551,7 @@
- 	    if ( pp != NULL && strcmp( pp, salt ) == 0 ) {
+ 	    retval = pwdb_run_helper_binary(pamh, p, ctrl, name);
+@@ -542,13 +567,17 @@ static int _unix_verify_password(pam_han
+ 	if ( strcmp( pp, salt ) == 0 ) {
+ 	    verify_result = PAM_SUCCESS;
+ 	} else {
++#if 0
+ 	    _pam_delete(pp);
+ 	    pp = _pam_md_compat(p, salt);
+ 	    if ( strcmp( pp, salt ) == 0 ) {
  		verify_result = PAM_SUCCESS;
  	    } else {
-+#if 0
- 		_pam_delete(pp);
- 		D(("did not match"));
- 		pp = _pam_md_compat(p, salt);
-@@ -542,8 +559,11 @@
- 		if ( pp != NULL && strcmp( pp, salt ) == 0 ) {
- 		    verify_result = PAM_SUCCESS;
- 		} else {
 +#endif
- 		    verify_result = PAM_AUTH_ERR;
+ 		verify_result = PAM_AUTH_ERR;
 +#if 0
- 		}
-+#endif
  	    }
- 	    D(("verify result is %s", pam_strerror(pamh, verify_result)));
- 	    p = NULL; /* no longer needed here */
++#endif
+ 	}
+ 
+         p = NULL;                                /* no longer needed here */
+@@ -826,8 +855,8 @@ static int _unix_read_password( pam_hand
+ 			    || strcmp(token,resp[i-1].resp)) {
+ 			    token = _pam_delete(token); /* mistyped */
+ 			    retval = PAM_AUTHTOK_RECOVER_ERR;
+-			    make_remark(pamh, ctrl
+-					, PAM_ERROR_MSG, MISTYPED_PASS);
++			    if (off(UNIX__QUIET, ctrl))
++				_pammodutil_error(pamh, "%s", MISTYPED_PASS);
+ 			}
+ 		    }
+ 
+@@ -911,8 +940,9 @@ static int _pam_unix_approve_pass(pam_ha
+ 	  if ( on(UNIX_DEBUG, ctrl) ) {
+ 	       _log_err(LOG_DEBUG, "bad authentication token");
+ 	  }
+-	  make_remark(pamh, ctrl, PAM_ERROR_MSG, pass_new == NULL ?
+-		       "No password supplied":"Password unchanged" );
++	  if (off(UNIX__QUIET, ctrl))
++	       _pammodutil_error(pamh, "%s", pass_new == NULL ?
++		    "No password supplied" : "Password unchanged" );
+ 	  return PAM_AUTHTOK_ERR;
+      }
+ 

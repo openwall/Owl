@@ -1,0 +1,133 @@
+Replace explicit _BSD_SOURCE and _GNU_SOURCE defines in C code
+with AC_GNU_SOURCE autoconf macro.
+
+diff -upk.orig Linux-PAM-0.80.orig/configure.in Linux-PAM-0.80/configure.in
+--- Linux-PAM-0.80.orig/configure.in	2005-08-06 10:22:05 +0000
++++ Linux-PAM-0.80/configure.in	2005-08-06 10:22:21 +0000
+@@ -46,6 +46,7 @@ NEEDSONAME=yes			; AC_SUBST(NEEDSONAME)
+ LDCONFIG=/sbin/ldconfig		; AC_SUBST(LDCONFIG)
+ 
+ dnl Checks for programs.
++AC_GNU_SOURCE
+ AC_PROG_CC
+ dnl ### AC_PROG_CXX
+ AC_PROG_YACC
+@@ -58,6 +59,8 @@ dnl
+ dnl options and defaults
+ dnl
+ 
++AC_SYS_LARGEFILE
++
+ dnl lots of debugging information goes to /var/run/pam-debug.log
+ AC_ARG_ENABLE(debug,
+ [  --enable-debug           specify you are building with debugging on],
+diff -upk.orig Linux-PAM-0.80.orig/modules/pam_group/pam_group.c Linux-PAM-0.80/modules/pam_group/pam_group.c
+--- Linux-PAM-0.80.orig/modules/pam_group/pam_group.c	2005-08-06 10:22:05 +0000
++++ Linux-PAM-0.80/modules/pam_group/pam_group.c	2005-08-06 10:24:35 +0000
+@@ -11,8 +11,6 @@ static const char rcsid[] =
+ "Version 0.5 for Linux-PAM\n"
+ "Copyright (c) Andrew G. Morgan 1996 <morgan@linux.kernel.org>\n";
+ 
+-#define _BSD_SOURCE
+-
+ #include "config.h"
+ 
+ #include <sys/file.h>
+diff -upk.orig Linux-PAM-0.80.orig/modules/pam_issue/pam_issue.c Linux-PAM-0.80/modules/pam_issue/pam_issue.c
+--- Linux-PAM-0.80.orig/modules/pam_issue/pam_issue.c	2005-08-06 10:22:05 +0000
++++ Linux-PAM-0.80/modules/pam_issue/pam_issue.c	2005-08-06 10:24:26 +0000
+@@ -14,9 +14,6 @@
+  * Released under the GNU LGPL version 2 or later
+  */
+ 
+-#define _GNU_SOURCE
+-#define _BSD_SOURCE
+-
+ #include "config.h"
+ 
+ #include <string.h>
+diff -upk.orig Linux-PAM-0.80.orig/modules/pam_mkhomedir/pam_mkhomedir.c Linux-PAM-0.80/modules/pam_mkhomedir/pam_mkhomedir.c
+--- Linux-PAM-0.80.orig/modules/pam_mkhomedir/pam_mkhomedir.c	2005-08-06 10:22:05 +0000
++++ Linux-PAM-0.80/modules/pam_mkhomedir/pam_mkhomedir.c	2005-08-06 10:24:13 +0000
+@@ -27,9 +27,6 @@
+      <morgan@parc.power.net> 1996
+  */
+ 
+-/* I want snprintf dammit */
+-#define _GNU_SOURCE
+-
+ #include "config.h"
+ 
+ #include <stdarg.h>
+diff -upk.orig Linux-PAM-0.80.orig/modules/pam_rootok/pam_rootok.c Linux-PAM-0.80/modules/pam_rootok/pam_rootok.c
+--- Linux-PAM-0.80.orig/modules/pam_rootok/pam_rootok.c	2005-05-19 15:25:43 +0000
++++ Linux-PAM-0.80/modules/pam_rootok/pam_rootok.c	2005-08-06 10:23:57 +0000
+@@ -6,7 +6,7 @@
+  * Written by Andrew Morgan <morgan@linux.kernel.org> 1996/3/11
+  */
+ 
+-#define _GNU_SOURCE
++#include "config.h"
+ 
+ #include <stdio.h>
+ #include <unistd.h>
+diff -upk.orig Linux-PAM-0.80.orig/modules/pam_securetty/pam_securetty.c Linux-PAM-0.80/modules/pam_securetty/pam_securetty.c
+--- Linux-PAM-0.80.orig/modules/pam_securetty/pam_securetty.c	2005-08-06 10:22:05 +0000
++++ Linux-PAM-0.80/modules/pam_securetty/pam_securetty.c	2005-08-06 10:23:47 +0000
+@@ -10,7 +10,7 @@
+  * Slight modifications AGM. 1996/12/3
+  */
+ 
+-#define _GNU_SOURCE
++#include "config.h"
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+diff -upk.orig Linux-PAM-0.80.orig/modules/pam_shells/pam_shells.c Linux-PAM-0.80/modules/pam_shells/pam_shells.c
+--- Linux-PAM-0.80.orig/modules/pam_shells/pam_shells.c	2004-09-24 11:36:37 +0000
++++ Linux-PAM-0.80/modules/pam_shells/pam_shells.c	2005-08-06 10:23:54 +0000
+@@ -8,7 +8,7 @@
+  * This code shamelessly ripped from the pam_securetty module.
+  */
+ 
+-#define _BSD_SOURCE
++#include "config.h"
+ 
+ #include <pwd.h>
+ #include <stdarg.h>
+diff -upk.orig Linux-PAM-0.80.orig/modules/pam_succeed_if/pam_succeed_if.c Linux-PAM-0.80/modules/pam_succeed_if/pam_succeed_if.c
+--- Linux-PAM-0.80.orig/modules/pam_succeed_if/pam_succeed_if.c	2005-06-09 07:18:53 +0000
++++ Linux-PAM-0.80/modules/pam_succeed_if/pam_succeed_if.c	2005-08-06 10:23:35 +0000
+@@ -37,7 +37,7 @@
+  *
+  */
+ 
+-#define _GNU_SOURCE
++#include "config.h"
+ 
+ #include <sys/types.h>
+ #include <errno.h>
+diff -upk.orig Linux-PAM-0.80.orig/modules/pam_warn/pam_warn.c Linux-PAM-0.80/modules/pam_warn/pam_warn.c
+--- Linux-PAM-0.80.orig/modules/pam_warn/pam_warn.c	2005-06-09 17:29:20 +0000
++++ Linux-PAM-0.80/modules/pam_warn/pam_warn.c	2005-08-06 10:24:01 +0000
+@@ -6,7 +6,7 @@
+  * Written by Andrew Morgan <morgan@linux.kernel.org> 1996/3/11
+  */
+ 
+-#define _BSD_SOURCE
++#include "config.h"
+ 
+ #include <stdio.h>
+ #include <unistd.h>
+diff -upk.orig Linux-PAM-0.80.orig/modules/pam_wheel/pam_wheel.c Linux-PAM-0.80/modules/pam_wheel/pam_wheel.c
+--- Linux-PAM-0.80.orig/modules/pam_wheel/pam_wheel.c	2005-08-06 10:22:05 +0000
++++ Linux-PAM-0.80/modules/pam_wheel/pam_wheel.c	2005-08-06 10:24:17 +0000
+@@ -21,7 +21,7 @@
+  *    a wheel member.
+  */
+ 
+-#define _BSD_SOURCE
++#include "config.h"
+ 
+ #include <stdio.h>
+ #include <unistd.h>

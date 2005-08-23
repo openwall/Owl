@@ -1,0 +1,66 @@
+Never rely on getlogin(3).
+
+diff -upk.orig Linux-PAM-0.80.orig/modules/pam_wheel/README Linux-PAM-0.80/modules/pam_wheel/README
+--- Linux-PAM-0.80.orig/modules/pam_wheel/README	2004-11-12 11:59:31 +0000
++++ Linux-PAM-0.80/modules/pam_wheel/README	2005-08-03 15:26:35 +0000
+@@ -6,10 +6,9 @@ RECOGNIZED ARGUMENTS:
+ 	debug		Write a message to syslog indicating success or
+ 			failure.
+ 
+-	use_uid		The check for wheel membership will be done against
+-			the current uid instead of the original one
+-			(useful when jumping with su from one account to
+-			another for example).
++	use_uid		the check for wheel membership will be done against
++			the current uid; this version of pam_wheel can only
++			work in this way and ignores the 'use_uid' argument.
+ 			
+ 	trust		The pam_wheel module will return PAM_SUCCESS instead
+ 			of PAM_IGNORE if the user is a member of the wheel
+@@ -26,7 +25,7 @@ RECOGNIZED ARGUMENTS:
+                         which case we return PAM_SUCCESS).
+ 
+ 	group=xxxx	Instead of checking the wheel or GID 0 groups, use
+-			the xxxx group to perform the authentification.
++			the xxxx group to perform the authentication.
+ 
+ 	root_only	The check for wheel membership is done only
+ 			if the uid of requested account is 0.
+diff -upk.orig Linux-PAM-0.80.orig/modules/pam_wheel/pam_wheel.c Linux-PAM-0.80/modules/pam_wheel/pam_wheel.c
+--- Linux-PAM-0.80.orig/modules/pam_wheel/pam_wheel.c	2004-11-12 11:59:32 +0000
++++ Linux-PAM-0.80/modules/pam_wheel/pam_wheel.c	2005-08-03 15:26:35 +0000
+@@ -130,7 +130,7 @@ static int perform_check(pam_handle_t *p
+     pwd = _pammodutil_getpwnam (pamh, username);
+     if (!pwd) {
+         if (ctrl & PAM_DEBUG_ARG) {
+-            _pam_log(LOG_NOTICE,"unknown user %s",username);
++            _pam_log(LOG_NOTICE,"unknown username");
+         }
+         return PAM_USER_UNKNOWN;
+     }
+@@ -141,7 +141,9 @@ static int perform_check(pam_handle_t *p
+         }
+     }
+      
++#if 0
+     if (ctrl & PAM_USE_UID_ARG) {
++#endif
+ 	tpwd = _pammodutil_getpwuid (pamh, getuid());
+ 	if (!tpwd) {
+ 	    if (ctrl & PAM_DEBUG_ARG) {
+@@ -150,6 +152,7 @@ static int perform_check(pam_handle_t *p
+ 	    return PAM_SERVICE_ERR;
+ 	}
+ 	fromsu = tpwd->pw_name;
++#if 0
+     } else {
+ 	fromsu = _pammodutil_getlogin(pamh);
+ 	if (fromsu) {
+@@ -162,6 +165,7 @@ static int perform_check(pam_handle_t *p
+ 	    return PAM_SERVICE_ERR;
+ 	}
+     }
++#endif
+ 
+     /*
+      * At this point fromsu = username-of-invoker; tpwd = pwd ptr for fromsu

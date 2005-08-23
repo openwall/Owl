@@ -1,19 +1,25 @@
-diff -urp pam-0.75.orig/modules/pam_limits/pam_limits.c pam-0.75/modules/pam_limits/pam_limits.c
---- pam-0.75.orig/modules/pam_limits/pam_limits.c	Mon Apr 23 18:39:04 2001
-+++ pam-0.75/modules/pam_limits/pam_limits.c	Sat Aug  9 23:00:09 2003
-@@ -92,6 +92,50 @@ struct pam_limit_s {
- #include <grp.h>
- #endif
+Support stacking for account management (as well as for session setup).
+Be fail-close on configuration file reads.
+Report the "too many logins" via PAM conversation rather than direct printf(3).
+
+diff -upk.orig Linux-PAM-0.80.orig/modules/pam_limits/pam_limits.c Linux-PAM-0.80/modules/pam_limits/pam_limits.c
+--- Linux-PAM-0.80.orig/modules/pam_limits/pam_limits.c	2005-08-03 15:17:19 +0000
++++ Linux-PAM-0.80/modules/pam_limits/pam_limits.c	2005-08-03 15:17:43 +0000
+@@ -94,6 +94,52 @@ struct pam_limit_s {
+ #include <security/_pam_macros.h>
+ #include <security/_pam_modutil.h>
  
 +/* A generic interface to sending messages, originally from pam_passwdqc */
 +static int converse(pam_handle_t *pamh, int style, const char *text,
 +    struct pam_response **resp)
 +{
-+	struct pam_conv *conv;
++	const void *void_conv = NULL;
++	const struct pam_conv *conv;
 +	struct pam_message msg, *pmsg;
 +	int status;
 +
-+	status = pam_get_item(pamh, PAM_CONV, (const void **)&conv);
++	status = pam_get_item(pamh, PAM_CONV, &void_conv);
++	conv = void_conv;
 +	if (status != PAM_SUCCESS)
 +		return status;
 +
@@ -52,7 +58,16 @@ diff -urp pam-0.75.orig/modules/pam_limits/pam_limits.c pam-0.75/modules/pam_lim
  /* logging */
  static void _pam_log(int err, const char *format, ...)
  {
-@@ -454,8 +498,8 @@ static int parse_config_file(const char 
+@@ -265,7 +311,7 @@ static void process_limit(int source, co
+     int limit_item;
+     int limit_type = 0;
+     int int_value = 0;
+-    unsigned long rlimit_value = 0;
++    rlim_t rlimit_value = 0;
+     char *endptr;
+     const char *value_orig = lim_value;
+ 
+@@ -449,8 +495,8 @@ static int parse_config_file(pam_handle_
          _pam_log(LOG_DEBUG,"reading settings from '%s'", CONF_FILE);
      fil = fopen(CONF_FILE, "r");
      if (fil == NULL) {
@@ -62,36 +77,28 @@ diff -urp pam-0.75.orig/modules/pam_limits/pam_limits.c pam-0.75/modules/pam_lim
 +        return PAM_ABORT;
      }
  #undef CONF_FILE
-     
-@@ -547,7 +591,9 @@ static int setup_limits(const char * una
-     for (i=0; i<RLIM_NLIMITS; i++) {
-         if (pl->limits[i].limit.rlim_cur > pl->limits[i].limit.rlim_max)
-             pl->limits[i].limit.rlim_cur = pl->limits[i].limit.rlim_max;
--        retval |= setrlimit(i, &pl->limits[i].limit);
-+	if (pl->limits[i].src_soft != LIMITS_DEF_NONE ||
-+	    pl->limits[i].src_hard != LIMITS_DEF_NONE)
-+		retval |= setrlimit(i, &pl->limits[i].limit);
-     }
-     
-     if (retval != PAM_SUCCESS)
-@@ -575,7 +621,6 @@ PAM_EXTERN int pam_sm_open_session(pam_h
-     struct passwd *pwd;
-     int ctrl;
-     struct pam_limit_s pl;
--    char error_buf[BUFSIZ];
  
-     D(("called."));
- 
-@@ -599,7 +644,7 @@ PAM_EXTERN int pam_sm_open_session(pam_h
-     /* do not impose limits on UID 0 accounts */
-     if (!pwd->pw_uid) {
-         if (ctrl & PAM_DEBUG_ARG)
--            _pam_log(LOG_DEBUG, "user '%s' have UID 0 - no limits imposed",
-+            _pam_log(LOG_DEBUG, "user '%s' has UID 0 - no limits imposed",
-                                 user_name);
-         return PAM_SUCCESS;
+@@ -572,12 +618,17 @@ static int setup_limits(pam_handle_t *pa
      }
-@@ -607,7 +652,7 @@ PAM_EXTERN int pam_sm_open_session(pam_h
+ 
+     for (i=0, status=LIMITED_OK; i<RLIM_NLIMITS; i++) {
+-        if (pl->limits[i].limit.rlim_cur > pl->limits[i].limit.rlim_max)
+-            pl->limits[i].limit.rlim_cur = pl->limits[i].limit.rlim_max;
+ 	if (!pl->supported[i]) {
+ 	    /* skip it if its not known to the system */
+ 	    continue;
+ 	}
++	if (pl->limits[i].src_soft == LIMITS_DEF_NONE &&
++	    pl->limits[i].src_hard == LIMITS_DEF_NONE) {
++	    /* skip it if its not initialized */
++	    continue;
++	}
++        if (pl->limits[i].limit.rlim_cur > pl->limits[i].limit.rlim_max)
++            pl->limits[i].limit.rlim_cur = pl->limits[i].limit.rlim_max;
+ 	status |= setrlimit(i, &pl->limits[i].limit);
+     }
+ 
+@@ -635,7 +686,7 @@ PAM_EXTERN int pam_sm_open_session(pam_h
      retval = init_limits(&pl);
      if (retval != PAM_SUCCESS) {
          _pam_log(LOG_WARNING, "cannot initialize");
@@ -99,8 +106,8 @@ diff -urp pam-0.75.orig/modules/pam_limits/pam_limits.c pam-0.75/modules/pam_lim
 +        return PAM_ABORT;
      }
  
-     retval = parse_config_file(pwd->pw_name, ctrl, &pl);
-@@ -617,7 +662,7 @@ PAM_EXTERN int pam_sm_open_session(pam_h
+     retval = parse_config_file(pamh, pwd->pw_name, ctrl, &pl);
+@@ -645,13 +696,15 @@ PAM_EXTERN int pam_sm_open_session(pam_h
      }
      if (retval != PAM_SUCCESS) {
          _pam_log(LOG_WARNING, "error parsing the configuration file");
@@ -108,25 +115,16 @@ diff -urp pam-0.75.orig/modules/pam_limits/pam_limits.c pam-0.75/modules/pam_lim
 +        return retval;
      }
  
-     if (ctrl & PAM_DO_SETREUID)
-@@ -625,15 +670,7 @@ PAM_EXTERN int pam_sm_open_session(pam_h
- 
-     retval = setup_limits(pwd->pw_name, ctrl, &pl);
-     if (retval & LOGIN_ERR) {
--	snprintf(error_buf, sizeof(error_buf), "Too many logins for '%s'.\n",
--		 pwd->pw_name);
--#if 0
--	if (pam_get_item(pamh, PAM_CONV, (const void **)&conv) == PAM_SUCCESS)
--	    conv->conv(1, messages, &responses, conv->appdata_ptr);
--	else
--#endif
--            printf("%s", error_buf);
--        sleep(2);
+     if (ctrl & PAM_DO_SETREUID) {
+ 	setreuid(pwd->pw_uid, -1);
+     }
+     retval = setup_limits(pamh, pwd->pw_name, pwd->pw_uid, ctrl, &pl);
++    if (retval & LOGIN_ERR)
 +	say(pamh, PAM_ERROR_MSG, "Too many logins for '%s'.", pwd->pw_name);
+     if (retval != LIMITED_OK) {
          return PAM_PERM_DENIED;
      }
- 
-@@ -648,14 +685,24 @@ PAM_EXTERN int pam_sm_close_session(pam_
+@@ -667,14 +720,24 @@ PAM_EXTERN int pam_sm_close_session(pam_
  }
  
  #ifdef PAM_STATIC
