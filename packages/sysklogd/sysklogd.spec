@@ -1,9 +1,9 @@
-# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.19 2005/08/21 02:38:40 solar Exp $
+# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.20 2005/08/23 23:10:12 ldv Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
 Version: 1.4.1
-Release: owl9
+Release: owl10
 License: BSD for syslogd and GPL for klogd
 Group: System Environment/Daemons
 URL: http://www.infodrom.org/projects/sysklogd/
@@ -22,10 +22,11 @@ Patch6: sysklogd-1.4.2-alt-syslogd-nonblock.diff
 Patch7: sysklogd-1.4.2-owl-syslogd-create-mode.diff
 Patch8: sysklogd-1.4.2-owl-syslogd-doexit.diff
 Patch9: sysklogd-1.4.2-caen-owl-klogd-drop-root.diff
-Patch10: sysklogd-1.4.2-caen-owl-syslogd-bind.diff
-Patch11: sysklogd-1.4.2-caen-owl-syslogd-drop-root.diff
-Patch12: sysklogd-1.4.2-alt-syslogd-chroot.diff
-Patch13: sysklogd-1.4.2-alt-syslogd-funix_dir.diff
+Patch10: sysklogd-1.4.2-owl-klogd-kmsg.diff
+Patch11: sysklogd-1.4.2-caen-owl-syslogd-bind.diff
+Patch12: sysklogd-1.4.2-caen-owl-syslogd-drop-root.diff
+Patch13: sysklogd-1.4.2-alt-syslogd-chroot.diff
+Patch14: sysklogd-1.4.2-alt-syslogd-funix_dir.diff
 PreReq: shadow-utils, grep, fileutils, /sbin/chkconfig
 Requires: logrotate, /var/empty
 BuildRoot: /override/%name-%version
@@ -52,6 +53,7 @@ places according to a configuration file.
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
+%patch14 -p1
 
 %build
 make CFLAGS="%optflags -Wall -DSYSV -D_FILE_OFFSET_BITS=64"
@@ -115,6 +117,11 @@ fi
 %_mandir/*/*
 
 %changelog
+* Wed Aug 24 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.4.1-owl10
+- Changed klogd to terminate when read from previously opened /proc/kmsg
+returns EPERM.
+- Added missing linefeed in usage messages.
+
 * Thu Aug 18 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.4.1-owl9
 - Updated to post-1.4.1 cvs snapshot 20050525.
 - Reviewed Owl patches, removed obsolete ones, rediffed all the rest.

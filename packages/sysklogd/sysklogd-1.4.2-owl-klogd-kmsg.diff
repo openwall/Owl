@@ -1,0 +1,18 @@
+diff -uprk.orig sysklogd-1.4.2.orig/klogd.c sysklogd-1.4.2/klogd.c
+--- sysklogd-1.4.2.orig/klogd.c	2005-08-23 22:44:26 +0000
++++ sysklogd-1.4.2/klogd.c	2005-08-23 22:47:33 +0000
+@@ -977,10 +977,14 @@ static void LogProcLine(void)
+ 	memset(log_buffer, '\0', sizeof(log_buffer));
+ 	if ( (rdcnt = read(kmsg, log_buffer, sizeof(log_buffer)-1)) < 0 )
+ 	{
++		int saved_errno = errno;
++
+ 		if ( errno == EINTR )
+ 			return;
+ 		Syslog(LOG_ERR, "Cannot read proc file system: %d - %s.", \
+ 		       errno, strerror(errno));
++		if ( saved_errno == EPERM )
++			Terminate();
+ 	}
+ 	else
+ 		LogLine(log_buffer, rdcnt);
