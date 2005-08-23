@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.37 2005/06/28 18:53:10 ldv Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.38 2005/08/23 15:40:52 ldv Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
 Version: 0.60
-Release: owl24
+Release: owl25
 License: BSD or GPL
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
@@ -20,6 +20,7 @@ Patch3: SimplePAMApps-0.60-owl-alt-login-su-ut_id.diff
 Patch4: SimplePAMApps-0.60-alt-owl-login-su-env.diff
 Patch5: SimplePAMApps-0.60-alt-login-su-strip-argv0.diff
 Patch6: SimplePAMApps-0.60-alt-owl-warnings.diff
+Patch7: SimplePAMApps-0.60-owl-log.diff
 PreReq: owl-control >= 0.4, owl-control < 2.0
 Requires: tcb, pam_passwdqc >= 0.2, pam_mktemp
 Obsoletes: passwd
@@ -38,6 +39,7 @@ includes "login", "su", and "passwd".
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -58,14 +60,14 @@ install -m 644 pamapps/{login/login.1,su/su.1,passwd/passwd.1} \
 	%buildroot%_mandir/man1/
 
 mkdir -p %buildroot/etc/pam.d
-install -m 600 $RPM_SOURCE_DIR/login.pam %buildroot/etc/pam.d/login
-install -m 600 $RPM_SOURCE_DIR/su.pam %buildroot/etc/pam.d/su
-install -m 600 $RPM_SOURCE_DIR/passwd.pam %buildroot/etc/pam.d/passwd
+install -m 600 %_sourcedir/login.pam %buildroot/etc/pam.d/login
+install -m 600 %_sourcedir/su.pam %buildroot/etc/pam.d/su
+install -m 600 %_sourcedir/passwd.pam %buildroot/etc/pam.d/passwd
 
 mkdir -p %buildroot/etc/control.d/facilities
-install -m 700 $RPM_SOURCE_DIR/su.control \
+install -m 700 %_sourcedir/su.control \
 	%buildroot/etc/control.d/facilities/su
-install -m 700 $RPM_SOURCE_DIR/passwd.control \
+install -m 700 %_sourcedir/passwd.control \
 	%buildroot/etc/control.d/facilities/passwd
 
 %pre
@@ -100,6 +102,9 @@ fi
 /etc/control.d/facilities/*
 
 %changelog
+* Tue Aug 23 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.60-owl25
+- Added system logger initialization, removed closelog() calls.
+
 * Tue Jun 28 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.60-owl24
 - Fixed compilation warnings.
 
