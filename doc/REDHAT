@@ -55,16 +55,6 @@ auth       required	/lib/security/pam_listfile.so item=user sense=allow onerr=fa
 Then you list the users which need to run X in /etc/xserver.allow.
 
 
-	pam_pwdb is not tcb-aware (Red Hat Linux 6.2 and below).
-
-The pam_pwdb module, provided for backwards compatibility with Red Hat
-Linux 6.2, is not aware of our new password shadowing scheme.  Thus,
-if you install packages from or intended for Red Hat Linux 6.2 or
-below which use PAM for authentication and you do use /etc/tcb, these
-packages will not work right.  The workaround is to edit their PAM
-configuration files to use pam_tcb instead of pam_pwdb.
-
-
 	Password checking helpers (xlock*).
 
 On Red Hat Linux, the PAM modules' helper programs used to check a
@@ -115,4 +105,4 @@ for recent versions of RPM (newer than the one used in RHL 9)
 requiring NPTL.  We have resolved that dependency on NPTL in our build
 of RPM.
 
-$Id: Owl/doc/REDHAT,v 1.1 2004/11/02 22:54:01 solar Exp $
+$Id: Owl/doc/REDHAT,v 1.2 2005/08/23 23:51:19 solar Exp $

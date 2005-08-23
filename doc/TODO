@@ -314,8 +314,7 @@ Make other packages in Owl use new "include" directive where appropriate.
 
 [PRIORITY: low]
 [ASSIGNED: ldv@]
-Move pam_pwdb (with its dependency on libpwdb) into a new pam-compat
-subpackage.
+Move pam_stack (and something else?) into a new pam-compat subpackage.
 
 [PRIORITY: low]
 Review PAM man pages in OpenPAM (FreeBSD-current) and on other OSes,
@@ -553,4 +552,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.99 2005/08/23 16:30:33 ldv Exp $
+$Id: Owl/doc/TODO,v 1.100 2005/08/23 23:48:34 solar Exp $
