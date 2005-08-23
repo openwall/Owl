@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.30 2005/02/06 04:17:23 solar Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.31 2005/08/23 23:23:50 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -217,7 +217,7 @@ rm -rf %buildroot
 %__make all -f - <<EOF
 %if %BUILD_PH_ALL
 PKGS	= \$(shell rpm -qa | sed -n 's/\(^.*-devel\)-[0-9.]\+-owl[0-9]\+\$$/\1/p' | sort) \
-	  binutils popt pwdb
+	  binutils popt
 STDH	= \$(filter %_includedir/%%.h, \$(shell rpm -ql \$(PKGS); echo %_includedir/{linux,asm*,scsi}/*.h))
 %else
 PKGS	= glibc-devel
