@@ -137,7 +137,7 @@ pam_list(pam_handle_t *pamh, int argc, const char **argv)
       apply = a + 6;
 
     else {
-      _pam_log(LOG_ERR, "Unknown, invalid or duplicated option: %s", a);
+      _pam_log(LOG_ERR, "Unknown, invalid, or duplicated option: %s", a);
       r = 0;
     }
   }
@@ -180,7 +180,7 @@ pam_list(pam_handle_t *pamh, int argc, const char **argv)
         return sense ? PAM_SUCCESS : PAM_AUTH_ERR;
     }
 
-    /* user is ok.  But it may not exists... */
+    /* user is ok.  But it may not exist... */
 
     if (apply && *apply != '@') /* check apply=user */
       if (strcmp(user, apply)) /* applies */
@@ -191,7 +191,7 @@ pam_list(pam_handle_t *pamh, int argc, const char **argv)
     if (apply) { /* apply to group */
       const struct group *gr = getgrnam(++apply); /* skip @ and get group name */
       if (!gr)
-        _pam_log(LOG_WARNING, "apply group %s does not exists", apply);
+        _pam_log(LOG_WARNING, "apply group %s does not exist", apply);
         /*XXXX FIXME: error or warning? Maybe command-line error... */
       else if (in_list(user, (const char **)gr->gr_mem))
 	/* applies, found in group */
@@ -399,7 +399,7 @@ pam_list(pam_handle_t *pamh, int argc, const char **argv)
     pam_get_item(pamh, PAM_USER, &void_item);
     user = void_item;
   }
-  _pam_log(LOG_ERR,  "Refused user %s for service %s", user, list);
+  _pam_log(LOG_ERR, "Refused user %s for service %s", user, list);
   return PAM_AUTH_ERR;
 }
 
