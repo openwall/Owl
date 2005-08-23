@@ -137,7 +137,7 @@ pam_list(pam_handle_t *pamh, int argc, const char **argv)
       apply = a + 6;
 
     else {
-      _pam_log(LOG_ERR, "Unknown, invalid, or duplicated option: %s", a);
+      _pam_log(LOG_ERR, "Unknown, invalid, or duplicate option: %s", a);
       r = 0;
     }
   }
