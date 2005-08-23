@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.38 2005/08/23 16:20:39 ldv Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.39 2005/08/23 22:22:57 ldv Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
@@ -26,16 +26,16 @@ Patch8: Linux-PAM-0.80-owl-pam_wheel.diff
 Patch9: Linux-PAM-0.80-owl-configure.diff
 Patch10: Linux-PAM-0.80-owl-pam_filter.diff
 Patch11: Linux-PAM-0.80-owl-no-cracklib.diff
-Patch12: Linux-PAM-0.80-owl-pammodutil-attribute.diff
-Patch13: Linux-PAM-0.80-owl-log.diff
-Patch14: Linux-PAM-0.80-owl-pam_mkhomedir.diff
-Patch15: Linux-PAM-0.80-owl-converse.diff
-Patch16: Linux-PAM-0.80-owl-pam_pwdb.diff
+Patch12: Linux-PAM-0.80-owl-no-pwdb.diff
+Patch13: Linux-PAM-0.80-owl-pammodutil-attribute.diff
+Patch14: Linux-PAM-0.80-owl-log.diff
+Patch15: Linux-PAM-0.80-owl-pam_mkhomedir.diff
+Patch16: Linux-PAM-0.80-owl-converse.diff
 Patch17: Linux-PAM-0.79-ibm-man.diff
 PreReq: /sbin/ldconfig
-Requires: glibc-crypt_blowfish, pwdb >= 0.61-1owl
-# Just to make sure noone misses pam_unix, which is now provided by tcb
-Requires: tcb >= 0.9.5
+Requires: glibc-crypt_blowfish
+# Just to make sure noone misses pam_unix and pam_pwdb, which are now provided by tcb
+Requires: tcb >= 0.9.9
 BuildRequires: glibc-crypt_blowfish-devel
 BuildRoot: /override/%name-%version
 
@@ -87,8 +87,7 @@ PostScript formats.
 %patch17 -p1
 
 # Remove unwanted modules.
-rm -r modules/pam_{console,cracklib,debug,loginuid,postgresok,radius,rps,selinux,timestamp,umask,unix}
-rm modules/pam_pwdb/{md5,bigcrypt.}*
+rm -r modules/pam_{console,cracklib,debug,loginuid,postgresok,pwdb,radius,rps,selinux,timestamp,umask,unix}
 
 install -pm644 %_sourcedir/pam_listfile.c modules/pam_listfile/
 
@@ -184,13 +183,6 @@ rm -f doc/ps/missfont.log
 gzip -9nf doc/ps/*.ps
 gzip -9nf doc/txts/*.txt
 
-%triggerin -- shadow-utils
-grep -q '^shadow:[^:]*:42:' /etc/group && \
-	chgrp shadow %_libexecdir/chkpwd/pwdb_chkpwd && \
-	chmod 2711 %_libexecdir/chkpwd/pwdb_chkpwd
-grep -q ^chkpwd: /etc/group || groupadd -g 163 chkpwd
-chgrp chkpwd %_libexecdir/chkpwd && chmod 710 %_libexecdir/chkpwd
-
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
@@ -206,9 +198,6 @@ chgrp chkpwd %_libexecdir/chkpwd && chmod 710 %_libexecdir/chkpwd
 /lib/libpam.so.*
 /lib/libpamc.so.*
 /lib/libpam_misc.so.*
-
-%attr(700,root,root) %verify(not mode group) %dir %_libexecdir/chkpwd
-%attr(700,root,root) %verify(not mode group) %_libexecdir/chkpwd/pwdb_chkpwd
 
 /sbin/pam_tally
 
@@ -230,7 +219,6 @@ chgrp chkpwd %_libexecdir/chkpwd && chmod 710 %_libexecdir/chkpwd
 /lib/security/pam_motd.so
 /lib/security/pam_nologin.so
 /lib/security/pam_permit.so
-/lib/security/pam_pwdb.so
 /lib/security/pam_rhosts_auth.so
 /lib/security/pam_rootok.so
 /lib/security/pam_securetty.so
@@ -278,6 +266,8 @@ chgrp chkpwd %_libexecdir/chkpwd && chmod 710 %_libexecdir/chkpwd
 - Updated Linux-PAM to 0.80.
 - Updated pam-redhat to 0.80-1.
 - Reviewed patches, removed obsolete ones, updated all the rest.
+- No longer build pam_pwdb, the tcb package will provide compatibility
+symlinks instead.
 - Restricted list of global symbols exported by PAM modules to
 standard set of six pam_sm_* functions.
 - Changed modules logging to eliminate disunion in behaviour and
