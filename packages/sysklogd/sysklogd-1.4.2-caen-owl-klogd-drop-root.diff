@@ -144,7 +144,7 @@ diff -upk.orig sysklogd-1.4.2.orig/klogd.c sysklogd-1.4.2/klogd.c
  		}
  
 +	if (chroot_dir && !server_user) {
-+		fputs("'-j' is only valid with '-u'", stderr);
++		fputs("'-j' is only valid with '-u'\n", stderr);
 +		exit(1);
 +	}
  

@@ -145,7 +145,7 @@ diff -upk.orig sysklogd-1.4.2.orig/syslogd.c sysklogd-1.4.2/syslogd.c
  		case 'd':		/* debug */
  			Debug = 1;
 @@ -979,6 +1046,8 @@ int main(argc, argv)
- 		fputs("'-j' is only valid with '-u'", stderr);
+ 		fputs("'-j' is only valid with '-u'\n", stderr);
  		exit(1);
  	}
 +	if (funix_dir && *funix_dir)

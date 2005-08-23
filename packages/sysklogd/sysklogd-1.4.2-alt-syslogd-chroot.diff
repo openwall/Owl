@@ -87,7 +87,7 @@ diff -upk.orig sysklogd-1.4.2.orig/syslogd.c sysklogd-1.4.2/syslogd.c
  		usage();
  
 +	if (chroot_dir && !server_user) {
-+		fputs("'-j' is only valid with '-u'", stderr);
++		fputs("'-j' is only valid with '-u'\n", stderr);
 +		exit(1);
 +	}
  #ifndef TESTING
