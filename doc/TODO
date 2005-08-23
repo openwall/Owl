@@ -39,13 +39,13 @@ response).
 	bind.
 
 [PRIORITY: medium]
-[ASSIGNED: galaxy@]
+[ASSIGNED: ldv@]
 Package BIND 9.x, built without pthreads.  Use the query ID shuffle
 code from our glibc.  Allocate and use a pseudo-user, setup and use a
 chroot jail.  Ensure the PID file is dealt with safely (it shouldn't
 allow for named -> root attacks on BIND itself and on our startup
 scripts), preferably have it kept in the system's /var/run and as
-root.  (Jarno did some work on this.)
+root.  (Jarno did some work on this, Galaxy did initial packaging.)
 
 
 	bison, dialog, diffstat, diffutils, file, hdparm, man-pages.
@@ -553,4 +553,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.98 2005/08/23 16:28:20 ldv Exp $
+$Id: Owl/doc/TODO,v 1.99 2005/08/23 16:30:33 ldv Exp $
