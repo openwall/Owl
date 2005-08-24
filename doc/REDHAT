@@ -1,6 +1,6 @@
 This file lists known issues with using packages from or intended for
-Red Hat Linux 9 on Owl.  The names of affected Red Hat Linux packages,
-if applicable and known, are given in braces.
+Red Hat Linux on Owl.  The names of affected Red Hat Linux packages, if
+applicable and known, are given in braces.
 
 
 	Packages providing cron jobs (slocate).
@@ -41,7 +41,7 @@ Midnight Commander (mc).  No workaround is recommended; mc needs to be
 taught to use Unix98 ptys instead of /dev/ttyp*.
 
 
-	No pam_console (XFree86-*).
+	No pam_console (XFree86, xorg).
 
 Owl does not provide the pam_console module.  Red Hat's packages of
 XFree86 X servers are known to provide PAM configuration files which
@@ -55,7 +55,7 @@ auth       required	/lib/security/pam_listfile.so item=user sense=allow onerr=fa
 Then you list the users which need to run X in /etc/xserver.allow.
 
 
-	Password checking helpers (xlock*).
+	Password checking helpers (xlockmore, xscreensaver).
 
 On Red Hat Linux, the PAM modules' helper programs used to check a
 user's own password are world-accessible.  On Owl, they're restricted
@@ -66,6 +66,10 @@ coming from package xlockmore.  To make it work on Owl, it needs to be
 made SGID to group chkpwd, like this:
 
 -rwx--s--x    1 root     chkpwd     751328 Mar 30  2001 /usr/X11R6/bin/xlock
+
+Unfortunately, this trick does not appear to work with the newer
+xscreensaver package.  xscreensaver appears to be too smart and drops
+its additional privilege.
 
 
 	No rpm-python subpackage (rpm-python).
@@ -86,12 +90,11 @@ There're no dependencies on our version of slang within Owl itself.
 
 	No NPTL support in glibc.
 
-Red Hat Linux 9 provides the newer Native POSIX Thread Library (NPTL)
-in their glibc (C library) package.  We continue to provide the older
-LinuxThreads library which is still the one found in the latest
-official version of glibc as of the time of this writing (glibc
-version 2.3.2).  Also, NPTL would require support from the kernel
-which we currently do not provide.
+Red Hat Linux 9 and above provides the newer Native POSIX Thread Library
+(NPTL) in their glibc (C library) package.  We continue to provide the
+older LinuxThreads library.  NPTL would require support from the kernel
+which we currently do not provide.  This is something that will change
+once we move to Linux 2.6.x and drop support for Linux 2.4.x kernels.
 
 We're currently unaware of a Red Hat Linux 9 or any other package
 which would fail to work without NPTL.  This is no surprise because
@@ -101,8 +104,7 @@ their packages are thus meant to work with the non-NPTL libraries as
 well.
 
 The one problem we are aware of and have resolved is the source code
-for recent versions of RPM (newer than the one used in RHL 9)
-requiring NPTL.  We have resolved that dependency on NPTL in our build
-of RPM.
+for recent versions of RPM requiring NPTL.  We have resolved that
+dependency on NPTL in our build of RPM.
 
-$Id: Owl/doc/REDHAT,v 1.2 2005/08/23 23:51:19 solar Exp $
+$Id: Owl/doc/REDHAT,v 1.3 2005/08/24 00:18:22 solar Exp $
