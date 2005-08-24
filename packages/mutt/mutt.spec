@@ -1,9 +1,9 @@
-# $Id: Owl/packages/mutt/mutt.spec,v 1.19 2005/07/19 20:36:40 solar Exp $
+# $Id: Owl/packages/mutt/mutt.spec,v 1.20 2005/08/24 22:41:02 solar Exp $
 
 Summary: A feature-rich text-based mail user agent.
 Name: mutt
 Version: 1.4.2.1
-Release: owl4
+Release: owl5
 License: GPL
 Group: Applications/Internet
 URL: http://www.mutt.org
@@ -78,6 +78,10 @@ cat contrib/gpg.rc %_sourcedir/Muttrc-color >> %buildroot/%_sysconfdir/Muttrc
 %exclude %_mandir/man1/mutt_dotlock.*
 
 %changelog
+* Thu Aug 25 2005 Solar Designer <solar@owl.openwall.com> 1.4.2.1-owl5
+- Introduced the buffer non-overflow hardening into convert_to_state() itself
+rather than into only one of its callers.
+
 * Tue Jul 19 2005 Solar Designer <solar@owl.openwall.com> 1.4.2.1-owl4
 - Extra buffer non-overflow safety for handler.c: mutt_decode_xbit().
 - Updated the SEE ALSO lists of all Mutt man pages according to Owl
