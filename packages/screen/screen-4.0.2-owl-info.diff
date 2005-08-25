@@ -1,0 +1,11 @@
+--- screen-4.0.2/doc/screen.texinfo.orig	2003-12-05 16:51:46 +0300
++++ screen-4.0.2/doc/screen.texinfo	2005-08-26 02:57:17 +0400
+@@ -10,7 +10,7 @@
+ @set version 4.0.2
+ 
+ @direntry
+-* Screen: (screen).             Full-screen window manager.
++* screen: (screen).                             Terminal multiplexer.
+ @end direntry
+ 
+ @c For examples, use a literal escape in info.

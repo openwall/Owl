@@ -1,7 +1,7 @@
 #%PAM-1.0
-# $Id: Owl/packages/screen/screen.pam,v 1.5 2003/04/17 14:12:59 solar Exp $
+# $Id: Owl/packages/screen/screen.pam,v 1.6 2005/08/25 23:08:04 ldv Exp $
 auth       required	/lib/security/pam_userpass.so
-auth       required	/lib/security/pam_tcb.so use_first_pass shadow fork nodelay prefix=$2a$ count=8 helper=/usr/libexec/screen/tcb_chkpwd
+auth       required	/lib/security/pam_tcb.so use_first_pass shadow fork nodelay prefix=$2a$ count=8 nullok helper=/usr/libexec/screen/tcb_chkpwd
 account    required	/lib/security/pam_deny.so
 password   required	/lib/security/pam_deny.so
 session    required	/lib/security/pam_deny.so

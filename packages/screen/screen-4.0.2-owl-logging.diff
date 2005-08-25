@@ -1,0 +1,19 @@
+diff -urk.orig screen-4.0.2.orig/attacher.c screen-4.0.2/attacher.c
+--- screen-4.0.2.orig/attacher.c	2005-08-25 22:17:18 +0000
++++ screen-4.0.2/attacher.c	2005-08-25 22:23:52 +0000
+@@ -26,6 +26,7 @@
+ #include <sys/ioctl.h>
+ #include <fcntl.h>
+ #include <signal.h>
++#include <syslog.h>
+ #include "config.h"
+ #include "screen.h"
+ #include "extern.h"
+@@ -886,6 +887,7 @@
+       userpass.user = ppp->pw_name;
+       userpass.pass = cp1;
+ 
++      openlog("screen", LOG_PID, LOG_AUTH);
+       status = pam_start("screen", ppp->pw_name, &conv, &pamh);
+ 
+       if (status == PAM_SUCCESS)

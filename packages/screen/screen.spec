@@ -1,9 +1,9 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.34 2005/06/24 22:29:54 ldv Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.35 2005/08/25 23:08:04 ldv Exp $
 
 Summary: A screen manager that supports multiple sessions on one terminal.
 Name: screen
 Version: 4.0.2
-Release: owl3
+Release: owl4
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%version.tar.gz
@@ -19,6 +19,8 @@ Patch7: screen-4.0.2-owl-tmp.diff
 Patch8: screen-4.0.2-owl-no-fault-handler.diff
 Patch9: screen-4.0.2-alt-utempter.diff
 Patch10: screen-4.0.2-owl-warnings.diff
+Patch11: screen-4.0.2-owl-logging.diff
+Patch12: screen-4.0.2-owl-info.diff
 PreReq: /sbin/install-info
 Requires: tcb, pam_userpass, libutempter
 # Just in case this is built with an older version of RPM package.
@@ -46,6 +48,8 @@ but want to use more than one session.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
+%patch12 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -66,7 +70,7 @@ make install DESTDIR=%buildroot
 mv %buildroot%_bindir/screen-%version %buildroot%_bindir/screen
 
 install -m 644 etc/etcscreenrc %buildroot/etc/screenrc
-install -m 644 $RPM_SOURCE_DIR/screen.pam %buildroot/etc/pam.d/screen
+install -m 644 %_sourcedir/screen.pam %buildroot/etc/pam.d/screen
 
 mkdir -p %buildroot%_libexecdir/screen
 
@@ -80,13 +84,11 @@ rm %buildroot%_infodir/dir
 grep -q ^screen: /etc/group || groupadd -g 165 screen
 
 %post
-/sbin/install-info %_infodir/screen.info.gz %_infodir/dir \
-	--entry="* screen: (screen).                             Terminal multiplexer."
+/sbin/install-info %_infodir/screen.info %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/screen.info.gz %_infodir/dir \
-		--entry="* screen: (screen).                             Terminal multiplexer."
+	/sbin/install-info --delete %_infodir/screen.info %_infodir/dir
 	rm -f %_libexecdir/screen/{tcb_chkpwd,utempter}
 fi
 
@@ -120,6 +122,11 @@ fi
 %ghost %_libexecdir/screen/utempter
 
 %changelog
+* Fri Aug 26 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.0.2-owl4
+- Added system logger initialization to builtin locker.
+- Allowed users with empty passwords to use builtin locker.
+- Corrected info files installation.
+
 * Sat Jun 25 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.0.2-owl3
 - Do not link with -lelf even if the library is available during build.
 
