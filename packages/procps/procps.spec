@@ -1,4 +1,4 @@
-# $Id: Owl/packages/procps/Attic/procps.spec,v 1.20 2005/08/30 15:10:26 ldv Exp $
+# $Id: Owl/packages/procps/Attic/procps.spec,v 1.21 2005/08/30 17:39:19 solar Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
@@ -18,7 +18,7 @@ Patch12: procps-3.2.5-suse-w-notruncate.diff
 Patch13: procps-3.2.5-suse-w-maxcmd.diff
 Patch14: procps-3.2.5-suse-pwdx-bound.diff
 Patch15: procps-3.2.5-suse-buffersize.diff
-Patch20: procps-3.2.5-alt-makefile.diff
+Patch20: procps-3.2.5-alt-Makefile.diff
 Patch21: procps-3.2.5-alt-sysctl-messages.diff
 Patch22: procps-3.2.5-alt-sysctl-verbose.diff
 Patch23: procps-3.2.5-alt-watch-stdin.diff
@@ -57,7 +57,7 @@ skill, slabtop, snice, sysctl, tload, top, uptime, vmstat, w, and watch.
 %patch27 -p1
 
 %build
-%__make CC="%__cc" CFLAGS="$RPM_OPT_FLAGS"
+%__make CC="%__cc" CFLAGS="%optflags"
 
 %install
 rm -rf %buildroot
@@ -80,7 +80,7 @@ rm -rf %buildroot
 - Updated to 3.2.5, removed obsolete patches.
 - Packaged new procps utilities: pmap, pwdx, slabtop.
 - Imported a bunch of patches from RH's procps-3.2.5-6.3,
-SuSE's procps-3.2.5-5 and ALT's procps-3.2.5-alt2 packages.
+SuSE's procps-3.2.5-5, and ALT's procps-3.2.5-alt2 packages.
 - Corrected error diagnostics when /proc filesystem is not mounted.
 
 * Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.0.7-owl7
