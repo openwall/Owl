@@ -1,0 +1,14 @@
+diff -urk.orig procps-3.2.5.orig/ps/ps.1 procps-3.2.5/ps/ps.1
+--- procps-3.2.5.orig/ps/ps.1	2004-12-02 17:39:04 +0000
++++ procps-3.2.5/ps/ps.1	2005-08-30 11:31:29 +0000
+@@ -21,8 +21,8 @@
+ .\" See /usr/share/groff/current/tmac/an-old.tmac for what these do.
+ .\" Setting them to zero provides extra space, but only do that for
+ .\" plain text output. PostScript and such will remain indented.
+-.if n .nr IN 0n
+-.if n .nr an-prevailing-indent 0n
++.\" .if n .nr IN 0n
++.\" .if n .nr an-prevailing-indent 0n
+ .\"
+ .\"
+ .\" ColSize is used for the format spec table.

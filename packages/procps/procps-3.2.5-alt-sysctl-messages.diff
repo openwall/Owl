@@ -1,0 +1,76 @@
+diff -urk.orig procps-3.2.5.orig/sysctl.c procps-3.2.5/sysctl.c
+--- procps-3.2.5.orig/sysctl.c	2005-08-24 16:56:44 +0000
++++ procps-3.2.5/sysctl.c	2005-08-24 21:14:23 +0000
+@@ -56,8 +56,8 @@
+ static const char ERR_MALFORMED_SETTING[] = "error: Malformed setting \"%s\"\n";
+ static const char ERR_NO_EQUALS[] = "error: \"%s\" must be of the form name=value\n";
+ static const char ERR_INVALID_KEY[] = "error: \"%s\" is an unknown key\n";
+-static const char ERR_UNKNOWN_WRITING[] = "error: \"%s\" setting key \"%s\"\n";
+-static const char ERR_UNKNOWN_READING[] = "error: \"%s\" reading key \"%s\"\n";
++static const char ERR_GENERAL_WRITING[] = "error: setting key \"%s\": %s\n";
++static const char ERR_GENERAL_READING[] = "error: reading key \"%s\": %s\n";
+ static const char ERR_PERMISSION_DENIED[] = "error: permission denied on key '%s'\n";
+ static const char ERR_OPENING_DIR[] = "error: unable to open directory \"%s\"\n";
+ static const char ERR_PRELOAD_FILE[] = "error: unable to open preload file \"%s\"\n";
+@@ -154,12 +154,8 @@
+             rc = -1;
+          }
+          break;
+-      case EACCES:
+-         fprintf(stderr, ERR_PERMISSION_DENIED, outname);
+-         rc = -1;
+-         break;
+       default:
+-         fprintf(stderr, ERR_UNKNOWN_READING, strerror(errno), outname);
++         fprintf(stderr, ERR_GENERAL_READING, outname, strerror(errno));
+          rc = -1;
+          break;
+       }
+@@ -185,10 +181,6 @@
+          } while(fgets(inbuf, sizeof inbuf - 1, fp));
+       } else {
+          switch(errno) {
+-         case EACCES:
+-            fprintf(stderr, ERR_PERMISSION_DENIED, outname);
+-            rc = -1;
+-            break;
+          case EISDIR:{
+             size_t len;
+             len = strlen(tmpname);
+@@ -198,7 +190,7 @@
+             break;
+          }
+          default:
+-            fprintf(stderr, ERR_UNKNOWN_READING, strerror(errno), outname);
++            fprintf(stderr, ERR_GENERAL_READING, outname, strerror(errno));
+             rc = -1;
+             break;
+          }
+@@ -309,24 +301,20 @@
+             rc = -1;
+          }
+          break;
+-      case EACCES:
+-         fprintf(stderr, ERR_PERMISSION_DENIED, outname);
+-         rc = -1;
+-         break;
+       default:
+-         fprintf(stderr, ERR_UNKNOWN_WRITING, strerror(errno), outname);
++         fprintf(stderr, ERR_GENERAL_WRITING, outname, strerror(errno));
+          rc = -1;
+          break;
+       }
+    } else {
+       rc = fprintf(fp, "%s\n", value);
+       if (rc < 0) {
+-         fprintf(stderr, ERR_UNKNOWN_WRITING, strerror(errno), outname);
++         fprintf(stderr, ERR_GENERAL_WRITING, outname, strerror(errno));
+          fclose(fp);
+       } else {
+          rc=fclose(fp);
+          if (rc != 0) 
+-            fprintf(stderr, ERR_UNKNOWN_WRITING, strerror(errno), outname);
++            fprintf(stderr, ERR_GENERAL_WRITING, outname, strerror(errno));
+       }
+       if (rc==0 && !Quiet) {
+          if (NameOnly) {

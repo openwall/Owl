@@ -1,0 +1,41 @@
+diff -urk.orig procps-3.2.5.orig/top.c procps-3.2.5/top.c
+--- procps-3.2.5.orig/top.c	2005-08-24 22:12:01 +0000
++++ procps-3.2.5/top.c	2005-08-24 22:16:30 +0000
+@@ -2430,19 +2430,24 @@
+ {
+    // standardized 'secure mode' errors
+    static const char err_secure[] = "\aUnavailable in secure mode";
++   static const char err_num_cpus[] = "\aSorry, terminal is not big enough";
+ #ifdef WARN_NOT_SMP
+    // standardized 'smp' errors
+-   static const char err_smp[] = "\aSorry, only 1 cpu detected";
++   static const char err_smp[] = "\aSorry, only one cpu detected";
+ #endif
+ 
+    switch (c) {
+       case '1':
++	 if ((Screen_rows < (Cpu_tot+4)) && (Cpu_tot > 1))
++		show_msg(err_num_cpus);
++	 else {
+ #ifdef WARN_NOT_SMP
+          if (Cpu_tot > 1) TOGw(Curwin, View_CPUSUM);
+          else show_msg(err_smp);
+ #else
+          TOGw(Curwin, View_CPUSUM);
+ #endif
++	 }
+          break;
+ 
+       case 'a':
+diff -urk.orig procps-3.2.5.orig/top.h procps-3.2.5/top.h
+--- procps-3.2.5.orig/top.h	2005-08-24 22:12:01 +0000
++++ procps-3.2.5/top.h	2005-08-24 22:16:30 +0000
+@@ -27,7 +27,7 @@
+ //#define CASEUP_SCALE    // show scaled time/num suffix upper case
+ //#define CASEUP_SUMMK    // show memory summary kilobytes with 'K'
+ //#define SORT_SUPRESS    // *attempt* to reduce qsort overhead
+-//#define WARN_NOT_SMP    // restrict '1' & 'I' commands to true smp
++#define WARN_NOT_SMP    // restrict '1' & 'I' commands to true smp
+ 
+ // Development/Debugging defines -----------------------------------
+ //#define ATEOJ_REPORT    // report a bunch of stuff, at end-of-job

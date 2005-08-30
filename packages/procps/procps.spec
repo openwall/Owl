@@ -1,27 +1,39 @@
-# $Id: Owl/packages/procps/Attic/procps.spec,v 1.19 2005/01/20 01:47:40 solar Exp $
+# $Id: Owl/packages/procps/Attic/procps.spec,v 1.20 2005/08/30 15:10:26 ldv Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
-Version: 2.0.7
-Release: owl7
+Version: 3.2.5
+Release: owl1
 License: GPL and LGPL
 Group: System Environment/Base
 URL: http://procps.sf.net
 Source: ftp://sunsite.unc.edu/pub/Linux/system/status/ps/procps-%version.tar.gz
-Patch0: procps-2.0.6-owl-stale.diff
-Patch1: procps-2.0.7-owl-locale.diff
-Patch2: procps-2.0.7-owl-meminfo-fixes.diff
-Patch3: procps-2.0.7-owl-no-catman-cleanup.diff
-Patch4: procps-2.0.7-owl-top-ticks.diff
-Patch5: procps-2.0.7-owl-top-include.diff
-Patch6: procps-2.0.7-owl-fixes.diff
+Patch0: procps-3.2.5-rh-top-pseudo.diff
+Patch1: procps-3.2.5-rh-owl-top-rc.diff
+Patch2: procps-3.2.5-rh-top-sigwinch.diff
+Patch3: procps-3.2.5-rh-vmstat-bound.diff
+Patch10: procps-3.2.5-suse-top-cpus.diff
+Patch11: procps-3.2.5-suse-top-eof.diff
+Patch12: procps-3.2.5-suse-w-notruncate.diff
+Patch13: procps-3.2.5-suse-w-maxcmd.diff
+Patch14: procps-3.2.5-suse-pwdx-bound.diff
+Patch15: procps-3.2.5-suse-buffersize.diff
+Patch20: procps-3.2.5-alt-makefile.diff
+Patch21: procps-3.2.5-alt-sysctl-messages.diff
+Patch22: procps-3.2.5-alt-sysctl-verbose.diff
+Patch23: procps-3.2.5-alt-watch-stdin.diff
+Patch24: procps-3.2.5-alt-proc-sbuf.diff
+Patch25: procps-3.2.5-alt-man.diff
+Patch26: procps-3.2.5-owl-format.diff
+Patch27: procps-3.2.5-owl-proc.diff
 PreReq: /sbin/ldconfig
+BuildRequires: ncurses-devel
 BuildRoot: /override/%name-%version
 
 %description
 The procps package contains a set of system utilities which provide
-system information.  procps includes ps, free, skill, snice, tload,
-top, pgrep, pkill, uptime, vmstat, w, and watch.
+system information.  procps includes: free, pgrep, pkill, pmap, ps, pwdx,
+skill, slabtop, snice, sysctl, tload, top, uptime, vmstat, w, and watch.
 
 %prep
 %setup -q
@@ -29,33 +41,27 @@ top, pgrep, pkill, uptime, vmstat, w, and watch.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch20 -p1
+%patch21 -p1
+%patch22 -p1
+%patch23 -p1
+%patch24 -p1
+%patch25 -p1
+%patch26 -p1
+%patch27 -p1
 
 %build
-%__make CC="%__cc" OPT="$RPM_OPT_FLAGS"
+%__make CC="%__cc" CFLAGS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot{/bin,/%_lib,/sbin,%_bindir,/usr/X11R6/bin,%_mandir/{man1,man5,man8}}
-%__make install \
-	DESTDIR="%buildroot" \
-	MANDIR="%_mandir" \
-	USRBINDIR="%buildroot%_bindir" \
-	PROCDIR="%buildroot%_bindir" \
-	SHLIBDIR="%buildroot/%_lib" \
-	INSTALLBIN="install -m 755" \
-	INSTALLSCT="install -m 755" \
-	INSTALLMAN="install -m 644" \
-	OWNERGROUP=""
-chmod 755 %buildroot/{%_lib,bin,sbin,%_bindir}/*
-
-# Remove unpackaged files
-rm %buildroot/usr/X11R6/bin/XConsole
-# We use kill(1) from util-linux
-rm %buildroot%_bindir/kill
-rm %buildroot%_mandir/man1/kill.1*
+%__make install DESTDIR=%buildroot lib64=%_lib
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -63,38 +69,20 @@ rm %buildroot%_mandir/man1/kill.1*
 %files
 %defattr(-,root,root)
 %doc NEWS BUGS TODO
-/%_lib/libproc.so.%version
-/bin/ps
-/sbin/sysctl
-%_bindir/oldps
-%_bindir/uptime
-%_bindir/tload
-%_bindir/free
-%_bindir/w
-%_bindir/top
-%_bindir/vmstat
-%_bindir/watch
-%_bindir/skill
-%_bindir/snice
-%_bindir/pgrep
-%_bindir/pkill
-%_mandir/man1/free.1*
-%_mandir/man1/ps.1*
-%_mandir/man1/oldps.1*
-%_mandir/man1/skill.1*
-%_mandir/man1/snice.1*
-%_mandir/man1/pgrep.1*
-%_mandir/man1/pkill.1*
-%_mandir/man1/tload.1*
-%_mandir/man1/top.1*
-%_mandir/man1/uptime.1*
-%_mandir/man1/w.1*
-%_mandir/man1/watch.1*
-%_mandir/man5/sysctl.conf.5*
-%_mandir/man8/vmstat.8*
-%_mandir/man8/sysctl.8*
+/%_lib/*
+/bin/*
+/sbin/*
+%_bindir/*
+%_mandir/man?/*
 
 %changelog
+* Tue Aug 30 2005 Dmitry V. Levin <ldv@owl.openwall.com> 3.2.5-owl1
+- Updated to 3.2.5, removed obsolete patches.
+- Packaged new procps utilities: pmap, pwdx, slabtop.
+- Imported a bunch of patches from RH's procps-3.2.5-6.3,
+SuSE's procps-3.2.5-5 and ALT's procps-3.2.5-alt2 packages.
+- Corrected error diagnostics when /proc filesystem is not mounted.
+
 * Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.0.7-owl7
 - Added a patch to solve issues after gcc upgrade.
 - Cleaned up the spec.

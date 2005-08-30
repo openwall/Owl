@@ -1,0 +1,71 @@
+diff -urk.orig procps-3.2.5.orig/w.c procps-3.2.5/w.c
+--- procps-3.2.5.orig/w.c	2004-10-20 16:51:49 +0000
++++ procps-3.2.5/w.c	2005-08-24 22:26:03 +0000
+@@ -191,7 +191,25 @@
+ 	return;
+ 
+     strncpy(uname, u->ut_user, USERSZ);		/* force NUL term for printf */
+-    if (formtype) {
++    switch(formtype) {
++    case 2:
++	printf("%s %s", uname, u->ut_line);
++	if (from)
++	    print_host(u->ut_host, sizeof u->ut_host);
++	print_logintime(u->ut_time, stdout);
++	if (*u->ut_line == ':')			/* idle unknown for xdm logins */
++	    printf(" ?xdm? ");
++	else
++	    print_time_ival7(idletime(tty), 0, stdout);
++	print_time_ival7(jcpu/Hertz, (jcpu%Hertz)*(100./Hertz), stdout);
++	if (best) {
++	    unsigned long long pcpu = best->utime + best->stime;
++	    print_time_ival7(pcpu/Hertz, (pcpu%Hertz)*(100./Hertz), stdout);
++	} else
++	    printf("   ?   ");
++        break;
++
++    case 1:
+ 	printf("%-9.8s%-9.8s", uname, u->ut_line);
+ 	if (from)
+ 	    print_host(u->ut_host, sizeof u->ut_host);
+@@ -206,7 +224,8 @@
+ 	    print_time_ival7(pcpu/Hertz, (pcpu%Hertz)*(100./Hertz), stdout);
+ 	} else
+ 	    printf("   ?   ");
+-    } else {
++        break;
++    case 0:
+ 	printf("%-9.8s%-9.8s", u->ut_user, u->ut_line);
+ 	if (from)
+ 	    print_host(u->ut_host, sizeof u->ut_host);
+@@ -214,6 +233,8 @@
+ 	    printf(" ?xdm? ");
+ 	else
+ 	    print_time_ival7(idletime(tty), 0, stdout);
++
++        break;
+     }
+     fputs(" ", stdout);
+     if (likely(best)) {
+@@ -238,11 +259,12 @@
+ #endif
+ 
+     setlocale(LC_ALL, "");
+-    for (args=0; (ch = getopt(argc, argv, "hlusfV")) != EOF; args++)
++    for (args=0; (ch = getopt(argc, argv, "hlusnfV")) != EOF; args++)
+ 	switch (ch) {
+ 	  case 'h': header = 0;		break;
+ 	  case 'l': longform = 1;	break;
+ 	  case 's': longform = 0;	break;
++	  case 'n': longform = 2; header=0; break;
+ 	  case 'f': from = !from;	break;
+ 	  case 'V': display_version();	exit(0);
+ 	  case 'u': ignoreuser = 1;	break;
+@@ -251,6 +273,7 @@
+ 		   "    -h    skip header\n"
+ 		   "    -l    long listing (default)\n"
+ 		   "    -s    short listing\n"
++		   "    -n    non truncated listing (large)\n"
+ 		   "    -u    ignore uid of processes\n"
+ 		   "    -f    toggle FROM field (default %s)\n"
+ 		   "    -V    display version\n", FROM_STRING);

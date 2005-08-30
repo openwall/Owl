@@ -1,0 +1,11 @@
+--- procps-3.2.5/proc/sysinfo.c
++++ procps-3.2.5/proc/sysinfo.c
+@@ -43,7 +43,7 @@
+ #define VMINFO_FILE "/proc/vmstat"
+ static int vminfo_fd = -1;
+ 
+-static char buf[1024];
++static char buf[4096];
+ 
+ /* This macro opens filename only if necessary and seeks to 0 so
+  * that successive calls to the functions are more efficient.

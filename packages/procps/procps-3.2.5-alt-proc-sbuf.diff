@@ -1,0 +1,39 @@
+diff -urk.orig procps-3.2.5.orig/proc/readproc.c procps-3.2.5/proc/readproc.c
+--- procps-3.2.5.orig/proc/readproc.c	2005-08-25 21:57:30 +0000
++++ procps-3.2.5/proc/readproc.c	2005-08-25 21:57:55 +0000
+@@ -492,7 +492,7 @@
+ // room to spare.
+ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict const p) {
+     static struct stat sb;		// stat() buffer
+-    static char sbuf[1024];	// buffer for stat,statm
++    static char sbuf[4096];	// buffer for stat,statm
+     char *restrict const path = PT->path;
+     unsigned flags = PT->flags;
+ 
+@@ -569,7 +569,7 @@
+ // path is a path to the task, with some room to spare.
+ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restrict const p, proc_t *restrict const t, char *restrict const path) {
+     static struct stat sb;		// stat() buffer
+-    static char sbuf[1024];	// buffer for stat,statm
++    static char sbuf[4096];	// buffer for stat,statm
+     unsigned flags = PT->flags;
+ 
+ //printf("hhh\n");
+@@ -854,7 +854,7 @@
+ 
+ //////////////////////////////////////////////////////////////////////////////////
+ void look_up_our_self(proc_t *p) {
+-    char sbuf[1024];
++    char sbuf[4096];
+ 
+     if(file2str("/proc/self", "stat", sbuf, sizeof sbuf) == -1){
+         fprintf(stderr, "%s", BAD_OPEN_MESSAGE);
+@@ -984,7 +984,7 @@
+  * and filled out proc_t structure.
+  */
+ proc_t * get_proc_stats(pid_t pid, proc_t *p) {
+-	static char path[PATH_MAX], sbuf[1024];
++	static char path[PATH_MAX], sbuf[4096];
+ 	struct stat statbuf;
+ 
+ 	sprintf(path, "/proc/%d", pid);

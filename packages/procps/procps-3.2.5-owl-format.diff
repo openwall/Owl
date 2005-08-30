@@ -1,0 +1,69 @@
+diff -urk.orig procps-3.2.5.orig/pgrep.c procps-3.2.5/pgrep.c
+--- procps-3.2.5.orig/pgrep.c	2004-10-19 17:53:47 +0000
++++ procps-3.2.5/pgrep.c	2005-08-30 13:44:24 +0000
+@@ -338,7 +338,7 @@
+ 		re_err = regcomp (preg, re, REG_EXTENDED | REG_NOSUB);
+ 		if (re_err) {
+ 			regerror (re_err, preg, errbuf, sizeof(errbuf));
+-			fprintf (stderr, errbuf);
++			fprintf (stderr, "%s", errbuf);
+ 			exit (2);
+ 		}
+ 	}
+diff -urk.orig procps-3.2.5.orig/proc/slab.c procps-3.2.5/proc/slab.c
+--- procps-3.2.5.orig/proc/slab.c	2005-01-24 18:07:42 +0000
++++ procps-3.2.5/proc/slab.c	2005-08-30 13:44:24 +0000
+@@ -306,7 +306,7 @@
+ 
+ 	slabfile = fopen(SLABINFO_FILE, "r");
+ 	if (!slabfile) {
+-		perror("fopen");
++		perror(SLABINFO_FILE);
+ 		return 1;
+ 	}
+ 
+diff -urk.orig procps-3.2.5.orig/proc/sysinfo.c procps-3.2.5/proc/sysinfo.c
+--- procps-3.2.5.orig/proc/sysinfo.c	2005-08-30 13:44:12 +0000
++++ procps-3.2.5/proc/sysinfo.c	2005-08-30 13:44:24 +0000
+@@ -52,7 +52,7 @@
+ #define FILE_TO_BUF(filename, fd) do{				\
+     static int local_n;						\
+     if (fd == -1 && (fd = open(filename, O_RDONLY)) == -1) {	\
+-	fprintf(stderr, BAD_OPEN_MESSAGE);			\
++	fprintf(stderr, "%s", BAD_OPEN_MESSAGE);		\
+ 	fflush(NULL);						\
+ 	_exit(102);						\
+     }								\
+diff -urk.orig procps-3.2.5.orig/pwdx.c procps-3.2.5/pwdx.c
+--- procps-3.2.5.orig/pwdx.c	2005-08-30 13:44:12 +0000
++++ procps-3.2.5/pwdx.c	2005-08-30 13:44:24 +0000
+@@ -22,7 +22,7 @@
+ static void die(const char *msg) NORETURN;
+ static void die(const char *msg)
+ {
+-     fprintf(stderr, msg);
++     fprintf(stderr, "%s", msg);
+      exit(1);
+ }
+ 
+diff -urk.orig procps-3.2.5.orig/vmstat.c procps-3.2.5/vmstat.c
+--- procps-3.2.5.orig/vmstat.c	2005-08-30 13:44:12 +0000
++++ procps-3.2.5/vmstat.c	2005-08-30 13:45:40 +0000
+@@ -394,7 +394,7 @@
+       free(partitions);
+     }
+   }else{
+-    fprintf(stderr, "Your kernel doesn't support diskstat (2.5.70 or above required)"); 
++    fprintf(stderr, "Your kernel doesn't support diskstat (2.5.70 or above required)\n"); 
+     exit(0);
+   } 
+ }
+@@ -415,7 +415,7 @@
+ 
+   fSlab=fopen("/proc/slabinfo", "rb");
+   if(!fSlab){
+-    fprintf(stderr, "Your kernel doesn't support slabinfo");    
++    fprintf(stderr, "Your kernel doesn't support slabinfo\n");    
+     return;
+   }
+ 

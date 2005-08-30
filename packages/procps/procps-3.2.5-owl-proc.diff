@@ -1,0 +1,253 @@
+diff -urk.orig procps-3.2.5.orig/pgrep.c procps-3.2.5/pgrep.c
+--- procps-3.2.5.orig/pgrep.c	2005-08-30 12:25:06 +0000
++++ procps-3.2.5/pgrep.c	2005-08-30 13:19:36 +0000
+@@ -25,6 +25,7 @@
+ #include <regex.h>
+ #include <errno.h>
+ 
++#include "proc/checkproc.h"
+ #include "proc/readproc.h"
+ #include "proc/sig.h"
+ #include "proc/devname.h"
+@@ -288,6 +289,7 @@
+ 	PROCTAB *ptp;
+ 	int flags = 0;
+ 
++	checkproc (3);
+ 	if (opt_pattern || opt_full)
+ 		flags |= PROC_FILLCOM;
+ 	if (opt_ruid || opt_rgid)
+diff -urk.orig procps-3.2.5.orig/pmap.c procps-3.2.5/pmap.c
+--- procps-3.2.5.orig/pmap.c	2005-01-11 01:41:30 +0000
++++ procps-3.2.5/pmap.c	2005-08-30 13:19:36 +0000
+@@ -21,6 +21,7 @@
+ #include <sys/ipc.h>
+ #include <sys/shm.h>
+ 
++#include "proc/checkproc.h"
+ #include "proc/readproc.h"
+ #include "proc/version.h"
+ #include "proc/escape.h"
+@@ -318,6 +319,7 @@
+   discover_shm_minor();
+ 
+   pidlist[count] = 0;  // old libproc interface is zero-terminated
++  checkproc(1);
+   PT = openproc(PROC_FILLSTAT|PROC_FILLARG|PROC_PID, pidlist);
+   while(readproc(PT, &p)){
+     ret |= one_proc(&p);
+diff -urk.orig procps-3.2.5.orig/proc/checkproc.c procps-3.2.5/proc/checkproc.c
+--- procps-3.2.5.orig/proc/checkproc.c	1970-01-01 00:00:00 +0000
++++ procps-3.2.5/proc/checkproc.c	2005-08-30 13:21:15 +0000
+@@ -0,0 +1,29 @@
++#ifdef HAVE_CONFIG_H
++#include "config.h"
++#endif
++
++#include <stdio.h>
++#include <stdlib.h>
++#include <unistd.h>
++
++#include "checkproc.h"
++
++#define BAD_PROCFS_MESSAGE					\
++"Error: /proc must be mounted\n"				\
++"  To mount /proc at boot you need an /etc/fstab line like:\n"	\
++"      proc   /proc   proc    defaults\n"			\
++"  In the meantime, mount proc /proc -t proc\n"
++
++// Check whether procfs is available.
++// If yes, returns 0.
++// If not, outputs error message and exit with specified return code,
++// unless rc is zero.  In later case, returns -1.
++extern int checkproc(int rc) {
++    if (access("/proc/self/stat", R_OK) == 0)
++	return 0;
++    fprintf(stderr, "%s", BAD_PROCFS_MESSAGE);
++    if (rc)
++	exit(rc);
++    else
++	return -1;
++}
+diff -urk.orig procps-3.2.5.orig/proc/checkproc.h procps-3.2.5/proc/checkproc.h
+--- procps-3.2.5.orig/proc/checkproc.h	1970-01-01 00:00:00 +0000
++++ procps-3.2.5/proc/checkproc.h	2005-08-30 13:19:36 +0000
+@@ -0,0 +1,16 @@
++#ifndef PROCPS_PROC_CHECKPROC_H
++#define PROCPS_PROC_CHECKPROC_H
++
++#include "procps.h"
++
++EXTERN_C_BEGIN
++
++// Check whether procfs is available.
++// If yes, returns 0.
++// If not, outputs error message and exit with specified return code,
++// unless rc is zero.  In later case, returns -1.
++extern int checkproc(int rc);
++
++EXTERN_C_END
++
++#endif
+diff -urk.orig procps-3.2.5.orig/proc/library.map procps-3.2.5/proc/library.map
+--- procps-3.2.5.orig/proc/library.map	2004-10-21 15:02:00 +0000
++++ procps-3.2.5/proc/library.map	2005-08-30 13:19:36 +0000
+@@ -5,6 +5,7 @@
+ global:
+   __cyg_profile_func_enter; __cyg_profile_func_exit; main;
+ 
++  checkproc;
+   readproc; readtask; readproctab; readproctab2; look_up_our_self; escape_command;
+   escape_str; escape_strlist;
+   openproc; closeproc;
+diff -urk.orig procps-3.2.5.orig/proc/readproc.c procps-3.2.5/proc/readproc.c
+--- procps-3.2.5.orig/proc/readproc.c	2005-08-30 12:25:06 +0000
++++ procps-3.2.5/proc/readproc.c	2005-08-30 13:19:36 +0000
+@@ -10,6 +10,7 @@
+ #include "config.h"
+ #endif
+ #include "version.h"
++#include "checkproc.h"
+ #include "readproc.h"
+ #include "alloc.h"
+ #include "pwcache.h"
+@@ -856,7 +857,8 @@
+     char sbuf[4096];
+ 
+     if(file2str("/proc/self", "stat", sbuf, sizeof sbuf) == -1){
+-        fprintf(stderr, "Error, do this: mount -t proc none /proc\n");
++	checkproc(0);
++	fflush(NULL);
+         _exit(47);
+     }
+     stat2proc(sbuf, p);    // parse /proc/self/stat
+diff -urk.orig procps-3.2.5.orig/proc/sysinfo.c procps-3.2.5/proc/sysinfo.c
+--- procps-3.2.5.orig/proc/sysinfo.c	2005-08-30 12:25:06 +0000
++++ procps-3.2.5/proc/sysinfo.c	2005-08-30 13:19:36 +0000
+@@ -18,6 +18,7 @@
+ #include <unistd.h>
+ #include <fcntl.h>
+ #include "version.h"
++#include "checkproc.h"
+ #include "sysinfo.h" /* include self to verify prototypes */
+ 
+ #ifndef HZ
+@@ -26,12 +27,6 @@
+ 
+ long smp_num_cpus;     /* number of CPUs */
+ 
+-#define BAD_OPEN_MESSAGE					\
+-"Error: /proc must be mounted\n"				\
+-"  To mount /proc at boot you need an /etc/fstab line like:\n"	\
+-"      /proc   /proc   proc    defaults\n"			\
+-"  In the meantime, mount /proc /proc -t proc\n"
+-
+ #define STAT_FILE    "/proc/stat"
+ static int stat_fd = -1;
+ #define UPTIME_FILE  "/proc/uptime"
+@@ -52,7 +47,7 @@
+ #define FILE_TO_BUF(filename, fd) do{				\
+     static int local_n;						\
+     if (fd == -1 && (fd = open(filename, O_RDONLY)) == -1) {	\
+-	fprintf(stderr, "%s", BAD_OPEN_MESSAGE);		\
++	checkproc(0);						\
+ 	fflush(NULL);						\
+ 	_exit(102);						\
+     }								\
+diff -urk.orig procps-3.2.5.orig/pwdx.c procps-3.2.5/pwdx.c
+--- procps-3.2.5.orig/pwdx.c	2005-08-30 12:25:06 +0000
++++ procps-3.2.5/pwdx.c	2005-08-30 13:19:36 +0000
+@@ -17,6 +17,7 @@
+ #include <unistd.h>
+ #include <errno.h>
+ 
++#include "proc/checkproc.h"
+ #include "proc/version.h"
+ 
+ static void die(const char *msg) NORETURN;
+@@ -68,6 +69,8 @@
+ 
+      regfree(&re);
+ 
++     checkproc(1);
++
+      for (i = 1; i < argc; i++) {
+           char * s = buf;
+           int len;
+diff -urk.orig procps-3.2.5.orig/skill.c procps-3.2.5/skill.c
+--- procps-3.2.5.orig/skill.c	2004-09-09 13:49:38 +0000
++++ procps-3.2.5/skill.c	2005-08-30 13:19:36 +0000
+@@ -21,6 +21,7 @@
+ #include <sys/time.h>
+ #include <sys/types.h>
+ #include <unistd.h>
++#include "proc/checkproc.h"
+ #include "proc/pwcache.h"
+ #include "proc/sig.h"
+ #include "proc/devname.h"
+@@ -215,6 +216,7 @@
+   if(!ttys && !cmds && !pids && !i_flag){
+   }
+ #endif
++  checkproc(2);
+   d = opendir("/proc");
+   if(!d){
+     perror("/proc");
+diff -urk.orig procps-3.2.5.orig/slabtop.c procps-3.2.5/slabtop.c
+--- procps-3.2.5.orig/slabtop.c	2005-01-05 21:25:54 +0000
++++ procps-3.2.5/slabtop.c	2005-08-30 13:19:36 +0000
+@@ -25,6 +25,7 @@
+ #include <sys/types.h>
+ #include <unistd.h>
+ 
++#include "proc/checkproc.h"
+ #include "proc/slab.h"
+ #include "proc/version.h"
+ 
+@@ -319,6 +320,8 @@
+ 		}
+ 	}
+ 
++	checkproc(1);
++
+ 	if (tcgetattr(0, &saved_tty) == -1)
+ 		perror("tcgetattr");
+ 
+diff -urk.orig procps-3.2.5.orig/top.c procps-3.2.5/top.c
+--- procps-3.2.5.orig/top.c	2005-08-30 12:25:06 +0000
++++ procps-3.2.5/top.c	2005-08-30 13:19:36 +0000
+@@ -43,6 +43,7 @@
+ #include <unistd.h>
+ #include <values.h>
+ 
++#include "proc/checkproc.h"
+ #include "proc/devname.h"
+ #include "proc/wchan.h"
+ #include "proc/procps.h"
+@@ -3260,6 +3261,7 @@
+    windows_stage1();                    //                 top (sic) slice
+    configs_read();                      //                 > spread etc, <
+    parse_args(&argv[1]);                //                 > lean stuff, <
++   checkproc(1);
+    whack_terminal();                    //                 > onions etc. <
+    windows_stage2();                    //                 as bottom slice
+                                         //                 +-------------+
+diff -urk.orig procps-3.2.5.orig/vmstat.c procps-3.2.5/vmstat.c
+--- procps-3.2.5.orig/vmstat.c	2005-08-30 12:25:06 +0000
++++ procps-3.2.5/vmstat.c	2005-08-30 13:19:36 +0000
+@@ -25,6 +25,7 @@
+ #include <sys/dir.h>
+ #include <dirent.h>
+ 
++#include "proc/checkproc.h"
+ #include "proc/sysinfo.h"
+ #include "proc/version.h"
+ 
+@@ -651,6 +652,7 @@
+       } /* switch */
+   }
+ }
++  checkproc(1);
+   if (moreheaders) {
+       int tmp=winhi()-3;
+       height=((tmp>0)?tmp:22);

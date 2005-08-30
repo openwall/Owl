@@ -1,0 +1,92 @@
+--- procps-3.2.5/top.c.sigwinch	2005-06-28 14:31:18.607714424 +0200
++++ procps-3.2.5/top.c	2005-06-28 14:53:21.179652928 +0200
+@@ -140,6 +140,9 @@
+            buffer is used, stdout is flushed at frame end or if interactive. */
+ static char *Pseudo_scrn;
+ static int   Pseudo_row, Pseudo_cols, Pseudo_size;
++
++static int Screen_resized;
++
+ #ifndef STDOUT_IOLBF
+         // less than stdout's normal buffer but with luck mostly '\n' anyway
+ static char  Stdout_buf[2048];
+@@ -2298,14 +2301,18 @@
+ // Set the screen dimensions and arrange for the real workhorse.
+ // (also) catches:
+ //    SIGWINCH and SIGCONT
+-static void wins_resize (int dont_care_sig)
++static void wins_resize_handler(int dont_care_sig)
++{
++	(void)dont_care_sig;
++	Screen_resized = 1;
++}
++
++static void wins_resize (void)
+ {
+    struct winsize wz;
+    char *env_columns;  // Unix98 environment variable COLUMNS
+    char *env_lines;    // Unix98 environment variable LINES
+ 
+-   (void)dont_care_sig;
+-
+    Screen_cols = columns;   // <term.h>
+    Screen_rows = lines;     // <term.h>
+ 
+@@ -2349,6 +2356,9 @@
+ 
+    // force rebuild of column headers AND libproc/readproc requirements
+    Frames_libflags = 0;
++
++   Screen_resized = 0;
++   
+    ZAP_TIMEOUT
+ }
+ 
+@@ -2397,7 +2407,7 @@
+       capsmk(&Winstk[i]);
+    }
+    // rely on this next guy to force a call (eventually) to reframewins
+-   wins_resize(0);
++   wins_resize();
+ }
+ 
+ 
+@@ -2429,7 +2439,7 @@
+ 
+       case 'A':
+          Rc.mode_altscr = !Rc.mode_altscr;
+-         wins_resize(0);
++         wins_resize();
+          break;
+ 
+       case 'b':
+@@ -3262,8 +3272,8 @@
+    signal(SIGTSTP,  suspend);
+    signal(SIGTTIN,  suspend);
+    signal(SIGTTOU,  suspend);
+-   signal(SIGCONT,  wins_resize);
+-   signal(SIGWINCH, wins_resize);
++   signal(SIGCONT,  wins_resize_handler);
++   signal(SIGWINCH, wins_resize_handler);
+ 
+    for (;;) {
+       frame_make();
+@@ -3277,6 +3287,8 @@
+ 
+       if (Batch) {
+          select(0, NULL, NULL, NULL, &tv);  // ought to loop until done
++	 if (Screen_resized)
++		 wins_resize();
+       } else {
+          long file_flags;
+          int rc;
+@@ -3298,6 +3310,9 @@
+             select(1, &fs, NULL, NULL, &tv);
+             fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK|file_flags);
+          }
++	 if (Screen_resized)
++		 /* maybe select() wake up after signal */
++		 wins_resize();
+          if (chin(0, &c, 1) > 0) {
+             fcntl(STDIN_FILENO, F_SETFL, file_flags);
+             do_key((unsigned)c);

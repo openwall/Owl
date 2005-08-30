@@ -1,0 +1,15 @@
+--- procps-3.2.5/top.c.rc	2005-06-28 22:36:24.000000000 +0200
++++ procps-3.2.5/top.c	2005-06-28 22:40:27.000000000 +0200
+@@ -2393,7 +2393,11 @@
+    int i;
+ 
+    for (i = 0; i < GROUPSMAX; i++) {
+-      win_names(&Winstk[i], Winstk[i].rc.winname);
++      /* Please, never use something like sprintf(x, "%s", x); ... see win_names() */
++      char buf[WINNAMSIZ];
++      buf[0] = '\0';
++      strncat(buf, Winstk[i].rc.winname, sizeof(buf)-1);
++      win_names(&Winstk[i], buf);
+       capsmk(&Winstk[i]);
+    }
+    // rely on this next guy to force a call (eventually) to reframewins

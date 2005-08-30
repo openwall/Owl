@@ -1,0 +1,38 @@
+diff -urk.orig procps-3.2.5.orig/sysctl.8 procps-3.2.5/sysctl.8
+--- procps-3.2.5.orig/sysctl.8	2004-07-30 01:42:03 +0000
++++ procps-3.2.5/sysctl.8	2005-08-24 16:57:50 +0000
+@@ -12,9 +12,9 @@
+ .SH SYNOPSIS
+ .B "sysctl [-n] [-e] variable ..."
+ .br
+-.B "sysctl [-n] [-e] [-q] -w variable=value ..."
++.B "sysctl [-n] [-e] [-q|-v] -w variable=value ..."
+ .br
+-.B "sysctl [-n] [-e] [-q] -p <filename>"
++.B "sysctl [-n] [-e] [-q|-v] -p <filename>"
+ .br
+ .B "sysctl [-n] [-e] -a"
+ .br
+@@ -52,6 +52,9 @@
+ .B "-q"
+ Use this option to not display the values set to stdout.
+ .TP
++.B "-v"
++Use this option to display the values set to stdout.
++.TP
+ .B "-w"
+ Use this option when you want to change a sysctl setting.
+ .TP
+diff -urk.orig procps-3.2.5.orig/sysctl.c procps-3.2.5/sysctl.c
+--- procps-3.2.5.orig/sysctl.c	2005-01-05 21:00:47 +0000
++++ procps-3.2.5/sysctl.c	2005-08-24 16:56:44 +0000
+@@ -474,6 +474,9 @@
+ 	 case 'q':
+ 	      Quiet = true;
+ 	   break;
++	 case 'v':
++	      Quiet = false;
++	   break;
+ 	 case 'o':  // BSD: binary values too, 1st 16 bytes in hex
+ 	 case 'x':  // BSD: binary values too, whole thing in hex
+ 	      /* does nothing */ ;

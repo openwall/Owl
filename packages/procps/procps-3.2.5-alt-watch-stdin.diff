@@ -1,0 +1,40 @@
+diff -urk.orig procps-3.2.5.orig/watch.c procps-3.2.5/watch.c
+--- procps-3.2.5.orig/watch.c	2004-08-21 16:48:43 +0000
++++ procps-3.2.5/watch.c	2005-08-24 20:58:48 +0000
+@@ -22,6 +22,8 @@
+ #include <sys/ioctl.h>
+ #include <time.h>
+ #include <unistd.h>
++#include <fcntl.h>
++#include <paths.h>
+ #include <locale.h>
+ #include "proc/procps.h"
+ 
+@@ -137,6 +139,7 @@
+ main(int argc, char *argv[])
+ {
+ 	int optc;
++	int fd;
+ 	int option_differences = 0,
+ 	    option_differences_cumulative = 0,
+ 	    option_help = 0, option_version = 0;
+@@ -228,6 +231,19 @@
+ 	noecho();
+ 	cbreak();
+ 
++	if ((fd = open(_PATH_DEVNULL, O_RDWR)) < 0) {
++		perror("open: " _PATH_DEVNULL);
++		do_exit(2);
++	}
++	if (fd != 0 && dup2(fd, 0) != 0) {
++		perror("dup2: " _PATH_DEVNULL);
++		do_exit(2);
++	}
++	if (fd > 2 && close(fd) < 0) {
++		perror("close: " _PATH_DEVNULL);
++		do_exit(2);
++	}
++
+ 	for (;;) {
+ 		time_t t = time(NULL);
+ 		char *ts = ctime(&t);
