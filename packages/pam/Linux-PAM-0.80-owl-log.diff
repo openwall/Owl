@@ -2379,7 +2379,7 @@ diff -upk.orig Linux-PAM-0.80.orig/modules/pammodutil/modutil_log.c Linux-PAM-0.
 +/*
 + * $Id$
 + *
-+ * This function provide common method for system logging.
++ * This function provides common method for system logging.
 + */
 +
 +#include "config.h"

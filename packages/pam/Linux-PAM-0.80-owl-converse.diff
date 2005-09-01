@@ -762,7 +762,7 @@ diff -upk.orig Linux-PAM-0.80.orig/modules/pammodutil/modutil_conv.c Linux-PAM-0
 +/*
 + * $Id$
 + *
-+ * This function provide common method for system logging.
++ * These functions provide common interface to conversation function.
 + */
 +
 +#include "config.h"
