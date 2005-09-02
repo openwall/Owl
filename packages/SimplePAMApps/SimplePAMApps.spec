@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.38 2005/08/23 15:40:52 ldv Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.39 2005/09/02 17:41:21 ldv Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
 Version: 0.60
-Release: owl25
+Release: owl26
 License: BSD or GPL
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
@@ -102,6 +102,10 @@ fi
 /etc/control.d/facilities/*
 
 %changelog
+* Fri Sep 02 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.60-owl26
+- Allow users with empty passwords to change their passwords.
+- Stripped /lib/security/ prefix from module pathnames in PAM config files.
+
 * Tue Aug 23 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.60-owl25
 - Added system logger initialization, removed closelog() calls.
 

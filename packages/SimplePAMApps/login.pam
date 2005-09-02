@@ -1,13 +1,13 @@
 #%PAM-1.0
-# $Id: Owl/packages/SimplePAMApps/login.pam,v 1.10 2003/05/29 01:10:54 solar Exp $
-auth       required	/lib/security/pam_securetty.so
-auth       required	/lib/security/pam_tcb.so shadow fork nullok prefix=$2a$ count=8
-auth       required	/lib/security/pam_nologin.so
-account    required	/lib/security/pam_tcb.so shadow fork
-password   required	/lib/security/pam_passwdqc.so min=disabled,24,12,8,7 max=40 passphrase=3 match=4 similar=deny random=42 enforce=everyone retry=3
-password   required	/lib/security/pam_tcb.so use_authtok shadow write_to=tcb fork prefix=$2a$ count=8
-session    required	/lib/security/pam_tcb.so
-session    required	/lib/security/pam_lastlog.so nowtmp
-session    required	/lib/security/pam_limits.so
-session    required	/lib/security/pam_mktemp.so
-session    required	/lib/security/pam_motd.so
+# $Id: Owl/packages/SimplePAMApps/login.pam,v 1.11 2005/09/02 17:41:21 ldv Exp $
+auth       required	pam_securetty.so
+auth       required	pam_tcb.so shadow fork nullok prefix=$2a$ count=8
+auth       required	pam_nologin.so
+account    required	pam_tcb.so shadow fork
+password   required	pam_passwdqc.so min=disabled,24,12,8,7 max=40 passphrase=3 match=4 similar=deny random=42 enforce=everyone retry=3
+password   required	pam_tcb.so use_authtok shadow write_to=tcb fork nullok prefix=$2a$ count=8
+session    required	pam_tcb.so
+session    required	pam_lastlog.so nowtmp
+session    required	pam_limits.so
+session    required	pam_mktemp.so
+session    required	pam_motd.so

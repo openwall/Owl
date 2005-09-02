@@ -1,7 +1,7 @@
 #%PAM-1.0
-# $Id: Owl/packages/SimplePAMApps/passwd.pam,v 1.6 2003/05/29 01:10:54 solar Exp $
-auth       required	/lib/security/pam_tcb.so shadow fork nullok nodelay prefix=$2a$ count=8
-account    required	/lib/security/pam_tcb.so shadow fork
-password   required	/lib/security/pam_passwdqc.so min=disabled,24,12,8,7 max=40 passphrase=3 match=4 similar=deny random=42 enforce=everyone retry=3
-password   required	/lib/security/pam_tcb.so use_authtok shadow write_to=tcb fork prefix=$2a$ count=8
-session    required	/lib/security/pam_deny.so
+# $Id: Owl/packages/SimplePAMApps/passwd.pam,v 1.7 2005/09/02 17:41:21 ldv Exp $
+auth       required	pam_tcb.so shadow fork nullok nodelay prefix=$2a$ count=8
+account    required	pam_tcb.so shadow fork
+password   required	pam_passwdqc.so min=disabled,24,12,8,7 max=40 passphrase=3 match=4 similar=deny random=42 enforce=everyone retry=3
+password   required	pam_tcb.so use_authtok shadow write_to=tcb fork nullok prefix=$2a$ count=8
+session    required	pam_deny.so
