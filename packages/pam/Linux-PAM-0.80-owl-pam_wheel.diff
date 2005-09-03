@@ -11,7 +11,7 @@ diff -upk.orig Linux-PAM-0.80.orig/modules/pam_wheel/README Linux-PAM-0.80/modul
 -			the current uid instead of the original one
 -			(useful when jumping with su from one account to
 -			another for example).
-+	use_uid		the check for wheel membership will be done against
++	use_uid		The check for wheel membership will be done against
 +			the current uid; this version of pam_wheel can only
 +			work in this way and ignores the 'use_uid' argument.
  			
