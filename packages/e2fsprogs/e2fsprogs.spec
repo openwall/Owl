@@ -1,4 +1,4 @@
-# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.26 2005/03/26 01:17:19 solar Exp $
+# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.27 2005/09/04 09:06:09 solar Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -13,13 +13,14 @@
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
 Version: 1.37
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
 Patch0: e2fsprogs-1.37-owl-fixes.diff
 Patch1: e2fsprogs-1.37-owl-tests.diff
 Patch2: e2fsprogs-1.37-owl-blkid-env.diff
+Patch3: e2fsprogs-1.37-owl-messages.diff
 PreReq: /sbin/ldconfig
 BuildRoot: /override/%name-%version
 
@@ -50,6 +51,7 @@ chmod -R u+w .
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -220,6 +222,9 @@ fi
 %_mandir/man3/uuid_unparse.3*
 
 %changelog
+* Sun Sep 04 2005 Solar Designer <solar@owl.openwall.com> 1.37-owl2
+- Corrected grammar in the error message fsck outputs on conflicting options.
+
 * Fri Mar 25 2005 Solar Designer <solar@owl.openwall.com> 1.37-owl1
 - Updated to 1.37 (the previous update to 1.36 was never made public).
 - Patched blkid_get_cache() to use __secure_getenv() instead of an explicit
