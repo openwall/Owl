@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.54 2005/07/18 15:38:21 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.55 2005/09/05 02:10:05 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.38.1
+Version: 1.6.38.2
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -57,8 +57,6 @@ install -m 700 run/john-* %buildroot%_libexecdir/john/
 install -m 644 run/{john.conf,password.lst} john-1.6/run/*.chr \
 	%buildroot%_datadir/john/
 install -m 644 -p run/mailer doc/
-mkdir doc/john-1.6
-cp -a john-1.6/doc/* doc/john-1.6/
 
 %files
 %defattr(-,root,root)
@@ -75,6 +73,11 @@ cp -a john-1.6/doc/* doc/john-1.6/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Mon Sep 05 2005 Solar Designer <solar@owl.openwall.com> 1.6.38.2-owl1
+- All of the remaining bits of John 1.6 documentation have been updated to
+apply to the current version.
+- Dropped John 1.6 documentation from the package.
+
 * Sun May 15 2005 Solar Designer <solar@owl.openwall.com> 1.6.38.1-owl1
 - Added a sample case toggler for cracking MD4-based NTLM hashes (with the
 contributed patch), given already cracked DES-based LM hashes.
