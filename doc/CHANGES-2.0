@@ -12,6 +12,10 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2005/09/05	Package: john
+All of the documentation has been updated to apply to the current
+version.  The old John the Ripper 1.6 documentation has been removed.
+
 2005/08/30	Package: procps
 Updated to 3.2.5.
 
@@ -555,4 +559,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.124 2005/08/30 15:17:22 ldv Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.125 2005/09/05 02:19:08 solar Exp $
