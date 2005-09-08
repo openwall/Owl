@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.56 2005/09/05 02:13:33 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.57 2005/09/08 18:08:08 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.38.2
+Version: 1.6.38.3
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -73,6 +73,11 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Thu Sep 08 2005 Solar Designer <solar@owl.openwall.com> 1.6.38.3-owl1
+- Fixed a bug in the loader introduced with 1.6.37.10 where "john --show"
+would report split hashes with the last piece not yet cracked as if they
+were fully cracked.
+
 * Mon Sep 05 2005 Solar Designer <solar@owl.openwall.com> 1.6.38.2-owl1
 - All of the remaining bits of John 1.6 documentation have been updated to
 apply to the current version.
@@ -91,7 +96,7 @@ contributed patch), given already cracked DES-based LM hashes.
 - Added the openbsd-x86-mmx-elf make target.
 
 * Wed Apr 20 2005 Solar Designer <solar@owl.openwall.com> 1.6.37.10-owl1
-- Fixed a long-standing bug in the loader where "john -show" would segfault
+- Fixed a long-standing bug in the loader where "john --show" would segfault
 when an invalid or unsupported hash is present in both john.pot and the
 password file.
 
