@@ -1,3 +1,7 @@
+#include <sys/types.h>
+#include <sys/stat.h>
+
+
 #include "iface.hpp"
 #include "cmd.hpp"
 #include "config.hpp"
@@ -47,6 +51,7 @@ void select_timezone(OwlInstallInterface *the_iface)
         ExecAndWait cp(the_config->CpPath().c_str(),
                        path.c_str(),
                        the_config->ZoneinfoSysconf().c_str(), 0);
+        chmod(path.c_str(), 0644);
         if(cp.Success())
             the_iface->Message("Timezone set");
         else

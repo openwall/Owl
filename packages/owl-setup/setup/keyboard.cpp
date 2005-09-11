@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include "scriptpp/scrvar.hpp"
 #include "scriptpp/scrvect.hpp"
 
@@ -72,6 +74,7 @@ void select_keyboard_layout(OwlInstallInterface *the_iface)
                                the_config->KeymapSysconf() + " for writing");
             return;
         }
+        fchmod(fileno(f), 0644);
         fprintf(f, "KEYTABLE=%s\n", res[0].c_str());
         fclose(f);
         the_iface->Message("Keyboard layout set");

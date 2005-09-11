@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #include "scriptpp/scrvar.hpp"
 #include "scriptpp/scrvect.hpp"
 
@@ -357,6 +360,8 @@ static bool save_net_config(const NetconfInfo &info)
     bool success = true;
     f = fopen(the_config->HostsFile().c_str(), "w");
     if(f) {
+        fchmod(fileno(f), 0644);
+
         if(info.MainIpAddress() != "127.0.0.1")
             fprintf(f, "127.0.0.1\tlocalhost\n");
 
@@ -379,6 +384,7 @@ static bool save_net_config(const NetconfInfo &info)
 
     f = fopen(the_config->ResolvFile().c_str(), "w");
     if(f) {
+        fchmod(fileno(f), 0644);
         if(info.GetDomain()!="") {
             fprintf(f, "domain %s\nsearch %s\n", info.GetDomain().c_str(),
                                                  info.GetDomain().c_str());
@@ -393,6 +399,7 @@ static bool save_net_config(const NetconfInfo &info)
 
     f = fopen(the_config->NetworkSysconf().c_str(), "w");
     if(f) {
+        fchmod(fileno(f), 0600);
         fprintf(f, "NETWORKING=yes\n"
 #if 0
                    "FORWARD_IPV4=%s\n"
@@ -431,6 +438,7 @@ static bool save_net_config(const NetconfInfo &info)
         fname += ii.Name();
         f = fopen(fname.c_str(), "w");
         if(f) {
+            fchmod(fileno(f), 0600);
             fprintf(f, "DEVICE=%s\n"
                        "BOOTPROTO=static\n"
                        "IPADDR=%s\n"

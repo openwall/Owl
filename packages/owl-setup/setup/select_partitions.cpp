@@ -1,6 +1,8 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <errno.h>
+#include <string.h>
 
 #include "scriptpp/scrvect.hpp"
 
@@ -56,11 +58,29 @@ static void mount_at(OwlInstallInterface *the_iface,
     ScriptVariable mp(the_config->OwlRoot());
     if(mountpoint != "/")
         mp += mountpoint;
-    ExecAndWait mkdir(the_config->MkdirPath().c_str(), "-p", mp.c_str(), 0);
-    sync();
-    chmod(mp.c_str(), 0755);
-    sync();
+
+    ScriptVector mpv(mp, "/", "");
+    ScriptVariable pp;
+    for(int i=0; i<mpv.Length(); i++) {
+        pp += "/";
+        pp += mpv[i];
+
+        FileStat thedir(pp.c_str());
+        if(thedir.IsDir()) {
+            chmod(pp.c_str(), 0755);
+        } else {
+            mode_t save_mask = umask(0);
+            int res = mkdir(pp.c_str(), 0755);
+            if(res == -1) {
+                the_iface->Message(ScriptVariable(0, 
+                    "Couldn't create the directory %s : %s",
+                    pp.c_str(), strerror(errno)));
+            }
+            umask(save_mask);
+        }
+    } 
       /* now we need all the operations with the dir to be completed */
+    sync();
     usleep(500000); /* yes, I know this is dirty -- so, what would you
                        recommend instead? */
     ExecAndWait mnt(the_config->MountPath().c_str(),

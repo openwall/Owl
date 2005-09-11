@@ -3,11 +3,26 @@ RM = rm -f
 MKDIR = mkdir -p
 INSTALL = install
 
-CXXFLAGS = -Wall -O2 -fomit-frame-pointer
-LDFLAGS = -s
+#LDFLAGS = -s
+LDFLAGS = -static
+
+WITH_NCURSES = no
+
+ifeq ($(WITH_NCURSES), yes)
+CURSES_LIBS = -lcdk -lmenu -lncurses
+CURSES_OBJ = iface_ncurses.o
+CURSES_FLAGS = -DNCURSES_ENABLE
+#CURSES_FLAGS = -DNCURSES_ENABLE -DNCURSES_DEFAULT
+else
+CURSES_LIBS = 
+CURSES_OBJ = 
+CURSES_FLAGS = 
+endif
+
+CXXFLAGS = -Wall -O2 -g -fomit-frame-pointer $(CURSES_FLAGS)
 
 LIBDEPS = scriptpp/libscriptpp.a ip4areas/libip4areas.a
-LIBS = -L scriptpp -lscriptpp -L ip4areas -lip4areas
+LIBS = -L scriptpp -lscriptpp -L ip4areas -lip4areas $(CURSES_LIBS)
 
 DESTDIR =
 PREFIX = /usr
@@ -15,7 +30,7 @@ SBINDIR = $(PREFIX)/sbin
 
 PROJ = settle setup
 
-SETTLE_OBJS = settle.o iface.o iface_dumb.o \
+SETTLE_OBJS = settle.o iface.o iface_dumb.o $(CURSES_OBJ) \
 	cmd.o \
 	state.o repartition.o \
 	select_partitions.o \
@@ -24,7 +39,7 @@ SETTLE_OBJS = settle.o iface.o iface_dumb.o \
 	mkfstab.o shellout.o network.o \
 	timezone.o keyboard.o config_settle.o reboot.o
 
-SETUP_OBJS = setup.o iface.o iface_dumb.o \
+SETUP_OBJS = setup.o iface.o iface_dumb.o $(CURSES_OBJ) \
 	cmd.o \
 	root_passwd_setup.o shellout.o \
 	network.o timezone.o keyboard.o config_setup.o
@@ -43,10 +58,10 @@ ip4areas/libip4areas.a: FORCE
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 settle: $(LIBDEPS) $(SETTLE_OBJS)
-	$(CXX) $(LDFLAGS) $(SETTLE_OBJS) $(LIBS) -o $@
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(SETTLE_OBJS) $(LIBS) -o $@
 
 setup: $(LIBDEPS) $(SETUP_OBJS)
-	$(CXX) $(LDFLAGS) $(SETUP_OBJS) $(LIBS) -o $@
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(SETUP_OBJS) $(LIBS) -o $@
 
 install: $(PROJ)
 	$(MKDIR) -m 755 $(DESTDIR)$(SBINDIR)

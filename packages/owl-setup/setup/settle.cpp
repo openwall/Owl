@@ -2,10 +2,13 @@
 
 #include "scriptpp/scrvar.hpp"
 
-#include "iface.hpp"
-#include "iface_dumb.hpp"
 #include "state.hpp"
 #include "config.hpp"
+#include "iface.hpp"
+#include "iface_dumb.hpp"
+#ifdef NCURSES_ENABLE
+#include "iface_ncurses.hpp"
+#endif
 
 #include "version.h"
 
@@ -23,8 +26,35 @@ extern void configure_network(OwlInstallInterface *);
 extern void install_kernel_and_lilo(OwlInstallInterface *);
 extern void reboot_it(OwlInstallInterface *);
 
-int main()
+#ifdef NCURSES_ENABLE
+
+#ifdef NCURSES_DEFAULT
+bool ncurses_interface = true;
+#else
+bool ncurses_interface = false;
+#endif
+
+void process_cmdline(int argc, char **argv)
 {
+    if(argc>1) {
+        ScriptVariable a1(argv[1]);
+        if(a1 == "-m") {
+            ncurses_interface = true;
+        } else 
+        if(a1 == "-d") {
+            ncurses_interface = false;
+        }
+    }
+}
+
+#endif
+
+int main(int argc, char **argv)
+{
+#ifdef NCURSES_ENABLE
+    process_cmdline(argc, argv);
+#endif
+
     the_config = new OwlInstallConfig();
 
     struct MainMenuItem {
@@ -56,7 +86,16 @@ int main()
         { 0,0,0,0 }
     };
 
-    OwlInstallInterface *the_interface = new DumbOwlInstallInterface;
+    OwlInstallInterface *the_interface;
+
+#ifdef NCURSES_ENABLE
+    if(ncurses_interface) 
+        the_interface = new NcursesOwlInstallInterface;
+    else
+        the_interface = new DumbOwlInstallInterface;
+#else 
+    the_interface = new DumbOwlInstallInterface;
+#endif
 
     for(;;) {
         IfaceSingleChoice *mm = the_interface->CreateSingleChoice();

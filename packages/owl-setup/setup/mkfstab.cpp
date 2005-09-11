@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
 
 #include "scriptpp/scrvar.hpp"
 #include "scriptpp/scrvect.hpp"
@@ -24,6 +27,7 @@ static void generate_standard_fstab(OwlInstallInterface *the_iface)
                            the_config->FstabFile() + " for writing");
         return;
     }
+    fchmod(fileno(f), 0644);
     ScriptVector dirs, parts, types;
     enumerate_owl_dirs3(dirs, parts, types);
     for(int i=0; i<dirs.Length(); i++) {

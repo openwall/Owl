@@ -69,8 +69,9 @@ void IfaceHierChoice::EndDir()
 
 void IfaceHierChoice::RmTree(Item *t)
 {
-    if(t->children) RmTree(t->children);
-    if(t->next) RmTree(t->next);
+    if(!t) return;
+    RmTree(t->children);
+    RmTree(t->next);
     delete t;
 }
 
