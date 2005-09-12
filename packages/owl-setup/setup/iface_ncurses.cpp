@@ -1,3 +1,5 @@
+#ifdef NCURSES_ENABLE
+
 #include <stdio.h>
 #include <ctype.h>
 #include <curses.h>
@@ -422,3 +424,5 @@ void NcursesOwlInstallInterface::CloseExecWindow()
 {
     refresh();
 }
+
+#endif
