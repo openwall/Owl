@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.30 2005/08/08 18:34:53 solar Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.31 2005/09/12 11:40:49 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 0.21
+Version: 0.22
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -31,6 +31,11 @@ rm -rf %buildroot
 %_sbindir/*
 
 %changelog
+* Mon Sep 12 2005 Croco <croco@owl.openwall.com> 0.22-owl1
+- Enforce the proper permissions on files created by the installer (regardless
+of umask).
+- An ncurses-based user interface has been implemented (but not yet enabled).
+
 * Mon Aug 08 2005 Solar Designer <solar@owl.openwall.com> 0.21-owl1
 - Revised the user interface messages and applied various bugfixes.
 
