@@ -73,7 +73,7 @@ static void mount_at(OwlInstallInterface *the_iface,
             int res = mkdir(pp.c_str(), 0755);
             if(res == -1) {
                 the_iface->Message(ScriptVariable(0, 
-                    "Couldn't create the directory %s : %s",
+                    "Failed to create directory: %s: %s",
                     pp.c_str(), strerror(errno)));
             }
             umask(save_mask);
