@@ -3,9 +3,6 @@ RM = rm -f
 MKDIR = mkdir -p
 INSTALL = install
 
-#LDFLAGS = -s
-LDFLAGS = -static
-
 WITH_NCURSES = no
 
 ifeq ($(WITH_NCURSES), yes)
@@ -14,12 +11,13 @@ CURSES_OBJ = iface_ncurses.o
 CURSES_FLAGS = -DNCURSES_ENABLE
 #CURSES_FLAGS = -DNCURSES_ENABLE -DNCURSES_DEFAULT
 else
-CURSES_LIBS = 
-CURSES_OBJ = 
-CURSES_FLAGS = 
+CURSES_LIBS =
+CURSES_OBJ =
+CURSES_FLAGS =
 endif
 
-CXXFLAGS = -Wall -O2 -g -fomit-frame-pointer $(CURSES_FLAGS)
+CXXFLAGS = -Wall -O2 -fomit-frame-pointer $(CURSES_FLAGS)
+LDFLAGS = -s
 
 LIBDEPS = scriptpp/libscriptpp.a ip4areas/libip4areas.a
 LIBS = -L scriptpp -lscriptpp -L ip4areas -lip4areas $(CURSES_LIBS)
