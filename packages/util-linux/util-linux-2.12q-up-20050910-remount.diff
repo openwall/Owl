@@ -1,0 +1,11 @@
+--- util-linux-2.12q/mount/umount.c	2004-12-21 01:03:45 +0300
++++ util-linux-2.12r-pre1/mount/umount.c	2005-09-10 22:07:38 +0400
+@@ -714,7 +714,7 @@ main (int argc, char *argv[]) {
+ 
+ 	if (getuid () != geteuid ()) {
+ 		suid = 1;
+-		if (all || types || nomtab || force)
++		if (all || types || nomtab || force || remount)
+ 			die (2, _("umount: only root can do that"));
+ 	}
+ 
