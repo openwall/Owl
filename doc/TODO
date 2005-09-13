@@ -28,7 +28,7 @@ friendly to virtual hosting.
 	bash.
 
 [PRIORITY: low]
-[ASSIGNED: galaxy@]
+[ASSIGNED: ldv@]
 Update to latest release (we're currently at 2.05, but 2.05b went out
 a long time ago), with our patches.  Make sure it still builds cleanly
 with -Wall (due to our patches).  Once again try to get our generic
@@ -412,7 +412,7 @@ Update to 3.22+.
 	rpm.
 
 [PRIORITY: high]
-[ASSIGNED: galaxy@]
+[ASSIGNED: ldv@]
 Should remove old files on "-U --force" even if package versions
 match.  Right now, when forcibly updating a package to what appears to
 be the same version, but the previously installed package contains
@@ -422,17 +422,17 @@ Reference:
 https://bugzilla.redhat.com/bugzilla/show_bug.cgi?id=134388
 
 [PRIORITY: medium]
-[ASSIGNED: galaxy@]
+[ASSIGNED: ldv@]
 When comparing package versions on -U or -F, optionally take build
 dates into account.  That is, consider a newer build of the same
 package version/release to be a newer package.
 
 [PRIORITY: medium]
-[ASSIGNED: galaxy@]
+[ASSIGNED: ldv@]
 Provide a safe default for %_repackage_dir; /var/tmp is not quite it.
 
 [PRIORITY: medium]
-[ASSIGNED: galaxy@]
+[ASSIGNED: ldv@]
 Set umask 022 for install scripts execution.
 
 [PRIORITY: medium]
@@ -440,7 +440,7 @@ Audit and correct rpm's temporary file handling and its support for
 package signature checking.
 
 [PRIORITY: low]
-[ASSIGNED: galaxy@]
+[ASSIGNED: ldv@]
 Make rpm also use the system's libelf.
 
 
@@ -552,4 +552,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.100 2005/08/23 23:48:34 solar Exp $
+$Id: Owl/doc/TODO,v 1.101 2005/09/13 13:04:14 solar Exp $
