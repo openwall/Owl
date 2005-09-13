@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.29 2005/07/03 06:42:23 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.30 2005/09/13 14:23:12 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 0.13
+Version: 0.14
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -85,6 +85,9 @@ fi
 %dir /owl
 
 %changelog
+* Tue Sep 13 2005 Solar Designer <solar@owl.openwall.com> 0.14-owl1
+- Updated the message in welcome-cdrom.sh for the new owl-setup.
+
 * Sun Jul 03 2005 Solar Designer <solar@owl.openwall.com> 0.13-owl1
 - Updated to Linux 2.4.31-ow1, dropped support for old 10 Mbps Intel Ethernet
 cards.

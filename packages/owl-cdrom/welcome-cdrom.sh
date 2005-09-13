@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-cdrom/welcome-cdrom.sh,v 1.5 2003/10/20 02:03:04 solar Exp $
+# $Id: Owl/packages/owl-cdrom/welcome-cdrom.sh,v 1.6 2005/09/13 14:23:12 solar Exp $
 
 CD=/.Owl-CD-ROM
 VERSION=
@@ -62,9 +62,8 @@ fi
 
 unset WORLD KERNEL DOC HAVE_SRCS HAVE_RPMS
 
-echo -n 'You may either configure the CD-booted system '
-echo 'and let it boot into multi-user'
-echo -n 'or install Owl on a hard disk for long-term use.  '
-echo 'Please refer to INSTALL for'
-echo 'more information.'
+echo 'Type "settle" to install Owl on a hard disk.'
+echo -n 'Type "setup" to configure the live CD system, '
+echo 'then "exit" the shell to boot.'
+echo 'Please refer to INSTALL for more information.'
 echo
