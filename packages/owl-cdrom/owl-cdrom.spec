@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.31 2005/09/13 14:27:45 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.32 2005/09/13 15:04:51 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
@@ -88,6 +88,7 @@ fi
 * Tue Sep 13 2005 Solar Designer <solar@owl.openwall.com> 0.14-owl1
 - Updated the message in welcome-cdrom.sh for the new owl-setup.
 - Install /boot/.config as world-readable.
+- Allow for LILO to be built with no external /boot/boot* files.
 
 * Sun Jul 03 2005 Solar Designer <solar@owl.openwall.com> 0.13-owl1
 - Updated to Linux 2.4.31-ow1, dropped support for old 10 Mbps Intel Ethernet
