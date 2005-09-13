@@ -12,6 +12,13 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2005/09/13	Package: util-linux
+SECURITY FIX	Severity: none to high, local, active
+Applied upstream fix to umount, to avoid unintentional grant of
+privileges by "umount -r".
+Reference:
+http://marc.theaimsgroup.com/?l=bugtraq&m=112656096125857&w=2
+
 2005/09/05	Package: john
 All of the documentation has been updated to apply to the current
 version.  The old John the Ripper 1.6 documentation has been removed.
@@ -559,4 +566,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.125 2005/09/05 02:19:08 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.126 2005/09/13 19:34:08 ldv Exp $
