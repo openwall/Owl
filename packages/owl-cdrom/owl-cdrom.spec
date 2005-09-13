@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.30 2005/09/13 14:23:12 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.31 2005/09/13 14:27:45 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
@@ -29,7 +29,7 @@ touch .Owl-CD-ROM
 install -m 700 $RPM_SOURCE_DIR/rc.ramdisk etc/rc.d/
 install -m 755 $RPM_SOURCE_DIR/welcome-cdrom.sh etc/profile.d/
 install -m 600 $RPM_SOURCE_DIR/lilo.conf etc/
-install -m 600 $RPM_SOURCE_DIR/dot-config boot/.config
+install -m 644 $RPM_SOURCE_DIR/dot-config boot/.config
 install -m 700 $RPM_SOURCE_DIR/floppy-update.sh boot/
 install -m 600 $RPM_SOURCE_DIR/message boot/
 ln -s ../rom/{dev,etc,home,root,tmp,var,world} ram/
@@ -87,6 +87,7 @@ fi
 %changelog
 * Tue Sep 13 2005 Solar Designer <solar@owl.openwall.com> 0.14-owl1
 - Updated the message in welcome-cdrom.sh for the new owl-setup.
+- Install /boot/.config as world-readable.
 
 * Sun Jul 03 2005 Solar Designer <solar@owl.openwall.com> 0.13-owl1
 - Updated to Linux 2.4.31-ow1, dropped support for old 10 Mbps Intel Ethernet
