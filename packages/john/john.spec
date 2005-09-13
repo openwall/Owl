@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.58 2005/09/08 18:09:57 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.59 2005/09/13 14:32:44 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.38.3
+Version: 1.6.39
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -73,7 +73,7 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
-* Thu Sep 08 2005 Solar Designer <solar@owl.openwall.com> 1.6.38.3-owl1
+* Thu Sep 08 2005 Solar Designer <solar@owl.openwall.com> 1.6.39-owl1
 - Fixed a bug in the loader introduced with 1.6.37.10 where "john --show"
 would report split hashes with the last piece not yet cracked as if they
 were fully cracked (thanks to Stephen Cartwright for the problem report).
