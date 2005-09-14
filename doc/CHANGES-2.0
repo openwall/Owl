@@ -19,7 +19,7 @@ privileges by "umount -r".  This only affected systems which made
 umount available to non-root users with control(8) (by default, only
 root can invoke umount) and specified any filesystems with restrictive
 flags (such as nosuid or nodev) as user-mountable.
-Reference:
+References:
 http://marc.theaimsgroup.com/?l=bugtraq&m=112656096125857
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-2876
 
@@ -570,4 +570,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.127 2005/09/14 23:44:42 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.128 2005/09/14 23:48:06 solar Exp $
