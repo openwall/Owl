@@ -1,9 +1,9 @@
-# $Id: Owl/packages/procps/Attic/procps.spec,v 1.21 2005/08/30 17:39:19 solar Exp $
+# $Id: Owl/packages/procps/Attic/procps.spec,v 1.22 2005/09/14 14:21:43 ldv Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
 Version: 3.2.5
-Release: owl1
+Release: owl2
 License: GPL and LGPL
 Group: System Environment/Base
 URL: http://procps.sf.net
@@ -26,6 +26,8 @@ Patch24: procps-3.2.5-alt-proc-sbuf.diff
 Patch25: procps-3.2.5-alt-man.diff
 Patch26: procps-3.2.5-owl-format.diff
 Patch27: procps-3.2.5-owl-proc.diff
+Patch28: procps-3.2.5-owl-pmap.diff
+Patch29: procps-3.2.5-owl-stat2proc.diff
 PreReq: /sbin/ldconfig
 BuildRequires: ncurses-devel
 BuildRoot: /override/%name-%version
@@ -55,6 +57,8 @@ skill, slabtop, snice, sysctl, tload, top, uptime, vmstat, w, and watch.
 %patch25 -p1
 %patch26 -p1
 %patch27 -p1
+%patch28 -p1
+%patch29 -p1
 
 %build
 %__make CC="%__cc" CFLAGS="%optflags"
@@ -76,6 +80,10 @@ rm -rf %buildroot
 %_mandir/man?/*
 
 %changelog
+* Wed Sep 14 2005 Dmitry V. Levin <ldv@owl.openwall.com> 3.2.5-owl2
+- Fixed handling of processes with unreadable /proc/#/stat files.
+- Suppressed bogus error message in pmap utility.
+
 * Tue Aug 30 2005 Dmitry V. Levin <ldv@owl.openwall.com> 3.2.5-owl1
 - Updated to 3.2.5, removed obsolete patches.
 - Packaged new procps utilities: pmap, pwdx, slabtop.

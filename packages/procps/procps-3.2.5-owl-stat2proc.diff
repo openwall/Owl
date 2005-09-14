@@ -1,0 +1,50 @@
+--- procps-3.2.5/proc/readproc.c.orig	2005-09-14 00:06:29 +0000
++++ procps-3.2.5/proc/readproc.c	2005-09-14 00:09:11 +0000
+@@ -506,9 +506,8 @@ static proc_t* simple_readproc(PROCTAB *
+     p->egid = sb.st_gid;			/* need a way to get real gid */
+ 
+     if (flags & PROC_FILLSTAT) {         /* read, parse /proc/#/stat */
+-	if (unlikely( file2str(path, "stat", sbuf, sizeof sbuf) == -1 ))
+-	    goto next_proc;			/* error reading /proc/#/stat */
+-	stat2proc(sbuf, p);				/* parse /proc/#/stat */
++	if (likely( file2str(path, "stat", sbuf, sizeof sbuf) != -1 ))
++	    stat2proc(sbuf, p);			/* parse /proc/#/stat */
+     }
+ 
+     if (unlikely(flags & PROC_FILLMEM)) {	/* read, parse /proc/#/statm */
+@@ -584,9 +583,8 @@ static proc_t* simple_readtask(PROCTAB *
+ 
+ //printf("iii\n");
+     if (flags & PROC_FILLSTAT) {         /* read, parse /proc/#/stat */
+-	if (unlikely( file2str(path, "stat", sbuf, sizeof sbuf) == -1 ))
+-	    goto next_task;			/* error reading /proc/#/stat */
+-	stat2proc(sbuf, t);				/* parse /proc/#/stat */
++	if (likely( file2str(path, "stat", sbuf, sizeof sbuf) != -1 ))
++	    stat2proc(sbuf, t);			/* parse /proc/#/stat */
+     }
+ 
+     if (unlikely(flags & PROC_FILLMEM)) {	/* read, parse /proc/#/statm */
+@@ -734,7 +732,10 @@ proc_t* readproc(PROCTAB *restrict const
+ //  }
+ 
+   saved_p = p;
+-  if(!p) p = xcalloc(p, sizeof *p); /* passed buf or alloced mem */
++  if(p)
++    memset (p, 0, sizeof *p);
++  else
++    p = xcalloc(p, sizeof *p); /* passed buf or alloced mem */
+ 
+   for(;;){
+     // fills in the path, plus p->tid and p->tgid
+@@ -762,7 +763,10 @@ proc_t* readtask(PROCTAB *restrict const
+   proc_t *saved_t;
+ 
+   saved_t = t;
+-  if(!t) t = xcalloc(t, sizeof *t); /* passed buf or alloced mem */
++  if(t)
++    memset (t, 0, sizeof *t);
++  else
++    t = xcalloc(t, sizeof *t); /* passed buf or alloced mem */
+ 
+   // 1. got to fake a thread for old kernels
+   // 2. for single-threaded processes, this is faster

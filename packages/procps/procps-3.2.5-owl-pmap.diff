@@ -1,0 +1,14 @@
+--- procps-3.2.5/pmap.c.orig	2005-09-13 23:13:04 +0000
++++ procps-3.2.5/pmap.c	2005-09-13 23:48:34 +0000
+@@ -85,10 +85,9 @@ static void discover_shm_minor(void){
+     }
+   }
+ 
+-  if(shmdt(addr)) perror("shmdt");
+-
+ out_destroy:
+   if(shmctl(shmid, IPC_RMID, NULL)) perror("IPC_RMID");
++  if(addr!=(void*)-1 && shmdt(addr)) perror("shmdt");
+ 
+   return;
+ }
