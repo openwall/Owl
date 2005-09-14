@@ -12,12 +12,16 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
-2005/09/13	Package: util-linux
+2005/09/14	Package: util-linux
 SECURITY FIX	Severity: none to high, local, active
-Applied upstream fix to umount, to avoid unintentional grant of
-privileges by "umount -r".
+Applied upstream fix to umount(8) to avoid unintentional grant of
+privileges by "umount -r".  This only affected systems which made
+umount available to non-root users with control(8) (by default, only
+root can invoke umount) and specified any filesystems with restrictive
+flags (such as nosuid or nodev) as user-mountable.
 Reference:
-http://marc.theaimsgroup.com/?l=bugtraq&m=112656096125857&w=2
+http://marc.theaimsgroup.com/?l=bugtraq&m=112656096125857
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-2876
 
 2005/09/05	Package: john
 All of the documentation has been updated to apply to the current
@@ -566,4 +570,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.126 2005/09/13 19:34:08 ldv Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.127 2005/09/14 23:44:42 solar Exp $
