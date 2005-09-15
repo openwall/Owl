@@ -1,30 +1,33 @@
---- procps-3.2.5/proc/readproc.c.orig	2005-09-14 00:06:29 +0000
-+++ procps-3.2.5/proc/readproc.c	2005-09-14 00:09:11 +0000
-@@ -506,9 +506,8 @@ static proc_t* simple_readproc(PROCTAB *
+diff -upk.orig procps-3.2.5.orig/proc/readproc.c procps-3.2.5/proc/readproc.c
+--- procps-3.2.5.orig/proc/readproc.c	2005-09-15 15:26:11 +0000
++++ procps-3.2.5/proc/readproc.c	2005-09-15 15:35:57 +0000
+@@ -506,9 +506,10 @@ static proc_t* simple_readproc(PROCTAB *
      p->egid = sb.st_gid;			/* need a way to get real gid */
  
      if (flags & PROC_FILLSTAT) {         /* read, parse /proc/#/stat */
 -	if (unlikely( file2str(path, "stat", sbuf, sizeof sbuf) == -1 ))
--	    goto next_proc;			/* error reading /proc/#/stat */
--	stat2proc(sbuf, p);				/* parse /proc/#/stat */
 +	if (likely( file2str(path, "stat", sbuf, sizeof sbuf) != -1 ))
 +	    stat2proc(sbuf, p);			/* parse /proc/#/stat */
++	else if ((flags & PROC_FILLSTAT_FAILOK) != PROC_FILLSTAT_FAILOK)
+ 	    goto next_proc;			/* error reading /proc/#/stat */
+-	stat2proc(sbuf, p);				/* parse /proc/#/stat */
      }
  
      if (unlikely(flags & PROC_FILLMEM)) {	/* read, parse /proc/#/statm */
-@@ -584,9 +583,8 @@ static proc_t* simple_readtask(PROCTAB *
+@@ -584,9 +585,10 @@ static proc_t* simple_readtask(PROCTAB *
  
  //printf("iii\n");
      if (flags & PROC_FILLSTAT) {         /* read, parse /proc/#/stat */
 -	if (unlikely( file2str(path, "stat", sbuf, sizeof sbuf) == -1 ))
--	    goto next_task;			/* error reading /proc/#/stat */
--	stat2proc(sbuf, t);				/* parse /proc/#/stat */
 +	if (likely( file2str(path, "stat", sbuf, sizeof sbuf) != -1 ))
 +	    stat2proc(sbuf, t);			/* parse /proc/#/stat */
++	else if ((flags & PROC_FILLSTAT_FAILOK) != PROC_FILLSTAT_FAILOK)
+ 	    goto next_task;			/* error reading /proc/#/stat */
+-	stat2proc(sbuf, t);				/* parse /proc/#/stat */
      }
  
      if (unlikely(flags & PROC_FILLMEM)) {	/* read, parse /proc/#/statm */
-@@ -734,7 +732,10 @@ proc_t* readproc(PROCTAB *restrict const
+@@ -734,7 +736,10 @@ proc_t* readproc(PROCTAB *restrict const
  //  }
  
    saved_p = p;
@@ -36,7 +39,7 @@
  
    for(;;){
      // fills in the path, plus p->tid and p->tgid
-@@ -762,7 +763,10 @@ proc_t* readtask(PROCTAB *restrict const
+@@ -762,7 +767,10 @@ proc_t* readtask(PROCTAB *restrict const
    proc_t *saved_t;
  
    saved_t = t;
@@ -48,3 +51,27 @@
  
    // 1. got to fake a thread for old kernels
    // 2. for single-threaded processes, this is faster
+diff -upk.orig procps-3.2.5.orig/proc/readproc.h procps-3.2.5/proc/readproc.h
+--- procps-3.2.5.orig/proc/readproc.h	2004-09-23 13:35:42 +0000
++++ procps-3.2.5/proc/readproc.h	2005-09-15 15:32:07 +0000
+@@ -241,6 +241,8 @@ extern proc_t * get_proc_stats(pid_t pid
+ #define PROC_PID             0x1000  // process id numbers ( 0   terminated)
+ #define PROC_UID             0x4000  // user id numbers    ( length needed )
+ 
++#define PROC_FILLSTAT_FAILOK (0x10000|PROC_FILLSTAT) // read stat but do not fail in case of error
++
+ // it helps to give app code a few spare bits
+ #define PROC_SPARE_1     0x01000000
+ #define PROC_SPARE_2     0x02000000
+diff -upk.orig procps-3.2.5.orig/w.c procps-3.2.5/w.c
+--- procps-3.2.5.orig/w.c	2005-09-15 15:26:11 +0000
++++ procps-3.2.5/w.c	2005-09-15 15:29:00 +0000
+@@ -299,7 +299,7 @@ int main(int argc, char **argv) {
+     if (maxcmd < 3)
+ 	fprintf(stderr, "warning: screen width %d suboptimal.\n", win.ws_col);
+ 
+-    procs = readproctab(PROC_FILLCOM | PROC_FILLUSR | PROC_FILLSTAT);
++    procs = readproctab(PROC_FILLCOM | PROC_FILLUSR | PROC_FILLSTAT_FAILOK);
+ 
+     if (header) {				/* print uptime and headers */
+ 	print_uptime();
