@@ -28,6 +28,8 @@ static void mount_at(OwlInstallInterface *the_iface,
     pm->AddItem("no", "Don't format it, try to mount now");
     pm->AddItem("q", "Quit/cancel");
 
+    pm->SetDefault("ext3");
+
     ScriptVariable choice = pm->Run();
     delete pm;
     if(choice=="q" || choice=="" ||
