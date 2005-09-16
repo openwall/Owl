@@ -1,0 +1,11 @@
+--- findutils-4.2.25/find/find.c.orig	2005-09-16 22:52:31 +0000
++++ findutils-4.2.25/find/find.c	2005-09-04 14:25:45 +0000
+@@ -1806,7 +1806,7 @@ complete_pending_execs(struct predicate 
+ static void
+ process_dir (char *pathname, char *name, int pathlen, struct stat *statp, char *parent)
+ {
+-  int subdirs_left;		/* Number of unexamined subdirs in PATHNAME. */
++  int subdirs_left = 0;		/* Number of unexamined subdirs in PATHNAME. */
+   boolean subdirs_unreliable;	/* if true, cannot use dir link count as subdir limif (if false, it may STILL be unreliable) */
+   int idx;			/* Which entry are we on? */
+   struct stat stat_buf;
