@@ -1,9 +1,9 @@
-# $Id: Owl/packages/procps/Attic/procps.spec,v 1.22 2005/09/14 14:21:43 ldv Exp $
+# $Id: Owl/packages/procps/Attic/procps.spec,v 1.23 2005/09/16 22:16:48 ldv Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
 Version: 3.2.5
-Release: owl2
+Release: owl3
 License: GPL and LGPL
 Group: System Environment/Base
 URL: http://procps.sf.net
@@ -80,6 +80,10 @@ rm -rf %buildroot
 %_mandir/man?/*
 
 %changelog
+* Sat Sep 17 2005 Dmitry V. Levin <ldv@owl.openwall.com> 3.2.5-owl3
+- Restored old behavior of all utilities except w(1) wrt unreadable
+/proc/#/stat files.
+
 * Wed Sep 14 2005 Dmitry V. Levin <ldv@owl.openwall.com> 3.2.5-owl2
 - Fixed handling of processes with unreadable /proc/#/stat files.
 - Suppressed bogus error message in pmap utility.
