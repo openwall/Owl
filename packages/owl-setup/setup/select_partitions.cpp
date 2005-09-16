@@ -66,23 +66,19 @@ static void mount_at(OwlInstallInterface *the_iface,
         pp += mpv[i];
 
         FileStat thedir(pp.c_str());
-        if(thedir.IsDir()) {
-            chmod(pp.c_str(), 0755);
-        } else {
-            mode_t save_mask = umask(0);
+        if(!thedir.IsDir()) {
             int res = mkdir(pp.c_str(), 0755);
             if(res == -1) {
                 the_iface->Message(ScriptVariable(0, 
                     "Failed to create directory: %s: %s",
                     pp.c_str(), strerror(errno)));
             }
-            umask(save_mask);
+            
         }
+        chmod(pp.c_str(), 0755);
     } 
-      /* now we need all the operations with the dir to be completed */
+    chmod(mp.c_str(), 0700);
     sync();
-    usleep(500000); /* yes, I know this is dirty -- so, what would you
-                       recommend instead? */
     ExecAndWait mnt(the_config->MountPath().c_str(),
                     part.c_str(), mp.c_str(), 0);
 
