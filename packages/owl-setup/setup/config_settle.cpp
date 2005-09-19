@@ -90,8 +90,11 @@ ScriptVariable OwlInstallConfig::LoadkeysPath() const
 ScriptVariable OwlInstallConfig::ZoneinfoDbPath() const
 { return "/usr/share/zoneinfo"; }
 
-ScriptVariable OwlInstallConfig::ZoneinfoSysconf() const
+ScriptVariable OwlInstallConfig::ZoneinfoFile() const
 { return "/owl/etc/localtime"; }
+
+ScriptVariable OwlInstallConfig::ZoneinfoSysconf() const
+{ return "/owl/etc/sysconfig/clock"; }
 
 
 

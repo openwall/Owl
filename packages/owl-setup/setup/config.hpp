@@ -45,6 +45,7 @@ public:
 
         // time zone
     ScriptVariable ZoneinfoDbPath() const;
+    ScriptVariable ZoneinfoFile() const;
     ScriptVariable ZoneinfoSysconf() const;
 
         // network config

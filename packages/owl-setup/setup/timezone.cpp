@@ -1,5 +1,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <stdio.h>
 
 
 #include "iface.hpp"
@@ -48,12 +49,29 @@ void select_timezone(OwlInstallInterface *the_iface)
         ScriptVariable path(the_config->ZoneinfoDbPath());
         path += "/";
         path += res.Join("/");
+        the_iface->ExecWindow("Copying zone file");
         ExecAndWait cp(the_config->CpPath().c_str(),
                        path.c_str(),
-                       the_config->ZoneinfoSysconf().c_str(), 0);
+                       the_config->ZoneinfoFile().c_str(), 0);
+        the_iface->CloseExecWindow();
         chmod(path.c_str(), 0644);
-        if(cp.Success())
-            the_iface->Message("Timezone set");
+        if(cp.Success()) {
+            bool utc = 
+                the_iface->YesNoMessage("Hardware clock set to UTC?", 
+                                        true);
+            
+            FILE *f = fopen(the_config->ZoneinfoSysconf().c_str(), "w");
+            if(f) {
+                fchmod(fileno(f), 0644);
+                fprintf(f, "UTC=%s\nARC=false\nZONE=%s\n", 
+                        utc ? "true" : "false",    
+                        res.Join("/").c_str());
+                fclose(f);
+            } else {
+                the_iface->Message("Error writing clock config file");
+            }
+
+        }
         else
             the_iface->Message("Error copying the timezone file");
     }
