@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.33 2005/09/19 17:34:29 croco Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.34 2005/09/19 18:47:12 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 0.22
+Version: 0.24
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
