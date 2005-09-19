@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.32 2005/09/19 15:12:22 croco Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.33 2005/09/19 17:34:29 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -31,6 +31,10 @@ rm -rf %buildroot
 %_sbindir/*
 
 %changelog
+* Mon Sep 19 2005 Croco <croco@owl.openwall.com> 0.24-owl1
+- UTC/local hw clock handled; creation of /etc/sysconfig/clock implemented
+- lots of fixes to the ncurses-based interface
+
 * Mon Sep 19 2005 Croco <croco@owl.openwall.com> 0.23-owl1
 - ext3 is now offered as the default
 - removed some unclear dirty workarounds with creating mountpoints
