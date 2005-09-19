@@ -29,7 +29,7 @@ public:
 
     void Message(const ScriptVariable& msg);
     void Notice(const ScriptVariable& msg);
-    bool YesNoMessage(const ScriptVariable& msg);
+    bool YesNoMessage(const ScriptVariable& msg, bool dfl = false);
     YesNoCancelResult YesNoCancelMessage(const ScriptVariable& msg);
 
     ScriptVariable QueryString(const ScriptVariable &prompt,

@@ -15,16 +15,34 @@ NcursesIfaceSingleChoice::NcursesIfaceSingleChoice()
     : IfaceSingleChoice()
 {}
 
+
+static void do_menu_move(MENU *the_menu, int direction)
+{
+    ITEM* last_current = current_item(the_menu);
+    ITEM* cur;
+    do {
+        menu_driver(the_menu, direction);
+        cur = current_item(the_menu);
+        if(cur == last_current) {
+            // this means we're in a endless cycle, bail out
+            break;
+        }
+    } while((item_opts(cur) & O_SELECTABLE) == 0);
+}
+
 ScriptVariable NcursesIfaceSingleChoice::Run()
 {
     int nitem = 0;
     for(Item *p = first; p; p = p->next) nitem++;
     ITEM **menu_items = new (ITEM*)[nitem+1];
     int i = 0;
-    for(Item *p = first; p; p = p->next, i++) {
-        menu_items[i] = new_item(p->label.c_str(), p->comment.c_str());
+    for(Item *p = first; p; p = p->next) {
+        menu_items[i] = 
+            new_item(p->enabled ? p->label.c_str() : "----", 
+                     p->comment.c_str());
         if(!p->enabled) 
             item_opts_off(menu_items[i], O_SELECTABLE);
+        i++;
     }
     menu_items[nitem] = 0;
     MENU *the_menu = new_menu(menu_items); 
@@ -51,9 +69,25 @@ ScriptVariable NcursesIfaceSingleChoice::Run()
     refresh();
 
     set_menu_mark(the_menu, "");
+    menu_opts_on(the_menu, O_ONEVALUE|O_SHOWDESC);
+    menu_opts_off(the_menu, O_NONCYCLIC|O_SHOWMATCH);
     box(mwin, 0, 0);
 
     post_menu(the_menu);
+
+    if(defvalue!="") {
+        ITEM* first = current_item(the_menu);
+        ITEM* cur = first;
+        while(defvalue != item_name(cur))  {
+            menu_driver(the_menu, REQ_NEXT_ITEM);
+            cur = current_item(the_menu);
+            if(cur == first) {
+                // this means we're in a endless cycle, bail out
+                break;
+            }
+        }
+    }
+
     keypad(mwin, TRUE);
     wrefresh(mwin);
 
@@ -69,10 +103,10 @@ ScriptVariable NcursesIfaceSingleChoice::Run()
                 result = item_name(current_item(the_menu));
                 goto quit;
             case KEY_DOWN:
-                menu_driver(the_menu, REQ_DOWN_ITEM);
+                do_menu_move(the_menu, REQ_DOWN_ITEM);
                 break;
             case KEY_UP:
-                menu_driver(the_menu, REQ_UP_ITEM);
+                do_menu_move(the_menu, REQ_UP_ITEM);
                 break;
             case KEY_CANCEL:
             case KEY_EXIT:
@@ -124,8 +158,13 @@ static int run_scroll(CDKSCREEN *screen,
  
     char **itemsv = items.MakeArgv();
 
+    int maxlen = 0;
+    for(int i=0; i<items.Length(); i++) {
+        if(maxlen < items[i].Length()) maxlen = items[i].Length();
+    }
+
     CDKSCROLL* list = 
-        newCDKScroll(screen, CENTER, CENTER, RIGHT, -4, 20,
+        newCDKScroll(screen, CENTER, CENTER, RIGHT, -4, maxlen + 6,
                      (char*)(header.c_str()), itemsv, items.Length(), 
                      false, A_REVERSE, true, false);
 
@@ -273,7 +312,7 @@ void NcursesOwlInstallInterface::Message(const ScriptVariable& msg)
 
 void NcursesOwlInstallInterface::Notice(const ScriptVariable& msg)
 {
-    waddstr((WINDOW*)noticewin, msg.c_str());
+    waddstr((WINDOW*)noticewin, (msg+"\n").c_str());
     wrefresh((WINDOW*)noticewin);
 }
 
@@ -282,7 +321,8 @@ void NcursesOwlInstallInterface::Notice(const ScriptVariable& msg)
 /* popupDialog() could satisfy us if the problem is fixed */
 static int run_dialog(CDKSCREEN *screen, 
                       char **message, int msglen, 
-                      char **buttons, int buttonscount)
+                      char **buttons, int buttonscount, 
+                      int dfl)
 {
     int res = -1;
 
@@ -290,6 +330,9 @@ static int run_dialog(CDKSCREEN *screen,
                                   message, msglen, buttons, buttonscount, 
                                   A_REVERSE, true, true, false);
     drawCDKDialog(dlg, true);
+ 
+    for(int i = 0; i< dfl; i++) 
+         injectCDKDialog(dlg, KEY_LEFT);
 
     for(;;) {
         int c = wgetch(stdscr);
@@ -323,7 +366,8 @@ quit:
                       
 
 
-bool NcursesOwlInstallInterface::YesNoMessage(const ScriptVariable& msg)
+bool NcursesOwlInstallInterface::YesNoMessage(const ScriptVariable& msg,
+                                              bool dfl)
 {
     static char *yesno[] = { "Yes", "No", 0 };
  
@@ -332,7 +376,8 @@ bool NcursesOwlInstallInterface::YesNoMessage(const ScriptVariable& msg)
     char **message = vect.MakeArgv();
 
     int res = 
-        run_dialog((CDKSCREEN*)cdkscreen, message, vect.Length(), yesno, 2);
+        run_dialog((CDKSCREEN*)cdkscreen, message, vect.Length(), yesno, 2, 
+                    dfl ? 0 : 1);
 
     vect.DeleteArgv(message);
 
@@ -349,7 +394,8 @@ NcursesOwlInstallInterface::YesNoCancelMessage(const ScriptVariable& msg)
     char **message = vect.MakeArgv();
 
     int res = 
-        run_dialog((CDKSCREEN*)cdkscreen, message, vect.Length(), yesnoc, 3);
+        run_dialog((CDKSCREEN*)cdkscreen, message, vect.Length(), yesnoc,
+                   3, 2);
 
     vect.DeleteArgv(message);
 
@@ -393,7 +439,7 @@ NcursesOwlInstallInterface::QueryString(const ScriptVariable& prompt,
             case KEY_ENTER: 
             case KEY_RETURN: 
             case KEY_SELECT: 
-                act_res = injectCDKEntry(entry, '\r');
+                act_res = getCDKEntryValue(entry);
                 goto quit;
             case KEY_DOWN:
             case KEY_UP:

@@ -253,17 +253,18 @@ void DumbOwlInstallInterface::Notice(const ScriptVariable& msg)
     printf("\n%s\n\n", msg.c_str());
 }
 
-bool DumbOwlInstallInterface::YesNoMessage(const ScriptVariable& msg)
+bool DumbOwlInstallInterface::YesNoMessage(const ScriptVariable& msg, 
+                                           bool dfl)
 {
     for(;;) {
-        printf("\n%s (yes|no) [no] ", msg.c_str());
+        printf("\n%s (yes|no) [%s] ", msg.c_str(), dfl ? "yes" : "no");
         ScriptVariable res = KeyboardRead();
         if(res==qs_redraw) continue;
         res.Trim(" \n\r\t");
         res.Tolower();
+        if(res=="") return dfl;
         if(res=="yes") return true;
-        if(res=="no"||res==""||
-           res==qs_cancel||res==qs_escape||res==qs_eof)
+        if(res=="no"||res==qs_cancel||res==qs_escape||res==qs_eof)
         {
             return false;
         }
