@@ -113,7 +113,7 @@ int main(int argc, char **argv)
         } else
         if(choice == OwlInstallInterface::qs_eof) {
             the_interface->Notice("Got EOF, exiting...");
-            return 1;
+            break;
         } else {
             the_interface->Message("Warning: internal error (unknown choice)");
         }

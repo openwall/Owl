@@ -116,7 +116,7 @@ int main(int argc, char **argv)
         delete mm;
         if(choice == "") {
             the_interface->Notice("Got EOF, exiting...");
-            return 1;
+            break;
         } else
         if(choice == "f") {
             repartition_hard_drive(the_interface);
@@ -159,28 +159,30 @@ int main(int argc, char **argv)
             enumerate_owl_dirs(dirs, parts);
             if(parts.Length()>0) {
                 if(parts.Length()==1) {
-                    the_interface->Notice(ScriptVariable("Warning: ") +
+                    the_interface->Message(ScriptVariable("Warning: ") +
                                           parts[0] +
                                           " is still mounted at " +
                                           dirs[0]);
                 } else {
-                    the_interface->Notice(ScriptVariable("Warning: ") +
+                    the_interface->Message(ScriptVariable("Warning: ") +
                                           parts.Join(", ") +
                                           " are still mounted at " +
                                           dirs.Join(", ") + ", respectively");
                 }
             }
             the_interface->Notice("Exiting...");
-            return 0;
+            break;
         } else
         if(choice == OwlInstallInterface::qs_cancel) {
             the_interface->Notice("Please use \"x\" to exit");
         } else
         if(choice == OwlInstallInterface::qs_eof) {
             the_interface->Notice("Got EOF, exiting...");
-            return 1;
+            break;
         } else {
             the_interface->Message("Warning: internal error (unknown choice)");
         }
     }
+    delete the_interface;
+    return 0;
 }
