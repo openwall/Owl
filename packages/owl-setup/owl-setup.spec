@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.31 2005/09/12 11:40:49 solar Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.32 2005/09/19 15:12:22 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -31,6 +31,11 @@ rm -rf %buildroot
 %_sbindir/*
 
 %changelog
+* Mon Sep 19 2005 Croco <croco@owl.openwall.com> 0.23-owl1
+- ext3 is now offered as the default
+- removed some unclear dirty workarounds with creating mountpoints
+- mountpoints theyselves are now forced to be 0700, not 0755
+
 * Mon Sep 12 2005 Croco <croco@owl.openwall.com> 0.22-owl1
 - Enforce the proper permissions on files created by the installer (regardless
 of umask).
