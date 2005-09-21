@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cdk/cdk.spec,v 1.3 2005/09/21 22:18:51 solar Exp $
+# $Id: Owl/packages/cdk/cdk.spec,v 1.4 2005/09/21 22:27:50 solar Exp $
 
 Summary: Curses Development Kit.
 Name: cdk
@@ -15,9 +15,9 @@ BuildRoot: /override/%name-%version
 
 %description
 CDK is a widget set developed on top of the basic curses library.  It
-contains 21 ready to use widgets.  Some of which are text entry field,
-scrolling list, selection list, alphalist, pull-down menu, radio
-list, viewer widget, dialog box, and many more.
+contains 21 ready to use widgets, some of which are text entry field,
+scrolling list, selection list, alphalist, pull-down menu, radio list,
+viewer widget, dialog box, and many more.
 
 %package devel
 Summary: Static library, header files and development documentation for CDK library.
