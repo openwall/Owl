@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cdk/cdk.spec,v 1.2 2005/09/21 22:18:28 solar Exp $
+# $Id: Owl/packages/cdk/cdk.spec,v 1.3 2005/09/21 22:18:51 solar Exp $
 
 Summary: Curses Development Kit.
 Name: cdk
@@ -33,7 +33,7 @@ Header files and development documentation for CDK library.
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-%configure 
+%configure
 %__make cdklib cdkshlib
 
 %install
