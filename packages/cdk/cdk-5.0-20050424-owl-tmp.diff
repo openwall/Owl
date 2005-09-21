@@ -1,0 +1,42 @@
+diff -urp cdk-5.0-20050424.orig/demos/rolodex.c cdk-5.0-20050424/demos/rolodex.c
+--- cdk-5.0-20050424.orig/demos/rolodex.c	2005-04-24 21:26:15 +0000
++++ cdk-5.0-20050424/demos/rolodex.c	2005-09-21 23:11:12 +0000
+@@ -1448,7 +1448,7 @@ void printGroupNumbers (CDKSCREEN *scree
+ 	 destroyCDKEntry (entry);
+ 
+ 	 /* Print the group. */
+-	 if (printGroup (groupList[x], "/tmp/rolodex.tmp", printer) == 0)
++	 if (printGroup (groupList[x], "rolodex.tmp", printer) == 0)
+ 	 {
+ 	    /* The group could not be printed. */
+ 	    sprintf (temp, "<C>Sorry the group '%s' could not be printed.", groupList[x].name);
+@@ -1460,7 +1460,7 @@ void printGroupNumbers (CDKSCREEN *scree
+ 	 /* Clean up. */
+ 	 destroyCDKLabel (title);
+ 	 freeChar (printer);
+-	 unlink ("/tmp/rolodex.tmp");
++	 unlink ("rolodex.tmp");
+       }
+       else if (selectionList->selections[x] == 1)
+       {
+@@ -1526,7 +1526,7 @@ int printGroup (SRolodex groupRecord, ch
+    }
+    else
+    {
+-      sprintf (tempFilename, "/tmp/rolodex.%d", (int)uid);
++      sprintf (tempFilename, "rolodex.tmp%d", (int)uid);
+    }
+ 
+    /* Open the file. */
+diff -urp cdk-5.0-20050424.orig/headers.sh cdk-5.0-20050424/headers.sh
+--- cdk-5.0-20050424.orig/headers.sh	2005-03-25 23:30:29 +0000
++++ cdk-5.0-20050424/headers.sh	2005-09-21 23:10:59 +0000
+@@ -94,7 +94,7 @@ do
+ 		FILE=$1
+ 
+ 		SHOW=`basename $FILE`
+-		TMPSRC=${TMPDIR-/tmp}/${SHOW}$$
++		TMPSRC=${SHOW}.tmp$$
+ 
+ 		echo "	... $SHOW"
+ 		test -f $OPT_S/$FILE && FILE="$OPT_S/$FILE"
