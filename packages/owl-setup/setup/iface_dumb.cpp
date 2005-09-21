@@ -215,7 +215,7 @@ bool DumbIfaceHierChoice::Run(ScriptVector &result)
                         level = p->children;
                         break;
                     } else {
-                        // here is it!
+                        // here it is!
                         result.Clear();
                         result[0] = p->name;
                         while(level->parent) {
