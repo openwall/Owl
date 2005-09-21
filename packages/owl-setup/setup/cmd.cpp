@@ -276,6 +276,11 @@ bool FileStat::IsRegularFile() const
     return stat_info && S_ISREG(((struct stat*)stat_info)->st_mode);
 }
 
+bool FileStat::IsEmpty() const
+{
+    return stat_info && (((struct stat*)stat_info)->st_size == 0);
+}
+
 
 
 

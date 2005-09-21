@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.35 2005/09/19 18:48:01 solar Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.36 2005/09/21 20:55:06 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 0.24
+Version: 0.25
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -31,6 +31,10 @@ rm -rf %buildroot
 %_sbindir/*
 
 %changelog
+* Mon Sep 21 2005 Croco <croco@owl.openwall.com> 0.25-owl1
+- careful handling of /etc/hosts added
+- timezone and keyb. layout in the dumb interface made case insensitive 
+
 * Mon Sep 19 2005 Croco <croco@owl.openwall.com> 0.24-owl1
 - UTC/local hw clock handled; creation of /etc/sysconfig/clock implemented
 - lots of fixes to the ncurses-based interface

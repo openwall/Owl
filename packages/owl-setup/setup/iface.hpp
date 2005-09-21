@@ -53,6 +53,7 @@ protected:
     Item* parent;
 
     ScriptVariable caption;
+    bool ignore_case;
 
 public:
     IfaceHierChoice();
@@ -66,6 +67,7 @@ public:
 
     virtual bool Run(ScriptVector &result) = 0;
 
+    void SetCaseSensitivity(bool sensitive) { ignore_case = !sensitive; }
 private:
     void RmTree(Item *t);
 };

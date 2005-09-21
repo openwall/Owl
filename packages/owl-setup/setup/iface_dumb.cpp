@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <ctype.h>
 #include <termios.h>
 
@@ -206,14 +207,17 @@ bool DumbIfaceHierChoice::Run(ScriptVector &result)
             res.Trim("[] ");
             Item *p;
             for(p = level; p; p = p->next) {
-                if(p->name == res) {
+                bool eq = ignore_case ? 
+                    strcasecmp(p->name.c_str(), res.c_str()) == 0 : 
+                    p->name == res;
+                if(eq) {
                     if(p->children) {
                         level = p->children;
                         break;
                     } else {
                         // here is it!
                         result.Clear();
-                        result[0] = res;
+                        result[0] = p->name;
                         while(level->parent) {
                             result.Insert(0, level->parent->name);
                             level = level->parent;

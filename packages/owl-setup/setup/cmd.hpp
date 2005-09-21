@@ -77,6 +77,7 @@ public:
     bool Exists() const;
     bool IsDir() const;
     bool IsRegularFile() const;
+    bool IsEmpty() const;
 };
 
 

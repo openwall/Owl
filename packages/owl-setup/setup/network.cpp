@@ -354,15 +354,15 @@ static ScriptVariable summary_net_ifaces(NetconfInfo &info)
     return res;
 }
 
-static bool save_net_config(const NetconfInfo &info)
+static bool save_hosts_file(const NetconfInfo &info, 
+                            bool append_mode = false)
 {
-    FILE* f;
-    bool success = true;
-    f = fopen(the_config->HostsFile().c_str(), "w");
+    FILE *f;
+    f = fopen(the_config->HostsFile().c_str(), append_mode ? "a" : "w");
     if(f) {
         fchmod(fileno(f), 0644);
 
-        if(info.MainIpAddress() != "127.0.0.1")
+        if(!append_mode && info.MainIpAddress() != "127.0.0.1")
             fprintf(f, "127.0.0.1\tlocalhost\n");
 
         ScriptVariable fullnm(info.GetFullHostname());
@@ -379,8 +379,17 @@ static bool save_net_config(const NetconfInfo &info)
                        shortnm.c_str());
         }
         fclose(f);
+        return true;
     } else
-        success = false;
+        return false;
+}
+
+
+
+static bool save_net_config(const NetconfInfo &info)
+{
+    FILE* f;
+    bool success = true;
 
     f = fopen(the_config->ResolvFile().c_str(), "w");
     if(f) {
@@ -462,6 +471,88 @@ static bool save_net_config(const NetconfInfo &info)
     }
 
     return success;
+}
+
+static bool check_hosts_for_line(NetconfInfo& info)
+{
+    ScriptVariable mainip(info.MainIpAddress());
+    ScriptVariable fullnm(info.GetFullHostname());
+    ReadText hosts(the_config->HostsFile().c_str());
+    ScriptVector buf;
+    while(hosts.ReadLine(buf)) {
+        if(buf[0] == mainip && buf[1] == fullnm) return true;
+    }
+    return false;
+}
+
+static bool save_all(OwlInstallInterface* the_iface, NetconfInfo& info)
+{
+    FileStat hosts(the_config->HostsFile().c_str());
+    if(hosts.IsRegularFile() && !hosts.IsEmpty()) {
+        if(!check_hosts_for_line(info)) {
+            IfaceSingleChoice *pm = the_iface->CreateSingleChoice();
+            pm->SetCaption(ScriptVariable("What to do with ")+
+                           the_config->HostsFile() + "?");
+            pm->AddItem("p", "Explain what it's all about");
+            pm->AddItem("i", "Just ignore, I'll update it myself");
+            pm->AddItem("o", "Overwrite it, I don't need its contents");
+            pm->AddItem("a", "Append the necessary line to the end of file");
+            pm->AddItem("c", "Cancel");
+            do {
+                ScriptVariable choice = pm->Run();
+                if(choice == "p") {
+                    ScriptVariable msg(0, 
+                        "There should be a line in your %s which contains "
+                        "\n\n%s %s\n\n"
+                        "(your main ip address and your hostname).\n "
+                        "There seems to be some contents already but\n"
+                        "the line above doesn't appear", 
+                        the_config->HostsFile().c_str(),
+                        info.MainIpAddress().c_str(),
+                        info.GetFullHostname().c_str());
+                    the_iface->Message(msg);
+                    continue;
+                } else                
+                if(choice == "i") {
+                    break;
+                } else                
+                if(choice == "o") {
+                    if(!save_hosts_file(info)) {
+                        the_iface->Message("Problems writing the hosts file");
+                        delete pm;
+                        return false;
+                    }
+                    break;
+                } else                
+                if(choice == "a") {
+                    if(!save_hosts_file(info, true)) {
+                        the_iface->Message("Problems writing the hosts file");
+                        delete pm;
+                        return false;
+                    }
+                    break;
+                } else                
+                if(choice == "c") {
+                    delete pm;
+                    return false;                    
+                }                
+            } while(true);
+            delete pm;
+        } else {
+            // the necessary line seems to be there already, do nothing
+        }
+    } else {
+        // hosts doesn't exist or is empty... just overwrite it, no asking
+        if(!save_hosts_file(info)) {
+            the_iface->Message("Problems writing the hosts file");
+        }
+    }
+    if(!save_net_config(info)) {
+        the_iface->Message("Problems saving the network configuration");
+        return false;
+    }
+    the_iface->Message("Network configuration saved");
+    return true;
 }
 
 static bool query_ip_and_mask(OwlInstallInterface *the_iface,
@@ -692,9 +783,8 @@ void configure_network(OwlInstallInterface *the_iface)
         }
 #endif
         else if(choice=="s") {
-            save_net_config(info);
-            the_iface->Message("Network configuration saved");
-            break;
+            if(save_all(the_iface, info)) 
+                break;
         }
         else if(choice == "x" ||
                 choice == OwlInstallInterface::qs_escape ||

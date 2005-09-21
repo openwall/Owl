@@ -40,6 +40,7 @@ IfaceHierChoice::IfaceHierChoice()
     first = 0;
     last = &first;
     parent = 0;
+    ignore_case = true;
 }
 
 IfaceHierChoice::~IfaceHierChoice()
