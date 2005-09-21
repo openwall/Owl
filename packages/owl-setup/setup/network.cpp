@@ -502,11 +502,11 @@ static bool save_all(OwlInstallInterface* the_iface, NetconfInfo& info)
                 ScriptVariable choice = pm->Run();
                 if(choice == "p") {
                     ScriptVariable msg(0, 
-                        "There should be a line in your %s which contains "
+                        "There should be a line in your %s which contains:"
                         "\n\n%s %s\n\n"
-                        "(your main ip address and your hostname).\n "
-                        "There seems to be some contents already but\n"
-                        "the line above doesn't appear", 
+                        "(your main IP address and your hostname).\n"
+                        "There seems to be some content already but\n"
+                        "the line above doesn't appear.",
                         the_config->HostsFile().c_str(),
                         info.MainIpAddress().c_str(),
                         info.GetFullHostname().c_str());
