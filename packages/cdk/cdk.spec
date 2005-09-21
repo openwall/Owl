@@ -1,16 +1,14 @@
-# $Id: Owl/packages/cdk/cdk.spec,v 1.1 2005/09/21 12:18:43 mci Exp $
-
-%define ver 5.0
-%define snapshot 20050424
+# $Id: Owl/packages/cdk/cdk.spec,v 1.2 2005/09/21 22:18:28 solar Exp $
 
 Summary: Curses Development Kit.
 Name: cdk
-Version: %ver
+Version: 5.0
+%define snapshot 20050424
 Release: owl1
 License: BSD
 Group: System Environment/Libraries
 URL: http://invisible-island.net/cdk/
-Source: ftp://invisible-island.net/cdk/cdk-%ver-%snapshot.tgz
+Source: ftp://invisible-island.net/cdk/cdk-%version-%snapshot.tgz
 PreReq: /sbin/ldconfig
 BuildRequires: ncurses-devel
 BuildRoot: /override/%name-%version
@@ -30,7 +28,7 @@ Requires: %name = %version-%release
 Header files and development documentation for CDK library.
 
 %prep
-%setup -q -n %name-%ver-%snapshot
+%setup -q -n %name-%version-%snapshot
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -42,7 +40,7 @@ Header files and development documentation for CDK library.
 rm -rf %buildroot
 %__make install installCDKSHLibrary \
 	DESTDIR=%buildroot \
-	DOCUMENT_DIR=%buildroot%_docdir/%name-%ver
+	DOCUMENT_DIR=%buildroot%_docdir/%name-%version
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
