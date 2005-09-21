@@ -73,14 +73,14 @@ static void mount_at(OwlInstallInterface *the_iface,
         if(!thedir.IsDir()) {
             int res = mkdir(pp.c_str(), 0755);
             if(res == -1) {
-                the_iface->Message(ScriptVariable(0, 
+                the_iface->Message(ScriptVariable(0,
                     "Failed to create directory: %s: %s",
                     pp.c_str(), strerror(errno)));
             }
-            
+
         }
         chmod(pp.c_str(), 0755);
-    } 
+    }
     chmod(mp.c_str(), 0700);
     sync();
     the_iface->ExecWindow("Executing mount...");

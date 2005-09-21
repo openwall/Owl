@@ -207,8 +207,8 @@ bool DumbIfaceHierChoice::Run(ScriptVector &result)
             res.Trim("[] ");
             Item *p;
             for(p = level; p; p = p->next) {
-                bool eq = ignore_case ? 
-                    strcasecmp(p->name.c_str(), res.c_str()) == 0 : 
+                bool eq = ignore_case ?
+                    strcasecmp(p->name.c_str(), res.c_str()) == 0 :
                     p->name == res;
                 if(eq) {
                     if(p->children) {
@@ -257,7 +257,7 @@ void DumbOwlInstallInterface::Notice(const ScriptVariable& msg)
     printf("\n%s\n\n", msg.c_str());
 }
 
-bool DumbOwlInstallInterface::YesNoMessage(const ScriptVariable& msg, 
+bool DumbOwlInstallInterface::YesNoMessage(const ScriptVariable& msg,
                                            bool dfl)
 {
     for(;;) {

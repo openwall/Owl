@@ -37,27 +37,27 @@ ScriptVariable NcursesIfaceSingleChoice::Run()
     ITEM **menu_items = new (ITEM*)[nitem+1];
     int i = 0;
     for(Item *p = first; p; p = p->next) {
-        menu_items[i] = 
-            new_item(p->enabled ? p->label.c_str() : "----", 
+        menu_items[i] =
+            new_item(p->enabled ? p->label.c_str() : "----",
                      p->comment.c_str());
-        if(!p->enabled) 
+        if(!p->enabled)
             item_opts_off(menu_items[i], O_SELECTABLE);
         i++;
     }
     menu_items[nitem] = 0;
-    MENU *the_menu = new_menu(menu_items); 
+    MENU *the_menu = new_menu(menu_items);
 
 
     int rows, cols;
     scale_menu(the_menu, &rows, &cols);
-    if(cols < caption.Length()) 
+    if(cols < caption.Length())
         cols = caption.Length();
     int maxy, maxx;
     getmaxyx(stdscr, maxy, maxx);
     int begy = (maxy - rows - 4) / 2;
     int begx = (maxx - cols - 6) / 2;
-    if(begy < 0) begy = 0; 
-    if(begx < 0) begx = 0; 
+    if(begy < 0) begy = 0;
+    if(begx < 0) begx = 0;
     WINDOW *mwin = newwin(rows + 4, cols + 6, begy, begx);
     set_menu_win(the_menu, mwin);
     set_menu_sub(the_menu, derwin(mwin, rows, cols, 3, 4));
@@ -95,11 +95,11 @@ ScriptVariable NcursesIfaceSingleChoice::Run()
     for(;;) {
         int c = wgetch(mwin);
         switch(c) {
-            case '\n': 
-            case '\r': 
-            case KEY_ENTER: 
-            case KEY_SELECT: 
-            case KEY_HOME: 
+            case '\n':
+            case '\r':
+            case KEY_ENTER:
+            case KEY_SELECT:
+            case KEY_HOME:
                 result = item_name(current_item(the_menu));
                 goto quit;
             case KEY_DOWN:
@@ -146,16 +146,16 @@ quit:
 //
 
 NcursesIfaceHierChoice::NcursesIfaceHierChoice(void *a_screen)
-    : IfaceHierChoice() 
+    : IfaceHierChoice()
 {
     the_cdkscreen = a_screen;
 }
 
-static int run_scroll(CDKSCREEN *screen, 
+static int run_scroll(CDKSCREEN *screen,
                       ScriptVariable header, ScriptVector items)
 {
     int res = -1;
- 
+
     char **itemsv = items.MakeArgv();
 
     int maxlen = 0;
@@ -163,9 +163,9 @@ static int run_scroll(CDKSCREEN *screen,
         if(maxlen < items[i].Length()) maxlen = items[i].Length();
     }
 
-    CDKSCROLL* list = 
+    CDKSCROLL* list =
         newCDKScroll(screen, CENTER, CENTER, RIGHT, -4, maxlen + 6,
-                     (char*)(header.c_str()), itemsv, items.Length(), 
+                     (char*)(header.c_str()), itemsv, items.Length(),
                      false, A_REVERSE, true, false);
 
     drawCDKScroll(list, true);
@@ -175,11 +175,11 @@ static int run_scroll(CDKSCREEN *screen,
         switch(c) {
 #if '\n' != KEY_RETURN
             case '\n':
-#endif  
-            case '\r': 
-            case KEY_ENTER: 
-            case KEY_RETURN: 
-            case KEY_SELECT: 
+#endif
+            case '\r':
+            case KEY_ENTER:
+            case KEY_RETURN:
+            case KEY_SELECT:
                 res = injectCDKScroll(list, KEY_RETURN);
                 goto quit;
             case KEY_CANCEL:
@@ -207,9 +207,9 @@ bool NcursesIfaceHierChoice::Run(ScriptVector &result)
     do {
         ScriptVector items;
         for(Item *p = level; p; p = p->next) {
-            if(p->children) 
+            if(p->children)
                 items.AddItem(ScriptVariable("[")+p->name+"]");
-            else 
+            else
                 items.AddItem(p->name);
         }
 
@@ -218,15 +218,15 @@ bool NcursesIfaceHierChoice::Run(ScriptVector &result)
             header = p->name + " >> " + header;
         }
         header = caption + "\n" + header;
-        
+
         int rn = run_scroll((CDKSCREEN*)the_cdkscreen, header, items);
 
         if(rn == -1) {
             // UP
-            if(level->parent) { 
-                if(level->parent->parent) 
+            if(level->parent) {
+                if(level->parent->parent)
                     level = level->parent->parent->children;
-                else 
+                else
                     level = first;
             } else {
                 return false;
@@ -241,7 +241,7 @@ bool NcursesIfaceHierChoice::Run(ScriptVector &result)
                         level = p->children;
                         break;
                     } else {
-                        // here is it! 
+                        // here is it!
                         result.Clear();
                         result[0] = res;
                         while(level->parent) {
@@ -319,19 +319,19 @@ void NcursesOwlInstallInterface::Notice(const ScriptVariable& msg)
 
 /* this is a workaround against CDK's manner to ignore the Enter key */
 /* popupDialog() could satisfy us if the problem is fixed */
-static int run_dialog(CDKSCREEN *screen, 
-                      char **message, int msglen, 
-                      char **buttons, int buttonscount, 
+static int run_dialog(CDKSCREEN *screen,
+                      char **message, int msglen,
+                      char **buttons, int buttonscount,
                       int dfl)
 {
     int res = -1;
 
-    CDKDIALOG* dlg = newCDKDialog(screen, CENTER, CENTER, 
-                                  message, msglen, buttons, buttonscount, 
+    CDKDIALOG* dlg = newCDKDialog(screen, CENTER, CENTER,
+                                  message, msglen, buttons, buttonscount,
                                   A_REVERSE, true, true, false);
     drawCDKDialog(dlg, true);
- 
-    for(int i = 0; i< dfl; i++) 
+
+    for(int i = 0; i< dfl; i++)
          injectCDKDialog(dlg, KEY_LEFT);
 
     for(;;) {
@@ -339,11 +339,11 @@ static int run_dialog(CDKSCREEN *screen,
         switch(c) {
 #if '\n' != KEY_RETURN
             case '\n':
-#endif  
-            case '\r': 
-            case KEY_ENTER: 
-            case KEY_RETURN: 
-            case KEY_SELECT: 
+#endif
+            case '\r':
+            case KEY_ENTER:
+            case KEY_RETURN:
+            case KEY_SELECT:
                 res = injectCDKDialog(dlg, KEY_RETURN);
                 goto quit;
             case KEY_DOWN:
@@ -363,20 +363,20 @@ quit:
     destroyCDKDialog(dlg);
     return res;
 }
-                      
+
 
 
 bool NcursesOwlInstallInterface::YesNoMessage(const ScriptVariable& msg,
                                               bool dfl)
 {
     static char *yesno[] = { "Yes", "No", 0 };
- 
+
     ScriptVector vect(msg, "\n", "");
     vect.AddItem("");
     char **message = vect.MakeArgv();
 
-    int res = 
-        run_dialog((CDKSCREEN*)cdkscreen, message, vect.Length(), yesno, 2, 
+    int res =
+        run_dialog((CDKSCREEN*)cdkscreen, message, vect.Length(), yesno, 2,
                     dfl ? 0 : 1);
 
     vect.DeleteArgv(message);
@@ -384,27 +384,27 @@ bool NcursesOwlInstallInterface::YesNoMessage(const ScriptVariable& msg,
     return res == 0;
 }
 
-YesNoCancelResult 
+YesNoCancelResult
 NcursesOwlInstallInterface::YesNoCancelMessage(const ScriptVariable& msg)
 {
     static char *yesnoc[] = { "Yes", "No", "Cancel", 0 };
- 
+
     ScriptVector vect(msg, "\n", "");
     vect.AddItem("");
     char **message = vect.MakeArgv();
 
-    int res = 
+    int res =
         run_dialog((CDKSCREEN*)cdkscreen, message, vect.Length(), yesnoc,
                    3, 2);
 
     vect.DeleteArgv(message);
 
     switch(res) {
-        case 0: 
+        case 0:
             return ync_yes;
         case 1:
             return ync_no;
-        case 2: 
+        case 2:
             return ync_cancel;
         default:
             return ync_cancel;
@@ -412,7 +412,7 @@ NcursesOwlInstallInterface::YesNoCancelMessage(const ScriptVariable& msg)
 }
 
 
-ScriptVariable 
+ScriptVariable
 NcursesOwlInstallInterface::QueryString(const ScriptVariable& prompt,
                                         const ScriptVariable& defval)
 {
@@ -422,7 +422,7 @@ NcursesOwlInstallInterface::QueryString(const ScriptVariable& prompt,
                         (char*)(ScriptVariable("<C> ")+prompt).c_str(), "",
                         A_NORMAL, '_', vMIXED,
                         -8, 0, 1024, TRUE, FALSE);
-    if(defval != "") 
+    if(defval != "")
         setCDKEntryValue(entry, (char*)defval.c_str());
 
     const char *act_res = 0;
@@ -434,11 +434,11 @@ NcursesOwlInstallInterface::QueryString(const ScriptVariable& prompt,
         switch(c) {
 #if '\n' != KEY_RETURN
             case '\n':
-#endif  
-            case '\r': 
-            case KEY_ENTER: 
-            case KEY_RETURN: 
-            case KEY_SELECT: 
+#endif
+            case '\r':
+            case KEY_ENTER:
+            case KEY_RETURN:
+            case KEY_SELECT:
                 act_res = getCDKEntryValue(entry);
                 goto quit;
             case KEY_DOWN:
@@ -452,7 +452,7 @@ NcursesOwlInstallInterface::QueryString(const ScriptVariable& prompt,
                 injectCDKEntry(entry, c);
         }
     }
-quit:   
+quit:
     ScriptVariable res(act_res ? act_res : qs_cancel);
     eraseCDKEntry(entry);
     destroyCDKEntry(entry);

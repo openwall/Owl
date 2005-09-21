@@ -32,7 +32,7 @@ void process_cmdline(int argc, char **argv)
         ScriptVariable a1(argv[1]);
         if(a1 == "-m") {
             ncurses_interface = true;
-        } else 
+        } else
         if(a1 == "-d") {
             ncurses_interface = false;
         }
@@ -66,7 +66,7 @@ int main(int argc, char **argv)
     OwlInstallInterface *the_interface;
 
 #ifdef NCURSES_ENABLE
-    if(ncurses_interface) 
+    if(ncurses_interface)
         the_interface = new NcursesOwlInstallInterface;
     else
         the_interface = new DumbOwlInstallInterface;

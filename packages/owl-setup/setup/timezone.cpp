@@ -56,15 +56,15 @@ void select_timezone(OwlInstallInterface *the_iface)
         the_iface->CloseExecWindow();
         chmod(path.c_str(), 0644);
         if(cp.Success()) {
-            bool utc = 
-                the_iface->YesNoMessage("Hardware clock set to UTC?", 
+            bool utc =
+                the_iface->YesNoMessage("Hardware clock set to UTC?",
                                         true);
-            
+
             FILE *f = fopen(the_config->ZoneinfoSysconf().c_str(), "w");
             if(f) {
                 fchmod(fileno(f), 0644);
-                fprintf(f, "UTC=%s\nARC=false\nZONE=%s\n", 
-                        utc ? "true" : "false",    
+                fprintf(f, "UTC=%s\nARC=false\nZONE=%s\n",
+                        utc ? "true" : "false",
                         res.Join("/").c_str());
                 fclose(f);
             } else {

@@ -354,7 +354,7 @@ static ScriptVariable summary_net_ifaces(NetconfInfo &info)
     return res;
 }
 
-static bool save_hosts_file(const NetconfInfo &info, 
+static bool save_hosts_file(const NetconfInfo &info,
                             bool append_mode = false)
 {
     FILE *f;
@@ -501,7 +501,7 @@ static bool save_all(OwlInstallInterface* the_iface, NetconfInfo& info)
             do {
                 ScriptVariable choice = pm->Run();
                 if(choice == "p") {
-                    ScriptVariable msg(0, 
+                    ScriptVariable msg(0,
                         "There should be a line in your %s which contains:"
                         "\n\n%s %s\n\n"
                         "(your main IP address and your hostname).\n"
@@ -512,10 +512,10 @@ static bool save_all(OwlInstallInterface* the_iface, NetconfInfo& info)
                         info.GetFullHostname().c_str());
                     the_iface->Message(msg);
                     continue;
-                } else                
+                } else
                 if(choice == "i") {
                     break;
-                } else                
+                } else
                 if(choice == "o") {
                     if(!save_hosts_file(info)) {
                         the_iface->Message("Problems writing the hosts file");
@@ -523,7 +523,7 @@ static bool save_all(OwlInstallInterface* the_iface, NetconfInfo& info)
                         return false;
                     }
                     break;
-                } else                
+                } else
                 if(choice == "a") {
                     if(!save_hosts_file(info, true)) {
                         the_iface->Message("Problems writing the hosts file");
@@ -531,11 +531,11 @@ static bool save_all(OwlInstallInterface* the_iface, NetconfInfo& info)
                         return false;
                     }
                     break;
-                } else                
+                } else
                 if(choice == "c") {
                     delete pm;
-                    return false;                    
-                }                
+                    return false;
+                }
             } while(true);
             delete pm;
         } else {
@@ -783,7 +783,7 @@ void configure_network(OwlInstallInterface *the_iface)
         }
 #endif
         else if(choice=="s") {
-            if(save_all(the_iface, info)) 
+            if(save_all(the_iface, info))
                 break;
         }
         else if(choice == "x" ||
