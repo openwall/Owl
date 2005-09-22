@@ -34,7 +34,7 @@ ScriptVariable NcursesIfaceSingleChoice::Run()
 {
     int nitem = 0;
     for(Item *p = first; p; p = p->next) nitem++;
-    ITEM **menu_items = new (ITEM*)[nitem+1];
+    ITEM **menu_items = new ITEM* [nitem+1];
     int i = 0;
     for(Item *p = first; p; p = p->next) {
         menu_items[i] =
