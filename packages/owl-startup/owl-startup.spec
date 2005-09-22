@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.56 2005/07/27 21:11:43 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.57 2005/09/22 19:44:30 galaxy Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.25
+Version: 0.26
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -24,6 +24,7 @@ Requires: bash >= 2.0, sh-utils
 Requires: mingetty, e2fsprogs >= 1.15, util-linux, net-tools
 Requires: gawk, sed, mktemp
 Requires: /sbin/sysctl
+Requires: mount
 Provides: initscripts
 Obsoletes: initscripts
 BuildRoot: /override/%name-%version
@@ -162,6 +163,9 @@ fi
 %doc redhat
 
 %changelog
+* Thu Sep 22 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.26-owl1
+- Added a dependency on the mount package.
+
 * Wed Jul 27 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.25-owl1
 - Fixed killproc() argument parsing bug in /etc/rc.d/init.d/functions.
 
