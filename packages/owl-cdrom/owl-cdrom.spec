@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.32 2005/09/13 15:04:51 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.33 2005/09/22 08:38:59 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 0.14
+Version: 0.15
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -85,6 +85,12 @@ fi
 %dir /owl
 
 %changelog
+* Thu Sep 22 2005 Solar Designer <solar@owl.openwall.com> 0.15-owl1
+- Updated lilo.conf according to suggestions from John Coffman: added
+"backup=/dev/null", "geometric", "el-torito-bootable-CD", removed "install=..."
+since its syntax changed and the file is now linked into LILO anyway.
+- Moved the common "read-only" and "append=..." options to the global list.
+
 * Tue Sep 13 2005 Solar Designer <solar@owl.openwall.com> 0.14-owl1
 - Updated the message in welcome-cdrom.sh for the new owl-setup.
 - Install /boot/.config as world-readable.
