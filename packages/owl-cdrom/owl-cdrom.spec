@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.33 2005/09/22 08:38:59 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.34 2005/09/22 08:47:20 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
@@ -26,12 +26,12 @@ mkdir -p %buildroot/{etc/{rc,profile}.d,boot,rom,ram,owl}
 
 cd %buildroot
 touch .Owl-CD-ROM
-install -m 700 $RPM_SOURCE_DIR/rc.ramdisk etc/rc.d/
-install -m 755 $RPM_SOURCE_DIR/welcome-cdrom.sh etc/profile.d/
-install -m 600 $RPM_SOURCE_DIR/lilo.conf etc/
-install -m 644 $RPM_SOURCE_DIR/dot-config boot/.config
-install -m 700 $RPM_SOURCE_DIR/floppy-update.sh boot/
-install -m 600 $RPM_SOURCE_DIR/message boot/
+install -m 700 %_sourcedir/rc.ramdisk etc/rc.d/
+install -m 755 %_sourcedir/welcome-cdrom.sh etc/profile.d/
+install -m 600 %_sourcedir/lilo.conf etc/
+install -m 644 %_sourcedir/dot-config boot/.config
+install -m 700 %_sourcedir/floppy-update.sh boot/
+install -m 600 %_sourcedir/message boot/
 ln -s ../rom/{dev,etc,home,root,tmp,var,world} ram/
 
 %pre
@@ -110,7 +110,7 @@ CD-ROM device that is being requested in the boot menu.
 * Sun Apr 18 2004 Solar Designer <solar@owl.openwall.com> 0.11-owl1
 - Updated to Linux 2.4.26-ow1.
 - Include the Broadcom Tigon3 Gigabit Ethernet driver and the BusLogic
-SCSI controller driver (the latter is apparently needed under VMWare).
+SCSI controller driver (the latter is apparently needed under VMware).
 - Dropped support for IrDA to make room for the above.
 
 * Thu Feb 05 2004 Solar Designer <solar@owl.openwall.com> 0.10-owl1
