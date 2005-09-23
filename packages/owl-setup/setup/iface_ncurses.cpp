@@ -180,7 +180,9 @@ static int run_scroll(CDKSCREEN *screen,
             case KEY_ENTER:
             case KEY_RETURN:
             case KEY_SELECT:
-                res = injectCDKScroll(list, KEY_RETURN);
+                res = injectCDKScroll(list, KEY_ENTER);
+                if(res == -1)
+                    res = injectCDKScroll(list, KEY_RETURN);
                 goto quit;
             case KEY_CANCEL:
             case KEY_EXIT:
@@ -344,7 +346,9 @@ static int run_dialog(CDKSCREEN *screen,
             case KEY_ENTER:
             case KEY_RETURN:
             case KEY_SELECT:
-                res = injectCDKDialog(dlg, KEY_RETURN);
+                res = injectCDKDialog(dlg, KEY_ENTER);
+                if(res == -1)
+                    res = injectCDKDialog(dlg, KEY_RETURN);
                 goto quit;
             case KEY_DOWN:
             case KEY_UP:

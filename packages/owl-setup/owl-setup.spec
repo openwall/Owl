@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.38 2005/09/23 21:12:33 croco Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.39 2005/09/23 22:41:21 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -32,6 +32,7 @@ rm -rf %buildroot
 
 %changelog
 * Fri Sep 23 2005 Croco <croco@owl.openwall.com> 0.26-owl1
+- bug with injectCDKxxx worked around
 - scanning fstab for standard entries added; the default entries are
   reformatted to match those in the default fstab
 - config module reworked (install root is now a variable)
