@@ -1,9 +1,9 @@
-# $Id: Owl/packages/crontabs/crontabs.spec,v 1.12 2005/01/18 13:31:47 solar Exp $
+# $Id: Owl/packages/crontabs/crontabs.spec,v 1.13 2005/09/23 21:45:26 ldv Exp $
 
 Summary: System crontab files used to schedule the execution of programs.
 Name: crontabs
 Version: 2.0
-Release: owl5
+Release: owl6
 License: GPL
 Group: System Environment/Base
 Source0: run-parts-1.15.tar.gz
@@ -12,6 +12,7 @@ Patch0: run-parts-1.15-owl-umask.diff
 Patch1: run-parts-1.15-owl-races.diff
 Patch2: run-parts-1.15-owl-write_loop.diff
 Patch3: run-parts-1.15-owl-fixes.diff
+Requires: crond
 BuildRoot: /override/%name-%version
 
 %description
@@ -45,7 +46,7 @@ mkdir -p %buildroot/etc/cron.{hourly,daily,weekly,monthly}
 mkdir -p %buildroot%_bindir
 mkdir -p %buildroot%_mandir/man8/
 
-install -m 644 $RPM_SOURCE_DIR/crontab %buildroot/etc/
+install -m 644 %_sourcedir/crontab %buildroot/etc/
 install -m 755 run-parts %buildroot%_bindir/
 install -m 644 run-parts.8 %buildroot%_mandir/man8/
 
@@ -60,6 +61,9 @@ install -m 644 run-parts.8 %buildroot%_mandir/man8/
 %dir /etc/cron.monthly
 
 %changelog
+* Sat Sep 24 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.0-owl6
+- Added crond to the package requirements.
+
 * Fri Jan 07 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.0-owl5
 - Added fixes patch to deal with issues after gcc upgrade.
 - Use %%__cc macro to choose C compiler.
