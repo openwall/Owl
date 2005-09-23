@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/bind/bind.init,v 1.1 2005/09/23 21:17:25 ldv Exp $
+# $Id: Owl/packages/bind/bind.init,v 1.2 2005/09/23 23:30:18 ldv Exp $
 #
 # named           This shell script takes care of starting and stopping
 #                 named (BIND DNS server).
@@ -37,7 +37,13 @@ case "$1" in
 
 		rndc_keygen
 
-		daemon --expect-user named -- named
+		if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
+			daemon --expect-user named -- named
+		else
+			# Red Hat's implementation of daemon() would
+			# get confused by multiple named processes.
+			named
+		fi
 		;;
 	stop)
 		action "Stopping named" @SBINDIR@/rndc stop
@@ -50,7 +56,11 @@ case "$1" in
 			echo "named is running (rndc status)"
 			exit 0
 		else
-			status --expect-user named -- named
+			if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
+				status --expect-user named -- named
+			else
+				status named
+			fi
 		fi
 		;;
 	reload)
