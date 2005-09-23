@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.37 2005/09/23 21:07:44 croco Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.38 2005/09/23 21:12:33 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -38,6 +38,8 @@ rm -rf %buildroot
 - scanning the base system for the network settings implemented
 - the settle's main menu now doesn't display completion status for
   'shellout', 'exit' and 'reboot' items.
+- ncurses-based interface is now enabled (but the dumb is still used by
+  default)
 
 * Wed Sep 21 2005 Croco <croco@owl.openwall.com> 0.25-owl1
 - careful handling of /etc/hosts added

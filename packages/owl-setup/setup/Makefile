@@ -3,7 +3,7 @@ RM = rm -f
 MKDIR = mkdir -p
 INSTALL = install
 
-WITH_NCURSES = no
+WITH_NCURSES = yes
 
 ifeq ($(WITH_NCURSES), yes)
 CURSES_LIBS = -lcdk -lmenu -lncurses
