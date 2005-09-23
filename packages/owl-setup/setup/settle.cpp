@@ -55,7 +55,7 @@ int main(int argc, char **argv)
     process_cmdline(argc, argv);
 #endif
 
-    the_config = new OwlInstallConfig();
+    the_config = new OwlInstallConfig("/owl");
 
     struct MainMenuItem {
         const char *label;
@@ -63,6 +63,9 @@ int main(int argc, char **argv)
         bool (*enabled)(void);
         bool (*passed)(void);
     };
+
+    bool (* const never_done)(void) = (bool(*)(void))(-1);
+
     MainMenuItem main_menu[] = {
         { "f", "Repartition your hard drive",
             always_true, linux_partition_exists },
@@ -73,16 +76,16 @@ int main(int argc, char **argv)
         { "k", "Select keyboard layout",
             packages_installed, keyboard_selected },
         { "p", "Set root password", packages_installed, root_password_set },
-        { "t", "Create /etc/fstab", packages_installed, fstab_exists },
+        { "t", "Create /etc/fstab", fstab_exists, fstab_contains_root },
         { "z", "Select timezone", packages_installed, timezone_selected },
         { "n", "Configure network", packages_installed, network_configured },
         { "b", "Install kernel and bootloader",
             packages_installed, kernel_installed },
         { "r", "Reboot to the newly-installed system",
-            kernel_installed, always_false },
+            minimal_install_ready, never_done },
 
-        { "!", "Run shell", always_true, always_false },
-        { "x", "Exit", always_true, always_false },
+        { "!", "Run shell", always_true, never_done },
+        { "x", "Exit", always_true, never_done },
         { 0,0,0,0 }
     };
 
@@ -102,8 +105,15 @@ int main(int argc, char **argv)
         ScriptVariable defval("");
         for(int i=0; main_menu[i].label; i++) {
             bool enabled = main_menu[i].enabled();
-            bool passed  = main_menu[i].passed();
-            const char *mark = passed ? "[OK]     " : "[--]     ";
+            bool passed;
+            const char *mark;
+            if(main_menu[i].passed != never_done) {
+                passed = main_menu[i].passed();
+                mark = passed ? "[OK]     " : "[--]     ";
+            } else {
+                passed = false;
+                mark = "         ";
+            }
             mm->AddItem(main_menu[i].label,
                         ScriptVariable(mark)+main_menu[i].comment,
                         enabled);

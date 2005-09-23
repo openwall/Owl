@@ -5,8 +5,11 @@
 #include "scriptpp/scrvect.hpp"
 
 class OwlInstallConfig {
+    ScriptVariable root;
 public:
+    OwlInstallConfig(const char *rt = "") : root(rt) {}
 
+    void SetRoot(const char *rt) { root = rt; }
 
     ScriptVariable FdiskPath() const;
     ScriptVariable CpPath() const;
@@ -65,7 +68,6 @@ public:
 
 
     ScriptVariable FstabFile() const;
-    ScriptVariable DefaultFstabContent() const;
 };
 
 extern OwlInstallConfig *the_config;

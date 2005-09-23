@@ -155,9 +155,11 @@ bool root_password_set()
 
 bool fstab_exists()
 {
-    if(!FileStat(the_config->FstabFile().c_str()).IsRegularFile())
-        return false;
+    return FileStat(the_config->FstabFile().c_str()).IsRegularFile();
+}
 
+bool fstab_contains_root()
+{
     ReadText rt(the_config->FstabFile().c_str());
     ScriptVector v;
     while(rt.ReadLine(v, 7)) {
@@ -183,6 +185,14 @@ bool kernel_installed()
         FileStat(the_config->LiloMap().c_str()).IsRegularFile();
 }
 
+bool minimal_install_ready()
+{
+    return
+        packages_installed() &&
+        root_password_set() &&
+        fstab_contains_root() &&
+        kernel_installed();
+}
 
 ScriptVariable get_runlevel()
 {

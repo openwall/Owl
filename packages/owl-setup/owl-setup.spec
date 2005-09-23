@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.36 2005/09/21 20:55:06 croco Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.37 2005/09/23 21:07:44 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 0.25
+Version: 0.26
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -31,7 +31,15 @@ rm -rf %buildroot
 %_sbindir/*
 
 %changelog
-* Mon Sep 21 2005 Croco <croco@owl.openwall.com> 0.25-owl1
+* Fri Sep 23 2005 Croco <croco@owl.openwall.com> 0.26-owl1
+- scanning fstab for standard entries added; the default entries are
+  reformatted to match those in the default fstab
+- config module reworked (install root is now a variable)
+- scanning the base system for the network settings implemented
+- the settle's main menu now doesn't display completion status for
+  'shellout', 'exit' and 'reboot' items.
+
+* Wed Sep 21 2005 Croco <croco@owl.openwall.com> 0.25-owl1
 - careful handling of /etc/hosts added
 - timezone and keyb. layout in the dumb interface made case insensitive 
 

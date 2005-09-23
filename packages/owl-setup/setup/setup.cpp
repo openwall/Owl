@@ -47,7 +47,7 @@ int main(int argc, char **argv)
     process_cmdline(argc, argv);
 #endif
 
-    the_config = new OwlInstallConfig();
+    the_config = new OwlInstallConfig("");
 
     struct MainMenuItem {
         const char *label;

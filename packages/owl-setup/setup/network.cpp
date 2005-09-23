@@ -257,6 +257,17 @@ private:
 
 static void scan_net_config(NetconfInfo &info)
 {
+    if(the_config->OwlRoot()!="" && 
+       !FileStat(the_config->NetworkSysconf().c_str()).Exists()) 
+    {
+        /* scan the base system's settings... */
+        ScriptVariable save_root = the_config->OwlRoot();
+        the_config->SetRoot("");
+        scan_net_config(info);
+        the_config->SetRoot(save_root.c_str());
+        return;
+    }
+
     info.ClearDns();
     // read dns servers from resolv.conf
     {

@@ -49,7 +49,7 @@ ScriptVariable OwlInstallConfig::ProcSwaps() const
 { return "/proc/swaps"; }
 
 ScriptVariable OwlInstallConfig::OwlRoot() const
-{ return "/owl"; }
+{ return root == "" ? ScriptVariable("/") : root; }
 
 
 
@@ -57,13 +57,13 @@ ScriptVariable OwlInstallConfig::OwlRoot() const
 void OwlInstallConfig::PkgInstalledCheckFiles(ScriptVector &vec) const
 {
     vec.Clear();
-    vec.AddItem("/owl/etc/passwd");
-    vec.AddItem("/owl/bin/sh");
-    vec.AddItem("/owl/dev/tty1");
+    vec.AddItem(root+"/etc/passwd");
+    vec.AddItem(root+"/bin/sh");
+    vec.AddItem(root+"/dev/tty1");
 }
 
 ScriptVariable OwlInstallConfig::RootShadowFile() const
-{ return "/owl/etc/tcb/root/shadow"; }
+{ return root+"/etc/tcb/root/shadow"; }
 
 
 
@@ -80,7 +80,7 @@ ScriptVariable OwlInstallConfig::KeymapDbPath() const
 { return "/lib/kbd/keymaps/i386"; }
 
 ScriptVariable OwlInstallConfig::KeymapSysconf() const
-{ return "/owl/etc/sysconfig/keyboard"; }
+{ return root+"/etc/sysconfig/keyboard"; }
 
 ScriptVariable OwlInstallConfig::LoadkeysPath() const
 { return "/bin/loadkeys"; }
@@ -91,26 +91,26 @@ ScriptVariable OwlInstallConfig::ZoneinfoDbPath() const
 { return "/usr/share/zoneinfo"; }
 
 ScriptVariable OwlInstallConfig::ZoneinfoFile() const
-{ return "/owl/etc/localtime"; }
+{ return root+"/etc/localtime"; }
 
 ScriptVariable OwlInstallConfig::ZoneinfoSysconf() const
-{ return "/owl/etc/sysconfig/clock"; }
+{ return root+"/etc/sysconfig/clock"; }
 
 
 
 
 
 ScriptVariable OwlInstallConfig::ResolvFile() const
-{ return "/owl/etc/resolv.conf"; }
+{ return root+"/etc/resolv.conf"; }
 
 ScriptVariable OwlInstallConfig::HostsFile() const
-{ return "/owl/etc/hosts"; }
+{ return root+"/etc/hosts"; }
 
 ScriptVariable OwlInstallConfig::NetworkScriptsDir() const
-{ return "/owl/etc/sysconfig/network-scripts"; }
+{ return root+"/etc/sysconfig/network-scripts"; }
 
 ScriptVariable OwlInstallConfig::NetworkSysconf() const
-{ return "/owl/etc/sysconfig/network"; }
+{ return root+"/etc/sysconfig/network"; }
 
 
 
@@ -121,34 +121,24 @@ ScriptVariable OwlInstallConfig::DefaultKernelMap() const
 { return "/boot/System.map"; }
 
 ScriptVariable OwlInstallConfig::TargetKernel() const
-{ return "/owl/boot/bzImage"; }
+{ return root+"/boot/bzImage"; }
 
 ScriptVariable OwlInstallConfig::TargetKernelMap() const
-{ return "/owl/boot/System.map"; }
+{ return root+"/boot/System.map"; }
 
 ScriptVariable OwlInstallConfig::LiloconfFile() const
-{ return "/owl/etc/lilo.conf"; }
+{ return root+"/etc/lilo.conf"; }
 
 ScriptVariable OwlInstallConfig::LiloPath() const
 { return "/sbin/lilo"; }
 
 ScriptVariable OwlInstallConfig::LiloMap() const
-{ return "/owl/boot/map"; }
+{ return root+"/boot/map"; }
 
 
 
 
 ScriptVariable OwlInstallConfig::FstabFile() const
-{ return "/owl/etc/fstab"; }
-
-ScriptVariable OwlInstallConfig::DefaultFstabContent() const
-{
-    return
-        "proc\t/proc\tproc\tgid=110\t0 0\n"
-        "devpts\t/dev/pts\tdevpts\tgid=5,mode=620\t0 0\n"
-        "/dev/cdrom\t/mnt/cdrom\tiso9660\tnoauto,nosuid,owner,ro\t0 0\n"
-        "/dev/floppy\t/mnt/floppy\text2\tnoauto,nosuid,owner\t0 0\n";
-}
-
+{ return root+"/etc/fstab"; }
 
 OwlInstallConfig *the_config = 0;

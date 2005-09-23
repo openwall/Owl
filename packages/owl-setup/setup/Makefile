@@ -35,12 +35,12 @@ SETTLE_OBJS = settle.o iface.o iface_dumb.o $(CURSES_OBJ) \
 	swap.o installworld.o root_passwd_settle.o \
 	installkernel.o \
 	mkfstab.o shellout.o network.o \
-	timezone.o keyboard.o config_settle.o reboot.o
+	timezone.o keyboard.o config.o reboot.o
 
 SETUP_OBJS = setup.o iface.o iface_dumb.o $(CURSES_OBJ) \
 	cmd.o \
 	root_passwd_setup.o shellout.o \
-	network.o timezone.o keyboard.o config_setup.o
+	network.o timezone.o keyboard.o config.o
 
 SRCS = $(wildcard [^_]*.cpp)
 
