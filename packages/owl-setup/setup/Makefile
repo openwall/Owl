@@ -16,7 +16,9 @@ CURSES_OBJ =
 CURSES_FLAGS =
 endif
 
+ifndef CXXFLAGS
 CXXFLAGS = -Wall -O2 -fomit-frame-pointer
+endif
 CXXFLAGS += $(CURSES_FLAGS)
 LDFLAGS = -s
 
