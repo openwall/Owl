@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.58 2005/09/23 15:44:05 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.59 2005/09/23 15:49:47 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -66,14 +66,14 @@ mv sysconfig.txt sysvinitfiles redhat/
 
 cd %buildroot
 
-install -m 600 $RPM_SOURCE_DIR/inittab etc/
-install -m 700 $RPM_SOURCE_DIR/rc.sysinit etc/rc.d/
-install -m 700 $RPM_SOURCE_DIR/rc etc/rc.d/
-install -m 644 $RPM_SOURCE_DIR/functions etc/rc.d/init.d/
-install -m 700 $RPM_SOURCE_DIR/{halt,single,clock} etc/rc.d/init.d/
-install -m 755 $RPM_SOURCE_DIR/service sbin/
+install -m 600 %_sourcedir/inittab etc/
+install -m 700 %_sourcedir/rc.sysinit etc/rc.d/
+install -m 700 %_sourcedir/rc etc/rc.d/
+install -m 644 %_sourcedir/functions etc/rc.d/init.d/
+install -m 700 %_sourcedir/{halt,single,clock} etc/rc.d/init.d/
+install -m 755 %_sourcedir/service sbin/
 install -m 700 /dev/null etc/rc.d/rc.local
-install -m 600 $RPM_SOURCE_DIR/sysctl.conf etc/
+install -m 600 %_sourcedir/sysctl.conf etc/
 
 ln -s ../init.d/halt etc/rc.d/rc0.d/S01halt
 ln -s ../init.d/halt etc/rc.d/rc6.d/S01reboot
