@@ -1,9 +1,9 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.38 2005/06/24 23:49:49 ldv Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.39 2005/09/23 21:41:05 ldv Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
 Version: 4.1.20040916
-Release: owl3
+Release: owl4
 License: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%version.tar.bz2
@@ -23,7 +23,7 @@ Patch8: vixie-cron-4.1.20040916-alt-setlocale.diff
 Patch9: vixie-cron-4.1.20040916-alt-children.diff
 PreReq: owl-control >= 0.4, owl-control < 2.0
 PreReq: /sbin/chkconfig, grep, shadow-utils
-Provides: at
+Provides: at, crond
 Obsoletes: at
 BuildRoot: /override/%name-%version
 
@@ -144,6 +144,9 @@ fi
 %attr(640,root,crontab) %config(noreplace) /etc/*.deny
 
 %changelog
+* Sat Sep 24 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.1.20040916-owl4
+- Added crond to the package provides list.
+
 * Sat Jun 25 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.1.20040916-owl3
 - Fixed typo in two error messages introduced by PAM support patch.
 
