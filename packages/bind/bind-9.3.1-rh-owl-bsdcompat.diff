@@ -1,0 +1,21 @@
+diff -puNr bind-9.3.1.orig/lib/isc/unix/socket.c bind-9.3.1/lib/isc/unix/socket.c
+--- bind-9.3.1.orig/lib/isc/unix/socket.c	Thu Nov 18 21:31:16 2004
++++ bind-9.3.1/lib/isc/unix/socket.c	Tue Jul 26 20:47:42 2005
+@@ -1344,7 +1344,7 @@ isc_socket_create(isc_socketmgr_t *manag
+ {
+ 	isc_socket_t *sock = NULL;
+ 	isc_result_t ret;
+-#if defined(USE_CMSG) || defined(SO_BSDCOMPAT)
++#if defined(USE_CMSG)
+ 	int on = 1;
+ #endif
+ 	char strbuf[ISC_STRERRORSIZE];
+@@ -1429,7 +1429,7 @@ isc_socket_create(isc_socketmgr_t *manag
+ 		return (ISC_R_UNEXPECTED);
+ 	}
+ 
+-#ifdef SO_BSDCOMPAT
++#if 0
+ 	if (setsockopt(sock->fd, SOL_SOCKET, SO_BSDCOMPAT,
+ 		       (void *)&on, sizeof(on)) < 0) {
+ 		isc__strerror(errno, strbuf, sizeof(strbuf));

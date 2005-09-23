@@ -1,0 +1,62 @@
+diff -puNr bind-9.3.1.orig/bin/check/named-checkconf.8 bind-9.3.1/bin/check/named-checkconf.8
+--- bind-9.3.1.orig/bin/check/named-checkconf.8	Thu Jun  3 05:35:41 2004
++++ bind-9.3.1/bin/check/named-checkconf.8	Tue Jul 26 21:14:18 2005
+@@ -31,6 +31,7 @@ the semantics, of a named configuration 
+ chroot to \fIdirectory\fR so that include
+ directives in the configuration file are processed as if
+ run by a similarly chrooted named.
++By default, \fBnamed-checkconf\fR \fBchroot()\fR's to \fI@ROOT@\fR.
+ .TP
+ \fB-v\fR
+ Print the version of the \fBnamed-checkconf\fR
+diff -puNr bind-9.3.1.orig/bin/check/named-checkconf.c bind-9.3.1/bin/check/named-checkconf.c
+--- bind-9.3.1.orig/bin/check/named-checkconf.c	Thu Mar  3 06:33:38 2005
++++ bind-9.3.1/bin/check/named-checkconf.c	Tue Jul 26 21:17:52 2005
+@@ -208,6 +208,7 @@ main(int argc, char **argv) {
+ 	int exit_status = 0;
+ 	isc_entropy_t *ectx = NULL;
+ 	isc_boolean_t load_zones = ISC_FALSE;
++	const char *chroot_dir = "@ROOT@";
+ 	
+ 	while ((c = isc_commandline_parse(argc, argv, "djt:vz")) != EOF) {
+ 		switch (c) {
+@@ -220,18 +221,7 @@ main(int argc, char **argv) {
+ 			break;
+ 
+ 		case 't':
+-			result = isc_dir_chroot(isc_commandline_argument);
+-			if (result != ISC_R_SUCCESS) {
+-				fprintf(stderr, "isc_dir_chroot: %s\n",
+-					isc_result_totext(result));
+-				exit(1);
+-			}
+-			result = isc_dir_chdir("/");
+-			if (result != ISC_R_SUCCESS) {
+-				fprintf(stderr, "isc_dir_chdir: %s\n",
+-					isc_result_totext(result));
+-				exit(1);
+-			}
++			chroot_dir = isc_commandline_argument;
+ 			break;
+ 
+ 		case 'v':
+@@ -245,6 +235,19 @@ main(int argc, char **argv) {
+ 		default:
+ 			usage();
+ 		}
++	}
++
++	result = isc_dir_chroot(chroot_dir);
++	if (result != ISC_R_SUCCESS) {
++		fprintf(stderr, "isc_dir_chroot: %s\n",
++			isc_result_totext(result));
++		exit(1);
++	}
++	result = isc_dir_chdir("/");
++	if (result != ISC_R_SUCCESS) {
++		fprintf(stderr, "isc_dir_chdir: %s\n",
++			isc_result_totext(result));
++		exit(1);
+ 	}
+ 
+ 	if (argv[isc_commandline_index] != NULL)

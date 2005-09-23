@@ -1,0 +1,32 @@
+diff -upk.orig bind-9.3.1.orig/lib/isc/unix/net.c bind-9.3.1/lib/isc/unix/net.c
+--- bind-9.3.1.orig/lib/isc/unix/net.c	2004-04-29 01:31:22 +0000
++++ bind-9.3.1/lib/isc/unix/net.c	2005-09-22 15:50:44 +0000
+@@ -39,8 +39,12 @@ const struct in6_addr isc_net_in6addrloo
+ #endif
+ 
+ static isc_once_t 	once = ISC_ONCE_INIT;
++#ifdef ISC_PLATFORM_HAVEIPV6
++#ifdef WANT_IPV6
+ static isc_once_t 	once_ipv6only = ISC_ONCE_INIT;
+ static isc_once_t 	once_ipv6pktinfo = ISC_ONCE_INIT;
++#endif
++#endif
+ static isc_result_t	ipv4_result = ISC_R_NOTFOUND;
+ static isc_result_t	ipv6_result = ISC_R_NOTFOUND;
+ static isc_result_t	ipv6only_result = ISC_R_NOTFOUND;
+@@ -235,7 +239,6 @@ initialize_ipv6only(void) {
+ 	RUNTIME_CHECK(isc_once_do(&once_ipv6only,
+ 				  try_ipv6only) == ISC_R_SUCCESS);
+ }
+-#endif /* IPV6_V6ONLY */
+ 
+ static void
+ try_ipv6pktinfo(void) {
+@@ -290,6 +293,7 @@ initialize_ipv6pktinfo(void) {
+ 				  try_ipv6pktinfo) == ISC_R_SUCCESS);
+ }
+ #endif /* WANT_IPV6 */
++#endif /* ISC_PLATFORM_HAVEIPV6 */
+ 
+ isc_result_t
+ isc_net_probe_ipv6only(void) {

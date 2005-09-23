@@ -1,0 +1,41 @@
+--- bind-9.3.1/bin/dnssec/Makefile.in.orig	2004-07-20 07:01:48 +0000
++++ bind-9.3.1/bin/dnssec/Makefile.in	2005-09-20 21:52:49 +0000
+@@ -39,15 +39,19 @@ DEPLIBS =	${DNSDEPLIBS} ${ISCDEPLIBS}
+ LIBS =		${DNSLIBS} ${ISCLIBS} @LIBS@
+ 
+ # Alphabetically
+-TARGETS =	dnssec-keygen@EXEEXT@ dnssec-signzone@EXEEXT@
++TARGETS =	dnssec-keygen@EXEEXT@ dnssec-signzone@EXEEXT@ \
++		dnssec-makekeyset@EXEEXT@ dnssec-signkey@EXEEXT@ 
+ 
+ OBJS =		dnssectool.@O@
+ 
+-SRCS =		dnssec-keygen.c dnssec-signzone.c dnssectool.c
++SRCS =		dnssec-keygen.c dnssec-signzone.c dnssectool.c \
++		dnssec-makekeyset.c dnssec-signkey.c
+ 
+-MANPAGES =	dnssec-keygen.8 dnssec-signzone.8
++MANPAGES =	dnssec-keygen.8 dnssec-signzone.8 \
++		dnssec-makekeyset.8 dnssec-signkey.8
+ 
+-HTMLPAGES =	dnssec-keygen.html dnssec-signzone.html
++HTMLPAGES =	dnssec-keygen.html dnssec-signzone.html \
++		dnssec-makekeyset.html dnssec-signkey.html
+ 
+ MANOBJS =	${MANPAGES} ${HTMLPAGES}
+ 
+@@ -64,6 +68,14 @@ dnssec-signzone@EXEEXT@: dnssec-signzone
+ 	${LIBTOOL_MODE_LINK} ${PURIFY} ${CC} ${CFLAGS} ${LDFLAGS} -o $@ \
+ 	dnssec-signzone.@O@ ${OBJS} ${LIBS}
+ 
++dnssec-makekeyset@EXEEXT@: dnssec-makekeyset.@O@ ${OBJS} ${DEPLIBS}
++	${LIBTOOL_MODE_LINK} ${PURIFY} ${CC} ${CFLAGS} ${LDFLAGS} -o $@ \
++	dnssec-makekeyset.@O@ ${OBJS} ${LIBS}
++
++dnssec-signkey@EXEEXT@: dnssec-signkey.@O@ ${OBJS} ${DEPLIBS}
++	${LIBTOOL_MODE_LINK} ${PURIFY} ${CC} ${CFLAGS} ${LDFLAGS} -o $@ \
++	dnssec-signkey.@O@ ${OBJS} ${LIBS}
++
+ doc man:: ${MANOBJS}
+ 
+ docclean manclean maintainer-clean::

@@ -1,0 +1,278 @@
+diff -puNr bind-9.3.1.orig/bin/named/server.c bind-9.3.1/bin/named/server.c
+--- bind-9.3.1.orig/bin/named/server.c	Tue Jul 26 23:05:48 2005
++++ bind-9.3.1/bin/named/server.c	Tue Jul 26 23:38:54 2005
+@@ -2519,8 +2519,12 @@ load_configuration(const char *filename,
+ 				      "no source of entropy found");
+ 		} else {
+ 			const char *randomdev = cfg_obj_asstring(obj);
+-			result = isc_entropy_createfilesource(ns_g_entropy,
++			if (strcmp(randomdev, PATH_RANDOMDEV))
++				result = isc_entropy_createfilesource(ns_g_entropy,
+ 							      randomdev);
++			else
++				result = isc_entropy_createfilefd(ns_g_entropy,
++							      ns_os_open_randomdev(), ISC_FALSE, ISC_FALSE);
+ 			if (result != ISC_R_SUCCESS)
+ 				isc_log_write(ns_g_lctx,
+ 					      NS_LOGCATEGORY_GENERAL,
+@@ -2553,8 +2557,10 @@ load_configuration(const char *filename,
+ 	/*
+ 	 * Relinquish root privileges.
+ 	 */
+-	if (first_time)
++	if (first_time) {
+ 		ns_os_changeuser();
++		ns_os_dropprivs();
++	}
+ 
+ 	/*
+ 	 * Configure the logging system.
+diff -puNr bind-9.3.1.orig/bin/named/unix/include/named/os.h bind-9.3.1/bin/named/unix/include/named/os.h
+--- bind-9.3.1.orig/bin/named/unix/include/named/os.h	Tue Jul 26 23:05:48 2005
++++ bind-9.3.1/bin/named/unix/include/named/os.h	Tue Jul 26 23:38:54 2005
+@@ -50,6 +50,12 @@ void
+ ns_os_preopenpidfile(const char *filename);
+ 
+ void
++ns_os_dropprivs(void);
++
++int
++ns_os_open_randomdev(void);
++
++void
+ ns_os_writepidfile(const char *filename, isc_boolean_t first_time);
+ 
+ void
+diff -puNr bind-9.3.1.orig/bin/named/unix/os.c bind-9.3.1/bin/named/unix/os.c
+--- bind-9.3.1.orig/bin/named/unix/os.c	Tue Jul 26 23:05:48 2005
++++ bind-9.3.1/bin/named/unix/os.c	Tue Jul 26 23:38:54 2005
+@@ -303,6 +303,19 @@ ns_os_init(const char *progname) {
+ #endif
+ }
+ 
++int
++ns_os_open_randomdev (void)
++{
++	static int fd = -1;
++
++#ifdef PATH_RANDOMDEV
++	if (fd < 0)
++		fd = open(PATH_RANDOMDEV, O_RDONLY | O_NONBLOCK, 0);
++#endif
++
++	return fd;
++}
++
+ void
+ ns_os_daemonize(void) {
+ 	pid_t pid;
+@@ -420,6 +433,7 @@ void
+ ns_os_chroot(const char *root) {
+ 	char strbuf[ISC_STRERRORSIZE];
+ 	if (root != NULL) {
++		ns_os_open_randomdev();
+ 		if (chroot(root) < 0) {
+ 			isc__strerror(errno, strbuf, sizeof(strbuf));
+ 			ns_main_earlyfatal("chroot(): %s", strbuf);
+@@ -503,6 +517,13 @@ ns_os_minprivs(void) {
+ 
+ #if defined(HAVE_LINUX_CAPABILITY_H) && defined(HAVE_LINUXTHREADS)
+ 	linux_minprivs();
++#endif
++}
++
++void
++ns_os_dropprivs(void) {
++#if defined(HAVE_LINUX_CAPABILITY_H) && !defined(HAVE_LINUXTHREADS)
++	linux_setcaps(0);
+ #endif
+ }
+ 
+diff -puNr bind-9.3.1.orig/lib/isc/include/isc/entropy.h bind-9.3.1/lib/isc/include/isc/entropy.h
+--- bind-9.3.1.orig/lib/isc/include/isc/entropy.h	Sat Mar  6 08:14:40 2004
++++ bind-9.3.1/lib/isc/include/isc/entropy.h	Tue Jul 26 23:38:55 2005
+@@ -166,6 +166,9 @@ isc_entropy_createfilesource(isc_entropy
+  * The file will never be opened/read again once EOF is reached.
+  */
+ 
++isc_result_t
++isc_entropy_createfilefd(isc_entropy_t *ent, int fd, isc_boolean_t is_usocket, isc_boolean_t is_connected);
++
+ void
+ isc_entropy_destroysource(isc_entropysource_t **sourcep);
+ /*
+diff -puNr bind-9.3.1.orig/lib/isc/unix/entropy.c bind-9.3.1/lib/isc/unix/entropy.c
+--- bind-9.3.1.orig/lib/isc/unix/entropy.c	Tue Mar 16 05:02:31 2004
++++ bind-9.3.1/lib/isc/unix/entropy.c	Tue Jul 26 23:42:34 2005
+@@ -464,24 +464,82 @@ make_nonblock(int fd) {
+ }
+ 
+ isc_result_t
+-isc_entropy_createfilesource(isc_entropy_t *ent, const char *fname) {
+-	int fd;
+-	struct stat _stat;
+-	isc_boolean_t is_usocket = ISC_FALSE;
+-	isc_boolean_t is_connected = ISC_FALSE;
++isc_entropy_createfilefd(isc_entropy_t *ent, int fd, isc_boolean_t is_usocket, isc_boolean_t is_connected) {
+ 	isc_result_t ret;
+ 	isc_entropysource_t *source;
+ 
+ 	REQUIRE(VALID_ENTROPY(ent));
+-	REQUIRE(fname != NULL);
++	REQUIRE(fd >= 0);
+ 
+ 	LOCK(&ent->lock);
+ 
+-	source = NULL;
++	source = isc_mem_get(ent->mctx, sizeof(isc_entropysource_t));
++	if (source == NULL) {
++		(void) close(fd);
++		UNLOCK(&ent->lock);
++		return ISC_R_NOMEMORY;
++	}
++
++	ret = make_nonblock(fd);
++	if (ret != ISC_R_SUCCESS)
++		goto closefd;
++
++	/*
++	 * From here down, no failures can occur.
++	 */
++	source->magic = SOURCE_MAGIC;
++	source->ent = ent;
++	source->total = 0;
++	source->bad = ISC_FALSE;
++	memset(source->name, 0, sizeof(source->name));
++	ISC_LINK_INIT(source, link);
++	if (is_usocket) {
++		source->sources.usocket.handle = fd;
++		if (is_connected)
++			source->sources.usocket.status =
++					isc_usocketsource_connected;
++		else
++			source->sources.usocket.status =
++					isc_usocketsource_connecting;
++		source->sources.usocket.sz_to_recv = 0;
++		source->type = ENTROPY_SOURCETYPE_USOCKET;
++	} else {
++		source->sources.file.handle = fd;
++		source->type = ENTROPY_SOURCETYPE_FILE;
++	}
++
++	/*
++	 * Hook it into the entropy system.
++	 */
++	ISC_LIST_APPEND(ent->sources, source, link);
++	ent->nsources++;
++
++	UNLOCK(&ent->lock);
++	return (ISC_R_SUCCESS);
++
++ closefd:
++	(void)close(fd);
++
++	if (source != NULL)
++		isc_mem_put(ent->mctx, source, sizeof(isc_entropysource_t));
++
++	UNLOCK(&ent->lock);
++
++	return (ret);
++}
++
++isc_result_t
++isc_entropy_createfilesource(isc_entropy_t *ent, const char *fname) {
++	struct stat _stat;
++	isc_boolean_t is_usocket = ISC_FALSE;
++	isc_boolean_t is_connected = ISC_FALSE;
++	int fd;
++
++	REQUIRE(VALID_ENTROPY(ent));
++	REQUIRE(fname != NULL);
+ 
+ 	if (stat(fname, &_stat) < 0) {
+-		ret = isc__errno2result(errno);
+-		goto errout;
++		return isc__errno2result(errno);
+ 	}
+ 	/* 
+ 	 * Solaris 2.5.1 does not have support for sockets (S_IFSOCK),
+@@ -504,14 +562,9 @@ isc_entropy_createfilesource(isc_entropy
+ 		fd = open(fname, O_RDONLY | O_NONBLOCK, 0);
+ 
+ 	if (fd < 0) {
+-		ret = isc__errno2result(errno);
+-		goto errout;
++		return isc__errno2result(errno);
+ 	}
+ 
+-	ret = make_nonblock(fd);
+-	if (ret != ISC_R_SUCCESS)
+-		goto closefd;
+-
+ 	if (is_usocket) {
+ 		struct sockaddr_un sname;
+ 
+@@ -530,60 +583,12 @@ isc_entropy_createfilesource(isc_entropy
+ 		if (connect(fd, (struct sockaddr *) &sname,
+ 			    sizeof(struct sockaddr_un)) < 0) {
+ 			if (errno != EINPROGRESS) {
+-				ret = isc__errno2result(errno);
+-				goto closefd;
++				(void) close(fd);
++				return isc__errno2result(errno);
+ 			}
+ 		} else
+ 			is_connected = ISC_TRUE;
+ 	}
+ 
+-	source = isc_mem_get(ent->mctx, sizeof(isc_entropysource_t));
+-	if (source == NULL) {
+-		ret = ISC_R_NOMEMORY;
+-		goto closefd;
+-	}
+-
+-	/*
+-	 * From here down, no failures can occur.
+-	 */
+-	source->magic = SOURCE_MAGIC;
+-	source->ent = ent;
+-	source->total = 0;
+-	source->bad = ISC_FALSE;
+-	memset(source->name, 0, sizeof(source->name));
+-	ISC_LINK_INIT(source, link);
+-	if (is_usocket) {
+-		source->sources.usocket.handle = fd;
+-		if (is_connected)
+-			source->sources.usocket.status =
+-					isc_usocketsource_connected;
+-		else
+-			source->sources.usocket.status =
+-					isc_usocketsource_connecting;
+-		source->sources.usocket.sz_to_recv = 0;
+-		source->type = ENTROPY_SOURCETYPE_USOCKET;
+-	} else {
+-		source->sources.file.handle = fd;
+-		source->type = ENTROPY_SOURCETYPE_FILE;
+-	}
+-
+-	/*
+-	 * Hook it into the entropy system.
+-	 */
+-	ISC_LIST_APPEND(ent->sources, source, link);
+-	ent->nsources++;
+-
+-	UNLOCK(&ent->lock);
+-	return (ISC_R_SUCCESS);
+-
+- closefd:
+-	(void)close(fd);
+-
+- errout:
+-	if (source != NULL)
+-		isc_mem_put(ent->mctx, source, sizeof(isc_entropysource_t));
+-
+-	UNLOCK(&ent->lock);
+-
+-	return (ret);
++	return isc_entropy_createfilefd(ent, fd, is_usocket, is_connected);
+ }

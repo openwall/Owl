@@ -1,0 +1,26 @@
+diff -upk.orig bind-9.3.1.orig/lib/bind/irs/irs_data.c bind-9.3.1/lib/bind/irs/irs_data.c
+--- bind-9.3.1.orig/lib/bind/irs/irs_data.c	2004-11-30 01:15:43 +0000
++++ bind-9.3.1/lib/bind/irs/irs_data.c	2005-09-20 21:40:43 +0000
+@@ -221,9 +221,7 @@ __h_errno(void) {
+ 
+ void
+ __h_errno_set(struct __res_state *res, int err) {
+-
+-
+-#if (__GLIBC__ > 2 || __GLIBC__ == 2 &&  __GLIBC_MINOR__ >= 3)
++#if 0
+ 	res->res_h_errno = err;
+ #else
+ 	h_errno = res->res_h_errno = err;
+diff -upk.orig bind-9.3.1.orig/lib/bind/resolv/res_query.c bind-9.3.1/lib/bind/resolv/res_query.c
+--- bind-9.3.1.orig/lib/bind/resolv/res_query.c	2004-03-16 12:34:19 +0000
++++ bind-9.3.1/lib/bind/resolv/res_query.c	2005-03-10 02:53:34 +0000
+@@ -192,6 +192,8 @@ again:
+ 		}
+ 		return (-1);
+ 	}
++	if( n > 0 )
++		RES_SET_H_ERRNO(statp,0);
+ 	return (n);
+ }
+ 

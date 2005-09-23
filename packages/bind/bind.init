@@ -1,0 +1,65 @@
+#!/bin/sh
+# $Id: Owl/packages/bind/bind.init,v 1.1 2005/09/23 21:17:25 ldv Exp $
+#
+# named           This shell script takes care of starting and stopping
+#                 named (BIND DNS server).
+#
+# chkconfig: 345 20 55
+# description: \
+#	named (BIND) is a Domain Name Server (DNS) that is used to \
+#	resolve host names to IP addresses.
+# processname: named
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+OWL_STARTUP_ENABLE=1
+
+# Source networking configuration.
+test -s /etc/sysconfig/network && . /etc/sysconfig/network
+
+rndc_keygen()
+{
+	local rndc="@ROOT@/etc/rndc.key"
+	if [ -w "$rndc" ] && grep -Eqs '^[[:space:]]*secret[[:space:]]+"@RNDC_KEY@";$' "$rndc"; then
+		local key
+		key=$(@SBINDIR@/rndc-confgen -A 2>/dev/null)
+		test -n "$key" && sed -i -e "s,^\([[:space:]]*secret[[:space:]]\+\)\"@RNDC_KEY@\";,\1\"$key\";," "$rndc"
+		action "Generating RNDC key:" test "$?" -eq 0
+		test "$?" -ne 0 && exit 1
+	fi
+}
+
+# See how we were called.
+case "$1" in
+	start)
+		test "$NETWORKING" = "no" && return 0
+
+		rndc_keygen
+
+		daemon --expect-user named -- named
+		;;
+	stop)
+		action "Stopping named" @SBINDIR@/rndc stop
+		;;
+	restart)
+		$0 stop && $0 start
+		;;
+	status)
+		if @SBINDIR@/rndc status &>/dev/null; then
+			echo "named is running (rndc status)"
+			exit 0
+		else
+			status --expect-user named -- named
+		fi
+		;;
+	reload)
+		action "Reloading named configuration" @SBINDIR@/rndc reload
+		;; 
+	*)
+		echo "Usage: ${0##*/} {start|stop|reload|restart|status}"
+		exit 1
+esac
+
+exit $?
+

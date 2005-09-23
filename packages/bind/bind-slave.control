@@ -1,0 +1,11 @@
+#!/bin/sh
+# $Id: Owl/packages/bind/bind-slave.control,v 1.1 2005/09/23 21:17:25 ldv Exp $
+
+. /etc/control.d/functions
+
+DIRECTORY=/var/lib/bind/zone/slave
+
+new_fmode enabled 1770 root named
+new_fmode disabled 700 root named
+
+control_fmode "$DIRECTORY" "$*" || exit 1

@@ -1,0 +1,11 @@
+$TTL	1D
+@	IN	SOA	localhost. root.localhost. (
+				YYYYMMDDNN	; serial
+				12H		; refresh
+				1H		; retry
+				1W		; expire
+				1H		; ncache
+			)
+	IN	NS	localhost.
+0.0.0	IN	PTR	localdomain.
+1.0.0	IN	PTR	localhost.

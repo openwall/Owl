@@ -1,0 +1,219 @@
+diff -upk.orig bind-9.3.1.orig/bin/named/include/named/globals.h bind-9.3.1/bin/named/include/named/globals.h
+--- bind-9.3.1.orig/bin/named/include/named/globals.h	2004-03-08 04:04:20 +0000
++++ bind-9.3.1/bin/named/include/named/globals.h	2005-09-22 15:53:57 +0000
+@@ -108,6 +108,8 @@ EXTERN const char *		ns_g_defaultpidfile
+ 							     "/run/named.pid");
+ EXTERN const char *		lwresd_g_defaultpidfile INIT(NS_LOCALSTATEDIR
+ 							    "/run/lwresd.pid");
++EXTERN const char *		ns_g_pidfile		INIT(NS_LOCALSTATEDIR
++							    "/run/named.pid");
+ EXTERN const char *		ns_g_username		INIT(NULL);
+ 
+ EXTERN int			ns_g_listen		INIT(3);
+diff -upk.orig bind-9.3.1.orig/bin/named/main.c bind-9.3.1/bin/named/main.c
+--- bind-9.3.1.orig/bin/named/main.c	2004-10-25 00:42:54 +0000
++++ bind-9.3.1/bin/named/main.c	2005-09-22 15:53:57 +0000
+@@ -240,7 +240,7 @@ usage(void) {
+ 		"usage: named [-4|-6] [-c conffile] [-d debuglevel] "
+ 		"[-f|-g] [-n number_of_cpus]\n"
+ 		"             [-p port] [-s] [-t chrootdir] [-u username]\n"
+-		"             [-m {usage|trace|record}]\n");
++		"             [-i pidfile] [-m {usage|trace|record}]\n");
+ }
+ 
+ static void
+@@ -388,9 +388,8 @@ parse_command_line(int argc, char *argv[
+ 			ns_g_foreground = ISC_TRUE;
+ 			ns_g_logstderr = ISC_TRUE;
+ 			break;
+-		/* XXXBEW -i should be removed */
+ 		case 'i':
+-			lwresd_g_defaultpidfile = isc_commandline_argument;
++			ns_g_pidfile = isc_commandline_argument;
+ 			break;
+ 		case 'l':
+ 			ns_g_lwresdonly = ISC_TRUE;
+@@ -541,6 +540,12 @@ static void
+ setup(void) {
+ 	isc_result_t result;
+ 
++        /*
++	 * Write pidfile before chroot if specified on the command line
++	 */
++	if (ns_g_pidfile != NULL)
++		ns_os_preopenpidfile(ns_g_pidfile);
++
+ 	/*
+ 	 * Get the user and group information before changing the root
+ 	 * directory, so the administrator does not need to keep a copy
+diff -upk.orig bind-9.3.1.orig/bin/named/server.c bind-9.3.1/bin/named/server.c
+--- bind-9.3.1.orig/bin/named/server.c	2004-11-10 22:13:56 +0000
++++ bind-9.3.1/bin/named/server.c	2005-09-22 15:53:57 +0000
+@@ -2639,16 +2639,20 @@ load_configuration(const char *filename,
+ 		}
+ 	}
+ 
+-	obj = NULL;
+-	if (ns_config_get(maps, "pid-file", &obj) == ISC_R_SUCCESS)
+-		if (cfg_obj_isvoid(obj))
+-			ns_os_writepidfile(NULL, first_time);
++	if (ns_g_pidfile != NULL) {
++		ns_os_writepidfile(ns_g_pidfile, first_time);
++	} else {
++		obj = NULL;
++		if (ns_config_get(maps, "pid-file", &obj) == ISC_R_SUCCESS)
++			if (cfg_obj_isvoid(obj))
++				ns_os_writepidfile(NULL, first_time);
++			else
++				ns_os_writepidfile(cfg_obj_asstring(obj), first_time);
++		else if (ns_g_lwresdonly)
++			ns_os_writepidfile(lwresd_g_defaultpidfile, first_time);
+ 		else
+-			ns_os_writepidfile(cfg_obj_asstring(obj), first_time);
+-	else if (ns_g_lwresdonly)
+-		ns_os_writepidfile(lwresd_g_defaultpidfile, first_time);
+-	else
+-		ns_os_writepidfile(ns_g_defaultpidfile, first_time);
++			ns_os_writepidfile(ns_g_defaultpidfile, first_time);
++	}
+ 	
+ 	obj = NULL;
+ 	if (options != NULL &&
+diff -upk.orig bind-9.3.1.orig/bin/named/unix/include/named/os.h bind-9.3.1/bin/named/unix/include/named/os.h
+--- bind-9.3.1.orig/bin/named/unix/include/named/os.h	2004-09-29 06:36:44 +0000
++++ bind-9.3.1/bin/named/unix/include/named/os.h	2005-09-22 15:53:57 +0000
+@@ -47,6 +47,9 @@ void
+ ns_os_minprivs(void);
+ 
+ void
++ns_os_preopenpidfile(const char *filename);
++
++void
+ ns_os_writepidfile(const char *filename, isc_boolean_t first_time);
+ 
+ void
+diff -upk.orig bind-9.3.1.orig/bin/named/unix/os.c bind-9.3.1/bin/named/unix/os.c
+--- bind-9.3.1.orig/bin/named/unix/os.c	2004-10-07 02:34:20 +0000
++++ bind-9.3.1/bin/named/unix/os.c	2005-09-22 15:54:24 +0000
+@@ -48,6 +48,8 @@
+ #include <named/os.h>
+ 
+ static char *pidfile = NULL;
++static int pidfilefd = -1;
++static isc_boolean_t preopenpidfile = ISC_FALSE;
+ static int devnullfd = -1;
+ 
+ #ifndef ISC_FACILITY
+@@ -537,32 +539,26 @@ cleanup_pidfile(void) {
+ 	pidfile = NULL;
+ }
+ 
+-void
+-ns_os_writepidfile(const char *filename, isc_boolean_t first_time) {
++static int
++open_pidfile(const char *filename, isc_boolean_t first_time) {
+ 	int fd;
+-	FILE *lockfile;
+ 	size_t len;
+-	pid_t pid;
+ 	char strbuf[ISC_STRERRORSIZE];
+ 	void (*report)(const char *, ...);
+ 
+-	/*
+-	 * The caller must ensure any required synchronization.
+-	 */
+-
+ 	report = first_time ? ns_main_earlyfatal : ns_main_earlywarning;
+ 
+ 	cleanup_pidfile();
+ 
+ 	if (filename == NULL)
+-		return;
++		return -1;
+ 
+ 	len = strlen(filename);
+ 	pidfile = malloc(len + 1);
+ 	if (pidfile == NULL) {
+ 		isc__strerror(errno, strbuf, sizeof(strbuf));
+ 		(*report)("couldn't malloc '%s': %s", filename, strbuf);
+-		return;
++		return -1;
+ 	}
+ 	/* This is safe. */
+ 	strcpy(pidfile, filename);
+@@ -573,15 +569,46 @@ ns_os_writepidfile(const char *filename,
+ 		(*report)("couldn't open pid file '%s': %s", filename, strbuf);
+ 		free(pidfile);
+ 		pidfile = NULL;
+-		return;
++		return -1;
+ 	}
++
++	return fd;
++}
++
++void
++ns_os_preopenpidfile(const char *filename) {
++	pidfilefd = open_pidfile(filename, ISC_TRUE);
++	preopenpidfile = ISC_TRUE;
++}
++
++void
++ns_os_writepidfile(const char *filename, isc_boolean_t first_time) {
++	int fd;
++	FILE *lockfile;
++	pid_t pid;
++	char strbuf[ISC_STRERRORSIZE];
++	void (*report)(const char *, ...);
++
++	/*
++	 * The caller must ensure any required synchronization.
++	 */
++
++	report = first_time ? ns_main_earlyfatal : ns_main_earlywarning;
++
++	if (preopenpidfile == ISC_TRUE)
++		fd = pidfilefd;
++	else
++		fd = open_pidfile(filename, first_time);
++
++	if (fd < 0) return;
++
+ 	lockfile = fdopen(fd, "w");
+ 	if (lockfile == NULL) {
+ 		isc__strerror(errno, strbuf, sizeof(strbuf));
+ 		(*report)("could not fdopen() pid file '%s': %s",
+ 			  filename, strbuf);
+ 		(void)close(fd);
+-		cleanup_pidfile();
++		if (preopenpidfile == ISC_FALSE) cleanup_pidfile();
+ 		return;
+ 	}
+ #ifdef HAVE_LINUXTHREADS
+@@ -592,22 +619,23 @@ ns_os_writepidfile(const char *filename,
+ 	if (fprintf(lockfile, "%ld\n", (long)pid) < 0) {
+ 		(*report)("fprintf() to pid file '%s' failed", filename);
+ 		(void)fclose(lockfile);
+-		cleanup_pidfile();
++		if (preopenpidfile == ISC_FALSE) cleanup_pidfile();
+ 		return;
+ 	}
+ 	if (fflush(lockfile) == EOF) {
+ 		(*report)("fflush() to pid file '%s' failed", filename);
+ 		(void)fclose(lockfile);
+-		cleanup_pidfile();
++		if (preopenpidfile == ISC_FALSE) cleanup_pidfile();
+ 		return;
+ 	}
+ 	(void)fclose(lockfile);
++	if (preopenpidfile == ISC_TRUE) pidfilefd = -1;
+ }
+ 
+ void
+ ns_os_shutdown(void) {
+ 	closelog();
+-	cleanup_pidfile();
++	if (preopenpidfile == ISC_FALSE) cleanup_pidfile();
+ }
+ 
+ isc_result_t
