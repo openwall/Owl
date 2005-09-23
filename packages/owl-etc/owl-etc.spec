@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.61 2005/01/20 04:39:13 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.62 2005/09/23 21:30:10 ldv Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
 Version: 0.29
-Release: owl3
+Release: owl4
 License: public domain
 Group: System Environment/Base
 Source0: passwd
@@ -30,7 +30,7 @@ BuildRequires: fileutils >= 4.0.27, rpm >= 3.0.6-owl8
 BuildArchitectures: noarch
 BuildRoot: /override/%name-%version
 
-%define shadow_initial_sha1 87b2b95772ae5ae8de701a850fd0e468592ae1c4
+%define shadow_initial_sha1 9e2a159906fd0f95e6ee1d6204007b95c11624c9
 
 %description
 Initial set of configuration files to be placed into /etc.
@@ -161,6 +161,9 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 %ghost /etc/*-
 
 %changelog
+* Sat Sep 24 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.29-owl4
+- named user/group.
+
 * Fri Jan 14 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.29-owl3
 - Let RPM know that /etc/shadow may be missing.
 - Include /etc/{group,passwd,shadow}- (backup copies - with the trailing

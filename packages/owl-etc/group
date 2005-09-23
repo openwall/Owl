@@ -17,6 +17,7 @@ floppy:x:19:
 games:x:20:
 slocate:x:21:
 utmp:x:22:
+named:x:25:
 dip:x:40:
 shadow:x:42:
 ftp:x:50:
