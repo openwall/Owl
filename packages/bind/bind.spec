@@ -1,12 +1,7 @@
-# $Id: Owl/packages/bind/bind.spec,v 1.1 2005/09/23 21:17:25 ldv Exp $
+# $Id: Owl/packages/bind/bind.spec,v 1.2 2005/09/23 23:39:36 ldv Exp $
 
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
 %{?!BUILD_OPENSSL: %define BUILD_OPENSSL 1}
-
-%define _localstatedir		/var
-%define _chrootdir		%_localstatedir/lib/bind
-%define randomdev		/dev/urandom
-%define docdir			%_docdir/%name-%version
 
 Summary: The ISC BIND server.
 Name: bind
@@ -17,10 +12,10 @@ URL: http://www.isc.org/products/BIND/
 Group: System Environment/Daemons
 
 Source0: ftp://ftp.isc.org/isc/bind9/%{version}/bind-%{version}.tar.gz
-Source1: bind-debug.control
-Source2: bind-slave.control
-Source3: resolver.5
-Source4: rfc1912.txt
+Source1: rfc1912.txt.bz2
+Source2: bind-debug.control
+Source3: bind-slave.control
+Source4: resolver.5
 Source5: bind.init
 Source6: rndc.key
 Source7: rndc.conf
@@ -51,7 +46,7 @@ Patch12: bind-9.3.1-suse-Makefile.diff
 Patch13: bind-9.3.1-owl-rfc-index.diff
 
 Requires: %name-libs = %version-%release
-Requires: owl-startup >= 0.25
+Requires: owl-startup
 Requires: sysklogd >= 1.4.1-owl9
 PreReq: owl-control >= 0.4, owl-control < 2.0
 %if %BUILD_OPENSSL
@@ -59,7 +54,11 @@ BuildRequires: openssl-devel
 %endif
 BuildRequires: gcc, gcc-c++, glibc-devel >= 2.3.2, libtool, tar
 Provides: bind-chroot(%_chrootdir)
-Buildroot: /override/%name-%version
+BuildRoot: /override/%name-%version
+
+%define _localstatedir	/var
+%define _chrootdir	%_localstatedir/lib/bind
+%define docdir		%_docdir/%name-%version
 
 %description
 The ISC BIND (Berkeley Internet Name Domain) is an implementation of
@@ -82,7 +81,7 @@ as well as other information about registered domains and network
 addresses.
 
 %package doc
-Summary: Documentation for the ISC BIND.
+Summary: Documentation for ISC BIND.
 Group: Documentation
 
 %description doc
@@ -90,7 +89,7 @@ This package provides various documents that are useful for maintaining a
 working BIND installation.
 
 %package libs
-Summary: Shared library used by the ISC BIND.
+Summary: Shared library used by ISC BIND.
 Group: System Environment/Libraries
 
 %description libs
@@ -98,13 +97,13 @@ This package contains shared libraries used by BIND's daemons
 and utilities.
 
 %package devel
-Summary: Include files and libraries needed for bind DNS development.
+Summary: Files for building applications with ISC BIND libraries.
 Group: Development/Libraries
 Requires: %name-libs = %version-%release
 
 %description devel
-This package contains all the include files and libraries required
-for DNS (Domain Name System) development for ISC BIND versions 9.x.x.
+This package contains development libraries and include files required
+for building applications with ISC BIND libraries.
 
 %prep
 %setup -q -n %name-%version
@@ -123,7 +122,7 @@ for DNS (Domain Name System) development for ISC BIND versions 9.x.x.
 %patch12 -p1
 %patch13 -p1
 
-install -pm644 %_sourcedir/rfc1912.txt doc/rfc/
+install -pm644 %_sourcedir/rfc1912.txt.bz2 doc/rfc/
 find doc -type f -name '*.txt' -print0 |
 	xargs -r0 bzip2 -9q --
 
@@ -164,7 +163,7 @@ CPP="%__cpp"; export CPP
 %endif
 	--disable-threads \
 	--disable-linux-caps \
-	--with-randomdev=%{?!randomdev:/dev/random}%{?randomdev} \
+	--with-randomdev=/dev/urandom \
 	--with-libtool \
 	--with-pic
 
@@ -178,7 +177,7 @@ rm -rf %buildroot
 # Install missing man pages
 install -pm644 %_sourcedir/resolver.5 %buildroot%_mandir/man5/
 
-# Install startup script for the ISC BIND daemon
+# Install startup script for ISC BIND daemon
 install -pD -m700 addon/bind.init %buildroot%_initrddir/named
 
 # Install control files
