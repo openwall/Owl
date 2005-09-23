@@ -36,18 +36,6 @@ fixes (the "-owl-fixes.diff") to the maintainer (haven't received a
 response).
 
 
-	bind.
-
-[PRIORITY: medium]
-[ASSIGNED: ldv@]
-Package BIND 9.x, built without pthreads.  Use the query ID shuffle
-code from our glibc.  Allocate and use a pseudo-user, setup and use a
-chroot jail.  Ensure the PID file is dealt with safely (it shouldn't
-allow for named -> root attacks on BIND itself and on our startup
-scripts), preferably have it kept in the system's /var/run and as
-root.  (Jarno did some work on this, Galaxy did initial packaging.)
-
-
 	bison, dialog, diffstat, diffutils, file, hdparm, man-pages.
 
 [PRIORITY: low]
@@ -552,4 +540,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.101 2005/09/13 13:04:14 solar Exp $
+$Id: Owl/doc/TODO,v 1.102 2005/09/23 21:36:05 ldv Exp $
