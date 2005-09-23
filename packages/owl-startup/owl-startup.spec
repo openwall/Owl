@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.57 2005/09/22 19:44:30 galaxy Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.58 2005/09/23 15:44:05 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.26
-Release: owl1
+Version: 0.25
+Release: owl2
 License: GPL
 Group: System Environment/Base
 Source0: initscripts-5.00.tar.gz
@@ -21,10 +21,9 @@ Patch1: initscripts-5.00-owl-network-typo.diff
 PreReq: /sbin/chkconfig
 Requires: SysVinit, msulogin, /sbin/start-stop-daemon
 Requires: bash >= 2.0, sh-utils
-Requires: mingetty, e2fsprogs >= 1.15, util-linux, net-tools
+Requires: mingetty, e2fsprogs >= 1.15, mount, util-linux, net-tools
 Requires: gawk, sed, mktemp
 Requires: /sbin/sysctl
-Requires: mount
 Provides: initscripts
 Obsoletes: initscripts
 BuildRoot: /override/%name-%version
@@ -163,7 +162,7 @@ fi
 %doc redhat
 
 %changelog
-* Thu Sep 22 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.26-owl1
+* Thu Sep 22 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.25-owl2
 - Added a dependency on the mount package.
 
 * Wed Jul 27 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.25-owl1
