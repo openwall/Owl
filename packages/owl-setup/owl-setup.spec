@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.39 2005/09/23 22:41:21 croco Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.40 2005/09/23 23:18:08 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -20,7 +20,7 @@ This is the installation and configuration tool for Owl.
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-%__make CXXFLAGS="%optflags"
+CXXFLAGS="%optflags" %__make
 
 %install
 rm -rf %buildroot
