@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.62 2005/09/23 21:30:10 ldv Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.63 2005/09/23 22:01:40 ldv Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
-Version: 0.29
-Release: owl4
+Version: 0.30
+Release: owl1
 License: public domain
 Group: System Environment/Base
 Source0: passwd
@@ -161,7 +161,7 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 %ghost /etc/*-
 
 %changelog
-* Sat Sep 24 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.29-owl4
+* Sat Sep 24 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.30-owl1
 - named user/group.
 
 * Fri Jan 14 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.29-owl3
