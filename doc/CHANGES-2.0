@@ -12,7 +12,7 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
-2005/09/24	Packages: bind, owl-etc
+2005/09/24	Packages: bind, owl-etc;
 		Owl/build/installorder.conf
 New package: the ISC BIND server.
 
@@ -580,4 +580,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.131 2005/09/23 21:34:24 ldv Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.132 2005/09/23 21:59:19 ldv Exp $
