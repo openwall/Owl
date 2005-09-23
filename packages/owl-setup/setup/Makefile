@@ -16,7 +16,8 @@ CURSES_OBJ =
 CURSES_FLAGS =
 endif
 
-CXXFLAGS = -Wall -O2 -fomit-frame-pointer $(CURSES_FLAGS)
+CXXFLAGS = -Wall -O2 -fomit-frame-pointer
+CXXFLAGS += $(CURSES_FLAGS)
 LDFLAGS = -s
 
 LIBDEPS = scriptpp/libscriptpp.a ip4areas/libip4areas.a
