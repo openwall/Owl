@@ -1,0 +1,22 @@
+diff -urp openssh-3.6.1p2-cvs-20050725-ssh2-delayed-compression/sshd.c openssh-3.6.1p2-cvs-20050921-ssh2-delayed-compression/sshd.c
+--- openssh-3.6.1p2-cvs-20050725-ssh2-delayed-compression/sshd.c	Mon Jul 25 20:18:29 2005
++++ openssh-3.6.1p2-cvs-20050921-ssh2-delayed-compression/sshd.c	Sat Sep 24 01:35:46 2005
+@@ -639,9 +639,8 @@ privsep_postauth(Authctxt *authctxt)
+ 	if (authctxt->pw->pw_uid == 0 || options.use_login) {
+ #endif
+ 		/* File descriptor passing is broken or root login */
+-		monitor_apply_keystate(pmonitor);
+ 		use_privsep = 0;
+-		return;
++		goto skip;
+ 	}
+ 
+ 	/* Authentication complete */
+@@ -676,6 +675,7 @@ privsep_postauth(Authctxt *authctxt)
+ 	/* Drop privileges */
+ 	do_setusercontext(authctxt->pw);
+ 
++ skip:
+ 	/* It is safe now to apply the key state */
+ 	monitor_apply_keystate(pmonitor);
+ 

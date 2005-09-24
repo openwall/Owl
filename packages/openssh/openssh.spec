@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.81 2005/07/27 20:33:34 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.82 2005/09/24 01:45:02 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl14
+Release: owl15
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -32,6 +32,7 @@ Patch15: openssh-3.6.1p2-cvs-20040401-scp-fix.diff
 Patch16: openssh-3.6.1p2-owl-sanitize-packet-types.diff
 Patch17: openssh-3.6.1p2-cvs-20050725-ssh2-delayed-compression.diff
 Patch18: openssh-3.6.1p2-owl-ssh2-delayed-compression-fix.diff
+Patch19: openssh-3.6.1p2-cvs-20050921-ssh2-delayed-compression-root.diff
 PreReq: openssl >= 0.9.7, openssl < 0.9.8
 Requires: pam >= 0.75-owl16
 Obsoletes: ssh
@@ -123,6 +124,7 @@ rm -r autom4te.cache
 %patch16 -p1
 %patch17 -p1
 %patch18 -p1
+%patch19 -p1
 
 %{expand:%%define _sysconfdir %_sysconfdir/ssh}
 %{expand:%%define _datadir %_datadir/ssh}
@@ -239,6 +241,10 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Sat Sep 24 2005 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl15
+- Another bugfix for delayed compression: set the authenticated flag for
+root logins as well.  Thanks to Damien Miller.
+
 * Thu Jul 28 2005 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl14
 - Added delayed compression support for protocol 2 (a back-port of the
 changes committed into the OpenBSD CVS recently, with a bugfix added),
