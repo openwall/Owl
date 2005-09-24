@@ -1,9 +1,9 @@
-# $Id: Owl/packages/elinks/elinks.spec,v 1.18 2005/09/24 21:13:25 galaxy Exp $
+# $Id: Owl/packages/elinks/elinks.spec,v 1.19 2005/09/24 21:16:07 galaxy Exp $
 
 Summary: Lynx-like text WWW browser with many features.
 Name: elinks
 Version: 0.9.1
-Release: owl5
+Release: owl6
 License: GPL
 Group: Applications/Internet
 URL: http://elinks.or.cz
@@ -20,7 +20,7 @@ Patch10: elinks-0.9.1-owl-man.diff
 Requires: gpm, zlib, bzip2, openssl
 Provides: links
 Obsoletes: links
-BuildRequires: gpm-devel, zlib-devel, bzip2-devel, openssl-devel
+BuildRequires: gpm-devel, zlib-devel, bzip2-devel, openssl-devel >= 0.9.7g-owl1
 BuildRoot: /override/%name-%version
 
 %description
@@ -78,8 +78,11 @@ rm %buildroot%_datadir/locale/locale.alias
 %_mandir/man?/*
 
 %changelog
-* Sun Sep 25 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.9.1-owl5
+* Sun Sep 25 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.9.1-owl6
 - Fixed a segmentation fault inside the typeahead routine.
+
+* Sat Jun 25 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.9.1-owl5
+- Rebuilt with libssl.so.5.
 
 * Fri Feb 06 2004 Michail Litvak <mci@owl.openwall.com> 0.9.1-owl4
 - Fix yet another bug in -owl-tmp patch (Thanks to Maxim Timofeyev).
