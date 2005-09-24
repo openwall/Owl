@@ -1,12 +1,13 @@
-# $Id: Owl/packages/bind/bind.spec,v 1.3 2005/09/24 00:22:22 ldv Exp $
+# $Id: Owl/packages/bind/bind.spec,v 1.4 2005/09/24 20:03:54 ldv Exp $
 
+%{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
 %{?!BUILD_OPENSSL: %define BUILD_OPENSSL 1}
 
 Summary: ISC BIND - DNS server.
 Name: bind
 Version: 9.3.1
-Release: owl1
+Release: owl2
 License: BSD-like
 URL: http://www.isc.org/products/BIND/
 Group: System Environment/Daemons
@@ -53,7 +54,6 @@ PreReq: owl-control >= 0.4, owl-control < 2.0
 BuildRequires: openssl-devel
 %endif
 BuildRequires: gcc, gcc-c++, glibc-devel >= 2.3.2, libtool, tar
-Provides: bind-chroot(%_chrootdir)
 BuildRoot: /override/%name-%version
 
 %define _localstatedir	/var
@@ -152,6 +152,12 @@ s,@SBINDIR@,%_sbindir,g;
 # This usage of CPP is a hack, we should fix configure instead -- (GM)
 CPP="%__cpp"; export CPP
 %configure \
+	--enable-shared \
+%if %BUILD_DEVEL
+	--enable-static \
+%else
+	--disable-static \
+%endif
 %if %BUILD_IPV6
 	--enable-ipv6 \
 %else
@@ -316,6 +322,7 @@ fi
 %docdir/COPYRIGHT
 %_libdir/*.so.*
 
+%if %BUILD_DEVEL
 %files devel
 %defattr(-,root,root)
 %_bindir/isc-config.sh
@@ -323,6 +330,12 @@ fi
 %_libdir/*.a
 %_libdir/*.so
 %_mandir/man3/*
+%else
+%exclude %_bindir/isc-config.sh
+%exclude %_includedir/*
+%exclude %_libdir/*.so
+%exclude %_mandir/man3/*
+%endif
 
 %files utils
 %defattr(-,root,root)
@@ -337,6 +350,9 @@ fi
 %_mandir/man8/nsupdate.8*
 
 %changelog
+* Sat Sep 24 2005 Dmitry V. Levin <ldv@owl.openwall.com> 9.3.1-owl2
+- Made build of -devel subpackage conditional and disabled it by default.
+
 * Fri Sep 23 2005 Dmitry V. Levin <ldv@owl.openwall.com> 9.3.1-owl1
 - Initial release, based on ALT's bind-9.3.1-alt1 package and initial
 packaging made by (GalaxyMaster).
