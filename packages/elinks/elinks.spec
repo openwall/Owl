@@ -1,4 +1,4 @@
-# $Id: Owl/packages/elinks/elinks.spec,v 1.17 2005/06/25 22:34:41 ldv Exp $
+# $Id: Owl/packages/elinks/elinks.spec,v 1.18 2005/09/24 21:13:25 galaxy Exp $
 
 Summary: Lynx-like text WWW browser with many features.
 Name: elinks
@@ -15,11 +15,12 @@ Patch3: elinks-0.9.1-owl-vitmp.diff
 Patch4: elinks-0.9.1-owl-no-xterm-title.diff
 Patch5: elinks-0.9.1-owl-no-uname-leak.diff
 Patch6: elinks-0.9.1-owl-external-programs.diff
+Patch7: elinks-0.9.1-owl-typeahead.diff
 Patch10: elinks-0.9.1-owl-man.diff
 Requires: gpm, zlib, bzip2, openssl
 Provides: links
 Obsoletes: links
-BuildRequires: gpm-devel, zlib-devel, bzip2-devel, openssl-devel >= 0.9.7g-owl1
+BuildRequires: gpm-devel, zlib-devel, bzip2-devel, openssl-devel
 BuildRoot: /override/%name-%version
 
 %description
@@ -43,6 +44,7 @@ It is in no way associated with Twibright Labs and their Links version.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 %patch10 -p1
 
 %build
@@ -76,8 +78,8 @@ rm %buildroot%_datadir/locale/locale.alias
 %_mandir/man?/*
 
 %changelog
-* Sat Jun 25 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.9.1-owl5
-- Rebuilt with libssl.so.5.
+* Sun Sep 25 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.9.1-owl5
+- Fixed a segmentation fault inside the typeahead routine.
 
 * Fri Feb 06 2004 Michail Litvak <mci@owl.openwall.com> 0.9.1-owl4
 - Fix yet another bug in -owl-tmp patch (Thanks to Maxim Timofeyev).

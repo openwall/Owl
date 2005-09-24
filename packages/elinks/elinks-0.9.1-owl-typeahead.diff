@@ -1,0 +1,47 @@
+Problem:
+========
+A segmentation fault during typeahead on the document without links.
+
+How to reproduce:
+=================
+
+$ touch empty.html
+$ elinks ./empty.html
+[type '#' followed by any character]
+
+-- 
+(GM)
+
+diff -puNr elinks-0.9.1.orig/src/viewer/text/search.c elinks-0.9.1/src/viewer/text/search.c
+--- elinks-0.9.1.orig/src/viewer/text/search.c	2004-01-07 21:24:56 +0000
++++ elinks-0.9.1/src/viewer/text/search.c	2005-09-24 20:53:38 +0000
+@@ -969,6 +969,10 @@ do_typeahead(struct session *ses, struct
+ 	enum keyact action = kbd_action(KM_EDIT, event, NULL);
+ 	int direction, case_sensitive, i;
+ 
++	/* if there are no links in the document, just bail out */
++	if (!doc_view->document->nlinks)
++		return TYPEAHEAD_STOP;
++
+ 	if (current_link == -1) current_link = 0;
+ 	i = current_link;
+ 
+diff -puNr elinks-0.9.1.orig/src/viewer/text/view.c elinks-0.9.1/src/viewer/text/view.c
+--- elinks-0.9.1.orig/src/viewer/text/view.c	2004-01-08 21:00:37 +0000
++++ elinks-0.9.1/src/viewer/text/view.c	2005-09-24 21:15:57 +0000
+@@ -581,10 +581,12 @@ frame_ev(struct session *ses, struct doc
+ 		} else if (ses->kbdprefix.typeahead) {
+ 			/* Link typeahead */
+ 			unsigned char *typeahead = ses->kbdprefix.typeahead;
+-			enum typeahead_code code;
++			enum typeahead_code code = TYPEAHEAD_STOP;
+ 
+-			code = do_typeahead(ses, doc_view, typeahead, ev);
+-			if (code == TYPEAHEAD_MATCHED) return 1;
++			if (doc_view->document->nlinks) {
++				code = do_typeahead(ses, doc_view, typeahead, ev);
++				if (code == TYPEAHEAD_MATCHED) return 1;
++			}
+ 
+ 			mem_free(ses->kbdprefix.typeahead);
+ 			ses->kbdprefix.typeahead = NULL;
