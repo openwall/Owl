@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bind/bind.spec,v 1.4 2005/09/24 20:03:54 ldv Exp $
+# $Id: Owl/packages/bind/bind.spec,v 1.5 2005/09/24 20:15:39 ldv Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -250,7 +250,8 @@ fi
 if [ $1 -ge 2 ]; then
 	%_sbindir/control-restore bind-debug bind-slave
 else
-	/sbin/service syslog reload || :
+	/sbin/service syslog status >/dev/null 2>&1 &&
+		/sbin/service syslog restart || :
 fi
 /sbin/chkconfig --add named
 test -f /var/run/named.restart && %_initrddir/named start || :
