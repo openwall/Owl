@@ -1,9 +1,9 @@
-# $Id: Owl/packages/bind/bind.spec,v 1.2 2005/09/23 23:39:36 ldv Exp $
+# $Id: Owl/packages/bind/bind.spec,v 1.3 2005/09/24 00:22:22 ldv Exp $
 
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
 %{?!BUILD_OPENSSL: %define BUILD_OPENSSL 1}
 
-Summary: The ISC BIND server.
+Summary: ISC BIND - DNS server.
 Name: bind
 Version: 9.3.1
 Release: owl1
@@ -61,10 +61,10 @@ BuildRoot: /override/%name-%version
 %define docdir		%_docdir/%name-%version
 
 %description
-The ISC BIND (Berkeley Internet Name Domain) is an implementation of
-the DNS (Domain Name System) protocols.  BIND is the most widely used
-name server software on the Internet, and is supported by the Internet
-Software Consortium (ISC).
+ISC BIND (Berkeley Internet Name Domain) is an implementation of the DNS
+(Domain Name System) protocols.  BIND is the most widely used name server
+software on the Internet, and is supported by the Internet Software
+Consortium (ISC).
 
 This package provides the server and related configuration files.
 
@@ -83,6 +83,7 @@ addresses.
 %package doc
 Summary: Documentation for ISC BIND.
 Group: Documentation
+Requires: %name = %version-%release
 
 %description doc
 This package provides various documents that are useful for maintaining a
@@ -304,6 +305,10 @@ fi
 %files doc
 %defattr(-,root,root)
 %docdir
+%exclude %docdir/COPYRIGHT
+%exclude %docdir/README*
+%exclude %docdir/FAQ*
+%exclude %docdir/misc
 
 %files libs
 %defattr(-,root,root)
