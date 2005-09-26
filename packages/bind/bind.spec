@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bind/bind.spec,v 1.5 2005/09/24 20:15:39 ldv Exp $
+# $Id: Owl/packages/bind/bind.spec,v 1.6 2005/09/26 22:26:55 ldv Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -212,7 +212,7 @@ ln -s ..%_chrootdir/etc/named.conf %buildroot/etc/
 # Make use of the /etc/syslog.d/ feature
 touch %buildroot%_chrootdir/dev/log
 mkdir %buildroot/etc/syslog.d
-ln -s ../..%_chrootdir/dev/log %buildroot/etc/syslog.d/named
+ln -s %_chrootdir/dev/log %buildroot/etc/syslog.d/named
 # === end of the chroot configuration
 
 # Package documentation files
@@ -351,8 +351,11 @@ fi
 %_mandir/man8/nsupdate.8*
 
 %changelog
-* Sat Sep 24 2005 Dmitry V. Levin <ldv@owl.openwall.com> 9.3.1-owl2
+* Mon Sep 26 2005 Dmitry V. Levin <ldv@owl.openwall.com> 9.3.1-owl2
 - Made build of -devel subpackage conditional and disabled it by default.
+- Fixed /etc/syslog.d/named symlink.
+- In %post script, restart syslog service instead of reload, to make
+syslogd start listening on the additional socket.
 
 * Fri Sep 23 2005 Dmitry V. Levin <ldv@owl.openwall.com> 9.3.1-owl1
 - Initial release, based on ALT's bind-9.3.1-alt1 package and initial
