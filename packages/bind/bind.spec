@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bind/bind.spec,v 1.7 2005/09/27 13:50:27 solar Exp $
+# $Id: Owl/packages/bind/bind.spec,v 1.8 2005/09/27 21:41:11 ldv Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -7,7 +7,7 @@
 Summary: ISC BIND - DNS server.
 Name: bind
 Version: 9.3.1
-Release: owl2
+Release: owl3
 License: BSD-like
 URL: http://www.isc.org/products/BIND/
 Group: System Environment/Daemons
@@ -251,9 +251,6 @@ fi
 %post
 if [ $1 -ge 2 ]; then
 	%_sbindir/control-restore bind-debug bind-slave
-else
-	/sbin/service syslog status >/dev/null 2>&1 &&
-		/sbin/service syslog restart || :
 fi
 /sbin/chkconfig --add named
 test -f /var/run/named.restart && %_initrddir/named start || :
@@ -353,10 +350,13 @@ fi
 %_mandir/man8/nsupdate.8*
 
 %changelog
+* Tue Sep 27 2005 Dmitry V. Levin <ldv@owl.openwall.com> 9.3.1-owl3
+- Removed syslog restart code from the %%post script.
+
 * Mon Sep 26 2005 Dmitry V. Levin <ldv@owl.openwall.com> 9.3.1-owl2
 - Made build of -devel subpackage conditional and disabled it by default.
 - Fixed /etc/syslog.d/named symlink.
-- In %post script, restart syslog service instead of reload, to make
+- In %%post script, restart syslog service instead of reload, to make
 syslogd start listening on the additional socket.
 
 * Fri Sep 23 2005 Dmitry V. Levin <ldv@owl.openwall.com> 9.3.1-owl1
