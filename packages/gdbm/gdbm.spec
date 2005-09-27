@@ -1,9 +1,9 @@
-# $Id: Owl/packages/gdbm/gdbm.spec,v 1.11 2004/11/23 22:40:45 mci Exp $
+# $Id: Owl/packages/gdbm/gdbm.spec,v 1.12 2005/09/27 13:17:20 mci Exp $
 
 Summary: A GNU set of database routines which use extensible hashing.
 Name: gdbm
 Version: 1.8.0
-Release: owl9
+Release: owl10
 License: GPL
 Group: System Environment/Libraries
 Source: ftp://ftp.gnu.org/gnu/gdbm/gdbm-%version.tar.gz
@@ -60,6 +60,8 @@ sed -i "s,^\(libdir=\).*$,\1'%_libdir'," .%_libdir/libgdbm.la
 ln -sf gdbm/gdbm.h .%_oldincludedir/gdbm.h
 ln -sf libgdbm.so.2.0.0 .%_libdir/libgdbm.so
 
+rm -f %buildroot%_libdir/*.la
+
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
@@ -81,7 +83,6 @@ fi
 %files devel
 %defattr(-,root,root)
 %_libdir/libgdbm.so
-%_libdir/libgdbm.la
 %_libdir/libgdbm.a
 %_oldincludedir/gdbm.h
 %_includedir
@@ -89,6 +90,9 @@ fi
 %_mandir/man3/*
 
 %changelog
+* Fri Sep 23 2005 Michail Litvak <mci@owl.openwall.com> 1.8.0-owl10
+- Don't package .la files.
+
 * Wed Jul 21 2004 Michail Litvak <mci@owl.openwall.com> 1.8.0-owl9
 - Use sed -i.
 

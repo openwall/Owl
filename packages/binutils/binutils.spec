@@ -1,4 +1,4 @@
-# $Id: Owl/packages/binutils/binutils.spec,v 1.15 2005/06/02 14:23:40 ldv Exp $
+# $Id: Owl/packages/binutils/binutils.spec,v 1.16 2005/09/27 13:17:20 mci Exp $
 
 %define BUILD_HJL 1
 
@@ -9,7 +9,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.15.94.0.2.2
-Release: owl2
+Release: owl3
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils/
@@ -126,6 +126,7 @@ chmod +x %buildroot%_libdir/lib*.so*
 
 # Remove unpackaged files if any
 rm -f %buildroot%_infodir/dir
+rm -f %buildroot%_libdir/*.la
 
 cd ..
 
@@ -162,6 +163,10 @@ fi
 %_datadir/locale/*/LC_MESSAGES/*.mo
 
 %changelog
+
+* Fri Sep 23 2005 Michail Litvak <mci@owl.openwall.com>  2.15.94.0.2.2-owl3
+- Don't package .la files.
+
 * Thu Jun 02 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.15.94.0.2.2-owl2
 - Updated strings-mem patch.
 

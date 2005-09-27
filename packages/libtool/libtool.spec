@@ -1,11 +1,11 @@
-# $Id: Owl/packages/libtool/libtool.spec,v 1.14 2005/05/28 10:55:26 ldv Exp $
+# $Id: Owl/packages/libtool/libtool.spec,v 1.15 2005/09/27 13:17:20 mci Exp $
 
 %define BUILD_TEST 0
 
 Summary: The GNU Libtool, which simplifies the use of shared libraries.
 Name: libtool
 Version: 1.5.18
-Release: owl1
+Release: owl2
 License: GPL
 Group: Development/Tools
 URL: http://www.gnu.org/software/libtool/
@@ -63,6 +63,7 @@ mkdir -p %buildroot%_prefix
 
 # Remove unpackaged files if any
 rm -f %buildroot%_infodir/dir
+rm -f %buildroot%_libdir/*.la
 
 %post
 /sbin/install-info %_infodir/libtool.info %_infodir/dir
@@ -80,7 +81,7 @@ fi
 %_includedir/ltdl.h
 %_datadir/libtool
 %_libdir/libltdl.so
-%_libdir/libltdl.*a
+%_libdir/libltdl.a
 %_datadir/aclocal/libtool.m4
 %_datadir/aclocal/ltdl.m4
 
@@ -89,6 +90,9 @@ fi
 %_libdir/libltdl.so.*
 
 %changelog
+* Sun Sep 25 2005 Michail Litvak <mci@owl.openwall.com> 1.5.18-owl2
+- Don't package .la files.
+
 * Thu May 26 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.5.18-owl1
 - Updated to 1.5.18, reviewed and updated patches.
 - Applied a change from Debian and ALT: do not add the contents of

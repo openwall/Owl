@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.53 2005/06/25 00:41:18 ldv Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.54 2005/09/27 13:17:20 mci Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -11,7 +11,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl7
+Release: owl8
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -281,6 +281,8 @@ rm %buildroot%__libdir/rpm/{Specfile.pm,cpanflute*,rpmdiff*,sql*,tcl*,trpm}
 rm %buildroot%__libdir/rpm/rpm.{daily,log,xinetd}
 # outdated man pages
 rm -r %buildroot%__mandir/{fr,ja,ko,pl,ru,sk}
+# .la files
+rm %buildroot%__libdir/*.la
 
 # XXX: glibc 2.3.2 update -- this file isn't created
 #rm %buildroot%__datadir/locale/locale.alias
@@ -440,7 +442,7 @@ fi
 %files devel
 %defattr(-,root,root)
 %__includedir/rpm
-%__libdir/librpm*.*a
+%__libdir/librpm*.a
 %__libdir/librpm.so
 %__libdir/librpmbuild.so
 %__libdir/librpmdb.so
@@ -453,11 +455,14 @@ fi
 %__mandir/man3/popt.3*
 
 # XXX These may end up in popt-devel but it hardly seems worth the effort now.
-%__libdir/libpopt.*a
+%__libdir/libpopt.a
 %__libdir/libpopt.so
 %__includedir/popt.h
 
 %changelog
+* Fri Sep 23 2005 Michail Litvak <mci@owl.openwall.com> 4.2-owl8
+- Don't package .la files.
+
 * Sat Jun 25 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.2-owl7
 - Do not use system's libelf even if the library is available during build.
 

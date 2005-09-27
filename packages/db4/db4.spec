@@ -1,4 +1,4 @@
-# $Id: Owl/packages/db4/db4.spec,v 1.8 2005/01/18 13:34:37 solar Exp $
+# $Id: Owl/packages/db4/db4.spec,v 1.9 2005/09/27 13:17:20 mci Exp $
 
 %define __soversion	4.0
 %define _libdb_a	libdb-%__soversion.a
@@ -8,7 +8,7 @@
 Summary: The Berkeley DB database library (version 4) for C.
 Name: db4
 Version: 4.0.14
-Release: owl2
+Release: owl3
 License: GPL
 Group: System Environment/Libraries
 URL: http://www.sleepycat.com
@@ -120,6 +120,8 @@ for i in db.h db_cxx.h db_185.h cxx_common.h cxx_except.h; do
 done
 popd
 
+rm -f %buildroot%_libdir/*.la
+
 # Eliminate installed docs.
 rm -rf %buildroot%_prefix/docs
 
@@ -158,14 +160,15 @@ rm -rf %buildroot
 %doc examples_c examples_cxx
 %_libdir/libdb.so
 %_libdir/libdb_cxx.so
-%_libdir/libdb-%__soversion.la
-%_libdir/libdb_cxx-%__soversion.la
 %_libdir/%_libdb_a
 %_libdir/%_libcxx_a
 %_includedir/%name
 %_includedir/*.h
 
 %changelog
+* Fri Sep 23 2005 Michail Litvak <mci@owl.openwall.com> 4.0.14-owl3
+- Don't package .la files.
+
 * Sun Jan 16 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.0.14-owl2
 - Add write permission to files under %_bindir and %_libdir to allow brp-
 scripts to do their work.

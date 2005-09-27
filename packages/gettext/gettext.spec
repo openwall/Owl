@@ -1,9 +1,9 @@
-# $Id: Owl/packages/gettext/gettext.spec,v 1.8 2005/05/04 21:15:08 solar Exp $
+# $Id: Owl/packages/gettext/gettext.spec,v 1.9 2005/09/27 13:17:20 mci Exp $
 
 Summary: GNU libraries and utilities for producing multi-lingual messages.
 Name: gettext
 Version: 0.14.1
-Release: owl2
+Release: owl3
 License: GPL/LGPL
 Group: Development/Tools
 URL: http://www.gnu.org/software/gettext/
@@ -62,6 +62,7 @@ mv %buildroot%_datadir/doc/libasprintf %buildroot%_docdir/%name-%version/
 # Remove unpackaged files
 rm %buildroot%_infodir/dir
 rm %buildroot%_datadir/locale/locale.alias
+rm -f %buildroot%_libdir/*.la
 # This one is also in glibc
 rm %buildroot%_includedir/libintl.h
 
@@ -90,6 +91,9 @@ fi
 #%_datadir/emacs/site-lisp/*
 
 %changelog
+* Fri Sep 24 2005 Michail Litvak <mci@owl.openwall.com>  0.14.1-owl3
+- Don't package .la files.
+
 * Thu May 05 2005 Solar Designer <solar@owl.openwall.com> 0.14.1-owl2
 - "Provide" gettext-devel and devel(libintl) for Fedora compatibility.
 - Install autosprintf.info.

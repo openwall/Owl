@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.40 2005/01/19 14:31:19 solar Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.41 2005/09/27 13:17:20 mci Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -38,7 +38,7 @@
 Summary: C compiler from the GNU Compiler Collection.
 Name: gcc
 Version: 3.4.3
-Release: owl2
+Release: owl3
 Epoch: 1
 License: GPL
 Group: Development/Languages
@@ -486,6 +486,7 @@ rm %buildroot%_infodir/gccinstall.info*
 rm %buildroot%_libdir/libiberty.a
 rm %buildroot%_bindir/%_target_platform-gcc-%version
 rm -rf %buildroot%_libdir/gcc/%_target_platform/%version/include/*
+rm -f %buildroot%version_libdir/*.la
 
 %post
 /sbin/install-info --info-dir=%_infodir %_infodir/gcc.info.gz
@@ -679,7 +680,7 @@ fi
 %else
 %_includedir/c++/%version
 %endif
-%version_libdir/libs*++.*a
+%version_libdir/libs*++.a
 %version_libdir/libstdc++.so
 %endif
 
@@ -743,6 +744,9 @@ fi
 %endif
 
 %changelog
+* Fri Sep 23 2005 Michail Litvak <mci@owl.openwall.com>  1:3.4.3-owl3
+- Don't package .la files.
+
 * Wed Jan 19 2005 Solar Designer <solar@owl.openwall.com> 1:3.4.3-owl2
 - Provide/obsolete libstdc++-compat in libstdc++-v3-compat.
 - Restored the cc(1) and c++(1) man pages.
