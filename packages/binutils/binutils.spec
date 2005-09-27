@@ -1,4 +1,4 @@
-# $Id: Owl/packages/binutils/binutils.spec,v 1.16 2005/09/27 13:17:20 mci Exp $
+# $Id: Owl/packages/binutils/binutils.spec,v 1.17 2005/09/27 13:41:42 solar Exp $
 
 %define BUILD_HJL 1
 
@@ -163,8 +163,7 @@ fi
 %_datadir/locale/*/LC_MESSAGES/*.mo
 
 %changelog
-
-* Fri Sep 23 2005 Michail Litvak <mci@owl.openwall.com>  2.15.94.0.2.2-owl3
+* Fri Sep 23 2005 Michail Litvak <mci@owl.openwall.com> 2.15.94.0.2.2-owl3
 - Don't package .la files.
 
 * Thu Jun 02 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.15.94.0.2.2-owl2
