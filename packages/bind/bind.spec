@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bind/bind.spec,v 1.6 2005/09/26 22:26:55 ldv Exp $
+# $Id: Owl/packages/bind/bind.spec,v 1.7 2005/09/27 13:50:27 solar Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -97,6 +97,7 @@ Group: System Environment/Libraries
 This package contains shared libraries used by BIND's daemons
 and utilities.
 
+%if %BUILD_DEVEL
 %package devel
 Summary: Files for building applications with ISC BIND libraries.
 Group: Development/Libraries
@@ -105,6 +106,7 @@ Requires: %name-libs = %version-%release
 %description devel
 This package contains development libraries and include files required
 for building applications with ISC BIND libraries.
+%endif
 
 %prep
 %setup -q -n %name-%version
