@@ -86,10 +86,9 @@ using safe mode (~077 & mode), then chown(), then chmod().
 
 	cvs.
 
-[PRIORITY: medium]
+[PRIORITY: low]
 [ASSIGNED: ldv@]
-Update to the latest 1.11.x or to 1.12.x.  It is starting to feel like
-a waste of time to continue back-porting security fixes to our 1.11.5.
+Update to the latest 1.11.x or to 1.12.x.
 
 
 	dhcp.
@@ -540,4 +539,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.102 2005/09/23 21:36:05 ldv Exp $
+$Id: Owl/doc/TODO,v 1.103 2005/09/29 22:09:56 ldv Exp $
