@@ -1,0 +1,161 @@
+diff -upk.orig cvs-1.11.20.orig/src/cvsrc.c cvs-1.11.20/src/cvsrc.c
+--- cvs-1.11.20.orig/src/cvsrc.c	2005-09-29 13:35:01 +0000
++++ cvs-1.11.20/src/cvsrc.c	2005-09-29 13:35:16 +0000
+@@ -17,6 +17,12 @@
+ #include "cvs.h"
+ #include "getline.h"
+ 
++/* this file is to be found in the system directory */
++
++#ifndef	CVSRC_GLOBAL_FILENAME
++#define	CVSRC_GLOBAL_FILENAME	"/etc/cvs/cvsrc"
++#endif
++
+ /* this file is to be found in the user's home directory */
+ 
+ #ifndef	CVSRC_FILENAME
+@@ -28,17 +34,16 @@ char cvsrc[] = CVSRC_FILENAME;
+ 
+ extern char *strtok ();
+ 
+-/* Read cvsrc, processing options matching CMDNAME ("cvs" for global
+-   options, and update *ARGC and *ARGV accordingly.  */
++/* Read specified cvsrc file, processing options matching CMDNAME
++   ("cvs" for global options, and update *ARGC and *ARGV accordingly.  */
+ 
+-void
+-read_cvsrc (argc, argv, cmdname)
++static void
++read_cvsrc_file ( argc, argv, cmdname, filename )
+     int *argc;
+     char ***argv;
+     const char *cmdname;
++    char *filename;
+ {
+-    char *homedir;
+-    char *homeinit;
+     FILE *cvsrcfile;
+ 
+     char *line;
+@@ -47,6 +52,7 @@ read_cvsrc (argc, argv, cmdname)
+ 
+     char *optstart;
+ 
++    int space_len = 0;
+     int command_len;
+     int found = 0;
+ 
+@@ -63,47 +69,30 @@ read_cvsrc (argc, argv, cmdname)
+     static int old_argc = 0;
+     static char **old_argv = NULL;
+ 
+-    /* don't do anything if argc is -1, since that implies "help" mode */
+-    if (*argc == -1)
+-	return;
+-
+-    /* determine filename for ~/.cvsrc */
+-
+-    homedir = get_homedir ();
+-    /* If we can't find a home directory, ignore ~/.cvsrc.  This may
+-       make tracking down problems a bit of a pain, but on the other
+-       hand it might be obnoxious to complain when CVS will function
+-       just fine without .cvsrc (and many users won't even know what
+-       .cvsrc is).  */
+-    if (!homedir)
+-	return;
+-
+-    homeinit = strcat_filename_onto_homedir (homedir, cvsrc);
+-
+     /* if it can't be read, there's no point to continuing */
+ 
+-    if (!isreadable (homeinit))
+-    {
+-	free (homeinit);
++    if (!isreadable (filename))
+ 	return;
+-    }
+ 
+     /* now scan the file until we find the line for the command in question */
+ 
+     line = NULL;
+     line_chars_allocated = 0;
+     command_len = strlen (cmdname);
+-    cvsrcfile = open_file (homeinit, "r");
++    cvsrcfile = open_file (filename, "r");
+     while ((line_length = getline (&line, &line_chars_allocated, cvsrcfile))
+ 	   >= 0)
+     {
++	for (space_len=0; isspace(line[space_len]); ++space_len)
++	    ;
++
+ 	/* skip over comment lines */
+-	if (line[0] == '#')
++	if (line[space_len] == '#')
+ 	    continue;
+ 
+ 	/* stop if we match the current command */
+-	if (!strncmp (line, cmdname, command_len)
+-	    && isspace ((unsigned char) *(line + command_len)))
++	if (!strncmp (line + space_len, cmdname, command_len)
++	    && isspace ((unsigned char) *(line + space_len + command_len)))
+ 	{
+ 	    found = 1;
+ 	    break;
+@@ -111,7 +100,7 @@ read_cvsrc (argc, argv, cmdname)
+     }
+ 
+     if (line_length < 0 && !feof (cvsrcfile))
+-	error (0, errno, "cannot read %s", homeinit);
++	error (0, errno, "cannot read %s", filename);
+ 
+     fclose (cvsrcfile);
+ 
+@@ -125,7 +114,7 @@ read_cvsrc (argc, argv, cmdname)
+     if (found)
+     {
+ 	/* skip over command in the options line */
+-	for (optstart = strtok (line + command_len, "\t \n");
++	for (optstart = strtok (line + space_len + command_len, "\t \n");
+ 	     optstart;
+ 	     optstart = strtok (NULL, "\t \n"))
+ 	{
+@@ -164,6 +153,39 @@ read_cvsrc (argc, argv, cmdname)
+     old_argc = *argc = new_argc;
+     old_argv = *argv = new_argv;
+ 
++    return;
++}
++
++/* Read all cvsrc files in turn, using read_cvsrc_file() */
++
++void
++read_cvsrc (argc, argv, cmdname)
++    int *argc;
++    char ***argv;
++    const char *cmdname;
++{
++    const char *homedir;
++    char *homeinit;
++
++    /* don't do anything if argc is -1, since that implies "help" mode */
++    if (*argc == -1)
++	return;
++
++    read_cvsrc_file (argc, argv, cmdname, CVSRC_GLOBAL_FILENAME);
++
++    /* determine filename for ~/.cvsrc */
++
++    homedir = get_homedir ();
++    /* If we can't find a home directory, ignore ~/.cvsrc.  This may
++       make tracking down problems a bit of a pain, but on the other
++       hand it might be obnoxious to complain when CVS will function
++       just fine without .cvsrc (and many users won't even know what
++       .cvsrc is).  */
++    if (!homedir)
++	return;
++
++    homeinit = strcat_filename_onto_homedir (homedir, cvsrc);
++    read_cvsrc_file (argc, argv, cmdname, homeinit);
+     free (homeinit);
+     return;
+ }

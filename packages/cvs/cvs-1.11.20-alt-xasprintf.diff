@@ -1,0 +1,82 @@
+diff -upk.orig cvs-1.11.20.orig/src/cvs.h cvs-1.11.20/src/cvs.h
+--- cvs-1.11.20.orig/src/cvs.h	2005-09-29 13:37:23 +0000
++++ cvs-1.11.20/src/cvs.h	2005-09-29 13:38:17 +0000
+@@ -467,6 +467,8 @@ extern void check_numeric PROTO ((const 
+ char *getcaller PROTO ((void));
+ char *time_stamp PROTO ((const char *file));
+ 
++extern char *xasprintf (char **ptr, const char *fmt, ...)
++	__attribute__ ((__format__ (__printf__, 2, 3)));
+ void *xmalloc PROTO((size_t bytes));
+ void *xrealloc PROTO((void *ptr, size_t bytes));
+ void expand_string PROTO ((char **, size_t *, size_t));
+diff -upk.orig cvs-1.11.20.orig/src/subr.c cvs-1.11.20/src/subr.c
+--- cvs-1.11.20.orig/src/subr.c	2005-09-29 13:37:23 +0000
++++ cvs-1.11.20/src/subr.c	2005-09-29 13:38:17 +0000
+@@ -14,6 +14,7 @@
+  */
+ 
+ #include <assert.h>
++#include <stdarg.h>
+ #include "cvs.h"
+ #include "getline.h"
+ 
+@@ -28,6 +29,19 @@
+ 
+ extern char *getlogin ();
+ 
++char *
++xasprintf (char **ptr, const char *fmt, ...)
++{
++	va_list arg;
++
++	va_start (arg, fmt);
++	if (vasprintf (ptr, fmt, arg) < 0)
++		error (1, errno, "vasprintf");
++	va_end (arg);
++
++	return *ptr;
++}
++
+ /*
+  * malloc some data and die if it fails
+  */
+@@ -37,17 +51,11 @@ xmalloc (bytes)
+ {
+     char *cp;
+ 
+-    /* Parts of CVS try to xmalloc zero bytes and then free it.  Some
+-       systems have a malloc which returns NULL for zero byte
+-       allocations but a free which can't handle NULL, so compensate. */
+-    if (bytes == 0)
+-	bytes = 1;
+-
+     cp = malloc (bytes);
+     if (cp == NULL)
+     {
+ 	char buf[80];
+-	sprintf (buf, "out of memory; can not allocate %lu bytes",
++	sprintf (buf, "cannot allocate %lu bytes: out of memory",
+ 		 (unsigned long) bytes);
+ 	error (1, 0, buf);
+     }
+@@ -64,17 +72,12 @@ xrealloc (ptr, bytes)
+     void *ptr;
+     size_t bytes;
+ {
+-    char *cp;
+-
+-    if (!ptr)
+-	cp = malloc (bytes);
+-    else
+-	cp = realloc (ptr, bytes);
++    char *cp = realloc (ptr, bytes);
+ 
+     if (cp == NULL)
+     {
+ 	char buf[80];
+-	sprintf (buf, "out of memory; can not reallocate %lu bytes",
++	sprintf (buf, "can not reallocate %lu bytes: out of memory",
+ 		 (unsigned long) bytes);
+ 	error (1, 0, buf);
+     }

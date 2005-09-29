@@ -1,0 +1,17 @@
+diff -upk.orig cvs-1.11.20.orig/src/cvsbug.in cvs-1.11.20/src/cvsbug.in
+--- cvs-1.11.20.orig/src/cvsbug.in	2005-09-28 23:27:55 +0000
++++ cvs-1.11.20/src/cvsbug.in	2005-09-28 23:28:13 +0000
+@@ -103,10 +103,11 @@ if [ -n "$NAME" ]; then
+ elif [ -f $HOME/.fullname ]; then
+   ORIGINATOR="`sed -e '1q' $HOME/.fullname`"
+ elif [ -f /bin/domainname ]; then
+-  if [ "`/bin/domainname`" != "" -a -f /usr/bin/ypcat ]; then
++  YPCAT=/usr/bin/ypcat
++  if [ -x "$YPCAT" -a -n "`/bin/domainname`" ]; then
+     # Must use temp file due to incompatibilities in quoting behavior
+     # and to protect shell metacharacters in the expansion of $LOGNAME
+-    /usr/bin/ypcat passwd 2>/dev/null | cat - /etc/passwd | grep "^$LOGNAME:" |
++    "$YPCAT" passwd 2>/dev/null | cat - /etc/passwd | grep "^$LOGNAME:" |
+       cut -f5 -d':' | sed -e 's/,.*//' > $TEMP
+     ORIGINATOR="`cat $TEMP`"
+     rm -f $TEMP

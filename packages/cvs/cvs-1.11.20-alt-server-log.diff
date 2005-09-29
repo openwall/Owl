@@ -1,0 +1,290 @@
+diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
+--- cvs-1.11.20.orig/src/server.c	2005-09-29 13:39:48 +0000
++++ cvs-1.11.20/src/server.c	2005-09-29 13:40:08 +0000
+@@ -56,6 +56,11 @@ int cvs_gssapi_encrypt;
+ 
+ #if defined (AUTH_SERVER_SUPPORT) || defined (HAVE_KERBEROS) || defined (HAVE_GSSAPI)
+ #include <sys/socket.h>
++#include <netinet/in.h>
++#include <arpa/inet.h>
++
++static const char *remote_name (int fd);
++static char *cvs_username;
+ #endif
+ 
+ #ifdef HAVE_SYSLOG_H
+@@ -66,7 +71,6 @@ int cvs_gssapi_encrypt;
+ #endif
+ 
+ #ifdef HAVE_KERBEROS
+-# include <netinet/in.h>
+ # include <krb.h>
+ # ifndef HAVE_KRB_GET_ERR_TEXT
+ #   define krb_get_err_text(status) krb_err_txt[status]
+@@ -5350,12 +5354,9 @@ error 0 %s: no such system user\n", user
+     if (pw->pw_uid == 0)
+     {
+ #ifdef HAVE_SYSLOG_H
+-	    /* FIXME: Can the IP address of the connecting client be retrieved
+-	     * and printed here?
+-	     */
+ 	    syslog (LOG_DAEMON | LOG_ALERT,
+-		    "attempt to root from account: %s", cvs_username
+-		   );
++		    "%s: ROOT LOGIN REJECTED for %s",
++		   remote_name(0), cvs_username);
+ #endif
+         printf("error 0: root not allowed\n");
+         error_exit ();
+@@ -5508,6 +5509,10 @@ check_repository_password (username, pas
+     fp = CVS_FOPEN (filename, "r");
+     if (fp == NULL)
+     {
++#ifdef HAVE_SYSLOG_H
++	syslog (LOG_ERR, "%s: unable to open %s for reading: %m",
++	    remote_name(0), filename);
++#endif
+ 	if (!existence_error (errno))
+ 	    error (0, errno, "cannot open %s", filename);
+ 	free (filename);
+@@ -5526,9 +5531,21 @@ check_repository_password (username, pas
+ 	}
+     }
+     if (ferror (fp))
++    {
++#ifdef HAVE_SYSLOG_H
++	syslog (LOG_ERR, "%s: error reading %s: %m",
++	    remote_name(0), filename);
++#endif
+ 	error (0, errno, "cannot read %s", filename);
++    }
+     if (fclose (fp) < 0)
++    {
++#ifdef HAVE_SYSLOG_H
++	syslog (LOG_ERR, "%s: error closing %s[%d]: %m",
++	    remote_name(0), filename, fileno(fp));
++#endif
+ 	error (0, errno, "cannot close %s", filename);
++    }
+ 
+     /* If found_it, then linebuf contains the information we need. */
+     if (found_it)
+@@ -5597,6 +5614,11 @@ check_repository_password (username, pas
+ 	    || ((strcmp (found_password, crypt (password, found_password))
+ 		 == 0)))
+ 	{
++#ifdef LOG_AUTHPRIV
++	    syslog (LOG_AUTHPRIV | LOG_INFO,
++	            "%s: password ok according to %s",
++		    remote_name(0), filename);
++#endif
+ 	    /* Give host_user_ptr permanent storage. */
+ 	    *host_user_ptr = xstrdup (host_user_tmp);
+ 	    retval = 1;
+@@ -5604,9 +5626,9 @@ check_repository_password (username, pas
+ 	else
+ 	{
+ #ifdef LOG_AUTHPRIV
+-	syslog (LOG_AUTHPRIV | LOG_NOTICE,
+-		"password mismatch for %s in %s: %s vs. %s", username,
+-		repository, crypt(password, found_password), found_password);
++	    syslog (LOG_AUTHPRIV | LOG_NOTICE,
++	            "%s: password incorrect according to %s",
++	            remote_name(0), filename);
+ #endif
+ 	    *host_user_ptr = NULL;
+ 	    retval	 = 2;
+@@ -5614,6 +5636,11 @@ check_repository_password (username, pas
+     }
+     else     /* Didn't find this user, so deny access. */
+     {
++#ifdef LOG_AUTHPRIV
++	syslog (LOG_AUTHPRIV | LOG_NOTICE,
++	        "%s: password not found according to %s",
++		remote_name(0), filename);
++#endif
+ 	*host_user_ptr = NULL;
+ 	retval = 0;
+     }
+@@ -5663,6 +5690,10 @@ check_password (username, password, repo
+ 	   letting you in if it won't say why, and I am not convinced
+ 	   that the potential information disclosure to an attacker
+ 	   outweighs this.  */
++#ifdef HAVE_SYSLOG_H
++	syslog (LOG_NOTICE, "%s: repository \"%s\" not allowed",
++	        remote_name(0), repository);
++#endif
+ 	printf ("error 0 no such user %s in CVSROOT/passwd\n", username);
+ 
+ 	error_exit ();
+@@ -5689,6 +5720,10 @@ check_password (username, password, repo
+ 
+     if (found_passwd == NULL)
+     {
++#ifdef LOG_AUTHPRIV
++	syslog (LOG_AUTHPRIV | LOG_NOTICE, "%s: user not found",
++		remote_name(0));
++#endif
+ 	printf ("E Fatal error, aborting.\n\
+ error 0 %s: no such user\n", username);
+ 
+@@ -5716,14 +5751,17 @@ error 0 %s: no such user\n", username);
+ 	if (strcmp (found_passwd, crypt (password, found_passwd)) == 0)
+ 	{
+ 	    host_user = xstrdup (username);
++#ifdef LOG_AUTHPRIV
++	    syslog (LOG_AUTHPRIV | LOG_INFO,
++		    "%s: password ok", remote_name(0));
++#endif
+ 	}
+ 	else
+ 	{
+ 	    host_user = NULL;
+ #ifdef LOG_AUTHPRIV
+ 	    syslog (LOG_AUTHPRIV | LOG_NOTICE,
+-		    "password mismatch for %s: %s vs. %s", username,
+-		    crypt(password, found_passwd), found_passwd);
++		    "%s: password incorrect", remote_name(0));
+ #endif
+ 	}
+ 	goto handle_return;
+@@ -5734,24 +5772,33 @@ error 0 %s: no such user\n", username);
+ 	/* user exists and has no system password, but we got
+ 	   one as parameter */
+ 	host_user = xstrdup (username);
++#ifdef LOG_AUTHPRIV
++	syslog (LOG_AUTHPRIV | LOG_INFO,
++		"%s: unexpected password", remote_name(0));
++#endif
+ 	goto handle_return;
+     }
+ 
+     /* user exists but has no password at all */
+     host_user = NULL;
+-#ifdef LOG_AUTHPRIV
+-    syslog (LOG_AUTHPRIV | LOG_NOTICE,
+-	    "login refused for %s: user has no password", username);
+-#endif
+ 
+ handle_return:
+     if (host_user)
+     {
++#ifdef LOG_AUTHPRIV
++	syslog (LOG_AUTHPRIV | LOG_INFO,
++		"%s: access granted as %s",
++		remote_name(0), host_user);
++#endif
+ 	/* Set CVS_Username here, in allocated space.
+ 	   It might or might not be the same as host_user. */
+ 	CVS_Username = xmalloc (strlen (username) + 1);
+ 	strcpy (CVS_Username, username);
+     }
++#ifdef LOG_AUTHPRIV
++	syslog (LOG_AUTHPRIV | LOG_INFO,
++		"%s: access denied", remote_name(0));
++#endif
+ 
+     return host_user;
+ }
+@@ -5760,6 +5807,29 @@ handle_return:
+ 
+ #if defined (AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)
+ 
++const char *remote_name (int fd)
++{
++    struct sockaddr_in peer;
++    int len;
++    len = sizeof peer;
++    if (getpeername (fd, (struct sockaddr *) &peer, &len) < 0)
++	return "unknown";
++    else
++    {
++	static char *message = NULL;
++	char *host = inet_ntoa (peer.sin_addr);
++	char port[1 + sizeof(unsigned int) * 3];
++
++	snprintf (port, sizeof(port), "%u", ntohs (peer.sin_port));
++
++	free (message);
++	if (cvs_username)
++	    xasprintf (&message, "%s@%s:%s", cvs_username, host, port);
++	else
++	    xasprintf (&message, "%s:%s", host, port);
++	return message;
++    }
++}
+ /* Read username and password from client (i.e., stdin).
+    If correct, then switch to run as that user and send an ACK to the
+    client via stdout, else send NACK and die. */
+@@ -5823,6 +5893,11 @@ pserver_authenticate_connection ()
+      * big deal.
+      */
+ 
++#ifdef HAVE_SYSLOG_H
++    openlog( "cvs_pserver", LOG_PID, LOG_DAEMON );
++    syslog (LOG_INFO, "connection from %s", remote_name(0));
++#endif
++
+ #ifdef SO_KEEPALIVE
+     /* Set SO_KEEPALIVE on the socket, so that we don't hang forever
+        if the client dies while we are waiting for input.  */
+@@ -5843,7 +5918,12 @@ pserver_authenticate_connection ()
+     if (getline_safe (&tmp, &tmp_allocated, stdin, PATH_MAX) < 0)
+ 	{
+ #ifdef HAVE_SYSLOG_H
+-	    syslog (LOG_DAEMON | LOG_NOTICE, "bad auth protocol start: EOF");
++	    if (feof(stdin))
++		syslog (LOG_INFO, "%s: EOF encountered on read",
++		        remote_name(0) );
++	    else
++		syslog (LOG_INFO, "%s: error reading input: %m",
++		        remote_name(0));
+ #endif
+ 	    error (1, 0, "bad auth protocol start: EOF");
+ 	}
+@@ -5863,7 +5943,13 @@ pserver_authenticate_connection ()
+ #endif
+     }
+     else
++    {
++#ifdef HAVE_SYSLOG_H
++	syslog (LOG_NOTICE, "%s: bad auth protocol start: %s",
++	        remote_name(0), tmp);
++#endif
+ 	error (1, 0, "bad auth protocol start: %s", tmp);
++    }
+ 
+ #ifndef AUTH_SERVER_SUPPORT
+ 
+@@ -5896,13 +5982,20 @@ pserver_authenticate_connection ()
+ 		"END VERIFICATION REQUEST\n" : "END AUTH REQUEST\n")
+ 	!= 0)
+     {
++#ifdef HAVE_SYSLOG_H
++	syslog (LOG_NOTICE, "%s: bad auth protocol end: %s",
++	        remote_name(0), tmp);
++#endif
+ 	error (1, 0, "bad auth protocol end: %s", tmp);
+     }
++
++    cvs_username = xstrdup( username );
+     if (!root_allow_ok (repository))
+     {
+ 	printf ("error 0 %s: no such repository\n", repository);
+ #ifdef HAVE_SYSLOG_H
+-	syslog (LOG_DAEMON | LOG_NOTICE, "login refused for %s", repository);
++	syslog (LOG_DAEMON | LOG_NOTICE, "%s: login refused for %s",
++		remote_name(0), repository);
+ #endif
+ 	goto i_hate_you;
+     }
+@@ -5920,7 +6013,8 @@ pserver_authenticate_connection ()
+     if (host_user == NULL)
+     {
+ #ifdef HAVE_SYSLOG_H
+-	syslog (LOG_DAEMON | LOG_NOTICE, "login failure (for %s)", repository);
++	syslog (LOG_DAEMON | LOG_NOTICE, "%s: login failure (for %s)",
++		remote_name(0), repository);
+ #endif
+ 	memset (descrambled_password, 0, strlen (descrambled_password));
+ 	free (descrambled_password);

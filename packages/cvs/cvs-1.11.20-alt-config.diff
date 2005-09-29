@@ -1,0 +1,109 @@
+diff -upk.orig cvs-1.11.20.orig/src/mkmodules.c cvs-1.11.20/src/mkmodules.c
+--- cvs-1.11.20.orig/src/mkmodules.c	2005-09-29 14:22:46 +0000
++++ cvs-1.11.20/src/mkmodules.c	2005-09-29 14:31:03 +0000
+@@ -307,41 +307,65 @@ static const char *const modules_content
+ };
+ 
+ static const char *const config_contents[] = {
+-    "# Set this to \"no\" if pserver shouldn't check system users/passwords\n",
++    "#    SystemAuth=VALUE\n"
++    "#    If VALUE is `yes', then pserver should check for users in the\n",
++    "#    system's user database if not found in `CVSROOT/passwd'.  If it is\n",
++    "#    `no', then all pserver users must exist in `CVSROOT/passwd'.\n",
++    "#    The default value is `no'.\n",
+     "#SystemAuth=no\n",
+     "\n",
+-    "# Set `LocalKeyword' to specify a local alias for a standard keyword.\n",
++    "#    Set `LocalKeyword' to specify a local alias for a standard keyword.\n",
+     "#LocalKeyword=MYCVS=CVSHeader\n",
+     "\n",
+-    "# Set `KeywordExpand' to `i' followed by a list of keywords to expand or\n",
+-    "# `e' followed by a list of keywords to not expand.\n"
++    "#    Set `KeywordExpand' to `i' followed by a list of keywords to expand\n",
++    "#    or `e' followed by a list of keywords to not expand.\n"
+     "#KeywordExpand=iMYCVS,Name,Date\n",
+     "#KeywordExpand=eCVSHeader\n",
+     "\n",
+-    "# Put CVS lock files in this directory rather than directly in the repository.\n",
++    "#    LockDir=DIRECTORY\n",
++    "#    Put CVS lock files in DIRECTORY rather than directly in the\n",
++    "#    repository.  This is useful if you want to let users read from the\n",
++    "#    repository while giving them write access only to DIRECTORY, not\n",
++    "#    to the repository.  You need to create DIRECTORY, but CVS will\n",
++    "#    create subdirectories of DIRECTORY as it needs them.\n",
++    "#    Before enabling the LockDir option, make sure that you have\n",
++    "#    tracked down and removed any copies of CVS 1.9 or older.  Such\n",
++    "#    versions neither support LockDir, nor will give an error\n",
++    "#    indicating that they don't support it.  The result, if this is\n",
++    "#    allowed to happen, is that some CVS users will put the locks one\n",
++    "#    place, and others will put them another place, and therefore the\n",
++    "#    repository could become corrupted.  CVS 1.10 does not support\n",
++    "#    LockDir but it will print a warning if run on a repository with\n",
++    "#    LockDir enabled.\n",
+     "#LockDir=/var/lock/cvs\n",
+     "\n",
+ #ifdef PRESERVE_PERMISSIONS_SUPPORT
+-    "# Set `PreservePermissions' to `yes' to save file status information\n",
+-    "# in the repository.\n",
++    "#    Set `PreservePermissions' to `yes' to enable support for saving\n",
++    "#    special device files, symbolic links, file permissions and\n",
++    "#    ownerships in the repository.\n",
+     "#PreservePermissions=no\n",
+     "\n",
+ #endif
+-    "# Set `TopLevelAdmin' to `yes' to create a CVS directory at the top\n",
+-    "# level of the new working directory when using the `cvs checkout'\n",
+-    "# command.\n",
++    "#    Set `TopLevelAdmin' to `yes' to modify the `checkout' command to\n",
++    "#    create a `CVS' directory at the top level of the new working directory,\n",
++    "#    in addition to `CVS' directories created within checked-out directories.\n",
++    "#    This option is useful if you find yourself performing many\n",
++    "#    commands at the top level of your working directory, rather than\n",
++    "#    in one of the checked out subdirectories.  The `CVS' directory\n",
++    "#    created there will mean you don't have to specify `CVSROOT' for\n",
++    "#    each command.  It also provides a place for the `CVS/Template' file.\n",
+     "#TopLevelAdmin=no\n",
+     "\n",
+-    "# Set `LogHistory' to `all' or `" ALL_HISTORY_REC_TYPES "' to log all transactions to the\n",
+-    "# history file, or a subset as needed (ie `TMAR' logs all write operations)\n",
++    "#    Set `LogHistory' to `all' or `" ALL_HISTORY_REC_TYPES "' to log all transactions\n",
++    "#    to the history file, or a subset as needed (ie `TMAR' logs all write operations)\n",
+     "#LogHistory=" ALL_HISTORY_REC_TYPES "\n",
+     "\n",
+-    "# Set `RereadLogAfterVerify' to `always' (the default) to allow the verifymsg\n",
+-    "# script to change the log message.  Set it to `stat' to force CVS to verify",
+-    "# that the file has changed before reading it (this can take up to an extra\n",
+-    "# second per directory being committed, so it is not recommended for large\n",
+-    "# repositories.  Set it to `never' (the previous CVS behavior) to prevent\n",
+-    "# verifymsg scripts from changing the log message.\n",
++    "#    Set `RereadLogAfterVerify' to `always' (the default) to allow the verifymsg\n",
++    "#    script to change the log message.  Set it to `stat' to force CVS to verify\n",
++    "#    that the file has changed before reading it (this can take up to an extra\n",
++    "#    second per directory being committed, so it is not recommended for large\n",
++    "#    repositories.  Set it to `never' (the previous CVS behavior) to prevent\n",
++    "#    verifymsg scripts from changing the log message.\n",
+     "#RereadLogAfterVerify=always\n",
+     NULL
+ };
+@@ -407,6 +431,9 @@ static const struct admin_file filelist[
+        someone used a password in the past they might be using it
+        elsewhere, using a similar password, etc, and so saving old
+        passwords, even hashed, is probably not a good idea.  */
++    {CVSROOTADM_PASSWD,
++	"a %s file contains a list of the cvs accounts",
++	NULL},
+ 
+     {CVSROOTADM_CONFIG,
+ 	 "a %s file configures various behaviors",
+diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
+--- cvs-1.11.20.orig/src/server.c	2005-09-29 14:22:46 +0000
++++ cvs-1.11.20/src/server.c	2005-09-29 14:23:02 +0000
+@@ -120,7 +120,7 @@ static char *Pserver_Repos = NULL;
+ 
+ /* Should we check for system usernames/passwords?  Can be changed by
+    CVSROOT/config.  */
+-int system_auth = 1;
++int system_auth = 0;
+ 
+ # endif /* AUTH_SERVER_SUPPORT */
+ 

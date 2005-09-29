@@ -1,0 +1,45 @@
+diff -upk.orig cvs-1.11.20.orig/src/wrapper.c cvs-1.11.20/src/wrapper.c
+--- cvs-1.11.20.orig/src/wrapper.c	2004-06-23 01:51:07 +0000
++++ cvs-1.11.20/src/wrapper.c	2005-09-29 13:27:46 +0000
+@@ -86,7 +86,7 @@ void wrap_setup()
+        move this to a per-connection data structure, or better yet
+        think about a cleaner solution.  */
+     static int wrap_setup_already_done = 0;
+-    char *homedir;
++    char *homedir = NULL;
+ 
+     if (wrap_setup_already_done != 0)
+         return;
+@@ -113,6 +113,10 @@ void wrap_setup()
+ 	free (file);
+     }
+ 
++#ifdef SERVER_SUPPORT
++    if (!server_active)
++#endif
++      {
+     /* Then add entries found in home dir, (if user has one) and file
+        exists.  */
+     homedir = get_homedir ();
+@@ -121,6 +125,8 @@ void wrap_setup()
+        hand it might be obnoxious to complain when CVS will function
+        just fine without .cvswrappers (and many users won't even know what
+        .cvswrappers is).  */
++      }
++
+     if (homedir != NULL)
+     {
+ 	char *file = strcat_filename_onto_homedir (homedir, CVSDOTWRAPPER);
+@@ -365,6 +371,12 @@ wrap_add (line, isTemp)
+     if (!line || line[0] == '#')
+ 	return;
+ 
++    /* Allows user to declare all wrappers null and void */
++    if ( line[0] == '!') {
++      wrap_kill ( );
++      return;
++    }
++
+     memset (&e, 0, sizeof(e));
+ 
+ 	/* Search for the wild card */

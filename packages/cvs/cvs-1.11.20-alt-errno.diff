@@ -1,0 +1,231 @@
+diff -upk.orig cvs-1.11.20.orig/lib/xgetwd.c cvs-1.11.20/lib/xgetwd.c
+--- cvs-1.11.20.orig/lib/xgetwd.c	1997-11-29 22:52:35 +0000
++++ cvs-1.11.20/lib/xgetwd.c	2005-09-28 23:23:15 +0000
+@@ -42,18 +42,15 @@ xgetwd ()
+   char *ret;
+   unsigned path_max;
+ 
+-  errno = 0;
+   path_max = (unsigned) PATH_MAX;
+   path_max += 2;		/* The getcwd docs say to do this. */
+ 
+   cwd = xmalloc (path_max);
+ 
+-  errno = 0;
+-  while ((ret = getcwd (cwd, path_max)) == NULL && errno == ERANGE)
++  while ((errno = 0, ret = getcwd (cwd, path_max)) == NULL && errno == ERANGE)
+     {
+       path_max += PATH_INCR;
+       cwd = xrealloc (cwd, path_max);
+-      errno = 0;
+     }
+ 
+   if (ret == NULL)
+diff -upk.orig cvs-1.11.20.orig/src/filesubr.c cvs-1.11.20/src/filesubr.c
+--- cvs-1.11.20.orig/src/filesubr.c	2004-11-03 22:19:51 +0000
++++ cvs-1.11.20/src/filesubr.c	2005-09-28 23:23:15 +0000
+@@ -496,8 +496,7 @@ deep_remove_dir (path)
+ 		 */
+ 		return -1;
+ 
+-	    errno = 0;
+-	    while ((dp = CVS_READDIR (dirp)) != NULL)
++	    while ((errno = 0, dp = CVS_READDIR (dirp)) != NULL)
+ 	    {
+ 		char *buf;
+ 
+@@ -530,8 +529,6 @@ deep_remove_dir (path)
+ 		    }
+ 		}
+ 		free (buf);
+-
+-		errno = 0;
+ 	    }
+ 	    if (errno != 0)
+ 	    {
+diff -upk.orig cvs-1.11.20.orig/src/find_names.c cvs-1.11.20/src/find_names.c
+--- cvs-1.11.20.orig/src/find_names.c	2005-03-09 14:22:46 +0000
++++ cvs-1.11.20/src/find_names.c	2005-09-28 23:23:15 +0000
+@@ -270,8 +270,7 @@ find_rcs (dir, list)
+ 	return (1);
+ 
+     /* read the dir, grabbing the ,v files */
+-    errno = 0;
+-    while ((dp = CVS_READDIR (dirp)) != NULL)
++    while ((errno = 0, dp = CVS_READDIR (dirp)) != NULL)
+     {
+ 	if (CVS_FNMATCH (RCSPAT, dp->d_name, 0) == 0) 
+ 	{
+@@ -285,7 +284,6 @@ find_rcs (dir, list)
+ 	    if (addnode (list, p) != 0)
+ 		freenode (p);
+ 	}
+-	errno = 0;
+     }
+     if (errno != 0)
+     {
+@@ -333,42 +331,41 @@ find_dirs (dir, list, checkadm, entries)
+ 	return (1);
+ 
+     /* read the dir, grabbing sub-dirs */
+-    errno = 0;
+-    while ((dp = CVS_READDIR (dirp)) != NULL)
++    while ((errno = 0, dp = CVS_READDIR (dirp)) != NULL)
+     {
+ 	if (strcmp (dp->d_name, ".") == 0 ||
+ 	    strcmp (dp->d_name, "..") == 0 ||
+ 	    strcmp (dp->d_name, CVSATTIC) == 0 ||
+ 	    strcmp (dp->d_name, CVSLCK) == 0 ||
+ 	    strcmp (dp->d_name, CVSREP) == 0)
+-	    goto do_it_again;
++	    continue;
+ 
+ 	/* findnode() is going to be significantly faster than stat()
+ 	   because it involves no system calls.  That is why we bother
+ 	   with the entries argument, and why we check this first.  */
+ 	if (entries != NULL && findnode (entries, dp->d_name) != NULL)
+-	    goto do_it_again;
++	    continue;
+ 
+ 	if (skip_emptydir
+ 	    && strcmp (dp->d_name, CVSNULLREPOS) == 0)
+-	    goto do_it_again;
++	    continue;
+ 
+ #ifdef DT_DIR
+ 	if (dp->d_type != DT_DIR) 
+ 	{
+ 	    if (dp->d_type != DT_UNKNOWN && dp->d_type != DT_LNK)
+-		goto do_it_again;
++		continue;
+ #endif
+ 	    /* don't bother stating ,v files */
+ 	    if (CVS_FNMATCH (RCSPAT, dp->d_name, 0) == 0)
+-		goto do_it_again;
++		continue;
+ 
+ 	    expand_string (&tmp,
+ 			   &tmp_size,
+ 			   strlen (dir) + strlen (dp->d_name) + 10);
+ 	    sprintf (tmp, "%s/%s", dir, dp->d_name);
+ 	    if (!isdir (tmp))
+-		goto do_it_again;
++		continue;
+ 
+ #ifdef DT_DIR
+ 	}
+@@ -383,12 +380,12 @@ find_dirs (dir, list, checkadm, entries)
+ 	    {
+ 		/* we're either unknown or a symlink at this point */
+ 		if (dp->d_type == DT_LNK)
+-		    goto do_it_again;
++		    continue;
+ #endif
+ 		/* Note that we only get here if we already set tmp
+ 		   above.  */
+ 		if (islink (tmp))
+-		    goto do_it_again;
++		    continue;
+ #ifdef DT_DIR
+ 	    }
+ #endif
+@@ -400,7 +397,7 @@ find_dirs (dir, list, checkadm, entries)
+ 			    + sizeof (CVSADM) + 10));
+ 	    (void) sprintf (tmp, "%s/%s/%s", dir, dp->d_name, CVSADM);
+ 	    if (!isdir (tmp))
+-		goto do_it_again;
++		continue;
+ 	}
+ 
+ 	/* put it in the list */
+@@ -409,9 +406,6 @@ find_dirs (dir, list, checkadm, entries)
+ 	p->key = xstrdup (dp->d_name);
+ 	if (addnode (list, p) != 0)
+ 	    freenode (p);
+-
+-    do_it_again:
+-	errno = 0;
+     }
+     if (errno != 0)
+     {
+diff -upk.orig cvs-1.11.20.orig/src/import.c cvs-1.11.20/src/import.c
+--- cvs-1.11.20.orig/src/import.c	2005-03-09 16:28:14 +0000
++++ cvs-1.11.20/src/import.c	2005-09-28 23:23:15 +0000
+@@ -458,22 +458,21 @@ import_descend (message, vtag, targc, ta
+     }
+     else
+     {
+-	errno = 0;
+-	while ((dp = CVS_READDIR (dirp)) != NULL)
++	while ((errno = 0, dp = CVS_READDIR (dirp)) != NULL)
+ 	{
+ 	    if (strcmp (dp->d_name, ".") == 0 || strcmp (dp->d_name, "..") == 0)
+-		goto one_more_time_boys;
++		continue;
+ #ifdef SERVER_SUPPORT
+ 	    /* CVS directories are created in the temp directory by
+ 	       server.c because it doesn't special-case import.  So
+ 	       don't print a message about them, regardless of -I!.  */
+ 	    if (server_active && strcmp (dp->d_name, CVSADM) == 0)
+-		goto one_more_time_boys;
++		continue;
+ #endif
+ 	    if (ign_name (dp->d_name))
+ 	    {
+ 		add_log ('I', dp->d_name);
+-		goto one_more_time_boys;
++		continue;
+ 	    }
+ 
+ 	    if (
+@@ -522,8 +521,6 @@ import_descend (message, vtag, targc, ta
+ 		    err += process_import_file (message, dp->d_name,
+ 						vtag, targc, targv);
+ 	    }
+-	one_more_time_boys:
+-	    errno = 0;
+ 	}
+ 	if (errno != 0)
+ 	{
+diff -upk.orig cvs-1.11.20.orig/src/lock.c cvs-1.11.20/src/lock.c
+--- cvs-1.11.20.orig/src/lock.c	2005-09-28 23:23:02 +0000
++++ cvs-1.11.20/src/lock.c	2005-09-28 23:23:15 +0000
+@@ -662,8 +662,7 @@ readers_exist (repository)
+ 	    error (1, 0, "cannot open directory %s", lockdir);
+ 
+ 	ret = 0;
+-	errno = 0;
+-	while ((dp = CVS_READDIR (dirp)) != NULL)
++	while ((errno = 0, dp = CVS_READDIR (dirp)) != NULL)
+ 	{
+ 	    if (CVS_FNMATCH (CVSRFLPAT, dp->d_name, 0) == 0)
+ 	    {
+@@ -701,7 +700,6 @@ readers_exist (repository)
+ 		ret = 1;
+ 		break;
+ 	    }
+-	    errno = 0;
+ 	}
+ 	if (errno != 0)
+ 	    error (0, errno, "error reading directory %s", repository);
+diff -upk.orig cvs-1.11.20.orig/src/update.c cvs-1.11.20/src/update.c
+--- cvs-1.11.20.orig/src/update.c	2005-03-16 22:01:21 +0000
++++ cvs-1.11.20/src/update.c	2005-09-28 23:23:15 +0000
+@@ -1124,8 +1124,7 @@ isemptydir (dir, might_not_exist)
+ 	error (0, errno, "cannot open directory %s for empty check", dir);
+ 	return 0;
+     }
+-    errno = 0;
+-    while ((dp = CVS_READDIR (dirp)) != NULL)
++    while ((errno = 0, dp = CVS_READDIR (dirp)) != NULL)
+     {
+ 	if (strcmp (dp->d_name, ".") != 0
+ 	    && strcmp (dp->d_name, "..") != 0)
+@@ -1170,7 +1169,6 @@ isemptydir (dir, might_not_exist)
+ 		}
+ 	    }
+ 	}
+-	errno = 0;
+     }
+     if (errno != 0)
+     {

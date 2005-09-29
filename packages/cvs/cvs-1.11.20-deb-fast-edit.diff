@@ -1,0 +1,35 @@
+diff -upk.orig cvs-1.11.20.orig/src/logmsg.c cvs-1.11.20/src/logmsg.c
+--- cvs-1.11.20.orig/src/logmsg.c	2005-09-29 13:28:49 +0000
++++ cvs-1.11.20/src/logmsg.c	2005-09-29 13:29:56 +0000
+@@ -16,6 +16,9 @@
+ #include "cvs.h"
+ #include "getline.h"
+ 
++#include <sys/types.h>
++#include <utime.h>
++
+ static int find_type PROTO((Node * p, void *closure));
+ static int fmt_proc PROTO((Node * p, void *closure));
+ static int logfile_write PROTO((const char *repository, const char *filter,
+@@ -199,6 +202,7 @@ do_editor (dir, messagep, repository, ch
+     size_t line_chars_allocated;
+     char *fname;
+     struct stat pre_stbuf, post_stbuf;
++    struct utimbuf pre_utbuf;
+     int retcode = 0;
+ 
+ #ifdef CLIENT_SUPPORT
+@@ -287,6 +291,13 @@ do_editor (dir, messagep, repository, ch
+     if ( CVS_STAT (fname, &pre_stbuf) == -1)
+ 	pre_stbuf.st_mtime = 0;
+ 
++  /* Decrease the file's modification time by 1 second so we can
++   * find out if the `editor' program changes it in less than 1 second.
++   */
++    pre_utbuf.actime = pre_stbuf.st_atime;
++    pre_utbuf.modtime = pre_stbuf.st_mtime - 1;
++    utime (fname, &pre_utbuf);
++
+     if (editinfo_editor)
+ 	free (editinfo_editor);
+     editinfo_editor = (char *) NULL;

@@ -1,0 +1,30 @@
+diff -upk.orig cvs-1.11.20.orig/src/login.c cvs-1.11.20/src/login.c
+--- cvs-1.11.20.orig/src/login.c	2005-09-29 12:55:58 +0000
++++ cvs-1.11.20/src/login.c	2005-09-29 12:56:14 +0000
+@@ -200,11 +200,21 @@ password_entry_parseline (cvsroot_canoni
+ 	    return NULL;
+ 	}
+ 	*p = ' ';
+-	tmp_root_canonical = normalize_cvsroot (tmp_root);
+-	if (strcmp (cvsroot_canonical, tmp_root_canonical) == 0)
+-	    password = p + 1;
+-
+-	free (tmp_root_canonical);
++        switch (tmp_root->method)
++        {
++	    case gserver_method:
++	    case pserver_method:
++#ifdef HAVE_KERBEROS
++	    case kserver_method:
++#endif
++	        tmp_root_canonical = normalize_cvsroot (tmp_root);
++		if (strcmp (cvsroot_canonical, tmp_root_canonical) == 0)
++		    password = p + 1;
++		free (tmp_root_canonical);
++		break;
++	    default:
++	        break;
++        }
+ 	free_cvsroot_t (tmp_root);
+     }
+ 

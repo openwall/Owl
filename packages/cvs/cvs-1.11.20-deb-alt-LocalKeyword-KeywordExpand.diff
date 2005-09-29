@@ -1,0 +1,696 @@
+diff -upk.orig cvs-1.11.20.orig/doc/cvs.texinfo cvs-1.11.20/doc/cvs.texinfo
+--- cvs-1.11.20.orig/doc/cvs.texinfo	2005-09-29 16:41:00 +0000
++++ cvs-1.11.20/doc/cvs.texinfo	2005-09-29 16:41:17 +0000
+@@ -6781,11 +6781,12 @@ with strings of the form
+ a new revision of the file.
+ 
+ @menu
+-* Keyword list::                Keywords
+-* Using keywords::              Using keywords
+-* Avoiding substitution::       Avoiding substitution
+-* Substitution modes::          Substitution modes
+-* Log keyword::                 Problems with the $@splitrcskeyword{Log}$ keyword.
++* Keyword list::                   Keywords
++* Using keywords::                 Using keywords
++* Avoiding substitution::          Avoiding substitution
++* Substitution modes::             Substitution modes
++* Configuring keyword expansion::  Configuring keyword expansion
++* Log keyword::                    Problems with the $@splitrcskeyword{Log}$ keyword.
+ @end menu
+ 
+ @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@@ -6806,6 +6807,23 @@ This is a list of the keywords:
+ @item $@splitrcskeyword{Author}$
+ The login name of the user who checked in the revision.
+ 
++@cindex CVSHeader keyword
++@item $@splitrcskeyword{CVSHeader}$
++A standard header (similar to $@splitrcskeyword{Header}$, but with
++the CVS root stripped off). It contains the relative
++pathname of the @sc{rcs} file to the CVS root, the
++revision number, the date (UTC), the author, the state,
++and the locker (if locked). Files will normally never
++be locked when you use @sc{cvs}.
++
++Note that this keyword has only been recently
++introduced to @sc{cvs} and may cause problems with
++existing installations if $@splitrcskeyword{CVSHeader}$ is already
++in the files for a different purpose. This keyword may
++be excluded using the @code{KeywordExpand=eCVSHeader}
++in the @file{CVSROOT/config} file. 
++See @ref{Configuring keyword expansion} for more details.
++
+ @cindex Date keyword
+ @item $@splitrcskeyword{Date}$
+ The date and time (UTC) the revision was checked in.
+@@ -6883,6 +6901,55 @@ The full pathname of the RCS file.
+ The state assigned to the revision.  States can be
+ assigned with @code{cvs admin -s}---see @ref{admin options}.
+ 
++@cindex Local keyword
++@item Local keyword
++The @code{LocalKeyword} option in the @file{CVSROOT/config} file
++may be used to specify a local keyword which is to be
++used as an alias for one of the keywords: $@splitrcskeyword{Id}$,
++$@splitrcskeyword{Header}$, or $@splitrcskeyword{CVSHeader}$. For
++example, if the @file{CVSROOT/config} file contains
++a line with @code{LocalKeyword=MYBSD=CVSHeader}, then a
++file with the local keyword $@splitrcskeyword{MYBSD}$ will be
++expanded as if it were a $@splitrcskeyword{CVSHeader}$ keyword. If
++the src/frob.c file contained this keyword, it might
++look something like this:
++
++@example
++  /*
++   * $@splitrcskeyword{MYBSD}: src/frob.c,v 1.1 2003/05/04 09:27:45 john Exp $ 
++   */
++@end example
++
++Many repositories make use of a such a ``local
++keyword'' feature. An old patch to @sc{cvs} provided
++the @code{LocalKeyword} feature using a @code{tag=}
++option and called this the ``custom tag'' or ``local
++tag'' feature. It was used in conjunction with the
++what they called the @code{tagexpand=} option. In
++@sc{cvs} this other option is known as the
++@code{KeywordExpand} option. 
++See @ref{Configuring keyword expansion} for more
++details.
++
++Examples from popular projects include:
++$@splitrcskeyword{FreeBSD}$, $@splitrcskeyword{NetBSD}$,
++$@splitrcskeyword{OpenBSD}$, $@splitrcskeyword{XFree86}$,
++$@splitrcskeyword{Xorg}$.
++
++The advantage of this is that you can include your
++local version information in a file using this local
++keyword without disrupting the upstream version
++information (which may be a different local keyword or
++a standard keyword). Allowing bug reports and the like
++to more properly identify the source of the original
++bug to the third-party and reducing the number of
++conflicts that arise during an import of a new version.
++
++All keyword expansion except the local keyword may be
++disabled using the @code{KeywordExpand} option in
++the @file{CVSROOT/config} file---see 
++@ref{Configuring keyword expansion} for more details.
++
+ @end table
+ 
+ @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@@ -6966,6 +7033,14 @@ contains @samp{$@@asis@{@}Author$} whene
+ and @code{troff} you can embed the null-character
+ @code{\&} inside the keyword for a similar effect.
+ 
++It is also possible to specify an explicit list of
++keywords to include or exclude using the
++@code{KeywordExpand} option in the
++@file{CVSROOT/config} file--see @ref{Configuring keyword expansion}
++for more details. This feature is intended primarily
++for use with the @code{LocalKeyword} option--see
++@ref{Keyword list}.
++
+ @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ @node Substitution modes
+ @section Substitution modes
+@@ -7056,6 +7131,99 @@ handle an export containing binary files
+ @end table
+ 
+ @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
++@node Configuring keyword expansion
++@section Configuring Keyword Expansion
++@cindex Configuring keyword expansion
++
++In a repository that includes third-party software on
++vendor branches, it is sometimes helpful to configure
++CVS to use a local keyword instead of the standard
++$@splitrcskeyword{Id}$ or $@splitrcskeyword{Header}$ keywords. Examples from
++real projects include $@splitrcskeyword{Xorg}$, $@splitrcskeyword{XFree86}$,
++$@splitrcskeyword{FreeBSD}$, $@splitrcskeyword{NetBSD}$,
++$@splitrcskeyword{OpenBSD}$, and even $@splitrcskeyword{dotat}$.
++The advantage of this is that
++you can include your local version information in a
++file using this local keyword (sometimes called a
++``custom tag'' or a ``local tag'') without disrupting
++the upstream version information (which may be a
++different local keyword or a standard keyword). In
++these cases, it is typically desirable to disable the
++expansion of all keywords except the configured local
++keyword.
++
++The @code{KeywordExpand} option in the
++@file{CVSROOT/config} file is intended to allow for the
++either the explicit exclusion of a keyword or list of
++keywords, or for the explicit inclusion of a keyword or
++a list of keywords. This list may include the
++@code{LocalKeyword} that has been configured.
++
++The @code{KeywordExpand} option is followed by
++@code{=} and the next character may either be @code{i}
++to start an inclusion list or @code{e} to start an
++exclusion list. If the following lines were added to
++the @file{CVSROOT/config} file:
++
++@example
++        # Add a "MyBSD" keyword and restrict keyword
++        # expansion
++        LocalKeyword=MyBSD=CVSHeader
++        KeywordExpand=iMyBSD
++@end example
++
++then only the $@splitrcskeyword{MyBSD}$ keyword would be expanded.
++A list may be used. The this example:
++
++@example
++        # Add a "MyBSD" keyword and restrict keyword
++        # expansion to the MyBSD, Name and Date keywords.
++        LocalKeyword=MyBSD=CVSHeader
++        KeywordExpand=iMyBSD,Name,Date
++@end example
++
++would allow $@splitrcskeyword{MyBSD}$, $@splitrcskeyword{Name}$, and
++$@splitrcskeyword{Date}$ to be expanded.
++
++It is also possible to configure an exclusion list
++using the following:
++
++@example
++        # Do not expand the non-RCS keyword CVSHeader
++        KeywordExpand=eCVSHeader
++@end example
++
++This allows @sc{cvs} to ignore the recently introduced
++$@splitrcskeyword{CVSHeader}$ keyword and retain all of the
++others. The exclusion entry could also contain the
++standard RCS keyword list, but this could be confusing
++to users that expect RCS keywords to be expanded, so
++care should be taken to properly set user expectations
++for a repository that is configured in that manner.
++
++If there is a desire to not have any RCS keywords
++expanded and not use the @code{-ko} flags everywhere,
++an administrator may disable all keyword expansion
++using the @file{CVSROOT/config} line:
++
++@example
++	# Do not expand any RCS keywords
++	KeywordExpand=i
++@end example
++
++this could be confusing to users that expect RCS
++keywords like $@splitrcskeyword{Id}$ to be expanded properly,
++so care should be taken to properly set user
++expectations for a repository so configured.
++
++It should be noted that a patch to provide both the
++@code{KeywordExpand} and @code{LocalKeyword} features
++has been around a long time. However, that patch
++implemented these features using @code{tag=} and
++@code{tagexpand=} keywords and those keywords are NOT
++recognized.
++
++@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ @node Log keyword
+ @section Problems with the $@splitrcskeyword{Log}$ keyword.
+ 
+@@ -13540,6 +13708,20 @@ pserver users must exist in @file{CVSROO
+ The default is @samp{yes}.  For more on pserver, see
+ @ref{Password authenticated}.
+ 
++@cindex LocalKeyword, in CVSROOT/config
++@item LocalKeyword=@var{value}
++Specify a local alias for a standard keyword.
++For example, @samp{LocalKeyword=MYCVS=CVSHeader}.
++For more on local keywords, see @ref{Keyword substitution}.
++
++@cindex KeywordExpand, in CVSROOT/config
++@item KeywordExpand=@var{value}
++Specify @samp{i} followed by a list of keywords to be expanded
++(for example, @samp{KeywordExpand=iMYCVS,Name,Date}),
++or @samp{e} followed by a list of keywords not to be expanded
++(for example, @samp{KeywordExpand=eCVSHeader}).
++For more on keyword expansion, see @ref{Configuring keyword expansion}.
++
+ @ignore
+ @cindex PreservePermissions, in CVSROOT/config
+ @item PreservePermissions=@var{value}
+diff -upk.orig cvs-1.11.20.orig/src/mkmodules.c cvs-1.11.20/src/mkmodules.c
+--- cvs-1.11.20.orig/src/mkmodules.c	2005-09-29 16:41:00 +0000
++++ cvs-1.11.20/src/mkmodules.c	2005-09-29 16:41:17 +0000
+@@ -310,6 +310,14 @@ static const char *const config_contents
+     "# Set this to \"no\" if pserver shouldn't check system users/passwords\n",
+     "#SystemAuth=no\n",
+     "\n",
++    "# Set `LocalKeyword' to specify a local alias for a standard keyword.\n",
++    "#LocalKeyword=MYCVS=CVSHeader\n",
++    "\n",
++    "# Set `KeywordExpand' to `i' followed by a list of keywords to expand or\n",
++    "# `e' followed by a list of keywords to not expand.\n"
++    "#KeywordExpand=iMYCVS,Name,Date\n",
++    "#KeywordExpand=eCVSHeader\n",
++    "\n",
+     "# Put CVS lock files in this directory rather than directly in the repository.\n",
+     "#LockDir=/var/lock/cvs\n",
+     "\n",
+diff -upk.orig cvs-1.11.20.orig/src/parseinfo.c cvs-1.11.20/src/parseinfo.c
+--- cvs-1.11.20.orig/src/parseinfo.c	2005-03-16 22:01:21 +0000
++++ cvs-1.11.20/src/parseinfo.c	2005-09-29 16:41:17 +0000
+@@ -357,6 +357,10 @@ parse_config (cvsroot)
+ 		goto error_return;
+ 	    }
+ 	}
++	else if (strcmp (line, "LocalKeyword") == 0)
++	    RCS_setlocalid (p);
++	else if (strcmp (line, "KeywordExpand") == 0)
++	    RCS_setincexc (p);
+ 	else if (strcmp (line, "PreservePermissions") == 0)
+ 	{
+ 	    if (strcmp (p, "no") == 0)
+diff -upk.orig cvs-1.11.20.orig/src/rcs.c cvs-1.11.20/src/rcs.c
+--- cvs-1.11.20.orig/src/rcs.c	2005-09-29 16:41:00 +0000
++++ cvs-1.11.20/src/rcs.c	2005-09-29 16:41:58 +0000
+@@ -140,6 +140,8 @@ static char *rcs_lockfilename PROTO ((co
+    evaluates its arguments multiple times.  */
+ #define STREQ(a, b) (*(char *)(a) == *(char *)(b) && strcmp ((a), (b)) == 0)
+ 
++static const char * getfullCVSname PROTO ((const char *, char **));
++
+ /*
+  * We don't want to use isspace() from the C library because:
+  *
+@@ -3544,27 +3546,31 @@ struct rcs_keyword
+ {
+     const char *string;
+     size_t len;
++    int expandit;
+ };
+ #define KEYWORD_INIT(s) (s), sizeof (s) - 1
+-static const struct rcs_keyword keywords[] =
++static struct rcs_keyword keywords[] =
+ {
+-    { KEYWORD_INIT ("Author") },
+-    { KEYWORD_INIT ("Date") },
+-    { KEYWORD_INIT ("Header") },
+-    { KEYWORD_INIT ("Id") },
+-    { KEYWORD_INIT ("Locker") },
+-    { KEYWORD_INIT ("Log") },
+-    { KEYWORD_INIT ("Name") },
+-    { KEYWORD_INIT ("RCSfile") },
+-    { KEYWORD_INIT ("Revision") },
+-    { KEYWORD_INIT ("Source") },
+-    { KEYWORD_INIT ("State") },
+-    { NULL, 0 }
++    { KEYWORD_INIT ("Author"), 1 },
++    { KEYWORD_INIT ("Date"), 1 },
++    { KEYWORD_INIT ("CVSHeader"), 1 },
++    { KEYWORD_INIT ("Header"), 1 },
++    { KEYWORD_INIT ("Id"), 1 },
++    { KEYWORD_INIT ("Locker"), 1 },
++    { KEYWORD_INIT ("Log"), 1 },
++    { KEYWORD_INIT ("Name"), 1 },
++    { KEYWORD_INIT ("RCSfile"), 1 },
++    { KEYWORD_INIT ("Revision"), 1 },
++    { KEYWORD_INIT ("Source"), 1 },
++    { KEYWORD_INIT ("State"), 1 },
++    { NULL, 0, 0 },
++    { NULL, 0, 0 }
+ };
+ enum keyword
+ {
+     KEYWORD_AUTHOR = 0,
+     KEYWORD_DATE,
++    KEYWORD_CVSHEADER,
+     KEYWORD_HEADER,
+     KEYWORD_ID,
+     KEYWORD_LOCKER,
+@@ -3573,8 +3579,10 @@ enum keyword
+     KEYWORD_RCSFILE,
+     KEYWORD_REVISION,
+     KEYWORD_SOURCE,
+-    KEYWORD_STATE
++    KEYWORD_STATE,
++    KEYWORD_LOCALID
+ };
++enum keyword keyword_local = KEYWORD_ID;
+ 
+ /* Convert an RCS date string into a readable string.  This is like
+    the RCS date2str function.  */
+@@ -3757,7 +3765,8 @@ expand_keywords (rcs, ver, name, log, lo
+ 	slen = s - srch;
+ 	for (keyword = keywords; keyword->string != NULL; keyword++)
+ 	{
+-	    if (keyword->len == slen
++	    if (keyword->expandit
++		&& keyword->len == slen
+ 		&& strncmp (keyword->string, srch, slen) == 0)
+ 	    {
+ 		break;
+@@ -3804,15 +3813,25 @@ expand_keywords (rcs, ver, name, log, lo
+ 		free_value = 1;
+ 		break;
+ 
++	    case KEYWORD_CVSHEADER:
+ 	    case KEYWORD_HEADER:
+ 	    case KEYWORD_ID:
++	    case KEYWORD_LOCALID:
+ 		{
+ 		    const char *path;
+ 		    int free_path;
+ 		    char *date;
++		    char *old_path;
+ 
+-		    if (kw == KEYWORD_HEADER)
++		    old_path = NULL;
++		    if (kw == KEYWORD_HEADER ||
++			    (kw == KEYWORD_LOCALID &&
++			     keyword_local == KEYWORD_HEADER))
+ 			path = rcs->path;
++		    else if (kw == KEYWORD_CVSHEADER ||
++			     (kw == KEYWORD_LOCALID &&
++			      keyword_local == KEYWORD_CVSHEADER))
++			path = getfullCVSname(rcs->path, &old_path);
+ 		    else
+ 			path = last_component (rcs->path);
+ 		    path = escape_keyword_value (path, &free_path);
+@@ -3835,6 +3854,8 @@ expand_keywords (rcs, ver, name, log, lo
+ 			 * and we can discard the const.
+ 			 */
+ 			free ((char *)path);
++		    if (old_path)
++			free (old_path);
+ 		    free (date);
+ 		    free_value = 1;
+ 		}
+@@ -8746,3 +8767,118 @@ make_file_label (path, rev, rcs)
+     }
+     return label;
+ }
++
++void
++RCS_setlocalid (const char *arg)
++{
++    char *copy, *next, *key, *s;
++
++    copy = xstrdup(arg);
++    next = copy;
++    key = strtok(next, "=");
++
++    /*
++     * Validate key
++     */
++    for (s = key; *s != '\0'; s++)
++    {
++	if (! isalnum ((unsigned char) *s))
++	{
++		    error (0, 0,
++"LocalKeyword ignored: Bad character `%c' in key `%s'",
++			   *s, key);
++	    free (copy);
++	    return;
++	}
++    }
++
++    keywords[KEYWORD_LOCALID].string = xstrdup(key);
++    keywords[KEYWORD_LOCALID].len = strlen(key);
++    keywords[KEYWORD_LOCALID].expandit = 1;
++
++    /* options? */
++    while ((key = strtok(NULL, ","))) {
++	if (!strcmp(key, keywords[KEYWORD_ID].string))
++	    keyword_local = KEYWORD_ID;
++	else if (!strcmp(key, keywords[KEYWORD_HEADER].string))
++	    keyword_local = KEYWORD_HEADER;
++	else if (!strcmp(key, keywords[KEYWORD_CVSHEADER].string))
++	    keyword_local = KEYWORD_CVSHEADER;
++	else
++	    error(0, 0,
++"LocalKeyword ignored: Unknown LocalId mode: `%s'", key);
++    }
++    free(copy);
++}
++
++void
++RCS_setincexc (const char *arg)
++{
++    char *key;
++    char *copy, *next;
++    int include = 0;
++    struct rcs_keyword *keyword;
++
++    copy = xstrdup(arg);
++    next = copy;
++    switch (*next++) {
++	case 'e':
++	    include = 0;
++	    break;
++	case 'i':
++	    include = 1;
++	    break;
++	default:
++	    free(copy);
++	    return;
++    }
++
++    if (include)
++	for (keyword = keywords; keyword->string != NULL; keyword++)
++	{
++	    keyword->expandit = 0;
++	}
++
++    key = strtok(next, ",");
++    while (key) {
++	for (keyword = keywords; keyword->string != NULL; keyword++) {
++	    if (strcmp (keyword->string, key) == 0)
++		keyword->expandit = include;
++	}
++	key = strtok(NULL, ",");
++    }
++    free(copy);
++    return;
++}
++
++#define ROOT_ATTIC "/" CVSATTIC
++static const char *
++getfullCVSname(const char *CVSname, char **pathstore)
++{
++    if (current_parsed_root->directory) {
++	int rootlen;
++	char *c = NULL;
++	int alen = sizeof(ROOT_ATTIC) - 1;
++
++	*pathstore = xstrdup(CVSname);
++	if ((c = strrchr(*pathstore, '/')) != NULL) {
++	    if (c - *pathstore >= alen) {
++		if (!strncmp(c - alen, ROOT_ATTIC, alen)) {
++		    while (*c != '\0') {
++			*(c - alen) = *c;
++			c++;
++		    }
++		    *(c - alen) = '\0';
++		}
++	    }
++	}
++
++	rootlen = strlen(current_parsed_root->directory);
++	if (!strncmp(*pathstore, current_parsed_root->directory, rootlen) &&
++	    (*pathstore)[rootlen] == '/')
++	    CVSname = (*pathstore + rootlen + 1);
++	else
++	    CVSname = (*pathstore);
++    }
++    return CVSname;
++}
+diff -upk.orig cvs-1.11.20.orig/src/rcs.h cvs-1.11.20/src/rcs.h
+--- cvs-1.11.20.orig/src/rcs.h	2005-01-31 22:20:17 +0000
++++ cvs-1.11.20/src/rcs.h	2005-09-29 16:41:17 +0000
+@@ -247,6 +247,8 @@ void RCS_rewrite PROTO ((RCSNode *, Delt
+ void RCS_abandon PROTO ((RCSNode *));
+ int rcs_change_text PROTO ((const char *, char *, size_t, const char *,
+ 			    size_t, char **, size_t *));
++void RCS_setincexc PROTO ((const char *arg));
++void RCS_setlocalid PROTO ((const char *arg));
+ void RCS_deltas PROTO ((RCSNode *, FILE *, struct rcsbuffer *, const char *,
+ 			enum rcs_delta_op, char **, size_t *,
+ 			char **, size_t *));
+diff -upk.orig cvs-1.11.20.orig/src/sanity.sh cvs-1.11.20/src/sanity.sh
+--- cvs-1.11.20.orig/src/sanity.sh	2005-09-29 16:41:00 +0000
++++ cvs-1.11.20/src/sanity.sh	2005-09-29 16:49:33 +0000
+@@ -1078,6 +1078,7 @@ if test x"$*" = x; then
+ 	tests="${tests} join-rm"
+ 	tests="${tests} new newb conflicts conflicts2 conflicts3"
+ 	tests="${tests} clean"
++	tests="${tests} keywordexpand"
+ 	# Checking out various places (modules, checkout -d, &c)
+ 	tests="${tests} modules modules2 modules3 modules4 modules5 modules6"
+ 	tests="${tests} modules7 mkmodules co-d"
+@@ -11273,6 +11274,169 @@ fish"
+ 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+ 	  ;;
+ 
++	keywordexpand)
++	  # Tests of the original *BSD tag= and keywordexpand= features
++	  # are done via the LocalKeyword= and KeywordExpand features.
++
++	  mkdir keywordexpand; cd keywordexpand
++
++	  dotest keywordexpand-1 "${testcvs} -q co CVSROOT" \
++'U CVSROOT/checkoutlist
++U CVSROOT/commitinfo
++U CVSROOT/config
++U CVSROOT/cvswrappers
++U CVSROOT/editinfo
++U CVSROOT/loginfo
++U CVSROOT/modules
++U CVSROOT/notify
++U CVSROOT/rcsinfo
++U CVSROOT/taginfo
++U CVSROOT/tagloginfo
++U CVSROOT/verifymsg'
++	  cd CVSROOT
++	  echo LocalKeyword=MyBSD=CVSHeader >> config
++	  # First do not expand any keywords
++	  echo KeywordExpand=i >> config
++	  dotest keywordexpand-2 "${testcvs} -Q ci -mkeywordexpand config" \
++"Checking in config;
++${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
++new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
++done
++${PROG} commit: Rebuilding administrative file database"
++
++	  cd ..
++
++	  mkdir testimport; cd testimport
++	  echo '$''Author$' > file1
++	  echo '$''Date$' >> file1
++	  echo '$''CVSHeader$' >> file1
++	  echo '$''Header$' >> file1
++	  echo '$''Id$' >> file1
++	  echo '$''Locker$' >> file1
++	  echo '$''Log$' >> file1
++	  echo '$''Name$' >> file1
++	  echo '$''RCSfile$' >> file1
++	  echo '$''Revision$' >> file1
++	  echo '$''Source$' >> file1
++	  echo '$''State$' >> file1
++	  echo '$''MyBSD$' >> file1
++	  dotest keywordexpand-3 \
++"${testcvs} -Q import -I ! -m test-import-with-bsd-keyword keywordexpand vendor v1" \
++''
++	  cd ..
++
++	  dotest keywordexpand-4 "${testcvs} -Q checkout keywordexpand" ''
++	  cd keywordexpand
++	  dotest keywordexpand-5 "cat file1" \
++"\$""Author\$
++\$""Date\$
++\$""CVSHeader\$
++\$""Header\$
++\$""Id\$
++\$""Locker\$
++\$""Log\$
++\$""Name\$
++\$""RCSfile\$
++\$""Revision\$
++\$""Source\$
++\$""State\$
++\$MyBSD\$"
++	  cd ../CVSROOT
++	  # Now expand just the MyBSD and Id keywords
++	  mv config config.old
++	  sed -e 's/KeywordExpand=i/KeywordExpand=iMyBSD,Id/' < config.old > config
++	  rm -f config.old
++	  dotest keywordexpand-6 "${testcvs} -Q ci -mkeywordexpand config" \
++"Checking in config;
++${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
++new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
++done
++${PROG} commit: Rebuilding administrative file database"
++	  cd ../keywordexpand
++	  echo 'a change' >> file1
++	  dotest keywordexpand-7 "${testcvs} -Q ci -madd" \
++"Checking in file1;
++${CVSROOT_DIRNAME}/keywordexpand/file1,v  <--  file1
++new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
++done"
++	  dotest keywordexpand-8 "cat file1" \
++"\$""Author\$
++\$""Date\$
++\$""CVSHeader\$
++\$""Header\$
++\$""Id: file1,v 1\.2 [0-9/]* [0-9:]* ${username} Exp \$
++\$""Locker\$
++\$""Log\$
++\$""Name\$
++\$""RCSfile\$
++\$""Revision\$
++\$""Source\$
++\$""State\$
++\$MyBSD: keywordexpand/file1,v 1\.2 [0-9/]* [0-9:]* ${username} Exp \$
++a change"
++
++	  cd ../CVSROOT
++	  mv config config.old
++	  sed -e 's/LocalKeyword=MyBSD/LocalKeyword=My_BSD/' \
++	      <config.old >config
++	  dotest keywordexpand-9 "$testcvs -Q ci -minvalidlocalkeyword config" \
++"Checking in config;
++${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
++new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
++done
++${PROG} commit: Rebuilding administrative file database"
++	  dotest keywordexpand-10 "$testcvs -Q update config" \
++"${PROG} [a-z]*: LocalKeyword ignored: Bad character \`_' in key \`My_BSD'"
++	  cp config.old config
++	  dotest keywordexpand-11 "$testcvs -Q ci -mfixit config" \
++"${PROG} [a-z]*: LocalKeyword ignored: Bad character \`_' in key \`My_BSD'
++Checking in config;
++${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
++new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
++done
++${PROG} commit: Rebuilding administrative file database" \
++"${PROG} [a-z]*: LocalKeyword ignored: Bad character \`_' in key \`My_BSD'
++${PROG} [a-z]*: LocalKeyword ignored: Bad character \`_' in key \`My_BSD'
++Checking in config;
++${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
++new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
++done
++${PROG} commit: Rebuilding administrative file database"
++	  dotest keywordexpand-12 "$testcvs -Q update config"
++	  sed -e 's/LocalKeyword=MyBSD=CVSHeader/LocalKeyword=MyBSD=Name/' \
++	      <config.old >config
++	  dotest keywordexpand-13 \
++"$testcvs -Q ci -minvalidlocalkeyword2 config" \
++"Checking in config;
++${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
++new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
++done
++${PROG} commit: Rebuilding administrative file database"
++	  dotest keywordexpand-14 "$testcvs -Q update config" \
++"${PROG} [a-z]*: LocalKeyword ignored: Unknown LocalId mode: \`Name'"
++	  cp config.old config
++	  dotest keywordexpand-15 "$testcvs -Q ci -mfixit2 config" \
++"${PROG} [a-z]*: LocalKeyword ignored: Unknown LocalId mode: \`Name'
++Checking in config;
++${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
++new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
++done
++${PROG} commit: Rebuilding administrative file database" \
++"${PROG} [a-z]*: LocalKeyword ignored: Unknown LocalId mode: \`Name'
++${PROG} [a-z]*: LocalKeyword ignored: Unknown LocalId mode: \`Name'
++Checking in config;
++${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
++new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
++done
++${PROG} commit: Rebuilding administrative file database"
++	  dotest keywordexpand-16 "$testcvs -Q update config"
++
++	  # Done. Clean up.
++	  cd ../..
++	  rm -rf $TESTDIR/keywordexpand
++	  rm -rf ${CVSROOT_DIRNAME}/keywordexpand
++	  ;;
++
+ 	modules)
+ 	  # Tests of various ways to define and use modules.
+ 	  # Roadmap to various modules tests:

@@ -1,0 +1,43 @@
+diff -upk.orig cvs-1.11.20.orig/src/sanity.sh cvs-1.11.20/src/sanity.sh
+--- cvs-1.11.20.orig/src/sanity.sh	2005-09-29 14:35:34 +0000
++++ cvs-1.11.20/src/sanity.sh	2005-09-29 14:36:01 +0000
+@@ -280,20 +280,25 @@ fi
+ #
+ CVS="${testcvs} -Q"
+ 
+-LOGFILE=`pwd`/check.log
++if $remote; then
++	CHECK_LOG=check-r.log
++else
++	CHECK_LOG=check.log
++fi
++LOGFILE=`pwd`/$CHECK_LOG
+ 
+ # Save the previous log in case the person running the tests decides
+ # they want to look at it.  The extension ".plog" is chosen for consistency
+ # with dejagnu.
+-if test -f check.log; then
+-	mv check.log check.plog
++if test -f $CHECK_LOG; then
++	mv $CHECK_LOG $CHECK_LOG.orig
+ fi
+ 
+-# Create the log file so check.log can be tailed almost immediately after
++# Create the log file so $CHECK_LOG can be tailed almost immediately after
+ # this script is started.  Otherwise it can take up to a minute or two before
+ # the log file gets created when $remotehost is specified on some systems,
+ # which makes for a lot of failed `tail -f' attempts.
+-touch check.log
++touch $CHECK_LOG
+ 
+ # Workaround any X11Forwarding by ssh. Otherwise this text:
+ #   Warning: No xauth data; using fake authentication data for X11 forwarding.
+@@ -787,7 +792,7 @@ warn ()
+ fail ()
+ {
+   echo "FAIL: $1" | tee -a ${LOGFILE}
+-  echo "*** Please see the \`TESTS' and \`check.log' files for more information." >&2
++  echo "*** Please see the \`TESTS' and \`$CHECK_LOG' files for more information." >&2
+   # This way the tester can go and see what remnants were left
+   exit 1
+ }

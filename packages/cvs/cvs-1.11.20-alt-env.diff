@@ -1,0 +1,34 @@
+diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
+--- cvs-1.11.20.orig/src/server.c	2005-09-29 13:38:51 +0000
++++ cvs-1.11.20/src/server.c	2005-09-29 13:39:11 +0000
+@@ -5442,23 +5442,19 @@ error 0 %s: no such system user\n", user
+ #endif
+ 
+ #if HAVE_PUTENV
+-    /* Set LOGNAME, USER and CVS_USER in the environment, in case they
++    /* Set HOME, LOGNAME, USER and CVS_USER in the environment, in case they
+        are already set to something else.  */
+     {
+ 	char *env;
+ 
+-	env = xmalloc (sizeof "LOGNAME=" + strlen (username));
+-	(void) sprintf (env, "LOGNAME=%s", username);
+-	(void) putenv (env);
+-
+-	env = xmalloc (sizeof "USER=" + strlen (username));
+-	(void) sprintf (env, "USER=%s", username);
+-	(void) putenv (env);
++	putenv (xasprintf (&env, "HOME=%s", pw->pw_dir ?: "/"));
++	putenv (xasprintf (&env, "USER=%s", username));
+ 
+ #ifdef AUTH_SERVER_SUPPORT
+-	env = xmalloc (sizeof "CVS_USER=" + strlen (CVS_Username));
+-	(void) sprintf (env, "CVS_USER=%s", CVS_Username);
+-	(void) putenv (env);
++	putenv (xasprintf (&env, "LOGNAME=%s", CVS_Username));
++	putenv (xasprintf (&env, "CVS_USER=%s", CVS_Username));
++#else
++	putenv (xasprintf (&env, "LOGNAME=%s", username));
+ #endif
+     }
+ #endif /* HAVE_PUTENV */

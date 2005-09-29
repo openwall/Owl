@@ -1,0 +1,82 @@
+diff -upk.orig cvs-1.11.20.orig/src/root.c cvs-1.11.20/src/root.c
+--- cvs-1.11.20.orig/src/root.c	2005-03-16 22:01:21 +0000
++++ cvs-1.11.20/src/root.c	2005-09-28 23:24:43 +0000
+@@ -614,6 +614,14 @@ parse_cvsroot (root_in)
+ 	    error (0, 0, "when using local access method.");
+ 	    goto error_exit;
+ 	}
++	{
++	    char *dir = canonicalize_file_name (newroot->directory);
++	    if (dir)
++	    {
++		free (newroot->directory);
++		newroot->directory = dir;
++	    }
++	}
+ 	no_port = 1;
+ 	/* no_password already set */
+ #endif /* CLIENT_SUPPORT */
+@@ -790,7 +798,7 @@ local_cvsroot (dir)
+ 
+     newroot->original = xstrdup(dir);
+     newroot->method = local_method;
+-    newroot->directory = xstrdup(dir);
++    newroot->directory = canonicalize_file_name (dir) ?: xstrdup(dir);
+     /* Here and parse_cvsroot() should be the only places this needs to be
+      * called on a CVSROOT now.  cvsroot->original is saved for error messages
+      * and, otherwise, we want no trailing slashes.
+diff -upk.orig cvs-1.11.20.orig/src/sanity.sh cvs-1.11.20/src/sanity.sh
+--- cvs-1.11.20.orig/src/sanity.sh	2005-09-28 23:23:57 +0000
++++ cvs-1.11.20/src/sanity.sh	2005-09-28 23:24:43 +0000
+@@ -28481,7 +28481,7 @@ EOF
+ 	  # possible security holes are plugged.
+ 	  if $remote; then
+ 	    dotest server2-1 "${testcvs} server" \
+-"E protocol error: directory '${CVSROOT_DIRNAME}/\.\./dir1' not within root '${CVSROOT_DIRNAME}'
++"E protocol error: directory '${TESTDIR}/dir1' not within root '${CVSROOT_DIRNAME}'
+ error  " <<EOF
+ Root ${CVSROOT_DIRNAME}
+ Directory .
+diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
+--- cvs-1.11.20.orig/src/server.c	2005-03-16 19:16:01 +0000
++++ cvs-1.11.20/src/server.c	2005-09-28 23:24:43 +0000
+@@ -1155,6 +1155,39 @@ serve_directory (arg)
+     status = buf_read_line (buf_from_net, &repos, (int *) NULL);
+     if (status == 0)
+     {
++	char *real_repos = canonicalize_file_name (repos);
++
++	/* The last path component may not exist when adding a directory.  */
++	if (!real_repos)
++	{
++	    char *last = strrchr (repos, '/');
++
++	    if (last)
++	    {
++		char *real_path;
++
++		*last = '\0';
++		real_path = canonicalize_file_name (repos);
++		*last = '/';
++
++		if (real_path)
++		{
++		    real_repos = realloc(real_path,
++			strlen(real_path) + strlen(last) + 1);
++		    if (real_repos)
++			strcat(real_repos, last);
++		    else
++			free (real_path);
++		}
++	    }
++	}
++
++	if (real_repos)
++	{
++	    free (repos);
++	    repos = real_repos;
++	}
++
+ 	if (!outside_root (repos))
+ 	    dirswitch (arg, repos);
+ 	free (repos);

@@ -1,0 +1,48 @@
+diff -upk.orig cvs-1.11.20.orig/src/client.c cvs-1.11.20/src/client.c
+--- cvs-1.11.20.orig/src/client.c	2005-09-29 14:22:45 +0000
++++ cvs-1.11.20/src/client.c	2005-09-29 14:23:02 +0000
+@@ -3650,7 +3650,7 @@ get_port_number (envname, portname, defa
+ 	if (port <= 0)
+ 	{
+ 	    error (0, 0, "%s must be a positive integer!  If you", envname);
+-	    error (0, 0, "are trying to force a connection via rsh, please");
++	    error (0, 0, "are trying to force a connection via ssh, please");
+ 	    error (0, 0, "put \":server:\" at the beginning of your CVSROOT");
+ 	    error (1, 0, "variable.");
+ 	}
+@@ -4781,7 +4781,7 @@ start_rsh_server (root, to_server, from_
+ 	   example in CVS_RSH or other such mechanisms to be devised,
+ 	   if that is what they want (the manual already tells them
+ 	   that).  */
+-	cvs_rsh = "rsh";
++	cvs_rsh = "ssh";
+     if (!cvs_server)
+ 	cvs_server = "cvs";
+ 
+@@ -4818,7 +4818,7 @@ start_rsh_server (root, to_server, from_
+     /* Do the deed. */
+     child_pid = popenRW (rsh_argv, pipes);
+     if (child_pid < 0)
+-	error (1, errno, "cannot start server via rsh");
++	error (1, errno, "cannot start server via %s", cvs_rsh);
+ 
+     /* Give caller the file descriptors in a form it can deal with. */
+     make_bufs_from_fds (pipes[0], pipes[1], child_pid, to_server, from_server, 0);
+@@ -4842,7 +4842,7 @@ start_rsh_server (root, to_server, from_
+     int child_pid;
+ 
+     if (!cvs_rsh)
+-	cvs_rsh = "rsh";
++	cvs_rsh = "ssh";
+     if (!cvs_server)
+ 	cvs_server = "cvs";
+ 
+@@ -4889,7 +4889,7 @@ start_rsh_server (root, to_server, from_
+ 	child_pid = piped_child (argv, &tofd, &fromfd);
+ 
+ 	if (child_pid < 0)
+-	    error (1, errno, "cannot start server via rsh");
++	    error (1, errno, "cannot start server via %s", cvs_rsh);
+     }
+     free (command);
+ 

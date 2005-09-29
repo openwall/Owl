@@ -1,0 +1,535 @@
+diff -upk.orig cvs-1.11.20.orig/doc/cvs.texinfo cvs-1.11.20/doc/cvs.texinfo
+--- cvs-1.11.20.orig/doc/cvs.texinfo	2005-05-23 16:28:09 +0000
++++ cvs-1.11.20/doc/cvs.texinfo	2005-05-23 16:57:05 +0000
+@@ -2376,7 +2376,7 @@ If you are having trouble setting this u
+ @ref{Connection}.
+ 
+ @cindex CVS passwd file
+-@cindex passwd (admin file)
++@cindex @file{passwd} (admin file)
+ Because the client stores and transmits passwords in
+ cleartext (almost---see @ref{Password authentication
+ security}, for details), a separate @sc{cvs} password
+@@ -2819,8 +2819,8 @@ environment variable.
+ @node Read-only access
+ @section Read-only repository access
+ @cindex Read-only repository access
+-@cindex readers (admin file)
+-@cindex writers (admin file)
++@cindex @file{readers} (admin file)
++@cindex @file{writers} (admin file)
+ 
+         It is possible to grant read-only repository
+ access to people using the password-authenticated
+@@ -6435,7 +6435,7 @@ watches for the specified actions are re
+ 
+ @end deffn
+ 
+-@cindex notify (admin file)
++@cindex @file{notify} (admin file)
+ When the conditions exist for notification, @sc{cvs}
+ calls the @file{notify} administrative file.  Edit
+ @file{notify} as one edits the other administrative
+@@ -6463,7 +6463,7 @@ This causes users to be notified by elec
+ @c document the use of "DEFAULT :" for the case where
+ @c skipping the notification is indeed desired)?
+ 
+-@cindex users (admin file)
++@cindex @file{users} (admin file)
+ Note that if you set this up in the straightforward
+ way, users receive notifications on the server machine.
+ One could of course write a @file{notify} script which
+@@ -11866,10 +11866,10 @@ file, which defines the modules inside t
+ * modules::                     Defining modules
+ * Wrappers::                    Specify binary-ness based on file name
+ * Trigger Scripts::		Some notes on the commit support files and
+-				taginfo, referenced below.
++				tagging support files, referenced below.
+ * commit files::                The commit support files (commitinfo,
+                                 verifymsg, editinfo, loginfo)
+-* taginfo::                     Verifying/Logging tags
++* tagging files::               Verifying/Logging tags (taginfo, tagloginfo)
+ * rcsinfo::                     Templates for the log messages
+ * cvsignore::                   Ignoring files via cvsignore
+ * checkoutlist::                Adding your own administrative files
+@@ -11881,7 +11881,7 @@ file, which defines the modules inside t
+ @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ @node modules
+ @appendixsec The modules file
+-@cindex Modules (admin file)
++@cindex @file{Modules} (admin file)
+ @cindex Defining modules (reference manual)
+ 
+ The @file{modules} file records your definitions of
+@@ -12207,7 +12207,7 @@ completed.
+ @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ @node Wrappers
+ @appendixsec The cvswrappers file
+-@cindex cvswrappers (admin file)
++@cindex @file{cvswrappers} (admin file)
+ @cindex CVSWRAPPERS, environment variable
+ @cindex Wrappers
+ 
+@@ -12372,7 +12372,7 @@ cvs import -I ! -W "*.exe -k 'b'" first-
+ Several of the administrative files support triggers, or the launching external
+ scripts or programs at specific times before or after particular events.  The
+ individual files are discussed in the later sections, @ref{commit files} and
+-@ref{taginfo}, but some of the common elements are discussed here.
++@ref{tagging files}, but some of the common elements are discussed here.
+ 
+ All the trigger scripts are launched in a copy of the user sandbox being
+ committed, on the server, in client-server mode.  In local mode, the scripts
+@@ -12516,7 +12516,7 @@ imagination is the limit!
+ * verifymsg::                   How are log messages evaluated?
+ * editinfo::                    Specifying how log messages are created
+                                 (obsolete)
+-* loginfo::                     Where should log messages be sent?
++* loginfo::                     Where should commit/add/import log messages be sent?
+ @end menu
+ 
+ @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@@ -12742,7 +12742,7 @@ RereadLogAfterVerify=always
+ @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ @node editinfo
+ @appendixsubsec Editinfo
+-@cindex editinfo (admin file)
++@cindex @file{editinfo} (admin file)
+ @cindex Editor, specifying per module
+ @cindex Per-module editor
+ @cindex Log messages, editing
+@@ -12860,17 +12860,15 @@ The @file{rcsinfo} file contains this li
+ @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ @node loginfo
+ @appendixsubsec Loginfo
+-@cindex loginfo (admin file)
++@cindex @file{loginfo} (admin file)
+ @cindex Storing log messages
+ @cindex Mailing log messages
+ @cindex Distributing log messages
+ @cindex Log messages
+ 
+-@c "cvs commit" is not quite right.  What we
+-@c mean is "when the repository gets changed" which
+-@c also includes "cvs import" and "cvs add" on a directory.
+ The @file{loginfo} file is used to control where
+-@samp{cvs commit} log information is sent.  The first
++@samp{cvs commit}, @samp{cvs import} and @samp{cvs add}
++log information is sent.  The first
+ entry on a line is a regular expression which is tested
+ against the directory that the change is being made to,
+ relative to the @code{$CVSROOT}.  If a match is found, then
+@@ -13033,9 +13031,120 @@ out tree in @file{/u/www/local-docs}.
+ @c we start and we can wait 2 seconds instead of 30.
+ 
+ @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
++@node tagging files
++@appendixsec The tagging support files
++@cindex Tagging files
++
++The @samp{-i} flag in the @file{modules} file can be
++used to run a certain program whenever files are
++committed (@pxref{modules}).  The files described in
++this section provide other, more flexible, ways to run
++programs whenever something is committed.
++
++There are three kind of programs that can be run on
++commit.  They are specified in files in the repository,
++as described below.  The following table summarizes the
++file names and the purpose of the corresponding
++programs.
++
++@table @file
++@item taginfo
++The program is responsible for checking that the tagging
++is allowed.  If it exits with a non-zero exit status
++the tagging will be aborted.
++
++@item tagloginfo
++The specified program is called when the tagging is
++complete.  It receives the log message and some
++additional information and can store the log message in
++a file, or mail it to appropriate persons, or maybe
++post it to a local newsgroup, or@dots{}  Your
++imagination is the limit!
++@end table
++
++@menu
++* taginfo::                     Pre-tag checking
++* tagloginfo::                  Where should tag log messages be sent?
++@end menu
++
++@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
++@node taginfo
++@appendixsubsec Taginfo
++@cindex @file{taginfo} (admin file)
++@cindex Pre-tag checking
++The @file{taginfo} file defines programs to execute
++when someone executes a @code{tag} or @code{rtag}
++command.  The @file{taginfo} file has the standard form
++for trigger scripts (@pxref{Trigger Scripts}),
++where each line is a regular expression
++followed by a command to execute (@pxref{syntax}).  The arguments passed
++to the command are, in order, the @var{tagname},
++@var{operation} (@code{add} for @code{tag},
++@code{mov} for @code{tag -F}, and @code{del} for
++@code{tag -d}), @var{repository}, and any remaining are
++pairs of @var{filename} @var{revision}.
++
++@cindex Exit status, of taginfo
++A non-zero exit of the filter program will cause the tag to be aborted.
++
++Here is an example of using taginfo to log tag and rtag
++commands.  In the taginfo file put:
++
++@example
++ALL /usr/local/cvsroot/CVSROOT/loggit
++@end example
++
++Where @file{/usr/local/cvsroot/CVSROOT/loggit} contains the
++following script:
++
++@example
++#!/bin/sh
++echo "$@@" >>/home/kingdon/cvsroot/CVSROOT/taglog
++@end example
++
++@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
++@node tagloginfo
++@appendixsubsec Tagloginfo
++@cindex @file{tagloginfo} (admin file)
++@cindex Post-tag processing
++@cindex Storing tag log messages
++@cindex Mailing tag log messages
++@cindex Distributing tag log messages
++
++The @file{tagloginfo} file defines programs to execute
++when someone successfully executed a @code{tag} or @code{rtag}
++command.  The @file{tagloginfo} file has the standard form
++for trigger scripts (@pxref{Trigger Scripts}),
++where each line is a regular expression
++followed by a command to execute (@pxref{syntax}).  The arguments passed
++to the command are, in order, the @var{tagname},
++@var{operation} (@code{add} for @code{tag},
++@code{mov} for @code{tag -F}, and @code{del} for
++@code{tag -d}), @var{repository}, and any remaining are
++pairs of @var{filename} @var{revision}.
++
++@cindex Exit status, of tagloginfo
++A non-zero exit of the filter program will not cause the tag to be aborted.
++
++Here is an example of using tagloginfo to log tag and rtag
++commands.  In the tagloginfo file put:
++
++@example
++ALL /cvsroot/CVSROOT/loggit
++@end example
++
++Where @file{/cvsroot/CVSROOT/loggit} contains the
++following script:
++
++@example
++#!/bin/sh
++echo "$@@" >>/cvsroot/CVSROOT/taglog
++@end example
++
++@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ @node rcsinfo
+ @appendixsec Rcsinfo
+-@cindex rcsinfo (admin file)
++@cindex @file{rcsinfo} (admin file)
+ @cindex Form for log message
+ @cindex Log message template
+ @cindex Template for log message
+@@ -13091,46 +13200,9 @@ directory.
+ @c it has.
+ 
+ @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+-@node taginfo
+-@appendixsec Taginfo
+-@cindex taginfo (admin file)
+-@cindex Tags, logging
+-@cindex Tags, verifying
+-The @file{taginfo} file defines programs to execute
+-when someone executes a @code{tag} or @code{rtag}
+-command.  The @file{taginfo} file has the standard form
+-for trigger scripts (@pxref{Trigger Scripts}),
+-where each line is a regular expression
+-followed by a command to execute (@pxref{syntax}).  The arguments passed
+-to the command are, in order, the @var{tagname},
+-@var{operation} (@code{add} for @code{tag},
+-@code{mov} for @code{tag -F}, and @code{del} for
+-@code{tag -d}), @var{repository}, and any remaining are
+-pairs of @var{filename} @var{revision}.  A non-zero
+-exit of the filter program will cause the tag to be
+-aborted.
+-
+-Here is an example of using the @file{taginfo} file
+-to log @code{tag} and @code{rtag}
+-commands.  In the @file{taginfo} file put:
+-
+-@example
+-ALL /usr/local/cvsroot/CVSROOT/loggit
+-@end example
+-
+-@noindent
+-Where @file{/usr/local/cvsroot/CVSROOT/loggit} contains the
+-following script:
+-
+-@example
+-#!/bin/sh
+-echo "$@@" >>/home/kingdon/cvsroot/CVSROOT/taglog
+-@end example
+-
+-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ @node cvsignore
+ @appendixsec Ignoring files via cvsignore
+-@cindex cvsignore (admin file), global
++@cindex @file{cvsignore} (admin file), global
+ @cindex Global cvsignore
+ @cindex Ignoring files
+ @c -- This chapter should maybe be moved to the
+diff -upk.orig cvs-1.11.20.orig/src/cvs.h cvs-1.11.20/src/cvs.h
+--- cvs-1.11.20.orig/src/cvs.h	2005-03-09 14:22:46 +0000
++++ cvs-1.11.20/src/cvs.h	2005-05-23 16:28:23 +0000
+@@ -186,6 +186,7 @@ extern int errno;
+ #define	CVSROOTADM_RCSINFO	"rcsinfo"
+ #define CVSROOTADM_COMMITINFO	"commitinfo"
+ #define CVSROOTADM_TAGINFO      "taginfo"
++#define CVSROOTADM_TAGLOGINFO	"tagloginfo"
+ #define	CVSROOTADM_EDITINFO	"editinfo"
+ #define CVSROOTADM_VERIFYMSG    "verifymsg"
+ #define	CVSROOTADM_HISTORY	"history"
+diff -upk.orig cvs-1.11.20.orig/src/mkmodules.c cvs-1.11.20/src/mkmodules.c
+--- cvs-1.11.20.orig/src/mkmodules.c	2005-05-23 16:28:09 +0000
++++ cvs-1.11.20/src/mkmodules.c	2005-05-23 16:28:23 +0000
+@@ -192,6 +192,28 @@ static const char *const taginfo_content
+     NULL
+ };
+ 
++static const char *const tagloginfo_contents[] = {
++    "# The \"tagloginfo\" file is used to control post-tag logging.\n",
++    "# The filter on the right is invoked with the following arguments:\n",
++    "#\n",
++    "# $1 -- tagname\n",
++    "# $2 -- operation \"add\" for tag, \"mov\" for tag -F, and \"del\" for tag -d\n",
++    "# $3 -- repository\n",
++    "# $4->  file revision [file revision ...]\n",
++    "#\n",
++    "# The first entry on a line is a regular expression which is tested\n",
++    "# against the directory that the change is being committed to, relative\n",
++    "# to the $CVSROOT.  For the first match that is found, then the remainder\n",
++    "# of the line is the name of the filter to run.\n",
++    "#\n",
++    "# If the repository name does not match any of the regular expressions in this\n",
++    "# file, the \"DEFAULT\" line is used, if it is specified.\n",
++    "#\n",
++    "# If the name \"ALL\" appears as a regular expression it is always used\n",
++    "# in addition to the first matching regex or \"DEFAULT\".\n",
++    NULL
++};
++
+ static const char *const checkoutlist_contents[] = {
+     "# The \"checkoutlist\" file is used to support additional version controlled\n",
+     "# administrative files in $CVSROOT/CVSROOT, such as template files.\n",
+@@ -335,6 +357,9 @@ static const struct admin_file filelist[
+     {CVSROOTADM_TAGINFO,
+ 	"a %s file can be used to configure 'cvs tag' checking",
+ 	taginfo_contents},
++    {CVSROOTADM_TAGLOGINFO,
++	"a %s file controls where 'cvs tag' log information is sent",
++	tagloginfo_contents},
+     {CVSROOTADM_IGNORE,
+ 	"a %s file can be used to specify files to ignore",
+ 	NULL},
+diff -upk.orig cvs-1.11.20.orig/src/rcs.c cvs-1.11.20/src/rcs.c
+--- cvs-1.11.20.orig/src/rcs.c	2005-05-23 16:28:09 +0000
++++ cvs-1.11.20/src/rcs.c	2005-05-23 16:28:23 +0000
+@@ -3430,7 +3430,7 @@ void
+ RCS_check_tag (tag)
+     const char *tag;
+ {
+-    char *invalid = "$,.:;@";		/* invalid RCS tag characters */
++    char *invalid = "$,.:;@/";		/* invalid RCS tag characters */
+     const char *cp;
+ 
+     /*
+diff -upk.orig cvs-1.11.20.orig/src/sanity.sh cvs-1.11.20/src/sanity.sh
+--- cvs-1.11.20.orig/src/sanity.sh	2005-05-23 16:28:09 +0000
++++ cvs-1.11.20/src/sanity.sh	2005-05-23 16:28:23 +0000
+@@ -11307,6 +11307,7 @@ U CVSROOT/modules
+ U CVSROOT/notify
+ U CVSROOT/rcsinfo
+ U CVSROOT/taginfo
++U CVSROOT/tagloginfo
+ U CVSROOT/verifymsg'
+ 	  echo "# made a change" >>CVSROOT/modules
+ 	  dotest modules-1d "${testcvs} -q ci -m add-modules" \
+@@ -11331,6 +11332,7 @@ U CVSROOT/modules
+ U CVSROOT/notify
+ U CVSROOT/rcsinfo
+ U CVSROOT/taginfo
++U CVSROOT/tagloginfo
+ U CVSROOT/verifymsg'
+ 	  echo "# made a change" >>CVSROOT/modules
+ 	  dotest modules-2d "${testcvs} -q ci -m add-modules" \
+@@ -11358,6 +11360,7 @@ U CVSROOT/modules
+ U CVSROOT/notify
+ U CVSROOT/rcsinfo
+ U CVSROOT/taginfo
++U CVSROOT/tagloginfo
+ U CVSROOT/verifymsg'
+ 	  echo "# made a change" >>CVSROOT/modules
+ 	  dotest modules-3g "${testcvs} -q ci -m add-modules" \
+@@ -11426,6 +11429,7 @@ U CVSROOT/modules
+ U CVSROOT/notify
+ U CVSROOT/rcsinfo
+ U CVSROOT/taginfo
++U CVSROOT/tagloginfo
+ U CVSROOT/verifymsg"
+ 
+ 	  # Here we test that CVS can deal with CVSROOT (whose repository
+@@ -12285,6 +12289,7 @@ U CVSROOT/modules
+ U CVSROOT/notify
+ U CVSROOT/rcsinfo
+ U CVSROOT/taginfo
++U CVSROOT/tagloginfo
+ U CVSROOT/verifymsg"
+ 
+ 	  # FIXCVS: The sleep in the following script helps avoid out of
+@@ -14765,6 +14770,8 @@ ${PROG} checkout: move away CVSROOT/rcsi
+ C CVSROOT/rcsinfo
+ ${PROG} checkout: move away CVSROOT/taginfo; it is in the way
+ C CVSROOT/taginfo
++${PROG} checkout: move away CVSROOT/tagloginfo; it is in the way
++C CVSROOT/tagloginfo
+ ${PROG} checkout: move away CVSROOT/verifymsg; it is in the way
+ C CVSROOT/verifymsg"
+ 
+diff -upk.orig cvs-1.11.20.orig/src/tag.c cvs-1.11.20/src/tag.c
+--- cvs-1.11.20.orig/src/tag.c	2005-03-16 19:16:01 +0000
++++ cvs-1.11.20/src/tag.c	2005-05-23 16:28:23 +0000
+@@ -28,10 +28,12 @@ static int check_filesdoneproc PROTO ((v
+                                        const char *repos,
+                                        const char *update_dir,
+                                        List *entries));
++static int prepost_tag_proc PROTO((const char *repository, const char *filter, const char *tagname));
+ static int pretag_proc PROTO((const char *repository, const char *filter));
++static int posttag_proc PROTO((const char *repository, const char *filter));
+ static void masterlist_delproc PROTO((Node *p));
+ static void tag_delproc PROTO((Node *p));
+-static int pretag_list_proc PROTO((Node *p, void *closure));
++static int prepost_tag_list_proc PROTO((Node *p, void *closure));
+ 
+ static Dtype tag_dirproc PROTO ((void *callerdat, const char *dir,
+                                  const char *repos, const char *update_dir,
+@@ -39,6 +41,9 @@ static Dtype tag_dirproc PROTO ((void *c
+ static int rtag_fileproc PROTO ((void *callerdat, struct file_info *finfo));
+ static int rtag_delete PROTO((RCSNode *rcsfile));
+ static int tag_fileproc PROTO ((void *callerdat, struct file_info *finfo));
++static int tag_filesdoneproc PROTO ((void *callerdat, int err,
++				       const char *repos, const char *update_dir,
++				       List *entries));
+ 
+ static char *numtag;			/* specific revision to tag */
+ static int numtag_validated = 0;
+@@ -400,7 +405,7 @@ rtag_proc (argc, argv, xwhere, mwhere, m
+ 
+     /* start the recursion processor */
+     err = start_recursion (is_rtag ? rtag_fileproc : tag_fileproc,
+-			   (FILESDONEPROC) NULL, tag_dirproc,
++			   tag_filesdoneproc, tag_dirproc,
+ 			   (DIRLEAVEPROC) NULL, NULL, argc - 1, argv + 1,
+ 			   local_specified, which, 0, CVS_LOCK_WRITE, where, 1,
+ 			   repository);
+@@ -572,9 +577,7 @@ check_filesdoneproc (callerdat, err, rep
+ }
+ 
+ static int
+-pretag_proc (repository, filter)
+-    const char *repository;
+-    const char *filter;
++prepost_tag_proc (const char *repository, const char *filter, const char *tagname)
+ {
+     if (filter[0] == '/')
+     {
+@@ -591,7 +594,7 @@ pretag_proc (repository, filter)
+         }
+         if (!isfile(s))
+         {
+-            error (0, errno, "cannot find pre-tag filter '%s'", s);
++            error (0, errno, "cannot find %s filter '%s'", tagname, s);
+             free(s);
+             return (1);
+         }
+@@ -601,10 +604,22 @@ pretag_proc (repository, filter)
+     run_arg (symtag);
+     run_arg (delete_flag ? "del" : force_tag_move ? "mov" : "add");
+     run_arg (repository);
+-    walklist(tlist, pretag_list_proc, NULL);
++    walklist(tlist, prepost_tag_list_proc, NULL);
+     return (run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL));
+ }
+ 
++static int
++pretag_proc (const char *repository, const char *filter)
++{
++	return prepost_tag_proc (repository, filter, "pre-rtag");
++}
++
++static int
++posttag_proc (const char *repository, const char *filter)
++{
++	return prepost_tag_proc (repository, filter, "post-rtag");
++}
++
+ static void
+ masterlist_delproc(p)
+     Node *p;
+@@ -629,7 +644,7 @@ tag_delproc(p)
+ }
+ 
+ static int
+-pretag_list_proc(p, closure)
++prepost_tag_list_proc(p, closure)
+     Node *p;
+     void *closure;
+ {
+@@ -1071,6 +1086,38 @@ tag_fileproc (callerdat, finfo)
+     return (retval);
+ }
+ 
++static int
++tag_filesdoneproc (callerdat, err, repos, update_dir, entries)
++    void *callerdat;
++    int err;
++    const char *repos;
++    const char *update_dir;
++    List *entries;
++{
++    int n;
++    Node *p;
++
++    p = findnode(mtlist, update_dir);
++    if (p != NULL)
++    {
++        tlist = ((struct master_lists *) p->data)->tlist;
++    }
++    else
++    {
++        tlist = (List *) NULL;
++    }
++    if ((tlist == NULL) || (tlist->list->next == tlist->list))
++    {
++        return (err);
++    }
++    if ((n = Parse_Info(CVSROOTADM_TAGLOGINFO, repos, posttag_proc, 1)) > 0)
++    {
++        error (0, 0, "Post-tag script failed");
++        err += n;
++    }
++    return (err);
++}
++
+ /*
+  * Print a warm fuzzy message
+  */

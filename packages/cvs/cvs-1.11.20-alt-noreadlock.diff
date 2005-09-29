@@ -1,0 +1,51 @@
+diff -upk.orig cvs-1.11.20.orig/src/cvs.h cvs-1.11.20/src/cvs.h
+--- cvs-1.11.20.orig/src/cvs.h	2005-09-29 14:21:40 +0000
++++ cvs-1.11.20/src/cvs.h	2005-09-29 14:21:52 +0000
+@@ -267,6 +267,7 @@ extern int errno;
+ 
+ /* Environment variable used by CVS */
+ #define	CVSREAD_ENV	"CVSREAD"	/* make files read-only */
++#define	CVSNORDLOCK_ENV	"CVSNOREADLOCK"	/* succeed on all read locks */
+ #define	CVSREAD_DFLT	0		/* writable files by default */
+ 
+ #define	TMPDIR_ENV	"TMPDIR"	/* Temporary directory */
+@@ -399,6 +400,7 @@ extern int safe_location PROTO ((char *)
+ 
+ extern int trace;		/* Show all commands */
+ extern int noexec;		/* Don't modify disk anywhere */
++extern int noreadlock;		/* Succeed on all read locks */
+ extern int logoff;		/* Don't write history entry */
+ 
+ extern int top_level_admin;
+diff -upk.orig cvs-1.11.20.orig/src/lock.c cvs-1.11.20/src/lock.c
+--- cvs-1.11.20.orig/src/lock.c	2005-09-29 14:21:40 +0000
++++ cvs-1.11.20/src/lock.c	2005-09-29 14:21:52 +0000
+@@ -407,7 +407,7 @@ Reader_Lock (xrepository)
+ 	(void) fprintf (stderr, "%s-> Reader_Lock(%s)\n", CLIENT_SERVER_STR,
+                         xrepository);
+ 
+-    if (noexec)
++    if (noexec || noreadlock)
+ 	return 0;
+ 
+     /* we only do one directory at a time for read locks! */
+diff -upk.orig cvs-1.11.20.orig/src/main.c cvs-1.11.20/src/main.c
+--- cvs-1.11.20.orig/src/main.c	2005-09-29 14:21:40 +0000
++++ cvs-1.11.20/src/main.c	2005-09-29 14:21:52 +0000
+@@ -46,6 +46,7 @@ int really_quiet = 0;
+ int quiet = 0;
+ int trace = 0;
+ int noexec = 0;
++int noreadlock = 0;
+ int logoff = 0;
+ 
+ /* Set if we should be writing CVSADM directories at top level.  At
+@@ -459,6 +460,8 @@ main (argc, argv)
+ 	Editor = cp;
+     if (getenv (CVSREAD_ENV) != NULL)
+ 	cvswrite = 0;
++    if (getenv (CVSNORDLOCK_ENV) != NULL)
++	noreadlock = logoff = 1;
+ 
+     /* Set this to 0 to force getopt initialization.  getopt() sets
+        this to 1 internally.  */

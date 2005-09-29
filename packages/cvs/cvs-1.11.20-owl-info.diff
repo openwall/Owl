@@ -1,0 +1,29 @@
+diff -upk.orig cvs-1.11.20.orig/doc/cvs.texinfo cvs-1.11.20/doc/cvs.texinfo
+--- cvs-1.11.20.orig/doc/cvs.texinfo	2005-04-14 17:38:46 +0000
++++ cvs-1.11.20/doc/cvs.texinfo	2005-09-28 22:38:22 +0000
+@@ -99,11 +99,11 @@ approved by the Free Software Foundation
+ 
+ @dircategory GNU Packages
+ @direntry
+-* CVS: (cvs).                   Concurrent Versions System
++* CVS: (cvs).                                   Concurrent Versions System
+ @end direntry
+ @dircategory Individual utilities
+ @direntry
+-* cvs: (cvs)CVS commands.       Concurrent Versions System
++* cvs: (cvs)CVS commands.                       Concurrent Versions System
+ @end direntry
+ 
+ @comment The titlepage section does not appear in the Info file.
+diff -upk.orig cvs-1.11.20.orig/doc/cvsclient.texi cvs-1.11.20/doc/cvsclient.texi
+--- cvs-1.11.20.orig/doc/cvsclient.texi	2004-11-11 22:30:41 +0000
++++ cvs-1.11.20/doc/cvsclient.texi	2005-09-28 22:38:22 +0000
+@@ -5,7 +5,7 @@
+ 
+ @dircategory Programming
+ @direntry
+-* cvsclient: (cvsclient).      The CVS client/server protocol.
++* cvsclient: (cvsclient).                       The CVS client/server protocol
+ @end direntry
+ 
+ @node Top

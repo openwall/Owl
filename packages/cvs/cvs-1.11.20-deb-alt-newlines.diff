@@ -1,0 +1,76 @@
+diff -upk.orig cvs-1.11.20.orig/src/logmsg.c cvs-1.11.20/src/logmsg.c
+--- cvs-1.11.20.orig/src/logmsg.c	2005-09-29 13:33:46 +0000
++++ cvs-1.11.20/src/logmsg.c	2005-09-29 13:34:02 +0000
+@@ -229,6 +229,8 @@ do_editor (dir, messagep, repository, ch
+ 	if ((*messagep)[0] == '\0' ||
+ 	    (*messagep)[strlen (*messagep) - 1] != '\n')
+ 	    (void) fprintf (fp, "\n");
++    } else {
++      (void) fprintf (fp, "\n");
+     }
+ 
+     if (repository != NULL)
+@@ -374,7 +376,11 @@ do_editor (dir, messagep, repository, ch
+ 	*messagep = NULL;
+     }
+ 
+-    if (pre_stbuf.st_mtime == post_stbuf.st_mtime || *messagep == NULL)
++    if (pre_stbuf.st_mtime == post_stbuf.st_mtime || 
++        *messagep == NULL ||
++        (*messagep)[0] == '\0' ||
++        strcmp (*messagep, "\n") == 0 ||
++        strcmp (*messagep, "\n\n") == 0)
+     {
+ 	for (;;)
+ 	{
+diff -upk.orig cvs-1.11.20.orig/src/sanity.sh cvs-1.11.20/src/sanity.sh
+--- cvs-1.11.20.orig/src/sanity.sh	2005-09-29 13:33:46 +0000
++++ cvs-1.11.20/src/sanity.sh	2005-09-29 13:34:02 +0000
+@@ -14909,6 +14909,7 @@ description:
+ revision 1\.1
+ date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+ branches:  1\.1\.2;
++x
+ xCVS: ----------------------------------------------------------------------
+ xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
+ xCVS:
+@@ -14920,6 +14921,7 @@ xCVS: ----------------------------------
+ ----------------------------
+ revision 1\.1\.2\.1
+ date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
++x
+ xCVS: ----------------------------------------------------------------------
+ xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
+ xCVS:
+@@ -14947,6 +14949,7 @@ description:
+ revision 1\.1
+ date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+ branches:  1\.1\.2;
++x
+ xCVS: ----------------------------------------------------------------------
+ xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
+ xCVS:
+@@ -14958,6 +14961,7 @@ xCVS: ----------------------------------
+ ----------------------------
+ revision 1\.1\.2\.1
+ date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
++x
+ xCVS: ----------------------------------------------------------------------
+ xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
+ xCVS:
+@@ -14979,6 +14983,7 @@ description:
+ revision 1\.1
+ date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+ branches:  1\.1\.2;
++x
+ xCVS: ----------------------------------------------------------------------
+ xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
+ xCVS:
+@@ -14990,6 +14995,7 @@ xCVS: ----------------------------------
+ ----------------------------
+ revision 1\.1\.2\.1
+ date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
++x
+ xCVS: ----------------------------------------------------------------------
+ xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
+ xCVS:

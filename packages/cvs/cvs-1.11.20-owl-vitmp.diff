@@ -1,0 +1,60 @@
+diff -upk.orig cvs-1.11.20.orig/FAQ cvs-1.11.20/FAQ
+--- cvs-1.11.20.orig/FAQ	2004-11-11 22:30:36 +0000
++++ cvs-1.11.20/FAQ	2005-09-28 23:09:45 +0000
+@@ -7144,7 +7144,7 @@ kingdon@cyclic.com
+ 
+         EDITOR          Used if CVSEDITOR doesn't exist.  If EDITOR
+                         doesn't exist, CVS uses a configured constant,
+-                        usually, "vi".
++                        usually, "vitmp".
+ 
+         CVSREAD         Sets files to read-only on "checkout".
+ 
+diff -upk.orig cvs-1.11.20.orig/configure.in cvs-1.11.20/configure.in
+--- cvs-1.11.20.orig/configure.in	2005-09-28 23:08:50 +0000
++++ cvs-1.11.20/configure.in	2005-09-28 23:09:44 +0000
+@@ -442,7 +442,7 @@ fi
+ # Set the default when --with-editor wasn't supplied or when it was supplied
+ # without an argument.
+ if test yes = $with_editor; then
+-  with_editor="vim vi emacs nano pico edit"
++  with_editor="vitmp"
+ fi
+ 
+ if echo $with_editor |grep ^/ >/dev/null; then
+diff -upk.orig cvs-1.11.20.orig/contrib/rcs-to-cvs.sh cvs-1.11.20/contrib/rcs-to-cvs.sh
+--- cvs-1.11.20.orig/contrib/rcs-to-cvs.sh	1997-02-21 03:44:46 +0000
++++ cvs-1.11.20/contrib/rcs-to-cvs.sh	2005-09-28 23:09:44 +0000
+@@ -78,7 +78,7 @@ fi
+ if [ $got_one -eq 0 ]; then
+     echo "Please Edit this file to contain the RCS log information" >$message_file
+     echo "to be associated with this directory (please remove these lines)">>$message_file
+-    ${EDITOR-vi} $message_file
++    ${EDITOR-vitmp} $message_file
+     got_one=1
+ fi
+ 
+diff -upk.orig cvs-1.11.20.orig/man/cvsbug.8 cvs-1.11.20/man/cvsbug.8
+--- cvs-1.11.20.orig/man/cvsbug.8	2001-11-27 16:24:58 +0000
++++ cvs-1.11.20/man/cvsbug.8	2005-09-28 23:09:45 +0000
+@@ -163,7 +163,7 @@ The environment variable 
+ specifies the editor to invoke on the template.
+ .br
+ default:
+-.B vi
++.B vitmp
+ .sp
+ If the environment variable 
+ .B PR_FORM
+diff -upk.orig cvs-1.11.20.orig/src/cvsbug.in cvs-1.11.20/src/cvsbug.in
+--- cvs-1.11.20.orig/src/cvsbug.in	2004-02-03 14:37:52 +0000
++++ cvs-1.11.20/src/cvsbug.in	2005-09-28 23:09:45 +0000
+@@ -136,7 +136,7 @@ fi
+ # If they don't have a preferred editor set, then use
+ if [ -z "$VISUAL" ]; then
+   if [ -z "$EDITOR" ]; then
+-    EDIT=vi
++    EDIT=vitmp
+   else
+     EDIT="$EDITOR"
+   fi
