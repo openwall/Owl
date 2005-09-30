@@ -1,22 +1,15 @@
-# $Id: Owl/packages/tcsh/tcsh.spec,v 1.12 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/tcsh/tcsh.spec,v 1.13 2005/09/30 19:44:26 solar Exp $
 
 Summary: An enhanced version of csh, the C shell.
 Name: tcsh
-Version: 6.10.01
-Release: owl3
+Version: 6.14.00
+Release: owl1
 License: BSD
 Group: System Environment/Shells
-URL: http://www.primate.wisc.edu/software/csh-tcsh-book/
-Source: ftp://ftp.fujitsu.co.jp/pub/misc/shells/tcsh/%name-%version.tgz
-Patch0: tcsh-6.10.00-rh-utmp.diff
-Patch1: tcsh-6.09.00-rh-termios_hack.diff
-Patch2: tcsh-6.09.00-rh-locale.diff
-Patch3: tcsh-6.10.00-suse-owl-shtmp.diff
-Patch4: tcsh-6.10.01-deb-format.diff
-Patch5: tcsh-6.10.01-deb-config.diff
-Patch6: tcsh-6.10.01-deb-locale.diff
-Patch7: tcsh-6.10.01-deb-man.diff
-Patch8: tcsh-6.10.01-deb-time.diff
+URL: http://www.tcsh.org/Home
+Source: ftp://ftp.astron.com/pub/tcsh/%name-%version.tar.gz
+Patch0: tcsh-6.14.00-suse-owl-tmp.diff
+Patch1: tcsh-6.14.00-owl-config.diff
 PreReq: fileutils, grep
 Provides: csh = %version
 BuildRoot: /override/%name-%version
@@ -33,13 +26,6 @@ like syntax.
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
 
 cat > catalogs << EOF
 de ISO-8859-1 german
@@ -108,6 +94,10 @@ fi
 %_datadir/locale/*/LC_MESSAGES/tcsh*
 
 %changelog
+* Sun Sep 18 2005 Gremlin from Kremlin <gremlin@owl.openwall.com> 6.14.00-owl1
+- Updated to 6.14.00, dropped obsolete patches (only the -tmp patch is left),
+disabled AUTOLOGOUT by default.
+
 * Sat Feb 28 2004 Michail Litvak <mci@owl.openwall.com> 6.10.01-owl3
 - Fixed building with new glibc (fix from ALT's spec file).
 
