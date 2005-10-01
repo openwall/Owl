@@ -275,9 +275,25 @@ http://www.kernel.org/pub/linux/utils/kernel/hotplug/udev.html
 	owl-setup.
 
 [PRIORITY: medium]
-[ASSIGNED: Croco]
-Develop a ncurses-based window interface for the installer (use cdk?),
-while keeping the original dumb terminal interface as well.
+[ASSIGNED: solar@, croco@]
+Once the ncurses/cdk-based user interface is sufficiently tested, make
+it the default.
+
+[PRIORITY: medium]
+[ASSIGNED: croco@]
+With the ncurses UI, default to using cfdisk, but offer plain fdisk as
+well.
+
+[PRIORITY: medium]
+[ASSIGNED: croco@]
+Talk to PAM rather than invoke passwd(1).  With the ncurses UI, display
+prompts and messages with the appropriate CDK widgets.  Buffer multiple
+subsequent messages like the old passwdlg.c did.
+
+[PRIORITY: low]
+[ASSIGNED: croco@]
+Color support for the ncurses/cdk-based UI.  Auto-detect supporting
+terminals in a way similar to that seen in our ls(1) patch.
 
 
 	owl-startup.
@@ -546,4 +562,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.104 2005/10/01 22:37:29 solar Exp $
+$Id: Owl/doc/TODO,v 1.105 2005/10/01 22:48:06 solar Exp $
