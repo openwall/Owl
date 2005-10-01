@@ -562,6 +562,15 @@ used when logging (currently, with some FTP sessions, some timestamps
 are in local time while others are in UTC).
 
 
+	whoson.
+
+[PRIORITY: medium]
+[ASSIGNED: ldv@, solar@]
+Package whoson, fixing its support for Unix domain sockets to work on
+Linux (apparently, it's only been tested on FreeBSD).  Teach Postfix and
+popa3d to use whoson.
+
+
 	xinetd.
 
 [PRIORITY: medium]
@@ -571,4 +580,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.107 2005/10/01 23:01:09 solar Exp $
+$Id: Owl/doc/TODO,v 1.108 2005/10/01 23:25:47 solar Exp $
