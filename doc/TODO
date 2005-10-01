@@ -93,14 +93,14 @@ Update to the latest 1.11.x or to 1.12.x.
 
 	dhcp.
 
-[PRIORITY: medium]
-[ASSIGNED: schmidt@, solar@]
+[PRIORITY: low]
+[ASSIGNED: ldv@]
 All of the DHCP suite programs should use /dev/urandom as the only
 source of randomness.  The resolver should be either corrected to use
 unpredictable query IDs, or dropped in favor of the one in glibc.
 
 [PRIORITY: low]
-[ASSIGNED: schmidt@, solar@]
+[ASSIGNED: ldv@]
 The DHCP client should be modified to run as a dedicated pseudo-user
 and in a chroot jail.  This requires privilege separation within the
 client (not easy).
@@ -109,7 +109,8 @@ client (not easy).
 	gdb.
 
 [PRIORITY: medium]
-Investigate and deal with fd leaks into traced programs.
+Investigate and deal with fd leaks into traced programs.  (Is this
+problem still present with our current version of gdb?)
 
 [PRIORITY: low]
 [ASSIGNED: solar@]
@@ -126,6 +127,7 @@ compatibility.
 	glibc.
 
 [PRIORITY: medium]
+[ASSIGNED: ldv@]
 Patch __libc_message() to write to syslog by default (rather than as
 a fallback) and when doing so to connect to /dev/log and write there
 directly, without utilizing vsyslog(3) (which may use malloc()-family
@@ -170,8 +172,8 @@ Keep it to latest release.
 
 [PRIORITY: medium]
 [ASSIGNED: solar@]
-Update documentation and .chr files, release as 1.7.  (Lots of other
-items are in a separate non-public TODO list for just John.)
+Update *.chr files, release as 1.7.  (Lots of other items are in a
+separate non-public TODO list for just John.)
 
 
 	libnet, libnids, libpcap.
@@ -225,6 +227,7 @@ Consider enhancements from VVV (http://mutt.org.ua).
 	ntp.
 
 [PRIORITY: low]
+[ASSIGNED: galaxy@]
 Package OpenNTPD.  Use UID/GID 185 (already allocated), but rename the
 pseudo-user as appropriate (ntpd?).
 
@@ -295,7 +298,7 @@ be supporting udev, make an exception for /dev.
 
 	pam.
 
-[PRIORITY: low]
+[PRIORITY: medium]
 [ASSIGNED: ldv@]
 Make other packages in Owl use new "include" directive where appropriate.
 
@@ -327,9 +330,8 @@ Provide some real stacking examples in the documentation.
 
 [PRIORITY: low]
 Support an external configuration file where settings common to uses
-of the module by several services could reside.  (If we start using
-pam_stack or add an equivalent libpam feature, that wouldn't be needed
-for Owl itself any longer.)
+of the module by several services could reside.  (If we start using the
+"include" directive, that wouldn't be needed for Owl itself any longer.)
 
 [PRIORITY: low]
 Support external wordlists and "31337" word mangling.
@@ -344,6 +346,7 @@ Solve the DoS-against-itself on the temporary file.
 	perl.
 
 [PRIORITY: low]
+[ASSIGNED: mci@]
 Double-check the perl packages in Fedora and RHEL and likely bump
 Epoch to 2 in our package for compatibility.
 
@@ -497,6 +500,7 @@ Bump syslog priorities of many pam_tcb error messages.
 	traceroute.
 
 [PRIORITY: medium]
+[ASSIGNED: mci@]
 Replace with Olaf Kirch's.  URLs:
 http://rechner.lst.de/~okir/traceroute/
 ftp://ftp.lst.de/pub/people/okir/traceroute
@@ -526,8 +530,11 @@ Reject or support long usernames in crontab(1).
 
 	vsftpd.
 
-[PRIORITY: low]
-Keep to latest release.
+[PRIORITY: medium]
+[ASSIGNED: ldv@]
+Update to latest release, see if that fixes the problem with timezone
+used when logging (currently, with some FTP sessions, some timestamps
+are in local time while others are in UTC).
 
 
 	xinetd.
@@ -539,4 +546,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.103 2005/09/29 22:09:56 ldv Exp $
+$Id: Owl/doc/TODO,v 1.104 2005/10/01 22:37:29 solar Exp $
