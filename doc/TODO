@@ -395,6 +395,7 @@ Consider a number of patches and add-ons.
 Restrict queue views and runs.
 
 [PRIORITY: medium]
+[ASSIGNED: ldv@]
 Open PAM sessions for programs run from .forward or LDA such that
 resource limits are set.
 
@@ -562,4 +563,4 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.105 2005/10/01 22:48:06 solar Exp $
+$Id: Owl/doc/TODO,v 1.106 2005/10/01 22:58:19 solar Exp $
