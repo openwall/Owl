@@ -72,7 +72,7 @@ xscreensaver package.  xscreensaver appears to be too smart and drops
 its additional privilege.
 
 
-	No rpm-python subpackage (rpm-python).
+	No rpm-python subpackage (rpm-python, yum).
 
 As we don't provide Python as part of Owl, we also build RPM without
 support for Python language bindings.  Moreover, Red Hat's rpm-python
@@ -107,4 +107,4 @@ The one problem we are aware of and have resolved is the source code
 for recent versions of RPM requiring NPTL.  We have resolved that
 dependency on NPTL in our build of RPM.
 
-$Id: Owl/doc/REDHAT,v 1.3 2005/08/24 00:18:22 solar Exp $
+$Id: Owl/doc/REDHAT,v 1.4 2005/10/01 23:04:05 solar Exp $
