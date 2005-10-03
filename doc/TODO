@@ -4,10 +4,10 @@ see CONVENTIONS if you do).  It is not intended as a poor replacement
 for a request tracking system (although we don't yet use one) and it
 is not a complete TODO list either.
 
-Currently, this list is limited to packages.  It doesn't have to be,
-so this may change.  In reality, besides the packages, there're quite
-a few bits of work on Owl build environment, kernel, documentation,
-and the facilities we use to run the project.
+Currently, this list is mostly limited to packages.  It doesn't have to
+be, so this may change.  In reality, besides the packages, there are
+quite a few bits of work on Owl build environment, kernel,
+documentation, and the facilities we use to run the project.
 
 If something is listed as ASSIGNED, it doesn't mean you shouldn't
 offer to do it.  Re-assigning is perfectly fine if it would seem to
@@ -580,4 +580,13 @@ Do ident lookups (if enabled) as a dedicated pseudo-user.
 Develop and migrate to a cleaner replacement, with some limited
 configuration file compatibility.
 
-$Id: Owl/doc/TODO,v 1.109 2005/10/01 23:52:41 solar Exp $
+
+	Owl/build/installworld.sh
+
+[PRIORITY: medium]
+Fix installworld.sh to always pick the latest version of a package when
+multiple versions are available (please refer to the appropriate XXX
+comment in the script).  Alternatively, as a temporary workaround drop
+the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
+
+$Id: Owl/doc/TODO,v 1.110 2005/10/03 13:20:40 solar Exp $
