@@ -2,12 +2,13 @@ Die Owl Homepage befindet sich unter:
 
 http://www.openwall.com/Owl/
 
-Dort kann man Owl auf einer CD bestellen, die weltweit geliefert wird
-und damit unser Projekt unterstützen.
+Dort kann man Owl auf einer CD bestellen.  Diese wird in die ganze Welt
+ausgeliefert und man unterstützt damit unser Projekt.
 
-Owl kann von einem der folgenden offiziellen Spiegel-Server herunter
+Owl kann von einem der folgenden offiziellen Mirror-Server herunter
 geladen werden:
 
+ftp://mirror.sg.depaul.edu/pub/security/openwall.com/Owl/	(USA)
 ftp://ftp1.msk.ru.openwall.com/pub/Owl/	(Moskau, Russland)
 ftp://ftp2.msk.ru.openwall.com/pub/Owl/	(Moskau, Russland)
 ftp://ftp.spb.ru.openwall.com/pub/Owl/	(St. Petersburg, Russland)
@@ -29,23 +30,24 @@ native.tar.gz		CVS tree (Unsere Software, Patches und div.
 sources			Quellcode (Original tar-Archive die gepatcht
 			werden)
 kernel			Kernel-Quellen und empfohlene Patches
-Owl.mtree		Die mtree(8) Spezifikationen von dem oberen
+Owl.mtree		Die mtree(8) Spezifikationen des CVS trees und
+			der Quellcodes
 i?86, sparc*, alpha*	Binärpakete zu Owl
 iso			ISO-9660 Images der Owl CDs
 
 Einige der Unterverzeichnisse benutzen symbolische Links zu Dateien, die
-in allen Owl Sparten vorkommen. Um nur eine Sparte herunterzuladen,
+in allen Owl Sparten vorkommen.  Um nur eine Sparte herunterzuladen,
 muss man eventuell dem FTP Client sagen, dass er Symbolische Links
-nicht dereferenzieren soll. Wird lftp (ist Bestandteil von Owl) benutzt,
+nicht dereferenzieren soll.  Wird lftp (ist Bestandteil von Owl) benutzt,
 dient dazu das "mirror -L" Kommando.
 
-Die mtree(8) Spezifikationen von Owl sind mit PGP signiert. Der
+Die mtree(8) Spezifikationen von Owl sind mit PGP signiert.  Der
 entsprechende Schlüssel findet sich unter:
 
 http://www.openwall.com/signatures/
 
-Man wird fast immer den CVS tree brauchen, auch wenn man nur die
-Binärpakete installiert. Wenn man Owl aus den Quellen neu übersetzen
+Man braucht fast immer den CVS tree, auch wenn man nur die
+Binärpakete installiert.  Wenn man Owl aus den Quellen neu übersetzen
 will, braucht man beides: den CVS tree und den Quellcode.
 
 Mehr Dokumentation (inklusive BUILD und INSTALL) gibt es im CVS tree unter
@@ -54,7 +56,7 @@ Owl/doc/.
 Alternativ kann man an den CVS tree (neben der Möglichkeit die snapshots für
 eine bestimmte Sparte als native.tar.gz von einem unserer oben aufgeführten
 FTP Spiegel-Server herunter zuladen) über unseren anonymen CVS Server
-kommen. Um via pserver an den CVS Server zu kommen, muss die CVSROOT Variable
+kommen.  Um via pserver an den CVS Server zu kommen, muss die CVSROOT Variable
 wie folgt gesetzt werden:
 
 CVSROOT=:pserver:anoncvs:anoncvs@anoncvs.owl.openwall.com:/cvs
@@ -64,7 +66,7 @@ oder über SSH mit den folgenden Einstellungen:
 CVS_RSH=ssh
 CVSROOT=anoncvs@anoncvs.owl.openwall.com:/cvs
 
-Das Passwort ist "anoncvs" und der Modulname ist "Owl". Es ist auch möglich
+Das Passwort ist "anoncvs" und der Modulname ist "Owl".  Es ist auch möglich
 Kompression zu benutzen, zum einen, wenn man direkt auf den anonymen CVS Server
 zugreift, mit der Option -z3 und/oder zum anderen wenn man "Compression yes"
 in der Konfigurationsdatei des SSH Clients einstellt.
@@ -73,4 +75,4 @@ Wir bieten zudem auch ein CVSweb-Interface an:
 
 http://cvsweb.openwall.com
 
-$Id: Owl/doc/de/DOWNLOAD,v 1.24 2005/07/14 16:36:39 solar Exp $
+$Id: Owl/doc/de/DOWNLOAD,v 1.25 2005/10/03 11:48:01 schmidt Exp $

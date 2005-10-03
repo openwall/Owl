@@ -15,7 +15,7 @@ Reihenfolge der Tags ist:
 Summary, Name, Version, Release, Epoch, License, Group, URL,
 Source*, Patch*, PreReq, Requires, Conflicts, Provides, Obsoletes,
 Auto*, Prefix, BuildRequires, BuildArchitectures, ExcludeArch,
-ExclusiveArch, BuildRoot. Andere Tags benutzen wir (momentan) nicht.
+ExclusiveArch, BuildRoot.  Andere Tags benutzen wir (momentan) nicht.
 
 3. Release-Nummern für Owl-Pakete sind von folgender Form:
 
@@ -32,7 +32,7 @@ oder wenn man eine ältere Sparte von Owl updatet:
 	BRANCH_POINT_RELEASE.BRANCH.REVISION
 
 wobei REVISION eine Owl spezifische Paket-Revisions Nummer ist, die
-nach jedem Update inkrementiert wird. BRANCH_POINT_RELEASE ist die
+nach jedem Update inkrementiert wird.  BRANCH_POINT_RELEASE ist die
 Zeichenkette, die das Erstellungsdatum der Sparte enthält. BRANCH
 ist die Spartennummer (ist "0.1" für Owl 0.1-stable).
 
@@ -49,17 +49,17 @@ er wird viele daran erinnern den BuildRoot Tag zu überschreiben, wenn
 sie manuell Pakete erstellen, besonders in nicht-Owl Umgebungen.
 
 5. Verschiedene Tag's und Einstellungen kann man mit einem einzelnen
-Leerzeichen setzen. Es werden Kommata, gefolgt von einem Leerzeichen benutzt um
-verschiedene Abhängigkeits-Einträge zu trennen. Aufzählungen mit einem
+Leerzeichen setzen.  Es werden Kommata, gefolgt von einem Leerzeichen benutzt um
+verschiedene Abhängigkeits-Einträge zu trennen.  Aufzählungen mit einem
 Punkt abschliessen. In beiden Fällen, Aufzählung und %description (wie
 auch bei anderer Dokumentation), sollte vermieden werden Befehle gross zu
-schreiben, selbst wenn es das erste Wort im Satz ist. Es sei denn die
-gross geschriebene Form ist der offizielle Name der Software. Um Sätze
+schreiben, selbst wenn es das erste Wort im Satz ist.  Es sei denn die
+gross geschriebene Form ist der offizielle Name der Software.  Um Sätze
 zu trennen sollten zwei Leerzeichen benutzt werden.
 
 6. Unsere Arbeitsumgebung setzt die optimierenden C/C++ compiler flags
 in %optflag. Dort werden sie so gesetzt, dass sie für einzelne Programme
-optimal sind und nicht zu viele Warnungen produzieren. Wenn man
+optimal sind und nicht zu viele Warnungen produzieren.  Wenn man
 Bibilotheken übersetzt kann man andere flags benutzen, indem man die
 folgenden zwei Zeilen genau über der %build Sektion platziert:
 
@@ -69,8 +69,8 @@ folgenden zwei Zeilen genau über der %build Sektion platziert:
 Dies wird eine Optimierung ausschalten die verhindert, dass man die
 Programme, die gegen diese Bibilothek gelinkt werden, debuggen kann
 (selbst wenn die Programme selber korrekt zum debuggen übersetzt worden
-sind). Auf dem x86 wird zusätzlich ein korrektes Stack-Verhalten für
-effizientere Gleitkomma- und MMX-Operationen gewährleistet. (Wir sind
+sind).  Auf dem x86 wird zusätzlich ein korrektes Stack-Verhalten für
+effizientere Gleitkomma- und MMX-Operationen gewährleistet.  (Wir sind
 nur wegen der Dritt-Software so freundlich. Wir haben, bei der Software
 die Teil von Owl ist, keinen grossen Anteil an Fliesskomma Arithmetik.
 Deswegen brauchen wir kein korrekteres Stack Verhalten, wenn wir unsere
@@ -78,38 +78,66 @@ Software übersetzen.)
 
 Es wird auch empfohlen, dass die Quelltexte sauber genug sind, damit
 keine einzige Kompilerwarnung erscheint, wenn man mit "gcc -Wall" über-
-setzt. Wenn dem so ist, ist der richtige Weg um die -Wall Option zu
+setzt.  Wenn dem so ist, ist der richtige Weg um die -Wall Option zu
 übergeben, einfach folgende Zeile vor der %build Sektion einfügen:
 
 	%{expand:%%define optflags %optflags -Wall}
 
 7. Subshells während des Erstellens, pre/post-install/uninstall und
 sonstige Scripts sind zu vermeiden, da sich in ihnen potentielle Fehler
-verstecken können. Wenn man eine Subshell verwenden will um kurz-
+verstecken können.  Wenn man eine Subshell verwenden will um kurz-
 zeitig das Verzeichnis zu wechseln, sollte man pushd und popd stattdessen verwenden.
 Wird wirklich eine Subshell verwendet, empfehlen wir dass man
 die Kommandos der Subshell manuell in der Elternshell eingibt.
 
 8. Benutze Tabulatoren um Anweisungsblöcke oder umgebrochene Zeilen
-in Scripts einzurücken.
+in Scripts einzurücken.  pushd ... popd Blöcke sollten allerdings
+nicht eingerückt werden.
 
 9. Um numerische Werte zu vergleichen, benutze -eq oder -ne und nicht =
 oder !=. Dies gilt besonders für das $1 Argument, was RPM zu den Scripts
 weiterleitet. Das $1 nicht in Anführungszeichen setzen, das Paket muss dem
 Paket-Manager vertrauen, dass es eine korrekte Eingabe bekommt.
 
-10. In %changelog das Datum eintragen. Zwei Zeichen für den Tag, evtl.
-mit einer führenden Null.
+10. Anstatt von $RPM_BUILD_ROOT sollte das %buildroot Makro verwendet werden,
+ebenso %_sourcedir anstatt von $RPM_SOURCE_DIR.  Quelltexte sollte nicht mit
+Zahlen (z.B. mit %SOURCE1), sondern mit %_sourcedir/HIERDIEDATEI referenziert
+werden.
 
-11. Wenn in %changelog ein neuer Eintrag gemacht wird, bitte die aktuelle
-Version und das Release hinter der E-Mail Adresse eintragen, ungefähr so:
+11. Um die verschiedenen Tools aufzurufen, die beim Übersetzen benötigt werden,
+sollten die entsprechenden RPM Makros benutzt werden.  Zum Beispiel %__make
+anstatt dem direkten Aufruf von make oder %__cc anstatt von gcc usw.  Für Shell
+Kommandos, wie z.B. cp, mv oder rm sollten die Makros allerdings nicht
+verwendet werden.
 
-* Mon Mar 10 2003 Your Name <you@example.com> 0.6.2-owl1
+12. Die Option "-f" (force) von Shell Kommandos sollte nicht unötig eingesetzt
+werden.  Dies gilt insbesondere für "rm".  Dadurch, dass "-f" nicht benutzt
+wird, können wir Dateien sehen, ob diese obsoltet geworden sind oder einer
+Überarbeitung bedürfen (z.B., weil ein Datei nach einem Update einen neuen
+Dateinamen hat oder dann an einer anderen Stelle liegt).  Zudem hilft es Fehler
+beim Übersetzen zu entdecken, wo eine Datei von ihrer erwarteten Stelle
+verschwunden ist.  Sollte "-f" aus bestimmten Gründen doch verwendet werden,
+den Grund bitte in einem kurzen, einzeiligen Kommentar über dem entsprechenden
+Kommando festhalten.
 
+13. In %changelog das Datum eintragen.  Zwei Zeichen für den Tag, evtl.
+mit einer führenden Null.  Wenn in %changelog ein neuer Eintrag gemacht wird,
+bitte die aktuelle Version und das Release hinter der E-Mail Adresse eintragen,
+zum Beispiel so:
+
+	* Mon Mar 10 2003 Your Name <you@example.com> 1.0-owl1
+
+14. Um unsere spec Dateien portabel zu halten, sollten sich diese auf einem
+nicht-Owl System entwerder einwandfrei übersetzen lassen oder gar nicht
+funktionieren.  Die spec Dateien, die während der Übersetzung in archive/*tar.gz
+kommen, sollten auf jeden Fall auf nicht-Owl System portierbar sein.  In allen
+spec Dateien, egal ob portierbar oder nicht, sollte die %clean Sektion vermieden
+werden (die Owl Umgebung ignoriert diese Einstellung sowieso und es sollte nicht
+nachteillig sein, wenn der übersetzte Quelltext am Ende nicht gelöscht wird).
 
 	Namen der Patch-Dateien.
 
-Man benutze die folgende Syntax für Patch-Dateinamen:
+Die folgende Syntax wird für Patch-Dateinamen benutzt:
 
 	NAME-VERSION-ORIGIN-WHAT.diff
 
@@ -119,13 +147,13 @@ Beschreibung was der Patch macht oder wofür er ist.
 
 Sollte ein einziger Patch aus mehreren Stücken von verschiedenen
 Distributionen bestehen, schreibt man alle, geordnet nach der Relevanz,
-in ORIGIN. Für Patches, die als ein Teil von Owl entwickelt wurden,
-setzt man ORIGIN auf "owl". Wenn der Patch von einer anderen Distribution
+in ORIGIN.  Für Patches, die als ein Teil von Owl entwickelt wurden,
+setzt man ORIGIN auf "owl".  Wenn der Patch von einer anderen Distribution
 stammt, aber signifikante Änderungen vorgenommen wurden, sollte ORIGIN
 zusätzlich "-owl-" enthalten (das zeigt an, dass auftretende Fehler
-unser Problem sind). Wenn ein Patch aus einem CVS Archiv entnommen
+unser Problem sind).  Wenn ein Patch aus einem CVS Archiv entnommen
 wurde, sollte ORIGIN auf "cvs" gesetzt werden. Zusätzlich sollte WHAT
-auf das koresspondierende Datum (JJJJMMDD) gesetzt werden. Bei Patches
+auf das koresspondierende Datum (JJJJMMDD) gesetzt werden.  Bei Patches
 von Maintainern die (noch?) nicht im primären CVS tree (sofern einer
 existiert) sind, könnte ORIGIN auf "up" gesetzt werden.
 
@@ -149,8 +177,8 @@ vitmp		- Patches die vitmp(1) Unterstützung hinzufügen
 warnings	- Veränderungen an den Kompiler-Warnungen
 
 Dies bedeutet NICHT, Modifikationen so zu verändern, dass
-sie in eine dieser Kategorien passen. Meistens ist es vorteilhaft
-bestimmte Sachen anders zu machen. Dies bedeutet nur, falls man einen
+sie in eine dieser Kategorien passen.  Meistens ist es vorteilhaft
+bestimmte Sachen anders zu machen.  Dies bedeutet nur, falls man einen
 Patch hat, der in eine dieser Kategorien passt, ihn auch passend
 benennt (zum Beispiel "tmp" und nicht "mkstemp").
 
@@ -163,7 +191,7 @@ Patches sollten folgendermassen erstellt werden:
 		NAME-VERSION-ORIGIN-WHAT.diff
 
 wobei NAME-VERSION.orig und NAME-VERSION die Verzeichnisse der Original-
-und modifizierten-Version des Paketes sind. Die "-p" und "-N" Optionen
+und modifizierten-Version des Paketes sind.  Die "-p" und "-N" Optionen
 von diff(1) können weggelassen werden, falls sie nicht gebraucht werden.
 
 Wenn Patches nochmal erstellt werden um zusätzliche Änderungen einzubringen,
@@ -191,21 +219,26 @@ deswegen bei Quelltexten in Owl noch nicht eingesetzt.
 
 	Behandeln von temporären Dateien.
 
-Normalerweise ist es besser keine temporären Dateien zu benutzen, muss
-es aber doch einmal sein, sollte die bevorzugte Art aus Shell Skripten
-heraus ungefähr so aussehen:
+Normalerweise sollte man keine temporären Dateien benutzen.  Sollte es aber doch
+einmal der Fall sein, kann man den folgenden Code verwenden:
 
-TMPFILE=
-trap 'rm -f -- "$TMPFILE"' EXIT
-trap 'trap - EXIT; rm -f -- "$TMPFILE"; exit 1' HUP INT QUIT TERM
-TMPFILE="`mktemp -t program.XXXXXXXXXX`" || exit
+
+	TMPFILE="`mktemp -t program.XXXXXXXXXX`" || exit
+	trap 'rm -f -- "$TMPFILE"' EXIT
+	trap 'trap - EXIT; rm -f -- "$TMPFILE"; exit 1' HUP INT QUIT TERM
+
+Für temporäre Verzeichnisse gilt das folgende:
+
+	TMPD="`mktemp -dt program.XXXXXXXXXX`" || exit
+	trap 'rm -rf -- "$TMPD"' EXIT
+	trap 'trap - EXIT; rm -rf -- "$TMPD"; exit 1' HUP INT QUIT TERM
 
 Diese Art kann in unseren eigenen Skripts sowie Patches verwendet werden.
 Das Paket sollte dann die korrekte Version von mktemp(1) verlangen:
 
-Requires: mktemp >= 1:1.3.1
+	Requires: mktemp >= 1:1.3.1
 
 Benutze Requires, PreReq und/oder BuildRequires wie gewöhnlich nur an den
 Stellen im Paket, wo mktemp auftritt.
 
-$Id: Owl/doc/de/CONVENTIONS,v 1.10 2004/02/07 06:23:23 solar Exp $
+$Id: Owl/doc/de/CONVENTIONS,v 1.11 2005/10/03 11:48:01 schmidt Exp $

@@ -11,11 +11,11 @@ adresse haben, falls technische Probleme oder signifikante
 
 Die bevorzugte Methode für einen Owl mirror vom primären
 feed (ftp.feed.openwall.com) aus ist lftp zu benutzen,
-vorzugsweise das Owl-Paket. (Spätere Versionen haben
+vorzugsweise das Owl-Paket (Spätere Versionen haben
 einen bekannten Bug, aber 2.6.x und neuer funktionieren
 einwandfrei).
 
-Wichtig ist, dass passives FTP benutzt wird. lftp benutzt
+Wichtig ist, dass passives FTP benutzt wird.  lftp benutzt
 diesen Modus standardmässig, aber andere Programme eventuell
 nicht.
 
@@ -28,13 +28,13 @@ Die Aktivitäten werden in ~mirror/.lftp/log geloggt. Wir
 empfehlen nächtliche Updates; zumindest sollte es Nacht in
 einer der Zeitzonen (des Empfängers oder Senders) sein.
 
-Als FTP-Server wird vsftpd empfohlen. Nochmals wird auf
-das entsprechende Owl-Paket von vsftpd verwiesen. Normalerweise
-sollte eine Owl-Installation perfekt sein.
+Als FTP-Server wird vsftpd empfohlen.  Nochmals wird auf
+das entsprechende Owl-Paket von vsftpd verwiesen.  Normalerweise
+sollte eine Owl-Installation ausreichend sein.
 
-Es wird empfohlen die selbe Verzeichnis-Struktur wie die
-ftp*.*.openwall.com Server zu benutzen, um eventuell dann
-ebenfalls einen solchen Namen zu bekommen. Das bedeutet,
+Es wird empfohlen die selbe Verzeichnis-Struktur wie auf den
+ftp*.*.openwall.com Servern zu benutzen, um eventuell dann
+ebenfalls einen solchen Namen zu bekommen.  Das bedeutet,
 dass eine IP-Adresse speziell für diesen mirror eingerichtet
 werden müsste, falls dieser Server noch anderen Inhalt
 hostet.
@@ -47,7 +47,7 @@ der FTP-Server Grusszeile einfügen, zum Beispiel:
 Für einen offiziellen mirror ist es erwünscht, dass dieser
 keine anderen, möglicherweise gefährlichen Dienste anbietet.
 (Wenn man Owl installiert und die Dienste nutzt, die Teil
-von Owl sind, ist das in Ordnung). In Ausnahmen kann der
+von Owl sind, ist das in Ordnung).  In Ausnahmen kann der
 Server andere Inhalte hosten.
 
-$Id: Owl/doc/de/MIRRORING,v 1.6 2004/02/07 06:23:23 solar Exp $
+$Id: Owl/doc/de/MIRRORING,v 1.7 2005/10/03 11:48:01 schmidt Exp $

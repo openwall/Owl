@@ -1,25 +1,25 @@
-Im folgenden Hinweise um die Owl Arbeitsumgebung zu benutzen. Wir nehmen
+Im folgenden Hinweise um die Owl Arbeitsumgebung zu benutzen.  Wir nehmen
 an, dass die Datei CONCEPTS gelesen wurde; wenn nicht, wäre es besser das
-zu tun bevor hier weitergelesen wird.
+zu tun bevor man hier weiterliest.
 
 
 	/usr/src/world Setup.
 
 Die Arbeitsumgebung ist standardmässig so konfiguriert, dass sie in
 /usr/src/world liegt (die HOME= Einstellung in buildworld.conf und
-installworld.conf). Es wird empfohlen, diese Einstellung zu
+installworld.conf).  Es wird empfohlen, diese Einstellung zu
 ändern und die Dateien nicht in /usr/src/world zu plazieren oder einen
 symbolischen Link zu benutzen, wenn /usr/src kein geeignetes Device ist
 (siehe unten für die Voraussetzungen).
 
-In den meisten Fällen existiert das Verzeichnis schon. Wenn nicht muss
+In den meisten Fällen existiert das Verzeichnis schon.  Wenn nicht muss
 man es erstellen, den Pseudo-Benutzer "build" anlegen, vorzugsweise
 mit UID 151 und GID 150 ("sources") und ihm das Verzeichnis mittels
 "chown" zur Verfügung stellen.
 
-Das CVS Archiv ist in /usr/src/world anzulegen. Der einfachste Weg um das
+Das CVS Archiv ist in /usr/src/world anzulegen.  Der einfachste Weg um das
 zu tun ist die Datei native.tar.gz, die auf den FTP-Servern erhältlich ist,
-zu entpacken. Man erhält dann ein "native" Verzeichnis und einen
+zu entpacken.  Man erhält dann ein "native" Verzeichnis und einen
 symbolischen Link zum Makefile.
 
 Um aus den Quellen zu übersetzen, erstellt man das "sources" Verzeichnis
@@ -47,9 +47,9 @@ Mindestens 160 MB virtuellen Speicher wenn auf einer Alpha
 
 (Momentan) zwischen einer und fünf Stunden CPU Zeit auf einem modernen System.
 
-Natürlich sollte man alles auf Owl übersetzten. Es ist zwar möglich
+Natürlich sollte man alles auf Owl übersetzten.  Es ist zwar möglich
 dies alles auf einem anderen GNU/*/Linux System zu machen, aber man muss
-etwas tricksen um das System zu einem Owl zu machen. Das Ganze geht
+etwas tricksen um das System zu einem Owl zu machen.  Das Ganze geht
 mit mehreren Wiederholungen von "make buildworld" und "make installworld".
 
 Hier einige Übersetzungszeiten (Stunden:Minuten) für Owl-current um
@@ -70,8 +70,8 @@ Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB			5:30
 
 (Ja, der gcc ist auf einer Alpha ganz schön hungrig)
 
-Die Zeiten werden sich erhöhen, wenn in Zukunft mehr Pakete hinzugefügt werden und
-wenn die Software, die bereits Bestandteil von Owl ist, ge-updated wird.
+Die Zeiten werden sich erhöhen, wenn in Zukunft mehr Pakete hinzugefügt werden
+und wenn die Software, die bereits Bestandteil von Owl ist, ge-updated wird.
 
 
 	Richtige (Neu-)Übersetzung.
@@ -86,11 +86,11 @@ die älteste Version der jeweiligen Architektur (siehe ARCHITECTURES) über-
 setzt und zusätzlich wird versucht, alle Prozessoren zu nutzen.
 
 buildworld.conf (sowie andere *.conf's) können editiert werden, indem
-man sie von native/Owl/build nach /usr/src/world kopiert. Man muss vorher jedoch
-den symbolischen Link entfernen, sofern dieser erstellt wurde.
+man sie von native/Owl/build nach /usr/src/world kopiert.  Man muss vorher
+jedoch den symbolischen Link entfernen, sofern dieser erstellt wurde.
 
 Alle Pakete werden mit den Bibilotheken und Tools übersetzt, die auf dem
-System vorhanden sind. Mehrere Wiederholungen von buildworld und
+System vorhanden sind.  Mehrere Wiederholungen von buildworld und
 installworld (zwei sind meistens ausreichend) sollten nötig werden,
 wenn signifikante Änderungen an den Paketen während des Build-Prozesses
 aufgetreten sind.
@@ -100,7 +100,7 @@ aufgetreten sind.
 
 "make installworld" installiert alle Pakete, die es in /usr/src/world/RPMS
 findet auf das aktuelle System oder in ein anderes Verzeichnis freier
-Wahl (ROOT= Einstellung in installworld.conf). Standardmässig werden
+Wahl (ROOT= Einstellung in installworld.conf).  Standardmässig werden
 die Pakete nach /owl installiert.
 
 "make installworld" sollte als root ausgeführt werden.
@@ -113,4 +113,4 @@ Individuelle Pakete können wieder- oder neuübersetzt werden, indem man
 Für fremde Pakete (SRPMs) die mit der Owl-Arbeitsumgebung erstellt worden
 sind, muss man zusätzlich die Versionsnummer in "name" einfügen.
 
-$Id: Owl/doc/de/BUILD,v 1.13 2004/11/04 15:39:37 schmidt Exp $
+$Id: Owl/doc/de/BUILD,v 1.14 2005/10/03 11:48:01 schmidt Exp $

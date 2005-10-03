@@ -1,5 +1,11 @@
-Die Installation von Owl ist im Moment noch etwas komplizierter,
-als wir es uns wünschen. Aber das wird sich mit zukünftigen Releases ändern.
+Die folgenden Installationsanweisungen gelten für Owl-current snapshots, die
+nach dem 08.08.2005 erstellt wurden.  Für ältere Versionen (wie zum Beispiel
+1.1), sollte die Owl/doc/INSTALL Datei zur Rate gezogen werden.  Diese Datei
+ist im "native" Verzeichnis der entsprechenden Version vorhanden
+(/usr/src/world/native/Owl/doc/INSTALL auf unseren CDs).
+
+Die Installation von Owl ist im Moment noch etwas komplizierter, als wir es uns
+wünschen.  Dies wird sich mit zukünftigen Releases ändern.
 
 Momentan gibt es zwei Wege um Owl zu installieren; von der Owl-CD booten
 oder eine existierende Linux Installation benutzen.
@@ -11,59 +17,64 @@ Wenn man noch keine Owl-CD hat, kann man eine bestellen oder es finden
 sich in der DOWNLOAD Datei verschiedene Server, von denen man ein ISO-9660
 Image herunter laden kann um es auf CD zu brennen.
 
-Die Owl CDs sind im Moment nur auf x86 Architekturen bootfähig. Sollte
-der Rechner von CD booten wird dieser Weg empfohlen. Wenn nicht, schreibt man
+Die Owl CDs sind im Moment nur auf x86 Architekturen bootfähig.  Sollte
+der Rechner von CD booten wird dieser Weg empfohlen.  Wenn nicht, schreibt man
 das Bootdisketten-Image (unter boot/floppy.image) auf eine formatierte
 1,44 MB Diskette (mittels dd(1) oder einem äquivalenten Tool) und bootet
-von der Diskette. In beiden Fällen wird der boot loader nach dem
+von der Diskette.  In beiden Fällen wird der boot loader nach dem
 CD-ROM Device fragen, welches der Kernel als root Dateisystem verwenden
-soll. Wird ein IDE CD-ROM verwendet muss hier der richtige IDE Controller
-und die richtige Anschlussart (Master oder Slave) gewählt werden. Bei
+soll.  Wird ein IDE CD-ROM verwendet muss hier der richtige IDE Controller
+und die richtige Anschlussart (Master oder Slave) gewählt werden.  Bei
 einem SCSI CD-ROM wählt man "scsi".
 
-Owl sollte dann in den single-user Modus booten. Bei der Frage nach dem
+Owl sollte dann in den single-user Modus booten.  Bei der Frage nach dem
 root Passwort drückt man einfach Enter (die CDs haben kein Passwort) oder
 man drückt STRG-D um das System in den multi-user Modus zu booten (nicht
-empfohlen). Wenn man sich für den single-user Modus entschieden hat,
+empfohlen).  Wenn man sich für den single-user Modus entschieden hat,
 kann man das von der CD gebootete System durch Eingabe von
 
 	setup
 
-konfigurieren. Die Konfiguration wird im Arbeitsspeicher abgelegt (Teile
-von /etc und /var liegen auf einer Ramdisk). Nun kann man das System
-durch Verlassen der Shell in den multi-user Modus booten. Dieser Schritt
+konfigurieren.  Die Konfiguration wird im Arbeitsspeicher abgelegt (Teile
+von /etc und /var liegen auf einer Ramdisk).  Nun kann man das System
+durch Verlassen der Shell in den multi-user Modus booten.  Dieser Schritt
 ist optional und ist nur notwendig, wenn man die Installation im multi-user
 Modus vervollständigen will (z.B. weil man von einem anderen Rechner aus
 arbeitet) oder weil man das von CD gebootete Owl ohne Installation auf der
 Platte verwenden will.
 
-Um Owl dann zu installieren, fährt man mit den allgemeinen Installationshinweisen
-weiter unten fort.
+Um Owl dann tatsächlich zu installieren und den Installer zu starten, gibt man
+folgendes ein:
+
+	settle
+
+Der Installer leitet einen dann durch den gesamten Installationsprozess.
+
+Momentan installiert der Installer weder die Kernel Quelltexte noch die C header
+files (diese werden aber gebraucht, um Software auf dem frischen System zu
+installieren).  Folglich müssen beide manuell von der CD kopiert werden.  (Wir
+planen aber, dieses Problem zu beheben).
 
 
 	Benutzen einer existierenden Linux-Installation.
 
 Wichtig: Dieser Abschnitt ist nur für diejenigen wichtig, die keine Owl CD
-besitzen oder aus einem anderen Grund diese nicht benutzen. Die meisten werden
+besitzen oder aus einem anderen Grund diese nicht benutzen.  Die meisten werden
 eine CD benutzen und können diesen Abschnitt überspringen.
 
-Eine vernünftige Linux-Installation sollte diverse GNU-Tools und
-rpm2cpio zur Verfügung stellen. Es ist nicht notwendig, dass die
-Distribution das RPM Format verwendet.
+Eine vernünftige Linux-Installation sollte diverse GNU-Tools und rpm2cpio
+zur Verfügung stellen.  Es ist nicht notwendig, dass die Distribution das
+RPM Format verwendet.
 
-Man bereitet die normale /usr/src/world Installation wie in BUILD beschrieben
-vor. Danach kann man mit den allgemeinen Installationshinweisen
-weitermachen.
+Als erstes bereitet man die normale /usr/src/world Installation, wie es in
+BUILD beschrieben ist, vor.  Danach kann man das neue System installieren:
 
-
-	Allgemeine Installationshinweise.
-
-Mit fdisk(8) kann man die Platte für Owl nach Belieben partitionieren.
-Mit mkfs(8) wird ein neues Dateisystem angelegt, mit mkswap(8) eine
-Swap-Partition und danach mountet man das neue Dateisystem mittels mount(8)
-unter /owl. Selbstverständlich auch alle anderen Dateisysteme an
-ihrem bestimmten Platz unter /owl. Um Owl nun zu installieren, wechselt
-man in das /usr/src/world Verzeichnis und gibt ein:
+Mit fdisk(8) wird die Festplatte, wie gewünscht, partitioniert.  Die
+Dateisysteme und die Swap-Partition werden mit mkfs(8) und mkswap(8) erzeugt.
+Das neu erstelle root Dateisystem wird mit mount(8) nach /owl gemountet.  Alle
+zusätzlich erstellten Dateisysteme, sollten ebenfalls unter /owl eingehängt
+werden. Um Owl nun zu installieren, wechselt man in das /usr/src/world
+Verzeichnis und gibt folgendes ein:
 
 	make installworld && make setup
 
@@ -72,8 +83,10 @@ Sollten Probleme während des "installworld" Vorgangs auftreten (auf
 Kommando noch mal neu gestartet werden.
 
 Wenn die Owl-Benutzersoftware installiert ist, muss man nur noch einen
-Kernel und einen boot loader installieren. Es wird empfohlen den Kernel
-aus den Quellen neu zu übersetzen um ihn seinen Bedürfnissen anzupassen.
+Kernel installieren und einen boot loader konfigurieren.  Momentan stellt Owl
+nur den Kernel auf der CD bereit, d.h. man kopiert entweder diesen
+(/boot/bzImage und /boot/System.map) von der CD oder man installiert sich einen
+eigenen (die empfohlene Methode).
 
 Das Übersetzen des Kernels und die Einrichtung des boot loaders muss
 in einer chroot-Umgebung im Verzeichnis des neu installierten User-
@@ -88,4 +101,7 @@ Man kann nun den boot loader konfigurieren, der unter Owl verfügbar
 ist (LILO oder SILO, kommt auf die Architektur an), oder einen
 bereits installierten (falls vorhanden) verwenden.
 
-$Id: Owl/doc/de/INSTALL,v 1.12 2004/11/04 15:39:37 schmidt Exp $
+Nach Abschluss der Installation müssen die Dateisysteme noch manuell mittels
+umount(8) ausgehängt werden.  Danach kann das System sicher neugestartet werden.
+
+$Id: Owl/doc/de/INSTALL,v 1.13 2005/10/03 11:48:01 schmidt Exp $
