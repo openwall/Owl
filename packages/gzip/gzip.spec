@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gzip/gzip.spec,v 1.20 2005/07/18 16:44:58 solar Exp $
+# $Id: Owl/packages/gzip/gzip.spec,v 1.21 2005/10/08 23:34:22 solar Exp $
 
 Summary: The GNU data compression program.
 Name: gzip
@@ -18,6 +18,7 @@ Patch6: gzip-1.3.5-deb-alt-original-filename.diff
 Patch7: gzip-1.3.5-alt-copy_stat.diff
 Patch8: gzip-1.3.5-alt-bzip2.diff
 Patch9: gzip-1.3.5-gentoo-huft_build-return.diff
+BuildRequires: rpm-build >= 0:4
 BuildRoot: /override/%name-%version
 
 %description

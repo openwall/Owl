@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bc/bc.spec,v 1.10 2004/11/23 22:40:45 mci Exp $
+# $Id: Owl/packages/bc/bc.spec,v 1.11 2005/10/08 23:34:22 solar Exp $
 
 Summary: GNU's bc (a numeric processing language) and dc (a calculator).
 Name: bc
@@ -12,7 +12,8 @@ Patch1: bc-1.06-owl-functions-fix.diff
 Patch2: bc-1.06-owl-readline.diff
 PreReq: /sbin/install-info, grep
 Prefix: %_prefix
-BuildRequires: texinfo, readline-devel >= 4.3
+BuildRequires: texinfo, readline-devel >= 0:4.3
+BuildRequires: rpm-build >= 0:4
 BuildRoot: /override/%name-%version
 
 %description

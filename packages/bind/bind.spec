@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bind/bind.spec,v 1.8 2005/09/27 21:41:11 ldv Exp $
+# $Id: Owl/packages/bind/bind.spec,v 1.9 2005/10/08 23:34:22 solar Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -54,6 +54,7 @@ PreReq: owl-control >= 0.4, owl-control < 2.0
 BuildRequires: openssl-devel
 %endif
 BuildRequires: gcc, gcc-c++, glibc-devel >= 2.3.2, libtool, tar
+BuildRequires: rpm-build >= 0:4
 BuildRoot: /override/%name-%version
 
 %define _localstatedir	/var

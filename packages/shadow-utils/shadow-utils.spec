@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.48 2005/05/16 13:26:09 ldv Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.49 2005/10/08 23:34:22 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
@@ -44,6 +44,7 @@ BuildRequires: libtool, gettext = 0.14.1, automake, autoconf
 BuildRequires: glibc-crypt_blowfish-devel
 BuildRequires: pam-devel, pam_userpass-devel, tcb-devel
 BuildRequires: cvs
+BuildRequires: rpm-build >= 0:4
 BuildRoot: /override/%name-%version
 
 %description

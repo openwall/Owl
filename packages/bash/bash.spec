@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.25 2004/11/23 22:40:45 mci Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.26 2005/10/08 23:26:26 solar Exp $
 
 Version: 2.05
 Name: bash
@@ -31,7 +31,7 @@ Requires: mktemp >= 1:1.3.1
 Provides: bash2
 Obsoletes: bash2, etcskel
 Prefix: %_prefix
-BuildRequires: mktemp >= 1:1.3.1, readline-devel >= 4.3
+BuildRequires: mktemp >= 1:1.3.1, readline-devel >= 0:4.3, rpm-build >= 0:4
 BuildRoot: /override/%name-%version
 
 %description

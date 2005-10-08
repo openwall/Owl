@@ -1,4 +1,4 @@
-# $Id: Owl/packages/diffutils/diffutils.spec,v 1.11 2005/05/17 15:13:29 ldv Exp $
+# $Id: Owl/packages/diffutils/diffutils.spec,v 1.12 2005/10/08 23:34:22 solar Exp $
 
 Summary: A GNU collection of diff utilities.
 Name: diffutils
@@ -15,6 +15,7 @@ Patch3: diffutils-2.8.7-alt-i18n.diff
 Patch4: diffutils-2.8.7-alt-backup_suffix.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
+BuildRequires: rpm-build >= 0:4
 BuildRoot: /override/%name-%version
 
 %description

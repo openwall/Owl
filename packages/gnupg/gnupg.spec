@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gnupg/gnupg.spec,v 1.26 2004/12/02 23:58:29 mci Exp $
+# $Id: Owl/packages/gnupg/gnupg.spec,v 1.27 2005/10/08 23:34:22 solar Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
@@ -12,6 +12,7 @@ Patch0: gnupg-1.2.2-fw-secret-key-checks.diff
 PreReq: /sbin/install-info
 Provides: gpg, openpgp
 BuildRequires: zlib-devel, bison, texinfo
+BuildRequires: rpm-build >= 0:4
 BuildRoot: /override/%name-%version
 
 %description
