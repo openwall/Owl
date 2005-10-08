@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.59 2005/09/13 14:32:44 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.60 2005/10/08 20:59:13 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.39
+Version: 1.6.39.1
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -73,6 +73,14 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Sun Oct 09 2005 Solar Designer <solar@owl.openwall.com> 1.6.39.1-owl1
+- With linux-sparc make target, let's not use sparc.S because it uses
+registers reserved by the SPARC ABI (%g5-%g7) and this no longer works with
+glibc 2.3.x.
+- Fixed a bug in best.sh which could result in MD5_IMM being enabled wrongly
+when MD5_X2 is determined to improve performance (this only affected builds
+with "make generic").
+
 * Thu Sep 08 2005 Solar Designer <solar@owl.openwall.com> 1.6.39-owl1
 - Fixed a bug in the loader introduced with 1.6.37.10 where "john --show"
 would report split hashes with the last piece not yet cracked as if they
