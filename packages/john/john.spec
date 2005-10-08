@@ -1,4 +1,4 @@
-# $Id: Owl/packages/john/john.spec,v 1.60 2005/10/08 20:59:13 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.61 2005/10/08 23:09:14 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -80,6 +80,9 @@ glibc 2.3.x.
 - Fixed a bug in best.sh which could result in MD5_IMM being enabled wrongly
 when MD5_X2 is determined to improve performance (this only affected builds
 with "make generic").
+- Added a workaround for "some kaserver.DB0 files created by OpenAFS"; this
+issue was brought up on john-users by Heiko Schulz and the patch produced by
+Lionel Cons (thanks!)
 
 * Thu Sep 08 2005 Solar Designer <solar@owl.openwall.com> 1.6.39-owl1
 - Fixed a bug in the loader introduced with 1.6.37.10 where "john --show"
