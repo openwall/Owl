@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.94 2005/05/23 03:16:29 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.95 2005/10/08 23:45:15 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -79,6 +79,7 @@ Patch412: glibc-2.3.5-owl-alt-sanitize-env.diff
 Requires: /etc/nsswitch.conf
 Provides: glibc-crypt_blowfish = %crypt_bf_version, ldconfig
 Obsoletes: ldconfig
+BuildRequires: gcc >= 3.2
 BuildRoot: /override/%name-%version
 
 %description
