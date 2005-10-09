@@ -1,9 +1,9 @@
-# $Id: Owl/packages/logrotate/logrotate.spec,v 1.9 2004/11/23 22:40:47 mci Exp $
+# $Id: Owl/packages/logrotate/logrotate.spec,v 1.10 2005/10/09 17:19:04 galaxy Exp $
 
 Summary: Rotates, compresses, removes and mails system log files.
 Name: logrotate
 Version: 3.6.2
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 Source: logrotate-%version.tar.bz2
@@ -31,10 +31,10 @@ logrotate runs as a daily cron job.
 %patch3 -p1
 
 %build
-make CC=gcc RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
+%__make CC="%__cc" RPM_OPT_FLAGS="%optflags"
 
 %install
-make PREFIX=%buildroot MANDIR=%_mandir install
+%__make PREFIX="%buildroot" MANDIR="%_mandir" install
 mkdir -p %buildroot/etc/{logrotate.d,cron.daily}
 mkdir -p %buildroot/var/lib/logrotate
 
@@ -52,7 +52,7 @@ if [ $1 -eq 0 ]; then
 fi
 
 %files
-%attr(0700,root,root) /usr/sbin/logrotate
+%attr(0755,root,root) %_sbindir/logrotate
 %attr(0644,root,root) %_mandir/man8/logrotate.8*
 %attr(0600,root,root) %config(noreplace) /etc/logrotate.conf
 %attr(0700,root,root) %dir /etc/logrotate.d
@@ -60,6 +60,11 @@ fi
 %attr(0700,root,root) /var/lib/logrotate
 
 %changelog
+* Sun Oct 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.6.2-owl2
+- Changed the permissions for %%_sbindir/logrotate from 0700 to 0755.
+- Replaced 'make' with '%%__make' and 'gcc' with '%%__cc'.
+- Replaced '/usr/sbin' with '%%_sbindir'.
+
 * Mon Mar 11 2002 Michail Litvak <mci@owl.openwall.com> 3.6.2-owl1
 - 3.6.2
 - noreplace config file
