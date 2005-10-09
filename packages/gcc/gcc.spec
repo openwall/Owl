@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.41 2005/09/27 13:17:20 mci Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.42 2005/10/09 01:12:22 solar Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -744,7 +744,7 @@ fi
 %endif
 
 %changelog
-* Fri Sep 23 2005 Michail Litvak <mci@owl.openwall.com>  1:3.4.3-owl3
+* Fri Sep 23 2005 Michail Litvak <mci@owl.openwall.com> 1:3.4.3-owl3
 - Don't package .la files.
 
 * Wed Jan 19 2005 Solar Designer <solar@owl.openwall.com> 1:3.4.3-owl2
