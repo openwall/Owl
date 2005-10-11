@@ -12,6 +12,21 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2005/10/11	Package: openssl
+SECURITY FIX	Severity: low, remote, active
+Updated to 0.9.7h.  This release of OpenSSL fixes potential SSL
+2.0 rollback during SSL handshake.  Applications using either
+SSL_OP_MSIE_SSLV2_RSA_PADDING or SSL_OP_ALL option miss a verification
+step in the SSL 2.0 server supposed to prevent active protocol-version
+rollback attacks.  With this verification step disabled, an attacker
+acting as a "man in the middle" can force a client and a server to
+negotiate the SSL 2.0 protocol even if these parties both support
+SSL 3.0 or TLS 1.0.  The SSL 2.0 protocol is known to have severe
+cryptographic weaknesses and is supported as a fallback only.
+References:
+http://www.openssl.org/news/secadv_20051011.txt
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-2969
+
 2005/09/30	Package: tcsh
 Updated to 6.14.00.
 
@@ -586,4 +601,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.135 2005/09/30 19:51:57 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.136 2005/10/11 13:09:33 ldv Exp $

@@ -1,20 +1,18 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.45 2005/06/25 00:35:59 ldv Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.46 2005/10/11 13:09:33 ldv Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
-Version: 0.9.7g
+Version: 0.9.7h
 Release: owl1
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
 Source: ftp://ftp.openssl.org/source/%name-%version.tar.gz
 Patch0: openssl-0.9.7g-owl-alt-issetugid.diff
-Patch1: openssl-0.9.7g-mdk-alt-Makefile.diff
+Patch1: openssl-0.9.7h-mdk-alt-Makefile.diff
 Patch2: openssl-0.9.7g-rh-alt-soversion.diff
 Patch3: openssl-0.9.7g-rh-mdk-ia64-asm.diff
 Patch4: openssl-0.9.7g-rh-version-engines.diff
-Patch5: openssl-0.9.7g-up-rh-fixes.diff
-Patch6: openssl-0.9.7g-rh-consttime.diff
 Provides: SSL
 # For backwards compatibility.
 Provides: libcrypto.so.4, libssl.so.4  
@@ -69,8 +67,6 @@ libraries and header files required when developing applications.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
-%patch6 -p1
 
 # Avoid conflict with pow10(3).
 sed -i s/pow10/pow10i/ crypto/bio/b_print.c
@@ -200,6 +196,10 @@ ln -sf libssl.so.5 /%_lib/libssl.so.4
 %attr(0644,root,root) %_mandir/man3/*
 
 %changelog
+* Tue Oct 11 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.9.7h-owl1
+- Updated to 0.9.7h.  This release of OpenSSL fixes potential
+SSL 2.0 rollback during SSL handshake (CAN-2005-2969).
+
 * Fri Jun 24 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.9.7g-owl1
 - Updated to 0.9.7g.
 - Imported a bunch of patches from RH's openssl-0.9.7f-7 and ALT's
