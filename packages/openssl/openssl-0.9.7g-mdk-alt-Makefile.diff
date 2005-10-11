@@ -1,5 +1,6 @@
---- openssl-0.9.7h/Makefile.org.orig	2005-06-20 04:29:54 +0000
-+++ openssl-0.9.7h/Makefile.org	2005-10-11 12:22:39 +0000
+diff -upk.orig openssl-0.9.7g.orig/Makefile.org openssl-0.9.7g/Makefile.org
+--- openssl-0.9.7g.orig/Makefile.org	2005-03-15 09:46:13 +0000
++++ openssl-0.9.7g/Makefile.org	2005-06-17 13:55:28 +0000
 @@ -25,6 +25,7 @@ HERE=.
  # Normally it is left empty.
  INSTALL_PREFIX=
@@ -8,8 +9,8 @@
  
  # Do not edit this manually. Use Configure --openssldir=DIR do change this!
  OPENSSLDIR=/usr/local/ssl
-@@ -329,7 +330,7 @@ do_darwin-shared: 
- 		--verbose -dynamiclib -o lib$$i${SHLIB_EXT} \
+@@ -324,7 +325,7 @@ do_darwin-shared: 
+ 	( set -x; ${CC} --verbose -dynamiclib -o lib$$i${SHLIB_EXT} \
  		lib$$i.a $$libs -all_load -current_version ${SHLIB_MAJOR}.${SHLIB_MINOR} \
  		-compatibility_version ${SHLIB_MAJOR}.`echo ${SHLIB_MINOR} | cut -d. -f1` \
 -		-install_name ${INSTALLTOP}/lib/lib$$i${SHLIB_EXT} ) || exit 1; \
@@ -17,16 +18,16 @@
  	libs="-l`basename $$i${SHLIB_EXT} .dylib` $$libs"; \
  	echo "" ; \
  	done
-@@ -403,7 +404,7 @@ do_tru64-shared-rpath:
+@@ -398,7 +399,7 @@ do_tru64-shared-rpath:
  		fi; \
  		( set -x; ${CC} ${SHARED_LDFLAGS} \
  			-shared -msym -o lib$$i.so \
 -			-rpath  ${INSTALLTOP}/lib \
 +			-rpath  ${INSTALLTOP}/$(SLIB) \
  			-set_version "${SHLIB_VERSION_HISTORY}${SHLIB_VERSION_NUMBER}" \
- 			-all lib$$i.a -none $$libs ${EX_LIBS} ) || exit 1; \
+ 			-all lib$$i.a -none $$libs ${EX_LIBS} -lc ) || exit 1; \
  		libs="-l$$i $$libs"; \
-@@ -591,7 +592,7 @@ do_reliantunix-shared:
+@@ -622,7 +623,7 @@ do_reliantunix-shared:
  openssl.pc: Makefile
  	@ ( echo 'prefix=$(INSTALLTOP)'; \
  	    echo 'exec_prefix=$${prefix}'; \
@@ -35,7 +36,7 @@
  	    echo 'includedir=$${prefix}/include'; \
  	    echo ''; \
  	    echo 'Name: OpenSSL'; \
-@@ -775,8 +776,8 @@ install: all install_docs install_sw
+@@ -802,8 +803,8 @@ install: all install_docs install_sw
  
  install_sw:
  	@$(PERL) $(TOP)/util/mkdir-p.pl $(INSTALL_PREFIX)$(INSTALLTOP)/bin \
@@ -46,7 +47,7 @@
  		$(INSTALL_PREFIX)$(INSTALLTOP)/include/openssl \
  		$(INSTALL_PREFIX)$(OPENSSLDIR)/misc \
  		$(INSTALL_PREFIX)$(OPENSSLDIR)/certs \
-@@ -797,14 +798,14 @@ install_sw:
+@@ -824,14 +825,14 @@ install_sw:
  	do \
  		if [ -f "$$i" ]; then \
  		(       echo installing $$i; \
@@ -65,30 +66,16 @@
  		fi; \
  	done;
  	@if [ -n "$(SHARED_LIBS)" ]; then \
-@@ -814,31 +815,31 @@ install_sw:
+@@ -841,22 +842,22 @@ install_sw:
  			if [ -f "$$i" -o -f "$$i.a" ]; then \
  			(       echo installing $$i; \
  				if [ "$(PLATFORM)" != "Cygwin" ]; then \
 -					cp $$i $(INSTALL_PREFIX)$(INSTALLTOP)/lib/$$i.new; \
 -					chmod 555 $(INSTALL_PREFIX)$(INSTALLTOP)/lib/$$i.new; \
--					mv -f	$(INSTALL_PREFIX)$(INSTALLTOP)/lib/$$i.new \
--						$(INSTALL_PREFIX)$(INSTALLTOP)/lib/$$i; \
+-					mv -f $(INSTALL_PREFIX)$(INSTALLTOP)/lib/$$i.new $(INSTALL_PREFIX)$(INSTALLTOP)/lib/$$i; \
 +					cp $$i $(INSTALL_PREFIX)$(INSTALLTOP)/$(SLIB)/$$i.new; \
 +					chmod 555 $(INSTALL_PREFIX)$(INSTALLTOP)/$(SLIB)/$$i.new; \
-+					mv -f	$(INSTALL_PREFIX)$(INSTALLTOP)/$(SLIB)/$$i.new \
-+						$(INSTALL_PREFIX)$(INSTALLTOP)/$(SLIB)/$$i; \
- 					sig="$$i.$${HMAC_EXT:-sha1}"; \
- 					if [ -f $$sig ]; then \
- 						echo installing $$sig; \
--						cp $$sig $(INSTALL_PREFIX)$(INSTALLTOP)/lib/$$sig.new; \
--						chmod 444 $(INSTALL_PREFIX)$(INSTALLTOP)/lib/$$sig.new; \
--						mv -f	$(INSTALL_PREFIX)$(INSTALLTOP)/lib/$$sig.new \
--							$(INSTALL_PREFIX)$(INSTALLTOP)/lib/$$sig; \
-+						cp $$sig $(INSTALL_PREFIX)$(INSTALLTOP)/$(SLIB)/$$sig.new; \
-+						chmod 444 $(INSTALL_PREFIX)$(INSTALLTOP)/$(SLIB)/$$sig.new; \
-+						mv -f	$(INSTALL_PREFIX)$(INSTALLTOP)/$(SLIB)/$$sig.new \
-+							$(INSTALL_PREFIX)$(INSTALLTOP)/$(SLIB)/$$sig; \
- 					fi; \
++					mv -f $(INSTALL_PREFIX)$(INSTALLTOP)/$(SLIB)/$$i.new $(INSTALL_PREFIX)$(INSTALLTOP)/$(SLIB)/$$i; \
  				else \
  					c=`echo $$i | sed 's/^lib\(.*\)\.dll/cyg\1-$(SHLIB_VERSION_NUMBER).dll/'`; \
  					cp $$c $(INSTALL_PREFIX)$(INSTALLTOP)/bin/$$c.new; \
@@ -109,7 +96,7 @@
  			set $(MAKE); \
  			$$1 -f $$here/Makefile link-shared ); \
  		if [ "$(INSTALLTOP)" != "/usr" ]; then \
-@@ -852,13 +853,13 @@ install_sw:
+@@ -870,13 +871,13 @@ install_sw:
  	do \
  		if [ -f "$$i" ]; then \
  		(       echo installing $$i; \
