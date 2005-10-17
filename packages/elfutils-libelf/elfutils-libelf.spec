@@ -1,9 +1,9 @@
-# $Id: Owl/packages/elfutils-libelf/elfutils-libelf.spec,v 1.3 2005/06/24 23:06:42 ldv Exp $
+# $Id: Owl/packages/elfutils-libelf/elfutils-libelf.spec,v 1.4 2005/10/17 22:21:26 ldv Exp $
 
 Summary: Library to read and write ELF files.
 Name: elfutils-libelf
 Version: 0.108
-Release: owl2
+Release: owl3
 License: GPL
 Group: System Environment/Libraries
 Source: elfutils-%version.tar.gz
@@ -45,6 +45,7 @@ different sections of an ELF file.
 %install
 rm -rf %buildroot
 %makeinstall -C libelf
+install -p -m644 libdw/dwarf.h %buildroot%_includedir/
 
 # XXX: Remove unpackaged files (check later)
 rm %buildroot%_includedir/elfutils/elf-knowledge.h
@@ -59,13 +60,17 @@ rm %buildroot%_includedir/elfutils/elf-knowledge.h
 
 %files devel
 %defattr(-,root,root)
-%_includedir/libelf.h
+%_includedir/dwarf.h
 %_includedir/gelf.h
+%_includedir/libelf.h
 %_includedir/nlist.h
 %_libdir/libelf.a
 %_libdir/libelf.so
 
 %changelog
+* Mon Oct 17 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.108-owl3
+- Packaged %_includedir/dwarf.h.
+
 * Fri Jun 24 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.108-owl2
 - Corrected library symlinks packaging.
 
