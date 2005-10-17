@@ -1,0 +1,11 @@
+--- rpm-4.2/doc/rpm.8~	2002-11-29 19:17:04 +0000
++++ rpm-4.2/doc/rpm.8	2005-10-17 13:25:06 +0000
+@@ -356,7 +356,7 @@
+ \fB%_repackage_name_fmt\fR
+ and will be created in the directory named by
+ the macro \fB%_repackage_dir\fR (default value
+-is \fI/var/tmp\fR).
++is \fI/var/spool/repackage\fR).
+ .TP
+ \fB--replacefiles\fR
+ Install the packages even if they replace files from other,

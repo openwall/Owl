@@ -110,7 +110,7 @@ diff -uNrp rpm-4.2/tools/Makefile.am rpm-4.2.lite/tools/Makefile.am
  
  debugedit_SOURCES =	debugedit.c hashtab.c
  debugedit_LDADD =	@LDFLAGS_STATIC@ @WITH_LIBELF_LIB@ \
-+	libelf.a \
++	-lelf \
  	$(top_builddir)/popt/libpopt.la
  
  javadeps_SOURCES =	javadeps.c
@@ -132,7 +132,7 @@ diff -uNrp rpm-4.2/tools/Makefile.in rpm-4.2.lite/tools/Makefile.in
  
  debugedit_SOURCES = debugedit.c hashtab.c
  debugedit_LDADD = @LDFLAGS_STATIC@ @WITH_LIBELF_LIB@ \
-+	libelf.a \
++	-lelf \
  	$(top_builddir)/popt/libpopt.la
  
  

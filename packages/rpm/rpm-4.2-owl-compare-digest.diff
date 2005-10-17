@@ -1,0 +1,110 @@
+diff -upk.orig rpm-4.2.orig/lib/depends.c rpm-4.2/lib/depends.c
+--- rpm-4.2.orig/lib/depends.c	2003-03-03 22:12:00 +0000
++++ rpm-4.2/lib/depends.c	2005-10-17 11:13:27 +0000
+@@ -124,6 +124,24 @@ static int removePackage(rpmts ts, Heade
+     return 0;
+ }
+ 
++static int rpmDigestCompare(Header first, Header second)
++{
++    const char * one, * two;
++
++    if (!headerGetEntry(first, RPMTAG_SHA1HEADER, NULL, (void **) &one, NULL))
++	one = NULL;
++    if (!headerGetEntry(second, RPMTAG_SHA1HEADER, NULL, (void **) &two, NULL))
++	two = NULL;
++
++    if (one && two)
++	return strcmp(one, two);
++    if (one && !two)
++	return 1;
++    if (!one && two)
++	return -1;
++    return 0;
++}
++
+ int rpmtsAddInstallElement(rpmts ts, Header h,
+ 			fnpyKey key, int upgrade, rpmRelocation * relocs)
+ {
+@@ -262,8 +280,8 @@ int rpmtsAddInstallElement(rpmts ts, Hea
+ 	if (tscolor && hcolor && ohcolor && !(hcolor & ohcolor))
+ 	    continue;
+ 
+-	/* Skip packages that contain identical NEVR. */
+-	if (rpmVersionCompare(h, oh) == 0)
++	/* Skip identical packages. */
++	if (rpmDigestCompare(h, oh) == 0 && rpmVersionCompare(h, oh) == 0)
+ 	    continue;
+ 
+ 	xx = removePackage(ts, oh, rpmdbGetIteratorOffset(mi), pkgKey);
+diff -upk.orig rpm-4.2.orig/lib/psm.c rpm-4.2/lib/psm.c
+--- rpm-4.2.orig/lib/psm.c	2005-10-16 21:16:11 +0000
++++ rpm-4.2/lib/psm.c	2005-10-17 11:01:45 +0000
+@@ -1451,6 +1451,8 @@ assert(psm->mi == NULL);
+ 			rpmteV(psm->te));
+ 	    xx = rpmdbSetIteratorRE(psm->mi, RPMTAG_RELEASE, RPMMIRE_DEFAULT,
+ 			rpmteR(psm->te));
++	    xx = rpmdbSetIteratorRE(psm->mi, RPMTAG_SHA1HEADER, RPMMIRE_DEFAULT,
++			rpmteDigest(psm->te));
+ 	    if (tscolor) {
+ 		xx = rpmdbSetIteratorRE(psm->mi, RPMTAG_ARCH, RPMMIRE_DEFAULT,
+ 			rpmteA(psm->te));
+diff -upk.orig rpm-4.2.orig/lib/rpmte.c rpm-4.2/lib/rpmte.c
+--- rpm-4.2.orig/lib/rpmte.c	2003-01-25 20:46:57 +0000
++++ rpm-4.2/lib/rpmte.c	2005-10-17 11:08:55 +0000
+@@ -62,6 +62,7 @@ static void delTE(rpmte p)
+     p->name = _free(p->name);
+     p->NEVR = _free(p->NEVR);
+     p->NEVRA = _free(p->NEVRA);
++    p->digest = _free(p->digest);
+ 
+     p->h = headerFree(p->h);
+ 
+@@ -104,6 +105,9 @@ static void addTE(rpmts ts, rpmte p, Hea
+     if ((p->version = strrchr(p->name, '-')) != NULL)
+ 	*p->version++ = '\0';
+ 
++    os = NULL;
++    xx = hge(h, RPMTAG_SHA1HEADER, NULL, (void **)&os, NULL);
++    p->digest = (os != NULL ? xstrdup(os) : NULL);
+     arch = NULL;
+     xx = hge(h, RPMTAG_ARCH, NULL, (void **)&arch, NULL);
+     p->arch = (arch != NULL ? xstrdup(arch) : NULL);
+@@ -248,6 +252,11 @@ const char * rpmteO(rpmte te)
+     return (te != NULL ? te->os : NULL);
+ }
+ 
++const char * rpmteDigest(rpmte te)
++{
++    return (te != NULL ? te->digest : NULL);
++}
++
+ uint_32 rpmteColor(rpmte te)
+ {
+     return (te != NULL ? te->color : 0);
+diff -upk.orig rpm-4.2.orig/lib/rpmte.h rpm-4.2/lib/rpmte.h
+--- rpm-4.2.orig/lib/rpmte.h	2003-01-25 20:35:39 +0000
++++ rpm-4.2/lib/rpmte.h	2005-10-17 11:06:19 +0000
+@@ -121,6 +121,7 @@ struct rpmte_s {
+     } u;
+ /*@=fielduse@*/
+ 
++    char * digest;
+ };
+ 
+ /**
+@@ -233,6 +234,14 @@ extern const char * rpmteO(rpmte te)
+ 	/*@*/;
+ 
+ /**
++ * Retrieve digest string of transaction element.
++ * @param te		transaction element
++ * @return		digest string
++ */
++/*@observer@*/ /*@null@*/
++extern const char * rpmteDigest(rpmte te)
++	/*@*/;
++
+  * Retrieve color bits of transaction element.
+  * @param te		transaction element
+  * @return		color bits

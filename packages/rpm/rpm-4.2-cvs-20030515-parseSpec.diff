@@ -1,0 +1,23 @@
+revision 2.95
+date: 2003/05/15 13:53:41;  author: jbj;  state: Exp;  lines: +3 -1
+- fix: nested %if handling
+
+Index: build/parseSpec.c
+===================================================================
+RCS file: /cvs/devel/rpm/build/parseSpec.c,v
+retrieving revision 2.94
+retrieving revision 2.95
+diff -u -p -r2.94 -r2.95
+--- build/parseSpec.c	8 May 2003 20:39:30 -0000	2.94
++++ build/parseSpec.c	15 May 2003 13:53:41 -0000	2.95
+@@ -273,7 +273,9 @@ retry:
+     SKIPSPACE(s);
+ 
+     match = -1;
+-    if (! strncmp("%ifarch", s, sizeof("%ifarch")-1)) {
++    if (!spec->readStack->reading && !strncmp("%if", s, sizeof("%if")-1)) {
++	match = 0;
++    } else if (! strncmp("%ifarch", s, sizeof("%ifarch")-1)) {
+ 	const char *arch = rpmExpand("%{_target_cpu}", NULL);
+ 	s += 7;
+ 	match = matchTok(arch, s);

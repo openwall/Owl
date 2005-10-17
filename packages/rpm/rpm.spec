@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.54 2005/09/27 13:17:20 mci Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.55 2005/10/17 22:53:57 ldv Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -11,7 +11,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl8
+Release: owl9
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -53,12 +53,18 @@ Patch27: rpm-4.2-owl-db1-addon.diff
 Patch28: rpm-4.2-owl-fix-configure.diff
 Patch29: rpm-4.2-owl-chroot-ugid.diff
 Patch30: rpm-4.2-owl-rpmal-bounds.diff
+Patch31: rpm-4.2-owl-compare-digest.diff
+Patch32: rpm-4.2-owl-honor-buildtime.diff
+Patch33: rpm-4.2-owl-runScript-umask.diff
+Patch34: rpm-4.2-owl-doc-fix.diff
+Patch35: rpm-4.2-cvs-20030515-parseSpec.diff
 
 PreReq: /sbin/ldconfig
 PreReq: sh-utils, fileutils, mktemp, gawk
 Requires: findutils, diffutils, gzip
 BuildRequires: libtool >= 1.5.2, automake >= 1.8.3, autoconf >= 2.59
 BuildRequires: gettext >= 0.14.1
+BuildRequires: elfutils-libelf-devel >= 0:0.108-owl3
 BuildRoot: /override/%name-%rpm_version
 
 %description
@@ -158,17 +164,16 @@ rm -r tests
 %patch28 -p1
 %patch29 -p1
 %patch30 -p1
+%patch31 -p1
+%patch32 -p1
+%patch33 -p1
+%patch34 -p1
+%patch35 -p0
 
 # Replace gendiff with our implementation
-cp $RPM_SOURCE_DIR/gendiff .
+install -p -m 755 %_sourcedir/gendiff .
 
-# Prepare libelf archive and save it with headers to the tools subdirectory
-pushd elfutils
-export CFLAGS="${CFLAGS:-%optflags}"
-./configure
-%__make AM_CFLAGS="$CFLAGS" -C libelf libelf.a
-cp -p libelf/{libelf.a,libelf.h,gelf.h,elf.h} libdwarf/dwarf.h ../tools/
-popd
+# Remove libelf archive just in case
 rm -r elfutils
 
 # Prepare libfmagic archive and save it to the rpmio subdirectory.
@@ -177,7 +182,7 @@ pushd file
 # We add -DMAGIC=path to configure to make sure that default magic file will
 # be searched for in the directory where "file" package stores it (this will
 # be unneeded once we separate "file" from "rpm")
-export CFLAGS="$CFLAGS -DMAGIC='\"/usr/share/magic\"'"
+CFLAGS="%optflags -DMAGIC='\"/usr/share/magic\"'" \
 ./configure
 %__make libfmagic.la
 cp -rp .libs libfmagic.la ../rpmio/
@@ -210,6 +215,8 @@ rm -r file
 %define __oldincludedir  /usr/include
 %define __infodir        %__datadir/info
 %define __mandir         %__datadir/man
+
+%{expand:%%define optflags %optflags -fno-strict-aliasing}
 
 %build
 # XXX rpm needs functioning nptl for configure tests
@@ -248,6 +255,10 @@ ac_cv_header_libelf_h=no ac_cv_header_gelf_h=no \
 	%with_python_option \
 	--disable-posixmutexes
 %__make
+# Check whether it works at all
+./rpmi --showrc >/dev/null &&
+./rpm --showrc >/dev/null ||
+	exit 1
 
 %install
 rm -rf %buildroot
@@ -287,14 +298,14 @@ rm %buildroot%__libdir/*.la
 # XXX: glibc 2.3.2 update -- this file isn't created
 #rm %buildroot%__datadir/locale/locale.alias
 
-install -p -m 755 $RPM_SOURCE_DIR/rpminit %buildroot%__bindir/
-install -p -m 644 $RPM_SOURCE_DIR/rpminit.1 %buildroot%__mandir/man1/
+install -p -m 755 %_sourcedir/rpminit %buildroot%__bindir/
+install -p -m 644 %_sourcedir/rpminit.1 %buildroot%__mandir/man1/
 
-echo "%defattr(-,root,root)"
+echo "%%defattr(-,root,root)"
 platforms="`echo %buildroot%__libdir/rpm/*/macros | sed -e 's#/macros##g; s#%buildroot%__libdir/##g'`"
 for platform in $platforms; do
-	echo "%attr(0755,root,root) %dir %__libdir/$platform" >> platforms.list
-	echo "%attr(0644,root,root) %verify(not md5 size mtime) %config(missingok,noreplace) %__libdir/$platform/macros" >> platforms.list
+	echo "%%attr(0755,root,root) %%dir %__libdir/$platform" >> platforms.list
+	echo "%%attr(0644,root,root) %%verify(not md5 size mtime) %%config(missingok,noreplace) %__libdir/$platform/macros" >> platforms.list
 done
 
 %pre
@@ -460,6 +471,16 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Mon Oct 17 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.2-owl9
+- Backported fix to nested %if handling.
+- Changed package upgrade algorithm to remove old files
+on "-U --force" even if package versions match.
+- When comparing package versions on -U or -F, take build dates
+into account.
+- Set umask 022 for install scripts and triggers execution.
+- Build debugedit utility with system libelf.
+- Build this package without optimizations based on strict aliasing rules.
+
 * Fri Sep 23 2005 Michail Litvak <mci@owl.openwall.com> 4.2-owl8
 - Don't package .la files.
 
@@ -552,7 +573,7 @@ is very ugly :( )
 
 * Tue Feb 10 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl0.5
 - Cleaned up the spec file (to use macros in file sections)
-- Added %config to configuration files
+- Added %%config to configuration files
 - Fixed permissions on platform directories under %__libdir/rpm/
 
 * Mon Feb 09 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl0.4

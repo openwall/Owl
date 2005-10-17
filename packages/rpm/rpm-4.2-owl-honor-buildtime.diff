@@ -1,0 +1,163 @@
+diff -upk.orig rpm-4.2.orig/lib/psm.c rpm-4.2/lib/psm.c
+--- rpm-4.2.orig/lib/psm.c	2005-10-17 11:01:45 +0000
++++ rpm-4.2/lib/psm.c	2005-10-17 11:01:45 +0000
+@@ -47,6 +47,38 @@ int _psm_debug = _PSM_DEBUG;
+ /*@access rpmte @*/	/* XXX rpmInstallSourcePackage */
+ /*@access rpmts @*/	/* XXX ts->notify */
+ 
++static int update_honor_buildtime(void)
++{
++    static int honor_buildtime = -1;
++
++    if (honor_buildtime < 0)
++	honor_buildtime = rpmExpandNumeric("%{?_upgrade_honor_buildtime}%{?!_upgrade_honor_buildtime:1}") ? 1 : 0;
++
++    return honor_buildtime;
++}
++
++static int rpmBuildTimeCompare(Header first, Header second)
++{
++    int_32 * one, * two;
++
++    if (!headerGetEntry(first, RPMTAG_BUILDTIME, NULL, (void **) &one, NULL))
++	one = NULL;
++    if (!headerGetEntry(second, RPMTAG_BUILDTIME, NULL, (void **) &two, NULL))
++	two = NULL;
++
++    if (!one && !two)
++	return 0;
++    if (one && !two)
++	return 1;
++    if (!one && two)
++	return -1;
++    if (*one < *two)
++	return -1;
++    if (*one > *two)
++	return 1;
++    return 0;
++}
++
+ int rpmVersionCompare(Header first, Header second)
+ {
+     const char * one, * two;
+@@ -82,7 +114,14 @@ int rpmVersionCompare(Header first, Head
+     rc = headerGetEntry(first, RPMTAG_RELEASE, NULL, (void **) &one, NULL);
+     rc = headerGetEntry(second, RPMTAG_RELEASE, NULL, (void **) &two, NULL);
+ 
+-    return rpmvercmp(one, two);
++    rc = rpmvercmp(one, two);
++    if (rc)
++	return rc;
++
++    if (update_honor_buildtime())
++	return rpmBuildTimeCompare(first, second);
++
++    return 0;
+ }
+ 
+ /**
+diff -upk.orig rpm-4.2.orig/lib/rpmte.c rpm-4.2/lib/rpmte.c
+--- rpm-4.2.orig/lib/rpmte.c	2005-10-17 11:08:55 +0000
++++ rpm-4.2/lib/rpmte.c	2005-10-17 11:08:55 +0000
+@@ -126,6 +126,9 @@ static void addTE(rpmts ts, rpmte p, Hea
+ 	t = stpcpy( stpcpy( t, "."), p->arch);
+ 
+     ep = NULL;
++    xx = hge(h, RPMTAG_BUILDTIME, NULL, (void **) &ep, NULL);
++    p->buildtime = (ep ? *ep : 0);
++    ep = NULL;
+     xx = hge(h, RPMTAG_EPOCH, NULL, (void **)&ep, NULL);
+ /*@-branchstate@*/
+     if (ep) {
+@@ -257,6 +260,11 @@ const char * rpmteDigest(rpmte te)
+     return (te != NULL ? te->digest : NULL);
+ }
+ 
++uint_32 rpmteBuildtime(rpmte te)
++{
++    return (te != NULL ? te->buildtime : 0);
++}
++
+ uint_32 rpmteColor(rpmte te)
+ {
+     return (te != NULL ? te->color : 0);
+diff -upk.orig rpm-4.2.orig/lib/rpmte.h rpm-4.2/lib/rpmte.h
+--- rpm-4.2.orig/lib/rpmte.h	2005-10-17 11:06:19 +0000
++++ rpm-4.2/lib/rpmte.h	2005-10-17 11:06:19 +0000
+@@ -122,6 +122,7 @@ struct rpmte_s {
+ /*@=fielduse@*/
+ 
+     char * digest;
++    uint_32 buildtime;
+ };
+ 
+ /**
+@@ -242,6 +243,15 @@ extern const char * rpmteO(rpmte te)
+ extern const char * rpmteDigest(rpmte te)
+ 	/*@*/;
+ 
++/**
++ * Retrieve buildtime of transaction element.
++ * @param te		transaction element
++ * @return		buildtime
++ */
++uint_32 rpmteBuildtime(rpmte te)
++	/*@*/;
++
++/**
+  * Retrieve color bits of transaction element.
+  * @param te		transaction element
+  * @return		color bits
+diff -upk.orig rpm-4.2.orig/lib/transaction.c rpm-4.2/lib/transaction.c
+--- rpm-4.2.orig/lib/transaction.c	2005-10-16 21:16:11 +0000
++++ rpm-4.2/lib/transaction.c	2005-10-17 13:18:45 +0000
+@@ -994,6 +994,16 @@ rpmfi rpmtsiFi(const rpmtsi tsi)
+ 
+ #define	NOTIFY(_ts, _al) /*@i@*/ if ((_ts)->notify) (void) (_ts)->notify _al
+ 
++static int update_honor_buildtime(void)
++{
++    static int honor_buildtime = -1;
++
++    if (honor_buildtime < 0)
++	honor_buildtime = rpmExpandNumeric("%{?_upgrade_honor_buildtime}%{?!_upgrade_honor_buildtime:1}") ? 1 : 0;
++
++    return honor_buildtime;
++}
++
+ int rpmtsRun(rpmts ts, rpmps okProbs, rpmprobFilterFlags ignoreSet)
+ {
+     uint_32 tscolor = rpmtsColor(ts);
+@@ -1113,6 +1123,11 @@ rpmMessage(RPMMESS_DEBUG, _("sanity chec
+ 				rpmteV(p));
+ 	    xx = rpmdbSetIteratorRE(mi, RPMTAG_RELEASE, RPMMIRE_DEFAULT,
+ 				rpmteR(p));
++	    if (update_honor_buildtime()) {
++		char b[2 + sizeof(unsigned int) * 3];
++		snprintf(b, sizeof(b), "%u", rpmteBuildtime(p));
++		xx = rpmdbSetIteratorRE(mi, RPMTAG_BUILDTIME, RPMMIRE_DEFAULT, b);
++	    }
+ 	    if (tscolor) {
+ 		xx = rpmdbSetIteratorRE(mi, RPMTAG_ARCH, RPMMIRE_DEFAULT,
+ 				rpmteA(p));
+diff -upk.orig rpm-4.2.orig/rpmpopt.in rpm-4.2/rpmpopt.in
+--- rpm-4.2/rpmpopt.in.orig	2003-01-24 14:56:30 +0000
++++ rpm-4.2/rpmpopt.in	2005-10-17 13:47:43 +0000
+@@ -202,6 +202,9 @@ rpm	alias --with		--define "_with_!#:+  
+ rpm	alias --without		--define "_without_!#:+    --without-!#:+" \
+ 	--POPTdesc=$"disable configure <option> for build" \
+ 	--POPTargs=$"<option>"
++
++rpm	alias --ignorebuildtime --define '_upgrade_honor_buildtime 0'
++
+ #==============================================================================
+ rpmb	alias --dbpath		--define '_dbpath !#:+' \
+ 	--POPTdesc=$"use database in DIRECTORY" \
+@@ -264,6 +267,7 @@ rpmi	alias --ftpport		--define '_ftpport
+ rpmi	alias --ftpproxy	--define '_ftpproxy !#:+'
+ rpmi	alias --httpport	--define '_httpport !#:+'
+ rpmi	alias --httpproxy	--define '_httpproxy !#:+'
++rpmi	alias --ignorebuildtime --define '_upgrade_honor_buildtime 0'
+ #==============================================================================
+ rpmk	alias --dbpath		--define '_dbpath !#:+' \
+ 	--POPTdesc=$"use database in DIRECTORY" \

@@ -60,22 +60,24 @@ diff -uNrp rpm-4.2.orig/platform.in rpm-4.2/platform.in
 diff -uNrp rpm-4.2.orig/configure rpm-4.2/configure
 --- rpm-4.2.orig/configure	Mon Mar 10 19:09:49 2003
 +++ rpm-4.2/configure	Fri Mar  5 05:44:32 2004
-@@ -23226,6 +23226,7 @@ unknown|pc|ibm|redhat|pld|mandrake|conec
+@@ -23226,6 +23226,8 @@ unknown|pc|ibm|redhat|pld|mandrake|conec
  	test -f /etc/conectiva-release &&	RPMCANONVENDOR=conectiva
  	test -f /etc/lvr-release &&		RPMCANONVENDOR=lvr
  	test -f /etc/yellowdog-release &&	RPMCANONVENDOR=yellowdog
 +	test -f /etc/owl-setup.conf &&		RPMCANONVENDOR=openwall
++	test -f /etc/mtree &&			RPMCANONVENDOR=openwall
  	;;
  esac
  RPMCANONOS="$build_os_noversion"
 diff -uNrp rpm-4.2.orig/configure.ac rpm-4.2/configure.ac
 --- rpm-4.2.orig/configure.ac	Fri Feb 14 22:53:37 2003
 +++ rpm-4.2/configure.ac	Fri Mar  5 05:45:25 2004
-@@ -1154,6 +1154,7 @@ unknown|pc|ibm|redhat|pld|mandrake|conec
+@@ -1154,6 +1154,8 @@ unknown|pc|ibm|redhat|pld|mandrake|conec
  	test -f /etc/conectiva-release &&	RPMCANONVENDOR=conectiva
  	test -f /etc/lvr-release &&		RPMCANONVENDOR=lvr
  	test -f /etc/yellowdog-release &&	RPMCANONVENDOR=yellowdog
 +	test -f /etc/owl-setup.conf &&		RPMCANONVENDOR=openwall
++	test -f /etc/mtree &&			RPMCANONVENDOR=openwall
  	;;
  esac
  RPMCANONOS="$build_os_noversion"

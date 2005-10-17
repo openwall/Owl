@@ -1,0 +1,11 @@
+--- rpm-4.2/lib/psm.c~	2005-10-17 11:01:45 +0000
++++ rpm-4.2/lib/psm.c	2005-10-17 13:30:24 +0000
+@@ -1034,6 +1034,8 @@ fprintf(stderr, "      Exec: %s \"%s\"\n
+ 		    _exit(-1);
+ 	    }
+ 
++	    umask(022);
++
+ 	    xx = execv(argv[0], (char *const *)argv);
+ 	    break;
+ 	default:
