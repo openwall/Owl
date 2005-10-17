@@ -45,6 +45,10 @@ Update these to latest releases once in a while.
 
 	coreutils.
 
+[PRIORITY: medium]
+[ASSIGNED: ldv@]
+Update to 5.91+.
+
 [PRIORITY: low]
 [ASSIGNED: ldv@]
 The texinfo documentation for true(1) and false(1) is wrong for the
@@ -426,38 +430,12 @@ Update to 3.22+.
 
 	rpm.
 
-[PRIORITY: high]
-[ASSIGNED: ldv@]
-Should remove old files on "-U --force" even if package versions
-match.  Right now, when forcibly updating a package to what appears to
-be the same version, but the previously installed package contains
-files that no longer exist in the package being installed, the files
-are not removed from the system and become orphaned.
-Reference:
-https://bugzilla.redhat.com/bugzilla/show_bug.cgi?id=134388
-
-[PRIORITY: medium]
-[ASSIGNED: ldv@]
-When comparing package versions on -U or -F, optionally take build
-dates into account.  That is, consider a newer build of the same
-package version/release to be a newer package.
-
-[PRIORITY: medium]
-[ASSIGNED: ldv@]
-Provide a safe default for %_repackage_dir; /var/tmp is not quite it.
-
-[PRIORITY: medium]
-[ASSIGNED: ldv@]
-Set umask 022 for install scripts execution.
-
 [PRIORITY: medium]
 Audit and correct rpm's temporary file handling and its support for
 package signature checking.
 
 [PRIORITY: low]
-[ASSIGNED: ldv@]
-Make rpm also use the system's libelf.
-
+Update to the latest stable 4.3.x or 4.4.x.
 
 	shadow-utils.
 
@@ -589,4 +567,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Id: Owl/doc/TODO,v 1.110 2005/10/03 13:20:40 solar Exp $
+$Id: Owl/doc/TODO,v 1.111 2005/10/17 22:57:10 ldv Exp $
