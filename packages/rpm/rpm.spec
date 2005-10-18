@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.57 2005/10/18 16:05:50 solar Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.58 2005/10/18 16:15:34 ldv Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -124,8 +124,6 @@ variables based on command line arguments.  popt allows command line
 arguments to be aliased via configuration files and includes utility
 functions for parsing arbitrary strings into argv[] arrays using
 shell-like rules.
-
-%{expand:%%define optflags %optflags -fno-strict-aliasing}
 
 %prep
 # RPM 3.0.6 magic: after definition of version for popt the version
@@ -479,7 +477,6 @@ on "-U --force" even if package versions match.
 into account.
 - Set umask 022 for install scripts and triggers execution.
 - Build debugedit utility with system libelf.
-- Build this package without optimizations based on strict aliasing rules.
 - Applied sparc optflags update from Alexandr Kanevskiy.
 
 * Fri Sep 23 2005 Michail Litvak <mci@owl.openwall.com> 4.2-owl8
