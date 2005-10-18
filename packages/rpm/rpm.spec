@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.56 2005/10/18 10:04:58 ldv Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.57 2005/10/18 16:05:50 solar Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -56,7 +56,7 @@ Patch30: rpm-4.2-owl-rpmal-bounds.diff
 Patch31: rpm-4.2-owl-compare-digest.diff
 Patch32: rpm-4.2-owl-honor-buildtime.diff
 Patch33: rpm-4.2-owl-runScript-umask.diff
-Patch34: rpm-4.2-owl-doc-fix.diff
+Patch34: rpm-4.2-owl-man.diff
 Patch35: rpm-4.2-cvs-20030515-parseSpec.diff
 
 PreReq: /sbin/ldconfig
@@ -124,6 +124,8 @@ variables based on command line arguments.  popt allows command line
 arguments to be aliased via configuration files and includes utility
 functions for parsing arbitrary strings into argv[] arrays using
 shell-like rules.
+
+%{expand:%%define optflags %optflags -fno-strict-aliasing}
 
 %prep
 # RPM 3.0.6 magic: after definition of version for popt the version
@@ -215,8 +217,6 @@ rm -r file
 %define __oldincludedir  /usr/include
 %define __infodir        %__datadir/info
 %define __mandir         %__datadir/man
-
-%{expand:%%define optflags %optflags -fno-strict-aliasing}
 
 %build
 # XXX rpm needs functioning nptl for configure tests
