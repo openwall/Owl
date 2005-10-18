@@ -1,4 +1,4 @@
-2005-10-17  Dmitry V. Levin  <ldv@owl.openwall.com>
+2005-10-17  Dmitry V. Levin  <ldv at owl.openwall.com>
 
 	* lib/depends.c (rpmDigestCompare): New function.
 	(rpmtsAddInstallElement): Use it for package comparison.
