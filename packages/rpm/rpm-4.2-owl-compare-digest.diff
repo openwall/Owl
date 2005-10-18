@@ -1,3 +1,14 @@
+2005-10-17  Dmitry V. Levin  <ldv@owl.openwall.com>
+
+	* lib/depends.c (rpmDigestCompare): New function.
+	(rpmtsAddInstallElement): Use it for package comparison.
+	(rpmpsmStage): Take digest into account.
+	* lib/rpmte.c (delTE): Free digest.
+	(addTE): Initialize digest.
+	(rpmteDigest): New function.
+	* lib/rpmte.h: Declare it.
+	(rpmte_s): Add digest.
+
 diff -upk.orig rpm-4.2.orig/lib/depends.c rpm-4.2/lib/depends.c
 --- rpm-4.2.orig/lib/depends.c	2003-03-03 22:12:00 +0000
 +++ rpm-4.2/lib/depends.c	2005-10-17 11:13:27 +0000
@@ -40,7 +51,7 @@ diff -upk.orig rpm-4.2.orig/lib/depends.c rpm-4.2/lib/depends.c
 diff -upk.orig rpm-4.2.orig/lib/psm.c rpm-4.2/lib/psm.c
 --- rpm-4.2.orig/lib/psm.c	2005-10-16 21:16:11 +0000
 +++ rpm-4.2/lib/psm.c	2005-10-17 11:01:45 +0000
-@@ -1451,6 +1451,8 @@ assert(psm->mi == NULL);
+@@ -1451,6 +1451,8 @@ rpmRC rpmpsmStage(rpmpsm psm, pkgStage
  			rpmteV(psm->te));
  	    xx = rpmdbSetIteratorRE(psm->mi, RPMTAG_RELEASE, RPMMIRE_DEFAULT,
  			rpmteR(psm->te));
