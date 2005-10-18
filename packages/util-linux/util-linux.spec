@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.31 2005/09/13 17:04:23 ldv Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.32 2005/10/18 22:48:09 ldv Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -7,7 +7,7 @@
 Summary: A collection of basic system utilities.
 Name: util-linux
 Version: 2.11z
-Release: owl5
+Release: owl6
 License: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%version.tar.bz2
@@ -166,7 +166,7 @@ fi
 /sbin/cfdisk
 %endif
 
-%ifarch %ix86 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
+%ifarch %ix86 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67 sparc sparcv9
 /sbin/fsck.minix
 /sbin/mkfs.minix
 %endif
@@ -225,13 +225,13 @@ fi
 %_bindir/renice
 %_sbindir/readprofile
 %_bindir/setsid
-%ifarch %ix86 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
+%ifarch %ix86 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67 sparc sparcv9
 %_bindir/cytune
 %endif
 
 %_mandir/man1/arch.1*
 %_mandir/man1/readprofile.1*
-%ifarch %ix86 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
+%ifarch %ix86 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67 sparc sparcv9
 %_mandir/man8/cytune.8*
 %endif
 %_mandir/man8/ctrlaltdel.8*
@@ -279,7 +279,7 @@ fi
 /bin/more
 %_mandir/man1/more.1*
 
-%ifarch %ix86 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
+%ifarch %ix86 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67 sparc sparcv9
 %_mandir/man8/fsck.minix.8*
 %_mandir/man8/mkfs.minix.8*
 %endif
@@ -327,6 +327,10 @@ fi
 %endif
 
 %changelog
+* Tue Oct 18 2005 Alexandr D. Kanevskiy <kad@owl.openwall.com> 2.11z-owl6
+- Also package /sbin/fsck.minix, /sbin/mkfs.minix and /usr/bin/cytune for
+sparc and sparcv9 architectures.
+   
 * Tue Sep 13 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.11z-owl5
 - Backported upstream fix to umount, to avoid unintentional grant
   of privileges by "umount -r".
