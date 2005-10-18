@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.58 2005/10/18 16:15:34 ldv Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.59 2005/10/18 18:07:25 ldv Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -241,6 +241,8 @@ done
 aclocal
 automake -f
 autoconf
+# This build does not use %%optflags yet, because
+# build with %%optflags produces unusable executables.
 ac_cv_header_libelf_h=no ac_cv_header_gelf_h=no \
 ./configure \
 	--prefix=%__prefix \
