@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.55 2005/10/17 22:53:57 ldv Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.56 2005/10/18 10:04:58 ldv Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -480,6 +480,7 @@ into account.
 - Set umask 022 for install scripts and triggers execution.
 - Build debugedit utility with system libelf.
 - Build this package without optimizations based on strict aliasing rules.
+- Applied sparc optflags update from Alexandr Kanevskiy.
 
 * Fri Sep 23 2005 Michail Litvak <mci@owl.openwall.com> 4.2-owl8
 - Don't package .la files.

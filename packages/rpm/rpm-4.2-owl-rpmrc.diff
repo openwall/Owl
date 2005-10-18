@@ -45,9 +45,9 @@ diff -ur rpm-4.2.orig/rpmrc.in rpm-4.2/rpmrc.in
 -optflags: sparc64 -O2 -g -m64 -mcpu=ultrasparc
 +# Note: we set plain "sparc" to require SPARC V8.  With the official RPM,
 +# it would also work for V7.
-+optflags: sparc -O2 -g -pipe -m32 -march=v8 -mtune=ultrasparc
-+optflags: sparcv9 -O2 -g -pipe -m32 -march=ultrasparc
-+optflags: sparc64 -O2 -g -pipe -m64 -march=ultrasparc
++optflags: sparc -O2 -g -pipe -m32 -mcpu=v8 -mtune=ultrasparc
++optflags: sparcv9 -O2 -g -pipe -m32 -mcpu=ultrasparc
++optflags: sparc64 -O2 -g -pipe -m64 -mcpu=ultrasparc
  
  optflags: m68k -O2 -g -fomit-frame-pointer
  
