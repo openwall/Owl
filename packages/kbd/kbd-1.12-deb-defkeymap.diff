@@ -1,0 +1,41 @@
+#!/bin/sh -e
+## 10_defkeymap.dpatch by Wartan Hachaturow <wart@mojo.tepkom.ru>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: No description.
+
+if [ $# -lt 1 ]; then
+    echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+    exit 1
+fi
+
+[ -f debian/patches/00patch-opts ] && . debian/patches/00patch-opts
+patch_opts="${patch_opts:--f --no-backup-if-mismatch}"
+
+case "$1" in
+       -patch) patch $patch_opts -p1 < $0;;
+       -unpatch) patch $patch_opts -p1 -R < $0;;
+        *)
+                echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+                exit 1;;
+esac
+
+exit 0
+
+@DPATCH@
+diff -urNad /home/wart/Projects/debian/kbd/new/kbd-1.12/src/paths.h kbd-1.12/src/paths.h
+--- /home/wart/Projects/debian/kbd/new/kbd-1.12/src/paths.h	2004-01-27 14:26:28.000000000 +0300
++++ kbd-1.12/src/paths.h	2004-01-27 14:38:14.000000000 +0300
+@@ -16,10 +16,10 @@
+  * Default keymap, and where the kernel copy of it lives.
+  */
+ #ifdef __sparc__
+-# define DEFMAP "sunkeymap.map"
++# define DEFMAP "sunkeymap.kmap"
+ # define KERNDIR "/usr/src/linux/drivers/sbus/char"
+ #else
+-# define DEFMAP "defkeymap.map"
++# define DEFMAP "defkeymap.kmap"
+ # define KERNDIR "/usr/src/linux/drivers/char"
+ #endif
+ 

@@ -1,0 +1,75 @@
+--- kbd-1.12/contrib/codepage.c.clean	2002-10-11 18:08:55 +0700
++++ kbd-1.12/contrib/codepage.c	2005-02-26 21:56:44 +0600
+@@ -224,8 +224,8 @@
+ 	}
+ 	if (optL) {
+ 	    int t = CPEntryHeader.device_type;
+-	    printf("CPEntryHeader: size=%d dev=%d [%s] name=%8.8s \
+-codepage=%d\n\t\tres=%6.6s nxt=%ld off_font=%ld\n\n",
++	    printf("CPEntryHeader: size=%d dev=%d [%s] name=%8.8s"
++"codepage=%d\n\t\tres=%6.6s nxt=%ld off_font=%ld\n\n",
+ 		   CPEntryHeader.size,
+ 		   t, (t==1) ? "screen" : (t==2) ? "printer" : "?",
+ 		   CPEntryHeader.device_name,
+@@ -270,6 +270,10 @@
+ 	if (optc)
+ 	  return 0;
+ 
++        fprintf(stderr,
++		"Warning: CP format is a hack!\n"
++		"The files produced may or may not be usable!\n");
++
+ 	sprintf(outfile, "%d.cp", CPEntryHeader.codepage);
+ 	if ((out = fopen(outfile, "w")) == NULL) {
+ 	    printf("\nUnable to open file %s.\n", outfile);
+--- kbd-1.12/src/loadkeys.y.clean	2004-01-17 03:51:25 +0600
++++ kbd-1.12/src/loadkeys.y	2005-02-26 22:02:31 +0600
+@@ -79,10 +79,12 @@
+ 
+ extern int rvalct;
+ extern struct kbsentry kbs_buf;
++int yyerror(const char *s);
+ extern void lkfatal(const char *s);
+ extern void lkfatal1(const char *s, const char *s2);
+ 
+ #include "ksyms.h"
++int yylex (void);
+ %}
+ 
+ %%
+@@ -614,7 +616,7 @@
+       gotf:
+ 	filename = xstrdup(pathname);
+ 	if (!quiet)
+-		fprintf(stderr, _("Loading %s\n"), pathname);
++	  fprintf(stderr, optm ? _("Reading %s\n") : _("Loading %s\n"), pathname);
+ 	if (first_file) {
+ 		yyin = f;
+ 		first_file = 0;
+@@ -988,18 +990,21 @@
+ 	fd = getfd(NULL);
+ 	keyct = defkeys(fd);
+ 	funcct = deffuncs(fd);
+-	if (accent_table_size > 0 || nocompose)
+-		diacct = defdiacs(fd);
+ 	if (verbose) {
+ 	        printf(_("\nChanged %d %s and %d %s.\n"),
+ 		       keyct, (keyct == 1) ? _("key") : _("keys"),
+ 		       funcct, (funcct == 1) ? _("string") : _("strings"));
+-		if (accent_table_size > 0 || nocompose)
++	}
++	if (accent_table_size > 0 || nocompose) {
++	  diacct = defdiacs(fd);
++	  if (verbose) {
+ 			printf(_("Loaded %d compose %s.\n"), diacct,
+ 			       (diacct == 1) ? _("definition") : _("definitions"));
+-		else
+-			printf(_("(No change in compose definitions.)\n"));
++	  }
+ 	}
++	else
++	  if (verbose)
++	    printf(_("(No change in compose definitions.)\n"));
+ }
+ 
+ static void strings_as_usual(void) {

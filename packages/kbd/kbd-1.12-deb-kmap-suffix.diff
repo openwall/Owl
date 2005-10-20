@@ -1,0 +1,37 @@
+#!/bin/sh -e
+## 10_kmap_suffix.dpatch by Wartan Hachaturow <wart@mojo.tepkom.ru>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: No description.
+
+if [ $# -lt 1 ]; then
+    echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+    exit 1
+fi
+
+[ -f debian/patches/00patch-opts ] && . debian/patches/00patch-opts
+patch_opts="${patch_opts:--f --no-backup-if-mismatch}"
+
+case "$1" in
+       -patch) patch $patch_opts -p1 < $0;;
+       -unpatch) patch $patch_opts -p1 -R < $0;;
+        *)
+                echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+                exit 1;;
+esac
+
+exit 0
+
+@DPATCH@
+diff -urNad /home/wart/Projects/debian/kbd/new/kbd-1.12/src/loadkeys.y kbd-1.12/src/loadkeys.y
+--- /home/wart/Projects/debian/kbd/new/kbd-1.12/src/loadkeys.y	2004-01-27 14:25:50.000000000 +0300
++++ kbd-1.12/src/loadkeys.y	2004-01-27 14:37:01.000000000 +0300
+@@ -566,7 +566,7 @@
+ }
+ 
+ char *dirpath[] = { "", DATADIR "/" KEYMAPDIR "/**", KERNDIR "/", 0 };
+-char *suffixes[] = { "", ".map", 0 };
++char *suffixes[] = { "", ".kmap", ".map", 0 };
+ extern FILE *findfile(char *fnam, char **dirpath, char **suffixes);
+ 
+ #undef yywrap

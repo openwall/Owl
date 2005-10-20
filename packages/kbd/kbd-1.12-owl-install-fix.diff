@@ -1,0 +1,64 @@
+diff -ur kbd-1.12.orig/src/Makefile.in kbd-1.12/src/Makefile.in
+--- kbd-1.12.orig/src/Makefile.in	2004-01-03 17:53:54 +0000
++++ kbd-1.12/src/Makefile.in	2005-05-29 17:03:33 +0000
+@@ -8,15 +8,15 @@
+ endif
+ 
+ ifndef BINDIR
+-BINDIR = $(DESTDIR)$(PREFIX)/bin
++BINDIR = $(PREFIX)/bin
+ endif
+ 
+ # Maybe we want to use a qwertz keyboard before /usr is mounted
+ ifndef LOADKEYS_BINDIR
+ ifeq ($(PREFIX), /usr)
+-  LOADKEYS_BINDIR = $(DESTDIR)/bin
++  LOADKEYS_BINDIR = /bin
+ else
+-  LOADKEYS_BINDIR = $(DESTDIR)$(PREFIX)/bin
++  LOADKEYS_BINDIR = $(PREFIX)/bin
+ endif
+ endif
+ 
+@@ -71,15 +71,15 @@
+ old:	$(OLDPROGS)
+ 
+ install:	all
+-	install -d -m 0755 $(BINDIR) $(LOADKEYS_BINDIR)
+-	install -s -m 0755 $(setowner) $(PROGS) $(OLDPROGS) $(BINDIR)
+-#	install -s -m 0755 $(setowner) $(MISC) $(BINDIR)
+-	install -c -m 0755 $(setowner) $(SHCMDS) $(BINDIR)
++	install -d -m 0755 $(DESTDIR)$(BINDIR) $(DESTDIR)$(LOADKEYS_BINDIR)
++	install -m 0755 $(setowner) $(PROGS) $(OLDPROGS) $(DESTDIR)$(BINDIR)
++#	install -m 0755 $(setowner) $(MISC) $(DESTDIR)$(BINDIR)
++	install -c -m 0755 $(setowner) $(SHCMDS) $(DESTDIR)$(BINDIR)
+ 	for i in psfaddtable psfgettable psfstriptable; do \
+-		rm -f $(BINDIR)/$$i; ln -s psfxtable $(BINDIR)/$$i; \
++		rm -f $(DESTDIR)$(BINDIR)/$$i; ln -s psfxtable $(DESTDIR)$(BINDIR)/$$i; \
+ 	done
+-	rm -f $(BINDIR)/loadkeys
+-	install -s -m 0755 $(setowner) loadkeys $(LOADKEYS_BINDIR)
++	rm -f $(DESTDIR)$(BINDIR)/loadkeys
++	install -m 0755 $(setowner) loadkeys $(DESTDIR)$(LOADKEYS_BINDIR)
+ 	@echo "You may also want to add psf.magic to /usr/lib/magic"
+ 
+ 
+diff -ur kbd-1.12.orig/openvt/Makefile kbd-1.12/openvt/Makefile
+--- kbd-1.12.orig/openvt/Makefile	2004-01-03 14:44:41 +0000
++++ kbd-1.12/openvt/Makefile	2005-05-29 17:19:31 +0000
+@@ -24,10 +24,11 @@
+ 	-rm -f $(PROGS)
+ 
+ install: $(PROGS)
+-	install -d -m 755 $(BINDIR) $(MANDIR)/man1
+-	install $(PROGS) $(BINDIR)
+-	install -m 644 $(MAN) $(MANDIR)/man1
++	install -d -m 755 $(DESTDIR)$(BINDIR) $(MANDIR)/man1
++	install $(PROGS) $(DESTDIR)$(BINDIR)
++	install -m 644 $(MAN) $(MANDIR)/man1
+ 
+ # don't change 4711 to 0711 - this is the setuid target
++# but we packing it into RPM, so we don't need it at all -- (GM)
+ setuid:
+-	chmod 4711 $(BINDIR)/$(PROG)
++	# chmod 4711 $(DESTDIR)$(BINDIR)/$(PROG)

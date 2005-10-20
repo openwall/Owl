@@ -1,0 +1,139 @@
+#! /bin/sh -e
+## 02_man_pages.dpatch by Denis Barbier <barbier@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Description: codepage, mk_modmap, screendump and setvesablank
+## DP: programs are installed, so their man pages have to be shipped too.
+## DP: splitfont.1, setlogcons.8, and vcstime.8 are copied from console-tools.
+## DP: Date: 2004-07-25
+
+if [ $# -lt 1 ]; then
+    echo "`basename $0`: script expects -patch|-unpatch as argument" >&2
+    exit 1
+fi
+
+[ -f debian/patches/00patch-opts ] && . debian/patches/00patch-opts
+patch_opts="${patch_opts:--f --no-backup-if-mismatch} ${2:+-d $2}"
+
+case "$1" in
+    -patch) patch -p1 ${patch_opts} < $0;;
+    -unpatch) patch -R -p1 ${patch_opts} < $0;;
+    *)
+        echo "`basename $0`: script expects -patch|-unpatch as argument" >&2
+        exit 1;;
+esac
+
+exit 0
+
+--- kbd-1.12.orig/man/Makefile
++++ kbd-1.12/man/Makefile
+@@ -7,6 +7,13 @@
+ 		install -d -m 755 $(MANDIR)/$$i; \
+ 		install -m 644 $$i/*.[0-9] $(MANDIR)/$$i; \
+ 	done
++	install -m 644 man1misc/codepage.1 $(MANDIR)/man1
++	install -m 644 man1misc/screendump.1 $(MANDIR)/man1
++	install -m 644 man1misc/splitfont.1 $(MANDIR)/man1
++	install -m 644 man8misc/mk_modmap.8 $(MANDIR)/man8
++	install -m 644 man8misc/setlogcons.8 $(MANDIR)/man8
++	install -m 644 man8misc/setvesablank.8 $(MANDIR)/man8
++	install -m 644 man8misc/vcstime.8 $(MANDIR)/man8
+ 	rm -f $(MANDIR)/man5/keytables.5
+ 
+ clean:
+--- kbd-1.12.orig/man/man1misc/splitfont.1
++++ kbd-1.12/man/man1misc/splitfont.1
+@@ -0,0 +1,28 @@
++.TH SPLITFONT 1 "2002-02-24" "" "Linux Console"
++
++.SH NAME
++splitfont \- extract characters from an ISO-type font.
++
++.SH SYNOPSIS
++.B
++splitfont
++.I fontfile 
++.I <character range>...
++
++.SH DESCRIPTION
++The command
++.splitfont
++removes characters from a given font file; it removes all the
++specified characters from the named font file.
++.P
++This works for Linux console fonts, without PSF headers, 
++and containing just 256 characters.
++.P
++The character range is of the form
++.LP
++.RS
++	17,23-30,
++.RE
++
++.SH "SEE ALSO"
++setfont(8).
+--- kbd-1.12.orig/man/man8/showconsolefont.8
++++ kbd-1.12/man/man8/showconsolefont.8
+@@ -1,4 +1,4 @@
+-.TH  SHOWFONT 1 "2002-02-22" "" "Linux Console"
++.TH  SHOWCONSOLEFONT 8 "2002-02-22" "" "Linux Console"
+ 
+ .SH NAME
+ showconsolefont \- Show the current EGA/VGA console screen font
+--- kbd-1.12.orig/man/man8misc/setlogcons.8
++++ kbd-1.12/man/man8misc/setlogcons.8
+@@ -0,0 +1,26 @@
++.TH SETLOGCONS 8 "18 Apr 2004" "Console tools" "Linux User's Manual"
++
++.SH NAME
++setlogcons \- Send kernel messages to console N 
++.SH SYNOPSIS
++.BI setlogcons
++.BI N
++
++.SH DESCRIPTION
++The command
++.B setlogcons
++.I N
++sets all kernel messges to the console specified as N.
++.P
++By default kernel messages are sent to the current console.
++.P
++To change the level of messages sent, use 
++.B dmesg
++
++.SH "AUTHORS"
++.BI setlogcons 
++was originally written by Andries Brouwer for the kbd package.
++.P
++This manual page was written by Alastair McKinstry.
++.SH "SEE ALSO"
++dmesg(1)
+--- kbd-1.12.orig/man/man8misc/vcstime.8
++++ kbd-1.12/man/man8misc/vcstime.8
+@@ -0,0 +1,25 @@
++.\" Copyright 2003 Alastair McKinstry <mckinstry@computer.org>"
++.\" May be distributed under the GNU General Public License"
++.TH VCSTIME 8 "22 Jan 2003" "Console tools" "Linux User's Manual"
++
++.SH NAME
++vcstime \- Show time in upper right hand corner of the console screen
++
++.SH SYNOPSIS
++.BI vcstime
++
++.SH DESCRIPTION
++.PP
++.B vcstime
++shows the current time in the upper right\-hand corner of the console screen.
++.PP
++This simple program shows the current time in the corner of the console screen.
++.PP
++It needs to be run by root, in order to have write permissions to 
++.I /dev/vcsa
++
++
++.SH "AUTHORS"
++.BR vcstime
++was written by Andries Brouwer, based on  a suggestion by Miguel de Icaza.
++This manual page was Written by Alastair McKinstry, Debian, Jan 2003.

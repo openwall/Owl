@@ -1,0 +1,69 @@
+--- kbd-1.12/src/analyze.l.plainletter	2005-02-26 23:54:23 +0600
++++ kbd-1.12/src/analyze.l	2005-02-27 01:01:05 +0600
+@@ -57,6 +57,19 @@
+ On			on|On|ON
+ To                      to|To|TO
+ %%
++%{
++/* To protect from wrong code in the higher level parser (loadkeys.y), 
++ * make sure we do not return a sensible value if we
++ * do not intend to. (So wrong code would crash, or issue an error message.
++ * I mean the code like the one for PLAIN handling in past loadkeys.y.
++ * What to choose as the "bad" value: 0, -1?.. 
++ * Well, make it equal to CODE_FOR_UNKNOWN_KSYM as the most efficient thing.
++ */
++#define YYLVAL_UNDEF CODE_FOR_UNKNOWN_KSYM
++/* Every time yylex is called, initialize the associated
++ * yylval to YYLVAL_UNDEF. Then it might be overwritten by specific rules. */
++  yylval = YYLVAL_UNDEF;
++%}
+ {Include}               {BEGIN(INCLSTR);}
+ <INCLSTR>\"[^"\n]+\"	{ int l; char *s;
+ 			 l = strlen(yytext);
+--- kbd-1.12/src/ksyms.h.plainletter	2005-02-27 00:15:54 +0600
++++ kbd-1.12/src/ksyms.h	2005-02-27 01:01:39 +0600
+@@ -22,6 +22,9 @@
+ extern const int syms_size;
+ extern const int syn_size;
+ 
++/* Returned by ksymtocode to report an unknown symbol */
++#define CODE_FOR_UNKNOWN_KSYM (-1)
++
+ extern int set_charset(const char *name);
+ extern const char *unicodetoksym(int code);
+ extern void list_charsets(FILE *f);
+--- kbd-1.12/src/ksyms.c.plainletter	2005-02-27 00:16:50 +0600
++++ kbd-1.12/src/ksyms.c	2005-02-27 00:17:03 +0600
+@@ -1780,7 +1780,7 @@
+ 
+ 	fprintf(stderr, _("unknown keysym '%s'\n"), s);
+ 
+-	return -1;
++	return CODE_FOR_UNKNOWN_KSYM;
+ }
+ 
+ int
+--- kbd-1.12/src/loadkeys.y.plainletter	2005-02-27 01:00:33 +0600
++++ kbd-1.12/src/loadkeys.y	2005-02-27 00:25:53 +0600
+@@ -170,7 +170,7 @@
+ 			}
+ 		| PLAIN KEYCODE NUMBER EQUALS rvalue EOL
+ 			{
+-			    addkey($4, 0, $6);
++			    addkey($3, 0, $5);
+ 			}
+ 		;
+ modifiers	: modifiers modifier
+@@ -659,8 +659,10 @@
+ addkey(int index, int table, int keycode) {
+ 	int i;
+ 
+-	if (keycode == -1)
+-		return;
++	if (keycode == CODE_FOR_UNKNOWN_KSYM)
++	  /* is safer not to be silent in this case, 
++	   * it can be caused by coding errors as well. */
++	        lkfatal0(_("addkey called with bad keycode %d"), keycode);
+         if (index < 0 || index >= NR_KEYS)
+ 	        lkfatal0(_("addkey called with bad index %d"), index);
+         if (table < 0 || table >= MAX_NR_KEYMAPS)

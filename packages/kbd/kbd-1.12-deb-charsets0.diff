@@ -1,0 +1,69 @@
+#! /bin/sh -e
+
+## 50_charsets0.dpatch by Denis Barbier <barbier@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Description: stores in charsets[0] the current Unicode<->name
+## DP: mapping, otherwise some symbols could not be retrieved if they
+## DP: appear with different names.
+## DP: Date: 2004-07-31
+
+if [ $# -lt 1 ]; then
+    echo "`basename $0`: script expects -patch|-unpatch as argument" >&2
+    exit 1
+fi
+
+[ -f debian/patches/00patch-opts ] && . debian/patches/00patch-opts
+patch_opts="${patch_opts:--f --no-backup-if-mismatch} ${2:+-d $2}"
+
+case "$1" in
+    -patch) patch -p1 ${patch_opts} < $0;;
+    -unpatch) patch -R -p1 ${patch_opts} < $0;;
+    *)
+        echo "`basename $0`: script expects -patch|-unpatch as argument" >&2
+        exit 1;;
+esac
+
+exit 0
+
+--- kbd-1.12.orig/src/ksyms.c
++++ kbd-1.12/src/ksyms.c
+@@ -1604,6 +1602,7 @@
+     sym *charnames;
+     int start;
+ } charsets[] = {
++    { "", NULL, 256 },
+     { "iso-8859-1",	latin1_syms, 160 },
+     { "iso-8859-2",	latin2_syms, 160 },
+     { "iso-8859-3",	latin3_syms, 160 },
+@@ -1636,7 +1635,7 @@
+ 		fprintf(f, "%s{", mm[j]);
+ 		ct = 0;
+ 		lth = strlen(mm[j]);
+-		for(i=0; i < sizeof(charsets)/sizeof(charsets[0]); i++) {
++		for(i=1; i < sizeof(charsets)/sizeof(charsets[0]); i++) {
+ 			if(!strncmp(charsets[i].charset, mm[j], lth)) {
+ 				if(ct++)
+ 					fprintf(f, ",");
+@@ -1645,7 +1644,7 @@
+ 		}
+ 		fprintf(f, "}");
+ 	}
+-	for(i=0; i < sizeof(charsets)/sizeof(charsets[0]); i++) {
++	for(i=1; i < sizeof(charsets)/sizeof(charsets[0]); i++) {
+ 		for (j=0; j<sizeof(mm)/sizeof(mm[0]); j++) {
+ 			lth = strlen(mm[j]);
+ 			if(!strncmp(charsets[i].charset, mm[j], lth))
+@@ -1665,8 +1664,11 @@
+ 	if (!strcasecmp(charset, "unicode"))
+ 		return 0;
+ 
+-	for (i = 0; i < sizeof(charsets)/sizeof(charsets[0]); i++) {
++	for (i = 1; i < sizeof(charsets)/sizeof(charsets[0]); i++) {
+ 		if (!strcasecmp(charsets[i].charset, charset)) {
++			charsets[0].charset = charsets[i].charset;
++			charsets[0].charnames = charsets[i].charnames;
++			charsets[0].start = charsets[i].start;
+ 			p = charsets[i].charnames;
+ 			for (i = charsets[i].start; i < 256; i++,p++) {
+ 				if(p->name[0])
