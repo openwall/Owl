@@ -1,4 +1,4 @@
-# $Id: Owl/packages/kbd/kbd.spec,v 1.12 2005/10/20 22:02:41 galaxy Exp $
+# $Id: Owl/packages/kbd/kbd.spec,v 1.13 2005/10/20 22:59:18 galaxy Exp $
 
 Summary: Tools for configuring the console.
 Name: kbd
@@ -101,7 +101,7 @@ rm -rf %buildroot
 %__make install \
 	DESTDIR=%buildroot \
 	BINDIR=%_bindir \
-	LOADKEYS_BINDIR=/bin \
+	LOADKEYS_BINDIR=/bin
 	
 
 # Obsolete
