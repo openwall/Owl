@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openntpd/openntpd.spec,v 1.2 2005/10/20 17:28:25 galaxy Exp $
+# $Id: Owl/packages/openntpd/openntpd.spec,v 1.3 2005/10/20 17:34:06 galaxy Exp $
 
 Summary: NTP time synchronization server and client.
 Name: openntpd
@@ -22,7 +22,7 @@ BuildRequires: openssl-devel
 BuildRoot: /override/%name-%version
 
 %description
-NTP time Synchronization server and client - http://www.openntpd.org
+NTP time synchronization server and client - http://www.openntpd.org
 
 The ntpd daemon synchronizes the local clock to one or more remote NTP
 servers, and can also act as an NTP server itself, redistributing the
