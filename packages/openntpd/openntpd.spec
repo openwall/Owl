@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openntpd/openntpd.spec,v 1.4 2005/10/20 17:37:09 galaxy Exp $
+# $Id: Owl/packages/openntpd/openntpd.spec,v 1.5 2005/10/20 23:25:02 galaxy Exp $
 
 Summary: NTP time synchronization server and client.
 Name: openntpd
@@ -10,7 +10,6 @@ URL: http://www.openntpd.org
 Source0: ftp://ftp.openbsd.org/pub/OpenBSD/OpenNTPD/%name-%version.tar.gz
 Source1: openntpd.init
 Source2: openntpd.control
-
 Prefix: %_prefix
 PreReq: /var/empty
 PreReq: shadow-utils
@@ -41,19 +40,19 @@ described in RFC 1305.
 %__make
 
 %install
-rm -rf "%buildroot"
-%__make install DESTDIR="%buildroot" INSTALL="install -p"
-mkdir -p "%buildroot%_sysconfdir/init.d"
-install -p -m755 "%_sourcedir/openntpd.init" "%buildroot%_sysconfdir/init.d/ntpd"
-mkdir -p "%buildroot%_sysconfdir/control.d/facilities"
-install -p -m755 "%_sourcedir/openntpd.control" "%buildroot%_sysconfdir/control.d/facilities/ntpd"
+rm -rf %buildroot
+%__make install DESTDIR=%buildroot INSTALL="install -p"
+mkdir -p %buildroot%_sysconfdir/init.d
+install -p -m755 %_sourcedir/openntpd.init %buildroot%_sysconfdir/init.d/ntpd
+mkdir -p %buildroot%_sysconfdir/control.d/facilities
+install -p -m755 %_sourcedir/openntpd.control %buildroot%_sysconfdir/control.d/facilities/ntpd
 
 %pre
 if [ \
 	0"$(id -u xntpd 2>/dev/null)" -eq 185 -a \
 	0"$(id -g xntpd 2>/dev/null)" -eq 185 -a \
 	-z "$(id -un ntpd 2>/dev/null)" -a \
-	-z "$(grep '^ntpd:' %_sysconfdir/group 2>/dev/null)" \
+	-z "$(grep '^ntpd:' /etc/group 2>/dev/null)" \
 ]; then
 	echo -n "Renaming the 'xntpd' group to 'ntpd' ... "
 	groupmod -n ntpd xntpd && echo "Done"
@@ -61,13 +60,13 @@ if [ \
 	usermod -l ntpd xntpd && echo "Done"
 fi
 
-grep '^ntpd:' %_sysconfdir/group &>/dev/null || groupadd -g 185 ntpd
+grep -q '^ntpd:' /etc/group || groupadd -g 185 ntpd
 id ntpd &>/dev/null || useradd -u 185 -g ntpd -s /bin/false -d / ntpd
 
 if [ $1 -ge 2 ]; then
 	%_sbindir/control-dump ntpd
 	if /sbin/service ntpd status &>/dev/null; then
-		touch /var/run/ntpd.restart || :
+		touch /var/run/ntpd.restart
 		/sbin/service ntpd stop || :
 	fi
 fi
