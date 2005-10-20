@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openntpd/openntpd.spec,v 1.5 2005/10/20 23:25:02 galaxy Exp $
+# $Id: Owl/packages/openntpd/openntpd.spec,v 1.6 2005/10/20 23:53:30 galaxy Exp $
 
 Summary: NTP time synchronization server and client.
 Name: openntpd
@@ -14,6 +14,7 @@ Prefix: %_prefix
 PreReq: /var/empty
 PreReq: shadow-utils
 PreReq: coreutils
+PreReq: grep
 PreReq: owl-control >= 0.4, owl-control <= 2.0
 Requires: chkconfig
 Requires: openssl
@@ -52,7 +53,7 @@ if [ \
 	0"$(id -u xntpd 2>/dev/null)" -eq 185 -a \
 	0"$(id -g xntpd 2>/dev/null)" -eq 185 -a \
 	-z "$(id -un ntpd 2>/dev/null)" -a \
-	-z "$(grep '^ntpd:' /etc/group 2>/dev/null)" \
+	-z "$(grep -q '^ntpd:' /etc/group)" \
 ]; then
 	echo -n "Renaming the 'xntpd' group to 'ntpd' ... "
 	groupmod -n ntpd xntpd && echo "Done"
