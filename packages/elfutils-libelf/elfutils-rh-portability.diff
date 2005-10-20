@@ -1,0 +1,35 @@
+--- elfutils/libelf/common.h
++++ elfutils/libelf/common.h
+@@ -122,7 +122,7 @@ libelf_release_all (Elf *elf)
+   (Var) = (sizeof (Var) == 1						      \
+ 	   ? (unsigned char) (Var)					      \
+ 	   : (sizeof (Var) == 2						      \
+-	      ? bswap_16 (Var)						      \
++	      ? (unsigned short int) bswap_16 (Var)			      \
+ 	      : (sizeof (Var) == 4					      \
+ 		 ? bswap_32 (Var)					      \
+ 		 : bswap_64 (Var))))
+@@ -131,7 +131,7 @@ libelf_release_all (Elf *elf)
+   (Dst) = (sizeof (Var) == 1						      \
+ 	   ? (unsigned char) (Var)					      \
+ 	   : (sizeof (Var) == 2						      \
+-	      ? bswap_16 (Var)						      \
++	      ? (unsigned short int) bswap_16 (Var)			      \
+ 	      : (sizeof (Var) == 4					      \
+ 		 ? bswap_32 (Var)					      \
+ 		 : bswap_64 (Var))))
+--- elfutils/src/findtextrel.c
++++ elfutils/src/findtextrel.c
+@@ -476,7 +476,11 @@ ptrcompare (const void *p1, const void *
+ 
+ 
+ static void
+-check_rel (size_t nsegments, struct segments segments[nsegments],
++check_rel (size_t nsegments, struct segments segments[
++#if __GNUC__ >= 4
++						      nsegments
++#endif
++	   ],
+ 	   GElf_Addr addr, Elf *elf, Elf_Scn *symscn, Dwarf *dw,
+ 	   const char *fname, bool more_than_one, void **knownsrcs)
+ {

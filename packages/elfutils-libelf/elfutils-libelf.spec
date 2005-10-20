@@ -1,14 +1,14 @@
-# $Id: Owl/packages/elfutils-libelf/elfutils-libelf.spec,v 1.4 2005/10/17 22:21:26 ldv Exp $
+# $Id: Owl/packages/elfutils-libelf/elfutils-libelf.spec,v 1.5 2005/10/20 00:07:47 ldv Exp $
 
 Summary: Library to read and write ELF files.
 Name: elfutils-libelf
-Version: 0.108
-Release: owl3
+Version: 0.115
+Release: owl1
 License: GPL
 Group: System Environment/Libraries
 Source: elfutils-%version.tar.gz
-Patch0: elfutils-0.108-rh-robustify.diff
-Patch1: elfutils-0.108-owl-fixes.diff
+Patch0: elfutils-0.115-rh-robustify.diff
+Patch1: elfutils-rh-portability.diff
 Obsoletes: libelf
 BuildRequires: bison >= 1.35
 BuildRequires: flex >= 2.5.4a
@@ -68,6 +68,10 @@ rm %buildroot%_includedir/elfutils/elf-knowledge.h
 %_libdir/libelf.so
 
 %changelog
+* Thu Oct 20 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.115-owl1
+- Updated to 0.115.
+- Partially imported portability patch from RH.
+
 * Mon Oct 17 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.108-owl3
 - Packaged %_includedir/dwarf.h.
 
