@@ -1,0 +1,53 @@
+#! /bin/bash
+#
+# ntpd		Time synchronization daemon 
+#
+# chkconfig: 2345 90 60
+# description: ntpd is a time synchronization daemon
+# processname: ntpd
+# config: /etc/ntpd.conf
+# pidfile: /var/run/ntpd.pid
+
+# Source function library.
+. /etc/init.d/functions
+
+OWL_STARTUP_ENABLE=1
+
+case "$1" in
+start)
+	if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
+		daemon --pidfile "$PID_FILE" --expect-user ntpd -- ntpd -s
+	else
+		daemon ntpd -s
+	fi
+	;;
+stop)
+	if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
+		# owl-startup 0.24 compatible -- (GM)
+		killproc --pidfile "$PID_FILE" --expect-user ntpd ntpd
+	else
+		killproc ntpd
+	fi
+	;;
+reload)
+	if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
+		killproc --pidfile "$PID_FILE" --expect-user ntpd -HUP ntpd
+	else
+		killproc -HUP ntpd
+	fi
+	;;
+status)
+	if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
+		status --pidfile "$PID_FILE" --expect-user ntpd -- ntpd
+	fi
+	;;
+restart)
+  	$0 stop
+	$0 start
+	;;
+*)
+	echo $"Usage: $0 {start|stop|status|reload|restart}"
+	exit 1
+esac
+
+exit $?

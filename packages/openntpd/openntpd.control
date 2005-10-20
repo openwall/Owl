@@ -1,0 +1,29 @@
+#!/bin/sh
+# $Id: Owl/packages/openntpd/openntpd.control,v 1.1 2005/10/20 15:30:59 galaxy Exp $
+
+. /etc/control.d/functions
+
+CONFIG=/etc/ntpd.conf
+
+# XXX: Actually we should uncomment only the first 'listen on' directive.
+#      The way proposed below isn't reliable since it's binded to the
+#      presence of the '# Addresses ...' comment line right before the
+#      first 'listen on' directive.
+#                                                             -- (GM)
+new_subst server \
+	'^[[:space:]]*listen[[:space:]]+on[[:space:]]' \
+	'/# Addresses to/,+1 s,^#\([[:space:]]*listen[[:space:]]\+on[[:space:]]\),\1,'
+new_subst client \
+	'^#[[:space:]]*listen[[:space:]]+on[[:space:]]' \
+	's,^\([[:space:]]*listen[[:space:]]\+on[[:space:]]\),#\1,'
+
+control_subst "$CONFIG" "$*" || exit 1
+
+case "$*" in
+server|client)
+	if /sbin/service ntpd status &>/dev/null; then
+		/sbin/service ntpd restart
+	fi
+	exit 0
+	;;
+esac
