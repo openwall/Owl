@@ -1,4 +1,4 @@
-# $Id: Owl/packages/kbd/kbd.spec,v 1.11 2005/10/20 21:55:32 galaxy Exp $
+# $Id: Owl/packages/kbd/kbd.spec,v 1.12 2005/10/20 22:02:41 galaxy Exp $
 
 Summary: Tools for configuring the console.
 Name: kbd
@@ -35,7 +35,7 @@ PreReq: /sbin/chkconfig, /sbin/ldconfig
 Conflicts: util-linux < 2.11
 Provides: console-tools
 Obsoletes: console-tools
-BuildRequires: bison, flex
+BuildRequires: bison, flex, sed >= 4.0.9
 BuildRoot: /override/%name-%version
 
 %description
@@ -148,6 +148,8 @@ fi
 - Merged recent patches from several distributions.
 - Fixed error in the description.
 - Regenerated 1st hunk of kbdrate.c patch in -owl-rh-sparc.
+- Added BuildRequire on sed >= 4.0.9 due to 'sed -i'.
+- From now on, this package could be compiled with kernel 2.6 headers.
 
 * Thu Jan 15 2004 Michail Litvak <mci@owl.openwall.com> 1.08-owl5
 - Make /lib/kbd directory owned by this package.
