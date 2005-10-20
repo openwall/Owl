@@ -1,4 +1,4 @@
-# $Id: Owl/packages/elfutils-libelf/elfutils-libelf.spec,v 1.5 2005/10/20 00:07:47 ldv Exp $
+# $Id: Owl/packages/elfutils-libelf/elfutils-libelf.spec,v 1.6 2005/10/20 00:28:37 ldv Exp $
 
 Summary: Library to read and write ELF files.
 Name: elfutils-libelf
@@ -8,7 +8,7 @@ License: GPL
 Group: System Environment/Libraries
 Source: elfutils-%version.tar.gz
 Patch0: elfutils-0.115-rh-robustify.diff
-Patch1: elfutils-rh-portability.diff
+Patch1: elfutils-0.115-rh-portability.diff
 Obsoletes: libelf
 BuildRequires: bison >= 1.35
 BuildRequires: flex >= 2.5.4a
