@@ -1,9 +1,9 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.35 2005/08/25 23:08:04 ldv Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.36 2005/10/20 16:00:47 galaxy Exp $
 
 Summary: A screen manager that supports multiple sessions on one terminal.
 Name: screen
 Version: 4.0.2
-Release: owl4
+Release: owl5
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%version.tar.gz
@@ -21,6 +21,7 @@ Patch9: screen-4.0.2-alt-utempter.diff
 Patch10: screen-4.0.2-owl-warnings.diff
 Patch11: screen-4.0.2-owl-logging.diff
 Patch12: screen-4.0.2-owl-info.diff
+Patch13: screen-4.0.2-owl-Makefile.diff
 PreReq: /sbin/install-info
 Requires: tcb, pam_userpass, libutempter
 # Just in case this is built with an older version of RPM package.
@@ -50,6 +51,7 @@ but want to use more than one session.
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
+%patch13 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -59,13 +61,13 @@ autoconf
 
 rm doc/screen.info*
 
-make CFLAGS="$RPM_OPT_FLAGS"
+%__make
 
 %install
 rm -rf %buildroot
 mkdir -p %buildroot/etc/pam.d
 
-make install DESTDIR=%buildroot
+%__make install DESTDIR=%buildroot
 
 mv %buildroot%_bindir/screen-%version %buildroot%_bindir/screen
 
@@ -120,8 +122,17 @@ fi
 %attr(710,root,screen) %dir %_libexecdir/screen
 %ghost %_libexecdir/screen/tcb_chkpwd
 %ghost %_libexecdir/screen/utempter
+# XXX: perhaps we should patch the build environment to find out the location
+#      of the terminfo database at buildtime -- (GM)
+/usr/share/terminfo/s/screen*
 
 %changelog
+* Tue Oct 18 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.0.2-owl5
+- Added -owl-Makefile.diff which fixes the usage of tic.
+- Packaged /usr/share/terminfo/s/screen*.
+- Removed redundant CFLAGS from make.
+- Replaced 'make' with '%%__make'.
+
 * Fri Aug 26 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.0.2-owl4
 - Added system logger initialization to builtin locker.
 - Allowed users with empty passwords to use builtin locker.
