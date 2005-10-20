@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bind/bind.spec,v 1.9 2005/10/08 23:34:22 solar Exp $
+# $Id: Owl/packages/bind/bind.spec,v 1.10 2005/10/20 23:30:07 galaxy Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -7,7 +7,7 @@
 Summary: ISC BIND - DNS server.
 Name: bind
 Version: 9.3.1
-Release: owl3
+Release: owl4
 License: BSD-like
 URL: http://www.isc.org/products/BIND/
 Group: System Environment/Daemons
@@ -244,7 +244,7 @@ grep -q ^named: /etc/passwd ||
 if [ $1 -ge 2 ]; then
 	%_sbindir/control-dump bind-debug bind-slave
 	if %_initrddir/named status; then
-		touch /var/run/named.restart || :
+		touch /var/run/named.restart
 		%_initrddir/named stop || :
 	fi
 fi
@@ -351,6 +351,9 @@ fi
 %_mandir/man8/nsupdate.8*
 
 %changelog
+* Thu Oct 21 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 9.3.1-owl4
+- Removed '|| :' from touch in %%pre.
+
 * Tue Sep 27 2005 Dmitry V. Levin <ldv@owl.openwall.com> 9.3.1-owl3
 - Removed syslog restart code from the %%post script.
 
