@@ -236,14 +236,6 @@ sure that everything works, the temporary files are dealt with safely
 Consider enhancements from VVV (http://mutt.org.ua).
 
 
-	ntp.
-
-[PRIORITY: low]
-[ASSIGNED: galaxy@]
-Package OpenNTPD.  Use UID/GID 185 (already allocated), but rename the
-pseudo-user as appropriate (ntpd?).
-
-
 	openssh.
 
 [PRIORITY: medium]
@@ -567,4 +559,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Id: Owl/doc/TODO,v 1.111 2005/10/17 22:57:10 ldv Exp $
+$Id: Owl/doc/TODO,v 1.112 2005/10/20 15:36:28 galaxy Exp $
