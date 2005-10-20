@@ -1,0 +1,19 @@
+--- second/fs/ext2.c.old	Mon Jan 28 03:43:50 2002
++++ second/fs/ext2.c	Mon Jan 28 03:45:01 2002
+@@ -42,14 +42,14 @@
+     	    return;
+     	}
+ #endif
+-    printf ("Unknown ext2 error");
++    printf ("Unknown ext2 error: %d", errcode);
+ }
+ 
+ static int open_ext2 (char *device)
+ {
+     int retval;
+ 
+-    retval = ext2fs_open (device, EXT2_FLAG_RW, 0, 0, silo_io_manager, &fs);
++    retval = ext2fs_open (device, EXT2_FLAG_DIRTY, 0, 0, silo_io_manager, &fs);
+     if (retval == EXT2_ET_BAD_MAGIC)
+         return 0;
+     if (retval) {

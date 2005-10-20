@@ -1,14 +1,15 @@
-# $Id: Owl/packages/silo/silo.spec,v 1.9 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/silo/silo.spec,v 1.10 2005/10/20 00:24:11 ldv Exp $
 
 Summary: Sparc Improved boot LOader.
 Name: silo
-Version: 1.2.5
+Version: 1.4.9
 Release: owl1
 License: GPL
 Group: System Environment/Base
-Source: http://prdownloads.sourceforge.net/silo/silo-%version.tar.bz2
+Source: http://www.ultralinux.nl/silo/download/silo-%version.tar.bz2
 Patch0: silo-1.2.5-owl-Makefile.diff
 Patch1: silo-1.2.5-owl-man.diff
+Patch2: silo-1.2.4-aurora-ext3.diff
 ExclusiveArch: sparc sparcv9 sparc64
 BuildRoot: /override/%name-%version
 
@@ -18,31 +19,34 @@ you'll need to boot Linux on a SPARC.  SILO installs onto your system's
 boot block and can be configured to boot Linux, Solaris and SunOS.
 
 %prep
-%setup -q -n silo-%version
+%setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p0
 
 %build
-make CFLAGS="$RPM_OPT_FLAGS -Wall -I. -I../include"
+%__make 
 
 %install
 rm -rf %buildroot
 make install DESTDIR=%buildroot MANDIR=%_mandir
+rm -f %buildroot/etc/silo.conf
 
 %post
 test -f /etc/silo.conf -a "$SILO_INSTALL" = "yes" && /sbin/silo $SILO_FLAGS || :
 
 %files
 %defattr(-,root,root)
-%doc docs COPYING ChangeLog
+%doc docs COPYING ChangeLog etc/silo.conf
 /sbin/silo
 /usr/bin/tilo
 /usr/bin/maketilo
 /boot/first.b
 /boot/ultra.b
-/boot/cd.b
+/boot/generic.b
 /boot/fd.b
 /boot/ieee32.b
+/boot/isofs.b
 /boot/silotftp.b
 /boot/second.b
 /usr/sbin/silocheck
@@ -51,6 +55,12 @@ test -f /etc/silo.conf -a "$SILO_INSTALL" = "yes" && /sbin/silo $SILO_FLAGS || :
 %_mandir/man8/silo.8*
 
 %changelog
+* Tue Oct 18 2005 Alexandr D. Kanevskiy <kad@owl.openwall.com> 1.4.9-owl1
+- Updated to latest stable version.
+- Added patch from Aurora Linux for support unclean ext3, and a little
+more debugging info wrt unclean ext2 fs.
+- Packaged example silo.conf as documentation.
+
 * Mon Jun 03 2002 Solar Designer <solar@owl.openwall.com> 1.2.5-owl1
 - Updated to 1.2.5.
 - Don't disable cat anymore; anyone who wants boot loader security
