@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ncurses/ncurses.spec,v 1.25 2004/11/23 22:40:47 mci Exp $
+# $Id: Owl/packages/ncurses/ncurses.spec,v 1.26 2005/10/20 16:02:24 galaxy Exp $
 
 %define major 5
 %define oldmajor 4
@@ -9,7 +9,7 @@
 Summary: A CRT screen handling and optimization package.
 Name: ncurses
 Version: 5.4
-Release: owl1
+Release: owl2
 License: distributable
 Group: System Environment/Libraries
 URL: http://dickey.his.com/ncurses/ncurses.html
@@ -158,10 +158,14 @@ install -m 755 $RPM_SOURCE_DIR/ncurses-resetall.sh \
 	%buildroot%_bindir/resetall
 
 # compat links
-ln -s libform.so.%version %buildroot/usr/lib/libform.so.%oldmajor
-ln -s libmenu.so.%version %buildroot/usr/lib/libmenu.so.%oldmajor
-ln -s libncurses.so.%version %buildroot/usr/lib/libncurses.so.%oldmajor
-ln -s libpanel.so.%version %buildroot/usr/lib/libpanel.so.%oldmajor
+ln -s libform.so.%version %buildroot%_libdir/libform.so.%oldmajor
+ln -s libmenu.so.%version %buildroot%_libdir/libmenu.so.%oldmajor
+ln -s libncurses.so.%version %buildroot%_libdir/libncurses.so.%oldmajor
+ln -s libpanel.so.%version %buildroot%_libdir/libpanel.so.%oldmajor
+
+# remove terminfo entries for screen, since the screen package provides
+# more recent versions
+rm %buildroot%_datadir/terminfo/s/screen{,-bce,-s}
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -198,6 +202,10 @@ ln -s libpanel.so.%version %buildroot/usr/lib/libpanel.so.%oldmajor
 %_libdir/lib*.so.%{oldmajor}*
 
 %changelog
+* Fri May 14 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 5.4-owl2
+- Fixed inconsistency when dealing with compat symlinks.
+- Removed entries for the screen package from the database.
+
 * Fri May 14 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 5.4-owl1
 - Updated patch-set from official site
 - Added %_libdir/terminfo symbolic link into filelist
