@@ -1,4 +1,4 @@
-# $Id: Owl/packages/kbd/kbd.spec,v 1.13 2005/10/20 22:59:18 galaxy Exp $
+# $Id: Owl/packages/kbd/kbd.spec,v 1.14 2005/10/20 23:26:46 galaxy Exp $
 
 Summary: Tools for configuring the console.
 Name: kbd
@@ -103,7 +103,6 @@ rm -rf %buildroot
 	BINDIR=%_bindir \
 	LOADKEYS_BINDIR=/bin
 	
-
 # Obsolete
 rm -fv %buildroot%_bindir/resizecons
 rm -fv %buildroot%_mandir/man8/resizecons.8*
