@@ -1,0 +1,10 @@
+--- setarch-1.8/setarch.c.kad	2005-10-18 21:40:48.000000000 +0300
++++ setarch-1.8/setarch.c	2005-10-18 21:41:14.000000000 +0300
+@@ -73,6 +73,7 @@
+ #endif
+ #if defined(__sparc64__) || defined(__sparc__)
+     {PER_LINUX32, "sparc", "sparc"},
++    {PER_LINUX32, "sparc32", "sparc"},
+     {PER_LINUX, "sparc64", "sparc64"},
+ #endif
+     {-1, NULL, NULL}
