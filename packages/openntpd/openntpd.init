@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/sh
 #
 # ntpd		Time synchronization daemon 
 #
@@ -7,6 +7,8 @@
 # processname: ntpd
 # config: /etc/ntpd.conf
 # pidfile: /var/run/ntpd.pid
+
+PID_FILE=/var/run/ntpd.pid
 
 # Source function library.
 . /etc/init.d/functions

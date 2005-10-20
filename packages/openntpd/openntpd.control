@@ -1,12 +1,12 @@
 #!/bin/sh
-# $Id: Owl/packages/openntpd/openntpd.control,v 1.1 2005/10/20 15:30:59 galaxy Exp $
+# $Id: Owl/packages/openntpd/openntpd.control,v 1.2 2005/10/20 17:28:25 galaxy Exp $
 
 . /etc/control.d/functions
 
 CONFIG=/etc/ntpd.conf
 
 # XXX: Actually we should uncomment only the first 'listen on' directive.
-#      The way proposed below isn't reliable since it's binded to the
+#      The way proposed below isn't reliable since it's bound to the
 #      presence of the '# Addresses ...' comment line right before the
 #      first 'listen on' directive.
 #                                                             -- (GM)
