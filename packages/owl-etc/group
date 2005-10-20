@@ -41,7 +41,7 @@ syslogd:x:181:
 postfix:x:182:
 postman:x:183:
 popa3d:x:184:
-xntpd:x:185:
+ntpd:x:185:
 telnetd:x:186:
 vsftpd:x:187:
 dhcp:x:188:

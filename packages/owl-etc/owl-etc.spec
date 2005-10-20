@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.63 2005/09/23 22:01:40 ldv Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.64 2005/10/20 16:37:17 galaxy Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
-Version: 0.30
+Version: 0.31
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -30,7 +30,7 @@ BuildRequires: fileutils >= 4.0.27, rpm >= 3.0.6-owl8
 BuildArchitectures: noarch
 BuildRoot: /override/%name-%version
 
-%define shadow_initial_sha1 9e2a159906fd0f95e6ee1d6204007b95c11624c9
+%define shadow_initial_sha1 953f35a56fbea8d66ca1e458cbd51bc90d1d615b
 
 %description
 Initial set of configuration files to be placed into /etc.
@@ -161,6 +161,9 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 %ghost /etc/*-
 
 %changelog
+* Wed Oct 19 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.31-owl1
+- Changed 'xntpd' in passwd/group to 'ntpd'.
+
 * Sat Sep 24 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.30-owl1
 - named user/group.
 
