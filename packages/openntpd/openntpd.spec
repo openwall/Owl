@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openntpd/openntpd.spec,v 1.3 2005/10/20 17:34:06 galaxy Exp $
+# $Id: Owl/packages/openntpd/openntpd.spec,v 1.4 2005/10/20 17:37:09 galaxy Exp $
 
 Summary: NTP time synchronization server and client.
 Name: openntpd
@@ -100,5 +100,5 @@ fi
 - Added a logic to rename the 'xntpd' account to 'ntpd'.
 - Added openntpd.control to put ntpd under the control of owl-control.
 
-* Fri Sep 09 2005 (GalaxyMaster) <galaxy at owl.openwall.com> 3.7p1-owl0
+* Fri Sep 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.7p1-owl0
 - Initial release for Owl.
