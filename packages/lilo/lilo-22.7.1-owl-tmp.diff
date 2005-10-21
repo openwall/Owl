@@ -1,0 +1,47 @@
+diff -ur lilo-22.7.1.orig/mkrescue lilo-22.7.1/mkrescue
+--- lilo-22.7.1.orig/mkrescue	Thu Aug 18 21:35:34 2005
++++ lilo-22.7.1/mkrescue	Fri Oct 21 12:06:34 2005
+@@ -84,10 +84,6 @@
+ compact=-c
+ device=/dev/fd0
+ fs=ext2
+-tmpbase=${TMPDIR:-/tmp}/mkrescue_$$
+-mount=$tmpbase/mkrescue-flp
+-mfile=$tmpbase/mkrescue-emu
+-mtemp=$tmpbase/mkrescue-tmp
+ loopback=loop0
+ looppart=loop1
+ install=text
+@@ -179,12 +175,15 @@
+     exit 0
+ fi
+ 
+-umount $mount 2>/dev/null
+-rm -rf $tmpbase 2>/dev/null
+-mkdir $tmpbase || {
+-    echo "Could not create temporary directory."
+-    exit 1
+-}
++
++tmpbase="`mktemp -dt $(basename $0).XXXXXXXXXX`" || exit
++if [ $debug != true ]; then 
++	trap 'rm -rf -- "$tmpbase"' EXIT
++	trap 'trap - EXIT; rm -rf -- "$tmpbase"; exit 1' HUP INT QUIT TERM
++fi
++mount=$tmpbase/mkrescue-flp
++mfile=$tmpbase/mkrescue-emu
++mtemp=$tmpbase/mkrescue-tmp
+ 
+ 
+ while [ $# -gt 0 ]; do
+@@ -680,10 +679,6 @@
+ 		read aline
+ 	fi
+ 	dd if=$mfile of=$device bs=1024
+-fi
+-
+-if [ $debug != true ]; then 
+-	rm -rf $tmpbase
+ fi
+ 
+ echo "All done."

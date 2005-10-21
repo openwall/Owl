@@ -1,19 +1,20 @@
-# $Id: Owl/packages/lilo/lilo.spec,v 1.18 2005/07/07 14:13:22 solar Exp $
+# $Id: Owl/packages/lilo/lilo.spec,v 1.19 2005/10/21 13:19:41 solar Exp $
 
 %define BUILD_EXTERNAL_SUPPORT 0
 
 Summary: The boot loader for Linux and other operating systems.
 Name: lilo
-Version: 22.7
+Version: 22.7.1
 Release: owl1
 License: MIT
 Group: System Environment/Base
+URL: http://lilo.go.dyndns.org/pub/linux/lilo/
 Source0: ftp://sunsite.unc.edu/pub/Linux/system/boot/lilo/%name-%version.src.tar.gz
 Source1: keytab-lilo.c
 Patch0: lilo-22.7-owl-Makefile.diff
-Patch1: lilo-22.7-mdk-part.diff
-Patch2: lilo-22.7-alt-owl-fixes.diff
-Patch3: lilo-22.7-alt-owl-getopt.diff
+Patch1: lilo-22.7.1-alt-owl-fixes.diff
+Patch2: lilo-22.7.1-owl-no-fs.diff
+Patch3: lilo-22.7.1-owl-tmp.diff
 Patch4: lilo-22.7-deb-owl-man.diff
 BuildRequires: coreutils, dev86
 ExclusiveArch: %ix86
@@ -62,7 +63,6 @@ install -m 755 keytab-lilo %buildroot%_bindir/
 %if %BUILD_EXTERNAL_SUPPORT
 rm %buildroot/boot/mbr.b
 %endif
-rm %buildroot/sbin/mkrescue
 rm %buildroot%_sbindir/keytab-lilo.pl
 
 %post
@@ -80,9 +80,18 @@ test -f /etc/lilo.conf && /sbin/lilo || :
 /boot/os2_d.b
 %endif
 /sbin/lilo
+/sbin/mkrescue
 %_mandir/*/*
 
 %changelog
+* Fri Oct 21 2005 Solar Designer <solar@owl.openwall.com> 22.7.1-owl1
+- Updated to 22.7.1.
+- Patched second.S to not use the FS register since it appears to be clobbered
+by some BIOSes.
+- Dropped known-buggy and questionable changes.
+- Do package the mkrescue script (we were already packaging its man page),
+but have it patched for safe temporary file handling.
+
 * Mon Jun 13 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 22.7-owl1
 - Updated to 22.7.
 - Added a fix for a typo in the geometry.c file.
