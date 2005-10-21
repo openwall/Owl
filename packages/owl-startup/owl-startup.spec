@@ -1,9 +1,9 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.59 2005/09/23 15:49:47 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.60 2005/10/21 00:33:09 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.25
-Release: owl2
+Version: 0.26
+Release: owl1
 License: GPL
 Group: System Environment/Base
 Source0: initscripts-5.00.tar.gz
@@ -34,11 +34,11 @@ system down cleanly.
 
 %prep
 %setup -q -n initscripts-5.00
-%patch -p1
+%patch0 -p1
 %patch1 -p1
 
 %build
-%__make -C src CC="%__cc" CFLAGS="$RPM_OPT_FLAGS" usleep ipcalc
+%__make -C src CC="%__cc" CFLAGS="%optflags" usleep ipcalc
 
 %install
 rm -rf %buildroot
@@ -162,6 +162,11 @@ fi
 %doc redhat
 
 %changelog
+* Fri Oct 21 Solar Designer <solar@owl.openwall.com> 0.26-owl1
+- Optimized the "service" script to use "exec" on final executions of
+init scripts such that there's no second copy of a shell unnecessarily
+occupying memory during service startup/shutdown.
+
 * Thu Sep 22 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.25-owl2
 - Added a dependency on the mount package.
 
