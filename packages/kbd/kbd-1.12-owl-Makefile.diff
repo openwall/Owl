@@ -58,7 +58,7 @@ diff -ur kbd-1.12.orig/openvt/Makefile kbd-1.12/openvt/Makefile
 +	install -m 644 $(MAN) $(MANDIR)/man1
  
  # don't change 4711 to 0711 - this is the setuid target
-+# but we packing it into RPM, so we don't need it at all -- (GM)
++# but we're packing it into an RPM, so we don't need the SUID at all -- (GM)
  setuid:
 -	chmod 4711 $(BINDIR)/$(PROG)
 +	# chmod 4711 $(DESTDIR)$(BINDIR)/$(PROG)
