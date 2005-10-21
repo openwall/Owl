@@ -6,9 +6,6 @@
 # description: ntpd is a time synchronization daemon
 # processname: ntpd
 # config: /etc/ntpd.conf
-# pidfile: /var/run/ntpd.pid
-
-PIDFILE=/var/run/ntpd.pid
 
 # Source function library.
 . /etc/init.d/functions
@@ -18,7 +15,7 @@ OWL_STARTUP_ENABLE=1
 case "$1" in
 start)
 	if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
-		daemon --pidfile "$PIDFILE" --expect-user ntpd -- ntpd -s
+		daemon --expect-user ntpd -- ntpd -s
 	else
 		daemon ntpd -s
 	fi
@@ -26,21 +23,21 @@ start)
 stop)
 	if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
 		# owl-startup 0.24 compatible -- (GM)
-		killproc --pidfile "$PIDFILE" --expect-user ntpd ntpd
+		killproc --expect-user ntpd ntpd
 	else
 		killproc ntpd
 	fi
 	;;
 reload)
 	if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
-		killproc --pidfile "$PIDFILE" --expect-user ntpd -HUP ntpd
+		killproc --expect-user ntpd -HUP ntpd
 	else
 		killproc -HUP ntpd
 	fi
 	;;
 status)
 	if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
-		status --pidfile "$PIDFILE" --expect-user ntpd -- ntpd
+		status --expect-user ntpd -- ntpd
 	fi
 	;;
 restart)
