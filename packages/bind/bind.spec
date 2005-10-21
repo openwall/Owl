@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bind/bind.spec,v 1.10 2005/10/20 23:30:07 galaxy Exp $
+# $Id: Owl/packages/bind/bind.spec,v 1.11 2005/10/21 00:46:13 galaxy Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -351,7 +351,7 @@ fi
 %_mandir/man8/nsupdate.8*
 
 %changelog
-* Thu Oct 21 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 9.3.1-owl4
+* Fri Oct 21 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 9.3.1-owl4
 - Removed '|| :' from touch in %%pre.
 
 * Tue Sep 27 2005 Dmitry V. Levin <ldv@owl.openwall.com> 9.3.1-owl3
