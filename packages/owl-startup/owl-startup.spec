@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.60 2005/10/21 00:33:09 solar Exp $
+# $Id: Owl/packages/owl-startup/owl-startup.spec,v 1.61 2005/10/21 00:35:22 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -162,7 +162,7 @@ fi
 %doc redhat
 
 %changelog
-* Fri Oct 21 Solar Designer <solar@owl.openwall.com> 0.26-owl1
+* Fri Oct 21 2005 Solar Designer <solar@owl.openwall.com> 0.26-owl1
 - Optimized the "service" script to use "exec" on final executions of
 init scripts such that there's no second copy of a shell unnecessarily
 occupying memory during service startup/shutdown.
