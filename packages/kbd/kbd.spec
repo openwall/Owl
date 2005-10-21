@@ -1,4 +1,4 @@
-# $Id: Owl/packages/kbd/kbd.spec,v 1.14 2005/10/20 23:26:46 galaxy Exp $
+# $Id: Owl/packages/kbd/kbd.spec,v 1.15 2005/10/21 00:14:47 solar Exp $
 
 Summary: Tools for configuring the console.
 Name: kbd
@@ -19,10 +19,10 @@ Patch5: kbd-1.12-rh-alias.diff
 Patch6: kbd-1.12-rh-dir.diff
 Patch7: kbd-1.12-rh-setfont-man.diff
 Patch8: kbd-1.12-rh-Meta_utf8.diff
-Patch9: kbd-1.12-owl-install-fix.diff
+Patch9: kbd-1.12-owl-Makefile.diff
 Patch10: kbd-1.12-alt-cleanup.diff
 Patch11: kbd-1.12-alt-plainletter-safer.diff
-Patch12: kbd-1.12-deb-po-makefile.diff
+Patch12: kbd-1.12-deb-po-Makefile.diff
 Patch13: kbd-1.12-deb-man-pages.diff
 Patch14: kbd-1.12-deb-kmap-suffix.diff
 Patch15: kbd-1.12-deb-defkeymap.diff
