@@ -1,4 +1,4 @@
-# $Id: Owl/packages/kbd/kbd.spec,v 1.15 2005/10/21 00:14:47 solar Exp $
+# $Id: Owl/packages/kbd/kbd.spec,v 1.16 2005/10/21 00:26:14 solar Exp $
 
 Summary: Tools for configuring the console.
 Name: kbd
@@ -12,7 +12,7 @@ Source2: keytable.init
 Source3: setsysfont
 Patch0: kbd-1.08-rh-compose.diff
 Patch1: kbd-1.08-rh-rukbd.diff
-Patch2: kbd-1.08-owl-rh-sparc.diff
+Patch2: kbd-1.12-owl-rh-sparc.diff
 Patch3: kbd-1.08-rh-speakup.diff
 Patch4: kbd-1.08-rh-terminal.diff
 Patch5: kbd-1.12-rh-alias.diff
