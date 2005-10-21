@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openntpd/openntpd.spec,v 1.6 2005/10/20 23:53:30 galaxy Exp $
+# $Id: Owl/packages/openntpd/openntpd.spec,v 1.7 2005/10/21 19:43:29 galaxy Exp $
 
 Summary: NTP time synchronization server and client.
 Name: openntpd
 Version: 3.7p1
-Release: owl1
+Release: owl2
 License: BSD License
 Group: System Environment/Daemons
 URL: http://www.openntpd.org
@@ -36,7 +36,7 @@ described in RFC 1305.
 %build
 %configure \
 	--with-privsep-user=ntpd \
-	--with-privsep-dir=/var/empty
+	--with-privsep-path=/var/empty
 
 %__make
 
@@ -96,6 +96,9 @@ fi
 %_mandir/man?/*
 
 %changelog
+* Fri Oct 29 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.7p1-owl2
+- Fixed a typo in the configure option name.
+
 * Wed Oct 19 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.7p1-owl1
 - Added a logic to rename the 'xntpd' account to 'ntpd'.
 - Added openntpd.control to put ntpd under the control of owl-control.
