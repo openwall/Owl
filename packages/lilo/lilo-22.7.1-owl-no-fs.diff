@@ -13,8 +13,8 @@ diff -ur lilo-22.7.1.orig/second.S lilo-22.7.1/second.S
  #define END_FS
 +#else
 +/* Use DS, not FS, since some BIOSes appear to clobber FS.
-+   This implementation comes from LILO 22.1 where it would only be enabled
-+   with the non-default setting M386. */
++   This implementation comes from LILO 22.1 where it would only be used
++   if the default setting "M386" would be disabled. */
 +#define BEG_FS db 0x1e,0x2e,0x8e,0x1e,0x02,0x00
 +/*	push ds; \
 +	seg cs; \
