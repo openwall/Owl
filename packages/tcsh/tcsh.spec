@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tcsh/tcsh.spec,v 1.14 2005/10/22 15:53:51 galaxy Exp $
+# $Id: Owl/packages/tcsh/tcsh.spec,v 1.15 2005/10/22 18:18:47 galaxy Exp $
 
 Summary: An enhanced version of csh, the C shell.
 Name: tcsh
@@ -10,10 +10,9 @@ URL: http://www.tcsh.org/Home
 Source: ftp://ftp.astron.com/pub/tcsh/%name-%version.tar.gz
 Patch0: tcsh-6.14.00-suse-owl-tmp.diff
 Patch1: tcsh-6.14.00-owl-config.diff
-Patch2: tcsh-6.14.00-owl-man.diff
 PreReq: fileutils, grep
 Requires(postun): sed >= 4.0.9
-BuildRequires: perl, groff
+BuildRequires: perl, groff, libtermcap-devel
 Provides: csh = %version
 BuildRoot: /override/%name-%version
 
@@ -29,7 +28,6 @@ like syntax.
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 cat > catalogs << EOF
 de ISO-8859-1 german
@@ -85,7 +83,7 @@ if ! grep -qs '^/bin/tcsh$' /etc/shells; then echo /bin/tcsh >> /etc/shells; fi
 
 %postun
 if [ $1 -eq 0 ]; then
-	sed -i -e 's,/bin/t\?csh,,; /^[[:space:]]*$/ d' /etc/shells
+	sed -i -e '/\/bin\/t\?csh/d' /etc/shells
 fi
 
 %files
@@ -100,10 +98,11 @@ fi
 * Wed Oct 19 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 6.14.00-owl2
 - Replaced 'make' with '%%__make'.
 - Dropped the strip option from install in favor of brp- scripts.
-- Removed -lnsl from 'LIBES=', since isn't needed to be specified explicitly.
-- Added BuildRequires on perl, groff.
+- Removed -lnsl from 'LIBES=', since it isn't needed to be specified
+explicitly.
+- Added BuildRequires on perl, groff, libtermcap-devel.
 - Fixed tcsh.1 to mention the correct path for temporary files used for '<<'
-redirections.
+redirections (appended to the -suse-owl-tmp patch).
 - Optimized the %%postun, avoided the use of the predictable temporary file
 name.
 - Added Requires(postun) sed >= 4.0.9.
