@@ -1,4 +1,4 @@
-# $Id: Owl/packages/m4/m4.spec,v 1.14 2005/10/22 00:56:50 ldv Exp $
+# $Id: Owl/packages/m4/m4.spec,v 1.15 2005/10/22 08:34:15 solar Exp $
 
 Summary: The GNU macro processor.
 Name: m4
@@ -6,7 +6,7 @@ Version: 1.4.4
 Release: owl1
 License: GPL
 Group: Applications/Text
-Source: ftp://ftp.gnu.org/gnu/m4/m4-%version.tar.bz2
+Source0: ftp://ftp.gnu.org/gnu/m4/m4-%version.tar.bz2
 Source1: m4.m4
 Patch0: m4-1.4.3-owl-info.diff
 Patch1: m4-1.4.3-alt-glibc.diff
@@ -71,9 +71,8 @@ fi
 - Updated to 1.4.4.
 - Corrected info files installation.
 - Packaged %_datadir/aclocal/m4.m4 from autoconf-2.59 sources.
-- Applied ALT's build change to use getopt, error, libintl and obstack
-implementations from glibc rather then build them statically in this
-package.
+- Applied ALT's build change to use getopt, error, libintl, and obstack
+implementations from glibc rather than build them statically in this package.
 
 * Fri Oct 21 2005 Alexandr D. Kanevskiy <kad@owl.openwall.com> 1.4.3-owl1
 - Updated to 1.4.3.
