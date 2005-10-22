@@ -1,4 +1,4 @@
-# $Id: Owl/packages/m4/m4.spec,v 1.15 2005/10/22 08:34:15 solar Exp $
+# $Id: Owl/packages/m4/m4.spec,v 1.16 2005/10/22 14:26:36 ldv Exp $
 
 Summary: The GNU macro processor.
 Name: m4
@@ -15,6 +15,7 @@ Patch3: m4-1.4.4-owl-warnings.diff
 PreReq: /sbin/install-info
 # due to sed -i
 BuildRequires: sed >= 4.1.1
+BuildRequires: texinfo
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
 
