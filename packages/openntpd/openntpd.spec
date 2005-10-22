@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openntpd/openntpd.spec,v 1.7 2005/10/21 19:43:29 galaxy Exp $
+# $Id: Owl/packages/openntpd/openntpd.spec,v 1.8 2005/10/22 13:02:26 galaxy Exp $
 
 Summary: NTP time synchronization server and client.
 Name: openntpd
@@ -10,6 +10,7 @@ URL: http://www.openntpd.org
 Source0: ftp://ftp.openbsd.org/pub/OpenBSD/OpenNTPD/%name-%version.tar.gz
 Source1: openntpd.init
 Source2: openntpd.control
+Patch0: openntpd-3.7p1-owl-chroot.diff
 Prefix: %_prefix
 PreReq: /var/empty
 PreReq: shadow-utils
@@ -32,8 +33,10 @@ described in RFC 1305.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
+autoreconf -f
 %configure \
 	--with-privsep-user=ntpd \
 	--with-privsep-path=/var/empty
@@ -96,8 +99,9 @@ fi
 %_mandir/man?/*
 
 %changelog
-* Fri Oct 29 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.7p1-owl2
+* Fri Oct 21 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.7p1-owl2
 - Fixed a typo in the configure option name.
+- Applied a patch to honor --with-privsep-path in configure.
 
 * Wed Oct 19 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.7p1-owl1
 - Added a logic to rename the 'xntpd' account to 'ntpd'.

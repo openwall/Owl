@@ -1,0 +1,47 @@
+diff -puNr openntpd-3.7p1.orig/config.h.in openntpd-3.7p1/config.h.in
+--- openntpd-3.7p1.orig/config.h.in	2005-05-23 11:25:31 +0000
++++ openntpd-3.7p1/config.h.in	2005-10-21 18:53:03 +0000
+@@ -262,6 +262,9 @@
+ /* Unprivileged userid */
+ #undef NTPD_USER
+ 
++/* Privilege separation chroot path */
++#undef NTPD_CHROOT_DIR
++
+ /* Define to the address where bug reports for this package should be sent. */
+ #undef PACKAGE_BUGREPORT
+ 
+diff -puNr openntpd-3.7p1.orig/configure.ac openntpd-3.7p1/configure.ac
+--- openntpd-3.7p1.orig/configure.ac	2005-05-23 11:11:08 +0000
++++ openntpd-3.7p1/configure.ac	2005-10-21 18:51:33 +0000
+@@ -445,7 +445,8 @@ AC_SUBST(privsep_user)
+ 
+ AC_ARG_WITH(privsep-path,
+ 	[  --with-privsep-path=path Specify privilege separation chroot path],
+-	[ privsep_path=$withval ],
++	[ AC_DEFINE_UNQUOTED(NTPD_CHROOT_DIR, "$withval", [Privilege separation chroot path])
++	  privsep_path=$withval ],
+ 	[ privsep_path=/var/empty ]
+ )
+ AC_SUBST(privsep_path)
+diff -puNr openntpd-3.7p1.orig/ntp.c openntpd-3.7p1/ntp.c
+--- openntpd-3.7p1.orig/ntp.c	2005-03-13 12:38:33 +0000
++++ openntpd-3.7p1/ntp.c	2005-10-21 18:55:43 +0000
+@@ -102,14 +102,14 @@ ntp_main(int pipe_prnt[2], struct ntpd_c
+ 	if ((nullfd = open(_PATH_DEVNULL, O_RDWR, 0)) == -1)
+ 		fatal(NULL);
+ 
+-	if (stat(pw->pw_dir, &stb) == -1)
++	if (stat(NTPD_CHROOT_DIR, &stb) == -1)
+ 		fatal("stat");
+ 	if (stb.st_uid != 0 || (stb.st_mode & (S_IWGRP|S_IWOTH)) != 0)
+ 		fatal("bad privsep dir permissions");
+-	if (chroot(pw->pw_dir) == -1)
++	if (chroot(NTPD_CHROOT_DIR) == -1)
+ 		fatal("chroot");
+ 	if (chdir("/") == -1)
+-		fatal("chdir(\"/\")");
++		fatal("chdir(\"" NTPD_CHROOT_DIR "\")");
+ 
+ 	if (!nconf->debug) {
+ 		dup2(nullfd, STDIN_FILENO);
