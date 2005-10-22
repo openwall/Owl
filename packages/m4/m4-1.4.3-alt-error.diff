@@ -1,0 +1,50 @@
+diff -urk.orig m4-1.4.3.orig/configure.ac m4-1.4.3/configure.ac
+--- m4-1.4.3.orig/configure.ac	2005-03-31 15:26:01 +0400
++++ m4-1.4.3/configure.ac	2005-04-01 19:58:07 +0400
+@@ -37,7 +37,7 @@
+ fp_C_PROTOTYPES
+ AC_C_CONST
+ 
+-AC_CHECK_HEADERS([limits.h memory.h siginfo.h string.h unistd.h])
++AC_CHECK_HEADERS([limits.h memory.h siginfo.h string.h unistd.h error.h])
+ AC_CHECK_HEADERS([signal.h sys/signal.h], [break])
+ AC_HEADER_STDC
+ AC_TYPE_SIGNAL
+diff -urk.orig m4-1.4.3.orig/lib/xmalloc.c m4-1.4.3/lib/xmalloc.c
+--- m4-1.4.3.orig/lib/xmalloc.c	2004-08-21 14:29:00 +0400
++++ m4-1.4.3/lib/xmalloc.c	2005-04-01 19:57:40 +0400
+@@ -43,11 +43,7 @@
+    The caller may set it to some other value.  */
+ int xmalloc_exit_failure = EXIT_FAILURE;
+ 
+-#if __STDC__ && (HAVE_VPRINTF || HAVE_DOPRNT)
+-void error (int, int, const char *, ...);
+-#else
+-void error ();
+-#endif
++#include <error.h>
+ 
+ static VOID *
+ fixup_null_alloc (n)
+diff -urk.orig m4-1.4.3.orig/src/m4.h m4-1.4.3/src/m4.h
+--- m4-1.4.3.orig/src/m4.h	2005-02-10 00:03:00 +0300
++++ m4-1.4.3/src/m4.h	2005-04-01 19:57:40 +0400
+@@ -105,6 +105,8 @@
+ extern int errno;
+ #endif
+ 
++#include <error.h>
++
+ #ifdef HAVE_UNISTD_H
+ # include <unistd.h>
+ #endif
+@@ -137,9 +139,6 @@
+ #define obstack_chunk_alloc	xmalloc
+ #define obstack_chunk_free	xfree
+ 
+-/* Other library routines.  */
+-void error _((int, int, const char *, ...));
+-
+ /* Those must come first.  */
+ typedef void builtin_func ();
+ typedef struct token_data token_data;

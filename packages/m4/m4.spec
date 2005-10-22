@@ -1,17 +1,20 @@
-# $Id: Owl/packages/m4/m4.spec,v 1.13 2004/11/23 22:40:47 mci Exp $
+# $Id: Owl/packages/m4/m4.spec,v 1.14 2005/10/22 00:56:50 ldv Exp $
 
 Summary: The GNU macro processor.
 Name: m4
-Version: 1.4
-Release: owl17
+Version: 1.4.4
+Release: owl1
 License: GPL
 Group: Applications/Text
-Source: ftp://ftp.gnu.org/gnu/m4/m4-%version.tar.gz
-Patch0: m4-1.4-rh-glibc.diff
-Patch1: m4-1.4-owl-format.diff
-Patch2: m4-1.4-owl-info.diff
-Patch3: m4-1.4-owl-configure.diff
+Source: ftp://ftp.gnu.org/gnu/m4/m4-%version.tar.bz2
+Source1: m4.m4
+Patch0: m4-1.4.3-owl-info.diff
+Patch1: m4-1.4.3-alt-glibc.diff
+Patch2: m4-1.4.3-alt-error.diff
+Patch3: m4-1.4.4-owl-warnings.diff
 PreReq: /sbin/install-info
+# due to sed -i
+BuildRequires: sed >= 4.1.1
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
 
@@ -29,24 +32,31 @@ not for running configure scripts.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+# use prototypes from glibc
+rm lib/*.h
+# fix tmp file handling in test suite
+sed -i -e s,/tmp,., checks/check-them
+
+%{expand:%%define optflags %optflags -Wall}
 
 %build
-rm doc/m4.info
-autoreconf -f
+autoreconf -fisv
 export ac_cv_func_mkstemp=yes \
 %configure
-make CFLAGS="$RPM_OPT_FLAGS" LDFLAGS=-s
+%__make CFLAGS="%optflags" LDFLAGS=-s
+%__make -k check
 
 %install
 rm -rf %buildroot
 %makeinstall INSTALL_DATA="install -c -m 644"
+install -pD -m644 %_sourcedir/m4.m4 %buildroot%_datadir/aclocal/m4.m4
 
 %post
-/sbin/install-info %_infodir/m4.info.gz %_infodir/dir
+/sbin/install-info %_infodir/m4.info %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/m4.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/m4.info %_infodir/dir
 fi
 
 %files
@@ -54,8 +64,20 @@ fi
 %doc NEWS README
 %_bindir/m4
 %_infodir/*.info*
+%_datadir/aclocal/m4.m4
 
 %changelog
+* Sat Oct 22 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.4.4-owl1
+- Updated to 1.4.4.
+- Corrected info files installation.
+- Packaged %_datadir/aclocal/m4.m4 from autoconf-2.59 sources.
+- Applied ALT's build change to use getopt, error, libintl and obstack
+implementations from glibc rather then build them statically in this
+package.
+
+* Fri Oct 21 2005 Alexandr D. Kanevskiy <kad@owl.openwall.com> 1.4.3-owl1
+- Updated to 1.4.3.
+
 * Thu Feb 26 2004 Michail Litvak <mci@owl.openwall.com> 1.4-owl17
 - Fixed building with new auto* tools.
 

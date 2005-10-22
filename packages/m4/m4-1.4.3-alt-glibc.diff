@@ -1,0 +1,37 @@
+diff -uprk.orig m4-1.4.3.orig/lib/Makefile.in m4-1.4.3/lib/Makefile.in
+--- m4-1.4.3.orig/lib/Makefile.in	2005-02-09 23:48:35 +0300
++++ m4-1.4.3/lib/Makefile.in	2005-04-01 20:23:27 +0400
+@@ -41,7 +41,7 @@ INCLUDES = -I.. -I$(srcdir)
+ HEADERS = getopt.h obstack.h regex.h
+ SOURCES = regex.c getopt.c getopt1.c error.c obstack.c xmalloc.c \
+ xstrdup.c alloca.c strtol.c
+-OBJECTS = regex.o getopt.o getopt1.o error.o obstack.o xmalloc.o \
++OBJECTS = xmalloc.o \
+ xstrdup.o @ALLOCA@ @LIBOBJS@
+ 
+ DISTFILES = COPYING.LIB Makefile.in $(HEADERS) $(SOURCES) \
+diff -uprk.orig m4-1.4.3.orig/src/Makefile.in m4-1.4.3/src/Makefile.in
+--- m4-1.4.3.orig/src/Makefile.in	2005-03-31 13:46:09 +0400
++++ m4-1.4.3/src/Makefile.in	2005-04-01 20:23:27 +0400
+@@ -77,8 +77,7 @@ all: m4
+ m4: $(OBJECTS) ../lib/libm4.a
+ 	$(LINK) $(OBJECTS) ../lib/libm4.a $(LIBS)
+ 
+-$(OBJECTS): $(ANSI2KNR) ../config.h m4.h ../lib/obstack.h
+-builtin$O: ../lib/regex.h
++$(OBJECTS): $(ANSI2KNR) ../config.h m4.h
+ 
+ ansi2knr: ansi2knr.o
+ 	$(LINK) ansi2knr.o $(LIBS)
+diff -uprk.orig m4-1.4.3.orig/src/stackovf.c m4-1.4.3/src/stackovf.c
+--- m4-1.4.3.orig/src/stackovf.c	2004-08-21 14:29:00 +0400
++++ m4-1.4.3/src/stackovf.c	2005-04-01 20:26:52 +0400
+@@ -85,6 +85,8 @@
+ 
+ #if HAVE_SIGINFO_H
+ # include <siginfo.h>
++#elif defined(__GLIBC__)
++# define HAVE_SIGINFO_H 1
+ #endif
+ 
+ #ifndef SIGSTKSZ
