@@ -1,16 +1,19 @@
-# $Id: Owl/packages/tcsh/tcsh.spec,v 1.13 2005/09/30 19:44:26 solar Exp $
+# $Id: Owl/packages/tcsh/tcsh.spec,v 1.14 2005/10/22 15:53:51 galaxy Exp $
 
 Summary: An enhanced version of csh, the C shell.
 Name: tcsh
 Version: 6.14.00
-Release: owl1
+Release: owl2
 License: BSD
 Group: System Environment/Shells
 URL: http://www.tcsh.org/Home
 Source: ftp://ftp.astron.com/pub/tcsh/%name-%version.tar.gz
 Patch0: tcsh-6.14.00-suse-owl-tmp.diff
 Patch1: tcsh-6.14.00-owl-config.diff
+Patch2: tcsh-6.14.00-owl-man.diff
 PreReq: fileutils, grep
+Requires(postun): sed >= 4.0.9
+BuildRequires: perl, groff
 Provides: csh = %version
 BuildRoot: /override/%name-%version
 
@@ -26,6 +29,7 @@ like syntax.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 cat > catalogs << EOF
 de ISO-8859-1 german
@@ -54,14 +58,14 @@ done < catalogs
 
 %build
 %configure
-make LIBES="-lnsl -ltermcap -lcrypt" all
+%__make LIBES="-ltermcap -lcrypt" all
 test -x %__perl && %__perl tcsh.man2html tcsh.man || :
-make -C nls catalogs
+%__make -C nls catalogs
 
 %install
 rm -rf %buildroot
 
-install -m 755 -D -s tcsh %buildroot%_bindir/tcsh
+install -m 755 -D tcsh %buildroot%_bindir/tcsh
 install -m 644 -D tcsh.man %buildroot%_mandir/man1/tcsh.1
 ln -sf tcsh %buildroot%_bindir/csh
 ln -sf tcsh.1 %buildroot%_mandir/man1/csh.1
@@ -80,9 +84,8 @@ if ! grep -qs '^/bin/csh$' /etc/shells; then echo /bin/csh >> /etc/shells; fi
 if ! grep -qs '^/bin/tcsh$' /etc/shells; then echo /bin/tcsh >> /etc/shells; fi
 
 %postun
-if [ ! -x %_bindir/tcsh ]; then
-	grep -Ev '^%_bindir/t{0,1}csh$' /etc/shells > /etc/shells.rpmtmp
-	mv /etc/shells.rpmtmp /etc/shells
+if [ $1 -eq 0 ]; then
+	sed -i -e 's,/bin/t\?csh,,; /^[[:space:]]*$/ d' /etc/shells
 fi
 
 %files
@@ -94,6 +97,17 @@ fi
 %_datadir/locale/*/LC_MESSAGES/tcsh*
 
 %changelog
+* Wed Oct 19 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 6.14.00-owl2
+- Replaced 'make' with '%%__make'.
+- Dropped the strip option from install in favor of brp- scripts.
+- Removed -lnsl from 'LIBES=', since isn't needed to be specified explicitly.
+- Added BuildRequires on perl, groff.
+- Fixed tcsh.1 to mention the correct path for temporary files used for '<<'
+redirections.
+- Optimized the %%postun, avoided the use of the predictable temporary file
+name.
+- Added Requires(postun) sed >= 4.0.9.
+
 * Sun Sep 18 2005 Gremlin from Kremlin <gremlin@owl.openwall.com> 6.14.00-owl1
 - Updated to 6.14.00, dropped obsolete patches (only the -tmp patch is left),
 disabled AUTOLOGOUT by default.

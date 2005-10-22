@@ -1,0 +1,12 @@
+diff -uNr tcsh-6.14.00.orig/tcsh.man tcsh-6.14.00/tcsh.man
+--- tcsh-6.14.00.orig/tcsh.man	2005-03-25 17:36:08 +0000
++++ tcsh-6.14.00/tcsh.man	2005-10-19 15:18:28 +0000
+@@ -4880,7 +4880,7 @@
+ .I /bin/sh
+ Used to interpret shell scripts not starting with a `#'.
+ .TP 16
+-.I /tmp/sh*
++.I $TMPDIR/sh.*
+ Temporary file for `<<'.
+ .TP 16
+ .I /etc/passwd
