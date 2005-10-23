@@ -1,4 +1,4 @@
-# $Id: Owl/packages/zlib/zlib.spec,v 1.10 2005/10/23 21:37:54 ldv Exp $
+# $Id: Owl/packages/zlib/zlib.spec,v 1.11 2005/10/23 22:14:07 ldv Exp $
 
 Summary: The zlib compression and decompression library.
 Name: zlib
@@ -6,7 +6,7 @@ Version: 1.2.3
 Release: owl1
 License: BSD
 Group: System Environment/Libraries
-URL: http://www.zlib.net/
+URL: http://www.zlib.net
 Source: %url/zlib-%version.tar.bz2
 Patch0: zlib-1.2.3-alt-gzio-gzwrite-z_err.diff
 Patch1: zlib-1.2.3-alt-gzio-gzerror.diff
