@@ -1,19 +1,20 @@
-# $Id: Owl/packages/strace/strace.spec,v 1.16 2005/08/10 12:27:09 ldv Exp $
+# $Id: Owl/packages/strace/strace.spec,v 1.17 2005/10/23 22:00:47 ldv Exp $
 
 Summary: Tracks and displays system calls associated with a running process.
 Name: strace
 Version: 4.5.13
-Release: owl1
+Release: owl2
 License: BSD
 Group: Development/Debuggers
 URL: http://sourceforge.net/projects/strace/
 Source: http://prdownloads.sourceforge.net/%name/%name-%version.tar.bz2
-Patch0: strace-4.5.13-alt-quotactl.diff
-Patch1: strace-4.5.13-alt-mount.diff
-Patch2: strace-4.5.13-owl-man.diff
-Patch3: strace-4.5.13-alt-keep_status.diff
-Patch4: strace-4.5.13-drepper-x86_64-ipc.diff
-Patch5: strace-4.5.13-drepper-msgrcv.diff
+Patch0: strace-4.5.13-cvs-20051021.diff
+Patch1: strace-4.5.13-alt-quotactl.diff
+Patch2: strace-4.5.13-alt-mount.diff
+Patch3: strace-4.5.13-owl-man.diff
+Patch4: strace-4.5.13-alt-keep_status.diff
+Patch5: strace-4.5.13-drepper-x86_64-ipc.diff
+Patch6: strace-4.5.13-drepper-msgrcv.diff
 BuildRoot: /override/%name-%version
 
 %package graph
@@ -34,12 +35,13 @@ commands do.
 
 %prep
 %setup -q
-%patch0 -p1
+%patch0 -p0
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -67,6 +69,9 @@ mkdir -p %buildroot%_prefix/bin
 %_prefix/bin/strace-graph
 
 %changelog
+* Mon Oct 24 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.5.13-owl2
+- Updated to cvs snapshot 20051021.
+
 * Wed Aug 10 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.5.13-owl1
 - Updated to 4.5.13.
 - Synced set of patches with ALT's strace-4.5.13-alt1 package.
