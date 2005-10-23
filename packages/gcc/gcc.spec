@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.42 2005/10/09 01:12:22 solar Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.43 2005/10/23 10:41:16 galaxy Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -38,7 +38,7 @@
 Summary: C compiler from the GNU Compiler Collection.
 Name: gcc
 Version: 3.4.3
-Release: owl3
+Release: owl4
 Epoch: 1
 License: GPL
 Group: Development/Languages
@@ -77,6 +77,7 @@ Source9: libstdc++-compat-3.2.2-i386.tar.bz2
 %endif
 
 PreReq: /sbin/ldconfig, /sbin/install-info
+Requires(post): sed
 # This is the version of binutils we have tested this package with; older
 # ones might work, but were not tested.
 Requires: binutils >= 2.10.1.0.4
@@ -744,6 +745,9 @@ fi
 %endif
 
 %changelog
+* Tue Oct 18 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.4.3-owl4
+- Added sed to Requires(post), since we are using sed in mkheaders.
+
 * Fri Sep 23 2005 Michail Litvak <mci@owl.openwall.com> 1:3.4.3-owl3
 - Don't package .la files.
 
