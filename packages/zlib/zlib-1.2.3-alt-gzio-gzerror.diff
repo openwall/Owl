@@ -1,0 +1,32 @@
+diff -upk.orig zlib-1.2.3.orig/gzio.c zlib-1.2.3/gzio.c
+--- zlib-1.2.3.orig/gzio.c	2005-07-02 15:37:21 +0000
++++ zlib-1.2.3/gzio.c	2005-07-02 15:48:46 +0000
+@@ -41,7 +41,7 @@ extern void   free   OF((voidpf ptr));
+ #endif
+ 
+ #define ALLOC(size) malloc(size)
+-#define TRYFREE(p) {if (p) free(p);}
++#define TRYFREE(p) {if (p) {free(p); (p) = NULL;}}
+ 
+ static int const gz_magic[2] = {0x1f, 0x8b}; /* gzip magic header */
+ 
+@@ -1006,11 +1006,15 @@ const char * ZEXPORT gzerror (file, errn
+     if (m == NULL || *m == '\0') m = (char*)ERR_MSG(s->z_err);
+ 
+     TRYFREE(s->msg);
+-    s->msg = (char*)ALLOC(strlen(s->path) + strlen(m) + 3);
++    s->msg = (char*)ALLOC((s->path ? strlen(s->path) + 2 : 0) + strlen(m) + 1);
+     if (s->msg == Z_NULL) return (const char*)ERR_MSG(Z_MEM_ERROR);
+-    strcpy(s->msg, s->path);
+-    strcat(s->msg, ": ");
+-    strcat(s->msg, m);
++    if (s->path) {
++        strcpy(s->msg, s->path);
++        strcat(s->msg, ": ");
++        strcat(s->msg, m);
++    } else {
++        strcpy(s->msg, m);
++    }
+     return (const char*)s->msg;
+ }
+ 

@@ -1,0 +1,12 @@
+--- zlib-1.2.3/gzio.c.orig	2005-07-11 20:31:48 +0000
++++ zlib-1.2.3/gzio.c	2005-07-02 15:37:21 +0000
+@@ -588,6 +588,9 @@ int ZEXPORT gzwrite (file, buf, len)
+     }
+     s->crc = crc32(s->crc, (const Bytef *)buf, len);
+ 
++    if (len == s->stream.avail_in &&
++        (s->z_err == Z_DATA_ERROR || s->z_err == Z_ERRNO))
++        return -1;
+     return (int)(len - s->stream.avail_in);
+ }
+ 

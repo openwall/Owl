@@ -1,0 +1,24 @@
+diff -upk.orig zlib-1.2.3.orig/Makefile.in zlib-1.2.3/Makefile.in
+--- zlib-1.2.3.orig/Makefile.in	2005-07-18 02:25:21 +0000
++++ zlib-1.2.3/Makefile.in	2004-02-22 11:56:45 +0000
+@@ -59,13 +59,16 @@ all: example$(EXE) minigzip$(EXE)
+ check: test
+ test: all
+ 	@LD_LIBRARY_PATH=.:$(LD_LIBRARY_PATH) ; export LD_LIBRARY_PATH; \
+-	echo hello world | ./minigzip | ./minigzip -d || \
+-	  echo '		*** minigzip test FAILED ***' ; \
++	ret=0; \
++	if ! echo hello world | ./minigzip | ./minigzip -d; then \
++	  echo '		*** minigzip test FAILED ***'; ret=1; \
++	fi; \
+ 	if ./example; then \
+ 	  echo '		*** zlib test OK ***'; \
+ 	else \
+-	  echo '		*** zlib test FAILED ***'; \
+-	fi
++	  echo '		*** zlib test FAILED ***'; ret=1; \
++	fi; \
++	exit $$ret
+ 
+ libz.a: $(OBJS) $(OBJA)
+ 	$(AR) $@ $(OBJS) $(OBJA)

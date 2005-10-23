@@ -1,0 +1,43 @@
+diff -upk.orig zlib-1.2.3.orig/gzio.c zlib-1.2.3/gzio.c
+--- zlib-1.2.3.orig/gzio.c	2005-07-02 15:48:46 +0000
++++ zlib-1.2.3/gzio.c	2005-07-01 15:25:35 +0000
+@@ -398,20 +398,17 @@ int ZEXPORT gzread (file, buf, len)
+ {
+     gz_stream *s = (gz_stream*)file;
+     Bytef *start = (Bytef*)buf; /* starting point for crc computation */
+-    Byte  *next_out; /* == stream.next_out but not forced far (for MSDOS) */
+ 
+     if (s == NULL || s->mode != 'r') return Z_STREAM_ERROR;
+ 
+     if (s->z_err == Z_DATA_ERROR || s->z_err == Z_ERRNO) return -1;
+     if (s->z_err == Z_STREAM_END) return 0;  /* EOF */
+ 
+-    next_out = (Byte*)buf;
+     s->stream.next_out = (Bytef*)buf;
+     s->stream.avail_out = len;
+ 
+     if (s->stream.avail_out && s->back != EOF) {
+-        *next_out++ = s->back;
+-        s->stream.next_out++;
++        *s->stream.next_out++ = s->back;
+         s->stream.avail_out--;
+         s->back = EOF;
+         s->out++;
+@@ -430,15 +427,14 @@ int ZEXPORT gzread (file, buf, len)
+             if (n > s->stream.avail_out) n = s->stream.avail_out;
+             if (n > 0) {
+                 zmemcpy(s->stream.next_out, s->stream.next_in, n);
+-                next_out += n;
+-                s->stream.next_out = next_out;
++                s->stream.next_out += n;
+                 s->stream.next_in   += n;
+                 s->stream.avail_out -= n;
+                 s->stream.avail_in  -= n;
+             }
+             if (s->stream.avail_out > 0) {
+                 s->stream.avail_out -=
+-                    (uInt)fread(next_out, 1, s->stream.avail_out, s->file);
++                    (uInt)fread(s->stream.next_out, 1, s->stream.avail_out, s->file);
+             }
+             len -= s->stream.avail_out;
+             s->in  += len;

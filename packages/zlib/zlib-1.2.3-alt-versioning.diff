@@ -1,0 +1,60 @@
+diff -upk.orig zlib-1.2.3.orig/configure zlib-1.2.3/configure
+--- zlib-1.2.3.orig/configure	2005-07-11 20:11:57 +0000
++++ zlib-1.2.3/configure	2004-09-23 11:44:43 +0000
+@@ -76,7 +76,7 @@ if test "$gcc" -eq 1 && ($cc -c $cflags 
+   SFLAGS=${CFLAGS-"-fPIC -O3"}
+   CFLAGS="$cflags"
+   case `(uname -s || echo unknown) 2>/dev/null` in
+-  Linux | linux | GNU | GNU/*) LDSHARED=${LDSHARED-"$cc -shared -Wl,-soname,libz.so.1"};;
++  Linux | linux | GNU | GNU/*) LDSHARED=${LDSHARED-"$cc -shared -Wl,-soname,libz.so.1,--version-script,zlib.map"};;
+   CYGWIN* | Cygwin* | cygwin* | OS/2* )
+              EXE='.exe';;
+   QNX*)  # This is for QNX6. I suppose that the QNX rule below is for QNX2,QNX4
+diff -upk.orig zlib-1.2.3.orig/zlib.map zlib-1.2.3/zlib.map
+--- zlib-1.2.3.orig/zlib.map	1970-01-01 00:00:00 +0000
++++ zlib-1.2.3/zlib.map	2005-08-20 13:11:28 +0000
+@@ -0,0 +1,44 @@
++ZLIB_1.2.0 {
++  global:
++    compressBound;
++    deflateBound;
++    inflateBack;
++    inflateBackEnd;
++    inflateBackInit_;
++    inflateCopy;
++  local:
++    deflate_copyright;
++    inflate_copyright;
++    inflate_fast;
++    inflate_table;
++    zcalloc;
++    zcfree;
++    z_errmsg;
++    _*;
++};
++
++ZLIB_1.2.0.2 {
++    gzclearerr;
++    gzungetc;
++    zlibCompileFlags;
++} ZLIB_1.2.0;
++
++ZLIB_1.2.0.8 {
++    deflatePrime;
++} ZLIB_1.2.0.2;
++
++ZLIB_1.2.2 {
++    adler32_combine;
++    crc32_combine;
++    deflateSetHeader;
++    inflateGetHeader;
++} ZLIB_1.2.0.8;
++
++ZLIB_1.2.2.3 {
++    deflateTune;
++    gzdirect;
++} ZLIB_1.2.2;
++
++ZLIB_1.2.2.4 {
++    inflatePrime;
++} ZLIB_1.2.2.3;
