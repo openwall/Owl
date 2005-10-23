@@ -1,4 +1,4 @@
-# $Id: Owl/packages/autoconf/autoconf.spec,v 1.10 2004/11/23 22:40:44 mci Exp $
+# $Id: Owl/packages/autoconf/autoconf.spec,v 1.11 2005/10/23 17:36:32 solar Exp $
 
 Summary: A GNU tool for automatically configuring source code.
 Name: autoconf
@@ -13,6 +13,7 @@ PreReq: /sbin/install-info
 Requires: gawk, m4, mktemp, perl, textutils
 Requires: mktemp >= 1:1.3.1
 BuildArchitectures: noarch
+BuildRequires: sed, m4, texinfo
 BuildRoot: /override/%name-%version
 
 %description

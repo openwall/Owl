@@ -1,4 +1,4 @@
-# $Id: Owl/packages/binutils/binutils.spec,v 1.17 2005/09/27 13:41:42 solar Exp $
+# $Id: Owl/packages/binutils/binutils.spec,v 1.18 2005/10/23 17:36:32 solar Exp $
 
 %define BUILD_HJL 1
 
@@ -30,6 +30,7 @@ Patch8: binutils-2.15.94.0.2-owl-searchpath.diff
 Patch9: binutils-2.14.90.0.8-owl-info.diff
 PreReq: /sbin/ldconfig, /sbin/install-info
 ExcludeArch: ia64
+BuildRequires: texinfo, gettext, flex, bison, libtool
 BuildRoot: /override/%name-%version
 
 # Undefine _gnu macro - peeped from RH9 spec :)

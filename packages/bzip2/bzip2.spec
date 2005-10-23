@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bzip2/bzip2.spec,v 1.23 2005/05/20 23:22:43 ldv Exp $
+# $Id: Owl/packages/bzip2/bzip2.spec,v 1.24 2005/10/23 17:36:32 solar Exp $
 
 Summary: An extremely powerful file compression utility.
 Name: bzip2
@@ -20,6 +20,7 @@ PreReq: /sbin/ldconfig
 Requires: mktemp >= 1:1.3.1
 # Provide this soname for backwards compatibility
 Provides: libbz2.so.0
+BuildRequires: automake, autoconf, libtool, texinfo
 BuildRoot: /override/%name-%version
 
 %description

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.25 2005/01/14 03:27:50 galaxy Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.26 2005/10/23 17:36:32 solar Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
@@ -16,7 +16,7 @@ Patch1: acct-6.3.5-owl-devpts.diff
 PreReq: /sbin/install-info, grep
 Provides: psacct
 Obsoletes: psacct
-BuildRequires: sed >= 4.0.9
+BuildRequires: sed >= 4.0.9, texinfo
 BuildRoot: /override/%name-%version
 
 %description
