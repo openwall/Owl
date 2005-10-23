@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.43 2005/10/23 10:41:16 galaxy Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.44 2005/10/23 17:46:19 galaxy Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -77,12 +77,14 @@ Source9: libstdc++-compat-3.2.2-i386.tar.bz2
 %endif
 
 PreReq: /sbin/ldconfig, /sbin/install-info
-Requires(post): sed
+# XXX: the following line uses RPM4 syntax. I've commented it for now. -- (GM)
+#Requires(post): sed
 # This is the version of binutils we have tested this package with; older
 # ones might work, but were not tested.
 Requires: binutils >= 2.10.1.0.4
 Requires: cpp = %version-%release
 Obsoletes: egcs
+BuildRequires: binutils, gettext, bison, flex, texinfo
 BuildRoot: /override/%name-%version
 
 %description
@@ -745,8 +747,10 @@ fi
 %endif
 
 %changelog
-* Tue Oct 18 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.4.3-owl4
-- Added sed to Requires(post), since we are using sed in mkheaders.
+* Sun Oct 23 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.4.3-owl4
+- Added sed to Requires(post), since we are using sed in mkheaders;
+commented out this Requires(post), since we will use this spec with RPM3.
+- Added BuildRequires as suggested by kad@.
 
 * Fri Sep 23 2005 Michail Litvak <mci@owl.openwall.com> 1:3.4.3-owl3
 - Don't package .la files.
