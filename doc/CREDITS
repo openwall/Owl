@@ -1,16 +1,13 @@
 Owl development Core Team:
 
 	Solar Designer <solar at owl.openwall.com>
+	Alexandr D. Kanevskiy <kad at owl.openwall.com>
 	Michail Litvak <mci at owl.openwall.com>
 	Rafal Wojtczuk <nergal at owl.openwall.com>
 	(GalaxyMaster) <galaxy at owl.openwall.com>
 	Andreas Ericsson <exon at owl.openwall.com>
 	Juan M. Bello Rivas <jmbr at owl.openwall.com>
 	Dmitry V. Levin <ldv at owl.openwall.com>
-
-Emeritus members of the Core Team:
-
-	Alexandr D. Kanevskiy <kad at owl.openwall.com>
 
 Owl installer:
 
@@ -32,7 +29,7 @@ French translations:
 
 	Denis Ducamp <ducamp at owl.openwall.com>
 
-Russian translations:
+tcsh package updates and Russian translations:
 
 	Gremlin from Kremlin <gremlin at owl.openwall.com>
 
@@ -48,4 +45,4 @@ a donation too:
 
 http://www.openwall.com/donations/
 
-$Id: Owl/doc/CREDITS,v 1.14 2005/08/08 21:04:39 solar Exp $
+$Id: Owl/doc/CREDITS,v 1.15 2005/10/23 16:50:16 solar Exp $
