@@ -1,9 +1,9 @@
-# $Id: Owl/packages/tcsh/tcsh.spec,v 1.15 2005/10/22 18:18:47 galaxy Exp $
+# $Id: Owl/packages/tcsh/tcsh.spec,v 1.16 2005/10/23 21:10:44 galaxy Exp $
 
 Summary: An enhanced version of csh, the C shell.
 Name: tcsh
 Version: 6.14.00
-Release: owl2
+Release: owl3
 License: BSD
 Group: System Environment/Shells
 URL: http://www.tcsh.org/Home
@@ -95,6 +95,9 @@ fi
 %_datadir/locale/*/LC_MESSAGES/tcsh*
 
 %changelog
+* Mon Oct 24 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 6.14.00-owl3
+- Adjusted the tcsh.1 patch as suggested by Solar.
+
 * Wed Oct 19 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 6.14.00-owl2
 - Replaced 'make' with '%%__make'.
 - Dropped the strip option from install in favor of brp- scripts.
