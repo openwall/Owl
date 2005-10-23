@@ -12,6 +12,12 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2005/10/23	Package: zlib
+Updated to 1.2.3.
+
+2005/10/23	Package: coreutils
+Updated to 5.92.
+
 2005/10/23	Package: net-tools
 Updated to 1.60.
 
@@ -635,4 +641,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.146 2005/10/23 17:30:49 solar Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.147 2005/10/23 22:03:54 ldv Exp $

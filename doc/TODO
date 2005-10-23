@@ -45,16 +45,6 @@ Update these to latest releases once in a while.
 
 	coreutils.
 
-[PRIORITY: medium]
-[ASSIGNED: ldv@]
-Update to 5.91+.
-
-[PRIORITY: low]
-[ASSIGNED: ldv@]
-The texinfo documentation for true(1) and false(1) is wrong for the
-assembly versions (we do not support any command-line options).
-Update the documentation to match the reality.
-
 [PRIORITY: low]
 [ASSIGNED: ldv@]
 Package coreutils' versions of kill(1), hostname(1), and usleep(1).
@@ -553,4 +543,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Id: Owl/doc/TODO,v 1.114 2005/10/21 13:33:01 solar Exp $
+$Id: Owl/doc/TODO,v 1.115 2005/10/23 22:03:54 ldv Exp $
