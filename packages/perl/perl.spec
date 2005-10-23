@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.31 2005/08/23 23:23:50 solar Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.32 2005/10/23 22:14:14 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -81,8 +81,8 @@ Provides: perl(timelocal.pl)
 Provides: perl(utf8_heavy.pl)
 Provides: perl(validate.pl)
 Obsoletes: perl-MD5
+BuildRequires: gdbm-devel, db4-devel, gawk, grep
 BuildRequires: rpm >= 4.0.5
-BuildRequires: gawk, grep
 BuildRoot: /override/%name-%version
 
 %description

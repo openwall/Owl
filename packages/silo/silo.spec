@@ -1,4 +1,4 @@
-# $Id: Owl/packages/silo/silo.spec,v 1.10 2005/10/20 00:24:11 ldv Exp $
+# $Id: Owl/packages/silo/silo.spec,v 1.11 2005/10/23 22:20:11 solar Exp $
 
 Summary: Sparc Improved boot LOader.
 Name: silo
@@ -11,6 +11,7 @@ Patch0: silo-1.2.5-owl-Makefile.diff
 Patch1: silo-1.2.5-owl-man.diff
 Patch2: silo-1.2.4-aurora-ext3.diff
 ExclusiveArch: sparc sparcv9 sparc64
+BuildRequires: elftoaout, e2fsprogs-devel
 BuildRoot: /override/%name-%version
 
 %description

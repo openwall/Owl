@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.17 2005/03/25 21:07:36 solar Exp $
+# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.18 2005/10/23 20:20:13 solar Exp $
 
 Summary: Pluggable authentication module for USER/PASS-style protocols.
 Name: pam_userpass
@@ -8,6 +8,7 @@ License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
 URL: http://www.openwall.com/pam/
 Source: ftp://ftp.openwall.com/pub/projects/pam/modules/%name/%name-%version.tar.gz
+BuildRequires: pam-devel
 BuildRoot: /override/%name-%version
 
 %description

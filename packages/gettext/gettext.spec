@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gettext/gettext.spec,v 1.9 2005/09/27 13:17:20 mci Exp $
+# $Id: Owl/packages/gettext/gettext.spec,v 1.10 2005/10/23 21:09:44 solar Exp $
 
 Summary: GNU libraries and utilities for producing multi-lingual messages.
 Name: gettext
@@ -12,6 +12,7 @@ Patch0: gettext-0.14.1-alt-gettextize-quiet.diff
 PreReq: /sbin/install-info
 Provides: %name-devel = %version-%release
 Provides: devel(libintl)
+BuildRequires: automake, autoconf, libtool, bison, gcc-c++
 BuildRoot: /override/%name-%version
 
 %description

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/findutils/findutils.spec,v 1.15 2005/09/16 23:28:46 ldv Exp $
+# $Id: Owl/packages/findutils/findutils.spec,v 1.16 2005/10/23 21:09:44 solar Exp $
 
 Summary: The GNU versions of find utilities (find and xargs).
 Name: findutils
@@ -16,6 +16,7 @@ Patch2: findutils-4.2.21-owl-info.diff
 PreReq: /sbin/install-info
 # due to sed -i
 BuildRequires: sed >= 4.1.1
+BuildRequires: automake, autoconf, libtool, gettext, texinfo
 BuildRoot: /override/%name-%version
 
 %description

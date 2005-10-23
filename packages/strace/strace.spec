@@ -1,4 +1,4 @@
-# $Id: Owl/packages/strace/strace.spec,v 1.17 2005/10/23 22:00:47 ldv Exp $
+# $Id: Owl/packages/strace/strace.spec,v 1.18 2005/10/23 22:21:35 solar Exp $
 
 Summary: Tracks and displays system calls associated with a running process.
 Name: strace
@@ -15,6 +15,7 @@ Patch3: strace-4.5.13-owl-man.diff
 Patch4: strace-4.5.13-alt-keep_status.diff
 Patch5: strace-4.5.13-drepper-x86_64-ipc.diff
 Patch6: strace-4.5.13-drepper-msgrcv.diff
+BuildRequires: automake, autoconf
 BuildRoot: /override/%name-%version
 
 %package graph

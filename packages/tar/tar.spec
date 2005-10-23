@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tar/tar.spec,v 1.18 2005/10/08 23:34:22 solar Exp $
+# $Id: Owl/packages/tar/tar.spec,v 1.19 2005/10/23 22:20:11 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
@@ -21,6 +21,7 @@ Patch9: tar-1.13.19-up-relativize-links.diff
 Patch10: tar-1.13.19-owl-autotools.diff
 Patch11: tar-1.13.19-owl-po.diff
 PreReq: /sbin/install-info, grep
+BuildRequires: automake, autoconf, texinfo, gettext
 BuildRequires: rpm-build >= 0:4
 BuildRoot: /override/%name-%version
 

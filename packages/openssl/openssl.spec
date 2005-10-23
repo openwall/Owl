@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.47 2005/10/11 15:26:37 ldv Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.48 2005/10/23 22:14:13 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
@@ -19,7 +19,7 @@ Patch7: openssl-0.9.7g-up-SSL_OP_MSIE_SSLV2_RSA_PADDING.diff
 Provides: SSL
 # For backwards compatibility.
 Provides: libcrypto.so.4, libssl.so.4  
-BuildRequires: perl
+BuildRequires: perl, diffutils
 # Due to sed -i.
 BuildRequires: sed >= 4.1.1
 BuildRoot: /override/%name-%version

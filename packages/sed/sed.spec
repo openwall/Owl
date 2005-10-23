@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sed/sed.spec,v 1.10 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/sed/sed.spec,v 1.11 2005/10/23 22:14:14 solar Exp $
 
 Summary: A GNU stream text editor.
 Name: sed
@@ -11,6 +11,7 @@ Source: ftp://ftp.gnu.org/gnu/sed/sed-%version.tar.gz
 Patch0: sed-4.0.9-owl-info.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
+BuildRequires: texinfo
 BuildRoot: /override/%name-%version
 
 %description

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/db4/db4.spec,v 1.9 2005/09/27 13:17:20 mci Exp $
+# $Id: Owl/packages/db4/db4.spec,v 1.10 2005/10/23 21:09:44 solar Exp $
 
 %define __soversion	4.0
 %define _libdb_a	libdb-%__soversion.a
@@ -19,7 +19,7 @@ Patch1: db-1.85-rh-errno.diff
 Patch2: db-4.0.14-rh-ham-dirty-meta.diff
 Patch3: db-4.0.14-rh-recover.diff
 Obsoletes: db1, db1-devel
-BuildRequires: perl
+BuildRequires: perl, libtool, ed, gcc-c++
 BuildRoot: /override/%name-%version
 
 %description

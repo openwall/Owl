@@ -1,4 +1,4 @@
-# $Id: Owl/packages/chkconfig/chkconfig.spec,v 1.12 2005/01/18 13:29:07 solar Exp $
+# $Id: Owl/packages/chkconfig/chkconfig.spec,v 1.13 2005/10/23 21:09:43 solar Exp $
 
 %define BUILD_NTSYSV 0
 %define INSTALL_ALTERNATIVES 0
@@ -12,6 +12,7 @@ Group: System Environment/Base
 Source: ftp://ftp.redhat.com/pub/redhat/code/chkconfig/%name-%version.tar.gz
 Patch0: chkconfig-1.3.9-owl-xinetd.d-check.diff
 Patch1: chkconfig-1.3.9-owl-no-ntsysv.diff
+BuildRequires: gettext
 BuildRoot: /override/%name-%version
 
 %description

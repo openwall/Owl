@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gdb/gdb.spec,v 1.20 2005/05/29 19:11:32 solar Exp $
+# $Id: Owl/packages/gdb/gdb.spec,v 1.21 2005/10/23 21:09:44 solar Exp $
 
 Summary: A GNU source-level debugger for C, C++ and Fortran.
 Name: gdb
@@ -22,6 +22,7 @@ Patch10: gdb-6.3-gentoo-alt-gdbinit.diff
 PreReq: /sbin/install-info
 BuildRequires: ncurses-devel >= 5.0
 BuildRequires: readline-devel >= 4.3
+BuildRequires: libtool, texinfo
 BuildRoot: /override/%name-%version
 
 %description

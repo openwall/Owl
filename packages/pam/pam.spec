@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.40 2005/08/23 22:48:10 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.41 2005/10/23 22:14:14 solar Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
@@ -38,6 +38,7 @@ Requires: glibc-crypt_blowfish
 # provided by tcb.
 Requires: tcb >= 0.9.9
 BuildRequires: glibc-crypt_blowfish-devel
+BuildRequires: automake, autoconf, bison, flex, sed >= 4.1, db4-devel
 BuildRoot: /override/%name-%version
 
 %description

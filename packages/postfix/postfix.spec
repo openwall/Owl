@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.25 2005/08/11 18:25:07 ldv Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.26 2005/10/23 22:14:14 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
@@ -29,6 +29,7 @@ Patch9: postfix-2.2.4-owl-postfix-script.diff
 Patch10: postfix-2.2.5-deb-man.diff
 PreReq: /sbin/chkconfig, grep, shadow-utils
 Requires: owl-control >= 0.4, owl-control < 2.0
+BuildRequires: db4-devel
 BuildRequires: sed >= 4.1.1
 Conflicts: sendmail, qmail
 Provides: MTA, smtpd, smtpdaemon

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/modutils/modutils.spec,v 1.19 2004/11/23 22:40:47 mci Exp $
+# $Id: Owl/packages/modutils/modutils.spec,v 1.20 2005/10/23 22:14:13 solar Exp $
 
 Summary: Kernel module utilities.
 Name: modutils
@@ -14,6 +14,7 @@ Patch3: modutils-2.4.16-rh-owl-syms.diff
 Patch4: modutils-2.4.27-owl-warnings.diff
 PreReq: /sbin/chkconfig
 Obsoletes: modules
+BuildRequires: flex
 BuildRoot: /override/%name-%version
 
 %description

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/time/time.spec,v 1.5 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/time/time.spec,v 1.6 2005/10/23 22:20:11 solar Exp $
 
 Summary: A GNU utility for monitoring a program's use of system resources.
 Name: time
@@ -12,6 +12,7 @@ Patch0: time-1.7-deb-make_quiet.diff
 Patch1: time-1.7-mdk-info.diff
 Patch2: time-1.7-deb-info_quiet.diff
 Prefix: %_prefix
+BuildRequires: texinfo
 BuildRoot: /override/%name-%version
 
 %description

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iproute2/iproute2.spec,v 1.17 2005/03/05 19:12:54 mci Exp $
+# $Id: Owl/packages/iproute2/iproute2.spec,v 1.18 2005/10/23 22:14:13 solar Exp $
 
 %define ver 2.4.7
 %define snapshot ss020116
@@ -29,6 +29,7 @@ Patch4: iproute2-2.4.7-owl-nstat-bound.diff
 Patch5: iproute2-2.4.7-devik-htb.diff
 Provides: iproute = %version
 Obsoletes: iproute
+BuildRequires: db4-devel, bison
 BuildRoot: /override/%name-%version
 
 %description

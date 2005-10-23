@@ -1,4 +1,4 @@
-# $Id: Owl/packages/psmisc/psmisc.spec,v 1.12 2005/04/08 00:54:38 solar Exp $
+# $Id: Owl/packages/psmisc/psmisc.spec,v 1.13 2005/10/23 22:14:14 solar Exp $
 
 Summary: Utilities for managing processes on your system.
 Name: psmisc
@@ -10,6 +10,7 @@ URL: http://psmisc.sourceforge.net
 Source: http://prdownloads.sourceforge.net/psmisc/psmisc-%version.tar.gz
 Patch0: psmisc-21.5-owl-termcap.diff
 Patch1: psmisc-21.5-owl-restricted-proc.diff
+BuildRequires: ncurses-devel
 BuildRoot: /override/%name-%version
 
 %description

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/file/file.spec,v 1.10 2004/11/23 22:40:45 mci Exp $
+# $Id: Owl/packages/file/file.spec,v 1.11 2005/10/23 21:09:44 solar Exp $
 
 Summary: A utility for determining file types.
 Name: file
@@ -19,6 +19,7 @@ Patch7: file-3.41-deb-magic.diff
 Patch8: file-3.41-deb-owl-man.diff
 Patch9: file-3.41-deb-owl-apprentice.diff
 Prefix: %_prefix
+BuildRequires: zlib-devel, automake, autoconf
 BuildRoot: /override/%name-%version
 
 %description

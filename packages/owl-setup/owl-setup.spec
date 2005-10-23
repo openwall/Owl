@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.40 2005/09/23 23:18:08 solar Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.41 2005/10/23 22:14:14 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -9,6 +9,7 @@ Group: System Environment/Base
 Source: setup-%version.tar.gz
 Requires: e2fsprogs, kbd, util-linux
 Conflicts: setuptool
+BuildRequires: ncurses-devel, cdk-devel
 BuildRoot: /override/%name-%version
 
 %description

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.40 2005/04/29 12:48:49 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.41 2005/10/23 21:09:44 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -20,6 +20,7 @@ Patch4: dhcp-3.0pl2-owl-bound.diff
 Patch5: dhcp-3.0pl2-owl-fixes.diff
 Patch6: dhcp-3.0pl2-owl-support-contact.diff
 PreReq: grep, shadow-utils
+BuildRequires: groff
 BuildRoot: /override/%name-%version
 
 %description

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gpm/gpm.spec,v 1.21 2005/01/20 03:51:28 solar Exp $
+# $Id: Owl/packages/gpm/gpm.spec,v 1.22 2005/10/23 21:09:44 solar Exp $
 
 # This defines the library version that this package builds.
 %define LIBVER 1.18.0
@@ -23,7 +23,7 @@ Patch7: gpm-1.19.6-owl-doc-mkinstalldirs.diff
 Patch8: gpm-1.19.6-owl-info.diff
 Patch9: gpm-1.19.6-owl-fixes.diff
 PreReq: /sbin/chkconfig, /sbin/ldconfig, /sbin/install-info
-BuildRequires: bison
+BuildRequires: sed, gawk, texinfo, bison, ncurses-devel, automake, autoconf
 BuildRoot: /override/%name-%version
 
 %description

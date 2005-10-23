@@ -1,4 +1,4 @@
-# $Id: Owl/packages/readline/readline.spec,v 1.19 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/readline/readline.spec,v 1.20 2005/10/23 22:14:14 solar Exp $
 
 %define compat_list 3 3.0 4.0 4.1 4.2
 
@@ -20,7 +20,7 @@ Patch7: readline-4.3-owl-info.diff
 PreReq: /sbin/ldconfig, /sbin/install-info
 Provides: %(for n in %compat_list; do echo -n "libhistory.so.$n lib%name.so.$n "; done)
 Prefix: %_prefix
-BuildRequires: sed
+BuildRequires: sed, texinfo
 BuildRoot: /override/%name-%version
 
 # Use optflags_lib for this package if defined.

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.32 2005/10/18 22:48:09 ldv Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.33 2005/10/23 22:20:11 solar Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -28,6 +28,7 @@ Obsoletes: fdisk, tunelp
 %ifarch sparc alpha
 Obsoletes: clock
 %endif
+BuildRequires: pam-devel, ncurses-devel, zlib-devel, gettext, sed
 BuildRoot: /override/%name-%version
 
 %description

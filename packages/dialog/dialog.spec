@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dialog/dialog.spec,v 1.14 2004/11/23 22:40:45 mci Exp $
+# $Id: Owl/packages/dialog/dialog.spec,v 1.15 2005/10/23 21:09:44 solar Exp $
 
 Summary: A utility for creating TTY dialog boxes.
 Name: dialog
@@ -13,6 +13,7 @@ Patch1: dialog-0.9b-owl-warnings.diff
 Patch2: dialog-0.9b-owl-tmp.diff
 Patch3: dialog-0.9b-rsbac-item-help.diff
 Patch4: dialog-0.9b-alt-locale.diff
+BuildRequires: ncurses-devel
 BuildRoot: /override/%name-%version
 
 %description

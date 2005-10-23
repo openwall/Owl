@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libtool/libtool.spec,v 1.15 2005/09/27 13:17:20 mci Exp $
+# $Id: Owl/packages/libtool/libtool.spec,v 1.16 2005/10/23 22:14:13 solar Exp $
 
 %define BUILD_TEST 0
 
@@ -19,6 +19,7 @@ Patch5: libtool-1.5.18-alt-ld.so.conf.diff
 PreReq: /sbin/install-info, autoconf, automake, m4, perl
 Requires: libtool-libs = %version-%release, mktemp
 Prefix: %_prefix
+BuildRequires: automake, autoconf, texinfo
 BuildRoot: /override/%name-%version
 
 %description

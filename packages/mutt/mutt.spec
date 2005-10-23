@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mutt/mutt.spec,v 1.21 2005/10/08 23:34:22 solar Exp $
+# $Id: Owl/packages/mutt/mutt.spec,v 1.22 2005/10/23 22:14:13 solar Exp $
 
 Summary: A feature-rich text-based mail user agent.
 Name: mutt
@@ -17,6 +17,7 @@ Patch4: mutt-1.4.2.1-owl-man.diff
 Requires: mktemp >= 1:1.3.1
 Conflicts: mutt-us
 Provides: mutt-i
+BuildRequires: ncurses-devel
 BuildRequires: openssl-devel >= 0.9.7g-owl1
 BuildRequires: rpm-build >= 0:4
 BuildRoot: /override/%name-%version

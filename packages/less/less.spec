@@ -1,4 +1,4 @@
-# $Id: Owl/packages/less/less.spec,v 1.12 2004/11/23 22:40:46 mci Exp $
+# $Id: Owl/packages/less/less.spec,v 1.13 2005/10/23 22:14:13 solar Exp $
 
 Summary: A text file browser similar to more, but better.
 Name: less
@@ -13,6 +13,7 @@ Source2: less.sh
 Source3: less.csh
 Patch0: less-358-owl-popen.diff
 Patch1: less-358-owl-optimize.diff
+BuildRequires: ncurses-devel
 BuildRoot: /override/%name-%version
 
 %description

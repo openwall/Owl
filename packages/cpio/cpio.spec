@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cpio/cpio.spec,v 1.18 2005/05/11 14:34:11 ldv Exp $
+# $Id: Owl/packages/cpio/cpio.spec,v 1.19 2005/10/23 21:09:44 solar Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
@@ -30,6 +30,7 @@ Patch25: cpio-2.6-deb-owl-rmt.diff
 PreReq: /sbin/install-info
 Provides: mt-st, rmt
 Prefix: %_prefix
+BuildRequires: texinfo, automake, autoconf, gettext
 BuildRoot: /override/%name-%version
 
 %description

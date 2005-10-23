@@ -1,4 +1,4 @@
-# $Id: Owl/packages/groff/groff.spec,v 1.16 2004/11/23 22:40:46 mci Exp $
+# $Id: Owl/packages/groff/groff.spec,v 1.17 2005/10/23 22:14:13 solar Exp $
 
 %define BUILD_USE_X 0
 %define BUILD_CURRENT 0
@@ -19,7 +19,7 @@ Patch1: groff-1.17.2-suse-pic-format.diff
 Patch2: groff-1.17.2-owl-grn-bound.diff
 Patch3: groff-1.17.2-owl-tmp.diff
 Obsoletes: groff-tools
-BuildRequires: mktemp >= 1:1.3.1
+BuildRequires: mktemp >= 1:1.3.1, zlib-devel, gcc-c++
 BuildRoot: /override/%name-%version
 
 %description

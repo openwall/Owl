@@ -1,4 +1,4 @@
-# $Id: Owl/packages/net-tools/net-tools.spec,v 1.11 2005/10/23 16:58:11 galaxy Exp $
+# $Id: Owl/packages/net-tools/net-tools.spec,v 1.12 2005/10/23 22:14:13 solar Exp $
 
 Summary: The basic tools for setting up networking.
 Name: net-tools
@@ -11,6 +11,7 @@ Source1: net-tools-1.57-config.h
 Source2: net-tools-1.57-config.make
 Patch0: net-tools-1.57-owl-fixes.diff
 Patch1: net-tools-1.60-owl-x25_address.diff
+BuildRequires: gettext
 BuildRoot: /override/%name-%version
 
 %description

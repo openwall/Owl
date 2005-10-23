@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vim/vim.spec,v 1.20 2005/01/14 03:27:53 galaxy Exp $
+# $Id: Owl/packages/vim/vim.spec,v 1.21 2005/10/23 22:20:11 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -31,6 +31,7 @@ Patch5: vim-6.1-owl-tmp.diff
 Patch6: vim-6.1-owl-perl-clash.diff
 Patch7: vim-6.1-owl-autotools.diff
 Requires: mktemp >= 1:1.3.1
+BuildRequires: libtermcap-devel, ncurses-devel, perl
 BuildRequires: sed >= 4.0.9
 %if %BUILD_USE_GPM
 BuildRequires: gpm-devel

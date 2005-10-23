@@ -1,4 +1,4 @@
-# $Id: Owl/packages/make/make.spec,v 1.10 2004/11/23 22:40:47 mci Exp $
+# $Id: Owl/packages/make/make.spec,v 1.11 2005/10/23 22:14:13 solar Exp $
 
 Summary: A GNU tool which simplifies the build process for users.
 Name: make
@@ -9,6 +9,7 @@ Group: Development/Tools
 Source: ftp://ftp.gnu.org/gnu/make/make-%version.tar.bz2
 PreReq: /sbin/install-info
 Prefix: %_prefix
+BuildRequires: texinfo
 BuildRoot: /override/%name-%version
 
 %description

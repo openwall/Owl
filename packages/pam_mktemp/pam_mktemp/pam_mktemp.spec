@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.17 2005/08/10 21:44:41 ldv Exp $
+# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.18 2005/10/23 20:20:13 solar Exp $
 
 Summary: Pluggable private /tmp space support for interactive (shell) sessions.
 Name: pam_mktemp
@@ -8,6 +8,7 @@ License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
 URL: http://www.openwall.com/pam/
 Source: ftp://ftp.openwall.com/pub/projects/pam/modules/%name/%name-%version.tar.gz
+BuildRequires: pam-devel, e2fsprogs-devel
 BuildRoot: /override/%name-%version
 
 %description
