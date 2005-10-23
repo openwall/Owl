@@ -1,4 +1,4 @@
-# $Id: Owl/packages/coreutils/coreutils.spec,v 1.9 2005/10/23 21:23:07 ldv Exp $
+# $Id: Owl/packages/coreutils/coreutils.spec,v 1.10 2005/10/23 21:40:22 ldv Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
@@ -7,7 +7,7 @@ Release: owl1
 License: GPL
 Group: System Environment/Base
 URL: http://www.gnu.org/software/%name/
-Source: ftp://ftp.gnu.org/gnu/%name/%name-%version.tar.bz2
+Source0: ftp://ftp.gnu.org/gnu/%name/%name-%version.tar.bz2
 
 # Additional sources
 # true and false asm source and man-pages
