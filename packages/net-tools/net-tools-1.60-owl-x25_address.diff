@@ -1,0 +1,15 @@
+--- net-tools-1.60.orig/lib/x25_sr.c	2000-05-20 13:38:10 +0000
++++ net-tools-1.60/lib/x25_sr.c	2005-06-14 18:40:42 +0000
+@@ -77,7 +77,12 @@ static int X25_setroute(int action, int 
+   rt.sigdigits=sigdigits;
+ 
+   /* x25_route_struct.address isn't type struct sockaddr_x25, Why? */
++#include <linux/version.h>
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
+   memcpy(&rt.address, &sx25.sx25_addr, sizeof(x25_address));
++#else
++  memcpy(&rt.address, &sx25.sx25_addr, sizeof(struct x25_address));
++#endif
+ 
+   while (*args) {
+ 	if (!strcmp(*args,"device") || !strcmp(*args,"dev")) {

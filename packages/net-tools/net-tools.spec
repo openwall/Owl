@@ -1,16 +1,16 @@
-# $Id: Owl/packages/net-tools/net-tools.spec,v 1.10 2005/01/20 04:26:55 solar Exp $
+# $Id: Owl/packages/net-tools/net-tools.spec,v 1.11 2005/10/23 16:58:11 galaxy Exp $
 
 Summary: The basic tools for setting up networking.
 Name: net-tools
-Version: 1.57
-Release: owl3
+Version: 1.60
+Release: owl1
 License: GPL
 Group: System Environment/Base
 Source0: http://www.tazenda.demon.co.uk/phil/net-tools/net-tools-%version.tar.bz2
 Source1: net-tools-1.57-config.h
 Source2: net-tools-1.57-config.make
-Patch0: net-tools-1.56-rh-fhs.diff
-Patch1: net-tools-1.57-owl-fixes.diff
+Patch0: net-tools-1.57-owl-fixes.diff
+Patch1: net-tools-1.60-owl-x25_address.diff
 BuildRoot: /override/%name-%version
 
 %description
@@ -22,11 +22,11 @@ networking: ethers, route and others.
 %patch0 -p1
 %patch1 -p1
 
-cp $RPM_SOURCE_DIR/net-tools-1.57-config.h config.h
-cp $RPM_SOURCE_DIR/net-tools-1.57-config.make config.make
+cp %_sourcedir/net-tools-1.57-config.h config.h
+cp %_sourcedir/net-tools-1.57-config.make config.make
 
 %build
-%__make CC="%__cc" COPTS="$RPM_OPT_FLAGS -D_GNU_SOURCE -Wall"
+%__make CC="%__cc" COPTS="%optflags -D_GNU_SOURCE -Wall"
 
 %install
 rm -rf %buildroot
@@ -95,9 +95,15 @@ rm %buildroot%_mandir/pt_BR/man8/route.8*
 /sbin/rarp
 /sbin/route
 /sbin/slattach
+/sbin/nameif
 %_mandir/man[158]/*
 
 %changelog
+* Tue Jun 14 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.60-owl1
+- Updated to 1.60.
+- Dropped obsoleted -rh-fhs patch.
+- Added a hack to build this package against kernel 2.6.
+
 * Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.57-owl3
 - Added a fix to the "label at end of compound statement" issue.
 
