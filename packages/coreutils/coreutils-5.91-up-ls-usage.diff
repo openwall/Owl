@@ -1,0 +1,31 @@
+2005-10-17  Eric Blake  <ebb9@byu.net>
+
+	* src/ls.c (usage): Fix description of --sort, --time.
+	Reported by Vitaly A. Ostanin <vyt@altlinux.org>.
+	Fixes ALT#8176.
+
+Index: src/ls.c
+===================================================================
+RCS file: /cvsroot/coreutils/coreutils/src/ls.c,v
+retrieving revision 1.400
+diff -u -r1.400 ls.c
+--- src/ls.c    15 Oct 2005 09:56:21 -0000      1.400
++++ src/ls.c    17 Oct 2005 15:50:28 -0000
+@@ -4188,12 +4194,12 @@
+ "), stdout);
+       fputs (_("\
+   -S                         sort by file size\n\
+-      --sort=WORD            extension -X, none -U, size -S, time -t,\n\
+-                             version -v, status -c, time -t, atime -u,\n\
+-                             access -u, use -u\n\
++      --sort=WORD            sort by WORD instead of name: none -U,\n\
++                             extension -X, size -S, time -t, version -v\n\
+       --time=WORD            with -l, show time as WORD instead of modification\n\
+-                             time: atime, access, use, ctime or status; use\n\
+-                             specified time as sort key if --sort=time\n\
++                             time: atime -u, access -u, use -u, ctime -c,\n\
++                             or status -c; use specified time as sort key\n\
++                             if --sort=time\n\
+ "), stdout);
+       fputs (_("\
+       --time-style=STYLE     with -l, show times using style STYLE:\n\

@@ -1,0 +1,105 @@
+2005-09-27  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* NEWS: ls now defaults to --time-style="locale", but this
+	style now behaves like posix-long-iso if your locale appears
+	to be messed up.
+	* doc/coreutils.texi (Formatting file timestamps): Document that
+	--time-style="locale" is now the default.  Update advice for
+	Emacs 21.3 and later.
+	* src/ls.c (decode_switches): Implement the above.
+
+Index: NEWS
+===================================================================
+RCS file: /fetish/cu/NEWS,v
+retrieving revision 1.313
+diff -p -u -r1.313 NEWS
+--- NEWS	25 Sep 2005 06:07:48 -0000	1.313
++++ NEWS	27 Sep 2005 20:38:29 -0000
+@@ -1,5 +1,11 @@
+ GNU coreutils NEWS                                    -*- outline -*-
+ 
++** ls now defaults to --time-style="locale" rather than
++  --time-style="posix-long-iso".  However, --time-style="locale" now
++  behaves like --time-style="posix-long-iso" if your locale settings
++  appear to be messed up.  This change attempts to have the default be
++  the best of both worlds.
++
+ * Major changes in release 5.91 (2005-10-17) [stable candidate]
+ 
+ ** Bring back support for `head -NUM', `tail -NUM', etc. even when
+Index: doc/coreutils.texi
+===================================================================
+RCS file: /fetish/cu/doc/coreutils.texi,v
+retrieving revision 1.285
+diff -p -u -r1.285 coreutils.texi
+--- doc/coreutils.texi	25 Sep 2005 06:08:17 -0000	1.285
++++ doc/coreutils.texi	27 Sep 2005 20:38:32 -0000
+@@ -6047,7 +6047,7 @@ and might generate timestamps like @samp
+ @vindex LC_TIME
+ List @acronym{POSIX}-locale timestamps if the @env{LC_TIME} locale
+ category is @acronym{POSIX}, @var{style} timestamps otherwise.  For
+-example, the default style, which is @samp{posix-long-iso}, lists
++example, the @samp{posix-long-iso} style lists
+ timestamps like @samp{Mar 30@ @ 2002} and @samp{Mar 30 23:45} when in
+ the @acronym{POSIX} locale, and like @samp{2002-03-30 23:45} otherwise.
+ @end table
+@@ -6056,10 +6056,11 @@ the @acronym{POSIX} locale, and like @sa
+ @vindex TIME_STYLE
+ You can specify the default value of the @option{--time-style} option
+ with the environment variable @env{TIME_STYLE}; if @env{TIME_STYLE} is not set
+-the default style is @samp{posix-long-iso}.  @acronym{GNU} Emacs 21 and
+-later can parse @acronym{ISO} dates, but older Emacs versions do not, so if
+-you are using an older version of Emacs and specify a non-@acronym{POSIX}
+-locale, you may need to set @samp{TIME_STYLE="locale"}.
++the default style is @samp{locale}.  @acronym{GNU} Emacs 21.3 and
++later use the @option{--dired} option and therefore can parse any date
++format, but if you are using Emacs 21.1 or 21.2 and specify a
++non-@acronym{POSIX} locale you may need to set
++@samp{TIME_STYLE="posix-long-iso"}.
+ 
+ To avoid certain denial-of-service attacks, timestamps that would be
+ longer than 1000 bytes may be treated as errors.
+Index: src/ls.c
+===================================================================
+RCS file: /fetish/cu/src/ls.c,v
+retrieving revision 1.399
+diff -p -u -r1.399 ls.c
+--- src/ls.c	16 Sep 2005 07:50:33 -0000	1.399
++++ src/ls.c	27 Sep 2005 20:38:33 -0000
+@@ -1823,7 +1823,7 @@ decode_switches (int argc, char **argv)
+ 
+       if (! style)
+ 	if (! (style = getenv ("TIME_STYLE")))
+-	  style = "posix-long-iso";
++	  style = "locale";
+ 
+       while (strncmp (style, posix_prefix, sizeof posix_prefix - 1) == 0)
+ 	{
+@@ -1859,6 +1859,7 @@ decode_switches (int argc, char **argv)
+ 	    break;
+ 
+ 	  case long_iso_time_style:
++	  case_long_iso_time_style:
+ 	    long_time_format[0] = long_time_format[1] = "%Y-%m-%d %H:%M";
+ 	    break;
+ 
+@@ -1870,10 +1871,17 @@ decode_switches (int argc, char **argv)
+ 	  case locale_time_style:
+ 	    if (hard_locale (LC_TIME))
+ 	      {
++		/* Ensure that the locale has translations for both
++		   formats.  If not, fall back on long-iso format.  */
+ 		int i;
+ 		for (i = 0; i < 2; i++)
+-		  long_time_format[i] =
+-		    dcgettext (NULL, long_time_format[i], LC_TIME);
++		  {
++		    char const *locale_format =
++		      dcgettext (NULL, long_time_format[i], LC_TIME);
++		    if (locale_format == long_time_format[i])
++		      goto case_long_iso_time_style;
++		    long_time_format[i] = locale_format;
++		  }
+ 	      }
+ 	  }
+     }

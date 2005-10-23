@@ -1,18 +1,18 @@
-diff -uprk.orig coreutils-200504010740.orig/configure.ac coreutils-200504010740/configure.ac
---- coreutils-200504010740.orig/configure.ac	2005-03-22 18:09:54 +0300
-+++ coreutils-200504010740/configure.ac	2005-04-12 17:10:03 +0400
-@@ -232,6 +232,8 @@ AC_CHECK_DECLS([strsignal, sys_siglist, 
+diff -upk.orig coreutils-5.91.orig/configure.ac coreutils-5.91/configure.ac
+--- coreutils-5.91.orig/configure.ac	2005-10-16 09:50:24 +0000
++++ coreutils-5.91/configure.ac	2005-10-20 11:46:03 +0000
+@@ -246,6 +246,8 @@ AC_CHECK_DECLS([strsignal, sys_siglist, 
  # For src/kill.c and src/printf.c.
  AC_CHECK_DECLS([strtoimax, strtoumax])
  
 +gt_PREREQ_HOSTNAME
 +
- gl_LIB_CHECK
+ cu_LIB_CHECK
  
  AM_GNU_GETTEXT([external], [need-ngettext])
-diff -uprk.orig coreutils-200504010740.orig/m4/hostname.m4 coreutils-200504010740/m4/hostname.m4
---- coreutils-200504010740.orig/m4/hostname.m4	1970-01-01 03:00:00 +0300
-+++ coreutils-200504010740/m4/hostname.m4	2005-04-12 17:10:03 +0400
+diff -upk.orig coreutils-5.91.orig/m4/hostname.m4 coreutils-5.91/m4/hostname.m4
+--- coreutils-5.91.orig/m4/hostname.m4	1970-01-01 00:00:00 +0000
++++ coreutils-5.91/m4/hostname.m4	2005-10-20 11:14:57 +0000
 @@ -0,0 +1,26 @@
 +# hostname.m4 serial 1 (gettext-0.11)
 +dnl Copyright (C) 2001-2002 Free Software Foundation, Inc.
@@ -40,9 +40,9 @@ diff -uprk.orig coreutils-200504010740.orig/m4/hostname.m4 coreutils-20050401074
 +    AC_DEFINE(HAVE_IPV6, 1, [Define if <sys/socket.h> defines AF_INET6.])
 +  fi
 +])
-diff -uprk.orig coreutils-200504010740.orig/src/hostname.c coreutils-200504010740/src/hostname.c
---- coreutils-200504010740.orig/src/hostname.c	2004-11-17 03:56:25 +0300
-+++ coreutils-200504010740/src/hostname.c	2005-04-13 03:53:10 +0400
+diff -upk.orig coreutils-5.91.orig/src/hostname.c coreutils-5.91/src/hostname.c
+--- coreutils-5.91.orig/src/hostname.c	2005-08-23 17:04:10 +0000
++++ coreutils-5.91/src/hostname.c	2005-10-20 11:14:57 +0000
 @@ -25,7 +25,9 @@
  #include "system.h"
  #include "long-options.h"
@@ -352,7 +352,7 @@ diff -uprk.orig coreutils-200504010740.orig/src/hostname.c coreutils-20050401074
 -      /* Set hostname to operand.  */
 -      char const *name = argv[optind];
 -      if (sethostname (name, strlen (name)) != 0)
--	error (EXIT_FAILURE, errno, _("cannot set name to `%s'"), name);
+-	error (EXIT_FAILURE, errno, _("cannot set name to %s"), quote (name));
 -#else
 -      error (EXIT_FAILURE, 0,
 -	     _("cannot set hostname; this system lacks the functionality"));
@@ -510,15 +510,15 @@ diff -uprk.orig coreutils-200504010740.orig/src/hostname.c coreutils-20050401074
 +#ifdef HAVE_SETHOSTNAME
 +    case host_query:
 +      if (sethostname (name, strlen (name)) != 0)
-+	error (EXIT_FAILURE, errno, _("cannot set %s name to `%s'"),
-+	       name_of_query (query), name);
++	error (EXIT_FAILURE, errno, _("cannot set %s name to %s"),
++	       name_of_query (query), quote (name));
 +      break;
 +#endif
 +#ifdef HAVE_SETDOMAINNAME
 +    case nis_query:
 +      if (setdomainname (name, strlen (name)) != 0)
-+	error (EXIT_FAILURE, errno, _("cannot set %s name to `%s'"),
-+	       name_of_query (query), name);
++	error (EXIT_FAILURE, errno, _("cannot set %s name to %s"),
++	       name_of_query (query), quote (name));
 +      break;
 +#endif
 +    default:

@@ -1,18 +1,13 @@
-# $Id: Owl/packages/coreutils/coreutils.spec,v 1.8 2005/10/23 21:09:43 solar Exp $
+# $Id: Owl/packages/coreutils/coreutils.spec,v 1.9 2005/10/23 21:23:07 ldv Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
-Version: 5.3.1
-Release: owl0.6
+Version: 5.92
+Release: owl1
 License: GPL
 Group: System Environment/Base
 URL: http://www.gnu.org/software/%name/
-# ftp://ftp.gnu.org/gnu/%name/
-# cvs -d anoncvs@savannah.gnu.org:/cvsroot/coreutils export -Dnow coreutils
-# Fix base source when we're off CVS snapshot
-%define snapshot 200504240446
-%define srcname %name-%snapshot
-Source0: %srcname.tar.bz2
+Source: ftp://ftp.gnu.org/gnu/%name/%name-%version.tar.bz2
 
 # Additional sources
 # true and false asm source and man-pages
@@ -23,26 +18,27 @@ Source3: false.1
 # shell profile settings and configuration file for colorized ls output
 Source10: colorls.sh
 Source11: colorls.csh
-Source12: DIR_COLORS
 
 # usleep source and manpage
 Source20: usleep.c
 Source21: usleep.1
 
 # ALT patches, candidates for upstream version and CVS backports
-Patch0: coreutils-5.3.1-alt-hostname.diff
+Patch0: coreutils-5.91-up-ls-usage.diff
+Patch1: coreutils-5.91-eggert-ls-time-style.diff
+Patch2: coreutils-5.91-alt-hostname.diff
 
-# ALT specific
-Patch10: coreutils-5.3.1-alt-dircolors.diff
-Patch11: coreutils-5.3.0-alt-without-su-uptime.diff
-Patch12: coreutils-5.3.1-alt-ls-dir-vdir.diff
-Patch13: coreutils-5.3.0-alt-posix2_version.diff
+# Owl/ALT specific
+Patch10: coreutils-5.91-owl-info-true-false.diff
+Patch11: coreutils-5.91-alt-owl-dircolors.diff
+Patch12: coreutils-5.3.0-alt-without-su-uptime.diff
+Patch13: coreutils-5.3.1-alt-ls-dir-vdir.diff
+Patch14: coreutils-5.91-alt-posix2_version.diff
 
 # other
-Patch20: coreutils-5.3.0-rh-owl-ls-default-time-style.diff
-Patch21: coreutils-5.2.0-rh-install-strip.diff
-Patch22: coreutils-5.3.1-rh-owl-alt-ls-dumbterm.diff
-Patch23: coreutils-4.5.3-rh-langinfo.diff
+Patch20: coreutils-5.2.0-rh-install-strip.diff
+Patch21: coreutils-5.3.1-rh-owl-alt-ls-dumbterm.diff
+Patch22: coreutils-5.91-rh-alt-langinfo.diff
 
 Provides: stat = %version, fileutils = %version, textutils = %version, sh-utils = %version
 Obsoletes: stat, fileutils, textutils, sh-utils
@@ -61,7 +57,6 @@ Obsoletes: stat, fileutils, textutils, sh-utils
 #Conflicts: owl-startup
 
 PreReq: /sbin/install-info
-# due to sed -i
 BuildRequires: sed >= 4.1.1, bison >= 2.0, automake >= 1.9.5, m4 >= 1.4.3
 BuildRequires: libtermcap-devel
 
@@ -82,32 +77,26 @@ counterparts, such as greater speed, additional options, and fewer
 arbitrary limits.
 
 %prep
-%setup -q -n %srcname
+%setup -q
 
 # ALT patches, candidates for upstream version and CVS backports
-%patch0 -p1
+%patch0 -p0
+%patch1 -p0
+%patch2 -p1
 
 # ALT specific
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
+%patch14 -p1
 
 # other
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
-%patch23 -p1
 
 find -type f -name '*.orig' -delete -print
-
-# 2nd part of the posix2_version patch
-find src -type f -print0 |
-	xargs -r0 grep -FZl 'posix2_version () < 200112' -- |
-	xargs -r0 sed -i 's/posix2_version () < 200112/posix2_version_lt_200112 ()/' --
-find src -type f -print0 |
-	xargs -r0 grep -FZl '200112 <= posix2_version ()' -- |
-	xargs -r0 sed -i 's/200112 <= posix2_version ()/posix2_version_ge_200112 ()/' --
 
 # Get rid of su and uptime
 rm {src,man}/{su,uptime}.*
@@ -127,6 +116,7 @@ sed -i 's,/etc/utmp,/var/run/utmp,g;s,/etc/wtmp,/var/run/wtmp,g' \
 export gnulib_cv_have_boot_time=no
 
 %configure --exec-prefix=/
+%__make -C po update-po
 %__make
 
 %{?!_without_check:%{?!_disable_check:%__make -k check}}
@@ -150,7 +140,7 @@ rm -rf %buildroot
 # color-ls shell profile settings and configuration file
 mkdir -p %buildroot/etc/profile.d
 install -pm755 %_sourcedir/colorls.{,c}sh %buildroot/etc/profile.d/
-install -pm644 %_sourcedir/DIR_COLORS %buildroot/etc/
+install -pm644 src/dircolors.hin %buildroot/etc/DIR_COLORS
 
 # %_bindir -> /bin path relocations
 mkdir -p %buildroot/bin
@@ -238,6 +228,11 @@ fi
 %doc ChangeLog.bz2 NEWS.bz2 THANKS.bz2 AUTHORS README TODO
 
 %changelog
+* Sun Oct 23 2005 Dmitry V. Levin <ldv@owl.openwall.com> 5.92-owl1
+- Updated to 5.92.
+- Updated texinfo documentation for true(1) and false(1),
+patch from Andreas Ericsson.
+
 * Sun Jul 03 2005 Solar Designer <solar@owl.openwall.com> 5.3.1-owl0.6
 - Enable color ls on ttys by default (like we did in fileutils package).
 
