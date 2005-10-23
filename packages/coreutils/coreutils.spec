@@ -1,9 +1,9 @@
-# $Id: Owl/packages/coreutils/coreutils.spec,v 1.10 2005/10/23 21:40:22 ldv Exp $
+# $Id: Owl/packages/coreutils/coreutils.spec,v 1.11 2005/10/23 23:57:33 solar Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
 Version: 5.92
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 URL: http://www.gnu.org/software/%name/
@@ -29,7 +29,7 @@ Patch1: coreutils-5.91-eggert-ls-time-style.diff
 Patch2: coreutils-5.91-alt-hostname.diff
 
 # Owl/ALT specific
-Patch10: coreutils-5.91-owl-info-true-false.diff
+Patch10: coreutils-5.92-owl-info-true-false.diff
 Patch11: coreutils-5.91-alt-owl-dircolors.diff
 Patch12: coreutils-5.3.0-alt-without-su-uptime.diff
 Patch13: coreutils-5.3.1-alt-ls-dir-vdir.diff
@@ -228,6 +228,10 @@ fi
 %doc ChangeLog.bz2 NEWS.bz2 THANKS.bz2 AUTHORS README TODO
 
 %changelog
+* Sun Oct 23 2005 Solar Designer <solar@owl.openwall.com> 5.92-owl2
+- Re-worked the texinfo documentation patch for true(1) and false(1) to make
+it explicit that we're referring to non-GNU versions of these utilities.
+
 * Sun Oct 23 2005 Dmitry V. Levin <ldv@owl.openwall.com> 5.92-owl1
 - Updated to 5.92.
 - Updated texinfo documentation for true(1) and false(1),

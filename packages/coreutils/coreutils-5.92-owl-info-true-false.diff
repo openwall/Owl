@@ -1,6 +1,7 @@
---- coreutils-5.91/doc/coreutils.texi.orig	2005-10-20 17:30:39 +0400
-+++ coreutils-5.91/doc/coreutils.texi	2005-10-20 17:32:57 +0400
-@@ -9585,15 +9585,11 @@ In most modern shells, @command{false} i
+diff -ur coreutils-5.92.orig/doc/coreutils.texi coreutils-5.92/doc/coreutils.texi
+--- coreutils-5.92.orig/doc/coreutils.texi	2005-10-16 07:26:21 +0000
++++ coreutils-5.92/doc/coreutils.texi	2005-10-23 23:47:48 +0000
+@@ -9594,16 +9594,18 @@
  you use @samp{false} in a script, you're probably using the built-in
  command, not the one documented here.
  
@@ -9,24 +10,29 @@
  
 -This version of @command{false} is implemented as a C program, and is thus
 -more secure and faster than a shell script implementation, and may safely
--be used as a dummy shell for the purpose of disabling accounts.
--
++@strong{Please note} that this system uses a non-GNU version of
++@command{false}, not the version supplied with GNU coreutils.
++The GNU version of @command{false} is a C program that actually honors
++some options.
++
++This version of @command{false} is implemented as an assembly program that
++does not use the dynamic linker or any libraries.  It is thus more secure
++and faster than a shell script or a C implementation, and may safely
+ be used as a dummy shell for the purpose of disabling accounts.
+ 
 -Note that @command{false} (unlike all other programs documented herein)
 -exits unsuccessfully, even when invoked with
 -@option{--help} or @option{--version}.
-+This version of @command{false} is implemented as an asm program, and is
-+thus more secure and faster than a shell script implementation, and may
-+safely be used as a dummy shell for the purpose of disabling accounts.
- 
+-
  Portable programs should not assume that the exit status of
  @command{false} is 1, as it is greater than 1 on some
-@@ -9617,24 +9613,11 @@ In most modern shells, @command{true} is
+ non-@acronym{GNU} hosts.
+@@ -9626,23 +9628,17 @@
  you use @samp{true} in a script, you're probably using the built-in
  command, not the one documented here.
  
 -@command{true} honors the @option{--help} and @option{--version} options.
-+@command{true} ignores all options.
- 
+-
 -Note, however, that it is possible to cause @command{true}
 -to exit with nonzero status: with the @option{--help} or @option{--version}
 -option, and with standard
@@ -39,13 +45,19 @@
 -$ ./true --version > /dev/full
 -./true: write error: No space left on device
 -@end example
--
++@command{true} ignores all options.
+ 
 -This version of @command{true} is implemented as a C program, and is thus
 -more secure and faster than a shell script implementation, and may safely
--be used as a dummy shell for the purpose of disabling accounts.
-+This version of @command{true} is implemented as an asm program, and is
-+thus more secure and faster than a shell script implementation, and may
-+safely be used as a dummy shell for the purpose of disabling accounts.
++@strong{Please note} that this system uses a non-GNU version of
++@command{true}, not the version supplied with GNU coreutils.
++The GNU version of @command{true} is a C program that actually honors
++some options (and may even be caused to exit with nonzero status on
++some subtle error conditions).
++
++This version of @command{true} is implemented as an assembly program that
++does not use the dynamic linker or any libraries.  It is thus more secure
++and faster than a shell script or a C implementation, and may safely
+ be used as a dummy shell for the purpose of disabling accounts.
  
  @node test invocation
- @section @command{test}: Check file types and compare values
