@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.45 2005/10/23 19:05:06 galaxy Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.46 2005/10/23 19:16:02 galaxy Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -752,7 +752,7 @@ fi
 - Added sed to Requires(post), since we are using sed in mkheaders;
 commented out this Requires(post), since we will use this spec with RPM3.
 - Added BuildRequires as suggested by kad@.
-- Adding a missing requirement for libstdc++ to libstdc++-devel.
+- Added a missing requirement for libstdc++ to libstdc++-devel.
 
 * Fri Sep 23 2005 Michail Litvak <mci@owl.openwall.com> 1:3.4.3-owl3
 - Don't package .la files.
