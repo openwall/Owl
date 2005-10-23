@@ -1,4 +1,4 @@
-# $Id: Owl/packages/strace/strace.spec,v 1.18 2005/10/23 22:21:35 solar Exp $
+# $Id: Owl/packages/strace/strace.spec,v 1.19 2005/10/23 22:34:37 ldv Exp $
 
 Summary: Tracks and displays system calls associated with a running process.
 Name: strace
@@ -71,7 +71,7 @@ mkdir -p %buildroot%_prefix/bin
 
 %changelog
 * Mon Oct 24 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.5.13-owl2
-- Updated to cvs snapshot 20051021.
+- Applied upstream fix for potential buffer overflow in printpathn().
 
 * Wed Aug 10 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.5.13-owl1
 - Updated to 4.5.13.
