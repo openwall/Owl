@@ -1,4 +1,4 @@
-# $Id: Owl/packages/file/file.spec,v 1.12 2005/10/24 01:08:35 mci Exp $
+# $Id: Owl/packages/file/file.spec,v 1.13 2005/10/24 01:34:34 solar Exp $
 
 Summary: A utility for determining file types.
 Name: file
@@ -56,6 +56,7 @@ magic files.
 %patch7 -p1
 
 %{expand:%%define optflags %optflags -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -Wall}
+
 %build
 autoreconf -f
 %configure --enable-fsect-man5
@@ -85,9 +86,11 @@ rm -f %buildroot%_libdir/*.la
 %_mandir/man5/*
 
 %files -n libmagic
+%defattr(-,root,root)
 %_libdir/*.so.*
 
 %files -n libmagic-devel
+%defattr(-,root,root)
 %_libdir/*.so
 %_libdir/*.a
 %_includedir/*
