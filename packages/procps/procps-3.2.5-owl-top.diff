@@ -1,0 +1,127 @@
+diff -upk.orig procps-3.2.5.orig/top.c procps-3.2.5/top.c
+--- procps-3.2.5.orig/top.c	2005-10-24 12:49:13 +0000
++++ procps-3.2.5/top.c	2005-10-24 13:35:08 +0000
+@@ -1172,7 +1172,7 @@ static FLD_t Fieldstab[] = {
+    { "GgGg", " TTY     ",   " %-8.8s",   8,    -1, SF(TTY), "Controlling Tty",      L_stat   },
+    { "HhHh", "  PR",        " %3d",     -1,    -1, SF(PRI), "Priority",             L_stat   },
+    { "IiIi", "  NI",        " %3d",     -1,    -1, SF(NCE), "Nice value",           L_stat   },
+-   { "JjYy", " #C",         " %2u",     -1,    -1, SF(CPN), "Last used cpu (SMP)",  L_stat   },
++   { "JjYy", " #C",         " %2u",     -1,    -1, SF(CPN), "Last used CPU (SMP)",  L_stat   },
+    { "KkEe", " %CPU",       " %#4.1f",  -1,    -1, SF(CPU), "CPU usage",            L_stat   },
+    { "LlWw", "   TIME",     " %6.6s",    6,    -1, SF(TME), "CPU Time",             L_stat   },
+    { "MmRr", "    TIME+ ",  " %9.9s",    9,    -1, SF(TME), "CPU Time, hundredths", L_stat   },
+@@ -1196,7 +1196,7 @@ static FLD_t Fieldstab[] = {
+    { "..Qq", "   A",        " %4.4s",    4, SK_no, SF(PID), "Accessed Page count",  L_stat   },
+    { "..Nn", "  TRS",       " %4.4s",    4, SK_Kb, SF(PID), "Code in memory (kb)",  L_stat   },
+    { "..Rr", "  WP",        " %4.4s",    4, SK_no, SF(PID), "Unwritable Pages",     L_stat   },
+-   { "Jj[{", " #C",         " %2u",     -1,    -1, SF(CPN), "Last used cpu (SMP)",  L_stat   },
++   { "Jj[{", " #C",         " %2u",     -1,    -1, SF(CPN), "Last used CPU (SMP)",  L_stat   },
+    { "..\\|"," Bad",        " %2u",     -1,    -1, SF(CPN), "-- must ignore | --",  0        },
+    { "..]}", " Bad",        " %2u",     -1,    -1, SF(CPN), "-- not used --",       0        },
+    { "..^~", " Bad",        " %2u",     -1,    -1, SF(CPN), "-- not used --",       0        },
+@@ -2424,7 +2424,7 @@ static void do_key (unsigned c)
+    static const char err_num_cpus[] = "\aSorry, terminal is not big enough";
+ #ifdef WARN_NOT_SMP
+    // standardized 'smp' errors
+-   static const char err_smp[] = "\aSorry, only one cpu detected";
++   static const char err_smp[] = "\aSorry, only one CPU detected";
+ #endif
+ 
+    switch (c) {
+@@ -2436,6 +2436,7 @@ static void do_key (unsigned c)
+          if (Cpu_tot > 1) TOGw(Curwin, View_CPUSUM);
+          else show_msg(err_smp);
+ #else
++         OFFw(Curwin, View_CPUOPT);
+          TOGw(Curwin, View_CPUSUM);
+ #endif
+ 	 }
+@@ -2546,12 +2547,12 @@ static void do_key (unsigned c)
+ #ifdef WARN_NOT_SMP
+          if (Cpu_tot > 1) {
+             Rc.mode_irixps = !Rc.mode_irixps;
+-            show_msg(fmtmk("Irix mode %s", Rc.mode_irixps ? "On" : "Off"));
++            show_msg(fmtmk("IRIX mode %s", Rc.mode_irixps ? "On" : "Off"));
+          } else
+             show_msg(err_smp);
+ #else
+          Rc.mode_irixps = !Rc.mode_irixps;
+-         show_msg(fmtmk("Irix mode %s", Rc.mode_irixps ? "On" : "Off"));
++         show_msg(fmtmk("IRIX mode %s", Rc.mode_irixps ? "On" : "Off"));
+ #endif
+          break;
+ 
+@@ -2909,15 +2910,19 @@ static proc_t **summary_show (void)
+ 
+       smpcpu = cpus_refresh(smpcpu);
+ 
+-      if (CHKw(Curwin, View_CPUSUM)) {
++      if (CHKw(Curwin, View_CPUSUM)
++          || (CHKw(Curwin, View_CPUOPT) && (Cpu_tot > 4))) {
+          // display just the 1st /proc/stat line
+-         summaryhlp(&smpcpu[Cpu_tot], "Cpu(s):");
++         if (Cpu_tot > 1)
++            summaryhlp(&smpcpu[Cpu_tot], "CPUs:");
++         else
++            summaryhlp(&smpcpu[Cpu_tot], "CPU:");
+       } else {
+          int i;
+          char tmp[SMLBUFSIZ];
+          // display each cpu's states separately
+          for (i = 0; i < Cpu_tot; i++) {
+-            snprintf(tmp, sizeof(tmp), "Cpu%-3d:", smpcpu[i].id);
++            snprintf(tmp, sizeof(tmp), "CPU%-3d:", smpcpu[i].id);
+             summaryhlp(&smpcpu[i], tmp);
+          }
+       }
+diff -upk.orig procps-3.2.5.orig/top.h procps-3.2.5/top.h
+--- procps-3.2.5.orig/top.h	2005-10-24 12:49:13 +0000
++++ procps-3.2.5/top.h	2005-10-24 13:22:02 +0000
+@@ -24,8 +24,8 @@
+ 
+ // Defines intended to be experimented with ------------------------
+ //#define CASEUP_HEXES    // show any hex values in upper case
+-//#define CASEUP_SCALE    // show scaled time/num suffix upper case
+-//#define CASEUP_SUMMK    // show memory summary kilobytes with 'K'
++#define CASEUP_SCALE    // show scaled time/num suffix upper case
++#define CASEUP_SUMMK    // show memory summary kilobytes with 'K'
+ //#define SORT_SUPRESS    // *attempt* to reduce qsort overhead
+ #define WARN_NOT_SMP    // restrict '1' & 'I' commands to true smp
+ 
+@@ -275,6 +275,7 @@ enum pflag {
+ // letter shown is the corresponding 'command' toggle
+ 
+ // 'View_' flags affect the summary (minimum), taken from 'Curwin'
++#define View_CPUOPT  0x10000    // show each CPU stats unless too many CPUs found
+ #define View_CPUSUM  0x8000     // '1' - show combined cpu stats (vs. each)
+ #define View_LOADAV  0x4000     // 'l' - display load avg and uptime summary
+ #define View_STATES  0x2000     // 't' - display task/cpu(s) states summary
+@@ -302,7 +303,7 @@ enum pflag {
+ 
+ // Default flags if there's no rcfile to provide user customizations
+ #define DEF_WINFLGS ( \
+-   View_LOADAV | View_STATES | View_CPUSUM | View_MEMORY | View_NOBOLD | \
++   View_LOADAV | View_STATES | View_CPUOPT | View_MEMORY | View_NOBOLD | \
+    Show_HIBOLD | Show_HIROWS | Show_IDLEPS | Qsrt_NORMAL | \
+    VISIBLE_tsk \
+ )
+@@ -412,8 +413,8 @@ typedef struct WIN_t {
+    "Window \01%s\06: \01Cumulative mode \03%s\02.  \01System\06: \01Delay \03%.1f secs\02; \01Secure mode \03%s\02.\n" \
+    "\n" \
+    "  Z\05,\01B\05       Global: '\01Z\02' change color mappings; '\01B\02' disable/enable bold\n" \
+-   "  l,t,m     Toggle Summaries: '\01l\02' load avg; '\01t\02' task/cpu stats; '\01m\02' mem info\n" \
+-   "  1,I       Toggle SMP view: '\0011\02' single/separate states; '\01I\02' Irix/Solaris mode\n" \
++   "  l,t,m     Toggle Summaries: '\01l\02' load avg; '\01t\02' task/CPU stats; '\01m\02' mem info\n" \
++   "  1,I       Toggle SMP view: '\0011\02' single/separate states; '\01I\02' IRIX/Solaris mode\n" \
+    "\n" \
+    "  f,o     . Fields/Columns: '\01f\02' add or remove; '\01o\02' change display order\n" \
+    "  F or O  . Select sort field\n" \
+@@ -506,7 +507,7 @@ typedef struct WIN_t {
+    "\n" \
+    "   color - 04:25:44 up 8 days, 50 min,  7 users,  load average:\n" \
+    "   Tasks:\03  64 \02total,\03   2 \03running,\03  62 \02sleeping,\03   0 \02stopped,\03\n" \
+-   "   Cpu(s):\03  76.5%% \02user,\03  11.2%% \02system,\03   0.0%% \02nice,\03  12.3%% \02idle\03\n" \
++   "   CPU(s):\03  76.5%% \02user,\03  11.2%% \02system,\03   0.0%% \02nice,\03  12.3%% \02idle\03\n" \
+    "   \01 Nasty Message! \04  -or-  \01Input Prompt\05\n" \
+    "   \01  PID TTY     PR  NI %%CPU    TIME+   VIRT SWAP STA Command  \06\n" \
+    "   17284 \10pts/2  \07  8   0  0.0   0:00.75  1380    0 S   /bin/bash \10\n" \
