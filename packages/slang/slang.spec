@@ -1,4 +1,4 @@
-# $Id: Owl/packages/slang/Attic/slang.spec,v 1.14 2005/06/28 18:58:45 ldv Exp $
+# $Id: Owl/packages/slang/Attic/slang.spec,v 1.15 2005/10/24 02:20:10 solar Exp $
 
 Summary: The shared library for the S-Lang extension language.
 Name: slang
@@ -41,7 +41,7 @@ applications is also included.
 %{expand:%%define optflags %optflags -fno-strict-aliasing}
 
 %build
-sed -i 's,\(ELF_CFLAGS=".*\)-O2\(.*\),\1'"$RPM_OPT_FLAGS"'\2,' configure
+sed -i 's~\(ELF_CFLAGS=".*\)-O2~\1%optflags~' configure
 export ac_cv_func_snprintf=yes ac_cv_func_vsnprintf=yes \
 %configure \
 	--includedir=%_includedir/slang \
