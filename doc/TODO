@@ -49,7 +49,8 @@ Update these to latest releases once in a while.
 [ASSIGNED: ldv@]
 Package coreutils' versions of kill(1), hostname(1), and usleep(1).
 Correct the other packages (util-linux, net-tools, and owl-startup) to
-no longer provide these programs.
+no longer provide these programs.  Enhance installorder.conf and/or
+installworld.sh to resolve the conflict on updates of existing systems.
 
 
 	cpio, tar.
@@ -551,4 +552,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Id: Owl/doc/TODO,v 1.117 2005/10/24 07:48:28 solar Exp $
+$Id: Owl/doc/TODO,v 1.118 2005/10/24 07:51:17 solar Exp $
