@@ -1,16 +1,25 @@
-# $Id: Owl/packages/man/man.spec,v 1.16 2005/10/24 03:06:27 solar Exp $
+# $Id: Owl/packages/man/man.spec,v 1.17 2005/10/24 06:17:58 solar Exp $
 
 Summary: A set of documentation tools: man, apropos and whatis.
 Name: man
 Version: 1.5l
-Release: owl5
+Release: owl6
 License: GPL
 Group: System Environment/Base
 Source: ftp://ftp.win.tue.nl/pub/linux-local/utils/man/man-%version.tar.gz
 Patch0: man-1.5l-owl-makewhatis.diff
 Patch1: man-1.5l-owl-latin1.diff
 Patch2: man-1.5l-owl-bound.diff
-Requires: groff, mktemp >= 1:1.3.1, findutils >= 1:4.1.5-owl4
+Requires: groff, less, gzip, bzip2, coreutils
+# makewhatis
+Requires: awk, sed, mktemp >= 1:1.3.1
+# makewhatis and %%preun
+Requires: findutils >= 1:4.1.5-owl4
+BuildRequires: sed
+# These need to be detected when this package is built
+BuildRequires: groff, less, gzip, bzip2
+# The proper full path to awk is patched into makewhatis
+BuildRequires: awk
 BuildRoot: /override/%name-%version
 
 %description
@@ -77,6 +86,9 @@ find /var/cache/man/{,X11R6/,local/}cat[123456789n] -type f -delete
 %attr(0775,root,man) %dir /var/cache/man/local/cat[123456789n]
 
 %changelog
+* Mon Oct 24 Solar Designer <solar-at-owl.openwall.com> 1.5l-owl6
+- Added build and runtime dependencies.
+
 * Thu Nov 11 2004 Michail Litvak <mci-at-owl.openwall.com> 1.5l-owl5
 - Spec file cleanups.
 - Include man2dvi.
