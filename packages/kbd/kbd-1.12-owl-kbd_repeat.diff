@@ -1,0 +1,27 @@
+diff -puNr kbd-1.12.orig/src/kbdrate.c kbd-1.12/src/kbdrate.c
+--- kbd-1.12.orig/src/kbdrate.c	2004-01-16 19:45:31 +0000
++++ kbd-1.12/src/kbdrate.c	2005-10-24 21:31:03 +0000
+@@ -80,14 +80,15 @@ beats rebuilding the kernel!
+ #include <asm/kbio.h>
+ #endif
+ 
+-#ifndef KDKBDREP
+-/* usually defined in <linux/kd.h> */
+-#define KDKBDREP        0x4B52  /* set keyboard delay/repeat rate;
+-				 * actually used values are returned */
+-struct kbd_repeat {
+-        int delay;        /* in msec; <= 0: don't change */
+-        int period;       /* in msec; <= 0: don't change */
+-};
++#include <linux/kd.h>
++/*
++ * Hey, they have changed the member name in the kbd_repeat structure
++ * See: http://seclists.org/lists/linux-kernel/2002/Oct/3925.html
++ * -- (GM)
++ */
++#include <linux/version.h>
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,5,42)
++#define period   rate
+ #endif
+ 
+ #include "nls.h"

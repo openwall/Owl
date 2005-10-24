@@ -1,9 +1,9 @@
-# $Id: Owl/packages/kbd/kbd.spec,v 1.18 2005/10/24 03:06:24 solar Exp $
+# $Id: Owl/packages/kbd/kbd.spec,v 1.19 2005/10/24 21:54:52 galaxy Exp $
 
 Summary: Tools for configuring the console.
 Name: kbd
 Version: 1.12
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/kbd/kbd-%version.tar.bz2
@@ -12,7 +12,7 @@ Source2: keytable.init
 Source3: setsysfont
 Patch0: kbd-1.08-rh-compose.diff
 Patch1: kbd-1.08-rh-rukbd.diff
-Patch2: kbd-1.12-owl-rh-sparc.diff
+Patch2: kbd-1.12-owl-kbd_repeat.diff
 Patch3: kbd-1.08-rh-speakup.diff
 Patch4: kbd-1.08-rh-terminal.diff
 Patch5: kbd-1.12-rh-alias.diff
@@ -142,6 +142,14 @@ fi
 /lib/kbd/*
 
 %changelog
+* Tue Oct 25 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.12-owl2
+- Removed the -owl-rh-sparc patch since it does nothing nor now, nor in
+1.08 dates.
+- Introduced -owl-kbd_repeat to workaround the member's name change in 2.5.42;
+although this patch isn't strictly needed, it's good to use the kernel header
+to acquire the kbd_repeat structure for consequent ioctl.
+- Tested that now it builds cleanly on both 2.4 and 2.6 kernels.
+
 * Mon Oct 17 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.12-owl1
 - Updated to 1.12.
 - Merged recent patches from several distributions.
