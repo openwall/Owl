@@ -1,4 +1,4 @@
-# $Id: Owl/packages/slang/Attic/slang.spec,v 1.16 2005/10/24 03:06:30 solar Exp $
+# $Id: Owl/packages/slang/Attic/slang.spec,v 1.17 2005/10/24 03:25:12 solar Exp $
 
 Summary: The shared library for the S-Lang extension language.
 Name: slang
@@ -112,7 +112,7 @@ restricted those which would be unsafe in SUID/SGID programs.
 - Enable snprintf() and vsnprintf() explicitly.
 - Set ELF_CFLAGS (used for the shared library) to include RPM_OPT_FLAGS.
 
-* Wed Sep 25 2002 Ilya Andreiv <ilya@if5641.spb.edu>
+* Wed Sep 25 2002 Ilya Andreiv <ilya-at-if5641.spb.edu>
 - Upgrade to 1.4.5
 
 * Tue Feb 05 2002 Solar Designer <solar-at-owl.openwall.com>

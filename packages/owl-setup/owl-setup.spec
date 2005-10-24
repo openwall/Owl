@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.42 2005/10/24 03:06:28 solar Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.43 2005/10/24 03:29:15 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -82,7 +82,7 @@ to kbd).
 
 * Fri Sep 06 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Support for keyboard layout configuration
-  (thanks to Matthias Schmidt <schmidt@giessen.ccc.de>)
+  (thanks to Matthias Schmidt <schmidt at giessen.ccc.de>)
 - fix code indenting
 
 * Sun Jul 07 2002 Solar Designer <solar-at-owl.openwall.com>

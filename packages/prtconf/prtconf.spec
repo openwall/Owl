@@ -1,4 +1,4 @@
-# $Id: Owl/packages/prtconf/prtconf.spec,v 1.6 2005/10/24 03:06:29 solar Exp $
+# $Id: Owl/packages/prtconf/prtconf.spec,v 1.7 2005/10/24 03:25:12 solar Exp $
 
 Summary: Utilities to dump and modify SPARC OpenPROM.
 Name: prtconf
@@ -44,5 +44,5 @@ gzip -9n examples/*
 - Adjusted according to our spec file conventions.
 - Compress the examples.
 
-* Wed Apr 23 2003 Maxim Timofeyev <tma@tma.spb.ru>
+* Wed Apr 23 2003 Maxim Timofeyev <tma-at-tma.spb.ru>
 - Wrote this spec file.

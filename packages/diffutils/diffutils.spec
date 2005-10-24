@@ -1,4 +1,4 @@
-# $Id: Owl/packages/diffutils/diffutils.spec,v 1.14 2005/10/24 03:06:22 solar Exp $
+# $Id: Owl/packages/diffutils/diffutils.spec,v 1.15 2005/10/24 03:29:15 solar Exp $
 
 Summary: A GNU collection of diff utilities.
 Name: diffutils
@@ -89,7 +89,7 @@ fi
 
 * Wed Jan 03 2001 Solar Designer <solar-at-owl.openwall.com>
 - Fixed the unsafe temporary file creation discovered by the Immunix team
-and reported to vendor-sec by Greg KH <greg@wirex.com>.
+and reported to vendor-sec by Greg KH <greg at wirex.com>.
 
 * Sun Aug 06 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import spec from RH

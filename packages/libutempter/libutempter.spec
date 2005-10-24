@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libutempter/libutempter.spec,v 1.8 2005/10/24 03:06:26 solar Exp $
+# $Id: Owl/packages/libutempter/libutempter.spec,v 1.9 2005/10/24 03:29:15 solar Exp $
 
 Summary: A privileged helper for utmp/wtmp updates.
 Name: libutempter
@@ -67,7 +67,7 @@ symbols exported by the library.
 
 * Mon Feb 24 2003 Michail Litvak <mci-at-owl.openwall.com> 1.1.1-owl1
 - Updated to 1.1.1
-  * Fri Feb 14 2003 Dmitry V. Levin <ldv@owl.openwall.com> 1.1.1-alt1
+  * Fri Feb 14 2003 Dmitry V. Levin <ldv at owl.openwall.com> 1.1.1-alt1
   - iface.c: don't block SIGCHLD; redefine signal handler instead.
 
 * Tue Jan 14 2003 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.1.0-owl1

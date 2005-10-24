@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.85 2005/10/24 03:06:27 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.86 2005/10/24 03:29:15 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
@@ -423,11 +423,11 @@ by the PAM modules.
 
 * Fri Jun 15 2001 Solar Designer <solar-at-owl.openwall.com>
 - Prevent additional timing leaks with null passwords (when allowed),
-updated patch from Rafal Wojtczuk <nergal@owl.openwall.com>.
+updated patch from Rafal Wojtczuk <nergal at owl.openwall.com>.
 
 * Mon Jun 11 2001 Solar Designer <solar-at-owl.openwall.com>
 - Switch credentials when cleaning up temporary files and sockets to fix
-the vulnerability reported by zen-parse@gmx.net on Bugtraq; the patch is
+the vulnerability reported by <zen-parse at gmx.net> on Bugtraq; the patch is
 by Markus Friedl with a later OpenSSH CVS change added and two bugs fixed.
 
 * Sun May 06 2001 Solar Designer <solar-at-owl.openwall.com>

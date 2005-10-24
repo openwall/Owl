@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tcsh/tcsh.spec,v 1.18 2005/10/24 03:06:30 solar Exp $
+# $Id: Owl/packages/tcsh/tcsh.spec,v 1.19 2005/10/24 03:29:15 solar Exp $
 
 Summary: An enhanced version of csh, the C shell.
 Name: tcsh
@@ -140,7 +140,7 @@ already includes a more portable, but worse fix for the same problem).
 - security update
 
 * Sat Nov 04 2000 Solar Designer <solar-at-owl.openwall.com>
-- Added a patch by Dr. Werner Fink <werner@suse.de> (and slightly modified)
+- Added a patch by Dr. Werner Fink <werner at suse.de> (and slightly modified)
 for the unsafe /tmp access reported on Bugtraq by proton.
 
 * Sun Sep 24 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>

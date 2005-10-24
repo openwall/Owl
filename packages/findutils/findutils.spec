@@ -1,4 +1,4 @@
-# $Id: Owl/packages/findutils/findutils.spec,v 1.17 2005/10/24 03:06:23 solar Exp $
+# $Id: Owl/packages/findutils/findutils.spec,v 1.18 2005/10/24 03:29:15 solar Exp $
 
 Summary: The GNU versions of find utilities (find and xargs).
 Name: findutils
@@ -106,4 +106,4 @@ dealt with at next update.
 
 * Sat Sep 23 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import spec from RH
-- import "-delete" patch by Douglas Siebert <douglas-siebert@uiowa.edu>
+- import "-delete" patch by Douglas Siebert <douglas-siebert at uiowa.edu>

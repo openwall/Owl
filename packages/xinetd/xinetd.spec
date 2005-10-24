@@ -1,4 +1,4 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.33 2005/10/24 03:06:32 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.34 2005/10/24 03:25:12 solar Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
@@ -110,7 +110,7 @@ fi
 %_mandir/*/*
 
 %changelog
-* Tue Jun 28 2005 Dmitry V. Levin <ldv@altlinux.org> 2.3.13-owl1
+* Tue Jun 28 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3.13-owl1
 - Updated to 2.3.13.
 - Backported bug fixes from cvs snapshot 20050330.
 - Applied two patches from ALT's xinetd-2.3.13-alt3 package.
@@ -181,7 +181,7 @@ with 2.3.4+).
 
 * Sun Jul 22 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated the -audit patch based on results of testing by Michail Litvak
-<mci@owl.openwall.com>, by ALT Linux Team, and at DataForce ISP.
+<mci at owl.openwall.com>, by ALT Linux Team, and at DataForce ISP.
 
 * Thu Jul 05 2001 Solar Designer <solar-at-owl.openwall.com>
 - Applied _many_ security and reliability fixes (in fact so many that

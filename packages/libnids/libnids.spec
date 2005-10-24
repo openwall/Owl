@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libnids/libnids.spec,v 1.15 2005/10/24 03:06:25 solar Exp $
+# $Id: Owl/packages/libnids/libnids.spec,v 1.16 2005/10/24 03:29:15 solar Exp $
 
 Summary: NIDS E-component.
 Name: libnids
@@ -65,7 +65,7 @@ rm -rf %buildroot
 broke things for (at least) PPP interfaces.
 
 * Mon Feb 16 2004 Simon Baker <simonb-at-owl.openwall.com>
-- Added prism wireless capabilities patch from Snax (snax@shmoo.com)
+- Added prism wireless capabilities patch from Snax <snax at shmoo.com>
 
 * Wed Oct 15 2003 Rafal Wojtczuk <nergal-at-owl.openwall.com> 1:1.18-owl1
 - updated to 1.18

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/modutils/modutils.spec,v 1.21 2005/10/24 03:06:27 solar Exp $
+# $Id: Owl/packages/modutils/modutils.spec,v 1.22 2005/10/24 03:25:12 solar Exp $
 
 Summary: Kernel module utilities.
 Name: modutils
@@ -67,7 +67,7 @@ fi
 * Fri Nov 05 2004 Solar Designer <solar-at-owl.openwall.com> 2.4.27-owl1
 - Fixed two new compiler warnings.
 
-* Thu Oct 14 2004 Maxim Timofeyev <tma@tma.spb.ru> 2.4.27-owl0
+* Thu Oct 14 2004 Maxim Timofeyev <tma-at-tma.spb.ru> 2.4.27-owl0
 - v2.4.27
 - Remove modutils-2.4.16-owl-warnings.diff
 - Update alt-owl-aliases.diff

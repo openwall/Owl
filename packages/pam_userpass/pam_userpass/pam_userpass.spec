@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.20 2005/10/24 03:06:28 solar Exp $
+# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.21 2005/10/24 03:29:15 solar Exp $
 
 Summary: Pluggable authentication module for USER/PASS-style protocols.
 Name: pam_userpass
@@ -78,7 +78,7 @@ password changes which don't require the old password to be passed.
 
 * Thu Jun 14 2001 Solar Designer <solar-at-owl.openwall.com>
 - 0.4: deal with null passwords correctly (thanks to Rafal Wojtczuk
-<nergal@owl.openwall.com>), support Linux-PAM 0.74+'s new BP macros.
+<nergal at owl.openwall.com>), support Linux-PAM 0.74+'s new BP macros.
 
 * Tue Dec 19 2000 Solar Designer <solar-at-owl.openwall.com>
 - Added "-Wall -fPIC" to the CFLAGS.
