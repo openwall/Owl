@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cdk/cdk.spec,v 1.5 2005/09/21 23:22:03 solar Exp $
+# $Id: Owl/packages/cdk/cdk.spec,v 1.6 2005/10/24 03:06:22 solar Exp $
 
 Summary: Curses Development Kit.
 Name: cdk
@@ -59,11 +59,11 @@ rm -rf %buildroot
 %_mandir/man3/*
 
 %changelog
-* Thu Sep 22 2005 Solar Designer <solar@owl.openwall.com> 5.0-owl2
+* Thu Sep 22 2005 Solar Designer <solar-at-owl.openwall.com> 5.0-owl2
 - Patched temporary file handling issues in headers.sh and demos/rolodex.c;
 many more remain under cli/ but we are not packaging that.
 - configure --with-warnings instead of adding -Wall to %optflags.
 - Miscellaneous spec file updates.
 
-* Mon Sep 19 2005 Michail Litvak <mci@owl.openwall.com> 5.0-owl1
+* Mon Sep 19 2005 Michail Litvak <mci-at-owl.openwall.com> 5.0-owl1
 - Initial packaging for Owl.

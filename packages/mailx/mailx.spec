@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mailx/mailx.spec,v 1.7 2005/10/24 02:22:12 solar Exp $
+# $Id: Owl/packages/mailx/mailx.spec,v 1.8 2005/10/24 03:06:27 solar Exp $
 
 Summary: The /bin/mail program for sending e-mail messages.
 Name: mailx
@@ -38,13 +38,13 @@ make -C usr.bin/mail install DESTDIR=%buildroot MANDIR=%_mandir
 %doc usr.bin/mail/USD.doc/USD.ps
 
 %changelog
-* Thu Feb 12 2004 Michail Litvak <mci@owl.openwall.com> 8.1.1.2.7-owl2
+* Thu Feb 12 2004 Michail Litvak <mci-at-owl.openwall.com> 8.1.1.2.7-owl2
 - Use RPM macros instead of explicit paths.
 
-* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com> 8.1.1.2.7-owl1
+* Wed Feb 06 2002 Michail Litvak <mci-at-owl.openwall.com> 8.1.1.2.7-owl1
 - Enforce our new spec file conventions
 
-* Tue Nov 14 2000 Solar Designer <solar@owl.openwall.com>
+* Tue Nov 14 2000 Solar Designer <solar-at-owl.openwall.com>
 - Ported /bin/mail from OpenBSD 2.7 to Linux.
 - Did various fixes, mostly to the way locking is done (uses fcntl locks
 now, plus can do dotlocks via lockspool helper binary if enabled).

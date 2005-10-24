@@ -1,4 +1,4 @@
-# $Id: Owl/packages/diffstat/diffstat.spec,v 1.8 2004/11/23 22:40:45 mci Exp $
+# $Id: Owl/packages/diffstat/diffstat.spec,v 1.9 2005/10/24 03:06:22 solar Exp $
 
 Summary: A utility which provides statistics based on the output of diff.
 Name: diffstat
@@ -34,18 +34,18 @@ rm -rf %buildroot
 %_mandir/*/*
 
 %changelog
-* Wed Jan 15 2003 Michail Litvak <mci@owl.openwall.com> 1.32-owl2
+* Wed Jan 15 2003 Michail Litvak <mci-at-owl.openwall.com> 1.32-owl2
 - Use configure --with-warnings instead our -Wall
 
-* Sun Jan 12 2003 Michail Litvak <mci@owl.openwall.com>
+* Sun Jan 12 2003 Michail Litvak <mci-at-owl.openwall.com>
 - 1.32
 
-* Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Jan 24 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Tue Jan 30 2001 Michail Litvak <mci@owl.openwall.com>
+* Tue Jan 30 2001 Michail Litvak <mci-at-owl.openwall.com>
 - add $RPM_OPT_FLAGS using for compiling
 
-* Mon Jan 29 2001 Michail Litvak <mci@owl.openwall.com>
+* Mon Jan 29 2001 Michail Litvak <mci-at-owl.openwall.com>
 - imported spec from RH
 - moved to new release

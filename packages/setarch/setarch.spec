@@ -1,4 +1,4 @@
-# $Id: Owl/packages/setarch/setarch.spec,v 1.1 2005/10/20 01:07:58 ldv Exp $
+# $Id: Owl/packages/setarch/setarch.spec,v 1.2 2005/10/24 03:06:29 solar Exp $
 
 Summary: Personality setter.
 Name: setarch
@@ -59,9 +59,9 @@ done
 %_mandir/man8/*
 
 %changelog
-* Thu Oct 20 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.8-owl1
+* Thu Oct 20 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.8-owl1
 - Minor specfile cleanup.
 
-* Tue Oct 18 2005 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Tue Oct 18 2005 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - Initial build for Openwall GNU/*/Linux, based on RH package.
 - fix sparc32 alias.

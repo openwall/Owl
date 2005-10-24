@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bzip2/bzip2.spec,v 1.24 2005/10/23 17:36:32 solar Exp $
+# $Id: Owl/packages/bzip2/bzip2.spec,v 1.25 2005/10/24 03:06:22 solar Exp $
 
 Summary: An extremely powerful file compression utility.
 Name: bzip2
@@ -103,14 +103,14 @@ fi
 %_infodir/bzip2.*
 
 %changelog
-* Fri May 20 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.0.3-owl4
+* Fri May 20 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.0.3-owl4
 - Relocated bzcmp, bzdiff, bz*grep, bzmore and bzless to gzip package
 which provides better versions of these utilities now.
 
-* Mon May 16 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.0.3-owl3
+* Mon May 16 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.0.3-owl3
 - Fixed double fclose bug in bunzip2 introduced in 1.0.3-owl1.
 
-* Sat May 07 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.0.3-owl2
+* Sat May 07 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.0.3-owl2
 - Imported several patches from ALT: documentation in texinfo format,
 autotools support, change of bzip2 -h/-L/-V options behaviour to
 output to stdout instead of stderr and cause program exit (for -L/-V)
@@ -118,7 +118,7 @@ without processing any more options.
 - Converted bunzip2, bzcat, bzcmp, bzegrep, bzfgrep, and bzless
 utilities from hardlinks to symlinks.
 
-* Fri May 06 2005 Solar Designer <solar@owl.openwall.com> 1.0.3-owl1
+* Fri May 06 2005 Solar Designer <solar-at-owl.openwall.com> 1.0.3-owl1
 - Updated to 1.0.3.
 - Re-worked the bzdiff temporary file handling patch according to our new
 conventions and postponing the temporary file creation until it is certain
@@ -127,10 +127,10 @@ that the file is actually needed (idea from ALT).
 (use fchmod/fchown instead), use safe initial output file permissions in
 bzip2recover, use program_invocation_short_name.
 
-* Mon Feb 09 2004 Michail Litvak <mci@owl.openwall.com> 1.0.2-owl2
+* Mon Feb 09 2004 Michail Litvak <mci-at-owl.openwall.com> 1.0.2-owl2
 - Use RPM macros instead of explicit paths.
 
-* Fri Feb 01 2002 Solar Designer <solar@owl.openwall.com> 1.0.2-owl1
+* Fri Feb 01 2002 Solar Designer <solar-at-owl.openwall.com> 1.0.2-owl1
 - Updated to 1.0.2.
 - Dropped Red Hat's autoconf/libtoolize patch.
 - Use the new Makefile-libbz2_so for building the shared library.
@@ -140,16 +140,16 @@ better performance on register-starved architectures such as the x86.
 "tempfile" and to remove the temporary file in all cases.
 - Build with -Wall.
 
-* Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Jan 24 2002 Solar Designer <solar-at-owl.openwall.com>
 - Patched a double-fclose() bug which could be triggered on certain
 error conditions including running "bzip2 -f" on a directory (which
 is the particular scenario reported to and dealt with by Red Hat).
 - Enforce our new spec file conventions.
 - Based the new package description on the man page.
 
-* Wed Nov 29 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Wed Nov 29 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - bzip2 ver 0.x compat hack
 
-* Sun Oct 01 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Oct 01 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import spec from RH
 - patch goes to repacked

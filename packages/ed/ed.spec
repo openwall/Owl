@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ed/ed.spec,v 1.17 2004/11/23 22:40:45 mci Exp $
+# $Id: Owl/packages/ed/ed.spec,v 1.18 2005/10/24 03:06:23 solar Exp $
 
 Summary: The GNU line editor.
 Name: ed
@@ -59,24 +59,24 @@ fi
 %_mandir/*/*
 
 %changelog
-* Wed Feb 25 2004 Michail Litvak <mci@owl.openwall.com> 0.2-owl22
+* Wed Feb 25 2004 Michail Litvak <mci-at-owl.openwall.com> 0.2-owl22
 - Fixed building with new auto* tools.
 
-* Wed Sep 04 2002 Michail Litvak <mci@owl.openwall.com> 0.2-owl21
+* Wed Sep 04 2002 Michail Litvak <mci-at-owl.openwall.com> 0.2-owl21
 - Replace -owl-mkstemp.diff by more improved -alt-tmp.diff
 - add patch to fix man page
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Deal with info dir entries such that the menu looks pretty.
 
-* Wed Jan 30 2002 Michail Litvak <mci@owl.openwall.com>
+* Wed Jan 30 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Thu Nov 23 2000 Michail Litvak <mci@owl.openwall.com>
+* Thu Nov 23 2000 Michail Litvak <mci-at-owl.openwall.com>
 - ed-0.2-deb-tmpnam.diff replaced by ed-0.2-owl-mkstemp.diff
   we must use mkstemp(3)
 
-* Wed Nov 22 2000 Michail Litvak <mci@owl.openwall.com>
+* Wed Nov 22 2000 Michail Litvak <mci-at-owl.openwall.com>
 - imported from RH
 - patches from Debian
 - ed-0.2-deb-mkfile.diff: don't compile in

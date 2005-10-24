@@ -1,4 +1,4 @@
-# $Id: Owl/packages/findutils/findutils.spec,v 1.16 2005/10/23 21:09:44 solar Exp $
+# $Id: Owl/packages/findutils/findutils.spec,v 1.17 2005/10/24 03:06:23 solar Exp $
 
 Summary: The GNU versions of find utilities (find and xargs).
 Name: findutils
@@ -70,19 +70,19 @@ fi
 %_datadir/locale/*/LC_MESSAGES/findutils.mo
 
 %changelog
-* Sat Sep 17 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1:4.2.25-owl1
+* Sat Sep 17 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:4.2.25-owl1
 - Updated to 4.2.25.
 
-* Tue Jun 21 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1:4.2.23-owl1
+* Tue Jun 21 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:4.2.23-owl1
 - Updated to 4.2.23.
 
-* Thu Jun 16 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1:4.2.22-owl2
+* Thu Jun 16 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:4.2.22-owl2
 - Fixed few harmless compilation warnings.
 
-* Mon Jun 13 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1:4.2.22-owl1
+* Mon Jun 13 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:4.2.22-owl1
 - Updated to 4.2.22.
 
-* Sat Jun 11 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1:4.2.21-owl1
+* Sat Jun 11 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:4.2.21-owl1
 - Updated to 4.2.21.
 - Reviewed Owl patches, removed obsolete ones.
 - Imported two patches and updated Russian translation from ALT's
@@ -91,19 +91,19 @@ findutils-4.2.21-alt2 package.
 - Packaged findutils translations.
 - Added URL.
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1:4.1.7-owl2
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 1:4.1.7-owl2
 - Deal with info dir entries such that the menu looks pretty.
 
-* Tue May 14 2002 Solar Designer <solar@owl.openwall.com>
+* Tue May 14 2002 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 4.1.7.
 
-* Fri Feb 01 2002 Solar Designer <solar@owl.openwall.com>
+* Fri Feb 01 2002 Solar Designer <solar-at-owl.openwall.com>
 - Build with -Wall; this produces very few warnings which should be
 dealt with at next update.
 
-* Fri Feb 01 2002 Michail Litvak <mci@owl.openwall.com>
+* Fri Feb 01 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Sat Sep 23 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sat Sep 23 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import spec from RH
 - import "-delete" patch by Douglas Siebert <douglas-siebert@uiowa.edu>

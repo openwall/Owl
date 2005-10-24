@@ -1,4 +1,4 @@
-# $Id: Owl/packages/man-pages/man-pages.spec,v 1.18 2005/10/24 01:56:47 solar Exp $
+# $Id: Owl/packages/man-pages/man-pages.spec,v 1.19 2005/10/24 03:06:27 solar Exp $
 
 Summary: Manual (man) pages from the Linux Documentation Project.
 Name: man-pages
@@ -101,38 +101,38 @@ done
 %_mandir/man*/*
 
 %changelog
-* Thu Apr 17 2003 Solar Designer <solar@owl.openwall.com> 1.52-owl3
+* Thu Apr 17 2003 Solar Designer <solar-at-owl.openwall.com> 1.52-owl3
 - console-tools has been replaced with kbd, so let's package console(4)
 from here now.
 
-* Tue Jul 30 2002 Michail Litvak <mci@owl.openwall.com>
+* Tue Jul 30 2002 Michail Litvak <mci-at-owl.openwall.com>
 - 1.52
 - Obsolete patches removed
 - Don't package nscd* man pages
 
-* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
+* Wed Feb 06 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions
 
-* Fri Sep 14 2001 Solar Designer <solar@owl.openwall.com>
+* Fri Sep 14 2001 Solar Designer <solar-at-owl.openwall.com>
 - Corrected .Bl/.El usage in mdoc.samples.7
 - Dropped the RH paths patch entirely, it will need to be updated once we
 fix our paths anyway.
 
-* Wed Sep 05 2001 Michail Litvak <mci@owl.openwall.com>
+* Wed Sep 05 2001 Michail Litvak <mci-at-owl.openwall.com>
 - updated to 1.39
 - patch to add reference pwrite.2 -> pread.2
 
-* Mon Jun 18 2001 Michail Litvak <mci@owl.openwall.com>
+* Mon Jun 18 2001 Michail Litvak <mci-at-owl.openwall.com>
 - updated to 1.38
 
-* Fri May 04 2001 Solar Designer <solar@owl.openwall.com>
+* Fri May 04 2001 Solar Designer <solar-at-owl.openwall.com>
 - crypt.3 is now a part of our glibc package due to crypt_blowfish.
 
-* Wed May 02 2001 Michail Litvak <mci@owl.openwall.com>
+* Wed May 02 2001 Michail Litvak <mci-at-owl.openwall.com>
 - use cp instead of cp -a in spec
 - uselib.2 patch
 
-* Mon Apr 30 2001 Michail Litvak <mci@owl.openwall.com>
+* Mon Apr 30 2001 Michail Litvak <mci-at-owl.openwall.com>
 - Disabled patch 3 (we don't yet have these paths)
 - added man for ld-linux.so
 - remove time.1 (it is in time package)
@@ -140,7 +140,7 @@ fix our paths anyway.
   by just non packed files (is better for storing in CVS)
 - patch to replace cc(1) -> gcc(1), ld.so -> ld-linux.so
 
-* Fri Apr 27 2001 Michail Litvak <mci@owl.openwall.com>
+* Fri Apr 27 2001 Michail Litvak <mci-at-owl.openwall.com>
 - Imported from RH 7.1
 - added patch from Debian
 - removed man page for ld.so as obsolete

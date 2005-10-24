@@ -1,4 +1,4 @@
-# $Id: Owl/packages/kernel/kernel.spec,v 1.16 2005/10/24 01:56:47 solar Exp $
+# $Id: Owl/packages/kernel/kernel.spec,v 1.17 2005/10/24 03:06:24 solar Exp $
 
 Summary: Fake Linux kernel package for Red Hat Linux compatibility.
 Name: kernel
@@ -62,19 +62,19 @@ test -L /usr/include/asm && rm -f /usr/include/asm || :
 %endif
 
 %changelog
-* Sat Mar 13 2004 Michail Litvak <mci@owl.openwall.com> 2.2+.x-owl4
+* Sat Mar 13 2004 Michail Litvak <mci-at-owl.openwall.com> 2.2+.x-owl4
 - Provide kernel-drm for compatibility with RH.
 
-* Thu Jul 31 2003 Solar Designer <solar@owl.openwall.com> 2.2+.x-owl3
+* Thu Jul 31 2003 Solar Designer <solar-at-owl.openwall.com> 2.2+.x-owl3
 - Set this package's version to match the actual kernel headers used
 (this is especially important on SPARC).
 
-* Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com> 2.2.999-owl2
+* Mon Feb 04 2002 Michail Litvak <mci-at-owl.openwall.com> 2.2.999-owl2
 - Enforce our new spec file conventions
 
-* Thu Nov 16 2000 Solar Designer <solar@owl.openwall.com>
+* Thu Nov 16 2000 Solar Designer <solar-at-owl.openwall.com>
 - Imported the BuildASM script from RH to produce the magic headers
 needed to build 32-bit packages when a sparc64 kernel is installed.
 
-* Sat Oct 28 2000 Solar Designer <solar@owl.openwall.com>
+* Sat Oct 28 2000 Solar Designer <solar-at-owl.openwall.com>
 - Initial version.

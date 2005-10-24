@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sed/sed.spec,v 1.11 2005/10/23 22:14:14 solar Exp $
+# $Id: Owl/packages/sed/sed.spec,v 1.12 2005/10/24 03:06:29 solar Exp $
 
 Summary: A GNU stream text editor.
 Name: sed
@@ -58,18 +58,18 @@ fi
 %_mandir/man*/*
 
 %changelog
-* Fri Jul 16 2004 Solar Designer <solar@owl.openwall.com> 4.1.1-owl1
+* Fri Jul 16 2004 Solar Designer <solar-at-owl.openwall.com> 4.1.1-owl1
 - Updated to 4.1.1.
 
-* Mon Jul 12 2004 Michail Litvak <mci@owl.openwall.com> 4.0.9-owl1
+* Mon Jul 12 2004 Michail Litvak <mci-at-owl.openwall.com> 4.0.9-owl1
 - 4.0.9
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 3.02-owl9
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 3.02-owl9
 - Deal with info dir entries such that the menu looks pretty.
 
-* Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com>
+* Wed Feb 06 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import spec from RH rawhide
 - fix URL

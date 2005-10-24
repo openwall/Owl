@@ -1,4 +1,4 @@
-# $Id: Owl/packages/nc/nc.spec,v 1.8 2005/10/24 02:22:12 solar Exp $
+# $Id: Owl/packages/nc/nc.spec,v 1.9 2005/10/24 03:06:27 solar Exp $
 
 Summary: Reads and writes data across network connections using TCP or UDP.
 Name: nc
@@ -44,15 +44,15 @@ install -m 644 usr.bin/nc/nc.1 %buildroot%_mandir/man1/
 %_mandir/man1/nc.1*
 
 %changelog
-* Wed Jul 21 2004 Michail Litvak <mci@owl.openwall.com> 3.2-owl3
+* Wed Jul 21 2004 Michail Litvak <mci-at-owl.openwall.com> 3.2-owl3
 - Updated -owl-fixes. Fixed bug with handling POLLERR event in
 poll()'s loop.
 
-* Fri Jan 24 2003 Michail Litvak <mci@owl.openwall.com> 3.2-owl2
+* Fri Jan 24 2003 Michail Litvak <mci-at-owl.openwall.com> 3.2-owl2
 - Updated -owl-fixes. Initialize len argument before accept(),
   handle accept()'s errors.
 
-* Fri Dec 27 2002 Michail Litvak <mci@owl.openwall.com>
+* Fri Dec 27 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Ported the nc utility from OpenBSD-current (post-3.2).
 - Patch to set AF_INET by default to fix problem with getaddrinfo(3).
 - Fix error handling and other.

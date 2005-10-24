@@ -1,4 +1,4 @@
-# $Id: Owl/packages/groff/groff.spec,v 1.18 2005/10/24 01:56:46 solar Exp $
+# $Id: Owl/packages/groff/groff.spec,v 1.19 2005/10/24 03:06:24 solar Exp $
 
 %define BUILD_USE_X 0
 %define BUILD_CURRENT 0
@@ -154,15 +154,15 @@ find %buildroot%_prefix/bin %buildroot%_mandir \
 %endif
 
 %changelog
-* Sun Feb 03 2002 Michail Litvak <mci@owl.openwall.com> 1.17.2-owl2
+* Sun Feb 03 2002 Michail Litvak <mci-at-owl.openwall.com> 1.17.2-owl2
 - Enforce our new spec file conventions
 
-* Fri Dec 21 2001 Solar Designer <solar@owl.openwall.com>
+* Fri Dec 21 2001 Solar Designer <solar-at-owl.openwall.com>
 - Patched two buffer overflow bugs in grn(1) discovered by zen-parse.
 - Made the configure script fail-close on the temporary directory creation,
 corrected the dependency on mktemp(1).
 
-* Sun Sep 02 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Sep 02 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 1.17.2.
 - Added Sebastian Krahmer's patch for the pic(1) plot command's "format
 feature" which zen-parse has demonstrated to be a security problem when
@@ -171,10 +171,10 @@ groff is used with LPRng on Red Hat Linux.
 on untrusted input.
 - Dropped the now obsolete patches.
 
-* Sun May 06 2001 Solar Designer <solar@owl.openwall.com>
+* Sun May 06 2001 Solar Designer <solar-at-owl.openwall.com>
 - README.A4 updates (mention grops -g and a4.tmac).
 
-* Sat May 05 2001 Solar Designer <solar@owl.openwall.com>
+* Sat May 05 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 1.17.
 - Reviewed post-1.17 changes, included one tiny and obviously correct
 fix as a patch.
@@ -185,14 +185,14 @@ at http://www.ffii.org/archive/mails/groff/2000/Nov/0050.html
 - Added a patch for pre-grohtml's insecure temporary file handling as
 it's now actually used with -Thtml.
 
-* Sat Jan 06 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Jan 06 2001 Solar Designer <solar-at-owl.openwall.com>
 - Enable mkstemp explicitly, not rely on configure.
 
-* Thu Nov 23 2000 Solar Designer <solar@owl.openwall.com>
+* Thu Nov 23 2000 Solar Designer <solar-at-owl.openwall.com>
 - Updated to today's -current.
 - Dropped the now obsolete patches from Nov 21.
 
-* Tue Nov 21 2000 Solar Designer <solar@owl.openwall.com>
+* Tue Nov 21 2000 Solar Designer <solar-at-owl.openwall.com>
 - Updated to -current which now includes fixes for the current directory
 problem described in the ISS X-Force advisory.
 - Restrict .mso and hpf in a similar way (patch for -current).
@@ -201,6 +201,6 @@ problem described in the ISS X-Force advisory.
 this needed fixing, and the patch wasn't a complete fix anyway (it trusted
 files under the cwd and had races).
 
-* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import from RH
 - update to 1.16.1

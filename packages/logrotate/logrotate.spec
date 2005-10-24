@@ -1,4 +1,4 @@
-# $Id: Owl/packages/logrotate/logrotate.spec,v 1.10 2005/10/09 17:19:04 galaxy Exp $
+# $Id: Owl/packages/logrotate/logrotate.spec,v 1.11 2005/10/24 03:06:26 solar Exp $
 
 Summary: Rotates, compresses, removes and mails system log files.
 Name: logrotate
@@ -60,34 +60,34 @@ fi
 %attr(0700,root,root) /var/lib/logrotate
 
 %changelog
-* Sun Oct 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.6.2-owl2
+* Sun Oct 09 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.6.2-owl2
 - Changed the permissions for %%_sbindir/logrotate from 0700 to 0755.
 - Replaced 'make' with '%%__make' and 'gcc' with '%%__cc'.
 - Replaced '/usr/sbin' with '%%_sbindir'.
 
-* Mon Mar 11 2002 Michail Litvak <mci@owl.openwall.com> 3.6.2-owl1
+* Mon Mar 11 2002 Michail Litvak <mci-at-owl.openwall.com> 3.6.2-owl1
 - 3.6.2
 - noreplace config file
 
-* Tue Feb 05 2002 Michail Litvak <mci@owl.openwall.com>
+* Tue Feb 05 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions
 
-* Tue Nov 27 2001 Solar Designer <solar@owl.openwall.com>
+* Tue Nov 27 2001 Solar Designer <solar-at-owl.openwall.com>
 - Corrected the man page for our status file path.
 - Use $TMPDIR.
 
-* Mon Nov 26 2001 Michail Litvak <mci@owl.openwall.com>
+* Mon Nov 26 2001 Michail Litvak <mci-at-owl.openwall.com>
 - 3.5.9
 - Patch from CVS to fix zero-length state files.
 - Wrote in man page about use of wildcards.
 - fix race in case fchmod->fchown.
 
-* Mon Jun 04 2001 Solar Designer <solar@owl.openwall.com>
+* Mon Jun 04 2001 Solar Designer <solar-at-owl.openwall.com>
 - Enabled the daily cron job now that we have /etc/cron.daily (finally).
 - Moved /var/lib/logrotate.status to /var/lib/logrotate/status
 - If log compression is requested, use gzip at its default compression
 level (no "-9").
 
-* Sat Nov 04 2000 Solar Designer <solar@owl.openwall.com>
+* Sat Nov 04 2000 Solar Designer <solar-at-owl.openwall.com>
 - Imported this spec file for Owl.
 - Added a patch to fix some security/reliability issues.

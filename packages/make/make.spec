@@ -1,4 +1,4 @@
-# $Id: Owl/packages/make/make.spec,v 1.11 2005/10/23 22:14:13 solar Exp $
+# $Id: Owl/packages/make/make.spec,v 1.12 2005/10/24 03:06:27 solar Exp $
 
 Summary: A GNU tool which simplifies the build process for users.
 Name: make
@@ -54,21 +54,21 @@ fi
 %_datadir/locale/*/LC_MESSAGES/make.mo
 
 %changelog
-* Sun Sep 26 2004 Solar Designer <solar@owl.openwall.com> 3.80-owl2
+* Sun Sep 26 2004 Solar Designer <solar-at-owl.openwall.com> 3.80-owl2
 - Do package locale files.
 
-* Sun Sep 19 2004 Andreas Ericsson <exon@owl.openwall.com> 3.80-owl1
+* Sun Sep 19 2004 Andreas Ericsson <exon-at-owl.openwall.com> 3.80-owl1
 - Corrected rm-args for removing %buildroot in %install.
 - Upgraded to latest version.
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 3.79.1-owl4
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 3.79.1-owl4
 - Deal with info dir entries such that the menu looks pretty.
 
-* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
+* Wed Feb 06 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions
 
-* Sat Jan 06 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Jan 06 2001 Solar Designer <solar-at-owl.openwall.com>
 - Enable mkstemp explicitly, not rely on configure.
 
-* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import spec from RH rawhide

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libnids/libnids.spec,v 1.14 2004/11/23 22:40:46 mci Exp $
+# $Id: Owl/packages/libnids/libnids.spec,v 1.15 2005/10/24 03:06:25 solar Exp $
 
 Summary: NIDS E-component.
 Name: libnids
@@ -57,33 +57,33 @@ rm -rf %buildroot
 %_libdir/lib*.a
 
 %changelog
-* Fri Jul 30 2004 Rafal Wojtczuk <nergal@owl.openwall.com> 1:1.19-owl1
+* Fri Jul 30 2004 Rafal Wojtczuk <nergal-at-owl.openwall.com> 1:1.19-owl1
 - updated to 1.19
 
-* Wed Feb 18 2004 Solar Designer <solar@owl.openwall.com> 1:1.18-owl2
+* Wed Feb 18 2004 Solar Designer <solar-at-owl.openwall.com> 1:1.18-owl2
 - Replaced the Prism patch with a version from Nergal; the previous patch
 broke things for (at least) PPP interfaces.
 
-* Mon Feb 16 2004 Simon Baker <simonb@owl.openwall.com>
+* Mon Feb 16 2004 Simon Baker <simonb-at-owl.openwall.com>
 - Added prism wireless capabilities patch from Snax (snax@shmoo.com)
 
-* Wed Oct 15 2003 Rafal Wojtczuk <nergal@owl.openwall.com> 1:1.18-owl1
+* Wed Oct 15 2003 Rafal Wojtczuk <nergal-at-owl.openwall.com> 1:1.18-owl1
 - updated to 1.18
 
-* Tue Dec 17 2002 Rafal Wojtczuk <nergal@owl.openwall.com> 1:1.17-owl2
+* Tue Dec 17 2002 Rafal Wojtczuk <nergal-at-owl.openwall.com> 1:1.17-owl2
 - switched soname to libnids.1.xx because of binary incompatibility between
 versions
 
-* Fri Dec 13 2002 Rafal Wojtczuk <nergal@owl.openwall.com>
+* Fri Dec 13 2002 Rafal Wojtczuk <nergal-at-owl.openwall.com>
 - updated to 1.17
 
-* Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Feb 04 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions
 
-* Tue Apr 17 2001 Solar Designer <solar@owl.openwall.com>
+* Tue Apr 17 2001 Solar Designer <solar-at-owl.openwall.com>
 - Minor spec file cleanups.
 
-* Wed Apr 11 2001 Rafal Wojtczuk <nergal@owl.openwall.com>
+* Wed Apr 11 2001 Rafal Wojtczuk <nergal-at-owl.openwall.com>
 - adapted pld specs
 - patch to enable usage of libpcap-0.6.2 "any" device
 - -Wl,-soname adjusted

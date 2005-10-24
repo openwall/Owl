@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.60 2005/10/24 02:34:30 solar Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.61 2005/10/24 03:06:29 solar Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -471,7 +471,7 @@ fi
 %__includedir/popt.h
 
 %changelog
-* Mon Oct 17 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.2-owl9
+* Mon Oct 17 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl9
 - Backported fix to nested %if handling.
 - Changed package upgrade algorithm to remove old files
 on "-U --force" even if package versions match.
@@ -481,64 +481,64 @@ into account.
 - Build debugedit utility with system libelf.
 - Applied sparc optflags update from Alexandr Kanevskiy.
 
-* Fri Sep 23 2005 Michail Litvak <mci@owl.openwall.com> 4.2-owl8
+* Fri Sep 23 2005 Michail Litvak <mci-at-owl.openwall.com> 4.2-owl8
 - Don't package .la files.
 
-* Sat Jun 25 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.2-owl7
+* Sat Jun 25 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl7
 - Do not use system's libelf even if the library is available during build.
 
-* Sat Apr 02 2005 Solar Designer <solar@owl.openwall.com> 4.2-owl6
+* Sat Apr 02 2005 Solar Designer <solar-at-owl.openwall.com> 4.2-owl6
 - Allow unpackaged files and missing docs by default for building legacy
 third-party packages (our build environment overrides this for native ones).
 - Re-implemented the gendiff script.
 
-* Tue Mar 22 2005 Solar Designer <solar@owl.openwall.com> 4.2-owl5
+* Tue Mar 22 2005 Solar Designer <solar-at-owl.openwall.com> 4.2-owl5
 - Updated the default rpmrc to use -march/-mtune as required for gcc 3.4.3+
 and to use -pipe with all supported archs.
 
-* Sun Mar 20 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl4
+* Sun Mar 20 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl4
 - Fixed a bug with creating and packaging /var/lib/lib/rpm.
 
-* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl3
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl3
 - Applied rpmal-bounds patch to avoid going out of array bounds in the
 dependency checker.
 
-* Sun Dec 26 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl2
+* Sun Dec 26 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl2
 - Applied chroot-ugid patch to not rely on host OS provided NSS modules.
 
-* Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 4.2-owl1
+* Tue Nov 02 2004 Solar Designer <solar-at-owl.openwall.com> 4.2-owl1
 - Corrected the long text messages for consistency with owl-etc.
 - Set Release to -owl1 such that we can make this public.
 
-* Wed Sep 29 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl0.18
+* Wed Sep 29 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl0.18
 - Added db1 format support into rpmdb
 - Fixed configure.ac to use proper AC_CONFIG_HEADERS syntax
 - Removed "create" from __dbi_cdb definition in macros.in, because it breaks upgrade logic
 - Modified %%pre section to be more friendly to end-user
 
-* Mon May 05 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl0.17
+* Mon May 05 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl0.17
 - Finally fixed the problem with db environment opens inside & outside chroot.
 
-* Mon Mar 22 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl0.16
+* Mon Mar 22 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl0.16
 - Quick and dirty fix for the problem with installing into a chroot jail
 from read-only filesystem. (Discovered by Solar Designer)
 
-* Fri Mar 19 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl0.15
+* Fri Mar 19 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl0.15
 - Fixed problem during package upgrade with Obsoletes tag pointed to
 not installed package
 - Removed unneeded PreReqs, added necessary Requires
 
-* Thu Mar 11 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl0.14
+* Thu Mar 11 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl0.14
 - Fixed permissions during install of packages. Not explictly included
 directories (that is, those in the middle of an included pathname) will be
 created with mode 755, all files will be created with mode 600 and then
 chmod'ed to the specified access rights.
 
-* Wed Mar 10 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl0.13
+* Wed Mar 10 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl0.13
 - Minor changes to the spec file (exporting CFLAGS, making sure that any
 passed value of CFLAGS gets into compilation process).
 
-* Thu Mar 04 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl0.12
+* Thu Mar 04 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl0.12
 - Changed type of rpmError for errors during opening of /etc/mtab from error
 to debug.
 - Modified version of Owl RPM3 closeall patch added
@@ -547,40 +547,40 @@ to debug.
 buildhost, popt-sgid, rpmrc
 - Added vendor-setup patch to setup our environment (compatible with RH)
 
-* Wed Mar 03 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl0.11
+* Wed Mar 03 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl0.11
 - Added missing --enable-posixmutexes option to configure
 
-* Fri Feb 20 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl0.10
+* Fri Feb 20 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl0.10
 - Removed unnecessary verify prefix from rpmmacros and rpmpopt
 - Applied style corrections as described by Solar Designer
 
-* Mon Feb 16 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl0.9
+* Mon Feb 16 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl0.9
 - It seems to be first fully working version of this package and drop-in
 replacement for rpm 3.0.6 (except upgrade procedure)
 - Applied patch to ignore umask and follow the logical behavior of honoring
 permissions settings in the macros.
 
-* Fri Feb 13 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl0.8
+* Fri Feb 13 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl0.8
 - Fixed issue with platforms directories
 
-* Thu Feb 12 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl0.7
+* Thu Feb 12 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl0.7
 - Changed macros file to use external dependency generator (internal one
 is very ugly :( )
 - Minor changes in %_libdir/rpm directory
 
-* Wed Feb 11 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl0.6
+* Wed Feb 11 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl0.6
 - Fixed brp- scripts
 
-* Tue Feb 10 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl0.5
+* Tue Feb 10 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl0.5
 - Cleaned up the spec file (to use macros in file sections)
 - Added %%config to configuration files
 - Fixed permissions on platform directories under %__libdir/rpm/
 
-* Mon Feb 09 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl0.4
+* Mon Feb 09 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl0.4
 - Making only libelf.a from elfutils, not 'make all' in libelf subdirectory
 - Removed dependency on gcc3+ and binutils 2.14.90+
 
-* Thu Feb 05 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl0.3
+* Thu Feb 05 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl0.3
 - Tested building of this package under rpm 3.0.6 and rebuilding under
 rpm 4.2
 - Added -DMAGIC option to CFLAGS for configure in file subdirectory to
@@ -589,87 +589,87 @@ hardcode correct path to file's magic database in /usr/share
 dependency from rpm
 - Added missing rpmrc, rpmdeps
 
-* Wed Feb 04 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl0.2
+* Wed Feb 04 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl0.2
 - Moved compilation of libelf.a, libfmagic.so to prep and removed
 source trees for elfutils and file (Hope, someday we will package
 them independently).
 - Solved problem with linking librpm.so.0 into librpmbuild if we're
 building on a system with installed rpm 3.x
 
-* Tue Feb 03 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl0.1
+* Tue Feb 03 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl0.1
 - Updated to version 4.2
 - Spec file was heavily reviewed
 
-* Fri Jan 16 2004 Michail Litvak <mci@owl.openwall.com> 3.0.6-owl11
+* Fri Jan 16 2004 Michail Litvak <mci-at-owl.openwall.com> 3.0.6-owl11
 - Make /usr/lib/rpm directory owned by this package.
 
-* Fri Dec 12 2003 Solar Designer <solar@owl.openwall.com> 3.0.6-owl10
+* Fri Dec 12 2003 Solar Designer <solar-at-owl.openwall.com> 3.0.6-owl10
 - In brp-strip*, use sed expressions which allow SUID/SGID binaries to get
 stripped.
 
-* Sun Dec 07 2003 Solar Designer <solar@owl.openwall.com> 3.0.6-owl9
+* Sun Dec 07 2003 Solar Designer <solar-at-owl.openwall.com> 3.0.6-owl9
 - Don't use a file under /tmp in installplatform script used during builds,
 spotted by (GalaxyMaster).
 
-* Tue May 27 2003 Solar Designer <solar@owl.openwall.com> 3.0.6-owl8
+* Tue May 27 2003 Solar Designer <solar-at-owl.openwall.com> 3.0.6-owl8
 - Obey AutoReq: false also for dependency on the shell with triggers.
 
-* Thu May 15 2003 Solar Designer <solar@owl.openwall.com> 3.0.6-owl7
+* Thu May 15 2003 Solar Designer <solar-at-owl.openwall.com> 3.0.6-owl7
 - Don't call gzerror() after gzclose(), patch from Dmitry V. Levin.
 
-* Wed Apr 30 2003 Solar Designer <solar@owl.openwall.com> 3.0.6-owl6
+* Wed Apr 30 2003 Solar Designer <solar-at-owl.openwall.com> 3.0.6-owl6
 - In popt, handle uses from SGID apps in the same way as from SUID ones.
 
-* Sun Feb 23 2003 Michail Litvak <mci@owl.openwall.com>
+* Sun Feb 23 2003 Michail Litvak <mci-at-owl.openwall.com>
 - Fixed misplaced semicolon in /usr/lib/rpm/macros file
   (Thanks to Oleg Lukashin)
 
-* Fri Jan 17 2003 Solar Designer <solar@owl.openwall.com>
+* Fri Jan 17 2003 Solar Designer <solar-at-owl.openwall.com>
 - In find-requires, support symbol versioning with package dependencies
 for libraries other than glibc (from Dmitry V. Levin of ALT Linux).
 
-* Tue Dec 17 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Dec 17 2002 Solar Designer <solar-at-owl.openwall.com>
 - Added rpminit, a script to create private RPM package build directories,
 and its man page.
 - Changed the default rpmrc to use more optimal optflags for our gcc (note
 that builds of Owl itself use a different set of optflags anyway).
 
-* Sun Mar 03 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Mar 03 2002 Solar Designer <solar-at-owl.openwall.com>
 - Support setting the BuildHost tag explicitly rather than only from what
 the kernel thinks the system's hostname is.
 - Don't package vpkg-provides* (temporary file handling issues, non-Linux).
 - Don't package rpmgettext/rpmputtext because of poor quality and no uses
 by RPM itself.
 
-* Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com>
+* Wed Feb 06 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Tue Jun 12 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Tue Jun 12 2001 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - update to 3.0.6 release
 
-* Thu Nov 30 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Thu Nov 30 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - disable /usr/src/RPM for security reasons
 
-* Sun Nov 19 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Nov 19 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - gendiff fix
 
-* Sun Nov 12 2000 Solar Designer <solar@owl.openwall.com>
+* Sun Nov 12 2000 Solar Designer <solar-at-owl.openwall.com>
 - Added missing #include's to lib/rpmio.c (it wouldn't build with a
 sparc64 kernel).
 
-* Fri Oct 20 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Fri Oct 20 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - disabled /usr/share/man autodetection
 
-* Sun Sep 03 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Sep 03 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - vendor fix
 - FHS
 - closeall security fix
 - RH 6.2 updates merge
 
-* Sat Aug 05 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sat Aug 05 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - change build target
 - /usr/src/redhat -> /usr/src/RPM
 
-* Thu Jul 20 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Thu Jul 20 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import from official RPM team test rpm.
 - disable Python module

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/net-tools/net-tools.spec,v 1.12 2005/10/23 22:14:13 solar Exp $
+# $Id: Owl/packages/net-tools/net-tools.spec,v 1.13 2005/10/24 03:06:27 solar Exp $
 
 Summary: The basic tools for setting up networking.
 Name: net-tools
@@ -100,23 +100,23 @@ rm %buildroot%_mandir/pt_BR/man8/route.8*
 %_mandir/man[158]/*
 
 %changelog
-* Tue Jun 14 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.60-owl1
+* Tue Jun 14 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.60-owl1
 - Updated to 1.60.
 - Dropped obsoleted -rh-fhs patch.
 - Added a hack to build this package against kernel 2.6.
 
-* Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.57-owl3
+* Fri Jan 07 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.57-owl3
 - Added a fix to the "label at end of compound statement" issue.
 
-* Sun Nov 28 2004 Michail Litvak <mci@owl.openwall.com> 1.57-owl2
+* Sun Nov 28 2004 Michail Litvak <mci-at-owl.openwall.com> 1.57-owl2
 - Fixed building with 2.4.28 kernel.
 
-* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com> 1.57-owl1
+* Wed Feb 06 2002 Michail Litvak <mci-at-owl.openwall.com> 1.57-owl1
 - Enforce our new spec file conventions
 
-* Thu Sep 07 2000 Solar Designer <solar@owl.openwall.com>
+* Thu Sep 07 2000 Solar Designer <solar-at-owl.openwall.com>
 - Use RPM_OPT_FLAGS.
 
-* Wed Aug 09 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Wed Aug 09 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import from RH
 - upgrade to 1.57

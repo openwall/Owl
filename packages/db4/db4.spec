@@ -1,4 +1,4 @@
-# $Id: Owl/packages/db4/db4.spec,v 1.11 2005/10/24 02:22:11 solar Exp $
+# $Id: Owl/packages/db4/db4.spec,v 1.12 2005/10/24 03:06:22 solar Exp $
 
 %define __soversion	4.0
 %define _libdb_a	libdb-%__soversion.a
@@ -166,15 +166,15 @@ rm -rf %buildroot
 %_includedir/*.h
 
 %changelog
-* Fri Sep 23 2005 Michail Litvak <mci@owl.openwall.com> 4.0.14-owl3
+* Fri Sep 23 2005 Michail Litvak <mci-at-owl.openwall.com> 4.0.14-owl3
 - Don't package .la files.
 
-* Sun Jan 16 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.0.14-owl2
+* Sun Jan 16 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.0.14-owl2
 - Add write permission to files under %_bindir and %_libdir to allow brp-
 scripts to do their work.
 - Add "-Xcompiler -static-libgcc" to LIBXSO_LIBS to link libgcc statically.
 - Used %%__cc and %%__make macros.
 - Cleaned up the spec.
 
-* Tue Mar 02 2004 Michail Litvak <mci@owl.openwall.com> 4.0.14-owl1
+* Tue Mar 02 2004 Michail Litvak <mci-at-owl.openwall.com> 4.0.14-owl1
 - Imported spec from RH.

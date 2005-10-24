@@ -1,4 +1,4 @@
-# $Id: Owl/packages/chkconfig/chkconfig.spec,v 1.14 2005/10/24 02:22:11 solar Exp $
+# $Id: Owl/packages/chkconfig/chkconfig.spec,v 1.15 2005/10/24 03:06:22 solar Exp $
 
 %define BUILD_NTSYSV 0
 %define INSTALL_ALTERNATIVES 0
@@ -106,16 +106,16 @@ rm %buildroot%_mandir/man8/ntsysv.8*
 %endif
 
 %changelog
-* Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.3.9-owl2
+* Fri Jan 07 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.3.9-owl2
 - Used %%__cc macro and configured build more correctly.
 - Clean up the spec.
 
-* Fri Feb 06 2004 Michail Litvak <mci@owl.openwall.com> 1.3.9-owl1
+* Fri Feb 06 2004 Michail Litvak <mci-at-owl.openwall.com> 1.3.9-owl1
 - 1.3.9
 
-* Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com> 1.2.16-owl1
+* Thu Jan 24 2002 Solar Designer <solar-at-owl.openwall.com> 1.2.16-owl1
 - Enforce our new spec file conventions.
 
-* Sat Sep 23 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sat Sep 23 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import spec from RH
 - disable ntsysv by default

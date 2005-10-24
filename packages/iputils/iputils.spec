@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iputils/iputils.spec,v 1.22 2005/10/24 02:22:11 solar Exp $
+# $Id: Owl/packages/iputils/iputils.spec,v 1.23 2005/10/24 03:06:24 solar Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
@@ -89,40 +89,40 @@ fi
 /etc/control.d/facilities/ping
 
 %changelog
-* Wed Jun 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> ss020927-owl3
+* Wed Jun 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> ss020927-owl3
 - Removed verifying permissions and group owner for ping since it's
 controlled by owl-control facility.
 - Cleaned up the spec.
 
-* Tue Oct 21 2003 Michail Litvak <mci@owl.openwall.com> ss020927-owl2
+* Tue Oct 21 2003 Michail Litvak <mci-at-owl.openwall.com> ss020927-owl2
 - reduce -owl-socketbits.diff to include only sockaddr_storage
 definition, because previous version broke tracepath.
 
-* Thu Oct 16 2003 Michail Litvak <mci@owl.openwall.com> ss020927-owl1
+* Thu Oct 16 2003 Michail Litvak <mci-at-owl.openwall.com> ss020927-owl1
 - ss020927
 - Fixed building with kernel >= 2.4.22.
 - Source archive now contains precompiled man pages, so don't include
 them as another archive.
 
-* Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Nov 03 2002 Solar Designer <solar-at-owl.openwall.com>
 - Dump/restore the owl-control setting for ping on package upgrades.
 - Keep ping at mode 700 ("restricted") in the package, but default it to
 "public" in %post when the package is first installed.  This avoids a
 race and fail-open behavior where a "restricted" ping could be "public"
 during package upgrades.
 
-* Mon Jun 03 2002 Solar Designer <solar@owl.openwall.com>
+* Mon Jun 03 2002 Solar Designer <solar-at-owl.openwall.com>
 - Patched ifenslave to use the SIOCBOND* ioctl's instead of the obsolete
 BOND_* ones when building with Linux 2.4+ kernel headers.
 
-* Wed May 30 2002 Michail Litvak <mci@owl.openwall.com>
+* Wed May 30 2002 Michail Litvak <mci-at-owl.openwall.com>
 - ss020124
 - include man pages precompiled from sgml sources
 
-* Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Feb 04 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions
 
-* Tue Apr 10 2001 Solar Designer <solar@owl.openwall.com>
+* Tue Apr 10 2001 Solar Designer <solar-at-owl.openwall.com>
 - Reviewed patches and RPM spec files of the iputils package in RH, CAEN,
 and PLD distributions.
 - Updated two RH-derived patches.

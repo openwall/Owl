@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openntpd/openntpd.spec,v 1.8 2005/10/22 13:02:26 galaxy Exp $
+# $Id: Owl/packages/openntpd/openntpd.spec,v 1.9 2005/10/24 03:06:27 solar Exp $
 
 Summary: NTP time synchronization server and client.
 Name: openntpd
@@ -99,13 +99,13 @@ fi
 %_mandir/man?/*
 
 %changelog
-* Fri Oct 21 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.7p1-owl2
+* Fri Oct 21 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.7p1-owl2
 - Fixed a typo in the configure option name.
 - Applied a patch to honor --with-privsep-path in configure.
 
-* Wed Oct 19 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.7p1-owl1
+* Wed Oct 19 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.7p1-owl1
 - Added a logic to rename the 'xntpd' account to 'ntpd'.
 - Added openntpd.control to put ntpd under the control of owl-control.
 
-* Fri Sep 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.7p1-owl0
+* Fri Sep 09 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.7p1-owl0
 - Initial release for Owl.

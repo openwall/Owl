@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.35 2005/10/24 02:22:13 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.36 2005/10/24 03:06:32 solar Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -328,90 +328,90 @@ fi
 %endif
 
 %changelog
-* Tue Oct 18 2005 Alexandr D. Kanevskiy <kad@owl.openwall.com> 2.11z-owl6
+* Tue Oct 18 2005 Alexandr D. Kanevskiy <kad-at-owl.openwall.com> 2.11z-owl6
 - Also package /sbin/fsck.minix, /sbin/mkfs.minix and /usr/bin/cytune for
 sparc and sparcv9 architectures.
    
-* Tue Sep 13 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.11z-owl5
+* Tue Sep 13 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.11z-owl5
 - Backported upstream fix to umount, to avoid unintentional grant
   of privileges by "umount -r".
 
-* Tue Jun 28 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.11z-owl4
+* Tue Jun 28 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.11z-owl4
 - Corrected the source code to not break C strict aliasing rules.
 
-* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.11z-owl3
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.11z-owl3
 - Supplied %%__cc to make.
 - Removed verify checks for files under the "control" utility.
 - Cleaned up the spec.
 
-* Fri Nov 07 2003 Michail Litvak <mci@owl.openwall.com> 2.11z-owl2
+* Fri Nov 07 2003 Michail Litvak <mci-at-owl.openwall.com> 2.11z-owl2
 - Replaced crypto code from international crypto patch (2.2.18.3) to
 unified util-linux crypto patch by Jari Ruusu.
 
-* Tue Apr 14 2003 Michail Litvak <mci@owl.openwall.com> 2.11z.2.2.18.3-owl1
+* Tue Apr 14 2003 Michail Litvak <mci-at-owl.openwall.com> 2.11z.2.2.18.3-owl1
 - 2.11z
 - minor spec file cleanups.
 
-* Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Nov 03 2002 Solar Designer <solar-at-owl.openwall.com>
 - Dump/restore the owl-control settings for mount and write on package
 upgrades.
 - Keep write at mode 700 ("restricted") in the package, but default
 it to "public" in %post when the package is first installed.  This avoids
 a race and fail-open behavior.
 
-* Sat Oct 12 2002 Solar Designer <solar@owl.openwall.com>
+* Sat Oct 12 2002 Solar Designer <solar-at-owl.openwall.com>
 - Use umask 077 when creating mtab files (to be chmod'ed later) to avoid
 the race pointed out by Olaf Kirch of SuSE.
 
-* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
+* Mon Feb 04 2002 Solar Designer <solar-at-owl.openwall.com>
 - Install the info dir entry for ipc.
 - Enforce our new spec file conventions.
 
-* Mon Nov 12 2001 Solar Designer <solar@owl.openwall.com>
+* Mon Nov 12 2001 Solar Designer <solar-at-owl.openwall.com>
 - newgrp is now built from shadow-utils, for gshadow support.
 - Dropped the support for building of chsh, chfn, vipw, vigr, and newgrp
 entirely (including owl-control files and a security patch, which may be
 restored from the CVS if needed) as it's not going to be updated.
 
-* Wed Apr 18 2001 Solar Designer <solar@owl.openwall.com>
+* Wed Apr 18 2001 Solar Designer <solar-at-owl.openwall.com>
 - Added crypto code from the international kernel patch (2.2.18.3), with
 minor changes.
 - Corrected the Alpha-specific hwclock(8) usage information (the options
 are case-sensitive).
 
-* Sun Jan 28 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Jan 28 2001 Solar Designer <solar-at-owl.openwall.com>
 - Reviewed the changes made in 2.10r, updated the write patch accordingly.
 - More improvements to the write patch (prompt/prefix with usernames).
 - optflags are now passed correctly.
 - newgrp is no longer installed SUID by default (it's owl-control'able).
 
-* Tue Jan 23 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Tue Jan 23 2001 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - 2.10r
 
-* Fri Dec 29 2000 Solar Designer <solar@owl.openwall.com>
+* Fri Dec 29 2000 Solar Designer <solar-at-owl.openwall.com>
 - Dirty hack for builds with Linux 2.2.18 headers.
 
-* Wed Dec 13 2000 Solar Designer <solar@owl.openwall.com>
+* Wed Dec 13 2000 Solar Designer <solar-at-owl.openwall.com>
 - Use the ix86 macro.
 
-* Sat Aug 26 2000 Solar Designer <solar@owl.openwall.com>
+* Sat Aug 26 2000 Solar Designer <solar-at-owl.openwall.com>
 - chsh, chfn, vipw, and vigr are now built from shadow-utils, which
 uses libpwdb-compatible locking.
 
-* Wed Aug 16 2000 Solar Designer <solar@owl.openwall.com>
+* Wed Aug 16 2000 Solar Designer <solar-at-owl.openwall.com>
 - owl-control support for chsh, chfn, newgrp, write, and mount/umount.
 
-* Wed Aug 02 2000 Solar Designer <solar@owl.openwall.com>
+* Wed Aug 02 2000 Solar Designer <solar-at-owl.openwall.com>
 - Disabled locale support in write(1) entirely for security reasons
 (dangerous printf formats, control characters, anonymous messages).
 - Removed the dependency on kernel as we may not have the kernel in
 an RPM package.
 - mount and losetup are now packaged here.
 
-* Tue Jul 18 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Tue Jul 18 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - locale come back
 
-* Thu Jul 13 2000 Solar Designer <solar@owl.openwall.com>
+* Thu Jul 13 2000 Solar Designer <solar-at-owl.openwall.com>
 - Imported this spec file from RH, and changed it heavily.
 - Updated one of the RH patches for 2.10h, removed the rest.
 - Removed login as we use one from SimplePAMApps.

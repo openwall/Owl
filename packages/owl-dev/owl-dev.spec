@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.19 2004/11/23 22:40:47 mci Exp $
+# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.20 2005/10/24 03:06:28 solar Exp $
 
 Summary: Initial set of device files and MAKEDEV, a script to manage them.
 Name: owl-dev
@@ -67,20 +67,20 @@ echo "Creating device files"
 %files -f filelist
 
 %changelog
-* Wed Mar 10 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 0.10-owl2
+* Wed Mar 10 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.10-owl2
 - Added "dev" to Provides.
 
-* Sat Oct 25 2003 Solar Designer <solar@owl.openwall.com> 0.10-owl1
+* Sat Oct 25 2003 Solar Designer <solar-at-owl.openwall.com> 0.10-owl1
 - /dev/rtc (but restricted to just root, unlike on Red Hat Linux).
 - Make the /dev/core and /dev/fd symlinks relative.
 
-* Thu Jul 31 2003 Solar Designer <solar@owl.openwall.com> 0.9-owl1
+* Thu Jul 31 2003 Solar Designer <solar-at-owl.openwall.com> 0.9-owl1
 - /dev/kbd.
 
-* Fri Jul 25 2003 Solar Designer <solar@owl.openwall.com> 0.8-owl1
+* Fri Jul 25 2003 Solar Designer <solar-at-owl.openwall.com> 0.8-owl1
 - /dev/openprom.
 
-* Sun Jun 09 2002 Solar Designer <solar@owl.openwall.com> 0.7-owl1
+* Sun Jun 09 2002 Solar Designer <solar-at-owl.openwall.com> 0.7-owl1
 - Support Linux 2.4.x's /proc/devices entries.
 - Support and create frame buffer devices.
 - Support up to 8 IDE controllers (16 devices).
@@ -89,40 +89,40 @@ echo "Creating device files"
 - Install the MAKEDEV(8) man page.
 - List /dev subdirectories in the package.
 
-* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
+* Wed Feb 06 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Sun Nov 18 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Nov 18 2001 Solar Designer <solar-at-owl.openwall.com>
 - Don't verify file type (as well as permissions, because of an RPM
 limitation), device, and group for the device files.
 
-* Mon Nov 05 2001 Solar Designer <solar@owl.openwall.com>
+* Mon Nov 05 2001 Solar Designer <solar-at-owl.openwall.com>
 - Don't PreReq: shadow-utils, the post-install script is smart enough
 to not depend on groupadd when the groups already exist (which is the
 case for new installs due to owl-etc).
 
-* Thu Nov 01 2001 Solar Designer <solar@owl.openwall.com>
+* Thu Nov 01 2001 Solar Designer <solar-at-owl.openwall.com>
 - audio, video and radio groups to manage access to devices.
 
-* Sun Apr 08 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Apr 08 2001 Solar Designer <solar-at-owl.openwall.com>
 - Obsoletes: MAKEDEV, dev
 
-* Sun Mar 04 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Mar 04 2001 Solar Designer <solar-at-owl.openwall.com>
 - USB printers and mice.
 
-* Mon Feb 05 2001 Solar Designer <solar@owl.openwall.com>
+* Mon Feb 05 2001 Solar Designer <solar-at-owl.openwall.com>
 - Create devices of more categories by default (st, scd, sg, md, loop, audio).
 
-* Sat Jan 06 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Jan 06 2001 Solar Designer <solar-at-owl.openwall.com>
 - /dev/sunmouse.
 
-* Mon Dec 04 2000 Solar Designer <solar@owl.openwall.com>
+* Mon Dec 04 2000 Solar Designer <solar-at-owl.openwall.com>
 - Create device files for 4 IDE and 8 SCSI devices with up to 15 partitions
 by default.
 - Use %ghost.
 
-* Sun Dec 03 2000 Solar Designer <solar@owl.openwall.com>
+* Sun Dec 03 2000 Solar Designer <solar-at-owl.openwall.com>
 - Unix98 pty's support.
 
-* Sat Jul 29 2000 Solar Designer <solar@owl.openwall.com>
+* Sat Jul 29 2000 Solar Designer <solar-at-owl.openwall.com>
 - Initial version.

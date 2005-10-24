@@ -1,4 +1,4 @@
-# $Id: Owl/packages/psmisc/psmisc.spec,v 1.13 2005/10/23 22:14:14 solar Exp $
+# $Id: Owl/packages/psmisc/psmisc.spec,v 1.14 2005/10/24 03:06:29 solar Exp $
 
 Summary: Utilities for managing processes on your system.
 Name: psmisc
@@ -51,31 +51,31 @@ mv .%_bindir/fuser sbin/
 %_mandir/man1/pstree.1*
 
 %changelog
-* Fri Apr 08 2005 Solar Designer <solar@owl.openwall.com> 21.5-owl2
+* Fri Apr 08 2005 Solar Designer <solar-at-owl.openwall.com> 21.5-owl2
 - Updated the License tag - this code is now GPL'ed.
 
-* Mon Feb 21 2005 Solar Designer <solar@owl.openwall.com> 21.5-owl1
+* Mon Feb 21 2005 Solar Designer <solar-at-owl.openwall.com> 21.5-owl1
 - Added URL tag, corrected Source URL.
 - Moved fuser back to /sbin for RHL compatibility and since our current
 /etc/rc.d/init.d/netfs depends on that.
 
-* Sat Feb 19 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 21.5-owl0
+* Sat Feb 19 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 21.5-owl0
 - Updated to 21.5.
 - Dropped unneeded Makefile patch.
 - Regenerated restricted proc patch.
 - Temporary workaround for termcap.
 
-* Sat Jan 15 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 19-owl6
+* Sat Jan 15 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 19-owl6
 - Implemented support for restricted proc kernel patch.
 
-* Wed Dec 25 2002 Solar Designer <solar@owl.openwall.com> 19-owl5
+* Wed Dec 25 2002 Solar Designer <solar-at-owl.openwall.com> 19-owl5
 - Fixed the segfault in pstree(1) when asked to report information for a
 user, but entry with PID 1 (init) is inaccessible, thanks to (GalaxyMaster).
 - Replaced two RH-derived Makefile patches with a much cleaner one.
 
-* Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com>
+* Wed Feb 06 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 - Package the documentation.
 
-* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import from RH

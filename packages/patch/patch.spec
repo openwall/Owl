@@ -1,4 +1,4 @@
-# $Id: Owl/packages/patch/patch.spec,v 1.7 2005/10/24 02:22:13 solar Exp $
+# $Id: Owl/packages/patch/patch.spec,v 1.8 2005/10/24 03:06:28 solar Exp $
 
 Summary: The GNU patch command, for modifying/upgrading files.
 Name: patch
@@ -48,12 +48,12 @@ rm -rf %buildroot
 %_mandir/*/*
 
 %changelog
-* Thu Feb 07 2002 Michail Litvak <mci@owl.openwall.com> 2.5.4-owl6
+* Thu Feb 07 2002 Michail Litvak <mci-at-owl.openwall.com> 2.5.4-owl6
 - Enforce our new spec file conventions.
 
-* Wed Dec 20 2000 Michail Litvak <mci@owl.openwall.com>
+* Wed Dec 20 2000 Michail Litvak <mci-at-owl.openwall.com>
 - added patch to fix default backup extension
 
-* Tue Nov 17 2000 Michail Litvak <mci@owl.openwall.com>
+* Tue Nov 17 2000 Michail Litvak <mci-at-owl.openwall.com>
 - import from RH and Mandrake
 - sigsegv patch from MDK, stderr from RH

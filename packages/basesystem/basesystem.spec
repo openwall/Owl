@@ -1,4 +1,4 @@
-# $Id: Owl/packages/basesystem/basesystem.spec,v 1.5 2003/10/29 18:15:26 solar Exp $
+# $Id: Owl/packages/basesystem/basesystem.spec,v 1.6 2005/10/24 03:06:21 solar Exp $
 
 Summary: Initial set of configuration files and directory hierarchy.
 Name: basesystem
@@ -17,11 +17,11 @@ Red Hat Linux compatibility.
 %files
 
 %changelog
-* Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com> 99.0-owl1
+* Thu Jan 24 2002 Solar Designer <solar-at-owl.openwall.com> 99.0-owl1
 - Enforce our new spec file conventions.
 
-* Wed Dec 20 2000 Solar Designer <solar@owl.openwall.com>
+* Wed Dec 20 2000 Solar Designer <solar-at-owl.openwall.com>
 - Set version to 99.0 so that we can cleanly replace Red Hat's package.
 
-* Wed Aug 02 2000 Solar Designer <solar@owl.openwall.com>
+* Wed Aug 02 2000 Solar Designer <solar-at-owl.openwall.com>
 - Initial version.

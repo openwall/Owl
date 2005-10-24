@@ -1,4 +1,4 @@
-# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.29 2005/10/23 21:09:44 solar Exp $
+# $Id: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.30 2005/10/24 03:06:23 solar Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -226,55 +226,55 @@ fi
 %_mandir/man3/uuid_unparse.3*
 
 %changelog
-* Sun Sep 04 2005 Solar Designer <solar@owl.openwall.com> 1.37-owl2
+* Sun Sep 04 2005 Solar Designer <solar-at-owl.openwall.com> 1.37-owl2
 - Corrected grammar in the error message fsck outputs on conflicting options.
 
-* Fri Mar 25 2005 Solar Designer <solar@owl.openwall.com> 1.37-owl1
+* Fri Mar 25 2005 Solar Designer <solar-at-owl.openwall.com> 1.37-owl1
 - Updated to 1.37 (the previous update to 1.36 was never made public).
 - Patched blkid_get_cache() to use __secure_getenv() instead of an explicit
 UID/EUID check.
 - Fixed more compiler warnings, including some for real bugs.
 
-* Mon Mar 01 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.36-owl1
+* Mon Mar 01 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.36-owl1
 - Updated to 1.36.
 - Reviewed all patches, dropped the ones accepted.
 - Dropped the "notitle" patch.
 - Fixed make check to fail in case of failed tests.
 
-* Sun Jan 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.27-owl7
+* Sun Jan 09 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.27-owl7
 - Using %__cc macro during configure
 - Cleaned up the spec.
 
-* Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 1.27-owl6
+* Tue Nov 02 2004 Solar Designer <solar-at-owl.openwall.com> 1.27-owl6
 - Bumped the release to reflect Galaxy's change to remove unpackaged files.
 
-* Mon Feb 09 2004 Michail Litvak <mci@owl.openwall.com> 1.27-owl5
+* Mon Feb 09 2004 Michail Litvak <mci-at-owl.openwall.com> 1.27-owl5
 - Use RPM macros instead of explicit paths.
 
-* Sat Oct 12 2002 Solar Designer <solar@owl.openwall.com> 1.27-owl4
+* Sat Oct 12 2002 Solar Designer <solar-at-owl.openwall.com> 1.27-owl4
 - Dropped the mke2fs lost+found permissions patch (leaving only the hunks
 for e2fsck and mklost+found) as it's no longer needed with 1.27.
 
-* Wed Oct 09 2002 Solar Designer <solar@owl.openwall.com>
+* Wed Oct 09 2002 Solar Designer <solar-at-owl.openwall.com>
 - Updated the lost+found permissions patch to cover e2fsck as well, thanks
 to Jarno Huuskonen for noticing that this was missing.
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Deal with info dir entries such that the menu looks pretty.
 
-* Mon Apr 22 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Apr 22 2002 Michail Litvak <mci-at-owl.openwall.com>
 - 1.27
 - Build with -Wall
 - Added some reviewed patches from RH and ALT, removed unnecessary patches
 
-* Wed Jan 30 2002 Michail Litvak <mci@owl.openwall.com>
+* Wed Jan 30 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 - New source URL
 
-* Tue Aug 08 2000 Solar Designer <solar@owl.openwall.com>
+* Tue Aug 08 2000 Solar Designer <solar-at-owl.openwall.com>
 - Added a patch by Miquel van Smoorenburg to fix the progress indicator
 in e2fsck.
 
-* Wed Aug 03 2000 Solar Designer <solar@owl.openwall.com>
+* Wed Aug 03 2000 Solar Designer <solar-at-owl.openwall.com>
 - Imported this spec file from RH.
 - Added a patch for the permissions on lost+found.

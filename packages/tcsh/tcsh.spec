@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tcsh/tcsh.spec,v 1.17 2005/10/24 02:34:30 solar Exp $
+# $Id: Owl/packages/tcsh/tcsh.spec,v 1.18 2005/10/24 03:06:30 solar Exp $
 
 Summary: An enhanced version of csh, the C shell.
 Name: tcsh
@@ -95,10 +95,10 @@ fi
 %_datadir/locale/*/LC_MESSAGES/tcsh*
 
 %changelog
-* Mon Oct 24 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 6.14.00-owl3
+* Mon Oct 24 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.14.00-owl3
 - Adjusted the tcsh.1 patch as suggested by Solar.
 
-* Wed Oct 19 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 6.14.00-owl2
+* Wed Oct 19 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.14.00-owl2
 - Replaced 'make' with '%%__make'.
 - Dropped the strip option from install in favor of brp- scripts.
 - Removed -lnsl from 'LIBES=', since it isn't needed to be specified
@@ -110,38 +110,38 @@ redirections (appended to the -suse-owl-tmp patch).
 name.
 - Added Requires(postun) sed >= 4.0.9.
 
-* Sun Sep 18 2005 Gremlin from Kremlin <gremlin@owl.openwall.com> 6.14.00-owl1
+* Sun Sep 18 2005 Gremlin from Kremlin <gremlin-at-owl.openwall.com> 6.14.00-owl1
 - Updated to 6.14.00, dropped obsolete patches (only the -tmp patch is left),
 disabled AUTOLOGOUT by default.
 
-* Sat Feb 28 2004 Michail Litvak <mci@owl.openwall.com> 6.10.01-owl3
+* Sat Feb 28 2004 Michail Litvak <mci-at-owl.openwall.com> 6.10.01-owl3
 - Fixed building with new glibc (fix from ALT's spec file).
 
-* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com> 6.10.01-owl2
+* Mon Feb 04 2002 Solar Designer <solar-at-owl.openwall.com> 6.10.01-owl2
 - Enforce our new spec file conventions.
 
-* Fri Jul 06 2001 Michail Litvak <mci@owl.openwall.com>
+* Fri Jul 06 2001 Michail Litvak <mci-at-owl.openwall.com>
 - added some patches from Debian (format bug, etc.)
 
-* Wed Jun 20 2001 Michail Litvak <mci@owl.openwall.com>
+* Wed Jun 20 2001 Michail Litvak <mci-at-owl.openwall.com>
 - updated to 6.10.01
 - some spec cleanups
 
-* Sun Dec 17 2000 Solar Designer <solar@owl.openwall.com>
+* Sun Dec 17 2000 Solar Designer <solar-at-owl.openwall.com>
 - Build HTML docs correctly (the script was trying to be too smart and
 behaved differently when not run on a tty).
 
-* Fri Dec 15 2000 Solar Designer <solar@owl.openwall.com>
+* Fri Dec 15 2000 Solar Designer <solar-at-owl.openwall.com>
 - Updated the mkstemp() patch to actually be correct for 6.10.00 (which
 already includes a more portable, but worse fix for the same problem).
 
-* Sat Dec 09 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sat Dec 09 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - 6.10
 - security update
 
-* Sat Nov 04 2000 Solar Designer <solar@owl.openwall.com>
+* Sat Nov 04 2000 Solar Designer <solar-at-owl.openwall.com>
 - Added a patch by Dr. Werner Fink <werner@suse.de> (and slightly modified)
 for the unsafe /tmp access reported on Bugtraq by proton.
 
-* Sun Sep 24 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Sep 24 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import from RH

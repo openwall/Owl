@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gpm/gpm.spec,v 1.23 2005/10/24 01:56:46 solar Exp $
+# $Id: Owl/packages/gpm/gpm.spec,v 1.24 2005/10/24 03:06:24 solar Exp $
 
 # This defines the library version that this package builds.
 %define LIBVER 1.18.0
@@ -150,32 +150,32 @@ fi
 %endif
 
 %changelog
-* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.19.6-owl5
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.19.6-owl5
 - Added libgpm.so.1 to the list of packaged files since it's created
 by ldconfig anyway, but now we have a track where this file comes from.
 - Added a patch to deal with "label at end of compound statement" issue.
 
-* Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 1.19.6-owl4
+* Tue Nov 02 2004 Solar Designer <solar-at-owl.openwall.com> 1.19.6-owl4
 - Remove unpackaged files.
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1.19.6-owl3
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 1.19.6-owl3
 - Deal with info dir entries such that the menu looks pretty.
 
-* Sun Feb 03 2002 Michail Litvak <mci@owl.openwall.com>
+* Sun Feb 03 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Fix source URL
 - Enforce our new spec file conventions
 
-* Mon Nov 05 2001 Solar Designer <solar@owl.openwall.com>
+* Mon Nov 05 2001 Solar Designer <solar-at-owl.openwall.com>
 - /etc/init.d -> /etc/rc.d/init.d for consistency.
 
-* Sat Oct 06 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Oct 06 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 1.19.6.
 - Dropped hltest, t-mouse.el* (gpm itself is broken enough).
 
-* Wed Jun 27 2001 Solar Designer <solar@owl.openwall.com>
+* Wed Jun 27 2001 Solar Designer <solar-at-owl.openwall.com>
 - Disabled packaging gpm-root by default.
 
-* Tue Jun 26 2001 Solar Designer <solar@owl.openwall.com>
+* Tue Jun 26 2001 Solar Designer <solar-at-owl.openwall.com>
 - Moved gpm-root to a separate subpackage.
 - Disabled support for ~/.gpm-root because of too many security issues
 with this feature, updated the documentation accordingly.
@@ -183,18 +183,18 @@ with this feature, updated the documentation accordingly.
 reported by Colin Phipps to Debian (http://bugs.debian.org/102031) and
 several other bugs which were about as bad.
 
-* Sun May 27 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun May 27 2001 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - hack to avoid double use of $RPM_OPT_FLAGS
 
-* Sat Jan 06 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Jan 06 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated the patches for fail-closeness in many cases.
 - Re-generate gpm-root.c at build time, to avoid maintaining two patches.
 - /tmp fixes in the documentation (don't suggest bad practices).
 - More startup script cleanups.
 - Restart after package upgrades in an owl-startup compatible way.
 
-* Fri Jan 05 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Fri Jan 05 2001 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import mktemp patch from Immunix, fix strncpy
 
-* Sun Dec 24 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Dec 24 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import from RH

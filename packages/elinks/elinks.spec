@@ -1,4 +1,4 @@
-# $Id: Owl/packages/elinks/elinks.spec,v 1.19 2005/09/24 21:16:07 galaxy Exp $
+# $Id: Owl/packages/elinks/elinks.spec,v 1.20 2005/10/24 03:06:23 solar Exp $
 
 Summary: Lynx-like text WWW browser with many features.
 Name: elinks
@@ -78,28 +78,28 @@ rm %buildroot%_datadir/locale/locale.alias
 %_mandir/man?/*
 
 %changelog
-* Sun Sep 25 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.9.1-owl6
+* Sun Sep 25 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.9.1-owl6
 - Fixed a segmentation fault inside the typeahead routine.
 
-* Sat Jun 25 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.9.1-owl5
+* Sat Jun 25 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.9.1-owl5
 - Rebuilt with libssl.so.5.
 
-* Fri Feb 06 2004 Michail Litvak <mci@owl.openwall.com> 0.9.1-owl4
+* Fri Feb 06 2004 Michail Litvak <mci-at-owl.openwall.com> 0.9.1-owl4
 - Fix yet another bug in -owl-tmp patch (Thanks to Maxim Timofeyev).
 
-* Sun Feb 01 2004 Solar Designer <solar@owl.openwall.com> 0.9.1-owl3
+* Sun Feb 01 2004 Solar Designer <solar-at-owl.openwall.com> 0.9.1-owl3
 - Don't leak kernel version information (uname -srm) via User-Agent by
 default.
 
-* Sun Feb 01 2004 Michail Litvak <mci@owl.openwall.com> 0.9.1-owl2
+* Sun Feb 01 2004 Michail Litvak <mci-at-owl.openwall.com> 0.9.1-owl2
 - Fix bug in -owl-tmp patch (Thanks to Alexey Tourbin for report).
 
-* Wed Jan 28 2004 Michail Litvak <mci@owl.openwall.com> 0.9.1-owl1
+* Wed Jan 28 2004 Michail Litvak <mci-at-owl.openwall.com> 0.9.1-owl1
 - 0.9.1
 - Regenerated patches.
 - Provide symlinks links -> elinks, links.1 -> elinks.1
 
-* Sun Jan 25 2004 Solar Designer <solar@owl.openwall.com> 0.9.0-owl2
+* Sun Jan 25 2004 Solar Designer <solar-at-owl.openwall.com> 0.9.0-owl2
 - Use vitmp in textarea_edit().
 - Minor corrections to the temporary file handling patch.
 - Do not set xterm window title (it wasn't getting reset when Elinks is
@@ -115,26 +115,26 @@ it is preceded by a safe non-whitespace one.
 on what libraries might happen to be installed on the build system.
 - Obsoletes: links
 
-* Wed Jan 21 2004 Michail Litvak <mci@owl.openwall.com> 0.9.0-owl1
+* Wed Jan 21 2004 Michail Litvak <mci-at-owl.openwall.com> 0.9.0-owl1
 - Switch from Links to ELinks.
 
-* Tue Feb 05 2002 Michail Litvak <mci@owl.openwall.com> 0.96-owl2
+* Tue Feb 05 2002 Michail Litvak <mci-at-owl.openwall.com> 0.96-owl2
 - Enforce our new spec file conventions
 
-* Fri Jul 27 2001 Michail Litvak <mci@owl.openwall.com>
+* Fri Jul 27 2001 Michail Litvak <mci-at-owl.openwall.com>
 - updated to 0.96
 - remove configure patch, because it was included in source
 
-* Sat Jun 07 2001 Michail Litvak <mci@owl.openwall.com>
+* Sat Jun 07 2001 Michail Litvak <mci-at-owl.openwall.com>
 - patch configure.in to force error if OpenSSL not found
 
-* Sat Jun 04 2001 Michail Litvak <mci@owl.openwall.com>
+* Sat Jun 04 2001 Michail Litvak <mci-at-owl.openwall.com>
 - TMPDIR support
 - compile with SSL
 - include man page into %files
 - mkstemp patch renamed to *-tmp.diff
 - some spec and patch cleanups
 
-* Sat Jun 02 2001 Michail Litvak <mci@owl.openwall.com>
+* Sat Jun 02 2001 Michail Litvak <mci-at-owl.openwall.com>
 - spec file imported from ASP linux
 - patch to replace tempnam with mkstemp

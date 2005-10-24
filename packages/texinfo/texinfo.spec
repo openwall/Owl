@@ -1,4 +1,4 @@
-# $Id: Owl/packages/texinfo/texinfo.spec,v 1.23 2005/04/26 02:09:55 solar Exp $
+# $Id: Owl/packages/texinfo/texinfo.spec,v 1.24 2005/10/24 03:06:30 solar Exp $
 
 %define BUILD_TEST 1
 
@@ -120,47 +120,47 @@ fi
 %_mandir/man5/info.5*
 
 %changelog
-* Mon Apr 25 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.8-owl2
+* Mon Apr 25 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.8-owl2
 - Fixed info files installation as suggested by Dmitry V. Levin.
 - Reverted back the removal of the __spec_install_post macro since its
 absence breaks the package build. We have to fix our rpm package first.
 
-* Wed Mar 30 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.8-owl1
+* Wed Mar 30 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.8-owl1
 - Updated to 4.8.
 - Set LC_ALL=C to use English in the produced files.
 - Reviewed unpackaged files and included them.
 
-* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.2-owl4
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl4
 - Removed verify checks for info-dir since it's heavily modified during
 the system lifetime.
 - Cleaned up the spec.
 
-* Fri Nov 22 2002 Solar Designer <solar@owl.openwall.com> 4.2-owl3
+* Fri Nov 22 2002 Solar Designer <solar-at-owl.openwall.com> 4.2-owl3
 - Corrected the path to bzcat, thanks to (GalaxyMaster).
 
-* Tue Aug 27 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Aug 27 2002 Solar Designer <solar-at-owl.openwall.com>
 - PreReq: gzip in info subpackage as required for the new texinfo
 (install-info now invokes external *zcat instead of using zlib).
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Deal with info dir entries such that the menu looks pretty.
 
-* Sat Jul 13 2002 Solar Designer <solar@owl.openwall.com>
+* Sat Jul 13 2002 Solar Designer <solar-at-owl.openwall.com>
 - Require mktemp >= 1:1.3.1 as needed by the updated patches.
 - Package the ChangeLog gzipped as it grew too large.
 
-* Thu Jun 20 2002 Michail Litvak <mci@owl.openwall.com>
+* Thu Jun 20 2002 Michail Litvak <mci-at-owl.openwall.com>
 - 4.2
 - reviewed patches, added patches from ALT
 
-* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
+* Mon Feb 04 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Wed Jan 03 2001 Solar Designer <solar@owl.openwall.com>
+* Wed Jan 03 2001 Solar Designer <solar-at-owl.openwall.com>
 - Patch to create temporary files safely.
 - Give offline sorting in texindex a chance to work (fixed a bug in there;
 did anyone ever test that code, it certainly looks like not).
 
-* Wed Aug 09 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Wed Aug 09 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import from RH
 - FHS build

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.43 2005/10/24 02:22:11 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.44 2005/10/24 03:06:22 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -216,14 +216,14 @@ fi
 %_mandir/man8/dhcrelay.8*
 
 %changelog
-* Fri Apr 29 2005 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl11
+* Fri Apr 29 2005 Solar Designer <solar-at-owl.openwall.com> 3.0pl2-owl11
 - Do register dhcpd with chkconfig, but don't enable it for any runlevels
 by default.
 - Added "PreReq: grep, shadow-utils" to the common "dhcp" subpackage (for
 grep, groupadd, useradd), "PreReq: fileutils" to the server subpackage (for
 rm, touch).
 
-* Sun Apr 10 2005 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl10
+* Sun Apr 10 2005 Solar Designer <solar-at-owl.openwall.com> 3.0pl2-owl10
 - Re-worked the drop-root patch such that dhcpd and dhcrelay will drop
 privileges by default, adjusted the man pages accordingly.
 - Corrected the packaging of dhcpd.conf.sample, install it under /etc,
@@ -235,53 +235,53 @@ third-party modifications and that might not be based off their latest code.
 - Build this package without optimizations based on strict aliasing rules
 (there were 33 gcc warnings).
 
-* Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.0pl2-owl9
+* Fri Jan 07 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.0pl2-owl9
 - Added fixes patch to deal with gcc post-upgrade issues.
 - Cleaned up the spec.
 
-* Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl8
+* Tue Nov 02 2004 Solar Designer <solar-at-owl.openwall.com> 3.0pl2-owl8
 - Remove unpackaged files.
 
-* Sun Jun 13 2004 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl7
+* Sun Jun 13 2004 Solar Designer <solar-at-owl.openwall.com> 3.0pl2-owl7
 - Added a bounds checking patch covering sprintf() calls with "%s" format
 specifier and non-constant strings and forcing the use of snprintf() and
 vsnprintf() in all places where that was previously supported.
 
-* Mon Feb 09 2004 Michail Litvak <mci@owl.openwall.com> 3.0pl2-owl6
+* Mon Feb 09 2004 Michail Litvak <mci-at-owl.openwall.com> 3.0pl2-owl6
 - Use RPM macros instead of explicit paths.
 
-* Sun Oct 12 2003 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl5
+* Sun Oct 12 2003 Solar Designer <solar-at-owl.openwall.com> 3.0pl2-owl5
 - Require /var/empty in server and relay subpackages (from Maxim Timofeyev).
 
-* Tue Sep 30 2003 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl4
+* Tue Sep 30 2003 Solar Designer <solar-at-owl.openwall.com> 3.0pl2-owl4
 - Define PTRSIZE_64BIT when building for Alpha.
 
-* Fri Sep 19 2003 Matthias Schmidt <schmidt@owl.openwall.com> 3.0pl2-owl3
+* Fri Sep 19 2003 Matthias Schmidt <schmidt-at-owl.openwall.com> 3.0pl2-owl3
 - Fixed another four warnings on sparc.
 
-* Mon Sep 15 2003 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl2
+* Mon Sep 15 2003 Solar Designer <solar-at-owl.openwall.com> 3.0pl2-owl2
 - Don't set dhcpd to be started at system boot by default.
 - dhcrelay chroots now to /var/empty.
 
-* Mon Sep 15 2003 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl1
+* Mon Sep 15 2003 Solar Designer <solar-at-owl.openwall.com> 3.0pl2-owl1
 - Create the pseudo-user/group in the common package.
 
-* Sun Sep 14 2003 Matthias Schmidt <schmidt@owl.openwall.com> 3.0pl2-owl0.4
+* Sun Sep 14 2003 Matthias Schmidt <schmidt-at-owl.openwall.com> 3.0pl2-owl0.4
 - Create three subdirectories for dhcpd and dhclient under /var/lib/dhcp
 
-* Tue Sep 09 2003 Matthias Schmidt <schmidt@owl.openwall.com> 3.0pl2-owl0.3
+* Tue Sep 09 2003 Matthias Schmidt <schmidt-at-owl.openwall.com> 3.0pl2-owl0.3
 - Minor changes in the drop-root patch
 - Set the permissions for /var/lib/dhcp correctly
 - Passing options to dhcpd via /etc/sysconfig/dhcpd
 - Fix for the remaining 34 warnings
 
-* Tue Sep 09 2003 Solar Designer <solar@owl.openwall.com> 3.0pl2-owl0.2
+* Tue Sep 09 2003 Solar Designer <solar-at-owl.openwall.com> 3.0pl2-owl0.2
 - Applied the initial set of corrections.
 - Pass the optflags correctly.
 - Changed -Wall to -Wall -Wno-unused, this reduces the number of warnings
 from 418 to 34; the remaining warnings need to be dealt with.
 
-* Mon May 05 2003 Matthias Schmidt <schmidt@owl.openwall.com> 3.0pl2-owl0.1
+* Mon May 05 2003 Matthias Schmidt <schmidt-at-owl.openwall.com> 3.0pl2-owl0.1
 - Initial release (3.0pl2)
 - chroot patch for dhcpd and dhcrelay
 - Modified a client-patch from Red Hat

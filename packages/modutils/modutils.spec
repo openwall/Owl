@@ -1,4 +1,4 @@
-# $Id: Owl/packages/modutils/modutils.spec,v 1.20 2005/10/23 22:14:13 solar Exp $
+# $Id: Owl/packages/modutils/modutils.spec,v 1.21 2005/10/24 03:06:27 solar Exp $
 
 Summary: Kernel module utilities.
 Name: modutils
@@ -64,7 +64,7 @@ fi
 %_mandir/*/*
 
 %changelog
-* Fri Nov 05 2004 Solar Designer <solar@owl.openwall.com> 2.4.27-owl1
+* Fri Nov 05 2004 Solar Designer <solar-at-owl.openwall.com> 2.4.27-owl1
 - Fixed two new compiler warnings.
 
 * Thu Oct 14 2004 Maxim Timofeyev <tma@tma.spb.ru> 2.4.27-owl0
@@ -72,33 +72,33 @@ fi
 - Remove modutils-2.4.16-owl-warnings.diff
 - Update alt-owl-aliases.diff
 
-* Mon Jun 10 2002 Michail Litvak <mci@owl.openwall.com> 2.4.16-owl1
+* Mon Jun 10 2002 Michail Litvak <mci-at-owl.openwall.com> 2.4.16-owl1
 - v2.4.16
 - reviewed patches, added patches from ALT
 - build with -Wall
 
-* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
+* Wed Feb 06 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions
 
-* Wed Nov 22 2000 Solar Designer <solar@owl.openwall.com>
+* Wed Nov 22 2000 Solar Designer <solar-at-owl.openwall.com>
 - v2.3.21
 
-* Tue Nov 21 2000 Solar Designer <solar@owl.openwall.com>
+* Tue Nov 21 2000 Solar Designer <solar-at-owl.openwall.com>
 - Added a patch by Andreas Hasenack of Conectiva to fix a typo in the
 recent security fix to modprobe.c.
 
-* Fri Nov 17 2000 Solar Designer <solar@owl.openwall.com>
+* Fri Nov 17 2000 Solar Designer <solar-at-owl.openwall.com>
 - v2.3.20
 - Pass plain sparc- target to configure when building for sparcv9, to
 allow for the use of sparcv9 optflags while not confusing configure.
 
-* Wed Oct 25 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Wed Oct 25 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - v2.3.19
 
-* Wed Oct 18 2000 Solar Designer <solar@owl.openwall.com>
+* Wed Oct 18 2000 Solar Designer <solar-at-owl.openwall.com>
 - Removed /etc/cron.d/kmod
 
-* Sun Oct 01 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Oct 01 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import spec from RH
 - fix aliases
 - v2.3.17

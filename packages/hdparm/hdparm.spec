@@ -1,4 +1,4 @@
-# $Id: Owl/packages/hdparm/hdparm.spec,v 1.15 2005/10/24 02:22:11 solar Exp $
+# $Id: Owl/packages/hdparm/hdparm.spec,v 1.16 2005/10/24 03:06:24 solar Exp $
 
 Summary: A utility for displaying and/or setting hard disk parameters.
 Name: hdparm
@@ -36,30 +36,30 @@ install -m 644 hdparm.8 %buildroot%_mandir/man8/
 %_mandir/man8/hdparm.8*
 
 %changelog
-* Sun Nov 28 2004 Michail Litvak <mci@owl.openwall.com> 5.8-owl1
+* Sun Nov 28 2004 Michail Litvak <mci-at-owl.openwall.com> 5.8-owl1
 - 5.8
 
-* Wed Jan 08 2003 Michail Litvak <mci@owl.openwall.com> 5.3-owl1
+* Wed Jan 08 2003 Michail Litvak <mci-at-owl.openwall.com> 5.3-owl1
 - 5.3
 - Updated -warnings.diff.
 
-* Tue Nov 05 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Nov 05 2002 Solar Designer <solar-at-owl.openwall.com>
 - Package README.acoustic.
 
-* Mon Nov 04 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Nov 04 2002 Michail Litvak <mci-at-owl.openwall.com>
 - 5.2
 - Fixed building with -Wall
 
-* Sun Feb 03 2002 Michail Litvak <mci@owl.openwall.com>
+* Sun Feb 03 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions
 
-* Sat Mar 31 2001 Michail Litvak <mci@owl.openwall.com>
+* Sat Mar 31 2001 Michail Litvak <mci-at-owl.openwall.com>
 - description fix
 
-* Wed Mar 28 2001 Michail Litvak <mci@owl.openwall.com>
+* Wed Mar 28 2001 Michail Litvak <mci-at-owl.openwall.com>
 - use sed instead of perl
 - removed old RH changelog
 
-* Tue Mar 27 2001 Michail Litvak <mci@owl.openwall.com>
+* Tue Mar 27 2001 Michail Litvak <mci-at-owl.openwall.com>
 - Import spec from RH.
 - version 4.1

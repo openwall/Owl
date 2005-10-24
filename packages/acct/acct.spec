@@ -1,4 +1,4 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.27 2005/10/24 01:56:46 solar Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.28 2005/10/24 03:06:20 solar Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
@@ -107,55 +107,55 @@ fi
 %_infodir/*
 
 %changelog
-* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 6.3.5-owl14
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.3.5-owl14
 - /var/account is owned by owl-hier and uses more restrictive permissions,
 so I've removed it from this package.
 - Cleaned up the spec for consistency.
 
-* Wed Jul 21 2004 Michail Litvak <mci@owl.openwall.com> 6.3.5-owl13
+* Wed Jul 21 2004 Michail Litvak <mci-at-owl.openwall.com> 6.3.5-owl13
 - Use sed -i.
 
-* Thu Feb 26 2004 Michail Litvak <mci@owl.openwall.com> 6.3.5-owl12
+* Thu Feb 26 2004 Michail Litvak <mci-at-owl.openwall.com> 6.3.5-owl12
 - Don't call autoconf.
 
-* Mon May 05 2003 Solar Designer <solar@owl.openwall.com> 6.3.5-owl11
+* Mon May 05 2003 Solar Designer <solar-at-owl.openwall.com> 6.3.5-owl11
 - Added a patch from Denis Ducamp to support /dev/pts in lastcomm(1).
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Deal with info dir entries such that the menu looks pretty.
 
-* Mon Aug 05 2002 Solar Designer <solar@owl.openwall.com>
+* Mon Aug 05 2002 Solar Designer <solar-at-owl.openwall.com>
 - Use a more generic script to remove the obsolete info dir entry.
 
-* Sun Mar 24 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Mar 24 2002 Solar Designer <solar-at-owl.openwall.com>
 - Heavy documentation corrections and cleanups (both man pages and texinfo).
 - Minor spec file cleanups.
 
-* Fri Mar 22 2002 Michail Litvak <mci@owl.openwall.com>
+* Fri Mar 22 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Fixed sa(8) to properly report real time in minutes or seconds.
 - Fixes to build with -Wall cleanly.
 
-* Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Jan 24 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Sat Apr 14 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Apr 14 2001 Solar Designer <solar-at-owl.openwall.com>
 - Preserve permissions of /etc/info-dir when modifying it in %post.
 
-* Thu Apr 12 2001 Solar Designer <solar@owl.openwall.com>
+* Thu Apr 12 2001 Solar Designer <solar-at-owl.openwall.com>
 - acct.logrotate: nocreate (we create the file from the postrotate script).
 
-* Wed Apr 11 2001 Michail Litvak <mci@owl.openwall.com>
+* Wed Apr 11 2001 Michail Litvak <mci-at-owl.openwall.com>
 - added chkconfig support in init script
 - improved logrotate config
 - more cleanups...
 
-* Mon Apr 08 2001 Michail Litvak <mci@owl.openwall.com>
+* Mon Apr 08 2001 Michail Litvak <mci-at-owl.openwall.com>
 - spec cleanups
 - acct.logrotate and acct.init was rewritten
 - Obsoletes: psacct
 - Use %ghost for /var/account/*
 
-* Mon Apr 02 2001 Michail Litvak <mci@owl.openwall.com>
+* Mon Apr 02 2001 Michail Litvak <mci-at-owl.openwall.com>
 - Imported spec from RH (some parts from Mandrake)
 - update to 6.3.5, fixed source location
 - dump-acct, dump-utmp manpages from Debian

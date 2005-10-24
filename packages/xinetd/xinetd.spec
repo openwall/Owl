@@ -1,4 +1,4 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.32 2005/10/24 01:56:49 solar Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.33 2005/10/24 03:06:32 solar Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
@@ -116,101 +116,101 @@ fi
 - Applied two patches from ALT's xinetd-2.3.13-alt3 package.
 - Fixed compilation warnings.
 
-* Mon May 03 2004 Solar Designer <solar@owl.openwall.com> 2.3.12-owl4
+* Mon May 03 2004 Solar Designer <solar-at-owl.openwall.com> 2.3.12-owl4
 - Bumped release to correctly reflect the rebuild against shared libwrap.
 
-* Fri Sep 12 2003 Solar Designer <solar@owl.openwall.com> 2.3.12-owl3
+* Fri Sep 12 2003 Solar Designer <solar-at-owl.openwall.com> 2.3.12-owl3
 - Another fix from the CVS (originally submitted by Red Hat):
 Occasionally, Smorefds didn't allocate more fds as expected.
 
-* Fri Sep 05 2003 Solar Designer <solar@owl.openwall.com> 2.3.12-owl2
+* Fri Sep 05 2003 Solar Designer <solar-at-owl.openwall.com> 2.3.12-owl2
 - Back-ported a fix from the CVS, thanks to Steve Grubb:
 Add NULL entry to success_log_options to properly end the nvlist.
 - With IPv6, correctly extract IPv4 mapped addresses from sa_data:
 http://marc.theaimsgroup.com/?l=xinetd&m=106027800730549
 
-* Mon Aug 25 2003 Solar Designer <solar@owl.openwall.com> 2.3.12-owl1
+* Mon Aug 25 2003 Solar Designer <solar-at-owl.openwall.com> 2.3.12-owl1
 - Updated to 2.3.12.
 
-* Wed Apr 16 2003 Solar Designer <solar@owl.openwall.com> 2.3.11-owl1
+* Wed Apr 16 2003 Solar Designer <solar-at-owl.openwall.com> 2.3.11-owl1
 - Updated to 2.3.11.
 
-* Mon Feb 24 2003 Michail Litvak <mci@owl.openwall.com>
+* Mon Feb 24 2003 Michail Litvak <mci-at-owl.openwall.com>
 - TCPMUX parser updates. -Steve Grubb
 - TCPMUX was causing core dumps due to changes made in 2.3.10's
   child_process(), reverted changes. -Philip Armstrong
 - Fix from ALT Linux Team (fixed a bounds check in Sdone())
 
-* Sat Jan 18 2003 Solar Designer <solar@owl.openwall.com>
+* Sat Jan 18 2003 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 2.3.10, with its meaningless change to Sdone() reverted.
 
-* Thu Dec 19 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Dec 19 2002 Solar Designer <solar-at-owl.openwall.com>
 - New release number for linking against tcp_wrappers with Steve Grubb's
 error handling fix.
 
-* Mon Oct 28 2002 Solar Designer <solar@owl.openwall.com>
+* Mon Oct 28 2002 Solar Designer <solar-at-owl.openwall.com>
 - Build with load averages support.
 
-* Sat Sep 28 2002 Solar Designer <solar@owl.openwall.com>
+* Sat Sep 28 2002 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 2.3.9, dropping the patch (included).
 
-* Thu Sep 19 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Sep 19 2002 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 2.3.8 with a new set of minor fixes.
 
-* Sun Aug 11 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Aug 11 2002 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 2.3.6 adding fixes or workarounds for issues introduced after
 2.3.3 including the signal pipe leak into child processes (a security hole
 with 2.3.4+).
 - Made xinetd also unlink its PID file when exiting on reload.
 
-* Sat Feb 02 2002 Solar Designer <solar@owl.openwall.com>
+* Sat Feb 02 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 - Dropped the unused xinetd-inetdconvert.
 
-* Mon Nov 05 2001 Solar Designer <solar@owl.openwall.com>
+* Mon Nov 05 2001 Solar Designer <solar-at-owl.openwall.com>
 - /etc/init.d -> /etc/rc.d/init.d for consistency.
 
-* Thu Aug 30 2001 Solar Designer <solar@owl.openwall.com>
+* Thu Aug 30 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 2.3.3.
 - Dropped the big -audit patch all of which went into xinetd 2.3.1+.
 - Added the unlinking of PID file when exiting due to no services.
 
-* Sat Jul 28 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Jul 28 2001 Solar Designer <solar-at-owl.openwall.com>
 - Handle the case of nonexistent /etc/sysconfig/network correctly.
 - Don't -stayalive, we may invent a reload-or-start option instead.
 
-* Sun Jul 22 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Jul 22 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated the -audit patch based on results of testing by Michail Litvak
 <mci@owl.openwall.com>, by ALT Linux Team, and at DataForce ISP.
 
-* Thu Jul 05 2001 Solar Designer <solar@owl.openwall.com>
+* Thu Jul 05 2001 Solar Designer <solar-at-owl.openwall.com>
 - Applied _many_ security and reliability fixes (in fact so many that
 there have to be new bugs as well and testing is needed), see AUDIT.
 The patch is 100 KB large.
 
-* Fri Jun 29 2001 Solar Designer <solar@owl.openwall.com>
+* Fri Jun 29 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 2.3.0, which fixes the problem with xinetd's string handling
 routines discovered by Sebastian Krahmer of SuSE Security Team.
 - Dropped the 2.1.8.9pre15 patches (incorporated into 2.1.8.9pre16+).
 
-* Tue Jun 12 2001 Solar Designer <solar@owl.openwall.com>
+* Tue Jun 12 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 2.1.8.9pre15.
 - With includedir, skip all files with names containing a dot ('.') or
 ending with a tilde ('~'); this replaces the Red Hat Linux derived patch.
 - Minor man page fixes.
 
-* Wed May 30 2001 Solar Designer <solar@owl.openwall.com>
+* Wed May 30 2001 Solar Designer <solar-at-owl.openwall.com>
 - Ensure the umask is no less restrictive than 022.
 
-* Sat Jan 06 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Jan 06 2001 Solar Designer <solar-at-owl.openwall.com>
 - Corrected the use of "--" in the startup script.
 
-* Fri Dec 15 2000 Solar Designer <solar@owl.openwall.com>
+* Fri Dec 15 2000 Solar Designer <solar-at-owl.openwall.com>
 - Changed the default xinetd.conf.
 - Startup script cleanups.
 - Restart after package upgrades in an owl-startup compatible way.
 
-* Mon Dec 11 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Mon Dec 11 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import
 - xinetd.init -> owl-startup
 - 2.1.8.9pre13

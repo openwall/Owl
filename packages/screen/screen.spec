@@ -1,4 +1,4 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.36 2005/10/20 16:00:47 galaxy Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.37 2005/10/24 03:06:29 solar Exp $
 
 Summary: A screen manager that supports multiple sessions on one terminal.
 Name: screen
@@ -127,46 +127,46 @@ fi
 /usr/share/terminfo/s/screen*
 
 %changelog
-* Tue Oct 18 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.0.2-owl5
+* Tue Oct 18 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.0.2-owl5
 - Added -owl-Makefile.diff which fixes the usage of tic.
 - Packaged /usr/share/terminfo/s/screen*.
 - Removed redundant CFLAGS from make.
 - Replaced 'make' with '%%__make'.
 
-* Fri Aug 26 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.0.2-owl4
+* Fri Aug 26 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.0.2-owl4
 - Added system logger initialization to builtin locker.
 - Allowed users with empty passwords to use builtin locker.
 - Corrected info files installation.
 
-* Sat Jun 25 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.0.2-owl3
+* Sat Jun 25 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.0.2-owl3
 - Do not link with -lelf even if the library is available during build.
 
-* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 4.0.2-owl2
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.0.2-owl2
 - Fixed orphaned files in %_libexecdir/screen created by %triggerin.
 - Removed unneeded rm -f of %_bindir/screen{,.old}
 
-* Fri Jan 09 2004 Michail Litvak <mci@owl.openwall.com> 4.0.2-owl1
+* Fri Jan 09 2004 Michail Litvak <mci-at-owl.openwall.com> 4.0.2-owl1
 - 4.0.2
 - Dropped obsoleted patches.
 
-* Sun Dec 14 2003 Michail Litvak <mci@owl.openwall.com> 3.9.10-owl8
+* Sun Dec 14 2003 Michail Litvak <mci-at-owl.openwall.com> 3.9.10-owl8
 - Patch from 4.0.2 upstream version - buffer overflow fix in
 ANSI characters handling (reported by Timo Sirainen).
 
-* Thu Apr 17 2003 Solar Designer <solar@owl.openwall.com> 3.9.10-owl7
+* Thu Apr 17 2003 Solar Designer <solar-at-owl.openwall.com> 3.9.10-owl7
 - Pass prefix= and count= to pam_tcb also for authentication such that it
 can use this information to reduce timing leaks.
 
-* Mon Apr 07 2003 Dmitry V. Levin <ldv@owl.openwall.com> 3.9.10-owl6
+* Mon Apr 07 2003 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.9.10-owl6
 - Updated pam_userpass support: build with libpam_userpass.
 
-* Wed Dec 25 2002 Dmitry V. Levin <ldv@owl.openwall.com> 3.9.10-owl5
+* Wed Dec 25 2002 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.9.10-owl5
 - Migrated to libutempter.
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Deal with info dir entries such that the menu looks pretty.
 
-* Sun May 19 2002 Solar Designer <solar@owl.openwall.com>
+* Sun May 19 2002 Solar Designer <solar-at-owl.openwall.com>
 - Grant screen access to both chkpwd and utempter helpers via a group
 screen restricted directory and hard links.
 - Switch egid for the PAM authentication making use of POSIX saved ID's.
@@ -175,44 +175,44 @@ only used for SUID installation, not SGID, and would claim to dump core
 which it indeed can't do).
 - Additional convention enforcement on patch file names.
 
-* Tue Feb 05 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Feb 05 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Fri Nov 16 2001 Solar Designer <solar@owl.openwall.com>
+* Fri Nov 16 2001 Solar Designer <solar-at-owl.openwall.com>
 - Use pam_tcb.
 - Build with -Wall.
 
-* Tue Nov 13 2001 Solar Designer <solar@owl.openwall.com>
+* Tue Nov 13 2001 Solar Designer <solar-at-owl.openwall.com>
 - Corrected the package description.
 
-* Tue Nov 13 2001 Michail Litvak <mci@owl.openwall.com>
+* Tue Nov 13 2001 Michail Litvak <mci-at-owl.openwall.com>
 - 3.9.10
 - more tmp fixes in configure
 
-* Sun Oct 07 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Oct 07 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updates to appl_userpass.c to support building against Linux-PAM 0.74+.
 
-* Fri Aug 03 2001 Michail Litvak <mci@owl.openwall.com>
+* Fri Aug 03 2001 Michail Litvak <mci-at-owl.openwall.com>
 - install doc/FAQ as FAQ instead link to doc/FAQ
 
-* Wed Jun 13 2001 Michail Litvak <mci@owl.openwall.com>
+* Wed Jun 13 2001 Michail Litvak <mci-at-owl.openwall.com>
 - updated to 3.9.9
 - patch configure to avoid non secure file creation in /tmp
 
-* Mon Mar 19 2001 Solar Designer <solar@owl.openwall.com>
+* Mon Mar 19 2001 Solar Designer <solar-at-owl.openwall.com>
 - screen.pam: explicit pam_deny for everything but authentication.
 
-* Sat Mar 10 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Mar 10 2001 Solar Designer <solar-at-owl.openwall.com>
 - Don't require and link against libpam_misc.
 
-* Sat Mar 10 2001 Michail Litvak <mci@owl.openwall.com>
+* Sat Mar 10 2001 Michail Litvak <mci-at-owl.openwall.com>
 - example user's .screenrc moved to doc
 - added patch to builtin telnet (bcopy->memmove)
 - spec, patches cleanups
 
-* Thu Mar 08 2001 Michail Litvak <mci@owl.openwall.com>
+* Thu Mar 08 2001 Michail Litvak <mci-at-owl.openwall.com>
 - Many patches removed and other reworked
 
-* Sat Mar 03 2001 Michail Litvak <mci@owl.openwall.com>
+* Sat Mar 03 2001 Michail Litvak <mci-at-owl.openwall.com>
 - Added patches imported from Debian, RedHat
 - PAM support for screen locking via pam_userpass

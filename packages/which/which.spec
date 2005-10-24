@@ -1,4 +1,4 @@
-# $Id: Owl/packages/which/which.spec,v 1.8 2005/10/24 01:56:49 solar Exp $
+# $Id: Owl/packages/which/which.spec,v 1.9 2005/10/24 03:06:32 solar Exp $
 
 Summary: Displays where a particular program in your path is located.
 Name: which
@@ -42,9 +42,9 @@ rm %buildroot%_infodir/which.info*
 %_mandir/*/*
 
 %changelog
-* Sat Feb 02 2002 Solar Designer <solar@owl.openwall.com> 2.12-owl2
+* Sat Feb 02 2002 Solar Designer <solar-at-owl.openwall.com> 2.12-owl2
 - Enforce our new spec file conventions.
 
-* Sun Nov 19 2000 Michail Litvak <mci@owl.openwall.com>
+* Sun Nov 19 2000 Michail Litvak <mci-at-owl.openwall.com>
 - Imported from RH.
 - update to 2.12

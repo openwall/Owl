@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iproute2/iproute2.spec,v 1.20 2005/10/24 02:22:11 solar Exp $
+# $Id: Owl/packages/iproute2/iproute2.spec,v 1.21 2005/10/24 03:06:24 solar Exp $
 
 %define ver 2.4.7
 %define snapshot ss020116
@@ -86,35 +86,35 @@ gzip -9nf iproute2-ps/*.ps
 %_mandir/man8/*
 
 %changelog
-* Sat Mar 05 2005 Michail Litvak <mci@owl.openwall.com> 2.4.7.ss020116-owl3
+* Sat Mar 05 2005 Michail Litvak <mci-at-owl.openwall.com> 2.4.7.ss020116-owl3
 - Added patch to support HTB qdisc.
 
-* Sun Apr 18 2004 Solar Designer <solar@owl.openwall.com> 2.4.7.ss020116-owl2
+* Sun Apr 18 2004 Solar Designer <solar-at-owl.openwall.com> 2.4.7.ss020116-owl2
 - Fixed the potential buffer overflow in nstat discovered by Steve Grubb,
 and a number of other related potential issues in nstat.
 
-* Sat Nov 22 2003 Michail Litvak <mci@owl.openwall.com> 2.4.7.ss020116-owl1
+* Sat Nov 22 2003 Michail Litvak <mci-at-owl.openwall.com> 2.4.7.ss020116-owl1
 - reduce -owl-socketbits.diff to include only sockaddr_storage
 definition.
 - Added patch from Herbert Xu to prevent a local denial of service attack
 via sending unicast netlink messages to any process on the system.
 
-* Sun Oct 12 2003 Michail Litvak <mci@owl.openwall.com> 2.4.7-owl5
+* Sun Oct 12 2003 Michail Litvak <mci-at-owl.openwall.com> 2.4.7-owl5
 - ss020116
 - Fixed building with kernel >= 2.4.22.
 - Dropped some obsolete patches.
 - Include some new tools (ifstat, nstat, rtstat, ss)
 
-* Mon Apr 01 2002 Solar Designer <solar@owl.openwall.com>
+* Mon Apr 01 2002 Solar Designer <solar-at-owl.openwall.com>
 - More formatting fixes to ip.8; the tc*.8 man pages remain _very_ dirty.
 - Compilation warning fixes on Alpha (builds with -Wall cleanly now).
 
-* Mon Feb 11 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Feb 11 2002 Michail Litvak <mci-at-owl.openwall.com>
 - add manpages
 - add PostScript documentation
 
-* Thu Feb 07 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Feb 07 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Tue Dec 28 2001 Michail Litvak <mci@owl.openwall.com>
+* Tue Dec 28 2001 Michail Litvak <mci-at-owl.openwall.com>
 - spec-file based on RH's

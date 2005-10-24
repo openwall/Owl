@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gnupg/gnupg.spec,v 1.27 2005/10/08 23:34:22 solar Exp $
+# $Id: Owl/packages/gnupg/gnupg.spec,v 1.28 2005/10/24 03:06:24 solar Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
@@ -84,48 +84,48 @@ fi
 %exclude %_infodir/dir
 
 %changelog
-* Fri Dec 03 2004 Michail Litvak <mci@owl.openwall.com> 1.2.6-owl1
+* Fri Dec 03 2004 Michail Litvak <mci-at-owl.openwall.com> 1.2.6-owl1
 - 1.2.6
 - Dropped patch which was included into upstream.
 - Package gpgsplit tool.
 
-* Sat Nov 29 2003 Michail Litvak <mci@owl.openwall.com> 1.2.2-owl3
+* Sat Nov 29 2003 Michail Litvak <mci-at-owl.openwall.com> 1.2.2-owl3
 - Added patch by David Shaw to disable the ability to create signatures
 using the ElGamal sign+encrypt (type 20) keys as well as to remove
 the option to create such keys.
 
-* Fri May 16 2003 Michail Litvak <mci@owl.openwall.com> 1.2.2-owl2
+* Fri May 16 2003 Michail Litvak <mci-at-owl.openwall.com> 1.2.2-owl2
 - %dir %_datadir/gnupg
 
-* Sun May 11 2003 Michail Litvak <mci@owl.openwall.com> 1.2.2-owl1
+* Sun May 11 2003 Michail Litvak <mci-at-owl.openwall.com> 1.2.2-owl1
 - 1.2.2 (Fixed key validity bug)
 - built with --included-gettext
 - spec file cleanups
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Deal with info dir entries such that the menu looks pretty.
 
-* Fri May 17 2002 Michail Litvak <mci@owl.openwall.com>
+* Fri May 17 2002 Michail Litvak <mci-at-owl.openwall.com>
 - 1.0.7
 - updated -fw-secret-key-checks patch (by Florian Weimer,
   http://cert.uni-stuttgart.de/files/fw/gnupg-klima-rosa.diff)
 - add info files into package
 
-* Sun Feb 03 2002 Michail Litvak <mci@owl.openwall.com>
+* Sun Feb 03 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions
 
-* Wed May 30 2001 Solar Designer <solar@owl.openwall.com>
+* Wed May 30 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 1.0.6.
 
-* Sun May 27 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun May 27 2001 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - upgraded to 1.0.5
 
-* Mon Mar 26 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Mon Mar 26 2001 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - additional checks to secret key
 - add the --allow-secret-key-import patch from CVS
 
-* Thu Dec 14 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Thu Dec 14 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - detached signatures security fix
 
-* Wed Oct 25 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Wed Oct 25 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import from RH

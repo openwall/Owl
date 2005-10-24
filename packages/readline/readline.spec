@@ -1,4 +1,4 @@
-# $Id: Owl/packages/readline/readline.spec,v 1.21 2005/10/24 02:22:13 solar Exp $
+# $Id: Owl/packages/readline/readline.spec,v 1.22 2005/10/24 03:06:29 solar Exp $
 
 %define compat_list 3 3.0 4.0 4.1 4.2
 
@@ -141,31 +141,31 @@ fi
 %_libdir/lib*.so
 
 %changelog
-* Wed Feb 18 2004 Michail Litvak <mci@owl.openwall.com> 4.3-owl1
+* Wed Feb 18 2004 Michail Litvak <mci-at-owl.openwall.com> 4.3-owl1
 - 4.3
 - Added official patches, patches from Alt Linux Team,
 dropped outdated patches.
 - Provide symlinks for compatibility with previous versions of readline.
 
-* Sat Jan 17 2004 Solar Designer <solar@owl.openwall.com> 4.1-owl11
+* Sat Jan 17 2004 Solar Designer <solar-at-owl.openwall.com> 4.1-owl11
 - Remove /usr/doc/examples with a trigger on package upgrades.
 
-* Thu Jan 15 2004 Michail Litvak <mci@owl.openwall.com> 4.1-owl10
+* Thu Jan 15 2004 Michail Litvak <mci-at-owl.openwall.com> 4.1-owl10
 - Put examples to right place.
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 4.1-owl9
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 4.1-owl9
 - Deal with info dir entries such that the menu looks pretty.
 
-* Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com>
+* Wed Feb 06 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Fri Dec 08 2000 Michail Litvak <mci@owl.openwall.com>
+* Fri Dec 08 2000 Michail Litvak <mci-at-owl.openwall.com>
 - optflags_lib support.
 
-* Wed Dec 06 2000 Michail Litvak <mci@owl.openwall.com>
+* Wed Dec 06 2000 Michail Litvak <mci-at-owl.openwall.com>
 - hack for compatibility with readline2
 - spec file cleanups
 
-* Tue Dec 05 2000 Michail Litvak <mci@owl.openwall.com>
+* Tue Dec 05 2000 Michail Litvak <mci-at-owl.openwall.com>
 - Imported from RH
 - added Debian patches

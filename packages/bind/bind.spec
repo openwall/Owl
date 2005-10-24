@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bind/bind.spec,v 1.12 2005/10/24 02:34:30 solar Exp $
+# $Id: Owl/packages/bind/bind.spec,v 1.13 2005/10/24 03:06:22 solar Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -350,18 +350,18 @@ fi
 %_mandir/man8/nsupdate.8*
 
 %changelog
-* Fri Oct 21 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 9.3.1-owl4
+* Fri Oct 21 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 9.3.1-owl4
 - Removed '|| :' from touch in %%pre.
 
-* Tue Sep 27 2005 Dmitry V. Levin <ldv@owl.openwall.com> 9.3.1-owl3
+* Tue Sep 27 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.1-owl3
 - Removed syslog restart code from the %%post script.
 
-* Mon Sep 26 2005 Dmitry V. Levin <ldv@owl.openwall.com> 9.3.1-owl2
+* Mon Sep 26 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.1-owl2
 - Made build of -devel subpackage conditional and disabled it by default.
 - Fixed /etc/syslog.d/named symlink.
 - In %%post script, restart syslog service instead of reload, to make
 syslogd start listening on the additional socket.
 
-* Fri Sep 23 2005 Dmitry V. Levin <ldv@owl.openwall.com> 9.3.1-owl1
+* Fri Sep 23 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.1-owl1
 - Initial release, based on ALT's bind-9.3.1-alt1 package and initial
 packaging made by (GalaxyMaster).

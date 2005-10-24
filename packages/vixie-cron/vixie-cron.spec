@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.41 2005/10/24 02:22:14 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.42 2005/10/24 03:06:32 solar Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
@@ -145,39 +145,39 @@ fi
 %attr(640,root,crontab) %config(noreplace) /etc/*.deny
 
 %changelog
-* Sat Sep 24 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.1.20040916-owl4
+* Sat Sep 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.1.20040916-owl4
 - Added crond to the package provides list.
 
-* Sat Jun 25 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.1.20040916-owl3
+* Sat Jun 25 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.1.20040916-owl3
 - Fixed typo in two error messages introduced by PAM support patch.
 
-* Wed Jun 22 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.1.20040916-owl2
+* Wed Jun 22 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.1.20040916-owl2
 - Imported patch from ALT that implements PAM accounting and session
 management support.
 - Enabled use of getloadavg(3).
 
-* Mon Mar 14 2005 Solar Designer <solar@owl.openwall.com> 4.1.20040916-owl1
+* Mon Mar 14 2005 Solar Designer <solar-at-owl.openwall.com> 4.1.20040916-owl1
 - Applied many assorted corrections and cleanups.
 
-* Sun Feb 20 2005 Juan M. Bello Rivas <jmbr@owl.openwall.com> 4.1.20040916-owl0.1
+* Sun Feb 20 2005 Juan M. Bello Rivas <jmbr-at-owl.openwall.com> 4.1.20040916-owl0.1
 - Updated to 4.1 as found in OpenBSD CVS snapshot dated 2004/09/16, with
 modifications by Jarno Huuskonen and Dmitry V. Levin.
 
-* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.0.2.7-owl19
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.0.2.7-owl19
 - Removed verify checks for crontab binary since we are controlling it
 through owl-control facility.
 - Added a patch to deal with issues after gcc upgrade.
 - Cleaned up the spec.
 
-* Sun Feb 29 2004 Michail Litvak <mci@owl.openwall.com> 3.0.2.7-owl18
+* Sun Feb 29 2004 Michail Litvak <mci-at-owl.openwall.com> 3.0.2.7-owl18
 - Fixed -owl-linux.diff to build on glibc 2.3.2.
 
-* Wed Jan 29 2003 Michail Litvak <mci@owl.openwall.com> 3.0.2.7-owl17
+* Wed Jan 29 2003 Michail Litvak <mci-at-owl.openwall.com> 3.0.2.7-owl17
 - Added patch from OpenBSD for setting SIG_DFL action instead of SIG_IGN
 for SIGCHLD signal; this fixes the problem with Perl's scripts which run
 from cron.
 
-* Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Nov 03 2002 Solar Designer <solar-at-owl.openwall.com>
 - Dump/restore the owl-control setting for crontab on package upgrades.
 - Keep crontab at mode 700 ("restricted") in the package, but default
 it to "public" in %post when the package is first installed.  This avoids
@@ -186,56 +186,56 @@ a race and fail-open behavior.
 package from over a year ago, -- it would wrongly go off on each upgrade
 or uninstall of the new package because of our new version numbering.
 
-* Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Jul 07 2002 Solar Designer <solar-at-owl.openwall.com>
 - Use grep -q in %pre.
 
-* Thu May 09 2002 Solar Designer <solar@owl.openwall.com>
+* Thu May 09 2002 Solar Designer <solar-at-owl.openwall.com>
 - Ensure all files are closed in crontab(1) when the editor is run; this
 fixes the problem pointed out by Paul Starzetz on Bugtraq where crontab
 could leak read-only access to /etc/cron.{allow,deny} even if those files
 are made readable to just group crontab.
 
-* Thu Apr 25 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Apr 25 2002 Solar Designer <solar-at-owl.openwall.com>
 - vitmp has been moved to /bin.
 
-* Sun Apr 21 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Apr 21 2002 Solar Designer <solar-at-owl.openwall.com>
 - Use /usr/libexec/vitmp in crontab(1).
 
-* Sat Feb 02 2002 Solar Designer <solar@owl.openwall.com>
+* Sat Feb 02 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 - Use the _mandir macro.
 
-* Mon Nov 05 2001 Solar Designer <solar@owl.openwall.com>
+* Mon Nov 05 2001 Solar Designer <solar-at-owl.openwall.com>
 - Use a trigger to re-create the rc*.d symlinks when upgrading from
 old versions of the package.
 
-* Wed Jul 18 2001 Michail Litvak <mci@owl.openwall.com>
+* Wed Jul 18 2001 Michail Litvak <mci-at-owl.openwall.com>
 - rework spooldirs handling to exclude files with
   filenames containing a dot '.' or ending with '~'
 - spec changes: remove packaging /etc/rc.d/rc*.d/*
   (this is a chkconfig work)
 
-* Mon Jul 16 2001 Michail Litvak <mci@owl.openwall.com>
+* Mon Jul 16 2001 Michail Litvak <mci-at-owl.openwall.com>
 - Patch to support /etc/cron.d dir
 
-* Fri Dec 01 2000 Solar Designer <solar@owl.openwall.com>
+* Fri Dec 01 2000 Solar Designer <solar-at-owl.openwall.com>
 - Adjusted vixie-cron.init for owl-startup.
 - Restart crond after package upgrades in an owl-startup compatible way.
 
-* Sat Oct 28 2000 Solar Designer <solar@owl.openwall.com>
+* Sat Oct 28 2000 Solar Designer <solar-at-owl.openwall.com>
 - Added "|| :" to the test in %post, as it should return success to RPM.
 
-* Mon Aug 21 2000 Solar Designer <solar@owl.openwall.com>
+* Mon Aug 21 2000 Solar Designer <solar-at-owl.openwall.com>
 - Check nlink and permissions as well as the owner of crontabs.
 
-* Sun Aug 20 2000 Solar Designer <solar@owl.openwall.com>
+* Sun Aug 20 2000 Solar Designer <solar-at-owl.openwall.com>
 - crontab is now SGID crontab, not SUID root; the required changes
 have been made to crontab, and the file ownership check has been added
 into crond for this to make sense.
 - Close fd's at crond startup, so they no longer get inherited by cron
 jobs if a custom SHELL= is specified.
 
-* Sat Aug 19 2000 Solar Designer <solar@owl.openwall.com>
+* Sat Aug 19 2000 Solar Designer <solar-at-owl.openwall.com>
 - Based this package on Vixie cron with modifications from NetBSD and
 OpenBSD teams, as found in OpenBSD 2.7.
 - Did a number of changes needed for Linux.

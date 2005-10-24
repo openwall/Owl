@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ltrace/ltrace.spec,v 1.19 2005/06/14 14:32:39 mci Exp $
+# $Id: Owl/packages/ltrace/ltrace.spec,v 1.20 2005/10/24 03:06:27 solar Exp $
 
 Summary: Tracks runtime library calls from dynamically linked executables.
 Name: ltrace
@@ -42,28 +42,28 @@ rm -rf %buildroot%_prefix/doc
 %config /etc/ltrace.conf
 
 %changelog
-* Mon Jun 13 2005 Michail Litvak <mci@owl.openwall.com> 0.3.36-owl1
+* Mon Jun 13 2005 Michail Litvak <mci-at-owl.openwall.com> 0.3.36-owl1
 - 0.3.36
 - Dropped outdated patches, imported -no-root-install patch from ALT.
 - Patch to correct version reported by ltrace -V.
 
-* Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.3.10-owl9
+* Fri Jan 07 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.3.10-owl9
 - Added a patch to deal with "label at end of compound statement" issue.
 - Cleaned up the spec.
 
-* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com> 0.3.10-owl8
+* Wed Feb 06 2002 Michail Litvak <mci-at-owl.openwall.com> 0.3.10-owl8
 - Enforce our new spec file conventions
 
-* Thu Oct 25 2001 Michail Litvak <mci@owl.openwall.com>
+* Thu Oct 25 2001 Michail Litvak <mci-at-owl.openwall.com>
 - fix dangling symlink
 
-* Sun Jan 14 2001 Michail Litvak <mci@owl.openwall.com>
+* Sun Jan 14 2001 Michail Litvak <mci-at-owl.openwall.com>
 - extracted from sparc patch - ltrace-0.3.10-rh-strlen.diff
   (it useful for any arch)
 - fixed some type cast in sparc patch
 
-* Sun Jan 14 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Jan 14 2001 Solar Designer <solar-at-owl.openwall.com>
 - Use the ix86 macro.
 
-* Sun Jan 14 2001 Michail Litvak <mci@owl.openwall.com>
+* Sun Jan 14 2001 Michail Litvak <mci-at-owl.openwall.com>
 - Imported from RH

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libtool/libtool.spec,v 1.16 2005/10/23 22:14:13 solar Exp $
+# $Id: Owl/packages/libtool/libtool.spec,v 1.17 2005/10/24 03:06:25 solar Exp $
 
 %define BUILD_TEST 0
 
@@ -91,35 +91,35 @@ fi
 %_libdir/libltdl.so.*
 
 %changelog
-* Sun Sep 25 2005 Michail Litvak <mci@owl.openwall.com> 1.5.18-owl2
+* Sun Sep 25 2005 Michail Litvak <mci-at-owl.openwall.com> 1.5.18-owl2
 - Don't package .la files.
 
-* Thu May 26 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.5.18-owl1
+* Thu May 26 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.5.18-owl1
 - Updated to 1.5.18, reviewed and updated patches.
 - Applied a change from Debian and ALT: do not add the contents of
 dependency_libs to the link line when linking programs.
 - Corrected info files installation.
 - Added URL.
 
-* Sat Mar 20 2004 Michail Litvak <mci@owl.openwall.com> 1.5.2-owl1.1
+* Sat Mar 20 2004 Michail Litvak <mci-at-owl.openwall.com> 1.5.2-owl1.1
 - Don't install demo in docs, we can do make check if we need this.
 
-* Tue Feb 24 2004 Michail Litvak <mci@owl.openwall.com> 1.5.2-owl1
+* Tue Feb 24 2004 Michail Litvak <mci-at-owl.openwall.com> 1.5.2-owl1
 - 1.5.2
 - Regenerate patches, some spec changes.
 - Add -alt-ltmain-legacy.diff
 
-* Wed Oct 22 2003 Solar Designer <solar@owl.openwall.com> 1.3.5-owl11
+* Wed Oct 22 2003 Solar Designer <solar-at-owl.openwall.com> 1.3.5-owl11
 - Prevent build host name leaks into the generated libtool script.
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1.3.5-owl10
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 1.3.5-owl10
 - Deal with info dir entries such that the menu looks pretty.
 
-* Tue Feb 05 2002 Michail Litvak <mci@owl.openwall.com>
+* Tue Feb 05 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions
 
-* Sun May 06 2001 Solar Designer <solar@owl.openwall.com>
+* Sun May 06 2001 Solar Designer <solar-at-owl.openwall.com>
 - Ensure proper permissions on demo (installed as documentation).
 
-* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import from RH

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/procmail/procmail.spec,v 1.9 2005/10/24 02:22:13 solar Exp $
+# $Id: Owl/packages/procmail/procmail.spec,v 1.10 2005/10/24 03:06:29 solar Exp $
 
 Summary: The procmail mail processing program.
 Name: procmail
@@ -49,25 +49,25 @@ make install \
 %_mandir/man[15]/*
 
 %changelog
-* Tue Jun 28 2005 Dmitry V. Levin <ldv@owl.openwall.com> 3.15.2-owl3
+* Tue Jun 28 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.15.2-owl3
 - Build this package without optimizations based on strict aliasing rules.
 
-* Fri Oct 04 2002 Solar Designer <solar@owl.openwall.com> 3.15.2-owl2
+* Fri Oct 04 2002 Solar Designer <solar-at-owl.openwall.com> 3.15.2-owl2
 - Corrected the mansed script "fix", thanks to Dmitry V. Levin of ALT Linux
 for pointing out that it was broken.
 
-* Tue Aug 13 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Aug 13 2002 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 3.15.2.
 - Added temporary file handling fixes to scripts used during the builds.
 
-* Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com>
+* Wed Feb 06 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Thu May 10 2001 Solar Designer <solar@owl.openwall.com>
+* Thu May 10 2001 Solar Designer <solar-at-owl.openwall.com>
 - Don't let procmail get linked against -lnet (our libnet isn't what
 procmail thinks it is).
 
-* Wed Nov 15 2000 Solar Designer <solar@owl.openwall.com>
+* Wed Nov 15 2000 Solar Designer <solar-at-owl.openwall.com>
 - Checked procmail for a number of possible problems in the handling of
 .procmailrc files, produced a patch.
 - Decided against installing anything SGID by default (fcntl locking is

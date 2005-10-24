@@ -1,4 +1,4 @@
-# $Id: Owl/packages/prtconf/prtconf.spec,v 1.5 2005/10/24 02:22:13 solar Exp $
+# $Id: Owl/packages/prtconf/prtconf.spec,v 1.6 2005/10/24 03:06:29 solar Exp $
 
 Summary: Utilities to dump and modify SPARC OpenPROM.
 Name: prtconf
@@ -40,7 +40,7 @@ gzip -9n examples/*
 %_mandir/man8/eeprom.8*
 
 %changelog
-* Thu Jul 24 2003 Solar Designer <solar@owl.openwall.com> 1.3-owl1
+* Thu Jul 24 2003 Solar Designer <solar-at-owl.openwall.com> 1.3-owl1
 - Adjusted according to our spec file conventions.
 - Compress the examples.
 

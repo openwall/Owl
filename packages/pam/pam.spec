@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.41 2005/10/23 22:14:14 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.42 2005/10/24 03:06:28 solar Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
@@ -264,7 +264,7 @@ gzip -9nf doc/txts/*.txt
 %doc doc/specs/rfc86.0.txt
 
 %changelog
-* Tue Aug 23 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.80-owl1
+* Tue Aug 23 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.80-owl1
 - Updated Linux-PAM to 0.80.
 - Updated pam-redhat to 0.80-1.
 - Reviewed patches, removed obsolete ones, updated all the rest.
@@ -279,51 +279,51 @@ avoid openlog/closelog calls for each logging function invocation.
 - Implemented additional build sanity checks to ensure that all shared
 objects meet certain requirements.
 
-* Tue Jun 28 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.75-owl25
+* Tue Jun 28 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.75-owl25
 - Build this package without optimizations based on strict aliasing rules.
 
-* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.75-owl24
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.75-owl24
 - Removed permissions and group owner verify check for %_libexecdir/chkpwd
 due to %%triggerin.
 - Cleaned up the spec.
 
-* Tue Feb 24 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 0.75-owl23
+* Tue Feb 24 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.75-owl23
 - Moved /lib/*.so to %_libdir where corresponding static archives live
 
-* Thu Feb 19 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 0.75-owl22
+* Thu Feb 19 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.75-owl22
 - Created missing /etc/security directory
 
-* Wed Oct 29 2003 Solar Designer <solar@owl.openwall.com> 0.75-owl21
+* Wed Oct 29 2003 Solar Designer <solar-at-owl.openwall.com> 0.75-owl21
 - Require glibc-crypt_blowfish-devel for builds.
 - Dropped the obsolete "Provides: pam <= 0.75-14owl" tag which was needed
 during our transition to the new Release numbering scheme.
 
-* Sun Aug 10 2003 Solar Designer <solar@owl.openwall.com> 0.75-owl20
+* Sun Aug 10 2003 Solar Designer <solar-at-owl.openwall.com> 0.75-owl20
 - pam_limits: don't invoke setrlimit(2) on limits which are not set
 explicitly as simply resetting RLIMIT_FSIZE to what appears to be its
 current value may decrease the actual limit with LFS.
 
-* Tue Jul 22 2003 Solar Designer <solar@owl.openwall.com> 0.75-owl19
+* Tue Jul 22 2003 Solar Designer <solar-at-owl.openwall.com> 0.75-owl19
 - Patched pam_wheel to never rely on getlogin(3).
 
-* Thu Aug 22 2002 Solar Designer <solar@owl.openwall.com> 0.75-owl18
+* Thu Aug 22 2002 Solar Designer <solar-at-owl.openwall.com> 0.75-owl18
 - Patched pam_motd to behave on errors.
 
-* Sun Jul 28 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Jul 28 2002 Solar Designer <solar-at-owl.openwall.com>
 - Moved pam.d and pam.conf man pages to section 5 where they belong.
 
-* Sat Jul 06 2002 Solar Designer <solar@owl.openwall.com>
+* Sat Jul 06 2002 Solar Designer <solar-at-owl.openwall.com>
 - pam_limits: support stacking for account management (as well as for
 session setup), be fail-close on configuration file reads, report the
 "too many logins" via PAM conversation rather than direct printf(3).
 
-* Sun May 19 2002 Solar Designer <solar@owl.openwall.com>
+* Sun May 19 2002 Solar Designer <solar-at-owl.openwall.com>
 - Moved the chkpwd directory to /usr/libexec.
 
-* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
+* Mon Feb 04 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Mon Nov 19 2001 Solar Designer <solar@owl.openwall.com>
+* Mon Nov 19 2001 Solar Designer <solar-at-owl.openwall.com>
 - Cache pam_get_user() failures such that the conversation function isn't
 called multiple times with the same prompt if pam_get_user() fails and is
 used by more than one module in the stack.
@@ -332,19 +332,19 @@ used by more than one module in the stack.
 - pam_securetty: be fail-close on user lookups, always log failures (not
 just with "debug").
 
-* Fri Nov 16 2001 Solar Designer <solar@owl.openwall.com>
+* Fri Nov 16 2001 Solar Designer <solar-at-owl.openwall.com>
 - Use the trigger on shadow-utils for possibly creating and making use of
 group chkpwd, not just for group shadow.  This makes no difference on Owl
 as either the groups are provided by owl-etc (on new installs) or groupadd
 is already available when this package is installed, but may be useful on
 hybrid systems.
 
-* Thu Nov 15 2001 Solar Designer <solar@owl.openwall.com>
+* Thu Nov 15 2001 Solar Designer <solar-at-owl.openwall.com>
 - No longer build pam_unix, the tcb package will provide compatibility
 symlinks instead.
 - /tmp fixes in the documentation (don't suggest bad practices).
 
-* Sun Oct 07 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Oct 07 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated to Red Hat's 0.75-10 plus our usual patches.
 - Replaced pam_listfile with Michael Tokarev's implementation (see
 http://archives.neohapsis.com/archives/pam-list/2000-12/0084.html).
@@ -354,36 +354,36 @@ file to discourage such misuses.
 - Moved development libraries and header files into a subpackage.
 - Moved the main Linux-PAM documentation into a documentation subpackage.
 
-* Mon Jul 30 2001 Solar Designer <solar@owl.openwall.com>
+* Mon Jul 30 2001 Solar Designer <solar-at-owl.openwall.com>
 - Fixed a double-free bug in pam_pwdb which caused it to segfault after
 successful password changes in some cases.  The bug was specific to Owl.
 
-* Sat May 05 2001 Solar Designer <solar@owl.openwall.com>
+* Sat May 05 2001 Solar Designer <solar-at-owl.openwall.com>
 - Minor updates to use crypt_blowfish interfaces in the now officially
 documented ways.
 
-* Thu Mar 08 2001 Solar Designer <solar@owl.openwall.com>
+* Thu Mar 08 2001 Solar Designer <solar-at-owl.openwall.com>
 - Patched some of the pam_pwdb/pwdb_chkpwd interaction problems.
 - Install pwdb_chkpwd SGID shadow, but restricted to group chkpwd.
 
-* Sat Sep 16 2000 Solar Designer <solar@owl.openwall.com>
+* Sat Sep 16 2000 Solar Designer <solar-at-owl.openwall.com>
 - optflags_lib support.
 
-* Sat Aug 26 2000 Solar Designer <solar@owl.openwall.com>
+* Sat Aug 26 2000 Solar Designer <solar-at-owl.openwall.com>
 - Disabled building of pam_console entirely to avoid the dependency on glib.
 - Removed the (bogus?) dependency on initscripts from this spec file.
 - Added packaging of man pages.
 
-* Tue Aug 08 2000 Solar Designer <solar@owl.openwall.com>
+* Tue Aug 08 2000 Solar Designer <solar-at-owl.openwall.com>
 - Removed pam_console and its related files.
 
-* Sun Jul 16 2000 Solar Designer <solar@owl.openwall.com>
+* Sun Jul 16 2000 Solar Designer <solar-at-owl.openwall.com>
 - Added a password expiration bugfix for pam_pwdb.
 
-* Sun Jul 09 2000 Solar Designer <solar@owl.openwall.com>
+* Sun Jul 09 2000 Solar Designer <solar-at-owl.openwall.com>
 - Added installation of pam_client.h
 
-* Sat Jul 08 2000 Solar Designer <solar@owl.openwall.com>
+* Sat Jul 08 2000 Solar Designer <solar-at-owl.openwall.com>
 - Imported from RH.
 - Ported the Owl pam_pwdb patch from original Linux-PAM-0.72.
 - Disabled pam_cracklib as it's to be replaced with pam_passwdqc (not

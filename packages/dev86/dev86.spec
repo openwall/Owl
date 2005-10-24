@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dev86/dev86.spec,v 1.19 2005/07/03 20:55:27 mci Exp $
+# $Id: Owl/packages/dev86/dev86.spec,v 1.20 2005/10/24 03:06:22 solar Exp $
 
 Summary: A real mode 80x86 assembler and linker.
 Name: dev86
@@ -92,43 +92,43 @@ mv bin86/ChangeLog ChangeLog.bin86
 %_mandir/man1/*
 
 %changelog
-* Thu Jun 30 2005 Michail Litvak <mci@owl.openwall.com> 0.16.17-owl1
+* Thu Jun 30 2005 Michail Litvak <mci-at-owl.openwall.com> 0.16.17-owl1
 - 0.16.17
 - Dropped outdated patches, updated -owl-warnings patch.
 
-* Tue Jun 28 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.16.0-owl7
+* Tue Jun 28 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.16.0-owl7
 - Build this package without optimizations based on strict aliasing rules.
 
-* Sun Jan 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.16.0-owl6
+* Sun Jan 09 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.16.0-owl6
 - Made use of %%__make and %%__cc macros.
 - Added build of dis86 (it seems like we forgot it).
 - Optimized package build by issuing optflags to all compile stages which
 use gcc.
 - Cleaned up the spec.
 
-* Fri Feb 27 2004 Michail Litvak <mci@owl.openwall.com> 0.16.0-owl5
+* Fri Feb 27 2004 Michail Litvak <mci-at-owl.openwall.com> 0.16.0-owl5
 - Patch to fix errno.h usage (from RH).
 - add ar86 to file list.
 
-* Sun Feb 15 2004 Michail Litvak <mci@owl.openwall.com> 0.16.0-owl4
+* Sun Feb 15 2004 Michail Litvak <mci-at-owl.openwall.com> 0.16.0-owl4
 - Correctly install documentation files from subdirectories
 (rename dir/README to README.dir)
 
-* Mon Feb 09 2004 Michail Litvak <mci@owl.openwall.com> 0.16.0-owl3
+* Mon Feb 09 2004 Michail Litvak <mci-at-owl.openwall.com> 0.16.0-owl3
 - Use rpm macros instead just paths.
 
-* Thu Mar 20 2002 Michail Litvak <mci@owl.openwall.com> 0.16.0-owl2
+* Thu Mar 20 2002 Michail Litvak <mci-at-owl.openwall.com> 0.16.0-owl2
 - fixes to build with -Wall without warnings
 
-* Thu Mar 14 2002 Michail Litvak <mci@owl.openwall.com>
+* Thu Mar 14 2002 Michail Litvak <mci-at-owl.openwall.com>
 - 0.16
 
-* Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Jan 24 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Mon Dec 04 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Mon Dec 04 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - optflags fix
 - symlink fix
 
-* Sun Nov 19 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Nov 19 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - 0.15.4

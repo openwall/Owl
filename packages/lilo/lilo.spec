@@ -1,4 +1,4 @@
-# $Id: Owl/packages/lilo/lilo.spec,v 1.19 2005/10/21 13:19:41 solar Exp $
+# $Id: Owl/packages/lilo/lilo.spec,v 1.20 2005/10/24 03:06:26 solar Exp $
 
 %define BUILD_EXTERNAL_SUPPORT 0
 
@@ -84,7 +84,7 @@ test -f /etc/lilo.conf && /sbin/lilo || :
 %_mandir/*/*
 
 %changelog
-* Fri Oct 21 2005 Solar Designer <solar@owl.openwall.com> 22.7.1-owl1
+* Fri Oct 21 2005 Solar Designer <solar-at-owl.openwall.com> 22.7.1-owl1
 - Updated to 22.7.1.
 - Patched second.S to not use the FS register since it appears to be clobbered
 by some BIOSes.
@@ -92,7 +92,7 @@ by some BIOSes.
 - Do package the mkrescue script (we were already packaging its man page),
 but have it patched for safe temporary file handling.
 
-* Mon Jun 13 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 22.7-owl1
+* Mon Jun 13 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 22.7-owl1
 - Updated to 22.7.
 - Added a fix for a typo in the geometry.c file.
 - Added the %%BUILD_EXTERNAL_SUPPORT macro to control the creation of
@@ -100,24 +100,24 @@ but have it patched for safe temporary file handling.
 compiled into the LILO bootloader.
 - Regenerated patches against new version.
 
-* Thu Feb 14 2002 Michail Litvak <mci@owl.openwall.com> 22.1-owl1
+* Thu Feb 14 2002 Michail Litvak <mci-at-owl.openwall.com> 22.1-owl1
 - 22.1
 - removed non-actual patches
 - added patches from ALT Linux and Debian
 
-* Tue Feb 05 2002 Michail Litvak <mci@owl.openwall.com>
+* Tue Feb 05 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions
 
-* Mon Jul 23 2001 Solar Designer <solar@owl.openwall.com>
+* Mon Jul 23 2001 Solar Designer <solar-at-owl.openwall.com>
 - Use RPM_OPT_FLAGS.
 
-* Mon Dec 11 2000 Solar Designer <solar@owl.openwall.com>
+* Mon Dec 11 2000 Solar Designer <solar-at-owl.openwall.com>
 - Run lilo in %post in case the (physical) location of /boot/boot.b or
 whatever else LILO depends on has changed with our upgrade.
 
-* Mon Dec 04 2000 Solar Designer <solar@owl.openwall.com>
+* Mon Dec 04 2000 Solar Designer <solar-at-owl.openwall.com>
 - No longer require mkinitrd.
 
-* Sun Nov 19 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Nov 19 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - 21.6
 - import from RH

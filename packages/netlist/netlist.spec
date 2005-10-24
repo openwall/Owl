@@ -1,4 +1,4 @@
-# $Id: Owl/packages/netlist/Attic/netlist.spec,v 1.10 2005/10/24 02:22:12 solar Exp $
+# $Id: Owl/packages/netlist/Attic/netlist.spec,v 1.11 2005/10/24 03:06:27 solar Exp $
 
 Summary: A program to list active Internet connections and sockets.
 Name: netlist
@@ -42,15 +42,15 @@ grep -q '^proc:[^:]*:110:' /etc/group && \
 %_mandir/man1/netlist.1*
 
 %changelog
-* Mon Jun 02 2003 Solar Designer <solar@owl.openwall.com> 2.0-owl3
+* Mon Jun 02 2003 Solar Designer <solar-at-owl.openwall.com> 2.0-owl3
 - Removed verify checks for size and group owner due to %post.
 - Cleaned up the spec.
 
-* Mon Jun 02 2003 Solar Designer <solar@owl.openwall.com> 2.0-owl2
+* Mon Jun 02 2003 Solar Designer <solar-at-owl.openwall.com> 2.0-owl2
 - Added URL.
 
-* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com> 2.0-owl1
+* Wed Feb 06 2002 Michail Litvak <mci-at-owl.openwall.com> 2.0-owl1
 - Enforce our new spec file conventions
 
-* Wed Nov 07 2001 Solar Designer <solar@owl.openwall.com>
+* Wed Nov 07 2001 Solar Designer <solar-at-owl.openwall.com>
 - Wrote the man page, Makefile, and this spec file.

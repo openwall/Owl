@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libnet/libnet.spec,v 1.11 2005/10/24 02:22:11 solar Exp $
+# $Id: Owl/packages/libnet/libnet.spec,v 1.12 2005/10/24 03:06:25 solar Exp $
 
 Summary: "libpwrite" Network Routine Library.
 Name: libnet
@@ -77,22 +77,22 @@ ln -sf libnet.so %buildroot%_libdir/libpwrite
 %_libdir/lib*.a
 
 %changelog
-* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1:1.0.2a-owl4
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:1.0.2a-owl4
 - Fixed orphaned %_libdir/libnet.so.1 created by %post.
 
-* Mon Feb 16 2004 Michail Litvak <mci@owl.openwall.com> 1:1.0.2a-owl3
+* Mon Feb 16 2004 Michail Litvak <mci-at-owl.openwall.com> 1:1.0.2a-owl3
 - Correctly install documentation from doc/ subdirectory.
 
-* Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com> 1:1.0.2a-owl2
+* Mon Feb 04 2002 Michail Litvak <mci-at-owl.openwall.com> 1:1.0.2a-owl2
 - Enforce our new spec file conventions
 
-* Sun Jun 17 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Jun 17 2001 Solar Designer <solar-at-owl.openwall.com>
 - Support alpha* targets other than plain alpha (don't even try to check
 for unaligned accesses when building for an Alpha).
 
-* Tue Apr 17 2001 Solar Designer <solar@owl.openwall.com>
+* Tue Apr 17 2001 Solar Designer <solar-at-owl.openwall.com>
 - Minor spec file cleanups.
 
-* Wed Apr 11 2001 Rafal Wojtczuk <nergal@owl.openwall.com>
+* Wed Apr 11 2001 Rafal Wojtczuk <nergal-at-owl.openwall.com>
 - adapted pld package to libnet version 1.0.2a
 - -Wl,-soname adjusted

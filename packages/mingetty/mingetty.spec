@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mingetty/mingetty.spec,v 1.12 2005/10/24 02:22:12 solar Exp $
+# $Id: Owl/packages/mingetty/mingetty.spec,v 1.13 2005/10/24 03:06:27 solar Exp $
 
 Summary: A compact getty program for virtual consoles only.
 Name: mingetty
@@ -44,20 +44,20 @@ install -m 644 mingetty.8 %buildroot%_mandir/man8/
 %_mandir/man8/mingetty.8*
 
 %changelog
-* Mon Jan 10 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.9.4-owl15
+* Mon Jan 10 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.9.4-owl15
 - Made use of %%__cc and %%__make macros.
 
-* Thu Dec 18 2003 Michail Litvak <mci@owl.openwall.com> 0.9.4-owl14
+* Thu Dec 18 2003 Michail Litvak <mci-at-owl.openwall.com> 0.9.4-owl14
 - Fix Y2K bug in -suse.diff (Thanks to Ilya Andreiv)
 
-* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com> 0.9.4-owl13
+* Mon Feb 04 2002 Solar Designer <solar-at-owl.openwall.com> 0.9.4-owl13
 - Enforce our new spec file conventions.
 
-* Mon Sep 25 2000 Solar Designer <solar@owl.openwall.com>
+* Mon Sep 25 2000 Solar Designer <solar-at-owl.openwall.com>
 - Replaced the error()/USE_SYSLOG code to fix a "format bug" reported by
 Jarno Huuskonen on security-audit.
 
-* Sun Jul 09 2000 Solar Designer <solar@owl.openwall.com>
+* Sun Jul 09 2000 Solar Designer <solar-at-owl.openwall.com>
 - Imported this spec file from RH, replaced all their patches with one
 from SuSE, and added a patch of my own (that backs out some of the RH/
 SuSE changes and adds some bound checking).  This package is indeed still

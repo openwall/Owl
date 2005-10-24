@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gzip/gzip.spec,v 1.21 2005/10/08 23:34:22 solar Exp $
+# $Id: Owl/packages/gzip/gzip.spec,v 1.22 2005/10/24 03:06:24 solar Exp $
 
 Summary: The GNU data compression program.
 Name: gzip
@@ -131,10 +131,10 @@ fi
 %exclude %_mandir/*/zcat.*
 
 %changelog
-* Mon Jul 18 2005 Solar Designer <solar@owl.openwall.com> 1.3.5-owl2
+* Mon Jul 18 2005 Solar Designer <solar-at-owl.openwall.com> 1.3.5-owl2
 - Fixed a segfault on invalid compressed data (patch from Gentoo).
 
-* Fri May 20 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.3.5-owl1
+* Fri May 20 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.3.5-owl1
 - Updated to 1.3.5.
 - Reviewed Owl patches, removed obsolete ones.
 - Imported a bunch of patches from ALT's gzip-1.3.5-alt1 package,
@@ -149,34 +149,34 @@ bzmore and bzless within separate subpackage, gzip-utils.
 - Corrected info files installation.
 - Updated URL.
 
-* Tue Aug 27 2002 Solar Designer <solar@owl.openwall.com> 1.3-owl17
+* Tue Aug 27 2002 Solar Designer <solar-at-owl.openwall.com> 1.3-owl17
 - Use a trigger instead of a dependency on /sbin/install-info to avoid a
 dependency loop with the new texinfo.
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Deal with info dir entries such that the menu looks pretty.
 
-* Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Jul 07 2002 Solar Designer <solar-at-owl.openwall.com>
 - Use grep -q in zforce, zgrep.
 - Use mktemp -t rather than substitute $TMPDIR manually in gzexe, zdiff.
 
-* Sun Feb 03 2002 Michail Litvak <mci@owl.openwall.com>
+* Sun Feb 03 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions
 
-* Sat Sep 29 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Sep 29 2001 Solar Designer <solar-at-owl.openwall.com>
 - Synced with Todd's latest fixes: re-create the temporary file in gzexe
 safely when run on multiple files, support GZIP="--suffix .suf" in znew.
 
-* Fri Sep 28 2001 Solar Designer <solar@owl.openwall.com>
+* Fri Sep 28 2001 Solar Designer <solar-at-owl.openwall.com>
 - Patched unsafe temporary file handling in gzexe, zdiff, and znew based
 on work by Todd Miller of OpenBSD.
 - Dropped Red Hat's patch which attempted to fix some of the same issues
 for gzexe but was far from sufficient.
 
-* Sat Jun 16 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sat Jun 16 2001 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - sync mktemp patch from RH
 - errors go to stderror
 - add handler for SIGPIPE in zgrep
 
-* Sun Aug  6 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Aug  6 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import from RH

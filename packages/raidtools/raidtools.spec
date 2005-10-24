@@ -1,4 +1,4 @@
-# $Id: Owl/packages/raidtools/Attic/raidtools.spec,v 1.4 2005/10/24 01:56:48 solar Exp $
+# $Id: Owl/packages/raidtools/Attic/raidtools.spec,v 1.5 2005/10/24 03:06:29 solar Exp $
 
 Summary: Tools for creating and maintaining software RAID devices.
 Name: raidtools
@@ -49,5 +49,5 @@ make install_bin install_doc ROOTDIR=%buildroot MAN=%_mandir
 %_mandir/man*/*
 
 %changelog
-* Wed Sep 10 2003 Michail Litvak <mci@owl.openwall.com> 1.00.3-owl1
+* Wed Sep 10 2003 Michail Litvak <mci-at-owl.openwall.com> 1.00.3-owl1
 - Initial packaging for Owl.

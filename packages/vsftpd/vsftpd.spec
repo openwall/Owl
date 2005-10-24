@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.16 2005/10/24 02:22:14 solar Exp $
+# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.17 2005/10/24 03:06:32 solar Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
@@ -81,32 +81,32 @@ mkdir -m 755 /home/ftp &> /dev/null || :
 %_mandir/man8/vsftpd.8*
 
 %changelog
-* Sat Jun 19 2004 Dmitry V. Levin <ldv@owl.openwall.com> 1.2.1-owl0.2
+* Sat Jun 19 2004 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.2.1-owl0.2
 - vsftpd.conf(5): note that session_support is disabled by default.
 - vsftpd.pam: set proper session management entry.
 
-* Sun Oct 26 2003 Solar Designer <solar@owl.openwall.com> 1.2.1-owl0.1
+* Sun Oct 26 2003 Solar Designer <solar-at-owl.openwall.com> 1.2.1-owl0.1
 - Updated to 1.2.1pre1.
 - Let vsftpd use libcap now that we package it.
 - Package the control flow diagram from our presentation slides; the dia
 source to vsftpd.eps is available through the download link from
 http://www.openwall.com/presentations/Owl/
 
-* Thu Apr 17 2003 Solar Designer <solar@owl.openwall.com> 1.0.2-owl0.3
+* Thu Apr 17 2003 Solar Designer <solar-at-owl.openwall.com> 1.0.2-owl0.3
 - Pass prefix= and count= to pam_tcb also for authentication such that it
 can use this information to reduce timing leaks.
 
-* Thu Apr 03 2003 Dmitry V. Levin <ldv@owl.openwall.com> 1.0.2-owl0.2
+* Thu Apr 03 2003 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.0.2-owl0.2
 - Updated pam_userpass support: build with libpam_userpass.
 
-* Tue Apr 02 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Apr 02 2002 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 1.0.2pre3.
 - Set hide_ids to YES.
 
-* Sat Feb 02 2002 Solar Designer <solar@owl.openwall.com>
+* Sat Feb 02 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Sun Dec 16 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Dec 16 2001 Solar Designer <solar-at-owl.openwall.com>
 - Adjusted the default tunable settings, based some on those from ALT Linux.
 - Patched in pam_userpass support.
 - Wrote PAM and xinetd configuration files.

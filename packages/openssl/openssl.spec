@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.49 2005/10/24 02:22:12 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.50 2005/10/24 03:06:27 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
@@ -202,11 +202,11 @@ ln -sf libssl.so.5 /%_lib/libssl.so.4
 %attr(0644,root,root) %_mandir/man3/*
 
 %changelog
-* Tue Oct 11 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.9.7g-owl2
+* Tue Oct 11 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.9.7g-owl2
 - Applied upstream fix for potential SSL 2.0 rollback during SSL
 handshake (CAN-2005-2969).
 
-* Fri Jun 24 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.9.7g-owl1
+* Fri Jun 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.9.7g-owl1
 - Updated to 0.9.7g.
 - Imported a bunch of patches from RH's openssl-0.9.7f-7 and ALT's
 openssl-0.9.7g-alt1 packages, including new constant time/memory access
@@ -216,22 +216,22 @@ attack (CAN-2005-0109).
 - Packaged soname symlinks along with shared libraries.
 - Removed documentation in .pod format.
 
-* Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 0.9.7d-owl2
+* Tue Nov 02 2004 Solar Designer <solar-at-owl.openwall.com> 0.9.7d-owl2
 - Do package CA.pl; we were packaging CA.pl.pod and CA.pl.1 anyway, and we
 had a dependency on Perl anyway (possibly something to be resolved later).
 - Remove "Modes of DES.7" man page name which confuses brp-compress.
 
-* Thu Mar 18 2004 Michail Litvak <mci@owl.openwall.com> 0.9.7d-owl1
+* Thu Mar 18 2004 Michail Litvak <mci-at-owl.openwall.com> 0.9.7d-owl1
 - 0.9.7d
 
-* Thu Mar 18 2004 Solar Designer <solar@owl.openwall.com> 0.9.7c-owl3
+* Thu Mar 18 2004 Solar Designer <solar-at-owl.openwall.com> 0.9.7c-owl3
 - Spec file cleanups for issues introduced with the update to 0.9.7+.
 
-* Tue Mar 04 2004 Michail Litvak <mci@owl.openwall.com> 0.9.7c-owl2
+* Tue Mar 04 2004 Michail Litvak <mci-at-owl.openwall.com> 0.9.7c-owl2
 - Apply RH's soname convention.
 - Move libs to /lib and place symlinks to /usr/lib.
 
-* Tue Mar 02 2004 Michail Litvak <mci@owl.openwall.com> 0.9.7c-owl1
+* Tue Mar 02 2004 Michail Litvak <mci-at-owl.openwall.com> 0.9.7c-owl1
 - 0.9.7c
 - Removed patches included by upstream.
 - Patch to fix man-pages generation.
@@ -239,48 +239,48 @@ had a dependency on Perl anyway (possibly something to be resolved later).
 - Set openssl dir to datadir not to /var.
 - Don't install perl scripts (RH install it into openssl-perl package).
 
-* Fri Jan 16 2004 Michail Litvak <mci@owl.openwall.com> 0.9.6l-owl2
+* Fri Jan 16 2004 Michail Litvak <mci-at-owl.openwall.com> 0.9.6l-owl2
 - Make /usr/include/openssl directory owned by this package.
 
-* Thu Nov 06 2003 Solar Designer <solar@owl.openwall.com> 0.9.6l-owl1
+* Thu Nov 06 2003 Solar Designer <solar-at-owl.openwall.com> 0.9.6l-owl1
 - Updated to 0.9.6l.
 
-* Wed Oct 01 2003 Solar Designer <solar@owl.openwall.com> 0.9.6k-owl1
+* Wed Oct 01 2003 Solar Designer <solar-at-owl.openwall.com> 0.9.6k-owl1
 - Updated to 0.9.6k.
 
-* Sat Apr 12 2003 Solar Designer <solar@owl.openwall.com> 0.9.6j-owl1
+* Sat Apr 12 2003 Solar Designer <solar-at-owl.openwall.com> 0.9.6j-owl1
 - Updated to 0.9.6j.
 
-* Thu Feb 20 2003 Solar Designer <solar@owl.openwall.com> 0.9.6i-owl1
+* Thu Feb 20 2003 Solar Designer <solar-at-owl.openwall.com> 0.9.6i-owl1
 - Updated to 0.9.6i.
 
-* Thu Dec 12 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Dec 12 2002 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 0.9.6h.
 - Dropped clean-shared for the "all" target (invoked by "tests" and
 "install"), it resulted in re-linking of shared libraries at best.
 
-* Fri Nov 15 2002 Solar Designer <solar@owl.openwall.com>
+* Fri Nov 15 2002 Solar Designer <solar-at-owl.openwall.com>
 - Dropped the patch removing -Wl,-Bsymbolic which is no longer needed with
 0.9.6g and/or after dropping the explicit "make build-shared".
 - Dropped RSAref stuff.
 
-* Wed Sep 25 2002 Solar Designer <solar@owl.openwall.com>
+* Wed Sep 25 2002 Solar Designer <solar-at-owl.openwall.com>
 - Don't do an explicit "make build-shared", it's not needed and could only
 cause harm (link libssl against libcrypto statically), but luckily didn't;
 pointed out by Dmitry V. Levin of ALT Linux.
 
-* Mon Aug 12 2002 Solar Designer <solar@owl.openwall.com>
+* Mon Aug 12 2002 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 0.9.6g dropping two patches.
 
-* Sat Aug 03 2002 Solar Designer <solar@owl.openwall.com>
+* Sat Aug 03 2002 Solar Designer <solar-at-owl.openwall.com>
 - Added two post-0.9.6e changes from the CVS which correct the recent ASN.1
 parsing vulnerability fixes.
 
-* Wed Jul 31 2002 Solar Designer <solar@owl.openwall.com>
+* Wed Jul 31 2002 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 0.9.6e, dropping the shared-on-SPARC and the official security
 patches (both are now included).
 
-* Tue Jul 30 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Jul 30 2002 Solar Designer <solar-at-owl.openwall.com>
 - Applied the official patch with 4 security fixes to problems discovered
 by Ben Laurie and others of A.L. Digital Ltd and The Bunker under DARPA's
 CHATS program, by consultants at Neohapsis, and by Adi Stav and James Yonan.
@@ -289,11 +289,11 @@ of the fixes partly based on a version by Adi Stav.
 - Renamed the err.3 man page to avoid conflict with the new man-pages
 package which documents the BSD-derived libc function under that name.
 
-* Wed May 29 2002 Solar Designer <solar@owl.openwall.com>
+* Wed May 29 2002 Solar Designer <solar-at-owl.openwall.com>
 - Made shared library builds work on SPARC (again).
 - Moved the .so symlinks to devel subpackage.
 
-* Sun May 12 2002 Solar Designer <solar@owl.openwall.com>
+* Sun May 12 2002 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 0.9.6d.
 - Added a patch by Ben Laurie for "openssl dgst" to behave on read errors.
 - Dropped the incorrect (or no longer correct?) RH-derived configuration
@@ -301,16 +301,16 @@ file path patch to ca(1).
 - Properly restrict the instruction set in assembly code when building for
 i386 (don't use bswapl).
 
-* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
+* Wed Feb 06 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Wed Dec 26 2001 Solar Designer <solar@owl.openwall.com>
+* Wed Dec 26 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 0.9.6c.
 
-* Wed Jul 11 2001 Solar Designer <solar@owl.openwall.com>
+* Wed Jul 11 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 0.9.6b.
 
-* Fri Jul 06 2001 Solar Designer <solar@owl.openwall.com>
+* Fri Jul 06 2001 Solar Designer <solar-at-owl.openwall.com>
 - Applied patches provided by the OpenSSL team to correct a PRNG
 weakness which under unusual circumstances could allow an attacker to
 determine internal state of the PRNG and thus to predict future PRNG
@@ -318,27 +318,27 @@ output.  This problem has been discovered and reported to the OpenSSL
 team by Markku-Juhani O. Saarinen.  No applications are known to be
 affected at this time.
 
-* Sun Apr 22 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Apr 22 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 0.9.6a which contains a number of security fixes (but breaks
 binary compatibility).
 - Updated shared libraries building to match the new Makefile conventions.
 - Use glibc's __libc_enable_secure for the new OPENSSL_issetugid().
 - Various other changes to the spec file.
 
-* Sat Apr 14 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Apr 14 2001 Solar Designer <solar-at-owl.openwall.com>
 - Support Alpha targets.
 - Use the ix86 macro.
 
-* Mon Nov 13 2000 Solar Designer <solar@owl.openwall.com>
+* Mon Nov 13 2000 Solar Designer <solar-at-owl.openwall.com>
 - Support SPARC targets (32-bit only at this time).
 
-* Sun Oct 29 2000 Solar Designer <solar@owl.openwall.com>
+* Sun Oct 29 2000 Solar Designer <solar-at-owl.openwall.com>
 - Don't require bc (disable one of the tests if bc isn't available).
 
-* Mon Oct 02 2000 Solar Designer <solar@owl.openwall.com>
+* Mon Oct 02 2000 Solar Designer <solar-at-owl.openwall.com>
 - Rename the passwd and rand man pages differently (this is still a hack).
 
-* Sun Jul 09 2000 Solar Designer <solar@owl.openwall.com>
+* Sun Jul 09 2000 Solar Designer <solar-at-owl.openwall.com>
 - Imported Damien Miller's spec file.
 - Added two patches from Trustix and, more importantly, a patch to avoid
 exporting crypt() as a symbol (which used to override the weak alias for

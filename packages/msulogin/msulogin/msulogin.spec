@@ -1,4 +1,4 @@
-# $Id: Owl/packages/msulogin/msulogin/msulogin.spec,v 1.5 2005/10/24 02:22:12 solar Exp $
+# $Id: Owl/packages/msulogin/msulogin/msulogin.spec,v 1.6 2005/10/24 03:06:27 solar Exp $
 
 Summary: The single user mode login program (sulogin).
 Name: msulogin
@@ -33,9 +33,9 @@ make install DESTDIR=%buildroot MANDIR=%_mandir
 %_mandir/man8/sulogin.8*
 
 %changelog
-* Fri May 23 2003 Solar Designer <solar@owl.openwall.com> 0.9.1-owl1
+* Fri May 23 2003 Solar Designer <solar-at-owl.openwall.com> 0.9.1-owl1
 - Avoid a race condition in the handling of timeout pointed out by
 Pavel Kankovsky on owl-devel.
 
-* Sun Apr 27 2003 Solar Designer <solar@owl.openwall.com> 0.9-owl1
+* Sun Apr 27 2003 Solar Designer <solar-at-owl.openwall.com> 0.9-owl1
 - Wrote this program and the accompanying files.

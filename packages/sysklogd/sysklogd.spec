@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.20 2005/08/23 23:10:12 ldv Exp $
+# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.21 2005/10/24 03:06:30 solar Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
@@ -117,12 +117,12 @@ fi
 %_mandir/*/*
 
 %changelog
-* Wed Aug 24 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.4.1-owl10
+* Wed Aug 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.1-owl10
 - Changed klogd to terminate when read from previously opened /proc/kmsg
 returns EPERM.
 - Added missing linefeed in usage messages.
 
-* Thu Aug 18 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.4.1-owl9
+* Thu Aug 18 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.1-owl9
 - Updated to post-1.4.1 cvs snapshot 20050525.
 - Reviewed Owl patches, removed obsolete ones, rediffed all the rest.
 - Imported a bunch of patches from ALT's sysklogd-1.4.1-alt21 package,
@@ -131,34 +131,34 @@ syslogd, nonblocking I/O on tty descriptors, new syslogd option "-A"
 can be used to specify directory with symlinks to additional sockets
 from that syslogd has to listen to, syslogd now can run chrooted.
 
-* Sun Apr 18 2004 Solar Designer <solar@owl.openwall.com> 1.4.1-owl8
+* Sun Apr 18 2004 Solar Designer <solar-at-owl.openwall.com> 1.4.1-owl8
 - Cleaned up the crunch_list() function in syslogd fixing the buffer overflow
 discovered by Steve Grubb and a number of other issues.
 
-* Tue Feb 10 2004 Solar Designer <solar@owl.openwall.com> 1.4.1-owl7
+* Tue Feb 10 2004 Solar Designer <solar-at-owl.openwall.com> 1.4.1-owl7
 - Use "sharedscripts" directive in /etc/logrotate.d/syslog such that syslogd
 is told to restart only once for all logs rotated.
 
-* Sun Jan 04 2004 Michail Litvak <mci@owl.openwall.com> 1.4.1-owl6
+* Sun Jan 04 2004 Michail Litvak <mci-at-owl.openwall.com> 1.4.1-owl6
 - Pass options to syslogd and klogd from /etc/sysconfig/syslog file.
 
-* Sun Aug 10 2003 Solar Designer <solar@owl.openwall.com> 1.4.1-owl5
+* Sun Aug 10 2003 Solar Designer <solar-at-owl.openwall.com> 1.4.1-owl5
 - Build with LFS (thanks to Dmitry V. Levin).
 
-* Fri Aug 01 2003 Solar Designer <solar@owl.openwall.com> 1.4.1-owl4
+* Fri Aug 01 2003 Solar Designer <solar-at-owl.openwall.com> 1.4.1-owl4
 - Added URL.
 
-* Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com> 1.4.1-owl3
+* Sun Jul 07 2002 Solar Designer <solar-at-owl.openwall.com> 1.4.1-owl3
 - Use grep -q in %pre.
 
-* Tue Feb 05 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Feb 05 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Mon Nov 05 2001 Solar Designer <solar@owl.openwall.com>
+* Mon Nov 05 2001 Solar Designer <solar-at-owl.openwall.com>
 - Use a trigger to re-create the rc*.d symlinks when upgrading from
 old versions of the package.
 
-* Mon Oct 08 2001 Solar Designer <solar@owl.openwall.com>
+* Mon Oct 08 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 1.4.1.
 - Based the new klogd drop root patch on one from CAEN Linux.
 - Added syslogd patches derived from CAEN Linux to allow specifying a
@@ -166,19 +166,19 @@ bind address for the UDP socket and to let syslogd run as non-root.
 - klogd is now running chrooted to /var/empty.
 - syslogd is now running as its dedicated pseudo-user, too.
 
-* Wed May 23 2001 Solar Designer <solar@owl.openwall.com>
+* Wed May 23 2001 Solar Designer <solar-at-owl.openwall.com>
 - Back-ported a klogd DoS fix from 1.4.1, thanks to the reports from
 Jarno Huuskonen and Thomas Roessler who initially reported the problem
 to Debian (see http://bugs.debian.org/85478).
 
-* Fri Dec 01 2000 Solar Designer <solar@owl.openwall.com>
+* Fri Dec 01 2000 Solar Designer <solar-at-owl.openwall.com>
 - Adjusted syslog.init for owl-startup.
 - Restart after package upgrades in an owl-startup compatible way.
 
-* Wed Sep 20 2000 Solar Designer <solar@owl.openwall.com>
+* Wed Sep 20 2000 Solar Designer <solar-at-owl.openwall.com>
 - Run klogd as a non-root user.
 
-* Tue Sep 12 2000 Solar Designer <solar@owl.openwall.com>
+* Tue Sep 12 2000 Solar Designer <solar-at-owl.openwall.com>
 - Imported this spec file from RH, did the usual cleanups.
 - Based many of the patches on those found in RH.
 - Added a reliability/security fix by Daniel Jacobowitz of Debian

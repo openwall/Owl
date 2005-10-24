@@ -1,4 +1,4 @@
-# $Id: Owl/packages/grep/grep.spec,v 1.11 2005/10/23 21:09:44 solar Exp $
+# $Id: Owl/packages/grep/grep.spec,v 1.12 2005/10/24 03:06:24 solar Exp $
 
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
@@ -59,12 +59,12 @@ fi
 %_prefix/share/locale/*/*/grep.*
 
 %changelog
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1:2.4.2-owl2
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 1:2.4.2-owl2
 - Deal with info dir entries such that the menu looks pretty.
 
-* Sun Feb 03 2002 Michail Litvak <mci@owl.openwall.com>
+* Sun Feb 03 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions
 
-* Sun Jul 30 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Jul 30 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - imported from RH
 - locales fix

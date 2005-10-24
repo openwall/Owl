@@ -1,4 +1,4 @@
-# $Id: Owl/packages/binutils/binutils.spec,v 1.18 2005/10/23 17:36:32 solar Exp $
+# $Id: Owl/packages/binutils/binutils.spec,v 1.19 2005/10/24 03:06:22 solar Exp $
 
 %define BUILD_HJL 1
 
@@ -164,13 +164,13 @@ fi
 %_datadir/locale/*/LC_MESSAGES/*.mo
 
 %changelog
-* Fri Sep 23 2005 Michail Litvak <mci@owl.openwall.com> 2.15.94.0.2.2-owl3
+* Fri Sep 23 2005 Michail Litvak <mci-at-owl.openwall.com> 2.15.94.0.2.2-owl3
 - Don't package .la files.
 
-* Thu Jun 02 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.15.94.0.2.2-owl2
+* Thu Jun 02 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.15.94.0.2.2-owl2
 - Updated strings-mem patch.
 
-* Sat May 28 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.15.94.0.2.2-owl1
+* Sat May 28 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.15.94.0.2.2-owl1
 - Updated to 2.15.94.0.2.2
 - Updated set of Red Hat patches.
 - Imported patches from Red Hat that add sanity checks to BFD library
@@ -179,28 +179,28 @@ buffer overflows in readelf utility.
 - Imported patch from ALT that fixes OOM handling in strings utility.
 - Corrected info files installation.
 
-* Fri May 07 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.15.90.0.3-owl1
+* Fri May 07 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.15.90.0.3-owl1
 - Updated to 2.15.90.0.3
 
-* Mon Mar 15 2004 Solar Designer <solar@owl.openwall.com> 2.14.90.0.8-owl0.5
+* Mon Mar 15 2004 Solar Designer <solar-at-owl.openwall.com> 2.14.90.0.8-owl0.5
 - Further spec file cleanups.
 
-* Fri Mar 05 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.14.90.0.8-owl0.4
+* Fri Mar 05 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.14.90.0.8-owl0.4
 - Cleaned up spec a bit
 
-* Mon Feb 23 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.14.90.0.8-owl0.3
+* Mon Feb 23 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.14.90.0.8-owl0.3
 - Removed unpackaged %_infodir/dir to make RPM4 happy
 
-* Wed Jan 28 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.14.90.0.8-owl0.2
+* Wed Jan 28 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.14.90.0.8-owl0.2
 - Cleaned up the spec file from unneeded macros
 
-* Sun Jan 25 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.14.90.0.8-owl0.1
+* Sun Jan 25 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.14.90.0.8-owl0.1
 - Included relro Red Hat patch
 - Patched search logic of ldfile.c to allow more robust search of the object
 to link with
 - Fix a typo in spec file, causing incorrect tooldir to be used
 
-* Wed Jan 21 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.14.90.0.8-owl0
+* Wed Jan 21 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.14.90.0.8-owl0
 - Updated to the version 2.14.90.0.8
 - Corrections to this spec file according to the bundled binutils spec
 - Regenerated owl-info patch
@@ -208,24 +208,24 @@ to link with
 - Made more strict checking in make_tempname() in bucomm.c
 - Included Red Hat patch place-orphan (see description in the patch file).
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 2.10.1.0.4-owl2
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 2.10.1.0.4-owl2
 - Deal with info dir entries such that the menu looks pretty.
 
-* Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Jan 24 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Thu Jan 18 2001 Solar Designer <solar@owl.openwall.com>
+* Thu Jan 18 2001 Solar Designer <solar-at-owl.openwall.com>
 - 2.10.1.0.4 (due to the temporary file handling fix in objdump that is
 not in the 2.10.1 release).
 
-* Fri Nov 17 2000 Solar Designer <solar@owl.openwall.com>
+* Fri Nov 17 2000 Solar Designer <solar-at-owl.openwall.com>
 - --enable-targets=sparc64-linux for sparcv9 as well as plain sparc.
 - Pass plain sparc- target to configure when building for sparcv9, to
 allow for the use of sparcv9 optflags while not confusing configure.
 
-* Sat Jul 29 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sat Jul 29 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - 2.10
 
-* Tue Jul 18 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Tue Jul 18 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - 2.9.5.0.46
 - import from spec from RH

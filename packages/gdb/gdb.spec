@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gdb/gdb.spec,v 1.21 2005/10/23 21:09:44 solar Exp $
+# $Id: Owl/packages/gdb/gdb.spec,v 1.22 2005/10/24 03:06:23 solar Exp $
 
 Summary: A GNU source-level debugger for C, C++ and Fortran.
 Name: gdb
@@ -109,7 +109,7 @@ fi
 %_infodir/stabs.info*
 
 %changelog
-* Sun May 29 2005 Dmitry V. Levin <ldv@owl.openwall.com> 6.3-owl1
+* Sun May 29 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 6.3-owl1
 - Updated to 6.3
 - Imported a bunch of patches from Debian's gdb-6.3-5 package.
 - Backported patch from upstream that adds sanity checks to BFD library
@@ -117,34 +117,34 @@ fi
 - Imported patch from Gentoo that fixes .gdbinit issue (CAN-2005-1705).
 - Corrected info files installation.
 
-* Fri Jan 15 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 6.1.1-owl2
+* Fri Jan 15 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.1.1-owl2
 - Used %%__make macro instead of plain "make".
 
-* Thu Jul 08 2004 Michail Litvak <mci@owl.openwall.com> 6.1.1-owl1
+* Thu Jul 08 2004 Michail Litvak <mci-at-owl.openwall.com> 6.1.1-owl1
 - 6.1.1
 
-* Tue Mar 09 2004 Michail Litvak <mci@owl.openwall.com> 6.0-owl0.1
+* Tue Mar 09 2004 Michail Litvak <mci-at-owl.openwall.com> 6.0-owl0.1
 - 6.0
 
-* Thu Feb 26 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 5.0-owl10.1
+* Thu Feb 26 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 5.0-owl10.1
 - Disabled autoconf and other regeneration programs due to conflict
 with new autotools.
 
-* Fri Feb 20 2004 Michail Litvak <mci@owl.openwall.com> 5.0-owl10
+* Fri Feb 20 2004 Michail Litvak <mci-at-owl.openwall.com> 5.0-owl10
 - Fixed building with new readline 4.3.
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 5.0-owl9
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 5.0-owl9
 - Deal with info dir entries such that the menu looks pretty.
 
-* Fri Feb 01 2002 Michail Litvak <mci@owl.openwall.com>
+* Fri Feb 01 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Thu Jul 12 2001 Solar Designer <solar@owl.openwall.com>
+* Thu Jul 12 2001 Solar Designer <solar-at-owl.openwall.com>
 - Corrected the package description.
 - Corrected Alpha builds.
 - Disabled the (incorrect) uses of vfork.
 - Fixed some harmless compiler warnings.
 
-* Wed Jul 11 2001 Michail Litvak <mci@owl.openwall.com>
+* Wed Jul 11 2001 Michail Litvak <mci-at-owl.openwall.com>
 - spec imported from RH with additions from PLD and SuSE
 - patches from PLD and RH

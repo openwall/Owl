@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.51 2005/10/24 02:22:13 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.52 2005/10/24 03:06:29 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
@@ -238,18 +238,18 @@ fi
 %exclude %_mandir/man8/mkpasswd*
 
 %changelog
-* Mon May 16 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2:4.0.4.1-owl9
+* Mon May 16 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2:4.0.4.1-owl9
 - Fixed double free bug in userdel_rm_tcbdir().
 
-* Sun May 08 2005 Solar Designer <solar@owl.openwall.com> 2:4.0.4.1-owl8
+* Sun May 08 2005 Solar Designer <solar-at-owl.openwall.com> 2:4.0.4.1-owl8
 - The new coreutils' version of chgrp(1) complains on non-existing files
 even when invoked with "-f", so test for /etc/shadow presence explicitly.
 
-* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2:4.0.4.1-owl7
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2:4.0.4.1-owl7
 - Removed verify checks for file controlled via owl-control facility.
 - Fixed xmalloc.c to cast correct return type for malloc().
 
-* Fri Nov 26 2004 Solar Designer <solar@owl.openwall.com> 2:4.0.4.1-owl6
+* Fri Nov 26 2004 Solar Designer <solar-at-owl.openwall.com> 2:4.0.4.1-owl6
 - Report /etc/login.defs open/read errors to stderr, not only to syslog.
 - Merged some enhancements/corrections from ALT Linux: document the
 restrictions on valid user/group names in useradd.8 and groupadd.8,
@@ -257,99 +257,99 @@ hard-code the path to passwd(1) (don't let configure pick the wrong path
 when building on a system without our SimplePAMApps package installed).
 - Compiler warning fixes.
 
-* Fri Nov 26 2004 Dmitry V. Levin <ldv@owl.openwall.com> 2:4.0.4.1-owl5
+* Fri Nov 26 2004 Dmitry V. Levin <ldv-at-owl.openwall.com> 2:4.0.4.1-owl5
 - Backported patch from shadow cvs, to fix userdel(8) return value.
 
-* Thu Nov 11 2004 Juan M. Bello Rivas <jmbr@owl.openwall.com> 2:4.0.4.1-owl4
+* Thu Nov 11 2004 Juan M. Bello Rivas <jmbr-at-owl.openwall.com> 2:4.0.4.1-owl4
 - Added the USERNAME_MAX and GROUPNAME_MAX options.
 - Placed the "usermod -p" patch higher in the patch list.
 
-* Thu Nov 11 2004 Dmitry V. Levin <ldv@owl.openwall.com> 2:4.0.4.1-owl3
+* Thu Nov 11 2004 Dmitry V. Levin <ldv-at-owl.openwall.com> 2:4.0.4.1-owl3
 - Restore chpasswd(8) behaviour, which was broken since 4.0.4.1-owl0.1.
 
-* Tue Sep 28 2004 Juan M. Bello Rivas <jmbr@owl.openwall.com> 2:4.0.4.1-owl2
+* Tue Sep 28 2004 Juan M. Bello Rivas <jmbr-at-owl.openwall.com> 2:4.0.4.1-owl2
 - Modified usermod to update the last password change field when invoked
 with the -p option.
 
-* Fri Jun 11 2004 Michail Litvak <mci@owl.openwall.com> 2:4.0.4.1-owl1
+* Fri Jun 11 2004 Michail Litvak <mci-at-owl.openwall.com> 2:4.0.4.1-owl1
 - Originally by solar@ in Owl-current:
 Properly check the return value from pam_chauthtok() in
 libmisc/pwdcheck.c: passwd_check() that is used by chfn and chsh commands.
 Thanks to Steve Grubb and Martin Schulze.
 
-* Thu Mar 19 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2:4.0.4.1-owl0.3
+* Thu Mar 19 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2:4.0.4.1-owl0.3
 - Removed gettext patch, we are using autopoint now
 - Changed patch number for userdel-path_prefix
 
-* Thu Mar 18 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2:4.0.4.1-owl0.2
+* Thu Mar 18 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2:4.0.4.1-owl0.2
 - Fixed a bug in path_prefix() in userdel
 - Fixed a typo in tcb patch
 
-* Fri Feb 27 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2:4.0.4.1-owl0.1
+* Fri Feb 27 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2:4.0.4.1-owl0.1
 - Updated to the new version
 - All patches were regenerated
 - Spec file was adopted for RPM4
 
-* Thu Feb 12 2004 Michail Litvak <mci@owl.openwall.com> 2:4.0.0-owl15
+* Thu Feb 12 2004 Michail Litvak <mci-at-owl.openwall.com> 2:4.0.0-owl15
 - Use RPM macros instead of explicit paths.
 
-* Sat Nov 22 2003 Solar Designer <solar@owl.openwall.com> 2:4.0.0-owl14
+* Sat Nov 22 2003 Solar Designer <solar-at-owl.openwall.com> 2:4.0.0-owl14
 - In tcb_move(), use mode 700 and not mode 0 for the directory being
 modified as the latter is incompatible with the mode 0 hack in vserver
 kernel patches; thanks to Dmitry V. Levin for the report and patch.
 
-* Wed Oct 29 2003 Solar Designer <solar@owl.openwall.com> 2:4.0.0-owl13
+* Wed Oct 29 2003 Solar Designer <solar-at-owl.openwall.com> 2:4.0.0-owl13
 - Require glibc-crypt_blowfish-devel for builds.
 
-* Mon Jul 28 2003 Michail Litvak <mci@owl.openwall.com> 2:4.0.0-owl12
+* Mon Jul 28 2003 Michail Litvak <mci-at-owl.openwall.com> 2:4.0.0-owl12
 - Added patch from ALT to fix user_groups initialization.
 
-* Thu May 29 2003 Solar Designer <solar@owl.openwall.com> 2:4.0.0-owl11
+* Thu May 29 2003 Solar Designer <solar-at-owl.openwall.com> 2:4.0.0-owl11
 - write_to=tcb
 - USE_TCB yes
 
-* Thu Apr 17 2003 Solar Designer <solar@owl.openwall.com> 2:4.0.0-owl10
+* Thu Apr 17 2003 Solar Designer <solar-at-owl.openwall.com> 2:4.0.0-owl10
 - Pass prefix= and count= to pam_tcb also for authentication such that it
 can use this information to reduce timing leaks.
 
-* Sat Apr 12 2003 Solar Designer <solar@owl.openwall.com> 2:4.0.0-owl9
+* Sat Apr 12 2003 Solar Designer <solar-at-owl.openwall.com> 2:4.0.0-owl9
 - Don't let %post fail if group shadow exists, but /etc/shadow doesn't
 (tcb is in use).
 
-* Mon Apr 07 2003 Dmitry V. Levin <ldv@owl.openwall.com> 2:4.0.0-owl8
+* Mon Apr 07 2003 Dmitry V. Levin <ldv-at-owl.openwall.com> 2:4.0.0-owl8
 - Updated pam_userpass support: build with libpam_userpass.
 
-* Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Nov 03 2002 Solar Designer <solar-at-owl.openwall.com>
 - Dump/restore the owl-control settings for chage, chfn, chsh, gpasswd,
 and newgrp on package upgrades.
 
-* Thu Oct 24 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Oct 24 2002 Solar Designer <solar-at-owl.openwall.com>
 - Cleaned up the recent changes.
 - Corrected a newly introduced memory leak on an error path.
 - Changed the TCB_SYMLINKS pseudo-code in login.defs(5) manual page to
 be C/English rather than shell for consistency with the pam_tcb(8) page.
 
-* Mon Aug 19 2002 Rafal Wojtczuk <nergal@owl.openwall.com>
+* Mon Aug 19 2002 Rafal Wojtczuk <nergal-at-owl.openwall.com>
 - Merged the enhancements which remove 32K users limit.
 
-* Sun Jul 21 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Jul 21 2002 Solar Designer <solar-at-owl.openwall.com>
 - Made "chage -l" drop its saved GID too.
 - Removed the extra space in "[-e expire ]" in the usage instructions for
 useradd and usermod.
 
-* Wed Feb 06 2002 Solar Designer <solar@owl.openwall.com>
+* Wed Feb 06 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Sun Nov 25 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Nov 25 2001 Solar Designer <solar-at-owl.openwall.com>
 - auth group.
 
-* Fri Nov 16 2001 Solar Designer <solar@owl.openwall.com>
+* Fri Nov 16 2001 Solar Designer <solar-at-owl.openwall.com>
 - Enable forking for pam_tcb with chage, chfn, and chsh.
 
-* Mon Nov 12 2001 Solar Designer <solar@owl.openwall.com>
+* Mon Nov 12 2001 Solar Designer <solar-at-owl.openwall.com>
 - Use /etc/tcb/root as scratch space for "vipw -s user".
 
-* Sun Nov 11 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Nov 11 2001 Solar Designer <solar-at-owl.openwall.com>
 - gpasswd will now use crypt_gensalt(3) when setting group passwords; two
 new configuration items have been added to login.defs and the man page
 updated accordingly.
@@ -369,41 +369,41 @@ had a password set; previously, this would open up a passwordless account.
 but skip shadow file checks.
 - Build with -Wall (surprisingly only a few fixes were needed).
 
-* Thu Nov 08 2001 Solar Designer <solar@owl.openwall.com>
+* Thu Nov 08 2001 Solar Designer <solar-at-owl.openwall.com>
 - chpasswd(8) and newusers(8) will now talk to pam_userpass for password
 changes.
 - More bugfixes and code cleanups for the tcb patch.
 
-* Sun Nov 04 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Nov 04 2001 Solar Designer <solar-at-owl.openwall.com>
 - Cleaned up all of the patches fixing several bugs and re-coding a few
 pieces; the tcb patch is still far from clean, though.
 
-* Wed Aug 21 2001 Rafal Wojtczuk <nergal@owl.openwall.com>
+* Wed Aug 21 2001 Rafal Wojtczuk <nergal-at-owl.openwall.com>
 - fixed mailbox creation, which was wrong in rh patch
 - added USE_TCB to login.defs.5
 
-* Fri Aug 03 2001 Rafal Wojtczuk <nergal@owl.openwall.com>
+* Fri Aug 03 2001 Rafal Wojtczuk <nergal-at-owl.openwall.com>
 - upgrade to 20000902 version
 - added tcb support
 - merged patches from rawhide, updated owl ones
 
-* Fri Jun 15 2001 Solar Designer <solar@owl.openwall.com>
+* Fri Jun 15 2001 Solar Designer <solar-at-owl.openwall.com>
 - Rewrote most of the login.defs(5) man page and enabled its packaging.
 - Added more defaults to /etc/login.defs, added a reference to login.defs(5).
 - Fixed a bug in the lastlog(8) man page reported by Jarno Huuskonen.
 
-* Sun May 27 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun May 27 2001 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - enable EXTRA_CHECK_HOME_DIR for userdel
 
-* Sat Mar 10 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sat Mar 10 2001 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - restrictions to username/groupname
 
-* Sat Feb 10 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Feb 10 2001 Solar Designer <solar-at-owl.openwall.com>
 - shadow group.
 - Don't lock password files with "chage -l" (this is read-only access).
 - Drop SGID privileges after opening shadow file with "chage -l".
 
-* Sat Aug 26 2000 Solar Designer <solar@owl.openwall.com>
+* Sat Aug 26 2000 Solar Designer <solar-at-owl.openwall.com>
 - Imported this spec file from RH, cleaned it up, and changed heavily.
 - Imported many of the Red Hat modifications to useradd, including some
 questionable ones.

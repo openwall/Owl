@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bison/bison.spec,v 1.22 2005/10/23 17:36:32 solar Exp $
+# $Id: Owl/packages/bison/bison.spec,v 1.23 2005/10/24 03:06:22 solar Exp $
 
 %define BUILD_TEST 0
 
@@ -64,43 +64,43 @@ fi
 %_libdir/liby.a
 
 %changelog
-* Wed Apr 27 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.0-owl1
+* Wed Apr 27 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.0-owl1
 - Adjusted post-/pre- scriptlets to not use an explicit compression suffix.
 
-* Mon Apr 04 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.0-owl0
+* Mon Apr 04 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.0-owl0
 - Updated to 2.0.
 - Dropped -tmp patch; regenerate configure instead.
 - Added optional testsuite.
 
-* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.35-owl4
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.35-owl4
 - Fixed package filelist to include files which belong to this package only.
 - Use %%_datadir for data, not %%_libdir.
 
-* Sat Sep 11 2004 Solar Designer <solar@owl.openwall.com> 1.35-owl3
+* Sat Sep 11 2004 Solar Designer <solar-at-owl.openwall.com> 1.35-owl3
 - Use RPM's exclude macro on info dir file.
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1.35-owl2
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 1.35-owl2
 - Deal with info dir entries such that the menu looks pretty.
 
-* Tue Jun 11 2002 Michail Litvak <mci@owl.openwall.com>
+* Tue Jun 11 2002 Michail Litvak <mci-at-owl.openwall.com>
 - 1.35
 
-* Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Jan 24 2002 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 1.32.
 
-* Fri Dec 21 2001 Solar Designer <solar@owl.openwall.com>
+* Fri Dec 21 2001 Solar Designer <solar-at-owl.openwall.com>
 - Corrected the dependency on mktemp(1) (it's only needed for builds).
 
-* Thu Nov 08 2001 Solar Designer <solar@owl.openwall.com>
+* Thu Nov 08 2001 Solar Designer <solar-at-owl.openwall.com>
 - Build with -Wall (surprisingly the code was clean enough already).
 
-* Mon Nov 05 2001 Michail Litvak <mci@owl.openwall.com>
+* Mon Nov 05 2001 Michail Litvak <mci-at-owl.openwall.com>
 - 1.30
 - Patch for configure to use mktemp in a fail-close way
 
-* Wed Jan 03 2001 Solar Designer <solar@owl.openwall.com>
+* Wed Jan 03 2001 Solar Designer <solar-at-owl.openwall.com>
 - Patch to create temporary files safely.
 
-* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import from RH
 - fix URL

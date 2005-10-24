@@ -1,4 +1,4 @@
-# $Id: Owl/packages/silo/silo.spec,v 1.11 2005/10/23 22:20:11 solar Exp $
+# $Id: Owl/packages/silo/silo.spec,v 1.12 2005/10/24 03:06:29 solar Exp $
 
 Summary: Sparc Improved boot LOader.
 Name: silo
@@ -56,23 +56,23 @@ test -f /etc/silo.conf -a "$SILO_INSTALL" = "yes" && /sbin/silo $SILO_FLAGS || :
 %_mandir/man8/silo.8*
 
 %changelog
-* Tue Oct 18 2005 Alexandr D. Kanevskiy <kad@owl.openwall.com> 1.4.9-owl1
+* Tue Oct 18 2005 Alexandr D. Kanevskiy <kad-at-owl.openwall.com> 1.4.9-owl1
 - Updated to latest stable version.
 - Added patch from Aurora Linux for support unclean ext3, and a little
 more debugging info wrt unclean ext2 fs.
 - Packaged example silo.conf as documentation.
 
-* Mon Jun 03 2002 Solar Designer <solar@owl.openwall.com> 1.2.5-owl1
+* Mon Jun 03 2002 Solar Designer <solar-at-owl.openwall.com> 1.2.5-owl1
 - Updated to 1.2.5.
 - Don't disable cat anymore; anyone who wants boot loader security
 should use the proper measures to achieve it.
 
-* Tue Feb 05 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Feb 05 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Thu Jan 18 2001 Solar Designer <solar@owl.openwall.com>
+* Thu Jan 18 2001 Solar Designer <solar-at-owl.openwall.com>
 - Run silo in %post if enabled via $SILO_INSTALL.
 
-* Fri Jan 05 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Fri Jan 05 2001 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import from RH
 - disable cat command

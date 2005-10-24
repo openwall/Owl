@@ -1,4 +1,4 @@
-# $Id: Owl/packages/coreutils/coreutils.spec,v 1.11 2005/10/23 23:57:33 solar Exp $
+# $Id: Owl/packages/coreutils/coreutils.spec,v 1.12 2005/10/24 03:06:22 solar Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
@@ -228,25 +228,25 @@ fi
 %doc ChangeLog.bz2 NEWS.bz2 THANKS.bz2 AUTHORS README TODO
 
 %changelog
-* Sun Oct 23 2005 Solar Designer <solar@owl.openwall.com> 5.92-owl2
+* Sun Oct 23 2005 Solar Designer <solar-at-owl.openwall.com> 5.92-owl2
 - Re-worked the texinfo documentation patch for true(1) and false(1) to make
 it explicit that we're referring to non-GNU versions of these utilities.
 
-* Sun Oct 23 2005 Dmitry V. Levin <ldv@owl.openwall.com> 5.92-owl1
+* Sun Oct 23 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 5.92-owl1
 - Updated to 5.92.
 - Updated texinfo documentation for true(1) and false(1),
 patch from Andreas Ericsson.
 
-* Sun Jul 03 2005 Solar Designer <solar@owl.openwall.com> 5.3.1-owl0.6
+* Sun Jul 03 2005 Solar Designer <solar-at-owl.openwall.com> 5.3.1-owl0.6
 - Enable color ls on ttys by default (like we did in fileutils package).
 
-* Sat May 28 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 5.3.1-owl0.5
+* Sat May 28 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 5.3.1-owl0.5
 - Added bison >= 2.0 and automake >= 1.9.5 dependencies to BuildRequires.
 
-* Sun May 08 2005 Solar Designer <solar@owl.openwall.com> 5.3.1-owl0.4
+* Sun May 08 2005 Solar Designer <solar-at-owl.openwall.com> 5.3.1-owl0.4
 - Miscellaneous corrections to usleep.c, usleep.1, true.1, and false.1.
 
-* Sat May 07 2005 Dmitry V. Levin <ldv@owl.openwall.com> 5.3.1-owl0.3
+* Sat May 07 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 5.3.1-owl0.3
 - Enabled "make check" during build by default.
 - Corrected %%post/%%preun scripts.
 - Linked /bin/ls with /lib/libtermcap.so.2 instead of
@@ -254,7 +254,7 @@ patch from Andreas Ericsson.
 - Fixed errors handling in colorls.sh script.
 - Cleaned up spec file a bit according with conventions.
 
-* Thu May 5 2005 Andreas Ericsson <exon@owl.openwall.com> 5.3.1-owl0.2
+* Thu May 5 2005 Andreas Ericsson <exon-at-owl.openwall.com> 5.3.1-owl0.2
 - Removed sources for unpackaged files (runas, runbg et al).
 - Removed explicit Provides-tags for files.
 - Removed Conflicts-tags for man-pages et al.
@@ -265,5 +265,5 @@ patch from Andreas Ericsson.
 - Removed %%clean.
 - Updated to snapshot 200504240446, which is used in 5.3.1-alt0.4).
 
-* Tue Apr 19 2005 Andreas Ericsson <exon@owl.openwall.com> 5.3.1-owl0.1
+* Tue Apr 19 2005 Andreas Ericsson <exon-at-owl.openwall.com> 5.3.1-owl0.1
 - Imported to Owl from coreutils-5.3.1-alt0.3, with Owl's conventions.

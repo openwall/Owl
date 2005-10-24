@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libutempter/libutempter.spec,v 1.7 2005/08/18 18:16:03 ldv Exp $
+# $Id: Owl/packages/libutempter/libutempter.spec,v 1.8 2005/10/24 03:06:26 solar Exp $
 
 Summary: A privileged helper for utmp/wtmp updates.
 Name: libutempter
@@ -61,30 +61,30 @@ grep -q ^utempter: /etc/group || groupadd -g 162 utempter
 %_includedir/utempter.h
 
 %changelog
-* Thu Aug 18 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.1.3-owl1
+* Thu Aug 18 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.1.3-owl1
 - Updated to 1.1.3: Added multilib support, restricted list of global
 symbols exported by the library.
 
-* Mon Feb 24 2003 Michail Litvak <mci@owl.openwall.com> 1.1.1-owl1
+* Mon Feb 24 2003 Michail Litvak <mci-at-owl.openwall.com> 1.1.1-owl1
 - Updated to 1.1.1
   * Fri Feb 14 2003 Dmitry V. Levin <ldv@owl.openwall.com> 1.1.1-alt1
   - iface.c: don't block SIGCHLD; redefine signal handler instead.
 
-* Tue Jan 14 2003 Dmitry V. Levin <ldv@owl.openwall.com> 1.1.0-owl1
+* Tue Jan 14 2003 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.1.0-owl1
 - Migrated to libutempter-1.1.0
 
-* Sun May 19 2002 Solar Designer <solar@owl.openwall.com>
+* Sun May 19 2002 Solar Designer <solar-at-owl.openwall.com>
 - Moved the utempter directory to /usr/libexec.
 - Try an alternate utempter helper binary location for screen.
 
-* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
+* Mon Feb 04 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Sun Feb 25 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Feb 25 2001 Solar Designer <solar-at-owl.openwall.com>
 - Various spec file cleanups.
 - Corrected the package description.
 
-* Wed Feb 21 2001 Michail Litvak <mci@owl.openwall.com>
+* Wed Feb 21 2001 Michail Litvak <mci-at-owl.openwall.com>
 - imported from RH
 - added utempter group
 - utempter binary moved to /usr/sbin/utempter.d/

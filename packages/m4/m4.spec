@@ -1,4 +1,4 @@
-# $Id: Owl/packages/m4/m4.spec,v 1.17 2005/10/24 02:34:30 solar Exp $
+# $Id: Owl/packages/m4/m4.spec,v 1.18 2005/10/24 03:06:27 solar Exp $
 
 Summary: The GNU macro processor.
 Name: m4
@@ -68,31 +68,31 @@ fi
 %_datadir/aclocal/m4.m4
 
 %changelog
-* Sat Oct 22 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.4.4-owl1
+* Sat Oct 22 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.4-owl1
 - Updated to 1.4.4.
 - Corrected info files installation.
 - Packaged %_datadir/aclocal/m4.m4 from autoconf-2.59 sources.
 - Applied ALT's build change to use getopt, error, libintl, and obstack
 implementations from glibc rather than build them statically in this package.
 
-* Fri Oct 21 2005 Alexandr D. Kanevskiy <kad@owl.openwall.com> 1.4.3-owl1
+* Fri Oct 21 2005 Alexandr D. Kanevskiy <kad-at-owl.openwall.com> 1.4.3-owl1
 - Updated to 1.4.3.
 
-* Thu Feb 26 2004 Michail Litvak <mci@owl.openwall.com> 1.4-owl17
+* Thu Feb 26 2004 Michail Litvak <mci-at-owl.openwall.com> 1.4-owl17
 - Fixed building with new auto* tools.
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1.4-owl16
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 1.4-owl16
 - Deal with info dir entries such that the menu looks pretty.
 
-* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
+* Wed Feb 06 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions
 
-* Tue Feb 06 2001 Michail Litvak <mci@owl.openwall.com>
+* Tue Feb 06 2001 Michail Litvak <mci-at-owl.openwall.com>
 - Fixed format bug in error
 - added __attribute__ ((format(...))) for error
 
-* Sat Jan 06 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Jan 06 2001 Solar Designer <solar-at-owl.openwall.com>
 - Enable mkstemp explicitly, not rely on configure.
 
-* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import from RH

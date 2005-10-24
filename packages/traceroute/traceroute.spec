@@ -1,4 +1,4 @@
-# $Id: Owl/packages/traceroute/traceroute.spec,v 1.11 2005/01/14 03:27:53 galaxy Exp $
+# $Id: Owl/packages/traceroute/traceroute.spec,v 1.12 2005/10/24 03:06:30 solar Exp $
 
 Summary: Traces the route taken by packets over a TCP/IP network.
 Name: traceroute
@@ -65,34 +65,34 @@ fi
 /etc/control.d/facilities/traceroute
 
 %changelog
-* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.4a12-owl6
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.4a12-owl6
 - Removed verify checks for traceroute binary since we are using control
 to configure its permissions and group owner.
 - Cleaned up the spec.
 
-* Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com> 1.4a12-owl5
+* Sun Nov 03 2002 Solar Designer <solar-at-owl.openwall.com> 1.4a12-owl5
 - Dump/restore the owl-control setting for traceroute on package upgrades.
 - Keep traceroute at mode 700 ("restricted") in the package, but default
 it to "public" in %post when the package is first installed.  This avoids
 a race and fail-open behavior.
 
-* Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Jul 07 2002 Solar Designer <solar-at-owl.openwall.com>
 - Use struct sockaddr_in everywhere rather than cast struct sockaddr's as
 the latter may have different alignment requirements.
 
-* Mon Apr 01 2002 Solar Designer <solar@owl.openwall.com>
+* Mon Apr 01 2002 Solar Designer <solar-at-owl.openwall.com>
 - Imported Red Hat's patch for proper use of the unaligned *outdata
 structure; this really was still needed on 64-bit architectures.
 
-* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
+* Mon Feb 04 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Thu Mar 08 2001 Solar Designer <solar@owl.openwall.com>
+* Thu Mar 08 2001 Solar Designer <solar-at-owl.openwall.com>
 - Use bind(2) for the actual source address restriction (but leave the loop
 such that the right source address is tried in case of multiple A records).
 - Disallow non-loopback destinations for the case of "-i lo" as well.
 
-* Tue Mar 06 2001 Solar Designer <solar@owl.openwall.com>
+* Tue Mar 06 2001 Solar Designer <solar-at-owl.openwall.com>
 - Reviewed many patches in other distributions, concluded that only some
 of the security fixes by Tim Robbins and Chris Evans are still relevant.
 - Produced a patch with the above fixes and some more (in particular, to

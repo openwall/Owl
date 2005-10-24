@@ -1,4 +1,4 @@
-# $Id: Owl/packages/telnet/telnet.spec,v 1.10 2005/10/24 02:22:13 solar Exp $
+# $Id: Owl/packages/telnet/telnet.spec,v 1.11 2005/10/24 03:06:30 solar Exp $
 
 Summary: The client program for the telnet remote login protocol.
 Name: telnet
@@ -80,10 +80,10 @@ grep -q ^telnetd: /etc/passwd ||
 %_mandir/man8/telnetd.8*
 
 %changelog
-* Tue Jun 28 2005 Dmitry V. Levin <ldv@owl.openwall.com> 3.0-owl3
+* Tue Jun 28 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.0-owl3
 - Build with -Wall; fixed compilation warnings.
 
-* Thu Mar 17 2005 Solar Designer <solar@owl.openwall.com> 3.0-owl2
+* Thu Mar 17 2005 Solar Designer <solar-at-owl.openwall.com> 3.0-owl2
 - Introduced the appropriate bounds checking into slc_add_reply() and
 env_opt_add() (both are in the telnet client only).
 - Improved the environment variable export restrictions such that the
@@ -92,10 +92,10 @@ updated the man page; this replaced the Red Hat Linux derived patch.
 - Resolved a possible truncation of DISPLAY when it is sent in response
 to TELOPT_XDISPLOC.
 
-* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com> 3.0-owl1
+* Mon Feb 04 2002 Solar Designer <solar-at-owl.openwall.com> 3.0-owl1
 - Enforce our new spec file conventions.
 
-* Sun Nov 25 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Nov 25 2001 Solar Designer <solar-at-owl.openwall.com>
 - Do telnet protocol handling as a dedicated pseudo-user and in a chroot
 jail.  This uses the approach introduced by Chris Evans in his NetKit
 telnetd patches, but the code is different.
@@ -108,7 +108,7 @@ IPv6 addresses even if an IPv4 entry exists in the local /etc/hosts.  See
 the thread at:
 http://sources.redhat.com/ml/libc-alpha/2001-11/threads.html#00125
 
-* Wed Nov 21 2001 Solar Designer <solar@owl.openwall.com>
+* Wed Nov 21 2001 Solar Designer <solar-at-owl.openwall.com>
 - Eliminated even more dead code in telnetd, made it use logwtmp(3)
 rather than writing to the files directly (it does that to remove the
 records which is redundant with our login; will be disabled once telnetd
@@ -120,11 +120,11 @@ information).
 - Added a Red Hat Linux derived patch to the telnet client such that it
 permits queries for exported variables only.
 
-* Tue Nov 20 2001 Solar Designer <solar@owl.openwall.com>
+* Tue Nov 20 2001 Solar Designer <solar-at-owl.openwall.com>
 - Don't use AI_CANONNAME with getaddrinfo(3) in the telnet client (there's
 no longer a reference to ai_canonname in the OpenBSD version of the code).
 
-* Sat Nov 17 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Nov 17 2001 Solar Designer <solar-at-owl.openwall.com>
 - Ported the telnet client and server from OpenBSD-current (post-3.0),
 reviewing changes made in NetBSD-current, FreeBSD-current, and Linux
 NetKit 0.17.

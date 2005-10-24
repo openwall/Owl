@@ -1,4 +1,4 @@
-# $Id: Owl/packages/nmap/nmap.spec,v 1.9 2005/06/25 22:34:41 ldv Exp $
+# $Id: Owl/packages/nmap/nmap.spec,v 1.10 2005/10/24 03:06:27 solar Exp $
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
@@ -55,24 +55,24 @@ grep -q ^nmap: /etc/passwd ||
 %_datadir/nmap
 
 %changelog
-* Sat Jun 25 2005 Dmitry V. Levin <ldv@owl.openwall.com> 3.48-owl4
+* Sat Jun 25 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.48-owl4
 - Rebuilt with libssl.so.5.
 
-* Sun Dec 25 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 3.48-owl3
+* Sun Dec 25 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.48-owl3
 - Bumped up release to satisfy dependency resolver (fix for openssl
 upgrading issue).
 
-* Sun Oct 26 2003 Solar Designer <solar@owl.openwall.com> 3.48-owl2
+* Sun Oct 26 2003 Solar Designer <solar-at-owl.openwall.com> 3.48-owl2
 - Added a reduced version of the drop privileges patch from ALT Linux,
 without chrooting if DNS resolver is required.
 
-* Sat Oct 11 2003 Solar Designer <solar@owl.openwall.com> 3.48-owl1
+* Sat Oct 11 2003 Solar Designer <solar-at-owl.openwall.com> 3.48-owl1
 - Updated to 3.48 (from Simon with minor changes; the use of included
 libpcre is now forced).
 
-* Fri Oct 02 2003 Simon B <simonb@owl.openwall.com> 3.45-owl1
+* Fri Oct 02 2003 Simon B <simonb-at-owl.openwall.com> 3.45-owl1
 - Upgrade
 
-* Mon Jun 02 2003 Solar Designer <solar@owl.openwall.com> 3.27-owl1
+* Mon Jun 02 2003 Solar Designer <solar-at-owl.openwall.com> 3.27-owl1
 - Initial packaging for Owl, spec file very loosely based on one found
 in the official Nmap package.

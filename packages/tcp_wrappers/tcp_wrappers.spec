@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tcp_wrappers/tcp_wrappers.spec,v 1.13 2005/10/24 02:22:13 solar Exp $
+# $Id: Owl/packages/tcp_wrappers/tcp_wrappers.spec,v 1.14 2005/10/24 03:06:30 solar Exp $
 
 Summary: A security tool which acts as a wrapper for network services.
 Name: tcp_wrappers
@@ -59,29 +59,29 @@ ln -s hosts_access.5 %buildroot%_mandir/man5/hosts.deny.5
 %_mandir/man*/*
 
 %changelog
-* Thu Sep 09 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 7.6-owl5
+* Thu Sep 09 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 7.6-owl5
 - Re-enabled the patch for building with new glibc.
 
-* Wed May 19 2004 Solar Designer <solar@owl.openwall.com> 7.6-owl4
+* Wed May 19 2004 Solar Designer <solar-at-owl.openwall.com> 7.6-owl4
 - Do not apply the patch for building with new glibc just yet as it breaks
 things for glibc 2.1.3.
 
-* Wed Apr 21 2004 Michail Litvak <mci@owl.openwall.com> 7.6-owl3.2
+* Wed Apr 21 2004 Michail Litvak <mci-at-owl.openwall.com> 7.6-owl3.2
 - Build shared library (patch from ALT).
 
-* Fri Feb 27 2004 Michail Litvak <mci@owl.openwall.com> 7.6-owl3.1
+* Fri Feb 27 2004 Michail Litvak <mci-at-owl.openwall.com> 7.6-owl3.1
 - Patch from ALT to fix building with glibc 2.3.2.
 
-* Sun Dec 07 2003 Solar Designer <solar@owl.openwall.com> 7.6-owl3
+* Sun Dec 07 2003 Solar Designer <solar-at-owl.openwall.com> 7.6-owl3
 - Don't use a file under /tmp during builds, spotted by (GalaxyMaster).
 
-* Thu Dec 19 2002 Solar Designer <solar@owl.openwall.com> 7.6-owl2
+* Thu Dec 19 2002 Solar Designer <solar-at-owl.openwall.com> 7.6-owl2
 - Handle error conditions with table matching, patch from Steve Grubb.
 
-* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
+* Mon Feb 04 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 - Use the _mandir macro.
 
-* Mon Oct 02 2000 Solar Designer <solar@owl.openwall.com>
+* Mon Oct 02 2000 Solar Designer <solar-at-owl.openwall.com>
 - Based this spec file on Red Hat's, did some cleanups.
 - Replaced all of the RH patches with own and OpenBSD-derived ones.

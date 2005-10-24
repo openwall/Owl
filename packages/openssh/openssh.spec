@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.84 2005/10/24 02:22:12 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.85 2005/10/24 03:06:27 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
@@ -241,75 +241,75 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
-* Sat Sep 24 2005 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl15
+* Sat Sep 24 2005 Solar Designer <solar-at-owl.openwall.com> 3.6.1p2-owl15
 - Another bugfix for delayed compression: set the authenticated flag for
 root logins as well.  Thanks to Damien Miller.
 
-* Thu Jul 28 2005 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl14
+* Thu Jul 28 2005 Solar Designer <solar-at-owl.openwall.com> 3.6.1p2-owl14
 - Added delayed compression support for protocol 2 (a back-port of the
 changes committed into the OpenBSD CVS recently, with a bugfix added),
 enabled by default.  Thanks to Markus Friedl for working on this and for
 bringing it to our attention.
 
-* Sat Jun 25 2005 Dmitry V. Levin <ldv@owl.openwall.com> 3.6.1p2-owl13
+* Sat Jun 25 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.6.1p2-owl13
 - Rebuilt with libcrypto.so.5.
 
-* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.6.1p2-owl12
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.6.1p2-owl12
 - Removed verify checks for sshd_config which is under owl-control.
 - Cleaned up the spec a little.
 
-* Wed Nov 03 2004 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl11
+* Wed Nov 03 2004 Solar Designer <solar-at-owl.openwall.com> 3.6.1p2-owl11
 - Sanitize packet types early on.
 
-* Thu Sep 09 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 3.6.1p2-owl10
+* Thu Sep 09 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.6.1p2-owl10
 - Rebuild with OpenSSL 0.9.7.
 
-* Fri Jun 04 2004 Michail Litvak <mci@owl.openwall.com> 3.6.1p2-owl9
+* Fri Jun 04 2004 Michail Litvak <mci-at-owl.openwall.com> 3.6.1p2-owl9
 - Fixed directory traversal vulnerability in scp which allows remote malicious
 servers to overwrite arbitrary files (CAN-2004-0175).
 
-* Mon May 03 2004 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl8
+* Mon May 03 2004 Solar Designer <solar-at-owl.openwall.com> 3.6.1p2-owl8
 - Bumped release to correctly reflect the rebuild against shared libwrap.
 
-* Mon Nov 03 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl7
+* Mon Nov 03 2003 Solar Designer <solar-at-owl.openwall.com> 3.6.1p2-owl7
 - Always pass empty passwords into PAM to not produce failed authentication
 warnings as empty passwords are tried automatically; this fixes the bug
 introduced in the patch in 3.6.1p2-owl1.
 
-* Fri Oct 24 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl6
+* Fri Oct 24 2003 Solar Designer <solar-at-owl.openwall.com> 3.6.1p2-owl6
 - Explain how to enable the SFTP server with control(8).
 - Generate SSH host keys at startup if needed (for use with bootable CDs).
 
-* Wed Oct 22 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl5
+* Wed Oct 22 2003 Solar Designer <solar-at-owl.openwall.com> 3.6.1p2-owl5
 - Set comments in SSH host keys to key type instead of to hostname as the
 latter would leak the hostname when doing chrooted installs for other
 systems.
 
-* Mon Oct 20 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl4
+* Mon Oct 20 2003 Solar Designer <solar-at-owl.openwall.com> 3.6.1p2-owl4
 - Check the validity of sshd_config and host keys with "sshd -t" before
 proceeding with a restart or reload.
 
-* Wed Sep 17 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl3
+* Wed Sep 17 2003 Solar Designer <solar-at-owl.openwall.com> 3.6.1p2-owl3
 - Included the buffer and channels memory reallocation fixes from:
 http://www.openssh.com/txt/buffer.adv (2nd revision).
 - Reviewed all uses of *realloc(), resulting in four more fixes of this
 nature.
 
-* Mon Jul 21 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl2
+* Mon Jul 21 2003 Solar Designer <solar-at-owl.openwall.com> 3.6.1p2-owl2
 - Included a change from the CVS to deprecate VerifyReverseMapping and
 replace it with a new option, UseDNS.  This should solve the client
 address restriction circumvention attack discovered by Mike Harding.
 
-* Mon Jun 02 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p2-owl1
+* Mon Jun 02 2003 Solar Designer <solar-at-owl.openwall.com> 3.6.1p2-owl1
 - Updated to 3.6.1p2.
 - When we know we're going to fail authentication for reasons external
 to PAM, pass there a hopefully incorrect password to have it behave the
 same for correct and incorrect passwords.
 
-* Thu May 29 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p1-owl4
+* Thu May 29 2003 Solar Designer <solar-at-owl.openwall.com> 3.6.1p1-owl4
 - write_to=tcb
 
-* Fri Apr 18 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p1-owl3
+* Fri Apr 18 2003 Solar Designer <solar-at-owl.openwall.com> 3.6.1p1-owl3
 - Added back the now more complete patch to always run PAM with password
 authentication, even for non-existent or not allowed usernames.
 - Tell pam_tcb to not log failed authentication attempts when a blank
@@ -317,67 +317,67 @@ password is tried (blank_nolog) as this is attempted automatically.
 - Pass prefix= and count= to pam_tcb also for authentication such that it
 can use this information to reduce timing leaks.
 
-* Tue Apr 08 2003 Dmitry V. Levin <ldv@owl.openwall.com> 3.6.1p1-owl2
+* Tue Apr 08 2003 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.6.1p1-owl2
 - Updated pam_userpass support: build with libpam_userpass.
 
-* Tue Apr 08 2003 Solar Designer <solar@owl.openwall.com> 3.6.1p1-owl1
+* Tue Apr 08 2003 Solar Designer <solar-at-owl.openwall.com> 3.6.1p1-owl1
 - Updated to 3.6.1p1.
 - Make ssh-agent protect itself by setting prctl(PR_SET_DUMPABLE, 0) on
 Linux 2.4+.
 
-* Thu Dec 19 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Dec 19 2002 Solar Designer <solar-at-owl.openwall.com>
 - New release number for linking against tcp_wrappers with Steve Grubb's
 error handling fix.
 
-* Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Nov 03 2002 Solar Designer <solar-at-owl.openwall.com>
 - Dump/restore the owl-control setting for sftp on package upgrades.
 
-* Thu Aug 29 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Aug 29 2002 Solar Designer <solar-at-owl.openwall.com>
 - Corrected the dependencies (many are specific to the server package).
 
-* Sun Jul 28 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Jul 28 2002 Solar Designer <solar-at-owl.openwall.com>
 - Install the packet_close() cleanup for the client as well.
 
-* Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Jul 07 2002 Solar Designer <solar-at-owl.openwall.com>
 - Install the packet_close() cleanup for root logins as well (which are
 not privilege separated because that wouldn't make sense and thus were
 handled by a different code path which I initially have missed).
 
-* Sat Jul 06 2002 Solar Designer <solar@owl.openwall.com>
+* Sat Jul 06 2002 Solar Designer <solar-at-owl.openwall.com>
 - Re-initialize logging after calls into PAM module stacks, make use of
 log_reinit() where the original code needed that kind of functionality.
 - Stack pam_limits for account management, not session setup, such that
 its configuration file doesn't need to be world-readable with privsep.
 
-* Fri Jul 05 2002 Solar Designer <solar@owl.openwall.com>
+* Fri Jul 05 2002 Solar Designer <solar-at-owl.openwall.com>
 - Re-enable the password changing code (disabled in 3.3p1 and 3.4p1) for
 non-privsep case, disallowing any forwardings (such that the session may
 not be actually used while still not changing the expired password).
 - Limit three of the cleanup functions to apply to just the proper sshd
 processes, make sure session_pty_cleanup() happens before packet_close().
 
-* Tue Jul 02 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Jul 02 2002 Solar Designer <solar-at-owl.openwall.com>
 - In the PAM conversation, queue any text messages appearing in initial
 login mode for printing later, similarly to what the original code did.
 This is needed to pass password expiration warnings on to the user.
 
-* Sat Jun 29 2002 Solar Designer <solar@owl.openwall.com>
+* Sat Jun 29 2002 Solar Designer <solar-at-owl.openwall.com>
 - Keep the /dev/log fd open and only close it before executing other
 programs, to enable direct logging from chrooted child processes.
 
-* Thu Jun 27 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Jun 27 2002 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 3.4p1.
 - Zero out the written-to pages in memory mapped areas when they're
 destroyed to reduce the chances of sensitive data remaining on disk media
 in a remotely-recoverable way while not wasting any extra physical pages
 or filesystem blocks.
 
-* Tue Jun 25 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Jun 25 2002 Solar Designer <solar-at-owl.openwall.com>
 - Fixed the dropping of supplementary groups now included in 3.3p1 rather
 than adding our own version of the fix, to allow for running sshd as
 non-root and to be fail-close whenever possible.
 
-* Sun Jun 23 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Jun 23 2002 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 3.3p1 with privilege separation.
 - If MAP_ANON|MAP_SHARED fails (is unsupported on Linux 2.2), fallback
 to using SysV shm, and, if that fails too (SysV shm is a compile-time
@@ -386,78 +386,78 @@ kernel option), to MAP_SHARED with sparse and unlinked swap files.
 as the latter is no longer done as root (possibly something to be
 reverted in future versions).
 
-* Sat Jun 08 2002 Solar Designer <solar@owl.openwall.com>
+* Sat Jun 08 2002 Solar Designer <solar-at-owl.openwall.com>
 - Build deattack.c with -mcpu=ev5 when building for alphaev56+ to not
 trigger a not fully debugged problem with the EV56+ code.
 
-* Sun Mar 17 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Mar 17 2002 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 3.1p1.
 
-* Tue Mar 05 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Mar 05 2002 Solar Designer <solar-at-owl.openwall.com>
 - Patched a channel id check off by one bug discovered by Joost Pol.
 
-* Tue Feb 05 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Feb 05 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Wed Dec 12 2001 Solar Designer <solar@owl.openwall.com>
+* Wed Dec 12 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 3.0.2p1.
 
-* Fri Nov 16 2001 Solar Designer <solar@owl.openwall.com>
+* Fri Nov 16 2001 Solar Designer <solar-at-owl.openwall.com>
 - Use pam_tcb.
 
-* Sun Oct 07 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Oct 07 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updates to appl_userpass.c to support building against Linux-PAM 0.74+.
 
-* Sat Sep 29 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Sep 29 2001 Solar Designer <solar-at-owl.openwall.com>
 - Include post-2.9.9 fixes from the CVS, most importantly to restore the
 order of reading for ~/.ssh/config and /etc/ssh_config.
 
-* Thu Sep 27 2001 Solar Designer <solar@owl.openwall.com>
+* Thu Sep 27 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 2.9.9p2.
 - Patched the OpenSSL version check to ignore the patch and status bits.
 - Drop supplementary groups at sshd startup such that they aren't inherited
 by the PAM modules.
 
-* Wed Jul 11 2001 Solar Designer <solar@owl.openwall.com>
+* Wed Jul 11 2001 Solar Designer <solar-at-owl.openwall.com>
 - New release number for upgrades after building against OpenSSL 0.9.6b.
 
-* Fri Jun 15 2001 Solar Designer <solar@owl.openwall.com>
+* Fri Jun 15 2001 Solar Designer <solar-at-owl.openwall.com>
 - Prevent additional timing leaks with null passwords (when allowed),
 updated patch from Rafal Wojtczuk <nergal@owl.openwall.com>.
 
-* Mon Jun 11 2001 Solar Designer <solar@owl.openwall.com>
+* Mon Jun 11 2001 Solar Designer <solar-at-owl.openwall.com>
 - Switch credentials when cleaning up temporary files and sockets to fix
 the vulnerability reported by zen-parse@gmx.net on Bugtraq; the patch is
 by Markus Friedl with a later OpenSSH CVS change added and two bugs fixed.
 
-* Sun May 06 2001 Solar Designer <solar@owl.openwall.com>
+* Sun May 06 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 2.9p1.
 - Added sftp.control.
 
-* Sun Apr 22 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Apr 22 2001 Solar Designer <solar-at-owl.openwall.com>
 - New release number for upgrades after building against OpenSSL 0.9.6a.
 
-* Sun Apr 01 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Apr 01 2001 Solar Designer <solar-at-owl.openwall.com>
 - Patch from the CVS to not use AES/Rijndael against OpenSSH versions
 with bigendian bug.
 
-* Fri Mar 23 2001 Solar Designer <solar@owl.openwall.com>
+* Fri Mar 23 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 2.5.2p2.
 - Dropped two PAM patches (included in 2.5.2p2).
 
-* Wed Mar 21 2001 Solar Designer <solar@owl.openwall.com>
+* Wed Mar 21 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 2.5.2p1.
 - Patched a potential uninitialized reference in do_pam_cleanup_proc().
 
-* Mon Mar 19 2001 Solar Designer <solar@owl.openwall.com>
+* Mon Mar 19 2001 Solar Designer <solar-at-owl.openwall.com>
 - Package files introduced with 2.5.0 (primes, sftp, ssh-keyscan).
 
-* Sun Mar 18 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Mar 18 2001 Solar Designer <solar-at-owl.openwall.com>
 - Increased the STALLTIME for scp from 5 to 60 seconds (needed for large
 windows and slow links).
 - scp will now calculate ETA without account for possible stall time.
 
-* Wed Feb 28 2001 Solar Designer <solar@owl.openwall.com>
+* Wed Feb 28 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 2.5.1p1.
 - Updated the don't-log-unknown-users and pam_userpass patches.
 - Added a patch to always run PAM authentication, even for unknown users
@@ -466,42 +466,42 @@ windows and slow links).
 version).
 - Dropped the client version string NUL termination patch (fixed).
 
-* Fri Jan 26 2001 Solar Designer <solar@owl.openwall.com>
+* Fri Jan 26 2001 Solar Designer <solar-at-owl.openwall.com>
 - Added a patch to reduce the impact of traffic analysis by padding initial
 login passwords for SSH-1 and simulating echo during interactive sessions.
 (Thanks to Dug Song for updating the patch to current OpenSSH.)
 
-* Wed Dec 20 2000 Solar Designer <solar@owl.openwall.com>
+* Wed Dec 20 2000 Solar Designer <solar-at-owl.openwall.com>
 - Use pam_mktemp.
 
-* Thu Dec 07 2000 Solar Designer <solar@owl.openwall.com>
+* Thu Dec 07 2000 Solar Designer <solar-at-owl.openwall.com>
 - Updated sshd.init to use --pidfile and --expect-user.
 
-* Fri Dec 01 2000 Solar Designer <solar@owl.openwall.com>
+* Fri Dec 01 2000 Solar Designer <solar-at-owl.openwall.com>
 - Adjusted sshd.init for owl-startup.
 - Restart sshd after package upgrades in an owl-startup compatible way.
 - Corrected package descriptions.
 
-* Mon Nov 20 2000 Solar Designer <solar@owl.openwall.com>
+* Mon Nov 20 2000 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 2.3.0p1.
 
-* Fri Aug 04 2000 Solar Designer <solar@owl.openwall.com>
+* Fri Aug 04 2000 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 2.1.1p4.
 
-* Sun Jul 23 2000 Solar Designer <solar@owl.openwall.com>
+* Sun Jul 23 2000 Solar Designer <solar-at-owl.openwall.com>
 - Added dependencies on pam_userpass and /dev/urandom into openssh-server.
 
-* Mon Jul 17 2000 Solar Designer <solar@owl.openwall.com>
+* Mon Jul 17 2000 Solar Designer <solar-at-owl.openwall.com>
 - Added a patch to not log unknown usernames (someone could have typed
 their password at the username prompt by mistake, even though there's no
 such prompt with the "native" client).
 
-* Wed Jul 12 2000 Solar Designer <solar@owl.openwall.com>
+* Wed Jul 12 2000 Solar Designer <solar-at-owl.openwall.com>
 - Cleaned up the default ssh*_config.
 - The config files are now declared as separate Source's in this spec.
 - Moved this changelog to end of spec file.
 
-* Sun Jul 09 2000 Solar Designer <solar@owl.openwall.com>
+* Sun Jul 09 2000 Solar Designer <solar-at-owl.openwall.com>
 - Imported current Damien Miller's spec file, removed the X11-specific
 stuff, fixed buildroot issues.
 - sshd.pam and sshd.init are now taken from separate files, not the

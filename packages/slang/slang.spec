@@ -1,4 +1,4 @@
-# $Id: Owl/packages/slang/Attic/slang.spec,v 1.15 2005/10/24 02:20:10 solar Exp $
+# $Id: Owl/packages/slang/Attic/slang.spec,v 1.16 2005/10/24 03:06:30 solar Exp $
 
 Summary: The shared library for the S-Lang extension language.
 Name: slang
@@ -89,22 +89,22 @@ rm %buildroot/usr/doc/slang/slangfun.txt
 %_includedir/slang
 
 %changelog
-* Tue Jun 28 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.4.6-owl6
+* Tue Jun 28 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.6-owl6
 - Build this package without optimizations based on strict aliasing rules.
 
-* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.4.6-owl5
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.4.6-owl5
 - Fix for orphaned %_libdir/libslang.so.1 produced by ldconfig in the %post.
 
-* Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 1.4.6-owl4
+* Tue Nov 02 2004 Solar Designer <solar-at-owl.openwall.com> 1.4.6-owl4
 - Set Release to -owl4 to permit for making this public.
 
-* Thu Sep 09 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1.4.6-owl3.1
+* Thu Sep 09 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.4.6-owl3.1
 - Fixed -fixes.patch to compile under glibc 2.3+
 
-* Tue Jul 20 2004 Michail Litvak <mci@owl.openwall.com> 1.4.6-owl3
+* Tue Jul 20 2004 Michail Litvak <mci-at-owl.openwall.com> 1.4.6-owl3
 - Use sed -i instead of perl.
 
-* Sat Oct 12 2002 Solar Designer <solar@owl.openwall.com> 1.4.6-owl2
+* Sat Oct 12 2002 Solar Designer <solar-at-owl.openwall.com> 1.4.6-owl2
 - Updated to 1.4.6.
 - Reviewed all of the library code for environment variable uses and
 restricted those which would be unsafe in SUID/SGID programs.
@@ -115,8 +115,8 @@ restricted those which would be unsafe in SUID/SGID programs.
 * Wed Sep 25 2002 Ilya Andreiv <ilya@if5641.spb.edu>
 - Upgrade to 1.4.5
 
-* Tue Feb 05 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Feb 05 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Thu Dec 14 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Thu Dec 14 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import from RH

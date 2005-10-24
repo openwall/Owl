@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mutt/mutt.spec,v 1.22 2005/10/23 22:14:13 solar Exp $
+# $Id: Owl/packages/mutt/mutt.spec,v 1.23 2005/10/24 03:06:27 solar Exp $
 
 Summary: A feature-rich text-based mail user agent.
 Name: mutt
@@ -80,11 +80,11 @@ cat contrib/gpg.rc %_sourcedir/Muttrc-color >> %buildroot/%_sysconfdir/Muttrc
 %exclude %_mandir/man1/mutt_dotlock.*
 
 %changelog
-* Thu Aug 25 2005 Solar Designer <solar@owl.openwall.com> 1.4.2.1-owl5
+* Thu Aug 25 2005 Solar Designer <solar-at-owl.openwall.com> 1.4.2.1-owl5
 - Introduced the buffer non-overflow hardening into convert_to_state() itself
 rather than into only one of its callers.
 
-* Tue Jul 19 2005 Solar Designer <solar@owl.openwall.com> 1.4.2.1-owl4
+* Tue Jul 19 2005 Solar Designer <solar-at-owl.openwall.com> 1.4.2.1-owl4
 - Extra buffer non-overflow safety for handler.c: mutt_decode_xbit().
 - Updated the SEE ALSO lists of all Mutt man pages according to Owl
 specifics.
@@ -92,41 +92,41 @@ specifics.
 - Use the configure macro instead of the ./prepare script, do not pass
 obsolete settings into configure and makeinstall.
 
-* Tue Jun 28 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.4.2.1-owl3
+* Tue Jun 28 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.2.1-owl3
 - Build this package without optimizations based on strict aliasing rules.
 
-* Sat Jun 25 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.4.2.1-owl2
+* Sat Jun 25 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.2.1-owl2
 - Rebuilt with libssl.so.5.
 
-* Fri Feb 13 2004 Michail Litvak <mci@owl.openwall.com> 1.4.2.1-owl1
+* Fri Feb 13 2004 Michail Litvak <mci-at-owl.openwall.com> 1.4.2.1-owl1
 - 1.4.2.1 (remove -cvs patch included into release)
 
-* Fri Jan 30 2004 Michail Litvak <mci@owl.openwall.com> 1.4.1-owl3
+* Fri Jan 30 2004 Michail Litvak <mci-at-owl.openwall.com> 1.4.1-owl3
 - Patch (from Mutt's CVS) to fix Mutt crash on certain e-mails; this can
 occur when an UTF-8 locale is used on wide (more than ~120 columns)
 terminals, but Owl isn't affected with its current glibc because of the
 lack of UTF-8 locales support.
 
-* Mon Oct 20 2003 Solar Designer <solar@owl.openwall.com> 1.4.1-owl2
+* Mon Oct 20 2003 Solar Designer <solar-at-owl.openwall.com> 1.4.1-owl2
 - Build without glibc's wide character functions due to the broken locales;
 in particular, with koi8-r some control characters wouldn't be treated
 as such after being passed through mbrtowc() and checked with iswcntrl().
 
-* Sun Mar 23 2003 Jarno Huuskonen <jhuuskon@owl.openwall.com> 1.4.1-owl1
+* Sun Mar 23 2003 Jarno Huuskonen <jhuuskon-at-owl.openwall.com> 1.4.1-owl1
 - 1.4.1
 
-* Mon Jan 20 2003 Solar Designer <solar@owl.openwall.com>
+* Mon Jan 20 2003 Solar Designer <solar-at-owl.openwall.com>
 - Improved the package description.
 - Require the proper version of mktemp for our muttbug/flea patch.
 - Initial commit into Owl.
 
-* Wed Jan 15 2003 Jarno Huuskonen <jhuuskon@owl.openwall.com>
+* Wed Jan 15 2003 Jarno Huuskonen <jhuuskon-at-owl.openwall.com>
 - use mkstemp when creating temporary files.
 - include locales and flea
 
-* Wed Sep 25 2002 Solar Designer <solar@owl.openwall.com>
+* Wed Sep 25 2002 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 1.4, the package is still non-public.
 - Don't use slang.
 
-* Tue Jan 08 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Jan 08 2002 Solar Designer <solar-at-owl.openwall.com>
 - Based this spec file on Red Hat's, dropped most patches for now.

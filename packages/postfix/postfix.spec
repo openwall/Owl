@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.28 2005/10/24 02:34:30 solar Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.29 2005/10/24 03:06:29 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
@@ -311,7 +311,7 @@ fi
 %attr(644,root,root) %verify(not md5 mtime size) %ghost %queue_directory/etc/*
 
 %changelog
-* Thu Aug 11 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1:2.2.5-owl1
+* Thu Aug 11 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.2.5-owl1
 - Updated to 2.2.5.
 - Updated mantools/postlink patch from Debian.
 - Added workaround in %%pre script to stop Postfix even if old
@@ -319,7 +319,7 @@ fi
 - Changed chroot jail update script to set world-readable permissions
 on files it copies.
 
-* Thu Jun 30 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1:2.2.4-owl1
+* Thu Jun 30 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.2.4-owl1
 - Updated to 2.2.4.
 - Reviewed Owl patches, removed obsolete ones.
 - Imported shared build model and adopted a bunch of patches from ALT's
@@ -328,60 +328,60 @@ alias_database = hash:/etc/postfix/aliases,
 alias_maps = hash:/etc/postfix/aliases,
 mynetworks_style = host.
 
-* Sun Nov 07 2004 Michail Litvak <mci@owl.openwall.com> 19991231_pl13-owl9
+* Sun Nov 07 2004 Michail Litvak <mci-at-owl.openwall.com> 19991231_pl13-owl9
 - Corrected the placement of man pages for FHS 2.2 compatibility.
 
-* Fri Nov 28 2003 Solar Designer <solar@owl.openwall.com> 19991231_pl13-owl8
+* Fri Nov 28 2003 Solar Designer <solar-at-owl.openwall.com> 19991231_pl13-owl8
 - Continue on possible errors from the rmdir in %preun such that it is still
 possible to uninstall; thanks to Maciek Pasternacki for reporting this.
 
-* Fri Oct 24 2003 Solar Designer <solar@owl.openwall.com> 19991231_pl13-owl7
+* Fri Oct 24 2003 Solar Designer <solar-at-owl.openwall.com> 19991231_pl13-owl7
 - Explain how to enable the SMTP server with control(8).
 
-* Wed Oct 22 2003 Solar Designer <solar@owl.openwall.com> 19991231_pl13-owl6
+* Wed Oct 22 2003 Solar Designer <solar-at-owl.openwall.com> 19991231_pl13-owl6
 - Hack: in postalias, don't set YP_MASTER_NAME as that would leak the
 hostname when doing chrooted installs for other systems.
 
-* Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com> 19991231_pl13-owl5
+* Sun Nov 03 2002 Solar Designer <solar-at-owl.openwall.com> 19991231_pl13-owl5
 - Dump/restore the owl-control setting for SMTP server on package upgrades.
 
-* Sun Oct 13 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Oct 13 2002 Solar Designer <solar-at-owl.openwall.com>
 - Use fcntl locking, not flock.
 
-* Tue Sep 03 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Sep 03 2002 Solar Designer <solar-at-owl.openwall.com>
 - Conflicts: qmail
 
-* Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Jul 07 2002 Solar Designer <solar-at-owl.openwall.com>
 - Use grep -q in %pre.
 
-* Thu Feb 07 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Feb 07 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Wed Dec 26 2001 Solar Designer <solar@owl.openwall.com>
+* Wed Dec 26 2001 Solar Designer <solar-at-owl.openwall.com>
 - Additional postfix-script fail-closeness.
 
-* Sat Dec 22 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Dec 22 2001 Solar Designer <solar-at-owl.openwall.com>
 - Hardening of the Postfix queue file permissions and access methods,
 in case someone compromises the postfix account.  The fixes are by
 Wietse Venema and have been back-ported from the 20011217 snapshot.
 Thanks to Michael Tokarev for his help in handling these issues.
 - Updated to 19991231-pl13.
 
-* Sun Mar 18 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Mar 18 2001 Solar Designer <solar-at-owl.openwall.com>
 - Fixed a copy/paste bug in the restart script.
 
-* Sun Dec 24 2000 Solar Designer <solar@owl.openwall.com>
+* Sun Dec 24 2000 Solar Designer <solar-at-owl.openwall.com>
 - Obsoletes: sendmail-cf, sendmail-doc
 
-* Mon Dec 04 2000 Solar Designer <solar@owl.openwall.com>
+* Mon Dec 04 2000 Solar Designer <solar-at-owl.openwall.com>
 - Ignore missing source files when updating the chroot jail (this may
 happen during system installation).
 
-* Fri Dec 01 2000 Solar Designer <solar@owl.openwall.com>
+* Fri Dec 01 2000 Solar Designer <solar-at-owl.openwall.com>
 - Simplified postfix.init for use with owl-startup.
 - Restart on package upgrades.
 
-* Wed Nov 22 2000 Solar Designer <solar@owl.openwall.com>
+* Wed Nov 22 2000 Solar Designer <solar-at-owl.openwall.com>
 - Restrict relaying to the host's own addresses only by default.
 - Ignore sparse .forward files on filesystems which allow for this.
 - /var/spool/postfix/pid/ is now only writable by root.
@@ -390,7 +390,7 @@ privileges in their real and/or saved IDs and pseudo-user postfix
 is shared with non-chroot'ed processes, so this is breakable).
 - Wrote postfix.control to enable/disable the SMTP server.
 
-* Tue Nov 21 2000 Solar Designer <solar@owl.openwall.com>
+* Tue Nov 21 2000 Solar Designer <solar-at-owl.openwall.com>
 - Wrote this spec file.
 - Took postfix.init from Simon J Mudd's package with minor changes.
 - SMTP server is now disabled by default.

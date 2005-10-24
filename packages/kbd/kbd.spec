@@ -1,4 +1,4 @@
-# $Id: Owl/packages/kbd/kbd.spec,v 1.17 2005/10/24 02:34:30 solar Exp $
+# $Id: Owl/packages/kbd/kbd.spec,v 1.18 2005/10/24 03:06:24 solar Exp $
 
 Summary: Tools for configuring the console.
 Name: kbd
@@ -142,7 +142,7 @@ fi
 /lib/kbd/*
 
 %changelog
-* Mon Oct 17 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.12-owl1
+* Mon Oct 17 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.12-owl1
 - Updated to 1.12.
 - Merged recent patches from several distributions.
 - Fixed error in the description.
@@ -150,19 +150,19 @@ fi
 - Added BuildRequire on sed >= 4.0.9 due to 'sed -i'.
 - From now on, this package could be compiled with kernel 2.6 headers.
 
-* Thu Jan 15 2004 Michail Litvak <mci@owl.openwall.com> 1.08-owl5
+* Thu Jan 15 2004 Michail Litvak <mci-at-owl.openwall.com> 1.08-owl5
 - Make /lib/kbd directory owned by this package.
 
-* Tue Oct 21 2003 Solar Designer <solar@owl.openwall.com> 1.08-owl4
+* Tue Oct 21 2003 Solar Designer <solar-at-owl.openwall.com> 1.08-owl4
 - Dropped support for console-tools' consolechars from the setsysfont script.
 
-* Fri Aug 01 2003 Michail Litvak <mci@owl.openwall.com> 1.08-owl3
+* Fri Aug 01 2003 Michail Litvak <mci-at-owl.openwall.com> 1.08-owl3
 - Fixed building on sparc architecture.
 
-* Thu Apr 17 2003 Michail Litvak <mci@owl.openwall.com> 1.08-owl2
+* Thu Apr 17 2003 Michail Litvak <mci-at-owl.openwall.com> 1.08-owl2
 - Don't install resizecons man page.
 
-* Thu Apr 17 2003 Michail Litvak <mci@owl.openwall.com>
+* Thu Apr 17 2003 Michail Litvak <mci-at-owl.openwall.com>
 - Obsoletes console-tools package, but derive kbdtable.init from it.
 - spec based on RH
 - spec files cleanups

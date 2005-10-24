@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iptables/iptables.spec,v 1.19 2005/10/24 02:22:11 solar Exp $
+# $Id: Owl/packages/iptables/iptables.spec,v 1.20 2005/10/24 03:06:24 solar Exp $
 
 %define BUILD_STATIC 0
 %define BUILD_IPV6 0
@@ -114,7 +114,7 @@ fi
 %endif
 
 %changelog
-* Mon Jan 10 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.2.11-owl2
+* Mon Jan 10 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.2.11-owl2
 - Corrected kernel requirement to 2.4.4 as mentioned by iptables' INSTALL.
 - Made use of %%__cc and %%__make macros.
 - Added iptables6 package and BUILD_IPV6 macro to control its building.
@@ -127,15 +127,15 @@ source package.
 (main) iptables package building was tested in this mode.
 - Cleaned up the spec.
 
-* Thu Jul 22 2004 Michail Litvak <mci@owl.openwall.com> 1.2.11-owl1
+* Thu Jul 22 2004 Michail Litvak <mci-at-owl.openwall.com> 1.2.11-owl1
 - 1.2.11
 
-* Mon Sep 15 2003 Solar Designer <solar@owl.openwall.com> 1.2.8-owl2
+* Mon Sep 15 2003 Solar Designer <solar-at-owl.openwall.com> 1.2.8-owl2
 - In "stop", only try to do anything if iptables is supported by kernel.
 
-* Fri Aug 22 2003 Solar Designer <solar@owl.openwall.com> 1.2.8-owl1
+* Fri Aug 22 2003 Solar Designer <solar-at-owl.openwall.com> 1.2.8-owl1
 - Further cleanups and changes for consistency with the ipchains package.
 
-* Wed Aug 20 2003 Michail Litvak <mci@owl.openwall.com>
+* Wed Aug 20 2003 Michail Litvak <mci-at-owl.openwall.com>
 - initial package for Owl.
 - startup script cleanups.

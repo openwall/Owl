@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.33 2005/10/24 02:22:13 solar Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.34 2005/10/24 03:06:28 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -274,37 +274,37 @@ find %buildroot%_libdir/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
-* Sun Feb 06 2005 Solar Designer <solar@owl.openwall.com> 1:5.8.3-owl4
+* Sun Feb 06 2005 Solar Designer <solar-at-owl.openwall.com> 1:5.8.3-owl4
 - File::Path::rmtree and suidperl PERLIO_DEBUG security fixes.
 
-* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1:5.8.3-owl3
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:5.8.3-owl3
 - Removed unneeded BuildRequires for tcsh.
 - Reflected Epoch in the %changelog.
 
-* Fri Mar 19 2004 Michail Litvak <mci@owl.openwall.com> 1:5.8.3-owl2
+* Fri Mar 19 2004 Michail Litvak <mci-at-owl.openwall.com> 1:5.8.3-owl2
 - Deal with automatic requires.
 - Add some Provides, which were undetected automatically.
 
-* Fri Mar 19 2004 Solar Designer <solar@owl.openwall.com> 1:5.8.3-owl1.3
+* Fri Mar 19 2004 Solar Designer <solar-at-owl.openwall.com> 1:5.8.3-owl1.3
 - Dropped the AutoReq: false
 
-* Mon Mar 15 2004 Michail Litvak <mci@owl.openwall.com> 1:5.8.3-owl1.2
+* Mon Mar 15 2004 Michail Litvak <mci-at-owl.openwall.com> 1:5.8.3-owl1.2
 - Build with threading support to be RH9 compatible.
 - Added vendor_perl directory to @INC.
 
-* Thu Feb 19 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:5.8.3-owl1.1
+* Thu Feb 19 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:5.8.3-owl1.1
 - Temporarily set AutoReq to false
 
-* Sun Jan 25 2004 Solar Designer <solar@owl.openwall.com> 1:5.8.3-owl1
+* Sun Jan 25 2004 Solar Designer <solar-at-owl.openwall.com> 1:5.8.3-owl1
 - Additional temporary file handling fixes.
 - Made building/packaging of suidperl optional and officially unsupported.
 
-* Tue Jan 20 2004 Solar Designer <solar@owl.openwall.com> 1:5.8.3-owl0
+* Tue Jan 20 2004 Solar Designer <solar-at-owl.openwall.com> 1:5.8.3-owl0
 - Updated to 5.8.3.
 - Reviewed all the patches, re-generated those which are to remain, applied
 various corrections to the patches and the spec file.
 
-* Thu Dec 25 2003 (GalaxyMaster) <galaxy@owl.openwall.com> 1:5.8.2-owl0
+* Thu Dec 25 2003 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:5.8.2-owl0
 - Updated to 5.8.2.
 - Dropped patches incorporated into mainstream (rh-buildroot, rh-fhs,
 rh-installman-man, rh-no-db, rh-prereq, up-owl-glob-bound).
@@ -318,21 +318,21 @@ Pod::Perldoc, which deals with temporary files via File::Temp).
 (they will fail on system with CONFIG_HARDEN_SHM).
 - Reviewed Owl patches and corrected some of them to suit the new version.
 
-* Fri Jul 04 2003 Solar Designer <solar@owl.openwall.com> 1:5.6.0-owl13
+* Fri Jul 04 2003 Solar Designer <solar-at-owl.openwall.com> 1:5.6.0-owl13
 - Corrected the Perl getpwent() to not rely on getspent(3) returning
 entries in the same order as getpwent(3) does; this actually makes a
 difference with /etc/tcb and likely with non-files password databases.
 
-* Sun Aug 11 2002 Solar Designer <solar@owl.openwall.com> 1:5.6.0-owl12
+* Sun Aug 11 2002 Solar Designer <solar-at-owl.openwall.com> 1:5.6.0-owl12
 - Back-ported bound checking fixes for File::Glob from Perl 5.8.0.
 Thanks to Pavel Kankovsky for the report and to Michael Tokarev for
 discussing other possible approaches to fixing this.
 
-* Sun Aug 04 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Aug 04 2002 Solar Designer <solar-at-owl.openwall.com>
 - Use "rm -f" on compile.ph as it won't exist if the kernel sources under
 /usr/src/linux haven't been compiled (reported by Camiel Dobbelaar).
 
-* Thu Jul 18 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Jul 18 2002 Solar Designer <solar-at-owl.openwall.com>
 - Patched c2ph and lib/ExtUtils/inst to use File::Temp, and the inst to
 work with GNU tar.
 - Patched lib/dotsh.pl to use a pipe instead of a temporary file (which
@@ -340,7 +340,7 @@ used to be created unsafely) and lib/perl5db.pl to not use /tmp/perldbtty$$.
 - Applied many fixes to documentation and code comments to not suggest bad
 practices on the use of temporary files.
 
-* Tue Jul 16 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Jul 16 2002 Solar Designer <solar-at-owl.openwall.com>
 - Package File::Temp as needed for the modified perldoc.
 - Replaced perlcc with the version that uses File::Temp, from Perl 5.6.1.
 - Patched perlbug and s2p to create temporary files with File::Temp, and
@@ -349,7 +349,7 @@ perlbug to use vitmp.
 - Only generate *.ph files out of gcc, glibc and kernel headers (but not
 SCSI ones) by default.
 
-* Sun Jul 14 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Jul 14 2002 Solar Designer <solar-at-owl.openwall.com>
 - Corrected the temporary file handling in perldoc (patch from ALT Linux)
 and Configure.
 - Use the versions of Perl-specific find-{provides,requires} included with
@@ -362,17 +362,17 @@ at Red Hat? same bug in Rawhide, so it seems not).
 and don't package linux/compile.ph to not leak information specific to the
 build system's last kernel compile.
 
-* Thu Feb 07 2002 Michail Litvak <mci@owl.openwall.com>
+* Thu Feb 07 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Mon Sep 18 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Mon Sep 18 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - specify cc=%__cc; continue to let cpp sort itself out
 - switch shadow support on (RH bug #8646)
 
-* Wed Sep 06 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Wed Sep 06 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - no mail in suidperl
 
-* Sun Sep 03 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Sep 03 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import from RH
 - MD5 -> Digest::MD5
 - /usr/man/man*

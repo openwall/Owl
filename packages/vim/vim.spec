@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vim/vim.spec,v 1.24 2005/10/24 02:34:30 solar Exp $
+# $Id: Owl/packages/vim/vim.spec,v 1.25 2005/10/24 03:06:32 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -287,26 +287,26 @@ chmod 644 ../runtime/doc/vim2html.pl
 %endif
 
 %changelog
-* Thu Sep 09 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 6.1.386-owl4
+* Thu Sep 09 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.1.386-owl4
 - Patched to build with new autotools.
 - Spec prepared for FHS moving.
 
-* Tue Jul 20 2004 Michail Litvak <mci@owl.openwall.com> 6.1.386-owl3
+* Tue Jul 20 2004 Michail Litvak <mci-at-owl.openwall.com> 6.1.386-owl3
 - Use sed -i instead of perl.
 
-* Thu Jan 29 2004 Solar Designer <solar@owl.openwall.com> 6.1.386-owl2
+* Thu Jan 29 2004 Solar Designer <solar-at-owl.openwall.com> 6.1.386-owl2
 - Included patch by galaxy@ to resolve a name clash with Perl 5.8.3.
 
-* Sat Mar 15 2003 Michail Litvak <mci@owl.openwall.com> 6.1.386-owl1
+* Sat Mar 15 2003 Michail Litvak <mci-at-owl.openwall.com> 6.1.386-owl1
 - Updated to patchlevel 386
 
-* Thu Apr 25 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Apr 25 2002 Solar Designer <solar-at-owl.openwall.com>
 - vitmp moved from /usr/libexec to /bin and now has a man page.
 - Additional temporary file handling fixes to vim and its scripts (but not
 the documentation yet).
 - Run autoconf in the same way that vim Makefiles would.
 
-* Fri Apr 19 2002 Solar Designer <solar@owl.openwall.com>
+* Fri Apr 19 2002 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 6.1 patchlevel 18, reviewing the patches in Rawhide and taking
 those pieces which make sense.
 - No longer install a second copy of the documentation, refer to the runtime
@@ -314,30 +314,30 @@ directory instead.
 - Provide a vitmp wrapper, to be used by crontab(1) and edquota(8); this is
 to make sure the file is overwritten in-place and no swap files are used.
 
-* Sat Feb 02 2002 Solar Designer <solar@owl.openwall.com>
+* Sat Feb 02 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Sun Apr 01 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Apr 01 2001 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import php,lilo,nocrv patches from RH
 - upgrade to 6.0z
 - disable modeline's
 - alternative languages disabled
 
-* Mon Feb 19 2001 Solar Designer <solar@owl.openwall.com>
+* Mon Feb 19 2001 Solar Designer <solar-at-owl.openwall.com>
 - "small" feature set for /bin/vi (+visual).
 - Renamed vim-minimal package to vim-small, corrected package descriptions.
 
-* Sat Jan 06 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Jan 06 2001 Solar Designer <solar-at-owl.openwall.com>
 - Enable mkstemp explicitly, not rely on configure (this will make sense
 once vim uses mkstemp for real).
 
-* Fri Dec 15 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Fri Dec 15 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - disable gpm
 
-* Fri Dec 15 2000 Solar Designer <solar@owl.openwall.com>
+* Fri Dec 15 2000 Solar Designer <solar-at-owl.openwall.com>
 - More spec file cleanups (no subshell).
 
-* Mon Dec 11 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Mon Dec 11 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - Imported from RH.
 - 6.0p
 - cleanup

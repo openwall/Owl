@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gettext/gettext.spec,v 1.10 2005/10/23 21:09:44 solar Exp $
+# $Id: Owl/packages/gettext/gettext.spec,v 1.11 2005/10/24 03:06:23 solar Exp $
 
 Summary: GNU libraries and utilities for producing multi-lingual messages.
 Name: gettext
@@ -92,37 +92,37 @@ fi
 #%_datadir/emacs/site-lisp/*
 
 %changelog
-* Fri Sep 24 2005 Michail Litvak <mci@owl.openwall.com>  0.14.1-owl3
+* Fri Sep 24 2005 Michail Litvak <mci-at-owl.openwall.com>  0.14.1-owl3
 - Don't package .la files.
 
-* Thu May 05 2005 Solar Designer <solar@owl.openwall.com> 0.14.1-owl2
+* Thu May 05 2005 Solar Designer <solar-at-owl.openwall.com> 0.14.1-owl2
 - "Provide" gettext-devel and devel(libintl) for Fedora compatibility.
 - Install autosprintf.info.
 - Corrected the Source URL, License.
 - Added URL.
 
-* Wed Sep 08 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 0.14.1-owl1
+* Wed Sep 08 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.14.1-owl1
 - Changed %%exclude to removing the file in %%install section; this will
 allow to build this package under RPM3.
 
-* Wed Mar 17 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 0.14.1-owl0.1
+* Wed Mar 17 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.14.1-owl0.1
 - Updated to 0.14.1
 - Cleaned up the spec (removed unneeded patches, fixed a typo)
 
-* Thu Feb 26 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 0.11.5-owl0.1
+* Thu Feb 26 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.11.5-owl0.1
 - Updated to 0.11.5
 - Temporarily we do not package libintl.h as it conflicts with one from glibc
 - Some autotools magic to build this package under new autoconf
 - Temporarily disabled packaging of emacs lisp files, must be investigated
 
-* Sun Feb 03 2002 Michail Litvak <mci@owl.openwall.com> 0.10.35-owl24
+* Sun Feb 03 2002 Michail Litvak <mci-at-owl.openwall.com> 0.10.35-owl24
 - Enforce our new spec file conventions
 
-* Thu Oct 19 2000 Solar Designer <solar@owl.openwall.com>
+* Thu Oct 19 2000 Solar Designer <solar-at-owl.openwall.com>
 - Added a security patch for the (largely unused) libintl sources that
 get installed into /usr/share/gettext/intl
 - unset LINGUAS
 
-* Sun Sep 24 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Sep 24 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import spec from RH
 - little sprintf/snprintf fix.

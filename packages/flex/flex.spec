@@ -1,4 +1,4 @@
-# $Id: Owl/packages/flex/flex.spec,v 1.10 2004/11/23 22:40:45 mci Exp $
+# $Id: Owl/packages/flex/flex.spec,v 1.11 2005/10/24 03:06:23 solar Exp $
 
 Summary: A tool for creating scanners (text pattern recognizers).
 Name: flex
@@ -69,14 +69,14 @@ fi
 %_prefix/include/FlexLexer.h
 
 %changelog
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 2.5.4a-owl13
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 2.5.4a-owl13
 - Deal with info dir entries such that the menu looks pretty.
 
-* Sun Jul 07 2002 Michail Litvak <mci@owl.openwall.com>
+* Sun Jul 07 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Package flex.info
 
-* Fri Feb 01 2002 Michail Litvak <mci@owl.openwall.com>
+* Fri Feb 01 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import from RH

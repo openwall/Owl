@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cvs/cvs.spec,v 1.27 2005/10/24 02:34:30 solar Exp $
+# $Id: Owl/packages/cvs/cvs.spec,v 1.28 2005/10/24 03:06:22 solar Exp $
 
 Summary: A version control system.
 Name: cvs
@@ -185,7 +185,7 @@ fi
 %_datadir/cvs
 
 %changelog
-* Thu Sep 29 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.11.20-owl1
+* Thu Sep 29 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.11.20-owl1
 - Updated to 1.11.20.
 - Reviewed Owl patches, removed obsolete ones.
 - Imported a bunch of patches from ALT's cvs-1.11.20-alt2 package, including:
@@ -196,29 +196,29 @@ global cvsrc file (/etc/cvs/cvsrc) support;
 tagloginfo support;
 - Corrected info files installation.
 
-* Sat Sep 11 2004 Solar Designer <solar@owl.openwall.com> 1.11.5-owl8
+* Sat Sep 11 2004 Solar Designer <solar-at-owl.openwall.com> 1.11.5-owl8
 - Use RPM's exclude macro on info dir file.
 
-* Thu Jun 03 2004 Solar Designer <solar@owl.openwall.com> 1.11.5-owl7
+* Thu Jun 03 2004 Solar Designer <solar-at-owl.openwall.com> 1.11.5-owl7
 - Added back-ports of further CVS security fixes to CAN-2004-0414,
 CAN-2004-0416, CAN-2004-0417, CAN-2004-0418, and to some minor bugs which
 didn't appear to deserve CVE names.  Thanks to Stefan Esser, Sebastian
 Krahmer, and Derek Robert Price for finding and fixing these.
 
-* Tue May 18 2004 Solar Designer <solar@owl.openwall.com> 1.11.5-owl6
+* Tue May 18 2004 Solar Designer <solar-at-owl.openwall.com> 1.11.5-owl6
 - Added Derek Robert Price's fix for the CVS server heap-based buffer
 overflow vulnerability in processing of malformed "Entry" lines in
 combination with "Is-modified" and "Unchanged" discovered by Stefan Esser.
 
-* Tue Apr 13 2004 Michail Litvak <mci@owl.openwall.com> 1.11.5-owl5
+* Tue Apr 13 2004 Michail Litvak <mci-at-owl.openwall.com> 1.11.5-owl5
 - Patch to fix CVS pserver client side remote exploit.
 - Fixed that using the -p option to cvs checkout sidesteps the
 check that verifies the path isn't outside the repository.
 
-* Fri Dec 12 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl4
+* Fri Dec 12 2003 Solar Designer <solar-at-owl.openwall.com> 1.11.5-owl4
 - Back-ported a patch from CVS 1.11.10 to reject absolute module paths.
 
-* Sat Jun 28 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl3
+* Sat Jun 28 2003 Solar Designer <solar-at-owl.openwall.com> 1.11.5-owl3
 - Updated the canonicalize patch to avoid using _GNU_SOURCE but rather
 declare the prototype for canonicalize_file_name() explicitly.  With
 _GNU_SOURCE, we could get function prototype conflicts on certain other
@@ -227,7 +227,7 @@ not build on Alpha).
 - Handle the special case when the last path component doesn't yet exist
 and thus can't be canonicalized.
 
-* Thu May 01 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl2
+* Thu May 01 2003 Solar Designer <solar-at-owl.openwall.com> 1.11.5-owl2
 - BuildRequires: mktemp >= 1:1.3.1 (but don't yet require mktemp for the
 package itself because it won't be needed for most uses; the scripts will
 need to be moved to a subpackage).
@@ -235,7 +235,7 @@ need to be moved to a subpackage).
 re-use its name.
 - Moved the documentation and contributed scripts into subpackages.
 
-* Thu May 01 2003 Solar Designer <solar@owl.openwall.com> 1.11.5-owl1
+* Thu May 01 2003 Solar Designer <solar-at-owl.openwall.com> 1.11.5-owl1
 - Re-worked the temporary file handling patch to make it actually do what
 it was supposed to and cover more scripts and the documentation.
 - Force configure to use /tmp for the default temporary file directory,
@@ -249,12 +249,12 @@ other commands if $CVSROOT contains symlinks.
 - chmod -x most scripts in contrib/ to prevent bogus dependencies on perl
 and csh.
 
-* Mon Mar 24 2003 Simon B <simonb@owl.openwall.com> 1.11.5-owl0.1
+* Mon Mar 24 2003 Simon B <simonb-at-owl.openwall.com> 1.11.5-owl0.1
 - Pulled in mktemp fixes from ALT Linux
 - Disable {Checkin,Update}-prog
 - General tidying up based on suggestions from Solar Designer
 
-* Fri Mar 14 2003 Simon B <simonb@owl.openwall.com>
+* Fri Mar 14 2003 Simon B <simonb-at-owl.openwall.com>
 - initial Owl spec file
 - compile CVS dynamically against zlib instead of using the version
 included with the CVS source.

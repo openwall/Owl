@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libcap/libcap.spec,v 1.11 2005/10/24 02:22:11 solar Exp $
+# $Id: Owl/packages/libcap/libcap.spec,v 1.12 2005/10/24 03:06:25 solar Exp $
 
 Summary: Library for getting and setting POSIX.1e capabilities.
 Name: libcap
@@ -84,15 +84,15 @@ rm %buildroot%_mandir/man2/capset.2*
 %_mandir/man3/*
 
 %changelog
-* Mon Feb 09 2004 Michail Litvak <mci@owl.openwall.com> 1.10-owl3
+* Mon Feb 09 2004 Michail Litvak <mci-at-owl.openwall.com> 1.10-owl3
 - Use RPM macros instead of explicit paths.
 
-* Thu Nov 06 2003 Dmitry V. Levin <ldv@owl.openwall.com> 1.10-owl2
+* Thu Nov 06 2003 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.10-owl2
 - Do not override capget and capset symbols defined in glibc.
 - Build the shared library with -fPIC.
 
-* Sun Oct 26 2003 Solar Designer <solar@owl.openwall.com> 1.10-owl1
+* Sun Oct 26 2003 Solar Designer <solar-at-owl.openwall.com> 1.10-owl1
 - Re-worked the spec file to make it suitable for inclusion in Owl.
 
-* Sat Oct 11 2003 Simon B <simonb@owl.openwall.com> 1.10-owl0.1
+* Sat Oct 11 2003 Simon B <simonb-at-owl.openwall.com> 1.10-owl0.1
 - Initial revision, based on a spec file from ALT Linux.

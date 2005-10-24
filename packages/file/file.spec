@@ -1,4 +1,4 @@
-# $Id: Owl/packages/file/file.spec,v 1.13 2005/10/24 01:34:34 solar Exp $
+# $Id: Owl/packages/file/file.spec,v 1.14 2005/10/24 03:06:23 solar Exp $
 
 Summary: A utility for determining file types.
 Name: file
@@ -97,24 +97,24 @@ rm -f %buildroot%_libdir/*.la
 %_mandir/man3/*
 
 %changelog
-* Sun Oct 23 2005 Michail Litvak <mci@owl.openwall.com> 4.16-owl1
+* Sun Oct 23 2005 Michail Litvak <mci-at-owl.openwall.com> 4.16-owl1
 - 4.16
 - Updated patches.
 - New subpackages libmagic, libmagic-devel.
 
-* Thu Feb 26 2004 Michail Litvak <mci@owl.openwall.com> 3.41-owl3
+* Thu Feb 26 2004 Michail Litvak <mci-at-owl.openwall.com> 3.41-owl3
 - Fixed building with new auto* tools.
 
-* Tue Apr 29 2003 Michail Litvak <mci@owl.openwall.com> 3.41-owl2
+* Tue Apr 29 2003 Michail Litvak <mci-at-owl.openwall.com> 3.41-owl2
 - Patch to remove annoying message: "Using regular magic file..."
 
-* Fri Mar 07 2003 Michail Litvak <mci@owl.openwall.com>
+* Fri Mar 07 2003 Michail Litvak <mci-at-owl.openwall.com>
 - 3.41
 - Patch updates
 
-* Thu Jan 31 2002 Michail Litvak <mci@owl.openwall.com>
+* Thu Jan 31 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Thu Nov 29 2000 Michail Litvak <mci@owl.openwall.com>
+* Thu Nov 29 2000 Michail Litvak <mci-at-owl.openwall.com>
 - Imported from RH and updated to 3.33
 - added some patches from Debian and RH

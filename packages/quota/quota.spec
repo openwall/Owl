@@ -1,4 +1,4 @@
-# $Id: Owl/packages/quota/quota.spec,v 1.22 2005/01/14 03:30:38 galaxy Exp $
+# $Id: Owl/packages/quota/quota.spec,v 1.23 2005/10/24 03:06:29 solar Exp $
 
 Summary: System administration tools for monitoring users' disk usage.
 Name: quota
@@ -64,41 +64,41 @@ rm %buildroot%_datadir/locale/pl/LC_MESSAGES/quota.mo
 %_mandir/man?/*
 
 %changelog
-* Tue Jan 11 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 3.11-owl2
+* Tue Jan 11 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.11-owl2
 - Used %%__cc and %%__cpp macros.
 
-* Sat Feb 28 2004 Michail Litvak <mci@owl.openwall.com> 3.11-owl1
+* Sat Feb 28 2004 Michail Litvak <mci-at-owl.openwall.com> 3.11-owl1
 - 3.11
 - Regenerated patches, add patches from Alt and RH.
 
-* Thu Apr 25 2002 Solar Designer <solar@owl.openwall.com> 2.00-owl8
+* Thu Apr 25 2002 Solar Designer <solar-at-owl.openwall.com> 2.00-owl8
 - vitmp has been moved to /bin.
 
-* Sun Apr 21 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Apr 21 2002 Solar Designer <solar-at-owl.openwall.com>
 - Use /usr/libexec/vitmp in edquota(8).
 
-* Tue Feb 05 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Feb 05 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Fri Jul 06 2001 Solar Designer <solar@owl.openwall.com>
+* Fri Jul 06 2001 Solar Designer <solar-at-owl.openwall.com>
 - New release number for upgrades after building against glibc >= 2.1.3-17owl
 which includes corrected declaration of struct dqstats in <sys/quota.h>.
 
-* Sun Jul 01 2001 Michail Litvak <mci@owl.openwall.com>
+* Sun Jul 01 2001 Michail Litvak <mci-at-owl.openwall.com>
 - pack only *.html in doc/
 - man pages fixes
 - added TMPDIR support to edquota
 - put warnquota.conf in doc
 
-* Wed Jun 27 2001 Michail Litvak <mci@owl.openwall.com>
+* Wed Jun 27 2001 Michail Litvak <mci-at-owl.openwall.com>
 - more fixes in mans and docs
 - patch to catch error from mkstemp
 - include doc/ subdir into package
 
-* Mon Jun 25 2001 Michail Litvak <mci@owl.openwall.com>
+* Mon Jun 25 2001 Michail Litvak <mci-at-owl.openwall.com>
 - some spec cleanups
 - patch to allow building to non-root user
 
-* Sun Jun 24 2001 Michail Litvak <mci@owl.openwall.com>
+* Sun Jun 24 2001 Michail Litvak <mci-at-owl.openwall.com>
 - Imported from RH
 - man patch from PLD

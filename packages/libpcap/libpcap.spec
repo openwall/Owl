@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libpcap/libpcap.spec,v 1.15 2005/01/12 16:15:50 galaxy Exp $
+# $Id: Owl/packages/libpcap/libpcap.spec,v 1.16 2005/10/24 03:06:25 solar Exp $
 
 Summary: Network packet capture library.
 Name: libpcap
@@ -74,44 +74,44 @@ ln -s %name.so.0.8 %buildroot%_libdir/%name.so.1
 %_libdir/lib*.a
 
 %changelog
-* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2:0.8.1-owl3
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2:0.8.1-owl3
 - Fixed orphaned %_libdir/libpcap.so.0 produced in %post.
 
-* Thu Feb 19 2004 Michail Litvak <mci@owl.openwall.com> 2:0.8.1-owl2
+* Thu Feb 19 2004 Michail Litvak <mci-at-owl.openwall.com> 2:0.8.1-owl2
 - Updated -nmap-alt-owl-linux-honor-timeout.diff patch.
 
-* Fri Feb 13 2004 Michail Litvak <mci@owl.openwall.com> 2:0.8.1-owl1
+* Fri Feb 13 2004 Michail Litvak <mci-at-owl.openwall.com> 2:0.8.1-owl1
 - 0.8.1
 - provide %_includedir/net/bpf.h for compatibility.
 
-* Mon Dec 15 2003 Solar Designer <solar@owl.openwall.com> 2:0.6.2-owl5
+* Mon Dec 15 2003 Solar Designer <solar-at-owl.openwall.com> 2:0.6.2-owl5
 - Avoid unaligned accesses in bpf_filter.c unless we're positive the
 architecture can handle them.
 
-* Mon Jun 02 2003 Solar Designer <solar@owl.openwall.com> 2:0.6.2-owl4
+* Mon Jun 02 2003 Solar Designer <solar-at-owl.openwall.com> 2:0.6.2-owl4
 - Corrected the timeout handling patch to do it in the packet receive
 loop rather than only once before the loop and to return on timeout.
 
-* Mon Jun 02 2003 Solar Designer <solar@owl.openwall.com> 2:0.6.2-owl3
+* Mon Jun 02 2003 Solar Designer <solar-at-owl.openwall.com> 2:0.6.2-owl3
 - Added a patch for timeout handling on Linux from Nmap with minor
 modifications by ALT Linux team.
 - Added URL.
 
-* Mon Sep 16 2002 Michail Litvak <mci@owl.openwall.com> 2:0.6.2-owl2
+* Mon Sep 16 2002 Michail Litvak <mci-at-owl.openwall.com> 2:0.6.2-owl2
 - Back-ported a possible buffer overflow fix from the CVS; This fixes
 a bug wherein "live_open_new()" wasn't making the buffer size the maximum
 of "enough to hold packets of the MTU obtained from the socket" and
 "the snapshot length" (for some reason, "recvfrom()" was copying more data
 than the MTU obtained from the socket). Thanks to Pavel Kankovsky.
 
-* Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Feb 04 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions
 
-* Tue Apr 17 2001 Solar Designer <solar@owl.openwall.com>
+* Tue Apr 17 2001 Solar Designer <solar-at-owl.openwall.com>
 - Minor spec file cleanups.
 - Removed non-English descriptions (we don't have them in other packages).
 
-* Wed Apr 11 2001 Rafal Wojtczuk <nergal@owl.openwall.com>
+* Wed Apr 11 2001 Rafal Wojtczuk <nergal-at-owl.openwall.com>
 - Imported from PLD, adjusted naming conventions
 - removed unnecesary info about few patches
 - replaced ipv6 patches with ANK patch.

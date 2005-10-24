@@ -1,4 +1,4 @@
-# $Id: Owl/packages/lftp/lftp.spec,v 1.27 2005/10/23 22:14:13 solar Exp $
+# $Id: Owl/packages/lftp/lftp.spec,v 1.28 2005/10/24 03:06:24 solar Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
@@ -81,54 +81,54 @@ fi
 %_datadir/locale/*/LC_MESSAGES/lftp.mo
 
 %changelog
-* Sat Jun 25 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.6.12-owl2
+* Sat Jun 25 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.6.12-owl2
 - Rebuilt with libssl.so.5.
 
-* Tue May 10 2005 Andreas Ericsson <exon@owl.openwall.com> 2.6.12-owl1
+* Tue May 10 2005 Andreas Ericsson <exon-at-owl.openwall.com> 2.6.12-owl1
 - 2.6.12, fixes hang on copying zero length file with the mirror command.
 - Removed malformed-http patch which is now included upstream.
 - Enforced recent CONVENTIONS additions.
 - Be specific in %%files section.
 
-* Fri Feb 20 2004 Michail Litvak <mci@owl.openwall.com> 2.6.10-owl3
+* Fri Feb 20 2004 Michail Litvak <mci-at-owl.openwall.com> 2.6.10-owl3
 - Build with system readline.
 
-* Tue Dec 16 2003 Solar Designer <solar@owl.openwall.com> 2.6.10-owl2
+* Tue Dec 16 2003 Solar Designer <solar-at-owl.openwall.com> 2.6.10-owl2
 - Added a patch by Nalin Dahyabhai of Red Hat to handle malformed HTTP
 server responses gracefully.
 
-* Sat Dec 13 2003 Michail Litvak <mci@owl.openwall.com> 2.6.10-owl1
+* Sat Dec 13 2003 Michail Litvak <mci-at-owl.openwall.com> 2.6.10-owl1
 - 2.6.10 (security fixes in html parsing code)
 
-* Mon Dec 08 2003 Michail Litvak <mci@owl.openwall.com> 2.6.9-owl1
+* Mon Dec 08 2003 Michail Litvak <mci-at-owl.openwall.com> 2.6.9-owl1
 - 2.6.9
 - Dropped patch to fix tmp-files handling in configure script,
   this fixed in upstream.
 - Do not package .la files.
 
-* Tue Jun 03 2003 Michail Litvak <mci@owl.openwall.com> 2.6.6-owl2
+* Tue Jun 03 2003 Michail Litvak <mci-at-owl.openwall.com> 2.6.6-owl2
 - Fixed tmp-files handling in configure script of included readline.
 
-* Mon Jun 02 2003 Michail Litvak <mci@owl.openwall.com> 2.6.6-owl1
+* Mon Jun 02 2003 Michail Litvak <mci-at-owl.openwall.com> 2.6.6-owl1
 - 2.6.6
 - Removed outdated patches.
 - Built with included readline.
 - Patch to provide -n option for compatibility with old ftp.
 
-* Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Feb 04 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions
 
-* Thu Apr 26 2001 Solar Designer <solar@owl.openwall.com>
+* Thu Apr 26 2001 Solar Designer <solar-at-owl.openwall.com>
 - New release number for upgrades after building against OpenSSL 0.9.6a.
 
-* Fri Mar 23 2001 Solar Designer <solar@owl.openwall.com>
+* Fri Mar 23 2001 Solar Designer <solar-at-owl.openwall.com>
 - Corrected the package description.
 - Point /usr/bin/ftp to lftp if it doesn't exist when lftp is installed.
 
-* Wed Mar 21 2001 Michail Litvak <mci@owl.openwall.com>
+* Wed Mar 21 2001 Michail Litvak <mci-at-owl.openwall.com>
 - change source from tar.gz to tar.bz2
 
-* Mon Mar 19 2001 Michail Litvak <mci@owl.openwall.com>
+* Mon Mar 19 2001 Michail Litvak <mci-at-owl.openwall.com>
 - reworked spec from author's package
 - imported patches from Debian
 - add patch to check length of address returned from DNS

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/time/time.spec,v 1.7 2005/10/24 01:56:48 solar Exp $
+# $Id: Owl/packages/time/time.spec,v 1.8 2005/10/24 03:06:30 solar Exp $
 
 Summary: A GNU utility for monitoring a program's use of system resources.
 Name: time
@@ -55,12 +55,12 @@ fi
 %_mandir/*/*
 
 %changelog
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1.7-owl14
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 1.7-owl14
 - Deal with info dir entries such that the menu looks pretty.
 
-* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
+* Mon Feb 04 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Sat Nov 18 2000 Michail Litvak <mci@owl.openwall.com>
+* Sat Nov 18 2000 Michail Litvak <mci-at-owl.openwall.com>
 - imported from RH, some patches from MDK, and Debian
 - added --quiet options (deb)

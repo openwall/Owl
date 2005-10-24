@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gawk/gawk.spec,v 1.13 2004/11/23 22:40:45 mci Exp $
+# $Id: Owl/packages/gawk/gawk.spec,v 1.14 2005/10/24 03:06:23 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -102,26 +102,26 @@ fi
 %endif
 
 %changelog
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 3.1.1-owl3
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 3.1.1-owl3
 - Deal with info dir entries such that the menu looks pretty.
 
-* Mon Jul 23 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Jul 23 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Moved profiling gawk (pgawk) into separate subpackage, not built by default.
 - Compress PostScript documentation.
 
-* Mon Jul 15 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Jul 15 2002 Michail Litvak <mci-at-owl.openwall.com>
 - 3.1.1
 - Switched to using Paul Eggert's patch to igawk which makes it
 not use temporary files at all.
 
-* Fri Feb 01 2002 Michail Litvak <mci@owl.openwall.com>
+* Fri Feb 01 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Sun May 27 2001 Solar Designer <solar@owl.openwall.com>
+* Sun May 27 2001 Solar Designer <solar-at-owl.openwall.com>
 - Patched unsafe temporary file handling in igawk, based on report and
 patch from Jarno Huuskonen.
 - Make sure gawk.info and igawk.sh are re-generated from gawk.texi on
 package builds.
 
-* Sun Oct 01 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Oct 01 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import spec from RH

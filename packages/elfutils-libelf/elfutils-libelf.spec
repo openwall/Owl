@@ -1,4 +1,4 @@
-# $Id: Owl/packages/elfutils-libelf/elfutils-libelf.spec,v 1.6 2005/10/20 00:28:37 ldv Exp $
+# $Id: Owl/packages/elfutils-libelf/elfutils-libelf.spec,v 1.7 2005/10/24 03:06:23 solar Exp $
 
 Summary: Library to read and write ELF files.
 Name: elfutils-libelf
@@ -68,17 +68,17 @@ rm %buildroot%_includedir/elfutils/elf-knowledge.h
 %_libdir/libelf.so
 
 %changelog
-* Thu Oct 20 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.115-owl1
+* Thu Oct 20 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.115-owl1
 - Updated to 0.115.
 - Partially imported portability patch from RH.
 
-* Mon Oct 17 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.108-owl3
+* Mon Oct 17 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.108-owl3
 - Packaged %_includedir/dwarf.h.
 
-* Fri Jun 24 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.108-owl2
+* Fri Jun 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.108-owl2
 - Corrected library symlinks packaging.
 
-* Mon Jun 13 2005 Michail Litvak <mci@owl.openwall.com> 0.108-owl1
+* Mon Jun 13 2005 Michail Litvak <mci-at-owl.openwall.com> 0.108-owl1
 - Reworked spec from RH - build only elfutils-libelf and elfutils-libelf-devel.
 - Patch to fix compilation on Owl.
 - Fixes from RH.

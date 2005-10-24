@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dialog/dialog.spec,v 1.15 2005/10/23 21:09:44 solar Exp $
+# $Id: Owl/packages/dialog/dialog.spec,v 1.16 2005/10/24 03:06:22 solar Exp $
 
 Summary: A utility for creating TTY dialog boxes.
 Name: dialog
@@ -64,34 +64,34 @@ rm -rf %buildroot
 %_mandir/man1/dialog.*
 
 %changelog
-* Fri Jan 17 2003 Michail Litvak <mci@owl.openwall.com> 0.9b-owl2
+* Fri Jan 17 2003 Michail Litvak <mci-at-owl.openwall.com> 0.9b-owl2
 - Patch to fix unsafe temporary file handling in samples.
 - Patch from RSBAC project - allow help button using in
 menubox widget without --item-help option.
 
-* Fri Jan 10 2003 Michail Litvak <mci@owl.openwall.com>
+* Fri Jan 10 2003 Michail Litvak <mci-at-owl.openwall.com>
 - Update to new version (0.9b-20020814).
 - Patch to fix warning on build.
 - Dropped -owl-fselect.diff.
 
-* Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Jan 24 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 - Build with -Wall (no warnings).
 
-* Sun Jun 13 2001 Michail Litvak <mci@owl.openwall.com>
+* Sun Jun 13 2001 Michail Litvak <mci-at-owl.openwall.com>
 - patch to fix bug with fselect mouse lock-up
 
-* Tue Jun 12 2001 Michail Litvak <mci@owl.openwall.com>
+* Tue Jun 12 2001 Michail Litvak <mci-at-owl.openwall.com>
 - remove alt-tmpdir patch
 
-* Sun Jun 10 2001 Michail Litvak <mci@owl.openwall.com>
+* Sun Jun 10 2001 Michail Litvak <mci-at-owl.openwall.com>
 - Updated to new version
 - imported patches from ALT Linux
 
-* Thu Dec 28 2000 Michail Litvak <mci@owl.openwall.com>
+* Thu Dec 28 2000 Michail Litvak <mci-at-owl.openwall.com>
 - Updated to new snapshot for fix file locking problem
 
-* Thu Dec 07 2000 Michail Litvak <mci@owl.openwall.com>
+* Thu Dec 07 2000 Michail Litvak <mci-at-owl.openwall.com>
 - Imported from RH
 - New upstream release
 - Added patch to display '*' in passwordbox

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.41 2005/10/24 02:22:10 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.42 2005/10/24 03:06:20 solar Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
@@ -103,43 +103,43 @@ fi
 /etc/control.d/facilities/*
 
 %changelog
-* Fri Sep 02 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.60-owl26
+* Fri Sep 02 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.60-owl26
 - Allow users with empty passwords to change their passwords.
 - Stripped /lib/security/ prefix from module pathnames in PAM config files.
 
-* Tue Aug 23 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.60-owl25
+* Tue Aug 23 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.60-owl25
 - Added system logger initialization, removed closelog() calls.
 
-* Tue Jun 28 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.60-owl24
+* Tue Jun 28 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.60-owl24
 - Fixed compilation warnings.
 
-* Wed Jan 05 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.60-owl23
+* Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.60-owl23
 - Removed verification of permissions and group owner from su and passwd,
 since we are controlling them through control.
 - Cleaned up the spec.
 
-* Sun Feb 08 2004 Solar Designer <solar@owl.openwall.com> 0.60-owl22
+* Sun Feb 08 2004 Solar Designer <solar-at-owl.openwall.com> 0.60-owl22
 - In login and su, generate ut_id's consistently with libutempter and
 openssh (patch from Dmitry Levin of ALT Linux).
 
-* Thu Oct 16 2003 Solar Designer <solar@owl.openwall.com> 0.60-owl21
+* Thu Oct 16 2003 Solar Designer <solar-at-owl.openwall.com> 0.60-owl21
 - Invoke "control passwd tcb" when updating old installs; the invocation
 from owl-etc could have failed if the previous version of SimplePAMApps
 was too old to even know of tcb as a possible setting for passwd.
 
-* Thu May 29 2003 Solar Designer <solar@owl.openwall.com> 0.60-owl20
+* Thu May 29 2003 Solar Designer <solar-at-owl.openwall.com> 0.60-owl20
 - write_to=tcb
 - passwd(1) file modes now default to tcb.
 
-* Thu Apr 17 2003 Solar Designer <solar@owl.openwall.com> 0.60-owl19
+* Thu Apr 17 2003 Solar Designer <solar-at-owl.openwall.com> 0.60-owl19
 - Pass prefix= and count= to pam_tcb also for authentication such that it
 can use this information to reduce timing leaks.
 
-* Tue Apr 15 2003 Solar Designer <solar@owl.openwall.com> 0.60-owl18
+* Tue Apr 15 2003 Solar Designer <solar-at-owl.openwall.com> 0.60-owl18
 - Imported ALT Linux patches, most importantly replacing command line parsing
 in su, -- should now better match the behavior of other implementations.
 
-* Sun Nov 03 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Nov 03 2002 Solar Designer <solar-at-owl.openwall.com>
 - Dump/restore the owl-control settings for passwd and su on package upgrades.
 - Support "traditional" and "tcb" settings for permissions on /usr/bin/passwd
 and /etc/pam.d/passwd.
@@ -147,22 +147,22 @@ and /etc/pam.d/passwd.
 them to "traditional" and "wheelonly", respectively, in %post when the package
 is first installed.  This avoids a race and fail-open behavior.
 
-* Thu Aug 22 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Aug 22 2002 Solar Designer <solar-at-owl.openwall.com>
 - Use pam_motd with login.
 
-* Sun Mar 24 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Mar 24 2002 Solar Designer <solar-at-owl.openwall.com>
 - Group: System Environment/Base
 
-* Fri Mar 01 2002 Solar Designer <solar@owl.openwall.com>
+* Fri Mar 01 2002 Solar Designer <solar-at-owl.openwall.com>
 - Pick the best match utmp entry to replace when ut_id's don't match; if
 that was the case, leave ut_id at what it was in utmp such that the entry
 may be manipulated with pututline(3).
 
-* Mon Feb 04 2002 Solar Designer <solar@owl.openwall.com>
+* Mon Feb 04 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 - Use the _mandir macro.
 
-* Mon Nov 19 2001 Solar Designer <solar@owl.openwall.com>
+* Mon Nov 19 2001 Solar Designer <solar-at-owl.openwall.com>
 - Use (the recently patched version of) pam_lastlog with login.
 - login: treat all PAM errors except PAM_NEW_AUTHTOK_REQD in the same way to
 reduce information leaks.
@@ -171,40 +171,40 @@ reduce information leaks.
 from within a PAM module anyway).
 - Re-arranged the patches such that we now have one patch file per program.
 
-* Fri Nov 16 2001 Solar Designer <solar@owl.openwall.com>
+* Fri Nov 16 2001 Solar Designer <solar-at-owl.openwall.com>
 - Use pam_tcb.
 - Dropped outdated documentation.
 
-* Sun Apr 01 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Apr 01 2001 Solar Designer <solar-at-owl.openwall.com>
 - Use pam_limits with login and su.
 - passwd: line-buffer stdout.
 - passwd: don't require an utmp entry even when run on a tty.
 
-* Mon Mar 19 2001 Solar Designer <solar@owl.openwall.com>
+* Mon Mar 19 2001 Solar Designer <solar-at-owl.openwall.com>
 - passwd: don't require a tty.
 - passwd.pam and su.pam: "nodelay" for pam_pwdb.
 
-* Wed Dec 20 2000 Solar Designer <solar@owl.openwall.com>
+* Wed Dec 20 2000 Solar Designer <solar-at-owl.openwall.com>
 - Use pam_mktemp.
 
-* Sun Oct 29 2000 Solar Designer <solar@owl.openwall.com>
+* Sun Oct 29 2000 Solar Designer <solar-at-owl.openwall.com>
 - su: don't require that the tty can be determined when started by root.
 - su: don't require that getlogin() works to set PAM_RUSER.
 - #include <stdarg.h> in su.c (was needed, but missing).
 
-* Fri Sep 22 2000 Solar Designer <solar@owl.openwall.com>
+* Fri Sep 22 2000 Solar Designer <solar-at-owl.openwall.com>
 - Make use of the new pam_passwdqc option: min=99,... -> min=disabled,...
 
-* Sat Sep 16 2000 Solar Designer <solar@owl.openwall.com>
+* Sat Sep 16 2000 Solar Designer <solar-at-owl.openwall.com>
 - Use RPM_OPT_FLAGS correctly.
 
-* Wed Aug 23 2000 Solar Designer <solar@owl.openwall.com>
+* Wed Aug 23 2000 Solar Designer <solar-at-owl.openwall.com>
 - %config(noreplace) for /etc/pam.d files.
 
-* Fri Aug 11 2000 Solar Designer <solar@owl.openwall.com>
+* Fri Aug 11 2000 Solar Designer <solar-at-owl.openwall.com>
 - Added owl-control support for su and passwd.
 
-* Sun Jul 09 2000 Solar Designer <solar@owl.openwall.com>
+* Sun Jul 09 2000 Solar Designer <solar-at-owl.openwall.com>
 - Imported this spec file from SimplePAMApps-0.56-2.src.rpm and changed it
 so heavily that there isn't much left.
 - Added a bugfix patch for passwd and a bugfix and security patch for

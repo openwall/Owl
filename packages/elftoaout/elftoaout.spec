@@ -1,4 +1,4 @@
-# $Id: Owl/packages/elftoaout/elftoaout.spec,v 1.8 2004/11/23 22:40:45 mci Exp $
+# $Id: Owl/packages/elftoaout/elftoaout.spec,v 1.9 2005/10/24 03:06:23 solar Exp $
 
 Summary: A utility for converting ELF binaries to a.out binaries.
 Name: elftoaout
@@ -38,8 +38,8 @@ install -m 644 elftoaout.1 %buildroot%_mandir/man1/
 %_mandir/man1/elftoaout.*
 
 %changelog
-* Wed Jan 30 2002 Michail Litvak <mci@owl.openwall.com> 2.3-owl1
+* Wed Jan 30 2002 Michail Litvak <mci-at-owl.openwall.com> 2.3-owl1
 - Enforce our new spec file conventions.
 
-* Sun Jan 07 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Jan 07 2001 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - spec cleanup

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.96 2005/10/24 02:34:30 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.97 2005/10/24 03:06:23 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -456,28 +456,28 @@ fi
 %files compat-fake
 
 %changelog
-* Mon May 23 2005 Solar Designer <solar@owl.openwall.com> 2.3.5-owl5
+* Mon May 23 2005 Solar Designer <solar-at-owl.openwall.com> 2.3.5-owl5
 - Even more changes to the sanitize-env patch: corrected the way
 __libc_enable_secure is set in __libc_init_secure() if still undecided at
 that point, provide safe defaults for __libc_enable_secure and
 __libc_security_mask in sysdeps/generic/dl-sysdep.c.
 
-* Tue May 17 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.3.5-owl4
+* Tue May 17 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3.5-owl4
 - Further changes to the sanitize-env patch: left
 __libc_enable_secure a boolean variable; instead, introduced an
 internal bitmask, __libc_security_mask.
 
-* Mon May 16 2005 Solar Designer <solar@owl.openwall.com> 2.3.5-owl3
+* Mon May 16 2005 Solar Designer <solar-at-owl.openwall.com> 2.3.5-owl3
 - Further changes to the sanitize-env patch: be safe in case the
 kernel passes multiple instances of AT_*ID.
 
-* Sun May 15 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.3.5-owl2
+* Sun May 15 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3.5-owl2
 - Reworked sanitize-env patch to take into account AT_SECURE value
 of the auxiliary vector in addition to AT_*ID values.
 - Removed unneeded __locale_getenv() function which was introduced
 in 2.3.3.2004061600-owl1.
 
-* Fri May 13 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.3.5-owl1
+* Fri May 13 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3.5-owl1
 - Updated to 2.3.5 with changes from glibc-2_3-branch snapshot 20050427.
 - Enabled GNU Libidn add-on.
 - Updated patches which were imported from ALT.
@@ -485,26 +485,26 @@ in 2.3.3.2004061600-owl1.
 - Disabled packaging of the obsolete pt_chown helper.
 - Corrected info files installation.
 
-* Sat Apr 02 2005 Solar Designer <solar@owl.openwall.com> 2.3.3.2004061600-owl6
+* Sat Apr 02 2005 Solar Designer <solar-at-owl.openwall.com> 2.3.3.2004061600-owl6
 - Corrected the permissions on /etc/ld.so.conf.d.
 
-* Sun Mar 06 2005 Solar Designer <solar@owl.openwall.com> 2.3.3.2004061600-owl5
+* Sun Mar 06 2005 Solar Designer <solar-at-owl.openwall.com> 2.3.3.2004061600-owl5
 - Use UTC for our default timezone, Factory is just too ugly ("Local time
 zone must be set--see zic manual page" - hardly an informative message for
 an end-user - and it comes up while booting off the CD).
 
-* Thu Mar 03 2005 Solar Designer <solar@owl.openwall.com> 2.3.3.2004061600-owl4
+* Thu Mar 03 2005 Solar Designer <solar-at-owl.openwall.com> 2.3.3.2004061600-owl4
 - Place strlc*() into libc_nonshared.a such that no programs become dependent
 on the presence of these extensions in the shared library.
 - Added the strlcpy(3) and strlcat(3) man pages.
 
-* Tue Feb 22 2005 Solar Designer <solar@owl.openwall.com> 2.3.3.2004061600-owl3
+* Tue Feb 22 2005 Solar Designer <solar-at-owl.openwall.com> 2.3.3.2004061600-owl3
 - crypt_blowfish-0.4.7: crypt(3) man page updates.
 
-* Thu Jan 20 2005 Solar Designer <solar@owl.openwall.com> 2.3.3.2004061600-owl2
+* Thu Jan 20 2005 Solar Designer <solar-at-owl.openwall.com> 2.3.3.2004061600-owl2
 - Many post-update corrections.
 
-* Sun Jan 09 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.3.2004061600-owl1
+* Sun Jan 09 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.3.2004061600-owl1
 - Updated to CVS version 2.3.3 (2004061600).
 - Spec file was revised and reworked.
 - Imported a bunch of patches from ALT Linux.
@@ -521,64 +521,64 @@ controled through BUILD_LOCALES macro.
 patch also replaces execv() to execvp() to search for cpp binary in PATH.
 - Cleaned up the spec.
 
-* Wed Dec 25 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl3
+* Wed Dec 25 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.2-owl3
 - Fixed compat-fake's provides to deal with Owl 1.1 release upgrades
 - Fixed a bug with creating buildtree using %_target_cpu, but accessing it
 using RPM_ARCH variable. Thanks goes to Piotr Janiec, who had pointed and
 fixed this issue.
 
-* Wed Dec 08 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl2
+* Wed Dec 08 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.2-owl2
 - Fixed <sys/quota.h> types (we were using types from linux/types.h instead
 of sys/types). Thanks goes to Sergio <sergio at openwall.com>.
 
-* Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 2.3.2-owl1
+* Tue Nov 02 2004 Solar Designer <solar-at-owl.openwall.com> 2.3.2-owl1
 - Corrected the -compat-fake sub-package description.
 - Set Release to -owl1 such that we can make it public, then proceed with
 further corrections for whatever we've broken with the big update.
 
-* Thu Sep 30 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl0.8
+* Thu Sep 30 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.2-owl0.8
 - Added compat-fake sub-package to help upgrade procedure
 
-* Sat Mar 20 2004 Solar Designer <solar@owl.openwall.com> 2.3.2-owl0.7
+* Sat Mar 20 2004 Solar Designer <solar-at-owl.openwall.com> 2.3.2-owl0.7
 - Corrections to BUILD_PROFILE support.
 
-* Wed Mar 10 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl0.6
+* Wed Mar 10 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.2-owl0.6
 - Moved big rh9 patch to the sources
 - Split glibc utility programs into glibc-utils subpackage
 
-* Tue Mar 09 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl0.5
+* Tue Mar 09 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.2-owl0.5
 - Updated patch set for 2.3.2 version
 
-* Thu Mar 04 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl0.4
+* Thu Mar 04 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.2-owl0.4
 - Spec clean up, added documentation
 
-* Mon Mar 01 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl0.3
+* Mon Mar 01 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.2-owl0.3
 - Prepared spec for FHS 2.2
 
-* Thu Feb 24 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl0.2
+* Thu Feb 24 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.2-owl0.2
 - Cleaned up spec for building under "stage4" environment.
 
-* Thu Feb 19 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl0.1
+* Thu Feb 19 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.2-owl0.1
 - Regenerated crypt_blowfish patch against this version of glibc
 
-* Mon Feb 16 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.3.2-owl0
+* Mon Feb 16 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.2-owl0
 - Updated to the new version - 2.3.2 (official release); This cannot be used
 as primary glibc on system yet due to missing crypt_blowfish.
 
-* Mon Dec 08 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl38
+* Mon Dec 08 2003 Solar Designer <solar-at-owl.openwall.com> 2.1.3-owl38
 - Sanity check the forward and backward chunk pointers in dlmalloc's
 unlink() macro, thanks to Stefan Esser for the idea.
 
-* Sun Dec 07 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl37
+* Sun Dec 07 2003 Solar Designer <solar-at-owl.openwall.com> 2.1.3-owl37
 - Allow tmpfile(3) to use $TMPDIR, thanks to the report and patch by
 (GalaxyMaster).  Certain other implementations are known to do the same.
 
-* Wed Oct 29 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl36
+* Wed Oct 29 2003 Solar Designer <solar-at-owl.openwall.com> 2.1.3-owl36
 - Added "Provides: glibc-crypt_blowfish-devel" tag to -devel subpackage.
 - Dropped the obsolete "Provides: glibc <= 2.1.3-19owl" tag which was
 needed during our transition to the new Release numbering scheme.
 
-* Sat Aug 02 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl35
+* Sat Aug 02 2003 Solar Designer <solar-at-owl.openwall.com> 2.1.3-owl35
 - Back-ported a fix from glibc CVS to pass the high and low 32 bits of
 file offsets into ftruncate64, truncate64, pread64, and pwrite64
 syscalls under the correct endianness.  Of the architectures we support
@@ -586,29 +586,29 @@ currently, this only makes a difference for SPARC.  The MIPS-specific
 bits of this fix are intentionally not included (we'll probably update
 glibc earlier than we might possibly support it).
 
-* Sat Jun 28 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl34
+* Sat Jun 28 2003 Solar Designer <solar-at-owl.openwall.com> 2.1.3-owl34
 - Corrected the comments in stdlib.h for canonicalize_file_name() and
 realpath() to not describe behavior that is not actually implemented.
 
-* Sun Jun 22 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl33
+* Sun Jun 22 2003 Solar Designer <solar-at-owl.openwall.com> 2.1.3-owl33
 - Back-ported a fix from glibc CVS to relax the mutex ownership checks
 in pthread_cond_wait(3) and related functions.
 
-* Sat Jun 21 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl32
+* Sat Jun 21 2003 Solar Designer <solar-at-owl.openwall.com> 2.1.3-owl32
 - Applied a fix by Dmitry V. Levin to call openlog_internal() with a
 NULL ident instead of with LogTag to not cause possible deallocation
 of LogTagDynamic.
 
-* Fri May 23 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl31
+* Fri May 23 2003 Solar Designer <solar-at-owl.openwall.com> 2.1.3-owl31
 - Moved /etc/nsswitch.conf from glibc to owl-etc package.
 
-* Sun Mar 23 2003 Solar Designer <solar@owl.openwall.com> 2.1.3-owl30
+* Sun Mar 23 2003 Solar Designer <solar-at-owl.openwall.com> 2.1.3-owl30
 - Included Red Hat's back-port of the Sun RPC XDR integer overflow fixes
 from glibc CVS; the fixes are by Paul Eggert and Roland McGrath, and the
 xdrmem_getbytes() integer overflow has been discovered by Riley Hassell
 of eEye Digital Security.
 
-* Fri Nov 08 2002 Solar Designer <solar@owl.openwall.com>
+* Fri Nov 08 2002 Solar Designer <solar-at-owl.openwall.com>
 - Made the x86 assembly code in crypt_blowfish reentrant (this time for
 real), added a test for proper operation with multiple threads, made
 crypt_blowfish more careful about overwriting sensitive data.
@@ -618,7 +618,7 @@ calling everything an "entry" (now we use "databases", name "services",
 and "entries" being looked up via NSS), and lists "tcb" among possible
 name services and provides an example of its use.
 
-* Tue Oct 01 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Oct 01 2002 Solar Designer <solar-at-owl.openwall.com>
 - Avoid read buffer overruns in glibc itself and applications that
 naively assume the length returned by res_* is always less than or equal
 to the answer buffer size (CERT VU#738331, CVE CAN-2002-1146), by
@@ -627,29 +627,29 @@ truncating the answer in res_send(3); the patch is by Olaf Kirch of SuSE.
 making sure they're at least HFIXEDSZ+QFIXEDSZ in size; pointed out by
 Dmitry V. Levin of ALT Linux.
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Deal with info dir entries such that the menu looks pretty.
 
-* Tue Aug 06 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Aug 06 2002 Solar Designer <solar-at-owl.openwall.com>
 - Updated the recent calloc(3) patch to conform to POSIX-2001 wrt the
 behavior on elsize == 0.  Pointed out by Sebastian Krahmer of SuSE.
 
-* Sun Aug 04 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Aug 04 2002 Solar Designer <solar-at-owl.openwall.com>
 - Made the FreeSec code reentrant, adjusted crypt*(3) wrappers and the
 manual page accordingly.
 
-* Thu Aug 01 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Aug 01 2002 Solar Designer <solar-at-owl.openwall.com>
 - Patched two potential integer overflows (and thus buffer overflows) in
 calloc(3) and xdr_array (the latter discovered by ISS X-Force).
 
-* Fri Jul 05 2002 Solar Designer <solar@owl.openwall.com>
+* Fri Jul 05 2002 Solar Designer <solar-at-owl.openwall.com>
 - Added the patch by NISHIMURA Daisuke and Tomohiro 'Tomo-p' KATO of
 Vine Linux to fix the DNS resolver buffer overflows affecting both host
 and net lookups in the glibc-compat code that is used by binaries built
 against glibc 2.0:
 http://sources.redhat.com/ml/bug-glibc/2002-07/msg00119.html
 
-* Thu Jul 04 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Jul 04 2002 Solar Designer <solar-at-owl.openwall.com>
 - Back-ported the fix to buffer overflow in resolv/nss_dns/dns-network.c
 affecting getnetby{addr,name}{,_r}(3) when "dns" is listed on "networks"
 line in /etc/nsswitch.conf (which is not the default).
@@ -658,10 +658,10 @@ it generate different sequences of IDs in forked processes (problem
 noted by Jarno Huuskonen), conserve the kernel's randomness pool (based
 on feedback from Michael Tokarev), and properly reseed when chrooted.
 
-* Thu Jul 04 2002 Michail Litvak <mci@owl.openwall.com>
+* Thu Jul 04 2002 Michail Litvak <mci-at-owl.openwall.com>
 - patch to build with new texinfo
 
-* Wed Jun 12 2002 Solar Designer <solar@owl.openwall.com>
+* Wed Jun 12 2002 Solar Designer <solar-at-owl.openwall.com>
 - ldd(1) will no longer try to invoke programs directly, even when it
 seems like that would work.  The dynamic linker will be invoked as a
 program instead.  This makes a difference when the program is SGID and
@@ -677,10 +677,10 @@ to vitmp(1) for the editor.
 - crypt_blowfish-0.4.3 (documentation updates, a check to produce better
 code for PA-RISC).
 
-* Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Feb 04 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Fri Dec 14 2001 Solar Designer <solar@owl.openwall.com>
+* Fri Dec 14 2001 Solar Designer <solar-at-owl.openwall.com>
 - Back-ported a glob(3) buffer overflow fix from the CVS; the bug has been
 discovered and an initial patch produced by Flavio Veloso of Magnux.
 - Applied fixes to vasprintf(3) (thus affecting asprintf(3) as well) to
@@ -690,14 +690,14 @@ handle possible errors.  Thanks to Dmitry V. Levin of ALT Linux for
 discovering and looking into these issues.
 - Updated to crypt_blowfish-0.4.2 (more man page fixes).
 
-* Thu Nov 08 2001 Solar Designer <solar@owl.openwall.com>
+* Thu Nov 08 2001 Solar Designer <solar-at-owl.openwall.com>
 - If syslog(3) is called by a SUID/SGID program without a preceding call to
 openlog(3), don't blindly trust __progname for the syslog ident.
 
-* Fri Jul 06 2001 Solar Designer <solar@owl.openwall.com>
+* Fri Jul 06 2001 Solar Designer <solar-at-owl.openwall.com>
 - Corrected the declaration of struct dqstats in <sys/quota.h>.
 
-* Wed Jun 13 2001 Solar Designer <solar@owl.openwall.com>
+* Wed Jun 13 2001 Solar Designer <solar-at-owl.openwall.com>
 - Back-ported a patch from the CVS to handle unaligned relocations on Alpha.
 References:
 http://bugs.debian.org/43401
@@ -706,7 +706,7 @@ http://www.alphalinux.org/archives/debian-alpha/February2000/0197.html
 http://gcc.gnu.org/ml/gcc/1999-07n/msg00968.html
 http://gcc.gnu.org/ml/gcc/1999-07n/msg01041.html
 
-* Sun Jun 03 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Jun 03 2001 Solar Designer <solar-at-owl.openwall.com>
 - Sync the fts(3) routines with current OpenBSD and FreeBSD; this is
 triggered by Nick Cleaton's report of yet another FTS vulnerability
 to FreeBSD, and a discussion with Kris Kennaway and Todd Miller.  It
@@ -714,53 +714,53 @@ should no longer be possible to trick FTS into leaving the intended
 directory hierarchy, but DoS attacks on FTS itself remain possible.
 - Updated to crypt_blowfish-0.4.1 (man page fixes).
 
-* Thu May 10 2001 Solar Designer <solar@owl.openwall.com>
+* Thu May 10 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated to crypt_blowfish-0.4 (release).
 
-* Fri May 04 2001 Solar Designer <solar@owl.openwall.com>
+* Fri May 04 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated to crypt_blowfish-0.3.9, which adds crypt_ra, crypt_gensalt_ra
 and an up-to-date crypt(3) man page.
 
-* Sat Apr 07 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Apr 07 2001 Solar Designer <solar-at-owl.openwall.com>
 - Force known control characters for iscntrl(3) (in localedef and C locale).
 
-* Thu Jan 11 2001 Solar Designer <solar@owl.openwall.com>
+* Thu Jan 11 2001 Solar Designer <solar-at-owl.openwall.com>
 - Sanitize the environment in a paranoid way (this was meant to be delayed
 until we add a configuration file, but well...).
 
-* Wed Jan 10 2001 Solar Designer <solar@owl.openwall.com>
+* Wed Jan 10 2001 Solar Designer <solar-at-owl.openwall.com>
 - Included several critical dynamic linker security fixes from the CVS.
 
-* Tue Jan 02 2001 Solar Designer <solar@owl.openwall.com>
+* Tue Jan 02 2001 Solar Designer <solar-at-owl.openwall.com>
 - Back-ported the mktemp, tempnam, tmpnam, and tmpnam_r link_warning's.
 
-* Fri Nov 17 2000 Solar Designer <solar@owl.openwall.com>
+* Fri Nov 17 2000 Solar Designer <solar-at-owl.openwall.com>
 - 'ASFLAGS-.os += -Wa,-Av8plusa' for sparcv9.
 
-* Thu Sep 07 2000 Solar Designer <solar@owl.openwall.com>
+* Thu Sep 07 2000 Solar Designer <solar-at-owl.openwall.com>
 - Added optflags_lib support and _target_platform to configure.
 
-* Fri Sep 01 2000 Solar Designer <solar@owl.openwall.com>
+* Fri Sep 01 2000 Solar Designer <solar-at-owl.openwall.com>
 - One more security fix (locale once again) from the CVS version.
 - Fixed a bug in crypt_gensalt*() reported by Michael Tokarev.
 
-* Fri Aug 25 2000 Solar Designer <solar@owl.openwall.com>
+* Fri Aug 25 2000 Solar Designer <solar-at-owl.openwall.com>
 - Back-ported 3 security-related fixes from the CVS version.
 
-* Sun Aug 06 2000 Solar Designer <solar@owl.openwall.com>
+* Sun Aug 06 2000 Solar Designer <solar-at-owl.openwall.com>
 - Added FreeSec (as a patch) to support extended/new-style/BSDI password
 hashes in crypt(3) (but not in the reentrant versions; this is a hack).
 - The building of profiling libraries is now optional and disabled by
 default.
 
-* Fri Jul 14 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Fri Jul 14 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import syslog fix from RH
 - import time fix from RH
 - import timezone fixes from RH
 - import ldd patch to handle non-executable shared objects. (mdk)
 - import ucontext.h patch from mdk
 
-* Wed Jul 12 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Wed Jul 12 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - paths patch from RH
 - import libNoVersion from RH
 - import xdr_ypall patch (RH bug id #249)
@@ -769,7 +769,7 @@ default.
 - import some little fixes from RH
 - import cp1251 locales from BCL
 
-* Sun Jun 18 2000 Solar Designer <solar@owl.openwall.com>
+* Sun Jun 18 2000 Solar Designer <solar-at-owl.openwall.com>
 - import this spec from RH, and make it use the original glibc 2.1.3
 code with Owl patches only; libNoVersion and other RH hacks may be added
 at a later stage.

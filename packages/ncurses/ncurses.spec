@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ncurses/ncurses.spec,v 1.27 2005/10/24 01:56:47 solar Exp $
+# $Id: Owl/packages/ncurses/ncurses.spec,v 1.28 2005/10/24 03:06:27 solar Exp $
 
 %define major 5
 %define oldmajor 4
@@ -202,75 +202,75 @@ rm %buildroot%_datadir/terminfo/s/screen{,-bce,-s}
 %_libdir/lib*.so.%{oldmajor}*
 
 %changelog
-* Fri May 14 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 5.4-owl2
+* Fri May 14 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 5.4-owl2
 - Fixed inconsistency when dealing with compat symlinks.
 - Removed entries for the screen package from the database.
 
-* Fri May 14 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 5.4-owl1
+* Fri May 14 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 5.4-owl1
 - Updated patch-set from official site
 - Added %_libdir/terminfo symbolic link into filelist
 
-* Wed Mar 17 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 5.4-owl0.3
+* Wed Mar 17 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 5.4-owl0.3
 - Removed unneeded libraries strip -- it will be done by brp- scripts
 - Fixed packaging problem for c++ documentation
 
-* Wed Mar 10 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 5.4-owl0.2
+* Wed Mar 10 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 5.4-owl0.2
 - turned off building of C++ library by default.
 - turned off linking with gpm by default (we need to review Makefiles to
 link this library only where needed, but not to every binary we build).
 
-* Fri Mar 05 2004 Michail Litvak <mci@owl.openwall.com> 5.4-owl0.1
+* Fri Mar 05 2004 Michail Litvak <mci-at-owl.openwall.com> 5.4-owl0.1
 - 5.4
 - 20040214 + 20040221 + 20040228 patches
 
-* Wed Jan 28 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 5.3-owl0.1
+* Wed Jan 28 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 5.3-owl0.1
 - Cleaned up the spec file (removed unneeded macros)
 
-* Tue Jan 20 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 5.3-owl0
+* Tue Jan 20 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 5.3-owl0
 - Updated to the 5.3 version with 20040117 patch
 - Cleaned up the spec (by using macros)
 - Dropped rh-typo and rh-tput-S patches (already in upstream)
 - owl-fixes patch shrinked (all previous owl-fixes already in upstream)
 
-* Wed Oct 29 2003 Solar Designer <solar@owl.openwall.com> 5.2-owl10
+* Wed Oct 29 2003 Solar Designer <solar-at-owl.openwall.com> 5.2-owl10
 - Don't keep ESC characters in resetall script source, use echo -e instead.
 - Eliminated unneeded curly braces with RPM macros and dropped %clean.
 
-* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com> 5.2-owl9
+* Wed Feb 06 2002 Michail Litvak <mci-at-owl.openwall.com> 5.2-owl9
 - Enforce our new spec file conventions
 
-* Mon Jun 25 2001 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Mon Jun 25 2001 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - fix tput -S bug. (RH#44669)
 
-* Fri Jan 26 2001 Solar Designer <solar@owl.openwall.com>
+* Fri Jan 26 2001 Solar Designer <solar-at-owl.openwall.com>
 - Patch a typo in curs_deleteln(3X).
 
-* Sat Jan 06 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Jan 06 2001 Solar Designer <solar-at-owl.openwall.com>
 - Enable mkstemp explicitly, not rely on configure.
 
-* Sun Dec 24 2000 Solar Designer <solar@owl.openwall.com>
+* Sun Dec 24 2000 Solar Designer <solar-at-owl.openwall.com>
 - Autoreq: false for the -devel package to install before perl.
 
-* Sun Dec 10 2000 Solar Designer <solar@owl.openwall.com>
+* Sun Dec 10 2000 Solar Designer <solar-at-owl.openwall.com>
 - Removed the last remaining RH (security) patch which is now redundant
 and had a race, anyway.
 
-* Wed Nov 08 2000 Solar Designer <solar@owl.openwall.com>
+* Wed Nov 08 2000 Solar Designer <solar-at-owl.openwall.com>
 - ncurses-5.2-20001104 patch which adds --with-ospeed and bugfixes.
 - --with-ospeed=speed_t for compatibility with libtermcap.
 - optflags_lib support.
 - %defattr(-,root,root) for the compat package.
 
-* Mon Nov 06 2000 Solar Designer <solar@owl.openwall.com>
+* Mon Nov 06 2000 Solar Designer <solar-at-owl.openwall.com>
 - --disable-root-environ to enable the recent security fixes.
 - Added a patch to use glibc's __libc_enable_secure.
 - Added a patch to fix potential problems found during a mini-audit.
 
-* Sat Nov 04 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sat Nov 04 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - new compat
 
-* Wed Oct 25 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Wed Oct 25 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - ncurses 5.2 and compat.
 
-* Sun Oct 15 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Oct 15 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import 5.1 from RH rawhide

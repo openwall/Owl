@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bc/bc.spec,v 1.11 2005/10/08 23:34:22 solar Exp $
+# $Id: Owl/packages/bc/bc.spec,v 1.12 2005/10/24 03:06:22 solar Exp $
 
 Summary: GNU's bc (a numeric processing language) and dc (a calculator).
 Name: bc
@@ -57,24 +57,24 @@ fi
 %exclude %_infodir/dir
 
 %changelog
-* Sat Sep 11 2004 Solar Designer <solar@owl.openwall.com> 1.06-owl5
+* Sat Sep 11 2004 Solar Designer <solar-at-owl.openwall.com> 1.06-owl5
 - Use RPM's exclude macro on info dir file.
 
-* Fri Feb 20 2004 Michail Litvak <mci@owl.openwall.com> 1.06-owl4
+* Fri Feb 20 2004 Michail Litvak <mci-at-owl.openwall.com> 1.06-owl4
 - Fixed building with new readline 4.3.
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1.06-owl3
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 1.06-owl3
 - Deal with info dir entries such that the menu looks pretty.
 
-* Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Jan 24 2002 Solar Designer <solar-at-owl.openwall.com>
 - Install the info dir entry for bc as well.
 - Enforce our new spec file conventions.
 - Wrote a cleaner package description.
 
-* Thu Dec 07 2000 Solar Designer <solar@owl.openwall.com>
+* Thu Dec 07 2000 Solar Designer <solar-at-owl.openwall.com>
 - Fixed a bug in the loading of functions (this affected primarily the
 built-in math library).
 
-* Mon Nov 21 2000 Michail Litvak <mci@owl.openwall.com>
+* Mon Nov 21 2000 Michail Litvak <mci-at-owl.openwall.com>
 - Updated to 1.06 version
 - added patch to avoid creation of dir file

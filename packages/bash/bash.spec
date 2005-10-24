@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.28 2005/10/24 02:34:30 solar Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.29 2005/10/24 03:06:22 solar Exp $
 
 Version: 2.05
 Name: bash
@@ -185,32 +185,32 @@ fi
 %doc doc/*.ps* doc/*.html doc/article.txt*
 
 %changelog
-* Sat Sep 11 2004 Solar Designer <solar@owl.openwall.com> 2.05-owl8
+* Sat Sep 11 2004 Solar Designer <solar-at-owl.openwall.com> 2.05-owl8
 - Use RPM's exclude macro on info dir file.
 
-* Tue Feb 24 2004 Michail Litvak <mci@owl.openwall.com> 2.05-owl7
+* Tue Feb 24 2004 Michail Litvak <mci-at-owl.openwall.com> 2.05-owl7
 - Statically link with system readline.
 
-* Fri Feb 20 2004 Michail Litvak <mci@owl.openwall.com> 2.05-owl6
+* Fri Feb 20 2004 Michail Litvak <mci-at-owl.openwall.com> 2.05-owl6
 - Build with system readline.
 
-* Tue Apr 15 2003 Solar Designer <solar@owl.openwall.com> 2.05-owl5
+* Tue Apr 15 2003 Solar Designer <solar-at-owl.openwall.com> 2.05-owl5
 - Added /usr/local/sbin to the default PATH.
 
-* Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com> 2.05-owl4
+* Sun Jul 07 2002 Solar Designer <solar-at-owl.openwall.com> 2.05-owl4
 - Use grep -q in this spec file.
 
-* Sat May 25 2002 Solar Designer <solar@owl.openwall.com>
+* Sat May 25 2002 Solar Designer <solar-at-owl.openwall.com>
 - Declare that the new mktemp is also required for bash _builds_.
 
-* Thu Apr 25 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Apr 25 2002 Solar Designer <solar-at-owl.openwall.com>
 - Default to vitmp in fc (the history editor) and bashbug script.
 - Provide sh.1 and bash2.1 symlinks to the man page.
 
-* Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Jan 24 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Sat Oct 27 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Oct 27 2001 Solar Designer <solar-at-owl.openwall.com>
 - Applied many cleanups to bash sources to build with -Wall also fixing a
 few real bugs, disabling pieces of dead code, and commenting on likely
 signal races (which remain).
@@ -220,32 +220,32 @@ and to bashbug as well.
 - The official bash patches are now in a separate file and applied first.
 - Dropped some obsolete patches.
 
-* Wed Oct 24 2001 Michail Litvak <mci@owl.openwall.com>
+* Wed Oct 24 2001 Michail Litvak <mci-at-owl.openwall.com>
 - 2.05
 - Many patches from Debian, ALT Linux.
 - some spec rework.
 - removed -glibc-build-hack.diff which is no longer needed.
 - #if 0'ed not used valid_exportstr function.
 
-* Sat Jan 13 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Jan 13 2001 Solar Designer <solar-at-owl.openwall.com>
 - One more temporary file handling fix for the history editor, as reported
 by Marcus Meissner of Caldera.
 - Use $TMPDIR.
 
-* Mon Dec 11 2000 Solar Designer <solar@owl.openwall.com>
+* Mon Dec 11 2000 Solar Designer <solar-at-owl.openwall.com>
 - Some /tmp fixes (the old code was mostly safe, though).
 
-* Sat Oct 28 2000 Solar Designer <solar@owl.openwall.com>
+* Sat Oct 28 2000 Solar Designer <solar-at-owl.openwall.com>
 - Use %triggerin to create /etc/shells when libtermcap is installed, as
 the commands require a working bash already.
 - %postun -> %preun.
 - "%triggerin -- libtermcap" and "%preun" script cleanups.
 
-* Thu Sep 07 2000 Solar Designer <solar@owl.openwall.com>
+* Thu Sep 07 2000 Solar Designer <solar-at-owl.openwall.com>
 - Workaround for glibc builds (allow '-' in identifiers in the exportstr
 code, which is new for bash 2.04).
 
-* Sun Sep 03 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Sep 03 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import from rawhide.
 - spec cleanup
 - /etc/bashrc now in owl-etc

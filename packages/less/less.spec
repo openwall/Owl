@@ -1,4 +1,4 @@
-# $Id: Owl/packages/less/less.spec,v 1.14 2005/10/24 01:56:47 solar Exp $
+# $Id: Owl/packages/less/less.spec,v 1.15 2005/10/24 03:06:24 solar Exp $
 
 Summary: A text file browser similar to more, but better.
 Name: less
@@ -46,29 +46,29 @@ install -m 755 %_sourcedir/less.{sh,csh} %buildroot/etc/profile.d/
 %_mandir/man1/*
 
 %changelog
-* Sun Jul 07 2002 Solar Designer <solar@owl.openwall.com> 358-owl7
+* Sun Jul 07 2002 Solar Designer <solar-at-owl.openwall.com> 358-owl7
 - Use grep -q in lesspipe.sh.
 
-* Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com>
+* Mon Feb 04 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions
 
-* Sat May 05 2001 Solar Designer <solar@owl.openwall.com>
+* Sat May 05 2001 Solar Designer <solar-at-owl.openwall.com>
 - Use -Tlatin1 with groff such that 8-bit man pages may be viewed.
 
-* Mon Apr 09 2001 Solar Designer <solar@owl.openwall.com>
+* Mon Apr 09 2001 Solar Designer <solar-at-owl.openwall.com>
 - Optimized line number calculation and forward searches, now 20 to 50%
 faster (but still a lot slower than wc and grep).
 
-* Thu Oct 19 2000 Solar Designer <solar@owl.openwall.com>
+* Thu Oct 19 2000 Solar Designer <solar-at-owl.openwall.com>
 - lesspipe.sh: "cd /" before running groff such that it can't be attacked
 when less is run with an untrusted current directory.
 
-* Sun Sep 03 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Sep 03 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - use popen
 
-* Wed Aug 23 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Wed Aug 23 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - lesspipe fixes
 
-* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import spec from RH
 - fix URL

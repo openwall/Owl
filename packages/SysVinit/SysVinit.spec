@@ -1,4 +1,4 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.24 2005/10/24 02:22:11 solar Exp $
+# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.25 2005/10/24 03:06:20 solar Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
@@ -121,13 +121,13 @@ fi
 %attr(0600,root,root) /dev/initctl
 
 %changelog
-* Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 2.85-owl5
+* Fri Jan 07 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.85-owl5
 - Cleaned up the spec.
 - Removed "-s" from LDFLAGS since we are using brp- scripts.
 - Using %%__cc macros to specify C compiler.
 - Fixed multiline string in start-stop-daemon.c to satisfy GCC 3.4.3.
 
-* Sun Apr 27 2003 Solar Designer <solar@owl.openwall.com> 2.85-owl4
+* Sun Apr 27 2003 Solar Designer <solar-at-owl.openwall.com> 2.85-owl4
 - Wrote a new implementation of sulogin which is now packaged separately,
 so don't package sulogin here.
 - Don't mount /proc in pidof, and mount it as "proc" rather than "none"
@@ -138,19 +138,19 @@ were previously renamed to *-RPMDELETE (this is how RPM 3.0.x replaces
 files).
 - Actually start the new init on package upgrades, with "telinit u".
 
-* Thu Apr 24 2003 Solar Designer <solar@owl.openwall.com> 2.85-owl3
+* Thu Apr 24 2003 Solar Designer <solar-at-owl.openwall.com> 2.85-owl3
 - Fixed a bug in yesterday's update to start-stop-daemon's executable file
 matching, thanks to Dmitry V. Levin.
 - On package upgrades, make a hard link to (the old) /sbin/init instead of
 renaming it.
 
-* Wed Apr 23 2003 Solar Designer <solar@owl.openwall.com>
+* Wed Apr 23 2003 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 2.85 (which includes most of our old patches plus quite a few
 from ALT Linux).
 - Added more patches from ALT and Red Hat Linux, including for executable
 file path matching in start-stop-daemon and pidof(8), with minor changes.
 
-* Wed Feb 13 2002 Solar Designer <solar@owl.openwall.com>
+* Wed Feb 13 2002 Solar Designer <solar-at-owl.openwall.com>
 - Don't unlink the old /sbin/init on package upgrades as that would actually
 leave it pending for delete on process termination and prevent remounting
 the filesystem read-only during shutdown.
@@ -158,25 +158,25 @@ the filesystem read-only during shutdown.
 the old libc would remain pending for delete until the very end preventing
 the remount.
 
-* Tue Feb 05 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Feb 05 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Wed May 30 2001 Solar Designer <solar@owl.openwall.com>
+* Wed May 30 2001 Solar Designer <solar-at-owl.openwall.com>
 - Ensure the umask is no less restrictive than 022 when starting programs
 from init and start-stop-daemon.
 
-* Sun Dec 10 2000 Solar Designer <solar@owl.openwall.com>
+* Sun Dec 10 2000 Solar Designer <solar-at-owl.openwall.com>
 - Use getpass(3) in sulogin; the old code was unreliable.
 - Updated the sulogin man page (no fallback).
 
-* Fri Dec 01 2000 Solar Designer <solar@owl.openwall.com>
+* Fri Dec 01 2000 Solar Designer <solar-at-owl.openwall.com>
 - Relaxed permissions on start-stop-daemon to 755 for status checks.
 - Removed the packaging of utmpdump as it is unsafe on untrusted files.
 
-* Wed Aug 09 2000 Solar Designer <solar@owl.openwall.com>
+* Wed Aug 09 2000 Solar Designer <solar-at-owl.openwall.com>
 - Added building of bootlogd and start-stop-daemon.
 
-* Tue Aug 08 2000 Solar Designer <solar@owl.openwall.com>
+* Tue Aug 08 2000 Solar Designer <solar-at-owl.openwall.com>
 - Imported this spec file from RH, changed it in various ways.
 - Removed the RH patches.
 - Added the initial set of Owl patches.

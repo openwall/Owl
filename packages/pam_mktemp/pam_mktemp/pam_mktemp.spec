@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.19 2005/10/24 02:22:12 solar Exp $
+# $Id: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.20 2005/10/24 03:06:28 solar Exp $
 
 Summary: Pluggable private /tmp space support for interactive (shell) sessions.
 Name: pam_mktemp
@@ -40,52 +40,52 @@ fi
 /lib/security/pam_mktemp.so
 
 %changelog
-* Thu Aug 11 2005 Dmitry V. Levin <ldv@owl.openwall.com> 1.0.1-owl1
+* Thu Aug 11 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.0.1-owl1
 - Added support of filesystem drivers which fail with ENOSYS error code
 in response to ioctl requests.
 
-* Fri Mar 25 2005 Solar Designer <solar@owl.openwall.com> 1.0-owl1
+* Fri Mar 25 2005 Solar Designer <solar-at-owl.openwall.com> 1.0-owl1
 - Corrected the source code to not break C strict aliasing rules.
 
-* Sun Nov 02 2003 Solar Designer <solar@owl.openwall.com> 0.2.5-owl1
+* Sun Nov 02 2003 Solar Designer <solar-at-owl.openwall.com> 0.2.5-owl1
 - Ignore errors from chattr as /tmp may be on tmpfs rather than ext[23]fs.
 - When compiling with gcc, also link with gcc.
 - Use "install -c" (makes a difference on some non-Linux systems).
 - Moved the "-c" out of CFLAGS, renamed FAKEROOT to DESTDIR.
 
-* Mon Jun 02 2003 Solar Designer <solar@owl.openwall.com> 0.2.4.1-owl1
+* Mon Jun 02 2003 Solar Designer <solar-at-owl.openwall.com> 0.2.4.1-owl1
 - Added URL.
 
-* Thu Apr 25 2002 Solar Designer <solar@owl.openwall.com> 0.2.4-owl1
+* Thu Apr 25 2002 Solar Designer <solar-at-owl.openwall.com> 0.2.4-owl1
 - Use a trigger on e2fsprogs, don't assume that chattr(1) is available
 at the time this package is installed.
 
-* Tue Apr 02 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Apr 02 2002 Solar Designer <solar-at-owl.openwall.com>
 - Use '=' instead of '.set' to declare the alias.
 
-* Sun Mar 31 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Mar 31 2002 Solar Designer <solar-at-owl.openwall.com>
 - Support running without CAP_LINUX_IMMUTABLE as long as this code is
 _never_ executed with the capability; should probably switch to using
 mode 511 for the directory instead of the append-only flag, this would
 be sufficient against tmpwatch (will prevent it from traversing the
 directory structure at all, but we now have stmpclean).
 
-* Thu Mar 21 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Mar 21 2002 Solar Designer <solar-at-owl.openwall.com>
 - Deal with non-ext2fs correctly (again).
 
-* Wed Mar 20 2002 Solar Designer <solar@owl.openwall.com>
+* Wed Mar 20 2002 Solar Designer <solar-at-owl.openwall.com>
 - Don't let the append-only flag get inherited by per-user subdirectories.
 
-* Wed Mar 13 2002 Solar Designer <solar@owl.openwall.com>
+* Wed Mar 13 2002 Solar Designer <solar-at-owl.openwall.com>
 - Make the /tmp/.private directory append-only (where supported) such that
 the directory or its subdirectories don't get removed by a /tmp cleaner.
 
-* Thu Feb 07 2002 Michail Litvak <mci@owl.openwall.com>
+* Thu Feb 07 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Fri Nov 09 2001 Solar Designer <solar@owl.openwall.com>
+* Fri Nov 09 2001 Solar Designer <solar-at-owl.openwall.com>
 - Support stacking for account management as well as for session setup.
 - No longer set LYNX_TEMP_SPACE.
 
-* Tue Dec 19 2000 Solar Designer <solar@owl.openwall.com>
+* Tue Dec 19 2000 Solar Designer <solar-at-owl.openwall.com>
 - Initial version.

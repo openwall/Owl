@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.17 2005/10/24 02:22:11 solar Exp $
+# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.18 2005/10/24 03:06:24 solar Exp $
 
 Summary: Tools for managing ipchains packet filtering rules.
 Name: ipchains
@@ -76,14 +76,14 @@ fi
 %_mandir/man*/*
 
 %changelog
-* Fri Jan 07 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1.3.10-owl13
+* Fri Jan 07 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.3.10-owl13
 - Added a patch to deal with "label at end of compound statement" issue.
 - Cleaned up the spec.
 
-* Mon Sep 15 2003 Solar Designer <solar@owl.openwall.com> 1.3.10-owl12
+* Mon Sep 15 2003 Solar Designer <solar-at-owl.openwall.com> 1.3.10-owl12
 - In "stop", only try to do anything if ipchains is supported by kernel.
 
-* Fri Aug 22 2003 Solar Designer <solar@owl.openwall.com> 1.3.10-owl11
+* Fri Aug 22 2003 Solar Designer <solar-at-owl.openwall.com> 1.3.10-owl11
 - Corrected the package summary and description to note the difference
 from iptables.
 - Removed the redirect of ipchains-save output to /dev/null, let's see
@@ -94,14 +94,14 @@ before the '#'.
 - PreReq: chkconfig
 - Requires: fileutils, sh-utils, textutils, grep, sed
 
-* Mon Feb 04 2002 Michail Litvak <mci@owl.openwall.com> 1.3.10-owl10
+* Mon Feb 04 2002 Michail Litvak <mci-at-owl.openwall.com> 1.3.10-owl10
 - Enforce our new spec file conventions
 
-* Mon Dec 10 2001 Solar Designer <solar@owl.openwall.com>
+* Mon Dec 10 2001 Solar Designer <solar-at-owl.openwall.com>
 - More cleanups to the startup script.
 - Corrected the package description.
 - Compressed the HOWTO.
 
-* Thu Dec 09 2001 Michail Litvak <mci@owl.openwall.com>
+* Thu Dec 09 2001 Michail Litvak <mci-at-owl.openwall.com>
 - imported from RH
 - some spec and ipchains.init cleanups

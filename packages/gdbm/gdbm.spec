@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gdbm/gdbm.spec,v 1.13 2005/10/23 21:09:44 solar Exp $
+# $Id: Owl/packages/gdbm/gdbm.spec,v 1.14 2005/10/24 03:06:23 solar Exp $
 
 Summary: A GNU set of database routines which use extensible hashing.
 Name: gdbm
@@ -91,24 +91,24 @@ fi
 %_mandir/man3/*
 
 %changelog
-* Fri Sep 23 2005 Michail Litvak <mci@owl.openwall.com> 1.8.0-owl10
+* Fri Sep 23 2005 Michail Litvak <mci-at-owl.openwall.com> 1.8.0-owl10
 - Don't package .la files.
 
-* Wed Jul 21 2004 Michail Litvak <mci@owl.openwall.com> 1.8.0-owl9
+* Wed Jul 21 2004 Michail Litvak <mci-at-owl.openwall.com> 1.8.0-owl9
 - Use sed -i.
 
-* Thu Jul 01 2004 Solar Designer <solar@owl.openwall.com> 1.8.0-owl8
+* Thu Jul 01 2004 Solar Designer <solar-at-owl.openwall.com> 1.8.0-owl8
 - Fixed whacky libdir statement in libgdbm.la (patch from Andreas Ericsson
 with minor changes).
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1.8.0-owl7
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 1.8.0-owl7
 - Deal with info dir entries such that the menu looks pretty.
 
-* Fri Feb 01 2002 Michail Litvak <mci@owl.openwall.com>
+* Fri Feb 01 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions
 - include text docs in binary package
 - handle CFLAGS and fhs stuff in Makefile
 
-* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import from RH
 - fix URL

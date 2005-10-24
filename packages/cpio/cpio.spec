@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cpio/cpio.spec,v 1.19 2005/10/23 21:09:44 solar Exp $
+# $Id: Owl/packages/cpio/cpio.spec,v 1.20 2005/10/24 03:06:22 solar Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
@@ -111,7 +111,7 @@ fi
 %_datadir/locale/*/LC_MESSAGES/cpio.mo
 
 %changelog
-* Wed May 11 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.6-owl2
+* Wed May 11 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.6-owl2
 - Imported patch from ALT that fixes three race condition issues
 while setting permissions in copy-in and copy-pass modes:
 + corrected open(2) calls to use O_EXCL;
@@ -120,7 +120,7 @@ while setting permissions in copy-in and copy-pass modes:
 using safe mode before chown, for each directory which is going to
 be reused by cpio.
 
-* Thu May 05 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.6-owl1
+* Thu May 05 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.6-owl1
 - Updated to 2.6.
 - Imported a bunch of patches from ALT's cpio-2.6-alt9 package,
 including fix for directory traversal issue (CAN-2005-1229) and
@@ -132,34 +132,34 @@ and rmt(8) utilities.
 - Packaged cpio translations.
 - Added URL.
 
-* Sun Feb 06 2005 Solar Designer <solar@owl.openwall.com> 2.4.2-owl28
+* Sun Feb 06 2005 Solar Designer <solar-at-owl.openwall.com> 2.4.2-owl28
 - With "cpio -oO ...", postpone the setting of umask to 0 (yes, that's
 still far from perfect!) to until after the output file is created;
 thanks to Mike O'Connor for bringing this up.
 
-* Sun Oct 19 2003 Solar Designer <solar@owl.openwall.com> 2.4.2-owl27
+* Sun Oct 19 2003 Solar Designer <solar-at-owl.openwall.com> 2.4.2-owl27
 - Install the mt(1) man page.
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 2.4.2-owl26
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 2.4.2-owl26
 - Deal with info dir entries such that the menu looks pretty.
 
-* Sun Mar 24 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Mar 24 2002 Solar Designer <solar-at-owl.openwall.com>
 - Group: Applications/Archiving (be the same as tar).
 
-* Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Jan 24 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Sun Dec 24 2000 Solar Designer <solar@owl.openwall.com>
+* Sun Dec 24 2000 Solar Designer <solar-at-owl.openwall.com>
 - Conflicts -> Provides: mt-st, rmt
 
-* Sat Dec 02 2000 Solar Designer <solar@owl.openwall.com>
+* Sat Dec 02 2000 Solar Designer <solar-at-owl.openwall.com>
 - Added /etc/rmt and /sbin/rmt symlinks.
 - Conflicts: rmt
 
-* Wed Nov 29 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Wed Nov 29 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - imported lchown patch from RH7
 
-* Sun Nov 26 2000 Michail Litvak <mci@owl.openwall.com>
+* Sun Nov 26 2000 Michail Litvak <mci-at-owl.openwall.com>
 - Imported from RH
 - added some patches from Debian
   (many bug fixes in cpio, mt and rmt improvements)

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/stmpclean/stmpclean.spec,v 1.12 2005/10/24 02:22:13 solar Exp $
+# $Id: Owl/packages/stmpclean/stmpclean.spec,v 1.13 2005/10/24 03:06:30 solar Exp $
 
 Summary: A safe temporary directory cleaner.
 Name: stmpclean
@@ -42,26 +42,26 @@ install -m 700 %_sourcedir/stmpclean.cron etc/cron.daily/stmpclean
 /etc/cron.daily/stmpclean
 
 %changelog
-* Mon Nov 08 2004 Michail Litvak <mci@owl.openwall.com> 0.3-owl4
+* Mon Nov 08 2004 Michail Litvak <mci-at-owl.openwall.com> 0.3-owl4
 - Updated stmpclean.cron according to FHS 2.2 man pages cache location.
 
-* Mon Jun 28 2004 Solar Designer <solar@owl.openwall.com> 0.3-owl3
+* Mon Jun 28 2004 Solar Designer <solar-at-owl.openwall.com> 0.3-owl3
 - Silently continue on ENOENT from lstat() on a directory entry.
 
-* Fri Mar 19 2004 Solar Designer <solar@owl.openwall.com> 0.3-owl2
+* Fri Mar 19 2004 Solar Designer <solar-at-owl.openwall.com> 0.3-owl2
 - Package only man8/*, not the entire man8 directory (that was a bug).
 
-* Thu Jun 12 2003 Solar Designer <solar@owl.openwall.com> 0.3-owl1
+* Thu Jun 12 2003 Solar Designer <solar-at-owl.openwall.com> 0.3-owl1
 - Updated to 0.3 which will refuse to process relative pathnames.
 
-* Thu Apr 25 2002 Solar Designer <solar@owl.openwall.com> 0.1-owl3
+* Thu Apr 25 2002 Solar Designer <solar-at-owl.openwall.com> 0.1-owl3
 - Dereference symlinks for directories specified on the command line.
 - Install the binary mode 700 as it's not usable by regular users.
 
-* Sun Mar 31 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Mar 31 2002 Solar Designer <solar-at-owl.openwall.com>
 - Corrected the tmpwatch emulation to accept the time in hours.
 
-* Sat Mar 30 2002 Solar Designer <solar@owl.openwall.com>
+* Sat Mar 30 2002 Solar Designer <solar-at-owl.openwall.com>
 - Packaged stmpclean 0.1 with minor fixes and modifications to switch
 supplementary groups as well as euid/egid, make use of O_DIRECTORY and
 O_NOFOLLOW to avoid possible side effects on open(2) when raced, and

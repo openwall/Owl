@@ -1,4 +1,4 @@
-# $Id: Owl/packages/diffutils/diffutils.spec,v 1.13 2005/10/23 21:09:44 solar Exp $
+# $Id: Owl/packages/diffutils/diffutils.spec,v 1.14 2005/10/24 03:06:22 solar Exp $
 
 Summary: A GNU collection of diff utilities.
 Name: diffutils
@@ -72,24 +72,24 @@ fi
 %exclude %_mandir/man1/diff.*
 
 %changelog
-* Tue May 17 2005 Dmitry V. Levin <ldv@owl.openwall.com> 2.8.7-owl1
+* Tue May 17 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.8.7-owl1
 - Updated to 2.8.7.
 - Imported a bunch of patches from ALT's diffutils-2.8.7-alt1 package.
 - Corrected info files installation.
 - Packaged diffutils translations.
 
-* Wed Oct 29 2003 Solar Designer <solar@owl.openwall.com> 2.7-owl25
+* Wed Oct 29 2003 Solar Designer <solar-at-owl.openwall.com> 2.7-owl25
 - Dropped diff.1 from this package as it exists in man-pages.
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 2.7-owl24
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 2.7-owl24
 - Deal with info dir entries such that the menu looks pretty.
 
-* Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Jan 24 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Wed Jan 03 2001 Solar Designer <solar@owl.openwall.com>
+* Wed Jan 03 2001 Solar Designer <solar-at-owl.openwall.com>
 - Fixed the unsafe temporary file creation discovered by the Immunix team
 and reported to vendor-sec by Greg KH <greg@wirex.com>.
 
-* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import spec from RH

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/strace/strace.spec,v 1.19 2005/10/23 22:34:37 ldv Exp $
+# $Id: Owl/packages/strace/strace.spec,v 1.20 2005/10/24 03:06:30 solar Exp $
 
 Summary: Tracks and displays system calls associated with a running process.
 Name: strace
@@ -70,51 +70,51 @@ mkdir -p %buildroot%_prefix/bin
 %_prefix/bin/strace-graph
 
 %changelog
-* Mon Oct 24 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.5.13-owl2
+* Mon Oct 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.5.13-owl2
 - Applied upstream fix for potential buffer overflow in printpathn().
 
-* Wed Aug 10 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.5.13-owl1
+* Wed Aug 10 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.5.13-owl1
 - Updated to 4.5.13.
 - Synced set of patches with ALT's strace-4.5.13-alt1 package.
 
-* Sat Jun 18 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.5.12-owl2
+* Sat Jun 18 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.5.12-owl2
 - Implemented more elaborate quotactl(2) deparser.
 
-* Sat Jun 11 2005 Dmitry V. Levin <ldv@owl.openwall.com> 4.5.12-owl1
+* Sat Jun 11 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.5.12-owl1
 - Updated to 4.5.12.
 - Reviewed Owl patches, removed obsolete ones.
 - Imported a bunch of patches from ALT's strace-4.5.12-alt1 package.
 
-* Wed Mar 10 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 4.5.1-owl2
+* Wed Mar 10 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.5.1-owl2
 - Added a dirty patch to switch strace to using kernel version of quota.h
 (this allows to recognize both types of quota version). This patch must be
 reviewed and cleaned, but for now it has necessary functionality.
 
-* Fri Feb 27 2004 Michail Litvak <mci@owl.openwall.com> 4.5.1-owl1
+* Fri Feb 27 2004 Michail Litvak <mci-at-owl.openwall.com> 4.5.1-owl1
 - 4.5.1
 - Added patches from ALT.
 
-* Fri May 16 2003 Solar Designer <solar@owl.openwall.com> 4.4-owl3
+* Fri May 16 2003 Solar Designer <solar-at-owl.openwall.com> 4.4-owl3
 - Additional fixes to build with Linux 2.4.21-rc1 headers.
 
-* Sat Jun 08 2002 Solar Designer <solar@owl.openwall.com>
+* Sat Jun 08 2002 Solar Designer <solar-at-owl.openwall.com>
 - Updated to today's CVS version (post-4.4) with an additional fix for
 displaying all possible ioctl names when there's more than one match,
 some build fixes, and a Red Hat Linux derived patch for detaches from
 multi-threaded programs.
 - Package strace-graph (in its own subpackage due to the Perl requirement).
 
-* Tue Feb 05 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Feb 05 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 - Package most of the documentation.
 
-* Tue Aug 21 2001 Michail Litvak <mci@owl.openwall.com>
+* Tue Aug 21 2001 Michail Litvak <mci-at-owl.openwall.com>
 - man page fix
 
-* Thu Jan 25 2001 Michail Litvak <mci@owl.openwall.com>
+* Thu Jan 25 2001 Michail Litvak <mci-at-owl.openwall.com>
 - Added patch to fix printsock
 
-* Mon Jan 23 2001 Michail Litvak <mci@owl.openwall.com>
+* Mon Jan 23 2001 Michail Litvak <mci-at-owl.openwall.com>
 - Imported from RH
 - Removed most of 2.4 related patches...
 - Added patch to compile on 2.2 kernels (strace-4.2-owl-timex.diff)

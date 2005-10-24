@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.13 2005/10/24 02:22:12 solar Exp $
+# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.14 2005/10/24 03:06:25 solar Exp $
 
 Summary: A basic system library for accessing the termcap database.
 Name: libtermcap
@@ -95,23 +95,23 @@ fi
 /usr/include/termcap.h
 
 %changelog
-* Fri Feb 27 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 2.0.8-owl6
+* Fri Feb 27 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.0.8-owl6
 - Patched to compile properly under glibc 2.3.2
 
-* Sat Oct 25 2003 Solar Designer <solar@owl.openwall.com> 2.0.8-owl5
+* Sat Oct 25 2003 Solar Designer <solar-at-owl.openwall.com> 2.0.8-owl5
 - Make the /usr/lib/libtermcap.so symlink relative.
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 2.0.8-owl4
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 2.0.8-owl4
 - Deal with info dir entries such that the menu looks pretty.
 
-* Tue Feb 05 2002 Michail Litvak <mci@owl.openwall.com>
+* Tue Feb 05 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions
 
-* Sat Oct 28 2000 Solar Designer <solar@owl.openwall.com>
+* Sat Oct 28 2000 Solar Designer <solar-at-owl.openwall.com>
 - Create /lib/libtermcap.so.2 before ldconfig.
 
-* Fri Sep 08 2000 Solar Designer <solar@owl.openwall.com>
+* Fri Sep 08 2000 Solar Designer <solar-at-owl.openwall.com>
 - optflags_lib support.
 
-* Wed Aug 02 2000 Solar Designer <solar@owl.openwall.com>
+* Wed Aug 02 2000 Solar Designer <solar-at-owl.openwall.com>
 - Imported this spec file from RH, and changed it heavily.

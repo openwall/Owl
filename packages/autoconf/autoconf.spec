@@ -1,4 +1,4 @@
-# $Id: Owl/packages/autoconf/autoconf.spec,v 1.11 2005/10/23 17:36:32 solar Exp $
+# $Id: Owl/packages/autoconf/autoconf.spec,v 1.12 2005/10/24 03:06:20 solar Exp $
 
 Summary: A GNU tool for automatically configuring source code.
 Name: autoconf
@@ -62,21 +62,21 @@ fi
 %_mandir/man1/*
 
 %changelog
-* Sat Sep 11 2004 Solar Designer <solar@owl.openwall.com> 2.59-owl1
+* Sat Sep 11 2004 Solar Designer <solar-at-owl.openwall.com> 2.59-owl1
 - Make it official, and do not use RPM's exclude macro on info dir file just
 yet to avoid introducing additional chicken-egg problems.
 
-* Wed Feb 25 2004 Michail Litvak <mci@owl.openwall.com> 2.59-owl0.1
+* Wed Feb 25 2004 Michail Litvak <mci-at-owl.openwall.com> 2.59-owl0.1
 - 2.59
 - Patch to use mktemp in a fail-close way.
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 2.13-owl10
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 2.13-owl10
 - Deal with info dir entries such that the menu looks pretty.
 
-* Thu Jan 24 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Jan 24 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 - Based the new package description on the texinfo documentation.
 
-* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Aug 06 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - import spec from RH
 - fix URL

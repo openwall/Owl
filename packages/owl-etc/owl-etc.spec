@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.65 2005/10/24 01:56:47 solar Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.66 2005/10/24 03:06:28 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
@@ -161,135 +161,135 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 %ghost /etc/*-
 
 %changelog
-* Wed Oct 19 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.31-owl1
+* Wed Oct 19 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.31-owl1
 - Changed 'xntpd' in passwd/group to 'ntpd'.
 
-* Sat Sep 24 2005 Dmitry V. Levin <ldv@owl.openwall.com> 0.30-owl1
+* Sat Sep 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.30-owl1
 - named user/group.
 
-* Fri Jan 14 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 0.29-owl3
+* Fri Jan 14 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.29-owl3
 - Let RPM know that /etc/shadow may be missing.
 - Include /etc/{group,passwd,shadow}- (backup copies - with the trailing
 "minus") into this package as "ghosts".
 
-* Tue Nov 02 2004 Solar Designer <solar@owl.openwall.com> 0.29-owl2
+* Tue Nov 02 2004 Solar Designer <solar-at-owl.openwall.com> 0.29-owl2
 - Do install all sources explicitly (and do not pick anything else which
 might happen to be in RPM's source dir).
 
-* Sun Oct 26 2003 Solar Designer <solar@owl.openwall.com> 0.29-owl1
+* Sun Oct 26 2003 Solar Designer <solar-at-owl.openwall.com> 0.29-owl1
 - nmap user/group.
 
-* Tue Sep 09 2003 Solar Designer <solar@owl.openwall.com> 0.28-owl1
+* Tue Sep 09 2003 Solar Designer <solar-at-owl.openwall.com> 0.28-owl1
 - dhcp user/group.
 
-* Thu May 29 2003 Solar Designer <solar@owl.openwall.com> 0.27-owl1
+* Thu May 29 2003 Solar Designer <solar-at-owl.openwall.com> 0.27-owl1
 - tcb is now the default and automatic conversion to it is attempted.
 
-* Tue May 27 2003 Solar Designer <solar@owl.openwall.com> 0.26-owl1
+* Tue May 27 2003 Solar Designer <solar-at-owl.openwall.com> 0.26-owl1
 - When updating an install that uses tcb, don't install the initial
 /etc/shadow (rm it on a trigger).
 - Don't install /etc/{passwd,shadow,group}.rpmnew files (rm -f them),
 the post-install scripts of our other packages take care of creating
 any additional pseudo-users.
 
-* Fri May 23 2003 Solar Designer <solar@owl.openwall.com> 0.25-owl1
+* Fri May 23 2003 Solar Designer <solar-at-owl.openwall.com> 0.25-owl1
 - Moved /etc/nsswitch.conf from glibc to owl-etc package.
 
-* Tue Apr 15 2003 Solar Designer <solar@owl.openwall.com> 0.24-owl1
+* Tue Apr 15 2003 Solar Designer <solar-at-owl.openwall.com> 0.24-owl1
 - Added /usr/local/sbin to the default PATH.
 
-* Thu Aug 22 2002 Solar Designer <solar@owl.openwall.com> 0.23-owl2
+* Thu Aug 22 2002 Solar Designer <solar-at-owl.openwall.com> 0.23-owl2
 - Made more files noreplace.
 
-* Sun Jun 23 2002 Solar Designer <solar@owl.openwall.com>
+* Sun Jun 23 2002 Solar Designer <solar-at-owl.openwall.com>
 - sshd user/group.
 
-* Sun May 19 2002 Solar Designer <solar@owl.openwall.com>
+* Sun May 19 2002 Solar Designer <solar-at-owl.openwall.com>
 - screen group.
 
-* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
+* Wed Feb 06 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Sun Dec 16 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Dec 16 2001 Solar Designer <solar-at-owl.openwall.com>
 - vsftpd user/group.
 
-* Sun Nov 25 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Nov 25 2001 Solar Designer <solar-at-owl.openwall.com>
 - telnetd user/group.
 - auth group.
 
-* Thu Nov 01 2001 Solar Designer <solar@owl.openwall.com>
+* Thu Nov 01 2001 Solar Designer <solar-at-owl.openwall.com>
 - audio, video and radio groups to manage access to devices.
 
-* Wed Oct 10 2001 Solar Designer <solar@owl.openwall.com>
+* Wed Oct 10 2001 Solar Designer <solar-at-owl.openwall.com>
 - Use "proc" and "devpts" as fstab keywords for /proc and /dev/pts as
 "none" could cause confusing messages from umount(8).
 
-* Mon Oct 08 2001 Solar Designer <solar@owl.openwall.com>
+* Mon Oct 08 2001 Solar Designer <solar-at-owl.openwall.com>
 - syslogd user/group.
 
-* Sat Jul 28 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Jul 28 2001 Solar Designer <solar-at-owl.openwall.com>
 - Corrected the use of *'s and x's in the default passwd.
 
-* Thu Jul 12 2001 Solar Designer <solar@owl.openwall.com>
+* Thu Jul 12 2001 Solar Designer <solar-at-owl.openwall.com>
 - xntpd user/group.
 - scanlogd user/group.
 
-* Wed Mar 28 2001 Solar Designer <solar@owl.openwall.com>
+* Wed Mar 28 2001 Solar Designer <solar-at-owl.openwall.com>
 - Disable coredumps with the soft rlimit only.
 
-* Thu Mar 08 2001 Solar Designer <solar@owl.openwall.com>
+* Thu Mar 08 2001 Solar Designer <solar-at-owl.openwall.com>
 - chkpwd group.
 
-* Sun Feb 25 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Feb 25 2001 Solar Designer <solar-at-owl.openwall.com>
 - utempter group.
 
-* Sat Feb 10 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Feb 10 2001 Solar Designer <solar-at-owl.openwall.com>
 - shadow group.
 
-* Mon Feb 05 2001 Solar Designer <solar@owl.openwall.com>
+* Mon Feb 05 2001 Solar Designer <solar-at-owl.openwall.com>
 - Add /usr/X11R6/bin to the default PATH when applicable.
 - Changed the default csh prompts to be the same as they are with bash.
 - Mention that /etc/profile.d/local.* is the place for local additions.
 - No longer disable bash history by default.
 - Source /etc/bashrc from /etc/profile unless ~/.bashrc exists.
 
-* Wed Jan 31 2001 Solar Designer <solar@owl.openwall.com>
+* Wed Jan 31 2001 Solar Designer <solar-at-owl.openwall.com>
 - Changed some more pseudo-user home directories to / to avoid certain
 attacks via group write permissions.
 
-* Fri Jan 26 2001 Solar Designer <solar@owl.openwall.com>
+* Fri Jan 26 2001 Solar Designer <solar-at-owl.openwall.com>
 - Install /etc/fstab world-readable as it is used by sysconf(3) in glibc
 to find the mount point of procfs (which sounds broken enough for me).
 
-* Thu Jan 18 2001 Solar Designer <solar@owl.openwall.com>
+* Thu Jan 18 2001 Solar Designer <solar-at-owl.openwall.com>
 - Don't expire the initial (disabled) password of root and the pseudo-users.
 
-* Wed Dec 20 2000 Solar Designer <solar@owl.openwall.com>
+* Wed Dec 20 2000 Solar Designer <solar-at-owl.openwall.com>
 - Obsoletes: setup (yes, we can upgrade to this from RH).
 - Provide default hosts.allow and hosts.deny with useful comments.
 - Provide /var/log/lastlog as a ghost just so that it doesn't get removed
 when upgrading from Red Hat's "setup" package; the actual file is created
 by owl-startup.
 
-* Sat Dec 16 2000 Solar Designer <solar@owl.openwall.com>
+* Sat Dec 16 2000 Solar Designer <solar-at-owl.openwall.com>
 - Provide initial fstab here.
 - proc group.
 
-* Mon Dec 11 2000 Solar Designer <solar@owl.openwall.com>
+* Mon Dec 11 2000 Solar Designer <solar-at-owl.openwall.com>
 - Conflicts: setup
 
-* Wed Dec 06 2000 Solar Designer <solar@owl.openwall.com>
+* Wed Dec 06 2000 Solar Designer <solar-at-owl.openwall.com>
 - popa3d user/group.
 
-* Mon Dec 04 2000 Solar Designer <solar@owl.openwall.com>
+* Mon Dec 04 2000 Solar Designer <solar-at-owl.openwall.com>
 - utmp group.
 - Keep the initial shadow file here rather than use pwconv.
 
-* Tue Nov 21 2000 Solar Designer <solar@owl.openwall.com>
+* Tue Nov 21 2000 Solar Designer <solar-at-owl.openwall.com>
 - More pseudo-users/groups: klogd, postfix, postdrop, postman.
 
-* Sun Aug 20 2000 Solar Designer <solar@owl.openwall.com>
+* Sun Aug 20 2000 Solar Designer <solar-at-owl.openwall.com>
 - crontab user/group.
 
-* Thu Jul 27 2000 Solar Designer <solar@owl.openwall.com>
+* Thu Jul 27 2000 Solar Designer <solar-at-owl.openwall.com>
 - Initial version.

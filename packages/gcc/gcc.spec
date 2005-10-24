@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.46 2005/10/23 19:16:02 galaxy Exp $
+# $Id: Owl/packages/gcc/gcc.spec,v 1.47 2005/10/24 03:06:23 solar Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -748,24 +748,24 @@ fi
 %endif
 
 %changelog
-* Sun Oct 23 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.4.3-owl4
+* Sun Oct 23 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:3.4.3-owl4
 - Added sed to Requires(post), since we are using sed in mkheaders;
 commented out this Requires(post), since we will use this spec with RPM3.
 - Added BuildRequires as suggested by kad@.
 - Added a missing requirement for libstdc++ to libstdc++-devel.
 
-* Fri Sep 23 2005 Michail Litvak <mci@owl.openwall.com> 1:3.4.3-owl3
+* Fri Sep 23 2005 Michail Litvak <mci-at-owl.openwall.com> 1:3.4.3-owl3
 - Don't package .la files.
 
-* Wed Jan 19 2005 Solar Designer <solar@owl.openwall.com> 1:3.4.3-owl2
+* Wed Jan 19 2005 Solar Designer <solar-at-owl.openwall.com> 1:3.4.3-owl2
 - Provide/obsolete libstdc++-compat in libstdc++-v3-compat.
 - Restored the cc(1) and c++(1) man pages.
 
-* Fri Jan 14 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.4.3-owl1
+* Fri Jan 14 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:3.4.3-owl1
 - Reverted the change with removing symbolic links from gcc to cc.
 - Fixed missed compile flags for target compiler.
 
-* Thu Jan 06 2005 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.4.3-owl0
+* Thu Jan 06 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:3.4.3-owl0
 - Updated to 3.4.3.
 - Enabled autotools magic, it works as expected.
 - Added libstdc++ compatible libraries for glibc 3.2.2 based builds.
@@ -773,78 +773,78 @@ commented out this Requires(post), since we will use this spec with RPM3.
 packages. I hope that after next release of Owl we will drop this crap.
 - Spec was revised and cleaned up.
 
-* Fri Jul 16 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.4.1-owl0
+* Fri Jul 16 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:3.4.1-owl0
 - Updated to 3.4.1.
 
-* Thu Jun 04 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.4.0-owl0.2
+* Thu Jun 04 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:3.4.0-owl0.2
 - Updated to 3.4.0.
 - Tested only C and C++ compilers, ObjC has compilation issues when using
 Boehm GC, Ada unsupported by this build.
 
-* Tue May 25 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.2.2-owl1.6
+* Tue May 25 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:3.2.2-owl1.6
 - Fixed a typo in spec file.
 
-* Tue Apr 20 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.2.2-owl1.5
+* Tue Apr 20 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:3.2.2-owl1.5
 - Additional optimization fixes for build process (using STAGE1_CFLAGS and
 BOOT_CFLAGS).
 - Moved extraction of '-fno-rtti' to CXXFLAGS, because this is C++ options.
 
-* Fri Apr 16 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.2.2-owl1.4
+* Fri Apr 16 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:3.2.2-owl1.4
 - Removed extra_c_flags and "XXX:" comment from spec file.
 - Passing "-O -fomit-frame-pointers" in CFLAGS variable to improve build times.
 
-* Thu Feb 26 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.2.2-owl1.3
+* Thu Feb 26 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:3.2.2-owl1.3
 - Removed wchar patch as we are building against glibc 2.3.2.
 
-* Thu Feb 26 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.2.2-owl1.2
+* Thu Feb 26 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:3.2.2-owl1.2
 - Temporarily disabled regeneration of configure due to conflict with new
 autotools.
 
-* Mon Feb 23 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.2.2-owl1.1
+* Mon Feb 23 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:3.2.2-owl1.1
 - Fixed permission of %_libdir/gcc-lib/%_target_platform/%version/include/*
 directories.
 - Removed unpackaged files to make RPM4 happy. :)
 
-* Thu Feb 05 2004 Solar Designer <solar@owl.openwall.com> 1:3.2.2-owl1
+* Thu Feb 05 2004 Solar Designer <solar-at-owl.openwall.com> 1:3.2.2-owl1
 - Added libstdc++ compatibility libraries for gcc 2.95.3 as a separate
 source tarball.
 
-* Tue Feb 03 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.2.2-owl0.3
+* Tue Feb 03 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:3.2.2-owl0.3
 - Cleaned up the spec file (reordered scripts & files sections).
 - Avoid using of subshells in build section to not mask possible errors.
 
-* Mon Feb 02 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.2.2-owl0.2
+* Mon Feb 02 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:3.2.2-owl0.2
 - Added a patch to enable limited wchar support.
 
-* Fri Jan 30 2004 (GalaxyMaster) <galaxy@owl.openwall.com> 1:3.2.2-owl0.1
+* Fri Jan 30 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:3.2.2-owl0.1
 - Updated to 3.2.2 version.
 
-* Mon Aug 19 2002 Michail Litvak <mci@owl.openwall.com> 1:2.95.3-owl5
+* Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 1:2.95.3-owl5
 - Deal with info dir entries such that the menu looks pretty.
 
-* Fri Jun 21 2002 Solar Designer <solar@owl.openwall.com>
+* Fri Jun 21 2002 Solar Designer <solar-at-owl.openwall.com>
 - Provide a cc(1) man page.
 
-* Tue May 28 2002 Solar Designer <solar@owl.openwall.com>
+* Tue May 28 2002 Solar Designer <solar-at-owl.openwall.com>
 - Don't override the linker's default library path for elf32_sparc, place
 /lib64 before /usr/lib64 in the path for elf64_sparc; this is needed to
 support dynamic linking with libraries from packages which only place the
 .so's in /lib (/lib64), not /usr/lib (/usr/lib64).
 
-* Sat May 25 2002 Solar Designer <solar@owl.openwall.com>
+* Sat May 25 2002 Solar Designer <solar-at-owl.openwall.com>
 - Do use some optimization when building the stage1 compiler to make our gcc
 builds faster.
 
-* Tue Jan 29 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Jan 29 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions (but more cleanups are still needed).
 - Dropped the 2.95.2-specific patches entirely.
 
-* Sun Mar 18 2001 Solar Designer <solar@owl.openwall.com>
+* Sun Mar 18 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 2.95.3.
 - Dropped the duplicate_decls() patch (included in 2.95.3).
 - Various spec file cleanups (use the ix86 macro, avoid subshells).
 
-* Fri Nov 17 2000 Solar Designer <solar@owl.openwall.com>
+* Fri Nov 17 2000 Solar Designer <solar-at-owl.openwall.com>
 - No pthreads on sparcv9, not just on plain sparc.
 - Pass plain sparc- target to configure when building for sparcv9, to
 allow for the use of sparcv9 optflags while not confusing configure.
@@ -852,25 +852,25 @@ allow for the use of sparcv9 optflags while not confusing configure.
 - %defattr(-,root,root) for all architectures, not just x86 and alpha
 (no idea why this was restricted).
 
-* Wed Nov 08 2000 Solar Designer <solar@owl.openwall.com>
+* Wed Nov 08 2000 Solar Designer <solar-at-owl.openwall.com>
 - Added a patch for copying of DECL_MODE in duplicate_decls(), by
 Richard Henderson (http://gcc.gnu.org/ml/gcc-patches/1999-11/msg00087.html).
 
-* Sun Oct 29 2000 Solar Designer <solar@owl.openwall.com>
+* Sun Oct 29 2000 Solar Designer <solar-at-owl.openwall.com>
 - libstdc++-compat is for x86 only, corrected the %ifarch's.
 
-* Sat Oct 21 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sat Oct 21 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - texconfig bug hack
 
-* Fri Oct 20 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Fri Oct 20 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - disable dvi generation
 
-* Fri Aug 25 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Fri Aug 25 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - removed make -j
 
-* Sat Jul 29 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sat Jul 29 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - spec cleanup.
 - duplicate file fix.
 
-* Sun Jul 09 2000 Alexandr D. Kanevskiy <kad@owl.openwall.com>
+* Sun Jul 09 2000 Alexandr D. Kanevskiy <kad-at-owl.openwall.com>
 - Imported from RH.

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/patchutils/patchutils.spec,v 1.4 2005/04/26 05:32:44 solar Exp $
+# $Id: Owl/packages/patchutils/patchutils.spec,v 1.5 2005/10/24 03:06:28 solar Exp $
 
 Summary: Patchutils is a small collection of programs that operate on patch files.
 Name: patchutils
@@ -55,18 +55,18 @@ rm -rf %buildroot
 %_mandir/*/*
 
 %changelog
-* Tue Apr 26 2005 Solar Designer <solar@owl.openwall.com> 0.2.30-owl4
+* Tue Apr 26 2005 Solar Designer <solar-at-owl.openwall.com> 0.2.30-owl4
 - Dropped the currently unneeded invocations of autoconf, aclocal, automake
 to make the package build with the new automake installed on the system.
 - Added an explicit invocation of make in %build, do not rely on make install
 to also build the programs.
 
-* Sun Nov 28 2004 Juan M. Bello Rivas <jmbr@owl.openwall.com> 0.2.30-owl3
+* Sun Nov 28 2004 Juan M. Bello Rivas <jmbr-at-owl.openwall.com> 0.2.30-owl3
 - Corrected two instances of calls to memory allocation functions where there
 was no check for their return values.
 
-* Sat Nov 27 2004 Juan M. Bello Rivas <jmbr@owl.openwall.com> 0.2.30-owl2
+* Sat Nov 27 2004 Juan M. Bello Rivas <jmbr-at-owl.openwall.com> 0.2.30-owl2
 - Implemented temporary file handling and bounds checking fixes.
 
-* Mon Nov 22 2004 Juan M. Bello Rivas <jmbr@owl.openwall.com> 0.2.30-owl1
+* Mon Nov 22 2004 Juan M. Bello Rivas <jmbr-at-owl.openwall.com> 0.2.30-owl1
 - Adapted from ALT Linux.

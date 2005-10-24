@@ -1,4 +1,4 @@
-# $Id: Owl/packages/man/man.spec,v 1.15 2005/10/24 02:22:12 solar Exp $
+# $Id: Owl/packages/man/man.spec,v 1.16 2005/10/24 03:06:27 solar Exp $
 
 Summary: A set of documentation tools: man, apropos and whatis.
 Name: man
@@ -77,45 +77,45 @@ find /var/cache/man/{,X11R6/,local/}cat[123456789n] -type f -delete
 %attr(0775,root,man) %dir /var/cache/man/local/cat[123456789n]
 
 %changelog
-* Thu Nov 11 2004 Michail Litvak <mci@owl.openwall.com> 1.5l-owl5
+* Thu Nov 11 2004 Michail Litvak <mci-at-owl.openwall.com> 1.5l-owl5
 - Spec file cleanups.
 - Include man2dvi.
 
-* Mon Nov 08 2004 Michail Litvak <mci@owl.openwall.com> 1.5l-owl4
+* Mon Nov 08 2004 Michail Litvak <mci-at-owl.openwall.com> 1.5l-owl4
 - FHS 2.2 compatibility.
 
-* Wed Jul 21 2004 Michail Litvak <mci@owl.openwall.com> 1.5l-owl3
+* Wed Jul 21 2004 Michail Litvak <mci-at-owl.openwall.com> 1.5l-owl3
 - Use sed -i.
 
-* Fri Sep 05 2003 Solar Designer <solar@owl.openwall.com> 1.5l-owl2
+* Fri Sep 05 2003 Solar Designer <solar-at-owl.openwall.com> 1.5l-owl2
 - Fixed the buffer overflow with MANPL discovered by KF from SNOSoft.
 
-* Sun Mar 16 2003 Solar Designer <solar@owl.openwall.com> 1.5l-owl1
+* Sun Mar 16 2003 Solar Designer <solar-at-owl.openwall.com> 1.5l-owl1
 - Updated to 1.5l.
 
-* Fri Sep 20 2002 Solar Designer <solar@owl.openwall.com>
+* Fri Sep 20 2002 Solar Designer <solar-at-owl.openwall.com>
 - Use groff -Tlatin1 such that 8-bit characters may be seen (for example,
 when viewing rpm(8) with LANG=ru_RU.KOI8_R).
 - Use the new mktemp -t in makewhatis.
 
-* Sat Mar 30 2002 Solar Designer <solar@owl.openwall.com>
+* Sat Mar 30 2002 Solar Designer <solar-at-owl.openwall.com>
 - No longer have the /var/catman/{,X11R6/,local/} directories themselves
 (as opposed to their subdirectories) writable to group man.
 - Clean up the subdirectories on package removal or upgrade safely (this
 assumes that group man could have been compromised, even though we don't
 really use it on Owl).
 
-* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
+* Wed Feb 06 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Tue Jun 12 2001 Solar Designer <solar@owl.openwall.com>
+* Tue Jun 12 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 1.5i2.
 
-* Fri May 18 2001 Solar Designer <solar@owl.openwall.com>
+* Fri May 18 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated to 1.5i.
 - Corrected the Source URL.
 
-* Thu Aug 10 2000 Solar Designer <solar@owl.openwall.com>
+* Thu Aug 10 2000 Solar Designer <solar-at-owl.openwall.com>
 - Imported this spec file from RH, simplified it.
 - Non-SGID installation as there's still no good solution for the man page
 spoofing problem.

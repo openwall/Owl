@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.34 2005/09/22 08:47:20 solar Exp $
+# $Id: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.35 2005/10/24 03:06:27 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
@@ -85,96 +85,96 @@ fi
 %dir /owl
 
 %changelog
-* Thu Sep 22 2005 Solar Designer <solar@owl.openwall.com> 0.15-owl1
+* Thu Sep 22 2005 Solar Designer <solar-at-owl.openwall.com> 0.15-owl1
 - Updated lilo.conf according to suggestions from John Coffman: added
 "backup=/dev/null", "geometric", "el-torito-bootable-CD", removed "install=..."
 since its syntax changed and the file is now linked into LILO anyway.
 - Moved the common "read-only" and "append=..." options to the global list.
 
-* Tue Sep 13 2005 Solar Designer <solar@owl.openwall.com> 0.14-owl1
+* Tue Sep 13 2005 Solar Designer <solar-at-owl.openwall.com> 0.14-owl1
 - Updated the message in welcome-cdrom.sh for the new owl-setup.
 - Install /boot/.config as world-readable.
 - Allow for LILO to be built with no external /boot/boot* files.
 
-* Sun Jul 03 2005 Solar Designer <solar@owl.openwall.com> 0.13-owl1
+* Sun Jul 03 2005 Solar Designer <solar-at-owl.openwall.com> 0.13-owl1
 - Updated to Linux 2.4.31-ow1, dropped support for old 10 Mbps Intel Ethernet
 cards.
 
-* Sun Mar 06 2005 Solar Designer <solar@owl.openwall.com> 0.12-owl1
+* Sun Mar 06 2005 Solar Designer <solar-at-owl.openwall.com> 0.12-owl1
 - Updated to Linux 2.4.29-ow1, dropped support for parallel ports, SCSI tape
 drives, PPP, SLIP, and NFS server to make the kernel still fit on a floppy
 when built with the new gcc (3.4.3).
 - Have LILO display a message explaining that it's the controller for the
 CD-ROM device that is being requested in the boot menu.
 
-* Sun Apr 18 2004 Solar Designer <solar@owl.openwall.com> 0.11-owl1
+* Sun Apr 18 2004 Solar Designer <solar-at-owl.openwall.com> 0.11-owl1
 - Updated to Linux 2.4.26-ow1.
 - Include the Broadcom Tigon3 Gigabit Ethernet driver and the BusLogic
 SCSI controller driver (the latter is apparently needed under VMware).
 - Dropped support for IrDA to make room for the above.
 
-* Thu Feb 05 2004 Solar Designer <solar@owl.openwall.com> 0.10-owl1
+* Thu Feb 05 2004 Solar Designer <solar-at-owl.openwall.com> 0.10-owl1
 - In lilo.conf, pass the "rootfstype=iso9660" kernel option to get rid of
 the ugly error message resulting from the kernel trying FAT first; thanks
 to Nergal for the suggestion.
 
-* Fri Dec 19 2003 Solar Designer <solar@owl.openwall.com> 0.9-owl1
+* Fri Dec 19 2003 Solar Designer <solar-at-owl.openwall.com> 0.9-owl1
 - Linux 2.4.23-ow1 + cryptoloop (w/ AES compiled in).
 - Support Silicon Image SATA controllers (CONFIG_BLK_DEV_SIIMAGE).
 
-* Tue Oct 21 2003 Solar Designer <solar@owl.openwall.com> 0.8-owl1
+* Tue Oct 21 2003 Solar Designer <solar-at-owl.openwall.com> 0.8-owl1
 - Switch to using the new SYM53C8XX driver which supports the whole range
 of PCI SCSI controllers from NCR / Symbios Logic SCSI-2 to new LSI Logic
 Ultra-160 ones.
 
-* Mon Oct 20 2003 Solar Designer <solar@owl.openwall.com> 0.7-owl1
+* Mon Oct 20 2003 Solar Designer <solar-at-owl.openwall.com> 0.7-owl1
 - In the "welcome" script, report the Owl version from /.Owl-CD-ROM,
 correctly locate documentation when multiple branches are available, and
 explain how to set Cyrillic font.
 
-* Sun Oct 19 2003 Solar Designer <solar@owl.openwall.com> 0.6-owl1
+* Sun Oct 19 2003 Solar Designer <solar-at-owl.openwall.com> 0.6-owl1
 - Updated .config for Linux 2.4.22-ow1, require at least a Pentium (need
 TSC, and math emulation for older CPUs which could be missing a coprocessor
 is too big), dropped PCMCIA and USB support to make the kernel with certain
 more relevant 2.4.x-specific features (e.g., ext3fs) still fit on a 1.44 MB
 "floppy".
 
-* Tue Sep 10 2002 Solar Designer <solar@owl.openwall.com> 0.5-owl1
+* Tue Sep 10 2002 Solar Designer <solar-at-owl.openwall.com> 0.5-owl1
 - Build the CD kernels with SMP, it is always possible to disable SMP
 with "nosmp" on the kernel command line.
 - In the "welcome" script, explicitly tell ls to list entries by lines
 instead of by columns (-x) and ignore CVS directories (-I CVS).
 
-* Thu Aug 22 2002 Solar Designer <solar@owl.openwall.com>
+* Thu Aug 22 2002 Solar Designer <solar-at-owl.openwall.com>
 - Added a "welcome" script to introduce the user to directory locations.
 - Updated .config for Linux 2.2.21-ow1.
 
-* Sat Jun 22 2002 Solar Designer <solar@owl.openwall.com>
+* Sat Jun 22 2002 Solar Designer <solar-at-owl.openwall.com>
 - Style change with plural form of abbreviations (CD-ROM's -> CD-ROMs).
 
-* Tue Apr 02 2002 Solar Designer <solar@owl.openwall.com>
+* Tue Apr 02 2002 Solar Designer <solar-at-owl.openwall.com>
 - Marked this package x86-specific because at this stage it really is.
 
-* Wed Feb 06 2002 Michail Litvak <mci@owl.openwall.com>
+* Wed Feb 06 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions
 
-* Mon Nov 26 2001 Solar Designer <solar@owl.openwall.com>
+* Mon Nov 26 2001 Solar Designer <solar-at-owl.openwall.com>
 - Updated .config for Linux 2.2.20-ow1.
 
-* Wed Oct 03 2001 Solar Designer <solar@owl.openwall.com>
+* Wed Oct 03 2001 Solar Designer <solar-at-owl.openwall.com>
 - Create an inode per 1024 bytes on the ramdisk or we would get out of
 inodes with a 4 MB ramdisk.
 - The timeout for root device choice is now 1 minute, not 5 seconds as
 the default choice will very often be wrong.
 
-* Sat Sep 15 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Sep 15 2001 Solar Designer <solar-at-owl.openwall.com>
 - Packaged lilo.conf, .config, and a script to create or update floppy
 images for use with CD-ROMs.
 - Move /usr/src/world to /ram such that "make installworld" may create
 its symlinks and write to its log file.
 
-* Sat Jul 28 2001 Solar Designer <solar@owl.openwall.com>
+* Sat Jul 28 2001 Solar Designer <solar-at-owl.openwall.com>
 - Require CDROM=yes such that this package isn't installed by mistake.
 
-* Fri Jul 27 2001 Solar Designer <solar@owl.openwall.com>
+* Fri Jul 27 2001 Solar Designer <solar-at-owl.openwall.com>
 - Initial version.
