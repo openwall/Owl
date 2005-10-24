@@ -1,4 +1,4 @@
-# $Id: Owl/packages/man/man.spec,v 1.19 2005/10/24 09:16:09 solar Exp $
+# $Id: Owl/packages/man/man.spec,v 1.20 2005/10/24 13:55:57 solar Exp $
 
 Summary: A set of documentation tools: man, apropos and whatis.
 Name: man
@@ -12,14 +12,14 @@ Patch1: man-1.5l-owl-latin1.diff
 Patch2: man-1.5l-owl-bound.diff
 Requires: groff, less, gzip, bzip2, coreutils
 # makewhatis
-Requires: awk, sed, mktemp >= 1:1.3.1
+Requires: gawk, sed, mktemp >= 1:1.3.1
 # makewhatis and %%preun
 Requires: findutils >= 1:4.1.5-owl4
 BuildRequires: sed
 # These need to be detected when this package is built
 BuildRequires: groff, less, gzip, bzip2
 # The proper full path to awk is patched into makewhatis
-BuildRequires: awk
+BuildRequires: gawk
 BuildRoot: /override/%name-%version
 
 %description
