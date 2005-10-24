@@ -1,9 +1,0 @@
---- file-3.41/Magdir/animation.orig	Thu May 16 21:45:57 2002
-+++ file-3.41/Magdir/animation	Wed Mar  5 23:49:32 2003
-@@ -194,3 +194,6 @@
- 0	string			\x8aMNG		MNG video data,
- >4	belong			!0x0d0a1a0a	CORRUPTED,
- >4	belong			0x0d0a1a0a
-+>>16	belong			x		%ld x
-+>>20	belong			x		%ld,
-+>>24	byte			x		%d tps

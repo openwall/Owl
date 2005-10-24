@@ -1,0 +1,71 @@
+--- file-4.16/doc/file.man.orig	2005-08-18 15:18:22.000000000 +0000
++++ file-4.16/doc/file.man	2005-10-23 00:45:22.000000000 +0000
+@@ -56,10 +56,9 @@
+ meaning anything else (data is usually `binary' or non-printable).
+ Exceptions are well-known file formats (core files, tar archives)
+ that are known to contain binary data.
+-When modifying the file
+-.I __MAGIC__
+-or the program itself, 
+-.B "preserve these keywords" .
++When adding local definitions to
++.IR /etc/magic ,
++.BR "preserve these keywords" .
+ People depend on knowing that all the readable files in a directory
+ have the word ``text'' printed.
+ Don't do as Berkeley did and change ``shell commands text''
+@@ -98,7 +97,9 @@
+ The concept of `magic number' has been applied by extension to data files.
+ Any file with some invariant identifier at a small fixed
+ offset into the file can usually be described in this way.
+-The information identifying these files is read from the compiled
++The information identifying these files is read from
++.I /etc/magic
++and the compiled
+ magic file
+ .I __MAGIC__.mgc ,
+ or 
+@@ -206,7 +207,8 @@
+ (See ``FILES'' section, below).
+ .TP 8
+ .B "\-k, \-\-keep\-going"
+-Don't stop at the first match, keep going.
++Don't stop at the first match, keep going. Subsequent matches will be
++prepended by ``\\012\- ''. (If you want a newline, see ``\-r'' option.)
+ .TP 8
+ .B "\-L, \-\-dereference"
+ option causes symlinks to be followed, as the like-named option in
+@@ -368,12 +370,6 @@
+ The order of entries in the magic file is significant.
+ Depending on what system you are using, the order that
+ they are put together may be incorrect.
+-If your old
+-.B file
+-command uses a magic file,
+-keep the old magic file around for comparison purposes
+-(rename it to 
+-.IR __MAGIC__.orig ).
+ .SH EXAMPLES
+ .nf
+ $ file file.c file /dev/{wd0a,hda}
+@@ -521,6 +517,9 @@
+ The new support for multiple character codes makes it even slower.
+ .PP
+ This manual page, and particularly this section, is too long.
++.SH RETURN CODE
++.B file
++almost always returns 0. It returns a different if it cannot open a file.
+ .SH AVAILABILITY
+ You can obtain the original author's latest version by anonymous FTP
+ on
+--- file-4.16/doc/magic.man.orig	2005-04-13 17:16:22.000000000 +0000
++++ file-4.16/doc/magic.man	2005-10-23 00:44:56.000000000 +0000
+@@ -52,7 +52,7 @@
+ The ``b'' flag treats every blank in the target as an optional blank.
+ Finally the ``c'' flag, specifies case insensitive matching: lowercase
+ characters in the magic match both lower and upper case characters in the
+-targer, whereas upper case characters in the magic, only much uppercase
++target, whereas upper case characters in the magic, only much uppercase
+ characters in the target.
+ .IP date
+ A four-byte value interpreted as a UNIX date.

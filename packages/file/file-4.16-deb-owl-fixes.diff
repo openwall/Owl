@@ -1,0 +1,57 @@
+--- file-4.16/src/Makefile.am.orig	2005-08-27 08:07:31.000000000 +0000
++++ file-4.16/src/Makefile.am	2005-10-23 00:08:05.000000000 +0000
+@@ -5,7 +5,7 @@
+ 
+ bin_PROGRAMS = file
+ 
+-AM_CPPFLAGS = -DMAGIC='"$(MAGIC)"'
++AM_CPPFLAGS = -DMAGIC='"/etc/magic:$(MAGIC)"'
+ 
+ libmagic_la_SOURCES = magic.c apprentice.c softmagic.c ascmagic.c \
+ 	compress.c is_tar.c readelf.c print.c fsmagic.c \
+--- file-4.16/src/Makefile.in.orig	2005-10-17 17:13:52.000000000 +0000
++++ file-4.16/src/Makefile.in	2005-10-23 00:08:05.000000000 +0000
+@@ -198,7 +198,7 @@
+ lib_LTLIBRARIES = libmagic.la
+ include_HEADERS = magic.h
+ EXTRA_DIST = test.c
+-AM_CPPFLAGS = -DMAGIC='"$(MAGIC)"'
++AM_CPPFLAGS = -DMAGIC='"/etc/magic:$(MAGIC)"'
+ libmagic_la_SOURCES = magic.c apprentice.c softmagic.c ascmagic.c \
+ 	compress.c is_tar.c readelf.c print.c fsmagic.c \
+ 	funcs.c file.h names.h patchlevel.h readelf.h tar.h apptype.c
+--- file-4.16/src/fsmagic.c.orig	2005-06-30 16:33:01.000000000 +0000
++++ file-4.16/src/fsmagic.c	2005-10-23 00:08:05.000000000 +0000
+@@ -92,7 +92,8 @@
+ 		if (file_printf(ms, "cannot open `%s' (%s)",
+ 		    fn, strerror(errno)) == -1)
+ 			return -1;
+-		return 1;
++		ms->haderr++;
++		return -1;
+ 	}
+ 
+ 	if ((ms->flags & MAGIC_MIME) != 0) {
+--- file-4.16/src/file.c.orig	2005-10-17 18:41:44.000000000 +0000
++++ file-4.16/src/file.c	2005-10-23 00:13:26.000000000 +0000
+@@ -253,9 +253,8 @@
+ 			flags |= MAGIC_DEVICES;
+ 			break;
+ 		case 'v':
+-			(void)fprintf(stdout, "%s-%d.%.2d\n", progname,
+-				       FILE_VERSION_MAJOR, patchlevel);
+-			(void)fprintf(stdout, "magic file from %s\n",
++ 			(void) fprintf(stdout, "%s-"VERSION"\n", progname);
++			(void) fprintf(stdout, "magic data from %s\n",
+ 				       magicfile);
+ 			return 1;
+ 		case 'z':
+@@ -318,7 +317,7 @@
+ 	}
+ 
+ 	magic_close(magic);
+-	return 0;
++	return magic->haderr ? -1 : 0;
+ }
+ 
+ 

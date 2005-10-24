@@ -1,0 +1,29 @@
+--- file-4.16/src/readelf.c.orig	2005-10-17 18:41:44.000000000 +0000
++++ file-4.16/src/readelf.c	2005-10-21 09:44:10.000000000 +0000
+@@ -860,7 +860,7 @@
+ 	    return 0;
+ 
+ 
+-	class = buf[4];
++	class = buf[EI_CLASS];
+ 
+ 	if (class == ELFCLASS32) {
+ 		Elf32_Ehdr elfhdr;
+@@ -870,7 +870,7 @@
+ 
+ 		u.l = 1;
+ 		(void) memcpy(&elfhdr, buf, sizeof elfhdr);
+-		swap = (u.c[sizeof(int32_t) - 1] + 1) != elfhdr.e_ident[5];
++		swap = (u.c[sizeof(int32_t) - 1] + 1) != elfhdr.e_ident[EI_DATA];
+ 
+ 		if (getu16(swap, elfhdr.e_type) == ET_CORE) {
+ #ifdef ELFCORE
+@@ -908,7 +908,7 @@
+ 
+ 		u.l = 1;
+ 		(void) memcpy(&elfhdr, buf, sizeof elfhdr);
+-		swap = (u.c[sizeof(int32_t) - 1] + 1) != elfhdr.e_ident[5];
++		swap = (u.c[sizeof(int32_t) - 1] + 1) != elfhdr.e_ident[EI_DATA];
+ 
+ 		if (getu16(swap, elfhdr.e_type) == ET_CORE) {
+ #ifdef ELFCORE

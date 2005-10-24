@@ -1,0 +1,42 @@
+--- file-4.16/magic/Makefile.in.orig	2005-10-17 17:13:51.000000000 +0000
++++ file-4.16/magic/Makefile.in	2005-10-23 00:58:42.000000000 +0000
+@@ -176,6 +176,7 @@
+ Magdir/alpha \
+ Magdir/amanda \
+ Magdir/amigaos \
++Magdir/mail.news \
+ Magdir/animation \
+ Magdir/apl \
+ Magdir/apple \
+@@ -199,7 +200,6 @@
+ Magdir/citrus \
+ Magdir/claris \
+ Magdir/clipper \
+-Magdir/cracklib \
+ Magdir/spec \
+ Magdir/commands \
+ Magdir/communications \
+@@ -209,13 +209,14 @@
+ Magdir/ctags \
+ Magdir/dact \
+ Magdir/database \
++Magdir/cracklib \
+ Magdir/diamond \
+ Magdir/diff \
+ Magdir/digital \
+ Magdir/dolby \
+-Magdir/dump \
+ Magdir/editors \
+ Magdir/elf \
++Magdir/dump \
+ Magdir/encore \
+ Magdir/epoc \
+ Magdir/esri \
+@@ -255,7 +256,6 @@
+ Magdir/mach \
+ Magdir/macintosh \
+ Magdir/magic \
+-Magdir/mail.news \
+ Magdir/maple \
+ Magdir/mathematica \
+ Magdir/matroska \

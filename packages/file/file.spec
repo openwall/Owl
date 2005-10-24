@@ -1,24 +1,24 @@
-# $Id: Owl/packages/file/file.spec,v 1.11 2005/10/23 21:09:44 solar Exp $
+# $Id: Owl/packages/file/file.spec,v 1.12 2005/10/24 01:08:35 mci Exp $
 
 Summary: A utility for determining file types.
 Name: file
-Version: 3.41
-Release: owl3
+Version: 4.16
+Release: owl1
 License: distributable
 Group: Applications/File
-URL: http://www.darwinsys.com/freeware/file.html
+URL: http://www.darwinsys.com/file/
 Source0: ftp://ftp.astron.com/pub/file/file-%version.tar.gz
-Patch0: file-3.41-rh-ia64.diff
-Patch1: file-3.41-mdk-alt-zsh.diff
-Patch2: file-3.41-alt-doctype.diff
-Patch3: file-3.41-alt-mng.diff
-Patch4: file-3.41-deb-compress.diff
-Patch5: file-3.41-deb-magic2mime.diff
-Patch6: file-3.41-deb-make.diff
-Patch7: file-3.41-deb-magic.diff
-Patch8: file-3.41-deb-owl-man.diff
-Patch9: file-3.41-deb-owl-apprentice.diff
+Source1: magic.local
+Patch0: file-4.16-rh-alt-compress.diff
+Patch1: file-4.16-rh-alt-elf.diff
+Patch2: file-4.16-deb-owl-fixes.diff
+Patch3: file-4.16-rh-order.diff
+Patch4: file-4.16-rh-selinux.diff
+Patch5: file-4.16-alt-magic.diff
+Patch6: file-4.16-deb-magic.diff
+Patch7: file-4.16-deb-owl-man.diff
 Prefix: %_prefix
+Requires: libmagic = %version-%release
 BuildRequires: zlib-devel, automake, autoconf
 BuildRoot: /override/%name-%version
 
@@ -27,6 +27,22 @@ The file command is used to identify a particular file according to the
 type of data contained by the file.  file can identify many different
 file types, including ELF binaries, system libraries, RPM packages, and
 different graphics formats.
+
+%package -n libmagic
+Summary: Shared library for handling magic files.
+Group: System Environment/Libraries
+
+%description -n libmagic
+This package contains shared library for handling magic files.
+
+%package -n libmagic-devel
+Summary: Development files to build applications that handle magic files.
+Group: Development/Libraries
+Requires: libmagic = %version-%release
+
+%description -n libmagic-devel
+This package contains development files to build applications that handle
+magic files.
 
 %prep
 %setup -q
@@ -38,13 +54,12 @@ different graphics formats.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
-%patch8 -p1
-%patch9 -p1
 
+%{expand:%%define optflags %optflags -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -Wall}
 %build
 autoreconf -f
 %configure --enable-fsect-man5
-make LDFLAGS=-s
+%__make LDFLAGS=-s
 
 %install
 rm -rf %buildroot
@@ -53,14 +68,37 @@ mkdir -p %buildroot%_mandir/man{1,5}
 mkdir -p %buildroot%_datadir
 
 %makeinstall
+install -p -D -m 644 %_sourcedir/magic.local %buildroot/etc/magic
+
+ln -s file/magic %buildroot%_datadir/magic
+ln -s file/magic.mime %buildroot%_datadir/magic.mime
+
+rm -f %buildroot%_libdir/*.la
 
 %files
 %defattr(-,root,root)
+%config(noreplace) /etc/magic
 %_bindir/*
 %_datadir/magic*
-%_mandir/man*/*
+%_datadir/file/*
+%_mandir/man1/*
+%_mandir/man5/*
+
+%files -n libmagic
+%_libdir/*.so.*
+
+%files -n libmagic-devel
+%_libdir/*.so
+%_libdir/*.a
+%_includedir/*
+%_mandir/man3/*
 
 %changelog
+* Sun Oct 23 2005 Michail Litvak <mci@owl.openwall.com> 4.16-owl1
+- 4.16
+- Updated patches.
+- New subpackages libmagic, libmagic-devel.
+
 * Thu Feb 26 2004 Michail Litvak <mci@owl.openwall.com> 3.41-owl3
 - Fixed building with new auto* tools.
 
