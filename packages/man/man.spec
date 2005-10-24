@@ -1,4 +1,4 @@
-# $Id: Owl/packages/man/man.spec,v 1.18 2005/10/24 07:18:46 solar Exp $
+# $Id: Owl/packages/man/man.spec,v 1.19 2005/10/24 09:16:09 solar Exp $
 
 Summary: A set of documentation tools: man, apropos and whatis.
 Name: man
@@ -86,7 +86,7 @@ find /var/cache/man/{,X11R6/,local/}cat[123456789n] -type f -delete
 %attr(0775,root,man) %dir /var/cache/man/local/cat[123456789n]
 
 %changelog
-* Mon Oct 24 Solar Designer <solar-at-owl.openwall.com> 1.5l-owl6
+* Mon Oct 24 2005 Solar Designer <solar-at-owl.openwall.com> 1.5l-owl6
 - Added build and runtime dependencies.
 - Updated the makewhatis patch per our new conventions (mktemp first, set
 the trap later to not trigger in-shell races).
