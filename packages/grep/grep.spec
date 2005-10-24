@@ -1,4 +1,4 @@
-# $Id: Owl/packages/grep/grep.spec,v 1.12 2005/10/24 03:06:24 solar Exp $
+# $Id: Owl/packages/grep/grep.spec,v 1.13 2005/10/24 06:22:45 solar Exp $
 
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
@@ -11,7 +11,7 @@ Source: ftp://ftp.gnu.org/gnu/grep/grep-%version.tar.gz
 Patch: grep-2.4.2-owl-info.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
-BuildRequires: texinfo, gettext
+BuildRequires: texinfo, gettext, sed
 BuildRoot: /override/%name-%version
 
 %description
