@@ -1,0 +1,33 @@
+2005-10-24  Jim Meyering  <jim@meyering.net>
+
+	* src/dircolors.c (ls_codes): Add missing comma.
+	Anonymous report and patch from
+	http://savannah.gnu.org/bugs/?func=detailitem&item_id=14849
+
+	* src/dircolors.c: Add compile-time assertion that the slack_codes
+	and ls_codes arrays have the same number of elements.  This would
+	have prevented the above-fixed bug.
+
+--- src/dircolors.c	19 Oct 2005 07:32:14 -0000	1.94
++++ src/dircolors.c	24 Oct 2005 10:39:46 -0000	1.97
+@@ -62,7 +62,6 @@ enum Shell_syntax
+    variable.  */
+ static struct obstack lsc_obstack;
+ 
+-/* FIXME: associate with ls_codes? */
+ static const char *const slack_codes[] =
+ {
+   "NORMAL", "NORM", "FILE", "DIR", "LNK", "LINK",
+@@ -75,9 +74,11 @@ static const char *const slack_codes[] =
+ static const char *const ls_codes[] =
+ {
+   "no", "no", "fi", "di", "ln", "ln", "ln", "or", "mi", "pi", "pi",
+-  "so", "bd", "bd", "cd", "cd", "do", "ex", "lc", "lc", "rc", "rc", "ec", "ec"
++  "so", "bd", "bd", "cd", "cd", "do", "ex", "lc", "lc", "rc", "rc", "ec", "ec",
+   "su", "su", "sg", "sg", "st", "ow", "ow", "tw", "tw", NULL
+ };
++#define array_len(Array) (sizeof (Array) / sizeof *(Array))
++verify (array_len (slack_codes) == array_len (ls_codes));
+ 
+ static struct option const long_options[] =
+   {

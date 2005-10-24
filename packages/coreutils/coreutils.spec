@@ -1,9 +1,9 @@
-# $Id: Owl/packages/coreutils/coreutils.spec,v 1.12 2005/10/24 03:06:22 solar Exp $
+# $Id: Owl/packages/coreutils/coreutils.spec,v 1.13 2005/10/24 16:45:33 ldv Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
 Version: 5.92
-Release: owl2
+Release: owl3
 License: GPL
 Group: System Environment/Base
 URL: http://www.gnu.org/software/%name/
@@ -24,9 +24,11 @@ Source20: usleep.c
 Source21: usleep.1
 
 # ALT patches, candidates for upstream version and CVS backports
-Patch0: coreutils-5.91-up-ls-usage.diff
-Patch1: coreutils-5.91-eggert-ls-time-style.diff
-Patch2: coreutils-5.91-alt-hostname.diff
+Patch0: coreutils-5.92-cvs-20051024-dircolors.diff
+Patch1: coreutils-5.92-alt-make_dir_parents.diff
+Patch2: coreutils-5.91-up-ls-usage.diff
+Patch3: coreutils-5.91-eggert-ls-time-style.diff
+Patch4: coreutils-5.91-alt-hostname.diff
 
 # Owl/ALT specific
 Patch10: coreutils-5.92-owl-info-true-false.diff
@@ -81,8 +83,10 @@ arbitrary limits.
 
 # ALT patches, candidates for upstream version and CVS backports
 %patch0 -p0
-%patch1 -p0
-%patch2 -p1
+%patch1 -p1
+%patch2 -p0
+%patch3 -p0
+%patch4 -p1
 
 # ALT specific
 %patch10 -p1
@@ -97,6 +101,9 @@ arbitrary limits.
 %patch22 -p1
 
 find -type f -name '*.orig' -delete -print
+
+# New tests should be executable, too
+chmod u+x tests/*/*-slashdot
 
 # Get rid of su and uptime
 rm {src,man}/{su,uptime}.*
@@ -228,6 +235,10 @@ fi
 %doc ChangeLog.bz2 NEWS.bz2 THANKS.bz2 AUTHORS README TODO
 
 %changelog
+* Mon Oct 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 5.92-owl3
+- Applied upstream fix to "mkdir -p" and "install -d".
+- Applied upstream fix to dircolors.
+
 * Sun Oct 23 2005 Solar Designer <solar-at-owl.openwall.com> 5.92-owl2
 - Re-worked the texinfo documentation patch for true(1) and false(1) to make
 it explicit that we're referring to non-GNU versions of these utilities.
