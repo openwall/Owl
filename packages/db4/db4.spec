@@ -1,4 +1,4 @@
-# $Id: Owl/packages/db4/db4.spec,v 1.10 2005/10/23 21:09:44 solar Exp $
+# $Id: Owl/packages/db4/db4.spec,v 1.11 2005/10/24 02:22:11 solar Exp $
 
 %define __soversion	4.0
 %define _libdb_a	libdb-%__soversion.a
@@ -72,7 +72,7 @@ popd
 
 # Static link with old db-185 libraries.
 %__make -C db.1.85/PORT/%_os CC="%__cc" OORG="%optflags_lib"
-/bin/sh libtool --mode=compile %__cc $RPM_OPT_FLAGS \
+/bin/sh libtool --mode=compile %__cc %optflags \
 	-Idb.1.85/PORT/%_os/include -D_REENTRANT \
 	-c db_dump185/db_dump185.c -o dist/db_dump185.lo
 /bin/sh libtool --mode=link %__cc -o dist/db_dump185 \

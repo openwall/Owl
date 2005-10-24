@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.16 2005/10/24 01:56:47 solar Exp $
+# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.17 2005/10/24 02:22:11 solar Exp $
 
 Summary: Tools for managing ipchains packet filtering rules.
 Name: ipchains
@@ -38,7 +38,7 @@ install -m 644 %_sourcedir/HOWTO.txt.gz .
 
 %build
 %__make clean
-%__make CC="%__cc" COPTS="$RPM_OPT_FLAGS"
+%__make CC="%__cc" COPTS="%optflags"
 
 %install
 rm -rf %buildroot

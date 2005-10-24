@@ -1,4 +1,4 @@
-# $Id: Owl/packages/prtconf/prtconf.spec,v 1.4 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/prtconf/prtconf.spec,v 1.5 2005/10/24 02:22:13 solar Exp $
 
 Summary: Utilities to dump and modify SPARC OpenPROM.
 Name: prtconf
@@ -19,7 +19,7 @@ changing OpenPROM options.
 %setup -q
 
 %build
-make CFLAGS="$RPM_OPT_FLAGS"
+make CFLAGS="%optflags"
 
 %install
 rm -rf %buildroot

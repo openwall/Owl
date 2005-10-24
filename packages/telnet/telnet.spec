@@ -1,4 +1,4 @@
-# $Id: Owl/packages/telnet/telnet.spec,v 1.9 2005/10/24 01:56:48 solar Exp $
+# $Id: Owl/packages/telnet/telnet.spec,v 1.10 2005/10/24 02:22:13 solar Exp $
 
 Summary: The client program for the telnet remote login protocol.
 Name: telnet
@@ -46,7 +46,7 @@ will support remote logins into the host machine.
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-CFLAGS="-c $RPM_OPT_FLAGS" make
+CFLAGS="-c %optflags" make
 
 %install
 rm -rf %buildroot

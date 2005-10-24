@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.40 2005/10/23 20:20:13 solar Exp $
+# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.41 2005/10/24 02:22:14 solar Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
@@ -50,7 +50,7 @@ modifications by the NetBSD, OpenBSD, Red Hat, ALT, and Owl teams.
 
 %build
 for dir in usr.sbin/cron usr.bin/crontab usr.bin/at; do
-	CFLAGS="$RPM_OPT_FLAGS" %__make -C $dir .CURDIR=. CC="%__cc" LD="%__cc"
+	CFLAGS="%optflags" %__make -C $dir .CURDIR=. CC="%__cc" LD="%__cc"
 done
 
 %install

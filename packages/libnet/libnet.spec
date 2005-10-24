@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libnet/libnet.spec,v 1.10 2005/01/12 16:15:17 galaxy Exp $
+# $Id: Owl/packages/libnet/libnet.spec,v 1.11 2005/10/24 02:22:11 solar Exp $
 
 Summary: "libpwrite" Network Routine Library.
 Name: libnet
@@ -42,7 +42,7 @@ Header files and development documentation for libnet.
 aclocal
 autoconf
 %configure --with-pf_packet=yes
-%__make CFLAGS="$RPM_OPT_FLAGS"
+%__make CFLAGS="%optflags"
 
 %install
 rm -rf %buildroot

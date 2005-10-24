@@ -1,4 +1,4 @@
-# $Id: Owl/packages/hdparm/hdparm.spec,v 1.14 2004/11/28 00:46:51 solar Exp $
+# $Id: Owl/packages/hdparm/hdparm.spec,v 1.15 2005/10/24 02:22:11 solar Exp $
 
 Summary: A utility for displaying and/or setting hard disk parameters.
 Name: hdparm
@@ -21,7 +21,7 @@ hdparm - get/set hard disk parameters for IDE drives.
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-make CC=gcc CFLAGS="$RPM_OPT_FLAGS"
+make CC=gcc CFLAGS="%optflags"
 
 %install
 mkdir -p %buildroot/sbin

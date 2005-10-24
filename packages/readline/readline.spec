@@ -1,4 +1,4 @@
-# $Id: Owl/packages/readline/readline.spec,v 1.20 2005/10/23 22:14:14 solar Exp $
+# $Id: Owl/packages/readline/readline.spec,v 1.21 2005/10/24 02:22:13 solar Exp $
 
 %define compat_list 3 3.0 4.0 4.1 4.2
 
@@ -59,7 +59,7 @@ command line interface for users.
 %build
 rm doc/{history,readline,rluserman}.info
 %configure
-make all shared documentation CFLAGS="$RPM_OPT_FLAGS -D_GNU_SOURCE"
+make all shared documentation CFLAGS="%optflags -D_GNU_SOURCE"
 
 %install
 rm -rf %buildroot

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.40 2005/10/23 20:20:13 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.41 2005/10/24 02:22:10 solar Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
@@ -46,7 +46,7 @@ includes "login", "su", and "passwd".
 
 %build
 touch conf/.ignore_age
-CFLAGS="$RPM_OPT_FLAGS" ./configure --without-pniam --without-pwdb
+CFLAGS="%optflags" ./configure --without-pniam --without-pwdb
 %__make
 
 %install

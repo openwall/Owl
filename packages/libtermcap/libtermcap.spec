@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.12 2004/11/23 22:40:46 mci Exp $
+# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.13 2005/10/24 02:22:12 solar Exp $
 
 Summary: A basic system library for accessing the termcap database.
 Name: libtermcap
@@ -52,7 +52,7 @@ developing programs which will access the termcap database.
 %patch8 -p1
 
 %build
-%__make CFLAGS="$RPM_OPT_FLAGS -I."
+%__make CFLAGS="%optflags -I."
 
 %install
 rm -rf %buildroot

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iputils/iputils.spec,v 1.21 2005/10/24 01:56:47 solar Exp $
+# $Id: Owl/packages/iputils/iputils.spec,v 1.22 2005/10/24 02:22:11 solar Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
@@ -35,9 +35,9 @@ mv -f bonding-0.2/README bonding-0.2/README.ifenslave
 
 %build
 %__make \
-	CCOPT="-D_GNU_SOURCE $RPM_OPT_FLAGS" \
+	CCOPT="-D_GNU_SOURCE %optflags" \
 	IPV4_TARGETS="tracepath ping clockdiff rdisc arping" # no tftpd, rarpd
-%__cc $RPM_OPT_FLAGS -s bonding-0.2/ifenslave.c -o bonding-0.2/ifenslave
+%__cc %optflags -s bonding-0.2/ifenslave.c -o bonding-0.2/ifenslave
 
 %install
 rm -rf %buildroot

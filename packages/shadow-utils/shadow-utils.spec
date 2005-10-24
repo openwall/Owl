@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.50 2005/10/24 01:56:48 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.51 2005/10/24 02:22:13 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
@@ -88,7 +88,7 @@ aclocal -I m4
 automake -a
 autoheader
 autoconf
-CFLAGS="$RPM_OPT_FLAGS -DEXTRA_CHECK_HOME_DIR -DSHADOWTCB" \
+CFLAGS="%optflags -DEXTRA_CHECK_HOME_DIR -DSHADOWTCB" \
 %configure \
 	--disable-desrpc --disable-shared \
 	--with-libcrypt --with-libpam --without-libcrack

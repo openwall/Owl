@@ -1,4 +1,4 @@
-# $Id: Owl/packages/procmail/procmail.spec,v 1.8 2005/06/28 18:58:45 ldv Exp $
+# $Id: Owl/packages/procmail/procmail.spec,v 1.9 2005/10/24 02:22:13 solar Exp $
 
 Summary: The procmail mail processing program.
 Name: procmail
@@ -29,7 +29,7 @@ make \
 	LOCKINGTEST=100 \
 	SEARCHLIBS="-lm -lnsl -ldl" \
 	CC=gcc \
-	CFLAGS0="$RPM_OPT_FLAGS"
+	CFLAGS0="%optflags"
 
 %install
 rm -rf %buildroot

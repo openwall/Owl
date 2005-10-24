@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mailx/mailx.spec,v 1.6 2004/11/23 22:40:47 mci Exp $
+# $Id: Owl/packages/mailx/mailx.spec,v 1.7 2005/10/24 02:22:12 solar Exp $
 
 Summary: The /bin/mail program for sending e-mail messages.
 Name: mailx
@@ -21,7 +21,7 @@ e-mail messages.  It is often used in shell scripts.
 
 %build
 cd usr.bin/mail
-make CFLAGS="$RPM_OPT_FLAGS -c -Wall -Dlint"
+make CFLAGS="%optflags -c -Wall -Dlint"
 make -C USD.doc
 
 %install

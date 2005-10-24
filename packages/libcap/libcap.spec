@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libcap/libcap.spec,v 1.10 2005/10/24 01:56:47 solar Exp $
+# $Id: Owl/packages/libcap/libcap.spec,v 1.11 2005/10/24 02:22:11 solar Exp $
 
 Summary: Library for getting and setting POSIX.1e capabilities.
 Name: libcap
@@ -53,7 +53,7 @@ install -p -m 644 %_sourcedir/capfaq-0.2.txt .
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-make COPTFLAG="$RPM_OPT_FLAGS -D_GNU_SOURCE" DEBUG= LDFLAGS= WARNINGS=
+make COPTFLAG="%optflags -D_GNU_SOURCE" DEBUG= LDFLAGS= WARNINGS=
 
 %install
 rm -rf %buildroot

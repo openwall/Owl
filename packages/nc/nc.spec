@@ -1,4 +1,4 @@
-# $Id: Owl/packages/nc/nc.spec,v 1.7 2004/11/23 22:40:47 mci Exp $
+# $Id: Owl/packages/nc/nc.spec,v 1.8 2005/10/24 02:22:12 solar Exp $
 
 Summary: Reads and writes data across network connections using TCP or UDP.
 Name: nc
@@ -28,7 +28,7 @@ built-in capabilities.
 %patch2 -p1
 
 %build
-CFLAGS="-c $RPM_OPT_FLAGS" make
+CFLAGS="-c %optflags" make
 
 %install
 rm -rf %buildroot

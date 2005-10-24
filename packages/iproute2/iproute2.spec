@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iproute2/iproute2.spec,v 1.19 2005/10/24 01:56:47 solar Exp $
+# $Id: Owl/packages/iproute2/iproute2.spec,v 1.20 2005/10/24 02:22:11 solar Exp $
 
 %define ver 2.4.7
 %define snapshot ss020116
@@ -53,7 +53,7 @@ utilities (ip, tc, rtmon, rtacct, ifstat, nstat, rtstat, ss).
 %build
 make \
 	KERNEL_INCLUDE=/usr/include \
-	CCOPTS="$RPM_OPT_FLAGS -D_GNU_SOURCE"
+	CCOPTS="%optflags -D_GNU_SOURCE"
 
 %install
 rm -rf %buildroot

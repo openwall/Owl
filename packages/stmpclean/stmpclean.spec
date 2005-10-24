@@ -1,4 +1,4 @@
-# $Id: Owl/packages/stmpclean/stmpclean.spec,v 1.11 2005/10/24 01:56:48 solar Exp $
+# $Id: Owl/packages/stmpclean/stmpclean.spec,v 1.12 2005/10/24 02:22:13 solar Exp $
 
 Summary: A safe temporary directory cleaner.
 Name: stmpclean
@@ -25,7 +25,7 @@ such as /tmp where old files tend to accumulate.
 %patch0 -p1
 
 %build
-make CFLAGS="$RPM_OPT_FLAGS -Wall" stmpclean
+make CFLAGS="%optflags -Wall" stmpclean
 
 %install
 rm -rf %buildroot

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vim/vim.spec,v 1.22 2005/10/24 01:56:48 solar Exp $
+# $Id: Owl/packages/vim/vim.spec,v 1.23 2005/10/24 02:22:14 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -176,7 +176,7 @@ export ac_cv_func_mkstemp=yes \
 	--with-tlib=termcap --disable-gpm
 %__make VIMRUNTIMEDIR=%_datadir/vim/%vimdir COMPILEDBY=build@%buildhost
 
-gcc $RPM_OPT_FLAGS -Wall -s %_sourcedir/vitmp.c -o vitmp
+gcc %optflags -Wall -s %_sourcedir/vitmp.c -o vitmp
 
 %install
 rm -rf %buildroot

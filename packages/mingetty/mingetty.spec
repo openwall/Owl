@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mingetty/mingetty.spec,v 1.11 2005/01/14 03:27:52 galaxy Exp $
+# $Id: Owl/packages/mingetty/mingetty.spec,v 1.12 2005/10/24 02:22:12 solar Exp $
 
 Summary: A compact getty program for virtual consoles only.
 Name: mingetty
@@ -27,7 +27,7 @@ needed for serial lines (you may use the mgetty program in that case).
 %patch3 -p1
 
 %build
-%__make CC="%__cc" CFLAGS="-D_GNU_SOURCE -Wall $RPM_OPT_FLAGS"
+%__make CC="%__cc" CFLAGS="-D_GNU_SOURCE -Wall %optflags"
 
 %install
 rm -rf %buildroot

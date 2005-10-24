@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.42 2005/10/24 01:56:46 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.43 2005/10/24 02:22:11 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -92,7 +92,7 @@ subnet.  The DHCP relay takes care of this for the client.
 %endif
 
 %build
-./configure --copts "$RPM_OPT_FLAGS -D_GNU_SOURCE"
+./configure --copts "%optflags -D_GNU_SOURCE"
 %__make CC="%__cc" DEBUG=
 
 %install

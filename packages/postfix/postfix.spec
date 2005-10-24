@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.26 2005/10/23 22:14:14 solar Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.27 2005/10/24 02:22:13 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
@@ -102,7 +102,7 @@ rm conf/LICENSE
 
 %build
 export MAKEFLAGS="$MAKEFLAGS DEF_MAIL_VERSION=%version"
-OPT="$RPM_OPT_FLAGS -Wall -Wno-comment"
+OPT="%optflags -Wall -Wno-comment"
 CCARGS="\
  -DDEF_COMMAND_DIR=\\\"%command_directory\\\" \
  -DDEF_CONFIG_DIR=\\\"%config_directory\\\" \

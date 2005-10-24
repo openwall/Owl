@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.83 2005/10/24 01:56:47 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.84 2005/10/24 02:22:12 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
@@ -140,7 +140,7 @@ export LIBS="-lcrypt -lpam -lpam_misc -lpam_userpass"
 	--with-privsep-path=/var/empty \
 	--with-privsep-user=sshd
 %ifarch alphaev56 alphapca56 alphaev6 alphaev67
-%__make deattack.o CFLAGS="$RPM_OPT_FLAGS -mcpu=ev5 -Wall"
+%__make deattack.o CFLAGS="%optflags -mcpu=ev5 -Wall"
 %endif
 %__make
 

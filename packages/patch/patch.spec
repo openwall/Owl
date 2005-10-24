@@ -1,4 +1,4 @@
-# $Id: Owl/packages/patch/patch.spec,v 1.6 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/patch/patch.spec,v 1.7 2005/10/24 02:22:13 solar Exp $
 
 Summary: The GNU patch command, for modifying/upgrading files.
 Name: patch
@@ -35,7 +35,7 @@ original file (patching the file).
 %configure --disable-largefile
 %endif
 
-make "CFLAGS=$RPM_OPT_FLAGS -D_GNU_SOURCE -W -Wall" LDFLAGS=-s
+make "CFLAGS=%optflags -D_GNU_SOURCE -W -Wall" LDFLAGS=-s
 
 %install
 rm -rf %buildroot

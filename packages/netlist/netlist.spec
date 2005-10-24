@@ -1,4 +1,4 @@
-# $Id: Owl/packages/netlist/Attic/netlist.spec,v 1.9 2005/01/12 16:40:05 galaxy Exp $
+# $Id: Owl/packages/netlist/Attic/netlist.spec,v 1.10 2005/10/24 02:22:12 solar Exp $
 
 Summary: A program to list active Internet connections and sockets.
 Name: netlist
@@ -25,7 +25,7 @@ LICENSE for information on this and other licensing conditions.
 %setup -q
 
 %build
-%__make CFLAGS="-c -Wall $RPM_OPT_FLAGS"
+%__make CFLAGS="-c -Wall %optflags"
 
 %install
 rm -rf %buildroot

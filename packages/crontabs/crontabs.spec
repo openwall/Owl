@@ -1,4 +1,4 @@
-# $Id: Owl/packages/crontabs/crontabs.spec,v 1.13 2005/09/23 21:45:26 ldv Exp $
+# $Id: Owl/packages/crontabs/crontabs.spec,v 1.14 2005/10/24 02:22:11 solar Exp $
 
 Summary: System crontab files used to schedule the execution of programs.
 Name: crontabs
@@ -38,7 +38,7 @@ installed on your system.
 %patch3 -p1
 
 %build
-%__cc run-parts.c -o run-parts $RPM_OPT_FLAGS -Wall
+%__cc run-parts.c -o run-parts %optflags -Wall
 
 %install
 rm -rf %buildroot

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.34 2005/10/24 01:56:48 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.35 2005/10/24 02:22:13 solar Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -79,10 +79,10 @@ to query the status of a loop device.
 %build
 unset LINGUAS || :
 CC="%__cc" \
-CFLAGS="$RPM_OPT_FLAGS" \
+CFLAGS="%optflags" \
 LDFLAGS="" \
 ./configure
-%__make RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
+%__make RPM_OPT_FLAGS="%optflags"
 
 %install
 rm -rf %buildroot

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.23 2005/01/14 03:27:50 galaxy Exp $
+# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.24 2005/10/24 02:22:11 solar Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
@@ -46,11 +46,11 @@ rm man/sulogin.8
 %{expand:%%define optflags %optflags -Wall -D_GNU_SOURCE}
 
 %build
-%__make -C src CC="%__cc" CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-static" init
-%__make -C src CC="%__cc" CFLAGS="$RPM_OPT_FLAGS" DISTRO=Owl
-%__make -C src CC="%__cc" CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-lutil" bootlogd
+%__make -C src CC="%__cc" CFLAGS="%optflags" LDFLAGS="-static" init
+%__make -C src CC="%__cc" CFLAGS="%optflags" DISTRO=Owl
+%__make -C src CC="%__cc" CFLAGS="%optflags" LDFLAGS="-lutil" bootlogd
 cd contrib
-%__cc start-stop-daemon.c -o start-stop-daemon -s $RPM_OPT_FLAGS
+%__cc start-stop-daemon.c -o start-stop-daemon -s %optflags
 
 %install
 rm -rf %buildroot

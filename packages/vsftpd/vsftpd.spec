@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.15 2005/10/24 01:56:49 solar Exp $
+# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.16 2005/10/24 02:22:14 solar Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
@@ -37,7 +37,7 @@ program has been carefully designed to be resilient to attack.
 install -p -m 644 %_sourcedir/vsftpd.eps.gz .
 
 %build
-make CFLAGS="$RPM_OPT_FLAGS -Wall" LIBS="-lcap -lpam -lpam_userpass"
+make CFLAGS="%optflags -Wall" LIBS="-lcap -lpam -lpam_userpass"
 
 %install
 rm -rf %buildroot

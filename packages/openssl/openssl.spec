@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.48 2005/10/23 22:14:13 solar Exp $
+# $Id: Owl/packages/openssl/openssl.spec,v 1.49 2005/10/24 02:22:12 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
@@ -78,7 +78,7 @@ libraries and header files required when developing applications.
 sed -i s/pow10/pow10i/ crypto/bio/b_print.c
 
 # Correct compilation options.
-perl -pi -e "s/-O.(?: -fomit-frame-pointer)?(?: -m.86)?/$RPM_OPT_FLAGS/" \
+perl -pi -e 's/-O.(?: -fomit-frame-pointer)?(?: -m.86)?/%optflags/' \
 	Configure
 
 # Correct shared library name.

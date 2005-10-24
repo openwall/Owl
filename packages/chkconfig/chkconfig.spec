@@ -1,4 +1,4 @@
-# $Id: Owl/packages/chkconfig/chkconfig.spec,v 1.13 2005/10/23 21:09:43 solar Exp $
+# $Id: Owl/packages/chkconfig/chkconfig.spec,v 1.14 2005/10/24 02:22:11 solar Exp $
 
 %define BUILD_NTSYSV 0
 %define INSTALL_ALTERNATIVES 0
@@ -50,7 +50,7 @@ LIBMHACK=-lm
 
 %__make \
 	CC="%__cc" \
-	CFLAGS="$RPM_OPT_FLAGS -D_GNU_SOURCE" \
+	CFLAGS="%optflags -D_GNU_SOURCE" \
 	LIBMHACK="$LIBMHACK"
 
 %install

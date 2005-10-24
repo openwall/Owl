@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.32 2005/10/23 22:14:14 solar Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.33 2005/10/24 02:22:13 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -155,7 +155,7 @@ rm -rf %buildroot
 	-Dmyuname="`uname -mrs`" \
 	-Dnewmyuname="`uname -mrs`" \
 	-Dmyhostname=%buildhost \
-	-Doptimize="$RPM_OPT_FLAGS" \
+	-Doptimize="%optflags" \
 	-Dcc='%__cc' \
 	-Dcccdlflags='-fPIC' \
 	-Dinstallprefix=%buildroot%_prefix \

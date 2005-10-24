@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iptables/iptables.spec,v 1.18 2005/10/24 01:56:47 solar Exp $
+# $Id: Owl/packages/iptables/iptables.spec,v 1.19 2005/10/24 02:22:11 solar Exp $
 
 %define BUILD_STATIC 0
 %define BUILD_IPV6 0
@@ -46,7 +46,7 @@ iptables-based filtering is used on Linux 2.4.x and newer kernels.
 
 %__make iptables-save iptables-restore all \
 	CC="%__cc" \
-	COPT_FLAGS="$RPM_OPT_FLAGS" \
+	COPT_FLAGS="%optflags" \
 %if %BUILD_STATIC
 	NO_SHARED_LIBS="1" \
 %endif

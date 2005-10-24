@@ -1,4 +1,4 @@
-# $Id: Owl/packages/man/man.spec,v 1.14 2004/11/11 21:25:50 mci Exp $
+# $Id: Owl/packages/man/man.spec,v 1.15 2005/10/24 02:22:12 solar Exp $
 
 Summary: A set of documentation tools: man, apropos and whatis.
 Name: man
@@ -29,7 +29,7 @@ whatis searches its own database for a complete word.
 
 %build
 ./configure -default +fhs -fsstnd -confdir /etc
-make CC="gcc $RPM_OPT_FLAGS -D_GNU_SOURCE"
+make CC="gcc %optflags -D_GNU_SOURCE"
 
 %install
 rm -rf %buildroot
