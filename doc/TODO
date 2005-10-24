@@ -163,6 +163,13 @@ field widths.
 Keep it to latest release.
 
 
+	grep.
+
+[PRIORITY: low]
+[ASSIGNED: mci@]
+Update grep to 2.5.1a (or whatever the latest stable version will be).
+
+
 	john.
 
 [PRIORITY: medium]
@@ -552,4 +559,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Id: Owl/doc/TODO,v 1.118 2005/10/24 07:51:17 solar Exp $
+$Id: Owl/doc/TODO,v 1.119 2005/10/24 07:53:03 solar Exp $
