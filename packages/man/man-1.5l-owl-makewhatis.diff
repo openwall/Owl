@@ -1,6 +1,6 @@
 diff -ur man-1.5l.orig/src/makewhatis.sh man-1.5l/src/makewhatis.sh
---- man-1.5l.orig/src/makewhatis.sh	Mon Mar 10 20:14:51 2003
-+++ man-1.5l/src/makewhatis.sh	Sun Mar 16 20:10:58 2003
+--- man-1.5l.orig/src/makewhatis.sh	2003-03-10 20:14:51 +0000
++++ man-1.5l/src/makewhatis.sh	2005-10-24 07:12:37 +0000
 @@ -3,6 +3,7 @@
  # Created: Sun Jun 14 10:49:37 1992
  # Revised: Sat Jan  8 14:12:37 1994 by faith@cs.unc.edu
@@ -9,7 +9,7 @@ diff -ur man-1.5l.orig/src/makewhatis.sh man-1.5l/src/makewhatis.sh
  # Copyright 1992, 1993, 1994 Rickard E. Faith (faith@cs.unc.edu)
  # May be freely distributed and modified as long as copyright is retained.
  #
-@@ -25,7 +26,10 @@
+@@ -25,15 +26,19 @@
  # 971012 - replaced "test -z" - it doesnt work on SunOS 4.1.3_U1.
  # 980710 - be more careful with TMPFILE
  # 000323 - do not change PATH, better treatment of catpages - Bryan Henderson
@@ -20,16 +20,17 @@ diff -ur man-1.5l.orig/src/makewhatis.sh man-1.5l/src/makewhatis.sh
  # 030310 - find files only; fix LAPACK cruft; no /usr/man default;
  #	use /dev/stderr instead of /dev/tty; handle files with strange names;
  #	add support for chinese, hungarian, indonesian, japanese, korean,
-@@ -33,7 +37,7 @@
+ #	polish, russian (Thierry Vignaud); 
++# 051024 - mktemp first, set the trap later to not trigger in-shell races
  #
  # Note for Slackware users: "makewhatis -v -w -c" will work.
  #
 -# makewhatis aeb 030310 (from %version%)
-+# makewhatis aeb 030310 / Owl 030316 (from %version%)
++# makewhatis aeb 030310 / Owl 051024 (from %version%)
  
  program=`basename $0`
  
-@@ -63,24 +67,11 @@
+@@ -63,24 +68,10 @@
  # AWK=/usr/bin/gawk
  AWK=%awk%
  
@@ -52,10 +53,9 @@ diff -ur man-1.5l.orig/src/makewhatis.sh man-1.5l/src/makewhatis.sh
 -# (just delete this line if your shell doesnt know about trap)
 -trap "rm -rf $TMPFILEDIR" 0 1 2 3 15
 +# make sure TMPFILE is deleted if program is killed or terminates
-+TMPFILE=
-+trap 'rm -f "$TMPFILE"' EXIT
-+trap 'rm -f "$TMPFILE"; exit 1' HUP INT QUIT TERM
-+TMPFILE="`mktemp -t $program.XXXXXXXXXX`" || exit 1
++TMPFILE="`mktemp -t $program.XXXXXXXXXX`" || exit
++trap 'rm -f -- "$TMPFILE"' EXIT
++trap 'trap - EXIT; rm -f -- "$TMPFILE"; exit 1' HUP INT QUIT TERM
  
  # default find arg: no directories, no empty files
  findarg0="-type f -size +0"
