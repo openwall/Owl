@@ -497,7 +497,7 @@ ftp://ftp.lst.de/pub/people/okir/traceroute
 
 [PRIORITY: low]
 [ASSIGNED: mci@]
-Update to latest 6.3 patchlevel.
+Update to latest 6.4 patchlevel.
 
 [PRIORITY: low]
 Use mkdtemp(3) for the directory.
@@ -551,4 +551,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Id: Owl/doc/TODO,v 1.116 2005/10/24 07:47:55 solar Exp $
+$Id: Owl/doc/TODO,v 1.117 2005/10/24 07:48:28 solar Exp $
