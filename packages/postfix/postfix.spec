@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.27 2005/10/24 02:22:13 solar Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.28 2005/10/24 02:34:30 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
@@ -141,7 +141,7 @@ pushd src
 # 2. separate libs objects into dict-dependent and others.
 for a in */*.a; do
 	ar t "$a" |
-		sed -ne "s,.*,${a%/*}/&,p"
+		sed -n "s,.*,${a%/*}/&,p"
 done | sort -u >postfix_all_obj.list
 sh %_sourcedir/postfix-lorder.sh `cat postfix_all_obj.list` |
 	sort -u |
@@ -172,7 +172,7 @@ dict_build_dirs=
 for d in *; do
 	[ -f "$d/Makefile" ] || continue
 	sh %_sourcedir/postfix-lorder.sh `cat postfix_dict_obj.list` \
-	             `MAKEFLAGS= %__make -C "$d" -s objs-print |sed -e "s,^,$d/,"` |
+	             `MAKEFLAGS= %__make -C "$d" -s objs-print |sed "s,^,$d/,"` |
 		sort -u |
 		sort -k2,2 |
 		join -1 1 -2 2 -o 2.1 postfix_dict_obj.list - |

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.27 2005/10/24 01:56:46 solar Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.28 2005/10/24 02:34:30 solar Exp $
 
 Version: 2.05
 Name: bash
@@ -71,7 +71,7 @@ Again shell version %version.
 %patch41 -p1
 
 echo %version > _distribution
-echo %release | sed -e "s/[A-Za-z]//g" > _patchlevel
+echo %release | sed 's/[A-Za-z]//g' > _patchlevel
 
 # Would anyone volunteer to fix those? Probably not.
 find examples -type f -print0 | xargs -r0 grep -lZ /tmp | xargs -r0 rm -f --
@@ -118,7 +118,7 @@ gzip -9nf *.{ps,txt}
 install -m 644 builtins.1 %buildroot%_mandir/man1/builtins.1
 
 # Make manpages for bash builtins as per suggestion in doc/README
-sed -e '
+sed '
 /^\.SH NAME/, /\\- bash built-in commands, see \\fBbash\\fR(1)$/{
 /^\.SH NAME/d
 s/^bash, //

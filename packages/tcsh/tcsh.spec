@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tcsh/tcsh.spec,v 1.16 2005/10/23 21:10:44 galaxy Exp $
+# $Id: Owl/packages/tcsh/tcsh.spec,v 1.17 2005/10/24 02:34:30 solar Exp $
 
 Summary: An enhanced version of csh, the C shell.
 Name: tcsh
@@ -83,7 +83,7 @@ if ! grep -qs '^/bin/tcsh$' /etc/shells; then echo /bin/tcsh >> /etc/shells; fi
 
 %postun
 if [ $1 -eq 0 ]; then
-	sed -i -e '/\/bin\/t\?csh/d' /etc/shells
+	sed -i '/\/bin\/t\?csh/d' /etc/shells
 fi
 
 %files

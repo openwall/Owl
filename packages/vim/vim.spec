@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vim/vim.spec,v 1.23 2005/10/24 02:22:14 solar Exp $
+# $Id: Owl/packages/vim/vim.spec,v 1.24 2005/10/24 02:34:30 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -140,7 +140,7 @@ cd src
 
 aclocal
 autoconf
-sed -e 's+\./config.log+auto/config.log+' configure > auto/configure
+sed 's+\./config.log+auto/config.log+' configure > auto/configure
 chmod 755 auto/configure
 
 %if %BUILD_USE_X

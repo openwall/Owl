@@ -1,4 +1,4 @@
-# $Id: Owl/packages/kbd/kbd.spec,v 1.16 2005/10/21 00:26:14 solar Exp $
+# $Id: Owl/packages/kbd/kbd.spec,v 1.17 2005/10/24 02:34:30 solar Exp $
 
 Summary: Tools for configuring the console.
 Name: kbd
@@ -81,7 +81,7 @@ cp azerty/fr-latin9.map azerty/fr-latin0.map # legasy alias
 
 cd ../../..
 
-sed -i -e 's,LatArCyrHeb-16,latarcyrheb-san16,' src/unicode_start
+sed -i 's,LatArCyrHeb-16,latarcyrheb-san16,' src/unicode_start
 
 %build
 

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.59 2005/10/18 18:07:25 ldv Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.60 2005/10/24 02:34:30 solar Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -302,7 +302,7 @@ install -p -m 755 %_sourcedir/rpminit %buildroot%__bindir/
 install -p -m 644 %_sourcedir/rpminit.1 %buildroot%__mandir/man1/
 
 echo "%%defattr(-,root,root)"
-platforms="`echo %buildroot%__libdir/rpm/*/macros | sed -e 's#/macros##g; s#%buildroot%__libdir/##g'`"
+platforms="`echo %buildroot%__libdir/rpm/*/macros | sed 's#/macros##g; s#%buildroot%__libdir/##g'`"
 for platform in $platforms; do
 	echo "%%attr(0755,root,root) %%dir %__libdir/$platform" >> platforms.list
 	echo "%%attr(0644,root,root) %%verify(not md5 size mtime) %%config(missingok,noreplace) %__libdir/$platform/macros" >> platforms.list

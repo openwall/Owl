@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bind/bind.spec,v 1.11 2005/10/21 00:46:13 galaxy Exp $
+# $Id: Owl/packages/bind/bind.spec,v 1.12 2005/10/24 02:34:30 solar Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -138,8 +138,7 @@ install -pm644 %_sourcedir/bind.{localhost,localdomain,127.in-addr.arpa,empty} \
 	addon/
 install -pm644 %_sourcedir/rndc.{conf,key} addon/
 
-sed -i -e \
-	'
+sed -i '
 s,@ROOT@,%_chrootdir,g;
 s,@DOCDIR@,%docdir,g;
 s,@SYSCONFDIR@,/etc,g;
@@ -207,7 +206,7 @@ for n in named options rndc local rfc1912 rfc1918; do
 done
 for n in localhost localdomain 127.in-addr.arpa empty; do
 	install -pm640 "addon/bind.$n" %buildroot%_chrootdir/zone/$n
-	sed -i -e 's,YYYYMMDDNN,%(date +%%s),' %buildroot%_chrootdir/zone/$n
+	sed -i 's,YYYYMMDDNN,%(date +%%s),' %buildroot%_chrootdir/zone/$n
 done
 install -pm640 addon/rndc.key %buildroot%_chrootdir/etc/
 ln -s ..%_chrootdir/etc/named.conf %buildroot/etc/

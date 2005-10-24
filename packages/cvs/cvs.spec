@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cvs/cvs.spec,v 1.26 2005/09/29 22:04:27 ldv Exp $
+# $Id: Owl/packages/cvs/cvs.spec,v 1.27 2005/10/24 02:34:30 solar Exp $
 
 Summary: A version control system.
 Name: cvs
@@ -85,7 +85,7 @@ find -type f \( -name getopt\* -o -name regex.\* -o -name getdate.c \) -delete -
 r=$(printf '\r')
 find contrib -type f -print0 |
 	xargs -r0 grep -Zl "$r\$" -- |
-	xargs -r0 sed -i -e "s/$r\$//g" --
+	xargs -r0 sed -i "s/$r\$//g" --
 unset r
 
 %patch0 -p1
@@ -117,10 +117,10 @@ unset r
 %patch26 -p1
 
 # Second part of the tmp handling fix
-sed -i -e 's|${TMPDIR}/cvs-serv|${TMPDIR:-/tmp}/cvs-serv|g' src/sanity.sh
+sed -i 's|${TMPDIR}/cvs-serv|${TMPDIR:-/tmp}/cvs-serv|g' src/sanity.sh
 
 # Fix texinfo warnings
-sed -i -e 's/@strong{Note:/@strong{Please notice:/' doc/cvs.texinfo
+sed -i 's/@strong{Note:/@strong{Please notice:/' doc/cvs.texinfo
 
 %{expand:%%define optflags %optflags -Wall -D_GNU_SOURCE}
 

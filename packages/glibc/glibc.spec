@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.95 2005/10/08 23:45:15 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.96 2005/10/24 02:34:30 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -341,7 +341,7 @@ rm %buildroot%_libexecdir/pt_chown
 # BUILD THE FILE LIST
 find %buildroot -type f -or -type l |
 	grep -v '^%buildroot%_libexecdir' |
-	sed -e 's|.*/etc|%config &|' > rpm.filelist.in
+	sed 's|.*/etc|%config &|' > rpm.filelist.in
 for n in %_includedir %_libdir %_datadir; do
     find %buildroot$n -type d |
 	sed 's/^/%dir /' >> rpm.filelist.in
@@ -364,7 +364,7 @@ grep '%_libdir/lib.*_p\.a' < rpm.filelist.full > profile.filelist
 egrep '(%_includedir)|(%_infodir)' < rpm.filelist.full |
 	fgrep -v '%_infodir/dir' |
 	fgrep -v '.info-' |
-	sed -e 's|\.info.*$|&\*|' > devel.filelist
+	sed 's|\.info.*$|&\*|' > devel.filelist
 
 grep -v '%_libdir/lib.*_p.a' rpm.filelist.full |
 	egrep -v '(%_includedir)|(%_infodir)' > rpm.filelist
@@ -372,7 +372,7 @@ grep -v '%_libdir/lib.*_p.a' rpm.filelist.full |
 grep '%_libdir/lib.*\.a' < rpm.filelist >> devel.filelist
 grep '%_libdir/.*\.o' < rpm.filelist >> devel.filelist
 grep '%_libdir/lib.*\.so' < rpm.filelist >> devel.filelist
-fgrep '%_mandir/man' < rpm.filelist | sed -e 's|$|\*|' >> devel.filelist
+fgrep '%_mandir/man' < rpm.filelist | sed 's|$|\*|' >> devel.filelist
 
 mv rpm.filelist rpm.filelist.full
 grep -v '%_libdir/lib.*\.a' < rpm.filelist.full |

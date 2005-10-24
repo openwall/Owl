@@ -1,4 +1,4 @@
-# $Id: Owl/packages/m4/m4.spec,v 1.16 2005/10/22 14:26:36 ldv Exp $
+# $Id: Owl/packages/m4/m4.spec,v 1.17 2005/10/24 02:34:30 solar Exp $
 
 Summary: The GNU macro processor.
 Name: m4
@@ -36,7 +36,7 @@ not for running configure scripts.
 # use prototypes from glibc
 rm lib/*.h
 # fix tmp file handling in test suite
-sed -i -e s,/tmp,., checks/check-them
+sed -i 's,/tmp,.,' checks/check-them
 
 %{expand:%%define optflags %optflags -Wall}
 
