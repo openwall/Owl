@@ -30,7 +30,7 @@
  .TP 8
  .B "\-k, \-\-keep\-going"
 -Don't stop at the first match, keep going.
-+Don't stop at the first match, keep going. Subsequent matches will be
++Don't stop at the first match, keep going.  Subsequent matches will be
 +prepended by ``\\012\- ''. (If you want a newline, see ``\-r'' option.)
  .TP 8
  .B "\-L, \-\-dereference"
@@ -54,7 +54,7 @@
  This manual page, and particularly this section, is too long.
 +.SH RETURN CODE
 +.B file
-+almost always returns 0. It returns a different if it cannot open a file.
++almost always returns 0.  It returns a different code if it cannot open a file.
  .SH AVAILABILITY
  You can obtain the original author's latest version by anonymous FTP
  on
@@ -65,7 +65,7 @@
  Finally the ``c'' flag, specifies case insensitive matching: lowercase
  characters in the magic match both lower and upper case characters in the
 -targer, whereas upper case characters in the magic, only much uppercase
-+target, whereas upper case characters in the magic, only much uppercase
++target, whereas upper case characters in the magic only much uppercase
  characters in the target.
  .IP date
  A four-byte value interpreted as a UNIX date.
