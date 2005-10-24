@@ -24,13 +24,13 @@
 
 	Matthias Schmidt <schmidt ПРИ owl.openwall.com>
 
+Русский перевод и пакет tcsh:
+
+	Gremlin from Kremlin <gremlin ПРИ owl.openwall.com>
+
 Французский перевод:
 
 	Denis Ducamp <ducamp ПРИ owl.openwall.com>
-
-Русский перевод:
-
-	Gremlin from Kremlin <gremlin ПРИ owl.openwall.com>
 
 Графика и разработка логотипа:
 
@@ -44,4 +44,4 @@
 
 http://www.openwall.com/donations/
 
-$Id: Owl/doc/ru/CREDITS,v 1.13 2005/05/13 05:08:40 gremlin Exp $
+$Id: Owl/doc/ru/CREDITS,v 1.14 2005/10/24 19:10:17 gremlin Exp $
