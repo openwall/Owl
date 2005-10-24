@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-control/owl-control.spec,v 1.16 2005/05/27 10:36:44 ldv Exp $
+# $Id: Owl/packages/owl-control/owl-control.spec,v 1.17 2005/10/24 01:56:47 solar Exp $
 
 Summary: A set of scripts to control installed system facilities.
 Name: owl-control
@@ -29,9 +29,9 @@ from package installation.
 %install
 rm -rf %buildroot
 mkdir -p %buildroot{/etc/control.d/facilities,%_sbindir,%_mandir/man8}
-cp $RPM_SOURCE_DIR/functions %buildroot/etc/control.d/
-cp $RPM_SOURCE_DIR/control{,-dump,-restore} %buildroot%_sbindir/
-cp $RPM_SOURCE_DIR/control{,-dump,-restore}.8 %buildroot%_mandir/man8/
+cp %_sourcedir/functions %buildroot/etc/control.d/
+cp %_sourcedir/control{,-dump,-restore} %buildroot%_sbindir/
+cp %_sourcedir/control{,-dump,-restore}.8 %buildroot%_mandir/man8/
 
 %files
 %defattr(0700,root,root)

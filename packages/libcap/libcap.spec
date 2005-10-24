@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libcap/libcap.spec,v 1.9 2004/11/23 22:40:46 mci Exp $
+# $Id: Owl/packages/libcap/libcap.spec,v 1.10 2005/10/24 01:56:47 solar Exp $
 
 Summary: Library for getting and setting POSIX.1e capabilities.
 Name: libcap
@@ -48,7 +48,7 @@ capabilities.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-install -p -m 644 $RPM_SOURCE_DIR/capfaq-0.2.txt .
+install -p -m 644 %_sourcedir/capfaq-0.2.txt .
 
 %{expand:%%define optflags %optflags -Wall}
 

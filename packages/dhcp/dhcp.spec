@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.41 2005/10/23 21:09:44 solar Exp $
+# $Id: Owl/packages/dhcp/dhcp.spec,v 1.42 2005/10/24 01:56:46 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -110,8 +110,8 @@ cd %buildroot
 mkdir -p etc/{rc.d/init.d,sysconfig}
 mkdir -p var/lib/dhcp/{dhcpd,dhclient}/state
 
-install -m 700 $RPM_SOURCE_DIR/dhcpd.init etc/rc.d/init.d/dhcpd
-install -m 600 $RPM_SOURCE_DIR/dhcpd.conf.sample etc/
+install -m 700 %_sourcedir/dhcpd.init etc/rc.d/init.d/dhcpd
+install -m 600 %_sourcedir/dhcpd.conf.sample etc/
 
 touch var/lib/dhcp/dhcpd/state/dhcpd.leases
 touch var/lib/dhcp/dhclient/state/dhclient.leases

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/time/time.spec,v 1.6 2005/10/23 22:20:11 solar Exp $
+# $Id: Owl/packages/time/time.spec,v 1.7 2005/10/24 01:56:48 solar Exp $
 
 Summary: A GNU utility for monitoring a program's use of system resources.
 Name: time
@@ -35,7 +35,7 @@ rm -rf %buildroot
 %makeinstall
 
 mkdir -p %buildroot%_mandir/man1
-install -m 644 $RPM_SOURCE_DIR/time.1 %buildroot%_mandir/man1/
+install -m 644 %_sourcedir/time.1 %buildroot%_mandir/man1/
 
 %post
 /sbin/install-info %_infodir/time.info.gz %_infodir/dir \

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/telnet/telnet.spec,v 1.8 2005/06/28 18:51:55 ldv Exp $
+# $Id: Owl/packages/telnet/telnet.spec,v 1.9 2005/10/24 01:56:48 solar Exp $
 
 Summary: The client program for the telnet remote login protocol.
 Name: telnet
@@ -60,7 +60,7 @@ install -m 700 libexec/telnetd/telnetd %buildroot/usr/libexec/
 install -m 644 libexec/telnetd/telnetd.8 %buildroot%_mandir/man8/
 
 mkdir -p %buildroot/etc/xinetd.d
-install -m 600 $RPM_SOURCE_DIR/telnetd.xinetd \
+install -m 600 %_sourcedir/telnetd.xinetd \
 	%buildroot/etc/xinetd.d/telnetd
 
 %pre server

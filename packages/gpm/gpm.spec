@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gpm/gpm.spec,v 1.22 2005/10/23 21:09:44 solar Exp $
+# $Id: Owl/packages/gpm/gpm.spec,v 1.23 2005/10/24 01:56:46 solar Exp $
 
 # This defines the library version that this package builds.
 %define LIBVER 1.18.0
@@ -86,7 +86,7 @@ ln -sf libgpm.so.%LIBVER .%_libdir/libgpm.so
 ln -sf libgpm.so.%LIBVER .%_libdir/libgpm.so.1
 
 mkdir -p etc/rc.d/init.d
-install -m 755 $RPM_SOURCE_DIR/gpm.init etc/rc.d/init.d/gpm
+install -m 755 %_sourcedir/gpm.init etc/rc.d/init.d/gpm
 
 # Remove unpackaged files
 rm %buildroot%_bindir/disable-paste

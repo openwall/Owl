@@ -1,4 +1,4 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.31 2005/06/28 18:47:28 ldv Exp $
+# $Id: Owl/packages/xinetd/xinetd.spec,v 1.32 2005/10/24 01:56:49 solar Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
@@ -65,16 +65,16 @@ mkdir -p %buildroot/etc/{rc.d/init.d,xinetd.d}
 
 cd %buildroot
 
-install -m 755 $RPM_SOURCE_DIR/xinetd.init etc/rc.d/init.d/xinetd
-install -m 644 $RPM_SOURCE_DIR/xinetd.conf etc/
-install -m 644 $RPM_SOURCE_DIR/xinetd-ttime etc/xinetd.d/time
-install -m 644 $RPM_SOURCE_DIR/xinetd-utime etc/xinetd.d/time-udp
-install -m 644 $RPM_SOURCE_DIR/xinetd-tdtime etc/xinetd.d/daytime
-install -m 644 $RPM_SOURCE_DIR/xinetd-udtime etc/xinetd.d/daytime-udp
-install -m 644 $RPM_SOURCE_DIR/xinetd-echo etc/xinetd.d/echo
-install -m 644 $RPM_SOURCE_DIR/xinetd-uecho etc/xinetd.d/echo-udp
-install -m 644 $RPM_SOURCE_DIR/xinetd-chargen etc/xinetd.d/chargen
-install -m 644 $RPM_SOURCE_DIR/xinetd-uchargen etc/xinetd.d/chargen-udp
+install -m 755 %_sourcedir/xinetd.init etc/rc.d/init.d/xinetd
+install -m 644 %_sourcedir/xinetd.conf etc/
+install -m 644 %_sourcedir/xinetd-ttime etc/xinetd.d/time
+install -m 644 %_sourcedir/xinetd-utime etc/xinetd.d/time-udp
+install -m 644 %_sourcedir/xinetd-tdtime etc/xinetd.d/daytime
+install -m 644 %_sourcedir/xinetd-udtime etc/xinetd.d/daytime-udp
+install -m 644 %_sourcedir/xinetd-echo etc/xinetd.d/echo
+install -m 644 %_sourcedir/xinetd-uecho etc/xinetd.d/echo-udp
+install -m 644 %_sourcedir/xinetd-chargen etc/xinetd.d/chargen
+install -m 644 %_sourcedir/xinetd-uchargen etc/xinetd.d/chargen-udp
 
 rm .%_sbindir/{itox,xconv.pl} .%_mandir/man8/{itox,xconv.pl}.8*
 

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/termcap/termcap.spec,v 1.4 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/termcap/termcap.spec,v 1.5 2005/10/24 01:56:48 solar Exp $
 
 Summary: The terminal feature database used by certain applications.
 Name: termcap
@@ -19,7 +19,7 @@ etc.).
 
 %prep
 mkdir -p %buildroot/etc
-zcat $RPM_SOURCE_DIR/termtypes.tc.gz > %buildroot/etc/termcap
+zcat %_sourcedir/termtypes.tc.gz > %buildroot/etc/termcap
 
 %files
 %config %attr(0644,root,root) /etc/termcap

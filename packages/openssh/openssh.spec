@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.82 2005/09/24 01:45:02 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.83 2005/10/24 01:56:47 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
@@ -150,12 +150,12 @@ rm -rf %buildroot
 
 install -d %buildroot/etc/pam.d
 install -d %buildroot/etc/rc.d/init.d
-install -m 600 $RPM_SOURCE_DIR/sshd.pam %buildroot/etc/pam.d/sshd
-install -m 700 $RPM_SOURCE_DIR/sshd.init %buildroot/etc/rc.d/init.d/sshd
-install -m 644 $RPM_SOURCE_DIR/ssh_config %buildroot/etc/ssh/
-install -m 600 $RPM_SOURCE_DIR/sshd_config %buildroot/etc/ssh/
+install -m 600 %_sourcedir/sshd.pam %buildroot/etc/pam.d/sshd
+install -m 700 %_sourcedir/sshd.init %buildroot/etc/rc.d/init.d/sshd
+install -m 644 %_sourcedir/ssh_config %buildroot/etc/ssh/
+install -m 600 %_sourcedir/sshd_config %buildroot/etc/ssh/
 mkdir -p %buildroot/etc/control.d/facilities
-install -m 700 $RPM_SOURCE_DIR/sftp.control \
+install -m 700 %_sourcedir/sftp.control \
 	%buildroot/etc/control.d/facilities/sftp
 
 rm %buildroot%_datadir/Ssh.bin

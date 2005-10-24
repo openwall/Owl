@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iproute2/iproute2.spec,v 1.18 2005/10/23 22:14:13 solar Exp $
+# $Id: Owl/packages/iproute2/iproute2.spec,v 1.19 2005/10/24 01:56:47 solar Exp $
 
 %define ver 2.4.7
 %define snapshot ss020116
@@ -63,16 +63,16 @@ mkdir -p %buildroot{/sbin,%_sbindir,/etc/iproute2,%_mandir/man8}
 install -m 755 ip/{ip,ifcfg,rtmon} tc/tc %buildroot/sbin/
 install -m 755 misc/{ifstat,nstat,rtacct,rtstat,ss} %buildroot%_sbindir/
 install -m 644 etc/iproute2/* %buildroot/etc/iproute2/
-install -m 644 $RPM_SOURCE_DIR/ip.8 %buildroot%_mandir/man8/
-install -m 644 $RPM_SOURCE_DIR/tc.8 %buildroot%_mandir/man8/
-install -m 644 $RPM_SOURCE_DIR/tc-htb.8 %buildroot%_mandir/man8/
-install -m 644 $RPM_SOURCE_DIR/tc-pbfifo.8 %buildroot%_mandir/man8/
-install -m 644 $RPM_SOURCE_DIR/tc-pfifo_fast.8 %buildroot%_mandir/man8/
-install -m 644 $RPM_SOURCE_DIR/tc-prio.8 %buildroot%_mandir/man8/
-install -m 644 $RPM_SOURCE_DIR/tc-red.8 %buildroot%_mandir/man8/
-install -m 644 $RPM_SOURCE_DIR/tc-sfq.8 %buildroot%_mandir/man8/
-install -m 644 $RPM_SOURCE_DIR/tc-tbf.8 %buildroot%_mandir/man8/
-install -m 644 $RPM_SOURCE_DIR/tc-cbq.8 %buildroot%_mandir/man8/
+install -m 644 %_sourcedir/ip.8 %buildroot%_mandir/man8/
+install -m 644 %_sourcedir/tc.8 %buildroot%_mandir/man8/
+install -m 644 %_sourcedir/tc-htb.8 %buildroot%_mandir/man8/
+install -m 644 %_sourcedir/tc-pbfifo.8 %buildroot%_mandir/man8/
+install -m 644 %_sourcedir/tc-pfifo_fast.8 %buildroot%_mandir/man8/
+install -m 644 %_sourcedir/tc-prio.8 %buildroot%_mandir/man8/
+install -m 644 %_sourcedir/tc-red.8 %buildroot%_mandir/man8/
+install -m 644 %_sourcedir/tc-sfq.8 %buildroot%_mandir/man8/
+install -m 644 %_sourcedir/tc-tbf.8 %buildroot%_mandir/man8/
+install -m 644 %_sourcedir/tc-cbq.8 %buildroot%_mandir/man8/
 
 gzip -9nf iproute2-ps/*.ps
 

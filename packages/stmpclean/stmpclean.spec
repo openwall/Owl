@@ -1,4 +1,4 @@
-# $Id: Owl/packages/stmpclean/stmpclean.spec,v 1.10 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/stmpclean/stmpclean.spec,v 1.11 2005/10/24 01:56:48 solar Exp $
 
 Summary: A safe temporary directory cleaner.
 Name: stmpclean
@@ -32,7 +32,7 @@ rm -rf %buildroot
 make install DESTDIR=%buildroot SBINDIR=%_sbindir MANDIR=%_mandir
 cd %buildroot
 mkdir -p etc/cron.daily
-install -m 700 $RPM_SOURCE_DIR/stmpclean.cron etc/cron.daily/stmpclean
+install -m 700 %_sourcedir/stmpclean.cron etc/cron.daily/stmpclean
 
 %files
 %defattr(-,root,root)

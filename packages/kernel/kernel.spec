@@ -1,4 +1,4 @@
-# $Id: Owl/packages/kernel/kernel.spec,v 1.15 2004/11/23 22:40:46 mci Exp $
+# $Id: Owl/packages/kernel/kernel.spec,v 1.16 2005/10/24 01:56:47 solar Exp $
 
 Summary: Fake Linux kernel package for Red Hat Linux compatibility.
 Name: kernel
@@ -42,7 +42,7 @@ ln -s /usr/src/linux/include/linux usr/include/linux
 ln -s /usr/src/linux/include/asm-sparc usr/include/asm-sparc
 ln -s /usr/src/linux/include/asm-sparc64 usr/include/asm-sparc64
 mkdir usr/include/asm
-install -m 744 $RPM_SOURCE_DIR/BuildASM-sparc.sh usr/include/asm/BuildASM
+install -m 744 %_sourcedir/BuildASM-sparc.sh usr/include/asm/BuildASM
 usr/include/asm/BuildASM usr/include
 %else
 ln -s /usr/src/linux/include/asm usr/include/asm

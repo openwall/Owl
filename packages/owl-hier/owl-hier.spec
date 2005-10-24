@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.21 2005/01/20 04:42:01 solar Exp $
+# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.22 2005/10/24 01:56:48 solar Exp $
 
 Summary: Initial directory hierarchy.
 Name: owl-hier
@@ -29,7 +29,7 @@ sed \
 	-e "s/\(uname=\)root$/\1`id -un`/" \
 	-e "s/\(gname=\)root /\1`id -gn` /" \
 	-e "s/\(gname=\)root$/\1`id -gn`/" \
-	< $RPM_SOURCE_DIR/base |
+	< %_sourcedir/base |
 		%_sbindir/mtree -U
 ln -s ../var/tmp usr/tmp
 ln -s ../X11R6/bin .%_bindir/X11
@@ -37,7 +37,7 @@ ln -s ../X11R6/include/X11 .%_includedir/X11
 ln -s ../X11R6/lib/X11 .%_libdir/X11
 ln -s log var/adm
 ln -s spool/mail var/mail
-install -m 600 $RPM_SOURCE_DIR/base etc/mtree/
+install -m 600 %_sourcedir/base etc/mtree/
 
 # Build the filelist
 cd $RPM_BUILD_DIR

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.14 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.15 2005/10/24 01:56:49 solar Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
@@ -34,7 +34,7 @@ program has been carefully designed to be resilient to attack.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-install -p -m 644 $RPM_SOURCE_DIR/vsftpd.eps.gz .
+install -p -m 644 %_sourcedir/vsftpd.eps.gz .
 
 %build
 make CFLAGS="$RPM_OPT_FLAGS -Wall" LIBS="-lcap -lpam -lpam_userpass"
@@ -47,7 +47,7 @@ install -m 700 vsftpd %buildroot/usr/sbin/
 install -m 600 vsftpd.conf %buildroot/etc/
 install -m 644 vsftpd.conf.5 %buildroot%_mandir/man5/
 install -m 644 vsftpd.8 %buildroot%_mandir/man8/
-cd $RPM_SOURCE_DIR
+cd %_sourcedir
 install -m 600 vsftpd.pam %buildroot/etc/pam.d/vsftpd
 install -m 600 vsftpd.xinetd %buildroot/etc/xinetd.d/vsftpd
 install -m 600 vsftpd.logrotate %buildroot/etc/logrotate.d/vsftpd

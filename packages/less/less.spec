@@ -1,4 +1,4 @@
-# $Id: Owl/packages/less/less.spec,v 1.13 2005/10/23 22:14:13 solar Exp $
+# $Id: Owl/packages/less/less.spec,v 1.14 2005/10/24 01:56:47 solar Exp $
 
 Summary: A text file browser similar to more, but better.
 Name: less
@@ -36,8 +36,8 @@ make datadir=/usr/doc
 rm -rf %buildroot
 %makeinstall
 mkdir -p %buildroot/etc/profile.d
-install -m 755 $RPM_SOURCE_DIR/lesspipe.sh %buildroot/usr/bin/
-install -m 755 $RPM_SOURCE_DIR/less.{sh,csh} %buildroot/etc/profile.d/
+install -m 755 %_sourcedir/lesspipe.sh %buildroot/usr/bin/
+install -m 755 %_sourcedir/less.{sh,csh} %buildroot/etc/profile.d/
 
 %files
 %defattr(-,root,root)

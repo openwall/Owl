@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.33 2005/10/23 22:20:11 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.34 2005/10/24 01:56:48 solar Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -97,8 +97,8 @@ chmod 644 %buildroot/usr/share/misc/getopt/*
 mkdir -p %buildroot/etc/control.d/facilities
 cd %buildroot/etc/control.d/facilities
 
-install -m 700 $RPM_SOURCE_DIR/mount.control mount
-install -m 700 $RPM_SOURCE_DIR/write.control write
+install -m 700 %_sourcedir/mount.control mount
+install -m 700 %_sourcedir/write.control write
 
 # XXX: (GM): Remove unpackaged files (check later)
 rm %buildroot/sbin/agetty

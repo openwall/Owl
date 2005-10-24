@@ -1,4 +1,4 @@
-# $Id: Owl/packages/man-pages/man-pages.spec,v 1.17 2004/11/23 22:40:47 mci Exp $
+# $Id: Owl/packages/man-pages/man-pages.spec,v 1.18 2005/10/24 01:56:47 solar Exp $
 
 Summary: Manual (man) pages from the Linux Documentation Project.
 Name: man-pages
@@ -38,18 +38,18 @@ administration (intro only).
 %prep
 %setup -q
 
-cp $RPM_SOURCE_DIR/rpcgen.1 man1/
-cp $RPM_SOURCE_DIR/getent.1 man1/
-cp $RPM_SOURCE_DIR/iconv.1 man1/
-cp $RPM_SOURCE_DIR/locale.1 man1/
-cp $RPM_SOURCE_DIR/localedef.1 man1/
-cp $RPM_SOURCE_DIR/sprof.1 man1/
+cp %_sourcedir/rpcgen.1 man1/
+cp %_sourcedir/getent.1 man1/
+cp %_sourcedir/iconv.1 man1/
+cp %_sourcedir/locale.1 man1/
+cp %_sourcedir/localedef.1 man1/
+cp %_sourcedir/sprof.1 man1/
 
-cp $RPM_SOURCE_DIR/setcontext.2 man2/
+cp %_sourcedir/setcontext.2 man2/
 
-cp $RPM_SOURCE_DIR/ld-linux.so.8 man8/
-cp $RPM_SOURCE_DIR/ldconfig.8 man8/
-cp $RPM_SOURCE_DIR/rpcinfo.8 man8/
+cp %_sourcedir/ld-linux.so.8 man8/
+cp %_sourcedir/ldconfig.8 man8/
+cp %_sourcedir/rpcinfo.8 man8/
 
 %patch0 -p1
 %patch1 -p1

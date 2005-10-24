@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vim/vim.spec,v 1.21 2005/10/23 22:20:11 solar Exp $
+# $Id: Owl/packages/vim/vim.spec,v 1.22 2005/10/24 01:56:48 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -121,7 +121,7 @@ test ! -e failed
 %patch6 -p1
 %patch7 -p1
 rm src/auto/configure
-install -m 644 $RPM_SOURCE_DIR/README .
+install -m 644 %_sourcedir/README .
 
 %if %BUILD_USE_GPM
 %define	gpmflag --enable-gpm
@@ -176,7 +176,7 @@ export ac_cv_func_mkstemp=yes \
 	--with-tlib=termcap --disable-gpm
 %__make VIMRUNTIMEDIR=%_datadir/vim/%vimdir COMPILEDBY=build@%buildhost
 
-gcc $RPM_OPT_FLAGS -Wall -s $RPM_SOURCE_DIR/vitmp.c -o vitmp
+gcc $RPM_OPT_FLAGS -Wall -s %_sourcedir/vitmp.c -o vitmp
 
 %install
 rm -rf %buildroot
@@ -196,7 +196,7 @@ install -m 755 gvim %buildroot%_prefix/X11R6/bin/
 %endif
 
 install -m 755 vitmp %buildroot/bin/
-install -m 644 $RPM_SOURCE_DIR/vitmp.1 %buildroot%_mandir/man1/
+install -m 644 %_sourcedir/vitmp.1 %buildroot%_mandir/man1/
 
 pushd %buildroot
 mv bin/vim bin/vi
@@ -227,13 +227,13 @@ ln -sf vim.1 .%_mandir/man1/gview.1
 ln -sf vim.1 .%_mandir/man1/gex.1
 ln -sf vim.1 .%_mandir/man1/evim.1
 mkdir -p etc/X11/applnk/Applications
-cp $RPM_SOURCE_DIR/gvim.desktop etc/X11/applnk/Applications/
+cp %_sourcedir/gvim.desktop etc/X11/applnk/Applications/
 %else
 # XXX: investigate this -- (GM)
 rm -r .%_mandir/man1/evim.1*
 %endif
 
-install -m 644 $RPM_SOURCE_DIR/vimrc .%_datadir/vim/
+install -m 644 %_sourcedir/vimrc .%_datadir/vim/
 
 # Dependency cleanups
 chmod 644 .%_datadir/vim/%vimdir/{doc/vim2html.pl,tools/{*.pl,vim132}}

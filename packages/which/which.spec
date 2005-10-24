@@ -1,4 +1,4 @@
-# $Id: Owl/packages/which/which.spec,v 1.7 2004/11/23 22:40:50 mci Exp $
+# $Id: Owl/packages/which/which.spec,v 1.8 2005/10/24 01:56:49 solar Exp $
 
 Summary: Displays where a particular program in your path is located.
 Name: which
@@ -29,7 +29,7 @@ rm -rf %buildroot
 %makeinstall
 
 mkdir -p %buildroot/etc/profile.d
-install -m 755 $RPM_SOURCE_DIR/which-2.{sh,csh} %buildroot/etc/profile.d/
+install -m 755 %_sourcedir/which-2.{sh,csh} %buildroot/etc/profile.d/
 
 # XXX: (GM): Remove unpackaged files (check later)
 rm %buildroot%_infodir/which.info*

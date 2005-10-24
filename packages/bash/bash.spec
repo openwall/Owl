@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.26 2005/10/08 23:26:26 solar Exp $
+# $Id: Owl/packages/bash/bash.spec,v 1.27 2005/10/24 01:56:46 solar Exp $
 
 Version: 2.05
 Name: bash
@@ -137,9 +137,9 @@ cd %buildroot
 rm .%_mandir/man1/{echo,pwd,test,kill}.1
 
 mkdir -p etc/skel
-install -m 644 $RPM_SOURCE_DIR/dot-bashrc etc/skel/.bashrc
-install -m 644 $RPM_SOURCE_DIR/dot-bash_profile etc/skel/.bash_profile
-install -m 644 $RPM_SOURCE_DIR/dot-bash_logout etc/skel/.bash_logout
+install -m 644 %_sourcedir/dot-bashrc etc/skel/.bashrc
+install -m 644 %_sourcedir/dot-bash_profile etc/skel/.bash_profile
+install -m 644 %_sourcedir/dot-bash_logout etc/skel/.bash_logout
 
 %triggerin -- libtermcap
 if [ ! -f /etc/shells ]; then

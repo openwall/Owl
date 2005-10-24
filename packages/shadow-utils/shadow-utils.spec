@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.49 2005/10/08 23:34:22 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.50 2005/10/24 01:56:48 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
@@ -115,24 +115,24 @@ echo '.so pwconv.8' > %buildroot%_mandir/man8/grpunconv.8
 echo '.so vipw.8' > %buildroot%_mandir/man8/vigr.8
 
 mkdir -p -m 700 %buildroot/etc/default
-install -m 600 $RPM_SOURCE_DIR/login.defs %buildroot/etc/
-install -m 600 $RPM_SOURCE_DIR/useradd.default \
+install -m 600 %_sourcedir/login.defs %buildroot/etc/
+install -m 600 %_sourcedir/useradd.default \
 	%buildroot/etc/default/useradd
 
 mkdir -p %buildroot/etc/pam.d
 pushd %buildroot/etc/pam.d
-install -m 600 $RPM_SOURCE_DIR/user-group-mod.pam user-group-mod
+install -m 600 %_sourcedir/user-group-mod.pam user-group-mod
 ln -s user-group-mod groupadd
 ln -s user-group-mod groupdel
 ln -s user-group-mod groupmod
 ln -s user-group-mod useradd
 ln -s user-group-mod userdel
 ln -s user-group-mod usermod
-install -m 644 $RPM_SOURCE_DIR/chage-chfn-chsh.pam chage-chfn-chsh
+install -m 644 %_sourcedir/chage-chfn-chsh.pam chage-chfn-chsh
 ln -s chage-chfn-chsh chage
 ln -s chage-chfn-chsh chfn
 ln -s chage-chfn-chsh chsh
-install -m 600 $RPM_SOURCE_DIR/chpasswd-newusers.pam chpasswd-newusers
+install -m 600 %_sourcedir/chpasswd-newusers.pam chpasswd-newusers
 ln -s chpasswd-newusers chpasswd
 ln -s chpasswd-newusers newusers
 popd
@@ -140,11 +140,11 @@ popd
 mkdir -p %buildroot/etc/control.d/facilities
 cd %buildroot/etc/control.d/facilities
 
-install -m 700 $RPM_SOURCE_DIR/chage.control chage
-install -m 700 $RPM_SOURCE_DIR/chfn.control chfn
-install -m 700 $RPM_SOURCE_DIR/chsh.control chsh
-install -m 700 $RPM_SOURCE_DIR/gpasswd.control gpasswd
-install -m 700 $RPM_SOURCE_DIR/newgrp.control newgrp
+install -m 700 %_sourcedir/chage.control chage
+install -m 700 %_sourcedir/chfn.control chfn
+install -m 700 %_sourcedir/chsh.control chsh
+install -m 700 %_sourcedir/gpasswd.control gpasswd
+install -m 700 %_sourcedir/newgrp.control newgrp
 
 %pre
 if [ $1 -ge 2 ]; then

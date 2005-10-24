@@ -1,4 +1,4 @@
-# $Id: Owl/packages/raidtools/Attic/raidtools.spec,v 1.3 2004/11/23 22:40:49 mci Exp $
+# $Id: Owl/packages/raidtools/Attic/raidtools.spec,v 1.4 2005/10/24 01:56:48 solar Exp $
 
 Summary: Tools for creating and maintaining software RAID devices.
 Name: raidtools
@@ -31,7 +31,7 @@ system.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-install -m 644 $RPM_SOURCE_DIR/Software-RAID.HOWTO.txt.bz2 .
+install -m 644 %_sourcedir/Software-RAID.HOWTO.txt.bz2 .
 
 %build
 %configure --sbindir=/sbin

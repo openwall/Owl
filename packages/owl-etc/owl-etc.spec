@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.64 2005/10/20 16:37:17 galaxy Exp $
+# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.65 2005/10/24 01:56:47 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
@@ -40,11 +40,11 @@ rm -rf %buildroot
 mkdir -p %buildroot/{etc/profile.d,var/log}
 cd %buildroot
 touch etc/motd var/log/lastlog
-install -p $RPM_SOURCE_DIR/{passwd,shadow,group,fstab} etc/
-install -p $RPM_SOURCE_DIR/{securetty,shells,host.conf,nsswitch.conf} etc/
-install -p $RPM_SOURCE_DIR/{protocols,services,hosts.{allow,deny}} etc/
-install -p $RPM_SOURCE_DIR/{profile,bashrc,inputrc} etc/
-install -p $RPM_SOURCE_DIR/{csh.{login,cshrc}} etc/
+install -p %_sourcedir/{passwd,shadow,group,fstab} etc/
+install -p %_sourcedir/{securetty,shells,host.conf,nsswitch.conf} etc/
+install -p %_sourcedir/{protocols,services,hosts.{allow,deny}} etc/
+install -p %_sourcedir/{profile,bashrc,inputrc} etc/
+install -p %_sourcedir/{csh.{login,cshrc}} etc/
 touch etc/{group,passwd,shadow}-
 
 %triggerin -- shadow-utils

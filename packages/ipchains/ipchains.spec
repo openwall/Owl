@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.15 2005/01/20 04:08:30 solar Exp $
+# $Id: Owl/packages/ipchains/Attic/ipchains.spec,v 1.16 2005/10/24 01:56:47 solar Exp $
 
 Summary: Tools for managing ipchains packet filtering rules.
 Name: ipchains
@@ -34,7 +34,7 @@ a non-default configuration option.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-install -m 644 $RPM_SOURCE_DIR/HOWTO.txt.gz .
+install -m 644 %_sourcedir/HOWTO.txt.gz .
 
 %build
 %__make clean
@@ -54,7 +54,7 @@ cp *.8 %buildroot%_mandir/man8/
 popd
 
 mkdir -p %buildroot/etc/rc.d/init.d
-install -m 755 $RPM_SOURCE_DIR/ipchains.init \
+install -m 755 %_sourcedir/ipchains.init \
 	%buildroot/etc/rc.d/init.d/ipchains
 
 gzip -9nf ipchains-quickref.ps

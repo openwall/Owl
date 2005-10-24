@@ -1,4 +1,4 @@
-# $Id: Owl/packages/groff/groff.spec,v 1.17 2005/10/23 22:14:13 solar Exp $
+# $Id: Owl/packages/groff/groff.spec,v 1.18 2005/10/24 01:56:46 solar Exp $
 
 %define BUILD_USE_X 0
 %define BUILD_CURRENT 0
@@ -69,7 +69,7 @@ zcat %SOURCE1 | patch -p1 -l
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-install -m 644 $RPM_SOURCE_DIR/README.A4 .
+install -m 644 %_sourcedir/README.A4 .
 
 %build
 %if %BUILD_USE_X

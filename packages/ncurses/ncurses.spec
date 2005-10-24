@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ncurses/ncurses.spec,v 1.26 2005/10/20 16:02:24 galaxy Exp $
+# $Id: Owl/packages/ncurses/ncurses.spec,v 1.27 2005/10/24 01:56:47 solar Exp $
 
 %define major 5
 %define oldmajor 4
@@ -134,9 +134,9 @@ done
 %ifarch sparc sparcv9 sparc64
 # XXX (GM): Warning: I cannot test if this block is necessary for current
 # version of ncurses.
-install -m 644 $RPM_SOURCE_DIR/ncurses-linux \
+install -m 644 %_sourcedir/ncurses-linux \
 	%buildroot%_datadir/terminfo/l/linux
-install -m 644 $RPM_SOURCE_DIR/ncurses-linux-m \
+install -m 644 %_sourcedir/ncurses-linux-m \
 	%buildroot%_datadir/terminfo/l/linux-m
 %endif
 
@@ -154,7 +154,7 @@ install -p -m 644 c++/{NEWS,PROBLEMS,README-first} rpm-doc/c++/
 %__make clean -C test
 
 # the resetall script
-install -m 755 $RPM_SOURCE_DIR/ncurses-resetall.sh \
+install -m 755 %_sourcedir/ncurses-resetall.sh \
 	%buildroot%_bindir/resetall
 
 # compat links

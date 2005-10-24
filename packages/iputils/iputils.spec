@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iputils/iputils.spec,v 1.20 2005/01/14 03:27:52 galaxy Exp $
+# $Id: Owl/packages/iputils/iputils.spec,v 1.21 2005/10/24 01:56:47 solar Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
@@ -58,7 +58,7 @@ sed 's/rdisc/rdiscd/' \
 	< doc/rdisc.8 > %buildroot%_mandir/man8/rdiscd.8
 
 mkdir -p %buildroot/etc/control.d/facilities
-install -m 700 $RPM_SOURCE_DIR/ping.control \
+install -m 700 %_sourcedir/ping.control \
 	%buildroot/etc/control.d/facilities/ping
 
 %pre

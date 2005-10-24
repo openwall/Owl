@@ -1,4 +1,4 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.26 2005/10/23 17:36:32 solar Exp $
+# $Id: Owl/packages/acct/acct.spec,v 1.27 2005/10/24 01:56:46 solar Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
@@ -45,10 +45,10 @@ mkdir -p %buildroot/etc/{rc.d/init.d,logrotate.d}
 mkdir -p %buildroot{/sbin,%_bindir,%_sbindir,%_mandir}
 mkdir -p %buildroot%_var/account
 %makeinstall
-install -m 644 $RPM_SOURCE_DIR/dump-acct.8 %buildroot%_mandir/man8/
-install -m 644 $RPM_SOURCE_DIR/dump-utmp.8 %buildroot%_mandir/man8/
-install -m 755 $RPM_SOURCE_DIR/acct.init %buildroot/etc/rc.d/init.d/acct
-install -m 644 $RPM_SOURCE_DIR/acct.logrotate \
+install -m 644 %_sourcedir/dump-acct.8 %buildroot%_mandir/man8/
+install -m 644 %_sourcedir/dump-utmp.8 %buildroot%_mandir/man8/
+install -m 755 %_sourcedir/acct.init %buildroot/etc/rc.d/init.d/acct
+install -m 644 %_sourcedir/acct.logrotate \
 	%buildroot/etc/logrotate.d/acct
 
 # Move accton to /sbin -- leave historical symlink

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iptables/iptables.spec,v 1.17 2005/01/20 06:01:32 solar Exp $
+# $Id: Owl/packages/iptables/iptables.spec,v 1.18 2005/10/24 01:56:47 solar Exp $
 
 %define BUILD_STATIC 0
 %define BUILD_IPV6 0
@@ -67,7 +67,7 @@ rm -rf %buildroot
 	INCDIR="%_includedir"
 
 mkdir -p %buildroot/etc/rc.d/init.d
-install -m 755 $RPM_SOURCE_DIR/iptables.init \
+install -m 755 %_sourcedir/iptables.init \
 	%buildroot/etc/rc.d/init.d/iptables
 
 %if !%BUILD_IPV6
