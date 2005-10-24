@@ -1,0 +1,13 @@
+Files sysvinit-2.86.orig/src/init and sysvinit-2.86/src/init differ
+diff -puNr sysvinit-2.86.orig/src/init.c sysvinit-2.86/src/init.c
+--- sysvinit-2.86.orig/src/init.c	2005-10-24 14:28:39 +0000
++++ sysvinit-2.86/src/init.c	2005-10-24 15:43:46 +0000
+@@ -1884,7 +1884,7 @@ void re_exec(void)
+ 	 *	The existing init process execs a new init binary.
+ 	 */
+ 	env = init_buildenv(0);
+-	execl(myname, myname, "--init", NULL, env);
++	execle(myname, myname, "--init", NULL, env);
+ 
+ 	/*
+ 	 *	We shouldn't be here, something failed. 

@@ -1,6 +1,6 @@
-diff -uprk.orig sysvinit-2.85.orig/contrib/start-stop-daemon.c sysvinit-2.85/contrib/start-stop-daemon.c
---- sysvinit-2.85.orig/contrib/start-stop-daemon.c	1996-06-23 02:00:00 +0400
-+++ sysvinit-2.85/contrib/start-stop-daemon.c	2003-04-20 21:35:59 +0400
+diff -puNr sysvinit-2.86.orig/contrib/start-stop-daemon.c sysvinit-2.86/contrib/start-stop-daemon.c
+--- sysvinit-2.86.orig/contrib/start-stop-daemon.c	1996-06-22 22:00:00 +0000
++++ sysvinit-2.86/contrib/start-stop-daemon.c	2005-05-29 09:39:29 +0000
 @@ -32,7 +32,7 @@ static const char *cmdname = NULL;
  static char *execname = NULL;
  static char *startas = NULL;
@@ -48,10 +48,10 @@ diff -uprk.orig sysvinit-2.85.orig/contrib/start-stop-daemon.c sysvinit-2.85/con
  
  	parse_options(argc, argv);
  	argc -= optind;
-diff -uprk.orig sysvinit-2.85.orig/src/init.c sysvinit-2.85/src/init.c
---- sysvinit-2.85.orig/src/init.c	2003-04-15 15:16:41 +0400
-+++ sysvinit-2.85/src/init.c	2003-04-20 21:35:59 +0400
-@@ -2402,16 +2402,19 @@ int init_main()
+diff -puNr sysvinit-2.86.orig/src/init.c sysvinit-2.86/src/init.c
+--- sysvinit-2.86.orig/src/init.c	2004-07-30 12:16:20 +0000
++++ sysvinit-2.86/src/init.c	2005-05-29 09:45:04 +0000
+@@ -2490,10 +2490,13 @@ int init_main()
    /*NOTREACHED*/
  }
  
@@ -60,30 +60,23 @@ diff -uprk.orig sysvinit-2.85.orig/src/init.c sysvinit-2.85/src/init.c
  /*
   * Tell the user about the syntax we expect.
   */
--void Usage(char *s)
+-void usage(char *s)
 +__attribute__ ((noreturn))
-+void Usage(const char *s)
++void usage(const char *s)
  {
-   fprintf(stderr, "Usage: %s 0123456SsQqAaBbCcUu\n", s);
-   exit(1);
- }
- 
--int telinit(char *progname, int argc, char **argv)
-+int telinit(const char *progname, int argc, char **argv)
- {
- #ifdef TELINIT_USES_INITLVL
- 	FILE			*fp;
-@@ -2420,6 +2423,9 @@ int telinit(char *progname, int argc, ch
- 	struct sigaction	sa;
- 	int			f, fd;
+ 	fprintf(stderr, "Usage: %s 0123456SsQqAaBbCcUu\n", s);
+ 	exit(1);
+@@ -2509,6 +2512,9 @@ int telinit(char *progname, int argc, ch
+ 	int			f, fd, l;
+ 	char			*env = NULL;
  
 +	if (!argc)
-+		Usage(progname);
++		usage(progname);
 +
- 	while((f = getopt(argc, argv, "t:")) != EOF) switch(f) {
- 		case 't':
- 			sltime = atoi(optarg);
-@@ -2483,20 +2489,14 @@ int telinit(char *progname, int argc, ch
+ 	memset(&request, 0, sizeof(request));
+ 	request.magic     = INIT_MAGIC;
+ 
+@@ -2596,20 +2602,14 @@ int telinit(char *progname, int argc, ch
   */
  int main(int argc, char **argv)
  {
@@ -106,7 +99,7 @@ diff -uprk.orig sysvinit-2.85.orig/src/init.c sysvinit-2.85/src/init.c
  		exit(1);
  	}
  
-@@ -2509,7 +2509,7 @@ int main(int argc, char **argv)
+@@ -2622,7 +2622,7 @@ int main(int argc, char **argv)
  			isinit = 1;
  			break;
  	}

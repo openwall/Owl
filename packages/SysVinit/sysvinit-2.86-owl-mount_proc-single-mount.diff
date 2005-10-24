@@ -1,0 +1,12 @@
+diff -puNr sysvinit-2.86.orig/src/killall5.c sysvinit-2.86/src/killall5.c
+--- sysvinit-2.86.orig/src/killall5.c	2004-07-30 12:16:23 +0000
++++ sysvinit-2.86/src/killall5.c	2005-05-29 10:27:55 +0000
+@@ -122,8 +122,6 @@ int mount_proc(void)
+ 			exit(1);
+ 		}
+ 		if (pid == 0) {
+-			/* Try a few mount binaries. */
+-			execv("/sbin/mount", args);
+ 			execv("/bin/mount", args);
+ 
+ 			/* Okay, I give up. */

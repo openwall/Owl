@@ -1,23 +1,20 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.25 2005/10/24 03:06:20 solar Exp $
+# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.26 2005/10/24 17:21:14 galaxy Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
-Version: 2.85
-Release: owl5
+Version: 2.86
+Release: owl1
 License: GPL
 Group: System Environment/Base
 Source: ftp://ftp.cistron.nl/pub/people/miquels/sysvinit/sysvinit-%version.tar.gz
-Patch0: sysvinit-2.85-owl-Makefile.diff
-Patch1: sysvinit-2.85-owl-wall-longjmp-clobbering.diff
-Patch2: sysvinit-2.85-owl-format.diff
-Patch3: sysvinit-2.85-alt-progname-umask.diff
-Patch4: sysvinit-2.85-alt-owl-start-stop-daemon.diff
-Patch5: sysvinit-2.85-alt-owl-bootlogd.diff
-Patch6: sysvinit-2.85-owl-mount-proc.diff
-Patch7: sysvinit-2.85-owl-typos.diff
-Patch8: sysvinit-2.85-rh-alt-owl-pidof.diff
-Patch9: sysvinit-2.85-rh-alt-owl-shutdown-log.diff
-Patch10: sysvinit-2.85-owl-multiline-string-fix.diff
+Patch0: sysvinit-2.86-alt-progname-umask.diff
+Patch1: sysvinit-2.85-alt-owl-start-stop-daemon.diff
+Patch2: sysvinit-2.86-owl-mount_proc-single-mount.diff
+Patch3: sysvinit-2.85-owl-multiline-string-fix.diff
+Patch4: sysvinit-2.86-rh-alt-owl-pidof.diff
+Patch5: sysvinit-2.86-owl-initcmd_setenv.diff
+Patch6: sysvinit-2.86-owl-save-env.diff
+Patch7: sysvinit-2.86-owl-warnings.diff
 Requires: /sbin/sulogin
 BuildRoot: /override/%name-%version
 
@@ -39,22 +36,19 @@ rm man/sulogin.8
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
 
 %{expand:%%define optflags %optflags -Wall -D_GNU_SOURCE}
 
 %build
 %__make -C src CC="%__cc" CFLAGS="%optflags" LDFLAGS="-static" init
-%__make -C src CC="%__cc" CFLAGS="%optflags" DISTRO=Owl
-%__make -C src CC="%__cc" CFLAGS="%optflags" LDFLAGS="-lutil" bootlogd
+%__make -C src CC="%__cc" CFLAGS="%optflags" LDFLAGS= DISTRO=Owl
+%__make -C src CC="%__cc" CFLAGS="%optflags" LDFLAGS= bootlogd
 cd contrib
 %__cc start-stop-daemon.c -o start-stop-daemon -s %optflags
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot/{dev,sbin,%_bindir,%_mandir/man{1,5,8}}
+mkdir -p %buildroot/{dev,bin,sbin,%_bindir,%_mandir/man{1,5,8}}
 mkdir -p %buildroot%_includedir
 
 %__make -C src install \
@@ -68,6 +62,10 @@ install -m 700 src/bootlogd %buildroot/sbin/
 install -m 700 contrib/start-stop-daemon %buildroot/sbin/
 
 mkfifo -m 600 %buildroot/dev/initctl
+
+# We would like to package pidof in /sbin
+rm %buildroot/bin/pidof
+rmdir %buildroot/bin
 ln -sf killall5 %buildroot/sbin/pidof
 
 # XXX: (GM): Remove unpackaged files (check later)
@@ -121,6 +119,14 @@ fi
 %attr(0600,root,root) /dev/initctl
 
 %changelog
+* Mon Oct 24 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.86-owl1
+- Updated to 2.86, dropped patches which were included upstream.
+- Adjusted make command according to Makefile of the new version.
+- Fixed handling of extra environment variables to deny altering of
+INIT_VERSION.
+- Fixed the re-exec part to save environment on init reload.
+- Fixed compilation warnings.
+
 * Fri Jan 07 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.85-owl5
 - Cleaned up the spec.
 - Removed "-s" from LDFLAGS since we are using brp- scripts.

@@ -1,0 +1,58 @@
+diff -puNr sysvinit-2.86.orig/src/killall5.c sysvinit-2.86/src/killall5.c
+--- sysvinit-2.86.orig/src/killall5.c	2005-10-23 21:26:34 +0000
++++ sysvinit-2.86/src/killall5.c	2005-10-23 22:29:21 +0000
+@@ -47,6 +47,7 @@ char *Version = "@(#)killall5 2.86 31-Ju
+ 
+ /* Info about a process. */
+ typedef struct proc {
++	char *pathname;		/* full path to executable        */
+ 	char *argv0;		/* Name as found out from argv[0] */
+ 	char *argv0base;	/* `basename argv[1]`		  */
+ 	char *argv1;		/* Name as found out from argv[1] */
+@@ -189,6 +190,7 @@ int readproc()
+ 		n = p->next;
+ 		if (p->argv0) free(p->argv0);
+ 		if (p->argv1) free(p->argv1);
++		if (p->pathname) free(p->pathname);
+ 		free(p);
+ 	}
+ 	plist = NULL;
+@@ -305,6 +307,14 @@ int readproc()
+ 		/* Try to stat the executable. */
+ 		snprintf(path, sizeof(path), "/proc/%s/exe", d->d_name);
+ 		if (stat(path, &st) == 0) {
++			char buf[PATH_MAX];
++
++			f = readlink(path, buf, sizeof buf);
++			if (f > 0) {
++				p->pathname = (char *)xmalloc(f + 1);
++				memcpy(p->pathname, buf, f);
++				p->pathname[f] = '\0';
++			}
+ 			p->dev = st.st_dev;
+ 			p->ino = st.st_ino;
+ 		}
+@@ -400,6 +410,23 @@ PIDQ_HEAD *pidof(char *prog)
+ 
+ 	/* If we didn't find a match based on dev/ino, try the name. */
+ 	if (!foundone) for (p = plist; p; p = p->next) {
++		if (prog[0] == '/') {
++			if (!p->pathname)
++				continue;
++			if (strcmp(prog, p->pathname)) {
++				int len = strlen(prog);
++				if (strncmp(prog, p->pathname, len))
++					continue;
++				if (strcmp(" (deleted)",
++				    p->pathname + len) &&
++				    strcmp("-RPMDELETE (deleted)",
++				    p->pathname + len))
++					continue;
++			}
++			add_pid_to_q(q, p);
++			continue;
++		}
++
+ 		ok = 0;
+ 
+ 		/* Compare name (both basename and full path) */
