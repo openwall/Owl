@@ -101,7 +101,7 @@ its package manager to pass it the correct input anyway.
 10. Use the %buildroot macro instead of $RPM_BUILD_ROOT.  Use the
 %_sourcedir macro instead of $RPM_SOURCE_DIR.  Do not refer to source
 files by number (e.g., with %SOURCE1), use %_sourcedir/WHATEVERFILE
-instead.
+instead.  Use the %optflags macro instead of $RPM_OPT_FLAGS.
 
 11. Do use the appropriate RPM macros for invoking build tools which
 we might want to override (e.g., use %__make instead of just make, use
@@ -117,12 +117,17 @@ from their expected locations as well.  If you do use "-f" for a
 reason, consider explaining the reason in a one-line comment right
 before the shell command.
 
-13. In %changelog entry dates, use two digits for day of month with a
-leading zero if necessary.  When adding new entries do specify the
-current package Version and Release after your e-mail address, like
-this:
+13. In %changelog entries, obfuscate the "@" in e-mail addresses with
+"-at-".  Use two digits for day of month with a leading zero if
+necessary.  Do specify the current package Epoch (only if it's other
+than 0), Version, and Release after your e-mail address.  The lines will
+look like this:
 
-	* Wed Dec 01 2004 Your Name <you@example.com> 1.0-owl1
+	* Wed Dec 01 2004 Your Name <you-at-example.com> 1.0-owl1
+
+or, if Epoch is used:
+
+	* Mon Oct 24 2005 Your Name <you-at-example.com> 1:1.0-owl1
 
 14. As it relates to spec files portability, the current stance is to
 have our spec files either result in a reasonable build or fail to
@@ -244,4 +249,4 @@ then require the proper version of mktemp(1):
 As usual, use Requires, PreReq, and/or BuildRequires depending on
 where in the package the uses of mktemp occur.
 
-$Id: Owl/doc/CONVENTIONS,v 1.25 2005/05/02 01:11:02 solar Exp $
+$Id: Owl/doc/CONVENTIONS,v 1.26 2005/10/24 07:41:13 solar Exp $
