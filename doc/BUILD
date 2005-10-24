@@ -51,7 +51,7 @@ you actually convert the system into Owl with multiple iterations of
 Here are some build times (hours:minutes) for Owl-current, so that you
 know what to expect:
 
-Dual Pentium III, 600 MHz, 512 MB				2:50
+Dual Pentium III, 600 MHz, 512 MB				3:20
 UltraSparc IIi, 400 MHz, 256 MB					9:00
 
 Some build times for Owl 1.1 release, no longer valid for Owl-current:
@@ -109,4 +109,4 @@ where "name" is the name of the source package.  For foreign packages
 (SRPMs) built with the Owl build environment you also need to include
 the version number part in "name".
 
-$Id: Owl/doc/BUILD,v 1.26 2005/10/21 08:28:49 solar Exp $
+$Id: Owl/doc/BUILD,v 1.27 2005/10/24 13:58:06 solar Exp $
