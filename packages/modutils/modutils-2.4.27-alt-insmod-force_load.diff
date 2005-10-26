@@ -1,0 +1,36 @@
+diff -upk.orig modutils-2.4.27.orig/insmod/insmod.c modutils-2.4.27/insmod/insmod.c
+--- modutils-2.4.27.orig/insmod/insmod.c	2005-10-26 15:11:53 +0000
++++ modutils-2.4.27/insmod/insmod.c	2005-10-26 15:18:47 +0000
+@@ -101,6 +101,7 @@ static int n_ext_modules_used;
+ static int m_has_modinfo;
+ static int gplonly_seen;
+ static int warnings;
++static int taint_forced_module;
+ 
+ extern int insmod_main(int argc, char **argv);
+ extern int insmod_main_32(int argc, char **argv);
+@@ -506,6 +507,7 @@ static int check_gcc_mismatch(struct obj
+ 				"version 2 compiler, while the kernel you are running is compiled with\n"
+ 				"a gcc version 3 compiler. This is known to not work.",filename);
+ 			++warnings;
++			++taint_forced_module;
+ 			return 0;
+ 		} else {
+ 			error("The module you are trying to load (%s) is compiled with a gcc\n"
+@@ -1570,7 +1572,7 @@ static void check_tainted_module(struct 
+ 		break;
+ 	}
+ 
+-	if (flag_force_load)
++	if (taint_forced_module)
+ 		set_tainted(f, fd, 1, noload, TAINT_FORCED_MODULE, "forced load", "");
+ 	if (fd >= 0)
+ 		close(fd);
+@@ -1868,6 +1870,7 @@ int INSMOD_MAIN(int argc, char **argv)
+ 				"\twhile this kernel is version %s",
+ 				filename, m_strversion, k_strversion);
+ 			++warnings;
++			++taint_forced_module;
+ 		} else {
+ 			if (!quiet)
+ 				error("kernel-module version mismatch\n"

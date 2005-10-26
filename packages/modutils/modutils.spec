@@ -1,18 +1,32 @@
-# $Id: Owl/packages/modutils/modutils.spec,v 1.22 2005/10/24 03:25:12 solar Exp $
+# $Id: Owl/packages/modutils/modutils.spec,v 1.23 2005/10/26 16:39:07 ldv Exp $
 
 Summary: Kernel module utilities.
 Name: modutils
 Version: 2.4.27
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Kernel
-Source: ftp://ftp.kernel.org/pub/linux/utils/kernel/modutils/v2.4/modutils-%version.tar.bz2
-Patch0: modutils-2.4.16-alt-GPL.diff
-Patch1: modutils-2.4.16-alt-modprobe-bL.diff
-Patch2: modutils-2.4.27-alt-owl-aliases.diff
-Patch3: modutils-2.4.16-rh-owl-syms.diff
-Patch4: modutils-2.4.27-owl-warnings.diff
+Source0: ftp://ftp.kernel.org/pub/linux/utils/kernel/modutils/v2.4/modutils-%version.tar.bz2
+%define mitver 3.1
+Source1: http://www.kernel.org/pub/linux/utils/kernel/module-init-tools/module-init-tools-%mitver.tar.bz2
+Patch0: modutils-2.4.27-rh-owl-syms.diff
+Patch1: modutils-2.4.27-rh-versions.diff
+Patch2: modutils-2.4.27-rh-showconfig.diff
+Patch3: modutils-2.4.27-alt-owl-aliases.diff
+Patch4: modutils-2.4.27-alt-insmod-GPL.diff
+Patch5: modutils-2.4.27-alt-modprobe-bL.diff
+Patch6: modutils-2.4.27-alt-depmod-prtdepend-cut_prefix.diff
+Patch7: modutils-2.4.27-alt-allowable-licenses.diff
+Patch8: modutils-2.4.27-alt-insmod-force_load.diff
+Patch9: modutils-2.4.27-alt-warning-stderr.diff
+Patch10: modutils-2.4.27-owl-warnings.diff
+Patch11: module-init-tools-3.1-alt-release-memory.diff
+Patch12: module-init-tools-3.1-alt-depmod-check-aliases.diff
+Patch13: module-init-tools-3.1-alt-modinfo-legacy.diff
+Patch14: modutils-2.4.27-alt-mit-combined.diff
+Patch15: modutils-2.4.27-alt-owl-doc.diff
 PreReq: /sbin/chkconfig
+Provides: module-init-tools = %mitver
 Obsoletes: modules
 BuildRequires: flex
 BuildRoot: /override/%name-%version
@@ -24,12 +38,26 @@ other module management programs.  Examples of loaded and unloaded
 modules are device drivers and filesystems, as well as some other things.
 
 %prep
-%setup -q
+%setup -q -a1
+mv module-init-tools-%mitver module-init-tools
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+pushd module-init-tools
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+popd # module-init-tools
+%patch14 -p1
+%patch15 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -37,12 +65,18 @@ modules are device drivers and filesystems, as well as some other things.
 %ifarch sparcv9
 %define _target_platform sparc-%_vendor-%_target_os
 %endif
+
+pushd module-init-tools
+%configure CPPFLAGS="-D_COMBINED_MODUTILS_=1"
+%__make combined 
+popd # module-init-tools
+
 # Build a statically-linked version of insmod (and symlinks to it) to
 # satisfy Red Hat's mkinitrd.
 %configure \
 	--exec_prefix=/ \
 	--disable-compat-2-0 --disable-kerneld --enable-insmod-static
-make dep all
+%__make dep all
 
 %install
 rm -rf %buildroot
@@ -64,6 +98,10 @@ fi
 %_mandir/*/*
 
 %changelog
+* Wed Oct 26 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.4.27-owl2
+- Imported a bunch of patches from ALT's modutils-2.4.27-alt4 package,
+including integrated module-init-tools for kernel 2.6.x support.
+
 * Fri Nov 05 2004 Solar Designer <solar-at-owl.openwall.com> 2.4.27-owl1
 - Fixed two new compiler warnings.
 

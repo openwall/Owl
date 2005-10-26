@@ -1,0 +1,191 @@
+diff -upk.orig modutils-2.4.27.orig/include/util.h modutils-2.4.27/include/util.h
+--- modutils-2.4.27.orig/include/util.h	2003-03-28 23:45:50 +0000
++++ modutils-2.4.27/include/util.h	2005-10-26 15:19:21 +0000
+@@ -58,6 +58,12 @@ void lprintf(const char *fmt, ...)
+ #endif
+   ;
+ 
++void lwarn(const char *fmt, ...)
++#ifdef __GNUC__
++  __attribute__((format(printf, 1, 2)))
++#endif
++  ;
++
+ void setsyslog(const char *program);
+ 
+ /*
+diff -upk.orig modutils-2.4.27.orig/insmod/insmod.c modutils-2.4.27/insmod/insmod.c
+--- modutils-2.4.27.orig/insmod/insmod.c	2005-10-26 15:18:47 +0000
++++ modutils-2.4.27/insmod/insmod.c	2005-10-26 15:19:21 +0000
+@@ -503,7 +503,7 @@ static int check_gcc_mismatch(struct obj
+ 
+ 	if (module_gcc2_compiled && kernel_gcc3_compiled) {
+ 		if (flag_force_load) {
+-			lprintf("Warning: The module you are trying to load (%s) is compiled with a gcc\n"
++			lwarn("Warning: The module you are trying to load (%s) is compiled with a gcc\n"
+ 				"version 2 compiler, while the kernel you are running is compiled with\n"
+ 				"a gcc version 3 compiler. This is known to not work.",filename);
+ 			++warnings;
+@@ -889,7 +889,7 @@ static int process_module_arguments(stru
+ 			key[n + 5] = '\0';
+ 			if ((fmt = get_modinfo_value(f, key)) == NULL) {
+ 				if (required || flag_verbose) {
+-					lprintf("Warning: ignoring %s, no such parameter in this module", *argv);
++					lwarn("Warning: ignoring %s, no such parameter in this module", *argv);
+ 					++warnings;
+ 					continue;
+ 				}
+@@ -1274,7 +1274,7 @@ static int init_module(const char *m_nam
+ 		ret = sys_init_module(m_name, (struct module *) image);
+ 		if (ret) {
+ 			error("init_module: %m");
+-			lprintf("Hint: insmod errors can be caused by incorrect module parameters, "
++			lwarn("Hint: insmod errors can be caused by incorrect module parameters, "
+ 				"including invalid IO or IRQ parameters.\n"
+ 			        "      You may find more information in syslog or the output from dmesg");
+ 		}
+@@ -1404,7 +1404,7 @@ static int check_module_parameter(struct
+ 		/* FIXME: For 2.2 kernel compatibility, only issue warnings for
+ 		 *        most error conditions.  Make these all errors in 2.5.
+ 		 */
+-		lprintf("Warning: %s symbol for parameter %s not found", error_file, key);
++		lwarn("Warning: %s symbol for parameter %s not found", error_file, key);
+ 		++warnings;
+ 		return(1);
+ 	}
+@@ -1419,7 +1419,7 @@ static int check_module_parameter(struct
+ 		min = max = 1;
+ 
+ 	if (max < min) {
+-		lprintf("Warning: %s parameter %s has max < min!", error_file, key);
++		lwarn("Warning: %s parameter %s has max < min!", error_file, key);
+ 		++warnings;
+ 		return(1);
+ 	}
+@@ -1427,7 +1427,7 @@ static int check_module_parameter(struct
+ 	switch (*p) {
+ 	case 'c':
+ 		if (!isdigit(p[1])) {
+-			lprintf("%s parameter %s has no size after 'c'!", error_file, key);
++			lwarn("%s parameter %s has no size after 'c'!", error_file, key);
+ 			++warnings;
+ 			return(1);
+ 		}
+@@ -1441,11 +1441,11 @@ static int check_module_parameter(struct
+ 	case 's':
+ 		break;
+ 	case '\0':
+-		lprintf("%s parameter %s has no format character!", error_file, key);
++		lwarn("%s parameter %s has no format character!", error_file, key);
+ 		++warnings;
+ 		return(1);
+ 	default:
+-		lprintf("%s parameter %s has unknown format character '%c'", error_file, key, *p);
++		lwarn("%s parameter %s has unknown format character '%c'", error_file, key, *p);
+ 		++warnings;
+ 		return(1);
+ 	}
+@@ -1460,7 +1460,7 @@ static int check_module_parameter(struct
+ 	case '\0':
+ 		break;
+ 	default:
+-		lprintf("%s parameter %s has unknown format modifier '%c'", error_file, key, *p);
++		lwarn("%s parameter %s has unknown format modifier '%c'", error_file, key, *p);
+ 		++warnings;
+ 		return(1);
+ 	}
+@@ -1518,11 +1518,11 @@ static void set_tainted(struct obj_file 
+ 	static int first = 1;
+ 	if (fd < 0 && !kernel_has_tainted)
+ 		return;		/* New modutils on old kernel */
+-	lprintf("Warning: loading %s will taint the kernel: %s%s",
++	lwarn("Warning: loading %s will taint the kernel: %s%s",
+ 			f->filename, text1, text2);
+ 	++warnings;
+ 	if (first) {
+-		lprintf("  See %s for information about tainted modules", TAINT_URL);
++		lwarn("  See %s for information about tainted modules", TAINT_URL);
+ 		first = 0;
+ 	}
+ 	if (fd >= 0 && !noload) {
+@@ -1780,7 +1780,7 @@ int INSMOD_MAIN(int argc, char **argv)
+ 		free(persist_name);
+ 		persist_name = NULL;
+ 		if (flag_verbose) {
+-			lprintf("insmod: -e \"\" ignored, no persistdir");
++			lwarn("insmod: -e \"\" ignored, no persistdir");
+ 			++warnings;
+ 		}
+ 	}
+@@ -1865,7 +1865,7 @@ int INSMOD_MAIN(int argc, char **argv)
+ 	m_crcs = is_module_checksummed(f);
+ 	if (strncmp(k_strversion, m_strversion, STRVERSIONLEN) != 0) {
+ 		if (flag_force_load) {
+-			lprintf("Warning: kernel-module version mismatch\n"
++			lwarn("Warning: kernel-module version mismatch\n"
+ 			      "\t%s was compiled for kernel version %s\n"
+ 				"\twhile this kernel is version %s",
+ 				filename, m_strversion, k_strversion);
+@@ -2019,7 +2019,7 @@ int INSMOD_MAIN(int argc, char **argv)
+ 		FILE *fp = fopen(f->persist, "r");
+ 		if (!fp) {
+ 			if (flag_verbose)
+-				lprintf("Cannot open persist file '%s' %m", f->persist);
++				lwarn("Cannot open persist file '%s' %m", f->persist);
+ 		}
+ 		else {
+ 			int pargc = 0;
+@@ -2161,7 +2161,7 @@ int INSMOD_MAIN(int argc, char **argv)
+ 		goto out;
+ 	}
+ 	if (warnings && !noload)
+-		lprintf("Module %s loaded, with warnings", m_name);
++		lwarn("Module %s loaded, with warnings", m_name);
+ 	exit_status = 0;
+ 
+       out:
+diff -upk.orig modutils-2.4.27.orig/insmod/modprobe.c modutils-2.4.27/insmod/modprobe.c
+--- modutils-2.4.27.orig/insmod/modprobe.c	2005-10-26 15:14:00 +0000
++++ modutils-2.4.27/insmod/modprobe.c	2005-10-26 15:19:21 +0000
+@@ -793,7 +793,7 @@ static int read_depfile(void)
+ 	if (fstat(fileno(fin), &statbuf) != 0)
+ 		error("Could not stat %s", depfile);
+ 	else if (config_mtime && config_mtime > statbuf.st_mtime)
+-		lprintf("Note: %s is more recent than %s",
++		lwarn("Note: %s is more recent than %s",
+ 			config_file, depfile);
+ #endif
+ 
+diff -upk.orig modutils-2.4.27.orig/util/logger.c modutils-2.4.27/util/logger.c
+--- modutils-2.4.27.orig/util/logger.c	2002-03-24 05:01:03 +0000
++++ modutils-2.4.27/util/logger.c	2004-03-11 13:44:32 +0000
+@@ -126,6 +126,29 @@ void lprintf(const char *fmt,...)
+ 	}
+ }
+ 
++void lwarn(const char *fmt,...)
++{
++	va_list args;
++
++	if (silent);
++	else if (log) {
++		char buf[2*PATH_MAX];
++		va_start(args, fmt);
++		vsnprintf(buf, sizeof(buf), fmt, args);
++		va_end(args);
++#ifdef STOREMSG
++		savemsg(LOG_INFO, buf);
++#else
++		syslog(LOG_INFO, "%s", buf);
++#endif
++	} else {
++		va_start(args, fmt);
++		vfprintf(stderr, fmt, args);
++		va_end(args);
++		putc('\n', stderr);
++	}
++}
++
+ void setsyslog(const char *program)
+ {
+ 	openlog(program, LOG_CONS, LOG_DAEMON);

@@ -1,0 +1,355 @@
+diff -urNp module-init-tools-3.1.orig/depmod.c module-init-tools-3.1/depmod.c
+--- module-init-tools-3.1.orig/depmod.c	2004-07-01 08:24:40 +0400
++++ module-init-tools-3.1/depmod.c	2005-01-11 20:48:46 +0300
+@@ -315,6 +315,12 @@ static struct module *grab_module(const 
+ 		     new->pathname, ((char *)new->data)[EI_CLASS]);
+ 		goto fail;
+ 	}
++
++	new->ops->load_symbols(new);
++	new->ops->fetch_tables(new);
++	release_file(new->data, new->len);
++	new->data = NULL;
++
+ 	return new;
+ 
+ fail:
+@@ -571,16 +577,6 @@ static struct module *grab_basedir(const
+ 	return list;
+ }
+ 
+-static void parse_modules(struct module *list)
+-{
+-	struct module *i;
+-
+-	for (i = list; i; i = i->next) {
+-		i->ops->load_symbols(i);
+-		i->ops->fetch_tables(i);
+-	}
+-}
+-
+ /* Convert filename to the module name.  Works if filename == modname, too. */
+ static void filename2modname(char *modname, const char *filename)
+ {
+@@ -654,13 +650,13 @@ static void output_aliases(struct module
+ 		filename2modname(modname, i->pathname);
+ 
+ 		/* Grab from old-style .modalias section. */
+-		for (p = i->ops->get_aliases(i, &size);
++		for (p = i->modalias.data, size = i->modalias.size;
+ 		     p;
+ 		     p = next_string(p, &size))
+ 			fprintf(out, "alias %s %s\n", p, modname);
+ 
+ 		/* Grab form new-style .modinfo section. */
+-		for (p = i->ops->get_modinfo(i, &size);
++		for (p = i->modinfo.data, size = i->modinfo.size;
+ 		     p;
+ 		     p = next_string(p, &size)) {
+ 			if (strncmp(p, "alias=", strlen("alias=")) == 0)
+@@ -841,7 +837,6 @@ int main(int argc, char *argv[])
+ 	} else {
+ 		list = grab_basedir(dirname);
+ 	}
+-	parse_modules(list);
+ 
+ 	for (i = 0; i < sizeof(depfiles)/sizeof(depfiles[0]); i++) {
+ 		FILE *out;
+diff -urNp module-init-tools-3.1.orig/depmod.h module-init-tools-3.1/depmod.h
+--- module-init-tools-3.1.orig/depmod.h	2003-12-24 05:10:57 +0300
++++ module-init-tools-3.1/depmod.h	2005-01-11 20:48:46 +0300
+@@ -15,6 +15,12 @@ void add_symbol(const char *name, struct
+ struct module *find_symbol(const char *name, const char *modname, int weak);
+ void add_dep(struct module *mod, struct module *depends_on);
+ 
++struct module_section
++{
++	void *data;
++	unsigned long size;
++};
++
+ struct module
+ {
+ 	/* Next module in list of all modules */
+@@ -30,6 +36,13 @@ struct module
+ 	/* Set while we are traversing dependencies */
+ 	struct list_head dep_list;
+ 
++	struct module_section modalias;
++	struct module_section modinfo;
++	struct module_section strtab;
++	struct module_section symtab;
++
++	int handle_register_symbols;
++
+ 	/* Tables extracted from module by ops->fetch_tables(). */
+ 	/* FIXME: Do other tables too --RR */
+ 	unsigned int pci_size;
+diff -urNp module-init-tools-3.1.orig/moduleops_core.c module-init-tools-3.1/moduleops_core.c
+--- module-init-tools-3.1.orig/moduleops_core.c	2004-08-12 09:08:35 +0400
++++ module-init-tools-3.1/moduleops_core.c	2005-01-11 20:48:46 +0300
+@@ -65,16 +65,6 @@ static void PERBIT(load_symbols)(struct 
+ 		add_symbol(ksyms[i].name, module);
+ }
+ 
+-static char *PERBIT(get_aliases)(struct module *module, unsigned long *size)
+-{
+-	return PERBIT(load_section)(module->data, ".modalias", size);
+-}
+-
+-static char *PERBIT(get_modinfo)(struct module *module, unsigned long *size)
+-{
+-	return PERBIT(load_section)(module->data, ".modinfo", size);
+-}
+-
+ #ifndef STT_REGISTER
+ #define STT_REGISTER    13              /* Global register reserved to app. */
+ #endif
+@@ -86,11 +76,10 @@ static void PERBIT(calculate_deps)(struc
+ 	unsigned long size;
+ 	char *strings;
+ 	ElfPERBIT(Sym) *syms;
+-	ElfPERBIT(Ehdr) *hdr;
+-	int handle_register_symbols;
+ 
+-	strings = PERBIT(load_section)(module->data, ".strtab", &size);
+-	syms = PERBIT(load_section)(module->data, ".symtab", &size);
++	strings = module->strtab.data;
++	syms = module->symtab.data;
++	size = module->symtab.size;
+ 
+ 	if (!strings || !syms) {
+ 		warn("Couldn't find symtab and strtab in module %s\n",
+@@ -98,12 +87,6 @@ static void PERBIT(calculate_deps)(struc
+ 		return;
+ 	}
+ 
+-	hdr = module->data;
+-	handle_register_symbols = 0;
+-	if (hdr->e_machine == EM_SPARC ||
+-	    hdr->e_machine == EM_SPARCV9)
+-		handle_register_symbols = 1;
+-
+ 	module->num_deps = 0;
+ 	module->deps = NULL;
+ 	for (i = 1; i < size / sizeof(syms[0]); i++) {
+@@ -117,7 +100,7 @@ static void PERBIT(calculate_deps)(struc
+                            U references when you have global asm
+                            variables, to avoid anyone else misusing
+                            them. */
+-			if (handle_register_symbols
++			if (module->handle_register_symbols
+ 			    && (ELFPERBIT(ST_TYPE)(syms[i].st_info)
+ 				== STT_REGISTER))
+ 				continue;
+@@ -165,9 +148,35 @@ static void *PERBIT(deref_sym)(ElfPERBIT
+ 	return NULL;
+ }
+ 
++static void PERBIT(copy_section)(struct module *module, const char *name,
++				 struct module_section *section)
++{
++	void *data;
++
++	section->data = NULL;
++	data = PERBIT(load_section)(module->data, name, &section->size);
++	if (data) {
++		section->data = NOFAIL(malloc(section->size));
++		memcpy(section->data, data, section->size);
++	}
++}
++
+ /* FIXME: Check size, unless we end up using aliases anyway --RR */
+ static void PERBIT(fetch_tables)(struct module *module)
+ {
++	ElfPERBIT(Ehdr) *hdr;
++
++	hdr = module->data;
++	module->handle_register_symbols = 0;
++	if (hdr->e_machine == EM_SPARC ||
++	    hdr->e_machine == EM_SPARCV9)
++		module->handle_register_symbols = 1;
++
++	PERBIT(copy_section)(module, ".modalias", &module->modalias);
++	PERBIT(copy_section)(module, ".modinfo", &module->modinfo);
++	PERBIT(copy_section)(module, ".strtab", &module->strtab);
++	PERBIT(copy_section)(module, ".symtab", &module->symtab);
++
+ 	module->pci_size = PERBIT(PCI_DEVICE_SIZE);
+ 	module->pci_table = PERBIT(deref_sym)(module->data,
+ 					"__mod_pci_device_table");
+@@ -196,12 +205,12 @@ static void PERBIT(fetch_tables)(struct 
+ 	module->input_size = PERBIT(INPUT_DEVICE_SIZE);
+ 	module->input_table = PERBIT(deref_sym)(module->data,
+ 					"__mod_input_device_table");
++
++	copy_all_tables(module);
+ }
+ 
+ struct module_ops PERBIT(mod_ops) = {
+ 	.load_symbols	= PERBIT(load_symbols),
+ 	.calculate_deps	= PERBIT(calculate_deps),
+ 	.fetch_tables	= PERBIT(fetch_tables),
+-	.get_aliases	= PERBIT(get_aliases),
+-	.get_modinfo	= PERBIT(get_modinfo),
+ };
+diff -urNp module-init-tools-3.1.orig/moduleops.h module-init-tools-3.1/moduleops.h
+--- module-init-tools-3.1.orig/moduleops.h	2003-02-21 06:50:58 +0300
++++ module-init-tools-3.1/moduleops.h	2005-01-11 20:48:46 +0300
+@@ -19,8 +19,6 @@ struct module_ops
+ 	void (*load_symbols)(struct module *module);
+ 	void (*calculate_deps)(struct module *module, int verbose);
+ 	void (*fetch_tables)(struct module *module);
+-	char *(*get_aliases)(struct module *module, unsigned long *size);
+-	char *(*get_modinfo)(struct module *module, unsigned long *size);
+ };
+ 
+ extern struct module_ops mod_ops32, mod_ops64;
+diff -urNp module-init-tools-3.1.orig/tables.c module-init-tools-3.1/tables.c
+--- module-init-tools-3.1.orig/tables.c	2003-12-24 08:23:38 +0300
++++ module-init-tools-3.1/tables.c	2005-01-11 20:48:46 +0300
+@@ -51,6 +51,15 @@ void output_pci_table(struct module *mod
+ 	}
+ }
+ 
++static size_t pci_table_size(void *table, size_t entry_size)
++{
++	struct pci_device_id *e;
++
++	for (e = table; e->vendor; e = (void *)e + entry_size)
++		;
++	return ((void *)e + entry_size) - table;
++}
++
+ /* We set driver_info to zero */
+ static void output_usb_entry(struct usb_device_id *usb, char *name, FILE *out)
+ {
+@@ -100,6 +109,17 @@ void output_usb_table(struct module *mod
+ 	}
+ }
+ 
++static size_t usb_table_size(void *table, size_t entry_size)
++{
++	struct usb_device_id *e;
++
++	for (e = table;
++	     e->idVendor || e->bDeviceClass || e->bInterfaceClass;
++	     e = (void *)e + entry_size)
++		;
++	return ((void *)e + entry_size) - table;
++}
++
+ static void output_ieee1394_entry(struct ieee1394_device_id *fw, char *name, FILE *out)
+ {
+ 	fprintf(out, "%-20s 0x%08x  0x%06x  0x%06x 0x%06x     0x%06x\n",
+@@ -128,6 +148,15 @@ void output_ieee1394_table(struct module
+ 	}
+ }
+ 
++static size_t ieee1394_table_size(void *table, size_t entry_size)
++{
++	struct ieee1394_device_id *e;
++
++	for (e = table; e->match_flags; e = (void *)e + entry_size)
++		;
++	return ((void *)e + entry_size) - table;
++}
++
+ 
+ /* We set driver_data to zero */
+ static void output_ccw_entry(struct ccw_device_id *ccw, char *name, FILE *out)
+@@ -160,6 +189,17 @@ void output_ccw_table(struct module *mod
+ 	}
+ }
+ 
++static size_t ccw_table_size(void *table, size_t entry_size)
++{
++	struct ccw_device_id *e;
++
++	for (e = table;
++	     e->cu_type || e->cu_model || e->dev_type || e->dev_model;
++	     e = (void *)e + entry_size)
++		;
++	return ((void *)e + entry_size) - table;
++}
++
+ #define ISAPNP_VENDOR(a,b,c)	(((((a)-'A'+1)&0x3f)<<2)|\
+ 				((((b)-'A'+1)&0x18)>>3)|((((b)-'A'+1)&7)<<13)|\
+ 				((((c)-'A'+1)&0x1f)<<8))
+@@ -225,6 +265,24 @@ void output_isapnp_table(struct module *
+ 	}
+ }
+ 
++static size_t pnp_table_size(void *table, size_t entry_size)
++{
++	struct pnp_device_id *e;
++
++	for (e = table; e->id[0]; e = (void *)e + entry_size)
++		;
++	return ((void *)e + entry_size) - table;
++}
++
++static size_t pnp_card_table_size(void *table, size_t entry_size)
++{
++	void *e;
++
++	for (e = table; ((char *)e)[0]; e = (void *)e + entry_size)
++		;
++	return ((void *)e + entry_size) - table;
++}
++
+ #define MATCH_bustype   1
+ #define MATCH_vendor    2
+ #define MATCH_product   4
+@@ -340,3 +398,41 @@ void output_input_table(struct module *m
+ 		}
+ 	}
+ }
++
++static size_t input_table_size(void *table, size_t entry_size)
++{
++	struct input_device_id_32 *i32;
++	struct input_device_id_64 *i64;
++
++	if (entry_size == sizeof(*i32)) {
++		for (i32 = table; i32->match_flags || i32->driver_info; i32++)
++			;
++		return (void *)(i32 + 1) - table;
++	} else {
++		for (i64 = table; i64->match_flags || i64->driver_info; i64++)
++			;
++		return (void *)(i64 + 1) - table;
++	}
++}
++
++#define COPY_TABLE(module, name) do {					\
++	void *data = (module)->name##_table;				\
++	if (data) {							\
++		size_t table_size =					\
++			name##_table_size(data, (module)->name##_size);	\
++		void *new_data = NOFAIL(malloc(table_size));		\
++		memcpy(new_data, data, table_size);			\
++		(module)->name##_table = new_data;			\
++	}								\
++} while (0)
++
++void copy_all_tables(struct module *module)
++{
++	COPY_TABLE(module, pci);
++	COPY_TABLE(module, usb);
++	COPY_TABLE(module, ieee1394);
++	COPY_TABLE(module, ccw);
++	COPY_TABLE(module, pnp);
++	COPY_TABLE(module, pnp_card);
++	COPY_TABLE(module, input);
++}
+diff -urNp module-init-tools-3.1.orig/tables.h module-init-tools-3.1/tables.h
+--- module-init-tools-3.1.orig/tables.h	2003-12-24 08:18:54 +0300
++++ module-init-tools-3.1/tables.h	2005-01-11 20:48:46 +0300
+@@ -124,5 +124,6 @@ void output_pci_table(struct module *mod
+ void output_ccw_table(struct module *modules, FILE *out);
+ void output_isapnp_table(struct module *modules, FILE *out);
+ void output_input_table(struct module *modules, FILE *out);
++void copy_all_tables(struct module *module);
+ 
+ #endif /* MODINITTOOLS_TABLES_H */

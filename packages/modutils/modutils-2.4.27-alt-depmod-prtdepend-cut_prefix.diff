@@ -1,0 +1,55 @@
+diff -upk.orig modutils-2.4.27.orig/depmod/depmod.c modutils-2.4.27/depmod/depmod.c
+--- modutils-2.4.27.orig/depmod/depmod.c	2005-10-26 15:06:29 +0000
++++ modutils-2.4.27/depmod/depmod.c	2005-10-26 15:16:15 +0000
+@@ -1184,6 +1184,18 @@ char *shortname(const char *name)
+ 	return(s);
+ }
+ 
++static const char *cut_prefix(const char *prefix, const char *sample)
++{
++	const char *s = sample;
++	for (; (*prefix && *s) && (*prefix == *s); ++prefix, ++s)
++		;
++
++	if (!*prefix && (!*s || *s == '/'))
++		return s;
++
++	return sample;
++}
++
+ /*
+  *	Format the dependancy list of a module into a simple makefile.
+  *	Print the dependancies in the depfile (or stdout if nflag is true).
+@@ -1212,7 +1224,6 @@ static int prtdepend(char *base_dir, int
+ 	MODULE *ptmod;
+ 	int i;
+ 	int ret = 0;
+-	int skipchars;	/* For depmod -a in image of a tree */
+ 
+ 	if (!nflag) {
+ 		dep = gen_file_open(gen_file+GEN_DEPFILE);
+@@ -1225,7 +1236,6 @@ static int prtdepend(char *base_dir, int
+ 		pnpbiosmap = gen_file_open(gen_file+GEN_PNPBIOSMAPFILE);
+ 	}
+ 
+-	skipchars = strlen(base_dir);
+ 	tbdep = (MODULE **)alloca(sizeof(MODULE) * n_modules);
+ 
+ 	ptmod = modules;
+@@ -1277,13 +1287,13 @@ static int prtdepend(char *base_dir, int
+ 				errors = save_errors;
+ 			}
+ 		}
+-		verbose("%s\n", ptmod->name + skipchars);
++		verbose("%s\n", cut_prefix(base_dir, ptmod->name));
+ 
+-		fprintf(dep, "%s:", ptmod->name + skipchars);
++		fprintf(dep, "%s:", cut_prefix(base_dir, ptmod->name));
+ 		for (m = 0; m < nbdepmod; m++) {
+ 			if (m != 0 /*&& (m & 3) == 0*/)
+ 				fprintf(dep, " \\\n");
+-			fprintf(dep, "\t%s", tbdep[m]->name + skipchars);
++			fprintf(dep, "\t%s", cut_prefix(base_dir, tbdep[m]->name));
+ 		}
+ 		fprintf(dep, "\n\n");
+ 	}

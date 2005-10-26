@@ -1,0 +1,51 @@
+--- modutils-2.4.27/man/insmod.8.orig	2003-12-09 21:27:57 +0000
++++ modutils-2.4.27/man/insmod.8	2004-06-06 18:19:10 +0000
+@@ -67,6 +67,23 @@
+ symbol name checks.  If the symbol names in the module do not match the
+ kernel then there is no way to force \fBinsmod\fR to load the module.
+ .TP
++.B ""
++For 2.6.x kernels this option is equivalent to \fB\-\-force\-vermagic
++\-\-force\-modversion\fR.
++.TP
++.B \-\-force\-vermagic
++Modules for 2.6.x kernels contains a small string containing important
++information, such as the kernel and compiler versions.  If a module
++fails to load and the kernel complains that the "version magic" doesn't
++match, you can use this option to remove it.
++.TP
++.B \-\-force\-modversion
++When modules for 2.6.x kernels are compiled with CONFIG_MODVERSIONS set,
++a section is created detailing the versions of every interface used by
++(or supplied by) the module.  If a module fails to load and the kernel
++complains that the module disagrees about a version of some interface,
++you can use this option to remove the version information altogether.
++.TP
+ .BR \-h ", " \-\-help
+ Display a summary of options and immediately exit.
+ .TP
+--- modutils-2.4.27/module-init-tools/modinfo.8.orig	2004-08-26 09:11:07 +0000
++++ modutils-2.4.27/module-init-tools/modinfo.8	2005-10-26 16:06:58 +0000
+@@ -110,11 +110,9 @@ transition from the old modutils 
+  
+ .SH "BACKWARDS COMPATIBILITY" 
+ .PP 
+-This version of \fBmodinfo\fR is for kernel 
+-modules \fB2.5.48\fP and above.  If it detects a 
+-kernel with support for old-style modules, it will attempt to 
+-run \fBmodprobe.old\fR in its place, so it is 
+-completely transparent to the user. 
++This version of \fBmodinfo\fR supports both old-style 
++(before kernel \fB2.5.48\fP) and new-style modules. 
++The output format is the same for both kinds of modules. 
+ .PP 
+ Note that the output of this version of 
+ \fBmodinfo\fR is simpler and more regular than 
+@@ -131,6 +129,5 @@ This manual page Copyright 2003, Rusty R
+  
+ .SH "SEE ALSO" 
+ .PP 
+-\fBmodprobe\fP\fB(8)\fP, 
+-\fBmodinfo.old\fP\fB(8)\fP 
++\fBmodprobe\fP\fB(8)\fP 
+ .\" created by instant / docbook-to-man, Tue 09 Mar 2004, 08:43 

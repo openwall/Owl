@@ -1,0 +1,1997 @@
+diff -upk.orig modutils-2.4.27.orig/depmod/Makefile.in modutils-2.4.27/depmod/Makefile.in
+--- modutils-2.4.27.orig/depmod/Makefile.in	2003-10-27 04:42:07 +0000
++++ modutils-2.4.27/depmod/Makefile.in	2005-01-10 18:11:41 +0000
+@@ -6,6 +6,8 @@ DEFSNOARCH	:= -I$(srcdir)/../include -D_
+ DEFS		:= -DELF_MACHINE_H='"elf_$(ARCH).h"' -DARCH_$(ARCH)
+ OBJS		:= depmod.o
+ 
++DEPMOD_MIT_OBJS := ../module-init-tools/depmod.o ../module-init-tools/moduleops.o ../module-init-tools/tables.o ../module-init-tools/zlibsupport.o
++
+ # arch specific definitions for common 32/64 code
+ 
+ ifeq (@COMMON_sparc@,yes)
+@@ -49,7 +51,7 @@ endif
+ 
+ all: .depend depmod
+ 
+-depmod: $(OBJS) ../util/libutil.a ../obj/libobj.a
++depmod: $(OBJS) ../util/libutil.a ../obj/libobj.a $(DEPMOD_MIT_OBJS)
+ 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS) $(ZLIB_STATIC)
+ 
+ clean:
+diff -upk.orig modutils-2.4.27.orig/depmod/depmod.c modutils-2.4.27/depmod/depmod.c
+--- modutils-2.4.27.orig/depmod/depmod.c	2005-10-26 15:47:49 +0000
++++ modutils-2.4.27/depmod/depmod.c	2005-10-26 15:48:13 +0000
+@@ -271,6 +271,7 @@ int flag_unresolved_error = 0;
+ extern int depmod_main(int argc, char **argv);
+ extern int depmod_main_32(int argc, char **argv);
+ extern int depmod_main_64(int argc, char **argv);
++extern int mit_depmod_main(int argc, char **argv);
+ 
+ extern int quick;	/* Option -A */
+ 
+@@ -1540,6 +1541,12 @@ int depmod_main(int argc, char **argv)
+ }
+ #endif  /* defined(COMMON_3264) && defined(ONLY_64) */
+ 
++static void add_arg(int *argc, char ***argv, char *arg)
++{
++	*argv = xrealloc(*argv, (*argc + 1) * sizeof(char *));
++	(*argv)[(*argc)++] = arg;
++}
++
+ int DEPMOD_MAIN(int argc, char **argv)
+ {
+ 	int ret = -1;
+@@ -1551,6 +1558,11 @@ int DEPMOD_MAIN(int argc, char **argv)
+ 	char *file_syms = NULL;
+ 	char *base_dir = "";
+ 	int ignore_suffix = 0;	/* Ignore genksyms suffix on resolve? */
++	int new_argc = 0;
++	char **new_argv = NULL;
++	char *new_opt;
++	char *new_arg;
++	int i;
+ 
+ 	struct option long_opts[] = {
+ 		{"all", 0, 0, 'a'},
+@@ -1574,20 +1586,29 @@ int DEPMOD_MAIN(int argc, char **argv)
+ 
+ 	error_file = "depmod";
+ 
++	if (argc > 0)
++		add_arg(&new_argc, &new_argv, argv[0]);
++
+ 	while ((o = getopt_long(argc, argv, "aAb:C:eF:him:nqsvVru",
+ 				&long_opts[0], NULL)) != EOF) {
++		new_opt = new_arg = NULL;
++
+ 		switch (o) {
+ 		case 'A':
+ 		case 'a':
++			new_opt = "-a";
+ 			quick = o == 'A';
+ 			stdmode = 1;	/* Probe standard directory */
+ 			break;		/* using the config file */
+ 
+ 		case 'e':
++			new_opt = "-e";
+ 			showerror = 1;
+ 			break;
+ 
+ 		case 'b':
++			new_opt = "-b";
++			new_arg = optarg;
+ 			base_dir = optarg;
+ 			break;
+ 
+@@ -1603,40 +1624,51 @@ int DEPMOD_MAIN(int argc, char **argv)
+ 			break;
+ 
+ 		case 'C':
++			new_opt = "-C";
++			new_arg = optarg;
+ 			conf_file = optarg;
+ 			break;
+ 
+ 		case 'm':
+ 			fprintf(stderr, "Warning: -m is deprecated; please use -F.\n");
+ 		case 'F':
++			new_opt = "-F";
++			new_arg = optarg;
+ 			file_syms = optarg;
+ 			break;
+ 
+ 		case 'n':
++			new_opt = "-n";
+ 			nflag = 1;
+ 			break;
+ 
+ 		case 'q':
++			/* not implemented in module-init-tools */
+ 			quiet = 1;
+ 			break;
+ 
+ 		case 's':
++			/* not implemented in module-init-tools */
+ 			setsyslog("depmod");
+ 			break;
+ 
+ 		case 'v':
++			new_opt = "-v";
+ 			flag_verbose = 1;
+ 			break;
+ 
+ 		case 'V':
++			new_opt = "-V";
+ 			printf("depmod version %s\n", MODUTILS_VERSION);
+ 			break;
+ 
+ 		case 'r':
++			/* not implemented in module-init-tools */
+ 			root_check_off = 1;
+ 			break;
+ 
+ 		case 'u':
++			/* not implemented in module-init-tools */
+ 			flag_unresolved_error = 1;
+ 			break;
+ 
+@@ -1644,6 +1676,11 @@ int DEPMOD_MAIN(int argc, char **argv)
+ 			err = 1;
+ 			break;
+ 		}
++
++		if (new_opt)
++			add_arg(&new_argc, &new_argv, new_opt);
++		if (new_arg)
++			add_arg(&new_argc, &new_argv, new_arg);
+ 	}
+ 
+ 	if (err) {
+@@ -1656,6 +1693,22 @@ int DEPMOD_MAIN(int argc, char **argv)
+ 
+ 	ignore_suffix += (file_syms != NULL);
+ 
++	set_kernel_version((argc > 0) ? *argv : NULL);
++	if (kernel_requires_new_utilities) {
++		/*
++		 * In the "quick" mode config_read() will call exit(0) if the
++		 * dependency file is up to date.  What a hack :(
++		 */
++		if (quick)
++			config_read(0, (argc > 0) ? *argv : NULL, base_dir,
++				    conf_file);
++
++		for (i = 0; i < argc; ++i)
++			add_arg(&new_argc, &new_argv, argv[i]);
++		optind = 0;
++		return mit_depmod_main(new_argc, new_argv);
++	}
++
+ 	if (stdmode || argc == 0) {
+ 		/* option -a is the default without arguments */
+ 		if (argc > 0) {
+diff -upk.orig modutils-2.4.27.orig/include/config.h modutils-2.4.27/include/config.h
+--- modutils-2.4.27.orig/include/config.h	2003-10-26 11:28:14 +0000
++++ modutils-2.4.27/include/config.h	2005-01-10 18:11:41 +0000
+@@ -82,6 +82,13 @@ struct gen_files {
+ 	char *base;		/* xxx in /lib/modules/`uname -r`/modules.xxx */
+ 	char *name;             /* name actually used */
+ 	time_t mtime;
++	unsigned flags;
++};
++
++enum {
++	GEN_FILE_2_4	= 0x01,
++	GEN_FILE_2_6	= 0x02,
++	GEN_FILE_ALL	= GEN_FILE_2_4 | GEN_FILE_2_6,
+ };
+ 
+ extern struct gen_files gen_file[];
+@@ -96,6 +103,10 @@ enum gen_file_enum {
+ 	GEN_IEEE1394MAPFILE,
+ 	GEN_PNPBIOSMAPFILE,
+ 	GEN_DEPFILE,
++	GEN_ALIASFILE,
++	GEN_SYMBOLSFILE,
++	GEN_CCWMAPFILE,
++	GEN_INPUTMAPFILE,
+ };
+ 
+ extern char *persistdir;
+diff -upk.orig modutils-2.4.27.orig/include/modstat.h modutils-2.4.27/include/modstat.h
+--- modutils-2.4.27.orig/include/modstat.h	2001-01-05 01:45:19 +0000
++++ modutils-2.4.27/include/modstat.h	2005-01-10 18:11:41 +0000
+@@ -51,5 +51,6 @@ extern size_t nksyms;
+ extern int k_new_syscalls;
+ 
+ int get_kernel_info(int type);
++char *getline_wrapped(FILE *file, unsigned int *linenum);
+ 
+ #endif /* _KERNEL_H */
+diff -upk.orig modutils-2.4.27.orig/include/util.h modutils-2.4.27/include/util.h
+--- modutils-2.4.27.orig/include/util.h	2005-10-26 15:47:49 +0000
++++ modutils-2.4.27/include/util.h	2005-10-26 15:48:13 +0000
+@@ -34,6 +34,11 @@ char *xstrdup(const char *);
+ char *xstrcat(char *, const char *, size_t);
+ int   xsystem(const char *, char *const[]);
+ int   arch64(void);
++void  set_kernel_version(const char *);
++char *to_underscores(char *name);
++int   modnamecmp(const char *a, const char *b);
++
++extern int kernel_requires_new_utilities;
+ 
+ typedef int (*xftw_func_t)(const char *, const struct stat *);
+ extern int xftw(const char *directory, xftw_func_t);
+diff -upk.orig modutils-2.4.27.orig/insmod/Makefile.in modutils-2.4.27/insmod/Makefile.in
+--- modutils-2.4.27.orig/insmod/Makefile.in	2003-10-27 04:42:07 +0000
++++ modutils-2.4.27/insmod/Makefile.in	2005-10-26 15:48:13 +0000
+@@ -6,11 +6,13 @@ DEFSNOARCH	:= -I$(srcdir)/../include -D_
+ DEFS		:= -DELF_MACHINE_H='"elf_$(ARCH).h"' -DARCH_$(ARCH) -DTAINT_URL='"$(TAINT_URL)"'
+ 
+ PROGS		:= insmod modprobe rmmod lsmod ksyms kallsyms modinfo
++MIT_PROGS	:= insmod rmmod lsmod
+ 
+ # COMB is the list of utilities to combine with insmod into one executable
+ COMB		:= @COMBINE_rmmod@ @COMBINE_modprobe@ @COMBINE_lsmod@ @COMBINE_ksyms@ @COMBINE_kallsyms@
+ COMBDEFS	:= $(addprefix -DCOMBINE_, $(COMB))
+ COMB_STATIC	:= $(addsuffix .static, $(COMB))
++COMB_MIT	:= $(addprefix ../module-init-tools/, $(filter $(MIT_PROGS), $(COMB)))
+ 
+ TARGETS_REAL	:= $(filter-out $(COMB),$(PROGS))
+ TARGETS	:= $(PROGS)
+@@ -20,8 +22,8 @@ TARGETS_REAL	+= insmod.static
+ TARGETS		+= insmod.static $(COMB_STATIC)
+ endif
+ 
+-INSMODOBJS	:= insmod.o
+-MODINFOOBJS	:= modinfo.o
++INSMODOBJS	:= insmod.o ../module-init-tools/insmod.o ../module-init-tools/zlibsupport.o
++MODINFOOBJS	:= ../module-init-tools/modinfo.o ../module-init-tools/zlibsupport.o
+ ifeq (@COMBINE_kallsyms@,kallsyms)
+ KALLSYMSOBJS	:=
+ else
+@@ -59,14 +61,14 @@ INSMODOBJS	+= kallsyms_64.o
+ else
+ KALLSYMSOBJS	+= kallsyms_64.o
+ endif
+-MODINFOOBJS	+= modinfo_64.o
++#MODINFOOBJS	+= modinfo_64.o
+ DEFSNOARCH	+= -DCOMMON_3264
+ DEFS		+= -DONLY_32
+ DEFS64		+= -DONLY_64 $(call check_gcc,-malign-double,)
+ DEFS64		+= -DTAINT_URL='"$(TAINT_URL)"'
+ endif
+ 
+-INSMODOBJS	+= $(addsuffix .o, $(COMB))
++INSMODOBJS	+= $(addsuffix .o, $(COMB)) $(addsuffix .o, $(COMB_MIT))
+ 
+ ifdef DEFS64
+ TARGETS+=libmodutils.a($(filter-out insmod.o insmod_64.o, $(INSMODOBJS)) combined_insmod.o combined_insmod_64.o)
+diff -upk.orig modutils-2.4.27.orig/insmod/insmod.c modutils-2.4.27/insmod/insmod.c
+--- modutils-2.4.27.orig/insmod/insmod.c	2005-10-26 15:47:49 +0000
++++ modutils-2.4.27/insmod/insmod.c	2005-10-26 15:48:13 +0000
+@@ -72,6 +72,8 @@
+ #include <getopt.h>
+ #include <sys/stat.h>
+ #include <sys/file.h>
++#include <sys/mman.h>
++#include <asm/unistd.h>
+ 
+ #include "module.h"
+ #include "obj.h"
+@@ -87,6 +89,8 @@
+ /*======================================================================*/
+ 
+ static int flag_force_load = 0;
++static int flag_force_vermagic = 0;
++static int flag_force_modversion = 0;
+ static int flag_silent_probe = 0;
+ #ifdef HAS_FUNCTION_DESCRIPTORS
+ static int flag_export = 0;
+@@ -111,9 +115,322 @@ extern int rmmod_main(int argc, char **a
+ extern int ksyms_main(int argc, char **argv);
+ extern int lsmod_main(int argc, char **argv);
+ extern int kallsyms_main(int argc, char **argv);
++extern int mit_insmod_main(int argc, char **argv);
+ 
+ /*======================================================================*/
+ 
++/* We use error numbers in a loose translation... */
++static const char *moderror(int err)
++{
++	switch (err) {
++	case ENOEXEC:
++		return "Invalid module format";
++	case ENOENT:
++		return "Unknown symbol in module, or unknown parameter (see dmesg)";
++	case ENOSYS:
++		return "Kernel does not have module support";
++	default:
++		return strerror(err);
++	}
++}
++
++static char * get_module_name(char *filename)
++{
++	size_t len;
++	char *p, *oldname;
++
++	if ((p = strrchr(filename, '/')) != NULL)
++		p++;
++	else
++		p = filename;
++	len = strlen(p);
++	if (len > 2 && p[len - 2] == '.' && p[len - 1] == 'o')
++		len -= 2;
++	else if (len > 4 && p[len - 4] == '.' && p[len - 3] == 'm'
++		 && p[len - 2] == 'o' && p[len - 1] == 'd')
++		len -= 4;
++	else if (len > 3 && !strcmp(p + len - 3, ".ko"))
++		len -= 3;
++#ifdef CONFIG_USE_ZLIB
++	else if (len > 5 && !strcmp(p + len - 5, ".o.gz"))
++		len -= 5;
++	else if (len > 6 && !strcmp(p + len - 6, ".ko.gz"))
++		len -= 6;
++#endif
++
++	oldname = xmalloc(len + 1);
++	memcpy(oldname, p, len);
++	oldname[len] = '\0';
++	return oldname;
++}
++
++static char *append_option(char *options, const char *newoption)
++{
++	options = xrealloc(options,
++			   strlen(options) + 1 + strlen(newoption) + 1);
++	if (strlen(options))
++		strcat(options, " ");
++	strcat(options, newoption);
++	return options;
++}
++
++static char *gather_options(char *argv[])
++{
++	char *optstring = xstrdup("");
++
++	/* Rest is module options */
++	while (*argv) {
++		if (strchr(*argv, ' ')) {
++			/* Spaces handled by "" pairs, but no way of
++			   escaping quotes */
++			char protected_option[strlen(optstring) + 3];
++			sprintf(protected_option, "\"%s\"", *argv);
++			optstring = append_option(optstring, protected_option);
++		} else
++			optstring = append_option(optstring, *argv);
++		argv++;
++	}
++	return optstring;
++}
++
++static void replace_modname(const char *filename, void *mem, unsigned long len,
++			    const char *oldname, const char *newname)
++{
++	char *p;
++
++	/* 64 - sizeof(unsigned long) - 1 */
++	if (strlen(newname) > 55)
++		error("New name %s is too long\n", newname);
++
++	/* Find where it is in the module structure.  Don't assume layout! */
++	for (p = mem; p < (char *)mem + len - strlen(oldname); p++)
++		if (memcmp(p, oldname, strlen(oldname)) == 0) {
++			strcpy(p, newname);
++			return;
++		}
++	error("Could not find old name in %s to replace!\n", filename);
++}
++
++static void *get_section32(void *file, unsigned long size,
++			   const char *name, unsigned long *secsize)
++{
++	Elf32_Ehdr *hdr = file;
++	Elf32_Shdr *sechdrs = file + hdr->e_shoff;
++	const char *secnames;
++	unsigned int i;
++
++	/* Too short? */
++	if (size < sizeof(*hdr))
++		return NULL;
++	if (size < hdr->e_shoff + hdr->e_shnum * sizeof(sechdrs[0]))
++		return NULL;
++	if (size < sechdrs[hdr->e_shstrndx].sh_offset)
++		return NULL;
++		
++	secnames = file + sechdrs[hdr->e_shstrndx].sh_offset;
++	for (i = 1; i < hdr->e_shnum; i++){
++		if (strcmp(secnames + sechdrs[i].sh_name, name) == 0) {
++			*secsize = sechdrs[i].sh_size;
++			return file + sechdrs[i].sh_offset;
++		}
++	}
++	return NULL;
++}
++
++static void *get_section64(void *file, unsigned long size,
++			   const char *name, unsigned long *secsize)
++{
++	Elf64_Ehdr *hdr = file;
++	Elf64_Shdr *sechdrs = file + hdr->e_shoff;
++	const char *secnames;
++	unsigned int i;
++
++	/* Too short? */
++	if (size < sizeof(*hdr))
++		return NULL;
++	if (size < hdr->e_shoff + hdr->e_shnum * sizeof(sechdrs[0]))
++		return NULL;
++	if (size < sechdrs[hdr->e_shstrndx].sh_offset)
++		return NULL;
++		
++	secnames = file + sechdrs[hdr->e_shstrndx].sh_offset;
++	for (i = 1; i < hdr->e_shnum; i++)
++		if (strcmp(secnames + sechdrs[i].sh_name, name) == 0) {
++			*secsize = sechdrs[i].sh_size;
++			return file + sechdrs[i].sh_offset;
++		}
++	return NULL;
++}
++
++static int elf_ident(void *mod, unsigned long size)
++{
++	/* "\177ELF" <byte> where byte = 001 for 32-bit, 002 for 64 */
++	char *ident = mod;
++
++	if (size < EI_CLASS || memcmp(mod, ELFMAG, SELFMAG) != 0)
++		return ELFCLASSNONE;
++	return ident[EI_CLASS];
++}
++
++static void *get_section(void *file, unsigned long size,
++			 const char *name, unsigned long *secsize)
++{
++	switch (elf_ident(file, size)) {
++	case ELFCLASS32:
++		return get_section32(file, size, name, secsize);
++	case ELFCLASS64:
++		return get_section64(file, size, name, secsize);
++	default:
++		return NULL;
++	}
++}
++
++static void rename_module(const char *filename, void *mod, unsigned long len,
++			  const char *newname, const char *modname)
++{
++	void *modstruct;
++	unsigned long modstruct_len;
++
++	/* Old-style */
++	modstruct = get_section(mod, len, ".gnu.linkonce.this_module",
++				&modstruct_len);
++	/* New-style */
++	if (!modstruct)
++		modstruct = get_section(mod, len, "__module", &modstruct_len);
++	if (!modstruct)
++		error("Could not find module name to change in %s\n",
++		      filename);
++	else
++		replace_modname(filename, modstruct, modstruct_len,
++				modname, newname);
++}
++
++/* Kernel told to ignore these sections if SHF_ALLOC not set. */
++static void invalidate_section32(void *mod, const char *secname)
++{
++	Elf32_Ehdr *hdr = mod;
++	Elf32_Shdr *sechdrs = mod + hdr->e_shoff;
++	const char *secnames = mod + sechdrs[hdr->e_shstrndx].sh_offset;
++	unsigned int i;
++
++	for (i = 1; i < hdr->e_shnum; i++)
++		if (strcmp(secnames+sechdrs[i].sh_name, secname) == 0)
++			sechdrs[i].sh_flags &= ~SHF_ALLOC;
++}
++
++static void invalidate_section64(void *mod, const char *secname)
++{
++	Elf64_Ehdr *hdr = mod;
++	Elf64_Shdr *sechdrs = mod + hdr->e_shoff;
++	const char *secnames = mod + sechdrs[hdr->e_shstrndx].sh_offset;
++	unsigned int i;
++
++	for (i = 1; i < hdr->e_shnum; i++)
++		if (strcmp(secnames+sechdrs[i].sh_name, secname) == 0)
++			sechdrs[i].sh_flags &= ~(unsigned long long)SHF_ALLOC;
++}
++
++static void strip_section(const char *filename, void *mod, unsigned long len,
++			  const char *secname)
++{
++	switch (elf_ident(mod, len)) {
++	case ELFCLASS32:
++		invalidate_section32(mod, secname);
++		break;
++	case ELFCLASS64:
++		invalidate_section64(mod, secname);
++		break;
++	default:
++		error("Unknown module format in %s: not forcing version\n",
++		      filename);
++	}
++}
++
++static const char *next_string(const char *string, unsigned long *secsize)
++{
++	/* Skip non-zero chars */
++	while (string[0]) {
++		string++;
++		if ((*secsize)-- <= 1)
++			return NULL;
++	}
++
++	/* Skip any zero padding. */
++	while (!string[0]) {
++		string++;
++		if ((*secsize)-- <= 1)
++			return NULL;
++	}
++	return string;
++}
++
++static void clear_magic(const char *filename, void *mod, unsigned long len)
++{
++	const char *p;
++	unsigned long modlen;
++
++	/* Old-style: __vermagic section */
++	strip_section(filename, mod, len, "__vermagic");
++
++	/* New-style: in .modinfo section */
++	for (p = get_section(mod, len, ".modinfo", &modlen);
++	     p;
++	     p = next_string(p, &modlen)) {
++		if (strncmp(p, "vermagic=", strlen("vermagic=")) == 0) {
++			memset((char *)p, 0, strlen(p));
++			return;
++		}
++	}
++}
++
++/* Actually do the insert.  Frees second arg. */
++static int insmod26(int fd,
++		    char *optstring,
++		    const char *filename,
++		    const char *newname,
++		    const char *oldname,
++		    int dry_run,
++		    int verbose,
++		    int strip_vermagic,
++		    int strip_modversion)
++{
++	int ret;
++	unsigned long len, max = 16384;
++	void *map = xmalloc(max);
++
++	len = 0;
++	while ((ret = gzf_read(fd, map + len, max - len)) > 0) {
++		len += ret;
++		if (len == max)
++			map = xrealloc(map, max *= 2);
++	}
++	if (ret < 0) {
++		error("%s: read error: %s\n", filename, strerror(errno));
++		return 1;
++	}
++
++	if (newname)
++		rename_module(filename, map, len, newname, oldname);
++
++	if (strip_modversion)
++		strip_section(filename, map, len, "__versions");
++	if (strip_vermagic)
++		clear_magic(filename, map, len);
++
++	if (verbose)
++		lprintf("insmod%s%s %s %s", newname ? " -o " : "",
++			newname ? newname : "", filename, optstring);
++
++	if (dry_run)
++		ret = 0;
++	else
++		ret = syscall(__NR_init_module, map, len, optstring);
++
++	free(optstring);
++	free(map);
++	return ret;
++}
++
+ /* Only use the numeric part of the version string? */
+ 
+ static void use_numeric_only(int major, int minor, char *str)
+@@ -1589,6 +1906,9 @@ void insmod_usage(void)
+ 	      "\n"
+ 	      "  module                Name of a loadable kernel module ('.o' can be omitted)\n"
+ 	      "  -f, --force           Force loading under wrong kernel version\n"
++	      "      --force-vermagic    Ignore version magic mismatch (2.6 kernels)\n"
++	      "      --force-modversion  Ignore symbol version mismatch (2.6 kernels)\n"
++	      "      --if-not-exists   Do not fail if the module is already loaded\n"
+ 	      "  -h, --help            Print this message\n"
+ 	      "  -k, --autoclean       Make module autoclean-able\n"
+ 	      "  -L, --lock            Prevent simultaneous loads of the same module\n"
+@@ -1625,6 +1945,10 @@ void insmod_usage(void)
+ #define INSMOD_MAIN insmod_main		/* Not common code */
+ #endif
+ 
++#define OPT_FORCE_VERMAGIC	1000
++#define OPT_FORCE_MODVERSION	1001
++#define OPT_IF_NOT_EXISTS	1002
++
+ int INSMOD_MAIN(int argc, char **argv)
+ {
+ 	int k_version;
+@@ -1632,11 +1956,15 @@ int INSMOD_MAIN(int argc, char **argv)
+ 	char k_strversion[STRVERSIONLEN];
+ 	struct option long_opts[] = {
+ 		{"force", 0, 0, 'f'},
++		{"force-vermagic", 0, 0, OPT_FORCE_VERMAGIC},
++		{"force-modversion", 0, 0, OPT_FORCE_MODVERSION},
++		{"if-not-exists", 0, 0, OPT_IF_NOT_EXISTS},
+ 		{"help", 0, 0, 'h'},
+ 		{"autoclean", 0, 0, 'k'},
+ 		{"lock", 0, 0, 'L'},
+ 		{"map", 0, 0, 'm'},
+ 		{"noload", 0, 0, 'n'},
++		{"dry-run", 0, 0, 'n'},
+ 		{"probe", 0, 0, 'p'},
+ 		{"poll", 0, 0, 'p'},	/* poll is deprecated, remove in 2.5 */
+ 		{"quiet", 0, 0, 'q'},
+@@ -1677,7 +2005,10 @@ int INSMOD_MAIN(int argc, char **argv)
+ 	int persist_parms = 0;	/* does module have persistent parms? */
+ 	int i;
+ 	int gpl_status, gpl;
++	int flag_if_not_exists = 0;
+ 
++	set_kernel_version(NULL);
++	
+ 	error_file = "insmod";
+ 
+ 	/* To handle repeated calls from combined modprobe */
+@@ -1689,6 +2020,17 @@ int INSMOD_MAIN(int argc, char **argv)
+ 		switch (o) {
+ 		case 'f':	/* force loading */
+ 			flag_force_load = 1;
++			flag_force_vermagic = 1;
++			flag_force_modversion = 1;
++			break;
++		case OPT_FORCE_VERMAGIC:
++			flag_force_vermagic = 1;
++			break;
++		case OPT_FORCE_MODVERSION:
++			flag_force_modversion = 1;
++			break;
++		case OPT_IF_NOT_EXISTS:
++			flag_if_not_exists = 1;
+ 			break;
+ 		case 'h':       /* Print the usage message. */
+ 			insmod_usage();
+@@ -1785,30 +2127,6 @@ int INSMOD_MAIN(int argc, char **argv)
+ 		}
+ 	}
+ 
+-	if (m_name == NULL) {
+-		size_t len;
+-		char *p;
+-
+-		if ((p = strrchr(filename, '/')) != NULL)
+-			p++;
+-		else
+-			p = filename;
+-		len = strlen(p);
+-		if (len > 2 && p[len - 2] == '.' && p[len - 1] == 'o')
+-			len -= 2;
+-		else if (len > 4 && p[len - 4] == '.' && p[len - 3] == 'm'
+-			 && p[len - 2] == 'o' && p[len - 1] == 'd')
+-			len -= 4;
+-#ifdef CONFIG_USE_ZLIB
+-		else if (len > 5 && !strcmp(p + len - 5, ".o.gz"))
+-			len -= 5;
+-#endif
+-
+-		m_name = xmalloc(len + 1);
+-		memcpy(m_name, p, len);
+-		m_name[len] = '\0';
+-	}
+-
+ 	/* Locate the file to be loaded.  */
+ 	if (!strchr(filename, '/') && !strchr(filename, '.')) {
+ 		char *tmp = search_module_path(filename);
+@@ -1830,6 +2148,35 @@ int INSMOD_MAIN(int argc, char **argv)
+ 	if (dolock)
+ 		flock(fp, LOCK_EX);
+ 
++	if (kernel_requires_new_utilities) {
++		long int ret;
++		char *oldname = get_module_name(filename);
++		char *options = gather_options(argv + optind);
++
++		to_underscores(oldname);
++		ret = insmod26(fp, options, filename, m_name, oldname,
++			       noload, flag_verbose,
++			       flag_force_vermagic, flag_force_modversion);
++		free(oldname);
++
++		if ((ret == -1) && (errno == EEXIST) && flag_if_not_exists) {
++			exit_status = 0;
++			goto out;
++		}
++
++		if (ret != 0) {
++			fprintf(stderr, "Error inserting '%s': %li %s\n",
++				filename, ret, moderror(errno));
++			exit_status = 1;
++		} else
++			exit_status = 0;
++
++		goto out;
++	}
++
++	if (m_name == NULL)
++		m_name = get_module_name(filename);
++
+ 	if (!get_kernel_info(K_SYMBOLS))
+ 		goto out;
+ 
+@@ -1841,6 +2188,10 @@ int INSMOD_MAIN(int argc, char **argv)
+ 
+ 	for (i = 0; !noload && i < n_module_stat; ++i) {
+ 		if (strcmp(module_stat[i].name, m_name) == 0) {
++			if (flag_if_not_exists) {
++				exit_status = 0;
++				goto out;
++			}
+ 			error("a module named %s already exists", m_name);
+ 			goto out;
+ 		}
+diff -upk.orig modutils-2.4.27.orig/insmod/lsmod.c modutils-2.4.27/insmod/lsmod.c
+--- modutils-2.4.27.orig/insmod/lsmod.c	2002-03-01 00:39:06 +0000
++++ modutils-2.4.27/insmod/lsmod.c	2005-01-10 18:11:41 +0000
+@@ -37,6 +37,7 @@
+ #ifdef COMBINE_lsmod
+ #define main lsmod_main
+ #endif
++extern int mit_lsmod_main(int argc, char **argv);
+ 
+ void lsmod_usage(void)
+ {
+@@ -62,6 +63,10 @@ int main(int argc, char **argv)
+ 	  {0, 0, 0, 0}
+ 	};
+ 
++	set_kernel_version(NULL);
++	if (kernel_requires_new_utilities)
++		return mit_lsmod_main(argc, argv);
++
+ 	error_file = "lsmod";
+ 
+ 	while ((i = getopt_long(argc, argv, "Vh",
+diff -upk.orig modutils-2.4.27.orig/insmod/modprobe.c modutils-2.4.27/insmod/modprobe.c
+--- modutils-2.4.27.orig/insmod/modprobe.c	2005-10-26 15:47:49 +0000
++++ modutils-2.4.27/insmod/modprobe.c	2005-10-26 15:48:13 +0000
+@@ -33,6 +33,9 @@
+ #include <limits.h>
+ #include <sys/param.h>
+ #include <sys/stat.h>
++#include <asm/unistd.h>
++#include <fcntl.h>
++#include <fnmatch.h>
+ #include "module.h"
+ #include "obj.h"
+ #include "modstat.h"
+@@ -107,11 +110,15 @@ static const char *stripo(const char *fn
+ 	len = strlen(fname);
+ 	if (len > 2 && !strcmp(fname + len - 2, ".o"))
+ 		len -= 2;
++	else if (len > 3 && !strcmp(fname + len - 3, ".ko"))
++		len -= 3;
+ 	else if (len > 4 && !strcmp(fname + len - 4, ".mod"))
+ 		len -= 4;
+ #ifdef CONFIG_USE_ZLIB
+ 	else if (len > 5 && !strcmp(fname + len - 5, ".o.gz"))
+ 		len -= 5;
++	else if (len > 6 && !strcmp(fname + len - 6, ".ko.gz"))
++		len -= 6;
+ #endif
+ 	else return fname;
+ 
+@@ -131,7 +138,7 @@ static GLOB_LIST *any_probe_list(const c
+ 	int i;
+ 
+ 	for (i = 0; probe_list && probe_list[i].name; ++i) {
+-		if (strcmp(probe_list[i].name, name) == 0)
++		if (modnamecmp(probe_list[i].name, name) == 0)
+ 			return probe_list[i].opts;
+ 	}
+ 	return NULL;
+@@ -146,7 +153,7 @@ static GLOB_LIST *any_probeall_list(cons
+ 	int i;
+ 
+ 	for (i = 0; probeall_list && probeall_list[i].name; ++i) {
+-		if (strcmp(probeall_list[i].name, name) == 0)
++		if (modnamecmp(probeall_list[i].name, name) == 0)
+ 			return probeall_list[i].opts;
+ 	}
+ 	return NULL;
+@@ -161,14 +168,18 @@ static OPT_LIST *any_options(const char 
+ 	const char *modname;
+ 	int i;
+ 
+-	if (*mod == '/')
++	if (*mod == '/') {
+ 		modname = mod;
+-	else
++		for (i = 0; opt_list && opt_list[i].name; ++i) {
++			if (strcmp(opt_list[i].name, modname) == 0)
++				return opt_list+i;
++		}
++	} else {
+ 		modname = stripo(mod);
+-
+-	for (i = 0; opt_list && opt_list[i].name; ++i) {
+-		if (strcmp(opt_list[i].name, modname) == 0)
+-			return opt_list+i;
++		for (i = 0; opt_list && opt_list[i].name; ++i) {
++			if (modnamecmp(opt_list[i].name, modname) == 0)
++				return opt_list+i;
++		}
+ 	}
+ 	return NULL;
+ }
+@@ -191,15 +202,18 @@ static const char *any_alias(const char 
+ 	 */
+ 	/* For devfs */
+ 	if (*mod != '/') {
+-		const char *modname = stripo(mod);
++		char *modname = to_underscores(xstrdup(stripo(mod)));
+ 
+ 		for (i = 0; aliases && aliases[i].name; i++) {
+-			if (strcmp(aliases[i].name, modname) == 0) {
+-				if (aliases[i].opts && aliases[i].opts->pathc)
++			if (fnmatch(aliases[i].name, modname, 0) == 0) {
++				if (aliases[i].opts && aliases[i].opts->pathc) {
++					free(modname);
+ 					return aliases[i].opts->pathv[0];
++				}
+ 				break;
+ 			}
+ 		}
++		free(modname);
+ 		return NULL;
+ 	}
+ 	/* else maybe devfs, check full name (shell-globbing aliases allowed) */
+@@ -243,7 +257,7 @@ static NODE *lookup_key(NODE * nod, cons
+ {
+ 	if (nod)
+ 		do {
+-			if (nod->key && strcmp(str, nod->key) == 0)
++			if (nod->key && modnamecmp(str, nod->key) == 0)
+ 				break;
+ 		} while ((nod = nod->next) != (NODE *)0);
+ 
+@@ -259,14 +273,14 @@ static GLOB_LIST *extradeps(OPT_LIST *li
+ 		if (path) {
+ 			name = stripo(path);
+ 			for (me = list; me->name; ++me) {
+-				if (strcmp(me->name, name) == 0)
++				if (modnamecmp(me->name, name) == 0)
+ 					return me->opts;
+ 			}
+ 		}
+ 		/* else */
+ 		name = stripo(mod);
+ 		for (me = list; me->name; ++me) {
+-			if (strcmp(me->name, name) == 0)
++			if (modnamecmp(me->name, name) == 0)
+ 				return me->opts;
+ 		}
+ 	}
+@@ -292,6 +306,31 @@ static LINK *linkit(int last, void *item
+ 	return me;
+ }
+ 
++char *find_from_exported(enum gen_file_enum filetype, const char *name)
++{
++	char *aname = to_underscores(xstrdup(name));
++	FILE *fin = fopen(gen_file[filetype].name, "r");
++	if (fin) {
++		char *line;
++		while ((line = getline_wrapped(fin, NULL)) != NULL) {
++			char *entry = strtok(line, " \t\n");
++			if (strcmp(entry, "alias") == 0) {
++				entry = to_underscores(strtok(NULL, " \t\n"));
++				if (entry && fnmatch(entry, aname, 0) == 0) {
++					entry = strtok(NULL, " \t\n");
++					fclose(fin);
++					free(aname);
++					return entry;
++				}
++			}
++			free(line);
++		}
++		fclose(fin);
++	}
++	free(aname);
++	return NULL;
++}
++
+ /* Forward definition for probe[all] recusrsion.  */
+ static int modprobe_fromlist(int argc, char *argv[], char *type, int loadall);
+ 
+@@ -303,6 +342,7 @@ static DESC *build_desc(const char *name
+ 	NODE *nod = NULL;
+ 	const char *p;
+ 	int aliases = 0, ret = 0;
++	int used_alias_files = 0;
+ 
+ 	if (objname && (nod = lookup(in_depfile, objname)) == NULL)
+ 		return NULL;
+@@ -314,6 +354,7 @@ static DESC *build_desc(const char *name
+ 	desc->nod = objname ? nod : NULL;
+ 	desc->autoclean = 1;
+ 
++restart:
+ 	for (p = name; p; p = allow_alias ? any_alias(p) : NULL) {
+ 		if (++aliases > 1000) {		/* Arbitrary limit on alias loop */
+ 			allow_alias = 0;
+@@ -344,8 +385,6 @@ static DESC *build_desc(const char *name
+ 			}
+ 		}
+ 	}
+-	if (!desc->kname)
+-		desc->kname = desc->objkey;
+ 
+ 	if (!desc->nod && desc->objkey)
+ 		desc->nod = lookup_key(in_depfile, desc->objkey);
+@@ -359,7 +398,7 @@ static DESC *build_desc(const char *name
+ 	 */
+ 	if (!desc->nod &&			/* no object */
+ 	     desc->objkey &&			/* not "off" */
+-	     strcmp(name, desc->objkey)) {	/* different name, aliased */
++	     modnamecmp(name, desc->objkey)) {	/* different name, aliased */
+ 		if ((g = any_probe_list(desc->objkey)))
+ 			ret = modprobe_fromlist(g->pathc, g->pathv, NULL, 0);
+ 		else if ((g = any_probeall_list(desc->objkey)))
+@@ -368,6 +407,33 @@ static DESC *build_desc(const char *name
+ 			desc->objkey = NULL;	/* treat as "off", modprobe_fromlist did the load */
+ 	}
+ 
++	/* If we still don't have a valid module, for 2.6.x try searching in
++	 * modules.alias and modules.symbols.  This search is expensive,
++	 * therefore it is performed with special code instead of just
++	 * including these files in the configuration.
++	 *
++	 * If a match is found, restart alias processing from the beginning
++	 * with the new name (so that aliasing the real module name to "off"
++	 * will work).
++	 *
++	 * Recursive lookups in alias files are not allowed.
++	 */
++	if (allow_alias &&			/* aliases are permitted */
++	    !used_alias_files &&		/* try this only once */
++	    !desc->nod &&			/* no object */
++	    desc->objkey) {			/* not "off" */
++		if (strncmp(desc->objkey, "symbol:", 7) == 0)
++			name = find_from_exported(GEN_SYMBOLSFILE, desc->objkey);
++		else
++			name = find_from_exported(GEN_ALIASFILE, desc->objkey);
++		used_alias_files = 1;
++		if (name)
++			goto restart;
++	}
++
++	if (!desc->kname)
++		desc->kname = desc->objkey;
++
+ 	return desc;
+ }
+ 
+@@ -405,7 +471,7 @@ static int build_stack(LINK **stack, con
+ 	desc->mode = mode;
+ 
+ 	/* Avoid infinite loops with reverse references ("above") */
+-	if (rev && strcmp(rev->kname, desc->kname) == 0)
++	if (rev && modnamecmp(rev->kname, desc->kname) == 0)
+ 		return 0;
+ 
+ 	if (++bstackrecurs > BSTACKRECMAX) {
+@@ -428,7 +494,7 @@ static int build_stack(LINK **stack, con
+ 				LINK *up;
+ 				/* Already there? */
+ 				for (up = *stack; up; up = up->next)
+-					if (strcmp(g->pathv[i], up->item.d->kname) == 0)
++					if (modnamecmp(g->pathv[i], up->item.d->kname) == 0)
+ 						break;
+ 				if (up == NULL) { /* Not already there */
+ 					r = build_stack(stack, g->pathv[i],
+@@ -445,7 +511,7 @@ static int build_stack(LINK **stack, con
+ 	}
+ 
+ 	for (lp = *stack; lp; prev = lp, lp = lp->next) {
+-		if (strcmp(desc->kname, lp->item.d->kname) == 0) {
++		if (modnamecmp(desc->kname, lp->item.d->kname) == 0) {
+ 			/* Avoid infinite loops ("above") */
+ 			if (rev && rev == lp->item.d) {
+ 				bstackrecurs--;
+@@ -573,9 +639,17 @@ static GLOB_LIST *config_locate(const ch
+ 	snprintf(match_o, sizeof(match_o), "%s.o", match);
+ 	g = config_lstmod(match_o, type, 0);
+ 	if (g == NULL || g->pathc == 0) {
++		snprintf(match_o, sizeof(match_o), "%s.ko", match);
++		g = config_lstmod(match_o, type, 0);
++	}
++	if (g == NULL || g->pathc == 0) {
+ #ifdef CONFIG_USE_ZLIB
+ 		snprintf(match_o, sizeof(match_o), "%s.o.gz", match);
+ 		g = config_lstmod(match_o, type, 0);
++		if (g == NULL || g->pathc == 0) {
++			snprintf(match_o, sizeof(match_o), "%s.ko.gz", match);
++			g = config_lstmod(match_o, type, 0);
++		}
+ 		if (g == NULL || g->pathc == 0)
+ #endif
+ 		{
+@@ -613,7 +687,7 @@ static GLOB_LIST *config_locate(const ch
+ 					s = g->pathv[j];
+ 				else
+ 					++s;
+-				if (strcmp(s, p) == 0) {
++				if (modnamecmp(s, p) == 0) {
+ 					free(g->pathv[j]);
+ 					g->pathv[j] = NULL;
+ 				}
+@@ -719,7 +793,7 @@ static const char *exec_cmd(int when, co
+ 	for (i = 0; i < nexecs; i++) {
+ 		if (execs[i].when != when)
+ 			continue;
+-		if (strcmp(execs[i].module, modname) == 0)
++		if (modnamecmp(execs[i].module, modname) == 0)
+ 			return execs[i].cmd;
+ 	}
+ 	return NULL;
+@@ -848,6 +922,21 @@ static int read_depfile(void)
+ 	return ret;
+ }
+ 
++static int do_delete_module(const char *name)
++{
++	int ret;
++	char *modname;
++
++	if (!kernel_requires_new_utilities)
++		return delete_module(name);
++
++	modname = to_underscores(xstrdup(name));
++	ret = syscall(__NR_delete_module, modname, O_EXCL);
++	free(modname);
++
++	return ret;
++}
++
+ static int call_rmmod(const char *modname, DESC *desc, int complain)
+ {
+ 	struct module_stat *m;
+@@ -877,7 +966,7 @@ static int call_rmmod(const char *modnam
+ 		return -1;
+ 
+ 	for (m = module_stat, i = 0; i < n_module_stat; ++i, ++m) {
+-		if (strcmp(m->name, kname) == 0) {
++		if (modnamecmp(m->name, kname) == 0) {
+ 			if (m->nrefs != 0 || m->usecount != 0) {
+ 				errno = EBUSY;
+ 				return -1; /* Busy */
+@@ -940,8 +1029,8 @@ static int call_rmmod(const char *modnam
+ 	}
+ 
+ 	if (!used_ex && ret == 0) {
+-		verbose("# delete %s\n", kname);
+-		if (runit && (ret = delete_module(kname)) < 0)
++		verbose("# delete %s (%s)\n", m->name, kname);
++		if (runit && (ret = do_delete_module(m->name)) < 0)
+ 			if (!quiet && complain)
+ 				perror(kname);
+ 	}
+@@ -1031,6 +1120,7 @@ static int insmod(DESC *desc, LINK **new
+ 
+ 		/* Locking is _always_ done in insmod now: -L is redundant */
+ 		my_argv[my_argc++] = "/sbin/insmod";
++		my_argv[my_argc++] = "--if-not-exists";
+ 		if (flag_autoclean && desc->autoclean)
+ 			my_argv[my_argc++] = "-k";
+ 
+@@ -1274,7 +1364,7 @@ static int unload(const char *name)
+ 
+ 		if (!lookup_key(in_kernel, desc->kname))
+ 			continue; /* Not loaded */
+-		want_del = (strcmp(mod, desc->kname) == 0);
++		want_del = (modnamecmp(mod, desc->kname) == 0);
+ 		if (call_rmmod(desc->kname, desc, want_del) && want_del)
+ 			ret = -1;
+ 	}
+@@ -1314,7 +1404,7 @@ static int probe_stack(const char *name,
+ 		const char *this_name = desc->name->item.s;
+ 		char **these_options = NULL;
+ 
+-		if (strcmp(name, this_name) == 0) {
++		if (modnamecmp(name, this_name) == 0) {
+ 			*asked_for = desc;
+ 			if (status)
+ 				break;
+@@ -1382,7 +1472,9 @@ static int modprobe_fromlist(int argc, c
+ 		else
+ 			options = NULL;
+ 
+-		if (type || strpbrk(name, SHELL_META)) {
++		/* 2.6: Don't try to search for a module file if the pattern
++		 * contains ':' */
++		if (type || (strpbrk(name, SHELL_META) && !strchr(name, ':'))) {
+ 			int alt = 0;
+ 
+ 			g = config_locate(name, type);
+@@ -1462,6 +1554,22 @@ static void modprobe_printlist(char *pat
+ 			printf("%s\n", g->pathv[i]);
+ }
+ 
++static void normalize_config_keys(void)
++{
++	int i;
++
++	if (aliases) {
++		for (i = 0; aliases[i].name != NULL; ++i) {
++			char *pattern = aliases[i].name;
++			if (!pattern)
++				continue;
++			if (pattern[0] == '/')
++				continue; /* do not convert devfs aliases */
++			to_underscores(pattern);
++		}
++	}
++}
++
+ static void modprobe_nothing(char *str)
+ {
+ 	error("Nothing to %s ???\n"
+@@ -1676,8 +1784,13 @@ int main(int argc, char *argv[])
+ 	}
+ 	/* else */
+ 
++	set_kernel_version(kernel_release);
++
+ 	if (config_read(1, kernel_release, base_dir, conf_file) == -1)
+ 		return -1;
++
++	normalize_config_keys();
++
+ 	/* else */
+ 	new_NODE("null", "null", &in_depfile);
+ 	if (read_depfile() == -1 && !showconfig)
+@@ -1737,6 +1850,13 @@ int main(int argc, char *argv[])
+ 			struct module_stat *m;
+ 			int i;
+ 
++			/* 2.6 does not support autoclean */
++			if (kernel_requires_new_utilities) {
++				if (runit)
++					snap_shot_log("autoclean not supported for 2.6.x kernels");
++				return 1;
++			}
++
+ 			if (!get_kernel_info(K_INFO | K_REFS)) {
+ 				if (runit)
+ 					snap_shot_log("get_kernel_info failed");
+diff -upk.orig modutils-2.4.27.orig/insmod/rmmod.c modutils-2.4.27/insmod/rmmod.c
+--- modutils-2.4.27.orig/insmod/rmmod.c	2002-07-30 08:00:17 +0000
++++ modutils-2.4.27/insmod/rmmod.c	2005-01-10 18:11:41 +0000
+@@ -50,6 +50,7 @@
+ #ifdef COMBINE_rmmod
+ #define main rmmod_main
+ #endif
++extern int mit_rmmod_main(int argc, char **argv);
+ 
+ struct module_parm {
+ 	struct obj_symbol *sym;
+@@ -609,6 +610,10 @@ int main(int argc, char **argv)
+ 
+ 	error_file = "rmmod";
+ 
++	set_kernel_version(NULL);
++	if (kernel_requires_new_utilities)
++		return mit_rmmod_main(argc, argv);
++
+ 	/*
+ 	 * Collect the loaded modules before deletion.  delete_module()
+ 	 * gives no indication that any modules were deleted so we have to
+diff -upk.orig modutils-2.4.27.orig/module-init-tools/Makefile.am modutils-2.4.27/module-init-tools/Makefile.am
+--- modutils-2.4.27.orig/module-init-tools/Makefile.am	2004-07-12 06:11:46 +0000
++++ modutils-2.4.27/module-init-tools/Makefile.am	2005-01-10 18:11:41 +0000
+@@ -67,6 +67,8 @@ tarball: $(DIST_DIR)/module-init-tools-$
+ $(DIST_DIR)/module-init-tools-$(VERSION).tar.gz: dist
+ 	mv module-init-tools-$(VERSION).tar.gz $@
+ 
++combined: $(OBJECTS)
++
+ srpm: $(DIST_DIR)/module-init-tools-$(VERSION).tar.gz
+ 	ln -sf $(DIST_DIR)/module-init-tools-$(VERSION).tar.gz /usr/src/rpm/SOURCES/
+ 	set -e; RELEASE=`grep '^Release:' /usr/src/rpm/SPECS/modutils.spec | awk '{ print $$2 }'`; \
+diff -upk.orig modutils-2.4.27.orig/module-init-tools/Makefile.in modutils-2.4.27/module-init-tools/Makefile.in
+--- modutils-2.4.27.orig/module-init-tools/Makefile.in	2004-11-15 00:59:48 +0000
++++ modutils-2.4.27/module-init-tools/Makefile.in	2005-01-10 18:11:41 +0000
+@@ -199,6 +199,7 @@ DIST_COMMON = README AUTHORS COPYING Cha
+ 	Makefile.in NEWS TODO aclocal.m4 config.guess config.sub \
+ 	configure configure.in depcomp install-sh missing mkinstalldirs
+ SOURCES = $(depmod_SOURCES) $(EXTRA_depmod_SOURCES) $(insmod_SOURCES) $(EXTRA_insmod_SOURCES) $(insmod_static_SOURCES) $(EXTRA_insmod_static_SOURCES) $(lsmod_SOURCES) $(EXTRA_lsmod_SOURCES) $(modinfo_SOURCES) $(EXTRA_modinfo_SOURCES) $(modprobe_SOURCES) $(EXTRA_modprobe_SOURCES) $(rmmod_SOURCES) $(EXTRA_rmmod_SOURCES)
++OBJECTS = $(depmod_OBJECTS) $(insmod_OBJECTS) $(lsmod_OBJECTS) $(modinfo_OBJECTS) $(modprobe_OBJECTS) $(rmmod_OBJECTS)
+ 
+ all: all-am
+ 
+@@ -728,6 +729,8 @@ tarball: $(DIST_DIR)/module-init-tools-$
+ $(DIST_DIR)/module-init-tools-$(VERSION).tar.gz: dist
+ 	mv module-init-tools-$(VERSION).tar.gz $@
+ 
++combined: $(OBJECTS)
++
+ srpm: $(DIST_DIR)/module-init-tools-$(VERSION).tar.gz
+ 	ln -sf $(DIST_DIR)/module-init-tools-$(VERSION).tar.gz /usr/src/rpm/SOURCES/
+ 	set -e; RELEASE=`grep '^Release:' /usr/src/rpm/SPECS/modutils.spec | awk '{ print $$2 }'`; \
+diff -upk.orig modutils-2.4.27.orig/module-init-tools/depmod.c modutils-2.4.27/module-init-tools/depmod.c
+--- modutils-2.4.27.orig/module-init-tools/depmod.c	2005-10-26 15:47:50 +0000
++++ modutils-2.4.27/module-init-tools/depmod.c	2005-10-26 15:48:13 +0000
+@@ -34,6 +34,7 @@
+ 
+ static int verbose;
+ static unsigned int skipchars;
++static char *config_file = "/etc/modules.conf";
+ 
+ void fatal(const char *fmt, ...)
+ {
+@@ -194,6 +195,8 @@ static int is_version_number(const char 
+ 	return (sscanf(version, "%u.%u.%u", &dummy, &dummy, &dummy) == 3);
+ }
+ 
++#ifndef _COMBINED_MODUTILS_
++
+ static int old_module_version(const char *version)
+ {
+ 	/* Expect three part version. */
+@@ -239,6 +242,8 @@ static void exec_old_depmod(char *argv[]
+ 	exit(2);
+ }
+ 
++#endif
++
+ static void print_usage(const char *name)
+ {
+ 	fprintf(stderr,
+@@ -733,6 +738,7 @@ static int any_modules_newer(const char 
+ static int depfile_out_of_date(const char *dirname)
+ {
+ 	struct stat st;
++	struct stat conf_st;
+ 	char depfile[strlen(dirname) + 1 + strlen(depfiles[0].name) + 1];
+ 
+ 	sprintf(depfile, "%s/%s", dirname, depfiles[0].name);
+@@ -740,10 +746,19 @@ static int depfile_out_of_date(const cha
+ 	if (stat(depfile, &st) != 0)
+ 		return 1;
+ 
++	if (stat(config_file, &conf_st) != 0)
++		return 1;
++	if (conf_st.st_mtime > st.st_mtime)
++		return 1;
++
+ 	return any_modules_newer(dirname, st.st_mtime);
+ }
+ 
++#ifndef _COMBINED_MODUTILS_
+ int main(int argc, char *argv[])
++#else
++int mit_depmod_main(int argc, char *argv[])
++#endif
+ {
+ 	int opt, all = 0, maybe_all = 0, doing_stdout = 0;
+ 	char *basedir = "", *dirname, *version, *badopt = NULL,
+@@ -779,9 +794,11 @@ int main(int argc, char *argv[])
+ 		case 'u':
+ 		case 'q':
+ 		case 'r':
+-		case 'C':
+ 			/* Ignored. */
+ 			break;
++		case 'C':
++			config_file = optarg;
++			break;
+ 		case 'h':
+ 			print_usage(argv[0]);
+ 			exit(0);
+@@ -813,9 +830,11 @@ int main(int argc, char *argv[])
+ 		version = strdup(buf.release);
+ 	}
+ 
++#ifndef _COMBINED_MODUTILS_
+ 	/* Run old version if required. */
+ 	if (old_module_version(version))
+ 		exec_old_depmod(argv);
++#endif
+ 
+ 	if (badopt) {
+ 		fprintf(stderr, "%s: malformed/unrecognized option '%s'\n",
+diff -upk.orig modutils-2.4.27.orig/module-init-tools/insmod.c modutils-2.4.27/module-init-tools/insmod.c
+--- modutils-2.4.27.orig/module-init-tools/insmod.c	2004-03-31 01:41:46 +0000
++++ modutils-2.4.27/module-init-tools/insmod.c	2005-01-10 18:11:41 +0000
+@@ -28,7 +28,9 @@
+ #include <errno.h>
+ #include <asm/unistd.h>
+ 
++#ifndef _COMBINED_MODUTILS_
+ #include "backwards_compat.c"
++#endif
+ 
+ #define streq(a,b) (strcmp((a),(b)) == 0)
+ 
+@@ -85,7 +87,11 @@ static void *grab_file(const char *filen
+ 	return buffer;
+ }
+ 
++#ifndef _COMBINED_MODUTILS_
+ int main(int argc, char *argv[])
++#else
++int mit_insmod_main(int argc, char *argv[])
++#endif
+ {
+ 	unsigned int i;
+ 	long int ret;
+@@ -93,20 +99,25 @@ int main(int argc, char *argv[])
+ 	void *file;
+ 	char *filename, *options = strdup("");
+ 	char *progname = argv[0];
++	int err;
+ 
++#ifndef _COMBINED_MODUTILS_
+ 	if (strstr(argv[0], "insmod.static"))
+ 		try_old_version("insmod.static", argv);
+ 	else
+ 		try_old_version("insmod", argv);
++#endif
+ 
+ 	if (argv[1] && (streq(argv[1], "--version") || streq(argv[1], "-V"))) {
+ 		puts(PACKAGE " version " VERSION);
+-		exit(0);
++		return 0;
+ 	}
+ 
+ 	/* Ignore old options, for backwards compat. */
+ 	while (argv[1] && (streq(argv[1], "-p")
+ 			   || streq(argv[1], "-s")
++			   || streq(argv[1], "-k")
++			   || streq(argv[1], "-q")
+ 			   || streq(argv[1], "-f"))) {
+ 		argv++;
+ 		argc--;
+@@ -128,14 +139,17 @@ int main(int argc, char *argv[])
+ 	if (!file) {
+ 		fprintf(stderr, "insmod: can't read '%s': %s\n",
+ 			filename, strerror(errno));
+-		exit(1);
++		return 1;
+ 	}
+ 
+ 	ret = init_module(file, len, options);
++	err = errno;
++	free(file);
++	free(options);
+ 	if (ret != 0) {
+ 		fprintf(stderr, "insmod: error inserting '%s': %li %s\n",
+ 			filename, ret, moderror(errno));
+-		exit(1);
++		return 1;
+ 	}
+-	exit(0);
++	return 0;
+ }
+diff -upk.orig modutils-2.4.27.orig/module-init-tools/lsmod.c modutils-2.4.27/module-init-tools/lsmod.c
+--- modutils-2.4.27.orig/module-init-tools/lsmod.c	2003-01-30 01:23:29 +0000
++++ modutils-2.4.27/module-init-tools/lsmod.c	2005-01-10 18:11:41 +0000
+@@ -27,7 +27,9 @@
+ #include <ctype.h>
+ #include <asm/unistd.h>
+ 
++#ifndef _COMBINED_MODUTILS_
+ #include "backwards_compat.c"
++#endif
+ 
+ static void print_usage(const char *progname)
+ {
+@@ -35,12 +37,18 @@ static void print_usage(const char *prog
+ 	exit(1);
+ }
+ 
++#ifndef _COMBINED_MODUTILS_
+ int main(int argc, char *argv[])
++#else
++int mit_lsmod_main(int argc, char *argv[])
++#endif
+ {
+ 	char line[4096];
+ 	FILE *file;
+-
++ 
++#ifndef _COMBINED_MODUTILS_
+ 	try_old_version("lsmod", argv);
++#endif
+ 
+ 	if (argc != 1)
+ 		print_usage("lsmod");
+diff -upk.orig modutils-2.4.27.orig/module-init-tools/modinfo.c modutils-2.4.27/module-init-tools/modinfo.c
+--- modutils-2.4.27.orig/module-init-tools/modinfo.c	2005-10-26 15:47:50 +0000
++++ modutils-2.4.27/module-init-tools/modinfo.c	2005-10-26 15:48:50 +0000
+@@ -14,7 +14,9 @@
+ #include <sys/utsname.h>
+ #include <sys/mman.h>
+ #include "zlibsupport.h"
++#ifndef _COMBINED_MODUTILS_
+ #include "backwards_compat.c"
++#endif
+ 
+ #define streq(a,b) (strcmp((a),(b)) == 0)
+ 
+@@ -327,6 +329,7 @@ static struct option options[] =
+ 	{0, 0, 0, 0}
+ };
+ 
++#if 0
+ /* - and _ are equivalent, and expect suffix. */
+ static int name_matches(const char *line, const char *end, const char *modname)
+ {
+@@ -374,12 +377,13 @@ static char *next_line(char *p, const ch
+ 		return eol + 1;
+ 	return (char *)end + 1;
+ }
++#endif
++
++extern char *search_module_path(const char *name);
+ 
+ static void *grab_module(const char *name, unsigned long *size, char**filename)
+ {
+ 	char *data;
+-	struct utsname buf;
+-	char *depname, *p;
+ 
+ 	data = grab_file(name, size);
+ 	if (data) {
+@@ -392,35 +396,17 @@ static void *grab_module(const char *nam
+ 		return NULL;
+ 	}
+ 
+-	/* Search for it in modules.dep. */
+-	uname(&buf);
+-	asprintf(&depname, "%s/%s/modules.dep", MODULE_DIR, buf.release);
+-	data = grab_file(depname, size);
+-	if (!data) {
+-		fprintf(stderr, "modinfo: could not open %s\n", depname);
+-		free(depname);
++	*filename = search_module_path(name);
++	if (*filename == NULL) {
++		fprintf(stderr, "modinfo: %s: no module by that name found\n",
++			name);
+ 		return NULL;
+ 	}
+-	free(depname);
+-
+-	for (p = data; p < data + *size; p = next_line(p, data + *size)) {
+-		if (name_matches(p, data + *size, name)) {
+-			int namelen = strcspn(p, ":");
+-			*filename = malloc(namelen + 1);
+-			memcpy(*filename, p, namelen);
+-			(*filename)[namelen] = '\0';
+-			release_file(data, *size);
+-			data = grab_file(*filename, size);
+-			if (!data)
+-				fprintf(stderr,
+-					"modinfo: could not open %s: %s\n",
+-					*filename, strerror(errno));
+-			return data;
+-		}
+-	}
+-	release_file(data, *size);
+-	fprintf(stderr, "modinfo: could not find module %s\n", name);
+-	return NULL;
++	data = grab_file(*filename, size);
++	if (!data)
++		fprintf(stderr, "modinfo: could not open %s: %s\n",
++			*filename, strerror(errno));
++	return data;
+ }
+ 
+ static void usage(const char *name)
+@@ -441,8 +427,10 @@ int main(int argc, char *argv[])
+ 	unsigned long infosize;
+ 	int opt, ret = 0;
+ 
++#ifndef _COMBINED_MODUTILS_
+ 	if (!getenv("NEW_MODINFO"))
+ 		try_old_version("modinfo", argv);
++#endif
+ 
+ 	endian_test.s = 1;
+ 	if (endian_test.c[1] == 1) my_endian = ELFDATA2MSB;
+diff -upk.orig modutils-2.4.27.orig/module-init-tools/modprobe.c modutils-2.4.27/module-init-tools/modprobe.c
+--- modutils-2.4.27.orig/module-init-tools/modprobe.c	2004-09-30 10:16:19 +0000
++++ modutils-2.4.27/module-init-tools/modprobe.c	2005-01-10 18:11:41 +0000
+@@ -44,7 +44,10 @@
+ 
+ #include "zlibsupport.h"
+ #include "list.h"
++
++#ifndef _COMBINED_MODUTILS_
+ #include "backwards_compat.c"
++#endif
+ 
+ extern long init_module(void *, unsigned long, const char *);
+ extern long delete_module(const char *, unsigned int);
+@@ -1226,7 +1229,11 @@ static int is_devfs_call(char *argv[])
+ 	return 0;
+ }
+ 
++#ifndef _COMBINED_MODUTILS_
+ int main(int argc, char *argv[])
++#else
++int mit_modprobe_main(int argc, char *argv[])
++#endif
+ {
+ 	struct utsname buf;
+ 	struct stat statbuf;
+@@ -1254,6 +1261,7 @@ int main(int argc, char *argv[])
+ 	/* Prepend options from environment. */
+ 	argv = merge_args(getenv("MODPROBE_OPTIONS"), argv, &argc);
+ 
++#ifndef _COMBINED_MODUTILS_
+ 	/* --set-version overrides version, and disables backwards compat. */
+ 	for (opt = 1; opt < argc; opt++)
+ 		if (strncmp(argv[opt],"--set-version",strlen("--set-version"))
+@@ -1262,6 +1270,7 @@ int main(int argc, char *argv[])
+ 
+ 	if (opt == argc)
+ 		try_old_version("modprobe", argv);
++#endif
+ 
+ 	uname(&buf);
+ 	while ((opt = getopt_long(argc, argv, "vVC:o:rknqQsclt:aif", options, NULL)) != -1){
+diff -upk.orig modutils-2.4.27.orig/module-init-tools/rmmod.c modutils-2.4.27/module-init-tools/rmmod.c
+--- modutils-2.4.27.orig/module-init-tools/rmmod.c	2004-02-25 07:10:51 +0000
++++ modutils-2.4.27/module-init-tools/rmmod.c	2005-01-10 18:11:41 +0000
+@@ -27,7 +27,9 @@
+ #include <getopt.h>
+ #include <syslog.h>
+ 
++#ifndef _COMBINED_MODUTILS_
+ #include "backwards_compat.c"
++#endif
+ 
+ extern long delete_module(const char *, unsigned int);
+ 
+@@ -221,14 +223,20 @@ static void print_usage(const char *prog
+ 	exit(1);
+ }
+ 
++#ifndef _COMBINED_MODUTILS_
+ int main(int argc, char *argv[])
++#else
++int mit_rmmod_main(int argc, char *argv[])
++#endif
+ {
+ 	/* O_EXCL so kernels can spot old rmmod versions */
+ 	unsigned int flags = O_NONBLOCK|O_EXCL;
+ 	int i, opt, all = 0, log = 0, verbose = 0;
+ 	int ret, err;
+ 
++#ifndef _COMBINED_MODUTILS_
+ 	try_old_version("rmmod", argv);
++#endif
+ 
+ 	while ((opt = getopt_long(argc, argv,
+ 			"afh?swvV", options, NULL)) != EOF) {
+diff -upk.orig modutils-2.4.27.orig/util/alias.h modutils-2.4.27/util/alias.h
+--- modutils-2.4.27.orig/util/alias.h	2005-10-26 15:47:49 +0000
++++ modutils-2.4.27/util/alias.h	2005-10-26 15:48:13 +0000
+@@ -334,6 +334,10 @@ char *prune[] =
+ 	"modules.parportmap",
+ 	"modules.ieee1394map",
+ 	"modules.pnpbiosmap",
++	"modules.ccwmap",	/* 2.6 */
++	"modules.inputmap",	/* 2.6 */
++	"modules.alias",	/* 2.6 */
++	"modules.symbols",	/* 2.6 */
+ 	"System.map",
+ 	".config",
+ 	"Kerntypes",
+diff -upk.orig modutils-2.4.27.orig/util/config.c modutils-2.4.27/util/config.c
+--- modutils-2.4.27.orig/util/config.c	2003-10-26 11:28:14 +0000
++++ modutils-2.4.27/util/config.c	2005-10-26 15:48:13 +0000
+@@ -111,14 +111,18 @@ int quick = 0;			/* Option -A */
+ 
+ /* The initialization order must match the gen_file_enum order in config.h */
+ struct gen_files gen_file[] = {
+-	{"generic_string", NULL, 0},
+-	{"pcimap", NULL, 0},
+-	{"isapnpmap", NULL, 0},
+-	{"usbmap", NULL, 0},
+-	{"parportmap", NULL, 0},
+-	{"ieee1394map", NULL, 0},
+-	{"pnpbiosmap", NULL, 0},
+-	{"dep", NULL, 0},
++	{"generic_string", NULL, 0, GEN_FILE_2_4},
++	{"pcimap", NULL, 0, GEN_FILE_ALL},
++	{"isapnpmap", NULL, 0, GEN_FILE_ALL},
++	{"usbmap", NULL, 0, GEN_FILE_ALL},
++	{"parportmap", NULL, 0, GEN_FILE_2_4},
++	{"ieee1394map", NULL, 0, GEN_FILE_ALL},
++	{"pnpbiosmap", NULL, 0, GEN_FILE_2_4},
++	{"dep", NULL, 0, GEN_FILE_ALL},
++	{"alias", NULL, 0, GEN_FILE_2_6},
++	{"symbols", NULL, 0, GEN_FILE_2_6},
++	{"ccwmap", NULL, 0, GEN_FILE_2_6},
++	{"inputmap", NULL, 0, GEN_FILE_2_6},
+ };
+ 
+ const int gen_file_count = sizeof(gen_file)/sizeof(gen_file[0]);
+@@ -151,6 +155,8 @@ static int check_update (const char *fil
+ 	if (!S_ISREG(sb->st_mode))
+ 		return 0;
+ 	for (i = 0; i < gen_file_count; ++i) {
++		if (gen_file[i].mtime == (time_t)(-1))
++			continue;
+ 		if (sb->st_mtime > gen_file[i].mtime)
+ 			break;
+ 	}
+@@ -159,15 +165,27 @@ static int check_update (const char *fil
+ 
+ 	if (len > 2 && !strcmp(file + len - 2, ".o"))
+ 		return 1;
++	else if (len > 3 && !strcmp(file + len - 3, ".ko"))
++		return 1;
+ 	else if (len > 4 && !strcmp(file + len - 4, ".mod"))
+ 		return 1;
+ #ifdef CONFIG_USE_ZLIB
+ 	else if (len > 5 && !strcmp(file + len - 5, ".o.gz"))
+ 		return 1;
++	else if (len > 6 && !strcmp(file + len - 6, ".ko.gz"))
++		return 1;
+ #endif
+ 	return 0;
+ }
+ 
++static int gen_file_needed (int index)
++{
++	unsigned flag;
++	
++	flag = kernel_requires_new_utilities ? GEN_FILE_2_6 : GEN_FILE_2_4;
++	return (gen_file[index].flags & flag) != 0;
++}
++
+ static int need_update (const char *force_ver, const char *base_dir)
+ {
+ 	struct stat tmp;
+@@ -182,6 +200,9 @@ static int need_update (const char *forc
+ 		return 1;
+ 
+ 	for (i = 0; i < gen_file_count; ++i) {
++		gen_file[i].mtime = (time_t)(-1);
++		if (!gen_file_needed(i))
++			continue;
+ 		if (stat(gen_file[i].name, &tmp))
+ 			return 1;	/* No dependency file yet, so we need to build it. */
+ 		gen_file[i].mtime = tmp.st_mtime;
+@@ -192,6 +213,8 @@ static int need_update (const char *forc
+ 		return 1;
+ 
+ 	for (i = 0; i < gen_file_count; ++i) {
++		if (gen_file[i].mtime == (time_t)(-1))
++			continue;
+ 		if (tmp.st_mtime > gen_file[i].mtime)
+ 			return 1;	/* Config file is newer. */
+ 	}
+@@ -1500,7 +1523,7 @@ static int config_add(const char *file, 
+ 			else
+ 				p += 1;
+ 
+-			if (strcmp(p, filter_by_file))
++			if (modnamecmp(p, filter_by_file))
+ 				return 0;
+ 		}
+ 		if (filter_by_dir && !strstr(file, filter_by_dir))
+@@ -1652,11 +1675,19 @@ char *search_module_path(const char *bas
+ 
+ 		snprintf(base_o, sizeof(base_o), "%s.o", base);
+ 		g = config_lstmod(base_o, NULL, 1);
++		if (g == NULL || g->pathc == 0) {
++			snprintf(base_o, sizeof(base_o), "%s.ko", base);
++			g = config_lstmod(base_o, NULL, 1);
++		}
+ #ifdef CONFIG_USE_ZLIB
+ 		if (g == NULL || g->pathc == 0) {
+ 			snprintf(base_o, sizeof(base_o), "%s.o.gz", base);
+ 			g = config_lstmod(base_o, NULL, 1);
+ 		}
++		if (g == NULL || g->pathc == 0) {
++			snprintf(base_o, sizeof(base_o), "%s.ko.gz", base);
++			g = config_lstmod(base_o, NULL, 1);
++		}
+ #endif
+ 	}
+ 	if (g == NULL || g->pathc == 0)
+@@ -1664,3 +1695,53 @@ char *search_module_path(const char *bas
+ 	/* else */
+ 	return g->pathv[0];
+ }
++
++/* Set to 1 if new utilities are required */
++int kernel_requires_new_utilities = 0;
++
++/* Set kernel version (NULL - get version of the running kernel) */
++void set_kernel_version(const char *version)
++{
++	struct utsname buf;
++	unsigned int major, sub, minor;
++	
++	if (!version) {
++		uname(&buf);
++		version = buf.release;
++	}
++	if (sscanf(version, "%u.%u.%u", &major, &sub, &minor) != 3)
++		return;
++	if (major > 2 || (major == 2 && sub >= 5))
++		kernel_requires_new_utilities = 1;
++	else
++		kernel_requires_new_utilities =0;
++}
++
++/* Replace '-' with '_' in the module name (for newer kernels) */
++char *to_underscores(char *modname)
++{
++	if (modname) {
++		unsigned int i;
++		for (i = 0; modname[i]; ++i) {
++			if (modname[i] == '-')
++				modname[i] = '_';
++		}
++	}
++
++	return modname;
++}
++
++/* Compare module names (like strcmp, but considers '-' and '_' as equal for
++ * newer kernels) */
++int modnamecmp(const char *a, const char *b)
++{
++	for (;  *a;  ++a, ++b) {
++		if (*a == *b)
++			continue;
++		if ((*a == '-' || *a == '_') && (*b == '-' || *b == '_'))
++			continue;
++		return *(unsigned char *)a - *(unsigned char *)b;
++	}
++
++	return *(unsigned char *)a - *(unsigned char *)b;
++}
+diff -upk.orig modutils-2.4.27.orig/util/modstat.c modutils-2.4.27/util/modstat.c
+--- modutils-2.4.27.orig/util/modstat.c	2002-11-25 04:01:57 +0000
++++ modutils-2.4.27/util/modstat.c	2005-01-10 18:11:41 +0000
+@@ -223,6 +223,180 @@ static int new_get_kernel_info(int type)
+ 	return 1;
+ }
+ 
++static int fgetc_wrapped(FILE *file, unsigned int *linenum)
++{
++	for (;;) {
++	  	int ch = fgetc(file);
++		if (ch != '\\')
++			return ch;
++		ch = fgetc(file);
++		if (ch != '\n')
++			return ch;
++		if (linenum)
++			(*linenum)++;
++	}
++}
++
++char *getline_wrapped(FILE *file, unsigned int *linenum)
++{
++	int size = 1024;
++	int i = 0;
++	char *buf = xmalloc(size);
++	for(;;) {
++		int ch = fgetc_wrapped(file, linenum);
++		if (i == size) {
++			size *= 2;
++			buf = xrealloc(buf, size);
++		}
++		if (ch < 0 && i == 0) {
++			free(buf);
++			return NULL;
++		}
++		if (ch < 0 || ch == '\n') {
++			if (linenum)
++				(*linenum)++;
++			buf[i] = '\0';
++			return xrealloc(buf, i+1);
++		}
++		buf[i++] = ch;
++	}
++}
++
++
++static int get_kernel26_info(int type)
++{
++	FILE *proc_modules;
++	char **used_modules = NULL;
++	char *line;
++	size_t i;
++
++	drop();
++
++	if (type & K_SYMBOLS) { /* Want info about symbols */
++		printf("K_SYMBOLS not supported yet for kernel 2.6\n");
++		/* ignore */
++	}
++	
++	/* Might not be mounted yet.  Don't fail. */
++	proc_modules = fopen("/proc/modules", "r");
++	if (!proc_modules)
++		return -1;
++
++	l_module_name_list = 256;
++	module_name_list = xmalloc(l_module_name_list);
++	memset(module_name_list, 0, l_module_name_list);
++
++	n_module_stat = 256;
++	module_stat = xmalloc(n_module_stat * sizeof(struct module_stat));
++	memset(module_stat, 0, n_module_stat * sizeof(struct module_stat));
++
++	if (type & K_REFS)
++		used_modules = xmalloc(n_module_stat * sizeof(char *));
++
++	/* Collect the info from the modules */
++	i = 0;
++	while ((line = getline_wrapped(proc_modules, NULL)) != NULL) {
++		char *entry = strtok(line, " \n");
++		struct module_stat *m;
++		size_t entry_len, new_list_len;
++
++		if (!entry) {
++			free(line);
++			continue;
++		}
++
++		if (i == n_module_stat) {
++			n_module_stat *= 2;
++			module_stat = xrealloc(module_stat, n_module_stat*sizeof(struct module_stat));
++			if (used_modules)
++				used_modules = xrealloc(used_modules, n_module_stat*sizeof(char *));
++		}
++		m = module_stat + i;
++
++		entry_len = strlen(entry) + 1;
++		new_list_len = l_module_name_list + entry_len;
++		module_name_list = xrealloc(module_name_list, new_list_len);
++		memcpy(module_name_list + l_module_name_list, entry, entry_len);
++		l_module_name_list += entry_len;
++
++		m->name = xstrdup(entry);
++		entry = strtok(NULL, " \n"); // size if not NULL
++		m->size = (entry) ? atoi(entry) : 0;
++		entry = strtok(NULL, " \n"); // usecount if not NULL
++		m->usecount = (entry) ? atoi(entry) : 0;
++		m->flags = NEW_MOD_RUNNING | NEW_MOD_USED_ONCE; // temporary
++		entry = strtok(NULL, " \n"); // modules
++		if (used_modules)
++			used_modules[i] = (entry) ? xstrdup(entry) : NULL;
++		entry = strtok(NULL, " \n"); // status
++		entry = strtok(NULL, " \n"); // address if not NULL
++		m->modstruct = m->addr = (entry) ? atoi(entry) : 0;
++
++		++i;
++		free(line);
++	}
++	fclose(proc_modules);
++
++	n_module_stat = i;
++	if (i > 0 ) {
++		module_stat = xrealloc(module_stat,
++				       i * sizeof(struct module_stat));
++	} else {
++		free(module_stat);
++		module_stat = NULL;
++	}
++
++	/* If module references were not requested, all done */
++	if (!(type & K_REFS))
++		return 1;
++
++	/* Resolve module references */
++	for (i = 0; i < n_module_stat; ++i) {
++		struct module_stat *m = module_stat + i;
++		char *used = used_modules[i];
++		int mm, j;
++		char *entry;
++
++		if (!used || (used[0] == '\0') || (used[0] == '[')
++		    || (strcmp(used, "-") == 0)) {
++			free(used);
++			m->nrefs = 0;
++			m->refs = NULL;
++			continue;
++		}
++
++		m->nrefs = m->usecount;
++		m->refs = xmalloc(m->nrefs * sizeof(struct module_stat **));
++
++		j = 0;
++		entry = strtok(used, ",");
++		while (entry) {
++			if ((entry[0] == '\0') || (entry[0] == '['))
++				continue;
++			if (strcmp(entry, "-") == 0)
++				continue;
++			for (mm = 0; mm < n_module_stat; ++mm) {
++				if (strcmp(entry, module_stat[mm].name) == 0) {
++					m->refs[j++] = module_stat + mm;
++					break;
++				}
++			}
++			entry = strtok(NULL, ",");
++		}
++		m->nrefs = j;
++		if (j)
++			m->refs = xrealloc(m->refs, m->nrefs * sizeof(struct module_stat **));
++		else {
++			free(m->refs);
++			m->refs = NULL;
++		}
++		free(used_modules[i]);
++	}
++
++	free(used_modules);
++	return 1;
++}
++
+ #ifdef COMPAT_2_0
+ /************************************************************************/
+ 
+@@ -408,6 +582,9 @@ static int old_get_kernel_info(int type)
+ 
+ int get_kernel_info(int type)
+ {
++	if (kernel_requires_new_utilities)
++		return get_kernel26_info(type);
++
+ 	k_new_syscalls = !query_module(NULL, 0, NULL, 0, NULL);
+ 
+ #ifdef COMPAT_2_0
+diff -upk.orig modutils-2.4.27.orig/util/snap_shot.c modutils-2.4.27/util/snap_shot.c
+--- modutils-2.4.27.orig/util/snap_shot.c	2002-03-01 00:39:06 +0000
++++ modutils-2.4.27/util/snap_shot.c	2005-01-10 18:11:41 +0000
+@@ -77,6 +77,10 @@ void snap_shot(const char *module_names,
+ 	t = time(NULL);
+ 	local = localtime(&t);
+ 	for (i = 0; i < sizeof(infile)/sizeof(infile[0]); ++i) {
++		/* /proc/ksyms does not exist under 2.6.x */
++		if ((i == 0) && kernel_requires_new_utilities)
++			continue;
++
+ 		snprintf(file, sizeof(file), "%04d%02d%02d%02d%02d%02d.%s",
+ 			local->tm_year+1900,
+ 			local->tm_mon + 1,

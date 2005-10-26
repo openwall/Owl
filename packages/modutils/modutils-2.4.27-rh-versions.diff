@@ -1,0 +1,13 @@
+diff -upk.orig modutils-2.4.27.orig/insmod/insmod.c modutils-2.4.27/insmod/insmod.c
+--- modutils-2.4.27.orig/insmod/insmod.c	2003-10-27 02:34:46 +0000
++++ modutils-2.4.27/insmod/insmod.c	2005-10-26 15:07:58 +0000
+@@ -1861,8 +1861,7 @@ int INSMOD_MAIN(int argc, char **argv)
+ 
+ 	k_crcs = is_kernel_checksummed();
+ 	m_crcs = is_module_checksummed(f);
+-	if ((m_crcs == 0 || k_crcs == 0) &&
+-	    strncmp(k_strversion, m_strversion, STRVERSIONLEN) != 0) {
++	if (strncmp(k_strversion, m_strversion, STRVERSIONLEN) != 0) {
+ 		if (flag_force_load) {
+ 			lprintf("Warning: kernel-module version mismatch\n"
+ 			      "\t%s was compiled for kernel version %s\n"

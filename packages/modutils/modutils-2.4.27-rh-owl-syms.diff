@@ -1,29 +1,31 @@
---- modutils-2.4.16/depmod/depmod.c.orig	Sun Apr 28 10:53:35 2002
-+++ modutils-2.4.16/depmod/depmod.c	Mon Jun 10 00:36:58 2002
-@@ -1540,7 +1540,9 @@
+diff -upk.orig modutils-2.4.27.orig/depmod/depmod.c modutils-2.4.27/depmod/depmod.c
+--- modutils-2.4.27.orig/depmod/depmod.c	2003-03-23 02:34:28 +0000
++++ modutils-2.4.27/depmod/depmod.c	2005-10-26 15:06:29 +0000
+@@ -1549,7 +1549,9 @@ int DEPMOD_MAIN(int argc, char **argv)
  		{"errsyms", 0, 0, 'e'},
  		{"filesyms", 1, 0, 'F'},
  		{"help", 0, 0, 'h'},
-+		{"ignore-versions", 0, 0, 'i'},
++		{"ignore-versions", 0, 0, 'i'}, /* backward compatibility */
  		{"show", 0, 0, 'n'},
 +		{"system-map", 1, 0, 'm'}, /* backward compatibility, same as 'F' */
  		{"quick", 0, 0, 'A'},
  		{"quiet", 0, 0, 'q'},
  		{"syslog", 0, 0, 's'},
-@@ -1553,7 +1555,7 @@
+@@ -1562,7 +1564,7 @@ int DEPMOD_MAIN(int argc, char **argv)
  
  	error_file = "depmod";
  
 -	while ((o = getopt_long(argc, argv, "aAb:C:eF:hnqsvVru",
-+	while ((o = getopt_long(argc, argv, "aAb:C:eF:himnqsvVru",
++	while ((o = getopt_long(argc, argv, "aAb:C:eF:him:nqsvVru",
  				&long_opts[0], NULL)) != EOF) {
  		switch (o) {
  		case 'A':
-@@ -1576,10 +1578,16 @@
+@@ -1585,10 +1587,17 @@ int DEPMOD_MAIN(int argc, char **argv)
  			return 0;
  			break;
  
 +		case 'i':
++			fprintf(stderr, "Warning: -i is obsolete and deprecated.\n");
 +			ignore_suffix = 1;
 +			break;
 +
@@ -32,11 +34,11 @@
  			break;
  
 +		case 'm':
-+			error("Warning: -m is deprecated; please use -F.");
++			fprintf(stderr, "Warning: -m is deprecated; please use -F.\n");
  		case 'F':
  			file_syms = optarg;
  			break;
-@@ -1626,7 +1634,7 @@
+@@ -1635,7 +1644,7 @@ int DEPMOD_MAIN(int argc, char **argv)
  	argc -= optind;
  	argv += optind;
  
@@ -45,8 +47,9 @@
  
  	if (stdmode || argc == 0) {
  		/* option -a is the default without arguments */
---- modutils-2.4.16/man/depmod.8.orig	Sun Apr 28 12:39:21 2002
-+++ modutils-2.4.16/man/depmod.8	Mon Jun 10 00:33:39 2002
+diff -upk.orig modutils-2.4.27.orig/man/depmod.8 modutils-2.4.27/man/depmod.8
+--- modutils-2.4.27.orig/man/depmod.8	2003-02-12 03:51:53 +0000
++++ modutils-2.4.27/man/depmod.8	2005-10-26 15:06:29 +0000
 @@ -8,7 +8,7 @@
  depmod \- handle dependency descriptions for loadable kernel modules
  .SH SYNOPSIS
@@ -56,7 +59,7 @@
  .RI [\-C\  configfile "] [\-F\ " kernelsyms "] [\-b " basedirectory ]
  .RI [ forced_version ]
  .br
-@@ -86,6 +86,19 @@
+@@ -86,6 +86,19 @@ This option only updates the dependency 
  .BR \-e ", " \-\-errsyms
  Show all the unresolved symbols for each module.
  .TP
@@ -76,7 +79,7 @@
  .BR \-h ", " \-\-help
  Display a summary of options and immediately exit.
  .TP
-@@ -196,6 +209,10 @@
+@@ -196,6 +209,10 @@ output, since that file contains the sym
  symbols.  However you can use a
  .I System.map
  even with versioned symbols.

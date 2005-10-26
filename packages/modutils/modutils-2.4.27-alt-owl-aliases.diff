@@ -1,7 +1,16 @@
-diff -ruN modutils-2.4.27.orig/util/alias.h modutils-2.4.27/util/alias.h
---- modutils-2.4.27.orig/util/alias.h	Thu Oct 14 16:04:11 2004
-+++ modutils-2.4.27/util/alias.h	Thu Oct 14 16:07:18 2004
-@@ -116,6 +116,7 @@
+diff -upk.orig modutils-2.4.27.orig/util/alias.h modutils-2.4.27/util/alias.h
+--- modutils-2.4.27.orig/util/alias.h	2004-02-22 07:33:30 +0000
++++ modutils-2.4.27/util/alias.h	2005-10-26 15:10:34 +0000
+@@ -97,7 +97,7 @@ char *aliaslist[] =
+ 	"char-major-6 lp",
+ 	"char-major-9 st",
+ 	"char-major-10 off",		/* was: mouse, was: misc */
+-	"char-major-10-0 busmouse",	/* /dev/logibm Logitech bus mouse */
++	"char-major-10-0 logibusmouse",	/* /dev/logibm Logitech bus mouse */
+ 	"char-major-10-1 off",		/* /dev/psaux PS/2-style mouse port */
+ 	"char-major-10-2 msbusmouse",	/* /dev/inportbm Microsoft Inport bus mouse */
+ 	"char-major-10-3 atixlmouse",	/* /dev/atibm ATI XL bus mouse */
+@@ -116,6 +116,7 @@ char *aliaslist[] =
  	"char-major-10-144 nvram",	/* from Tigran Aivazian <tigran@sco.COM> */
  	"char-major-10-157 applicom",	/* from David Woodhouse <dwmw2@infradead.org> */
  	"char-major-10-175 agpgart",    /* /dev/agpgart GART AGP mapping access */
@@ -9,7 +18,19 @@ diff -ruN modutils-2.4.27.orig/util/alias.h modutils-2.4.27/util/alias.h
  	"char-major-10-184 microcode",	/* Tigran Aivazian <tigran@veritas.com> */
  	"char-major-10-200 tun",	/* Universal TUN/TAP device driver */
  	"char-major-10-250 hci_vhci",
-@@ -173,7 +174,7 @@
+@@ -148,9 +149,10 @@ char *aliaslist[] =
+ 	"char-major-109 lvm-mod",
+ 	"char-major-161 ircomm-tty",
+ 	"char-major-171 raw1394",
+-	"char-major-195 NVdriver",
++	"char-major-195 nvidia",
+ 	"char-major-200 vxspec",
+ 	"char-major-206 osst",  /* OnStream SCSI tape */
++	"char-major-212 slamrmo", /* SLMmodem driver */
+ 	"char-major-216 rfcomm",
+ 
+ 	"dos msdos",
+@@ -173,7 +175,7 @@ char *aliaslist[] =
  				/* PF_BRIDGE	7  Multiprotocol bridge */
  				/* PF_AAL5	8  Reserved for Werner's ATM */
  				/* PF_X25	9  Reserved for X.25 project */
@@ -18,7 +39,7 @@ diff -ruN modutils-2.4.27.orig/util/alias.h modutils-2.4.27/util/alias.h
  	"net-pf-15 af_key",	/* PF_KEY       15 Key Management API */
  
  	/* next two from <dairiki@matthews.dairiki.org>  Thanks! */
-@@ -229,12 +230,36 @@
+@@ -229,12 +231,36 @@ char *aliaslist[] =
  	"ppp-compress-24 ppp_deflate",
  	"ppp-compress-26 ppp_deflate",
  
@@ -55,7 +76,7 @@ diff -ruN modutils-2.4.27.orig/util/alias.h modutils-2.4.27/util/alias.h
  	"usbdevfs usbcore",
  
  	"xfrm-type-2-50 esp4",
-@@ -248,6 +273,8 @@
+@@ -248,6 +274,8 @@ char *aliaslist[] =
  	"digest_null crypto_null",
  	"compress_null crypto_null",
  	"sha384 sha512",
@@ -64,11 +85,12 @@ diff -ruN modutils-2.4.27.orig/util/alias.h modutils-2.4.27/util/alias.h
  
  	NULL			/* marks the end of the list! */
  };
-@@ -295,6 +322,7 @@
+@@ -295,6 +323,8 @@ char *below[] =
   */
  char *prune[] =
  {
 +	".rhkmvtag",
++	".versions",
  	"modules.dep",
  	"modules.description",
  	"modules.generic_string",

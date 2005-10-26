@@ -1,0 +1,178 @@
+diff -upk.orig modutils-2.4.27.orig/insmod/modprobe.c modutils-2.4.27/insmod/modprobe.c
+--- modutils-2.4.27.orig/insmod/modprobe.c	2005-10-26 15:08:45 +0000
++++ modutils-2.4.27/insmod/modprobe.c	2005-10-26 15:14:00 +0000
+@@ -86,6 +86,8 @@ struct LINK {
+ static char *conf_file = NULL;
+ static int runit = 1;
+ static int quiet = 0;
++static int listonly = 0;
++static int flag_list_module_files = 0;
+ static int debug = 0;
+ 
+ static NODE *in_kernel;
+@@ -976,6 +978,18 @@ static int insmod(DESC *desc, LINK **new
+ 	int used_ex = 0;
+ 	const char *ex;
+ 
++	if (listonly) {
++		if (desc->nod && desc->nod->str)
++			puts(stripo(desc->nod->str));
++		else
++			puts(desc->kname);
++		return 0;
++	} else if (flag_list_module_files) {
++		if (desc->nod && desc->nod->str)
++			puts(desc->nod->str);
++		return 0;
++	}
++
+ 	/* Something new for us to do? Or is the module already installed... */
+ 	if (desc == NULL || strcmp(desc->objkey, "null") == 0 ||
+ 	    (runit && lookup_key(in_kernel, desc->kname) != NULL))
+@@ -1472,11 +1486,13 @@ static void usage(void)
+ 		"\n"
+ 		"options:\n"
+ 		"\t-a, --all                  Load _all_ matching modules\n"
++		"\t-b, --basedir              Use an image of a module tree.\n"
+ 		"\t-c, --showconfig           Show current configuration\n"
+ 		"\t-d, --debug                Print debugging information\n"
+ 		"\t-h, --help                 Print this message\n"
+ 		"\t-k, --autoclean            Set 'autoclean' on loaded modules\n"
+ 		"\t-l, --list                 List matching modules\n"
++		"\t-L, --listonly             Only list modules required to satisfy dependencies\n"
+ 		"\t-n, --show                 Don't actually perform the action\n"
+ 		"\t-q, --quiet                Quiet operation\n"
+ 		"\t-r, --remove               Remove module (stacks) or do autoclean\n"
+@@ -1485,14 +1501,23 @@ static void usage(void)
+ 		"\t-v, --verbose              Print all commands\n"
+ 		"\t-V, --version              Show version\n"
+ 		"\t-C, --config configfile    Use instead of /etc/modules.conf\n"
++		"\t    --list-module-files    Only list module files required\n"
++		"\t                           to satisfy dependencies\n"
++		"\t    --kernel-release=REL   Search for modules for the specified\n"
++		"\t                           kernel instead of current\n"
+ 	    );
+ }
+ 
++#define OPT_KERNEL_RELEASE	1000
++#define OPT_LIST_MODULE_FILES	1001
++
+ int main(int argc, char *argv[])
+ {
+ 	int ret = 0;
+ 	int loadall = 0; /* Load only one module out of a list */
+ 	char *type = NULL; /* Search in all path[] */
++	char *base_dir = "";
++	char *kernel_release = NULL; /* Forced kernel release */
+ 	int remove = 0;
+ 	int showconfig = 0;
+ 	int list = 0;
+@@ -1501,9 +1526,11 @@ int main(int argc, char *argv[])
+ 	struct option long_opts[] = {
+ 		{"type", 1, 0, 't'},
+ 		{"all", 0, 0, 'a'},
++		{"basedir", 1, 0, 'b'},
+ 		{"debug", 0, 0, 'd'},
+ 		{"showconfig", 0, 0, 'c'},
+ 		{"list", 0, 0, 'l'},
++		{"listonly", 0, 0, 'L'},
+ 		{"show", 0, 0, 'n'},
+ 		{"remove", 0, 0, 'r'},
+ 		{"verbose", 0, 0, 'v'},
+@@ -1512,6 +1539,8 @@ int main(int argc, char *argv[])
+ 		{"syslog", 0, 0, 's'},
+ 		{"config", 1, 0, 'C'},
+ 		{"quiet", 1, 0, 'q'},
++		{"kernel-release", 1, 0, OPT_KERNEL_RELEASE},
++		{"list-module-files", 0, 0, OPT_LIST_MODULE_FILES},
+ 		{"help", 0, 0, 'h'},
+ 		{0, 0, 0, 0}
+ 	};
+@@ -1559,7 +1588,7 @@ int main(int argc, char *argv[])
+ 	if (safemode)
+ 		--argc;		/* Do not scan last parameter in getopt */
+ 
+-	while ((o = getopt_long(argc, argv, "t:acdhlnqrvksC:V",
++	while ((o = getopt_long(argc, argv, "t:ab:cdhlLnqrvksC:V",
+ 				&long_opts[0], NULL)) != EOF) {
+ 		switch (o) {
+ 		case 't': /* type of module */
+@@ -1570,6 +1599,10 @@ int main(int argc, char *argv[])
+ 			loadall = 1;
+ 			break;
+ 
++		case 'b':
++			base_dir = optarg;
++			break;
++
+ 		case 'c':
+ 			showconfig = 1;
+ 			break;
+@@ -1585,6 +1618,10 @@ int main(int argc, char *argv[])
+ 			list = 1;
+ 			break;
+ 
++		case 'L':
++			listonly = 1;
++			break;
++
+ 		case 'n':
+ 			runit = 0;
+ 			break;
+@@ -1619,6 +1656,14 @@ int main(int argc, char *argv[])
+ 			       MODUTILS_VERSION);
+ 			break;
+ 
++		case OPT_KERNEL_RELEASE:
++			kernel_release = optarg;
++			break;
++
++		case OPT_LIST_MODULE_FILES:
++			flag_list_module_files = 1;
++			break;
++
+ 		default:
+ 			ret = -1;
+ 			break;
+@@ -1631,7 +1676,7 @@ int main(int argc, char *argv[])
+ 	}
+ 	/* else */
+ 
+-	if (config_read(1, NULL, "", conf_file) == -1)
++	if (config_read(1, kernel_release, base_dir, conf_file) == -1)
+ 		return -1;
+ 	/* else */
+ 	new_NODE("null", "null", &in_depfile);
+diff -upk.orig modutils-2.4.27.orig/man/modprobe.8 modutils-2.4.27/man/modprobe.8
+--- modutils-2.4.27.orig/man/modprobe.8	2003-10-27 02:20:26 +0000
++++ modutils-2.4.27/man/modprobe.8	2005-10-26 15:14:00 +0000
+@@ -92,6 +92,29 @@ will only look at modules whose director
+ name, e.g. "\fB\-t\fR\ \fIdrivers/net\fR" would list modules in
+ \fIxxx/drivers/net/\fR and its subdirectories.
+ .TP
++\fB\-L\fR, \fB\-\-listonly
++Only list modules required to satisfy dependencies, do not try to load them.
++.TP
++\fB\-b \fIbasedirectory\fR, \fB\-\-basedir \fIbasedirectory
++If the directory tree
++.I /lib/modules
++containing the sub-trees of modules is moved somewhere else in order to
++handle modules for a different environment, the
++.B \-b
++option tells modprobe where to find the moved image of the
++.I /lib/modules
++tree.
++.TP
++.BR \-\-list\-module\-files
++Only list module files (with path, as recorded in \fImodules.dep\fR) required
++to satisfy dependencies, do not try to load them.
++.TP
++\fB\-\-kernel\-release \fIrelease
++Use the specified kernel release instead of the release field from the uname()
++syscall.  Changes the module search path and condition handling in the
++configuration file appropriately.  Probably only useful with \fB\-L\fR or
++\fB\-\-list\-module\-files\fR.
++.TP
+ .BR \-v ", " \-\-verbose
+ Print all commands as they are executed.
+ .TP

@@ -1,0 +1,45 @@
+--- module-init-tools/depmod.c.alt-depmod-check-aliases	2005-01-15 21:27:15 +0300
++++ module-init-tools/depmod.c	2005-01-15 21:28:28 +0300
+@@ -637,6 +637,16 @@ static const char *next_string(const cha
+ 	return string;
+ }
+ 
++static int good_alias(struct module *mod, const char *alias)
++{
++	if (strpbrk(alias, " #\t\n")) {
++		warn("Module %s contains invalid alias \"%s\"\n",
++		     mod->pathname, alias);
++		return 0;
++	}
++	return 1;
++}
++
+ static void output_aliases(struct module *modules, FILE *out)
+ {
+ 	struct module *i;
+@@ -652,16 +662,20 @@ static void output_aliases(struct module
+ 		/* Grab from old-style .modalias section. */
+ 		for (p = i->modalias.data, size = i->modalias.size;
+ 		     p;
+-		     p = next_string(p, &size))
+-			fprintf(out, "alias %s %s\n", p, modname);
++		     p = next_string(p, &size)) {
++			if (good_alias(i, p))
++				fprintf(out, "alias %s %s\n", p, modname);
++		}
+ 
+ 		/* Grab form new-style .modinfo section. */
+ 		for (p = i->modinfo.data, size = i->modinfo.size;
+ 		     p;
+ 		     p = next_string(p, &size)) {
+-			if (strncmp(p, "alias=", strlen("alias=")) == 0)
+-				fprintf(out, "alias %s %s\n",
+-					p + strlen("alias="), modname);
++			if (strncmp(p, "alias=", strlen("alias=")) == 0) {
++				if (good_alias(i, p))
++					fprintf(out, "alias %s %s\n",
++						p + strlen("alias="), modname);
++			}
+ 		}
+ 	}
+ }

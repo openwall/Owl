@@ -1,0 +1,12 @@
+diff -upk.orig modutils-2.4.27.orig/insmod/modprobe.c modutils-2.4.27/insmod/modprobe.c
+--- modutils-2.4.27.orig/insmod/modprobe.c	2004-02-22 07:32:35 +0000
++++ modutils-2.4.27/insmod/modprobe.c	2005-10-26 15:08:45 +0000
+@@ -1635,7 +1635,7 @@ int main(int argc, char *argv[])
+ 		return -1;
+ 	/* else */
+ 	new_NODE("null", "null", &in_depfile);
+-	if (read_depfile() == -1)
++	if (read_depfile() == -1 && !showconfig)
+ 		return -1;
+ 	/* else */
+ 	if (readcur() == -1)
