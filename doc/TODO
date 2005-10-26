@@ -205,14 +205,6 @@ a makewhatis cron job.  Don't process cat (preformatted) pages in
 makewhatis.
 
 
-	modutils.
-
-[PRIORITY: medium]
-[ASSIGNED: ldv@]
-Include module-init-tools for Linux 2.6.x readiness, but continue to
-support Linux 2.4.x as well.
-
-
 	mtree.
 
 [PRIORITY: low]
@@ -559,4 +551,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Id: Owl/doc/TODO,v 1.119 2005/10/24 07:53:03 solar Exp $
+$Id: Owl/doc/TODO,v 1.120 2005/10/26 16:43:57 ldv Exp $

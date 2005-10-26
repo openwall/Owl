@@ -12,6 +12,10 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2005/10/26	Package: modutils
+Integrated module-init-tools for Linux 2.6.x readiness, based on patches
+from ALT Linux.
+
 2005/10/24	Package: SysVinit
 Updated to 2.86.
 
@@ -654,4 +658,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.151 2005/10/24 17:26:35 galaxy Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.152 2005/10/26 16:43:57 ldv Exp $
