@@ -25,7 +25,7 @@ class NcursesOwlInstallInterface : public OwlInstallInterface {
     void *cdkscreen;
     void *noticewin;
 public:
-    NcursesOwlInstallInterface();
+    NcursesOwlInstallInterface(bool allow_colors);
     ~NcursesOwlInstallInterface();
 
     IfaceSingleChoice *CreateSingleChoice() const;

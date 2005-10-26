@@ -10,6 +10,22 @@
 
 #include "iface_ncurses.hpp"
 
+enum the_color_pairs {
+    cp_default = 57,
+    cp_disabled = 49,
+    cp_selection = 5,
+    cp_background = 7
+};
+
+static ScriptVariable cdk_tag_default(0, "</%d>", cp_default);
+static ScriptVariable cdk_tag_disabled(0, "</%d>", cp_disabled);
+static ScriptVariable cdk_tag_selection(0, "</%d>", cp_selection);
+
+static bool work_with_colors = false;
+    /* this variable looks bad but it add no badness to our architecture
+     * because curses&cdk have their own global states for color issues;
+     * so, no additional global state is really created
+     */
 
 NcursesIfaceSingleChoice::NcursesIfaceSingleChoice()
     : IfaceSingleChoice()
@@ -60,7 +76,18 @@ ScriptVariable NcursesIfaceSingleChoice::Run()
     if(begx < 0) begx = 0;
     WINDOW *mwin = newwin(rows + 4, cols + 6, begy, begx);
     set_menu_win(the_menu, mwin);
-    set_menu_sub(the_menu, derwin(mwin, rows, cols, 3, 4));
+    WINDOW *mwin_d = derwin(mwin, rows, cols, 3, 4);
+    set_menu_sub(the_menu, mwin_d);
+
+    if(work_with_colors) {
+        wcolor_set(mwin, cp_default, 0);
+        wbkgdset(mwin, COLOR_PAIR(cp_default));
+        wbkgdset(mwin_d, COLOR_PAIR(cp_default));
+        werase(mwin);
+        set_menu_fore(the_menu, COLOR_PAIR(cp_selection));
+        set_menu_back(the_menu, COLOR_PAIR(cp_default));
+        set_menu_grey(the_menu, COLOR_PAIR(cp_disabled));
+    }
 
     if(caption != "") {
         mvwprintw(mwin, 1, 4, "%s", caption.c_str());
@@ -69,6 +96,7 @@ ScriptVariable NcursesIfaceSingleChoice::Run()
     refresh();
 
     set_menu_mark(the_menu, "");
+
     menu_opts_on(the_menu, O_ONEVALUE|O_SHOWDESC);
     menu_opts_off(the_menu, O_NONCYCLIC|O_SHOWMATCH);
     box(mwin, 0, 0);
@@ -134,6 +162,7 @@ quit:
     wclear(mwin);
     wrefresh(mwin);
     delwin(mwin);
+    clear();
     refresh();
     for(int i=0; i<nitem; i++) free_item(menu_items[i]);
     delete[] menu_items;
@@ -152,9 +181,20 @@ NcursesIfaceHierChoice::NcursesIfaceHierChoice(void *a_screen)
 }
 
 static int run_scroll(CDKSCREEN *screen,
-                      ScriptVariable header, ScriptVector items)
+                      ScriptVariable header, ScriptVariable header2,
+                      ScriptVector items)
 {
     int res = -1;
+
+    if(work_with_colors) {
+        for(int i=0; i<items.Length(); i++)
+            items[i] = cdk_tag_default + items[i];
+        header = cdk_tag_default + header;
+        if(header2!="")
+            header2 = cdk_tag_default + header2;
+    }
+    if(header2!="")
+        header2 = ScriptVariable("<R>") + header2;
 
     char **itemsv = items.MakeArgv();
 
@@ -165,8 +205,14 @@ static int run_scroll(CDKSCREEN *screen,
 
     CDKSCROLL* list =
         newCDKScroll(screen, CENTER, CENTER, RIGHT, -4, maxlen + 6,
-                     (char*)(header.c_str()), itemsv, items.Length(),
-                     false, A_REVERSE, true, false);
+                     (char*)(header+"\n"+header2).c_str(),
+                     itemsv, items.Length(),
+                     false,
+                     work_with_colors ? COLOR_PAIR(cp_selection) : A_REVERSE,
+                     true, false);
+
+    if(work_with_colors)
+        setCDKScrollBackgroundColor(list, (char*)cdk_tag_default.c_str());
 
     drawCDKScroll(list, true);
 
@@ -196,6 +242,8 @@ static int run_scroll(CDKSCREEN *screen,
 quit:
     eraseCDKScroll(list);
     destroyCDKScroll(list);
+    clear();
+    refresh();
     items.DeleteArgv(itemsv);
     return res;
 }
@@ -219,9 +267,9 @@ bool NcursesIfaceHierChoice::Run(ScriptVector &result)
         for(Item *p = level->parent; p; p = p->parent) {
             header = p->name + " >> " + header;
         }
-        header = caption + "\n" + header;
 
-        int rn = run_scroll((CDKSCREEN*)the_cdkscreen, header, items);
+        int rn =
+            run_scroll((CDKSCREEN*)the_cdkscreen, caption, header, items);
 
         if(rn == -1) {
             // UP
@@ -265,18 +313,37 @@ bool NcursesIfaceHierChoice::Run(ScriptVector &result)
 /////////////////////////////////////////////////////////////
 //
 
-NcursesOwlInstallInterface::NcursesOwlInstallInterface()
+NcursesOwlInstallInterface::NcursesOwlInstallInterface(bool allow_colors)
 {
     initscr();
     keypad(stdscr, TRUE);
     nonl();
     cbreak();
     noecho();
+
     cdkscreen = (void*)initCDKScreen(stdscr);
+
+    if(allow_colors && has_colors()) {
+        start_color();
+        initCDKColor();
+        bkgdset(COLOR_PAIR(cp_background));
+        erase();
+        work_with_colors = true;
+    } else {
+        work_with_colors = false;
+    }
+
 
     int maxy, maxx;
     getmaxyx(stdscr, maxy, maxx);
-    noticewin = (void*) newwin(4, maxx - 4, maxy - 5, 2);
+    noticewin = (void*) newwin(4, maxx - 4, maxy - 4, 2);
+
+    if(work_with_colors) {
+        wcolor_set((WINDOW*)noticewin, cp_default, 0);
+        wbkgdset((WINDOW*)noticewin, COLOR_PAIR(cp_default));
+        werase((WINDOW*)noticewin);
+    }
+
 }
 
 NcursesOwlInstallInterface::~NcursesOwlInstallInterface()
@@ -300,21 +367,29 @@ void NcursesOwlInstallInterface::Message(const ScriptVariable& msg)
 {
     ScriptVector vect(msg, "\n", "");
     vect.AddItem("");
-    vect.AddItem("<C>[ press a key... ]");
+    for(int i=0; i<vect.Length(); i++)
+        vect[i] = cdk_tag_default + vect[i];
+    vect.AddItem(ScriptVariable(0, "<C></%d> [ press a key... ]",
+                                cp_default));
     char **message = vect.MakeArgv();
     CDKLABEL* lab = newCDKLabel((CDKSCREEN*)cdkscreen, CENTER, CENTER, message,
                                 vect.Length(), true, false);
+    if(work_with_colors)
+        setCDKLabelBackgroundColor(lab, (char*)cdk_tag_default.c_str());
     drawCDKLabel(lab, true);
     waitCDKLabel(lab, 0);
     eraseCDKLabel(lab);
     destroyCDKLabel(lab);
     vect.DeleteArgv(message);
+    clear();
     refresh();
 }
 
 void NcursesOwlInstallInterface::Notice(const ScriptVariable& msg)
 {
-    waddstr((WINDOW*)noticewin, (msg+"\n").c_str());
+    scrollok((WINDOW*)noticewin, TRUE);
+    scroll((WINDOW*)noticewin);
+    mvwaddstr((WINDOW*)noticewin, 3, 0, msg.c_str());
     wrefresh((WINDOW*)noticewin);
 }
 
@@ -322,18 +397,35 @@ void NcursesOwlInstallInterface::Notice(const ScriptVariable& msg)
 /* this is a workaround against CDK's manner to ignore the Enter key */
 /* popupDialog() could satisfy us if the problem is fixed */
 static int run_dialog(CDKSCREEN *screen,
-                      char **message, int msglen,
-                      char **buttons, int buttonscount,
+                      ScriptVector &message_vect,
+                      ScriptVector &buttons_vect,
                       int dfl)
 {
     int res = -1;
 
+    if(work_with_colors) {
+        for(int i=0; i<message_vect.Length(); i++)
+            message_vect[i] = cdk_tag_default + message_vect[i];
+        for(int j=0; j<buttons_vect.Length(); j++)
+            buttons_vect[j] = cdk_tag_default + buttons_vect[j];
+    }
+
+    char **message = message_vect.MakeArgv();
+    int msglen = message_vect.Length();
+    char **buttons = buttons_vect.MakeArgv();
+    int buttonscount = buttons_vect.Length();
+
     CDKDIALOG* dlg = newCDKDialog(screen, CENTER, CENTER,
                                   message, msglen, buttons, buttonscount,
-                                  A_REVERSE, true, true, false);
+                                  work_with_colors ?
+                                      COLOR_PAIR(cp_selection) :
+                                      A_REVERSE,
+                                  true, true, false);
+    if(work_with_colors)
+        setCDKDialogBackgroundColor(dlg, (char*)cdk_tag_default.c_str());
     drawCDKDialog(dlg, true);
 
-    for(int i = 0; i< dfl; i++)
+    for(int k = 0; k< dfl; k++)
          injectCDKDialog(dlg, KEY_LEFT);
 
     for(;;) {
@@ -363,8 +455,15 @@ static int run_dialog(CDKSCREEN *screen,
         }
     }
 quit:
+
+    message_vect.DeleteArgv(message);
+    buttons_vect.DeleteArgv(buttons);
+
+
     eraseCDKDialog(dlg);
     destroyCDKDialog(dlg);
+    clear();
+    refresh();
     return res;
 }
 
@@ -373,17 +472,12 @@ quit:
 bool NcursesOwlInstallInterface::YesNoMessage(const ScriptVariable& msg,
                                               bool dfl)
 {
-    static char *yesno[] = { "Yes", "No", 0 };
+    ScriptVector yesno("Yes:No", ":");
 
-    ScriptVector vect(msg, "\n", "");
-    vect.AddItem("");
-    char **message = vect.MakeArgv();
+    ScriptVector message(msg, "\n", "");
+    message.AddItem("");
 
-    int res =
-        run_dialog((CDKSCREEN*)cdkscreen, message, vect.Length(), yesno, 2,
-                    dfl ? 0 : 1);
-
-    vect.DeleteArgv(message);
+    int res = run_dialog((CDKSCREEN*)cdkscreen, message, yesno, dfl ? 0 : 1);
 
     return res == 0;
 }
@@ -391,17 +485,12 @@ bool NcursesOwlInstallInterface::YesNoMessage(const ScriptVariable& msg,
 YesNoCancelResult
 NcursesOwlInstallInterface::YesNoCancelMessage(const ScriptVariable& msg)
 {
-    static char *yesnoc[] = { "Yes", "No", "Cancel", 0 };
+    ScriptVector yesnoc("Yes:No:Cancel", ":");
 
-    ScriptVector vect(msg, "\n", "");
-    vect.AddItem("");
-    char **message = vect.MakeArgv();
+    ScriptVector message(msg, "\n", "");
+    message.AddItem("");
 
-    int res =
-        run_dialog((CDKSCREEN*)cdkscreen, message, vect.Length(), yesnoc,
-                   3, 2);
-
-    vect.DeleteArgv(message);
+    int res = run_dialog((CDKSCREEN*)cdkscreen, message, yesnoc, 2);
 
     switch(res) {
         case 0:
@@ -423,9 +512,16 @@ NcursesOwlInstallInterface::QueryString(const ScriptVariable& prompt,
     CDKENTRY *entry;
 
     entry = newCDKEntry((CDKSCREEN*)cdkscreen, CENTER, CENTER,
-                        (char*)(ScriptVariable("<C> ")+prompt).c_str(), "",
-                        A_NORMAL, '_', vMIXED,
+                        (char*)ScriptVariable(0, "<C></%d> %s",
+                                              cp_default, prompt.c_str())
+                             .c_str(),
+                        "",
+                        work_with_colors ? COLOR_PAIR(cp_selection) : A_NORMAL,
+                        work_with_colors ? ' ' : '_',
+                        vMIXED,
                         -8, 0, 1024, TRUE, FALSE);
+    if(work_with_colors)
+        setCDKEntryBackgroundColor(entry, (char*)cdk_tag_default.c_str());
     if(defval != "")
         setCDKEntryValue(entry, (char*)defval.c_str());
 
@@ -460,6 +556,7 @@ quit:
     ScriptVariable res(act_res ? act_res : qs_cancel);
     eraseCDKEntry(entry);
     destroyCDKEntry(entry);
+    clear();
     refresh();
     return res;
 }

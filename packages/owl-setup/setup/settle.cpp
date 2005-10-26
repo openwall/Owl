@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "scriptpp/scrvar.hpp"
 
@@ -34,16 +35,36 @@ bool ncurses_interface = true;
 bool ncurses_interface = false;
 #endif
 
+bool allow_ncurses_color = true;
+
+void display_usage(bool by_option)
+{
+    if(!by_option) {
+        printf("Invalid command line\n");
+    }
+    printf("Usage: settle -d      use dumb terminal interface\n"
+           "       settle -m [-b] use ncurses interface [force bw mode]\n");
+    exit(by_option ? 0 : 1);
+}
+
+
 void process_cmdline(int argc, char **argv)
 {
-    if(argc>1) {
-        ScriptVariable a1(argv[1]);
+    for(int i=1; i<argc; i++) {
+        ScriptVariable a1(argv[i]);
+        if(a1 == "-b") {
+            allow_ncurses_color = false;
+        } else
         if(a1 == "-m") {
             ncurses_interface = true;
         } else
         if(a1 == "-d") {
             ncurses_interface = false;
-        }
+        } else
+        if(a1 == "-h" || a1 == "--help") {
+            display_usage(true);
+        } else
+            display_usage(false);
     }
 }
 
@@ -93,7 +114,7 @@ int main(int argc, char **argv)
 
 #ifdef NCURSES_ENABLE
     if(ncurses_interface)
-        the_interface = new NcursesOwlInstallInterface;
+        the_interface = new NcursesOwlInstallInterface(allow_ncurses_color);
     else
         the_interface = new DumbOwlInstallInterface;
 #else

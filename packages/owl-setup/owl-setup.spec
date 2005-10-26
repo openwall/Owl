@@ -1,8 +1,8 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.43 2005/10/24 03:29:15 solar Exp $
+# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.44 2005/10/26 16:48:49 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 0.26
+Version: 0.27
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -32,6 +32,9 @@ rm -rf %buildroot
 %_sbindir/*
 
 %changelog
+* Wed Oct 26 2005 Croco <croco-at-owl.openwall.com> 0.27-owl1
+- ncurses-based interface is now able to use colors
+
 * Fri Sep 23 2005 Croco <croco-at-owl.openwall.com> 0.26-owl1
 - bug with injectCDKxxx worked around
 - scanning fstab for standard entries added; the default entries are
