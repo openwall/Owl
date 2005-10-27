@@ -12,14 +12,14 @@
 +Modules for 2.6.x kernels contain a small string with important
 +information such as the kernel and compiler versions.  If a module
 +fails to load and the kernel complains that the "version magic" doesn't
-+match, you can use this option to ignore it.
++match, you can use this option to remove it.
 +.TP
 +.B \-\-force\-modversion
 +When modules for 2.6.x kernels are compiled with CONFIG_MODVERSIONS set,
 +a section is created detailing the versions of every interface used by
 +(or supplied by) the module.  If a module fails to load and the kernel
 +complains that the module disagrees about a version of some interface,
-+you can use this option to ignore the version information altogether.
++you can use this option to remove the version information altogether.
 +.TP
  .BR \-h ", " \-\-help
  Display a summary of options and immediately exit.
