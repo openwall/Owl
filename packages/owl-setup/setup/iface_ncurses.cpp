@@ -22,7 +22,7 @@ static ScriptVariable cdk_tag_disabled(0, "</%d>", cp_disabled);
 static ScriptVariable cdk_tag_selection(0, "</%d>", cp_selection);
 
 static bool work_with_colors = false;
-    /* this variable looks bad but it add no badness to our architecture
+    /* this variable looks bad but it adds no badness to our architecture
      * because curses&cdk have their own global states for color issues;
      * so, no additional global state is really created
      */
