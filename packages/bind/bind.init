@@ -1,10 +1,10 @@
 #!/bin/sh
-# $Id: Owl/packages/bind/bind.init,v 1.3 2005/09/24 00:01:26 ldv Exp $
+# $Id: Owl/packages/bind/bind.init,v 1.4 2005/10/27 00:44:15 galaxy Exp $
 #
 # named           This shell script takes care of starting and stopping
 #                 named (BIND DNS server).
 #
-# chkconfig: 345 20 55
+# chkconfig: - 20 55
 # description: \
 #	named (BIND) is a Domain Name Server (DNS) that is used to \
 #	resolve host names to IP addresses.

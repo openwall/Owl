@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bind/bind.spec,v 1.13 2005/10/24 03:06:22 solar Exp $
+# $Id: Owl/packages/bind/bind.spec,v 1.14 2005/10/27 00:44:15 galaxy Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -7,7 +7,7 @@
 Summary: ISC BIND - DNS server.
 Name: bind
 Version: 9.3.1
-Release: owl4
+Release: owl5
 License: BSD-like
 URL: http://www.isc.org/products/BIND/
 Group: System Environment/Daemons
@@ -350,6 +350,9 @@ fi
 %_mandir/man8/nsupdate.8*
 
 %changelog
+* Thu Oct 27 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 9.3.1-owl5
+- Adjusted bind.init to not execute named on system startup by default.
+
 * Fri Oct 21 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 9.3.1-owl4
 - Removed '|| :' from touch in %%pre.
 
