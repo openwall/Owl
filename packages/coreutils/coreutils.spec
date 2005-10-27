@@ -1,9 +1,9 @@
-# $Id: Owl/packages/coreutils/coreutils.spec,v 1.13 2005/10/24 16:45:33 ldv Exp $
+# $Id: Owl/packages/coreutils/coreutils.spec,v 1.14 2005/10/27 20:17:44 ldv Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
 Version: 5.92
-Release: owl3
+Release: owl4
 License: GPL
 Group: System Environment/Base
 URL: http://www.gnu.org/software/%name/
@@ -26,9 +26,10 @@ Source21: usleep.1
 # ALT patches, candidates for upstream version and CVS backports
 Patch0: coreutils-5.92-cvs-20051024-dircolors.diff
 Patch1: coreutils-5.92-alt-make_dir_parents.diff
-Patch2: coreutils-5.91-up-ls-usage.diff
-Patch3: coreutils-5.91-eggert-ls-time-style.diff
-Patch4: coreutils-5.91-alt-hostname.diff
+Patch2: coreutils-5.92-alt-md5sum-binary.diff
+Patch3: coreutils-5.91-up-ls-usage.diff
+Patch4: coreutils-5.91-eggert-ls-time-style.diff
+Patch5: coreutils-5.91-alt-hostname.diff
 
 # Owl/ALT specific
 Patch10: coreutils-5.92-owl-info-true-false.diff
@@ -84,9 +85,10 @@ arbitrary limits.
 # ALT patches, candidates for upstream version and CVS backports
 %patch0 -p0
 %patch1 -p1
-%patch2 -p0
+%patch2 -p1
 %patch3 -p0
-%patch4 -p1
+%patch4 -p0
+%patch5 -p1
 
 # ALT specific
 %patch10 -p1
@@ -235,8 +237,13 @@ fi
 %doc ChangeLog.bz2 NEWS.bz2 THANKS.bz2 AUTHORS README TODO
 
 %changelog
+* Thu Oct 27 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 5.92-owl4
+- Applied upstream fix to md5sum and sha1sum: changed default read mode
+back to text, to sync with documentation and for backwards compatibility.
+
 * Mon Oct 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 5.92-owl3
-- Applied upstream fix to "mkdir -p" and "install -d".
+- Applied upstream fix to "mkdir -p" and "install -d": when creating
+final component of the file name, do not fail when it already exists.
 - Applied upstream fix to dircolors.
 
 * Sun Oct 23 2005 Solar Designer <solar-at-owl.openwall.com> 5.92-owl2
