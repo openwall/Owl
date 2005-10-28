@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.62 2005/10/24 03:06:24 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.63 2005/10/28 08:29:50 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.39.1
+Version: 1.6.39.2
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -25,14 +25,14 @@ of other hash types are supported as well.
 %build
 cd src
 %ifarch athlon i786 i886 i986
-make linux-x86-mmx-elf CFLAGS='%cflags'
+make linux-x86-mmx CFLAGS='%cflags'
 %else
 %ifarch %ix86
 %define with_cpu_fallback 1
-make linux-x86-any-elf CFLAGS='%cflags'
+make linux-x86-any CFLAGS='%cflags'
 mv ../run/john ../run/john-non-mmx
 make clean
-make linux-x86-mmx-elf CFLAGS='%cflags -DCPU_FALLBACK=1'
+make linux-x86-mmx CFLAGS='%cflags -DCPU_FALLBACK=1'
 %endif
 %endif
 %ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
@@ -73,6 +73,9 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Fri Oct 28 2005 Solar Designer <solar-at-owl.openwall.com> 1.6.39.2-owl1
+- Dropped "-elf" from make target names.
+
 * Sun Oct 09 2005 Solar Designer <solar-at-owl.openwall.com> 1.6.39.1-owl1
 - With linux-sparc make target, let's not use sparc.S because it uses
 registers reserved by the SPARC ABI (%g5-%g7) and this no longer works with
