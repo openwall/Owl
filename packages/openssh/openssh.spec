@@ -1,9 +1,9 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.86 2005/10/24 03:29:15 solar Exp $
+# $Id: Owl/packages/openssh/openssh.spec,v 1.87 2005/10/29 19:25:59 ldv Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl15
+Release: owl16
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -34,7 +34,7 @@ Patch17: openssh-3.6.1p2-cvs-20050725-ssh2-delayed-compression.diff
 Patch18: openssh-3.6.1p2-owl-ssh2-delayed-compression-fix.diff
 Patch19: openssh-3.6.1p2-cvs-20050921-ssh2-delayed-compression-root.diff
 PreReq: openssl >= 0.9.7, openssl < 0.9.8
-Requires: pam >= 0.75-owl16
+Requires: pam >= 0:0.80-owl2
 Obsoletes: ssh
 BuildRequires: openssl-devel >= 0.9.7g-owl1
 BuildRequires: pam-devel, pam_userpass-devel
@@ -241,6 +241,11 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Sat Oct 29 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.6.1p2-owl16
+- Changed PAM config file to include system-auth for PAM account,
+password and session management.
+- Stripped /lib/security/ prefix from PAM module names.
+
 * Sat Sep 24 2005 Solar Designer <solar-at-owl.openwall.com> 3.6.1p2-owl15
 - Another bugfix for delayed compression: set the authenticated flag for
 root logins as well.  Thanks to Damien Miller.

@@ -1,11 +1,10 @@
 #%PAM-1.0
-# $Id: Owl/packages/openssh/sshd.pam,v 1.13 2005/10/29 17:25:16 ldv Exp $
+# $Id: Owl/packages/openssh/sshd.pam,v 1.14 2005/10/29 19:25:59 ldv Exp $
 auth       required	pam_userpass.so
 auth       required	pam_tcb.so use_first_pass shadow fork blank_nolog nodelay prefix=$2a$ count=8
 auth       required	pam_nologin.so
-account    required	pam_tcb.so shadow fork
+account    include	system-auth
 account    required	pam_limits.so
 account    required	pam_mktemp.so
-password   required	pam_passwdqc.so min=disabled,24,12,8,7 max=40 passphrase=3 match=4 similar=deny random=42 enforce=everyone retry=3
-password   required	pam_tcb.so use_authtok shadow write_to=tcb fork prefix=$2a$ count=8
-session    required	pam_tcb.so
+password   include	system-auth
+session    include	system-auth
