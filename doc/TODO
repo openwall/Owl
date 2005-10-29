@@ -310,10 +310,6 @@ be supporting udev, make an exception for /dev.
 
 	pam.
 
-[PRIORITY: medium]
-[ASSIGNED: ldv@]
-Make other packages in Owl use new "include" directive where appropriate.
-
 [PRIORITY: low]
 [ASSIGNED: ldv@]
 Move pam_stack (and something else?) into a new pam-compat subpackage.
@@ -551,4 +547,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Id: Owl/doc/TODO,v 1.120 2005/10/26 16:43:57 ldv Exp $
+$Id: Owl/doc/TODO,v 1.121 2005/10/29 19:35:54 ldv Exp $
