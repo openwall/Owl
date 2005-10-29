@@ -1,9 +1,9 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.52 2005/10/24 03:06:29 solar Exp $
+# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.53 2005/10/29 19:27:46 ldv Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.4.1
-Release: owl9
+Release: owl10
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -39,7 +39,7 @@ Patch30: shadow-4.0.4.1-owl-tcb.diff
 Patch40: shadow-4.0.4.1-alt-man.diff
 Patch41: shadow-4.0.4.1-alt-configure.diff
 Requires: owl-control >= 0.4, owl-control < 2.0
-Requires: pam, tcb >= 0.9.8, pam_userpass >= 0.5
+Requires: pam >= 0:0.80-owl2, pam_userpass >= 0.5, tcb >= 0.9.8
 BuildRequires: libtool, gettext = 0.14.1, automake, autoconf
 BuildRequires: glibc-crypt_blowfish-devel
 BuildRequires: pam-devel, pam_userpass-devel, tcb-devel
@@ -238,6 +238,11 @@ fi
 %exclude %_mandir/man8/mkpasswd*
 
 %changelog
+* Sat Oct 29 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2:4.0.4.1-owl10
+- Changed PAM config file to include system-auth for PAM auth and
+account management.
+- Stripped /lib/security/ prefix from PAM module names.
+
 * Mon May 16 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2:4.0.4.1-owl9
 - Fixed double free bug in userdel_rm_tcbdir().
 

@@ -1,7 +1,7 @@
 #%PAM-1.0
-# $Id: Owl/packages/shadow-utils/chage-chfn-chsh.pam,v 1.5 2005/10/29 17:25:16 ldv Exp $
+# $Id: Owl/packages/shadow-utils/chage-chfn-chsh.pam,v 1.6 2005/10/29 19:27:46 ldv Exp $
 auth       sufficient	pam_rootok.so
-auth       required	pam_tcb.so shadow fork nullok nodelay prefix=$2a$ count=8
-account    required	pam_tcb.so shadow fork
+auth       include	system-auth
+account    include	system-auth
 password   required	pam_permit.so
 session    required	pam_deny.so
