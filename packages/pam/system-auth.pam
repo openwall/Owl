@@ -1,0 +1,7 @@
+#%PAM-1.0
+# $Id: Owl/packages/pam/system-auth.pam,v 1.1 2005/10/29 18:04:08 ldv Exp $
+auth       required	pam_tcb.so shadow fork nullok prefix=$2a$ count=8
+account    required	pam_tcb.so shadow fork
+password   required	pam_passwdqc.so min=disabled,24,12,8,7 max=40 passphrase=3 match=4 similar=deny random=42 enforce=everyone retry=3
+password   required	pam_tcb.so use_authtok shadow write_to=tcb fork nullok prefix=$2a$ count=8
+session    required	pam_tcb.so

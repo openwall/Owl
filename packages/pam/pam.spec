@@ -1,9 +1,9 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.42 2005/10/24 03:06:28 solar Exp $
+# $Id: Owl/packages/pam/pam.spec,v 1.43 2005/10/29 18:04:08 ldv Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
 Version: 0.80
-Release: owl1
+Release: owl2
 %define rh_version %version-1
 License: GPL or BSD
 Group: System Environment/Base
@@ -14,6 +14,7 @@ Source2: pam-redhat-%rh_version.tar.bz2
 Source3: pam_listfile.c
 Source4: modules.map
 Source5: other.pam
+Source6: system-auth.pam
 Patch0: Linux-PAM-0.80-cvs-20050728.diff
 Patch1: Linux-PAM-0.80-owl-tmp.diff
 Patch2: Linux-PAM-0.80-owl-pam_get_user-cache-failures.diff
@@ -105,7 +106,7 @@ find modules -type f -print0 |
 
 mkdir modules/READMEs
 for f in modules/pam_*/README; do
-	d="${f%/*}"
+	d="${f%%/*}"
 	install -p -m 644 "$f" "modules/READMEs/README.${d##*/}"
 done
 autoconf
@@ -180,6 +181,7 @@ done
 ! [ -s check.log ] || exit 1
 
 install -pD -m644 %_sourcedir/other.pam %buildroot/etc/pam.d/other
+install -pD -m644 %_sourcedir/system-auth.pam %buildroot/etc/pam.d/system-auth
 
 rm -f doc/ps/missfont.log
 gzip -9nf doc/ps/*.ps
@@ -195,46 +197,46 @@ gzip -9nf doc/txts/*.txt
 
 %dir /etc/pam.d
 %config(noreplace) /etc/pam.d/other
-#%config(noreplace) /etc/pam.d/system-auth
+%config(noreplace) /etc/pam.d/system-auth
 
-/lib/libpam.so.*
-/lib/libpamc.so.*
-/lib/libpam_misc.so.*
+/%_lib/libpam.so.*
+/%_lib/libpamc.so.*
+/%_lib/libpam_misc.so.*
 
 /sbin/pam_tally
 
-%dir /lib/security
-/lib/security/pam_access.so
-/lib/security/pam_chroot.so
-/lib/security/pam_deny.so
-/lib/security/pam_env.so
-/lib/security/pam_filter.so
-/lib/security/pam_ftp.so
-/lib/security/pam_group.so
-/lib/security/pam_issue.so
-/lib/security/pam_lastlog.so
-/lib/security/pam_limits.so
-/lib/security/pam_listfile.so
-/lib/security/pam_localuser.so
-/lib/security/pam_mail.so
-/lib/security/pam_mkhomedir.so
-/lib/security/pam_motd.so
-/lib/security/pam_nologin.so
-/lib/security/pam_permit.so
-/lib/security/pam_rhosts_auth.so
-/lib/security/pam_rootok.so
-/lib/security/pam_securetty.so
-/lib/security/pam_shells.so
-/lib/security/pam_stack.so
-/lib/security/pam_stress.so
-/lib/security/pam_succeed_if.so
-/lib/security/pam_tally.so
-/lib/security/pam_time.so
-/lib/security/pam_userdb.so
-/lib/security/pam_warn.so
-/lib/security/pam_wheel.so
-/lib/security/pam_xauth.so
-/lib/security/pam_filter
+%dir /%_lib/security
+/%_lib/security/pam_access.so
+/%_lib/security/pam_chroot.so
+/%_lib/security/pam_deny.so
+/%_lib/security/pam_env.so
+/%_lib/security/pam_filter.so
+/%_lib/security/pam_ftp.so
+/%_lib/security/pam_group.so
+/%_lib/security/pam_issue.so
+/%_lib/security/pam_lastlog.so
+/%_lib/security/pam_limits.so
+/%_lib/security/pam_listfile.so
+/%_lib/security/pam_localuser.so
+/%_lib/security/pam_mail.so
+/%_lib/security/pam_mkhomedir.so
+/%_lib/security/pam_motd.so
+/%_lib/security/pam_nologin.so
+/%_lib/security/pam_permit.so
+/%_lib/security/pam_rhosts_auth.so
+/%_lib/security/pam_rootok.so
+/%_lib/security/pam_securetty.so
+/%_lib/security/pam_shells.so
+/%_lib/security/pam_stack.so
+/%_lib/security/pam_stress.so
+/%_lib/security/pam_succeed_if.so
+/%_lib/security/pam_tally.so
+/%_lib/security/pam_time.so
+/%_lib/security/pam_userdb.so
+/%_lib/security/pam_warn.so
+/%_lib/security/pam_wheel.so
+/%_lib/security/pam_xauth.so
+/%_lib/security/pam_filter
 
 %dir /etc/security
 %attr(640,root,wheel) %config(noreplace) /etc/security/access.conf
@@ -264,6 +266,9 @@ gzip -9nf doc/txts/*.txt
 %doc doc/specs/rfc86.0.txt
 
 %changelog
+* Sat Oct 29 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.80-owl2
+- Packaged /etc/pam.d/system-auth.
+
 * Tue Aug 23 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.80-owl1
 - Updated Linux-PAM to 0.80.
 - Updated pam-redhat to 0.80-1.
