@@ -1,7 +1,7 @@
 #%PAM-1.0
-# $Id: Owl/packages/shadow-utils/chage-chfn-chsh.pam,v 1.4 2004/09/10 07:31:15 galaxy Exp $
-auth       sufficient	/lib/security/pam_rootok.so
-auth       required	/lib/security/pam_tcb.so shadow fork nullok nodelay prefix=$2a$ count=8
-account    required	/lib/security/pam_tcb.so shadow fork
-password   required	/lib/security/pam_permit.so
-session    required	/lib/security/pam_deny.so
+# $Id: Owl/packages/shadow-utils/chage-chfn-chsh.pam,v 1.5 2005/10/29 17:25:16 ldv Exp $
+auth       sufficient	pam_rootok.so
+auth       required	pam_tcb.so shadow fork nullok nodelay prefix=$2a$ count=8
+account    required	pam_tcb.so shadow fork
+password   required	pam_permit.so
+session    required	pam_deny.so

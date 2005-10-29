@@ -1,5 +1,6 @@
 #%PAM-1.0
-auth     required       /lib/security/pam_deny.so
-account  required       /lib/security/pam_deny.so
-password required       /lib/security/pam_deny.so
-session  required       /lib/security/pam_deny.so
+# $Id: Owl/packages/pam/other.pam,v 1.2 2005/10/29 17:25:16 ldv Exp $
+auth       required	pam_deny.so
+account    required	pam_deny.so
+password   required	pam_deny.so
+session    required	pam_deny.so
