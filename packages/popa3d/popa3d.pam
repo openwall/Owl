@@ -1,7 +1,7 @@
 #%PAM-1.0
-# $Id: Owl/packages/popa3d/popa3d.pam,v 1.5 2005/10/29 17:25:16 ldv Exp $
+# $Id: Owl/packages/popa3d/popa3d.pam,v 1.6 2005/10/29 19:27:00 ldv Exp $
 auth       required	pam_userpass.so
 auth       required	pam_tcb.so use_first_pass shadow fork nolog prefix=$2a$ count=8
-account    required	pam_tcb.so shadow fork
+account    include	system-auth
 password   required	pam_deny.so
 session    required	pam_deny.so

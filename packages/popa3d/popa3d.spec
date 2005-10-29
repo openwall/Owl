@@ -1,9 +1,9 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.46 2005/10/24 03:06:28 solar Exp $
+# $Id: Owl/packages/popa3d/popa3d.spec,v 1.47 2005/10/29 19:27:00 ldv Exp $
 
 Summary: Post Office Protocol (POP3) server.
 Name: popa3d
 Version: 1.0
-Release: owl1
+Release: owl2
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Daemons
 URL: http://www.openwall.com/popa3d/
@@ -13,7 +13,7 @@ Source2: popa3d.pam
 Source3: popa3d.init
 Source4: popa3d.xinetd
 PreReq: /sbin/chkconfig, grep, shadow-utils
-Requires: /var/empty, tcb, pam_userpass, xinetd
+Requires: /var/empty, pam >= 0:0.80-owl2, pam_userpass, tcb, xinetd
 BuildRequires: pam-devel, pam_userpass-devel
 BuildRoot: /override/%name-%version
 
@@ -74,6 +74,11 @@ fi
 %doc CHANGES CONTACT DESIGN LICENSE
 
 %changelog
+* Sat Oct 29 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.0-owl2
+- Changed PAM config file to include system-auth for PAM account
+management.
+- Stripped /lib/security/ prefix from PAM module names.
+
 * Thu May 26 2005 Solar Designer <solar-at-owl.openwall.com> 1.0-owl1
 - Corrected the source code to not break C strict aliasing rules.
 - With Sun PAM (Solaris, HP-UX), insist on only one PAM message per call
