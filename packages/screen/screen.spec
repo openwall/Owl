@@ -1,9 +1,9 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.37 2005/10/24 03:06:29 solar Exp $
+# $Id: Owl/packages/screen/screen.spec,v 1.38 2005/10/29 19:14:42 ldv Exp $
 
 Summary: A screen manager that supports multiple sessions on one terminal.
 Name: screen
 Version: 4.0.2
-Release: owl5
+Release: owl6
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%version.tar.gz
@@ -127,6 +127,9 @@ fi
 /usr/share/terminfo/s/screen*
 
 %changelog
+* Sat Oct 29 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.0.2-owl6
+- Stripped /lib/security/ prefix from PAM module names.
+
 * Tue Oct 18 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.0.2-owl5
 - Added -owl-Makefile.diff which fixes the usage of tic.
 - Packaged /usr/share/terminfo/s/screen*.
