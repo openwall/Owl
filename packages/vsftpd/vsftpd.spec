@@ -1,9 +1,9 @@
-# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.17 2005/10/24 03:06:32 solar Exp $
+# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.18 2005/10/29 19:29:21 ldv Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
 Version: 1.2.1
-Release: owl0.2
+Release: owl0.3
 License: GPL
 Group: System Environment/Daemons
 URL: http://vsftpd.beasts.org
@@ -17,7 +17,7 @@ Patch0: vsftpd-1.2.1pre1-owl-alt-defaults.diff
 Patch1: vsftpd-1.2.1pre1-owl-pam_userpass.diff
 Patch2: vsftpd-1.2.1pre1-owl-warnings.diff
 Patch3: vsftpd-1.2.2-alt-doc.diff
-Requires: xinetd, logrotate, pam_userpass, tcb, /var/empty
+Requires: logrotate, pam >= 0:0.80-owl2, pam_userpass, tcb, xinetd, /var/empty
 Provides: ftpserver
 BuildRequires: pam-devel, pam_userpass-devel, libcap-devel
 BuildRoot: /override/%name-%version
@@ -81,6 +81,11 @@ mkdir -m 755 /home/ftp &> /dev/null || :
 %_mandir/man8/vsftpd.8*
 
 %changelog
+* Sat Oct 29 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.2.1-owl0.3
+- Changed PAM config file to include system-auth for PAM account and
+session management.
+- Stripped /lib/security/ prefix from PAM module names.
+
 * Sat Jun 19 2004 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.2.1-owl0.2
 - vsftpd.conf(5): note that session_support is disabled by default.
 - vsftpd.pam: set proper session management entry.

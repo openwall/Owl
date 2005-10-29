@@ -1,8 +1,8 @@
 #%PAM-1.0
-# $Id: Owl/packages/vixie-cron/crond.pam,v 1.3 2005/10/29 17:25:16 ldv Exp $
+# $Id: Owl/packages/vixie-cron/crond.pam,v 1.4 2005/10/29 19:28:35 ldv Exp $
 auth       required	pam_rootok.so
-account    required	pam_tcb.so shadow fork
+account    include	system-auth
 password   required	pam_deny.so
-session    required	pam_tcb.so
+session    include	system-auth
 session    required	pam_limits.so
 session    required	pam_mktemp.so
