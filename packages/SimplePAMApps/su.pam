@@ -1,10 +1,10 @@
 #%PAM-1.0
-# $Id: Owl/packages/SimplePAMApps/su.pam,v 1.9 2005/09/02 17:41:21 ldv Exp $
+# $Id: Owl/packages/SimplePAMApps/su.pam,v 1.10 2005/10/29 19:24:52 ldv Exp $
 auth       sufficient	pam_rootok.so
 #auth       required	pam_wheel.so use_uid group=wheel
-auth       required	pam_tcb.so shadow fork nullok nodelay prefix=$2a$ count=8
-account    required	pam_tcb.so shadow fork
+auth       include	system-auth
+account    include	system-auth
 password   required	pam_deny.so
-session    required	pam_tcb.so
+session    include	system-auth
 session    required	pam_limits.so
 session    required	pam_mktemp.so

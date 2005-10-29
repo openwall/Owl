@@ -1,7 +1,6 @@
 #%PAM-1.0
-# $Id: Owl/packages/SimplePAMApps/passwd.pam,v 1.7 2005/09/02 17:41:21 ldv Exp $
-auth       required	pam_tcb.so shadow fork nullok nodelay prefix=$2a$ count=8
-account    required	pam_tcb.so shadow fork
-password   required	pam_passwdqc.so min=disabled,24,12,8,7 max=40 passphrase=3 match=4 similar=deny random=42 enforce=everyone retry=3
-password   required	pam_tcb.so use_authtok shadow write_to=tcb fork nullok prefix=$2a$ count=8
+# $Id: Owl/packages/SimplePAMApps/passwd.pam,v 1.8 2005/10/29 19:24:52 ldv Exp $
+auth       include	system-auth
+account    include	system-auth
+password   include	system-auth
 session    required	pam_deny.so

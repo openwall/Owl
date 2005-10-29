@@ -1,9 +1,9 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.42 2005/10/24 03:06:20 solar Exp $
+# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.43 2005/10/29 19:24:52 ldv Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
 Version: 0.60
-Release: owl26
+Release: owl27
 License: BSD or GPL
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
@@ -22,7 +22,7 @@ Patch5: SimplePAMApps-0.60-alt-login-su-strip-argv0.diff
 Patch6: SimplePAMApps-0.60-alt-owl-warnings.diff
 Patch7: SimplePAMApps-0.60-owl-log.diff
 PreReq: owl-control >= 0.4, owl-control < 2.0
-Requires: tcb, pam_passwdqc >= 0.2, pam_mktemp
+Requires: pam >= 0:0.80-owl2, pam_passwdqc >= 0.2, pam_mktemp, tcb
 Obsoletes: passwd
 BuildRequires: pam-devel
 BuildRoot: /override/%name-%version
@@ -103,6 +103,10 @@ fi
 /etc/control.d/facilities/*
 
 %changelog
+* Sat Oct 29 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.60-owl27
+- Changed PAM config files to include system-auth for PAM auth, account,
+password and session management.
+
 * Fri Sep 02 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.60-owl26
 - Allow users with empty passwords to change their passwords.
 - Stripped /lib/security/ prefix from module pathnames in PAM config files.
@@ -199,7 +203,7 @@ from within a PAM module anyway).
 - Use RPM_OPT_FLAGS correctly.
 
 * Wed Aug 23 2000 Solar Designer <solar-at-owl.openwall.com>
-- %config(noreplace) for /etc/pam.d files.
+- %%config(noreplace) for /etc/pam.d files.
 
 * Fri Aug 11 2000 Solar Designer <solar-at-owl.openwall.com>
 - Added owl-control support for su and passwd.
