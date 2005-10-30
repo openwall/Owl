@@ -1,4 +1,4 @@
-# $Id: Owl/packages/john/john.spec,v 1.63 2005/10/28 08:29:50 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.64 2005/10/30 21:38:20 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -74,7 +74,11 @@ install -m 644 -p run/mailer doc/
 
 %changelog
 * Fri Oct 28 2005 Solar Designer <solar-at-owl.openwall.com> 1.6.39.2-owl1
-- Dropped "-elf" from make target names.
+- Re-worked the Makefile: dropped "-elf" suffixes from make target names,
+re-ordered the targets for best to most generic (for individual platforms),
+marked some targets as "best" or "obsolete", added openbsd-x86-64 (thanks to
+Sebastian Rother), added many openbsd-* targets based on the OpenBSD port.
+- Minor corrections to EXAMPLES.
 
 * Sun Oct 09 2005 Solar Designer <solar-at-owl.openwall.com> 1.6.39.1-owl1
 - With linux-sparc make target, let's not use sparc.S because it uses
