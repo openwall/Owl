@@ -1,9 +1,9 @@
-# $Id: Owl/packages/procps/Attic/procps.spec,v 1.26 2005/10/30 21:42:20 ldv Exp $
+# $Id: Owl/packages/procps/Attic/procps.spec,v 1.27 2005/10/30 23:08:20 ldv Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
 Version: 3.2.5
-Release: owl5
+Release: owl6
 License: GPL and LGPL
 Group: System Environment/Base
 URL: http://procps.sf.net
@@ -84,7 +84,7 @@ rm -rf %buildroot
 %_mandir/man?/*
 
 %changelog
-* Mon Oct 31 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.2.5-owl5
+* Mon Oct 31 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.2.5-owl6
 - Fixed array subscript type warnings.
 
 * Mon Oct 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.2.5-owl4
