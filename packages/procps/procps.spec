@@ -1,9 +1,9 @@
-# $Id: Owl/packages/procps/Attic/procps.spec,v 1.25 2005/10/24 15:05:44 ldv Exp $
+# $Id: Owl/packages/procps/Attic/procps.spec,v 1.26 2005/10/30 21:42:20 ldv Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
 Version: 3.2.5
-Release: owl4
+Release: owl5
 License: GPL and LGPL
 Group: System Environment/Base
 URL: http://procps.sf.net
@@ -29,6 +29,7 @@ Patch27: procps-3.2.5-owl-proc.diff
 Patch28: procps-3.2.5-owl-pmap.diff
 Patch29: procps-3.2.5-owl-stat2proc.diff
 Patch30: procps-3.2.5-owl-top.diff
+Patch31: procps-3.2.5-owl-warnings.diff
 PreReq: /sbin/ldconfig
 BuildRequires: ncurses-devel
 BuildRoot: /override/%name-%version
@@ -61,6 +62,7 @@ skill, slabtop, snice, sysctl, tload, top, uptime, vmstat, w, and watch.
 %patch28 -p1
 %patch29 -p1
 %patch30 -p1
+%patch31 -p1
 
 %build
 %__make CC="%__cc" CFLAGS="%optflags"
@@ -82,6 +84,9 @@ rm -rf %buildroot
 %_mandir/man?/*
 
 %changelog
+* Mon Oct 31 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.2.5-owl5
+- Fixed array subscript type warnings.
+
 * Mon Oct 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.2.5-owl4
 - Corrected spelling in the top utility, changed its default view to SMP
 unless more than 4 CPUs are installed.

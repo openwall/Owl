@@ -1,0 +1,11 @@
+--- procps-3.2.5/proc/readproc.c.orig	2005-10-30 21:27:02 +0000
++++ procps-3.2.5/proc/readproc.c	2005-10-30 21:28:14 +0000
+@@ -163,7 +163,7 @@ ENTER(0x220);
+         // examine a field name (hash and compare)
+     base:
+         if(unlikely(!*S)) break;
+-        entry = table[63 & (asso[S[3]] + asso[S[2]] + asso[S[0]])];
++        entry = table[63 & (asso[(int)S[3]] + asso[(int)S[2]] + asso[(int)S[0]])];
+         colon = strchr(S, ':');
+         if(unlikely(!colon)) break;
+         if(unlikely(colon[1]!='\t')) break;
