@@ -1,0 +1,22 @@
+--- procmail-3.22.orig/man/procmail.man	2001-09-11 08:54:43 +0400
++++ procmail-3.22/man/procmail.man	2004-03-28 20:55:10 +0400
+@@ -754,7 +754,7 @@
+ .SS "A sample small @PROCMAILRC@:"
+ .na
+ .nf
+-PATH=/bin:/usr/bin:@BINDIR@
++PATH=/bin:/usr/bin:/usr/local/bin
+ MAILDIR=$HOME/Mail      #you'd better make sure it exists
+ DEFAULT=$MAILDIR/mbox   #completely optional
+ LOGFILE=$MAILDIR/from   #recommended
+--- procmail-3.22.orig/man/procmailrc.man
++++ procmail-3.22/man/procmailrc.man
+@@ -779,7 +779,7 @@
+ .PP
+ Some non-optimal and non-obvious regexps set MATCH to an incorrect
+ value.  The regexp can be made to work by removing one or more unneeded
+-'*', '+', or '?' operator on the left-hand side of the \e/ token.
++\&'*', '+', or '?' operator on the left-hand side of the \e/ token.
+ .SH MISCELLANEOUS
+ If the regular expression contains `\fB@TO_key@\fP' it will be substituted by
+ .na

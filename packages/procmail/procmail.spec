@@ -1,14 +1,18 @@
-# $Id: Owl/packages/procmail/procmail.spec,v 1.10 2005/10/24 03:06:29 solar Exp $
+# $Id: Owl/packages/procmail/procmail.spec,v 1.11 2005/10/30 21:04:30 ldv Exp $
 
 Summary: The procmail mail processing program.
 Name: procmail
-Version: 3.15.2
-Release: owl3
+Version: 3.22
+Release: owl1
 License: GPL or Artistic License
 Group: System Environment/Daemons
-Source: ftp://ftp.procmail.org/pub/procmail/procmail-%version.tar.gz
-Patch0: procmail-3.15.2-owl-config.diff
-Patch1: procmail-3.15.2-owl-fixes.diff
+Source0: ftp://ftp.procmail.org/pub/procmail/procmail-%version.tar.gz
+Source1: mailstat.1
+Patch0: procmail-3.22-deb-fixes.diff
+Patch1: procmail-3.22-owl-alt-fixes.diff
+Patch2: procmail-3.22-owl-config.diff
+Patch3: procmail-3.22-deb-alt-doc.diff
+Patch4: procmail-3.22-owl-truncate.diff
 BuildRequires: mktemp >= 1:1.3.1
 BuildRoot: /override/%name-%version
 
@@ -21,15 +25,22 @@ may be installed as the local delivery agent.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+
+sed -i 's,/usr/ucb/mail,/bin/mail,g' examples/*rmail
+sed -i 's,\(/usr\)\(/spool\)\?/mail,/var\2/mail,g' examples/advanced FAQ
 
 %{expand:%%define optflags %optflags -fno-strict-aliasing -Wall -Wno-comment -Wno-parentheses}
 
 %build
-make \
+%__make \
 	LOCKINGTEST=100 \
-	SEARCHLIBS="-lm -lnsl -ldl" \
-	CC=gcc \
-	CFLAGS0="%optflags"
+	SEARCHLIBS=-lm \
+	CC=%__cc \
+	CFLAGS0="%optflags `getconf LFS_CFLAGS`"
+bzip2 -9fk HISTORY
 
 %install
 rm -rf %buildroot
@@ -38,10 +49,11 @@ mkdir -p %buildroot{%_bindir,%_mandir/man{1,5}}
 make install \
 	BASENAME=%buildroot%_prefix \
 	MANDIR=%buildroot%_mandir
+install -pm644 %_sourcedir/mailstat.1 %buildroot%_mandir/man1/
 
 %files
 %defattr(-,root,root)
-%doc FAQ HISTORY README KNOWN_BUGS FEATURES COPYING Artistic examples
+%doc FAQ FEATURES HISTORY.bz2 KNOWN_BUGS README COPYING Artistic examples
 %attr(755,root,root) %_bindir/formail
 %attr(755,root,root) %_bindir/lockfile
 %attr(755,root,root) %_bindir/mailstat
@@ -49,6 +61,12 @@ make install \
 %_mandir/man[15]/*
 
 %changelog
+* Sun Oct 30 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.22-owl1
+- Updated to 3.22.
+- Imported fixes from ALT's procmail-3.22-alt4 and Debian's
+procmail-3.22-11 packages.
+- Fixed procmail truncation bug, patch from Solar Designer.
+
 * Tue Jun 28 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.15.2-owl3
 - Build this package without optimizations based on strict aliasing rules.
 

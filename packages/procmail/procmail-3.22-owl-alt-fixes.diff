@@ -1,0 +1,378 @@
+diff -upk.orig procmail-3.22.orig/man/mansed procmail-3.22/man/mansed
+--- procmail-3.22.orig/man/mansed	2000-12-31 06:08:12 +0000
++++ procmail-3.22/man/mansed	2002-09-10 12:34:37 +0000
+@@ -19,13 +19,19 @@ DEST="$3"
+ RM="$4"
+ DEVNULL=$5
+ export SHELL SRC DEST RM DEVNULL
+-TMPF0=/tmp/_mansed.0.$$
+-TMPF1=/tmp/_mansed.1.$$
++TMPF0="`mktemp -t mansed.XXXXXXXXXX`" || exit 1
++TMPF1="`mktemp -t mansed.XXXXXXXXXX`" || {
++ $RM "$TMPF0"
++ exit 1
++}
+ 
+ if test ! -f "$DEST"
+ then
+- trap "$RM \"$DEST\" $TMPF0 $TMPF1;exit 1" 1 2 3 15
++ trap '$RM "$DEST" "$TMPF0" "$TMPF1"; exit 1' HUP INT PIPE TERM
++else
++ trap '$RM "$TMPF0" "$TMPF1"; exit 1' HUP INT PIPE TERM
+ fi
++trap '$RM "$TMPF0" "$TMPF1"' EXIT
+ 
+ (cat <<\HERE
+ .\"if n .pl +(135i-\n(.pu)
+@@ -120,11 +126,10 @@ cat <<HERE
+ .rm RE
+ .rn Re RE
+ HERE
+- )| sed -f man.sed.0000 >$TMPF0
++ )| sed -f man.sed.0000 > "$TMPF0"
+ 
+ if test $? != 0
+ then
+-  $RM $TMPF0
+   exit 1
+ fi
+ 
+@@ -133,19 +138,10 @@ do
+   case $a in
+      man.sed.0000) ;;
+      man.sed.????)
+-	mv $TMPF0 $TMPF1
+-	if sed -f $a <$TMPF1 >$TMPF0
+-	then
+-	:
+-	else
+-	   $RM $TMPF1 $TMPF0
+-	   exit 1
+-	fi
++	sed -f $a < "$TMPF0" > "$TMPF1" || exit 1
++	cat < "$TMPF1" > "$TMPF0" || exit 1
+   esac
+ done
+ 
+-cat $TMPF0 >"$DEST"
+-result=$?
+-
+-$RM $TMPF0 $TMPF1
+-exit $result
++cat "$TMPF0" > "$DEST"
++touch -r "$SRC" "$DEST"
+diff -upk.orig procmail-3.22.orig/src/autoconf procmail-3.22/src/autoconf
+--- procmail-3.22.orig/src/autoconf	2001-09-11 04:55:46 +0000
++++ procmail-3.22/src/autoconf	2005-10-30 20:21:21 +0000
+@@ -194,7 +194,7 @@ An excellent candidate would be a remote
+ ==============================================================================
+ HERE
+ 
+-testdirs="/tmp ."
++testdirs="."
+ 
+ case "$LOCKINGTEST" in
+   ""|*[a-zA-Z/]*) b=dummy ;;
+@@ -1458,7 +1458,7 @@ fi
+ grep '^#define SENDMAIL ".*/sendmail"' $ACONF >$DEVNULL ||
+  echo "#define DEFflagsendmail \"\"" >>$ACONF
+ 
+-a=/tmp/_chowntst.$$
++a=_chowntst.$$
+ $RM -r $a
+ OLDTESTDIRS="$a $OLDTESTDIRS"
+ mkdir $a
+@@ -1466,13 +1466,18 @@ mkdir $a/__
+ 
+ _autotst $a/__ $a/__/__ 4 >>$ACONF
+ 
+-cat /usr/lib/sendmail.cf /etc/sendmail.cf /etc/mail/sendmail.cf 2>$DEVNULL |
+- grep 'Mlocal.*procmail' >$DEVNULL ||
+- echo '#define CF_no_procmail_yet' >>$ACONF
+-
+-cat /usr/lib/sendmail.cf /etc/sendmail.cf /etc/mail/sendmail.cf 2>$DEVNULL |
+- grep '^V' >$DEVNULL ||
+- echo '#define buggy_SENDMAIL' >>$ACONF
++# Skip this check on systems without sendmail (possibly with another MTA)
++#if test -r /usr/lib/sendmail.cf -o \
++#	-r /etc/sendmail.cf -o \
++#	-r /etc/mail/sendmail.cf; then
++#  cat /usr/lib/sendmail.cf /etc/sendmail.cf /etc/mail/sendmail.cf 2>$DEVNULL |
++#   grep 'Mlocal.*procmail' >$DEVNULL ||
++#   echo '#define CF_no_procmail_yet' >>$ACONF
++#
++#  cat /usr/lib/sendmail.cf /etc/sendmail.cf /etc/mail/sendmail.cf 2>$DEVNULL |
++#   grep '^V' >$DEVNULL ||
++#   echo '#define buggy_SENDMAIL' >>$ACONF
++#fi
+ 
+ lpath='/bin'
+ bins="/bin"
+@@ -1491,8 +1496,6 @@ do
+   fi
+ done
+ 
+-echo "#define defPATH \"PATH=\$HOME/bin:$lpath\"" >>$ACONF
+-echo "#define defSPATH \"PATH=$lpath\"" >>$ACONF
+ 
+ sed -n -e 's/^ v\([^ ]*\) .*$/#define PM_VERSION "\1"/p' \
+  ../patchlevel.h >>$ACONF
+diff -upk.orig procmail-3.22.orig/src/cstdio.c procmail-3.22/src/cstdio.c
+--- procmail-3.22.orig/src/cstdio.c	2000-12-31 06:08:20 +0000
++++ procmail-3.22/src/cstdio.c	2005-10-30 20:04:58 +0000
+@@ -14,6 +14,7 @@ static /*const*/char rcsid[]=
+ #include "lmtp.h"
+ #include "variables.h"
+ #include "shell.h"
++#include "common.h"
+ #include "cstdio.h"
+ 
+ static uchar rcbuf[STDBUF],*rcbufp,*rcbufend;	  /* buffer for custom stdio */
+diff -upk.orig procmail-3.22.orig/src/exopen.c procmail-3.22/src/exopen.c
+--- procmail-3.22.orig/src/exopen.c	2001-09-11 04:56:58 +0000
++++ procmail-3.22/src/exopen.c	2005-10-30 19:25:51 +0000
+@@ -55,9 +55,9 @@ int unique(full,p,len,mode,verbos,flags)
+  const size_t len;const mode_t mode;const int verbos,flags;
+ { static const char s2c[]=".,+%";static int serial=STRLEN(s2c);
+   static time_t t;char*dot,*end,*host;struct stat filebuf;
+-  int nicediff,i,didnice,retry=RETRYunique;
++  int i,didnice=0,retry=RETRYunique;
+   if(flags&doCHOWN)		  /* semi-critical, try raising the priority */
+-   { nicediff=nice(0);SETerrno(0);nicediff-=nice(-NICE_RANGE);
++   { nice(0);SETerrno(0);nice(-NICE_RANGE);
+      didnice=!errno;					  /* did we succeed? */
+    }
+   end=full+len;
+@@ -112,8 +112,9 @@ in:	if(flags&doMAILDIR)
+   while((!i||errno!=ENOENT||	      /* casually check if it already exists */
+ 	 (0>(i=ropen(full,O_WRONLY|O_CREAT|O_EXCL,mode))&&errno==EEXIST))&&
+ 	(i= -1,retry--));
+-  if(flags&doCHOWN&&didnice)
+-     nice(nicediff);		   /* put back the priority to the old level */
++  if(didnice) {
++     nice(NICE_RANGE/2);nice(0);   /* put back the priority to the old level */
++  }
+   if(i<0)
+    { if(verbos)			      /* this error message can be confusing */
+ 	writeerr(full);					 /* for casual users */
+diff -upk.orig procmail-3.22.orig/src/foldinfo.c procmail-3.22/src/foldinfo.c
+--- procmail-3.22.orig/src/foldinfo.c	2001-09-11 04:57:32 +0000
++++ procmail-3.22/src/foldinfo.c	2005-10-30 19:25:51 +0000
+@@ -11,6 +11,7 @@ static /*const*/char rcsid[]=
+  "$Id: foldinfo.c,v 1.11 2001/08/04 07:07:42 guenther Exp $";
+ #endif
+ #include "procmail.h"
++#include "acommon.h"
+ #include "misc.h"
+ #include "lastdirsep.h"
+ #include "robust.h"
+@@ -99,9 +100,9 @@ static mode_t trymkdir(dir,paranoid,i)co
+ 
+ static int mkmaildir(buffer,chp,paranoid)char*const buffer,*const chp;
+  const int paranoid;
+-{ mode_t mode;int i;
++{ mode_t mode;int i=chp-buffer+1;
+   if(paranoid)
+-     memcpy(buf2,buffer,i=chp-buffer+1),buf2[i-1]= *MCDIRSEP_,buf2[i]='\0';
++     memcpy(buf2,buffer,i),buf2[i-1]= *MCDIRSEP_,buf2[i]='\0';
+   return
+    (strcpy(chp,maildirnew),mode=trymkdir(buffer,paranoid,i),S_ISDIR(mode))&&
+    (strcpy(chp,maildircur),mode=trymkdir(buffer,paranoid,i),S_ISDIR(mode))&&
+@@ -111,6 +112,7 @@ static int mkmaildir(buffer,chp,paranoid
+ int foldertype(type,forcedir,modep,paranoid)int type,forcedir;
+  mode_t*const modep;struct stat*const paranoid;
+ { struct stat stbuf;mode_t mode;int i;char*chp;
++  mode=0; /* XXX: this appears to be actually used (type==ft_FILE&&forcedir) */
+   if(!type)
+      type=folderparse();
+   switch(type)
+diff -upk.orig procmail-3.22.orig/src/formail.c procmail-3.22/src/formail.c
+--- procmail-3.22.orig/src/formail.c	2001-09-11 04:57:32 +0000
++++ procmail-3.22/src/formail.c	2005-10-30 20:06:29 +0000
+@@ -11,8 +11,8 @@
+ #ifdef RCS
+ static /*const*/char rcsid[]=
+  "$Id: formail.c,v 1.102 2001/08/04 07:07:43 guenther Exp $";
+-#endif
+ static /*const*/char rcsdate[]="$Date: 2001/08/04 07:07:43 $";
++#endif
+ #include "includes.h"
+ #include <ctype.h>		/* iscntrl() */
+ #include "formail.h"
+@@ -305,7 +305,7 @@ pnewname:  lastm=nowm;saddr=strcpy(mallo
+ 			     /* lifted out of main() to reduce main()'s size */
+ static void elimdups(namep,idcache,maxlen,split)const char*const namep;
+  FILE*idcache;const long maxlen;const int split;
+-{ int dupid=0;char*key,*oldnewl;
++{ int dupid=0;char*key,*oldnewl=0;
+   key=(char*)namep;		  /* not to worry, no change will be noticed */
+   if(!areply)
+    { key=0;
+@@ -364,9 +364,9 @@ static PROGID;
+ 
+ int main(lastm,argv)int lastm;const char*const argv[];
+ { int i,split=0,force=0,bogus=1,every=0,headreply=0,digest=0,nowait=0,keepb=0,
+-   minfields=(char*)progid-(char*)progid,conctenate=0,babyl=0,babylstart,
++   minfields=(char*)progid-(char*)progid,conctenate=0,babyl=0,babylstart=0,
+    berkeley=0,forgetclen;
+-  long maxlen,ctlength;FILE*idcache=0;pid_t thepid;
++  long maxlen=0,ctlength;FILE*idcache=0;pid_t thepid;
+   size_t j,lnl,escaplen;char*chp,*namep,*escap=ESCAP;
+   struct field*fldp,*fp2,**afldp,*fdate,*fcntlength,*fsubject,*fFrom_;
+   if(lastm)			       /* sanity check, any argument at all? */
+@@ -786,7 +786,10 @@ fromanyway: { register size_t k;
+ 	   else if(split&&digest&&(lnl||every)&&digheadr())	  /* digest? */
+ accuhdr:    { for(i=minfields;--i&&readhead()&&digheadr();); /* found enough */
+ 	      if(!i)					   /* then split it! */
+-splitit:       { if(!lnl)   /* did the previous mail end with an empty line? */
++#ifdef MAILBOX_SEPARATOR
++splitit:
++#endif
++	       { if(!lnl)   /* did the previous mail end with an empty line? */
+ 		    lputcs('\n');		      /* but now it does :-) */
+ 		 logfolder();
+ 		 if(fclose(mystdout)==EOF||errout==EOF)
+diff -upk.orig procmail-3.22.orig/src/lmtp.c procmail-3.22/src/lmtp.c
+--- procmail-3.22.orig/src/lmtp.c	2001-06-29 02:20:51 +0000
++++ procmail-3.22/src/lmtp.c	2005-10-30 20:05:59 +0000
+@@ -51,7 +51,7 @@ static int lreaddyn P((void));
+ 
+ int childserverpid;
+ 
+-static ctopfd;
++static int ctopfd;
+ static char*overread;
+ static size_t overlen;
+ 
+diff -upk.orig procmail-3.22.orig/src/lockfile.c procmail-3.22/src/lockfile.c
+--- procmail-3.22.orig/src/lockfile.c	2001-09-11 04:58:04 +0000
++++ procmail-3.22/src/lockfile.c	2005-10-30 20:06:15 +0000
+@@ -16,8 +16,8 @@
+ #ifdef RCS
+ static /*const*/char rcsid[]=
+  "$Id: lockfile.c,v 1.49 2001/08/04 07:12:16 guenther Exp $";
+-#endif
+ static /*const*/char rcsdate[]="$Date: 2001/08/04 07:12:16 $";
++#endif
+ #include "includes.h"
+ #include "sublib.h"
+ #include "exopen.h"
+diff -upk.orig procmail-3.22.orig/src/misc.c procmail-3.22/src/misc.c
+--- procmail-3.22.orig/src/misc.c	2001-06-29 02:21:05 +0000
++++ procmail-3.22/src/misc.c	2005-10-30 19:25:51 +0000
+@@ -439,7 +439,7 @@ noconcat:
+       if(getlline(buf2,buf2+linebuf))
+ 	 i=0;				       /* assume failure on overflow */
+       if(i)					 /* check out all conditions */
+-       { int negate,scoreany;double weight,xponent,lscore;
++       { int negate,scoreany;double weight=0,xponent=0,lscore;
+ 	 char*lstartchar=startchar;long ltobesent=tobesent,sizecheck=filled;
+ 	 for(chp=strchr(buf2,'\0');--chp>=buf2;)
+ 	  { switch(*chp)		  /* strip off whitespace at the end */
+diff -upk.orig procmail-3.22.orig/src/pipes.c procmail-3.22/src/pipes.c
+--- procmail-3.22.orig/src/pipes.c	2001-09-11 04:58:44 +0000
++++ procmail-3.22/src/pipes.c	2005-10-30 19:25:51 +0000
+@@ -141,7 +141,7 @@ No_1st_comma: elog(*walkargs);					/* ex
+ }
+ 
+ int pipthrough(line,source,len)char*line,*source;const long len;
+-{ int pinfd[2],poutfd[2];char*eq;
++{ int pinfd[2],poutfd[2];char*eq=0;
+   if(Stdout)
+    { *(eq=strchr(Stdout,'\0')-1)='\0';			     /* chop the '=' */
+      if(!(backblock=getenv(Stdout)))			/* no current value? */
+@@ -188,7 +188,7 @@ perr:	      progerr(line,excode,pwait==4
+   rclose(PWRB);rclose(PWRI);getstdin(PRDI);
+   if(forkerr(pidchild,procmailn))
+      return -1;
+-  if(Stdout)
++  if(eq)
+    { char*name;memblk temp;		    /* ick.  This is inefficient XXX */
+      *eq='=';name=Stdout;Stdout=0;primeStdout(name);free(name);
+      makeblock(&temp,Stdfilled);
+@@ -254,7 +254,9 @@ long pipin(line,source,len,asgnlastf)cha
+       }
+    }
+   pidchild=0;
++#if 0
+ builtin:
++#endif
+   if(!sh)
+      concatenate(line);
+   if(asgnlastf)
+diff -upk.orig procmail-3.22.orig/src/procmail.c procmail-3.22/src/procmail.c
+--- procmail-3.22.orig/src/procmail.c	2001-09-11 04:59:14 +0000
++++ procmail-3.22/src/procmail.c	2005-10-30 19:25:51 +0000
+@@ -95,7 +95,7 @@ static int
+  mainloop P((void));
+ 
+ int main(argc,argv)int argc;const char*const argv[];
+-{ register char*chp,*chp2;
++{ register char*chp=0,*chp2=0;
+ #if 0				/* enable this if you want to trace procmail */
+   kill(getpid(),SIGSTOP);/*raise(SIGSTOP);*/
+ #endif
+@@ -591,7 +591,9 @@ suspicious_rc:
+ 	  (stbuf.st_mode&S_IWOTH)||		      /* writable by others, */
+ 	  rctype==rct_DEFAULT&&		   /* if the default then also check */
+ 	   (stbuf.st_mode&S_IWGRP)&&		   /* for writable by group, */
+-	   (NO_CHECK_stgid||stbuf.st_gid!=gid)
++	   (NO_CHECK_stgid||stbuf.st_gid!=gid)||
++	   !S_ISREG(stbuf.st_mode)||
++	   (stbuf.st_blksize>=512 && stbuf.st_size>stbuf.st_blocks*stbuf.st_blksize)
+ 	 )&&strcmp(devnull,buf)||	     /* /dev/null is a special case, */
+ 	(*chp='\0',stat(buf,&stbuf))||		     /* check the directory, */
+ #ifndef CAN_chown				   /* sticky and can't chown */
+diff -upk.orig procmail-3.22.orig/src/regexp.c procmail-3.22/src/regexp.c
+--- procmail-3.22.orig/src/regexp.c	2000-12-31 06:08:45 +0000
++++ procmail-3.22/src/regexp.c	2005-10-30 19:25:51 +0000
+@@ -125,7 +125,7 @@ static void psimp(e)const struct eps*con
+ 	   errorno=1;
+ 	return;
+      case R_BEG_CLASS:					   /* a simple class */
+-      { unsigned i,j=R_NOT_CLASS==*++p;
++      { unsigned i=0,j=R_NOT_CLASS==*++p;
+ 	if(e)
+ 	 { r->opc=OPC_CLASS;r->next=Ceps e;Cc(r,pos1.st_)=Cc(r,pos2.st_)=0;
+ 	   i=maxindex(rAc);
+@@ -268,7 +268,7 @@ incagoon:  if(endgroup(++p))		/* at the 
+ }
+ 
+ static int por(e)const struct eps*const e;
+-{ uchar*pvold;struct eps*rvold;
++{ uchar*pvold=0;struct eps*rvold=0;
+   if(!e)
+    { rvold=r;
+      if(cachea==(pvold=p))
+@@ -509,7 +509,7 @@ pcstack_switch:;				   /* this pc-stack 
+    }
+   while(--len);					     /* still text to search */
+   goto wrapup;
+-  ;{ const char*start,*bom;
++  ;{ const char*start,*bom=0;
+      do
+       { i= *++str;			 /* get the next real-text character */
+ 	if(i-'A'<='Z'-'A')
+diff -upk.orig procmail-3.22.orig/src/robust.c procmail-3.22/src/robust.c
+--- procmail-3.22.orig/src/robust.c	2001-06-29 02:21:11 +0000
++++ procmail-3.22/src/robust.c	2005-10-30 19:25:51 +0000
+@@ -22,6 +22,9 @@ mode_t cumask;
+ #define nomemretry	noresretry
+ #define noforkretry	noresretry
+ 		       /* set nextexit to prevent elog() from using malloc() */
++#ifdef __GNUC__
++__attribute__ ((noreturn))
++#endif
+ void nomemerr(len)const size_t len;
+ { static const char outofmem[]="Out of memory";
+   nextexit=2;nlog(outofmem);elog("\n");
+@@ -132,7 +135,8 @@ int opena(a)const char*const a;
+ int ropen(name,mode,mask)const char*const name;const int mode;
+  const mode_t mask;
+ { int i,r;					       /* a SysV secure open */
+-  for(r=noresretry,lcking|=lck_FILDES;0>(i=open(name,mode,mask));)
++  for(r=noresretry,lcking|=lck_FILDES;
++   0>(i=open(name,mode|O_NOCTTY|O_NONBLOCK,mask));)
+      if(errno!=EINTR&&!(errno==ENFILE&&(r<0||r--)))
+ 	break;		 /* survives a temporary "file table full" condition */
+   lcking&=~lck_FILDES;
