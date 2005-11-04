@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.61 2005/10/24 03:06:29 solar Exp $
+# $Id: Owl/packages/rpm/rpm.spec,v 1.62 2005/11/04 23:38:05 ldv Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -11,7 +11,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl9
+Release: owl10
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -471,6 +471,10 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Sat Nov 05 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl10
+- Fixed macro files which appeared to be incomplete due to outdated
+vendor autodetection code in configure scripts.
+
 * Mon Oct 17 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl9
 - Backported fix to nested %if handling.
 - Changed package upgrade algorithm to remove old files
