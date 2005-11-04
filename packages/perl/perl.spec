@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.34 2005/10/24 03:06:28 solar Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.35 2005/11/04 21:16:06 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -17,8 +17,8 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.8.3
-Release: owl4
-Epoch: 1
+Release: owl5
+Epoch: 2
 License: GPL
 Group: Development/Languages
 Source: ftp://ftp.perl.org/pub/CPAN/src/perl-%version.tar.bz2
@@ -274,6 +274,9 @@ find %buildroot%_libdir/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Sat Nov 05 2005 Solar Designer <solar-at-owl.openwall.com> 2:5.8.3-owl5
+- Bumped the Epoch to 2 for Fedora and RHEL compatibility.
+
 * Sun Feb 06 2005 Solar Designer <solar-at-owl.openwall.com> 1:5.8.3-owl4
 - File::Path::rmtree and suidperl PERLIO_DEBUG security fixes.
 

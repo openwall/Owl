@@ -354,11 +354,6 @@ Solve the DoS-against-itself on the temporary file.
 	perl.
 
 [PRIORITY: low]
-[ASSIGNED: mci@]
-Double-check the perl packages in Fedora and RHEL and likely bump
-Epoch to 2 in our package for compatibility.
-
-[PRIORITY: low]
 Re-implement temporary file handling in CGI.pm making use of File::Temp.
 
 [PRIORITY: low]
@@ -547,4 +542,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Id: Owl/doc/TODO,v 1.121 2005/10/29 19:35:54 ldv Exp $
+$Id: Owl/doc/TODO,v 1.122 2005/11/04 21:16:06 solar Exp $
