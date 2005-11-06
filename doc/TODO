@@ -484,6 +484,12 @@ http://rechner.lst.de/~okir/traceroute/
 ftp://ftp.lst.de/pub/people/okir/traceroute
 
 
+	util-linux.
+
+[PRIORITY: medium]
+Update to a newer version that would build with Linux 2.6.x headers.
+
+
 	vim.
 
 [PRIORITY: low]
@@ -542,4 +548,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Id: Owl/doc/TODO,v 1.122 2005/11/04 21:16:06 solar Exp $
+$Id: Owl/doc/TODO,v 1.123 2005/11/06 00:32:08 solar Exp $
