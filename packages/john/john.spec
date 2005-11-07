@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.64 2005/10/30 21:38:20 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.65 2005/11/07 15:20:07 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.39.2
+Version: 1.6.39.3
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -73,6 +73,18 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Mon Nov 07 2005 Solar Designer <solar-at-owl.openwall.com> 1.6.39.3-owl1
+- When loading hashes for cracking, use the internal representation for
+eliminating any duplicates and already-cracked hashes.  This is consistent
+with what cracker.c does when logging cracked passwords.
+- When displaying cracked passwords, let split() unify the encoding of hashes.
+(This only works when the only difference is upper vs. lower vs. mixed case
+since we're using a hash table and would not do a comparison against hashes 
+which look very different.)
+- Force the encoding of LM hashes that get into john.pot to all-lowercase.
+- Corrected the handling of break statements with nested loops in the external
+mode compiler.
+
 * Fri Oct 28 2005 Solar Designer <solar-at-owl.openwall.com> 1.6.39.2-owl1
 - Re-worked the Makefile: dropped "-elf" suffixes from make target names,
 re-ordered the targets for best to most generic (for individual platforms),
