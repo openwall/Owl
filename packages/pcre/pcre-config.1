@@ -1,4 +1,4 @@
-.\" $Id: Owl/packages/pcre/pcre-config.1,v 1.2 2005/11/08 07:52:54 solar Exp $
+.\" $Id: Owl/packages/pcre/pcre-config.1,v 1.3 2005/11/08 08:00:01 solar Exp $
 .TH PCRE-CONFIG 1
 .SH NAME
 pcre-config \- program to return PCRE configuration
@@ -18,8 +18,7 @@ libraries: the options required to compile a program to use them.
 .TP 10
 \fB--prefix\fR
 Writes the directory prefix used in the PCRE installation for
-architecture independent files (/usr on debian systems, /usr/local on
-many other systems) to standard output.
+architecture independent files (e.g., \fI/usr\fR) to standard output.
 .TP
 \fB--exec-prefix\fR
 Writes the directory prefix used in the PCRE installation for
@@ -31,23 +30,20 @@ Writes the version of PCRE installed to standard output.
 .TP
 \fB--libs\fR
 Writes to standard output the command line options required to link
-with PCRE (-lpcre on debian systems).
+with PCRE (e.g., \fI-lpcre\fR).
 .TP
 \fB--libs-posix\fR
 Writes to standard output the command line options required to link
-with the PCRE posix emulation library (-lpcreposix -lpcre on debian
-systems).
+with the PCRE posix emulation library (e.g., \fI-lpcreposix -lpcre\fR).
 .TP
 \fB--cflags\fR
 Writes to standard output the command line options required to compile
-files that use PCRE (this often includes some -I options, but is blank
-on debian systems).
+files that use PCRE (this often includes some \fI-I\fR options).
 .TP
 \fB--cflags-posix\fR
 Writes to standard output the command line options required to compile
 files that use the PCRE posix emulation library (this often includes
-some -I options, but is blank on debian systems). Suppress printing of
-filenames when searching multiple files.
+some \fI-I\fR options).
 .SH AUTHOR
 This manual page was written by Mark Baker <mark at mnb.org.uk>,
 for the Debian GNU/Linux system (but may be used by others).
