@@ -373,8 +373,7 @@ Separate, currently non-public, TODO lists exist.
 
 	postfix.
 
-[PRIORITY: medium]
-[ASSIGNED: ldv@]
+[PRIORITY: low]
 Consider a number of patches and add-ons.
 
 [PRIORITY: medium]
@@ -542,4 +541,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Id: Owl/doc/TODO,v 1.124 2005/11/08 02:09:30 ldv Exp $
+$Id: Owl/doc/TODO,v 1.125 2005/11/08 02:13:34 ldv Exp $
