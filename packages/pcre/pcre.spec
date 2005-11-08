@@ -1,27 +1,22 @@
-# $Id: Owl/packages/pcre/pcre.spec,v 1.1 2005/11/08 01:32:02 ldv Exp $
+# $Id: Owl/packages/pcre/pcre.spec,v 1.2 2005/11/08 08:09:26 solar Exp $
 
+Summary: Perl-compatible regular expression library.
 Name: pcre
 Version: 6.4
 Release: owl1
-
-Summary: Perl-compatible regular expression library.
 License: BSD
 Group: System Environment/Libraries
-URL: http://www.pcre.org/
-
+URL: http://www.pcre.org
 Source0: ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-%version.tar.bz2
 Source1: pcre-config.1
 Source2: zpcregrep
-
 Patch0: pcre-6.3-deb-pcreposix.diff
 Patch1: pcre-6.3-deb-pcregrep.diff
 Patch2: pcre-6.3-deb-pcretest.diff
 Patch3: pcre-6.3-alt-Makefile.diff
 Patch4: pcre-6.4-owl-testdata.diff
 Patch5: pcre-5.0-rh-libdir.diff
-
 BuildRequires: autoconf, automake, libtool, sed >= 4.1.1
-
 BuildRoot: /override/%name-%version
 
 %description
