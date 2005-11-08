@@ -1,16 +1,19 @@
-.\" $Id: Owl/packages/pcre/pcre-config.1,v 1.1 2005/11/08 01:32:02 ldv Exp $
+.\" $Id: Owl/packages/pcre/pcre-config.1,v 1.2 2005/11/08 07:52:54 solar Exp $
 .TH PCRE-CONFIG 1
 .SH NAME
-pcre-config - program to return PCRE configuration
-
+pcre-config \- program to return PCRE configuration
 .SH SYNOPSIS
-.B pcre-config  [--prefix] [--exec-prefix] [--version] [--libs] 
-                [--libs-posix] [--cflags] [--cflags-posix]
-
+.B pcre-config
+.RB [ --prefix ]
+.RB [ --exec-prefix ]
+.RB [ --version ]
+.RB [ --libs ]
+.RB [ --libs-posix ]
+.RB [ --cflags ]
+.RB [ --cflags-posix ]
 .SH DESCRIPTION
 \fBpcre-config\fR returns the configuration of the installed PCRE
 libraries: the options required to compile a program to use them.
-
 .SH OPTIONS
 .TP 10
 \fB--prefix\fR
@@ -20,8 +23,9 @@ many other systems) to standard output.
 .TP
 \fB--exec-prefix\fR
 Writes the directory prefix used in the PCRE installation for
-architecture dependent files (normally the same as --prefix)
+architecture dependent files (normally the same as \fB--prefix\fR)
 to standard output.
+.TP
 \fB--version\fR
 Writes the version of PCRE installed to standard output.
 .TP
@@ -35,8 +39,8 @@ with the PCRE posix emulation library (-lpcreposix -lpcre on debian
 systems).
 .TP
 \fB--cflags\fR
-Writes to standard output the command line options required to compile 
-files that use PCRE (this often includes some -I options, but is blank 
+Writes to standard output the command line options required to compile
+files that use PCRE (this often includes some -I options, but is blank
 on debian systems).
 .TP
 \fB--cflags-posix\fR
@@ -44,10 +48,8 @@ Writes to standard output the command line options required to compile
 files that use the PCRE posix emulation library (this often includes
 some -I options, but is blank on debian systems). Suppress printing of
 filenames when searching multiple files.
-
-.SH SEE ALSO
-.BR pcre (3).
-
 .SH AUTHOR
-This manual page was written by Mark Baker <mark@mnb.org.uk>,
+This manual page was written by Mark Baker <mark at mnb.org.uk>,
 for the Debian GNU/Linux system (but may be used by others).
+.SH SEE ALSO
+.BR pcre (3)
