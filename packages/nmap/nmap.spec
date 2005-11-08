@@ -1,9 +1,9 @@
-# $Id: Owl/packages/nmap/nmap.spec,v 1.10 2005/10/24 03:06:27 solar Exp $
+# $Id: Owl/packages/nmap/nmap.spec,v 1.11 2005/11/08 01:32:44 ldv Exp $
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
 Version: 3.48
-Release: owl4
+Release: owl5
 License: GPL
 Group: Applications/System
 URL: http://www.insecure.org/nmap/
@@ -13,7 +13,8 @@ Patch1: nmap-3.48-alt-owl-no-local-libs.diff
 Patch2: nmap-3.48-up-no-external-libpcre.diff
 Patch3: nmap-3.48-alt-owl-drop-root.diff
 Requires: /var/empty
-BuildRequires: openssl-devel >= 0.9.7g-owl1, libpcap-devel, libcap-devel
+BuildRequires: openssl-devel >= 0.9.7g-owl1
+BuildRequires: libpcap-devel, libcap-devel, pcre-devel
 BuildRoot: /override/%name-%version
 
 %description
@@ -34,8 +35,8 @@ rm -r libpcap-possiblymodified
 %patch3 -p1
 
 %build
-%configure --without-nmapfe --with-libpcre=included
-make LIBS='-lm -lssl -lcrypto -lpcap -lcap -lnbase -lnsock libpcre/libpcre.a'
+%configure --without-nmapfe
+make LIBS='-lm -lssl -lcrypto -lpcap -lcap -lnbase -lnsock -lpcre'
 
 %install
 rm -rf %buildroot
@@ -55,6 +56,9 @@ grep -q ^nmap: /etc/passwd ||
 %_datadir/nmap
 
 %changelog
+* Mon Nov 07 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.48-owl5
+- Build with system PCRE library.
+
 * Sat Jun 25 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.48-owl4
 - Rebuilt with libssl.so.5.
 
