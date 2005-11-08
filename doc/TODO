@@ -173,6 +173,7 @@ Update grep to 2.5.1a (or whatever the latest stable version will be).
 	indent.
 
 [PRIORITY: low]
+[ASSIGNED: exon@]
 Need to package indent.
 
 
@@ -547,4 +548,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Id: Owl/doc/TODO,v 1.126 2005/11/08 08:13:13 solar Exp $
+$Id: Owl/doc/TODO,v 1.127 2005/11/08 19:22:08 solar Exp $
