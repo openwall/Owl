@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.30 2005/11/08 01:37:12 ldv Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.31 2005/11/08 09:26:33 ldv Exp $
 
 Summary: Postfix mail system.
 Name: postfix
@@ -149,7 +149,8 @@ done | sort -u >postfix_all_obj.list
 sh %_sourcedir/postfix-lorder.sh `cat postfix_all_obj.list` |
 	sort -u |
 	sort -k2,2 >postfix_lorder.list
-printf '%%s\n%%s\n' util/dict_{db,cdb,pcre}.o |
+printf '%%s\n%%s\n%%s\n' util/dict_{cdb,db,pcre}.o |
+	sort -u |
 	sh %_sourcedir/postfix-oclosure.sh postfix_lorder.list >postfix_dict_obj.list
 join -v1 postfix_all_obj.list postfix_dict_obj.list >postfix_common_obj.list
 
