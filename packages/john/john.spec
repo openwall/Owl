@@ -1,4 +1,4 @@
-# $Id: Owl/packages/john/john.spec,v 1.65 2005/11/07 15:20:07 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.66 2005/11/08 10:53:36 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -73,7 +73,7 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
-* Mon Nov 07 2005 Solar Designer <solar-at-owl.openwall.com> 1.6.39.3-owl1
+* Tue Nov 08 2005 Solar Designer <solar-at-owl.openwall.com> 1.6.39.3-owl1
 - When loading hashes for cracking, use the internal representation for
 eliminating any duplicates and already-cracked hashes.  This is consistent
 with what cracker.c does when logging cracked passwords.
