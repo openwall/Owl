@@ -1,0 +1,174 @@
+diff -upk.orig tinycdb-0.75.orig/Makefile tinycdb-0.75/Makefile
+--- tinycdb-0.75.orig/Makefile	2005-08-23 16:22:03 +0000
++++ tinycdb-0.75/Makefile	2005-11-04 17:58:32 +0000
+@@ -21,15 +21,18 @@ CFLAGS = -O
+ CFLAGS_PIC = -fPIC
+ CFLAGS_SHARED = -shared
+ CFLAGS_SONAME = -Wl,--soname,
++CFLAGS_VERSION_SCRIPT = -Wl,--version-script,
+ AR = ar
+ ARFLAGS = rv
+ RANLIB = ranlib
+ 
++LIB_MAP = libcdb.map
+ NSS_CDB = libnss_cdb.so.2
+ LIBBASE = libcdb
+ LIB = $(LIBBASE).a
+ PICLIB = $(LIBBASE)_pic.a
+-SHAREDLIB = $(LIBBASE).so.1
++SHAREDLIB = $(LIBBASE).so.$(VERSION)
++SONAME = $(LIBBASE).so.1
+ SOLIB = $(LIBBASE).so
+ CDB_USELIB = $(LIB)
+ NSS_USELIB = $(PICLIB)
+@@ -45,14 +48,14 @@ DISTFILES = Makefile cdb.h cdb_int.h $(L
+  tinycdb.spec tests.sh tests.ok \
+  ChangeLog NEWS
+ 
+-all: static
++all: static shared
+ static: staticlib cdb
++shared: sharedlib cdb-shared
+ staticlib: $(LIB)
+ nss: $(NSS_CDB)
+ piclib: $(PICLIB)
+ sharedlib: $(SHAREDLIB)
+ nss-shared: $(NSS_CDB)-shared
+-shared: sharedlib cdb-shared
+ 
+ LIB_OBJS = $(LIB_SRCS:.c=.o)
+ LIB_OBJS_PIC = $(LIB_SRCS:.c=.lo)
+@@ -69,9 +72,11 @@ $(PICLIB): $(LIB_OBJS_PIC)
+ 	-$(RANLIB) $@
+ 
+ $(SHAREDLIB): $(LIB_OBJS_PIC)
+-	-rm -f $(SOLIB)
++	-rm -f $(SONAME) $(SOLIB)
++	$(CC) $(CFLAGS) $(CFLAGS_SHARED) -o $@ $(CFLAGS_SONAME)$(SONAME) \
++		$(CFLAGS_VERSION_SCRIPT)$(LIB_MAP) $(LIB_OBJS_PIC)
++	ln -s $@ $(SONAME)
+ 	ln -s $@ $(SOLIB)
+-	$(CC) $(CFLAGS) $(CFLAGS_SHARED) -o $@ $(CFLAGS_SONAME)$(SHAREDLIB) $(LIB_OBJS_PIC)
+ 
+ cdb: cdb.o $(CDB_USELIB)
+ 	$(CC) $(CFLAGS) -o $@ cdb.o $(CDB_USELIB)
+@@ -96,13 +101,22 @@ $(LIB_OBJS) $(LIB_OBJS_PIC): cdb_int.h c
+ $(NSS_OBJS): nss_cdb.h cdb.h
+ 
+ clean:
+-	-rm -f *.o *.lo core *~ tests.out
++	-rm -f *.o *.lo core *~ tests-shared.ok tests.out
+ realclean distclean:
+ 	-rm -f *.o *.lo core *~ $(LIBBASE)* $(NSS_CDB)* cdb cdb-shared
+ 
+-test tests check: cdb
+-	sh ./tests.sh ./cdb > tests.out 2>&1
+-	diff tests.ok tests.out
++test tests check:
++	@if test -x cdb; then \
++		sh ./tests.sh ./cdb >tests.out 2>&1; \
++		diff tests.ok tests.out; \
++		echo All static tests passed; \
++	fi
++	@if test -x cdb-shared; then \
++		sed 's/^cdb: /cdb-shared: /' <tests.ok >tests-shared.ok; \
++		LD_LIBRARY_PATH=. sh ./tests.sh ./cdb-shared >tests.out 2>&1; \
++		diff tests-shared.ok tests.out; \
++		echo All shared tests passed; \
++	fi
+ 	@echo All tests passed
+ 
+ do_install = \
+@@ -110,33 +124,50 @@ do_install = \
+    if [ .$$4 = .- ]; then f=$$1; else f=$$4; fi; \
+    d=$(DESTDIR)$$3 ; echo installing $$d/$$f; \
+    [ -d $$d ] || mkdir -p $$d || exit 1 ; \
+-   cp $$1 $$d/$$f || exit 1; \
++   cp -p $$1 $$d/$$f || exit 1; \
+    chmod 0$$2 $$d/$$f || exit 1; \
+    shift 4; \
+  done
+ 
+-install-all: all
++install-data:
+ 	set -- \
+ 	 cdb.h 644 $(includedir) - \
+ 	 cdb.3 644 $(mandir)/man3 - \
+ 	 cdb.1 644 $(mandir)/man1 - \
+ 	 cdb.5 644 $(mandir)/man5 - \
++	 ; \
++	$(do_install)
++install-staticbin: cdb
++	set -- \
+ 	 cdb 755 $(bindir) - \
++	 ; \
++	$(do_install)
++install-sharedbin: cdb-shared
++	set -- \
++	 cdb-shared 755 $(bindir) cdb \
++	 ; \
++	$(do_install)
++install-staticlib: staticlib
++	set -- \
+ 	 libcdb.a 644 $(libdir) - \
+ 	 ; \
+ 	$(do_install)
++install-sharedlib: sharedlib
++	@set -- $(SHAREDLIB) 644 $(libdir) - ; \
++	$(do_install)
++	ln -sf $(SHAREDLIB) $(DESTDIR)$(libdir)/$(SONAME)
++	ln -sf $(SHAREDLIB) $(DESTDIR)$(libdir)/$(SOLIB)
+ install-nss: nss
+ 	@set -- $(NSS_CDB) 644 $(syslibdir) - \
+ 	        nss_cdb-Makefile 644 $(sysconfdir) cdb-Makefile ; \
+ 	$(do_install)
+-install-sharedlib: sharedlib
+-	@set -- $(SHAREDLIB) 644 $(libdir) - ; \
+-	$(do_install) ; \
+-	ln -sf $(SHAREDLIB) $(libdir)/$(LIBBASE).so
+ install-piclib: piclib
+ 	@set -- $(PICLIB) 644 $(libdir) - ; \
+ 	$(do_install)
+ install: install-all
++install-all: install-static install-shared
++install-static: install-data install-staticbin install-staticlib
++install-shared: install-data install-sharedbin install-sharedlib
+ 
+ DNAME = tinycdb-$(VERSION)
+ dist: $(DNAME).tar.gz
+@@ -148,4 +179,6 @@ $(DNAME).tar.gz: $(DISTFILES)
+ 
+ .PHONY: all clean realclean test tests check dist spec
+ .PHONY: static staticlib shared sharedlib nss piclib nss-shared
+-.PHONY: install install-all install-sharedlib install-piclib install-nss
++.PHONY: install install-all install-data install-shared install-sharedbin
++.PHONY: install-sharedlib install-static install-staticbin install-staticlib
++.PHONY: install-piclib install-nss
+diff -upk.orig tinycdb-0.75.orig/libcdb.map tinycdb-0.75/libcdb.map
+--- tinycdb-0.75.orig/libcdb.map	1970-01-01 00:00:00 +0000
++++ tinycdb-0.75/libcdb.map	2005-11-04 17:59:05 +0000
+@@ -0,0 +1,24 @@
++{
++  global:
++    cdb_hash;
++    cdb_unpack;
++    cdb_pack;
++    cdb_init;
++    cdb_free;
++    cdb_read;
++    cdb_get;
++    cdb_find;
++    cdb_findinit;
++    cdb_findnext;
++    cdb_seqnext;
++    cdb_seek;
++    cdb_bread;
++    cdb_make_start;
++    cdb_make_add;
++    cdb_make_exists;
++    cdb_make_put;
++    cdb_make_find;
++    cdb_make_finish;
++  local:
++    *;
++};

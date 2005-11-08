@@ -1,0 +1,17 @@
+--- pcre-6.3/Makefile.in.orig	2005-08-18 13:08:28 +0000
++++ pcre-6.3/Makefile.in	2005-09-13 21:02:02 +0000
+@@ -460,11 +460,14 @@ install:        all @ON_WINDOWS@ wininst
+ 		$(INSTALL_DATA) $(top_srcdir)/doc/pcrecompat.3 $(DESTDIR)$(MANDIR)/man3/pcrecompat.3
+ @HAVE_CPP@		 $(INSTALL_DATA) $(top_srcdir)/doc/pcrecpp.3 $(DESTDIR)$(MANDIR)/man3/pcrecpp.3
+ 		$(INSTALL_DATA) $(top_srcdir)/doc/pcrematching.3 $(DESTDIR)$(MANDIR)/man3/pcrematching.3
++		$(INSTALL_DATA) $(top_srcdir)/doc/pcrepartial.3 $(DESTDIR)$(MANDIR)/man3/pcrepartial.3
+ 		$(INSTALL_DATA) $(top_srcdir)/doc/pcrepattern.3 $(DESTDIR)$(MANDIR)/man3/pcrepattern.3
+ 		$(INSTALL_DATA) $(top_srcdir)/doc/pcreperform.3 $(DESTDIR)$(MANDIR)/man3/pcreperform.3
+ 		$(INSTALL_DATA) $(top_srcdir)/doc/pcreposix.3 $(DESTDIR)$(MANDIR)/man3/pcreposix.3
++		$(INSTALL_DATA) $(top_srcdir)/doc/pcreprecompile.3 $(DESTDIR)$(MANDIR)/man3/pcreprecompile.3
+ 		$(INSTALL_DATA) $(top_srcdir)/doc/pcresample.3 $(DESTDIR)$(MANDIR)/man3/pcresample.3
+ 		$(INSTALL_DATA) $(top_srcdir)/doc/pcre_compile.3 $(DESTDIR)$(MANDIR)/man3/pcre_compile.3
++		$(INSTALL_DATA) $(top_srcdir)/doc/pcre_compile2.3 $(DESTDIR)$(MANDIR)/man3/pcre_compile2.3
+ 		$(INSTALL_DATA) $(top_srcdir)/doc/pcre_config.3 $(DESTDIR)$(MANDIR)/man3/pcre_config.3
+ 		$(INSTALL_DATA) $(top_srcdir)/doc/pcre_copy_named_substring.3 $(DESTDIR)$(MANDIR)/man3/pcre_copy_named_substring.3
+ 		$(INSTALL_DATA) $(top_srcdir)/doc/pcre_copy_substring.3 $(DESTDIR)$(MANDIR)/man3/pcre_copy_substring.3

@@ -1,0 +1,11 @@
+--- tinycdb-0.75/cdb.3.orig	2005-04-18 09:46:50 +0000
++++ tinycdb-0.75/cdb.3	2005-11-04 17:47:40 +0000
+@@ -169,7 +169,7 @@ with a given key.
+ 
+ .nf
+ int \fBcdb_findinit(\fIcdbfp\fR, \fIcdbp\fR, \fIkey\fR, \fIklen\fR)
+-int \fBcdb_findnext\fR(\fIcdbfp\fR, \fIcdbp\fR)
++int \fBcdb_findnext\fR(\fIcdbfp\fR)
+   struct cdb_find *\fIcdbfp\fR;
+   const struct cdb *\fIcdbp\fR;
+   const void *\fIkey\fR;

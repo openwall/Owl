@@ -1,0 +1,15 @@
+--- pcre-5.0/pcre-config.in.libdir
++++ pcre-5.0/pcre-config.in
+@@ -52,10 +52,10 @@
+       echo $includes
+       ;;
+     --libs-posix)
+-      echo -L@libdir@$libR -lpcreposix -lpcre
++      echo -lpcreposix -lpcre
+       ;;
+     --libs)
+-      echo -L@libdir@$libR -lpcre
++      echo -lpcre
+       ;;
+     *)
+       echo "${usage}" 1>&2

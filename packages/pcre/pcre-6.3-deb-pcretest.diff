@@ -1,0 +1,11 @@
+--- pcre3-6.3.orig/pcretest.c
++++ pcre3-6.3/pcretest.c
+@@ -428,7 +428,7 @@
+ int main(int argc, char **argv)
+ {
+ FILE *infile = stdin;
+-int options = 0;
++long int options = 0;
+ int study_options = 0;
+ int op = 1;
+ int timeit = 0;

@@ -1,0 +1,31 @@
+--- tinycdb-0.75/cdb.c.orig	2005-04-18 00:26:40 +0000
++++ tinycdb-0.75/cdb.c	2005-11-04 17:46:24 +0000
+@@ -18,7 +18,11 @@
+ # define EPROTO EINVAL
+ #endif
+ 
++#ifdef __GLIBC__
++#define progname program_invocation_short_name
++#else
+ static char *progname;
++#endif /* __GLIBC__ */
+ 
+ #define F_DUPMASK	0x000f
+ #define F_WARNDUP	0x0100
+@@ -390,12 +394,14 @@ int main(int argc, char **argv)
+   extern char *optarg;
+   extern int optind;
+ 
+-  if ((progname = strrchr(argv[0], '/')) != NULL)
++#ifndef __GLIBC__
++  if (argv[0] != NULL && (progname = strrchr(argv[0], '/')) != NULL)
+     argv[0] = ++progname;
+   else
+     progname = argv[0];
++#endif /* __GLIBC__ */
+ 
+-  if (argc == 1)
++  if (argc <= 1)
+     error(0, "no arguments given");
+ 
+   while((c = getopt(argc, argv, "qdlcsht:n:mwrue0")) != EOF)
