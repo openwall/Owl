@@ -397,12 +397,6 @@ libraries, our patched postfix-script does not know to remove copies
 of library versions which are no longer in the system.
 
 
-	procmail.
-
-[PRIORITY: low]
-Update to 3.22+.
-
-
 	rpm.
 
 [PRIORITY: medium]
@@ -548,4 +542,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Id: Owl/doc/TODO,v 1.123 2005/11/06 00:32:08 solar Exp $
+$Id: Owl/doc/TODO,v 1.124 2005/11/08 02:09:30 ldv Exp $
