@@ -1,4 +1,4 @@
-# $Id: Owl/packages/john/john.spec,v 1.66 2005/11/08 10:53:36 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.67 2005/11/08 13:13:05 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -74,9 +74,8 @@ install -m 644 -p run/mailer doc/
 
 %changelog
 * Tue Nov 08 2005 Solar Designer <solar-at-owl.openwall.com> 1.6.39.3-owl1
-- When loading hashes for cracking, use the internal representation for
-eliminating any duplicates and already-cracked hashes.  This is consistent
-with what cracker.c does when logging cracked passwords.
+- When eliminating any duplicate and already-cracked hashes, compare the
+internal representations first.
 - When displaying cracked passwords, let split() unify the encoding of hashes.
 (This only works when the only difference is upper vs. lower vs. mixed case
 since we're using a hash table and would not do a comparison against hashes 
