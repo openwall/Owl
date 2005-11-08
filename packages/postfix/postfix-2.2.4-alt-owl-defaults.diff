@@ -165,6 +165,18 @@ diff -upk.orig postfix-2.2.4.orig/proto/BASIC_CONFIGURATION_README.html postfix-
  elsewhere.  Use the command "postconf alias_maps" to find out.</p>
  
  <p> The Postfix system reports problems to the postmaster alias.
+diff -upk.orig postfix-2.2.4.orig/proto/VIRTUAL_README.html postfix-2.2.4/proto/VIRTUAL_README.html
+--- postfix-2.2.4.orig/proto/VIRTUAL_README.html	2004-04-23 23:49:43 +0000
++++ postfix-2.2.4/proto/VIRTUAL_README.html	2005-06-23 12:37:33 +0000
+@@ -259,7 +259,7 @@ section at the top of this document.</p>
+  2     virtual_mailbox_domains = example.com ...more domains...
+  3     virtual_mailbox_base = /var/mail/vhosts
+  4     virtual_mailbox_maps = hash:/etc/postfix/vmailbox
+- 5     virtual_minimum_uid = 100
++ 5     virtual_minimum_uid = 500
+  6     virtual_uid_maps = static:5000
+  7     virtual_gid_maps = static:5000
+  8     virtual_alias_maps = hash:/etc/postfix/virtual
 diff -upk.orig postfix-2.2.4.orig/proto/postconf.proto postfix-2.2.4/proto/postconf.proto
 --- postfix-2.2.4.orig/proto/postconf.proto	2005-03-09 19:48:30 +0000
 +++ postfix-2.2.4/proto/postconf.proto	2005-06-29 17:50:57 +0000
@@ -204,6 +216,15 @@ diff -upk.orig postfix-2.2.4.orig/proto/postconf.proto postfix-2.2.4/proto/postc
  
  <li><p>Specify "mynetworks_style = class" when Postfix should
  "trust" SMTP clients in the same IP class A/B/C networks as the
+@@ -7501,7 +7501,7 @@ it will open the table directly. Before 
+ virtual(8) delivery agent will terminate with a fatal error.
+ </p>
+ 
+-%PARAM virtual_minimum_uid 100
++%PARAM virtual_minimum_uid 500
+ 
+ <p>
+ The minimum user ID value that the virtual(8) delivery agent accepts
 diff -upk.orig postfix-2.2.4.orig/README_FILES/ADDRESS_REWRITING_README postfix-2.2.4/README_FILES/ADDRESS_REWRITING_README
 --- postfix-2.2.4.orig/README_FILES/ADDRESS_REWRITING_README	2005-03-09 19:30:56 +0000
 +++ postfix-2.2.4/README_FILES/ADDRESS_REWRITING_README	2005-06-30 15:25:42 +0000
@@ -287,6 +308,18 @@ diff -upk.orig postfix-2.2.4.orig/README_FILES/BASIC_CONFIGURATION_README postfi
  "postconf alias_maps" to find out.
  
  The Postfix system reports problems to the postmaster alias. You may not be
+diff -upk.orig postfix-2.2.4.orig/README_FILES/VIRTUAL_README postfix-2.2.4/README_FILES/VIRTUAL_README
+--- postfix-2.2.4.orig/README_FILES/VIRTUAL_README	2004-04-28 12:02:57 +0000
++++ postfix-2.2.4/README_FILES/VIRTUAL_README	2005-06-23 12:37:33 +0000
+@@ -180,7 +180,7 @@ Here is an example of a virtual mailbox 
+      2     virtual_mailbox_domains = example.com ...more domains...
+      3     virtual_mailbox_base = /var/mail/vhosts
+      4     virtual_mailbox_maps = hash:/etc/postfix/vmailbox
+-     5     virtual_minimum_uid = 100
++     5     virtual_minimum_uid = 500
+      6     virtual_uid_maps = static:5000
+      7     virtual_gid_maps = static:5000
+      8     virtual_alias_maps = hash:/etc/postfix/virtual
 diff -upk.orig postfix-2.2.4.orig/src/global/mail_params.h postfix-2.2.4/src/global/mail_params.h
 --- postfix-2.2.4.orig/src/global/mail_params.h	2005-02-27 15:06:07 +0000
 +++ postfix-2.2.4/src/global/mail_params.h	2005-06-23 12:37:33 +0000
@@ -326,6 +359,15 @@ diff -upk.orig postfix-2.2.4.orig/src/global/mail_params.h postfix-2.2.4/src/glo
  extern char *var_mynetworks_style;
  
  #define	MYNETWORKS_STYLE_CLASS	"class"
+@@ -1851,7 +1851,7 @@ extern char *var_virt_uid_maps;
+ extern char *var_virt_gid_maps;
+ 
+ #define VAR_VIRT_MINUID			"virtual_minimum_uid"
+-#define DEF_VIRT_MINUID			100
++#define DEF_VIRT_MINUID			500
+ extern int var_virt_minimum_uid;
+ 
+ #define VAR_VIRT_MAILBOX_BASE		"virtual_mailbox_base"
 diff -upk.orig postfix-2.2.4.orig/src/util/sys_defs.h postfix-2.2.4/src/util/sys_defs.h
 --- postfix-2.2.4.orig/src/util/sys_defs.h	2005-06-21 21:12:00 +0000
 +++ postfix-2.2.4/src/util/sys_defs.h	2005-06-23 12:37:33 +0000
@@ -334,7 +376,7 @@ diff -upk.orig postfix-2.2.4.orig/src/util/sys_defs.h postfix-2.2.4/src/util/sys
  #define HAS_FCNTL_LOCK
  #define INTERNAL_LOCK	MYFLOCK_STYLE_FLOCK
 -#define DEF_MAILBOX_LOCK "fcntl, dotlock"	/* RedHat >= 4.x */
-+#define DEF_MAILBOX_LOCK "fcntl, dotlock"	/* Owl */
++#define DEF_MAILBOX_LOCK "fcntl"	/* Owl */
  #define HAS_FSYNC
  #define HAS_DB
  #define DEF_DB_TYPE	"hash"
@@ -355,3 +397,15 @@ diff -upk.orig postfix-2.2.4.orig/src/local/local.c postfix-2.2.4/src/local/loca
  /*	The default rights used by the \fBlocal\fR(8) delivery agent for delivery
  /*	to external file or command.
  /* .IP "\fBforward_expansion_filter (see 'postconf -d' output)\fR"
+diff -upk.orig postfix-2.2.4.orig/src/virtual/virtual.c postfix-2.2.4/src/virtual/virtual.c
+--- postfix-2.2.4.orig/src/virtual/virtual.c	2005-02-08 19:12:24 +0000
++++ postfix-2.2.4/src/virtual/virtual.c	2005-05-08 13:38:44 +0000
+@@ -159,7 +159,7 @@
+ /* .IP "\fBvirtual_mailbox_maps (empty)\fR"
+ /*	Optional lookup tables with all valid addresses in the domains that
+ /*	match $virtual_mailbox_domains.
+-/* .IP "\fBvirtual_minimum_uid (100)\fR"
++/* .IP "\fBvirtual_minimum_uid (500)\fR"
+ /*	The minimum user ID value that the \fBvirtual\fR(8) delivery agent accepts
+ /*	as a result from $virtual_uid_maps table lookup.
+ /* .IP "\fBvirtual_uid_maps (empty)\fR"

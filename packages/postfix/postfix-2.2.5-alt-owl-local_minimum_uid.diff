@@ -1,0 +1,114 @@
+diff -upk.orig postfix-2.2.5.orig/proto/postconf.proto postfix-2.2.5/proto/postconf.proto
+--- postfix-2.2.5.orig/proto/postconf.proto	2005-11-08 00:19:30 +0000
++++ postfix-2.2.5/proto/postconf.proto	2005-11-08 00:37:44 +0000
+@@ -2000,6 +2000,15 @@ the entry in the master.cf file. </p>
+ local_destination_concurrency_limit from concurrency per recipient
+ into concurrency per domain.  </p>
+ 
++%PARAM local_minimum_uid 500
++
++<p>
++Restricts mypwnam() and dict_unix_getpwnam() functions to lookup users
++with uid &gt;= local_minimum_uid.  In particular, this parameter restricts
++local delivery to "normal" users created by useradd(8) assuming that
++UID_MIN parameter in /etc/login.defs file is set to the same value .
++</p>
++
+ %PARAM local_recipient_maps proxy:unix:passwd.byname $alias_maps
+ 
+ <p> Lookup tables with all names or addresses of local recipients:
+diff -upk.orig postfix-2.2.5.orig/src/global/mail_params.c postfix-2.2.5/src/global/mail_params.c
+--- postfix-2.2.5.orig/src/global/mail_params.c	2005-11-08 00:19:30 +0000
++++ postfix-2.2.5/src/global/mail_params.c	2005-11-08 00:19:44 +0000
+@@ -28,6 +28,7 @@
+ /*	char	*var_daemon_dir;
+ /*	char	*var_command_dir;
+ /*	char	*var_queue_dir;
++/*	int     var_local_minimum_uid;
+ /*	int	var_use_limit;
+ /*	int	var_idle_limit;
+ /*	int	var_event_drain;
+@@ -190,6 +191,7 @@ char   *var_config_dir;
+ char   *var_daemon_dir;
+ char   *var_command_dir;
+ char   *var_queue_dir;
++int     var_local_minimum_uid;
+ int     var_use_limit;
+ int     var_event_drain;
+ int     var_idle_limit;
+@@ -538,6 +540,7 @@ void    mail_params_init()
+ 	0,
+     };
+     static CONFIG_INT_TABLE other_int_defaults[] = {
++	VAR_LOCAL_MINUID, DEF_LOCAL_MINUID, &var_local_minimum_uid, 0, 0,
+ 	VAR_MAX_USE, DEF_MAX_USE, &var_use_limit, 1, 0,
+ 	VAR_DONT_REMOVE, DEF_DONT_REMOVE, &var_dont_remove, 0, 0,
+ 	VAR_LINE_LIMIT, DEF_LINE_LIMIT, &var_line_limit, 512, 0,
+diff -upk.orig postfix-2.2.5.orig/src/global/mail_params.h postfix-2.2.5/src/global/mail_params.h
+--- postfix-2.2.5.orig/src/global/mail_params.h	2005-11-08 00:19:30 +0000
++++ postfix-2.2.5/src/global/mail_params.h	2005-11-08 00:19:44 +0000
+@@ -455,6 +455,10 @@ extern char *var_alias_db_map;
+ #define DEF_LUSER_RELAY		""
+ extern char *var_luser_relay;
+ 
++#define VAR_LOCAL_MINUID	"local_minimum_uid"
++#define DEF_LOCAL_MINUID	500
++extern int var_local_minimum_uid;
++
+  /*
+   * Local delivery: mailbox delivery.
+   */
+diff -upk.orig postfix-2.2.5.orig/src/global/mypwd.c postfix-2.2.5/src/global/mypwd.c
+--- postfix-2.2.5.orig/src/global/mypwd.c	2000-11-20 18:05:27 +0000
++++ postfix-2.2.5/src/global/mypwd.c	2005-11-08 00:19:44 +0000
+@@ -46,6 +46,7 @@
+ 
+ #include <sys_defs.h>
+ #include <pwd.h>
++#include <errno.h>
+ #include <string.h>
+ #ifdef USE_PATHS_H
+ #include <paths.h>
+@@ -62,6 +63,8 @@
+ 
+ #include "mypwd.h"
+ 
++extern int var_local_minimum_uid;
++
+  /*
+   * The private cache. One for lookups by name, one for lookups by uid, and
+   * one for the last looked up result.
+@@ -162,6 +165,10 @@ struct mypasswd *mypwnam(const char *nam
+     if ((mypwd = (struct mypasswd *) htable_find(mypwcache_name, name)) == 0) {
+ 	if ((pwd = getpwnam(name)) == 0)
+ 	    return (0);
++        if ((int) pwd->pw_uid < var_local_minimum_uid) {
++           errno = ENOENT;
++           return (0);
++        }
+ 	mypwd = mypwenter(pwd);
+     }
+     last_pwd = mypwd;
+diff -upk.orig postfix-2.2.5.orig/src/util/dict_unix.c postfix-2.2.5/src/util/dict_unix.c
+--- postfix-2.2.5.orig/src/util/dict_unix.c	2002-12-20 00:08:49 +0000
++++ postfix-2.2.5/src/util/dict_unix.c	2005-11-08 00:19:44 +0000
+@@ -54,6 +54,8 @@
+ #include "dict.h"
+ #include "dict_unix.h"
+ 
++extern int var_local_minimum_uid;
++
+ /* Application-specific. */
+ 
+ typedef struct {
+@@ -81,6 +83,10 @@ static const char *dict_unix_getpwnam(DI
+ 	}
+ 	return (0);
+     } else {
++        if ((int) pwd->pw_uid < var_local_minimum_uid) {
++            errno = ENOENT;
++            return (0);
++        }
+ 	if (buf == 0)
+ 	    buf = vstring_alloc(10);
+ 	sanity_checked = 1;

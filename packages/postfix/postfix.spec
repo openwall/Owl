@@ -1,9 +1,9 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.29 2005/10/24 03:06:29 solar Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.30 2005/11/08 01:37:12 ldv Exp $
 
 Summary: Postfix mail system.
 Name: postfix
 Version: 2.2.5
-Release: owl1
+Release: owl2
 Epoch: 1
 License: IBM Public License
 Group: System Environment/Daemons
@@ -26,11 +26,12 @@ Patch6: postfix-2.2.4-alt-post-install.diff
 Patch7: postfix-2.2.4-alt-owl-config.diff
 Patch8: postfix-2.2.4-alt-owl-shared.diff
 Patch9: postfix-2.2.4-owl-postfix-script.diff
-Patch10: postfix-2.2.5-deb-man.diff
+Patch10: postfix-2.2.5-alt-owl-local_minimum_uid.diff
+Patch11: postfix-2.2.5-alt-mailbox_unpriv_delivery.diff
+Patch12: postfix-2.2.5-deb-man.diff
 PreReq: /sbin/chkconfig, grep, shadow-utils
 Requires: owl-control >= 0.4, owl-control < 2.0
-BuildRequires: db4-devel
-BuildRequires: sed >= 4.1.1
+BuildRequires: db4-devel, pcre-devel, tinycdb-devel, sed >= 4.1.1
 Conflicts: sendmail, qmail
 Provides: MTA, smtpd, smtpdaemon
 Obsoletes: sendmail-cf, sendmail-doc
@@ -78,6 +79,8 @@ compatible enough to not upset your users.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
+%patch12 -p1
 
 install -p -m644 %_sourcedir/aliases conf/
 
@@ -117,8 +120,8 @@ CCARGS="\
  -DDEF_SAMPLE_DIR=\\\"%readme_directory\\\" \
  -DDEF_SENDMAIL_PATH=\\\"%sendmail_path\\\" \
 "
-DICT_LIBS="-ldl -ldb"
-DICT_ARGS="$CCARGS"
+DICT_LIBS="-ldl -ldb -lcdb `pcre-config --libs`"
+DICT_ARGS="$CCARGS -DHAS_CDB -DHAS_PCRE `pcre-config --cflags`"
 SYSLIBS="-lnsl -lresolv"
 
 pushd src
@@ -141,12 +144,12 @@ pushd src
 # 2. separate libs objects into dict-dependent and others.
 for a in */*.a; do
 	ar t "$a" |
-		sed -n "s,.*,${a%/*}/&,p"
+		sed -n "s,.*,${a%%/*}/&,p"
 done | sort -u >postfix_all_obj.list
 sh %_sourcedir/postfix-lorder.sh `cat postfix_all_obj.list` |
 	sort -u |
 	sort -k2,2 >postfix_lorder.list
-printf '%s\n%s\n' util/dict_{c,}db.o |
+printf '%%s\n%%s\n' util/dict_{db,cdb,pcre}.o |
 	sh %_sourcedir/postfix-oclosure.sh postfix_lorder.list >postfix_dict_obj.list
 join -v1 postfix_all_obj.list postfix_dict_obj.list >postfix_common_obj.list
 
@@ -206,7 +209,7 @@ mkdir -p %buildroot{%_libdir,%_mandir}
 
 install -p -m755 lib/%libpostfix lib/%libpostfix_dict %buildroot%_libdir/
 
-echo '%defattr (-,root,root)' >postfix.files
+echo '%%defattr (-,root,root)' >postfix.files
 # Postfix's postfix-install script accept various parameters both in
 # command line and as environment variables.  Better to reset environment
 # here, so no locally-set variable will give any surprise.
@@ -311,6 +314,17 @@ fi
 %attr(644,root,root) %verify(not md5 mtime size) %ghost %queue_directory/etc/*
 
 %changelog
+* Mon Nov 07 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.2.5-owl2
+- Added CDB database type and PCRE lookup tables support.
+- Changed default mailbox locking method to fcntl.
+- Changed default virtual_minimum_uid value from 100 to 500.
+- Imported patch from ALT which introduces new integer parameter
+local_minimum_uid and restricts local user lookup functions
+to users with uid >= local_minimum_uid (500 by default).
+- Imported patch from ALT which introduces new boolean parameter
+mailbox_unpriv_delivery which, if enabled (by default), instructs local(8)
+to deliver as recipient when spool directory is not world-writable.
+
 * Thu Aug 11 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.2.5-owl1
 - Updated to 2.2.5.
 - Updated mantools/postlink patch from Debian.
