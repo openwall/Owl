@@ -13,8 +13,9 @@ change logs for the packages themselves.
 	Changes made between Owl 1.1 and Owl-current.
 
 2005/11/08	Packages: tinycdb, pcre, postfix, nmap
-New packages: constant database library, Perl-compatible regular expression
-library.  Enabled CDB database type and PCRE lookup tables support in postfix.
+New packages: constant database library, Perl-compatible regular
+expression library.  Enabled CDB database type and PCRE lookup tables
+support in Postfix.
 
 2005/11/07	Package: coreutils
 Updated to 5.93.
@@ -674,4 +675,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.157 2005/11/08 01:52:50 ldv Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.158 2005/11/08 07:27:40 solar Exp $
