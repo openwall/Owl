@@ -1,10 +1,10 @@
-# $Id: Owl/packages/tinycdb/tinycdb.spec,v 1.1 2005/11/08 01:22:19 ldv Exp $
+# $Id: Owl/packages/tinycdb/tinycdb.spec,v 1.2 2005/11/08 01:47:12 ldv Exp $
 
 Name: tinycdb
 Version: 0.75
 Release: owl1
 
-Summary: Command line tool for managing constant databases.
+Summary: Shared library and command line tool for managing constant databases.
 License: GPL/LGPL
 Group: System Environment/Libraries
 URL: http://www.corpit.ru/mjt/tinycdb.html
