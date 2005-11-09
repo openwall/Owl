@@ -12,7 +12,7 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
-2005/11/08	Package: glibc
+2005/11/09	Package: glibc
 Updated to 2.3.6.
 
 2005/11/08	Packages: tinycdb, pcre, postfix, nmap
@@ -678,4 +678,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Id: Owl/doc/CHANGES-2.0,v 1.159 2005/11/09 01:09:14 ldv Exp $
+$Id: Owl/doc/CHANGES-2.0,v 1.160 2005/11/09 01:15:45 ldv Exp $
