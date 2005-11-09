@@ -1,17 +1,17 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.97 2005/10/24 03:06:23 solar Exp $
+# $Id: Owl/packages/glibc/glibc.spec,v 1.98 2005/11/09 01:07:09 ldv Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
 %define BUILD_LOCALES_UTF8 0
 
-%define basevers 2.3.5
+%define basevers 2.3.6
 #%%define snapshot 20050427
 
 Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 0.4.7
-Release: owl5
+Release: owl1
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/%name/
@@ -35,8 +35,7 @@ Source6: strlcpy.3
 # 400-... - Owl
 
 # CVS
-Patch0: glibc-2.3.5-cvs-20050427-2_3-branch.diff
-Patch1: glibc-2.3.5-cvs-20050427-canonicalize.diff
+Patch0: glibc-2.3.5-cvs-20050427-canonicalize.diff
 
 # RH
 Patch100: glibc-2.3.5-fedora.diff
@@ -65,16 +64,15 @@ Patch313: glibc-2.3.5-alt-assume_kernel.diff
 Patch400: glibc-2.3.3-owl-crypt_freesec.diff
 Patch401: glibc-2.3.5-owl-alt-res_randomid.diff
 Patch402: glibc-2.3.2-owl-iscntrl.diff
-Patch403: glibc-2.3.2-owl-quota.diff
-Patch404: glibc-2.3.5-owl-alt-ldd.diff
-Patch405: glibc-2.3.3-owl-info.diff
-Patch406: glibc-2.3.5-owl-alt-syslog-ident.diff
-Patch407: glibc-2.3.5-mjt-owl-alt-syslog-timestamp.diff
-Patch408: glibc-2.3.5-owl-alt-resolv-QFIXEDSZ-underfills.diff
-Patch409: glibc-2.3.2-owl-tmpfile.diff
-Patch410: glibc-2.3.3-owl-tmp-scripts.diff
-Patch411: glibc-2.3.3-owl-rpcgen-cpp.diff
-Patch412: glibc-2.3.5-owl-alt-sanitize-env.diff
+Patch403: glibc-2.3.5-owl-alt-ldd.diff
+Patch404: glibc-2.3.3-owl-info.diff
+Patch405: glibc-2.3.5-owl-alt-syslog-ident.diff
+Patch406: glibc-2.3.5-mjt-owl-alt-syslog-timestamp.diff
+Patch407: glibc-2.3.5-owl-alt-resolv-QFIXEDSZ-underfills.diff
+Patch408: glibc-2.3.2-owl-tmpfile.diff
+Patch409: glibc-2.3.3-owl-tmp-scripts.diff
+Patch410: glibc-2.3.3-owl-rpcgen-cpp.diff
+Patch411: glibc-2.3.5-owl-alt-sanitize-env.diff
 
 Requires: /etc/nsswitch.conf
 Provides: glibc-crypt_blowfish = %crypt_bf_version, ldconfig
@@ -155,12 +153,9 @@ compatibility package with necessary binaries of old libdb libraries.
 %setup -q %{!?snapshot:-a 1 -a 2} -a 3 -n %name-%basevers%{?snapshot:-%snapshot}
 
 # CVS
-# 20050427-2_3-branch
-%patch0 -p0
-
 # fix realpath(3) to return NULL and set errno to ENOTDIR for such
 # pathnames like "/path/to/existing-non-directory/"
-%patch1 -p0
+%patch0 -p0
 
 # RH
 # usual glibc-fedora.patch
@@ -217,26 +212,24 @@ cp %_sourcedir/crypt_freesec.[ch] crypt/
 %patch401 -p1
 # force known control characters for iscntrl(3)
 %patch402 -p1
-# sync quota.h with current kernel
-%patch403 -p1
 # always execute traced object directly with dynamic linker
-%patch404 -p1
+%patch403 -p1
 # fix libc's info formatting
-%patch405 -p1
+%patch404 -p1
 # don't blindly trust __progname for the syslog ident
-%patch406 -p1
+%patch405 -p1
 # use ctime_r() instead of strftime_r() in syslog(3)
-%patch407 -p1
+%patch406 -p1
 # avoid potential reads beyond end of undersized DNS responses
-%patch408 -p1
+%patch407 -p1
 # allow tmpfile(3) to use TMPDIR environment variable
-%patch409 -p1
+%patch408 -p1
 # fix temporary file handling in the scripts
-%patch410 -p1
+%patch409 -p1
 # avoid hardcoding of cpp binary, use execvp instead of execv
-%patch411 -p1
+%patch410 -p1
 # sanitize the environment in a paranoid way
-%patch412 -p1
+%patch411 -p1
 
 # XXX: check sparcv9 builds and probably fix this.
 #%ifarch sparcv9
@@ -341,20 +334,20 @@ rm %buildroot%_libexecdir/pt_chown
 # BUILD THE FILE LIST
 find %buildroot -type f -or -type l |
 	grep -v '^%buildroot%_libexecdir' |
-	sed 's|.*/etc|%config &|' > rpm.filelist.in
+	sed 's|.*/etc|%%config &|' > rpm.filelist.in
 for n in %_includedir %_libdir %_datadir; do
     find %buildroot$n -type d |
-	sed 's/^/%dir /' >> rpm.filelist.in
+	sed 's/^/%%dir /' >> rpm.filelist.in
 done
 
 # primary filelist
 sed 's|\( *\)%buildroot|\1|' < rpm.filelist.in |
-	fgrep -vx '%dir %_includedir' |
-	fgrep -vx '%dir %_libdir' |
-	fgrep -vx '%dir %_datadir' |
-	fgrep -vx '%dir %_mandir' |
-	fgrep -vx '%dir %_infodir' |
-	grep -v '^%config /etc/' |
+	fgrep -vx '%%dir %_includedir' |
+	fgrep -vx '%%dir %_libdir' |
+	fgrep -vx '%%dir %_datadir' |
+	fgrep -vx '%%dir %_mandir' |
+	fgrep -vx '%%dir %_infodir' |
+	grep -v '^%%config /etc/' |
 	sort > rpm.filelist.full
 
 %if %BUILD_PROFILE
@@ -456,6 +449,9 @@ fi
 %files compat-fake
 
 %changelog
+* Wed Nov 09 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3.6-owl1
+- Updated to 2.3.6.
+
 * Mon May 23 2005 Solar Designer <solar-at-owl.openwall.com> 2.3.5-owl5
 - Even more changes to the sanitize-env patch: corrected the way
 __libc_enable_secure is set in __libc_init_secure() if still undecided at

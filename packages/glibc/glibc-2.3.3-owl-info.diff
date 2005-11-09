@@ -9,3 +9,23 @@
  @end direntry
  @include dir-add.texi
  
+--- glibc-2.3.6.orig/manual/message.texi	2003-08-29 07:15:18 +0000
++++ glibc-2.3.6/manual/message.texi	2005-11-09 00:42:53 +0000
+@@ -1189,7 +1189,7 @@ the rules of how to select the plural fo
+ with every language this is the only viable solution except for
+ hardcoding the information in the code (which still would require the
+ possibility of extensions to not prevent the use of new languages).  The
+-details are explained in the GNU @code{gettext} manual.  Here only a a
++details are explained in the GNU @code{gettext} manual.  Here only a
+ bit of information is provided.
+ 
+ The information about the plural form selection has to be stored in the
+@@ -1590,7 +1590,7 @@ the user to select the message s/he want
+ them.
+ 
+ The POSIX locale model uses the environment variables @code{LC_COLLATE},
+-@code{LC_CTYPE}, @code{LC_MESSAGES}, @code{LC_MONETARY}, @code{NUMERIC},
++@code{LC_CTYPE}, @code{LC_MESSAGES}, @code{LC_MONETARY}, @code{LC_NUMERIC},
+ and @code{LC_TIME} to select the locale which is to be used.  This way
+ the user can influence lots of functions.  As we mentioned above the
+ @code{gettext} functions also take advantage of this.

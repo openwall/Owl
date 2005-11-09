@@ -1,22 +1,22 @@
 # Fix mprotect return code handling in _dl_make_stack_executable().
 
---- glibc-2.3.5/sysdeps/unix/sysv/linux/dl-execstack.c.orig	2004-09-21 02:30:12 +0000
-+++ glibc-2.3.5/sysdeps/unix/sysv/linux/dl-execstack.c	2005-05-09 10:49:50 +0000
-@@ -84,7 +84,7 @@ _dl_make_stack_executable (void **stack_
+--- glibc-2.3.5/sysdeps/unix/sysv/linux/dl-execstack.c.orig	2005-08-11 14:51:40 +0000
++++ glibc-2.3.5/sysdeps/unix/sysv/linux/dl-execstack.c	2005-08-11 15:20:56 +0000
+@@ -89,7 +89,7 @@ _dl_make_stack_executable (void **stack_
  	page -= size;
        else
  	{
 -	  if (errno != ENOMEM)	/* Unexpected failure mode.  */
 +	  if (errno != ENOMEM && errno != EFAULT)	/* Unexpected failure mode.  */
- 	    return errno;
- 
- 	  if (size == GLRO(dl_pagesize))
-@@ -107,7 +107,7 @@ _dl_make_stack_executable (void **stack_
+ 	    {
+ 	      result = errno;
+ 	      goto out;
+@@ -115,7 +115,7 @@ _dl_make_stack_executable (void **stack_
  	page += size;
        else
  	{
 -	  if (errno != ENOMEM)	/* Unexpected failure mode.  */
 +	  if (errno != ENOMEM && errno != EFAULT)	/* Unexpected failure mode.  */
- 	    return errno;
- 
- 	  if (size == GLRO(dl_pagesize))
+ 	    {
+ 	      result = errno;
+ 	      goto out;
