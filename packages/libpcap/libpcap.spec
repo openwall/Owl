@@ -1,10 +1,10 @@
-# $Id: Owl/packages/libpcap/libpcap.spec,v 1.16 2005/10/24 03:06:25 solar Exp $
+# $Id: Owl/packages/libpcap/libpcap.spec,v 1.17 2005/11/10 00:17:05 solar Exp $
 
 Summary: Network packet capture library.
 Name: libpcap
 Version: 0.8.1
-Release: owl3
-Epoch: 2
+Release: owl4
+Epoch: 14
 License: GPL
 Group: System Environment/Libraries
 URL: http://www.tcpdump.org
@@ -74,6 +74,9 @@ ln -s %name.so.0.8 %buildroot%_libdir/%name.so.1
 %_libdir/lib*.a
 
 %changelog
+* Thu Nov 10 2005 Solar Designer <solar-at-owl.openwall.com> 14:0.8.1-owl4
+- Bumped the Epoch to 14 (yuck) for Fedora and RHEL compatibility.
+
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2:0.8.1-owl3
 - Fixed orphaned %_libdir/libpcap.so.0 produced in %post.
 
