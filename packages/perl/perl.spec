@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.35 2005/11/04 21:16:06 solar Exp $
+# $Id: Owl/packages/perl/perl.spec,v 1.36 2005/11/10 00:00:32 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -17,7 +17,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.8.3
-Release: owl5
+Release: owl6
 Epoch: 2
 License: GPL
 Group: Development/Languages
@@ -274,6 +274,10 @@ find %buildroot%_libdir/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Thu Nov 10 2005 Solar Designer <solar-at-owl.openwall.com> 2:5.8.3-owl6
+- Corrected the removal of "$SAFEDIR/a.out" in c2ph.PL (fix from Fedora Legacy
+pointed out by Pekka Savola).
+
 * Sat Nov 05 2005 Solar Designer <solar-at-owl.openwall.com> 2:5.8.3-owl5
 - Bumped the Epoch to 2 for Fedora and RHEL compatibility.
 

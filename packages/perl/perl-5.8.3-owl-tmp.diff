@@ -820,7 +820,7 @@ diff -ur perl-5.8.3.orig/utils/c2ph.PL perl-5.8.3/utils/c2ph.PL
      }
      close(PIPE) || die "couldn't read intrinsics!";
 -    unlink($TMP, '$TMPDIR/a.out');
-+    unlink($TMP, '$SAFEDIR/a.out');
++    unlink($TMP, "$SAFEDIR/a.out");
      print STDERR "done\n" if $trace;
  }
  
