@@ -185,10 +185,17 @@ Update *.chr files, release as 1.7.  (Lots of other items are in a
 separate non-public TODO list for just John.)
 
 
-	libnet, libnids, libpcap.
+	libpcap.
+
+[PRIORITY: medium]
+[ASSIGNED: ldv@]
+Update to 0.8.3+ for Fedora compatibility (in particular, to allow for
+their ppp package to be installed on Owl).
+
+
+	libnet, libnids.
 
 [PRIORITY: low]
-[ASSIGNED: nergal@]
 Update to latest releases.
 
 
@@ -548,4 +555,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Id: Owl/doc/TODO,v 1.127 2005/11/08 19:22:08 solar Exp $
+$Id: Owl/doc/TODO,v 1.128 2005/11/10 00:23:56 solar Exp $
