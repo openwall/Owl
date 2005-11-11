@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.38 2005/11/11 18:16:47 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.39 2005/11/11 18:18:06 solar Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -332,7 +332,7 @@ fi
 %endif
 
 %changelog
-* Fri Nov 11 Solar Designer <solar-at-owl.openwall.com> 2.11z-owl7
+* Fri Nov 11 2005 Solar Designer <solar-at-owl.openwall.com> 2.11z-owl7
 - Corrected the uses of llseek() to avoid miscompilation with recent gcc.
 - Do package the sln(8) man page.
 
