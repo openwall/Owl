@@ -115,9 +115,11 @@ Package a tool to trap unaligned accesses on Alpha.
 	gettext.
 
 [PRIORITY: low]
+[ASSIGNED: exon@]
 Update gettext to 0.14.5.
 
 [PRIORITY: low]
+[ASSIGNED: exon@]
 Split the appropriate files into a gettext-devel subpackage for Fedora
 compatibility.
 
@@ -583,4 +585,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Id: Owl/doc/TODO,v 1.129 2005/11/11 10:44:12 ldv Exp $
+$Id: Owl/doc/TODO,v 1.130 2005/11/11 12:42:53 solar Exp $
