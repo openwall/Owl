@@ -1,0 +1,10 @@
+--- indent-2.2.9/src/indent.c
++++ indent-2.2.9/src/indent.c
+@@ -875,6 +875,7 @@
+                                                  * imply we are in a stmt */
+         for (t_ptr = s_code; *t_ptr; ++t_ptr)
+         {
++            check_lab_size();
+             *e_lab++ = *t_ptr;  /* turn everything so far into a label */
+         }
+                 
