@@ -115,6 +115,9 @@ Package a tool to trap unaligned accesses on Alpha.
 	gettext.
 
 [PRIORITY: low]
+Update gettext to 0.14.5.
+
+[PRIORITY: low]
 Split the appropriate files into a gettext-devel subpackage for Fedora
 compatibility.
 
@@ -362,6 +365,10 @@ Support external wordlists and "31337" word mangling.
 	patch.
 
 [PRIORITY: low]
+[ASSIGNED: ldv@]
+Update patch to 2.5.9.
+
+[PRIORITY: low]
 Solve the DoS-against-itself on the temporary file.
 
 
@@ -410,6 +417,13 @@ libraries, our patched postfix-script does not know to remove copies
 of library versions which are no longer in the system.
 
 
+	quota.
+
+[PRIORITY: low]
+[ASSIGNED: ldv@]
+Update quota to 3.13.
+
+
 	rpm.
 
 [PRIORITY: medium]
@@ -418,6 +432,13 @@ package signature checking.
 
 [PRIORITY: low]
 Update to the latest stable 4.3.x or 4.4.x.
+
+	sed.
+
+[PRIORITY: low]
+[ASSIGNED: ldv@]
+Update sed to 4.1.4.
+
 
 	shadow-utils.
 
@@ -462,6 +483,13 @@ we will likely have to maintain ourselves.
 
 [PRIORITY: low]
 Keep to latest release.
+
+
+	tar.
+
+[PRIORITY: low]
+[ASSIGNED: ldv@]
+Update tar to 1.15.1.
 
 
 	telnet.
@@ -555,4 +583,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Id: Owl/doc/TODO,v 1.128 2005/11/10 00:23:56 solar Exp $
+$Id: Owl/doc/TODO,v 1.129 2005/11/11 10:44:12 ldv Exp $
