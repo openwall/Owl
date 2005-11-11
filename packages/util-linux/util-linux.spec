@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.37 2005/11/11 18:10:40 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.38 2005/11/11 18:16:47 solar Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -118,7 +118,6 @@ rm %buildroot%_mandir/man8/agetty.8*
 rm %buildroot%_mandir/man8/mkfs.bfs.8*
 rm %buildroot%_mandir/man8/pivot_root.8*
 rm %buildroot%_mandir/man8/raw.8*
-rm %buildroot%_mandir/man8/sln.8*
 rm %buildroot%_mandir/man8/vigr.8*
 rm %buildroot%_mandir/man8/vipw.8*
 
@@ -304,6 +303,9 @@ fi
 %doc fdisk/sfdisk.examples
 %endif
 
+# sln comes from glibc-utils
+%_mandir/man8/sln.8*
+
 /etc/control.d/facilities/write
 
 %if %BUILD_MOUNT
@@ -332,6 +334,7 @@ fi
 %changelog
 * Fri Nov 11 Solar Designer <solar-at-owl.openwall.com> 2.11z-owl7
 - Corrected the uses of llseek() to avoid miscompilation with recent gcc.
+- Do package the sln(8) man page.
 
 * Tue Oct 18 2005 Alexandr D. Kanevskiy <kad-at-owl.openwall.com> 2.11z-owl6
 - Also package /sbin/fsck.minix, /sbin/mkfs.minix, and /usr/bin/cytune for
