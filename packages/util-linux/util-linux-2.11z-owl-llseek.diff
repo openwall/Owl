@@ -1,0 +1,44 @@
+diff -urp util-linux-2.11z.orig/fdisk/llseek.c util-linux-2.11z/fdisk/llseek.c
+--- util-linux-2.11z.orig/fdisk/llseek.c	2002-10-31 13:44:31 +0000
++++ util-linux-2.11z/fdisk/llseek.c	2005-11-11 17:55:46 +0000
+@@ -62,6 +62,7 @@ static ext2_loff_t my_llseek (unsigned i
+ 	retval = _llseek (fd, ((unsigned long long) offset) >> 32,
+ 			((unsigned long long) offset) & 0xffffffff,
+ 			&result, origin);
++	__asm__ __volatile__ ("" : "=g" (result));
+ 	return (retval == -1 ? (ext2_loff_t) retval : result);
+ }
+ 
+diff -urp util-linux-2.11z.orig/fdisk/sfdisk.c util-linux-2.11z/fdisk/sfdisk.c
+--- util-linux-2.11z.orig/fdisk/sfdisk.c	2003-01-28 18:18:03 +0000
++++ util-linux-2.11z/fdisk/sfdisk.c	2005-11-11 17:54:25 +0000
+@@ -151,6 +151,7 @@ sseek(char *dev, unsigned int fd, unsign
+ 	error(_("seek error on %s - cannot seek to %lu\n"), dev, s);
+ 	return 0;
+     }
++    __asm__ __volatile__ ("" : "=g" (out));
+ 
+     if (in != out) {
+ 	error(_("seek error: wanted 0x%08x%08x, got 0x%08x%08x\n"),
+diff -urp util-linux-2.11z.orig/partx/partx.c util-linux-2.11z/partx/partx.c
+--- util-linux-2.11z.orig/partx/partx.c	2002-10-31 13:51:06 +0000
++++ util-linux-2.11z/partx/partx.c	2005-11-11 18:02:06 +0000
+@@ -347,12 +347,16 @@ _syscall5(int,  _llseek,  uint,  fd, ulo
+ static int
+ sseek(int fd, unsigned int secnr) {
+ 	long long in, out;
++#ifdef NEED__llseek
++	int retval;
++#endif
+ 	in = ((long long) secnr << 9);
+ 	out = 1;
+ 
+ #ifdef NEED__llseek
+-	if (_llseek (fd, in>>32, in & 0xffffffff, &out, SEEK_SET) != 0
+-	    || out != in)
++	retval = _llseek (fd, in>>32, in & 0xffffffff, &out, SEEK_SET);
++	__asm__ __volatile__ ("" : "=g" (out));
++	if (retval != 0 || out != in)
+ #else
+ 	if ((out = lseek(fd, in, SEEK_SET)) != in)
+ #endif

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.36 2005/10/24 03:06:32 solar Exp $
+# $Id: Owl/packages/util-linux/util-linux.spec,v 1.37 2005/11/11 18:10:40 solar Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -7,7 +7,7 @@
 Summary: A collection of basic system utilities.
 Name: util-linux
 Version: 2.11z
-Release: owl6
+Release: owl7
 License: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%version.tar.bz2
@@ -19,6 +19,7 @@ Patch2: util-linux-2.11z-owl-write.diff
 Patch3: util-linux-2.11z-owl-mtab-umask.diff
 Patch4: util-linux-2.11z-owl-warnings.diff
 Patch5: util-linux-2.12q-up-20050910-remount.diff
+Patch6: util-linux-2.11z-owl-llseek.diff
 %if %BUILD_CRYPTO
 Patch10: util-linux-2.11z-crypto-v3.diff.bz2
 %endif
@@ -72,6 +73,7 @@ to query the status of a loop device.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 %if %BUILD_CRYPTO
 %patch10 -p1
 %endif
@@ -328,13 +330,16 @@ fi
 %endif
 
 %changelog
+* Fri Nov 11 Solar Designer <solar-at-owl.openwall.com> 2.11z-owl7
+- Corrected the uses of llseek() to avoid miscompilation with recent gcc.
+
 * Tue Oct 18 2005 Alexandr D. Kanevskiy <kad-at-owl.openwall.com> 2.11z-owl6
-- Also package /sbin/fsck.minix, /sbin/mkfs.minix and /usr/bin/cytune for
+- Also package /sbin/fsck.minix, /sbin/mkfs.minix, and /usr/bin/cytune for
 sparc and sparcv9 architectures.
    
 * Tue Sep 13 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.11z-owl5
-- Backported upstream fix to umount, to avoid unintentional grant
-  of privileges by "umount -r".
+- Backported upstream fix to umount, to avoid unintentional grant of
+privileges by "umount -r".
 
 * Tue Jun 28 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.11z-owl4
 - Corrected the source code to not break C strict aliasing rules.
