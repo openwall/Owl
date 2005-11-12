@@ -1,8 +1,8 @@
-# $Id: Owl/packages/john/john.spec,v 1.67 2005/11/08 13:13:05 solar Exp $
+# $Id: Owl/packages/john/john.spec,v 1.68 2005/11/12 16:27:13 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.39.3
+Version: 1.6.39.4
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -73,12 +73,16 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Sat Nov 12 2005 Solar Designer <solar-at-owl.openwall.com> 1.6.39.4-owl1
+- Corrected the way nouns ending in "z" and "h" (other than those ending in
+"ch" and "sh") are pluralized with the "p" wordlist rules command.
+
 * Tue Nov 08 2005 Solar Designer <solar-at-owl.openwall.com> 1.6.39.3-owl1
 - When eliminating any duplicate and already-cracked hashes, compare the
 internal representations first.
 - When displaying cracked passwords, let split() unify the encoding of hashes.
 (This only works when the only difference is upper vs. lower vs. mixed case
-since we're using a hash table and would not do a comparison against hashes 
+since we're using a hash table and would not do a comparison against hashes
 which look very different.)
 - Force the encoding of LM hashes that get into john.pot to all-lowercase.
 - Corrected the handling of break statements with nested loops in the external
