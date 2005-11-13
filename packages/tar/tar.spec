@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tar/tar.spec,v 1.22 2005/11/13 03:54:35 ldv Exp $
+# $Id: Owl/packages/tar/tar.spec,v 1.23 2005/11/13 15:14:11 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
@@ -9,7 +9,7 @@ Group: Applications/Archiving
 URL: http://www.gnu.org/software/tar/
 Source0: ftp://ftp.gnu.org/gnu/tar/tar-%version.tar.bz2
 Source1: tar.1
-Source1: append.at
+Source2: append.at
 Patch0: tar-1.15.1-cvs-20050113-name_size.diff
 Patch1: tar-1.15.1-cvs-20050303-seekable.diff
 Patch2: tar-1.15.1-cvs-20050303-newer-verbose.diff
