@@ -1,4 +1,4 @@
-# $Id: Owl/packages/patch/patch.spec,v 1.9 2005/11/13 03:46:25 ldv Exp $
+# $Id: Owl/packages/patch/patch.spec,v 1.10 2005/11/13 17:02:54 solar Exp $
 
 Summary: The GNU patch command, for modifying/upgrading files.
 Name: patch
@@ -33,14 +33,7 @@ original file (patching the file).
 
 %build
 autoreconf -fisv
-ADDITIONAL_ARCH_FLAGS=
-# (ldv) Could anybody on sparc*/alpha recheck the following statement, please?
-# (fg) Large file support can be disabled from ./configure - it is necessary at
-# least on sparcs
-%ifarch sparc sparc64 alpha
-ADDITIONAL_ARCH_FLAGS=--disable-largefile
-%endif
-%configure $ADDITIONAL_ARCH_FLAGS
+%configure
 
 %__make "CFLAGS=%optflags -D_GNU_SOURCE -W -Wall" LDFLAGS=-s
 bzip2 -9fk ChangeLog
