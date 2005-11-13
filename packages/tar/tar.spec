@@ -1,22 +1,23 @@
-# $Id: Owl/packages/tar/tar.spec,v 1.23 2005/11/13 15:14:11 solar Exp $
+# $Id: Owl/packages/tar/tar.spec,v 1.24 2005/11/13 23:30:20 ldv Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
 Version: 1.15.1
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/tar/
 Source0: ftp://ftp.gnu.org/gnu/tar/tar-%version.tar.bz2
 Source1: tar.1
 Source2: append.at
-Patch0: tar-1.15.1-cvs-20050113-name_size.diff
-Patch1: tar-1.15.1-cvs-20050303-seekable.diff
-Patch2: tar-1.15.1-cvs-20050303-newer-verbose.diff
-Patch3: tar-1.15.1-cvs-20050512-pad.diff
-Patch4: tar-1.15.1-cvs-20050613-is_avoided_name.diff
-Patch5: tar-1.15.1-cvs-20050801-sparse-totals.diff
-Patch6: tar-1.15.1-cvs-20051105-tests.diff
+Patch0: tar-1.15.1-cvs-20050105-parse_opt.diff
+Patch1: tar-1.15.1-cvs-20050113-name_size.diff
+Patch2: tar-1.15.1-cvs-20050303-seekable.diff
+Patch3: tar-1.15.1-cvs-20050303-newer-verbose.diff
+Patch4: tar-1.15.1-cvs-20050512-pad.diff
+Patch5: tar-1.15.1-cvs-20050613-is_avoided_name.diff
+Patch6: tar-1.15.1-cvs-20050801-sparse-totals.diff
+Patch7: tar-1.15.1-cvs-20051105-tests.diff
 Patch10: tar-1.15.1-alt-parse_opt-Iy.diff
 Patch11: tar-1.15.1-owl-info.diff
 Patch12: tar-1.15.1-owl-without-librt.diff
@@ -49,6 +50,7 @@ backups.
 %patch4 -p0
 %patch5 -p0
 %patch6 -p0
+%patch7 -p0
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
@@ -113,6 +115,9 @@ fi
 %doc AUTHORS NEWS THANKS
 
 %changelog
+* Mon Nov 14 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.15.1-owl2
+- Backported fix to options parser from tar CVS.
+
 * Sat Nov 12 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.15.1-owl1
 - Updated to 1.15.1.
 - Backported a few fixes from tar CVS.
