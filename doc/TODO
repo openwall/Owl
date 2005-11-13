@@ -390,10 +390,6 @@ Consider a number of patches and add-ons.
 
 [PRIORITY: medium]
 [ASSIGNED: ldv@]
-Restrict queue views and runs.
-
-[PRIORITY: medium]
-[ASSIGNED: ldv@]
 Open PAM sessions for programs run from .forward or LDA such that
 resource limits are set.
 
@@ -553,4 +549,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Id: Owl/doc/TODO,v 1.132 2005/11/13 04:02:28 ldv Exp $
+$Id: Owl/doc/TODO,v 1.133 2005/11/13 20:14:22 ldv Exp $
