@@ -1,0 +1,129 @@
+diff -upk.orig quota-3.13.orig/quotasys.c quota-3.13/quotasys.c
+--- quota-3.13.orig/quotasys.c	2005-06-24 12:12:16 +0000
++++ quota-3.13/quotasys.c	2005-06-27 21:37:50 +0000
+@@ -386,12 +386,54 @@ void number2str(unsigned long long num, 
+ 	sprintf(buf, "%Lu", num);
+ }
+ 
++/* Return if given option has nonempty argument */
++static char *hasmntoptarg(struct mntent *mnt, char *opt)
++{
++	char *p = hasmntopt(mnt, opt);
++
++	if (!p)
++		return NULL;
++	p += strlen(opt);
++	if (*p == '=' && p[1] != ',')
++		return p+1;
++	return NULL;
++}
++
++static char *get_loop_device_name(struct mntent *mnt, dev_t *dev)
++{
++	char *opt;
++
++	if (!(opt = hasmntoptarg(mnt, MNTOPT_LOOP)))
++		return NULL;
++
++	char loopdev[PATH_MAX];
++	unsigned i;
++
++	/* Copy the device name */
++	for (i = 0; *opt && *opt != ',' && i < sizeof(loopdev)-1; ++opt, ++i)
++		loopdev[i] = *opt;
++	loopdev[i] = 0;
++
++	struct stat st;
++	if (stat(loopdev, &st) < 0) {
++		errstr(_("Can't stat() loopback device %s: %s\n"), loopdev, strerror(errno));
++		return NULL;
++	}
++	if (!S_ISBLK(st.st_mode)) {
++		errstr(_("Loopback device %s isn't block device!\n"), loopdev);
++		return NULL;
++	}
++	if (dev)
++		*dev = st.st_rdev;
++	return sstrdup(loopdev);
++}
++
+ /*
+  *	Check for XFS filesystem with quota accounting enabled
+  */
+ static int hasxfsquota(struct mntent *mnt, int type)
+ {
+-	int ret = 0;
++	int rc, ret = 0;
+ 	u_int16_t sbflags;
+ 	struct xfs_mem_dqinfo info;
+ 	const char *dev = get_device_name(mnt->mnt_fsname);
+@@ -400,7 +442,13 @@ static int hasxfsquota(struct mntent *mn
+ 		return ret;
+ 
+ 	memset(&info, 0, sizeof(struct xfs_mem_dqinfo));
+-	if (!quotactl(QCMD(Q_XFS_GETQSTAT, type), dev, 0, (void *)&info)) {
++	rc = quotactl(QCMD(Q_XFS_GETQSTAT, type), dev, 0, (void *)&info);
++	if (rc && errno == ENOTBLK) {
++		free((char *)dev);
++		if ((dev = get_loop_device_name(mnt, NULL)))
++			rc = quotactl(QCMD(Q_XFS_GETQSTAT, type), dev, 0, (void *)&info);
++	}
++	if (!rc) {
+ 		sbflags = (info.qs_flags & 0xff00) >> 8;
+ 		if (type == USRQUOTA && (info.qs_flags & XFS_QUOTA_UDQ_ACCT))
+ 			ret = 1;
+@@ -424,19 +472,6 @@ static int hasxfsquota(struct mntent *mn
+ 	return ret;
+ }
+ 
+-/* Return if given option has nonempty argument */
+-char *hasmntoptarg(struct mntent *mnt, char *opt)
+-{
+-	char *p = hasmntopt(mnt, opt);
+-
+-	if (!p)
+-		return NULL;
+-	p += strlen(opt);
+-	if (*p == '=' && p[1] != ',')
+-		return p+1;
+-	return NULL;
+-}
+-
+ /*
+  *	Check to see if a particular quota is to be enabled (filesystem mounted with proper option)
+  */
+@@ -904,32 +939,9 @@ static int cache_mnt_table(int flags)
+ 					free((char *)devname);
+ 					continue;	/* We just ignore bind mounts... */
+ 				}
+-				else if ((opt = hasmntopt(mnt, MNTOPT_LOOP))) {
+-					char loopdev[PATH_MAX];
+-					int i;
+-
+-					if (!(opt = strchr(opt, '='))) {
+-						errstr(_("Can't find device of loopback mount in options for %s. Skipping.\n"), devname);
+-						free((char *)devname);
+-						continue;
+-					}
+-					/* Copy the device name */
+-					for (opt++, i = 0; *opt && i < sizeof(loopdev)-1 && *opt != ','; opt++, i++)
+-						loopdev[i] = *opt;
+-					loopdev[i] = 0;
+-					if (stat(loopdev, &st) < 0) {	/* Can't stat loopback device? */
+-						errstr(_("Can't stat() loopback device %s: %s\n"), opt, strerror(errno));
+-						free((char *)devname);
+-						continue;
+-					}
+-					if (!S_ISBLK(st.st_mode)) {
+-						errstr(_("Loopback device %s isn't block device!\n"), opt);
+-						free((char *)devname);
+-						continue;
+-					}
+-					dev = st.st_rdev;
++				else if ((opt = get_loop_device_name(mnt, &dev))) {
+ 					free((char *)devname);
+-					devname = sstrdup(loopdev);
++					devname = opt;
+ 				} else {
+ 					if (!S_ISBLK(st.st_mode) && !S_ISCHR(st.st_mode))
+ 						goto unsupporteddev;

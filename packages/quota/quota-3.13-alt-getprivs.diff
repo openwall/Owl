@@ -1,0 +1,30 @@
+diff -upk.orig quota-3.13.orig/quotaops.c quota-3.13/quotaops.c
+--- quota-3.13.orig/quotaops.c	2005-06-01 07:21:30 +0000
++++ quota-3.13/quotaops.c	2005-06-27 21:34:51 +0000
+@@ -97,8 +97,8 @@ struct dquot *getprivs(qid_t id, struct 
+ 	int j, ngroups;
+ 	uid_t euid;
+ 	gid_t gidset[NGROUPS], *gidsetp;
+-	char name[MAXNAMELEN];
+ #endif
++	char name[MAXNAMELEN];
+ 
+ 	for (i = 0; handles[i]; i++) {
+ #if defined(BSD_BEHAVIOUR)
+@@ -151,9 +151,13 @@ struct dquot *getprivs(qid_t id, struct 
+ 
+ 		if (!(q = handles[i]->qh_ops->read_dquot(handles[i], id))) {
+ 			/* If rpc.rquotad is not running filesystem might be just without quotas... */
+-			if (errno != ENOENT && (errno != ECONNREFUSED || !quiet))
+-				errstr(_("%s: error while getting quota from %s for %u: %s\n"),
+-					name, handles[i]->qh_quotadev, id, strerror(errno));
++			if (errno != ENOENT && (errno != ECONNREFUSED || !quiet)) {
++				const char *err_text = strerror(errno);
++				id2name(id, handles[i]->qh_type, name);
++				errstr(_("%s: error while getting quota on %s for %s %u: %s\n"),
++					name, handles[i]->qh_quotadev,
++					type2name(handles[i]->qh_type), id, err_text);
++			}
+ 			continue;
+ 		}
+ 		if (qhead == NULL)
