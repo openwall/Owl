@@ -1,0 +1,21 @@
+--- sed-4.1.2/doc/sed.x.orig	2005-01-19 17:00:55 +0300
++++ sed-4.1.2/doc/sed.x	2005-01-19 17:15:04 +0300
+@@ -1,6 +1,7 @@
+-.SH NAME
+-sed \- a Stream EDitor
+-.SH SYNOPSIS
++[NAME]
++\fBsed\fR \- a Stream text EDitor
++
++[SYNOPSIS]
+ .nf
+ sed [-V] [--version] [--help] [-n] [--quiet] [--silent]
+     [-l N] [--line-length=N] [-u] [--unbuffered]
+@@ -10,6 +11,7 @@
+     [script-if-no-other-script]
+     [file...]
+ .fi
++
+ [DESCRIPTION]
+ .ds sd \fIsed\fP
+ .ds Sd \fISed\fP

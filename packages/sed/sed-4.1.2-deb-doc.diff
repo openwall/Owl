@@ -1,0 +1,11 @@
+--- sed-4.1.2.orig/doc/sed.x
++++ sed-4.1.2/doc/sed.x
+@@ -297,7 +297,7 @@
+ .BR ed (1),
+ .BR grep (1),
+ .BR tr (1),
+-.BR perlre (1),
++.BR regex (7),
+ sed.info,
+ any of various books on \*(sd,
+ .na

@@ -1,0 +1,38 @@
+diff -upk.orig sed-4.1.4.orig/configure.ac sed-4.1.4/configure.ac
+--- sed-4.1.4.orig/configure.ac	2005-01-25 08:30:13 +0000
++++ sed-4.1.4/configure.ac	2005-11-12 14:59:59 +0000
+@@ -118,6 +118,7 @@ AM_CONDITIONAL(BUILD_HTML, test "x$enabl
+ : ${TEXI2HTML=texi2html -monolithic}
+ AC_SUBST(TEXI2HTML)
+ 
++if test "x$enable_html" != xno; then
+ AC_MSG_CHECKING(how to build HTML documentation)
+ if eval $am_missing_run makeinfo --help 2>&1 | grep .-html > /dev/null; then
+   AC_MSG_RESULT(with makeinfo)
+@@ -133,6 +134,7 @@ else
+     fi
+     enable_html=no
+   fi
++fi
+ fi 
+ 
+ AM_CONDITIONAL(MAKEINFO_HTML, test "x$enable_html" = xmakeinfo)
+diff -upk.orig sed-4.1.4.orig/configure sed-4.1.4/configure
+--- sed-4.1.4.orig/configure	2005-01-25 08:30:37 +0000
++++ sed-4.1.4/configure	2005-11-12 15:00:37 +0000
+@@ -6746,6 +6746,7 @@ fi
+ : ${TEXI2HTML=texi2html -monolithic}
+ 
+ 
++if test "x$enable_html" != xno; then
+ echo "$as_me:$LINENO: checking how to build HTML documentation" >&5
+ echo $ECHO_N "checking how to build HTML documentation... $ECHO_C" >&6
+ if eval $am_missing_run makeinfo --help 2>&1 | grep .-html > /dev/null; then
+@@ -6768,6 +6769,7 @@ echo "$as_me: error: cannot build HTML d
+     enable_html=no
+   fi
+ fi
++fi
+ 
+ 
+ 

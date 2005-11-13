@@ -1,16 +1,22 @@
-# $Id: Owl/packages/sed/sed.spec,v 1.12 2005/10/24 03:06:29 solar Exp $
+# $Id: Owl/packages/sed/sed.spec,v 1.13 2005/11/13 03:42:14 ldv Exp $
 
 Summary: A GNU stream text editor.
 Name: sed
-Version: 4.1.1
+Version: 4.1.4
 Release: owl1
 License: GPL
 Group: Applications/Text
 URL: http://www.gnu.org/software/sed/
-Source: ftp://ftp.gnu.org/gnu/sed/sed-%version.tar.gz
-Patch0: sed-4.0.9-owl-info.diff
+Source0: ftp://ftp.gnu.org/gnu/sed/sed-%version.tar.gz
+Source1: http://sed.sourceforge.net/grabbag/tutorials/sedfaq-015.txt.bz2
+Source2: http://sed.sourceforge.net/sed1line-5.4.txt.bz2
+Patch0: sed-4.1.4-cvs-20050210.diff
+Patch1: sed-4.0.9-owl-info.diff
+Patch2: sed-4.1.2-alt-man.diff
+Patch3: sed-4.0.9-alt-doc-sedfaq.diff
+Patch4: sed-4.1.2-deb-doc.diff
+Patch5: sed-4.1.4-owl-configure.diff
 PreReq: /sbin/install-info
-Prefix: %_prefix
 BuildRequires: texinfo
 BuildRoot: /override/%name-%version
 
@@ -23,41 +29,62 @@ specified in a script file or from the command line.
 
 %prep
 %setup -q
-%patch -p1
+%patch0 -p0
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+
+%__install -pm644 %_sourcedir/sedfaq-015.txt.bz2 doc/sedfaq.txt.bz2
+%__install -pm644 %_sourcedir/sed1line-5.4.txt.bz2 doc/sed1line.txt.bz2
+bzip2 -9fk ChangeLog NEWS
+
+%{expand:%%define optflags %optflags -Wall}
 
 %build
 rm doc/sed.info
 %configure
-make
+
+%__make SUBDIRS='lib sed'
+./sed/sed -i 's,@DOCDIR@,%_docdir/%name-%version,' doc/sed-in.texi doc/sed.x
+%__make
+
+%__make -k check
 
 %install
 rm -rf %buildroot
 
 %makeinstall
+mv %buildroot%_bindir %buildroot/bin
 
-cd %buildroot
-mv .%_bindir bin
-
-# Remove unpackaged files
-rm %buildroot%_infodir/dir
+# Remove unpackaged files if any
+rm -f %buildroot%_infodir/dir
 
 %post
-/sbin/install-info %_infodir/sed.info.gz %_infodir/dir
+/sbin/install-info %_infodir/sed.info %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/sed.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/sed.info %_infodir/dir
 fi
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS BUGS NEWS README THANKS ChangeLog
+%doc AUTHORS BUGS ChangeLog.bz2 NEWS.bz2 README THANKS doc/*.txt.bz2
 /bin/sed
 %_infodir/*.info*
 %_datadir/locale/*/*/*
 %_mandir/man*/*
 
 %changelog
+* Sat Nov 12 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.1.4-owl1
+- Updated to 4.1.4.
+- Applied upstream fix for off-by-one error in the "invalid reference
+to subexpression" message.
+- Imported sed(1) corrections from Debian and ALT.
+- Packaged sed1line.txt and the sed FAQ.
+
 * Fri Jul 16 2004 Solar Designer <solar-at-owl.openwall.com> 4.1.1-owl1
 - Updated to 4.1.1.
 

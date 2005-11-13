@@ -1,0 +1,29 @@
+diff -uprk.orig sed-4.0.9.orig/doc/sed-in.texi sed-4.0.9/doc/sed-in.texi
+--- sed-4.0.9.orig/doc/sed-in.texi	2004-01-07 14:35:49 +0300
++++ sed-4.0.9/doc/sed-in.texi	2004-03-02 17:22:18 +0300
+@@ -2511,11 +2511,8 @@ In addition to several books that have b
+ (either specifically or as chapters in books which discuss
+ shell programming), one can find out more about @command{sed}
+ (including suggestions of a few books) from the FAQ
+-for the @code{sed-users} mailing list, available from any of:
+-@display
+- @uref{http://www.student.northpark.edu/pemente/sed/sedfaq.html}
+- @uref{http://sed.sf.net/grabbag/tutorials/sedfaq.html}
+-@end display
++for the @code{sed-users} mailing list, available at
++@uref{file://@DOCDIR@/sedfaq.txt.bz2}.
+ 
+ Also of interest are
+ @uref{http://www.student.northpark.edu/pemente/sed/index.htm}
+diff -uprk.orig sed-4.0.9.orig/doc/sed.x sed-4.0.9/doc/sed.x
+--- sed-4.0.9.orig/doc/sed.x	2002-10-25 22:21:18 +0400
++++ sed-4.0.9/doc/sed.x	2004-03-02 17:22:50 +0300
+@@ -301,7 +301,7 @@ and other sequences.
+ sed.info,
+ any of various books on \*(sd,
+ .na
+-the \*(sd FAQ (http://sed.sf.net/grabbag/tutorials/sedfaq.html),
++the \*(sd FAQ (@DOCDIR@/sedfaq.txt.bz2),
+ http://sed.sf.net/grabbag/.
+ 
+ [BUGS]
