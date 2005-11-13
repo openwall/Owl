@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sed/sed.spec,v 1.13 2005/11/13 03:42:14 ldv Exp $
+# $Id: Owl/packages/sed/sed.spec,v 1.14 2005/11/13 03:44:05 ldv Exp $
 
 Summary: A GNU stream text editor.
 Name: sed
@@ -12,7 +12,7 @@ Source1: http://sed.sourceforge.net/grabbag/tutorials/sedfaq-015.txt.bz2
 Source2: http://sed.sourceforge.net/sed1line-5.4.txt.bz2
 Patch0: sed-4.1.4-cvs-20050210.diff
 Patch1: sed-4.0.9-owl-info.diff
-Patch2: sed-4.1.2-alt-man.diff
+Patch2: sed-4.1.2-alt-doc.diff
 Patch3: sed-4.0.9-alt-doc-sedfaq.diff
 Patch4: sed-4.1.2-deb-doc.diff
 Patch5: sed-4.1.4-owl-configure.diff
