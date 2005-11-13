@@ -12,7 +12,7 @@ diff -upk.orig quota-3.13.orig/warnquota.conf quota-3.13/warnquota.conf
  # but they don't have to be:
 -SUBJECT 	= Hey, user, clean up your account!
 -CC_TO 		= "sysadm@localhost"
-+SUBJECT 	= NOTE: You are exceeding your allocatted disk space limits
++SUBJECT 	= NOTE: You are exceeding your allocated disk space limits
 +CC_TO 		= "root@localhost"
  # If you set this variable CC will be used only when user has less than
  # specified grace time left (examples of possible times: 5 seconds, 1 minute,
@@ -26,8 +26,8 @@ diff -upk.orig quota-3.13.orig/warnquota.conf quota-3.13/warnquota.conf
  # Line breaks are done by '|' character
 -MESSAGE         = Hello, I've noticed you use too much space\
 - on my disk|Delete your files on following filesystems:|
-+MESSAGE         = Your disk usage has exceeded the agreeded limits\
-+  on this server|Please delete any unnecessary files on following filesystems:|
++MESSAGE         = Your disk usage has exceeded the agreed limits\
++ on this server|Please delete any unnecessary files on the following filesystems:|
  # Text in the end of the mail (if not specified, default text using SUPPORT and PHONE
  # is created)
 -SIGNATURE	= See you!|			Your admin|
