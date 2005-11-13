@@ -1,0 +1,42 @@
+diff -upk.orig patch-2.5.9.orig/inp.c patch-2.5.9/inp.c
+--- patch-2.5.9.orig/inp.c	2003-05-20 13:58:02 +0000
++++ patch-2.5.9/inp.c	2005-10-25 23:02:41 +0000
+@@ -79,6 +79,14 @@ re_input (void)
+     }
+ }
+ 
++void
++reset_scan_input_vars (void)
++{
++    using_plan_a = 1;
++    i_buffer = NULL;
++    i_ptr = NULL;
++}
++
+ /* Construct the line index, somehow or other. */
+ 
+ void
+diff -upk.orig patch-2.5.9.orig/inp.h patch-2.5.9/inp.h
+--- patch-2.5.9.orig/inp.h	2003-05-20 14:05:22 +0000
++++ patch-2.5.9/inp.h	2005-10-25 23:02:21 +0000
+@@ -26,4 +26,5 @@ XTERN LINENUM input_lines;		/* how long 
+ char const *ifetch (LINENUM, bool, size_t *);
+ void get_input_file (char const *, char const *);
+ void re_input (void);
++void reset_scan_input_vars (void);
+ void scan_input (char *);
+diff -upk.orig patch-2.5.9.orig/patch.c patch-2.5.9/patch.c
+--- patch-2.5.9.orig/patch.c	2003-05-20 13:55:03 +0000
++++ patch-2.5.9/patch.c	2005-10-25 22:58:02 +0000
+@@ -213,7 +213,10 @@ main (int argc, char **argv)
+ 
+ 	/* find out where all the lines are */
+ 	if (!skip_rest_of_patch)
+-	    scan_input (inname);
++	  scan_input (inname);
++	else
++	  reset_scan_input_vars ();
++        
+ 
+ 	/* from here on, open no standard i/o files, because malloc */
+ 	/* might misfire and we can't catch it easily */

@@ -1,0 +1,24 @@
+diff -upk.orig patch-2.5.9.orig/patch.man patch-2.5.9/patch.man
+--- patch-2.5.9.orig/patch.man	2002-05-25 10:36:44 +0000
++++ patch-2.5.9/patch.man	2005-10-25 23:08:09 +0000
+@@ -259,7 +259,7 @@ Make backup files.
+ That is, when patching a file,
+ rename or copy the original instead of removing it.
+ When backing up a file that does not exist,
+-an empty, unreadable backup file is created
++an empty, readonly backup file is created
+ as a placeholder to represent the nonexistent file.
+ See the
+ .B \-V
+diff -upk.orig patch-2.5.9.orig/util.c patch-2.5.9/util.c
+--- patch-2.5.9.orig/util.c	2003-05-20 14:04:53 +0000
++++ patch-2.5.9/util.c	2005-10-25 23:08:09 +0000
+@@ -106,7 +106,7 @@ move_file (char const *from, int volatil
+ 
+ 	  try_makedirs_errno = ENOENT;
+ 	  unlink (bakname);
+-	  while ((fd = creat (bakname, 0)) < 0)
++	  while ((fd = creat (bakname, 0400)) < 0)
+ 	    {
+ 	      if (errno != try_makedirs_errno)
+ 		pfatal ("Can't create file %s", quotearg (bakname));
