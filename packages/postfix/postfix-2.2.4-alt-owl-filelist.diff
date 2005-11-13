@@ -50,7 +50,7 @@
 -$command_directory/postdrop:f:root:$setgid_group:2755:u
 -$command_directory/postqueue:f:root:$setgid_group:2755:u
 +$command_directory/postdrop:f:root:$setgid_group:2711:u
-+$command_directory/postqueue:f:root:$setgid_group:2711:u
++$daemon_directory/postqueuedir/postqueue:f:root:$setgid_group:2711:u
  $sendmail_path:f:root:-:755
  $newaliases_path:l:$sendmail_path
  $mailq_path:l:$sendmail_path

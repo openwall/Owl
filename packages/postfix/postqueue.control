@@ -1,0 +1,12 @@
+#!/bin/sh
+# $Id: Owl/packages/postfix/postqueue.control,v 1.1 2005/11/13 20:12:06 ldv Exp $
+
+. /etc/control.d/functions
+
+DIRECTORY=/usr/libexec/postfix/postqueuedir
+
+new_fmode public 755 root root
+new_fmode wheelonly 750 root wheel
+new_fmode restricted 700 root root
+
+control_fmode "$DIRECTORY" "$*" || exit 1

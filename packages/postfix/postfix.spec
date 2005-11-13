@@ -1,9 +1,9 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.31 2005/11/08 09:26:33 ldv Exp $
+# $Id: Owl/packages/postfix/postfix.spec,v 1.32 2005/11/13 20:12:06 ldv Exp $
 
 Summary: Postfix mail system.
 Name: postfix
 Version: 2.2.5
-Release: owl2
+Release: owl3
 Epoch: 1
 License: IBM Public License
 Group: System Environment/Daemons
@@ -16,6 +16,7 @@ Source4: postfix-master-chrootify.awk
 Source5: postfix-master-comment.awk
 Source6: postfix-lorder.sh
 Source7: postfix-oclosure.sh
+Source8: postqueue.control
 Patch0: postfix-2.2.4-owl-sparse-hack.diff
 Patch1: postfix-2.2.4-mjt-var_command_maxtime.diff
 Patch2: postfix-2.2.4-alt-check-warn.diff
@@ -202,11 +203,14 @@ popd # src
 
 %__make manpages
 
+mkdir -p libexec/postqueuedir
+mv bin/postqueue libexec/postqueuedir/
+
 bzip2 -9fk HISTORY
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot{%_libdir,%_mandir}
+mkdir -p %buildroot{%_libdir,%_mandir,%daemon_directory/postqueuedir}
 
 install -p -m755 lib/%libpostfix lib/%libpostfix_dict %buildroot%_libdir/
 
@@ -219,10 +223,16 @@ env -i "LD_LIBRARY_PATH=%buildroot%_libdir" \
 		install_root=%buildroot \
 		tempdir=%_tmppath
 
+# Finish postqueue install
+chmod 700 %buildroot%daemon_directory/postqueuedir
+ln -s ../..%daemon_directory/postqueuedir/postqueue %buildroot%command_directory/
+
 install -pD -m700 %_sourcedir/postfix.init \
 	%buildroot/etc/rc.d/init.d/postfix
 install -pD -m700 %_sourcedir/postfix.control \
 	%buildroot/etc/control.d/facilities/postfix
+install -pD -m700 %_sourcedir/postqueue.control \
+	%buildroot/etc/control.d/facilities/postqueue
 
 cp -a man/man{1,5,8} %buildroot%manpage_directory/
 
@@ -262,7 +272,8 @@ if [ $1 -ge 2 ]; then
 		--pidfile %queue_directory/pid/master.pid --user root; then
 		touch %restart_flag || :
 	fi
-	/usr/sbin/control-dump postfix
+	mkdir -p -m700 %daemon_directory/postqueuedir
+	/usr/sbin/control-dump postfix postqueue
 fi
 
 %post
@@ -271,7 +282,7 @@ fi
 %command_directory/postalias %config_directory/aliases
 %command_directory/postfix check
 if [ $1 -ge 2 ]; then
-	/usr/sbin/control-restore postfix
+	/usr/sbin/control-restore postfix postqueue
 fi
 /sbin/chkconfig --add postfix
 [ -f %restart_flag ] && %command_directory/postfix start || :
@@ -307,6 +318,8 @@ fi
 %_libdir/%libpostfix
 %_libdir/%libpostfix_dict
 %_libdir/sendmail
+%attr(700,root,root) %verify(not mode,group) %dir %daemon_directory/postqueuedir
+%command_directory/postqueue
 %_bindir/mailq
 %_bindir/newaliases
 %_bindir/qshape
@@ -315,6 +328,9 @@ fi
 %attr(644,root,root) %verify(not md5 mtime size) %ghost %queue_directory/etc/*
 
 %changelog
+* Sun Nov 13 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.2.5-owl3
+- Restricted queue views and runs.
+
 * Mon Nov 07 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.2.5-owl2
 - Added CDB database type and PCRE lookup tables support.
 - Changed default mailbox locking method to fcntl.

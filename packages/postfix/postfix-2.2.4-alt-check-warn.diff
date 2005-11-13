@@ -1,6 +1,20 @@
 diff -upk.orig postfix-2.2.4.orig/conf/postfix-script postfix-2.2.4/conf/postfix-script
 --- postfix-2.2.4.orig/conf/postfix-script	2005-02-04 01:05:21 +0000
 +++ postfix-2.2.4/conf/postfix-script	2005-06-23 12:34:29 +0000
+@@ -214,11 +214,11 @@ check-warn)
+ 		-exec $WARN not owned by $mail_owner: {} \;
+ 
+ 	find $queue_directory/public $queue_directory/maildrop \
+-	    $command_directory/postqueue $command_directory/postdrop \
++	    $daemon_directory/postqueuedir/postqueue $command_directory/postdrop \
+ 	    -prune ! -group $setgid_group \
+ 	    -exec $WARN not owned by group $setgid_group: {} \;
+ 
+-	find $command_directory/postqueue $command_directory/postdrop \
++	find $daemon_directory/postqueuedir/postqueue $command_directory/postdrop \
+ 	    -prune ! -perm -02111 \
+ 	    -exec $WARN not set-gid or not owner+group+world executable: {} \;
+ 
 @@ -239,10 +239,15 @@ check-warn)
  	do
  		test -d $dir && find $dir -type f -print | while read path
