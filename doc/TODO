@@ -360,10 +360,6 @@ Support external wordlists and "31337" word mangling.
 	patch.
 
 [PRIORITY: low]
-[ASSIGNED: ldv@]
-Update patch to 2.5.9.
-
-[PRIORITY: low]
 Solve the DoS-against-itself on the temporary file.
 
 
@@ -412,13 +408,6 @@ libraries, our patched postfix-script does not know to remove copies
 of library versions which are no longer in the system.
 
 
-	quota.
-
-[PRIORITY: low]
-[ASSIGNED: ldv@]
-Update quota to 3.13.
-
-
 	rpm.
 
 [PRIORITY: medium]
@@ -427,13 +416,6 @@ package signature checking.
 
 [PRIORITY: low]
 Update to the latest stable 4.3.x or 4.4.x.
-
-	sed.
-
-[PRIORITY: low]
-[ASSIGNED: ldv@]
-Update sed to 4.1.4.
-
 
 	shadow-utils.
 
@@ -478,13 +460,6 @@ we will likely have to maintain ourselves.
 
 [PRIORITY: low]
 Keep to latest release.
-
-
-	tar.
-
-[PRIORITY: low]
-[ASSIGNED: ldv@]
-Update tar to 1.15.1.
 
 
 	telnet.
@@ -578,4 +553,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Id: Owl/doc/TODO,v 1.131 2005/11/11 15:36:34 solar Exp $
+$Id: Owl/doc/TODO,v 1.132 2005/11/13 04:02:28 ldv Exp $
