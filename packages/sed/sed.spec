@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sed/sed.spec,v 1.14 2005/11/13 03:44:05 ldv Exp $
+# $Id: Owl/packages/sed/sed.spec,v 1.15 2005/11/13 16:43:49 ldv Exp $
 
 Summary: A GNU stream text editor.
 Name: sed
@@ -8,8 +8,11 @@ License: GPL
 Group: Applications/Text
 URL: http://www.gnu.org/software/sed/
 Source0: ftp://ftp.gnu.org/gnu/sed/sed-%version.tar.gz
-Source1: http://sed.sourceforge.net/grabbag/tutorials/sedfaq-015.txt.bz2
-Source2: http://sed.sourceforge.net/sed1line-5.4.txt.bz2
+# Original sources was download from:
+# http://sed.sourceforge.net/grabbag/tutorials/sedfaq.txt
+# http://sed.sourceforge.net/sed1line.txt
+Source1: sedfaq-015.txt.bz2
+Source2: sed1line-5.4.txt.bz2
 Patch0: sed-4.1.4-cvs-20050210.diff
 Patch1: sed-4.0.9-owl-info.diff
 Patch2: sed-4.1.2-alt-doc.diff
