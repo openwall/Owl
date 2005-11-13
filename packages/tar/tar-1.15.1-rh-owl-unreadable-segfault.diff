@@ -1,0 +1,13 @@
+--- tar-1.15.1/src/incremen.c.orig	2004-09-06 11:30:42 +0000
++++ tar-1.15.1/src/incremen.c	2005-01-15 06:11:18 +0000
+@@ -132,7 +132,10 @@ scan_directory (struct obstack *stk, cha
+ 
+   if (! dirp)
+     {
++      /* Assume errno is the reason why */
+       savedir_error (dir_name);
++      return;
++      /* we cannot return NULL as error flag because scan_directory returns void */
+     }
+   errno = 0;
+ 

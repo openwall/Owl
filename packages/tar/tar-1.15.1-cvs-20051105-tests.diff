@@ -1,0 +1,55 @@
+--- tests/pipe.at	21 Dec 2004 13:24:37 -0000	1.1
++++ tests/pipe.at	7 Jul 2005 16:20:03 -0000	1.4
+@@ -34,9 +34,9 @@ AT_TAR_CHECK([
+ mkdir directory
+ genfile --length 10240 --pattern zeros > directory/file1
+ genfile --length 13 > directory/file2
+-tar cf archive directory
++tar cf archive directory|sort 2>/dev/null
+ mv directory orig
+-cat archive | tar xfv -
++cat archive | tar xfv - | sort 2>/dev/null
+ echo "separator"
+ cmp orig/file1 directory/file1
+ echo "separator"
+@@ -49,4 +49,4 @@ separator
+ separator
+ ])
+ 
+-AT_CLEANUP
+\ No newline at end of file
++AT_CLEANUP
+--- tests/listed02.at	21 Dec 2004 13:27:06 -0000	1.2
++++ tests/listed02.at	5 Nov 2005 15:55:38 -0000	1.7
+@@ -29,7 +29,6 @@ AT_SETUP([working --listed])
+ AT_KEYWORDS([listed02])
+ 
+ AT_TAR_CHECK([
+-mkdir directory
+ 
+ echo Create directories
+ mkdir tart
+@@ -52,12 +51,13 @@ tar -c -v --listed-incremental=tart.incr
+ sleep 1
+ echo Modifying filesystem
+ rm tart/a1
++
+ mv tart/b1 tart/b2
+ mv tart/c1 tart/c2
+ touch tart/c2/ca3
+ 
+ echo Directory contents
+-find tart|sort 2>/dev/null
++find tart -print | sort 2>/dev/null
+ 
+ sleep 1
+ echo Creating incremental archive
+@@ -76,7 +76,7 @@ echo Extracting incremental archive
+ tar -x -v --listed-incremental=tart.incr2 -f archive.2 | sort 2>/dev/null 
+ 
+ echo Final files:
+-find tart|sort 2>/dev/null
++find tart -print | sort 2>/dev/null
+ ],
+ [0],
+ [Create directories

@@ -1,27 +1,33 @@
-# $Id: Owl/packages/tar/tar.spec,v 1.21 2005/10/24 03:06:30 solar Exp $
+# $Id: Owl/packages/tar/tar.spec,v 1.22 2005/11/13 03:54:35 ldv Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
-Version: 1.13.19
-Release: owl5
+Version: 1.15.1
+Release: owl1
 License: GPL
 Group: Applications/Archiving
-Source0: ftp://alpha.gnu.org/pub/gnu/tar/tar-%version.tar.gz
+URL: http://www.gnu.org/software/tar/
+Source0: ftp://ftp.gnu.org/gnu/tar/tar-%version.tar.bz2
 Source1: tar.1
-Patch0: tar-1.13.19-owl-verify-looping-fix.diff
-Patch1: tar-1.13.19-mdk-Iy.diff
-Patch2: tar-1.13.19-rh-fail.diff
-Patch3: tar-1.13.19-rh-owl-unreadable-segfault.diff
-Patch4: tar-1.13.19-rh-autoconf.diff
-Patch5: tar-1.13.19-rh-owl-no-librt.diff
-Patch6: tar-1.13.19-owl-info.diff
-Patch7: tar-1.13.19-owl-dot-dot.diff
-Patch8: tar-1.13.19-owl-symlinks.diff
-Patch9: tar-1.13.19-up-relativize-links.diff
-Patch10: tar-1.13.19-owl-autotools.diff
-Patch11: tar-1.13.19-owl-po.diff
+Source1: append.at
+Patch0: tar-1.15.1-cvs-20050113-name_size.diff
+Patch1: tar-1.15.1-cvs-20050303-seekable.diff
+Patch2: tar-1.15.1-cvs-20050303-newer-verbose.diff
+Patch3: tar-1.15.1-cvs-20050512-pad.diff
+Patch4: tar-1.15.1-cvs-20050613-is_avoided_name.diff
+Patch5: tar-1.15.1-cvs-20050801-sparse-totals.diff
+Patch6: tar-1.15.1-cvs-20051105-tests.diff
+Patch10: tar-1.15.1-alt-parse_opt-Iy.diff
+Patch11: tar-1.15.1-owl-info.diff
+Patch12: tar-1.15.1-owl-without-librt.diff
+Patch13: tar-1.15.1-alt-contains_dot_dot.diff
+Patch14: tar-1.15.1-rh-owl-unreadable-segfault.diff
+Patch15: tar-1.15.1-mdk-optimize-ignored.diff
+Patch16: tar-1.15.1-deb-doc.diff
+Patch17: tar-1.15.1-deb-lone-zero-block-warning.diff
+Patch18: tar-1.15.1-alt-warnings.diff
 PreReq: /sbin/install-info, grep
-BuildRequires: automake, autoconf, texinfo, gettext
+BuildRequires: automake, autoconf, cvs, gettext, texinfo
 BuildRequires: rpm-build >= 0:4
 BuildRoot: /override/%name-%version
 
@@ -36,40 +42,46 @@ backups.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
+%patch0 -p0
+%patch1 -p0
+%patch2 -p0
+%patch3 -p0
+%patch4 -p0
+%patch5 -p0
+%patch6 -p0
 %patch10 -p1
 %patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1
+%patch17 -p1
+%patch18 -p1
+install -pm644 %_sourcedir/append.at tests/
 
 %{expand:%%define optflags %optflags -Wall -Dlint}
 
 %build
 rm doc/tar.info
-unset LINGUAS || :
-aclocal
-automake -a
-autoconf
-%define _bindir /bin
-%define _libexecdir /sbin
-%configure
-%__make LIBS=-lbsd all check
+autoreconf -fisv
+export tar_cv_path_RSH=%_bindir/ssh
+%configure --bindir=/bin --with-rmt=/sbin/rmt
+%__make
+%__make -k check
+bzip2 -9fk ChangeLog
 
 %install
 rm -rf %buildroot
 
-%makeinstall
+%makeinstall bindir=%buildroot/bin
 ln -sf tar %buildroot/bin/gtar
 
 mkdir -p %buildroot%_mandir/man1
 install -m 644 %_sourcedir/tar.1 %buildroot%_mandir/man1/
+
+# Remove unpackaged files if any
+rm -f %buildroot%_infodir/dir
 
 %post
 # Get rid of an old, incorrect info entry when replacing older versions
@@ -84,11 +96,11 @@ if grep -q '^Tar: ' $INFODIRFILE; then
 	mv $INFODIRFILE.rpmtmp $INFODIRFILE
 fi
 
-/sbin/install-info %_infodir/tar.info.gz %_infodir/dir
+/sbin/install-info %_infodir/tar.info %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/tar.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/tar.info %_infodir/dir
 fi
 
 %files
@@ -98,10 +110,16 @@ fi
 %_mandir/man1/tar.1*
 %_infodir/tar.info*
 %_prefix/share/locale/*/LC_MESSAGES/*
-%exclude /sbin/rmt
-%exclude %_infodir/dir
+%doc AUTHORS NEWS THANKS
 
 %changelog
+* Sat Nov 12 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.15.1-owl1
+- Updated to 1.15.1.
+- Backported a few fixes from tar CVS.
+- Reviewed Owl patches, removed obsolete ones.
+- Added missing tests/append.at and enabled testsuite by default.
+- Imported fixes from Debian's and ALT's tar packages.
+
 * Tue Mar 02 2004 Michail Litvak <mci-at-owl.openwall.com> 1.13.19-owl5
 - Fixed building with new gettext.
 

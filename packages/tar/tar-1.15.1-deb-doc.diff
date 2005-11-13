@@ -1,0 +1,34 @@
+--- tar-1.15.1.orig/doc/tar.texi
++++ tar-1.15.1/doc/tar.texi
+@@ -759,7 +759,7 @@
+ 
+ Excluding Some Files
+ 
+-* controlling pattern-patching with exclude::
++* controlling pattern-matching with exclude::
+ * problems with exclude::
+ 
+ Crossing Filesystem Boundaries
+@@ -6186,11 +6186,11 @@
+ so that such data can be more easily excluded from backups.
+ 
+ @menu
+-* controlling pattern-patching with exclude::
++* controlling pattern-matching with exclude::
+ * problems with exclude::
+ @end menu
+ 
+-@node controlling pattern-patching with exclude
++@node controlling pattern-matching with exclude
+ @unnumberedsubsec Controlling Pattern-Matching with the @code{exclude} Options
+ 
+ Normally, a pattern matches a name if an initial subsequence of the
+@@ -6490,7 +6490,7 @@
+ the files under those directories.
+ 
+ The @value{op-no-recursion} option also affects how exclude patterns
+-are interpreted (@pxref{controlling pattern-patching with exclude}).
++are interpreted (@pxref{controlling pattern-matching with exclude}).
+ 
+ The @option{--no-recursion} and @option{--recursion} options apply to
+ later options and operands, and can be overridden by later occurrences

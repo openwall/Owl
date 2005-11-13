@@ -1,0 +1,11 @@
+--- tar-1.15.1/doc/tar.texi.orig	2004-12-18 19:20:19 +0000
++++ tar-1.15.1/doc/tar.texi	2005-05-15 13:56:07 +0000
+@@ -538,7 +538,7 @@ developing GNU and promoting software fr
+ 
+ @dircategory Archiving
+ @direntry
+-* Tar: (tar).                   Making tape (or disk) archives.
++* Tar: (tar).                                   Making tape (or disk) archives.
+ @end direntry
+ 
+ @dircategory Individual utilities
