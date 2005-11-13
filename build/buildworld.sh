@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/buildworld.sh,v 1.34 2005/05/05 21:53:33 solar Exp $
+# $Id: Owl/build/buildworld.sh,v 1.35 2005/11/13 03:39:28 ldv Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -104,9 +104,10 @@ function build_native()
 		while read NAME VERSION; do
 			ARCHIVE=${NAME}-${VERSION}
 			ln -sf $NATIVE/$PACKAGES/$PACKAGE/$NAME $ARCHIVE
-			tar czhf $ARCHIVE.tar.gz $ARCHIVE \
+			tar czhf $ARCHIVE.tar.gz \
 				--exclude CVS \
-				--owner=root --group=root --mode=go-rwx
+				--owner=root --group=root --mode=go-rwx \
+				$ARCHIVE
 			if [ $? -eq 0 -a -d $HOME/archives ]; then
 				mv -f $ARCHIVE.tar.gz $HOME/archives/
 				ln -s $HOME/archives/$ARCHIVE.tar.gz .
