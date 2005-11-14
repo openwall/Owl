@@ -1,20 +1,19 @@
-# $Id: Owl/packages/traceroute/traceroute.spec,v 1.12 2005/10/24 03:06:30 solar Exp $
+# $Id: Owl/packages/traceroute/traceroute.spec,v 1.13 2005/11/14 15:25:30 ldv Exp $
 
 Summary: Traces the route taken by packets over a TCP/IP network.
 Name: traceroute
-Version: 1.4a12
-Release: owl6
-License: BSD
+Version: 1.0.3
+Release: owl1
+Epoch: 1
+License: GPL
 Group: Applications/Internet
-Source0: ftp://ftp.ee.lbl.gov/traceroute-%version.tar.gz
-Source1: traceroute.control
-Patch0: traceroute-1.4a12-owl-install-no-root.diff
-Patch1: traceroute-1.4a12-owl-tim-chris-fixes.diff
-Patch2: traceroute-1.4a12-owl-force-linux.diff
-Patch3: traceroute-1.4a12-owl-sockaddr-vs-sockaddr_in.diff
-Patch4: traceroute-1.4a12-rh-unaligned.diff
-Prefix: %_prefix
-PreReq: owl-control >= 0.4, owl-control < 2.0
+URL: http://rechner.lst.de/~okir/traceroute/
+Source: ftp://ftp.lst.de/pub/people/okir/traceroute/traceroute-%version.tar.bz2
+Patch0: traceroute-1.0.3-rh-compat.diff
+Patch1: traceroute-1.0.3-alt-fixes.diff
+Patch2: traceroute-1.0.3-alt-src_port.diff
+# due to traceroute6
+Conflicts: iputils < 0:ss020927-owl4
 BuildRoot: /override/%name-%version
 
 %description
@@ -29,42 +28,36 @@ along the route.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%patch4 -p1
 
 %build
-%configure
-%__make
+%__make CCOPTS="%optflags -W"
 
 %install
 rm -rf %buildroot
+install -pD -m755 traceroute %buildroot/bin/traceroute
+install -pD -m644 traceroute.1 %buildroot%_mandir/man8/traceroute.8
+ln -s traceroute %buildroot/bin/traceroute6
+ln -s traceroute.8.gz %buildroot%_mandir/man8/traceroute6.8.gz
+# Backwards compatibility symlinks.
 mkdir -p %buildroot%_sbindir
-mkdir -p %buildroot%_mandir/man8
-
-%__make DESTDIR=%buildroot install install-man
-
-mkdir -p %buildroot/etc/control.d/facilities
-install -m 700 %SOURCE1 %buildroot/etc/control.d/facilities/traceroute
-
-%pre
-if [ $1 -ge 2 ]; then
-	%_sbindir/control-dump traceroute
-fi
-
-%post
-if [ $1 -ge 2 ]; then
-	%_sbindir/control-restore traceroute
-else
-	%_sbindir/control traceroute public
-fi
+ln -s ../../bin/traceroute %buildroot%_sbindir/
+ln -s ../../bin/traceroute %buildroot%_sbindir/traceroute6
 
 %files
 %defattr(-,root,root)
-%attr(700,root,root) %verify(not mode group) %_sbindir/traceroute
+/bin/traceroute*
+%_sbindir/traceroute*
 %_mandir/man8/*
-/etc/control.d/facilities/traceroute
 
 %changelog
+* Mon Nov 14 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:1.0.3-owl1
+- Replaced with traceroute written by Olaf Kirch.
+- Imported patch from Fedora for better backwards compatibility.
+- Imported ALT patches which add -P option to specify UDP source port
+and fix compilation warnings.
+- Relocated traceroute binaries to /bin/ and added symlinks to old
+/usr/sbin/ place for backwards compatibility.
+
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.4a12-owl6
 - Removed verify checks for traceroute binary since we are using control
 to configure its permissions and group owner.

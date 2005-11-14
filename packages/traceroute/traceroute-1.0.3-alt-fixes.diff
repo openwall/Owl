@@ -1,0 +1,232 @@
+diff -upk.orig traceroute-1.0.3.orig/traceroute.1 traceroute-1.0.3/traceroute.1
+--- traceroute-1.0.3.orig/traceroute.1	2005-11-10 22:25:46 +0000
++++ traceroute-1.0.3/traceroute.1	2005-11-10 22:27:51 +0000
+@@ -4,7 +4,7 @@
+ traceroute \- print the route packets take to network host
+ .SH SYNOPSIS
+ .na
+-.BR traceroute " [" \-46FnrRV "] [" "\-f first_ttl" "] [" "-p port" ]
++.BR traceroute " [" \-46FhnrRV "] [" "\-f first_ttl" "] [" "-p port" ]
+ .br
+ .ti +8
+ .BR "" [ "-m max_hops" "] [" "-N concurrent_hops" ]
+@@ -151,6 +151,9 @@ Chooses an alternative source address. N
+ address of one of the interfaces.
+ By default, the address of the outgoing interface is used.
+ .TP
++.BI \-h
++Print usage text and exit.
++.TP
+ .BI \-V
+ Print the version and exit.
+ .SH SEE ALSO
+diff -upk.orig traceroute-1.0.3.orig/traceroute.c traceroute-1.0.3/traceroute.c
+--- traceroute-1.0.3.orig/traceroute.c	2005-11-10 22:25:46 +0000
++++ traceroute-1.0.3/traceroute.c	2005-11-10 22:26:55 +0000
+@@ -19,6 +19,7 @@
+ #include <arpa/inet.h>
+ #include <net/if.h>
+ #include <errno.h>
++#include <error.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <unistd.h>
+@@ -112,8 +113,8 @@ static void		probe_timeout(struct probe 
+ static int		probe_recverr(struct probe *);
+ static int		probe_init(struct hop *, struct probe *);
+ static void		ipopt_init(void);
+-static void		usage(int exval);
+-static void		show_version(void);
++static void		usage(int exval) __attribute__ ((__noreturn__));
++static void		show_version(void) __attribute__ ((__noreturn__));
+ 
+ int
+ main(int argc, char **argv)
+@@ -124,7 +125,7 @@ main(int argc, char **argv)
+ 	/* Set the locale - needed for international domain names */
+ 	setlocale (LC_ALL, "");
+ 
+-	while ((c = getopt(argc, argv, "46DFVf:g:i:m:N:np:t:w:q:rRs:")) != -1) {
++	while ((c = getopt(argc, argv, "46DFVf:g:hi:m:N:np:t:w:q:rRs:")) != -1) {
+ 		switch (c) {
+ 		case '4':
+ 			af = AF_INET;
+@@ -145,9 +146,9 @@ main(int argc, char **argv)
+ 			break;
+ 
+ 		case 'g':
+-			/* fatal("option -g not yet supported"); */
++			/* error(1, 0, "option -g not yet supported"); */
+ 			if (ngateways >= MAXGATEWAYS)
+-				fatal("too many gateways");
++				error(1, 0, "too many gateways");
+ 			opt_gateway_name[ngateways++] = optarg;
+ 			break;
+ 
+@@ -198,6 +199,9 @@ main(int argc, char **argv)
+ 		case 'V':
+ 			show_version();
+ 			break;
++		case 'h':
++			usage(0);
++			break;
+ 		default:
+ 			usage(1);
+ 		}
+@@ -213,13 +217,8 @@ main(int argc, char **argv)
+ 	/* Check the program name. If we've called as traceroute6,
+ 	 * default to IPv6 */
+ 	if (af == -1) {
+-		char	*s;
+-
+-		if ((s = strrchr(argv[0], '/')) != 0)
+-			s++;
+-		else
+-			s = argv[0];
+-		if (!strcmp(s, "traceroute6"))
++		if (program_invocation_short_name &&
++		    !strcmp(program_invocation_short_name, "traceroute6"))
+ 			af = AF_INET6;
+ 	}
+ 
+@@ -353,11 +352,11 @@ done:	return 0;
+ static void
+ usage(int exval)
+ {
+-	fprintf(stderr,
+-	"usage: traceroute [-nFV] [-f first_ttl] [-m max_hops] [-p port]\n"
++	fprintf(exval ? stderr : stdout,
++	"usage: traceroute [-hnFV] [-f first_ttl] [-m max_hops] [-p port]\n"
+ 	"           [-s source_addr] [-i interface] [-g gateway]\n"
+ 	"           [-t tos] [-w timeout] [-q nqueries] host [packetlen]\n");
+-	exit(1);
++	exit(exval);
+ }
+ 
+ static void
+@@ -454,42 +453,42 @@ probe_init(struct hop *hop, struct probe
+ 	int			fd, val, len;
+ 
+ 	if ((fd = socket(af, SOCK_DGRAM, 0)) < 0)
+-		fatal("unable to create UDP socket: %m");
++		error(1, errno, "unable to create UDP socket");
+ 
+ 	len = sizeof(val);
+ 	if (af == AF_INET) {
+ 		val = 1;
+ 		if (setsockopt(fd, SOL_IP, IP_RECVERR, &val, len) < 0)
+-			fatal("unable to set SO_RECVERR: %m");
++			error(1, errno, "unable to set SO_RECVERR");
+ 		val = hop->ttl;
+ 		if (setsockopt(fd, SOL_IP, IP_TTL, &val, len) < 0)
+-			fatal("unable to set TTL: %m");
++			error(1, errno, "unable to set TTL");
+ 		val = dst_tos;
+ 		if (setsockopt(fd, SOL_IP, IP_TOS, &val, len) < 0)
+-			fatal("unable to set TOS: %m");
++			error(1, errno, "unable to set TOS");
+ 		val = opt_dontfrag;
+ 		if (setsockopt(fd, SOL_IP, IP_MTU_DISCOVER, &val, len) < 0)
+-			fatal("unable to set MTU_DISCOVER: %m");
++			error(1, errno, "unable to set MTU_DISCOVER");
+ 	} else {
+ 		val = 1;
+ 		if (setsockopt(fd, SOL_IPV6, IPV6_RECVERR, &val, len) < 0)
+-			fatal("unable to set SO_RECVERR: %m");
++			error(1, errno, "unable to set SO_RECVERR");
+ 		val = hop->ttl;
+ 		if (setsockopt(fd, SOL_IPV6, IPV6_UNICAST_HOPS, &val, len) < 0)
+-			fatal("unable to set IPV6_UNICAST_HOPS: %m");
++			error(1, errno, "unable to set IPV6_UNICAST_HOPS");
+ 	}
+ 
+ 	val = opt_dontroute;
+ 	if (setsockopt(fd, SOL_SOCKET, SO_DONTROUTE, &val, len) < 0)
+-		fatal("unable to set SO_DONTROUTE: %m");
++		error(1, errno, "unable to set SO_DONTROUTE");
+ 	val = 1;
+ 	if (setsockopt(fd, SOL_SOCKET, SO_TIMESTAMP, &val, len) < 0)
+-		fatal("unable to set SO_TIMESTAMP: %m");
++		error(1, errno, "unable to set SO_TIMESTAMP");
+ 
+ 	if (src_device) {
+ 		len = strlen(src_device)+1;
+ 		if (setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, src_device, len) < 0)
+-			fatal("Unable to bind to network interface %s: %m",
++			error(1, errno, "Unable to bind to network interface %s",
+ 				src_device);
+ 	}
+ 
+@@ -517,7 +516,7 @@ probe_init(struct hop *hop, struct probe
+ 		if (bind(fd, ap, alen) >= 0)
+ 			break;
+ 		if (errno != EADDRINUSE)
+-			fatal("unable to bind socket: %m");
++			error(1, errno, "unable to bind socket");
+ 	}
+ 
+ 	memcpy(ap, &dst_addr, alen);
+@@ -529,7 +528,7 @@ probe_init(struct hop *hop, struct probe
+ 	dst_port++;
+ 
+ 	if (connect(fd, ap, alen) < 0)
+-		fatal("Unable to connect to %s: %m", straddr(&dst_addr));
++		error(1, errno, "Unable to connect to %s", straddr(&dst_addr));
+ 
+ 	pb->timeout = now + opt_timeout * 1000;
+ 	pb->hop = hop;
+diff -upk.orig traceroute-1.0.3.orig/utils.c traceroute-1.0.3/utils.c
+--- traceroute-1.0.3.orig/utils.c	2005-11-02 09:07:18 +0000
++++ traceroute-1.0.3/utils.c	2005-11-10 22:26:04 +0000
+@@ -12,6 +12,7 @@
+ #include <stdarg.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <error.h>
+ #include "utils.h"
+ 
+ 
+@@ -35,13 +36,13 @@ getnum(const char *what, const char *arg
+ 
+ 	value = strtoul(arg, &end, 0);
+ 	if (*end)
+-		fatal("bad %s value \"%s\"", what, arg);
++		error(1, 0, "bad %s value \"%s\"", what, arg);
+ 	
+ 	if (value < min)
+-		fatal("bad %s value %u, must be less than %u",
++		error(1, 0, "bad %s value %u, must be less than %u",
+ 			what, value, min);
+ 	if (value > max)
+-		fatal("bad %s value %u, must be greater than %u",
++		error(1, 0, "bad %s value %u, must be greater than %u",
+ 			what, value, max);
+ 	return value;
+ }
+@@ -161,16 +162,3 @@ printaddr(sockaddr_any *ap, int resolve)
+ 		printf("%s", straddr(ap));
+ 	}
+ }
+-
+-void
+-fatal(const char *fmt, ...)
+-{
+-	va_list	ap;
+-
+-	va_start(ap, fmt);
+-	vfprintf(stderr, fmt, ap);
+-	if (!strchr(fmt, '\n'))
+-		fputs("\n", stderr);
+-	va_end(ap);
+-	exit(1);
+-}
+diff -upk.orig traceroute-1.0.3.orig/utils.h traceroute-1.0.3/utils.h
+--- traceroute-1.0.3.orig/utils.h	2005-11-02 09:07:18 +0000
++++ traceroute-1.0.3/utils.h	2005-11-10 22:26:04 +0000
+@@ -21,6 +21,5 @@ extern int		getaddr(const char *, int, s
+ extern const char *	straddr(sockaddr_any *);
+ extern int		sameaddr(sockaddr_any *, sockaddr_any *);
+ extern void		printaddr(sockaddr_any *, int) ;
+-extern void		fatal(const char *, ...);
+ 
+ #endif /* UTILS_H */

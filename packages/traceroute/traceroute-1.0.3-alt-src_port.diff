@@ -1,0 +1,70 @@
+diff -upk.orig traceroute-1.0.3.orig/traceroute.1 traceroute-1.0.3/traceroute.1
+--- traceroute-1.0.3.orig/traceroute.1	2005-11-10 22:09:19 +0000
++++ traceroute-1.0.3/traceroute.1	2005-11-10 22:18:46 +0000
+@@ -4,7 +4,10 @@
+ traceroute \- print the route packets take to network host
+ .SH SYNOPSIS
+ .na
+-.BR traceroute " [" \-46FhnrRV "] [" "\-f first_ttl" "] [" "-p port" ]
++.BR traceroute " [" \-46FhnrRV "] [" "\-f first_ttl" ]
++.br
++.ti +8
++.BR "" [ "-P source_port" "] [" "-p destination_port" ]
+ .br
+ .ti +8
+ .BR "" [ "-m max_hops" "] [" "-N concurrent_hops" ]
+@@ -99,6 +102,18 @@ The default value is 6.
+ .BI \-n
+ Do not try to map IP addresses to host names when displaying them.
+ .TP
++.BI \-P " port
++Specifies the UDP source port
++.I traceroute
++will use. When sending its UDP probe packets, it will send them from
++.IR port .
++If this port is already in use,
++.I traceroute
++will try to use next available port.  The default port is 64000;
++you can use
++.B \-P
++to change this to a different value.
++.TP
+ .BI \-p " port
+ Specifies the UDP destination port base
+ .I traceroute
+diff -upk.orig traceroute-1.0.3.orig/traceroute.c traceroute-1.0.3/traceroute.c
+--- traceroute-1.0.3.orig/traceroute.c	2005-11-10 22:09:19 +0000
++++ traceroute-1.0.3/traceroute.c	2005-11-10 22:13:06 +0000
+@@ -125,7 +125,7 @@ main(int argc, char **argv)
+ 	/* Set the locale - needed for international domain names */
+ 	setlocale (LC_ALL, "");
+ 
+-	while ((c = getopt(argc, argv, "46DFVf:g:hi:m:N:np:t:w:q:rRs:")) != -1) {
++	while ((c = getopt(argc, argv, "46DFVf:g:hi:m:N:nP:p:t:w:q:rRs:")) != -1) {
+ 		switch (c) {
+ 		case '4':
+ 			af = AF_INET;
+@@ -168,8 +168,12 @@ main(int argc, char **argv)
+ 			opt_noresolver = 1;
+ 			break;
+ 
++		case 'P':
++			src_port = getnum("source port", optarg, 1, 65535);
++			break;
++
+ 		case 'p':
+-			dst_port = getnum("port", optarg, 1, 65535);
++			dst_port = getnum("destination port", optarg, 1, 65535);
+ 			break;
+ 
+ 		case 't':
+@@ -353,7 +357,8 @@ static void
+ usage(int exval)
+ {
+ 	fprintf(exval ? stderr : stdout,
+-	"usage: traceroute [-hnFV] [-f first_ttl] [-m max_hops] [-p port]\n"
++	"usage: traceroute [-hnFV] [-f first_ttl] [-m max_hops]\n"
++	"           [-P source_port] [-p destination_port]\n"
+ 	"           [-s source_addr] [-i interface] [-g gateway]\n"
+ 	"           [-t tos] [-w timeout] [-q nqueries] host [packetlen]\n");
+ 	exit(exval);

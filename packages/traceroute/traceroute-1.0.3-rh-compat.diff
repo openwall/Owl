@@ -1,0 +1,75 @@
+diff -upk.orig traceroute-1.0.3.orig/traceroute.1 traceroute-1.0.3/traceroute.1
+--- traceroute-1.0.3.orig/traceroute.1	2003-04-10 08:51:53 +0000
++++ traceroute-1.0.3/traceroute.1	2005-11-08 09:19:42 +0000
+@@ -1,4 +1,4 @@
+-.TH TRACEROUTE 1 "6 December 2000"
++.TH TRACEROUTE 8 "6 December 2000"
+ .UC 6
+ .SH NAME
+ traceroute \- print the route packets take to network host
+@@ -13,7 +13,7 @@ traceroute \- print the route packets ta
+ .BR "" "[" "-t tos" "] [" "-w timeout" "] [" "-q nqueries" ] 
+ .br
+ .ti +8
+-.BR "" "[" "-S source_addr" "] [" "-I interface" "]
++.BR "" "[" "-s source_addr" "] [" "-i interface" "]
+ .br
+ .ti +8
+ .BR "" [ "-g gateway" "] " host " [" "packetlen" "]"
+@@ -74,7 +74,7 @@ specified
+ Not very useful, because most routers have disabled source routing
+ for security reasons.
+ .TP
+-.BI \-I " interface
++.BI \-i " interface
+ Specifies the interface through which to 
+ .I traceroute
+ should send packets. By default, the interface is selected
+@@ -146,7 +146,7 @@ router that has been configured to not r
+ .IP
+ This feature hasn't been implemented yet.
+ .TP
+-.BI \-S " source_addr
++.BI \-s " source_addr
+ Chooses an alternative source address. Note that you must select the
+ address of one of the interfaces.
+ By default, the address of the outgoing interface is used.
+diff -upk.orig traceroute-1.0.3.orig/traceroute.c traceroute-1.0.3/traceroute.c
+--- traceroute-1.0.3.orig/traceroute.c	2005-11-02 09:07:18 +0000
++++ traceroute-1.0.3/traceroute.c	2005-11-08 09:19:23 +0000
+@@ -124,7 +124,7 @@ main(int argc, char **argv)
+ 	/* Set the locale - needed for international domain names */
+ 	setlocale (LC_ALL, "");
+ 
+-	while ((c = getopt(argc, argv, "46DFVf:g:I:m:N:np:t:w:q:rRS:")) != -1) {
++	while ((c = getopt(argc, argv, "46DFVf:g:i:m:N:np:t:w:q:rRs:")) != -1) {
+ 		switch (c) {
+ 		case '4':
+ 			af = AF_INET;
+@@ -151,7 +151,7 @@ main(int argc, char **argv)
+ 			opt_gateway_name[ngateways++] = optarg;
+ 			break;
+ 
+-		case 'I':
++		case 'i':
+ 			src_device = optarg;
+ 			break;
+ 
+@@ -191,7 +191,7 @@ main(int argc, char **argv)
+ 			opt_rr = 1;
+ 			break;
+ 
+-		case 'S':
++		case 's':
+ 			src_addr_name = optarg;
+ 			break;
+ 
+@@ -355,7 +355,7 @@ usage(int exval)
+ {
+ 	fprintf(stderr,
+ 	"usage: traceroute [-nFV] [-f first_ttl] [-m max_hops] [-p port]\n"
+-	"           [-S source_addr] [-I interface]\n"
++	"           [-s source_addr] [-i interface] [-g gateway]\n"
+ 	"           [-t tos] [-w timeout] [-q nqueries] host [packetlen]\n");
+ 	exit(1);
+ }
