@@ -1,9 +1,9 @@
-# $Id: Owl/packages/iputils/iputils.spec,v 1.23 2005/10/24 03:06:24 solar Exp $
+# $Id: Owl/packages/iputils/iputils.spec,v 1.24 2005/11/14 15:26:02 ldv Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
 Version: ss020927
-Release: owl3
+Release: owl4
 License: mostly BSD, some GPL
 Group: Applications/Internet
 Source0: ftp://ftp.inr.ac.ru/ip-routing/%name-%version.tar.gz
@@ -44,14 +44,14 @@ rm -rf %buildroot
 
 mkdir -p %buildroot%_sbindir
 mkdir -p %buildroot/{bin,sbin}
-install -m 755 arping clockdiff ping6 tracepath tracepath6 traceroute6 \
+install -m 755 arping clockdiff ping6 tracepath tracepath6 \
 	%buildroot%_sbindir/
 install -m 755 rdisc %buildroot%_sbindir/rdiscd
 install -m 700 ping %buildroot/bin/
 install -m 755 bonding-0.2/ifenslave %buildroot/sbin/
 
 mkdir -p %buildroot%_mandir/man8
-install -m 644 doc/{arping,clockdiff,ping,tracepath,traceroute6}.8 \
+install -m 644 doc/{arping,clockdiff,ping,tracepath}.8 \
 	%buildroot%_mandir/man8/
 
 sed 's/rdisc/rdiscd/' \
@@ -83,12 +83,14 @@ fi
 %_sbindir/ping6
 %_sbindir/tracepath
 %_sbindir/tracepath6
-%_sbindir/traceroute6
 %_sbindir/rdiscd
 %_mandir/man8/*
 /etc/control.d/facilities/ping
 
 %changelog
+* Mon Nov 14 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> ss020927-owl4
+- Removed traceroute6 in favour of the traceroute package.
+
 * Wed Jun 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> ss020927-owl3
 - Removed verifying permissions and group owner for ping since it's
 controlled by owl-control facility.
