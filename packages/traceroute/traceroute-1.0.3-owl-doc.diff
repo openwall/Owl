@@ -1,0 +1,36 @@
+--- traceroute-1.0.3/traceroute.1.bak	2005-11-14 00:11:33 +0000
++++ traceroute-1.0.3/traceroute.1	2005-11-14 17:01:53 +0000
+@@ -40,7 +40,7 @@ with the
+ option.
+ .SH OPTIONS
+ The only required parameter is the name or IP address of the
+-destination host. This paremeter can be followed by the size of the
++destination host. This parameter can be followed by the size of the
+ probing packet sent to that host (40 by default). Varying the
+ size of the packet in conjunction with the
+ .B \-F
+@@ -50,7 +50,7 @@ individual network hops.
+ Additional options are:
+ .TP
+ .BR \-6 ", " \-4
+-Explicitly force IPv4 or IPv6 traceouting. By default, the program
++Explicitly force IPv4 or IPv6 tracing. By default, the program
+ will try to resolve the name given, and choose the appropriate
+ protocol automatically. If resolving a host name returns both
+ IPv4 and IPv6 addresses,
+@@ -131,7 +131,7 @@ to change this to a different value.
+ .BI \-t " tos
+ Set the IP Type of Service (TOS) and Precedence value. Useful values
+ are 16 (low delay) and 8 (high throughput). Note that in order to use
+-some TOS precendence values, you have to be super user.
++some TOS precedence values, you have to be super user.
+ .TP
+ .BI \-w " sec
+ Wait for
+@@ -176,5 +176,5 @@ Print the version and exit.
+ .BR netstat (8).
+ .SH AUTHOR
+ Concept and command line options based on the original LBL implementation
+-of traceroute, written by Van Jacobson. This implentation is a complete
++of traceroute, written by Van Jacobson. This implementation is a complete
+ rewrite and redesign, written and copyright (C) 2000 Olaf Kirch <okir@suse.de>.

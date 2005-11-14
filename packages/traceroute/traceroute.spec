@@ -1,4 +1,4 @@
-# $Id: Owl/packages/traceroute/traceroute.spec,v 1.14 2005/11/14 16:49:30 solar Exp $
+# $Id: Owl/packages/traceroute/traceroute.spec,v 1.15 2005/11/14 17:06:36 ldv Exp $
 
 Summary: Traces the route taken by packets over a TCP/IP network.
 Name: traceroute
@@ -12,6 +12,7 @@ Source: ftp://ftp.lst.de/pub/people/okir/traceroute/traceroute-%version.tar.bz2
 Patch0: traceroute-1.0.3-rh-compat.diff
 Patch1: traceroute-1.0.3-alt-fixes.diff
 Patch2: traceroute-1.0.3-alt-src_port.diff
+Patch3: traceroute-1.0.3-owl-doc.diff
 # due to traceroute6
 Conflicts: iputils < 0:ss020927-owl4
 BuildRoot: /override/%name-%version
@@ -28,6 +29,7 @@ along the route.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 %__make CC="%__cc" CCOPTS="%optflags -W"
@@ -57,6 +59,7 @@ ln -s ../../bin/traceroute %buildroot%_sbindir/traceroute6
 and fix compilation warnings.
 - Relocated traceroute binaries to /bin/ and added symlinks to old
 /usr/sbin/ place for backwards compatibility.
+- Fixed typos in traceroute(8) manual page.
 
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.4a12-owl6
 - Removed verify checks for traceroute binary since we are using control
