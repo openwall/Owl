@@ -1,16 +1,26 @@
-# $Id: Owl/packages/grep/grep.spec,v 1.13 2005/10/24 06:22:45 solar Exp $
+# $Id: Owl/packages/grep/grep.spec,v 1.14 2005/11/14 23:27:19 mci Exp $
 
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
-Version: 2.4.2
-Release: owl2
+Version: 2.5.1a
+Release: owl1
 Epoch: 1
 License: GPL
 Group: Applications/Text
-Source: ftp://ftp.gnu.org/gnu/grep/grep-%version.tar.gz
-Patch: grep-2.4.2-owl-info.diff
+Source: ftp://ftp.gnu.org/gnu/grep/grep-%version.tar.bz2
+Patch10: grep-2.5.1a-rh-fgrep.diff
+Patch11: grep-2.5.1a-rh-owl-i18n.diff
+Patch12: grep-2.5.1a-rh-oi.diff
+Patch20: grep-2.5.1a-deb-case-fold-charclass.diff
+Patch21: grep-2.5.1a-deb-case-fold.diff
+Patch22: grep-2.5.1a-deb-case-fold-range.diff
+Patch23: grep-2.5.1a-deb-owl-charclass-bracket.diff
+Patch24: grep-2.5.1a-deb-owl-man.diff
+Patch30: grep-2.5.1a-owl-info.diff
+Patch31: grep-2.5.1a-owl-fixes.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
+BuildRequires: pcre-devel
 BuildRequires: texinfo, gettext, sed
 BuildRoot: /override/%name-%version
 
@@ -22,13 +32,23 @@ include grep, egrep and fgrep.
 
 %prep
 %setup -q
-%patch -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch20 -p1
+%patch21 -p1
+%patch22 -p1
+%patch23 -p1
+%patch24 -p1
+%patch30 -p1
+%patch31 -p1
+
+%{expand:%%define optflags %optflags -Wall}
 
 %build
-rm doc/grep.info
-unset LINGUAS || :
-%configure
+%configure  --without-included-regex
 make
+make check
 
 %install
 rm -rf %buildroot
@@ -38,6 +58,10 @@ rm -rf %buildroot
 mkdir -p %buildroot/bin
 mv %buildroot%_prefix/bin/* %buildroot/bin/
 rm -rf %buildroot%_prefix/bin
+
+# Use symlinks for egrep and fgrep
+ln -sf grep %buildroot/bin/egrep
+ln -sf grep %buildroot/bin/fgrep
 
 # Remove unpackaged files
 rm %buildroot%_infodir/dir
@@ -59,6 +83,12 @@ fi
 %_prefix/share/locale/*/*/grep.*
 
 %changelog
+* Thu Nov 10 2004 Michail Litvak <mci-at-owl.openwall.com> 1:2.5.1a-owl1
+- 2.5.1a
+- Added patches from Debian and RedHat.
+- Builded with -Wall, fixed some warnings.
+- Added make check.
+
 * Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 1:2.4.2-owl2
 - Deal with info dir entries such that the menu looks pretty.
 

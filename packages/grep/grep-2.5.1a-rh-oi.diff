@@ -1,0 +1,48 @@
+--- grep-2.5.1a/lib/posix/regex.h.orig	2001-04-02 17:56:50.000000000 +0000
++++ grep-2.5.1a/lib/posix/regex.h	2005-11-09 21:29:41.000000000 +0000
+@@ -109,6 +109,10 @@
+    If not set, \{, \}, {, and } are literals.  */
+ #define RE_INTERVALS (RE_HAT_LISTS_NOT_NEWLINE << 1)
+ 
++/* If this bit is set, then ignore case when matching.
++   If not set, then case is significant.  */
++#define RE_ICASE (RE_INVALID_INTERVAL_ORD << 1)
++
+ /* If this bit is set, +, ? and | aren't recognized as operators.
+    If not set, they are.  */
+ #define RE_LIMITED_OPS (RE_INTERVALS << 1)
+--- grep-2.5.1a/src/search.c.orig	2001-04-19 03:42:14.000000000 +0000
++++ grep-2.5.1a/src/search.c	2005-11-09 21:29:41.000000000 +0000
+@@ -31,7 +31,7 @@
+ 
+ #include "system.h"
+ #include "grep.h"
+-#include "regex.h"
++#include <regex.h>
+ #include "dfa.h"
+ #include "kwset.h"
+ #include "error.h"
+@@ -181,7 +181,7 @@
+   size_t total = size;
+   char const *motif = pattern;
+ 
+-  re_set_syntax (RE_SYNTAX_GREP | RE_HAT_LISTS_NOT_NEWLINE);
++  re_set_syntax (RE_SYNTAX_GREP | RE_HAT_LISTS_NOT_NEWLINE | (match_icase ? RE_ICASE : 0));
+   dfasyntax (RE_SYNTAX_GREP | RE_HAT_LISTS_NOT_NEWLINE, match_icase, eolbyte);
+ 
+   /* For GNU regex compiler we have to pass the patterns separately to detect
+@@ -259,12 +259,12 @@
+ 
+   if (strcmp (matcher, "awk") == 0)
+     {
+-      re_set_syntax (RE_SYNTAX_AWK);
++      re_set_syntax (RE_SYNTAX_AWK | (match_icase ? RE_ICASE : 0));
+       dfasyntax (RE_SYNTAX_AWK, match_icase, eolbyte);
+     }
+   else
+     {
+-      re_set_syntax (RE_SYNTAX_POSIX_EGREP);
++      re_set_syntax (RE_SYNTAX_POSIX_EGREP | (match_icase ? RE_ICASE : 0));
+       dfasyntax (RE_SYNTAX_POSIX_EGREP, match_icase, eolbyte);
+     }
+ 

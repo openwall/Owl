@@ -1,0 +1,20 @@
+--- grep-2.5.1a/src/dfa.c.orig	2001-09-26 16:57:55.000000000 +0000
++++ grep-2.5.1a/src/dfa.c	2005-11-09 20:44:21.000000000 +0000
+@@ -547,6 +547,17 @@
+ 		/* build character class.  */
+ 		{
+ 		  wctype_t wt;
++		  /* NOTE:
++		   * when case_fold, character class [:upper:] and [:lower:]
++		   * should be treated as [:alpha:], this is the same way
++		   * of glibc/posix/regcomp.c:build_charclass().
++		   * reported by Bug#276202
++		   * - fixed by Fumitoshi UKAI
++		   */
++		  if (case_fold 
++		      && (strcmp (str, "upper") == 0 || strcmp (str, "lower") == 0)) 
++		      strcpy (str, "alpha");
++
+ 		  /* Query the character class as wctype_t.  */
+ 		  wt = wctype (str);
+ 

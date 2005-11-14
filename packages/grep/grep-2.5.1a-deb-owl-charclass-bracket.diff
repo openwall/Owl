@@ -1,0 +1,24 @@
+--- grep-2.5.1a/src/dfa.c.orig	2005-11-09 21:05:50.000000000 +0000
++++ grep-2.5.1a/src/dfa.c	2005-11-09 21:23:53.000000000 +0000
+@@ -586,7 +586,20 @@
+ 		      work_mbc->coll_elems[work_mbc->ncoll_elems++] = elem;
+ 		    }
+  		}
+-	      wc = -1;
++ 	      /* NOTE:
++ 	       * At the beginning of processing [[ type of constructs, 
++ 	       * wc (= '[') is stored in wc1 for backtrack case.  
++ 	       * But if it process normally, wc1 remains '[' and it will 
++ 	       * be put as normal character in work_mbc->chars[].
++ 	       * This is why '[' will matches [[:space:]] or other 
++ 	       * character classes. This is a bug.
++ 	       *
++ 	       * I think wc1 should be set WEOF at the end of processing 
++ 	       * [[ type of constructs.
++ 	       * Bug#277122.
++ 	       * fixed by Fumitoshi UKAI
++ 	       */
++ 	      wc = wc1 = WEOF;
+ 	    }
+ 	  else
+ 	    /* We treat '[' as a normal character here.  */

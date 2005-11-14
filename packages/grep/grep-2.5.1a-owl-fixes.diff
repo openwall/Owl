@@ -1,0 +1,23 @@
+--- grep-2.5.1a/lib/savedir.h.orig	2005-11-11 00:15:39.000000000 +0000
++++ grep-2.5.1a/lib/savedir.h	2005-11-11 00:16:06.000000000 +0000
+@@ -15,4 +15,8 @@
+ savedir PARAMS ((const char *dir, off_t name_size,
+ 		 struct exclude *, struct exclude *));
+ 
++
++int
++isdir PARAMS ((const char *path));
++
+ #endif
+--- grep-2.5.1a/src/kwset.c.orig	2005-11-11 00:16:32.000000000 +0000
++++ grep-2.5.1a/src/kwset.c	2005-11-11 00:16:50.000000000 +0000
+@@ -590,9 +590,7 @@
+   register struct tree const *tree;
+   register char const *trans;
+ 
+-#ifdef lint
+   accept = NULL;
+-#endif
+ 
+   /* Initialize register copies and look for easy ways out. */
+   kwset = (struct kwset *) kws;
