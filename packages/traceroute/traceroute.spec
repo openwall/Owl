@@ -1,4 +1,4 @@
-# $Id: Owl/packages/traceroute/traceroute.spec,v 1.13 2005/11/14 15:25:30 ldv Exp $
+# $Id: Owl/packages/traceroute/traceroute.spec,v 1.14 2005/11/14 16:49:30 solar Exp $
 
 Summary: Traces the route taken by packets over a TCP/IP network.
 Name: traceroute
@@ -30,7 +30,7 @@ along the route.
 %patch2 -p1
 
 %build
-%__make CCOPTS="%optflags -W"
+%__make CC="%__cc" CCOPTS="%optflags -W"
 
 %install
 rm -rf %buildroot
