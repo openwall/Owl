@@ -479,7 +479,7 @@ Bump syslog priorities of many pam_tcb error messages.
 	traceroute.
 
 [PRIORITY: medium]
-[ASSIGNED: mci@]
+[ASSIGNED: ldv@]
 Replace with Olaf Kirch's.  URLs:
 http://rechner.lst.de/~okir/traceroute/
 ftp://ftp.lst.de/pub/people/okir/traceroute
@@ -549,4 +549,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Id: Owl/doc/TODO,v 1.133 2005/11/13 20:14:22 ldv Exp $
+$Id: Owl/doc/TODO,v 1.134 2005/11/14 05:38:21 solar Exp $
