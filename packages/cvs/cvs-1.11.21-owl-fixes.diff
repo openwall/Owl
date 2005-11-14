@@ -1,6 +1,6 @@
-diff -upk.orig cvs-1.11.20.orig/diff/diff.c cvs-1.11.20/diff/diff.c
---- cvs-1.11.20.orig/diff/diff.c	2004-11-11 22:30:41 +0000
-+++ cvs-1.11.20/diff/diff.c	2005-09-29 00:38:32 +0000
+diff -upk.orig cvs-1.11.21.orig/diff/diff.c cvs-1.11.21/diff/diff.c
+--- cvs-1.11.21.orig/diff/diff.c	2005-04-04 20:46:04 +0000
++++ cvs-1.11.21/diff/diff.c	2005-09-30 15:23:17 +0000
 @@ -250,6 +250,15 @@ diff_run (argc, argv, out, callbacks_arg
    int optind_old;
    int opened_file = 0;
@@ -17,9 +17,9 @@ diff -upk.orig cvs-1.11.20.orig/diff/diff.c cvs-1.11.20/diff/diff.c
    callbacks = callbacks_arg;
  
    /* Do our initializations.  */
-diff -upk.orig cvs-1.11.20.orig/diff/diff3.c cvs-1.11.20/diff/diff3.c
---- cvs-1.11.20.orig/diff/diff3.c	2004-11-11 22:30:41 +0000
-+++ cvs-1.11.20/diff/diff3.c	2005-09-29 00:38:32 +0000
+diff -upk.orig cvs-1.11.21.orig/diff/diff3.c cvs-1.11.21/diff/diff3.c
+--- cvs-1.11.21.orig/diff/diff3.c	2005-04-04 20:46:04 +0000
++++ cvs-1.11.21/diff/diff3.c	2005-09-30 15:23:17 +0000
 @@ -209,7 +209,11 @@ static struct diff3_block *reverse_diff3
  static struct diff3_block *using_to_diff3_block PARAMS((struct diff_block *[2], struct diff_block *[2], int, int, struct diff3_block const *));
  static struct diff_block *process_diff PARAMS((char const *, char const *, struct diff_block **, char **));
@@ -114,9 +114,9 @@ diff -upk.orig cvs-1.11.20.orig/diff/diff3.c cvs-1.11.20/diff/diff3.c
      }
    /* Copy rest of common file.  */
    while ((c = getc (infile)) != EOF || !(ferror (infile) | feof (infile)))
-diff -upk.orig cvs-1.11.20.orig/diff/side.c cvs-1.11.20/diff/side.c
---- cvs-1.11.20.orig/diff/side.c	1998-06-18 16:57:14 +0000
-+++ cvs-1.11.20/diff/side.c	2005-09-29 00:38:32 +0000
+diff -upk.orig cvs-1.11.21.orig/diff/side.c cvs-1.11.21/diff/side.c
+--- cvs-1.11.21.orig/diff/side.c	1998-06-18 16:57:14 +0000
++++ cvs-1.11.21/diff/side.c	2005-09-30 15:23:17 +0000
 @@ -123,16 +123,18 @@ print_half_line (line, indent, out_bound
  
  	case '\b':
@@ -146,9 +146,9 @@ diff -upk.orig cvs-1.11.20.orig/diff/side.c cvs-1.11.20/diff/side.c
  	  break;
  
  	case '\f':
-diff -upk.orig cvs-1.11.20.orig/lib/getline.c cvs-1.11.20/lib/getline.c
---- cvs-1.11.20.orig/lib/getline.c	2004-11-11 22:30:44 +0000
-+++ cvs-1.11.20/lib/getline.c	2005-09-29 00:38:32 +0000
+diff -upk.orig cvs-1.11.21.orig/lib/getline.c cvs-1.11.21/lib/getline.c
+--- cvs-1.11.21.orig/lib/getline.c	2005-04-04 20:46:05 +0000
++++ cvs-1.11.21/lib/getline.c	2005-09-30 15:23:17 +0000
 @@ -154,7 +154,7 @@ getstr (lineptr, n, stream, terminator, 
    return ret;
  }
@@ -158,9 +158,9 @@ diff -upk.orig cvs-1.11.20.orig/lib/getline.c cvs-1.11.20/lib/getline.c
  getline (lineptr, n, stream)
       char **lineptr;
       size_t *n;
-diff -upk.orig cvs-1.11.20.orig/lib/getline.h cvs-1.11.20/lib/getline.h
---- cvs-1.11.20.orig/lib/getline.h	2004-11-11 22:30:44 +0000
-+++ cvs-1.11.20/lib/getline.h	2005-09-29 00:38:32 +0000
+diff -upk.orig cvs-1.11.21.orig/lib/getline.h cvs-1.11.21/lib/getline.h
+--- cvs-1.11.21.orig/lib/getline.h	2005-04-04 20:46:05 +0000
++++ cvs-1.11.21/lib/getline.h	2005-09-30 15:23:17 +0000
 @@ -11,7 +11,7 @@
  
  #define GETLINE_NO_LIMIT -1
@@ -170,10 +170,10 @@ diff -upk.orig cvs-1.11.20.orig/lib/getline.h cvs-1.11.20/lib/getline.h
    getline __PROTO ((char **_lineptr, size_t *_n, FILE *_stream));
  int
    getline_safe __PROTO ((char **_lineptr, size_t *_n, FILE *_stream,
-diff -upk.orig cvs-1.11.20.orig/src/buffer.c cvs-1.11.20/src/buffer.c
---- cvs-1.11.20.orig/src/buffer.c	2005-03-09 15:42:19 +0000
-+++ cvs-1.11.20/src/buffer.c	2005-09-29 00:38:32 +0000
-@@ -1839,6 +1839,8 @@ packetizing_buffer_output (closure, data
+diff -upk.orig cvs-1.11.21.orig/src/buffer.c cvs-1.11.21/src/buffer.c
+--- cvs-1.11.21.orig/src/buffer.c	2005-09-04 00:26:41 +0000
++++ cvs-1.11.21/src/buffer.c	2005-09-30 15:23:17 +0000
+@@ -1849,6 +1849,8 @@ packetizing_buffer_output (closure, data
      char *outbuf;
      int size, status, translated;
  
@@ -182,9 +182,9 @@ diff -upk.orig cvs-1.11.20.orig/src/buffer.c cvs-1.11.20/src/buffer.c
      if (have > BUFFER_DATA_SIZE)
      {
  	/* It would be easy to xmalloc a buffer, but I don't think this
-diff -upk.orig cvs-1.11.20.orig/src/client.c cvs-1.11.20/src/client.c
---- cvs-1.11.20.orig/src/client.c	2005-03-17 15:47:22 +0000
-+++ cvs-1.11.20/src/client.c	2005-09-29 00:38:57 +0000
+diff -upk.orig cvs-1.11.21.orig/src/client.c cvs-1.11.21/src/client.c
+--- cvs-1.11.21.orig/src/client.c	2005-09-22 15:58:46 +0000
++++ cvs-1.11.21/src/client.c	2005-09-30 15:23:17 +0000
 @@ -3871,6 +3871,8 @@ auth_server (root, lto_server, lfrom_ser
      char *username;			/* the username we use to connect */
      char no_passwd = 0;			/* gets set if no password found */
@@ -221,9 +221,9 @@ diff -upk.orig cvs-1.11.20.orig/src/client.c cvs-1.11.20/src/client.c
  	    int len;
  
  	    /* FIXME: This is gross.  It assumes that we might read
-diff -upk.orig cvs-1.11.20.orig/src/cvsrc.c cvs-1.11.20/src/cvsrc.c
---- cvs-1.11.20.orig/src/cvsrc.c	2005-01-31 22:11:59 +0000
-+++ cvs-1.11.20/src/cvsrc.c	2005-09-29 00:38:32 +0000
+diff -upk.orig cvs-1.11.21.orig/src/cvsrc.c cvs-1.11.21/src/cvsrc.c
+--- cvs-1.11.21.orig/src/cvsrc.c	2005-04-04 20:46:07 +0000
++++ cvs-1.11.21/src/cvsrc.c	2005-09-30 15:23:17 +0000
 @@ -42,7 +42,7 @@ read_cvsrc (argc, argv, cmdname)
      FILE *cvsrcfile;
  
@@ -233,9 +233,9 @@ diff -upk.orig cvs-1.11.20.orig/src/cvsrc.c cvs-1.11.20/src/cvsrc.c
      size_t line_chars_allocated;
  
      char *optstart;
-diff -upk.orig cvs-1.11.20.orig/src/entries.c cvs-1.11.20/src/entries.c
---- cvs-1.11.20.orig/src/entries.c	2005-03-09 16:01:07 +0000
-+++ cvs-1.11.20/src/entries.c	2005-09-29 00:38:32 +0000
+diff -upk.orig cvs-1.11.21.orig/src/entries.c cvs-1.11.21/src/entries.c
+--- cvs-1.11.21.orig/src/entries.c	2005-09-22 07:42:18 +0000
++++ cvs-1.11.21/src/entries.c	2005-09-30 15:23:17 +0000
 @@ -304,7 +304,7 @@ fgetentent(fpin, cmd, sawdir)
      enum ent_type type;
      char *l, *user, *vn, *ts, *options;
@@ -254,9 +254,9 @@ diff -upk.orig cvs-1.11.20.orig/src/entries.c cvs-1.11.20/src/entries.c
  	size_t line_chars_allocated;
  
  	line = NULL;
-diff -upk.orig cvs-1.11.20.orig/src/fileattr.c cvs-1.11.20/src/fileattr.c
---- cvs-1.11.20.orig/src/fileattr.c	2005-03-11 19:07:26 +0000
-+++ cvs-1.11.20/src/fileattr.c	2005-09-29 00:38:32 +0000
+diff -upk.orig cvs-1.11.21.orig/src/fileattr.c cvs-1.11.21/src/fileattr.c
+--- cvs-1.11.21.orig/src/fileattr.c	2005-04-04 20:46:07 +0000
++++ cvs-1.11.21/src/fileattr.c	2005-09-30 15:23:17 +0000
 @@ -99,7 +99,7 @@ fileattr_read ()
      }
      attrlist = getlist ();
@@ -266,20 +266,20 @@ diff -upk.orig cvs-1.11.20.orig/src/fileattr.c cvs-1.11.20/src/fileattr.c
  	nread = getline (&line, &line_len, fp);
  	if (nread < 0)
  	    break;
-diff -upk.orig cvs-1.11.20.orig/src/lock.c cvs-1.11.20/src/lock.c
---- cvs-1.11.20.orig/src/lock.c	2005-01-31 22:13:07 +0000
-+++ cvs-1.11.20/src/lock.c	2005-09-29 00:38:32 +0000
-@@ -162,8 +162,7 @@ lock_name (repository, name)
-     char *p;
+diff -upk.orig cvs-1.11.21.orig/src/lock.c cvs-1.11.21/src/lock.c
+--- cvs-1.11.21.orig/src/lock.c	2005-05-03 15:34:53 +0000
++++ cvs-1.11.21/src/lock.c	2005-09-30 15:24:14 +0000
+@@ -173,8 +173,7 @@ lock_name (repository, name)
+     const char *p;
      char *q;
-     char *short_repos;
+     const char *short_repos;
 -    mode_t save_umask;
 -    int saved_umask = 0;
 +    int saved_umask = -1;
  
      if (lock_dir == NULL)
      {
-@@ -236,8 +235,7 @@ lock_name (repository, name)
+@@ -247,8 +246,7 @@ lock_name (repository, name)
  	if (CVS_STAT (lock_dir, &sb) < 0)
  	    error (1, errno, "cannot stat %s", lock_dir);
  	new_mode = sb.st_mode;
@@ -289,7 +289,7 @@ diff -upk.orig cvs-1.11.20.orig/src/lock.c cvs-1.11.20/src/lock.c
  
  	p = short_repos;
  	while (1)
-@@ -277,11 +275,8 @@ lock_name (repository, name)
+@@ -288,11 +286,8 @@ lock_name (repository, name)
  	strcat (retval, "/");
  	strcat (retval, name);
  
@@ -303,9 +303,9 @@ diff -upk.orig cvs-1.11.20.orig/src/lock.c cvs-1.11.20/src/lock.c
      }
      return retval;
  }
-diff -upk.orig cvs-1.11.20.orig/src/login.c cvs-1.11.20/src/login.c
---- cvs-1.11.20.orig/src/login.c	2005-03-09 20:40:07 +0000
-+++ cvs-1.11.20/src/login.c	2005-09-29 00:38:32 +0000
+diff -upk.orig cvs-1.11.21.orig/src/login.c cvs-1.11.21/src/login.c
+--- cvs-1.11.21.orig/src/login.c	2005-04-27 15:47:30 +0000
++++ cvs-1.11.21/src/login.c	2005-09-30 15:23:17 +0000
 @@ -115,7 +115,7 @@ password_entry_parseline (cvsroot_canoni
      {
  	/* Yes: slurp '^/\d+\D' and parse the rest of the line according to version number */
@@ -324,9 +324,9 @@ diff -upk.orig cvs-1.11.20.orig/src/login.c cvs-1.11.20/src/login.c
      long line = -1;
      char *linebuf = NULL;
      size_t linebuf_len;
-diff -upk.orig cvs-1.11.20.orig/src/logmsg.c cvs-1.11.20/src/logmsg.c
---- cvs-1.11.20.orig/src/logmsg.c	2005-03-16 22:01:21 +0000
-+++ cvs-1.11.20/src/logmsg.c	2005-09-29 00:38:32 +0000
+diff -upk.orig cvs-1.11.21.orig/src/logmsg.c cvs-1.11.21/src/logmsg.c
+--- cvs-1.11.21.orig/src/logmsg.c	2005-09-04 00:26:42 +0000
++++ cvs-1.11.21/src/logmsg.c	2005-09-30 15:23:17 +0000
 @@ -195,7 +195,7 @@ do_editor (dir, messagep, repository, ch
  {
      static int reuse_log_message = 0;
@@ -336,7 +336,7 @@ diff -upk.orig cvs-1.11.20.orig/src/logmsg.c cvs-1.11.20/src/logmsg.c
      size_t line_chars_allocated;
      char *fname;
      struct stat pre_stbuf, post_stbuf;
-@@ -514,7 +514,7 @@ do_verify (messagep, repository)
+@@ -503,7 +503,7 @@ do_verify (messagep, repository)
  	else
  	{
  	    char *line = NULL;
@@ -345,20 +345,9 @@ diff -upk.orig cvs-1.11.20.orig/src/logmsg.c cvs-1.11.20/src/logmsg.c
  	    size_t line_chars_allocated = 0;
  	    char *p;
  
-diff -upk.orig cvs-1.11.20.orig/src/main.c cvs-1.11.20/src/main.c
---- cvs-1.11.20.orig/src/main.c	2005-03-09 16:34:07 +0000
-+++ cvs-1.11.20/src/main.c	2005-09-29 00:38:32 +0000
-@@ -927,7 +927,6 @@ distribution kit for a complete list of 
- 		{
- 		    static char *prev;
- 		    char *env;
--		    size_t dummy;
- 
- 		    env = xmalloc (strlen (CVSROOT_ENV)
- 				   + strlen (current_parsed_root->original)
-diff -upk.orig cvs-1.11.20.orig/src/modules.c cvs-1.11.20/src/modules.c
---- cvs-1.11.20.orig/src/modules.c	2005-03-16 22:01:21 +0000
-+++ cvs-1.11.20/src/modules.c	2005-09-29 00:38:32 +0000
+diff -upk.orig cvs-1.11.21.orig/src/modules.c cvs-1.11.21/src/modules.c
+--- cvs-1.11.21.orig/src/modules.c	2005-04-04 20:46:07 +0000
++++ cvs-1.11.21/src/modules.c	2005-09-30 15:23:18 +0000
 @@ -129,7 +129,7 @@ my_module (db, mname, m_type, msg, callb
      char *line;
      int modargc;
@@ -368,10 +357,10 @@ diff -upk.orig cvs-1.11.20.orig/src/modules.c cvs-1.11.20/src/modules.c
      char **xmodargv = NULL;
      /* Found entry from modules file, including options and such.  */
      char *value = NULL;
-diff -upk.orig cvs-1.11.20.orig/src/patch.c cvs-1.11.20/src/patch.c
---- cvs-1.11.20.orig/src/patch.c	2005-03-16 19:16:01 +0000
-+++ cvs-1.11.20/src/patch.c	2005-09-29 00:38:32 +0000
-@@ -389,7 +389,7 @@ patch_fileproc (callerdat, finfo)
+diff -upk.orig cvs-1.11.21.orig/src/patch.c cvs-1.11.21/src/patch.c
+--- cvs-1.11.21.orig/src/patch.c	2005-09-23 02:03:04 +0000
++++ cvs-1.11.21/src/patch.c	2005-09-30 15:25:21 +0000
+@@ -388,7 +388,7 @@ patch_fileproc (callerdat, finfo)
      struct file_info *finfo;
  {
      struct utimbuf t;
@@ -380,19 +369,19 @@ diff -upk.orig cvs-1.11.20.orig/src/patch.c cvs-1.11.20/src/patch.c
      char *rcs = NULL;
      char *rcs_orig = NULL;
      RCSNode *rcsfile;
-@@ -405,7 +405,7 @@ patch_fileproc (callerdat, finfo)
+@@ -404,7 +404,7 @@ patch_fileproc (callerdat, finfo)
      size_t line2_chars_allocated;
      char *cp1, *cp2;
      FILE *fp;
 -    int line_length;
 +    ssize_t line_length;
- 
-     line1 = NULL;
-     line1_chars_allocated = 0;
-diff -upk.orig cvs-1.11.20.orig/src/rcs.c cvs-1.11.20/src/rcs.c
---- cvs-1.11.20.orig/src/rcs.c	2005-03-17 16:33:47 +0000
-+++ cvs-1.11.20/src/rcs.c	2005-09-29 00:38:32 +0000
-@@ -4146,7 +4146,7 @@ RCS_checkout (rcs, workfile, rev, nameta
+     int dargc = 0;
+     size_t darg_allocated = 0;
+     char **dargv = NULL;
+diff -upk.orig cvs-1.11.21.orig/src/rcs.c cvs-1.11.21/src/rcs.c
+--- cvs-1.11.21.orig/src/rcs.c	2005-09-26 14:31:36 +0000
++++ cvs-1.11.21/src/rcs.c	2005-09-30 15:23:18 +0000
+@@ -4166,7 +4166,7 @@ RCS_checkout (rcs, workfile, rev, nameta
  {
      int free_rev = 0;
      enum kflag expand;
@@ -401,21 +390,22 @@ diff -upk.orig cvs-1.11.20.orig/src/rcs.c cvs-1.11.20/src/rcs.c
      struct stat sb;
      struct rcsbuffer rcsbuf;
      char *key;
-diff -upk.orig cvs-1.11.20.orig/src/release.c cvs-1.11.20/src/release.c
---- cvs-1.11.20.orig/src/release.c	2005-03-04 19:05:09 +0000
-+++ cvs-1.11.20/src/release.c	2005-09-29 00:38:32 +0000
-@@ -178,7 +178,7 @@ release (argc, argv)
+diff -upk.orig cvs-1.11.21.orig/src/release.c cvs-1.11.21/src/release.c
+--- cvs-1.11.21.orig/src/release.c	2005-09-04 00:26:43 +0000
++++ cvs-1.11.21/src/release.c	2005-09-30 15:25:58 +0000
+@@ -192,7 +192,8 @@ release (argc, argv)
  
  	if (!really_quiet)
  	{
--	    int line_length;
+-	    int line_length, status;
 +	    ssize_t line_length;
++	    int status;
  
  	    /* The "release" command piggybacks on "update", which
  	       does the real work of finding out if anything is not
-diff -upk.orig cvs-1.11.20.orig/src/root.c cvs-1.11.20/src/root.c
---- cvs-1.11.20.orig/src/root.c	2005-03-16 22:01:21 +0000
-+++ cvs-1.11.20/src/root.c	2005-09-29 00:38:32 +0000
+diff -upk.orig cvs-1.11.21.orig/src/root.c cvs-1.11.21/src/root.c
+--- cvs-1.11.21.orig/src/root.c	2005-09-04 00:26:43 +0000
++++ cvs-1.11.21/src/root.c	2005-09-30 15:23:18 +0000
 @@ -41,7 +41,7 @@ Name_Root (dir, update_dir)
      char *tmp;
      char *cvsadm;
@@ -425,19 +415,10 @@ diff -upk.orig cvs-1.11.20.orig/src/root.c cvs-1.11.20/src/root.c
  
      if (update_dir && *update_dir)
  	xupdate_dir = update_dir;
-@@ -414,7 +414,7 @@ parse_cvsroot (root_in)
- 	 * We don't handle these, but we like to try and warn the user that
- 	 * they are being ignored.
- 	 */
--	if (p = strchr (method, ';'))	
-+	if ((p = strchr (method, ';')))	
- 	{
- 	    *p++ = '\0';
- 	    if (!really_quiet)
-diff -upk.orig cvs-1.11.20.orig/src/run.c cvs-1.11.20/src/run.c
---- cvs-1.11.20.orig/src/run.c	2004-04-01 18:53:22 +0000
-+++ cvs-1.11.20/src/run.c	2005-09-29 00:38:32 +0000
-@@ -121,6 +121,14 @@ run_exec (stin, stout, sterr, flags)
+diff -upk.orig cvs-1.11.21.orig/src/run.c cvs-1.11.21/src/run.c
+--- cvs-1.11.21.orig/src/run.c	2005-06-06 22:23:30 +0000
++++ cvs-1.11.21/src/run.c	2005-09-30 15:23:18 +0000
+@@ -138,6 +138,14 @@ run_exec (stin, stout, sterr, flags)
  #endif
  #endif
  
@@ -452,10 +433,10 @@ diff -upk.orig cvs-1.11.20.orig/src/run.c cvs-1.11.20/src/run.c
      if (trace)
      {
  #ifdef SERVER_SUPPORT
-diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
---- cvs-1.11.20.orig/src/server.c	2005-03-16 19:16:01 +0000
-+++ cvs-1.11.20/src/server.c	2005-09-29 00:38:32 +0000
-@@ -2535,7 +2535,7 @@ check_command_legal_p (cmd_name)
+diff -upk.orig cvs-1.11.21.orig/src/server.c cvs-1.11.21/src/server.c
+--- cvs-1.11.21.orig/src/server.c	2005-09-22 15:57:34 +0000
++++ cvs-1.11.21/src/server.c	2005-09-30 15:23:18 +0000
+@@ -2542,7 +2542,7 @@ check_command_legal_p (cmd_name)
  	 */
  
  	 char *linebuf = NULL;
@@ -464,21 +445,10 @@ diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
  	 size_t linebuf_len = 0;
  	 char *fname;
  	 size_t flen;
-diff -upk.orig cvs-1.11.20.orig/src/subr.c cvs-1.11.20/src/subr.c
---- cvs-1.11.20.orig/src/subr.c	2005-01-31 22:17:37 +0000
-+++ cvs-1.11.20/src/subr.c	2005-09-29 00:38:32 +0000
-@@ -324,7 +324,6 @@ increment_revnum (rev)
-     const char *rev;
- {
-     char *newrev, *p;
--    int lastfield;
-     size_t len = strlen (rev);
- 
-     newrev = xmalloc (len + 2);
-diff -upk.orig cvs-1.11.20.orig/src/update.c cvs-1.11.20/src/update.c
---- cvs-1.11.20.orig/src/update.c	2005-03-16 22:01:21 +0000
-+++ cvs-1.11.20/src/update.c	2005-09-29 00:38:32 +0000
-@@ -1246,7 +1246,7 @@ checkout_file (finfo, vers_ts, adding, m
+diff -upk.orig cvs-1.11.21.orig/src/update.c cvs-1.11.21/src/update.c
+--- cvs-1.11.21.orig/src/update.c	2005-09-24 17:58:16 +0000
++++ cvs-1.11.21/src/update.c	2005-09-30 15:23:20 +0000
+@@ -1223,7 +1223,7 @@ checkout_file (finfo, vers_ts, adding, m
  {
      char *backup;
      int set_time, retval = 0;

@@ -1,6 +1,6 @@
-diff -upk.orig cvs-1.11.20.orig/lib/xgetwd.c cvs-1.11.20/lib/xgetwd.c
---- cvs-1.11.20.orig/lib/xgetwd.c	1997-11-29 22:52:35 +0000
-+++ cvs-1.11.20/lib/xgetwd.c	2005-09-28 23:23:15 +0000
+diff -upk.orig cvs-1.11.21.orig/lib/xgetwd.c cvs-1.11.21/lib/xgetwd.c
+--- cvs-1.11.21.orig/lib/xgetwd.c	1997-11-29 22:52:35 +0000
++++ cvs-1.11.21/lib/xgetwd.c	2005-09-30 15:30:35 +0000
 @@ -42,18 +42,15 @@ xgetwd ()
    char *ret;
    unsigned path_max;
@@ -21,10 +21,10 @@ diff -upk.orig cvs-1.11.20.orig/lib/xgetwd.c cvs-1.11.20/lib/xgetwd.c
      }
  
    if (ret == NULL)
-diff -upk.orig cvs-1.11.20.orig/src/filesubr.c cvs-1.11.20/src/filesubr.c
---- cvs-1.11.20.orig/src/filesubr.c	2004-11-03 22:19:51 +0000
-+++ cvs-1.11.20/src/filesubr.c	2005-09-28 23:23:15 +0000
-@@ -496,8 +496,7 @@ deep_remove_dir (path)
+diff -upk.orig cvs-1.11.21.orig/src/filesubr.c cvs-1.11.21/src/filesubr.c
+--- cvs-1.11.21.orig/src/filesubr.c	2005-09-22 16:26:04 +0000
++++ cvs-1.11.21/src/filesubr.c	2005-09-30 15:30:35 +0000
+@@ -492,8 +492,7 @@ deep_remove_dir (path)
  		 */
  		return -1;
  
@@ -34,7 +34,7 @@ diff -upk.orig cvs-1.11.20.orig/src/filesubr.c cvs-1.11.20/src/filesubr.c
  	    {
  		char *buf;
  
-@@ -530,8 +529,6 @@ deep_remove_dir (path)
+@@ -526,8 +525,6 @@ deep_remove_dir (path)
  		    }
  		}
  		free (buf);
@@ -43,9 +43,9 @@ diff -upk.orig cvs-1.11.20.orig/src/filesubr.c cvs-1.11.20/src/filesubr.c
  	    }
  	    if (errno != 0)
  	    {
-diff -upk.orig cvs-1.11.20.orig/src/find_names.c cvs-1.11.20/src/find_names.c
---- cvs-1.11.20.orig/src/find_names.c	2005-03-09 14:22:46 +0000
-+++ cvs-1.11.20/src/find_names.c	2005-09-28 23:23:15 +0000
+diff -upk.orig cvs-1.11.21.orig/src/find_names.c cvs-1.11.21/src/find_names.c
+--- cvs-1.11.21.orig/src/find_names.c	2005-04-04 20:46:07 +0000
++++ cvs-1.11.21/src/find_names.c	2005-09-30 15:30:35 +0000
 @@ -270,8 +270,7 @@ find_rcs (dir, list)
  	return (1);
  
@@ -148,10 +148,10 @@ diff -upk.orig cvs-1.11.20.orig/src/find_names.c cvs-1.11.20/src/find_names.c
      }
      if (errno != 0)
      {
-diff -upk.orig cvs-1.11.20.orig/src/import.c cvs-1.11.20/src/import.c
---- cvs-1.11.20.orig/src/import.c	2005-03-09 16:28:14 +0000
-+++ cvs-1.11.20/src/import.c	2005-09-28 23:23:15 +0000
-@@ -458,22 +458,21 @@ import_descend (message, vtag, targc, ta
+diff -upk.orig cvs-1.11.21.orig/src/import.c cvs-1.11.21/src/import.c
+--- cvs-1.11.21.orig/src/import.c	2005-09-04 00:26:42 +0000
++++ cvs-1.11.21/src/import.c	2005-09-30 15:31:54 +0000
+@@ -448,22 +448,21 @@ import_descend (message, vtag, targc, ta
      }
      else
      {
@@ -162,14 +162,14 @@ diff -upk.orig cvs-1.11.20.orig/src/import.c cvs-1.11.20/src/import.c
  	    if (strcmp (dp->d_name, ".") == 0 || strcmp (dp->d_name, "..") == 0)
 -		goto one_more_time_boys;
 +		continue;
- #ifdef SERVER_SUPPORT
+ 
  	    /* CVS directories are created in the temp directory by
  	       server.c because it doesn't special-case import.  So
  	       don't print a message about them, regardless of -I!.  */
  	    if (server_active && strcmp (dp->d_name, CVSADM) == 0)
 -		goto one_more_time_boys;
 +		continue;
- #endif
+ 
  	    if (ign_name (dp->d_name))
  	    {
  		add_log ('I', dp->d_name);
@@ -178,7 +178,7 @@ diff -upk.orig cvs-1.11.20.orig/src/import.c cvs-1.11.20/src/import.c
  	    }
  
  	    if (
-@@ -522,8 +521,6 @@ import_descend (message, vtag, targc, ta
+@@ -512,8 +511,6 @@ import_descend (message, vtag, targc, ta
  		    err += process_import_file (message, dp->d_name,
  						vtag, targc, targv);
  	    }
@@ -187,10 +187,10 @@ diff -upk.orig cvs-1.11.20.orig/src/import.c cvs-1.11.20/src/import.c
  	}
  	if (errno != 0)
  	{
-diff -upk.orig cvs-1.11.20.orig/src/lock.c cvs-1.11.20/src/lock.c
---- cvs-1.11.20.orig/src/lock.c	2005-09-28 23:23:02 +0000
-+++ cvs-1.11.20/src/lock.c	2005-09-28 23:23:15 +0000
-@@ -662,8 +662,7 @@ readers_exist (repository)
+diff -upk.orig cvs-1.11.21.orig/src/lock.c cvs-1.11.21/src/lock.c
+--- cvs-1.11.21.orig/src/lock.c	2005-09-30 15:30:05 +0000
++++ cvs-1.11.21/src/lock.c	2005-09-30 15:30:35 +0000
+@@ -670,8 +670,7 @@ readers_exist (repository)
  	    error (1, 0, "cannot open directory %s", lockdir);
  
  	ret = 0;
@@ -200,7 +200,7 @@ diff -upk.orig cvs-1.11.20.orig/src/lock.c cvs-1.11.20/src/lock.c
  	{
  	    if (CVS_FNMATCH (CVSRFLPAT, dp->d_name, 0) == 0)
  	    {
-@@ -701,7 +700,6 @@ readers_exist (repository)
+@@ -709,7 +708,6 @@ readers_exist (repository)
  		ret = 1;
  		break;
  	    }
@@ -208,10 +208,10 @@ diff -upk.orig cvs-1.11.20.orig/src/lock.c cvs-1.11.20/src/lock.c
  	}
  	if (errno != 0)
  	    error (0, errno, "error reading directory %s", repository);
-diff -upk.orig cvs-1.11.20.orig/src/update.c cvs-1.11.20/src/update.c
---- cvs-1.11.20.orig/src/update.c	2005-03-16 22:01:21 +0000
-+++ cvs-1.11.20/src/update.c	2005-09-28 23:23:15 +0000
-@@ -1124,8 +1124,7 @@ isemptydir (dir, might_not_exist)
+diff -upk.orig cvs-1.11.21.orig/src/update.c cvs-1.11.21/src/update.c
+--- cvs-1.11.21.orig/src/update.c	2005-09-30 15:30:05 +0000
++++ cvs-1.11.21/src/update.c	2005-09-30 15:30:35 +0000
+@@ -1104,8 +1104,7 @@ isemptydir (dir, might_not_exist)
  	error (0, errno, "cannot open directory %s for empty check", dir);
  	return 0;
      }
@@ -221,7 +221,7 @@ diff -upk.orig cvs-1.11.20.orig/src/update.c cvs-1.11.20/src/update.c
      {
  	if (strcmp (dp->d_name, ".") != 0
  	    && strcmp (dp->d_name, "..") != 0)
-@@ -1170,7 +1169,6 @@ isemptydir (dir, might_not_exist)
+@@ -1150,7 +1149,6 @@ isemptydir (dir, might_not_exist)
  		}
  	    }
  	}

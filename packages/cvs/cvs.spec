@@ -1,17 +1,17 @@
-# $Id: Owl/packages/cvs/cvs.spec,v 1.28 2005/10/24 03:06:22 solar Exp $
+# $Id: Owl/packages/cvs/cvs.spec,v 1.29 2005/11/14 01:30:44 ldv Exp $
 
 Summary: A version control system.
 Name: cvs
-Version: 1.11.20
+Version: 1.11.21
 Release: owl1
 License: GPL
 Group: Development/Tools
 URL: http://www.nongnu.org/cvs/
-Source: ftp://ftp.gnu.org/non-gnu/cvs/%name-%version.tar.bz2
+Source: ftp://ftp.gnu.org/non-gnu/cvs/source/stable/%version/cvs-%version.tar.bz2
 Patch0: cvs-1.11.20-alt-remove-unused.diff
-Patch1: cvs-1.11.20-owl-fixes.diff
+Patch1: cvs-1.11.21-owl-fixes.diff
 Patch2: cvs-1.11.20-owl-info.diff
-Patch3: cvs-1.11.20-alt-errno.diff
+Patch3: cvs-1.11.21-alt-errno.diff
 Patch4: cvs-1.11.20-owl-vitmp.diff
 Patch5: cvs-1.11.20-owl-no-world-writables.diff
 Patch6: cvs-1.11.20-alt-mdk-owl-canonicalize.diff
@@ -24,7 +24,7 @@ Patch12: cvs-1.11.20-deb-expand_keywords-alphanumeric.diff
 Patch13: cvs-1.11.20-deb-server-wrapper.diff
 Patch14: cvs-1.11.20-deb-fast-edit.diff
 Patch15: cvs-1.11.20-alt-password_entry_operation.diff
-Patch16: cvs-1.11.20-deb-alt-homedir.diff
+Patch16: cvs-1.11.21-deb-alt-homedir.diff
 Patch17: cvs-1.11.20-deb-alt-newlines.diff
 Patch18: cvs-1.11.20-alt-cvsrc.diff
 Patch19: cvs-1.11.20-alt-tagloginfo.diff
@@ -37,9 +37,7 @@ Patch25: cvs-1.11.20-alt-ssh.diff
 Patch26: cvs-1.11.20-alt-testsuit-log.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
-BuildRequires: mktemp >= 1:1.3.1, zlib-devel
-# due to sed -i
-BuildRequires: sed >= 4.1.1
+BuildRequires: mktemp >= 1:1.3.1, sed >= 4.1.1, zlib-devel
 BuildRoot: /override/%name-%version
 
 %description
@@ -142,7 +140,6 @@ autoreconf -fisv
 	--with-editor=/bin/vitmp
 
 %__make LDFLAGS=-s
-gzip -9nf doc/*.ps
 bzip2 -9 FAQ NEWS
 %{?_enable_check:TMPDIR=/tmp %__make check}
 
@@ -177,7 +174,7 @@ fi
 %files doc
 %defattr(-,root,root)
 %doc AUTHORS BUGS FAQ.bz2 MINOR-BUGS NEWS.bz2 PROJECTS TODO README
-%doc doc/RCSFILES doc/*.ps.gz
+%doc doc/RCSFILES doc/*.pdf
 
 %files contrib
 %defattr(-,root,root)
@@ -185,6 +182,9 @@ fi
 %_datadir/cvs
 
 %changelog
+* Mon Nov 14 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.11.21-owl1
+- Updated to 1.11.21.
+
 * Thu Sep 29 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.11.20-owl1
 - Updated to 1.11.20.
 - Reviewed Owl patches, removed obsolete ones.

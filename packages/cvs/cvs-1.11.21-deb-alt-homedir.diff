@@ -1,7 +1,7 @@
-diff -upk.orig cvs-1.11.20.orig/src/filesubr.c cvs-1.11.20/src/filesubr.c
---- cvs-1.11.20.orig/src/filesubr.c	2005-09-29 13:32:46 +0000
-+++ cvs-1.11.20/src/filesubr.c	2005-09-29 13:33:02 +0000
-@@ -985,6 +985,11 @@ last_component (path)
+diff -upk.orig cvs-1.11.21.orig/src/filesubr.c cvs-1.11.21/src/filesubr.c
+--- cvs-1.11.21.orig/src/filesubr.c	2005-09-30 15:46:58 +0000
++++ cvs-1.11.21/src/filesubr.c	2005-09-30 15:48:02 +0000
+@@ -981,6 +981,11 @@ last_component (path)
     The workaround is to put -f in inetd.conf which means that
     get_homedir won't get called until after the switch in user ID.
  
@@ -13,7 +13,7 @@ diff -upk.orig cvs-1.11.20.orig/src/filesubr.c cvs-1.11.20/src/filesubr.c
     The whole concept of a "home directory" on the server is pretty
     iffy, although I suppose some people probably are relying on it for
     .cvsrc and such, in the cases where it works.  */
-@@ -992,9 +997,18 @@ char *
+@@ -988,15 +993,24 @@ char *
  get_homedir ()
  {
      static char *home = NULL;
@@ -32,12 +32,8 @@ diff -upk.orig cvs-1.11.20.orig/src/filesubr.c cvs-1.11.20/src/filesubr.c
      if (home != NULL)
  	return home;
  
-@@ -1002,9 +1016,10 @@ get_homedir ()
- #ifdef SERVER_SUPPORT
- 	!server_active &&
- #endif
-+	!changed_uid &&
- 	(env = getenv ("HOME")) != NULL)
+-    if (!server_active && (env = getenv ("HOME")) != NULL)
++    if (!server_active && !changed_uid && (env = getenv ("HOME")) != NULL)
  	home = env;
 -    else if ((pw = (struct passwd *) getpwuid (getuid ()))
 +    else if ((pw = (struct passwd *) getpwuid (uid))

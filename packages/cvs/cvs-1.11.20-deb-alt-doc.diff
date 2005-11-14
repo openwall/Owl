@@ -12,17 +12,7 @@ diff -upk.orig cvs-1.11.20.orig/doc/cvs.texinfo cvs-1.11.20/doc/cvs.texinfo
  @code{CVS_RSH} environment variable to invoke another
  program which can access the remote server (for
  example, @code{remsh} on HP-UX 9 because @code{rsh} is
-@@ -3176,6 +3177,9 @@ $ cvs import -m "Created directory struc
- This will add yoyodyne/@var{dir} as a directory under
- @code{$CVSROOT}.
- 
-+This will add yoyodyne/@var{dir} as a directory under
-+@code{$CVSROOT}.
-+
- Then, use @code{add} to add files (and new directories)
- as they appear.
- 
-@@ -11968,7 +11972,7 @@ U first-dir/sdir/sfile
+@@ -11968,7 +11969,7 @@ U first-dir/sdir/sfile
  @item @var{mname} [ options ] @var{dir} [ @var{files}@dots{} ]
  In the simplest case, this form of module definition
  reduces to @samp{@var{mname} @var{dir}}.  This defines
