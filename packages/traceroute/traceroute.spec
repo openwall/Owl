@@ -1,4 +1,4 @@
-# $Id: Owl/packages/traceroute/traceroute.spec,v 1.15 2005/11/14 17:06:36 ldv Exp $
+# $Id: Owl/packages/traceroute/traceroute.spec,v 1.16 2005/11/14 18:08:12 ldv Exp $
 
 Summary: Traces the route taken by packets over a TCP/IP network.
 Name: traceroute
@@ -12,7 +12,7 @@ Source: ftp://ftp.lst.de/pub/people/okir/traceroute/traceroute-%version.tar.bz2
 Patch0: traceroute-1.0.3-rh-compat.diff
 Patch1: traceroute-1.0.3-alt-fixes.diff
 Patch2: traceroute-1.0.3-alt-src_port.diff
-Patch3: traceroute-1.0.3-owl-doc.diff
+Patch3: traceroute-1.0.3-owl-man.diff
 # due to traceroute6
 Conflicts: iputils < 0:ss020927-owl4
 BuildRoot: /override/%name-%version
