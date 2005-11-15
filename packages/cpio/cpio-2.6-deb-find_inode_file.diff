@@ -1,4 +1,12 @@
-diff -uprk.orig cpio-2.6.orig/src/util.c cpio-2.6/src/util.c
+2005-05-05  Brian Mays <brian@debian.org>
+	    Dmitry V. Levin <ldv@altlinux.org>
+
+	* src/util.c (find_inode_file): Fix typos causing function to
+	occasionally miss inodes and, therefore, to copy out the same
+	(hard-linked) file several times to archive.
+
+	Fixes Debian bug #294172.
+
 --- cpio-2.6.orig/src/util.c	2005-05-05 11:40:43 +0000
 +++ cpio-2.6/src/util.c	2005-05-05 11:41:16 +0000
 @@ -699,8 +699,8 @@ find_inode_file (unsigned long node_num,

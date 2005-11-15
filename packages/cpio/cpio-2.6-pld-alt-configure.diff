@@ -1,3 +1,10 @@
+2005-01-09  Marcin Bohosiewicz <marcus@pld-linux.org>
+	    Jakub Bogusz <qboosh@pld-linux.org>
+	    Dmitry V. Levin <ldv@altlinux.org>
+
+	* configure.ac: Link with -lnsl and -lsocket only when necessary.
+	Merge two AC_CONFIG_FILES sections.
+
 diff -urk.orig cpio-2.6.orig/configure.ac cpio-2.6/configure.ac
 --- cpio-2.6.orig/configure.ac	2004-12-20 10:46:30 +0000
 +++ cpio-2.6/configure.ac	2005-01-09 01:12:13 +0000

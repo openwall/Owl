@@ -1,3 +1,17 @@
+2005-05-04  Peter Vrabec <pvrabec@redhat.com>
+	    Dmitry V. Levin <ldv@altlinux.org>
+
+	Fix LFS support issues.
+
+	* src/extern.h (copy_files_tape_to_disk, copy_files_disk_to_tape,
+	copy_files_disk_to_disk): Change num_bytes argument type from
+	long to off_t.
+	* src/util.c (copy_files_tape_to_disk, copy_files_disk_to_tape,
+	copy_files_disk_to_disk, disk_fill_input_buffer,
+	write_nuls_to_file): Likewise.
+	(write_nuls_to_file, copy_files_disk_to_tape,
+	copy_files_disk_to_disk): Handle `off_t num_bytes' properly.
+
 diff -uprk.orig cpio-2.6.orig/src/extern.h cpio-2.6/src/extern.h
 --- cpio-2.6.orig/src/extern.h	2004-09-08 10:49:57 +0000
 +++ cpio-2.6/src/extern.h	2005-05-04 14:51:31 +0000

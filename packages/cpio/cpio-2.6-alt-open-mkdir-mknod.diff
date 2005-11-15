@@ -1,3 +1,29 @@
+2005-05-11  Dmitry V. Levin <ldv@altlinux.org>
+
+	Fix race conditions in code which creates regular files, creates
+	directories and devices or sets its permissions, in copy-in and
+	copy-pass modes.
+
+	* src/copyin.c (try_existing_file): Add argument: existing_mode.
+	When `*existing_dir' is set to true, store file mode to
+	`*existing_mode'.
+	(create_final_defers, copyin_regular_file): Change open(2)
+	calls to use O_EXCL.
+	(copyin_directory): Change mkdir(2) and mknod(2) calls to use
+	safe permissions.
+	Add argument: existing_mode.
+	When reusing already existing directory, no_chown_flag is not
+	set and directory mode is too permissive, chmod it to safe mode
+	before chown(2) call.
+	(copyin_file): Pass existing_mode from try_existing_file()
+	to copyin_directory().
+	* src/copypass.c (process_copy_pass): Change open(2) calls to
+	use O_EXCL.
+	Change mkdir(2) and mknod(2) calls to use safe permissions.
+	When reusing already existing directory, no_chown_flag is not
+	set and directory mode is too permissive, chmod it to safe mode
+	before chown(2) call.
+
 diff -uprk.orig cpio-2.6.orig/src/copyin.c cpio-2.6/src/copyin.c
 --- cpio-2.6.orig/src/copyin.c	2005-05-11 12:20:17 +0000
 +++ cpio-2.6/src/copyin.c	2005-05-11 13:39:03 +0000
