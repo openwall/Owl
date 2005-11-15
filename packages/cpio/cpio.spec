@@ -1,9 +1,9 @@
-# $Id: Owl/packages/cpio/cpio.spec,v 1.20 2005/10/24 03:06:22 solar Exp $
+# $Id: Owl/packages/cpio/cpio.spec,v 1.21 2005/11/15 23:37:48 ldv Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
 Version: 2.6
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/cpio/
@@ -27,6 +27,8 @@ Patch22: cpio-2.6-deb-find_inode_file.diff
 Patch23: cpio-2.6-owl-mt-argmatch.diff
 Patch24: cpio-2.6-deb-owl-mt-scsi.diff
 Patch25: cpio-2.6-deb-owl-rmt.diff
+Patch26: cpio-2.6-cvs-20051112-copyout.diff
+Patch27: cpio-2.6-up-savedir.diff
 PreReq: /sbin/install-info
 Provides: mt-st, rmt
 Prefix: %_prefix
@@ -66,12 +68,15 @@ install -m644 %_sourcedir/rmt.8 .
 %patch23 -p1
 %patch24 -p1
 %patch25 -p1
+%patch26 -p1
+%patch27 -p1
 
 %build
 # Several patches modify configure.ac
 %__autoconf
 %configure --enable-mt
-make LDFLAGS=-s
+%__make LDFLAGS=-s
+%__make -k check
 
 %install
 rm -rf %buildroot
@@ -111,6 +116,11 @@ fi
 %_datadir/locale/*/LC_MESSAGES/cpio.mo
 
 %changelog
+* Wed Nov 16 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.6-owl3
+- Backported fixes for write_out_header() and read_for_checksum()
+  from cpio CVS.
+- Backported savedir() fix from gnulib CVS.
+
 * Wed May 11 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.6-owl2
 - Imported patch from ALT that fixes three race condition issues
 while setting permissions in copy-in and copy-pass modes:
