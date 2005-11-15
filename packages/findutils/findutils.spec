@@ -1,9 +1,9 @@
-# $Id: Owl/packages/findutils/findutils.spec,v 1.18 2005/10/24 03:29:15 solar Exp $
+# $Id: Owl/packages/findutils/findutils.spec,v 1.19 2005/11/15 23:49:25 ldv Exp $
 
 Summary: The GNU versions of find utilities (find and xargs).
 Name: findutils
 Version: 4.2.25
-Release: owl1
+Release: owl2
 Epoch: 1
 License: GPL
 Group: Applications/File
@@ -13,6 +13,7 @@ Source1: findutils-ru.po
 Patch0: findutils-4.2.25-alt-warnings.diff
 Patch1: findutils-4.2.21-alt-find-check_nofollow.diff
 Patch2: findutils-4.2.21-owl-info.diff
+Patch3: findutils-4.2.25-up-savedir.diff
 PreReq: /sbin/install-info
 # due to sed -i
 BuildRequires: sed >= 4.1.1
@@ -33,6 +34,7 @@ install -pm644 %_sourcedir/findutils-ru.po po/ru.po
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -70,6 +72,9 @@ fi
 %_datadir/locale/*/LC_MESSAGES/findutils.mo
 
 %changelog
+* Wed Nov 16 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:4.2.25-owl2
+- Backported savedir() fix from gnulib CVS.
+
 * Sat Sep 17 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:4.2.25-owl1
 - Updated to 4.2.25.
 

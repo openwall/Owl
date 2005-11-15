@@ -1,0 +1,17 @@
+2005-10-28  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* savedir.c (savedir): Don't assume that xrealloc etc. leave
+	errno alone.  Problem reported by Frederic Jolliton.
+
+--- findutils-4.2.25/gnulib/lib/savedir.c.orig	2004-08-07 00:09:39 +0000
++++ findutils-4.2.25/gnulib/lib/savedir.c	2005-11-02 12:16:00 +0000
+@@ -82,8 +82,7 @@ savedir (const char *dir)
+ 
+   name_space = xmalloc (allocated);
+ 
+-  errno = 0;
+-  while ((dp = readdir (dirp)) != NULL)
++  while ((errno = 0, dp = readdir (dirp)) != NULL)
+     {
+       /* Skip "", ".", and "..".  "" is returned by at least one buggy
+          implementation: Solaris 2.4 readdir on NFS file systems.  */

@@ -1,9 +1,9 @@
-# $Id: Owl/packages/tar/tar.spec,v 1.24 2005/11/13 23:30:20 ldv Exp $
+# $Id: Owl/packages/tar/tar.spec,v 1.25 2005/11/15 23:49:25 ldv Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
 Version: 1.15.1
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/tar/
@@ -18,6 +18,7 @@ Patch4: tar-1.15.1-cvs-20050512-pad.diff
 Patch5: tar-1.15.1-cvs-20050613-is_avoided_name.diff
 Patch6: tar-1.15.1-cvs-20050801-sparse-totals.diff
 Patch7: tar-1.15.1-cvs-20051105-tests.diff
+Patch8: tar-1.15.1-up-savedir.diff
 Patch10: tar-1.15.1-alt-parse_opt-Iy.diff
 Patch11: tar-1.15.1-owl-info.diff
 Patch12: tar-1.15.1-owl-without-librt.diff
@@ -51,6 +52,7 @@ backups.
 %patch5 -p0
 %patch6 -p0
 %patch7 -p0
+%patch8 -p1
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
@@ -115,6 +117,9 @@ fi
 %doc AUTHORS NEWS THANKS
 
 %changelog
+* Wed Nov 16 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.15.1-owl3
+- Backported savedir() fix from gnulib CVS.
+
 * Mon Nov 14 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.15.1-owl2
 - Backported fix to options parser from tar CVS.
 
