@@ -7,12 +7,12 @@ time \- run programs and summarize system resource usage
 .na
 .TP
 .B time
-[ 
+[
 .B \-apqvV
 ] [
-.BI \-f " FORMAT" 
+.BI \-f " FORMAT"
 ] [
-.BI \-o " FILE"  
+.BI \-o " FILE"
 ]
 .br
 [
@@ -36,7 +36,7 @@ time \- run programs and summarize system resource usage
 [
 .B \-\-help
 ]
-.I COMMAND 
+.I COMMAND
 [
 .I ARGS
 ]
@@ -44,40 +44,40 @@ time \- run programs and summarize system resource usage
 .ad b
 .SH DESCRIPTION
 .B time
-run the program 
+run the program
 .I COMMAND
-with any given arguments 
+with any given arguments
 .IR "ARG..." .
-When 
-.I COMMAND 
-finishes, 
-.B time 
-displays information about resources used by 
-.I COMMAND 
-(on the standard error output, by default).  If 
+When
 .I COMMAND
-exits with non-zero status, 
-.B time 
+finishes,
+.B time
+displays information about resources used by
+.I COMMAND
+(on the standard error output, by default).  If
+.I COMMAND
+exits with non-zero status,
+.B time
 displays a warning message and the exit status.
 
-.B time 
-determines which information to display about the resources used by the 
-.I COMMAND 
+.B time
+determines which information to display about the resources used by the
+.I COMMAND
 from the string
-.IR FORMAT . 
-If no format is specified on the command line, but the 
+.IR FORMAT .
+If no format is specified on the command line, but the
 .B TIME
 environment variable is set, its value is used as the format.
-Otherwise, a default format built into 
-.B time 
+Otherwise, a default format built into
+.B time
 is used.
 
-Options to 
-.B time 
-must appear on the command line before 
+Options to
+.B time
+must appear on the command line before
 .IR COMMAND .
-Anything on the command line after 
-.I COMMAND 
+Anything on the command line after
+.I COMMAND
 is passed as arguments to
 .IR COMMAND .
 
@@ -85,23 +85,23 @@ is passed as arguments to
 .PD 0
 .TP
 .BI \-o " FILE, " \-\-output= "FILE "
-Write the resource use statistics to 
-.I FILE 
-instead of to the standard error stream.  By default, this overwrites the 
+Write the resource use statistics to
+.I FILE
+instead of to the standard error stream.  By default, this overwrites the
 file, destroying the file's previous contents.  This option is useful for
-collecting information on interactive programs and programs that produce 
+collecting information on interactive programs and programs that produce
 output on the standard error stream.
 .TP
 .BR \-a ", " \-\-append ""
 Append the resource use information to the output file instead of overwriting
- it.  This option is only useful with the `-o' or `--output' option.       
+ it.  This option is only useful with the `-o' or `--output' option.
 .TP
 .BI \-f " FORMAT, " \-\-format " FORMAT "
-Use 
-.I FORMAT 
+Use
+.I FORMAT
 as the format string that controls the output of
-.BR time .  
-See the below more information.  
+.BR time .
+See the below more information.
 .TP
 .B \-\-help
 Print a summary of the command line options and exit.
@@ -121,20 +121,20 @@ description of its meaning.
 Do not report the status of the program even if it is different from zero.
 .TP
 .BR \-V ", " \-\-version ""
-Print the version number of 
-.B time 
-and exit.      
+Print the version number of
+.B time
+and exit.
 
 .SH "FORMATTING THE OUTPUT"
 The format string
-.I FORMAT 
-controls the contents of the 
-.B time 
+.I FORMAT
+controls the contents of the
+.B time
 output.  The format string can be set using the `-f' or `--format', `-v' or
 `--verbose', or `-p' or `--portability' options.  If they are not
-given, but the 
-.I TIME 
-environment variable is set, its value is used as the format string.  
+given, but the
+.I TIME
+environment variable is set, its value is used as the format string.
 Otherwise, a built-in default format is used.  The default format is:
   %Uuser %Ssystem %Eelapsed %PCPU (%Xtext+%Ddata %Mmax)k
   %Iinputs+%Ooutputs (%Fmajor+%Rminor)pagefaults %Wswaps
@@ -142,8 +142,8 @@ Otherwise, a built-in default format is used.  The default format is:
 The format string usually consists of `resource specifiers'
 interspersed with plain text.  A percent sign (`%') in the format
 string causes the following character to be interpreted as a resource
-specifier, which is similar to the formatting characters in the 
-.BR printf (3) 
+specifier, which is similar to the formatting characters in the
+.BR printf (3)
 function.
 
 A backslash (`\\') introduces a `backslash escape', which is
@@ -154,16 +154,16 @@ A backslash followed by any other character outputs a question mark
 escape was given.
 
 Other text in the format string is copied verbatim to the output.
-.B time 
+.B time
 always prints a newline after printing the resource use
 information, so normally format strings do not end with a newline
-character (or `\n').                                   
+character (or `\n').
 
 There are many resource specifications.  Not all resources are
 measured by all versions of Unix, so some of the values might be
 reported as zero.  Any character following a percent sign that is not
 listed in the table below causes a question mark (`?') to be output,
-followed by that character, to indicate that an invalid resource      
+followed by that character, to indicate that an invalid resource
 listed in the table below causes a question mark (`?') to be output,
 followed by that character, to indicate that an invalid resource
 specifier was given.
@@ -193,7 +193,7 @@ Kilobytes.
 Maximum resident set size of the process during its lifetime, in
 Kilobytes.
 .IP O
-Number of file system outputs by the process.       
+Number of file system outputs by the process.
 .IP P
 Percentage of the CPU that this job got.  This is just user +
 system times divied by the total running time.
@@ -234,7 +234,7 @@ Average resident set size of the process, in Kilobytes.
 Number of times that the program was context-switched voluntarily,
 for instance while waiting for an I/O operation to complete.
 .IP x
-Exit status of the command.     
+Exit status of the command.
 .RS
 
 .SH EXAMPLES
@@ -250,15 +250,15 @@ number of signals to the file `log', reading the format string from the
 environment variable `TIME':
      export TIME="\t%E,\t%k" # If using bash or ksh
      setenv TIME "\t%E,\t%k" # If using csh or tcsh
-     time -a -o log emacs bork             
+     time -a -o log emacs bork
 
 .SH ACCURACY
 The elapsed time is not collected atomically with the execution of
-the program; as a result, in bizarre circumstances (if the 
+the program; as a result, in bizarre circumstances (if the
 .B time
 command gets stopped or swapped out in between when the program being
-timed exits and when 
-.B time 
+timed exits and when
+.B time
 calculates how long it took to run), it
 could be much larger than the actual execution time.
 
@@ -266,27 +266,27 @@ When the running time of a command is very nearly zero, some values
 (e.g., the percentage of CPU used) may be reported as either zero (which
 is wrong) or a question mark.
 
-Most information shown by 
-.B time 
-is derived from the 
-.BR wait3 (2) 
+Most information shown by
+.B time
+is derived from the
+.BR wait3 (2)
 system call.  The numbers are only as good as
-those returned by 
-.BR wait3 (2).  
-On systems that do not have a 
-.BR wait3 (2) 
-call that returns status information, the 
-.BR times (2) 
+those returned by
+.BR wait3 (2).
+On systems that do not have a
+.BR wait3 (2)
+call that returns status information, the
+.BR times (2)
 system call is used instead.  However, it provides much less information than
-.BR wait3 (2), 
-so on those systems 
-.B time 
+.BR wait3 (2),
+so on those systems
+.B time
 reports the majority of the resources as zero.
 
 The `%I' and `%O' values are allegedly only `real' input and output
 and do not include those supplied by caching devices.  The meaning of
 `real' I/O reported by `%I' and `%O' may be muddled for workstations,
-especially diskless ones.                  
+especially diskless ones.
 
 .SH AUTHOR
 .B time
