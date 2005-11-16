@@ -1,8 +1,9 @@
 /*
- * Pam_listfile written by Michael Tokarev <mjt@corpit.ru> Dec, 2000
+ * Pam_listfile written by Michael Tokarev <mjt at corpit.ru> Dec, 2000
  * based on ideas and original work
- * by Elliot Lee <sopwith@redhat.com>, Red Hat Software. July 25, 1996.
- * log refused access error christopher mccrory <chrismcc@netus.com> 1998/7/11
+ * by Elliot Lee <sopwith at redhat.com>, Red Hat Software. July 25, 1996.
+ * log refused access error
+ * christopher mccrory <chrismcc at netus.com> 1998/7/11
  *
  * This code began life as the pam_rootok module.
  */

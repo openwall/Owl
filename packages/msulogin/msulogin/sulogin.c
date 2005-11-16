@@ -8,10 +8,10 @@
  * The supported command line options match those used with Miquel van
  * Smoorenburg's implementation of sulogin.
  *
- * Copyright (c) 2003 by Solar Designer <solar@owl.openwall.com>.
+ * Copyright (c) 2003 by Solar Designer <solar at owl.openwall.com>.
  * See LICENSE.
  *
- * $Owl: Owl/packages/msulogin/msulogin/sulogin.c,v 1.3 2005/11/16 13:16:56 solar Exp $
+ * $Owl: Owl/packages/msulogin/msulogin/sulogin.c,v 1.4 2005/11/16 17:26:53 solar Exp $
  */
 
 #include <stdio.h>

@@ -3,10 +3,10 @@
  * the editor in a way that is guaranteed to be suitable for editing
  * temporary files used with programs such as crontab(1) and edquota(8).
  *
- * Written by Solar Designer <solar@owl.openwall.com> and placed in the
+ * Written by Solar Designer <solar at owl.openwall.com> and placed in the
  * public domain.
  *
- * $Owl: Owl/packages/vim/vitmp.c,v 1.3 2005/11/16 13:32:45 solar Exp $
+ * $Owl: Owl/packages/vim/vitmp.c,v 1.4 2005/11/16 17:26:54 solar Exp $
  */
 #include <stdio.h>
 #include <unistd.h>

@@ -1,16 +1,16 @@
 # Локализация findutils 4.2.23
 # Copyright (C) 1997, 1998, 1999, 2000 Free Software Foundation, Inc.
-# Denis Perchine <dyp@perchine.com>, 1997, 1998, 1999, 2000.
-# Dmitry V. Levin <ldv@altlinux.org>, 2004, 2005.
+# Denis Perchine <dyp at perchine.com>, 1997, 1998, 1999, 2000.
+# Dmitry V. Levin <ldv at altlinux.org>, 2004, 2005.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: findutils 4.2.23\n"
-"Report-Msgid-Bugs-To: bug-findutils@gnu.org\n"
+"Report-Msgid-Bugs-To: bug-findutils at gnu.org\n"
 "POT-Creation-Date: 2005-09-04 19:38+0400\n"
 "PO-Revision-Date: 2005-09-04 19:38+0400\n"
-"Last-Translator: Dmitry V. Levin <ldv@altlinux.org>\n"
-"Language-Team: Russian <ru@li.org>\n"
+"Last-Translator: Dmitry V. Levin <ldv at altlinux.org>\n"
+"Language-Team: Russian <ru at li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=koi8-r\n"
 "Content-Transfer-Encoding: 8-bit\n"
@@ -332,12 +332,12 @@ msgstr ""
 msgid ""
 "Report (and track progress on fixing) bugs via the findutils bug-reporting\n"
 "page at http://savannah.gnu.org/ or, if you have no web access, by sending\n"
-"email to <bug-findutils@gnu.org>."
+"email to <bug-findutils at gnu.org>."
 msgstr ""
 "Сообщайте об ошибках в программе find (и отслеживайте исправление этих "
 "ошибок) через веб-страницу пакета findutils на http://savannah.gnu.org/ или "
-"посредством электронной почты по адресу списка рассылки <bug-findutils@gnu."
-"org>."
+"посредством электронной почты по адресу списка рассылки <bug-findutils at "
+"gnu.org>."
 
 #: find/parser.c:843
 msgid "sanity check of the fnmatch() library function failed."
@@ -495,10 +495,10 @@ msgstr ""
 #: locate/code.c:131 locate/locate.c:1114 xargs/xargs.c:1095
 msgid ""
 "\n"
-"Report bugs to <bug-findutils@gnu.org>.\n"
+"Report bugs to <bug-findutils at gnu.org>.\n"
 msgstr ""
 "\n"
-"Сообщайте об ошибках по адресу списка рассылки <bug-findutils@gnu.org>.\n"
+"Сообщайте об ошибках по адресу списка рассылки <bug-findutils at gnu.org>.\n"
 
 #: locate/code.c:165
 #, c-format
