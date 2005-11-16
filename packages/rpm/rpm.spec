@@ -1,4 +1,4 @@
-# $Id: Owl/packages/rpm/rpm.spec,v 1.62 2005/11/04 23:38:05 ldv Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.63 2005/11/16 13:31:51 solar Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/setarch/setarch.spec,v 1.2 2005/10/24 03:06:29 solar Exp $
+# $Owl: Owl/packages/setarch/setarch.spec,v 1.3 2005/11/16 13:31:51 solar Exp $
 
 Summary: Personality setter.
 Name: setarch

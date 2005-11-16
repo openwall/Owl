@@ -1,4 +1,4 @@
-# $Id: Owl/packages/raidtools/Attic/raidtools.spec,v 1.5 2005/10/24 03:06:29 solar Exp $
+# $Owl: Owl/packages/raidtools/Attic/raidtools.spec,v 1.6 2005/11/16 13:31:51 solar Exp $
 
 Summary: Tools for creating and maintaining software RAID devices.
 Name: raidtools

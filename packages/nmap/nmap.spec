@@ -1,4 +1,4 @@
-# $Id: Owl/packages/nmap/nmap.spec,v 1.11 2005/11/08 01:32:44 ldv Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.12 2005/11/16 13:21:53 solar Exp $
 
 Summary: Network exploration tool and security scanner.
 Name: nmap

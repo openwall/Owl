@@ -1,4 +1,4 @@
-# $Id: Owl/packages/lilo/lilo.spec,v 1.20 2005/10/24 03:06:26 solar Exp $
+# $Owl: Owl/packages/lilo/lilo.spec,v 1.21 2005/11/16 13:11:15 solar Exp $
 
 %define BUILD_EXTERNAL_SUPPORT 0
 

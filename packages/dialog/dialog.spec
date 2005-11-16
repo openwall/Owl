@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dialog/dialog.spec,v 1.16 2005/10/24 03:06:22 solar Exp $
+# $Owl: Owl/packages/dialog/dialog.spec,v 1.17 2005/11/16 12:21:03 solar Exp $
 
 Summary: A utility for creating TTY dialog boxes.
 Name: dialog

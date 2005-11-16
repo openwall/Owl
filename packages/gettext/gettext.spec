@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gettext/gettext.spec,v 1.11 2005/10/24 03:06:23 solar Exp $
+# $Owl: Owl/packages/gettext/gettext.spec,v 1.12 2005/11/16 13:09:47 solar Exp $
 
 Summary: GNU libraries and utilities for producing multi-lingual messages.
 Name: gettext

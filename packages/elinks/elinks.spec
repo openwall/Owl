@@ -1,4 +1,4 @@
-# $Id: Owl/packages/elinks/elinks.spec,v 1.20 2005/10/24 03:06:23 solar Exp $
+# $Owl: Owl/packages/elinks/elinks.spec,v 1.21 2005/11/16 12:21:36 solar Exp $
 
 Summary: Lynx-like text WWW browser with many features.
 Name: elinks

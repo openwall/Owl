@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libcap/libcap.spec,v 1.12 2005/10/24 03:06:25 solar Exp $
+# $Owl: Owl/packages/libcap/libcap.spec,v 1.13 2005/11/16 13:11:15 solar Exp $
 
 Summary: Library for getting and setting POSIX.1e capabilities.
 Name: libcap

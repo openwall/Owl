@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vsftpd/vsftpd.spec,v 1.18 2005/10/29 19:29:21 ldv Exp $
+# $Owl: Owl/packages/vsftpd/vsftpd.spec,v 1.19 2005/11/16 13:32:46 solar Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd

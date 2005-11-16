@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-setup/owl-setup.spec,v 1.44 2005/10/26 16:48:49 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.45 2005/11/16 13:21:54 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup

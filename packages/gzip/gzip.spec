@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gzip/gzip.spec,v 1.22 2005/10/24 03:06:24 solar Exp $
+# $Owl: Owl/packages/gzip/gzip.spec,v 1.23 2005/11/16 13:09:47 solar Exp $
 
 Summary: The GNU data compression program.
 Name: gzip

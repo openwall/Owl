@@ -1,4 +1,4 @@
-# $Id: Owl/packages/m4/m4.spec,v 1.18 2005/10/24 03:06:27 solar Exp $
+# $Owl: Owl/packages/m4/m4.spec,v 1.19 2005/11/16 13:16:56 solar Exp $
 
 Summary: The GNU macro processor.
 Name: m4

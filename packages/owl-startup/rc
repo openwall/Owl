@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/owl-startup/rc,v 1.2 2001/05/08 11:10:48 mci Exp $
+# $Owl: Owl/packages/owl-startup/rc,v 1.3 2005/11/16 13:21:54 solar Exp $
 #
 # This file is responsible for starting/stopping services when the
 # runlevel changes.

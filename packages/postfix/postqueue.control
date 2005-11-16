@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/postfix/postqueue.control,v 1.1 2005/11/13 20:12:06 ldv Exp $
+# $Owl: Owl/packages/postfix/postqueue.control,v 1.2 2005/11/16 13:28:58 solar Exp $
 
 . /etc/control.d/functions
 

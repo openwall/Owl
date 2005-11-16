@@ -1,4 +1,4 @@
-# $Id: Owl/packages/db4/db4.spec,v 1.12 2005/10/24 03:06:22 solar Exp $
+# $Owl: Owl/packages/db4/db4.spec,v 1.13 2005/11/16 12:21:03 solar Exp $
 
 %define __soversion	4.0
 %define _libdb_a	libdb-%__soversion.a

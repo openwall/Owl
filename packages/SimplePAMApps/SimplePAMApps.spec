@@ -1,4 +1,4 @@
-# $Id: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.43 2005/10/29 19:24:52 ldv Exp $
+# $Owl: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.44 2005/11/16 13:34:48 solar Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps

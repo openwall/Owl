@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-cdrom/welcome-cdrom.sh,v 1.6 2005/09/13 14:23:12 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/welcome-cdrom.sh,v 1.7 2005/11/16 13:21:54 solar Exp $
 
 CD=/.Owl-CD-ROM
 VERSION=

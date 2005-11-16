@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-hier/owl-hier.spec,v 1.23 2005/10/24 03:06:28 solar Exp $
+# $Owl: Owl/packages/owl-hier/owl-hier.spec,v 1.24 2005/11/16 13:21:54 solar Exp $
 
 Summary: Initial directory hierarchy.
 Name: owl-hier

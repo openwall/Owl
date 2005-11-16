@@ -85,4 +85,4 @@ built for alphaev56 are tuned for EV56/PCA56 processors (21164A,
 plain alpha packages.  On an EV6+ (21264, 21264A), use the alphaev56
 packages.
 
-$Id: Owl/doc/ARCHITECTURES,v 1.3 2002/06/08 18:46:59 solar Exp $
+$Owl: Owl/doc/ARCHITECTURES,v 1.4 2005/11/16 11:59:01 solar Exp $

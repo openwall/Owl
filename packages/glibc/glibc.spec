@@ -1,4 +1,4 @@
-# $Id: Owl/packages/glibc/glibc.spec,v 1.98 2005/11/09 01:07:09 ldv Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.99 2005/11/16 13:09:47 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1

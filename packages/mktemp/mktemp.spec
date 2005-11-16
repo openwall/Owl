@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mktemp/mktemp.spec,v 1.10 2005/10/24 03:06:27 solar Exp $
+# $Owl: Owl/packages/mktemp/mktemp.spec,v 1.11 2005/11/16 13:16:56 solar Exp $
 
 Summary: A small utility for safely making temporary files.
 Name: mktemp

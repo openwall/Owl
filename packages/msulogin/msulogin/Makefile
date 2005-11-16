@@ -1,4 +1,4 @@
-# $Id: Owl/packages/msulogin/msulogin/Makefile,v 1.1 2003/04/27 02:26:29 solar Exp $
+# $Owl: Owl/packages/msulogin/msulogin/Makefile,v 1.2 2005/11/16 13:16:56 solar Exp $
 
 CC = gcc
 LD = gcc

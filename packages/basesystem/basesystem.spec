@@ -1,4 +1,4 @@
-# $Id: Owl/packages/basesystem/basesystem.spec,v 1.6 2005/10/24 03:06:21 solar Exp $
+# $Owl: Owl/packages/basesystem/basesystem.spec,v 1.7 2005/11/16 12:19:20 solar Exp $
 
 Summary: Initial set of configuration files and directory hierarchy.
 Name: basesystem

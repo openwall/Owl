@@ -1,4 +1,4 @@
-# $Id: Owl/packages/procps/Attic/procps.spec,v 1.27 2005/10/30 23:08:20 ldv Exp $
+# $Owl: Owl/packages/procps/Attic/procps.spec,v 1.28 2005/11/16 13:28:58 solar Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps

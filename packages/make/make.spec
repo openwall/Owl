@@ -1,4 +1,4 @@
-# $Id: Owl/packages/make/make.spec,v 1.12 2005/10/24 03:06:27 solar Exp $
+# $Owl: Owl/packages/make/make.spec,v 1.13 2005/11/16 13:16:56 solar Exp $
 
 Summary: A GNU tool which simplifies the build process for users.
 Name: make

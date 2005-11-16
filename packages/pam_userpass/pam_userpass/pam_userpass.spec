@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.21 2005/10/24 03:29:15 solar Exp $
+# $Owl: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.22 2005/11/16 13:28:58 solar Exp $
 
 Summary: Pluggable authentication module for USER/PASS-style protocols.
 Name: pam_userpass

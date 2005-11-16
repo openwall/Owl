@@ -1,4 +1,4 @@
-# $Id: Owl/packages/acct/acct.spec,v 1.28 2005/10/24 03:06:20 solar Exp $
+# $Owl: Owl/packages/acct/acct.spec,v 1.29 2005/11/16 12:19:20 solar Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct

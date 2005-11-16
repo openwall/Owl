@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tar/tar.spec,v 1.25 2005/11/15 23:49:25 ldv Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.26 2005/11/16 13:32:45 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar

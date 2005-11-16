@@ -1,4 +1,4 @@
-# $Id: Owl/packages/net-tools/net-tools.spec,v 1.13 2005/10/24 03:06:27 solar Exp $
+# $Owl: Owl/packages/net-tools/net-tools.spec,v 1.14 2005/11/16 13:21:53 solar Exp $
 
 Summary: The basic tools for setting up networking.
 Name: net-tools

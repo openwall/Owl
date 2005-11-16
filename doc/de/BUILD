@@ -113,4 +113,4 @@ Individuelle Pakete können wieder- oder neuübersetzt werden, indem man
 Für fremde Pakete (SRPMs) die mit der Owl-Arbeitsumgebung erstellt worden
 sind, muss man zusätzlich die Versionsnummer in "name" einfügen.
 
-$Id: Owl/doc/de/BUILD,v 1.14 2005/10/03 11:48:01 schmidt Exp $
+$Owl: Owl/doc/de/BUILD,v 1.15 2005/11/16 11:59:01 solar Exp $

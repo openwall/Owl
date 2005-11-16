@@ -1,4 +1,4 @@
-# $Id: Owl/packages/msulogin/msulogin/msulogin.spec,v 1.6 2005/10/24 03:06:27 solar Exp $
+# $Owl: Owl/packages/msulogin/msulogin/msulogin.spec,v 1.7 2005/11/16 13:16:56 solar Exp $
 
 Summary: The single user mode login program (sulogin).
 Name: msulogin

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/readline/readline.spec,v 1.22 2005/10/24 03:06:29 solar Exp $
+# $Owl: Owl/packages/readline/readline.spec,v 1.23 2005/11/16 13:31:51 solar Exp $
 
 %define compat_list 3 3.0 4.0 4.1 4.2
 

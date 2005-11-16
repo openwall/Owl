@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/sshd_config,v 1.13 2005/07/25 20:51:49 solar Exp $
+# $Owl: Owl/packages/openssh/sshd_config,v 1.14 2005/11/16 13:21:53 solar Exp $
 
 # This is the sshd server system-wide configuration file.  See
 # sshd_config(5) for more information.

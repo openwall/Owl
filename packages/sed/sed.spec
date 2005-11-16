@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sed/sed.spec,v 1.16 2005/11/13 16:58:55 ldv Exp $
+# $Owl: Owl/packages/sed/sed.spec,v 1.17 2005/11/16 13:31:51 solar Exp $
 
 Summary: A GNU stream text editor.
 Name: sed

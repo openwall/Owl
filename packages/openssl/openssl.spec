@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssl/openssl.spec,v 1.50 2005/10/24 03:06:27 solar Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.51 2005/11/16 13:21:53 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl

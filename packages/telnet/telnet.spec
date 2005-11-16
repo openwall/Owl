@@ -1,4 +1,4 @@
-# $Id: Owl/packages/telnet/telnet.spec,v 1.11 2005/10/24 03:06:30 solar Exp $
+# $Owl: Owl/packages/telnet/telnet.spec,v 1.12 2005/11/16 13:32:45 solar Exp $
 
 Summary: The client program for the telnet remote login protocol.
 Name: telnet

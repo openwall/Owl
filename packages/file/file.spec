@@ -1,4 +1,4 @@
-# $Id: Owl/packages/file/file.spec,v 1.14 2005/10/24 03:06:23 solar Exp $
+# $Owl: Owl/packages/file/file.spec,v 1.15 2005/11/16 12:21:36 solar Exp $
 
 Summary: A utility for determining file types.
 Name: file

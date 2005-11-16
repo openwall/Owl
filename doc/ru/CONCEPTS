@@ -128,4 +128,4 @@ CVS-репозитарии, содержит правила сборки, исправления, а также
 пакеты, собранные для Fedora Core и Red Hat Enterprise Linux, на
 компьютер, работающий под управлением Owl.
 
-$Id: Owl/doc/ru/CONCEPTS,v 1.7 2005/10/03 13:25:53 gremlin Exp $
+$Owl: Owl/doc/ru/CONCEPTS,v 1.8 2005/11/16 11:59:02 solar Exp $

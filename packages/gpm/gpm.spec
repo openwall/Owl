@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gpm/gpm.spec,v 1.24 2005/10/24 03:06:24 solar Exp $
+# $Owl: Owl/packages/gpm/gpm.spec,v 1.25 2005/11/16 13:09:47 solar Exp $
 
 # This defines the library version that this package builds.
 %define LIBVER 1.18.0

@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/xinetd/xinetd.init,v 1.7 2002/08/10 21:31:25 solar Exp $
+# $Owl: Owl/packages/xinetd/xinetd.init,v 1.8 2005/11/16 13:32:46 solar Exp $
 #
 # chkconfig: 345 56 50
 # description: \

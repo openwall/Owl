@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gnupg/gnupg.spec,v 1.28 2005/10/24 03:06:24 solar Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.29 2005/11/16 13:09:47 solar Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg

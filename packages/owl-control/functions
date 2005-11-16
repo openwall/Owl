@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-control/functions,v 1.12 2005/05/26 23:03:56 ldv Exp $
+# $Owl: Owl/packages/owl-control/functions,v 1.13 2005/11/16 13:21:54 solar Exp $
 
 function define()
 {

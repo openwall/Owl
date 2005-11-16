@@ -1,5 +1,5 @@
 #%PAM-1.0
-# $Id: Owl/packages/SimplePAMApps/login.pam,v 1.12 2005/10/29 19:24:52 ldv Exp $
+# $Owl: Owl/packages/SimplePAMApps/login.pam,v 1.13 2005/11/16 13:34:48 solar Exp $
 auth       required	pam_securetty.so
 auth       include	system-auth
 auth       required	pam_nologin.so

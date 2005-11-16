@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/build/installworld.sh,v 1.26 2005/07/21 14:42:28 solar Exp $
+# $Owl: Owl/build/installworld.sh,v 1.27 2005/11/16 12:01:35 solar Exp $
 
 . installworld.conf
 

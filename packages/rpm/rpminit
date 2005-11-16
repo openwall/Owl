@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/rpm/rpminit,v 1.2 2004/09/10 07:29:54 galaxy Exp $
+# $Owl: Owl/packages/rpm/rpminit,v 1.3 2005/11/16 13:31:51 solar Exp $
 
 RPMMACROS=~/.rpmmacros
 RPMDIR=~/.rpm.d

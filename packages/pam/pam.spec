@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam/pam.spec,v 1.43 2005/10/29 18:04:08 ldv Exp $
+# $Owl: Owl/packages/pam/pam.spec,v 1.44 2005/11/16 13:28:57 solar Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam

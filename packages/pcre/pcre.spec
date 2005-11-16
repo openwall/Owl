@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pcre/pcre.spec,v 1.2 2005/11/08 08:09:26 solar Exp $
+# $Owl: Owl/packages/pcre/pcre.spec,v 1.3 2005/11/16 13:28:58 solar Exp $
 
 Summary: Perl-compatible regular expression library.
 Name: pcre

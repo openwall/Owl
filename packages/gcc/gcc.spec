@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gcc/gcc.spec,v 1.47 2005/10/24 03:06:23 solar Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.48 2005/11/16 13:09:46 solar Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.

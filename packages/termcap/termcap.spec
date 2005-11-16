@@ -1,4 +1,4 @@
-# $Id: Owl/packages/termcap/termcap.spec,v 1.6 2005/10/24 03:06:30 solar Exp $
+# $Owl: Owl/packages/termcap/termcap.spec,v 1.7 2005/11/16 13:32:45 solar Exp $
 
 Summary: The terminal feature database used by certain applications.
 Name: termcap

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vim/vim.spec,v 1.25 2005/10/24 03:06:32 solar Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.26 2005/11/16 13:32:45 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0

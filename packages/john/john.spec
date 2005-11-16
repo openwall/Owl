@@ -1,4 +1,4 @@
-# $Id: Owl/packages/john/john.spec,v 1.68 2005/11/12 16:27:13 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.69 2005/11/16 13:11:14 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john

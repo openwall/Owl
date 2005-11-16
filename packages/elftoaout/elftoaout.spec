@@ -1,4 +1,4 @@
-# $Id: Owl/packages/elftoaout/elftoaout.spec,v 1.9 2005/10/24 03:06:23 solar Exp $
+# $Owl: Owl/packages/elftoaout/elftoaout.spec,v 1.10 2005/11/16 12:21:36 solar Exp $
 
 Summary: A utility for converting ELF binaries to a.out binaries.
 Name: elftoaout

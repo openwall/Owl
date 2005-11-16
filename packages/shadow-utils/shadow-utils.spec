@@ -1,4 +1,4 @@
-# $Id: Owl/packages/shadow-utils/shadow-utils.spec,v 1.53 2005/10/29 19:27:46 ldv Exp $
+# $Owl: Owl/packages/shadow-utils/shadow-utils.spec,v 1.54 2005/11/16 13:31:52 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils

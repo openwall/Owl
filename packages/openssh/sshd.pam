@@ -1,5 +1,5 @@
 #%PAM-1.0
-# $Id: Owl/packages/openssh/sshd.pam,v 1.14 2005/10/29 19:25:59 ldv Exp $
+# $Owl: Owl/packages/openssh/sshd.pam,v 1.15 2005/11/16 13:21:53 solar Exp $
 auth       required	pam_userpass.so
 auth       required	pam_tcb.so use_first_pass shadow fork blank_nolog nodelay prefix=$2a$ count=8
 auth       required	pam_nologin.so

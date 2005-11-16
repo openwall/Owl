@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/rpm/gendiff,v 1.1 2005/04/02 00:13:38 solar Exp $
+# $Owl: Owl/packages/rpm/gendiff,v 1.2 2005/11/16 13:31:51 solar Exp $
 
 if [ $# -ne 2 ]; then
 	echo "Usage: ${0##*/} DIRECTORY DIFF-SUFFIX" >&2

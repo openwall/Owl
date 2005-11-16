@@ -1,4 +1,4 @@
-# $Id: Owl/packages/which/which.spec,v 1.9 2005/10/24 03:06:32 solar Exp $
+# $Owl: Owl/packages/which/which.spec,v 1.10 2005/11/16 13:32:46 solar Exp $
 
 Summary: Displays where a particular program in your path is located.
 Name: which

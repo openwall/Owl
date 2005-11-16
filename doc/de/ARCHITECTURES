@@ -84,4 +84,4 @@ optimiert.  Die Pakete für alphaev56 sind für EV56/PCA56 Prozessoren
 alpha Pakete nutzen.  Auf einem EV6+ (21264, 21264A) sollten
 die alphaev56 Pakete benutzt werden.
 
-$Id: Owl/doc/de/ARCHITECTURES,v 1.5 2005/10/03 11:48:01 schmidt Exp $
+$Owl: Owl/doc/de/ARCHITECTURES,v 1.6 2005/11/16 11:59:01 solar Exp $

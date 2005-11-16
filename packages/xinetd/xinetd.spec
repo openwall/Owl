@@ -1,4 +1,4 @@
-# $Id: Owl/packages/xinetd/xinetd.spec,v 1.34 2005/10/24 03:25:12 solar Exp $
+# $Owl: Owl/packages/xinetd/xinetd.spec,v 1.35 2005/11/16 13:32:46 solar Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd

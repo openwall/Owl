@@ -1,5 +1,5 @@
 #%PAM-1.0
-# $Id: Owl/packages/vixie-cron/crond.pam,v 1.4 2005/10/29 19:28:35 ldv Exp $
+# $Owl: Owl/packages/vixie-cron/crond.pam,v 1.5 2005/11/16 13:32:45 solar Exp $
 auth       required	pam_rootok.so
 account    include	system-auth
 password   required	pam_deny.so

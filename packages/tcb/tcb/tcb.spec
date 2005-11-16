@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tcb/tcb/tcb.spec,v 1.38 2005/10/24 03:06:30 solar Exp $
+# $Owl: Owl/packages/tcb/tcb/tcb.spec,v 1.39 2005/11/16 13:32:45 solar Exp $
 
 Summary: Libraries and tools implementing the tcb password shadowing scheme.
 Name: tcb

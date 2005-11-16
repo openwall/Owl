@@ -1,4 +1,4 @@
-# $Id: Owl/packages/postfix/postfix.spec,v 1.32 2005/11/13 20:12:06 ldv Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.33 2005/11/16 13:28:58 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix

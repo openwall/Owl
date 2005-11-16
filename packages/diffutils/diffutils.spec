@@ -1,4 +1,4 @@
-# $Id: Owl/packages/diffutils/diffutils.spec,v 1.15 2005/10/24 03:29:15 solar Exp $
+# $Owl: Owl/packages/diffutils/diffutils.spec,v 1.16 2005/11/16 12:21:03 solar Exp $
 
 Summary: A GNU collection of diff utilities.
 Name: diffutils

@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/vixie-cron/crontab.control,v 1.2 2000/08/20 02:59:33 solar Exp $
+# $Owl: Owl/packages/vixie-cron/crontab.control,v 1.3 2005/11/16 13:32:45 solar Exp $
 
 . /etc/control.d/functions
 

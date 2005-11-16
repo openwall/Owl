@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-control/owl-control.spec,v 1.18 2005/10/24 03:06:28 solar Exp $
+# $Owl: Owl/packages/owl-control/owl-control.spec,v 1.19 2005/11/16 13:21:54 solar Exp $
 
 Summary: A set of scripts to control installed system facilities.
 Name: owl-control

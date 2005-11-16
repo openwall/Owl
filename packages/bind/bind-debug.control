@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/bind/bind-debug.control,v 1.1 2005/09/23 21:17:25 ldv Exp $
+# $Owl: Owl/packages/bind/bind-debug.control,v 1.2 2005/11/16 12:19:20 solar Exp $
 
 . /etc/control.d/functions
 

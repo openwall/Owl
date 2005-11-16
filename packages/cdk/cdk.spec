@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cdk/cdk.spec,v 1.6 2005/10/24 03:06:22 solar Exp $
+# $Owl: Owl/packages/cdk/cdk.spec,v 1.7 2005/11/16 12:19:21 solar Exp $
 
 Summary: Curses Development Kit.
 Name: cdk

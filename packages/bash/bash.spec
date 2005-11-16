@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bash/bash.spec,v 1.29 2005/10/24 03:06:22 solar Exp $
+# $Owl: Owl/packages/bash/bash.spec,v 1.30 2005/11/16 12:19:20 solar Exp $
 
 Version: 2.05
 Name: bash

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libtermcap/libtermcap.spec,v 1.14 2005/10/24 03:06:25 solar Exp $
+# $Owl: Owl/packages/libtermcap/libtermcap.spec,v 1.15 2005/11/16 13:11:15 solar Exp $
 
 Summary: A basic system library for accessing the termcap database.
 Name: libtermcap

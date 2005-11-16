@@ -1,4 +1,4 @@
-# $Id: Owl/packages/psmisc/psmisc.spec,v 1.14 2005/10/24 03:06:29 solar Exp $
+# $Owl: Owl/packages/psmisc/psmisc.spec,v 1.15 2005/11/16 13:28:58 solar Exp $
 
 Summary: Utilities for managing processes on your system.
 Name: psmisc

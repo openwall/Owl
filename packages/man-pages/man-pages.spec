@@ -1,4 +1,4 @@
-# $Id: Owl/packages/man-pages/man-pages.spec,v 1.19 2005/10/24 03:06:27 solar Exp $
+# $Owl: Owl/packages/man-pages/man-pages.spec,v 1.20 2005/11/16 13:16:56 solar Exp $
 
 Summary: Manual (man) pages from the Linux Documentation Project.
 Name: man-pages

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dhcp/dhcp.spec,v 1.44 2005/10/24 03:06:22 solar Exp $
+# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.45 2005/11/16 12:21:03 solar Exp $
 
 %define BUILD_DHCP_CLIENT 0
 

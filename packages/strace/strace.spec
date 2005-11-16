@@ -1,4 +1,4 @@
-# $Id: Owl/packages/strace/strace.spec,v 1.20 2005/10/24 03:06:30 solar Exp $
+# $Owl: Owl/packages/strace/strace.spec,v 1.21 2005/11/16 13:31:52 solar Exp $
 
 Summary: Tracks and displays system calls associated with a running process.
 Name: strace

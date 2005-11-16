@@ -104,4 +104,4 @@ bereits installierten (falls vorhanden) verwenden.
 Nach Abschluss der Installation müssen die Dateisysteme noch manuell mittels
 umount(8) ausgehängt werden.  Danach kann das System sicher neugestartet werden.
 
-$Id: Owl/doc/de/INSTALL,v 1.13 2005/10/03 11:48:01 schmidt Exp $
+$Owl: Owl/doc/de/INSTALL,v 1.14 2005/11/16 11:59:01 solar Exp $

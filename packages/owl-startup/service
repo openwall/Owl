@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/owl-startup/service,v 1.4 2005/10/21 00:38:00 solar Exp $
+# $Owl: Owl/packages/owl-startup/service,v 1.5 2005/11/16 13:21:54 solar Exp $
 
 # This script is mostly compatible with Red Hat's service script,
 # version 0.91.  However, it is not so ugly and support for option

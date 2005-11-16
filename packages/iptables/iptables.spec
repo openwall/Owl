@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iptables/iptables.spec,v 1.20 2005/10/24 03:06:24 solar Exp $
+# $Owl: Owl/packages/iptables/iptables.spec,v 1.21 2005/11/16 13:11:14 solar Exp $
 
 %define BUILD_STATIC 0
 %define BUILD_IPV6 0

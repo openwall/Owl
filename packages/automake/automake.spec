@@ -1,4 +1,4 @@
-# $Id: Owl/packages/automake/automake.spec,v 1.13 2005/10/24 03:06:20 solar Exp $
+# $Owl: Owl/packages/automake/automake.spec,v 1.14 2005/11/16 12:19:20 solar Exp $
 
 %define BUILD_TEST 0
 

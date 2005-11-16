@@ -1,4 +1,4 @@
-# $Id: Owl/packages/sysklogd/sysklogd.spec,v 1.21 2005/10/24 03:06:30 solar Exp $
+# $Owl: Owl/packages/sysklogd/sysklogd.spec,v 1.22 2005/11/16 13:31:52 solar Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd

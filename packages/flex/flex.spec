@@ -1,4 +1,4 @@
-# $Id: Owl/packages/flex/flex.spec,v 1.11 2005/10/24 03:06:23 solar Exp $
+# $Owl: Owl/packages/flex/flex.spec,v 1.12 2005/11/16 12:21:37 solar Exp $
 
 Summary: A tool for creating scanners (text pattern recognizers).
 Name: flex

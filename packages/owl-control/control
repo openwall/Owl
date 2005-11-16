@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/owl-control/control,v 1.3 2002/11/03 01:24:35 solar Exp $
+# $Owl: Owl/packages/owl-control/control,v 1.4 2005/11/16 13:21:54 solar Exp $
 
 FACILITIES_DIR=/etc/control.d/facilities
 

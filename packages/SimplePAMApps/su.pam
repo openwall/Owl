@@ -1,5 +1,5 @@
 #%PAM-1.0
-# $Id: Owl/packages/SimplePAMApps/su.pam,v 1.10 2005/10/29 19:24:52 ldv Exp $
+# $Owl: Owl/packages/SimplePAMApps/su.pam,v 1.11 2005/11/16 13:34:48 solar Exp $
 auth       sufficient	pam_rootok.so
 #auth       required	pam_wheel.so use_uid group=wheel
 auth       include	system-auth

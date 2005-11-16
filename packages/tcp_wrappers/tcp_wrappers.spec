@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tcp_wrappers/tcp_wrappers.spec,v 1.14 2005/10/24 03:06:30 solar Exp $
+# $Owl: Owl/packages/tcp_wrappers/tcp_wrappers.spec,v 1.15 2005/11/16 13:32:45 solar Exp $
 
 Summary: A security tool which acts as a wrapper for network services.
 Name: tcp_wrappers

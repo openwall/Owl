@@ -1,4 +1,4 @@
-# $Id: Owl/packages/screen/screen.spec,v 1.38 2005/10/29 19:14:42 ldv Exp $
+# $Owl: Owl/packages/screen/screen.spec,v 1.39 2005/11/16 13:31:51 solar Exp $
 
 Summary: A screen manager that supports multiple sessions on one terminal.
 Name: screen

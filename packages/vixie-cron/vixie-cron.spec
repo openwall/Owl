@@ -1,4 +1,4 @@
-# $Id: Owl/packages/vixie-cron/vixie-cron.spec,v 1.43 2005/10/29 19:28:35 ldv Exp $
+# $Owl: Owl/packages/vixie-cron/vixie-cron.spec,v 1.44 2005/11/16 13:32:46 solar Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron

@@ -108,4 +108,4 @@ Ein uns bekanntes Problem liegt in den Sourcen zu den aktuellsten Versionen
 von RPM (neuer als die, die in PHL 9 verwendet werden) die NPTL verwenden.
 Diese Abhängigkeit ist in unserer Version von RPM gelöst.
 
-$Id: Owl/doc/de/REDHAT,v 1.2 2005/10/03 11:48:01 schmidt Exp $
+$Owl: Owl/doc/de/REDHAT,v 1.3 2005/11/16 11:59:01 solar Exp $

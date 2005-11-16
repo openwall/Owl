@@ -1,4 +1,4 @@
-# $Id: Owl/packages/chkconfig/chkconfig.spec,v 1.15 2005/10/24 03:06:22 solar Exp $
+# $Owl: Owl/packages/chkconfig/chkconfig.spec,v 1.16 2005/11/16 12:19:21 solar Exp $
 
 %define BUILD_NTSYSV 0
 %define INSTALL_ALTERNATIVES 0

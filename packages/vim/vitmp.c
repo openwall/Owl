@@ -6,7 +6,7 @@
  * Written by Solar Designer <solar@owl.openwall.com> and placed in the
  * public domain.
  *
- * $Id: Owl/packages/vim/vitmp.c,v 1.2 2002/04/24 23:11:34 solar Exp $
+ * $Owl: Owl/packages/vim/vitmp.c,v 1.3 2005/11/16 13:32:45 solar Exp $
  */
 #include <stdio.h>
 #include <unistd.h>

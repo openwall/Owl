@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mutt/mutt.spec,v 1.23 2005/10/24 03:06:27 solar Exp $
+# $Owl: Owl/packages/mutt/mutt.spec,v 1.24 2005/11/16 13:16:56 solar Exp $
 
 Summary: A feature-rich text-based mail user agent.
 Name: mutt

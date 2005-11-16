@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/gpm/gpm.init,v 1.8 2001/11/05 11:01:24 solar Exp $
+# $Owl: Owl/packages/gpm/gpm.init,v 1.9 2005/11/16 13:09:47 solar Exp $
 #
 # chkconfig: 2345 85 15
 # description: \

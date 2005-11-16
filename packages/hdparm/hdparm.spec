@@ -1,4 +1,4 @@
-# $Id: Owl/packages/hdparm/hdparm.spec,v 1.16 2005/10/24 03:06:24 solar Exp $
+# $Owl: Owl/packages/hdparm/hdparm.spec,v 1.17 2005/11/16 13:11:14 solar Exp $
 
 Summary: A utility for displaying and/or setting hard disk parameters.
 Name: hdparm

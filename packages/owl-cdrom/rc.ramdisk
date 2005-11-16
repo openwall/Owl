@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/owl-cdrom/rc.ramdisk,v 1.5 2003/10/24 00:01:45 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/rc.ramdisk,v 1.6 2005/11/16 13:21:54 solar Exp $
 
 echo "Setting up a RAM disk"
 

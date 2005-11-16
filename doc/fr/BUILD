@@ -117,4 +117,4 @@ Les paquets individuels peuvent être compilés ou re-compilés avec
 étrangers (SRPMs) compilés avec l'environnement de compilation de Owl vous
 avez aussi besoin d'inclure dans "nom" la partie numéro de version.
 
-$Id: Owl/doc/fr/BUILD,v 1.8 2003/08/09 10:09:54 ducamp Exp $
+$Owl: Owl/doc/fr/BUILD,v 1.9 2005/11/16 11:59:01 solar Exp $

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/kbd/kbd.spec,v 1.19 2005/10/24 21:54:52 galaxy Exp $
+# $Owl: Owl/packages/kbd/kbd.spec,v 1.20 2005/11/16 13:11:15 solar Exp $
 
 Summary: Tools for configuring the console.
 Name: kbd

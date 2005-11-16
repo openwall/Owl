@@ -107,4 +107,4 @@ The one problem we are aware of and have resolved is the source code
 for recent versions of RPM requiring NPTL.  We have resolved that
 dependency on NPTL in our build of RPM.
 
-$Id: Owl/doc/REDHAT,v 1.4 2005/10/01 23:04:05 solar Exp $
+$Owl: Owl/doc/REDHAT,v 1.5 2005/11/16 11:55:10 solar Exp $

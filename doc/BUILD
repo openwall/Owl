@@ -109,4 +109,4 @@ where "name" is the name of the source package.  For foreign packages
 (SRPMs) built with the Owl build environment you also need to include
 the version number part in "name".
 
-$Id: Owl/doc/BUILD,v 1.28 2005/11/07 16:07:11 solar Exp $
+$Owl: Owl/doc/BUILD,v 1.29 2005/11/16 11:59:01 solar Exp $

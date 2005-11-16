@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-etc/Attic/csh.cshrc,v 1.2 2001/02/04 23:01:53 solar Exp $
+# $Owl: Owl/packages/owl-etc/Attic/csh.cshrc,v 1.3 2005/11/16 13:21:54 solar Exp $
 
 if ($?prompt) then
 	if ($?tcsh) then

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/nc/nc.spec,v 1.9 2005/10/24 03:06:27 solar Exp $
+# $Owl: Owl/packages/nc/nc.spec,v 1.10 2005/11/16 13:21:53 solar Exp $
 
 Summary: Reads and writes data across network connections using TCP or UDP.
 Name: nc

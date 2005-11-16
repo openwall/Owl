@@ -1,5 +1,5 @@
 #%PAM-1.0
-# $Id: Owl/packages/shadow-utils/chage-chfn-chsh.pam,v 1.6 2005/10/29 19:27:46 ldv Exp $
+# $Owl: Owl/packages/shadow-utils/chage-chfn-chsh.pam,v 1.7 2005/11/16 13:31:52 solar Exp $
 auth       sufficient	pam_rootok.so
 auth       include	system-auth
 account    include	system-auth

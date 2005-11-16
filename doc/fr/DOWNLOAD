@@ -64,4 +64,4 @@ utiliser la compression avec chaque méthode d'accès au serveur CVS anonyme,
 typiquement en spécifiant l'option -z3 à CVS et/ou "Compression yes" dans le
 fichier de configuration du client SSH.
 
-$Id: Owl/doc/fr/DOWNLOAD,v 1.15 2005/07/14 16:36:39 solar Exp $
+$Owl: Owl/doc/fr/DOWNLOAD,v 1.16 2005/11/16 11:59:01 solar Exp $

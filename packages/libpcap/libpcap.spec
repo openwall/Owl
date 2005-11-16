@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libpcap/libpcap.spec,v 1.17 2005/11/10 00:17:05 solar Exp $
+# $Owl: Owl/packages/libpcap/libpcap.spec,v 1.18 2005/11/16 13:11:15 solar Exp $
 
 Summary: Network packet capture library.
 Name: libpcap

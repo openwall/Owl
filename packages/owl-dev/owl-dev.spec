@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-dev/owl-dev.spec,v 1.20 2005/10/24 03:06:28 solar Exp $
+# $Owl: Owl/packages/owl-dev/owl-dev.spec,v 1.21 2005/11/16 13:21:54 solar Exp $
 
 Summary: Initial set of device files and MAKEDEV, a script to manage them.
 Name: owl-dev

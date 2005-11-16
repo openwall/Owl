@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/postfix/postfix.init,v 1.4 2000/12/01 18:38:00 solar Exp $
+# $Owl: Owl/packages/postfix/postfix.init,v 1.5 2005/11/16 13:28:58 solar Exp $
 #
 # postfix      This shell script takes care of starting and stopping postfix.
 #

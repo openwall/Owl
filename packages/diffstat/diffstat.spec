@@ -1,4 +1,4 @@
-# $Id: Owl/packages/diffstat/diffstat.spec,v 1.9 2005/10/24 03:06:22 solar Exp $
+# $Owl: Owl/packages/diffstat/diffstat.spec,v 1.10 2005/11/16 12:21:03 solar Exp $
 
 Summary: A utility which provides statistics based on the output of diff.
 Name: diffstat

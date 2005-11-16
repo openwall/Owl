@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/owl-startup/rc.sysinit,v 1.16 2003/10/24 00:01:45 solar Exp $
+# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.17 2005/11/16 13:21:54 solar Exp $
 
 # Set the initial default search path for use by startup scripts.
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin

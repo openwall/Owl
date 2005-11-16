@@ -1,4 +1,4 @@
-# $Id: Owl/build/Makefile,v 1.17 2005/01/25 22:07:32 solar Exp $
+# $Owl: Owl/build/Makefile,v 1.18 2005/11/16 12:01:35 solar Exp $
 
 # The Owl branch to build and/or install, specified by its tag in the
 # CVS.  This should only be set to build and/or install a non-current

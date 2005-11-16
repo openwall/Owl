@@ -1,5 +1,5 @@
 #%PAM-1.0
-# $Id: Owl/packages/pam/other.pam,v 1.2 2005/10/29 17:25:16 ldv Exp $
+# $Owl: Owl/packages/pam/other.pam,v 1.3 2005/11/16 13:28:57 solar Exp $
 auth       required	pam_deny.so
 account    required	pam_deny.so
 password   required	pam_deny.so

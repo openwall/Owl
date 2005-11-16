@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gawk/gawk.spec,v 1.14 2005/10/24 03:06:23 solar Exp $
+# $Owl: Owl/packages/gawk/gawk.spec,v 1.15 2005/11/16 13:09:46 solar Exp $
 
 %define BUILD_PROFILE 0
 

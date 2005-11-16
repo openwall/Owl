@@ -1,4 +1,4 @@
-# $Id: Owl/packages/silo/silo.spec,v 1.12 2005/10/24 03:06:29 solar Exp $
+# $Owl: Owl/packages/silo/silo.spec,v 1.13 2005/11/16 13:31:52 solar Exp $
 
 Summary: Sparc Improved boot LOader.
 Name: silo

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libnids/libnids.spec,v 1.16 2005/10/24 03:29:15 solar Exp $
+# $Owl: Owl/packages/libnids/libnids.spec,v 1.17 2005/11/16 13:11:15 solar Exp $
 
 Summary: NIDS E-component.
 Name: libnids

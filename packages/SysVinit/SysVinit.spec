@@ -1,4 +1,4 @@
-# $Id: Owl/packages/SysVinit/SysVinit.spec,v 1.26 2005/10/24 17:21:14 galaxy Exp $
+# $Owl: Owl/packages/SysVinit/SysVinit.spec,v 1.27 2005/11/16 13:34:48 solar Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit

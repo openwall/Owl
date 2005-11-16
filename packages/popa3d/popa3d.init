@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/popa3d/popa3d.init,v 1.5 2005/05/26 16:24:29 solar Exp $
+# $Owl: Owl/packages/popa3d/popa3d.init,v 1.6 2005/11/16 13:28:58 solar Exp $
 #
 # chkconfig: - 50 50
 # description: \

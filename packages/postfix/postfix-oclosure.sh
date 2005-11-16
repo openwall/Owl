@@ -1,6 +1,6 @@
 #!/bin/sh -e
 #
-# $Id: Owl/packages/postfix/postfix-oclosure.sh,v 1.1 2005/06/30 18:18:30 ldv Exp $
+# $Owl: Owl/packages/postfix/postfix-oclosure.sh,v 1.2 2005/11/16 13:28:58 solar Exp $
 #
 # Written by Dmitry V. Levin and placed in the public domain.
 #

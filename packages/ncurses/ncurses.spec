@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ncurses/ncurses.spec,v 1.28 2005/10/24 03:06:27 solar Exp $
+# $Owl: Owl/packages/ncurses/ncurses.spec,v 1.29 2005/11/16 13:21:53 solar Exp $
 
 %define major 5
 %define oldmajor 4

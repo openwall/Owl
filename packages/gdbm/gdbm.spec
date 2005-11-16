@@ -1,4 +1,4 @@
-# $Id: Owl/packages/gdbm/gdbm.spec,v 1.14 2005/10/24 03:06:23 solar Exp $
+# $Owl: Owl/packages/gdbm/gdbm.spec,v 1.15 2005/11/16 13:09:46 solar Exp $
 
 Summary: A GNU set of database routines which use extensible hashing.
 Name: gdbm

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/patch/patch.spec,v 1.10 2005/11/13 17:02:54 solar Exp $
+# $Owl: Owl/packages/patch/patch.spec,v 1.11 2005/11/16 13:28:58 solar Exp $
 
 Summary: The GNU patch command, for modifying/upgrading files.
 Name: patch

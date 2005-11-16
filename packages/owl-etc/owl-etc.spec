@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-etc/owl-etc.spec,v 1.66 2005/10/24 03:06:28 solar Exp $
+# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.67 2005/11/16 13:21:54 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc

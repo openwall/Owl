@@ -91,4 +91,4 @@ processeurs EV56/PCA56 (21164A, 21164PC). Sur un processeur EV5 (21164) vous
 pouvez utiliser le paquet alpha ordinaire sous-optimal. Sur un EV6+ (21264,
 21264A), utilisez les paquets alphaev56.
 
-$Id: Owl/doc/fr/ARCHITECTURES,v 1.3 2002/10/14 08:52:25 ducamp Exp $
+$Owl: Owl/doc/fr/ARCHITECTURES,v 1.4 2005/11/16 11:59:01 solar Exp $

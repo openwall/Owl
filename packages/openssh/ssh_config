@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/ssh_config,v 1.9 2003/04/08 02:18:27 solar Exp $
+# $Owl: Owl/packages/openssh/ssh_config,v 1.10 2005/11/16 13:21:53 solar Exp $
 
 # This is the ssh client system-wide configuration file.  See
 # ssh_config(5) for more information.  This file provides defaults for

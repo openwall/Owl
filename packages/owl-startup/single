@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/owl-startup/single,v 1.1 2000/12/07 19:31:57 solar Exp $
+# $Owl: Owl/packages/owl-startup/single,v 1.2 2005/11/16 13:21:54 solar Exp $
 #
 # This file is executed by init(8) upon entering runlevel 1 (single user).
 # It should be installed into /etc/rc.d/rc1.d as S99single.

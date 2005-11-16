@@ -1,4 +1,4 @@
-# $Id: Owl/build/.rpmmacros,v 1.9 2005/10/19 22:55:24 solar Exp $
+# $Owl: Owl/build/.rpmmacros,v 1.10 2005/11/16 12:05:17 solar Exp $
 %_tmppath %home/tmp-work
 %_topdir %home/rpm-work-%number
 %buildroot %home/rpm-work-%number/buildroot

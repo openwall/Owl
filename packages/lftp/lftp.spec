@@ -1,4 +1,4 @@
-# $Id: Owl/packages/lftp/lftp.spec,v 1.28 2005/10/24 03:06:24 solar Exp $
+# $Owl: Owl/packages/lftp/lftp.spec,v 1.29 2005/11/16 13:11:15 solar Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp

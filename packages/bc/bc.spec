@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bc/bc.spec,v 1.12 2005/10/24 03:06:22 solar Exp $
+# $Owl: Owl/packages/bc/bc.spec,v 1.13 2005/11/16 12:19:20 solar Exp $
 
 Summary: GNU's bc (a numeric processing language) and dc (a calculator).
 Name: bc

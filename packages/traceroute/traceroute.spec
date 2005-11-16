@@ -1,4 +1,4 @@
-# $Id: Owl/packages/traceroute/traceroute.spec,v 1.16 2005/11/14 18:08:12 ldv Exp $
+# $Owl: Owl/packages/traceroute/traceroute.spec,v 1.17 2005/11/16 13:32:45 solar Exp $
 
 Summary: Traces the route taken by packets over a TCP/IP network.
 Name: traceroute

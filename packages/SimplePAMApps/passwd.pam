@@ -1,5 +1,5 @@
 #%PAM-1.0
-# $Id: Owl/packages/SimplePAMApps/passwd.pam,v 1.8 2005/10/29 19:24:52 ldv Exp $
+# $Owl: Owl/packages/SimplePAMApps/passwd.pam,v 1.9 2005/11/16 13:34:48 solar Exp $
 auth       include	system-auth
 account    include	system-auth
 password   include	system-auth

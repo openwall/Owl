@@ -1,5 +1,5 @@
 #%PAM-1.0
-# $Id: Owl/packages/vsftpd/vsftpd.pam,v 1.5 2005/10/29 19:29:21 ldv Exp $
+# $Owl: Owl/packages/vsftpd/vsftpd.pam,v 1.6 2005/11/16 13:32:46 solar Exp $
 auth       required	pam_userpass.so
 auth       required	pam_tcb.so use_first_pass shadow fork prefix=$2a$ count=8
 auth       required	pam_listfile.so item=user sense=deny file=/etc/ftpusers onerr=fail

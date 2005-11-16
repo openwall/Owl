@@ -1,4 +1,4 @@
-# $Id: Owl/packages/coreutils/coreutils.spec,v 1.15 2005/11/06 23:30:27 ldv Exp $
+# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.16 2005/11/16 12:19:21 solar Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils

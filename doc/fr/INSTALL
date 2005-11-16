@@ -89,4 +89,4 @@ Vous pouvez choisir de configurer le chargeur de démarrage disponible avec
 Owl (LILO ouSILO, dépendant de l'architecture), ou vous pouvez utiliser un
 chargeur de démarrage déjà installé sur le système (s'il y en a un).
 
-$Id: Owl/doc/fr/INSTALL,v 1.6 2003/08/09 10:09:54 ducamp Exp $
+$Owl: Owl/doc/fr/INSTALL,v 1.7 2005/11/16 11:59:02 solar Exp $

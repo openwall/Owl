@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cvs/cvs.spec,v 1.29 2005/11/14 01:30:44 ldv Exp $
+# $Owl: Owl/packages/cvs/cvs.spec,v 1.30 2005/11/16 12:19:21 solar Exp $
 
 Summary: A version control system.
 Name: cvs

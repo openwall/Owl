@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/bind/bind.init,v 1.4 2005/10/27 00:44:15 galaxy Exp $
+# $Owl: Owl/packages/bind/bind.init,v 1.5 2005/11/16 12:19:20 solar Exp $
 #
 # named           This shell script takes care of starting and stopping
 #                 named (BIND DNS server).

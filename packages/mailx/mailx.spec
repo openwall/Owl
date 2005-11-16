@@ -1,4 +1,4 @@
-# $Id: Owl/packages/mailx/mailx.spec,v 1.8 2005/10/24 03:06:27 solar Exp $
+# $Owl: Owl/packages/mailx/mailx.spec,v 1.9 2005/11/16 13:16:56 solar Exp $
 
 Summary: The /bin/mail program for sending e-mail messages.
 Name: mailx

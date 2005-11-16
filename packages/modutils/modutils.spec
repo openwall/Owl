@@ -1,4 +1,4 @@
-# $Id: Owl/packages/modutils/modutils.spec,v 1.23 2005/10/26 16:39:07 ldv Exp $
+# $Owl: Owl/packages/modutils/modutils.spec,v 1.24 2005/11/16 13:16:56 solar Exp $
 
 Summary: Kernel module utilities.
 Name: modutils

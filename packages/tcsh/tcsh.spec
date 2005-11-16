@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tcsh/tcsh.spec,v 1.19 2005/10/24 03:29:15 solar Exp $
+# $Owl: Owl/packages/tcsh/tcsh.spec,v 1.20 2005/11/16 13:32:45 solar Exp $
 
 Summary: An enhanced version of csh, the C shell.
 Name: tcsh

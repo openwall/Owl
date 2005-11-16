@@ -1,4 +1,4 @@
-# $Id: Owl/packages/patchutils/patchutils.spec,v 1.5 2005/10/24 03:06:28 solar Exp $
+# $Owl: Owl/packages/patchutils/patchutils.spec,v 1.6 2005/11/16 13:28:58 solar Exp $
 
 Summary: Patchutils is a small collection of programs that operate on patch files.
 Name: patchutils

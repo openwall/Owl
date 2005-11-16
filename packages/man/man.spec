@@ -1,4 +1,4 @@
-# $Id: Owl/packages/man/man.spec,v 1.20 2005/10/24 13:55:57 solar Exp $
+# $Owl: Owl/packages/man/man.spec,v 1.21 2005/11/16 13:16:56 solar Exp $
 
 Summary: A set of documentation tools: man, apropos and whatis.
 Name: man

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/slang/Attic/slang.spec,v 1.17 2005/10/24 03:25:12 solar Exp $
+# $Owl: Owl/packages/slang/Attic/slang.spec,v 1.18 2005/11/16 13:31:52 solar Exp $
 
 Summary: The shared library for the S-Lang extension language.
 Name: slang

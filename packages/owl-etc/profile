@@ -1,4 +1,4 @@
-# $Id: Owl/packages/owl-etc/Attic/profile,v 1.4 2003/04/15 14:20:09 solar Exp $
+# $Owl: Owl/packages/owl-etc/Attic/profile,v 1.5 2005/11/16 13:21:54 solar Exp $
 
 # It is recommended that this file be left unchanged to permit for upgrades,
 # and any local additions go into /etc/profile.d/local.sh.

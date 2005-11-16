@@ -1,4 +1,4 @@
-# $Id: Owl/packages/texinfo/texinfo.spec,v 1.24 2005/10/24 03:06:30 solar Exp $
+# $Owl: Owl/packages/texinfo/texinfo.spec,v 1.25 2005/11/16 13:32:45 solar Exp $
 
 %define BUILD_TEST 1
 

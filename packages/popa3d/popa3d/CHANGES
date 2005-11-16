@@ -101,4 +101,4 @@ code size.
 Added a popa3d(8) manual page based on the one Camiel Dobbelaar wrote
 for OpenBSD.
 
-$Id: Owl/packages/popa3d/popa3d/CHANGES,v 1.7 2005/05/26 16:01:15 solar Exp $
+$Owl: Owl/packages/popa3d/popa3d/CHANGES,v 1.8 2005/11/16 13:28:58 solar Exp $

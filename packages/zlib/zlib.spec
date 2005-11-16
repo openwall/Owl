@@ -1,4 +1,4 @@
-# $Id: Owl/packages/zlib/zlib.spec,v 1.12 2005/10/24 03:06:32 solar Exp $
+# $Owl: Owl/packages/zlib/zlib.spec,v 1.13 2005/11/16 13:32:46 solar Exp $
 
 Summary: The zlib compression and decompression library.
 Name: zlib

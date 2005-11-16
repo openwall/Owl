@@ -1,4 +1,4 @@
-# $Id: Owl/packages/time/time.spec,v 1.8 2005/10/24 03:06:30 solar Exp $
+# $Owl: Owl/packages/time/time.spec,v 1.9 2005/11/16 13:32:45 solar Exp $
 
 Summary: A GNU utility for monitoring a program's use of system resources.
 Name: time

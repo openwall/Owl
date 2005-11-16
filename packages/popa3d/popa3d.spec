@@ -1,4 +1,4 @@
-# $Id: Owl/packages/popa3d/popa3d.spec,v 1.47 2005/10/29 19:27:00 ldv Exp $
+# $Owl: Owl/packages/popa3d/popa3d.spec,v 1.48 2005/11/16 13:28:58 solar Exp $
 
 Summary: Post Office Protocol (POP3) server.
 Name: popa3d

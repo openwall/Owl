@@ -1,4 +1,4 @@
-# $Id: Owl/packages/elfutils-libelf/elfutils-libelf.spec,v 1.7 2005/10/24 03:06:23 solar Exp $
+# $Owl: Owl/packages/elfutils-libelf/elfutils-libelf.spec,v 1.8 2005/11/16 12:21:36 solar Exp $
 
 Summary: Library to read and write ELF files.
 Name: elfutils-libelf

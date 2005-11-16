@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bzip2/bzip2.spec,v 1.25 2005/10/24 03:06:22 solar Exp $
+# $Owl: Owl/packages/bzip2/bzip2.spec,v 1.26 2005/11/16 12:19:20 solar Exp $
 
 Summary: An extremely powerful file compression utility.
 Name: bzip2

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/quota/quota.spec,v 1.24 2005/11/13 03:49:29 ldv Exp $
+# $Owl: Owl/packages/quota/quota.spec,v 1.25 2005/11/16 13:31:51 solar Exp $
 
 Summary: System administration tools for monitoring users' disk usage.
 Name: quota

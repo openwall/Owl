@@ -1,4 +1,4 @@
-# $Id: Owl/packages/grep/grep.spec,v 1.16 2005/11/16 11:29:25 solar Exp $
+# $Owl: Owl/packages/grep/grep.spec,v 1.17 2005/11/16 13:09:47 solar Exp $
 
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep

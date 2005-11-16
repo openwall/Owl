@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tcb/tcb/libs/libnss_tcb.map,v 1.1 2005/08/23 15:52:43 ldv Exp $
+# $Owl: Owl/packages/tcb/tcb/libs/libnss_tcb.map,v 1.2 2005/11/16 13:32:45 solar Exp $
 
 {
   global:

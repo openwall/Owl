@@ -1,4 +1,4 @@
-# $Id: Owl/packages/perl/perl.spec,v 1.36 2005/11/10 00:00:32 solar Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.37 2005/11/16 13:28:58 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0

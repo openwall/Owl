@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openntpd/openntpd.spec,v 1.9 2005/10/24 03:06:27 solar Exp $
+# $Owl: Owl/packages/openntpd/openntpd.spec,v 1.10 2005/11/16 13:21:53 solar Exp $
 
 Summary: NTP time synchronization server and client.
 Name: openntpd

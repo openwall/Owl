@@ -1,4 +1,4 @@
-# $Id: Owl/packages/logrotate/logrotate.spec,v 1.11 2005/10/24 03:06:26 solar Exp $
+# $Owl: Owl/packages/logrotate/logrotate.spec,v 1.12 2005/11/16 13:11:15 solar Exp $
 
 Summary: Rotates, compresses, removes and mails system log files.
 Name: logrotate

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/netlist/Attic/netlist.spec,v 1.11 2005/10/24 03:06:27 solar Exp $
+# $Owl: Owl/packages/netlist/Attic/netlist.spec,v 1.12 2005/11/16 13:21:53 solar Exp $
 
 Summary: A program to list active Internet connections and sockets.
 Name: netlist

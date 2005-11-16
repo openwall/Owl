@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/iptables/iptables.init,v 1.4 2003/09/15 17:16:04 solar Exp $
+# $Owl: Owl/packages/iptables/iptables.init,v 1.5 2005/11/16 13:11:14 solar Exp $
 #
 # chkconfig: 2345 08 92
 # description: \

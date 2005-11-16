@@ -1,4 +1,4 @@
-# $Id: Owl/packages/openssh/openssh.spec,v 1.87 2005/10/29 19:25:59 ldv Exp $
+# $Owl: Owl/packages/openssh/openssh.spec,v 1.88 2005/11/16 13:21:53 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh

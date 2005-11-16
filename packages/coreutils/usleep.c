@@ -4,7 +4,7 @@
  *
  * There's absolutely no warranty.
  *
- * $Id: Owl/packages/coreutils/usleep.c,v 1.5 2005/05/07 22:26:06 solar Exp $
+ * $Owl: Owl/packages/coreutils/usleep.c,v 1.6 2005/11/16 12:19:21 solar Exp $
  */
 
 #ifndef _GNU_SOURCE

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/stmpclean/stmpclean.spec,v 1.13 2005/10/24 03:06:30 solar Exp $
+# $Owl: Owl/packages/stmpclean/stmpclean.spec,v 1.14 2005/11/16 13:31:52 solar Exp $
 
 Summary: A safe temporary directory cleaner.
 Name: stmpclean

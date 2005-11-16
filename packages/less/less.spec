@@ -1,4 +1,4 @@
-# $Id: Owl/packages/less/less.spec,v 1.15 2005/10/24 03:06:24 solar Exp $
+# $Owl: Owl/packages/less/less.spec,v 1.16 2005/11/16 13:11:15 solar Exp $
 
 Summary: A text file browser similar to more, but better.
 Name: less

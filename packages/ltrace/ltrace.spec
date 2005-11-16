@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ltrace/ltrace.spec,v 1.20 2005/10/24 03:06:27 solar Exp $
+# $Owl: Owl/packages/ltrace/ltrace.spec,v 1.21 2005/11/16 13:11:15 solar Exp $
 
 Summary: Tracks runtime library calls from dynamically linked executables.
 Name: ltrace

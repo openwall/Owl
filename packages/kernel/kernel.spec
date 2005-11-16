@@ -1,4 +1,4 @@
-# $Id: Owl/packages/kernel/kernel.spec,v 1.17 2005/10/24 03:06:24 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.18 2005/11/16 13:11:15 solar Exp $
 
 Summary: Fake Linux kernel package for Red Hat Linux compatibility.
 Name: kernel

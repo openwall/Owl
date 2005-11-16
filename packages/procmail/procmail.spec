@@ -1,4 +1,4 @@
-# $Id: Owl/packages/procmail/procmail.spec,v 1.11 2005/10/30 21:04:30 ldv Exp $
+# $Owl: Owl/packages/procmail/procmail.spec,v 1.12 2005/11/16 13:28:58 solar Exp $
 
 Summary: The procmail mail processing program.
 Name: procmail

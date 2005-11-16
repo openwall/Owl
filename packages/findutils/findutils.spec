@@ -1,4 +1,4 @@
-# $Id: Owl/packages/findutils/findutils.spec,v 1.19 2005/11/15 23:49:25 ldv Exp $
+# $Owl: Owl/packages/findutils/findutils.spec,v 1.20 2005/11/16 12:21:36 solar Exp $
 
 Summary: The GNU versions of find utilities (find and xargs).
 Name: findutils

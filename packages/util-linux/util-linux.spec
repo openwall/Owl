@@ -1,4 +1,4 @@
-# $Id: Owl/packages/util-linux/util-linux.spec,v 1.39 2005/11/11 18:18:06 solar Exp $
+# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.40 2005/11/16 13:32:45 solar Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1

@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iputils/iputils.spec,v 1.24 2005/11/14 15:26:02 ldv Exp $
+# $Owl: Owl/packages/iputils/iputils.spec,v 1.25 2005/11/16 13:11:14 solar Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils

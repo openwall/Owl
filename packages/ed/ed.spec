@@ -1,4 +1,4 @@
-# $Id: Owl/packages/ed/ed.spec,v 1.18 2005/10/24 03:06:23 solar Exp $
+# $Owl: Owl/packages/ed/ed.spec,v 1.19 2005/11/16 12:21:36 solar Exp $
 
 Summary: The GNU line editor.
 Name: ed

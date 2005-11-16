@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bind/bind.spec,v 1.14 2005/10/27 00:44:15 galaxy Exp $
+# $Owl: Owl/packages/bind/bind.spec,v 1.15 2005/11/16 12:19:20 solar Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}

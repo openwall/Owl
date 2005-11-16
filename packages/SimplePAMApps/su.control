@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/SimplePAMApps/su.control,v 1.3 2005/09/02 17:41:21 ldv Exp $
+# $Owl: Owl/packages/SimplePAMApps/su.control,v 1.4 2005/11/16 13:34:48 solar Exp $
 
 . /etc/control.d/functions
 

@@ -209,4 +209,4 @@ It used to take a bit more CPU for less POP3 sessions.
 -- 
 Solar Designer <solar at openwall.com>
 
-$Id: Owl/packages/popa3d/popa3d/DESIGN,v 1.4 2003/03/10 01:41:32 solar Exp $
+$Owl: Owl/packages/popa3d/popa3d/DESIGN,v 1.5 2005/11/16 13:28:58 solar Exp $

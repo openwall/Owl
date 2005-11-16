@@ -1,4 +1,4 @@
-# $Id: Owl/packages/iproute2/iproute2.spec,v 1.21 2005/10/24 03:06:24 solar Exp $
+# $Owl: Owl/packages/iproute2/iproute2.spec,v 1.22 2005/11/16 13:11:14 solar Exp $
 
 %define ver 2.4.7
 %define snapshot ss020116

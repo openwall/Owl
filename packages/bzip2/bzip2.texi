@@ -1,5 +1,5 @@
 \input texinfo  @c                                  -*- Texinfo -*-
-@c $Id: Owl/packages/bzip2/bzip2.texi,v 1.1 2005/05/06 22:40:06 ldv Exp $
+@c $Owl: Owl/packages/bzip2/bzip2.texi,v 1.2 2005/11/16 12:19:21 solar Exp $
 @setfilename bzip2.info
 
 @ignore

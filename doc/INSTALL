@@ -100,4 +100,4 @@ already installed on the system (if any).
 Once the installation is complete, make sure to manually unmount the
 filesystems with umount(8) prior to rebooting the system.
 
-$Id: Owl/doc/INSTALL,v 1.15 2005/08/08 19:20:59 solar Exp $
+$Owl: Owl/doc/INSTALL,v 1.16 2005/11/16 11:59:01 solar Exp $

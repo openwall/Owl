@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/openntpd/openntpd.control,v 1.2 2005/10/20 17:28:25 galaxy Exp $
+# $Owl: Owl/packages/openntpd/openntpd.control,v 1.3 2005/11/16 13:21:53 solar Exp $
 
 . /etc/control.d/functions
 

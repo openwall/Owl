@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/sysklogd/syslog.init,v 1.5 2004/01/04 23:01:55 mci Exp $
+# $Owl: Owl/packages/sysklogd/syslog.init,v 1.6 2005/11/16 13:31:52 solar Exp $
 #
 # chkconfig: 2345 30 99
 # description: \

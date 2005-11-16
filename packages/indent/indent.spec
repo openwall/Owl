@@ -1,4 +1,4 @@
-# $Id: Owl/packages/indent/indent.spec,v 1.1 2005/11/11 15:29:49 solar Exp $
+# $Owl: Owl/packages/indent/indent.spec,v 1.2 2005/11/16 13:11:14 solar Exp $
 
 Summary: A GNU program for formatting C code.
 Name: indent

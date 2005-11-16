@@ -11,7 +11,7 @@
  * Copyright (c) 2003 by Solar Designer <solar@owl.openwall.com>.
  * See LICENSE.
  *
- * $Id: Owl/packages/msulogin/msulogin/sulogin.c,v 1.2 2003/05/23 01:07:07 solar Exp $
+ * $Owl: Owl/packages/msulogin/msulogin/sulogin.c,v 1.3 2005/11/16 13:16:56 solar Exp $
  */
 
 #include <stdio.h>

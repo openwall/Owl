@@ -1,4 +1,4 @@
-# $Id: Owl/packages/libutempter/libutempter.spec,v 1.9 2005/10/24 03:29:15 solar Exp $
+# $Owl: Owl/packages/libutempter/libutempter.spec,v 1.10 2005/11/16 13:11:15 solar Exp $
 
 Summary: A privileged helper for utmp/wtmp updates.
 Name: libutempter

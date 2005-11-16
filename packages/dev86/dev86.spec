@@ -1,4 +1,4 @@
-# $Id: Owl/packages/dev86/dev86.spec,v 1.20 2005/10/24 03:06:22 solar Exp $
+# $Owl: Owl/packages/dev86/dev86.spec,v 1.21 2005/11/16 12:21:03 solar Exp $
 
 Summary: A real mode 80x86 assembler and linker.
 Name: dev86

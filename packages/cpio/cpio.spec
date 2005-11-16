@@ -1,4 +1,4 @@
-# $Id: Owl/packages/cpio/cpio.spec,v 1.21 2005/11/15 23:37:48 ldv Exp $
+# $Owl: Owl/packages/cpio/cpio.spec,v 1.22 2005/11/16 12:19:21 solar Exp $
 
 Summary: A GNU archiving program.
 Name: cpio

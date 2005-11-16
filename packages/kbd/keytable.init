@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/kbd/keytable.init,v 1.2 2003/05/01 21:08:32 mci Exp $
+# $Owl: Owl/packages/kbd/keytable.init,v 1.3 2005/11/16 13:11:15 solar Exp $
 #
 # Load keytable
 #

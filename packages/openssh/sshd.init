@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: Owl/packages/openssh/sshd.init,v 1.6 2003/10/24 04:02:26 solar Exp $
+# $Owl: Owl/packages/openssh/sshd.init,v 1.7 2005/11/16 13:21:53 solar Exp $
 #
 # chkconfig: 2345 55 25
 # description: \

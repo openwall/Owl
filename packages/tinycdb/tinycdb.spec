@@ -1,4 +1,4 @@
-# $Id: Owl/packages/tinycdb/tinycdb.spec,v 1.3 2005/11/08 07:35:48 solar Exp $
+# $Owl: Owl/packages/tinycdb/tinycdb.spec,v 1.4 2005/11/16 13:32:45 solar Exp $
 
 Summary: Shared library and command line tool for managing constant databases.
 Name: tinycdb

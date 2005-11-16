@@ -1,4 +1,4 @@
-# $Id: Owl/packages/pam/Attic/modules.map,v 1.1 2005/08/23 16:20:38 ldv Exp $
+# $Owl: Owl/packages/pam/Attic/modules.map,v 1.2 2005/11/16 13:28:57 solar Exp $
 
 {
   global:

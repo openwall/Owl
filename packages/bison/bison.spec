@@ -1,4 +1,4 @@
-# $Id: Owl/packages/bison/bison.spec,v 1.23 2005/10/24 03:06:22 solar Exp $
+# $Owl: Owl/packages/bison/bison.spec,v 1.24 2005/11/16 12:19:20 solar Exp $
 
 %define BUILD_TEST 0
 
