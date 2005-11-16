@@ -1,4 +1,4 @@
-2005-08-08  Dmitry V. Levin  <ldv@altlinux.org>
+2005-08-08  Dmitry V. Levin  <ldv at altlinux.org>
 
 	Implement detailed quotactl(2) deparser for Linux.
 	* Makefile.am (strace_SOURCES): Add quota.c.
@@ -23,11 +23,11 @@ diff -upk.orig strace-4.5.13.orig/quota.c strace-4.5.13/quota.c
 +++ strace-4.5.13/quota.c	2005-08-08 16:35:30 +0000
 @@ -0,0 +1,732 @@
 +/*
-+ * Copyright (c) 1991, 1992 Paul Kranenburg <pk@cs.few.eur.nl>
-+ * Copyright (c) 1993 Branko Lankester <branko@hacktic.nl>
-+ * Copyright (c) 1993, 1994, 1995, 1996 Rick Sladkey <jrs@world.std.com>
-+ * Copyright (c) 1996-1999 Wichert Akkerman <wichert@cistron.nl>
-+ * Copyright (c) 2005 Dmitry V. Levin <ldv@altlinux.org>
++ * Copyright (c) 1991, 1992 Paul Kranenburg <pk at cs.few.eur.nl>
++ * Copyright (c) 1993 Branko Lankester <branko at hacktic.nl>
++ * Copyright (c) 1993, 1994, 1995, 1996 Rick Sladkey <jrs at world.std.com>
++ * Copyright (c) 1996-1999 Wichert Akkerman <wichert at cistron.nl>
++ * Copyright (c) 2005 Dmitry V. Levin <ldv at altlinux.org>
 + * All rights reserved.
 + *
 + * Redistribution and use in source and binary forms, with or without

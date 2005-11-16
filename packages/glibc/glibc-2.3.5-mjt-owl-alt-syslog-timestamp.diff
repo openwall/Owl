@@ -1,5 +1,5 @@
-2005-05-08  Michael Tokarev <mjt@corpit.ru>
-	    Dmitry V. Levin  <ldv@altlinux.org>
+2005-05-08  Michael Tokarev <mjt at corpit.ru>
+	    Dmitry V. Levin  <ldv at altlinux.org>
 
 	Use ctime_r(3) instead of strftime_r(3) in syslog(3) so that month
 	names will not depend on current locale settings.  This patch also

@@ -1,4 +1,4 @@
-2005-05-11  Dmitry V. Levin <ldv@altlinux.org>
+2005-05-11  Dmitry V. Levin <ldv at altlinux.org>
 
 	Fix race conditions in code which creates regular files, creates
 	directories and devices or sets its permissions, in copy-in and

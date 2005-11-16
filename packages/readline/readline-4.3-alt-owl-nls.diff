@@ -1,4 +1,4 @@
-2002-12-14  Dmitry V. Levin <ldv@altlinux.org>
+2002-12-14  Dmitry V. Levin <ldv at altlinux.org>
 	* nls.c (_rl_init_eightbit): Instead of setting the LC_CTYPE
 	locale category from environment variables, query it from
 	the program's current locale.

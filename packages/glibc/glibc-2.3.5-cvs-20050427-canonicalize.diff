@@ -1,10 +1,10 @@
-2005-04-27  Ulrich Drepper  <drepper@redhat.com>
+2005-04-27  Ulrich Drepper  <drepper at redhat.com>
 
 	* stdlib/test-canon.c: Make doesExist a directory and add more tests
 	for the new error case.
 
-2004-06-02  Dmitry V. Levin  <ldv@altlinux.org>
-	    Ranjani Murthy <ranmur@gmail.com>
+2004-06-02  Dmitry V. Levin  <ldv at altlinux.org>
+	    Ranjani Murthy <ranmur at gmail.com>
 
 	* stdlib/canonicalize.c (__realpath): Change realpath(3) to
 	return NULL and set errno to ENOTDIR for such pathnames like

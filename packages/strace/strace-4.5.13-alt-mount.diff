@@ -1,4 +1,4 @@
-2005-08-08  Dmitry V. Levin  <ldv@altlinux.org>
+2005-08-08  Dmitry V. Levin  <ldv at altlinux.org>
 
 	* system.c [LINUX] (MS_MGC_VAL): New macro.
 	[LINUX] (mount_flags): Add it.

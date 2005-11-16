@@ -1,4 +1,4 @@
-2005-05-03  Dmitry V. Levin <ldv@altlinux.org>
+2005-05-03  Dmitry V. Levin <ldv at altlinux.org>
 
 	Fix directory traversal issues in copy-in and copy-pass modes
 	(CAN-2005-1229).

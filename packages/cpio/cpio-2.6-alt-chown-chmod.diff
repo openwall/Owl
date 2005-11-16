@@ -1,4 +1,4 @@
-2005-05-04  Dmitry V. Levin <ldv@altlinux.org>
+2005-05-04  Dmitry V. Levin <ldv at altlinux.org>
 
 	Fix race conditions in code which sets ownership and mode of
 	regular files in copy-in and copy-pass modes (CAN-2005-1111).

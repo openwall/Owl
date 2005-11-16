@@ -1,5 +1,5 @@
-2005-05-05  Brian Mays <brian@debian.org>
-	    Dmitry V. Levin <ldv@altlinux.org>
+2005-05-05  Brian Mays <brian at debian.org>
+	    Dmitry V. Levin <ldv at altlinux.org>
 
 	* src/util.c (find_inode_file): Fix typos causing function to
 	occasionally miss inodes and, therefore, to copy out the same

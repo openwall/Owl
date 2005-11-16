@@ -1,5 +1,5 @@
-2005-05-04  Peter Vrabec <pvrabec@redhat.com>
-	    Dmitry V. Levin <ldv@altlinux.org>
+2005-05-04  Peter Vrabec <pvrabec at redhat.com>
+	    Dmitry V. Levin <ldv at altlinux.org>
 
 	Fix LFS support issues.
 

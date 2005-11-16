@@ -1,5 +1,5 @@
-2005-05-08  Solar Designer <solar@openwall.com>
-	    Dmitry V. Levin  <ldv@altlinux.org>
+2005-05-08  Solar Designer <solar at openwall.com>
+	    Dmitry V. Levin  <ldv at altlinux.org>
 
 	When vsyslog(3)/syslog(3) is called by a privileged program
 	without a preceding call to openlog(3), don't blindly trust

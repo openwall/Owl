@@ -1,6 +1,6 @@
-2005-01-09  Marcin Bohosiewicz <marcus@pld-linux.org>
-	    Jakub Bogusz <qboosh@pld-linux.org>
-	    Dmitry V. Levin <ldv@altlinux.org>
+2005-01-09  Marcin Bohosiewicz <marcus at pld-linux.org>
+	    Jakub Bogusz <qboosh at pld-linux.org>
+	    Dmitry V. Levin <ldv at altlinux.org>
 
 	* configure.ac: Link with -lnsl and -lsocket only when necessary.
 	Merge two AC_CONFIG_FILES sections.
