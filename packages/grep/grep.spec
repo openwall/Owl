@@ -1,4 +1,4 @@
-# $Id: Owl/packages/grep/grep.spec,v 1.15 2005/11/15 23:54:56 galaxy Exp $
+# $Id: Owl/packages/grep/grep.spec,v 1.16 2005/11/16 11:29:25 solar Exp $
 
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
@@ -28,7 +28,7 @@ BuildRoot: /override/%name-%version
 The GNU versions of commonly used grep utilities.  grep searches
 through textual input for lines which contain a match to a specified
 pattern and then prints the matching lines.  GNU's grep utilities
-include grep, egrep and fgrep.
+include grep, egrep, and fgrep.
 
 %prep
 %setup -q
@@ -46,7 +46,7 @@ include grep, egrep and fgrep.
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-%configure  --without-included-regex
+%configure --without-included-regex
 %__make
 %__make check
 
@@ -83,9 +83,9 @@ fi
 %_prefix/share/locale/*/*/grep.*
 
 %changelog
-* Thu Nov 10 2004 Michail Litvak <mci-at-owl.openwall.com> 1:2.5.1a-owl1
+* Thu Nov 10 2005 Michail Litvak <mci-at-owl.openwall.com> 1:2.5.1a-owl1
 - 2.5.1a
-- Added patches from Debian and RedHat.
+- Added patches from Debian and Red Hat.
 - Built with -Wall, fixed some warnings.
 - Added make check.
 
