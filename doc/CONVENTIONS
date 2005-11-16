@@ -8,8 +8,9 @@ Our conventions for RPM spec files are quite similar to Red Hat's, but
 a few differences and additional requirements for native Owl packages
 do exist.
 
-1. Start the spec file with a comment containing the CVS Id keyword,
-followed by an empty line.
+1. Start the spec file with a comment containing the dollar-Owl-dollar
+tag ("Owl" is configured to be a replacement of the "CVSHeader" keyword
+in our CVS repository), followed by an empty line.
 
 2. The preferred tag names (whenever synonyms exist) and order of tags
 is: Summary, Name, Version, Release, Epoch, License, Group, URL,
@@ -252,4 +253,4 @@ then require the proper version of mktemp(1):
 As usual, use Requires, PreReq, and/or BuildRequires depending on
 where in the package the uses of mktemp occur.
 
-$Owl: Owl/doc/CONVENTIONS,v 1.28 2005/11/16 11:59:01 solar Exp $
+$Owl: Owl/doc/CONVENTIONS,v 1.29 2005/11/16 16:49:43 solar Exp $
