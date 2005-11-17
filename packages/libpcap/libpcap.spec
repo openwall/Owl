@@ -1,18 +1,25 @@
-# $Owl: Owl/packages/libpcap/libpcap.spec,v 1.18 2005/11/16 13:11:15 solar Exp $
+# $Owl: Owl/packages/libpcap/libpcap.spec,v 1.19 2005/11/17 22:31:16 ldv Exp $
 
 Summary: Network packet capture library.
 Name: libpcap
-Version: 0.8.1
-Release: owl4
+Version: 0.9.4
+Release: owl1
 Epoch: 14
-License: GPL
+License: BSD
 Group: System Environment/Libraries
 URL: http://www.tcpdump.org
-Source: http://www.tcpdump.org/release/%name-%version.tar.gz
-Patch0: libpcap-0.8.1-pld-shared.diff
-Patch1: libpcap-0.8.1-nmap-alt-owl-linux-honor-timeout.diff
-Patch2: libpcap-0.8.1-owl-align.diff
+Source0: http://www.tcpdump.org/release/libpcap-%version.tar.gz
+Source1: libpcap.map
+Patch0: libpcap-0.9.4-nmap-alt-owl-linux-honor-timeout.diff
+Patch1: libpcap-0.9.4-owl-align.diff
+Patch2: libpcap-0.9.4-owl-static.diff
+Patch3: libpcap-0.9.4-rh-ppp.diff
+Patch4: libpcap-0.9.4-deb-man.diff
 PreReq: /sbin/ldconfig
+%define soname libpcap.so.0
+%define compat_sonames libpcap.so.0.8.2 libpcap.so.0.8.3 libpcap.so.0.9.4
+# Additional provides for better binary compatibility with Fedora.
+Provides: %compat_sonames
 BuildRequires: flex, bison
 BuildRoot: /override/%name-%version
 
@@ -37,43 +44,61 @@ Header files and development documentation for libpcap.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
+%patch4 -p1
+install -pm644 %_sourcedir/libpcap.map .
+bzip2 -9k CHANGES
 
 %build
 %configure \
 	--with-pcap=linux \
 	--enable-ipv6
-%__make
+# First build shared,
+%__make CCOPT="%optflags -fPIC `getconf LFS_CFLAGS`"
+mkdir shared
+gcc -shared -o shared/libpcap.so.%version \
+	-Wl,-soname,%soname -Wl,--version-script,libpcap.map \
+	-Wl,-whole-archive,libpcap.a,-no-whole-archive
+
+# then static.
+%__make clean
+%__make CCOPT="%optflags `getconf LFS_CFLAGS`"
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot{%_libdir,%_mandir/man3}
+%makeinstall
 
-%__make install \
-	DESTDIR=%buildroot
+install -pm644 shared/libpcap.so.%version %buildroot%_libdir/
+for n in %soname %compat_sonames libpcap.so.1 libpcap.so; do
+	[ -f %buildroot%_libdir/$n ] ||
+		ln -s libpcap.so.%version %buildroot%_libdir/$n
+done
 
 mkdir -p %buildroot%_includedir/net
 ln -s ../pcap-bpf.h %buildroot%_includedir/net/bpf.h
-
-# XXX: (GM): We have to find a universal way to do the following:
-ln -s %name.so.0.8 %buildroot%_libdir/%name.so.1
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
 %files
-%defattr(644,root,root,755)
-%doc README CHANGES CREDITS
-%attr(755,root,root) %_libdir/lib*.so.*
+%defattr(-,root,root,755)
+%doc CHANGES.bz2 CREDITS LICENSE README
+%_libdir/lib*.so.*
 
 %files devel
-%defattr(644,root,root,755)
-%attr(755,root,root) %_libdir/lib*.so
+%defattr(-,root,root,755)
+%_libdir/lib*.so
 %_includedir/*.h
 %_includedir/net/*.h
 %_mandir/man*/*
 %_libdir/lib*.a
 
 %changelog
+* Fri Nov 18 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 14:0.9.4-owl1
+- Updated to 0.9.4.
+- Reworked shared and static libraries build method.
+- Restricted list of global symbols exported by the library.
+
 * Thu Nov 10 2005 Solar Designer <solar-at-owl.openwall.com> 14:0.8.1-owl4
 - Bumped the Epoch to 14 (yuck) for Fedora and RHEL compatibility.
 

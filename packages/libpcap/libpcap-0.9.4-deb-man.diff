@@ -1,0 +1,31 @@
+--- libpcap-0.9.4/pcap.3.orig	2005-09-07 08:29:17 +0000
++++ libpcap-0.9.4/pcap.3	2005-11-17 17:08:34 +0000
+@@ -215,7 +215,7 @@ is called to open a ``savefile'' for rea
+ .I fname
+ specifies the name of the file to open. The file has
+ the same format as those used by
+-.B tcpdump(1)
++.B tcpdump(8)
+ and
+ .BR tcpslice(1) .
+ The name "-" in a synonym for
+@@ -437,7 +437,9 @@ of \-1 processes all the packets receive
+ live capture, or all the packets in the file when reading a
+ ``savefile''.
+ .I callback
+-specifies a routine to be called with three arguments:
++specifies a 
++.I pcap_handler
++routine to be called with three arguments:
+ a
+ .I u_char
+ pointer which is passed in from
+@@ -1278,7 +1280,7 @@ is returned on error.
+ closes the ``savefile.''
+ .PP
+ .SH SEE ALSO
+-tcpdump(1), tcpslice(1)
++tcpdump(8), tcpslice(1)
+ .SH AUTHORS
+ The original authors are:
+ .LP

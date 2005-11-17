@@ -1,0 +1,10 @@
+--- libpcap-0.9.4/gencode.c.orig	2005-09-05 09:08:04 +0000
++++ libpcap-0.9.4/gencode.c	2005-11-17 11:11:48 +0000
+@@ -6014,6 +6014,7 @@ gen_inbound(dir)
+ 	 */
+ 	switch (linktype) {
+ 	case DLT_SLIP:
++	case DLT_PPP:
+ 		b0 = gen_relation(BPF_JEQ,
+ 			  gen_load(Q_LINK, gen_loadi(0), 1),
+ 			  gen_loadi(0),

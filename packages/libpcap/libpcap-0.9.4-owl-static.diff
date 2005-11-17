@@ -1,0 +1,35 @@
+--- libpcap-0.9.4/optimize.c.orig	2005-04-04 08:42:18 +0000
++++ libpcap-0.9.4/optimize.c	2005-11-17 12:25:58 +0000
+@@ -146,7 +146,7 @@ static void opt_dump(struct block *);
+ static int n_blocks;
+ struct block **blocks;
+ static int n_edges;
+-struct edge **edges;
++static struct edge **edges;
+ 
+ /*
+  * A bit vector set representation of the dominators.
+@@ -154,8 +154,8 @@ struct edge **edges;
+  */
+ static int nodewords;
+ static int edgewords;
+-struct block **levels;
+-bpf_u_int32 *space;
++static struct block **levels;
++static bpf_u_int32 *space;
+ #define BITS_PER_WORD (8*sizeof(bpf_u_int32))
+ /*
+  * True if a is in uset {p}
+@@ -559,9 +559,9 @@ struct vmapinfo {
+ 	bpf_int32 const_val;
+ };
+ 
+-struct vmapinfo *vmap;
+-struct valnode *vnode_base;
+-struct valnode *next_vnode;
++static struct vmapinfo *vmap;
++static struct valnode *vnode_base;
++static struct valnode *next_vnode;
+ 
+ static void
+ init_val()

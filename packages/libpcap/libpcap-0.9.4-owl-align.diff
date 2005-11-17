@@ -1,6 +1,6 @@
---- libpcap-0.8.1/bpf/net/bpf_filter.c.orig	Sat Nov 15 23:26:49 2003
-+++ libpcap-0.8.1/bpf/net/bpf_filter.c	Fri Feb 13 00:34:51 2004
-@@ -80,18 +80,9 @@
+--- libpcap-0.9.4/bpf/net/bpf_filter.c.orig	2003-11-15 23:24:07 +0000
++++ libpcap-0.9.4/bpf/net/bpf_filter.c	2005-11-17 11:17:04 +0000
+@@ -80,19 +80,10 @@ static const char rcsid[] _U_ =
  #define int32 bpf_int32
  #define u_int32 bpf_u_int32
  
@@ -17,7 +17,8 @@
 +#if !defined(LBL_ALIGN) && \
 +	!defined(__i386__) && !defined(__x86_64__) && !defined(__vax__)
  #define LBL_ALIGN
--#endif
  #endif
+-#endif
  
  #ifndef LBL_ALIGN
+ #ifndef WIN32
