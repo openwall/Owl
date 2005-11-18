@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.63 2005/11/16 13:31:51 solar Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.64 2005/11/18 15:51:48 solar Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -11,7 +11,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl10
+Release: owl11
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -471,6 +471,9 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Fri Nov 18 2005 Solar Designer <solar-at-owl.openwall.com> 4.2-owl11
+- Added public domain statements to the rpminit script and its man page.
+
 * Sat Nov 05 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl10
 - Fixed macro files which appeared to be incomplete due to outdated
 vendor autodetection code in configure scripts.
