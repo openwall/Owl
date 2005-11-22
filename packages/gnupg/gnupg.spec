@@ -1,17 +1,22 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.29 2005/11/16 13:09:47 solar Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.30 2005/11/22 09:40:09 mci Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
-Version: 1.2.6
+Version: 1.4.2
 Release: owl1
 License: GPL
 Group: Applications/Cryptography
 URL: http://www.gnupg.org
-Source: ftp://ftp.gnupg.org/GnuPG/gnupg/%name-%version.tar.bz2
-Patch0: gnupg-1.2.2-fw-secret-key-checks.diff
+Source: ftp://ftp.gnupg.org/gcrypt/gnupg/%name-%version.tar.bz2
+Patch0: gnupg-1.4.2-alt-always-trust.diff
+Patch1: gnupg-1.4.2-alt-cp1251.diff
+Patch2: gnupg-1.4.2-alt-getkey-i18n.diff
+Patch3: gnupg-1.4.2-up-zero-length-mpi-fix.diff
+Patch4: gnupg-1.4.2-fw-secret-key-checks.diff
+Patch5: gnupg-1.4.2-rh-keygen.diff
 PreReq: /sbin/install-info
 Provides: gpg, openpgp
-BuildRequires: zlib-devel, bison, texinfo
+BuildRequires: zlib-devel, bzip2-devel, texinfo, readline-devel
 BuildRequires: rpm-build >= 0:4
 BuildRoot: /override/%name-%version
 
@@ -25,19 +30,18 @@ only IDEA for symmetric-key encryption, which is patented worldwide).
 
 %prep
 %setup -q
-rm zlib/*
-cat > zlib/Makefile.in << EOF
-all:
-install:
-EOF
 %patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
 
 %build
-unset LINGUAS || :
 %configure \
 	--with-static-rnd=linux \
 	--with-mailprog=/usr/sbin/sendmail
-make
+%__make
 
 %install
 mkdir -p %buildroot%_libdir/%name
@@ -45,17 +49,21 @@ mkdir -p %buildroot%_libdir/%name
 sed 's,\.\./g[0-9\.]*/,,g' tools/lspgpot > lspgpot
 install -m 755 lspgpot %buildroot%_bindir/lspgpot
 
+# Move localized manpages to FHS compliant locations
+mkdir -p %buildroot%_mandir/ru/man1
+mv %buildroot%_mandir/man1/gpg.ru.* %buildroot%_mandir/ru/man1/
+
 %post
-/sbin/install-info %_infodir/gpg.info.gz %_infodir/dir \
+/sbin/install-info %_infodir/gpg.info %_infodir/dir \
 	--entry "* GnuPG: (gpg).                                 Encryption and signing tool."
-/sbin/install-info %_infodir/gpgv.info.gz %_infodir/dir \
+/sbin/install-info %_infodir/gpgv.info %_infodir/dir \
 	--entry "* gpgv: (gpgv).                                 GnuPG signature verification tool."
 
 %preun
 if [ $1 -eq 0 ]; then
-        /sbin/install-info --delete %_infodir/gpg.info.gz %_infodir/dir \
+        /sbin/install-info --delete %_infodir/gpg.info %_infodir/dir \
 		--entry "* GnuPG: (gpg).                                 Encryption and signing tool."
-        /sbin/install-info --delete %_infodir/gpgv.info.gz %_infodir/dir \
+        /sbin/install-info --delete %_infodir/gpgv.info %_infodir/dir \
 		--entry "* gpgv: (gpgv).                                 GnuPG signature verification tool."
 fi
 
@@ -73,6 +81,7 @@ fi
 %_libdir/%name
 %_mandir/man1/gpg.*
 %_mandir/man1/gpgv.*
+%_mandir/ru/man1/gpg.*
 %_mandir/man7/gnupg.*
 %_infodir/gpg.*
 %_infodir/gpgv.*
@@ -84,6 +93,10 @@ fi
 %exclude %_infodir/dir
 
 %changelog
+* Sat Nov 19 2005 Michail Litvak <mci-at-owl.openwall.com> 1.4.2-owl1
+- 1.4.2
+- Imported patches from ALT, Red Hat, Debian.
+
 * Fri Dec 03 2004 Michail Litvak <mci-at-owl.openwall.com> 1.2.6-owl1
 - 1.2.6
 - Dropped patch which was included into upstream.

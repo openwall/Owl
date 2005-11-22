@@ -1,0 +1,23 @@
+--- gnupg-1.4.2/g10/g10.c.orig	2005-07-22 15:58:08.000000000 +0000
++++ gnupg-1.4.2/g10/g10.c	2005-11-18 22:52:04.000000000 +0000
+@@ -3011,7 +3011,7 @@
+ 	break;
+       case aExportOwnerTrust: rc = setup_trustdb( 0, trustdb_name ); break;
+       case aListTrustDB: rc = setup_trustdb( argc? 1:0, trustdb_name ); break;
+-      default: rc = setup_trustdb(1, trustdb_name ); break;
++      default: rc = setup_trustdb( opt.trust_model != TM_ALWAYS, trustdb_name ); break;
+     }
+     if( rc )
+ 	log_error(_("failed to initialize the TrustDB: %s\n"), g10_errstr(rc));
+--- gnupg-1.4.2/g10/trustdb.c.orig	2005-07-18 17:30:16.000000000 +0000
++++ gnupg-1.4.2/g10/trustdb.c	2005-11-18 22:52:04.000000000 +0000
+@@ -1057,6 +1057,9 @@
+   u32 kid[2];
+   PKT_public_key *main_pk;
+ 
++  if (opt.trust_model == TM_ALWAYS)
++    return TRUST_ULTIMATE;
++
+   if(uid)
+     namehash_from_uid(uid);
+ 

@@ -1,0 +1,76 @@
+--- gnupg-1.4.2/g10/getkey.c.orig	2005-06-18 11:29:47.000000000 +0000
++++ gnupg-1.4.2/g10/getkey.c	2005-11-18 22:55:34.000000000 +0000
+@@ -26,6 +26,11 @@
+ #include <string.h>
+ #include <assert.h>
+ #include <ctype.h>
++
++#ifdef HAVE_LANGINFO_CODESET
++#include <langinfo.h>
++#endif
++
+ #include "util.h"
+ #include "packet.h"
+ #include "memory.h"
+@@ -162,6 +167,41 @@
+ }
+ 
+ 
++static const char *
++get_user_id_not_found_msg (void)
++{
++	const char *retval;
++	char   *orig_codeset = NULL;
++
++#ifdef ENABLE_NLS
++	orig_codeset = bind_textdomain_codeset (PACKAGE, NULL);
++#ifdef HAVE_LANGINFO_CODESET
++	if (!orig_codeset)
++		orig_codeset = nl_langinfo (CODESET);
++#endif
++	if (orig_codeset)
++	{
++		orig_codeset = m_strdup (orig_codeset);
++		if (!bind_textdomain_codeset (PACKAGE, "utf-8"))
++		{
++			m_free (orig_codeset);
++			orig_codeset = NULL;
++		}
++	}
++#endif
++
++	retval = _("[User ID not found]");
++
++#ifdef ENABLE_NLS
++	if (orig_codeset)
++		bind_textdomain_codeset (PACKAGE, orig_codeset);
++#endif
++	m_free (orig_codeset);
++
++	return retval;
++}
++
++
+ /*
+  * Return the user ID from the given keyblock.
+  * We use the primary uid flag which has been set by the merge_selfsigs
+@@ -182,9 +222,7 @@
+             return k->pkt->pkt.user_id->name;
+         }
+     } 
+-    /* fixme: returning translatable constants instead of a user ID is 
+-     * not good because they are probably not utf-8 encoded. */
+-    s = _("[User ID not found]");
++    s = get_user_id_not_found_msg ();
+     *uidlen = strlen (s);
+     return s;
+ }
+@@ -2756,7 +2794,7 @@
+             }
+         }
+     } while( ++pass < 2 && !get_pubkey( NULL, keyid ) );
+-    p = m_strdup( _("[User ID not found]") );
++    p = m_strdup( get_user_id_not_found_msg() );
+     *rn = strlen(p);
+     return p;
+ }
