@@ -1,22 +1,23 @@
-# $Owl: Owl/packages/vsftpd/vsftpd.spec,v 1.19 2005/11/16 13:32:46 solar Exp $
+# $Owl: Owl/packages/vsftpd/vsftpd.spec,v 1.20 2005/11/28 00:27:17 ldv Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
-Version: 1.2.1
-Release: owl0.3
+Version: 2.0.3
+Release: owl1
 License: GPL
 Group: System Environment/Daemons
 URL: http://vsftpd.beasts.org
 # The primary site for releases is ftp://ferret.lmh.ox.ac.uk/pub/linux/
-Source0: ftp://ftp.beasts.org/users/cevans/vsftpd-%{version}pre1.tar.gz
+Source0: ftp://ftp.beasts.org/users/cevans/vsftpd-%version.tar.gz
 Source1: vsftpd.eps.gz
 Source2: vsftpd.pam
 Source3: vsftpd.xinetd
 Source4: vsftpd.logrotate
-Patch0: vsftpd-1.2.1pre1-owl-alt-defaults.diff
-Patch1: vsftpd-1.2.1pre1-owl-pam_userpass.diff
-Patch2: vsftpd-1.2.1pre1-owl-warnings.diff
-Patch3: vsftpd-1.2.2-alt-doc.diff
+Patch0: vsftpd-2.0.3-owl-pam_userpass.diff
+Patch1: vsftpd-2.0.3-owl-warnings.diff
+Patch2: vsftpd-2.0.3-suse-owl-tz.diff
+Patch3: vsftpd-2.0.3-owl-alt-defaults.diff
+Patch4: vsftpd-2.0.3-alt-owl-man.diff
 Requires: logrotate, pam >= 0:0.80-owl2, pam_userpass, tcb, xinetd, /var/empty
 Provides: ftpserver
 BuildRequires: pam-devel, pam_userpass-devel, libcap-devel
@@ -34,10 +35,11 @@ program has been carefully designed to be resilient to attack.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 install -p -m 644 %_sourcedir/vsftpd.eps.gz .
 
 %build
-make CFLAGS="%optflags -Wall" LIBS="-lcap -lpam -lpam_userpass"
+make CFLAGS="%optflags -Wall -W -Wshadow" LIBS="-lcap -lpam -lpam_userpass"
 
 %install
 rm -rf %buildroot
@@ -81,6 +83,10 @@ mkdir -m 755 /home/ftp &> /dev/null || :
 %_mandir/man8/vsftpd.8*
 
 %changelog
+* Sun Nov 27 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.0.3-owl1
+- Updated to 2.0.3.
+- Fixed the problem with timezone in chroot.
+
 * Sat Oct 29 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.2.1-owl0.3
 - Changed PAM config file to include system-auth for PAM account and
 session management.
