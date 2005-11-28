@@ -489,15 +489,6 @@ virtual hosting environments.)
 Reject or support long usernames in crontab(1).
 
 
-	vsftpd.
-
-[PRIORITY: medium]
-[ASSIGNED: ldv@]
-Update to latest release, see if that fixes the problem with timezone
-used when logging (currently, with some FTP sessions, some timestamps
-are in local time while others are in UTC).
-
-
 	whoson.
 
 [PRIORITY: medium]
@@ -525,4 +516,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Owl: Owl/doc/TODO,v 1.138 2005/11/17 22:34:15 ldv Exp $
+$Owl: Owl/doc/TODO,v 1.139 2005/11/28 00:30:06 ldv Exp $
