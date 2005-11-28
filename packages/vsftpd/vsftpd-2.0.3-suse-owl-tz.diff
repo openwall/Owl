@@ -12,33 +12,38 @@ calls with localtime_r(3) will not help to fix the issue.
 
 --- vsftpd-2.0.3.orig/sysutil.c	2005-03-11 16:51:15 +0000
 +++ vsftpd-2.0.3/sysutil.c	2005-11-27 21:54:53 +0000
-@@ -2347,11 +2347,25 @@
- void
- vsf_sysutil_chroot(const char* p_root_path)
- {
-+  char envtz[sizeof("UTC-::") + sizeof(long)*3 + 2*sizeof(int)*3];
-+  long hour;
-+  int min, sec;
-   int retval = chroot(p_root_path);
-   if (retval != 0)
+@@ -2352,6 +2352,30 @@ vsf_sysutil_chroot(const char* p_root_path)
    {
      die("chroot");
    }
-+  hour = s_timezone;
-+  if (s_timezone < 0)
-+    hour = -hour;
-+  sec = hour % 60;
-+  hour /= 60;
-+  min = hour % 60;
-+  hour /= 60;
-+  if (s_timezone < 0)
-+    hour = -hour;
-+  snprintf(envtz, sizeof(envtz) - 1, "UTC%+ld:%d:%d", hour, min, sec);
-+  setenv("TZ", envtz, 0);
++  if (s_timezone)
++  {
++    char envtz[sizeof("UTC-hh:mm:ss")];
++    int hour, min, sec;
++
++    hour = s_timezone;
++    if (hour < 0)
++    {
++      hour = -hour;
++    }
++    if (hour < 25*60*60)
++    {
++      sec = hour % 60;
++      hour /= 60;
++      min = hour % 60;
++      hour /= 60;
++      if (s_timezone < 0)
++      {
++        hour = -hour;
++      }
++      snprintf(envtz, sizeof(envtz), "UTC%+d:%d:%d", hour, min, sec);
++      setenv("TZ", envtz, 1);
++    }
++  }
  }
  
  unsigned int
-@@ -2382,16 +2396,12 @@
+@@ -2382,16 +2406,12 @@
  void
  vsf_sysutil_tzset(void)
  {
