@@ -1,15 +1,14 @@
-# $Owl: Owl/packages/pcre/pcre.spec,v 1.3 2005/11/16 13:28:58 solar Exp $
+# $Owl: Owl/packages/pcre/pcre.spec,v 1.4 2005/11/30 13:04:57 ldv Exp $
 
 Summary: Perl-compatible regular expression library.
 Name: pcre
 Version: 6.4
-Release: owl1
+Release: owl2
 License: BSD
 Group: System Environment/Libraries
 URL: http://www.pcre.org
 Source0: ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-%version.tar.bz2
 Source1: pcre-config.1
-Source2: zpcregrep
 Patch0: pcre-6.3-deb-pcreposix.diff
 Patch1: pcre-6.3-deb-pcregrep.diff
 Patch2: pcre-6.3-deb-pcretest.diff
@@ -69,21 +68,28 @@ bzip2 -9fk ChangeLog
 rm -rf %buildroot
 %__make install DESTDIR=%buildroot
 
-install -pm644 %_sourcedir/pcre-config.1 %buildroot%_mandir/man1/
-install -pm755 %_sourcedir/zpcregrep %buildroot%_bindir/
-ln -s pcregrep.1.gz %buildroot%_mandir/man1/zpcregrep.1.gz
+# Relocate shared libraries from %_libdir/ to /%_lib/.
+mkdir %buildroot/%_lib
+for f in %buildroot%_libdir/*.so; do
+	t=`objdump -p "$f" |awk '/SONAME/ {print $2}'`
+	[ -n "$t" ]
+	ln -sf ../../%_lib/"$t" "$f"
+done
+mv %buildroot%_libdir/*.so.* %buildroot/%_lib/
 
-rm -f %buildroot%_libdir/*.la
+install -pm644 %_sourcedir/pcre-config.1 %buildroot%_mandir/man1/
+
+rm %buildroot%_bindir/pcregrep
+rm %buildroot%_mandir/man1/pcregrep.*
+rm %buildroot%_libdir/*.la
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
 %files
 %defattr(-,root,root)
-%_bindir/*pcregrep
 %_bindir/pcretest
-%_libdir/*.so.*
-%_mandir/man1/*pcregrep.*
+/%_lib/*.so.*
 %_mandir/man1/pcretest.*
 %doc AUTHORS ChangeLog.bz2 LICENCE NEWS README
 
@@ -98,5 +104,9 @@ rm -f %buildroot%_libdir/*.la
 %_mandir/man3/*
 
 %changelog
+* Wed Nov 30 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 6.4-owl2
+- Relocated shared libraries from %_libdir/ to /%_lib/.
+- Moved pcregrep to grep package.
+
 * Mon Nov 07 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 6.4-owl1
 - Initial build for Openwall GNU/*/Linux, based on ALT package.
