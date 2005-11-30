@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/pcre/pcre.spec,v 1.4 2005/11/30 13:04:57 ldv Exp $
+# $Owl: Owl/packages/pcre/pcre.spec,v 1.5 2005/11/30 13:10:59 ldv Exp $
 
 Summary: Perl-compatible regular expression library.
 Name: pcre
@@ -10,11 +10,10 @@ URL: http://www.pcre.org
 Source0: ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-%version.tar.bz2
 Source1: pcre-config.1
 Patch0: pcre-6.3-deb-pcreposix.diff
-Patch1: pcre-6.3-deb-pcregrep.diff
-Patch2: pcre-6.3-deb-pcretest.diff
-Patch3: pcre-6.3-alt-Makefile.diff
-Patch4: pcre-6.4-owl-testdata.diff
-Patch5: pcre-5.0-rh-libdir.diff
+Patch1: pcre-6.3-deb-pcretest.diff
+Patch2: pcre-6.3-alt-Makefile.diff
+Patch3: pcre-6.4-owl-testdata.diff
+Patch4: pcre-5.0-rh-libdir.diff
 BuildRequires: autoconf, automake, libtool, sed >= 4.1.1
 BuildRoot: /override/%name-%version
 
@@ -48,7 +47,6 @@ This package contains PCRE development libraries and header files.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
 
 # Fix configure.in; bundled one is broken.
 sed -i '/^AC_LIBTOOL_WIN32_DLL/ d;s/AM_PROG_LIBTOOL/AC_PROG_LIBTOOL/' configure.in
