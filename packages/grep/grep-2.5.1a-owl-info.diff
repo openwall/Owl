@@ -5,7 +5,7 @@
  @ifinfo
  @direntry
 -* grep: (grep).                   print lines matching a pattern.
-+* grep: (grep).                                 print lines matching a pattern.
++* grep: (grep).                                 Print lines matching a pattern.
  @end direntry
  This file documents @command{grep}, a pattern matching engine.
  
