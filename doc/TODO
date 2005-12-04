@@ -281,11 +281,6 @@ Talk to PAM rather than invoke passwd(1).  With the ncurses UI, display
 prompts and messages with the appropriate CDK widgets.  Buffer multiple
 subsequent messages like the old passwdlg.c did.
 
-[PRIORITY: low]
-[ASSIGNED: croco@]
-Color support for the ncurses/cdk-based UI.  Auto-detect supporting
-terminals in a way similar to that seen in our ls(1) patch.
-
 
 	owl-startup.
 
@@ -516,4 +511,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Owl: Owl/doc/TODO,v 1.139 2005/11/28 00:30:06 ldv Exp $
+$Owl: Owl/doc/TODO,v 1.140 2005/12/04 14:32:27 solar Exp $
