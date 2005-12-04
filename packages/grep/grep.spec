@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/grep/grep.spec,v 1.17 2005/11/16 13:09:47 solar Exp $
+# $Owl: Owl/packages/grep/grep.spec,v 1.18 2005/12/04 23:17:32 ldv Exp $
 
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
 Version: 2.5.1a
-Release: owl1
+Release: owl2
 Epoch: 1
 License: GPL
 Group: Applications/Text
@@ -18,8 +18,8 @@ Patch23: grep-2.5.1a-deb-owl-charclass-bracket.diff
 Patch24: grep-2.5.1a-deb-owl-man.diff
 Patch30: grep-2.5.1a-owl-info.diff
 Patch31: grep-2.5.1a-owl-fixes.diff
+Patch32: grep-2.5.1a-owl-program_name.diff
 PreReq: /sbin/install-info
-Prefix: %_prefix
 BuildRequires: pcre-devel
 BuildRequires: texinfo, gettext, sed
 BuildRoot: /override/%name-%version
@@ -42,47 +42,53 @@ include grep, egrep, and fgrep.
 %patch24 -p1
 %patch30 -p1
 %patch31 -p1
+%patch32 -p1
+bzip2 -9k ChangeLog
 
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-%configure --without-included-regex
+# The regex.h must be kept in sync with --without-included-regex.
+install -pm644 %_includedir/regex.h lib/
+# Bundled error.c is outdated.
+: >lib/error.c
+%configure --bindir=/bin --without-included-regex
 %__make
 %__make check
 
 %install
 rm -rf %buildroot
-%makeinstall \
-	LDFLAGS=-s \
-	prefix=%buildroot%_prefix exec_prefix=%buildroot
-mkdir -p %buildroot/bin
-mv %buildroot%_prefix/bin/* %buildroot/bin/
-rm -rf %buildroot%_prefix/bin
+%makeinstall bindir=%buildroot/bin LDFLAGS=-s
 
-# Use symlinks for egrep and fgrep
+# Use symlinks for egrep, fgrep and pcregrep
 ln -sf grep %buildroot/bin/egrep
 ln -sf grep %buildroot/bin/fgrep
+ln -sf grep %buildroot/bin/pcregrep
+ln -s grep.1.gz %buildroot%_mandir/man1/pcregrep.1.gz
 
-# Remove unpackaged files
-rm %buildroot%_infodir/dir
+# Remove unpackaged files if any
+rm -f %buildroot%_infodir/dir
 
 %post
-/sbin/install-info %_infodir/grep.info.gz %_infodir/dir
+/sbin/install-info %_infodir/grep.info %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/grep.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/grep.info %_infodir/dir
 fi
 
 %files
 %defattr(-,root,root)
-%doc ABOUT-NLS AUTHORS THANKS TODO NEWS README ChangeLog
+%doc AUTHORS ChangeLog.bz2 NEWS README THANKS TODO
 /bin/*
 %_infodir/*.info*
 %_mandir/*/*
 %_prefix/share/locale/*/*/grep.*
 
 %changelog
+* Mon Dec 05 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.5.1a-owl2
+- Packaged pcregrep.
+
 * Thu Nov 10 2005 Michail Litvak <mci-at-owl.openwall.com> 1:2.5.1a-owl1
 - 2.5.1a
 - Added patches from Debian and Red Hat.

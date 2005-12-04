@@ -1,0 +1,30 @@
+--- grep-2.5.1a/src/grep.c.orig	2005-12-02 22:38:03 +0000
++++ grep-2.5.1a/src/grep.c	2005-12-02 22:40:05 +0000
+@@ -1300,11 +1300,6 @@ main (int argc, char **argv)
+   if (program_name && strrchr (program_name, '/'))
+     program_name = strrchr (program_name, '/') + 1;
+ 
+-  if (!strcmp(program_name, "egrep"))
+-    setmatcher ("egrep");
+-  if (!strcmp(program_name, "fgrep"))
+-    setmatcher ("fgrep");
+-
+ #if defined(__MSDOS__) || defined(_WIN32)
+   /* DOS and MS-Windows use backslashes as directory separators, and usually
+      have an .exe suffix.  They also have case-insensitive filesystems.  */
+@@ -1330,6 +1325,15 @@ main (int argc, char **argv)
+     }
+ #endif
+ 
++  if (!program_name)
++    program_name = "grep";
++  else if (!strcmp(program_name, "egrep"))
++    setmatcher ("egrep");
++  else if (!strcmp(program_name, "fgrep"))
++    setmatcher ("fgrep");
++  else if (!strcmp(program_name, "pcregrep"))
++    setmatcher ("perl");
++
+   keys = NULL;
+   keycc = 0;
+   with_filenames = 0;
