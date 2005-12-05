@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/procps/Attic/procps.spec,v 1.29 2005/12/05 19:06:26 ldv Exp $
+# $Owl: Owl/packages/procps/Attic/procps.spec,v 1.30 2005/12/05 19:09:16 ldv Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
@@ -84,7 +84,7 @@ rm -rf %buildroot
 %_mandir/man?/*
 
 %changelog
-* Mon Dec 05 2005 Dmitry V. Levin <ldv@altlinux.org> 3.2.5-owl7
+* Mon Dec 05 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.2.5-owl7
 - Changed top's default view to summary when only one CPU is installed.
 
 * Mon Oct 31 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.2.5-owl6
