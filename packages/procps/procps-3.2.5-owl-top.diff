@@ -57,7 +57,7 @@ diff -upk.orig procps-3.2.5.orig/top.c procps-3.2.5/top.c
  
 -      if (CHKw(Curwin, View_CPUSUM)) {
 +      if (CHKw(Curwin, View_CPUSUM)
-+          || (CHKw(Curwin, View_CPUOPT) && (Cpu_tot > 4))) {
++          || (CHKw(Curwin, View_CPUOPT) && (Cpu_tot < 2 || Cpu_tot > 4))) {
           // display just the 1st /proc/stat line
 -         summaryhlp(&smpcpu[Cpu_tot], "Cpu(s):");
 +         if (Cpu_tot > 1)

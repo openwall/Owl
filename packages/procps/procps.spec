@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/procps/Attic/procps.spec,v 1.28 2005/11/16 13:28:58 solar Exp $
+# $Owl: Owl/packages/procps/Attic/procps.spec,v 1.29 2005/12/05 19:06:26 ldv Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
 Version: 3.2.5
-Release: owl6
+Release: owl7
 License: GPL and LGPL
 Group: System Environment/Base
 URL: http://procps.sf.net
@@ -84,6 +84,9 @@ rm -rf %buildroot
 %_mandir/man?/*
 
 %changelog
+* Mon Dec 05 2005 Dmitry V. Levin <ldv@altlinux.org> 3.2.5-owl7
+- Changed top's default view to summary when only one CPU is installed.
+
 * Mon Oct 31 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.2.5-owl6
 - Fixed array subscript type warnings.
 
