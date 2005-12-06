@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.37 2005/11/16 13:28:58 solar Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.38 2005/12/06 23:56:02 ldv Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -17,15 +17,16 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.8.3
-Release: owl6
+Release: owl7
 Epoch: 2
 License: GPL
 Group: Development/Languages
 Source: ftp://ftp.perl.org/pub/CPAN/src/perl-%version.tar.bz2
-Patch0: perl-5.8.3-owl-disable-suidperl.diff
-Patch1: perl-5.8.3-owl-tmp.diff
-Patch2: perl-5.8.3-owl-vitmp.diff
-Patch3: perl-5.8.3-owl-rmtree.diff
+Patch0: perl-5.8.3-cvs-20051202-sprintf.diff
+Patch1: perl-5.8.3-owl-disable-suidperl.diff
+Patch2: perl-5.8.3-owl-tmp.diff
+Patch3: perl-5.8.3-owl-vitmp.diff
+Patch4: perl-5.8.3-owl-rmtree.diff
 %if %KERNEL_CONFIG_HARDEN_SHM
 Patch10: perl-5.8.3-owl-tests-shm.diff
 %endif
@@ -118,6 +119,7 @@ introduce security holes.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 %if %KERNEL_CONFIG_HARDEN_SHM
 %patch10 -p1
 %endif
@@ -274,6 +276,10 @@ find %buildroot%_libdir/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Tue Dec 06 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2:5.8.3-owl7
+- Backported upstream fix for a potential integer overflow in format
+string functionality (CVE-2005-3962).
+
 * Thu Nov 10 2005 Solar Designer <solar-at-owl.openwall.com> 2:5.8.3-owl6
 - Corrected the removal of "$SAFEDIR/a.out" in c2ph.PL (fix from Fedora Legacy
 pointed out by Pekka Savola).
