@@ -12,6 +12,15 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2005/12/06	Package: perl
+Backported upstream fix for a potential integer overflow in perl format
+string functionality.  Third-party software which passes untrusted input
+into format strings may allow attackers to overwrite arbitrary memory
+in the Perl interpreter and possibly execute arbitrary code via format
+string specifiers with large values.
+Reference:
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2005-3962
+
 2005/11/27	vsftpd
 Updated to 2.0.3.
 
@@ -731,4 +740,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Owl: Owl/doc/CHANGES-2.0,v 1.174 2005/11/28 00:30:06 ldv Exp $
+$Owl: Owl/doc/CHANGES-2.0,v 1.175 2005/12/07 22:03:59 ldv Exp $
