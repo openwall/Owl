@@ -258,6 +258,7 @@ private:
 static void scan_net_config(NetconfInfo &info)
 {
     if(the_config->OwlRoot()!="" &&
+       the_config->OwlRoot()!="/" &&
        !FileStat(the_config->NetworkSysconf().c_str()).Exists())
     {
         /* scan the base system's settings... */

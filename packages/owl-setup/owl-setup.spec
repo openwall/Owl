@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.45 2005/11/16 13:21:54 solar Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.46 2005/12/08 18:00:03 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 0.27
+Version: 0.28
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -32,6 +32,9 @@ rm -rf %buildroot
 %_sbindir/*
 
 %changelog
+* Thu Dec 08 2005 Solar Designer <solar-at-owl.openwall.com> 0.28-owl1
+- Fixed an infinite recursion bug in scan_net_config().
+
 * Wed Oct 26 2005 Croco <croco-at-owl.openwall.com> 0.27-owl1
 - ncurses-based interface is now able to use colors
 
