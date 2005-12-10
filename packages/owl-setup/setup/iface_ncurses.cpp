@@ -10,12 +10,21 @@
 
 #include "iface_ncurses.hpp"
 
+#if 1
+enum the_color_pairs {
+    cp_default = 57,
+    cp_disabled = 25,
+    cp_selection = 29,
+    cp_background = 53
+};
+#else
 enum the_color_pairs {
     cp_default = 57,
     cp_disabled = 49,
     cp_selection = 5,
     cp_background = 7
 };
+#endif
 
 static ScriptVariable cdk_tag_default(0, "</%d>", cp_default);
 static ScriptVariable cdk_tag_disabled(0, "</%d>", cp_disabled);
@@ -40,7 +49,7 @@ static void do_menu_move(MENU *the_menu, int direction)
         menu_driver(the_menu, direction);
         cur = current_item(the_menu);
         if(cur == last_current) {
-            // this means we're in a endless cycle, bail out
+            // this means we're in an endless cycle, bail out
             break;
         }
     } while((item_opts(cur) & O_SELECTABLE) == 0);
@@ -84,7 +93,7 @@ ScriptVariable NcursesIfaceSingleChoice::Run()
         wbkgdset(mwin, COLOR_PAIR(cp_default));
         wbkgdset(mwin_d, COLOR_PAIR(cp_default));
         werase(mwin);
-        set_menu_fore(the_menu, COLOR_PAIR(cp_selection));
+        set_menu_fore(the_menu, COLOR_PAIR(cp_selection)|A_BOLD);
         set_menu_back(the_menu, COLOR_PAIR(cp_default));
         set_menu_grey(the_menu, COLOR_PAIR(cp_disabled));
     }
@@ -208,7 +217,9 @@ static int run_scroll(CDKSCREEN *screen,
                      (char*)(header+"\n"+header2).c_str(),
                      itemsv, items.Length(),
                      false,
-                     work_with_colors ? COLOR_PAIR(cp_selection) : A_REVERSE,
+                     work_with_colors ?
+                         COLOR_PAIR(cp_selection)|A_BOLD
+                         : A_REVERSE,
                      true, false);
 
     if(work_with_colors)
@@ -315,7 +326,19 @@ bool NcursesIfaceHierChoice::Run(ScriptVector &result)
 
 NcursesOwlInstallInterface::NcursesOwlInstallInterface(bool allow_colors)
 {
+    /* The code with checking for the initscr()'s return value
+       just found useless because in ncurses, initscr() calls
+       exit(2) itself (indirectly) and doesn't seem to return NULL
+       in any conditions
+     */
+#if 0
+    if(!initscr()) {
+        fprintf(stderr, "ERROR INITIALIZING SCREEN!!!\n");
+        exit(22);
+    }
+#else
     initscr();
+#endif
     keypad(stdscr, TRUE);
     nonl();
     cbreak();
@@ -334,15 +357,9 @@ NcursesOwlInstallInterface::NcursesOwlInstallInterface(bool allow_colors)
     }
 
 
-    int maxy, maxx;
-    getmaxyx(stdscr, maxy, maxx);
-    noticewin = (void*) newwin(4, maxx - 4, maxy - 4, 2);
+    noticewin = 0;
+    ClearNotices();
 
-    if(work_with_colors) {
-        wcolor_set((WINDOW*)noticewin, cp_default, 0);
-        wbkgdset((WINDOW*)noticewin, COLOR_PAIR(cp_default));
-        werase((WINDOW*)noticewin);
-    }
 
 }
 
@@ -393,6 +410,23 @@ void NcursesOwlInstallInterface::Notice(const ScriptVariable& msg)
     wrefresh((WINDOW*)noticewin);
 }
 
+void NcursesOwlInstallInterface::ClearNotices()
+{
+    if(noticewin) {
+        delwin((WINDOW*)noticewin);
+        refresh();
+    }
+
+    int maxy, maxx;
+    getmaxyx(stdscr, maxy, maxx);
+    noticewin = (void*) newwin(4, maxx - 4, maxy - 4, 2);
+
+    if(work_with_colors) {
+        wcolor_set((WINDOW*)noticewin, cp_default, 0);
+        wbkgdset((WINDOW*)noticewin, COLOR_PAIR(cp_default));
+        werase((WINDOW*)noticewin);
+    }
+}
 
 /* this is a workaround against CDK's manner to ignore the Enter key */
 /* popupDialog() could satisfy us if the problem is fixed */
@@ -418,7 +452,7 @@ static int run_dialog(CDKSCREEN *screen,
     CDKDIALOG* dlg = newCDKDialog(screen, CENTER, CENTER,
                                   message, msglen, buttons, buttonscount,
                                   work_with_colors ?
-                                      COLOR_PAIR(cp_selection) :
+                                      COLOR_PAIR(cp_selection)|A_BOLD :
                                       A_REVERSE,
                                   true, true, false);
     if(work_with_colors)
@@ -516,7 +550,9 @@ NcursesOwlInstallInterface::QueryString(const ScriptVariable& prompt,
                                               cp_default, prompt.c_str())
                              .c_str(),
                         "",
-                        work_with_colors ? COLOR_PAIR(cp_selection) : A_NORMAL,
+                        work_with_colors ? 
+                            COLOR_PAIR(cp_selection)|A_BOLD 
+                            : A_NORMAL,
                         work_with_colors ? ' ' : '_',
                         vMIXED,
                         -8, 0, 1024, TRUE, FALSE);

@@ -28,10 +28,11 @@ void install_kernel_and_lilo(OwlInstallInterface *the_iface)
         return;
     }
 
-    the_iface->Notice("Now choose what device will hold your boot loader\n "
+    the_iface->Notice("Now choose what device will hold your boot loader\n"
                       "(e.g., /dev/hda for the first IDE disk).");
     ScriptVariable boot_dev =
         the_iface->QueryString("What is your boot device?");
+    the_iface->ClearNotices();
     if(boot_dev == "" || boot_dev == OwlInstallInterface::qs_cancel
                       || boot_dev == OwlInstallInterface::qs_eof)
         return;

@@ -54,25 +54,29 @@ bool active_swap_exists()
     return rt.ReadLine(v,1); // true if more than one line is there
 }
 
-void enumerate_owl_dirs(ScriptVector &dirs, ScriptVector &parts)
+void enumerate_owl_dirs(ScriptVector &dirs, ScriptVector &parts,
+                        bool remove_prefix)
 {
     ScriptVector types;
-    enumerate_owl_dirs3(dirs, parts, types);
+    enumerate_owl_dirs3(dirs, parts, types, remove_prefix);
 }
 
 void enumerate_owl_dirs3(ScriptVector &dirs,
                          ScriptVector &parts,
-                         ScriptVector &types)
+                         ScriptVector &types,
+                         bool remove_prefix)
 {
     dirs.Clear();
     parts.Clear();
+    int prefix_len = remove_prefix ? the_config->OwlRoot().Length() : 0;
     ReadText rt(the_config->ProcMounts().c_str());
     ScriptVector v;
     while(rt.ReadLine(v,4)) {
         if(v[1] == the_config->OwlRoot() ||
            v[1].HasPrefix(the_config->OwlRoot()+"/"))
         {
-            v[1].Range(0,4).Erase(); // remove "/owl"
+            if(prefix_len)
+                v[1].Range(0,prefix_len).Erase(); // remove "/owl"
             if(v[1]=="") v[1] = "/";
             dirs.AddItem(v[1]);
             parts.AddItem(v[0]);

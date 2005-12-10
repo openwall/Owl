@@ -37,6 +37,9 @@ bool ncurses_interface = false;
 
 bool allow_ncurses_color = true;
 
+/* defined in curs_detect.cpp */
+bool is_terminal_curses_capable();
+
 void display_usage(bool by_option)
 {
     if(!by_option) {
@@ -113,6 +116,9 @@ int main(int argc, char **argv)
     OwlInstallInterface *the_interface;
 
 #ifdef NCURSES_ENABLE
+    if(ncurses_interface && !is_terminal_curses_capable())
+        ncurses_interface = false;
+
     if(ncurses_interface)
         the_interface = new NcursesOwlInstallInterface(allow_ncurses_color);
     else
@@ -187,7 +193,7 @@ int main(int argc, char **argv)
         } else
         if(choice == "x") {
             ScriptVector parts, dirs;
-            enumerate_owl_dirs(dirs, parts);
+            enumerate_owl_dirs(dirs, parts, false);
             if(parts.Length()>0) {
                 if(parts.Length()==1) {
                     the_interface->Message(ScriptVariable("Warning: ") +

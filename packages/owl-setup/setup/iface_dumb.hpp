@@ -29,6 +29,7 @@ public:
 
     void Message(const ScriptVariable& msg);
     void Notice(const ScriptVariable& msg);
+    void ClearNotices() {}
     bool YesNoMessage(const ScriptVariable& msg, bool dfl = false);
     YesNoCancelResult YesNoCancelMessage(const ScriptVariable& msg);
 

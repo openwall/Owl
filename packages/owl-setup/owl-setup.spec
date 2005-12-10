@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.46 2005/12/08 18:00:03 solar Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.47 2005/12/10 01:37:08 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 0.28
+Version: 0.29
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -32,6 +32,12 @@ rm -rf %buildroot
 %_sbindir/*
 
 %changelog
+* Sat Dec 10 2005 Croco <croco-at-owl.openwall.com> 0.29-owl1
+- Automatic curses-incapable terminal detection added
+- color scheme changed for ncurses interface
+- fixed the bug with 'select your boot device' notice
+- changed the settle's quit message to reflect full path of mount points
+
 * Thu Dec 08 2005 Solar Designer <solar-at-owl.openwall.com> 0.28-owl1
 - Fixed an infinite recursion bug in scan_net_config().
 

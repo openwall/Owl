@@ -84,6 +84,7 @@ public:
 
     virtual void Message(const ScriptVariable& msg) = 0;
     virtual void Notice(const ScriptVariable& msg) = 0;
+    virtual void ClearNotices() = 0;
     virtual bool YesNoMessage(const ScriptVariable& msg, bool dfl=false)=0;
     virtual YesNoCancelResult YesNoCancelMessage(const ScriptVariable& msg)=0;
 

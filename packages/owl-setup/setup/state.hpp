@@ -8,10 +8,13 @@ bool linux_partition_exists();
 bool owl_dir_mounted();
 bool active_swap_exists();
 
-void enumerate_owl_dirs(class ScriptVector &dirs, class ScriptVector &parts);
+void enumerate_owl_dirs(class ScriptVector &dirs,
+                        class ScriptVector &parts,
+                        bool remove_prefix = true);
 void enumerate_owl_dirs3(class ScriptVector &dirs,
                          class ScriptVector &parts,
-                         class ScriptVector &types);
+                         class ScriptVector &types,
+                         bool remove_prefix = true);
 
 void enumerate_linux_partitions(class ScriptVector &parts);
 

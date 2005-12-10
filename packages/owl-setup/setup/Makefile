@@ -7,7 +7,7 @@ WITH_NCURSES = yes
 
 ifeq ($(WITH_NCURSES), yes)
 CURSES_LIBS = -lcdk -lmenu -lncurses
-CURSES_OBJ = iface_ncurses.o
+CURSES_OBJ = iface_ncurses.o curs_detect.o
 CURSES_FLAGS = -DNCURSES_ENABLE
 #CURSES_FLAGS = -DNCURSES_ENABLE -DNCURSES_DEFAULT
 else
@@ -16,11 +16,20 @@ CURSES_OBJ =
 CURSES_FLAGS =
 endif
 
+
+ifeq ($(DEBUG_INFO), yes)
+ifndef CXXFLAGS
+CXXFLAGS = -Wall -g -O0 -fomit-frame-pointer
+endif
+CXXFLAGS += $(CURSES_FLAGS)
+LDFLAGS = 
+else
 ifndef CXXFLAGS
 CXXFLAGS = -Wall -O2 -fomit-frame-pointer
 endif
 CXXFLAGS += $(CURSES_FLAGS)
 LDFLAGS = -s
+endif
 
 LIBDEPS = scriptpp/libscriptpp.a ip4areas/libip4areas.a
 LIBS = -L scriptpp -lscriptpp -L ip4areas -lip4areas $(CURSES_LIBS)
