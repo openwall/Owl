@@ -25,15 +25,15 @@ by default.  Make it fail-close on suEXEC.  Clone and maintain a version
 of suEXEC more friendly to virtual hosting.
 
 
-	bash.
+	bash, readline.
 
-[PRIORITY: low]
+[PRIORITY: high]
 [ASSIGNED: ldv@]
-Update to latest release (we're currently at 2.05, but 2.05b went out
-a long time ago), with our patches.  Make sure it still builds cleanly
-with -Wall (due to our patches).  Once again try to get our generic
-fixes (the "-owl-fixes.diff") to the maintainer (haven't received a
-response).
+Update to latest release for Fedora compatibility (we're currently at
+2.05, but 3.0 went out a long time ago and 3.1 was released recently),
+with our patches.  Make sure it still builds cleanly with -Wall
+(due to our patches).  Once again try to get our generic fixes (the
+"-owl-fixes.diff") to the maintainer (haven't received a response).
 
 
 	bison, dialog, diffstat, diffutils, file, hdparm, man-pages.
@@ -511,4 +511,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Owl: Owl/doc/TODO,v 1.140 2005/12/04 14:32:27 solar Exp $
+$Owl: Owl/doc/TODO,v 1.141 2005/12/11 18:58:50 ldv Exp $
