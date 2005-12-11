@@ -24,7 +24,7 @@ string specifiers with large values.
 Reference:
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2005-3962
 
-2005/11/27	vsftpd
+2005/11/27	Package: vsftpd
 Updated to 2.0.3.
 
 2005/11/26	kernel
@@ -743,4 +743,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Owl: Owl/doc/CHANGES-2.0,v 1.176 2005/12/08 23:44:03 ldv Exp $
+$Owl: Owl/doc/CHANGES-2.0,v 1.177 2005/12/11 16:45:43 solar Exp $
