@@ -439,7 +439,7 @@ diff -ur perl-5.8.3.orig/lib/perl5db.pl perl-5.8.3/lib/perl5db.pl
  
  if set, goes in NonStop mode.  On interrupt, if TTY is not set,
 -uses the value of noTTY or "/tmp/perldbtty$$" to find TTY using
-+uses the value of noTTY or "/var/run/perldbtty$$" to find TTY using
++uses the value of noTTY or "$HOME/.perldbtty$$" to find TTY using
  Term::Rendezvous.  Current variant is to have the name of TTY in this
  file.
  
@@ -449,8 +449,8 @@ diff -ur perl-5.8.3.orig/lib/perl5db.pl perl-5.8.3/lib/perl5db.pl
              # See if we have anything to pass to Term::Rendezvous.
 -            # Use /tmp/perldbtty$$ if not.
 -            my $rv = $ENV{PERLDB_NOTTY} || "/tmp/perldbtty$$";
-+            # Use /var/run/perldbtty$$ if not.
-+            my $rv = $ENV{PERLDB_NOTTY} || "/var/run/perldbtty$$";
++            # Use $HOME/.perldbtty$$ if not.
++            my $rv = $ENV{PERLDB_NOTTY} || "$ENV{HOME}/.perldbtty$$";
  
              # Rendezvous and get the filehandles.
              my $term_rv = new Term::Rendezvous $rv;
@@ -576,7 +576,7 @@ diff -ur perl-5.8.3.orig/pod/perldebug.pod perl-5.8.3/pod/perldebug.pod
  for debugging input and output correspondingly.  The C<new> method should
  inspect an argument containing the value of C<$ENV{PERLDB_NOTTY}> at
 -startup, or C<"/tmp/perldbtty$$"> otherwise.  This file is not 
-+startup, or C<"/var/run/perldbtty$$"> otherwise.  This file is not 
++startup, or C<"~/.perldbtty$$"> otherwise.  This file is not 
  inspected for proper ownership, so security hazards are theoretically
  possible.
  

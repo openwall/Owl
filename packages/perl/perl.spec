@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.38 2005/12/06 23:56:02 ldv Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.39 2005/12/11 15:04:12 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -17,7 +17,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.8.3
-Release: owl7
+Release: owl8
 Epoch: 2
 License: GPL
 Group: Development/Languages
@@ -276,6 +276,12 @@ find %buildroot%_libdir/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Sun Dec 11 2005 Solar Designer <solar-at-owl.openwall.com> 2:5.8.3-owl8
+- Corrected the perl5db.pl patch to obtain the TTY name from ~/.perldbtty$$
+rather than from a file under /var/run to allow ordinary users to utilize
+that method of notifying Term::Rendezvous of a TTY (patch from David
+Eisenstein of Fedora Legacy project).
+
 * Tue Dec 06 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2:5.8.3-owl7
 - Backported upstream fix for a potential integer overflow in format
 string functionality (CVE-2005-3962).
