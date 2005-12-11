@@ -1,0 +1,12 @@
+#!/bin/sh
+# $Owl: Owl/packages/iputils/ping6.control,v 1.1 2005/12/11 19:15:54 ldv Exp $
+
+. /etc/control.d/functions
+
+BINARY=/bin/ping6
+
+new_fmode public 4711 root root
+new_fmode wheelonly 4710 root wheel
+new_fmode restricted 700 root root
+
+control_fmode "$BINARY" "$*" || exit 1

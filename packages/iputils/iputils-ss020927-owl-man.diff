@@ -1,0 +1,93 @@
+diff -upk.orig iputils.orig/doc/arping.8 iputils/doc/arping.8
+--- iputils.orig/doc/arping.8	2002-09-27 17:12:43 +0000
++++ iputils/doc/arping.8	2005-11-24 18:57:05 +0000
+@@ -87,9 +87,9 @@ expire or until
+ probes are answered.
+ .SH "SEE ALSO"
+ .PP
+-\fBping\fR(8),
+-\fBclockdiff\fR(8),
+-\fBtracepath\fR(8).
++\fBping\fR(1),
++\fBtracepath\fR(1),
++\fBclockdiff\fR(8).
+ .SH "AUTHOR"
+ .PP
+ \fBarping\fR was written by
+diff -upk.orig iputils.orig/doc/clockdiff.8 iputils/doc/clockdiff.8
+--- iputils.orig/doc/clockdiff.8	2002-09-27 17:12:45 +0000
++++ iputils/doc/clockdiff.8	2005-11-24 18:56:31 +0000
+@@ -48,9 +48,9 @@ use NTP in this case, which is even bett
+ \fBclockdiff\fR shows difference in time modulo 24 days.
+ .SH "SEE ALSO"
+ .PP
+-\fBping\fR(8),
+-\fBarping\fR(8),
+-\fBtracepath\fR(8).
++\fBping\fR(1),
++\fBtracepath\fR(1),
++\fBarping\fR(8).
+ .SH "REFERENCES"
+ .PP
+ [1] ICMP ECHO,
+diff -upk.orig iputils.orig/doc/ping.8 iputils/doc/ping.8
+--- iputils.orig/doc/ping.8	2002-09-27 17:12:47 +0000
++++ iputils/doc/ping.8	2005-11-24 18:55:51 +0000
+@@ -3,7 +3,7 @@
+ .\" <http://shell.ipoline.com/~elmert/comp/docbook2X/> 
+ .\" Please send any bug reports, improvements, comments, patches, 
+ .\" etc. to Steve Cheng <steve@ggi-project.org>.
+-.TH "PING" "8" "27 September 2002" "iputils-020927" "System Manager's Manual: iputils"
++.TH "PING" "1" "27 September 2002" "iputils-020927" "System Manager's Manual: iputils"
+ .SH NAME
+ ping, ping6 \- send ICMP ECHO_REQUEST to network hosts
+ .SH SYNOPSIS
+diff -upk.orig iputils.orig/doc/rdisc.8 iputils/doc/rdisc.8
+--- iputils.orig/doc/rdisc.8	2002-09-27 17:12:50 +0000
++++ iputils/doc/rdisc.8	2005-11-24 18:55:11 +0000
+@@ -87,9 +87,9 @@ Alexey Kuznetsov
+ <kuznet@ms2.inr.ac.ru>.
+ .SH "SEE ALSO"
+ .PP
++\fBping\fR(1),
+ \fBicmp\fR(7),
+-\fBinet\fR(7),
+-\fBping\fR(8).
++\fBinet\fR(7).
+ .SH "REFERENCES"
+ .PP
+ Deering, S.E.,ed "ICMP Router Discovery Messages",
+diff -upk.orig iputils.orig/doc/tracepath.8 iputils/doc/tracepath.8
+--- iputils.orig/doc/tracepath.8	2002-09-27 17:12:53 +0000
++++ iputils/doc/tracepath.8	2005-11-24 18:58:34 +0000
+@@ -3,7 +3,7 @@
+ .\" <http://shell.ipoline.com/~elmert/comp/docbook2X/> 
+ .\" Please send any bug reports, improvements, comments, patches, 
+ .\" etc. to Steve Cheng <steve@ggi-project.org>.
+-.TH "TRACEPATH" "8" "27 September 2002" "iputils-020927" "System Manager's Manual: iputils"
++.TH "TRACEPATH" "1" "27 September 2002" "iputils-020927" "System Manager's Manual: iputils"
+ .SH NAME
+ tracepath, tracepath6 \- traces path to a network host discovering MTU along this path
+ .SH SYNOPSIS
+@@ -61,9 +61,9 @@ guess about amount of hops from the dest
+ different when the path is asymmetric.
+ .SH "SEE ALSO"
+ .PP
+-\fBtraceroute\fR(8),
+-\fBtraceroute6\fR(8),
+-\fBping\fR(8).
++\fBtraceroute\fR(1),
++\fBtraceroute6\fR(1),
++\fBping\fR(1).
+ .SH "AUTHOR"
+ .PP
+ \fBtracepath\fR was written by
+@@ -75,7 +75,7 @@ No security issues.
+ .PP
+ This lapidary deserves to be elaborated.
+ \fBtracepath\fR is not a privileged program, unlike
+-\fBtraceroute\fR, \fBping\fR and other beasts of this kind.
++\fBping\fR and other beasts of this kind.
+ \fBtracepath\fR may be executed by everyone who has some access
+ to network, enough to send UDP datagrams to investigated destination
+ using given port.

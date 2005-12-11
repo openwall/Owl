@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/iputils/iputils.spec,v 1.25 2005/11/16 13:11:14 solar Exp $
+# $Owl: Owl/packages/iputils/iputils.spec,v 1.26 2005/12/11 19:15:54 ldv Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
 Version: ss020927
-Release: owl4
+Release: owl5
 License: mostly BSD, some GPL
 Group: Applications/Internet
 Source0: ftp://ftp.inr.ac.ru/ip-routing/%name-%version.tar.gz
@@ -12,7 +12,8 @@ Source2: ping.control
 Patch0: iputils-ss020927-rh-owl-cache-reverse-lookups.diff
 Patch1: iputils-ss020927-owl-warnings.diff
 Patch2: iputils-ss020927-owl-socketbits.diff
-Patch3: bonding-0.2-owl-ioctl.diff
+Patch3: iputils-ss020927-owl-man.diff
+Patch4: bonding-0.2-owl-ioctl.diff
 PreReq: owl-control >= 0.4, owl-control < 2.0
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
@@ -29,7 +30,8 @@ mv -f bonding-0.2/README bonding-0.2/README.ifenslave
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p0
+%patch3 -p1
+%patch4 -p0
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -44,14 +46,19 @@ rm -rf %buildroot
 
 mkdir -p %buildroot%_sbindir
 mkdir -p %buildroot/{bin,sbin}
-install -m 755 arping clockdiff ping6 tracepath tracepath6 \
-	%buildroot%_sbindir/
+install -m 755 arping clockdiff %buildroot%_sbindir/
 install -m 755 rdisc %buildroot%_sbindir/rdiscd
-install -m 700 ping %buildroot/bin/
+install -m 700 ping ping6 %buildroot/bin/
+install -m 755 tracepath tracepath6 %buildroot/bin/
 install -m 755 bonding-0.2/ifenslave %buildroot/sbin/
 
+install -pD -m644 doc/ping.8 %buildroot%_mandir/man1/ping.1
+install -pD -m644 doc/tracepath.8 %buildroot%_mandir/man1/tracepath.1
+ln -s ping.1 %buildroot%_mandir/man1/ping6.1
+ln -s tracepath.1 %buildroot%_mandir/man1/tracepath6.1
+
 mkdir -p %buildroot%_mandir/man8
-install -m 644 doc/{arping,clockdiff,ping,tracepath}.8 \
+install -m 644 doc/{arping,clockdiff}.8 \
 	%buildroot%_mandir/man8/
 
 sed 's/rdisc/rdiscd/' \
@@ -60,15 +67,17 @@ sed 's/rdisc/rdiscd/' \
 mkdir -p %buildroot/etc/control.d/facilities
 install -m 700 %_sourcedir/ping.control \
 	%buildroot/etc/control.d/facilities/ping
+install -m 700 %_sourcedir/ping6.control \
+	%buildroot/etc/control.d/facilities/ping6
 
 %pre
 if [ $1 -ge 2 ]; then
-	%_sbindir/control-dump ping
+	%_sbindir/control-dump ping ping6
 fi
 
 %post
 if [ $1 -ge 2 ]; then
-	%_sbindir/control-restore ping
+	%_sbindir/control-restore ping ping6
 else
 	%_sbindir/control ping public
 fi
@@ -80,14 +89,20 @@ fi
 %_sbindir/clockdiff
 /sbin/ifenslave
 %attr(700,root,root) %verify(not mode group) /bin/ping
-%_sbindir/ping6
-%_sbindir/tracepath
-%_sbindir/tracepath6
+%attr(700,root,root) %verify(not mode group) /bin/ping6
+/bin/tracepath
+/bin/tracepath6
 %_sbindir/rdiscd
-%_mandir/man8/*
+%_mandir/man?/*
 /etc/control.d/facilities/ping
+/etc/control.d/facilities/ping6
 
 %changelog
+* Thu Nov 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> ss020927-owl5
+- Added owl-control facility for ping6.
+- Relocated ping6, tracepath and tracepath6 to /bin.
+- Relocated manual pages for commands to the first section.
+
 * Mon Nov 14 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> ss020927-owl4
 - Removed traceroute6 in favour of the traceroute package.
 
