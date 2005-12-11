@@ -1,12 +1,6 @@
 diff -upk.orig traceroute-1.0.3.orig/traceroute.1 traceroute-1.0.3/traceroute.1
 --- traceroute-1.0.3.orig/traceroute.1	2003-04-10 08:51:53 +0000
 +++ traceroute-1.0.3/traceroute.1	2005-11-08 09:19:42 +0000
-@@ -1,4 +1,4 @@
--.TH TRACEROUTE 1 "6 December 2000"
-+.TH TRACEROUTE 8 "6 December 2000"
- .UC 6
- .SH NAME
- traceroute \- print the route packets take to network host
 @@ -13,7 +13,7 @@ traceroute \- print the route packets ta
  .BR "" "[" "-t tos" "] [" "-w timeout" "] [" "-q nqueries" ] 
  .br

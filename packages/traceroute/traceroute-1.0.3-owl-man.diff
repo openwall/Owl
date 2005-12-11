@@ -1,5 +1,5 @@
---- traceroute-1.0.3/traceroute.1.bak	2005-11-14 00:11:33 +0000
-+++ traceroute-1.0.3/traceroute.1	2005-11-14 17:01:53 +0000
+--- traceroute-1.0.3/traceroute.1.orig	2005-11-24 18:34:40 +0000
++++ traceroute-1.0.3/traceroute.1	2005-11-24 18:35:00 +0000
 @@ -40,7 +40,7 @@ with the
  option.
  .SH OPTIONS
@@ -27,7 +27,12 @@
  .TP
  .BI \-w " sec
  Wait for
-@@ -176,5 +176,5 @@ Print the version and exit.
+@@ -172,9 +172,9 @@ Print usage text and exit.
+ .BI \-V
+ Print the version and exit.
+ .SH SEE ALSO
+-.BR ping (8),
++.BR ping (1),
  .BR netstat (8).
  .SH AUTHOR
  Concept and command line options based on the original LBL implementation

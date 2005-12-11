@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/traceroute/traceroute.spec,v 1.17 2005/11/16 13:32:45 solar Exp $
+# $Owl: Owl/packages/traceroute/traceroute.spec,v 1.18 2005/12/11 19:11:42 ldv Exp $
 
 Summary: Traces the route taken by packets over a TCP/IP network.
 Name: traceroute
 Version: 1.0.3
-Release: owl1
+Release: owl2
 Epoch: 1
 License: GPL
 Group: Applications/Internet
@@ -37,9 +37,9 @@ along the route.
 %install
 rm -rf %buildroot
 install -pD -m755 traceroute %buildroot/bin/traceroute
-install -pD -m644 traceroute.1 %buildroot%_mandir/man8/traceroute.8
+install -pD -m644 traceroute.1 %buildroot%_mandir/man1/traceroute.1
 ln -s traceroute %buildroot/bin/traceroute6
-ln -s traceroute.8.gz %buildroot%_mandir/man8/traceroute6.8.gz
+ln -s traceroute.1.gz %buildroot%_mandir/man1/traceroute6.1.gz
 # Backwards compatibility symlinks.
 mkdir -p %buildroot%_sbindir
 ln -s ../../bin/traceroute %buildroot%_sbindir/
@@ -49,9 +49,12 @@ ln -s ../../bin/traceroute %buildroot%_sbindir/traceroute6
 %defattr(-,root,root)
 /bin/traceroute*
 %_sbindir/traceroute*
-%_mandir/man8/*
+%_mandir/man1/*
 
 %changelog
+* Thu Nov 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:1.0.3-owl2
+- Relocated manual pages to the first section.
+
 * Mon Nov 14 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:1.0.3-owl1
 - Replaced with traceroute written by Olaf Kirch.
 - Imported patch from Fedora for better backwards compatibility.
