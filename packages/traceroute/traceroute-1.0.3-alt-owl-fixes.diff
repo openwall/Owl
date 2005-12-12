@@ -1,6 +1,5 @@
-diff -upk.orig traceroute-1.0.3.orig/traceroute.1 traceroute-1.0.3/traceroute.1
---- traceroute-1.0.3.orig/traceroute.1	2005-11-10 22:25:46 +0000
-+++ traceroute-1.0.3/traceroute.1	2005-11-10 22:27:51 +0000
+--- traceroute-1.0.3/traceroute.1.orig	2005-12-12 15:19:05 +0000
++++ traceroute-1.0.3/traceroute.1	2005-12-12 15:19:20 +0000
 @@ -4,7 +4,7 @@
  traceroute \- print the route packets take to network host
  .SH SYNOPSIS
@@ -10,7 +9,7 @@ diff -upk.orig traceroute-1.0.3.orig/traceroute.1 traceroute-1.0.3/traceroute.1
  .br
  .ti +8
  .BR "" [ "-m max_hops" "] [" "-N concurrent_hops" ]
-@@ -151,6 +151,9 @@ Chooses an alternative source address. N
+@@ -151,6 +151,9 @@
  address of one of the interfaces.
  By default, the address of the outgoing interface is used.
  .TP
@@ -20,9 +19,8 @@ diff -upk.orig traceroute-1.0.3.orig/traceroute.1 traceroute-1.0.3/traceroute.1
  .BI \-V
  Print the version and exit.
  .SH SEE ALSO
-diff -upk.orig traceroute-1.0.3.orig/traceroute.c traceroute-1.0.3/traceroute.c
---- traceroute-1.0.3.orig/traceroute.c	2005-11-10 22:25:46 +0000
-+++ traceroute-1.0.3/traceroute.c	2005-11-10 22:26:55 +0000
+--- traceroute-1.0.3/traceroute.c.orig	2005-12-12 15:19:05 +0000
++++ traceroute-1.0.3/traceroute.c	2005-12-12 15:19:46 +0000
 @@ -19,6 +19,7 @@
  #include <arpa/inet.h>
  #include <net/if.h>
@@ -104,6 +102,15 @@ diff -upk.orig traceroute-1.0.3.orig/traceroute.c traceroute-1.0.3/traceroute.c
  }
  
  static void
+@@ -435,7 +434,7 @@ hop_print(struct hop *hop)
+ 			hop->prev_addr = p->responder;
+ 			if (p->err_ind)
+ 				printf("(%s)", p->err_ind);
+-			printf("  %lu.%03lu ms",
++			printf(" %lu.%03lu ms",
+ 				1000 * delta.tv_sec + delta.tv_usec / 1000,
+ 				delta.tv_usec % 1000);
+ 		}
 @@ -454,42 +453,42 @@ probe_init(struct hop *hop, struct probe
  	int			fd, val, len;
  
@@ -175,8 +182,7 @@ diff -upk.orig traceroute-1.0.3.orig/traceroute.c traceroute-1.0.3/traceroute.c
  
  	pb->timeout = now + opt_timeout * 1000;
  	pb->hop = hop;
-diff -upk.orig traceroute-1.0.3.orig/utils.c traceroute-1.0.3/utils.c
---- traceroute-1.0.3.orig/utils.c	2005-11-02 09:07:18 +0000
+--- traceroute-1.0.3/utils.c.orig	2005-11-02 09:07:18 +0000
 +++ traceroute-1.0.3/utils.c	2005-11-10 22:26:04 +0000
 @@ -12,6 +12,7 @@
  #include <stdarg.h>
@@ -220,10 +226,9 @@ diff -upk.orig traceroute-1.0.3.orig/utils.c traceroute-1.0.3/utils.c
 -	va_end(ap);
 -	exit(1);
 -}
-diff -upk.orig traceroute-1.0.3.orig/utils.h traceroute-1.0.3/utils.h
---- traceroute-1.0.3.orig/utils.h	2005-11-02 09:07:18 +0000
+--- traceroute-1.0.3/utils.h.orig	2005-11-02 09:07:18 +0000
 +++ traceroute-1.0.3/utils.h	2005-11-10 22:26:04 +0000
-@@ -21,6 +21,5 @@ extern int		getaddr(const char *, int, s
+@@ -21,6 +21,5 @@
  extern const char *	straddr(sockaddr_any *);
  extern int		sameaddr(sockaddr_any *, sockaddr_any *);
  extern void		printaddr(sockaddr_any *, int) ;

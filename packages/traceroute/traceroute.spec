@@ -1,16 +1,16 @@
-# $Owl: Owl/packages/traceroute/traceroute.spec,v 1.18 2005/12/11 19:11:42 ldv Exp $
+# $Owl: Owl/packages/traceroute/traceroute.spec,v 1.19 2005/12/12 20:21:06 mci Exp $
 
 Summary: Traces the route taken by packets over a TCP/IP network.
 Name: traceroute
 Version: 1.0.3
-Release: owl2
+Release: owl3
 Epoch: 1
 License: GPL
 Group: Applications/Internet
 URL: http://rechner.lst.de/~okir/traceroute/
 Source: ftp://ftp.lst.de/pub/people/okir/traceroute/traceroute-%version.tar.bz2
 Patch0: traceroute-1.0.3-rh-compat.diff
-Patch1: traceroute-1.0.3-alt-fixes.diff
+Patch1: traceroute-1.0.3-alt-owl-fixes.diff
 Patch2: traceroute-1.0.3-alt-src_port.diff
 Patch3: traceroute-1.0.3-owl-man.diff
 # due to traceroute6
@@ -52,6 +52,9 @@ ln -s ../../bin/traceroute %buildroot%_sbindir/traceroute6
 %_mandir/man1/*
 
 %changelog
+* Mon Dec 12 2005 Michail Litvak <mci-at-owl.openwall.com> 1:1.0.3-owl3
+- Make traceroute's output like LBNL's traceroute.
+
 * Thu Nov 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:1.0.3-owl2
 - Relocated manual pages to the first section.
 
