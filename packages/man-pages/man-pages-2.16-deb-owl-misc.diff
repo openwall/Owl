@@ -1,4 +1,4 @@
---- man-pages-2.16/man2/adjtime.2.orig	2005-12-07 22:55:02.000000000 +0000
+--- man-pages-2.16/man2/adjtime.2.orig	2005-12-12 22:55:02.000000000 +0000
 +++ man-pages-2.16/man2/adjtime.2	2005-12-07 00:00:00.000000000 +0000
 @@ -0,0 +1,71 @@
 +.\" This is free documentation; you can redistribute it and/or
@@ -101,19 +101,19 @@
  .SH "RETURN VALUE"
  On success, zero is returned.  On error, \-1 is returned, and
  .I errno
---- man-pages-2.16/man2/FD_CLR.2.orig	2005-12-07 22:55:02.000000000 +0000
+--- man-pages-2.16/man2/FD_CLR.2.orig	2005-12-12 22:55:02.000000000 +0000
 +++ man-pages-2.16/man2/FD_CLR.2	2005-12-07 00:00:00.000000000 +0000
 @@ -0,0 +1 @@
 +.so man2/select.2
---- man-pages-2.16/man2/FD_ISSET.2.orig	2005-12-07 22:55:02.000000000 +0000
+--- man-pages-2.16/man2/FD_ISSET.2.orig	2005-12-12 22:55:02.000000000 +0000
 +++ man-pages-2.16/man2/FD_ISSET.2	2005-12-07 00:00:00.000000000 +0000
 @@ -0,0 +1 @@
 +.so man2/select.2
---- man-pages-2.16/man2/FD_SET.2.orig	2005-12-07 22:55:02.000000000 +0000
+--- man-pages-2.16/man2/FD_SET.2.orig	2005-12-12 22:55:02.000000000 +0000
 +++ man-pages-2.16/man2/FD_SET.2	2005-12-07 00:00:00.000000000 +0000
 @@ -0,0 +1 @@
 +.so man2/select.2
---- man-pages-2.16/man2/FD_ZERO.2.orig	2005-12-07 22:55:02.000000000 +0000
+--- man-pages-2.16/man2/FD_ZERO.2.orig	2005-12-12 22:55:02.000000000 +0000
 +++ man-pages-2.16/man2/FD_ZERO.2	2005-12-07 00:00:00.000000000 +0000
 @@ -0,0 +1 @@
 +.so man2/select.2
@@ -204,8 +204,8 @@
  altogether, and use
  .BR sigaction (2)
 --- man-pages-2.16/man2/socket.2.orig	2005-11-03 12:47:27.000000000 +0000
-+++ man-pages-2.16/man2/socket.2	2005-12-07 22:55:02.000000000 +0000
-@@ -306,12 +306,18 @@
++++ man-pages-2.16/man2/socket.2	2005-12-12 00:21:01.000000000 +0000
+@@ -306,7 +306,7 @@
  appeared in 4.2BSD. It is generally portable to/from
  non-BSD systems supporting clones of the BSD socket layer (including
  System V variants).
@@ -214,72 +214,6 @@
  The manifest constants used under 4.x BSD for protocol families
  are PF_UNIX, PF_INET, etc., while AF_UNIX etc. are used for address
  families. However, already the BSD man page promises: "The protocol
- family generally is the same as the address family", and subsequent
- standards use AF_* everywhere.
-+
-+The header file
-+.I <sys/types.h>
-+is only required for libc4 or earlier.  Some packages, like
-+util-linux, claim portability to all Linux versions and libraries.
-+They certainly need this header file.
- .SH BUGS
- .B SOCK_UUCP
- is not implemented yet.
---- man-pages-2.16/man2/socketpair.2.orig	2005-11-02 11:34:24.000000000 +0000
-+++ man-pages-2.16/man2/socketpair.2	2005-12-07 22:55:02.000000000 +0000
-@@ -98,6 +98,12 @@
- (or synonymously,
- .BR AF_LOCAL ).
- (Most implementations have the same restriction.)
-+
-+The header file
-+.I <sys/types.h>
-+is only required for libc4 or earlier.  Some packages, like
-+util-linux, claim portability to all Linux versions and libraries.
-+They certainly need this header file.
- .SH "SEE ALSO"
- .BR pipe (2),
- .BR read (2),
---- man-pages-2.16/man2/sstk.2.orig	2005-12-07 22:55:02.000000000 +0000
-+++ man-pages-2.16/man2/sstk.2	2005-12-07 00:00:00.000000000 +0000
-@@ -0,0 +1,37 @@
-+.\" From the 4.3BSD Architecture Manual - BSD copyright
-+.TH SSTK 2 2003-11-11 "" "BSD planned"
-+.SH NAME
-+sstk \- change stack size
-+.SH SYNOPSIS
-+caddr_t sstk(int incr);
-+.SH DESCRIPTION
-+(From the 4.3BSD Architecture Manual)
-+.sp
-+Each process begins execution with three logical areas of memories
-+called text, data and stack. The text area is read-only and shared,
-+while the data and stack areas are private to the process.
-+Both the data and stack areas may be extended and contracted on
-+program request. The call
-+.sp
-+.in +5
-+caddr_t addr = sbrk(incr);
-+.in
-+.sp
-+changes the size of the data area by
-+.I incr
-+bytes and returns the new end of the data area, while
-+.sp
-+.in +5
-+caddr_t addr = sstk(incr);
-+.in
-+.sp
-+changes the size of the stack area. The stack area is also automatically
-+extended as needed. On the VAX the text and data areas are adjacent
-+in the P0 region, while the stack section is in the P1 region, and
-+grows downward.
-+.SH NOTE
-+This call is not supported in 4.3BSD or 4.4BSD or glibc or Linux or any
-+other known Unix-like system. Some systems have a routine of this name
-+that returns ENOSYS.
-+.SH "SEE ALSO"
-+.BR sbrk (2)
 --- man-pages-2.16/man2/swapon.2.orig	2005-09-19 12:18:57.000000000 +0000
 +++ man-pages-2.16/man2/swapon.2	2005-12-07 22:55:02.000000000 +0000
 @@ -115,7 +115,7 @@
@@ -446,23 +380,6 @@
  .SH "RETURN VALUE"
  Upon successful completion 0 is returned.  Otherwise,
  .B EOF
---- man-pages-2.16/man3/fenv.3.orig	2005-11-02 11:34:24.000000000 +0000
-+++ man-pages-2.16/man3/fenv.3	2005-12-07 22:55:02.000000000 +0000
-@@ -200,13 +200,11 @@
- As before, the object
- .RI * envp
- must be known to be valid.
--
- .SH "RETURN VALUE"
--These functions return zero on success and non-zero if an error occurred.
-+These function return zero on success and non-zero if an error occurred.
- .\" Earlier seven of these functions were listed as returning void.
- .\" This was corrected in Corrigendum 1 (ISO/IEC 9899:1999/Cor.1:2001(E))
- .\" of the C99 Standard.
--
- .SH "GNU DETAILS"
- If possible, the GNU C Library defines a macro
- .B FE_NOMASK_ENV
 --- man-pages-2.16/man3/ffs.3.orig	2005-10-19 07:07:02.000000000 +0000
 +++ man-pages-2.16/man3/ffs.3	2005-12-07 22:55:02.000000000 +0000
 @@ -55,7 +55,8 @@
@@ -562,7 +479,7 @@
 +.BR uptime (1),
 +.BR proc (5)
 --- man-pages-2.16/man3/getpwent.3.orig	2005-11-15 17:57:53.000000000 +0000
-+++ man-pages-2.16/man3/getpwent.3	2005-12-07 22:55:02.000000000 +0000
++++ man-pages-2.16/man3/getpwent.3	2005-12-12 00:27:11.000000000 +0000
 @@ -26,7 +26,8 @@
  .\"     386BSD man pages
  .\"
@@ -607,7 +524,7 @@
 +.PP
 +The variable
 +.I pw_shell
-+may be empty, in which case the system will execute the default shell
++may be empty, in which case the system may execute the default shell
 +.RB ( /bin/sh )
 +for the user.
  .SH "RETURN VALUE"
@@ -621,23 +538,14 @@
  If an error occurs,
  .I errno
  is set appropriately.
-@@ -93,7 +109,8 @@
- I/O error.
- .TP
- .B EMFILE
--The maximum number (OPEN_MAX) of files was open already in the calling process.
-+The maximum number (OPEN_MAX) of files was open already in the
-+alling process.
- .TP
- .B ENFILE
- The maximum number of files was open already in the system.
-@@ -118,4 +135,6 @@
+@@ -118,4 +134,6 @@
  .BR getpwnam (3),
  .BR getpwuid (3),
  .BR putpwent (3),
+-.BR passwd (5)
++.BR passwd (5),
 +.\" Next line rejected upstream
-+.BR shadow (5),
- .BR passwd (5)
++.BR shadow (5)
 --- man-pages-2.16/man3/getpwnam.3.orig	2005-10-19 07:07:02.000000000 +0000
 +++ man-pages-2.16/man3/getpwnam.3	2005-12-07 22:55:02.000000000 +0000
 @@ -29,7 +29,7 @@
@@ -704,7 +612,7 @@
  The details of what characters belong into which class depend on the current
  locale.  For example,
 --- man-pages-2.16/man3/mkstemp.3.orig	2005-10-19 07:07:02.000000000 +0000
-+++ man-pages-2.16/man3/mkstemp.3	2005-12-07 22:55:02.000000000 +0000
++++ man-pages-2.16/man3/mkstemp.3	2005-12-12 00:29:14.000000000 +0000
 @@ -75,12 +75,16 @@
  .BR mkstemp ().
  .SH "CONFORMING TO"
@@ -717,9 +625,9 @@
  and has the prototype in
  .IR <stdlib.h> .
 +
-+Don't use this function, use
 +.BR tmpfile (3)
-+instead.  It is better defined and more portable.
++is a more portable alternative to some uses of
++.BR mkstemp .
  .SH "SEE ALSO"
  .BR mkdtemp (3),
  .BR mktemp (3),
@@ -731,7 +639,7 @@
  .BR unsetenv (3),
 -.BR environ (5)
 +.BR environ (7)
---- man-pages-2.16/man3/readv.3.orig	2005-12-07 22:55:02.000000000 +0000
+--- man-pages-2.16/man3/readv.3.orig	2005-12-12 22:55:02.000000000 +0000
 +++ man-pages-2.16/man3/readv.3	2005-12-07 00:00:00.000000000 +0000
 @@ -0,0 +1,136 @@
 +.\" (c) 1993 by Thomas Koenig (ig25@rz.uni-karlsruhe.de)
@@ -907,24 +815,24 @@
  .BR sh (1),
  .BR signal (2),
 --- man-pages-2.16/man3/tmpnam.3.orig	2005-10-19 07:07:02.000000000 +0000
-+++ man-pages-2.16/man3/tmpnam.3	2005-12-07 22:55:02.000000000 +0000
-@@ -99,7 +99,7 @@
++++ man-pages-2.16/man3/tmpnam.3	2005-12-12 00:31:05.000000000 +0000
+@@ -99,6 +99,8 @@
  .IR "<stdio.h>" .
  .SH BUGS
  Never use this function. Use
--.BR mkstemp (3)
 +.BR tmpfile (3)
++or
+ .BR mkstemp (3)
  instead.
  .SH "CONFORMING TO"
- SVID 2, POSIX, 4.3BSD, ISO 9899
 --- man-pages-2.16/man3/tsearch.3.orig	2005-10-19 13:48:50.000000000 +0000
-+++ man-pages-2.16/man3/tsearch.3	2005-12-07 22:55:02.000000000 +0000
++++ man-pages-2.16/man3/tsearch.3	2005-12-12 00:31:59.000000000 +0000
 @@ -85,19 +85,21 @@
  visit to a leaf node.  (These symbols are defined in
  \fI<search.h>\fP.)  The third argument is the depth of the node, with
  zero being the root.
 +You should not modify the tree while traversing it
-+as the the results would be undefined.
++as the results would be undefined.
 +.PP
 +\fBtdestroy\fP() removes the whole tree pointed to by \fIrootp\fP,
 +freeing all resources allocated by the \fBtsearch\fP() function.  For
@@ -1031,7 +939,7 @@
  of the form \\unnnn does not solve this problem.) Therefore, in
  internationalized programs, the \fIformat\fP string should consist of ASCII
  wide characters only, or should be constructed at run time in an
---- man-pages-2.16/man3/writev.3.orig	2005-12-07 22:55:02.000000000 +0000
+--- man-pages-2.16/man3/writev.3.orig	2005-12-12 22:55:02.000000000 +0000
 +++ man-pages-2.16/man3/writev.3	2005-12-07 00:00:00.000000000 +0000
 @@ -0,0 +1 @@
 +.so man3/readv.3
@@ -1124,8 +1032,8 @@
  .SH "SEE ALSO"
  .BR console (4),
  .BR console_ioctl (4),
---- man-pages-2.16/man5/networks.5.orig	2005-12-07 22:55:02.000000000 +0000
-+++ man-pages-2.16/man5/networks.5	2005-12-07 00:00:00.000000000 +0000
+--- man-pages-2.16/man5/networks.5.orig	2005-12-12 22:55:02.000000000 +0000
++++ man-pages-2.16/man5/networks.5	2005-12-12 00:36:28.000000000 +0000
 @@ -0,0 +1,72 @@
 +.\" Copyright (c) 2001 Martin Schulze <joey@infodrom.org>
 +.\"
@@ -1197,10 +1105,10 @@
 +.BR getnetbyaddr (3),
 +.BR getnetbyname (3),
 +.BR getnetent (3),
-+.BR route (8),
-+.BR netstat (8)
++.BR netstat (8),
++.BR route (8)
 --- man-pages-2.16/man5/tzfile.5.orig	2005-11-02 13:55:25.000000000 +0000
-+++ man-pages-2.16/man5/tzfile.5	2005-12-07 22:55:02.000000000 +0000
++++ man-pages-2.16/man5/tzfile.5	2005-12-12 00:37:07.000000000 +0000
 @@ -8,6 +8,10 @@
  .B
  #include <tzfile.h>
@@ -1230,20 +1138,20 @@
 +just to support the non-glibc-maintained timezone data (which is
 +maintained by some other entity).
 +.SH "SEE ALSO"
-+.BR time (3),
++.BR ctime (3),
 +.BR gettimeofday (3),
-+.BR tzset (3),
-+.BR ctime (3)
++.BR time (3),
++.BR tzset (3)
 +.\" .BR newctime (3)
---- man-pages-2.16/man7/AF_LOCAL.7.orig	2005-12-07 22:55:02.000000000 +0000
+--- man-pages-2.16/man7/AF_LOCAL.7.orig	2005-12-12 22:55:02.000000000 +0000
 +++ man-pages-2.16/man7/AF_LOCAL.7	2005-12-07 00:00:00.000000000 +0000
 @@ -0,0 +1 @@
 +.so man7/unix.7
---- man-pages-2.16/man7/AF_UNIX.7.orig	2005-12-07 22:55:02.000000000 +0000
+--- man-pages-2.16/man7/AF_UNIX.7.orig	2005-12-12 22:55:02.000000000 +0000
 +++ man-pages-2.16/man7/AF_UNIX.7	2005-12-07 00:00:00.000000000 +0000
 @@ -0,0 +1 @@
 +.so man7/unix.7
---- man-pages-2.16/man7/IPPROTO_ICMP.7.orig	2005-12-07 22:55:02.000000000 +0000
+--- man-pages-2.16/man7/IPPROTO_ICMP.7.orig	2005-12-12 22:55:02.000000000 +0000
 +++ man-pages-2.16/man7/IPPROTO_ICMP.7	2005-12-07 00:00:00.000000000 +0000
 @@ -0,0 +1 @@
 +.so man7/icmp.7
@@ -1298,35 +1206,35 @@
  .El
  .Pp
  It is an error to call
---- man-pages-2.16/man7/NETLINK_ROUTE.7.orig	2005-12-07 22:55:02.000000000 +0000
+--- man-pages-2.16/man7/NETLINK_ROUTE.7.orig	2005-12-12 22:55:02.000000000 +0000
 +++ man-pages-2.16/man7/NETLINK_ROUTE.7	2005-12-07 00:00:00.000000000 +0000
 @@ -0,0 +1 @@
 +.so man7/rtnetlink.7
---- man-pages-2.16/man7/PF_INET6.7.orig	2005-12-07 22:55:02.000000000 +0000
+--- man-pages-2.16/man7/PF_INET6.7.orig	2005-12-12 22:55:02.000000000 +0000
 +++ man-pages-2.16/man7/PF_INET6.7	2005-12-07 00:00:00.000000000 +0000
 @@ -0,0 +1 @@
 +.so man7/ipv6.7
---- man-pages-2.16/man7/PF_LOCAL.7.orig	2005-12-07 22:55:02.000000000 +0000
+--- man-pages-2.16/man7/PF_LOCAL.7.orig	2005-12-12 22:55:02.000000000 +0000
 +++ man-pages-2.16/man7/PF_LOCAL.7	2005-12-07 00:00:00.000000000 +0000
 @@ -0,0 +1 @@
 +.so man7/unix.7
---- man-pages-2.16/man7/PF_NETLINK.7.orig	2005-12-07 22:55:02.000000000 +0000
+--- man-pages-2.16/man7/PF_NETLINK.7.orig	2005-12-12 22:55:02.000000000 +0000
 +++ man-pages-2.16/man7/PF_NETLINK.7	2005-12-07 00:00:00.000000000 +0000
 @@ -0,0 +1 @@
 +.so man7/netlink.7
---- man-pages-2.16/man7/PF_PACKET.7.orig	2005-12-07 22:55:02.000000000 +0000
+--- man-pages-2.16/man7/PF_PACKET.7.orig	2005-12-12 22:55:02.000000000 +0000
 +++ man-pages-2.16/man7/PF_PACKET.7	2005-12-07 00:00:00.000000000 +0000
 @@ -0,0 +1 @@
 +.so man7/packet.7
---- man-pages-2.16/man7/PF_UNIX.7.orig	2005-12-07 22:55:02.000000000 +0000
+--- man-pages-2.16/man7/PF_UNIX.7.orig	2005-12-12 22:55:02.000000000 +0000
 +++ man-pages-2.16/man7/PF_UNIX.7	2005-12-07 00:00:00.000000000 +0000
 @@ -0,0 +1 @@
 +.so man7/unix.7
---- man-pages-2.16/man7/PF_X25.7.orig	2005-12-07 22:55:02.000000000 +0000
+--- man-pages-2.16/man7/PF_X25.7.orig	2005-12-12 22:55:02.000000000 +0000
 +++ man-pages-2.16/man7/PF_X25.7	2005-12-07 00:00:00.000000000 +0000
 @@ -0,0 +1 @@
 +.so man7/x25.7
---- man-pages-2.16/man7/SOCK_RAW.7.orig	2005-12-07 22:55:02.000000000 +0000
+--- man-pages-2.16/man7/SOCK_RAW.7.orig	2005-12-12 22:55:02.000000000 +0000
 +++ man-pages-2.16/man7/SOCK_RAW.7	2005-12-07 00:00:00.000000000 +0000
 @@ -0,0 +1 @@
 +.so man7/raw.7
