@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/man-pages/man-pages.spec,v 1.20 2005/11/16 13:16:56 solar Exp $
+# $Owl: Owl/packages/man-pages/man-pages.spec,v 1.21 2005/12/12 01:00:31 mci Exp $
 
 Summary: Manual (man) pages from the Linux Documentation Project.
 Name: man-pages
-Version: 1.52
-Release: owl3
+Version: 2.16
+Release: owl1
 License: distributable
 Group: Documentation
 Source0: ftp://ftp.win.tue.nl/pub/linux-local/manpages/man-pages-%version.tar.gz
@@ -13,14 +13,14 @@ Source3: iconv.1
 Source4: locale.1
 Source5: localedef.1
 Source6: sprof.1
-Source7: setcontext.2
-Source8: ld-linux.so.8
-Source9: ldconfig.8
-Source10: rpcinfo.8
-Patch0: man-pages-1.52-deb-owl-misc.diff
-Patch1: man-pages-1.52-rh-owl-roff-fixes.diff
-Patch2: man-pages-1.52-owl-cc-ld.so.diff
-Patch3: man-pages-1.52-owl-uselib.diff
+Source7: ld-linux.so.8
+Source8: ldconfig.8
+Source9: rpcinfo.8
+Patch0: man-pages-2.16-deb-owl-misc.diff
+Patch1: man-pages-2.16-rh-owl-roff-fixes.diff
+Patch2: man-pages-2.16-rh-misc.diff
+Patch3: man-pages-2.16-owl-cc-ld.so.diff
+Patch4: man-pages-2.16-owl-uselib.diff
 AutoReqProv: false
 BuildArchitectures: noarch
 BuildRoot: /override/%name-%version
@@ -35,6 +35,27 @@ nfs); Section 6, games (intro only); Section 7, conventions, macro
 packages, etc. (e.g., nroff, ascii); and Section 8, system
 administration (intro only).
 
+%package posix
+Summary: Man (manual) pages from the IEEE and The Open Group.
+Group: Documentation
+License: for reprint only
+Requires: %name = %version-%release
+
+%description posix
+A large collection of man pages (reference material) from the
+IEEE Std 1003.1, 2003 Edition, Standard for Information Technology --
+Portable Operating System Interface (POSIX), The Open Group Base
+Specifications Issue 6, Copyright (C) 2001-2003 by the Institute of
+Electrical and Electronics Engineers, Inc and The Open Group.003.1,
+2003 Edition, Standard for Information Technology -- Portable Operating
+System Interface (POSIX), The Open Group Base Specifications Issue 6,
+Copyright (C) 2001-2003 by the Institute of Electrical and Electronics
+Engineers, Inc and The Open Group.  The man pages are organized into
+the following sections:
+	0p: POSIX headers
+	1p: POSIX utilities
+	3p: POSIX functions
+
 %prep
 %setup -q
 
@@ -45,8 +66,6 @@ cp %_sourcedir/locale.1 man1/
 cp %_sourcedir/localedef.1 man1/
 cp %_sourcedir/sprof.1 man1/
 
-cp %_sourcedir/setcontext.2 man2/
-
 cp %_sourcedir/ld-linux.so.8 man8/
 cp %_sourcedir/ldconfig.8 man8/
 cp %_sourcedir/rpcinfo.8 man8/
@@ -55,52 +74,66 @@ cp %_sourcedir/rpcinfo.8 man8/
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
-rm -fv man1/README
+rm man1/README
 
 # These are parts of fileutils
-rm -fv man1/{chgrp,chmod,chown,cp,dd,df,dircolors,du,install}.1
-rm -fv man1/{ln,ls,mkdir,mkfifo,mknod,mv,rm,rmdir,touch}.1
-rm -fv man1/{dir,vdir}.1
+rm man1/{chgrp,chmod,chown,cp,dd,df,dircolors,du,install}.1
+rm man1/{ln,ls,mkdir,mkfifo,mknod,mv,rm,rmdir,touch}.1
+rm man1/{dir,vdir}.1
 
 # Part of quota
-rm -fv man2/quotactl.2
+rm man2/quotactl.2
 
 # Part of glibc (crypt_blowfish)
-rm -fv man3/crypt.3
+rm man3/crypt.3
 
 # Part of bind-utils
-rm -fv man5/resolver.5
-rm -fv man5/resolv.conf.5
+rm man5/resolver.5
+rm man5/resolv.conf.5
+
+# Part of shadow-utils
+rm man3/getspnam.3
 
 # Obsolete
-rm -f man3/infnan.3
+rm man3/infnan.3
 
 # Part of time
-rm -fv man1/time.1
+rm man1/time.1
 
 # We don't package it
-rm -fv man5/nscd.conf.5
-rm -fv man8/nscd.8
+rm man5/nscd.conf.5
+rm man8/nscd.8
 
 %install
 rm -rf %buildroot
 
 mkdir -p %buildroot%_mandir
-for n in 1 2 3 4 5 6 7 8; do
+for n in 0p 1 1p 2 3 3p 4 5 6 7 8 9; do
 	mkdir %buildroot%_mandir/man$n
 done
-for n in man?/*; do
+for n in man*/*; do
 	cp -a $n %buildroot%_mandir/$n
 done
 
 %files
 %defattr(0644,root,root,0755)
-%doc README man-pages-%version.Announce
-%_mandir/man*/*
+%doc README HOWTOHELP man-pages-%version.Announce
+%_mandir/man?/*
+
+%files posix
+%defattr(0644,root,root,0755)
+%doc POSIX-COPYRIGHT
+%_mandir/man?p/*
 
 %changelog
+* Thu Dec 08 2005 Michail Litvak <mci-at-owl.openwall.com> 2.16-owl1
+- 2.16.
+- Make separate subpackage for POSIX man-pages due to licensing restrictions.
+- Updated patches.
+
 * Thu Apr 17 2003 Solar Designer <solar-at-owl.openwall.com> 1.52-owl3
 - console-tools has been replaced with kbd, so let's package console(4)
 from here now.

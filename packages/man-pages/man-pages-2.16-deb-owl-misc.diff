@@ -1,0 +1,1343 @@
+--- man-pages-2.16/man2/adjtime.2.orig	2005-12-07 22:55:02.000000000 +0000
++++ man-pages-2.16/man2/adjtime.2	2005-12-07 00:00:00.000000000 +0000
+@@ -0,0 +1,71 @@
++.\" This is free documentation; you can redistribute it and/or
++.\" modify it under the terms of the GNU General Public License as
++.\" published by the Free Software Foundation; either version 2 of
++.\" the License, or (at your option) any later version.
++.\"
++.\" The GNU General Public License's references to "object code"
++.\" and "executables" are to be interpreted as the output of any
++.\" document formatting or typesetting system, including
++.\" intermediate and printed output.
++.\"
++.\" This manual is distributed in the hope that it will be useful,
++.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
++.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++.\" GNU General Public License for more details.
++.\"
++.\" You should have received a copy of the GNU General Public
++.\" License along with this manual; if not, write to the Free
++.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
++.\" USA.
++.\"
++.\" 2002-02-16, joey: Converted from glibc.info
++.\"
++.TH ADJTIME 2 2002-02-16 "Linux 2.0" "Linux Programmer's Manual"
++.SH NAME
++adjtime \- smoothly tune kernel clock
++.SH SYNOPSIS
++.B #include <sys/time.h>
++.sp
++.BI "int adjtime(const struct timeval *" delta ", struct timeval *" olddelta );
++.SH DESCRIPTION
++This function speeds up or slows down the system clock in order to
++make a gradual adjustment.  This ensures that the calendar time
++reported by the system clock is always monotonically increasing, which
++might not happen if you simply set the clock.
++
++The
++.I delta
++argument specifies a relative adjustment to be made to the clock time.
++If negative, the system clock is slowed down fora while until it has
++lost this much elapsed time.  If positive, the system clock is speeded
++up for a while.
++
++If the
++.I olddelta
++argument is not a null pointer, the
++.B adjtime
++function returns information about any previous time adjustment that
++has not yet completed.
++
++This function is typically used to synchronize the clocks of computers
++in a local network.  You must be a privileged user to use it.
++.SH "RETURN VALUE"
++The
++.B adjtime
++function returns 0 on success and -1 on failure and sets the external
++variable
++.I errno
++accordingly.
++.SH ERRORS
++.TP
++.B EPERM
++The calling process does not have enough privileges to access the clock.
++.SH NOTE
++With a Linux kernel, you can use the 
++.BR adjtimex (2)
++function to permanently change the system clock speed.
++.SH "CONFORMING TO"
++This function is derived from 4.3 BSD and SVr4.
++.SH "SEE ALSO"
++.BR adjtimex (2),
++.BR settimeofday (2)
+--- man-pages-2.16/man2/bind.2.orig	2005-07-18 15:05:56.000000000 +0000
++++ man-pages-2.16/man2/bind.2	2005-12-07 22:55:02.000000000 +0000
+@@ -96,7 +96,7 @@
+ .BR accept (2)).
+ 
+ The rules used in name binding vary between address families.  Consult
+-the manual entries in Section 7 for detailed information. For
++the manual entries in Section 7 for detailed information.  For
+ .B AF_INET
+ see
+ .BR ip (7),
+--- man-pages-2.16/man2/chroot.2.orig	2005-11-02 11:34:24.000000000 +0000
++++ man-pages-2.16/man2/chroot.2	2005-12-07 22:55:02.000000000 +0000
+@@ -28,6 +28,7 @@
+ .\" Modified 1996-06-13 by aeb
+ .\" Modified 1996-11-06 by Eric S. Raymond <esr@thyrsus.com>
+ .\" Modified 1997-08-21 by Joseph S. Myers <jsm28@cam.ac.uk>
++.\" Modified 2003-08-24 by Martin Schulze <joey@infodrom.org>
+ .\" Modified 2004-06-23 by Michael Kerrisk <mtk-manpages@gmx.net>
+ .\"
+ .TH CHROOT 2 2004-06-23 "Linux 2.6.7" "Linux Programmer's Manual"
+@@ -59,7 +60,6 @@
+ 
+ This call does not close open file descriptors, and such file
+ descriptors may allow access to files outside the chroot tree.
+-
+ .SH "RETURN VALUE"
+ On success, zero is returned.  On error, \-1 is returned, and
+ .I errno
+--- man-pages-2.16/man2/FD_CLR.2.orig	2005-12-07 22:55:02.000000000 +0000
++++ man-pages-2.16/man2/FD_CLR.2	2005-12-07 00:00:00.000000000 +0000
+@@ -0,0 +1 @@
++.so man2/select.2
+--- man-pages-2.16/man2/FD_ISSET.2.orig	2005-12-07 22:55:02.000000000 +0000
++++ man-pages-2.16/man2/FD_ISSET.2	2005-12-07 00:00:00.000000000 +0000
+@@ -0,0 +1 @@
++.so man2/select.2
+--- man-pages-2.16/man2/FD_SET.2.orig	2005-12-07 22:55:02.000000000 +0000
++++ man-pages-2.16/man2/FD_SET.2	2005-12-07 00:00:00.000000000 +0000
+@@ -0,0 +1 @@
++.so man2/select.2
+--- man-pages-2.16/man2/FD_ZERO.2.orig	2005-12-07 22:55:02.000000000 +0000
++++ man-pages-2.16/man2/FD_ZERO.2	2005-12-07 00:00:00.000000000 +0000
+@@ -0,0 +1 @@
++.so man2/select.2
+--- man-pages-2.16/man2/getgid.2.orig	2005-10-19 06:54:38.000000000 +0000
++++ man-pages-2.16/man2/getgid.2	2005-12-07 22:55:02.000000000 +0000
+@@ -39,6 +39,12 @@
+ 
+ .BR getegid ()
+ returns the effective group ID of the current process.
++
++When a normal program is executed, the effective and real group ID of
++the process are set to the group ID of the user executing the file.
++When a set ID program is executed the real group ID is set to the
++group of the calling user and the effective user ID corresponds to the
++set group ID bit on the file being executed.
+ .SH ERRORS
+ These functions are always successful.
+ .SH "CONFORMING TO"
+--- man-pages-2.16/man2/gettimeofday.2.orig	2005-11-02 13:55:25.000000000 +0000
++++ man-pages-2.16/man2/gettimeofday.2	2005-12-07 22:55:02.000000000 +0000
+@@ -42,6 +42,9 @@
+ gettimeofday, settimeofday \- get / set time
+ .SH SYNOPSIS
+ .B #include <sys/time.h>
++.\" Andries disagrees with this --> don't forward upstream
++.br
++.B #include <time.h>
+ .sp
+ .BI "int gettimeofday(struct timeval *" tv ", struct timezone *" tz );
+ .br
+--- man-pages-2.16/man2/getuid.2.orig	2005-10-19 07:07:02.000000000 +0000
++++ man-pages-2.16/man2/getuid.2	2005-12-07 22:55:02.000000000 +0000
+@@ -40,6 +40,12 @@
+ 
+ .BR geteuid ()
+ returns the effective user ID of the current process.
++
++When a normal program is executed, the effective and real user ID of
++the process are set to the ID of the user executing the file.
++When a set ID program is executed the real user ID is set to the
++calling user and the effective user ID corresponds to the set ID bit
++on the file being executed.
+ .SH ERRORS
+ These functions are always successful.
+ .SH "CONFORMING TO"
+--- man-pages-2.16/man2/intro.2.orig	2005-10-19 07:29:28.000000000 +0000
++++ man-pages-2.16/man2/intro.2	2005-12-07 22:55:02.000000000 +0000
+@@ -166,7 +166,7 @@
+ IEEE Std 1003.1b-1993 (POSIX.1b standard) describing real-time facilities
+ for portable operating systems, aka ISO/IEC 9945-1:1996, as elucidated in
+ "Programming for the real world \- POSIX.4"
+-by Bill O. Gallmeister (O'Reilly & Associates, Inc. ISBN 1-56592-074-0).
++by Bill O. Gallmeister (O'Reilly & Associates, Inc. ISBN 1\-56592\-074\-0).
+ .TP
+ SUS, SUSv2
+ Single Unix Specification.
+--- man-pages-2.16/man2/kill.2.orig	2005-11-21 13:37:53.000000000 +0000
++++ man-pages-2.16/man2/kill.2	2005-12-07 22:55:02.000000000 +0000
+@@ -149,6 +149,7 @@
+ .SH "SEE ALSO"
+ .BR _exit (2),
+ .BR killpg (2),
++.BR sigqueue (2),
+ .BR signal (2),
+ .BR sigqueue (2),
+ .BR tkill (2),
+--- man-pages-2.16/man2/signal.2.orig	2005-11-29 15:01:54.000000000 +0000
++++ man-pages-2.16/man2/signal.2	2005-12-07 22:55:02.000000000 +0000
+@@ -96,17 +96,17 @@
+ .BR signal ()
+ is redefined as
+ .B __bsd_signal
+-and signal has the BSD semantics. This is not recommended.
++and signal has the BSD semantics.  This is not recommended.
+ 
+ If one on a glibc2 system defines a feature test
+ macro such as
+ .B _XOPEN_SOURCE
+ or uses a separate
+ .B sysv_signal
+-function, one obtains classical behaviour. This is not recommended.
++function, one obtains classical behaviour.  This is not recommended.
+ 
+ Trying to change the semantics of this call using
+-defines and includes is not a good idea. It is better to avoid
++defines and includes is not a good idea.  It is better to avoid
+ .BR signal ()
+ altogether, and use
+ .BR sigaction (2)
+--- man-pages-2.16/man2/socket.2.orig	2005-11-03 12:47:27.000000000 +0000
++++ man-pages-2.16/man2/socket.2	2005-12-07 22:55:02.000000000 +0000
+@@ -306,12 +306,18 @@
+ appeared in 4.2BSD. It is generally portable to/from
+ non-BSD systems supporting clones of the BSD socket layer (including
+ System V variants).
+-.SH NOTE
++.SH NOTES
+ The manifest constants used under 4.x BSD for protocol families
+ are PF_UNIX, PF_INET, etc., while AF_UNIX etc. are used for address
+ families. However, already the BSD man page promises: "The protocol
+ family generally is the same as the address family", and subsequent
+ standards use AF_* everywhere.
++
++The header file
++.I <sys/types.h>
++is only required for libc4 or earlier.  Some packages, like
++util-linux, claim portability to all Linux versions and libraries.
++They certainly need this header file.
+ .SH BUGS
+ .B SOCK_UUCP
+ is not implemented yet.
+--- man-pages-2.16/man2/socketpair.2.orig	2005-11-02 11:34:24.000000000 +0000
++++ man-pages-2.16/man2/socketpair.2	2005-12-07 22:55:02.000000000 +0000
+@@ -98,6 +98,12 @@
+ (or synonymously,
+ .BR AF_LOCAL ).
+ (Most implementations have the same restriction.)
++
++The header file
++.I <sys/types.h>
++is only required for libc4 or earlier.  Some packages, like
++util-linux, claim portability to all Linux versions and libraries.
++They certainly need this header file.
+ .SH "SEE ALSO"
+ .BR pipe (2),
+ .BR read (2),
+--- man-pages-2.16/man2/sstk.2.orig	2005-12-07 22:55:02.000000000 +0000
++++ man-pages-2.16/man2/sstk.2	2005-12-07 00:00:00.000000000 +0000
+@@ -0,0 +1,37 @@
++.\" From the 4.3BSD Architecture Manual - BSD copyright
++.TH SSTK 2 2003-11-11 "" "BSD planned"
++.SH NAME
++sstk \- change stack size
++.SH SYNOPSIS
++caddr_t sstk(int incr);
++.SH DESCRIPTION
++(From the 4.3BSD Architecture Manual)
++.sp
++Each process begins execution with three logical areas of memories
++called text, data and stack. The text area is read-only and shared,
++while the data and stack areas are private to the process.
++Both the data and stack areas may be extended and contracted on
++program request. The call
++.sp
++.in +5
++caddr_t addr = sbrk(incr);
++.in
++.sp
++changes the size of the data area by
++.I incr
++bytes and returns the new end of the data area, while
++.sp
++.in +5
++caddr_t addr = sstk(incr);
++.in
++.sp
++changes the size of the stack area. The stack area is also automatically
++extended as needed. On the VAX the text and data areas are adjacent
++in the P0 region, while the stack section is in the P1 region, and
++grows downward.
++.SH NOTE
++This call is not supported in 4.3BSD or 4.4BSD or glibc or Linux or any
++other known Unix-like system. Some systems have a routine of this name
++that returns ENOSYS.
++.SH "SEE ALSO"
++.BR sbrk (2)
+--- man-pages-2.16/man2/swapon.2.orig	2005-09-19 12:18:57.000000000 +0000
++++ man-pages-2.16/man2/swapon.2	2005-12-07 22:55:02.000000000 +0000
+@@ -115,7 +115,7 @@
+ or, for
+ .BR swapon (),
+ the indicated path does not contain a valid swap signature;
+-or, for 
++or, for
+ .BR swapoff (),
+ .I path
+ is not currently a swap area.
+--- man-pages-2.16/man2/syscalls.2.orig	2005-10-19 07:07:02.000000000 +0000
++++ man-pages-2.16/man2/syscalls.2	2005-12-07 22:55:02.000000000 +0000
+@@ -32,8 +32,7 @@
+ and the Linux kernel. As of Linux 2.4.17, there are 1100 system calls
+ listed in
+ .IR /usr/src/linux/include/asm-*/unistd.h .
+-This man page lists those that are common to most platforms
+-(providing hyperlinks if you read this with a browser).
++This man page lists those that are common to most platforms.
+ 
+ _llseek(2),
+ _newselect(2),
+--- man-pages-2.16/man2/times.2.orig	2005-07-19 15:36:19.000000000 +0000
++++ man-pages-2.16/man2/times.2	2005-12-07 22:55:02.000000000 +0000
+@@ -59,8 +59,8 @@
+ .RS
+ clock_t tms_utime;  /* user time */
+ clock_t tms_stime;  /* system time */
+-clock_t tms_cutime; /* user time of children */
+-clock_t tms_cstime; /* system time of children */
++clock_t tms_cutime; /* user time of dead children */
++clock_t tms_cstime; /* system time of dead children */
+ .RE
+ };
+ .fi
+--- man-pages-2.16/man3/catopen.3.orig	2005-11-02 11:34:24.000000000 +0000
++++ man-pages-2.16/man3/catopen.3	2005-12-07 22:55:02.000000000 +0000
+@@ -23,7 +23,7 @@
+ .\" Modified Thu Dec 13 22:51:19 2001 by Martin Schulze <joey@infodrom.org>
+ .\" Modified 2001-12-14 aeb
+ .\"
+-.TH CATOPEN 3 2001-12-14
++.TH CATOPEN 3 2001-12-14 "GNU" "Linux Programmer's Manual"
+ .SH NAME
+ catopen, catclose \- open/close a message catalog
+ .SH SYNOPSIS
+--- man-pages-2.16/man3/clog10.3.orig	2004-11-11 17:28:42.000000000 +0000
++++ man-pages-2.16/man3/clog10.3	2005-12-07 22:55:02.000000000 +0000
+@@ -5,8 +5,6 @@
+ .SH NAME
+ clog10, clog10f, clog10l \- base-10 logarithm of a complex number
+ .SH SYNOPSIS
+-.B #define _GNU_SOURCE
+-.br
+ .B #include <complex.h>
+ .sp
+ .BI "double complex clog10(double complex " z );
+@@ -15,16 +13,14 @@
+ .br
+ .BI "long double complex clog10l(long double complex " z );
+ .sp
+-Link with \-lm.
+ .SH DESCRIPTION
+ The logarithm is defined as log10(cabs(z))+I*carg(z).
+ Please note that z close to zero will cause an overflow. 
+ .SH "CONFORMING TO"
+-The function is a GNU extension.
+-It is reserved for future use in C99.
++C99
++\" in "future directions" of C99
+ .SH "SEE ALSO"
+ .BR cabs (3),
+ .BR cexp (3),
+-.BR clog (3),
+ .BR clog2 (3),
+-.BR complex (5)
++.BR clog (3)
+--- man-pages-2.16/man3/daemon.3.orig	2005-10-19 07:07:02.000000000 +0000
++++ man-pages-2.16/man3/daemon.3	2005-12-07 22:55:02.000000000 +0000
+@@ -79,7 +79,7 @@
+ The glibc implementation can also return \-1 when
+ .I /dev/null
+ exists but is not a character device with the expected
+-major and minor numbers. In this case
++major and minor numbers.  In this case
+ .I errno
+ need not be set.
+ .SH HISTORY
+--- man-pages-2.16/man3/dbopen.3.orig	2005-11-02 11:34:24.000000000 +0000
++++ man-pages-2.16/man3/dbopen.3	2005-12-07 22:55:02.000000000 +0000
+@@ -41,6 +41,7 @@
+ #include <sys/types.h>
+ #include <limits.h>
+ #include <db.h>
++#include <fcntl.h>
+ 
+ DB *
+ dbopen(const char *file, int flags, int mode, DBTYPE type,
+--- man-pages-2.16/man3/difftime.3.orig	2005-10-19 07:07:02.000000000 +0000
++++ man-pages-2.16/man3/difftime.3	2005-12-07 22:55:02.000000000 +0000
+@@ -25,7 +25,10 @@
+ .\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+ .\"     386BSD man pages
+ .\" Modified Sat Jul 24 19:48:17 1993 by Rik Faith (faith@cs.unc.edu)
+-.TH DIFFTIME 3  1993-07-02 "GNU" "Linux Programmer's Manual"
++.\" 2002-02-22, joey: Copied note from glibc.info
++.\" 2002-02-28, aeb
++.\"
++.TH DIFFTIME 3  2002-02-28 "GNU" "Linux Programmer's Manual"
+ .SH NAME
+ difftime \- calculate time difference
+ .SH SYNOPSIS
+@@ -48,10 +51,16 @@
+ define
+ .RS
+ .nf
++
+ #define difftime(t1,t0) (double)(t1 \- t0)
++
+ .fi
+ .RE
+ when the possible overflow in the subtraction is not a concern.
++On other systems, the data type time_t might use some other encoding
++where subtraction doesn't work directly.
++.SH "CONFORMING TO"
++SVID 3, BSD 4.3, ISO 9899
+ .SH "SEE ALSO"
+ .BR date (1),
+ .BR gettimeofday (2),
+--- man-pages-2.16/man3/dlopen.3.orig	2005-10-28 13:27:52.000000000 +0000
++++ man-pages-2.16/man3/dlopen.3	2005-12-07 22:55:02.000000000 +0000
+@@ -220,7 +220,7 @@
+ and
+ .BR RTLD_NEXT .
+ The former will find the first occurrence of the desired symbol
+-using the default library search order. The latter
++using the default library search order.  The latter
+ will find the next occurrence of a function in the search order
+ after the current library.  This allows one to provide a wrapper
+ around a function in another shared library.
+--- man-pages-2.16/man3/fclose.3.orig	2005-10-19 06:54:38.000000000 +0000
++++ man-pages-2.16/man3/fclose.3	2005-12-07 22:55:02.000000000 +0000
+@@ -38,6 +38,7 @@
+ .\" Converted for Linux, Mon Nov 29 15:19:14 1993, faith@cs.unc.edu
+ .\"
+ .\" Modified 2000-07-22 by Nicolás Lichtmaier <nick@debian.org>
++.\"      added note about fclose not ensuring the data is physically saved
+ .\"
+ .TH FCLOSE 3  1993-11-29 "BSD MANPAGE" "Linux Programmer's Manual"
+ .SH NAME
+@@ -54,6 +55,14 @@
+ (writing any buffered output data using
+ .BR fflush (3))
+ and close the underlying file descriptor.
++.PP
++The behaviour of
++.BR fclose ()
++is undefined if the
++.I stream
++parameter is an illegal pointer, or is a descriptor already passed
++to a previous invocation of
++.BR fclose ().
+ .SH "RETURN VALUE"
+ Upon successful completion 0 is returned.  Otherwise,
+ .B EOF
+--- man-pages-2.16/man3/fenv.3.orig	2005-11-02 11:34:24.000000000 +0000
++++ man-pages-2.16/man3/fenv.3	2005-12-07 22:55:02.000000000 +0000
+@@ -200,13 +200,11 @@
+ As before, the object
+ .RI * envp
+ must be known to be valid.
+-
+ .SH "RETURN VALUE"
+-These functions return zero on success and non-zero if an error occurred.
++These function return zero on success and non-zero if an error occurred.
+ .\" Earlier seven of these functions were listed as returning void.
+ .\" This was corrected in Corrigendum 1 (ISO/IEC 9899:1999/Cor.1:2001(E))
+ .\" of the C99 Standard.
+-
+ .SH "GNU DETAILS"
+ If possible, the GNU C Library defines a macro
+ .B FE_NOMASK_ENV
+--- man-pages-2.16/man3/ffs.3.orig	2005-10-19 07:07:02.000000000 +0000
++++ man-pages-2.16/man3/ffs.3	2005-12-07 22:55:02.000000000 +0000
+@@ -55,7 +55,8 @@
+ arguments of possibly different size.
+ .SH "RETURN VALUE"
+ These functions return the position of the first bit set,
+-or 0 if no bits are set.
++or 0 if no bits are set in
++.IR i .
+ .SH "CONFORMING TO"
+ 4.3BSD, POSIX 1003.1-2001.
+ .SH NOTES
+--- man-pages-2.16/man3/ftime.3.orig	2005-10-19 07:07:02.000000000 +0000
++++ man-pages-2.16/man3/ftime.3	2005-12-07 22:55:02.000000000 +0000
+@@ -62,7 +62,7 @@
+ .SH "RETURN VALUE"
+ This function always returns 0.
+ .SH BUGS
+-This function is obsolete. Don't use it. If the time in seconds
++This function is obsolete.  Don't use it.  If the time in seconds
+ suffices,
+ .BR time (2)
+ can be used;
+--- man-pages-2.16/man3/getenv.3.orig	2005-10-19 07:07:02.000000000 +0000
++++ man-pages-2.16/man3/getenv.3	2005-12-07 22:55:02.000000000 +0000
+@@ -50,4 +50,4 @@
+ .BR putenv (3),
+ .BR setenv (3),
+ .BR unsetenv (3),
+-.BR environ (5)
++.BR environ (7)
+--- man-pages-2.16/man3/getloadavg.3.orig	2005-07-18 15:05:56.000000000 +0000
++++ man-pages-2.16/man3/getloadavg.3	2005-12-07 22:55:02.000000000 +0000
+@@ -26,38 +26,42 @@
+ .\" SUCH DAMAGE.
+ .\"
+ .\"     @(#)getloadavg.3	8.1 (Berkeley) 6/4/93
++.\" $FreeBSD: src/lib/libc/gen/getloadavg.3,v 1.6 1999/08/27 23:58:41 peter Exp $
+ .\"
+-.Dd June 4, 1993
+-.Dt GETLOADAVG 3
+-.Os 4.3BSD
+-.Sh NAME
+-.Nm getloadavg
+-.Nd get system load averages
+-.Sh SYNOPSIS
++.\" Modified Sat Dec 22 20:23:19 2001 by Martin Schulze <joey@infodrom.org>
++.\"
++.TH GETLOADAVG 3  1993-06-04 "4.3BSD" "Linux Programmer's Manual"
++.SH NAME
++getloadavg \- get system load averages
++.SH SYNOPSIS
+ .Fd #define _BSD_SOURCE
+-.Fd #include <stdlib.h>
+-.Ft int
+-.Fn getloadavg "double loadavg[]" "int nelem"
+-.Sh DESCRIPTION
++.sp
++or
++.sp
++.B #define _GNU_SOURCE
++.sp
++.B #include <stdlib.h>
++.sp
++.BI "int getloadavg(double " loadavg "[], int " nelem );
++.SH DESCRIPTION
+ The
+-.Fn getloadavg
++.B getloadavg
+ function returns the number of processes in the system run queue
+ averaged over various periods of time.
+ Up to
+-.Fa nelem
++.I nelem
+ samples are retrieved and assigned to successive elements of
+-.Fa loadavg Ns Bq .
++.IR loadavg [].
+ The system imposes a maximum of 3 samples, representing averages
+ over the last 1, 5, and 15 minutes, respectively.
+-.Sh DIAGNOSTICS
++.SH DIAGNOSTICS
+ If the load average was unobtainable, \-1 is returned; otherwise,
+ the number of samples actually retrieved is returned.
+-.Sh SEE ALSO
+-.Xr uptime 1 ,
+-.Xr proc 5
+-.Sh HISTORY
++.SH "CONFORMING TO"
+ The
+-.Fn getloadavg
++.B getloadavg
+ function appeared in
+-.Bx 4.3 Reno .
+-.\" mdoc seems to have a bug - there must be no newline here
++4.3BSD-Reno.
++.SH "SEE ALSO"
++.BR uptime (1),
++.BR proc (5)
+--- man-pages-2.16/man3/getpwent.3.orig	2005-11-15 17:57:53.000000000 +0000
++++ man-pages-2.16/man3/getpwent.3	2005-12-07 22:55:02.000000000 +0000
+@@ -26,7 +26,8 @@
+ .\"     386BSD man pages
+ .\"
+ .\" Modified Sat Jul 24 19:22:14 1993 by Rik Faith (faith@cs.unc.edu)
+-.\" Modified Mon May 27 21:37:47 1996 by Martin Schulze (joey@linux.de)
++.\" Modified Mon May 27 21:37:47 1996 by Martin Schulze <joey@linux.de>
++.\" Modified Thu Dec 13 21:10:55 2001 by Martin Schulze <joey@infodrom.org>
+ .\"
+ .TH GETPWENT 3  1996-05-27 "GNU" "Linux Programmer's Manual"
+ .SH NAME
+@@ -45,14 +46,14 @@
+ .SH DESCRIPTION
+ The \fBgetpwent\fP() function returns a pointer to a structure containing
+ the broken-out fields of a record from the password database
+-(e.g., the local password file 
++(e.g., the local password file
+ .IR /etc/passwd ,
+ NIS, and LDAP).
+-The first time it 
++The first time it
+ is called it returns the first entry; thereafter, it returns successive 
+ entries.
+ .PP
+-The \fBsetpwent\fP() function rewinds to the beginning 
++The \fBsetpwent\fP() function rewinds to the beginning
+ of the password database.
+ .PP
+ The \fBendpwent\fP() function is used to close the password database
+@@ -73,11 +74,26 @@
+ };
+ .fi
+ .RE
++.\" Next paragraph rejected upstream
++.PP
++When
++.BR shadow (5)
++passwords are enabled (which is default on many GNU/Linux
++installations) the content of
++.I pw_passwd
++is usually not very useful.  In such a case most passwords are stored
++in a separate file.
++.PP
++The variable
++.I pw_shell
++may be empty, in which case the system will execute the default shell
++.RB ( /bin/sh )
++for the user.
+ .SH "RETURN VALUE"
+-The \fBgetpwent\fP() function returns a pointer to a 
++The \fBgetpwent\fP() function returns a pointer to a
+ .I passwd
+-structure, or NULL if 
+-there are no more entries or an error occurs.
++structure, or NULL if
++there are no more entries or an error occured.
+ If an error occurs,
+ .I errno
+ is set appropriately.
+@@ -93,7 +109,8 @@
+ I/O error.
+ .TP
+ .B EMFILE
+-The maximum number (OPEN_MAX) of files was open already in the calling process.
++The maximum number (OPEN_MAX) of files was open already in the
++alling process.
+ .TP
+ .B ENFILE
+ The maximum number of files was open already in the system.
+@@ -118,4 +135,6 @@
+ .BR getpwnam (3),
+ .BR getpwuid (3),
+ .BR putpwent (3),
++.\" Next line rejected upstream
++.BR shadow (5),
+ .BR passwd (5)
+--- man-pages-2.16/man3/getpwnam.3.orig	2005-10-19 07:07:02.000000000 +0000
++++ man-pages-2.16/man3/getpwnam.3	2005-12-07 22:55:02.000000000 +0000
+@@ -29,7 +29,7 @@
+ .\" Modified 1996-05-27 by Martin Schulze (joey@linux.de)
+ .\" Modified 2003-11-15 by aeb
+ .\"
+-.TH GETPWNAM 3  1996-05-27 "GNU" "Linux Programmer's Manual"
++.TH GETPWNAM 3  2002-03-09 "GNU" "Linux Programmer's Manual"
+ .SH NAME
+ getpwnam, getpwnam_r, getpwuid, getpwuid_r \- get password file entry
+ .SH SYNOPSIS
+@@ -152,14 +152,22 @@
+ .B ENOMEM
+ .\" not in POSIX
+ Insufficient memory to allocate passwd structure.
+-.\" This structure is static, allocated 0 or 1 times. No memory leak. (libc45)
++.\" This structure is static, allocated 0 or 1 times.  No memory leak. (libc45)
+ .TP
+ .B ERANGE
+ Insufficient buffer space supplied.
++.SH NOTE
++The user password database mostly refers to \fI/etc/passwd\fP.
++However, with recent systems it also refers to network wide databases
++using NIS, LDAP and other local files as configured in
++\fI/etc/nsswitch.conf\fP.
+ .SH FILES
+ .TP
+ .I /etc/passwd
+ local password database file
++.TP
++.I /etc/nsswitch.conf
++System Databases and Name Service Switch configuration file
+ .fi
+ .SH "CONFORMING TO"
+ SVID 3, 4.3BSD, POSIX 1003.1-2003
+@@ -167,10 +175,10 @@
+ The formulation given above under "RETURN VALUE" is from POSIX 1003.1-2001.
+ It does not call "not found" an error, and hence does not specify what value
+ .I errno
+-might have in this situation. But that makes it impossible to recognize
++might have in this situation.  But that makes it impossible to recognize
+ errors. One might argue that according to POSIX
+ .I errno
+-should be left unchanged if an entry is not found. Experiments on various
++should be left unchanged if an entry is not found.  Experiments on various
+ Unix-like systems show that lots of different values occur in this
+ situation: 0, ENOENT, EBADF, ESRCH, EWOULDBLOCK, EPERM and probably others.
+ .\" more precisely:
+@@ -203,4 +211,5 @@
+ .BR getpwent (3),
+ .BR putpwent (3),
+ .BR setpwent (3),
++.BR nsswitch.conf (5),
+ .BR passwd (5)
+--- man-pages-2.16/man3/isalpha.3.orig	2005-10-19 16:30:05.000000000 +0000
++++ man-pages-2.16/man3/isalpha.3	2005-12-07 22:55:02.000000000 +0000
+@@ -145,6 +145,8 @@
+ \fBisascii\fP() is a BSD extension
+ and is also an SVID extension.
+ \fBisblank\fP() conforms to ISO C99 7.4.1.3.
++\fBisblank\fP() is conforming to IEEE Std 1003.1, 2003, and
++ISO C99 7.4.1.3.
+ .SH NOTE
+ The details of what characters belong into which class depend on the current
+ locale.  For example,
+--- man-pages-2.16/man3/mkstemp.3.orig	2005-10-19 07:07:02.000000000 +0000
++++ man-pages-2.16/man3/mkstemp.3	2005-12-07 22:55:02.000000000 +0000
+@@ -75,12 +75,16 @@
+ .BR mkstemp ().
+ .SH "CONFORMING TO"
+ 4.3BSD, POSIX 1003.1-2001
+-.SH NOTE
++.SH NOTES
+ The prototype is in
+ .I <unistd.h>
+ for libc4, libc5, glibc1; glibc2 follows the Single Unix Specification
+ and has the prototype in
+ .IR <stdlib.h> .
++
++Don't use this function, use
++.BR tmpfile (3)
++instead.  It is better defined and more portable.
+ .SH "SEE ALSO"
+ .BR mkdtemp (3),
+ .BR mktemp (3),
+--- man-pages-2.16/man3/putenv.3.orig	2005-11-15 17:57:39.000000000 +0000
++++ man-pages-2.16/man3/putenv.3	2005-12-07 22:55:02.000000000 +0000
+@@ -91,4 +91,4 @@
+ .BR getenv (3),
+ .BR setenv (3),
+ .BR unsetenv (3),
+-.BR environ (5)
++.BR environ (7)
+--- man-pages-2.16/man3/readv.3.orig	2005-12-07 22:55:02.000000000 +0000
++++ man-pages-2.16/man3/readv.3	2005-12-07 00:00:00.000000000 +0000
+@@ -0,0 +1,136 @@
++.\" (c) 1993 by Thomas Koenig (ig25@rz.uni-karlsruhe.de)
++.\"
++.\" Permission is granted to make and distribute verbatim copies of this
++.\" manual provided the copyright notice and this permission notice are
++.\" preserved on all copies.
++.\"
++.\" Permission is granted to copy and distribute modified versions of this
++.\" manual under the conditions for verbatim copying, provided that the
++.\" entire resulting derived work is distributed under the terms of a
++.\" permission notice identical to this one
++.\" 
++.\" Since the Linux kernel and libraries are constantly changing, this
++.\" manual page may be incorrect or out-of-date.  The author(s) assume no
++.\" responsibility for errors or omissions, or for damages resulting from
++.\" the use of the information contained herein.  The author(s) may not
++.\" have taken the same level of care in the production of this manual,
++.\" which is licensed free of charge, as they might when working
++.\" professionally.
++.\" 
++.\" Formatted or processed versions of this manual, if unaccompanied by
++.\" the source, must acknowledge the copyright and authors of this work.
++.\" License.
++.\" Modified Sat Jul 24 18:34:44 1993 by Rik Faith (faith@cs.unc.edu)
++.TH READV 3  1993-04-25 "GNU" "Linux Programmer's Manual"
++.SH NAME
++readv, writev \- read or write data into multiple buffers
++.SH SYNOPSIS
++.nf
++.B #include <sys/uio.h>
++.sp
++.BI "int readv(int " filedes ", const struct iovec *" vector ,
++.BI "          size_t " count );
++.sp
++.BI "int writev(int " filedes ", const struct iovec *" vector ,
++.BI "          size_t " count );
++.fi
++.SH DESCRIPTION
++The
++.B readv()
++function reads
++.I count
++blocks from the file associated with the file descriptor
++.I filedes
++into the multiple buffers described by
++.IR vector .
++.PP
++The
++.B writev()
++function writes at most
++.I count
++blocks described by
++.I vector
++to the file associated with the file descriptor
++.IR filedes .
++.PP
++The pointer
++.I vector
++points to a
++.B struct iovec
++defined in
++.B <sys/uio.h>
++as
++.PP
++.br
++.nf
++.in 10
++struct iovec {
++.in 14
++void *iov_base;   /* Starting address */
++size_t iov_len;   /* Number of bytes */
++.in 10
++};
++.fi
++.PP
++Buffers are processed in the order
++.IR "vector[0]" ", " vector[1] ", ... " "vector[count]" .
++.PP
++The
++.B readv()
++function works just like
++.BR read (2)
++except that multiple buffers are filled.
++.PP
++The
++.B writev()
++function works just like
++.BR write (2)
++except that multiple buffers are written out.
++.PP
++.SH "RETURN VALUE"
++The
++.B readv()
++function returns the number of bytes or \-1 on error; the
++.B writev()
++function returns the number of bytes written.
++.SH ERRORS
++The
++.B readv()
++and 
++.B writev()
++functions can fail and set
++.I errno
++to the following values:
++.TP
++.B EBADF
++.I fd
++is not a valid file descriptor.
++.TP
++.B EINVAL
++.I fd
++is unsuitable for reading (for
++.BR readv() )
++or writing (for
++.BR writev() ).
++.TP
++.B EFAULT
++.I buf
++is outside the processes' address space.
++.TP
++.B EAGAIN
++Non-blocking I/O had been selected in the 
++.B open()
++call, and reading or writing could not be done immediately.
++.TP
++.B EINTR
++Reading or writing was interrupted before any data was transferred.
++.SH "CONFORMING TO"
++unknown
++.SH BUGS
++It is not advisable to mix calls to functions like
++.BR readv() " or " writev() ,
++which operate on file descriptors, with the functions from the stdio
++library; the results will be undefined and probably not what you want.
++.SH "SEE ALSO"
++.BR read (2),
++.BR write (2)
+--- man-pages-2.16/man3/re_comp.3.orig	2005-11-02 13:55:25.000000000 +0000
++++ man-pages-2.16/man3/re_comp.3	2005-12-07 22:55:02.000000000 +0000
+@@ -27,6 +27,9 @@
+ re_comp, re_exec \- BSD regex functions
+ .SH SYNOPSIS
+ .B #include <sys/types.h>
++.\" Not applied upstream:
++.br
++#define _REGEX_RE_COMP
+ .br
+ .B #include <regex.h>
+ .sp
+--- man-pages-2.16/man3/setenv.3.orig	2005-10-19 07:07:02.000000000 +0000
++++ man-pages-2.16/man3/setenv.3	2005-12-07 22:55:02.000000000 +0000
+@@ -83,4 +83,4 @@
+ .BR clearenv (3),
+ .BR getenv (3),
+ .BR putenv (3),
+-.BR environ (5)
++.BR environ (7)
+--- man-pages-2.16/man3/system.3.orig	2005-11-02 13:55:25.000000000 +0000
++++ man-pages-2.16/man3/system.3	2005-12-07 22:55:02.000000000 +0000
+@@ -139,6 +139,13 @@
+ a sure indication that the
+ .BR execve ()
+ call failed.
++
++If the
++.B _XOPEN_SOURCE
++feature test macro is defined, then the macros described in
++.BR wait (2)
++.RB ( WEXITSTATUS (),
++etc.) are made available when including <stdlib.h>.
+ .SH "SEE ALSO"
+ .BR sh (1),
+ .BR signal (2),
+--- man-pages-2.16/man3/tmpnam.3.orig	2005-10-19 07:07:02.000000000 +0000
++++ man-pages-2.16/man3/tmpnam.3	2005-12-07 22:55:02.000000000 +0000
+@@ -99,7 +99,7 @@
+ .IR "<stdio.h>" .
+ .SH BUGS
+ Never use this function. Use
+-.BR mkstemp (3)
++.BR tmpfile (3)
+ instead.
+ .SH "CONFORMING TO"
+ SVID 2, POSIX, 4.3BSD, ISO 9899
+--- man-pages-2.16/man3/tsearch.3.orig	2005-10-19 13:48:50.000000000 +0000
++++ man-pages-2.16/man3/tsearch.3	2005-12-07 22:55:02.000000000 +0000
+@@ -85,19 +85,21 @@
+ visit to a leaf node.  (These symbols are defined in
+ \fI<search.h>\fP.)  The third argument is the depth of the node, with
+ zero being the root.
++You should not modify the tree while traversing it
++as the the results would be undefined.
++.PP
++\fBtdestroy\fP() removes the whole tree pointed to by \fIrootp\fP,
++freeing all resources allocated by the \fBtsearch\fP() function.  For
++the data in each tree node the function \fIfree_node\fP is called.
++The pointer to the data is passed as the argument to the function.
++If no such work is necessary \fIfree_node\fP must point to a
++function doing nothing.  It is called in any case.
+ .PP
+ (More commonly, \fBpreorder\fP, \fBpostorder\fP, and \fBendorder\fP
+ are known as \fBpreorder\fP, \fBinorder\fP, and \fBpostorder\fP:
+ before visiting the children, after the first and before the second,
+ and after visiting the children. Thus, the choice of name \fBpost\%order\fP
+ is rather confusing.)
+-.PP
+-\fBtdestroy\fP() removes the whole tree pointed to by \fIrootp\fP,
+-freeing all resources allocated by the \fBtsearch\fP() function. For
+-the data in each tree node the function \fIfree_node\fP is called.
+-The pointer to the data is passed as the argument to the function. If
+-no such work is necessary \fIfree_node\fP must point to a function
+-doing nothing.
+ .SH "RETURN VALUE"
+ \fBtsearch\fP() returns a pointer to a matching item in the tree, or to
+ the newly added item, or NULL if there was insufficient memory
+@@ -115,7 +117,7 @@
+ \fBtwalk\fP() takes a pointer to the root, while the other functions
+ take a pointer to a variable which points to the root.
+ .PP
+-\fBtwalk\fP() uses \fBpostorder\fP to mean "after the left subtree, but
++\fBtwalk\fP() uses \fBpostorder\fP() to mean "after the left subtree, but
+ before the right subtree".  Some authorities would call this
+ "inorder", and reserve "postorder" to mean "after both subtrees".
+ .PP
+--- man-pages-2.16/man3/wprintf.3.orig	2005-10-19 08:35:30.000000000 +0000
++++ man-pages-2.16/man3/wprintf.3	2005-12-07 22:55:02.000000000 +0000
+@@ -37,11 +37,11 @@
+ characters.
+ .PP
+ The \fBwprintf\fP() and \fBvwprintf\fP() functions perform wide character output
+-to \fBstdout\fP. \fBstdout\fP must not be byte oriented; see function
++to \fBstdout\fP.  \fBstdout\fP must not be byte oriented; see function
+ \fBfwide\fP() for more information.
+ .PP
+ The \fBfwprintf\fP() and \fBvfwprintf\fP() functions perform wide character output
+-to \fIstream\fP. \fIstream\fP must not be byte oriented; see function
++to \fIstream\fP.  \fIstream\fP must not be byte oriented; see function
+ \fBfwide\fP() for more information.
+ .PP
+ The \fBswprintf\fP() and \fBvswprintf\fP() functions perform wide character output
+@@ -88,12 +88,12 @@
+ .IR "" `` "const char *" ''
+ argument is expected to be a pointer to an array of character type
+ (pointer to a string) containing a multibyte character sequence beginning
+-in the initial shift state. Characters from the array are converted to
++in the initial shift state.  Characters from the array are converted to
+ wide characters (each by a call to the
+ .BR mbrtowc ()
+ function with a conversion state starting in the initial state before
+-the first byte). The resulting wide characters are written up to
+-(but not including) the terminating null wide character. If a precision is
++the first byte).  The resulting wide characters are written up to
++(but not including) the terminating null wide character.  If a precision is
+ specified, no more wide characters than the number specified are written.
+ Note that the precision determines the number of
+ .I wide characters
+@@ -109,14 +109,14 @@
+ .IR "" `` "const wchar_t *" ''
+ argument is expected to be a pointer to an array of wide characters.
+ Wide characters from the array are written up to (but not including) a
+-terminating null wide character. If a precision is specified, no more than
+-the number specified are written. The array must contain a terminating null
++terminating null wide character.  If a precision is specified, no more than
++the number specified are written.  The array must contain a terminating null
+ wide character, unless a precision is given and it is smaller than or equal
+ to the number of wide characters in the array.
+ .SH "RETURN VALUE"
+ The functions return the number of wide characters written, excluding the
+ terminating null wide character in case of the functions \fBswprintf\fP() and
+-\fBvswprintf\fP(). They return \-1 when an error occurs.
++\fBvswprintf\fP().  They return \-1 when an error occurs.
+ .SH "CONFORMING TO"
+ ISO/ANSI C, UNIX98
+ .SH "SEE ALSO"
+@@ -124,8 +124,7 @@
+ .BR fputwc (3),
+ .BR fwide (3),
+ .BR printf (3),
+-.BR snprintf (3),
+-.BR wscanf (3)
++.BR snprintf (3).
+ .SH NOTES
+ The behaviour of \fBwprintf\fP() et al. depends on the LC_CTYPE category of the
+ current locale.
+@@ -133,11 +132,11 @@
+ If the \fIformat\fP string contains non-ASCII wide characters, the program
+ will only work correctly if the LC_CTYPE category of the current locale at
+ run time is the same as the LC_CTYPE category of the current locale at
+-compile time. This is because the
++compile time.  This is because the
+ .B wchar_t
+ representation is platform and locale dependent. (The GNU libc represents
+ wide characters using their Unicode (ISO-10646) code point, but other
+-platforms don't do this. Also, the use of ISO C99 universal character names
++platforms don't do this.  Also, the use of ISO C99 universal character names
+ of the form \\unnnn does not solve this problem.) Therefore, in
+ internationalized programs, the \fIformat\fP string should consist of ASCII
+ wide characters only, or should be constructed at run time in an
+--- man-pages-2.16/man3/writev.3.orig	2005-12-07 22:55:02.000000000 +0000
++++ man-pages-2.16/man3/writev.3	2005-12-07 00:00:00.000000000 +0000
+@@ -0,0 +1 @@
++.so man3/readv.3
+--- man-pages-2.16/man4/console_codes.4.orig	2005-07-19 15:36:19.000000000 +0000
++++ man-pages-2.16/man4/console_codes.4	2005-12-07 22:55:02.000000000 +0000
+@@ -15,6 +15,7 @@
+ .\" by Eric S. Raymond <esr@thyrsus.com>.
+ .\"
+ .\" Tiny correction, aeb, 961107.
++.\" Modified Thu Dec 13 23:23:41 2001 by Martin Schulze <joey@infodrom.org>
+ .\"
+ .TH CONSOLE_CODES 4 1996-10-31 "Linux" "Linux Programmer's Manual"
+ .SH NAME
+@@ -60,9 +61,7 @@
+ .BR tput (1), 
+ or
+ .BR reset (1).
+-
+ .SH "LINUX CONSOLE CONTROLS"
+-
+ This section describes all the control characters and escape sequences
+ that invoke special functions (i.e. anything other than writing a
+ glyph at the current cursor location) on the Linux console. 
+@@ -110,7 +109,6 @@
+ DEL (0x7F) is ignored;
+ .HP
+ CSI (0x9B) is equivalent to ESC [.
+-.\" .LP
+ .SS "ESC- but not CSI-sequences"
+ .TS
+ l l l.
+@@ -149,7 +147,6 @@
+ 		ESC ] R: reset palette
+ .TE
+ .SS "ECMA-48 CSI sequences"
+-
+ CSI (or ESC [) is followed by a sequence of parameters,
+ at most NPAR (16), that are decimal numbers separated by
+ semicolons. An empty or absent parameter is taken to be 0.
+@@ -204,7 +201,6 @@
+ `	HPA	Move cursor to indicated column in current row.
+ .TE
+ .SS ECMA-48 Set Graphics Rendition
+-
+ The ECMA-48 SGR sequence ESC [ <parameters> m sets display attributes.
+ Several attributes can be set in the same sequence.
+ .LP
+@@ -335,9 +331,7 @@
+ ESC [ 13 ]      	Unblank the screen.
+ ESC [ 14 ; \fIn\fP ]   	Set the VESA powerdown interval in minutes.
+ .TE
+-
+ .SH "CHARACTER SETS"
+-
+ The kernel knows about 4 translations of bytes into console-screen symbols.
+ The four tables are: a) Latin1 \-> PC,
+ b) VT100 graphics \-> PC, c) PC \-> PC, d) user-defined.
+@@ -368,9 +362,7 @@
+ s = map[c] is sent to the video memory. The bitmap that corresponds to
+ s is found in the character ROM, and can be changed using
+ .BR setfont (8).
+-
+ .SH "MOUSE TRACKING"
+-
+ The mouse tracking facility is intended to return xterm-compatible
+ mouse status reports.  Because the console driver has no way to know
+ the device or type of the mouse, these reports are returned in the 
+@@ -402,9 +394,7 @@
+ are added together: 4=Shift, 8=Meta, 16=Control.  Again \fIx\fP and
+ \fIy\fP are the x and y coordinates of the mouse event.  The upper
+ left corner is (1,1).
+-
+ .SH "COMPARISONS WITH OTHER TERMINALS"
+-
+ Many different terminal types are described, like the Linux console,
+ as being `VT100-compatible'.  Here we discuss differences vbetween the
+ Linux console an the two most important others, the DEC VT102 and
+@@ -515,11 +505,11 @@
+ .I Xterm Control Sequences
+ document by Edward Moy and Stephen Gildea, available with the X 
+ distribution.
+-
++.SH NOTE
++ESC 8 (DECRC) is not able to restore the character set changed with
++ESC %.
+ .SH BUGS
+-
+ In 2.0.23, CSI is broken, and NUL is not ignored inside escape sequences.
+-
+ .SH "SEE ALSO"
+ .BR console (4),
+ .BR console_ioctl (4),
+--- man-pages-2.16/man5/networks.5.orig	2005-12-07 22:55:02.000000000 +0000
++++ man-pages-2.16/man5/networks.5	2005-12-07 00:00:00.000000000 +0000
+@@ -0,0 +1,72 @@
++.\" Copyright (c) 2001 Martin Schulze <joey@infodrom.org>
++.\"
++.\" This is free documentation; you can redistribute it and/or
++.\" modify it under the terms of the GNU General Public License as
++.\" published by the Free Software Foundation; either version 2 of
++.\" the License, or (at your option) any later version.
++.\"
++.\" The GNU General Public License's references to "object code"
++.\" and "executables" are to be interpreted as the output of any
++.\" document formatting or typesetting system, including
++.\" intermediate and printed output.
++.\"
++.\" This manual is distributed in the hope that it will be useful,
++.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
++.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++.\" GNU General Public License for more details.
++.\"
++.\" You should have received a copy of the GNU General Public
++.\" License along with this manual; if not, write to the Free
++.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
++.\" USA.
++.\"
++.TH NETWORKS 5 2001-12-22 "GNU/Linux" "Linux System Administration"
++.SH NAME
++networks \- network name information
++.SH DESCRIPTION
++The file
++.I /etc/networks
++is a plain ASCII file that describes known DARPA networks and symbolic
++names for these networks.
++Each line represents a network and has the following structure:
++
++.RS
++.I name number aliases ...
++.RE
++
++where the fields are delimited by spaces or tabs.
++Empty lines are ignored.
++If a line contains a hash mark (#), the hash mark and the remaining
++part of the line are ignored.
++
++The field descriptions are:
++
++.TP
++.I name
++The symbolic name for the network.
++.TP
++.I number
++The official number for this network in dotted-decimal notation.
++The trailing ".0" may be omitted.
++.TP
++.I aliases
++Optional aliases for the network.
++.LP
++
++This file is read by
++.B route
++or
++.B netstat
++utilities.
++Only Class A, B or C networks are supported, partitioned networks
++(i.e. network/26 or network/28) are not supported by this facility.l
++.SH FILES
++.TP
++.I /etc/networks
++The networks definition file.
++.SH "SEE ALSO"
++.BR getnetbyaddr (3),
++.BR getnetbyname (3),
++.BR getnetent (3),
++.BR route (8),
++.BR netstat (8)
+--- man-pages-2.16/man5/tzfile.5.orig	2005-11-02 13:55:25.000000000 +0000
++++ man-pages-2.16/man5/tzfile.5	2005-12-07 22:55:02.000000000 +0000
+@@ -8,6 +8,10 @@
+ .B
+ #include <tzfile.h>
+ .SH DESCRIPTION
++This page describes the structure of timezone files as commonly found
++in
++.IR /usr/lib/zoneinfo " or " /usr/share/zoneinfo .
++
+ The time zone information files used by
+ .BR tzset (3)
+ begin with the magic characters "TZif" to identify then as
+@@ -134,3 +138,22 @@
+ .I tzh_timecnt
+ is zero or the time argument is less than the first transition time recorded
+ in the file.
++.SH NOTES
++This manual page documents
++.I <tzfile.h>
++in the glibc source archive, see
++.IR timezone/tzfile.h .
++
++It seems that timezone uses
++.B tzfile
++internally, but glibc refuses to expose it to userspace.  This is most
++likely because the standardised functions are more useful and
++portable, and actually documented by glibc.  It may only be in glibc
++just to support the non-glibc-maintained timezone data (which is
++maintained by some other entity).
++.SH "SEE ALSO"
++.BR time (3),
++.BR gettimeofday (3),
++.BR tzset (3),
++.BR ctime (3)
++.\" .BR newctime (3)
+--- man-pages-2.16/man7/AF_LOCAL.7.orig	2005-12-07 22:55:02.000000000 +0000
++++ man-pages-2.16/man7/AF_LOCAL.7	2005-12-07 00:00:00.000000000 +0000
+@@ -0,0 +1 @@
++.so man7/unix.7
+--- man-pages-2.16/man7/AF_UNIX.7.orig	2005-12-07 22:55:02.000000000 +0000
++++ man-pages-2.16/man7/AF_UNIX.7	2005-12-07 00:00:00.000000000 +0000
+@@ -0,0 +1 @@
++.so man7/unix.7
+--- man-pages-2.16/man7/IPPROTO_ICMP.7.orig	2005-12-07 22:55:02.000000000 +0000
++++ man-pages-2.16/man7/IPPROTO_ICMP.7	2005-12-07 00:00:00.000000000 +0000
+@@ -0,0 +1 @@
++.so man7/icmp.7
+--- man-pages-2.16/man7/LDP.7.orig	2005-11-02 13:55:25.000000000 +0000
++++ man-pages-2.16/man7/LDP.7	2005-12-07 22:55:02.000000000 +0000
+@@ -23,13 +23,11 @@
+ The Linux Documentation Project (LDP) provides a variety of
+ free documentation resources including
+ guides, FAQs, HOWTOs, and man-pages to the Linux community.
+-
+ .SH AUTHORS
+ The various documents in the LDP archives are maintained by individual
+-authors, and are listed in the beginning of each HOWTO. If you have
++authors, and are listed in the beginning of each HOWTO.  If you have
+ any questions or inputs to a document we encourage you to contact the
+ authors directly.
+-
+ .SH "WEB PAGES"
+ The LDP has its own dedicated web site as do many of
+ the various translations projects which are linked from the
+@@ -38,14 +36,12 @@
+ \fBhttp://www\&.tldp\&.org/\fP
+ .RE
+ which you may wish to bookmark.
+-
+ .SH "MAN PAGES"
+ A web page with status information for manual pages and translations
+ is found at
+ .RS
+ \fBhttp://www\&.win\&.tue\&.nl/~aeb/linux/man/\fP
+ .RE
+-
+ .SH "MAILING LISTS"
+ LDP has a number of mailing lists, such as
+ .PP
+--- man-pages-2.16/man7/mdoc.samples.7.orig	2005-07-18 16:02:32.000000000 +0000
++++ man-pages-2.16/man7/mdoc.samples.7	2005-12-07 22:55:02.000000000 +0000
+@@ -1079,13 +1079,13 @@
+ .Bd -literal
+ Usage: .Fn [type] function [[type] parameters ... \*(Pu]
+ .Ed
+-.Bl -tag -width ".Fn .int align. .const * char *sptrsxx" -compact
++.Bl -tag -width "xFn xalignx xchar *sptrsxx" -compact
+ .It Li "\&.Fn getchar"
+ .Fn getchar
+ .It Li "\&.Fn strlen ) ,"
+ .Fn strlen ) ,
+-.It Li \&.Fn "\\*qint align\\*q" "\\*qconst * char *sptrs\\*q" ,
+-.Fn "int align" "const * char *sptrs" ,
++.It Li \&.Fn "\\*qalign\\*q" "\\*qchar *sptrs\\*q" ,
++.Fn "align" "char *sptrs" ,
+ .El
+ .Pp
+ It is an error to call
+--- man-pages-2.16/man7/NETLINK_ROUTE.7.orig	2005-12-07 22:55:02.000000000 +0000
++++ man-pages-2.16/man7/NETLINK_ROUTE.7	2005-12-07 00:00:00.000000000 +0000
+@@ -0,0 +1 @@
++.so man7/rtnetlink.7
+--- man-pages-2.16/man7/PF_INET6.7.orig	2005-12-07 22:55:02.000000000 +0000
++++ man-pages-2.16/man7/PF_INET6.7	2005-12-07 00:00:00.000000000 +0000
+@@ -0,0 +1 @@
++.so man7/ipv6.7
+--- man-pages-2.16/man7/PF_LOCAL.7.orig	2005-12-07 22:55:02.000000000 +0000
++++ man-pages-2.16/man7/PF_LOCAL.7	2005-12-07 00:00:00.000000000 +0000
+@@ -0,0 +1 @@
++.so man7/unix.7
+--- man-pages-2.16/man7/PF_NETLINK.7.orig	2005-12-07 22:55:02.000000000 +0000
++++ man-pages-2.16/man7/PF_NETLINK.7	2005-12-07 00:00:00.000000000 +0000
+@@ -0,0 +1 @@
++.so man7/netlink.7
+--- man-pages-2.16/man7/PF_PACKET.7.orig	2005-12-07 22:55:02.000000000 +0000
++++ man-pages-2.16/man7/PF_PACKET.7	2005-12-07 00:00:00.000000000 +0000
+@@ -0,0 +1 @@
++.so man7/packet.7
+--- man-pages-2.16/man7/PF_UNIX.7.orig	2005-12-07 22:55:02.000000000 +0000
++++ man-pages-2.16/man7/PF_UNIX.7	2005-12-07 00:00:00.000000000 +0000
+@@ -0,0 +1 @@
++.so man7/unix.7
+--- man-pages-2.16/man7/PF_X25.7.orig	2005-12-07 22:55:02.000000000 +0000
++++ man-pages-2.16/man7/PF_X25.7	2005-12-07 00:00:00.000000000 +0000
+@@ -0,0 +1 @@
++.so man7/x25.7
+--- man-pages-2.16/man7/SOCK_RAW.7.orig	2005-12-07 22:55:02.000000000 +0000
++++ man-pages-2.16/man7/SOCK_RAW.7	2005-12-07 00:00:00.000000000 +0000
+@@ -0,0 +1 @@
++.so man7/raw.7
+--- man-pages-2.16/man8/zdump.8.orig	2005-04-25 05:16:35.000000000 +0000
++++ man-pages-2.16/man8/zdump.8	2005-12-07 22:55:02.000000000 +0000
+@@ -35,6 +35,6 @@
+ .BI "\-c " cutoffyear
+ Cut off the verbose output near the start of the given year.
+ .SH "SEE ALSO"
+-tzfile (5),
+-zic (8)
++.BR tzfile (5),
++.BR zic (8)
+ .\" @(#)zdump.8	7.3
