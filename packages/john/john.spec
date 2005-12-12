@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.69 2005/11/16 13:11:14 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.70 2005/12/12 19:20:11 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.39.4
+Version: 1.6.39.5
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -73,6 +73,9 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Mon Dec 12 2005 Solar Designer <solar-at-owl.openwall.com> 1.6.39.5-owl1
+- Detect changed charset files when restoring sessions.
+
 * Sat Nov 12 2005 Solar Designer <solar-at-owl.openwall.com> 1.6.39.4-owl1
 - Corrected the way nouns ending in "z" and "h" (other than those ending in
 "ch" and "sh") are pluralized with the "p" wordlist rules command.
