@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/postfix/postfix.spec,v 1.33 2005/11/16 13:28:58 solar Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.34 2005/12/13 13:16:07 ldv Exp $
 
 Summary: Postfix mail system.
 Name: postfix
-Version: 2.2.5
-Release: owl3
+Version: 2.2.7
+Release: owl1
 Epoch: 1
 License: IBM Public License
 Group: System Environment/Daemons
@@ -328,6 +328,9 @@ fi
 %attr(644,root,root) %verify(not md5 mtime size) %ghost %queue_directory/etc/*
 
 %changelog
+* Tue Dec 13 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.2.7-owl1
+- Updated to 2.2.7.
+
 * Sun Nov 13 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.2.5-owl3
 - Restricted queue views and runs.
 
