@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.39 2005/12/11 15:04:12 solar Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.40 2005/12/13 13:08:02 ldv Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -101,7 +101,7 @@ scripts.
 %package suidperl
 Summary: Privileged Perl wrapper to support SUID/SGID Perl scripts.
 Group: Development/Languages
-Requires: %name = %version-%release
+Requires: %name = %epoch:%version-%release
 
 %description suidperl
 This package contains a SUID root Perl executable that is used to handle
