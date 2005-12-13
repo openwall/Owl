@@ -25,11 +25,11 @@ by default.  Make it fail-close on suEXEC.  Clone and maintain a version
 of suEXEC more friendly to virtual hosting.
 
 
-	bash, readline.
+	bash.
 
 [PRIORITY: high]
 [ASSIGNED: ldv@]
-Update to latest release for Fedora compatibility (we're currently at
+Update to latest release for FC4/RHEL4 compatibility (we're currently at
 2.05, but 3.0 went out a long time ago and 3.1 was released recently),
 with our patches.  Make sure it still builds cleanly with -Wall
 (due to our patches).  Once again try to get our generic fixes (the
@@ -41,6 +41,13 @@ with our patches.  Make sure it still builds cleanly with -Wall
 [PRIORITY: low]
 [ASSIGNED: mci@]
 Update these to latest releases once in a while.
+
+
+	chkconfig.
+
+[PRIORITY: medium]
+Update to latest release for FC4/RHEL4 compatibility.  In particular,
+/usr/sbin/alternatives is required.
 
 
 	coreutils.
@@ -84,6 +91,13 @@ using safe mode (~077 & mode), then chown(), then chmod().
 [PRIORITY: low]
 [ASSIGNED: ldv@]
 Update to the latest 1.11.x or to 1.12.x.
+
+
+	db4.
+
+[PRIORITY: high]
+Update to either db-4.2.52 (for RHEL4 compatibility) or 4.3.29
+(for FC4 compatibility).
 
 
 	dhcp.
@@ -302,7 +316,7 @@ be supporting udev, make an exception for /dev.
 
 	pam.
 
-[PRIORITY: low]
+[PRIORITY: medium]
 [ASSIGNED: ldv@]
 Move pam_stack (and something else?) into a new pam-compat subpackage.
 
@@ -344,6 +358,9 @@ Solve the DoS-against-itself on the temporary file.
 
 
 	perl.
+
+[PRIORITY: high]
+Deal with FC4/RHEL4 compatibility issues.
 
 [PRIORITY: low]
 Re-implement temporary file handling in CGI.pm making use of File::Temp.
@@ -393,6 +410,13 @@ package signature checking.
 [PRIORITY: low]
 Update to the latest stable 4.3.x or 4.4.x.
 
+
+	readline.
+
+[PRIORITY: low]
+Update to latest release for FC4 compatibility.
+
+
 	shadow-utils.
 
 [PRIORITY: low]
@@ -418,9 +442,6 @@ Re-test pipe(2) reporting on Alpha and fix it if it's still incorrect.
 [PRIORITY: medium]
 chown to syslogd (group or user if the group permissions are already
 in use) in syslogd itself.
-
-[PRIORITY: low]
-Protect against timestamp spoofing.
 
 [PRIORITY: low]
 In klogd, support new System.map format used starting with recent
@@ -455,11 +476,20 @@ Re-enable IPv6 in the client once glibc is fixed.
 [PRIORITY: medium]
 Bump syslog priorities of many pam_tcb error messages.
 
+[PRIORITY: medium]
+[ASSIGNED: ldv@]
+After updating Linux-PAM, update logging code to use pam_syslog and
+conversation code to use pam_prompt.
+
 
 	util-linux.
 
 [PRIORITY: medium]
 Update to a newer version that would build with Linux 2.6.x headers.
+
+[PRIORITY: medium]
+[ASSIGNED: ldv@]
+Include /sbin/nologin for FC4/RHEL4 compatibility.
 
 
 	vim.
@@ -511,4 +541,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Owl: Owl/doc/TODO,v 1.141 2005/12/11 18:58:50 ldv Exp $
+$Owl: Owl/doc/TODO,v 1.142 2005/12/13 22:01:15 ldv Exp $
