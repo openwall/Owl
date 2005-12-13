@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/libpcap/libpcap.spec,v 1.19 2005/11/17 22:31:16 ldv Exp $
+# $Owl: Owl/packages/libpcap/libpcap.spec,v 1.20 2005/12/13 13:17:26 ldv Exp $
 
 Summary: Network packet capture library.
 Name: libpcap
 Version: 0.9.4
-Release: owl1
+Release: owl2
 Epoch: 14
 License: BSD
 Group: System Environment/Libraries
@@ -34,7 +34,7 @@ tcpdump and arpwatch.
 %package devel
 Summary: Header files and development documentation for libpcap.
 Group: Development/Libraries
-Requires: %name = %version-%release
+Requires: %name = %epoch:%version-%release
 
 %description devel
 Header files and development documentation for libpcap.
@@ -94,6 +94,9 @@ ln -s ../pcap-bpf.h %buildroot%_includedir/net/bpf.h
 %_libdir/lib*.a
 
 %changelog
+* Tue Dec 13 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 14:0.9.4-owl2
+- Corrected interpackage dependencies.
+
 * Fri Nov 18 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 14:0.9.4-owl1
 - Updated to 0.9.4.
 - Reworked shared and static libraries build method.

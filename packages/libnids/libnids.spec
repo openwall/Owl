@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/libnids/libnids.spec,v 1.17 2005/11/16 13:11:15 solar Exp $
+# $Owl: Owl/packages/libnids/libnids.spec,v 1.18 2005/12/13 13:17:26 ldv Exp $
 
 Summary: NIDS E-component.
 Name: libnids
 Version: 1.19
-Release: owl1
+Release: owl2
 Epoch: 1
 License: GPL
 Group: System Environment/Libraries
@@ -22,7 +22,7 @@ detection.
 %package devel
 Summary: Development libraries, header files, and documentation for libnids.
 Group: Development/Libraries
-Requires: %name = %version-%release
+Requires: %name = %epoch:%version-%release
 
 %description devel
 Development libraries, header files, and documentation for libnids.
@@ -57,6 +57,9 @@ rm -rf %buildroot
 %_libdir/lib*.a
 
 %changelog
+* Tue Dec 13 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:1.19-owl2
+- Corrected interpackage dependencies.
+
 * Fri Jul 30 2004 Rafal Wojtczuk <nergal-at-owl.openwall.com> 1:1.19-owl1
 - updated to 1.19
 

@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/libnet/libnet.spec,v 1.13 2005/11/16 13:11:15 solar Exp $
+# $Owl: Owl/packages/libnet/libnet.spec,v 1.14 2005/12/13 13:17:26 ldv Exp $
 
 Summary: "libpwrite" Network Routine Library.
 Name: libnet
 Version: 1.0.2a
-Release: owl4
+Release: owl5
 Epoch: 1
 License: BSD
 Group: System Environment/Libraries
@@ -28,7 +28,7 @@ functionality.
 %package devel
 Summary: Header files and development documentation for libnet.
 Group: Development/Libraries
-Requires: %name = %version-%release
+Requires: %name = %epoch:%version-%release
 
 %description devel
 Header files and development documentation for libnet.
@@ -77,6 +77,9 @@ ln -sf libnet.so %buildroot%_libdir/libpwrite
 %_libdir/lib*.a
 
 %changelog
+* Tue Dec 13 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:1.0.2a-owl5
+- Corrected interpackage dependencies.
+
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:1.0.2a-owl4
 - Fixed orphaned %_libdir/libnet.so.1 created by %post.
 

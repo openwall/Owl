@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.48 2005/11/16 13:09:46 solar Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.49 2005/12/13 13:17:26 ldv Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -24,7 +24,7 @@
 %define BUILD_CXX_COMPAT_SEPARATE 1
 
 # If this variable is set to non-zero, then all support libraries
-# will be placed into %_libdir/gcc/%_target_platform/%_version
+# will be placed into %_libdir/gcc/%_target_platform/%version
 # sub-directory (allowing to have several binary incompatible
 # versions of compilers).
 %define USE_VERSION_SPECIFIC_LIBS 0
@@ -38,7 +38,7 @@
 Summary: C compiler from the GNU Compiler Collection.
 Name: gcc
 Version: 3.4.3
-Release: owl4
+Release: owl5
 Epoch: 1
 License: GPL
 Group: Development/Languages
@@ -82,7 +82,7 @@ PreReq: /sbin/ldconfig, /sbin/install-info
 # This is the version of binutils we have tested this package with; older
 # ones might work, but were not tested.
 Requires: binutils >= 2.10.1.0.4
-Requires: cpp = %version-%release
+Requires: cpp = %epoch:%version-%release
 Obsoletes: egcs
 BuildRequires: binutils, gettext, bison, flex, texinfo
 BuildRoot: /override/%name-%version
@@ -106,7 +106,7 @@ used independently from the C compiler and the C language.
 %package c++
 Summary: C++ support for gcc.
 Group: Development/Languages
-Requires: gcc = %version-%release, cpp = %version-%release
+Requires: gcc = %epoch:%version-%release, cpp = %epoch:%version-%release
 Obsoletes: egcs-c++
 
 %description c++
@@ -190,7 +190,7 @@ Openwall GNU/*/Linux based on glibc 3.2.2 only.
 %package -n libstdc++-devel
 Summary: Header files and libraries for C++ development.
 Group: Development/Libraries
-Requires: libstdc++ = %version-%release
+Requires: libstdc++ = %epoch:%version-%release
 Obsoletes: gcc-libstdc++-devel
 
 %description -n libstdc++-devel
@@ -203,7 +203,7 @@ package includes the header files and libraries needed for C++ development.
 Summary: Objective C support for gcc.
 Group: Development/Languages
 PreReq: /sbin/ldconfig
-Requires: gcc = %version-%release, cpp = %version-%release
+Requires: gcc = %epoch:%version-%release, cpp = %epoch:%version-%release
 Obsoletes: egcs-objc
 
 %description objc
@@ -218,7 +218,7 @@ not include the standard Objective C object library.
 Summary: Fortran 77 support for gcc.
 Group: Development/Languages
 PreReq: /sbin/ldconfig, /sbin/install-info
-Requires: gcc = %version-%release
+Requires: gcc = %epoch:%version-%release
 Obsoletes: egcs-g77
 
 %description g77
@@ -231,7 +231,7 @@ Collection.
 Summary: Java support for gcc.
 Group: Development/Languages
 PreReq: /sbin/ldconfig, /sbin/install-info
-Requires: gcc = %version-%release
+Requires: gcc = %epoch:%version-%release
 
 %description java
 This package adds support for compiling Java programs with the GNU
@@ -243,7 +243,7 @@ compiler.
 Summary: ADA support for gcc.
 Group: Development/Languages
 PreReq: /sbin/ldconfig
-Requires: gcc = %version-%release
+Requires: gcc = %epoch:%version-%release
 
 %description ada
 This package adds support for compiling ADA programs with the GNU
@@ -309,7 +309,7 @@ rm compat/i386/libstdc++.so.2.9.dummy
 %build
 # Rebuild configure(s) and Makefile(s) if templates are newer...
 for f in */acinclude.m4; do
-	pushd "${f%/*}"
+	pushd "${f%%/*}"
 # Run aclocal & autoconf only if files aclocal.m4 and configure.in exist
 # and acinclude.m4 is newer than aclocal.m4.
 	if [ -f aclocal.m4 -a -f configure.in -a acinclude.m4 -nt aclocal.m4 ]
@@ -320,12 +320,12 @@ for f in */acinclude.m4; do
 	popd
 done
 for f in */configure.in; do
-	pushd "${f%/*}"
+	pushd "${f%%/*}"
 	[ configure.in -nt configure ] && autoconf && autoheader
 	popd
 done
 for f in */Makefile.am; do
-	pushd "${f%/*}"
+	pushd "${f%%/*}"
 	[ Makefile.am -nt Makefile.in ] && automake
 	popd
 done
@@ -748,6 +748,9 @@ fi
 %endif
 
 %changelog
+* Tue Dec 13 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:3.4.3-owl5
+- Corrected interpackage dependencies.
+
 * Sun Oct 23 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:3.4.3-owl4
 - Added sed to Requires(post), since we are using sed in mkheaders;
 commented out this Requires(post), since we will use this spec with RPM3.
@@ -849,7 +852,7 @@ builds faster.
 - Pass plain sparc- target to configure when building for sparcv9, to
 allow for the use of sparcv9 optflags while not confusing configure.
 - Check for __arch64__ rather than __sparc_v9__ in limits.h.
-- %defattr(-,root,root) for all architectures, not just x86 and alpha
+- %%defattr(-,root,root) for all architectures, not just x86 and alpha
 (no idea why this was restricted).
 
 * Wed Nov 08 2000 Solar Designer <solar-at-owl.openwall.com>
