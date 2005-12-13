@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2005/12/13	Package: postfix
+Updated to 2.2.7.
+
 2005/12/11	Package: man-pages;
 		Owl/build/installorder.conf
 Updated to 2.16, including the addition of POSIX man pages in their own
@@ -748,4 +751,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Owl: Owl/doc/CHANGES-2.0,v 1.179 2005/12/12 08:17:46 solar Exp $
+$Owl: Owl/doc/CHANGES-2.0,v 1.180 2005/12/13 21:29:39 ldv Exp $
