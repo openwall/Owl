@@ -1,14 +1,15 @@
-# $Owl: Owl/packages/john/john.spec,v 1.70 2005/12/12 19:20:11 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.71 2005/12/16 15:19:12 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
 Version: 1.6.39.5
+%define charsets_version 20051216
 Release: owl1
 License: GPL
 Group: Applications/System
 URL: http://www.openwall.com/john/
-Source0: ftp://ftp.openwall.com/pub/projects/john/john-%version.tar.gz
-Source1: ftp://ftp.openwall.com/pub/projects/john/john-1.6.tar.gz
+Source0: john-%version.tar.gz
+Source1: john-charsets-%charsets_version.tar.bz2
 BuildRoot: /override/%name-%version
 
 %description
@@ -54,7 +55,8 @@ cp -a run/un* %buildroot%_bindir/
 mkdir -p %buildroot%_libexecdir/john
 install -m 700 run/john-* %buildroot%_libexecdir/john/
 %endif
-install -m 644 run/{john.conf,password.lst} john-1.6/run/*.chr \
+install -m 644 -p run/{john.conf,password.lst} \
+	john-charsets-%charsets_version/*.chr \
 	%buildroot%_datadir/john/
 install -m 644 -p run/mailer doc/
 
@@ -73,8 +75,12 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
-* Mon Dec 12 2005 Solar Designer <solar-at-owl.openwall.com> 1.6.39.5-owl1
+* Fri Dec 16 2005 Solar Designer <solar-at-owl.openwall.com> 1.6.39.5-owl1
 - Detect changed charset files when restoring sessions.
+- Updated the supplied password.lst.
+- Added a new pre-defined "incremental" mode "Alnum", along with its
+corresponding filter.
+- Package new charset files (a separate tarball) instead of those from 1.6.
 
 * Sat Nov 12 2005 Solar Designer <solar-at-owl.openwall.com> 1.6.39.4-owl1
 - Corrected the way nouns ending in "z" and "h" (other than those ending in
