@@ -12,6 +12,20 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2005/10/09 -
+2005/12/16	Package: john
+The handling of LM hashes has been enhanced to use case insensitive
+comparisons of the encodings when eliminating duplicate and
+already-cracked hashes at load time and when displaying cracked
+passwords.  The way nouns ending in "z" and "h" are pluralized with the
+"p" wordlist rules command has been corrected.  A workaround for OpenAFS
+has been added to unafs.  Any charset file changes will now be detected
+when restoring sessions.  The supplied charset files and password.lst
+have been updated.  A new pre-defined "incremental" mode "Alnum" (for
+alphanumeric) has been added.  A bug with the handling of break
+statements with nested loops in the external mode compiler has been
+fixed.
+
 2005/12/13	Package: postfix
 Updated to 2.2.7.
 
@@ -751,4 +765,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Owl: Owl/doc/CHANGES-2.0,v 1.180 2005/12/13 21:29:39 ldv Exp $
+$Owl: Owl/doc/CHANGES-2.0,v 1.181 2005/12/17 19:44:09 solar Exp $
