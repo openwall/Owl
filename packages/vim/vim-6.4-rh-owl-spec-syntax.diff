@@ -1,6 +1,5 @@
-diff -ur vim61.orig/runtime/syntax/spec.vim vim61/runtime/syntax/spec.vim
---- vim61.orig/runtime/syntax/spec.vim	Thu May 10 00:18:45 2001
-+++ vim61/runtime/syntax/spec.vim	Sun Apr 21 02:51:16 2002
+--- vim64/runtime/syntax/spec.vim.orig	2004-12-31 17:29:22.000000000 +0000
++++ vim64/runtime/syntax/spec.vim	2005-12-18 00:09:50.000000000 +0000
 @@ -38,7 +38,7 @@
  syn match specManpageFile '[a-zA-Z]\.1'
  
@@ -17,8 +16,8 @@ diff -ur vim61.orig/runtime/syntax/spec.vim vim61/runtime/syntax/spec.vim
 -syn match   specTarCommand contained '\<tar\s\+[cxvpzIf]\{,5}\s*'
 +syn match   specTarCommand contained '\<tar\s\+[cxvpzIjf]\{,5}\s*'
  syn keyword specCommandSpecial contained root
--syn keyword specCommand        contained make xmkmf mkdir chmod ln find sed rm strip moc echo grep ls rm mv mkdir install cp pwd cat tail then else elif cd gzip rmdir ln eval export touch
-+syn keyword specCommand        contained make xmkmf mkdir chmod ln find sed rm strip moc echo grep ls rm mv mkdir install cp pwd cat tail then else elif cd gzip rmdir ln eval export touch gunzip zcat bzip2 bunzip2 bzcat
+-syn keyword specCommand		contained make xmkmf mkdir chmod ln find sed rm strip moc echo grep ls rm mv mkdir install cp pwd cat tail then else elif cd gzip rmdir ln eval export touch
++syn keyword specCommand contained make xmkmf mkdir chmod ln find sed rm strip moc echo grep ls rm mv mkdir install cp pwd cat tail then else elif cd gzip rmdir ln eval export touch gunzip zcat bzip2 bunzip2 bzcat
  syn cluster specCommands contains=specCommand,specTarCommand,specConfigure,specCommandSpecial
  
  "frequently used rpm env vars

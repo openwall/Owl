@@ -1,0 +1,35 @@
+--- vim64/src/xxd/xxd.c.orig	2005-01-22 14:38:33.000000000 +0000
++++ vim64/src/xxd/xxd.c	2005-12-18 00:32:28.000000000 +0000
+@@ -266,6 +266,9 @@
+       if (c == '\r')	/* Doze style input file? */
+ 	continue;
+ 
++      if (c==' ' || c=='\n' || c=='\t')        /* allow multiple spaces */
++        continue;
++
+       n3 = n2;
+       n2 = n1;
+ 
+--- vim64/src/message.c.orig	2004-06-13 10:15:03.000000000 +0000
++++ vim64/src/message.c	2005-12-18 00:32:28.000000000 +0000
+@@ -905,7 +905,7 @@
+ 	     * CTRL-C, but we need to loop then. */
+ 	    had_got_int = got_int;
+ 	    c = safe_vgetc();
+-	    if (!global_busy)
++	    if (had_got_int && !global_busy)
+ 		got_int = FALSE;
+ #ifdef FEAT_CLIPBOARD
+ 	    /* Strange way to allow copying (yanking) a modeless selection at
+--- vim64/src/option.c.orig	2005-10-08 14:27:46.000000000 +0000
++++ vim64/src/option.c	2005-10-16 15:56:15.000000000 +0000
+@@ -2512,7 +2512,8 @@
+ # endif
+ #endif
+        )
+-	set_string_default("sh", p);
++	if (strlen(p) != 0)
++	    set_string_default("sh", p);
+ 
+ #ifdef FEAT_WILDIGN
+     /*

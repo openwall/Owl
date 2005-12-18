@@ -1,15 +1,6 @@
-diff -ur vim61.orig/src/term.c vim61/src/term.c
---- vim61.orig/src/term.c	Fri Mar 15 00:21:46 2002
-+++ vim61/src/term.c	Sun Apr 21 03:13:36 2002
-@@ -971,7 +971,6 @@
-     {(int)KS_CWS,	IF_EB("\033[8;%d;%dt", ESC_STR "[8;%d;%dt")},
-     {(int)KS_CWP,	IF_EB("\033[3;%d;%dt", ESC_STR "[3;%d;%dt")},
- #  endif
--    {(int)KS_CRV,	IF_EB("\033[>c", ESC_STR "[>c")},
-     {K_UP,		IF_EB("\033OA", ESC_STR "OA")},
-     {K_DOWN,		IF_EB("\033OB", ESC_STR "OB")},
-     {K_RIGHT,		IF_EB("\033OC", ESC_STR "OC")},
-@@ -983,14 +982,14 @@
+--- vim64/src/term.c.orig	2005-07-21 11:00:18.000000000 +0000
++++ vim64/src/term.c	2005-12-17 23:57:08.000000000 +0000
+@@ -1013,14 +1013,14 @@
      {K_S_LEFT,		IF_EB("\033O2D", ESC_STR "O2D")},
      {K_C_LEFT,		IF_EB("\033O5D", ESC_STR "O5D")},
      /* An extra set of function keys for vt100 mode */

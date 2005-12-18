@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.26 2005/11/16 13:32:45 solar Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.27 2005/12/18 23:41:59 mci Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -7,12 +7,12 @@
 Summary: The VIM editor.
 Name: vim
 %define major 6
-%define minor 1
+%define minor 4
 %define alpha %nil
-%define patchlevel 386
+%define patchlevel 4
 %define vimdir vim%major%minor%alpha
 Version: %major.%minor%{?patchlevel:.%patchlevel}
-Release: owl4
+Release: owl1
 License: Charityware
 Group: Applications/Editors
 Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%major.%minor%alpha.tar.bz2
@@ -22,14 +22,14 @@ Source3: vitmp.1
 Source4: vimrc
 Source5: gvim.desktop
 Source6: README
-Patch0: vim-6.1-rh-owl-vim-not-vi.diff
-Patch1: vim-6.1-rh-paths.diff
-Patch2: vim-6.1-rh-fix-keys.diff
-Patch3: vim-6.1-rh-owl-xxd-locale.diff
-Patch4: vim-6.1-rh-owl-spec-syntax.diff
-Patch5: vim-6.1-owl-tmp.diff
-Patch6: vim-6.1-owl-perl-clash.diff
-Patch7: vim-6.1-owl-autotools.diff
+Patch0: vim-6.4-deb-fixes.diff
+Patch1: vim-6.4-deb-man.diff
+Patch2: vim-6.4-owl-tmp.diff
+Patch3: vim-6.4-rh-fix-keys.diff
+Patch4: vim-6.4-rh-owl-spec-syntax.diff
+Patch5: vim-6.4-rh-owl-vim-not-vi.diff
+Patch6: vim-6.4-rh-owl-xxd-locale.diff
+Patch7: vim-6.4-rh-paths.diff
 Requires: mktemp >= 1:1.3.1
 BuildRequires: libtermcap-devel, ncurses-devel, perl
 BuildRequires: sed >= 4.0.9
@@ -66,6 +66,7 @@ order to run.
 Summary: A small version of the VIM editor.
 Group: Applications/Editors
 Requires: vim-common
+Provides: vim-minimal
 Obsoletes: vim, vim-minimal
 
 %description small
@@ -202,30 +203,26 @@ pushd %buildroot
 mv bin/vim bin/vi
 mv bin/vimtutor .%_bindir
 rm bin/rvim
-ln -sf vi bin/view
-ln -sf vi bin/ex
-ln -sf vi bin/rvi
-ln -sf vi bin/rview
-ln -sf vim .%_bindir/ex
-ln -sf vim .%_bindir/rvim
-ln -sf vim .%_bindir/vimdiff
+ln -s vi bin/rvi
+ln -s vim .%_bindir/ex
+ln -s vim .%_bindir/rvim
+ln -s vim .%_bindir/vimdiff
 sed -i "s,%buildroot,," .%_mandir/man1/{vim,vimtutor}.1
 rm .%_mandir/man1/rvim.1
-ln -sf vim.1 .%_mandir/man1/vi.1
-ln -sf vim.1 .%_mandir/man1/rvi.1
-ln -sf vim.1 .%_mandir/man1/rvim.1
-ln -sf vim.1 .%_mandir/man1/vimdiff.1
+ln -s vim.1 .%_mandir/man1/vi.1
+ln -s vim.1 .%_mandir/man1/rvi.1
+ln -s vim.1 .%_mandir/man1/rvim.1
 
 %if %BUILD_USE_X
-ln -sf gvim .%_prefix/X11R6/bin/vimx
-ln -sf gvim .%_prefix/X11R6/bin/gview
-ln -sf gvim .%_prefix/X11R6/bin/gex
-ln -sf gvim .%_prefix/X11R6/bin/evim
-ln -sf vim.1 .%_mandir/man1/gvim.1
-ln -sf vim.1 .%_mandir/man1/vimx.1
-ln -sf vim.1 .%_mandir/man1/gview.1
-ln -sf vim.1 .%_mandir/man1/gex.1
-ln -sf vim.1 .%_mandir/man1/evim.1
+ln -s gvim .%_prefix/X11R6/bin/vimx
+ln -s gvim .%_prefix/X11R6/bin/gview
+ln -s gvim .%_prefix/X11R6/bin/gex
+ln -s gvim .%_prefix/X11R6/bin/evim
+ln -s vim.1 .%_mandir/man1/gvim.1
+ln -s vim.1 .%_mandir/man1/vimx.1
+ln -s vim.1 .%_mandir/man1/gview.1
+ln -s vim.1 .%_mandir/man1/gex.1
+ln -s vim.1 .%_mandir/man1/evim.1
 mkdir -p etc/X11/applnk/Applications
 cp %_sourcedir/gvim.desktop etc/X11/applnk/Applications/
 %else
@@ -246,6 +243,7 @@ chmod 644 ../runtime/doc/vim2html.pl
 %_bindir/xxd
 %_datadir/vim
 %_mandir/man1/vim.*
+%_mandir/man1/vimdiff.*
 %_mandir/man1/vi.*
 %_mandir/man1/ex.*
 %_mandir/man1/view.*
@@ -287,6 +285,11 @@ chmod 644 ../runtime/doc/vim2html.pl
 %endif
 
 %changelog
+* Sun Dec 18 2005 Michail Litvak <mci-at-owl.openwall.com> 6.4.4-owl1
+- Updated to 6.4 patchlevel 4.
+- Reviewed patches, added some patches from Debian.
+- Provides vim-minimal for FC4 compatibility.
+
 * Thu Sep 09 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.1.386-owl4
 - Patched to build with new autotools.
 - Spec prepared for FHS moving.

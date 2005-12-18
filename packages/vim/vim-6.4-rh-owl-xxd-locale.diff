@@ -1,24 +1,32 @@
-diff -ur vim61.orig/src/xxd/xxd.c vim61/src/xxd/xxd.c
---- vim61.orig/src/xxd/xxd.c	Mon Jul 16 12:11:02 2001
-+++ vim61/src/xxd/xxd.c	Sun Apr 21 03:36:21 2002
-@@ -81,6 +81,7 @@
+--- vim64/src/xxd/xxd.c.orig	2005-01-22 14:38:33.000000000 +0000
++++ vim64/src/xxd/xxd.c	2005-12-16 12:37:27.000000000 +0000
+@@ -83,12 +83,12 @@
  #if __MWERKS__ && !defined(BEBOX)
  # include <unix.h>	/* for fdopen() on MAC */
  #endif
+-
+ #if defined(__BORLANDC__) && __BORLANDC__ <= 0x0410 && !defined(fileno)
+ /* Missing define and prototype grabbed from the BC 4.0 <stdio.h> */
+ # define fileno(f)       ((f)->fd)
+ FILE   _FAR *_Cdecl _FARFUNC fdopen(int __handle, char _FAR *__type);
+ #endif
 +#include <locale.h>
  
+ 
  /*  This corrects the problem of missing prototypes for certain functions
-  *  in some GNU installations (e.g. SunOS 4.1.x).
-@@ -425,6 +426,8 @@
+@@ -437,6 +437,11 @@
+   long length = -1, n = 0, seekoff = 0;
    char l[LLEN+1];
    char *pname, *pp;
++  char *lang=getenv("LANG");
++  if(!lang) lang=getenv("LC_ALL");
++  if(!lang) lang=getenv("LC_CTYPE");
++  if(lang)
++	  setlocale(LC_ALL, lang);
  
-+  setlocale(LC_CTYPE, "");
-+
  #ifdef AMIGA
    /* This program doesn't work when started from the Workbench */
-   if (argc == 0)
-@@ -643,7 +646,7 @@
+@@ -656,7 +661,7 @@
        if (fp != stdin)
  	{
  	  fprintf(fpo, "unsigned char %s", isdigit((int)argv[1][0]) ? "__" : "");
@@ -27,7 +35,7 @@ diff -ur vim61.orig/src/xxd/xxd.c vim61/src/xxd/xxd.c
  	    putc(isalnum(c) ? c : '_', fpo);
  	  fputs("[] = {\n", fpo);
  	}
-@@ -662,7 +665,7 @@
+@@ -675,7 +680,7 @@
        if (fp != stdin)
  	{
  	  fprintf(fpo, "unsigned int %s", isdigit((int)argv[1][0]) ? "__" : "");
@@ -36,7 +44,7 @@ diff -ur vim61.orig/src/xxd/xxd.c vim61/src/xxd/xxd.c
  	    putc(isalnum(c) ? c : '_', fpo);
  	  fprintf(fpo, "_len = %d;\n", p);
  	}
-@@ -726,7 +729,7 @@
+@@ -739,7 +744,7 @@
  #ifdef __MVS__
  	  (e >= 64)
  #else

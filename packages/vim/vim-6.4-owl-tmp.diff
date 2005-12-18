@@ -1,0 +1,101 @@
+--- vim64/src/configure.in.orig	2005-10-15 12:53:28.000000000 +0000
++++ vim64/src/configure.in	2005-12-15 23:54:50.000000000 +0000
+@@ -476,7 +476,7 @@
+ 	dnl    see what the interpreter is built from
+ 	AC_CACHE_VAL(vi_cv_path_python_plibs,
+ 	[
+-	    tmp_mkf="/tmp/Makefile-conf$$"
++	    tmp_mkf="`pwd`/Makefile-conf$$"
+ 	    cat ${PYTHON_CONFDIR}/Makefile - <<'eof' >${tmp_mkf}
+ __:
+ 	@echo "python_MODLIBS='$(MODLIBS)'"
+--- vim64/src/fileio.c.orig	2005-12-18 01:13:21.000000000 +0000
++++ vim64/src/fileio.c	2005-12-18 01:27:24.000000000 +0000
+@@ -3100,29 +3100,16 @@
+ 		/*
+ 		 * Check if we can create a file and set the owner/group to
+ 		 * the ones from the original file.
+-		 * First find a file name that doesn't exist yet (use some
+-		 * arbitrary numbers).
+ 		 */
+-		STRCPY(IObuff, fname);
+-		for (i = 4913; ; i += 123)
+-		{
+-		    sprintf((char *)gettail(IObuff), "%d", i);
+-#ifdef HAVE_LSTAT
+-		    if (mch_lstat((char *)IObuff, &st) < 0)
+-#else
+-		    if (mch_stat((char *)IObuff, &st) < 0)
+-#endif
+-			break;
+-		}
+-		fd = mch_open((char *)IObuff, O_CREAT|O_WRONLY|O_EXCL, perm);
++ 		sprintf((char *)IObuff, "%s.XXXXXX", fname);
++ 		fd = mkstemp((char *)IObuff);
+ 		if (fd < 0)	/* can't write in directory */
+ 		    backup_copy = TRUE;
+ 		else
+ 		{
+ # ifdef UNIX
+-#  ifdef HAVE_FCHOWN
+-		    fchown(fd, st_old.st_uid, st_old.st_gid);
+-#  endif
++ 		    if (fchown(fd, st_old.st_uid, st_old.st_gid) == 0)
++ 			fchmod(fd, perm);
+ 		    if (mch_stat((char *)IObuff, &st) < 0
+ 			    || st.st_uid != st_old.st_uid
+ 			    || st.st_gid != st_old.st_gid
+--- vim64/src/vimtutor.orig	2004-04-04 14:20:16.000000000 +0000
++++ vim64/src/vimtutor	2005-12-16 00:01:52.000000000 +0000
+@@ -10,34 +10,14 @@
+ xx=$1
+ export xx
+ 
+-# We need a temp file for the copy.  First try using a standard command.
+-tmp="${TMPDIR-/tmp}"
+-TUTORCOPY=`mktemp $tmp/tutorXXXXXX || tempfile -p tutor || echo none`
+-
+-# If the standard commands failed then create a directory to put the copy in.
+-# That is a secure way to make a temp file.
+-if test "$TUTORCOPY" = none; then
+-	tmpdir=$tmp/vimtutor$$
+-	OLD_UMASK=`umask`
+-	umask 077
+-	getout=no
+-	mkdir $tmpdir || getout=yes
+-	umask $OLD_UMASK
+-	if test $getout = yes; then
+-		echo "Could not create directory for tutor copy, exiting."
+-		exit 1
+-	fi
+-	TUTORCOPY=$tmpdir/tutorcopy
+-	touch $TUTORCOPY
+-	TODELETE=$tmpdir
+-else
+-	TODELETE=$TUTORCOPY
+-fi
+-
++# We need a temp file for the copy.
++TUTORCOPY="`mktemp -t vimtutor.XXXXXXXXXX`" || exit
+ export TUTORCOPY
+ 
+ # remove the copy of the tutor on exit
+-trap "rm -rf $TODELETE" 0 1 2 3 9 11 13 15
++trap 'rm -f -- "$TUTORCOPY"' EXIT
++trap 'trap - EXIT; rm -f -- "$TUTORCOPY"; exit 1' HUP INT QUIT TERM
++
+ 
+ # Vim could be called "vim" or "vi".  Also check for "vim6", for people who
+ # have Vim 5.x installed as "vim" and Vim 6.0 as "vim6".
+--- vim64/runtime/tools/vimspell.sh.orig	1999-08-01 12:01:46.000000000 +0000
++++ vim64/runtime/tools/vimspell.sh	2005-12-18 01:14:01.000000000 +0000
+@@ -13,7 +13,8 @@
+ # March 1999
+ 
+ INFILE=$1
+-OUTFILE=/tmp/vimspell.$$
++OUTFILE="`mktemp -t vimspell.XXXXXXXXXX`" || exit
++
+ # if you have "tempfile", use the following line
+ #OUTFILE=`tempfile`
+ 
