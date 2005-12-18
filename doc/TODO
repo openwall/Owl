@@ -46,8 +46,9 @@ Update these to latest releases once in a while.
 	chkconfig.
 
 [PRIORITY: medium]
-Update to latest release for FC4/RHEL4 compatibility.  In particular,
-/usr/sbin/alternatives is required.
+[ASSIGNED: ldv@]
+Update to latest release for FC4/RHEL4 compatibility.  Package
+alternatives.
 
 
 	coreutils.
@@ -96,8 +97,8 @@ Update to the latest 1.11.x or to 1.12.x.
 	db4.
 
 [PRIORITY: high]
-Update to either db-4.2.52 (for RHEL4 compatibility) or 4.3.29
-(for FC4 compatibility).
+[ASSIGNED: ldv@]
+Update to 4.2.52 for FC3/RHEL4 compatibility.
 
 
 	dhcp.
@@ -541,4 +542,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Owl: Owl/doc/TODO,v 1.142 2005/12/13 22:01:15 ldv Exp $
+$Owl: Owl/doc/TODO,v 1.143 2005/12/18 23:59:27 ldv Exp $
