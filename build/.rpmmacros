@@ -1,4 +1,4 @@
-# $Owl: Owl/build/.rpmmacros,v 1.10 2005/11/16 12:05:17 solar Exp $
+# $Owl: Owl/build/.rpmmacros,v 1.11 2005/12/19 23:00:18 solar Exp $
 %_tmppath %home/tmp-work
 %_topdir %home/rpm-work-%number
 %buildroot %home/rpm-work-%number/buildroot
@@ -17,11 +17,11 @@
 %optflags_lib_sparcv9 -pipe -mcpu=ultrasparc -Wa,-Av8plusa -O2
 %optflags_bin_sparcv9 -pipe -mcpu=ultrasparc -Wa,-Av8plusa -O2 -fomit-frame-pointer
 # alpha
-%optflags_lib_alpha -pipe -march=ev4 -O2
-%optflags_bin_alpha -pipe -march=ev4 -O2 -fomit-frame-pointer
+%optflags_lib_alpha -pipe -mcpu=ev4 -O2
+%optflags_bin_alpha -pipe -mcpu=ev4 -O2 -fomit-frame-pointer
 # alphaev56
-%optflags_lib_alphaev56 -pipe -march=ev56 -O2
-%optflags_bin_alphaev56 -pipe -march=ev56 -O2 -fomit-frame-pointer
+%optflags_lib_alphaev56 -pipe -mcpu=ev56 -O2
+%optflags_bin_alphaev56 -pipe -mcpu=ev56 -O2 -fomit-frame-pointer
 #
 %optflags_lib %{expand:%{optflags_lib_%{expand:%buildarch}}}
 %optflags_bin %{expand:%{optflags_bin_%{expand:%buildarch}}}
