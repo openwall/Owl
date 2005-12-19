@@ -493,16 +493,6 @@ Update to a newer version that would build with Linux 2.6.x headers.
 Include /sbin/nologin for FC4/RHEL4 compatibility.
 
 
-	vim.
-
-[PRIORITY: low]
-[ASSIGNED: mci@]
-Update to latest 6.4 patchlevel.
-
-[PRIORITY: low]
-Use mkdtemp(3) for the directory.
-
-
 	vixie-cron.
 
 [PRIORITY: low]
@@ -542,4 +532,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Owl: Owl/doc/TODO,v 1.143 2005/12/18 23:59:27 ldv Exp $
+$Owl: Owl/doc/TODO,v 1.144 2005/12/19 00:11:52 solar Exp $
