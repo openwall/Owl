@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2005/12/18	Package: vim
+Updated to 6.4 patchlevel 4.
+
 2005/10/09 -
 2005/12/16	Package: john
 The handling of LM hashes has been enhanced to use case insensitive
@@ -765,4 +768,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Owl: Owl/doc/CHANGES-2.0,v 1.181 2005/12/17 19:44:09 solar Exp $
+$Owl: Owl/doc/CHANGES-2.0,v 1.182 2005/12/19 00:06:41 solar Exp $
