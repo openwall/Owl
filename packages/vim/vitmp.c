@@ -6,9 +6,10 @@
  * Written by Solar Designer <solar at owl.openwall.com> and placed in the
  * public domain.
  *
- * $Owl: Owl/packages/vim/vitmp.c,v 1.4 2005/11/16 17:26:54 solar Exp $
+ * $Owl: Owl/packages/vim/vitmp.c,v 1.5 2005/12/19 00:10:58 solar Exp $
  */
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 
 int main(int argc, const char * const *argv)
