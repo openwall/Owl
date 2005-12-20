@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.16 2005/11/16 12:19:21 solar Exp $
+# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.17 2005/12/20 21:20:55 solar Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
@@ -58,6 +58,7 @@ Obsoletes: stat, fileutils, textutils, sh-utils
 
 PreReq: /sbin/install-info
 BuildRequires: sed >= 4.1.1, bison >= 2.0, automake >= 1.9.5, m4 >= 1.4.3
+BuildRequires: perl >= 5.6.1
 BuildRequires: libtermcap-devel
 
 BuildRoot: /override/%name-%version
