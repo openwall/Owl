@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bison/bison.spec,v 1.24 2005/11/16 12:19:20 solar Exp $
+# $Owl: Owl/packages/bison/bison.spec,v 1.25 2005/12/20 18:20:31 solar Exp $
 
 %define BUILD_TEST 0
 
@@ -13,8 +13,9 @@ Source: ftp://ftp.gnu.org/gnu/bison/bison-%version.tar.bz2
 Patch0: bison-2.0-owl-info.diff
 PreReq: /sbin/install-info
 BuildRequires: mktemp >= 1:1.3.1
-BuildRequires: rpm-build >= 0:4
+BuildRequires: glibc > 0:2.1.3
 BuildRequires: automake, autoconf
+BuildRequires: rpm-build >= 0:4
 BuildRoot: /override/%name-%version
 
 %description

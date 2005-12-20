@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.31 2005/11/16 12:21:36 solar Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.32 2005/12/20 18:20:31 solar Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -23,6 +23,7 @@ Patch2: e2fsprogs-1.37-owl-blkid-env.diff
 Patch3: e2fsprogs-1.37-owl-messages.diff
 PreReq: /sbin/ldconfig
 BuildRequires: gettext, texinfo, automake, autoconf
+BuildRequires: glibc > 0:2.1.3
 %if !%USE_PKGCONFIG
 BuildRequires: rpm-build >= 0:4
 %endif
