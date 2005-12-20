@@ -39,7 +39,7 @@ builds;
 at least 64 MB of physical memory (it is possible to build on less
 with sufficient swap space, but you'd better not);
 
-at least 160 MB of virtual memory if building on and for an Alpha;
+at least 200 MB of virtual memory;
 
 1 to 5 hours of CPU time, on a modern system (as of this writing).
 
@@ -109,4 +109,4 @@ where "name" is the name of the source package.  For foreign packages
 (SRPMs) built with the Owl build environment you also need to include
 the version number part in "name".
 
-$Owl: Owl/doc/BUILD,v 1.29 2005/11/16 11:59:01 solar Exp $
+$Owl: Owl/doc/BUILD,v 1.30 2005/12/20 19:58:22 solar Exp $
