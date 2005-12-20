@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.99 2005/11/16 13:09:47 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.100 2005/12/20 16:13:57 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -11,7 +11,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 0.4.7
-Release: owl1
+Release: owl2
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/%name/
@@ -30,7 +30,8 @@ Source6: strlcpy.3
 # We are using the following numbering rules for glibc patches:
 #    0-99 - CVS
 # 100-199 - RH
-# 200-299 - SuSE
+# 200-219 - SuSE
+# 220-239 - Gentoo
 # 300-399 - ALT
 # 400-... - Owl
 
@@ -43,6 +44,9 @@ Patch100: glibc-2.3.5-fedora.diff
 # SuSE
 Patch200: glibc-2.3.2-suse-resolv-response-length.diff
 Patch201: glibc-2.3.4-suse-getconf-default_output.diff
+
+# Gentoo
+Patch220: glibc-2.3.6-gentoo-alpha-xstat.diff
 
 # ALT
 Patch300: glibc-2.3.5-alt-doc-linuxthreads.diff
@@ -167,6 +171,10 @@ compatibility package with necessary binaries of old libdb libraries.
 
 # add -a option to getconf(1)
 %patch201 -p0
+
+# Gentoo
+# Re-introduce support for building on Alpha with pre-2.6.4 kernel headers
+%patch220 -p1
 
 # ALT
 # fix linuxthreads documentation
@@ -449,6 +457,10 @@ fi
 %files compat-fake
 
 %changelog
+* Tue Dec 20 2005 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl2
+- Imported a patch from Gentoo (re-generated from glibc234-alpha-xstat.patch)
+to re-introduce support for building on Alpha with pre-2.6.4 kernel headers.
+
 * Wed Nov 09 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3.6-owl1
 - Updated to 2.3.6.
 
