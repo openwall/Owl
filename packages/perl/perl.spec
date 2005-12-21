@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.40 2005/12/13 13:08:02 ldv Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.41 2005/12/21 10:36:00 ldv Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -17,16 +17,17 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.8.3
-Release: owl8
+Release: owl9
 Epoch: 2
 License: GPL
 Group: Development/Languages
 Source: ftp://ftp.perl.org/pub/CPAN/src/perl-%version.tar.bz2
 Patch0: perl-5.8.3-cvs-20051202-sprintf.diff
-Patch1: perl-5.8.3-owl-disable-suidperl.diff
-Patch2: perl-5.8.3-owl-tmp.diff
-Patch3: perl-5.8.3-owl-vitmp.diff
-Patch4: perl-5.8.3-owl-rmtree.diff
+Patch1: perl-5.8.3-cvs-20051206-Sys-Syslog.diff
+Patch2: perl-5.8.3-owl-disable-suidperl.diff
+Patch3: perl-5.8.3-owl-tmp.diff
+Patch4: perl-5.8.3-owl-vitmp.diff
+Patch5: perl-5.8.3-owl-rmtree.diff
 %if %KERNEL_CONFIG_HARDEN_SHM
 Patch10: perl-5.8.3-owl-tests-shm.diff
 %endif
@@ -120,6 +121,7 @@ introduce security holes.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 %if %KERNEL_CONFIG_HARDEN_SHM
 %patch10 -p1
 %endif
@@ -276,6 +278,9 @@ find %buildroot%_libdir/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Wed Dec 21 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2:5.8.3-owl9
+- Updated Sys::Syslog to version 0.08.
+
 * Sun Dec 11 2005 Solar Designer <solar-at-owl.openwall.com> 2:5.8.3-owl8
 - Corrected the perl5db.pl patch to obtain the TTY name from ~/.perldbtty$$
 rather than from a file under /var/run to allow ordinary users to utilize
