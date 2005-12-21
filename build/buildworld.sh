@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/buildworld.sh,v 1.36 2005/11/16 12:01:35 solar Exp $
+# $Owl: Owl/build/buildworld.sh,v 1.37 2005/12/21 09:42:13 ldv Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -9,7 +9,7 @@ TIME=/usr/bin/time
 . buildworld.conf
 
 export -n BRANCH PACKAGE
-MAKEFLAGS=${MAKEFLAGS/#PACKAGE=*}
+MAKEFLAGS=${MAKEFLAGS/PACKAGE=*}
 
 PACKAGES=$BRANCH/packages
 
