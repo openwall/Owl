@@ -1,13 +1,25 @@
-Allows to link to internal librpm.so even if librpm.so exists in /usr/lib
-diff -puNr rpm-4.2.orig/build/Makefile.in rpm-4.2/build/Makefile.in
---- rpm-4.2.orig/build/Makefile.in	Fri Feb  6 14:55:01 2004
-+++ rpm-4.2/build/Makefile.in	Fri Feb  6 20:59:31 2004
-@@ -223,7 +223,7 @@ pkgincdir = $(pkgincludedir)
+--- rpm-4.2/build/Makefile.am.orig	2005-12-20 19:25:03 +0300
++++ rpm-4.2/build/Makefile.am	2005-12-20 19:43:51 +0300
+@@ -19,8 +19,6 @@ pkgincdir = $(pkgincludedir)
  pkginc_HEADERS = rpmbuild.h rpmfc.h rpmfile.h rpmspec.h
  noinst_HEADERS = buildio.h
  
 -LDFLAGS = -L$(DESTDIR)$(usrlibdir)
-+LDFLAGS = -L$(top_builddir)/lib/.libs -L$(DESTDIR)$(usrlibdir)
- 
+-
  usrlibdir = $(libdir)@MARK64@
  usrlib_LTLIBRARIES = librpmbuild.la
+ librpmbuild_la_SOURCES = \
+@@ -29,10 +27,10 @@ librpmbuild_la_SOURCES = \
+ 	parseFiles.c parsePreamble.c parsePrep.c parseReqs.c parseScript.c \
+ 	parseSpec.c poptBT.c reqprov.c rpmfc.c spec.c
+ librpmbuild_la_LDFLAGS = -release @VERSION@ \
+-	$(top_builddir)/lib/librpm.la \
+-	$(top_builddir)/rpmdb/librpmdb.la \
+-	$(top_builddir)/rpmio/librpmio.la \
+ 	@WITH_LIBELF_LIB@
++librpmbuild_la_LIBADD = $(top_builddir)/lib/librpm.la \
++	$(top_builddir)/rpmdb/librpmdb.la \
++	$(top_builddir)/rpmio/librpmio.la
+ 
+ clean-local:
+ 	rm -f *.o rpmfile.h # .created $(FILELOBJS)

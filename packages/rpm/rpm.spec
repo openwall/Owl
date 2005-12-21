@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.64 2005/11/18 15:51:48 solar Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.65 2005/12/21 09:37:13 ldv Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -11,7 +11,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl11
+Release: owl12
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -176,6 +176,7 @@ install -p -m 755 %_sourcedir/gendiff .
 # Remove libelf archive just in case
 rm -r elfutils
 
+%build
 # Prepare libfmagic archive and save it to the rpmio subdirectory.
 # Also, put patchlevel.h to the tools directory (it is needed by rpmfile.c)
 pushd file
@@ -216,7 +217,6 @@ rm -r file
 %define __infodir        %__datadir/info
 %define __mandir         %__datadir/man
 
-%build
 # XXX rpm needs functioning nptl for configure tests
 unset LD_ASSUME_KERNEL || :
 %if %WITH_PYTHON
@@ -256,9 +256,8 @@ ac_cv_header_libelf_h=no ac_cv_header_gelf_h=no \
 	--disable-posixmutexes
 %__make
 # Check whether it works at all
-./rpmi --showrc >/dev/null &&
-./rpm --showrc >/dev/null ||
-	exit 1
+./rpmi --showrc >/dev/null
+./rpm --showrc >/dev/null
 
 %install
 rm -rf %buildroot
@@ -471,6 +470,9 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Wed Dec 21 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl12
+- Fixed build to avoid linking of librpmbuild with system librpm.
+
 * Fri Nov 18 2005 Solar Designer <solar-at-owl.openwall.com> 4.2-owl11
 - Added public domain statements to the rpminit script and its man page.
 
