@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/setarch/setarch.spec,v 1.3 2005/11/16 13:31:51 solar Exp $
+# $Owl: Owl/packages/setarch/setarch.spec,v 1.4 2005/12/21 19:47:19 solar Exp $
 
 Summary: Personality setter.
 Name: setarch
@@ -7,11 +7,12 @@ Release: owl1
 License: GPL
 Group: System Environment/Kernel
 Source: %name-%version.tar.gz
-Patch: setarch-1.8-owl-sparc32-alias.diff
+Patch0: setarch-1.8-owl-sparc32-alias.diff
 %ifarch sparc sparcv9 sparc64
 Provides: sparc32
 Obsoletes: sparc32
 %endif
+ExclusiveArch: %ix86 x86_64 sparc sparcv9 sparc64 ppc ppc64 ia64 s390 s390x
 BuildRoot: /override/%name-%version
 
 %description
@@ -21,7 +22,7 @@ set various personality flags.
 
 %prep
 %setup -q
-%patch -p1
+%patch0 -p1
 
 %build
 %__cc -o setarch setarch.c %optflags
@@ -33,20 +34,20 @@ install -p -m644 setarch.8 %buildroot%_mandir/man8/
 install -m755 setarch %buildroot%_bindir/
 
 LINKS="linux32"
-%ifarch s390 s390x
-LINKS="$LINKS s390 s390x"
-%endif
 %ifarch %ix86 x86_64
 LINKS="$LINKS i386 x86_64"
+%endif
+%ifarch sparc sparcv9 sparc64
+LINKS="$LINKS sparc sparc64 sparc32"
 %endif
 %ifarch ppc ppc64
 LINKS="$LINKS ppc ppc64 ppc32"
 %endif
-%ifarch sparc sparc64
-LINKS="$LINKS sparc sparc64 sparc32"
-%endif
 %ifarch ia64
 LINKS="$LINKS i386 ia64"
+%endif
+%ifarch s390 s390x
+LINKS="$LINKS s390 s390x"
 %endif
 for i in $LINKS; do
 	ln -s setarch %buildroot%_bindir/$i
