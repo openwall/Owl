@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.41 2005/12/21 10:36:00 ldv Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.42 2005/12/21 19:07:01 ldv Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -18,7 +18,7 @@ Summary: The Perl programming language.
 Name: perl
 Version: 5.8.3
 Release: owl9
-Epoch: 2
+Epoch: 3
 License: GPL
 Group: Development/Languages
 Source: ftp://ftp.perl.org/pub/CPAN/src/perl-%version.tar.bz2
@@ -278,7 +278,8 @@ find %buildroot%_libdir/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
-* Wed Dec 21 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2:5.8.3-owl9
+* Wed Dec 21 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3:5.8.3-owl9
+- Bumped the Epoch to 3 for FC and RHEL compatibility.
 - Updated Sys::Syslog to version 0.08.
 
 * Sun Dec 11 2005 Solar Designer <solar-at-owl.openwall.com> 2:5.8.3-owl8
