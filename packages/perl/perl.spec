@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.42 2005/12/21 19:07:01 ldv Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.43 2005/12/22 02:10:13 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -17,7 +17,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.8.3
-Release: owl9
+Release: owl10
 Epoch: 3
 License: GPL
 Group: Development/Languages
@@ -217,7 +217,10 @@ rm -rf %buildroot
 #
 # It also is non-obvious whether any of this needs to be done during the
 # package build at all.
-#
+
+# h2ph happens to overflow an 8 MB stack on Alpha.
+ulimit -s 16384
+
 %__make all -f - <<EOF
 %if %BUILD_PH_ALL
 PKGS	= \$(shell rpm -qa | sed -n 's/\(^.*-devel\)-[0-9.]\+-owl[0-9]\+\$$/\1/p' | sort) \
@@ -278,6 +281,10 @@ find %buildroot%_libdir/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Thu Dec 22 2005 Solar Designer <solar-at-owl.openwall.com> 3:5.8.3-owl10
+- Increase the stack size rlimit to 16 MB before h2ph invocations since
+h2ph happens to overflow an 8 MB stack on Alpha.
+
 * Wed Dec 21 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3:5.8.3-owl9
 - Bumped the Epoch to 3 for FC and RHEL compatibility.
 - Updated Sys::Syslog to version 0.08.
