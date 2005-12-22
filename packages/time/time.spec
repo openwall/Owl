@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/time/time.spec,v 1.9 2005/11/16 13:32:45 solar Exp $
+# $Owl: Owl/packages/time/time.spec,v 1.10 2005/12/22 02:55:35 solar Exp $
 
 Summary: A GNU utility for monitoring a program's use of system resources.
 Name: time
 Version: 1.7
-Release: owl14
+Release: owl15
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.gnu.org/gnu/time/time-%version.tar.gz
@@ -27,6 +27,7 @@ results.  time can help developers optimize their programs.
 %patch2 -p1
 
 %build
+export ac_cv_func_wait3=yes \
 %configure
 make LDFLAGS=-s
 
@@ -38,12 +39,12 @@ mkdir -p %buildroot%_mandir/man1
 install -m 644 %_sourcedir/time.1 %buildroot%_mandir/man1/
 
 %post
-/sbin/install-info %_infodir/time.info.gz %_infodir/dir \
+/sbin/install-info %_infodir/time.info %_infodir/dir \
 	--entry="* time: (time).                                 GNU time Utility"
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/time.info.gz %_infodir/dir \
+	/sbin/install-info --delete %_infodir/time.info %_infodir/dir \
 		--entry="* time: (time).                                 GNU time Utility"
 fi
 
@@ -55,6 +56,12 @@ fi
 %_mandir/*/*
 
 %changelog
+* Thu Dec 22 2005 Solar Designer <solar-at-owl.openwall.com> 1.7-owl15
+- Hard-wired the detection of a functioning wait3(2) since the configure
+test is unreliable (assumes that fork/sleep/exit will consume at least one
+clock tick).
+- Corrected info files installation (dropped the explicit .gz).
+
 * Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 1.7-owl14
 - Deal with info dir entries such that the menu looks pretty.
 
