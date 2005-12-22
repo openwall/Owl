@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/basesystem/basesystem.spec,v 1.7 2005/11/16 12:19:20 solar Exp $
+# $Owl: Owl/packages/basesystem/basesystem.spec,v 1.8 2005/12/22 03:57:32 solar Exp $
 
 Summary: Initial set of configuration files and directory hierarchy.
 Name: basesystem
@@ -13,6 +13,9 @@ BuildRoot: /override/%name-%version
 %description
 This package combines owl-etc and owl-hier, and exists primarily for
 Red Hat Linux compatibility.
+
+%install
+rm -rf %buildroot
 
 %files
 
