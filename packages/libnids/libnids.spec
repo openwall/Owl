@@ -1,16 +1,16 @@
-# $Owl: Owl/packages/libnids/libnids.spec,v 1.18 2005/12/13 13:17:26 ldv Exp $
+# $Owl: Owl/packages/libnids/libnids.spec,v 1.19 2005/12/23 01:29:03 solar Exp $
 
 Summary: NIDS E-component.
 Name: libnids
-Version: 1.19
-Release: owl2
+Version: 1.20
+Release: owl1
 Epoch: 1
 License: GPL
 Group: System Environment/Libraries
 URL: http://libnids.sourceforge.net
 Source: %name-%version.tar.gz
 PreReq: /sbin/ldconfig
-BuildRequires: autoconf, libpcap-devel, libnet-devel
+BuildRequires: libpcap-devel, libnet-devel >= 1:1.1
 BuildRoot: /override/%name-%version
 
 %description
@@ -25,38 +25,39 @@ Group: Development/Libraries
 Requires: %name = %epoch:%version-%release
 
 %description devel
-Development libraries, header files, and documentation for libnids.
+This package contains development libraries and C header files needed for
+building applications which use libnids, as well as documentation on libnids.
 
 %prep
 %setup -q
 
 %build
-autoconf
 %configure --enable-shared
-
 %__make
 
 %install
 rm -rf %buildroot
-
-%__make install install_prefix=%buildroot
+%makeinstall
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
 %files
-%defattr(644,root,root,755)
-%attr(755,root,root) %_libdir/lib*.so.*
+%defattr(-,root,root)
+%_libdir/libnids.so.*
 
 %files devel
-%defattr(644,root,root,755)
-%doc CHANGES README CREDITS MISC doc/*
-%attr(755,root,root) %_libdir/lib*.so
-%_includedir/*.h
+%defattr(-,root,root)
+%doc doc README CHANGES CREDITS MISC
 %_mandir/man3/*
-%_libdir/lib*.a
+%_includedir/*.h
+%_libdir/libnids.so
+%_libdir/libnids.a
 
 %changelog
+* Fri Dec 23 2005 Solar Designer <solar-at-owl.openwall.com> 1:1.20-owl1
+- Updated to 1.20.
+
 * Tue Dec 13 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:1.19-owl2
 - Corrected interpackage dependencies.
 
