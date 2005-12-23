@@ -1,16 +1,16 @@
-# $Owl: Owl/packages/libnet/libnet.spec,v 1.14 2005/12/13 13:17:26 ldv Exp $
+# $Owl: Owl/packages/libnet/libnet.spec,v 1.15 2005/12/23 00:51:57 solar Exp $
 
 Summary: "libpwrite" Network Routine Library.
 Name: libnet
-Version: 1.0.2a
-Release: owl5
+Version: 1.1.3
+%define extra -RC-01
+Release: owl0.1
 Epoch: 1
 License: BSD
 Group: System Environment/Libraries
 URL: http://www.packetfactory.net/libnet/
-Source: http://www.packetfactory.net/libnet/dist/%name-%version.tar.gz
-Patch0: libnet-1.0.2a-pld-shared.diff
-Patch1: libnet-1.0.2a-owl-alpha-targets.diff
+Source: http://www.packetfactory.net/libnet/dist/%name-%version%extra.tar.gz
+Patch0: libnet-1.0.2a-owl-alpha-targets.diff
 PreReq: /sbin/ldconfig
 BuildRequires: libpcap-devel, autoconf
 BuildRoot: /override/%name-%version
@@ -28,57 +28,47 @@ functionality.
 %package devel
 Summary: Header files and development documentation for libnet.
 Group: Development/Libraries
-Requires: %name = %epoch:%version-%release
+Requires: %name = %version-%release
 
 %description devel
 Header files and development documentation for libnet.
 
 %prep
-%setup -q -n Libnet-%version
+%setup -q -n libnet
 %patch0 -p1
-%patch1 -p1
+rm -r doc/{CVS,man,libnet.doxygen.conf}
 
 %build
 aclocal
 autoconf
-%configure --with-pf_packet=yes
-%__make CFLAGS="%optflags"
+export ac_cv_libnet_linux_procfs=yes \
+%configure
+%__make
 
 %install
 rm -rf %buildroot
-
-%__make install \
-	DESTDIR=%buildroot \
-	MAN_PREFIX=%_mandir/man3
-
-pushd %buildroot%_libdir
-ln -sf libnet.so.*.* libnet.so
-# XXX: (GM): we have to find a universal way to do the following:
-ln -sf libnet.so.*.* libnet.so.1
-popd
-ln -sf libnet.so %buildroot%_libdir/libpwrite
+%makeinstall
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
 %files
-%defattr(644,root,root,755)
-%attr(755,root,root) %_libdir/lib*.so.*
-%attr(755,root,root) %_libdir/libpwrite
+%defattr(-,root,root)
+%_libdir/libnet.so.*
 
 %files devel
-%defattr(644,root,root,755)
+%defattr(-,root,root)
 %doc doc README
-%attr(755,root,root) %_libdir/lib*.so
-%attr(755,root,root) %_bindir/*
-%_includedir/*.h
+%_bindir/libnet-config
+%_includedir/libnet.h
 %_includedir/libnet
-%_mandir/man*/*
-%_libdir/lib*.a
+%_libdir/libnet.so
+%_libdir/libnet.a
+%exclude %_libdir/libnet.la
 
 %changelog
-* Tue Dec 13 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:1.0.2a-owl5
-- Corrected interpackage dependencies.
+* Fri Dec 23 2005 Solar Designer <solar-at-owl.openwall.com> 1:1.1.3-owl0.1
+- Updated to 1.1.3-RC-01.
 
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:1.0.2a-owl4
 - Fixed orphaned %_libdir/libnet.so.1 created by %post.
