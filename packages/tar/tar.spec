@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.26 2005/11/16 13:32:45 solar Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.27 2005/12/23 00:22:14 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
 Version: 1.15.1
-Release: owl3
+Release: owl4
 License: GPL
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/tar/
@@ -28,6 +28,7 @@ Patch15: tar-1.15.1-mdk-optimize-ignored.diff
 Patch16: tar-1.15.1-deb-doc.diff
 Patch17: tar-1.15.1-deb-lone-zero-block-warning.diff
 Patch18: tar-1.15.1-alt-warnings.diff
+Patch19: tar-1.15.1-owl-tests.diff
 PreReq: /sbin/install-info, grep
 BuildRequires: automake, autoconf, cvs, gettext, texinfo
 BuildRequires: rpm-build >= 0:4
@@ -62,6 +63,7 @@ backups.
 %patch16 -p1
 %patch17 -p1
 %patch18 -p1
+%patch19 -p1
 install -pm644 %_sourcedir/append.at tests/
 
 %{expand:%%define optflags %optflags -Wall -Dlint}
@@ -117,6 +119,10 @@ fi
 %doc AUTHORS NEWS THANKS
 
 %changelog
+* Fri Dec 23 2005 Solar Designer <solar-at-owl.openwall.com> 1.15.1-owl4
+- Disabled tests/listed02.at because of a known race condition bug (reported
+upstream by ldv@).
+
 * Wed Nov 16 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.15.1-owl3
 - Backported savedir() fix from gnulib CVS.
 

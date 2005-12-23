@@ -1,0 +1,12 @@
+diff -ur tar-1.15.1.orig/tests/testsuite.at tar-1.15.1/tests/testsuite.at
+--- tar-1.15.1.orig/tests/testsuite.at	2004-12-21 12:41:40 +0000
++++ tar-1.15.1/tests/testsuite.at	2005-12-22 23:29:42 +0000
+@@ -87,7 +87,7 @@
+ m4_include([link01.at])
+ 
+ m4_include([listed01.at])
+-m4_include([listed02.at])
++#m4_include([listed02.at])
+ 
+ m4_include([longv7.at])
+ 
