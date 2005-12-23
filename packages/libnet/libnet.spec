@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/libnet/libnet.spec,v 1.15 2005/12/23 00:51:57 solar Exp $
+# $Owl: Owl/packages/libnet/libnet.spec,v 1.16 2005/12/23 00:55:22 solar Exp $
 
 Summary: "libpwrite" Network Routine Library.
 Name: libnet
@@ -28,7 +28,7 @@ functionality.
 %package devel
 Summary: Header files and development documentation for libnet.
 Group: Development/Libraries
-Requires: %name = %version-%release
+Requires: %name = %epoch:%version-%release
 
 %description devel
 Header files and development documentation for libnet.
@@ -69,6 +69,9 @@ rm -rf %buildroot
 %changelog
 * Fri Dec 23 2005 Solar Designer <solar-at-owl.openwall.com> 1:1.1.3-owl0.1
 - Updated to 1.1.3-RC-01.
+
+* Tue Dec 13 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:1.0.2a-owl5
+- Corrected interpackage dependencies.
 
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:1.0.2a-owl4
 - Fixed orphaned %_libdir/libnet.so.1 created by %post.
