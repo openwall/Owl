@@ -1,6 +1,6 @@
-# $Owl: Owl/packages/libnet/libnet.spec,v 1.16 2005/12/23 00:55:22 solar Exp $
+# $Owl: Owl/packages/libnet/libnet.spec,v 1.17 2005/12/23 01:10:31 solar Exp $
 
-Summary: "libpwrite" Network Routine Library.
+Summary: A library for portable packet creation and injection.
 Name: libnet
 Version: 1.1.3
 %define extra -RC-01
@@ -16,22 +16,21 @@ BuildRequires: libpcap-devel, autoconf
 BuildRoot: /override/%name-%version
 
 %description
-The Network Library provides a simple API for commonly used low-level
-network functions (mainly packet injection).  Using libnet, it is easy
-to build and write arbitrary network packets.  It provides a portable
-framework for low-level network packet writing and handling (use
-libnet in conjunction with libpcap and you can write some really cool
-stuff).  libnet includes packet creation at the IP layer and at the
-link layer as well as a host of supplementary and complementary
-functionality.
+Libnet is an API to help with the construction and handling of network
+packets.  It provides a portable framework for low-level network
+packet writing and handling (use libnet in conjunction with libpcap and
+you can write some really cool stuff).  Libnet includes packet creation
+at the IP layer and at the link layer as well as a host of supplementary
+and complementary functionality.
 
 %package devel
-Summary: Header files and development documentation for libnet.
+Summary: Development libraries, header files, and documentation for libnet.
 Group: Development/Libraries
 Requires: %name = %epoch:%version-%release
 
 %description devel
-Header files and development documentation for libnet.
+This package contains development libraries and C header files needed for
+building applications which use libnet, as well as documentation on libnet.
 
 %prep
 %setup -q -n libnet
