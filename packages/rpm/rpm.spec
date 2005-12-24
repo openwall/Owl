@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.65 2005/12/21 09:37:13 ldv Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.66 2005/12/24 17:02:44 ldv Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -11,7 +11,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl12
+Release: owl13
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -177,6 +177,9 @@ install -p -m 755 %_sourcedir/gendiff .
 rm -r elfutils
 
 %build
+CC=gcc
+CXX=g++
+export CC CXX
 # Prepare libfmagic archive and save it to the rpmio subdirectory.
 # Also, put patchlevel.h to the tools directory (it is needed by rpmfile.c)
 pushd file
@@ -184,7 +187,11 @@ pushd file
 # be searched for in the directory where "file" package stores it (this will
 # be unneeded once we separate "file" from "rpm")
 CFLAGS="%optflags -DMAGIC='\"/usr/share/magic\"'" \
-./configure
+./configure \
+	--host=%_target_platform \
+	--build=%_target_platform \
+	--target=%_target_platform \
+	--program-transform-name=
 %__make libfmagic.la
 cp -rp .libs libfmagic.la ../rpmio/
 cp -p patchlevel.h ../tools/
@@ -245,6 +252,10 @@ autoconf
 # build with %%optflags produces unusable executables.
 ac_cv_header_libelf_h=no ac_cv_header_gelf_h=no \
 ./configure \
+	--host=%_target_platform \
+	--build=%_target_platform \
+	--target=%_target_platform \
+	--program-transform-name= \
 	--prefix=%__prefix \
 	--sysconfdir=%__sysconfdir \
 	--localstatedir=%__localstatedir \
@@ -470,6 +481,10 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Sat Dec 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl13
+- Corrected build to generate proper values for %%_host, %%_host_alias,
+%%_host_cpu and %%_host_vendor macros.
+
 * Wed Dec 21 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl12
 - Fixed build to avoid linking of librpmbuild with system librpm.
 
