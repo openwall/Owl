@@ -86,13 +86,6 @@ using safe mode (~077 & mode), then chown(), then chmod().
 Update to the latest 1.11.x or to 1.12.x.
 
 
-	db4.
-
-[PRIORITY: high]
-[ASSIGNED: ldv@]
-Update to 4.2.52 for FC3/RHEL4 compatibility.
-
-
 	dhcp.
 
 [PRIORITY: low]
@@ -520,4 +513,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Owl: Owl/doc/TODO,v 1.146 2005/12/24 16:05:12 ldv Exp $
+$Owl: Owl/doc/TODO,v 1.147 2005/12/24 22:51:48 ldv Exp $
