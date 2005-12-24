@@ -1,6 +1,5 @@
-diff -ur man-1.5l.orig/src/makewhatis.sh man-1.5l/src/makewhatis.sh
---- man-1.5l.orig/src/makewhatis.sh	2003-03-10 20:14:51 +0000
-+++ man-1.5l/src/makewhatis.sh	2005-10-24 07:12:37 +0000
+--- man-1.6b/src/makewhatis.sh.orig	2005-08-20 23:26:06.000000000 +0000
++++ man-1.6b/src/makewhatis.sh	2005-12-21 23:41:40.000000000 +0000
 @@ -3,6 +3,7 @@
  # Created: Sun Jun 14 10:49:37 1992
  # Revised: Sat Jan  8 14:12:37 1994 by faith@cs.unc.edu
@@ -20,17 +19,17 @@ diff -ur man-1.5l.orig/src/makewhatis.sh man-1.5l/src/makewhatis.sh
  # 030310 - find files only; fix LAPACK cruft; no /usr/man default;
  #	use /dev/stderr instead of /dev/tty; handle files with strange names;
  #	add support for chinese, hungarian, indonesian, japanese, korean,
- #	polish, russian (Thierry Vignaud); 
+ #	polish, russian (Thierry Vignaud);
 +# 051024 - mktemp first, set the trap later to not trigger in-shell races
  #
  # Note for Slackware users: "makewhatis -v -w -c" will work.
  #
--# makewhatis aeb 030310 (from %version%)
-+# makewhatis aeb 030310 / Owl 051024 (from %version%)
+-# makewhatis aeb 030801 (from %version%)
++# makewhatis aeb 030801 / Owl 051024 (from %version%)
  
  program=`basename $0`
  
-@@ -63,24 +68,10 @@
+@@ -65,24 +70,10 @@
  # AWK=/usr/bin/gawk
  AWK=%awk%
  
@@ -59,7 +58,7 @@ diff -ur man-1.5l.orig/src/makewhatis.sh man-1.5l/src/makewhatis.sh
  
  # default find arg: no directories, no empty files
  findarg0="-type f -size +0"
-@@ -146,7 +137,7 @@
+@@ -148,7 +139,7 @@
  fi
  catpath=`echo ${catpath} | tr : ' '`
  
@@ -68,7 +67,7 @@ diff -ur man-1.5l.orig/src/makewhatis.sh man-1.5l/src/makewhatis.sh
  # then only update - we might visit the same directory twice
  if [ x$update = x ]; then
     for pages in man cat
-@@ -154,7 +145,7 @@
+@@ -156,7 +147,7 @@
        eval path="\$$pages"path
        for mandir in $path
        do
@@ -77,7 +76,7 @@ diff -ur man-1.5l.orig/src/makewhatis.sh man-1.5l/src/makewhatis.sh
        done
     done
  fi
-@@ -168,7 +159,7 @@
+@@ -170,7 +161,7 @@
       if [ x$verbose != x ]; then
  	echo "about to enter $mandir" > /dev/stderr
       fi
@@ -86,7 +85,7 @@ diff -ur man-1.5l.orig/src/makewhatis.sh man-1.5l/src/makewhatis.sh
  	if [ x$verbose != x ]; then
  	   echo skipping $mandir - we did it already > /dev/stderr
  	fi
-@@ -235,12 +226,12 @@
+@@ -237,12 +228,12 @@
  	      sub(/\..*/, "", progname);
  	      if (use_zcat || use_bzcat) {
  		if (use_zcat) {
@@ -102,7 +101,7 @@ diff -ur man-1.5l.orig/src/makewhatis.sh man-1.5l/src/makewhatis.sh
  		  print "ignored strange file name " filename " in " curdir > "/dev/stderr";
  		  return;
  		}
-@@ -387,7 +378,7 @@
+@@ -389,7 +380,7 @@
  	    ' pages=$pages section=$section verbose=$verbose curdir=$curdir
  	    cd ..
  	 fi
@@ -111,20 +110,21 @@ diff -ur man-1.5l.orig/src/makewhatis.sh man-1.5l/src/makewhatis.sh
  
         cd $here
  
-@@ -401,16 +392,14 @@
+@@ -403,16 +394,15 @@
  
         if [ -f ${mandir1}/whatis ]
         then
 -	 cat ${mandir1}/whatis >> $TMPFILE
 +	 cat ${mandir1}/whatis >> "$TMPFILE"
         fi
--       sed '/^$/d' < $TMPFILE | sort | uniq > ${mandir1}/whatis
-+       touch ${mandir1}/whatis.tmp
-+       chmod 644 ${mandir1}/whatis.tmp
-+       sed '/^$/d' < "$TMPFILE" | sort -u > ${mandir1}/whatis.tmp
+-       tr -s '\n' < $TMPFILE | sort -u > ${mandir1}/whatis
  
 -       chmod 644 ${mandir1}/whatis
 -       rm $TMPFILE
++       touch ${mandir1}/whatis.tmp
++       chmod 644 ${mandir1}/whatis.tmp
++       tr -s '\n' < "$TMPFILE" | sort -u > ${mandir1}/whatis.tmp
++  
 +       mv -f ${mandir1}/whatis.tmp ${mandir1}/whatis
 +       rm ${mandir1}/whatis.update
       fi

@@ -1,0 +1,21 @@
+--- man-1.6b/src/util.c.orig	2005-08-20 23:26:06.000000000 +0000
++++ man-1.6b/src/util.c	2005-12-21 23:58:09.000000000 +0000
+@@ -273,7 +273,7 @@
+ 			case 'S': /* check and turn into 's' */
+ 				ss = va_arg(p, char *);
+ 				if (!is_shell_safe(ss, (s[1] == 'Q')))
+-					return NOT_SAFE;
++					return my_strdup(NOT_SAFE);
+ 				len += strlen(ss);
+ 				s[1] = 's';
+ 				break;
+--- man-1.6b/src/different.c.orig	2005-08-20 23:26:06.000000000 +0000
++++ man-1.6b/src/different.c	2005-12-21 23:58:16.000000000 +0000
+@@ -22,6 +22,7 @@
+ 	while (p->next) {
+ 	    command = my_xsprintf("%s %S %S\n", cmp, file, p->pathname);
+ 	    ret = do_system_command (command, 1);
++	    free(command);
+ 	    if (ret == 0) {
+ 		gripe(IDENTICAL, file, p->pathname);
+ 		return 0;

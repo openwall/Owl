@@ -1,7 +1,6 @@
-diff -ur man-1.5l.orig/configure man-1.5l/configure
---- man-1.5l.orig/configure	Mon Mar 10 20:21:00 2003
-+++ man-1.5l/configure	Sun Mar 16 19:43:08 2003
-@@ -480,12 +480,7 @@
+--- man-1.6b/configure.orig	2005-08-20 23:26:06.000000000 +0000
++++ man-1.6b/configure	2005-12-24 00:18:31.000000000 +0000
+@@ -474,12 +474,7 @@
      troff="troff -mandoc"
      echo "Warning: could not find groff"
    else

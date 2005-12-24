@@ -1,0 +1,88 @@
+--- man-1.6b/src/apropos.sh.orig	2005-08-20 23:26:06.000000000 +0000
++++ man-1.6b/src/apropos.sh	2005-12-21 23:49:00.000000000 +0000
+@@ -14,29 +14,33 @@
+ #
+ # keep old PATH - 000323 - Bryan Henderson
+ # also look in /var/cache/man - 030801 - aeb
++# Modified for ALT Linux by Dmitry V. Levin <ldv-at-altlinux.org>
+ 
+-program=`basename $0`
++PATH=/bin:/usr/bin
++export PATH
++ 
++PROG="${0##*/}"
+ 
+ # When man pages in your favorite locale look to grep like binary files
+ # (and you use GNU grep) you may want to add the 'a' option to *grepopt1.
+-aproposgrepopt1='i'
++aproposgrepopt1='ia'
+ aproposgrepopt2=''
+-whatisgrepopt1='iw'
++whatisgrepopt1='iwa'
+ whatisgrepopt2='^'
+ grepopt1=$%apropos_or_whatis%grepopt1
+ grepopt2=$%apropos_or_whatis%grepopt2
+ 
+ if [ $# = 0 ]
+ then
+-    echo "usage: $program keyword ..."
++    echo "usage: $PROG keyword ..."
+     exit 1
+ fi
+ 
+-manpath=`man %manpathoption% | tr : '\040'`
++manpath=`man %manpathoption% | tr : \`
+ 
+-if [ "$manpath" = "" ]
++if [ -z "$manpath" ]
+ then
+-    echo "$program: manpath is null"
++    echo "$PROG: manpath is null"
+     exit 1
+ fi
+ 
+@@ -44,15 +48,15 @@
+ for arg in $*; do
+     case $arg in
+         --version|-V|-v)
+-	    echo "$program from %version%"
++	    echo "$PROG from %version%"
+ 	    exit 0
+ 	    ;;
+ 	--help|-h)
+-            echo "usage: $program keyword ..."
++            echo "usage: $PROG keyword ..."
+ 	    exit 0
+ 	    ;;
+ 	-*)
+-	    echo "$program: $arg: unknown option"
++	    echo "$PROG: $arg: unknown option" >&2
+ 	    exit 1
+ 	    ;;
+ 	*)
+@@ -63,11 +67,22 @@
+ while [ "$1" != "" ]
+ do
+     found=0
+-    for d in /var/cache/man $manpath /usr/lib
++    for d in $manpath
+     do
+-        if [ -f $d/whatis ]
++	if [ -z "${d##/usr/share/man*}" ]; then
++		d="${d/\/usr\/share\/man//var/cache/man}"
++	elif [ "$d" == /usr/X11R6/man ]; then
++		d=/var/cache/man/X11R6
++	elif [ "$d" == /usr/lib/perl5/man ]; then
++		d=/var/cache/man/perl
++	elif [ "$d" == /usr/local/man ]; then
++		d=/var/cache/man/local
++	else
++		continue
++	fi
++        if [ -f "$d/whatis" ]
+         then
+-            if grep -"$grepopt1" "$grepopt2""$1" $d/whatis
++            if grep -qs"$grepopt1" "$grepopt2""$1" "$d/whatis"
+             then
+                 found=1
+ # Some people are satisfied with a single occurrence

@@ -1,15 +1,18 @@
-# $Owl: Owl/packages/man/man.spec,v 1.21 2005/11/16 13:16:56 solar Exp $
+# $Owl: Owl/packages/man/man.spec,v 1.22 2005/12/24 22:56:53 mci Exp $
 
 Summary: A set of documentation tools: man, apropos and whatis.
 Name: man
-Version: 1.5l
-Release: owl6
+Version: 1.6b
+Release: owl1
 License: GPL
 Group: System Environment/Base
-Source: ftp://ftp.win.tue.nl/pub/linux-local/utils/man/man-%version.tar.gz
-Patch0: man-1.5l-owl-makewhatis.diff
-Patch1: man-1.5l-owl-latin1.diff
-Patch2: man-1.5l-owl-bound.diff
+URL: http://primates.ximian.com/~flucifredi/man/
+Source: http://primates.ximian.com/~flucifredi/man/%name-%version.tar.gz
+Patch0: man-1.6b-alt-apropos.diff
+Patch1: man-1.6b-alt-fixes.diff
+Patch2: man-1.6b-owl-latin1.diff
+Patch3: man-1.6b-owl-makewhatis.diff
+Patch4: man-1.6b-gentoo-makewhatis-config.diff
 Requires: groff, less, gzip, bzip2, coreutils
 # makewhatis
 Requires: gawk, sed, mktemp >= 1:1.3.1
@@ -35,6 +38,8 @@ whatis searches its own database for a complete word.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
+%patch4 -p1
 
 %build
 ./configure -default +fhs -fsstnd -confdir /etc
@@ -86,6 +91,10 @@ find /var/cache/man/{,X11R6/,local/}cat[123456789n] -type f -delete
 %attr(0775,root,man) %dir /var/cache/man/local/cat[123456789n]
 
 %changelog
+* Thu Dec 24 2005 Michail Litvak <mci-at-owl.openwall.com> 1.6b-owl1
+- Updated to 1.6b.
+- Updated patches, added patch from Gentoo.
+
 * Mon Oct 24 2005 Solar Designer <solar-at-owl.openwall.com> 1.5l-owl6
 - Added build and runtime dependencies.
 - Updated the makewhatis patch per our new conventions (mktemp first, set

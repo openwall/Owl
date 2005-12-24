@@ -1,0 +1,72 @@
+--- man-1.6b/src/makewhatis.sh.orig	2005-12-24 00:12:21.000000000 +0000
++++ man-1.6b/src/makewhatis.sh	2005-12-24 00:13:24.000000000 +0000
+@@ -38,7 +38,7 @@
+ #
+ # Note for Slackware users: "makewhatis -v -w -c" will work.
+ #
+-# makewhatis aeb 030801 / Owl 051024 (from %version%)
++# makewhatis aeb 030801 / Owl 051024 (from @version@)
+ 
+ program=`basename $0`
+ 
+@@ -68,7 +68,7 @@
+ # but that leads to problems and bugs.
+ 
+ # AWK=/usr/bin/gawk
+-AWK=%awk%
++AWK=@awk@
+ 
+ # make sure TMPFILE is deleted if program is killed or terminates
+ TMPFILE="`mktemp -t $program.XXXXXXXXXX`" || exit
+@@ -83,7 +83,15 @@
+ defmanpath=$DEFMANPATH
+ defcatpath=
+ 
+-sections="1 2 3 4 5 6 7 8 9 n l"
++if [ -n "$MANSECT" ]; then
++	sections=$MANSECT
++else
++	sections=`$AWK '($1 == "MANSECT") { print $2 }' @man_config_file@`
++	if [ x"$sections" = x ]; then
++		sections="@sections@"
++	fi
++fi
++sections=`echo $sections | sed -e 's/:/ /g'`
+ 
+ for name in "$@"
+ do
+@@ -94,7 +102,7 @@
+ fi
+ case $name in
+     --version|-V)
+-	echo "$program from %version%"
++	echo "$program from @version@"
+ 	exit 0;;
+     -c) topath=catpath
+ 	defmanpath=
+--- man-1.6b/src/Makefile.in.orig	2005-09-05 22:20:35.000000000 +0000
++++ man-1.6b/src/Makefile.in	2005-12-24 00:08:51.000000000 +0000
+@@ -93,8 +93,8 @@
+ 
+ makewhatis: makewhatis.sh Makefile
+ 	rm -f makewhatis
+-	sed -e 's,%version%,@version@,' \
+-	    -e 's,%awk%,@awk@,' makewhatis.sh > makewhatis
++	cp makewhatis.sh makewhatis.in
++	../conf_script makewhatis
+ 	chmod +x makewhatis
+ 
+ MANCONFIG=$(DESTDIR)$(PREFIX)@man_config_file@
+--- man-1.6b/man/en/makewhatis.man.orig	2005-09-19 06:29:48.000000000 +0000
++++ man-1.6b/man/en/makewhatis.man	2005-12-24 00:08:51.000000000 +0000
+@@ -62,8 +62,8 @@
+ .I sections
+ of
+ .IR manpath " or " catpath .
+-If the option is absent, its value is assumed to be
+-.I  \'1 2 3 4 5 6 7 8 9 n l\'
++If the option is absent, the MANSECT env var will be used.  If it too
++is absent, the MANSECT setting in man.conf will be used.
+ .TP 
+ .BI -c " catpath"
+ The preformatted manual pages located in
