@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.49 2005/12/13 13:17:26 ldv Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.50 2005/12/24 22:21:49 ldv Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -24,7 +24,7 @@
 %define BUILD_CXX_COMPAT_SEPARATE 1
 
 # If this variable is set to non-zero, then all support libraries
-# will be placed into %_libdir/gcc/%_target_platform/%version
+# will be placed into %_libdir/gcc/%_target_platform/%%version
 # sub-directory (allowing to have several binary incompatible
 # versions of compilers).
 %define USE_VERSION_SPECIFIC_LIBS 0
@@ -37,8 +37,8 @@
 
 Summary: C compiler from the GNU Compiler Collection.
 Name: gcc
-Version: 3.4.3
-Release: owl5
+Version: 3.4.5
+Release: owl1
 Epoch: 1
 License: GPL
 Group: Development/Languages
@@ -76,13 +76,14 @@ Source9: libstdc++-compat-3.2.2-i386.tar.bz2
 %endif
 %endif
 
-PreReq: /sbin/ldconfig, /sbin/install-info
+PreReq: /sbin/install-info
 # XXX: the following line uses RPM4 syntax. I've commented it for now. -- (GM)
 #Requires(post): sed
 # This is the version of binutils we have tested this package with; older
 # ones might work, but were not tested.
 Requires: binutils >= 2.10.1.0.4
 Requires: cpp = %epoch:%version-%release
+Requires: libgcc >= %epoch:%version-%release
 Obsoletes: egcs
 BuildRequires: binutils, gettext, bison, flex, texinfo
 BuildRoot: /override/%name-%version
@@ -102,6 +103,15 @@ macro processor which is used automatically by the C compiler to
 transform program source before actual compilation.  cpp may also be
 used independently from the C compiler and the C language.
 
+%package -n libgcc
+Summary: GCC shared support library
+Group: System Environment/Libraries
+PreReq: /sbin/ldconfig
+
+%description -n libgcc
+This package contains GCC shared support library which is needed
+e.g. for exception handling support.
+
 %if %BUILD_GXX
 %package c++
 Summary: C++ support for gcc.
@@ -120,6 +130,7 @@ programs is available as a separate binary package.
 Summary: GNU C++ library.
 Group: System Environment/Libraries
 PreReq: /sbin/ldconfig
+Requires: libgcc >= %epoch:%version-%release
 Obsoletes: gcc-libstdc++
 
 %description -n libstdc++
@@ -465,6 +476,15 @@ rm -rf %buildroot
 
 %__make -C obj-%_target_platform DESTDIR=%buildroot install
 
+%if !%USE_VERSION_SPECIFIC_LIBS
+# Relocate libgcc shared library from %_libdir/ to /%_lib/.
+mkdir %buildroot/%_lib
+mv %buildroot%_libdir/libgcc_s.so.1 %buildroot/%_lib/
+ln -s ../../../../../%_lib/libgcc_s.so.1 \
+	%buildroot%_libdir/gcc/%_target_platform/%version/libgcc_s.so
+rm %buildroot%_libdir/libgcc_s.so
+%endif
+
 # Fix some things.
 ln -s gcc %buildroot%_bindir/cc
 echo ".so gcc.1" > %buildroot%_mandir/man1/cc.1
@@ -493,31 +513,31 @@ rm -rf %buildroot%_libdir/gcc/%_target_platform/%version/include/*
 rm -f %buildroot%version_libdir/*.la
 
 %post
-/sbin/install-info --info-dir=%_infodir %_infodir/gcc.info.gz
-/sbin/install-info --info-dir=%_infodir %_infodir/gccint.info.gz
-/sbin/ldconfig
+/sbin/install-info --info-dir=%_infodir %_infodir/gcc.info
+/sbin/install-info --info-dir=%_infodir %_infodir/gccint.info
 %_libdir/gcc/%_target_platform/%version/install-tools/mkheaders
 chmod -R go+rX %_libdir/gcc/%_target_platform/%version/include/*
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete --info-dir=%_infodir %_infodir/gccint.info.gz
-	/sbin/install-info --delete --info-dir=%_infodir %_infodir/gcc.info.gz
+	/sbin/install-info --delete --info-dir=%_infodir %_infodir/gccint.info
+	/sbin/install-info --delete --info-dir=%_infodir %_infodir/gcc.info
 	if [ -d %_libdir/gcc/%_target_platform/%version/include ]; then
 		rm -rf %_libdir/gcc/%_target_platform/%version/include/*
 	fi
 fi
 
-%postun -p /sbin/ldconfig
+%post -n libgcc -p /sbin/ldconfig
+%postun -n libgcc -p /sbin/ldconfig
 
 %post -n cpp
-/sbin/install-info --info-dir=%_infodir %_infodir/cpp.info.gz
-/sbin/install-info --info-dir=%_infodir %_infodir/cppinternals.info.gz
+/sbin/install-info --info-dir=%_infodir %_infodir/cpp.info
+/sbin/install-info --info-dir=%_infodir %_infodir/cppinternals.info
 
 %preun -n cpp
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete --info-dir=%_infodir %_infodir/cppinternals.info.gz
-	/sbin/install-info --delete --info-dir=%_infodir %_infodir/cpp.info.gz
+	/sbin/install-info --delete --info-dir=%_infodir %_infodir/cppinternals.info
+	/sbin/install-info --delete --info-dir=%_infodir %_infodir/cpp.info
 fi
 
 %if %BUILD_GXX
@@ -548,12 +568,12 @@ fi
 
 %if %BUILD_G77
 %post g77
-/sbin/install-info --info-dir=%_infodir %_infodir/g77.info.gz
+/sbin/install-info --info-dir=%_infodir %_infodir/g77.info
 /sbin/ldconfig
 
 %preun g77
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete --info-dir=%_infodir %_infodir/g77.info.gz
+	/sbin/install-info --delete --info-dir=%_infodir %_infodir/g77.info
 fi
 
 %postun g77 -p /sbin/ldconfig
@@ -566,12 +586,12 @@ fi
 
 %if %BUILD_JAVA
 %post java
-/sbin/install-info --info-dir=%_infodir %_infodir/gcj.info.gz
+/sbin/install-info --info-dir=%_infodir %_infodir/gcj.info
 /sbin/ldconfig
 
 %preun java
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete --info-dir=%_infodir %_infodir/gcj.info.gz
+	/sbin/install-info --delete --info-dir=%_infodir %_infodir/gcj.info
 fi
 
 %postun java -p /sbin/ldconfig
@@ -598,8 +618,8 @@ fi
 %_libdir/gcc/%_target_platform/%version/collect2
 %_libdir/gcc/%_target_platform/%version/crt*.o
 %_libdir/gcc/%_target_platform/%version/libgcc*.a
+%_libdir/gcc/%_target_platform/%version/libgcc*.so
 %_libdir/gcc/%_target_platform/%version/libgcov*.a
-%version_libdir/libgcc*.so*
 %_libdir/gcc/%_target_platform/%version/specs
 %dir %_libdir/gcc/%_target_platform/%version/include
 %_libdir/gcc/%_target_platform/%version/install-tools
@@ -622,11 +642,25 @@ fi
 %dir %_libdir/gcc/%_target_platform/%version
 %_mandir/man1/cpp.1*
 
+%files -n libgcc
+%defattr(-,root,root)
+%if %USE_VERSION_SPECIFIC_LIBS
+%dir %_libdir/gcc
+%dir %_libdir/gcc/%_target_platform
+%dir %_libdir/gcc/%_target_platform/%version
+%_libdir/gcc/%_target_platform/%version/libgcc*.so.*
+%else
+/%_lib/libgcc*.so.*
+%endif
+
 %if %BUILD_GXX
 %files c++
 %defattr(-,root,root)
 %_bindir/?++
 %_bindir/%_target_platform-?++
+%dir %_libdir/gcc
+%dir %_libdir/gcc/%_target_platform
+%dir %_libdir/gcc/%_target_platform/%version
 %_libdir/gcc/%_target_platform/%version/cc1plus
 %_mandir/man1/?++.1*
 %doc gcc/cp/ChangeLog*
@@ -748,6 +782,10 @@ fi
 %endif
 
 %changelog
+* Wed Dec 21 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:3.4.5-owl1
+- Updated to 3.4.5.
+- Packaged libgcc shared library in separate subpackage.
+
 * Tue Dec 13 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:3.4.3-owl5
 - Corrected interpackage dependencies.
 
