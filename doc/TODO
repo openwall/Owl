@@ -480,10 +480,6 @@ conversation code to use pam_prompt.
 [PRIORITY: medium]
 Update to a newer version that would build with Linux 2.6.x headers.
 
-[PRIORITY: medium]
-[ASSIGNED: ldv@]
-Include /sbin/nologin for FC4/RHEL4 compatibility.
-
 
 	vixie-cron.
 
@@ -524,4 +520,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Owl: Owl/doc/TODO,v 1.145 2005/12/24 14:19:55 ldv Exp $
+$Owl: Owl/doc/TODO,v 1.146 2005/12/24 16:05:12 ldv Exp $
