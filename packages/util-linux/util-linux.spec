@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.40 2005/11/16 13:32:45 solar Exp $
+# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.41 2005/12/24 16:03:38 ldv Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -7,12 +7,14 @@
 Summary: A collection of basic system utilities.
 Name: util-linux
 Version: 2.11z
-Release: owl7
+Release: owl8
 License: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%version.tar.bz2
 Source1: mount.control
 Source2: write.control
+Source3: nologin.c
+Source4: nologin.8
 Patch0: util-linux-2.11z-owl-MCONFIG.diff
 Patch1: util-linux-2.11z-owl-Makefile.diff
 Patch2: util-linux-2.11z-owl-write.diff
@@ -85,11 +87,14 @@ CFLAGS="%optflags" \
 LDFLAGS="" \
 ./configure
 %__make RPM_OPT_FLAGS="%optflags"
+%__cc %optflags %_sourcedir/nologin.c -o nologin
 
 %install
 rm -rf %buildroot
 
 %__make install DESTDIR=%buildroot MAN_DIR=%_mandir INFO_DIR=%_infodir
+install -pm755 nologin %buildroot/sbin/
+install -pm644 %_sourcedir/nologin.8 %buildroot%_mandir/man8/
 
 ln -sf hwclock %buildroot/sbin/clock
 
@@ -189,6 +194,9 @@ fi
 %_mandir/man8/mkswap.8*
 %_mandir/man8/setfdprm.8*
 %_mandir/man8/isosize.8*
+
+/sbin/nologin
+%_mandir/man8/nologin.8*
 
 %_bindir/ddate
 %_mandir/man1/ddate.1*
@@ -332,6 +340,9 @@ fi
 %endif
 
 %changelog
+* Sat Dec 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.11z-owl8
+- Packaged nologin.
+
 * Fri Nov 11 2005 Solar Designer <solar-at-owl.openwall.com> 2.11z-owl7
 - Corrected the uses of llseek() to avoid miscompilation with recent gcc.
 - Do package the sln(8) man page.
