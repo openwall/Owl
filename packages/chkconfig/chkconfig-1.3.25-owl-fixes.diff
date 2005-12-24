@@ -1,0 +1,1318 @@
+diff -upk.orig chkconfig-1.3.25.orig/Makefile chkconfig-1.3.25/Makefile
+--- chkconfig-1.3.25.orig/Makefile	2005-02-23 04:22:53 +0000
++++ chkconfig-1.3.25/Makefile	2005-12-22 20:03:58 +0000
+@@ -14,7 +14,7 @@ ALTDIR = /var/lib/alternatives
+ ALTDATADIR = /etc/alternatives
+ SUBDIRS = po
+ 
+-OBJS=chkconfig.o leveldb.o
++OBJS=chkconfig.o leveldb.o xmalloc.o
+ NTOBJS=ntsysv.o leveldb.o
+ 
+ all: subdirs $(PROG) ntsysv alternatives
+@@ -26,7 +26,7 @@ subdirs:
+ 	done && test -z "$$fail"
+ 
+ chkconfig: $(OBJS)
+-	$(CC) $(LDFLAGS) -o chkconfig $(OBJS) -Wl,-Bstatic -lpopt -Wl,-Bdynamic
++	$(CC) $(LDFLAGS) -o chkconfig $(OBJS) -lpopt
+ 
+ alternativs: alternatives.o
+ 
+diff -upk.orig chkconfig-1.3.25.orig/chkconfig.c chkconfig-1.3.25/chkconfig.c
+--- chkconfig-1.3.25.orig/chkconfig.c	2005-11-30 19:45:33 +0000
++++ chkconfig-1.3.25/chkconfig.c	2005-12-22 20:32:08 +0000
+@@ -10,24 +10,26 @@
+ #include <string.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+-
+-static char *progname;
++#include <limits.h>
+ 
+ #define _(String) gettext((String)) 
++#define progname program_invocation_short_name
+ 
+ #include "leveldb.h"
++#include "xmalloc.h"
+ 
+-static void usage(void) {
+-    fprintf(stderr, _("%s version %s - Copyright (C) 1997-2000 Red Hat, Inc.\n"), progname, VERSION);
+-    fprintf(stderr, _("This may be freely redistributed under the terms of "
++static void __attribute__ ((__noreturn__)) usage(int rc) {
++    FILE *fp = rc ? stderr : stdout;
++    fprintf(fp, _("%s version %s - Copyright (C) 1997-2000 Red Hat, Inc.\n"), progname, VERSION);
++    fprintf(fp, _("This may be freely redistributed under the terms of "
+ 			"the GNU Public License.\n"));
+-    fprintf(stderr, "\n");
+-    fprintf(stderr, _("usage:   %s --list [name]\n"), progname);
+-    fprintf(stderr, _("         %s --add <name>\n"), progname);
+-    fprintf(stderr, _("         %s --del <name>\n"), progname);
+-    fprintf(stderr, _("         %s [--level <levels>] <name> %s\n"), progname, "<on|off|reset>");
++    fprintf(fp, "\n");
++    fprintf(fp, _("usage:   %s --list [name]\n"), progname);
++    fprintf(fp, _("         %s --add <name>\n"), progname);
++    fprintf(fp, _("         %s --del <name>\n"), progname);
++    fprintf(fp, _("         %s [--level <levels>] <name> %s\n"), progname, "<on|off|reset>");
+ 
+-    exit(1);
++    exit(rc);
+ }
+ 
+ static void readServiceError(int rc, char * name) {
+@@ -43,9 +45,17 @@ static void readServiceError(int rc, cha
+     exit(1);
+ }
+ 
++static int checkUnprivileged(void) {
++    if (getuid()) {
++	fprintf(stderr, "%s",
++	    _("This function is not available for unprivileged user.\n"));
++	return 1;
++    }
++    return 0;
++}
++
+ static int delServiceOne(char *name, int level) {
+-    int i, rc;
+-    glob_t globres;
++    int rc;
+     struct service s;
+ 
+     if ((rc = readServiceInfo(name, &s, 0))) {
+@@ -54,33 +64,25 @@ static int delServiceOne(char *name, int
+     }
+     if (s.type == TYPE_XINETD) return 0;
+ 
+-
+-    if (!findServiceEntries(name, level, &globres)) {
+-	    for (i = 0; i < globres.gl_pathc; i++)
+-		    unlink(globres.gl_pathv[i]);
+-	    if (globres.gl_pathc) globfree(&globres);
+-    }
++    cleanServiceEntry(name, level);
+     return 0;
+ }
+ 
+ static int delService(char * name) {
+-    int level, i, rc;
+-    glob_t globres;
++    int level, rc;
+     struct service s;
+ 
++    if (checkUnprivileged())
++	return 1;
++
+     if ((rc = readServiceInfo(name, &s, 0))) {
+ 	readServiceError(rc, name);
+ 	return 1;
+     }
+     if (s.type == TYPE_XINETD) return 0;
+ 
+-    for (level = 0; level < 7; level++) {
+-	    if (!findServiceEntries(name, level, &globres)) {
+-		    for (i = 0; i < globres.gl_pathc; i++)
+-		      unlink(globres.gl_pathv[i]);
+-		    if (globres.gl_pathc) globfree(&globres);
+-	    }
+-    }
++    for (level = 0; level < 7; level++)
++	cleanServiceEntry(name, level);
+     return 0;
+ }
+ 
+@@ -149,6 +151,26 @@ static int frobOneDependencies(struct se
+ }
+ 
+ 
++static int skipDirEntry(struct dirent * ent) {
++	const char *dn;
++
++	/* Skip any file starting with a . */
++	if (ent->d_name[0] == '.')
++		return 1;
++
++	/* Skip files with known bad extensions */
++	if ((dn = strrchr(ent->d_name, '.')) != NULL &&
++	    (!strcmp(dn, ".rpmsave") || !strcmp(dn, ".rpmnew")
++	     || !strcmp(dn, ".rpmorig") || !strcmp(dn, ".swp")))
++		return 1;
++
++	dn = ent->d_name + strlen(ent->d_name) - 1;
++	if (*dn == '~' || *dn == ',')
++		return 1;
++
++	return 0;
++}
++
+ /* LSB-style dependency frobber. Calculates a usable start priority
+  * and stop priority.
+  * This algorithm will almost certainly break horribly at some point. */
+@@ -158,7 +180,7 @@ static void frobDependencies(struct serv
+ 	struct stat sb;
+ 	struct service *servs = NULL;
+ 	int numservs = 0;
+-	char fn[1024];
++	char fn[PATH_MAX];
+ 	int nResolved = 0;
+ 
+ 	if (!(dir = opendir(RUNLEVELS "/init.d"))) {
+@@ -168,21 +190,10 @@ static void frobDependencies(struct serv
+ 	}
+ 
+ 	while ((ent = readdir(dir))) {
+-		const char *dn;
+-
+-		/* Skip any file starting with a . */
+-		if (ent->d_name[0] == '.')	continue;
+-
+-		/* Skip files with known bad extensions */
+-		if ((dn = strrchr(ent->d_name, '.')) != NULL &&
+-		    (!strcmp(dn, ".rpmsave") || !strcmp(dn, ".rpmnew") || !strcmp(dn, ".rpmorig") || !strcmp(dn, ".swp")))
+-			continue;
+-		
+-		dn = ent->d_name + strlen(ent->d_name) - 1;
+-		if (*dn == '~' || *dn == ',')
++		if (skipDirEntry(ent))
+ 			continue;
+ 	
+-		sprintf(fn, RUNLEVELS "/init.d/%s", ent->d_name);
++		snprintf(fn, sizeof(fn), RUNLEVELS "/init.d/%s", ent->d_name);
+ 		if (stat(fn, &sb)) {
+ 			continue;
+ 		}
+@@ -212,6 +223,9 @@ static int addService(char * name) {
+     int i, rc;
+     struct service s;
+ 
++    if (checkUnprivileged())
++	return 1;
++
+     if ((rc = readServiceInfo(name, &s, 0))) {
+ 	readServiceError(rc, name);
+ 	return 1;
+@@ -301,17 +315,16 @@ static int listService(char * item) {
+     DIR * dir;
+     struct dirent * ent;
+     struct stat sb;
+-    char fn[1024];
++    char fn[PATH_MAX];
+     char **services;
+     int i;
+     int numServices = 0;
+     int numServicesAlloced;
+-    int err = 0;
+ 
+     if (item) return showServiceInfo(item, 0);
+ 
+     numServicesAlloced = 10;
+-    services = malloc(sizeof(*services) * numServicesAlloced);
++    services = xmalloc(sizeof(*services) * numServicesAlloced);
+     
+     if (!(dir = opendir(RUNLEVELS "/init.d"))) {
+ 	fprintf(stderr, _("failed to open %s/init.d: %s\n"), RUNLEVELS,
+@@ -320,21 +333,10 @@ static int listService(char * item) {
+     }
+ 
+     while ((ent = readdir(dir))) {
+-	const char *dn;
+-
+-	/* Skip any file starting with a . */
+-	if (ent->d_name[0] == '.')	continue;
+-
+-	/* Skip files with known bad extensions */
+-	if ((dn = strrchr(ent->d_name, '.')) != NULL &&
+-    (!strcmp(dn, ".rpmsave") || !strcmp(dn, ".rpmnew") || !strcmp(dn, ".rpmorig") || !strcmp(dn, ".swp")))
++	if (skipDirEntry(ent))
+ 	    continue;
+ 
+-	dn = ent->d_name + strlen(ent->d_name) - 1;
+-	if (*dn == '~' || *dn == ',')
+-	    continue;
+-	
+-	sprintf(fn, RUNLEVELS "/init.d/%s", ent->d_name);
++	snprintf(fn, sizeof(fn), RUNLEVELS "/init.d/%s", ent->d_name);
+ 	if (stat(fn, &sb)) {
+ 	    fprintf(stderr, _("error reading info for service %s: %s\n"), 
+ 		ent->d_name, strerror(errno));
+@@ -365,35 +367,19 @@ static int listService(char * item) {
+ 	
+     closedir(dir);
+ 	
+-    if (isXinetdEnabled()) {
++    if (isXinetdEnabled() && (dir = opendir(XINETDDIR))) {
+ 	    struct service *s, *t;
+ 	  
+ 	    printf("\n");
+ 	    printf(_("xinetd based services:\n"));
+-	    if (!(dir = opendir(XINETDDIR))) {
+-		    fprintf(stderr, _("failed to open directory %s: %s\n"),
+-			    XINETDDIR, strerror(err));
+-		    return 1;
+-	    }
+ 	    numServices = 0;
+ 	    numServicesAlloced = 10;
+-	    s = malloc(sizeof (*s) * numServicesAlloced);
++	    s = xmalloc(sizeof (*s) * numServicesAlloced);
+ 	    
+ 	    while ((ent = readdir(dir))) {
+-		    const char *dn;
+-
+-		    /* Skip any file starting with a . */
+-		    if (ent->d_name[0] == '.')	continue;
++		    if (skipDirEntry(ent))
++			    continue;
+ 
+-		    /* Skip files with known bad extensions */
+-		    if ((dn = strrchr(ent->d_name, '.')) != NULL &&
+-			(!strcmp(dn, ".rpmsave") || !strcmp(dn, ".rpmnew") || !strcmp(dn, ".rpmorig") || !strcmp(dn, ".swp")))
+-		      continue;
+-
+-		    dn = ent->d_name + strlen(ent->d_name) - 1;
+-		    if (*dn == '~' || *dn == ',')
+-		      continue;
+-	    
+ 		    if (numServices == numServicesAlloced) {
+ 			    numServicesAlloced += 10;
+ 			    s = realloc(s, numServicesAlloced * sizeof (*s));
+@@ -405,9 +391,10 @@ static int listService(char * item) {
+ 	    qsort(s, numServices, sizeof(*s), xinetdNameCmp);
+ 	    t = s;
+ 	    for (i = 0; i < numServices; i++, s++) {
+-		    char *tmp = malloc(strlen(s->name) + 5);
++		    char *tmp = xmalloc(strlen(s->name) + 2);
+ 		    sprintf(tmp,"%s:",s->name);
+ 		    printf("\t%-15s\t%s\n", tmp,  s->levels ? _("on") : _("off"));
++		    free(tmp);
+ 	    }
+ 	    closedir(dir);
+ 	    free(t);
+@@ -461,7 +448,7 @@ int setService(char * name, int where, i
+     return 0;
+ }
+ 
+-int main(int argc, char ** argv) {
++int main(int argc, const char ** argv) {
+     int listItem = 0, addItem = 0, delItem = 0;
+     int rc, i, x;
+     int LSB = 0;
+@@ -480,10 +467,9 @@ int main(int argc, char ** argv) {
+ 	    { 0, 0, 0, 0, 0 } 
+     };
+ 
+-    if ((progname = strrchr(argv[0], '/')) != NULL)
+-	progname++;
+-    else
+-	progname = argv[0];
++    if (argc < 1)
++	progname = "chkconfig";
++
+     if (!strcmp(progname,"install_initd")) {
+ 	    addItem++;
+ 	    LSB++;
+@@ -497,6 +483,9 @@ int main(int argc, char ** argv) {
+     bindtextdomain("chkconfig","/usr/share/locale"); 
+     textdomain("chkconfig"); 
+ 
++    if (argc < 1)
++	usage(EXIT_FAILURE);
++
+     optCon = poptGetContext("chkconfig", argc, argv, optionsTable, 0);
+     poptReadDefaultConfig(optCon, 1);
+ 
+@@ -512,7 +501,8 @@ int main(int argc, char ** argv) {
+ 	exit(0);
+     }
+ 
+-    if (help || argc == 1) usage();
++    if (help) usage(EXIT_SUCCESS);
++    if (argc <= 1) usage(EXIT_FAILURE);
+ 
+     if ((listItem + addItem + delItem) > 1) {
+ 	fprintf(stderr, _("only one of --list, --add, or --del may be "
+@@ -524,7 +514,7 @@ int main(int argc, char ** argv) {
+ 	char * name = (char *)poptGetArg(optCon);
+ 
+ 	if (!name || !*name || poptGetArg(optCon)) 
+-	    usage();
++	    usage(EXIT_FAILURE);
+ 	
+ 	if (LSB)
+ 		    name = basename(name);
+@@ -532,7 +522,7 @@ int main(int argc, char ** argv) {
+     } else if (delItem) {
+ 	char * name = (char *)poptGetArg(optCon);
+ 
+-	if (!name || !*name || poptGetArg(optCon)) usage();
++	if (!name || !*name || poptGetArg(optCon)) usage(EXIT_FAILURE);
+ 
+ 	if (LSB)
+ 		    name = basename(name);
+@@ -540,7 +530,7 @@ int main(int argc, char ** argv) {
+     } else if (listItem) {
+ 	char * item = (char *)poptGetArg(optCon);
+ 
+-	if (item && poptGetArg(optCon)) usage();
++	if (item && poptGetArg(optCon)) usage(EXIT_FAILURE);
+ 
+ 	return listService(item);
+     } else {
+@@ -549,13 +539,16 @@ int main(int argc, char ** argv) {
+ 	int where = 0, level = -1;
+ 
+ 	if (!name) {
+-		usage();
++		usage(EXIT_FAILURE);
+ 	}
+ 	if (levels) {
+ 	    where = parseLevels(levels, 0);
+-	    if (where == -1) usage();
++	    if (where == -1) usage(EXIT_FAILURE);
+ 	}
+ 
++	if (checkUnprivileged())
++		return 1;
++
+ 	if (!state) {
+ 	    if (where) {
+ 		rc = x = 0;
+@@ -577,7 +570,7 @@ int main(int argc, char ** argv) {
+ 	    } 
+ 	    rc = readServiceInfo(name, &s, 0);
+ 	    if (rc)
+-	       usage();
++	       usage(EXIT_FAILURE);
+ 	    if (s.type == TYPE_XINETD) {
+ 	       if (isOn("xinetd",level))
+ 		       return !s.levels;
+@@ -592,10 +585,8 @@ int main(int argc, char ** argv) {
+ 	else if (!strcmp(state, "reset"))
+ 	    return setService(name, where, -1);
+ 	else
+-	    usage();
++	    usage(EXIT_FAILURE);
+     }
+ 
+-    usage();
+-
+-    return 1;
++    usage(EXIT_FAILURE);
+ }
+diff -upk.orig chkconfig-1.3.25.orig/leveldb.c chkconfig-1.3.25/leveldb.c
+--- chkconfig-1.3.25.orig/leveldb.c	2005-11-08 22:18:38 +0000
++++ chkconfig-1.3.25/leveldb.c	2005-12-22 20:26:31 +0000
+@@ -5,12 +5,12 @@
+ #include <glob.h>
+ #include <libintl.h> 
+ #include <locale.h> 
+-#include <sys/mman.h>
+ #include <sys/stat.h>
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <string.h>
+ #include <unistd.h>
++#include <limits.h>
+ 
+ /* Changes
+    1998-09-22 - Arnaldo Carvalho de Melo <acme@conectiva.com.br>
+@@ -21,30 +21,28 @@
+ #define _(String) gettext((String)) 
+ 
+ #include "leveldb.h"
++#include "xmalloc.h"
+ 
+ int parseLevels(char * str, int emptyOk) {
+-    char * chptr = str;
++    char * chptr;
+     int rc = 0;
+ 
+-    if (!str || !strlen(str))
++    if (!str || !*str)
+ 	return emptyOk ? 0 : -1;
+ 
+-    while (*chptr) {
++    for (chptr = str; *chptr; ++chptr) {
+ 	if (!isdigit(*chptr) || *chptr > '6') return -1;
+ 	rc |= 1 << (*chptr - '0');
+-	chptr++;
+     }
+ 
+     return rc;
+ }
+ 
+ int readDescription(char *start, char *bufstop, char **english_desc, char **serv_desc) { 
+-	char english;
+-	char my_lang_loaded = 0;
+-	char is_my_lang = 0;
++	int english;
++	int is_my_lang = 0;
+ 	char * lang = getenv ("LANG");
+-	char * final_parenthesis;
+-	char * end, *next;
++	char * end, *next, *desc;
+ 	int i;
+ 	
+ 	english = *start == ':';
+@@ -55,6 +53,8 @@ int readDescription(char *start, char *b
+ 	    next = end + 1;
+ 
+ 	if (!english) {
++		char * final_parenthesis;
++
+ 		if (*start != '(') {
+ 		    return 1;
+ 		}
+@@ -67,33 +67,30 @@ int readDescription(char *start, char *b
+ 		}
+ 
+ 		is_my_lang = lang ? strncmp (lang, start, strlen (lang)) == 0 : 0;
+-		start = final_parenthesis + 2;
+-	    } else ++start;
+-
+-	    while (isspace(*start) && start < end) start++;
+-	    if (start == end) {
+-		return 1;
+-	    }
+-          {
+-	    char* desc = malloc(end - start + 1);
+-	    strncpy(desc, start, end - start);
+-	    desc[end - start] = '\0';
+-
+-	    start = next;
++		start = final_parenthesis + 1;
++		if (*start == ':')
++		    ++start;
++	} else ++start;
++
++	while (start < end && isspace(*start)) start++;
++	if (start >= end) return 1;
++
++	desc = xmalloc(end - start + 1);
++	strncpy(desc, start, end - start);
++	desc[end - start] = '\0';
+ 
+-	    while (desc[strlen(desc) - 1] == '\\') {
++	for (start = next; desc[strlen(desc) - 1] == '\\'; start = next) {
+ 		desc[strlen(desc) - 1] = '\0';
+-		start = next;
+ 		
+-		while (isspace(*start) && start < bufstop) start++;
+-		if (start == bufstop || *start != '#') {
++		while (start < bufstop && isspace(*start)) start++;
++		if (start >= bufstop || *start != '#') {
+ 		    return 1;
+ 		}
+ 
+ 		start++;
+ 
+-		while (isspace(*start) && start < bufstop) start++;
+-		if (start == bufstop) {
++		while (start < bufstop && isspace(*start)) start++;
++		if (start >= bufstop) {
+ 		    return 1;
+ 		}
+ 
+@@ -104,38 +101,62 @@ int readDescription(char *start, char *b
+ 		    next = end + 1;
+ 
+ 		i = strlen(desc);
+-		desc = realloc(desc, i + end - start + 1);
++		desc = xrealloc(desc, i + end - start + 1);
+ 		strncat(desc, start, end - start);
+-		desc[i + end - start] = '\0';
+-
+-		start = next;
+-	    }
++	}
+ 
+-	    if (desc) {
+-		    if (my_lang_loaded) {
+-			    free(desc);
+-		    } else if (is_my_lang) {
+-			    if (*serv_desc)
+-			      free(*serv_desc);
+-
+-			    *serv_desc = desc;
+-			    return 0;
+-		    } else if (english) {
+-			    if (*serv_desc)
+-			      free(*serv_desc);
++	if (desc) {
++		if (is_my_lang) {
++			free(*serv_desc);
++			*serv_desc = desc;
++		} else if (english) {
++			*serv_desc = xfree(*serv_desc);
++			free (*english_desc);
++			*english_desc = desc;
++		} else
++			desc = xfree (desc);
++	}
++	return 0;
++}
+ 
+-			    if (*english_desc)
+-			      free (*english_desc);
++static  ssize_t
++read_loop(int fd, char *buffer, size_t count)
++{
++	ssize_t offset = 0;
++
++	while (count > 0)
++	{
++		ssize_t block =
++			TEMP_FAILURE_RETRY(read(fd, &buffer[offset], count));
++
++		if (block <= 0)
++			return offset ? : block;
++		offset += block;
++		count -= block;
++	}
++	return offset;
++}
+ 
+-			    *english_desc = desc;
+-		    } else free (desc);
+-	    }
+-	  }
+-	return 0;
++static  ssize_t
++write_loop(int fd, const char *buffer, size_t count)
++{
++	ssize_t offset = 0;
++
++	while (count > 0)
++	{
++		ssize_t block =
++			TEMP_FAILURE_RETRY(write(fd, &buffer[offset], count));
++
++		if (block <= 0)
++			return offset ? : block;
++		offset += block;
++		count -= block;
++	}
++	return offset;
+ }
+ 
+ int readXinetdServiceInfo(char *name, struct service * service, int honorHide) {
+-	char * filename = alloca(strlen(name) + strlen(XINETDDIR) + 50);
++	char * filename;
+ 	int fd;
+ 	struct service serv = { 
+ 			name: NULL,
+@@ -152,56 +173,57 @@ int readXinetdServiceInfo(char *name, st
+ 	};
+ 	struct stat sb;
+ 	char * buf, *ptr;
+-	char * eng_desc = NULL, *start;
++	char * eng_desc = NULL, *end_buf;
+ 	
+-	snprintf(filename, strlen(name)+strlen(XINETDDIR)+50, XINETDDIR "/%s", name);
++	if (strlen(name) > PATH_MAX)
++		return -1;
++	filename = alloca(strlen(name) + strlen(XINETDDIR) + 50);
++	sprintf(filename, "%s/%s", XINETDDIR, name);
+ 	
+ 	if ((fd = open(filename, O_RDONLY)) < 0) return -1;
+-	fstat(fd,&sb);
+-	if (! S_ISREG(sb.st_mode)) return -1;
+-	buf = malloc(sb.st_size+1);
+-	if (read(fd,buf,sb.st_size)!=sb.st_size) {
++	if (fstat(fd,&sb) || !S_ISREG(sb.st_mode)) {
+ 		close(fd);
++		return -1;
++	}
++	if (!(buf = malloc(sb.st_size+1))) {
++		close(fd);
++		return -1;
++	}
++	if (read_loop(fd, buf, sb.st_size) != sb.st_size) {
+ 		free(buf);
++		close(fd);
+ 		return -1;
+ 	}
+ 	close(fd);
+-        serv.name = strdup(name);
+-	buf[sb.st_size] = '\0';
+-	start = buf;
+-	while (buf) {
++	end_buf = buf + sb.st_size;
++	*end_buf = '\0';
++        serv.name = xstrdup(name);
++	for (; buf && buf[0]; buf = ptr) {
+ 		ptr = strchr(buf,'\n');
+ 		if (*buf == '#') {
+ 			buf++;
+-			while (isspace(*buf) && buf < ptr) buf++;
+-			if (!strncmp(buf,"default:", 9)) {
++			while (isspace(*buf) && (!ptr || buf < ptr)) buf++;
++			if (!strncmp(buf,"default:", 8)) {
+ 				buf+=8;
+-				while(isspace(*buf)) buf++;
+-				if (!strncmp(buf+9,"on",2)) {
++				while (isspace(*buf) && (!ptr || buf < ptr)) buf++;
++				if (!strncmp(buf,"on",2)) {
+ 					serv.enabled = 1;
+ 				} else {
+ 					serv.enabled = 0;
+ 				}
+ 			} else if (!strncmp(buf,"description:",12)) {
+ 				buf+=11;
+-				if (readDescription(buf,start+sb.st_size,
+-						    &serv.desc,&eng_desc)) {
+-					if (serv.desc) free(serv.desc);
++				if (readDescription(buf, end_buf,
++						    &eng_desc, &serv.desc)) {
++					serv.desc = xfree(serv.desc);
+ 				}
+-				if (!serv.desc) {
+-					if (eng_desc)
+-					  serv.desc = eng_desc;
+-				} else if (eng_desc)
+-					  free (eng_desc);
+ 			}
+ 			if (ptr) {
+-				*ptr = '\0';
+ 				ptr++;
+ 			} 
+-			buf = ptr;
+ 			continue;
+ 		}
+-		while (isspace(*buf) && buf < ptr) buf++;
++		while (isspace(*buf) && (!ptr || buf < ptr)) buf++;
+ 		if (!strncmp(buf,"disable", 7)) {
+ 			buf = strstr(buf,"=");
+ 			if (buf) 
+@@ -220,20 +242,25 @@ int readXinetdServiceInfo(char *name, st
+ 			}
+ 		}
+ 		if (ptr) {
+-			*ptr = '\0';
+ 			ptr++;
+ 		} 
+-		buf = ptr;
+ 	}
++
++	if (!serv.desc) {
++		if (eng_desc)
++			serv.desc = eng_desc;
++	} else
++		eng_desc = xfree (eng_desc);
++
+ 	*service = serv;
+ 	return 0;
+ }
+ 
+ int readServiceInfo(char * name, struct service * service, int honorHide) {
+-    char * filename = alloca(strlen(name) + strlen(RUNLEVELS) + 50);
++    char * filename;
+     int fd;
+     struct stat sb;
+-    char * bufstart, * bufstop, * start, * end, * next, *tmpbufstart;
++    char * bufstart, * bufstop, * start, * end, * next;
+     struct service serv = { 
+ 	    	    name: NULL, 
+ 		    levels: -1, 
+@@ -247,44 +274,43 @@ int readServiceInfo(char * name, struct 
+ 		    isLSB: 0, 
+ 		    enabled: 0
+     };
+-    char overflow;
+-    char levelbuf[20];
+     char * english_desc = NULL;
+ 
+-    sprintf(filename, RUNLEVELS "/init.d/%s", name);
++    if (strlen(name) > PATH_MAX)
++	return -1;
++    filename = alloca(strlen(name) + strlen(RUNLEVELS) + 50);
++    sprintf(filename, "%s/init.d/%s", RUNLEVELS, name);
+ 
+     if ((fd = open(filename, O_RDONLY)) < 0) {
+ 	    return readXinetdServiceInfo(name,service,honorHide);
+     }
+-    fstat(fd, &sb);
+ 
+-    bufstart = mmap(NULL, sb.st_size, PROT_READ, MAP_SHARED, fd, 0);
+-    if (bufstart == ((caddr_t) -1)) {
+-	close(fd);	
++    if (fstat(fd,&sb) || !S_ISREG(sb.st_mode)) {
++	close(fd);
+ 	return -1;
+     }
+ 
+-    tmpbufstart = (char*)malloc(sb.st_size+1);
+-    if (tmpbufstart == NULL) {
++    if (!(bufstart = malloc(sb.st_size+1))) {
+ 	close(fd);	
+ 	return -1;
+     }
+ 
+-    memcpy(tmpbufstart, bufstart, sb.st_size);
+-    munmap(bufstart, sb.st_size);
++    if (read_loop(fd, bufstart, sb.st_size) != sb.st_size) {
++	free(bufstart);
++	close(fd);
++	return -1;
++    }
+ 
+-    bufstart = tmpbufstart;
++    close(fd);
+     bufstop = bufstart + sb.st_size;
+     *bufstop = 0;
+ 
+-    close(fd);
+-
+     next = bufstart;
+     while (next < bufstop && (serv.levels == -1 || !serv.desc)) {
+ 	start = next;
+ 
+-	while (isspace(*start) && start < bufstop) start++;
+-	if (start == bufstop) break; 
++	while (start < bufstop && isspace(*start)) start++;
++	if (start >= bufstop) break; 
+ 
+ 	end = strchr(start, '\n');
+ 	if (!end) 
+@@ -295,41 +321,68 @@ int readServiceInfo(char * name, struct 
+ 	if (*start != '#') continue;
+ 
+ 	start++;
+-	if (!strncmp(start, "## BEGIN INIT INFO", 18))
+-		    serv.isLSB = 1;
++	if (!strncmp(start, "## BEGIN INIT INFO", 18)) {
++	    serv.isLSB = 1;
++	    continue;
++	}
+ 		
+-	while (isspace(*start) && start < end) start++;
+-	if (start == end) continue;
+-	if (honorHide && !strncmp(start, "hide:", 5)) {
+-	    start += 5;
+-	    while (isspace(*start) && start < end) start++;
+-	    if (start == end || !strncmp(start, "true", 4)) {
+-		if (serv.desc) free(serv.desc);
++	while (start < end && isspace(*start)) start++;
++	if (start >= end) continue;
++	if (honorHide && !strncmp(start, "hide:", 5) && (start += 5)) {
++	    while (start < end && isspace(*start)) start++;
++	    if (start >= end || !strncmp(start, "true", 4)) {
++		serv.desc = xfree(serv.desc);
+ 		free(bufstart);
+ 		return 1;
+ 	    }
+ 	}
+ 
+-	if (!strncmp(start, "chkconfig:", 10)) {
++	if (!strncmp(start, "chkconfig:", 10) && (start += 10)) {
+ 	    int spri, kpri;
++	    char overflow;
++	    char * level_end;
+ 	     
+-	    start += 10;
+-	    while (isspace(*start) && start < end) start++;
+-	    if (start == end) {
+-		if (serv.desc) free(serv.desc);
++	    while (start < end && isspace(*start)) start++;
++	    if (start >= end) {
++		serv.desc = xfree(serv.desc);
+ 		free(bufstart);
+ 		return 1;
+ 	    }
+ 
+-	    if ((sscanf(start, "%s %d %d%c", levelbuf,
+-			&spri, &kpri, &overflow) != 4) ||
++	    for (level_end = start;
++	         level_end < end && *level_end && !isspace(*level_end);
++	    	 ++level_end)
++		;
++	    if (level_end <= start || level_end >= end) {
++		serv.desc = xfree(serv.desc);
++		free(bufstart);
++		return 1;
++	    } else if (serv.levels == -1) {
++		char buf[level_end - start + 1];
++
++		memcpy(buf, start, level_end - start);
++		buf[level_end - start] = '\0';
++		if (!strcmp(buf, "-"))
++			serv.levels = 0;
++		else
++			serv.levels = parseLevels(buf, 0);
++	    }
++	    if (serv.levels == -1) {
++		serv.desc = xfree(serv.desc);
++		free(bufstart);
++		return 1;
++	    }
++	    start = level_end;
++	    while (start < end && isspace(*start)) start++;
++	    if ((sscanf(start, "%d %d%c",
++			&spri, &kpri, &overflow) != 3) ||
+ 		 !isspace(overflow)) {
+-		if (serv.desc) free(serv.desc);
++		serv.desc = xfree(serv.desc);
+ 		free(bufstart);
+ 		return 1;
+ 	    }
+ 	    if (spri > 99 || kpri > 99 || kpri < 0 || spri < 0) {
+-		    if (serv.desc) free(serv.desc);
++		    serv.desc = xfree(serv.desc);
+ 		    free(bufstart);
+ 		    return 1;
+ 	    }
+@@ -337,28 +390,15 @@ int readServiceInfo(char * name, struct 
+ 			serv.sPriority = spri;
+ 	    if (serv.kPriority == -1)
+ 			serv.kPriority = kpri;
+-
+-	    if (serv.levels == -1) {
+-		    if (!strcmp(levelbuf, "-"))
+-			    serv.levels = 0;
+-		    else
+-			    serv.levels = parseLevels(levelbuf, 0);
+-	    }
+-	    if (serv.levels == -1) {
+-		if (serv.desc) free(serv.desc);
+-		free(bufstart);
+-		return 1;
+-	    }
+-	} else if (!strncmp(start, "description", 11) ||
+-		   !strncmp(start, "Description:", 12) ||
+-		   !strncmp(start, "Short-Description:", 18)) {
+-		if (readDescription(start+11, bufstop, &english_desc, &serv.desc)) {
+-			if (serv.desc) free(serv.desc);
++	} else if ((!strncmp(start, "description", 11) && (start += 11)) ||
++		   (!strncmp(start, "Description:", 12) && (start += 11)) ||
++		   (!strncmp(start, "Short-Description:", 18) && (start += 17))) {
++		if (readDescription(start, bufstop, &english_desc, &serv.desc)) {
++			serv.desc = xfree(serv.desc);
+ 		}
+-	} else if (!strncmp(start, "Default-Start:", 14)) {
++	} else if (!strncmp(start, "Default-Start:", 14) && (start += 14)) {
+ 		char *t;
+ 		
+-		start+=14;
+ 		while (1) {
+ 			int lev;
+ 			
+@@ -371,10 +411,9 @@ int readServiceInfo(char * name, struct 
+ 				serv.levels = 0;
+ 			serv.levels |= 1 << lev;
+ 		}
+-	} else if (!strncmp(start, "Default-Stop:", 13)) {
++	} else if (!strncmp(start, "Default-Stop:", 13) && (start += 13)) {
+ 		char *t;
+ 		
+-		start+=13;
+ 		while (1) {
+ 			int lev;
+ 			
+@@ -387,14 +426,13 @@ int readServiceInfo(char * name, struct 
+ 				serv.levels = 0;
+ 			serv.levels &= ~(1 << lev);
+ 		}
+-	} else if (!strncmp(start, "Required-Start:", 15)) {
++	} else if (!strncmp(start, "Required-Start:", 15) && (start += 15)) {
+ 		char *t;
+ 		int numdeps = 0;
+ 		
+-		start+=15;
+ 		while (1) {
+-			while (*start && isspace(*start) && start < end) start++;
+-			if (start == end)
++			while (start < end && isspace(*start)) start++;
++			if (start >= end)
+ 				break;
+ 			t = start;
+ 			while (*t && !isspace(*t) && t < end) t++;
+@@ -403,23 +441,19 @@ int readServiceInfo(char * name, struct 
+ 				t++;
+ 			}
+ 			numdeps++;
+-			serv.startDeps = realloc(serv.startDeps,
++			serv.startDeps = xrealloc(serv.startDeps,
+ 						 (numdeps + 1) * sizeof(char *));
+-			serv.startDeps[numdeps-1] = strdup(start);
++			serv.startDeps[numdeps-1] = xstrdup(start);
+ 			serv.startDeps[numdeps] = NULL;
+-			if (!t || t >= end)
+-				break;
+-			else
+-				start = t;
++			start = t;
+ 		}
+-	} else if (!strncmp(start, "Required-Stop:", 14)) {
++	} else if (!strncmp(start, "Required-Stop:", 14) && (start += 14)) {
+ 		char *t;
+ 		int numdeps = 0;
+ 		
+-		start+=14;
+ 		while (1) {
+-			while (*start && isspace(*start) && start < end) start++;
+-			if (start == end)
++			while (start < end && isspace(*start)) start++;
++			if (start >= end)
+ 				break;
+ 			t = start;
+ 			while (*t && !isspace(*t) && t < end) t++;
+@@ -428,23 +462,19 @@ int readServiceInfo(char * name, struct 
+ 				t++;
+ 			}
+ 			numdeps++;
+-			serv.stopDeps = realloc(serv.stopDeps,
++			serv.stopDeps = xrealloc(serv.stopDeps,
+ 						 (numdeps + 1) * sizeof(char *));
+-			serv.stopDeps[numdeps-1] = strdup(start);
++			serv.stopDeps[numdeps-1] = xstrdup(start);
+ 			serv.stopDeps[numdeps] = NULL;
+-			if (!t || t >= end)
+-				break;
+-			else
+-				start = t;
++			start = t;
+ 		}
+-	} else if (!strncmp(start, "Provides:", 9)) {
++	} else if (!strncmp(start, "Provides:", 9) && (start += 9)) {
+ 		char *t;
+ 		int numdeps = 0;
+ 		
+-		start+=9;
+ 		while (1) {
+-			while (*start && isspace(*start) && start < end) start++;
+-			if (start == end)
++			while (start < end && isspace(*start)) start++;
++			if (start >= end)
+ 				break;
+ 			t = start;
+ 			while (*t && !isspace(*t) && t < end) t++;
+@@ -453,35 +483,32 @@ int readServiceInfo(char * name, struct 
+ 				t++;
+ 			}
+ 			numdeps++;
+-			serv.provides = realloc(serv.provides,
++			serv.provides = xrealloc(serv.provides,
+ 						 (numdeps + 1) * sizeof(char *));
+-			serv.provides[numdeps-1] = strdup(start);
++			serv.provides[numdeps-1] = xstrdup(start);
+ 			serv.provides[numdeps] = NULL;
+-			if (!t || t >= end)
+-				break;
+-			else
+-				start = t;
++			start = t;
+ 		}
+ 		
+ 	}
+     }
+ 
+-    free(bufstart);
++    bufstart = xfree(bufstart);
+ 
+     if (!serv.desc) {
+       if (english_desc)
+ 	serv.desc = english_desc;
+-    } else if (english_desc)
+-	free (english_desc);
++    } else
++	english_desc = xfree (english_desc);
+ 
+     if ((serv.levels == -1 ) || !serv.desc) {
+ 	return 1;
+     } 
+ 
+-    serv.name = strdup(name);
++    serv.name = xstrdup(name);
+     if (!serv.provides) {
+-	    serv.provides = malloc(2 * sizeof(char *));
+-	    serv.provides[0] = strdup(name);
++	    serv.provides = xmalloc(2 * sizeof(char *));
++	    serv.provides[0] = xstrdup(name);
+ 	    serv.provides[1] = NULL;
+     }
+ 
+@@ -511,24 +538,27 @@ int currentRunlevel(void) {
+ }
+ 
+ int findServiceEntries(char * name, int level, glob_t * globresptr) {
+-    char match[200];
++    char *match;
+     glob_t globres;
+     int rc;
+ 
+-    sprintf(match, "%s/rc%d.d/[SK][0-9][0-9]%s", RUNLEVELS, level, name);
++    xasprintf(&match, "%s/rc%d.d/[SK][0-9][0-9]%s", RUNLEVELS, level, name);
+ 
+     rc = glob(match, GLOB_ERR | GLOB_NOSORT, NULL, &globres);
+ 
+     if (rc && rc != GLOB_NOMATCH) {
+ 	fprintf(stderr, _("failed to glob pattern %s: %s\n"), match,
+ 		strerror(errno));
++	free(match);
+ 	return 1;
+     } else if (rc == GLOB_NOMATCH) {
+ 	globresptr->gl_pathc = 0;
++	free(match);
+ 	return 0;
+     }
+ 
+     *globresptr = globres;
++    free(match);
+     return 0;
+ }
+ 
+@@ -547,6 +577,7 @@ int isConfigured(char * name, int level)
+ 
+ int isOn(char * name, int level) {
+     glob_t globres;
++    int rc;
+ 
+     if (level == -1) {
+ 	level = currentRunlevel();
+@@ -559,43 +590,43 @@ int isOn(char * name, int level) {
+     if (findServiceEntries(name, level, &globres))
+ 	exit(1);
+ 
+-    if (!globres.gl_pathc || !strstr(globres.gl_pathv[0], "/S"))
++    if (!globres.gl_pathc)
+ 	return 0;
+ 
++    rc = !!strstr(globres.gl_pathv[0], "/S");
+     globfree(&globres);
+-    return 1;
++
++    return rc;
+ }
+ 
+ int setXinetdService(struct service s, int on) {
+-	int oldfd, newfd;
+-	char oldfname[100], newfname[100];
+-	char tmpstr[50];
+-	char *buf, *ptr, *tmp;
++	int fd = -1, rc = -1;
++	char *oldfname = NULL, *newfname = NULL;
++	char *bufstart = NULL, *bufstop, *buf, *ptr, *tmp;
+ 	struct stat sb;
+ 	
+ 	if (on == -1) {
+ 		on = s.enabled ? 1 : 0;
+ 	}
+-	snprintf(oldfname,100,"%s/%s",XINETDDIR,s.name);
+-	if ( (oldfd = open(oldfname,O_RDONLY)) == -1 ) {
+-		return -1;
+-	}
+-	fstat(oldfd,&sb);
+-	buf = malloc(sb.st_size+1);
+-	if (read(oldfd,buf,sb.st_size)!=sb.st_size) {
+-		close(oldfd);
+-		free(buf);
+-		return -1;
++	xasprintf(&oldfname, "%s/%s", XINETDDIR, s.name);
++	if ((fd = open(oldfname, O_RDONLY)) < 0)
++		goto setXinetdService_done;
++	if (fstat(fd,&sb) || !S_ISREG(sb.st_mode))
++		goto setXinetdService_done;
++	if (!(bufstart = malloc(sb.st_size+1)))
++		goto setXinetdService_done;
++	if (read_loop(fd, bufstart, sb.st_size) != sb.st_size)
++		goto setXinetdService_done;
++	close(fd), fd = -1;
++	bufstop = bufstart + sb.st_size;
++	*bufstop = '\0';
++
++	xasprintf(&newfname, "%s.XXXXXX", oldfname);
++	if ((fd = mkstemp(newfname)) < 0) {
++		newfname = xfree(newfname);
++		goto setXinetdService_done;
+ 	}
+-	close(oldfd);
+-	buf[sb.st_size] = '\0';
+-	snprintf(newfname,100,"%s/%s.XXXXXX",XINETDDIR,s.name);
+-	newfd = mkstemp(newfname);
+-	if (newfd == -1) {
+-		free(buf);
+-		return -1;
+-	}
+-	while (buf) {
++	for (buf = bufstart; buf && buf < bufstop; buf = ptr) {
+ 		tmp = buf;
+ 		ptr = strchr(buf,'\n');
+ 		if (ptr) {
+@@ -603,47 +634,64 @@ int setXinetdService(struct service s, i
+ 			ptr++;
+ 		} 
+ 		while (isspace(*buf)) buf++;
+-		if (strncmp(buf,"disable", 7) && strlen(buf)) {
+-			write(newfd,tmp,strlen(tmp));
+-			write(newfd,"\n",1);
+-			if (buf[0] == '{') {
+-				snprintf(tmpstr,50,"\tdisable\t= %s", on ? "no" : "yes");
+-				write(newfd,tmpstr,strlen(tmpstr));
+-				write(newfd,"\n",1);
+-			}
++		if (!buf[0] || !strncmp(buf,"disable", 7))
++			continue;
++		if (write_loop(fd,tmp,strlen(tmp)) != strlen(tmp) ||
++		    write_loop(fd,"\n",1) != 1)
++			goto setXinetdService_done;
++		if (buf[0] == '{') {
++			const char *prefix = "\tdisable\t= ";
++			const char *yesno = on ? "no\n" : "yes\n";
++			if (write_loop(fd,prefix,strlen(prefix)) != strlen(prefix) ||
++			    write_loop(fd,yesno,strlen(yesno)) != strlen(yesno))
++				goto setXinetdService_done;
+ 		}
+-		buf = ptr;
+ 	}
+-	close(newfd);
+-	chmod(newfname,0644);
++	fchmod(fd, sb.st_mode & 0666);
++	close(fd), fd = -1;
+ 	unlink(oldfname);
+-	return(rename(newfname,oldfname));
++	rc = rename(newfname,oldfname);
++
++    setXinetdService_done:
++	if (rc && newfname)
++		unlink(newfname);
++	if (fd >= 0) close(fd);
++	free(newfname);
++	free(bufstart);
++	free(oldfname);
++	return rc;
++}
++
++void cleanServiceEntry(char *name, int level) {
++	int i;
++	glob_t globres;
++
++	if (!findServiceEntries(name, level, &globres) && globres.gl_pathc) {
++		for (i = 0; i < globres.gl_pathc; ++i)
++			unlink(globres.gl_pathv[i]);
++		globfree(&globres);
++	}
+ }
+ 
+ int doSetService(struct service s, int level, int on) {
+     int priority = on ? s.sPriority : s.kPriority;
+-    char linkname[200];
+-    char linkto[200];
+-    glob_t globres;
+-    int i;
++    char *linkname, *linkto;
++    int rc;
+ 
+-    if (!findServiceEntries(s.name, level, &globres)) {
+-	for (i = 0; i < globres.gl_pathc; i++)
+-	    unlink(globres.gl_pathv[i]);
+-	if (globres.gl_pathc) globfree(&globres);
+-    }
++    cleanServiceEntry(s.name, level);
+ 
+-    sprintf(linkname, "%s/rc%d.d/%c%02d%s", RUNLEVELS, level,
++    xasprintf(&linkname, "%s/rc%d.d/%c%02d%s", RUNLEVELS, level,
+ 			on ? 'S' : 'K', priority, s.name);
+-    sprintf(linkto, "../init.d/%s", s.name);
++    xasprintf(&linkto, "../init.d/%s", s.name);
+ 
+     unlink(linkname);	/* just in case */
+-    if (symlink(linkto, linkname)) {
++    if ((rc = symlink(linkto, linkname))) {
+ 	fprintf(stderr, _("failed to make symlink %s: %s\n"), linkname,
+ 		strerror(errno));
+-	return 1;
+     }
+ 
+-    return 0; 
++    free(linkto);
++    free(linkname);
++    return !!rc; 
+ }
+ 
+diff -upk.orig chkconfig-1.3.25.orig/leveldb.h chkconfig-1.3.25/leveldb.h
+--- chkconfig-1.3.25.orig/leveldb.h	2002-03-13 07:09:04 +0000
++++ chkconfig-1.3.25/leveldb.h	2005-12-22 20:03:24 +0000
+@@ -33,5 +33,6 @@ int doSetService(struct service s, int l
+ int findServiceEntries(char * name, int level, glob_t * globresptr);
+ int readXinetdServiceInfo(char *name, struct service *service, int honorHide);
+ int setXinetdService(struct service s, int on);
++void cleanServiceEntry(char *name, int level);
+ 
+ #endif
+diff -upk.orig chkconfig-1.3.25.orig/xmalloc.c chkconfig-1.3.25/xmalloc.c
+--- chkconfig-1.3.25.orig/xmalloc.c	1970-01-01 00:00:00 +0000
++++ chkconfig-1.3.25/xmalloc.c	2005-12-18 17:04:40 +0000
+@@ -0,0 +1,59 @@
++#include <string.h>
++#include <stdlib.h>
++#include <stdarg.h>
++#include <stdio.h>
++#include <errno.h>
++#include <error.h>
++
++#include "xmalloc.h"
++
++void   *
++xmalloc(size_t size)
++{
++	void   *r = malloc(size);
++
++	if (!r)
++		error(EXIT_FAILURE, errno, "malloc");
++	return r;
++}
++
++void   *
++xfree(void *ptr)
++{
++	free(ptr);
++
++	return NULL;
++}
++
++void   *
++xrealloc(void *ptr, size_t size)
++{
++	void   *r = realloc(ptr, size);
++
++	if (!r)
++		error(EXIT_FAILURE, errno, "realloc");
++	return r;
++}
++
++char   *
++xstrdup(const char *s)
++{
++	size_t  len = strlen(s);
++	char   *r = xmalloc(len + 1);
++
++	memcpy(r, s, len + 1);
++	return r;
++}
++
++char   *
++xasprintf(char **ptr, const char *fmt, ...)
++{
++	va_list arg;
++
++	va_start(arg, fmt);
++	if (vasprintf(ptr, fmt, arg) < 0)
++		error(EXIT_FAILURE, errno, "vasprintf");
++	va_end(arg);
++
++	return *ptr;
++}
+diff -upk.orig chkconfig-1.3.25.orig/xmalloc.h chkconfig-1.3.25/xmalloc.h
+--- chkconfig-1.3.25.orig/xmalloc.h	1970-01-01 00:00:00 +0000
++++ chkconfig-1.3.25/xmalloc.h	2005-12-18 17:04:17 +0000
+@@ -0,0 +1,11 @@
++#ifndef __XMALLOC_H__
++#define __XMALLOC_H__
++
++extern void *xmalloc(size_t size);
++extern void *xfree(void *ptr);
++extern void *xrealloc(void *ptr, size_t size);
++extern char *xstrdup(const char *s);
++extern char *xasprintf(char **ptr, const char *fmt, ...)
++	__attribute__ ((__format__(__printf__, 2, 3)));
++
++#endif /* __XMALLOC_H__ */

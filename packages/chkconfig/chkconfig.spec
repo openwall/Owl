@@ -1,18 +1,18 @@
-# $Owl: Owl/packages/chkconfig/chkconfig.spec,v 1.16 2005/11/16 12:19:21 solar Exp $
+# $Owl: Owl/packages/chkconfig/chkconfig.spec,v 1.17 2005/12/24 14:16:25 ldv Exp $
 
 %define BUILD_NTSYSV 0
-%define INSTALL_ALTERNATIVES 0
+%define INSTALL_ALTERNATIVES 1
 
 Summary: A system tool for maintaining the /etc/rc.d/rc*.d hierarchy.
 Name: chkconfig
-Version: 1.3.9
-Release: owl2
+Version: 1.3.25
+Release: owl1
 License: GPL
 Group: System Environment/Base
 Source: ftp://ftp.redhat.com/pub/redhat/code/chkconfig/%name-%version.tar.gz
-Patch0: chkconfig-1.3.9-owl-xinetd.d-check.diff
+Patch0: chkconfig-1.3.25-owl-fixes.diff
 Patch1: chkconfig-1.3.9-owl-no-ntsysv.diff
-BuildRequires: gettext
+BuildRequires: gettext, glibc >= 0:2.2
 BuildRoot: /override/%name-%version
 
 %description
@@ -50,7 +50,7 @@ LIBMHACK=-lm
 
 %__make \
 	CC="%__cc" \
-	CFLAGS="%optflags -D_GNU_SOURCE" \
+	CFLAGS="%optflags -Wall -D_GNU_SOURCE" \
 	LIBMHACK="$LIBMHACK"
 
 %install
@@ -106,6 +106,11 @@ rm %buildroot%_mandir/man8/ntsysv.8*
 %endif
 
 %changelog
+* Fri Dec 23 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.3.25-owl1
+- Updated to 1.3.25.
+- Cleaned up chkconfig code a bit.
+- Enabled packaging of alternatives by default.
+
 * Fri Jan 07 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.3.9-owl2
 - Used %%__cc macro and configured build more correctly.
 - Clean up the spec.
