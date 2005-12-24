@@ -43,14 +43,6 @@ with our patches.  Make sure it still builds cleanly with -Wall
 Update these to latest releases once in a while.
 
 
-	chkconfig.
-
-[PRIORITY: medium]
-[ASSIGNED: ldv@]
-Update to latest release for FC4/RHEL4 compatibility.  Package
-alternatives.
-
-
 	coreutils.
 
 [PRIORITY: low]
@@ -532,4 +524,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Owl: Owl/doc/TODO,v 1.144 2005/12/19 00:11:52 solar Exp $
+$Owl: Owl/doc/TODO,v 1.145 2005/12/24 14:19:55 ldv Exp $
