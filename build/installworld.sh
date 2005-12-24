@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/installworld.sh,v 1.27 2005/11/16 12:01:35 solar Exp $
+# $Owl: Owl/build/installworld.sh,v 1.28 2005/12/24 22:23:50 ldv Exp $
 
 . installworld.conf
 
@@ -101,8 +101,9 @@ if [ -f $ROOT/var/lib/rpm/packages.rpm -o -f $ROOT/var/lib/rpm/Packages ]; then
 	fi
 
 # First of all, we will do the check that no user packages make use of
-# libdb.so.2 and libdb.so.3 from glibc 2.1.3. For that task we have to
-# use the target system's RPM.
+# libdb.so.2 and libdb.so.3 from glibc 2.1.3, or libdb-4.0.so and
+# libdb_cxx-4.0.so from db4 4.0.  For that task we have to use the target
+# system's RPM.
 	if [ ! -x $ROOT/bin/rpm ]; then
 		log "Found an RPM database but no RPM binary, aborting"
 		exit 1
@@ -110,23 +111,24 @@ if [ -f $ROOT/var/lib/rpm/packages.rpm -o -f $ROOT/var/lib/rpm/Packages ]; then
 
 # XXX: Should check for errors (rpm's exit status).
 	CHROOT_BIN=$(type -p chroot 2>/dev/null)
-	LIBDB23_DEPS=$(echo `env - ${CHROOT_BIN:=/usr/sbin/chroot} $ROOT /bin/rpm -q --whatrequires libdb.so.2 libdb.so.3 2>/dev/null | sort -u | grep -vE '^(no package|rpm-|pam-|perl-|postfix-)'`)
+	LIBDB234_DEPS=$(echo `env - ${CHROOT_BIN:=/usr/sbin/chroot} $ROOT /bin/rpm -q --whatrequires libdb.so.2 libdb.so.3 libdb-4.0.so libdb_cxx-4.0.so 2>/dev/null | sort -u | grep -vE '^(no package|rpm-|pam-|perl-|postfix-|db4-utils-)'`)
 
-	if [ -n "$LIBDB23_DEPS" ]; then
+	if [ -n "$LIBDB234_DEPS" ]; then
 		cat << EOF
 Warning!
 We found that upgrade procedure will break packages listed below, because
-of the absence of libdb.so.2 and libdb.so.3 support in our supplied glibc:
+of the absence of libdb.so.2, libdb.so.3, libdb-4.0.so and libdb_cxx-4.0.so
+support in our supplied glibc and db4:
 
 EOF
-		echo "$LIBDB23_DEPS"
+		echo "$LIBDB234_DEPS"
 		cat << EOF
 
 Please resolve this issue before running Owl upgrade procedure again.
 
 You can try to remove the problematic packages from the system with:
 
-	# chroot $ROOT /bin/rpm -e $LIBDB23_DEPS
+	# chroot $ROOT /bin/rpm -e $LIBDB234_DEPS
 
 This command will fail if other packages depend on those requiring the
 old versions of libdb.  If so, remove those other packages in a similar
@@ -173,7 +175,7 @@ while read PACKAGES; do
 		fi
 		if [ "$NEED_FAKE" != yes ]; then
 			case "$PACKAGE" in
-			glibc-compat-fake|libstdc++*-compat)
+			glibc-compat-fake|libstdc++*-compat|db4-compat-fake)
 				log "Skipping $PACKAGE"
 				continue
 				;;
@@ -200,7 +202,7 @@ done
 
 if [ "$NEED_FAKE" = yes ]; then
 	log "Removing installation support packages"
-	for PACKAGE in glibc-compat-fake libstdc++-v{3,5}-compat; do
+	for PACKAGE in glibc-compat-fake libstdc++-v{3,5}-compat db4-compat-fake; do
 		if ! $RPM $RPM_FLAGS --root $ROOT -ev $PACKAGE; then
 			log "Removal of $PACKAGE failed"
 		fi
