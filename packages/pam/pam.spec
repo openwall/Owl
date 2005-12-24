@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/pam/pam.spec,v 1.44 2005/11/16 13:28:57 solar Exp $
+# $Owl: Owl/packages/pam/pam.spec,v 1.45 2005/12/24 22:50:37 ldv Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
 Version: 0.80
-Release: owl2
+Release: owl3
 %define rh_version %version-1
 License: GPL or BSD
 Group: System Environment/Base
@@ -39,7 +39,8 @@ Requires: glibc-crypt_blowfish
 # provided by tcb.
 Requires: tcb >= 0.9.9
 BuildRequires: glibc-crypt_blowfish-devel
-BuildRequires: automake, autoconf, bison, flex, sed >= 4.1, db4-devel
+BuildRequires: automake, autoconf, bison, flex
+BuildRequires: sed >= 4.1, db4-devel >= 4.2.52
 BuildRoot: /override/%name-%version
 
 %description
@@ -266,6 +267,9 @@ gzip -9nf doc/txts/*.txt
 %doc doc/specs/rfc86.0.txt
 
 %changelog
+* Sat Dec 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.80-owl3
+- Rebuilt with libdb-4.2.so.
+
 * Sat Oct 29 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.80-owl2
 - Packaged /etc/pam.d/system-auth.
 

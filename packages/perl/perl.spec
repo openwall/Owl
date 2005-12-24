@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.43 2005/12/22 02:10:13 solar Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.44 2005/12/24 22:50:37 ldv Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -17,7 +17,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.8.3
-Release: owl10
+Release: owl11
 Epoch: 3
 License: GPL
 Group: Development/Languages
@@ -83,7 +83,7 @@ Provides: perl(timelocal.pl)
 Provides: perl(utf8_heavy.pl)
 Provides: perl(validate.pl)
 Obsoletes: perl-MD5
-BuildRequires: gdbm-devel, db4-devel, gawk, grep
+BuildRequires: gdbm-devel, db4-devel >= 4.2.52, gawk, grep
 BuildRequires: rpm >= 4.0.5
 BuildRoot: /override/%name-%version
 
@@ -281,6 +281,9 @@ find %buildroot%_libdir/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Sat Dec 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3:5.8.3-owl11
+- Rebuilt with libdb-4.2.so.
+
 * Thu Dec 22 2005 Solar Designer <solar-at-owl.openwall.com> 3:5.8.3-owl10
 - Increase the stack size rlimit to 16 MB before h2ph invocations since
 h2ph happens to overflow an 8 MB stack on Alpha.
