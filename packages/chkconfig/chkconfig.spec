@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/chkconfig/chkconfig.spec,v 1.17 2005/12/24 14:16:25 ldv Exp $
+# $Owl: Owl/packages/chkconfig/chkconfig.spec,v 1.18 2005/12/25 11:37:30 ldv Exp $
 
 %define BUILD_NTSYSV 0
 %define INSTALL_ALTERNATIVES 1
@@ -9,7 +9,7 @@ Version: 1.3.25
 Release: owl1
 License: GPL
 Group: System Environment/Base
-Source: ftp://ftp.redhat.com/pub/redhat/code/chkconfig/%name-%version.tar.gz
+Source: %name-%version.tar.gz
 Patch0: chkconfig-1.3.25-owl-fixes.diff
 Patch1: chkconfig-1.3.9-owl-no-ntsysv.diff
 BuildRequires: gettext, glibc >= 0:2.2
