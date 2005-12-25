@@ -1,12 +1,13 @@
-# $Owl: Owl/packages/diffstat/diffstat.spec,v 1.10 2005/11/16 12:21:03 solar Exp $
+# $Owl: Owl/packages/diffstat/diffstat.spec,v 1.11 2005/12/25 22:33:11 mci Exp $
 
 Summary: A utility which provides statistics based on the output of diff.
 Name: diffstat
-Version: 1.32
-Release: owl2
+Version: 1.41
+Release: owl1
 Group: Development/Tools
 License: distributable
 Source: ftp://dickey.his.com/diffstat/%name-%version.tgz
+Patch: diffstat-1.41-owl-man.diff
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
 
@@ -18,10 +19,11 @@ to provide a summary of the changes in large, complex patch files.
 
 %prep
 %setup -q
+%patch -p1
 
 %build
 %configure --with-warnings
-make
+%__make
 
 %install
 rm -rf %buildroot
@@ -31,9 +33,13 @@ rm -rf %buildroot
 %defattr(-,root,root)
 %doc README CHANGES
 %_bindir/diffstat
-%_mandir/*/*
+%_mandir/man1/*
 
 %changelog
+* Mon Dec 26 2005 Michail Litvak <mci-at-owl.openwall.com> 1.41-owl1
+- 1.41
+- Small man-page fix.
+
 * Wed Jan 15 2003 Michail Litvak <mci-at-owl.openwall.com> 1.32-owl2
 - Use configure --with-warnings instead our -Wall
 
