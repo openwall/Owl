@@ -1,0 +1,46 @@
+--- man-1.6b/src/makewhatis.sh.orig	2005-12-25 21:33:01.000000000 +0200
++++ man-1.6b/src/makewhatis.sh	2005-12-25 21:36:03.000000000 +0200
+@@ -83,7 +83,15 @@
+ defmanpath=$DEFMANPATH
+ defcatpath=
+ 
+-sections="1 2 3 4 5 6 7 8 9 n l"
++if [ -n "$MANSECT" ]; then
++	sections=$MANSECT
++else
++	sections=`$AWK '($1 == "MANSECT") { print $2 }' %man_config_file%`
++	if [ x"$sections" = x ]; then
++		sections="%sections%"
++	fi
++fi
++sections=`echo $sections | sed -e 's/:/ /g'`
+ 
+ for name in "$@"
+ do
+--- man-1.6b/src/Makefile.in.orig	2005-09-06 01:20:35.000000000 +0300
++++ man-1.6b/src/Makefile.in	2005-12-25 21:55:56.000000000 +0200
+@@ -94,7 +94,10 @@
+ makewhatis: makewhatis.sh Makefile
+ 	rm -f makewhatis
+ 	sed -e 's,%version%,@version@,' \
+-	    -e 's,%awk%,@awk@,' makewhatis.sh > makewhatis
++	    -e 's,%awk%,@awk@,' \
++	    -e 's,%man_config_file%,@man_config_file@,' \
++	    -e 's,%sections%,@sections@,' \
++	    makewhatis.sh > makewhatis
+ 	chmod +x makewhatis
+ 
+ MANCONFIG=$(DESTDIR)$(PREFIX)@man_config_file@
+--- man-1.6b/man/en/makewhatis.man.orig	2005-09-19 09:29:48.000000000 +0300
++++ man-1.6b/man/en/makewhatis.man	2005-12-24 02:08:51.000000000 +0200
+@@ -62,8 +62,8 @@
+ .I sections
+ of
+ .IR manpath " or " catpath .
+-If the option is absent, its value is assumed to be
+-.I  \'1 2 3 4 5 6 7 8 9 n l\'
++If the option is absent, the MANSECT env var will be used.  If it too
++is absent, the MANSECT setting in man.conf will be used.
+ .TP 
+ .BI -c " catpath"
+ The preformatted manual pages located in
