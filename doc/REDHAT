@@ -1,6 +1,7 @@
 This file lists known issues with using packages from or intended for
-Red Hat Linux on Owl.  The names of affected Red Hat Linux packages, if
-applicable and known, are given in braces.
+Red Hat Linux (Fedora Core, Red Hat Enterprise Linux) on Owl.  The names
+of affected Red Hat Linux packages, if applicable and known, are given
+in braces.
 
 
 	Packages providing cron jobs (slocate).
@@ -107,4 +108,4 @@ The one problem we are aware of and have resolved is the source code
 for recent versions of RPM requiring NPTL.  We have resolved that
 dependency on NPTL in our build of RPM.
 
-$Owl: Owl/doc/REDHAT,v 1.6 2005/12/26 22:14:07 solar Exp $
+$Owl: Owl/doc/REDHAT,v 1.7 2005/12/26 22:23:42 solar Exp $
