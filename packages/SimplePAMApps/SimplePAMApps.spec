@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.44 2005/11/16 13:34:48 solar Exp $
+# $Owl: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.45 2005/12/26 23:49:21 ldv Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
 Version: 0.60
-Release: owl27
+Release: owl28
 License: BSD or GPL
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
@@ -23,6 +23,7 @@ Patch6: SimplePAMApps-0.60-alt-owl-warnings.diff
 Patch7: SimplePAMApps-0.60-owl-log.diff
 PreReq: owl-control >= 0.4, owl-control < 2.0
 Requires: pam >= 0:0.80-owl2, pam_passwdqc >= 0.2, pam_mktemp, tcb
+Provides: passwd
 Obsoletes: passwd
 BuildRequires: pam-devel
 BuildRoot: /override/%name-%version
@@ -103,6 +104,10 @@ fi
 /etc/control.d/facilities/*
 
 %changelog
+* Tue Dec 27 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.60-owl28
+- Fixed build with Linux-PAM >= 0.81.
+- Added passwd to provides list for compatibility.
+
 * Sat Oct 29 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.60-owl27
 - Changed PAM config files to include system-auth for PAM auth, account,
 password and session management.
