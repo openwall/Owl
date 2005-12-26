@@ -85,7 +85,7 @@ RPM package due to RPM version differences.
 On Red Hat Linux, UTF-8 support is added into S-Lang with a patch.  We
 don't do that.  If another package requires S-Lang with UTF-8 support,
 the workaround is simply to replace our slang package with Red Hat's.
-There're no dependencies on our version of slang within Owl itself.
+There are no dependencies on our version of slang within Owl itself.
 
 
 	No NPTL support in glibc.
@@ -107,4 +107,4 @@ The one problem we are aware of and have resolved is the source code
 for recent versions of RPM requiring NPTL.  We have resolved that
 dependency on NPTL in our build of RPM.
 
-$Owl: Owl/doc/REDHAT,v 1.5 2005/11/16 11:55:10 solar Exp $
+$Owl: Owl/doc/REDHAT,v 1.6 2005/12/26 22:14:07 solar Exp $

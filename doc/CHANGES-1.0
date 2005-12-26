@@ -230,7 +230,7 @@ listed on "networks" line in /etc/nsswitch.conf (which is not the
 default).  Added the patch by NISHIMURA Daisuke and Tomohiro 'Tomo-p'
 KATO of Vine Linux to fix the DNS resolver buffer overflows affecting
 both host and network lookups in the compatibility code that is used
-by binaries built against glibc 2.0 (there're no such binaries in Owl
+by binaries built against glibc 2.0 (there are no such binaries in Owl
 itself).  Improved the code used to produce unpredictable DNS query
 IDs to make it generate different sequences of IDs in forked processes
 (problem noted by Jarno Huuskonen), conserve the kernel's randomness
@@ -992,4 +992,4 @@ we've released.  Thus, this isn't a security update.
 New files: French translations of the documentation, from Denis Ducamp
 <ducamp at owl.openwall.com>.
 
-$Owl: Owl/doc/CHANGES-1.0,v 1.6 2005/11/16 11:59:01 solar Exp $
+$Owl: Owl/doc/CHANGES-1.0,v 1.7 2005/12/26 22:14:07 solar Exp $

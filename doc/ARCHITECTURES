@@ -20,7 +20,7 @@ were built for a newer one.  The packages will appear to build and
 work, but may in fact require the newer architecture flavor due to
 code inherited from development libraries installed on the system.
 
-There're two possible solutions to this last problem: you may choose
+There are two possible solutions to this last problem: you may choose
 to only use packages for the oldest architecture flavor you may ever
 need, or you may install development libraries built for the older
 flavor while using other packages (including dynamic libraries) built
@@ -85,4 +85,4 @@ built for alphaev56 are tuned for EV56/PCA56 processors (21164A,
 plain alpha packages.  On an EV6+ (21264, 21264A), use the alphaev56
 packages.
 
-$Owl: Owl/doc/ARCHITECTURES,v 1.4 2005/11/16 11:59:01 solar Exp $
+$Owl: Owl/doc/ARCHITECTURES,v 1.5 2005/12/26 22:14:07 solar Exp $

@@ -171,7 +171,7 @@ underscores except when referring to an existing identifier (in which
 case the identifier is to be quoted verbatim, including any possible
 underscores and uppercase letters).
 
-There're also some common WHATs to use whenever applicable:
+There are also some common WHATs to use whenever applicable:
 
 Makefile	- Makefile* patches only (note the capitalization)
 bound		- bound checking (buffer and/or integer overflow fixes)
@@ -253,4 +253,4 @@ then require the proper version of mktemp(1):
 As usual, use Requires, PreReq, and/or BuildRequires depending on
 where in the package the uses of mktemp occur.
 
-$Owl: Owl/doc/CONVENTIONS,v 1.29 2005/11/16 16:49:43 solar Exp $
+$Owl: Owl/doc/CONVENTIONS,v 1.30 2005/12/26 22:14:07 solar Exp $

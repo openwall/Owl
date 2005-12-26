@@ -7,7 +7,7 @@ the CDs).
 Owl installation is currently more complicated than we'd like it to
 be.  This is going to change with future releases.
 
-Currently, there're two primary ways to install Owl, -- by booting off
+Currently, there are two primary ways to install Owl, -- by booting off
 an Owl CD or by using another Linux installation you may already have.
 
 
@@ -100,4 +100,4 @@ already installed on the system (if any).
 Once the installation is complete, make sure to manually unmount the
 filesystems with umount(8) prior to rebooting the system.
 
-$Owl: Owl/doc/INSTALL,v 1.16 2005/11/16 11:59:01 solar Exp $
+$Owl: Owl/doc/INSTALL,v 1.17 2005/12/26 22:14:07 solar Exp $
