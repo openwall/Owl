@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.41 2005/12/24 16:03:38 ldv Exp $
+# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.42 2005/12/26 21:33:51 ldv Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -87,7 +87,8 @@ CFLAGS="%optflags" \
 LDFLAGS="" \
 ./configure
 %__make RPM_OPT_FLAGS="%optflags"
-%__cc %optflags %_sourcedir/nologin.c -o nologin
+%__cc %optflags -static -nostartfiles -Dmain=_start -Dexit=_exit \
+	%_sourcedir/nologin.c -o nologin
 
 %install
 rm -rf %buildroot
