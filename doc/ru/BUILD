@@ -55,17 +55,9 @@ UID 151 и GID 150 ("sources"), и сделать этого пользователя владельцем
 
 для Owl-current:
 
-Dual Pentium III, 600 MHz, 512 MB				2:50
-
-для Owl 1.1 release, не актуальны для Owl-current:
-
-Dual Pentium 4 Xeon, HT (4-way MP), 2.666 GHz, 2 GB		0:17
-Dual Pentium 4 Xeon, no HT (2-way SMP), 2.666 GHz, 2 GB		0:21
-Dual Pentium III, 1.266 GHz, 2 GB				0:30
-Athlon XP 2000+, 1.666 GHz, 512 MB				0:45
-Pentium III, 700 MHz, 192 MB					1:40
-UltraSparc IIi, 400 MHz, 256 MB					3:50
-Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB			5:30
+Dual Pentium III, 600 MHz, 512 MB				3:35
+UltraSparc IIi, 400 MHz, 256 MB					9:20
+Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB			13:30
 
 (Да, gcc для Alpha такая медленная и прожорливая штука.)
 
@@ -113,4 +105,4 @@ native/Owl/build в /usr/src/world. Предварительно следует удалить
 (SRPM), собираемых с помощью системы сборки Owl, вам следует также
 указать в названии номер версии.
 
-$Owl: Owl/doc/ru/BUILD,v 1.10 2005/11/16 11:59:02 solar Exp $
+$Owl: Owl/doc/ru/BUILD,v 1.11 2005/12/26 19:58:44 gremlin Exp $
