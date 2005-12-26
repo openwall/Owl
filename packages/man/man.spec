@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/man/man.spec,v 1.23 2005/12/25 20:31:40 mci Exp $
+# $Owl: Owl/packages/man/man.spec,v 1.24 2005/12/26 20:39:54 mci Exp $
 
 Summary: A set of documentation tools: man, apropos and whatis.
 Name: man
@@ -8,11 +8,10 @@ License: GPL
 Group: System Environment/Base
 URL: http://primates.ximian.com/~flucifredi/man/
 Source: http://primates.ximian.com/~flucifredi/man/%name-%version.tar.gz
-Patch0: man-1.6b-alt-apropos.diff
-Patch1: man-1.6b-alt-fixes.diff
-Patch2: man-1.6b-owl-latin1.diff
-Patch3: man-1.6b-owl-makewhatis.diff
-Patch4: man-1.6b-owl-gentoo-makewhatis-config.diff
+Patch0: man-1.6b-alt-fixes.diff
+Patch1: man-1.6b-owl-latin1.diff
+Patch2: man-1.6b-owl-makewhatis.diff
+Patch3: man-1.6b-owl-gentoo-makewhatis-config.diff
 Requires: groff, less, gzip, bzip2, coreutils
 # makewhatis
 Requires: gawk, sed, mktemp >= 1:1.3.1
@@ -39,7 +38,6 @@ whatis searches its own database for a complete word.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
 
 %build
 ./configure -default +fhs -fsstnd -confdir /etc
