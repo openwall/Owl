@@ -12,6 +12,12 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2005/12/27	Package: pam
+Updated to 0.99.2.1.
+
+2005/12/27	Package: tcb
+Updated to 1.0.
+
 2005/12/26	Package: diffstat
 Updated to 1.41.
 
@@ -791,4 +797,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Owl: Owl/doc/CHANGES-2.0,v 1.188 2005/12/26 16:19:27 solar Exp $
+$Owl: Owl/doc/CHANGES-2.0,v 1.189 2005/12/27 23:50:55 ldv Exp $

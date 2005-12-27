@@ -462,11 +462,6 @@ Re-enable IPv6 in the client once glibc is fixed.
 [PRIORITY: medium]
 Bump syslog priorities of many pam_tcb error messages.
 
-[PRIORITY: medium]
-[ASSIGNED: ldv@]
-After updating Linux-PAM, update logging code to use pam_syslog and
-conversation code to use pam_prompt.
-
 
 	util-linux.
 
@@ -513,4 +508,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Owl: Owl/doc/TODO,v 1.147 2005/12/24 22:51:48 ldv Exp $
+$Owl: Owl/doc/TODO,v 1.148 2005/12/27 23:50:55 ldv Exp $
