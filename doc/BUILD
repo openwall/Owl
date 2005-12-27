@@ -41,7 +41,7 @@ with sufficient swap space, but you'd better not);
 
 at least 200 MB of virtual memory;
 
-1 to 5 hours of CPU time, on a modern system (as of this writing).
+a few hours of CPU time, on a modern system.
 
 And, of course, you should be running the build on Owl.  Building on
 another GNU/*/Linux system is possible, but tricky and requires that
@@ -51,6 +51,7 @@ you actually convert the system into Owl with multiple iterations of
 Here are some build times (hours:minutes) for Owl-current, so that you
 know what to expect:
 
+Dual Pentium 4 Xeon, HT (4-way MP), 2.8 GHz, 2 GB		0:50
 Dual Pentium III, 600 MHz, 512 MB				3:35
 UltraSparc IIi, 400 MHz, 256 MB					9:20
 Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB			13:30
@@ -100,4 +101,4 @@ where "name" is the name of the source package.  For foreign packages
 (SRPMs) built with the Owl build environment you also need to include
 the version number part in "name".
 
-$Owl: Owl/doc/BUILD,v 1.32 2005/12/26 14:24:45 solar Exp $
+$Owl: Owl/doc/BUILD,v 1.33 2005/12/27 20:05:29 solar Exp $
