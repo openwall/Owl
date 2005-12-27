@@ -1,0 +1,192 @@
+diff -upk.orig Linux-PAM-0.99.2.1.orig/configure.in Linux-PAM-0.99.2.1/configure.in
+--- Linux-PAM-0.99.2.1.orig/configure.in	2005-12-12 16:56:27 +0000
++++ Linux-PAM-0.99.2.1/configure.in	2005-12-26 14:32:06 +0000
+@@ -413,5 +413,5 @@ AC_OUTPUT(Makefile libpam/Makefile libpa
+ 	modules/pam_time/Makefile modules/pam_umask/Makefile \
+ 	modules/pam_unix/Makefile modules/pam_userdb/Makefile \
+ 	modules/pam_warn/Makefile modules/pam_wheel/Makefile \
+-	modules/pam_xauth/Makefile doc/Makefile doc/specs/Makefile \
+-	examples/Makefile)
++	modules/pam_xauth/Makefile modules/pam_chroot/Makefile \
++	doc/Makefile doc/specs/Makefile examples/Makefile)
+diff -upk.orig Linux-PAM-0.99.2.1.orig/modules/Makefile.am Linux-PAM-0.99.2.1/modules/Makefile.am
+--- Linux-PAM-0.99.2.1.orig/modules/Makefile.am	2005-09-21 13:35:29 +0000
++++ Linux-PAM-0.99.2.1/modules/Makefile.am	2005-09-26 17:41:06 +0000
+@@ -8,7 +8,7 @@ SUBDIRS = pam_access pam_cracklib pam_de
+ 	pam_motd pam_nologin pam_permit pam_pwdb pam_rhosts pam_rootok \
+ 	pam_securetty pam_selinux pam_shells pam_stress pam_succeed_if \
+ 	pam_tally pam_time pam_umask pam_unix pam_userdb pam_warn \
+-	pam_wheel pam_xauth
++	pam_wheel pam_xauth pam_chroot
+ 
+ 
+ CLEANFILES = *~
+diff -upk.orig Linux-PAM-0.99.2.1.orig/modules/pam_chroot/Makefile.am Linux-PAM-0.99.2.1/modules/pam_chroot/Makefile.am
+--- Linux-PAM-0.99.2.1.orig/modules/pam_chroot/Makefile.am	1970-01-01 00:00:00 +0000
++++ Linux-PAM-0.99.2.1/modules/pam_chroot/Makefile.am	2005-09-26 17:41:06 +0000
+@@ -0,0 +1,17 @@
++CLEANFILES = *~
++
++EXTRA_DIST = README chroot.conf
++
++securelibdir = $(SECUREDIR)
++secureconfdir = $(SCONFIGDIR)
++
++AM_CFLAGS = -I$(top_srcdir)/libpam/include -I$(top_srcdir)/libpamc/include
++AM_LDFLAGS = -no-undefined -avoid-version -module \
++	-L$(top_builddir)/libpam -lpam
++if HAVE_VERSIONING
++  AM_LDFLAGS += -Wl,--version-script=$(srcdir)/../modules.map
++endif
++
++securelib_LTLIBRARIES = pam_chroot.la
++
++secureconf_DATA = chroot.conf
+diff -upk.orig Linux-PAM-0.99.2.1.orig/modules/pam_chroot/pam_chroot.c Linux-PAM-0.99.2.1/modules/pam_chroot/pam_chroot.c
+--- Linux-PAM-0.99.2.1.orig/modules/pam_chroot/pam_chroot.c	2001-11-21 19:42:31 +0000
++++ Linux-PAM-0.99.2.1/modules/pam_chroot/pam_chroot.c	2005-09-09 20:51:16 +0000
+@@ -4,10 +4,11 @@
+  * $Id: pam_chroot.c,v 1.8 2001/11/21 19:42:31 nalin Exp $
+  */
+ 
+-#include "../../_pam_aconf.h"
++#include "config.h"
+ 
+ #define	PAM_SM_SESSION
+-#include "../../libpam/include/security/pam_modules.h"
++#include <security/pam_modules.h>
++#include <security/pam_ext.h>
+ 
+ #include <syslog.h>
+ #include <string.h>
+@@ -22,8 +23,9 @@
+ 
+ #define	CONFIG	"/etc/security/chroot.conf"
+ 
+-PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
+-				   int argc, const char **argv)
++PAM_EXTERN int
++pam_sm_open_session(pam_handle_t *pamh, int flags UNUSED,
++		    int argc, const char **argv)
+ {
+ 	int ret = PAM_SESSION_ERR;
+ 	int debug = 0;
+@@ -34,8 +36,6 @@ PAM_EXTERN int pam_sm_open_session(pam_h
+ 	char const *user;
+ 	FILE *conf;
+ 
+-	openlog("pam_chroot", LOG_PID, LOG_AUTHPRIV);
+-
+ 	/* parse command-line arguments */
+ 	for(i = 0; i < argc; i++) {
+ 		if(strcmp(argv[i], "debug") == 0)
+@@ -45,16 +45,17 @@ PAM_EXTERN int pam_sm_open_session(pam_h
+ 				onerr = PAM_SESSION_ERR;
+ 	}
+ 
+-	if((ret = pam_get_user(pamh, &user, NULL)) != PAM_SUCCESS) {
+-		syslog(LOG_ERR, "can't get username: %s",
+-				pam_strerror(pamh, ret));
+-		return ret;
++	ret = pam_get_user(pamh, &user, NULL);
++	if (ret != PAM_SUCCESS || user == NULL) {
++		pam_syslog(pamh, LOG_ERR, "cannot get the username: %s",
++			   pam_strerror(pamh, ret));
++		return PAM_SERVICE_ERR;
+ 	}
+ 
+ 	conf = fopen(CONFIG, "r");
+ 	if(conf == NULL) {
+-		syslog(LOG_ERR, "can't open config file \"" CONFIG "\": %s",
+-				strerror(errno));
++		pam_syslog(pamh, LOG_ERR,
++			   "cannot open config file \"%s\": %m", CONFIG);
+ 		return ret;
+ 	}
+ 
+@@ -74,7 +75,8 @@ PAM_EXTERN int pam_sm_open_session(pam_h
+ 			continue;
+ 
+ 		if((dir = strtok_r(NULL, " \t\r\n", &p)) == NULL) {
+-			syslog(LOG_ERR, CONFIG ":%d: no directory", lineno);
++			pam_syslog(pamh, LOG_ERR, "%s:%d: no directory",
++				   CONFIG, lineno);
+ 			ret = onerr;
+ 			break;
+ 		}
+@@ -88,8 +90,9 @@ PAM_EXTERN int pam_sm_open_session(pam_h
+ 			memset(errbuf, 0, len + 1);
+ 			regerror(err, &name_regex, errbuf, len);
+ 
+-			syslog(LOG_ERR, CONFIG ":%d: illegal regex \"%s\": %s",
+-					lineno, name, errbuf);
++			pam_syslog(pamh, LOG_ERR,
++				   "%s:%d: illegal regex \"%s\": %s",
++				   CONFIG, lineno, name, errbuf);
+ 
+ 			free(errbuf);
+ 			regfree(&name_regex);
+@@ -105,33 +108,33 @@ PAM_EXTERN int pam_sm_open_session(pam_h
+ 			struct stat st;
+ 
+ 			if (stat(dir, &st) == -1) {
+-				syslog(LOG_ERR, "stat(%s) failed: %s",
+-						dir, strerror(errno));
++				pam_syslog(pamh, LOG_ERR,
++					   "stat(%s) failed: %m", dir);
+ 				ret = onerr;
+ 			} else
+ 			/* Catch the most common misuse */
+ 			if (st.st_uid != 0 ||
+ 			    (st.st_mode & (S_IWGRP | S_IWOTH))) {
+-				syslog(LOG_ERR, "%s is writable by non-root",
+-						dir);
++				pam_syslog(pamh, LOG_ERR,
++					   "%s is writable by non-root", dir);
+ 				ret = onerr;
+ 			} else
+-			if(chdir(dir) == -1) {
+-				syslog(LOG_ERR, "chdir(%s) failed: %s",
+-						dir, strerror(errno));
++			if (chdir(dir) == -1) {
++				pam_syslog(pamh, LOG_ERR,
++					   "chdir(%s) failed: %m", dir);
+ 				ret = onerr;
+ 			} else {
+-				if(debug) {
+-					syslog(LOG_ERR, "chdir(%s) succeeded",
+-							dir);
++				if (debug) {
++					pam_syslog(pamh, LOG_ERR,
++						   "chdir(%s) succeeded", dir);
+ 				}
+-				if(chroot(dir) == -1) {
+-					syslog(LOG_ERR, "chroot(%s) failed: %s",
+-							dir, strerror(errno));
++				if (chroot(".") == -1) {
++					pam_syslog(pamh, LOG_ERR,
++						   "chroot(%s) failed: %m", dir);
+ 					ret = onerr;
+ 				} else {
+-					syslog(LOG_ERR, "chroot(%s) succeeded",
+-							dir);
++					pam_syslog(pamh, LOG_ERR,
++						   "chroot(%s) succeeded", dir);
+ 					ret = PAM_SUCCESS;
+ 				}
+ 			}
+@@ -140,12 +143,11 @@ PAM_EXTERN int pam_sm_open_session(pam_h
+ 	}
+ 
+ 	fclose(conf);
+-	closelog();
+ 	return ret;
+ }
+ 
+-PAM_EXTERN int pam_sm_close_session(pam_handle_t *pamh, int flags,
+-				    int argc, const char **argv)
++PAM_EXTERN int pam_sm_close_session(pam_handle_t *pamh UNUSED, int flags UNUSED,
++				    int argc UNUSED, const char **argv UNUSED)
+ {
+ 	return PAM_SUCCESS;
+ }

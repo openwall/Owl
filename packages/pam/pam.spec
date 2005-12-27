@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/pam/pam.spec,v 1.45 2005/12/24 22:50:37 ldv Exp $
+# $Owl: Owl/packages/pam/pam.spec,v 1.46 2005/12/27 23:32:12 ldv Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
-Version: 0.80
-Release: owl3
-%define rh_version %version-1
+Version: 0.99.2.1
+Release: owl1
+%define rh_version 0.80-1
 License: GPL or BSD
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
@@ -12,27 +12,16 @@ Source0: ftp://ftp.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%version.
 Source1: ftp://ftp.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%version-docs.tar.bz2
 Source2: pam-redhat-%rh_version.tar.bz2
 Source3: pam_listfile.c
-Source4: modules.map
-Source5: other.pam
-Source6: system-auth.pam
-Patch0: Linux-PAM-0.80-cvs-20050728.diff
-Patch1: Linux-PAM-0.80-owl-tmp.diff
-Patch2: Linux-PAM-0.80-owl-pam_get_user-cache-failures.diff
-Patch3: Linux-PAM-0.80-owl-man.diff
-Patch4: Linux-PAM-0.80-owl-pam_lastlog.diff
-Patch5: Linux-PAM-0.80-owl-pam_securetty.diff
-Patch6: Linux-PAM-0.80-owl-pam_limits.diff
-Patch7: Linux-PAM-0.80-owl-pam_motd.diff
-Patch8: Linux-PAM-0.80-owl-pam_wheel.diff
-Patch9: Linux-PAM-0.80-owl-configure.diff
-Patch10: Linux-PAM-0.80-owl-pam_filter.diff
-Patch11: Linux-PAM-0.80-owl-no-cracklib.diff
-Patch12: Linux-PAM-0.80-owl-no-pwdb.diff
-Patch13: Linux-PAM-0.80-owl-pammodutil-attribute.diff
-Patch14: Linux-PAM-0.80-owl-log.diff
-Patch15: Linux-PAM-0.80-owl-pam_mkhomedir.diff
-Patch16: Linux-PAM-0.80-owl-converse.diff
-Patch17: Linux-PAM-0.79-ibm-man.diff
+Source4: other.pam
+Source5: system-auth.pam
+Patch0: Linux-PAM-0.99.2.1-cvs-20051221.diff
+Patch1: Linux-PAM-0.99.2.1-alt-const.diff
+Patch2: Linux-PAM-0.99.2.1-owl-pam_limits-acct.diff
+Patch3: Linux-PAM-0.99.2.1-owl-pam_mkhomedir-acct.diff
+Patch4: Linux-PAM-0.99.2.1-owl-pam_wheel-use_uid.diff
+Patch5: Linux-PAM-0.99.2.1-alt-pam_chroot.diff
+Patch6: Linux-PAM-0.99.2.1-owl-pam_stack.diff
+Patch7: Linux-PAM-0.99.2.1-alt-pam_xauth-check_acl.diff
 PreReq: /sbin/ldconfig
 Requires: glibc-crypt_blowfish
 # Just to make sure noone misses pam_unix and pam_pwdb, which are now
@@ -79,63 +68,57 @@ PostScript formats.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
-%patch11 -p1
-%patch12 -p1
-%patch13 -p1
-%patch14 -p1
-%patch15 -p1
-%patch16 -p1
-%patch17 -p1
 
 # Remove unwanted modules.
-rm -r modules/pam_{console,cracklib,debug,loginuid,postgresok,pwdb,radius,rps,selinux,timestamp,umask,unix}
+for d in pam_{console,cracklib,debug,loginuid,postgresok,pwdb,rps,selinux,timestamp,umask,unix}; do
+	rm -r modules/$d
+	sed -i "s,modules/$d/Makefile,," configure.in
+	sed -i "s/ $d / /" modules/Makefile.am
+done
+find modules -type f -name Makefile -delete -print
 
+# Replace pam_listfile.
 install -pm644 %_sourcedir/pam_listfile.c modules/pam_listfile/
-
-# Replace _pam_aconf.h with config.h
-grep -FZl _pam_aconf.h modules/*/*.c |
-	xargs -r0 sed -ie 's/_pam_aconf\.h/config.h/' --
-
-# Use version script during build of pam modules.
-install -pm644 %_sourcedir/modules.map modules/
-find modules -type f -print0 |
-	xargs -r0 grep -FlZ ' -o $@ $(LIBOBJD) ' |
-	xargs -r0 sed -ie 's| -o \$@ \$(LIBOBJD) | -Wl,--version-script=../modules.map&|' --
 
 mkdir modules/READMEs
 for f in modules/pam_*/README; do
 	d="${f%%/*}"
-	install -p -m 644 "$f" "modules/READMEs/README.${d##*/}"
+	install -pm644 "$f" "modules/READMEs/README.${d##*/}"
 done
-autoconf
 
+%define docdir %_docdir/pam-%version
 # Use optflags_lib for this package if defined.
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 
 %build
-autoreconf -fisv
+aclocal -I m4
+libtoolize -f
+autoconf
+autoheader
+automake -a
 export ac_cv_lib_ndbm_dbm_store=no \
 	ac_cv_lib_db_dbm_store=no \
-	ac_cv_lib_selinux_getfilecon=no
+	ac_cv_lib_selinux_getfilecon=no \
+	ac_cv_lib_pwdb_pwdb_db_name=no \
+	ac_cv_search_FascistCheck='none required'
 %configure \
 	--prefix=/ \
 	--exec-prefix=/ \
 	--libdir=/%_lib \
 	--sbindir=/sbin \
-	--enable-static-libpam \
+	--includedir=%_includedir/security \
+	--disable-nls \
 	--disable-read-both-confs \
-	--enable-fakeroot=%buildroot
+	--enable-fakeroot=%buildroot \
+	--enable-docdir=%docdir
 %__make
 
 %install
 rm -rf %buildroot
-%__make install
+%__make install DESTDIR=%buildroot
 
 mkdir -p %buildroot/etc/security
-install -m 644 modules/pam_chroot/chroot.conf %buildroot/etc/security/
+install -pm644 modules/pam_chroot/chroot.conf %buildroot/etc/security/
 
 # Relocate development libraries from /%_lib/ to %_libdir/.
 mkdir -p %buildroot%_libdir
@@ -147,6 +130,7 @@ for f in %buildroot/%_lib/*.so; do
 	ln -s ../../%_lib/"$t" "%buildroot%_libdir/${f##*/}"
 	rm -f "$f"
 done
+rm %buildroot{%_libdir,/%_lib/security}/*.la
 
 # Make sure that all modules are built.
 >check.log
@@ -184,17 +168,23 @@ done
 install -pD -m644 %_sourcedir/other.pam %buildroot/etc/pam.d/other
 install -pD -m644 %_sourcedir/system-auth.pam %buildroot/etc/pam.d/system-auth
 
-rm -f doc/ps/missfont.log
-gzip -9nf doc/ps/*.ps
-gzip -9nf doc/txts/*.txt
+# Documentation
+rm -f doc/ps/*.log
+install -pm644 doc/figs/*.txt doc/txts/
+install -pm644 AUTHORS NEWS ChangeLog CHANGELOG doc/CREDITS Copyright \
+	%buildroot%docdir/
+cp -a doc/{txts,html,ps} %buildroot%docdir/
+cp -a modules/READMEs %buildroot%docdir/modules
+find %buildroot%docdir/ -type f -size +4k \( -iname changelog -or -name \*.txt -or -name \*.ps \) -print0 |
+	xargs -r0 gzip -9nf --
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
 %files
 %defattr(-,root,root)
-%doc Copyright
-%doc modules/READMEs/*
+%dir %docdir
+%docdir/[ACNm]*
 
 %dir /etc/pam.d
 %config(noreplace) /etc/pam.d/other
@@ -210,6 +200,7 @@ gzip -9nf doc/txts/*.txt
 /%_lib/security/pam_access.so
 /%_lib/security/pam_chroot.so
 /%_lib/security/pam_deny.so
+/%_lib/security/pam_echo.so
 /%_lib/security/pam_env.so
 /%_lib/security/pam_filter.so
 /%_lib/security/pam_ftp.so
@@ -255,18 +246,20 @@ gzip -9nf doc/txts/*.txt
 %_libdir/libpam.so
 %_libdir/libpamc.so
 %_libdir/libpam_misc.so
-%_libdir/libpam.a
-%_libdir/libpamc.a
-%_libdir/libpam_misc.a
 %_includedir/security/
 %_mandir/man3/*
 
 %files doc
 %defattr(-,root,root)
-%doc doc/{html,ps,txts}
-%doc doc/specs/rfc86.0.txt
+%dir %docdir
+%docdir/[hpst]*
 
 %changelog
+* Mon Dec 26 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.99.2.1-owl1
+- Updated Linux-PAM to 0.99.2.1.
+- Relocated documentation to %docdir.
+- Disabled build of static libraries.
+
 * Sat Dec 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.80-owl3
 - Rebuilt with libdb-4.2.so.
 

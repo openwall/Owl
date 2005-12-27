@@ -1,0 +1,39 @@
+diff -upk.orig Linux-PAM-0.99.2.1.orig/modules/pam_xauth/pam_xauth.c Linux-PAM-0.99.2.1/modules/pam_xauth/pam_xauth.c
+--- Linux-PAM-0.99.2.1.orig/modules/pam_xauth/pam_xauth.c	2005-11-23 16:42:40 +0000
++++ Linux-PAM-0.99.2.1/modules/pam_xauth/pam_xauth.c	2005-12-26 14:57:38 +0000
+@@ -39,6 +39,9 @@
+ #include <sys/types.h>
+ #include <sys/fsuid.h>
+ #include <sys/wait.h>
++#include <sys/stat.h>
++#include <fcntl.h>
++#include <unistd.h>
+ #include <errno.h>
+ #include <fnmatch.h>
+ #include <grp.h>
+@@ -202,8 +205,9 @@ check_acl(pam_handle_t *pamh,
+ {
+ 	char path[PATH_MAX];
+ 	struct passwd *pwd;
+-	FILE *fp;
+-	int i;
++	FILE *fp = 0;
++	struct stat st;
++	int fd, i;
+ 	uid_t euid;
+ 	/* Check this user's <sense> file. */
+ 	pwd = pam_modutil_getpwnam(pamh, this_user);
+@@ -222,7 +226,12 @@ check_acl(pam_handle_t *pamh,
+ 	}
+ 	euid = geteuid();
+ 	setfsuid(pwd->pw_uid);
+-	fp = fopen(path, "r");
++	if ((fd = open (path, O_RDONLY | O_NOFOLLOW | O_NOCTTY)) >= 0) {
++		if ((fstat (fd, &st) == 0) && S_ISREG (st.st_mode))
++			fp = fdopen (fd, "r");
++		else
++			close (fd);
++	}
+ 	setfsuid(euid);
+ 	if (fp != NULL) {
+ 		char buf[LINE_MAX], *tmp;

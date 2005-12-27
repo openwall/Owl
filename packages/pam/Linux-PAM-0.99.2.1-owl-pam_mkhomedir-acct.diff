@@ -1,8 +1,9 @@
 Support stacking for account management as well as for session setup.
 
---- Linux-PAM-0.80/modules/pam_mkhomedir/pam_mkhomedir.c.orig	2005-08-10 00:21:09 +0000
-+++ Linux-PAM-0.80/modules/pam_mkhomedir/pam_mkhomedir.c	2005-08-10 00:43:23 +0000
-@@ -553,6 +553,18 @@ int pam_sm_close_session(pam_handle_t * 
+diff -upk.orig Linux-PAM-0.99.2.1.orig/modules/pam_mkhomedir/pam_mkhomedir.c Linux-PAM-0.99.2.1/modules/pam_mkhomedir/pam_mkhomedir.c
+--- Linux-PAM-0.99.2.1.orig/modules/pam_mkhomedir/pam_mkhomedir.c	2005-12-12 15:56:35 +0000
++++ Linux-PAM-0.99.2.1/modules/pam_mkhomedir/pam_mkhomedir.c	2005-12-26 20:44:02 +0000
+@@ -479,6 +479,18 @@ int pam_sm_close_session (pam_handle_t *
  }
  
  #ifdef PAM_STATIC
@@ -21,7 +22,7 @@ Support stacking for account management as well as for session setup.
  
  /* static module data */
  struct pam_module _pam_mkhomedir_modstruct =
-@@ -560,7 +572,7 @@ struct pam_module _pam_mkhomedir_modstru
+@@ -486,7 +498,7 @@ struct pam_module _pam_mkhomedir_modstru
     "pam_mkhomedir",
     NULL,
     NULL,

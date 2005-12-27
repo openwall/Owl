@@ -24,7 +24,8 @@
 #define PAM_SM_AUTH
 #define PAM_SM_ACCOUNT
 #include <security/pam_modules.h>
-#include <security/_pam_modutil.h>
+#include <security/pam_modutil.h>
+#include <security/pam_ext.h>
 
 #ifdef HAVE_FNMATCH
 # ifdef HAVE_FNMATCH_H
@@ -37,8 +38,6 @@
   /* we can implement simple matcher here */
 # define match(pattern, string) (strcmp(pattern, string) == 0)
 #endif
-
-DEFINE_PAM_LOG("pam_listfile")
 
 static int
 in_list(const char *member, const char * const *list)
@@ -138,17 +137,17 @@ pam_list(pam_handle_t *pamh, int argc, const char **argv)
       apply = a + 6;
 
     else {
-      _pam_log(LOG_ERR, "Unknown, invalid, or duplicate option: %s", a);
+      pam_syslog(pamh, LOG_ERR, "Unknown, invalid, or duplicate option: %s", a);
       r = 0;
     }
   }
 
   if (!item)
-    _pam_log (LOG_ERR, "Item not specified"), r = 0;
+    pam_syslog(pamh, LOG_ERR, "Item not specified"), r = 0;
   if (!list)
-    _pam_log (LOG_ERR, "List not specified"), r = 0;
+    pam_syslog(pamh, LOG_ERR, "List not specified"), r = 0;
   if (sense < 0)
-    _pam_log (LOG_ERR, "Sense not specified"), r = 0;
+    pam_syslog(pamh, LOG_ERR, "Sense not specified"), r = 0;
 
   /* if any command-line processing fails, we also fail, ignoring onerr= value.
      Command line should be fixed. */
@@ -159,7 +158,7 @@ pam_list(pam_handle_t *pamh, int argc, const char **argv)
   if (apply) {
     if (item == PAM_USER || item == PAM_RUSER || eitem == EI_GROUP) {
       /*XXX FIXME: why deny=user,... apply=@group is non-sense? */
-      _pam_log(LOG_WARNING, "Non-sense use for apply= parameter");
+      pam_syslog(pamh, LOG_WARNING, "Non-sense use for apply= parameter");
       //apply = NULL; /*XXX FIXME -- above */
     }
   }
@@ -170,11 +169,11 @@ pam_list(pam_handle_t *pamh, int argc, const char **argv)
 
     r = pam_get_user(pamh, &user, NULL); /* retrieve username from PAM */
     if (r != PAM_SUCCESS) {
-      _pam_log(LOG_WARNING, "unable to obtain user: %s", pam_strerror(pamh, r));
+      pam_syslog(pamh, LOG_WARNING, "unable to obtain user: %s", pam_strerror(pamh, r));
       return onerr;
     }
     if (!user || !*user) { /* empty user?! */
-      _pam_log(LOG_WARNING, "no user specified");
+      pam_syslog(pamh, LOG_WARNING, "no user specified");
       if (apply)
         return PAM_IGNORE; /* assume "not apply" */
       else /* assume "not listed" */
@@ -190,9 +189,9 @@ pam_list(pam_handle_t *pamh, int argc, const char **argv)
         return PAM_IGNORE;
 
     if (apply) { /* apply to group */
-      const struct group *gr = getgrnam(++apply); /* skip @ and get group name */
+      const struct group *gr = pam_modutil_getgrnam(pamh, ++apply); /* skip @ and get group name */
       if (!gr)
-        _pam_log(LOG_WARNING, "apply group %s does not exist", apply);
+        pam_syslog(pamh, LOG_WARNING, "apply group %s does not exist", apply);
         /*XXXX FIXME: error or warning? Maybe command-line error... */
       else if (in_list(user, (const char **)gr->gr_mem))
 	/* applies, found in group */
@@ -201,10 +200,10 @@ pam_list(pam_handle_t *pamh, int argc, const char **argv)
     }
 
     if (apply || eitem) { /* for that, we need primary group */
-      struct passwd *pw = getpwnam(user);
+      struct passwd *pw = pam_modutil_getpwnam(pamh, user);
       if (!pw) {
         if (apply) {
-          _pam_log(LOG_ERR, "user not found, can't apply group");
+          pam_syslog(pamh, LOG_ERR, "user not found, can't apply group");
           return PAM_IGNORE;
         }
         if (eitem) /* assume "not listed" */
@@ -214,9 +213,9 @@ pam_list(pam_handle_t *pamh, int argc, const char **argv)
       }
 
       if (apply || eitem == EI_GROUP) { /* need primary group */
-        const struct group *gr = getgrgid(pw->pw_gid);
+        const struct group *gr = pam_modutil_getgrgid(pamh, pw->pw_gid);
         if (!gr) {
-          _pam_log(LOG_WARNING, "unable to find primary group %d for %s",
+          pam_syslog(pamh, LOG_WARNING, "unable to find primary group %d for %s",
                    (int)pw->pw_gid, user);
           if (apply) /* not applies */
             return PAM_IGNORE;
@@ -231,7 +230,7 @@ pam_list(pam_handle_t *pamh, int argc, const char **argv)
           int n = 0; /* count of group items */
           if (gr) { /* add primary group */
             if ((items[n++] = strdup(gr->gr_name)) == NULL) {
-              _pam_log(LOG_ERR, "no memory for primary group");
+              pam_syslog(pamh, LOG_ERR, "no memory for primary group");
               return onerr;
             }
           }
@@ -240,12 +239,12 @@ pam_list(pam_handle_t *pamh, int argc, const char **argv)
             if (!in_list(user, (const char **)gr->gr_mem))
               continue;
             if (n == MAXITEMS) { /* items[] has additional entry for NULL */
-              _pam_log(LOG_WARNING, "too many groups for %s", user);
+              pam_syslog(pamh, LOG_WARNING, "too many groups for %s", user);
               break; /*XXX maybe return onerr here? */
             }
             if ((items[n++] = strdup(gr->gr_name)) == NULL) {
               while(n--) free((void*)items[n]);
-              _pam_log(LOG_ERR, "no memory for group list");
+              pam_syslog(pamh, LOG_ERR, "no memory for group list");
               return onerr;
             }
           }
@@ -275,7 +274,7 @@ pam_list(pam_handle_t *pamh, int argc, const char **argv)
     r = pam_get_item(pamh, item, &void_item);
     val = void_item;
     if (r != PAM_SUCCESS) {
-      _pam_log(LOG_ERR, "unable to get pam item: %s", pam_strerror(pamh, r));
+      pam_syslog(pamh, LOG_ERR, "unable to get pam item: %s", pam_strerror(pamh, r));
       return onerr;
     }
     if (!val || !*val)
@@ -318,18 +317,18 @@ pam_list(pam_handle_t *pamh, int argc, const char **argv)
     /* check file */
     if (lstat(list, &st) != 0) {
       if (onerr == PAM_SERVICE_ERR) /* Only report if it's an error... */
-        _pam_log(LOG_ERR, "unable to stat %s", list);
+        pam_syslog(pamh, LOG_ERR, "unable to stat %s", list);
       r = -1;
     }
     else if ((st.st_mode & S_IWOTH) || !S_ISREG(st.st_mode)) {
       /* If the file is world writable or is not a normal file, return error */
-      _pam_log(LOG_ERR,
+      pam_syslog(pamh, LOG_ERR,
          "%s is either world writable or not a normal file", list);
       r = -1;
     }
     else if ((f = fopen(list, "r")) == NULL) {
       if (onerr == PAM_SERVICE_ERR) /* Only report if it's an error... */
-        _pam_log(LOG_ERR, "unable to open %s", list);
+        pam_syslog(pamh, LOG_ERR, "unable to open %s", list);
       r = -1;
     }
     else {
@@ -343,7 +342,7 @@ pam_list(pam_handle_t *pamh, int argc, const char **argv)
         if (p[-1] == '\n') /* line is terminated good */
           --p;
         else if ((l = getc(f)) != EOF) { /* oops, not terminated and !eof */
-          _pam_log(LOG_ERR, "line in %s is too long", list);
+          pam_syslog(pamh, LOG_ERR, "line in %s is too long", list);
           while (l != '\n') /*XXX FIXME: skip this line completely? Or error? */
             if ((l = getc(f)) == EOF)
               break;
@@ -369,7 +368,7 @@ pam_list(pam_handle_t *pamh, int argc, const char **argv)
       }
       if (!r && ferror(f)) {
         /* if not found but error */
-        _pam_log(LOG_ERR, "error reading %s", list);
+        pam_syslog(pamh, LOG_ERR, "error reading %s", list);
         r = -1;
       }
       fclose(f);
@@ -400,25 +399,27 @@ pam_list(pam_handle_t *pamh, int argc, const char **argv)
     pam_get_item(pamh, PAM_USER, &void_item);
     user = void_item;
   }
-  _pam_log(LOG_ERR, "Refused user %s for service %s", user, list);
+  pam_syslog(pamh, LOG_ERR, "Refused user %s for service %s", user, list);
   return PAM_AUTH_ERR;
 }
 
-PAM_EXTERN
-int pam_sm_authenticate(pam_handle_t *pamh, int flags,
-                        int argc, const char **argv)
+PAM_EXTERN int
+pam_sm_authenticate(pam_handle_t *pamh, int flags UNUSED,
+		    int argc, const char **argv)
 {
   return pam_list(pamh, argc, argv);
 }
 
-PAM_EXTERN
-int pam_sm_setcred(pam_handle_t *pamh, int flags, int argc, const char **argv)
+PAM_EXTERN int
+pam_sm_setcred(pam_handle_t *pamh UNUSED, int flags UNUSED,
+	       int argc UNUSED, const char **argv UNUSED)
 {
   return PAM_SUCCESS;
 }
 
-PAM_EXTERN
-int pam_sm_acct_mgmt(pam_handle_t *pamh, int flags, int argc, const char **argv)
+PAM_EXTERN int
+pam_sm_acct_mgmt(pam_handle_t *pamh, int flags UNUSED,
+		 int argc, const char **argv)
 {
   return pam_list(pamh, argc, argv);
 }
@@ -435,6 +436,6 @@ struct pam_module _pam_listfile_modstruct = {
   NULL,
 };
 
-#endif
+#endif /* PAM_STATIC */
 
 /* end of module definition */

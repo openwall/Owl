@@ -1,0 +1,115 @@
+# Add const qualifier to pam_handle_t* argument of pam_strerror(),
+# pam_getenv(), pam_getenvlist(), pam_prompt() and pam_vprompt().
+
+diff -upk.orig Linux-PAM-0.99.2.1.orig/libpam/include/security/_pam_types.h Linux-PAM-0.99.2.1/libpam/include/security/_pam_types.h
+--- Linux-PAM-0.99.2.1.orig/libpam/include/security/_pam_types.h	2005-09-20 13:13:55 +0000
++++ Linux-PAM-0.99.2.1/libpam/include/security/_pam_types.h	2005-12-26 20:40:19 +0000
+@@ -175,16 +175,16 @@ extern int PAM_NONNULL((1,3))
+ pam_get_item(const pam_handle_t *pamh, int item_type, const void **item);
+ 
+ extern const char *
+-pam_strerror(pam_handle_t *pamh, int errnum);
++pam_strerror(const pam_handle_t *pamh, int errnum);
+ 
+ extern int PAM_NONNULL((1,2))
+ pam_putenv(pam_handle_t *pamh, const char *name_value);
+ 
+ extern const char * PAM_NONNULL((1,2))
+-pam_getenv(pam_handle_t *pamh, const char *name);
++pam_getenv(const pam_handle_t *pamh, const char *name);
+ 
+ extern char ** PAM_NONNULL((1))
+-pam_getenvlist(pam_handle_t *pamh);
++pam_getenvlist(const pam_handle_t *pamh);
+ 
+ /* ---------- Common Linux-PAM application/module PI ----------- */
+ 
+diff -upk.orig Linux-PAM-0.99.2.1.orig/libpam/include/security/pam_ext.h Linux-PAM-0.99.2.1/libpam/include/security/pam_ext.h
+--- Linux-PAM-0.99.2.1.orig/libpam/include/security/pam_ext.h	2005-09-19 15:58:29 +0000
++++ Linux-PAM-0.99.2.1/libpam/include/security/pam_ext.h	2005-12-26 20:40:19 +0000
+@@ -45,11 +45,11 @@ extern void PAM_FORMAT((printf, 3, 4)) P
+ pam_syslog (const pam_handle_t *pamh, int priority, const char *fmt, ...);
+ 
+ extern int PAM_FORMAT((printf, 4, 0)) PAM_NONNULL((1,4))
+-pam_vprompt (pam_handle_t *pamh, int style, char **response,
++pam_vprompt (const pam_handle_t *pamh, int style, char **response,
+ 	     const char *fmt, va_list args);
+ 
+ extern int PAM_FORMAT((printf, 4, 5)) PAM_NONNULL((1,4))
+-pam_prompt (pam_handle_t *pamh, int style, char **response,
++pam_prompt (const pam_handle_t *pamh, int style, char **response,
+ 	    const char *fmt, ...);
+ 
+ #define pam_error(pamh, fmt...) \
+diff -upk.orig Linux-PAM-0.99.2.1.orig/libpam/pam_env.c Linux-PAM-0.99.2.1/libpam/pam_env.c
+--- Linux-PAM-0.99.2.1.orig/libpam/pam_env.c	2005-09-04 20:32:25 +0000
++++ Linux-PAM-0.99.2.1/libpam/pam_env.c	2005-12-26 20:40:19 +0000
+@@ -22,7 +22,7 @@
+ /* helper functions */
+ 
+ #ifdef DEBUG
+-static void _pam_dump_env(pam_handle_t *pamh)
++static void _pam_dump_env(const pam_handle_t *pamh)
+ {
+     int i;
+ 
+@@ -282,7 +282,7 @@ int pam_putenv(pam_handle_t *pamh, const
+  *  Return the value of the requested environment variable
+  */
+ 
+-const char *pam_getenv(pam_handle_t *pamh, const char *name)
++const char *pam_getenv(const pam_handle_t *pamh, const char *name)
+ {
+     int item;
+ 
+@@ -316,7 +316,7 @@ const char *pam_getenv(pam_handle_t *pam
+     }
+ }
+ 
+-static char **_copy_env(pam_handle_t *pamh)
++static char **_copy_env(const pam_handle_t *pamh)
+ {
+     char **dump;
+     int i = pamh->env->requested;          /* reckon size of environment */
+@@ -355,7 +355,7 @@ static char **_copy_env(pam_handle_t *pa
+     return dump;
+ }
+ 
+-char **pam_getenvlist(pam_handle_t *pamh)
++char **pam_getenvlist(const pam_handle_t *pamh)
+ {
+     int i;
+ 
+diff -upk.orig Linux-PAM-0.99.2.1.orig/libpam/pam_strerror.c Linux-PAM-0.99.2.1/libpam/pam_strerror.c
+--- Linux-PAM-0.99.2.1.orig/libpam/pam_strerror.c	2005-08-16 12:27:39 +0000
++++ Linux-PAM-0.99.2.1/libpam/pam_strerror.c	2005-12-26 20:40:19 +0000
+@@ -6,7 +6,7 @@
+ 
+ #include "pam_private.h"
+ 
+-const char *pam_strerror(pam_handle_t *pamh UNUSED, int errnum)
++const char *pam_strerror(const pam_handle_t *pamh UNUSED, int errnum)
+ {
+     switch (errnum) {
+     case PAM_SUCCESS:
+diff -upk.orig Linux-PAM-0.99.2.1.orig/libpam/pam_vprompt.c Linux-PAM-0.99.2.1/libpam/pam_vprompt.c
+--- Linux-PAM-0.99.2.1.orig/libpam/pam_vprompt.c	2005-09-19 15:58:29 +0000
++++ Linux-PAM-0.99.2.1/libpam/pam_vprompt.c	2005-12-26 20:40:19 +0000
+@@ -46,7 +46,7 @@
+ #include "pam_private.h"
+ 
+ int
+-pam_vprompt (pam_handle_t *pamh, int style, char **response,
++pam_vprompt (const pam_handle_t *pamh, int style, char **response,
+ 	     const char *fmt, va_list args)
+ {
+   struct pam_message msg;
+@@ -101,7 +101,7 @@ pam_vprompt (pam_handle_t *pamh, int sty
+ }
+ 
+ int
+-pam_prompt (pam_handle_t *pamh, int style, char **response,
++pam_prompt (const pam_handle_t *pamh, int style, char **response,
+ 	    const char *fmt, ...)
+ {
+   va_list args;

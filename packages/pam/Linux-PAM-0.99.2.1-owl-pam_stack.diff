@@ -1,0 +1,319 @@
+diff -upk.orig Linux-PAM-0.99.2.1.orig/configure.in Linux-PAM-0.99.2.1/configure.in
+--- Linux-PAM-0.99.2.1.orig/configure.in	2005-12-26 14:32:06 +0000
++++ Linux-PAM-0.99.2.1/configure.in	2005-12-26 14:35:32 +0000
+@@ -414,4 +414,5 @@ AC_OUTPUT(Makefile libpam/Makefile libpa
+ 	modules/pam_unix/Makefile modules/pam_userdb/Makefile \
+ 	modules/pam_warn/Makefile modules/pam_wheel/Makefile \
+ 	modules/pam_xauth/Makefile modules/pam_chroot/Makefile \
++	modules/pam_stack/Makefile \
+ 	doc/Makefile doc/specs/Makefile examples/Makefile)
+diff -upk.orig Linux-PAM-0.99.2.1.orig/libpam/libpam.map Linux-PAM-0.99.2.1/libpam/libpam.map
+--- Linux-PAM-0.99.2.1.orig/libpam/libpam.map	2005-09-21 13:35:28 +0000
++++ Linux-PAM-0.99.2.1/libpam/libpam.map	2005-12-13 21:23:40 +0000
+@@ -54,3 +54,14 @@ LIBPAM_MODUTIL_1.0 {
+     pam_modutil_read;
+     pam_modutil_write;
+ };
++
++LIBPAM_PRIVATE_1.0 {
++  global:
++    _pam_make_env;
++    _pam_init_handlers;
++    _pam_start_handlers;
++    _pam_drop_env;
++    _pam_strdup;
++    _pam_dispatch;
++    _pam_free_handlers;
++};
+diff -upk.orig Linux-PAM-0.99.2.1.orig/modules/Makefile.am Linux-PAM-0.99.2.1/modules/Makefile.am
+--- Linux-PAM-0.99.2.1.orig/modules/Makefile.am	2005-09-26 17:41:06 +0000
++++ Linux-PAM-0.99.2.1/modules/Makefile.am	2005-12-26 14:35:12 +0000
+@@ -8,7 +8,7 @@ SUBDIRS = pam_access pam_cracklib pam_de
+ 	pam_motd pam_nologin pam_permit pam_pwdb pam_rhosts pam_rootok \
+ 	pam_securetty pam_selinux pam_shells pam_stress pam_succeed_if \
+ 	pam_tally pam_time pam_umask pam_unix pam_userdb pam_warn \
+-	pam_wheel pam_xauth pam_chroot
++	pam_wheel pam_xauth pam_chroot pam_stack
+ 
+ 
+ CLEANFILES = *~
+diff -upk.orig Linux-PAM-0.99.2.1.orig/modules/pam_stack/Makefile.am Linux-PAM-0.99.2.1/modules/pam_stack/Makefile.am
+--- Linux-PAM-0.99.2.1.orig/modules/pam_stack/Makefile.am	1970-01-01 00:00:00 +0000
++++ Linux-PAM-0.99.2.1/modules/pam_stack/Makefile.am	2005-12-13 21:23:40 +0000
+@@ -0,0 +1,16 @@
++CLEANFILES = *~
++
++EXTRA_DIST = README $(MANS)
++
++man_MANS = pam_stack.8
++
++securelibdir = $(SECUREDIR)
++
++AM_CFLAGS = -I$(top_srcdir)/libpam/include -I$(top_srcdir)/libpamc/include
++AM_LDFLAGS = -no-undefined -avoid-version -module \
++	-L$(top_builddir)/libpam -lpam
++if HAVE_VERSIONING
++  AM_LDFLAGS += -Wl,--version-script=$(srcdir)/../modules.map
++endif
++
++securelib_LTLIBRARIES = pam_stack.la
+diff -upk.orig Linux-PAM-0.99.2.1.orig/modules/pam_stack/pam_stack.c Linux-PAM-0.99.2.1/modules/pam_stack/pam_stack.c
+--- Linux-PAM-0.99.2.1.orig/modules/pam_stack/pam_stack.c	2005-01-10 16:16:47 +0000
++++ Linux-PAM-0.99.2.1/modules/pam_stack/pam_stack.c	2005-12-13 21:23:40 +0000
+@@ -46,10 +46,11 @@
+ 
+ #define PAM_CONST const
+ 
+-#include "../../_pam_aconf.h"
+-#include "../../libpam/include/security/_pam_types.h"
++#include "config.h"
++#include <security/_pam_types.h>
++#include <security/pam_modules.h>
++#include <security/pam_ext.h>
+ #include "../../libpam/pam_private.h"
+-#include <sys/syslog.h>
+ #include <stdlib.h>
+ #include <string.h>
+ 
+@@ -233,14 +234,14 @@ _pam_stack_copy(pam_handle_t *source, pa
+ 			break;
+ 	}
+ 	if(recipient) {
+-		openlog("pam_stack", LOG_PID, LOG_AUTHPRIV);
+ 		if(copied) {
+-			syslog(LOG_DEBUG, "passing %s to %s", name, recipient);
++			pam_syslog(source, LOG_DEBUG,
++				"passing %s to %s", name, recipient);
+ 		} else {
+-			syslog(LOG_DEBUG, "NOT passing %s to %s: %s", name,
+-			       recipient, reason);
++			pam_syslog(source, LOG_DEBUG,
++				"NOT passing %s to %s: %s",
++				name, recipient, reason);
+ 		}
+-		closelog();
+ 	}
+ }
+ 
+@@ -250,10 +251,9 @@ _pam_stack_cleanup(pam_handle_t *pamh, v
+ 	struct stack_data *stack_this = (struct stack_data*) data, *next;
+ 	while(stack_this != NULL) {
+ 		if(stack_this->debug) {
+-			openlog("pam_stack", LOG_PID, LOG_AUTHPRIV);
+-			syslog(LOG_DEBUG, "freeing stack data for `%s' service",
+-			       stack_this->service);
+-			closelog();
++			pam_syslog(pamh, LOG_DEBUG,
++				"freeing stack data for `%s' service",
++				stack_this->service);
+ 		}
+ 		/* Clean up and bug out.  Don't free the ITEMs because they're
+ 		 * shared by the parent's pamh.  Because of how setting items
+@@ -290,10 +290,9 @@ _pam_stack_dispatch(pam_handle_t *pamh, 
+ 	/* Save the main service name. */
+ 	ret = pam_get_item(pamh, PAM_SERVICE, (const void **) &parent_service);
+ 	if(ret != PAM_SUCCESS) {
+-		openlog("pam_stack", LOG_PID, LOG_AUTHPRIV);
+-		syslog(LOG_ERR, "pam_get_item(PAM_SERVICE) returned %s",
+-		       pam_strerror(pamh, ret));
+-		closelog();
++		pam_syslog(pamh, LOG_ERR,
++			"pam_get_item(PAM_SERVICE) returned %s",
++			pam_strerror(pamh, ret));
+ 		return PAM_SYSTEM_ERR;
+ 	}
+ 
+@@ -325,10 +324,8 @@ _pam_stack_dispatch(pam_handle_t *pamh, 
+ 					stack_description = "(unknown)";
+ 			}
+ 			if(stack_description) {
+-				openlog("pam_stack", LOG_PID, LOG_AUTHPRIV);
+-				syslog(LOG_DEBUG, "called for \"%s\"",
+-				       stack_description);
+-				closelog();
++				pam_syslog(pamh, LOG_DEBUG,
++					"called for \"%s\"", stack_description);
+ 			}
+ 		}
+ 		if(strncmp("service=", argv[i], 8) == 0) {
+@@ -339,23 +336,17 @@ _pam_stack_dispatch(pam_handle_t *pamh, 
+ 
+ 	/* Sign-on message. */
+ 	if(debug) {
+-		openlog("pam_stack", LOG_PID, LOG_AUTHPRIV);
+-		syslog(LOG_DEBUG, "called from \"%s\"",
++		pam_syslog(pamh, LOG_DEBUG, "called from \"%s\"",
+ 		       parent_service ? parent_service : "unknown service");
+-		closelog();
+ 	}
+ 	if(service == NULL) {
+-		openlog("pam_stack", LOG_PID, LOG_AUTHPRIV);
+-		syslog(LOG_ERR, "required argument \"service\" not given");
+-		closelog();
++		pam_syslog(pamh, LOG_ERR, "required argument \"service\" not given");
+ 		return PAM_SYSTEM_ERR;
+ 	}
+ 
+ 	/* Log that we're initializing. */
+ 	if(debug) {
+-		openlog("pam_stack", LOG_PID, LOG_AUTHPRIV);
+-		syslog(LOG_DEBUG, "initializing");
+-		closelog();
++		pam_syslog(pamh, LOG_DEBUG, "initializing");
+ 	}
+ 
+ 	/* Retrieve a previously-used stack, if we've been called before. */
+@@ -376,9 +367,7 @@ _pam_stack_dispatch(pam_handle_t *pamh, 
+ 	 * list of substacks we have contexts for. */
+ 	if(stack_this == NULL) {
+ 		if(debug) {
+-			openlog("pam_stack", LOG_PID, LOG_AUTHPRIV);
+-			syslog(LOG_DEBUG, "creating child stack `%s'", service);
+-			closelog();
++			pam_syslog(pamh, LOG_DEBUG, "creating child stack `%s'", service);
+ 		}
+ 
+ 		stack_this = malloc(sizeof(struct stack_data));
+@@ -399,16 +388,12 @@ _pam_stack_dispatch(pam_handle_t *pamh, 
+ 
+ 		/* Create an environment for the child. */
+ 		if(debug) {
+-			openlog("pam_stack", LOG_PID, LOG_AUTHPRIV);
+-			syslog(LOG_DEBUG, "creating environment");
+-			closelog();
++			pam_syslog(pamh, LOG_DEBUG, "creating environment");
+ 		}
+ 		ret = _pam_make_env(stack_this->pamh);
+ 		if(ret != PAM_SUCCESS) {
+-			openlog("pam_stack", LOG_PID, LOG_AUTHPRIV);
+-			syslog(LOG_ERR, "_pam_make_env() returned %s",
++			pam_syslog(pamh, LOG_ERR, "_pam_make_env() returned %s",
+ 			       pam_strerror(stack_this->pamh, ret));
+-			closelog();
+ 			_pam_drop(stack_this->service);
+ 			_pam_drop(stack_this->pamh);
+ 			_pam_drop(stack_this);
+@@ -418,10 +403,9 @@ _pam_stack_dispatch(pam_handle_t *pamh, 
+ 		/* Set the service.  This loads the service modules. */
+ 		ret = pam_set_item(stack_this->pamh, PAM_SERVICE, stack_this->service);
+ 		if(ret != PAM_SUCCESS) {
+-			openlog("pam_stack", LOG_PID, LOG_AUTHPRIV);
+-			syslog(LOG_ERR, "pam_set_item(PAM_SERVICE) returned %d (%s)",
+-			       ret, pam_strerror(stack_this->pamh, ret));
+-			closelog();
++			pam_syslog(pamh, LOG_ERR,
++				"pam_set_item(PAM_SERVICE) returned %d (%s)",
++				ret, pam_strerror(stack_this->pamh, ret));
+ 			_pam_drop(stack_this->service);
+ 			_pam_drop(stack_this->pamh);
+ 			_pam_drop(stack_this);
+@@ -432,10 +416,9 @@ _pam_stack_dispatch(pam_handle_t *pamh, 
+ 		_pam_start_handlers(stack_this->pamh);
+ 		ret = _pam_init_handlers(stack_this->pamh);
+ 		if(ret != PAM_SUCCESS) {
+-			openlog("pam_stack", LOG_PID, LOG_AUTHPRIV);
+-			syslog(LOG_ERR, "_pam_init_handlers() returned %d (%s)",
+-			       ret, pam_strerror(stack_this->pamh, ret));
+-			closelog();
++			pam_syslog(pamh, LOG_ERR,
++				"_pam_init_handlers() returned %d (%s)",
++				ret, pam_strerror(stack_this->pamh, ret));
+ 			_pam_drop(stack_this->service);
+ 			_pam_drop(stack_this->pamh);
+ 			_pam_drop(stack_this);
+@@ -461,10 +444,9 @@ _pam_stack_dispatch(pam_handle_t *pamh, 
+ 
+ 	} else {
+ 		if(debug) {
+-			openlog("pam_stack", LOG_PID, LOG_AUTHPRIV);
+-			syslog(LOG_DEBUG, "found previously-used child stack "
+-			       "`%s'", service);
+-			closelog();
++			pam_syslog(pamh, LOG_DEBUG,
++				"found previously-used child stack `%s'",
++				service);
+ 		}
+ 		_pam_drop(service);
+ 	}
+@@ -474,10 +456,8 @@ _pam_stack_dispatch(pam_handle_t *pamh, 
+ 	env = pam_getenvlist(pamh); 
+ 	for(i = 0; (env != NULL) && (env[i] != NULL); i++) {
+ 		if(debug) {
+-			openlog("pam_stack", LOG_PID, LOG_AUTHPRIV);
+-			syslog(LOG_DEBUG, "setting environment \"%s\" in child",
+-			       env[i]);
+-			closelog();
++			pam_syslog(pamh, LOG_DEBUG,
++				"setting environment \"%s\" in child", env[i]);
+ 		}
+ 		pam_putenv(stack_this->pamh, env[i]);
+ 		_pam_drop(env[i]);
+@@ -498,34 +478,26 @@ _pam_stack_dispatch(pam_handle_t *pamh, 
+ 
+ 	/* Pass the generic data pointer, too. */
+ 	if(debug) {
+-		openlog("pam_stack", LOG_PID, LOG_AUTHPRIV);
+-		syslog(LOG_DEBUG, "passing data to child");
+-		closelog();
++		pam_syslog(pamh, LOG_DEBUG, "passing data to child");
+ 	}
+ 	stack_this->pamh->data = pamh->data;
+ 
+ 	/* Now call the substack. */
+ 	if(debug) {
+-		openlog("pam_stack", LOG_PID, LOG_AUTHPRIV);
+-		syslog(LOG_DEBUG, "calling substack");
+-		closelog();
++		pam_syslog(pamh, LOG_DEBUG, "calling substack");
+ 	}
+ 	final_ret = _pam_dispatch(stack_this->pamh, flags, which_stack);
+ 	if(debug) {
+-		openlog("pam_stack", LOG_PID, LOG_AUTHPRIV);
+-		syslog(LOG_DEBUG, "substack returned %d (%s)", final_ret,
+-		       pam_strerror(stack_this->pamh, final_ret));
+-		closelog();
++		pam_syslog(pamh, LOG_DEBUG, "substack returned %d (%s)",
++			final_ret, pam_strerror(stack_this->pamh, final_ret));
+ 	}
+ 
+ 	/* Copy the useful data back up to the main stack, environment first. */
+ 	env = pam_getenvlist(stack_this->pamh); 
+ 	for(i = 0; (env != NULL) && (env[i] != NULL); i++) {
+ 		if(debug) {
+-			openlog("pam_stack", LOG_PID, LOG_AUTHPRIV);
+-			syslog(LOG_DEBUG, "setting environment \"%s\" in "
+-			       "parent", env[i]);
+-			closelog();
++			pam_syslog(pamh, LOG_DEBUG,
++				"setting environment \"%s\" in parent", env[i]);
+ 		}
+ 		pam_putenv(pamh, env[i]);
+ 		_pam_drop(env[i]);
+@@ -546,24 +518,18 @@ _pam_stack_dispatch(pam_handle_t *pamh, 
+ 
+ 	/* Wow, passing the extra data back is hard. */
+ 	if(debug) {
+-		openlog("pam_stack", LOG_PID, LOG_AUTHPRIV);
+-		syslog(LOG_DEBUG, "passing data back");
+-		closelog();
++		pam_syslog(pamh, LOG_DEBUG, "passing data back");
+ 	}
+ 	pamh->data = stack_this->pamh->data;
+ 
+ 	if(debug) {
+-		openlog("pam_stack", LOG_PID, LOG_AUTHPRIV);
+-		syslog(LOG_DEBUG, "passing former back");
+-		closelog();
++		pam_syslog(pamh, LOG_DEBUG, "passing former back");
+ 	}
+ 	/* pamh->former = stack_this->pamh->former; FIXME: deep copy? */
+ 
+ 	if(debug) {
+-		openlog("pam_stack", LOG_PID, LOG_AUTHPRIV);
+-		syslog(LOG_DEBUG, "returning %d (%s)", final_ret,
++		pam_syslog(pamh, LOG_DEBUG, "returning %d (%s)", final_ret,
+ 		       pam_strerror(stack_this->pamh, final_ret));
+-		closelog();
+ 	}
+ 
+ 	return final_ret;
