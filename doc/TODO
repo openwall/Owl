@@ -302,10 +302,6 @@ be supporting udev, make an exception for /dev.
 
 	pam.
 
-[PRIORITY: medium]
-[ASSIGNED: ldv@]
-Move pam_stack (and something else?) into a new pam-compat subpackage.
-
 [PRIORITY: low]
 Review PAM man pages in OpenPAM (FreeBSD-current) and on other OSes,
 most likely import some from OpenPAM (with minor changes for Linux-PAM
@@ -508,4 +504,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Owl: Owl/doc/TODO,v 1.148 2005/12/27 23:50:55 ldv Exp $
+$Owl: Owl/doc/TODO,v 1.149 2005/12/28 15:38:19 ldv Exp $

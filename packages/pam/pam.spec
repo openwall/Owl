@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/pam/pam.spec,v 1.46 2005/12/27 23:32:12 ldv Exp $
+# $Owl: Owl/packages/pam/pam.spec,v 1.47 2005/12/28 15:36:25 ldv Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
@@ -54,6 +54,14 @@ Group: Documentation
 %description doc
 This package contains the main Linux-PAM documentation in text, HTML, and
 PostScript formats.
+
+%package compat
+Summary: PAM modules for backwards compatibility.
+Group: System Environment/Base
+Requires: %name = %version-%release
+
+%description compat
+This package contains PAM modules for backwards compatibility.
 
 %prep
 %setup -q -n Linux-PAM-%version -a2
@@ -219,7 +227,6 @@ find %buildroot%docdir/ -type f -size +4k \( -iname changelog -or -name \*.txt -
 /%_lib/security/pam_rootok.so
 /%_lib/security/pam_securetty.so
 /%_lib/security/pam_shells.so
-/%_lib/security/pam_stack.so
 /%_lib/security/pam_stress.so
 /%_lib/security/pam_succeed_if.so
 /%_lib/security/pam_tally.so
@@ -241,6 +248,9 @@ find %buildroot%docdir/ -type f -size +4k \( -iname changelog -or -name \*.txt -
 %_mandir/man5/*
 %_mandir/man8/*
 
+%files compat
+/%_lib/security/pam_stack.so
+
 %files devel
 %defattr(-,root,root)
 %_libdir/libpam.so
@@ -259,6 +269,7 @@ find %buildroot%docdir/ -type f -size +4k \( -iname changelog -or -name \*.txt -
 - Updated Linux-PAM to 0.99.2.1.
 - Relocated documentation to %docdir.
 - Disabled build of static libraries.
+- Moved pam_stack into a new pam-compat subpackage.
 
 * Sat Dec 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.80-owl3
 - Rebuilt with libdb-4.2.so.
