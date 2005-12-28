@@ -1,6 +1,8 @@
 2005-12-27  Dmitry V. Levin  <ldv at owl.openwall.com>
 2005-12-28  Dmitry V. Levin  <ldv at owl.openwall.com>
 	* tcb.spec: 1.0.
+	* LICENSE: Updated copyrights for 2004 and 2005 years.
+	* tcb.spec: 1.0.
 	priorities of three error messages.
 
 2005-09-26  Dmitry V. Levin  <ldv at owl.openwall.com>
