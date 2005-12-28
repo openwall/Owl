@@ -40,7 +40,7 @@ diff -upk.orig Linux-PAM-0.99.2.1.orig/modules/Makefile.am Linux-PAM-0.99.2.1/mo
 diff -upk.orig Linux-PAM-0.99.2.1.orig/modules/pam_stack/Makefile.am Linux-PAM-0.99.2.1/modules/pam_stack/Makefile.am
 --- Linux-PAM-0.99.2.1.orig/modules/pam_stack/Makefile.am	1970-01-01 00:00:00 +0000
 +++ Linux-PAM-0.99.2.1/modules/pam_stack/Makefile.am	2005-12-13 21:23:40 +0000
-@@ -0,0 +1,16 @@
+@@ -0,0 +1,17 @@
 +CLEANFILES = *~
 +
 +EXTRA_DIST = README $(MANS)
@@ -49,7 +49,8 @@ diff -upk.orig Linux-PAM-0.99.2.1.orig/modules/pam_stack/Makefile.am Linux-PAM-0
 +
 +securelibdir = $(SECUREDIR)
 +
-+AM_CFLAGS = -I$(top_srcdir)/libpam/include -I$(top_srcdir)/libpamc/include
++AM_CFLAGS = -I$(top_srcdir)/libpam/include -I$(top_srcdir)/libpamc/include \
++	-fno-strict-aliasing
 +AM_LDFLAGS = -no-undefined -avoid-version -module \
 +	-L$(top_builddir)/libpam -lpam
 +if HAVE_VERSIONING
