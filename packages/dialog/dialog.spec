@@ -1,18 +1,15 @@
-# $Owl: Owl/packages/dialog/dialog.spec,v 1.17 2005/11/16 12:21:03 solar Exp $
+# $Owl: Owl/packages/dialog/dialog.spec,v 1.18 2005/12/29 23:58:49 mci Exp $
 
 Summary: A utility for creating TTY dialog boxes.
 Name: dialog
-Version: 0.9b
-%define original_date 20020814
-Release: owl2
+Version: 1.0
+%define original_date 20051219
+Release: owl1
 License: GPL
 Group: Applications/System
 Source: ftp://dickey.his.com/dialog/%name-%version-%original_date.tgz
-Patch0: dialog-0.9b-owl-pwdbox.diff
-Patch1: dialog-0.9b-owl-warnings.diff
-Patch2: dialog-0.9b-owl-tmp.diff
-Patch3: dialog-0.9b-rsbac-item-help.diff
-Patch4: dialog-0.9b-alt-locale.diff
+Patch0: dialog-1.0-owl-tmp.diff
+Patch1: dialog-1.0-owl-warnings.diff
 BuildRequires: ncurses-devel
 BuildRoot: /override/%name-%version
 
@@ -43,9 +40,6 @@ The following types of boxes are at your disposal:
 %setup -q -n %name-%version-%original_date
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -64,6 +58,10 @@ rm -rf %buildroot
 %_mandir/man1/dialog.*
 
 %changelog
+* Fri Dec 30 2003 Michail Litvak <mci-at-owl.openwall.com> 1.0-owl1
+- Updated to 1.0-20051219.
+- Updated patches.
+
 * Fri Jan 17 2003 Michail Litvak <mci-at-owl.openwall.com> 0.9b-owl2
 - Patch to fix unsafe temporary file handling in samples.
 - Patch from RSBAC project - allow help button using in

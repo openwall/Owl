@@ -1,8 +1,0 @@
---- dialog-0.9b-20020814/dialog.c.orig	Wed Aug 14 02:47:36 2002
-+++ dialog-0.9b-20020814/dialog.c	Fri Jan 10 01:05:14 2003
-@@ -1049,4 +1049,5 @@
-     (void) refresh();
-     end_dialog();
-     dlg_exit(retval);
-+    return 0;
- }

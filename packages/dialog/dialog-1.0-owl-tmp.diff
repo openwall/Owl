@@ -1,0 +1,787 @@
+--- dialog-1.0-20051219/samples/copifuncs/copi.funcs.orig	2001-01-15 22:24:26.000000000 +0000
++++ dialog-1.0-20051219/samples/copifuncs/copi.funcs	2005-12-29 22:55:48.000000000 +0000
+@@ -31,7 +31,8 @@
+ PNTSETUP=$COMEONDIR/point/.pntsetup
+ 
+ mkstemp() {
+-  eval 'tmp_'$1'=`tempfile 2>/dev/null` || tmp_'$1'=/tmp/'$1'$$'
++  eval 'tmp_'$1'=`mktemp -t copi-XXXXXX` || exit 1'
++  eval 'tempfiles[${#tempfiles[@]}]=$tmp_'$1
+ }
+ 
+ # Args: [start_uid]
+--- dialog-1.0-20051219/samples/copifuncs/copi.sendifm1.orig	1996-01-15 22:53:00.000000000 +0000
++++ dialog-1.0-20051219/samples/copifuncs/copi.sendifm1	2005-12-29 22:55:48.000000000 +0000
+@@ -20,7 +20,7 @@
+ cd ${BATCH}
+ 
+ ##  Anyone else there?
+-trap 'rm -f ${LOCK} ; exit 1' 1 2 3 15
++tempfiles[${#tempfiles[@]}]=${LOCK}
+ shlock -p $$ -f ${LOCK} || {
+     echo "${PROGNAME}: [$$] locked by [`cat ${LOCK}`]"
+     exit 0
+--- dialog-1.0-20051219/samples/copismall.orig	2003-08-15 19:34:18.000000000 +0000
++++ dialog-1.0-20051219/samples/copismall	2005-12-29 23:07:38.000000000 +0000
+@@ -49,6 +49,10 @@
+ 
+ #POINTVER="v1.1"		# ComeOn Point version
+ 
++declare -a tempfiles
++trap 'rm -f -- "${tempfiles[@]}"' EXIT
++trap 'trap - EXIT; rm -f -- "${tempfiles[@]}"; exit 1' HUP INT QUIT TERM
++
+ if [ $LOGNAME != root ]
+ then
+   $DIALOG --backtitle "$TITLE" --title "Error!" --beep --msgbox "Questo programma per funzionare correttamente deve essere avviato dall'amministratore di sistema (root)." 0 0
+--- dialog-1.0-20051219/samples/checklist.orig	2004-12-20 00:14:24.000000000 +0000
++++ dialog-1.0-20051219/samples/checklist	2005-12-29 23:05:06.000000000 +0000
+@@ -6,8 +6,10 @@
+ : ${DIALOG_CANCEL=1}
+ : ${DIALOG_ESC=255}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --backtitle "No Such Organization" \
+ 	--title "CHECKLIST BOX" \
+--- dialog-1.0-20051219/samples/checklist1.orig	2004-12-20 00:14:24.000000000 +0000
++++ dialog-1.0-20051219/samples/checklist1	2005-12-29 23:02:38.000000000 +0000
+@@ -6,8 +6,10 @@
+ : ${DIALOG_CANCEL=1}
+ : ${DIALOG_ESC=255}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --backtitle "No Such Organization" \
+ 	--title "CHECKLIST BOX" \
+--- dialog-1.0-20051219/samples/checklist7.orig	2005-10-05 23:43:22.000000000 +0000
++++ dialog-1.0-20051219/samples/checklist7	2005-12-29 23:17:14.000000000 +0000
+@@ -3,8 +3,10 @@
+ # "checklist6" with --separate-output
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --help-button \
+ 	--item-help \
+--- dialog-1.0-20051219/samples/checklist2.orig	2004-12-20 00:14:24.000000000 +0000
++++ dialog-1.0-20051219/samples/checklist2	2005-12-29 23:02:54.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: checklist2,v 1.4 2004/12/20 00:14:24 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --item-help --backtitle "No Such Organization" \
+ 	--title "CHECKLIST BOX" \
+--- dialog-1.0-20051219/samples/checklist8.orig	2005-10-05 23:43:22.000000000 +0000
++++ dialog-1.0-20051219/samples/checklist8	2005-12-29 23:17:30.000000000 +0000
+@@ -3,8 +3,10 @@
+ # "checklist7" without --item-help
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --help-button \
+ 	--colors \
+--- dialog-1.0-20051219/samples/checklist3.orig	2004-12-20 00:14:24.000000000 +0000
++++ dialog-1.0-20051219/samples/checklist3	2005-12-29 23:03:43.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: checklist3,v 1.4 2004/12/20 00:14:24 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --item-help --backtitle "No Such Organization" \
+ 	--title "CHECKLIST BOX" \
+--- dialog-1.0-20051219/samples/checklist9.orig	2004-03-13 19:25:43.000000000 +0000
++++ dialog-1.0-20051219/samples/checklist9	2005-12-29 23:17:40.000000000 +0000
+@@ -3,8 +3,10 @@
+ # "checklist8" using --file
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --file checklist9.txt 2>$tempfile
+ 
+--- dialog-1.0-20051219/samples/checklist4.orig	2004-12-20 00:14:24.000000000 +0000
++++ dialog-1.0-20051219/samples/checklist4	2005-12-29 23:04:04.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: checklist4,v 1.5 2004/12/20 00:14:24 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --help-button --item-help --backtitle "No Such Organization" \
+ 	--title "CHECKLIST BOX" \
+--- dialog-1.0-20051219/samples/checklist10.orig	2004-07-31 11:12:00.000000000 +0000
++++ dialog-1.0-20051219/samples/checklist10	2005-12-29 23:17:46.000000000 +0000
+@@ -3,8 +3,10 @@
+ # zero-width column
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG \
+ 	--backtitle "No such organization" \
+--- dialog-1.0-20051219/samples/checklist5.orig	2004-12-20 00:14:24.000000000 +0000
++++ dialog-1.0-20051219/samples/checklist5	2005-12-29 23:04:46.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: checklist5,v 1.4 2004/12/20 00:14:24 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --help-button --item-help --backtitle "No Such Organization" \
+ 	--title "CHECKLIST BOX" \
+--- dialog-1.0-20051219/samples/infobox5.orig	2003-08-15 19:40:37.000000000 +0000
++++ dialog-1.0-20051219/samples/infobox5	2005-12-29 23:18:17.000000000 +0000
+@@ -3,8 +3,11 @@
+ # get rid of all flickering by constructing a script unroll the loop, leaving
+ # us in curses-mode until we're done counting.
+ : ${DIALOG=dialog}
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ left=10
+ unit="seconds"
+--- dialog-1.0-20051219/samples/checklist6.orig	2005-10-05 23:43:22.000000000 +0000
++++ dialog-1.0-20051219/samples/checklist6	2005-12-29 23:04:58.000000000 +0000
+@@ -3,8 +3,10 @@
+ # example showing the --colors option
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --help-button --item-help --colors --backtitle "\Z1No Such\Zn Organization" \
+ 	--title "CHECKLIST BOX" \
+--- dialog-1.0-20051219/samples/infobox6.orig	2003-08-15 19:40:37.000000000 +0000
++++ dialog-1.0-20051219/samples/infobox6	2005-12-29 23:18:27.000000000 +0000
+@@ -5,8 +5,11 @@
+ #
+ # a little fancier than infobox5, this moves the widget at each step.
+ : ${DIALOG=dialog}
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ left=10
+ unit="seconds"
+--- dialog-1.0-20051219/samples/inputbox.orig	2003-08-15 19:40:37.000000000 +0000
++++ dialog-1.0-20051219/samples/inputbox	2005-12-29 23:08:40.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: inputbox,v 1.6 2003/08/15 19:40:37 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --title "INPUT BOX" --clear \
+         --inputbox "Hi, this is an input dialog box. You can use \n
+--- dialog-1.0-20051219/samples/inputbox1.orig	2003-08-15 19:43:23.000000000 +0000
++++ dialog-1.0-20051219/samples/inputbox1	2005-12-29 23:07:53.000000000 +0000
+@@ -1,8 +1,10 @@
+ #!/bin/sh
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --cr-wrap \
+ 	--title "INPUT BOX" --clear \
+--- dialog-1.0-20051219/samples/password1.orig	2003-11-26 22:25:03.000000000 +0000
++++ dialog-1.0-20051219/samples/password1	2005-12-29 23:19:31.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: password1,v 1.1 2003/11/26 22:25:03 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --title "INPUT BOX" --clear \
+ 	--insecure \
+--- dialog-1.0-20051219/samples/inputbox2.orig	2003-08-15 19:40:37.000000000 +0000
++++ dialog-1.0-20051219/samples/inputbox2	2005-12-29 23:08:06.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: inputbox2,v 1.4 2003/08/15 19:40:37 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --title "INPUT BOX" --clear \
+         --inputbox "Hi, this is an input dialog box. You can use \n
+--- dialog-1.0-20051219/samples/password2.orig	2003-11-26 22:37:29.000000000 +0000
++++ dialog-1.0-20051219/samples/password2	2005-12-29 23:19:49.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: password2,v 1.1 2003/11/26 22:37:29 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --title "INPUT BOX" --clear \
+ 	--insecure \
+--- dialog-1.0-20051219/samples/inputbox3.orig	2003-08-15 19:40:37.000000000 +0000
++++ dialog-1.0-20051219/samples/inputbox3	2005-12-29 23:08:14.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: inputbox3,v 1.2 2003/08/15 19:40:37 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --nocancel \
+ 	--title "INPUT BOX" --clear \
+--- dialog-1.0-20051219/samples/radiolist10.orig	2004-07-31 11:12:10.000000000 +0000
++++ dialog-1.0-20051219/samples/radiolist10	2005-12-29 23:19:56.000000000 +0000
+@@ -3,8 +3,10 @@
+ # zero-width column
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG \
+ 	--backtitle "No such organization" \
+--- dialog-1.0-20051219/samples/inputbox5.orig	2003-08-15 19:40:37.000000000 +0000
++++ dialog-1.0-20051219/samples/inputbox5	2005-12-29 23:08:32.000000000 +0000
+@@ -3,8 +3,10 @@
+ # use --output-fd to write to a different output than stderr
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --title "INPUT BOX" --clear --output-fd 4 \
+         --inputbox "Hi, this is an input dialog box. You can use \n
+--- dialog-1.0-20051219/samples/textbox3.orig	2005-12-05 22:07:56.000000000 +0000
++++ dialog-1.0-20051219/samples/textbox3	2005-12-29 23:20:02.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: textbox3,v 1.1 2005/12/05 22:07:56 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ TEXT=/usr/share/common-licenses/GPL
+ test -f $TEXT || TEXT=../COPYING
+--- dialog-1.0-20051219/samples/menubox.orig	2003-08-15 19:40:37.000000000 +0000
++++ dialog-1.0-20051219/samples/menubox	2005-12-29 23:10:44.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: menubox,v 1.4 2003/08/15 19:40:37 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --clear --title "MENU BOX" \
+         --menu "Hi, this is a menu box. You can use this to \n\
+--- dialog-1.0-20051219/samples/menubox1.orig	2003-08-15 19:40:37.000000000 +0000
++++ dialog-1.0-20051219/samples/menubox1	2005-12-29 23:08:52.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: menubox1,v 1.2 2003/08/15 19:40:37 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --default-item "OS/2" --clear --title "MENU BOX" \
+         --menu "Hi, this is a menu box. You can use this to \n\
+--- dialog-1.0-20051219/samples/menubox2.orig	2003-08-15 19:40:37.000000000 +0000
++++ dialog-1.0-20051219/samples/menubox2	2005-12-29 23:09:20.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: menubox2,v 1.2 2003/08/15 19:40:37 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --default-item "MSDOS" --clear --title "MENU BOX" \
+         --menu "Hi, this is a menu box. You can use this to \n\
+--- dialog-1.0-20051219/samples/menubox3.orig	2004-12-19 23:18:53.000000000 +0000
++++ dialog-1.0-20051219/samples/menubox3	2005-12-29 23:09:29.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: menubox3,v 1.3 2004/12/19 23:18:53 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --clear --item-help --title "MENU BOX" \
+         --menu "Hi, this is a menu box. You can use this to \n\
+--- dialog-1.0-20051219/samples/menubox4.orig	2004-12-19 23:18:53.000000000 +0000
++++ dialog-1.0-20051219/samples/menubox4	2005-12-29 23:09:39.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: menubox4,v 1.3 2004/12/19 23:18:53 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --clear --item-help --title "MENU BOX" \
+         --menu "Hi, this is a menu box. You can use this to \n\
+--- dialog-1.0-20051219/samples/menubox5.orig	2004-12-19 23:18:53.000000000 +0000
++++ dialog-1.0-20051219/samples/menubox5	2005-12-29 23:10:05.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: menubox5,v 1.4 2004/12/19 23:18:53 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --clear --help-button --item-help --title "MENU BOX" \
+         --menu "Hi, this is a menu box. You can use this to \n\
+--- dialog-1.0-20051219/samples/menubox6.orig	2004-12-19 23:18:53.000000000 +0000
++++ dialog-1.0-20051219/samples/menubox6	2005-12-29 23:10:14.000000000 +0000
+@@ -3,8 +3,10 @@
+ # example showing the --colors option
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --clear --item-help --title "MENU BOX" --colors \
+         --menu "Hi, this is a \Zumenu\Zn box. You can use this to \n\
+--- dialog-1.0-20051219/samples/menubox7.orig	2004-12-19 23:18:53.000000000 +0000
++++ dialog-1.0-20051219/samples/menubox7	2005-12-29 23:10:24.000000000 +0000
+@@ -3,8 +3,10 @@
+ # example with --extra-button
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --clear --item-help --extra-button --extra-label "Choice" \
+ 	--title "MENU BOX" \
+--- dialog-1.0-20051219/samples/password.orig	2003-08-15 19:40:37.000000000 +0000
++++ dialog-1.0-20051219/samples/password	2005-12-29 23:10:52.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: password,v 1.2 2003/08/15 19:40:37 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --title "INPUT BOX" --clear \
+         --passwordbox "Hi, this is an password dialog box. You can use \n
+--- dialog-1.0-20051219/samples/radiolist.orig	2004-12-20 00:14:24.000000000 +0000
++++ dialog-1.0-20051219/samples/radiolist	2005-12-29 23:11:24.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: radiolist,v 1.8 2004/12/20 00:14:24 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --backtitle "No Such Organization" \
+ 	--title "RADIOLIST BOX" --clear \
+--- dialog-1.0-20051219/samples/radiolist2.orig	2004-12-20 00:14:24.000000000 +0000
++++ dialog-1.0-20051219/samples/radiolist2	2005-12-29 23:11:03.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: radiolist2,v 1.3 2004/12/20 00:14:24 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --ok-label Okay \
+ 	--cancel-label 'Give Up' \
+--- dialog-1.0-20051219/samples/radiolist3.orig	2004-12-20 00:14:24.000000000 +0000
++++ dialog-1.0-20051219/samples/radiolist3	2005-12-29 23:11:09.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: radiolist3,v 1.4 2004/12/20 00:14:24 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --item-help --ok-label Okay \
+ 	--cancel-label 'Give Up' \
+--- dialog-1.0-20051219/samples/radiolist4.orig	2004-12-20 00:14:24.000000000 +0000
++++ dialog-1.0-20051219/samples/radiolist4	2005-12-29 23:11:17.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: radiolist4,v 1.4 2004/12/20 00:14:24 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --help-button --help-label "Hints" --item-help --ok-label Okay \
+ 	--cancel-label 'Give Up' \
+--- dialog-1.0-20051219/samples/tailboxbg.orig	2003-08-15 19:40:37.000000000 +0000
++++ dialog-1.0-20051219/samples/tailboxbg	2005-12-29 23:12:00.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: tailboxbg,v 1.5 2003/08/15 19:40:37 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ ./killall listing
+ ./listing >listing.out &
+--- dialog-1.0-20051219/samples/tailboxbg1.orig	2003-08-15 19:40:37.000000000 +0000
++++ dialog-1.0-20051219/samples/tailboxbg1	2005-12-29 23:11:33.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: tailboxbg1,v 1.5 2003/08/15 19:40:37 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ ./killall listing
+ ./listing >listing.out &
+--- dialog-1.0-20051219/samples/tailboxbg2.orig	2003-08-15 19:40:37.000000000 +0000
++++ dialog-1.0-20051219/samples/tailboxbg2	2005-12-29 23:11:45.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: tailboxbg2,v 1.5 2003/08/15 19:40:37 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ ./killall listing
+ ./listing >listing.out &
+--- dialog-1.0-20051219/samples/textbox.orig	2005-12-07 01:02:47.000000000 +0000
++++ dialog-1.0-20051219/samples/textbox	2005-12-29 23:12:14.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: textbox,v 1.7 2005/12/07 01:02:47 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ cat << EOF > $tempfile
+ Hi, this is a text dialog box. It can be used to display text from a file.
+--- dialog-1.0-20051219/samples/textbox2.orig	2005-12-07 01:03:22.000000000 +0000
++++ dialog-1.0-20051219/samples/textbox2	2005-12-29 23:12:06.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: textbox2,v 1.3 2005/12/07 01:03:22 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ cat << EOF > $tempfile
+ Hi, this is a text dialog box. It can be used to display text from a file.
+--- dialog-1.0-20051219/samples/wheel.orig	2003-08-15 19:40:37.000000000 +0000
++++ dialog-1.0-20051219/samples/wheel	2005-12-29 23:12:26.000000000 +0000
+@@ -2,7 +2,10 @@
+ # $Id: wheel,v 1.4 2003/08/15 19:40:37 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ TITLE="This screen was taken from ComeOn Point Installer! v0.9 by ComeOn Linux!"
+ 
+--- dialog-1.0-20051219/samples/checklist-8bit.orig	2004-12-19 16:47:52.000000000 +0000
++++ dialog-1.0-20051219/samples/checklist-8bit	2005-12-29 23:17:55.000000000 +0000
+@@ -6,8 +6,10 @@
+ : ${DIALOG_CANCEL=1}
+ : ${DIALOG_ESC=255}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ . ./testdata-8bit
+ 
+--- dialog-1.0-20051219/samples/checklist-utf8.orig	2004-12-20 00:14:24.000000000 +0000
++++ dialog-1.0-20051219/samples/checklist-utf8	2005-12-29 23:18:08.000000000 +0000
+@@ -6,8 +6,10 @@
+ : ${DIALOG_CANCEL=1}
+ : ${DIALOG_ESC=255}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ case none"$LANG$LC_ALL$LC_CTYPE" in
+ *UTF-8*)
+--- dialog-1.0-20051219/samples/inputbox6-8bit.orig	2004-12-19 16:19:34.000000000 +0000
++++ dialog-1.0-20051219/samples/inputbox6-8bit	2005-12-29 23:18:32.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: inputbox6-8bit,v 1.1 2004/12/19 16:19:34 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ . ./testdata-8bit
+ 
+--- dialog-1.0-20051219/samples/inputbox6-utf8.orig	2003-08-15 19:40:37.000000000 +0000
++++ dialog-1.0-20051219/samples/inputbox6-utf8	2005-12-29 23:18:38.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: inputbox6-utf8,v 1.1 2003/08/15 19:40:37 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ case none"$LANG$LC_ALL$LC_CTYPE" in
+ *UTF-8*)
+--- dialog-1.0-20051219/samples/inputbox-both.orig	2005-12-05 23:13:59.000000000 +0000
++++ dialog-1.0-20051219/samples/inputbox-both	2005-12-29 23:18:49.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: inputbox-both,v 1.1 2005/12/05 23:13:59 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --title "INPUT BOX" --clear \
+ 	--extra-button \
+--- dialog-1.0-20051219/samples/inputbox-extra.orig	2005-12-05 23:16:24.000000000 +0000
++++ dialog-1.0-20051219/samples/inputbox-extra	2005-12-29 23:18:56.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: inputbox-extra,v 1.1 2005/12/05 23:16:24 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --title "INPUT BOX" --clear \
+ 	--extra-button \
+--- dialog-1.0-20051219/samples/inputbox-help.orig	2005-12-05 23:15:16.000000000 +0000
++++ dialog-1.0-20051219/samples/inputbox-help	2005-12-29 23:19:02.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: inputbox-help,v 1.1 2005/12/05 23:15:16 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ $DIALOG --title "INPUT BOX" --clear \
+ 	--help-button \
+--- dialog-1.0-20051219/samples/menubox-8bit.orig	2004-12-19 16:55:17.000000000 +0000
++++ dialog-1.0-20051219/samples/menubox-8bit	2005-12-29 23:19:10.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: menubox-8bit,v 1.1 2004/12/19 16:55:17 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ . ./testdata-8bit
+ 
+--- dialog-1.0-20051219/samples/menubox-utf8.orig	2003-08-18 23:01:19.000000000 +0000
++++ dialog-1.0-20051219/samples/menubox-utf8	2005-12-29 23:19:17.000000000 +0000
+@@ -2,8 +2,10 @@
+ # $Id: menubox-utf8,v 1.1 2003/08/18 23:01:19 tom Exp $
+ : ${DIALOG=dialog}
+ 
+-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+-trap "rm -f $tempfile" 0 1 2 5 15
++tempfile=
++tempfile="`mktemp -t dialog-samples.XXXXXX`" || exit 
++trap 'rm -f -- "$tempfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ case none"$LANG$LC_ALL$LC_CTYPE" in
+ *UTF-8*)
