@@ -8,7 +8,7 @@ ausgeliefert und man unterstützt damit unser Projekt.
 Owl kann von einem der folgenden offiziellen Mirror-Server herunter
 geladen werden:
 
-ftp://mirror.sg.depaul.edu/pub/security/openwall.com/Owl/	(USA)
+ftp://ftp.mathematik.uni-marburg.de/pub/mirror/openwall/Owl/	(Deutschland)
 ftp://ftp1.msk.ru.openwall.com/pub/Owl/	(Moskau, Russland)
 ftp://ftp2.msk.ru.openwall.com/pub/Owl/	(Moskau, Russland)
 ftp://ftp.spb.ru.openwall.com/pub/Owl/	(St. Petersburg, Russland)
@@ -19,7 +19,8 @@ ftp://ftp.ua.openwall.com/pub/Owl/	(NUR in der Ukraine)
 ftp://gd.tuwien.ac.at/opsys/linux/Owl/	(Österreich)
 	http://gd.tuwien.ac.at/opsys/linux/Owl/
 	rsync://gd.tuwien.ac.at/opsys/linux/Owl/
-ftp://ftp.mathematik.uni-marburg.de/pub/mirror/openwall/Owl/	(Deutschland)
+ftp://ftp.mirrorgeek.com/openwall/Owl/	(USA)
+	http://www.mirrorgeek.com/openwall/Owl/
 ftp://ftp.wiretapped.net/pub/Owl/	(Australien)
 
 Für jedes Release von Owl gibt es ein eigenes Unterverzeichnis mit dem
@@ -75,4 +76,4 @@ Wir bieten zudem auch ein CVSweb-Interface an:
 
 http://cvsweb.openwall.com
 
-$Owl: Owl/doc/de/DOWNLOAD,v 1.26 2005/11/16 11:59:01 solar Exp $
+$Owl: Owl/doc/de/DOWNLOAD,v 1.27 2005/12/29 20:38:40 solar Exp $

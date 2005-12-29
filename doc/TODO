@@ -502,7 +502,6 @@ configuration file compatibility.
 [PRIORITY: medium]
 Fix installworld.sh to always pick the latest version of a package when
 multiple versions are available (please refer to the appropriate XXX
-comment in the script).  Alternatively, as a temporary workaround drop
-the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
+comment in the script).
 
-$Owl: Owl/doc/TODO,v 1.151 2005/12/29 13:15:20 solar Exp $
+$Owl: Owl/doc/TODO,v 1.152 2005/12/29 20:38:40 solar Exp $
