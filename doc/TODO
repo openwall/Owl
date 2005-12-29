@@ -223,6 +223,13 @@ sure that everything works, the temporary files are dealt with safely
 Consider enhancements from VVV (http://mutt.org.ua).
 
 
+	nmap.
+
+[PRIORITY: medium]
+[ASSIGNED: mci@]
+Update to 3.95+, reviewing post-3.48 patches in ALT Linux's package.
+
+
 	openssh.
 
 [PRIORITY: medium]
@@ -498,4 +505,4 @@ multiple versions are available (please refer to the appropriate XXX
 comment in the script).  Alternatively, as a temporary workaround drop
 the misconfigured mirror.sg.depaul.edu from the list of mirrors. :-(
 
-$Owl: Owl/doc/TODO,v 1.150 2005/12/28 16:13:22 ldv Exp $
+$Owl: Owl/doc/TODO,v 1.151 2005/12/29 13:15:20 solar Exp $
