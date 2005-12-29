@@ -69,9 +69,8 @@ The performance improvement with the sparcv9 is minimal (1 to 2%,
 except for certain functions in glibc and OpenSSL where SPARC V9
 assembly versions are provided).
 
-sparc64 is not supported at this stage (need to change glibc version
-first).  It is possible to build Owl userland (32-bit) while running
-a sparc64 kernel, though.
+sparc64 is not supported at this stage.  It is possible to build Owl
+userland (32-bit) while running a sparc64 kernel, though.
 
 
 	Alpha.
@@ -85,4 +84,4 @@ built for alphaev56 are tuned for EV56/PCA56 processors (21164A,
 plain alpha packages.  On an EV6+ (21264, 21264A), use the alphaev56
 packages.
 
-$Owl: Owl/doc/ARCHITECTURES,v 1.5 2005/12/26 22:14:07 solar Exp $
+$Owl: Owl/doc/ARCHITECTURES,v 1.6 2005/12/29 21:04:00 solar Exp $
