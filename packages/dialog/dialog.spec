@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/dialog/dialog.spec,v 1.18 2005/12/29 23:58:49 mci Exp $
+# $Owl: Owl/packages/dialog/dialog.spec,v 1.19 2005/12/30 10:32:07 mci Exp $
 
 Summary: A utility for creating TTY dialog boxes.
 Name: dialog
@@ -58,7 +58,7 @@ rm -rf %buildroot
 %_mandir/man1/dialog.*
 
 %changelog
-* Fri Dec 30 2003 Michail Litvak <mci-at-owl.openwall.com> 1.0-owl1
+* Fri Dec 30 2005 Michail Litvak <mci-at-owl.openwall.com> 1.0-owl1
 - Updated to 1.0-20051219.
 - Updated patches.
 
