@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.17 2005/11/16 13:21:54 solar Exp $
+# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.18 2005/12/31 12:51:09 ldv Exp $
 
 # Set the initial default search path for use by startup scripts.
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
@@ -71,7 +71,7 @@ if [ ! -f /fastboot -o -e /forcefsck ]; then
 		fsck -A -aTC $FSCKOPTS
 	else
 # ...except for the root filesystem, which is mounted read-write.
-		fsck -R -aTC $FSCKOPTS
+		fsck -RA -aTC $FSCKOPTS
 	fi
 	STATUS=$?
 else

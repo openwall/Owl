@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.63 2005/11/16 13:21:54 solar Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.64 2005/12/31 12:51:09 ldv Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.26
+Version: 0.27
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -18,6 +18,7 @@ Source8: service
 Source9: sysctl.conf
 Patch0: initscripts-5.00-owl-dhclient.diff
 Patch1: initscripts-5.00-owl-network-typo.diff
+Patch2: initscripts-5.00-owl-NETWORKING.diff
 PreReq: /sbin/chkconfig
 Requires: SysVinit, msulogin, /sbin/start-stop-daemon
 Requires: bash >= 2.0, sh-utils
@@ -36,6 +37,7 @@ system down cleanly.
 %setup -q -n initscripts-5.00
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 %__make -C src CC="%__cc" CFLAGS="%optflags" usleep ipcalc
@@ -162,6 +164,12 @@ fi
 %doc redhat
 
 %changelog
+* Sat Dec 31 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.27-owl1
+- Fixed a typo in rc.sysinit which prevented fsck from running in parallel
+mode when root filesystem is mounted read-write.
+- Quoted $NETWORKING to avoid syntax errors if this variable is not
+defined.  Thanks to Jarno Huuskonen for pointing it out.
+
 * Fri Oct 21 2005 Solar Designer <solar-at-owl.openwall.com> 0.26-owl1
 - Optimized the "service" script to use "exec" on final executions of
 init scripts such that there's no second copy of a shell unnecessarily
