@@ -27,11 +27,9 @@ soll.  Wird ein IDE CD-ROM verwendet muss hier der richtige IDE Controller
 und die richtige Anschlussart (Master oder Slave) gewählt werden.  Bei
 einem SCSI CD-ROM wählt man "scsi".
 
-Owl sollte dann in den single-user Modus booten.  Bei der Frage nach dem
-root Passwort drückt man einfach Enter (die CDs haben kein Passwort) oder
-man drückt STRG-D um das System in den multi-user Modus zu booten (nicht
-empfohlen).  Wenn man sich für den single-user Modus entschieden hat,
-kann man das von der CD gebootete System durch Eingabe von
+Owl sollte dann in den single-user Modus booten.  Das root Passwort ist bei den
+CDs nicht gesetzt, man kann einfach Enter drücken.  Von der Shell aus kann man
+das von der CD gebootete System durch Eingabe von
 
 	setup
 
@@ -104,4 +102,4 @@ bereits installierten (falls vorhanden) verwenden.
 Nach Abschluss der Installation müssen die Dateisysteme noch manuell mittels
 umount(8) ausgehängt werden.  Danach kann das System sicher neugestartet werden.
 
-$Owl: Owl/doc/de/INSTALL,v 1.14 2005/11/16 11:59:01 solar Exp $
+$Owl: Owl/doc/de/INSTALL,v 1.15 2006/01/02 10:26:38 schmidt Exp $

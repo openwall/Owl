@@ -1,6 +1,6 @@
 In dieser Datei werden Probleme beschrieben, die Auftauchen können,
-wenn man Pakete von Red Hat Linux 9 oder welche die dafür gedacht
-sind, verwendet.   Die Namen der betroffenen Red Hat Linux Pakete,
+wenn man Pakete von Red Hat Linux (Fedora Core, Red Hat Enterprise Linux)
+mit Owl verwendet.  Die Namen der betroffenen Red Hat Linux Pakete,
 falls zutreffend oder bekannt, sind in Klammern gesetzt.
 
 
@@ -108,4 +108,4 @@ Ein uns bekanntes Problem liegt in den Sourcen zu den aktuellsten Versionen
 von RPM (neuer als die, die in PHL 9 verwendet werden) die NPTL verwenden.
 Diese Abhängigkeit ist in unserer Version von RPM gelöst.
 
-$Owl: Owl/doc/de/REDHAT,v 1.3 2005/11/16 11:59:01 solar Exp $
+$Owl: Owl/doc/de/REDHAT,v 1.4 2006/01/02 10:26:38 schmidt Exp $

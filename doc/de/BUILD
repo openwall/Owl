@@ -42,10 +42,9 @@ während des Übersetzens genutzt werden kann;
 Mindestens 64 MB Arbeitsspeicher (es geht auch mit weniger und aus-
 reichendem Auslagerungsspeicher, aber davon ist abzuraten);
 
-Mindestens 160 MB virtuellen Speicher wenn auf einer Alpha
-übersetzt wird.
+Mindestens 200 MB virtuellen Speicher.
 
-(Momentan) zwischen einer und fünf Stunden CPU Zeit auf einem modernen System.
+Auf einem aktuellen System ein paar Stunden CPU Zeit.
 
 Natürlich sollte man alles auf Owl übersetzten.  Es ist zwar möglich
 dies alles auf einem anderen GNU/*/Linux System zu machen, aber man muss
@@ -55,18 +54,10 @@ mit mehreren Wiederholungen von "make buildworld" und "make installworld".
 Hier einige Übersetzungszeiten (Stunden:Minuten) für Owl-current um
 einen Eindruck zu bekommen was einen erwartet:
 
-Dual Pentium III, 600 MHz, 512 MB				2:50
-
-Hier noch einige Übersetzungszeiten für Owl 1.1, die aber nicht mehr
-länger gültig sind.
-
-Dual Pentium 4 Xeon, HT (4-way MP), 2.666 GHz, 2 GB		0:17
-Dual Pentium 4 Xeon, no HT (2-way SMP), 2.666 GHz, 2 GB		0:21
-Dual Pentium III, 1.266 GHz, 2 GB				0:30
-Athlon XP 2000+, 1.666 GHz, 512 MB				0:45
-Pentium III, 700 MHz, 192 MB					1:40
-UltraSparc IIi, 400 MHz, 256 MB					3:50
-Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB			5:30
+Dual Pentium 4 Xeon, HT (4-way MP), 2.8 GHz, 2 GB		0:50
+Dual Pentium III, 600 MHz, 512 MB				3:35
+UltraSparc IIi, 400 MHz, 256 MB					9:20
+Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB			13:30
 
 (Ja, der gcc ist auf einer Alpha ganz schön hungrig)
 
@@ -113,4 +104,4 @@ Individuelle Pakete können wieder- oder neuübersetzt werden, indem man
 Für fremde Pakete (SRPMs) die mit der Owl-Arbeitsumgebung erstellt worden
 sind, muss man zusätzlich die Versionsnummer in "name" einfügen.
 
-$Owl: Owl/doc/de/BUILD,v 1.15 2005/11/16 11:59:01 solar Exp $
+$Owl: Owl/doc/de/BUILD,v 1.16 2006/01/02 10:26:38 schmidt Exp $

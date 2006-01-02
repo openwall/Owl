@@ -68,9 +68,8 @@ Die Geschwindigkeitsgewinne mit sparcv9 sind minimal (zwischem einem
 und zwei Prozent, ausser speziellen Funktionen in glibc und OpenSSL,
 wo SPARC V9 optimierte Versionen bereit gestellt werden).
 
-sparc64 wird im Moment noch nicht unterstützt (die glibc Version muss
-zuerst geändert werden).  Es ist möglich die (32-Bit) Owl Benutzer-
-software zu erstellen, obwohl man einen sparc64 Kernel benutzt.
+sparc64 wird im Moment noch nicht unterstützt.  Es ist allerdings möglich das
+(32-Bit) Owl Userland zu erstellen, obwohl man einen sparc64 Kernel benutzt.
 
 
 	Alpha.
@@ -84,4 +83,4 @@ optimiert.  Die Pakete für alphaev56 sind für EV56/PCA56 Prozessoren
 alpha Pakete nutzen.  Auf einem EV6+ (21264, 21264A) sollten
 die alphaev56 Pakete benutzt werden.
 
-$Owl: Owl/doc/de/ARCHITECTURES,v 1.6 2005/11/16 11:59:01 solar Exp $
+$Owl: Owl/doc/de/ARCHITECTURES,v 1.7 2006/01/02 10:26:38 schmidt Exp $
