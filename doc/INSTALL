@@ -27,21 +27,19 @@ IDE CD-ROM drive, select the proper IDE controller and whether the
 drive is set to master or slave.  If you're using a SCSI CD-ROM drive,
 select "scsi".
 
-Owl should boot into single user mode.  At the root password prompt
-you can either just press Enter (as the CDs have a null password) or
-press Ctrl-D to let the system boot into multi-user right away (not
-recommended).  If you chose to enter a single user shell, you have a
-chance to optionally configure the CD-booted system by simply typing:
+Owl should boot into single user mode.  If you're prompted for a root
+password, you can just press Enter as the CDs have a null password.
+Once in the shell, you can optionally configure the CD-booted system by
+simply typing:
 
 	setup
 
 The configuration will be stored in RAM (parts of /etc and /var are on
-a ramdisk).  You may then let the system boot into multi-user by
-exiting the shell.  Of course, this step is optional and is only
-needed if it is more convenient to complete the installation while in
-multi-user mode (such as, operating from a remote workstation) or if
-you intend to actually use the CD-booted Owl without installing on a
-hard disk.
+a ramdisk).  You may then exit the shell to let the system boot into
+multi-user mode.  Of course, this step is optional and is only needed if
+it is more convenient to complete the installation while in multi-user
+mode (e.g., operating from a remote workstation) or if you intend to
+actually use the CD-booted Owl without installing on a hard disk.
 
 To actually install Owl, type:
 
@@ -100,4 +98,4 @@ already installed on the system (if any).
 Once the installation is complete, make sure to manually unmount the
 filesystems with umount(8) prior to rebooting the system.
 
-$Owl: Owl/doc/INSTALL,v 1.17 2005/12/26 22:14:07 solar Exp $
+$Owl: Owl/doc/INSTALL,v 1.18 2006/01/02 03:02:11 solar Exp $
