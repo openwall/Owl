@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.100 2005/12/20 16:13:57 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.101 2006/01/02 19:24:49 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -10,8 +10,8 @@
 Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
-%define crypt_bf_version 0.4.7
-Release: owl2
+%define crypt_bf_version 1.0
+Release: owl3
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/%name/
@@ -457,6 +457,10 @@ fi
 %files compat-fake
 
 %changelog
+* Mon Jan 02 2006 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl3
+- Corrected a bug in the way salts for extended DES-based and for MD5-based
+hashes are generated; thanks to Marko Kreen for discovering this.
+
 * Tue Dec 20 2005 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl2
 - Imported a patch from Gentoo (re-generated from glibc234-alpha-xstat.patch)
 to re-introduce support for building on Alpha with pre-2.6.4 kernel headers.
