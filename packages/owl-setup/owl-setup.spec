@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.47 2005/12/10 01:37:08 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.48 2006/01/02 17:45:19 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 0.29
+Version: 0.30
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -32,6 +32,12 @@ rm -rf %buildroot
 %_sbindir/*
 
 %changelog
+* Sat Dec 10 2005 Croco <croco-at-owl.openwall.com> 0.30-owl1
+- checking whether the /etc/localtime is UTC added
+- ncurses interface is now enabled by default
+- command line is now parsed using getopt(3) and the code is now in a 
+  separated module
+
 * Sat Dec 10 2005 Croco <croco-at-owl.openwall.com> 0.29-owl1
 - Automatic curses-incapable terminal detection added
 - color scheme changed for ncurses interface

@@ -13,6 +13,8 @@
 
 #include "version.h"
 
+#include "command_line.hpp"
+
 extern void repartition_hard_drive(OwlInstallInterface *);
 extern void select_and_mount_partitions(OwlInstallInterface *);
 extern void activate_swap(OwlInstallInterface *);
@@ -28,56 +30,14 @@ extern void install_kernel_and_lilo(OwlInstallInterface *);
 extern void reboot_it(OwlInstallInterface *);
 
 #ifdef NCURSES_ENABLE
-
-#ifdef NCURSES_DEFAULT
-bool ncurses_interface = true;
-#else
-bool ncurses_interface = false;
-#endif
-
-bool allow_ncurses_color = true;
-
 /* defined in curs_detect.cpp */
 bool is_terminal_curses_capable();
-
-void display_usage(bool by_option)
-{
-    if(!by_option) {
-        printf("Invalid command line\n");
-    }
-    printf("Usage: settle -d      use dumb terminal interface\n"
-           "       settle -m [-b] use ncurses interface [force bw mode]\n");
-    exit(by_option ? 0 : 1);
-}
-
-
-void process_cmdline(int argc, char **argv)
-{
-    for(int i=1; i<argc; i++) {
-        ScriptVariable a1(argv[i]);
-        if(a1 == "-b") {
-            allow_ncurses_color = false;
-        } else
-        if(a1 == "-m") {
-            ncurses_interface = true;
-        } else
-        if(a1 == "-d") {
-            ncurses_interface = false;
-        } else
-        if(a1 == "-h" || a1 == "--help") {
-            display_usage(true);
-        } else
-            display_usage(false);
-    }
-}
-
 #endif
 
 int main(int argc, char **argv)
 {
-#ifdef NCURSES_ENABLE
-    process_cmdline(argc, argv);
-#endif
+    OwlSetupCommandline cmdline;
+    cmdline.Process(argc, argv);
 
     the_config = new OwlInstallConfig("/owl");
 
@@ -116,13 +76,15 @@ int main(int argc, char **argv)
     OwlInstallInterface *the_interface;
 
 #ifdef NCURSES_ENABLE
-    if(ncurses_interface && !is_terminal_curses_capable())
-        ncurses_interface = false;
+    if(cmdline.ncurses_interface && !is_terminal_curses_capable())
+        cmdline.ncurses_interface = false;
 
-    if(ncurses_interface)
-        the_interface = new NcursesOwlInstallInterface(allow_ncurses_color);
+    if(cmdline.ncurses_interface)
+        the_interface =
+            new NcursesOwlInstallInterface(cmdline.allow_ncurses_color);
     else
-        the_interface = new DumbOwlInstallInterface;
+        the_interface =
+            new DumbOwlInstallInterface;
 #else
     the_interface = new DumbOwlInstallInterface;
 #endif

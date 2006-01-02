@@ -50,6 +50,7 @@ public:
     ScriptVariable ZoneinfoDbPath() const;
     ScriptVariable ZoneinfoFile() const;
     ScriptVariable ZoneinfoSysconf() const;
+    ScriptVariable UtcTimezoneName() const;
 
         // network config
     ScriptVariable ResolvFile() const;

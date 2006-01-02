@@ -1,7 +1,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
+#include <fcntl.h>
+#include <string.h>
 
 #include "scriptpp/scrvar.hpp"
 #include "scriptpp/scrvect.hpp"
@@ -172,9 +175,42 @@ bool fstab_contains_root()
     return false;
 }
 
+
+static bool timezone_is_not_utc()
+{
+    bool res = true;
+    int fd_localtime =
+        open(the_config->ZoneinfoFile().c_str(), O_RDONLY);
+    int fd_utc =
+        open((the_config->ZoneinfoDbPath()+"/"+
+              the_config->UtcTimezoneName()).c_str(), O_RDONLY);
+    if(fd_localtime == -1 || fd_utc == -1) goto quit;
+    int rc_localtime, rc_utc;
+    char buf_localtime[4096];
+    char buf_utc[sizeof(buf_localtime)];
+    do {
+        rc_localtime =
+            read(fd_localtime, buf_localtime, sizeof(buf_localtime));
+        rc_utc =
+            read(fd_utc, buf_utc, sizeof(buf_utc));
+        if(rc_localtime != rc_utc)
+            goto quit;
+        if(0 != memcmp(buf_localtime, buf_utc, rc_localtime))
+            goto quit;
+    } while(rc_localtime == sizeof(buf_localtime));
+    res = false;
+quit:
+    if(fd_utc!=-1) close(fd_utc);
+    if(fd_localtime!=-1) close(fd_localtime);
+    return res;
+}
+
+
 bool timezone_selected()
 {
-    return FileStat(the_config->ZoneinfoSysconf().c_str()).Exists();
+    return
+	FileStat(the_config->ZoneinfoSysconf().c_str()).Exists() &&
+	timezone_is_not_utc();
 }
 
 bool network_configured()

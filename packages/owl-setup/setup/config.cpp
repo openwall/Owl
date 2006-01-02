@@ -96,6 +96,8 @@ ScriptVariable OwlInstallConfig::ZoneinfoFile() const
 ScriptVariable OwlInstallConfig::ZoneinfoSysconf() const
 { return root+"/etc/sysconfig/clock"; }
 
+ScriptVariable OwlInstallConfig::UtcTimezoneName() const
+{ return "UTC"; }
 
 
 
