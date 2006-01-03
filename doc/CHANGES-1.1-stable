@@ -63,7 +63,6 @@ server).
 References:
 http://www.isec.pl/vulnerabilities/isec-0017-binfmt_elf.txt
 http://marc.theaimsgroup.com/?l=bugtraq&m=110091183206580
-http://security.e-matters.de/advisories/142004.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0883
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0949
 
@@ -133,9 +132,7 @@ that CVS server provides any security against a malicious client.  If
 required, any restrictions on the actions CVS server is allowed to
 perform should be imposed at the OS level.
 References:
-http://security.e-matters.de/advisories/072004.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0396
-http://security.e-matters.de/advisories/092004.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0414
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0416
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0417
@@ -224,4 +221,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 2004/01/15	Owl/doc/DOWNLOAD, Owl/doc/*/DOWNLOAD, Owl/doc/fr/CREDITS
 Sync'ed with the minor post-release updates made in Owl-current.
 
-$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.28 2005/05/15 04:38:28 solar Exp $
+$Id: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.29 2006/01/03 05:22:06 solar Exp $
