@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 
@@ -53,6 +54,7 @@ void install_kernel_headers(OwlInstallInterface *the_iface)
     ScriptVariable commd = the_config->CpPath() + " -a " +
                    from_path + " " +
                    the_config->KernelHeadersTarget();
+    unsetenv("BASH_ENV");
     ExecAndWait cp(the_config->SuPath().c_str(), "-c",
                    commd.c_str(), "sources", 0);
     the_iface->CloseExecWindow();
