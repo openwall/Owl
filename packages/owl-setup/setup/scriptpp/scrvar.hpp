@@ -1,6 +1,6 @@
 // +-------------------------------------------------------------------------+
-// |                     Script Plus Plus vers. 0.2.12                       |
-// | Copyright (c) Andrey Vikt. Stolyarov <crocodil_AT_croco.net>  2003-2005 |
+// |                     Script Plus Plus vers. 0.2.13                       |
+// | Copyright (c) Andrey Vikt. Stolyarov <crocodil_AT_croco.net>  2003-2006 |
 // | ----------------------------------------------------------------------- |
 // | This is free software.  Permission is granted to everyone to use, copy  |
 // |        or modify this software under the terms and conditions of        |
@@ -111,6 +111,8 @@ public:
 
         //! strcmp(3) functionality
     int Strcmp(const ScriptVariable &o2) const;
+        //! strcasecmp(3) functionality
+    int Strcasecmp(const ScriptVariable &o2) const;
 
         //! Convert all chars to upper case.
     const ScriptVariable& Toupper();
@@ -187,6 +189,9 @@ public:
 
         void Move(int delta);
         void Resize(int delta);
+
+        void ExtendToBegin();
+        void ExtendToEnd();
 
            /*! Trims the substring and returns *this */
         const Substring& Trim(const char *spaces = " \t\n\r");

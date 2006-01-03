@@ -1,4 +1,8 @@
-Version 0.2.12 (oficially released July 03, 2005)
+Version 0.2.13 (released Jan 04, 2006)
+   - Added Substring::ExtendToBegin()/ExtendToEnd()
+   - Fixed a bug with Erase()/Replace() of a too long substring
+   - ScriptVariable::Strncmp() added
+Version 0.2.12 (officially released July 03, 2005)
 Version 0.2.11 (occasionally released with the icfp2005contest entry)
    - minor syntactic fix to comply some standards...
 Version 0.2.10 (released June 11, 2005 as a part of Owlinst)

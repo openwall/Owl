@@ -1,6 +1,6 @@
 # +-------------------------------------------------------------------------+
-# |                     Script Plus Plus vers. 0.2.12                       |
-# | Copyright (c) Andrey Vikt. Stolyarov <crocodil_AT_croco.net>  2003-2005 |
+# |                     Script Plus Plus vers. 0.2.13                       |
+# | Copyright (c) Andrey Vikt. Stolyarov <crocodil_AT_croco.net>  2003-2006 |
 # | ----------------------------------------------------------------------- |
 # | This is free software.  Permission is granted to everyone to use, copy  |
 # |        or modify this software under the terms and conditions of        |
@@ -12,6 +12,7 @@
 # |   This code is provided strictly and exclusively on the "AS IS" basis.  |
 # | !!! THERE IS NO WARRANTY OF ANY KIND, NEITHER EXPRESSED NOR IMPLIED !!! |
 # +-------------------------------------------------------------------------+
+
 
 
 

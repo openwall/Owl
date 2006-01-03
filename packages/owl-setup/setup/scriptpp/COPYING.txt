@@ -1,5 +1,5 @@
                           The ScriptPP library
-           (c) Andrey V. Stolyarov a.k.a. Croco, 2002-2005
+           (c) Andrey V. Stolyarov a.k.a. Croco, 2002-2006
 
 This library can be copied, used, modified and distributed in the
 strict accordance with GNU Lesser General Public License, v. 2.1,

@@ -1,6 +1,6 @@
 // +-------------------------------------------------------------------------+
-// |                     Script Plus Plus vers. 0.2.12                       |
-// | Copyright (c) Andrey Vikt. Stolyarov <crocodil_AT_croco.net>  2003-2005 |
+// |                     Script Plus Plus vers. 0.2.13                       |
+// | Copyright (c) Andrey Vikt. Stolyarov <crocodil_AT_croco.net>  2003-2006 |
 // | ----------------------------------------------------------------------- |
 // | This is free software.  Permission is granted to everyone to use, copy  |
 // |        or modify this software under the terms and conditions of        |
@@ -60,7 +60,7 @@ ScriptVariable::ScriptVariable(const char *str)
 ScriptVariable::ScriptVariable(int len, const char *format, ...)
 {
     p = 0;
-    /* the next code is shamelessly stolen from man (3) vsnprintf */
+    /* the following code is shamelessly stolen from man (3) vsnprintf */
     while (1) {
         Create(len);
          /* Try to print in the allocated space. */
@@ -259,6 +259,11 @@ int ScriptVariable::Strcmp(const ScriptVariable &o2) const
     return strcmp(p->buf, o2.p->buf);
 }
 
+int ScriptVariable::Strcasecmp(const ScriptVariable &o2) const
+{
+    return strcasecmp(p->buf, o2.p->buf);
+}
+
 
 bool ScriptVariable::HasPrefix(const char *pr) const
 {
@@ -296,7 +301,15 @@ Substring(ScriptVariable &a_master, int a_pos, int a_len)
 void ScriptVariable::Substring::Erase()
 {
     master->EnsureOwnCopy();
-    for(char *p = master->p->buf + pos; (*p = *(p+len)); p++);
+    for(char *p = master->p->buf + pos; ; p++) {
+        if(!*p) { // this means it was really shorter than len
+           *(master->p->buf + pos) = 0;
+           break;
+        }
+        if(!(*p = *(p+len))) {
+           break;
+        }
+    }
     len = 0;
 }
 
@@ -304,6 +317,8 @@ void ScriptVariable::Substring::Replace(const char *what)
 {
     master->EnsureOwnCopy();
     int mlen = master->Length();
+    if(pos+len > mlen)
+        len = mlen - pos;
     int whatlen = strlen(what);
     if(whatlen > len) { // first move the rest forward
         // do we have enough room for it?
@@ -430,6 +445,17 @@ void ScriptVariable::Substring::Resize(int d)
         len = 0;
     else if(pos+len > master->p->maxlen)
         len = master->p->maxlen - pos;
+}
+
+void ScriptVariable::Substring::ExtendToBegin()
+{
+    len += pos;
+    pos = 0;
+}
+
+void ScriptVariable::Substring::ExtendToEnd()
+{
+    len = master->Length() - pos;
 }
 
 const ScriptVariable::Substring&
