@@ -26,6 +26,7 @@ extern void set_root_password(OwlInstallInterface *);
 extern void create_fstab(OwlInstallInterface *);
 extern void select_timezone(OwlInstallInterface *);
 extern void configure_network(OwlInstallInterface *);
+extern void install_kernel_headers(OwlInstallInterface *);
 extern void install_kernel_and_lilo(OwlInstallInterface *);
 extern void reboot_it(OwlInstallInterface *);
 
@@ -63,6 +64,8 @@ int main(int argc, char **argv)
         { "t", "Create /etc/fstab", fstab_exists, fstab_contains_root },
         { "z", "Select timezone", packages_installed, timezone_selected },
         { "n", "Configure network", packages_installed, network_configured },
+        { "h", "Install kernel headers (optional)",
+            can_install_kheaders, kheaders_installed },
         { "b", "Install kernel and bootloader",
             packages_installed, kernel_installed },
         { "r", "Reboot to the newly-installed system",
@@ -143,6 +146,9 @@ int main(int argc, char **argv)
         } else
         if(choice == "n") {
             configure_network(the_interface);
+        } else
+        if(choice == "h") {
+            install_kernel_headers(the_interface);
         } else
         if(choice == "b") {
             install_kernel_and_lilo(the_interface);

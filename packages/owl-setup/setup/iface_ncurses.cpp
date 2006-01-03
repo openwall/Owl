@@ -550,8 +550,8 @@ NcursesOwlInstallInterface::QueryString(const ScriptVariable& prompt,
                                               cp_default, prompt.c_str())
                              .c_str(),
                         "",
-                        work_with_colors ? 
-                            COLOR_PAIR(cp_selection)|A_BOLD 
+                        work_with_colors ?
+                            COLOR_PAIR(cp_selection)|A_BOLD
                             : A_NORMAL,
                         work_with_colors ? ' ' : '_',
                         vMIXED,

@@ -9,6 +9,9 @@ ScriptVariable OwlInstallConfig::FdiskPath() const
 ScriptVariable OwlInstallConfig::CpPath() const
 { return "/bin/cp"; }
 
+ScriptVariable OwlInstallConfig::SuPath() const
+{ return "/bin/su"; }
+
 ScriptVariable OwlInstallConfig::PasswdPath() const
 { return "/usr/bin/passwd"; }
 
@@ -65,7 +68,8 @@ void OwlInstallConfig::PkgInstalledCheckFiles(ScriptVector &vec) const
 ScriptVariable OwlInstallConfig::RootShadowFile() const
 { return root+"/etc/tcb/root/shadow"; }
 
-
+ScriptVariable OwlInstallConfig::OwlInstallCdLabel() const
+{ return "/.Owl-CD-ROM"; }
 
 ScriptVariable OwlInstallConfig::MkfsPath(const ScriptVariable& fst) const
 {
@@ -137,6 +141,15 @@ ScriptVariable OwlInstallConfig::LiloPath() const
 ScriptVariable OwlInstallConfig::LiloMap() const
 { return root+"/boot/map"; }
 
+
+ScriptVariable OwlInstallConfig::KernelHeadersSource() const
+{ return "/usr/src/linux"; }
+
+ScriptVariable OwlInstallConfig::KernelHeadersTarget() const
+{ return root+"/usr/src/"; }
+
+ScriptVariable OwlInstallConfig::KernelHeadersDirName() const
+{ return "linux"; }
 
 
 

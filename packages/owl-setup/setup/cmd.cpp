@@ -246,10 +246,12 @@ ChrootExecWait::~ChrootExecWait()
 
 
 
-FileStat::FileStat(const char *filename)
+FileStat::FileStat(const char *filename, bool dereference)
 {
     stat_info = new struct stat;
-    int res = stat(filename, (struct stat*) stat_info);
+    int res = dereference ?
+        stat(filename, (struct stat*) stat_info) :
+        lstat(filename, (struct stat*) stat_info);
     if(res == -1) {
         delete (struct stat*) stat_info;
         stat_info = 0;
@@ -281,8 +283,10 @@ bool FileStat::IsEmpty() const
     return stat_info && (((struct stat*)stat_info)->st_size == 0);
 }
 
-
-
+bool FileStat::IsSymlink() const
+{
+    return stat_info && S_ISLNK(((struct stat*)stat_info)->st_mode);
+}
 
 
 

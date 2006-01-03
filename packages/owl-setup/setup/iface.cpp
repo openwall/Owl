@@ -41,6 +41,7 @@ IfaceHierChoice::IfaceHierChoice()
     last = &first;
     parent = 0;
     ignore_case = true;
+    sorted = true;
 }
 
 IfaceHierChoice::~IfaceHierChoice()
@@ -50,22 +51,48 @@ IfaceHierChoice::~IfaceHierChoice()
 
 void IfaceHierChoice::AddItem(const ScriptVariable& name)
 {
-    *last = new Item(name, parent);
-    last = &((*last)->next);
+    if(sorted) {
+        Item **tmp = last;
+        while(*tmp && (*tmp)->name < name) tmp = &((*tmp)->next);
+        Item *p = new Item(name, parent);
+        p->next = *tmp;
+        *tmp = p;
+    } else {
+        *last = new Item(name, parent);
+        last = &((*last)->next);
+    }
 }
 
 void IfaceHierChoice::AddDir(const ScriptVariable& name)
 {
-    *last = new Item(name, parent);
-    parent = *last;
-    last = &((*last)->children);
+    if(sorted) {
+        Item **tmp = last;
+        while(*tmp && (*tmp)->name < name) tmp = &((*tmp)->next);
+        Item *p = new Item(name, parent);
+        p->next = *tmp;
+        *tmp = p;
+        parent = p;
+        last = &(p->children);
+    } else {
+        *last = new Item(name, parent);
+        parent = *last;
+        last = &((*last)->children);
+    }
 }
 
 void IfaceHierChoice::EndDir()
 {
     if(!parent) return;
-    last = &(parent->next);
-    parent = parent->parent;
+    if(sorted) {
+        parent = parent->parent;
+        if(parent)
+            last = &(parent->children);
+        else
+            last = &first;
+    } else {
+        last = &(parent->next);
+        parent = parent->parent;
+    }
 }
 
 void IfaceHierChoice::RmTree(Item *t)

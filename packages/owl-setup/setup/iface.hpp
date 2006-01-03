@@ -54,6 +54,7 @@ protected:
 
     ScriptVariable caption;
     bool ignore_case;
+    bool sorted;
 
 public:
     IfaceHierChoice();

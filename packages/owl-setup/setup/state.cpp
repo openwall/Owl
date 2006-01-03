@@ -39,14 +39,19 @@ bool linux_partition_exists()
     return ret;
 }
 
-bool owl_dir_mounted()
+bool mountpoint_mounted(const ScriptVariable &mp)
 {
     ReadText rt(the_config->ProcMounts().c_str());
     ScriptVector v;
     while(rt.ReadLine(v,3)) {
-        if(v[1] == the_config->OwlRoot()) return true;
+        if(v[1] == mp) return true;
     }
     return false;
+}
+
+bool owl_dir_mounted()
+{
+    return mountpoint_mounted(the_config->OwlRoot());
 }
 
 bool active_swap_exists()
@@ -216,6 +221,20 @@ bool timezone_selected()
 bool network_configured()
 {
     return FileStat(the_config->NetworkSysconf().c_str()).Exists();
+}
+
+bool can_install_kheaders()
+{
+    return
+        packages_installed() &&
+        FileStat(the_config->KernelHeadersSource().c_str()).Exists() &&
+        FileStat(the_config->OwlInstallCdLabel().c_str()).Exists();
+}
+
+bool kheaders_installed()
+{
+    return FileStat((the_config->KernelHeadersTarget()+
+                    the_config->KernelHeadersDirName()).c_str()).Exists();
 }
 
 bool kernel_installed()

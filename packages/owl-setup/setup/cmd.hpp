@@ -71,12 +71,13 @@ public:
 class FileStat {
     void *stat_info;
 public:
-    FileStat(const char *filename);
+    FileStat(const char *filename, bool dereference = true);
     ~FileStat();
 
     bool Exists() const;
     bool IsDir() const;
     bool IsRegularFile() const;
+    bool IsSymlink() const;
     bool IsEmpty() const;
 };
 

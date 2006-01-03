@@ -7,7 +7,7 @@ struct OwlSetupCommandline {
     bool ncurses_interface;
     bool allow_ncurses_color;
 
-    OwlSetupCommandline() 
+    OwlSetupCommandline()
     {
 #ifdef NCURSES_DEFAULT
         ncurses_interface = true;
@@ -44,10 +44,10 @@ struct OwlSetupCommandline {
             if(SpecificProcess(c)) continue;
             switch(c) {
             case 'd':
-               ncurses_interface = false; 
+               ncurses_interface = false;
                break;
             case 'm':
-               ncurses_interface = true; 
+               ncurses_interface = true;
                break;
             case 'b':
                allow_ncurses_color = false;

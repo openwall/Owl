@@ -13,6 +13,7 @@ public:
 
     ScriptVariable FdiskPath() const;
     ScriptVariable CpPath() const;
+    ScriptVariable SuPath() const;
     ScriptVariable MkdirPath() const;
     ScriptVariable PasswdPath() const;
     ScriptVariable MakePath() const;
@@ -35,6 +36,7 @@ public:
         // Checks
     void PkgInstalledCheckFiles(ScriptVector &vec) const;
     ScriptVariable RootShadowFile() const;
+    ScriptVariable OwlInstallCdLabel() const;
 
 
         // partitioning
@@ -66,6 +68,11 @@ public:
     ScriptVariable LiloconfFile() const;
     ScriptVariable LiloPath() const;
     ScriptVariable LiloMap() const;
+
+        // kernel headers
+    ScriptVariable KernelHeadersSource() const;
+    ScriptVariable KernelHeadersTarget() const;
+    ScriptVariable KernelHeadersDirName() const;
 
 
     ScriptVariable FstabFile() const;

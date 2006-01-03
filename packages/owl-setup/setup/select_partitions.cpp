@@ -114,6 +114,58 @@ static void add_mount(OwlInstallInterface *the_iface,
     mount_at(the_iface, part, mp);
 }
 
+static void use_tmpfs(OwlInstallInterface *the_iface)
+{
+    ScriptVariable mp(the_config->OwlRoot() + "/tmp");
+
+    ScriptVector mpv(mp, "/", "");
+    FileStat thedir(mp.c_str());
+    if(!thedir.IsDir()) {
+        int res = mkdir(mp.c_str(), 0777);
+        if(res == -1) {
+            the_iface->Message(ScriptVariable(0,
+                "Failed to create directory: %s: %s",
+                mp.c_str(), strerror(errno)));
+        }
+    }
+    chmod(mp.c_str(), 01777);
+
+    sync();
+    the_iface->ExecWindow("Executing mount...");
+    ExecAndWait mnt(the_config->MountPath().c_str(),
+                    "tmpfs", "-t", "tmpfs", mp.c_str(), 0);
+    the_iface->CloseExecWindow();
+
+    if(!mnt.Success()) {
+        the_iface->Message("Mount failed");
+    }
+
+    ScriptVariable vt(the_config->OwlRoot() + "/var/tmp");
+    FileStat vartmp(vt.c_str(), false /* no symlink dereference */);
+    if(!vartmp.Exists() || !vartmp.IsSymlink()) {
+        bool r = the_iface->YesNoMessage(ScriptVariable(
+            "Do you want your /var/tmp to be a symlink to /tmp?"),
+             true);
+        if(r) {
+            if(vartmp.IsDir()) {
+                if(-1 == rmdir(vt.c_str())) {
+                    the_iface->Message( "Couldn't rmdir /var/tmp");
+                    return;
+                }
+            } else {
+                if(vartmp.Exists()) {
+                    the_iface->Message(
+                        "/var/tmp already exists and is not a directory");
+                    return;
+                }
+            }
+            if(-1 == symlink("/tmp", vt.c_str())) {
+                the_iface->Message("symlink failed");
+            }
+        }
+    }
+}
+
 void unmount_all(OwlInstallInterface *the_iface)
 {
     ScriptVector parts, dirs;
@@ -225,6 +277,8 @@ void select_and_mount_partitions(OwlInstallInterface *the_iface)
                                            "Attach %s somewhere to the tree",
                                            parts[i].c_str()));
             }
+            if(!mountpoint_mounted(the_config->OwlRoot()+"/tmp"))
+                pm->AddItem("t", "Use tmpfs for /tmp");
             pm->AddItem("u", "Unmount all, select another root");
             pm->AddItem("q", "Done, return to main menu");
             if(parts.Length()>0) {
@@ -244,6 +298,8 @@ void select_and_mount_partitions(OwlInstallInterface *the_iface)
                 unmount_all(the_iface);
             else if(choice=="v")
                 view_tree(the_iface);
+            else if(choice=="t")
+                use_tmpfs(the_iface);
             else add_mount(the_iface, choice);
         }
     }

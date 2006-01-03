@@ -22,7 +22,7 @@ ifndef CXXFLAGS
 CXXFLAGS = -Wall -g -O0 -fomit-frame-pointer
 endif
 CXXFLAGS += $(CURSES_FLAGS)
-LDFLAGS = 
+LDFLAGS =
 else
 ifndef CXXFLAGS
 CXXFLAGS = -Wall -O2 -fomit-frame-pointer
@@ -45,7 +45,7 @@ SETTLE_OBJS = settle.o iface.o iface_dumb.o $(CURSES_OBJ) \
 	state.o repartition.o \
 	select_partitions.o \
 	swap.o installworld.o root_passwd_settle.o \
-	installkernel.o \
+	installkernel.o installkernheaders.o \
 	mkfstab.o shellout.o network.o \
 	timezone.o keyboard.o config.o reboot.o
 

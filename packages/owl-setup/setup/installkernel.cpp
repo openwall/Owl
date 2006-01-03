@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-#include "scriptpp/scrvar.cpp"
-#include "scriptpp/scrvect.cpp"
+#include "scriptpp/scrvar.hpp"
+#include "scriptpp/scrvect.hpp"
 
 #include "cmd.hpp"
 #include "iface.hpp"
