@@ -1,3 +1,28 @@
+--- dialog-1.0-20051219/samples/install/setup.c.orig	2006-01-03 22:35:59.000000000 +0000
++++ dialog-1.0-20051219/samples/install/setup.c	2006-01-03 22:37:29.000000000 +0000
+@@ -104,11 +104,11 @@
+     char line[200];
+     int length;
+ #ifndef DEBUG_THIS
+-    int ret = system("fdisk -l 2>/dev/null 1>/tmp/fdisk.output");
++    int ret = system("fdisk -l 2>/dev/null 1>./fdisk.output");
+     if ((ret >> 8) != 0) {
+ 	error("fdisk didn't run");
+     }
+-    if ((f = fopen("/tmp/fdisk.output", "r")) == NULL)
++    if ((f = fopen("./fdisk.output", "r")) == NULL)
+ #else
+     if ((f = fopen("FDISK.TEST", "r")) == NULL)
+ #endif
+@@ -150,7 +150,7 @@
+     }
+     fclose(f);
+ #ifndef DEBUG_THIS
+-    unlink("/tmp/fdisk.output");
++    unlink("./fdisk.output");
+ #endif
+ }
+ 
 --- dialog-1.0-20051219/samples/copifuncs/copi.funcs.orig	2001-01-15 22:24:26.000000000 +0000
 +++ dialog-1.0-20051219/samples/copifuncs/copi.funcs	2005-12-29 22:55:48.000000000 +0000
 @@ -31,7 +31,8 @@

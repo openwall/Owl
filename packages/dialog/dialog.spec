@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/dialog/dialog.spec,v 1.19 2005/12/30 10:32:07 mci Exp $
+# $Owl: Owl/packages/dialog/dialog.spec,v 1.20 2006/01/03 23:50:14 mci Exp $
 
 Summary: A utility for creating TTY dialog boxes.
 Name: dialog
 Version: 1.0
 %define original_date 20051219
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/System
 Source: ftp://dickey.his.com/dialog/%name-%version-%original_date.tgz
@@ -51,13 +51,20 @@ make
 rm -rf %buildroot
 %makeinstall
 
+tar cjf samples.tar.bz2 samples/
+bzip2 -9q CHANGES
+
 %files
 %defattr(-,root,root)
-%doc COPYING CHANGES README samples
+%doc COPYING CHANGES.bz2 README samples.tar.bz2
 %_prefix/bin/dialog
 %_mandir/man1/dialog.*
 
 %changelog
+* Wed Jan 04 2006 Michail Litvak <mci-at-owl.openwall.com> 1.0-owl2
+- bzip2'ed changelog and archived samples to reduce packet size.
+- Improved -tmp patch.
+
 * Fri Dec 30 2005 Michail Litvak <mci-at-owl.openwall.com> 1.0-owl1
 - Updated to 1.0-20051219.
 - Updated patches.
