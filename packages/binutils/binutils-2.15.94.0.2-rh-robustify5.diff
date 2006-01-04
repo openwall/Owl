@@ -1,0 +1,216 @@
+2005-06-17  Jakub Jelinek  <jakub@redhat.com>
+bfd/
+	* elf.c (bfd_section_from_shdr): Kill bogus warning.
+
+	* elf.c (bfd_section_from_shdr): Fail if sh_entsize is bogus for
+	symbol, relocation, group or versym sections.
+
+	* coffcode.h (coff_slurp_reloc_table): Don't crash if native_relocs
+	is NULL.
+	* peXXigen.c (pe_print_idata): Don't crash if dll_name or start_address
+	doesn't point into the section.
+include/
+	* elf/external.h (GRP_ENTRY_SIZE): Define.
+binutils/
+	* readelf.c (CHECK_ENTSIZE_VALUES, CHECK_ENTSIZE): Define.
+	(process_section_headers): Use it.
+	(process_relocs): Don't crash if symsec is not SHT_SYMTAB
+	or SHT_DYNSYM.
+	(process_version_sections): Use sizeof (Elf_External_Versym)
+	instead of sh_entsize.
+
+--- bfd/coffcode.h	9 Jun 2005 19:22:15 -0000	1.127
++++ bfd/coffcode.h	17 Jun 2005 13:39:56 -0000	1.128
+@@ -4830,7 +4830,7 @@ coff_slurp_reloc_table (bfd * abfd, sec_
+   amt = (bfd_size_type) asect->reloc_count * sizeof (arelent);
+   reloc_cache = bfd_alloc (abfd, amt);
+ 
+-  if (reloc_cache == NULL)
++  if (reloc_cache == NULL || native_relocs == NULL)
+     return FALSE;
+ 
+   for (idx = 0; idx < asect->reloc_count; idx++)
+--- bfd/elf.c	14 Jun 2005 11:04:22 -0000	1.301
++++ bfd/elf.c	17 Jun 2005 15:48:25 -0000	1.303
+@@ -1811,7 +1811,8 @@ bfd_section_from_shdr (bfd *abfd, unsign
+       if (elf_onesymtab (abfd) == shindex)
+ 	return TRUE;
+ 
+-      BFD_ASSERT (hdr->sh_entsize == bed->s->sizeof_sym);
++      if (hdr->sh_entsize != bed->s->sizeof_sym)
++	return FALSE;
+       BFD_ASSERT (elf_onesymtab (abfd) == 0);
+       elf_onesymtab (abfd) = shindex;
+       elf_tdata (abfd)->symtab_hdr = *hdr;
+@@ -1862,7 +1863,8 @@ bfd_section_from_shdr (bfd *abfd, unsign
+       if (elf_dynsymtab (abfd) == shindex)
+ 	return TRUE;
+ 
+-      BFD_ASSERT (hdr->sh_entsize == bed->s->sizeof_sym);
++      if (hdr->sh_entsize != bed->s->sizeof_sym)
++	return FALSE;
+       BFD_ASSERT (elf_dynsymtab (abfd) == 0);
+       elf_dynsymtab (abfd) = shindex;
+       elf_tdata (abfd)->dynsymtab_hdr = *hdr;
+@@ -1946,6 +1948,11 @@ bfd_section_from_shdr (bfd *abfd, unsign
+ 	Elf_Internal_Shdr *hdr2;
+ 	unsigned int num_sec = elf_numsections (abfd);
+ 
++	if (hdr->sh_entsize
++	    != (bfd_size_type) (hdr->sh_type == SHT_REL
++				? bed->s->sizeof_rel : bed->s->sizeof_rela))
++	  return FALSE;
++
+ 	/* Check for a bogus link to avoid crashing.  */
+ 	if ((hdr->sh_link >= SHN_LORESERVE && hdr->sh_link <= SHN_HIRESERVE)
+ 	    || hdr->sh_link >= num_sec)
+@@ -2004,10 +2011,10 @@ bfd_section_from_shdr (bfd *abfd, unsign
+ 	  return _bfd_elf_make_section_from_shdr (abfd, hdr, name,
+ 						  shindex);
+ 
+-        /* Prevent endless recursion on broken objects.  */
+-        if (elf_elfsections (abfd)[hdr->sh_info]->sh_type == SHT_REL
+-            || elf_elfsections (abfd)[hdr->sh_info]->sh_type == SHT_RELA)
+-          return FALSE;
++	/* Prevent endless recursion on broken objects.  */
++	if (elf_elfsections (abfd)[hdr->sh_info]->sh_type == SHT_REL
++	    || elf_elfsections (abfd)[hdr->sh_info]->sh_type == SHT_RELA)
++	  return FALSE;
+ 	if (! bfd_section_from_shdr (abfd, hdr->sh_info))
+ 	  return FALSE;
+ 	target_sect = bfd_section_from_elf_index (abfd, hdr->sh_info);
+@@ -2047,6 +2054,8 @@ bfd_section_from_shdr (bfd *abfd, unsign
+       break;
+ 
+     case SHT_GNU_versym:
++      if (hdr->sh_entsize != sizeof (Elf_External_Versym))
++	return FALSE;
+       elf_dynversym (abfd) = shindex;
+       elf_tdata (abfd)->dynversym_hdr = *hdr;
+       return _bfd_elf_make_section_from_shdr (abfd, hdr, name, shindex);
+@@ -2065,6 +2074,8 @@ bfd_section_from_shdr (bfd *abfd, unsign
+       /* We need a BFD section for objcopy and relocatable linking,
+ 	 and it's handy to have the signature available as the section
+ 	 name.  */
++      if (hdr->sh_entsize != GRP_ENTRY_SIZE)
++	return FALSE;
+       name = group_signature (abfd, hdr);
+       if (name == NULL)
+ 	return FALSE;
+--- bfd/peXXigen.c	4 May 2005 15:53:37 -0000	1.30
++++ bfd/peXXigen.c	17 Jun 2005 13:39:56 -0000	1.31
+@@ -1103,7 +1103,7 @@ pe_print_idata (bfd * abfd, void * vfile
+       bfd_vma toc_address;
+       bfd_vma start_address;
+       bfd_byte *data;
+-      int offset;
++      bfd_vma offset;
+ 
+       if (!bfd_malloc_and_get_section (abfd, rel_section, &data))
+ 	{
+@@ -1114,6 +1114,13 @@ pe_print_idata (bfd * abfd, void * vfile
+ 
+       offset = abfd->start_address - rel_section->vma;
+ 
++      if (offset >= rel_section->size || offset + 8 > rel_section->size)
++        {
++          if (data != NULL)
++            free (data);
++          return FALSE;
++        }
++
+       start_address = bfd_get_32 (abfd, data + offset);
+       loadable_toc_address = bfd_get_32 (abfd, data + offset + 4);
+       toc_address = loadable_toc_address - 32768;
+@@ -1182,6 +1189,9 @@ pe_print_idata (bfd * abfd, void * vfile
+       if (hint_addr == 0 && first_thunk == 0)
+ 	break;
+ 
++      if (dll_name - adj >= section->size)
++        break;
++
+       dll = (char *) data + dll_name - adj;
+       fprintf (file, _("\n\tDLL Name: %s\n"), dll);
+ 
+ 2005-06-08  Zack Weinberg  <zack@codesourcery.com>
+ 
+ 	* dis-asm.h (get_arm_regnames): Update prototype.
+--- include/elf/external.h	10 May 2005 10:21:10 -0000	1.7
++++ include/elf/external.h	17 Jun 2005 13:37:23 -0000	1.8
+@@ -272,5 +272,8 @@ typedef struct
+   unsigned char		a_val[8];
+ } Elf64_External_Auxv;
+ 
++/* Size of SHT_GROUP section entry.  */
++
++#define GRP_ENTRY_SIZE		4
+ 
+ #endif /* _ELF_EXTERNAL_H */
+--- binutils/readelf.c	14 Jun 2005 11:06:28 -0000	1.302
++++ binutils/readelf.c	17 Jun 2005 13:37:26 -0000	1.303
+@@ -3754,6 +3754,22 @@ process_section_headers (FILE *file)
+   dynamic_syminfo = NULL;
+   symtab_shndx_hdr = NULL;
+ 
++#define CHECK_ENTSIZE_VALUES(section, i, size32, size64) \
++  do									    \
++    {									    \
++      size_t expected_entsize						    \
++	= is_32bit_elf ? size32 : size64;				    \
++      if (section->sh_entsize != expected_entsize)			    \
++	error (_("Section %d has invalid sh_entsize %lx (expected %lx)\n"), \
++	       i, (unsigned long int) section->sh_entsize,		    \
++	       (unsigned long int) expected_entsize);			    \
++      section->sh_entsize = expected_entsize;				    \
++    }									    \
++  while (0)
++#define CHECK_ENTSIZE(section, i, type) \
++  CHECK_ENTSIZE_VALUES (section, i, sizeof (Elf32_External_##type),	    \
++			sizeof (Elf64_External_##type))
++
+   for (i = 0, section = section_headers;
+        i < elf_header.e_shnum;
+        i++, section++)
+@@ -3768,6 +3784,7 @@ process_section_headers (FILE *file)
+ 	      continue;
+ 	    }
+ 
++	  CHECK_ENTSIZE (section, i, Sym);
+ 	  num_dynamic_syms = section->sh_size / section->sh_entsize;
+ 	  dynamic_symbols = GET_ELF_SYMBOLS (file, section);
+ 	}
+@@ -3793,6 +3810,14 @@ process_section_headers (FILE *file)
+ 	    }
+ 	  symtab_shndx_hdr = section;
+ 	}
++      else if (section->sh_type == SHT_SYMTAB)
++	CHECK_ENTSIZE (section, i, Sym);
++      else if (section->sh_type == SHT_GROUP)
++	CHECK_ENTSIZE_VALUES (section, i, GRP_ENTRY_SIZE, GRP_ENTRY_SIZE);
++      else if (section->sh_type == SHT_REL)
++	CHECK_ENTSIZE (section, i, Rel);
++      else if (section->sh_type == SHT_RELA)
++	CHECK_ENTSIZE (section, i, Rela);
+       else if ((do_debugging || do_debug_info || do_debug_abbrevs
+ 		|| do_debug_lines || do_debug_pubnames || do_debug_aranges
+ 		|| do_debug_frames || do_debug_macinfo || do_debug_str
+@@ -4311,6 +4336,10 @@ process_relocs (FILE *file)
+ 		  char *strtab = NULL;
+ 
+ 		  symsec = SECTION_HEADER (section->sh_link);
++		  if (symsec->sh_type != SHT_SYMTAB
++		      && symsec->sh_type != SHT_DYNSYM)
++                    continue;
++
+ 		  nsyms = symsec->sh_size / symsec->sh_entsize;
+ 		  symtab = GET_ELF_SYMBOLS (file, symsec);
+ 
+@@ -6194,7 +6223,7 @@ process_version_sections (FILE *file)
+ 	      break;
+ 
+ 	    link_section = SECTION_HEADER (section->sh_link);
+-	    total = section->sh_size / section->sh_entsize;
++	    total = section->sh_size / sizeof (Elf_External_Versym);
+ 
+ 	    if (SECTION_HEADER_INDEX (link_section->sh_link)
+ 		>= elf_header.e_shnum)

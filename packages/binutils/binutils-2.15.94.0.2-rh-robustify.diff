@@ -1,5 +1,15 @@
-bfd/
-2005-05-25  Jakub Jelinek  <jakub@redhat.com>
+2005-06-14  Jakub Jelinek  <jakub@redhat.com>
+
+	* elf.c (bfd_elf_get_str_section): Allocate an extra byte after
+	the end of strtab and clear it.
+	(elf_read): Remove.
+
+	* elf.c (bfd_section_from_shdr): Fail if name is NULL.
+	Prevent endless recursion on broken objects.
+
+	* archive.c (do_slurp_coff_armap): Check for overflows.
+
+2005-05-26  Jakub Jelinek  <jakub@redhat.com>
 
 	* elfcode.h (elf_object_p): Fail if e_shoff != 0, e_shnum == 0 and
 	first shdr has sh_size == 0.  Fail if e_shnum is large to cause
@@ -20,15 +30,61 @@ bfd/
 
 	* elfcode.h (elf_object_p): Add more sanity checks on elf header.
 
-binutils/
-2005-05-24  H.J. Lu  <hongjiu.lu@intel.com>
-
-	* readelf.c (process_section_groups): Check if the section member
-	index is valid.
-
 --- bfd/elf.c.jj	2005-02-07 14:42:44.000000000 -0500
-+++ bfd/elf.c	2005-05-25 09:51:36.000000000 -0400
-@@ -443,8 +443,11 @@ group_signature (bfd *abfd, Elf_Internal
++++ bfd/elf.c	2005-06-10 19:22:09.000000000 -0400
+@@ -206,28 +206,6 @@ bfd_elf_hash (const char *namearg)
+   return h & 0xffffffff;
+ }
+ 
+-/* Read a specified number of bytes at a specified offset in an ELF
+-   file, into a newly allocated buffer, and return a pointer to the
+-   buffer.  */
+-
+-static char *
+-elf_read (bfd *abfd, file_ptr offset, bfd_size_type size)
+-{
+-  char *buf;
+-
+-  if ((buf = bfd_alloc (abfd, size)) == NULL)
+-    return NULL;
+-  if (bfd_seek (abfd, offset, SEEK_SET) != 0)
+-    return NULL;
+-  if (bfd_bread (buf, size, abfd) != size)
+-    {
+-      if (bfd_get_error () != bfd_error_system_call)
+-	bfd_set_error (bfd_error_file_truncated);
+-      return NULL;
+-    }
+-  return buf;
+-}
+-
+ bfd_boolean
+ bfd_elf_mkobject (bfd *abfd)
+ {
+@@ -267,7 +245,21 @@ bfd_elf_get_str_section (bfd *abfd, unsi
+       /* No cached one, attempt to read, and cache what we read.  */
+       offset = i_shdrp[shindex]->sh_offset;
+       shstrtabsize = i_shdrp[shindex]->sh_size;
+-      shstrtab = elf_read (abfd, offset, shstrtabsize);
++
++      /* Allocate and clear an extra byte at the end, to prevent crashes
++	 in case the string table is not terminated.  */
++      if (shstrtabsize + 1 == 0
++	  || (shstrtab = bfd_alloc (abfd, shstrtabsize + 1)) == NULL
++	  || bfd_seek (abfd, offset, SEEK_SET) != 0)
++	shstrtab = NULL;
++      else if (bfd_bread (shstrtab, shstrtabsize, abfd) != shstrtabsize)
++	{
++	  if (bfd_get_error () != bfd_error_system_call)
++	    bfd_set_error (bfd_error_file_truncated);
++	  shstrtab = NULL;
++	}
++      else
++	shstrtab[shstrtabsize] = '\0';
+       i_shdrp[shindex]->contents = shstrtab;
+     }
+   return shstrtab;
+@@ -443,8 +435,11 @@ group_signature (bfd *abfd, Elf_Internal
    Elf_External_Sym_Shndx eshndx;
    Elf_Internal_Sym isym;
  
@@ -42,7 +98,16 @@ binutils/
      return NULL;
  
    /* Go read the symbol.  */
-@@ -1755,6 +1758,9 @@ bfd_section_from_shdr (bfd *abfd, unsign
+@@ -1735,6 +1730,8 @@ bfd_section_from_shdr (bfd *abfd, unsign
+   name = bfd_elf_string_from_elf_section (abfd,
+ 					  elf_elfheader (abfd)->e_shstrndx,
+ 					  hdr->sh_name);
++  if (name == NULL)
++    return FALSE;
+ 
+   switch (hdr->sh_type)
+     {
+@@ -1755,6 +1752,9 @@ bfd_section_from_shdr (bfd *abfd, unsign
      case SHT_DYNAMIC:	/* Dynamic linking information.  */
        if (! _bfd_elf_make_section_from_shdr (abfd, hdr, name))
  	return FALSE;
@@ -52,6 +117,27 @@ binutils/
        if (elf_elfsections (abfd)[hdr->sh_link]->sh_type != SHT_STRTAB)
  	{
  	  Elf_Internal_Shdr *dynsymhdr;
+@@ -1900,6 +1900,9 @@ bfd_section_from_shdr (bfd *abfd, unsign
+ 	      Elf_Internal_Shdr *hdr2 = elf_elfsections (abfd)[i];
+ 	      if (hdr2->sh_link == shindex)
+ 		{
++		  /* Prevent endless recursion on broken objects.  */
++		  if (i == shindex)
++		    return FALSE;
+ 		  if (! bfd_section_from_shdr (abfd, i))
+ 		    return FALSE;
+ 		  if (elf_onesymtab (abfd) == i)
+@@ -1975,6 +1978,10 @@ bfd_section_from_shdr (bfd *abfd, unsign
+ 	if (hdr->sh_link != elf_onesymtab (abfd) || hdr->sh_info == SHN_UNDEF)
+ 	  return _bfd_elf_make_section_from_shdr (abfd, hdr, name);
+ 
++        /* Prevent endless recursion on broken objects.  */
++        if (elf_elfsections (abfd)[hdr->sh_info]->sh_type == SHT_REL
++            || elf_elfsections (abfd)[hdr->sh_info]->sh_type == SHT_RELA)
++          return FALSE;
+ 	if (! bfd_section_from_shdr (abfd, hdr->sh_info))
+ 	  return FALSE;
+ 	target_sect = bfd_section_from_elf_index (abfd, hdr->sh_info);
 --- bfd/elfcode.h.jj	2005-02-07 14:42:44.000000000 -0500
 +++ bfd/elfcode.h	2005-05-25 13:09:21.000000000 -0400
 @@ -33,7 +33,7 @@ Foundation, Inc., 59 Temple Place - Suit
@@ -184,25 +270,21 @@ binutils/
  	  if ((abfd->flags & (EXEC_P | DYNAMIC)) != 0)
  	    sym->symbol.value -= sym->symbol.section->vma;
  
---- binutils/readelf.c.jj	2005-02-18 01:14:30.000000000 -0500
-+++ binutils/readelf.c	2005-05-25 13:09:39.000000000 -0400
-@@ -4067,6 +4067,19 @@ process_section_groups (FILE *file)
- 	      entry = byte_get (indices, 4);
- 	      indices += 4;
+--- bfd/archive.c.jj	2005-06-10 19:02:01.000000000 +0200
++++ bfd/archive.c	2005-06-10 19:50:21.000000000 +0200
+@@ -821,9 +821,15 @@ do_slurp_coff_armap (bfd *abfd)
+   /* The coff armap must be read sequentially.  So we construct a
+      bsd-style one in core all at once, for simplicity.  */
  
-+	      if (entry >= elf_header.e_shnum)
-+		{
-+		  error (_("section [%5u] in group section [%5u] > maximum section [%5u]\n"),
-+			 entry, i, elf_header.e_shnum - 1);
-+		  continue;
-+		}
-+	      else if (entry >= SHN_LORESERVE && entry <= SHN_HIRESERVE)
-+		{
-+		  error (_("invalid section [%5u] in group section [%5u]\n"),
-+			 entry, i);
-+		  continue;
-+		}
++  if (nsymz > ~ (bfd_size_type) 0 / sizeof (carsym))
++    return FALSE;
 +
- 	      if (section_headers_groups [SECTION_HEADER_INDEX (entry)]
- 		  != NULL)
- 		{
+   carsym_size = (nsymz * sizeof (carsym));
+   ptrsize = (4 * nsymz);
+ 
++  if (carsym_size + stringsize + 1 <= carsym_size)
++    return FALSE;
++
+   ardata->symdefs = bfd_zalloc (abfd, carsym_size + stringsize + 1);
+   if (ardata->symdefs == NULL)
+     return FALSE;
