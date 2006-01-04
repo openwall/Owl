@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gzip/gzip.spec,v 1.24 2006/01/04 10:10:01 mci Exp $
+# $Owl: Owl/packages/gzip/gzip.spec,v 1.25 2006/01/04 13:56:01 ldv Exp $
 
 Summary: The GNU data compression program.
 Name: gzip
@@ -98,7 +98,7 @@ cat > %buildroot%_bindir/zless <<EOF
 EOF
 cat > %buildroot%_bindir/bzless <<EOF
 #!/bin/sh
-/usr/bin/bzcat "\$@" | %_bindir/less
+%_bindir/bzcat "\$@" | %_bindir/less
 EOF
 chmod 755 %buildroot%_bindir/{,b}zless
 
