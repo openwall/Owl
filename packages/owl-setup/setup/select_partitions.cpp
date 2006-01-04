@@ -197,6 +197,29 @@ void unmount_all(OwlInstallInterface *the_iface)
     the_iface->CloseExecWindow();
 }
 
+static void mount_unlisted(OwlInstallInterface *the_iface, 
+                           bool for_root = false)
+{
+    ScriptVariable part;
+    do {
+        ScriptVariable prompt(
+            "Please enter the device path \n"
+            "(e.g., /dev/hda1 or /dev/sdb2)");
+        part = the_iface->QueryString(prompt);
+        if(part == "" ||
+           part == OwlInstallInterface::qs_cancel ||
+           part == OwlInstallInterface::qs_escape ||
+           part == OwlInstallInterface::qs_eof)
+        {
+            return;
+        }
+    } while(part[0] != '/');
+    if(for_root)
+        mount_at(the_iface, part, "/");
+    else
+        add_mount(the_iface, part);
+}
+
 static void view_tree(OwlInstallInterface *the_iface)
 {
     ScriptVector parts, dirs;
@@ -251,6 +274,7 @@ void select_and_mount_partitions(OwlInstallInterface *the_iface)
                             ScriptVariable(0, "Select %s as your root",
                                               parts[i].c_str()));
             }
+            pm->AddItem("n", "Use uNlisted partition for root");
             pm->AddItem("q", "Quit/cancel");
             if(parts.Length()>0) {
                 pm->SetDefault(parts[0]);
@@ -263,8 +287,11 @@ void select_and_mount_partitions(OwlInstallInterface *the_iface)
                choice == OwlInstallInterface::qs_cancel)
             {
                 return;
-            }
-            mount_at(the_iface, choice, "/");
+            } else
+            if(choice == "n") {
+                mount_unlisted(the_iface, true);
+            } else 
+                mount_at(the_iface, choice, "/");
         } else {
             ScriptVector parts;
             enumerate_available_partitions(parts);
@@ -277,6 +304,7 @@ void select_and_mount_partitions(OwlInstallInterface *the_iface)
                                            "Attach %s somewhere to the tree",
                                            parts[i].c_str()));
             }
+            pm->AddItem("n", "Mount uNlisted partition");
             if(!mountpoint_mounted(the_config->OwlRoot()+"/tmp"))
                 pm->AddItem("t", "Use tmpfs for /tmp");
             pm->AddItem("u", "Unmount all, select another root");
@@ -294,6 +322,8 @@ void select_and_mount_partitions(OwlInstallInterface *the_iface)
             {
                 return;
             }
+            else if(choice=="n")
+                mount_unlisted(the_iface);
             else if(choice=="u")
                 unmount_all(the_iface);
             else if(choice=="v")

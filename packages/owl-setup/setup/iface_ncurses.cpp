@@ -75,6 +75,7 @@ ScriptVariable NcursesIfaceSingleChoice::Run()
 
     int rows, cols;
     scale_menu(the_menu, &rows, &cols);
+    int caprows = (caption == "") ? 0 : 2;
     if(cols < caption.Length())
         cols = caption.Length();
     int maxy, maxx;
@@ -83,9 +84,9 @@ ScriptVariable NcursesIfaceSingleChoice::Run()
     int begx = (maxx - cols - 6) / 2;
     if(begy < 0) begy = 0;
     if(begx < 0) begx = 0;
-    WINDOW *mwin = newwin(rows + 4, cols + 6, begy, begx);
+    WINDOW *mwin = newwin(rows + 2 + caprows, cols + 6, begy, begx);
     set_menu_win(the_menu, mwin);
-    WINDOW *mwin_d = derwin(mwin, rows, cols, 3, 4);
+    WINDOW *mwin_d = derwin(mwin, rows, cols, 1 + caprows, 4);
     set_menu_sub(the_menu, mwin_d);
 
     if(work_with_colors) {
@@ -545,10 +546,15 @@ NcursesOwlInstallInterface::QueryString(const ScriptVariable& prompt,
 {
     CDKENTRY *entry;
 
+    ScriptVector prom_v(prompt, "\n", " ");
+    int i;
+    for(i=0; i<prom_v.Length(); i++) {
+        ScriptVariable tmp(0, "<C></%d> %s", cp_default, prom_v[i].c_str());
+        prom_v[i] = tmp;
+    }
+
     entry = newCDKEntry((CDKSCREEN*)cdkscreen, CENTER, CENTER,
-                        (char*)ScriptVariable(0, "<C></%d> %s",
-                                              cp_default, prompt.c_str())
-                             .c_str(),
+                        (char*)prom_v.Join("\n").c_str(),
                         "",
                         work_with_colors ?
                             COLOR_PAIR(cp_selection)|A_BOLD

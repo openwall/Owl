@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <limits.h>
 
 #include "scriptpp/scrvar.hpp"
 
@@ -20,7 +21,7 @@ void install_kernel_headers(OwlInstallInterface *the_iface)
         return;
     }
     if(source_dir_stat.IsSymlink()) {
-        char buf[256];
+        char buf[PATH_MAX];
         int rc = readlink(the_config->KernelHeadersSource().c_str(),
                           buf, sizeof(buf)-1);
         if(rc<0) {
@@ -28,6 +29,8 @@ void install_kernel_headers(OwlInstallInterface *the_iface)
             return;
         }
         buf[rc] = 0;
+        while(--rc>0 && buf[rc] == '/') /* remove trailing slashes */
+            buf[rc] = 0;
         if(buf[0] == '/') {
             from_path = buf;
             char * last_slash = strrchr(buf, '/');

@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.49 2006/01/03 21:51:23 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.50 2006/01/04 17:41:39 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 0.31
+Version: 0.32
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -32,6 +32,12 @@ rm -rf %buildroot
 %_sbindir/*
 
 %changelog
+* Mon Jan 04 2006 Croco <croco-at-owl.openwall.com> 0.32-owl1
+- ncurses interface fixed to allow multiline prompts for string queries
+  and to omit blank lines atop a menu if there's no caption
+- partition selection dialog now offers to use an unlisted partition
+- two fixes to the 'install kernel headers' feature
+
 * Mon Jan 04 2006 Croco <croco-at-owl.openwall.com> 0.31-owl1
 - install kernel headers feature added
 - timezone and keyboard item lists are now alphabetically sorted

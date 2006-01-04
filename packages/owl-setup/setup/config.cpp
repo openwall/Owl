@@ -143,7 +143,7 @@ ScriptVariable OwlInstallConfig::LiloMap() const
 
 
 ScriptVariable OwlInstallConfig::KernelHeadersSource() const
-{ return "/usr/src/linux"; }
+{ return "/usr/src/linux"; /* NO TRAILING SLASH HERE!!! */ }
 
 ScriptVariable OwlInstallConfig::KernelHeadersTarget() const
 { return root+"/usr/src/"; }
