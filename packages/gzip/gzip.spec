@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/gzip/gzip.spec,v 1.23 2005/11/16 13:09:47 solar Exp $
+# $Owl: Owl/packages/gzip/gzip.spec,v 1.24 2006/01/04 10:10:01 mci Exp $
 
 Summary: The GNU data compression program.
 Name: gzip
 Version: 1.3.5
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/File
 URL: http://www.gnu.org/software/%name/
@@ -98,7 +98,7 @@ cat > %buildroot%_bindir/zless <<EOF
 EOF
 cat > %buildroot%_bindir/bzless <<EOF
 #!/bin/sh
-/bin/bzcat "\$@" | %_bindir/less
+/usr/bin/bzcat "\$@" | %_bindir/less
 EOF
 chmod 755 %buildroot%_bindir/{,b}zless
 
@@ -131,6 +131,9 @@ fi
 %exclude %_mandir/*/zcat.*
 
 %changelog
+* Wed Jan 04 2006 Michail Litvak <mci-at-owl.openwall.com> 1.3.5-owl3
+- Fixed path to bzcat.
+
 * Mon Jul 18 2005 Solar Designer <solar-at-owl.openwall.com> 1.3.5-owl2
 - Fixed a segfault on invalid compressed data (patch from Gentoo).
 
