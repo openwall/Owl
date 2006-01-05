@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/tcsh/tcsh.spec,v 1.20 2005/11/16 13:32:45 solar Exp $
+# $Owl: Owl/packages/tcsh/tcsh.spec,v 1.21 2006/01/05 09:16:53 gremlin Exp $
 
 Summary: An enhanced version of csh, the C shell.
 Name: tcsh
 Version: 6.14.00
-Release: owl3
+Release: owl4
 License: BSD
 Group: System Environment/Shells
 URL: http://www.tcsh.org/Home
@@ -95,6 +95,10 @@ fi
 %_datadir/locale/*/LC_MESSAGES/tcsh*
 
 %changelog
+* Wed Jan 04 2006 Gremlin from Kremlin <gremlin-at-owl.openwall.com> 6.14.00-owl4
+- Disabled color output for built-in "ls-F" command, as it caused choke on
+newer LS_COLORS options.
+
 * Mon Oct 24 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.14.00-owl3
 - Adjusted the tcsh.1 patch as suggested by Solar.
 
