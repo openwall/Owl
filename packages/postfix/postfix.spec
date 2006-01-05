@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/postfix/postfix.spec,v 1.35 2005/12/24 22:50:37 ldv Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.36 2006/01/05 13:21:29 ldv Exp $
 
 Summary: Postfix mail system.
 Name: postfix
-Version: 2.2.7
-Release: owl2
+Version: 2.2.8
+Release: owl1
 Epoch: 1
 License: IBM Public License
 Group: System Environment/Daemons
@@ -328,6 +328,9 @@ fi
 %attr(644,root,root) %verify(not md5 mtime size) %ghost %queue_directory/etc/*
 
 %changelog
+* Thu Jan 05 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.2.8-owl1
+- Updated to 2.2.8.
+
 * Sat Dec 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.2.7-owl2
 - Rebuilt with libdb-4.2.so.
 
