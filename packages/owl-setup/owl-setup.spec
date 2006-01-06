@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.50 2006/01/04 17:41:39 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.51 2006/01/06 19:33:48 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 0.32
+Version: 0.33
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -32,6 +32,9 @@ rm -rf %buildroot
 %_sbindir/*
 
 %changelog
+* Mon Jan 06 2006 Croco <croco-at-owl.openwall.com> 0.32-owl1
+- sorting criteria for kbd/tz selection fine tuned
+
 * Mon Jan 04 2006 Croco <croco-at-owl.openwall.com> 0.32-owl1
 - ncurses interface fixed to allow multiline prompts for string queries
   and to omit blank lines atop a menu if there's no caption
