@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.51 2006/01/06 19:33:48 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.52 2006/01/07 10:15:37 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -32,7 +32,7 @@ rm -rf %buildroot
 %_sbindir/*
 
 %changelog
-* Mon Jan 06 2006 Croco <croco-at-owl.openwall.com> 0.32-owl1
+* Fri Jan 06 2006 Croco <croco-at-owl.openwall.com> 0.33-owl1
 - sorting criteria for kbd/tz selection fine tuned
 
 * Mon Jan 04 2006 Croco <croco-at-owl.openwall.com> 0.32-owl1
