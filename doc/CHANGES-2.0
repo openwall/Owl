@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2006/01/07	Package: bash
+Updated to 3.1.1.
+
 2006/01/05	Package: postfix
 Updated to 2.2.8.
 
@@ -816,4 +819,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Owl: Owl/doc/CHANGES-2.0,v 1.195 2006/01/05 13:24:05 ldv Exp $
+$Owl: Owl/doc/CHANGES-2.0,v 1.196 2006/01/07 23:21:20 ldv Exp $

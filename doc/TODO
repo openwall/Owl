@@ -25,17 +25,6 @@ by default.  Make it fail-close on suEXEC.  Clone and maintain a version
 of suEXEC more friendly to virtual hosting.
 
 
-	bash.
-
-[PRIORITY: high]
-[ASSIGNED: ldv@]
-Update to latest release for FC4/RHEL4 compatibility (we're currently at
-2.05, but 3.0 went out a long time ago and 3.1 was released recently),
-with our patches.  Make sure it still builds cleanly with -Wall
-(due to our patches).  Once again try to get our generic fixes (the
-"-owl-fixes.diff") to the maintainer (haven't received a response).
-
-
 	bison, dialog, diffstat, diffutils, file, hdparm, man-pages.
 
 [PRIORITY: low]
@@ -504,4 +493,4 @@ Fix installworld.sh to always pick the latest version of a package when
 multiple versions are available (please refer to the appropriate XXX
 comment in the script).
 
-$Owl: Owl/doc/TODO,v 1.152 2005/12/29 20:38:40 solar Exp $
+$Owl: Owl/doc/TODO,v 1.153 2006/01/07 23:21:20 ldv Exp $
