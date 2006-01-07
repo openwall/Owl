@@ -1,0 +1,136 @@
+diff -upk.orig bash-3.1.orig/builtins/test.def bash-3.1/builtins/test.def
+--- bash-3.1.orig/builtins/test.def	2002-04-04 19:48:17 +0000
++++ bash-3.1/builtins/test.def	2006-01-06 01:17:42 +0000
+@@ -60,6 +60,9 @@ File operators:
+ 
+   FILE1 -ef FILE2  True if file1 is a hard link to file2.
+ 
++All file operators except -h and -L are acting on the target of a symbolic
++link, not on the symlink itself, if FILE is a symbolic link.
++
+ String operators:
+ 
+     -z STRING      True if string is empty.
+@@ -89,6 +92,9 @@ Other operators:
+ Arithmetic binary operators return true if ARG1 is equal, not-equal,
+ less-than, less-than-or-equal, greater-than, or greater-than-or-equal
+ than ARG2.
++
++See the bash manual page bash(1) for the handling of parameters (i.e.
++missing parameters).
+ $END
+ 
+ $BUILTIN [
+diff -upk.orig bash-3.1.orig/doc/bash.1 bash-3.1/doc/bash.1
+--- bash-3.1.orig/doc/bash.1	2006-01-06 01:03:46 +0000
++++ bash-3.1/doc/bash.1	2006-01-06 01:17:42 +0000
+@@ -115,6 +115,12 @@ processing, then commands are read from 
+ This option allows the positional parameters to be set
+ when invoking an interactive shell.
+ .TP
++.B \-v
++Print shell input lines as they are read.
++.TP
++.B \-x
++Print commands and their arguments as they are executed.
++.TP
+ .B \-D
+ A list of all double-quoted strings preceded by \fB$\fP
+ is printed on the standard output.
+@@ -1644,7 +1650,9 @@ A filename whose suffix matches one of t
+ is excluded from the list of matched filenames.
+ A sample value is
+ .if t \f(CW".o:~"\fP.
+-.if n ".o:~".
++.if n ".o:~"
++(Quoting is needed when assigning a value to this variable,
++which contains tildes).
+ .TP
+ .B GLOBIGNORE
+ A colon-separated list of patterns defining the set of filenames to
+@@ -2416,6 +2424,9 @@ below).
+ \fIlength\fP must evaluate to a number greater than or equal to zero.
+ If \fIoffset\fP evaluates to a number less than zero, the value
+ is used as an offset from the end of the value of \fIparameter\fP.
++Arithmetic expressions starting with a - must be separated by whitespace
++from the preceding : to be
++distinguished from the \fBUse Default Values\fP expansion.
+ If \fIparameter\fP is \fB@\fP, the result is \fIlength\fP positional
+ parameters beginning at \fIoffset\fP.
+ If \fIparameter\fP is an array name indexed by @ or *,
+@@ -2612,6 +2623,9 @@ and the substitution of the result.  The
+ \fB$((\fP\fIexpression\fP\fB))\fP
+ .RE
+ .PP
++The old format \fB$[\fP\fIexpression\fP\fB]\fP is deprecated and will
++be removed in upcoming versions of bash.
++.PP
+ The
+ .I expression
+ is treated as if it were within double quotes, but a double quote
+@@ -2749,6 +2763,10 @@ If the shell option
+ .B nocaseglob
+ is enabled, the match is performed without regard to the case
+ of alphabetic characters.
++Note that when using range expressions like
++[a-z] (see below), letters of the other case may be included,
++depending on the setting of
++.B LC_COLLATE.
+ When a pattern is used for pathname expansion,
+ the character
+ .B ``.''
+@@ -3015,6 +3033,9 @@ a UDP connection to the corresponding so
+ .PD
+ .RE
+ .PP
++\fBNOTE:\fP This Bash build does \fBnot\fP support using
++the \fB/dev/tcp\fP and \fB/dev/udp\fP files.
++.PP
+ A failure to open or create a file causes the redirection to fail.
+ .PP
+ Redirections using file descriptors greater than 9 should be used with
+@@ -3540,6 +3561,10 @@ descriptor 0, 1, or 2, respectively, is 
+ .PP
+ Unless otherwise specified, primaries that operate on files follow symbolic
+ links and operate on the target of the link, rather than the link itself.
++.PP
++See the description of the \fItest\fP builtin command (section SHELL
++BUILTIN COMMANDS below) for the handling of parameters (i.e.
++missing parameters).
+ .sp 1
+ .PD 0
+ .TP
+diff -upk.orig bash-3.1.orig/doc/bashref.texi bash-3.1/doc/bashref.texi
+--- bash-3.1.orig/doc/bashref.texi	2006-01-06 01:03:46 +0000
++++ bash-3.1/doc/bashref.texi	2006-01-06 01:17:42 +0000
+@@ -1584,6 +1584,9 @@ This is referred to as Substring Expansi
+ @var{length} must evaluate to a number greater than or equal to zero.
+ If @var{offset} evaluates to a number less than zero, the value
+ is used as an offset from the end of the value of @var{parameter}.
++Arithmetic expressions starting with a - must be separated by whitespace
++from the preceding : to be
++distinguished from the $@{@var{parameter}:@minus{}@var{word}@} expansion.
+ If @var{parameter} is @samp{@@}, the result is @var{length} positional
+ parameters beginning at @var{offset}.
+ If @var{parameter} is an array name indexed by @samp{@@} or @samp{*},
+@@ -2022,6 +2025,9 @@ If @var{host} is a valid hostname or Int
+ is an integer port number or service name, Bash attempts to open a UDP
+ connection to the corresponding socket.
+ 
++NOTE: This @code{Bash} build does not support using the
++@file{/dev/tcp} and @file{/dev/udp} files.
++
+ @end table
+ 
+ A failure to open or create a file causes the redirection to fail.
+@@ -5284,6 +5290,10 @@ descriptor 0, 1, or 2, respectively, is 
+ Unless otherwise specified, primaries that operate on files follow symbolic
+ links and operate on the target of the link, rather than the link itself.
+ 
++See the description of the @code{test} builtin command (section
++@pxref{Bash Builtins} below) for the handling of parameters
++(i.e. missing parameters).
++
+ @table @code
+ @item -a @var{file}
+ True if @var{file} exists.

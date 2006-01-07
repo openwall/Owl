@@ -1,0 +1,306 @@
+diff -upk.orig bash-3.1.orig/builtins/mkbuiltins.c bash-3.1/builtins/mkbuiltins.c
+--- bash-3.1.orig/builtins/mkbuiltins.c	2005-09-10 16:22:12 +0000
++++ bash-3.1/builtins/mkbuiltins.c	2006-01-06 00:42:16 +0000
+@@ -60,8 +60,13 @@ extern char *strcpy ();
+ #define whitespace(c) (((c) == ' ') || ((c) == '\t'))
+ 
+ /* Flag values that builtins can have. */
++/*  These flags are for the C code generator, 
++    the C which is produced (./builtin.c)
++    includes the flags definitions found 
++    in ../builtins.h */
+ #define BUILTIN_FLAG_SPECIAL	0x01
+ #define BUILTIN_FLAG_ASSIGNMENT 0x02
++#define BUILTIN_FLAG_REQUIRES	0x04
+ 
+ #define BASE_INDENT	4
+ 
+@@ -145,9 +150,17 @@ char *assignment_builtins[] =
+   (char *)NULL
+ };
+ 
++/* The builtin commands that cause requirements on other files. */
++static char *requires_builtins[] =
++{
++  ".", "command", "exec", "source", "inlib",
++  (char *)NULL
++};
++
+ /* Forward declarations. */
+ static int is_special_builtin ();
+ static int is_assignment_builtin ();
++static int is_requires_builtin ();
+ 
+ #if !defined (HAVE_RENAME)
+ static int rename ();
+@@ -791,6 +804,8 @@ builtin_handler (self, defs, arg)
+     new->flags |= BUILTIN_FLAG_SPECIAL;
+   if (is_assignment_builtin (name))
+     new->flags |= BUILTIN_FLAG_ASSIGNMENT;
++  if (is_requires_builtin (name))
++    new->flags |= BUILTIN_FLAG_REQUIRES;
+ 
+   array_add ((char *)new, defs->builtins);
+   building_builtin = 1;
+@@ -1208,10 +1223,11 @@ write_builtins (defs, structfile, extern
+ 		  else
+ 		    fprintf (structfile, "(sh_builtin_func_t *)0x0, ");
+ 
+-		  fprintf (structfile, "%s%s%s, %s_doc,\n",
++		  fprintf (structfile, "%s%s%s%s, %s_doc,\n",
+ 		    "BUILTIN_ENABLED | STATIC_BUILTIN",
+ 		    (builtin->flags & BUILTIN_FLAG_SPECIAL) ? " | SPECIAL_BUILTIN" : "",
+ 		    (builtin->flags & BUILTIN_FLAG_ASSIGNMENT) ? " | ASSIGNMENT_BUILTIN" : "",
++		    (builtin->flags & BUILTIN_FLAG_REQUIRES) ? " | REQUIRES_BUILTIN" : "",
+ 		    document_name (builtin));
+ 
+ 		  fprintf
+@@ -1542,6 +1558,13 @@ is_assignment_builtin (name)
+   return (_find_in_table (name, assignment_builtins));
+ }
+ 
++static int
++is_requires_builtin (name)
++     char *name;
++{
++  return (_find_in_table (name, requires_builtins));
++}
++
+ #if !defined (HAVE_RENAME)
+ static int
+ rename (from, to)
+diff -upk.orig bash-3.1.orig/builtins.h bash-3.1/builtins.h
+--- bash-3.1.orig/builtins.h	2004-12-30 18:59:05 +0000
++++ bash-3.1/builtins.h	2006-01-06 00:42:16 +0000
+@@ -40,6 +40,7 @@
+ #define STATIC_BUILTIN  0x4	/* This builtin is not dynamically loaded. */
+ #define SPECIAL_BUILTIN 0x8	/* This is a Posix `special' builtin. */
+ #define ASSIGNMENT_BUILTIN 0x10	/* This builtin takes assignment statements. */
++#define REQUIRES_BUILTIN 0x20	/* This builtin requires other files. */
+ 
+ #define BASE_INDENT	4
+ 
+diff -upk.orig bash-3.1.orig/doc/bash.1 bash-3.1/doc/bash.1
+--- bash-3.1.orig/doc/bash.1	2006-01-06 00:41:57 +0000
++++ bash-3.1/doc/bash.1	2006-01-06 00:42:16 +0000
+@@ -231,6 +231,13 @@ The shell becomes restricted (see
+ .B "RESTRICTED SHELL"
+ below).
+ .TP
++.B \-\-rpm-requires
++Produce the list of files that are required for the 
++shell script to run.  This implies '-n' and is subject
++to the same limitations as compile time error checking checking;
++Backticks, [] tests,  and evals are not parsed so some 
++dependencies may be missed.
++.TP
+ .B \-\-verbose
+ Equivalent to  \fB\-v\fP.
+ .TP
+diff -upk.orig bash-3.1.orig/doc/bashref.texi bash-3.1/doc/bashref.texi
+--- bash-3.1.orig/doc/bashref.texi	2006-01-06 00:41:57 +0000
++++ bash-3.1/doc/bashref.texi	2006-01-06 00:42:16 +0000
+@@ -4898,6 +4898,13 @@ standard.  @xref{Bash POSIX Mode}, for a
+ @item --restricted
+ Make the shell a restricted shell (@pxref{The Restricted Shell}).
+ 
++@item --rpm-requires
++Produce the list of files that are required for the 
++shell script to run.  This implies '-n' and is subject
++to the same limitations as compile time error checking checking;
++Backticks, [] tests,  and evals are not parsed so some 
++dependencies may be missed.
++
+ @item --verbose
+ Equivalent to @option{-v}.  Print shell input lines as they're read.
+ 
+diff -upk.orig bash-3.1.orig/eval.c bash-3.1/eval.c
+--- bash-3.1.orig/eval.c	2006-01-06 00:41:57 +0000
++++ bash-3.1/eval.c	2006-01-06 00:42:16 +0000
+@@ -53,6 +53,7 @@ extern int last_command_exit_value, stdi
+ extern int need_here_doc;
+ extern int current_command_number, current_command_line_count, line_number;
+ extern int expand_aliases;
++extern int rpm_requires;
+ 
+ static void send_pwd_to_eterm __P((void));
+ static sighandler alrm_catcher __P((int));
+@@ -131,7 +132,7 @@ reader_loop ()
+ 
+       if (read_command () == 0)
+ 	{
+-	  if (interactive_shell == 0 && read_but_dont_execute)
++	  if (interactive_shell == 0 && (read_but_dont_execute && !rpm_requires))
+ 	    {
+ 	      last_command_exit_value = EXECUTION_SUCCESS;
+ 	      dispose_command (global_command);
+diff -upk.orig bash-3.1.orig/execute_cmd.c bash-3.1/execute_cmd.c
+--- bash-3.1.orig/execute_cmd.c	2006-01-06 00:41:57 +0000
++++ bash-3.1/execute_cmd.c	2006-01-06 00:42:16 +0000
+@@ -473,6 +473,8 @@ async_redirect_stdin ()
+ 
+ #define DESCRIBE_PID(pid) do { if (interactive) describe_pid (pid); } while (0)
+ 
++extern int rpm_requires;
++
+ /* Execute the command passed in COMMAND, perhaps doing it asynchrounously.
+    COMMAND is exactly what read_command () places into GLOBAL_COMMAND.
+    ASYNCHROUNOUS, if non-zero, says to do this command in the background.
+@@ -498,7 +500,15 @@ execute_command_internal (command, async
+   volatile int last_pid;
+   volatile int save_line_number;
+ 
+-  if (command == 0 || breaking || continuing || read_but_dont_execute)
++  if (command == 0 || breaking || continuing || (read_but_dont_execute && !rpm_requires))
++    return (EXECUTION_SUCCESS);
++
++  if (rpm_requires && command->type == cm_function_def)
++    return last_command_exit_value =
++      execute_intern_function (command->value.Function_def->name,
++			       command->value.Function_def->command);
++
++  if (read_but_dont_execute)
+     return (EXECUTION_SUCCESS);
+ 
+   run_pending_traps ();
+@@ -3984,7 +3994,7 @@ execute_intern_function (name, function)
+ 
+   if (check_identifier (name, posixly_correct) == 0)
+     {
+-      if (posixly_correct && interactive_shell == 0)
++      if (posixly_correct && interactive_shell == 0 && rpm_requires == 0)
+ 	{
+ 	  last_command_exit_value = EX_USAGE;
+ 	  jump_to_top_level (ERREXIT);
+diff -upk.orig bash-3.1.orig/execute_cmd.h bash-3.1/execute_cmd.h
+--- bash-3.1.orig/execute_cmd.h	2001-05-07 14:39:37 +0000
++++ bash-3.1/execute_cmd.h	2003-04-20 13:20:49 +0000
+@@ -22,6 +22,8 @@
+ #define _EXECUTE_CMD_H_
+ 
+ #include "stdc.h"
++#include "variables.h"
++#include "command.h"
+ 
+ extern struct fd_bitmap *new_fd_bitmap __P((int));
+ extern void dispose_fd_bitmap __P((struct fd_bitmap *));
+diff -upk.orig bash-3.1.orig/make_cmd.c bash-3.1/make_cmd.c
+--- bash-3.1.orig/make_cmd.c	2006-01-06 00:41:57 +0000
++++ bash-3.1/make_cmd.c	2006-01-06 00:42:16 +0000
+@@ -41,11 +41,15 @@ Foundation, 59 Temple Place, Suite 330, 
+ #include "flags.h"
+ #include "make_cmd.h"
+ #include "dispose_cmd.h"
++#include "execute_cmd.h"
+ #include "variables.h"
+ #include "subst.h"
+ #include "input.h"
+ #include "ocache.h"
+ #include "externs.h"
++#include "builtins.h"
++
++#include "builtins/common.h"
+ 
+ #if defined (JOB_CONTROL)
+ #include "jobs.h"
+@@ -55,6 +59,10 @@ Foundation, 59 Temple Place, Suite 330, 
+ 
+ extern int line_number, current_command_line_count;
+ extern int last_command_exit_value;
++extern int rpm_requires;
++
++static char *alphabet_set = "abcdefghijklmnopqrstuvwxyz"
++                     "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+ 
+ /* Object caching */
+ sh_obj_cache_t wdcache = {0, 0, 0};
+@@ -784,6 +792,27 @@ make_subshell_command (command)
+   return (make_command (cm_subshell, (SIMPLE_COM *)temp));
+ }
+ 
++static void
++output_requirement (deptype, filename)
++const char *deptype;
++char *filename;
++{
++  if (strchr(filename, '$') || (filename[0] != '/' && strchr(filename, '/')))
++    return;
++
++  /* 
++      if the executable is called via variable substitution we can
++      not dermine what it is at compile time.  
++
++      if the executable consists only of characters not in the
++      alphabet we do not consider it a dependency just an artifact
++      of shell parsing (ex "exec < ${infile}").
++  */
++
++  if (strpbrk(filename, alphabet_set))
++    printf ("%s(%s)\n", deptype, filename);
++}
++
+ /* Reverse the word list and redirection list in the simple command
+    has just been parsed.  It seems simpler to do this here the one
+    time then by any other method that I can think of. */
+@@ -801,6 +830,27 @@ clean_simple_command (command)
+ 	REVERSE_LIST (command->value.Simple->redirects, REDIRECT *);
+     }
+ 
++  if (rpm_requires && command->value.Simple->words)
++    {
++      char *cmd0;
++      char *cmd1;
++      struct builtin *b;
++
++      cmd0 = command->value.Simple->words->word->word;
++      b = builtin_address_internal (cmd0, 0);
++      cmd1 = 0;
++      if (command->value.Simple->words->next)
++        cmd1 = command->value.Simple->words->next->word->word;
++
++      if (b) {
++        if ( (b->flags & REQUIRES_BUILTIN) && cmd1)
++          output_requirement ("executable", cmd1);
++      } else {
++        if (!assignment(cmd0, 0))
++          output_requirement (find_function(cmd0) ? "function" : "executable", cmd0);
++      }
++    } /*rpm_requires*/
++
+   return (command);
+ }
+ 
+diff -upk.orig bash-3.1.orig/shell.c bash-3.1/shell.c
+--- bash-3.1.orig/shell.c	2006-01-06 00:41:57 +0000
++++ bash-3.1/shell.c	2006-01-06 00:42:16 +0000
+@@ -175,6 +175,9 @@ int running_under_emacs;
+ /* The name of the .(shell)rc file. */
+ static char *bashrc_file = "~/.bashrc";
+ 
++/* Non-zero if we are finding the scripts requirements. */
++int rpm_requires;
++
+ /* Non-zero means to act more like the Bourne shell on startup. */
+ static int act_like_sh;
+ 
+@@ -233,6 +236,7 @@ struct {
+   { "posix", Int, &posixly_correct, (char **)0x0 },
+   { "protected", Int, &protected_mode, (char **)0x0 },
+   { "rcfile", Charp, (int *)0x0, &bashrc_file },
++  { "rpm-requires", Int, &rpm_requires, (char **)0x0 },
+ #if defined (RESTRICTED_SHELL)
+   { "restricted", Int, &restricted, (char **)0x0 },
+ #endif
+@@ -460,6 +464,12 @@ main (argc, argv, env)
+   if (dump_translatable_strings)
+     read_but_dont_execute = 1;
+ 
++  if (rpm_requires)
++    {
++      read_but_dont_execute = 1;
++      initialize_shell_builtins ();
++    }
++
+   if (running_setuid && privileged_mode == 0)
+     disable_priv_mode ();
+ 

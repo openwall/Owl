@@ -1,20 +1,27 @@
---- bash-2.05/doc/builtins.1~	Tue Nov 30 00:30:13 1999
-+++ bash-2.05/doc/builtins.1	Fri Apr 20 19:13:17 2001
-@@ -1,6 +1,6 @@
- .\" This is a hack to force bash builtins into the whatis database
- .\" and to get the list of builtins to come up with the man command.
--.TH BASH_BUILTINS 1 "1996 Mar 20" GNU
-+.TH BASH_BUILTINS 1 "2001 Mar 5" "GNU Bash-2.05"
- .SH NAME
- bash, :, ., alias, bg, bind, break, builtin, case, cd, command,
- continue, declare, dirs, disown, echo, enable, eval, exec, exit,
-@@ -8,8 +8,2516 @@
- let, local, logout, popd, pushd, pwd, read, readonly, return, set,
+diff -upk.orig bash-3.1.orig/doc/Makefile.in bash-3.1/doc/Makefile.in
+--- bash-3.1.orig/doc/Makefile.in	2004-07-27 12:57:48 +0000
++++ bash-3.1/doc/Makefile.in	2006-01-06 14:52:19 +0000
+@@ -224,7 +224,7 @@ installdirs:
+ 	-$(INSTALL_DATA) $(srcdir)/bash.1 $(DESTDIR)$(man1dir)/bash${man1ext}
+ 	-$(INSTALL_DATA) $(srcdir)/bashbug.1 $(DESTDIR)$(man1dir)/bashbug${man1ext}
+ # uncomment the next line to install the builtins man page
+-#	-$(INSTALL_DATA) $(srcdir)/builtins.1 $(DESTDIR)$(man1dir)/bash_builtins${man1ext}
++	-$(INSTALL_DATA) $(srcdir)/builtins.1 $(DESTDIR)$(man1dir)/builtins${man1ext}
+ 	-$(INSTALL_DATA) $(srcdir)/bash.info $(DESTDIR)$(infodir)/bash.info
+ # run install-info if it is present to update the info directory
+ 	if $(SHELL) -c 'install-info --version' >/dev/null 2>&1; then \
+diff -upk.orig bash-3.1.orig/doc/builtins.1 bash-3.1/doc/builtins.1
+--- bash-3.1.orig/doc/builtins.1	2004-05-24 14:19:55 +0000
++++ bash-3.1/doc/builtins.1	2006-01-06 14:50:26 +0000
+@@ -7,9 +7,2790 @@ continue, declare, dirs, disown, echo, e
+ export, fc, fg, getopts, hash, help, history, jobs, kill,
+ let, local, logout, popd, printf, pushd, pwd, read, readonly, return, set,
  shift, shopt, source, suspend, test, times, trap, type, typeset,
- ulimit, umask, unalias, unset, until, wait, while \- bash built-in commands, see \fBbash\fR(1)
+-ulimit, umask, unalias, unset, wait \- bash built-in commands, see \fBbash\fR(1)
 -.SH BASH BUILTIN COMMANDS
 -.nr zZ 1
 -.so bash.1
++ulimit, umask, unalias, unset, wait \- bash built-in commands
 +.SH "SHELL BUILTIN COMMANDS"
 +.\" start of bash_builtins
 +.zZ
@@ -25,6 +32,8 @@
 +accepts
 +.B \-\-
 +to signify the end of the options.
++For example, the \fB:\fP, \fBtrue\fP, \fBfalse\fP, and \fBtest\fP builtins
++do not accept options.
 +.sp .5
 +.PD 0
 +.TP
@@ -35,8 +44,8 @@
 +and performing any specified
 +redirections.  A zero exit code is returned.
 +.TP
-+.PD 0
 +\fB .\| \fP \fIfilename\fP [\fIarguments\fP]
++.PD 0
 +.TP
 +\fBsource\fP \fIfilename\fP [\fIarguments\fP]
 +.PD
@@ -91,8 +100,8 @@
 +\fBAlias\fP returns true unless a \fIname\fP is given for which
 +no alias has been defined.
 +.TP
-+\fBbg\fP [\fIjobspec\fP]
-+Resume the suspended job \fIjobspec\fP in the background, as if it
++\fBbg\fP [\fIjobspec\fP ...]
++Resume each suspended job \fIjobspec\fP in the background, as if it
 +had been started with
 +.BR & .
 +If \fIjobspec\fP is not present, the shell's notion of the
@@ -100,11 +109,11 @@
 +.B bg
 +.I jobspec
 +returns 0 unless run when job control is disabled or, when run with
-+job control enabled, if \fIjobspec\fP was not found or started without
-+job control.
++job control enabled, any specified \fIjobspec\fP was not found
++or was started without job control.
 +.TP
-+.PD 0
 +\fBbind\fP [\fB\-m\fP \fIkeymap\fP] [\fB\-lpsvPSV\fP]
++.PD 0
 +.TP
 +\fBbind\fP [\fB\-m\fP \fIkeymap\fP] [\fB\-q\fP \fIfunction\fP] [\fB\-u\fP \fIfunction\fP] [\fB\-r\fP \fIkeyseq\fP]
 +.TP
@@ -113,16 +122,21 @@
 +\fBbind\fP [\fB\-m\fP \fIkeymap\fP] \fB\-x\fP \fIkeyseq\fP:\fIshell\-command\fP
 +.TP
 +\fBbind\fP [\fB\-m\fP \fIkeymap\fP] \fIkeyseq\fP:\fIfunction\-name\fP
++.TP
++\fBbind\fP \fIreadline\-command\fP
 +.PD
 +Display current
 +.B readline
-+key and function bindings, or bind a key sequence to a
++key and function bindings, bind a key sequence to a
 +.B readline
-+function or macro.  The binding syntax accepted is identical to that of
++function or macro, or set a
++.B readline
++variable.
++Each non-option argument is a command as it would appear in
 +.IR .inputrc ,
-+but each binding must be passed as a separate argument;
-+e.g., '"\eC\-x\eC\-r": re\-read\-init\-file'.  Options, if supplied, have the
-+following meanings:
++but each binding or command must be passed as a separate argument;
++e.g., '"\eC\-x\eC\-r": re\-read\-init\-file'.
++Options, if supplied, have the following meanings:
 +.RS
 +.PD 0
 +.TP
@@ -214,7 +228,7 @@
 +.I shell\-builtin
 +is not a shell builtin command.
 +.TP
-+\fBcd\fP [\fB\-LP\fP] [\fIdir\fP]
++\fBcd\fP [\fB\-L|-P\fP] [\fIdir\fP]
 +Change the current directory to \fIdir\fP.  The variable
 +.SM
 +.B HOME
@@ -252,8 +266,26 @@
 +is equivalent to
 +.SM
 +.BR $OLDPWD .
++If a non-empty directory name from \fBCDPATH\fP is used, or if
++\fB\-\fP is the first argument, and the directory change is
++successful, the absolute pathname of the new working directory is
++written to the standard output.
 +The return value is true if the directory was successfully changed;
 +false otherwise.
++.TP
++\fBcaller\fP [\fIexpr\fP]
++Returns the context of any active subroutine call (a shell function or
++a script executed with the \fB.\fP or \fBsource\fP builtins.
++Without \fIexpr\fP, \fBcaller\fP displays the line number and source
++filename of the current subroutine call.
++If a non-negative integer is supplied as \fIexpr\fP, \fBcaller\fP 
++displays the line number, subroutine name, and source file corresponding
++to that position in the current execution call stack.  This extra
++information may be used, for example, to print a stack trace.  The
++current frame is frame 0.
++The return value is 0 unless the shell is not executing a subroutine
++call or \fIexpr\fP does not correspond to a valid position in the
++call stack.
 +.TP
 +\fBcommand\fP [\fB\-pVv\fP] \fIcommand\fP [\fIarg\fP ...]
 +Run
@@ -318,10 +350,10 @@
 +The return value is true unless an invalid option is supplied, or no
 +matches were generated.
 +.TP
-+.PD 0
-+\fBcomplete\fP [\fB\-abcdefjkvu\fP] [\fB\-o\fP \fIcomp-option\fP] [\fB\-A\fP \fIaction\fP] [\fB\-G\fP \fIglobpat\fP] [\fB\-W\fP \fIwordlist\fP] [\fB\-P\fP \fIprefix\fP] [\fB\-S\fP \fIsuffix\fP]
++\fBcomplete\fP [\fB\-abcdefgjksuv\fP] [\fB\-o\fP \fIcomp-option\fP] [\fB\-A\fP \fIaction\fP] [\fB\-G\fP \fIglobpat\fP] [\fB\-W\fP \fIwordlist\fP] [\fB\-P\fP \fIprefix\fP] [\fB\-S\fP \fIsuffix\fP]
 +.br
 +[\fB\-X\fP \fIfilterpat\fP] [\fB\-F\fP \fIfunction\fP] [\fB\-C\fP \fIcommand\fP] \fIname\fP [\fIname ...\fP]
++.PD 0
 +.TP
 +\fBcomplete\fP \fB\-pr\fP [\fIname\fP ...]
 +.PD
@@ -351,8 +383,13 @@
 +\fIcomp-option\fP may be one of:
 +.RS
 +.TP 8
++.B bashdefault
++Perform the rest of the default \fBbash\fP completions if the compspec
++generates no matches.
++.TP 8
 +.B default
-+Use readline's default completion if the compspec generates no matches.
++Use readline's default filename completion if the compspec generates
++no matches.
 +.TP 8
 +.B dirnames
 +Perform directory name completion if the compspec generates no matches.
@@ -361,6 +398,15 @@
 +Tell readline that the compspec generates filenames, so it can perform any
 +filename\-specific processing (like adding a slash to directory names or
 +suppressing trailing spaces).  Intended to be used with shell functions.
++.TP 8
++.B nospace
++Tell readline not to append a space (the default) to words completed at
++the end of the line.
++.TP 8
++.B plusdirs
++After any matches defined by the compspec are generated, 
++directory name completion is attempted and any
++matches are added to the results of the other actions.
 +.RE
 +.TP 8
 +\fB\-A\fP \fIaction\fP
@@ -401,6 +447,9 @@
 +.B function
 +Names of shell functions.
 +.TP 8
++.B group
++Group names.  May also be specified as \fB\-g\fP.
++.TP 8
 +.B helptopic
 +Help topics as accepted by the \fBhelp\fP builtin.
 +.TP 8
@@ -418,6 +467,9 @@
 +.TP 8
 +.B running
 +Names of running jobs, if job control is active.
++.TP 8
++.B service
++Service names.  May also be specified as \fB\-s\fP.
 +.TP 8
 +.B setopt
 +Valid arguments for the \fB\-o\fP option to the \fBset\fP builtin.
@@ -507,10 +559,10 @@
 +.B continue
 +is executed.
 +.TP
++\fBdeclare\fP [\fB\-afFirtx\fP] [\fB\-p\fP] [\fIname\fP[=\fIvalue\fP] ...]
 +.PD 0
-+\fBdeclare\fP [\fB\-afFirx\fP] [\fB\-p\fP] [\fIname\fP[=\fIvalue\fP]]
 +.TP
-+\fBtypeset\fP [\fB\-afFirx\fP] [\fB\-p\fP] [\fIname\fP[=\fIvalue\fP]]
++\fBtypeset\fP [\fB\-afFirtx\fP] [\fB\-p\fP] [\fIname\fP[=\fIvalue\fP] ...]
 +.PD
 +Declare variables and/or give them attributes.
 +If no \fIname\fPs are given then display the values of variables.
@@ -525,7 +577,9 @@
 +.B \-F
 +option inhibits the display of function definitions; only the
 +function name and attributes are printed.
-+The
++If the \fBextdebug\fP shell option is enabled using \fBshopt\fP,
++the source file name and line number where the function is defined
++are displayed as well.  The
 +.B \-F
 +option implies
 +.BR \-f .
@@ -553,6 +607,12 @@
 +Make \fIname\fPs readonly.  These names cannot then be assigned values
 +by subsequent assignment statements or unset.
 +.TP
++.B \-t
++Give each \fIname\fP the \fItrace\fP attribute.
++Traced functions inherit the \fBDEBUG\fP and \fBRETURN\fP traps from
++the calling shell.
++The trace attribute has no special meaning for variables.
++.TP
 +.B \-x
 +Mark \fIname\fPs for export to subsequent commands via the environment.
 +.PD
@@ -563,7 +623,10 @@
 +makes each
 +\fIname\fP local, as with the 
 +.B local
-+command.  The return value is 0 unless an invalid option is encountered,
++command.
++If a variable name is followed by =\fIvalue\fP, the value of
++the variable is set to \fIvalue\fP.
++The return value is 0 unless an invalid option is encountered,
 +an attempt is made to define a function using
 +.if n ``\-f foo=bar'',
 +.if t \f(CW\-f foo=bar\fP,
@@ -666,9 +729,7 @@
 +dynamically determine whether or not \fBecho\fP expands these
 +escape characters by default.
 +.B echo
-+does not interpret
-+.B \-\-
-+to mean the end of options.
++does not interpret \fB\-\-\fP to mean the end of options.
 +.B echo
 +interprets the following escape sequences:
 +.RS
@@ -704,13 +765,17 @@
 +.B \e\e
 +backslash
 +.TP
-+.B \e\fInnn\fP
-+the character whose ASCII code is the octal value \fInnn\fP
-+(one to three digits)
++.B \e0\fInnn\fP
++the eight-bit character whose value is the octal value \fInnn\fP
++(zero to three octal digits)
 +.TP
-+.B \ex\fInnn\fP
-+the character whose ASCII code is the hexadecimal value \fInnn\fP
-+(one to three digits)
++.B \e\fInnn\fP
++the eight-bit character whose value is the octal value \fInnn\fP
++(one to three octal digits)
++.TP
++.B \ex\fIHH\fP
++the eight-bit character whose value is the hexadecimal value \fIHH\fP
++(one or two hex digits)
 +.PD
 +.RE
 +.TP
@@ -811,8 +876,8 @@
 +.B EXIT
 +is executed before the shell terminates.
 +.TP
-+.PD 0
 +\fBexport\fP [\fB\-fn\fP\^] [\fIname\fP[=\fIword\fP]] ...
++.PD 0
 +.TP
 +.B export \-p
 +.PD
@@ -833,8 +898,10 @@
 +of all names that are exported in this shell is printed.
 +The
 +.B \-n
-+option causes the export property to be removed from the
-+named variables.
++option causes the export property to be removed from each
++\fIname\fP.
++If a variable name is followed by =\fIword\fP, the value of
++the variable is set to \fIword\fP.
 +.B export
 +returns an exit status of 0 unless an invalid option is
 +encountered,
@@ -844,8 +911,8 @@
 +.I name
 +that is not a function.
 +.TP
-+.PD 0
 +\fBfc\fP [\fB\-e\fP \fIename\fP] [\fB\-nlr\fP] [\fIfirst\fP] [\fIlast\fP]
++.PD 0
 +.TP
 +\fBfc\fP \fB\-s\fP [\fIpat\fP=\fIrep\fP] [\fIcmd\fP]
 +.PD
@@ -901,14 +968,14 @@
 +.SM
 +.B FCEDIT
 +is not set.  If neither variable is set,
-+.FN vi
++.FN vitmp
 +is used.  When editing is complete, the edited commands are
 +echoed and executed.
 +.sp 1
 +In the second form, \fIcommand\fP is re-executed after each instance
 +of \fIpat\fP is replaced by \fIrep\fP.
 +A useful alias to use with this is
-+.if n ``r=fc -s'',
++.if n ``r="fc -s"'',
 +.if t \f(CWr='fc \-s'\fP,
 +so that typing
 +.if n ``r cc''
@@ -1039,6 +1106,7 @@
 +is not silent,
 +a question mark (\^\fB?\fP\^) is placed in
 +.IR name ,
++.SM
 +.B OPTARG
 +is unset, and a diagnostic message is printed.
 +If
@@ -1055,7 +1123,7 @@
 +It returns false if the end of options is encountered or an
 +error occurs.
 +.TP
-+\fBhash\fP [\fB\-r\fP] [\fB\-p\fP \fIfilename\fP] [\fIname\fP]
++\fBhash\fP [\fB\-lr\fP] [\fB\-p\fP \fIfilename\fP] [\fB\-dt\fP] [\fIname\fP]
 +For each
 +.IR name ,
 +the full file name of the command is determined by searching
@@ -1070,8 +1138,20 @@
 +The
 +.B \-r
 +option causes the shell to forget all
-+remembered locations.  If no arguments are given, information
-+about remembered commands is printed.
++remembered locations.
++The
++.B \-d
++option causes the shell to forget the remembered location of each \fIname\fP.
++If the
++.B \-t
++option is supplied, the full pathname to which each \fIname\fP corresponds
++is printed.  If multiple \fIname\fP arguments are supplied with \fB\-t\fP,
++the \fIname\fP is printed before the hashed full pathname.
++The
++.B \-l
++option causes output to be displayed in a format that may be reused as input.
++If no arguments are given, or if only \fB\-l\fP is supplied,
++information about remembered commands is printed.
 +The return status is true unless a
 +.I name
 +is not found or an invalid option is supplied.
@@ -1090,8 +1170,8 @@
 +The return status is 0 unless no command matches
 +.IR pattern .
 +.TP
-+.PD 0
 +\fBhistory [\fIn\fP]
++.PD 0
 +.TP
 +\fBhistory\fP \fB\-c\fP
 +.TP
@@ -1111,7 +1191,13 @@
 +.I n
 +lists only the last
 +.I n
-+lines.  If \fIfilename\fP is supplied, it is used as the
++lines.
++If the shell variable \fBHISTTIMEFORMAT\fP is set and not null,
++it is used as a format string for \fIstrftime\fP(3) to display
++the time stamp associated with each displayed history entry.
++No intervening blank is printed between the formatted time stamp
++and the history line.
++If \fIfilename\fP is supplied, it is used as the
 +name of the history file; if not, the value of
 +.SM
 +.B HISTFILE
@@ -1158,14 +1244,16 @@
 +are added.
 +.PD
 +.PP
++If the \fBHISTTIMEFORMAT\fP is set, the time stamp information
++associated with each history entry is written to the history file.
 +The return value is 0 unless an invalid option is encountered, an
 +error occurs while reading or writing the history file, an invalid
 +\fIoffset\fP is supplied as an argument to \fB\-d\fP, or the
 +history expansion supplied as an argument to \fB\-p\fP fails.
 +.RE
 +.TP
-+.PD 0
 +\fBjobs\fP [\fB\-lnprs\fP] [ \fIjobspec\fP ... ]
++.PD 0
 +.TP
 +\fBjobs\fP \fB\-x\fP \fIcommand\fP [ \fIargs\fP ... ]
 +.PD
@@ -1218,8 +1306,8 @@
 +returning its exit status.
 +.RE
 +.TP
-+.PD 0
 +\fBkill\fP [\fB\-s\fP \fIsigspec\fP | \fB\-n\fP \fIsignum\fP | \fB\-\fP\fIsigspec\fP] [\fIpid\fP | \fIjobspec\fP] ...
++.PD 0
 +.TP
 +\fBkill\fP \fB\-l\fP [\fIsigspec\fP | \fIexit_status\fP]
 +.PD
@@ -1232,18 +1320,15 @@
 +or
 +.IR jobspec .
 +.I sigspec
-+is either a signal name such as
++is either a case-insensitive signal name such as
 +.SM
 +.B SIGKILL
-+or a signal number;
-+.I signum
-+is a signal number.  If
-+.I sigspec
-+is a signal name, the name may be
-+given with or without the
++(with or without the
 +.SM
 +.B SIG
-+prefix.
++prefix) or a signal number;
++.I signum
++is a signal number.
 +If
 +.I sigspec
 +is not present, then
@@ -1352,7 +1437,7 @@
 +directory change fails.
 +.RE
 +.TP
-+\fBprintf\fP \fIformat\fP [\fIarguments\fP]
++\fBprintf\fP [\fB\-v\fP \fIvar\fP] \fIformat\fP [\fIarguments\fP]
 +Write the formatted \fIarguments\fP to the standard output under the
 +control of the \fIformat\fP.
 +The \fIformat\fP is a character string which contains three types of objects:
@@ -1360,10 +1445,16 @@
 +escape sequences, which are converted and copied to the standard output, and
 +format specifications, each of which causes printing of the next successive
 +\fIargument\fP.
-+In addition to the standard \fIprintf\fP(1) formats, %b causes
++In addition to the standard \fIprintf\fP(1) formats, \fB%b\fP causes
 +\fBprintf\fP to expand backslash escape sequences in the corresponding
-+\fIargument\fP, and %q causes \fBprintf\fP to output the corresponding
++\fIargument\fP (except that \fB\ec\fP terminates output, backslashes in
++\fB\e'\fP, \fB\e"\fP, and \fB\e?\fP are not removed, and octal escapes
++beginning with \fB\e0\fP may contain up to four digits),
++and \fB%q\fP causes \fBprintf\fP to output the corresponding
 +\fIargument\fP in a format that can be reused as shell input.
++.sp 1
++The \fB\-v\fP option causes the output to be assigned to the variable
++\fIvar\fP rather than being printed to the standard output.
 +.sp 1
 +The \fIformat\fP is reused as necessary to consume all of the \fIarguments\fP.
 +If the \fIformat\fP requires more \fIarguments\fP than are supplied, the
@@ -1371,8 +1462,8 @@
 +appropriate, had been supplied.  The return value is zero on success,
 +non-zero on failure.
 +.TP
-+.PD 0
 +\fBpushd\fP [\fB\-n\fP] [\fIdir\fP]
++.PD 0
 +.TP
 +\fBpushd\fP [\fB\-n\fP] [+\fIn\fP] [\-\fIn\fP]
 +.PD
@@ -1441,8 +1532,9 @@
 +reading the name of the current directory or an
 +invalid option is supplied.
 +.TP
-+\fBread\fP [\fB\-ers\fP] [\fB\-t\fP \fItimeout\fP] [\fB\-a\fP \fIaname\fP] [\fB\-p\fP \fIprompt\fP] [\fB\-n\fP \fInchars\fP] [\fB\-d\fP \fIdelim\fP] [\fIname\fP ...]
-+One line is read from the standard input, and the first word
++\fBread\fP [\fB\-ers\fP] [\fB\-u\fP \fIfd\fP] [\fB\-t\fP \fItimeout\fP] [\fB\-a\fP \fIaname\fP] [\fB\-p\fP \fIprompt\fP] [\fB\-n\fP \fInchars\fP] [\fB\-d\fP \fIdelim\fP] [\fIname\fP ...]
++One line is read from the standard input, or from the file descriptor
++\fIfd\fP supplied as an argument to the \fB\-u\fP option, and the first word
 +is assigned to the first
 +.IR name ,
 +the second word to the second
@@ -1450,7 +1542,7 @@
 +and so on, with leftover words and their intervening separators assigned
 +to the last
 +.IR name .
-+If there are fewer words read from the standard input than names,
++If there are fewer words read from the input stream than names,
 +the remaining names are assigned empty values.
 +The characters in 
 +.SM
@@ -1489,7 +1581,7 @@
 +waiting for a complete line of input.
 +.TP
 +.B \-p \fIprompt\fP
-+Display \fIprompt\fP, without a
++Display \fIprompt\fP on standard error, without a
 +trailing newline, before attempting to read any input.  The prompt
 +is displayed only if input is coming from a terminal.
 +.TP
@@ -1508,6 +1600,9 @@
 +input is not read within \fItimeout\fP seconds.
 +This option has no effect if \fBread\fP is not reading input from the
 +terminal or a pipe.
++.TP
++.B \-u \fIfd\fP
++Read input from file descriptor \fIfd\fP.
 +.PD
 +.PP
 +If no
@@ -1515,11 +1610,12 @@
 +are supplied, the line read is assigned to the variable
 +.SM
 +.BR REPLY .
-+The return code is zero, unless end-of-file is encountered or \fBread\fP
-+times out.
++The return code is zero, unless end-of-file is encountered, \fBread\fP
++times out, or an invalid file descriptor is supplied as the argument to
++\fB\-u\fP.
 +.RE
 +.TP
-+\fBreadonly\fP [\fB\-apf\fP] [\fIname\fP ...]
++\fBreadonly\fP [\fB\-apf\fP] [\fIname\fP[=\fIword\fP] ...]
 +.PD
 +The given
 +\fInames\fP are marked readonly; the values of these
@@ -1542,6 +1638,8 @@
 +.B \-p
 +option causes output to be displayed in a format that
 +may be reused as input.
++If a variable name is followed by =\fIword\fP, the value of
++the variable is set to \fIword\fP.
 +The return status is 0 unless an invalid option is encountered,
 +one of the
 +.I names
@@ -1567,10 +1665,15 @@
 +script as the exit status of the script.  If used outside a
 +function and not during execution of a script by \fB.\fP\^,
 +the return status is false.
++Any command associated with the \fBRETURN\fP trap is executed
++before execution resumes after the function or script.
 +.TP
 +\fBset\fP [\fB\-\-abefhkmnptuvxBCHP\fP] [\fB\-o\fP \fIoption\fP] [\fIarg\fP ...]
 +Without options, the name and value of each shell variable are displayed
-+in a format that can be reused as input.
++in a format that can be reused as input
++for setting or resetting the currently-set variables.
++Read-only variables cannot be reset.
++In \fIposix mode\fP, only shell variables are listed.
 +The output is sorted according to the current locale.
 +When options are specified, they set or unset shell attributes.
 +Any arguments remaining after the options are processed are treated
@@ -1584,8 +1687,8 @@
 +.PD 0
 +.TP 8
 +.B \-a
-+Automatically mark variables and functions which are modified or created
-+for export to the environment of subsequent commands.
++Automatically mark variables and functions which are modified or
++created for export to the environment of subsequent commands.
 +.TP 8
 +.B \-b
 +Report the status of terminated background jobs
@@ -1596,13 +1699,14 @@
 +Exit immediately if a \fIsimple command\fP (see
 +.SM
 +.B SHELL GRAMMAR
-+above) exits with a non-zero status.  The shell does not exit if the
-+command that fails is part of an
-+.I until
++above) exits with a non-zero status.
++The shell does not exit if the
++command that fails is part of the command list immediately following a
++.B while
 +or
-+.I while
-+loop,
-+part of an
++.B until
++keyword, 
++part of the test in an
 +.I if
 +statement, part of a
 +.B &&
@@ -1611,6 +1715,7 @@
 +list, or if the command's return value is
 +being inverted via
 +.BR ! .
++A trap on \fBERR\fP, if set, is executed before the shell exits.
 +.TP 8
 +.B \-f
 +Disable pathname expansion.
@@ -1658,6 +1763,14 @@
 +.B \-\-noediting
 +option.
 +.TP 8
++.B errtrace
++Same as
++.BR \-E .
++.TP 8
++.B functrace
++Same as
++.BR \-T .
++.TP 8
 +.B errexit
 +Same as
 +.BR \-e .
@@ -1704,6 +1817,8 @@
 +.B noglob
 +Same as
 +.BR \-f .
++.B nolog
++Currently ignored.
 +.TP 8
 +.B notify
 +Same as
@@ -1720,6 +1835,12 @@
 +.B physical
 +Same as
 +.BR \-P .
++.TP 8
++.B pipefail
++If set, the return value of a pipeline is the value of the last
++(rightmost) command to exit with a non-zero status, or zero if all
++commands in the pipeline exit successfully.
++This option is disabled by default.
 +.TP 8
 +.B posix
 +Change the behavior of
@@ -1791,10 +1912,12 @@
 +.TP 8
 +.B \-x
 +After expanding each \fIsimple command\fP,
-+display the expanded value of
++\fBfor\fP command, \fBcase\fP command, \fBselect\fP command, or
++arithmetic \fBfor\fP command, display the expanded value of
 +.SM
 +.BR PS4 ,
-+followed by the command and its expanded arguments.
++followed by the command and its expanded arguments
++or associated word list.
 +.TP 8
 +.B \-B
 +The shell performs brace expansion (see
@@ -1815,6 +1938,11 @@
 +instead of
 +.BR > .
 +.TP 8
++.B \-E
++If set, any trap on \fBERR\fP is inherited by shell functions, command
++substitutions, and commands executed in a subshell environment.
++The \fBERR\fP trap is normally not inherited in such cases.
++.TP 8
 +.B \-H
 +Enable
 +.B !
@@ -1830,6 +1958,13 @@
 +.B bash
 +follows the logical chain of directories when performing commands
 +which change the current directory.
++.TP 8
++.B \-T
++If set, any traps on \fBDEBUG\fP and \fBRETURN\fP are inherited by shell
++functions, command substitutions, and commands executed in a
++subshell environment.
++The \fBDEBUG\fP and \fBRETURN\fP traps are normally not inherited
++in such cases.
 +.TP 8
 +.B \-\-
 +If no arguments follow this option, then the positional parameters are
@@ -1957,13 +2092,12 @@
 +.TP 8
 +.B checkwinsize
 +If set, \fBbash\fP checks the window size after each command
-+and every time variables
++and, if necessary, updates the values of
 +.SM
 +.B LINES
 +and
 +.SM
-+.BR COLUMNS
-+are used, updating values of these variables if necessary.
++.BR COLUMNS .
 +.TP 8
 +.B cmdhist
 +If set,
@@ -1992,9 +2126,66 @@
 +.BR ALIASES .
 +This option is enabled by default for interactive shells.
 +.TP 8
++.B extdebug
++If set, behavior intended for use by debuggers is enabled:
++.RS
++.TP
++.B 1.
++The \fB\-F\fP option to the \fBdeclare\fP builtin displays the source
++file name and line number corresponding to each function name supplied
++as an argument.
++.TP
++.B 2.
++If the command run by the \fBDEBUG\fP trap returns a non-zero value, the
++next command is skipped and not executed.
++.TP
++.B 3.
++If the command run by the \fBDEBUG\fP trap returns a value of 2, and the
++shell is executing in a subroutine (a shell function or a shell script
++executed by the \fB.\fP or \fBsource\fP builtins), a call to
++\fBreturn\fP is simulated.
++.TP
++.B 4.
++\fBBASH_ARGC\fP and \fBBASH_ARGV\fP are updated as described in their
++descriptions above.
++.TP
++.B 5.
++Function tracing is enabled:  command substitution, shell functions, and
++subshells invoked with \fB(\fP \fIcommand\fP \fB)\fP inherit the
++\fBDEBUG\fP and \fBRETURN\fP traps.
++.TP
++.B 6.
++Error tracing is enabled:  command substitution, shell functions, and
++subshells invoked with \fB(\fP \fIcommand\fP \fB)\fP inherit the
++\fBERROR\fP trap.
++.RE
++.TP 8
 +.B extglob
 +If set, the extended pattern matching features described above under
 +\fBPathname Expansion\fP are enabled.
++.TP 8
++.B extquote
++If set, \fB$\fP'\fIstring\fP' and \fB$\fP"\fIstring\fP" quoting is
++performed within \fB${\fP\fIparameter\fP\fB}\fP expansions
++enclosed in double quotes.  This option is enabled by default.
++.TP 8
++.B failglob
++If set, patterns which fail to match filenames during pathname expansion
++result in an expansion error.
++.TP 8
++.B force_fignore
++If set, the suffixes specified by the \fBFIGNORE\fP shell variable
++cause words to be ignored when performing word completion even if
++the ignored words are the only possible completions.
++See
++.SM
++\fBSHELL VARIABLES\fP
++above for a description of \fBFIGNORE\fP.
++This option is enabled by default.
++.TP 8
++.B gnu_errfmt
++If set, shell error messages are written in the standard GNU error
++message format.
 +.TP 8
 +.B histappend
 +If set, the history list is appended to the file named by the value
@@ -2048,6 +2239,13 @@
 +option is enabled, multi-line commands are saved to the history with
 +embedded newlines rather than using semicolon separators where possible.
 +.TP 8
++.B login_shell
++The shell sets this option if it is started as a login shell (see
++.SM
++.B "INVOCATION"
++above).
++The value may not be changed.
++.TP 8
 +.B mailwarn
 +If set, and a file that \fBbash\fP is checking for mail has been  
 +accessed since the last time it was checked, the message ``The mail in
@@ -2069,6 +2267,12 @@
 +.B Pathname Expansion
 +above).
 +.TP 8
++.B nocasematch
++If set,
++.B bash
++matches patterns in a case\-insensitive fashion when performing matching
++while executing \fBcase\fP or \fB[[\fP conditional commands.
++.TP 8
 +.B nullglob
 +If set,
 +.B bash
@@ -2084,8 +2288,9 @@
 +This option is enabled by default.
 +.TP 8
 +.B promptvars
-+If set, prompt strings undergo variable and parameter expansion after
-+being expanded as described in
++If set, prompt strings undergo
++parameter expansion, command substitution, arithmetic
++expansion, and quote removal after being expanded as described in
 +.SM
 +.B PROMPTING
 +above.  This option is enabled by default.
@@ -2130,8 +2335,8 @@
 +.B \-f
 +is not supplied, or if job control is not enabled.
 +.TP
-+.PD 0
 +\fBtest\fP \fIexpr\fP
++.PD 0
 +.TP
 +\fB[\fP \fIexpr\fP \fB]\fP
 +Return a status of 0 or 1 depending on
@@ -2141,6 +2346,8 @@
 +Expressions are composed of the primaries described above under
 +.SM
 +.BR "CONDITIONAL EXPRESSIONS" .
++\fBtest\fP does not accept any options, nor does it accept and ignore
++an argument of \fB\-\-\fP as signifying the end of options.
 +.if t .sp 0.5
 +.if n .sp 1
 +Expressions may be combined using the following operators, listed
@@ -2227,7 +2434,7 @@
 +Print the accumulated user and system times for the shell and
 +for processes run from the shell.  The return status is 0.
 +.TP
-+\fBtrap\fP [\fB\-lp\fP] [\fIarg\fP] [\fIsigspec\fP ...]
++\fBtrap\fP [\fB\-lp\fP] [[\fIarg\fP] \fIsigspec\fP ...]
 +The command
 +.I arg
 +is to be read and executed when the shell receives
@@ -2235,10 +2442,10 @@
 +.IR sigspec .
 +If
 +.I arg
-+is absent or
++is absent (and there is a single \fIsigspec\fP) or
 +.BR \- ,
-+all specified signals are
-+reset to their original values (the values they had
++each specified signal is
++reset to its original disposition (the value it had
 +upon entrance to the shell).
 +If 
 +.I arg
@@ -2256,11 +2463,16 @@
 +.B \-p
 +is given,
 +.B trap
-+prints the list of commands associated with each signal number.
++prints the list of commands associated with each signal.
++The
++.B \-l
++option causes the shell to print a list of signal names and
++their corresponding numbers.
 +Each
 +.I sigspec
 +is either
 +a signal name defined in <\fIsignal.h\fP>, or a signal number.
++Signal names are case insensitive and the SIG prefix is optional.
 +If a
 +.I sigspec
 +is
@@ -2268,21 +2480,59 @@
 +.B EXIT
 +(0) the command
 +.I arg
-+is executed on exit from the shell.  If a
++is executed on exit from the shell.
++If a
 +.I sigspec
 +is
 +.SM
 +.BR DEBUG ,
 +the command
 +.I arg
-+is executed after every \fIsimple command\fP (see
++is executed before every \fIsimple command\fP, \fIfor\fP command,
++\fIcase\fP command, \fIselect\fP command, every arithmetic \fIfor\fP
++command, and before the first command executes in a shell function (see
 +.SM
 +.B SHELL GRAMMAR
 +above).
++Refer to the description of the \fBextdebug\fP option to the
++\fBshopt\fP builtin for details of its effect on the \fBDEBUG\fP trap.
++If a
++.I sigspec
++is
++.SM
++.BR ERR ,
++the command
++.I arg
++is executed whenever a simple command has a non\-zero exit status,
++subject to the following conditions.
 +The
-+.B \-l
-+option causes the shell to print a list of signal names and
-+their corresponding numbers.
++.SM
++.B ERR
++trap is not executed if the failed
++command is part of the command list immediately following a
++.B while
++or
++.B until
++keyword, 
++part of the test in an
++.I if
++statement, part of a
++.B &&
++or
++.B \(bv\(bv
++list, or if the command's return value is
++being inverted via
++.BR ! .
++These are the same conditions obeyed by the \fBerrexit\fP option.
++If a
++.I sigspec
++is
++.SM
++.BR RETURN ,
++the command
++.I arg
++is executed each time a shell function or a script executed with the
++\fB.\fP or \fBsource\fP builtins finishes executing.
 +Signals ignored upon entry to the shell cannot be trapped or reset.
 +Trapped signals are reset to their original values in a child
 +process when it is created.
@@ -2292,7 +2542,7 @@
 +.B trap
 +returns true.
 +.TP
-+\fBtype\fP [\fB\-atp\fP] \fIname\fP [\fIname\fP ...]
++\fBtype\fP [\fB\-aftpP\fP] \fIname\fP [\fIname\fP ...]
 +With no options, 
 +indicate how each
 +.I name
@@ -2329,9 +2579,21 @@
 +.if n ``type -t name''
 +would not return
 +.IR file .
++The
++.B \-P
++option forces a
++.SM
++.B PATH
++search for each \fIname\fP, even if
++.if t \f(CWtype -t name\fP
++.if n ``type -t name''
++would not return
++.IR file .
 +If a command is hashed,
 +.B \-p
-+prints the hashed value, not necessarily the file that appears
++and
++.B \-P
++print the hashed value, not necessarily the file that appears
 +first in 
 +.SM
 +.BR PATH .
@@ -2349,23 +2611,31 @@
 +The table of hashed commands is not consulted
 +when using
 +.BR \-a .
++The
++.B \-f
++option suppresses shell function lookup, as with the \fBcommand\fP builtin.
 +.B type
 +returns true if any of the arguments are found, false if
 +none are found.
 +.TP
-+\fBulimit\fP [\fB\-SHacdflmnpstuv\fP [\fIlimit\fP]]
++\fBulimit\fP [\fB\-SHacdefilmnpqrstuvx\fP [\fIlimit\fP]]
 +Provides control over the resources available to the shell and to
-+processes started by it, on systems that allow such control.  The
-+value of
-+.I limit
-+can be a number in the unit specified for the resource, or the
-+value
-+.BR unlimited .
++processes started by it, on systems that allow such control.
 +The \fB\-H\fP and \fB\-S\fP options specify that the hard or soft limit is
 +set for the given resource.  A hard limit cannot be increased once it
 +is set; a soft limit may be increased up to the value of the hard limit.
 +If neither \fB\-H\fP nor \fB\-S\fP is specified, both the soft and hard
 +limits are set.
++The value of
++.I limit
++can be a number in the unit specified for the resource
++or one of the special values
++.BR hard ,
++.BR soft ,
++or
++.BR unlimited ,
++which stand for the current hard limit, the current soft limit, and
++no limit, respectively.
 +If
 +.I limit
 +is omitted, the current value of the soft limit of the resource is
@@ -2384,8 +2654,14 @@
 +.B \-d
 +The maximum size of a process's data segment
 +.TP
++.B \-e
++The maximum scheduling priority (`nice')
++.TP
 +.B \-f
 +The maximum size of files created by the shell
++.TP
++.B \-i
++The maximum number of pending signals
 +.TP
 +.B \-l
 +The maximum size that may be locked into memory
@@ -2400,6 +2676,12 @@
 +.B \-p
 +The pipe size in 512-byte blocks (this may not be set)
 +.TP
++.B \-q
++The maximum number of bytes in POSIX message queues
++.TP
++.B \-r
++The maximum rt priority
++.TP
 +.B \-s
 +The maximum stack size
 +.TP
@@ -2411,6 +2693,9 @@
 +.TP
 +.B \-v
 +The maximum amount of virtual memory available to the shell
++.TP
++.B \-x
++The maximum number of file locks
 +.PD
 +.PP
 +If
@@ -2429,10 +2714,9 @@
 +.B \-n
 +and
 +.BR \-u ,
-+which are unscaled values.  The return status is 0
-+unless an invalid option is encountered, a non-numeric argument
-+other than \fBunlimited\fP is supplied as \fIlimit\fP, or an
-+error occurs while setting a new limit.
++which are unscaled values.
++The return status is 0 unless an invalid option or argument is supplied,
++or an error occurs while setting a new limit.
 +.RE
 +.TP
 +\fBumask\fP [\fB\-p\fP] [\fB\-S\fP] [\fImode\fP]
@@ -2480,8 +2764,7 @@
 +Read-only variables may not be unset.
 +If
 +.B \-f
-+is specifed, 
-+each
++is specified, each
 +.I name
 +refers to a shell function, and the function definition
 +is removed.
@@ -2495,10 +2778,6 @@
 +.SM
 +.BR LINENO ,
 +.SM
-+.BR ROWS ,
-+.SM
-+.BR COLUMNS ,
-+.SM
 +.BR HISTCMD ,
 +.SM
 +.BR FUNCNAME ,
@@ -2510,11 +2789,11 @@
 +are unset, they lose their special properties, even if they are
 +subsequently reset.  The exit status is true unless a
 +.I name
-+does not exist or is readonly.
++is readonly.
 +.TP
-+\fBwait\fP [\fIn\fP]
-+Wait for the specified process and return its termination
-+status.
++\fBwait\fP [\fIn ...\fP]
++Wait for each specified process and return its termination status.
++Each
 +.I n
 +may be a process
 +ID or a job specification; if a job spec is given, all processes
@@ -2526,5 +2805,6 @@
 +specifies a non-existent process or job, the return status is
 +127.  Otherwise, the return status is the exit status of the last
 +process or job waited for.
++.\" bash_builtins
  .SH SEE ALSO
  bash(1), sh(1)

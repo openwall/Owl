@@ -1,0 +1,43 @@
+diff -upk.orig readline-5.1.orig/nls.c readline-5.1/nls.c
+--- readline-5.1.orig/nls.c	2002-10-19 02:05:50 +0000
++++ readline-5.1/nls.c	2005-12-29 00:04:22 +0000
+@@ -73,7 +73,6 @@ static char *legal_lang_values[] =
+ 
+ static char *normalize_codeset PARAMS((char *));
+ static char *find_codeset PARAMS((char *, size_t *));
+-#endif /* !HAVE_SETLOCALE */
+ 
+ static char *_rl_get_locale_var PARAMS((const char *));
+ 
+@@ -91,6 +90,7 @@ _rl_get_locale_var (v)
+ 
+   return lspec;
+ }
++#endif /* !HAVE_SETLOCALE */
+   
+ /* Check for LC_ALL, LC_CTYPE, and LANG and use the first with a value
+    to decide the defaults for 8-bit character input and output.  Returns
+@@ -101,20 +101,10 @@ _rl_init_eightbit ()
+ /* If we have setlocale(3), just check the current LC_CTYPE category
+    value, and go into eight-bit mode if it's not C or POSIX. */
+ #if defined (HAVE_SETLOCALE)
+-  char *lspec, *t;
++  char *t;
+ 
+-  /* Set the LC_CTYPE locale category from environment variables. */
+-  lspec = _rl_get_locale_var ("LC_CTYPE");
+-  /* Since _rl_get_locale_var queries the right environment variables,
+-     we query the current locale settings with setlocale(), and, if
+-     that doesn't return anything, we set lspec to the empty string to
+-     force the subsequent call to setlocale() to define the `native'
+-     environment. */
+-  if (lspec == 0 || *lspec == 0)
+-    lspec = setlocale (LC_CTYPE, (char *)NULL);
+-  if (lspec == 0)
+-    lspec = "";
+-  t = setlocale (LC_CTYPE, lspec);
++  /* Query the LC_CTYPE locale category from the program's current locale. */
++  t = setlocale (LC_CTYPE, NULL);
+ 
+   if (t && *t && (t[0] != 'C' || t[1]) && (STREQ (t, "POSIX") == 0))
+     {

@@ -1,0 +1,698 @@
+diff -upk.orig bash-3.1.orig/builtins/fc.def bash-3.1/builtins/fc.def
+--- bash-3.1.orig/builtins/fc.def	2005-10-11 13:15:04 +0000
++++ bash-3.1/builtins/fc.def	2006-01-05 20:11:22 +0000
+@@ -344,7 +344,7 @@ fc_builtin (list)
+   else
+     {
+       numbering = 0;
+-      stream = sh_mktmpfp ("bash-fc", MT_USERANDOM|MT_USETMPDIR, &fn);
++      stream = sh_mktmpfp ("bash-fc", MT_USETMPDIR, &fn);
+       if (stream == 0)
+ 	{
+ 	  builtin_error (_("%s: cannot open temp file: %s"), fn ? fn : "", strerror (errno));
+diff -upk.orig bash-3.1.orig/builtins/psize.sh bash-3.1/builtins/psize.sh
+--- bash-3.1.orig/builtins/psize.sh	2001-11-01 15:57:35 +0000
++++ bash-3.1/builtins/psize.sh	2006-01-05 20:12:18 +0000
+@@ -3,19 +3,10 @@
+ # psize.sh -- determine this system's pipe size, and write a define to
+ #             pipesize.h so ulimit.c can use it.
+ 
+-: ${TMPDIR:=/tmp}
+-# try to use mktemp(1) if the system supports it
+-{ TMPFILE="`mktemp $TMPDIR/pipsize.XXXXXX 2>/dev/null`"; } 2>/dev/null
+-used_mktemp=true
+-
+-if [ -z "$TMPFILE" ]; then
+-	TMPNAME=pipsize.$$
+-	TMPFILE=$TMPDIR/$TMPNAME
+-	used_mktemp=false
+-fi
++TMPFILE="`mktemp -t pipsize.XXXXXXXXXX`" || exit 1
+ 
+-trap 'rm -f "$TMPFILE" ; exit 1' 1 2 3 6 15
+-trap 'rm -f "$TMPFILE"' 0
++trap 'rm -f -- "$TMPFILE"; exit 1' HUP INT QUIT TERM
++trap 'rm -f -- "$TMPFILE"' EXIT
+ 
+ echo "/*"
+ echo " * pipesize.h"
+@@ -25,15 +16,6 @@ echo " * Do not edit!"
+ echo " */"
+ echo ""
+ 
+-#
+-# Try to avoid tempfile races.  We can't really check for the file's
+-# existance before we run psize.aux, because `test -e' is not portable,
+-# `test -h' (test for symlinks) is not portable, and `test -f' only
+-# checks for regular files.  If we used mktemp(1), we're ahead of the
+-# game.
+-#
+-$used_mktemp || rm -f "$TMPFILE"
+-
+ ./psize.aux 2>"$TMPFILE" | sleep 3
+ 
+ if [ -s "$TMPFILE" ]; then
+diff -upk.orig bash-3.1.orig/error.c bash-3.1/error.c
+--- bash-3.1.orig/error.c	2006-01-05 19:54:59 +0000
++++ bash-3.1/error.c	2006-01-05 20:11:22 +0000
+@@ -362,6 +362,7 @@ itrace (format, va_alist)
+ 
+ /* A trace function for silent debugging -- doesn't require a control
+    terminal. */
++/* Unused. */
+ void
+ #if defined (PREFER_STDARG)
+ trace (const char *format, ...)
+@@ -375,7 +376,7 @@ trace (format, va_alist)
+   static FILE *tracefp = (FILE *)NULL;
+ 
+   if (tracefp == NULL)
+-    tracefp = fopen("/tmp/bash-trace.log", "a+");
++    tracefp = fopen("/var/run/bash-trace.log", "a+");
+ 
+   if (tracefp == NULL)
+     tracefp = stderr;
+diff -upk.orig bash-3.1.orig/externs.h bash-3.1/externs.h
+--- bash-3.1.orig/externs.h	2005-11-12 04:10:52 +0000
++++ bash-3.1/externs.h	2006-01-05 20:11:22 +0000
+@@ -363,9 +363,10 @@ extern void print_timeval ();
+ /* declarations for functions defined in lib/sh/tmpfile.c */
+ #define MT_USETMPDIR		0x0001
+ #define MT_READWRITE		0x0002
+-#define MT_USERANDOM		0x0004
+ 
+-extern char *sh_mktmpname __P((char *, int));
++#if !defined(HAVE_DEV_FD)
++extern char *sh_mktmpname_unsafe __P((char *, int));
++#endif
+ extern int sh_mktmpfd __P((char *, int, char **));
+ /* extern FILE *sh_mktmpfp __P((char *, int, char **)); */
+ 
+diff -upk.orig bash-3.1.orig/lib/malloc/stats.c bash-3.1/lib/malloc/stats.c
+--- bash-3.1.orig/lib/malloc/stats.c	2003-11-29 21:01:44 +0000
++++ bash-3.1/lib/malloc/stats.c	2005-05-07 02:52:55 +0000
+@@ -131,7 +131,7 @@ fprint_malloc_stats (s, fp)
+   _print_malloc_stats (s, fp);
+ }
+ 
+-#define TRACEROOT "/var/tmp/maltrace/stats."
++#define TRACEROOT "/var/run/maltrace/stats."
+ 
+ void
+ trace_malloc_stats (s, fn)
+diff -upk.orig bash-3.1.orig/lib/malloc/trace.c bash-3.1/lib/malloc/trace.c
+--- bash-3.1.orig/lib/malloc/trace.c	2005-06-30 12:59:54 +0000
++++ bash-3.1/lib/malloc/trace.c	2006-01-05 20:11:22 +0000
+@@ -107,7 +107,7 @@ malloc_trace_bin (n)
+ #endif
+ }
+ 
+-#define TRACEROOT "/var/tmp/maltrace/trace."
++#define TRACEROOT "/var/run/maltrace/trace."
+ 
+ void
+ malloc_set_tracefn (s, fn)
+diff -upk.orig bash-3.1.orig/lib/sh/tmpfile.c bash-3.1/lib/sh/tmpfile.c
+--- bash-3.1.orig/lib/sh/tmpfile.c	2006-01-05 19:54:59 +0000
++++ bash-3.1/lib/sh/tmpfile.c	2006-01-05 20:30:31 +0000
+@@ -22,129 +22,49 @@
+ 
+ #include <config.h>
+ 
+-#include <bashtypes.h>
+-#include <posixstat.h>
+-#include <posixtime.h>
+-#include <filecntl.h>
+ 
+ #if defined (HAVE_UNISTD_H)
+ #  include <unistd.h>
+ #endif
+ 
+ #include <stdio.h>
+-#include <errno.h>
++#include <stdlib.h>
+ 
+ #include <shell.h>
+ 
+-#ifndef errno
+-extern int errno;
+-#endif
+-
+-#define BASEOPENFLAGS	(O_CREAT | O_TRUNC | O_EXCL)
+-
+-#define DEFAULT_TMPDIR		"."	/* bogus default, should be changed */
+-#define DEFAULT_NAMEROOT	"shtmp"
+-
+-extern pid_t dollar_dollar_pid;
+-
+-static char *sys_tmpdir = (char *)NULL;
+-static int ntmpfiles;
+-static int tmpnamelen = -1;
+-static unsigned long filenum = 1L;
+-
+-static char *
+-get_sys_tmpdir ()
+-{
+-  if (sys_tmpdir)
+-    return sys_tmpdir;
+-
+-#ifdef P_tmpdir
+-  sys_tmpdir = P_tmpdir;
+-  if (file_iswdir (sys_tmpdir))
+-    return sys_tmpdir;
+-#endif
+-
+-  sys_tmpdir = "/tmp";
+-  if (file_iswdir (sys_tmpdir))
+-    return sys_tmpdir;
+-
+-  sys_tmpdir = "/var/tmp";
+-  if (file_iswdir (sys_tmpdir))
+-    return sys_tmpdir;
+-
+-  sys_tmpdir = "/usr/tmp";
+-  if (file_iswdir (sys_tmpdir))
+-    return sys_tmpdir;
+-
+-  sys_tmpdir = DEFAULT_TMPDIR;
+-
+-  return sys_tmpdir;
+-}
++#define DEFAULT_TMPDIR			P_tmpdir
++#define DEFAULT_NAMEROOT		"bash"
+ 
+ static char *
+ get_tmpdir (flags)
+      int flags;
+ {
+-  char *tdir;
+-
+-  tdir = (flags & MT_USETMPDIR) ? get_string_value ("TMPDIR") : (char *)NULL;
+-  if (tdir == 0)
+-    tdir = get_sys_tmpdir ();
+-
+-#if defined (HAVE_PATHCONF) && defined (_PC_NAME_MAX)
+-  if (tmpnamelen == -1)
+-    tmpnamelen = pathconf (tdir, _PC_NAME_MAX);
+-#else
+-  tmpnamelen = 0;
+-#endif
+-
+-  return tdir;
++  if (flags & MT_USETMPDIR)
++    return get_string_value ("TMPDIR") ?: DEFAULT_TMPDIR;
++  return DEFAULT_TMPDIR;
+ }
+ 
++#if !defined(HAVE_DEV_FD)
++/* This is renamed to *_unsafe to trap and review possible additional
++ * references when applying the patch to future versions of bash. */
+ char *
+-sh_mktmpname (nameroot, flags)
++sh_mktmpname_unsafe (nameroot, flags)
+      char *nameroot;
+      int flags;
+ {
+-  char *filename, *tdir, *lroot;
+-  struct stat sb;
+-  int r, tdlen;
+-
+-  filename = (char *)xmalloc (PATH_MAX + 1);
+-  tdir = get_tmpdir (flags);
+-  tdlen = strlen (tdir);
+-
+-  lroot = nameroot ? nameroot : DEFAULT_NAMEROOT;
+-
+-#ifdef USE_MKTEMP
+-  sprintf (filename, "%s/%s.XXXXXX", tdir, lroot);
+-  if (mktemp (filename) == 0)
++  char *filename;
++
++  if (asprintf (&filename, "%s/%s.XXXXXX", get_tmpdir (flags),
++		nameroot ?: DEFAULT_NAMEROOT) < 0)
++    return NULL;
++  if (!mktemp (filename) || !*filename)
+     {
+       free (filename);
+       filename = NULL;
+     }
+-#else  /* !USE_MKTEMP */
+-  while (1)
+-    {
+-      filenum = (filenum << 1) ^
+-		(unsigned long) time ((time_t *)0) ^
+-		(unsigned long) dollar_dollar_pid ^
+-		(unsigned long) ((flags & MT_USERANDOM) ? get_random_number () : ntmpfiles++);
+-      sprintf (filename, "%s/%s-%lu", tdir, lroot, filenum);
+-      if (tmpnamelen > 0 && tmpnamelen < 32)
+-	filename[tdlen + 1 + tmpnamelen] = '\0';
+-#  ifdef HAVE_LSTAT
+-      r = lstat (filename, &sb);
+-#  else
+-      r = stat (filename, &sb);
+-#  endif
+-      if (r < 0 && errno == ENOENT)
+-	break;
+-    }
+-#endif /* !USE_MKTEMP */
+-
+   return filename;
+ }
++#endif /* !defined(HAVE_DEV_FD) */
+ 
+ int
+ sh_mktmpfd (nameroot, flags, namep)
+@@ -152,47 +75,25 @@ sh_mktmpfd (nameroot, flags, namep)
+      int flags;
+      char **namep;
+ {
+-  char *filename, *tdir, *lroot;
+-  int fd, tdlen;
++  char *filename;
++  int fd = -1;
+ 
+-  filename = (char *)xmalloc (PATH_MAX + 1);
+-  tdir = get_tmpdir (flags);
+-  tdlen = strlen (tdir);
+-
+-  lroot = nameroot ? nameroot : DEFAULT_NAMEROOT;
+-
+-#ifdef USE_MKSTEMP
+-  sprintf (filename, "%s/%s.XXXXXX", tdir, lroot);
+-  fd = mkstemp (filename);
+-  if (fd < 0 || namep == 0)
++  if (namep)
++    *namep = NULL;
++  if (asprintf (&filename, "%s/%s.XXXXXX", get_tmpdir (flags),
++		nameroot ?: DEFAULT_NAMEROOT) < 0)
++    return -1;
++  if ((fd = mkstemp (filename)) < 0)
+     {
+       free (filename);
+       filename = NULL;
+     }
+   if (namep)
+     *namep = filename;
+-  return fd;
+-#else /* !USE_MKSTEMP */
+-  do
+-    {
+-      filenum = (filenum << 1) ^
+-		(unsigned long) time ((time_t *)0) ^
+-		(unsigned long) dollar_dollar_pid ^
+-		(unsigned long) ((flags & MT_USERANDOM) ? get_random_number () : ntmpfiles++);
+-      sprintf (filename, "%s/%s-%lu", tdir, lroot, filenum);
+-      if (tmpnamelen > 0 && tmpnamelen < 32)
+-	filename[tdlen + 1 + tmpnamelen] = '\0';
+-      fd = open (filename, BASEOPENFLAGS | ((flags & MT_READWRITE) ? O_RDWR : O_WRONLY), 0600);
+-    }
+-  while (fd < 0 && errno == EEXIST);
+-
+-  if (namep)
+-    *namep = filename;
+-  else
+-    free (filename);
++  else if (filename)
++    free(filename);
+ 
+   return fd;
+-#endif /* !USE_MKSTEMP */
+ }
+ 
+ FILE *
+@@ -204,9 +105,8 @@ sh_mktmpfp (nameroot, flags, namep)
+   int fd;
+   FILE *fp;
+ 
+-  fd = sh_mktmpfd (nameroot, flags, namep);
+-  if (fd < 0)
+-    return ((FILE *)NULL);
++  if ((fd = sh_mktmpfd (nameroot, flags, namep)) < 0)
++    return NULL;
+   fp = fdopen (fd, (flags & MT_READWRITE) ? "w+" : "w");
+   if (fp == 0)
+     close (fd);
+diff -upk.orig bash-3.1.orig/redir.c bash-3.1/redir.c
+--- bash-3.1.orig/redir.c	2006-01-05 19:54:59 +0000
++++ bash-3.1/redir.c	2006-01-05 20:11:22 +0000
+@@ -376,7 +376,7 @@ here_document_to_fd (redirectee, ri)
+   char *filename;
+   int r, fd, fd2;
+ 
+-  fd = sh_mktmpfd ("sh-thd", MT_USERANDOM, &filename);
++  fd = sh_mktmpfd ("sh-thd", MT_USETMPDIR, &filename);
+ 
+   /* If we failed for some reason other than the file existing, abort */
+   if (fd < 0)
+diff -upk.orig bash-3.1.orig/subst.c bash-3.1/subst.c
+--- bash-3.1.orig/subst.c	2006-01-05 19:54:59 +0000
++++ bash-3.1/subst.c	2006-01-05 20:11:22 +0000
+@@ -4103,13 +4103,24 @@ static char *
+ make_named_pipe ()
+ {
+   char *tname;
++  int retries;
+ 
+-  tname = sh_mktmpname ("sh-np", MT_USERANDOM);
+-  if (mkfifo (tname, 0600) < 0)
++  retries = 0x1000;
++  do
+     {
+-      free (tname);
+-      return ((char *)NULL);
+-    }
++      tname = sh_mktmpname_unsafe ("sh-np", MT_USETMPDIR);
++      if (!tname)
++        {
++	  free (tname);
++	  return ((char *)NULL);
++	}
++      if (mkfifo (tname, 0600) == 0) break;
++      if (errno != EEXIST || !--retries)
++        {
++          free (tname);
++          return ((char *)NULL);
++        }
++    } while(1);
+ 
+   add_fifo_list (tname);
+   return (tname);
+diff -upk.orig bash-3.1.orig/support/bashbug.sh bash-3.1/support/bashbug.sh
+--- bash-3.1.orig/support/bashbug.sh	2004-04-28 13:46:45 +0000
++++ bash-3.1/support/bashbug.sh	2005-05-07 17:16:32 +0000
+@@ -39,18 +39,14 @@ MACHTYPE="!MACHTYPE!"
+ PATH=/bin:/usr/bin:/usr/local/bin:$PATH
+ export PATH
+ 
+-# Check if TMPDIR is set, default to /tmp
+-: ${TMPDIR:=/tmp}
+-
+-#Securely create a temporary directory for the temporary files
+-TEMPDIR=$TMPDIR/bbug.$$
+-(umask 077 && mkdir $TEMPDIR) || {
+-	echo "$0: could not create temporary directory" >&2
++TEMPFILE1="`mktemp -t bashbug.XXXXXXXXXX`" || exit 1
++TEMPFILE2="`mktemp -t bashbug.XXXXXXXXXX`" || {
++	rm -f "$TEMPFILE1"
+ 	exit 1
+ }
+ 
+-TEMPFILE1=$TEMPDIR/bbug1
+-TEMPFILE2=$TEMPDIR/bbug2
++trap 'rm -f "$TEMPFILE1" "$TEMPFILE2"; exit 1' HUP INT PIPE TERM
++trap 'rm -f "$TEMPFILE1" "$TEMPFILE2"' EXIT
+         
+ USAGE="Usage: $0 [--help] [--version] [bug-report-email-address]"
+ VERSTR="GNU bashbug, version ${RELEASE}.${PATCHLEVEL}-${RELSTATUS}"
+@@ -150,9 +146,6 @@ fi
+ 
+ : ${USER=${LOGNAME-`whoami`}}
+ 
+-trap 'rm -rf "$TEMPDIR"; exit 1' 1 2 3 13 15
+-trap 'rm -rf "$TEMPDIR"' 0
+-
+ UN=
+ if (uname) >/dev/null 2>&1; then
+ 	UN=`uname -a`
+@@ -203,7 +196,8 @@ EOF
+ cp "$TEMPFILE1" "$TEMPFILE2"
+ chmod u+w "$TEMPFILE1"
+ 
+-trap '' 2		# ignore interrupts while in editor
++# ignore interrupts while in editor
++trap '' INT
+ 
+ edstat=1
+ while [ $edstat -ne 0 ]; do
+@@ -250,7 +244,8 @@ while [ $edstat -ne 0 ]; do
+ 
+ done
+ 
+-trap 'rm -rf "$TEMPDIR"; exit 1' 2	# restore trap on SIGINT
++# restore trap on SIGINT
++trap 'rm -f "$TEMPFILE1" "$TEMPFILE2"; exit 1' INT
+ 
+ if cmp -s "$TEMPFILE1" "$TEMPFILE2"
+ then
+diff -upk.orig bash-3.1.orig/support/fixlinks bash-3.1/support/fixlinks
+--- bash-3.1.orig/support/fixlinks	2002-04-17 17:23:15 +0000
++++ bash-3.1/support/fixlinks	2005-05-07 17:23:24 +0000
+@@ -22,7 +22,7 @@
+ SRCDIR=.
+ while [ $# -gt 0 ]; do
+ 	case "$1" in
+-	-s)	shift; SRCDIR=$1 ;;
++	-s)	shift; SRCDIR="$1" ;;
+ 	-u)	unfix=yes ;;
+ 	-h)	hardlinks=yes ;;
+ 	-*)	echo "$0: $1: bad option" 1>&2
+@@ -33,15 +33,15 @@ while [ $# -gt 0 ]; do
+ 	shift
+ done
+ 
+-if [ ! -d $SRCDIR/builtins ]; then
++if [ ! -d "$SRCDIR/builtins" ]; then
+ 	echo "$0: must be run with valid -s argument or from source directory" 1>&2
+ 	exit 1
+ fi
+ 
+ if [ $# -eq 0 ]; then
+-	linkfile=$SRCDIR/support/SYMLINKS
++	linkfile="$SRCDIR/support/SYMLINKS"
+ else
+-	linkfile=$1	
++	linkfile="$1"
+ fi
+ 
+ if [ ! -f "$linkfile" ]; then
+@@ -49,25 +49,12 @@ if [ ! -f "$linkfile" ]; then
+ 	exit 1
+ fi
+ 
+-rm_ltmp=false
+-LINKTEMP=`mktemp -t linktmp.XXXXXXXX 2>/dev/null`
+-if [ -z "$LINKTEMP" ]; then
+-	: ${TMPDIR:=/tmp}
+-	LINKTEMP=${TMPDIR}/linktmp.$$
+-	rm_ltmp=true
+-fi
+-
+-$rm_ltmp && rm -f ${LINKTEMP}
+-# if the user specified hard links, then do that.  otherwise, try to use
+-# symlinks if they're present
++# if the user specified hard links, then do that.  otherwise, use symlinks.
+ if [ -n "$hardlinks" ]; then
+ 	LN=ln
+-elif (ln -s /dev/null ${LINKTEMP}) >/dev/null 2>&1; then
+-	LN="ln -s"
+ else
+-	LN=ln
++	LN="ln -s"
+ fi
+-rm -f ${LINKTEMP}
+ 
+ while read name target
+ do
+@@ -75,15 +62,15 @@ do
+ 	\#*)	continue;;
+ 	esac
+ 
+-	rm -f $name
++	rm -f "$name"
+ 	case "$unfix" in
+ 	yes)	dirname=`expr "$name" ':' '^\(.*\)/[^/]*'`
+ 		[ -z "$dirname" ] && dirname=.
+-		cp $dirname/$target $name
+-		echo $target copied to $name ;;
+-	*)	$LN $target $name ; echo "$name -> $target" ;;
++		cp "$dirname/$target" "$name"
++		echo "$target copied to $name" ;;
++	*)	$LN "$target" "$name" ; echo "$name -> $target" ;;
+ 	esac
+ 
+-done < $linkfile
++done < "$linkfile"
+ 
+ exit 0
+diff -upk.orig bash-3.1.orig/support/man2html.c bash-3.1/support/man2html.c
+--- bash-3.1.orig/support/man2html.c	2005-10-12 18:50:06 +0000
++++ bash-3.1/support/man2html.c	2006-01-05 20:11:22 +0000
+@@ -279,7 +279,7 @@ struct INTDEF {
+ static char NEWLINE[2] = "\n";
+ static char idxlabel[6] = "ixAAA";
+ 
+-#define INDEXFILE "/tmp/manindex.list"
++#define INDEXFILE "manindex.list"
+ 
+ static char *fname;
+ static FILE *idxfile;
+diff -upk.orig bash-3.1.orig/support/mkclone bash-3.1/support/mkclone
+--- bash-3.1.orig/support/mkclone	2002-04-17 17:23:54 +0000
++++ bash-3.1/support/mkclone	2005-05-07 17:28:35 +0000
+@@ -28,12 +28,12 @@ USAGE="usage: $prog [-m manifest] [-s sr
+ while getopts dhm:s:v opt
+ do
+ 	case "$opt" in
+-	m)	MANIFEST=$OPTARG ;;
+-	s)	SRCDIR=$OPTARG ;;
++	m)	MANIFEST="$OPTARG" ;;
++	s)	SRCDIR="$OPTARG" ;;
+ 	v)	verbose=y ;;
+ 	d)	ECHO=echo debug=y ;;
+ 	h)	hardlinks=y ;;
+-	?)	echo $USAGE >&2
++	?)	echo "$USAGE" >&2
+ 		exit 2;;
+ 	esac
+ done
+@@ -45,37 +45,24 @@ done
+ shift $(( $OPTIND - 1 ))
+ 
+ if [ $# -lt 1 ]; then
+-	echo $USAGE >&2
++	echo "$USAGE" >&2
+         exit 2
+ fi
+ 
+-if [ ! -f $MANIFEST ]; then
++if [ ! -f "$MANIFEST" ]; then
+ 	echo "$prog: $MANIFEST: no such file or directory" >&2
+ 	echo "$prog: must be run with valid -s argument or from source directory" >&2
+ 	exit 1
+ fi
+ 
+-rm_ltmp=false
+-LINKTEMP=`mktemp -t linktmp.XXXXXXXX 2>/dev/null`
+-if [ -z "$LINKTEMP" ]; then
+-	: ${TMPDIR:=/tmp}
+-	LINKTEMP=${TMPDIR}/linktmp.$$
+-	rm_ltmp=true
+-fi
+-
+-$rm_ltmp && rm -f ${LINKTEMP}
+-# if the user specified hard links, then do that.  otherwise, try to use
+-# symlinks if they're present
++# if the user specified hard links, then do that.  otherwise, use symlinks.
+ if [ -n "$hardlinks" ]; then
+ 	LN=ln
+-elif (ln -s /dev/null ${LINKTEMP}) >/dev/null 2>&1; then
+-	LN="ln -s"
+ else
+-	LN=ln
++	LN="ln -s"
+ fi
+-rm -f ${LINKTEMP}
+ 
+-TARGET=$1
++TARGET="$1"
+ 
+ if [ ! -d "$TARGET" ]; then
+ 	mkdir "$TARGET"
+@@ -95,7 +82,7 @@ do
+ 
+ 	case "$type" in
+ 	d)	[ -n "$verbose" ] && echo mkdir $fname
+-		$ECHO mkdir $fname ;;		# already in $TARGET
++		$ECHO mkdir "$fname" ;;		# already in $TARGET
+ 	f)	fn=${fname##*/}
+ 		case "$fname" in
+ 		*/*)	dn=${fname%/*} ;;
+@@ -104,11 +91,11 @@ do
+ 		if [ -n "$verbose" ] || [ -n "$debug" ]; then
+ 			echo "( cd $dn && $LN $SRCDIR/$fname $fn )"
+ 		fi
+-		[ -z "$debug" ] && ( cd $dn && $LN $SRCDIR/$fname $fn )
++		[ -z "$debug" ] && ( cd "$dn" && $LN "$SRCDIR/$fname" "$fn" )
+ 		;;
+ 	*)	echo "${prog}: ${fname}: unknown file type $type" 1>&2 ;;
+ 	esac
+-done < $MANIFEST
++done < "$MANIFEST"
+ 
+ # special
+ SPECIAL="parser-built y.tab.c y.tab.h"
+@@ -116,8 +103,8 @@ SPECIAL="parser-built y.tab.c y.tab.h"
+ rm -f $SPECIAL
+ for sf in $SPECIAL
+ do
+-	[ -n "$verbose" ] && echo cp -p $SRCDIR/$sf $TARGET
+-	$ECHO cp -p $SRCDIR/$sf $TARGET
++	[ -n "$verbose" ] && echo cp -p "$SRCDIR/$sf" "$TARGET"
++	$ECHO "cp -p $SRCDIR/$sf $TARGET"
+ done
+ 
+ exit 0
+diff -upk.orig bash-3.1.orig/support/rlvers.sh bash-3.1/support/rlvers.sh
+--- bash-3.1.orig/support/rlvers.sh	2002-04-17 17:27:27 +0000
++++ bash-3.1/support/rlvers.sh	2005-05-07 17:33:38 +0000
+@@ -22,9 +22,6 @@
+ 
+ PROGNAME=`basename $0`
+ 
+-: ${TMPDIR:=/tmp}
+-TDIR=$TMPDIR/rlvers
+-
+ # defaults
+ CC=cc
+ RL_LIBDIR=/usr/local/lib
+@@ -47,11 +44,11 @@ done
+ 
+ # if someone happened to install examples/rlversion, use it (it's not
+ # installed by default)
+-if test -f ${RL_LIBDIR}/rlversion ; then
++if test -f "${RL_LIBDIR}/rlversion" ; then
+ 	if [ -n "$verbose" ]; then
+ 		echo "${PROGNAME}: using installed rlversion from ${RL_LIBDIR}/rlversion"
+ 	fi
+-	v=`${RL_LIBDIR}/rlversion 2>/dev/null`
++	v="`${RL_LIBDIR}/rlversion 2>/dev/null`"
+ 	case "$v" in
+ 	unknown | "")	echo 0 ;;
+ 	*)		echo "$v" ;;
+@@ -64,17 +61,14 @@ if [ -n "$verbose" ]; then
+ 	echo "${PROGNAME}: attempting program compilation"
+ fi
+ 
+-# make $TDIR mode 0700
+-mkdir $TDIR || {
+-	echo "${PROGNAME}: ${TDIR}: file exists" >&2
++TDIR="mktemp -td rlvers.XXXXXXXXXX" || {
+ 	echo 0
+ 	exit 1
+ }
+-chmod 700 $TDIR
+ 
+-trap 'rm -f $TDIR/rlvers $TDIR/rlvers.? ; rmdir $TDIR' 0 1 2 3 6 15
++trap 'rm -f "$TDIR"/rlvers "$TDIR"/rlvers.? ; rmdir "$TDIR'" EXIT HUP INT TERM
+ 
+-cat > $TDIR/rlvers.c << EOF
++cat > "$TDIR"/rlvers.c << EOF
+ #include <stdio.h>
+ extern char *rl_library_version;
+ 
+@@ -87,15 +81,15 @@ EOF
+ 
+ opwd=`pwd`
+ 
+-cd $TDIR || {
++cd "$TDIR" || {
+ 	echo "${PROGNAME}: cannot cd to $TDIR" >&2
+ 	echo 0
+ 	exit 1
+ }
+ 	
+-if eval ${CC} -L${RL_LIBDIR} -I${RL_INCDIR} -o $TDIR/rlvers $TDIR/rlvers.c -lreadline ${TERMCAP_LIB};
++if eval ${CC} -L${RL_LIBDIR} -I${RL_INCDIR} -o "$TDIR"/rlvers "$TDIR"/rlvers.c -lreadline ${TERMCAP_LIB};
+ then
+-	v=`$TDIR/rlvers`
++	v=`"$TDIR"/rlvers`
+ else
+ 	if [ -n "$verbose" ] ; then
+ 		echo "${PROGNAME}: compilation failed: status $?"
+@@ -109,5 +103,5 @@ unknown | "")	echo 0 ;;
+ *)		echo "$v" ;;
+ esac
+ 
+-cd $opwd
++cd "$opwd"
+ exit 0

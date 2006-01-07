@@ -1,32 +1,36 @@
-# $Owl: Owl/packages/bash/bash.spec,v 1.30 2005/11/16 12:19:20 solar Exp $
+# $Owl: Owl/packages/bash/bash.spec,v 1.31 2006/01/07 23:18:28 ldv Exp $
 
-Version: 2.05
-Name: bash
 Summary: The GNU Bourne-Again SHell (Bash).
-Release: owl8
+Name: bash
+%define bash_version 3.1
+%define bash_patchlevel 1
+Version: %bash_version.%bash_patchlevel
+Release: owl1
 Group: System Environment/Shells
 License: GPL
-Source0: ftp://ftp.gnu.org/gnu/bash/bash-%version.tar.gz
-Source1: ftp://ftp.gnu.org/gnu/bash/bash-doc-%version.tar.gz
+Source0: ftp://ftp.gnu.org/gnu/bash/bash-%bash_version.tar.gz
+Source1: ftp://ftp.gnu.org/gnu/bash/bash-doc-%bash_version.tar.gz
 Source2: dot-bashrc
 Source3: dot-bash_profile
 Source4: dot-bash_logout
-Patch0: bash-2.05-cwru-fixes.diff
-Patch10: bash-2.05-owl-fixes.diff
-Patch11: bash-2.05-owl-tmp.diff
-Patch12: bash-2.05-owl-vitmp.diff
-Patch13: bash-2.05-owl-paths.diff
-Patch20: bash-2.04-rh-bash1_compat.diff
-Patch21: bash-2.04-rh-shellfunc.diff
-Patch22: bash-2.05-rh-requires.diff
-Patch23: bash-2.05-rh-profile.diff
-Patch30: bash-2.05-deb-64bit.diff
-Patch31: bash-2.05-deb-gnusource.diff
-Patch32: bash-2.05-deb-print_cmd.diff
-Patch33: bash-2.05-deb-random.diff
-Patch34: bash-2.05-deb-man.diff
-Patch40: bash-2.05-alt-fnmatch-disable-strcoll.diff
-Patch41: bash-2.05-alt-man.diff
+Patch0: bash-3.1-pl1.diff
+Patch10: bash-3.1-owl-warnings.diff
+Patch11: bash-3.1-owl-tmp.diff
+Patch12: bash-3.1-owl-vitmp.diff
+Patch13: bash-3.1-owl-defaults.diff
+Patch14: bash-3.1-alt-man.diff
+Patch20: bash-3.1-rh-ulimit.diff
+Patch21: bash-3.1-rh-setlocale.diff
+Patch22: bash-3.1-rh-read-memleak.diff
+Patch23: bash-3.1-rh-alt-requires.diff
+Patch24: bash-3.1-rh-man.diff
+Patch30: bash-3.1-deb-random.diff
+Patch31: bash-3.1-deb-doc.diff
+Patch100: readline-5.1-pl1.diff
+Patch101: readline-5.1-alt-warnings.diff
+Patch102: readline-5.1-alt-nls.diff
+Patch103: readline-5.1-deb-alt-inputrc.diff
+Patch104: readline-5.1-rh-wrap.diff
 Requires: mktemp >= 1:1.3.1
 Provides: bash2
 Obsoletes: bash2, etcskel
@@ -52,29 +56,27 @@ The bash-doc package contains documentation for the GNU Bourne
 Again shell version %version.
 
 %prep
-%setup -q -a 1
+%setup -q -a1 -n bash-%bash_version
 %patch0 -p0
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
+%patch14 -p1
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
 %patch23 -p1
+%patch24 -p1
 %patch30 -p1
 %patch31 -p1
-%patch32 -p1
-%patch33 -p1
-%patch34 -p1
-%patch40 -p1
-%patch41 -p1
-
-echo %version > _distribution
-echo %release | sed 's/[A-Za-z]//g' > _patchlevel
-
-# Would anyone volunteer to fix those? Probably not.
-find examples -type f -print0 | xargs -r0 grep -lZ /tmp | xargs -r0 rm -f --
+pushd lib/readline
+%patch100 -p0
+%patch101 -p1
+%patch102 -p1
+%patch103 -p1
+%patch104 -p1
+popd
 
 # Prevent bogus dependencies
 find examples -type f -print0 | xargs -r0 chmod -x --
@@ -82,22 +84,35 @@ find examples -type f -print0 | xargs -r0 chmod -x --
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-rm -f configure doc/bashref.info
+# Remove files which should be regenerated during build
+rm configure y.tab.? doc/*.info*
+
+# Bundled texi2dvi is outdated
+install -pm755 /usr/bin/texi2dvi support/
+
+# Fix temporary file handling
+sed -i 's,/tmp/,,g' aclocal.m4
+
+# Would anyone volunteer to fix those? Probably not
+find examples -type f -print0 |
+	xargs -r0 grep -FlZ -- /tmp |
+	xargs -r0 rm -f --
+
 autoconf
 export \
 	bash_cv_dev_fd=standard \
 	bash_cv_dev_stdin=present \
-	bash_cv_mail_dir=/var/mail \
+	bash_cv_mail_dir=/var/mail
+
 %configure \
-	--without-curses \
-	--with-installed-readline \
+	--disable-net-redirections \
 	--disable-restricted \
-	--disable-net-redirections
-make \
-	READLINE_LIBRARY=/usr/lib/libreadline.a \
-	READLINE_LIB="-Wl,-Bstatic -lreadline -Wl,-Bdynamic" \
-	HISTORY_LIBRARY=/usr/lib/libhistory.a \
-	HISTORY_LIB="-Wl,-Bstatic -lhistory -Wl,-Bdynamic"
+	--enable-separate-helpfiles \
+	--without-bash-malloc \
+	--without-curses \
+	--without-installed-readline
+
+%__make
 
 %install
 rm -rf %buildroot
@@ -115,14 +130,12 @@ ln -s bash.1 %buildroot%_mandir/man1/bash2.1
 cd doc
 gzip -9nf *.{ps,txt}
 
-install -m 644 builtins.1 %buildroot%_mandir/man1/builtins.1
-
 # Make manpages for bash builtins as per suggestion in doc/README
 sed '
-/^\.SH NAME/, /\\- bash built-in commands, see \\fBbash\\fR(1)$/{
+/^\.SH NAME/, /\\- bash built-in commands$/{
 /^\.SH NAME/d
 s/^bash, //
-s/\\- bash built-in commands, see \\fBbash\\fR(1)$//
+s/\\- bash built-in commands$//
 s/,//g
 b
 }
@@ -134,12 +147,15 @@ done
 
 cd %buildroot
 # These conflict with real manpages
-rm .%_mandir/man1/{echo,pwd,test,kill}.1
+rm .%_mandir/man1/{echo,kill,printf,pwd,test}.1
 
 mkdir -p etc/skel
 install -m 644 %_sourcedir/dot-bashrc etc/skel/.bashrc
 install -m 644 %_sourcedir/dot-bash_profile etc/skel/.bash_profile
 install -m 644 %_sourcedir/dot-bash_logout etc/skel/.bash_logout
+
+# Remove unpackaged files if any
+rm -f %buildroot%_infodir/dir
 
 %triggerin -- libtermcap
 if [ ! -f /etc/shells ]; then
@@ -166,7 +182,7 @@ fi
 %files
 %defattr(-,root,root)
 %config(noreplace) /etc/skel/.b*
-%doc CHANGES COMPAT NEWS NOTES CWRU/POSIX.NOTES
+%doc AUTHORS CHANGES COMPAT NEWS NOTES POSIX
 %doc doc/FAQ doc/INTRO doc/article.ms
 %doc examples/bashdb/ examples/functions/ examples/misc/
 %doc examples/scripts.noah/ examples/scripts.v2/ examples/scripts/
@@ -174,17 +190,33 @@ fi
 /bin/sh
 /bin/bash
 /bin/bash2
+%_datadir/bash
 %_infodir/bash.info*
-%exclude %_infodir/dir
 %_mandir/man1/*.1*
 %_mandir/man1/..1*
-%_prefix/bin/bashbug
+%_bindir/bashbug
+%_datadir/locale/en@*/LC_MESSAGES/bash.mo
 
 %files doc
 %defattr(-,root,root)
 %doc doc/*.ps* doc/*.html doc/article.txt*
 
 %changelog
+* Thu Jan 05 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.1-owl1
+- Updated to 3.1 patchlevel 1.
+- Changed build to use readline version 5.1 bundled with bash until
+system readline updated to this version.
+- Enabled build option to use external files for help builtin
+documentation.
+
+* Thu Mar 31 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.0-owl0
+- Updated to 3.0.
+- Removed the _distribution and _patchlevel creation from spec,
+these files are not used in the new version.
+- Used a new notation for CWRU-fixes (before: -cwru-fixes, after: -pl<n>),
+this allows to keep track what is the last patchlevel.
+- Updated to the patchlevel 16.
+
 * Sat Sep 11 2004 Solar Designer <solar-at-owl.openwall.com> 2.05-owl8
 - Use RPM's exclude macro on info dir file.
 

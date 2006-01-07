@@ -1,0 +1,11 @@
+diff -upk.orig bash-3.1.orig/builtins/setattr.def bash-3.1/builtins/setattr.def
+--- bash-3.1.orig/builtins/setattr.def	2006-01-06 00:39:56 +0000
++++ bash-3.1/builtins/setattr.def	2006-01-06 00:40:14 +0000
+@@ -438,4 +438,7 @@ set_var_attribute (name, attribute, undo
+ 
+   if (var && (exported_p (var) || (attribute & att_exported)))
+     array_needs_making++;	/* XXX */
++
++  if (var)
++    stupidly_hack_special_variables (name);
+ }

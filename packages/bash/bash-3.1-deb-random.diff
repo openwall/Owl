@@ -1,0 +1,78 @@
+diff -upk.orig bash-3.1.orig/config.h.in bash-3.1/config.h.in
+--- bash-3.1.orig/config.h.in	2006-01-06 01:03:46 +0000
++++ bash-3.1/config.h.in	2006-01-06 01:21:21 +0000
+@@ -628,6 +628,9 @@
+ /* Define if you have the raise function. */
+ #undef HAVE_RAISE
+ 
++/* Define if you have the random function.  */
++#undef HAVE_RANDOM
++
+ /* Define if you have the readlink function. */
+ #undef HAVE_READLINK
+ 
+@@ -721,6 +724,9 @@
+ /* Define if you have the strsignal function or macro. */
+ #undef HAVE_STRSIGNAL
+ 
++/* Define if you have the srandom function.  */
++#undef HAVE_SRANDOM
++
+ /* Define if you have the sysconf function. */
+ #undef HAVE_SYSCONF
+ 
+diff -upk.orig bash-3.1.orig/configure.in bash-3.1/configure.in
+--- bash-3.1.orig/configure.in	2005-12-01 14:36:03 +0000
++++ bash-3.1/configure.in	2006-01-06 01:21:21 +0000
+@@ -744,6 +744,9 @@ BASH_CHECK_DECL(strtoumax)
+ 
+ AC_FUNC_MKTIME
+ 
++dnl checks for random functions
++AC_CHECK_FUNCS(random srandom)
++
+ dnl
+ dnl Checks for lib/intl and related code (uses some of the output from
+ dnl AM_GNU_GETTEXT)
+diff -upk.orig bash-3.1.orig/variables.c bash-3.1/variables.c
+--- bash-3.1.orig/variables.c	2006-01-06 01:03:46 +0000
++++ bash-3.1/variables.c	2006-01-06 01:21:21 +0000
+@@ -1144,16 +1144,22 @@ static unsigned long rseed = 1;
+ static int last_random_value;
+ static int seeded_subshell = 0;
+ 
+-/* A linear congruential random number generator based on the example
+-   one in the ANSI C standard.  This one isn't very good, but a more
+-   complicated one is overkill. */
++/* Use the random number genrator provided by the standard C library,
++   else use a linear congruential random number generator based on the
++   ANSI C standard.  This one isn't very good (the values are alternately
++   odd and even, for example), but a more complicated one is overkill. */
+ 
+ /* Returns a pseudo-random number between 0 and 32767. */
+ static int
+ brand ()
+ {
++#if defined(HAVE_RANDOM)
++  rseed = (unsigned int) (labs(random()) & 32767);
++  return rseed;
++#else
+   rseed = rseed * 1103515245 + 12345;
+   return ((unsigned int)((rseed >> 16) & 32767));	/* was % 32768 */
++#endif
+ }
+ 
+ /* Set the random number generator seed to SEED. */
+@@ -1161,8 +1167,12 @@ static void
+ sbrand (seed)
+      unsigned long seed;
+ {
++#if defined(HAVE_SRANDOM)
++  srandom(seed);
++#else
+   rseed = seed;
+   last_random_value = 0;
++#endif
+ }
+ 
+ static SHELL_VAR *

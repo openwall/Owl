@@ -1,0 +1,1563 @@
+diff -upk.orig bash-3.1.orig/bashhist.c bash-3.1/bashhist.c
+--- bash-3.1.orig/bashhist.c	2005-10-01 02:30:52 +0000
++++ bash-3.1/bashhist.c	2006-01-05 19:21:02 +0000
+@@ -570,7 +570,7 @@ hc_erasedups (line)
+   int r;
+ 
+   using_history ();
+-  while (temp = previous_history ())
++  while ((temp = previous_history ()))
+     {
+       if (STREQ (temp->line, line))
+ 	{
+diff -upk.orig bash-3.1.orig/bashline.c bash-3.1/bashline.c
+--- bash-3.1.orig/bashline.c	2005-11-05 20:07:02 +0000
++++ bash-3.1/bashline.c	2006-01-05 19:34:58 +0000
+@@ -634,7 +634,7 @@ snarf_hosts_from_file (filename)
+   if (file == 0)
+     return;
+ 
+-  while (temp = fgets (buffer, 255, file))
++  while ((temp = fgets (buffer, 255, file)))
+     {
+       /* Skip to first character. */
+       for (i = 0; buffer[i] && cr_whitespace (buffer[i]); i++)
+@@ -1723,13 +1723,14 @@ bash_servicename_completion_function (te
+       setservent (0);
+     }
+ 
+-  while (srvent = getservent ())
++  aentry = NULL;
++  while ((srvent = getservent ()))
+     {
+       afound = 0;
+       if (snamelen == 0 || (STREQN (sname, srvent->s_name, snamelen)))
+ 	break;
+       /* Not primary, check aliases */
+-      for (alist = srvent->s_aliases; aentry = *alist; alist++)
++      for (alist = srvent->s_aliases; (aentry = *alist); alist++)
+ 	{
+ 	  if (STREQN (sname, aentry, snamelen))
+ 	    {
+@@ -1778,7 +1779,7 @@ bash_groupname_completion_function (text
+       setgrent ();
+     }
+ 
+-  while (grent = getgrent ())
++  while ((grent = getgrent ()))
+     {
+       if (gnamelen == 0 || (STREQN (gname, grent->gr_name, gnamelen)))
+         break;
+@@ -2113,11 +2114,8 @@ _ignore_completion_names (names, name_fu
+     ;
+   newnames = strvec_create (nidx + 1);
+ 
+-  if (force_fignore == 0)
+-    {
+-      oldnames = strvec_create (nidx - 1);
+-      oidx = 0;
+-    }
++  oldnames = (force_fignore == 0) ? strvec_create (nidx - 1) : 0;
++  oidx = 0;
+ 
+   newnames[0] = names[0];
+   for (idx = nidx = 1; names[idx]; idx++)
+@@ -3039,7 +3037,7 @@ isolate_sequence (string, ind, need_dquo
+   if (startp)
+     *startp = delim ? ++i : i;
+ 
+-  for (passc = 0; c = string[i]; i++)
++  for (passc = 0; (c = string[i]); i++)
+     {
+       if (passc)
+ 	{
+diff -upk.orig bash-3.1.orig/braces.c bash-3.1/braces.c
+--- bash-3.1.orig/braces.c	2004-09-17 22:42:36 +0000
++++ bash-3.1/braces.c	2006-01-05 18:12:47 +0000
+@@ -378,7 +378,7 @@ brace_gobbler (text, tlen, indx, satisfy
+   level = quoted = pass_next = 0;
+ 
+   i = *indx;
+-  while (c = text[i])
++  while ((c = text[i]))
+     {
+       if (pass_next)
+ 	{
+diff -upk.orig bash-3.1.orig/builtins/bind.def bash-3.1/builtins/bind.def
+--- bash-3.1.orig/builtins/bind.def	2003-12-19 22:56:34 +0000
++++ bash-3.1/builtins/bind.def	2006-01-05 19:29:39 +0000
+@@ -114,7 +114,7 @@ bind_builtin (list)
+ 
+   kmap = saved_keymap = (Keymap) NULL;
+   flags = 0;
+-  initfile = map_name = fun_name = unbind_name = remove_seq = (char *)NULL;
++  initfile = map_name = fun_name = unbind_name = remove_seq = cmd_seq = (char *)NULL;
+   return_code = EXECUTION_SUCCESS;
+ 
+   if (!bash_readline_initialized)
+diff -upk.orig bash-3.1.orig/builtins/caller.def bash-3.1/builtins/caller.def
+--- bash-3.1.orig/builtins/caller.def	2005-09-10 16:19:57 +0000
++++ bash-3.1/builtins/caller.def	2006-01-05 18:20:44 +0000
+@@ -76,7 +76,6 @@ caller_builtin (list)
+   SHELL_VAR *funcname_v, *bash_source_v, *bash_lineno_v;
+   ARRAY *funcname_a, *bash_source_a, *bash_lineno_a;
+   char *funcname_s, *source_s, *lineno_s;
+-  ARRAY_ELEMENT *ae;
+   intmax_t num;
+ 
+   GET_ARRAY_FROM_VAR ("FUNCNAME", funcname_v, funcname_a);
+diff -upk.orig bash-3.1.orig/builtins/cd.def bash-3.1/builtins/cd.def
+--- bash-3.1.orig/builtins/cd.def	2005-10-23 18:16:16 +0000
++++ bash-3.1/builtins/cd.def	2006-01-05 18:21:08 +0000
+@@ -223,13 +223,13 @@ cd_builtin (list)
+     }
+   else if (absolute_pathname (list->word->word))
+     dirname = list->word->word;
+-  else if (cdpath = get_string_value ("CDPATH"))
++  else if ((cdpath = get_string_value ("CDPATH")))
+     {
+       dirname = list->word->word;
+ 
+       /* Find directory in $CDPATH. */
+       path_index = 0;
+-      while (path = extract_colon_unit (cdpath, &path_index))
++      while ((path = extract_colon_unit (cdpath, &path_index)))
+ 	{
+ 	  /* OPT is 1 if the path element is non-empty */
+ 	  opt = path[0] != '\0';
+diff -upk.orig bash-3.1.orig/builtins/common.c bash-3.1/builtins/common.c
+--- bash-3.1.orig/builtins/common.c	2005-02-11 16:46:46 +0000
++++ bash-3.1/builtins/common.c	2006-01-05 18:21:34 +0000
+@@ -467,9 +467,6 @@ char *
+ get_working_directory (for_whom)
+      char *for_whom;
+ {
+-  char *directory;
+-  size_t dsize;
+-
+   if (no_symbolic_links)
+     {
+       FREE (the_current_working_directory);
+diff -upk.orig bash-3.1.orig/builtins/declare.def bash-3.1/builtins/declare.def
+--- bash-3.1.orig/builtins/declare.def	2004-11-07 03:42:10 +0000
++++ bash-3.1/builtins/declare.def	2006-01-05 18:21:49 +0000
+@@ -247,7 +247,7 @@ declare_internal (list, local_var)
+ #if defined (ARRAY_VARS)
+       compound_array_assign = simple_array_assign = 0;
+       subscript_start = (char *)NULL;
+-      if (t = strchr (name, '['))	/* ] */
++      if ((t = strchr (name, '[')))	/* ] */
+ 	{
+ 	  subscript_start = t;
+ 	  *t = '\0';
+diff -upk.orig bash-3.1.orig/builtins/echo.def bash-3.1/builtins/echo.def
+--- bash-3.1.orig/builtins/echo.def	2005-09-05 15:33:40 +0000
++++ bash-3.1/builtins/echo.def	2006-01-05 18:23:22 +0000
+@@ -30,6 +30,7 @@ $PRODUCES echo.c
+ 
+ #include <stdio.h>
+ #include "../shell.h"
++#include "common.h"
+ 
+ $BUILTIN echo
+ $FUNCTION echo_builtin
+@@ -115,7 +116,7 @@ echo_builtin (list)
+ 
+       /* All of the options in TEMP are valid options to ECHO.
+ 	 Handle them. */
+-      while (i = *temp++)
++      while ((i = *temp++))
+ 	{
+ 	  switch (i)
+ 	    {
+diff -upk.orig bash-3.1.orig/builtins/enable.def bash-3.1/builtins/enable.def
+--- bash-3.1.orig/builtins/enable.def	2003-12-19 23:07:07 +0000
++++ bash-3.1/builtins/enable.def	2006-01-05 19:12:30 +0000
+@@ -101,6 +101,9 @@ enable_builtin (list)
+ 
+   result = EXECUTION_SUCCESS;
+   flags = 0;
++#if defined (HAVE_DLOPEN) && defined (HAVE_DLSYM)
++  filename = NULL;
++#endif
+ 
+   reset_internal_getopt ();
+   while ((opt = internal_getopt (list, "adnpsf:")) != -1)
+@@ -336,7 +339,7 @@ dyn_load_builtin (list, flags, filename)
+ 	b->flags |= SPECIAL_BUILTIN;
+       b->handle = handle;
+ 
+-      if (old_builtin = builtin_address_internal (name, 1))
++      if ((old_builtin = builtin_address_internal (name, 1)))
+ 	{
+ 	  replaced++;
+ 	  FASTCOPY ((char *)b, (char *)old_builtin, sizeof (struct builtin));
+diff -upk.orig bash-3.1.orig/builtins/evalstring.c bash-3.1/builtins/evalstring.c
+--- bash-3.1.orig/builtins/evalstring.c	2005-10-30 23:28:24 +0000
++++ bash-3.1/builtins/evalstring.c	2006-01-05 18:25:34 +0000
+@@ -219,7 +219,7 @@ parse_and_execute (string, from_file, fl
+ 	      dispose_command (global_command);
+ 	      global_command = (COMMAND *)NULL;
+ 	    }
+-	  else if (command = global_command)
++	  else if ((command = global_command))
+ 	    {
+ 	      struct fd_bitmap *bitmap;
+ 
+@@ -316,9 +316,8 @@ static int
+ cat_file (r)
+      REDIRECT *r;
+ {
+-  char lbuf[128], *fn;
++  char *fn;
+   int fd, rval;
+-  ssize_t nr;
+ 
+   if (r->instruction != r_input_direction)
+     return -1;
+diff -upk.orig bash-3.1.orig/builtins/fg_bg.def bash-3.1/builtins/fg_bg.def
+--- bash-3.1.orig/builtins/fg_bg.def	2005-08-24 21:18:52 +0000
++++ bash-3.1/builtins/fg_bg.def	2006-01-05 18:26:58 +0000
+@@ -150,6 +150,7 @@ fg_bg (list, foreground)
+       goto failure;
+     }
+ 
++  old_async_pid = 0;
+   if (foreground == 0)
+     {
+       old_async_pid = last_asynchronous_pid;
+diff -upk.orig bash-3.1.orig/builtins/getopt.c bash-3.1/builtins/getopt.c
+--- bash-3.1.orig/builtins/getopt.c	2003-12-19 21:49:36 +0000
++++ bash-3.1/builtins/getopt.c	2006-01-05 18:35:58 +0000
+@@ -178,7 +178,7 @@ sh_getopt (argc, argv, optstring)
+       nextchar = (char *)NULL;
+     }
+ 
+-  if (sh_badopt = (temp == NULL || c == ':'))
++  if ((sh_badopt = (temp == NULL || c == ':')))
+     {
+       if (sh_opterr)
+ 	BADOPT (c);
+diff -upk.orig bash-3.1.orig/builtins/getopts.def bash-3.1/builtins/getopts.def
+--- bash-3.1.orig/builtins/getopts.def	2004-11-07 20:13:55 +0000
++++ bash-3.1/builtins/getopts.def	2006-01-05 18:32:52 +0000
+@@ -162,6 +162,7 @@ dogetopts (argc, argv)
+   argc -= 2;
+   argv += 2;
+ 
++  old_opterr = 0;
+   special_error = optstr[0] == ':';
+ 
+   if (special_error)
+diff -upk.orig bash-3.1.orig/builtins/help.def bash-3.1/builtins/help.def
+--- bash-3.1.orig/builtins/help.def	2004-12-30 18:59:55 +0000
++++ bash-3.1/builtins/help.def	2006-01-05 19:30:02 +0000
+@@ -117,7 +117,7 @@ help_builtin (list)
+       pattern = list->word->word;
+       plen = strlen (pattern);
+ 
+-      for (i = 0; name = shell_builtins[i].name; i++)
++      for (i = 0; (name = shell_builtins[i].name); i++)
+ 	{
+ 	  QUIT;
+ 	  if ((strncmp (pattern, name, plen) == 0) ||
+diff -upk.orig bash-3.1.orig/builtins/history.def bash-3.1/builtins/history.def
+--- bash-3.1.orig/builtins/history.def	2005-09-24 21:42:21 +0000
++++ bash-3.1/builtins/history.def	2006-01-05 19:30:38 +0000
+@@ -105,6 +105,7 @@ history_builtin (list)
+   intmax_t delete_offset;
+ 
+   flags = 0;
++  delete_arg = NULL;
+   reset_internal_getopt ();
+   while ((opt = internal_getopt (list, "acd:npsrw")) != -1)
+     {
+diff -upk.orig bash-3.1.orig/builtins/printf.def bash-3.1/builtins/printf.def
+--- bash-3.1.orig/builtins/printf.def	2005-10-29 18:51:29 +0000
++++ bash-3.1/builtins/printf.def	2006-01-05 18:34:27 +0000
+@@ -549,7 +549,7 @@ printstr (fmt, string, len, fieldwidth, 
+ #else
+   if (string == 0 || len == 0)
+ #endif
+-    return;
++    return 0;
+ 
+ #if 0
+   s = fmt;
+diff -upk.orig bash-3.1.orig/builtins/set.def bash-3.1/builtins/set.def
+--- bash-3.1.orig/builtins/set.def	2004-12-19 17:20:25 +0000
++++ bash-3.1/builtins/set.def	2006-01-05 18:29:36 +0000
+@@ -525,7 +525,7 @@ parse_shellopts (value)
+   int vptr;
+ 
+   vptr = 0;
+-  while (vname = extract_colon_unit (value, &vptr))
++  while ((vname = extract_colon_unit (value, &vptr)))
+     {
+       set_minus_o_option (FLAG_ON, vname);
+       free (vname);
+@@ -578,7 +578,6 @@ set_builtin (list)
+      WORD_LIST *list;
+ {
+   int on_or_off, flag_name, force_assignment, opts_changed;
+-  WORD_LIST *l;
+   register char *arg;
+   char s[3];
+ 
+@@ -634,7 +633,7 @@ set_builtin (list)
+ 
+       if ((on_or_off = *arg) && (on_or_off == '-' || on_or_off == '+'))
+ 	{
+-	  while (flag_name = *++arg)
++	  while ((flag_name = *++arg))
+ 	    {
+ 	      if (flag_name == '?')
+ 		{
+@@ -758,6 +757,7 @@ unset_builtin (list)
+ 
+ #if defined (ARRAY_VARS)
+       unset_array = 0;
++      t = NULL;
+       if (!unset_function && valid_array_reference (name))
+ 	{
+ 	  t = strchr (name, '[');
+diff -upk.orig bash-3.1.orig/builtins/setattr.def bash-3.1/builtins/setattr.def
+--- bash-3.1.orig/builtins/setattr.def	2005-08-09 15:32:19 +0000
++++ bash-3.1/builtins/setattr.def	2006-01-05 18:29:55 +0000
+@@ -261,7 +261,7 @@ set_or_show_attributes (list, attribute,
+ 
+       if (variable_list)
+ 	{
+-	  for (i = 0; var = variable_list[i]; i++)
++	  for (i = 0; (var = variable_list[i]); i++)
+ 	    {
+ #if defined (ARRAY_VARS)
+ 	      if (arrays_only && array_p (var) == 0)
+diff -upk.orig bash-3.1.orig/builtins/trap.def bash-3.1/builtins/trap.def
+--- bash-3.1.orig/builtins/trap.def	2005-02-11 16:47:22 +0000
++++ bash-3.1/builtins/trap.def	2006-01-05 18:30:43 +0000
+@@ -87,7 +87,7 @@ int
+ trap_builtin (list)
+      WORD_LIST *list;
+ {
+-  int list_signal_names, display, result, opt, first_signal;
++  int list_signal_names, display, result, opt;
+ 
+   list_signal_names = display = 0;
+   result = EXECUTION_SUCCESS;
+diff -upk.orig bash-3.1.orig/builtins/type.def bash-3.1/builtins/type.def
+--- bash-3.1.orig/builtins/type.def	2005-08-24 12:38:34 +0000
++++ bash-3.1/builtins/type.def	2006-01-05 18:31:04 +0000
+@@ -331,7 +331,7 @@ describe_command (command, dflags)
+      whether the file is present in our hash table. */
+   if (all == 0 || (dflags & CDESC_FORCE_PATH))
+     {
+-      if (full_path = phash_search (command))
++      if ((full_path = phash_search (command)))
+ 	{
+ 	  if (dflags & CDESC_TYPE)
+ 	    puts ("file");
+diff -upk.orig bash-3.1.orig/builtins/ulimit.def bash-3.1/builtins/ulimit.def
+--- bash-3.1.orig/builtins/ulimit.def	2005-08-04 12:39:04 +0000
++++ bash-3.1/builtins/ulimit.def	2006-01-05 18:32:03 +0000
+@@ -180,7 +180,9 @@ static int set_limit __P((int, RLIMTYPE,
+ static void printone __P((int, RLIMTYPE, int));
+ static void print_all_limits __P((int));
+ 
++#ifdef NOTYET
+ static int set_all_limits __P((int, RLIMTYPE));
++#endif
+ 
+ static int filesize __P((RLIMTYPE *));
+ static int pipesize __P((RLIMTYPE *));
+@@ -699,6 +701,7 @@ printone (limind, curlim, pdesc)
+     print_rlimtype ((curlim / limits[limind].block_factor), 1);
+ }
+ 
++#ifdef NOTYET
+ /* Set all limits to NEWLIM.  NEWLIM currently must be RLIM_INFINITY, which
+    causes all limits to be set as high as possible depending on mode (like
+    csh `unlimit').  Returns -1 if NEWLIM is invalid, 0 if all limits
+@@ -738,5 +741,6 @@ set_all_limits (mode, newlim)
+       }
+   return retval;
+ }
++#endif
+ 
+ #endif /* !_MINIX */
+diff -upk.orig bash-3.1.orig/error.c bash-3.1/error.c
+--- bash-3.1.orig/error.c	2005-06-30 14:25:59 +0000
++++ bash-3.1/error.c	2006-01-05 17:25:52 +0000
+@@ -146,7 +146,9 @@ programming_error (format, va_alist)
+ #endif
+ {
+   va_list args;
++#if defined (HISTORY)
+   char *h;
++#endif
+ 
+ #if defined (JOB_CONTROL)
+   give_terminal_to (shell_pgrp, 0);
+diff -upk.orig bash-3.1.orig/eval.c bash-3.1/eval.c
+--- bash-3.1.orig/eval.c	2005-10-03 18:48:24 +0000
++++ bash-3.1/eval.c	2006-01-05 16:58:29 +0000
+@@ -137,7 +137,7 @@ reader_loop ()
+ 	      dispose_command (global_command);
+ 	      global_command = (COMMAND *)NULL;
+ 	    }
+-	  else if (current_command = global_command)
++	  else if ((current_command = global_command))
+ 	    {
+ 	      global_command = (COMMAND *)NULL;
+ 	      current_command_number++;
+diff -upk.orig bash-3.1.orig/execute_cmd.c bash-3.1/execute_cmd.c
+--- bash-3.1.orig/execute_cmd.c	2005-11-05 19:37:21 +0000
++++ bash-3.1/execute_cmd.c	2006-01-05 17:19:16 +0000
+@@ -2477,8 +2477,8 @@ execute_cond_node (cond)
+     }
+   else if (cond->type == COND_BINARY)
+     {
+-      patmatch = ((cond->op->word[1] == '=') && (cond->op->word[2] == '\0') &&
+-		  (cond->op->word[0] == '!' || cond->op->word[0] == '=') ||
++      patmatch = (((cond->op->word[1] == '=') && (cond->op->word[2] == '\0') &&
++		   (cond->op->word[0] == '!' || cond->op->word[0] == '=')) ||
+ 		  (cond->op->word[0] == '=' && cond->op->word[1] == '\0'));
+ #if defined (COND_REGEXP)
+       rmatch = (cond->op->word[0] == '=' && cond->op->word[1] == '~' &&
+@@ -3650,7 +3650,9 @@ execute_disk_command (words, redirects, 
+     }
+   else
+     {
++#if defined (RESTRICTED_SHELL)
+ parent_return:
++#endif /* RESTRICTED_SHELL */
+       /* Make sure that the pipes are closed in the parent. */
+       close_pipes (pipe_in, pipe_out);
+ #if defined (PROCESS_SUBSTITUTION) && defined (HAVE_DEV_FD)
+diff -upk.orig bash-3.1.orig/expr.c bash-3.1/expr.c
+--- bash-3.1.orig/expr.c	2005-02-15 15:07:54 +0000
++++ bash-3.1/expr.c	2006-01-05 17:28:14 +0000
+@@ -414,11 +414,8 @@ expassign ()
+       if (lasttok != STR)
+ 	evalerror (_("attempted assignment to non-variable"));
+ 
+-      if (special)
+-	{
+-	  op = assigntok;		/* a OP= b */
+-	  lvalue = value;
+-	}
++      op = assigntok;		/* a OP= b */
++      lvalue = value;
+ 
+       lhs = savestring (tokstr);
+       readtok ();
+diff -upk.orig bash-3.1.orig/findcmd.c bash-3.1/findcmd.c
+--- bash-3.1.orig/findcmd.c	2005-08-17 20:49:54 +0000
++++ bash-3.1/findcmd.c	2006-01-05 18:13:35 +0000
+@@ -216,7 +216,7 @@ _find_user_command_internal (name, flags
+ 
+   /* Search for the value of PATH in both the temporary environments and
+      in the regular list of variables. */
+-  if (var = find_variable_internal ("PATH", 1))	/* XXX could be array? */
++  if ((var = find_variable_internal ("PATH", 1)))	/* XXX could be array? */
+     path_list = value_cell (var);
+   else
+     path_list = (char *)NULL;
+diff -upk.orig bash-3.1.orig/general.c bash-3.1/general.c
+--- bash-3.1.orig/general.c	2005-08-28 19:56:28 +0000
++++ bash-3.1/general.c	2006-01-05 17:10:55 +0000
+@@ -275,7 +275,7 @@ assignment (string, flags)
+ #endif
+     return (0);
+ 
+-  while (c = string[indx])
++  while ((c = string[indx]))
+     {
+       /* The following is safe.  Note that '=' at the start of a word
+ 	 is not an assignment statement. */
+diff -upk.orig bash-3.1.orig/hashlib.c bash-3.1/hashlib.c
+--- bash-3.1.orig/hashlib.c	2002-03-18 15:30:23 +0000
++++ bash-3.1/hashlib.c	2006-01-05 18:08:46 +0000
+@@ -81,7 +81,7 @@ copy_bucket_array (ba, cpdata)
+   if (ba == 0)
+     return ((BUCKET_CONTENTS *)0);
+ 
+-  for (n = (BUCKET_CONTENTS *)0, e = ba; e; e = e->next)
++  for (new_bucket = n = (BUCKET_CONTENTS *)0, e = ba; e; e = e->next)
+     {
+       if (n == 0)
+         {
+diff -upk.orig bash-3.1.orig/jobs.c bash-3.1/jobs.c
+--- bash-3.1.orig/jobs.c	2005-11-12 04:13:27 +0000
++++ bash-3.1/jobs.c	2006-01-05 17:30:48 +0000
+@@ -743,7 +743,7 @@ bgp_search (pid)
+ static void
+ bgp_prune ()
+ {
+-  struct pidstat *ps, *p;
++  struct pidstat *ps;
+ 
+   while (bgpids.npid > js.c_childmax)
+     {
+@@ -896,8 +896,7 @@ delete_job (job_index, warn_stopped)
+ {
+   register JOB *temp;
+   PROCESS *proc;
+-  int ndel, status;
+-  pid_t pid;
++  int ndel;
+ 
+   if (js.j_jobslots == 0 || jobs_list_frozen)
+     return;
+@@ -958,7 +957,7 @@ nohup_job (job_index)
+   if (js.j_jobslots == 0)
+     return;
+ 
+-  if (temp = jobs[job_index])
++  if ((temp = jobs[job_index]))
+     temp->flags |= J_NOHUP;
+ }
+ 
+diff -upk.orig bash-3.1.orig/jobs.h bash-3.1/jobs.h
+--- bash-3.1.orig/jobs.h	2005-10-18 15:03:27 +0000
++++ bash-3.1/jobs.h	2006-01-05 17:44:19 +0000
+@@ -229,6 +229,10 @@ extern void default_tty_job_signals __P(
+ 
+ extern void init_job_stats __P((void));
+ 
++#if defined (PGRP_PIPE)
++extern void close_pgrp_pipe __P((void));
++#endif
++
+ #if defined (JOB_CONTROL)
+ extern int job_control;
+ #endif
+diff -upk.orig bash-3.1.orig/lib/glob/glob.c bash-3.1/lib/glob/glob.c
+--- bash-3.1.orig/lib/glob/glob.c	2005-03-24 17:42:27 +0000
++++ bash-3.1/lib/glob/glob.c	2006-01-05 18:45:55 +0000
+@@ -184,7 +184,7 @@ mbskipname (pat, dname)
+ {
+   int ret;
+   wchar_t *pat_wc, *dn_wc;
+-  size_t pat_n, dn_n, n;
++  size_t pat_n, dn_n;
+ 
+   pat_n = xdupmbstowcs (&pat_wc, NULL, pat);
+   dn_n = xdupmbstowcs (&dn_wc, NULL, dname);
+@@ -357,7 +357,7 @@ glob_vector (pat, dir, flags)
+   struct globval *firstmalloc, *tmplink;
+ 
+   lastlink = 0;
+-  count = lose = skip = 0;
++  count = lose = skip = nalloca = 0;
+ 
+   firstmalloc = 0;
+ 
+diff -upk.orig bash-3.1.orig/lib/glob/sm_loop.c bash-3.1/lib/glob/sm_loop.c
+--- bash-3.1.orig/lib/glob/sm_loop.c	2005-10-17 01:21:04 +0000
++++ bash-3.1/lib/glob/sm_loop.c	2006-01-05 18:53:11 +0000
+@@ -302,7 +302,7 @@ BRACKMATCH (p, test, flags)
+      circumflex (`^') in its role in a `nonmatching list'.  A bracket
+      expression starting with an unquoted circumflex character produces
+      unspecified results.  This implementation treats the two identically. */
+-  if (not = (*p == L('!') || *p == L('^')))
++  if ((not = (*p == L('!') || *p == L('^'))))
+     ++p;
+ 
+   c = *p++;
+@@ -530,7 +530,7 @@ PATSCAN (string, end, delim)
+   cchar = 0;
+   bfirst = NULL;
+ 
+-  for (s = string; c = *s; s++)
++  for (s = string; (c = *s); s++)
+     {
+       if (s >= end)
+ 	return (s);
+@@ -677,10 +677,12 @@ fprintf(stderr, "extmatch: p = %s; pe = 
+ 		 string matches the rest of the pattern.  Also handle
+ 		 multiple matches of the pattern. */
+ 	      if (m1)
+-		m2 = (GMATCH (srest, se, prest, pe, flags) == 0) ||
++		{
++		  m2 = (GMATCH (srest, se, prest, pe, flags) == 0) ||
+ 		      (s != srest && GMATCH (srest, se, p - 1, pe, flags) == 0);
+-	      if (m1 && m2)
+-		return (0);
++		  if (m2)
++		    return (0);
++		}
+ 	    }
+ 	  if (pnext == prest)
+ 	    break;
+@@ -721,7 +723,7 @@ fprintf(stderr, "extmatch: p = %s; pe = 
+ 	    {
+ 	      pnext = PATSCAN (psub, pe, L('|'));
+ 	      /* If one of the patterns matches, just bail immediately. */
+-	      if (m1 = (GMATCH (s, srest, psub, pnext - 1, flags) == 0))
++	      if ((m1 = (GMATCH (s, srest, psub, pnext - 1, flags) == 0)))
+ 		break;
+ 	      if (pnext == prest)
+ 		break;
+diff -upk.orig bash-3.1.orig/lib/glob/smatch.c bash-3.1/lib/glob/smatch.c
+--- bash-3.1.orig/lib/glob/smatch.c	2005-03-24 17:39:57 +0000
++++ bash-3.1/lib/glob/smatch.c	2006-01-05 18:53:38 +0000
+@@ -247,7 +247,6 @@ rangecmp_wc (c1, c2)
+ {
+   static wchar_t s1[2] = { L' ', L'\0' };
+   static wchar_t s2[2] = { L' ', L'\0' };
+-  int ret;
+ 
+   if (c1 == c2)
+     return 0;
+diff -upk.orig bash-3.1.orig/lib/glob/strmatch.c bash-3.1/lib/glob/strmatch.c
+--- bash-3.1.orig/lib/glob/strmatch.c	2004-01-31 04:22:04 +0000
++++ bash-3.1/lib/glob/strmatch.c	2006-01-05 18:48:41 +0000
+@@ -25,7 +25,7 @@
+ #include "strmatch.h"
+ 
+ extern int xstrmatch __P((char *, char *, int));
+-#if defined (HAVE_MULTIBYTE)
++#if defined (HANDLE_MULTIBYTE)
+ extern int internal_wstrmatch __P((wchar_t *, wchar_t *, int));
+ #endif
+ 
+diff -upk.orig bash-3.1.orig/lib/sh/makepath.c bash-3.1/lib/sh/makepath.c
+--- bash-3.1.orig/lib/sh/makepath.c	2001-11-24 19:27:19 +0000
++++ bash-3.1/lib/sh/makepath.c	2006-01-05 18:41:19 +0000
+@@ -110,7 +110,7 @@ sh_makepath (path, dir, flags)
+   if (s[-1] != '/')
+     *r++ = '/';      
+   s = xdir;
+-  while (*r++ = *s++)
++  while ((*r++ = *s++))
+     ;
+   if (xpath != path)
+     free (xpath);
+diff -upk.orig bash-3.1.orig/lib/sh/netopen.c bash-3.1/lib/sh/netopen.c
+--- bash-3.1.orig/lib/sh/netopen.c	2003-12-20 00:10:24 +0000
++++ bash-3.1/lib/sh/netopen.c	2006-01-05 19:13:27 +0000
+@@ -25,6 +25,8 @@
+ 
+ #include <config.h>
+ 
++#if defined (NETWORK_REDIRECTIONS)
++
+ #if defined (HAVE_NETWORK)
+ 
+ #if defined (HAVE_UNISTD_H)
+@@ -227,6 +229,7 @@ _netopen6 (host, serv, typ)
+       return -1;
+     }
+ 
++  s = -1;
+   for (res = res0; res; res = res->ai_next)
+     {
+       if ((s = socket (res->ai_family, res->ai_socktype, res->ai_protocol)) < 0)
+@@ -338,3 +341,5 @@ netopen (path)
+ }
+ 
+ #endif /* !HAVE_NETWORK */
++
++#endif /* !NETWORK_REDIRECTIONS */
+diff -upk.orig bash-3.1.orig/lib/sh/pathcanon.c bash-3.1/lib/sh/pathcanon.c
+--- bash-3.1.orig/lib/sh/pathcanon.c	2005-02-22 22:40:56 +0000
++++ bash-3.1/lib/sh/pathcanon.c	2006-01-05 18:41:38 +0000
+@@ -114,7 +114,7 @@ sh_canonpath (path, flags)
+ 
+   /* POSIX.2 says to leave a leading `//' alone.  On cygwin, we skip over any
+      leading `x:' (dos drive name). */
+-  if (rooted = ROOTEDPATH(path))
++  if ((rooted = ROOTEDPATH(path)))
+     {
+       stub_char = DIRSEP;
+ #if defined (__CYGWIN__)
+diff -upk.orig bash-3.1.orig/lib/sh/spell.c bash-3.1/lib/sh/spell.c
+--- bash-3.1.orig/lib/sh/spell.c	2001-11-27 17:34:15 +0000
++++ bash-3.1/lib/sh/spell.c	2006-01-05 18:42:08 +0000
+@@ -95,7 +95,7 @@ spname(oldname, newname)
+       /*
+        *  Add to end of newname
+        */
+-      for (p = best; *np = *p++; np++)
++      for (p = best; (*np = *p++); np++)
+ 	;
+     }
+ }
+diff -upk.orig bash-3.1.orig/lib/sh/strtrans.c bash-3.1/lib/sh/strtrans.c
+--- bash-3.1.orig/lib/sh/strtrans.c	2004-10-20 17:52:01 +0000
++++ bash-3.1/lib/sh/strtrans.c	2006-01-05 18:42:44 +0000
+@@ -166,7 +166,7 @@ ansic_quote (str, flags, rlen)
+      int flags, *rlen;
+ {
+   char *r, *ret, *s;
+-  int l, rsize, t;
++  int l, rsize;
+   unsigned char c;
+ 
+   if (str == 0 || *str == 0)
+@@ -237,7 +237,7 @@ ansic_shouldquote (string)
+   if (string == 0)
+     return 0;
+ 
+-  for (s = string; c = *s; s++)
++  for (s = string; (c = *s); s++)
+     if (ISPRINT (c) == 0)
+       return 1;
+ 
+diff -upk.orig bash-3.1.orig/lib/sh/tmpfile.c bash-3.1/lib/sh/tmpfile.c
+--- bash-3.1.orig/lib/sh/tmpfile.c	2004-02-12 16:33:36 +0000
++++ bash-3.1/lib/sh/tmpfile.c	2006-01-05 18:41:57 +0000
+@@ -55,8 +55,6 @@ static unsigned long filenum = 1L;
+ static char *
+ get_sys_tmpdir ()
+ {
+-  struct stat sb;
+-
+   if (sys_tmpdir)
+     return sys_tmpdir;
+ 
+diff -upk.orig bash-3.1.orig/lib/sh/winsize.c bash-3.1/lib/sh/winsize.c
+--- bash-3.1.orig/lib/sh/winsize.c	2005-11-12 04:17:19 +0000
++++ bash-3.1/lib/sh/winsize.c	2006-01-05 19:02:00 +0000
+@@ -23,6 +23,8 @@
+ #include <stdc.h>
+ 
+ #include "bashtypes.h"
++#include "shell.h"
++#include "variables.h"
+ 
+ #if defined (HAVE_UNISTD_H)
+ #  include <unistd.h>
+diff -upk.orig bash-3.1.orig/lib/tilde/tilde.c bash-3.1/lib/tilde/tilde.c
+--- bash-3.1.orig/lib/tilde/tilde.c	2005-05-07 18:49:51 +0000
++++ bash-3.1/lib/tilde/tilde.c	2006-01-05 18:53:58 +0000
+@@ -196,7 +196,7 @@ tilde_expand (string)
+   int result_size, result_index;
+ 
+   result_index = result_size = 0;
+-  if (result = strchr (string, '~'))
++  if ((result = strchr (string, '~')))
+     result = (char *)xmalloc (result_size = (strlen (string) + 16));
+   else
+     result = (char *)xmalloc (result_size = (strlen (string) + 1));
+diff -upk.orig bash-3.1.orig/locale.c bash-3.1/locale.c
+--- bash-3.1.orig/locale.c	2004-08-02 01:30:19 +0000
++++ bash-3.1/locale.c	2006-01-05 18:13:12 +0000
+@@ -78,7 +78,6 @@ void
+ set_default_locale_vars ()
+ {
+   char *val;
+-  int r;
+ 
+ #if defined (HAVE_SETLOCALE)
+ 
+diff -upk.orig bash-3.1.orig/mailcheck.c bash-3.1/mailcheck.c
+--- bash-3.1.orig/mailcheck.c	2004-11-06 01:00:04 +0000
++++ bash-3.1/mailcheck.c	2006-01-05 18:09:17 +0000
+@@ -338,7 +338,7 @@ remember_mail_dates ()
+       return;
+     }
+ 
+-  while (mailfile = extract_colon_unit (mailpaths, &i))
++  while ((mailfile = extract_colon_unit (mailpaths, &i)))
+     {
+       mp = parse_mailpath_spec (mailfile);
+       if (mp && *mp)
+@@ -412,7 +412,7 @@ check_mail ()
+ #undef atime
+ #undef mtime
+ 
+-	  if (temp = expand_string_to_string (message, Q_DOUBLE_QUOTES))
++	  if ((temp = expand_string_to_string (message, Q_DOUBLE_QUOTES)))
+ 	    {
+ 	      puts (temp);
+ 	      free (temp);
+diff -upk.orig bash-3.1.orig/make_cmd.c bash-3.1/make_cmd.c
+--- bash-3.1.orig/make_cmd.c	2005-07-07 12:14:57 +0000
++++ bash-3.1/make_cmd.c	2006-01-05 17:11:53 +0000
+@@ -602,7 +602,7 @@ make_here_document (temp)
+      be read verbatim from the input.  If it was not quoted, we
+      need to perform backslash-quoted newline removal. */
+   delim_unquoted = (temp->redirectee.filename->flags & W_QUOTED) == 0;
+-  while (full_line = read_secondary_line (delim_unquoted))
++  while ((full_line = read_secondary_line (delim_unquoted)))
+     {
+       register char *line;
+       int len;
+@@ -750,7 +750,6 @@ make_function_def (name, command, lineno
+ #if defined (ARRAY_VARS)
+   SHELL_VAR *bash_source_v;
+   ARRAY *bash_source_a;
+-  char *t;
+ #endif
+ 
+   temp = (FUNCTION_DEF *)xmalloc (sizeof (FUNCTION_DEF));
+diff -upk.orig bash-3.1.orig/parse.y bash-3.1/parse.y
+--- bash-3.1.orig/parse.y	2006-01-05 16:33:46 +0000
++++ bash-3.1/parse.y	2006-01-05 17:09:55 +0000
+@@ -192,7 +192,9 @@ static int token_is_assignment __P((char
+ static int token_is_ident __P((char *, int));
+ #endif
+ static int read_token_word __P((int));
++#ifdef INCLUDE_UNUSED
+ static void discard_parser_constructs __P((int));
++#endif
+ 
+ static char *error_token_from_token __P((int));
+ static char *error_token_from_text __P((void));
+@@ -1869,7 +1871,6 @@ shell_getc (remove_quoted_newline)
+   register int i;
+   int c;
+   unsigned char uc;
+-  static int mustpop = 0;
+ 
+   QUIT;
+ 
+@@ -2737,6 +2738,7 @@ parse_matched_pair (qc, open, close, len
+   rflags = (qc == '"') ? P_DQUOTE : (flags & P_DQUOTE);
+ 
+   ret = (char *)xmalloc (retsize = 64);
++  nestret = NULL;
+   retind = 0;
+ 
+   start_lineno = line_number;
+@@ -2933,8 +2935,8 @@ static int
+ parse_dparen (c)
+      int c;
+ {
+-  int cmdtyp, len, sline;
+-  char *wval, *wv2;
++  int cmdtyp, sline;
++  char *wval;
+   WORD_DESC *wd;
+ 
+ #if defined (ARITH_FOR_COMMAND)
+@@ -3049,7 +3051,7 @@ cond_error ()
+     parser_error (cond_lineno, _("unexpected EOF while looking for `]]'"));
+   else if (cond_token != COND_ERROR)
+     {
+-      if (etext = error_token_from_token (cond_token))
++      if ((etext = error_token_from_token (cond_token)))
+ 	{
+ 	  parser_error (cond_lineno, _("syntax error in conditional expression: unexpected token `%s'"), etext);
+ 	  free (etext);
+@@ -3131,7 +3133,7 @@ cond_term ()
+ 	{
+ 	  if (term)
+ 	    dispose_cond_node (term);		/* ( */
+-	  if (etext = error_token_from_token (cond_token))
++	  if ((etext = error_token_from_token (cond_token)))
+ 	    {
+ 	      parser_error (lineno, _("unexpected token `%s', expected `)'"), etext);
+ 	      free (etext);
+@@ -3163,7 +3165,7 @@ cond_term ()
+       else
+ 	{
+ 	  dispose_word (op);
+-	  if (etext = error_token_from_token (tok))
++	  if ((etext = error_token_from_token (tok)))
+ 	    {
+ 	      parser_error (line_number, _("unexpected argument `%s' to conditional unary operator"), etext);
+ 	      free (etext);
+@@ -3204,7 +3206,7 @@ cond_term ()
+ 	}
+       else
+ 	{
+-	  if (etext = error_token_from_token (tok))
++	  if ((etext = error_token_from_token (tok)))
+ 	    {
+ 	      parser_error (line_number, _("unexpected token `%s', conditional binary operator expected"), etext);
+ 	      free (etext);
+@@ -3224,7 +3226,7 @@ cond_term ()
+ 	}
+       else
+ 	{
+-	  if (etext = error_token_from_token (tok))
++	  if ((etext = error_token_from_token (tok)))
+ 	    {
+ 	      parser_error (line_number, _("unexpected argument `%s' to conditional binary operator"), etext);
+ 	      free (etext);
+@@ -3242,7 +3244,7 @@ cond_term ()
+     {
+       if (tok < 256)
+ 	parser_error (line_number, _("unexpected token `%c' in conditional command"), tok);
+-      else if (etext = error_token_from_token (tok))
++      else if ((etext = error_token_from_token (tok)))
+ 	{
+ 	  parser_error (line_number, _("unexpected token `%s' in conditional command"), etext);
+ 	  free (etext);
+@@ -3986,8 +3988,9 @@ decode_prompt_string (string)
+   result = (char *)xmalloc (result_size = PROMPT_GROWTH);
+   result[result_index = 0] = 0;
+   temp = (char *)NULL;
++  n = 0;
+ 
+-  while (c = *string++)
++  while ((c = *string++))
+     {
+       if (posixly_correct && c == '!')
+ 	{
+@@ -4351,10 +4354,10 @@ error_token_from_token (token)
+ {
+   char *t;
+ 
+-  if (t = find_token_in_alist (token, word_token_alist, 0))
++  if ((t = find_token_in_alist (token, word_token_alist, 0)))
+     return t;
+ 
+-  if (t = find_token_in_alist (token, other_token_alist, 0))
++  if ((t = find_token_in_alist (token, other_token_alist, 0)))
+     return t;
+ 
+   t = (char *)NULL;
+@@ -4506,6 +4509,7 @@ report_syntax_error (message)
+   last_command_exit_value = EX_USAGE;
+ }
+ 
++#ifdef INCLUDE_UNUSED
+ /* ??? Needed function. ??? We have to be able to discard the constructs
+    created during parsing.  In the case of error, we want to return
+    allocated objects to the memory pool.  In the case of no error, we want
+@@ -4516,6 +4520,7 @@ discard_parser_constructs (error_p)
+      int error_p;
+ {
+ }
++#endif
+ 
+ /************************************************
+  *						*
+diff -upk.orig bash-3.1.orig/pathexp.c bash-3.1/pathexp.c
+--- bash-3.1.orig/pathexp.c	2002-05-06 17:43:05 +0000
++++ bash-3.1/pathexp.c	2006-01-05 18:12:21 +0000
+@@ -67,7 +67,7 @@ unquoted_glob_pattern_p (string)
+   open = 0;
+   send = string + strlen (string);
+ 
+-  while (c = *string++)
++  while ((c = *string++))
+     {
+       switch (c)
+ 	{
+@@ -419,7 +419,7 @@ setup_ignore_patterns (ivp)
+ 
+   numitems = maxitems = ptr = 0;
+ 
+-  while (colon_bit = extract_colon_unit (this_ignoreval, &ptr))
++  while ((colon_bit = extract_colon_unit (this_ignoreval, &ptr)))
+     {
+       if (numitems + 1 >= maxitems)
+ 	{
+diff -upk.orig bash-3.1.orig/pcomplete.c bash-3.1/pcomplete.c
+--- bash-3.1.orig/pcomplete.c	2005-11-16 18:42:20 +0000
++++ bash-3.1/pcomplete.c	2006-01-05 19:28:38 +0000
+@@ -520,6 +520,8 @@ it_init_joblist (itp, jstate)
+     ws = JRUNNING;
+   else if (jstate == 1)
+     ws = JSTOPPED;
++  else
++    ws = -1;
+ 
+   sl = strlist_create (js.j_jobslots);
+   for (i = js.j_jobslots - 1; i >= 0; i--)
+@@ -815,7 +817,7 @@ gen_wordlist_matches (cs, text)
+ {
+   WORD_LIST *l, *l2;
+   STRINGLIST *sl;
+-  int nw, tlen, qc;
++  int nw, tlen;
+   char *ntxt;		/* dequoted TEXT to use in comparisons */
+ 
+   if (cs->words == 0 || cs->words[0] == '\0')
+diff -upk.orig bash-3.1.orig/redir.c bash-3.1/redir.c
+--- bash-3.1.orig/redir.c	2005-10-11 19:58:13 +0000
++++ bash-3.1/redir.c	2006-01-05 19:11:27 +0000
+@@ -93,6 +93,7 @@ redirection_error (temp, error)
+   int oflags;
+ 
+   allocname = 0;
++  oflags = 0;
+   if (temp->redirector < 0)
+     /* This can happen when read_token_word encounters overflow, like in
+        exec 4294967297>x */
+@@ -629,6 +630,7 @@ do_redirection_internal (redirect, flags
+   redir_fd = redirect->redirectee.dest;
+   redirector = redirect->redirector;
+   ri = redirect->instruction;
++  oflags = 0;
+ 
+ if (redirect->flags & RX_INTERNAL)
+   flags |= RX_INTERNAL;
+@@ -638,6 +640,7 @@ if (redirect->flags & RX_INTERNAL)
+       /* We have [N]>&WORD[-] or [N]<&WORD[-].  Expand WORD, then translate
+ 	 the redirection into a new one and continue. */
+       redirectee_word = redirection_expand (redirectee);
++      new_redirect = NULL;
+ 
+       /* XXX - what to do with [N]<&$w- where w is unset or null?  ksh93
+ 	       closes N. */
+@@ -668,6 +671,8 @@ if (redirect->flags & RX_INTERNAL)
+ 	    case r_move_output_word:
+ 	      new_redirect = make_redirection (redirector, r_move_output, rd);
+ 	      break;
++	    default:
++	      break;
+ 	    }
+ 	}
+       else if (ri == r_duplicating_output_word && redirector == 1)
+@@ -938,6 +943,7 @@ if (redirect->flags & RX_INTERNAL)
+ 
+     case r_duplicating_input_word:
+     case r_duplicating_output_word:
++    default:
+       break;
+     }
+   return (0);
+@@ -1065,9 +1071,9 @@ stdin_redirection (ri, redirector)
+     case r_err_and_out:
+     case r_output_force:
+     case r_duplicating_output_word:
++    default:
+       return (0);
+     }
+-  return (0);
+ }
+ 
+ /* Return non-zero if any of the redirections in REDIRS alter the standard
+diff -upk.orig bash-3.1.orig/shell.c bash-3.1/shell.c
+--- bash-3.1.orig/shell.c	2005-09-05 02:32:08 +0000
++++ bash-3.1/shell.c	2006-01-05 16:58:12 +0000
+@@ -796,7 +796,7 @@ parse_shell_options (argv, arg_start, ar
+ 
+       i = 1;
+       on_or_off = arg_string[0];
+-      while (arg_character = arg_string[i++])
++      while ((arg_character = arg_string[i++]))
+ 	{
+ 	  switch (arg_character)
+ 	    {
+diff -upk.orig bash-3.1.orig/subst.c bash-3.1/subst.c
+--- bash-3.1.orig/subst.c	2006-01-05 16:33:46 +0000
++++ bash-3.1/subst.c	2006-01-05 19:09:05 +0000
+@@ -50,6 +50,8 @@
+ 
+ #include "shmbutil.h"
+ 
++#include "sig.h"
++
+ #include "builtins/getopt.h"
+ #include "builtins/common.h"
+ 
+@@ -185,8 +187,10 @@ WORD_LIST *subst_assign_varlist = (WORD_
+    without any leading variable assignments. */
+ static WORD_LIST *garglist = (WORD_LIST *)NULL;
+ 
++#ifdef INCLUDE_UNUSED
+ static char *quoted_substring __P((char *, int, int));
+ static int quoted_strlen __P((char *));
++#endif
+ static char *quoted_strchr __P((char *, int, int));
+ 
+ static char *expand_string_if_necessary __P((char *, int, EXPFUNC *));
+@@ -204,8 +208,10 @@ static WORD_LIST *dequote_list __P((WORD
+ static char *remove_quoted_escapes __P((char *));
+ static char *remove_quoted_nulls __P((char *));
+ 
++#ifdef INCLUDE_UNUSED
+ static int unquoted_substring __P((char *, char *));
+ static int unquoted_member __P((int, char *));
++#endif
+ 
+ #if defined (ARRAY_VARS)
+ static SHELL_VAR *do_compound_assignment __P((char *, char *, int));
+@@ -223,7 +229,9 @@ static char *extract_dollar_brace_string
+ 
+ static char *pos_params __P((char *, int, int, int));
+ 
++#ifdef INCLUDE_UNUSED
+ static unsigned char *mb_getcharlens __P((char *, int));
++#endif
+ 
+ static char *remove_upattern __P((char *, char *, int));
+ #if defined (HANDLE_MULTIBYTE)
+@@ -243,7 +251,9 @@ static int match_wpattern __P((wchar_t *
+ static int match_pattern __P((char *, char *, int, char **, char **));
+ static int getpatspec __P((int, char *));
+ static char *getpattern __P((char *, int, int));
++#ifdef INCLUDE_UNUSED
+ static char *variable_remove_pattern __P((char *, char *, int, int));
++#endif
+ static char *list_remove_pattern __P((WORD_LIST *, char *, int, int, int));
+ static char *parameter_list_remove_pattern __P((int, char *, int, int));
+ #ifdef ARRAY_VARS
+@@ -287,7 +297,7 @@ static WORD_LIST *expand_word_internal _
+ 
+ static WORD_LIST *word_list_split __P((WORD_LIST *));
+ 
+-static void exp_jump_to_top_level __P((int));
++static void exp_jump_to_top_level __P((int)) __attribute__((__noreturn__));
+ 
+ static WORD_LIST *separate_out_assignments __P((WORD_LIST *));
+ static WORD_LIST *glob_expand_word_list __P((WORD_LIST *, int));
+@@ -397,6 +407,7 @@ quoted_strchr (s, c, flags)
+   return ((char *)NULL);
+ }
+ 
++#ifdef INCLUDE_UNUSED
+ /* Return 1 if CHARACTER appears in an unquoted portion of
+    STRING.  Return 0 otherwise.  CHARACTER must be a single-byte character. */
+ static int
+@@ -410,7 +421,7 @@ unquoted_member (character, string)
+ 
+   slen = strlen (string);
+   sindex = 0;
+-  while (c = string[sindex])
++  while ((c = string[sindex]))
+     {
+       if (c == character)
+ 	return (1);
+@@ -438,7 +449,9 @@ unquoted_member (character, string)
+     }
+   return (0);
+ }
++#endif
+ 
++#ifdef INCLUDE_UNUSED
+ /* Return 1 if SUBSTR appears in an unquoted portion of STRING. */
+ static int
+ unquoted_substring (substr, string)
+@@ -453,7 +466,7 @@ unquoted_substring (substr, string)
+ 
+   slen = strlen (string);
+   sublen = strlen (substr);
+-  for (sindex = 0; c = string[sindex]; )
++  for (sindex = 0; (c = string[sindex]); )
+     {
+       if (STREQN (string + sindex, substr, sublen))
+ 	return (1);
+@@ -482,6 +495,7 @@ unquoted_substring (substr, string)
+     }
+   return (0);
+ }
++#endif
+ 
+ /* Most of the substitutions must be done in parallel.  In order
+    to avoid using tons of unclear goto's, I have some functions
+@@ -563,7 +577,7 @@ string_extract (string, sindex, charlist
+   slen = (MB_CUR_MAX > 1) ? strlen (string + *sindex) + *sindex : 0;
+   i = *sindex;
+   found = 0;
+-  while (c = string[i])
++  while ((c = string[i]))
+     {
+       if (c == '\\')
+ 	{
+@@ -634,7 +648,7 @@ string_extract_double_quoted (string, si
+ 
+   j = 0;
+   i = *sindex;
+-  while (c = string[i])
++  while ((c = string[i]))
+     {
+       /* Process a character that was quoted by a backslash. */
+       if (pass_next)
+@@ -781,7 +795,7 @@ skip_double_quoted (string, slen, sind)
+ 
+   pass_next = backquote = 0;
+   i = sind;
+-  while (c = string[i])
++  while ((c = string[i]))
+     {
+       if (pass_next)
+ 	{
+@@ -916,7 +930,7 @@ string_extract_verbatim (string, slen, s
+   clen = strlen (charlist);
+   wcharlist = 0;
+ #endif
+-  while (c = string[i])
++  while ((c = string[i]))
+     {
+ #if defined (HANDLE_MULTIBYTE)
+       size_t mblength;
+@@ -1187,7 +1201,7 @@ extract_dollar_brace_string (string, sin
+   slen = strlen (string + *sindex) + *sindex;
+ 
+   i = *sindex;
+-  while (c = string[i])
++  while ((c = string[i]))
+     {
+       if (pass_character)
+ 	{
+@@ -1456,7 +1470,7 @@ skip_to_delim (string, start, delims)
+   no_longjmp_on_fatal_error = 1;
+   i = start;
+   pass_next = backq = 0;
+-  while (c = string[i])
++  while ((c = string[i]))
+     {
+       if (pass_next)
+ 	{
+@@ -1814,7 +1828,7 @@ string_list_dollar_at (list, quoted)
+      WORD_LIST *list;
+      int quoted;
+ {
+-  char *ifs, *ret;
++  char *ifs;
+ #if defined (HANDLE_MULTIBYTE)
+   char sep[MB_CUR_MAX + 1];
+ #else
+@@ -1907,6 +1921,7 @@ list_string (string, separators, quoted)
+ 				 separators[3] == '\0';
+ 
+   slen = 0;
++  s = NULL;
+   /* Remove sequences of whitespace at the beginning of STRING, as
+      long as those characters appear in IFS.  Do not do this if
+      STRING is quoted or if there are no separator characters. */
+@@ -2180,7 +2195,7 @@ do_compound_assignment (name, value, fla
+      int flags;
+ {
+   SHELL_VAR *v;
+-  int off, mklocal;
++  int mklocal;
+ 
+   mklocal = flags & ASS_MKLOCAL;
+ 
+@@ -2209,7 +2224,7 @@ do_assignment_internal (word, expand)
+      int expand;
+ {
+   int offset, tlen, appendop, assign_list, aflags;
+-  char *name, *value, *ovalue, *nvalue;
++  char *name, *value;
+   SHELL_VAR *entry;
+ #if defined (ARRAY_VARS)
+   char *t;
+@@ -2280,7 +2295,7 @@ do_assignment_internal (word, expand)
+     aflags |= ASS_APPEND;
+ 
+ #if defined (ARRAY_VARS)
+-  if (t = xstrchr (name, '['))	/*]*/
++  if ((t = xstrchr (name, '[')))	/*]*/
+     {
+       if (assign_list)
+ 	{
+@@ -3312,7 +3327,7 @@ remove_wpattern (wparam, wstrlen, wpatte
+      int op;
+ {
+   wchar_t wc;
+-  int n, n1;
++  int n;
+   wchar_t *ret;
+ 
+   switch (op)
+@@ -3767,6 +3782,7 @@ getpattern (value, quoted, expandpat)
+ {
+   char *pat, *tword;
+   WORD_LIST *l;
++#if 0
+   int i;
+ 
+   /* There is a problem here:  how to handle single or double quotes in the
+@@ -3774,7 +3790,6 @@ getpattern (value, quoted, expandpat)
+      POSIX.2 says that enclosing double quotes do not cause the pattern to
+      be quoted, but does that leave us a problem with @ and array[@] and their
+      expansions inside a pattern? */
+-#if 0
+   if (expandpat && (quoted & (Q_HERE_DOCUMENT|Q_DOUBLE_QUOTES)) && *tword)
+     {
+       i = 0;
+@@ -4387,6 +4402,7 @@ read_comsub (fd, quoted)
+ 
+   istring = (char *)NULL;
+   istring_index = istring_size = bufn = 0;
++  bufp = NULL;
+ 
+ #ifdef __CYGWIN__
+   setmode (fd, O_TEXT);		/* we don't want CR/LF, we want Unix-style */
+@@ -4859,7 +4875,7 @@ parameter_brace_expand_word (name, var_i
+  		  : quote_escapes (temp);
+     }
+ #endif
+-  else if (var = find_variable (name))
++  else if ((var = find_variable (name)))
+     {
+       if (var_isset (var) && invisible_p (var) == 0)
+ 	{
+@@ -5098,6 +5114,7 @@ parameter_brace_expand_length (name)
+     number = number_of_args ();
+   else if ((sh_syntaxtab[(unsigned char) name[1]] & CSPECVAR) && name[2] == '\0')
+     {
++      t = NULL;
+       /* Take the lengths of some of the shell's special parameters. */
+       switch (name[1])
+ 	{
+@@ -5255,6 +5272,7 @@ verify_substring_values (value, substr, 
+     return (0);
+ 
+   len = -1;	/* paranoia */
++  a = NULL;
+   switch (vtype)
+     {
+     case VT_VARIABLE:
+@@ -5615,7 +5633,7 @@ pos_params_pat_subst (string, pat, rep, 
+ {
+   WORD_LIST *save, *params;
+   WORD_DESC *w;
+-  char *ret, *tt;
++  char *ret;
+ 
+   save = params = list_rest_of_args ();
+   if (save == 0)
+@@ -5681,10 +5699,8 @@ parameter_brace_patsub (varname, value, 
+   if (starsub)
+     mflags |= MATCH_STARSUB;
+ 
+-  if (rep = quoted_strchr (lpatsub, '/', ST_BACKSL))
++  if ((rep = quoted_strchr (lpatsub, '/', ST_BACKSL)))
+     *rep++ = '\0';
+-  else
+-    rep = (char *)NULL;
+ 
+   if (rep && *rep == '\0')
+     rep = (char *)NULL;
+@@ -5726,6 +5742,7 @@ parameter_brace_patsub (varname, value, 
+      other cases if QUOTED == 0, since the posparams and arrays
+      indexed by * or @ do special things when QUOTED != 0. */
+ 
++  temp = NULL;
+   switch (vtype)
+     {
+     case VT_VARIABLE:
+@@ -5831,7 +5848,7 @@ parameter_brace_expand (string, indexp, 
+ 
+   /* Find out what character ended the variable name.  Then
+      do the appropriate thing. */
+-  if (c = string[sindex])
++  if ((c = string[sindex]))
+     sindex++;
+ 
+   /* If c is followed by one of the valid parameter expansion
+@@ -5841,7 +5858,7 @@ parameter_brace_expand (string, indexp, 
+   if (c == ':' && VALID_PARAM_EXPAND_CHAR (string[sindex]))
+     {
+       check_nullness++;
+-      if (c = string[sindex])
++      if ((c = string[sindex]))
+ 	sindex++;
+     }
+   else if (c == ':' && string[sindex] != RBRACE)
+@@ -7287,7 +7304,7 @@ string_quote_removal (string, quoted)
+ 
+   r = result_string = (char *)xmalloc (slen + 1);
+ 
+-  for (dquote = sindex = 0; c = string[sindex];)
++  for (dquote = sindex = 0; (c = string[sindex]);)
+     {
+       switch (c)
+ 	{
+@@ -7468,7 +7485,7 @@ word_list_split (list)
+ {
+   WORD_LIST *result, *t, *tresult, *e;
+ 
+-  for (t = list, result = (WORD_LIST *)NULL; t; t = t->next)
++  for (t = list, result = e = (WORD_LIST *)NULL; t; t = t->next)
+     {
+       tresult = word_split (t->word, ifs_value);
+ #if 0
+@@ -7783,7 +7800,7 @@ brace_expand_word_list (tlist, eflags)
+ 	{
+ 	  expansions = brace_expand (tlist->word->word);
+ 
+-	  for (eindex = 0; temp_string = expansions[eindex]; eindex++)
++	  for (eindex = 0; (temp_string = expansions[eindex]); eindex++)
+ 	    {
+ 	      w = make_word (temp_string);
+ 	      /* If brace expansion didn't change the word, preserve
+diff -upk.orig bash-3.1.orig/unwind_prot.c bash-3.1/unwind_prot.c
+--- bash-3.1.orig/unwind_prot.c	2002-02-28 19:34:05 +0000
++++ bash-3.1/unwind_prot.c	2006-01-05 18:11:57 +0000
+@@ -235,7 +235,7 @@ unwind_frame_discard_internal (tag, igno
+ {
+   UNWIND_ELT *elt;
+ 
+-  while (elt = unwind_protect_list)
++  while ((elt = unwind_protect_list))
+     {
+       unwind_protect_list = unwind_protect_list->head.next;
+       if (elt->head.cleanup == 0 && (STREQ (elt->arg.v, tag)))
+@@ -264,7 +264,7 @@ unwind_frame_run_internal (tag, ignore)
+ {
+   UNWIND_ELT *elt;
+ 
+-  while (elt = unwind_protect_list)
++  while ((elt = unwind_protect_list))
+     {
+       unwind_protect_list = elt->head.next;
+ 
+diff -upk.orig bash-3.1.orig/variables.c bash-3.1/variables.c
+--- bash-3.1.orig/variables.c	2005-11-13 02:22:37 +0000
++++ bash-3.1/variables.c	2006-01-05 19:20:33 +0000
+@@ -144,8 +144,10 @@ static int export_env_size;
+ 
+ #if defined (READLINE)
+ static int winsize_assignment;		/* currently assigning to LINES or COLUMNS */
++#if defined (STRICT_POSIX)
+ static int winsize_assigned;		/* assigned to LINES or COLUMNS */
+ #endif
++#endif
+ 
+ /* Non-zero means that we have to remake EXPORT_ENV. */
+ int array_needs_making = 1;
+@@ -165,9 +167,10 @@ static void uidset __P((void));
+ static void make_vers_array __P((void));
+ #endif
+ 
+-static SHELL_VAR *null_assign __P((SHELL_VAR *, char *, arrayind_t));
+ #if defined (ARRAY_VARS)
+ static SHELL_VAR *null_array_assign __P((SHELL_VAR *, char *, arrayind_t));
++#else
++static SHELL_VAR *null_assign __P((SHELL_VAR *, char *, arrayind_t));
+ #endif
+ static SHELL_VAR *get_self __P((SHELL_VAR *));
+ 
+@@ -280,7 +283,7 @@ initialize_shell_variables (env, privmod
+     shell_function_defs = hash_create (0);
+ #endif
+ 
+-  for (string_index = 0; string = env[string_index++]; )
++  for (string_index = 0; (string = env[string_index++]); )
+     {
+       char_index = 0;
+       name = string;
+@@ -317,7 +320,7 @@ initialize_shell_variables (env, privmod
+ 	  if (name[char_index - 1] == ')' && name[char_index - 2] == '(')
+ 	    name[char_index - 2] = '\0';
+ 
+-	  if (temp_var = find_function (name))
++	  if ((temp_var = find_function (name)))
+ 	    {
+ 	      VSETATTR (temp_var, (att_exported|att_imported));
+ 	      array_needs_making = 1;
+@@ -860,9 +863,11 @@ sh_set_lines_and_columns (lines, cols)
+ {
+   char val[INT_STRLEN_BOUND(int) + 1], *v;
+ 
++#if defined (READLINE)
+   /* If we are currently assigning to LINES or COLUMNS, don't do anything. */
+   if (winsize_assignment)
+     return;
++#endif
+ 
+   v = inttostr (lines, val, sizeof (val));
+   bind_variable ("LINES", v, 0);
+@@ -1033,21 +1038,21 @@ print_var_function (var)
+     } \
+   while (0)
+ 
++#if defined (ARRAY_VARS)
+ static SHELL_VAR *
+-null_assign (self, value, unused)
++null_array_assign (self, value, ind)
+      SHELL_VAR *self;
+      char *value;
+-     arrayind_t unused;
++     arrayind_t ind;
+ {
+   return (self);
+ }
+-
+-#if defined (ARRAY_VARS)
++#else
+ static SHELL_VAR *
+-null_array_assign (self, value, ind)
++null_assign (self, value, unused)
+      SHELL_VAR *self;
+      char *value;
+-     arrayind_t ind;
++     arrayind_t unused;
+ {
+   return (self);
+ }
+@@ -1302,7 +1307,9 @@ static SHELL_VAR *
+ get_comp_wordbreaks (var)
+      SHELL_VAR *var;
+ {
++#if 0
+   char *p;
++#endif
+ 
+   /* If we don't have anything yet, assign a default value. */
+   if (rl_completer_word_break_characters == 0 && bash_readline_initialized == 0)
+@@ -1511,7 +1518,7 @@ var_lookup (name, vcontext)
+ 
+   v = (SHELL_VAR *)NULL;
+   for (vc = vcontext; vc; vc = vc->down)
+-    if (v = hash_lookup (name, vc->table))
++    if ((v = hash_lookup (name, vc->table)))
+       break;
+ 
+   return v;
+@@ -1647,6 +1654,7 @@ make_local_variable (name)
+   int was_tmpvar;
+   char *tmp_value;
+ 
++  tmp_value = NULL;
+   /* local foo; local foo;  is a no-op. */
+   old_var = find_variable (name);
+   if (old_var && local_p (old_var) && old_var->context == variable_context)
+@@ -1818,6 +1826,7 @@ make_variable_value (var, value, flags)
+      evaluation done. */
+   if (integer_p (var))
+     {
++      lval = 0;
+       if (flags & ASS_APPEND)
+ 	{
+ 	  oval = value_cell (var);
+@@ -2029,7 +2038,11 @@ bind_int_variable (lhs, rhs)
+      char *lhs, *rhs;
+ {
+   register SHELL_VAR *v;
++#if defined (ARRAY_VARS)
++#  if 0
+   char *t;
++#  endif
++#endif
+   int isint, isarr;
+ 
+   isint = isarr = 0;
+@@ -2386,7 +2399,7 @@ makunbound (name, vc)
+   char *t;
+ 
+   for (elt = (BUCKET_CONTENTS *)NULL, v = vc; v; v = v->down)
+-    if (elt = hash_remove (name, v->table, 0))
++    if ((elt = hash_remove (name, v->table, 0)))
+       break;
+ 
+   if (elt == 0)
+@@ -3069,7 +3082,7 @@ make_env_array_from_var_list (vars)
+ 
+ #define USE_EXPORTSTR (value == var->exportstr)
+ 
+-  for (i = 0, list_index = 0; var = vars[i]; i++)
++  for (i = 0, list_index = 0; (var = vars[i]); i++)
+     {
+ #if defined (__CYGWIN__)
+       /* We don't use the exportstr stuff on Cygwin at all. */
+@@ -3481,7 +3494,7 @@ pop_var_context ()
+       return;
+     }
+ 
+-  if (ret = vcxt->down)
++  if ((ret = vcxt->down))
+     {
+       ret->up = (VAR_CONTEXT *)NULL;
+       shell_variables = ret;
+@@ -4058,7 +4071,7 @@ sv_history_control (name)
+     return;
+ 
+   tptr = 0;
+-  while (val = extract_colon_unit (temp, &tptr))
++  while ((val = extract_colon_unit (temp, &tptr)))
+     {
+       if (STREQ (val, "ignorespace"))
+ 	history_control |= HC_IGNSPACE;
