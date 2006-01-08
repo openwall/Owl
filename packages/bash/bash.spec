@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bash/bash.spec,v 1.31 2006/01/07 23:18:28 ldv Exp $
+# $Owl: Owl/packages/bash/bash.spec,v 1.32 2006/01/08 22:42:08 ldv Exp $
 
 Summary: The GNU Bourne-Again SHell (Bash).
 Name: bash
@@ -13,7 +13,7 @@ Source1: ftp://ftp.gnu.org/gnu/bash/bash-doc-%bash_version.tar.gz
 Source2: dot-bashrc
 Source3: dot-bash_profile
 Source4: dot-bash_logout
-Patch0: bash-3.1-pl1.diff
+Patch0: bash-3.1-up-pl1.diff
 Patch10: bash-3.1-owl-warnings.diff
 Patch11: bash-3.1-owl-tmp.diff
 Patch12: bash-3.1-owl-vitmp.diff
@@ -26,7 +26,7 @@ Patch23: bash-3.1-rh-alt-requires.diff
 Patch24: bash-3.1-rh-man.diff
 Patch30: bash-3.1-deb-random.diff
 Patch31: bash-3.1-deb-doc.diff
-Patch100: readline-5.1-pl1.diff
+Patch100: readline-5.1-up-pl1.diff
 Patch101: readline-5.1-alt-warnings.diff
 Patch102: readline-5.1-alt-nls.diff
 Patch103: readline-5.1-deb-alt-inputrc.diff
