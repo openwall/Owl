@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.21 2005/11/16 13:28:57 solar Exp $
+# $Owl: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.22 2006/01/09 19:28:54 ldv Exp $
 
 Summary: Pluggable private /tmp space support for interactive (shell) sessions.
 Name: pam_mktemp
-Version: 1.0.1
+Version: 1.0.2
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
@@ -20,7 +20,7 @@ or account management.
 %setup -q
 
 %build
-make CFLAGS="-Wall -fPIC -DLINUX_PAM %optflags"
+make CFLAGS="%optflags -Wall -fPIC"
 
 %install
 rm -rf %buildroot
@@ -40,6 +40,10 @@ fi
 /lib/security/pam_mktemp.so
 
 %changelog
+* Mon Jan 09 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.0.2-owl1
+- Replaced manual -DLINUX_PAM with Linux-PAM autodetection.
+- Added workaround for build with Linux 2.6.x headers.
+
 * Thu Aug 11 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.0.1-owl1
 - Added support of filesystem drivers which fail with ENOSYS error code
 in response to ioctl requests.

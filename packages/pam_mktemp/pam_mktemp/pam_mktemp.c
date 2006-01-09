@@ -12,19 +12,22 @@
 #include <sys/stat.h>
 
 #ifdef __linux__
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <linux/ext2_fs.h>
+# include <fcntl.h>
+# include <sys/ioctl.h>
+# ifndef _LINUX_EXT2_FS_SB
+#  define _LINUX_EXT2_FS_SB
+# endif
+# include <linux/ext2_fs.h>
 #endif
 
 #define PAM_SM_SESSION
-#ifndef LINUX_PAM
-#include <security/pam_appl.h>
-#endif
 #include <security/pam_modules.h>
+#if !defined(__LIBPAM_VERSION) && !defined(__LINUX_PAM__)
+# include <security/pam_appl.h>
+#endif
 
 #if !defined(PAM_EXTERN) && !defined(PAM_STATIC)
-#define PAM_EXTERN			extern
+# define PAM_EXTERN			extern
 #endif
 
 #define PRIVATE_PREFIX			"/tmp/.private"
