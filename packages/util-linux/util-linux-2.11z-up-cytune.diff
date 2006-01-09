@@ -1,0 +1,14 @@
+--- util-linux-2.11z.orig/sys-utils/cytune.c	2002-03-09 02:04:30 +0300
++++ util-linux-2.11z/sys-utils/cytune.c	2004-11-04 19:59:27 +0300
+@@ -53,11 +53,6 @@
+ #include <linux/tty.h>
+ #include <termios.h>
+ 
+-#include "../defines.h"		/* for NEED_tqueue_h */
+-#ifdef NEED_tqueue_h
+-#include <linux/tqueue.h>	/* required for old kernels (for struct tq_struct) */
+-				/* compilation errors on other kernels */
+-#endif
+ #include <linux/cyclades.h>
+ 
+ #if 0

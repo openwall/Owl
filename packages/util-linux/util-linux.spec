@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.42 2005/12/26 21:33:51 ldv Exp $
+# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.43 2006/01/09 18:34:56 ldv Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -7,7 +7,7 @@
 Summary: A collection of basic system utilities.
 Name: util-linux
 Version: 2.11z
-Release: owl8
+Release: owl9
 License: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%version.tar.bz2
@@ -22,6 +22,9 @@ Patch3: util-linux-2.11z-owl-mtab-umask.diff
 Patch4: util-linux-2.11z-owl-warnings.diff
 Patch5: util-linux-2.12q-up-20050910-remount.diff
 Patch6: util-linux-2.11z-owl-llseek.diff
+Patch7: util-linux-2.11z-owl-blockdev.diff
+Patch8: util-linux-2.11z-up-elvtune.diff
+Patch9: util-linux-2.11z-up-cytune.diff
 %if %BUILD_CRYPTO
 Patch10: util-linux-2.11z-crypto-v3.diff.bz2
 %endif
@@ -76,6 +79,9 @@ to query the status of a loop device.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
 %if %BUILD_CRYPTO
 %patch10 -p1
 %endif
@@ -341,6 +347,9 @@ fi
 %endif
 
 %changelog
+* Mon Jan 09 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.11z-owl9
+- Added support for build with linux 2.6.x headers.
+
 * Sat Dec 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.11z-owl8
 - Packaged nologin.
 
