@@ -451,8 +451,8 @@ Re-enable IPv6 in the client once glibc is fixed.
 
 	util-linux.
 
-[PRIORITY: medium]
-Update to a newer version that would build with Linux 2.6.x headers.
+[PRIORITY: low]
+Keep to latest release.
 
 
 	vixie-cron.
@@ -493,4 +493,4 @@ Fix installworld.sh to always pick the latest version of a package when
 multiple versions are available (please refer to the appropriate XXX
 comment in the script).
 
-$Owl: Owl/doc/TODO,v 1.153 2006/01/07 23:21:20 ldv Exp $
+$Owl: Owl/doc/TODO,v 1.154 2006/01/09 18:37:37 ldv Exp $
