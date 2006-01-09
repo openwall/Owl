@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.72 2005/12/16 15:55:59 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.73 2006/01/09 14:46:48 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.6.40
+Version: 1.7
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -75,6 +75,13 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Mon Jan 09 2006 Solar Designer <solar-at-owl.openwall.com> 1.7-owl1
+- Documentation updates: separated CONTACT from CREDITS, added some FAQ
+entries, etc.
+- When displaying programs' usage information, use either an equivalent of
+basename(argv[0]) (with the main John program) or fixed strings (with the
+auxiliary tools).
+
 * Fri Dec 16 2005 Solar Designer <solar-at-owl.openwall.com> 1.6.40-owl1
 - Detect changed charset files when restoring sessions.
 - Updated the supplied password.lst.
