@@ -1,7 +1,6 @@
-diff -upk.orig bash-3.1.orig/builtins/ulimit.def bash-3.1/builtins/ulimit.def
---- bash-3.1.orig/builtins/ulimit.def	2006-01-06 00:38:23 +0000
-+++ bash-3.1/builtins/ulimit.def	2006-01-06 00:38:51 +0000
-@@ -34,6 +34,7 @@ option is given, it is interpreted as fo
+--- bash-3.1/builtins/ulimit.def.ulimit	2005-08-04 13:39:04 +0100
++++ bash-3.1/builtins/ulimit.def	2006-01-10 11:21:49 +0000
+@@ -34,6 +34,7 @@
      -a	all current limits are reported
      -c	the maximum size of core files created
      -d	the maximum size of a process's data segment
@@ -9,7 +8,7 @@ diff -upk.orig bash-3.1.orig/builtins/ulimit.def bash-3.1/builtins/ulimit.def
      -f	the maximum size of files created by the shell
      -i  the maximum number of pending signals
      -l	the maximum size a process may lock into memory
-@@ -41,6 +42,7 @@ option is given, it is interpreted as fo
+@@ -41,6 +42,7 @@
      -n	the maximum number of open file descriptors
      -p	the pipe buffer size
      -q  the maximum number of bytes in POSIX message queues
@@ -17,7 +16,7 @@ diff -upk.orig bash-3.1.orig/builtins/ulimit.def bash-3.1/builtins/ulimit.def
      -s	the maximum stack size
      -t	the maximum amount of cpu time in seconds
      -u	the maximum number of user processes
-@@ -204,6 +206,9 @@ static RESOURCE_LIMITS limits[] = {
+@@ -202,6 +204,9 @@
  #ifdef RLIMIT_DATA
    { 'd',	RLIMIT_DATA,  1024,	"data seg size",	"kbytes" },
  #endif
@@ -27,7 +26,7 @@ diff -upk.orig bash-3.1.orig/builtins/ulimit.def bash-3.1/builtins/ulimit.def
    { 'f',	RLIMIT_FILESIZE, 1024,	"file size",		"blocks" },
  #ifdef RLIMIT_SIGPENDING
    { 'i',	RLIMIT_SIGPENDING, 1,	"pending signals",	(char *)NULL },
-@@ -219,6 +224,9 @@ static RESOURCE_LIMITS limits[] = {
+@@ -217,6 +222,9 @@
  #ifdef RLIMIT_MSGQUEUE
    { 'q',	RLIMIT_MSGQUEUE, 1,	"POSIX message queues",	"bytes" },
  #endif
@@ -37,7 +36,7 @@ diff -upk.orig bash-3.1.orig/builtins/ulimit.def bash-3.1/builtins/ulimit.def
  #ifdef RLIMIT_STACK
    { 's',	RLIMIT_STACK, 1024,	"stack size",		"kbytes" },
  #endif
-@@ -235,6 +243,9 @@ static RESOURCE_LIMITS limits[] = {
+@@ -233,6 +241,9 @@
  #ifdef RLIMIT_LOCKS
    { 'x',	RLIMIT_LOCKS,	1,	"file locks",		(char *)NULL },
  #endif
@@ -47,19 +46,18 @@ diff -upk.orig bash-3.1.orig/builtins/ulimit.def bash-3.1/builtins/ulimit.def
    { -1, -1, -1, (char *)NULL, (char *)NULL }
  };
  #define NCMDS	(sizeof(limits) / sizeof(limits[0]))
-diff -upk.orig bash-3.1.orig/doc/bash.1 bash-3.1/doc/bash.1
---- bash-3.1.orig/doc/bash.1	2006-01-06 00:38:23 +0000
-+++ bash-3.1/doc/bash.1	2006-01-06 00:38:51 +0000
-@@ -8484,7 +8484,7 @@ option suppresses shell function lookup,
+--- bash-3.1/doc/bash.1.ulimit	2006-01-10 11:21:49 +0000
++++ bash-3.1/doc/bash.1	2006-01-10 11:24:43 +0000
+@@ -8496,7 +8496,7 @@
  returns true if any of the arguments are found, false if
  none are found.
  .TP
--\fBulimit\fP [\fB\-SHacdflmnpstuv\fP [\fIlimit\fP]]
+-\fBulimit\fP [\fB\-SHacdfilmnpqstuvx\fP [\fIlimit\fP]]
 +\fBulimit\fP [\fB\-SHacdefilmnpqrstuvx\fP [\fIlimit\fP]]
  Provides control over the resources available to the shell and to
  processes started by it, on systems that allow such control.
  The \fB\-H\fP and \fB\-S\fP options specify that the hard or soft limit is
-@@ -8520,9 +8520,15 @@ The maximum size of core files created
+@@ -8532,6 +8532,9 @@
  .B \-d
  The maximum size of a process's data segment
  .TP
@@ -69,48 +67,28 @@ diff -upk.orig bash-3.1.orig/doc/bash.1 bash-3.1/doc/bash.1
  .B \-f
  The maximum size of files created by the shell
  .TP
-+.B \-i
-+The maximum number of pending signals
-+.TP
- .B \-l
- The maximum size that may be locked into memory
+@@ -8554,6 +8557,9 @@
+ .B \-q
+ The maximum number of bytes in POSIX message queues
  .TP
-@@ -8536,6 +8542,12 @@ allow this value to be set)
- .B \-p
- The pipe size in 512-byte blocks (this may not be set)
- .TP
-+.B \-q
-+The maximum number of bytes in POSIX message queues
-+.TP
 +.B \-r
 +The maximum rt priority
 +.TP
  .B \-s
  The maximum stack size
  .TP
-@@ -8547,6 +8559,9 @@ The maximum number of processes availabl
- .TP
- .B \-v
- The maximum amount of virtual memory available to the shell
-+.TP
-+.B \-x
-+The maximum number of file locks
- .PD
- .PP
- If
-diff -upk.orig bash-3.1.orig/doc/bashref.texi bash-3.1/doc/bashref.texi
---- bash-3.1.orig/doc/bashref.texi	2005-10-03 19:07:21 +0000
-+++ bash-3.1/doc/bashref.texi	2006-01-06 00:38:51 +0000
-@@ -3833,7 +3833,7 @@ builtin command.
+--- bash-3.1/doc/bashref.texi.ulimit	2006-01-10 11:21:49 +0000
++++ bash-3.1/doc/bashref.texi	2006-01-10 11:25:06 +0000
+@@ -3833,7 +3833,7 @@
  @item ulimit
  @btindex ulimit
  @example
--ulimit [-acdflmnpstuvSH] [@var{limit}]
-+ulimit [-acdeflmnpqrstuvxSH] [@var{limit}]
+-ulimit [-acdfilmnpqstuvxSH] [@var{limit}]
++ulimit [-acdefilmnpqrstuvxSH] [@var{limit}]
  @end example
  @code{ulimit} provides control over the resources available to processes
  started by the shell, on systems that allow such control.  If an
-@@ -3854,9 +3854,15 @@ The maximum size of core files created.
+@@ -3854,6 +3854,9 @@
  @item -d
  The maximum size of a process's data segment.
  
@@ -120,28 +98,19 @@ diff -upk.orig bash-3.1.orig/doc/bashref.texi bash-3.1/doc/bashref.texi
  @item -f
  The maximum size of files created by the shell.
  
-+@item -i
-+The maximum number of pending signals.
-+
- @item -l
- The maximum size that may be locked into memory.
+@@ -3875,6 +3878,9 @@
+ @item -q
+ The maximum number of bytes in POSIX message queues.
  
-@@ -3869,6 +3875,12 @@ The maximum number of open file descript
- @item -p
- The pipe buffer size.
- 
-+@item -q
-+The maximum number of bytes in POSIX message queues.
-+
 +@item -r
 +The maximum RT priority.
 +
  @item -s
  The maximum stack size.
  
-@@ -3881,6 +3893,9 @@ The maximum number of processes availabl
- @item -v
- The maximum amount of virtual memory available to the process.
+@@ -3890,6 +3896,9 @@
+ @item -x
+ The maximum number of file locks.
  
 +@item -x
 +The maximum amount of file locks.

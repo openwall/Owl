@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/bash/bash.spec,v 1.32 2006/01/08 22:42:08 ldv Exp $
+# $Owl: Owl/packages/bash/bash.spec,v 1.33 2006/01/10 23:05:33 ldv Exp $
 
 Summary: The GNU Bourne-Again SHell (Bash).
 Name: bash
 %define bash_version 3.1
-%define bash_patchlevel 1
+%define bash_patchlevel 5
 Version: %bash_version.%bash_patchlevel
 Release: owl1
 Group: System Environment/Shells
@@ -13,7 +13,7 @@ Source1: ftp://ftp.gnu.org/gnu/bash/bash-doc-%bash_version.tar.gz
 Source2: dot-bashrc
 Source3: dot-bash_profile
 Source4: dot-bash_logout
-Patch0: bash-3.1-up-pl1.diff
+Patch0: bash-3.1-up-pl5.diff
 Patch10: bash-3.1-owl-warnings.diff
 Patch11: bash-3.1-owl-tmp.diff
 Patch12: bash-3.1-owl-vitmp.diff
@@ -202,6 +202,9 @@ fi
 %doc doc/*.ps* doc/*.html doc/article.txt*
 
 %changelog
+* Wed Jan 11 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.5-owl1
+- Updated to 3.1 patchlevel 5.
+
 * Thu Jan 05 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.1-owl1
 - Updated to 3.1 patchlevel 1.
 - Changed build to use readline version 5.1 bundled with bash until
