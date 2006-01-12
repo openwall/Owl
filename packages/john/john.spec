@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.73 2006/01/09 14:46:48 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.74 2006/01/12 05:08:53 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -81,6 +81,11 @@ entries, etc.
 - When displaying programs' usage information, use either an equivalent of
 basename(argv[0]) (with the main John program) or fixed strings (with the
 auxiliary tools).
+- In rec_done(), do a log_flush() even if the session completes normally;
+this is needed to hopefully update the pot file prior to our removal of the
+crash recovery file.
+- Applied some Cygwin-specific updates to signals.c and DOS/Win32-specific
+updates to the Makefile.
 
 * Fri Dec 16 2005 Solar Designer <solar-at-owl.openwall.com> 1.6.40-owl1
 - Detect changed charset files when restoring sessions.
