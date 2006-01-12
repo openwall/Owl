@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.44 2005/12/24 22:50:37 ldv Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.45 2006/01/12 18:29:53 ldv Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -10,6 +10,9 @@
 # Build perl with threads support.
 %define BUILD_THREADS 1
 
+# Build perl with large files support.
+%define BUILD_LARGEFILES 1
+
 # Set this if you might be running kernel with enabled "Destroy shared
 # memory segments not in use" (CONFIG_HARDEN_SHM) configuration option.
 %define KERNEL_CONFIG_HARDEN_SHM 1
@@ -17,7 +20,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.8.3
-Release: owl11
+Release: owl12
 Epoch: 3
 License: GPL
 Group: Development/Languages
@@ -46,6 +49,11 @@ Provides: perl(:WITH_THREADS)
 Provides: perl(:WITHOUT_ITHREADS)
 Provides: perl(:WITHOUT_THREADS)
 %endif
+%if %BUILD_LARGEFILES
+Provides: perl(:WITH_LARGEFILES)
+%else
+Provides: perl(:WITHOUT_LARGEFILES)
+%endif
 # XXX: RH do this
 Provides: perl(abbrev.pl)
 Provides: perl(assert.pl)
@@ -63,6 +71,7 @@ Provides: perl(fastcwd.pl)
 Provides: perl(find.pl)
 Provides: perl(finddepth.pl)
 Provides: perl(flush.pl)
+Provides: perl(ftp.pl)
 Provides: perl(getcwd.pl)
 Provides: perl(getopt.pl)
 Provides: perl(getopts.pl)
@@ -82,6 +91,7 @@ Provides: perl(termcap.pl)
 Provides: perl(timelocal.pl)
 Provides: perl(utf8_heavy.pl)
 Provides: perl(validate.pl)
+Provides: perl(Carp::Heavy)
 Obsoletes: perl-MD5
 BuildRequires: gdbm-devel, db4-devel >= 4.2.52, gawk, grep
 BuildRequires: rpm >= 4.0.5
@@ -191,7 +201,11 @@ rm -rf %buildroot
 	-Uusethreads \
 	-Uuseithreads \
 %endif
+%if %BUILD_LARGEFILES
 	-Duselargefiles \
+%else
+	-Uuselargefiles \
+%endif
 	-Ubincompat5005 \
 	-Uversiononly \
 	-Dinc_version_list='5.8.0/%_arch-%_os%thread_arch 5.8.0'
@@ -281,6 +295,9 @@ find %buildroot%_libdir/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Thu Jan 12 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3:5.8.3-owl12
+- Added several provides for FC and RHEL compatibility.
+
 * Sat Dec 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3:5.8.3-owl11
 - Rebuilt with libdb-4.2.so.
 
