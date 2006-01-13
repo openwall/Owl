@@ -1,17 +1,16 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.12 2005/11/16 13:21:53 solar Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.13 2006/01/13 23:09:32 mci Exp $
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
-Version: 3.48
-Release: owl5
+Version: 3.95
+Release: owl1
 License: GPL
 Group: Applications/System
 URL: http://www.insecure.org/nmap/
 Source: http://download.insecure.org/nmap/dist/nmap-%version.tar.bz2
-Patch0: nmap-3.48-alt-owl-libpcap.diff
-Patch1: nmap-3.48-alt-owl-no-local-libs.diff
-Patch2: nmap-3.48-up-no-external-libpcre.diff
-Patch3: nmap-3.48-alt-owl-drop-root.diff
+Patch0: nmap-3.95-alt-owl-init.diff
+Patch1: nmap-3.95-alt-owl-drop-root.diff
+Patch2: nmap-3.95-alt-owl-libpcap.diff
 Requires: /var/empty
 BuildRequires: openssl-devel >= 0.9.7g-owl1
 BuildRequires: libpcap-devel, libcap-devel, pcre-devel
@@ -28,15 +27,15 @@ Sun RPC scanning, and more.
 
 %prep
 %setup -q
-rm -r libpcap-possiblymodified
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 
 %build
+aclocal
+autoconf
 %configure --without-nmapfe
-make LIBS='-lm -lssl -lcrypto -lpcap -lcap -lnbase -lnsock -lpcre'
+%__make
 
 %install
 rm -rf %buildroot
@@ -50,12 +49,16 @@ grep -q ^nmap: /etc/passwd ||
 
 %files
 %defattr(-,root,root)
-%doc COPYING CHANGELOG HACKING docs/{README,*.{txt,html}}
+%doc COPYING CHANGELOG HACKING docs/{README,*.txt}
 %attr(750,root,wheel) %_bindir/nmap
 %_mandir/man1/nmap.1*
 %_datadir/nmap
 
 %changelog
+* Fri Jan 13 2006 Michail Litvak <mci-at-owl.openwall.com> 3.95-owl1
+- Updated to 3.95.
+- Updated patches.
+
 * Mon Nov 07 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.48-owl5
 - Build with system PCRE library.
 
