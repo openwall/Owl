@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 1.1 and Owl-current.
 
+2006/01/14	Package: nmap
+Updated to 3.95.
+
 2006/01/07 -
 2006/01/11	Package: bash
 Updated to 3.1 patchlevel 5.
@@ -820,4 +823,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Owl: Owl/doc/CHANGES-2.0,v 1.197 2006/01/13 04:40:16 solar Exp $
+$Owl: Owl/doc/CHANGES-2.0,v 1.198 2006/01/14 13:11:42 solar Exp $
