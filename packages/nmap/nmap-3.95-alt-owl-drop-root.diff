@@ -1,24 +1,24 @@
---- nmap-3.95/MACLookup.cc.orig 2006-01-11 22:50:04.000000000 +0000
-+++ nmap-3.95/MACLookup.cc      2006-01-11 23:28:58.000000000 +0000
-@@ -105,3 +105,4 @@
+--- nmap-3.95/MACLookup.cc.orig	2006-01-14 20:18:49 +0000
++++ nmap-3.95/MACLookup.cc	2006-01-14 20:19:09 +0000
+@@ -105,6 +105,7 @@
  #include "MACLookup.h"
  #include "nmap.h"
  #include "nmap_error.h"
 +#include "droppriv.h"
-
+ 
  struct MAC_entry {
    int prefix; /* -1 means none set */
-@@ -128,7 +129,7 @@
+@@ -128,7 +129,7 @@ static inline int MACTableHash(int prefi
    return prefix % table_capacity;
  }
-
+ 
 -static void mac_prefix_init() {
 +void mac_prefix_init() {
    static int initialized = 0;
    if (initialized) return;
    initialized = 1;
---- nmap-3.95/Makefile.in.orig	2005-12-08 08:14:08.000000000 +0000
-+++ nmap-3.95/Makefile.in	2006-01-09 23:43:59.000000000 +0000
+--- nmap-3.95/Makefile.in.orig	2005-12-08 08:14:08 +0000
++++ nmap-3.95/Makefile.in	2006-01-09 23:43:59 +0000
 @@ -46,11 +46,11 @@
  TARGETNMAPFE=@TARGETNMAPFE@
  INSTALLNMAPFE=@INSTALLNMAPFE@
@@ -34,8 +34,8 @@
  
  
  # %.o : %.cc -- nope this is a GNU extension
---- nmap-3.95/configure.ac.orig	2005-12-06 21:16:14.000000000 +0000
-+++ nmap-3.95/configure.ac	2006-01-09 23:41:57.000000000 +0000
+--- nmap-3.95/configure.ac.orig	2005-12-06 21:16:14 +0000
++++ nmap-3.95/configure.ac	2006-01-09 23:41:57 +0000
 @@ -652,6 +652,7 @@
          AC_DEFINE(HAVE_IP_IP_SUM)
  fi
@@ -44,8 +44,8 @@
  
  dnl Checks for library functions.
  dnl AC_TYPE_SIGNAL
---- nmap-3.95/droppriv.cc.orig	2006-01-11 22:50:25.000000000 +0000
-+++ nmap-3.95/droppriv.cc	2006-01-11 23:26:39.000000000 +0000
+--- nmap-3.95/droppriv.cc.orig	2006-01-14 20:19:09 +0000
++++ nmap-3.95/droppriv.cc	2006-01-11 23:26:39 +0000
 @@ -0,0 +1,71 @@
 +#include <stdlib.h>
 +#include <errno.h>
@@ -118,8 +118,8 @@
 +	if (setreuid (pw->pw_uid, pw->pw_uid) < 0)
 +		fatal ("setreuid failed");
 +}
---- nmap-3.95/droppriv.h.orig	2006-01-11 22:50:25.000000000 +0000
-+++ nmap-3.95/droppriv.h	2004-11-28 01:20:48.000000000 +0000
+--- nmap-3.95/droppriv.h.orig	2006-01-14 20:19:09 +0000
++++ nmap-3.95/droppriv.h	2004-11-28 01:20:48 +0000
 @@ -0,0 +1,15 @@
 +#ifndef NMAP_DROPPRIV_H__
 +#define NMAP_DROPPRIV_H__
@@ -136,8 +136,8 @@
 +
 +#endif /* NMAP_DROPPRIV_H__ */
 +
---- nmap-3.95/nmap.cc.orig	2005-12-06 22:26:05.000000000 +0000
-+++ nmap-3.95/nmap.cc	2006-01-09 23:41:57.000000000 +0000
+--- nmap-3.95/nmap.cc.orig	2005-12-06 22:26:05 +0000
++++ nmap-3.95/nmap.cc	2006-01-09 23:41:57 +0000
 @@ -105,6 +105,7 @@
  #include "scan_engine.h"
  #include "idle_scan.h"
@@ -146,7 +146,7 @@
  #include "NmapOps.h"
  #include "MACLookup.h"
  #ifdef WIN32
-@@ -888,6 +889,8 @@
+@@ -888,6 +889,8 @@ int nmap_main(int argc, char *argv[]) {
      }
    }
  
@@ -155,8 +155,8 @@
    /* By now, we've got our port lists.  Give the user a warning if no 
     * ports are specified for the type of scan being requested.  Other things
     * (such as OS ident scan) might break cause no ports were specified,  but
---- nmap-3.95/nmap_rpc.cc.orig	2006-01-11 22:50:04.000000000 +0000
-+++ nmap-3.95/nmap_rpc.cc	2006-01-11 22:50:25.000000000 +0000
+--- nmap-3.95/nmap_rpc.cc.orig	2006-01-14 20:18:49 +0000
++++ nmap-3.95/nmap_rpc.cc	2006-01-14 20:19:09 +0000
 @@ -103,6 +103,7 @@
  
  
@@ -165,7 +165,7 @@
  #include "NmapOps.h"
  
  extern NmapOps o;
-@@ -117,7 +118,7 @@
+@@ -117,7 +118,7 @@ static unsigned long rpc_xid_base = (uns
  static size_t tcp_readlen=0; /* used in get_rpc_results but can be reset in 
  			    send_rpc_query */
  
@@ -174,8 +174,8 @@
    static int services_initialized = 0;
    char filename[512];
    FILE *fp;
---- nmap-3.95/protocols.cc.orig	2006-01-11 22:50:04.000000000 +0000
-+++ nmap-3.95/protocols.cc	2006-01-11 22:50:25.000000000 +0000
+--- nmap-3.95/protocols.cc.orig	2006-01-14 20:18:49 +0000
++++ nmap-3.95/protocols.cc	2006-01-14 20:19:09 +0000
 @@ -100,13 +100,14 @@
  /* $Id: protocols.cc 2396 2004-08-29 09:12:05Z fyodor $ */
  
@@ -192,8 +192,8 @@
    static int protocols_initialized = 0;
    char filename[512];
    FILE *fp;
---- nmap-3.95/service_scan.cc.orig	2006-01-11 22:50:04.000000000 +0000
-+++ nmap-3.95/service_scan.cc	2006-01-11 22:50:25.000000000 +0000
+--- nmap-3.95/service_scan.cc.orig	2006-01-14 20:18:49 +0000
++++ nmap-3.95/service_scan.cc	2006-01-14 20:19:09 +0000
 @@ -105,6 +105,7 @@
  #include "timing.h"
  #include "NmapOps.h"
@@ -202,7 +202,7 @@
  #if HAVE_OPENSSL
  #include <openssl/ssl.h>
  #endif
-@@ -2288,7 +2289,7 @@
+@@ -2288,7 +2289,7 @@ void remove_excluded_ports(AllProbes *AP
  }
  
  
@@ -211,8 +211,8 @@
  {
    static AllProbes *AP;
  
---- nmap-3.95/services.cc.orig	2006-01-11 22:50:04.000000000 +0000
-+++ nmap-3.95/services.cc	2006-01-11 22:50:25.000000000 +0000
+--- nmap-3.95/services.cc.orig	2006-01-14 20:18:49 +0000
++++ nmap-3.95/services.cc	2006-01-14 20:19:09 +0000
 @@ -100,6 +100,7 @@
  /* $Id: services.cc 2396 2004-08-29 09:12:05Z fyodor $ */
  
@@ -221,7 +221,7 @@
  #include "NmapOps.h"
  
  extern NmapOps o;
-@@ -107,7 +108,7 @@
+@@ -107,7 +108,7 @@ static int numtcpports = 0;
  static int numudpports = 0;
  static struct service_list *service_table[SERVICE_TABLE_SIZE];
  
@@ -230,8 +230,8 @@
    static int services_initialized = 0;
    char filename[512];
    FILE *fp;
---- nmap-3.95/tcpip.cc.orig	2005-11-28 01:34:09.000000000 +0000
-+++ nmap-3.95/tcpip.cc	2006-01-10 00:05:16.000000000 +0000
+--- nmap-3.95/tcpip.cc.orig	2005-11-28 01:34:09 +0000
++++ nmap-3.95/tcpip.cc	2006-01-10 00:05:16 +0000
 @@ -102,6 +102,7 @@
  
  #include <dnet.h>
@@ -240,7 +240,7 @@
  #include "NmapOps.h"
  
  #if HAVE_SYS_TIME_H
-@@ -2382,6 +2383,14 @@
+@@ -2382,6 +2383,14 @@ static int nmaskcmp(const void *a, const
    else return 1;
  }
  
@@ -255,7 +255,7 @@
  /* Parse the system routing table, converting each route into a
     sys_route entry.  Returns an array of sys_routes.  numroutes is set
     to the number of routes in the array.  The routing table is only
-@@ -2392,7 +2401,6 @@
+@@ -2392,7 +2401,6 @@ struct sys_route *getsysroutes(int *howm
    int route_capacity = 128;
    static struct sys_route *routes = NULL;
    static int numroutes = 0;
@@ -263,7 +263,7 @@
    char buf[1024];
    char iface[16];
    char *p, *endptr;
-@@ -2407,7 +2415,7 @@
+@@ -2407,7 +2415,7 @@ struct sys_route *getsysroutes(int *howm
      routes = (struct sys_route *) safe_zalloc(route_capacity * sizeof(struct sys_route));
      ifaces = getinterfaces(&numifaces);
      /* First let us try Linux-style /proc/net/route */
@@ -272,7 +272,7 @@
      if (routefp) {
        fgets(buf, sizeof(buf), routefp); /* Kill the first line (column headers) */
        while(fgets(buf,sizeof(buf), routefp)) {
-@@ -2490,6 +2498,8 @@
+@@ -2490,6 +2498,8 @@ struct sys_route *getsysroutes(int *howm
  	  routes = (struct sys_route *) realloc(routes, route_capacity * sizeof(struct sys_route));
  	}
        }
