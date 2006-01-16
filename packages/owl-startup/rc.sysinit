@@ -1,8 +1,31 @@
 #!/bin/sh
-# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.19 2006/01/16 17:36:42 ldv Exp $
+# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.20 2006/01/16 21:00:32 ldv Exp $
 
 # Set the initial default search path for use by startup scripts.
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+
+repair_fs()
+{
+	echo
+	echo '*** The filesystem check reported serious problems.'
+	echo
+	echo '*** You now have the opportunity to enter a shell and run fsck'
+	echo '*** manually; the system will reboot when you leave the shell.'
+	echo
+	PS1='(Repair filesystem)# ' sulogin
+	if [ $? -lt 64 -o $? -gt 66 ]; then
+		echo 'Unmounting filesystems'
+		umount -a
+		mount -n -o remount,ro /
+		echo 'Automatic reboot in progress'
+		reboot -f
+	fi
+	echo 'sulogin failed.'
+	echo
+	echo 'OK, the system will now continue to boot despite the failed'
+	echo 'filesystem check - expect trouble!'
+	sleep 10
+}
 
 # Use a safe umask and don't do coredumps.
 umask 077
@@ -59,45 +82,24 @@ else
 	echo "read-only filesystem"
 fi
 
-# Check the integrity of all filesystems unless requested not to.
+# Check the integrity of / filesystem unless requested not to.
+FSCKOPTS=
+if [ -e /forcefsck ]; then
+	FSCKOPTS=-f
+fi
 if [ ! -f /fastboot -o -e /forcefsck ]; then
-	echo "Checking filesystems"
-	if [ -e /forcefsck ]; then
-		FSCKOPTS=-f
-	else
-		FSCKOPTS=
-	fi
+	echo "Checking / filesystem"
+	# ...except for the root filesystem which is mounted read-write.
 	if [ "$READWRITE" = "no" ]; then
-		fsck -A -aTC $FSCKOPTS
-	else
-# ...except for the root filesystem, which is mounted read-write.
-		fsck -RA -aTC $FSCKOPTS
+		fsck -aTC $FSCKOPTS /
 	fi
-	STATUS=$?
+	ROOTCHKSTATUS=$?
 else
-	STATUS=0
+	ROOTCHKSTATUS=0
 fi
 
-if [ $STATUS -gt 1 ]; then
-	echo
-	echo "The filesystem check reported serious problems."
-	echo
-	echo "You now have the opportunity to enter a shell and run fsck"
-	echo "manually; the system will reboot when you leave the shell."
-	echo
-	PS1="(Repair filesystem)# " sulogin
-	if [ $? -lt 64 -o $? -gt 66 ]; then
-		echo "Unmounting filesystems"
-		umount -a
-		mount -n -o remount,ro /
-		echo "Automatic reboot in progress"
-		reboot -f
-	fi
-	echo "sulogin failed."
-	echo
-	echo "OK, the system will now continue to boot despite the failed"
-	echo "filesystem check - expect trouble!"
-	sleep 10
+if [ $ROOTCHKSTATUS -gt 1 ]; then
+	repair_fs
 fi
 
 if [ ! -e /.Owl-CD-ROM ]; then
@@ -109,6 +111,25 @@ fi
 # Enter / and /proc into mtab.
 mount -f /
 test "$PROCFS" = "yes" && mount -f /proc
+
+# Activate LVM volumegroups.
+if [ -e /proc/lvm -a -x /sbin/vgchange -a -s /etc/lvmtab ]; then
+	echo "Setting up Logical volume management"
+	/sbin/vgscan > /dev/null && /sbin/vgchange -a y
+fi
+
+# Check the integrity of other filesystems unless requested not to.
+if [ ! -f /fastboot -o -e /forcefsck ]; then
+	echo "Checking filesystems"
+	fsck -aTC -AR $FSCKOPTS
+	STATUS=$?
+else 
+	STATUS=0
+fi
+
+if [ $STATUS -gt 1 ]; then
+	repair_fs
+fi
 
 rm -f /fastboot /forcefsck
 
@@ -129,7 +150,7 @@ mount -a -t nonfs,smbfs,ncpfs,proc
 swapon -a
 
 # Update quotas if fsck corrected any filesystem errors.
-if [ $STATUS -eq 1 -a -x /sbin/quotacheck ]; then
+if [ $ROOTCHKSTATUS -eq 1 -o $STATUS -eq 1 -a -x /sbin/quotacheck ]; then
 	echo "Checking filesystem quotas"
 	quotacheck -v -a
 fi

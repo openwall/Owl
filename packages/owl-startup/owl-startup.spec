@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.64 2005/12/31 12:51:09 ldv Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.65 2006/01/16 21:00:32 ldv Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.27
+Version: 0.28
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -164,6 +164,9 @@ fi
 %doc redhat
 
 %changelog
+* Mon Jan 16 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.28-owl1
+- Add LVM support to rc.sysinit, patch from Jarno Huuskonen.
+
 * Sat Dec 31 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.27-owl1
 - Fixed a typo in rc.sysinit which prevented fsck from running in parallel
 mode when root filesystem is mounted read-write.
