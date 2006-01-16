@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.18 2005/12/31 12:51:09 ldv Exp $
+# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.19 2006/01/16 17:36:42 ldv Exp $
 
 # Set the initial default search path for use by startup scripts.
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
@@ -23,8 +23,8 @@ fi
 # Set the system time from the hardware clock.
 . /etc/rc.d/init.d/clock
 
-# Enable swapping.
-swapon -a
+# Enable swapping, silently skip devices that do not exist.
+swapon -ae
 
 # Load the basic networking configuration.
 NETWORKING=no
@@ -126,7 +126,7 @@ echo "Mounting local filesystems"
 mount -a -t nonfs,smbfs,ncpfs,proc
 
 # Enable swapping into files.
-swapon -a &> /dev/null
+swapon -a
 
 # Update quotas if fsck corrected any filesystem errors.
 if [ $STATUS -eq 1 -a -x /sbin/quotacheck ]; then
