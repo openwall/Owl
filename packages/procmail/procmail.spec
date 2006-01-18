@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/procmail/procmail.spec,v 1.13 2006/01/18 14:15:07 solar Exp $
+# $Owl: Owl/packages/procmail/procmail.spec,v 1.14 2006/01/18 14:40:16 solar Exp $
 
 Summary: The procmail mail processing program.
 Name: procmail
@@ -32,7 +32,7 @@ may be installed as the local delivery agent.
 sed -i 's,/usr/ucb/mail,/bin/mail,g' examples/*rmail
 sed -i 's,\(/usr\)\(/spool\)\?/mail,/var\2/mail,g' examples/advanced FAQ
 
-%{expand:%%define optflags %optflags -fno-strict-aliasing -Wall -Wno-comment -Wno-parentheses}
+%{expand:%%define optflags %optflags -fno-strict-aliasing -Wall -Wno-comment -Wno-parentheses -Wno-unused}
 
 %build
 %__make \
