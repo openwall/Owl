@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/procmail/procmail.spec,v 1.12 2005/11/16 13:28:58 solar Exp $
+# $Owl: Owl/packages/procmail/procmail.spec,v 1.13 2006/01/18 14:15:07 solar Exp $
 
 Summary: The procmail mail processing program.
 Name: procmail
 Version: 3.22
-Release: owl1
+Release: owl2
 License: GPL or Artistic License
 Group: System Environment/Daemons
 Source0: ftp://ftp.procmail.org/pub/procmail/procmail-%version.tar.gz
@@ -61,6 +61,12 @@ install -pm644 %_sourcedir/mailstat.1 %buildroot%_mandir/man1/
 %_mandir/man[15]/*
 
 %changelog
+* Wed Jan 18 2006 Solar Designer <solar-at-owl.openwall.com> 3.22-owl2
+- Updated the mailbox truncation patch to not alter the value of "lasttell"
+in any way since this variable is also used from comsat.c; thanks to
+Dr. Werner Fink of SuSE for discovering this problem with the previous
+revision of the patch and to Sebastian Krahmer for reporting it to us.
+
 * Sun Oct 30 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.22-owl1
 - Updated to 3.22.
 - Imported fixes from ALT's procmail-3.22-alt4 and Debian's
