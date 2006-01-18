@@ -1,3 +1,9 @@
+2006-01-17  Dmitry V. Levin  <ldv at altlinux.org>
+
+	Update for linux-2.6.15.1.
+	* quota.c: Define Q_XQUOTASYNC.
+	(quotacmds): Add Q_XQUOTASYNC.
+
 2005-08-08  Dmitry V. Levin  <ldv at altlinux.org>
 
 	Implement detailed quotactl(2) deparser for Linux.
@@ -6,9 +12,9 @@
 	* resource.c: Remove old quotactl(2) deparser.
 	Fixes RH#118696.
 
-diff -upk.orig strace-4.5.13.orig/Makefile.am strace-4.5.13/Makefile.am
---- strace-4.5.13.orig/Makefile.am	2004-07-12 07:53:35 +0000
-+++ strace-4.5.13/Makefile.am	2005-08-08 16:35:30 +0000
+diff -upk.orig strace-4.5.14.orig/Makefile.am strace-4.5.14/Makefile.am
+--- strace-4.5.14.orig/Makefile.am	2005-12-02 04:26:08 +0000
++++ strace-4.5.14/Makefile.am	2006-01-17 14:41:33 +0000
 @@ -13,7 +13,7 @@ AM_CFLAGS = $(WARNFLAGS)
  INCLUDES = -I$(OS)/$(ARCH) -I$(srcdir)/$(OS)/$(ARCH) -I$(OS) -I$(srcdir)/$(OS)
  
@@ -18,16 +24,16 @@ diff -upk.orig strace-4.5.13.orig/Makefile.am strace-4.5.13/Makefile.am
  		 resource.c signal.c sock.c system.c term.c time.c \
  		 proc.c stream.c
  noinst_HEADERS = defs.h
-diff -upk.orig strace-4.5.13.orig/quota.c strace-4.5.13/quota.c
---- strace-4.5.13.orig/quota.c	1970-01-01 00:00:00 +0000
-+++ strace-4.5.13/quota.c	2005-08-08 16:35:30 +0000
-@@ -0,0 +1,732 @@
+diff -upk.orig strace-4.5.14.orig/quota.c strace-4.5.14/quota.c
+--- strace-4.5.14.orig/quota.c	1970-01-01 00:00:00 +0000
++++ strace-4.5.14/quota.c	2006-01-17 15:03:05 +0000
+@@ -0,0 +1,734 @@
 +/*
 + * Copyright (c) 1991, 1992 Paul Kranenburg <pk at cs.few.eur.nl>
 + * Copyright (c) 1993 Branko Lankester <branko at hacktic.nl>
 + * Copyright (c) 1993, 1994, 1995, 1996 Rick Sladkey <jrs at world.std.com>
 + * Copyright (c) 1996-1999 Wichert Akkerman <wichert at cistron.nl>
-+ * Copyright (c) 2005 Dmitry V. Levin <ldv at altlinux.org>
++ * Copyright (c) 2005, 2006 Dmitry V. Levin <ldv at altlinux.org>
 + * All rights reserved.
 + *
 + * Redistribution and use in source and binary forms, with or without
@@ -102,6 +108,7 @@ diff -upk.orig strace-4.5.13.orig/quota.c strace-4.5.13/quota.c
 +#define Q_XSETQLIM	XQM_CMD(0x4)
 +#define Q_XGETQSTAT	XQM_CMD(0x5)
 +#define Q_XQUOTARM	XQM_CMD(0x6)
++#define Q_XQUOTASYNC	XQM_CMD(0x7)
 +
 +static const struct xlat quotacmds[] = {
 +	{Q_V1_QUOTAON, "Q_V1_QUOTAON"},
@@ -138,6 +145,7 @@ diff -upk.orig strace-4.5.13.orig/quota.c strace-4.5.13/quota.c
 +	{Q_XSETQLIM, "Q_XSETQLIM"},
 +	{Q_XGETQSTAT, "Q_XGETQSTAT"},
 +	{Q_XQUOTARM, "Q_XQUOTARM"},
++	{Q_XQUOTASYNC, "Q_XQUOTASYNC"},
 +
 +	{0, NULL},
 +};
@@ -754,9 +762,9 @@ diff -upk.orig strace-4.5.13.orig/quota.c strace-4.5.13/quota.c
 +}
 +
 +#endif /* SUNOS4 || FREEBSD */
-diff -upk.orig strace-4.5.13.orig/resource.c strace-4.5.13/resource.c
---- strace-4.5.13.orig/resource.c	2005-08-03 12:18:09 +0000
-+++ strace-4.5.13/resource.c	2005-08-08 16:36:34 +0000
+diff -upk.orig strace-4.5.14.orig/resource.c strace-4.5.14/resource.c
+--- strace-4.5.14.orig/resource.c	2005-12-02 04:08:27 +0000
++++ strace-4.5.14/resource.c	2006-01-17 14:41:33 +0000
 @@ -36,11 +36,7 @@
  #ifdef LINUX
  #include <sys/times.h>
@@ -769,7 +777,7 @@ diff -upk.orig strace-4.5.13.orig/resource.c strace-4.5.13/resource.c
  #if defined(SVR4) || defined(FREEBSD)
  #include <sys/times.h>
  #include <sys/time.h>
-@@ -461,146 +457,3 @@ struct tcb *tcp;
+@@ -467,146 +463,3 @@ struct tcb *tcp;
  }
  
  #endif /* !SUNOS4 */

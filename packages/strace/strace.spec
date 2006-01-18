@@ -1,20 +1,15 @@
-# $Owl: Owl/packages/strace/strace.spec,v 1.21 2005/11/16 13:31:52 solar Exp $
+# $Owl: Owl/packages/strace/strace.spec,v 1.22 2006/01/18 15:59:24 ldv Exp $
 
 Summary: Tracks and displays system calls associated with a running process.
 Name: strace
-Version: 4.5.13
-Release: owl2
+Version: 4.5.14
+Release: owl1
 License: BSD
 Group: Development/Debuggers
 URL: http://sourceforge.net/projects/strace/
 Source: http://prdownloads.sourceforge.net/%name/%name-%version.tar.bz2
-Patch0: strace-4.5.13-cvs-20051021.diff
-Patch1: strace-4.5.13-alt-quotactl.diff
-Patch2: strace-4.5.13-alt-mount.diff
-Patch3: strace-4.5.13-owl-man.diff
-Patch4: strace-4.5.13-alt-keep_status.diff
-Patch5: strace-4.5.13-drepper-x86_64-ipc.diff
-Patch6: strace-4.5.13-drepper-msgrcv.diff
+Patch0: strace-4.5.14-alt-quotactl.diff
+Patch1: strace-4.5.14-alt-keep_status.diff
 BuildRequires: automake, autoconf
 BuildRoot: /override/%name-%version
 
@@ -36,40 +31,36 @@ commands do.
 
 %prep
 %setup -q
-%patch0 -p0
+%patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
+bzip2 -9k ChangeLog
 
 %{expand:%%define optflags %optflags -Wall}
 
 %build
 autoreconf -fisv
 %configure
-make
-bzip2 -9fk ChangeLog
+%__make
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot%_mandir/man1
-mkdir -p %buildroot%_prefix/bin
 %makeinstall man1dir=%buildroot%_mandir/man1
 
 %files
 %defattr(-,root,root)
 %doc COPYRIGHT CREDITS PORTING README README-linux TODO
 %doc ChangeLog.bz2 NEWS
-%_prefix/bin/strace
+%_bindir/strace
 %_mandir/man1/strace.1*
 
 %files graph
 %defattr(-,root,root)
-%_prefix/bin/strace-graph
+%_bindir/strace-graph
 
 %changelog
+* Wed Jan 18 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.5.14-owl1
+- Updated to 4.5.14.
+
 * Mon Oct 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.5.13-owl2
 - Applied upstream fix for potential buffer overflow in printpathn().
 
