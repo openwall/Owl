@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/libutempter/libutempter.spec,v 1.10 2005/11/16 13:11:15 solar Exp $
+# $Owl: Owl/packages/libutempter/libutempter.spec,v 1.11 2006/01/18 15:59:52 ldv Exp $
 
 Summary: A privileged helper for utmp/wtmp updates.
 Name: libutempter
-Version: 1.1.3
+Version: 1.1.4
 Release: owl1
 License: LGPL
 Group: System Environment/Base
@@ -30,8 +30,6 @@ software.
 
 %prep
 %setup -q
-
-%{expand:%%define optflags %optflags -Wall}
 
 %build
 make CC=gcc libdir="%_libdir" libexecdir="%_libexecdir"
@@ -61,6 +59,12 @@ grep -q ^utempter: /etc/group || groupadd -g 162 utempter
 %_includedir/utempter.h
 
 %changelog
+* Wed Jan 18 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.1.4-owl1
+- Updated to 1.1.4:
+Enabled almost all diagnostics supported by gcc and fixed all issues found
+by gcc-3.4.5, fixed struct utmp initialization on 64-bit architectures
+with 32-bit backwards compatibility enabled (like x86_64).
+
 * Thu Aug 18 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.1.3-owl1
 - Updated to 1.1.3: Added multilib support, restricted list of global
 symbols exported by the library.
