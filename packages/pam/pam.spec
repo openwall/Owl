@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/pam/pam.spec,v 1.47 2005/12/28 15:36:25 ldv Exp $
+# $Owl: Owl/packages/pam/pam.spec,v 1.48 2006/01/18 16:00:19 ldv Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
-Version: 0.99.2.1
+Version: 0.99.3.0
 Release: owl1
 %define rh_version 0.80-1
 License: GPL or BSD
@@ -14,7 +14,7 @@ Source2: pam-redhat-%rh_version.tar.bz2
 Source3: pam_listfile.c
 Source4: other.pam
 Source5: system-auth.pam
-Patch0: Linux-PAM-0.99.2.1-cvs-20051221.diff
+Patch0: Linux-PAM-0.99.3.0-cvs-20060115.diff
 Patch1: Linux-PAM-0.99.2.1-alt-const.diff
 Patch2: Linux-PAM-0.99.2.1-owl-pam_limits-acct.diff
 Patch3: Linux-PAM-0.99.2.1-owl-pam_mkhomedir-acct.diff
@@ -265,6 +265,9 @@ find %buildroot%docdir/ -type f -size +4k \( -iname changelog -or -name \*.txt -
 %docdir/[hpst]*
 
 %changelog
+* Wed Jan 18 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.99.3.0-owl1
+- Updated Linux-PAM to 0.99.3.0.
+
 * Mon Dec 26 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.99.2.1-owl1
 - Updated Linux-PAM to 0.99.2.1.
 - Relocated documentation to %docdir.
