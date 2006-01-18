@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openntpd/openntpd.spec,v 1.10 2005/11/16 13:21:53 solar Exp $
+# $Owl: Owl/packages/openntpd/openntpd.spec,v 1.11 2006/01/18 12:54:03 solar Exp $
 
 Summary: NTP time synchronization server and client.
 Name: openntpd
 Version: 3.7p1
-Release: owl2
+Release: owl3
 License: BSD License
 Group: System Environment/Daemons
 URL: http://www.openntpd.org
@@ -11,6 +11,7 @@ Source0: ftp://ftp.openbsd.org/pub/OpenBSD/OpenNTPD/%name-%version.tar.gz
 Source1: openntpd.init
 Source2: openntpd.control
 Patch0: openntpd-3.7p1-owl-chroot.diff
+Patch1: openntpd-3.7p1-cvs-20050524-listen_all-skip-NULL.diff
 Prefix: %_prefix
 PreReq: /var/empty
 PreReq: shadow-utils
@@ -34,6 +35,7 @@ described in RFC 1305.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p3
 
 %build
 autoreconf -f
@@ -99,6 +101,10 @@ fi
 %_mandir/man?/*
 
 %changelog
+* Wed Jan 18 2006 Solar Designer <solar-at-owl.openwall.com> 3.7p1-owl3
+- Back-ported a fix from the OpenBSD CVS to skip address-less interfaces
+with "listen on *"; thanks to Bernhard Fischer for reporting this to us.
+
 * Fri Oct 21 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.7p1-owl2
 - Fixed a typo in the configure option name.
 - Applied a patch to honor --with-privsep-path in configure.
