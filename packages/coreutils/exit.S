@@ -28,6 +28,13 @@ __start:
 	bis $31,1,$0
 	bis $31,STATUS,$16
 	callsys
+#elif defined(__linux__) && defined(__arm__)
+	mov r0,$STATUS
+	swi 0x900001
+#elif defined(__linux__) && defined(__thumb__)
+	mov r0,$STATUS
+	mov r7,#1
+	swi 0
 #elif defined(__sun__) && defined(__sparc__)
 	or %g0,1,%g1
 	or %g0,STATUS,%o0
