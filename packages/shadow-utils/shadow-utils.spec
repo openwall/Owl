@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/shadow-utils/shadow-utils.spec,v 1.54 2005/11/16 13:31:52 solar Exp $
+# $Owl: Owl/packages/shadow-utils/shadow-utils.spec,v 1.55 2006/01/20 16:08:46 ldv Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
@@ -40,7 +40,7 @@ Patch40: shadow-4.0.4.1-alt-man.diff
 Patch41: shadow-4.0.4.1-alt-configure.diff
 Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: pam >= 0:0.80-owl2, pam_userpass >= 0.5, tcb >= 0.9.8
-BuildRequires: libtool, gettext = 0.14.1, automake, autoconf
+BuildRequires: libtool, gettext >= 0.14.1, automake, autoconf
 BuildRequires: glibc-crypt_blowfish-devel
 BuildRequires: pam-devel, pam_userpass-devel, tcb-devel
 BuildRequires: cvs
