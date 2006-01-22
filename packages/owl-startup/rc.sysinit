@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.20 2006/01/16 21:00:32 ldv Exp $
+# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.21 2006/01/22 22:11:59 ldv Exp $
 
 # Set the initial default search path for use by startup scripts.
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
@@ -87,7 +87,7 @@ FSCKOPTS=
 if [ -e /forcefsck ]; then
 	FSCKOPTS=-f
 fi
-if [ ! -f /fastboot -o -e /forcefsck ]; then
+if [ ! -f /fastboot -a ! -e /.Owl-CD-ROM -o -e /forcefsck ]; then
 	echo "Checking / filesystem"
 	# ...except for the root filesystem which is mounted read-write.
 	if [ "$READWRITE" = "no" ]; then
@@ -119,7 +119,7 @@ if [ -e /proc/lvm -a -x /sbin/vgchange -a -s /etc/lvmtab ]; then
 fi
 
 # Check the integrity of other filesystems unless requested not to.
-if [ ! -f /fastboot -o -e /forcefsck ]; then
+if [ ! -f /fastboot -a ! -e /.Owl-CD-ROM -o -e /forcefsck ]; then
 	echo "Checking filesystems"
 	fsck -aTC -AR $FSCKOPTS
 	STATUS=$?

@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.65 2006/01/16 21:00:32 ldv Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.66 2006/01/22 22:11:59 ldv Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.28
+Version: 0.29
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -164,8 +164,12 @@ fi
 %doc redhat
 
 %changelog
+* Mon Jan 23 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.29-owl1
+- Changed rc.sysinit to treat /.Owl-CD-ROM the same way as /fastboot
+but do not try to remove it.
+
 * Mon Jan 16 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.28-owl1
-- Add LVM support to rc.sysinit, patch from Jarno Huuskonen.
+- Added LVM support to rc.sysinit, patch from Jarno Huuskonen.
 
 * Sat Dec 31 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.27-owl1
 - Fixed a typo in rc.sysinit which prevented fsck from running in parallel
