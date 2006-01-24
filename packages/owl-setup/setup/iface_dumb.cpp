@@ -277,7 +277,7 @@ bool DumbOwlInstallInterface::YesNoMessage(const ScriptVariable& msg,
 }
 
 YesNoCancelResult
-DumbOwlInstallInterface::YesNoCancelMessage(const ScriptVariable& msg, 
+DumbOwlInstallInterface::YesNoCancelMessage(const ScriptVariable& msg,
                                             int dfl)
 {
     const char *dflname;

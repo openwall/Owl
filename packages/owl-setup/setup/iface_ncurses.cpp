@@ -535,7 +535,7 @@ NcursesOwlInstallInterface::YesNoCancelMessage(const ScriptVariable& msg,
         case ync_yes:    dflpos = 0; break;
         case ync_no:     dflpos = 1; break;
         case ync_cancel: dflpos = 2; break;
-        default:         dflpos = 2; 
+        default:         dflpos = 2;
     }
 
     int res = run_dialog((CDKSCREEN*)cdkscreen, message, yesnoc, dflpos);

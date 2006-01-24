@@ -64,13 +64,13 @@ static void generate_standard_fstab(
         int pri = 2;
         if(parts[i] == "tmpfs")
             pri = 0;
-        else 
-        if(dirs[i] == "/") 
+        else
+        if(dirs[i] == "/")
             pri = 1;
-             
+
         fprintf(f, "%s%s%s\t\t\t%s\t%s\t\t%d %d\n",
                    parts[i].c_str(),
-                       parts[i].Length() < 8 ? "\t\t" : "\t", 
+                       parts[i].Length() < 8 ? "\t\t" : "\t",
                    dirs[i].c_str(),
                    types[i].c_str(),
                    fs_options(dirs[i]).c_str(),

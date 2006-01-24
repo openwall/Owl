@@ -53,9 +53,9 @@ void IfaceHierChoice::AddItem(const ScriptVariable& name)
 {
     if(sorted) {
         Item **tmp = last;
-        while(*tmp && 
+        while(*tmp &&
               ((*tmp)->children || (*tmp)->name.Strcasecmp(name)<0)
-             ) 
+             )
         {
             tmp = &((*tmp)->next);
         }
@@ -72,7 +72,7 @@ void IfaceHierChoice::AddDir(const ScriptVariable& name)
 {
     if(sorted) {
         Item **tmp = last;
-        while(*tmp && (*tmp)->children && (*tmp)->name.Strcasecmp(name)<0) 
+        while(*tmp && (*tmp)->children && (*tmp)->name.Strcasecmp(name)<0)
         {
             tmp = &((*tmp)->next);
         }

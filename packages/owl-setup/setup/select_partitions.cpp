@@ -208,7 +208,7 @@ void unmount_all(OwlInstallInterface *the_iface)
     the_iface->CloseExecWindow();
 }
 
-static void mount_unlisted(OwlInstallInterface *the_iface, 
+static void mount_unlisted(OwlInstallInterface *the_iface,
                            bool for_root = false)
 {
     ScriptVariable part;
@@ -301,7 +301,7 @@ void select_and_mount_partitions(OwlInstallInterface *the_iface)
             } else
             if(choice == "n") {
                 mount_unlisted(the_iface, true);
-            } else 
+            } else
                 mount_at(the_iface, choice, "/");
         } else {
             ScriptVector parts;
