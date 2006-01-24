@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/buildworld.sh,v 1.38 2005/12/24 00:48:58 solar Exp $
+# $Owl: Owl/build/buildworld.sh,v 1.39 2006/01/24 12:57:56 solar Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -315,7 +315,7 @@ function sanity_check()
 	log "Sanity check"
 
 	check_includes || {
-		log "Unreadable kernel includes"
+		log "Kernel headers are not world-readable - they should be"
 		exit 1
 	}
 
