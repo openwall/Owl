@@ -1,8 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.21 2006/01/22 22:11:59 ldv Exp $
-
-# Set the initial default search path for use by startup scripts.
-export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.22 2006/01/24 13:12:46 solar Exp $
 
 repair_fs()
 {
@@ -26,6 +23,9 @@ repair_fs()
 	echo 'filesystem check - expect trouble!'
 	sleep 10
 }
+
+# Set the initial default search path for use by startup scripts.
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 
 # Use a safe umask and don't do coredumps.
 umask 077
@@ -63,8 +63,7 @@ if [ -n "$NISDOMAIN" ]; then
 	domainname "$NISDOMAIN"
 fi
 
-# See if the root filesystem is mounted read-only, and skip the fsck
-# and the remount if not.
+# See if the root filesystem is mounted read-only, and skip the fsck if not.
 READWRITE=no
 echo -n "Testing filesystem status: "
 if echo -n 2> /dev/null >> /readwrite; then
@@ -87,15 +86,14 @@ FSCKOPTS=
 if [ -e /forcefsck ]; then
 	FSCKOPTS=-f
 fi
+ROOTCHKSTATUS=0
 if [ ! -f /fastboot -a ! -e /.Owl-CD-ROM -o -e /forcefsck ]; then
-	echo "Checking / filesystem"
-	# ...except for the root filesystem which is mounted read-write.
+	# ...except if the root filesystem is mounted read-write.
 	if [ "$READWRITE" = "no" ]; then
+		echo "Checking / filesystem"
 		fsck -aTC $FSCKOPTS /
+		ROOTCHKSTATUS=$?
 	fi
-	ROOTCHKSTATUS=$?
-else
-	ROOTCHKSTATUS=0
 fi
 
 if [ $ROOTCHKSTATUS -gt 1 ]; then
@@ -114,7 +112,7 @@ test "$PROCFS" = "yes" && mount -f /proc
 
 # Activate LVM volumegroups.
 if [ -e /proc/lvm -a -x /sbin/vgchange -a -s /etc/lvmtab ]; then
-	echo "Setting up Logical volume management"
+	echo "Setting up logical volume management"
 	/sbin/vgscan > /dev/null && /sbin/vgchange -a y
 fi
 
