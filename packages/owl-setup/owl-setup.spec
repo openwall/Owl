@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.52 2006/01/07 10:15:37 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.53 2006/01/24 15:15:07 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 0.33
+Version: 0.34
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -32,6 +32,14 @@ rm -rf %buildroot
 %_sbindir/*
 
 %changelog
+* Tue Jan 24 2006 Croco <croco-at-owl.openwall.com> 0.34-owl1
+- tmpfs fstab entry fixed
+- fixed a problem with /var/tmp->/tmp symlink in case there's no /var yet
+- the "Run mkswap?" question now defaults to YES
+- 'installing headers' now run /bin/cp in verbose mode
+- screen is now forced to get clear on exit from ncurses-faced programs
+- newbie notice added before launching vi on /etc/fstab
+
 * Fri Jan 06 2006 Croco <croco-at-owl.openwall.com> 0.33-owl1
 - sorting criteria for kbd/tz selection fine tuned
 

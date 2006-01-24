@@ -147,16 +147,27 @@ static void use_tmpfs(OwlInstallInterface *the_iface)
             "Do you want your /var/tmp to be a symlink to /tmp?"),
              true);
         if(r) {
-            if(vartmp.IsDir()) {
-                if(-1 == rmdir(vt.c_str())) {
-                    the_iface->Message( "Couldn't rmdir /var/tmp");
+            ScriptVariable v(the_config->OwlRoot() + "/var");
+            FileStat vardir(v.c_str(), false /* no symlink dereference */);
+            if(!vardir.Exists()) {
+                if(-1 == mkdir(v.c_str(), 0755)) {
+                    the_iface->Message("Couldn't create /var");
                     return;
+                } else {
+                    the_iface->Notice("/var directory created");
                 }
             } else {
-                if(vartmp.Exists()) {
-                    the_iface->Message(
-                        "/var/tmp already exists and is not a directory");
-                    return;
+                if(vartmp.IsDir()) {
+                    if(-1 == rmdir(vt.c_str())) {
+                        the_iface->Message("Couldn't rmdir /var/tmp");
+                        return;
+                    }
+                } else {
+                    if(vartmp.Exists()) {
+                        the_iface->Message(
+                            "/var/tmp already exists and is not a directory");
+                        return;
+                    }
                 }
             }
             if(-1 == symlink("/tmp", vt.c_str())) {

@@ -87,7 +87,8 @@ public:
     virtual void Notice(const ScriptVariable& msg) = 0;
     virtual void ClearNotices() = 0;
     virtual bool YesNoMessage(const ScriptVariable& msg, bool dfl=false)=0;
-    virtual YesNoCancelResult YesNoCancelMessage(const ScriptVariable& msg)=0;
+    virtual YesNoCancelResult YesNoCancelMessage(const ScriptVariable& msg,
+                                                 int dfl = ync_cancel)=0;
 
 
     ScriptVariable QueryString(const ScriptVariable &prompt);

@@ -79,7 +79,8 @@ static void swapon(OwlInstallInterface *the_iface, ScriptVariable& part)
     }
 
     YesNoCancelResult mk = the_iface->YesNoCancelMessage(
-        ScriptVariable("Run mkswap on ") + part + " before swapon?"
+        ScriptVariable("Run mkswap on ") + part + " before swapon?",
+        ync_yes        
     );
     if(mk == ync_cancel) return;
     if(mk == ync_yes) {

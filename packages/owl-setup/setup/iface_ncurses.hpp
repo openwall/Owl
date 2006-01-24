@@ -35,7 +35,8 @@ public:
     void Notice(const ScriptVariable& msg);
     void ClearNotices();
     bool YesNoMessage(const ScriptVariable& msg, bool dfl = false);
-    YesNoCancelResult YesNoCancelMessage(const ScriptVariable& msg);
+    YesNoCancelResult YesNoCancelMessage(const ScriptVariable& msg, 
+                                         int dfl = ync_cancel);
 
     ScriptVariable QueryString(const ScriptVariable &prompt,
                                const ScriptVariable &defval);

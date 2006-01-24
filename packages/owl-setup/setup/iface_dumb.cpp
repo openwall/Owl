@@ -277,18 +277,29 @@ bool DumbOwlInstallInterface::YesNoMessage(const ScriptVariable& msg,
 }
 
 YesNoCancelResult
-DumbOwlInstallInterface::YesNoCancelMessage(const ScriptVariable& msg)
+DumbOwlInstallInterface::YesNoCancelMessage(const ScriptVariable& msg, 
+                                            int dfl)
 {
+    const char *dflname;
+    switch(dfl) {
+        case ync_yes:    dflname = "yes";    break;
+        case ync_no:     dflname = "no";     break;
+        case ync_cancel: dflname = "cancel"; break;
+        default:
+            dfl = ync_cancel;
+            dflname = "cancel";
+    }
     for(;;) {
-        printf("\n%s (yes|no|cancel) [cancel] ", msg.c_str());
+        printf("\n%s (yes|no|cancel) [%s] ", msg.c_str(), dflname);
         ScriptVariable res = KeyboardRead();
         if(res==qs_redraw) continue;
         res.Trim(" \n\r\t");
         res.Tolower();
         if(res=="yes") return ync_yes;
         if(res=="no") return ync_no;
-        if(res=="cancel"||res==""||res==qs_cancel||res==qs_escape||res==qs_eof)
+        if(res=="cancel"||res==qs_cancel||res==qs_escape||res==qs_eof)
             return ync_cancel;
+        if(res=="") return (YesNoCancelResult)dfl;
         printf("Please answer \"yes\", \"no\", or \"cancel\"\n");
     }
 }

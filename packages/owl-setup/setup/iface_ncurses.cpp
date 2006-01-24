@@ -367,6 +367,10 @@ NcursesOwlInstallInterface::NcursesOwlInstallInterface(bool allow_colors)
 NcursesOwlInstallInterface::~NcursesOwlInstallInterface()
 {
     delwin((WINDOW*)noticewin);
+    if(work_with_colors)
+        bkgdset(0);
+    clear();
+    refresh();
     endCDK();
     endwin();
 }
@@ -518,14 +522,23 @@ bool NcursesOwlInstallInterface::YesNoMessage(const ScriptVariable& msg,
 }
 
 YesNoCancelResult
-NcursesOwlInstallInterface::YesNoCancelMessage(const ScriptVariable& msg)
+NcursesOwlInstallInterface::YesNoCancelMessage(const ScriptVariable& msg,
+                                               int dfl)
 {
     ScriptVector yesnoc("Yes:No:Cancel", ":");
 
     ScriptVector message(msg, "\n", "");
     message.AddItem("");
 
-    int res = run_dialog((CDKSCREEN*)cdkscreen, message, yesnoc, 2);
+    int dflpos;
+    switch(dfl) {
+        case ync_yes:    dflpos = 0; break;
+        case ync_no:     dflpos = 1; break;
+        case ync_cancel: dflpos = 2; break;
+        default:         dflpos = 2; 
+    }
+
+    int res = run_dialog((CDKSCREEN*)cdkscreen, message, yesnoc, dflpos);
 
     switch(res) {
         case 0:
@@ -605,12 +618,21 @@ quit:
 
 void NcursesOwlInstallInterface::ExecWindow(const ScriptVariable& msg)
 {
+    if(work_with_colors)
+        bkgdset(0);
+    erase();
+    refresh();
     endwin();
     printf("%s\n", msg.c_str());
+    fflush(stdout);
 }
 
 void NcursesOwlInstallInterface::CloseExecWindow()
 {
+    if(work_with_colors) {
+        bkgdset(COLOR_PAIR(cp_background));
+        erase();
+    }
     refresh();
 }
 

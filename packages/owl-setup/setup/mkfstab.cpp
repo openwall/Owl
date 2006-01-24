@@ -61,13 +61,21 @@ static void generate_standard_fstab(
     ScriptVector dirs, parts, types;
     enumerate_owl_dirs3(dirs, parts, types);
     for(int i=0; i<dirs.Length(); i++) {
-        fprintf(f, "%s\t%s\t\t\t%s\t%s\t\t%d %d\n",
+        int pri = 2;
+        if(parts[i] == "tmpfs")
+            pri = 0;
+        else 
+        if(dirs[i] == "/") 
+            pri = 1;
+             
+        fprintf(f, "%s%s%s\t\t\t%s\t%s\t\t%d %d\n",
                    parts[i].c_str(),
+                       parts[i].Length() < 8 ? "\t\t" : "\t", 
                    dirs[i].c_str(),
                    types[i].c_str(),
                    fs_options(dirs[i]).c_str(),
                    0,
-                   (dirs[i]=="/") ? 1 : 2
+                   pri
         );
     }
 
@@ -94,6 +102,15 @@ static void generate_standard_fstab(
 
 static void edit_fstab(OwlInstallInterface *the_iface)
 {
+    bool r = the_iface->YesNoMessage(
+        "I'm going to run the vi editor for you\n"
+        "\n"
+        "NEWBIE NOTICE: to quit vi, press Escape, then type `:q!'\n"
+        "\n"
+        "Continue?",
+        true
+    );
+    if(!r) return;
     the_iface->ExecWindow("Launching an editor on your /etc/fstab");
     ExecAndWait passwd(the_config->EditorPath().c_str(),
                        the_config->FstabFile().c_str(), 0);

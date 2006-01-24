@@ -54,7 +54,7 @@ void install_kernel_headers(OwlInstallInterface *the_iface)
     }
 
     the_iface->ExecWindow("Copying files...");
-    ScriptVariable commd = the_config->CpPath() + " -a " +
+    ScriptVariable commd = the_config->CpPath() + " -a -v " +
                    from_path + " " +
                    the_config->KernelHeadersTarget();
     unsetenv("BASH_ENV");
