@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.53 2006/01/24 15:15:07 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.54 2006/01/27 09:11:13 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 0.34
+Version: 0.35
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -32,6 +32,10 @@ rm -rf %buildroot
 %_sbindir/*
 
 %changelog
+* Fri Jan 27 2006 Croco <croco-at-owl.openwall.com> 0.35-owl1
+- fixed help (invalid cmdline) message for setup
+- added chmod after creating the '/var' directory
+
 * Tue Jan 24 2006 Croco <croco-at-owl.openwall.com> 0.34-owl1
 - tmpfs fstab entry fixed
 - fixed a problem with /var/tmp->/tmp symlink in case there's no /var yet
