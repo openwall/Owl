@@ -26,14 +26,14 @@ struct OwlSetupCommandline {
 
     virtual const char* OptChars() const { return "dmbh"; }
 
+    virtual const char* HelpMessage() const = 0;
+
     void DisplayUsage(bool by_option)
     {
         if(!by_option) {
             printf("Invalid command line\n");
         }
-        printf("Usage: settle -d      use dumb terminal interface\n"
-               "       settle -m      use ncurses interface\n"
-               "       settle -b      force bw mode for ncurses\n");
+        printf("%s", HelpMessage());
         exit(by_option ? 0 : 1);
     }
 

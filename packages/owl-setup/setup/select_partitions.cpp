@@ -154,6 +154,7 @@ static void use_tmpfs(OwlInstallInterface *the_iface)
                     the_iface->Message("Couldn't create /var");
                     return;
                 } else {
+                    chmod(v.c_str(), 0755);
                     the_iface->Notice("/var directory created");
                 }
             } else {

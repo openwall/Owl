@@ -35,9 +35,17 @@ extern void reboot_it(OwlInstallInterface *);
 bool is_terminal_curses_capable();
 #endif
 
+struct CommandLine : public OwlSetupCommandline {
+    const char* HelpMessage() const {
+        return "Usage: settle -d      use dumb terminal interface\n"
+               "       settle -m      use ncurses interface\n"
+               "       settle -b      force bw mode for ncurses\n";
+    }
+};
+
 int main(int argc, char **argv)
 {
-    OwlSetupCommandline cmdline;
+    CommandLine cmdline;
     cmdline.Process(argc, argv);
 
     the_config = new OwlInstallConfig("/owl");

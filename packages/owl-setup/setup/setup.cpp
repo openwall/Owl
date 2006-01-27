@@ -20,6 +20,13 @@ extern void set_root_password(OwlInstallInterface *);
 extern void select_timezone(OwlInstallInterface *);
 extern void configure_network(OwlInstallInterface *);
 
+struct CommandLine : public OwlSetupCommandline {
+    const char* HelpMessage() const {
+        return "Usage: setup -d      use dumb terminal interface\n"
+               "       setup -m      use ncurses interface\n"
+               "       setup -b      force bw mode for ncurses\n";
+    }
+};
 
 #ifdef NCURSES_ENABLE
 /* defined in curs_detect.cpp */
@@ -28,7 +35,7 @@ bool is_terminal_curses_capable();
 
 int main(int argc, char **argv)
 {
-    OwlSetupCommandline cmdline;
+    CommandLine cmdline;
     cmdline.Process(argc, argv);
 
     the_config = new OwlInstallConfig("");
