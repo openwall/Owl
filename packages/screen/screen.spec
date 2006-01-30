@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/screen/screen.spec,v 1.39 2005/11/16 13:31:51 solar Exp $
+# $Owl: Owl/packages/screen/screen.spec,v 1.40 2006/01/30 07:15:08 solar Exp $
 
 Summary: A screen manager that supports multiple sessions on one terminal.
 Name: screen
 Version: 4.0.2
-Release: owl6
+Release: owl7
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%version.tar.gz
@@ -127,6 +127,11 @@ fi
 /usr/share/terminfo/s/screen*
 
 %changelog
+* Mon Jan 30 2006 Solar Designer <solar-at-owl.openwall.com> 4.0.2-owl7
+- Force USEVARARGS, do not try to detect vsprintf() (that configure test was
+broken for current gcc and glibc).
+- Fixed a harmless compiler warning in confirm_fn() on LP64 platforms.
+
 * Sat Oct 29 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.0.2-owl6
 - Stripped /lib/security/ prefix from PAM module names.
 
