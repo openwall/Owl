@@ -1,17 +1,7 @@
---- screen-4.0.2/screen.c.orig	Mon Sep  8 17:26:41 2003
-+++ screen-4.0.2/screen.c	Thu Jan 15 00:34:13 2004
-@@ -2301,7 +2301,7 @@
-   int truncpos = -1;
-   int truncper = 0;
-   int trunclong = 0;
--  struct backtick *bt;
-+  struct backtick *bt = NULL;
-  
-   if (winmsg_numrend >= 0)
-     winmsg_numrend = 0;
---- screen-4.0.2/process.c.orig	Thu Sep 18 15:53:54 2003
-+++ screen-4.0.2/process.c	Thu Jan 15 00:35:52 2004
-@@ -3049,7 +3049,7 @@
+diff -urp screen-4.0.2.orig/process.c screen-4.0.2/process.c
+--- screen-4.0.2.orig/process.c	2003-09-18 12:53:54 +0000
++++ screen-4.0.2/process.c	2006-01-30 06:49:47 +0000
+@@ -3049,7 +3049,7 @@ int key;
            int newnr, fl = 0, kf = 0, af = 0, df = 0, mf = 0;
  	  struct display *odisp = display;
  	  int used = 0;
@@ -20,3 +10,24 @@
  
  	  for (; *args && **args == '-'; args++, argl++)
  	    {
+@@ -5466,7 +5466,7 @@ char *data;	/* dummy */
+       *buf = 0;
+       return;
+     }
+-  act.nr = (int)data;
++  act.nr = (long)data;
+   act.args = noargs;
+   act.argl = 0;
+   DoAction(&act, -1);
+diff -urp screen-4.0.2.orig/screen.c screen-4.0.2/screen.c
+--- screen-4.0.2.orig/screen.c	2003-09-08 14:26:41 +0000
++++ screen-4.0.2/screen.c	2006-01-30 06:49:16 +0000
+@@ -2301,7 +2301,7 @@ int rec;
+   int truncpos = -1;
+   int truncper = 0;
+   int trunclong = 0;
+-  struct backtick *bt;
++  struct backtick *bt = NULL;
+  
+   if (winmsg_numrend >= 0)
+     winmsg_numrend = 0;
