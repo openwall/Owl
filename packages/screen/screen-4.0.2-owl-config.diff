@@ -1,15 +1,6 @@
---- screen-4.0.2/etc/etcscreenrc.orig	Fri Dec  5 13:46:13 2003
-+++ screen-4.0.2/etc/etcscreenrc	Tue Dec  9 14:02:31 2003
-@@ -1,6 +1,6 @@
- #
- # This is an example for the global screenrc file.
--# You may want to install this file as /usr/local/etc/screenrc.
-+# You may want to install this file as /etc/screenrc.
- # Check config.h for the exact location.
- #
- # Flaws of termcap and standard settings are done here.
---- screen-4.0.2/config.h.in.orig	Fri Dec  5 13:59:39 2003
-+++ screen-4.0.2/config.h.in	Tue Dec  9 14:29:39 2003
+diff -ur screen-4.0.2.orig/config.h.in screen-4.0.2/config.h.in
+--- screen-4.0.2.orig/config.h.in	2003-12-05 13:59:39 +0000
++++ screen-4.0.2/config.h.in	2003-12-09 14:29:39 +0000
 @@ -64,7 +64,7 @@
   * Don't define this, if you don't want it.
   */
@@ -53,8 +44,9 @@
  
  /*
   * define HAVE_GETPT if you have the getpt() function.
---- screen-4.0.2/configure.in.orig	Tue Dec  9 14:17:14 2003
-+++ screen-4.0.2/configure.in	Tue Dec  9 14:18:43 2003
+diff -ur screen-4.0.2.orig/configure.in screen-4.0.2/configure.in
+--- screen-4.0.2.orig/configure.in	2003-06-03 11:58:24 +0000
++++ screen-4.0.2/configure.in	2006-01-30 07:01:55 +0000
 @@ -195,15 +195,6 @@
  #endif
  ], LIBS="$LIBS -lsocket -linet";seqptx=1)
@@ -71,7 +63,7 @@
  AC_CHECKING(for Solaris 2.x)
  AC_EGREP_CPP(yes,
  [#if defined(SVR4) && defined(sun)
-@@ -680,13 +680,6 @@
+@@ -680,13 +671,6 @@
  AC_DEFINE(HAVE_DEV_PTC)
  fi
  
@@ -85,7 +77,17 @@
  AC_CHECK_FUNCS(getpt)
  
  dnl check for openpty()
-@@ -1268,10 +1261,7 @@
+@@ -1205,8 +1189,7 @@
+ fi
+ rm -f /tmp/conftest*
+ 
+-AC_MSG_CHECKING(for vsprintf)
+-AC_TRY_LINK(,[vsprintf(0,0,0);], AC_MSG_RESULT(yes);AC_DEFINE(USEVARARGS), AC_MSG_RESULT(no))
++AC_DEFINE(USEVARARGS)
+ 
+ AC_HEADER_DIRENT
+ 
+@@ -1268,10 +1251,7 @@
  
  AC_TRY_RUN(main(){exit(0);},,AC_MSG_ERROR(Can't run the compiler - internal error. Sorry.))
  
@@ -97,3 +99,14 @@
  AC_MSG_CHECKING(for the global screenrc file)
  AC_ARG_WITH(sys-screenrc, [  --with-sys-screenrc=path  where to put the global screenrc file], [ ETCSCREENRC="\"${withval}\"" ])
  AC_DEFINE_UNQUOTED(ETCSCREENRC,$ETCSCREENRC)
+diff -ur screen-4.0.2.orig/etc/etcscreenrc screen-4.0.2/etc/etcscreenrc
+--- screen-4.0.2.orig/etc/etcscreenrc	2003-12-05 13:46:13 +0000
++++ screen-4.0.2/etc/etcscreenrc	2003-12-09 14:02:31 +0000
+@@ -1,6 +1,6 @@
+ #
+ # This is an example for the global screenrc file.
+-# You may want to install this file as /usr/local/etc/screenrc.
++# You may want to install this file as /etc/screenrc.
+ # Check config.h for the exact location.
+ #
+ # Flaws of termcap and standard settings are done here.
