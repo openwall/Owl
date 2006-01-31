@@ -51,9 +51,16 @@ pam_console with invocations of another module suitable for your
 particular setup, e.g. with pam_listfile.  You need to replace the
 pam_console line in /etc/pam.d/xserver with:
 
-auth       required	/lib/security/pam_listfile.so item=user sense=allow onerr=fail file=/etc/xserver.allow
+auth       required	pam_listfile.so item=user sense=allow onerr=fail file=/etc/xserver.allow
 
 Then you list the users which need to run X in /etc/xserver.allow.
+
+
+	No pam_stack by default.
+
+The pam_stack module is deprecated in favour of pam "include" syntax.
+Owl provides this module in pam-compat package which is not installed
+by default.
 
 
 	Password checking helpers (xlockmore, xscreensaver).
@@ -71,6 +78,21 @@ made SGID to group chkpwd, like this:
 Unfortunately, this trick does not appear to work with the newer
 xscreensaver package.  xscreensaver appears to be too smart and drops
 its additional privilege.
+
+
+	No libperl.so (exim, gaim, inn, mod_perl, postgresql-pl, xchat).
+
+The Owl perl package does not provide the libperl.so library.
+The workaround is to rebuild packages linked with libperl.so.
+
+
+	The Owl perl package is not fully compatibile with Red Hat's
+	(crypto-utils, foomatic, newt-perl, perl-Net-DNS, perl-XML-LibXML,
+	perl-XML-SAX, spamassassin, subversion-perl).
+
+On Red Hat Linux, some packages place their perl-specific files in
+directories which names depend on perl version.  These packages need to
+be rebuilt to work properly on Owl.
 
 
 	No rpm-python subpackage (rpm-python, yum).
@@ -108,4 +130,4 @@ The one problem we are aware of and have resolved is the source code
 for recent versions of RPM requiring NPTL.  We have resolved that
 dependency on NPTL in our build of RPM.
 
-$Owl: Owl/doc/REDHAT,v 1.7 2005/12/26 22:23:42 solar Exp $
+$Owl: Owl/doc/REDHAT,v 1.8 2006/01/31 15:52:18 ldv Exp $
