@@ -50,6 +50,11 @@ auth       required	/lib/security/pam_listfile.so item=user sense=allow onerr=fa
 После этого вы можете описать пользователей, которым нужно запускать X,
 в файле /etc/xserver.allow .
 
+	Отсутствие модуля pam_stack.
+
+Мы отказались от модуля pam_stack в пользу include для PAM. Данный модуль
+входит в пакет pam-compat из поставки Owl, который по умолчанию не ставится.
+
 
 	Программы, проверяющие пароли (xlockmore, xscreensaver).
 
@@ -65,6 +70,22 @@ Owl, следует установить для нее SGID на группу chkpwd таким образом:
 
 К сожалению, этот номер не проходит с более новым пакетом xscreensaver -
 эта программа слишком умная и самостоятельно понижает свой уровень доступа.
+
+
+	Отсутствие библиотеки libperl.so (exim, gaim, inn, mod_perl,
+	postgresql-pl, xchat).
+
+Пакет perl, входящий в поставку Owl, не содержит библиотеку libperl.so -
+вследствие этого может потребоваться пересобрать некоторые пакеты.
+
+
+	Неполная совместимость пакета perl с Red Hat (crypto-utils,
+	foomatic, newt-perl, perl-Net-DNS, perl-XML-LibXML,
+	perl-XML-SAX, spamassassin, subversion-perl).
+
+В Red Hat Linux некоторые пакеты размещают свои файлы, относящиеся к
+perl, в каталогах, имена которых зависят от версии perl - эти пакеты
+следует пересобирать из исходных текстов.
 
 
 	Отсутствие пакета python (rpm-python, yum).
@@ -105,4 +126,4 @@ NPTL требует особой поддержки со стороны ядра, которую мы пока не
 свежие версии RPM требуют поддержки NPTL. Эта проблема решена нами
 посредством особой сборки RPM.
 
-$Owl: Owl/doc/ru/REDHAT,v 1.8 2005/12/26 23:55:57 gremlin Exp $
+$Owl: Owl/doc/ru/REDHAT,v 1.9 2006/01/31 22:47:12 gremlin Exp $
