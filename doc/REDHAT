@@ -58,9 +58,9 @@ Then you list the users which need to run X in /etc/xserver.allow.
 
 	No pam_stack by default.
 
-The pam_stack module is deprecated in favour of pam "include" syntax.
-Owl provides this module in pam-compat package which is not installed
-by default.
+The pam_stack module is deprecated in favor of the "include" directive.
+Owl provides this deprecated module in the pam-compat package which is
+not installed by default.
 
 
 	Password checking helpers (xlockmore, xscreensaver).
@@ -91,8 +91,8 @@ The workaround is to rebuild packages linked with libperl.so.
 	perl-XML-SAX, spamassassin, subversion-perl).
 
 On Red Hat Linux, some packages place their perl-specific files in
-directories which names depend on perl version.  These packages need to
-be rebuilt to work properly on Owl.
+directories the names of which depend on Perl version.  These packages
+need to be rebuilt to work properly on Owl.
 
 
 	No rpm-python subpackage (rpm-python, yum).
@@ -130,4 +130,4 @@ The one problem we are aware of and have resolved is the source code
 for recent versions of RPM requiring NPTL.  We have resolved that
 dependency on NPTL in our build of RPM.
 
-$Owl: Owl/doc/REDHAT,v 1.8 2006/01/31 15:52:18 ldv Exp $
+$Owl: Owl/doc/REDHAT,v 1.9 2006/02/01 12:53:50 solar Exp $
