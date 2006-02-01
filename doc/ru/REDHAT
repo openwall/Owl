@@ -45,14 +45,15 @@ Midnight Commander (mc) не работает Ctrl-O и screensaver. Решение -
 подходящему модулю, например pam_listfile. Вам понадобится изменить
 строчку с упоминанием pam_console в файле /etc/pam.d/xserver на:
 
-auth       required	/lib/security/pam_listfile.so item=user sense=allow onerr=fail file=/etc/xserver.allow
+auth       required	pam_listfile.so item=user sense=allow onerr=fail file=/etc/xserver.allow
 
 После этого вы можете описать пользователей, которым нужно запускать X,
 в файле /etc/xserver.allow .
 
+
 	Отсутствие модуля pam_stack.
 
-Мы отказались от модуля pam_stack в пользу include для PAM. Данный модуль
+Мы отказались от модуля pam_stack в пользу директивы include. Данный модуль
 входит в пакет pam-compat из поставки Owl, который по умолчанию не ставится.
 
 
@@ -126,4 +127,4 @@ NPTL требует особой поддержки со стороны ядра, которую мы пока не
 свежие версии RPM требуют поддержки NPTL. Эта проблема решена нами
 посредством особой сборки RPM.
 
-$Owl: Owl/doc/ru/REDHAT,v 1.9 2006/01/31 22:47:12 gremlin Exp $
+$Owl: Owl/doc/ru/REDHAT,v 1.10 2006/02/01 12:56:56 solar Exp $
