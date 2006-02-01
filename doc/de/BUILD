@@ -56,8 +56,8 @@ einen Eindruck zu bekommen was einen erwartet:
 
 Dual Pentium 4 Xeon, HT (4-way MP), 2.8 GHz, 2 GB		0:50
 Dual Pentium III, 600 MHz, 512 MB				3:35
-UltraSparc IIi, 400 MHz, 256 MB					9:20
-Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB			13:30
+UltraSparc IIi, 400 MHz, 256 MB					10:00
+Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB			14:00
 
 (Ja, der gcc ist auf einer Alpha ganz schön hungrig)
 
@@ -104,4 +104,4 @@ Individuelle Pakete können wieder- oder neuübersetzt werden, indem man
 Für fremde Pakete (SRPMs) die mit der Owl-Arbeitsumgebung erstellt worden
 sind, muss man zusätzlich die Versionsnummer in "name" einfügen.
 
-$Owl: Owl/doc/de/BUILD,v 1.16 2006/01/02 10:26:38 schmidt Exp $
+$Owl: Owl/doc/de/BUILD,v 1.17 2006/02/01 17:53:09 solar Exp $

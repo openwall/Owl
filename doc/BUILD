@@ -53,8 +53,8 @@ know what to expect:
 
 Dual Pentium 4 Xeon, HT (4-way MP), 2.8 GHz, 2 GB		0:50
 Dual Pentium III, 600 MHz, 512 MB				3:35
-UltraSparc IIi, 400 MHz, 256 MB					9:20
-Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB			13:30
+UltraSparc IIi, 400 MHz, 256 MB					10:00
+Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB			14:00
 
 (Yes, gcc is this hungry and slow on Alpha.)
 
@@ -101,4 +101,4 @@ where "name" is the name of the source package.  For foreign packages
 (SRPMs) built with the Owl build environment you also need to include
 the version number part in "name".
 
-$Owl: Owl/doc/BUILD,v 1.33 2005/12/27 20:05:29 solar Exp $
+$Owl: Owl/doc/BUILD,v 1.34 2006/02/01 17:53:09 solar Exp $
