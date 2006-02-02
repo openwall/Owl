@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.54 2006/01/27 09:11:13 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.55 2006/02/02 17:22:51 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -33,6 +33,7 @@ rm -rf %buildroot
 
 %changelog
 * Fri Jan 27 2006 Croco <croco-at-owl.openwall.com> 0.35-owl1
+- changed vim command line to display help window on the start
 - fixed help (invalid cmdline) message for setup
 - added chmod after creating the '/var' directory
 

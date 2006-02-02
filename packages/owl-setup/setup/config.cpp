@@ -39,8 +39,22 @@ ScriptVariable OwlInstallConfig::SwaponPath() const
 ScriptVariable OwlInstallConfig::SwapoffPath() const
 { return "/sbin/swapoff"; }
 
+#if 0
 ScriptVariable OwlInstallConfig::EditorPath() const
 { return "/bin/vi"; }
+#endif
+
+void OwlInstallConfig::EditorCmdline(ScriptVector &cmdl) const
+{
+    cmdl.Clear();
+    cmdl.AddItem("/bin/vi");
+    cmdl.AddItem("-c");
+    cmdl.AddItem("set helpheight=8");
+    cmdl.AddItem("-c");
+    cmdl.AddItem("help");
+    cmdl.AddItem("-c");
+    cmdl.AddItem("resize 8");
+}
 
 ScriptVariable OwlInstallConfig::InstallWorldTarget() const
 { return "installworld"; }

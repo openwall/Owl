@@ -22,7 +22,10 @@ public:
     ScriptVariable MkswapPath() const;
     ScriptVariable SwaponPath() const;
     ScriptVariable SwapoffPath() const;
+#if 0
     ScriptVariable EditorPath() const;
+#endif
+    void EditorCmdline(ScriptVector &cmdl) const;
 
     ScriptVariable WorldDir() const;
     ScriptVariable InstallWorldTarget() const;

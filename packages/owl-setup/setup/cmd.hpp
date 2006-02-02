@@ -58,6 +58,7 @@ public:
 class ExecAndWait : public ExecProgram {
 public:
     ExecAndWait(const char *path, ...);
+    ExecAndWait(char * const * argv);
     ~ExecAndWait();
 };
 

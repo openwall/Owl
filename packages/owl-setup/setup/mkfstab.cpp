@@ -112,8 +112,16 @@ static void edit_fstab(OwlInstallInterface *the_iface)
     );
     if(!r) return;
     the_iface->ExecWindow("Launching an editor on your /etc/fstab");
-    ExecAndWait passwd(the_config->EditorPath().c_str(),
+#if 0
+    ExecAndWait editor(the_config->EditorPath().c_str(),
                        the_config->FstabFile().c_str(), 0);
+#endif
+    ScriptVector ed_cmdline;
+    the_config->EditorCmdline(ed_cmdline);
+    ed_cmdline.AddItem(the_config->FstabFile());   
+    char **ed_argv = ed_cmdline.MakeArgv();
+    ExecAndWait editor(ed_argv);
+    ed_cmdline.DeleteArgv(ed_argv);
     the_iface->CloseExecWindow();
 }
 

@@ -204,6 +204,20 @@ ExecAndWait::ExecAndWait(const char *path, ...)
     WaitChild();
 }
 
+ExecAndWait::ExecAndWait(char * const * argv)
+{
+    pid = fork();
+    if(pid == -1) throw ForkFailed();
+
+    if(pid == 0) { /* child */
+        setpgrp();
+        safetcsetpgrp(getpgrp());
+        execvp(argv[0], argv);
+        exit(1);
+    }
+    WaitChild();
+}
+
 ExecAndWait::~ExecAndWait()
 {}
 
