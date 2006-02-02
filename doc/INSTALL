@@ -1,7 +1,7 @@
 The instructions below apply to Owl 2.0 and newer (until revised).  For
 older versions of Owl, please refer to Owl/doc/INSTALL as included in
 the "native" tree for your version (that's
-/usr/src/world/native/Owl/doc/INSTALL on the CDs).
+/usr/src/world/native/Owl*/doc/INSTALL on the CDs).
 
 Currently, there are two primary ways to install Owl, -- by booting off
 an Owl CD or by using another Linux installation you may already have.
@@ -91,4 +91,4 @@ already installed on the system (if any).
 Once the installation is complete, make sure to manually unmount the
 filesystems with umount(8) prior to rebooting the system.
 
-$Owl: Owl/doc/INSTALL,v 1.19 2006/02/02 10:29:52 solar Exp $
+$Owl: Owl/doc/INSTALL,v 1.20 2006/02/02 10:33:35 solar Exp $
