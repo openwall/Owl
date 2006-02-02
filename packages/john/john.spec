@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/john/john.spec,v 1.74 2006/01/12 05:08:53 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.75 2006/02/02 15:48:00 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
 Version: 1.7
 %define charsets_version 20051216
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/System
 URL: http://www.openwall.com/john/
@@ -20,7 +20,7 @@ of other hash types are supported as well.
 %prep
 %setup -q -a 1
 
-%define cflags -c %optflags -Wall -DJOHN_SYSTEMWIDE=1
+%define cflags -c %optflags -finline-limit=2000 --param inline-unit-growth=2000 -Wall -DJOHN_SYSTEMWIDE=1
 %define with_cpu_fallback 0
 
 %build
@@ -75,6 +75,10 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Thu Feb 02 2006 Solar Designer <solar-at-owl.openwall.com> 1.7-owl2
+- Pass -finline-limit=2000 --param inline-unit-growth=2000 to gcc such that
+it inlines the S-boxes on non-x86 just like gcc 2.x used to do.
+
 * Mon Jan 09 2006 Solar Designer <solar-at-owl.openwall.com> 1.7-owl1
 - Documentation updates: separated CONTACT from CREDITS, added some FAQ
 entries, etc.
