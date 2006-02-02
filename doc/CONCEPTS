@@ -114,7 +114,8 @@ Hat Linux and several other distributions, on an Owl system.
 Except for a few cases where this conflicts with our more important
 goals, Owl tries to be binary- and package- compatible with several
 other major distributions of GNU/*/Linux.  In particular, in most
-cases it will be possible to install applications packaged for a
-recent version of Fedora Core or Red Hat Enterprise Linux on Owl.
+cases it is possible to install applications packaged for a recent
+version of Fedora Core or Red Hat Enterprise Linux on Owl (as of Owl 2.0
+release, this applies to FC3 and RHEL4).
 
-$Owl: Owl/doc/CONCEPTS,v 1.10 2005/11/16 11:59:01 solar Exp $
+$Owl: Owl/doc/CONCEPTS,v 1.11 2006/02/02 10:20:34 solar Exp $

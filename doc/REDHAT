@@ -1,3 +1,7 @@
+In most cases it is possible to install applications packaged for a
+recent version of Fedora Core or Red Hat Enterprise Linux on Owl.  As of
+Owl 2.0 release, this applies to FC3 and RHEL4.
+
 This file lists known issues with using packages from or intended for
 Red Hat Linux (Fedora Core, Red Hat Enterprise Linux) on Owl.  The names
 of affected Red Hat Linux packages, if applicable and known, are given
@@ -130,4 +134,4 @@ The one problem we are aware of and have resolved is the source code
 for recent versions of RPM requiring NPTL.  We have resolved that
 dependency on NPTL in our build of RPM.
 
-$Owl: Owl/doc/REDHAT,v 1.9 2006/02/01 12:53:50 solar Exp $
+$Owl: Owl/doc/REDHAT,v 1.10 2006/02/02 10:20:34 solar Exp $
