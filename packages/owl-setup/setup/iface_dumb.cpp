@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 #include <ctype.h>
 #include <termios.h>
@@ -61,12 +62,23 @@ static int get_terminal_columns()
     return res;
 }
 
+
+static int my_getchar()
+{
+    char c;
+    int r;
+    fflush(stdout);
+    r = read(0, &c, 1);
+    if(r<1) return EOF;
+    return c;
+}
+
 static ScriptVariable KeyboardRead()
 {
     SymbolicInterruption si;
     int c;
     ScriptVariable res;
-    while((c=getchar())!=EOF) {
+    while((c=my_getchar())!=EOF) {
         if(c=='\n') break;
         if(c=='\r') continue;
         if(c==si.EraseChar() || c=='\177' || c=='\b') {

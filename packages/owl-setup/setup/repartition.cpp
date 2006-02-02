@@ -18,7 +18,7 @@ void repartition_hard_drive(OwlInstallInterface *the_iface)
             if(v[0].Range(0,5).Get()=="Disk ") {
                 ScriptVariable::Substring sub(v[0].Range(5));
                 ScriptVariable::Substring disk;
-                sub.FetchToken(disk, ":", " \n\t\r");
+                sub.FetchToken(disk, ":(", " \n\t\r");
                 dm->AddItem(disk.Get(), sub.Get());
                 if(defval == "") defval = disk.Get();
             }

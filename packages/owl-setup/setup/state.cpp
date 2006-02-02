@@ -5,6 +5,7 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "scriptpp/scrvar.hpp"
 #include "scriptpp/scrvect.hpp"
@@ -31,7 +32,7 @@ bool linux_partition_exists()
     ScriptVector v;
     while(fdisk.ReadLine(v,7)) {
         if(v[0][0]!='/') continue;
-        if(v[1] == "*") {
+        if(!isdigit(v[1][0])) { // "bootable flag" could be an extra word
             v.Remove(1, 1);
         }
         if(v[4] == "83") ret = true;
@@ -100,7 +101,7 @@ static void enumerate_partitions(ScriptVector &parts, const char *t)
     ScriptVector v;
     while(fdisk.ReadLine(v,7)) {
         if(v[0][0]!='/') continue;
-        if(v[1] == "*") { // "bootable flag" could be an extra word
+        if(!isdigit(v[1][0])) { // "bootable flag" could be an extra word
             v.Remove(1, 1);
         }
         if(v[4] == t) parts.AddItem(v[0]);
