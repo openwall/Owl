@@ -1,11 +1,7 @@
-The instructions below apply to Owl-current snapshots dated 2005/08/08
-and newer (until revised).  For older versions of Owl (such as the 1.1
-release), please refer to Owl/doc/INSTALL as included in the "native"
-tree for your version (that's /usr/src/world/native/Owl/doc/INSTALL on
-the CDs).
-
-Owl installation is currently more complicated than we'd like it to
-be.  This is going to change with future releases.
+The instructions below apply to Owl 2.0 and newer (until revised).  For
+older versions of Owl, please refer to Owl/doc/INSTALL as included in
+the "native" tree for your version (that's
+/usr/src/world/native/Owl/doc/INSTALL on the CDs).
 
 Currently, there are two primary ways to install Owl, -- by booting off
 an Owl CD or by using another Linux installation you may already have.
@@ -27,10 +23,8 @@ IDE CD-ROM drive, select the proper IDE controller and whether the
 drive is set to master or slave.  If you're using a SCSI CD-ROM drive,
 select "scsi".
 
-Owl should boot into single user mode.  If you're prompted for a root
-password, you can just press Enter as the CDs have a null password.
-Once in the shell, you can optionally configure the CD-booted system by
-simply typing:
+Owl should boot into single user mode.  Once in the shell, you can
+optionally configure the CD-booted system by simply typing:
 
 	setup
 
@@ -49,9 +43,8 @@ This will invoke the installer that will guide you through the
 installation process.
 
 Please note that the installer currently does not install kernel
-sources or C headers (that you will need to build software from source
-on your newly installed system).  You're supposed to copy them off the
-CD manually.  (This is something we're planning to fix indeed.)
+sources.  If you would like to build a custom kernel (which is
+recommended), you need to copy the kernel sources off the CD manually.
 
 
 	Using an existing Linux installation.
@@ -98,4 +91,4 @@ already installed on the system (if any).
 Once the installation is complete, make sure to manually unmount the
 filesystems with umount(8) prior to rebooting the system.
 
-$Owl: Owl/doc/INSTALL,v 1.18 2006/01/02 03:02:11 solar Exp $
+$Owl: Owl/doc/INSTALL,v 1.19 2006/02/02 10:29:52 solar Exp $
