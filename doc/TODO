@@ -337,7 +337,7 @@ Solve the DoS-against-itself on the temporary file.
 
 	perl.
 
-[PRIORITY: high]
+[PRIORITY: medium]
 Deal with FC4/RHEL4 compatibility issues.
 
 [PRIORITY: low]
@@ -493,4 +493,4 @@ Fix installworld.sh to always pick the latest version of a package when
 multiple versions are available (please refer to the appropriate XXX
 comment in the script).
 
-$Owl: Owl/doc/TODO,v 1.154 2006/01/09 18:37:37 ldv Exp $
+$Owl: Owl/doc/TODO,v 1.155 2006/02/02 10:11:32 solar Exp $
