@@ -32,6 +32,8 @@ SymbolicInterruption::SymbolicInterruption()
     save_vmin = t.c_cc[VMIN];
     save_vtime = t.c_cc[VTIME];
     t.c_cc[VINTR] = 0;
+    t.c_cc[VMIN] = 1;
+    t.c_cc[VTIME] = 0;
     save_lflag = t.c_lflag;
     t.c_lflag &= ~ICANON;
     tcsetattr(0, TCSANOW, &t);
