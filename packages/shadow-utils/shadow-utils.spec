@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/shadow-utils/shadow-utils.spec,v 1.55 2006/01/20 16:08:46 ldv Exp $
+# $Owl: Owl/packages/shadow-utils/shadow-utils.spec,v 1.56 2006/02/03 22:15:52 ldv Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.4.1
-Release: owl10
+Release: owl11
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -76,6 +76,7 @@ shadow password files.
 %patch41 -p1
 
 find . -name '*.orig' -delete
+bzip2 -9k ChangeLog NEWS doc/HOWTO
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -100,8 +101,7 @@ rm -rf %buildroot
 chmod -R -s %buildroot
 
 # copy shadow.3 as it is in EXTRA_DIST and not installed by default
-install -p -m 644 $RPM_BUILD_DIR/shadow-%version/man/shadow.3 \
-	%buildroot%_mandir/man3/
+install -p -m644 man/shadow.3 %buildroot%_mandir/man3/
 
 # move symlinks to correct locations
 mv %buildroot%_bindir/vigr %buildroot%_sbindir/
@@ -168,7 +168,7 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc README NEWS ChangeLog doc/HOWTO
+%doc ChangeLog.bz2 NEWS.bz2 README doc/HOWTO.bz2
 %dir /etc/default
 %attr(0644,root,root) %config(noreplace) %verify(not mode group) /etc/login.defs
 %attr(0600,root,root) %config(noreplace) /etc/default/useradd
@@ -238,6 +238,9 @@ fi
 %exclude %_mandir/man8/mkpasswd*
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2:4.0.4.1-owl11
+- Compressed ChangeLog, NEWS and HOWTO files.
+
 * Sat Oct 29 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2:4.0.4.1-owl10
 - Changed PAM config file to include system-auth for PAM auth and
 account management.
