@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/bash/bash.spec,v 1.33 2006/01/10 23:05:33 ldv Exp $
+# $Owl: Owl/packages/bash/bash.spec,v 1.34 2006/02/03 22:10:21 ldv Exp $
 
 Summary: The GNU Bourne-Again SHell (Bash).
 Name: bash
 %define bash_version 3.1
 %define bash_patchlevel 5
 Version: %bash_version.%bash_patchlevel
-Release: owl1
+Release: owl2
 Group: System Environment/Shells
 License: GPL
 Source0: ftp://ftp.gnu.org/gnu/bash/bash-%bash_version.tar.gz
@@ -77,6 +77,8 @@ pushd lib/readline
 %patch103 -p1
 %patch104 -p1
 popd
+
+bzip2 -9k CHANGES NEWS doc/FAQ
 
 # Prevent bogus dependencies
 find examples -type f -print0 | xargs -r0 chmod -x --
@@ -182,8 +184,8 @@ fi
 %files
 %defattr(-,root,root)
 %config(noreplace) /etc/skel/.b*
-%doc AUTHORS CHANGES COMPAT NEWS NOTES POSIX
-%doc doc/FAQ doc/INTRO doc/article.ms
+%doc AUTHORS CHANGES.bz2 COMPAT NEWS.bz2 NOTES POSIX
+%doc doc/FAQ.bz2 doc/INTRO doc/article.ms
 %doc examples/bashdb/ examples/functions/ examples/misc/
 %doc examples/scripts.noah/ examples/scripts.v2/ examples/scripts/
 %doc examples/startup-files/
@@ -202,6 +204,9 @@ fi
 %doc doc/*.ps* doc/*.html doc/article.txt*
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.5-owl2
+- Compressed CHANGES, FAQ and NEWS files.
+
 * Wed Jan 11 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.5-owl1
 - Updated to 3.1 patchlevel 5.
 
