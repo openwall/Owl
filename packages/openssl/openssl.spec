@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.51 2005/11/16 13:21:53 solar Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.52 2006/02/03 22:14:04 ldv Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
 Version: 0.9.7g
-Release: owl2
+Release: owl3
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
@@ -73,6 +73,8 @@ libraries and header files required when developing applications.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p0
+
+bzip2 -9k CHANGES CHANGES.SSLeay
 
 # Avoid conflict with pow10(3).
 sed -i s/pow10/pow10i/ crypto/bio/b_print.c
@@ -167,6 +169,7 @@ mv %buildroot%_datadir/ssl/misc/CA{.sh,}
 mkdir docs
 cp -a doc docs/
 rm -rf docs/doc/{apps,crypto,ssl}
+bzip2 -9 docs/doc/ssleay.txt
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -177,7 +180,7 @@ ln -sf libssl.so.5 /%_lib/libssl.so.4
 
 %files
 %defattr(0644,root,root,0755)
-%doc CHANGES CHANGES.SSLeay LICENSE NEWS README
+%doc CHANGES*.bz2 LICENSE NEWS README
 %doc docs/doc
 %attr(0755,root,root) %_bindir/*
 %attr(-,root,root) /%_lib/*.so.?
@@ -202,6 +205,9 @@ ln -sf libssl.so.5 /%_lib/libssl.so.4
 %attr(0644,root,root) %_mandir/man3/*
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.9.7g-owl3
+- Compressed ssleay.txt and CHANGES* files.
+
 * Tue Oct 11 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.9.7g-owl2
 - Applied upstream fix for potential SSL 2.0 rollback during SSL
 handshake (CAN-2005-2969).
