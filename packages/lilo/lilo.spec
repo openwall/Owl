@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/lilo/lilo.spec,v 1.21 2005/11/16 13:11:15 solar Exp $
+# $Owl: Owl/packages/lilo/lilo.spec,v 1.22 2006/02/03 22:12:05 ldv Exp $
 
 %define BUILD_EXTERNAL_SUPPORT 0
 
 Summary: The boot loader for Linux and other operating systems.
 Name: lilo
 Version: 22.7.1
-Release: owl1
+Release: owl2
 License: MIT
 Group: System Environment/Base
 URL: http://lilo.go.dyndns.org/pub/linux/lilo/
@@ -33,6 +33,7 @@ can also boot other operating systems.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+bzip2 -9k CHANGES README
 
 %{expand: %%define optflags %optflags -Wall -Wno-long-long -pedantic}
 
@@ -70,8 +71,8 @@ test -f /etc/lilo.conf && /sbin/lilo || :
 
 %files
 %defattr(-,root,root)
-%doc README README.bitmaps README.common.problems README.raid1
-%doc CHANGES COPYING INCOMPAT QuickInst
+%doc README.bz2 README.bitmaps README.common.problems README.raid1
+%doc CHANGES.bz2 COPYING INCOMPAT QuickInst
 %doc doc
 %_bindir/keytab-lilo
 %if %BUILD_EXTERNAL_SUPPORT
@@ -84,6 +85,9 @@ test -f /etc/lilo.conf && /sbin/lilo || :
 %_mandir/*/*
 
 %changelog
+* Sat Feb 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 22.7.1-owl2
+- Compressed CHANGES and README files.
+
 * Fri Oct 21 2005 Solar Designer <solar-at-owl.openwall.com> 22.7.1-owl1
 - Updated to 22.7.1.
 - Patched second.S to not use the FS register since it appears to be clobbered
