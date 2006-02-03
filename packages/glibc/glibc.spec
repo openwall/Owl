@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.102 2006/02/03 12:09:37 ldv Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.103 2006/02/03 22:07:32 ldv Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -212,7 +212,7 @@ echo "Applying crypt_blowfish patch:"
 patch -p1 -s < crypt_blowfish-%crypt_bf_version/glibc-2.3.2-crypt.diff
 mv crypt/{crypt.h,gnu-crypt.h}
 mv crypt_blowfish-%crypt_bf_version/*.[chS] crypt/
-cp %_sourcedir/crypt_freesec.[ch] crypt/
+install -pm644 %_sourcedir/crypt_freesec.[ch] crypt/
 
 # FreeSec support for extended/new-style/BSDI hashes in crypt(3)
 %patch400 -p1
@@ -391,18 +391,18 @@ touch %buildroot%_libdir/gconv/gconv-modules.cache
 # The last bit: more documentation
 rm -rf documentation
 mkdir documentation
-cp linuxthreads/ChangeLog documentation/ChangeLog.threads
-cp linuxthreads/Changes documentation/Changes.threads
-cp linuxthreads/README documentation/README.threads
-cp linuxthreads/FAQ.html documentation/FAQ-threads.html
-cp -r linuxthreads/Examples documentation/examples.threads
-cp timezone/README documentation/README.timezone
-cp ChangeLog* documentation
+cp -pr linuxthreads/Examples documentation/examples.threads
+install -pm644 linuxthreads/ChangeLog documentation/ChangeLog.threads
+install -pm644 linuxthreads/Changes documentation/Changes.threads
+install -pm644 linuxthreads/README documentation/README.threads
+install -pm644 linuxthreads/FAQ.html documentation/FAQ-threads.html
+install -pm644 timezone/README documentation/README.timezone
+install -pm644 ChangeLog documentation/
 bzip2 -9qf documentation/ChangeLog*
 bzip2 -9qf FAQ INSTALL NEWS NOTES %{?snapshot:README-alpha} README.libm
 mkdir documentation/crypt_blowfish-%crypt_bf_version
-cp crypt_blowfish-%crypt_bf_version/{README,LINKS,PERFORMANCE} \
-	documentation/crypt_blowfish-%crypt_bf_version
+install -pm644 crypt_blowfish-%crypt_bf_version/{README,LINKS,PERFORMANCE} \
+	documentation/crypt_blowfish-%crypt_bf_version/
 
 # remove README.template and FAQ.in to allow using wildcards in the filelist
 rm README.template FAQ.in
@@ -459,6 +459,7 @@ fi
 %changelog
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3.6-owl4
 - Marked /etc/ld.so.conf with %%config(noreplace) flag.
+- Dropped old ChangeLog files.
 
 * Mon Jan 02 2006 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl3
 - Corrected a bug in the way salts for extended DES-based and for MD5-based
