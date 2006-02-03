@@ -12,6 +12,8 @@
 class SymbolicInterruption {
     int save_vintr;
     int save_verase;
+    int save_vmin;
+    int save_vtime;
     int save_lflag;
 public:
     SymbolicInterruption();
@@ -27,6 +29,8 @@ SymbolicInterruption::SymbolicInterruption()
     tcgetattr(0, &t);
     save_verase = t.c_cc[VERASE];
     save_vintr = t.c_cc[VINTR];
+    save_vmin = t.c_cc[VMIN];
+    save_vtime = t.c_cc[VTIME];
     t.c_cc[VINTR] = 0;
     save_lflag = t.c_lflag;
     t.c_lflag &= ~ICANON;
@@ -38,6 +42,9 @@ SymbolicInterruption::~SymbolicInterruption()
     struct termios t;
     tcgetattr(0, &t);
     t.c_cc[VINTR] = save_vintr;
+    t.c_cc[VERASE] = save_verase;
+    t.c_cc[VMIN] = save_vmin;
+    t.c_cc[VTIME] = save_vtime;
     t.c_lflag = save_lflag;
     tcsetattr(0, TCSANOW, &t);
 }

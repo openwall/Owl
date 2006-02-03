@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.57 2006/02/03 20:36:35 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.58 2006/02/03 20:48:01 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -32,7 +32,8 @@ rm -rf %buildroot
 %_sbindir/*
 
 %changelog
-* Thu Feb 02 2006 Croco <croco-at-owl.openwall.com> 0.35-owl1
+* Fri Feb 03 2006 Croco <croco-at-owl.openwall.com> 0.35-owl1
+- VMIN/VTIME worked around for bloody suns
 - ip4areas replaced with the version 0.3.1 which might run better on 64-bit
 - added some workarounds for non-x86 architectures
 - changed vim command line to display help window on the start
