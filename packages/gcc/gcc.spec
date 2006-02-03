@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.50 2005/12/24 22:21:49 ldv Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.51 2006/02/03 22:08:03 ldv Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -38,7 +38,7 @@
 Summary: C compiler from the GNU Compiler Collection.
 Name: gcc
 Version: 3.4.5
-Release: owl1
+Release: owl2
 Epoch: 1
 License: GPL
 Group: Development/Languages
@@ -421,22 +421,22 @@ TARGET_OPT_LIBFLAGS="${TARGET_OPT_LIBFLAGS//-mcpu=/-mtune=}"
 # Copy various doc files here and there.
 cd ..
 mkdir -p rpm-doc/gcc
-install -m 644 -p gcc/*ChangeLog* rpm-doc/gcc/
+install -m 644 -p gcc/ChangeLog rpm-doc/gcc/
 install -m 644 -p BUGS COPYING* FAQ MAINTAINERS README* gcc/SERVICE rpm-doc/gcc/
 
 %if %BUILD_GXX
 mkdir -p rpm-doc/g++
-install -m 644 -p gcc/cp/{ChangeLog*,NEWS} rpm-doc/g++/
+install -m 644 -p gcc/cp/{ChangeLog,NEWS} rpm-doc/g++/
 
 mkdir -p rpm-doc/libstdc++
-install -m 644 -p libstdc++-v3/{ChangeLog*,README} rpm-doc/libstdc++/
+install -m 644 -p libstdc++-v3/{ChangeLog,README} rpm-doc/libstdc++/
 %endif
 
 %if %BUILD_G77
 mkdir -p rpm-doc/g77
-install -m 644 -p gcc/f/{ChangeLog*,NEWS,BUGS} rpm-doc/g77/
+install -m 644 -p gcc/f/{ChangeLog,NEWS,BUGS} rpm-doc/g77/
 pushd libf2c
-for i in ChangeLog* README *.netlib; do
+for i in ChangeLog README *.netlib; do
 	install -m 644 -p $i ../rpm-doc/g77/$i.libf2c
 done
 popd
@@ -444,14 +444,14 @@ popd
 
 %if %BUILD_JAVA
 mkdir -p rpm-doc/java
-install -m 644 -p gcc/java/ChangeLog* libjava/doc/cni* rpm-doc/java/
+install -m 644 -p gcc/java/ChangeLog libjava/doc/cni* rpm-doc/java/
 pushd libffi
-for i in ChangeLog* README LICENSE; do
+for i in ChangeLog README LICENSE; do
 	install -m 644 -p $i ../rpm-doc/java/$i.libffi
 done
 popd
 pushd libjava
-for i in ChangeLog* README NEWS THANKS HACKING LIBGCJ_LICENSE; do
+for i in ChangeLog README NEWS THANKS HACKING LIBGCJ_LICENSE; do
 	install -m 644 -p $i ../rpm-doc/java/$i.libjava
 done
 popd
@@ -461,7 +461,7 @@ popd
 mkdir -p rpm-doc/objc
 install -m 644 -p gcc/objc/README* rpm-doc/objc/
 pushd libobjc
-for i in ChangeLog* README* THREADS*; do
+for i in ChangeLog README* THREADS*; do
 	install -m 644 -p $i ../rpm-doc/java/$i.libobjc
 done
 popd
@@ -470,6 +470,9 @@ popd
 %if %BUILD_ADA
 mkdir -p rpm-doc/ada
 %endif
+
+find rpm-doc -type f \( -iname '*changelog*' -not -name '*.bz2' \) -print0 |
+	xargs -r0 bzip2 -9 --
 
 %install
 rm -rf %buildroot
@@ -663,7 +666,6 @@ fi
 %dir %_libdir/gcc/%_target_platform/%version
 %_libdir/gcc/%_target_platform/%version/cc1plus
 %_mandir/man1/?++.1*
-%doc gcc/cp/ChangeLog*
 %doc rpm-doc/g++/*
 
 %files -n libstdc++
@@ -782,6 +784,9 @@ fi
 %endif
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:3.4.5-owl2
+- Dropped old ChangeLog files, compressed remained ChangeLog files.
+
 * Wed Dec 21 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:3.4.5-owl1
 - Updated to 3.4.5.
 - Packaged libgcc shared library in separate subpackage.
