@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/xinetd/xinetd.spec,v 1.35 2005/11/16 13:32:46 solar Exp $
+# $Owl: Owl/packages/xinetd/xinetd.spec,v 1.36 2006/02/03 22:05:18 ldv Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
 Version: 2.3.13
-Release: owl1
+Release: owl2
 License: BSD with minor restrictions
 Group: System Environment/Daemons
 URL: http://www.xinetd.org
@@ -49,6 +49,7 @@ limits on the number of servers that can be started, among other things.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+bzip2 -9k CHANGELOG
 
 %{expand:%%define optflags %optflags -Wall -W -Wno-unused -Wno-switch}
 
@@ -102,7 +103,7 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc README AUDIT CHANGELOG COPYRIGHT xinetd/sample.conf
+%doc AUDIT CHANGELOG.bz2 COPYRIGHT README xinetd/sample.conf
 %config(noreplace) /etc/xinetd.conf
 %config(noreplace) /etc/xinetd.d/*
 %config /etc/rc.d/init.d/xinetd
@@ -110,6 +111,9 @@ fi
 %_mandir/*/*
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3.13-owl2
+- Compressed CHANGELOG file.
+
 * Tue Jun 28 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3.13-owl1
 - Updated to 2.3.13.
 - Backported bug fixes from cvs snapshot 20050330.

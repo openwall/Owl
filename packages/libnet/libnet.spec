@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/libnet/libnet.spec,v 1.17 2005/12/23 01:10:31 solar Exp $
+# $Owl: Owl/packages/libnet/libnet.spec,v 1.18 2006/02/03 22:05:17 ldv Exp $
 
 Summary: A library for portable packet creation and injection.
 Name: libnet
 Version: 1.1.3
 %define extra -RC-01
-Release: owl0.1
+Release: owl0.2
 Epoch: 1
 License: BSD
 Group: System Environment/Libraries
@@ -36,6 +36,7 @@ building applications which use libnet, as well as documentation on libnet.
 %setup -q -n libnet
 %patch0 -p1
 rm -r doc/{CVS,man,libnet.doxygen.conf}
+bzip2 -9 doc/CHANGELOG
 
 %build
 aclocal
@@ -57,7 +58,7 @@ rm -rf %buildroot
 
 %files devel
 %defattr(-,root,root)
-%doc doc README
+%doc doc/* README
 %_bindir/libnet-config
 %_includedir/libnet.h
 %_includedir/libnet
@@ -66,6 +67,9 @@ rm -rf %buildroot
 %exclude %_libdir/libnet.la
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:1.1.3-owl0.2
+- Compressed CHANGELOG file.
+
 * Fri Dec 23 2005 Solar Designer <solar-at-owl.openwall.com> 1:1.1.3-owl0.1
 - Updated to 1.1.3-RC-01.
 

@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.13 2006/01/13 23:09:32 mci Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.14 2006/02/03 22:05:17 ldv Exp $
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
 Version: 3.95
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/System
 URL: http://www.insecure.org/nmap/
@@ -30,6 +30,7 @@ Sun RPC scanning, and more.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+bzip2 -9 CHANGELOG
 
 %build
 aclocal
@@ -49,12 +50,15 @@ grep -q ^nmap: /etc/passwd ||
 
 %files
 %defattr(-,root,root)
-%doc COPYING CHANGELOG HACKING docs/{README,*.txt}
+%doc CHANGELOG.bz2 COPYING HACKING docs/{README,*.txt}
 %attr(750,root,wheel) %_bindir/nmap
 %_mandir/man1/nmap.1*
 %_datadir/nmap
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.95-owl2
+- Compressed CHANGELOG file.
+
 * Fri Jan 13 2006 Michail Litvak <mci-at-owl.openwall.com> 3.95-owl1
 - Updated to 3.95.
 - Updated patches.
