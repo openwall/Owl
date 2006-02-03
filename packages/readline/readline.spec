@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/readline/readline.spec,v 1.23 2005/11/16 13:31:51 solar Exp $
+# $Owl: Owl/packages/readline/readline.spec,v 1.24 2006/02/03 22:15:01 ldv Exp $
 
 %define compat_list 3 3.0 4.0 4.1 4.2
 
 Summary: A library for editing typed in command lines.
 Name: readline
 Version: 4.3
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Libraries
 Source: ftp://ftp.gnu.org/gnu/%name/%name-%version.tar.gz
@@ -53,6 +53,7 @@ command line interface for users.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+bzip2 -9k CHANGES
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -105,16 +106,16 @@ rm %buildroot%_infodir/dir
 
 %post
 /sbin/ldconfig
-/sbin/install-info %_infodir/history.info.gz %_infodir/dir
-/sbin/install-info %_infodir/readline.info.gz %_infodir/dir
+/sbin/install-info %_infodir/history.info %_infodir/dir
+/sbin/install-info %_infodir/readline.info %_infodir/dir
 
 %postun -p /sbin/ldconfig
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/history.info.gz \
+	/sbin/install-info --delete %_infodir/history.info \
 		%_infodir/dir
-	/sbin/install-info --delete %_infodir/readline.info.gz \
+	/sbin/install-info --delete %_infodir/readline.info \
 		%_infodir/dir
 fi
 
@@ -128,7 +129,7 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc CHANGELOG CHANGES README
+%doc CHANGES.bz2 README
 %_mandir/man*/*
 %_infodir/*.info*
 %_libdir/lib*.so.*
@@ -141,9 +142,13 @@ fi
 %_libdir/lib*.so
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.3-owl2
+- Compressed CHANGES file, dropped CHANGELOG file.
+- Corrected info files installation.
+
 * Wed Feb 18 2004 Michail Litvak <mci-at-owl.openwall.com> 4.3-owl1
 - 4.3
-- Added official patches, patches from Alt Linux Team,
+- Added official patches, patches from ALT Linux Team,
 dropped outdated patches.
 - Provide symlinks for compatibility with previous versions of readline.
 
