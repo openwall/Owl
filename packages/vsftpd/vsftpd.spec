@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/vsftpd/vsftpd.spec,v 1.20 2005/11/28 00:27:17 ldv Exp $
+# $Owl: Owl/packages/vsftpd/vsftpd.spec,v 1.21 2006/02/03 22:16:41 ldv Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
 Version: 2.0.3
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Daemons
 URL: http://vsftpd.beasts.org
@@ -37,6 +37,7 @@ program has been carefully designed to be resilient to attack.
 %patch3 -p1
 %patch4 -p1
 install -p -m 644 %_sourcedir/vsftpd.eps.gz .
+bzip2 -9 Changelog
 
 %build
 make CFLAGS="%optflags -Wall -W -Wshadow" LIBS="-lcap -lpam -lpam_userpass"
@@ -66,12 +67,12 @@ mkdir -m 755 /home/ftp &> /dev/null || :
 
 %files
 %defattr(-,root,root)
-%doc README FAQ LICENSE COPYING
+%doc COPYING FAQ LICENSE README
 %doc README.security REWARD SECURITY/
 %doc BENCHMARKS SPEED TUNING
 %doc BUGS TODO
 %doc EXAMPLE/
-%doc Changelog
+%doc Changelog.bz2
 %doc vsftpd.eps.gz
 /usr/sbin/vsftpd
 %config(noreplace) /etc/vsftpd.conf
@@ -83,6 +84,9 @@ mkdir -m 755 /home/ftp &> /dev/null || :
 %_mandir/man8/vsftpd.8*
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.0.3-owl2
+- Compressed Changelog file.
+
 * Sun Nov 27 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.0.3-owl1
 - Updated to 2.0.3.
 - Fixed the problem with timezone in chroot.
