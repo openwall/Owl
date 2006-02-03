@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.30 2005/11/22 09:40:09 mci Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.31 2006/02/03 22:11:11 ldv Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
 Version: 1.4.2
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Cryptography
 URL: http://www.gnupg.org
@@ -36,6 +36,7 @@ only IDEA for symmetric-key encryption, which is patented worldwide).
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+bzip2 -9k NEWS
 
 %build
 %configure \
@@ -69,7 +70,7 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS COPYING ChangeLog NEWS PROJECTS README THANKS TODO
+%doc AUTHORS COPYING NEWS.bz2 PROJECTS README THANKS TODO
 %doc doc/{DETAILS,FAQ,HACKING,OpenPGP,*.html}
 %doc tools/convert-from-106
 
@@ -93,6 +94,9 @@ fi
 %exclude %_infodir/dir
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.2-owl2
+- Dropped ChangeLog file, compressed NEWS file.
+
 * Sat Nov 19 2005 Michail Litvak <mci-at-owl.openwall.com> 1.4.2-owl1
 - 1.4.2
 - Imported patches from ALT, Red Hat, Debian.
@@ -108,7 +112,7 @@ using the ElGamal sign+encrypt (type 20) keys as well as to remove
 the option to create such keys.
 
 * Fri May 16 2003 Michail Litvak <mci-at-owl.openwall.com> 1.2.2-owl2
-- %dir %_datadir/gnupg
+- %%dir %_datadir/gnupg
 
 * Sun May 11 2003 Michail Litvak <mci-at-owl.openwall.com> 1.2.2-owl1
 - 1.2.2 (Fixed key validity bug)
