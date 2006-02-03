@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/ncurses/ncurses.spec,v 1.29 2005/11/16 13:21:53 solar Exp $
+# $Owl: Owl/packages/ncurses/ncurses.spec,v 1.30 2006/02/03 22:13:37 ldv Exp $
 
 %define major 5
 %define oldmajor 4
@@ -9,7 +9,7 @@
 Summary: A CRT screen handling and optimization package.
 Name: ncurses
 Version: 5.4
-Release: owl2
+Release: owl3
 License: distributable
 Group: System Environment/Libraries
 URL: http://dickey.his.com/ncurses/ncurses.html
@@ -57,12 +57,13 @@ built against Red Hat Linux 6.2.
 
 %prep
 %setup -q -n ncurses-%version
-rm -r $RPM_BUILD_DIR/%name-%version/doc/html/ada
+rm -r doc/html/ada
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch10 -p1
 %patch11 -p1
+bzip2 -9k NEWS
 
 %build
 export ac_cv_func_mkstemp=yes \
@@ -173,7 +174,7 @@ rm %buildroot%_datadir/terminfo/s/screen{,-bce,-s}
 %files
 %defattr(-,root,root)
 %attr(755,root,root) %_libdir/lib*.so.%{major}*
-%doc README NEWS TO-DO ANNOUNCE
+%doc ANNOUNCE NEWS.bz2 README TO-DO
 %doc doc/html/announce.html
 %if %BUILD_CXX
 %doc rpm-doc/c++
@@ -202,6 +203,9 @@ rm %buildroot%_datadir/terminfo/s/screen{,-bce,-s}
 %_libdir/lib*.so.%{oldmajor}*
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 5.4-owl3
+- Compressed NEWS file.
+
 * Fri May 14 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 5.4-owl2
 - Fixed inconsistency when dealing with compat symlinks.
 - Removed entries for the screen package from the database.
@@ -259,7 +263,7 @@ and had a race, anyway.
 - ncurses-5.2-20001104 patch which adds --with-ospeed and bugfixes.
 - --with-ospeed=speed_t for compatibility with libtermcap.
 - optflags_lib support.
-- %defattr(-,root,root) for the compat package.
+- %%defattr(-,root,root) for the compat package.
 
 * Mon Nov 06 2000 Solar Designer <solar-at-owl.openwall.com>
 - --disable-root-environ to enable the recent security fixes.
