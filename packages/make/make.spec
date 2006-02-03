@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/make/make.spec,v 1.13 2005/11/16 13:16:56 solar Exp $
+# $Owl: Owl/packages/make/make.spec,v 1.14 2006/02/03 22:31:15 ldv Exp $
 
 Summary: A GNU tool which simplifies the build process for users.
 Name: make
 Version: 3.80
-Release: owl2
+Release: owl3
 License: GPL
 Group: Development/Tools
 Source: ftp://ftp.gnu.org/gnu/make/make-%version.tar.bz2
@@ -36,12 +36,12 @@ ln -sf make %buildroot%_bindir/gmake
 rm %buildroot%_infodir/dir
 
 %post
-/sbin/install-info %_infodir/make.info.gz %_infodir/dir \
+/sbin/install-info %_infodir/make.info %_infodir/dir \
 	--entry="* GNU make: (make).                             The GNU make utility."
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/make.info.gz %_infodir/dir \
+	/sbin/install-info --delete %_infodir/make.info %_infodir/dir \
 		--entry="* GNU make: (make).                             The GNU make utility."
 fi
 
@@ -54,6 +54,9 @@ fi
 %_datadir/locale/*/LC_MESSAGES/make.mo
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.80-owl3
+- Corrected info files installation.
+
 * Sun Sep 26 2004 Solar Designer <solar-at-owl.openwall.com> 3.80-owl2
 - Do package locale files.
 

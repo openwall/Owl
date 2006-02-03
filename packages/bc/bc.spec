@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/bc/bc.spec,v 1.13 2005/11/16 12:19:20 solar Exp $
+# $Owl: Owl/packages/bc/bc.spec,v 1.14 2006/02/03 22:31:14 ldv Exp $
 
 Summary: GNU's bc (a numeric processing language) and dc (a calculator).
 Name: bc
 Version: 1.06
-Release: owl5
+Release: owl6
 License: GPL
 Group: Applications/Engineering
 Source: ftp://ftp.gnu.org/gnu/bc/bc-%version.tar.gz
@@ -39,13 +39,13 @@ rm -rf %buildroot
 %makeinstall
 
 %post
-/sbin/install-info %_infodir/bc.info.gz %_infodir/dir
-/sbin/install-info %_infodir/dc.info.gz %_infodir/dir
+/sbin/install-info %_infodir/bc.info %_infodir/dir
+/sbin/install-info %_infodir/dc.info %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/bc.info.gz %_infodir/dir
-	/sbin/install-info --delete %_infodir/dc.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/bc.info %_infodir/dir
+	/sbin/install-info --delete %_infodir/dc.info %_infodir/dir
 fi
 
 %files
@@ -57,6 +57,9 @@ fi
 %exclude %_infodir/dir
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.06-owl6
+- Corrected info files installation.
+
 * Sat Sep 11 2004 Solar Designer <solar-at-owl.openwall.com> 1.06-owl5
 - Use RPM's exclude macro on info dir file.
 

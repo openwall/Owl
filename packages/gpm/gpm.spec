@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gpm/gpm.spec,v 1.25 2005/11/16 13:09:47 solar Exp $
+# $Owl: Owl/packages/gpm/gpm.spec,v 1.26 2006/02/03 22:31:15 ldv Exp $
 
 # This defines the library version that this package builds.
 %define LIBVER 1.18.0
@@ -7,7 +7,7 @@
 Summary: A mouse server for the Linux console.
 Name: gpm
 Version: 1.19.6
-Release: owl5
+Release: owl6
 License: GPL
 Group: System Environment/Daemons
 Source0: ftp://arcana.linux.it/pub/gpm/%name-%version.tar.bz2
@@ -114,11 +114,11 @@ if [ -f /var/run/gpm.restart ]; then
 fi
 rm -f /var/run/gpm.restart
 /sbin/ldconfig
-/sbin/install-info %_infodir/gpm.info.gz %_infodir/dir
+/sbin/install-info %_infodir/gpm.info %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/gpm.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/gpm.info %_infodir/dir
 	/etc/rc.d/init.d/gpm stop || :
 	/sbin/chkconfig --del gpm
 fi
@@ -150,6 +150,9 @@ fi
 %endif
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.19.6-owl6
+- Corrected info files installation.
+
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.19.6-owl5
 - Added libgpm.so.1 to the list of packaged files since it's created
 by ldconfig anyway, but now we have a track where this file comes from.

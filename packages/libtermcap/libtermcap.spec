@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/libtermcap/libtermcap.spec,v 1.15 2005/11/16 13:11:15 solar Exp $
+# $Owl: Owl/packages/libtermcap/libtermcap.spec,v 1.16 2006/02/03 22:31:15 ldv Exp $
 
 Summary: A basic system library for accessing the termcap database.
 Name: libtermcap
 Version: 2.0.8
-Release: owl6
+Release: owl7
 License: LGPL
 Group: System Environment/Libraries
 Source: ftp://sunsite.unc.edu/pub/Linux/GCC/termcap-2.0.8.tar.gz
@@ -73,12 +73,12 @@ strip -R .comments --strip-unneeded lib/libtermcap.so.2.0.8
 %post -p /sbin/ldconfig
 
 %trigger -- info >= 3.12
-/sbin/install-info %_infodir/termcap.info.gz %_infodir/dir \
+/sbin/install-info %_infodir/termcap.info %_infodir/dir \
 	--entry="* Termcap: (termcap).                           The GNU termcap library."
 
 %postun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/termcap.info.gz %_infodir/dir \
+	/sbin/install-info --delete %_infodir/termcap.info %_infodir/dir \
 		--entry="* Termcap: (termcap).                           The GNU termcap library."
 fi
 /sbin/ldconfig
@@ -95,6 +95,9 @@ fi
 /usr/include/termcap.h
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.0.8-owl7
+- Corrected info files installation.
+
 * Fri Feb 27 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.0.8-owl6
 - Patched to compile properly under glibc 2.3.2
 

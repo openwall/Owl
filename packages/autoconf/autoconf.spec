@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/autoconf/autoconf.spec,v 1.13 2005/11/16 12:19:20 solar Exp $
+# $Owl: Owl/packages/autoconf/autoconf.spec,v 1.14 2006/02/03 22:31:14 ldv Exp $
 
 Summary: A GNU tool for automatically configuring source code.
 Name: autoconf
 Version: 2.59
-Release: owl1
+Release: owl2
 License: GPL
 Group: Development/Tools
 Source: ftp://ftp.gnu.org/gnu/autoconf/autoconf-%version.tar.bz2
@@ -47,11 +47,11 @@ rm %buildroot%_infodir/standards*
 rm %buildroot%_infodir/dir
 
 %post
-/sbin/install-info %_infodir/autoconf.info.gz %_infodir/dir
+/sbin/install-info %_infodir/autoconf.info %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/autoconf.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/autoconf.info %_infodir/dir
 fi
 
 %files
@@ -62,6 +62,9 @@ fi
 %_mandir/man1/*
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.59-owl2
+- Corrected info files installation.
+
 * Sat Sep 11 2004 Solar Designer <solar-at-owl.openwall.com> 2.59-owl1
 - Make it official, and do not use RPM's exclude macro on info dir file just
 yet to avoid introducing additional chicken-egg problems.

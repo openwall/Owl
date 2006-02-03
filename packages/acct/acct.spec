@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/acct/acct.spec,v 1.29 2005/11/16 12:19:20 solar Exp $
+# $Owl: Owl/packages/acct/acct.spec,v 1.30 2006/02/03 22:31:14 ldv Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
 Version: 6.3.5
-Release: owl14
+Release: owl15
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.red-bean.com/pub/noel/%name-%version.tar.gz
@@ -77,7 +77,7 @@ if grep -q '^* accounting: (psacct)' $INFODIRFILE; then
 	mv $INFODIRFILE.rpmtmp $INFODIRFILE
 fi
 
-/sbin/install-info %_infodir/accounting.info.gz %_infodir/dir \
+/sbin/install-info %_infodir/accounting.info %_infodir/dir \
 	--entry="* accounting: (accounting).                     The GNU Process Accounting Suite."
 
 for f in %_var/account/{pacct,usracct,savacct}; do
@@ -89,7 +89,7 @@ done
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/accounting.info.gz %_infodir/dir \
+	/sbin/install-info --delete %_infodir/accounting.info %_infodir/dir \
 		--entry="* accounting: (accounting).                     The GNU Process Accounting Suite."
 fi
 
@@ -107,6 +107,9 @@ fi
 %_infodir/*
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 6.3.5-owl15
+- Corrected info files installation.
+
 * Wed Jan 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.3.5-owl14
 - /var/account is owned by owl-hier and uses more restrictive permissions,
 so I've removed it from this package.
@@ -153,7 +156,7 @@ so I've removed it from this package.
 - spec cleanups
 - acct.logrotate and acct.init was rewritten
 - Obsoletes: psacct
-- Use %ghost for /var/account/*
+- Use %%ghost for /var/account/*
 
 * Mon Apr 02 2001 Michail Litvak <mci-at-owl.openwall.com>
 - Imported spec from RH (some parts from Mandrake)

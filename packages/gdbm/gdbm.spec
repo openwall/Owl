@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/gdbm/gdbm.spec,v 1.15 2005/11/16 13:09:46 solar Exp $
+# $Owl: Owl/packages/gdbm/gdbm.spec,v 1.16 2006/02/03 22:31:15 ldv Exp $
 
 Summary: A GNU set of database routines which use extensible hashing.
 Name: gdbm
 Version: 1.8.0
-Release: owl10
+Release: owl11
 License: GPL
 Group: System Environment/Libraries
 Source: ftp://ftp.gnu.org/gnu/gdbm/gdbm-%version.tar.gz
@@ -67,12 +67,12 @@ rm -f %buildroot%_libdir/*.la
 %postun -p /sbin/ldconfig
 
 %post devel
-/sbin/install-info %_infodir/gdbm.info.gz %_infodir/dir \
+/sbin/install-info %_infodir/gdbm.info %_infodir/dir \
 	--entry="* gdbm: (gdbm).                                 The GNU Database."
 
 %preun devel
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/gdbm.info.gz %_infodir/dir \
+	/sbin/install-info --delete %_infodir/gdbm.info %_infodir/dir \
 		--entry="* gdbm: (gdbm).                                 The GNU Database."
 fi
 
@@ -91,6 +91,9 @@ fi
 %_mandir/man3/*
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.8.0-owl11
+- Corrected info files installation.
+
 * Fri Sep 23 2005 Michail Litvak <mci-at-owl.openwall.com> 1.8.0-owl10
 - Don't package .la files.
 

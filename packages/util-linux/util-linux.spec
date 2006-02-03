@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.43 2006/01/09 18:34:56 ldv Exp $
+# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.44 2006/02/03 22:31:15 ldv Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -7,7 +7,7 @@
 Summary: A collection of basic system utilities.
 Name: util-linux
 Version: 2.11z
-Release: owl9
+Release: owl10
 License: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%version.tar.bz2
@@ -144,12 +144,12 @@ if [ $1 -ge 2 ]; then
 else
 	%_sbindir/control write public
 fi
-/sbin/install-info %_infodir/ipc.info.gz %_infodir/dir \
+/sbin/install-info %_infodir/ipc.info %_infodir/dir \
 	--entry="* ipc: (ipc).                                   System V IPC."
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/ipc.info.gz %_infodir/dir \
+	/sbin/install-info --delete %_infodir/ipc.info %_infodir/dir \
 		--entry="* ipc: (ipc).                                   System V IPC."
 fi
 
@@ -347,6 +347,9 @@ fi
 %endif
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.11z-owl10
+- Corrected info files installation.
+
 * Mon Jan 09 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.11z-owl9
 - Added support for build with linux 2.6.x headers.
 

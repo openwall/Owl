@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/gawk/gawk.spec,v 1.15 2005/11/16 13:09:46 solar Exp $
+# $Owl: Owl/packages/gawk/gawk.spec,v 1.16 2006/02/03 22:31:15 ldv Exp $
 
 %define BUILD_PROFILE 0
 
 Summary: The GNU version of the awk text processing utility.
 Name: gawk
 Version: 3.1.1
-Release: owl3
+Release: owl4
 License: GPL
 Group: Applications/Text
 Source0: ftp://ftp.gnu.org/gnu/gawk/gawk-%version.tar.gz
@@ -73,11 +73,11 @@ rm %buildroot%_bindir/pgawk
 rm %buildroot%_infodir/gawkinet.info*
 
 %post
-/sbin/install-info %_infodir/gawk.info.gz %_infodir/dir
+/sbin/install-info %_infodir/gawk.info %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/gawk.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/gawk.info %_infodir/dir
 fi
 
 %files
@@ -102,6 +102,9 @@ fi
 %endif
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.1-owl4
+- Corrected info files installation.
+
 * Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 3.1.1-owl3
 - Deal with info dir entries such that the menu looks pretty.
 

@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/ed/ed.spec,v 1.19 2005/11/16 12:21:36 solar Exp $
+# $Owl: Owl/packages/ed/ed.spec,v 1.20 2006/02/03 22:31:14 ldv Exp $
 
 Summary: The GNU line editor.
 Name: ed
 Version: 0.2
-Release: owl22
+Release: owl23
 License: GPL
 Group: Applications/Text
 Source: ftp://ftp.gnu.org/gnu/%name-%version.tar.gz
@@ -42,12 +42,12 @@ make LDFLAGS=-s
 %makeinstall bindir=%buildroot/bin mandir=%buildroot%_mandir/man1
 
 %post
-/sbin/install-info %_infodir/ed.info.gz %_infodir/dir \
+/sbin/install-info %_infodir/ed.info %_infodir/dir \
 	--entry="* ed: (ed).                                     The GNU Line Editor."
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/ed.info.gz %_infodir/dir \
+	/sbin/install-info --delete %_infodir/ed.info %_infodir/dir \
 		--entry="* ed: (ed).                                     The GNU Line Editor."
 fi
 
@@ -59,6 +59,9 @@ fi
 %_mandir/*/*
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.2-owl23
+- Corrected info files installation.
+
 * Wed Feb 25 2004 Michail Litvak <mci-at-owl.openwall.com> 0.2-owl22
 - Fixed building with new auto* tools.
 
