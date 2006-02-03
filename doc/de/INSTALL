@@ -1,11 +1,7 @@
-Die folgenden Installationsanweisungen gelten für Owl-current snapshots, die
-nach dem 08.08.2005 erstellt wurden.  Für ältere Versionen (wie zum Beispiel
-1.1), sollte die Owl/doc/INSTALL Datei zur Rate gezogen werden.  Diese Datei
-ist im "native" Verzeichnis der entsprechenden Version vorhanden
-(/usr/src/world/native/Owl/doc/INSTALL auf unseren CDs).
-
-Die Installation von Owl ist im Moment noch etwas komplizierter, als wir es uns
-wünschen.  Dies wird sich mit zukünftigen Releases ändern.
+Die folgenden Installationsanweisungen gelten für Owl 2.0 und neuere Versionen.
+Für ältere Versionen sollte die Owl/doc/INSTALL Datei zur Rate gezogen werden.
+Diese Datei ist im "native" Verzeichnis der entsprechenden Version vorhanden
+(/usr/src/world/native/Owl*/doc/INSTALL auf unseren CDs).
 
 Momentan gibt es zwei Wege um Owl zu installieren; von der Owl-CD booten
 oder eine existierende Linux Installation benutzen.
@@ -27,8 +23,7 @@ soll.  Wird ein IDE CD-ROM verwendet muss hier der richtige IDE Controller
 und die richtige Anschlussart (Master oder Slave) gewählt werden.  Bei
 einem SCSI CD-ROM wählt man "scsi".
 
-Owl sollte dann in den single-user Modus booten.  Das root Passwort ist bei den
-CDs nicht gesetzt, man kann einfach Enter drücken.  Von der Shell aus kann man
+Owl sollte dann in den single-user Modus booten.  Von der Shell aus kann man
 das von der CD gebootete System durch Eingabe von
 
 	setup
@@ -102,4 +97,4 @@ bereits installierten (falls vorhanden) verwenden.
 Nach Abschluss der Installation müssen die Dateisysteme noch manuell mittels
 umount(8) ausgehängt werden.  Danach kann das System sicher neugestartet werden.
 
-$Owl: Owl/doc/de/INSTALL,v 1.15 2006/01/02 10:26:38 schmidt Exp $
+$Owl: Owl/doc/de/INSTALL,v 1.16 2006/02/03 08:53:27 schmidt Exp $

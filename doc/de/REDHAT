@@ -1,3 +1,7 @@
+In den meisten Fällen ist es möglich Pakete, die für Fedora Core oder Red Hat
+Enterprise Linux erstellen wurden unter Owl zu installieren.  Für Owl 2.0
+trifft das auf FC3 und RHEL4 zu.
+
 In dieser Datei werden Probleme beschrieben, die Auftauchen können,
 wenn man Pakete von Red Hat Linux (Fedora Core, Red Hat Enterprise Linux)
 mit Owl verwendet.  Die Namen der betroffenen Red Hat Linux Pakete,
@@ -60,6 +64,13 @@ Nun müssen noch alle User, die X benutzen wollen, in /etc/xserver.allow
 eingetragen werden.
 
 
+	Fehlendes pam_stack Modul.
+
+Wegen des "include" Befehls ist das pam_stack Module standardmässig nicht
+installiert.  Das veraltete Modul wird von Owl in dem Paket pam-compat bereit
+gestellt, wird aber nicht automatisch installiert.
+
+
 	Passwort überprüfung (xlockmore, xscreensaver).
 
 Die Helferprogramme für die PAM Module, die das eigene Passwort des
@@ -72,6 +83,23 @@ aus dem Paket xlockmore stammt.  Um das unter Owl zum Laufen zu be-
 kommen muss es SGID für die Gruppe chkpwd gemacht werden:
 
 -rwx--s--x    1 root     chkpwd     751328 Mar 30  2001 /usr/X11R6/bin/xlock
+
+
+	Kein libperl.so (exim, gaim, inn, mod_perl, postgresql-pl, xchat).
+
+Das Perl Paket von Owl stellt die libperl.so library nicht zur Verfügung.  Um
+das zu beheben, sollten alle Pakete die gegen die libperl.so gelinkt werden,
+neu übersetzt werden.
+
+
+	Das Perl Paket von Owl ist nicht vollständig mit dem von Red Hat
+	kompatibel.
+	(crypto-utils, foomatic, newt-perl, perl-Net-DNS, perl-XML-LibXML,
+	perl-XML-SAX, spamassassin, subversion-perl).
+
+Einige Pakete von Red Hat Linux legen ihre Perl spezifischen Dateien in
+Unterverzeichnissen ab, die nach der installierten Perl-Version benannt sind.
+Die Pakete müssen unter Owl neu übersetzt werden.
 
 
 	Kein rpm-python Paket (rpm-python).
@@ -108,4 +136,4 @@ Ein uns bekanntes Problem liegt in den Sourcen zu den aktuellsten Versionen
 von RPM (neuer als die, die in PHL 9 verwendet werden) die NPTL verwenden.
 Diese Abhängigkeit ist in unserer Version von RPM gelöst.
 
-$Owl: Owl/doc/de/REDHAT,v 1.4 2006/01/02 10:26:38 schmidt Exp $
+$Owl: Owl/doc/de/REDHAT,v 1.5 2006/02/03 08:53:27 schmidt Exp $

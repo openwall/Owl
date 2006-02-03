@@ -124,6 +124,6 @@ Zielen kollidiert, versucht Owl Binär- und Paketkompatibel mit
 diversen grossen GNU/*/Linux Distributionen zu sein.  In den meisten
 Fällen ist es möglich eine Applikation, die für eine aktuelle Version
 von Fedora Core oder Red Hat Enterprise Linux erstellt worden ist, auf
-Owl zu installieren.
+Owl zu installieren (für Owl 2.0 trifft das auf FC3 und RHEL4 zu).
 
-$Owl: Owl/doc/de/CONCEPTS,v 1.8 2005/11/16 11:59:01 solar Exp $
+$Owl: Owl/doc/de/CONCEPTS,v 1.9 2006/02/03 08:53:27 schmidt Exp $
