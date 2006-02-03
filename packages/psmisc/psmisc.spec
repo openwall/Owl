@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/psmisc/psmisc.spec,v 1.15 2005/11/16 13:28:58 solar Exp $
+# $Owl: Owl/packages/psmisc/psmisc.spec,v 1.16 2006/02/03 22:02:15 ldv Exp $
 
 Summary: Utilities for managing processes on your system.
 Name: psmisc
 Version: 21.5
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/System
 URL: http://psmisc.sourceforge.net
@@ -25,6 +25,7 @@ of processes that are using specified files or filesystems.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+bzip2 -9k ChangeLog
 
 %build
 %configure --disable-rpath
@@ -42,7 +43,7 @@ mv .%_bindir/fuser sbin/
 
 %files -f %name.lang
 %defattr(-,root,root)
-%doc ChangeLog COPYING README AUTHORS
+%doc AUTHORS COPYING ChangeLog.bz2 README
 /sbin/fuser
 %_bindir/killall
 %_bindir/pstree*
@@ -51,6 +52,9 @@ mv .%_bindir/fuser sbin/
 %_mandir/man1/pstree.1*
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 21.5-owl3
+- Compressed ChangeLog file.
+
 * Fri Apr 08 2005 Solar Designer <solar-at-owl.openwall.com> 21.5-owl2
 - Updated the License tag - this code is now GPL'ed.
 

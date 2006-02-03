@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/modutils/modutils.spec,v 1.24 2005/11/16 13:16:56 solar Exp $
+# $Owl: Owl/packages/modutils/modutils.spec,v 1.25 2006/02/03 22:02:14 ldv Exp $
 
 Summary: Kernel module utilities.
 Name: modutils
 Version: 2.4.27
-Release: owl2
+Release: owl3
 License: GPL
 Group: System Environment/Kernel
 Source0: ftp://ftp.kernel.org/pub/linux/utils/kernel/modutils/v2.4/modutils-%version.tar.bz2
@@ -58,6 +58,7 @@ pushd module-init-tools
 popd # module-init-tools
 %patch14 -p1
 %patch15 -p1
+bzip2 -9k ChangeLog
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -93,11 +94,14 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc README CREDITS TODO ChangeLog example/kallsyms.c include/kallsyms.h
+%doc CREDITS ChangeLog.bz2 README TODO example/kallsyms.c include/kallsyms.h
 /sbin/*
 %_mandir/*/*
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.4.27-owl3
+- Compressed ChangeLog file.
+
 * Wed Oct 26 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.4.27-owl2
 - Imported a bunch of patches from ALT's modutils-2.4.27-alt4 package,
 including integrated module-init-tools for kernel 2.6.x support.

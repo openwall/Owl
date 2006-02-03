@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/ltrace/ltrace.spec,v 1.22 2005/12/22 02:20:02 solar Exp $
+# $Owl: Owl/packages/ltrace/ltrace.spec,v 1.23 2006/02/03 22:02:14 ldv Exp $
 
 Summary: Tracks runtime library calls from dynamically linked executables.
 Name: ltrace
 Version: 0.3.36
-Release: owl1
+Release: owl2
 License: GPL
 Group: Development/Debuggers
 Source: ftp://ftp.debian.org/debian/pool/main/l/ltrace/ltrace_%version.orig.tar.gz
@@ -25,6 +25,7 @@ intercept and print system calls invoked by the process.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+bzip2 -9k ChangeLog
 
 %build
 %configure
@@ -36,12 +37,15 @@ rm -rf %buildroot%_prefix/doc
 
 %files
 %defattr(-,root,root)
-%doc COPYING README TODO BUGS ChangeLog
+%doc BUGS COPYING ChangeLog.bz2 README TODO
 %_prefix/bin/ltrace
 %_mandir/man1/ltrace.1*
 %config /etc/ltrace.conf
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.3.36-owl2
+- Compressed ChangeLog file.
+
 * Mon Jun 13 2005 Michail Litvak <mci-at-owl.openwall.com> 0.3.36-owl1
 - 0.3.36
 - Dropped outdated patches, imported -no-root-install patch from ALT.

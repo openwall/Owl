@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/patchutils/patchutils.spec,v 1.6 2005/11/16 13:28:58 solar Exp $
+# $Owl: Owl/packages/patchutils/patchutils.spec,v 1.7 2006/02/03 22:02:15 ldv Exp $
 
 Summary: Patchutils is a small collection of programs that operate on patch files.
 Name: patchutils
 Version: 0.2.30
-Release: owl4
+Release: owl5
 License: GPL
 Group: Applications/Text
 URL: http://cyberelk.net/tim/%name/
@@ -39,6 +39,7 @@ This version contains:
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+bzip2 -9k ChangeLog
 
 %build
 %configure
@@ -50,11 +51,14 @@ rm -rf %buildroot
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS ChangeLog README COPYING BUGS NEWS
+%doc AUTHORS BUGS COPYING ChangeLog.bz2 NEWS README
 %_bindir/*
 %_mandir/*/*
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.2.30-owl5
+- Compressed ChangeLog file.
+
 * Tue Apr 26 2005 Solar Designer <solar-at-owl.openwall.com> 0.2.30-owl4
 - Dropped the currently unneeded invocations of autoconf, aclocal, automake
 to make the package build with the new automake installed on the system.

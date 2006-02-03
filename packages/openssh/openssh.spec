@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openssh/openssh.spec,v 1.88 2005/11/16 13:21:53 solar Exp $
+# $Owl: Owl/packages/openssh/openssh.spec,v 1.89 2006/02/03 22:02:14 ldv Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl16
+Release: owl17
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -125,6 +125,7 @@ rm -r autom4te.cache
 %patch17 -p1
 %patch18 -p1
 %patch19 -p1
+bzip2 -9k ChangeLog
 
 %{expand:%%define _sysconfdir %_sysconfdir/ssh}
 %{expand:%%define _datadir %_datadir/ssh}
@@ -200,7 +201,7 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc README CREDITS LICENCE ChangeLog
+%doc CREDITS ChangeLog.bz2 LICENCE README
 %attr(0755,root,root) %_bindir/scp
 %attr(0755,root,root) %_bindir/ssh-keygen
 %attr(0644,root,root) %_mandir/man1/scp.1*
@@ -241,6 +242,9 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.6.1p2-owl17
+- Compressed ChangeLog file.
+
 * Sat Oct 29 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.6.1p2-owl16
 - Changed PAM config file to include system-auth for PAM account,
 password and session management.

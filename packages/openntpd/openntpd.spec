@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openntpd/openntpd.spec,v 1.11 2006/01/18 12:54:03 solar Exp $
+# $Owl: Owl/packages/openntpd/openntpd.spec,v 1.12 2006/02/03 22:02:14 ldv Exp $
 
 Summary: NTP time synchronization server and client.
 Name: openntpd
 Version: 3.7p1
-Release: owl3
+Release: owl4
 License: BSD License
 Group: System Environment/Daemons
 URL: http://www.openntpd.org
@@ -36,6 +36,7 @@ described in RFC 1305.
 %setup -q
 %patch0 -p1
 %patch1 -p3
+bzip2 -9k ChangeLog
 
 %build
 autoreconf -f
@@ -93,7 +94,7 @@ fi
 
 %files
 %defattr(-,root,root,0755)
-%doc ChangeLog CREDITS README LICENCE
+%doc CREDITS ChangeLog.bz2 LICENCE README
 %config(noreplace) %_sysconfdir/ntpd.conf
 %config %_sysconfdir/init.d/ntpd
 %_sysconfdir/control.d/facilities/ntpd
@@ -101,6 +102,9 @@ fi
 %_mandir/man?/*
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.7p1-owl4
+- Compressed ChangeLog file.
+
 * Wed Jan 18 2006 Solar Designer <solar-at-owl.openwall.com> 3.7p1-owl3
 - Back-ported a fix from the OpenBSD CVS to skip address-less interfaces
 with "listen on *"; thanks to Bernhard Fischer for reporting this to us.
