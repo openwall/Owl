@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.33 2005/12/20 18:22:43 solar Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.34 2006/02/03 22:09:35 ldv Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -13,7 +13,7 @@
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
 Version: 1.37
-Release: owl2
+Release: owl3
 License: GPL
 Group: System Environment/Base
 Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
@@ -44,7 +44,7 @@ filesystem utilities.
 Summary: Ext2 filesystem-specific static libraries and headers.
 Group: Development/Libraries
 PreReq: /sbin/install-info
-Requires: e2fsprogs
+Requires: e2fsprogs = %version-%release
 
 %description devel
 e2fsprogs-devel contains the libraries and header files needed to
@@ -57,6 +57,7 @@ chmod -R u+w .
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+bzip2 -9k ChangeLog RELEASE-NOTES
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -108,16 +109,16 @@ chmod 0644 %buildroot%_libdir/*.a
 %postun -p /sbin/ldconfig
 
 %post devel
-/sbin/install-info %_infodir/libext2fs.info.gz %_infodir/dir
+/sbin/install-info %_infodir/libext2fs.info %_infodir/dir
 
 %postun devel
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/libext2fs.info.gz %_infodir/dir
+	/sbin/install-info --delete %_infodir/libext2fs.info %_infodir/dir
 fi
 
 %files -f %name.lang
 %defattr(-,root,root)
-%doc README RELEASE-NOTES ChangeLog
+%doc ChangeLog.bz2 README RELEASE-NOTES.bz2
 
 /sbin/badblocks
 /sbin/blkid
@@ -227,6 +228,10 @@ fi
 %_mandir/man3/uuid_unparse.3*
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.37-owl3
+- Compressed ChangeLog and RELEASE-NOTES files.
+- Corrected info files installation.
+
 * Sun Sep 04 2005 Solar Designer <solar-at-owl.openwall.com> 1.37-owl2
 - Corrected grammar in the error message fsck outputs on conflicting options.
 
