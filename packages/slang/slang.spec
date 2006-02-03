@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/slang/Attic/slang.spec,v 1.18 2005/11/16 13:31:52 solar Exp $
+# $Owl: Owl/packages/slang/Attic/slang.spec,v 1.19 2006/02/03 22:16:18 ldv Exp $
 
 Summary: The shared library for the S-Lang extension language.
 Name: slang
 Version: 1.4.6
-Release: owl6
+Release: owl7
 License: GPL
 Group: System Environment/Libraries
 URL: http://www.s-lang.org
@@ -56,6 +56,8 @@ mkdir -p %buildroot/usr/include/slang
 	install_lib_dir=%buildroot%_libdir \
 	install_include_dir=%buildroot%_includedir/slang install-elf
 
+bzip2 -9 doc/text/*.txt
+
 # XXX: (GM): We have to create this link, but we need to find more robust
 #            way to do it.
 ln -s lib%name.so.%version %buildroot%_libdir/lib%name.so.1
@@ -89,6 +91,9 @@ rm %buildroot/usr/doc/slang/slangfun.txt
 %_includedir/slang
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.6-owl7
+- Compressed text documentation.
+
 * Tue Jun 28 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.6-owl6
 - Build this package without optimizations based on strict aliasing rules.
 
