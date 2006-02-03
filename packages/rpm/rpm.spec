@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.66 2005/12/24 17:02:44 ldv Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.67 2006/02/03 22:15:30 ldv Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -11,7 +11,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl13
+Release: owl14
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -169,6 +169,8 @@ rm -r tests
 %patch33 -p1
 %patch34 -p1
 %patch35 -p0
+
+bzip2 -9k CHANGES
 
 # Replace gendiff with our implementation
 install -p -m 755 %_sourcedir/gendiff .
@@ -381,7 +383,7 @@ fi
 
 %files -f platforms.list
 %defattr(-,root,root)
-%doc RPM-PGP-KEY RPM-GPG-KEY CHANGES GROUPS doc/manual/*
+%doc CHANGES.bz2 GROUPS RPM-GPG-KEY RPM-PGP-KEY doc/manual/*
 /bin/rpm
 %dir %__sysconfdir/rpm
 %__bindir/gendiff
@@ -481,6 +483,9 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl14
+- Compressed CHANGES file.
+
 * Sat Dec 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl13
 - Corrected build to generate proper values for %%_host, %%_host_alias,
 %%_host_cpu and %%_host_vendor macros.
