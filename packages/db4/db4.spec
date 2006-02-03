@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/db4/db4.spec,v 1.14 2005/12/24 22:17:06 ldv Exp $
+# $Owl: Owl/packages/db4/db4.spec,v 1.15 2006/02/03 22:10:50 ldv Exp $
 
 %define __soversion	4.2
 %define _libdb_a	libdb-%__soversion.a
@@ -9,7 +9,7 @@
 Summary: The Berkeley DB database library (version 4) for C.
 Name: db4
 Version: 4.2.52
-Release: owl1
+Release: owl2
 License: Sleepycat
 Group: System Environment/Libraries
 URL: http://www.sleepycat.com
@@ -122,6 +122,10 @@ mkdir -p %buildroot{/lib,%_libdir,%_includedir/db4}
 
 pushd %buildroot
 
+# Compress Postscript documentation.
+gzip -9 .%docdir/ref/refs/*.ps
+sed -i 's/usenix\.ps/&.gz/g' .%docdir/ref/refs/refs.html
+
 # Allow owner to modify to make our brp-scripts happy
 chmod -R u+w .{%_bindir,%_libdir}
 
@@ -194,6 +198,9 @@ rm %buildroot%_libdir/*.la
 %files compat-fake
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2.52-owl2
+- Compressed Postscript documentation.
+
 * Wed Dec 21 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2.52-owl1
 - Updated to 4.2.52.
 - Linked libdb_cxx shared library dynamically with libgcc_s and libstdc++.

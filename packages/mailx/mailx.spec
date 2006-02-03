@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/mailx/mailx.spec,v 1.9 2005/11/16 13:16:56 solar Exp $
+# $Owl: Owl/packages/mailx/mailx.spec,v 1.10 2006/02/03 22:13:16 ldv Exp $
 
 Summary: The /bin/mail program for sending e-mail messages.
 Name: mailx
 Version: 8.1.1.2.7
-Release: owl2
+Release: owl3
 License: BSD
 Group: Applications/Internet
 Source: mailx-%version.tar.gz
@@ -23,6 +23,7 @@ e-mail messages.  It is often used in shell scripts.
 cd usr.bin/mail
 make CFLAGS="%optflags -c -Wall -Dlint"
 make -C USD.doc
+gzip -9 USD.doc/USD.ps
 
 %install
 rm -rf %buildroot
@@ -35,9 +36,12 @@ make -C usr.bin/mail install DESTDIR=%buildroot MANDIR=%_mandir
 %config(noreplace) /etc/mail.rc
 /usr/share/misc/*
 %_mandir/man1/mail.1.*
-%doc usr.bin/mail/USD.doc/USD.ps
+%doc usr.bin/mail/USD.doc/USD.ps.gz
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 8.1.1.2.7-owl3
+- Compressed Postscript documentation.
+
 * Thu Feb 12 2004 Michail Litvak <mci-at-owl.openwall.com> 8.1.1.2.7-owl2
 - Use RPM macros instead of explicit paths.
 
