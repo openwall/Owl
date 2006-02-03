@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.101 2006/01/02 19:24:49 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.102 2006/02/03 12:09:37 ldv Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -11,7 +11,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 1.0
-Release: owl3
+Release: owl4
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/%name/
@@ -432,8 +432,8 @@ fi
 %doc crypt/README.ufc-crypt
 %config(noreplace) %verify(not size md5 mtime) /etc/localtime
 %ghost %config(noreplace) /etc/ld.so.cache
-%config /etc/ld.so.conf
-%config %dir /etc/ld.so.conf.d
+%config(noreplace) /etc/ld.so.conf
+%dir /etc/ld.so.conf.d
 %ghost %config(noreplace) %_libdir/gconv/gconv-modules.cache
 %config(noreplace) /etc/rpc
 # XXX
@@ -457,6 +457,9 @@ fi
 %files compat-fake
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3.6-owl4
+- Marked /etc/ld.so.conf with %%config(noreplace) flag.
+
 * Mon Jan 02 2006 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl3
 - Corrected a bug in the way salts for extended DES-based and for MD5-based
 hashes are generated; thanks to Marko Kreen for discovering this.
