@@ -1,6 +1,6 @@
 // +-------------------------------------------------------------------------+
-// |                     IP4areas library vers. 0.3.0                        |
-// | Copyright (c) Andrey Vikt. Stolyarov <crocodil_AT_croco.net>  2002-2005 |
+// |                     IP4areas library vers. 0.3.1                        |
+// | Copyright (c) Andrey Vikt. Stolyarov <crocodil_AT_croco.net>  2002-2006 |
 // | ----------------------------------------------------------------------- |
 // | This is free software.  Permission is granted to everyone to use, copy  |
 // |        or modify this software under the terms and conditions of        |

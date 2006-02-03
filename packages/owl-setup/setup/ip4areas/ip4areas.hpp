@@ -1,6 +1,6 @@
 // +-------------------------------------------------------------------------+
-// |                     IP4areas library vers. 0.3.0                        |
-// | Copyright (c) Andrey Vikt. Stolyarov <crocodil_AT_croco.net>  2002-2005 |
+// |                     IP4areas library vers. 0.3.1                        |
+// | Copyright (c) Andrey Vikt. Stolyarov <crocodil_AT_croco.net>  2002-2006 |
 // | ----------------------------------------------------------------------- |
 // | This is free software.  Permission is granted to everyone to use, copy  |
 // |        or modify this software under the terms and conditions of        |
@@ -16,16 +16,18 @@
 
 
 
-#ifndef IPARYTHM_HPP_SENTRY
-#define IPARYTHM_HPP_SENTRY
+#ifndef IP4AREAS_HPP_SENTRY
+#define IP4AREAS_HPP_SENTRY
 
+
+typedef unsigned int ip4addr_t;
 
 class IP4IpAddress {
-    unsigned long addr; //!< The address is stored in the host byte order
+    ip4addr_t addr; //!< The address is stored in the host byte order
 public:
     IP4IpAddress(); /* creates invalid ip address (0xf...f) */
     IP4IpAddress(const char* a_addr, int preflength = 32);
-    IP4IpAddress(unsigned long hostorderformaddr);
+    IP4IpAddress(ip4addr_t hostorderformaddr);
     IP4IpAddress(const IP4IpAddress &other, int preflength);
     IP4IpAddress(const IP4IpAddress &other);
     ~IP4IpAddress();
@@ -40,7 +42,7 @@ public:
     void operator =(const IP4IpAddress &other);
 
     const char* TextForm() const;
-    unsigned long HostByteOrderForm() const { return addr; }
+    ip4addr_t HostByteOrderForm() const { return addr; }
 };
 
 class IP4Mask {
@@ -54,7 +56,7 @@ public:
 
     bool IsInvalid() const;
     int Length() const;
-    unsigned long BitMask() const;
+    ip4addr_t BitMask() const;
     int HostCount() const;
 
     bool operator ==(const IP4Mask &other) const;

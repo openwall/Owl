@@ -1,6 +1,6 @@
 // +-------------------------------------------------------------------------+
-// |                     IP4areas library vers. 0.3.0                        |
-// | Copyright (c) Andrey Vikt. Stolyarov <crocodil_AT_croco.net>  2002-2005 |
+// |                     IP4areas library vers. 0.3.1                        |
+// | Copyright (c) Andrey Vikt. Stolyarov <crocodil_AT_croco.net>  2002-2006 |
 // | ----------------------------------------------------------------------- |
 // | This is free software.  Permission is granted to everyone to use, copy  |
 // |        or modify this software under the terms and conditions of        |
@@ -36,13 +36,13 @@ int main ()  {
         TEST_TRUE("equality", (*a1 == *a3));
         TEST_TRUE("non-equality", (!(*a1 == *a2)));
         TEST_TRUE("valid1", ! a1->IsInvalid());
-        TEST_TRUE("valid2", ! a2->IsInvalid());
-        TEST_TRUE("valid3", ! a3->IsInvalid());
-        TEST_TRUE("invalid1", a4->IsInvalid());
+        TEST_TRUE("valid2", ! a2->IsInvalid()); 
+        TEST_TRUE("valid3", ! a3->IsInvalid()); 
+        TEST_TRUE("invalid1", a4->IsInvalid()); 
 #ifndef __sun__
-        TEST_TRUE("invalid2", a5->IsInvalid());
+        TEST_TRUE("invalid2", a5->IsInvalid()); 
 #endif
-        TEST_TRUE("invalid3", a6->IsInvalid());
+        TEST_TRUE("invalid3", a6->IsInvalid()); 
         TEST_TRUE("textform", a1->TextForm() == string("1.2.3.4"));
         TEST_TRUE("less", *a1 < *a2);
         TEST_TRUE("no-less", !(*a2 < *a1));
@@ -55,7 +55,7 @@ int main ()  {
         delete a1;
     }
     TESTING_CLASS("IP4Mask");
-    {
+    { 
         IP4Mask m1("255.255.255.240");
         IP4Mask m2("/27");
         IP4Mask m3(26);
@@ -98,7 +98,7 @@ int main ()  {
         IP4Subnet s13("195.42.160.1"); // valid
         IP4Subnet s14("195.42.160.1/33"); // invalid
         IP4Subnet s15("195,42.160.1/33"); // invalid
-
+        
         TEST_TRUE("addr/24", s1.GetPrefix() == IP4IpAddress("194.87.251.0"));
         TEST_TRUE("mask/24", s1.GetMask() == IP4Mask(24));
         TEST_INTEGER("subnet_hostcount", s1.HostCount(), 256);
@@ -135,17 +135,17 @@ int main ()  {
     {
         IP4Area a1;
         TEST_TRUE("empty", a1.SubnetsCount() == 0);
-
+        
         IP4Area a2;
         a2 += IP4Subnet("10.0.1.16/29");
         a2 += IP4Subnet("10.2.0.24/29");
         TEST_INTEGER("adding", a2.SubnetsCount(), 2);
-
+        
         IP4Area a3;
         a3 += IP4Subnet("10.0.0.16/29");
         a3 += IP4Subnet("10.0.0.24/29");
         TEST_TRUE("complementary", a3.SubnetsCount() == 1);
-
+        
         IP4Area a4;
         a4 += IP4Subnet("10.0.2.0/24");
         a4 += IP4Subnet("10.0.3.128/25");  // 128 - 255
@@ -159,7 +159,7 @@ int main ()  {
         TEST_INTEGER("huge_aggregation", a4.SubnetsCount(), 1);
         if(TESTS_lasttestfailed)
             printf("%s\n", a4.TextForm());
-
+        
         IP4Area a5;
         a5.ReadIn("   10.0.0.0/24, 10.1.1.0/25,10.2.2.2/32");
         TEST_STRING("read-in",a5.TextForm(),"10.0.0.0/24,10.1.1.0/25,10.2.2.2/32");
@@ -228,7 +228,7 @@ int main ()  {
 //        a22.ReadIn("10.20.30.40");
 //        TEST_TRUE("area_invalid", a22.IsInvalid());
 
-
+        
         IP4Area a30;
         a30.ReadIn("10.0.0.0/31, 10.12.14.16, 11.11.11.11");
         TEST_INTEGER("hostcount", a30.HostCount(), 4);
@@ -243,8 +243,8 @@ int main ()  {
         iter30.GetNext(ip30);
         TEST_TRUE("hostiteration4", ip30 == IP4IpAddress("11.11.11.11"));
         TEST_TRUE("hostiteration_end", !(iter30.GetNext(ip30)));
-
-
+        
+        
     }
     TESTS_SECTION_END
     return 0;
