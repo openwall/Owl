@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.17 2005/12/20 21:20:55 solar Exp $
+# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.18 2006/02/03 00:00:43 ldv Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
 Version: 5.93
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 URL: http://www.gnu.org/software/%name/
@@ -23,10 +23,11 @@ Source11: colorls.csh
 Source20: usleep.c
 Source21: usleep.1
 
-# ALT patches, candidates for upstream version and CVS backports
-Patch0: coreutils-5.91-up-ls-usage.diff
-Patch1: coreutils-5.91-eggert-ls-time-style.diff
-Patch2: coreutils-5.91-alt-hostname.diff
+# CVS backports and other candidates for upstream version
+Patch0: coreutils-5.93-cvs-20060126-fts.diff
+Patch1: coreutils-5.91-up-ls-usage.diff
+Patch2: coreutils-5.91-eggert-ls-time-style.diff
+Patch3: coreutils-5.91-alt-hostname.diff
 
 # Owl/ALT specific
 Patch10: coreutils-5.92-owl-info-true-false.diff
@@ -83,7 +84,8 @@ arbitrary limits.
 # ALT patches, candidates for upstream version and CVS backports
 %patch0 -p0
 %patch1 -p0
-%patch2 -p1
+%patch2 -p0
+%patch3 -p1
 
 # ALT specific
 %patch10 -p1
@@ -229,6 +231,9 @@ fi
 %doc ChangeLog.bz2 NEWS.bz2 THANKS.bz2 AUTHORS README TODO
 
 %changelog
+* Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 5.93-owl2
+- Backported fts fixes from 5_94 branch.
+
 * Mon Nov 07 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 5.93-owl1
 - Updated to 5.93.
 
