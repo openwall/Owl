@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.51 2006/02/03 22:08:03 ldv Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.52 2006/02/03 22:33:11 ldv Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -785,7 +785,7 @@ fi
 
 %changelog
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:3.4.5-owl2
-- Dropped old ChangeLog files, compressed remained ChangeLog files.
+- Dropped old ChangeLog files, compressed the remaining ChangeLog files.
 
 * Wed Dec 21 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:3.4.5-owl1
 - Updated to 3.4.5.
