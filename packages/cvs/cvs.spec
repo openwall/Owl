@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/cvs/cvs.spec,v 1.30 2005/11/16 12:19:21 solar Exp $
+# $Owl: Owl/packages/cvs/cvs.spec,v 1.31 2006/02/07 14:15:16 solar Exp $
 
 Summary: A version control system.
 Name: cvs
 Version: 1.11.21
-Release: owl1
+Release: owl2
 License: GPL
 Group: Development/Tools
 URL: http://www.nongnu.org/cvs/
@@ -182,6 +182,10 @@ fi
 %_datadir/cvs
 
 %changelog
+* Tue Feb 07 2006 Solar Designer <solar-at-owl.openwall.com> 1.11.21-owl2
+- Fixed a NULL pointer dereference in client.c which would occur on commits
+from a tree lacking a CVS/Root file.
+
 * Mon Nov 14 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.11.21-owl1
 - Updated to 1.11.21.
 

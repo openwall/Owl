@@ -184,7 +184,25 @@ diff -upk.orig cvs-1.11.21.orig/src/buffer.c cvs-1.11.21/src/buffer.c
  	/* It would be easy to xmalloc a buffer, but I don't think this
 diff -upk.orig cvs-1.11.21.orig/src/client.c cvs-1.11.21/src/client.c
 --- cvs-1.11.21.orig/src/client.c	2005-09-22 15:58:46 +0000
-+++ cvs-1.11.21/src/client.c	2005-09-30 15:23:17 +0000
++++ cvs-1.11.21/src/client.c	2006-02-07 14:10:26 +0000
+@@ -252,7 +252,7 @@ arg_should_not_be_sent_to_server (arg)
+ 	    /* Since we didn't find it in the list, check the CVSADM
+                files on disk.  */
+ 	    this_root = Name_Root (arg, (char *) NULL);
+-	    root_string = this_root->original;
++	    root_string = this_root ? this_root->original : NULL;
+ 	    *t = c;
+ 	}
+ 	else
+@@ -264,7 +264,7 @@ arg_should_not_be_sent_to_server (arg)
+ 	    else
+ 	    {
+ 		this_root = Name_Root ((char *) NULL, (char *) NULL);
+-		root_string = this_root->original;
++		root_string = this_root ? this_root->original : NULL;
+ 	    }
+ 	}
+ 
 @@ -3871,6 +3871,8 @@ auth_server (root, lto_server, lfrom_ser
      char *username;			/* the username we use to connect */
      char no_passwd = 0;			/* gets set if no password found */
