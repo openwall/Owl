@@ -95,7 +95,11 @@ ScriptVariable OwlInstallConfig::KeymapFileSuffix() const
 { return "map.gz"; }
 
 ScriptVariable OwlInstallConfig::KeymapDbPath() const
+#ifdef __sparc__
+{ return "/lib/kbd/keymaps/sun"; }
+#else
 { return "/lib/kbd/keymaps/i386"; }
+#endif
 
 ScriptVariable OwlInstallConfig::KeymapSysconf() const
 { return root+"/etc/sysconfig/keyboard"; }

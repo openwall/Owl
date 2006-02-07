@@ -1,3 +1,5 @@
+#ifdef __i386__
+
 #include <stdio.h>
 
 #include "scriptpp/scrvar.hpp"
@@ -69,3 +71,5 @@ void install_kernel_and_lilo(OwlInstallInterface *the_iface)
     if(!lilo.Success())
         the_iface->Message("Warning: LILO failed");
 }
+
+#endif

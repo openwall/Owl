@@ -1,3 +1,5 @@
+#ifdef __i386__
+
 #include <unistd.h>
 
 #include "iface.hpp"
@@ -47,3 +49,5 @@ void reboot_it(OwlInstallInterface *the_iface)
         the_iface->Message("Failed to proceed, please reboot manually");
     }
 }
+
+#endif

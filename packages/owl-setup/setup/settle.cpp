@@ -26,9 +26,11 @@ extern void set_root_password(OwlInstallInterface *);
 extern void create_fstab(OwlInstallInterface *);
 extern void select_timezone(OwlInstallInterface *);
 extern void configure_network(OwlInstallInterface *);
+#ifdef __i386__
 extern void install_kernel_headers(OwlInstallInterface *);
 extern void install_kernel_and_lilo(OwlInstallInterface *);
 extern void reboot_it(OwlInstallInterface *);
+#endif
 
 #ifdef NCURSES_ENABLE
 /* defined in curs_detect.cpp */
@@ -72,13 +74,14 @@ int main(int argc, char **argv)
         { "t", "Create /etc/fstab", fstab_exists, fstab_contains_root },
         { "z", "Select timezone", packages_installed, timezone_selected },
         { "n", "Configure network", packages_installed, network_configured },
+#ifdef __i386__
         { "h", "Install kernel headers (optional)",
             can_install_kheaders, kheaders_installed },
         { "b", "Install kernel and bootloader",
             packages_installed, kernel_installed },
         { "r", "Reboot to the newly-installed system",
             minimal_install_ready, never_done },
-
+#endif
         { "!", "Run shell", always_true, never_done },
         { "x", "Exit", always_true, never_done },
         { 0,0,0,0 }
@@ -155,6 +158,7 @@ int main(int argc, char **argv)
         if(choice == "n") {
             configure_network(the_interface);
         } else
+#ifdef __i386__
         if(choice == "h") {
             install_kernel_headers(the_interface);
         } else
@@ -164,6 +168,7 @@ int main(int argc, char **argv)
         if(choice == "r") {
             reboot_it(the_interface);
         } else
+#endif
         if(choice == "!") {
             run_shell(the_interface);
         } else

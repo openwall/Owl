@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.58 2006/02/03 20:48:01 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.59 2006/02/07 13:25:03 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 0.35
+Version: 1.0
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -32,6 +32,10 @@ rm -rf %buildroot
 %_sbindir/*
 
 %changelog
+* Tue Feb 07 2006 Solar Designer <solar-at-owl.openwall.com> 1.0-owl1
+- Disable x86-specific menu options in "settle" when building for non-x86.
+- Use keyboard layouts from /lib/kbd/keymaps/sun on SPARC.
+
 * Fri Feb 03 2006 Croco <croco-at-owl.openwall.com> 0.35-owl1
 - VMIN/VTIME worked around for bloody suns
 - ip4areas replaced with the version 0.3.1 which might run better on 64-bit

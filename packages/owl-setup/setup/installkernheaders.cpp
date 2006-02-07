@@ -1,3 +1,5 @@
+#ifdef __i386__
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -74,3 +76,5 @@ void install_kernel_headers(OwlInstallInterface *the_iface)
         }
     }
 }
+
+#endif
