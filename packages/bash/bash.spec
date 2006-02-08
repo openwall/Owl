@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/bash/bash.spec,v 1.34 2006/02/03 22:10:21 ldv Exp $
+# $Owl: Owl/packages/bash/bash.spec,v 1.35 2006/02/08 23:32:48 ldv Exp $
 
 Summary: The GNU Bourne-Again SHell (Bash).
 Name: bash
 %define bash_version 3.1
-%define bash_patchlevel 5
+%define bash_patchlevel 7
 Version: %bash_version.%bash_patchlevel
-Release: owl2
+Release: owl1
 Group: System Environment/Shells
 License: GPL
 Source0: ftp://ftp.gnu.org/gnu/bash/bash-%bash_version.tar.gz
@@ -13,17 +13,18 @@ Source1: ftp://ftp.gnu.org/gnu/bash/bash-doc-%bash_version.tar.gz
 Source2: dot-bashrc
 Source3: dot-bash_profile
 Source4: dot-bash_logout
-Patch0: bash-3.1-up-pl5.diff
+Patch0: bash-3.1-up-patchlevel.diff
 Patch10: bash-3.1-owl-warnings.diff
 Patch11: bash-3.1-owl-tmp.diff
 Patch12: bash-3.1-owl-vitmp.diff
 Patch13: bash-3.1-owl-defaults.diff
 Patch14: bash-3.1-alt-man.diff
-Patch20: bash-3.1-rh-ulimit.diff
-Patch21: bash-3.1-rh-setlocale.diff
-Patch22: bash-3.1-rh-read-memleak.diff
-Patch23: bash-3.1-rh-alt-requires.diff
-Patch24: bash-3.1-rh-man.diff
+Patch20: bash-3.1-rh-login.diff
+Patch21: bash-3.1-rh-ulimit.diff
+Patch22: bash-3.1-rh-setlocale.diff
+Patch23: bash-3.1-rh-read-memleak.diff
+Patch24: bash-3.1-rh-alt-requires.diff
+Patch25: bash-3.1-rh-man.diff
 Patch30: bash-3.1-deb-random.diff
 Patch31: bash-3.1-deb-doc.diff
 Patch100: readline-5.1-up-pl1.diff
@@ -68,6 +69,7 @@ Again shell version %version.
 %patch22 -p1
 %patch23 -p1
 %patch24 -p1
+%patch25 -p1
 %patch30 -p1
 %patch31 -p1
 pushd lib/readline
@@ -204,6 +206,10 @@ fi
 %doc doc/*.ps* doc/*.html doc/article.txt*
 
 %changelog
+* Wed Feb 08 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.7-owl1
+- Updated to 3.1 patchlevel 7.
+- Imported FC fix for bug in setting login shell invocation attribute.
+.
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.5-owl2
 - Compressed CHANGES, FAQ and NEWS files.
 
