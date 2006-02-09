@@ -1,8 +1,7 @@
-This file lists the major changes made between the last released
-version of Owl and Owl-current.  While some of the changes listed here
-may also be made to a stable branch, the complete lists of stable
-branch changes are included with those branches and as errata for the
-corresponding Owl releases only.
+This file lists the major changes made between Owl releases.  While
+some of the changes listed here may also be made to a stable branch,
+the complete lists of stable branch changes are included with those
+branches and as errata for the corresponding Owl releases only.
 
 This is very far from an exhaustive list of changes.  Small changes to
 individual packages won't be mentioned here unless they fix a security
@@ -10,7 +9,7 @@ or a critical reliability problem.  They are, however, mentioned in
 change logs for the packages themselves.
 
 
-	Changes made between Owl 1.1 and Owl-current.
+	Changes made between Owl 1.1 and Owl 2.0.
 
 2006/01/18	Package: strace
 Updated to 4.5.14.
@@ -832,4 +831,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Owl: Owl/doc/CHANGES-2.0,v 1.199 2006/01/18 16:03:59 ldv Exp $
+$Owl: Owl/doc/CHANGES-2.0,v 1.200 2006/02/09 18:56:21 solar Exp $
