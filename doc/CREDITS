@@ -25,7 +25,7 @@ The initial DHCP suite package and German translations:
 
 	Matthias Schmidt <schmidt at owl.openwall.com>
 
-French translations:
+French translations (for Owl up to 1.1; not included with 2.0):
 
 	Denis Ducamp <ducamp at owl.openwall.com>
 
@@ -45,4 +45,4 @@ a donation too:
 
 http://www.openwall.com/donations/
 
-$Owl: Owl/doc/CREDITS,v 1.16 2005/11/16 11:59:01 solar Exp $
+$Owl: Owl/doc/CREDITS,v 1.16.2.1 2006/02/09 19:14:30 solar Exp $

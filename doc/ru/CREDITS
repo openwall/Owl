@@ -28,7 +28,7 @@
 
 	Gremlin from Kremlin <gremlin ПРИ owl.openwall.com>
 
-Французский перевод:
+Французский перевод (для Owl до 1.1; не включен в 2.0):
 
 	Denis Ducamp <ducamp ПРИ owl.openwall.com>
 
@@ -44,4 +44,4 @@
 
 http://www.openwall.com/donations/
 
-$Owl: Owl/doc/ru/CREDITS,v 1.15 2005/11/16 11:59:02 solar Exp $
+$Owl: Owl/doc/ru/CREDITS,v 1.15.2.1 2006/02/09 19:14:31 solar Exp $
