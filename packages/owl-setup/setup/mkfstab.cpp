@@ -105,7 +105,7 @@ static void edit_fstab(OwlInstallInterface *the_iface)
     bool r = the_iface->YesNoMessage(
         "I'm going to run the vi editor for you\n"
         "\n"
-        "NEWBIE NOTICE: to quit vi, press Escape, then type `:q!'\n"
+        "NEWBIE NOTICE: to quit vi, press Escape, then type `:qa!'\n"
         "\n"
         "Continue?",
         true

@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.59 2006/02/07 13:25:03 solar Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.59.2.1 2006/02/12 11:09:21 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 1.0
+Version: 1.0.1
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -32,6 +32,10 @@ rm -rf %buildroot
 %_sbindir/*
 
 %changelog
+* Sun Feb 12 2006 Solar Designer <solar-at-owl.openwall.com> 1.0.1-owl1
+- Updated the "vi newbie" notice to suggest ":qa!" to quit VIM such that both
+the help and the fstab windows are closed.
+
 * Tue Feb 07 2006 Solar Designer <solar-at-owl.openwall.com> 1.0-owl1
 - Disable x86-specific menu options in "settle" when building for non-x86.
 - Use keyboard layouts from /lib/kbd/keymaps/sun on SPARC.
