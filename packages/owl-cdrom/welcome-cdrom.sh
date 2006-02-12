@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-cdrom/welcome-cdrom.sh,v 1.7 2005/11/16 13:21:54 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/welcome-cdrom.sh,v 1.7.2.1 2006/02/12 11:07:39 solar Exp $
 
 CD=/.Owl-CD-ROM
 VERSION=
@@ -55,7 +55,8 @@ if [ -d $DOC ]; then
 	if [ -d $DOC/ru ]; then
 		echo
 		echo "To browse Russian documentation, set Cyrillic font with:"
-		echo "setfont -u koi8r koi8r-8x16"
+		echo -n "setfont -u /lib/kbd/unimaps/iso01 koi8r-8x16"
+		echo " && export LC_CTYPE=ru_RU.KOI8-R"
 	fi
 	echo
 fi
