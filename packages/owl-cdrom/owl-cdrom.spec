@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.36 2005/11/16 13:21:54 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.37 2006/02/12 10:58:32 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 0.15
+Version: 1.0
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -85,6 +85,10 @@ fi
 %dir /owl
 
 %changelog
+* Sun Feb 12 2006 Solar Designer <solar-at-owl.openwall.com> 1.0-owl1
+- Updated the suggested "setfont ..." command in welcome-cdrom.sh to apply to
+our current version of kbd.
+
 * Thu Sep 22 2005 Solar Designer <solar-at-owl.openwall.com> 0.15-owl1
 - Updated lilo.conf according to suggestions from John Coffman: added
 "backup=/dev/null", "geometric", "el-torito-bootable-CD", removed "install=..."
