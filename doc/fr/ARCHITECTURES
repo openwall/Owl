@@ -75,9 +75,9 @@ Les amélioration de performances avec sparcv9 est minimal (de 1 à 2%, sauf
 pour certaines fonctions dans glibc et OpenSSL où des versions assembleur
 SPARC V9 sont fournies).
 
-sparc64 n'est pas supporté à cette étape (nécessite de changer de version de
-glibc d'abord). Il est possible de compiler l'espace utilisateur de Owl (32
-bits) en fonctionnant sur un noyau sparc64, quand même.
+sparc64 n'est pas supporté à cette étape. Il est possible de compiler
+l'espace utilisateur de Owl (32 bits) en fonctionnant sur un noyau sparc64,
+quand même.
 
 
 	Alpha.
@@ -91,4 +91,4 @@ processeurs EV56/PCA56 (21164A, 21164PC). Sur un processeur EV5 (21164) vous
 pouvez utiliser le paquet alpha ordinaire sous-optimal. Sur un EV6+ (21264,
 21264A), utilisez les paquets alphaev56.
 
-$Owl: Owl/doc/fr/ARCHITECTURES,v 1.4 2005/11/16 11:59:01 solar Exp $
+$Owl: Owl/doc/fr/ARCHITECTURES,v 1.5 2006/02/15 16:38:43 solar Exp $

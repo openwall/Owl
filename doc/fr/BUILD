@@ -34,13 +34,13 @@ pour installer les paquets binaires.
 
 Pour (re-)compiler Owl depuis les sources, vous aurez besoin :
 
-d'au moins de 500 Mo d'espace disque libre sous /usr/src/world utilisables
+d'au moins de 1000 Mo d'espace disque libre sous /usr/src/world utilisables
 durant les compilations;
 
 d'au moins 64 Mo de mémoire physique (il est possible de compiler sur moins
 avec suffisamment d'espace de swap, mais vous ne devriez pas);
 
-d'au moins 160 Mo de mémoire virtuelle en compilant sur et pour un Alpha;
+d'au moins 200 Mo de mémoire virtuelle en compilant sur et pour un Alpha;
 
 de 1 à 5 heures de temps CPU, sur un système moderne (au moment de cette
 écriture).
@@ -53,13 +53,10 @@ convertissiez effectivement le système en Owl avec plusieurs itérations de
 Voici quelques temps de compilation (heures:minutes), ainsi vous savez à
 quoi vous attendre :
 
-Dual Pentium 4 Xeon, HT (4-way MP), 2.666 GHz, 2 GB		0:17
-Dual Pentium 4 Xeon, no HT (2-way SMP), 2.666 GHz, 2 GB		0:21
-Dual Pentium III, 1.266 GHz, 2 GB				0:30
-Athlon XP 2000+, 1.666 GHz, 512 MB				0:45
-Pentium III, 700 MHz, 192 MB					1:40
-UltraSparc IIi, 400 MHz, 256 MB					3:50
-Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB			5:30
+Dual Pentium 4 Xeon, HT (4-way MP), 2.8 GHz, 2 GB		0:50
+Dual Pentium III, 600 MHz, 512 MB				3:35
+UltraSparc IIi, 400 MHz, 256 MB					10:00
+Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB			14:00
 
 (Oui, gcc est si gourmand et lent sur Alpha.)
 
@@ -70,7 +67,7 @@ Owl.
 
 	(Re-)compilations natives.
 
-Vous avez besoin d'avoir un noyau Linux 2.2.x ou 2.4.x configuré sans
+Vous avez besoin d'avoir un noyau Linux 2.4.x configuré sans
 /usr/src/linux. En tant que l'utilisateur "build", changez de répertoire
 vers /usr/src/world et tapez :
 
@@ -102,13 +99,6 @@ installworld.conf). Par défaut, les paquets seront installés dans /owl.
 
 "make installworld" doit être exécuté en tant que root.
 
-Actuellement, il est possible de convertir l'installation d'une Linux Red
-Hat 6.x existante en Owl avec "make installworld" et quelques aides
-manuelles. Assurez vous de lire et comprendre tout du fichier
-installorder.conf avant d'essayer ceci. En particulier, votre noyau ne
-devrait plus faire partie des paquets RPM au moment de la conversion du
-système en Owl.
-
 
 	(Re-)compilations de paquets individuels.
 
@@ -117,4 +107,4 @@ Les paquets individuels peuvent être compilés ou re-compilés avec
 étrangers (SRPMs) compilés avec l'environnement de compilation de Owl vous
 avez aussi besoin d'inclure dans "nom" la partie numéro de version.
 
-$Owl: Owl/doc/fr/BUILD,v 1.9 2005/11/16 11:59:01 solar Exp $
+$Owl: Owl/doc/fr/BUILD,v 1.10 2006/02/15 16:38:43 solar Exp $

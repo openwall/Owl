@@ -128,6 +128,6 @@ importants, Owl essaye d'être compatible aux niveaux binaires et paquets
 avec plusieurs autres distributions majeures de GNU/*/Linux. En particulier,
 dans la plupart des cas il sera possible d'installer des applications
 empaquetées pour une version récente de Linux Red Hat (actuellement, ceci
-s'applique à Linux Red Hat 6.x) sur Owl.
+s'applique à Red Hat Enterprise Linux 4) sur Owl.
 
-$Owl: Owl/doc/fr/CONCEPTS,v 1.5 2005/11/16 11:59:01 solar Exp $
+$Owl: Owl/doc/fr/CONCEPTS,v 1.6 2006/02/15 16:38:43 solar Exp $

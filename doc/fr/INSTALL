@@ -82,11 +82,11 @@ utilisateur nouvellement installé.
 
 	chroot /owl
 
-Actuellement, Owl supporte les noyaux Linux 2.2.x et 2.4.x. Nous
-recommandons que vous compiliez la version fournie avec Owl.
+Actuellement, Owl supporte les noyaux Linux 2.4.x. Nous recommandons que
+vous compiliez la version fournie avec Owl.
 
 Vous pouvez choisir de configurer le chargeur de démarrage disponible avec
-Owl (LILO ouSILO, dépendant de l'architecture), ou vous pouvez utiliser un
+Owl (LILO ou SILO, dépendant de l'architecture), ou vous pouvez utiliser un
 chargeur de démarrage déjà installé sur le système (s'il y en a un).
 
-$Owl: Owl/doc/fr/INSTALL,v 1.7 2005/11/16 11:59:02 solar Exp $
+$Owl: Owl/doc/fr/INSTALL,v 1.8 2006/02/15 16:38:43 solar Exp $
