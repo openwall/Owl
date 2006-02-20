@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/bash/bash.spec,v 1.35 2006/02/08 23:32:48 ldv Exp $
+# $Owl: Owl/packages/bash/bash.spec,v 1.36 2006/02/20 15:28:15 ldv Exp $
 
 Summary: The GNU Bourne-Again SHell (Bash).
 Name: bash
 %define bash_version 3.1
-%define bash_patchlevel 7
+%define bash_patchlevel 8
 Version: %bash_version.%bash_patchlevel
 Release: owl1
 Group: System Environment/Shells
@@ -206,6 +206,9 @@ fi
 %doc doc/*.ps* doc/*.html doc/article.txt*
 
 %changelog
+* Mon Feb 20 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.8-owl1
+- Updated to 3.1 patchlevel 8.
+
 * Wed Feb 08 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.7-owl1
 - Updated to 3.1 patchlevel 7.
 - Imported FC fix for bug in setting login shell invocation attribute.
