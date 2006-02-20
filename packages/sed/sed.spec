@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/sed/sed.spec,v 1.17 2005/11/16 13:31:51 solar Exp $
+# $Owl: Owl/packages/sed/sed.spec,v 1.18 2006/02/20 15:33:13 ldv Exp $
 
 Summary: A GNU stream text editor.
 Name: sed
-Version: 4.1.4
+Version: 4.1.5
 Release: owl1
 License: GPL
 Group: Applications/Text
@@ -12,11 +12,11 @@ Source0: ftp://ftp.gnu.org/gnu/sed/sed-%version.tar.gz
 # http://sed.sourceforge.net/grabbag/tutorials/sedfaq.txt
 # http://sed.sourceforge.net/sed1line.txt
 Source1: sedfaq-015.txt.bz2
-Source2: sed1line-5.4.txt.bz2
-Patch0: sed-4.1.4-cvs-20050210.diff
+Source2: sed1line-5.5.txt.bz2
+Patch0: sed-4.1.5-owl-warnings.diff
 Patch1: sed-4.0.9-owl-info.diff
 Patch2: sed-4.1.2-alt-doc.diff
-Patch3: sed-4.0.9-alt-doc-sedfaq.diff
+Patch3: sed-4.1.5-alt-doc-sedfaq.diff
 Patch4: sed-4.1.2-deb-doc.diff
 Patch5: sed-4.1.4-owl-configure.diff
 PreReq: /sbin/install-info
@@ -32,15 +32,15 @@ specified in a script file or from the command line.
 
 %prep
 %setup -q
-%patch0 -p0
+%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
 
-%__install -pm644 %_sourcedir/sedfaq-015.txt.bz2 doc/sedfaq.txt.bz2
-%__install -pm644 %_sourcedir/sed1line-5.4.txt.bz2 doc/sed1line.txt.bz2
+install -pm644 %_sourcedir/sedfaq-015.txt.bz2 doc/sedfaq.txt.bz2
+install -pm644 %_sourcedir/sed1line-5.5.txt.bz2 doc/sed1line.txt.bz2
 bzip2 -9fk ChangeLog NEWS
 
 %{expand:%%define optflags %optflags -Wall}
@@ -81,6 +81,10 @@ fi
 %_mandir/man*/*
 
 %changelog
+* Mon Feb 20 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.1.5-owl1
+- Updated sed to 4.1.5.
+- Updated sed1line.txt to version 5.5
+
 * Sat Nov 12 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.1.4-owl1
 - Updated to 4.1.4.
 - Applied upstream fix for off-by-one error in the "invalid reference

@@ -1,0 +1,201 @@
+diff -upk.orig sed-4.1.5.orig/lib/regex_internal.h sed-4.1.5/lib/regex_internal.h
+--- sed-4.1.5.orig/lib/regex_internal.h	2005-12-06 08:50:56 +0000
++++ sed-4.1.5/lib/regex_internal.h	2006-02-14 01:40:26 +0000
+@@ -108,7 +108,9 @@
+ # define __wctype wctype
+ # define __iswctype iswctype
+ # define __btowc btowc
++# ifndef __mempcpy
+ # define __mempcpy mempcpy
++# endif
+ # define __wcrtomb wcrtomb
+ # define __regfree regfree
+ # define attribute_hidden
+diff -upk.orig sed-4.1.5.orig/lib/regexec.c sed-4.1.5/lib/regexec.c
+--- sed-4.1.5.orig/lib/regexec.c	2005-12-06 08:46:56 +0000
++++ sed-4.1.5/lib/regexec.c	2006-02-14 01:42:31 +0000
+@@ -227,7 +227,9 @@ regexec (preg, string, nmatch, pmatch, e
+ {
+   reg_errcode_t err;
+   int start, length;
++#ifdef _LIBC
+   re_dfa_t *dfa = (re_dfa_t *) preg->buffer;
++#endif
+ 
+   if (eflags & ~(REG_NOTBOL | REG_NOTEOL | REG_STARTEND))
+     return REG_BADPAT;
+@@ -418,7 +420,9 @@ re_search_stub (bufp, string, length, st
+   regmatch_t *pmatch;
+   int nregs, rval;
+   int eflags = 0;
++#ifdef _LIBC
+   re_dfa_t *dfa = (re_dfa_t *) bufp->buffer;
++#endif
+ 
+   /* Check for out-of-range.  */
+   if (BE (start < 0 || start > length, 0))
+diff -upk.orig sed-4.1.5.orig/lib/utils.c sed-4.1.5/lib/utils.c
+--- sed-4.1.5.orig/lib/utils.c	2005-06-21 14:09:40 +0000
++++ sed-4.1.5/lib/utils.c	2006-02-14 01:36:07 +0000
+@@ -35,6 +35,10 @@
+ # include <stdlib.h>
+ #endif /* HAVE_STDLIB_H */
+ 
++#ifdef HAVE_UNISTD_H
++# include <unistd.h>
++#endif /* HAVE_UNISTD_H */
++
+ #include "utils.h"
+ 
+ const char *myname;
+@@ -90,7 +94,6 @@ panic(const char *str, ...)
+     {
+       if (open_files->temp)
+ 	{
+-	  int fd = fileno (open_files->fp);
+ 	  fclose (open_files->fp);
+ 	  errno = 0;
+ 	  unlink (open_files->name);
+@@ -305,7 +308,6 @@ void
+ do_ck_fclose(fp)
+   FILE *fp;
+ {
+-  int fd;
+   ck_fflush(fp);
+   clearerr(fp);
+ 
+diff -upk.orig sed-4.1.5.orig/sed/compile.c sed-4.1.5/sed/compile.c
+--- sed-4.1.5.orig/sed/compile.c	2006-02-03 09:06:26 +0000
++++ sed-4.1.5/sed/compile.c	2006-02-14 01:48:29 +0000
+@@ -384,7 +384,6 @@ get_openfile(file_ptrs, mode, fail)
+   struct buffer *b;
+   char *file_name;
+   struct output *p;
+-  int is_stderr;
+ 
+   b = read_filename();
+   file_name = get_buffer(b);
+@@ -457,7 +456,7 @@ snarf_char_class(b, cur_stat)
+ {
+   int ch;
+   int state = 0;
+-  int delim;
++  int delim = 0;
+   bool pending_mb = 0;
+   
+   ch = inchar();
+@@ -493,7 +492,7 @@ snarf_char_class(b, cur_stat)
+ 	      delim = ch;
+ 	      state++;
+ 	    }
+-	  else if (ch == delim && state == 2)
++	  else if (state == 2 && ch == delim)
+ 	    state++;
+ 	  else
+ 	    break;
+@@ -1581,7 +1580,6 @@ compile_file(cur_program, cmdfile)
+   struct vector *cur_program;
+   const char *cmdfile;
+ {
+-  size_t len;
+   struct vector *ret;
+ 
+   prog.file = stdin;
+diff -upk.orig sed-4.1.5.orig/sed/execute.c sed-4.1.5/sed/execute.c
+--- sed-4.1.5.orig/sed/execute.c	2006-02-03 09:06:39 +0000
++++ sed-4.1.5/sed/execute.c	2006-02-14 01:52:55 +0000
+@@ -260,8 +260,10 @@ str_append_modified(to, string, length, 
+   size_t length;
+   enum replacement_types type;
+ {
++#ifndef HAVE_MBRTOWC
+   size_t old_length = to->length;
+   char *start, *end;
++#endif
+ 
+   if (length == 0)
+     return;
+@@ -608,7 +610,7 @@ get_backup_file_name(name)
+ 
+   /* Compute the length of the backup file */
+   for (asterisk = in_place_extension - 1, old_asterisk = asterisk + 1;
+-       asterisk = strchr(old_asterisk, '*');
++       (asterisk = strchr(old_asterisk, '*'));
+        old_asterisk = asterisk + 1)
+     backup_length += name_length - 1;
+ 
+@@ -616,7 +618,7 @@ get_backup_file_name(name)
+ 
+   /* Each iteration gobbles up to an asterisk */
+   for (asterisk = in_place_extension - 1, old_asterisk = asterisk + 1;
+-       asterisk = strchr(old_asterisk, '*');
++       (asterisk = strchr(old_asterisk, '*'));
+        old_asterisk = asterisk + 1)
+     {
+       MEMCPY (p, old_asterisk, asterisk - old_asterisk);
+@@ -662,7 +664,7 @@ open_next_file(name, input)
+       struct stat st;
+ 
+       /* get the base name */
+-      if (p = strrchr(tmpdir, '/'))
++      if ((p = strrchr(tmpdir, '/')))
+ 	*(p + 1) = 0;
+       else
+ 	strcpy(tmpdir, ".");
+@@ -1045,6 +1047,7 @@ append_replacement (buf, p, regs, repl_m
+         }
+ 
+       if (0 <= i)
++        {
+         if (regs->end[i] == regs->start[i] && p->repl_type & REPL_MODIFIERS)
+           /* Save this modifier, we shall apply it later.
+ 	     e.g. in s/()([a-z])/\u\1\2/
+@@ -1055,6 +1058,7 @@ append_replacement (buf, p, regs, repl_m
+ 	  str_append_modified(buf, line.active + regs->start[i],
+ 			      CAST(size_t)(regs->end[i] - regs->start[i]),
+ 			      curr_type);
++        }
+     }
+ 
+   return repl_mod;
+@@ -1083,6 +1087,7 @@ do_subst(sub)
+     return;
+   
+   if (!sub->replacement && sub->numb <= 1)
++    {
+     if (regs.start[0] == 0 && !sub->global)
+       {
+ 	/* We found a match, set the `replaced' flag. */
+@@ -1101,6 +1106,7 @@ do_subst(sub)
+ 	line.length = regs.start[0];
+ 	goto post_subst;
+       }
++    }
+ 
+   do
+     {
+@@ -1360,10 +1366,12 @@ execute_program(vec, input)
+ 		      char buf[4096];
+ 		      int n = fread (buf, sizeof(char), 4096, pipe);
+ 		      if (n > 0)
++			{
+ 			if (!cmd_length)
+ 			  str_append(&s_accum, buf, n);
+ 			else
+ 			  ck_fwrite(buf, 1, n, output_file.fp);
++			}
+ 		    }
+ 		  
+ 		  pclose (pipe);
+diff -upk.orig sed-4.1.5.orig/sed/sed.c sed-4.1.5/sed/sed.c
+--- sed-4.1.5.orig/sed/sed.c	2005-06-21 14:09:47 +0000
++++ sed-4.1.5/sed/sed.c	2006-02-14 01:44:15 +0000
+@@ -113,7 +113,7 @@ Usage: %s [OPTION]... {script-only-if-no
+                  disable all GNU extensions.\n"));
+   fprintf(out, _("  -r, --regexp-extended\n\
+                  use extended regular expressions in the script.\n"));
+-  fprintf(out, PERL_HELP);
++  fprintf(out, "%s", PERL_HELP);
+   fprintf(out, _("  -s, --separate\n\
+                  consider files as separate rather than as a single continuous\n\
+                  long stream.\n"));
