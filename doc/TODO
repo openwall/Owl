@@ -309,8 +309,8 @@ Provide some real stacking examples in the documentation.
 
 [PRIORITY: low]
 Support an external configuration file where settings common to uses
-of the module by several services could reside.  (If we start using the
-"include" directive, that wouldn't be needed for Owl itself any longer.)
+of the module by several services could reside (this is of little use
+for Owl itself since we're using the "include" directive).
 
 [PRIORITY: low]
 Support external wordlists and "31337" word mangling.
@@ -480,4 +480,4 @@ Fix installworld.sh to always pick the latest version of a package when
 multiple versions are available (please refer to the appropriate XXX
 comment in the script).
 
-$Owl: Owl/doc/TODO,v 1.158 2006/02/22 00:53:09 solar Exp $
+$Owl: Owl/doc/TODO,v 1.159 2006/02/22 00:56:54 solar Exp $
