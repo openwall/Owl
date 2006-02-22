@@ -157,14 +157,6 @@ field widths.
 Keep it to latest release.
 
 
-	john.
-
-[PRIORITY: medium]
-[ASSIGNED: solar@]
-Update *.chr files, release as 1.7.  (Lots of other items are in a
-separate non-public TODO list for just John.)
-
-
 	libnet, libnids.
 
 [PRIORITY: low]
@@ -493,4 +485,4 @@ Fix installworld.sh to always pick the latest version of a package when
 multiple versions are available (please refer to the appropriate XXX
 comment in the script).
 
-$Owl: Owl/doc/TODO,v 1.155 2006/02/02 10:11:32 solar Exp $
+$Owl: Owl/doc/TODO,v 1.156 2006/02/22 00:50:22 solar Exp $
