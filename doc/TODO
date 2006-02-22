@@ -254,11 +254,6 @@ http://www.kernel.org/pub/linux/utils/kernel/hotplug/udev.html
 	owl-setup.
 
 [PRIORITY: medium]
-[ASSIGNED: solar@, croco@]
-Once the ncurses/cdk-based user interface is sufficiently tested, make
-it the default.
-
-[PRIORITY: medium]
 [ASSIGNED: croco@]
 With the ncurses UI, default to using cfdisk, but offer plain fdisk as
 well.
@@ -485,4 +480,4 @@ Fix installworld.sh to always pick the latest version of a package when
 multiple versions are available (please refer to the appropriate XXX
 comment in the script).
 
-$Owl: Owl/doc/TODO,v 1.157 2006/02/22 00:52:12 solar Exp $
+$Owl: Owl/doc/TODO,v 1.158 2006/02/22 00:53:09 solar Exp $
