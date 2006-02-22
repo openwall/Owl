@@ -157,14 +157,6 @@ field widths.
 Keep it to latest release.
 
 
-	john.
-
-[PRIORITY: medium]
-[ASSIGNED: solar@]
-Update *.chr files, release as 1.7.  (Lots of other items are in a
-separate non-public TODO list for just John.)
-
-
 	libnet, libnids.
 
 [PRIORITY: low]
@@ -216,7 +208,7 @@ Consider enhancements from VVV (http://mutt.org.ua).
 
 [PRIORITY: medium]
 [ASSIGNED: mci@]
-Update to 3.95+, reviewing post-3.48 patches in ALT Linux's package.
+Update to 4.01+.
 
 
 	openssh.
@@ -260,11 +252,6 @@ http://www.kernel.org/pub/linux/utils/kernel/hotplug/udev.html
 
 
 	owl-setup.
-
-[PRIORITY: medium]
-[ASSIGNED: solar@, croco@]
-Once the ncurses/cdk-based user interface is sufficiently tested, make
-it the default.
 
 [PRIORITY: medium]
 [ASSIGNED: croco@]
@@ -322,8 +309,8 @@ Provide some real stacking examples in the documentation.
 
 [PRIORITY: low]
 Support an external configuration file where settings common to uses
-of the module by several services could reside.  (If we start using the
-"include" directive, that wouldn't be needed for Owl itself any longer.)
+of the module by several services could reside (this is of little use
+for Owl itself since we're using the "include" directive).
 
 [PRIORITY: low]
 Support external wordlists and "31337" word mangling.
@@ -493,4 +480,4 @@ Fix installworld.sh to always pick the latest version of a package when
 multiple versions are available (please refer to the appropriate XXX
 comment in the script).
 
-$Owl: Owl/doc/TODO,v 1.155 2006/02/02 10:11:32 solar Exp $
+$Owl: Owl/doc/TODO,v 1.155.2.1 2006/02/22 01:04:36 solar Exp $
