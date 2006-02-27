@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.76 2006/02/27 04:40:10 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.77 2006/02/27 09:58:30 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -80,10 +80,14 @@ install -m 644 -p run/mailer doc/
 changed" errors in batch mode if interrupted and restored before pass 3.
 - Handle 8-bit characters in external mode program sources correctly.
 Thanks to Frank Dittrich for reporting these two problems.
+- Implemented extra ticks overflow safety - timer-based rather than just
+crypts count based.
 - Save/update the recovery file after the end of each pass in batch mode
 to make sure that the file is up to date in case the next pass refuses to
 start for whatever reason.
 - Remove the recovery file when all hashes get cracked also in batch mode.
+- Use sysconf(_SC_CLK_TCK) instead of CLK_TCK when _SC_CLK_TCK is known to
+be available or CLK_TCK is not.
 - Added a separate DO_ALIGN(5) (cache line alignment) into x86.S after a
 possible switch to .bss from .data or .text.
 - Added "notes to packagers" to params.h.
