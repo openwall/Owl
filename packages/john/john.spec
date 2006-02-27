@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.77 2006/02/27 09:58:30 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.78 2006/02/27 12:47:08 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -88,6 +88,8 @@ start for whatever reason.
 - Remove the recovery file when all hashes get cracked also in batch mode.
 - Use sysconf(_SC_CLK_TCK) instead of CLK_TCK when _SC_CLK_TCK is known to
 be available or CLK_TCK is not.
+- Detect and report MinLen / MaxLen settings and charset files inconsistent
+with the hash type.
 - Added a separate DO_ALIGN(5) (cache line alignment) into x86.S after a
 possible switch to .bss from .data or .text.
 - Added "notes to packagers" to params.h.
