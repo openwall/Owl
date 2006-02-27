@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/john/john.spec,v 1.75 2006/02/02 15:48:00 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.76 2006/02/27 04:40:10 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7
+Version: 1.7.0.1
 %define charsets_version 20051216
-Release: owl2
+Release: owl1
 License: GPL
 Group: Applications/System
 URL: http://www.openwall.com/john/
@@ -75,6 +75,19 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Mon Feb 27 2006 Solar Designer <solar-at-owl.openwall.com> 1.7.0.1-owl1
+- Fixed a bug introduced with 1.6.40 which caused spurious "charset file
+changed" errors in batch mode if interrupted and restored before pass 3.
+- Handle 8-bit characters in external mode program sources correctly.
+Thanks to Frank Dittrich for reporting these two problems.
+- Save/update the recovery file after the end of each pass in batch mode
+to make sure that the file is up to date in case the next pass refuses to
+start for whatever reason.
+- Remove the recovery file when all hashes get cracked also in batch mode.
+- Added a separate DO_ALIGN(5) (cache line alignment) into x86.S after a
+possible switch to .bss from .data or .text.
+- Added "notes to packagers" to params.h.
+
 * Thu Feb 02 2006 Solar Designer <solar-at-owl.openwall.com> 1.7-owl2
 - Pass -finline-limit=2000 --param inline-unit-growth=2000 to gcc such that
 it inlines the S-boxes on non-x86 just like gcc 2.x used to do.
