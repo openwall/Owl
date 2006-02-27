@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.78 2006/02/27 12:47:08 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.79 2006/02/27 13:55:34 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -93,6 +93,8 @@ with the hash type.
 - Added a separate DO_ALIGN(5) (cache line alignment) into x86.S after a
 possible switch to .bss from .data or .text.
 - Added "notes to packagers" to params.h.
+- Added a sample but fully-functional "keyboard-based" external mode to the
+default john.conf.
 
 * Thu Feb 02 2006 Solar Designer <solar-at-owl.openwall.com> 1.7-owl2
 - Pass -finline-limit=2000 --param inline-unit-growth=2000 to gcc such that
