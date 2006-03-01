@@ -1,120 +1,222 @@
 #!/bin/sh
-# $Owl: Owl/packages/iptables/iptables.init,v 1.5 2005/11/16 13:11:14 solar Exp $
+# $Owl: Owl/packages/iptables/iptables.init,v 1.6 2006/03/01 22:52:04 ldv Exp $
 #
 # chkconfig: 2345 08 92
 # description: \
 #	ipchains is an interface to the Linux IP packet filtering code.
 # config: /etc/sysconfig/iptables
+# config: /etc/sysconfig/iptables-config
 
-IPTABLES=/sbin/iptables
-IPTABLES_CONFIG=/etc/sysconfig/iptables
+PATH=/bin:/sbin:/usr/bin:/usr/sbin
+IPTABLES=iptables
+IPTABLES_RESTORE="$IPTABLES-restore"
+IPTABLES_RESTORE_ARGS=
+IPTABLES_SAVE="$IPTABLES-save"
+IPTABLES_SAVE_ARGS=
+IPTABLES_STATUS_ARGS=
+IPTABLES_SAVE_ON_STOP=no
+IPTABLES_SAVE_ON_RESTART=no
+IPTABLES_DATA="/etc/sysconfig/$IPTABLES"
+IPTABLES_CONFIG="/etc/sysconfig/$IPTABLES-config"
+LOCKFILE="/var/lock/subsys/$IPTABLES"
+IPV="${IPTABLES%tables}" # ip for ipv4 | ip6 for ipv6
+IPTABLES_TABLES_NAMES="/proc/net/${IPV}_tables_names"
 
-function iftable()
+# Load firewall configuration.
+[ -s "$IPTABLES_CONFIG" ] && . "$IPTABLES_CONFIG"
+
+if /sbin/lsmod 2>/dev/null |fgrep -qs ipchains; then
+	echo "ipchains and $IPTABLES can not be used together"
+	exit 1
+fi
+
+tables=
+read_tables()
 {
-	if fgrep -qsx $1 /proc/net/ip_tables_names; then
-		$IPTABLES -t "$@"
+	tables="$(cat "$IPTABLES_TABLES_NAMES" 2>/dev/null)"
+	[ -n "$tables" ]
+}
+
+start()
+{
+	[ -s "$IPTABLES_DATA" ] || return 0
+	if grep -Evqs '^[[:space:]]*(#|$)' "$IPTABLES_DATA"; then
+		echo "Applying $IPTABLES firewall rules"
+		grep -Ev '^[[:space:]]*(#|$)' "$IPTABLES_DATA" |
+			$IPTABLES_RESTORE $IPTABLES_RESTORE_ARGS
+		return 0
+	else
+		echo "$IPTABLES firewall is not configured"
+		return 1
 	fi
 }
 
-case "$1" in
-start|restart|reload)
-	if [ -s "$IPTABLES_CONFIG" ]; then
-		tables=`cat /proc/net/ip_tables_names`
-		echo "Flushing all current rules and user defined chains"
-		for t in $tables; do
-			$IPTABLES -t $t -F
-		done
-		$IPTABLES -F
+set_policy()
+{
+	local rc=0 policy="$1" i
 
-		echo "Clearing all current rules and user defined chains"
-		for t in $tables; do
-			$IPTABLES -t $t -X
-		done
-		$IPTABLES -X
-
-		for t in $tables; do
-			$IPTABLES -t $t -Z
-		done
-
-		echo "Applying iptables firewall rules"
-		grep -Ev '^#|^[[:space:]]*$' "$IPTABLES_CONFIG" |
-			/sbin/iptables-restore -c
-	fi
-	;;
-stop)
-	if [ -e /proc/net/ip_tables_names ]; then
-		tables=`cat /proc/net/ip_tables_names 2>/dev/null`
-		echo "Flushing all chains"
-		for t in $tables; do
-			$IPTABLES -t $t -F
-		done
-		$IPTABLES -F
-
-		echo "Removing user defined chains"
-		for t in $tables; do
-			$IPTABLES -t $t -X
-		done
-		$IPTABLES -X
-
-		echo "Resetting built-in chains to the default ACCEPT policy"
-		iftable filter -P INPUT ACCEPT &&
-			iftable filter -P OUTPUT ACCEPT &&
-			iftable filter -P FORWARD ACCEPT &&
-			iftable nat -P PREROUTING ACCEPT &&
-			iftable nat -P POSTROUTING ACCEPT &&
-			iftable nat -P OUTPUT ACCEPT &&
-			iftable mangle -P PREROUTING ACCEPT &&
-			iftable mangle -P POSTROUTING ACCEPT &&
-			iftable mangle -P INPUT ACCEPT &&
-			iftable mangle -P OUTPUT ACCEPT &&
-			iftable mangle -P FORWARD ACCEPT
-	fi
-	;;
-status)
-	tables=`cat /proc/net/ip_tables_names`
-	for t in $tables; do
-		echo $"Table: $t"
-		$IPTABLES -t $t --list
+	echo "Setting $IPTABLES chains policies to $policy"
+	for i in $tables; do
+		case "$i" in
+			raw)
+				$IPTABLES -t raw -P PREROUTING $policy &&
+				$IPTABLES -t raw -P OUTPUT $policy ||
+				rc=1
+				;;
+			filter)
+				$IPTABLES -t filter -P INPUT $policy &&
+				$IPTABLES -t filter -P OUTPUT $policy &&
+				$IPTABLES -t filter -P FORWARD $policy ||
+				rc=1
+				;;
+			nat)
+				$IPTABLES -t nat -P PREROUTING $policy &&
+				$IPTABLES -t nat -P POSTROUTING $policy &&
+				$IPTABLES -t nat -P OUTPUT $policy ||
+				rc=1
+				;;
+			mangle)
+				$IPTABLES -t mangle -P PREROUTING $policy &&
+				$IPTABLES -t mangle -P POSTROUTING $policy &&
+				$IPTABLES -t mangle -P INPUT $policy &&
+				$IPTABLES -t mangle -P OUTPUT $policy &&
+				$IPTABLES -t mangle -P FORWARD $policy ||
+				rc=1
+				;;
+	        esac
 	done
-	;;
-panic)
-	echo "Changing target policies to DROP"
-	iftable filter -P INPUT DROP &&
-		iftable filter -P FORWARD DROP &&
-		iftable filter -P OUTPUT DROP &&
-		iftable nat -P PREROUTING DROP &&
-		iftable nat -P POSTROUTING DROP &&
-		iftable nat -P OUTPUT DROP &&
-		iftable mangle -P PREROUTING DROP &&
-		iftable mangle -P OUTPUT DROP &&
-		iftable mangle -P POSTROUTING DROP &&
-		iftable mangle -P INPUT DROP &&
-		iftable mangle -P FORWARD DROP
 
-	echo "Flushing all chains"
-	iftable filter -F INPUT &&
-		iftable filter -F FORWARD &&
-		iftable filter -F OUTPUT &&
-		iftable nat -F PREROUTING &&
-		iftable nat -F POSTROUTING &&
-		iftable nat -F OUTPUT &&
-		iftable mangle -F PREROUTING &&
-		iftable mangle -F OUTPUT
+	return $rc
+}
 
-	echo "Removing user defined chains"
-	iftable iftable filter -X &&
-		iftable nat -X &&
-		iftable mangle -X
-	;;
-save)
-	echo "Saving current rules to $IPTABLES_CONFIG"
-	touch "$IPTABLES_CONFIG"
-	chmod 600 "$IPTABLES_CONFIG"
-	/sbin/iptables-save -c > "$IPTABLES_CONFIG"
-	;;
-*)
-	echo "Usage: iptables {start|stop|restart|reload|status|panic|save}"
-	exit 1
+flush_delete()
+{
+	local rc=0 i
+
+	echo "Flushing all $IPTABLES chains"
+	for i in $tables; do
+		$IPTABLES -t $i -F || rc=1
+	done
+	$IPTABLES -F || rc=1
+
+	echo "Removing user defined $IPTABLES chains"
+	for i in $tables; do
+		$IPTABLES -t $i -X || rc=1
+	done
+	$IPTABLES -X || rc=1
+
+	echo "Zeroing $IPTABLES packet and byte counters"
+	for i in $tables; do
+		$IPTABLES -t $i -Z || rc=1
+	done
+	$IPTABLES -Z || rc=1
+
+	return $rc
+}
+
+fwstatus()
+{
+	local i
+
+	if read_tables; then
+		for i in $tables; do
+			echo "Table: $i"
+			$IPTABLES -t $i --list $IPTABLES_STATUS_ARGS && echo
+		done
+		return 0
+	else
+		echo "$IPTABLES firewall is not started"
+		return 1
+	fi
+}
+
+save()
+{
+	local rc tmp
+
+	if read_tables; then
+		echo "Saving current rules to $IPTABLES_DATA"
+		if tmp="$(mktemp "$IPTABLES_DATA.XXXXXXXX")" &&
+		   $IPTABLES_SAVE $IPTABLES_SAVE_ARGS >"$tmp"; then
+			[ -s "$IPTABLES_DATA" ] &&
+				ln -f "$IPTABLES_DATA" "$IPTABLES_DATA.save"
+			mv -f "$tmp" "$IPTABLES_DATA"
+			rc=$?
+		else
+			rc=1
+		fi
+		[ $rc -eq 0 -o -z "$tmp" ] || rm -f "$tmp"
+		return $rc
+	else
+		echo "$IPTABLES firewall is not started"
+		return 1
+	fi
+}
+
+stop()
+{
+	if read_tables; then
+		set_policy ACCEPT &&
+		flush_delete
+		return
+	else
+		echo "$IPTABLES firewall is not started"
+		return 1
+	fi
+}
+
+panic()
+{
+	if read_tables; then
+		set_policy DROP &&
+		flush_delete
+		return
+	else
+		echo "$IPTABLES firewall is not started"
+		return 1
+	fi
+}
+
+is_yes()
+{
+	case "$1" in
+		1|[Yy]|[Yy][Ee][Ss]|[Tt][Rr][Uu][Ee]|[Oo][Nn])
+			return 0
+			;;
+		*)
+			return 1
+			;;
+	esac
+}
+
+case "$1" in
+	start)
+		start
+		exit
+		;;
+	save)
+		save
+		exit
+		;;
+	status)
+		fwstatus
+		exit
+		;;
+	panic)
+		panic
+		exit
+		;;
+	stop)
+		is_yes "$IPTABLES_SAVE_ON_STOP" && save
+		stop
+		exit
+		;;
+	restart|reload)
+		is_yes "$IPTABLES_SAVE_ON_RESTART" && save
+		start
+		exit
+		;;
+	*)
+		echo "Usage: iptables {start|stop|restart|reload|status|panic|save}"
+		exit 1
 esac
-
-exit $?

@@ -1,0 +1,21 @@
+# $Owl: Owl/packages/iptables/iptables-config,v 1.1 2006/03/01 22:52:04 ldv Exp $
+#
+# Save current iptables firewall rules on stop.
+#   Value: yes|no,  default: no
+IPTABLES_SAVE_ON_STOP=no
+
+# Save current iptables firewall rules on restart.
+#   Value: yes|no,  default: no
+IPTABLES_SAVE_ON_RESTART=no
+
+# Additional options to iptables-restore.
+#   Value: string,  default:
+IPTABLES_RESTORE_ARGS=
+
+# Additional options to iptables-save.
+#   Value: string,  default:
+IPTABLES_SAVE_ARGS=
+
+# Additional options to iptables --list.
+#   Value: string,  default:
+IPTABLES_STATUS_ARGS=

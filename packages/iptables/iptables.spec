@@ -1,19 +1,26 @@
-# $Owl: Owl/packages/iptables/iptables.spec,v 1.21 2005/11/16 13:11:14 solar Exp $
+# $Owl: Owl/packages/iptables/iptables.spec,v 1.22 2006/03/01 22:52:04 ldv Exp $
 
 %define BUILD_STATIC 0
 %define BUILD_IPV6 0
 
 Summary: Tools for managing Netfilter/iptables packet filtering rules.
 Name: iptables
-Version: 1.2.11
-Release: owl2
+Version: 1.3.5
+Release: owl1
 License: GPL
 Group: System Environment/Base
-URL: http://www.netfilter.org
-Source0: http://www.netfilter.org/files/%name-%version.tar.bz2
+URL: http://www.netfilter.org/projects/iptables/
+Source0: ftp://ftp.netfilter.org/pub/iptables/%name-%version.tar.bz2
 Source1: iptables.init
+Source2: iptables-config
+Patch0: iptables-1.3.5-svn-r6466.diff
+Patch1: iptables-1.3.5-alt-link.diff
+Patch2: iptables-1.3.5-alt-modprobe.diff
+Patch3: iptables-1.3.5-alt-iptc-defs.diff
+Patch4: iptables-1.3.5-rh-alt-eperm.diff
+Patch5: iptables-1.3.5-owl-warnings.diff
 PreReq: chkconfig
-Requires: fileutils, textutils, grep
+Requires: coreutils, grep, mktemp
 BuildRequires: kernel-headers >= 2.4.4
 BuildRoot: /override/%name-%version
 
@@ -29,7 +36,7 @@ Summary: Tools for managing Netfilter/iptables packet filtering (IPv6).
 Group: System Environment/Base
 URL: http://www.netfilter.org
 PreReq: chkconfig
-Requires: fileutils, textutils, grep
+Requires: coreutils, grep, mktemp
 
 %description -n iptables6
 Tools found in this package are used to set up, maintain, and inspect the
@@ -41,24 +48,45 @@ iptables-based filtering is used on Linux 2.4.x and newer kernels.
 
 %prep
 %setup -q
+%patch0 -p0
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
 
 %build
-
-%__make iptables-save iptables-restore all \
+%__make all \
 	CC="%__cc" \
 	COPT_FLAGS="%optflags" \
 %if %BUILD_STATIC
 	NO_SHARED_LIBS="1" \
+%else
+	LDLIBS="-ldl" \
 %endif
 %if %BUILD_IPV6
-	DO_IPV6="1" \
+	experimental \
 %endif
-	IPT_LIBDIR=/%_lib/%name
+	DO_IPV6="%BUILD_IPV6" \
+	PREFIX="%_prefix" \
+	LIBDIR="/%_lib" \
+	BINDIR="/sbin"
+
+%if %BUILD_IPV6
+sed s/iptables/ip6tables/g <%_sourcedir/iptables.init >ip6tables.init
+sed s/iptables/ip6tables/g <%_sourcedir/iptables-config >ip6tables-config
+%endif
 
 %install
 rm -rf %buildroot
-
 %__make install \
+%if %BUILD_STATIC
+	NO_SHARED_LIBS="1" \
+%endif
+%if %BUILD_IPV6
+	install-experimental \
+%endif
+	DO_IPV6="%BUILD_IPV6" \
 	DESTDIR=%buildroot \
 	PREFIX="%_prefix" \
 	LIBDIR="/%_lib" \
@@ -66,18 +94,16 @@ rm -rf %buildroot
 	MANDIR="%_mandir" \
 	INCDIR="%_includedir"
 
-mkdir -p %buildroot/etc/rc.d/init.d
-install -m 755 %_sourcedir/iptables.init \
+mkdir -p %buildroot/etc/rc.d/init.d %buildroot/etc/sysconfig
+install -pm755 %_sourcedir/iptables.init \
 	%buildroot/etc/rc.d/init.d/iptables
-
-%if !%BUILD_IPV6
-rm %buildroot/%_lib/iptables/libip6t*
-rm %buildroot/sbin/ip6tables
-rm %buildroot%_mandir/man8/ip6tables.8*
-%endif
-
-%if %BUILD_STATIC
-rm -rf -- %buildroot/%_lib/iptables
+install -pm600 %_sourcedir/iptables-config \
+	%buildroot/etc/sysconfig/
+%if %BUILD_IPV6
+install -pm755 ip6tables.init \
+	%buildroot/etc/rc.d/init.d/ip6tables
+install -pm600 ip6tables-config \
+	%buildroot/etc/sysconfig/
 %endif
 
 %post
@@ -88,9 +114,20 @@ if [ $1 -eq 0 ]; then
 	/sbin/chkconfig --del iptables
 fi
 
+%if %BUILD_IPV6
+%post -n iptables6
+/sbin/chkconfig --add ip6tables
+
+%preun -n iptables6
+if [ $1 -eq 0 ]; then
+	/sbin/chkconfig --del ip6tables
+fi
+%endif
+
 %files
 %defattr(-,root,root)
-%attr(755,root,root) %config /etc/rc.d/init.d/iptables
+%config /etc/rc.d/init.d/iptables
+%config(noreplace) /etc/sysconfig/iptables-config
 /sbin/iptables*
 %_mandir/*/iptables*
 %if !%BUILD_STATIC
@@ -101,19 +138,25 @@ fi
 %if %BUILD_IPV6
 %files -n iptables6
 %defattr(-,root,root)
+%config /etc/rc.d/init.d/ip6tables
+%config(noreplace) /etc/sysconfig/ip6tables-config
 /sbin/ip6tables*
-%_mandir/*/ip6tables.8*
-# XXX: (GM): It seems like an RPM bug here.  If I use the following conditional
-# statement, RPM complains that there is a Boolean expression error, but in
-# the main filelist I've used the very same construction and get no complaints
-# at all.  I'll investigate this.
-#%%if !%BUILD_STATIC
+%_mandir/*/ip6tables*
+%if !%BUILD_STATIC
 %dir /%_lib/iptables
 /%_lib/iptables/libip6t*
-#%%endif
+%endif
 %endif
 
 %changelog
+* Tue Feb 28 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.3.5-owl
+- Updated to 1.3.5.
+- Applied upstream fixes from svn snapshot 6466.
+- Imported a bunch of patches from ALT's iptables-1.3.5-alt1 package.
+- Reworked startup script, introduced /etc/sysconfig/iptables-config
+for tuning it, changed default behaviour to load rules without restoring
+byte and package counters.
+
 * Mon Jan 10 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.2.11-owl2
 - Corrected kernel requirement to 2.4.4 as mentioned by iptables' INSTALL.
 - Made use of %%__cc and %%__make macros.

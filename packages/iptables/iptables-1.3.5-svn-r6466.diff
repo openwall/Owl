@@ -1,0 +1,122 @@
+Index: iptables.c
+===================================================================
+--- iptables.c	(.../tags/iptables/iptables_1_3_5)	(revision 6472)
++++ iptables.c	(.../trunk/iptables)	(revision 6472)
+@@ -229,7 +229,6 @@
+ 	{ "esp", IPPROTO_ESP },
+ 	{ "ah", IPPROTO_AH },
+ 	{ "sctp", IPPROTO_SCTP },
+-	{ "all", 0 },
+ };
+ 
+ static char *
+@@ -756,6 +755,13 @@
+ 	if (string_to_number(s, 0, 255, &proto) == -1) {
+ 		struct protoent *pent;
+ 
++		/* first deal with the special case of 'all' to prevent
++		 * people from being able to redefine 'all' in nsswitch
++		 * and/or provoke expensive [not working] ldap/nis/... 
++		 * lookups */
++		if (!strcmp(s, "all"))
++			return 0;
++
+ 		if ((pent = getprotobyname(s)))
+ 			proto = pent->p_proto;
+ 		else {
+@@ -1800,8 +1806,10 @@
+ 
+ 	for (matchp = *matches; matchp;) {
+ 		tmp = matchp->next;
+-		if (matchp->match->m)
++		if (matchp->match->m) {
+ 			free(matchp->match->m);
++			matchp->match->m = NULL;
++		}
+ 		free(matchp);
+ 		matchp = tmp;
+ 	}
+Index: libiptc/Makefile
+===================================================================
+--- libiptc/Makefile	(.../tags/iptables/iptables_1_3_5)	(revision 6472)
++++ libiptc/Makefile	(.../trunk/iptables)	(revision 6472)
+@@ -2,7 +2,8 @@
+ 
+ EXTRAS+=libiptc/libiptc.a
+ 
+-DEVEL_LIBS+=libiptc/libiptc.a
++# libiptc is not a public interface and therefore not installed
++# DEVEL_LIBS+=libiptc/libiptc.a
+ 
+ ifndef TOPLEVEL_INCLUDED
+ local:
+Index: ip6tables-restore.c
+===================================================================
+--- ip6tables-restore.c	(.../tags/iptables/iptables_1_3_5)	(revision 6472)
++++ ip6tables-restore.c	(.../trunk/iptables)	(revision 6472)
+@@ -266,7 +266,10 @@
+ 					char *ctrs;
+ 					ctrs = strtok(NULL, " \t\n");
+ 
+-					parse_counters(ctrs, &count);
++					if (!ctrs || !parse_counters(ctrs, &count))
++						exit_error(PARAMETER_PROBLEM,
++							  "invalid policy counters "
++							  "for chain '%s'\n", chain);
+ 
+ 				} else {
+ 					memset(&count, 0, 
+Index: iptables-restore.c
+===================================================================
+--- iptables-restore.c	(.../tags/iptables/iptables_1_3_5)	(revision 6472)
++++ iptables-restore.c	(.../trunk/iptables)	(revision 6472)
+@@ -269,7 +269,10 @@
+ 					char *ctrs;
+ 					ctrs = strtok(NULL, " \t\n");
+ 
+-					parse_counters(ctrs, &count);
++					if (!ctrs || !parse_counters(ctrs, &count))
++						exit_error(PARAMETER_PROBLEM,
++							   "invalid policy counters "
++							   "for chain '%s'\n", chain);
+ 
+ 				} else {
+ 					memset(&count, 0, 
+Index: ip6tables.c
+===================================================================
+--- ip6tables.c	(.../tags/iptables/iptables_1_3_5)	(revision 6472)
++++ ip6tables.c	(.../trunk/iptables)	(revision 6472)
+@@ -224,7 +224,6 @@
+ 	{ "icmpv6", IPPROTO_ICMPV6 },
+ 	{ "esp", IPPROTO_ESP },
+ 	{ "ah", IPPROTO_AH },
+-	{ "all", 0 },
+ };
+ 
+ static char *
+@@ -808,6 +807,13 @@
+ 	if (string_to_number(s, 0, 255, &proto) == -1) {
+ 		struct protoent *pent;
+ 
++		/* first deal with the special case of 'all' to prevent
++		 * people from being able to redefine 'all' in nsswitch
++		 * and/or provoke expensive [not working] ldap/nis/... 
++		 * lookups */
++		if (!strcmp(s, "all"))
++			return 0;
++
+ 		if ((pent = getprotobyname(s)))
+ 			proto = pent->p_proto;
+ 		else {
+@@ -1691,8 +1697,10 @@
+ 
+ 	for (matchp = *matches; matchp;) {
+ 		tmp = matchp->next;
+-		if (matchp->match->m)
++		if (matchp->match->m) {
+ 			free(matchp->match->m);
++			matchp->match->m = NULL;
++		}
+ 		free(matchp);
+ 		matchp = tmp;
+ 	}

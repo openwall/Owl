@@ -1,0 +1,36 @@
+diff -uk.orig iptables-1.3.5.orig/libiptc/libip4tc.c iptables-1.3.5/libiptc/libip4tc.c
+--- iptables-1.3.5.orig/libiptc/libip4tc.c	2006-01-30 08:43:09 +0000
++++ iptables-1.3.5/libiptc/libip4tc.c	2006-02-27 23:02:27 +0000
+@@ -94,6 +94,8 @@
+ #define TC_FREE			iptc_free
+ #define TC_COMMIT		iptc_commit
+ #define TC_STRERROR		iptc_strerror
++#define TC_NUM_RULES		iptc_num_rules
++#define TC_GET_RULE		iptc_get_rule
+ 
+ #define TC_AF			AF_INET
+ #define TC_IPPROTO		IPPROTO_IP
+diff -uk.orig iptables-1.3.5.orig/libiptc/libip6tc.c iptables-1.3.5/libiptc/libip6tc.c
+--- iptables-1.3.5.orig/libiptc/libip6tc.c	2006-01-30 08:43:09 +0000
++++ iptables-1.3.5/libiptc/libip6tc.c	2006-02-27 23:02:27 +0000
+@@ -89,6 +89,8 @@
+ #define TC_FREE			ip6tc_free
+ #define TC_COMMIT		ip6tc_commit
+ #define TC_STRERROR		ip6tc_strerror
++#define TC_NUM_RULES		ip6tc_num_rules
++#define TC_GET_RULE		ip6tc_get_rule
+ 
+ #define TC_AF			AF_INET6
+ #define TC_IPPROTO		IPPROTO_IPV6
+diff -uk.orig iptables-1.3.5.orig/libiptc/libiptc.c iptables-1.3.5/libiptc/libiptc.c
+--- iptables-1.3.5.orig/libiptc/libiptc.c	2006-01-30 08:43:09 +0000
++++ iptables-1.3.5/libiptc/libiptc.c	2006-02-27 23:02:27 +0000
+@@ -1102,7 +1102,7 @@
+ }
+ 
+ /* Returns a pointer to the target name of this position. */
+-const char *standard_target_map(int verdict)
++static const char *standard_target_map(int verdict)
+ {
+ 	switch (verdict) {
+ 		case RETURN:

@@ -1,0 +1,71 @@
+diff -upk.orig iptables-1.3.5.orig/extensions/libipt_dscp_helper.c iptables-1.3.5/extensions/libipt_dscp_helper.c
+--- iptables-1.3.5.orig/extensions/libipt_dscp_helper.c	2004-10-10 09:56:26 +0000
++++ iptables-1.3.5/extensions/libipt_dscp_helper.c	2006-02-28 00:25:49 +0000
+@@ -64,6 +64,7 @@ class_to_dscp(const char *name)
+ 
+ 
+ 
++#if 0
+ static const char *
+ dscp_to_name(unsigned int dscp)
+ {
+@@ -78,5 +79,6 @@ dscp_to_name(unsigned int dscp)
+ 	exit_error(PARAMETER_PROBLEM,
+ 			"Invalid DSCP value `%d'\n", dscp);
+ }
++#endif
+ 
+ 
+diff -upk.orig iptables-1.3.5.orig/libiptc/libip4tc.c iptables-1.3.5/libiptc/libip4tc.c
+--- iptables-1.3.5.orig/libiptc/libip4tc.c	2006-01-30 08:43:09 +0000
++++ iptables-1.3.5/libiptc/libip4tc.c	2006-02-28 00:25:10 +0000
+@@ -123,7 +123,8 @@ typedef unsigned int socklen_t;
+ 
+ #define IP_PARTS(n) IP_PARTS_NATIVE(ntohl(n))
+ 
+-int
++#if 0
++static int
+ dump_entry(STRUCT_ENTRY *e, const TC_HANDLE_T handle)
+ {
+ 	size_t i;
+@@ -172,6 +173,7 @@ dump_entry(STRUCT_ENTRY *e, const TC_HAN
+ 	printf("\n");
+ 	return 0;
+ }
++#endif
+ 
+ static unsigned char *
+ is_same(const STRUCT_ENTRY *a, const STRUCT_ENTRY *b, unsigned char *matchmask)
+diff -upk.orig iptables-1.3.5.orig/libiptc/libip6tc.c iptables-1.3.5/libiptc/libip6tc.c
+--- iptables-1.3.5.orig/libiptc/libip6tc.c	2006-01-30 08:43:09 +0000
++++ iptables-1.3.5/libiptc/libip6tc.c	2006-02-28 00:24:54 +0000
+@@ -128,6 +128,7 @@ ipv6_prefix_length(const struct in6_addr
+ 	return l;
+ }
+ 
++#if 0
+ static int
+ dump_entry(struct ip6t_entry *e, const ip6tc_handle_t handle)
+ {
+@@ -202,6 +203,7 @@ dump_entry(struct ip6t_entry *e, const i
+ 	printf("\n");
+ 	return 0;
+ }
++#endif
+ 
+ static unsigned char *
+ is_same(const STRUCT_ENTRY *a, const STRUCT_ENTRY *b,
+diff -upk.orig iptables-1.3.5.orig/libiptc/libiptc.c iptables-1.3.5/libiptc/libiptc.c
+--- iptables-1.3.5.orig/libiptc/libiptc.c	2006-01-30 08:43:09 +0000
++++ iptables-1.3.5/libiptc/libiptc.c	2006-02-28 00:34:54 +0000
+@@ -908,7 +908,9 @@ print_match(const STRUCT_ENTRY_MATCH *m)
+ 	return 0;
+ }
+ 
++#if 0
+ static int dump_entry(STRUCT_ENTRY *e, const TC_HANDLE_T handle);
++#endif
+  
+ void
+ TC_DUMP_ENTRIES(const TC_HANDLE_T handle)

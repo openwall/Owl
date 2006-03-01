@@ -1,0 +1,34 @@
+diff -upk.orig iptables-1.3.5.orig/ip6tables.c iptables-1.3.5/ip6tables.c
+--- iptables-1.3.5.orig/ip6tables.c	2006-01-30 08:43:12 +0000
++++ iptables-1.3.5/ip6tables.c	2006-02-27 23:20:35 +0000
+@@ -2192,11 +2192,12 @@ int do_command6(int argc, char *argv[], 
+ 		*handle = ip6tc_init(*table);
+ 
+ 	/* try to insmod the module if iptc_init failed */
++	errno = 0;
+ 	if (!*handle && ip6tables_insmod("ip6_tables", modprobe) != -1)
+ 		*handle = ip6tc_init(*table);
+ 
+ 	if (!*handle)
+-		exit_error(VERSION_PROBLEM,
++		exit_error(errno == EPERM ? OTHER_PROBLEM : VERSION_PROBLEM,
+ 			"can't initialize ip6tables table `%s': %s",
+ 			*table, ip6tc_strerror(errno));
+ 
+diff -upk.orig iptables-1.3.5.orig/iptables.c iptables-1.3.5/iptables.c
+--- iptables-1.3.5.orig/iptables.c	2006-01-30 08:43:09 +0000
++++ iptables-1.3.5/iptables.c	2006-02-27 23:18:05 +0000
+@@ -2339,11 +2339,12 @@ int do_command(int argc, char *argv[], c
+ 		*handle = iptc_init(*table);
+ 
+ 	/* try to insmod the module if iptc_init failed */
++	errno = 0;
+ 	if (!*handle && iptables_insmod("ip_tables", modprobe) != -1)
+ 		*handle = iptc_init(*table);
+ 
+ 	if (!*handle)
+-		exit_error(VERSION_PROBLEM,
++		exit_error(errno == EPERM ? OTHER_PROBLEM : VERSION_PROBLEM,
+ 			   "can't initialize iptables table `%s': %s",
+ 			   *table, iptc_strerror(errno));
+ 

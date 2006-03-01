@@ -1,0 +1,38 @@
+diff -upk.orig iptables-1.3.5.orig/Makefile iptables-1.3.5/Makefile
+--- iptables-1.3.5.orig/Makefile	2006-02-01 12:14:38 +0000
++++ iptables-1.3.5/Makefile	2006-02-27 22:24:26 +0000
+@@ -62,7 +62,7 @@ ifeq ($(shell uname -m),sparc64)
+ 		# The kernel is 64-bit, even though userspace is 32.
+ 		CFLAGS+=-DIPT_MIN_ALIGN=8 -DKERNEL_64_USERSPACE_32
+ 	else
+-		EXT_LDFLAGS=-m elf64_sparc
++		EXT_LDFLAGS+=-Wl,-m,elf64_sparc
+ 	endif
+ endif
+ 
+diff -upk.orig iptables-1.3.5.orig/Rules.make iptables-1.3.5/Rules.make
+--- iptables-1.3.5.orig/Rules.make	2004-10-10 09:56:27 +0000
++++ iptables-1.3.5/Rules.make	2006-02-27 22:24:26 +0000
+@@ -31,7 +31,7 @@ $(SHARED_LIBS:%.so=%.d): %.d: %.c
+ 	    sed -e 's@^.*\.o:@$*.d $*_sh.o:@' > $@
+ 
+ $(SHARED_LIBS): %.so : %_sh.o
+-	$(LD) -shared $(EXT_LDFLAGS) -o $@ $<
++	$(CC) -shared $(EXT_LDFLAGS) -o $@ $<
+ 
+ %_sh.o : %.c
+ 	$(CC) $(SH_CFLAGS) -o $@ -c $<
+diff -upk.orig iptables-1.3.5.orig/include/iptables_common.h iptables-1.3.5/include/iptables_common.h
+--- iptables-1.3.5.orig/include/iptables_common.h	2006-01-30 08:43:09 +0000
++++ iptables-1.3.5/include/iptables_common.h	2006-03-01 22:05:36 +0000
+@@ -32,8 +32,10 @@ void exit_error(enum exittype, char *, .
+ extern const char *program_name, *program_version;
+ extern char *lib_dir;
+ 
++#define _init __attribute__((constructor)) my_init
+ #ifdef NO_SHARED_LIBS
+ # ifdef _INIT
++#  undef _init
+ #  define _init _INIT
+ # endif
+   extern void init_extensions(void);
