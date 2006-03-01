@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2006/02/28	Package: iptables
+Updated to 1.3.5.
+
 2006/02/20	Package: sed
 Updated to 4.1.5.
 
@@ -29,4 +32,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.2 2006/02/20 23:13:28 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.3 2006/03/01 22:53:37 ldv Exp $
