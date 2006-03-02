@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/iptables/iptables.init,v 1.6 2006/03/01 22:52:04 ldv Exp $
+# $Owl: Owl/packages/iptables/iptables.init,v 1.7 2006/03/02 12:42:12 ldv Exp $
 #
 # chkconfig: 2345 08 92
 # description: \
@@ -25,11 +25,6 @@ IPTABLES_TABLES_NAMES="/proc/net/${IPV}_tables_names"
 # Load firewall configuration.
 [ -s "$IPTABLES_CONFIG" ] && . "$IPTABLES_CONFIG"
 
-if /sbin/lsmod 2>/dev/null |fgrep -qs ipchains; then
-	echo "ipchains and $IPTABLES can not be used together"
-	exit 1
-fi
-
 tables=
 read_tables()
 {
@@ -41,6 +36,10 @@ start()
 {
 	[ -s "$IPTABLES_DATA" ] || return 0
 	if grep -Evqs '^[[:space:]]*(#|$)' "$IPTABLES_DATA"; then
+		if [ -e /proc/net/ip_fwchains ]; then
+			echo "ipchains and $IPTABLES can not be used together"
+			return 1
+		fi
 		echo "Applying $IPTABLES firewall rules"
 		grep -Ev '^[[:space:]]*(#|$)' "$IPTABLES_DATA" |
 			$IPTABLES_RESTORE $IPTABLES_RESTORE_ARGS
