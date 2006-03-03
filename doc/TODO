@@ -207,7 +207,7 @@ Consider enhancements from VVV (http://mutt.org.ua).
 	nmap.
 
 [PRIORITY: medium]
-[ASSIGNED: mci@]
+[ASSIGNED: mci@, ldv@]
 Update to 4.01+.
 
 
@@ -480,4 +480,4 @@ Fix installworld.sh to always pick the latest version of a package when
 multiple versions are available (please refer to the appropriate XXX
 comment in the script).
 
-$Owl: Owl/doc/TODO,v 1.159 2006/02/22 00:56:54 solar Exp $
+$Owl: Owl/doc/TODO,v 1.160 2006/03/03 02:30:21 ldv Exp $
