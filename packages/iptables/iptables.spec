@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/iptables/iptables.spec,v 1.22 2006/03/01 22:52:04 ldv Exp $
+# $Owl: Owl/packages/iptables/iptables.spec,v 1.23 2006/03/03 15:30:29 ldv Exp $
 
 %define BUILD_STATIC 0
 %define BUILD_IPV6 0
@@ -149,7 +149,7 @@ fi
 %endif
 
 %changelog
-* Tue Feb 28 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.3.5-owl
+* Tue Feb 28 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.3.5-owl1
 - Updated to 1.3.5.
 - Applied upstream fixes from svn snapshot 6466.
 - Imported a bunch of patches from ALT's iptables-1.3.5-alt1 package.
