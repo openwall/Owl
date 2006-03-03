@@ -1,7 +1,7 @@
 diff -upk.orig iptables-1.3.5.orig/ip6tables.c iptables-1.3.5/ip6tables.c
 --- iptables-1.3.5.orig/ip6tables.c	2006-01-30 08:43:12 +0000
 +++ iptables-1.3.5/ip6tables.c	2006-02-27 22:58:13 +0000
-@@ -1597,25 +1597,23 @@ static char *get_modprobe(void)
+@@ -1597,25 +1597,25 @@ static char *get_modprobe(void)
  {
  	int procfile;
  	char *ret;
@@ -24,6 +24,8 @@ diff -upk.orig iptables-1.3.5.orig/ip6tables.c iptables-1.3.5/ip6tables.c
 +		{
 +			if (ret[count - 1] == '\n')
 +				ret[count - 1] = '\0';
++			else
++				ret[count] = '\0';
 +			close(procfile);
 +			return ret;
  		}
@@ -39,7 +41,7 @@ diff -upk.orig iptables-1.3.5.orig/ip6tables.c iptables-1.3.5/ip6tables.c
 diff -upk.orig iptables-1.3.5.orig/iptables.c iptables-1.3.5/iptables.c
 --- iptables-1.3.5.orig/iptables.c	2006-01-30 08:43:09 +0000
 +++ iptables-1.3.5/iptables.c	2006-02-27 22:57:04 +0000
-@@ -1706,25 +1706,23 @@ static char *get_modprobe(void)
+@@ -1706,25 +1706,25 @@ static char *get_modprobe(void)
  {
  	int procfile;
  	char *ret;
@@ -62,6 +64,8 @@ diff -upk.orig iptables-1.3.5.orig/iptables.c iptables-1.3.5/iptables.c
 +		{
 +			if (ret[count - 1] == '\n')
 +				ret[count - 1] = '\0';
++			else
++				ret[count] = '\0';
 +			close(procfile);
 +			return ret;
  		}
