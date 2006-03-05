@@ -1,47 +1,56 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.14 2006/02/03 22:05:17 ldv Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.15 2006/03/05 17:36:55 ldv Exp $
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
-Version: 3.95
-Release: owl2
+Version: 4.02
+Release: owl0.1
 License: GPL
 Group: Applications/System
 URL: http://www.insecure.org/nmap/
-Source: http://download.insecure.org/nmap/dist/nmap-%version.tar.bz2
-Patch0: nmap-3.95-alt-owl-init.diff
-Patch1: nmap-3.95-alt-owl-drop-root.diff
-Patch2: nmap-3.95-alt-owl-libpcap.diff
+%define srcname nmap-%{version}Alpha1
+Source: http://download.insecure.org/nmap/dist/%srcname.tar.bz2
+Patch0: nmap-4.01-alt-autoheader.diff
+Patch1: nmap-4.01-alt-owl-libpcap.diff
+Patch2: nmap-4.01-alt-owl-init.diff
+Patch3: nmap-4.02-alt-owl-drop-priv.diff
+Patch4: nmap-4.01-alt-owl-dot-dir.diff
+PreReq: grep, shadow-utils
 Requires: /var/empty
 BuildRequires: openssl-devel >= 0.9.7g-owl1
-BuildRequires: libpcap-devel, libcap-devel, pcre-devel
+BuildRequires: gcc-c++, libpcap-devel, libcap-devel, pcre-devel
 BuildRoot: /override/%name-%version
 
 %description
-Nmap is an utility for network exploration or security auditing.  It
-supports ping scanning (determine which hosts are up), many port
-scanning techniques, version detection (determine service protocols
-and application versions listening behind ports), and TCP/IP
-fingerprinting (remote host OS or device identification).  Nmap also
-offers flexible target and port specification, decoy/stealth scanning,
-Sun RPC scanning, and more.
+Nmap is an utility for network exploration or security auditing.
+It supports ping scanning (determine which hosts are up), many port
+scanning techniques, version detection (determine service protocols and
+application versions listening behind ports), and TCP/IP fingerprinting
+(remote host OS or device identification).  Nmap also offers flexible
+target and port specification, decoy/stealth scanning, Sun RPC scanning,
+and more.
 
 %prep
-%setup -q
+%setup -q -n %srcname
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
+%patch4 -p1
 bzip2 -9 CHANGELOG
 
 %build
 aclocal
+autoheader
 autoconf
-%configure --without-nmapfe
+%configure \
+	--without-nmapfe \
+	--with-user=nmap \
+	--with-chroot-empty=/var/empty
 %__make
 
 %install
 rm -rf %buildroot
-
-%makeinstall nmapdatadir=%buildroot%_datadir/%name
+%__make install DESTDIR=%buildroot
 
 %pre
 grep -q ^nmap: /etc/group || groupadd -g 189 nmap
@@ -56,6 +65,11 @@ grep -q ^nmap: /etc/passwd ||
 %_datadir/nmap
 
 %changelog
+* Sun Mar 05 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.02-owl0.1
+- Updated to 4.02 Alpha1.
+- Synced patches with ALT's nmap-4.02-alt0.1 package.
+- Reworked lowering root privileges patch for submission upstream.
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.95-owl2
 - Compressed CHANGELOG file.
 
