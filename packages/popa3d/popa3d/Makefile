@@ -1,5 +1,5 @@
 CC = gcc
-LD = gcc
+LD = $(CC)
 RM = rm -f
 MKDIR = mkdir -p
 INSTALL = install -c
