@@ -36,7 +36,7 @@ static void usage(void)
 
 static void version(void)
 {
-	printf("popa3d version %s (%.10s)\n", popa3d_version, popa3d_date + 7);
+	printf("popa3d version %s (%s)\n", popa3d_version, popa3d_date);
 	exit(0);
 }
 
