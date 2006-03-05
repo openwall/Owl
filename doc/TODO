@@ -208,7 +208,7 @@ Consider enhancements from VVV (http://mutt.org.ua).
 
 [PRIORITY: medium]
 [ASSIGNED: mci@, ldv@]
-Update to 4.01+.
+Keep it to latest release.
 
 
 	openssh.
@@ -480,4 +480,4 @@ Fix installworld.sh to always pick the latest version of a package when
 multiple versions are available (please refer to the appropriate XXX
 comment in the script).
 
-$Owl: Owl/doc/TODO,v 1.160 2006/03/03 02:30:21 ldv Exp $
+$Owl: Owl/doc/TODO,v 1.161 2006/03/05 17:41:46 ldv Exp $
