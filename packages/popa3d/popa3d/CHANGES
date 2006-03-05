@@ -1,3 +1,10 @@
+	Changes made between 1.0 and 1.0.1 (2006/03/05).
+
+Use sysconf(_SC_CLK_TCK) instead of CLK_TCK when _SC_CLK_TCK is known to
+be available or CLK_TCK is not.  This is needed for portability to glibc
+2.3.90+ and possibly to other recent and future systems.
+
+
 	Changes made between 0.6.4.1 and 1.0 (2005/05/26).
 
 Corrected the source code to not break C strict aliasing rules (this
@@ -101,4 +108,4 @@ code size.
 Added a popa3d(8) manual page based on the one Camiel Dobbelaar wrote
 for OpenBSD.
 
-$Owl: Owl/packages/popa3d/popa3d/CHANGES,v 1.8 2005/11/16 13:28:58 solar Exp $
+$Owl: Owl/packages/popa3d/popa3d/CHANGES,v 1.9 2006/03/05 10:47:13 solar Exp $
