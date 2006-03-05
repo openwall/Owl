@@ -114,7 +114,7 @@ int main(void)
 	int addrlen;
 	int pid;
 	struct tms buf;
-	clock_t now, log;
+	clock_t min_delay, now, log;
 	int i, j, n;
 
 	if (do_pop_startup()) return 1;
@@ -151,6 +151,12 @@ int main(void)
 	}
 
 	setsid();
+
+#if defined(_SC_CLK_TCK) || !defined(CLK_TCK)
+	min_delay = MIN_DELAY * sysconf(_SC_CLK_TCK);
+#else
+	min_delay = MIN_DELAY * CLK_TCK;
+#endif
 
 	child_blocked = 1;
 	child_pending = 0;
@@ -190,7 +196,7 @@ int main(void)
 				sessions[i].start = 0;
 			if (sessions[i].pid ||
 			    (sessions[i].start &&
-			    now - sessions[i].start < MIN_DELAY * CLK_TCK)) {
+			    now - sessions[i].start < min_delay)) {
 				if (sessions[i].addr.s_addr ==
 				    addr.sin_addr.s_addr)
 				if (++n >= MAX_SESSIONS_PER_SOURCE) break;
@@ -201,7 +207,7 @@ int main(void)
 		if (n >= MAX_SESSIONS_PER_SOURCE) {
 			if (!sessions[i].log ||
 			    now < sessions[i].log ||
-			    now - sessions[i].log >= MIN_DELAY * CLK_TCK) {
+			    now - sessions[i].log >= min_delay) {
 				syslog(SYSLOG_PRI_HI,
 					"%s: per source limit reached",
 					inet_ntoa(addr.sin_addr));
@@ -212,7 +218,7 @@ int main(void)
 
 		if (j < 0) {
 			if (!log ||
-			    now < log || now - log >= MIN_DELAY * CLK_TCK) {
+			    now < log || now - log >= min_delay) {
 				syslog(SYSLOG_PRI_HI,
 					"%s: sessions limit reached",
 					inet_ntoa(addr.sin_addr));
