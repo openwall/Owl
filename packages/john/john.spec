@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.79 2006/02/27 13:55:34 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.80 2006/03/05 01:19:37 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -90,6 +90,8 @@ start for whatever reason.
 be available or CLK_TCK is not.
 - Detect and report MinLen / MaxLen settings and charset files inconsistent
 with the hash type.
+- Perform additional sanity checking of charset files, distinguish incorrect
+vs. incompatible ones.
 - Added a separate DO_ALIGN(5) (cache line alignment) into x86.S after a
 possible switch to .bss from .data or .text.
 - Added "notes to packagers" to params.h.
