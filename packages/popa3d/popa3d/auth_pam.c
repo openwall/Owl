@@ -103,9 +103,9 @@ static int pam_userpass_conv(int num_msg, lo_const struct pam_message **msg,
     !defined(LINUX_PAM) && !defined(_OPENPAM)
 /*
  * Insist on only one message per call because of differences in the
- * layout of the "msg" parameter. It can be an array of pointers to
+ * layout of the "msg" parameter.  It can be an array of pointers to
  * struct pam_message (Linux-PAM, OpenPAM) or a pointer to an array of
- * struct pam_message (Sun PAM). We only fully support the former.
+ * struct pam_message (Sun PAM).  We only fully support the former.
  */
 	if (num_msg != 1)
 		return PAM_CONV_ERR;

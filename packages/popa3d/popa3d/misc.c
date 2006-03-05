@@ -76,7 +76,7 @@ int write_loop(int fd, char *buffer, int count)
 		block = write(fd, &buffer[offset], count);
 
 /* If any write(2) fails, we consider that the entire write_loop() has
- * failed to do its job. We don't even ignore EINTR here. We also don't
+ * failed to do its job.  We don't even ignore EINTR here.  We also don't
  * retry when a write(2) returns zero, as we could start eating up the
  * CPU if we did. */
 		if (block < 0) return block;

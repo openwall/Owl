@@ -1,7 +1,7 @@
 /*
- * The /etc/shadow authentication routine. This one is really tricky,
+ * The /etc/shadow authentication routine.  This one is really tricky,
  * in order to make sure we don't have an /etc/shadow fd or sensitive
- * data in our address space after we drop the root privileges. It is
+ * data in our address space after we drop the root privileges.  It is
  * arguable whether this was worth the extra code and the performance
  * penalty or not, but such discussions are outside of the scope of a
  * comment like this. ;^)

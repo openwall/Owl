@@ -28,7 +28,7 @@ static struct db_message *cmp;
 
 /*
  * If a message has changed since the database was filled in, then we
- * consider the database stale. This is called for every message when
+ * consider the database stale.  This is called for every message when
  * the mailbox is being re-parsed (because of its mtime change).
  */
 static int db_compare(struct db_message *msg)
@@ -62,9 +62,9 @@ static int eq(char *s1, int n1, char *s2, int n2)
 
 /*
  * The mailbox parsing routine: first called to fill the database in,
- * then to check if the database is still up to date. We implement a
+ * then to check if the database is still up to date.  We implement a
  * state machine at the line fragment level (that is, full or partial
- * lines). This is faster than dealing with individual characters (we
+ * lines).  This is faster than dealing with individual characters (we
  * leave that job for libc), and doesn't require ever loading entire
  * lines into memory.
  */
@@ -127,9 +127,9 @@ static int mailbox_parse(int init)
 	received = 0;	/* and haven't got a Received: header yet */
 
 /*
- * The main loop. Its first part extracts the line fragments, while the
+ * The main loop.  Its first part extracts the line fragments, while the
  * second one manages the state flags and performs whatever is required
- * based on the state. Unfortunately, splitting this into two functions
+ * based on the state.  Unfortunately, splitting this into two functions
  * didn't seem to simplify the code.
  */
 	do {

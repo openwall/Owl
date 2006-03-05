@@ -6,13 +6,13 @@
 #define _POP_MAILBOX_H
 
 /*
- * Opens the mailbox, filling in the message database. Returns a non-zero
+ * Opens the mailbox, filling in the message database.  Returns a non-zero
  * value on error.
  */
 extern int mailbox_open(char *spool, char *mailbox);
 
 /*
- * Sends (first lines of) a message to the POP client. Returns one of the
+ * Sends (first lines of) a message to the POP client.  Returns one of the
  * POP_* event codes.
  */
 extern int mailbox_get(struct db_message *msg, int lines);

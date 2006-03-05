@@ -1,7 +1,7 @@
 /*
- * Main daemon code: invokes the actual POP handling routines. Most calls
+ * Main daemon code: invokes the actual POP handling routines.  Most calls
  * to functions in other source files are done as a non-root user (either
- * POP_USER or the authenticated user). Depending on compile-time options
+ * POP_USER or the authenticated user).  Depending on compile-time options
  * in params.h, the following files may contain code executed as root:
  *
  * startup.c		if supporting command line options (POP_OPTIONS)
@@ -101,7 +101,7 @@ static int read_loop(int fd, char *buffer, int count)
  * The root-privileged part of the AUTHORIZATION state handling: reads
  * the authentication data obtained over POP from its end of the pipe,
  * attempts authentication, and, if successful, drops privilege to the
- * authenticated user. Returns one of the AUTH_* result codes.
+ * authenticated user.  Returns one of the AUTH_* result codes.
  */
 static int do_root_auth(int channel)
 {
@@ -115,7 +115,7 @@ static int do_root_auth(int channel)
 #endif
 
 /* The POP client could have sent extra commands without waiting for
- * successful authentication. We're passing them into the TRANSACTION
+ * successful authentication.  We're passing them into the TRANSACTION
  * state if we ever get there. */
 	if (read_loop(channel, (char *)&pop_buffer, sizeof(pop_buffer)) !=
 	    sizeof(pop_buffer)) return AUTH_NONE;

@@ -52,7 +52,7 @@ extern int pop_sane(void);
 
 /*
  * Handles a POP protocol state (AUTHORIZATION or TRANSACTION, as defined
- * in RFC 1939), processing the supplied commands. Returns when the state
+ * in RFC 1939), processing the supplied commands.  Returns when the state
  * is changed.
  */
 extern int pop_handle_state(struct pop_command *commands);
@@ -70,7 +70,7 @@ extern char *pop_get_param(char **params);
 extern int pop_get_int(char **params);
 
 /*
- * Produces a generic POP response. Returns a non-zero value on error;
+ * Produces a generic POP response.  Returns a non-zero value on error;
  * the POP session then has to crash.
  */
 extern int pop_reply(char *format, ...)
@@ -81,7 +81,7 @@ extern int pop_reply(char *format, ...)
 #endif
 
 /*
- * The two simple POP responses. Return a non-zero value on error; the
+ * The two simple POP responses.  Return a non-zero value on error; the
  * POP session then has to crash.
  */
 extern int pop_reply_ok(void);
@@ -90,13 +90,13 @@ extern int pop_reply_error(void);
 /*
  * Produces a multi-line POP response, reading the data from the supplied
  * file descriptor for up to the requested size or number of lines of the
- * message body, if that number is non-negative. Returns POP_OK or one of
+ * message body, if that number is non-negative.  Returns POP_OK or one of
  * the POP_CRASH_* event codes.
  */
 extern int pop_reply_multiline(int fd, unsigned long size, int lines);
 
 /*
- * Terminates a multi-line POP response. Returns a non-zero value on error;
+ * Terminates a multi-line POP response.  Returns a non-zero value on error;
  * the POP session then has to crash.
  */
 extern int pop_reply_terminate(void);
