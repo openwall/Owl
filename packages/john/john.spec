@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.80 2006/03/05 01:19:37 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.81 2006/03/05 01:20:44 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -75,7 +75,7 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
-* Mon Feb 27 2006 Solar Designer <solar-at-owl.openwall.com> 1.7.0.1-owl1
+* Sun Mar 05 2006 Solar Designer <solar-at-owl.openwall.com> 1.7.0.1-owl1
 - Fixed a bug introduced with 1.6.40 which caused spurious "charset file
 changed" errors in batch mode if interrupted and restored before pass 3.
 - Handle 8-bit characters in external mode program sources correctly.
