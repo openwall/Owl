@@ -12,6 +12,13 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2006/02/27 -
+2006/03/05	Package: john
+Applied many minor corrections, including for better handling of certain
+uncommon scenarios and improper uses of John.  Added a "keyboard
+cracker" to the default john.conf that will try sequences of adjacent
+keys on a keyboard as passwords.
+
 2006/02/28	Package: iptables
 Updated to 1.3.5.
 
@@ -32,4 +39,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.3 2006/03/01 22:53:37 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.4 2006/03/05 01:41:21 solar Exp $
