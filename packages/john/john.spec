@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.81 2006/03/05 01:20:44 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.82 2006/03/06 23:51:16 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -75,7 +75,7 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
-* Sun Mar 05 2006 Solar Designer <solar-at-owl.openwall.com> 1.7.0.1-owl1
+* Tue Mar 07 2006 Solar Designer <solar-at-owl.openwall.com> 1.7.0.1-owl1
 - Fixed a bug introduced with 1.6.40 which caused spurious "charset file
 changed" errors in batch mode if interrupted and restored before pass 3.
 - Handle 8-bit characters in external mode program sources correctly.
@@ -86,12 +86,14 @@ crypts count based.
 to make sure that the file is up to date in case the next pass refuses to
 start for whatever reason.
 - Remove the recovery file when all hashes get cracked also in batch mode.
-- Use sysconf(_SC_CLK_TCK) instead of CLK_TCK when _SC_CLK_TCK is known to
-be available or CLK_TCK is not.
 - Detect and report MinLen / MaxLen settings and charset files inconsistent
 with the hash type.
 - Perform additional sanity checking of charset files, distinguish incorrect
 vs. incompatible ones.
+- Use sysconf(_SC_CLK_TCK) instead of CLK_TCK when _SC_CLK_TCK is known to
+be available or CLK_TCK is not (needed for glibc 2.3.90+).
+- Worked around what appears to be a gcc 4.1.0 strict aliasing bug affecting
+BF_std.c, BF_body macro.
 - Added a separate DO_ALIGN(5) (cache line alignment) into x86.S after a
 possible switch to .bss from .data or .text.
 - Added "notes to packagers" to params.h.
