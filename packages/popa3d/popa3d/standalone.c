@@ -111,7 +111,7 @@ int main(void)
 	int true = 1;
 	int sock, new;
 	struct sockaddr_in addr;
-	int addrlen;
+	socklen_t addrlen;
 	int pid;
 	struct tms buf;
 	clock_t min_delay, now, log;

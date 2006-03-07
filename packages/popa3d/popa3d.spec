@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/popa3d/popa3d.spec,v 1.49 2006/03/05 10:50:17 solar Exp $
+# $Owl: Owl/packages/popa3d/popa3d.spec,v 1.50 2006/03/07 03:30:15 solar Exp $
 
 Summary: Post Office Protocol (POP3) server.
 Name: popa3d
@@ -74,9 +74,10 @@ fi
 %doc CHANGES CONTACT DESIGN LICENSE
 
 %changelog
-* Sun Mar 05 2006 Solar Designer <solar-at-owl.openwall.com> 1.0.1-owl1
+* Tue Mar 07 2006 Solar Designer <solar-at-owl.openwall.com> 1.0.1-owl1
 - Use sysconf(_SC_CLK_TCK) instead of CLK_TCK when _SC_CLK_TCK is known to be
 available or CLK_TCK is not.
+- Use socklen_t where appropriate.
 
 * Sat Oct 29 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.0-owl2
 - Changed PAM config file to include system-auth for PAM account

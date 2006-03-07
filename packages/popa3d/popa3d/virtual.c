@@ -43,7 +43,7 @@ int virtual_startup(void)
 static char *lookup(void)
 {
 	struct sockaddr_in sin;
-	int length;
+	socklen_t length;
 
 	length = sizeof(sin);
 	if (getsockname(0, (struct sockaddr *)&sin, &length)) {
