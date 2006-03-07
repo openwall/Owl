@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.82 2006/03/06 23:51:16 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.83 2006/03/07 02:31:13 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -93,7 +93,8 @@ vs. incompatible ones.
 - Use sysconf(_SC_CLK_TCK) instead of CLK_TCK when _SC_CLK_TCK is known to
 be available or CLK_TCK is not (needed for glibc 2.3.90+).
 - Worked around what appears to be a gcc 4.1.0 strict aliasing bug affecting
-BF_std.c, BF_body macro.
+BF_std.c, BF_body macro:
+http://gcc.gnu.org/bugzilla/show_bug.cgi?id=26587
 - Added a separate DO_ALIGN(5) (cache line alignment) into x86.S after a
 possible switch to .bss from .data or .text.
 - Added "notes to packagers" to params.h.
