@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/postfix/postfix.spec,v 1.36 2006/01/05 13:21:29 ldv Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.37 2006/03/11 16:48:41 ldv Exp $
 
 Summary: Postfix mail system.
 Name: postfix
-Version: 2.2.8
+Version: 2.2.9
 Release: owl1
 Epoch: 1
 License: IBM Public License
@@ -158,15 +158,15 @@ join -v1 postfix_all_obj.list postfix_dict_obj.list >postfix_common_obj.list
 # 3. build %libpostfix shared library.
 gcc -shared -o ../lib/%libpostfix \
 	-Wl,-O1 -Wl,-soname,%libpostfix \
-	$SYSLIBS \
-	`cat postfix_common_obj.list`
+	`cat postfix_common_obj.list` \
+	$SYSLIBS
 ln -s %libpostfix ../lib/libpostfix.so
 
 # 4. build %libpostfix_dict shared library.
 gcc -shared -o ../lib/%libpostfix_dict \
 	-Wl,-O1 -Wl,-soname,%libpostfix_dict \
 	`cat postfix_dict_obj.list` \
-	$DICT_LIBS ../lib/libpostfix.so
+	../lib/libpostfix.so $DICT_LIBS
 ln -s %libpostfix_dict ../lib/libpostfix_dict.so
 
 # 5. build applications objects.
@@ -186,7 +186,7 @@ for d in *; do
 	dict_build_dirs="$dict_build_dirs src/$d"
 done
 %__make -C .. \
-	LIBS='../../lib/libpostfix.so ../../lib/libpostfix_dict.so' \
+	LIBS='../../lib/libpostfix_dict.so ../../lib/libpostfix.so' \
 	DIRS="$dict_build_dirs" \
 	SYSLIBS= \
 	AUXLIBS= \
@@ -328,6 +328,9 @@ fi
 %attr(644,root,root) %verify(not md5 mtime size) %ghost %queue_directory/etc/*
 
 %changelog
+* Sat Mar 11 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.2.9-owl1
+- Updated to 2.2.9.
+
 * Thu Jan 05 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.2.8-owl1
 - Updated to 2.2.8.
 
