@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.31 2006/02/03 22:11:11 ldv Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.32 2006/03/11 16:56:59 ldv Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
-Version: 1.4.2
-Release: owl2
+Version: 1.4.2.2
+Release: owl1
 License: GPL
 Group: Applications/Cryptography
 URL: http://www.gnupg.org
@@ -14,6 +14,7 @@ Patch2: gnupg-1.4.2-alt-getkey-i18n.diff
 Patch3: gnupg-1.4.2-up-zero-length-mpi-fix.diff
 Patch4: gnupg-1.4.2-fw-secret-key-checks.diff
 Patch5: gnupg-1.4.2-rh-keygen.diff
+Patch6: gnupg-1.4.2.2-alt-checks.diff
 PreReq: /sbin/install-info
 Provides: gpg, openpgp
 BuildRequires: zlib-devel, bzip2-devel, texinfo, readline-devel
@@ -36,6 +37,7 @@ only IDEA for symmetric-key encryption, which is patented worldwide).
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 bzip2 -9k NEWS
 
 %build
@@ -94,6 +96,9 @@ fi
 %exclude %_infodir/dir
 
 %changelog
+* Sat Mar 11 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.2.2-owl1
+- Updated to 1.4.2.2.
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.2-owl2
 - Dropped ChangeLog file, compressed NEWS file.
 
