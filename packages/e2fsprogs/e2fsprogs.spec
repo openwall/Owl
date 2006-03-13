@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.34 2006/02/03 22:09:35 ldv Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.35 2006/03/13 01:40:24 ldv Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -13,7 +13,7 @@
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
 Version: 1.37
-Release: owl3
+Release: owl4
 License: GPL
 Group: System Environment/Base
 Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
@@ -95,7 +95,12 @@ rm -rf %buildroot
 %__make install install-libs DESTDIR="%buildroot" LDCONFIG= \
 	root_sbindir=/sbin root_libdir=/%_lib
 
-/sbin/ldconfig -N -n %buildroot%_libdir
+# make symlinks relative
+for f in %buildroot%_libdir/*.so; do
+	v="$(readlink -v "$f")"
+	v="${v##*/}"
+	ln -sf ../../%_lib/"$v" "$f"
+done
 
 # this binary has no documentation and its use is under question
 rm %buildroot%_libdir/e2initrd_helper
@@ -228,6 +233,9 @@ fi
 %_mandir/man3/uuid_unparse.3*
 
 %changelog
+* Sun Mar 12 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.37-owl4
+- Made %_libdir/*.so symlinks relative.
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.37-owl3
 - Compressed ChangeLog and RELEASE-NOTES files.
 - Corrected info files installation.
