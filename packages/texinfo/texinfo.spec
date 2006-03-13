@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/texinfo/texinfo.spec,v 1.25 2005/11/16 13:32:45 solar Exp $
+# $Owl: Owl/packages/texinfo/texinfo.spec,v 1.26 2006/03/13 01:39:13 ldv Exp $
 
 %define BUILD_TEST 1
 
 Summary: Tools needed to create Texinfo format documentation files.
 Name: texinfo
 Version: 4.8
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/Publishing
 Source0: ftp://ftp.gnu.org/gnu/texinfo/texinfo-%version.tar.bz2
@@ -68,8 +68,8 @@ export LC_ALL=C
 %makeinstall
 
 cd %buildroot
-mv .%_infodir/dir .%_sysconfdir/info-dir
-ln -s %_sysconfdir/info-dir %buildroot%_infodir/dir
+mv .%_infodir/dir ./etc/info-dir
+ln -s ../../../etc/info-dir %buildroot%_infodir/dir
 mv .%_bindir/install-info sbin/
 
 %post
@@ -93,12 +93,12 @@ fi
 %defattr(-,root,root)
 %doc AUTHORS ChangeLog* INTRODUCTION NEWS README TODO
 %doc info/README
-%_prefix/bin/makeinfo
-%_prefix/bin/texindex
-%_prefix/bin/texi2dvi
-%_prefix/bin/texi2pdf
+%_bindir/makeinfo
+%_bindir/texindex
+%_bindir/texi2dvi
+%_bindir/texi2pdf
 %_infodir/texinfo*
-%_prefix/share/locale/*/*/*
+%_datadir/locale/*/*/*
 %_mandir/man1/makeinfo.1*
 %_mandir/man1/texi2dvi.1*
 %_mandir/man1/texindex.1*
@@ -107,9 +107,9 @@ fi
 
 %files -n info
 %defattr(-,root,root)
-%config(noreplace) %verify(not size md5 mtime) %_sysconfdir/info-dir
+%config(noreplace) %verify(not size md5 mtime) /etc/info-dir
 %config(noreplace) %_infodir/dir
-%_prefix/bin/info
+%_bindir/info
 %_infodir/info.info*
 %_infodir/info-stnd.info*
 /sbin/install-info
@@ -120,6 +120,9 @@ fi
 %_mandir/man5/info.5*
 
 %changelog
+* Sun Mar 12 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.8-owl3
+- Made %_infodir/dir symlink relative.
+
 * Mon Apr 25 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.8-owl2
 - Fixed info files installation as suggested by Dmitry V. Levin.
 - Reverted back the removal of the __spec_install_post macro since its
