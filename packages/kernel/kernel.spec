@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.18 2005/11/16 13:11:15 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.19 2006/03/13 01:41:25 ldv Exp $
 
 Summary: Fake Linux kernel package for Red Hat Linux compatibility.
 Name: kernel
-Version: %(sed -n 's,^#define UTS_RELEASE "\(2\.[2-9]\.[0-9]\+\).*$,\1fake,p' < /usr/include/linux/version.h)
-Release: owl4
+Version: %(sed -n 's,^#define UTS_RELEASE "\(2\.[2-9]\.[0-9]\+\).*$,\1fake,p' < %_includedir/linux/version.h)
+Release: owl5
 License: public domain
 Group: System Environment/Base
 Source: BuildASM-sparc.sh
@@ -35,33 +35,36 @@ files.
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot/usr/include
+mkdir -p %buildroot%_includedir
 cd %buildroot
-ln -s /usr/src/linux/include/linux usr/include/linux
+ln -s ../src/linux/include/linux .%_includedir/linux
 %ifarch sparc sparcv9
-ln -s /usr/src/linux/include/asm-sparc usr/include/asm-sparc
-ln -s /usr/src/linux/include/asm-sparc64 usr/include/asm-sparc64
-mkdir usr/include/asm
-install -m 744 %_sourcedir/BuildASM-sparc.sh usr/include/asm/BuildASM
-usr/include/asm/BuildASM usr/include
+ln -s ../src/linux/include/asm-sparc .%_includedir/asm-sparc
+ln -s ../src/linux/include/asm-sparc64 .%_includedir/asm-sparc64
+mkdir .%_includedir/asm
+install -pm744 %_sourcedir/BuildASM-sparc.sh .%_includedir/asm/BuildASM
+.%_includedir/asm/BuildASM .%_includedir
 %else
-ln -s /usr/src/linux/include/asm usr/include/asm
+ln -s ../src/linux/include/asm .%_includedir/asm
 %endif
 
 %files
 
 %files headers
 %defattr(-,root,root)
-/usr/include/linux
-/usr/include/asm
+%_includedir/linux
+%_includedir/asm
 %ifarch sparc sparcv9
-/usr/include/asm-sparc*
+%_includedir/asm-sparc*
 
 %pre headers
-test -L /usr/include/asm && rm -f /usr/include/asm || :
+test -L %_includedir/asm && rm -f %_includedir/asm || :
 %endif
 
 %changelog
+* Sun Mar 12 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.4.29fake-owl5
+- Made %_includedir/* symlinks relative.
+
 * Sat Mar 13 2004 Michail Litvak <mci-at-owl.openwall.com> 2.2+.x-owl4
 - Provide kernel-drm for compatibility with RH.
 
