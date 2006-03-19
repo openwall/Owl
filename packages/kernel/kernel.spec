@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.19 2006/03/13 01:41:25 ldv Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.20 2006/03/19 22:37:33 solar Exp $
 
 Summary: Fake Linux kernel package for Red Hat Linux compatibility.
 Name: kernel
@@ -62,7 +62,7 @@ test -L %_includedir/asm && rm -f %_includedir/asm || :
 %endif
 
 %changelog
-* Sun Mar 12 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.4.29fake-owl5
+* Sun Mar 12 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.4.x-owl5
 - Made %_includedir/* symlinks relative.
 
 * Sat Mar 13 2004 Michail Litvak <mci-at-owl.openwall.com> 2.2+.x-owl4
