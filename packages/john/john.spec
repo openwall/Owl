@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.83 2006/03/07 02:31:13 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.84 2006/03/19 23:37:57 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.0.1
+Version: 1.7.0.2
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -75,6 +75,11 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Mon Mar 20 2006 Solar Designer <solar-at-owl.openwall.com> 1.7.0.2-owl1
+- Fixed a long-standing bug in the rule preprocessor which caused some
+duplicate characters to not be omitted on platforms where ARCH_WORD is bigger
+than int (that's all supported 64-bit platforms).
+
 * Tue Mar 07 2006 Solar Designer <solar-at-owl.openwall.com> 1.7.0.1-owl1
 - Fixed a bug introduced with 1.6.40 which caused spurious "charset file
 changed" errors in batch mode if interrupted and restored before pass 3.
