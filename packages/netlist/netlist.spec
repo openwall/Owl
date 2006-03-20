@@ -1,13 +1,14 @@
-# $Owl: Owl/packages/netlist/Attic/netlist.spec,v 1.12 2005/11/16 13:21:53 solar Exp $
+# $Owl: Owl/packages/netlist/Attic/netlist.spec,v 1.13 2006/03/20 00:45:18 ldv Exp $
 
 Summary: A program to list active Internet connections and sockets.
 Name: netlist
 Version: 2.0
-Release: owl3
+Release: owl4
 License: distributable
 Group: System Environment/Base
 URL: http://www.openwall.com/linux/
 Source: ftp://ftp.openwall.com/pub/patches/linux/contrib/netlist-%version.tar.gz
+Patch: netlist-2.0-alt-scan_proc_table.diff
 BuildRoot: /override/%name-%version
 
 %description
@@ -23,6 +24,7 @@ LICENSE for information on this and other licensing conditions.
 
 %prep
 %setup -q
+%patch -p1
 
 %build
 %__make CFLAGS="-c -Wall %optflags"
@@ -42,6 +44,9 @@ grep -q '^proc:[^:]*:110:' /etc/group && \
 %_mandir/man1/netlist.1*
 
 %changelog
+* Sun Mar 19 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.0-owl4
+- Updated /proc scanner for 2.6.x kernels.
+
 * Mon Jun 02 2003 Solar Designer <solar-at-owl.openwall.com> 2.0-owl3
 - Removed verify checks for size and group owner due to %post.
 - Cleaned up the spec.
