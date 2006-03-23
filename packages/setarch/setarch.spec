@@ -1,18 +1,17 @@
-# $Owl: Owl/packages/setarch/setarch.spec,v 1.4 2005/12/21 19:47:19 solar Exp $
+# $Owl: Owl/packages/setarch/setarch.spec,v 1.5 2006/03/23 00:09:33 ldv Exp $
 
 Summary: Personality setter.
 Name: setarch
-Version: 1.8
+Version: 1.9
 Release: owl1
 License: GPL
 Group: System Environment/Kernel
 Source: %name-%version.tar.gz
-Patch0: setarch-1.8-owl-sparc32-alias.diff
+Patch: setarch-1.9-owl-fixes.diff
 %ifarch sparc sparcv9 sparc64
 Provides: sparc32
 Obsoletes: sparc32
 %endif
-ExclusiveArch: %ix86 x86_64 sparc sparcv9 sparc64 ppc ppc64 ia64 s390 s390x
 BuildRoot: /override/%name-%version
 
 %description
@@ -22,7 +21,7 @@ set various personality flags.
 
 %prep
 %setup -q
-%patch0 -p1
+%patch -p1
 
 %build
 %__cc -o setarch setarch.c %optflags
@@ -30,10 +29,10 @@ set various personality flags.
 %install
 rm -rf %buildroot
 mkdir -p %buildroot%_bindir %buildroot%_mandir/man8
-install -p -m644 setarch.8 %buildroot%_mandir/man8/
+install -pm644 setarch.8 %buildroot%_mandir/man8/
 install -m755 setarch %buildroot%_bindir/
 
-LINKS="linux32"
+LINKS="linux32 linux64"
 %ifarch %ix86 x86_64
 LINKS="$LINKS i386 x86_64"
 %endif
@@ -42,6 +41,9 @@ LINKS="$LINKS sparc sparc64 sparc32"
 %endif
 %ifarch ppc ppc64
 LINKS="$LINKS ppc ppc64 ppc32"
+%endif
+%ifarch mips mips64
+LINKS="$LINKS mips mips64 mips32"
 %endif
 %ifarch ia64
 LINKS="$LINKS i386 ia64"
@@ -60,6 +62,10 @@ done
 %_mandir/man8/*
 
 %changelog
+* Thu Mar 23 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.9-owl1
+- Updated to 1.9.
+- Cleaned up setarch error handling.
+
 * Thu Oct 20 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.8-owl1
 - Minor specfile cleanup.
 
