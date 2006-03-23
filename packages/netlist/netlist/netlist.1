@@ -1,0 +1,40 @@
+.TH NETLIST 1 "7 November 2001" "Openwall Project"
+.SH NAME
+netlist \- list active Internet connections and sockets
+.SH SYNOPSIS
+.B netlist
+.SH DESCRIPTION
+When run by a non-privileged user,
+.B netlist
+lists active Internet connections and listening sockets of that user.
+.PP
+When run by root or a user with group access privileges for
+.IR /proc ,
+.B netlist
+lists all active TCP, UDP, and raw sockets on the system.
+.PP
+On systems which restrict access to the relevant parts or to all of
+.IR /proc ,
+.B netlist
+should be installed SGID to the group which grants the access.
+.SH LICENSE
+.B netlist
+was created to oppose restrictive tendencies in security,
+bring attention in computer systems design from administrators to the
+users, and cure the blindness of regular user in access to relevant
+information.
+Your use of
+.B netlist
+must be in accordance with this intent.
+Please see the LICENSE accompanying distributions of
+.B netlist
+for information on this and other licensing conditions.
+.SH FILES
+/proc \- mount point for the proc filesystem
+.SH AUTHORS
+stran9er <stra at owl.openwall.com>
+.PP
+Solar Designer <solar at owl.openwall.com> wrote this manual page for
+Openwall GNU/*/Linux.
+.SH SEE ALSO
+.BR netstat (8)
