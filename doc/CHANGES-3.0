@@ -19,7 +19,14 @@ Updated to 1.9.
 Updated to 2.2.9.
 
 2006/03/11	Package: gnupg
-Updated to 1.4.2.2.
+SECURITY FIX	Severity: medium, indirect, passive
+Updated to 1.4.2.2.  This includes fixes for the signature verification
+vulnerabilities discovered by Tavis Ormandy of Gentoo.
+References:
+http://lists.gnupg.org/pipermail/gnupg-announce/2006q1/000211.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0455
+http://lists.gnupg.org/pipermail/gnupg-announce/2006q1/000216.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0049
 
 2006/03/05	Package: nmap
 Updated to 4.02 Alpha1.
@@ -51,4 +58,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.7 2006/03/23 00:11:36 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.8 2006/03/23 13:44:00 solar Exp $
