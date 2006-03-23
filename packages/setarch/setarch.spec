@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/setarch/setarch.spec,v 1.5 2006/03/23 00:09:33 ldv Exp $
+# $Owl: Owl/packages/setarch/setarch.spec,v 1.6 2006/03/23 00:14:36 ldv Exp $
 
 Summary: Personality setter.
 Name: setarch
@@ -12,6 +12,7 @@ Patch: setarch-1.9-owl-fixes.diff
 Provides: sparc32
 Obsoletes: sparc32
 %endif
+ExclusiveArch: %ix86 x86_64 sparc sparcv9 sparc64 ppc ppc64 mips mips64 ia64 s390 s390x
 BuildRoot: /override/%name-%version
 
 %description
