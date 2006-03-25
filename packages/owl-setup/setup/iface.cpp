@@ -120,10 +120,10 @@ OwlInstallInterface::OwlInstallInterface()
 
 
 ScriptVariable
-OwlInstallInterface::QueryString(const ScriptVariable& prompt)
+OwlInstallInterface::QueryString(const ScriptVariable& prompt, bool blind)
 {
     ScriptVariable defval("");
-    return QueryString(prompt, defval);
+    return QueryString(prompt, defval, blind);
 }
 
 const char * OwlInstallInterface::qs_cancel = "\003";

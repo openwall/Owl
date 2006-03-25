@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.60 2006/02/12 11:05:23 solar Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.61 2006/03/25 17:36:50 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 1.0.1
+Version: 1.0.2
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -32,6 +32,12 @@ rm -rf %buildroot
 %_sbindir/*
 
 %changelog
+* Sat Mar 25 2006 Croco <croco-at-owl.openwall.com> 1.0.2-owl1
+- ru2 keymap workaround created
+- backspace hack replaced with manual echo in the dumb interface
+- talking to PAM when setting root passwd implemented
+- waiting for a key after installing packages & kernel headers implemented
+
 * Sun Feb 12 2006 Solar Designer <solar-at-owl.openwall.com> 1.0.1-owl1
 - Updated the "vi newbie" notice to suggest ":qa!" to quit VIM such that both
 the help and the fstab windows are closed.

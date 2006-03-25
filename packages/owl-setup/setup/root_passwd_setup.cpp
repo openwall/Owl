@@ -1,12 +1,8 @@
-#include "cmd.hpp"
 #include "iface.hpp"
-#include "config.hpp"
+
+void pam_root_passwd(OwlInstallInterface *the_iface);
 
 void set_root_password(OwlInstallInterface *the_iface)
 {
-    PreserveTerminalMode mode;
-    the_iface->ExecWindow(ScriptVariable("Invoking ") +
-                          the_config->PasswdPath());
-    ExecAndWait passwd(the_config->PasswdPath().c_str(), "root", 0);
-    the_iface->CloseExecWindow();
+    pam_root_passwd(the_iface);
 }

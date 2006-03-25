@@ -12,6 +12,7 @@
 class SymbolicInterruption {
     int save_vintr;
     int save_verase;
+    int save_veof;
     int save_vmin;
     int save_vtime;
     int save_lflag;
@@ -19,6 +20,7 @@ public:
     SymbolicInterruption();
     ~SymbolicInterruption();
 
+    int EofChar() const;
     int EraseChar() const;
     int InterruptChar() const;
 };
@@ -29,6 +31,7 @@ SymbolicInterruption::SymbolicInterruption()
     tcgetattr(0, &t);
     save_verase = t.c_cc[VERASE];
     save_vintr = t.c_cc[VINTR];
+    save_veof = t.c_cc[VEOF];
     save_vmin = t.c_cc[VMIN];
     save_vtime = t.c_cc[VTIME];
     t.c_cc[VINTR] = 0;
@@ -36,6 +39,7 @@ SymbolicInterruption::SymbolicInterruption()
     t.c_cc[VTIME] = 0;
     save_lflag = t.c_lflag;
     t.c_lflag &= ~ICANON;
+    t.c_lflag &= ~ECHO;
     tcsetattr(0, TCSANOW, &t);
 }
 
@@ -45,6 +49,7 @@ SymbolicInterruption::~SymbolicInterruption()
     tcgetattr(0, &t);
     t.c_cc[VINTR] = save_vintr;
     t.c_cc[VERASE] = save_verase;
+    t.c_cc[VEOF] = save_veof;
     t.c_cc[VMIN] = save_vmin;
     t.c_cc[VTIME] = save_vtime;
     t.c_lflag = save_lflag;
@@ -59,6 +64,11 @@ int SymbolicInterruption::InterruptChar() const
 int SymbolicInterruption::EraseChar() const
 {
     return save_verase;
+}
+
+int SymbolicInterruption::EofChar() const
+{
+    return save_veof;
 }
 
 static int get_terminal_columns()
@@ -82,7 +92,7 @@ static int my_getchar()
     return c;
 }
 
-static ScriptVariable KeyboardRead()
+static ScriptVariable KeyboardRead(bool blind = false)
 {
     SymbolicInterruption si;
     int c;
@@ -93,23 +103,22 @@ static ScriptVariable KeyboardRead()
         if(c==si.EraseChar() || c=='\177' || c=='\b') {
             if(res.Length() > 0) {
                 res.Range(-1, 1).Erase();
-                // now hide the last char and the "^?" (3 chars total)
-                fputs("\b\b\b   \b\b\b", stdout);
-            } else {
-                // just hide the "^?" (2 chars total)
-                fputs("\b\b  \b\b", stdout);
+                // now hide the last char 
+                fputs("\b \b", stdout);
             }
             fflush(stdout);
             continue;
         }
         if(c==si.InterruptChar()) return OwlInstallInterface::qs_cancel;
+        if(c==si.EofChar()) return OwlInstallInterface::qs_cancel;
         if(c=='\033') return OwlInstallInterface::qs_escape;
         if(c=='\014') return OwlInstallInterface::qs_redraw;
         if(!isprint(c)) {
-            fputs("\b\b  \b\b", stdout);
-            fflush(stdout);
+            // just ignore
             continue;
         }
+        putchar(blind ? '*' : c);
+        fflush(stdout);
         char x[2] = {0,0};
         x[0] = c;
         res += x;
@@ -327,7 +336,8 @@ DumbOwlInstallInterface::YesNoCancelMessage(const ScriptVariable& msg,
 
 ScriptVariable
 DumbOwlInstallInterface::QueryString(const ScriptVariable& prompt,
-                                     const ScriptVariable& defval)
+                                     const ScriptVariable& defval,
+                                     bool blind)
 {
     ScriptVariable res;
 
@@ -348,7 +358,7 @@ DumbOwlInstallInterface::QueryString(const ScriptVariable& prompt,
         if(defval != "")
             printf(" [%s]", defval.c_str());
         printf(": ");
-        res = KeyboardRead();
+        res = KeyboardRead(blind);
         if(res == qs_redraw) continue;
         break;
     }
@@ -361,7 +371,13 @@ void DumbOwlInstallInterface::ExecWindow(const ScriptVariable& msg)
     printf("\n%s\n\n", msg.c_str());
 }
 
-void DumbOwlInstallInterface::CloseExecWindow()
+void DumbOwlInstallInterface::CloseExecWindow(bool keywait)
 {
     printf("\n\n");
+    if(keywait) {
+        printf("Press return to continue...");
+        fflush(stdout);
+        int c;
+        do { c = getchar(); } while(c != '\n' && c != EOF);
+    }
 }

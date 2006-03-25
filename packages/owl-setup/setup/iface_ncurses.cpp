@@ -555,7 +555,8 @@ NcursesOwlInstallInterface::YesNoCancelMessage(const ScriptVariable& msg,
 
 ScriptVariable
 NcursesOwlInstallInterface::QueryString(const ScriptVariable& prompt,
-                                        const ScriptVariable& defval)
+                                        const ScriptVariable& defval,
+                                        bool blind)
 {
     CDKENTRY *entry;
 
@@ -573,12 +574,15 @@ NcursesOwlInstallInterface::QueryString(const ScriptVariable& prompt,
                             COLOR_PAIR(cp_selection)|A_BOLD
                             : A_NORMAL,
                         work_with_colors ? ' ' : '_',
-                        vMIXED,
+                        blind ? vHMIXED : vMIXED,
                         -8, 0, 1024, TRUE, FALSE);
     if(work_with_colors)
         setCDKEntryBackgroundColor(entry, (char*)cdk_tag_default.c_str());
     if(defval != "")
         setCDKEntryValue(entry, (char*)defval.c_str());
+
+    if(blind)
+        setCDKEntryHiddenChar(entry, '*');
 
     const char *act_res = 0;
 
@@ -603,6 +607,16 @@ NcursesOwlInstallInterface::QueryString(const ScriptVariable& prompt,
             case KEY_EXIT:
             case '\033':
                 goto quit;
+            case '\010': /* workaround for ru2 map... is it Ok? */
+                /* I'm unsure about KEY_BACKSPACE, I only choose it because 
+                   in the version of CDK which I use, it appears explicitly
+                   in the body of _injectCDKEntry(). However, in the 
+                   headers it is commented as 'unreliable'. Well... looks
+                   like there's no _right_ thing, there's only a thing 
+                   which works.
+                 */
+                injectCDKEntry(entry, KEY_BACKSPACE);
+                break;
             default:
                 injectCDKEntry(entry, c);
         }
@@ -627,8 +641,14 @@ void NcursesOwlInstallInterface::ExecWindow(const ScriptVariable& msg)
     fflush(stdout);
 }
 
-void NcursesOwlInstallInterface::CloseExecWindow()
+void NcursesOwlInstallInterface::CloseExecWindow(bool keywait)
 {
+    if(keywait) {
+        printf("\n\nPress return to continue...");
+        fflush(stdout);
+        int c;
+        do { c = getchar(); } while(c != '\n' && c != EOF);
+    }
     if(work_with_colors) {
         bkgdset(COLOR_PAIR(cp_background));
         erase();

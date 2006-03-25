@@ -91,10 +91,12 @@ public:
                                                  int dfl = ync_cancel)=0;
 
 
-    ScriptVariable QueryString(const ScriptVariable &prompt);
+    ScriptVariable QueryString(const ScriptVariable &prompt,
+                               bool blind = false);
 
     virtual ScriptVariable QueryString(const ScriptVariable &prompt,
-                                       const ScriptVariable &defval) = 0;
+                                       const ScriptVariable &defval,
+                                       bool blind = false) = 0;
 
     static const char *qs_cancel;
     static const char *qs_escape;
@@ -105,7 +107,7 @@ public:
                             // classes of the module
 
     virtual void ExecWindow(const ScriptVariable& msg) = 0;
-    virtual void CloseExecWindow() = 0;
+    virtual void CloseExecWindow(bool keywait = false) = 0;
 };
 
 

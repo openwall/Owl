@@ -62,7 +62,7 @@ void install_kernel_headers(OwlInstallInterface *the_iface)
     unsetenv("BASH_ENV");
     ExecAndWait cp(the_config->SuPath().c_str(), "-c",
                    commd.c_str(), "sources", 0);
-    the_iface->CloseExecWindow();
+    the_iface->CloseExecWindow(true);
     if(!cp.Success()) {
         the_iface->Message("Copying failed");
         return;

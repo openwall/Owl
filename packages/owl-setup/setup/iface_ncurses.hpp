@@ -39,10 +39,11 @@ public:
                                          int dfl = ync_cancel);
 
     ScriptVariable QueryString(const ScriptVariable &prompt,
-                               const ScriptVariable &defval);
+                               const ScriptVariable &defval,
+                               bool blind = false);
 
     void ExecWindow(const ScriptVariable& msg);
-    void CloseExecWindow();
+    void CloseExecWindow(bool keywait = false);
 };
 
 
