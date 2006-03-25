@@ -32,11 +32,14 @@
 #include "params.h"
 #include "tty.h"
 #include "config.h"
+#include "bench.h"
 
 volatile int event_pending = 0;
 volatile int event_abort = 0, event_save = 0, event_status = 0;
+volatile int event_ticksafety = 0;
 
 static int timer_save_interval, timer_save_value;
+static clock_t timer_ticksafety_interval, timer_ticksafety_value;
 
 #if !OS_TIMER
 
@@ -217,6 +220,12 @@ static void sig_handle_timer(int signum)
 		event_save = event_pending = 1;
 	}
 
+	if (!--timer_ticksafety_value) {
+		timer_ticksafety_value = timer_ticksafety_interval;
+
+		event_ticksafety = event_pending = 1;
+	}
+
 	if (sig_getchar() >= 0) {
 		while (sig_getchar() >= 0);
 
@@ -236,7 +245,7 @@ static void sig_install_timer(void)
 {
 #if !OS_TIMER
 	signal(SIGALRM, sig_handle_timer);
-	sig_timer_emu_init(TIMER_INTERVAL * CLK_TCK);
+	sig_timer_emu_init(TIMER_INTERVAL * clk_tck);
 #else
 	struct sigaction sa;
 	struct itimerval it;
@@ -278,6 +287,8 @@ static void sig_done(void);
 
 void sig_init(void)
 {
+	clk_tck_init();
+
 	timer_save_interval = cfg_get_int(SECTION_OPTIONS, NULL, "Save");
 	if (timer_save_interval < 0)
 		timer_save_interval = TIMER_SAVE_DELAY;
@@ -285,6 +296,12 @@ void sig_init(void)
 	if ((timer_save_interval /= TIMER_INTERVAL) <= 0)
 		timer_save_interval = 1;
 	timer_save_value = timer_save_interval;
+
+	timer_ticksafety_interval = (clock_t)1 << (sizeof(clock_t) * 8 - 4);
+	timer_ticksafety_interval /= clk_tck;
+	if ((timer_ticksafety_interval /= TIMER_INTERVAL) <= 0)
+		timer_ticksafety_interval = 1;
+	timer_ticksafety_value = timer_ticksafety_interval;
 
 	atexit(sig_done);
 

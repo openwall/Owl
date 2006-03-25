@@ -5,6 +5,13 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 2.0 and Owl 2.0-stable.
 
+(2006/02/27 - 2006/03/20)
+2006/03/25	Package: john
+Applied many minor corrections, including for better handling of certain
+uncommon scenarios and improper uses of John.  Added a "keyboard
+cracker" to the default john.conf that will try sequences of adjacent
+keys on a keyboard as passwords.
+
 (2006/02/20)
 2006/03/25	Package: tar
 SECURITY FIX	Severity: high, local, passive
@@ -14,4 +21,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.2 2006/03/25 14:30:48 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.3 2006/03/25 14:56:40 solar Exp $

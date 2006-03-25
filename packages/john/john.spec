@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/john/john.spec,v 1.75 2006/02/02 15:48:00 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.75.2.1 2006/03/25 14:50:18 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7
+Version: 1.7.0.2
 %define charsets_version 20051216
-Release: owl2
+Release: owl1
 License: GPL
 Group: Applications/System
 URL: http://www.openwall.com/john/
@@ -75,6 +75,36 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Mon Mar 20 2006 Solar Designer <solar-at-owl.openwall.com> 1.7.0.2-owl1
+- Fixed a long-standing bug in the rule preprocessor which caused some
+duplicate characters to not be omitted on platforms where ARCH_WORD is bigger
+than int (that's all supported 64-bit platforms).
+
+* Tue Mar 07 2006 Solar Designer <solar-at-owl.openwall.com> 1.7.0.1-owl1
+- Fixed a bug introduced with 1.6.40 which caused spurious "charset file
+changed" errors in batch mode if interrupted and restored before pass 3.
+- Handle 8-bit characters in external mode program sources correctly.
+Thanks to Frank Dittrich for reporting these two problems.
+- Implemented extra ticks overflow safety - timer-based rather than just
+crypts count based.
+- Save/update the recovery file after the end of each pass in batch mode
+to make sure that the file is up to date in case the next pass refuses to
+start for whatever reason.
+- Remove the recovery file when all hashes get cracked also in batch mode.
+- Detect and report MinLen / MaxLen settings and charset files inconsistent
+with the hash type.
+- Perform additional sanity checking of charset files, distinguish incorrect
+vs. incompatible ones.
+- Use sysconf(_SC_CLK_TCK) instead of CLK_TCK when _SC_CLK_TCK is known to
+be available or CLK_TCK is not (needed for glibc 2.3.90+).
+- Worked around a gcc 4.1.0 strict aliasing bug affecting BF_std.c, BF_body:
+http://gcc.gnu.org/bugzilla/show_bug.cgi?id=26587
+- Added a separate DO_ALIGN(5) (cache line alignment) into x86.S after a
+possible switch to .bss from .data or .text.
+- Added "notes to packagers" to params.h.
+- Added a sample but fully-functional "keyboard-based" external mode to the
+default john.conf.
+
 * Thu Feb 02 2006 Solar Designer <solar-at-owl.openwall.com> 1.7-owl2
 - Pass -finline-limit=2000 --param inline-unit-growth=2000 to gcc such that
 it inlines the S-boxes on non-x86 just like gcc 2.x used to do.
