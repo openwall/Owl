@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.27 2005/12/23 00:22:14 solar Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.27.2.1 2006/03/25 14:25:28 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
 Version: 1.15.1
-Release: owl4
+Release: owl5
 License: GPL
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/tar/
@@ -19,6 +19,7 @@ Patch5: tar-1.15.1-cvs-20050613-is_avoided_name.diff
 Patch6: tar-1.15.1-cvs-20050801-sparse-totals.diff
 Patch7: tar-1.15.1-cvs-20051105-tests.diff
 Patch8: tar-1.15.1-up-savedir.diff
+Patch9: tar-1.15.1-cvs-20050622-xheader.diff
 Patch10: tar-1.15.1-alt-parse_opt-Iy.diff
 Patch11: tar-1.15.1-owl-info.diff
 Patch12: tar-1.15.1-owl-without-librt.diff
@@ -54,6 +55,7 @@ backups.
 %patch6 -p0
 %patch7 -p0
 %patch8 -p1
+%patch9 -p1
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
@@ -119,6 +121,10 @@ fi
 %doc AUTHORS NEWS THANKS
 
 %changelog
+* Mon Feb 20 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.15.1-owl5
+- Backported upstream fix for potential heap buffer overrun in handling
+extended headers (CVE-2006-0300).
+
 * Fri Dec 23 2005 Solar Designer <solar-at-owl.openwall.com> 1.15.1-owl4
 - Disabled tests/listed02.at because of a known race condition bug (reported
 upstream by ldv@).
