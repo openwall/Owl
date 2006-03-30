@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/screen/screen.spec,v 1.40 2006/01/30 07:15:08 solar Exp $
+# $Owl: Owl/packages/screen/screen.spec,v 1.41 2006/03/30 02:14:12 galaxy Exp $
 
 Summary: A screen manager that supports multiple sessions on one terminal.
 Name: screen
 Version: 4.0.2
-Release: owl7
+Release: owl8
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%version.tar.gz
@@ -116,6 +116,8 @@ fi
 %attr(2711,root,screen) %_bindir/screen
 %_mandir/man1/screen.1.*
 %_infodir/screen.info*
+%dir %_datadir/screen
+%dir %_datadir/screen/utf8encodings
 %_datadir/screen/utf8encodings/*
 %config(noreplace) /etc/screenrc
 %config(noreplace) /etc/pam.d/screen
@@ -127,6 +129,10 @@ fi
 /usr/share/terminfo/s/screen*
 
 %changelog
+* Thu Mar 30 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.0.2-owl8
+- Added the %%_datadir/screen and %%_datadir/screen/utf8encoding directories
+to the filelist, so they will be covered by the RPM database.
+
 * Mon Jan 30 2006 Solar Designer <solar-at-owl.openwall.com> 4.0.2-owl7
 - Force USEVARARGS, do not try to detect vsprintf() (that configure test was
 broken for current gcc and glibc).
