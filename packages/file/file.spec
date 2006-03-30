@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/file/file.spec,v 1.16 2006/03/30 02:27:37 galaxy Exp $
+# $Owl: Owl/packages/file/file.spec,v 1.17 2006/03/30 02:33:27 galaxy Exp $
 
 Summary: A utility for determining file types.
 Name: file
@@ -98,7 +98,7 @@ rm -f %buildroot%_libdir/*.la
 %_mandir/man3/*
 
 %changelog
-* Tue Mar 30 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.16-owl2
+* Thu Mar 30 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.16-owl2
 - Dropped LDFLAGS=-s from the %%build section, let's brp-* scripts do their
 work.
 - Added the %%_datadir/file directory to the filelist (it was orhaned).
