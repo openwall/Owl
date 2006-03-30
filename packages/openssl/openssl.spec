@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.52 2006/02/03 22:14:04 ldv Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.53 2006/03/30 04:01:09 galaxy Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
 Version: 0.9.7g
-Release: owl3
+Release: owl4
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
@@ -22,6 +22,7 @@ Provides: libcrypto.so.4, libssl.so.4
 BuildRequires: perl, diffutils
 # Due to sed -i.
 BuildRequires: sed >= 4.1.1
+BuildRequires: /bin/awk
 BuildRoot: /override/%name-%version
 
 %description
@@ -124,7 +125,7 @@ LD_LIBRARY_PATH=`pwd` make test
 
 %install
 rm -rf %buildroot
-make install SLIB=%_lib MANDIR=%_mandir INSTALL_PREFIX="%buildroot"
+%__make install SLIB=%_lib MANDIR=%_mandir INSTALL_PREFIX="%buildroot"
 
 # Fail if one of shared libraries was rebuit.
 if [ libcrypto.so.%version -nt libcrypto-stamp -o \
@@ -190,6 +191,7 @@ ln -sf libssl.so.5 /%_lib/libssl.so.4
 %attr(0755,root,root) %openssldir/misc/c_*
 %attr(0644,root,root) %_mandir/man[157]/*
 %config %attr(0644,root,root) %openssldir/openssl.cnf
+%dir %attr(0755,root,root) %openssldir
 %dir %attr(0755,root,root) %openssldir/certs
 %dir %attr(0755,root,root) %openssldir/misc
 %dir %attr(0700,root,root) %openssldir/private
@@ -205,6 +207,12 @@ ln -sf libssl.so.5 /%_lib/libssl.so.4
 %attr(0644,root,root) %_mandir/man3/*
 
 %changelog
+* Thu Mar 30 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.9.7g-owl4
+- Replaced make with %%__make.
+- Added the %%openssldir to the main filelist.
+- Added /bin/awk to BuildRequires (perhaps, we need to adjust our gawk to
+provide 'awk'?)
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.9.7g-owl3
 - Compressed ssleay.txt and CHANGES* files.
 
