@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/cdk/cdk.spec,v 1.7 2005/11/16 12:19:21 solar Exp $
+# $Owl: Owl/packages/cdk/cdk.spec,v 1.8 2006/03/30 02:04:31 galaxy Exp $
 
 Summary: Curses Development Kit.
 Name: cdk
 Version: 5.0
 %define snapshot 20050424
-Release: owl2
+Release: owl3
 License: BSD
 Group: System Environment/Libraries
 URL: http://invisible-island.net/cdk/
@@ -41,6 +41,7 @@ rm -rf %buildroot
 %__make install installCDKSHLibrary \
 	DESTDIR=%buildroot \
 	DOCUMENT_DIR=%buildroot%_docdir/%name-%version
+ldconfig -n %buildroot%_libdir
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -48,7 +49,7 @@ rm -rf %buildroot
 %files
 %defattr(-,root,root)
 %doc CHANGES EXPANDING NOTES README TODO COPYING
-%attr(755,root,root) %_libdir/lib*.so.*.*
+%attr(755,root,root) %_libdir/lib*.so.*
 
 %files devel
 %defattr(-,root,root)
@@ -59,6 +60,11 @@ rm -rf %buildroot
 %_mandir/man3/*
 
 %changelog
+* Thu Mar 30 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 5.0-owl3
+- Added a call to ldconfig(8) in the %%install section to create all necessary
+symbolic links for libraries.
+- Removed a redundant ".*" wildcard at %%files section.
+
 * Thu Sep 22 2005 Solar Designer <solar-at-owl.openwall.com> 5.0-owl2
 - Patched temporary file handling issues in headers.sh and demos/rolodex.c;
 many more remain under cli/ but we are not packaging that.
