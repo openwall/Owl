@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/man-pages/man-pages.spec,v 1.21 2005/12/12 01:00:31 mci Exp $
+# $Owl: Owl/packages/man-pages/man-pages.spec,v 1.22 2006/03/30 02:36:25 galaxy Exp $
 
 Summary: Manual (man) pages from the Linux Documentation Project.
 Name: man-pages
 Version: 2.16
-Release: owl1
+Release: owl2
 License: distributable
 Group: Documentation
 Source0: ftp://ftp.win.tue.nl/pub/linux-local/manpages/man-pages-%version.tar.gz
@@ -126,9 +126,13 @@ done
 %files posix
 %defattr(0644,root,root,0755)
 %doc POSIX-COPYRIGHT
+%dir %_mandir/man?p
 %_mandir/man?p/*
 
 %changelog
+* Thu Mar 30 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.16-owl2
+- Added the ?p sections to the POSIX man-pages filelist.
+
 * Thu Dec 08 2005 Michail Litvak <mci-at-owl.openwall.com> 2.16-owl1
 - 2.16.
 - Make separate subpackage for POSIX man-pages due to licensing restrictions.
