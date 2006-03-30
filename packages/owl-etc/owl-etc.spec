@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.67 2005/11/16 13:21:54 solar Exp $
+# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.68 2006/03/30 04:18:02 galaxy Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
 Version: 0.31
-Release: owl1
+Release: owl2
 License: public domain
 Group: System Environment/Base
 Source0: passwd
@@ -46,6 +46,8 @@ install -p %_sourcedir/{protocols,services,hosts.{allow,deny}} etc/
 install -p %_sourcedir/{profile,bashrc,inputrc} etc/
 install -p %_sourcedir/{csh.{login,cshrc}} etc/
 touch etc/{group,passwd,shadow}-
+touch etc/{hosts,mtab,resolv.conf}
+mkdir etc/sysconfig
 
 %triggerin -- shadow-utils
 function pause()
@@ -159,8 +161,17 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 %dir %attr(755,root,root) /etc/profile.d
 %ghost /var/log/lastlog
 %ghost /etc/*-
+%attr(0644,root,root) %config(noreplace,missingok) %ghost /etc/hosts
+%attr(0644,root,root) %config(noreplace,missingok) %ghost /etc/mtab
+%attr(0644,root,root) %config(noreplace) %ghost /etc/resolv.conf
+%dir %attr(755,root,root) /etc/sysconfig
 
 %changelog
+* Thu Mar 30 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.31-owl2
+- A minor change to include ghost files (/etc/hosts, /etc/mtab, and
+/etc/resolv.conf).
+- Added /etc/sysconfig directory, since it was orphaned.
+
 * Wed Oct 19 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.31-owl1
 - Changed 'xntpd' in passwd/group to 'ntpd'.
 
