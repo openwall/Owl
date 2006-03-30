@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/sysklogd/sysklogd.spec,v 1.22 2005/11/16 13:31:52 solar Exp $
+# $Owl: Owl/packages/sysklogd/sysklogd.spec,v 1.23 2006/03/30 03:05:11 galaxy Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
 Version: 1.4.1
-Release: owl10
+Release: owl11
 License: BSD for syslogd and GPL for klogd
 Group: System Environment/Daemons
 URL: http://www.infodrom.org/projects/sysklogd/
@@ -56,11 +56,11 @@ places according to a configuration file.
 %patch14 -p1
 
 %build
-make CFLAGS="%optflags -Wall -DSYSV -D_FILE_OFFSET_BITS=64"
+%__make CFLAGS="%optflags -Wall -DSYSV -D_FILE_OFFSET_BITS=64"
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot{%_mandir/man{5,8},/sbin}
+mkdir -p %buildroot{%_mandir/man{5,8},/sbin,/dev}
 
 %makeinstall prefix=%buildroot MANDIR=%buildroot%_mandir
 
@@ -73,6 +73,10 @@ install -m 644 %_sourcedir/syslog.conf etc/syslog.conf
 install -m 755 %_sourcedir/syslog.init etc/rc.d/init.d/syslog
 install -m 644 %_sourcedir/syslog.logrotate etc/logrotate.d/syslog
 install -m 600 %_sourcedir/syslog.sysconfig etc/sysconfig/syslog
+
+# XXX: (GM): we need to use mksock(1) from coreutils here, but our
+#            coreutils package has no mksock tool.
+touch dev/log
 
 %pre
 grep -q ^klogd: /etc/group || groupadd -g 180 klogd
@@ -113,10 +117,15 @@ fi
 %config(noreplace) /etc/rc.d/init.d/syslog
 %config(noreplace) /etc/sysconfig/syslog
 %attr(700,root,root) %dir /etc/syslog.d
+%attr(666,root,root) %ghost /dev/log
 /sbin/*
 %_mandir/*/*
 
 %changelog
+* Thu Mar 30 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.4.1-owl11
+- Replaced make with %%__make.
+- Added ghost file /dev/log.
+
 * Wed Aug 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.1-owl10
 - Changed klogd to terminate when read from previously opened /proc/kmsg
 returns EPERM.
