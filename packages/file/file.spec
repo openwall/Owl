@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/file/file.spec,v 1.15 2005/11/16 12:21:36 solar Exp $
+# $Owl: Owl/packages/file/file.spec,v 1.16 2006/03/30 02:27:37 galaxy Exp $
 
 Summary: A utility for determining file types.
 Name: file
 Version: 4.16
-Release: owl1
+Release: owl2
 License: distributable
 Group: Applications/File
 URL: http://www.darwinsys.com/file/
@@ -60,7 +60,7 @@ magic files.
 %build
 autoreconf -f
 %configure --enable-fsect-man5
-%__make LDFLAGS=-s
+%__make
 
 %install
 rm -rf %buildroot
@@ -81,6 +81,7 @@ rm -f %buildroot%_libdir/*.la
 %config(noreplace) /etc/magic
 %_bindir/*
 %_datadir/magic*
+%dir %_datadir/file
 %_datadir/file/*
 %_mandir/man1/*
 %_mandir/man5/*
@@ -97,6 +98,11 @@ rm -f %buildroot%_libdir/*.la
 %_mandir/man3/*
 
 %changelog
+* Tue Mar 30 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.16-owl2
+- Dropped LDFLAGS=-s from the %%build section, let's brp-* scripts do their
+work.
+- Added the %%_datadir/file directory to the filelist (it was orhaned).
+
 * Sun Oct 23 2005 Michail Litvak <mci-at-owl.openwall.com> 4.16-owl1
 - 4.16
 - Updated patches.
