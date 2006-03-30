@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openssh/openssh.spec,v 1.89 2006/02/03 22:02:14 ldv Exp $
+# $Owl: Owl/packages/openssh/openssh.spec,v 1.90 2006/03/30 03:25:13 galaxy Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl17
+Release: owl18
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -161,6 +161,9 @@ install -m 700 %_sourcedir/sftp.control \
 
 rm %buildroot%_datadir/Ssh.bin
 
+# create ghosts
+touch %buildroot/etc/ssh/ssh_host_{,rsa_,dsa_}key{,.pub}
+
 %pre server
 grep -q ^sshd: /etc/group || groupadd -g 74 sshd
 grep -q ^sshd: /etc/passwd || useradd -g sshd -u 74 -d / -s /bin/false -M sshd
@@ -237,11 +240,16 @@ fi
 %attr(0644,root,root) %_mandir/man8/sshd.8*
 %attr(0644,root,root) %_mandir/man8/sftp-server.8*
 %attr(0600,root,root) %config(noreplace) %verify(not size md5 mtime) /etc/ssh/sshd_config
+%attr(0600,root,root) %config(noreplace) %ghost /etc/ssh/ssh_host*key
+%attr(0644,root,root) %config(noreplace) %ghost /etc/ssh/ssh_host*key.pub
 %attr(0600,root,root) %config(noreplace) /etc/pam.d/sshd
 %attr(0700,root,root) %config /etc/rc.d/init.d/sshd
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Thu Mar 30 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.6.1p2-owl18
+- Added /etc/ssh/ssh_host_* to the server filelist as ghosts.
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.6.1p2-owl17
 - Compressed ChangeLog file.
 
