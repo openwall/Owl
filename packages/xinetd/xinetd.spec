@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/xinetd/xinetd.spec,v 1.36 2006/02/03 22:05:18 ldv Exp $
+# $Owl: Owl/packages/xinetd/xinetd.spec,v 1.37 2006/03/30 02:43:54 galaxy Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
 Version: 2.3.13
-Release: owl2
+Release: owl3
 License: BSD with minor restrictions
 Group: System Environment/Daemons
 URL: http://www.xinetd.org
@@ -56,7 +56,7 @@ bzip2 -9k CHANGELOG
 %build
 export ac_cv_header_DNSServiceDiscovery_DNSServiceDiscovery_h=no \
 %configure --with-loadavg --with-libwrap
-make
+%__make
 
 %install
 rm -rf %buildroot
@@ -105,12 +105,17 @@ fi
 %defattr(-,root,root)
 %doc AUDIT CHANGELOG.bz2 COPYRIGHT README xinetd/sample.conf
 %config(noreplace) /etc/xinetd.conf
+%dir /etc/xinetd.d
 %config(noreplace) /etc/xinetd.d/*
 %config /etc/rc.d/init.d/xinetd
 %_sbindir/*
 %_mandir/*/*
 
 %changelog
+* Thu Mar 30 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.13-owl3
+- Replaced make with %%__make.
+- Added /etc/xinetd.d to the filelist.
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3.13-owl2
 - Compressed CHANGELOG file.
 
