@@ -332,7 +332,7 @@ diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/Makefile vixie-cron-4
 -	misc.c env.c popen.c atrun.c closeall.c  ../../lib/libc/gen/pw_dup.c
 +	misc.c env.c popen.c atrun.c closeall.c pam_auth.c ../../lib/libc/gen/pw_dup.c
  CFLAGS+=-I${.CURDIR}
-+LDFLAGS+=-lpam
++LDLIBS+=-lpam
  MAN=	cron.8
  
  #.include <bsd.prog.mk>

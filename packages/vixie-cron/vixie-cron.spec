@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/vixie-cron/vixie-cron.spec,v 1.44 2005/11/16 13:32:46 solar Exp $
+# $Owl: Owl/packages/vixie-cron/vixie-cron.spec,v 1.45 2006/04/03 23:56:34 ldv Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
 Version: 4.1.20040916
-Release: owl5
+Release: owl6
 License: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%version.tar.bz2
@@ -146,6 +146,10 @@ fi
 %attr(640,root,crontab) %config(noreplace) /etc/*.deny
 
 %changelog
+* Tue Apr 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.1.20040916-owl6
+- Changed Makefiles to pass list of libraries to linker after regular
+object files, to fix build with -Wl,--as-needed.
+
 * Sat Oct 29 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.1.20040916-owl5
 - Changed PAM config file to include system-auth for PAM account and
 session management.

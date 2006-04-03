@@ -10,7 +10,7 @@ diff -uprk.orig vixie-cron-4.1.20040916.orig/linux.mk vixie-cron-4.1.20040916/li
 +.PHONY: clean install maninstall proginstall
 +
 +$(PROG): $(SRCS:.c=.o)
-+	$(LINK.o) $(LDFLAGS) $+ -o $@
++	$(LINK.o) $(LDFLAGS) $+ $(LDLIBS) -o $@
 +
 +clean:
 +	$(RM) $(PROG) $(SRCS:.c=.o)
