@@ -1,26 +1,118 @@
-diff -uprk.orig libcap-1.10.orig/libcap/cap_extint.c libcap-1.10/libcap/cap_extint.c
---- libcap-1.10.orig/libcap/cap_extint.c	1999-04-18 02:16:31 +0400
-+++ libcap-1.10/libcap/cap_extint.c	2002-09-16 04:18:24 +0400
-@@ -91,7 +91,7 @@ cap_t cap_copy_int(const void *cap_ext)
+diff -upk.orig libcap-1.10.orig/libcap/cap_alloc.c libcap-1.10/libcap/cap_alloc.c
+--- libcap-1.10.orig/libcap/cap_alloc.c	2002-09-16 00:32:09 +0000
++++ libcap-1.10/libcap/cap_alloc.c	2005-10-13 22:38:26 +0000
+@@ -109,7 +109,7 @@ int cap_free(void *data_p)
+     }
+ 
+     if ( good_cap_string(data_p) ) {
+-	int length = strlen(data_p) + sizeof(__u32);
++	size_t length = strlen(data_p) + sizeof(__u32);
+      	data_p = -1 + (__u32 *) data_p;
+      	memset(data_p, 0, length);
+      	free(data_p);
+diff -upk.orig libcap-1.10.orig/libcap/cap_extint.c libcap-1.10/libcap/cap_extint.c
+--- libcap-1.10.orig/libcap/cap_extint.c	1999-04-17 22:16:31 +0000
++++ libcap-1.10/libcap/cap_extint.c	2005-10-13 23:30:38 +0000
+@@ -16,8 +16,8 @@
+  * length (void *))
+  */
+ #define CAP_EXT_MAGIC "\220\302\001\121"
+-#define CAP_EXT_MAGIC_SIZE 4
+-const static __u8 external_magic[CAP_EXT_MAGIC_SIZE+1] = CAP_EXT_MAGIC;
++#define CAP_EXT_MAGIC_SIZE 4UL
++static const __u8 external_magic[CAP_EXT_MAGIC_SIZE+1] = CAP_EXT_MAGIC;
+ 
+ struct cap_ext_struct {
+     __u8 magic[CAP_EXT_MAGIC_SIZE];
+@@ -31,7 +31,7 @@ struct cap_ext_struct {
+  * return size of external capability set
+  */
+ 
+-ssize_t cap_size(cap_t caps)
++ssize_t cap_size(cap_t __attribute__ ((unused)) caps)
+ {
+     return sizeof(struct cap_ext_struct);
+ }
+@@ -49,7 +49,8 @@ ssize_t cap_copy_ext(void *cap_ext, cap_
+     int i;
+ 
+     /* valid arguments? */
+-    if (!good_cap_t(cap_d) || length < sizeof(struct cap_ext_struct)
++    if (!good_cap_t(cap_d) || length < 0
++	|| (size_t) length < sizeof(struct cap_ext_struct)
+ 	|| cap_ext == NULL) {
+ 	errno = EINVAL;
+ 	return -1;
+@@ -60,7 +61,7 @@ ssize_t cap_copy_ext(void *cap_ext, cap_
+     result->length_of_capset = CAP_SET_SIZE;
+ 
+     for (i=0; i<NUMBER_OF_CAP_SETS; ++i) {
+-	int j;
++	unsigned int j;
+ 	for (j=0; j<CAP_SET_SIZE; ) {
+ 	    __u32 val = *from++;
+ 
+@@ -90,8 +91,8 @@ cap_t cap_copy_int(const void *cap_ext)
+     const struct cap_ext_struct *export =
  	(const struct cap_ext_struct *) cap_ext;
      cap_t cap_d;
-     int set, blen;
+-    int set, blen;
 -    __u32 * to = (__u32 *) &cap_d->set;
++    unsigned int set, blen;
 +    __u32 * to;
  
      /* Does the external representation make sense? */
      if (export == NULL || !memcmp(export->magic, external_magic
-@@ -105,6 +105,7 @@ cap_t cap_copy_int(const void *cap_ext)
+@@ -105,9 +106,10 @@ cap_t cap_copy_int(const void *cap_ext)
         return NULL;
  
      blen = export->length_of_capset;
 +    to = (__u32 *) &cap_d->set;
      for (set=0; set<=NUMBER_OF_CAP_SETS; ++set) {
- 	int blk;
- 	int bno = 0;
-diff -uprk.orig libcap-1.10.orig/progs/execcap.c libcap-1.10/progs/execcap.c
---- libcap-1.10.orig/progs/execcap.c	1999-04-18 02:16:31 +0400
-+++ libcap-1.10/progs/execcap.c	2002-09-16 04:19:07 +0400
+-	int blk;
+-	int bno = 0;
++	unsigned int blk;
++	unsigned int bno = 0;
+ 	for (blk=0; blk<(CAP_SET_SIZE/4); ++blk) {
+ 	    __u32 val = 0;
+ 
+diff -upk.orig libcap-1.10.orig/libcap/cap_flag.c libcap-1.10/libcap/cap_flag.c
+--- libcap-1.10.orig/libcap/cap_flag.c	1999-04-17 22:16:31 +0000
++++ libcap-1.10/libcap/cap_flag.c	2005-10-13 23:10:44 +0000
+@@ -26,7 +26,7 @@ int cap_get_flag(cap_t cap_d, cap_value_
+      */
+ 
+     if (raised && good_cap_t(cap_d) && value >= 0 && value < __CAP_BITS
+-	&& set >= 0 && set < NUMBER_OF_CAP_SETS) {
++	&& (int) set >= 0 && set < NUMBER_OF_CAP_SETS) {
+ 	__cap_s *cap_p = (__cap_s *) (set*CAP_SET_SIZE
+ 				      + (__u8 *) &cap_d->set);
+ 
+@@ -56,7 +56,7 @@ int cap_set_flag(cap_t cap_d, cap_flag_t
+      */
+ 
+     if (good_cap_t(cap_d) && no_values > 0 && no_values <= __CAP_BITS
+-	&& (set >= 0) && (set < NUMBER_OF_CAP_SETS)
++	&& (int) set >= 0 && set < NUMBER_OF_CAP_SETS
+ 	&& (raise == CAP_SET || raise == CAP_CLEAR) ) {
+ 	int i;
+ 	for (i=0; i<no_values; ++i) {
+diff -upk.orig libcap-1.10.orig/libcap/cap_text.c libcap-1.10/libcap/cap_text.c
+--- libcap-1.10.orig/libcap/cap_text.c	2003-10-13 08:35:41 +0000
++++ libcap-1.10/libcap/cap_text.c	2005-10-13 22:51:40 +0000
+@@ -90,8 +90,7 @@ cap_t cap_from_text(const char *str)
+ 
+     if (!(res = cap_init()))
+ 	return NULL;
+-    for (n = __CAP_BLKS; n--; )
+-	allones._blk[n] = -1;
++    memset(&allones, 0xff, sizeof(allones));
+     _cap_debug("%s", str);
+ 
+     for (;;) {
+diff -upk.orig libcap-1.10.orig/progs/execcap.c libcap-1.10/progs/execcap.c
+--- libcap-1.10.orig/progs/execcap.c	1999-04-17 22:16:31 +0000
++++ libcap-1.10/progs/execcap.c	2002-09-16 00:19:07 +0000
 @@ -10,11 +10,12 @@
  #include <sys/types.h>
  #include <errno.h>
@@ -67,9 +159,66 @@ diff -uprk.orig libcap-1.10.orig/progs/execcap.c libcap-1.10/progs/execcap.c
 -    usage();
 +    return 1;
  }
-diff -uprk.orig libcap-1.10.orig/progs/sucap.c libcap-1.10/progs/sucap.c
---- libcap-1.10.orig/progs/sucap.c	1999-04-18 02:16:31 +0400
-+++ libcap-1.10/progs/sucap.c	2002-09-16 04:19:25 +0400
+diff -upk.orig libcap-1.10.orig/progs/setpcaps.c libcap-1.10/progs/setpcaps.c
+--- libcap-1.10.orig/progs/setpcaps.c	1999-11-18 06:04:26 +0000
++++ libcap-1.10/progs/setpcaps.c	2005-10-13 22:58:08 +0000
+@@ -15,7 +15,7 @@
+ #include <sys/capability.h>
+ #include <unistd.h>
+ 
+-static void usage(void)
++static void __attribute__ ((noreturn)) usage(void)
+ {
+     fprintf(stderr,
+ "usage: setcap [-q] (-|<caps>) <pid> [ ... (-|<capsN>) <pid> ]\n\n"
+@@ -31,15 +31,13 @@ static void usage(void)
+ 
+ #define MAXCAP  2048
+ 
+-static int read_caps(int quiet, const char *filename, char *buffer)
++static int read_caps(int quiet, char *buffer, size_t size)
+ {
+-    int i=MAXCAP;
+-
+     if (!quiet) {
+ 	fprintf(stderr,	"Please enter caps for file [empty line to end]:\n");
+     }
+-    while (i > 0) {
+-	int j = read(STDIN_FILENO, buffer, i);
++    while (size > 0) {
++	ssize_t j = read(STDIN_FILENO, buffer, size);
+ 
+ 	if (j < 0) {
+ 	    fprintf(stderr, "\n[Error - aborting]\n");
+@@ -53,14 +51,14 @@ static int read_caps(int quiet, const ch
+ 
+ 	/* move on... */
+ 
+-	i -= j;
++	size -= j;
+ 	buffer += j;
+     }
+ 
+     /* <NUL> terminate */
+     buffer[0] = '\0';
+ 
+-    return (i < MAXCAP ? 0:-1);
++    return (size < MAXCAP ? 0 : -1);
+ }
+ 
+ int main(int argc, char **argv)
+@@ -82,7 +80,7 @@ int main(int argc, char **argv)
+ 	    continue;
+ 	}
+ 	if (!strcmp(*argv,"-")) {
+-	    retval = read_caps(quiet, *argv, buffer);
++	    retval = read_caps(quiet, buffer, sizeof(buffer)-1);
+ 	    if (retval)
+ 		usage();
+ 	    text = buffer;
+diff -upk.orig libcap-1.10.orig/progs/sucap.c libcap-1.10/progs/sucap.c
+--- libcap-1.10.orig/progs/sucap.c	1999-04-17 22:16:31 +0000
++++ libcap-1.10/progs/sucap.c	2005-10-13 23:29:57 +0000
 @@ -11,17 +11,19 @@
  #include <sys/types.h>
  #include <errno.h>
@@ -103,6 +252,15 @@ diff -uprk.orig libcap-1.10.orig/progs/sucap.c libcap-1.10/progs/sucap.c
  {
      cap_t old_caps;
      uid_t uid;
+@@ -129,7 +131,7 @@ void main(int argc, char **argv)
+ 	close(pipe_fds[0]);
+ 
+ 	/* Get rid of any supplemental groups */
+-	if (!getuid() && setgroups(0, 0)) {
++	if (!getuid() && setgroups(0UL, 0)) {
+ 	    perror("sucap: setgroups failed");
+ 	    exit(1);
+ 	}
 @@ -176,7 +178,7 @@ void main(int argc, char **argv)
  	/* if we fall through to here, our exec failed -- announce the fact */
  	fprintf(stderr, "Unable to execute command: %s\n", strerror(errno));

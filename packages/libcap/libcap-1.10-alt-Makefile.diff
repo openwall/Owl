@@ -1,6 +1,81 @@
---- libcap-1.10/libcap/Makefile.orig	2003-11-06 20:54:27 +0300
-+++ libcap-1.10/libcap/Makefile	2003-11-06 21:30:15 +0300
-@@ -32,7 +32,7 @@
+diff -upk.orig libcap-1.10.orig/Make.Rules libcap-1.10/Make.Rules
+--- libcap-1.10.orig/Make.Rules	1999-11-18 06:06:02 +0000
++++ libcap-1.10/Make.Rules	2005-10-13 23:14:06 +0000
+@@ -12,19 +12,19 @@ FAKEROOT=
+ 
+ # Autoconf-style prefixes are activated when $(prefix) is defined.
+ # Otherwise binaries and libraraies are installed in /{lib,sbin}/,
+-# header files in /usr/include/ and documentation in /usr/man/man?/.
++# header files in /usr/include/ and documentation in /usr/share/man/man?/.
+ 
+ ifdef prefix
+ exec_prefix=$(prefix)
+ lib_prefix=$(exec_prefix)
+ inc_prefix=$(lib_prefix)
+-man_prefix=$(prefix)
++man_prefix=$(prefix)/share
+ else
+ prefix=/usr
+ exec_prefix=
+ lib_prefix=$(exec_prefix)
+ inc_prefix=$(prefix)
+-man_prefix=$(prefix)
++man_prefix=$(prefix)/share
+ endif
+ 
+ # Target directories
+@@ -44,10 +44,12 @@ MINOR=10
+ CC=gcc
+ COPTFLAGS=-O2
+ DEBUG=-g #-DDEBUG
+-WARNINGS=-ansi -D_POSIX_SOURCE -Wall -Wwrite-strings \
+-        -Wpointer-arith -Wcast-qual -Wcast-align \
+-        -Wtraditional -Wstrict-prototypes -Wmissing-prototypes \
+-        -Wnested-externs -Winline -Wshadow -pedantic
++WARNINGS=-D_GNU_SOURCE -Wall -W \
++	-Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings \
++	-Wconversion -Waggregate-return -Wstrict-prototypes \
++	-Wmissing-prototypes -Wmissing-declarations -Wmissing-noreturn \
++	-Wmissing-format-attribute -Wredundant-decls \
++	-Wdisabled-optimization
+ LD=ld
+ LDFLAGS=-s #-g
+ 
+diff -upk.orig libcap-1.10.orig/doc/Makefile libcap-1.10/doc/Makefile
+--- libcap-1.10.orig/doc/Makefile	1999-04-17 22:16:31 +0000
++++ libcap-1.10/doc/Makefile	2005-10-13 22:11:38 +0000
+@@ -16,21 +16,15 @@ MAN3S = cap_init.3 cap_free.3 cap_dup.3 
+ 	capsetp.3 capgetp.3
+ #MAN8S = getcap.8 setcap.8
+ 
+-MANS = $(MAN2S) $(MAN3S) $(MAN8S)
++MANS = $(MAN3S)
+ 
+ all: $(MANS)
+ 
+-install:
+-	mkdir -p -m 755 $(MANDIR)/man2 $(MANDIR)/man3
+-	for man in \
+-		$(MANDIR)/man2 $(MAN2S) \
+-		$(MANDIR)/man3 $(MAN3S) \
+-		; \
+-	do \
+-		case $$man in \
+-		/*)	sub=$$man ; continue ;; \
+-		esac; \
+-		install -m 644 $$man $$sub ; \
++install: $(MANS)
++	for man in $(MANS); do \
++		sect="$${man##*.}"; \
++		mkdir -p -m755 $(MANDIR)/man$$sect; \
++		install -p -m644 $$man $(MANDIR)/man$$sect/; \
+ 	done
+ 
+ clean:
+diff -upk.orig libcap-1.10.orig/libcap/Makefile libcap-1.10/libcap/Makefile
+--- libcap-1.10.orig/libcap/Makefile	1999-04-17 22:16:31 +0000
++++ libcap-1.10/libcap/Makefile	2005-10-13 22:16:15 +0000
+@@ -32,7 +32,7 @@ include ../Make.Rules
  LIBNAME=libcap.so
  #
  
@@ -9,7 +84,23 @@
  
  # for later when there is filesystem support for cap's:
  #FILES += cap_file 
-@@ -61,7 +61,7 @@
+@@ -41,6 +41,7 @@ INCLS=libcap.h cap_names.h $(INCS)
+ OBJS=$(addsuffix .o, $(FILES))
+ MAJLIBNAME=$(LIBNAME).$(VERSION)
+ MINLIBNAME=$(MAJLIBNAME).$(MINOR)
++MAP=libcap.map
+ 
+ all: $(MINLIBNAME)
+ 
+@@ -55,13 +56,13 @@ cap_names.sed: Makefile /usr/include/lin
+ 	@sed -ne '/^#define[ \t]CAP[_A-Z]\+[ \t]\+[0-9]\+/{s/^#define \([^ \t]*\)[ \t]*\([^ \t]*\)/  \{ \2, \"\1\" \},/;y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/;p;}' < /usr/include/linux/capability.h | fgrep -v 0x > cap_names.sed
+ #	@sed -ne '/^#define[ \t]CAP[_A-Z]\+[ \t]\+[0-9]\+/{s/^#define CAP_\([^ \t]*\)[ \t]*\([^ \t]*\)/  \{ \2, \"\1\" \},/;y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/;p;}' < /usr/include/linux/capability.h | fgrep -v 0x > cap_names.sed
+ 
+-$(MINLIBNAME): $(OBJS)
+-	$(LD) -soname $(MAJLIBNAME) -x -shared -o $@ $(OBJS)
++$(MINLIBNAME): $(OBJS) $(MAP)
++	$(CC) -shared -Wl,-soname,$(MAJLIBNAME),--version-script,$(MAP),-z,defs -o $@ $(OBJS)
+ 	ln -sf $(MINLIBNAME) $(MAJLIBNAME)
  	ln -sf $(MAJLIBNAME) $(LIBNAME)
  
  %.o: %.c $(INCLS)
@@ -18,3 +109,35 @@
  
  install: all
  	mkdir -p -m 0755 $(INCDIR)/sys
+@@ -70,7 +71,6 @@ install: all
+ 	install -m 0644 $(MINLIBNAME) $(LIBDIR)/$(MINLIBNAME)
+ 	ln -sf $(MINLIBNAME) $(LIBDIR)/$(MAJLIBNAME)
+ 	ln -sf $(MAJLIBNAME) $(LIBDIR)/$(LIBNAME)
+-	-/sbin/ldconfig
+ 
+ clean:
+ 	$(LOCALCLEAN)
+diff -upk.orig libcap-1.10.orig/libcap/libcap.map libcap-1.10/libcap/libcap.map
+--- libcap-1.10.orig/libcap/libcap.map	1970-01-01 00:00:00 +0000
++++ libcap-1.10/libcap/libcap.map	2005-08-15 14:26:19 +0000
+@@ -0,0 +1,20 @@
++{
++  global:
++    _cap_names;
++    cap_clear;
++    cap_copy_ext;
++    cap_copy_int;
++    cap_dup;
++    cap_free;
++    cap_from_text;
++    cap_get_flag;
++    cap_get_proc;
++    cap_init;
++    cap_set_flag;
++    cap_set_proc;
++    cap_size;
++    cap_to_text;
++    capgetp;
++    capsetp;
++  local: *;
++};

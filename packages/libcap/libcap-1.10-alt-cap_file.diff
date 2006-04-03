@@ -1,0 +1,15 @@
+--- libcap-1.10/libcap/include/sys/capability.h.orig	2005-10-06 19:44:16 +0000
++++ libcap-1.10/libcap/include/sys/capability.h	2005-10-06 19:47:07 +0000
+@@ -111,12 +111,6 @@
+ int     cap_set_flag(cap_t, cap_flag_t, int, cap_value_t *, cap_flag_value_t);
+ int     cap_clear(cap_t);
+ 
+-/* libcap/cap_file.c */
+-cap_t   cap_get_fd(int);
+-cap_t   cap_get_file(const char *);
+-int     cap_set_fd(int, cap_t);
+-int     cap_set_file(const char *, cap_t);
+-
+ /* libcap/cap_proc.c */
+ cap_t   cap_get_proc(void);
+ int     cap_set_proc(cap_t);

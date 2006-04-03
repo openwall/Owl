@@ -1,20 +1,21 @@
-# $Owl: Owl/packages/libcap/libcap.spec,v 1.13 2005/11/16 13:11:15 solar Exp $
+# $Owl: Owl/packages/libcap/libcap.spec,v 1.14 2006/04/03 21:57:30 ldv Exp $
 
 Summary: Library for getting and setting POSIX.1e capabilities.
 Name: libcap
 Version: 1.10
-Release: owl3
+Release: owl4
 License: GPL
 Group: System Environment/Libraries
 URL: http://www.kernel.org/pub/linux/libs/security/linux-privs/
-Source0: ftp://ftp.kernel.org/pub/linux/libs/security/linux-privs/kernel-2.2/%name-%version.tar.bz2
+Source0: ftp://ftp.kernel.org/pub/linux/libs/security/linux-privs/kernel-2.2/libcap-%version.tar.bz2
 Source1: ftp://ftp.kernel.org/pub/linux/libs/security/linux-privs/kernel-2.2/capfaq-0.2.txt
-Patch0: libcap-1.10-alt-cap_free.diff
-Patch1: libcap-1.10-alt-bound.diff
-Patch2: libcap-1.10-alt-userland.diff
+Patch0: libcap-1.10-alt-Makefile.diff
+Patch1: libcap-1.10-alt-cap_free.diff
+Patch2: libcap-1.10-alt-bound.diff
 Patch3: libcap-1.10-alt-warnings.diff
 Patch4: libcap-1.10-rh-alt-makenames.diff
-Patch5: libcap-1.10-alt-Makefile.diff
+Patch5: libcap-1.10-alt-userland.diff
+Patch6: libcap-1.10-alt-cap_file.diff
 BuildRoot: /override/%name-%version
 
 %description
@@ -48,27 +49,31 @@ capabilities.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-install -p -m 644 %_sourcedir/capfaq-0.2.txt .
-
-%{expand:%%define optflags %optflags -Wall}
+%patch6 -p1
+install -pm644 %_sourcedir/capfaq-0.2.txt .
 
 %build
-make COPTFLAG="%optflags -D_GNU_SOURCE" DEBUG= LDFLAGS= WARNINGS=
+make COPTFLAG="%optflags" DEBUG= LDFLAGS= WARNINGS=
 
 %install
 rm -rf %buildroot
-make install FAKEROOT=%buildroot MANDIR=%buildroot%_mandir
+make install FAKEROOT=%buildroot \
+	MANDIR=%buildroot%_mandir LIBDIR=%buildroot/%_lib
 
-# XXX: (GM): Remove unpackaged files (check later)
-rm %buildroot%_mandir/man2/capget.2*
-rm %buildroot%_mandir/man2/capset.2*
+# Relocate development library from /%_lib/ to %_libdir/.
+mkdir %buildroot%_libdir
+symlink=%buildroot/%_lib/libcap.so
+soname=`objdump -p "$symlink" |awk '/SONAME/ {print $2}'`
+[ -n "$soname" ]
+rm -f "$symlink"
+ln -s ../../%_lib/"$soname" "%buildroot%_libdir/libcap.so"
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
 %files
 %defattr(-,root,root)
-/lib/*.so.*
+/%_lib/*.so.*
 
 %files utils
 %defattr(-,root,root)
@@ -78,12 +83,19 @@ rm %buildroot%_mandir/man2/capset.2*
 %defattr(-,root,root)
 %doc README CHANGELOG *.txt pgp.keys.asc doc/capability.notes
 %doc progs/*.c
-/lib/*.so
+%_libdir/*.so
 %_includedir/sys/*.h
-# man-pages package currently has newer versions of the section 2 pages.
 %_mandir/man3/*
 
 %changelog
+* Tue Apr 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.10-owl4
+- Synced with libcap-1.10-alt15:
+- Relocated development library to %_libdir.
+- Restricted list of global symbols exported by the library.
+- Removed prototypes of non-implemented functions (cap_get_fd,
+cap_get_file, cap_set_fd and cap_set_file) from sys/capability.h file.
+- Enabled additional gcc diagnostics and fixed all uncovered warnings.
+
 * Mon Feb 09 2004 Michail Litvak <mci-at-owl.openwall.com> 1.10-owl3
 - Use RPM macros instead of explicit paths.
 
