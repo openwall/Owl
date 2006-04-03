@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/mtree/mtree.spec,v 1.19 2005/11/16 13:16:56 solar Exp $
+# $Owl: Owl/packages/mtree/mtree.spec,v 1.20 2006/04/03 23:49:11 ldv Exp $
 
 Summary: Map a directory hierarchy.
 Name: mtree
 Version: 3.7.20050808
-Release: owl1
+Release: owl2
 License: BSD
 Group: System Environment/Base
 Source: mtree-%version.tar.bz2
@@ -42,6 +42,10 @@ install -m 644 usr.sbin/mtree/mtree.8 %buildroot%_mandir/man8/
 %_mandir/man8/mtree.8*
 
 %changelog
+* Tue Apr 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.7.20050808-owl2
+- Changed Makefile to pass list of libraries to linker after regular
+object files, to fix build with -Wl,--as-needed.
+
 * Mon Aug 08 2005 Solar Designer <solar-at-owl.openwall.com> 3.7.20050808-owl1
 - Updated to version from current OpenBSD (post-3.7).
 - Added VIS_GLOB support into *vis(), originally by phk of FreeBSD.

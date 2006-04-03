@@ -46,7 +46,7 @@ diff -urpN mtree-3.7.20050808-fixes/lib/libc/gen/setmode.c mtree-3.7.20050808-li
 diff -urpN mtree-3.7.20050808-fixes/usr.sbin/mtree/Makefile mtree-3.7.20050808-linux/usr.sbin/mtree/Makefile
 --- mtree-3.7.20050808-fixes/usr.sbin/mtree/Makefile	Sun May  2 17:55:53 2004
 +++ mtree-3.7.20050808-linux/usr.sbin/mtree/Makefile	Mon Aug  8 07:23:09 2005
-@@ -1,8 +1,32 @@
+@@ -1,8 +1,33 @@
  #	$OpenBSD: Makefile,v 1.7 2004/05/02 17:55:53 millert Exp $
  
 +CC = gcc
@@ -57,7 +57,8 @@ diff -urpN mtree-3.7.20050808-fixes/usr.sbin/mtree/Makefile mtree-3.7.20050808-l
 +endif
 +CFLAGS += -I. -I../../include
 +CFLAGS += -Wall -Dlint
-+LDFLAGS = -s -lcrypto
++LDFLAGS = -s
++LDLIBS = -lcrypto
 +
  PROG=	mtree
  #CFLAGS+=-DDEBUG
@@ -74,7 +75,7 @@ diff -urpN mtree-3.7.20050808-fixes/usr.sbin/mtree/Makefile mtree-3.7.20050808-l
 +all: $(PROG)
 +
 +$(PROG): $(SRCS:.c=.o)
-+	$(LD) $(LDFLAGS) $+ -o $@
++	$(LD) $(LDFLAGS) $+ $(LDLIBS) -o $@
 +
 +.c.o:
 +	$(CC) -c $(CFLAGS) $< -o $@
