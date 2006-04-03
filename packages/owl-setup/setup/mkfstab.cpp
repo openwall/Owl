@@ -118,7 +118,7 @@ static void edit_fstab(OwlInstallInterface *the_iface)
 #endif
     ScriptVector ed_cmdline;
     the_config->EditorCmdline(ed_cmdline);
-    ed_cmdline.AddItem(the_config->FstabFile());   
+    ed_cmdline.AddItem(the_config->FstabFile());
     char **ed_argv = ed_cmdline.MakeArgv();
     ExecAndWait editor(ed_argv);
     ed_cmdline.DeleteArgv(ed_argv);

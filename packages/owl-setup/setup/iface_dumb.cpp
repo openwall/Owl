@@ -10,12 +10,7 @@
 #include "iface_dumb.hpp"
 
 class SymbolicInterruption {
-    int save_vintr;
-    int save_verase;
-    int save_veof;
-    int save_vmin;
-    int save_vtime;
-    int save_lflag;
+    struct termios save_ti;
 public:
     SymbolicInterruption();
     ~SymbolicInterruption();
@@ -29,46 +24,32 @@ SymbolicInterruption::SymbolicInterruption()
 {
     struct termios t;
     tcgetattr(0, &t);
-    save_verase = t.c_cc[VERASE];
-    save_vintr = t.c_cc[VINTR];
-    save_veof = t.c_cc[VEOF];
-    save_vmin = t.c_cc[VMIN];
-    save_vtime = t.c_cc[VTIME];
+    save_ti = t;
     t.c_cc[VINTR] = 0;
     t.c_cc[VMIN] = 1;
     t.c_cc[VTIME] = 0;
-    save_lflag = t.c_lflag;
-    t.c_lflag &= ~ICANON;
-    t.c_lflag &= ~ECHO;
+    t.c_lflag &= ~(ICANON | ECHO);
     tcsetattr(0, TCSANOW, &t);
 }
 
 SymbolicInterruption::~SymbolicInterruption()
 {
-    struct termios t;
-    tcgetattr(0, &t);
-    t.c_cc[VINTR] = save_vintr;
-    t.c_cc[VERASE] = save_verase;
-    t.c_cc[VEOF] = save_veof;
-    t.c_cc[VMIN] = save_vmin;
-    t.c_cc[VTIME] = save_vtime;
-    t.c_lflag = save_lflag;
-    tcsetattr(0, TCSANOW, &t);
+    tcsetattr(0, TCSANOW, &save_ti);
 }
 
 int SymbolicInterruption::InterruptChar() const
 {
-    return save_vintr;
+    return save_ti.c_cc[VINTR];
 }
 
 int SymbolicInterruption::EraseChar() const
 {
-    return save_verase;
+    return save_ti.c_cc[VERASE];
 }
 
 int SymbolicInterruption::EofChar() const
 {
-    return save_veof;
+    return save_ti.c_cc[VEOF];
 }
 
 static int get_terminal_columns()
@@ -103,10 +84,12 @@ static ScriptVariable KeyboardRead(bool blind = false)
         if(c==si.EraseChar() || c=='\177' || c=='\b') {
             if(res.Length() > 0) {
                 res.Range(-1, 1).Erase();
-                // now hide the last char 
-                fputs("\b \b", stdout);
+                // now hide the last char
+                if(!blind)
+                    fputs("\b \b", stdout);
             }
-            fflush(stdout);
+            if(!blind)
+                fflush(stdout);
             continue;
         }
         if(c==si.InterruptChar()) return OwlInstallInterface::qs_cancel;
@@ -117,8 +100,10 @@ static ScriptVariable KeyboardRead(bool blind = false)
             // just ignore
             continue;
         }
-        putchar(blind ? '*' : c);
-        fflush(stdout);
+        if(!blind) {
+            putchar(c);
+            fflush(stdout);
+        }
         char x[2] = {0,0};
         x[0] = c;
         res += x;
@@ -375,7 +360,7 @@ void DumbOwlInstallInterface::CloseExecWindow(bool keywait)
 {
     printf("\n\n");
     if(keywait) {
-        printf("Press return to continue...");
+        printf("Press enter to continue...");
         fflush(stdout);
         int c;
         do { c = getchar(); } while(c != '\n' && c != EOF);

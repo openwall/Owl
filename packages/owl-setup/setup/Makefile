@@ -44,7 +44,7 @@ SETTLE_OBJS = settle.o iface.o iface_dumb.o $(CURSES_OBJ) \
 	cmd.o \
 	state.o repartition.o \
 	select_partitions.o \
-	swap.o installworld.o root_passwd_settle.o pam_root_passwd.o\
+	swap.o installworld.o root_passwd_settle.o pam_root_passwd.o \
 	installkernel.o installkernheaders.o \
 	mkfstab.o shellout.o network.o \
 	timezone.o keyboard.o config.o reboot.o

@@ -190,11 +190,48 @@ NcursesIfaceHierChoice::NcursesIfaceHierChoice(void *a_screen)
     the_cdkscreen = a_screen;
 }
 
+
+static int common_prefix_length(const ScriptVariable &v1,
+                                const ScriptVariable &v2)
+{
+    int i;
+    for(i=0; v1[i] && (v1[i] == v2[i]); i++) {}
+    return i;
+}
+
+static int calc_scroll_position(const ScriptVector &items,
+                                const ScriptVariable &str)
+{
+    int bestmatch = -1;
+    int bestmatchcpl = 0;
+    for(int i=0; i<items.Length(); i++) {
+        ScriptVariable cur(items[i]);
+        if(cur[0]=='<') {
+            ScriptVariable::Substring s(cur.Strchr('>'));
+            s.ExtendToBegin();
+            s.Erase();
+        }
+        cur.Trim("[] ");
+        cur.Toupper();
+        if(cur.HasPrefix(str)) return i;
+        int cpl = common_prefix_length(cur, str);
+        if(cpl > 0) {
+            if(bestmatch == -1 || bestmatchcpl < cpl) {
+                bestmatch = i;
+                bestmatchcpl = cpl;
+            }
+        }
+    }
+    return bestmatch;
+}
+
 static int run_scroll(CDKSCREEN *screen,
                       ScriptVariable header, ScriptVariable header2,
                       ScriptVector items)
 {
     int res = -1;
+
+    ScriptVariable quick_search("");
 
     if(work_with_colors) {
         for(int i=0; i<items.Length(); i++)
@@ -238,6 +275,7 @@ static int run_scroll(CDKSCREEN *screen,
             case KEY_ENTER:
             case KEY_RETURN:
             case KEY_SELECT:
+                quick_search = "";
                 res = injectCDKScroll(list, KEY_ENTER);
                 if(res == -1)
                     res = injectCDKScroll(list, KEY_RETURN);
@@ -245,10 +283,22 @@ static int run_scroll(CDKSCREEN *screen,
             case KEY_CANCEL:
             case KEY_EXIT:
             case '\033':
+                quick_search = "";
                 res = -1;
                 goto quit;
             default:
-                injectCDKScroll(list, c);
+                if(isalnum(c)) {
+                    quick_search += (char)c;
+                    quick_search.Toupper();
+                    int pos = calc_scroll_position(items, quick_search);
+                    if(pos>=0) {
+                        setCDKScrollPosition(list, pos);
+                        drawCDKScroll(list, true);
+                    }
+                } else {
+                    quick_search = "";
+                    injectCDKScroll(list, c);
+                }
         }
     }
 quit:
@@ -608,11 +658,11 @@ NcursesOwlInstallInterface::QueryString(const ScriptVariable& prompt,
             case '\033':
                 goto quit;
             case '\010': /* workaround for ru2 map... is it Ok? */
-                /* I'm unsure about KEY_BACKSPACE, I only choose it because 
+                /* I'm unsure about KEY_BACKSPACE, I only choose it because
                    in the version of CDK which I use, it appears explicitly
-                   in the body of _injectCDKEntry(). However, in the 
+                   in the body of _injectCDKEntry(). However, in the
                    headers it is commented as 'unreliable'. Well... looks
-                   like there's no _right_ thing, there's only a thing 
+                   like there's no _right_ thing, there's only a thing
                    which works.
                  */
                 injectCDKEntry(entry, KEY_BACKSPACE);
@@ -644,7 +694,7 @@ void NcursesOwlInstallInterface::ExecWindow(const ScriptVariable& msg)
 void NcursesOwlInstallInterface::CloseExecWindow(bool keywait)
 {
     if(keywait) {
-        printf("\n\nPress return to continue...");
+        printf("\n\nPress enter to continue...");
         fflush(stdout);
         int c;
         do { c = getchar(); } while(c != '\n' && c != EOF);

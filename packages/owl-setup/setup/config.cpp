@@ -170,8 +170,10 @@ ScriptVariable OwlInstallConfig::KernelHeadersDirName() const
 { return "linux"; }
 
 
-
 ScriptVariable OwlInstallConfig::FstabFile() const
 { return root+"/etc/fstab"; }
+
+ScriptVariable OwlInstallConfig::PamServiceName() const
+{ return "setup"; }
 
 OwlInstallConfig *the_config = 0;

@@ -77,8 +77,9 @@ public:
     ScriptVariable KernelHeadersTarget() const;
     ScriptVariable KernelHeadersDirName() const;
 
-
     ScriptVariable FstabFile() const;
+
+    ScriptVariable PamServiceName() const;
 };
 
 extern OwlInstallConfig *the_config;
