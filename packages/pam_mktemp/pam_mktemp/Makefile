@@ -8,20 +8,23 @@ RM = rm -f
 MKDIR = mkdir -p
 INSTALL = install -c
 CFLAGS = -Wall -O2 -fPIC
-LDFLAGS = -s -lpam --shared
+LDFLAGS = -s --shared -Wl,--version-script,$(MAP)
+LDLIBS = -lpam
 
 TITLE = pam_mktemp
-LIBSHARED = $(TITLE).so
-SHLIBMODE = 700
+PAM_SO_SUFFIX =
+LIBSHARED = $(TITLE).so$(PAM_SO_SUFFIX)
+SHLIBMODE = 755
 SECUREDIR = /lib/security
 DESTDIR =
 
 OBJS = pam_mktemp.o
+MAP = pam_mktemp.map
 
 all: $(LIBSHARED)
 
-pam_mktemp.so: $(OBJS)
-	$(LD) $(LDFLAGS) $(OBJS) -o pam_mktemp.so
+pam_mktemp.so: $(OBJS) $(MAP)
+	$(LD) $(LDFLAGS) $(OBJS) $(LDLIBS) -o pam_mktemp.so
 
 .c.o:
 	$(CC) $(CFLAGS) -c $*.c

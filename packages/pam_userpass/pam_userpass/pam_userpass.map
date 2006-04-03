@@ -1,0 +1,13 @@
+# $Owl: Owl/packages/pam_userpass/pam_userpass/pam_userpass.map,v 1.1 2006/04/03 22:59:09 ldv Exp $
+
+{
+  global:
+    pam_sm_acct_mgmt;
+    pam_sm_authenticate;
+    pam_sm_chauthtok;
+    pam_sm_close_session;
+    pam_sm_open_session;
+    pam_sm_setcred;
+  local:
+    *;
+};

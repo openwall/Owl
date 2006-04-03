@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.22 2005/11/16 13:28:58 solar Exp $
+# $Owl: Owl/packages/pam_userpass/pam_userpass/pam_userpass.spec,v 1.23 2006/04/03 22:59:09 ldv Exp $
 
 Summary: Pluggable authentication module for USER/PASS-style protocols.
 Name: pam_userpass
-Version: 1.0
+Version: 1.0.1
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
@@ -35,7 +35,7 @@ CFLAGS="-Wall -fPIC %optflags" make
 
 %install
 rm -rf %buildroot
-make install DESTDIR=%buildroot
+make install DESTDIR=%buildroot SECUREDIR=/%_lib/security LIBDIR=%_libdir
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -43,7 +43,7 @@ make install DESTDIR=%buildroot
 %files
 %defattr(-,root,root)
 %doc LICENSE README
-/lib/security/pam_userpass.so
+/%_lib/security/pam_userpass.so
 %_libdir/*.so.*
 
 %files devel
@@ -53,6 +53,13 @@ make install DESTDIR=%buildroot
 %_includedir/security/*
 
 %changelog
+* Tue Apr 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.0.1-owl1
+- Restricted list of global symbols exported by the PAM module
+to standard set of six pam_sm_* functions.
+- Changed Makefile to pass list of libraries to linker after regular
+object files, to fix build with -Wl,--as-needed.
+- Corrected specfile to make it build on x86_64.
+
 * Fri Mar 25 2005 Solar Designer <solar-at-owl.openwall.com> 1.0-owl1
 - Corrected the source code to not break C strict aliasing rules.
 

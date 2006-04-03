@@ -21,6 +21,8 @@ SONAME = lib$(TITLE).so.1
 LIBAPPLSHARED = lib$(TITLE).so.1.0
 LIBAPPLSHARED_LINK = lib$(TITLE).so
 LIBAPPLSTATIC = lib$(TITLE).a
+PAM_MAP = pam_userpass.map
+APPL_MAP = libpam_userpass.map
 SHLIBMODE = 755
 STLIBMODE = 644
 INCLUDEMODE = 644
@@ -37,11 +39,12 @@ DESTDIR =
 
 all: $(LIBPAMSHARED) $(LIBAPPLSTATIC) example_userpass
 
-$(LIBPAMSHARED): pam_userpass.o
-	$(LINK_SHARED) $< $(LIBS) -o $@
+$(LIBPAMSHARED): pam_userpass.o $(PAM_MAP)
+	$(LINK_SHARED) -Wl,--version-script,$(PAM_MAP) $< $(LIBS) -o $@
 
-$(LIBAPPLSHARED): appl_userpass.o
-	$(LINK_SHARED) -Wl,-soname,$(SONAME) $< $(LIBS) -o $@
+$(LIBAPPLSHARED): appl_userpass.o $(APPL_MAP)
+	$(LINK_SHARED) -Wl,--version-script,$(APPL_MAP),-soname,$(SONAME) \
+		$< $(LIBS) -o $@
 
 $(LIBAPPLSTATIC): appl_userpass.o
 	$(AR) $(ARFLAGS) $@ $<
@@ -58,7 +61,7 @@ appl_userpass.o: appl_userpass.c include/security/_pam_userpass.h \
 	include/security/pam_userpass.h
 
 example_userpass: example_userpass.o $(LIBAPPLSHARED_LINK)
-	$(LINK) $< -L. -l$(TITLE) -o $@
+	$(LINK) $< $(LIBS) -L. -l$(TITLE) -o $@
 
 install: all
 	$(MKDIR) $(DESTDIR)$(SECUREDIR)

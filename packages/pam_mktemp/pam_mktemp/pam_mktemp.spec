@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.22 2006/01/09 19:28:54 ldv Exp $
+# $Owl: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.23 2006/04/03 22:35:32 ldv Exp $
 
 Summary: Pluggable private /tmp space support for interactive (shell) sessions.
 Name: pam_mktemp
-Version: 1.0.2
+Version: 1.0.3
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible
 Group: System Environment/Base
@@ -24,7 +24,7 @@ make CFLAGS="%optflags -Wall -fPIC"
 
 %install
 rm -rf %buildroot
-make install DESTDIR=%buildroot
+make install DESTDIR=%buildroot SECUREDIR=/%_lib/security
 
 %post
 mkdir -p -m 711 /tmp/.private
@@ -37,9 +37,16 @@ fi
 %files
 %defattr(-,root,root)
 %doc LICENSE README
-/lib/security/pam_mktemp.so
+/%_lib/security/pam_mktemp.so
 
 %changelog
+* Tue Apr 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.0.3-owl1
+- Restricted list of global symbols exported by the PAM module
+to standard set of six pam_sm_* functions.
+- Changed Makefile to pass list of libraries to linker after regular
+object files, to fix build with -Wl,--as-needed.
+- Corrected specfile to make it build on x86_64.
+
 * Mon Jan 09 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.0.2-owl1
 - Replaced manual -DLINUX_PAM with Linux-PAM autodetection.
 - Added workaround for build with Linux 2.6.x headers.

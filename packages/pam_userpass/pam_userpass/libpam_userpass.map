@@ -1,0 +1,8 @@
+# $Owl: Owl/packages/pam_userpass/pam_userpass/libpam_userpass.map,v 1.1 2006/04/03 22:59:09 ldv Exp $
+
+{
+  global:
+    pam_userpass_conv;
+  local:
+    *;
+};
