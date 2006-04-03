@@ -1,0 +1,37 @@
+--- dev86-0.16.17/ifdef.c.orig	2004-10-02 17:59:29 +0400
++++ dev86-0.16.17/ifdef.c	2005-06-03 19:07:14 +0400
+@@ -443,10 +443,6 @@
+ #ifdef __i386__
+    save_name("__elksemu_works__", 'D');
+ #endif
+-/* Is this true ? */
+-#ifdef __x86_64__
+-   save_name("__elksemu_works__", 'D');
+-#endif
+ #endif
+ #ifdef __unix__
+    save_name("__unix__", 'D');
+--- dev86-0.16.17/makefile.in.orig	2005-06-03 19:06:56 +0400
++++ dev86-0.16.17/makefile.in	2005-06-03 19:14:01 +0400
+@@ -89,10 +89,10 @@
+ 
+ #ifdef GNUMAKE
+ all: check_config bcc86 cpp unproto copt as86 ar86 ld86 objdump86 \
+-     library lib-bsd alt-libs elksemu
++     library lib-bsd alt-libs
+ 
+ install: check_config install-bcc install-man \
+-     install-lib install-emu
++     install-lib
+ 
+ install-all: install install-other
+ 
+@@ -231,7 +231,7 @@
+ 	install $(INDAT) lib/i386/rules.* 	$(DISTLIB)/i386
+ 
+ # NB: This doesn't install as a suid root, that's ok though.
+-install-emu: elksemu
++install-emu:
+ #ifdef __elksemu_works__
+ 	install -d $(DISTBIN)
+ 	install $(INEXE) bin/elksemu 	$(DISTBIN)/elksemu
