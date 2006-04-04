@@ -694,7 +694,7 @@ void NcursesOwlInstallInterface::ExecWindow(const ScriptVariable& msg)
 void NcursesOwlInstallInterface::CloseExecWindow(bool keywait)
 {
     if(keywait) {
-        printf("\n\nPress enter to continue...");
+        printf("\n\nPress Enter to continue...");
         fflush(stdout);
         int c;
         do { c = getchar(); } while(c != '\n' && c != EOF);

@@ -360,7 +360,7 @@ void DumbOwlInstallInterface::CloseExecWindow(bool keywait)
 {
     printf("\n\n");
     if(keywait) {
-        printf("Press enter to continue...");
+        printf("Press Enter to continue...");
         fflush(stdout);
         int c;
         do { c = getchar(); } while(c != '\n' && c != EOF);
