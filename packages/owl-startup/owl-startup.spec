@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.66 2006/01/22 22:11:59 ldv Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.67 2006/04/04 14:34:42 ldv Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -38,6 +38,7 @@ system down cleanly.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+[ %_lib = lib ] || sed -i 's,/usr/lib,%_libdir,g' src/Makefile
 
 %build
 %__make -C src CC="%__cc" CFLAGS="%optflags" usleep ipcalc

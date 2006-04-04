@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/texinfo/texinfo.spec,v 1.26 2006/03/13 01:39:13 ldv Exp $
+# $Owl: Owl/packages/texinfo/texinfo.spec,v 1.27 2006/04/04 14:43:25 ldv Exp $
 
 %define BUILD_TEST 1
 
@@ -21,7 +21,7 @@ Prefix: %_prefix
 Requires: mktemp >= 1:1.3.1
 BuildRoot: /override/%name-%version
 
-#%%define __spec_install_post %_libdir/rpm/brp-strip \; %_libdir/rpm/brp-strip-comment-note
+#%%define __spec_install_post %_prefix/lib/rpm/brp-strip \; %_prefix/lib/rpm/brp-strip-comment-note
 
 %description
 Texinfo is a documentation system that can produce both online
@@ -48,7 +48,7 @@ browser program for viewing Info files.
 %patch5 -p1
 
 %{expand: %%define optflags %optflags -Wall}
-%define __spec_install_post %_libdir/rpm/brp-strip \; %_libdir/rpm/brp-strip-comment-note
+%define __spec_install_post %_prefix/lib/rpm/brp-strip \; %_prefix/lib/rpm/brp-strip-comment-note
 
 %build
 unset LINGUAS || :

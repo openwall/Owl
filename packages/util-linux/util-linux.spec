@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.44 2006/02/03 22:31:15 ldv Exp $
+# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.45 2006/04/04 14:43:25 ldv Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -176,11 +176,11 @@ fi
 %_mandir/man8/tunelp.8*
 
 /sbin/fdisk
-%ifarch %ix86 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
+%ifarch %ix86 x86_64 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
 /sbin/cfdisk
 %endif
 
-%ifarch %ix86 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67 sparc sparcv9
+%ifarch %ix86 x86_64 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67 sparc sparcv9
 /sbin/fsck.minix
 /sbin/mkfs.minix
 %endif
@@ -242,13 +242,13 @@ fi
 %_bindir/renice
 %_sbindir/readprofile
 %_bindir/setsid
-%ifarch %ix86 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67 sparc sparcv9
+%ifarch %ix86 x86_64 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67 sparc sparcv9
 %_bindir/cytune
 %endif
 
 %_mandir/man1/arch.1*
 %_mandir/man1/readprofile.1*
-%ifarch %ix86 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67 sparc sparcv9
+%ifarch %ix86 x86_64 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67 sparc sparcv9
 %_mandir/man8/cytune.8*
 %endif
 %_mandir/man8/ctrlaltdel.8*
@@ -296,7 +296,7 @@ fi
 /bin/more
 %_mandir/man1/more.1*
 
-%ifarch %ix86 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67 sparc sparcv9
+%ifarch %ix86 x86_64 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67 sparc sparcv9
 %_mandir/man8/fsck.minix.8*
 %_mandir/man8/mkfs.minix.8*
 %endif
@@ -306,13 +306,13 @@ fi
 
 %_mandir/man8/fdisk.8*
 
-%ifarch %ix86 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
+%ifarch %ix86 x86_64 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
 %_mandir/man8/cfdisk.8*
 %endif
 
 %doc */README.*
 
-%ifarch %ix86 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
+%ifarch %ix86 x86_64 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
 /sbin/sfdisk
 %_mandir/man8/sfdisk.8*
 %doc fdisk/sfdisk.examples
