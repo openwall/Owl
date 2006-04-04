@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/grep/grep.spec,v 1.18 2005/12/04 23:17:32 ldv Exp $
+# $Owl: Owl/packages/grep/grep.spec,v 1.19 2006/04/04 00:15:07 ldv Exp $
 
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
@@ -66,8 +66,8 @@ ln -sf grep %buildroot/bin/fgrep
 ln -sf grep %buildroot/bin/pcregrep
 ln -s grep.1.gz %buildroot%_mandir/man1/pcregrep.1.gz
 
-# Remove unpackaged files if any
-rm -f %buildroot%_infodir/dir
+# Remove unpackaged files
+rm %buildroot%_infodir/dir
 
 %post
 /sbin/install-info %_infodir/grep.info %_infodir/dir

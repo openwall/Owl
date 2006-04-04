@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gzip/gzip.spec,v 1.25 2006/01/04 13:56:01 ldv Exp $
+# $Owl: Owl/packages/gzip/gzip.spec,v 1.26 2006/04/04 00:15:07 ldv Exp $
 
 Summary: The GNU data compression program.
 Name: gzip
@@ -102,8 +102,8 @@ cat > %buildroot%_bindir/bzless <<EOF
 EOF
 chmod 755 %buildroot%_bindir/{,b}zless
 
-# Remove unpackaged files if any
-rm -f %buildroot%_infodir/dir
+# Remove unpackaged files
+rm %buildroot%_infodir/dir
 
 %triggerin -- info
 /sbin/install-info %_infodir/gzip.info %_infodir/dir

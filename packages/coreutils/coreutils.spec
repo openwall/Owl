@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.19 2006/02/20 15:28:54 ldv Exp $
+# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.20 2006/04/04 00:15:07 ldv Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
@@ -184,8 +184,8 @@ for n in env cut; do
 	ln -s ../../bin/$n %buildroot%_bindir/$n
 done
 
-# Remove unpackaged files if any
-rm -f %buildroot%_infodir/dir
+# Remove unpackaged files
+rm %buildroot%_infodir/dir
 
 ### Remove utilities and manpages which are still packaged within
 ### other packages.

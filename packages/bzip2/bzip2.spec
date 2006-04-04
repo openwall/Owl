@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bzip2/bzip2.spec,v 1.26 2005/11/16 12:19:20 solar Exp $
+# $Owl: Owl/packages/bzip2/bzip2.spec,v 1.27 2006/04/04 00:15:07 ldv Exp $
 
 Summary: An extremely powerful file compression utility.
 Name: bzip2
@@ -75,7 +75,7 @@ ln -s libbz2.so.%version %buildroot%_libdir/libbz2.so.0
 # Remove unpackaged files
 rm %buildroot{%_bindir,%_mandir/man1}/{bzcmp,bzdiff,bzgrep,bzfgrep,bzegrep,bzmore,bzless}*
 rm %buildroot%_libdir/libbz2.la
-rm -f %buildroot%_infodir/dir
+rm %buildroot%_infodir/dir
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig

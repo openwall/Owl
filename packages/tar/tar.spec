@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.28 2006/02/20 15:27:28 ldv Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.29 2006/04/04 00:15:08 ldv Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
@@ -88,8 +88,8 @@ ln -sf tar %buildroot/bin/gtar
 mkdir -p %buildroot%_mandir/man1
 install -m 644 %_sourcedir/tar.1 %buildroot%_mandir/man1/
 
-# Remove unpackaged files if any
-rm -f %buildroot%_infodir/dir
+# Remove unpackaged files
+rm %buildroot%_infodir/dir
 
 %post
 # Get rid of an old, incorrect info entry when replacing older versions

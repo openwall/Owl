@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bash/bash.spec,v 1.36 2006/02/20 15:28:15 ldv Exp $
+# $Owl: Owl/packages/bash/bash.spec,v 1.37 2006/04/04 00:15:07 ldv Exp $
 
 Summary: The GNU Bourne-Again SHell (Bash).
 Name: bash
@@ -158,8 +158,8 @@ install -m 644 %_sourcedir/dot-bashrc etc/skel/.bashrc
 install -m 644 %_sourcedir/dot-bash_profile etc/skel/.bash_profile
 install -m 644 %_sourcedir/dot-bash_logout etc/skel/.bash_logout
 
-# Remove unpackaged files if any
-rm -f %buildroot%_infodir/dir
+# Remove unpackaged files
+rm %buildroot%_infodir/dir
 
 %triggerin -- libtermcap
 if [ ! -f /etc/shells ]; then

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/automake/automake.spec,v 1.14 2005/11/16 12:19:20 solar Exp $
+# $Owl: Owl/packages/automake/automake.spec,v 1.15 2006/04/04 00:15:07 ldv Exp $
 
 %define BUILD_TEST 0
 
@@ -44,8 +44,8 @@ rm -rf %buildroot
 
 mkdir -p %buildroot%_datadir/aclocal
 
-# Remove unpackaged files if any
-rm -f %buildroot%_infodir/dir
+# Remove unpackaged files
+rm %buildroot%_infodir/dir
 
 %post
 /sbin/install-info %_infodir/automake.info %_infodir/dir

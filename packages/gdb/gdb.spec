@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gdb/gdb.spec,v 1.23 2005/11/16 13:09:46 solar Exp $
+# $Owl: Owl/packages/gdb/gdb.spec,v 1.24 2006/04/04 00:15:07 ldv Exp $
 
 Summary: A GNU source-level debugger for C, C++ and Fortran.
 Name: gdb
@@ -78,8 +78,8 @@ rm -r %buildroot%_includedir
 rm %buildroot%_infodir/{annotate,bfd,configure,standard}*
 rm %buildroot%_libdir/lib{bfd,iberty,opcodes}*
 
-# Remove unpackaged files if any
-rm -f %buildroot%_infodir/dir
+# Remove unpackaged files
+rm %buildroot%_infodir/dir
 rm %buildroot%_datadir/locale/*/LC_MESSAGES/{bfd,opcodes}.mo
 
 %pre

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/sed/sed.spec,v 1.18 2006/02/20 15:33:13 ldv Exp $
+# $Owl: Owl/packages/sed/sed.spec,v 1.19 2006/04/04 00:15:08 ldv Exp $
 
 Summary: A GNU stream text editor.
 Name: sed
@@ -61,8 +61,8 @@ rm -rf %buildroot
 %makeinstall
 mv %buildroot%_bindir %buildroot/bin
 
-# Remove unpackaged files if any
-rm -f %buildroot%_infodir/dir
+# Remove unpackaged files
+rm %buildroot%_infodir/dir
 
 %post
 /sbin/install-info %_infodir/sed.info %_infodir/dir

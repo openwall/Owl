@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/cpio/cpio.spec,v 1.22 2005/11/16 12:19:21 solar Exp $
+# $Owl: Owl/packages/cpio/cpio.spec,v 1.23 2006/04/04 00:15:07 ldv Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
@@ -90,8 +90,8 @@ mkdir -p %buildroot/{etc,sbin}
 ln -s %_libexecdir/rmt %buildroot/etc/
 ln -s ..%_libexecdir/rmt %buildroot/sbin/
 
-# Remove unpackaged files if any
-rm -f %buildroot%_infodir/dir
+# Remove unpackaged files
+rm %buildroot%_infodir/dir
 
 %post
 /sbin/install-info %_infodir/cpio.info %_infodir/dir

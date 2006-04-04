@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/libtool/libtool.spec,v 1.19 2005/12/19 01:19:46 solar Exp $
+# $Owl: Owl/packages/libtool/libtool.spec,v 1.20 2006/04/04 00:15:07 ldv Exp $
 
 %define BUILD_TEST 0
 
@@ -62,9 +62,9 @@ mkdir -p %buildroot%_prefix
 
 %makeinstall
 
-# Remove unpackaged files if any
-rm -f %buildroot%_infodir/dir
-rm -f %buildroot%_libdir/*.la
+# Remove unpackaged files
+rm %buildroot%_infodir/dir
+rm %buildroot%_libdir/*.la
 
 %post
 /sbin/install-info %_infodir/libtool.info %_infodir/dir

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/diffutils/diffutils.spec,v 1.16 2005/11/16 12:21:03 solar Exp $
+# $Owl: Owl/packages/diffutils/diffutils.spec,v 1.17 2006/04/04 00:15:07 ldv Exp $
 
 Summary: A GNU collection of diff utilities.
 Name: diffutils
@@ -50,8 +50,8 @@ make
 rm -rf %buildroot
 %makeinstall
 
-# Remove unpackaged files if any
-rm -f %buildroot%_infodir/dir
+# Remove unpackaged files
+rm %buildroot%_infodir/dir
 
 %post
 /sbin/install-info %_infodir/diff.info %_infodir/dir
