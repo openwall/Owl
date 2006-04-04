@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bison/bison.spec,v 1.26 2005/12/20 18:22:43 solar Exp $
+# $Owl: Owl/packages/bison/bison.spec,v 1.27 2006/04/04 00:20:01 ldv Exp $
 
 %define BUILD_TEST 0
 
@@ -46,6 +46,9 @@ autoreconf
 rm -rf %buildroot
 %makeinstall
 
+# Remove unpackaged files
+rm %buildroot%_infodir/dir
+
 %post
 /sbin/install-info %_infodir/bison.info %_infodir/dir
 
@@ -60,7 +63,6 @@ fi
 %_datadir/bison
 %_datadir/locale/*/LC_MESSAGES/bison.mo
 %_infodir/bison.info*
-%exclude %_infodir/dir
 %_bindir/*
 %_libdir/liby.a
 

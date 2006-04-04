@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.32 2006/03/11 16:56:59 ldv Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.33 2006/04/04 00:20:01 ldv Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
@@ -56,6 +56,9 @@ install -m 755 lspgpot %buildroot%_bindir/lspgpot
 mkdir -p %buildroot%_mandir/ru/man1
 mv %buildroot%_mandir/man1/gpg.ru.* %buildroot%_mandir/ru/man1/
 
+# Remove unpackaged files
+rm %buildroot%_infodir/dir
+
 %post
 /sbin/install-info %_infodir/gpg.info %_infodir/dir \
 	--entry "* GnuPG: (gpg).                                 Encryption and signing tool."
@@ -93,7 +96,6 @@ fi
 %config(noreplace) %_datadir/gnupg/options.skel
 %exclude %_datadir/gnupg/FAQ
 %exclude %_datadir/gnupg/faq.html
-%exclude %_infodir/dir
 
 %changelog
 * Sat Mar 11 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.2.2-owl1

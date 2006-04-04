@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bc/bc.spec,v 1.14 2006/02/03 22:31:14 ldv Exp $
+# $Owl: Owl/packages/bc/bc.spec,v 1.15 2006/04/04 00:20:01 ldv Exp $
 
 Summary: GNU's bc (a numeric processing language) and dc (a calculator).
 Name: bc
@@ -38,6 +38,9 @@ rm -rf %buildroot
 
 %makeinstall
 
+# Remove unpackaged files
+rm %buildroot%_infodir/dir
+
 %post
 /sbin/install-info %_infodir/bc.info %_infodir/dir
 /sbin/install-info %_infodir/dc.info %_infodir/dir
@@ -54,7 +57,6 @@ fi
 /usr/bin/bc
 %_mandir/*/*
 %_infodir/*.info*
-%exclude %_infodir/dir
 
 %changelog
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.06-owl6
