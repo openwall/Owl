@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/owl-hier/owl-hier.spec,v 1.24 2005/11/16 13:21:54 solar Exp $
+# $Owl: Owl/packages/owl-hier/owl-hier.spec,v 1.25 2006/04/04 00:58:54 ldv Exp $
 
 Summary: Initial directory hierarchy.
 Name: owl-hier
 Version: 0.8
-Release: owl2
+Release: owl3
 License: public domain
 Group: System Environment/Base
 Source: base
@@ -31,31 +31,35 @@ sed \
 	-e "s/\(gname=\)root$/\1`id -gn`/" \
 	< %_sourcedir/base |
 		%_sbindir/mtree -U
+if [ %_lib != lib ]; then
+	mkdir -m755 %_lib .%_libdir usr/X11R6/%_lib
+	mv lib/security %_lib
+fi
 ln -s ../var/tmp usr/tmp
 ln -s ../X11R6/bin .%_bindir/X11
 ln -s ../X11R6/include/X11 .%_includedir/X11
 ln -s ../X11R6/lib/X11 .%_libdir/X11
 ln -s log var/adm
 ln -s spool/mail var/mail
-install -m 600 %_sourcedir/base etc/mtree/
+install -pm600 %_sourcedir/base etc/mtree/
 
 # Build the filelist
 cd $RPM_BUILD_DIR
 find %buildroot -type d | sed \
 	-e "s,^%buildroot,," \
-	-e 's,^,%dir ,' > filelist.mtree
+	-e 's,^,%%dir ,' > filelist.mtree
 find %buildroot -type f -o -type l | sed \
 	-e "s,^%buildroot,," \
-	-e 's,^.*/etc,%config &,' >> filelist.mtree
+	-e 's,^.*/etc,%%config &,' >> filelist.mtree
 
 # Specify some entries manually to set user/group when building as non-root
 cat << EOF > filelist
-%defattr (-,root,root)
-%dir %attr(555,root,proc) /proc
-%dir %attr(755,sources,sources) /usr/src
-%dir %attr(750,build,sources) /usr/src/world
-%dir %attr(770,root,uucp) /var/lock/uucp
-%dir %attr(1771,root,mail) /var/spool/mail
+%%defattr (-,root,root)
+%%dir %%attr(555,root,proc) /proc
+%%dir %%attr(755,sources,sources) /usr/src
+%%dir %%attr(750,build,sources) /usr/src/world
+%%dir %%attr(770,root,uucp) /var/lock/uucp
+%%dir %%attr(1771,root,mail) /var/spool/mail
 EOF
 
 sed -n 's,^.* \(/[^ ]*\)$,\1,p' < filelist |
@@ -70,6 +74,9 @@ comm -3 - filelist.remove >> filelist
 %files -f filelist
 
 %changelog
+* Tue Apr 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.8-owl3
+- Added x86_64 support.
+
 * Mon Jan 10 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.8-owl2
 - Cleaned up the spec to use macros instead of hardcoded paths in some places.
 
