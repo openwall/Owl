@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/buildworld.sh,v 1.39 2006/01/24 12:57:56 solar Exp $
+# $Owl: Owl/build/buildworld.sh,v 1.40 2006/04/04 01:04:35 ldv Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -393,7 +393,7 @@ sanity_check
 NUMBER=1
 while [ $NUMBER -le $PROCESSORS ]; do
 	mkdir -p rpm-work-$NUMBER/{BUILD,SOURCES,SPECS,SRPMS}
-	mkdir -p rpm-work-$NUMBER/RPMS/{noarch,i386,i686,sparc,sparcv9,alpha}
+	mkdir -p rpm-work-$NUMBER/RPMS/{noarch,i386,i686,x86_64,sparc,sparcv9,alpha}
 	NUMBER=$[$NUMBER + 1]
 done
 
