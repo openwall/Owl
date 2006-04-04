@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.67 2006/02/03 22:15:30 ldv Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.68 2006/04/04 13:50:52 ldv Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -11,7 +11,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl14
+Release: owl15
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -58,6 +58,7 @@ Patch32: rpm-4.2-owl-honor-buildtime.diff
 Patch33: rpm-4.2-owl-runScript-umask.diff
 Patch34: rpm-4.2-owl-man.diff
 Patch35: rpm-4.2-cvs-20030515-parseSpec.diff
+Patch36: rpm-4.2-cvs-20050827-check-prereqs.diff
 
 PreReq: /sbin/ldconfig
 PreReq: sh-utils, fileutils, mktemp, gawk
@@ -169,6 +170,7 @@ rm -r tests
 %patch33 -p1
 %patch34 -p1
 %patch35 -p0
+%patch36 -p0
 
 bzip2 -9k CHANGES
 
@@ -209,7 +211,11 @@ rm -r file
 %define __usrsrc         %__usr/src
 %define __var            /var
 
+%ifarch x86_64
+%define _lib             lib64
+%else
 %define _lib             lib
+%endif
 %define __share          /share
 %define __prefix         %__usr
 %define __exec_prefix    %__prefix
@@ -225,6 +231,7 @@ rm -r file
 %define __oldincludedir  /usr/include
 %define __infodir        %__datadir/info
 %define __mandir         %__datadir/man
+%define _rpmlibdir       %__prefix/lib/rpm
 
 # XXX rpm needs functioning nptl for configure tests
 unset LD_ASSUME_KERNEL || :
@@ -279,7 +286,7 @@ rm -rf %buildroot
 
 mkdir -p %buildroot%__sysconfdir/rpm
 mkdir -p %buildroot%__localstatedir/spool/repackage
-mkdir -p %buildroot%__localstatedir/%_lib/rpm
+mkdir -p %buildroot%__localstatedir/lib/rpm
 for dbi in \
     Basenames Conflictname Dirnames Group Installtid Name Packages \
     Providename Provideversion Requirename Requireversion Triggername \
@@ -287,11 +294,11 @@ for dbi in \
     __db.001 __db.002 __db.003 __db.004 __db.005 __db.006 __db.007 \
     __db.008 __db.009
 do
-	touch %buildroot%__localstatedir/%_lib/rpm/$dbi
+	touch %buildroot%__localstatedir/lib/rpm/$dbi
 done
 
 # Fix rpmpopt
-ln -s rpmpopt-%rpm_version %buildroot%__libdir/rpm/rpmpopt
+ln -s rpmpopt-%rpm_version %buildroot%_rpmlibdir/rpmpopt
 
 # Remove unpackaged files
 #
@@ -299,9 +306,9 @@ ln -s rpmpopt-%rpm_version %buildroot%__libdir/rpm/rpmpopt
 rm -r %buildroot%__includedir/beecrypt
 rm %buildroot%__libdir/libbeecrypt.*
 # these scripts have nothing to do in Owl
-rm %buildroot%__libdir/rpm/{Specfile.pm,cpanflute*,rpmdiff*,sql*,tcl*,trpm}
+rm %buildroot%_rpmlibdir/{Specfile.pm,cpanflute*,rpmdiff*,sql*,tcl*,trpm}
 # unneeded crontab, logrotate config, xinetd config
-rm %buildroot%__libdir/rpm/rpm.{daily,log,xinetd}
+rm %buildroot%_rpmlibdir/rpm.{daily,log,xinetd}
 # outdated man pages
 rm -r %buildroot%__mandir/{fr,ja,ko,pl,ru,sk}
 # .la files
@@ -314,10 +321,10 @@ install -p -m 755 %_sourcedir/rpminit %buildroot%__bindir/
 install -p -m 644 %_sourcedir/rpminit.1 %buildroot%__mandir/man1/
 
 echo "%%defattr(-,root,root)"
-platforms="`echo %buildroot%__libdir/rpm/*/macros | sed 's#/macros##g; s#%buildroot%__libdir/##g'`"
+platforms="`echo %buildroot%_rpmlibdir/*/macros | sed 's#/macros##g; s#%buildroot%__prefix/lib/##g'`"
 for platform in $platforms; do
-	echo "%%attr(0755,root,root) %%dir %__libdir/$platform" >> platforms.list
-	echo "%%attr(0644,root,root) %%verify(not md5 size mtime) %%config(missingok,noreplace) %__libdir/$platform/macros" >> platforms.list
+	echo "%%attr(0755,root,root) %%dir %__prefix/lib/$platform" >> platforms.list
+	echo "%%attr(0644,root,root) %%verify(not md5 size mtime) %%config(missingok,noreplace) %__prefix/lib/$platform/macros" >> platforms.list
 done
 
 %pre
@@ -364,8 +371,8 @@ fi
 /sbin/ldconfig
 
 if [ ! -e %__sysconfdir/rpm/macros -a -e %__sysconfdir/rpmrc -a \
-    -f %__libdir/rpm/convertrpmrc.sh ]; then
-	sh %__libdir/rpm/convertrpmrc.sh &> /dev/null
+    -f %_rpmlibdir/convertrpmrc.sh ]; then
+	sh %_rpmlibdir/convertrpmrc.sh &> /dev/null
 fi
 
 # ToDo: (GM): It is good to run "rpmd --rebuilddb" after upgrading rpm, but
@@ -400,30 +407,30 @@ fi
 %__libdir/librpm-%rpm_version.so
 %__libdir/librpmdb-%rpm_version.so
 %__libdir/librpmio-%rpm_version.so
-%config %__libdir/rpmpopt
-%config %__libdir/rpmrc
+%config %__prefix/lib/rpmpopt
+%config %__prefix/lib/rpmrc
 
-%dir %__localstatedir/%_lib/rpm
-%ghost %attr(0644,root,root) %verify(not md5 size mtime) %config(missingok,noreplace) %__localstatedir/%_lib/rpm/*
+%dir %__localstatedir/lib/rpm
+%ghost %attr(0644,root,root) %verify(not md5 size mtime) %config(missingok,noreplace) %__localstatedir/lib/rpm/*
 %dir %__localstatedir/spool/repackage
 
-%dir %__libdir/rpm
-%__libdir/rpm/convertrpmrc.sh
-%config(missingok,noreplace) %__libdir/rpm/macros
-%__libdir/rpm/rpm2cpio.sh
-%__libdir/rpm/rpmcache
-%__libdir/rpm/rpmdb*
-%__libdir/rpm/rpmd
-%__libdir/rpm/rpme
-%__libdir/rpm/rpmi
-%__libdir/rpm/rpmk
-%__libdir/rpm/rpmq
-%__libdir/rpm/rpmu
-%__libdir/rpm/rpmv
-%config %__libdir/rpm/rpmpopt*
-%config(noreplace) %__libdir/rpm/rpmrc*
-%__libdir/rpm/tgpg
-%__libdir/rpm/u_pkg.sh
+%dir %_rpmlibdir
+%_rpmlibdir/convertrpmrc.sh
+%config(missingok,noreplace) %_rpmlibdir/macros
+%_rpmlibdir/rpm2cpio.sh
+%_rpmlibdir/rpmcache
+%_rpmlibdir/rpmdb*
+%_rpmlibdir/rpmd
+%_rpmlibdir/rpme
+%_rpmlibdir/rpmi
+%_rpmlibdir/rpmk
+%_rpmlibdir/rpmq
+%_rpmlibdir/rpmu
+%_rpmlibdir/rpmv
+%config %_rpmlibdir/rpmpopt*
+%config(noreplace) %_rpmlibdir/rpmrc*
+%_rpmlibdir/tgpg
+%_rpmlibdir/u_pkg.sh
 
 %__mandir/man1/gendiff.1*
 %__mandir/man1/rpminit.1*
@@ -438,27 +445,27 @@ fi
 %defattr(-,root,root)
 %__bindir/rpmbuild
 %__libdir/librpmbuild-%rpm_version.so
-%__libdir/rpm/brp-*
-%__libdir/rpm/check-files
-%__libdir/rpm/check-prereqs
-%__libdir/rpm/config.*
-%__libdir/rpm/cross-build
-%__libdir/rpm/debugedit
-%__libdir/rpm/find-debuginfo.sh
-%__libdir/rpm/find-lang.sh
-%__libdir/rpm/find-prov*
-%__libdir/rpm/find-req*
-%__libdir/rpm/get_magic.pl
-%__libdir/rpm/getpo.sh
-%__libdir/rpm/*.req
-%__libdir/rpm/*.prov
-%__libdir/rpm/javadeps
-%__libdir/rpm/mkinstalldirs
-%__libdir/rpm/perldeps.pl
-%__libdir/rpm/rpm[bt]
-%__libdir/rpm/rpmdeps
-%__libdir/rpm/rpmfile
-%__libdir/rpm/vpkg-*.sh
+%_rpmlibdir/brp-*
+%_rpmlibdir/check-files
+%_rpmlibdir/check-prereqs
+%_rpmlibdir/config.*
+%_rpmlibdir/cross-build
+%_rpmlibdir/debugedit
+%_rpmlibdir/find-debuginfo.sh
+%_rpmlibdir/find-lang.sh
+%_rpmlibdir/find-prov*
+%_rpmlibdir/find-req*
+%_rpmlibdir/get_magic.pl
+%_rpmlibdir/getpo.sh
+%_rpmlibdir/*.req
+%_rpmlibdir/*.prov
+%_rpmlibdir/javadeps
+%_rpmlibdir/mkinstalldirs
+%_rpmlibdir/perldeps.pl
+%_rpmlibdir/rpm[bt]
+%_rpmlibdir/rpmdeps
+%_rpmlibdir/rpmfile
+%_rpmlibdir/vpkg-*.sh
 %__mandir/man8/rpmbuild.8*
 %__mandir/man8/rpmdeps.8*
 
@@ -483,6 +490,11 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Tue Apr 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl15
+- Backported upstream fix to check-prereqs script.
+- Corrected specfile to make it build on x86_64.
+- Updated rpmrc optflags for x86_64.
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl14
 - Compressed CHANGES file.
 
