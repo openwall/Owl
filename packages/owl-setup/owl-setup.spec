@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.63 2006/04/03 12:26:21 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.64 2006/04/04 07:29:42 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 1.1.01
+Version: 1.1.1
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -32,7 +32,7 @@ rm -rf %buildroot
 %_sbindir/*
 
 %changelog
-* Mon Apr 03 2006 Croco <croco-at-owl.openwall.com> 1.1.01-owl1
+* Mon Apr 03 2006 Croco <croco-at-owl.openwall.com> 1.1.1-owl1
 - quick search implemented in scroll list selections
 - 'blind' input within iface_dumb changed to display nothing at all
 - PAM service name moved into the config.* module
