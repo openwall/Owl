@@ -720,3 +720,633 @@ Patch:
 ! #define PATCHLEVEL 8
   
   #endif /* _PATCHLEVEL_H_ */
+			     BASH PATCH REPORT
+			     =================
+
+Bash-Release: 3.1
+Patch-ID: bash31-009
+
+Bug-Reported-by: Joshua Neuheisel <jneuheisel@gmail.com>
+Bug-Reference-ID: <25d873330601140820v4ad8efd2t8bf683b073c138b3@mail.gmail.com>
+Bug-Reference-URL: http://lists.gnu.org/archive/html/bug-bash/2006-01/msg00062.html
+
+Bug-Description:
+
+Under some circumstances, background (asynchronous) jobs can set the terminal
+process group incorrectly.  This can cause a foreground process (including
+the foreground shell) to get read errors and exit.
+
+Patch:
+
+*** ../bash-3.1/jobs.c	Fri Nov 11 23:13:27 2005
+--- jobs.c	Wed Feb  1 13:55:38 2006
+***************
+*** 620,625 ****
+  	   * the parent gives it away.
+  	   *
+  	   */
+! 	  if (job_control && newjob->pgrp)
+  	    give_terminal_to (newjob->pgrp, 0);
+  	}
+--- 634,642 ----
+  	   * the parent gives it away.
+  	   *
++ 	   * Don't give the terminal away if this shell is an asynchronous
++ 	   * subshell.
++ 	   *
+  	   */
+! 	  if (job_control && newjob->pgrp && (subshell_environment&SUBSHELL_ASYNC) == 0)
+  	    give_terminal_to (newjob->pgrp, 0);
+  	}
+***************
+*** 1656,1660 ****
+  	     shell's process group (we could be in the middle of a
+  	     pipeline, for example). */
+! 	  if (async_p == 0 && pipeline_pgrp != shell_pgrp)
+  	    give_terminal_to (pipeline_pgrp, 0);
+  
+--- 1743,1747 ----
+  	     shell's process group (we could be in the middle of a
+  	     pipeline, for example). */
+! 	  if (async_p == 0 && pipeline_pgrp != shell_pgrp && ((subshell_environment&SUBSHELL_ASYNC) == 0))
+  	    give_terminal_to (pipeline_pgrp, 0);
+  
+*** ../bash-3.1/patchlevel.h	Wed Jul 20 13:58:20 2005
+--- patchlevel.h	Wed Dec  7 13:48:42 2005
+***************
+*** 26,30 ****
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 8
+  
+  #endif /* _PATCHLEVEL_H_ */
+--- 26,30 ----
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 9
+  
+  #endif /* _PATCHLEVEL_H_ */
+			     BASH PATCH REPORT
+			     =================
+
+Bash-Release: 3.1
+Patch-ID: bash31-010
+
+Bug-Reported-by: vw@vonwolff.de
+Bug-Reference-ID: <20060123135234.1AC2F1D596@wst07.vonwolff.de>
+Bug-Reference-URL: http://lists.gnu.org/archive/html/bug-bash/2006-01/msg00090.html
+
+Bug-Description:
+
+There is a difference in behavior between bash-3.0 and bash-3.1 involving
+parsing of single- and double-quoted strings occurring in old-style
+command substitution.  The difference has to do with how backslashes are
+processed.  This patch restores a measure of backwards compatibility while
+the question of POSIX conformance and ultimately correct behavior is discussed.
+
+THIS IS AN UPDATED PATCH.  USE THIS COMMAND TO REVERSE THE EFFECTS OF
+THE ORIGINAL PATCH.  THE CURRENT DIRECTORY MUST BE THE BASH-3.1 SOURCE
+DIRECTORY.
+
+patch -p0 -R < bash31-010.orig
+
+Then apply this patch as usual.
+
+Patch:
+
+*** ../bash-3.1/parse.y	Fri Nov 11 23:14:18 2005
+--- parse.y	Thu Feb 23 08:21:12 2006
+***************
+*** 2716,2721 ****
+--- 2723,2729 ----
+  #define P_ALLOWESC	0x02
+  #define P_DQUOTE	0x04
+  #define P_COMMAND	0x08	/* parsing a command, so look for comments */
++ #define P_BACKQUOTE	0x10	/* parsing a backquoted command substitution */
+  
+  static char matched_pair_error;
+  static char *
+***************
+*** 2725,2736 ****
+       int *lenp, flags;
+  {
+    int count, ch, was_dollar, in_comment, check_comment;
+!   int pass_next_character, nestlen, ttranslen, start_lineno;
+    char *ret, *nestret, *ttrans;
+    int retind, retsize, rflags;
+  
+    count = 1;
+!   pass_next_character = was_dollar = in_comment = 0;
+    check_comment = (flags & P_COMMAND) && qc != '\'' && qc != '"' && (flags & P_DQUOTE) == 0;
+  
+    /* RFLAGS is the set of flags we want to pass to recursive calls. */
+--- 2733,2744 ----
+       int *lenp, flags;
+  {
+    int count, ch, was_dollar, in_comment, check_comment;
+!   int pass_next_character, backq_backslash, nestlen, ttranslen, start_lineno;
+    char *ret, *nestret, *ttrans;
+    int retind, retsize, rflags;
+  
+    count = 1;
+!   pass_next_character = backq_backslash = was_dollar = in_comment = 0;
+    check_comment = (flags & P_COMMAND) && qc != '\'' && qc != '"' && (flags & P_DQUOTE) == 0;
+  
+    /* RFLAGS is the set of flags we want to pass to recursive calls. */
+***************
+*** 2742,2752 ****
+    start_lineno = line_number;
+    while (count)
+      {
+! #if 0
+!       ch = shell_getc ((qc != '\'' || (flags & P_ALLOWESC)) && pass_next_character == 0);
+! #else
+!       ch = shell_getc (qc != '\'' && pass_next_character == 0);
+! #endif
+        if (ch == EOF)
+  	{
+  	  free (ret);
+--- 2750,2757 ----
+    start_lineno = line_number;
+    while (count)
+      {
+!       ch = shell_getc (qc != '\'' && pass_next_character == 0 && backq_backslash == 0);
+! 
+        if (ch == EOF)
+  	{
+  	  free (ret);
+***************
+*** 2771,2779 ****
+  	  continue;
+  	}
+        /* Not exactly right yet */
+!       else if (check_comment && in_comment == 0 && ch == '#' && (retind == 0 || ret[retind-1] == '\n' || whitespace (ret[retind -1])))
+  	in_comment = 1;
+  
+        if (pass_next_character)		/* last char was backslash */
+  	{
+  	  pass_next_character = 0;
+--- 2776,2791 ----
+  	  continue;
+  	}
+        /* Not exactly right yet */
+!       else if MBTEST(check_comment && in_comment == 0 && ch == '#' && (retind == 0 || ret[retind-1] == '\n' || whitespace (ret[retind - 1])))
+  	in_comment = 1;
+  
++       /* last char was backslash inside backquoted command substitution */
++       if (backq_backslash)
++ 	{
++ 	  backq_backslash = 0;
++ 	  /* Placeholder for adding special characters */
++ 	}
++ 
+        if (pass_next_character)		/* last char was backslash */
+  	{
+  	  pass_next_character = 0;
+***************
+*** 2814,2819 ****
+--- 2824,2831 ----
+  	{
+  	  if MBTEST((flags & P_ALLOWESC) && ch == '\\')
+  	    pass_next_character++;
++ 	  else if MBTEST((flags & P_BACKQUOTE) && ch == '\\')
++ 	    backq_backslash++;
+  	  continue;
+  	}
+  
+***************
+*** 2898,2904 ****
+  	}
+        else if MBTEST(qc == '`' && (ch == '"' || ch == '\'') && in_comment == 0)
+  	{
+! 	  nestret = parse_matched_pair (0, ch, ch, &nestlen, rflags);
+  	  goto add_nestret;
+  	}
+        else if MBTEST(was_dollar && (ch == '(' || ch == '{' || ch == '['))	/* ) } ] */
+--- 2910,2920 ----
+  	}
+        else if MBTEST(qc == '`' && (ch == '"' || ch == '\'') && in_comment == 0)
+  	{
+! 	  /* Add P_BACKQUOTE so backslash quotes the next character and
+! 	     shell_getc does the right thing with \<newline>.  We do this for
+! 	     a measure  of backwards compatibility -- it's not strictly the
+! 	     right POSIX thing. */
+! 	  nestret = parse_matched_pair (0, ch, ch, &nestlen, rflags|P_BACKQUOTE);
+  	  goto add_nestret;
+  	}
+        else if MBTEST(was_dollar && (ch == '(' || ch == '{' || ch == '['))	/* ) } ] */
+*** ../bash-3.1/patchlevel.h	Wed Jul 20 13:58:20 2005
+--- patchlevel.h	Wed Dec  7 13:48:42 2005
+***************
+*** 26,30 ****
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 9
+  
+  #endif /* _PATCHLEVEL_H_ */
+--- 26,30 ----
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 10
+  
+  #endif /* _PATCHLEVEL_H_ */
+			     BASH PATCH REPORT
+			     =================
+
+Bash-Release: 3.1
+Patch-ID: bash31-011
+
+Bug-Reported-by: Mike Stroyan <mike.stroyan@hp.com>
+Bug-Reference-ID: <E1EvwxP-0004LD-GC@localhost.localdomain>
+Bug-Reference-URL: http://lists.gnu.org/archive/html/bug-bash/2006-01/msg00033.html
+
+Bug-Description:
+
+A change in bash-3.1 caused the single quotes to be stripped from ANSI-C
+quoting inside double-quoted command substitutions.
+
+Patch:
+
+*** ../bash-3.1/parse.y	Fri Nov 11 23:14:18 2005
+--- parse.y	Wed Jan 25 14:55:18 2006
+***************
+*** 2908,2912 ****
+  	    count--;
+  	  if (ch == '(')		/* ) */
+! 	    nestret = parse_matched_pair (0, '(', ')', &nestlen, rflags);
+  	  else if (ch == '{')		/* } */
+  	    nestret = parse_matched_pair (0, '{', '}', &nestlen, P_FIRSTCLOSE|rflags);
+--- 2914,2918 ----
+  	    count--;
+  	  if (ch == '(')		/* ) */
+! 	    nestret = parse_matched_pair (0, '(', ')', &nestlen, rflags & ~P_DQUOTE);
+  	  else if (ch == '{')		/* } */
+  	    nestret = parse_matched_pair (0, '{', '}', &nestlen, P_FIRSTCLOSE|rflags);
+*** ../bash-3.1/patchlevel.h	Wed Jul 20 13:58:20 2005
+--- patchlevel.h	Wed Dec  7 13:48:42 2005
+***************
+*** 26,30 ****
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 10
+  
+  #endif /* _PATCHLEVEL_H_ */
+--- 26,30 ----
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 11
+  
+  #endif /* _PATCHLEVEL_H_ */
+			     BASH PATCH REPORT
+			     =================
+
+Bash-Release: 3.1
+Patch-ID: bash31-012
+
+Bug-Reported-by: Alexander Kshevetskiy <alex@dgap.mipt.ru>
+Bug-Reference-ID: <308374997.20060124175849@dgap.mipt.ru>
+Bug-Reference-URL: http://lists.gnu.org/archive/html/bug-bash/2006-01/msg00097.html
+
+Bug-Description:
+
+There is a parsing problem involving parentheses in assignment statements
+that causes words to be terminated prematurely.
+
+Patch:
+
+*** ../bash-3.1/parse.y	Fri Nov 11 23:14:18 2005
+--- parse.y	Wed Jan 25 14:55:18 2006
+***************
+*** 3579,3583 ****
+  	      all_digit_token = 0;
+  	      compound_assignment = 1;
+! #if 0
+  	      goto next_character;
+  #else
+--- 3584,3588 ----
+  	      all_digit_token = 0;
+  	      compound_assignment = 1;
+! #if 1
+  	      goto next_character;
+  #else
+*** ../bash-3.1/patchlevel.h	Wed Jul 20 13:58:20 2005
+--- patchlevel.h	Wed Dec  7 13:48:42 2005
+***************
+*** 26,30 ****
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 11
+  
+  #endif /* _PATCHLEVEL_H_ */
+--- 26,30 ----
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 12
+  
+  #endif /* _PATCHLEVEL_H_ */
+			     BASH PATCH REPORT
+			     =================
+
+Bash-Release: 3.1
+Patch-ID: bash31-013
+
+Bug-Reported-by: Bob Rossi <bob@brasko.net>
+Bug-Reference-ID: <43F60606.80708@case.edu>
+Bug-Reference-URL:
+
+Bug-Description:
+
+In some cases, readline will reference freed memory when attempting to
+display a portion of the prompt.
+
+Patch:
+
+*** ../bash-3.1-patched/lib/readline/readline.c	Mon Jul  4 22:29:35 2005
+--- lib/readline/readline.c	Fri Feb 17 22:54:22 2006
+***************
+*** 282,287 ****
+--- 282,288 ----
+  {
+    FREE (rl_prompt);
+    rl_prompt = prompt ? savestring (prompt) : (char *)NULL;
++   rl_display_prompt = rl_prompt ? rl_prompt : "";
+  
+    rl_visible_prompt_length = rl_expand_prompt (rl_prompt);
+    return 0;
+*** ../bash-3.1/patchlevel.h	Wed Jul 20 13:58:20 2005
+--- patchlevel.h	Wed Dec  7 13:48:42 2005
+***************
+*** 26,30 ****
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 12
+  
+  #endif /* _PATCHLEVEL_H_ */
+--- 26,30 ----
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 13
+  
+  #endif /* _PATCHLEVEL_H_ */
+			     BASH PATCH REPORT
+			     =================
+
+Bash-Release: 3.1
+Patch-ID: bash31-014
+
+Bug-Reported-by: Mike Stroyan <mike.stroyan@hp.com>
+Bug-Reference-ID: <20060203191607.GC27614@localhost>
+Bug-Reference-URL: http://lists.gnu.org/archive/html/bug-bash/2006-02/msg00004.html
+
+Bug-Description:
+
+The displayed search prompt is corrupted when using non-incremental
+searches in vi and emacs mode if the prompt contains non-printing
+characters or spans multiple lines.  The prompt is expanded more than
+once; the second time without the escape sequences that protect non-
+printing characters from the length calculations.
+
+Patch:
+
+*** ../bash-3.1-patched/lib/readline/display.c	Wed Nov 30 14:05:02 2005
+--- lib/readline/display.c	Sat Feb 18 12:14:58 2006
+***************
+*** 1983,1993 ****
+       int pchar;
+  {
+    int len;
+!   char *pmt;
+  
+    rl_save_prompt ();
+  
+!   if (saved_local_prompt == 0)
+      {
+        len = (rl_prompt && *rl_prompt) ? strlen (rl_prompt) : 0;
+        pmt = (char *)xmalloc (len + 2);
+--- 1998,2012 ----
+       int pchar;
+  {
+    int len;
+!   char *pmt, *p;
+  
+    rl_save_prompt ();
+  
+!   /* We've saved the prompt, and can do anything with the various prompt
+!      strings we need before they're restored.  We want the unexpanded
+!      portion of the prompt string after any final newline. */
+!   p = rl_prompt ? strrchr (rl_prompt, '\n') : 0;
+!   if (p == 0)
+      {
+        len = (rl_prompt && *rl_prompt) ? strlen (rl_prompt) : 0;
+        pmt = (char *)xmalloc (len + 2);
+***************
+*** 1998,2016 ****
+      }
+    else
+      {
+!       len = *saved_local_prompt ? strlen (saved_local_prompt) : 0;
+        pmt = (char *)xmalloc (len + 2);
+        if (len)
+! 	strcpy (pmt, saved_local_prompt);
+        pmt[len] = pchar;
+        pmt[len+1] = '\0';
+!       local_prompt = savestring (pmt);
+!       prompt_last_invisible = saved_last_invisible;
+!       prompt_visible_length = saved_visible_length + 1;
+!     }
+  
+    prompt_physical_chars = saved_physical_chars + 1;
+- 
+    return pmt;
+  }
+  
+--- 2017,2033 ----
+      }
+    else
+      {
+!       p++;
+!       len = strlen (p);
+        pmt = (char *)xmalloc (len + 2);
+        if (len)
+! 	strcpy (pmt, p);
+        pmt[len] = pchar;
+        pmt[len+1] = '\0';
+!     }  
+  
++   /* will be overwritten by expand_prompt, called from rl_message */
+    prompt_physical_chars = saved_physical_chars + 1;
+    return pmt;
+  }
+  
+*** ../bash-3.1/patchlevel.h	Wed Jul 20 13:58:20 2005
+--- patchlevel.h	Wed Dec  7 13:48:42 2005
+***************
+*** 26,30 ****
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 13
+  
+  #endif /* _PATCHLEVEL_H_ */
+--- 26,30 ----
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 14
+  
+  #endif /* _PATCHLEVEL_H_ */
+			     BASH PATCH REPORT
+			     =================
+
+Bash-Release: 3.1
+Patch-ID: bash31-015
+
+Bug-Reported-by: Benoit Vila
+Bug-Reference-ID: <43FCA614.1090108@free.fr>
+Bug-Reference-URL: http://lists.gnu.org/archive/html/bug-bash/2006-02/msg00058.html
+
+Bug-Description:
+
+A problem with the extended globbing code prevented dots from matching
+filenames when used in some extended matching patterns.
+
+Patch:
+
+*** ../bash-3.1-patched/lib/glob/sm_loop.c	Sun Oct 16 21:21:04 2005
+--- lib/glob/sm_loop.c	Mon Feb 27 17:18:43 2006
+***************
+*** 639,643 ****
+    CHAR *pnext;			/* pointer to next sub-pattern */
+    CHAR *srest;			/* pointer to rest of string */
+!   int m1, m2;
+  
+  #if DEBUG_MATCHING
+--- 638,642 ----
+    CHAR *pnext;			/* pointer to next sub-pattern */
+    CHAR *srest;			/* pointer to rest of string */
+!   int m1, m2, xflags;		/* xflags = flags passed to recursive matches */
+  
+  #if DEBUG_MATCHING
+***************
+*** 645,648 ****
+--- 644,648 ----
+  fprintf(stderr, "extmatch: s = %s; se = %s\n", s, se);
+  fprintf(stderr, "extmatch: p = %s; pe = %s\n", p, pe);
++ fprintf(stderr, "extmatch: flags = %d\n", flags);
+  #endif
+  
+***************
+*** 678,683 ****
+  		 multiple matches of the pattern. */
+  	      if (m1)
+! 		m2 = (GMATCH (srest, se, prest, pe, flags) == 0) ||
+! 		      (s != srest && GMATCH (srest, se, p - 1, pe, flags) == 0);
+  	      if (m1 && m2)
+  		return (0);
+--- 678,687 ----
+  		 multiple matches of the pattern. */
+  	      if (m1)
+! 		{
+! 		  /* if srest > s, we are not at start of string */
+! 		  xflags = (srest > s) ? (flags & ~FNM_PERIOD) : flags;
+! 		  m2 = (GMATCH (srest, se, prest, pe, xflags) == 0) ||
+! 			(s != srest && GMATCH (srest, se, p - 1, pe, xflags) == 0);
+! 		}
+  	      if (m1 && m2)
+  		return (0);
+***************
+*** 705,710 ****
+  	  for ( ; srest <= se; srest++)
+  	    {
+  	      if (GMATCH (s, srest, psub, pnext - 1, flags) == 0 &&
+! 		  GMATCH (srest, se, prest, pe, flags) == 0)
+  		return (0);
+  	    }
+--- 709,716 ----
+  	  for ( ; srest <= se; srest++)
+  	    {
++ 	      /* if srest > s, we are not at start of string */
++ 	      xflags = (srest > s) ? (flags & ~FNM_PERIOD) : flags;
+  	      if (GMATCH (s, srest, psub, pnext - 1, flags) == 0 &&
+! 		  GMATCH (srest, se, prest, pe, xflags) == 0)
+  		return (0);
+  	    }
+***************
+*** 727,731 ****
+  		break;
+  	    }
+! 	  if (m1 == 0 && GMATCH (srest, se, prest, pe, flags) == 0)
+  	    return (0);
+  	}
+--- 733,739 ----
+  		break;
+  	    }
+! 	  /* if srest > s, we are not at start of string */
+! 	  xflags = (srest > s) ? (flags & ~FNM_PERIOD) : flags;
+! 	  if (m1 == 0 && GMATCH (srest, se, prest, pe, xflags) == 0)
+  	    return (0);
+  	}
+*** ../bash-3.1/patchlevel.h	Wed Jul 20 13:58:20 2005
+--- patchlevel.h	Wed Dec  7 13:48:42 2005
+***************
+*** 26,30 ****
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 14
+  
+  #endif /* _PATCHLEVEL_H_ */
+--- 26,30 ----
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 15
+  
+  #endif /* _PATCHLEVEL_H_ */
+			     BASH PATCH REPORT
+			     =================
+
+Bash-Release: 3.1
+Patch-ID: bash31-016
+
+Bug-Reported-by: Nikita Danilov <nikita@clusterfs.com>
+Bug-Reference-ID: <17397.51015.769854.541057@gargle.gargle.HOWL>
+Bug-Reference-URL: http://lists.gnu.org/archive/html/bug-bash/2006-02/msg00064.html
+
+Bug-Description:
+
+Bash will dump core when attempting to perform globbing in directories with
+very large numbers of files.
+
+Patch:
+
+*** ../bash-3.1-patched/lib/glob/glob.c	Thu Mar 24 12:42:27 2005
+--- lib/glob/glob.c	Fri Mar  3 16:54:12 2006
+***************
+*** 361,364 ****
+--- 361,365 ----
+  
+    firstmalloc = 0;
++   nalloca = 0;
+  
+    /* If PAT is empty, skip the loop, but return one (empty) filename. */
+***************
+*** 547,550 ****
+--- 551,556 ----
+  	      tmplink = lastlink;
+  	    }
++ 	  else
++ 	    tmplink = 0;
+  	  free (lastlink->name);
+  	  lastlink = lastlink->next;
+*** ../bash-3.1/patchlevel.h	Wed Jul 20 13:58:20 2005
+--- patchlevel.h	Wed Dec  7 13:48:42 2005
+***************
+*** 26,30 ****
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 15
+  
+  #endif /* _PATCHLEVEL_H_ */
+--- 26,30 ----
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 16
+  
+  #endif /* _PATCHLEVEL_H_ */

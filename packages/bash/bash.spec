@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/bash/bash.spec,v 1.37 2006/04/04 00:15:07 ldv Exp $
+# $Owl: Owl/packages/bash/bash.spec,v 1.38 2006/04/04 23:10:59 ldv Exp $
 
 Summary: The GNU Bourne-Again SHell (Bash).
 Name: bash
 %define bash_version 3.1
-%define bash_patchlevel 8
+%define bash_patchlevel 16
 Version: %bash_version.%bash_patchlevel
 Release: owl1
 Group: System Environment/Shells
@@ -206,6 +206,9 @@ fi
 %doc doc/*.ps* doc/*.html doc/article.txt*
 
 %changelog
+* Tue Apr 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.16-owl1
+- Updated to 3.1 patchlevel 16.
+
 * Mon Feb 20 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.8-owl1
 - Updated to 3.1 patchlevel 8.
 

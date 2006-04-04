@@ -574,23 +574,19 @@ diff -upk.orig bash-3.1.orig/lib/glob/sm_loop.c bash-3.1/lib/glob/sm_loop.c
      {
        if (s >= end)
  	return (s);
-@@ -677,10 +677,12 @@ fprintf(stderr, "extmatch: p = %s; pe = 
- 		 string matches the rest of the pattern.  Also handle
- 		 multiple matches of the pattern. */
- 	      if (m1)
--		m2 = (GMATCH (srest, se, prest, pe, flags) == 0) ||
-+		{
-+		  m2 = (GMATCH (srest, se, prest, pe, flags) == 0) ||
- 		      (s != srest && GMATCH (srest, se, p - 1, pe, flags) == 0);
--	      if (m1 && m2)
--		return (0);
+@@ -683,9 +683,9 @@ fprintf(stderr, "extmatch: flags = %d\n"
+ 		  xflags = (srest > s) ? (flags & ~FNM_PERIOD) : flags;
+ 		  m2 = (GMATCH (srest, se, prest, pe, xflags) == 0) ||
+ 			(s != srest && GMATCH (srest, se, p - 1, pe, xflags) == 0);
 +		  if (m2)
 +		    return (0);
-+		}
+ 		}
+-	      if (m1 && m2)
+-		return (0);
  	    }
  	  if (pnext == prest)
  	    break;
-@@ -721,7 +723,7 @@ fprintf(stderr, "extmatch: p = %s; pe = 
+@@ -728,7 +728,7 @@ fprintf(stderr, "extmatch: flags = %d\n"
  	    {
  	      pnext = PATSCAN (psub, pe, L('|'));
  	      /* If one of the patterns matches, just bail immediately. */
