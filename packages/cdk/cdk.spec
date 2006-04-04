@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/cdk/cdk.spec,v 1.8 2006/03/30 02:04:31 galaxy Exp $
+# $Owl: Owl/packages/cdk/cdk.spec,v 1.9 2006/04/04 00:29:46 ldv Exp $
 
 Summary: Curses Development Kit.
 Name: cdk
@@ -41,7 +41,7 @@ rm -rf %buildroot
 %__make install installCDKSHLibrary \
 	DESTDIR=%buildroot \
 	DOCUMENT_DIR=%buildroot%_docdir/%name-%version
-ldconfig -n %buildroot%_libdir
+/sbin/ldconfig -n %buildroot%_libdir
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
