@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/chkconfig/chkconfig.spec,v 1.18 2005/12/25 11:37:30 ldv Exp $
+# $Owl: Owl/packages/chkconfig/chkconfig.spec,v 1.19 2006/04/04 00:33:22 ldv Exp $
 
 %define BUILD_NTSYSV 0
 %define INSTALL_ALTERNATIVES 1
@@ -6,7 +6,7 @@
 Summary: A system tool for maintaining the /etc/rc.d/rc*.d hierarchy.
 Name: chkconfig
 Version: 1.3.25
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 Source: %name-%version.tar.gz
@@ -73,10 +73,10 @@ done
 # Remove unpackaged files
 %if !%INSTALL_ALTERNATIVES
 rm %buildroot%_sbindir/alternatives
-rm %buildroot%_mandir/man8/alternatives.8*
+rm %buildroot%_mandir/man?/*alternatives.*
 %endif
 %if !%BUILD_NTSYSV
-rm %buildroot%_mandir/man8/ntsysv.8*
+rm %buildroot%_mandir/man?/ntsysv.*
 %endif
 
 %find_lang %name
@@ -95,17 +95,20 @@ rm %buildroot%_mandir/man8/ntsysv.8*
 %dir %_var/lib/alternatives
 %_sbindir/update-alternatives
 %_sbindir/alternatives
-%_mandir/*/alternatives*
+%_mandir/man?/*alternatives.*
 %endif
 
 %if %BUILD_NTSYSV
 %files -n ntsysv
 %defattr(-,root,root)
 %_sbindir/ntsysv
-%_mandir/*/ntsysv.8*
+%_mandir/man?/ntsysv.*
 %endif
 
 %changelog
+* Tue Apr 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.3.25-owl2
+- Package update-alternatives manpage.
+
 * Fri Dec 23 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.3.25-owl1
 - Updated to 1.3.25.
 - Cleaned up chkconfig code a bit.
