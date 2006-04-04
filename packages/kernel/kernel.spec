@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.20 2006/03/19 22:37:33 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.21 2006/04/04 23:02:03 ldv Exp $
 
 Summary: Fake Linux kernel package for Red Hat Linux compatibility.
 Name: kernel
 Version: %(sed -n 's,^#define UTS_RELEASE "\(2\.[2-9]\.[0-9]\+\).*$,\1fake,p' < %_includedir/linux/version.h)
-Release: owl5
+Release: owl6
 License: public domain
 Group: System Environment/Base
 Source: BuildASM-sparc.sh
@@ -45,7 +45,8 @@ mkdir .%_includedir/asm
 install -pm744 %_sourcedir/BuildASM-sparc.sh .%_includedir/asm/BuildASM
 .%_includedir/asm/BuildASM .%_includedir
 %else
-ln -s ../src/linux/include/asm .%_includedir/asm
+ln -s ../src/linux/include/asm .%_includedir/
+ln -s ../src/linux/include/asm-generic .%_includedir/
 %endif
 
 %files
@@ -54,6 +55,7 @@ ln -s ../src/linux/include/asm .%_includedir/asm
 %defattr(-,root,root)
 %_includedir/linux
 %_includedir/asm
+%_includedir/asm-generic
 %ifarch sparc sparcv9
 %_includedir/asm-sparc*
 
@@ -62,6 +64,9 @@ test -L %_includedir/asm && rm -f %_includedir/asm || :
 %endif
 
 %changelog
+* Wed Apr 05 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.4.x-owl6
+- Include asm-generic symlink.
+
 * Sun Mar 12 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.4.x-owl5
 - Made %_includedir/* symlinks relative.
 
