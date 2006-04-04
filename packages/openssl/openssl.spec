@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.53 2006/03/30 04:01:09 galaxy Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.54 2006/04/04 00:28:35 ldv Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
@@ -101,6 +101,9 @@ sed -i 's/\${SHLIB_MAJOR}\.\${SHLIB_MINOR}/\${VERSION}/g' Makefile.org
 ./Configure %opensslflags --openssldir=%openssldir linux-elf
 %endif
 %endif
+%ifarch x86_64
+./Configure %opensslflags --openssldir=%openssldir linux-x86_64
+%endif
 %ifarch ppc
 ./Configure %opensslflags --openssldir=%openssldir linux-ppc
 %endif
@@ -202,8 +205,8 @@ ln -sf libssl.so.5 /%_lib/libssl.so.4
 %attr(0644,root,root) %_libdir/*.a
 %dir %attr(0755,root,root) /usr/include/openssl
 %attr(0644,root,root) /usr/include/openssl/*
-# XXX: we don't have a package providing /usr/lib/pkgconfig directory
-%attr(0644,root,root) /usr/lib/pkgconfig/openssl.pc
+# XXX: we don't have a package providing %_libdir/pkgconfig directory
+%attr(0644,root,root) %_libdir/pkgconfig/openssl.pc
 %attr(0644,root,root) %_mandir/man3/*
 
 %changelog

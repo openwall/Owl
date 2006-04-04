@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/ncurses/ncurses.spec,v 1.30 2006/02/03 22:13:37 ldv Exp $
+# $Owl: Owl/packages/ncurses/ncurses.spec,v 1.31 2006/04/04 00:28:35 ldv Exp $
 
 %define major 5
 %define oldmajor 4
@@ -119,6 +119,7 @@ TERMINFO=%buildroot%_datadir/terminfo %__make -C test
 
 %install
 rm -rf %buildroot
+mkdir -p %buildroot%_prefix/lib
 %makeinstall \
 	includedir=%buildroot%_includedir/%name \
 	ticdir=%buildroot%_datadir/terminfo
@@ -185,7 +186,7 @@ rm %buildroot%_datadir/terminfo/s/screen{,-bce,-s}
 %_mandir/man1/*
 %_mandir/man5/*
 %_mandir/man7/*
-%_libdir/terminfo
+%_prefix/lib/terminfo
 
 %files devel
 %defattr(-,root,root)

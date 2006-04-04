@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/db4/db4.spec,v 1.15 2006/02/03 22:10:50 ldv Exp $
+# $Owl: Owl/packages/db4/db4.spec,v 1.16 2006/04/04 00:28:34 ldv Exp $
 
 %define __soversion	4.2
 %define _libdb_a	libdb-%__soversion.a
@@ -116,7 +116,7 @@ popd #dist/build
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot{/lib,%_libdir,%_includedir/db4}
+mkdir -p %buildroot{/%_lib,%_libdir,%_includedir/db4}
 
 %makeinstall -C dist/build docdir=%buildroot%docdir
 
@@ -129,10 +129,10 @@ sed -i 's/usenix\.ps/&.gz/g' .%docdir/ref/refs/refs.html
 # Allow owner to modify to make our brp-scripts happy
 chmod -R u+w .{%_bindir,%_libdir}
 
-# Relocate main shared library from %_libdir/ to /lib/.
+# Relocate main shared library from %_libdir/ to /%_lib/.
 mv .%_libdir/%_libdb_so ./lib/
 for f in .%_libdir/libdb{,-{*,%__soversion}}.so; do
-	ln -s -nf ../../lib/%_libdb_so "$f"
+	ln -sf ../../%_lib/%_libdb_so "$f"
 done
 
 # Remove non-versioned archives.

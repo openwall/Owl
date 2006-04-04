@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.85 2006/03/25 14:43:54 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.86 2006/04/04 00:38:20 ldv Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -35,6 +35,9 @@ mv ../run/john ../run/john-non-mmx
 make clean
 make linux-x86-mmx CFLAGS='%cflags -DCPU_FALLBACK=1'
 %endif
+%endif
+%ifarch x86_64
+make linux-x86-64 CFLAGS='%cflags'
 %endif
 %ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
 make linux-alpha CFLAGS='%cflags'
@@ -152,7 +155,7 @@ Sebastian Rother), added many openbsd-* targets based on the OpenBSD port.
 
 * Sun Oct 09 2005 Solar Designer <solar-at-owl.openwall.com> 1.6.39.1-owl1
 - With linux-sparc make target, let's not use sparc.S because it uses
-registers reserved by the SPARC ABI (%g5-%g7) and this no longer works with
+registers reserved by the SPARC ABI (%%g5-%%g7) and this no longer works with
 glibc 2.3.x.
 - Fixed a bug in best.sh which could result in MD5_IMM being enabled wrongly
 when MD5_X2 is determined to improve performance (this only affected builds

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/tcp_wrappers/tcp_wrappers.spec,v 1.15 2005/11/16 13:32:45 solar Exp $
+# $Owl: Owl/packages/tcp_wrappers/tcp_wrappers.spec,v 1.16 2006/04/04 00:28:35 ldv Exp $
 
 Summary: A security tool which acts as a wrapper for network services.
 Name: tcp_wrappers
@@ -35,7 +35,7 @@ make linux EXTRA_CFLAGS="%optflags -fPIC -DPIC -D_REENTRANT"
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot/usr/{sbin,lib,include}
+mkdir -p %buildroot{%_sbindir,%_libdir,%_includedir}
 mkdir -p %buildroot%_mandir/man{3,5,8}
 
 install -m 755 safe_finger tcpd tcpdchk tcpdmatch try-from \

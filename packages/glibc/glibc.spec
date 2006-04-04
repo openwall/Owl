@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.104 2006/03/05 13:56:14 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.105 2006/04/04 01:00:04 ldv Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -199,7 +199,7 @@ compatibility package with necessary binaries of old libdb libraries.
 %patch309 -p1
 # support more ru_* locales
 %patch310 -p1
-# relocate helper libraries from /lib to %_libdir
+# relocate helper libraries from /%_lib to %_libdir
 %patch311 -p1
 # fix mprotect return code handling in _dl_make_stack_executable()
 %patch312 -p1
@@ -318,7 +318,7 @@ echo '.so man3/strlcpy.3' > %buildroot%_mandir/man3/strlcat.3
 ln -s libbsd-compat.a %buildroot%_libdir/libbsd.a
 
 # Relocate shared libraries used by catchsegv, memusage and xtrace
-mv %buildroot/lib/lib{memusage,pcprofile,SegFault}.so %buildroot%_libdir/
+mv %buildroot/%_lib/lib{memusage,pcprofile,SegFault}.so %buildroot%_libdir/
 
 # Replace the symlink with the file for our default timezone - use UTC
 rm %buildroot/etc/localtime

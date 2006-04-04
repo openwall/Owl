@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/libtermcap/libtermcap.spec,v 1.16 2006/02/03 22:31:15 ldv Exp $
+# $Owl: Owl/packages/libtermcap/libtermcap.spec,v 1.17 2006/04/04 00:28:35 ldv Exp $
 
 Summary: A basic system library for accessing the termcap database.
 Name: libtermcap
@@ -56,7 +56,7 @@ developing programs which will access the termcap database.
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot/{usr/lib,usr/include,etc,lib}
+mkdir -p %buildroot{/etc,/%_lib,/usr/lib,%_includedir}
 mkdir -p %buildroot%_infodir
 
 export PATH=/sbin:$PATH
@@ -65,10 +65,11 @@ export PATH=/sbin:$PATH
 install -m 644 termcap.info* %buildroot%_infodir/
 
 cd %buildroot
-mv usr/lib/libtermcap.so* lib/
-ln -sf libtermcap.so.2.0.8 lib/libtermcap.so.2
-ln -sf ../../lib/libtermcap.so.2.0.8 usr/lib/libtermcap.so
-strip -R .comments --strip-unneeded lib/libtermcap.so.2.0.8
+mv usr/lib/libtermcap.so.* %_lib/
+[ /usr/lib = %_libdir ] || mv usr/lib .%_libdir
+ln -sf libtermcap.so.2.0.8 %_lib/libtermcap.so.2
+ln -sf ../../%_lib/libtermcap.so.2.0.8 .%_libdir/libtermcap.so
+strip -R .comments --strip-unneeded %_lib/libtermcap.so.2.0.8
 
 %post -p /sbin/ldconfig
 
@@ -86,13 +87,13 @@ fi
 %files
 %defattr(-,root,root)
 %_infodir/termcap.info*
-/lib/libtermcap.so.2*
+/%_lib/libtermcap.so.2*
 
 %files devel
 %defattr(-,root,root)
-/usr/lib/libtermcap.a
-/usr/lib/libtermcap.so
-/usr/include/termcap.h
+%_libdir/libtermcap.a
+%_libdir/libtermcap.so
+%_includedir/termcap.h
 
 %changelog
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.0.8-owl7

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/binutils/binutils.spec,v 1.21 2006/01/04 19:14:36 ldv Exp $
+# $Owl: Owl/packages/binutils/binutils.spec,v 1.22 2006/04/04 00:28:34 ldv Exp $
 
 %define BUILD_HJL 1
 
@@ -135,9 +135,9 @@ install -m 644 ../include/libiberty.h %buildroot%_includedir/
 
 chmod +x %buildroot%_libdir/lib*.so*
 
-# Remove unpackaged files if any
-rm -f %buildroot%_infodir/dir
-rm -f %buildroot%_libdir/*.la
+# Remove unpackaged files
+rm %buildroot%_infodir/dir
+rm %buildroot%_libdir/*.la
 
 cd ..
 
@@ -165,11 +165,11 @@ fi
 %files
 %defattr(-,root,root)
 %doc README
-%_prefix/bin/*
+%_bindir/*
 %_mandir/man1/*
-%_prefix/include/*
-%_prefix/%_lib/ldscripts
-%_prefix/%_lib/lib*
+%_includedir/*
+%_prefix/lib/ldscripts
+%_libdir/lib*.*
 %_infodir/*.info*
 %_datadir/locale/*/LC_MESSAGES/*.mo
 

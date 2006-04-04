@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/readline/readline.spec,v 1.24 2006/02/03 22:15:01 ldv Exp $
+# $Owl: Owl/packages/readline/readline.spec,v 1.25 2006/04/04 00:28:35 ldv Exp $
 
 %define compat_list 3 3.0 4.0 4.1 4.2
 
@@ -71,7 +71,7 @@ mkdir -p %buildroot%_libdir
 mkdir -p %buildroot%_docdir/examples
 install -m 644 examples/* %buildroot%_docdir/examples
 
-chmod 755 %buildroot%_prefix/lib/*.so*
+chmod 755 %buildroot%_libdir/*.so*
 
 cd %buildroot
 ln -sf libreadline.so.%version .%_libdir/libreadline.so

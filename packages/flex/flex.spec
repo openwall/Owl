@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/flex/flex.spec,v 1.13 2006/02/03 22:31:14 ldv Exp $
+# $Owl: Owl/packages/flex/flex.spec,v 1.14 2006/04/04 00:28:34 ldv Exp $
 
 Summary: A tool for creating scanners (text pattern recognizers).
 Name: flex
@@ -38,10 +38,10 @@ rm -rf %buildroot
 %makeinstall mandir=%buildroot%_mandir/man1
 
 pushd %buildroot
-ln -sf flex .%_prefix/bin/lex
+ln -sf flex .%_bindir/lex
 ln -s flex.1 .%_mandir/man1/lex.1
 ln -s flex.1 .%_mandir/man1/flex++.1
-ln -s libfl.a .%_prefix/lib/libl.a
+ln -s libfl.a .%_libdir/libl.a
 popd
 
 mkdir %buildroot%_infodir
@@ -59,13 +59,13 @@ fi
 %files
 %defattr(-,root,root)
 %doc COPYING NEWS README
-%_prefix/bin/lex
-%_prefix/bin/flex
-%_prefix/bin/flex++
+%_bindir/lex
+%_bindir/flex
+%_bindir/flex++
 %_mandir/man1/*
 %_infodir/flex.*
-%_prefix/lib/libl.a
-%_prefix/lib/libfl.a
+%_libdir/libl.a
+%_libdir/libfl.a
 %_prefix/include/FlexLexer.h
 
 %changelog

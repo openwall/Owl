@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.52 2006/02/03 22:33:11 ldv Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.53 2006/04/04 00:28:35 ldv Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -385,6 +385,7 @@ cd obj-%_target_platform
 %if %USE_BOEHM_GC
 	--enable-objc-gc \
 %endif
+	--disable-multilib \
 	--host=%_target_platform \
 	--build=%_target_platform \
 	--target=%_target_platform
