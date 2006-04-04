@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.45 2006/01/12 18:29:53 ldv Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.46 2006/04/04 23:12:53 ldv Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -153,6 +153,12 @@ done | sed 's/\./\\./' | grep -vEf - MANIFEST.orig > MANIFEST
 # Satisfy a make dependency
 touch makeaperl.SH
 
+# Correct library search paths
+if [ %_lib != lib ]; then
+	sed -i -e 's,\([ "]\(/usr\(/local\)\?\)\?\)/lib\([ "]\),\1/%_lib\4,' Configure
+	sed -i -e 's,\([ "]\(/usr\(/local\)\?\)\?\)/lib\([ "]\),\1/%_lib\4,' Configure
+fi
+
 cat > filter_depends.sh <<EOF
 #!/bin/sh
 /usr/lib/rpm/find-requires.perl $* | grep -v NDBM | grep -v 'perl(v5.6.0)' | grep -v 'perl(Mac::' | grep -v 'perl(Tk' | grep -v 'perl(VMS::' | grep -v 'perl(FCGI)'
@@ -247,7 +253,7 @@ STDH	= \$(filter %_includedir/%%.h, \$(shell rpm -ql \$(PKGS); echo %_includedir
 GCCDIR	= \$(shell gcc --print-file-name include)
 GCCH	= \$(filter \$(GCCDIR)/%%.h, \$(shell rpm -ql gcc))
 
-PERLLIB = \$(RPM_BUILD_ROOT)%_libdir/perl5/%version
+PERLLIB = \$(RPM_BUILD_ROOT)%_prefix/lib/perl5/%version
 PERL	= PERL5LIB=\$(PERLLIB) \$(RPM_BUILD_ROOT)%_bindir/perl
 PHDIR	= \$(PERLLIB)/%_arch-%_os%thread_arch
 H2PH	= \$(PERL) \$(RPM_BUILD_ROOT)%_bindir/h2ph -d \$(PHDIR)/
@@ -271,17 +277,17 @@ EOF
 # Don't leak information specific to the build system.
 # "-f" here because compile.ph appeared here only when we have
 # compiled kernel source tree in system.
-rm -f %buildroot%_libdir/perl5/%version/%_arch-%_os%thread_arch/linux/compile.ph
+rm -f %buildroot%_prefix/lib/perl5/%version/%_arch-%_os%thread_arch/linux/compile.ph
 
 # Fix the rest of the stuff
-find %buildroot%_libdir/perl* -name .packlist -o -name perllocal.pod | \
+find %buildroot%_prefix/lib/perl* -name .packlist -o -name perllocal.pod | \
 	xargs ./perl -i -p -e "s|%buildroot||g;" $packlist
 
 %files
 %defattr(-,root,root)
 %doc Artistic Copying AUTHORS README README.Y2K
 %_mandir/*/*
-%_libdir/*
+%_prefix/lib/*
 %if !%BUILD_SUIDPERL
 %_bindir/*
 %else
