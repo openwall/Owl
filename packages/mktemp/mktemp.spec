@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/mktemp/mktemp.spec,v 1.11 2005/11/16 13:16:56 solar Exp $
+# $Owl: Owl/packages/mktemp/mktemp.spec,v 1.12 2006/04/04 01:02:00 ldv Exp $
 
 Summary: A small utility for safely making temporary files.
 Name: mktemp
@@ -55,8 +55,8 @@ addition to the OpenBSD-specific version. :-)
 
 * Tue Aug 08 2000 Solar Designer <solar-at-owl.openwall.com>
 - Updated to version from OpenBSD 2.7.
-- Added __attribute__ ((format ...)) to err() and "%s" to errx().
-- Added %defattr.
+- Added __attribute__ ((format ...)) to err() and "%%s" to errx().
+- Added %%defattr.
 
 * Fri Jul 07 2000 Solar Designer <solar-at-owl.openwall.com>
 - Imported from RH, and fixed for arbitrary buildroot.

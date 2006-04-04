@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/less/less.spec,v 1.16 2005/11/16 13:11:15 solar Exp $
+# $Owl: Owl/packages/less/less.spec,v 1.17 2006/04/04 01:02:00 ldv Exp $
 
 Summary: A text file browser similar to more, but better.
 Name: less
@@ -56,7 +56,7 @@ install -m 755 %_sourcedir/less.{sh,csh} %buildroot/etc/profile.d/
 - Use -Tlatin1 with groff such that 8-bit man pages may be viewed.
 
 * Mon Apr 09 2001 Solar Designer <solar-at-owl.openwall.com>
-- Optimized line number calculation and forward searches, now 20 to 50%
+- Optimized line number calculation and forward searches, now 20 to 50%%
 faster (but still a lot slower than wc and grep).
 
 * Thu Oct 19 2000 Solar Designer <solar-at-owl.openwall.com>

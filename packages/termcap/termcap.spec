@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/termcap/termcap.spec,v 1.7 2005/11/16 13:32:45 solar Exp $
+# $Owl: Owl/packages/termcap/termcap.spec,v 1.8 2006/04/04 01:02:01 ldv Exp $
 
 Summary: The terminal feature database used by certain applications.
 Name: termcap
@@ -31,4 +31,4 @@ zcat %_sourcedir/termtypes.tc.gz > %buildroot/etc/termcap
 * Tue Aug 08 2000 Solar Designer <solar-at-owl.openwall.com>
 - Based this spec file on one from RH, updated to 11.0.1, removed all
 of the RH patches for now.
-- Added %attr.
+- Added %%attr.

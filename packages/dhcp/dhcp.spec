@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.45 2005/11/16 12:21:03 solar Exp $
+# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.46 2006/04/04 01:02:00 ldv Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -243,7 +243,7 @@ third-party modifications and that might not be based off their latest code.
 - Remove unpackaged files.
 
 * Sun Jun 13 2004 Solar Designer <solar-at-owl.openwall.com> 3.0pl2-owl7
-- Added a bounds checking patch covering sprintf() calls with "%s" format
+- Added a bounds checking patch covering sprintf() calls with "%%s" format
 specifier and non-constant strings and forcing the use of snprintf() and
 vsnprintf() in all places where that was previously supported.
 

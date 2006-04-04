@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-dev/owl-dev.spec,v 1.21 2005/11/16 13:21:54 solar Exp $
+# $Owl: Owl/packages/owl-dev/owl-dev.spec,v 1.22 2006/04/04 01:02:00 ldv Exp $
 
 Summary: Initial set of device files and MAKEDEV, a script to manage them.
 Name: owl-dev
@@ -44,15 +44,15 @@ find %buildroot/dev ! -type d -size 0 -print0 | xargs -0 chmod go-rwx
 # Build the filelist
 cd $RPM_BUILD_DIR/MAKEDEV-2.5.2
 cat > filelist << EOF
-%defattr(-,root,root)
-%_mandir/man8/MAKEDEV.8*
+%%defattr(-,root,root)
+%%_mandir/man8/MAKEDEV.8*
 EOF
 find %buildroot/dev ! -type d ! -size 0 | \
 	sed "s,^%buildroot,," >> filelist
 find %buildroot/dev -type d -mindepth 1 | \
-	sed "s,^%buildroot,%ghost %dir ," >> filelist
+	sed "s,^%buildroot,%%ghost %%dir ," >> filelist
 find %buildroot/dev ! -type d -size 0 | \
-	sed "s,^%buildroot,%ghost %verify(not group mode rdev) ," \
+	sed "s,^%buildroot,%%ghost %%verify(not group mode rdev) ," \
 	>> filelist
 
 %post
@@ -85,7 +85,7 @@ echo "Creating device files"
 - Support and create frame buffer devices.
 - Support up to 8 IDE controllers (16 devices).
 - Create device files for 8 IDE devices by default.
-- Echo a message when running the script in %post.
+- Echo a message when running the script in %%post.
 - Install the MAKEDEV(8) man page.
 - List /dev subdirectories in the package.
 
@@ -119,7 +119,7 @@ case for new installs due to owl-etc).
 * Mon Dec 04 2000 Solar Designer <solar-at-owl.openwall.com>
 - Create device files for 4 IDE and 8 SCSI devices with up to 15 partitions
 by default.
-- Use %ghost.
+- Use %%ghost.
 
 * Sun Dec 03 2000 Solar Designer <solar-at-owl.openwall.com>
 - Unix98 pty's support.
