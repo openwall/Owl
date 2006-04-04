@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.37 2006/02/12 10:58:32 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.38 2006/04/04 00:36:18 ldv Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
@@ -13,7 +13,7 @@ Source11: dot-config
 Source12: floppy-update.sh
 Source13: message
 Requires: owl-startup >= 0.15-owl1
-ExclusiveArch: %ix86
+ExclusiveArch: %ix86 x86_64
 BuildRoot: /override/%name-%version
 
 %description

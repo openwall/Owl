@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/ltrace/ltrace.spec,v 1.23 2006/02/03 22:02:14 ldv Exp $
+# $Owl: Owl/packages/ltrace/ltrace.spec,v 1.24 2006/04/04 00:36:18 ldv Exp $
 
 Summary: Tracks runtime library calls from dynamically linked executables.
 Name: ltrace
@@ -11,7 +11,7 @@ Patch0: ltrace-0.3.36-alt-install-no-root.diff
 Patch1: ltrace-0.3.36-owl-version.diff
 Prefix: %_prefix
 BuildRequires: elfutils-libelf-devel
-ExclusiveArch: %ix86 sparc sparcv9
+ExclusiveArch: %ix86 x86_64 sparc sparcv9
 BuildRoot: /override/%name-%version
 
 %description

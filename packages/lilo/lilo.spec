@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/lilo/lilo.spec,v 1.22 2006/02/03 22:12:05 ldv Exp $
+# $Owl: Owl/packages/lilo/lilo.spec,v 1.23 2006/04/04 00:36:18 ldv Exp $
 
 %define BUILD_EXTERNAL_SUPPORT 0
 
@@ -17,7 +17,7 @@ Patch2: lilo-22.7.1-owl-no-fs.diff
 Patch3: lilo-22.7.1-owl-tmp.diff
 Patch4: lilo-22.7-deb-owl-man.diff
 BuildRequires: coreutils, dev86
-ExclusiveArch: %ix86
+ExclusiveArch: %ix86 x86_64
 BuildRoot: /override/%name-%version
 
 %description
