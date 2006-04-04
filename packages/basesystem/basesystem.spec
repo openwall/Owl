@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/basesystem/basesystem.spec,v 1.8 2005/12/22 03:57:32 solar Exp $
+# $Owl: Owl/packages/basesystem/basesystem.spec,v 1.9 2006/04/04 01:06:10 ldv Exp $
 
 Summary: Initial set of configuration files and directory hierarchy.
 Name: basesystem
@@ -16,6 +16,7 @@ Red Hat Linux compatibility.
 
 %install
 rm -rf %buildroot
+exit 0
 
 %files
 
