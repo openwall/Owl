@@ -2,12 +2,6 @@ revision 2.95
 date: 2003/05/15 13:53:41;  author: jbj;  state: Exp;  lines: +3 -1
 - fix: nested %if handling
 
-Index: build/parseSpec.c
-===================================================================
-RCS file: /cvs/devel/rpm/build/parseSpec.c,v
-retrieving revision 2.94
-retrieving revision 2.95
-diff -u -p -r2.94 -r2.95
 --- build/parseSpec.c	8 May 2003 20:39:30 -0000	2.94
 +++ build/parseSpec.c	15 May 2003 13:53:41 -0000	2.95
 @@ -273,7 +273,9 @@ retry:
