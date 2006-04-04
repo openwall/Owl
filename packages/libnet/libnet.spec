@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/libnet/libnet.spec,v 1.18 2006/02/03 22:05:17 ldv Exp $
+# $Owl: Owl/packages/libnet/libnet.spec,v 1.19 2006/04/04 00:21:38 ldv Exp $
 
 Summary: A library for portable packet creation and injection.
 Name: libnet
@@ -49,6 +49,9 @@ export ac_cv_libnet_linux_procfs=yes \
 rm -rf %buildroot
 %makeinstall
 
+# Don't package .la files.
+rm %buildroot%_libdir/*.la
+
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
@@ -64,7 +67,6 @@ rm -rf %buildroot
 %_includedir/libnet
 %_libdir/libnet.so
 %_libdir/libnet.a
-%exclude %_libdir/libnet.la
 
 %changelog
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:1.1.3-owl0.2
