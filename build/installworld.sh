@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/installworld.sh,v 1.28 2005/12/24 22:23:50 ldv Exp $
+# $Owl: Owl/build/installworld.sh,v 1.29 2006/04/06 23:50:43 ldv Exp $
 
 . installworld.conf
 
@@ -101,9 +101,9 @@ if [ -f $ROOT/var/lib/rpm/packages.rpm -o -f $ROOT/var/lib/rpm/Packages ]; then
 	fi
 
 # First of all, we will do the check that no user packages make use of
-# libdb.so.2 and libdb.so.3 from glibc 2.1.3, or libdb-4.0.so and
-# libdb_cxx-4.0.so from db4 4.0.  For that task we have to use the target
-# system's RPM.
+# libdb.so.2 and libdb.so.3 from glibc 2.1.3, or libdb-4.0.so, libdb-4.2.so,
+# libdb_cxx-4.0.so and libdb_cxx-4.2.so from db4 4.3.  For that task we have
+# to use the target system's RPM.
 	if [ ! -x $ROOT/bin/rpm ]; then
 		log "Found an RPM database but no RPM binary, aborting"
 		exit 1
@@ -111,14 +111,14 @@ if [ -f $ROOT/var/lib/rpm/packages.rpm -o -f $ROOT/var/lib/rpm/Packages ]; then
 
 # XXX: Should check for errors (rpm's exit status).
 	CHROOT_BIN=$(type -p chroot 2>/dev/null)
-	LIBDB234_DEPS=$(echo `env - ${CHROOT_BIN:=/usr/sbin/chroot} $ROOT /bin/rpm -q --whatrequires libdb.so.2 libdb.so.3 libdb-4.0.so libdb_cxx-4.0.so 2>/dev/null | sort -u | grep -vE '^(no package|rpm-|pam-|perl-|postfix-|db4-utils-)'`)
+	LIBDB234_DEPS=$(echo `env - ${CHROOT_BIN:=/usr/sbin/chroot} $ROOT /bin/rpm -q --whatrequires libdb.so.2 libdb.so.3 libdb-4.0.so libdb-4.2.so libdb_cxx-4.0.so libdb_cxx-4.2.so 2>/dev/null | sort -u | grep -vE '^(no package|rpm-|pam-|perl-|postfix-|db4-utils-)'`)
 
 	if [ -n "$LIBDB234_DEPS" ]; then
 		cat << EOF
 Warning!
 We found that upgrade procedure will break packages listed below, because
-of the absence of libdb.so.2, libdb.so.3, libdb-4.0.so and libdb_cxx-4.0.so
-support in our supplied glibc and db4:
+of the absence of libdb.so.2, libdb.so.3, libdb-4.0.so, libdb-4.2.so,
+libdb_cxx-4.0.so and libdb_cxx-4.2.so support in our supplied glibc and db4:
 
 EOF
 		echo "$LIBDB234_DEPS"
