@@ -1,0 +1,119 @@
+--- gettext-0.14.5/gettext-tools/src/x-c.c.orig	2005-05-20 20:45:55 +0000
++++ gettext-0.14.5/gettext-tools/src/x-c.c	2006-04-06 14:07:43 +0000
+@@ -81,7 +81,7 @@
+ static bool trigraphs = false;
+ 
+ void
+-x_c_trigraphs ()
++x_c_trigraphs (void)
+ {
+   trigraphs = true;
+ }
+@@ -98,7 +98,7 @@ static bool default_keywords = true;
+ 
+ 
+ void
+-x_c_extract_all ()
++x_c_extract_all (void)
+ {
+   extract_all = true;
+ }
+@@ -149,7 +149,7 @@ x_objc_keyword (const char *name)
+ /* Finish initializing the keywords hash tables.
+    Called after argument processing, before each file is processed.  */
+ static void
+-init_keywords ()
++init_keywords (void)
+ {
+   if (default_keywords)
+     {
+@@ -178,7 +178,7 @@ init_keywords ()
+ }
+ 
+ void
+-init_flag_table_c ()
++init_flag_table_c (void)
+ {
+   xgettext_record_flag ("gettext:1:pass-c-format");
+   xgettext_record_flag ("dgettext:2:pass-c-format");
+@@ -217,7 +217,7 @@ init_flag_table_c ()
+ }
+ 
+ void
+-init_flag_table_objc ()
++init_flag_table_objc (void)
+ {
+   /* Since the settings done in init_flag_table_c() also have an effect for
+      the ObjectiveC parser, we don't have to repeat them here.  */
+@@ -243,7 +243,7 @@ init_flag_table_objc ()
+ }
+ 
+ void
+-init_flag_table_gcc_internal ()
++init_flag_table_gcc_internal (void)
+ {
+   xgettext_record_flag ("gettext:1:pass-gcc-internal-format");
+   xgettext_record_flag ("dgettext:2:pass-gcc-internal-format");
+@@ -343,7 +343,7 @@ static FILE *fp;
+ 
+ 
+ static int
+-phase0_getc ()
++phase0_getc (void)
+ {
+   int c;
+ 
+@@ -387,7 +387,7 @@ static int phase1_pushback_length;
+ 
+ 
+ static int
+-phase1_getc ()
++phase1_getc (void)
+ {
+   int c;
+ 
+@@ -455,7 +455,7 @@ static int phase2_pushback_length;
+ 
+ 
+ static int
+-phase2_getc ()
++phase2_getc (void)
+ {
+   int c;
+ 
+@@ -523,7 +523,7 @@ static int phase3_pushback_length;
+ 
+ 
+ static int
+-phase3_getc ()
++phase3_getc (void)
+ {
+   if (phase3_pushback_length)
+     return phase3_pushback[--phase3_pushback_length];
+@@ -562,7 +562,7 @@ static size_t bufmax;
+ static size_t buflen;
+ 
+ static inline void
+-comment_start ()
++comment_start (void)
+ {
+   buflen = 0;
+ }
+@@ -608,7 +608,7 @@ static int newline_count;
+    We also optionally understand C++ comments.  */
+ 
+ static int
+-phase4_getc ()
++phase4_getc (void)
+ {
+   int c;
+   bool last_was_star;
+@@ -739,7 +739,7 @@ struct token_ty
+ #define P7_NEWLINE (1000 + '\n')
+ 
+ static int
+-phase7_getc ()
++phase7_getc (void)
+ {
+   int c, n, j;
+ 

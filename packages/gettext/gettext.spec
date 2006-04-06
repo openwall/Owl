@@ -1,14 +1,18 @@
-# $Owl: Owl/packages/gettext/gettext.spec,v 1.12 2005/11/16 13:09:47 solar Exp $
+# $Owl: Owl/packages/gettext/gettext.spec,v 1.13 2006/04/06 22:35:42 ldv Exp $
 
 Summary: GNU libraries and utilities for producing multi-lingual messages.
 Name: gettext
-Version: 0.14.1
-Release: owl3
+Version: 0.14.5
+Release: owl1
 License: GPL/LGPL
 Group: Development/Tools
 URL: http://www.gnu.org/software/gettext/
 Source: ftp://ftp.gnu.org/gnu/gettext/%name-%version.tar.gz
-Patch0: gettext-0.14.1-alt-gettextize-quiet.diff
+Patch0: gettext-0.14.5-alt-gettextize-quiet.diff
+Patch1: gettext-0.14.5-alt-m4.diff
+Patch2: gettext-0.14.5-alt-tmp.diff
+Patch3: gettext-0.14.5-alt-warnings.diff
+Patch4: gettext-0.14.5-alt-doc.diff
 PreReq: /sbin/install-info
 Provides: %name-devel = %version-%release
 Provides: devel(libintl)
@@ -30,16 +34,13 @@ programs.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
 
 %build
-unset LINGUAS || :
-libtoolize --force --copy
-aclocal
-automake
-autoconf
-LDFLAGS="-L%buildsubdir/gettext-runtime/intl/.libs -L%buildsubdir/gettext-tools/lib/.libs -L%buildsubdir/gettext-tools/src/.libs $LDFLAGS" \
-%configure --enable-shared --with-included-gettext --enable-relocatable
-%__make aliaspath='%_libdir/X11/locale:%_datadir/locale'
+%configure --enable-shared --without-included-gettext
 
 %install
 rm -rf %buildroot
@@ -53,19 +54,16 @@ mv %buildroot%_datadir/%name/intl/{ABOUT-NLS,archive.tar.gz} \
 	%buildroot%_datadir/%name/
 
 mkdir -p %buildroot%_datadir/%name/po
-install -p -m 644 %name-runtime/po/Makefile.in.in %buildroot%_datadir/%name/po/
+install -pm644 %name-runtime/po/Makefile.in.in %buildroot%_datadir/%name/po/
 
 # Move documentation in the right place
+%define docdir %_docdir/%name-%version
 mkdir -p %buildroot%_docdir
-mv %buildroot%_datadir/doc/%name %buildroot%_docdir/%name-%version
-mv %buildroot%_datadir/doc/libasprintf %buildroot%_docdir/%name-%version/
+mv %buildroot%_datadir/doc/%name %buildroot%docdir
+mv %buildroot%_datadir/doc/libasprintf %buildroot%docdir/
 
 # Remove unpackaged files
-rm %buildroot%_infodir/dir
-rm %buildroot%_datadir/locale/locale.alias
-rm -f %buildroot%_libdir/*.la
-# This one is also in glibc
-rm %buildroot%_includedir/libintl.h
+rm %buildroot%_infodir/dir %buildroot%_libdir/*.la
 
 %post
 /sbin/install-info %_infodir/gettext.info %_infodir/dir
@@ -79,19 +77,22 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc %_docdir/%name-%version
+%docdir
 %_bindir/*
 %_infodir/*.info*
 %_includedir/*.h
 %_mandir/man?/*
 %_libdir/*
 %_datadir/gettext
-%_datadir/locale/*/LC_MESSAGES/*
 %_datadir/aclocal/*
-# XXX: make install skips these -- (GM)
-#%_datadir/emacs/site-lisp/*
+%_datadir/locale/*/LC_MESSAGES/*
 
 %changelog
+* Thu Apr 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.14.5-owl1
+- Updated to 0.14.5.
+- Imported a bunch of patches from ALT's gettext-0.14.5-alt2 package.
+- Build gettext with libintl provided by glibc.
+
 * Fri Sep 24 2005 Michail Litvak <mci-at-owl.openwall.com>  0.14.1-owl3
 - Don't package .la files.
 

@@ -1,0 +1,121 @@
+--- gettext-0.14.5/gettext-tools/misc/autopoint.in.orig	2005-05-23 15:03:32 +0000
++++ gettext-0.14.5/gettext-tools/misc/autopoint.in	2006-04-06 14:06:37 +0000
+@@ -30,33 +30,31 @@ version=@VERSION@
+ prefix="@prefix@"
+ gettext_dir="@datadir@/gettext"
+ 
++tmp=
++cur_dir=
++cvs_dir=
++work_dir=
++exit_handler()
++{
++	local rc=$?
++	trap - EXIT
++	[ -z "$tmp" ] || rm -rf -- "$tmp"
++	[ -z "$cur_dir" -o -z "$cvs_dir" ] || rm -rf -- "$cur_dir/$cvs_dir"
++	[ -z "$cur_dir" -o -z "$work_dir" ] || rm -rf -- "$cur_dir/$work_dir"
++	exit $rc
++}
++
++trap exit_handler HUP PIPE INT QUIT TERM EXIT
++
+ # func_tmpdir
+ # creates a temporary directory.
+ # Sets variable
+ # - tmp             pathname of freshly created temporary directory
+ func_tmpdir ()
+ {
+-  # Use the environment variable TMPDIR, falling back to /tmp. This allows
+-  # users to specify a different temporary directory, for example, if their
+-  # /tmp is filled up or too small.
+-  : ${TMPDIR=/tmp}
++  tmp="$(mktemp -dt autopoint.XXXXXXXXXX)" ||
+   {
+-    # Use the mktemp program if available. If not available, hide the error
+-    # message.
+-    tmp=`(umask 077 && mktemp -d -q "$TMPDIR/gtXXXXXX") 2>/dev/null` &&
+-    test -n "$tmp" && test -d "$tmp"
+-  } ||
+-  {
+-    # Use a simple mkdir command. It is guaranteed to fail if the directory
+-    # already exists.  $RANDOM is bash specific and expands to empty in shells
+-    # other than bash, ksh and zsh.  Its use does not increase security;
+-    # rather, it minimizes the probability of failure in a very cluttered /tmp
+-    # directory.
+-    tmp=$TMPDIR/gt$$-$RANDOM
+-    (umask 077 && mkdir "$tmp")
+-  } ||
+-  {
+-    echo "$0: cannot create a temporary directory in $TMPDIR" >&2
++    echo "$0: cannot create a temporary directory in ${TMPDIR-/tmp}" >&2
+     { (exit 1); exit 1; }
+   }
+ }
+@@ -366,24 +364,9 @@ omitintl=`if test 'external' = "$omitint
+ # Set variables
+ # - cvs_dir         directory containing the temporary repository
+ # - work_dir        directory containing the temporary checkout
+-cvs_dir=tmpcvs$$
+-work_dir=tmpwrk$$
+-# Use an umask of 077, to avoid attacks that work by overwriting files in the
+-# "$CVSROOT"/CVSROOT directory.
+-(umask 077 && mkdir "$cvs_dir") || {
+-  if test -d "$cvs_dir"; then
+-    func_fatal_error "directory $cvs_dir already exists"
+-  else
+-    func_fatal_error "cannot create directory $cvs_dir"
+-  fi
+-}
+-mkdir "$work_dir" || {
+-  if test -d "$work_dir"; then
+-    func_fatal_error "directory $work_dir already exists"
+-  else
+-    func_fatal_error "cannot create directory $work_dir"
+-  fi
+-}
++cur_dir=`pwd` || exit
++cvs_dir="$(mktemp -d tmpcvs.XXXXXXXXXX)" || exit
++work_dir="$(mktemp -d tmpwrk.XXXXXXXXXX)" || exit
+ CVSROOT="$srcdir/$cvs_dir"
+ export CVSROOT
+ unset CVS_CLIENT_LOG
+@@ -410,8 +393,6 @@ cvsver=gettext-`echo "$ver" | sed -e 's/
+ (cvs checkout -r"$cvsver" archive > /dev/null) 2>&1 | grep -v '^cvs checkout: Updating'
+ find archive -name CVS -type d -print | xargs rm -rf
+ if test `find archive -type f -print | wc -l` = 0; then
+-  cd ..
+-  rm -rf "$cvs_dir" "$work_dir"
+   func_fatal_error "infrastructure files for version $ver not found; this is autopoint from GNU $package $version"
+ fi
+ cd ..
+@@ -474,10 +455,8 @@ if test -z "$force"; then
+     fi
+   done
+   if test -n "$mismatch"; then
+-    rm -rf "$cvs_dir" "$work_dir"
+     func_fatal_error "Some files have been locally modified. Not overwriting them because --force has not been specified. For your convenience, you find the local modifications in the file '$mismatchfile'."
+   fi
+-  rm -rf "$tmp"
+ fi
+ 
+ # func_mkdir_for to
+@@ -490,7 +469,11 @@ func_mkdir_for ()
+     func_mkdir_for "$base"
+     # Recompute base. It was clobbered by the recursive call.
+     base=`echo "$1" | sed -e 's,/[^/]*$,,'`
+-    test -d "$base" || { echo "Creating directory $base"; mkdir "$base"; }
++    test -d "$base" || { echo "Creating directory $base"; mkdir "$base"; } ||
++    {
++      echo "ERROR making directory $base"
++      exit 1
++    }
+   fi
+ }
+ 
+@@ -550,5 +533,4 @@ for file in `find "$work_dir/archive" -t
+ done
+ 
+ # That's it.
+-rm -rf "$cvs_dir" "$work_dir"
+ exit 0

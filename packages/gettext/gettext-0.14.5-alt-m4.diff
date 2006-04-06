@@ -1,0 +1,11 @@
+--- gettext-0.14.5/gettext-runtime/m4/signed.m4.orig	2005-01-19 14:12:28 +0000
++++ gettext-0.14.5/gettext-runtime/m4/signed.m4	2006-04-06 14:05:18 +0000
+@@ -9,7 +9,7 @@ dnl From Bruno Haible.
+ AC_DEFUN([bh_C_SIGNED],
+ [
+   AC_CACHE_CHECK([for signed], bh_cv_c_signed,
+-   [AC_TRY_COMPILE(, [signed char x;], bh_cv_c_signed=yes, bh_cv_c_signed=no)])
++   [AC_TRY_COMPILE(, [signed char x; x='x';], bh_cv_c_signed=yes, bh_cv_c_signed=no)])
+   if test $bh_cv_c_signed = no; then
+     AC_DEFINE(signed, ,
+               [Define to empty if the C compiler doesn't support this keyword.])

@@ -1,0 +1,29 @@
+--- gettext-0.14.5/gettext-tools/doc/gettext.texi.orig	2005-03-08 13:06:22 +0000
++++ gettext-0.14.5/gettext-tools/doc/gettext.texi	2006-03-30 11:38:04 +0000
+@@ -443,7 +443,7 @@ This chapter explains the goals sought i
+ of GNU @code{gettext} and the free Translation Project.
+ Then, it explains a few broad concepts around
+ Native Language Support, and positions message translation with regard
+-to other aspects of national and cultural variance, as they apply to
++to other aspects of national and cultural variance, as they apply
+ to programs.  It also surveys those files used to convey the
+ translations.  It explains how the various tools interact in the
+ initial generation of these files, and later, how the maintenance
+@@ -514,7 +514,7 @@ themselves.
+ A runtime library supporting the retrieval of translated messages.
+ 
+ @item
+-A few stand-alone programs to massage in various ways the sets of
++A few stand-alone programs to message in various ways the sets of
+ translatable strings, or already translated strings.
+ 
+ @item
+@@ -535,7 +535,7 @@ as a vehicle for documenting its structu
+ beyond the strict technicalities of documenting the GNU @code{gettext}
+ proper.  By so doing, translators will find in a single place, as
+ far as possible, all they need to know for properly doing their
+-translating work.  Also, this supplemental documentation might also
++translating work.  This supplemental documentation might also
+ help programmers, and even curious users, in understanding how GNU
+ @code{gettext} is related to the remainder of the Translation
+ Project, and consequently, have a glimpse at the @emph{big picture}.

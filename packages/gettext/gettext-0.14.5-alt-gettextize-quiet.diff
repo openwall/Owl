@@ -1,6 +1,6 @@
---- gettext-0.14.1/gettext-tools/misc/gettextize.in.orig        2004-01-20 14:30:06 +0300
-+++ gettext-0.14.1/gettext-tools/misc/gettextize.in     2004-02-26 12:54:27 +0300
-@@ -123,6 +123,7 @@ Options:
+--- gettext-0.14.5/gettext-tools/misc/gettextize.in.orig	2005-05-20 20:36:38 +0000
++++ gettext-0.14.5/gettext-tools/misc/gettextize.in	2006-04-06 14:03:34 +0000
+@@ -155,6 +155,7 @@ Options:
        --version        print version information and exit
    -c, --copy           copy files instead of making symlinks
    -f, --force          force writing of new files even if old exist
@@ -8,7 +8,7 @@
        --intl           install libintl in a subdirectory
        --no-changelog   don't update or create ChangeLog files
    -n, --dry-run        print modifications but don't perform them
-@@ -159,6 +160,7 @@ func_fatal_error ()
+@@ -194,6 +195,7 @@ func_fatal_error ()
  # - doit            false if --dry-run was given, : otherwise
  {
    force=0
@@ -16,7 +16,7 @@
    intldir=
    try_ln_s=:
    do_changelog=:
-@@ -175,6 +177,9 @@ func_fatal_error ()
+@@ -210,6 +212,9 @@ func_fatal_error ()
        -f | --force | --forc | --for | --fo | --f )
          shift
          force=1 ;;
@@ -26,7 +26,7 @@
        --help | --hel | --he | --h )
          func_usage; exit 0 ;;
        --intl | --int | --in | --i )
-@@ -1078,10 +1083,12 @@ if $doit; then
+@@ -1204,10 +1209,12 @@ if $doit; then
      5) count="five paragraphs";;
      *) count="$count paragraphs";;
    esac
@@ -37,6 +37,5 @@
    read dummy < /dev/tty
 +  fi
  fi
-
+ 
  exit 0
-
