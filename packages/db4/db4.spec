@@ -1,6 +1,6 @@
-# $Owl: Owl/packages/db4/db4.spec,v 1.16 2006/04/04 00:28:34 ldv Exp $
+# $Owl: Owl/packages/db4/db4.spec,v 1.17 2006/04/06 23:49:24 ldv Exp $
 
-%define __soversion	4.2
+%define __soversion	4.3
 %define _libdb_a	libdb-%__soversion.a
 %define _libcxx_a	libdb_cxx-%__soversion.a
 %define _libdb_so	libdb-%__soversion.so
@@ -8,20 +8,17 @@
 
 Summary: The Berkeley DB database library (version 4) for C.
 Name: db4
-Version: 4.2.52
-Release: owl2
+Version: 4.3.29
+Release: owl1
 License: Sleepycat
 Group: System Environment/Libraries
 URL: http://www.sleepycat.com
-Source0: http://www.sleepycat.com/update/snapshot/db-%version.tar.gz
-Source1: http://www.sleepycat.com/update/snapshot/db.1.85.tar.gz
+Source0: ftp://ftp.sleepycat.com/releases/db-%version.tar.gz
+Source1: ftp://ftp.sleepycat.com/releases/db.1.85.tar.gz
 Patch0: db-1.85-up-fixes.diff
 Patch1: db-1.85-rh-errno.diff
-Patch2: db-4.2.52-up-fixes.diff
-Patch3: db-4.2.52-alt-configure.diff
-Patch4: db-4.2.52-rh-java.diff
-Patch5: db-4.2.52-rh-gcj.diff
-Patch6: db-4.2.52-rh-fastjar.diff
+Patch2: db-4.3.29-cvs-20051006-db185.diff
+Patch3: db-4.3.29-alt-configure.diff
 Obsoletes: db1, db1-devel
 BuildRequires: perl, libtool, ed, gcc-c++
 BuildRoot: /override/%name-%version
@@ -62,17 +59,17 @@ libraries, and documentation for building programs which use the
 Berkeley DB.
 
 %package compat-fake
-Summary: Fake package to help upgrade db4 from 4.0 to 4.2+.
+Summary: Fake package to help upgrade db4 from 4.0 and 4.2 to 4.3+.
 Group: System Environment/Libraries
-Provides: libdb-4.0.so, libdb_cxx-4.0.so
+Provides: libdb-4.0.so, libdb_cxx-4.0.so, libdb-4.2.so, libdb_cxx-4.2.so
 
 %description compat-fake
-This package solves the problem with upgrading db4 4.0 -based Owl to
-db4 4.2+ version by reporting necessary Provides to RPM.  All packages
-in db4 4.2+ -based Owl don't rely on libdb-4.0.so and libdb_cxx-4.0.so.  If
-you have a package which uses these older libraries, you have to recompile
-that package against the db4 package supplied with Owl or create a
-compatibility package with necessary binaries of old libdb libraries.
+This package solves the problem with upgrading db4 4.0 and 4.2 -based Owl
+to db4 4.3+ version by reporting necessary Provides to RPM.  All packages
+in db4 4.3+ -based Owl don't rely on older sonames.  If you have a package
+which uses these older libraries, you have to recompile that package
+against the db4 package supplied with Owl or create a compatibility
+package with necessary binaries of old libdb libraries.
 
 %prep
 %setup -q -n db-%version -a 1
@@ -80,11 +77,11 @@ pushd db.1.85
 %patch0 -p1
 %patch1 -p1
 popd
-%patch2 -p0
+%patch2 -p1
 %patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
+
+# Package missing docs.
+cp -p docs/gsg/JAVA/returns.html docs/gsg/C/
 
 %{expand:%%define optflags_lib %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 
@@ -130,7 +127,7 @@ sed -i 's/usenix\.ps/&.gz/g' .%docdir/ref/refs/refs.html
 chmod -R u+w .{%_bindir,%_libdir}
 
 # Relocate main shared library from %_libdir/ to /%_lib/.
-mv .%_libdir/%_libdb_so ./lib/
+mv .%_libdir/%_libdb_so ./%_lib/
 for f in .%_libdir/libdb{,-{*,%__soversion}}.so; do
 	ln -sf ../../%_lib/%_libdb_so "$f"
 done
@@ -155,7 +152,10 @@ cp -a examples_c* %buildroot%docdir/
 rm %buildroot%docdir/examples_*/tags
 rm -r %buildroot%docdir/java
 
+# Remove unpackaged files
 rm %buildroot%_libdir/*.la
+
+chmod -R u+w %buildroot
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -187,7 +187,7 @@ rm %buildroot%_libdir/*.la
 %files devel
 %defattr(-,root,root)
 %dir %docdir
-%docdir/[aeirs]*
+%docdir/[a-tv-z]*
 %_libdir/libdb.so
 %_libdir/libdb_cxx.so
 %_libdir/%_libdb_a
@@ -198,6 +198,10 @@ rm %buildroot%_libdir/*.la
 %files compat-fake
 
 %changelog
+* Thu Apr 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.3.29-owl1
+- Updated to 4.3.29.
+- Backported db185 fixes from db-4.4.20.
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2.52-owl2
 - Compressed Postscript documentation.
 

@@ -1,0 +1,113 @@
+diff -upr db-4.3.29/db185/db185.c db-4.4.20/db185/db185.c
+--- db-4.3.29/db185/db185.c	2004-03-24 21:00:24 +0000
++++ db-4.4.20/db185/db185.c	2005-10-06 14:36:51 +0000
+@@ -1,17 +1,17 @@
+ /*-
+  * See the file LICENSE for redistribution information.
+  *
+- * Copyright (c) 1996-2004
++ * Copyright (c) 1996-2005
+  *	Sleepycat Software.  All rights reserved.
+  *
+- * $Id: db185.c,v 11.35 2004/03/24 20:37:35 bostic Exp $
++ * $Id: db185.c,v 12.2 2005/10/06 14:36:51 bostic Exp $
+  */
+ 
+ #include "db_config.h"
+ 
+ #ifndef lint
+ static const char copyright[] =
+-    "Copyright (c) 1996-2004\nSleepycat Software Inc.  All rights reserved.\n";
++    "Copyright (c) 1996-2005\nSleepycat Software Inc.  All rights reserved.\n";
+ #endif
+ 
+ #ifndef NO_SYSTEM_INCLUDES
+@@ -89,12 +89,6 @@ __db185_open(file, oflags, mode, type, o
+ 				(void)dbp->set_bt_minkey(dbp, bi->minkeypage);
+ 			if (bi->psize != 0)
+ 				(void)dbp->set_pagesize(dbp, bi->psize);
+-			/*
+-			 * !!!
+-			 * Comparisons and prefix calls work because the DBT
+-			 * structures in 1.85 and 2.0 have the same initial
+-			 * fields.
+-			 */
+ 			if (bi->prefix != NULL) {
+ 				db185p->prefix = bi->prefix;
+ 				dbp->set_bt_prefix(dbp, db185_prefix);
+@@ -546,7 +540,14 @@ db185_compare(dbp, a, b)
+ 	DB *dbp;
+ 	const DBT *a, *b;
+ {
+-	return (((DB185 *)dbp->api_internal)->compare(a, b));
++	DBT185 a185, b185;
++
++	a185.data = a->data;
++	a185.size = a->size;
++	b185.data = b->data;
++	b185.size = b->size;
++
++	return (((DB185 *)dbp->api_internal)->compare(&a185, &b185));
+ }
+ 
+ /*
+@@ -558,7 +559,14 @@ db185_prefix(dbp, a, b)
+ 	DB *dbp;
+ 	const DBT *a, *b;
+ {
+-	return (((DB185 *)dbp->api_internal)->prefix(a, b));
++	DBT185 a185, b185;
++
++	a185.data = a->data;
++	a185.size = a->size;
++	b185.data = b->data;
++	b185.size = b->size;
++
++	return (((DB185 *)dbp->api_internal)->prefix(&a185, &b185));
+ }
+ 
+ /*
+diff -upr db-4.3.29/db185/db185_int.in db-4.4.20/db185/db185_int.in
+--- db-4.3.29/db185/db185_int.in	2004-01-28 03:35:59 +0000
++++ db-4.4.20/db185/db185_int.in	2005-10-06 14:36:52 +0000
+@@ -1,7 +1,7 @@
+ /*-
+  * See the file LICENSE for redistribution information.
+  *
+- * Copyright (c) 1997-2004
++ * Copyright (c) 1997-2005
+  *	Sleepycat Software.  All rights reserved.
+  */
+ /*
+@@ -36,7 +36,7 @@
+  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+  * SUCH DAMAGE.
+  *
+- * $Id: db185_int.in,v 11.14 2004/01/28 03:35:59 bostic Exp $
++ * $Id: db185_int.in,v 12.2 2005/10/06 14:36:52 bostic Exp $
+  */
+ 
+ #ifndef _DB185_INT_H_
+@@ -82,8 +82,8 @@ typedef struct __db185 {
+ 	 */
+ 	DBC	  *dbc;			/* DB cursor. */
+ 					/* Various callback functions. */
+-	int	  (*compare) __P((const DBT *, const DBT *));
+-	size_t	  (*prefix) __P((const DBT *, const DBT *));
++	int	  (*compare) __P((const DBT185 *, const DBT185 *));
++	size_t	  (*prefix) __P((const DBT185 *, const DBT185 *));
+ 	u_int32_t (*hash) __P((const void *, size_t));
+ } DB185;
+ 
+@@ -96,9 +96,9 @@ typedef struct {
+ 	u_int32_t minkeypage;	/* minimum keys per page */
+ 	u_int32_t psize;	/* page size */
+ 	int	(*compare)	/* comparison function */
+-	    __P((const DBT *, const DBT *));
++	    __P((const DBT185 *, const DBT185 *));
+ 	size_t	(*prefix)	/* prefix function */
+-	    __P((const DBT *, const DBT *));
++	    __P((const DBT185 *, const DBT185 *));
+ 	int	lorder;		/* byte order */
+ } BTREEINFO;
+ 
