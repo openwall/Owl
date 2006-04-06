@@ -105,10 +105,6 @@ Package a tool to trap unaligned accesses on Alpha.
 
 [PRIORITY: low]
 [ASSIGNED: exon@]
-Update gettext to 0.14.5.
-
-[PRIORITY: low]
-[ASSIGNED: exon@]
 Split the appropriate files into a gettext-devel subpackage for Fedora
 compatibility.
 
@@ -480,4 +476,4 @@ Fix installworld.sh to always pick the latest version of a package when
 multiple versions are available (please refer to the appropriate XXX
 comment in the script).
 
-$Owl: Owl/doc/TODO,v 1.161 2006/03/05 17:41:46 ldv Exp $
+$Owl: Owl/doc/TODO,v 1.162 2006/04/06 22:42:05 ldv Exp $
