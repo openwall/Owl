@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/screen/screen.spec,v 1.41 2006/03/30 02:14:12 galaxy Exp $
+# $Owl: Owl/packages/screen/screen.spec,v 1.42 2006/04/06 22:38:46 ldv Exp $
 
 Summary: A screen manager that supports multiple sessions on one terminal.
 Name: screen
@@ -24,8 +24,6 @@ Patch12: screen-4.0.2-owl-info.diff
 Patch13: screen-4.0.2-owl-Makefile.diff
 PreReq: /sbin/install-info
 Requires: tcb, pam_userpass, libutempter
-# Just in case this is built with an older version of RPM package.
-Requires: libutempter.so.0(UTEMPTER_1.1)
 Prefix: %_prefix
 BuildRequires: pam-devel, pam_userpass-devel, libutempter-devel
 BuildRoot: /override/%name-%version
