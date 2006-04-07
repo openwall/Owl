@@ -12,8 +12,17 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
-2006/04/06	Package: db4
-Updated to 4.3.29.
+2006/04/04 -
+2006/04/07	Packages: *;
+		Owl/build/{.rpmmacros,.rpmrc,buildworld.conf,buildworld.sh}
+Ported Owl to x86_64 architecture.
+
+2006/04/06	Packages: db4, pam, perl, postfix;
+		Owl/build/installworld.sh
+Updated db4 to 4.3.29.
+
+2006/04/06	Package: postfix
+Updated to 2.2.10.
 
 2006/04/06	Package: gettext
 Updated to 0.14.5.
@@ -70,4 +79,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.11 2006/04/06 23:53:08 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.12 2006/04/07 00:55:54 ldv Exp $
