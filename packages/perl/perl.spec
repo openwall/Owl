@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.46 2006/04/04 23:12:53 ldv Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.47 2006/04/07 00:52:21 ldv Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -20,7 +20,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.8.3
-Release: owl12
+Release: owl13
 Epoch: 3
 License: GPL
 Group: Development/Languages
@@ -93,7 +93,7 @@ Provides: perl(utf8_heavy.pl)
 Provides: perl(validate.pl)
 Provides: perl(Carp::Heavy)
 Obsoletes: perl-MD5
-BuildRequires: gdbm-devel, db4-devel >= 4.2.52, gawk, grep
+BuildRequires: gdbm-devel, db4-devel >= 4.3.29, gawk, grep
 BuildRequires: rpm >= 4.0.5
 BuildRoot: /override/%name-%version
 
@@ -301,6 +301,10 @@ find %buildroot%_prefix/lib/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Fri Apr 07 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3:5.8.3-owl13
+- Corrected specfile to make it build on x86_64.
+- Rebuilt with libdb-4.3.so.
+
 * Thu Jan 12 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3:5.8.3-owl12
 - Added several provides for FC and RHEL compatibility.
 
