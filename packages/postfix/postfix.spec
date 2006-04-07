@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/postfix/postfix.spec,v 1.37 2006/03/11 16:48:41 ldv Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.38 2006/04/07 00:53:24 ldv Exp $
 
 Summary: Postfix mail system.
 Name: postfix
-Version: 2.2.9
+Version: 2.2.10
 Release: owl1
 Epoch: 1
 License: IBM Public License
@@ -32,7 +32,7 @@ Patch11: postfix-2.2.5-alt-mailbox_unpriv_delivery.diff
 Patch12: postfix-2.2.5-deb-man.diff
 PreReq: /sbin/chkconfig, grep, shadow-utils
 Requires: owl-control >= 0.4, owl-control < 2.0
-BuildRequires: db4-devel >= 4.2.52, pcre-devel, tinycdb-devel, sed >= 4.1.1
+BuildRequires: db4-devel >= 4.3.29, pcre-devel, tinycdb-devel, sed >= 4.1.1
 Conflicts: sendmail, qmail
 Provides: MTA, smtpd, smtpdaemon
 Obsoletes: sendmail-cf, sendmail-doc
@@ -328,6 +328,10 @@ fi
 %attr(644,root,root) %verify(not md5 mtime size) %ghost %queue_directory/etc/*
 
 %changelog
+* Fri Apr 07 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.2.10-owl1
+- Updated to 2.2.10.
+- Rebuilt with libdb-4.3.so.
+
 * Sat Mar 11 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.2.9-owl1
 - Updated to 2.2.9.
 
