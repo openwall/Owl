@@ -1,5 +1,5 @@
 // +-------------------------------------------------------------------------+
-// |                     Script Plus Plus vers. 0.2.13                       |
+// |                     Script Plus Plus vers. 0.2.14                       |
 // | Copyright (c) Andrey Vikt. Stolyarov <crocodil_AT_croco.net>  2003-2006 |
 // | ----------------------------------------------------------------------- |
 // | This is free software.  Permission is granted to everyone to use, copy  |
@@ -253,6 +253,22 @@ private:
     void Assign(ScriptVariableImplementation *q);
     void Create(int len);
     void EnsureOwnCopy();
+};
+
+class ScriptNumber : public ScriptVariable {
+public:
+    ScriptNumber(short int i) : ScriptVariable(0, "%hd", i) {}
+    ScriptNumber(unsigned short int i) : ScriptVariable(0, "%hu", i) {}
+    ScriptNumber(int i) : ScriptVariable(0, "%d", i) {}
+    ScriptNumber(unsigned int i) : ScriptVariable(0, "%u", i) {}
+    ScriptNumber(long i) : ScriptVariable(0, "%ld", i) {}
+    ScriptNumber(unsigned long int i) : ScriptVariable(0, "%lu", i) {}
+    ScriptNumber(float f) : ScriptVariable(0, "%g", f) {}
+    ScriptNumber(double f) : ScriptVariable(0, "%g", f) {}
+    ScriptNumber(long double f) : ScriptVariable(0, "%Lg", f) {}
+    ScriptNumber(float f, int pre) : ScriptVariable(0, "%.*f", pre, f) {}
+    ScriptNumber(double f, int pre) : ScriptVariable(0, "%.*f", pre, f) {}
+    ScriptNumber(long double f, int pre) : ScriptVariable(0,"%.*Lf",pre,f){}
 };
 
 

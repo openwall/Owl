@@ -1,5 +1,5 @@
 # +-------------------------------------------------------------------------+
-# |                     Script Plus Plus vers. 0.2.13                       |
+# |                     Script Plus Plus vers. 0.2.14                       |
 # | Copyright (c) Andrey Vikt. Stolyarov <crocodil_AT_croco.net>  2003-2006 |
 # | ----------------------------------------------------------------------- |
 # | This is free software.  Permission is granted to everyone to use, copy  |

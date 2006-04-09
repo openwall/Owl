@@ -1,3 +1,5 @@
+Version 0.2.14 (unreleased)
+   - ScriptNumber class for conversions added
 Version 0.2.13 (released Jan 04, 2006)
    - Added Substring::ExtendToBegin()/ExtendToEnd()
    - Fixed a bug with Erase()/Replace() of a too long substring
