@@ -74,10 +74,9 @@ setup: $(LIBDEPS) $(SETUP_OBJS)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(SETUP_OBJS) $(LIBS) -o $@
 
 install: $(PROJ)
-	$(MKDIR) -m 755 $(DESTDIR)$(SBINDIR)
+	$(MKDIR) -m 755 $(DESTDIR)$(SBINDIR) $(DESTDIR)$(MANDIR)/man8
 	$(INSTALL) -m 700 $(PROJ) $(DESTDIR)$(SBINDIR)/
 	$(INSTALL) -m 644 setup.8 settle.8 $(DESTDIR)$(MANDIR)/man8/
-
 
 clean:
 	$(RM) $(PROJ) $(SETTLE_OBJS) $(SETUP_OBJS) deps.mk
