@@ -76,6 +76,8 @@ setup: $(LIBDEPS) $(SETUP_OBJS)
 install: $(PROJ)
 	$(MKDIR) -m 755 $(DESTDIR)$(SBINDIR)
 	$(INSTALL) -m 700 $(PROJ) $(DESTDIR)$(SBINDIR)/
+	$(INSTALL) -m 644 setup.8 settle.8 $(DESTDIR)$(MANDIR)/man8/
+
 
 clean:
 	$(RM) $(PROJ) $(SETTLE_OBJS) $(SETUP_OBJS) deps.mk
