@@ -1,0 +1,76 @@
+.TH SETTLE 8 "10 April 2006" "Openwall Project" "System Administration"
+.SH NAME
+settle \- the program which installs the Openwall/*/Linux on your hard disk
+on a permanent basis.
+.SH SYNOPSIS
+.B settle
+.RB [ -d | -m ] 
+.RB [ -b ]
+.SH DESCRIPTION
+.B settle
+is an interactive program which guides you through the process of
+Openwall/*/Linux installation. 
+.PP
+The program is able to work both with ncurses-based interface and with
+.B dumb
+interface, which will work on almost any terminal. If not explicitly
+specified, the mode of the interface is detected automatically
+(to the best the program can).
+.PP
+The program doesn't have any internal state. This means the
+.B settle
+'s determination of the current system's state is based solely on
+the information of currently mounted filesystems, activated swaps and
+parameters read from configuration files within the system being created
+(e.g.,
+.B /etc/sysconfig/network
+). It allows you to quit the program at any stage of the install process,
+perform some steps of the process manually, then start
+.B settle
+again, and it will detect your changes. You can even shellout the program,
+or do something using another terminal: the actual system's status is
+redetected each time before the program displays it's main menu.
+.PP
+The installation process
+.B settle
+tries to follow is explained in the file
+.B /usr/src/world/native/Owl-*/doc/INSTALL
+on your Owl CD.
+Basically speaking,
+.B settle
+mounts your choosen root filesystem on
+.B /owl
+directory, builds and tunes the new system there and bases all its
+detections on the information read from there (e.g., from the file
+.B /owl/etc/sysconfig/network
+). See the
+.B INSTALL
+file for more details.
+.SH OPTIONS
+.TP
+.B -d
+use dumb interface (no colors or cursor movements, simple dialog)
+.TP
+.B -m
+try ncurses-based (menu-driven) interface. If the terminal's capabilities
+are not sufficient, the program will fallback to the dumb interface anyway.
+Currently this is the default behaviour. Note that
+.B -m
+and
+.B -d
+are mutually exclusive.
+.TP
+.B -b
+in case of using ncurses-based interface, don't use colors even if terminal
+capabilities look like sufficient for it; instead, just stay black and
+white.
+.TP
+.B -h
+print short usage information and exit.
+.SH AUTHORS
+Andrey Vikt. Stolyarov a.k.a. Croco <croco at owl.openwall.com>
+.PP
+with guidelines and fixes by Solar Designer <solar at openwall.com>
+.SH SEE ALSO
+.B setup
+(8)

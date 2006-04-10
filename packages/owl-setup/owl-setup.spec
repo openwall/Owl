@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.65 2006/04/10 19:07:07 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.66 2006/04/10 20:38:13 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -25,14 +25,17 @@ CXXFLAGS="%optflags" %__make
 
 %install
 rm -rf %buildroot
-%__make install DESTDIR=%buildroot SBINDIR=%_sbindir
+%__make install DESTDIR=%buildroot SBINDIR=%_sbindir MANDIR=%_mandir
 
 %files
 %defattr(-,root,root)
 %_sbindir/*
+%_mandir/man8/setup.8*
+%_mandir/man8/settle.8*
 
 %changelog
 * Mon Apr 10 2006 Croco <croco-at-owl.openwall.com> 1.1.1-owl1
+- manual pages for both settle and setup created
 - general cancellable progress indicators implemented in both interfaces
 - 'install kernel headers' is now done with a fancy progress indicator
 - quick search implemented in scroll list selections
