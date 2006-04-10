@@ -5,6 +5,10 @@
 #include <ctype.h>
 #include <termios.h>
 
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <signal.h>
+
 #include "scriptpp/scrvect.hpp"
 
 #include "iface_dumb.hpp"
@@ -114,6 +118,13 @@ static ScriptVariable KeyboardRead(bool blind = false)
     return res;
 }
 
+static const char interrupt_prompt[] = "(Interrupt (Ctrl-C) to cancel)";
+
+
+
+/////////////////////////////////////////////////
+//
+
 DumbIfaceSingleChoice::DumbIfaceSingleChoice()
     : IfaceSingleChoice()
 {}
@@ -175,8 +186,8 @@ DumbIfaceHierChoice::DumbIfaceHierChoice()
 bool DumbIfaceHierChoice::Run(ScriptVector &result)
 {
     if(!first) {
-       printf("\n\nNo items to choose\n\n");
-       return false;
+        printf("\n\nNo items to choose\n\n");
+        return false;
     }
     Item *level = first;
     do {
@@ -249,6 +260,80 @@ bool DumbIfaceHierChoice::Run(ScriptVector &result)
 /////////////////////////////////////////////////////////////
 //
 
+void DumbIfaceProgressBar::Draw()
+{
+    unsigned int margin = get_terminal_columns() -2;
+    printf("\n%*s\n", margin - 2, message.c_str());
+    SetCurrent(0);
+}
+
+void DumbIfaceProgressBar::SetCurrent(int c)
+{
+    current = c;
+    printf("\r%s %s", title.c_str(), ProgressText().c_str());
+    fflush(stdout);
+}
+
+void DumbIfaceProgressBar::Erase()
+{
+    printf("\n");
+}
+
+/////////////////////////////////////////////////////////////
+//
+
+DumbIfaceProgressCanceller::DumbIfaceProgressCanceller()
+{
+    pid = 0;
+    si = 0;
+}
+
+DumbIfaceProgressCanceller::~DumbIfaceProgressCanceller()
+{
+    Remove();
+}
+
+void DumbIfaceProgressCanceller::Run(int signo)
+{
+    if(pid > 0) {
+        Remove();
+    }
+    si = new SymbolicInterruption;
+    int my_pid = getpid();
+    pid = fork();
+    if(pid == -1) { pid = 0; return; } /* silently ignore this ... */
+    if(pid == 0) { /* child */
+        int c;
+        while((c=my_getchar()) != EOF) {
+            if(c == si->InterruptChar()) {
+                kill(my_pid, signo);
+                exit(0);
+            }
+        }
+        exit(1);
+    }
+}
+
+void DumbIfaceProgressCanceller::Remove()
+{
+    if(pid != 0) {
+        kill(pid, 15);
+        waitpid(pid, 0, 0);
+        pid = 0;
+    }
+    if(si) {
+        delete si;
+        si = 0;
+    }
+}
+
+const char* DumbIfaceProgressCanceller::Message() const
+{
+    return interrupt_prompt;
+}
+
+/////////////////////////////////////////////////////////////
+//
 
 IfaceSingleChoice* DumbOwlInstallInterface::CreateSingleChoice() const
 {
@@ -259,6 +344,24 @@ IfaceHierChoice* DumbOwlInstallInterface::CreateHierChoice() const
 {
     return new DumbIfaceHierChoice;
 }
+
+
+IfaceProgressBar*
+DumbOwlInstallInterface::CreateProgressBar(const ScriptVariable &title,
+                                           const ScriptVariable &msg,
+                                           int total,
+                                           const ScriptVariable &units,
+                                           int order) const
+{
+    return new DumbIfaceProgressBar(title, msg, total, units.c_str(), order);
+}
+
+IfaceProgressCanceller*
+DumbOwlInstallInterface::CreateProgressCanceller() const
+{
+    return new DumbIfaceProgressCanceller();
+}
+
 
 void DumbOwlInstallInterface::Message(const ScriptVariable& msg)
 {
@@ -327,18 +430,17 @@ DumbOwlInstallInterface::QueryString(const ScriptVariable& prompt,
     ScriptVariable res;
 
     for(;;) {
-        const char int_pr[] = "(Interrupt (Ctrl-C) to cancel)";
         unsigned int margin = get_terminal_columns() -2;
 #if 0
-        if(prompt.Length() + sizeof(int_pr) > margin)  {
-            printf("\n\t\t\t%s\n%s\n", int_pr, prompt.c_str());
+        if(prompt.Length() + sizeof(interrupt_prompt) > margin)  {
+            printf("\n\t\t\t%s\n%s\n", interrupt_prompt, prompt.c_str());
         } else {
-            printf("\n%-*s %s\n", margin - sizeof(int_pr) - 2,
+            printf("\n%-*s %s\n", margin - sizeof(interrupt_prompt) - 2,
                                  prompt.c_str(),
-                                 int_pr);
+                                 interrupt_prompt);
         }
 #else
-        printf("\n%*s\n%s", margin - 2, int_pr, prompt.c_str());
+        printf("\n%*s\n%s", margin - 2, interrupt_prompt, prompt.c_str());
 #endif
         if(defval != "")
             printf(" [%s]", defval.c_str());

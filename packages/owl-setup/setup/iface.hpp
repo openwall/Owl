@@ -73,6 +73,38 @@ private:
     void RmTree(Item *t);
 };
 
+class IfaceProgressBar {
+protected:
+    int current;
+    int total;
+    ScriptVariable units;
+    int order;
+public:
+    IfaceProgressBar(int a_total = 100,
+                     const char *a_units = "%",
+                     int a_order = 0)
+        : current(0), total(a_total), units(a_units), order(a_order) {}
+    virtual ~IfaceProgressBar() {}
+
+    virtual void Draw() = 0;
+    virtual void SetCurrent(int c) = 0;
+    virtual void Erase() = 0;
+
+    int CalcPosition(int total_positions) const
+        { return (total_positions * current * 2 + 1) / (total * 2); }
+
+    ScriptVariable ProgressText() const;
+};
+
+class IfaceProgressCanceller {
+public:
+    virtual ~IfaceProgressCanceller() {}
+
+    virtual void Run (int signo) = 0;
+    virtual void Remove () = 0;
+    virtual const char* Message() const = 0;
+};
+
 enum YesNoCancelResult { ync_yes = 1, ync_no = 0, ync_cancel = -1 };
 
 class OwlInstallInterface {
@@ -82,6 +114,12 @@ public:
 
     virtual IfaceSingleChoice *CreateSingleChoice() const = 0;
     virtual IfaceHierChoice *CreateHierChoice() const = 0;
+    virtual IfaceProgressBar *CreateProgressBar(const ScriptVariable &title,
+                                                const ScriptVariable &msg,
+                                                int total,
+                                                const ScriptVariable &units,
+                                                int order) const = 0;
+    virtual IfaceProgressCanceller *CreateProgressCanceller() const = 0;
 
     virtual void Message(const ScriptVariable& msg) = 0;
     virtual void Notice(const ScriptVariable& msg) = 0;

@@ -6,6 +6,11 @@
 #include <menu.h>
 #include <cdk/cdk.h>
 
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <signal.h>
+#include <unistd.h>
+
 #include "scriptpp/scrvect.hpp"
 
 #include "iface_ncurses.hpp"
@@ -375,6 +380,99 @@ bool NcursesIfaceHierChoice::Run(ScriptVector &result)
 /////////////////////////////////////////////////////////////
 //
 
+void NcursesIfaceProgressBar::Draw()
+{
+    ScriptVector vect(title, "\n", "");
+    for(int i=0; i<vect.Length(); i++)
+        vect[i] = ScriptVariable("<C>")+cdk_tag_default+vect[i];
+    vect.AddItem(ScriptVariable(0, "<C></%d>[", cp_default) + message + "]");
+    ScriptVariable t = vect.Join("\n");
+    ScriptVariable lab(0, "</%d>%d %s ", cp_default, total, units.c_str());
+    if(total == 0 || units == "%") lab = "";
+    if(the_slider) destroyCDKSlider((CDKSLIDER*)the_slider);
+    the_slider = (void*) newCDKSlider((CDKSCREEN*)the_screen,
+                                    CENTER, CENTER,
+                                    (char*)(t.c_str()),
+                                    (char*)(lab.c_str()),
+                                    work_with_colors ?
+                                        COLOR_PAIR(cp_selection)|A_BOLD
+                                        : A_REVERSE,
+                                    -(lab.Length()+10),
+                                    0, 0, total, 1, 1, TRUE, FALSE);
+    if(work_with_colors)
+        setCDKSliderBackgroundColor((CDKSLIDER*)the_slider,
+                                    (char*)cdk_tag_default.c_str());
+    drawCDKSlider((CDKSLIDER*)the_slider, TRUE);
+    SetCurrent(0);
+}
+
+void NcursesIfaceProgressBar::SetCurrent(int c)
+{
+    if(!the_slider) return;
+    setCDKSlider((CDKSLIDER*)the_slider, 0, total, c, FALSE);
+    drawCDKSlider((CDKSLIDER*)the_slider, FALSE);
+}
+
+void NcursesIfaceProgressBar::Erase()
+{
+    eraseCDKSlider((CDKSLIDER*)the_slider);
+    destroyCDKSlider((CDKSLIDER*)the_slider);
+    the_slider = 0;
+    clear();
+    refresh();
+}
+
+/////////////////////////////////////////////////////////////
+//
+
+NcursesIfaceProgressCanceller::NcursesIfaceProgressCanceller()
+{
+    pid = 0;
+}
+
+NcursesIfaceProgressCanceller::~NcursesIfaceProgressCanceller()
+{
+    Remove();
+}
+
+void NcursesIfaceProgressCanceller::Run(int signo)
+{
+    if(pid > 0) {
+        Remove();
+    }
+    int my_pid = getpid();
+    pid = fork();
+    if(pid == -1) { pid = 0; return; } /* silently ignore this ... */
+    if(pid == 0) { /* child */
+        int c;
+        for(;;) {
+            c = wgetch(stdscr);
+            if(c == '\033' || c == KEY_CANCEL) {
+                kill(my_pid, signo);
+                exit(0);
+            }
+        }
+        exit(1);
+    }
+}
+
+void NcursesIfaceProgressCanceller::Remove()
+{
+    if(pid != 0) {
+        kill(pid, 15);
+        waitpid(pid, 0, 0);
+        pid = 0;
+    }
+}
+
+const char* NcursesIfaceProgressCanceller::Message() const
+{
+    return "Press Escape to cancel";
+}
+
+/////////////////////////////////////////////////////////////
+//
+
 NcursesOwlInstallInterface::NcursesOwlInstallInterface(bool allow_colors)
 {
     /* The code with checking for the initscr()'s return value
@@ -433,6 +531,23 @@ IfaceSingleChoice* NcursesOwlInstallInterface::CreateSingleChoice() const
 IfaceHierChoice* NcursesOwlInstallInterface::CreateHierChoice() const
 {
     return new NcursesIfaceHierChoice((void*)cdkscreen);
+}
+
+IfaceProgressBar*
+NcursesOwlInstallInterface::CreateProgressBar(const ScriptVariable &title,
+                                           const ScriptVariable &msg,
+                                           int total,
+                                           const ScriptVariable &units,
+                                           int order) const
+{
+    return new NcursesIfaceProgressBar(cdkscreen,
+                                title, msg, total, units.c_str(), order);
+}
+
+IfaceProgressCanceller*
+NcursesOwlInstallInterface::CreateProgressCanceller() const
+{
+    return new NcursesIfaceProgressCanceller();
 }
 
 void NcursesOwlInstallInterface::Message(const ScriptVariable& msg)

@@ -134,6 +134,12 @@ void ExecProgram::WaitChild()
     if(save_pgrp!=-1) safetcsetpgrp(save_pgrp);
 }
 
+void ExecProgram::KillChild(int sig)
+{
+    if(pid<=0) return;
+    kill(pid, sig);
+}
+
 bool ExecProgram::Success() const
 {
     return WIFEXITED(status) && WEXITSTATUS(status)==0;

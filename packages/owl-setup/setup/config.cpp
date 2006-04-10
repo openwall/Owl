@@ -174,6 +174,6 @@ ScriptVariable OwlInstallConfig::FstabFile() const
 { return root+"/etc/fstab"; }
 
 ScriptVariable OwlInstallConfig::PamServiceName() const
-{ return "setup"; }
+{ return "passwd"; }
 
 OwlInstallConfig *the_config = 0;

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.64 2006/04/04 07:29:42 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.65 2006/04/10 19:07:07 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -32,7 +32,9 @@ rm -rf %buildroot
 %_sbindir/*
 
 %changelog
-* Mon Apr 03 2006 Croco <croco-at-owl.openwall.com> 1.1.1-owl1
+* Mon Apr 10 2006 Croco <croco-at-owl.openwall.com> 1.1.1-owl1
+- general cancellable progress indicators implemented in both interfaces
+- 'install kernel headers' is now done with a fancy progress indicator
 - quick search implemented in scroll list selections
 - 'blind' input within iface_dumb changed to display nothing at all
 - PAM service name moved into the config.* module

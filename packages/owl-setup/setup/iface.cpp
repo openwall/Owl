@@ -114,6 +114,44 @@ void IfaceHierChoice::RmTree(Item *t)
 /////////////////////////////////////////////////////////////
 //
 
+static void break_number(int num, int order, int &i, int &f)
+{
+    i = num; f = 0;
+    for(int k = 0; k<order; k++) {
+        int d = i % 10;
+        i /= 10;
+        for(int k1 = 0; k1 < k; k1++) d *= 10;
+        f += d;
+    }
+}
+
+ScriptVariable IfaceProgressBar::ProgressText() const
+{
+    ScriptVariable res;
+    int i, f;
+    break_number(current, order, i, f);
+    res += ScriptNumber(i);
+    if(f) {
+        res += ".";
+        res += ScriptNumber(f);
+    }
+    if(total != 0 && units != "%") {
+        break_number(total, order, i, f);
+        res += "/";
+        res += ScriptNumber(i);
+        if(f) {
+            res += ".";
+            res += ScriptNumber(f);
+        }
+    }
+    if(units != "%") res += " ";
+    res += units;
+    return res;
+}
+
+/////////////////////////////////////////////////////////////
+//
+
 OwlInstallInterface::OwlInstallInterface()
 {
 }

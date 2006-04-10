@@ -40,6 +40,7 @@ public:
 
     bool CheckChild();
     void WaitChild();
+    void KillChild(int signo = 15);
 
     bool Success() const;
 
