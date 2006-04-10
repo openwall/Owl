@@ -80,9 +80,9 @@ void install_kernel_headers(OwlInstallInterface *the_iface)
                    commd.c_str(), "sources", 0);
     the_iface->CloseExecWindow(true);
 #else  ////////////////////////////////
-    IfaceProgressCanceller *canceller = 
+    IfaceProgressCanceller *canceller =
         the_iface->CreateProgressCanceller();
-    IfaceProgressBar *bar = 
+    IfaceProgressBar *bar =
         the_iface->CreateProgressBar("Copying kernel header files",
                                      canceller->Message(),
                                      approx_kh_files, "files", 0);
@@ -131,8 +131,8 @@ void install_kernel_headers(OwlInstallInterface *the_iface)
         // cancelled!
         cancelled = true;
     }
-    kill(cp_pid, 9); /* in case of cancel, this is useful; 
-                        in case of normal flow, this might be useful too, 
+    kill(cp_pid, 9); /* in case of cancel, this is useful;
+                        in case of normal flow, this might be useful too,
                         to avoid deadlocks in case of cp internal problems
                       */
     signal(SIGUSR1, ep_savesig);
