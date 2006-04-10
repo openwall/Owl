@@ -17,25 +17,6 @@ based on capabilities of the terminal indicated by the
 .I TERM
 environment variable.
 .PP
-The program doesn't have any internal state.
-This means that
-.B settle
-determines the current system state based solely on information such as
-currently mounted filesystems, active swaps, and parameters read from
-configuration files of the system being installed
-(e.g.,
-.IR /owl/etc/sysconfig/network ).
-This allows you to quit the program at any stage of the installation
-process, perform some steps of the process manually, then start
-.B settle
-again, and it will detect your changes.
-You can even have
-.B settle
-run a shell for you or you can do something on another terminal:
-.B settle
-will re-detect the target system's status once you're back to the
-program's main menu.
-.PP
 The installation process
 .B settle
 tries to follow is explained in the file
@@ -54,6 +35,25 @@ and finally reboots the machine cleanly (with your approval).
 See the
 .I INSTALL
 file for more details.
+.PP
+The program doesn't have any internal state.
+This means that
+.B settle
+determines the current system state based solely on information such as
+currently mounted filesystems, active swaps, and parameters read from
+configuration files of the system being installed
+(e.g.,
+.IR /owl/etc/sysconfig/network ).
+This allows you to quit the program at any stage of the installation
+process, perform some steps of the process manually, then start
+.B settle
+again, and it will detect your changes.
+You can even have
+.B settle
+run a shell for you or you can do something on another terminal:
+.B settle
+will re-detect the target system's status once you're back to the
+program's main menu.
 .SH OPTIONS
 .TP
 .B -d
