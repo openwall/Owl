@@ -1,76 +1,84 @@
 .TH SETTLE 8 "10 April 2006" "Openwall Project" "System Administration"
 .SH NAME
-settle \- the program which installs the Openwall/*/Linux on your hard disk
-on a permanent basis.
+settle \- the system installer
 .SH SYNOPSIS
 .B settle
-.RB [ -d | -m ] 
+.RB [ -d | -m ]
 .RB [ -b ]
 .SH DESCRIPTION
 .B settle
 is an interactive program which guides you through the process of
-Openwall/*/Linux installation. 
+installing Openwall GNU/*/Linux on your hard drive.
 .PP
-The program is able to work both with ncurses-based interface and with
-.B dumb
-interface, which will work on almost any terminal. If not explicitly
-specified, the mode of the interface is detected automatically
-(to the best the program can).
+The program has an ncurses-based and a dumb interface;
+the latter will work on almost any terminal.
+If not explicitly specified, the interface to use is detected automatically
+based on capabilities of the terminal indicated by the
+.I TERM
+environment variable.
 .PP
-The program doesn't have any internal state. This means the
+The program doesn't have any internal state.
+This means that
 .B settle
-'s determination of the current system's state is based solely on
-the information of currently mounted filesystems, activated swaps and
-parameters read from configuration files within the system being created
+determines the current system state based solely on information such as
+currently mounted filesystems, active swaps, and parameters read from
+configuration files of the system being installed
 (e.g.,
-.B /etc/sysconfig/network
-). It allows you to quit the program at any stage of the install process,
-perform some steps of the process manually, then start
+.IR /owl/etc/sysconfig/network ).
+This allows you to quit the program at any stage of the installation
+process, perform some steps of the process manually, then start
 .B settle
-again, and it will detect your changes. You can even shellout the program,
-or do something using another terminal: the actual system's status is
-redetected each time before the program displays it's main menu.
+again, and it will detect your changes.
+You can even have
+.B settle
+run a shell for you or you can do something on another terminal:
+.B settle
+will re-detect the target system's status once you're back to the
+program's main menu.
 .PP
 The installation process
 .B settle
 tries to follow is explained in the file
-.B /usr/src/world/native/Owl-*/doc/INSTALL
+.I /usr/src/world/native/Owl-*/doc/INSTALL
 on your Owl CD.
-Basically speaking,
+Basically,
 .B settle
-mounts your choosen root filesystem on
-.B /owl
-directory, builds and tunes the new system there and bases all its
-detections on the information read from there (e.g., from the file
-.B /owl/etc/sysconfig/network
-). See the
-.B INSTALL
+lets you partition your hard drive(s) as desired,
+creates filesystems,
+initializes swap partitions (if any) for use with Linux,
+mounts your chosen root filesystem and any additional filesystems under
+.IR /owl ,
+installs and lets you configure the new system in there,
+installs a kernel and a bootloader,
+and finally reboots the machine cleanly (with your approval).
+See the
+.I INSTALL
 file for more details.
 .SH OPTIONS
 .TP
 .B -d
-use dumb interface (no colors or cursor movements, simple dialog)
+use the dumb interface (no colors or cursor movements, simple dialog)
 .TP
 .B -m
-try ncurses-based (menu-driven) interface. If the terminal's capabilities
-are not sufficient, the program will fallback to the dumb interface anyway.
-Currently this is the default behaviour. Note that
+try the ncurses-based (menu-driven) interface.
+If the terminal's capabilities are not sufficient, the program will
+fallback to the dumb interface anyway.
+Currently this is the default.  Note that
 .B -m
 and
 .B -d
 are mutually exclusive.
 .TP
 .B -b
-in case of using ncurses-based interface, don't use colors even if terminal
-capabilities look like sufficient for it; instead, just stay black and
-white.
+in case of using the ncurses-based interface, don't use colors even if
+the terminal appears to be sufficiently capable;
+instead, just stay black and white.
 .TP
 .B -h
 print short usage information and exit.
 .SH AUTHORS
 Andrey Vikt. Stolyarov a.k.a. Croco <croco at owl.openwall.com>
 .PP
-with guidelines and fixes by Solar Designer <solar at openwall.com>
+with guidelines and fixes by Solar Designer <solar at owl.openwall.com>
 .SH SEE ALSO
-.B setup
-(8)
+.BR setup (8)

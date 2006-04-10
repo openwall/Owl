@@ -1,50 +1,51 @@
 .TH SETUP 8 "10 April 2006" "Openwall Project" "System Administration"
 .SH NAME
-setup \- The system setup utility
+setup \- the system configuration utility
 .SH SYNOPSIS
 .B setup
-.RB [ -d | -m ] 
+.RB [ -d | -m ]
 .RB [ -b ]
 .SH DESCRIPTION
 .B setup
-is an interactive program which lets you configure your network, keyboard 
-layout, time zone and set the root password in a way similar to that during
-the system install process.
+is an interactive program which lets you configure your networking settings,
+keyboard layout, and time zone, and set the root password in a way similar to
+that used during the system install procedure.
 .PP
 Just like the
 .B settle
 program,
 .B setup
-is able to work both with ncurses-based interface and with
-.B dumb
-interface, which will work on almost any terminal. If not explicitly
-specified, the mode of the interface is detected automatically
-(to the best the program can).
+has an ncurses-based and a dumb interface;
+the latter will work on almost any terminal.
+If not explicitly specified, the interface to use is detected automatically
+based on capabilities of the terminal indicated by the
+.I TERM
+environment variable.
 .SH OPTIONS
 .TP
 .B -d
-use dumb interface (no colors or cursor movements, simple dialog)
+use the dumb interface (no colors or cursor movements, simple dialog)
 .TP
 .B -m
-try ncurses-based (menu-driven) interface. If the terminal's capabilities
-are not sufficient, the program will fallback to the dumb interface anyway.
-Currently this is the default behaviour. Note that
+try the ncurses-based (menu-driven) interface.
+If the terminal's capabilities are not sufficient, the program will
+fallback to the dumb interface anyway.
+Currently this is the default.  Note that
 .B -m
 and
 .B -d
 are mutually exclusive.
 .TP
 .B -b
-in case of using ncurses-based interface, don't use colors even if terminal
-capabilities look like sufficient for it; instead, just stay black and
-white.
+in case of using the ncurses-based interface, don't use colors even if
+the terminal appears to be sufficiently capable;
+instead, just stay black and white.
 .TP
 .B -h
 print short usage information and exit.
 .SH AUTHORS
 Andrey Vikt. Stolyarov a.k.a. Croco <croco at owl.openwall.com>
 .PP
-with guidelines and fixes by Solar Designer <solar at openwall.com>
+with guidelines and fixes by Solar Designer <solar at owl.openwall.com>
 .SH SEE ALSO
-.B settle
-(8)
+.BR settle (8)
