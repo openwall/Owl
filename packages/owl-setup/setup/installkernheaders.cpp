@@ -131,10 +131,10 @@ void install_kernel_headers(OwlInstallInterface *the_iface)
         // cancelled!
         cancelled = true;
     }
-    kill(cp_pid, 9); /* in case of cancel, this is useful;
-                        in case of normal flow, this might be useful too,
-                        to avoid deadlocks in case of cp internal problems
-                      */
+    kill(cp_pid, SIGKILL); /* in case of cancel, this is useful;
+                              in case of normal flow, this might be useful
+                              too, to avoid deadlocks in case of cp internal
+                              problems */
     signal(SIGUSR1, ep_savesig);
     close(fd[0]);
     canceller->Remove();

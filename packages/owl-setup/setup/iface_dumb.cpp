@@ -317,7 +317,7 @@ void DumbIfaceProgressCanceller::Run(int signo)
 void DumbIfaceProgressCanceller::Remove()
 {
     if(pid != 0) {
-        kill(pid, 15);
+        kill(pid, SIGTERM);
         waitpid(pid, 0, 0);
         pid = 0;
     }
