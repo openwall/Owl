@@ -12,10 +12,19 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2006/03/25 -
+2006/04/10	Package: owl-setup
+Many fixes and enhancements which had been postponed for after Owl 2.0
+release have now been implemented.  This includes directly talking to
+PAM when setting the initial root password, quick searches in scroll
+lists with the ncurses/CDK-based interface, progress indicators with
+both user interfaces (currently, this is used for installation of kernel
+headers), and manual pages for both "settle" and "setup".
+
 2006/04/04 -
 2006/04/07	Packages: *;
 		Owl/build/{.rpmmacros,.rpmrc,buildworld.conf,buildworld.sh}
-Ported Owl to x86_64 architecture.
+Ported Owl to the x86_64 architecture.
 
 2006/04/06	Packages: db4, pam, perl, postfix;
 		Owl/build/installworld.sh
@@ -79,4 +88,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.12 2006/04/07 00:55:54 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.13 2006/04/11 00:27:24 solar Exp $
