@@ -1,0 +1,38 @@
+--- util-linux-2.11z/hwclock/cmos.c.orig	2002-07-07 11:08:47 +0000
++++ util-linux-2.11z/hwclock/cmos.c	2006-04-11 00:02:16 +0000
+@@ -49,7 +49,7 @@
+ 
+ #include "nls.h"
+ 
+-#if defined(__i386__)
++#if defined(__i386__) || defined(__x86_64__)
+ #include <asm/io.h>		/* for inb, outb */
+ #elif defined(__alpha__)
+ /* <asm/io.h> fails to compile, probably because of u8 etc */
+@@ -214,7 +214,7 @@ set_cmos_access(int Jensen, int funky_to
+ 
+ 
+ 
+-#ifdef __i386__
++#if defined(__i386__) || defined(__x86_64__)
+ 
+ /*
+  * Try to do CMOS access atomically, so that no other processes
+@@ -569,7 +569,7 @@ set_hardware_clock_cmos(const struct tm 
+ 
+ static int
+ i386_iopl(const int level) {
+-#if defined(__i386__) || defined(__alpha__)
++#if defined(__i386__) || defined(__x86_64__) || defined(__alpha__)
+   extern int iopl(const int lvl);
+   return iopl(level);
+ #else
+@@ -618,7 +618,7 @@ static struct clock_ops cmos = {
+ struct clock_ops *
+ probe_for_cmos_clock(void){
+     int have_cmos =
+-#if defined(__i386__) || defined(__alpha__)
++#if defined(__i386__) || defined(__x86_64__) || defined(__alpha__)
+ 	    TRUE;
+ #else
+ 	    FALSE;

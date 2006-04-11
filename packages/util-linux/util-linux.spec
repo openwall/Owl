@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.45 2006/04/04 14:43:25 ldv Exp $
+# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.46 2006/04/11 00:12:39 ldv Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -7,7 +7,7 @@
 Summary: A collection of basic system utilities.
 Name: util-linux
 Version: 2.11z
-Release: owl10
+Release: owl11
 License: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%version.tar.bz2
@@ -25,8 +25,9 @@ Patch6: util-linux-2.11z-owl-llseek.diff
 Patch7: util-linux-2.11z-owl-blockdev.diff
 Patch8: util-linux-2.11z-up-elvtune.diff
 Patch9: util-linux-2.11z-up-cytune.diff
+Patch10: util-linux-2.11z-owl-hwclock.diff
 %if %BUILD_CRYPTO
-Patch10: util-linux-2.11z-crypto-v3.diff.bz2
+Patch11: util-linux-2.11z-crypto-v3.diff.bz2
 %endif
 PreReq: /sbin/install-info
 PreReq: owl-control >= 0.4, owl-control < 2.0
@@ -82,8 +83,9 @@ to query the status of a loop device.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
-%if %BUILD_CRYPTO
 %patch10 -p1
+%if %BUILD_CRYPTO
+%patch11 -p1
 %endif
 
 %build
@@ -347,6 +349,10 @@ fi
 %endif
 
 %changelog
+* Tue Apr 11 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.11z-owl11
+- Corrected specfile to make it build on x86_64.
+- Fixed x86_64 support in hwclock.
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.11z-owl10
 - Corrected info files installation.
 
