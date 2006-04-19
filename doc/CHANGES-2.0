@@ -472,9 +472,9 @@ might have allowed a malicious Telnet server to execute arbitrary
 machine code within the context of the telnet client process used to
 connect to the server.
 References:
-http://www.idefense.com/application/poi/display?id=220&type=vulnerabilities
+http://www.idefense.com/intelligence/vulnerabilities/display.php?id=220
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0469
-http://www.idefense.com/application/poi/display?id=221&type=vulnerabilities
+http://www.idefense.com/intelligence/vulnerabilities/display.php?id=221
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0468
 
 2005/03/25	Package: e2fsprogs
@@ -831,4 +831,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Owl: Owl/doc/CHANGES-2.0,v 1.200 2006/02/09 18:56:21 solar Exp $
+$Owl: Owl/doc/CHANGES-2.0,v 1.200.2.1 2006/04/19 05:26:51 solar Exp $
