@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.66 2006/04/10 20:38:13 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.67 2006/04/19 21:10:56 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 1.1.1
+Version: 1.1.2
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -34,6 +34,9 @@ rm -rf %buildroot
 %_mandir/man8/settle.8*
 
 %changelog
+* Wed Apr 20 2006 Croco <croco-at-owl.openwall.com> 1.1.2-owl1
+- quick search string displaying added to ncurses item lists
+
 * Mon Apr 10 2006 Croco <croco-at-owl.openwall.com> 1.1.1-owl1
 - manual pages for both settle and setup created
 - general cancellable progress indicators implemented in both interfaces

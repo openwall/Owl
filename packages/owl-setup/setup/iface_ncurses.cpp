@@ -205,10 +205,12 @@ static int common_prefix_length(const ScriptVariable &v1,
 }
 
 static int calc_scroll_position(const ScriptVector &items,
-                                const ScriptVariable &str)
+                                ScriptVariable &str)
 {
     int bestmatch = -1;
     int bestmatchcpl = 0;
+    ScriptVariable strup = str;
+    strup.Toupper();
     for(int i=0; i<items.Length(); i++) {
         ScriptVariable cur(items[i]);
         if(cur[0]=='<') {
@@ -218,8 +220,8 @@ static int calc_scroll_position(const ScriptVector &items,
         }
         cur.Trim("[] ");
         cur.Toupper();
-        if(cur.HasPrefix(str)) return i;
-        int cpl = common_prefix_length(cur, str);
+        if(cur.HasPrefix(strup)) return i;
+        int cpl = common_prefix_length(cur, strup);
         if(cpl > 0) {
             if(bestmatch == -1 || bestmatchcpl < cpl) {
                 bestmatch = i;
@@ -227,6 +229,7 @@ static int calc_scroll_position(const ScriptVector &items,
             }
         }
     }
+    str.Range(bestmatchcpl, -1).Erase();
     return bestmatch;
 }
 
@@ -291,19 +294,38 @@ static int run_scroll(CDKSCREEN *screen,
                 quick_search = "";
                 res = -1;
                 goto quit;
+            case KEY_BACKSPACE:
+            case DELETE:
+            case CONTROL('H'):
+            case KEY_DC:
+                quick_search.Range(-1,1).Erase();
+                break;
             default:
-                if(isalnum(c)) {
+                if(isprint(c) || c == ' ') {
                     quick_search += (char)c;
-                    quick_search.Toupper();
-                    int pos = calc_scroll_position(items, quick_search);
-                    if(pos>=0) {
-                        setCDKScrollPosition(list, pos);
-                        drawCDKScroll(list, true);
-                    }
+                    //quick_search.Toupper();
                 } else {
                     quick_search = "";
                     injectCDKScroll(list, c);
                 }
+        }
+        if(quick_search != "") {
+            int pos = calc_scroll_position(items, quick_search);
+            if(pos>=0) {
+                setCDKScrollPosition(list, pos);
+                drawCDKScroll(list, true);
+            }
+        }
+        if(quick_search != "") {
+            int maxy, maxx;
+            getmaxyx(stdscr, maxy, maxx);
+            int x = (maxx - maxlen) / 2 + maxlen - quick_search.Length() - 2; 
+            int y = maxy - 4;
+            mvprintw(y, x, "[%s]", quick_search.c_str());
+            refresh();
+        } else {
+            // restore the box
+            drawCDKScroll(list, true);
         }
     }
 quit:
