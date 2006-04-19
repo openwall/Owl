@@ -1,11 +1,11 @@
 diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
 --- MAKEDEV-2.5.2.orig/MAKEDEV	Wed Mar  1 22:16:37 2000
-+++ MAKEDEV-2.5.2/MAKEDEV	Sat Oct 25 08:25:47 2003
++++ MAKEDEV-2.5.2/MAKEDEV	Tue Apr 18 18:44:10 2006
 @@ -1,6 +1,11 @@
  #!/bin/bash -
  
 -RCSID='$Id: MAKEDEV 2.3 1997/09/29 19:03:13 johnsonm Exp $'
-+VERSION='MAKEDEV 2.5.2-0.9-owl1 (unofficial, see the source for details)'
++VERSION='MAKEDEV 2.5.2-0.11-owl1'
 +
 +# This version of MAKEDEV is based on work of many people.  The script was
 +# initially written by Nick Holloway, and then maintained by Michael K.
@@ -446,7 +446,36 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		do
  			minor=`expr $base + $part`
  			makedev sd$unit$part b $major $minor $disk
-@@ -758,14 +882,14 @@
+@@ -739,6 +863,28 @@
+ 		    done
+ 		done
+ 		;;
++	cciss[0-9])
++		[ -d cciss ] || {
++			mkdir cciss
++			chown root.root cciss
++			chmod 755 cciss
++		}
++		for ctr in 0 1 2 # 3 4 5 6 7
++		do
++		    major=`math 104 + $ctr`
++		    minor=0
++		    for ld in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
++		    do
++			makedev cciss/c${ctr}d${ld} b $major $minor $disk
++			minor=`math minor + 1`
++			for part in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
++			do
++			    makedev cciss/c${ctr}d${ld}p$part b $major $minor $disk
++			    minor=`math minor + 1`
++			done
++		    done
++		done
++		;;
+ 	rom)
+ 		major=`Major rom 31`
+ 		for i in 0 1 2 3 4 5 6 7
+@@ -758,14 +904,14 @@
  		done
  		;;
  	loop)
@@ -463,7 +492,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		for part in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
  		do
  			makedev md$part b $major $part $disk
-@@ -919,15 +1043,15 @@
+@@ -919,15 +1065,15 @@
  		minor=0
  		until [ $minor -gt 63 ]
  		do
@@ -483,7 +512,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  			minor=`math $minor + 1`
  		done
  		symlink video video0
-@@ -937,13 +1061,13 @@
+@@ -937,13 +1083,13 @@
  		minor=0
  		until [ $minor -gt 1 ]
  		do
@@ -500,7 +529,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		;;
  	i2c)
  		major=`Major i2c 89` || continue
-@@ -968,16 +1092,16 @@
+@@ -968,16 +1114,16 @@
  		makedev srnd1 c 110 1 $private
  		;;
  	fgrab)
@@ -522,7 +551,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		done
  		;;
  	sg)
-@@ -1003,7 +1127,7 @@
+@@ -1003,7 +1149,7 @@
  		;;
  	fd)
  		# not really devices, we use the /proc filesystem
@@ -531,7 +560,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		symlink stdin  fd/0
  		symlink stdout fd/1
  		symlink stderr fd/2
-@@ -1036,15 +1160,31 @@
+@@ -1036,15 +1182,31 @@
  		;;
  	apm)
  		major=`Major apm_bios` || continue
@@ -542,7 +571,10 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		major=`Major dcf` || continue
 -		makedev $arg c $major 0 $system
 +		makedev $arg c $major 0 $private
-+		;;
+ 		;;
+-	helloworld)
+-		major=`Major hw` || continue
+-		makedev helloworld c $major 0 $public
 +	usb)
 +		major=`Major usb 180`
 +		if [ "$opt_d" ]; then
@@ -555,10 +587,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
 +			makedev usb/lp$i    c $major $i $printer
 +			makedev usb/mouse$i c $major `math $i + 16` $mouse
 +		done
- 		;;
--	helloworld)
--		major=`Major hw` || continue
--		makedev helloworld c $major 0 $public
++		;;
 +	fb)
 +		major=`Major fb 29`
 +		for i in 0 1 2 3 # up to 7
@@ -568,7 +597,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		;;
  	update)
  		if [ ! "$devices" ]
-@@ -1080,8 +1220,8 @@
+@@ -1080,8 +1242,8 @@
  			exec 3<&-
  		fi
  		create="$create "`cvt $devs`

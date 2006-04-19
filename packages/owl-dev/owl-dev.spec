@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/owl-dev/owl-dev.spec,v 1.22 2006/04/04 01:02:00 ldv Exp $
+# $Owl: Owl/packages/owl-dev/owl-dev.spec,v 1.23 2006/04/19 04:31:16 solar Exp $
 
 Summary: Initial set of device files and MAKEDEV, a script to manage them.
 Name: owl-dev
-Version: 0.10
-Release: owl2
+Version: 0.11
+Release: owl1
 License: public domain
 Group: System Environment/Base
 Source: MAKEDEV-2.5.2.tar.gz
@@ -67,6 +67,9 @@ echo "Creating device files"
 %files -f filelist
 
 %changelog
+* Tue Apr 18 2006 Gremlin from Kremlin <gremlin-at-owl.openwall.com> 0.11-owl1
+- /dev/cciss/cXdYpZ for HP CCISS RAID
+
 * Wed Mar 10 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.10-owl2
 - Added "dev" to Provides.
 
