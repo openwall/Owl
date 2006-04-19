@@ -1,16 +1,18 @@
-# $Owl: Owl/packages/lftp/lftp.spec,v 1.29 2005/11/16 13:11:15 solar Exp $
+# $Owl: Owl/packages/lftp/lftp.spec,v 1.30 2006/04/19 16:05:18 ldv Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
-Version: 2.6.12
-Release: owl2
+Version: 3.4.4
+Release: owl1
 License: GPL
 Group: Applications/Internet
 URL: http://lftp.yar.ru
-Source0: ftp://ftp.yars.free.net/pub/software/unix/net/ftp/client/lftp/%name-%version.tar.bz2
+Source0: ftp://ftp.yars.free.net/pub/source/lftp/lftp-%version.tar.bz2
 Source1: lftpget.1
-Patch0: lftp-2.6.9-owl-n-option.diff
+Patch0: lftp-3.4.4-owl-n-option.diff
+Patch1: lftp-3.4.4-alt-Makefile.diff
 Prefix: %_prefix
+Requires: less
 BuildRequires: openssl-devel >= 0.9.7g-owl1, readline-devel >= 4.3
 BuildRequires: ncurses-devel, gettext
 BuildRoot: /override/%name-%version
@@ -40,32 +42,38 @@ downloading files.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
+CC=%__cc CXX=%__cxx
+export CC CXX
 # Make sure that all message catalogs are built
 unset LINGUAS || :
-%configure --with-modules --with-ssl
+%configure --with-modules --with-openssl --with-pager=less
 %__make
 
 %install
 rm -rf %buildroot
 %makeinstall
 
+# Avoid unwanted perl dependencies.
+chmod a-x %buildroot%_datadir/%name/{convert-netscape-cookies,verify-file}
+
 # Remove unpackaged files
 find %buildroot%_libdir/lftp -type f -name '*.la' -delete -print
 
-install -m 644 %_sourcedir/lftpget.1 %buildroot%_mandir/man1/
+install -pm644 %_sourcedir/lftpget.1 %buildroot%_mandir/man1/
 
 %post
-if [ ! -e /usr/bin/ftp -a ! -e %_mandir/man1/ftp.1.gz ]; then
-	ln -s lftp /usr/bin/ftp
+if [ ! -e %_bindir/ftp -a ! -e %_mandir/man1/ftp.1.gz ]; then
+	ln -s lftp %_bindir/ftp
 	ln -s lftp.1.gz %_mandir/man1/ftp.1.gz
 fi
 
 %preun
-if [ $1 -eq 0 -a -L /usr/bin/ftp -a -L %_mandir/man1/ftp.1.gz ]; then
-	if cmp -s /usr/bin/ftp /usr/bin/lftp; then
-		rm /usr/bin/ftp
+if [ $1 -eq 0 -a -L %_bindir/ftp -a -L %_mandir/man1/ftp.1.gz ]; then
+	if cmp -s %_bindir/ftp %_bindir/lftp; then
+		rm %_bindir/ftp
 		rm %_mandir/man1/ftp.1.gz
 	fi
 fi
@@ -81,6 +89,10 @@ fi
 %_datadir/locale/*/LC_MESSAGES/lftp.mo
 
 %changelog
+* Wed Apr 19 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.4.4-owl1
+- Updated to 3.4.4.
+- Changed default pager from "more" to "less".
+
 * Sat Jun 25 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.6.12-owl2
 - Rebuilt with libssl.so.5.
 

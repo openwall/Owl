@@ -1,0 +1,11 @@
+--- lftp-3.4.4/src/commands.cc.orig	2006-04-05 12:36:29 +0000
++++ lftp-3.4.4/src/commands.cc	2006-04-19 13:51:39 +0000
+@@ -797,7 +797,7 @@ Job *CmdExec::builtin_open()
+       {0,0,0,0}
+    };
+ 
+-   while((c=args->getopt_long("u:p:e:dBh",open_options,0))!=EOF)
++   while((c=args->getopt_long("u:p:e:dBhn",open_options,0))!=EOF)
+    {
+       switch(c)
+       {
