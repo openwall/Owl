@@ -20,9 +20,9 @@ might have allowed a malicious Telnet server to execute arbitrary
 machine code within the context of the telnet client process used to
 connect to the server.
 References:
-http://www.idefense.com/application/poi/display?id=220&type=vulnerabilities
+http://www.idefense.com/intelligence/vulnerabilities/display.php?id=220
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0469
-http://www.idefense.com/application/poi/display?id=221&type=vulnerabilities
+http://www.idefense.com/intelligence/vulnerabilities/display.php?id=221
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0468
 
 2005/02/06	Package: cpio
@@ -221,4 +221,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 2004/01/15	Owl/doc/DOWNLOAD, Owl/doc/*/DOWNLOAD, Owl/doc/fr/CREDITS
 Sync'ed with the minor post-release updates made in Owl-current.
 
-$Owl: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.30 2006/01/03 05:22:33 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.31 2006/04/19 05:26:09 solar Exp $
