@@ -1,13 +1,12 @@
-# $Owl: Owl/packages/setarch/setarch.spec,v 1.6 2006/03/23 00:14:36 ldv Exp $
+# $Owl: Owl/packages/setarch/setarch.spec,v 1.7 2006/04/19 16:01:19 ldv Exp $
 
 Summary: Personality setter.
 Name: setarch
-Version: 1.9
+Version: 2.0
 Release: owl1
 License: GPL
 Group: System Environment/Kernel
 Source: %name-%version.tar.gz
-Patch: setarch-1.9-owl-fixes.diff
 %ifarch sparc sparcv9 sparc64
 Provides: sparc32
 Obsoletes: sparc32
@@ -22,7 +21,6 @@ set various personality flags.
 
 %prep
 %setup -q
-%patch -p1
 
 %build
 %__cc -o setarch setarch.c %optflags
@@ -63,6 +61,9 @@ done
 %_mandir/man8/*
 
 %changelog
+* Wed Apr 19 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.0-owl1
+- Updated to 2.0.
+
 * Thu Mar 23 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.9-owl1
 - Updated to 1.9.
 - Cleaned up setarch error handling.
