@@ -1,0 +1,11 @@
+--- strace-4.5.14/defs.h.orig	2006-01-12 10:18:53 +0000
++++ strace-4.5.14/defs.h	2006-04-21 18:22:52 +0000
+@@ -340,6 +340,8 @@
+ #   define __NR_exit_group 405
+ #  elif defined I386
+ #   define __NR_exit_group 252
++#  elif defined X86_64
++#   define __NR_exit_group 231
+ #  elif defined IA64
+ #   define __NR_exit_group 1236
+ #  elif defined POWERPC
