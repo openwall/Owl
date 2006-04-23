@@ -58,6 +58,11 @@ It is recommended that you only use i386 packages, as the performance
 improvement with the i686 is minimal (less than 1% overall).
 
 
+	x86-64, also known as AMD64 and EM64T.
+
+There are no flavors.  The identifier for this architecture is x86_64.
+
+
 	SPARC.
 
 Two architecture flavors are defined: sparc and sparcv9.  The sparc
@@ -84,4 +89,4 @@ built for alphaev56 are tuned for EV56/PCA56 processors (21164A,
 plain alpha packages.  On an EV6+ (21264, 21264A), use the alphaev56
 packages.
 
-$Owl: Owl/doc/ARCHITECTURES,v 1.6 2005/12/29 21:04:00 solar Exp $
+$Owl: Owl/doc/ARCHITECTURES,v 1.7 2006/04/23 22:32:34 solar Exp $
