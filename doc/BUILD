@@ -52,6 +52,7 @@ Here are some build times (hours:minutes) for Owl-current, so that you
 know what to expect:
 
 Dual Pentium 4 Xeon, HT (4-way MP), 2.8 GHz, 2 GB		0:50
+AMD Athlon 64 3200+, 2.0 GHz, 1 GB (64-bit build)		1:25
 Dual Pentium III, 600 MHz, 512 MB				3:35
 UltraSparc IIi, 400 MHz, 256 MB					10:00
 Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB			14:00
@@ -101,4 +102,4 @@ where "name" is the name of the source package.  For foreign packages
 (SRPMs) built with the Owl build environment you also need to include
 the version number part in "name".
 
-$Owl: Owl/doc/BUILD,v 1.34 2006/02/01 17:53:09 solar Exp $
+$Owl: Owl/doc/BUILD,v 1.35 2006/04/23 22:59:03 solar Exp $
