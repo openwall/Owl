@@ -30,7 +30,7 @@ headers), and manual pages for both "settle" and "setup".
 2006/04/04 -
 2006/04/07	Packages: *;
 		Owl/build/{.rpmmacros,.rpmrc,buildworld.conf,buildworld.sh}
-Ported Owl to the x86_64 architecture.
+Ported Owl to the x86-64 architecture.
 
 2006/04/06	Packages: db4, pam, perl, postfix;
 		Owl/build/installworld.sh
@@ -94,4 +94,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.14 2006/04/19 16:07:31 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.15 2006/04/23 22:33:38 solar Exp $
