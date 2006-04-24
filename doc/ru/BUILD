@@ -49,14 +49,15 @@ UID 151 и GID 150 ("sources"), и сделать этого пользователя владельцем
 так как сводится к постепенному превращению системы в Owl посредством
 неоднократного запуска "make buildworld" и "make installworld".
 
-Ниже приведен ряд значений времени сборки (часы:минуты), чтобы вы могли
-примерно представить себе, чего следует ожидать:
+Ниже приведен ряд значений времени сборки Owl-current (часы:минуты),
+чтобы вы могли примерно представить себе, чего следует ожидать:
 
-для Owl-current:
-
-Dual Pentium III, 600 MHz, 512 MB				3:35
-UltraSparc IIi, 400 MHz, 256 MB					10:00
-Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB			14:00
+Dual Opteron, 2.2 GHz, 2 GB (64-bit build)                      0:50
+Dual Pentium 4 Xeon, HT (4-way MP), 2.8 GHz, 2 GB               0:50
+Athlon 64 3200+, 2.0 GHz, 1 GB (64-bit build)                   1:25
+Dual Pentium III, 600 MHz, 512 MB                               3:35
+UltraSparc IIi, 400 MHz, 256 MB                                 10:00
+Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB                      14:00
 
 (Да, gcc для Alpha такая медленная и прожорливая штука.)
 
@@ -104,4 +105,4 @@ native/Owl/build в /usr/src/world. Предварительно следует удалить
 (SRPM), собираемых с помощью системы сборки Owl, вам следует также
 указать в названии номер версии.
 
-$Owl: Owl/doc/ru/BUILD,v 1.12 2006/02/01 17:53:09 solar Exp $
+$Owl: Owl/doc/ru/BUILD,v 1.13 2006/04/24 16:06:51 gremlin Exp $
