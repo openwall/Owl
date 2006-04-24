@@ -51,9 +51,9 @@ you actually convert the system into Owl with multiple iterations of
 Here are some build times (hours:minutes) for Owl-current, so that you
 know what to expect:
 
-Dual AMD Opteron, 2.2 GHz, 2 GB (64-bit build)			0:49
+Dual Opteron, 2.2 GHz, 2 GB (64-bit build)			0:50
 Dual Pentium 4 Xeon, HT (4-way MP), 2.8 GHz, 2 GB		0:50
-AMD Athlon 64 3200+, 2.0 GHz, 1 GB (64-bit build)		1:25
+Athlon 64 3200+, 2.0 GHz, 1 GB (64-bit build)			1:25
 Dual Pentium III, 600 MHz, 512 MB				3:35
 UltraSparc IIi, 400 MHz, 256 MB					10:00
 Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB			14:00
@@ -103,4 +103,4 @@ where "name" is the name of the source package.  For foreign packages
 (SRPMs) built with the Owl build environment you also need to include
 the version number part in "name".
 
-$Owl: Owl/doc/BUILD,v 1.36 2006/04/24 00:18:17 ldv Exp $
+$Owl: Owl/doc/BUILD,v 1.37 2006/04/24 01:04:49 solar Exp $
