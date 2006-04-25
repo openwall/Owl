@@ -1,0 +1,25 @@
+--- nmap-4.02Alpha2/nmap.cc.orig	2006-03-08 23:42:19 +0000
++++ nmap-4.02Alpha2/nmap.cc	2006-03-08 23:46:20 +0000
+@@ -2150,19 +2150,14 @@
+   exit(1);
+ }
+ 
+-#ifndef S_IRUSR
+-#define S_IRUSR 00400
+-#endif
+-
+ /* Returns true (nonzero) if the file pathname given exists and is
+    readable by the executing process.  Returns zero if it is not */
+ static int fileexistsandisreadable(char *pathname) {
+   struct stat st;
+ 
+-  if (stat(pathname, &st) == -1)
+-    return 0;
+-
+-  if (!(st.st_mode & S_IFDIR) && (st.st_mode & S_IRUSR))
++  if (access(pathname, R_OK) == 0 &&
++      stat(pathname, &st) == 0 &&
++      S_ISREG(st.st_mode))
+     return 1;
+ 
+   return 0;

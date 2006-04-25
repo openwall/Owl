@@ -1,19 +1,19 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.15 2006/03/05 17:36:55 ldv Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.16 2006/04/25 23:43:44 ldv Exp $
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
-Version: 4.02
-Release: owl0.1
+Version: 4.03
+Release: owl1
 License: GPL
 Group: Applications/System
 URL: http://www.insecure.org/nmap/
-%define srcname nmap-%{version}Alpha1
+%define srcname nmap-%version
 Source: http://download.insecure.org/nmap/dist/%srcname.tar.bz2
-Patch0: nmap-4.01-alt-autoheader.diff
+Patch0: nmap-4.02-alt-autoheader.diff
 Patch1: nmap-4.01-alt-owl-libpcap.diff
-Patch2: nmap-4.01-alt-owl-init.diff
-Patch3: nmap-4.02-alt-owl-drop-priv.diff
-Patch4: nmap-4.01-alt-owl-dot-dir.diff
+Patch2: nmap-4.02-alt-owl-drop-priv.diff
+Patch3: nmap-4.01-alt-owl-dot-dir.diff
+Patch4: nmap-4.02-alt-fileexistsandisreadable.diff
 PreReq: grep, shadow-utils
 Requires: /var/empty
 BuildRequires: openssl-devel >= 0.9.7g-owl1
@@ -65,6 +65,9 @@ grep -q ^nmap: /etc/passwd ||
 %_datadir/nmap
 
 %changelog
+* Wed Apr 26 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.03-owl1
+- Updated to 4.03.
+
 * Sun Mar 05 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.02-owl0.1
 - Updated to 4.02 Alpha1.
 - Synced patches with ALT's nmap-4.02-alt0.1 package.

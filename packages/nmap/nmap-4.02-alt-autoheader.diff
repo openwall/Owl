@@ -240,19 +240,3 @@ diff -upk.orig nmap-4.01.orig/configure.ac nmap-4.01/configure.ac
    AC_MSG_RESULT(not found))])
  AC_LANG_POP(C++)
  
-diff -upk.orig nmap-4.01.orig/utils.h nmap-4.01/utils.h
---- nmap-4.01.orig/utils.h	2006-01-19 18:55:29 +0000
-+++ nmap-4.01/utils.h	2006-03-04 00:45:55 +0000
-@@ -232,12 +232,6 @@ long tval2msecs(char *tspec);
-    str is returned. */
- char *cstring_unescape(char *str, unsigned int *len);
- 
--#ifndef HAVE_USLEEP
--#ifdef HAVE_NANOSLEEP
--void usleep(unsigned long usec);
--#endif
--#endif
--
- #ifndef HAVE_STRERROR
- char *strerror(int errnum);
- #endif

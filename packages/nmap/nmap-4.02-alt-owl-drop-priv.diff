@@ -16,14 +16,14 @@ diff -upk.orig nmap-4.02Alpha1.orig/Makefile.in nmap-4.02Alpha1/Makefile.in
  TARGETNMAPFE=@TARGETNMAPFE@
  INSTALLNMAPFE=@INSTALLNMAPFE@
  
--export SRCS = main.cc nmap.cc targets.cc tcpip.cc nmap_error.cc utils.cc idle_scan.cc osscan.cc output.cc scan_engine.cc timing.cc charpool.cc services.cc protocols.cc nmap_rpc.cc portlist.cc NmapOps.cc TargetGroup.cc Target.cc FingerPrintResults.cc service_scan.cc NmapOutputTable.cc MACLookup.cc tty.cc nmap_dns.cc @COMPAT_SRCS@
-+export SRCS = main.cc nmap.cc targets.cc tcpip.cc nmap_error.cc utils.cc idle_scan.cc osscan.cc output.cc scan_engine.cc timing.cc charpool.cc services.cc protocols.cc nmap_rpc.cc portlist.cc droppriv.cc NmapOps.cc TargetGroup.cc Target.cc FingerPrintResults.cc service_scan.cc NmapOutputTable.cc MACLookup.cc tty.cc nmap_dns.cc @COMPAT_SRCS@
+-export SRCS = main.cc nmap.cc targets.cc tcpip.cc nmap_error.cc utils.cc idle_scan.cc osscan.cc output.cc scan_engine.cc timing.cc charpool.cc services.cc protocols.cc nmap_rpc.cc portlist.cc NmapOps.cc TargetGroup.cc Target.cc FingerPrintResults.cc service_scan.cc NmapOutputTable.cc MACLookup.cc nmap_tty.cc nmap_dns.cc @COMPAT_SRCS@
++export SRCS = main.cc nmap.cc targets.cc tcpip.cc nmap_error.cc utils.cc idle_scan.cc osscan.cc output.cc scan_engine.cc timing.cc charpool.cc services.cc protocols.cc nmap_rpc.cc portlist.cc droppriv.cc NmapOps.cc TargetGroup.cc Target.cc FingerPrintResults.cc service_scan.cc NmapOutputTable.cc MACLookup.cc nmap_tty.cc nmap_dns.cc @COMPAT_SRCS@
  
--OBJS = main.o nmap.o targets.o tcpip.o nmap_error.o utils.o idle_scan.o osscan.o output.o scan_engine.o timing.o charpool.o services.o protocols.o nmap_rpc.o portlist.o NmapOps.o TargetGroup.o Target.o FingerPrintResults.o service_scan.o NmapOutputTable.o MACLookup.o tty.o nmap_dns.o @COMPAT_OBJS@
-+OBJS = main.o nmap.o targets.o tcpip.o nmap_error.o utils.o idle_scan.o osscan.o output.o scan_engine.o timing.o charpool.o services.o protocols.o nmap_rpc.o portlist.o droppriv.o NmapOps.o TargetGroup.o Target.o FingerPrintResults.o service_scan.o NmapOutputTable.o MACLookup.o tty.o nmap_dns.o @COMPAT_OBJS@
+-OBJS = main.o nmap.o targets.o tcpip.o nmap_error.o utils.o idle_scan.o osscan.o output.o scan_engine.o timing.o charpool.o services.o protocols.o nmap_rpc.o portlist.o NmapOps.o TargetGroup.o Target.o FingerPrintResults.o service_scan.o NmapOutputTable.o MACLookup.o nmap_tty.o nmap_dns.o @COMPAT_OBJS@
++OBJS = main.o nmap.o targets.o tcpip.o nmap_error.o utils.o idle_scan.o osscan.o output.o scan_engine.o timing.o charpool.o services.o protocols.o nmap_rpc.o portlist.o droppriv.o NmapOps.o TargetGroup.o Target.o FingerPrintResults.o service_scan.o NmapOutputTable.o MACLookup.o nmap_tty.o nmap_dns.o @COMPAT_OBJS@
  
--export DEPS = nmap.h nmap_amigaos.h nmap_error.h targets.h idle_scan.h osscan.h output.h scan_engine.h timing.h tcpip.h utils.h global_structures.h charpool.h services.h protocols.h nmap_rpc.h portlist.h NmapOps.h TargetGroup.h Target.h FingerPrintResults.h service_scan.h NmapOutputTable.h MACLookup.h tty.h nmap_dns.h
-+export DEPS = nmap.h nmap_amigaos.h nmap_error.h targets.h idle_scan.h osscan.h output.h scan_engine.h timing.h tcpip.h utils.h global_structures.h charpool.h services.h protocols.h nmap_rpc.h portlist.h droppriv.h NmapOps.h TargetGroup.h Target.h FingerPrintResults.h service_scan.h NmapOutputTable.h MACLookup.h tty.h nmap_dns.h
+-export DEPS = nmap.h nmap_amigaos.h nmap_error.h targets.h idle_scan.h osscan.h output.h scan_engine.h timing.h tcpip.h utils.h global_structures.h charpool.h services.h protocols.h nmap_rpc.h portlist.h NmapOps.h TargetGroup.h Target.h FingerPrintResults.h service_scan.h NmapOutputTable.h MACLookup.h nmap_tty.h nmap_dns.h
++export DEPS = nmap.h nmap_amigaos.h nmap_error.h targets.h idle_scan.h osscan.h output.h scan_engine.h timing.h tcpip.h utils.h global_structures.h charpool.h services.h protocols.h nmap_rpc.h portlist.h droppriv.h NmapOps.h TargetGroup.h Target.h FingerPrintResults.h service_scan.h NmapOutputTable.h MACLookup.h nmap_tty.h nmap_dns.h
  
  
  # %.o : %.cc -- nope this is a GNU extension
@@ -206,7 +206,7 @@ diff -upk.orig nmap-4.02Alpha1.orig/nmap.cc nmap-4.02Alpha1/nmap.cc
 +#include "droppriv.h"
  #include "NmapOps.h"
  #include "MACLookup.h"
- #include "tty.h"
+ #include "nmap_tty.h"
 @@ -932,6 +933,8 @@ int nmap_main(int argc, char *argv[]) {
        o.sendpref = PACKET_SEND_ETH_STRONG;
    }
@@ -276,7 +276,7 @@ diff -upk.orig nmap-4.02Alpha1.orig/service_scan.cc nmap-4.02Alpha1/service_scan
  #include "nsock.h"
 +#include "droppriv.h"
  
- #include "tty.h"
+ #include "nmap_tty.h"
  
 @@ -1137,7 +1138,7 @@ void parse_nmap_service_probes(AllProbes
    parse_nmap_service_probe_file(AP, filename);
