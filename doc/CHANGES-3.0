@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2006/04/26	Package: nmap
+Updated to 4.03.
+
 2006/04/19	Package: lftp
 Updated to 3.4.4.
 
@@ -94,4 +97,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.15 2006/04/23 22:33:38 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.16 2006/04/25 23:46:00 ldv Exp $
