@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/buildworld.sh,v 1.40 2006/04/04 01:04:35 ldv Exp $
+# $Owl: Owl/build/buildworld.sh,v 1.41 2006/04/26 22:00:49 ldv Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -250,6 +250,9 @@ function detect_arch()
 	case "$MACHINE" in
 	*86)
 		ARCHITECTURE=i386
+		;;
+	x86_64)
+		ARCHITECTURE=x86_64
 		;;
 	sparc*)
 		ARCHITECTURE=sparc
