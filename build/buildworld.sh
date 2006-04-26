@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/buildworld.sh,v 1.41 2006/04/26 22:00:49 ldv Exp $
+# $Owl: Owl/build/buildworld.sh,v 1.42 2006/04/26 23:01:57 ldv Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -300,10 +300,21 @@ function detect()
 		BUILDARCH="%_arch"
 	fi
 
-	if [ "$ARCHITECTURE" = "sparc" -o "$ARCHITECTURE" = "sparcv9" ]; then
-		PERSONALITY=sparc32
-	else
-		PERSONALITY=
+	if [ -z "$PERSONALITY" ]; then
+		case "$ARCHITECTURE" in
+		sparc|sparcv9)
+			PERSONALITY=sparc32
+			;;
+		*86)
+			PERSONALITY=i386
+			;;
+		x86_64)
+			PERSONALITY=x86_64
+			;;
+		*)
+			PERSONALITY=
+			;;
+		esac
 	fi
 }
 
