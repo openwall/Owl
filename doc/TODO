@@ -75,6 +75,12 @@ using safe mode (~077 & mode), then chown(), then chmod().
 Update to the latest 1.11.x or to 1.12.x.
 
 
+	device-mapper, lvm2.
+
+[PRIORITY: low]
+Package logical volume management tools.
+
+
 	dhcp.
 
 [PRIORITY: low]
@@ -177,6 +183,12 @@ Allocate a pseudo-user and group for makewhatis, have makewhatis
 results go under a separate directory writable by the group.  Provide
 a makewhatis cron job.  Don't process cat (preformatted) pages in
 makewhatis.
+
+
+	mdadm.
+
+[PRIORITY: low]
+Replace raidtools with mdadm.
 
 
 	mtree.
@@ -374,8 +386,9 @@ Update to the latest stable 4.3.x or 4.4.x.
 
 	readline.
 
-[PRIORITY: low]
-Update to latest release for FC4 compatibility.
+[PRIORITY: medium]
+[ASSIGNED: ldv@]
+Update to latest release for FC4+ compatibility.
 
 
 	shadow-utils.
@@ -390,6 +403,13 @@ feed generic patches upstream.
 [PRIORITY: low]
 login should accept IP addresses rather than hostnames such that it
 can log both into wtmp.
+
+
+	smartmontools.
+
+[PRIORITY: medium]
+[ASSIGNED: ldv@]
+Package smartmontools.
 
 
 	strace.
@@ -476,4 +496,4 @@ Fix installworld.sh to always pick the latest version of a package when
 multiple versions are available (please refer to the appropriate XXX
 comment in the script).
 
-$Owl: Owl/doc/TODO,v 1.162 2006/04/06 22:42:05 ldv Exp $
+$Owl: Owl/doc/TODO,v 1.163 2006/04/29 22:53:26 ldv Exp $
