@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/lftp/lftp.spec,v 1.30 2006/04/19 16:05:18 ldv Exp $
+# $Owl: Owl/packages/lftp/lftp.spec,v 1.31 2006/04/30 23:19:13 galaxy Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
-Version: 3.4.4
+Version: 3.4.6
 Release: owl1
 License: GPL
 Group: Applications/Internet
@@ -10,7 +10,7 @@ URL: http://lftp.yar.ru
 Source0: ftp://ftp.yars.free.net/pub/source/lftp/lftp-%version.tar.bz2
 Source1: lftpget.1
 Patch0: lftp-3.4.4-owl-n-option.diff
-Patch1: lftp-3.4.4-alt-Makefile.diff
+Patch1: lftp-3.4.6-alt-Makefile.diff
 Prefix: %_prefix
 Requires: less
 BuildRequires: openssl-devel >= 0.9.7g-owl1, readline-devel >= 4.3
@@ -89,6 +89,9 @@ fi
 %_datadir/locale/*/LC_MESSAGES/lftp.mo
 
 %changelog
+* Sat Apr 29 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.4.6-owl1
+- Updated to 3.4.6.
+
 * Wed Apr 19 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.4.4-owl1
 - Updated to 3.4.4.
 - Changed default pager from "more" to "less".

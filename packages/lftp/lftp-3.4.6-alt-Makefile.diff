@@ -1,8 +1,9 @@
-diff -upk.orig lftp-3.4.4.orig/src/Makefile.am lftp-3.4.4/src/Makefile.am
---- lftp-3.4.4.orig/src/Makefile.am	2005-12-31 11:58:05 +0000
-+++ lftp-3.4.4/src/Makefile.am	2006-04-14 15:02:04 +0000
-@@ -12,9 +12,8 @@ EXTRA_DIST = $(pkgdata_SCRIPTS) $(bin_SC
- lftp_SOURCES = lftp.cc complete.h complete.cc lftp_rl.c lftp_rl.h getdate.y getdate.h
+Files lftp-3.4.6.orig/src/.Makefile.am.swp and lftp-3.4.6/src/.Makefile.am.swp differ
+diff -puNr lftp-3.4.6.orig/src/Makefile.am lftp-3.4.6/src/Makefile.am
+--- lftp-3.4.6.orig/src/Makefile.am	2006-04-19 09:32:55 +0000
++++ lftp-3.4.6/src/Makefile.am	2006-04-29 08:55:23 +0000
+@@ -19,9 +19,8 @@ example_module1_la_SOURCES = example-mod
+ example_module1_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
  
  if WITH_MODULES
 -pkgverlib_LTLIBRARIES = liblftp-pty.la liblftp-network.la proto-ftp.la proto-http.la proto-file.la cmd-mirror.la cmd-sleep.la proto-fish.la proto-sftp.la
@@ -12,7 +13,7 @@ diff -upk.orig lftp-3.4.4.orig/src/Makefile.am lftp-3.4.4/src/Makefile.am
  
  proto_ftp_la_SOURCES  = ftpclass.cc ftpclass.h FtpListInfo.cc FtpListInfo.h\
   FtpDirList.cc FtpDirList.h md5.c md5.h ftp-opie.c FileCopyFtp.cc FileCopyFtp.h
-@@ -43,6 +42,7 @@ proto_fish_la_LDFLAGS = -module -avoid-v
+@@ -50,6 +49,7 @@ proto_fish_la_LDFLAGS = -module -avoid-v
  proto_sftp_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
  cmd_mirror_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
  cmd_sleep_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
@@ -20,38 +21,37 @@ diff -upk.orig lftp-3.4.4.orig/src/Makefile.am lftp-3.4.4/src/Makefile.am
  liblftp_pty_la_LDFLAGS     = -avoid-version -rpath $(pkgverlibdir)
  liblftp_network_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir) $(OPENSSL_LDFLAGS)
  liblftp_network_la_LIBADD  = $(SOCKSLIBS) $(OPENSSL_LIBS) $(LIBGNUTLS_LIBS)
-@@ -70,7 +70,7 @@ liblftp_tasks_la_SOURCES = PollVec.cc Po
-  TimeDate.cc TimeDate.h Timer.cc Timer.h GetFileInfo.cc GetFileInfo.h\
-  StringPool.cc StringPool.h DirColors.cc DirColors.h IdNameCache.cc\
-  IdNameCache.h PatternSet.cc PatternSet.h LocalDir.cc LocalDir.h $(add_tasks)
+@@ -77,7 +77,7 @@ liblftp_tasks_la_SOURCES = PollVec.cc Po
+  IdNameCache.h PatternSet.cc PatternSet.h LocalDir.cc LocalDir.h\
+  mbswidth.c mbswidth.h\
+  $(add_tasks)
 -liblftp_tasks_la_LDFLAGS = $(OPENSSL_LDFLAGS)
 +liblftp_tasks_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir) $(OPENSSL_LDFLAGS)
  liblftp_tasks_la_LIBADD = $(LFTP_LIBGNUTLS_LIBS) $(LTLIBINTL) $(LTLIBICONV) $(add_tasks_libadd)
  
  liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
-@@ -84,7 +84,7 @@ liblftp_jobs_la_SOURCES = Job.cc Job.h C
-  OutputJob.cc OutputJob.h FileCopyOutputJob.cc buffer_std.cc buffer_std.h\
+@@ -95,6 +95,7 @@ liblftp_jobs_la_SOURCES = Job.cc Job.h C
+  getdate.y getdate.h\
   $(add_jobs)
  
--lftp_LDFLAGS = -export-dynamic
-+lftp_LDFLAGS = -export-dynamic -rpath $(pkgverlibdir)
++lftp_LDFLAGS   = -export-dynamic -rpath $(pkgverlibdir)
  lftp_LDADD = liblftp-jobs.la liblftp-tasks.la $(MODULES_LA_STATIC) $(READLINE)\
  	$(top_builddir)/lib/liblib.a
  lftp_DEPENDENCIES = liblftp-jobs.la liblftp-tasks.la $(READLINE_DEPEND) \
-diff -upk.orig lftp-3.4.4.orig/src/Makefile.in lftp-3.4.4/src/Makefile.in
---- lftp-3.4.4.orig/src/Makefile.in	2006-04-05 12:54:24 +0000
-+++ lftp-3.4.4/src/Makefile.in	2006-04-14 15:02:41 +0000
-@@ -380,8 +380,7 @@ EXTRA_DIST = $(pkgdata_SCRIPTS) $(bin_SC
- 	example1.cc example2.cc
- 
- lftp_SOURCES = lftp.cc complete.h complete.cc lftp_rl.c lftp_rl.h getdate.y getdate.h
+diff -puNr lftp-3.4.6.orig/src/Makefile.in lftp-3.4.6/src/Makefile.in
+--- lftp-3.4.6.orig/src/Makefile.in	2006-04-25 06:20:34 +0000
++++ lftp-3.4.6/src/Makefile.in	2006-04-29 09:34:44 +0000
+@@ -402,8 +402,7 @@ example1_cmd_SOURCES = example1-cmd.cc
+ example2_SOURCES = example2.cc
+ example_module1_la_SOURCES = example-module1.cc
+ example_module1_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
 -@WITH_MODULES_TRUE@pkgverlib_LTLIBRARIES = liblftp-pty.la liblftp-network.la proto-ftp.la proto-http.la proto-file.la cmd-mirror.la cmd-sleep.la proto-fish.la proto-sftp.la
 -lib_LTLIBRARIES = liblftp-tasks.la liblftp-jobs.la
 +@WITH_MODULES_TRUE@pkgverlib_LTLIBRARIES = liblftp-tasks.la liblftp-jobs.la liblftp-pty.la liblftp-network.la proto-ftp.la proto-http.la proto-file.la cmd-mirror.la cmd-sleep.la proto-fish.la proto-sftp.la
  proto_ftp_la_SOURCES = ftpclass.cc ftpclass.h FtpListInfo.cc FtpListInfo.h\
   FtpDirList.cc FtpDirList.h md5.c md5.h ftp-opie.c FileCopyFtp.cc FileCopyFtp.h
  
-@@ -408,6 +407,7 @@ proto_fish_la_LDFLAGS = -module -avoid-v
+@@ -430,6 +429,7 @@ proto_fish_la_LDFLAGS = -module -avoid-v
  proto_sftp_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
  cmd_mirror_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
  cmd_sleep_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
@@ -59,20 +59,19 @@ diff -upk.orig lftp-3.4.4.orig/src/Makefile.in lftp-3.4.4/src/Makefile.in
  liblftp_pty_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir)
  liblftp_network_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir) $(OPENSSL_LDFLAGS)
  liblftp_network_la_LIBADD = $(SOCKSLIBS) $(OPENSSL_LIBS) $(LIBGNUTLS_LIBS)
-@@ -434,7 +434,7 @@ liblftp_tasks_la_SOURCES = PollVec.cc Po
-  StringPool.cc StringPool.h DirColors.cc DirColors.h IdNameCache.cc\
-  IdNameCache.h PatternSet.cc PatternSet.h LocalDir.cc LocalDir.h $(add_tasks)
+@@ -456,7 +456,7 @@ liblftp_tasks_la_SOURCES = PollVec.cc Po
+  mbswidth.c mbswidth.h\
+  $(add_tasks)
  
 -liblftp_tasks_la_LDFLAGS = $(OPENSSL_LDFLAGS)
 +liblftp_tasks_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir) $(OPENSSL_LDFLAGS)
  liblftp_tasks_la_LIBADD = $(LFTP_LIBGNUTLS_LIBS) $(LTLIBINTL) $(LTLIBICONV) $(add_tasks_libadd)
  liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
   commands.cc mgetJob.h mgetJob.cc SysCmdJob.cc SysCmdJob.h rmJob.cc rmJob.h\
-@@ -447,7 +447,7 @@ liblftp_jobs_la_SOURCES = Job.cc Job.h C
-  OutputJob.cc OutputJob.h FileCopyOutputJob.cc buffer_std.cc buffer_std.h\
+@@ -473,6 +473,7 @@ liblftp_jobs_la_SOURCES = Job.cc Job.h C
+  getdate.y getdate.h\
   $(add_jobs)
  
--lftp_LDFLAGS = -export-dynamic
 +lftp_LDFLAGS = -export-dynamic -rpath $(pkgverlibdir)
  lftp_LDADD = liblftp-jobs.la liblftp-tasks.la $(MODULES_LA_STATIC) $(READLINE)\
  	$(top_builddir)/lib/liblib.a
