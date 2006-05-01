@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/vixie-cron/vixie-cron.spec,v 1.45 2006/04/03 23:56:34 ldv Exp $
+# $Owl: Owl/packages/vixie-cron/vixie-cron.spec,v 1.46 2006/05/01 13:52:16 ldv Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
-Version: 4.1.20040916
-Release: owl6
+Version: 4.1.20060426
+Release: owl1
 License: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%version.tar.bz2
@@ -12,7 +12,7 @@ Source2: crontab.control
 Source3: at.control
 Source4: crond.pam
 Patch0: vixie-cron-4.1.20040916-alt-warnings.diff
-Patch1: vixie-cron-4.1.20040916-owl-alt-linux.diff
+Patch1: vixie-cron-4.1.20060426-owl-alt-linux.diff
 Patch2: vixie-cron-4.1.20040916-owl-vitmp.diff
 Patch3: vixie-cron-4.1.20040916-owl-crond.diff
 Patch4: vixie-cron-4.1.20040916-alt-owl-Makefile.diff
@@ -21,12 +21,13 @@ Patch6: vixie-cron-4.1.20040916-alt-sigpipe.diff
 Patch7: vixie-cron-4.1.20040916-alt-pam.diff
 Patch8: vixie-cron-4.1.20040916-alt-setlocale.diff
 Patch9: vixie-cron-4.1.20040916-alt-children.diff
+Patch10: vixie-cron-4.1.20060426-owl-tmp.diff
 PreReq: owl-control >= 0.4, owl-control < 2.0
 PreReq: /sbin/chkconfig, grep, shadow-utils
 Requires: pam >= 0:0.80-owl2
 Provides: at, crond
 Obsoletes: at
-BuildRequires: pam-devel
+BuildRequires: pam-devel, sed >= 4.0.9
 BuildRoot: /override/%name-%version
 
 %description
@@ -46,8 +47,11 @@ modifications by the NetBSD, OpenBSD, Red Hat, ALT, and Owl teams.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
+sed -i -e 's/^\(static char const rcsid\[\] =\).*/\1 "%name-%version-%release";/' \
+	usr.sbin/cron/crontab.c
 
-%{expand:%%define optflags %optflags -Wall}
+%{expand:%%define optflags %optflags -Wall -DLINT}
 
 %build
 for dir in usr.sbin/cron usr.bin/crontab usr.bin/at; do
@@ -146,6 +150,10 @@ fi
 %attr(640,root,crontab) %config(noreplace) /etc/*.deny
 
 %changelog
+* Mon May 01 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.1.20060426-owl1
+- Updated to OpenBSD CVS snapshot dated 2006/04/26.
+- Changed crontab to use $TMPDIR for creating temporary file.
+
 * Tue Apr 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.1.20040916-owl6
 - Changed Makefiles to pass list of libraries to linker after regular
 object files, to fix build with -Wl,--as-needed.

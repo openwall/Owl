@@ -10,7 +10,7 @@ diff -uprk.orig vixie-cron-4.1.20040916.orig/linux.mk vixie-cron-4.1.20040916/li
 +.PHONY: clean install maninstall proginstall
 +
 +$(PROG): $(SRCS:.c=.o)
-+	$(LINK.o) $(LDFLAGS) $+ $(LDLIBS) -o $@
++	$(LINK.o) $^ $(LDLIBS) -o $@
 +
 +clean:
 +	$(RM) $(PROG) $(SRCS:.c=.o)
@@ -55,7 +55,7 @@ diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.bin/crontab/Makefile vixie-cron
  PROG=	crontab
 -SRCS=	crontab.c misc.c entry.c env.c
 +SRCS=	crontab.c misc.c entry.c env.c  closeall.c  ../../lib/libc/gen/pw_dup.c
- CFLAGS+=-I${.CURDIR} -I${.CURDIR}/../../usr.sbin/cron -DDEBUGGING=0 
+ CFLAGS+=-I${.CURDIR} -I${.CURDIR}/../../usr.sbin/cron -DDEBUGGING=0
  BINGRP =crontab
  BINMODE=2555
  MAN=	crontab.1 crontab.5
