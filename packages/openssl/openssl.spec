@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.54 2006/04/04 00:28:35 ldv Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.55 2006/05/01 21:56:56 galaxy Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
 Version: 0.9.7g
-Release: owl4
+Release: owl5
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
@@ -63,6 +63,28 @@ use it for commercial and non-commercial purposes.
 
 This package contains the OpenSSL cryptography and SSL/TLS static
 libraries and header files required when developing applications.
+
+%package perl
+Summary: Miscellaneous OpenSSL scripts written using Perl
+Group: System Environment/Libraries
+Requires: %name
+Requires: perl
+
+%description perl
+The OpenSSL Project is a collaborative effort to develop a robust,
+commercial-grade, fully featured, and Open Source toolkit implementing the
+Secure Sockets Layer (SSL v2/v3) and Transport Layer Security (TLS v1)
+protocols as well as a full-strength general purpose cryptography library.
+The project is managed by a worldwide community of volunteers that use the
+Internet to communicate, plan, and develop the OpenSSL toolkit and its
+related documentation.
+
+OpenSSL is based on the excellent SSLeay library developed from Eric A.
+Young and Tim J. Hudson.  The OpenSSL toolkit is licensed under an
+Apache-style licence, which basically means that you are free to get and
+use it for commercial and non-commercial purposes.
+
+This package contains some miscellaneous Perl scripts.
 
 %prep
 %setup -q
@@ -187,12 +209,13 @@ ln -sf libssl.so.5 /%_lib/libssl.so.4
 %doc CHANGES*.bz2 LICENSE NEWS README
 %doc docs/doc
 %attr(0755,root,root) %_bindir/*
+%exclude %_bindir/c_rehash
 %attr(-,root,root) /%_lib/*.so.?
 %attr(0755,root,root) /%_lib/*.so.?.*
 %attr(0755,root,root) %openssldir/misc/CA
-%attr(0755,root,root) %openssldir/misc/CA.pl
 %attr(0755,root,root) %openssldir/misc/c_*
 %attr(0644,root,root) %_mandir/man[157]/*
+%exclude %_mandir/man1/CA.pl.1*
 %config %attr(0644,root,root) %openssldir/openssl.cnf
 %dir %attr(0755,root,root) %openssldir
 %dir %attr(0755,root,root) %openssldir/certs
@@ -209,7 +232,16 @@ ln -sf libssl.so.5 /%_lib/libssl.so.4
 %attr(0644,root,root) %_libdir/pkgconfig/openssl.pc
 %attr(0644,root,root) %_mandir/man3/*
 
+%files perl
+%defattr(0644,root,root,0755)
+%attr(0755,root,root) %_bindir/c_rehash
+%attr(0755,root,root) %openssldir/misc/CA.pl
+%attr(0644,root,root) %_mandir/man1/CA.pl.1*
+
 %changelog
+* Sun Apr 30 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.9.7g-owl5
+- Introduced the openssl-perl sub-package and moved Perl scripts there.
+
 * Thu Mar 30 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.9.7g-owl4
 - Replaced make with %%__make.
 - Added the %%openssldir to the main filelist.
