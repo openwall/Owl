@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.55 2006/05/01 21:56:56 galaxy Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.56 2006/05/01 22:40:56 galaxy Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
@@ -66,7 +66,7 @@ libraries and header files required when developing applications.
 
 %package perl
 Summary: Miscellaneous OpenSSL scripts written using Perl
-Group: System Environment/Libraries
+Group: Applications/Internet
 Requires: %name
 Requires: perl
 
