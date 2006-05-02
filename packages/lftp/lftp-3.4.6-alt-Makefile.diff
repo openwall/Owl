@@ -33,7 +33,7 @@ diff -puNr lftp-3.4.6.orig/src/Makefile.am lftp-3.4.6/src/Makefile.am
   getdate.y getdate.h\
   $(add_jobs)
  
-+lftp_LDFLAGS   = -export-dynamic -rpath $(pkgverlibdir)
++lftp_LDFLAGS = -export-dynamic -rpath $(pkgverlibdir)
  lftp_LDADD = liblftp-jobs.la liblftp-tasks.la $(MODULES_LA_STATIC) $(READLINE)\
  	$(top_builddir)/lib/liblib.a
  lftp_DEPENDENCIES = liblftp-jobs.la liblftp-tasks.la $(READLINE_DEPEND) \
