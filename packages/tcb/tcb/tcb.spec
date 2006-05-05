@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/tcb/tcb/tcb.spec,v 1.40 2005/12/27 23:24:53 ldv Exp $
+# $Owl: Owl/packages/tcb/tcb/tcb.spec,v 1.41 2006/05/05 23:01:57 ldv Exp $
 
 Summary: Libraries and tools implementing the tcb password shadowing scheme.
 Name: tcb
-Version: 1.0
+Version: 1.0.1
 Release: owl1
 License: BSD or GPL
 Group: System Environment/Base
@@ -89,6 +89,9 @@ rmdir /sbin/chkpwd.d
 %_libdir/libtcb.so
 
 %changelog
+* Sat May 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.0.1-owl1
+- In the PAM module, hardened pam_sm_open_session() to fail for unknown users.
+
 * Wed Dec 28 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.0-owl1
 - Fixed potential NULL dereferences in the PAM module password handling.
 - Removed user prompt override in calls to pam_get_user.
