@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.45 2005/12/26 23:49:21 ldv Exp $
+# $Owl: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.46 2006/05/05 22:51:56 ldv Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
 Version: 0.60
-Release: owl28
+Release: owl29
 License: BSD or GPL
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
@@ -21,6 +21,7 @@ Patch4: SimplePAMApps-0.60-alt-owl-login-su-env.diff
 Patch5: SimplePAMApps-0.60-alt-login-su-strip-argv0.diff
 Patch6: SimplePAMApps-0.60-alt-owl-warnings.diff
 Patch7: SimplePAMApps-0.60-owl-log.diff
+Patch8: SimplePAMApps-0.60-owl-su-pam_acct_mgmt.diff
 PreReq: owl-control >= 0.4, owl-control < 2.0
 Requires: pam >= 0:0.80-owl2, pam_passwdqc >= 0.2, pam_mktemp, tcb
 Provides: passwd
@@ -42,6 +43,7 @@ includes "login", "su", and "passwd".
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -104,6 +106,10 @@ fi
 /etc/control.d/facilities/*
 
 %changelog
+* Fri May 05 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.60-owl29
+- In su, do not ignore pam_acct_mgmt() return values except PAM_ACCT_EXPIRED
+and PAM_NEW_AUTHTOK_REQD even if executed by root.
+
 * Tue Dec 27 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.60-owl28
 - Fixed build with Linux-PAM >= 0.81.
 - Added passwd to provides list for compatibility.
