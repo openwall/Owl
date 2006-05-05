@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.57 2006/05/02 13:49:10 ldv Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.58 2006/05/05 23:53:56 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
@@ -18,7 +18,7 @@ Patch6: openssl-0.9.7g-rh-consttime.diff
 Patch7: openssl-0.9.7g-up-SSL_OP_MSIE_SSLV2_RSA_PADDING.diff
 Provides: SSL
 # For backwards compatibility.
-Provides: libcrypto.so.4, libssl.so.4  
+Provides: libcrypto.so.4, libssl.so.4
 BuildRequires: perl, diffutils
 # Due to sed -i.
 BuildRequires: sed >= 4.1.1
@@ -62,10 +62,11 @@ Apache-style licence, which basically means that you are free to get and
 use it for commercial and non-commercial purposes.
 
 This package contains the OpenSSL cryptography and SSL/TLS static
-libraries and header files required when developing applications.
+libraries and header files required when developing or building
+applications from source code.
 
 %package perl
-Summary: Miscellaneous OpenSSL scripts written using Perl
+Summary: Miscellaneous OpenSSL scripts written in Perl.
 Group: Applications/Internet
 Requires: %name = %version-%release
 
