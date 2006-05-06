@@ -12,9 +12,6 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
-2006/05/02	Package: openssl
-Moved perl scripts to openssl-perl.
-
 2006/05/01	Package: vixie-cron
 Updated to OpenBSD CVS snapshot dated 2006/04/26.  Changed crontab(1) to
 use $TMPDIR for creating the temporary file.
@@ -25,20 +22,20 @@ Updated to 3.4.6.
 2006/04/26	Package: nmap
 Updated to 4.03.
 
-2006/04/19	Package: lftp
-Updated to 3.4.4.
-
-2006/04/19	Package: setarch
-Updated to 2.0.
-
 2006/03/25 -
-2006/04/10	Package: owl-setup
+2006/04/20	Package: owl-setup
 Many fixes and enhancements which had been postponed for after Owl 2.0
 release have now been implemented.  This includes directly talking to
 PAM when setting the initial root password, quick searches in scroll
 lists with the ncurses/CDK-based interface, progress indicators with
 both user interfaces (currently, this is used for installation of kernel
 headers), and manual pages for both "settle" and "setup".
+
+2006/04/19	Package: lftp
+Updated to 3.4.4.
+
+2006/04/19	Package: setarch
+Updated to 2.0.
 
 2006/04/04 -
 2006/04/07	Packages: *;
@@ -107,4 +104,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.19 2006/05/01 21:57:13 galaxy Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.20 2006/05/06 00:03:04 solar Exp $
