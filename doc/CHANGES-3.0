@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2006/05/07	Package: perl
+Updated to 5.8.8.
+
 2006/05/01	Package: vixie-cron
 Updated to OpenBSD CVS snapshot dated 2006/04/26.  Changed crontab(1) to
 use $TMPDIR for creating the temporary file.
@@ -104,4 +107,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.20 2006/05/06 00:03:04 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.21 2006/05/07 03:06:13 galaxy Exp $
