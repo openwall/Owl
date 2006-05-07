@@ -1,0 +1,351 @@
+diff -puNr perl-5.8.8.orig/Configure perl-5.8.8/Configure
+--- perl-5.8.8.orig/Configure	2006-01-08 14:51:03 +0000
++++ perl-5.8.8/Configure	2006-05-05 03:29:30 +0000
+@@ -2738,12 +2738,13 @@ $define|true|[yY]*)
+     	to=$to-$targetto
+     	from=$from-$targetfrom
+ 	case "$targetdir" in
+-	'')  targetdir=/tmp
++	'')  targetdir=~/tmp
+              echo "Guessing targetdir $targetdir." >&4
+              ;;
+ 	esac
+ 	case "$targetuser" in
+-	'')  targetuser=root
++	'')  targetuser=$(/usr/bin/id -un 2>/dev/null)
++             targetuser=${targetuser:-unspecified}
+              echo "Guessing targetuser $targetuser." >&4
+              ;;
+ 	esac
+diff -puNr perl-5.8.8.orig/INSTALL perl-5.8.8/INSTALL
+--- perl-5.8.8.orig/INSTALL	2006-01-02 19:17:31 +0000
++++ perl-5.8.8/INSTALL	2006-05-05 03:37:52 +0000
+@@ -1950,12 +1950,14 @@ happens), supply Configure with
+     -Dtargethost=so.me.ho.st -Dtargetdir=/tar/get/dir
+ 
+ The targethost is what e.g. ssh will use as the hostname, the targetdir
+-must exist (the scripts won't create it), the targetdir defaults to /tmp.
++must exist (the scripts won't create it), the targetdir defaults to ~/tmp.
+ You can also specify a username to use for ssh/rsh logins
+ 
+     -Dtargetuser=luser
+ 
+-but in case you don't, "root" will be used.
++but in case you don't, the name of the current user will be used (if
++Configure is unable to determine the name of the current user it will
++use 'unspecified' as the name).
+ 
+ Because this is a cross-compilation effort, you will also need to specify
+ which target environment and which compilation environment to use.
+diff -puNr perl-5.8.8.orig/ext/Devel/PPPort/HACKERS perl-5.8.8/ext/Devel/PPPort/HACKERS
+--- perl-5.8.8.orig/ext/Devel/PPPort/HACKERS	2005-06-25 16:57:44 +0000
++++ perl-5.8.8/ext/Devel/PPPort/HACKERS	2006-05-05 03:33:09 +0000
+@@ -94,8 +94,8 @@ basically only the following steps:
+ =item *
+ 
+ You need a whole bunch of different Perls. The more, the better.
+-You can use F<devel/buildperl.pl> to build them. I keep my perls
+-in F</tmp/perl>, so most of the tools take this as a default.
++You can use F<devel/buildperl.pl> to build them.  All tools work
++with the F<buildperl> subdirectory in the current working directory.
+ 
+ =item *
+ 
+diff -puNr perl-5.8.8.orig/ext/Devel/PPPort/devel/buildperl.pl perl-5.8.8/ext/Devel/PPPort/devel/buildperl.pl
+--- perl-5.8.8.orig/ext/Devel/PPPort/devel/buildperl.pl	2005-06-25 16:57:44 +0000
++++ perl-5.8.8/ext/Devel/PPPort/devel/buildperl.pl	2006-05-05 01:43:08 +0000
+@@ -30,9 +30,9 @@ use IO::File;
+ use Cwd;
+ 
+ my %opt = (
+-  prefix => '/tmp/perl/install/<config>/<perl>',
+-  build  => '/tmp/perl/build/<config>',
+-  source => '/tmp/perl/source',
++  prefix => './buildperl/install/<config>/<perl>',
++  build  => './buildperl/build/<config>',
++  source => './buildperl/source',
+   force  => 0,
+ );
+ 
+diff -puNr perl-5.8.8.orig/ext/Devel/PPPort/devel/mktodo perl-5.8.8/ext/Devel/PPPort/devel/mktodo
+--- perl-5.8.8.orig/ext/Devel/PPPort/devel/mktodo	2005-04-06 16:16:11 +0000
++++ perl-5.8.8/ext/Devel/PPPort/devel/mktodo	2006-05-05 01:44:21 +0000
+@@ -38,8 +38,8 @@ my $outdir = 'parts/todo';
+ #   unlink or die "$_: $!\n";
+ # }
+ 
+-my $install = '/tmp/perl/install/default';
+-# my $install = '/tmp/perl/install/thread';
++my $install = './buildperl/install/default';
++# my $install = './buildperl/install/thread';
+ 
+ my @perls = sort { $b->{version} <=> $a->{version} }
+             map { { version => `$_ -e 'printf "%.6f", \$]'`, path => $_ } }
+diff -puNr perl-5.8.8.orig/ext/Devel/PPPort/devel/scanprov perl-5.8.8/ext/Devel/PPPort/devel/scanprov
+--- perl-5.8.8.orig/ext/Devel/PPPort/devel/scanprov	2005-04-06 16:16:12 +0000
++++ perl-5.8.8/ext/Devel/PPPort/devel/scanprov	2006-05-05 01:44:53 +0000
+@@ -33,7 +33,7 @@ my @provided = grep { !exists $embed{$_}
+                map { /^(\w+)/ ? $1 : () }
+                `$^X ppport.h --list-provided`;
+ 
+-my $install = '/tmp/perl/install/default';
++my $install = './buildperl/install/default';
+ 
+ my @perls = sort { $b->{version} <=> $a->{version} }
+             map { { version => `$_ -e 'printf "%.6f", \$]'`, path => $_ } }
+diff -puNr perl-5.8.8.orig/ext/Socket/t/Socket.t perl-5.8.8/ext/Socket/t/Socket.t
+--- perl-5.8.8.orig/ext/Socket/t/Socket.t	2003-10-15 07:52:51 +0000
++++ perl-5.8.8/ext/Socket/t/Socket.t	2006-05-05 03:34:30 +0000
+@@ -152,7 +152,7 @@ print (($@ =~ /^Bad arg length for Socke
+ 
+ if ($^O eq 'linux') {
+     # see if we can handle abstract sockets
+-    my $test_abstract_socket = chr(0) . '/tmp/test-perl-socket';
++    my $test_abstract_socket = chr(0) . 'test-perl-socket';
+     my $addr = sockaddr_un ($test_abstract_socket);
+     my ($path) = sockaddr_un ($addr);
+     if ($test_abstract_socket eq $path) {
+diff -puNr perl-5.8.8.orig/lib/CGI/Cookie.pm perl-5.8.8/lib/CGI/Cookie.pm
+--- perl-5.8.8.orig/lib/CGI/Cookie.pm	2005-12-05 16:30:25 +0000
++++ perl-5.8.8/lib/CGI/Cookie.pm	2006-05-05 01:51:38 +0000
+@@ -407,7 +407,7 @@ same semantics as fetch(), but performs 
+ You may also retrieve cookies that were stored in some external
+ form using the parse() class method:
+ 
+-       $COOKIES = `cat /usr/tmp/Cookie_stash`;
++       $COOKIES = `cat /some/where/Cookie_stash`;
+        %cookies = parse CGI::Cookie($COOKIES);
+ 
+ If you are in a mod_perl environment, you can save some overhead by
+diff -puNr perl-5.8.8.orig/lib/CGI.pm perl-5.8.8/lib/CGI.pm
+--- perl-5.8.8.orig/lib/CGI.pm	2006-01-08 16:40:30 +0000
++++ perl-5.8.8/lib/CGI.pm	2006-05-05 02:58:22 +0000
+@@ -2,6 +2,9 @@ package CGI;
+ require 5.004;
+ use Carp 'croak';
+ 
++# XXX: The temporary file handling implemented in here is crap.  It should
++# be re-done making use of File::Temp.
++
+ # See the bottom of this file for the POD documentation.  Search for the
+ # string '=head'.
+ 
+@@ -23,7 +26,7 @@ $CGI::VERSION='3.15';
+ 
+ # HARD-CODED LOCATION FOR FILE UPLOAD TEMPORARY FILES.
+ # UNCOMMENT THIS ONLY IF YOU KNOW WHAT YOU'RE DOING.
+-# $CGITempFile::TMPDIRECTORY = '/usr/tmp';
++# $CGITempFile::TMPDIRECTORY = '/directory/for/upload/files/';
+ use CGI::Util qw(rearrange make_attributes unescape escape expires ebcdic2ascii ascii2ebcdic);
+ 
+ #use constant XHTML_DTD => ['-//W3C//DTD XHTML Basic 1.0//EN',
+diff -puNr perl-5.8.8.orig/lib/CPAN.pm perl-5.8.8/lib/CPAN.pm
+--- perl-5.8.8.orig/lib/CPAN.pm	2006-01-31 14:11:22 +0000
++++ perl-5.8.8/lib/CPAN.pm	2006-05-05 02:58:44 +0000
+@@ -2272,7 +2272,7 @@ sub ftp_get {
+ # If more accuracy is wanted/needed, Chris Leach sent me this patch...
+ 
+  # > *** /install/perl/live/lib/CPAN.pm-	Wed Sep 24 13:08:48 1997
+- # > --- /tmp/cp	Wed Sep 24 13:26:40 1997
++ # > --- cp	Wed Sep 24 13:26:40 1997
+  # > ***************
+  # > *** 1562,1567 ****
+  # > --- 1562,1580 ----
+diff -puNr perl-5.8.8.orig/lib/File/Temp.pm perl-5.8.8/lib/File/Temp.pm
+--- perl-5.8.8.orig/lib/File/Temp.pm	2005-04-03 15:27:16 +0000
++++ perl-5.8.8/lib/File/Temp.pm	2006-05-05 02:09:36 +0000
+@@ -1477,7 +1477,7 @@ of the file.
+ In scalar context, just the filehandle is returned.
+ 
+ The template may be any filename with some number of X's appended
+-to it, for example F</tmp/temp.XXXX>. The trailing X's are replaced
++to it, for example F</tmp/temp.XXXXXX>. The trailing X's are replaced
+ with unique alphanumeric combinations.
+ 
+ =cut
+diff -puNr perl-5.8.8.orig/lib/Memoize/t/tie.t perl-5.8.8/lib/Memoize/t/tie.t
+--- perl-5.8.8.orig/lib/Memoize/t/tie.t	2002-07-12 19:56:19 +0000
++++ perl-5.8.8/lib/Memoize/t/tie.t	2006-05-05 02:13:33 +0000
+@@ -29,14 +29,7 @@ sub n {
+   $_[0]+1;
+ }
+ 
+-if (eval {require File::Spec::Functions}) {
+-  File::Spec::Functions->import('tmpdir', 'catfile');
+-  $tmpdir = tmpdir();
+-} else {
+-  *catfile = sub { join '/', @_ };
+-  $tmpdir = $ENV{TMP} || $ENV{TMPDIR} || '/tmp';
+-}
+-$file = catfile($tmpdir, "md$$");
++$file = "md$$";
+ @files = ($file, "$file.db", "$file.dir", "$file.pag");
+ 1 while unlink @files;
+ 
+diff -puNr perl-5.8.8.orig/lib/Memoize/t/tie_gdbm.t perl-5.8.8/lib/Memoize/t/tie_gdbm.t
+--- perl-5.8.8.orig/lib/Memoize/t/tie_gdbm.t	2002-07-12 19:56:19 +0000
++++ perl-5.8.8/lib/Memoize/t/tie_gdbm.t	2006-05-05 02:11:22 +0000
+@@ -26,13 +26,7 @@ if ($@) {
+ 
+ print "1..4\n";
+ 
+-if (eval {require File::Spec::Functions}) {
+- File::Spec::Functions->import();
+-} else {
+-  *catfile = sub { join '/', @_ };
+-}
+-$tmpdir = $ENV{TMP} || $ENV{TMPDIR} ||  '/tmp';  
+-$file = catfile($tmpdir, "md$$");
++$file = "md$$";
+ 1 while unlink $file, "$file.dir", "$file.pag";
+ tryout('GDBM_File', $file, 1);  # Test 1..4
+ 1 while unlink $file, "$file.dir", "$file.pag";
+diff -puNr perl-5.8.8.orig/lib/Memoize/t/tie_ndbm.t perl-5.8.8/lib/Memoize/t/tie_ndbm.t
+--- perl-5.8.8.orig/lib/Memoize/t/tie_ndbm.t	2005-04-22 11:36:58 +0000
++++ perl-5.8.8/lib/Memoize/t/tie_ndbm.t	2006-05-05 03:25:06 +0000
+@@ -29,13 +29,7 @@ if ($@) {
+ print "1..4\n";
+ 
+ 
+-if (eval {require File::Spec::Functions}) {
+- File::Spec::Functions->import();
+-} else {
+-  *catfile = sub { join '/', @_ };
+-}
+-$tmpdir = $ENV{TMP} || $ENV{TMPDIR} ||  '/tmp';  
+-$file = catfile($tmpdir, "md$$");
++$file = "md$$";
+ 1 while unlink $file, "$file.dir", "$file.pag", "$file.db";
+ tryout('Memoize::NDBM_File', $file, 1);  # Test 1..4
+ 1 while unlink $file, "$file.dir", "$file.pag", "$file.db";
+diff -puNr perl-5.8.8.orig/lib/Memoize/t/tie_sdbm.t perl-5.8.8/lib/Memoize/t/tie_sdbm.t
+--- perl-5.8.8.orig/lib/Memoize/t/tie_sdbm.t	2002-07-12 19:56:19 +0000
++++ perl-5.8.8/lib/Memoize/t/tie_sdbm.t	2006-05-05 02:12:18 +0000
+@@ -28,14 +28,7 @@ if ($@) {
+ 
+ print "1..4\n";
+ 
+-if (eval {require File::Spec::Functions}) {
+- File::Spec::Functions->import('tmpdir', 'catfile');
+- $tmpdir = tmpdir();
+-} else {
+- *catfile = sub { join '/', @_ };
+-  $tmpdir = $ENV{TMP} || $ENV{TMPDIR} || '/tmp';
+-}
+-$file = catfile($tmpdir, "md$$");
++$file = "md$$";
+ 1 while unlink $file, "$file.dir", "$file.pag";
+ tryout('Memoize::SDBM_File', $file, 1);  # Test 1..4
+ 1 while unlink $file, "$file.dir", "$file.pag";
+diff -puNr perl-5.8.8.orig/lib/Memoize/t/tie_storable.t perl-5.8.8/lib/Memoize/t/tie_storable.t
+--- perl-5.8.8.orig/lib/Memoize/t/tie_storable.t	2002-07-12 19:56:19 +0000
++++ perl-5.8.8/lib/Memoize/t/tie_storable.t	2006-05-05 02:13:01 +0000
+@@ -34,13 +34,7 @@ if ($@) {
+ print "1..4\n";
+ 
+ 
+-if (eval {require File::Spec::Functions}) {
+- File::Spec::Functions->import();
+-} else {
+-  *catfile = sub { join '/', @_ };
+-}
+-$tmpdir = $ENV{TMP} || $ENV{TMPDIR} ||  '/tmp';  
+-$file = catfile($tmpdir, "storable$$");
++$file = "storable$$";
+ 1 while unlink $file;
+ tryout('Memoize::Storable', $file, 1);  # Test 1..4
+ 1 while unlink $file;
+diff -puNr perl-5.8.8.orig/lib/Shell.pm perl-5.8.8/lib/Shell.pm
+--- perl-5.8.8.orig/lib/Shell.pm	2004-06-01 09:42:17 +0000
++++ perl-5.8.8/lib/Shell.pm	2006-05-05 02:14:34 +0000
+@@ -127,7 +127,7 @@ Shell - run shell commands transparently
+    use Shell qw(cat ps cp);
+    $passwd = cat('</etc/passwd');
+    @pslines = ps('-ww'),
+-   cp("/etc/passwd", "/tmp/passwd");
++   cp("/etc/passwd", "/etc/passwd.orig");
+ 
+    # object oriented 
+    my $sh = Shell->new;
+diff -puNr perl-5.8.8.orig/perlio.c perl-5.8.8/perlio.c
+--- perl-5.8.8.orig/perlio.c	2006-01-06 22:42:20 +0000
++++ perl-5.8.8/perlio.c	2006-05-05 02:21:53 +0000
+@@ -4945,11 +4945,17 @@ PerlIO_tmpfile(void)
+ 	  f = PerlIO_fdopen(fd, "w+b");
+ #else /* WIN32 */
+ #    if defined(HAS_MKSTEMP) && ! defined(VMS) && ! defined(OS2)
+-     SV *sv = newSVpv("/tmp/PerlIO_XXXXXX", 0);
++     const char *tmpdir = __secure_getenv("TMPDIR");
++     SV *fname = newSVpv("/PerlIO_XXXXXX", 0);
++     SV *sv = newSVpv(tmpdir ? tmpdir : "/tmp", 0);
++     int fd = -1;
++
++     sv_catsv_nomg(sv, fname);
++     SvREFCNT_dec(fname);
+      /*
+       * I have no idea how portable mkstemp() is ... NI-S
+       */
+-     const int fd = mkstemp(SvPVX(sv));
++     fd = mkstemp(SvPVX(sv));
+      if (fd >= 0) {
+ 	  f = PerlIO_fdopen(fd, "w+");
+ 	  if (f)
+@@ -4957,20 +4963,7 @@ PerlIO_tmpfile(void)
+ 	  PerlLIO_unlink(SvPVX_const(sv));
+ 	  SvREFCNT_dec(sv);
+      }
+-#    else	/* !HAS_MKSTEMP, fallback to stdio tmpfile(). */
+-     FILE *stdio = PerlSIO_tmpfile();
+-
+-     if (stdio) {
+-	  if ((f = PerlIO_push(aTHX_(PerlIO_allocate(aTHX)),
+-                               PERLIO_FUNCS_CAST(&PerlIO_stdio),
+-			       "w+", Nullsv))) {
+-               PerlIOStdio *s = PerlIOSelf(f, PerlIOStdio);
+-
+-               if (s)
+-                    s->stdio = stdio;
+-          }
+-     }
+-#    endif /* else HAS_MKSTEMP */
++#    endif /* HAS_MKSTEMP */
+ #endif /* else WIN32 */
+      return f;
+ }
+diff -puNr perl-5.8.8.orig/pod/perltodo.pod perl-5.8.8/pod/perltodo.pod
+--- perl-5.8.8.orig/pod/perltodo.pod	2005-12-30 15:11:26 +0000
++++ perl-5.8.8/pod/perltodo.pod	2006-05-05 02:29:39 +0000
+@@ -544,7 +544,7 @@ Maybe C<re>, C<encoding>, maybe other pr
+ The old perltodo notes "With C<gdb>, you can attach the debugger to a running
+ program if you pass the process ID. It would be good to do this with the Perl
+ debugger on a running Perl program, although I'm not sure how it would be
+-done." ssh and screen do this with named pipes in /tmp. Maybe we can too.
++done." ssh and screen do this with named pipes. Maybe we can too.
+ 
+ =head2 Constant folding
+ 
+diff -puNr perl-5.8.8.orig/utils/perlbug.PL perl-5.8.8/utils/perlbug.PL
+--- perl-5.8.8.orig/utils/perlbug.PL	2006-01-03 19:07:41 +0000
++++ perl-5.8.8/utils/perlbug.PL	2006-05-05 02:44:28 +0000
+@@ -969,18 +969,9 @@ EOF
+ }
+ 
+ sub filename {
+-    if ($::HaveTemp) {
+-	# Good. Use a secure temp file
+-	my ($fh, $filename) = File::Temp::tempfile(UNLINK => 1);
+-	close($fh);
+-	return $filename;
+-    } else {
+-	# Bah. Fall back to doing things less securely.
+-	my $dir = File::Spec->tmpdir();
+-	$filename = "bugrep0$$";
+-	$filename++ while -e File::Spec->catfile($dir, $filename);
+-	$filename = File::Spec->catfile($dir, $filename);
+-    }
++    my ($fh, $filename) = File::Temp::tempfile(UNLINK => 1);
++    close($fh);
++    return $filename;
+ }
+ 
+ sub paraprint {

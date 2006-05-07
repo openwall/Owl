@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.47 2006/04/07 00:52:21 ldv Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.48 2006/05/07 03:01:02 galaxy Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -13,32 +13,39 @@
 # Build perl with large files support.
 %define BUILD_LARGEFILES 1
 
+# Build a shared library of perl.  For example, this is needed for PostgreSQL
+# to use perl as a procedural language.
+%define BUILD_DSO_PERL 0
+
+# Whether or not run tests after build.
+%define BUILD_TEST 1
+
 # Set this if you might be running kernel with enabled "Destroy shared
 # memory segments not in use" (CONFIG_HARDEN_SHM) configuration option.
 %define KERNEL_CONFIG_HARDEN_SHM 1
 
 Summary: The Perl programming language.
 Name: perl
-Version: 5.8.3
-Release: owl13
-Epoch: 3
+Version: 5.8.8
+Release: owl1
+Epoch: 4
 License: GPL
 Group: Development/Languages
 Source: ftp://ftp.perl.org/pub/CPAN/src/perl-%version.tar.bz2
-Patch0: perl-5.8.3-cvs-20051202-sprintf.diff
-Patch1: perl-5.8.3-cvs-20051206-Sys-Syslog.diff
-Patch2: perl-5.8.3-owl-disable-suidperl.diff
-Patch3: perl-5.8.3-owl-tmp.diff
-Patch4: perl-5.8.3-owl-vitmp.diff
-Patch5: perl-5.8.3-owl-rmtree.diff
-%if %KERNEL_CONFIG_HARDEN_SHM
-Patch10: perl-5.8.3-owl-tests-shm.diff
-%endif
-Patch20: perl-5.8.3-alt-AnyDBM_File-DB_File.diff
-Patch21: perl-5.8.3-alt-MM-uninst.diff
+Patch0: perl-5.8.3-owl-disable-suidperl.diff
+Patch1: perl-5.8.8-owl-tmp.diff
+Patch2: perl-5.8.3-owl-vitmp.diff
+Patch3: perl-5.8.8-owl-CPAN-tools.diff
+#%if %KERNEL_CONFIG_HARDEN_SHM
+Patch10: perl-5.8.8-owl-tests-shm.diff
+#%endif
+Patch20: perl-5.8.8-alt-AnyDBM_File-DB_File.diff
+Patch21: perl-5.8.8-alt-MM-uninst.diff
 Patch22: perl-5.8.3-alt-deb-perldoc-INC.diff
-Patch23: perl-5.8.3-mdk-suidperl.diff
-Patch30: perl-5.8.3-rh-lpthread.diff
+Patch23: perl-5.8.3-rh-lpthread.diff
+Patch24: perl-5.8.3-alt-configure-no-perl.diff
+Patch25: perl-5.8.6-alt-File-Copy-preserve.diff
+Patch26: perl-5.8.6-alt-pod-vendor-dirs-perlbug34500.diff
 Provides: perl(:WITH_PERLIO)
 %if %BUILD_THREADS
 %define thread_arch -thread-multi
@@ -54,44 +61,8 @@ Provides: perl(:WITH_LARGEFILES)
 %else
 Provides: perl(:WITHOUT_LARGEFILES)
 %endif
-# XXX: RH do this
-Provides: perl(abbrev.pl)
-Provides: perl(assert.pl)
-Provides: perl(bigfloat.pl)
-Provides: perl(bigint.pl)
-Provides: perl(bigrat.pl)
-Provides: perl(bytes_heavy.pl)
-Provides: perl(cacheout.pl)
-Provides: perl(complete.pl)
-Provides: perl(ctime.pl)
-Provides: perl(dotsh.pl)
-Provides: perl(dumpvar.pl)
-Provides: perl(exceptions.pl)
-Provides: perl(fastcwd.pl)
-Provides: perl(find.pl)
-Provides: perl(finddepth.pl)
-Provides: perl(flush.pl)
-Provides: perl(ftp.pl)
-Provides: perl(getcwd.pl)
-Provides: perl(getopt.pl)
-Provides: perl(getopts.pl)
-Provides: perl(hostname.pl)
-Provides: perl(importenv.pl)
-Provides: perl(look.pl)
-Provides: perl(newgetopt.pl)
-Provides: perl(open2.pl)
-Provides: perl(open3.pl)
-Provides: perl(perl5db.pl)
-Provides: perl(pwd.pl)
-Provides: perl(shellwords.pl)
-Provides: perl(stat.pl)
-Provides: perl(syslog.pl)
-Provides: perl(tainted.pl)
-Provides: perl(termcap.pl)
-Provides: perl(timelocal.pl)
-Provides: perl(utf8_heavy.pl)
-Provides: perl(validate.pl)
-Provides: perl(Carp::Heavy)
+# self requirements which were not detected by our find-provides
+Provides: perl(Carp::Heavy), perl(getopts.pl)
 Obsoletes: perl-MD5
 BuildRequires: gdbm-devel, db4-devel >= 4.3.29, gawk, grep
 BuildRequires: rpm >= 4.0.5
@@ -130,16 +101,18 @@ introduce security holes.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
-%patch5 -p1
 %if %KERNEL_CONFIG_HARDEN_SHM
 %patch10 -p1
 %endif
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
-%patch23 -p0
-%patch30 -p1
+%patch23 -p1
+%patch24 -p1
+%patch25 -p1
+%patch26 -p1
+
+find . -name '*.orig' -delete
 
 # Remove files with known temporary file handling issues that we don't
 # package or use anyway.
@@ -155,17 +128,22 @@ touch makeaperl.SH
 
 # Correct library search paths
 if [ %_lib != lib ]; then
-	sed -i -e 's,\([ "]\(/usr\(/local\)\?\)\?\)/lib\([ "]\),\1/%_lib\4,' Configure
-	sed -i -e 's,\([ "]\(/usr\(/local\)\?\)\?\)/lib\([ "]\),\1/%_lib\4,' Configure
+	sed -i ': start ; s,\([[:space:]"]\(/usr\(/local\)\?\)\?\)/lib\([[:space:]"]\),\1/%_lib\4,g ; t start' Configure
 fi
+
+# Perl5 always install itself to %_prefix/lib/perl5 (fix for x86_64 builds)
+%define _libdir %_prefix/lib/perl5
 
 cat > filter_depends.sh <<EOF
 #!/bin/sh
-/usr/lib/rpm/find-requires.perl $* | grep -v NDBM | grep -v 'perl(v5.6.0)' | grep -v 'perl(Mac::' | grep -v 'perl(Tk' | grep -v 'perl(VMS::' | grep -v 'perl(FCGI)'
+%__find_requires $* | grep -vE '(NDBM|perl\(v5\.8\.8\)|perl\(Mac::|perl\(Tk|perl\(VMS::|perl\(FCGI\))'
 EOF
 chmod +x filter_depends.sh
 
 %define __find_requires	%_builddir/%name-%version/filter_depends.sh
+
+# if we ain't run from 'make buildworld' the buildhost macro is undefined
+%{expand: %%define buildhost %{?buildhost:%buildhost}%{?!buildhost:localhost}}
 
 %build
 rm -rf %buildroot
@@ -183,7 +161,7 @@ rm -rf %buildroot
 	-Darchname=%_arch-%_os \
 	-Dvendorprefix=%_prefix \
 	-Dsiteprefix=%_prefix \
-	-Dotherlibdirs=/usr/lib/perl5/%version \
+	-Dotherlibdirs=%_libdir/%version \
 %if %BUILD_SUIDPERL
 	-Dd_dosuid \
 %else
@@ -212,10 +190,19 @@ rm -rf %buildroot
 %else
 	-Uuselargefiles \
 %endif
-	-Ubincompat5005 \
+%if %BUILD_DSO_PERL
+	-Duseshrplib \
+%else
+	-Uuseshrplib \
+%endif
 	-Uversiononly \
 	-Dinc_version_list='5.8.0/%_arch-%_os%thread_arch 5.8.0'
+
 %__make
+
+%if %BUILD_TEST
+%__make test
+%endif
 
 # Some of the tests might create temporary files without due care, some
 # others require network access.
@@ -253,10 +240,10 @@ STDH	= \$(filter %_includedir/%%.h, \$(shell rpm -ql \$(PKGS); echo %_includedir
 GCCDIR	= \$(shell gcc --print-file-name include)
 GCCH	= \$(filter \$(GCCDIR)/%%.h, \$(shell rpm -ql gcc))
 
-PERLLIB = \$(RPM_BUILD_ROOT)%_prefix/lib/perl5/%version
-PERL	= PERL5LIB=\$(PERLLIB) \$(RPM_BUILD_ROOT)%_bindir/perl
+PERLLIB = %buildroot%_libdir/%version
+PERL	= %{?BUILD_DSO_PERL:LD_LIBRARY_PATH=\$(PERLLIB)/%_arch-%_os%thread_arch/CORE} PERL5LIB=\$(PERLLIB) %buildroot%_bindir/perl
 PHDIR	= \$(PERLLIB)/%_arch-%_os%thread_arch
-H2PH	= \$(PERL) \$(RPM_BUILD_ROOT)%_bindir/h2ph -d \$(PHDIR)/
+H2PH	= \$(PERL) %buildroot%_bindir/h2ph -d \$(PHDIR)/
 
 all: std-headers gcc-headers fix-config
 
@@ -270,24 +257,26 @@ gcc-headers: \$(GCCH)
 	cd \$(GCCDIR) && \$(H2PH) \$(GCCH:\$(GCCDIR)/%%=%%)
 
 fix-config: \$(PHDIR)/Config.pm
-	\$(PERL) -i -p -e "s|\$(RPM_BUILD_ROOT)||g;" \$<
+	\$(PERL) -i -p -e "s|%buildroot||g;" \$<
 EOF
 %endif
 
 # Don't leak information specific to the build system.
 # "-f" here because compile.ph appeared here only when we have
 # compiled kernel source tree in system.
-rm -f %buildroot%_prefix/lib/perl5/%version/%_arch-%_os%thread_arch/linux/compile.ph
+rm -f %buildroot%_libdir/%version/%_arch-%_os%thread_arch/linux/compile.ph
 
 # Fix the rest of the stuff
-find %buildroot%_prefix/lib/perl* -name .packlist -o -name perllocal.pod | \
-	xargs ./perl -i -p -e "s|%buildroot||g;" $packlist
+find %buildroot%_libdir -name .packlist -o -name perllocal.pod | \
+	xargs sed -i 's|%buildroot||g' $packlist
+
+chmod -R u+w %buildroot
 
 %files
 %defattr(-,root,root)
 %doc Artistic Copying AUTHORS README README.Y2K
 %_mandir/*/*
-%_prefix/lib/*
+%_libdir
 %if !%BUILD_SUIDPERL
 %_bindir/*
 %else
@@ -301,6 +290,22 @@ find %buildroot%_prefix/lib/perl* -name .packlist -o -name perllocal.pod | \
 %endif
 
 %changelog
+* Sat May 06 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4:5.8.8-owl1
+- Fixed perlio.c to use TMPDIR.
+- Enabled tests.
+
+* Fri May 05 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4:5.8.8-owl0
+- Updated to 5.8.8.
+- Introduced the BUILD_DSO_PERL macro to enable/disable building of
+libperl.so.
+- Removed redundant Provides added at 1:5.8.3-owl2, they were added in RH
+due to their inefficient find-provides script (we have no such limitation).
+- Added links and lftp to CPAN module since lynx is somewhat obsoleted and
+we don't package ncftp*.
+- Imported few patches from ALT: disabling perl detection in Configure,
+preserving file attributes and timestamps in FileCopy, and searching for
+PODs in vendor directories.
+
 * Fri Apr 07 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3:5.8.3-owl13
 - Corrected specfile to make it build on x86_64.
 - Rebuilt with libdb-4.3.so.

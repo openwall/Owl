@@ -1,0 +1,97 @@
+--- perl-5.8.3~/Configure	2003-12-05 14:57:56 +0300
++++ perl-5.8.3/Configure	2004-02-04 04:24:22 +0300
+@@ -6767,28 +6704,6 @@
+ 	installhtml3dir="$html3direxp"
+ fi
+ 
+-: Find perl5.005 or later.
+-echo "Looking for a previously installed perl5.005 or later... "
+-case "$perl5" in
+-'')	for tdir in `echo "$binexp$path_sep$PATH" | $sed "s/$path_sep/ /g"`; do
+-		: Check if this perl is recent and can load a simple module
+-		if $test -x $tdir/perl$exe_ext && $tdir/perl -Mless -e 'use 5.005;' >/dev/null 2>&1; then
+-			perl5=$tdir/perl
+-			break;
+-		elif $test -x $tdir/perl5$exe_ext && $tdir/perl5 -Mless -e 'use 5.005;' >/dev/null 2>&1; then
+-			perl5=$tdir/perl5
+-			break;
+-		fi
+-	done
+-	;;
+-*)	perl5="$perl5"
+-	;;
+-esac
+-case "$perl5" in
+-'')	echo "None found.  That's ok.";;
+-*)	echo "Using $perl5." ;;
+-esac
+-
+ : Determine list of previous versions to include in @INC
+ $cat > getverlist <<EOPL
+ #!$perl5 -w
+@@ -6841,12 +6756,7 @@
+ EOPL
+ chmod +x getverlist
+ case "$inc_version_list" in
+-'')	if test -x "$perl5$exe_ext"; then
+-		dflt=`$perl5 getverlist`
+-	else
+-		dflt='none'
+-	fi
+-	;;
++'') dflt='none' ;;
+ $undef) dflt='none' ;;
+ *)  eval dflt=\"$inc_version_list\" ;;
+ esac
+@@ -6886,47 +6796,10 @@
+ $rm -f getverlist
+ 
+ : determine whether to install perl also as /usr/bin/perl
+-
+-echo " "
+-if $test -d /usr/bin -a "X$installbin" != X/usr/bin; then
+-	$cat <<EOM
+-Many scripts expect perl to be installed as /usr/bin/perl.
+-
+-If you want to, I can install the perl you are about to compile
+-as /usr/bin/perl (in addition to $bin/perl).
+-EOM
+-	if test -f /usr/bin/perl; then
+-	    $cat <<EOM
+-
+-However, please note that because you already have a /usr/bin/perl,
+-overwriting that with a new Perl would very probably cause problems.
+-Therefore I'm assuming you don't want to do that (unless you insist).
+-
+-EOM
+-	    case "$installusrbinperl" in
+-	    "$define"|[yY]*)	dflt='y';;
+-	    *)			dflt='n';;
+-	    esac
+-	else
+-	    $cat <<EOM
+-
+-Since you don't have a /usr/bin/perl I'm assuming creating one is okay.
+-
+-EOM
+-	    case "$installusrbinperl" in
+-	    "$undef"|[nN]*)	dflt='n';;
+-	    *)			dflt='y';;
+-	    esac
+-	fi
+-	rp="Do you want to install perl as /usr/bin/perl?"
+-	. ./myread
+-	case "$ans" in
+-	[yY]*)	val="$define";;
+-	*)	val="$undef" ;;
+-	esac
+-else
+-	val="$undef"
+-fi
++dflt='y'
++rp="Do you want to install perl as /usr/bin/perl?"
++. ./myread
++val="$define"
+ set installusrbinperl
+ eval $setvar
+ 

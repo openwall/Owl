@@ -1,0 +1,25 @@
+--- perl-5.8.6/lib/File/Copy.pm~	2004-07-01 08:14:45 +0000
++++ perl-5.8.6/lib/File/Copy.pm	2004-12-05 00:25:27 +0000
+@@ -77,9 +77,9 @@ sub copy {
+ 	croak("'$from' and '$to' are identical (not copied)");
+     }
+ 
++    my @fs = stat($from);
+     if ((($Config{d_symlink} && $Config{d_readlink}) || $Config{d_link}) &&
+ 	!($^O eq 'MSWin32' || $^O eq 'os2' || $^O eq 'vms')) {
+-	my @fs = stat($from);
+ 	if (@fs) {
+ 	    my @ts = stat($to);
+ 	    if (@ts && $fs[0] == $ts[0] && $fs[1] == $ts[1]) {
+@@ -155,6 +155,11 @@ sub copy {
+     close($to_h) || goto fail_open2 if $closeto;
+     close($from_h) || goto fail_open1 if $closefrom;
+ 
++    if (!$from_a_handle && !$to_a_handle && @fs) {
++	    chmod $fs[2] & 0777 => $to; # preserve permissions
++	    utime @fs[8,9] => $to; # preserve timestamps
++    }
++
+     # Use this idiom to avoid uninitialized value warning.
+     return 1;
+ 

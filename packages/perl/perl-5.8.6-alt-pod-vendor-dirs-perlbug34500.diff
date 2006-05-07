@@ -1,0 +1,26 @@
+--- perl-5.8.6/lib/Pod/Find.pm-	2004-06-01 16:41:24 +0400
++++ perl-5.8.6/lib/Pod/Find.pm	2005-03-19 22:10:56 +0300
+@@ -168,10 +168,10 @@
+ 
+         if ($^O eq 'MacOS') {
+             $SIMPLIFY_RX =
+-              qq!^(?i:\:?site_perl\:|\:?pod\:(?=.*?\\.pod\\z))*!;
++              qq!^(?i:\:?(?:site|vendor)_perl\:|\:?pod\:(?=.*?\\.pod\\z))*!;
+         } else {
+             $SIMPLIFY_RX =
+-              qq!^(?i:site(_perl)?/|\Q$Config::Config{archname}\E/|\\d+\\.\\d+([_.]?\\d+)?/|pod/(?=.*?\\.pod\\z))*!;
++              qq!^(?i:(?:site|vendor)(_perl)?/|\Q$Config::Config{archname}\E/|\\d+\\.\\d+([_.]?\\d+)?/|pod/(?=.*?\\.pod\\z))*!;
+         }
+     }
+ 
+--- perl-5.8.6/lib/Pod/Man.pm-	2003-03-31 15:16:36 +0400
++++ perl-5.8.6/lib/Pod/Man.pm	2005-03-19 21:58:12 +0300
+@@ -411,7 +411,7 @@
+             }
+             if ($cut > 0) {
+                 splice (@dirs, 0, $cut);
+-                shift @dirs if ($dirs[0] =~ /^site(_perl)?$/);
++                shift @dirs if ($dirs[0] =~ /^(site|vendor)(_perl)?$/);
+                 shift @dirs if ($dirs[0] =~ /^[\d.]+$/);
+                 shift @dirs if ($dirs[0] =~ /^(.*-$^O|$^O-.*|$^O)$/);
+             }

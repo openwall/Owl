@@ -1,0 +1,33 @@
+diff -puNr perl-5.8.8.orig/t/op/taint.t perl-5.8.8/t/op/taint.t
+--- perl-5.8.8.orig/t/op/taint.t	2006-01-18 11:04:39 +0000
++++ perl-5.8.8/t/op/taint.t	2006-05-05 05:06:10 +0000
+@@ -17,7 +17,7 @@ use Config;
+ use File::Spec::Functions;
+ 
+ BEGIN { require './test.pl'; }
+-plan tests => 238;
++plan tests => 236;
+ 
+ 
+ $| = 1;
+@@ -530,8 +530,10 @@ SKIP: {
+ {
+     my $foo = 'abc' . $TAINT;
+     my $fooref = \$foo;
+-    test not tainted $fooref;
+-    test tainted $$fooref;
++    # The following two tests are commented out because we could be run under
++    # kernel with CONFIG_HARDEN_SHM enabled (Owl patch).
++    #test not tainted $fooref;
++    #test tainted $$fooref;
+     test tainted $foo;
+ }
+ 
+@@ -673,6 +675,7 @@ SKIP: {
+     # test shmread
+     SKIP: {
+         skip "shm*() not available", 1 unless $Config{d_shm};
++	skip "- disabled, -ow kernel patch might be active";
+ 
+         no strict 'subs';
+         my $sent = "foobar";

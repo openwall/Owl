@@ -1,0 +1,40 @@
+diff -puNr perl-5.8.8.orig/gv.c perl-5.8.8/gv.c
+--- perl-5.8.8.orig/gv.c	2006-01-08 20:55:41 +0000
++++ perl-5.8.8/gv.c	2006-05-05 04:48:29 +0000
+@@ -917,10 +917,10 @@ Perl_gv_fetchpv(pTHX_ const char *nambeg
+ 			&& AvFILLp(av) == -1)
+ 			{
+ 			    const char *pname;
+-			    av_push(av, newSVpvn(pname = "NDBM_File",9));
+-			    gv_stashpvn(pname, 9, TRUE);
+ 			    av_push(av, newSVpvn(pname = "DB_File",7));
+ 			    gv_stashpvn(pname, 7, TRUE);
++			    av_push(av, newSVpvn(pname = "NDBM_File",9));
++			    gv_stashpvn(pname, 9, TRUE);
+ 			    av_push(av, newSVpvn(pname = "GDBM_File",9));
+ 			    gv_stashpvn(pname, 9, TRUE);
+ 			    av_push(av, newSVpvn(pname = "SDBM_File",9));
+diff -puNr perl-5.8.8.orig/lib/AnyDBM_File.pm perl-5.8.8/lib/AnyDBM_File.pm
+--- perl-5.8.8.orig/lib/AnyDBM_File.pm	2001-09-21 16:50:57 +0000
++++ perl-5.8.8/lib/AnyDBM_File.pm	2006-05-05 04:47:09 +0000
+@@ -2,7 +2,7 @@ package AnyDBM_File;
+ 
+ use 5.006_001;
+ our $VERSION = '1.00';
+-our @ISA = qw(NDBM_File DB_File GDBM_File SDBM_File ODBM_File) unless @ISA;
++our @ISA = qw(DB_File NDBM_File GDBM_File SDBM_File ODBM_File) unless @ISA;
+ 
+ my $mod;
+ for $mod (@ISA) {
+@@ -37,6 +37,11 @@ can still do so, but new ones can reorde
+     BEGIN { @AnyDBM_File::ISA = qw(DB_File GDBM_File NDBM_File) }
+     use AnyDBM_File;
+ 
++Note that DB_File module is used as the default backend (vanilla Perl
++uses NDBM module by default, for the sake of Perl4 compatibility).
++Other DBM packages are slower and have cell size limits, so DB_File
++is simply the best.
++
+ Having multiple DBM implementations makes it trivial to copy database formats:
+ 
+     use POSIX; use NDBM_File; use DB_File;
