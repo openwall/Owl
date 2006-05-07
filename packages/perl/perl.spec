@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.48 2006/05/07 03:01:02 galaxy Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.49 2006/05/07 03:52:52 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -17,7 +17,7 @@
 # to use perl as a procedural language.
 %define BUILD_DSO_PERL 0
 
-# Whether or not run tests after build.
+# Whether or not to run tests after build.
 %define BUILD_TEST 1
 
 # Set this if you might be running kernel with enabled "Destroy shared
@@ -131,7 +131,7 @@ if [ %_lib != lib ]; then
 	sed -i ': start ; s,\([[:space:]"]\(/usr\(/local\)\?\)\?\)/lib\([[:space:]"]\),\1/%_lib\4,g ; t start' Configure
 fi
 
-# Perl5 always install itself to %_prefix/lib/perl5 (fix for x86_64 builds)
+# Perl5 always installs itself to %_prefix/lib/perl5 (fix for x86_64 builds)
 %define _libdir %_prefix/lib/perl5
 
 cat > filter_depends.sh <<EOF
@@ -201,12 +201,9 @@ rm -rf %buildroot
 %__make
 
 %if %BUILD_TEST
+# Some of the tests might require network access.
 %__make test
 %endif
-
-# Some of the tests might create temporary files without due care, some
-# others require network access.
-#%__make test
 
 %install
 rm -rf %buildroot
@@ -298,11 +295,11 @@ chmod -R u+w %buildroot
 - Updated to 5.8.8.
 - Introduced the BUILD_DSO_PERL macro to enable/disable building of
 libperl.so.
-- Removed redundant Provides added at 1:5.8.3-owl2, they were added in RH
+- Removed redundant Provides added at 1:5.8.3-owl2, they were added in RHL
 due to their inefficient find-provides script (we have no such limitation).
-- Added links and lftp to CPAN module since lynx is somewhat obsoleted and
-we don't package ncftp*.
-- Imported few patches from ALT: disabling perl detection in Configure,
+- Added links and lftp to the CPAN module since lynx is somewhat obsoleted
+and we don't package ncftp*.
+- Imported a few patches from ALT: disabling perl detection in Configure,
 preserving file attributes and timestamps in FileCopy, and searching for
 PODs in vendor directories.
 
