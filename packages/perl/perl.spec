@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.49 2006/05/07 03:52:52 solar Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.50 2006/05/07 04:05:23 galaxy Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -36,9 +36,9 @@ Patch0: perl-5.8.3-owl-disable-suidperl.diff
 Patch1: perl-5.8.8-owl-tmp.diff
 Patch2: perl-5.8.3-owl-vitmp.diff
 Patch3: perl-5.8.8-owl-CPAN-tools.diff
-#%if %KERNEL_CONFIG_HARDEN_SHM
+%if %KERNEL_CONFIG_HARDEN_SHM
 Patch10: perl-5.8.8-owl-tests-shm.diff
-#%endif
+%endif
 Patch20: perl-5.8.8-alt-AnyDBM_File-DB_File.diff
 Patch21: perl-5.8.8-alt-MM-uninst.diff
 Patch22: perl-5.8.3-alt-deb-perldoc-INC.diff
