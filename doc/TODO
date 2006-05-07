@@ -339,11 +339,6 @@ Deal with FC4/RHEL4 compatibility issues.
 Re-implement temporary file handling in CGI.pm making use of File::Temp.
 
 [PRIORITY: low]
-Fix the tests (or the functions they test) such that "make test" will
-no longer use /tmp when $TMPDIR is set.  Currently, with Perl 5.8.3-owl1,
-3 of the tests fail when /tmp is unavailable, despite $TMPDIR being set.
-
-[PRIORITY: low]
 Determine which of the tests result in network accesses (is it just
 DNS lookups?) and disable those from within our perl.spec.
 
@@ -496,4 +491,4 @@ Fix installworld.sh to always pick the latest version of a package when
 multiple versions are available (please refer to the appropriate XXX
 comment in the script).
 
-$Owl: Owl/doc/TODO,v 1.163 2006/04/29 22:53:26 ldv Exp $
+$Owl: Owl/doc/TODO,v 1.164 2006/05/07 03:08:56 galaxy Exp $
