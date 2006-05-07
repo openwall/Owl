@@ -278,7 +278,7 @@ diff -puNr perl-5.8.8.orig/perlio.c perl-5.8.8/perlio.c
 +     const char *tmpdir = __secure_getenv("TMPDIR");
 +     SV *fname = newSVpv("/PerlIO_XXXXXX", 0);
 +     SV *sv = newSVpv(tmpdir ? tmpdir : "/tmp", 0);
-+     int fd = -1;
++     int fd;
 +
 +     sv_catsv_nomg(sv, fname);
 +     SvREFCNT_dec(fname);
@@ -290,28 +290,6 @@ diff -puNr perl-5.8.8.orig/perlio.c perl-5.8.8/perlio.c
       if (fd >= 0) {
  	  f = PerlIO_fdopen(fd, "w+");
  	  if (f)
-@@ -4957,20 +4963,7 @@ PerlIO_tmpfile(void)
- 	  PerlLIO_unlink(SvPVX_const(sv));
- 	  SvREFCNT_dec(sv);
-      }
--#    else	/* !HAS_MKSTEMP, fallback to stdio tmpfile(). */
--     FILE *stdio = PerlSIO_tmpfile();
--
--     if (stdio) {
--	  if ((f = PerlIO_push(aTHX_(PerlIO_allocate(aTHX)),
--                               PERLIO_FUNCS_CAST(&PerlIO_stdio),
--			       "w+", Nullsv))) {
--               PerlIOStdio *s = PerlIOSelf(f, PerlIOStdio);
--
--               if (s)
--                    s->stdio = stdio;
--          }
--     }
--#    endif /* else HAS_MKSTEMP */
-+#    endif /* HAS_MKSTEMP */
- #endif /* else WIN32 */
-      return f;
- }
 diff -puNr perl-5.8.8.orig/pod/perltodo.pod perl-5.8.8/pod/perltodo.pod
 --- perl-5.8.8.orig/pod/perltodo.pod	2005-12-30 15:11:26 +0000
 +++ perl-5.8.8/pod/perltodo.pod	2006-05-05 02:29:39 +0000
