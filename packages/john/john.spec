@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.87 2006/05/08 05:44:18 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.88 2006/05/08 05:47:38 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -20,7 +20,11 @@ of other hash types are supported as well.
 %prep
 %setup -q -a 1
 
+%ifarch x86_64
+%define cflags -c %optflags -Wall -DJOHN_SYSTEMWIDE=1
+%else
 %define cflags -c %optflags -finline-limit=2000 --param inline-unit-growth=2000 -Wall -DJOHN_SYSTEMWIDE=1
+%endif
 %define with_cpu_fallback 0
 
 %build
