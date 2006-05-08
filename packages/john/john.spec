@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.88 2006/05/08 05:47:38 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.89 2006/05/08 05:49:24 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -85,6 +85,10 @@ install -m 644 -p run/mailer doc/
 * Mon May 08 2006 Solar Designer <solar-at-owl.openwall.com> 1.7.1-owl1
 - Treat AMD's 64-bit processors the same as AMD Athlon for the purpose of
 selection of optimal 32-bit Blowfish and non-bitslice DES code.
+- Don't pass function inlining tweaks to gcc on x86-64 as this actually hurts
+performance with gcc 3.4.5 (that is currently in Owl) on current processors.
+With no special options (only -finline-functions), gcc 3.4.5 inlines only  
+s4(), which turns out to actually be optimal for current processors.
 
 * Mon Mar 20 2006 Solar Designer <solar-at-owl.openwall.com> 1.7.0.2-owl1
 - Fixed a long-standing bug in the rule preprocessor which caused some
