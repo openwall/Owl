@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.89 2006/05/08 05:49:24 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.90 2006/05/08 05:56:02 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -89,6 +89,9 @@ selection of optimal 32-bit Blowfish and non-bitslice DES code.
 performance with gcc 3.4.5 (that is currently in Owl) on current processors.
 With no special options (only -finline-functions), gcc 3.4.5 inlines only  
 s4(), which turns out to actually be optimal for current processors.
+- Use only a 32-bit data type within the MD5 implementation, not ARCH_WORD.
+While the latter sometimes worked a little bit better on Alpha, it turned
+out to kill performance on x86-64.
 
 * Mon Mar 20 2006 Solar Designer <solar-at-owl.openwall.com> 1.7.0.2-owl1
 - Fixed a long-standing bug in the rule preprocessor which caused some
