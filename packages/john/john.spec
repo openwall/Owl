@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.90 2006/05/08 05:56:02 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.91 2006/05/08 14:42:05 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -29,16 +29,19 @@ of other hash types are supported as well.
 
 %build
 cd src
+%ifarch %ix86
+%define with_cpu_fallback 1
 %ifarch athlon i786 i886 i986
 make linux-x86-mmx CFLAGS='%cflags'
 %else
-%ifarch %ix86
-%define with_cpu_fallback 1
 make linux-x86-any CFLAGS='%cflags'
 mv ../run/john ../run/john-non-mmx
 make clean
 make linux-x86-mmx CFLAGS='%cflags -DCPU_FALLBACK=1'
 %endif
+mv ../run/john ../run/john-non-sse
+make clean
+make linux-x86-sse CFLAGS='%cflags -DCPU_FALLBACK=1'
 %endif
 %ifarch x86_64
 make linux-x86-64 CFLAGS='%cflags'
@@ -83,6 +86,7 @@ install -m 644 -p run/mailer doc/
 
 %changelog
 * Mon May 08 2006 Solar Designer <solar-at-owl.openwall.com> 1.7.1-owl1
+- Added SSE support with runtime fallback to the MMX build on non-P4.
 - Treat AMD's 64-bit processors the same as AMD Athlon for the purpose of
 selection of optimal 32-bit Blowfish and non-bitslice DES code.
 - Don't pass function inlining tweaks to gcc on x86-64 as this actually hurts
