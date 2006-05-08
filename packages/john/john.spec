@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.86 2006/04/04 00:38:20 ldv Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.87 2006/05/08 05:44:18 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.0.2
+Version: 1.7.1
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -78,6 +78,10 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Mon May 08 2006 Solar Designer <solar-at-owl.openwall.com> 1.7.1-owl1
+- Treat AMD's 64-bit processors the same as AMD Athlon for the purpose of
+selection of optimal 32-bit Blowfish and non-bitslice DES code.
+
 * Mon Mar 20 2006 Solar Designer <solar-at-owl.openwall.com> 1.7.0.2-owl1
 - Fixed a long-standing bug in the rule preprocessor which caused some
 duplicate characters to not be omitted on platforms where ARCH_WORD is bigger
