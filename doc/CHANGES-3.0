@@ -12,12 +12,12 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
-2006/05/08	Package: john
-Bitslice DES code for x86 with SSE (as opposed to MMX) has been added
-for better performance at DES-based crypt(3) hashes on all Pentium 4
-processors and at LM hashes on some Pentium 4 processors.  Assorted
-high-level changes have been applied to improve performance on current
-x86-64 processors.
+2006/05/08 -
+2006/05/10	Package: john
+Bitslice DES code for x86 with SSE2 has been added for better performance
+at DES-based crypt(3) hashes on Pentium 4 and SSE2-capable AMD processors.
+Assorted high-level changes have been applied to improve performance on
+current x86-64 processors.
 
 2006/05/07	Package: perl
 Updated to 5.8.8.
@@ -114,4 +114,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.22 2006/05/08 14:58:39 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.23 2006/05/11 01:11:11 solar Exp $
