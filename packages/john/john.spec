@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.92 2006/05/10 06:02:01 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.93 2006/05/11 00:41:35 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -96,6 +96,8 @@ s4(), which turns out to actually be optimal for current processors.
 - Use only a 32-bit data type within the MD5 implementation, not ARCH_WORD.
 While the latter sometimes worked a little bit better on Alpha, it turned
 out to kill performance on x86-64.
+- Enhanced the self-test loop to proceed until we hit the maximum key index
+even if the number of different test vectors is smaller.
 
 * Mon Mar 20 2006 Solar Designer <solar-at-owl.openwall.com> 1.7.0.2-owl1
 - Fixed a long-standing bug in the rule preprocessor which caused some
