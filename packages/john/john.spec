@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.93 2006/05/11 00:41:35 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.94 2006/05/11 01:13:01 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -85,7 +85,7 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
-* Mon May 08 2006 Solar Designer <solar-at-owl.openwall.com> 1.7.1-owl1
+* Wed May 10 2006 Solar Designer <solar-at-owl.openwall.com> 1.7.1-owl1
 - Added SSE2 support with runtime fallback to the MMX build.
 - Treat AMD's 64-bit processors the same as AMD Athlon for the purpose of
 selection of optimal 32-bit Blowfish and non-bitslice DES code.
