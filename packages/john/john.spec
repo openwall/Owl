@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.94 2006/05/11 01:13:01 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.95 2006/05/15 16:59:15 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.1
+Version: 1.7.2
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -85,13 +85,17 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Mon May 15 2006 Solar Designer <solar-at-owl.openwall.com> 1.7.2-owl1
+- Added bitslice DES assembly code for x86-64 making use of the 64-bit mode
+extended SSE2 with 16 XMM registers.
+
 * Wed May 10 2006 Solar Designer <solar-at-owl.openwall.com> 1.7.1-owl1
 - Added SSE2 support with runtime fallback to the MMX build.
 - Treat AMD's 64-bit processors the same as AMD Athlon for the purpose of
 selection of optimal 32-bit Blowfish and non-bitslice DES code.
 - Don't pass function inlining tweaks to gcc on x86-64 as this actually hurts
 performance with gcc 3.4.5 (that is currently in Owl) on current processors.
-With no special options (only -finline-functions), gcc 3.4.5 inlines only  
+With no special options (only -finline-functions), gcc 3.4.5 inlines only
 s4(), which turns out to actually be optimal for current processors.
 - Use only a 32-bit data type within the MD5 implementation, not ARCH_WORD.
 While the latter sometimes worked a little bit better on Alpha, it turned
