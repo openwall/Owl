@@ -1,18 +1,19 @@
-# $Owl: Owl/packages/acct/acct.spec,v 1.30 2006/02/03 22:31:14 ldv Exp $
+# $Owl: Owl/packages/acct/acct.spec,v 1.31 2006/05/19 11:46:31 galaxy Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
-Version: 6.3.5
-Release: owl15
+Version: 6.4pre1
+Release: owl1
 License: GPL
 Group: Applications/System
-Source0: ftp://ftp.red-bean.com/pub/noel/%name-%version.tar.gz
+Source0: http://www.physik3.uni-rostock.de/tim/kernel/utils/acct/%name-6.4-pre1.tar.gz
 Source1: dump-acct.8
 Source2: dump-utmp.8
 Source3: acct.init
 Source4: acct.logrotate
-Patch0: acct-6.3.5-owl-fixes.diff
-Patch1: acct-6.3.5-owl-devpts.diff
+Patch0: acct-6.4pre1-owl-doc.diff
+Patch1: acct-6.4pre1-owl-devpts.diff
+Patch2: acct-6.4pre1-owl-sa-help.diff
 PreReq: /sbin/install-info, grep
 Provides: psacct
 Obsoletes: psacct
@@ -28,15 +29,15 @@ The accton command turns process accounting on or off.  The sa command
 summarizes information about previously executed commands.
 
 %prep
-%setup -q
+%setup -q -n %name-6.4-pre1
 rm accounting.info
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
+autoreconf -fis
 %configure
-sed -i 's,/\* #undef HAVE_LINUX_ACCT_H \*/,#define HAVE_LINUX_ACCT_H,' config.h
-touch texinfo.tex
 %__make
 
 %install
@@ -107,6 +108,10 @@ fi
 %_infodir/*
 
 %changelog
+* Fri May 19 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.4pre1-owl1
+- Updated to 6.4-pre1.
+- Re-generated patches.
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 6.3.5-owl15
 - Corrected info files installation.
 

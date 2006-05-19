@@ -1,6 +1,6 @@
-diff -urp acct-6.3.5.orig/dev_hash.c acct-6.3.5/dev_hash.c
---- acct-6.3.5.orig/dev_hash.c	Thu Apr 18 23:18:15 1996
-+++ acct-6.3.5/dev_hash.c	Mon May  5 02:31:13 2003
+diff -puNr acct-6.4-pre1.orig/dev_hash.c acct-6.4-pre1/dev_hash.c
+--- acct-6.4-pre1.orig/dev_hash.c	2006-01-07 21:56:46 +0000
++++ acct-6.4-pre1/dev_hash.c	2006-05-19 09:49:12 +0000
 @@ -52,6 +52,10 @@ char *alloca ();
  # endif
  #endif

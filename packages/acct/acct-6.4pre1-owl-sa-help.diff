@@ -1,0 +1,12 @@
+diff -puNr acct-6.4-pre1.orig/sa.c acct-6.4-pre1/sa.c
+--- acct-6.4-pre1.orig/sa.c	2006-01-07 21:56:46 +0000
++++ acct-6.4-pre1/sa.c	2006-05-19 09:39:29 +0000
+@@ -715,7 +715,7 @@ Usage: %s [ options ] [ file ]\n\
+ #ifdef HAVE_ACETIME
+                                            " [--sort-real-time]"
+ #endif
+-                                                              "\n"
++                                                              " [--ahz hz]\n"
+ #ifdef HAVE_PAGING
+ "       [--show-paging] [--show-paging-avg]\n"
+ #endif

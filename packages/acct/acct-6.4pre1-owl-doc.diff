@@ -1,6 +1,6 @@
-diff -ur acct-6.3.5.orig/ac.1 acct-6.3.5/ac.1
---- acct-6.3.5.orig/ac.1	Tue Sep 30 03:41:30 1997
-+++ acct-6.3.5/ac.1	Sat Mar 23 23:19:53 2002
+diff -uNr acct-6.4-pre1.orig/ac.1 acct-6.4-pre1/ac.1
+--- acct-6.4-pre1.orig/ac.1	2003-06-05 16:46:12 +0000
++++ acct-6.4-pre1/ac.1	2006-05-19 08:07:39 +0000
 @@ -1,6 +1,6 @@
 -.TH AC 1 "1995 October 31"
 +.TH AC 1 "2002 March 23"
@@ -222,30 +222,9 @@ diff -ur acct-6.3.5.orig/ac.1 acct-6.3.5/ac.1
 +.BR accton (8),
  .BR init (8),
  .BR sa (8)
-diff -ur acct-6.3.5.orig/ac.c acct-6.3.5/ac.c
---- acct-6.3.5.orig/ac.c	Tue Oct 14 04:28:36 1997
-+++ acct-6.3.5/ac.c	Sat Mar 23 21:30:25 2002
-@@ -152,7 +152,7 @@
- 
- /* prototypes */
- 
--void main PARAMS((int, char *[]));
-+int main PARAMS((int, char *[]));
- void give_usage PARAMS((void));
- void do_statistics PARAMS((char *));
- void log_in PARAMS((struct utmp *));
-@@ -168,7 +168,7 @@
- 
- /* code */
- 
--void
-+int
- main (int argc, char *argv[])
- {
-   int c;
-diff -ur acct-6.3.5.orig/accounting.texi acct-6.3.5/accounting.texi
---- acct-6.3.5.orig/accounting.texi	Wed May 27 03:22:16 1998
-+++ acct-6.3.5/accounting.texi	Sun Mar 24 00:06:20 2002
+diff -uNr acct-6.4-pre1.orig/accounting.texi acct-6.4-pre1/accounting.texi
+--- acct-6.4-pre1.orig/accounting.texi	2006-01-07 22:46:25 +0000
++++ acct-6.4-pre1/accounting.texi	2006-05-19 08:27:45 +0000
 @@ -61,7 +61,7 @@
  @node Top, Preface, (dir), (dir)
  
@@ -255,7 +234,7 @@ diff -ur acct-6.3.5.orig/accounting.texi acct-6.3.5/accounting.texi
  information about any of the applications, see the chapter with the
  program's name.
  
-@@ -105,7 +105,7 @@
+@@ -106,7 +106,7 @@
  
  The accounting utilities were born.
  
@@ -264,7 +243,7 @@ diff -ur acct-6.3.5.orig/accounting.texi acct-6.3.5/accounting.texi
  administrator with useful information about system usage---connections,
  programs executed, and utilization of system resources.
  
-@@ -144,13 +144,12 @@
+@@ -145,13 +145,12 @@
  @item sa
  summarizes the information in the @code{acct} file into the
  @code{savacct} and @code{usracct} file.  It also
@@ -279,7 +258,7 @@ diff -ur acct-6.3.5.orig/accounting.texi acct-6.3.5/accounting.texi
  @end table
  
  For more detailed information on any of these programs, check the
-@@ -164,7 +163,7 @@
+@@ -165,7 +164,7 @@
  process accounting file might be @code{acct} or @code{pacct} on your
  system.  To find the actual locations and names of these files on your
  system, specify the @code{--help} flag to any of the programs in this
@@ -288,7 +267,7 @@ diff -ur acct-6.3.5.orig/accounting.texi acct-6.3.5/accounting.texi
  
  Regardless of the names and locations of files on your system, this
  manual will refer to the login accounting file as @code{wtmp} and the
-@@ -207,7 +206,7 @@
+@@ -242,7 +241,7 @@
  @item Scott Crosby <root@@hypercube.res.cmu.edu>
  Suggested idea behind @code{--sort-real-time} for @code{sa}.
  
@@ -297,7 +276,7 @@ diff -ur acct-6.3.5.orig/accounting.texi acct-6.3.5/accounting.texi
  Added code for @code{--ahz} flag in @code{lastcomm} and @code{sa}.
  
  @item Dirk Eddelbuettel <edd@@miles.econ.queensu.ca>
-@@ -239,7 +238,7 @@
+@@ -274,7 +273,7 @@
  Noticed install target was missing, and corrected a typo for prefix in
  Makefile.in.
  
@@ -306,7 +285,7 @@ diff -ur acct-6.3.5.orig/accounting.texi acct-6.3.5/accounting.texi
  Tracked down miscellaneous bugs in sa.c under Linux.  Added Debian
  package maintenance files.
  
-@@ -273,7 +272,7 @@
+@@ -311,7 +310,7 @@
  @code{wtmp} file can get really big, really fast.  You might
  want to trim it every once and a while.
  
@@ -315,7 +294,7 @@ diff -ur acct-6.3.5.orig/accounting.texi acct-6.3.5/accounting.texi
  smarter in its printing out of daily totals---it actually prints
  @emph{every} day, rather than skipping to the date of the next entry in
  the @code{wtmp} file.
-@@ -410,7 +409,7 @@
+@@ -448,7 +447,7 @@
  For no fault of @code{ac}'s, if two logins occur at the same time
  (within a second of each other), each @code{login} process will try to
  write an entry to the @code{wtmp} file.  With file system
@@ -324,7 +303,7 @@ diff -ur acct-6.3.5.orig/accounting.texi acct-6.3.5/accounting.texi
  wrong order.  GNU @code{ac} automatically compensates for this, but some
  other @code{ac}s may not...  beware.
  
-@@ -463,8 +462,8 @@
+@@ -501,8 +500,8 @@
  
  Some @code{ac}'s on System V machines (I've tried SGI Indigo & SGI Indy)
  forget to pay attention to the @code{ut_type} field in a @code{struct
@@ -335,7 +314,7 @@ diff -ur acct-6.3.5.orig/accounting.texi acct-6.3.5/accounting.texi
  
  @noindent
  @strong{TANGIBLE RESULT:} The amount of total time reported by the
-@@ -491,7 +490,6 @@
+@@ -529,7 +528,6 @@
  @section Flags
  
  @table @code
@@ -343,7 +322,7 @@ diff -ur acct-6.3.5.orig/accounting.texi acct-6.3.5/accounting.texi
  @item -V
  @itemx --version
  Print @code{accton}'s version number.
-@@ -500,7 +498,6 @@
+@@ -538,7 +536,6 @@
  @itemx --help
  Print @code{accton}'s usage string and default locations of system files
  to standard output.
@@ -351,11 +330,10 @@ diff -ur acct-6.3.5.orig/accounting.texi acct-6.3.5/accounting.texi
  @end table
  
  @c ----------------------------------------------------------------------
-@@ -771,15 +768,16 @@
- The output fields are labeled as follows:
+@@ -815,14 +812,16 @@
  
  @table @code
--
+ 
 -@item cpu
 -sum of system and user time in cpu seconds
 +@item cp
@@ -373,12 +351,12 @@ diff -ur acct-6.3.5.orig/accounting.texi acct-6.3.5/accounting.texi
  
  @item avio
  average number of I/O operations per execution
-@@ -788,23 +786,24 @@
+@@ -831,23 +830,24 @@
  total number of I/O operations
  
  @item k*sec
 -cpu storage integral (kilo-core seconds)
-+CPU-storage integral (kilo-core seconds)
++CPU storage integral (kilo-core seconds)
  
  @item u
 -user cpu time in cpu seconds
@@ -388,7 +366,7 @@ diff -ur acct-6.3.5.orig/accounting.texi acct-6.3.5/accounting.texi
  @item s
 -system time in cpu seconds
 -
-+system CPU time in minutes
++system time in minutes
 +(unless @code{-j} or @code{--print-seconds} is specified)
  @end table
  
@@ -405,7 +383,7 @@ diff -ur acct-6.3.5.orig/accounting.texi acct-6.3.5/accounting.texi
  
  @section Flags
  
-@@ -819,7 +818,6 @@
+@@ -862,7 +862,6 @@
  In short, all of these flags may not be available on your machine.
  
  @table @code
@@ -413,7 +391,7 @@ diff -ur acct-6.3.5.orig/accounting.texi acct-6.3.5/accounting.texi
  @item -a
  @itemx --list-all-names
  Force @code{sa} not to sort those command names with unprintable
-@@ -859,16 +857,16 @@
+@@ -902,16 +901,16 @@
  
  @item -k
  @itemx --sort-cpu-avmem
@@ -433,7 +411,7 @@ diff -ur acct-6.3.5.orig/accounting.texi acct-6.3.5/accounting.texi
  
  @item -m
  @itemx --user-summary
-@@ -893,7 +891,7 @@
+@@ -945,7 +944,7 @@
  @itemx --print-ratio
  For each entry, print the ratio of real time to the sum of system and
  user times.  If the sum of system and user times is too small to
@@ -442,7 +420,7 @@ diff -ur acct-6.3.5.orig/accounting.texi acct-6.3.5/accounting.texi
  
  @item -u
  @itemx --print-users
-@@ -914,13 +912,7 @@
+@@ -966,13 +965,7 @@
  information together unless this option is specified.
  
  @item --sort-real-time
@@ -457,7 +435,7 @@ diff -ur acct-6.3.5.orig/accounting.texi acct-6.3.5/accounting.texi
  
  @item --debug
  Print verbose internal information.
-@@ -933,6 +925,24 @@
+@@ -985,6 +978,24 @@
  @itemx --help
  Print @code{sa}'s usage string and default locations of system files to
  standard output.
@@ -482,7 +460,7 @@ diff -ur acct-6.3.5.orig/accounting.texi acct-6.3.5/accounting.texi
  @end table
  
  @strong{Note}: if more than one sorting option is specified, the list
-@@ -950,7 +960,7 @@
+@@ -1002,7 +1013,7 @@
  @code{--print-users} flags.  GNU @code{sa} pays attention to these flags
  if they are applicable.
  
@@ -491,9 +469,9 @@ diff -ur acct-6.3.5.orig/accounting.texi acct-6.3.5/accounting.texi
  
  The average memory use is stored as a short rather than a double, so we
  suffer from round-off errors.  GNU @code{sa} uses double the whole way
-@@ -960,9 +970,9 @@
+@@ -1116,9 +1127,9 @@
  @c ----------------------------------------------------------------------
- @c @node Index,  , sa, Top
+ @c @node Index,  , dump-acct, Top
  @c @unnumbered Index
 -@c 
 +@c
@@ -503,9 +481,9 @@ diff -ur acct-6.3.5.orig/accounting.texi acct-6.3.5/accounting.texi
  
  @contents
  
-diff -ur acct-6.3.5.orig/accton.8 acct-6.3.5/accton.8
---- acct-6.3.5.orig/accton.8	Tue Sep 30 03:41:38 1997
-+++ acct-6.3.5/accton.8	Sat Mar 23 23:28:11 2002
+diff -uNr acct-6.4-pre1.orig/accton.8 acct-6.4-pre1/accton.8
+--- acct-6.4-pre1.orig/accton.8	2003-06-05 16:46:12 +0000
++++ acct-6.4-pre1/accton.8	2006-05-19 08:33:11 +0000
 @@ -1,6 +1,6 @@
 -.TH ACCTON 8 "1995 October 31"
 +.TH ACCTON 8 "2002 March 23"
@@ -574,72 +552,9 @@ diff -ur acct-6.3.5.orig/accton.8 acct-6.3.5/accton.8
  .BR acct (5),
 -.BR ac (8)
 +.BR sa (8)
-diff -ur acct-6.3.5.orig/accton.c acct-6.3.5/accton.c
---- acct-6.3.5.orig/accton.c	Tue Oct 14 04:28:36 1997
-+++ acct-6.3.5/accton.c	Sat Mar 23 21:30:25 2002
-@@ -41,7 +41,7 @@
- 
- /* protos */
- 
--void main PARAMS((int argc, char *argv[]));
-+int main PARAMS((int argc, char *argv[]));
- void usage PARAMS((void));
- 
- 
-@@ -57,7 +57,7 @@
-   print_acct_file_location ();
- }
- 
--void
-+int
- main (int argc, char *argv[])
- {
-   int c;
-diff -ur acct-6.3.5.orig/dump-acct.c acct-6.3.5/dump-acct.c
---- acct-6.3.5.orig/dump-acct.c	Tue Oct 14 04:28:36 1997
-+++ acct-6.3.5/dump-acct.c	Sat Mar 23 21:30:25 2002
-@@ -20,7 +20,7 @@
- 				   records or the file-reading
- 				   algorithms. */
- 
--void main PARAMS((int argc, char *argv[]));
-+int main PARAMS((int argc, char *argv[]));
- 
- static
- void
-@@ -33,7 +33,7 @@
- }
- 
- 
--void
-+int
- main (int argc, char *argv[])
- {
-   int c;
-diff -ur acct-6.3.5.orig/dump-utmp.c acct-6.3.5/dump-utmp.c
---- acct-6.3.5.orig/dump-utmp.c	Tue Oct 14 04:28:36 1997
-+++ acct-6.3.5/dump-utmp.c	Sat Mar 23 21:30:25 2002
-@@ -20,7 +20,7 @@
- 				   records or the file-reading
- 				   algorithms. */
- 
--void main PARAMS((int argc, char *argv[]));
-+int main PARAMS((int argc, char *argv[]));
- 
- static
- void
-@@ -33,7 +33,7 @@
- }
- 
- 
--void
-+int
- main (int argc, char *argv[])
- {
-   int c;
-diff -ur acct-6.3.5.orig/last.1 acct-6.3.5/last.1
---- acct-6.3.5.orig/last.1	Mon Mar 23 09:20:13 1998
-+++ acct-6.3.5/last.1	Sat Mar 23 23:25:34 2002
+diff -uNr acct-6.4-pre1.orig/last.1 acct-6.4-pre1/last.1
+--- acct-6.4-pre1.orig/last.1	2003-06-05 16:46:12 +0000
++++ acct-6.4-pre1/last.1	2006-05-19 08:50:55 +0000
 @@ -1,13 +1,13 @@
  .\" Man page by Dirk Eddelbuettel
 -.TH LAST 1 "1997 August 19"
@@ -838,27 +753,15 @@ diff -ur acct-6.3.5.orig/last.1 acct-6.3.5/last.1
 +.BR accton (8),
 +.BR init (8),
 +.BR sa (8)
-diff -ur acct-6.3.5.orig/last.c acct-6.3.5/last.c
---- acct-6.3.5.orig/last.c	Mon Mar 23 08:37:06 1998
-+++ acct-6.3.5/last.c	Sat Mar 23 21:30:25 2002
-@@ -172,7 +172,7 @@
- 
- /* code */
- 
--void
-+int
- main (int argc, char *argv[])
- {
-   int c;
-diff -ur acct-6.3.5.orig/lastcomm.1 acct-6.3.5/lastcomm.1
---- acct-6.3.5.orig/lastcomm.1	Mon Mar 23 09:26:12 1998
-+++ acct-6.3.5/lastcomm.1	Sat Mar 23 23:34:54 2002
+diff -uNr acct-6.4-pre1.orig/lastcomm.1 acct-6.4-pre1/lastcomm.1
+--- acct-6.4-pre1.orig/lastcomm.1	2006-01-07 21:55:07 +0000
++++ acct-6.4-pre1/lastcomm.1	2006-05-19 09:01:39 +0000
 @@ -1,6 +1,6 @@
 -.TH LASTCOMM 1 "1995 October 31"
 +.TH LASTCOMM 1 "2002 March 23"
  .SH NAME
 -lastcomm \-  print out information about previously executed commands.
-+lastcomm \- print out information about previously executed commands
++lastcomm \- print out information about previously executed commands.
  .SH SYNOPSIS
  .hy 0
  .na
@@ -871,7 +774,7 @@ diff -ur acct-6.3.5.orig/lastcomm.1 acct-6.3.5/lastcomm.1
  .B \-\-strict-match
  ]
  .br
-@@ -50,12 +50,12 @@
+@@ -55,12 +55,12 @@
  [
  .B \-V
  |
@@ -886,7 +789,7 @@ diff -ur acct-6.3.5.orig/lastcomm.1 acct-6.3.5/lastcomm.1
  ]
  .ad b
  .hy 1
-@@ -63,31 +63,31 @@
+@@ -68,31 +68,31 @@
  .LP
  .B lastcomm
  prints out information about previously executed
@@ -934,7 +837,7 @@ diff -ur acct-6.3.5.orig/lastcomm.1 acct-6.3.5/lastcomm.1
  lastcomm \-\-strict-match a.out root tty0
  .ce 0
  .LP
-@@ -104,7 +104,6 @@
+@@ -109,7 +109,6 @@
     + the name of the user who ran the process
     + time the process exited
  .SH OPTIONS
@@ -942,7 +845,7 @@ diff -ur acct-6.3.5.orig/lastcomm.1 acct-6.3.5/lastcomm.1
  .TP
  .B \-\-strict-match
  Print only entries that match *all* of the arguments on the command
-@@ -112,25 +111,24 @@
+@@ -117,25 +116,24 @@
  .TP
  .BI \-\-user " name"
  List records for user with
@@ -976,15 +879,16 @@ diff -ur acct-6.3.5.orig/lastcomm.1 acct-6.3.5/lastcomm.1
  .TP
  .BI \-\-ahz " hz"
  Use this flag to tell the program what
-@@ -140,35 +138,34 @@
+@@ -145,7 +143,7 @@
  .I acct
  file created on another machine which has the same byte order and file
  format as your current machine, but has a different value for
 -.B AHZ.
 +.BR AHZ .
  .TP
- .B \-\-debug
- Print verbose internal information.
+ .B \-p, \-\-show\-paging
+ Print paging statistics
+@@ -155,28 +153,27 @@
  .TP
  .B \-V, \-\-version
  Print the version number of
@@ -1021,47 +925,9 @@ diff -ur acct-6.3.5.orig/lastcomm.1 acct-6.3.5/lastcomm.1
 +.BR acct (5),
 +.BR accton (8),
 +.BR sa (8)
-diff -ur acct-6.3.5.orig/lastcomm.c acct-6.3.5/lastcomm.c
---- acct-6.3.5.orig/lastcomm.c	Thu Apr  9 03:24:49 1998
-+++ acct-6.3.5/lastcomm.c	Sat Mar 23 21:30:25 2002
-@@ -81,7 +81,7 @@
- 
- /* protos */
- 
--void main PARAMS((int, char *[]));
-+int main PARAMS((int, char *[]));
- void give_usage PARAMS((void));
- void parse_entries PARAMS((void));
- char *devname PARAMS((long));
-@@ -91,7 +91,7 @@
- 
- /* code */
- 
--void
-+int
- main (int argc, char *argv[])
- {
-   int c;
-@@ -296,6 +296,7 @@
- 	  double ut = (double) rec->ac_utime;
- 	  double st = (double) rec->ac_stime;
- #endif
-+	  time_t tmp = rec->ac_btime;
- 	  
- 	  /* Make sure there are no unprintable characters in the
-              command name string. */
-@@ -352,7 +353,7 @@
- 	  printf (" %-8.8s %-8.8s %6.2f secs %-16.16s\n",
- 		  this_uid, this_dev,
- 		  ((ut + st) / (double) ahz),
--		  ctime (&rec->ac_btime));
-+		  ctime (&tmp));
- 	}
-     }
- }
-diff -ur acct-6.3.5.orig/sa.8 acct-6.3.5/sa.8
---- acct-6.3.5.orig/sa.8	Wed May 27 03:27:45 1998
-+++ acct-6.3.5/sa.8	Sat Mar 23 23:33:17 2002
+diff -uNr acct-6.4-pre1.orig/sa.8 acct-6.4-pre1/sa.8
+--- acct-6.4-pre1.orig/sa.8	2006-01-07 21:55:07 +0000
++++ acct-6.4-pre1/sa.8	2006-05-19 09:30:09 +0000
 @@ -1,6 +1,6 @@
 -.TH SA 8 "1997 August 19"
 +.TH SA 8 "2002 March 23"
@@ -1080,7 +946,7 @@ diff -ur acct-6.3.5.orig/sa.8 acct-6.3.5/sa.8
  ]
  .br
  [
-@@ -121,15 +121,12 @@
+@@ -132,15 +132,12 @@
  [
  .B \-h
  |
@@ -1097,7 +963,7 @@ diff -ur acct-6.3.5.orig/sa.8 acct-6.3.5/sa.8
  .br
  [
  .BI "\-\-other-savacct-file " filename
-@@ -137,104 +134,127 @@
+@@ -148,104 +145,127 @@
  .br
  [
  [
@@ -1169,7 +1035,7 @@ diff -ur acct-6.3.5.orig/sa.8 acct-6.3.5/sa.8
 - sum of system and user time in cpu seconds
 +.hy 0
 +.I cp
-+sum of system and user CPU time in minutes (unless
++ sum of system and user CPU time in minutes (unless
 +.B -j
 +or
 +.B --print-seconds
@@ -1197,7 +1063,7 @@ diff -ur acct-6.3.5.orig/sa.8 acct-6.3.5/sa.8
  .TP
  .I k*sec
 - cpu storage integral (kilo-core seconds)
-+CPU-storage integral (kilo-core seconds)
++CPU storage integral (kilo-core seconds)
  .TP
  .I u
 - user cpu time in cpu seconds
@@ -1267,7 +1133,7 @@ diff -ur acct-6.3.5.orig/sa.8 acct-6.3.5/sa.8
  .B struct acct
  doesn't have the `ac_mem' field, the installed
  version of
-@@ -244,12 +264,11 @@
+@@ -255,12 +275,11 @@
  .LP
  In short, all of these flags may not be available on your machine.
  .TP
@@ -1284,7 +1150,7 @@ diff -ur acct-6.3.5.orig/sa.8 acct-6.3.5/sa.8
  .I ***other
  group.
  .TP
-@@ -280,14 +299,14 @@
+@@ -291,14 +310,14 @@
  Instead of printing total minutes for each category, print seconds per call.
  .TP
  .B \-k, \-\-sort-cpu-avmem
@@ -1302,7 +1168,7 @@ diff -ur acct-6.3.5.orig/sa.8 acct-6.3.5/sa.8
  .TP
  .B \-m, \-\-user-summary
  Print the number of processes and number of CPU minutes on a
-@@ -303,81 +322,81 @@
+@@ -321,81 +340,81 @@
  Merge the summarized accounting data into the summary files
  .I savacct
  and
@@ -1415,7 +1281,7 @@ diff -ur acct-6.3.5.orig/sa.8 acct-6.3.5/sa.8
  .BR acct (5)
  (or
  .BR pacct (5))
-@@ -388,22 +407,20 @@
+@@ -406,22 +425,20 @@
  .TP
  .I usracct
  A summary of system process accounting sorted by user ID.
@@ -1444,78 +1310,3 @@ diff -ur acct-6.3.5.orig/sa.8 acct-6.3.5/sa.8
  .BR acct (5),
 -.BR ac (8)
 +.BR accton (8)
-diff -ur acct-6.3.5.orig/sa.c acct-6.3.5/sa.c
---- acct-6.3.5.orig/sa.c	Mon Mar 23 09:06:34 1998
-+++ acct-6.3.5/sa.c	Sat Mar 23 22:34:45 2002
-@@ -21,6 +21,8 @@
- 
- #include "config.h"
- 
-+#define ACETIME_AHZ
-+
- /* AIX requires this to be the first thing in the file.  */
- #ifdef __GNUC__
- # define alloca __builtin_alloca
-@@ -238,7 +240,7 @@
- 
- /* prototypes */
- 
--void main PARAMS((int, char *[]));
-+int main PARAMS((int, char *[]));
- void give_usage PARAMS((void));
- void write_savacct_file PARAMS((char *));
- void write_usracct_file PARAMS((char *));
-@@ -262,7 +264,7 @@
- 
- /* code */
- 
--void
-+int
- main (int argc, char *argv[])
- {
-   int c;
-@@ -685,7 +687,7 @@
- #ifdef HAVE_ACETIME
-                                            " [--sort-real-time]"
- #endif
--                                                              "\n\
-+                                                              " [--ahz hz]\n\
- \n\
- ";
-   
-@@ -1129,17 +1131,6 @@
- # endif
- #endif
- 
--#ifdef HAVE_ACETIME
--# ifdef ACETIME_COMPT
--      double et = comp_t_2_double (rec->ac_etime);
--# else
--      double et = (double) rec->ac_etime;
--# endif
--# ifdef ACETIME_AHZ
--      et /= (double) ahz;
--# endif
--#endif
--
- #ifdef HAVE_ACIO
- # ifdef ACIO_COMPT
-       double di = comp_t_2_double (rec->ac_io) / (double) ahz;
-@@ -1153,6 +1144,17 @@
-       double mu = PAGES_TO_KB (comp_t_2_double (rec->ac_mem));
- # else
-       double mu = PAGES_TO_KB (rec->ac_mem);
-+# endif
-+#endif
-+
-+#ifdef HAVE_ACETIME
-+# ifdef ACETIME_COMPT
-+      double et = comp_t_2_double (rec->ac_etime);
-+# else
-+      double et = (double) rec->ac_etime;
-+# endif
-+# ifdef ACETIME_AHZ
-+      et /= (double) ahz;
- # endif
- #endif
- 
