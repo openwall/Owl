@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.67 2006/04/04 14:34:42 ldv Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.68 2006/05/19 13:28:32 galaxy Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.29
+Version: 0.30
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -87,7 +87,7 @@ ln -s ../rc.local etc/rc.d/rc2.d/S99local
 ln -s ../rc.local etc/rc.d/rc3.d/S99local
 ln -s ../rc.local etc/rc.d/rc5.d/S99local
 
-touch var/log/wtmp var/run/utmp
+touch var/log/wtmp var/run/utmp var/log/boot
 
 mkdir -p var/run/netreport
 
@@ -162,9 +162,16 @@ fi
 %_mandir/man1/ipcalc.1*
 %ghost %attr(0664,root,utmp) /var/log/wtmp
 %ghost %attr(0664,root,utmp) /var/run/utmp
+%ghost %attr(0600,root,root) /var/log/boot
 %doc redhat
 
 %changelog
+* Fri May 19 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.30-owl1
+- Added logging to rc.sysinit (the log file is /var/log/boot).
+- Adjusted the grep pattern to got /proc from /etc/fstab more
+precisely.
+- Added /var/log/boot as a %%ghost to the file list.
+
 * Mon Jan 23 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.29-owl1
 - Changed rc.sysinit to treat /.Owl-CD-ROM the same way as /fastboot
 but do not try to remove it.

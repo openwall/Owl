@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.22 2006/01/24 13:12:46 solar Exp $
+# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.23 2006/05/19 13:28:32 galaxy Exp $
 
 repair_fs()
 {
@@ -31,11 +31,20 @@ export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 umask 077
 ulimit -Sc 0
 
+# Re-run ourselves through a logger.
+case " $* " in
+	*" nolog "*)
+		;;
+	*)
+		exec /sbin/logsave -as /var/log/boot "$0" $* nolog
+		;;
+esac
+
 # Mount /proc early.
 PROCFS=no
-if grep -Eq '^[^[:space:]]+[[:space:]]+/proc[[:space:]]' /etc/fstab; then
-	mount -n /proc
-	PROCFS=yes
+if grep -Eq '^[[:space:]]*[^[:space:]]+[[:space:]]+/proc[[:space:]]+proc[[:space:]]' /etc/fstab;
+then
+	mount -n /proc && PROCFS=yes
 fi
 
 # Setup a RAM disk if we're booting off an Owl CD-ROM.
