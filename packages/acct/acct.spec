@@ -1,12 +1,12 @@
-# $Owl: Owl/packages/acct/acct.spec,v 1.31 2006/05/19 11:46:31 galaxy Exp $
+# $Owl: Owl/packages/acct/acct.spec,v 1.32 2006/05/19 13:55:23 galaxy Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
-Version: 6.4pre1
-Release: owl1
+Version: 6.4
+Release: owl0.1
 License: GPL
 Group: Applications/System
-Source0: http://www.physik3.uni-rostock.de/tim/kernel/utils/acct/%name-6.4-pre1.tar.gz
+Source0: http://www.physik3.uni-rostock.de/tim/kernel/utils/acct/%name-%version-pre1.tar.gz
 Source1: dump-acct.8
 Source2: dump-utmp.8
 Source3: acct.init
@@ -29,7 +29,7 @@ The accton command turns process accounting on or off.  The sa command
 summarizes information about previously executed commands.
 
 %prep
-%setup -q -n %name-6.4-pre1
+%setup -q -n %name-%version-pre1
 rm accounting.info
 %patch0 -p1
 %patch1 -p1
@@ -108,7 +108,7 @@ fi
 %_infodir/*
 
 %changelog
-* Fri May 19 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.4pre1-owl1
+* Fri May 19 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.4-owl0.1
 - Updated to 6.4-pre1.
 - Re-generated patches.
 
