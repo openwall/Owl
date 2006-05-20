@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/iptables/iptables.spec,v 1.23 2006/03/03 15:30:29 ldv Exp $
+# $Owl: Owl/packages/iptables/iptables.spec,v 1.24 2006/05/20 22:42:58 galaxy Exp $
 
 %define BUILD_STATIC 0
 %define BUILD_IPV6 0
@@ -6,7 +6,7 @@
 Summary: Tools for managing Netfilter/iptables packet filtering rules.
 Name: iptables
 Version: 1.3.5
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 URL: http://www.netfilter.org/projects/iptables/
@@ -19,6 +19,7 @@ Patch2: iptables-1.3.5-alt-modprobe.diff
 Patch3: iptables-1.3.5-alt-iptc-defs.diff
 Patch4: iptables-1.3.5-rh-alt-eperm.diff
 Patch5: iptables-1.3.5-owl-warnings.diff
+Patch6: iptables-1.3.5-owl-man.diff
 PreReq: chkconfig
 Requires: coreutils, grep, mktemp
 BuildRequires: kernel-headers >= 2.4.4
@@ -54,6 +55,7 @@ iptables-based filtering is used on Linux 2.4.x and newer kernels.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 %__make all \
@@ -149,6 +151,11 @@ fi
 %endif
 
 %changelog
+* Sat May 20 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.3.5-owl2
+- Fixed broken logic for unsupported extensions in extensions/Makefile.
+From now on, all unsupported target/matches are marked as such.
+- Introduced section PATCH-O-MATIC in iptables.8/ip6tables.8.
+
 * Tue Feb 28 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.3.5-owl1
 - Updated to 1.3.5.
 - Applied upstream fixes from svn snapshot 6466.

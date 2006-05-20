@@ -1,0 +1,157 @@
+--- iptables-1.3.5.orig/extensions/Makefile	2006-02-01 12:14:31 +0000
++++ iptables-1.3.5/extensions/Makefile	2006-05-20 19:26:30 +0000
+@@ -20,8 +20,8 @@
+ PF6_EXT_MAN_ALL_MATCHES:=$(foreach T,$(PF6_EXT_ALL_SLIB),$(shell test -f extensions/libip6t_$(T).man && grep -q register_match6 extensions/libip6t_$(T).c  && echo $(T)))
+ PF6_EXT_MAN_ALL_TARGETS:=$(foreach T,$(PF6_EXT_ALL_SLIB),$(shell test -f extensions/libip6t_$(T).man && grep -q register_target6 extensions/libip6t_$(T).c && echo $(T)))
+ 
+-PF_EXT_MAN_MATCHES:=$(filter $(PF_EXT_ALL_SLIB), $(PF_EXT_MAN_ALL_MATCHES))
+-PF_EXT_MAN_TARGETS:=$(filter $(PF_EXT_ALL_SLIB), $(PF_EXT_MAN_ALL_TARGETS))
++PF_EXT_MAN_MATCHES:=$(filter $(PF_EXT_SLIB) $(PF_EXT_SLIB_OPTS), $(PF_EXT_MAN_ALL_MATCHES))
++PF_EXT_MAN_TARGETS:=$(filter $(PF_EXT_SLIB) $(PF_EXT_SLIB_OPTS), $(PF_EXT_MAN_ALL_TARGETS))
+ PF_EXT_MAN_EXTRA_MATCHES:=$(filter-out $(PF_EXT_MAN_MATCHES), $(PF_EXT_MAN_ALL_MATCHES))
+ PF_EXT_MAN_EXTRA_TARGETS:=$(filter-out $(PF_EXT_MAN_TARGETS), $(PF_EXT_MAN_ALL_TARGETS))
+ PF6_EXT_MAN_MATCHES:=$(filter $(PF6_EXT_ALL_SLIB), $(PF6_EXT_MAN_ALL_MATCHES))
+@@ -104,59 +104,47 @@
+  
+ EXTRAS += extensions/libipt_targets.man
+ extensions/libipt_targets.man: $(patsubst %,extensions/libipt_%.man,$(PF_EXT_MAN_ALL_TARGETS))
+-	@for ext in $(PF_EXT_MAN_TARGETS); do \
+-	    echo ".SS $$ext" ;\
++	@for ext in $(sort $(PF_EXT_MAN_TARGETS) $(PF_EXT_MAN_EXTRA_TARGETS)); do \
++	    echo -n ".SS $$ext" ;\
++	    if [ -n "$$(echo ' $(PF_EXT_MAN_EXTRA_TARGETS) ' | sed -n "/[[:space:]]$$ext[[:space:]]/p")" ]; then \
++		echo -n " (not supported, see PATCH-O-MATIC)";\
++	    fi;\
++	    echo ;\
+ 	    cat extensions/libipt_$$ext.man ;\
+ 	done >extensions/libipt_targets.man
+-	@if [ -n "$(PF_EXT_MAN_EXTRA_TARGETS)" ]; then \
+-	    extra=$(PF_EXT_MAN_EXTRA_TARGETS) ;\
+-	    for ext in $${extra:-""}; do \
+-		echo ".SS $$ext (not supported, see Patch-O-Matic)" ;\
+-		cat extensions/libipt_$$ext.man ;\
+-	    done ;\
+-       	fi >>extensions/libipt_targets.man
+ 
+ EXTRAS += extensions/libipt_matches.man
+ extensions/libipt_matches.man: $(patsubst %,extensions/libipt_%.man,$(PF_EXT_MAN_ALL_MATCHES))
+-	@for ext in $(PF_EXT_MAN_MATCHES); do \
+-	    echo ".SS $$ext" ;\
++	@for ext in $(sort $(PF_EXT_MAN_MATCHES) $(PF_EXT_MAN_EXTRA_MATCHES)); do \
++	    echo -n ".SS $$ext" ;\
++	    if [ -n "$$(echo ' $(PF_EXT_MAN_EXTRA_MATCHES) ' | sed -n "/[[:space:]]$$ext[[:space:]]/p")" ]; then \
++		echo -n " (not supported, see PATCH-O-MATIC)";\
++	    fi;\
++	    echo ;\
+ 	    cat extensions/libipt_$$ext.man ;\
+ 	done >extensions/libipt_matches.man
+-	@if [ -n "$(PF_EXT_MAN_EXTRA_MATCHES)" ]; then \
+-	    extra=$(PF_EXT_MAN_EXTRA_MATCHES) ;\
+-	    for ext in $${extra:-""}; do \
+-		echo ".SS $$ext (not supported, see Patch-O-Matic)" ;\
+-		cat extensions/libipt_$$ext.man ;\
+-	    done ;\
+-       	fi >>extensions/libipt_matches.man
+ 
+ EXTRAS += extensions/libip6t_targets.man
+ extensions/libip6t_targets.man: $(patsubst %, extensions/libip6t_%.man, $(PF6_EXT_MAN_ALL_TARGETS))
+-	@for ext in $(PF6_EXT_MAN_TARGETS); do \
+-	    echo ".SS $$ext" ;\
++	@for ext in $(sort $(PF6_EXT_MAN_TARGETS) $(PF6_EXT_MAN_EXTRA_TARGETS)); do \
++	    echo -n ".SS $$ext" ;\
++	    if [ -n "$$(echo ' $(PF6_EXT_MAN_EXTRA_TARGETS) ' | sed -n "/[[:space:]]$$ext[[:space:]]/p")" ]; then \
++		echo -n " (not supported, see PATCH-O-MATIC)"; \
++	    fi; \
++	    echo ;\
+ 	    cat extensions/libip6t_$$ext.man ;\
+ 	done >extensions/libip6t_targets.man
+-	@if [ -n "$(PF6_EXT_MAN_EXTRA_TARGETS)" ]; then \
+-	    extra=$(PF6_EXT_MAN_EXTRA_TARGETS) ;\
+-	    for ext in $${extra:-""}; do \
+-		echo ".SS $$ext (not supported, see Patch-O-Matic)" ;\
+-		cat extensions/libip6t_$$ext.man ;\
+-	    done ;\
+-       	fi >>extensions/libip6t_targets.man
+ 
+ EXTRAS += extensions/libip6t_matches.man
+ extensions/libip6t_matches.man: $(patsubst %, extensions/libip6t_%.man, $(PF6_EXT_MAN_ALL_MATCHES))
+-	@for ext in $(PF6_EXT_MAN_MATCHES); do \
+-	    echo ".SS $$ext" ;\
++	@for ext in $(sort $(PF6_EXT_MAN_MATCHES) $(PF6_EXT_MAN_EXTRA_TARGET)); do \
++	    echo -n ".SS $$ext" ;\
++	    if [ -n "$$(echo ' $(PF6_EXT_MAN_EXTRA_MATCHES) ' | sed -n "/[[:space:]]$$ext[[:space:]]/p")" ]; then \
++		echo -n " (not supported, see PATCH-O-MATIC)"; \
++	    fi; \
++	    echo ;\
+ 	    cat extensions/libip6t_$$ext.man ;\
+ 	done >extensions/libip6t_matches.man
+-	@if [ -n "$(PF6_EXT_MAN_EXTRA_MATCHES)" ]; then \
+-	    extra=$(PF6_EXT_MAN_EXTRA_MATCHES) ;\
+-	    for ext in $${extra:-""}; do \
+-		echo ".SS $$ext (not supported, see Patch-O-Matic)" ;\
+-		cat extensions/libip6t_$$ext.man ;\
+-	    done ;\
+-       	fi >>extensions/libip6t_matches.man
+ 
+ $(DESTDIR)$(LIBDIR)/iptables/libipt_%.so: extensions/libipt_%.so
+ 	@[ -d $(DESTDIR)$(LIBDIR)/iptables ] || mkdir -p $(DESTDIR)$(LIBDIR)/iptables
+--- iptables-1.3.5.orig/Makefile	2006-02-01 12:14:38 +0000
++++ iptables-1.3.5/Makefile	2006-05-20 19:21:18 +0000
+@@ -188,10 +188,10 @@
+ 	@-$(CC) -M -MG $(CFLAGS) $< | sed -e 's@^.*\.o:@$*.d $*.o:@' > $@
+ 
+ iptables.8: iptables.8.in extensions/libipt_matches.man extensions/libipt_targets.man
+-	sed -e '/@MATCH@/ r extensions/libipt_matches.man' -e '/@TARGET@/ r extensions/libipt_targets.man' iptables.8.in >iptables.8
++	sed -e '/@MATCH@/ r extensions/libipt_matches.man' -e '/@TARGET@/ r extensions/libipt_targets.man' -e '/@PATCH-O-MATIC@/ r p-o-m.man' iptables.8.in >iptables.8
+ 
+ ip6tables.8: ip6tables.8.in extensions/libip6t_matches.man extensions/libip6t_targets.man
+-	sed -e '/@MATCH@/ r extensions/libip6t_matches.man' -e '/@TARGET@/ r extensions/libip6t_targets.man' ip6tables.8.in >ip6tables.8
++	sed -e '/@MATCH@/ r extensions/libip6t_matches.man' -e '/@TARGET@/ r extensions/libip6t_targets.man' -e '/@PATCH-O-MATIC@/ r p-o-m.man' ip6tables.8.in >ip6tables.8
+ 
+ # Development Targets
+ .PHONY: install-devel-man3
+--- iptables-1.3.5.orig/p-o-m.man	1970-01-01 00:00:00 +0000
++++ iptables-1.3.5/p-o-m.man	2006-05-20 19:24:28 +0000
+@@ -0,0 +1,20 @@
++.SH PATCH-O-MATIC
++Netfilter developers distribute a set of patches that they package so
++that it can be used by their `patch-o-matic' (or `p-o-m') system.
++p-o-m is a script that guides you through the process of choosing/selecting
++the patches you want to apply, and automatically patch the kernel for you.
++
++The
++.IR MATCHES
++and
++.IR TARGETS
++marked as `not supported' require patched kernel headers at compile
++time of the iptables package.  If you need the functionality provided by
++one of the unsupported
++.IR MATCHES
++or
++.IR TARGETS ,
++patch your kernel with the p-o-m script and recompile the iptables package.
++
++For more information please visit the official web page of patch-o-matic:
++.BR "http://www.netfilter.org/projects/patch-o-matic/" .
+diff -uNr iptables-1.3.5.orig/ip6tables.8.in iptables-1.3.5/ip6tables.8.in
+--- iptables-1.3.5.orig/ip6tables.8.in	2006-01-30 08:41:00 +0000
++++ iptables-1.3.5/ip6tables.8.in	2006-05-20 20:16:22 +0000
+@@ -450,6 +450,7 @@
+ .\" -M -L
+ .\" .br
+ There are several other changes in ip6tables.
++@PATCH-O-MATIC@
+ .SH SEE ALSO
+ .BR ip6tables-save (8),
+ .BR ip6tables-restore(8),
+diff -uNr iptables-1.3.5.orig/iptables.8.in iptables-1.3.5/iptables.8.in
+--- iptables-1.3.5.orig/iptables.8.in	2005-11-22 22:21:39 +0000
++++ iptables-1.3.5/iptables.8.in	2006-05-20 20:16:05 +0000
+@@ -456,6 +456,7 @@
+  -M -L
+ .fi
+ There are several other changes in iptables.
++@PATCH-O-MATIC@
+ .SH SEE ALSO
+ .BR iptables-save (8),
+ .BR iptables-restore (8),
