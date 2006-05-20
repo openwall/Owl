@@ -1,0 +1,20 @@
+--- perl-5.8.8.orig/ext/threads/t/join.t	2005-09-18 22:47:26 +0000
++++ perl-5.8.8/ext/threads/t/join.t	2006-05-20 20:39:28 +0000
+@@ -98,7 +98,7 @@
+ }
+ 
+ # We parse ps output so this is OS-dependent.
+-if ($^O eq 'linux') {
++if ($^O eq 'linux' and -l "/proc/self/exe") {
+   # First modify $0 in a subthread.
+   print "# mainthread: \$0 = $0\n";
+   threads->new( sub {
+@@ -130,7 +130,7 @@
+     skip("\$0 check: opening 'ps -f |' failed: $!");
+   }
+ } else {
+-  skip("\$0 check: only on Linux");
++  skip("\$0 check: only on Linux with mounted /proc");
+ }
+ 
+ {

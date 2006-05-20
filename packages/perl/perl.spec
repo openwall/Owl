@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.50 2006/05/07 04:05:23 galaxy Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.51 2006/05/20 22:10:08 galaxy Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -27,7 +27,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.8.8
-Release: owl1
+Release: owl2
 Epoch: 4
 License: GPL
 Group: Development/Languages
@@ -36,6 +36,7 @@ Patch0: perl-5.8.3-owl-disable-suidperl.diff
 Patch1: perl-5.8.8-owl-tmp.diff
 Patch2: perl-5.8.3-owl-vitmp.diff
 Patch3: perl-5.8.8-owl-CPAN-tools.diff
+Patch4: perl-5.8.8-owl-tests-proc.diff
 %if %KERNEL_CONFIG_HARDEN_SHM
 Patch10: perl-5.8.8-owl-tests-shm.diff
 %endif
@@ -101,6 +102,7 @@ introduce security holes.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 %if %KERNEL_CONFIG_HARDEN_SHM
 %patch10 -p1
 %endif
@@ -287,6 +289,10 @@ chmod -R u+w %buildroot
 %endif
 
 %changelog
+* Sun May 21 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4:5.8.8-owl2
+- Fixed 'make test' in chroot without the /proc filesystem mounted.
+Thanks to ldv@ for discovering this issue.
+
 * Sat May 06 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4:5.8.8-owl1
 - Fixed perlio.c to use TMPDIR.
 - Enabled tests.
