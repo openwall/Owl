@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.20 2006/04/04 00:15:07 ldv Exp $
+# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.21 2006/05/21 00:20:02 ldv Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
-Version: 5.94
+Version: 5.95
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -229,6 +229,9 @@ fi
 %doc ChangeLog.bz2 NEWS.bz2 THANKS.bz2 AUTHORS README TODO
 
 %changelog
+* Sun May 21 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 5.95-owl1
+- Updated to 5.95.
+
 * Mon Feb 20 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 5.94-owl1
 - Updated to 5.94.
 
