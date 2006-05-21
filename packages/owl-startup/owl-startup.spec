@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.68 2006/05/19 13:28:32 galaxy Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.69 2006/05/21 01:38:46 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -168,8 +168,8 @@ fi
 %changelog
 * Fri May 19 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.30-owl1
 - Added logging to rc.sysinit (the log file is /var/log/boot).
-- Adjusted the grep pattern to got /proc from /etc/fstab more
-precisely.
+- Adjusted the grep pattern used to determine whether /etc/fstab contains
+/proc to match the behavior of mount(8) more closely.
 - Added /var/log/boot as a %%ghost to the file list.
 
 * Mon Jan 23 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.29-owl1
