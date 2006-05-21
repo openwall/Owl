@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.33 2006/04/04 00:20:01 ldv Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.34 2006/05/21 00:06:50 ldv Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
 Version: 1.4.2.2
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Cryptography
 URL: http://www.gnupg.org
@@ -17,7 +17,7 @@ Patch5: gnupg-1.4.2-rh-keygen.diff
 Patch6: gnupg-1.4.2.2-alt-checks.diff
 PreReq: /sbin/install-info
 Provides: gpg, openpgp
-BuildRequires: zlib-devel, bzip2-devel, texinfo, readline-devel
+BuildRequires: zlib-devel, bzip2-devel, texinfo, readline-devel >= 0:5.1
 BuildRequires: rpm-build >= 0:4
 BuildRoot: /override/%name-%version
 
@@ -98,6 +98,9 @@ fi
 %exclude %_datadir/gnupg/faq.html
 
 %changelog
+* Sun May 21 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.2.2-owl2
+- Rebuilt with libreadline.so.5.
+
 * Sat Mar 11 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.2.2-owl1
 - Updated to 1.4.2.2.
 

@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/lftp/lftp.spec,v 1.31 2006/04/30 23:19:13 galaxy Exp $
+# $Owl: Owl/packages/lftp/lftp.spec,v 1.32 2006/05/21 00:06:51 ldv Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
 Version: 3.4.6
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Internet
 URL: http://lftp.yar.ru
@@ -13,7 +13,7 @@ Patch0: lftp-3.4.4-owl-n-option.diff
 Patch1: lftp-3.4.6-alt-Makefile.diff
 Prefix: %_prefix
 Requires: less
-BuildRequires: openssl-devel >= 0.9.7g-owl1, readline-devel >= 4.3
+BuildRequires: openssl-devel >= 0.9.7g-owl1, readline-devel >= 0:5.1
 BuildRequires: ncurses-devel, gettext
 BuildRoot: /override/%name-%version
 
@@ -89,6 +89,9 @@ fi
 %_datadir/locale/*/LC_MESSAGES/lftp.mo
 
 %changelog
+* Sun May 21 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.4.6-owl2
+- Rebuilt with libreadline.so.5.
+
 * Sat Apr 29 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.4.6-owl1
 - Updated to 3.4.6.
 

@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/gdb/gdb.spec,v 1.24 2006/04/04 00:15:07 ldv Exp $
+# $Owl: Owl/packages/gdb/gdb.spec,v 1.25 2006/05/21 00:06:50 ldv Exp $
 
 Summary: A GNU source-level debugger for C, C++ and Fortran.
 Name: gdb
 Version: 6.3
-Release: owl1
+Release: owl2
 License: GPL
 Group: Development/Debuggers
 URL: http://www.gnu.org/software/gdb/
@@ -21,7 +21,7 @@ Patch9: gdb-6.3-cvs-20050526-bfd.diff
 Patch10: gdb-6.3-gentoo-alt-gdbinit.diff
 PreReq: /sbin/install-info
 BuildRequires: ncurses-devel >= 5.0
-BuildRequires: readline-devel >= 4.3
+BuildRequires: readline-devel >= 0:5.1
 BuildRequires: libtool, texinfo
 BuildRoot: /override/%name-%version
 
@@ -109,6 +109,9 @@ fi
 %_infodir/stabs.info*
 
 %changelog
+* Sun May 21 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 6.3-owl2
+- Rebuilt with libreadline.so.5.
+
 * Sun May 29 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 6.3-owl1
 - Updated to 6.3
 - Imported a bunch of patches from Debian's gdb-6.3-5 package.
