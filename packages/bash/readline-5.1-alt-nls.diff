@@ -22,7 +22,7 @@ diff -upk.orig readline-5.1.orig/nls.c readline-5.1/nls.c
     value, and go into eight-bit mode if it's not C or POSIX. */
  #if defined (HAVE_SETLOCALE)
 -  char *lspec, *t;
-+  char *t;
++  const char *t;
  
 -  /* Set the LC_CTYPE locale category from environment variables. */
 -  lspec = _rl_get_locale_var ("LC_CTYPE");
