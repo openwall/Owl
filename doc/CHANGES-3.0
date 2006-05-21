@@ -19,6 +19,9 @@ Updated to 5.95.
 		Owl/build/installorder.conf
 Updated readline to 5.1 patchlevel 4.
 
+2006/05/19	Package: acct
+Updated to 6.4-pre1.
+
 2006/05/08 -
 2006/05/10	Package: john
 Bitslice DES code for x86 with SSE2 has been added for better performance
@@ -121,4 +124,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.25 2006/05/21 00:21:08 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.26 2006/05/21 01:09:38 solar Exp $
