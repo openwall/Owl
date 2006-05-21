@@ -27,7 +27,7 @@ int pam_userpass_conv(int num_msg, const struct pam_message **msg,
 		return PAM_CONV_ERR;
 
 	prompt = (pamc_bp_t)msg[0]->msg;
-	input = PAM_BP_RDATA(prompt);
+	input = (const char *)PAM_BP_RDATA(prompt);
 
 	if (PAM_BP_RCONTROL(prompt) != PAM_BPC_SELECT ||
 	    strncmp(input, USERPASS_AGENT_ID "/", USERPASS_AGENT_ID_LENGTH + 1))
@@ -46,7 +46,7 @@ int pam_userpass_conv(int num_msg, const struct pam_message **msg,
 	prompt = NULL;
 	PAM_BP_RENEW(&prompt, PAM_BPC_DONE,
 		strlen(userpass->user) + 1 + strlen(userpass->pass));
-	output = PAM_BP_WDATA(prompt);
+	output = (char *)PAM_BP_WDATA(prompt);
 
 	strcpy(output, userpass->user);
 	output += strlen(output) + 1;

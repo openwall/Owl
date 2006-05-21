@@ -40,7 +40,7 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags,
 	prompt = NULL;
 	PAM_BP_RENEW(&prompt, PAM_BPC_SELECT,
 		USERPASS_AGENT_ID_LENGTH + 1 + 1 + (user ? strlen(user) : 0));
-	output = PAM_BP_WDATA(prompt);
+	output = (char *)PAM_BP_WDATA(prompt);
 
 	memcpy(output, USERPASS_AGENT_ID "/", USERPASS_AGENT_ID_LENGTH + 1);
 	output += USERPASS_AGENT_ID_LENGTH + 1;
@@ -67,7 +67,7 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags,
 		return PAM_AUTH_ERR;
 
 	prompt = (pamc_bp_t)resp->resp;
-	input = PAM_BP_RDATA(prompt);
+	input = (const char *)PAM_BP_RDATA(prompt);
 
 	if (PAM_BP_RCONTROL(prompt) == PAM_BPC_DONE &&
 	    strlen(input) + 1 <= PAM_BP_LENGTH(prompt)) {
