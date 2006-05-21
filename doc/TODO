@@ -380,13 +380,6 @@ package signature checking.
 Update to the latest stable 4.3.x or 4.4.x.
 
 
-	readline.
-
-[PRIORITY: medium]
-[ASSIGNED: ldv@]
-Update to latest release for FC4+ compatibility.
-
-
 	shadow-utils.
 
 [PRIORITY: low]
@@ -492,4 +485,4 @@ Fix installworld.sh to always pick the latest version of a package when
 multiple versions are available (please refer to the appropriate XXX
 comment in the script).
 
-$Owl: Owl/doc/TODO,v 1.165 2006/05/07 03:10:22 galaxy Exp $
+$Owl: Owl/doc/TODO,v 1.166 2006/05/21 00:07:31 ldv Exp $
