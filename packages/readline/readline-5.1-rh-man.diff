@@ -1,6 +1,6 @@
---- readline-4.1/doc/readline.3.outdated	Tue Jan 30 15:48:32 2001
-+++ readline-4.1/doc/readline.3	Tue Jan 30 15:51:52 2001
-@@ -1203,3 +1204,7 @@
+--- readline-5.1/doc/readline.3.orig	2005-09-20 18:53:36 +0000
++++ readline-5.1/doc/readline.3	2005-09-20 18:53:36 +0000
+@@ -1298,3 +1298,7 @@ this manual page should be directed to
  .SH BUGS
  .PP
  It's too big and too slow.

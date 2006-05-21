@@ -1,0 +1,24 @@
+# Include stdio.h in readline.h and history.h; rltypedefs.h uses FILE anyway.
+
+diff -upk.orig readline-5.1.orig/history.h readline-5.1/history.h
+--- readline-5.1.orig/history.h	2003-07-31 12:38:44 +0000
++++ readline-5.1/history.h	2005-12-28 23:49:42 +0000
+@@ -32,6 +32,7 @@ extern "C" {
+ #  include "rlstdc.h"
+ #  include "rltypedefs.h"
+ #else
++#  include <stdio.h>
+ #  include <readline/rlstdc.h>
+ #  include <readline/rltypedefs.h>
+ #endif
+diff -upk.orig readline-5.1.orig/readline.h readline-5.1/readline.h
+--- readline-5.1.orig/readline.h	2005-11-13 01:47:04 +0000
++++ readline-5.1/readline.h	2005-12-28 23:49:22 +0000
+@@ -33,6 +33,7 @@ extern "C" {
+ #  include "keymaps.h"
+ #  include "tilde.h"
+ #else
++#  include <stdio.h>
+ #  include <readline/rlstdc.h>
+ #  include <readline/rltypedefs.h>
+ #  include <readline/keymaps.h>

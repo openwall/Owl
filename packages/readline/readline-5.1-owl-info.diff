@@ -1,0 +1,36 @@
+diff -upk.orig readline-5.1.orig/doc/history.texi readline-5.1/doc/history.texi
+--- readline-5.1.orig/doc/history.texi	2004-07-27 13:28:59 +0000
++++ readline-5.1/doc/history.texi	2006-05-20 21:58:46 +0000
+@@ -36,7 +36,7 @@ Software Foundation raise funds for GNU 
+ 
+ @dircategory Libraries
+ @direntry
+-* History: (history).       The GNU history library API.
++* History: (history).                           The GNU history library API.
+ @end direntry
+ 
+ @titlepage
+diff -upk.orig readline-5.1.orig/doc/rlman.texi readline-5.1/doc/rlman.texi
+--- readline-5.1.orig/doc/rlman.texi	2004-07-27 13:29:11 +0000
++++ readline-5.1/doc/rlman.texi	2006-05-20 21:58:58 +0000
+@@ -36,7 +36,7 @@ Software Foundation raise funds for GNU 
+ 
+ @dircategory Libraries
+ @direntry
+-* Readline: (readline).       The GNU readline library API.
++* Readline: (readline).                         The GNU readline library API.
+ @end direntry
+ 
+ @titlepage  
+diff -upk.orig readline-5.1.orig/doc/rluserman.texi readline-5.1/doc/rluserman.texi
+--- readline-5.1.orig/doc/rluserman.texi	2005-04-12 18:39:00 +0000
++++ readline-5.1/doc/rluserman.texi	2006-05-20 21:59:06 +0000
+@@ -36,7 +36,7 @@ Software Foundation raise funds for GNU 
+ 
+ @dircategory Libraries
+ @direntry
+-* RLuserman: (rluserman).       The GNU readline library User's Manual.
++* RLuserman: (rluserman).                       The GNU readline library User's Manual.
+ @end direntry
+ 
+ @titlepage

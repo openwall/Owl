@@ -1,0 +1,17 @@
+--- readline-5.1/display.c.orig	2005-12-29 00:05:27 +0000
++++ readline-5.1/display.c	2005-12-29 00:28:58 +0000
+@@ -643,10 +643,11 @@ rl_redisplay ()
+              
+       inv_lbreaks[++newlines] = temp;
+ #if defined (HANDLE_MULTIBYTE)
+-      lpos -= _rl_col_width (local_prompt, n0, num);
+-#else
+-      lpos -= _rl_screenwidth;
++      if (local_prompt)
++        lpos -= _rl_col_width (local_prompt, n0, num);
++      else
+ #endif
++      lpos -= _rl_screenwidth;
+     }
+ 
+   prompt_last_screen_line = newlines;
