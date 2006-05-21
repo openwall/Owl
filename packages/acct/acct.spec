@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/acct/acct.spec,v 1.32 2006/05/19 13:55:23 galaxy Exp $
+# $Owl: Owl/packages/acct/acct.spec,v 1.33 2006/05/21 21:07:19 ldv Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
 Version: 6.4
-Release: owl0.1
+Release: owl0.2
 License: GPL
 Group: Applications/System
 Source0: http://www.physik3.uni-rostock.de/tim/kernel/utils/acct/%name-%version-pre1.tar.gz
@@ -14,7 +14,10 @@ Source4: acct.logrotate
 Patch0: acct-6.4pre1-owl-doc.diff
 Patch1: acct-6.4pre1-owl-devpts.diff
 Patch2: acct-6.4pre1-owl-sa-help.diff
-PreReq: /sbin/install-info, grep
+Patch3: acct-6.4pre1-owl-info.diff
+Patch4: acct-6.4pre1-alt-time_t.diff
+Patch5: acct-6.4pre1-alt-program_name.diff
+PreReq: /sbin/install-info, grep, coreutils >= 5.3.0, sed >= 4.0.9
 Provides: psacct
 Obsoletes: psacct
 BuildRequires: sed >= 4.0.9, texinfo
@@ -30,10 +33,14 @@ summarizes information about previously executed commands.
 
 %prep
 %setup -q -n %name-%version-pre1
-rm accounting.info
+rm *.info getopt*
+sed -i 's/\<getopt[1]\?\.[hc]\>//g' Makefile.am
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
 
 %build
 autoreconf -fis
@@ -61,26 +68,20 @@ mv %buildroot%_bindir/last %buildroot%_bindir/last-acct
 mv %buildroot%_mandir/man1/last.1 \
 	%buildroot%_mandir/man1/last-acct.1
 
-touch %buildroot%_var/account/pacct
-touch %buildroot%_var/account/usracct
-touch %buildroot%_var/account/savacct
+touch %buildroot%_var/account/{pacct,usracct,savacct}
 
 %post
 # We need this hack to get rid of an old, incorrect accounting info entry
 # when installing over older versions of Red Hat Linux.
 INFODIRFILE=%_infodir/dir
-if grep -q '^* accounting: (psacct)' $INFODIRFILE; then
-	if test -L $INFODIRFILE; then
-		INFODIRFILE="`find %_infodir -name dir -printf '%%l'`"
-	fi
-	cp -p $INFODIRFILE $INFODIRFILE.rpmtmp &&
-	grep -v '^* accounting: (psacct)' $INFODIRFILE > $INFODIRFILE.rpmtmp &&
-	mv $INFODIRFILE.rpmtmp $INFODIRFILE
+if grep -q '^\* accounting: (psacct)' $INFODIRFILE; then
+	INFODIRFILE="$(readlink -e $INFODIRFILE)"
+	sed -i '/^\* accounting: (psacct)/d' "$INFODIRFILE"
 fi
 
-/sbin/install-info %_infodir/accounting.info %_infodir/dir \
-	--entry="* accounting: (accounting).                     The GNU Process Accounting Suite."
+/sbin/install-info %_infodir/accounting.info %_infodir/dir
 
+umask 177
 for f in %_var/account/{pacct,usracct,savacct}; do
 	test -e $f && continue || :
 	touch $f
@@ -90,8 +91,7 @@ done
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/accounting.info %_infodir/dir \
-		--entry="* accounting: (accounting).                     The GNU Process Accounting Suite."
+	/sbin/install-info --delete %_infodir/accounting.info %_infodir/dir
 fi
 
 %files
@@ -108,6 +108,12 @@ fi
 %_infodir/*
 
 %changelog
+* Sun May 21 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 6.4-owl0.2
+- Added @dircategory and @direntry to texinfo file, simplified info
+file installation.
+- Fixed casts to (time_t *).
+- Enforced build with system getopt.
+
 * Fri May 19 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.4-owl0.1
 - Updated to 6.4-pre1.
 - Re-generated patches.

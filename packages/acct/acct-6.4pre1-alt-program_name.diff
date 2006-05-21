@@ -1,0 +1,142 @@
+--- acct-6.4-pre1/configure.in.orig	2006-01-07 21:56:46 +0000
++++ acct-6.4-pre1/configure.in	2006-05-21 01:45:44 +0000
+@@ -8,6 +8,7 @@ dnl macros for automake
+ AM_INIT_AUTOMAKE
+ AM_CONFIG_HEADER(config.h)
+ 
++AC_GNU_SOURCE
+ AC_PROG_CC
+ if test "x${ac_cv_prog_gcc}" = "xyes"; then
+  CFLAGS="${CFLAGS} -Wall -Wmissing-prototypes"
+diff -upk.orig acct-6.4-pre1.orig/ac.c acct-6.4-pre1/ac.c
+--- acct-6.4-pre1.orig/ac.c	2006-01-07 21:56:46 +0000
++++ acct-6.4-pre1/ac.c	2006-05-21 01:59:41 +0000
+@@ -19,6 +19,7 @@ MA 02139, USA.  */
+ 
+ #include "config.h"
+ #include <stdio.h>
++#include <errno.h>
+ 
+ #ifdef HAVE_STDLIB_H
+ #include <stdlib.h>
+@@ -172,7 +173,7 @@ main (int argc, char *argv[])
+   int other_wtmp_file_specified = 0; /* nonzero if the user used the
+ 					`-f' or `--other-file' flags */
+ 
+-  program_name = argv[0];
++  program_name = program_invocation_short_name;
+   
+   /* Init the utmp reader for reading forwards in the files. */
+ 
+diff -upk.orig acct-6.4-pre1.orig/accton.c acct-6.4-pre1/accton.c
+--- acct-6.4-pre1.orig/accton.c	2006-01-07 21:54:03 +0000
++++ acct-6.4-pre1/accton.c	2006-05-21 01:56:20 +0000
+@@ -116,7 +116,7 @@ main (int argc, char *argv[])
+   char *acct_file = NULL;
+ 
+ 
+-  program_name = argv[0];
++  program_name = program_invocation_short_name;
+ 
+ 
+   /* deal with options */
+diff -upk.orig acct-6.4-pre1.orig/dump-acct.c acct-6.4-pre1/dump-acct.c
+--- acct-6.4-pre1.orig/dump-acct.c	2006-01-07 21:13:37 +0000
++++ acct-6.4-pre1/dump-acct.c	2006-05-21 01:59:29 +0000
+@@ -6,6 +6,7 @@
+ #include "config.h"
+ 
+ #include <stdio.h>
++#include <errno.h>
+ 
+ #ifdef HAVE_STDLIB_H
+ #include <stdlib.h>
+@@ -51,7 +52,7 @@ main (int argc, char *argv[])
+   static struct acct buf;
+ #endif
+ 
+-  program_name = argv[0];
++  program_name = program_invocation_short_name;
+ 
+   while (1)
+     {
+diff -upk.orig acct-6.4-pre1.orig/dump-utmp.c acct-6.4-pre1/dump-utmp.c
+--- acct-6.4-pre1.orig/dump-utmp.c	2003-06-05 17:21:36 +0000
++++ acct-6.4-pre1/dump-utmp.c	2006-05-21 01:59:25 +0000
+@@ -7,6 +7,7 @@
+ #include "config.h"
+ 
+ #include <stdio.h>
++#include <errno.h>
+ 
+ #ifdef HAVE_STDLIB_H
+ #include <stdlib.h>
+@@ -42,7 +43,7 @@ main (int argc, char *argv[])
+   long num_lines_to_print = -1;	/* -1 means all */
+   int raw = 0;
+ 
+-  program_name = argv[0];
++  program_name = program_invocation_short_name;
+ 
+   while (1)
+     {
+diff -upk.orig acct-6.4-pre1.orig/last.c acct-6.4-pre1/last.c
+--- acct-6.4-pre1.orig/last.c	2006-01-07 21:56:46 +0000
++++ acct-6.4-pre1/last.c	2006-05-21 01:59:20 +0000
+@@ -19,6 +19,7 @@ MA 02139, USA.  */
+ 
+ #include "config.h"
+ #include <stdio.h>
++#include <errno.h>
+ 
+ #ifdef HAVE_STDLIB_H
+ #include <stdlib.h>
+@@ -177,7 +178,7 @@ main (int argc, char *argv[])
+   int other_wtmp_file_specified = 0; /* nonzero if the user used the
+ 					`-f' or `--file' flags */
+ 
+-  program_name = argv[0];
++  program_name = program_invocation_short_name;
+   
+   /* Tell the utmp reader that we want to do things backwards! */
+ 
+diff -upk.orig acct-6.4-pre1.orig/lastcomm.c acct-6.4-pre1/lastcomm.c
+--- acct-6.4-pre1.orig/lastcomm.c	2006-01-07 21:56:46 +0000
++++ acct-6.4-pre1/lastcomm.c	2006-05-21 01:59:15 +0000
+@@ -19,6 +19,7 @@ MA 02139, USA.  */
+ 
+ #include "config.h"
+ #include <stdio.h>
++#include <errno.h>
+ 
+ #ifdef HAVE_STDLIB_H
+ #include <stdlib.h>
+@@ -97,7 +98,7 @@ main (int argc, char *argv[])
+   int other_pacct_file_specified = 0; /* nonzero if the user used the
+ 					 `-f' or `--file' flag */
+ 
+-  program_name = argv[0];
++  program_name = program_invocation_short_name;
+   
+   /* Tell the pacct reader that we want to do things backwards! */
+ 
+diff -upk.orig acct-6.4-pre1.orig/sa.c acct-6.4-pre1/sa.c
+--- acct-6.4-pre1.orig/sa.c	2006-05-21 01:56:01 +0000
++++ acct-6.4-pre1/sa.c	2006-05-21 01:59:05 +0000
+@@ -39,6 +39,7 @@ char *alloca ();
+ #endif
+ 
+ #include <stdio.h>
++#include <errno.h>
+ 
+ #ifdef HAVE_STDLIB_H
+ #include <stdlib.h>
+@@ -274,7 +275,7 @@ main (int argc, char *argv[])
+ {
+   int c;
+ 
+-  program_name = argv[0];
++  program_name = program_invocation_short_name;
+   
+   /* Cache the page size of the machine for the PAGES_TO_KB macro */
+   system_page_size = (double) getpagesize () / 1024.0;

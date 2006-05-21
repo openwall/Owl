@@ -1,0 +1,27 @@
+diff -upk.orig acct-6.4-pre1.orig/al_share.cpp acct-6.4-pre1/al_share.cpp
+--- acct-6.4-pre1.orig/al_share.cpp	2006-01-07 21:56:46 +0000
++++ acct-6.4-pre1/al_share.cpp	2006-05-21 01:41:27 +0000
+@@ -117,8 +117,8 @@ parse_entries ()
+ 	      utmp_print_file_and_line (stddebug);
+ 	      fprintf (stddebug, ": problem: time warp (%-24.24s",
+ 		       ctime (&last_time));
+-	      fprintf (stddebug, " -> %-24.24s)\n",
+-		       ctime ((time_t *) &(rec->ut_time)));
++	      time_t tmp_time = rec->ut_time;
++	      fprintf (stddebug, " -> %-24.24s)\n", ctime (&tmp_time));
+ 	    }
+ 
+ #ifdef BACKWARDS
+diff -upk.orig acct-6.4-pre1.orig/utmp_rd.c acct-6.4-pre1/utmp_rd.c
+--- acct-6.4-pre1.orig/utmp_rd.c	2006-01-07 21:56:46 +0000
++++ acct-6.4-pre1/utmp_rd.c	2006-05-21 01:41:27 +0000
+@@ -118,7 +118,8 @@ print_utmp_record (struct utmp *rec, FIL
+       fprintf (out, "%-*.*s|", HOST_LEN, HOST_LEN, rec->ut_host);
+ #endif
+ 
+-      fputs (ctime ((time_t *) &(rec->ut_time)), out);
++      time_t tmp_time = rec->ut_time;
++      fputs (ctime (&tmp_time), out);
+     }
+ }
+ 

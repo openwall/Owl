@@ -1,0 +1,13 @@
+--- acct-6.4-pre1/accounting.texi.orig	2006-05-21 01:37:56 +0000
++++ acct-6.4-pre1/accounting.texi	2006-05-21 01:37:57 +0000
+@@ -5,6 +5,10 @@
+ @include version.texi
+ 
+ @ifinfo
++@dircategory Monitoring
++@direntry
++* accounting: (accounting).                     The GNU Process Accounting Suite.
++@end direntry
+ GNU Accounting Utilities
+ Copyright (C) 1993, 1996, 1997, 1998, 2005 Free Software Foundation, Inc.
+ 
