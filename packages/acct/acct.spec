@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/acct/acct.spec,v 1.33 2006/05/21 21:07:19 ldv Exp $
+# $Owl: Owl/packages/acct/acct.spec,v 1.34 2006/05/21 22:07:58 ldv Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
@@ -69,6 +69,9 @@ mv %buildroot%_mandir/man1/last.1 \
 	%buildroot%_mandir/man1/last-acct.1
 
 touch %buildroot%_var/account/{pacct,usracct,savacct}
+
+# Remove unpackaged files
+rm %buildroot%_infodir/dir
 
 %post
 # We need this hack to get rid of an old, incorrect accounting info entry
