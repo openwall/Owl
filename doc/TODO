@@ -222,7 +222,7 @@ Keep it to latest release.
 	openssh.
 
 [PRIORITY: medium]
-[ASSIGNED: solar@]
+[ASSIGNED: ldv@, solar@]
 Keep OpenSSH to latest release, with our modifications obviously.
 
 [PRIORITY: low]
@@ -240,6 +240,7 @@ it might be).
 	openssl.
 
 [PRIORITY: low]
+[ASSIGNED: ldv@]
 Keep OpenSSL to latest in a branch.
 
 
@@ -485,4 +486,4 @@ Fix installworld.sh to always pick the latest version of a package when
 multiple versions are available (please refer to the appropriate XXX
 comment in the script).
 
-$Owl: Owl/doc/TODO,v 1.166 2006/05/21 00:07:31 ldv Exp $
+$Owl: Owl/doc/TODO,v 1.167 2006/05/22 20:46:02 solar Exp $
