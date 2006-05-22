@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.105 2006/04/04 01:00:04 ldv Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.106 2006/05/22 23:57:43 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -10,8 +10,8 @@
 Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
-%define crypt_bf_version 1.0.1
-Release: owl4
+%define crypt_bf_version 1.0.2
+Release: owl5
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/%name/
@@ -457,6 +457,9 @@ fi
 %files compat-fake
 
 %changelog
+* Tue May 23 2006 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl5
+- In crypt_blowfish, enable BF_SCALE on x86-64 for better performance.
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3.6-owl4
 - Marked /etc/ld.so.conf with %%config(noreplace) flag.
 - Dropped old ChangeLog files.
