@@ -1,3 +1,9 @@
+	Changes made between 1.0.1 and 1.0.2 (2006/05/23).
+
+A couple of optimizations specific to x86-64 have been applied to the
+included MD5 routines.
+
+
 	Changes made between 1.0 and 1.0.1 (2006/03/07).
 
 Use sysconf(_SC_CLK_TCK) instead of CLK_TCK when _SC_CLK_TCK is known to
@@ -110,4 +116,4 @@ code size.
 Added a popa3d(8) manual page based on the one Camiel Dobbelaar wrote
 for OpenBSD.
 
-$Owl: Owl/packages/popa3d/popa3d/CHANGES,v 1.10 2006/03/07 03:30:15 solar Exp $
+$Owl: Owl/packages/popa3d/popa3d/CHANGES,v 1.11 2006/05/23 00:15:04 solar Exp $

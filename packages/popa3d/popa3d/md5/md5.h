@@ -12,7 +12,7 @@
 #define _MD5_H
 
 /* Any 32-bit or wider unsigned integer data type will do */
-typedef unsigned long MD5_u32plus;
+typedef unsigned int MD5_u32plus;
 
 typedef struct {
 	MD5_u32plus lo, hi;

@@ -48,7 +48,7 @@
  * memory accesses is just an optimization.  Nothing will break if it
  * doesn't work.
  */
-#if defined(__i386__) || defined(__vax__)
+#if defined(__i386__) || defined(__x86_64__) || defined(__vax__)
 #define SET(n) \
 	(*(MD5_u32plus *)&ptr[(n) * 4])
 #define GET(n) \
@@ -66,7 +66,7 @@
 
 /*
  * This processes one or more 64-byte data blocks, but does NOT update
- * the bit counters.  There're no alignment requirements.
+ * the bit counters.  There are no alignment requirements.
  */
 static void *body(MD5_CTX *ctx, void *data, unsigned long size)
 {
