@@ -4,7 +4,7 @@ the design decisions for my tiny POP3 daemon, popa3d.
 
 	Why popa3d?
 
-There're lots of different POP3 servers -- with different feature
+There are lots of different POP3 servers -- with different feature
 sets, performance, and reliability.  However, as far as I know, before
 I started the work on popa3d, there had been only one with security as
 one of its primary design goals: qmail-pop3d.  Unfortunately, it would
@@ -114,7 +114,7 @@ logging everything that might be important.  However, when running
 from an inetd clone, the handling of these attacks is left up to your
 inetd and the kernel.
 
-2. Huge mailbox sizes, either in message count or bytes.  There're
+2. Huge mailbox sizes, either in message count or bytes.  There are
 limits in popa3d (see params.h) that are intended to prevent this
 attack from stopping the entire service.  Depending on your disk and
 other quotas, it may still be possible to stop individual users from
@@ -147,8 +147,8 @@ written to, by keeping the lock for up to a second if necessary.
 	Mailbox access.
 
 Except for the total size and message count limits mentioned above
-(and you can disable even those), there're no other artificial limits
-on the mailbox contents.  In particular, there're no line length
+(and you can disable even those), there are no other artificial limits
+on the mailbox contents.  In particular, there are no line length
 limits; unlike with qmail-pop3d, lines don't even need to fit in the
 available memory.  NUL bytes are allowed in messages as well.
 
@@ -209,4 +209,4 @@ It used to take a bit more CPU for less POP3 sessions.
 -- 
 Solar Designer <solar at openwall.com>
 
-$Owl: Owl/packages/popa3d/popa3d/DESIGN,v 1.5 2005/11/16 13:28:58 solar Exp $
+$Owl: Owl/packages/popa3d/popa3d/DESIGN,v 1.6 2006/05/23 00:20:19 solar Exp $
