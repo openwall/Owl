@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.21 2006/05/21 00:20:02 ldv Exp $
+# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.22 2006/05/27 18:59:15 ldv Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
-Version: 5.95
+Version: 5.96
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -10,8 +10,8 @@ URL: http://www.gnu.org/software/%name/
 Source0: ftp://ftp.gnu.org/gnu/%name/%name-%version.tar.bz2
 
 # Additional sources
-# true and false asm source and man-pages
-Source1: exit.S
+# true and false source and man-pages
+Source1: exit.c
 Source2: true.1
 Source3: false.1
 
@@ -27,6 +27,7 @@ Source21: usleep.1
 Patch0: coreutils-5.91-up-ls-usage.diff
 Patch1: coreutils-5.91-eggert-ls-time-style.diff
 Patch2: coreutils-5.91-alt-hostname.diff
+Patch3: coreutils-5.96-cvs-20060527-preserve-root.patch
 
 # Owl/ALT specific
 Patch10: coreutils-5.92-owl-info-true-false.diff
@@ -84,6 +85,7 @@ arbitrary limits.
 %patch0 -p0
 %patch1 -p0
 %patch2 -p1
+%patch3 -p0
 
 # ALT specific
 %patch10 -p1
@@ -122,14 +124,14 @@ export gnulib_cv_have_boot_time=no
 
 %{?!_without_check:%{?!_disable_check:%__make -k check}}
 
-# Build assembler version of true and false
-gcc -nostartfiles -nodefaultlibs -nostdlib -DSTATUS=0 \
-	%_sourcedir/exit.S -o true
-gcc -nostartfiles -nodefaultlibs -nostdlib -DSTATUS=1 \
-	%_sourcedir/exit.S -o false
+# Build our version of true and false
+%__cc %optflags -Wall -W -static -nostartfiles -DSTATUS=0 \
+	%_sourcedir/exit.c -o true
+%__cc %optflags -Wall -W -static -nostartfiles -DSTATUS=1 \
+	%_sourcedir/exit.c -o false
 
 # build usleep
-gcc %optflags %_sourcedir/usleep.c -o usleep
+%__cc %optflags %_sourcedir/usleep.c -o usleep
 
 # Compress (some) docs to save space
 bzip2 -9fk ChangeLog NEWS THANKS
@@ -229,6 +231,11 @@ fi
 %doc ChangeLog.bz2 NEWS.bz2 THANKS.bz2 AUTHORS README TODO
 
 %changelog
+* Sat May 27 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 5.96-owl1
+- Updated to 5.96.
+- Rewritten assembler version of true and false in C to avoid
+portability issues.
+
 * Sun May 21 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 5.95-owl1
 - Updated to 5.95.
 
