@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.22 2006/05/27 18:59:15 ldv Exp $
+# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.23 2006/05/27 19:14:33 ldv Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
@@ -27,7 +27,7 @@ Source21: usleep.1
 Patch0: coreutils-5.91-up-ls-usage.diff
 Patch1: coreutils-5.91-eggert-ls-time-style.diff
 Patch2: coreutils-5.91-alt-hostname.diff
-Patch3: coreutils-5.96-cvs-20060527-preserve-root.patch
+Patch3: coreutils-5.96-cvs-20060527-preserve-root.diff
 
 # Owl/ALT specific
 Patch10: coreutils-5.92-owl-info-true-false.diff
