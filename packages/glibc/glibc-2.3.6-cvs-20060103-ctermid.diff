@@ -1,0 +1,15 @@
+2006-01-03  Jakub Jelinek  <jakub at redhat.com>
+
+        * posix/unistd.h (ctermid): Remove __nonnull attribute.
+
+--- posix/unistd.h	16 Dec 2005 00:15:19 -0000	1.139
++++ posix/unistd.h	3 Jan 2006 15:57:08 -0000	1.140
+@@ -1075,7 +1075,7 @@ extern void swab (__const void *__restri
+    It is also found in <stdio.h>.  */
+ #ifdef __USE_XOPEN
+ /* Return the name of the controlling terminal.  */
+-extern char *ctermid (char *__s) __THROW __nonnull ((1));
++extern char *ctermid (char *__s) __THROW;
+ #endif
+ 
+ 

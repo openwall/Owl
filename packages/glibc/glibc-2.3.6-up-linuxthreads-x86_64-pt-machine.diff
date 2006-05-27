@@ -1,0 +1,92 @@
+2003-03-11  Ulrich Drepper  <drepper at redhat.com>
+
+	* sysdeps/x86_64/pt-machine.h (THREAD_SELF, THREAD_GETMEM, THREAD_GETMEM_NC,
+        THREAD_SETMEM, THREAD_SETMEM_NC): Correct asm syntax.
+
+--- linuxthreads/sysdeps/x86_64/pt-machine.h
++++ linuxthreads/sysdeps/x86_64/pt-machine.h
+@@ -81,7 +81,7 @@ __compare_and_swap (long int *p, long in
+ # define THREAD_SELF \
+ ({									      \
+   register pthread_descr __self;					      \
+-  __asm__ ("movq %%fs:%c1,%0" : "=r" (__self)				      \
++  __asm__ ("movq %%fs:%c1,%q0" : "=r" (__self)				      \
+ 	   : "i" (offsetof (struct _pthread_descr_struct,		      \
+ 			    p_header.data.self)));			      \
+   __self;								      \
+@@ -119,7 +119,7 @@ ({									      \
+ 	/* There should not be any value with a size other than 1, 4 or 8.  */\
+ 	abort ();							      \
+ 									      \
+-      __asm__ __volatile__ ("movq %%fs:%P1,%0"				      \
++      __asm__ __volatile__ ("movq %%fs:%P1,%q0"				      \
+ 			    : "=r" (__value)				      \
+ 			    : "i" (offsetof (struct _pthread_descr_struct,    \
+ 					     member)));			      \
+@@ -132,13 +132,13 @@ # define THREAD_GETMEM_NC(descr, member)
+ ({									      \
+   __typeof__ (descr->member) __value;					      \
+   if (sizeof (__value) == 1)						      \
+-    __asm__ __volatile__ ("movb %%fs:(%2),%b0"				      \
++    __asm__ __volatile__ ("movb %%fs:(%q2),%b0"				      \
+ 			  : "=q" (__value)				      \
+ 			  : "0" (0),					      \
+ 			    "r" (offsetof (struct _pthread_descr_struct,      \
+ 					   member)));			      \
+   else if (sizeof (__value) == 4)					      \
+-    __asm__ __volatile__ ("movl %%fs:(%2),%k0"				      \
++    __asm__ __volatile__ ("movl %%fs:(%q2),%k0"				      \
+ 			  : "=r" (__value)				      \
+ 			  : "0" (0),					      \
+ 			    "r" (offsetof (struct _pthread_descr_struct,      \
+@@ -149,7 +149,7 @@ ({									      \
+ 	/* There should not be any value with a size other than 1, 4 or 8.  */\
+ 	abort ();							      \
+ 									      \
+-      __asm__ __volatile__ ("movq %%fs:(%1),%0"				      \
++      __asm__ __volatile__ ("movq %%fs:(%q1),%q0"			      \
+ 			    : "=r" (__value)				      \
+ 			    : "r" (offsetof (struct _pthread_descr_struct,    \
+ 					     member)));			      \
+@@ -162,7 +162,7 @@ # define THREAD_SETMEM(descr, member, va
+ ({									      \
+   __typeof__ (descr->member) __value = (value);				      \
+   if (sizeof (__value) == 1)						      \
+-    __asm__ __volatile__ ("movb %0,%%fs:%P1" :				      \
++    __asm__ __volatile__ ("movb %b0,%%fs:%P1" :				      \
+ 			  : "q" (__value),				      \
+ 			    "i" (offsetof (struct _pthread_descr_struct,      \
+ 					   member)));			      \
+@@ -177,7 +177,7 @@ ({									      \
+ 	/* There should not be any value with a size other than 1, 4 or 8.  */\
+ 	abort ();							      \
+ 									      \
+-      __asm__ __volatile__ ("movq %0,%%fs:%P1" :			      \
++      __asm__ __volatile__ ("movq %q0,%%fs:%P1" :			      \
+ 			    : "r" (__value),				      \
+ 			      "i" (offsetof (struct _pthread_descr_struct,    \
+ 					     member)));			      \
+@@ -189,12 +189,12 @@ # define THREAD_SETMEM_NC(descr, member,
+ ({									      \
+   __typeof__ (descr->member) __value = (value);				      \
+   if (sizeof (__value) == 1)						      \
+-    __asm__ __volatile__ ("movb %0,%%fs:(%1)" :				      \
++    __asm__ __volatile__ ("movb %b0,%%fs:(%q1)" :			      \
+ 			  : "q" (__value),				      \
+ 			    "r" (offsetof (struct _pthread_descr_struct,      \
+ 					   member)));			      \
+   else if (sizeof (__value) == 4)					      \
+-    __asm__ __volatile__ ("movl %k0,%%fs:(%1)" :			      \
++    __asm__ __volatile__ ("movl %k0,%%fs:(%q1)" :			      \
+ 			  : "r" (__value),				      \
+ 			    "r" (offsetof (struct _pthread_descr_struct,      \
+ 					   member)));			      \
+@@ -204,7 +204,7 @@ ({									      \
+ 	/* There should not be any value with a size other than 1, 4 or 8.  */\
+ 	abort ();							      \
+ 									      \
+-      __asm__ __volatile__ ("movq %0,%%fs:(%1)"	:			      \
++      __asm__ __volatile__ ("movq %q0,%%fs:(%q1)"	:		      \
+ 			    : "r" (__value),				      \
+ 			      "r" (offsetof (struct _pthread_descr_struct,    \
+ 					     member)));			      \

@@ -1,15 +1,32 @@
---- glibc-2.3.5/elf/ldd.bash.in.orig	2005-02-16 10:29:34 +0000
-+++ glibc-2.3.5/elf/ldd.bash.in	2005-05-09 12:37:33 +0000
-@@ -148,8 +148,6 @@ for file do
+--- glibc-2.3.6/elf/ldd.bash.in.orig	2005-02-16 10:29:34 +0000
++++ glibc-2.3.6/elf/ldd.bash.in	2006-05-16 16:33:45 +0000
+@@ -74,6 +74,7 @@ For bug reporting instructions, please s
+     ;;
+   -u | --u | --un | --unu | --unus | --unuse | --unused)
+     unused=yes
++    bind_now=yes
+     shift
+     ;;
+   --v | --ve | --ver)
+@@ -148,8 +149,7 @@ for file do
      echo "ldd: ${file}:" $"No such file or directory" >&2
      result=1
    elif test -r "$file"; then
 -    test -x "$file" || echo 'ldd:' $"\
 -warning: you do not have execution permission for" "\`$file'" >&2
++    ret=
      RTLD=
      for rtld in ${RTLDLIST}; do
        if test -x $rtld; then
-@@ -167,17 +165,8 @@ warning: you do not have execution permi
+@@ -160,24 +160,15 @@ warning: you do not have execution permi
+ 	esac
+       fi
+     done
+-    if test -z "${RTLD}"; then
++    if test -z "${ret}"; then
+       set ${RTLDLIST}
+       RTLD=$1
+       verify_out=`${RTLD} --verify "$file"`
        ret=$?
      fi
      case $ret in
@@ -29,7 +46,7 @@
        ;;
      1)
        # This can be a non-ELF binary or no binary at all.
-@@ -186,9 +175,6 @@ warning: you do not have execution permi
+@@ -186,9 +177,6 @@ warning: you do not have execution permi
  	result=1
        }
        ;;

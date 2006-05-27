@@ -1,0 +1,172 @@
+2006-04-26  Petr Salinger  <Petr.Salinger at seznam.cz>
+	    Daniel Jacobowitz  <dan at codesourcery.com>
+
+	[BZ #2590]
+	* sysdeps/i386/pt-machine.h: Include <kernel-features.h>
+	and <useldt.h>.  Define BUSY_WAIT_NOP.
+	* sysdeps/i386/i486/pt-machine.h: New file.
+	* sysdeps/i386/i586/pt-machine.h: New file.
+	* sysdeps/i386/i686/pt-machine.h: Use the i386 version.
+
+Index: linuxthreads/sysdeps/i386/pt-machine.h
+diff -u linuxthreads/sysdeps/i386/pt-machine.h:1.18 linuxthreads/sysdeps/i386/pt-machine.h:1.19
+--- linuxthreads/sysdeps/i386/pt-machine.h:1.18	Thu Jul 31 19:15:42 2003
++++ linuxthreads/sysdeps/i386/pt-machine.h	Wed Apr 26 15:35:05 2006
+@@ -22,6 +22,8 @@
+ #ifndef _PT_MACHINE_H
+ #define _PT_MACHINE_H	1
+ 
++#include <kernel-features.h>
++
+ #ifndef __ASSEMBLER__
+ #ifndef PT_EI
+ # define PT_EI extern inline __attribute__ ((always_inline))
+@@ -105,4 +107,11 @@
+ }
+ #endif /* __ASSEMBLER__ */
+ 
++#if __ASSUME_LDT_WORKS > 0
++#include <useldt.h>
++#endif
++
++/* The P4 and above really want some help to prevent overheating.  */
++#define BUSY_WAIT_NOP	__asm__ ("rep; nop")
++
+ #endif /* pt-machine.h */
+Index: linuxthreads/sysdeps/i386/i486/pt-machine.h
+diff -u /dev/null linuxthreads/sysdeps/i386/i486/pt-machine.h:1.1
+--- /dev/null	Mon May 15 15:42:00 2006
++++ linuxthreads/sysdeps/i386/i486/pt-machine.h	Wed Apr 26 15:35:05 2006
+@@ -0,0 +1,25 @@
++/* Machine-dependent pthreads configuration and inline functions.
++   i486 version.
++   Copyright (C) 1996-2001, 2002, 2003, 2006 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++   Contributed by Richard Henderson <rth@tamu.edu>.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public License as
++   published by the Free Software Foundation; either version 2.1 of the
++   License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; see the file COPYING.LIB.  If not,
++   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++   Boston, MA 02111-1307, USA.  */
++
++#include_next <pt-machine.h>
++
++/* Compare-and-swap is always available.  */
++#undef TEST_FOR_COMPARE_AND_SWAP
+Index: linuxthreads/sysdeps/i386/i586/pt-machine.h
+diff -u /dev/null linuxthreads/sysdeps/i386/i586/pt-machine.h:1.1
+--- /dev/null	Mon May 15 15:42:00 2006
++++ linuxthreads/sysdeps/i386/i586/pt-machine.h	Wed Apr 26 15:35:05 2006
+@@ -0,0 +1,25 @@
++/* Machine-dependent pthreads configuration and inline functions.
++   i586 version.
++   Copyright (C) 1996-2001, 2002, 2003, 2006 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++   Contributed by Richard Henderson <rth@tamu.edu>.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public License as
++   published by the Free Software Foundation; either version 2.1 of the
++   License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; see the file COPYING.LIB.  If not,
++   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++   Boston, MA 02111-1307, USA.  */
++
++#include_next <pt-machine.h>
++
++/* Compare-and-swap is always available.  */
++#undef TEST_FOR_COMPARE_AND_SWAP
+Index: linuxthreads/sysdeps/i386/i686/pt-machine.h
+diff -u linuxthreads/sysdeps/i386/i686/pt-machine.h:1.24 linuxthreads/sysdeps/i386/i686/pt-machine.h:1.25
+--- linuxthreads/sysdeps/i386/i686/pt-machine.h:1.24	Tue Oct 19 05:12:59 2004
++++ linuxthreads/sysdeps/i386/i686/pt-machine.h	Wed Apr 26 15:35:05 2006
+@@ -1,6 +1,6 @@
+ /* Machine-dependent pthreads configuration and inline functions.
+    i686 version.
+-   Copyright (C) 1996-2001, 2002, 2003 Free Software Foundation, Inc.
++   Copyright (C) 1996-2001, 2002, 2003, 2006 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+    Contributed by Richard Henderson <rth@tamu.edu>.
+ 
+@@ -19,61 +19,7 @@
+    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.  */
+ 
+-#ifndef _PT_MACHINE_H
+-#define _PT_MACHINE_H	1
++#include_next <pt-machine.h>
+ 
+-#ifndef PT_EI
+-# define PT_EI extern inline __attribute__ ((always_inline))
+-#endif
+-#include "kernel-features.h"
+-
+-#ifndef __ASSEMBLER__
+-extern long int testandset (int *spinlock);
+-extern int __compare_and_swap (long int *p, long int oldval, long int newval);
+-
+-/* Get some notion of the current stack.  Need not be exactly the top
+-   of the stack, just something somewhere in the current frame.  */
+-#define CURRENT_STACK_FRAME  __builtin_frame_address (0)
+-
+-
+-/* Spinlock implementation; required.  */
+-PT_EI long int
+-testandset (int *spinlock)
+-{
+-  long int ret;
+-
+-  __asm__ __volatile__ (
+-	"xchgl %0, %1"
+-	: "=r" (ret), "=m" (*spinlock)
+-	: "0" (1), "m" (*spinlock)
+-	: "memory");
+-
+-  return ret;
+-}
+-
+-
+-/* Compare-and-swap for semaphores.  It's always available on i686.  */
+-#define HAS_COMPARE_AND_SWAP
+-
+-PT_EI int
+-__compare_and_swap (long int *p, long int oldval, long int newval)
+-{
+-  char ret;
+-  long int readval;
+-
+-  __asm__ __volatile__ ("lock; cmpxchgl %3, %1; sete %0"
+-			: "=q" (ret), "=m" (*p), "=a" (readval)
+-			: "r" (newval), "m" (*p), "a" (oldval)
+-			: "memory");
+-  return ret;
+-}
+-#endif
+-
+-#if __ASSUME_LDT_WORKS > 0
+-#include "../useldt.h"
+-#endif
+-
+-/* The P4 and above really want some help to prevent overheating.  */
+-#define BUSY_WAIT_NOP	__asm__ ("rep; nop")
+-
+-#endif /* pt-machine.h */
++/* Compare-and-swap is always available.  */
++#undef TEST_FOR_COMPARE_AND_SWAP

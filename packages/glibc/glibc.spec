@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.106 2006/05/22 23:57:43 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.107 2006/05/27 23:06:19 ldv Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -11,10 +11,10 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 1.0.2
-Release: owl5
+Release: owl6
 License: LGPL
 Group: System Environment/Libraries
-URL: http://www.gnu.org/software/%name/
+URL: http://www.gnu.org/software/libc/
 Source0: ftp://ftp.gnu.org/gnu/%name/glibc-%basevers%{?snapshot:-%snapshot}.tar.bz2
 %if %{?snapshot:0}%{!?snapshot:1}
 Source1: ftp://ftp.gnu.org/gnu/%name/glibc-linuxthreads-%basevers.tar.bz2
@@ -37,6 +37,10 @@ Source6: strlcpy.3
 
 # CVS
 Patch0: glibc-2.3.5-cvs-20050427-canonicalize.diff
+Patch1: glibc-2.3.6-cvs-20051116-divdi3.diff
+Patch2: glibc-2.3.6-cvs-20060103-ctermid.diff
+Patch3: glibc-2.3.6-cvs-20060426-linuxthreads-i386-pt-machine.diff
+Patch4: glibc-2.3.6-up-linuxthreads-x86_64-pt-machine.diff
 
 # RH
 Patch100: glibc-2.3.5-fedora.diff
@@ -68,7 +72,7 @@ Patch313: glibc-2.3.5-alt-assume_kernel.diff
 Patch400: glibc-2.3.3-owl-crypt_freesec.diff
 Patch401: glibc-2.3.5-owl-alt-res_randomid.diff
 Patch402: glibc-2.3.2-owl-iscntrl.diff
-Patch403: glibc-2.3.5-owl-alt-ldd.diff
+Patch403: glibc-2.3.6-owl-alt-ldd.diff
 Patch404: glibc-2.3.3-owl-info.diff
 Patch405: glibc-2.3.5-owl-alt-syslog-ident.diff
 Patch406: glibc-2.3.5-mjt-owl-alt-syslog-timestamp.diff
@@ -161,6 +165,18 @@ compatibility package with necessary binaries of old libdb libraries.
 # pathnames like "/path/to/existing-non-directory/"
 %patch0 -p0
 
+# fix build with new gas
+%patch1 -p0
+
+# remove inappropriate __nonnull attribute from ctermid
+%patch2 -p0
+
+# fix linuxthreads ix86 TLS
+%patch3 -p0
+
+# linuxthreads x86-64 asm correction
+%patch4 -p0
+
 # RH
 # usual glibc-fedora.patch
 %patch100 -p0
@@ -221,6 +237,8 @@ install -pm644 %_sourcedir/crypt_freesec.[ch] crypt/
 # force known control characters for iscntrl(3)
 %patch402 -p1
 # always execute traced object directly with dynamic linker
+# fix ldd error reporting on multilib platforms like x86-64
+# fix "ldd -u"
 %patch403 -p1
 # fix libc's info formatting
 %patch404 -p1
@@ -243,6 +261,9 @@ install -pm644 %_sourcedir/crypt_freesec.[ch] crypt/
 #%ifarch sparcv9
 #echo 'ASFLAGS-.os += -Wa,-Av8plusa' >> sysdeps/sparc/sparc32/elf/Makefile
 #%endif
+
+# Compile source test files with -fPIC for -shared.
+sed -i 's/-shared -/-fPIC &/' configure*
 
 cat > find_provides.sh << EOF
 #!/bin/sh
@@ -457,6 +478,15 @@ fi
 %files compat-fake
 
 %changelog
+* Sat May 27 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3.6-owl6
+- Backported configure fix: compile source test files with -fPIC for -shared.
+- Backported linuxthreads x86-64 asm syntax corrections.
+- Backported ctermid declaration fix.
+- Backported upstream patch to fix build with new GNU assembler.
+- Applied upstream linuxthreads ix86 TLS fix.
+- Fixed ldd error reporting on multilib platforms like x86-64.
+- Fixed "ldd -u".
+
 * Tue May 23 2006 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl5
 - In crypt_blowfish, enable BF_SCALE on x86-64 for better performance.
 
