@@ -1,10 +1,11 @@
 #!/bin/sh
-# $Owl: Owl/build/buildworld.sh,v 1.42 2006/04/26 23:01:57 ldv Exp $
+# $Owl: Owl/build/buildworld.sh,v 1.43 2006/05/28 18:18:56 galaxy Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
 
 TIME=/usr/bin/time
+test -x "$TIME" || TIME=
 
 . buildworld.conf
 
@@ -316,6 +317,9 @@ function detect()
 			;;
 		esac
 	fi
+
+	PERSONALITY=$(type -P $PERSONALITY 2>/dev/null)
+	test -x "$PERSONALITY" || PERSONALITY=
 }
 
 function check_includes()
