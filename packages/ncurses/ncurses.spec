@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/ncurses/ncurses.spec,v 1.31 2006/04/04 00:28:35 ldv Exp $
+# $Owl: Owl/packages/ncurses/ncurses.spec,v 1.32 2006/05/30 23:32:08 ldv Exp $
 
 %define major 5
 %define oldmajor 4
@@ -41,6 +41,7 @@ AutoReq: false
 The header files and libraries for developing applications that use
 the ncurses CRT screen handling and optimization package.
 
+%ifnarch x86_64
 %package compat
 Summary: ncurses compatibility for ncurses 4.x
 Group: System Environment/Libraries
@@ -51,6 +52,7 @@ Provides: libncurses.so.%oldmajor, libpanel.so.%oldmajor
 %description compat
 This ncurses package provides compatibility libraries for packages
 built against Red Hat Linux 6.2.
+%endif
 
 # Use optflags_lib for this package if defined.
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
@@ -159,11 +161,13 @@ install -p -m 644 c++/{NEWS,PROBLEMS,README-first} rpm-doc/c++/
 install -m 755 %_sourcedir/ncurses-resetall.sh \
 	%buildroot%_bindir/resetall
 
+%ifnarch x86_64
 # compat links
 ln -s libform.so.%version %buildroot%_libdir/libform.so.%oldmajor
 ln -s libmenu.so.%version %buildroot%_libdir/libmenu.so.%oldmajor
 ln -s libncurses.so.%version %buildroot%_libdir/libncurses.so.%oldmajor
 ln -s libpanel.so.%version %buildroot%_libdir/libpanel.so.%oldmajor
+%endif
 
 # remove terminfo entries for screen, since the screen package provides
 # more recent versions
@@ -199,9 +203,11 @@ rm %buildroot%_datadir/terminfo/s/screen{,-bce,-s}
 %_includedir/*
 %_mandir/man3/*
 
+%ifnarch x86_64
 %files compat
 %defattr(-,root,root)
 %_libdir/lib*.so.%{oldmajor}*
+%endif
 
 %changelog
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 5.4-owl3
