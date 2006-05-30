@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.58 2006/05/05 23:53:56 solar Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.59 2006/05/30 23:30:09 ldv Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
@@ -17,8 +17,10 @@ Patch5: openssl-0.9.7g-up-rh-fixes.diff
 Patch6: openssl-0.9.7g-rh-consttime.diff
 Patch7: openssl-0.9.7g-up-SSL_OP_MSIE_SSLV2_RSA_PADDING.diff
 Provides: SSL
+%ifnarch x86_64
 # For backwards compatibility.
 Provides: libcrypto.so.4, libssl.so.4
+%endif
 BuildRequires: perl, diffutils
 # Due to sed -i.
 BuildRequires: sed >= 4.1.1
@@ -174,9 +176,11 @@ for f in %buildroot%_libdir/*.so; do
 done
 mv %buildroot%_libdir/*.so.* %buildroot/%_lib/
 
+%ifnarch x86_64
 # For backwards compatibility.
 ln -s libcrypto.so.5 %buildroot/%_lib/libcrypto.so.4
 ln -s libssl.so.5 %buildroot/%_lib/libssl.so.4
+%endif
 
 # Remove fips fingerprint script.
 rm %buildroot%_bindir/openssl_fips_fingerprint
@@ -200,9 +204,11 @@ bzip2 -9 docs/doc/ssleay.txt
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
+%ifnarch x86_64
 %triggerpostun -- %name < 0:0.9.7g-owl1
 ln -sf libcrypto.so.5 /%_lib/libcrypto.so.4
 ln -sf libssl.so.5 /%_lib/libssl.so.4
+%endif
 
 %files
 %defattr(0644,root,root,0755)
