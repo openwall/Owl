@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/db4/db4.spec,v 1.17 2006/04/06 23:49:24 ldv Exp $
+# $Owl: Owl/packages/db4/db4.spec,v 1.18 2006/05/30 23:31:07 ldv Exp $
 
 %define __soversion	4.3
 %define _libdb_a	libdb-%__soversion.a
@@ -58,6 +58,7 @@ client/server applications.  This package contains the header files,
 libraries, and documentation for building programs which use the
 Berkeley DB.
 
+%ifnarch x86_64
 %package compat-fake
 Summary: Fake package to help upgrade db4 from 4.0 and 4.2 to 4.3+.
 Group: System Environment/Libraries
@@ -70,6 +71,7 @@ in db4 4.3+ -based Owl don't rely on older sonames.  If you have a package
 which uses these older libraries, you have to recompile that package
 against the db4 package supplied with Owl or create a compatibility
 package with necessary binaries of old libdb libraries.
+%endif
 
 %prep
 %setup -q -n db-%version -a 1
@@ -195,7 +197,9 @@ chmod -R u+w %buildroot
 %_includedir/%name
 %_includedir/*.h
 
+%ifnarch x86_64
 %files compat-fake
+%endif
 
 %changelog
 * Thu Apr 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.3.29-owl1

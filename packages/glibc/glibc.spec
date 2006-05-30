@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.107 2006/05/27 23:06:19 ldv Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.108 2006/05/30 23:31:28 ldv Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -137,6 +137,7 @@ libraries included in glibc-profile (instead of the standard GNU libc
 libraries included in the glibc package).
 %endif
 
+%ifnarch x86_64
 %package compat-fake
 Summary: Fake package to help upgrade glibc from 2.1.3 to 2.3+.
 Group: System Environment/Libraries
@@ -153,6 +154,7 @@ in glibc 2.3+ -based Owl don't rely on libdb.so.2 and libdb.so.3.  If
 you have a package which uses these older libraries, you have to recompile
 that package against the db4 package supplied with Owl or create a
 compatibility package with necessary binaries of old libdb libraries.
+%endif
 
 # Use optflags_lib for this package if defined.
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
@@ -475,7 +477,9 @@ fi
 %defattr(-,root,root)
 %endif
 
+%ifnarch x86_64
 %files compat-fake
+%endif
 
 %changelog
 * Sat May 27 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3.6-owl6
