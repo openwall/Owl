@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/libpcap/libpcap.spec,v 1.20 2005/12/13 13:17:26 ldv Exp $
+# $Owl: Owl/packages/libpcap/libpcap.spec,v 1.21 2006/05/30 23:33:36 ldv Exp $
 
 Summary: Network packet capture library.
 Name: libpcap
@@ -19,7 +19,7 @@ PreReq: /sbin/ldconfig
 %define soname libpcap.so.0
 %define compat_sonames libpcap.so.0.8.2 libpcap.so.0.8.3 libpcap.so.0.9.4
 # Additional provides for better binary compatibility with Fedora.
-Provides: %compat_sonames
+Provides: %(test %_lib = lib64 && s='()(64bit)' || s=; for n in %compat_sonames; do echo -n "$n$s "; done)
 BuildRequires: flex, bison
 BuildRoot: /override/%name-%version
 
