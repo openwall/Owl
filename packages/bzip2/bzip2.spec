@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bzip2/bzip2.spec,v 1.27 2006/04/04 00:15:07 ldv Exp $
+# $Owl: Owl/packages/bzip2/bzip2.spec,v 1.28 2006/05/30 23:29:38 ldv Exp $
 
 Summary: An extremely powerful file compression utility.
 Name: bzip2
@@ -18,8 +18,10 @@ Patch5: bzip2-1.0.3-alt-owl-fopen.diff
 Patch6: bzip2-1.0.3-alt-version.diff
 PreReq: /sbin/ldconfig
 Requires: mktemp >= 1:1.3.1
+%ifnarch x86_64
 # Provide this soname for backwards compatibility
 Provides: libbz2.so.0
+%endif
 BuildRequires: automake, autoconf, libtool, texinfo
 BuildRoot: /override/%name-%version
 
