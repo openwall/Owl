@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/bash/bash.spec,v 1.38 2006/04/04 23:10:59 ldv Exp $
+# $Owl: Owl/packages/bash/bash.spec,v 1.39 2006/06/05 21:55:22 ldv Exp $
 
 Summary: The GNU Bourne-Again SHell (Bash).
 Name: bash
 %define bash_version 3.1
-%define bash_patchlevel 16
+%define bash_patchlevel 17
 Version: %bash_version.%bash_patchlevel
 Release: owl1
 Group: System Environment/Shells
@@ -35,7 +35,6 @@ Patch104: readline-5.1-rh-wrap.diff
 Requires: mktemp >= 1:1.3.1
 Provides: bash2
 Obsoletes: bash2, etcskel
-Prefix: %_prefix
 BuildRequires: mktemp >= 1:1.3.1, readline-devel >= 0:4.3, rpm-build >= 0:4
 BuildRoot: /override/%name-%version
 
@@ -206,6 +205,9 @@ fi
 %doc doc/*.ps* doc/*.html doc/article.txt*
 
 %changelog
+* Tue Jun 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.17-owl1
+- Updated to 3.1 patchlevel 17.
+
 * Tue Apr 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.16-owl1
 - Updated to 3.1 patchlevel 16.
 
