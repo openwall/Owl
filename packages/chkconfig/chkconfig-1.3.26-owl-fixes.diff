@@ -48,12 +48,12 @@ diff -upk.orig chkconfig-1.3.25.orig/chkconfig.c chkconfig-1.3.25/chkconfig.c
 -    fprintf(stderr, _("usage:   %s --list [name]\n"), progname);
 -    fprintf(stderr, _("         %s --add <name>\n"), progname);
 -    fprintf(stderr, _("         %s --del <name>\n"), progname);
--    fprintf(stderr, _("         %s [--level <levels>] <name> %s\n"), progname, "<on|off|reset>");
+-    fprintf(stderr, _("         %s [--level <levels>] <name> %s\n"), progname, "<on|off|reset|resetpriorities>");
 +    fprintf(fp, "\n");
 +    fprintf(fp, _("usage:   %s --list [name]\n"), progname);
 +    fprintf(fp, _("         %s --add <name>\n"), progname);
 +    fprintf(fp, _("         %s --del <name>\n"), progname);
-+    fprintf(fp, _("         %s [--level <levels>] <name> %s\n"), progname, "<on|off|reset>");
++    fprintf(fp, _("         %s [--level <levels>] <name> %s\n"), progname, "<on|off|reset|resetpriorities>");
  
 -    exit(1);
 +    exit(rc);

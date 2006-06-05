@@ -1,16 +1,16 @@
-# $Owl: Owl/packages/chkconfig/chkconfig.spec,v 1.19 2006/04/04 00:33:22 ldv Exp $
+# $Owl: Owl/packages/chkconfig/chkconfig.spec,v 1.20 2006/06/05 22:07:48 ldv Exp $
 
 %define BUILD_NTSYSV 0
 %define INSTALL_ALTERNATIVES 1
 
 Summary: A system tool for maintaining the /etc/rc.d/rc*.d hierarchy.
 Name: chkconfig
-Version: 1.3.25
-Release: owl2
+Version: 1.3.29
+Release: owl1
 License: GPL
 Group: System Environment/Base
 Source: %name-%version.tar.gz
-Patch0: chkconfig-1.3.25-owl-fixes.diff
+Patch0: chkconfig-1.3.26-owl-fixes.diff
 Patch1: chkconfig-1.3.9-owl-no-ntsysv.diff
 BuildRequires: gettext, glibc >= 0:2.2
 BuildRoot: /override/%name-%version
@@ -106,6 +106,9 @@ rm %buildroot%_mandir/man?/ntsysv.*
 %endif
 
 %changelog
+* Tue Jun 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.3.29-owl1
+- Updated to 1.3.29.
+
 * Tue Apr 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.3.25-owl2
 - Package update-alternatives manpage.
 
