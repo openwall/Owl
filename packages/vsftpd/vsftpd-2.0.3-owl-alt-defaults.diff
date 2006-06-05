@@ -118,9 +118,9 @@ diff -upk.orig vsftpd-2.0.3.orig/vsftpd.conf vsftpd-2.0.3/vsftpd.conf
  # Enable this and the server will recognise asynchronous ABOR requests. Not
  # recommended for security (the code is non-trivial). Not enabling it,
 @@ -78,8 +80,8 @@ connect_from_port_20=YES
- # to enable ASCII uploads (to prevent uploaded scripts etc. from breaking),
- # without the DoS risk of SIZE and ASCII downloads. ASCII mangling should be
- # on the client anyway..
+ # predicted this attack and has always been safe, reporting the size of the
+ # raw file.
+ # ASCII mangling is a horrible feature of the protocol.
 -#ascii_upload_enable=YES
 -#ascii_download_enable=YES
 +ascii_upload_enable=YES

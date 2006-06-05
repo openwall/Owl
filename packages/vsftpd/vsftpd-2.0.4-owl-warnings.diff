@@ -1,0 +1,138 @@
+diff -upk.orig vsftpd-2.0.4.orig/ftpcmdio.h vsftpd-2.0.4/ftpcmdio.h
+--- vsftpd-2.0.4.orig/ftpcmdio.h	2005-03-04 00:14:45 +0000
++++ vsftpd-2.0.4/ftpcmdio.h	2005-11-27 17:15:42 +0000
+@@ -50,6 +50,9 @@ void vsf_cmdio_write_raw(struct vsf_sess
+  * The same as vsf_cmdio_write(), and then the calling process is exited. The
+  * write is _guaranteed_ to not block (ditching output if neccessary).
+  */
++#ifdef __GNUC__
++__attribute__ ((noreturn))
++#endif
+ void vsf_cmdio_write_exit(struct vsf_session* p_sess, int status,
+                           const char* p_text);
+ 
+diff -upk.orig vsftpd-2.0.4.orig/ipaddrparse.c vsftpd-2.0.4/ipaddrparse.c
+--- vsftpd-2.0.4.orig/ipaddrparse.c	2005-03-11 22:06:37 +0000
++++ vsftpd-2.0.4/ipaddrparse.c	2006-05-23 12:55:27 +0000
+@@ -55,7 +55,7 @@ vsf_sysutil_parse_ipv6(const struct myst
+     }
+     str_append_str(&s_ret, &s_rhs_ret);
+   }
+-  return str_getbuf(&s_ret);
++  return (const unsigned char*) str_getbuf(&s_ret);
+ }
+ 
+ const unsigned char*
+diff -upk.orig vsftpd-2.0.4.orig/str.c vsftpd-2.0.4/str.c
+--- vsftpd-2.0.4.orig/str.c	2004-07-12 17:58:39 +0000
++++ vsftpd-2.0.4/str.c	2006-05-23 12:54:09 +0000
+@@ -435,7 +435,7 @@ str_locate_chars(const struct mystr* p_s
+   struct str_locate_result retval;
+   unsigned int num_chars = vsf_sysutil_strlen(p_chars);
+   unsigned int i = 0;
+-  retval.found = 0;
++  vsf_sysutil_memclr(&retval, sizeof(retval));
+   for (; i < p_str->len; ++i)
+   {
+     unsigned int j = 0;
+@@ -460,8 +460,7 @@ str_locate_text(const struct mystr* p_st
+   struct str_locate_result retval;
+   unsigned int i;
+   unsigned int text_len = vsf_sysutil_strlen(p_text);
+-  retval.found = 0;
+-  retval.index = 0;
++  vsf_sysutil_memclr(&retval, sizeof(retval));
+   if (text_len == 0 || text_len > p_str->len)
+   {
+     /* Not found */
+@@ -486,8 +485,7 @@ str_locate_text_reverse(const struct mys
+   struct str_locate_result retval;
+   unsigned int i;
+   unsigned int text_len = vsf_sysutil_strlen(p_text);
+-  retval.found = 0;
+-  retval.index = 0;
++  vsf_sysutil_memclr(&retval, sizeof(retval));
+   if (text_len == 0 || text_len > p_str->len)
+   {
+     return retval;
+diff -upk.orig vsftpd-2.0.4.orig/sysutil.c vsftpd-2.0.4/sysutil.c
+--- vsftpd-2.0.4.orig/sysutil.c	2006-01-09 17:05:18 +0000
++++ vsftpd-2.0.4/sysutil.c	2006-05-23 13:05:18 +0000
+@@ -1740,7 +1740,7 @@ vsf_sysutil_connect_timeout(int fd, cons
+     }
+     else
+     {
+-      int socklen = sizeof(retval);
++      socklen_t socklen = sizeof(retval);
+       int sockoptret = getsockopt(fd, SOL_SOCKET, SO_ERROR, &retval, &socklen);
+       if (sockoptret != 0)
+       {
+diff -upk.orig vsftpd-2.0.4.orig/sysutil.h vsftpd-2.0.4/sysutil.h
+--- vsftpd-2.0.4.orig/sysutil.h	2006-01-07 20:01:41 +0000
++++ vsftpd-2.0.4/sysutil.h	2006-05-23 12:48:49 +0000
+@@ -162,6 +162,9 @@ void vsf_sysutil_free(void* p_ptr);
+ unsigned int vsf_sysutil_getpid(void);
+ int vsf_sysutil_fork(void);
+ int vsf_sysutil_fork_failok(void);
++#ifdef __GNUC__
++__attribute__ ((noreturn))
++#endif
+ void vsf_sysutil_exit(int exit_code);
+ struct vsf_sysutil_wait_retval
+ {
+diff -upk.orig vsftpd-2.0.4.orig/twoprocess.c vsftpd-2.0.4/twoprocess.c
+--- vsftpd-2.0.4.orig/twoprocess.c	2005-03-18 19:04:13 +0000
++++ vsftpd-2.0.4/twoprocess.c	2005-11-27 17:17:27 +0000
+@@ -41,6 +41,9 @@ static void calculate_chdir_dir(int anon
+                                 const struct mystr* p_user_str,
+                                 const struct mystr* p_orig_user_str);
+ 
++#ifdef __GNUC__
++__attribute__ ((noreturn))
++#endif
+ static void
+ handle_sigchld(int duff)
+ {
+diff -upk.orig vsftpd-2.0.4.orig/utility.h vsftpd-2.0.4/utility.h
+--- vsftpd-2.0.4.orig/utility.h	2004-04-15 22:46:29 +0000
++++ vsftpd-2.0.4/utility.h	2005-11-27 17:18:25 +0000
+@@ -10,6 +10,9 @@ struct mystr;
+  * PARAMETERS
+  * p_text       - text string describing why the process is exiting
+  */
++#ifdef __GNUC__
++__attribute__ ((noreturn))
++#endif
+ void die(const char* p_text);
+ 
+ /* die2()
+@@ -20,6 +23,9 @@ void die(const char* p_text);
+  * p_text1      - text string describing why the process is exiting
+  * p_text2      - text to safely concatenate to p_text1
+  */
++#ifdef __GNUC__
++__attribute__ ((noreturn))
++#endif
+ void die2(const char* p_text1, const char* p_text2);
+ 
+ /* bug()
+@@ -29,6 +35,9 @@ void die2(const char* p_text1, const cha
+  * PARAMETERS
+  * p_text       - text string describing what bug trap has triggered
+  *       */
++#ifdef __GNUC__
++__attribute__ ((noreturn))
++#endif
+ void bug(const char* p_text);
+ 
+ /* vsf_exit()
+@@ -38,6 +47,9 @@ void bug(const char* p_text);
+  * PARAMETERS
+  * p_text       - text string describing why the process is exiting
+  */
++#ifdef __GNUC__
++__attribute__ ((noreturn))
++#endif
+ void vsf_exit(const char* p_text);
+ 
+ #endif
