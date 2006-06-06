@@ -10,14 +10,3 @@ diff -urp e2fsprogs-1.37.orig/lib/blkid/cache.c e2fsprogs-1.37/lib/blkid/cache.c
  
  		if (dstr)
  			blkid_debug_mask = strtoul(dstr, 0, 0);
-@@ -41,8 +41,8 @@ int blkid_get_cache(blkid_cache *ret_cac
- 
- 	if (filename && !strlen(filename))
- 		filename = 0;
--	if (!filename && (getuid() == geteuid()))
--		filename = getenv("BLKID_FILE");
-+	if (!filename)
-+		filename = __secure_getenv("BLKID_FILE");
- 	if (!filename)
- 		filename = BLKID_CACHE_FILE;
- 	cache->bic_filename = blkid_strdup(filename);

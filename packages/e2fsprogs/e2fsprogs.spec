@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.35 2006/03/13 01:40:24 ldv Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.36 2006/06/06 13:07:42 ldv Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -12,18 +12,16 @@
 
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
-Version: 1.37
-Release: owl4
+Version: 1.39
+Release: owl1
 License: GPL
 Group: System Environment/Base
 Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
-Patch0: e2fsprogs-1.37-owl-fixes.diff
-Patch1: e2fsprogs-1.37-owl-tests.diff
-Patch2: e2fsprogs-1.37-owl-blkid-env.diff
-Patch3: e2fsprogs-1.37-owl-messages.diff
+Patch0: e2fsprogs-1.39-owl-alt-fixes.diff
+Patch1: e2fsprogs-1.37-owl-blkid-env.diff
 PreReq: /sbin/ldconfig
 BuildRequires: gettext, texinfo, automake, autoconf
-BuildRequires: glibc >= 0:2.2
+BuildRequires: glibc >= 0:2.2, sed >= 0:4.1
 %if !%USE_PKGCONFIG
 BuildRequires: rpm-build >= 0:4
 %endif
@@ -55,9 +53,15 @@ develop second extended (ext2) filesystem-specific programs.
 chmod -R u+w .
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
 bzip2 -9k ChangeLog RELEASE-NOTES
+
+# remove these unwanted header files just in case
+rm -r include
+
+# add noreturn attribute to usage functions
+find -type f -print0 |
+	xargs -r0 grep -lZ '^static void usage' -- |
+	xargs -r0 sed -i 's/^static void usage/__attribute__((noreturn)) &/' --
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -108,6 +112,11 @@ rm %buildroot%_libdir/e2initrd_helper
 # fix permissions
 chmod 0644 %buildroot%_libdir/*.a
 
+# ensure that %buildroot did not get into installed files
+sed -i 's,^ET_DIR=.*$,ET_DIR=%_datadir/et,' %buildroot%_bindir/compile_et
+sed -i 's,^SS_DIR=.*$,SS_DIR=%_datadir/ss,' %buildroot%_bindir/mk_cmds
+! fgrep -rl %buildroot %buildroot/
+
 %find_lang %name
 
 %post -p /sbin/ldconfig
@@ -124,6 +133,8 @@ fi
 %files -f %name.lang
 %defattr(-,root,root)
 %doc ChangeLog.bz2 README RELEASE-NOTES.bz2
+
+%config(noreplace) %_sysconfdir/*.conf
 
 /sbin/badblocks
 /sbin/blkid
@@ -158,7 +169,7 @@ fi
 %_mandir/man1/chattr.1*
 %_mandir/man1/lsattr.1*
 %_mandir/man1/uuidgen.1*
-
+%_mandir/man5/*
 %_mandir/man8/badblocks.8*
 %_mandir/man8/blkid.8*
 %_mandir/man8/debugfs.8*
@@ -233,6 +244,9 @@ fi
 %_mandir/man3/uuid_unparse.3*
 
 %changelog
+* Tue Jun 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.39-owl1
+- Updated to 1.39.
+
 * Sun Mar 12 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.37-owl4
 - Made %_libdir/*.so symlinks relative.
 
