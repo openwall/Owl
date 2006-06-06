@@ -1,16 +1,14 @@
-# $Owl: Owl/packages/patchutils/patchutils.spec,v 1.7 2006/02/03 22:02:15 ldv Exp $
+# $Owl: Owl/packages/patchutils/patchutils.spec,v 1.8 2006/06/06 20:12:20 ldv Exp $
 
 Summary: Patchutils is a small collection of programs that operate on patch files.
 Name: patchutils
-Version: 0.2.30
-Release: owl5
+Version: 0.2.31
+Release: owl1
 License: GPL
 Group: Applications/Text
-URL: http://cyberelk.net/tim/%name/
-Source: http://cyberelk.net/tim/data/%name/stable/%name-%version.tar.bz2
+URL: http://cyberelk.net/tim/patchutils/
+Source: http://cyberelk.net/tim/data/patchutils/stable/patchutils-%version.tar.bz2
 Patch0: patchutils-0.2.30-owl-tmp.diff
-Patch1: patchutils-0.2.30-owl-bound.diff
-Patch2: patchutils-0.2.30-owl-fixes.diff
 PreReq: /sbin/install-info
 Requires: mktemp >= 1:1.3.1
 Prefix: %_prefix
@@ -37,8 +35,6 @@ This version contains:
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
-%patch2 -p1
 bzip2 -9k ChangeLog
 
 %build
@@ -56,6 +52,9 @@ rm -rf %buildroot
 %_mandir/*/*
 
 %changelog
+* Tue Jun 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.2.31-owl1
+- Updated to 0.2.31.
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.2.30-owl5
 - Compressed ChangeLog file.
 
