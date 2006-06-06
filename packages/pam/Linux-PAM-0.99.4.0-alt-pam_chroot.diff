@@ -1,23 +1,23 @@
-diff -upk.orig Linux-PAM-0.99.2.1.orig/configure.in Linux-PAM-0.99.2.1/configure.in
---- Linux-PAM-0.99.2.1.orig/configure.in	2005-12-12 16:56:27 +0000
-+++ Linux-PAM-0.99.2.1/configure.in	2005-12-26 14:32:06 +0000
-@@ -413,5 +413,5 @@ AC_OUTPUT(Makefile libpam/Makefile libpa
+diff -upk.orig Linux-PAM-0.99.4.0.orig/configure.in Linux-PAM-0.99.4.0/configure.in
+--- Linux-PAM-0.99.4.0.orig/configure.in	2006-05-04 09:25:00 +0000
++++ Linux-PAM-0.99.4.0/configure.in	2006-05-05 15:24:09 +0000
+@@ -467,5 +467,6 @@ AC_OUTPUT(Makefile libpam/Makefile libpa
  	modules/pam_time/Makefile modules/pam_umask/Makefile \
  	modules/pam_unix/Makefile modules/pam_userdb/Makefile \
  	modules/pam_warn/Makefile modules/pam_wheel/Makefile \
 -	modules/pam_xauth/Makefile doc/Makefile doc/specs/Makefile \
--	examples/Makefile)
 +	modules/pam_xauth/Makefile modules/pam_chroot/Makefile \
-+	doc/Makefile doc/specs/Makefile examples/Makefile)
-diff -upk.orig Linux-PAM-0.99.2.1.orig/modules/Makefile.am Linux-PAM-0.99.2.1/modules/Makefile.am
---- Linux-PAM-0.99.2.1.orig/modules/Makefile.am	2005-09-21 13:35:29 +0000
-+++ Linux-PAM-0.99.2.1/modules/Makefile.am	2005-09-26 17:41:06 +0000
++	doc/Makefile doc/specs/Makefile \
+ 	doc/man/Makefile examples/Makefile tests/Makefile)
+diff -upk.orig Linux-PAM-0.99.4.0.orig/modules/Makefile.am Linux-PAM-0.99.4.0/modules/Makefile.am
+--- Linux-PAM-0.99.4.0.orig/modules/Makefile.am	2006-02-13 07:00:09 +0000
++++ Linux-PAM-0.99.4.0/modules/Makefile.am	2006-05-05 15:24:45 +0000
 @@ -8,7 +8,7 @@ SUBDIRS = pam_access pam_cracklib pam_de
- 	pam_motd pam_nologin pam_permit pam_pwdb pam_rhosts pam_rootok \
+ 	pam_motd pam_nologin pam_permit pam_rhosts pam_rootok \
  	pam_securetty pam_selinux pam_shells pam_stress pam_succeed_if \
  	pam_tally pam_time pam_umask pam_unix pam_userdb pam_warn \
--	pam_wheel pam_xauth
-+	pam_wheel pam_xauth pam_chroot
+-	pam_wheel pam_xauth pam_exec
++	pam_wheel pam_xauth pam_exec pam_chroot
  
  
  CLEANFILES = *~

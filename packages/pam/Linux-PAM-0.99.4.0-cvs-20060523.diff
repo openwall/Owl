@@ -1,0 +1,454 @@
+Index: ChangeLog
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/ChangeLog,v
+retrieving revision 1.102
+retrieving revision 1.105
+diff -u -p -a -r1.102 -r1.105
+--- ChangeLog	4 May 2006 11:32:36 -0000	1.102
++++ ChangeLog	23 May 2006 20:34:53 -0000	1.105
+@@ -1,3 +1,42 @@
++2006-05-23  Thorsten Kukuk  <kukuk@thkukuk.de>
++
++	* modules/pam_echo/pam_echo.c (pam_echo): Use pam_modutil_read()
++	instead of read().
++
++2006-05-22  Thorsten Kukuk  <kukuk@thkukuk.de>
++
++	* modules/pam_listfile/pam_listfile.c (pam_sm_authenticate):
++	Fix memory leaks, [#1490956] found by Coverity.
++
++	* modules/pam_tally/pam_tally.c (pam_get_uid): Check return
++	value of pam_get_user().
++	(tally_get_data): Check if oldtime is not NULL.
++	[#1489818] found by Coverity.
++
++	* modules/pam_mkhomedir/pam_mkhomedir.c (create_homedir): Don't
++	ignore return value of stat(). [#1489808] found by Coverity.
++
++	* modules/pam_mail/pam_mail.c (get_folder): Fix a potential
++	NULL pointer dereference. [#1489792] found by Coverity.
++
++	* libpam/Makefile.am: bump release number of libpam.so.
++	* libpam/pam_misc.c (_pam_mkargv): Fix memory leak,
++	[#1489804] found by Coverity.
++
++	* modules/pam_echo/pam_echo.c (replace_and_print): Initialize
++	str, [#1489658] found by Coverity.
++
++	* modules/pam_cracklib/pam_cracklib.c (_pam_unix_approve_pass): Fix
++	a potential NULL pointer dereference.
++	(pam_sm_chauthtok): Remove dead code.
++	[#1489634] found by Coverity.
++
++2006-05-04  Thorsten Kukuk  <kukuk@suse.de>
++
++	* configure.in: Check for fseeko.
++	* modules/pam_tally/pam_tally.c: Use fseeko if available
++	(Based on patch by IBM).
++
+ 2006-05-04  Thorsten Kukuk  <kukuk@thkukuk.de>
+ 
+ 	* release version 0.99.4.0
+Index: NEWS
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/NEWS,v
+retrieving revision 1.32
+retrieving revision 1.34
+diff -u -p -a -r1.32 -r1.34
+--- NEWS	4 May 2006 11:32:36 -0000	1.32
++++ NEWS	22 May 2006 17:27:54 -0000	1.34
+@@ -1,6 +1,9 @@
+ Linux-PAM NEWS -- history of user-visible changes.
+ 
+ 
++* pam_tally: Fix support for large UIDs
++* Fixed all problems found by Coverity
++
+ Release 0.99.4.0
+ 
+ * Add test suite
+Index: configure.in
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/configure.in,v
+retrieving revision 1.80
+retrieving revision 1.81
+diff -u -p -a -r1.80 -r1.81
+--- configure.in	4 May 2006 11:32:36 -0000	1.80
++++ configure.in	15 May 2006 11:52:22 -0000	1.81
+@@ -377,7 +377,7 @@ AC_TYPE_GETGROUPS
+ AC_PROG_GCC_TRADITIONAL
+ AC_FUNC_MEMCMP
+ AC_FUNC_VPRINTF
+-AC_CHECK_FUNCS(gethostname gettimeofday lckpwdf mkdir select)
++AC_CHECK_FUNCS(fseeko gethostname gettimeofday lckpwdf mkdir select)
+ AC_CHECK_FUNCS(strcspn strdup strspn strstr strtol uname)
+ AC_CHECK_FUNCS(getpwnam_r getpwuid_r getgrnam_r getgrgid_r getspnam_r)
+ AC_CHECK_FUNCS(getgrouplist getline getdelim)
+Index: libpam/Makefile.am
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/libpam/Makefile.am,v
+retrieving revision 1.15
+retrieving revision 1.16
+diff -u -p -a -r1.15 -r1.16
+--- libpam/Makefile.am	10 Feb 2006 18:33:56 -0000	1.15
++++ libpam/Makefile.am	22 May 2006 17:27:54 -0000	1.16
+@@ -20,7 +20,7 @@ include_HEADERS = $(addprefix include/se
+ noinst_HEADERS = pam_prelude.h pam_private.h pam_tokens.h \
+ 		pam_modutil_private.h pam_static_modules.h
+ 
+-libpam_la_LDFLAGS = -no-undefined -version-info 81:3:81 @LIBAUDIT@
++libpam_la_LDFLAGS = -no-undefined -version-info 81:4:81 @LIBAUDIT@
+ if STATIC_MODULES
+   libpam_la_LDFLAGS += `ls ../modules/pam_*/*.lo` \
+ 	@LIBDB@ @LIBCRYPT@ @LIBNSL@ @LIBCRACK@ -lutil
+Index: libpam/pam_misc.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/libpam/pam_misc.c,v
+retrieving revision 1.5
+retrieving revision 1.6
+diff -u -p -a -r1.5 -r1.6
+--- libpam/pam_misc.c	4 Sep 2005 20:32:25 -0000	1.5
++++ libpam/pam_misc.c	22 May 2006 17:27:54 -0000	1.6
+@@ -1,7 +1,7 @@
+ /* pam_misc.c -- This is random stuff */
+ 
+ /*
+- * $Id: pam_misc.c,v 1.5 2005/09/04 20:32:25 kukuk Exp $
++ * $Id: pam_misc.c,v 1.6 2006/05/22 17:27:54 kukuk Exp $
+  */
+ 
+ #include "pam_private.h"
+@@ -170,11 +170,11 @@ int _pam_mkargv(char *s, char ***argv, i
+ 		    sbuf = NULL;
+ 		    D(("loop again?"));
+ 		}
+-		_pam_drop(sbuf_start);
+ 	    }
++	    _pam_drop(sbuf_start);
+ 	}
+     }
+-    
++
+     *argv = our_argv;
+ 
+     D(("_pam_mkargv returned"));
+@@ -256,7 +256,7 @@ void _pam_parse_control(int *control_arr
+ 	    error = "expecting '='";
+ 	    goto parse_error;
+ 	}
+-	
++
+ 	/* skip leading space */
+ 	while (isspace((int)*tok) && *++tok);
+ 	if (!*tok) {
+Index: modules/pam_cracklib/pam_cracklib.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_cracklib/pam_cracklib.c,v
+retrieving revision 1.16
+retrieving revision 1.17
+diff -u -p -a -r1.16 -r1.17
+--- modules/pam_cracklib/pam_cracklib.c	8 Jan 2006 09:36:55 -0000	1.16
++++ modules/pam_cracklib/pam_cracklib.c	22 May 2006 17:27:54 -0000	1.17
+@@ -473,10 +473,9 @@ static int _pam_unix_approve_pass(pam_ha
+     if (!msg) {
+ 	retval = pam_get_item(pamh, PAM_USER, &user);
+ 	if (retval != PAM_SUCCESS || user == NULL) {
+-	    if (ctrl & PAM_DEBUG_ARG) {
++	    if (ctrl & PAM_DEBUG_ARG)
+ 		pam_syslog(pamh,LOG_ERR,"Can not get username");
+-        	return PAM_AUTHTOK_ERR;
+-	    }
++	    return PAM_AUTHTOK_ERR;
+ 	}
+ 	msg = check_old_password(user, pass_new);
+     }
+@@ -663,11 +662,6 @@ PAM_EXTERN int pam_sm_chauthtok(pam_hand
+                  */
+ 	        _pam_drop(resp);
+             } else {
+-                retval = (retval == PAM_SUCCESS) ?
+-                         PAM_AUTHTOK_RECOVERY_ERR:retval ;
+-            }
+-
+-            if (retval != PAM_SUCCESS) {
+                 if (ctrl && PAM_DEBUG_ARG)
+                     pam_syslog(pamh, LOG_DEBUG,
+ 			       "unable to obtain the password a second time");
+Index: modules/pam_echo/pam_echo.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_echo/pam_echo.c,v
+retrieving revision 1.4
+retrieving revision 1.6
+diff -u -p -a -r1.4 -r1.6
+--- modules/pam_echo/pam_echo.c	13 Feb 2006 07:45:17 -0000	1.4
++++ modules/pam_echo/pam_echo.c	23 May 2006 20:34:53 -0000	1.6
+@@ -58,6 +58,7 @@
+ #define PAM_SM_SESSION
+ 
+ #include <security/pam_modules.h>
++#include <security/pam_modutil.h>
+ #include <security/_pam_macros.h>
+ #include <security/pam_ext.h>
+ 
+@@ -67,7 +68,7 @@ replace_and_print (pam_handle_t *pamh, c
+   char *output;
+   size_t length = strlen (mesg) + PAM_MAX_MSG_SIZE;
+   char myhostname[HOST_NAME_MAX+1];
+-  const void *str;
++  const void *str = NULL;
+   const char *p, *q;
+   int item;
+   size_t len;
+@@ -182,7 +183,7 @@ pam_echo (pam_handle_t *pamh, int flags,
+       if (!mtmp)
+ 	return PAM_BUF_ERR;
+ 
+-      if (read (fd, mtmp, st.st_size) == -1)
++      if (pam_modutil_read (fd, mtmp, st.st_size) == -1)
+ 	{
+ 	  pam_syslog (pamh, LOG_ERR, "Error while reading %s: %m", file);
+ 	  free (mtmp);
+Index: modules/pam_listfile/pam_listfile.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_listfile/pam_listfile.c,v
+retrieving revision 1.13
+retrieving revision 1.14
+diff -u -p -a -r1.13 -r1.14
+--- modules/pam_listfile/pam_listfile.c	23 Jan 2006 12:36:34 -0000	1.13
++++ modules/pam_listfile/pam_listfile.c	22 May 2006 17:27:54 -0000	1.14
+@@ -108,16 +108,21 @@ pam_sm_authenticate (pam_handle_t *pamh,
+ 		onerr = PAM_SUCCESS;
+ 	    else if(!strcmp(myval,"fail"))
+ 		onerr = PAM_SERVICE_ERR;
+-	    else
++	    else {
++	        if (ifname) free (ifname);
+ 		return PAM_SERVICE_ERR;
++	    }
+ 	else if(!strcmp(mybuf,"sense"))
+ 	    if(!strcmp(myval,"allow"))
+ 		sense=0;
+ 	    else if(!strcmp(myval,"deny"))
+ 		sense=1;
+-	    else
++	    else {
++	        if (ifname) free (ifname);
+ 		return onerr;
++	    }
+ 	else if(!strcmp(mybuf,"file")) {
++	    if (ifname) free (ifname);
+ 	    ifname = (char *)malloc(strlen(myval)+1);
+ 	    if (!ifname)
+ 		return PAM_BUF_ERR;
+@@ -176,6 +181,7 @@ pam_sm_authenticate (pam_handle_t *pamh,
+               ) {
+ 	pam_syslog(pamh,LOG_ERR,
+ 		  "Invalid usage for apply= parameter");
++        free (ifname);
+ 	return onerr;
+     }
+ 
+Index: modules/pam_mail/pam_mail.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_mail/pam_mail.c,v
+retrieving revision 1.17
+retrieving revision 1.18
+diff -u -p -a -r1.17 -r1.18
+--- modules/pam_mail/pam_mail.c	12 Dec 2005 12:47:38 -0000	1.17
++++ modules/pam_mail/pam_mail.c	22 May 2006 17:27:54 -0000	1.18
+@@ -1,8 +1,6 @@
+ /* pam_mail module */
+ 
+ /*
+- * $Id: pam_mail.c,v 1.17 2005/12/12 12:47:38 t8m Exp $
+- *
+  * Written by Andrew Morgan <morgan@linux.kernel.org> 1996/3/11
+  * $HOME additions by David Kinchlea <kinch@kinch.ark.com> 1997/1/7
+  * mailhash additions by Chris Adams <cadams@ro.com> 1998/7/11
+@@ -174,6 +172,14 @@ get_folder(pam_handle_t *pamh, int ctrl,
+ 
+     retval = PAM_BUF_ERR;
+     if (ctrl & PAM_HOME_MAIL) {
++        if (pwd == NULL) {
++	    pwd = pam_modutil_getpwnam(pamh, user);
++	    if (pwd == NULL) {
++		pam_syslog(pamh, LOG_ERR, "user unknown");
++		retval = PAM_USER_UNKNOWN;
++		goto get_folder_cleanup;
++	    }
++	}
+ 	if (asprintf(&folder, MAIL_FILE_FORMAT, pwd->pw_dir, "", path) < 0)
+ 	    goto get_folder_cleanup;
+     } else {
+Index: modules/pam_mkhomedir/pam_mkhomedir.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_mkhomedir/pam_mkhomedir.c,v
+retrieving revision 1.21
+retrieving revision 1.22
+diff -u -p -a -r1.21 -r1.22
+--- modules/pam_mkhomedir/pam_mkhomedir.c	10 Feb 2006 18:33:59 -0000	1.21
++++ modules/pam_mkhomedir/pam_mkhomedir.c	22 May 2006 17:27:54 -0000	1.22
+@@ -341,7 +341,20 @@ create_homedir (pam_handle_t * pamh, int
+ 
+ 	 return PAM_PERM_DENIED;
+       }
+-      stat(newsource,&St);
++      if (stat(newsource,&St) != 0)
++	{
++	  pam_syslog(pamh, LOG_DEBUG, "unable to stat src file %s: %m",
++		     newsource);
++	  close(SrcFd);
++	  closedir(D);
++
++#ifndef PATH_MAX
++	  free(newsource); newsource = NULL;
++	  free(newdest); newdest = NULL;
++#endif
++
++	  return PAM_PERM_DENIED;
++	}
+ 
+       /* Open the dest file */
+       if ((DestFd = open(newdest,O_WRONLY | O_TRUNC | O_CREAT,0600)) < 0)
+Index: modules/pam_tally/pam_tally.c
+===================================================================
+RCS file: /cvsroot/pam/Linux-PAM/modules/pam_tally/pam_tally.c,v
+retrieving revision 1.24
+retrieving revision 1.26
+diff -u -p -a -r1.24 -r1.26
+--- modules/pam_tally/pam_tally.c	2 May 2006 11:12:00 -0000	1.24
++++ modules/pam_tally/pam_tally.c	22 May 2006 17:27:54 -0000	1.26
+@@ -1,7 +1,6 @@
+ /*
+  * pam_tally.c
+  *
+- * $Id: pam_tally.c,v 1.24 2006/05/02 11:12:00 kukuk Exp $
+  */
+ 
+ 
+@@ -34,11 +33,6 @@
+ #include <sys/param.h>
+ #include "faillog.h"
+ 
+-#ifndef TRUE
+-#define TRUE  1L
+-#define FALSE 0L
+-#endif
+-
+ /*
+  * here, we make a definition for the externally accessible function
+  * in this file (this definition is required for static a module
+@@ -55,6 +49,15 @@
+ #include <security/pam_modutil.h>
+ #include <security/pam_ext.h>
+ 
++#ifndef TRUE
++#define TRUE  1L
++#define FALSE 0L
++#endif
++
++#ifndef HAVE_FSEEKO
++#define fseeko fseek
++#endif
++
+ /*---------------------------------------------------------------------*/
+ 
+ #define DEFAULT_LOGFILE "/var/log/faillog"
+@@ -64,8 +67,6 @@
+ #define TALLY_FMT  "%hu"
+ #define TALLY_HI   ((tally_t)~0L)
+ 
+-#define UID_FMT    "%hu"
+-
+ #ifndef FILENAME_MAX
+ # define FILENAME_MAX MAXPATHLEN
+ #endif
+@@ -230,7 +231,10 @@ pam_get_uid(pam_handle_t *pamh, uid_t *u
+ #ifdef MAIN
+     user = cline_user;
+ #else
+-    pam_get_user( pamh, &user, NULL );
++    if ((pam_get_user( pamh, &user, NULL )) != PAM_SUCCESS) {
++      pam_syslog(pamh, LOG_ERR, "pam_get_user; user?");
++      return PAM_AUTH_ERR;
++    }
+ #endif
+ 
+     if ( !user || !*user ) {
+@@ -287,7 +291,8 @@ tally_get_data( pam_handle_t *pamh, time
+     }
+     else {
+       rv = -1;
+-      *oldtime = 0;
++      if (oldtime)
++	*oldtime = 0;
+     }
+     return rv;
+ }
+@@ -345,7 +350,7 @@ get_tally(pam_handle_t *pamh, tally_t *t
+       return PAM_AUTH_ERR;
+     }
+ 
+-    if ( fseek( *TALLY, uid * sizeof(struct faillog), SEEK_SET ) ) {
++    if ( fseeko( *TALLY, (off_t) uid * sizeof(struct faillog), SEEK_SET ) ) {
+           pam_syslog(pamh, LOG_ALERT, "fseek failed for %s", filename);
+           fclose(*TALLY);
+           return PAM_AUTH_ERR;
+@@ -382,7 +387,7 @@ set_tally(pam_handle_t *pamh, tally_t ta
+     int retval = PAM_SUCCESS;
+ 
+     if ( tally!=TALLY_HI ) {
+-      if ( fseek( *TALLY, uid * sizeof(struct faillog), SEEK_SET ) ) {
++      if ( fseeko( *TALLY, (off_t) uid * sizeof(struct faillog), SEEK_SET ) ) {
+ 	pam_syslog(pamh, LOG_ALERT, "fseek failed for %s", filename);
+ 	retval = PAM_AUTH_ERR;
+       } else {
+@@ -518,9 +523,9 @@ tally_check (time_t oldtime, pam_handle_
+       	if ( lock_time + oldtime > time(NULL) )
+       	{
+       		pam_syslog(pamh, LOG_NOTICE,
+-			 "user %s ("UID_FMT") has time limit [%lds left]"
++			 "user %s (%lu) has time limit [%lds left]"
+ 			 " since last failure.",
+-			 user,uid,
++			 user, (unsigned long int) uid,
+ 			 oldtime+lock_time
+ 			 -time(NULL));
+       		return PAM_AUTH_ERR;
+@@ -539,8 +544,8 @@ tally_check (time_t oldtime, pam_handle_
+         ( ((opts->ctrl & OPT_DENY_ROOT) || uid) )    /* even_deny stops uid check    */
+         ) {
+         pam_syslog(pamh, LOG_NOTICE,
+-		   "user %s ("UID_FMT") tally "TALLY_FMT", deny "TALLY_FMT,
+-		   user, uid, tally, deny);
++		   "user %s (%lu) tally "TALLY_FMT", deny "TALLY_FMT,
++		   user, (unsigned long int) uid, tally, deny);
+         return PAM_AUTH_ERR;                 /* Only unconditional failure   */
+       }
+     }
+@@ -807,7 +812,8 @@ int main ( int argc UNUSED, char **argv 
+     }
+ 
+     if ( !cline_quiet )
+-      printf("User %s\t("UID_FMT")\t%s "TALLY_FMT"\n",cline_user,uid,
++      printf("User %s\t(%lu)\t%s "TALLY_FMT"\n",cline_user,
++	     (unsigned long int) uid,
+              (cline_reset!=TALLY_HI)?"had":"has",tally);
+ 
+     i=set_tally(NULL, cline_reset, uid, cline_filename, &TALLY, fsp);
+@@ -832,11 +838,13 @@ int main ( int argc UNUSED, char **argv 
+       tally = fsp->fs_faillog.fail_cnt;
+ 
+       if ( ( pw=getpwuid(uid) ) ) {
+-        printf("User %s\t("UID_FMT")\t%s "TALLY_FMT"\n",pw->pw_name,uid,
++        printf("User %s\t(%lu)\t%s "TALLY_FMT"\n",pw->pw_name,
++	       (unsigned long int) uid,
+                (cline_reset!=TALLY_HI)?"had":"has",tally);
+       }
+       else {
+-        printf("User [NONAME]\t("UID_FMT")\t%s "TALLY_FMT"\n",uid,
++        printf("User [NONAME]\t(%lu)\t%s "TALLY_FMT"\n",
++	       (unsigned long int) uid,
+                (cline_reset!=TALLY_HI)?"had":"has",tally);
+       }
+     }

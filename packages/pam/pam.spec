@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/pam/pam.spec,v 1.49 2006/04/07 00:51:41 ldv Exp $
+# $Owl: Owl/packages/pam/pam.spec,v 1.50 2006/06/06 12:36:51 ldv Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
-Version: 0.99.3.0
-Release: owl2
+Version: 0.99.4.0
+Release: owl1
 %define rh_version 0.80-1
 License: GPL or BSD
 Group: System Environment/Base
@@ -14,13 +14,13 @@ Source2: pam-redhat-%rh_version.tar.bz2
 Source3: pam_listfile.c
 Source4: other.pam
 Source5: system-auth.pam
-Patch0: Linux-PAM-0.99.3.0-cvs-20060313-fixes.diff
+Patch0: Linux-PAM-0.99.4.0-cvs-20060523.diff
 Patch1: Linux-PAM-0.99.2.1-alt-const.diff
 Patch2: Linux-PAM-0.99.2.1-owl-pam_limits-acct.diff
 Patch3: Linux-PAM-0.99.2.1-owl-pam_mkhomedir-acct.diff
 Patch4: Linux-PAM-0.99.2.1-owl-pam_wheel-use_uid.diff
-Patch5: Linux-PAM-0.99.2.1-alt-pam_chroot.diff
-Patch6: Linux-PAM-0.99.2.1-owl-pam_stack.diff
+Patch5: Linux-PAM-0.99.4.0-alt-pam_chroot.diff
+Patch6: Linux-PAM-0.99.4.0-owl-pam_stack.diff
 Patch7: Linux-PAM-0.99.2.1-alt-pam_xauth-check_acl.diff
 PreReq: /sbin/ldconfig
 Requires: glibc-crypt_blowfish
@@ -78,7 +78,7 @@ This package contains PAM modules for backwards compatibility.
 %patch7 -p1
 
 # Remove unwanted modules.
-for d in pam_{console,cracklib,debug,loginuid,postgresok,pwdb,rps,selinux,timestamp,umask,unix}; do
+for d in pam_{console,cracklib,debug,loginuid,postgresok,rps,selinux,timestamp,umask,unix}; do
 	rm -r modules/$d
 	sed -i "s,modules/$d/Makefile,," configure.in
 	sed -i "s/ $d / /" modules/Makefile.am
@@ -107,7 +107,6 @@ automake -a
 export ac_cv_lib_ndbm_dbm_store=no \
 	ac_cv_lib_db_dbm_store=no \
 	ac_cv_lib_selinux_getfilecon=no \
-	ac_cv_lib_pwdb_pwdb_db_name=no \
 	ac_cv_search_FascistCheck='none required'
 %configure \
 	--prefix=/ \
@@ -210,6 +209,7 @@ find %buildroot%docdir/ -type f -size +4k \( -iname changelog -or -name \*.txt -
 /%_lib/security/pam_deny.so
 /%_lib/security/pam_echo.so
 /%_lib/security/pam_env.so
+/%_lib/security/pam_exec.so
 /%_lib/security/pam_filter.so
 /%_lib/security/pam_ftp.so
 /%_lib/security/pam_group.so
@@ -265,6 +265,9 @@ find %buildroot%docdir/ -type f -size +4k \( -iname changelog -or -name \*.txt -
 %docdir/[hpst]*
 
 %changelog
+* Tue Jun 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.99.4.0-owl1
+- Updated Linux-PAM to post-0.99.4.0 snapshot 20060523.
+
 * Fri Apr 07 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.99.3.0-owl2
 - Backported a few fixes from Linux-PAM cvs.
 - Rebuilt with libdb-4.3.so.
