@@ -1,0 +1,32 @@
+diff -upk.orig which-2.16.orig/tilde/tilde.c which-2.16/tilde/tilde.c
+--- which-2.16.orig/tilde/tilde.c	1999-05-28 00:15:55 +0000
++++ which-2.16/tilde/tilde.c	2003-03-18 14:29:13 +0000
+@@ -182,7 +182,7 @@ tilde_expand (string)
+   int result_size, result_index;
+ 
+   result_index = result_size = 0;
+-  if (result = strchr (string, '~'))
++  if ((result = strchr (string, '~')))
+     result = xmalloc (result_size = (strlen (string) + 16));
+   else
+     result = xmalloc (result_size = (strlen (string) + 1));
+diff -upk.orig which-2.16.orig/which.c which-2.16/which.c
+--- which-2.16.orig/which.c	2003-09-12 00:58:49 +0000
++++ which-2.16/which.c	2006-06-06 16:09:22 +0000
+@@ -22,6 +22,7 @@
+ #include "getopt.h"
+ #include "tilde/tilde.h"
+ #include "bash.h"
++#include <ctype.h>
+ 
+ static const char *progname;
+ 
+@@ -538,7 +539,7 @@ int main(int argc, char *argv[])
+     while (fgets(buf, sizeof(buf), stdin))
+     {
+       int looks_like_function_start = 0;
+-      int function_start_version_205b;
++      int function_start_version_205b = 0;
+       if (read_functions)
+       {
+ 	// bash version 2.0.5a and older output a pattern for `str' like

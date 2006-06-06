@@ -1,0 +1,14 @@
+diff -upk.orig which-2.16.orig/which.texinfo which-2.16/which.texinfo
+--- which-2.16.orig/which.texinfo	2001-08-17 02:20:26 +0000
++++ which-2.16/which.texinfo	2006-06-06 15:58:02 +0000
+@@ -3,6 +3,10 @@
+ @setfilename which.info
+ @settitle @command{which}: show full path of commands
+ @include version.texi
++@dircategory GNU Packages
++@direntry
++* Which: (which).                               Show full path of commands.
++@end direntry
+ @c %**end of header
+ 
+ @setchapternewpage odd
