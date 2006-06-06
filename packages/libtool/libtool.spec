@@ -1,21 +1,22 @@
-# $Owl: Owl/packages/libtool/libtool.spec,v 1.20 2006/04/04 00:15:07 ldv Exp $
+# $Owl: Owl/packages/libtool/libtool.spec,v 1.21 2006/06/06 01:05:19 ldv Exp $
 
 %define BUILD_TEST 0
 
 Summary: The GNU Libtool, which simplifies the use of shared libraries.
 Name: libtool
-Version: 1.5.18
-Release: owl2
-License: GPL
+Version: 1.5.22
+Release: owl1
+License: GPL/LGPL
 Group: Development/Tools
 URL: http://www.gnu.org/software/libtool/
 Source: ftp://ftp.gnu.org/gnu/libtool/libtool-%version.tar.gz
-Patch0: libtool-1.5.18-alt-tmp.diff
+Patch0: libtool-1.5.22-alt-tmp.diff
 Patch1: libtool-1.5.18-owl-info.diff
 Patch2: libtool-1.5.18-owl-buildhost.diff
 Patch3: libtool-1.5.18-alt-deb-link_all_deplibs.diff
 Patch4: libtool-1.5.18-alt-ltmain-legacy.diff
 Patch5: libtool-1.5.18-alt-ld.so.conf.diff
+Patch6: libtool-1.5.18-rh-multilib-hack.diff
 PreReq: /sbin/install-info, autoconf, automake, m4, perl
 Requires: libtool-libs = %version-%release, mktemp
 Prefix: %_prefix
@@ -43,6 +44,7 @@ shared libraries.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 rm doc/libtool.info
@@ -91,6 +93,9 @@ fi
 %_libdir/libltdl.so.*
 
 %changelog
+* Tue Jun 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.5.22-owl1
+- Updated to 1.5.22.
+
 * Sun Sep 25 2005 Michail Litvak <mci-at-owl.openwall.com> 1.5.18-owl2
 - Don't package .la files.
 

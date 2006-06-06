@@ -1,0 +1,44 @@
+--- libtool-1.5.22/ltmain.in.orig	2005-12-18 21:43:52 +0000
++++ libtool-1.5.22/ltmain.in	2005-12-19 22:08:31 +0000
+@@ -147,33 +147,20 @@ o2lo="s/\\.${objext}\$/.lo/"
+ # given, STRING is the basename for that directory.
+ func_mktempdir ()
+ {
+-    my_template="${TMPDIR-/tmp}/${1-$progname}"
++    my_template="${1-$progname}"
+ 
+     if test "$run" = ":"; then
+       # Return a directory name, but don't create it in dry-run mode
+-      my_tmpdir="${my_template}-$$"
++      my_mktemp='mktemp -dtu'
+     else
+-
+-      # If mktemp works, use that first and foremost
+-      my_tmpdir=`mktemp -d "${my_template}-XXXXXXXX" 2>/dev/null`
+-
+-      if test ! -d "$my_tmpdir"; then
+-	# Failing that, at least try and use $RANDOM to avoid a race
+-	my_tmpdir="${my_template}-${RANDOM-0}$$"
+-
+-	save_mktempdir_umask=`umask`
+-	umask 0077
+-	$mkdir "$my_tmpdir"
+-	umask $save_mktempdir_umask
+-      fi
+-
+-      # If we're not in dry-run mode, bomb out on failure
+-      test -d "$my_tmpdir" || {
+-        $echo "cannot create temporary directory \`$my_tmpdir'" 1>&2
+-	exit $EXIT_FAILURE
+-      }
++      my_mktemp='mktemp -dt'
+     fi
+ 
++    my_tmpdir=`$my_mktemp "${my_template}-XXXXXXXX"` || {
++      $echo "cannot create temporary directory" 1>&2
++      exit $EXIT_FAILURE
++    }
++
+     $echo "X$my_tmpdir" | $Xsed
+ }
+ 
