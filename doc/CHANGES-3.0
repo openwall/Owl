@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2006/06/06	Package: which
+Updated to 2.16.
+
 2006/06/06	Package: e2fsprogs
 Updated to 1.39.
 
@@ -155,4 +158,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.30 2006/06/06 13:11:04 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.31 2006/06/06 16:19:53 ldv Exp $
