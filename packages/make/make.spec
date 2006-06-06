@@ -1,12 +1,14 @@
-# $Owl: Owl/packages/make/make.spec,v 1.14 2006/02/03 22:31:15 ldv Exp $
+# $Owl: Owl/packages/make/make.spec,v 1.15 2006/06/06 01:06:26 ldv Exp $
 
 Summary: A GNU tool which simplifies the build process for users.
 Name: make
-Version: 3.80
-Release: owl3
+Version: 3.81
+Release: owl1
 License: GPL
 Group: Development/Tools
+URL: http://www.gnu.org/software/make/
 Source: ftp://ftp.gnu.org/gnu/make/make-%version.tar.bz2
+Patch: make-3.81-owl-info.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
 BuildRequires: texinfo
@@ -20,6 +22,8 @@ program need to be recompiled, and issues commands to recompile them.
 
 %prep
 %setup -q
+%patch -p1
+bzip2 -9k NEWS
 
 %build
 export ac_cv_func_mkstemp=yes \
@@ -36,24 +40,25 @@ ln -sf make %buildroot%_bindir/gmake
 rm %buildroot%_infodir/dir
 
 %post
-/sbin/install-info %_infodir/make.info %_infodir/dir \
-	--entry="* GNU make: (make).                             The GNU make utility."
+/sbin/install-info %_infodir/make.info %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/make.info %_infodir/dir \
-		--entry="* GNU make: (make).                             The GNU make utility."
+	/sbin/install-info --delete %_infodir/make.info %_infodir/dir
 fi
 
 %files
 %defattr(-,root,root)
-%doc NEWS README
+%doc AUTHORS NEWS.bz2
 %_bindir/*
 %_mandir/man*/*
 %_infodir/*.info*
 %_datadir/locale/*/LC_MESSAGES/make.mo
 
 %changelog
+* Tue Jun 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.81-owl1
+- Updated to 3.81.
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.80-owl3
 - Corrected info files installation.
 

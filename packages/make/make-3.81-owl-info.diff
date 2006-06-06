@@ -1,0 +1,11 @@
+--- make-3.81/doc/make.texi.orig	2006-04-01 06:36:40 +0000
++++ make-3.81/doc/make.texi	2006-04-01 11:30:39 +0000
+@@ -52,7 +52,7 @@ Software Foundation raise funds for GNU 
+ 
+ @dircategory GNU Packages
+ @direntry
+-* Make: (make).            Remake files automatically.
++* GNU make: (make).                             The GNU make utility.
+ @end direntry
+ 
+ @iftex
