@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/bison/bison.spec,v 1.27 2006/04/04 00:20:01 ldv Exp $
+# $Owl: Owl/packages/bison/bison.spec,v 1.28 2006/06/06 01:04:42 ldv Exp $
 
 %define BUILD_TEST 0
 
 Summary: A GNU general-purpose parser generator.
 Name: bison
-Version: 2.0
+Version: 2.1
 Release: owl1
 License: GPL
 Group: Development/Tools
@@ -31,6 +31,7 @@ to be very proficient in C programming to be able to program with Bison.
 %prep
 %setup -q
 %patch0 -p1
+bzip2 -9k NEWS
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -59,14 +60,19 @@ fi
 
 %files
 %defattr(-,root,root)
+%doc AUTHORS NEWS.bz2 THANKS doc/FAQ
 %_mandir/*/*
+%_datadir/aclocal/*
 %_datadir/bison
-%_datadir/locale/*/LC_MESSAGES/bison.mo
+%_datadir/locale/*/LC_MESSAGES/bison*.mo
 %_infodir/bison.info*
 %_bindir/*
 %_libdir/liby.a
 
 %changelog
+* Tue Jun 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.1-owl1
+- Updated to 2.1.
+
 * Wed Apr 27 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.0-owl1
 - Adjusted post-/pre- scriptlets to not use an explicit compression suffix.
 
