@@ -12,6 +12,27 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2006/06/06	Package: make
+Updated to 3.81.
+
+2006/06/06	Package: libtool
+Updated to 1.5.22.
+
+2006/06/06	Package: bison
+Updated to 2.1.
+
+2006/06/06	Package: bind
+Updated to 9.3.2.
+
+2006/06/06	Package: vsftpd
+Updated to 2.0.4.
+
+2006/06/06	Package: chkconfig
+Updated to 1.3.29.
+
+2006/06/06	Package: bash
+Updated to 3.1 patchlevel 17.
+
 2006/05/27	Package: coreutils
 Updated to 5.96.
 
@@ -128,4 +149,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.28 2006/05/27 19:01:52 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.29 2006/06/06 01:08:54 ldv Exp $
