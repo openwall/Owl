@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.51 2006/05/20 22:10:08 galaxy Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.52 2006/06/07 01:38:06 galaxy Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -27,7 +27,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.8.8
-Release: owl2
+Release: owl3
 Epoch: 4
 License: GPL
 Group: Development/Languages
@@ -255,8 +255,8 @@ std-headers: \$(STDH)
 gcc-headers: \$(GCCH)
 	cd \$(GCCDIR) && \$(H2PH) \$(GCCH:\$(GCCDIR)/%%=%%)
 
-fix-config: \$(PHDIR)/Config.pm
-	\$(PERL) -i -p -e "s|%buildroot||g;" \$<
+fix-config: \$(PHDIR)/Config.pm \$(PHDIR)/Config_heavy.pl
+	\$(PERL) -i -p -e "s|%buildroot||g;" \$^
 EOF
 %endif
 
@@ -289,6 +289,10 @@ chmod -R u+w %buildroot
 %endif
 
 %changelog
+* Tue Jun 06 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4:5.8.8-owl3
+- Added Config_heavy.pl to the fix-config section.
+Thanks goes to Bernhard Fischer who has reported the problem.
+
 * Sun May 21 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4:5.8.8-owl2
 - Fixed 'make test' in chroot without the /proc filesystem mounted.
 Thanks to ldv@ for discovering this issue.
