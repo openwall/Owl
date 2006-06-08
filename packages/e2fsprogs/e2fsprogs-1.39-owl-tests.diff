@@ -1,0 +1,14 @@
+diff -upk.orig e2fsprogs-1.39.orig/lib/ext2fs/tst_bitops.c e2fsprogs-1.39/lib/ext2fs/tst_bitops.c
+--- e2fsprogs-1.39.orig/lib/ext2fs/tst_bitops.c	2006-03-25 06:04:27 +0000
++++ e2fsprogs-1.39/lib/ext2fs/tst_bitops.c	2006-06-08 11:43:35 +0000
+@@ -102,8 +102,8 @@ main(int argc, char **argv)
+ 	/* Do bigarray test */
+ 	bigarray = malloc(1 << 29);
+ 	if (!bigarray) {
+-		fprintf(stderr, "Failed to allocate scratch memory!\n");
+-		exit(1);
++		printf("bigarray tests skipped.\n");
++		exit(0);
+ 	}
+ 
+         bigarray[BIG_TEST_BIT >> 3] = 0;

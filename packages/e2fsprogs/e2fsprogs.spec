@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.36 2006/06/06 13:07:42 ldv Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.37 2006/06/08 11:55:07 ldv Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -18,7 +18,8 @@ License: GPL
 Group: System Environment/Base
 Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
 Patch0: e2fsprogs-1.39-owl-alt-fixes.diff
-Patch1: e2fsprogs-1.37-owl-blkid-env.diff
+Patch1: e2fsprogs-1.39-owl-tests.diff
+Patch2: e2fsprogs-1.37-owl-blkid-env.diff
 PreReq: /sbin/ldconfig
 BuildRequires: gettext, texinfo, automake, autoconf
 BuildRequires: glibc >= 0:2.2, sed >= 0:4.1
@@ -53,6 +54,7 @@ develop second extended (ext2) filesystem-specific programs.
 chmod -R u+w .
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 bzip2 -9k ChangeLog RELEASE-NOTES
 
 # remove these unwanted header files just in case
