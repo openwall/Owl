@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/smartmontools/smartmontools.spec,v 1.1 2006/06/12 21:12:41 ldv Exp $
+# $Owl: Owl/packages/smartmontools/smartmontools.spec,v 1.2 2006/06/12 22:16:51 ldv Exp $
 
 Summary: Control and monitor storage systems using S.M.A.R.T.
 Name: smartmontools
@@ -10,11 +10,11 @@ URL: http://smartmontools.sourceforge.net/
 Source0: http://prdownloads.sourceforge.net/smartmontools/smartmontools-%version.tar.gz
 Source1: smartd.init
 Source2: smartd.sysconfig
-Patch1: smartmontools-5.36-cvs-20060414-wd-attr-190.diff
-Patch2: smartmontools-5.36-cvs-20060415-vpd-page-0x83-size.diff
-Patch3: smartmontools-5.36-cvs-20060415-libata-2.6.17-id.diff
-Patch4: smartmontools-5.36-cvs-20060609-seagate-momentus.diff
-Patch5: smartmontools-5.36-deb-cciss.diff
+Patch0: smartmontools-5.36-cvs-20060414-wd-attr-190.diff
+Patch1: smartmontools-5.36-cvs-20060415-vpd-page-0x83-size.diff
+Patch2: smartmontools-5.36-cvs-20060415-libata-2.6.17-id.diff
+Patch3: smartmontools-5.36-cvs-20060609-seagate-momentus.diff
+Patch4: smartmontools-5.36-deb-cciss.diff
 PreReq: /sbin/chkconfig
 Requires: mailx
 BuildRequires: sed >= 4.1
@@ -25,15 +25,15 @@ This package contains two utility programs (smartctl and smartd) to
 control and monitor storage systems using the Self-Monitoring, Analysis
 and Reporting Technology System (S.M.A.R.T.) built into most modern
 ATA and SCSI hard disks.  It is derived from the smartsuite package,
-and includes support or ATA/ATAPI-5 disks.
+and includes support for ATA/ATAPI-5 disks.
 
 %prep
 %setup -q
+%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
 fgrep -lZ /usr/local/bin/mail *.in |
 	xargs -r0 sed -i 's,/usr/local/bin/mail,/bin/mail,g' --
 
