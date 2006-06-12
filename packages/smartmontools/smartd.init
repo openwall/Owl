@@ -1,9 +1,9 @@
 #! /bin/sh
-# $Owl: Owl/packages/smartmontools/smartd.init,v 1.1 2006/06/12 21:12:41 ldv Exp $
+# $Owl: Owl/packages/smartmontools/smartd.init,v 1.2 2006/06/12 22:18:36 ldv Exp $
 #
 # smartd         Start/Stop the smartd daemon.
 #
-# chkconfig: 2345 90 10 
+# chkconfig: - 90 10 
 # description: S.M.A.R.T. Disk Monitoring Daemon.
 # processname: smartd
 # config: /etc/smartd.conf
