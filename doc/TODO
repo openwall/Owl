@@ -395,13 +395,6 @@ login should accept IP addresses rather than hostnames such that it
 can log both into wtmp.
 
 
-	smartmontools.
-
-[PRIORITY: medium]
-[ASSIGNED: ldv@]
-Package smartmontools.
-
-
 	strace.
 
 [PRIORITY: low]
@@ -486,4 +479,4 @@ Fix installworld.sh to always pick the latest version of a package when
 multiple versions are available (please refer to the appropriate XXX
 comment in the script).
 
-$Owl: Owl/doc/TODO,v 1.167 2006/05/22 20:46:02 solar Exp $
+$Owl: Owl/doc/TODO,v 1.168 2006/06/12 21:17:57 ldv Exp $
