@@ -1,0 +1,634 @@
+## 60_cciss.dpatch.dpatch by 
+##                    Praveen Chidambaram <bunchofmails@gmail.com>
+##                    Douglas Gilbert <dougg@torque.net>	
+##                    Guido Guenther <agx@sigxcpu.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: add support for Compaq/HP CCISS controllers
+
+diff -dur old-smartmontools-cciss/os_linux.c new-smartmontools-cciss/os_linux.c
+--- old-smartmontools-cciss/os_linux.c	2006-04-12 16:01:05.000000000 -0400
++++ new-smartmontools-cciss/os_linux.c	2006-04-13 14:21:16.000000000 -0400
+@@ -64,12 +64,17 @@
+ #include "os_linux.h"
+ #include "scsicmds.h"
+ #include "utility.h"
++#include "extern.h"
++
++#include <linux/cciss_ioctl.h>
++
+ 
+ #ifndef ENOTSUP
+ #define ENOTSUP ENOSYS
+ #endif
+ typedef unsigned long long u8;
+ 
++
+ #define ARGUSED(x) ((void)(x))
+ 
+ static const char *filenameandversion="$Id: os_linux.c,v 1.82 2006/04/12 16:28:56 ballen4705 Exp $";
+@@ -83,6 +88,23 @@
+ // global variable holding byte count of allocated memory
+ extern long long bytes;
+ 
++/* for passing global control variables */
++extern smartmonctrl *con;
++
++static int cciss_io_interface(int device, int target,
++			      struct scsi_cmnd_io * iop, int report);
++
++typedef struct _ReportLUNdata_struct
++{
++  BYTE LUNListLength[4];
++  DWORD reserved;
++  BYTE LUN[CISS_MAX_LUN][8];
++} ReportLunData_struct;
++
++/* Structure/defines of Report Physical LUNS of drive */
++#define CISS_MAX_LUN        16
++#define CISS_MAX_PHYS_LUN   1024
++#define CISS_REPORT_PHYS    0xc3
+ 
+ 
+ /* This function will setup and fix device nodes for a 3ware controller. */
+@@ -191,8 +213,15 @@
+     }
+     return open(pathname, O_RDONLY | O_NONBLOCK);
+   }
++  // cciss+
++  else if(!strcmp(type, "CCISS"))
++  {
++    // the device is a cciss smart array device.
++    return open(pathname, O_RDWR | O_NONBLOCK);
++  }
+   else
+     return -1;
++
+ }
+ 
+ // equivalent to close(file descriptor)
+@@ -609,6 +638,93 @@
+   
+   return 0; 
+ }
++// cciss+
++static int cciss_sendpassthru(unsigned int cmdtype, unsigned char *CDB,
++    			unsigned int CDBlen, char *buff,
++    			unsigned int size, unsigned int LunID,
++    			unsigned char *scsi3addr, int fd)
++{
++    int err ;
++    IOCTL_Command_struct iocommand;
++
++    memset(&iocommand, 0, sizeof(iocommand));
++
++    if (cmdtype == 0) 
++    {
++        // To controller; nothing to do
++    }
++    else if (cmdtype == 1) 
++    {
++        iocommand.LUN_info.LogDev.VolId = LunID;
++        iocommand.LUN_info.LogDev.Mode = 1;
++    }
++    else if (cmdtype == 2) 
++    {
++        memcpy(&iocommand.LUN_info.LunAddrBytes,scsi3addr,8);
++        iocommand.LUN_info.LogDev.Mode = 0;
++    }
++    else 
++    {
++        fprintf(stderr, "cciss_sendpassthru: bad cmdtype\n");
++        return 1;
++    }
++
++    memcpy(&iocommand.Request.CDB[0], CDB, CDBlen);
++    iocommand.Request.CDBLen = CDBlen;
++    iocommand.Request.Type.Type = TYPE_CMD;
++    iocommand.Request.Type.Attribute = ATTR_SIMPLE;
++    iocommand.Request.Type.Direction = XFER_READ;
++    iocommand.Request.Timeout = 0;
++
++    iocommand.buf_size = size;
++    iocommand.buf = (unsigned char *)buff;
++
++    if ((err = ioctl(fd, CCISS_PASSTHRU, &iocommand))) 
++    {
++        fprintf(stderr, "CCISS ioctl error %d\n", err);
++    }
++    return err;
++}
++
++// cciss+
++static int cciss_getlun(int device, int target, unsigned char *physlun)
++{
++    unsigned char CDB[16]= {0};
++    ReportLunData_struct *luns;
++    int reportlunsize = sizeof(*luns) + CISS_MAX_PHYS_LUN * 8;
++    int i;
++    int ret;
++
++    luns = (ReportLunData_struct *)malloc(reportlunsize);
++
++    memset(luns, 0, reportlunsize);
++
++    /* Get Physical LUN Info (for physical device) */
++    CDB[0] = CISS_REPORT_PHYS;
++    CDB[6] = (reportlunsize >> 24) & 0xFF;  /* MSB */
++    CDB[7] = (reportlunsize >> 16) & 0xFF;
++    CDB[8] = (reportlunsize >> 8) & 0xFF;
++    CDB[9] = reportlunsize & 0xFF;
++
++    if ((ret = cciss_sendpassthru(0, CDB, 12, (char *)luns, reportlunsize, 0, NULL, device)))
++    {
++        free(luns);
++        return ret;
++    }
++
++    for (i=0; i<CISS_MAX_LUN+1; i++) 
++    {
++        if (luns->LUN[i][6] == target) 
++        {
++            memcpy(physlun, luns->LUN[i], 8);
++            free(luns);
++            return 0;
++        }
++    }
++
++    free(luns);
++    return ret;
++}
+ 
+ // >>>>>> Start of general SCSI specific linux code
+ 
+@@ -913,7 +1029,8 @@
+  * (e.g. CHECK CONDITION). If the SCSI command could not be issued
+  * (e.g. device not present or timeout) or some other problem
+  * (e.g. timeout) then returns a negative errno value */
+-int do_scsi_cmnd_io(int dev_fd, struct scsi_cmnd_io * iop, int report)
++static int do_normal_scsi_cmnd_io(int dev_fd, struct scsi_cmnd_io * iop,
++                                  int report)
+ {
+     int res;
+ 
+@@ -937,15 +1054,104 @@
+     case SG_IO_PRESENT_YES:
+ 	return sg_io_cmnd_io(dev_fd, iop, report, 0);
+     default:
+-	pout(">>>> do_scsi_cmnd_io: bad sg_io_state=%d\n", sg_io_state); 
++	pout(">>>> do_normal_scsi_cmnd_io: bad sg_io_state=%d\n",
++             sg_io_state); 
+ 	sg_io_state = SG_IO_PRESENT_UNKNOWN;
+         return -EIO; 	/* report error and reset state */
+     }
+ }
+ 
++// Check and call the right interface. May be when the do_generic_scsi_cmd_io interface is better
++// we can take off this crude way of calling the right interface
++
++int do_scsi_cmnd_io(int dev_fd, struct scsi_cmnd_io * iop, int report)
++{
++    switch(con->controller_type)
++    {
++        case CONTROLLER_CCISS:
++            return cciss_io_interface(dev_fd, con->controller_port-1, iop, report);
++            // not reached
++            break;
++        default:
++            return do_normal_scsi_cmnd_io(dev_fd, iop, report);
++            // not reached
++            break;
++    }
++}
++
++
+ // >>>>>> End of general SCSI specific linux code
+ 
+ 
++// cciss+ >> CCSISS I/O passthrough
++// This is an interface that uses the cciss passthrough to talk to the SMART controller on
++// the HP system. The cciss driver provides a way to send SCSI cmds through the CCISS passthrough
++// essentially the methods above and below pertain to SCSI, except for the SG driver which is not
++// involved. The CCISS driver does not engage the scsi subsystem.
++static int cciss_io_interface(int device, int target, struct scsi_cmnd_io * iop, int report)
++{
++    unsigned char pBuf[512] = {0};
++    unsigned char phylun[1024] = {0};
++    int iBufLen = 512;
++    int status = -1;
++    int len = 0; // used later in the code.
++    report = 0;
++
++    cciss_getlun(device, target, phylun);
++    status = cciss_sendpassthru( 2, iop->cmnd, iop->cmnd_len, (char*) pBuf, iBufLen, 1, phylun, device);
++
++    if (0 == status)
++    {
++        if (report > 0)
++            printf("  status=0\n");
++        if (DXFER_FROM_DEVICE == iop->dxfer_dir)
++        {
++            memcpy(iop->dxferp, pBuf, iop->dxfer_len);
++            if (report > 1)
++            {
++                int trunc = (iop->dxfer_len > 256) ? 1 : 0;
++                printf("  Incoming data, len=%d%s:\n", (int)iop->dxfer_len,
++                     (trunc ? " [only first 256 bytes shown]" : ""));
++                dStrHex((const char*)iop->dxferp, (trunc ? 256 : iop->dxfer_len) , 1);
++            }
++        }
++        return 0;
++    }
++    iop->scsi_status = status & 0x7e; /* bits 0 and 7 used to be for vendors */
++    if (LSCSI_DRIVER_SENSE == ((status >> 24) & 0xf))
++        iop->scsi_status = SCSI_STATUS_CHECK_CONDITION;
++    len = (SEND_IOCTL_RESP_SENSE_LEN < iop->max_sense_len) ?
++               SEND_IOCTL_RESP_SENSE_LEN : iop->max_sense_len;
++    if ((SCSI_STATUS_CHECK_CONDITION == iop->scsi_status) &&
++        iop->sensep && (len > 0))
++    {
++        memcpy(iop->sensep, pBuf, len);
++        iop->resp_sense_len = iBufLen;
++        if (report > 1)
++        {
++            printf("  >>> Sense buffer, len=%d:\n", (int)len);
++            dStrHex((const char *)pBuf, len , 1);
++        }
++    }
++    if (report)
++    {
++        if (SCSI_STATUS_CHECK_CONDITION == iop->scsi_status) {
++            printf("  status=%x: sense_key=%x asc=%x ascq=%x\n", status & 0xff,
++                 pBuf[2] & 0xf, pBuf[12], pBuf[13]);
++        }
++        else
++            printf("  status=0x%x\n", status);
++    }
++    if (iop->scsi_status > 0)
++        return 0;
++    else
++    {
++        if (report > 0)
++            printf("  ioctl status=0x%x but scsi status=0, fail with EIO\n", status);
++        return -EIO;      /* give up, assume no device there */
++    }
++} 
++
+ // prototype
+ void printwarning(smart_command_set command);
+ 
+diff -dur old-smartmontools-cciss/smartctl.8.in new-smartmontools-cciss/smartctl.8.in
+--- old-smartmontools-cciss/smartctl.8.in	2006-04-12 16:01:05.000000000 -0400
++++ new-smartmontools-cciss/smartctl.8.in	2006-04-13 13:38:59.000000000 -0400
+@@ -177,7 +177,7 @@
+ .TP
+ .B \-d TYPE, \-\-device=TYPE
+ Specifies the type of the device.  The valid arguments to this option
+-are \fIata\fP, \fIscsi\fP, \fImarvell\fP, and \fI3ware,N\fP. If this option is not
++are \fIata\fP, \fIscsi\fP, \fImarvell\fP, \fIcciss,N\fP and \fI3ware,N\fP. If this option is not
+ used then \fBsmartctl\fP will attempt to guess the device type from
+ the device name.
+ 
+@@ -257,6 +257,8 @@
+ 
+ .B 3ware controllers are currently ONLY supported under Linux and FreeBSD.
+ 
++.B cciss controllers are currently ONLY supported under Linux.
++
+ .TP
+ .B \-T TYPE, \-\-tolerance=TYPE
+ Specifies how tolerant \fBsmartctl\fP should be of ATA and SMART command
+@@ -1157,6 +1159,12 @@
+ power\-cycled during the read\-scan, resume the scan 45 minutes after power to the
+ device is restored.
+ .PP
++.nf
++.B smartctl \-a \-d cciss,0 /dev/cciss/c0d0
++.fi
++Examine all SMART data for the first SCSI disk connected to a cciss
++RAID controller card.
++.PP
+ .SH RETURN VALUES
+ The return values of \fBsmartctl\fP are defined by a bitmask.  If all
+ is well with the disk, the return value (exit status) of
+Only in new-smartmontools-cciss: smartctl.8.in.orig
+diff -dur old-smartmontools-cciss/smartctl.c new-smartmontools-cciss/smartctl.c
+--- old-smartmontools-cciss/smartctl.c	2006-04-12 16:01:05.000000000 -0400
++++ new-smartmontools-cciss/smartctl.c	2006-04-13 13:38:59.000000000 -0400
+@@ -234,7 +234,7 @@
+   case 'q':
+     return "errorsonly, silent";
+   case 'd':
+-    return "ata, scsi, marvell, 3ware,N";
++    return "ata, scsi, marvell, 3ware,N, cciss,N";
+   case 'T':
+     return "normal, conservative, permissive, verypermissive";
+   case 'b':
+@@ -384,21 +384,35 @@
+           con->dont_print = FALSE;
+           pout("No memory for argument of -d. Exiting...\n");
+           exit(FAILCMD);
+-        } else if (strncmp(s,"3ware,",6)) {
+-          badarg = TRUE;
+-        } else if (split_report_arg2(s, &i)) {
+-          sprintf(extraerror, "Option -d 3ware,N requires N to be a non-negative integer\n");
+-          badarg = TRUE;
+-        } else if (i<0 || i>15) {
+-          sprintf(extraerror, "Option -d 3ware,N (N=%d) must have 0 <= N <= 15\n", i);
+-          badarg = TRUE;
+-        } else {
+-	  // NOTE: controller_port == disk number + 1
+-	  con->controller_type = CONTROLLER_3WARE;
+-          con->controller_port = i+1;
+-        }
+-        free(s);
+-      }         
++        } else if (!strncmp(s,"3ware,",6)) {
++            if (split_report_arg2(s, &i)) {
++                sprintf(extraerror, "Option -d 3ware,N requires N to be a non-negative integer\n");
++                badarg = TRUE;
++            } else if (i<0 || i>15) {
++                sprintf(extraerror, "Option -d 3ware,N (N=%d) must have 0 <= N <= 15\n", i);
++                badarg = TRUE;
++            } else {
++	        // NOTE: controller_port == disk number + 1
++	        con->controller_type = CONTROLLER_3WARE;
++                con->controller_port = i+1;
++            }
++	    free(s);
++        } else if (!strncmp(s,"cciss,",6)) {
++            if (split_report_arg2(s, &i)) {
++                sprintf(extraerror, "Option -d cciss,N requires N to be a non-negative integer\n");
++                badarg = TRUE;
++            } else if (i<0 || i>15) {
++                sprintf(extraerror, "Option -d cciss,N (N=%d) must have 0 <= N <= 15\n", i);
++                badarg = TRUE;
++            } else {
++              // NOTE: controller_port == drive number
++              con->controller_type = CONTROLLER_CCISS;
++              con->controller_port = i+1;
++            }
++            free(s);
++        } else
++	    badarg=TRUE;
++      }
+       break;
+     case 'T':
+       if (!strcmp(optarg,"normal")) {
+@@ -856,6 +870,9 @@
+   case CONTROLLER_3WARE_678K_CHAR:
+     mode="ATA_3WARE_678K";
+     break;
++  case CONTROLLER_CCISS:
++    mode="CCISS";
++    break;
+   default:
+     mode="ATA";
+     break;
+@@ -887,6 +904,11 @@
+   case CONTROLLER_SCSI:
+     retval = scsiPrintMain(fd);
+     break;
++  case CONTROLLER_CCISS:
++    // route the cciss command through scsiPrintMain. 
++    // cciss pass-throughs will separeate from the SCSI data-path.
++    retval = scsiPrintMain(fd);
++    break;
+   default:
+     retval = ataPrintMain(fd);
+     break;
+diff -dur old-smartmontools-cciss/smartd.8.in new-smartmontools-cciss/smartd.8.in
+--- old-smartmontools-cciss/smartd.8.in	2006-04-12 16:01:05.000000000 -0400
++++ new-smartmontools-cciss/smartd.8.in	2006-04-13 13:38:59.000000000 -0400
+@@ -596,8 +596,8 @@
+ .B \-d TYPE
+ Specifies the type of the device.  This Directive may be used multiple
+ times for one device, but the arguments \fIata\fP, \fIscsi\fP,
+-\fImarvell\fP, and \fI3ware,N\fP are mutually-exclusive. If more than
+-one is given then \fBsmartd\fP will use the last one which appears.
++\fImarvell\fP, \fIcciss,N\fP and \fI3ware,N\fP are mutually-exclusive. If more
++than one is given then \fBsmartd\fP will use the last one which appears.
+ 
+ If none of these three arguments is given, then \fBsmartd\fP will
+ first attempt to guess the device type by looking at whether the sixth
+@@ -664,8 +664,14 @@
+ 6/7/8000 series controllers) or /dev/twa0-15 (3ware 9000 series
+ controllers).
+ 
++.I cciss,N
++\- the device consists of one or more SCSI disks connected to a cciss
++RAID controller. The non-negative integer N (in the range from 0 to 15
++inclusive) denotes which disk on the controller is monitored.  In log
++files and email messages this disk will be identified as cciss_disk_XX
++with XX in the range from 00 to 15 inclusive.
+ 
+-.B 3ware controllers are currently ONLY supported under Linux.
++.B 3ware and cciss controllers are currently ONLY supported under Linux.
+ 
+ .I removable
+ \- the device or its media is removable.  This indicates to
+Only in new-smartmontools-cciss: smartd.8.in.orig
+diff -dur old-smartmontools-cciss/smartd.c new-smartmontools-cciss/smartd.c
+--- old-smartmontools-cciss/smartd.c	2006-04-12 16:01:06.000000000 -0400
++++ new-smartmontools-cciss/smartd.c	2006-04-13 13:38:59.000000000 -0400
+@@ -711,6 +711,18 @@
+ 	*s=' ';
+     }
+     break;
++  case CONTROLLER_CCISS:
++    {
++      char *s,devicetype[16];
++      sprintf(devicetype, "cciss,%d", cfg->controller_port-1);
++      exportenv(environ_strings[8], "SMARTD_DEVICETYPE", devicetype);
++      if ((s=strchr(cfg->name, ' ')))
++	*s='\0';
++      exportenv(environ_strings[9], "SMARTD_DEVICE", cfg->name);
++      if (s)
++	*s=' ';
++    }
++    break;
+   case CONTROLLER_ATA:
+     exportenv(environ_strings[8], "SMARTD_DEVICETYPE", "ata");
+     exportenv(environ_strings[9], "SMARTD_DEVICE", cfg->name);
+@@ -722,6 +734,7 @@
+   case CONTROLLER_SCSI:
+     exportenv(environ_strings[8], "SMARTD_DEVICETYPE", "scsi");
+     exportenv(environ_strings[9], "SMARTD_DEVICE", cfg->name);
++    break;
+   }
+ 
+   snprintf(fullmessage, 1024,
+@@ -1074,7 +1087,7 @@
+ void Directives() {
+   PrintOut(LOG_INFO,
+            "Configuration file (%s) Directives (after device name):\n"
+-           "  -d TYPE Set the device type: ata, scsi, marvell, removable, 3ware,N\n"
++           "  -d TYPE Set the device type: ata, scsi, marvell, removable, 3ware,N, cciss,N\n"
+            "  -T TYPE Set the tolerance to one of: normal, permissive\n"
+            "  -o VAL  Enable/disable automatic offline tests (on/off)\n"
+            "  -S VAL  Enable/disable attribute autosave (on/off)\n"
+@@ -1607,11 +1620,15 @@
+   // should we try to register this as a SCSI device?
+   switch (cfg->controller_type) {
+   case CONTROLLER_SCSI:
++  case CONTROLLER_CCISS:
+   case CONTROLLER_UNKNOWN:
+     break;
+   default:
+     return 1;
+   }
++  // pass user settings on to low-level SCSI commands
++  con->controller_port=cfg->controller_port;
++  con->controller_type=cfg->controller_type;
+   
+   // open the device
+   if ((fd = OpenDevice(device, "SCSI", scanning)) < 0)
+@@ -2796,26 +2813,42 @@
+         PrintOut(LOG_CRIT,
+                  "No memory to copy argument to -d option - exiting\n");
+         EXIT(EXIT_NOMEM);
+-      } else if (strncmp(s,"3ware,",6)) {
+-        badarg=1;
+-      } else if (split_report_arg2(s, &i)){
+-        PrintOut(LOG_CRIT, "File %s line %d (drive %s): Directive -d 3ware,N requires N integer\n",
+-                 configfile, lineno, name);
+-        badarg=1;
+-      } else if ( i<0 || i>15) {
+-        PrintOut(LOG_CRIT, "File %s line %d (drive %s): Directive -d 3ware,N (N=%d) must have 0 <= N <= 15\n",
+-                 configfile, lineno, name, i);
+-        badarg=1;
+-      } else {
+-	// determine type of escalade device from name of device
+-	cfg->controller_type = guess_device_type(name);
+-	if (cfg->controller_type!=CONTROLLER_3WARE_9000_CHAR && cfg->controller_type!=CONTROLLER_3WARE_678K_CHAR)
+-	  cfg->controller_type=CONTROLLER_3WARE_678K;
++      } else if (!strncmp(s,"3ware,",6)) {
++          if (split_report_arg2(s, &i)){
++              PrintOut(LOG_CRIT, "File %s line %d (drive %s): Directive -d 3ware,N requires N integer\n",
++               	       configfile, lineno, name);
++              badarg=1;
++          } else if ( i<0 || i>15) {
++              PrintOut(LOG_CRIT, "File %s line %d (drive %s): Directive -d 3ware,N (N=%d) must have 0 <= N <= 15\n",
++                       configfile, lineno, name, i);
++              badarg=1;
++          } else {
++	      // determine type of escalade device from name of device
++	      cfg->controller_type = guess_device_type(name);
++	      if (cfg->controller_type!=CONTROLLER_3WARE_9000_CHAR && cfg->controller_type!=CONTROLLER_3WARE_678K_CHAR)
++	           cfg->controller_type=CONTROLLER_3WARE_678K;
+ 	    
+-        // NOTE: controller_port == disk number + 1
+-        cfg->controller_port = i+1;
++              // NOTE: controller_port == disk number + 1
++              cfg->controller_port = i+1;
++          }
++      } else if (!strncmp(s,"cciss,",6)) {
++          if (split_report_arg2(s, &i)){
++              PrintOut(LOG_CRIT, "File %s line %d (drive %s): Directive -d cciss,N requires N integer\n",
++               	       configfile, lineno, name);
++              badarg=1;
++          } else if ( i<0 || i>15) {
++              PrintOut(LOG_CRIT, "File %s line %d (drive %s): Directive -d cciss,N (N=%d) must have 0 <= N <= 15\n",
++                       configfile, lineno, name, i);
++              badarg=1;
++          } else {
++              // NOTE: controller_port == disk number + 1
++              cfg->controller_type = CONTROLLER_CCISS;
++              cfg->controller_port = i+1;
++          }
++      } else {
++          badarg=1;
+       }
+-      s=CheckFree(s, __LINE__,filenameandversion); 
++      s=CheckFree(s, __LINE__,filenameandversion);
+     }
+     break;
+   case 'F':
+@@ -3223,13 +3256,13 @@
+     }
+   }
+   
+-  // If we found 3ware controller, then modify device name by adding a SPACE
+-  if (cfg->controller_port){
++  // If we found 3ware/cciss controller, then modify device name by adding a SPACE
++  if (cfg->controller_port) {
+     int len=17+strlen(cfg->name);
+     char *newname;
+     
+     if (devscan){
+-      PrintOut(LOG_CRIT, "smartd: can not scan for 3ware devices (line %d of file %s)\n",
++      PrintOut(LOG_CRIT, "smartd: can not scan for 3ware/cciss devices (line %d of file %s)\n",
+                lineno, configfile);
+       return -2;
+     }
+@@ -3240,7 +3273,8 @@
+     }
+     
+     // Make new device name by adding a space then RAID disk number
+-    snprintf(newname, len, "%s [3ware_disk_%02d]", cfg->name, cfg->controller_port-1);
++    snprintf(newname, len, "%s [%s_disk_%02d]", cfg->name, (cfg->controller_type == CONTROLLER_CCISS) ? "cciss" : "3ware", 
++		                                cfg->controller_port-1);
+     cfg->name=CheckFree(cfg->name, __LINE__,filenameandversion);
+     cfg->name=newname;
+     bytes+=16;
+@@ -3886,7 +3920,7 @@
+       continue;
+     
+     // register ATA devices
+-    if (ent->controller_type!=CONTROLLER_SCSI){
++    if (ent->controller_type!=CONTROLLER_SCSI && ent->controller_type!=CONTROLLER_CCISS){
+       if (ATADeviceScan(ent, scanning))
+         CanNotRegister(ent->name, "ATA", ent->lineno, scanning);
+       else {
+@@ -3899,7 +3933,8 @@
+     }
+     
+     // then register SCSI devices
+-    if (ent->controller_type==CONTROLLER_SCSI || ent->controller_type==CONTROLLER_UNKNOWN){
++    if (ent->controller_type==CONTROLLER_SCSI || ent->controller_type==CONTROLLER_CCISS || 
++        ent->controller_type==CONTROLLER_UNKNOWN){
+       int retscsi=0;
+ 
+ #if SCSITIMEOUT
+Only in new-smartmontools-cciss: smartd.conf.5
+diff -dur old-smartmontools-cciss/smartd.conf.5.in new-smartmontools-cciss/smartd.conf.5.in
+--- old-smartmontools-cciss/smartd.conf.5.in	2006-04-12 16:01:07.000000000 -0400
++++ new-smartmontools-cciss/smartd.conf.5.in	2006-04-13 13:38:59.000000000 -0400
+@@ -235,8 +235,8 @@
+ .B \-d TYPE
+ Specifies the type of the device.  This Directive may be used multiple
+ times for one device, but the arguments \fIata\fP, \fIscsi\fP,
+-\fImarvell\fP, and \fI3ware,N\fP are mutually-exclusive. If more than
+-one is given then \fBsmartd\fP will use the last one which appears.
++\fImarvell\fP, \fIcciss,N\fP and \fI3ware,N\fP are mutually-exclusive. If more
++than one is given then \fBsmartd\fP will use the last one which appears.
+ 
+ If none of these three arguments is given, then \fBsmartd\fP will
+ first attempt to guess the device type by looking at whether the sixth
+@@ -303,8 +303,14 @@
+ 6/7/8000 series controllers) or /dev/twa0-15 (3ware 9000 series
+ controllers).
+ 
++.I cciss,N
++\- the device consists of one or more SCSI disks connected to a cciss
++RAID controller. The non-negative integer N (in the range from 0 to 15
++inclusive) denotes which disk on the controller is monitored.  In log
++files and email messages this disk will be identified as cciss_disk_XX
++with XX in the range from 00 to 15 inclusive.
+ 
+-.B 3ware controllers are currently ONLY supported under Linux.
++.B 3ware and cciss controllers are currently ONLY supported under Linux.
+ 
+ .I removable
+ \- the device or its media is removable.  This indicates to
+diff -dur old-smartmontools-cciss/utility.h new-smartmontools-cciss/utility.h
+--- old-smartmontools-cciss/utility.h	2006-04-12 16:01:07.000000000 -0400
++++ new-smartmontools-cciss/utility.h	2006-04-13 13:38:59.000000000 -0400
+@@ -174,6 +174,6 @@
+ #define CONTROLLER_3WARE_9000_CHAR      0x05  // set by guess_device_type()
+ #define CONTROLLER_3WARE_678K_CHAR      0x06  // set by guess_device_type()
+ #define CONTROLLER_MARVELL_SATA         0x07  // SATA drives behind Marvell controllers
+-
++#define CONTROLLER_CCISS		0x08  // CCISS controller 
+ 
+ #endif

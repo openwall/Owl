@@ -1,0 +1,45 @@
+#! /bin/sh
+# $Owl: Owl/packages/smartmontools/smartd.init,v 1.1 2006/06/12 21:12:41 ldv Exp $
+#
+# smartd         Start/Stop the smartd daemon.
+#
+# chkconfig: 2345 90 10 
+# description: S.M.A.R.T. Disk Monitoring Daemon.
+# processname: smartd
+# config: /etc/smartd.conf
+# pidfile: /var/run/smartd.pid
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+EXTRAOPTIONS=
+OWL_STARTUP_ENABLE=1
+PIDFILE=/var/run/smartd.pid
+
+# Source additional smartd configuration.
+test -s /etc/sysconfig/smartd && . /etc/sysconfig/smartd
+
+# See how we were called.
+case "$1" in
+start)
+	daemon --pidfile "$PIDFILE" --expect-user root -- smartd -p "$PIDFILE" $EXTRAOPTIONS
+	;;
+stop)
+	killproc --pidfile "$PIDFILE" --expect-user root -- smartd
+	;;
+status)
+	status --pidfile "$PIDFILE" --expect-user root -- smartd
+	;;
+restart)
+	$0 stop
+	$0 start
+	;;
+reload)
+	killproc --pidfile "$PIDFILE" --expect-user root -HUP -- smartd
+	;;
+*)
+	echo "Usage: smartd {start|stop|status|restart|reload}"
+	exit 1
+esac
+
+exit $?

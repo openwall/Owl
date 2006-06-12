@@ -1,0 +1,2 @@
+# If you need to pass extra options to smartd, specify them here.
+EXTRAOPTIONS=""

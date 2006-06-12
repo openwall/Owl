@@ -1,0 +1,69 @@
+commit 06f05431776dddebc441bd0a0c5b1c1e1c344daf
+Author: ballen4705 <ballen4705>
+Date:   Fri Apr 14 08:08:33 2006 +0000
+
+    Identified Attribute 190 for Western Digital disks.  This
+    stores temperature in Celsius, just like Attribute 190.
+    But it has a failure threshold set to correspond to the
+    maximum design operating temperature of the disk, which
+    is typically 55 Celsius.  So if this Attribute has 'failed
+    in the past' this means that the maximum disk operating
+    temperature has been exceeded.
+
+diff --git a/CHANGELOG b/CHANGELOG
+index 7857883..a3a2346 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -1,6 +1,6 @@
+ CHANGELOG for smartmontools
+ 
+-$Id: CHANGELOG,v 1.537 2006/04/12 16:11:44 ballen4705 Exp $
++$Id: CHANGELOG,v 1.538 2006/04/14 08:08:33 ballen4705 Exp $
+ 
+ The most recent version of this file is:
+ http://cvs.sourceforge.net/viewcvs.py/smartmontools/sm5/CHANGELOG?sortby=date&view=markup
+@@ -32,6 +32,14 @@ NOTES FOR FUTURE RELEASES: see TODO file
+ 
+ <DEVELOPERS: ADDITIONS TO THE CHANGE LOG GO JUST BELOW HERE, PLEASE>
+ 
++  [BA] Identified Attribute 190 for Western Digital disks.  This
++       stores temperature in Celsius, just like Attribute 190.
++       But it has a failure threshold set to correspond to the
++       maximum design operating temperature of the disk, which
++       is typically 55 Celsius.  So if this Attribute has 'failed
++       in the past' this means that the maximum disk operating
++       temperature has been exceeded.
++
+ smartmontools 5.36 Stable Release
+ 
+   [BA] Linux: smartd/smartctl issue syntax hints to user if 3ware
+diff --git a/atacmds.c b/atacmds.c
+index 4a74f40..4a0a7aa 100644
+--- a/atacmds.c
++++ b/atacmds.c
+@@ -35,7 +35,7 @@ #include "atacmds.h"
+ #include "extern.h"
+ #include "utility.h"
+ 
+-const char *atacmds_c_cvsid="$Id: atacmds.c,v 1.168 2006/04/12 17:01:46 ballen4705 Exp $"
++const char *atacmds_c_cvsid="$Id: atacmds.c,v 1.169 2006/04/14 08:08:33 ballen4705 Exp $"
+ ATACMDS_H_CVSID CONFIG_H_CVSID EXTERN_H_CVSID INT64_H_CVSID UTILITY_H_CVSID;
+ 
+ // to hold onto exit code for atexit routine
+@@ -1678,6 +1678,16 @@ void ataPrintSmartAttribName(char *out, 
+   case 13:
+     name="Read_Soft_Error_Rate";
+     break;
++  case 190:
++    // Western Digital uses this for temperature.
++    // It's identical to Attribute 194 except that it
++    // has a failure threshold set to correspond to the
++    // max allowed operating temperature of the drive, which 
++    // is typically 55C.  So if this attribute has failed
++    // in the past, it indicates that the drive temp exceeded
++    // 55C sometime in the past.
++    name="Temperature_Celsius";
++    break;
+   case 191:
+     name="G-Sense_Error_Rate";
+     break;
