@@ -1,0 +1,13 @@
+--- hdparm-6.6.orig/identify.c
++++ hdparm-6.6/identify.c
+@@ -272,8 +272,8 @@
+ 	"ATA/ATAPI-6 T13 1410D revision 1",		/* 0x001c	*/
+ 	"ATA/ATAPI-7 published, ANSI INCITS 397-2005",	/* 0x001d	*/
+ 	"ATA/ATAPI-7 T13 1532D revision 0",		/* 0x001e	*/
+-	"Reserved"					/* 0x001f	*/
+-	"Reserved"					/* 0x0020	*/
++	"Reserved",					/* 0x001f	*/
++	"Reserved",					/* 0x0020	*/
+ 	"ATA/ATAPI-7 T13 1532D revision 4a",		/* 0x0021	*/
+ 	"ATA/ATAPI-6 published, ANSI INCITS 361-2002",	/* 0x0022	*/
+ 	"Reserved"					/* 0x0023-0xfffe*/

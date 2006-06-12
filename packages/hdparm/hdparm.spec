@@ -1,14 +1,16 @@
-# $Owl: Owl/packages/hdparm/hdparm.spec,v 1.19 2005/12/25 21:28:17 mci Exp $
+# $Owl: Owl/packages/hdparm/hdparm.spec,v 1.20 2006/06/12 23:01:11 ldv Exp $
 
-Summary: A utility for displaying and/or setting hard disk parameters.
+Summary: An utility for displaying and/or setting hard disk parameters.
 Name: hdparm
-Version: 6.3
+Version: 6.6
 Release: owl1
 License: BSD
 Group: Applications/System
-Source: http://www.ibiblio.org/pub/Linux/system/hardware/%name-%version.tar.gz
+URL: http://sourceforge.net/projects/hdparm/
+Source: http://prdownloads.sourceforge.net/hdparm/hdparm-%version.tar.gz
 Patch0: hdparm-6.3-owl-warnings.diff
-Prefix: %_prefix
+Patch1: hdparm-5.8-rh-help.diff
+Patch2: hdparm-6.6-deb-identify.diff
 BuildRoot: /override/%name-%version
 
 %description
@@ -17,17 +19,16 @@ hdparm - get/set hard disk parameters for IDE drives.
 %prep
 %setup -q
 %patch0 -p1
-
-%{expand:%%define optflags %optflags -Wall}
+%patch1 -p1
+%patch2 -p1
 
 %build
-%__make CC="%__cc" CFLAGS="%optflags"
+CFLAGS="%optflags" %__make CC="%__cc" LDFLAGS=
 
 %install
-mkdir -p %buildroot/sbin
-mkdir -p %buildroot%_mandir/man8
-install -s -m 755 hdparm %buildroot/sbin/
-install -m 644 hdparm.8 %buildroot%_mandir/man8/
+rm -rf %buildroot
+install -D -m755 hdparm %buildroot/sbin/hdparm
+install -pD -m644 hdparm.8 %buildroot%_mandir/man8/hdparm.8
 
 %files
 %defattr(-,root,root)
@@ -36,6 +37,11 @@ install -m 644 hdparm.8 %buildroot%_mandir/man8/
 %_mandir/man8/hdparm.8*
 
 %changelog
+* Mon Jun 12 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 6.6-owl1
+- Updated to 6.6.
+- Corrected build to keep upstream compiler options.
+- Added URL.
+
 * Sun Dec 25 2005 Michail Litvak <mci-at-owl.openwall.com> 6.3-owl1
 - 6.3
 
