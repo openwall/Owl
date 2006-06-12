@@ -3,7 +3,7 @@ Author: ballen4705 <ballen4705>
 Date:   Fri Apr 14 08:08:33 2006 +0000
 
     Identified Attribute 190 for Western Digital disks.  This
-    stores temperature in Celsius, just like Attribute 190.
+    stores temperature in Celsius, just like Attribute 194.
     But it has a failure threshold set to correspond to the
     maximum design operating temperature of the disk, which
     is typically 55 Celsius.  So if this Attribute has 'failed
@@ -27,7 +27,7 @@ index 7857883..a3a2346 100644
  <DEVELOPERS: ADDITIONS TO THE CHANGE LOG GO JUST BELOW HERE, PLEASE>
  
 +  [BA] Identified Attribute 190 for Western Digital disks.  This
-+       stores temperature in Celsius, just like Attribute 190.
++       stores temperature in Celsius, just like Attribute 194.
 +       But it has a failure threshold set to correspond to the
 +       maximum design operating temperature of the disk, which
 +       is typically 55 Celsius.  So if this Attribute has 'failed
