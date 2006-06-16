@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/dev86/dev86.spec,v 1.22 2006/04/03 23:45:13 ldv Exp $
+# $Owl: Owl/packages/dev86/dev86.spec,v 1.23 2006/06/16 12:57:41 galaxy Exp $
 
 Summary: A real mode 80x86 assembler and linker.
 Name: dev86
 Version: 0.16.17
-Release: owl2
+Release: owl3
 License: GPL
 Group: Development/Languages
 Source: http://www.cix.co.uk/~mayday/dev86/Dev86src-%version.tar.gz
@@ -13,6 +13,7 @@ Patch2: dev86-0.16.17-owl-warnings.diff
 Patch3: dev86-0.16.17-owl-Makefile.diff
 Patch4: dev86-0.16.17-owl-optflags.diff
 Patch5: dev86-0.16.17-alt-elksemu.diff
+Patch6: dev86-0.16.17-owl-tmp.diff
 Obsoletes: bin86
 ExclusiveArch: %ix86 x86_64
 BuildRoot: /override/%name-%version
@@ -33,6 +34,7 @@ bootstrapping code, from their sources.
 %ifarch x86_64
 %patch5 -p1
 %endif
+%patch6 -p1
 
 %{expand:%%define optflags %optflags -fno-strict-aliasing -fno-builtin-exp2 -Wall}
 
@@ -99,6 +101,9 @@ mv bin86/ChangeLog ChangeLog.bin86
 %_mandir/man1/*
 
 %changelog
+* Fri Jun 16 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.16.17-owl3
+- Fixed bcc to honor TMPDIR.
+
 * Tue Apr 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.16.17-owl2
 - Enabled build on x86_64.
 - Disabled elksemu build on x86_64.

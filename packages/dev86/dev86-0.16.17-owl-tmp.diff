@@ -1,0 +1,34 @@
+diff -puNr dev86-0.16.17.orig/bcc/bcc.c dev86-0.16.17/bcc/bcc.c
+--- dev86-0.16.17.orig/bcc/bcc.c	2005-01-03 22:41:55 +0000
++++ dev86-0.16.17/bcc/bcc.c	2006-06-16 12:16:18 +0000
+@@ -122,11 +122,7 @@ int file_count = 0;
+ int dyn_count = 0;
+ int error_count = 0;
+ char * progname = "C";
+-#ifdef MSDOS
+ char * tmpdir = "";
+-#else
+-char * tmpdir = "/tmp/";
+-#endif
+ 
+ int main P((int argc, char **argv));
+ void getargs P((int argc, char **argv));
+@@ -195,6 +191,18 @@ char ** argv;
+    if ((temp = getenv("BCC_PREFIX")) != 0 )
+       localprefix = copystr(temp);
+ 
++#ifndef MSDOS
++   /* XXX: this brings bcc behaviour in sync with the manual page which
++           states that bcc uses TMPDIR for the temporary directory name.
++           However, temporary file handling in this package is totally
++           insecure and I see no easy way how to fix it. :(
++                                                                -- (GM)
++    */
++   tmpdir = __secure_getenv("TMPDIR");
++   if (!tmpdir || !*tmpdir)
++      tmpdir = "/tmp";
++#endif
++
+    getargs(argc, argv);
+    validate_link_opts();
+ 
