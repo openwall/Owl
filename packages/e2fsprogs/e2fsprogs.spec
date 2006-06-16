@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.38 2006/06/16 15:37:20 galaxy Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.39 2006/06/16 16:42:20 solar Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -250,7 +250,7 @@ fi
 
 %changelog
 * Fri Jun 16 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.39-owl2
-- Fixed temporary file handling issues during ithe build process.
+- Fixed temporary file handling issues during the build process.
 
 * Tue Jun 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.39-owl1
 - Updated to 1.39.
