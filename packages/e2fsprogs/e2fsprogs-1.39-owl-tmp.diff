@@ -1,0 +1,56 @@
+diff -puNr e2fsprogs-1.39.orig/config/parse-types.sh e2fsprogs-1.39/config/parse-types.sh
+--- e2fsprogs-1.39.orig/config/parse-types.sh	2006-06-16 14:26:19 +0000
++++ e2fsprogs-1.39/config/parse-types.sh	2006-06-16 15:07:06 +0000
+@@ -9,7 +9,7 @@ then
+     exit 1
+ fi
+ 
+-cat > /tmp/sed.script << "EOF"
++cat > ./sed.script << "EOF"
+ /^#/d
+ /^$/d
+ s/__extension__ //
+@@ -17,7 +17,8 @@ s/typedef \(.*\) __u\([1-9]*\);/#define 
+ s/typedef \(.*\) __s\([1-9]*\);/#define __S\2_TYPEDEF \1/
+ EOF
+ 
+-gcc -E $ASM_TYPES | sed -f /tmp/sed.script | grep ^# > asm_types.h
++gcc -E $ASM_TYPES | sed -f ./sed.script | grep ^# > asm_types.h
++rm ./sed.script
+ 
+ cp asm_types.h asm_types.c
+ 
+@@ -104,7 +105,7 @@ main(int argc, char **argv)
+ }
+ EOF
+ 
+-cc -o asm_types asm_types.c
++gcc -o asm_types asm_types.c
+ if ! ./asm_types 
+ then
+     echo "Problem detected with asm_types.h"
+diff -puNr e2fsprogs-1.39.orig/lib/blkid/test_probe.in e2fsprogs-1.39/lib/blkid/test_probe.in
+--- e2fsprogs-1.39.orig/lib/blkid/test_probe.in	2005-09-10 18:08:42 +0000
++++ e2fsprogs-1.39/lib/blkid/test_probe.in	2006-06-16 15:10:30 +0000
+@@ -8,7 +8,7 @@ if test "$TESTS"x = x ; then
+ 	done
+ fi
+ 
+-mkdir -p tests
++mkdir -p tests/tmp
+ 
+ for i in $TESTS
+ do
+@@ -19,9 +19,9 @@ do
+ 		echo "non-existent"
+ 		continue
+ 	fi
+-	bunzip2 < $SRCDIR/tests/$i.img.bz2 > /tmp/test.img.$$
+-	./tst_probe /tmp/test.img.$$ > tests/$i.out
+-	/bin/rm -f /tmp/test.img.$$ tests/$i.ok tests/$i.failed
++	bunzip2 < $SRCDIR/tests/$i.img.bz2 > tests/tmp/test.img.$$
++	./tst_probe tests/tmp/test.img.$$ > tests/$i.out
++	/bin/rm -f tests/tmp/test.img.$$ tests/$i.ok tests/$i.failed
+ 	cmp -s tests/$i.out $SRCDIR/tests/$i.results
+ 	if [ $? = 0 ];  then
+ 		echo ok
