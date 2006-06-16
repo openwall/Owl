@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/acct/acct.spec,v 1.34 2006/05/21 22:07:58 ldv Exp $
+# $Owl: Owl/packages/acct/acct.spec,v 1.35 2006/06/16 00:17:01 galaxy Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
 Version: 6.4
-Release: owl0.2
+Release: owl0.3
 License: GPL
 Group: Applications/System
 Source0: http://www.physik3.uni-rostock.de/tim/kernel/utils/acct/%name-%version-pre1.tar.gz
@@ -111,6 +111,9 @@ fi
 %_infodir/*
 
 %changelog
+* Fri Jun 16 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.4-owl0.3
+- Adjusted the logrotate configuration file to redirect stdout to /dev/null.
+
 * Sun May 21 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 6.4-owl0.2
 - Added @dircategory and @direntry to texinfo file, simplified info
 file installation.
