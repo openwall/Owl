@@ -1,0 +1,11 @@
+--- cpio-2.6/src/copyin.c.initHeaderStruct	2006-03-23 10:59:31 +0100
++++ cpio-2.6/src/copyin.c	2006-03-23 10:59:55 +0100
+@@ -1407,7 +1407,7 @@
+   FILE *tty_out = NULL;		/* Interactive file for rename option.  */
+   FILE *rename_in = NULL;	/* Batch file for rename option.  */
+   struct stat file_stat;	/* Output file stat record.  */
+-  struct new_cpio_header file_hdr;	/* Output header information.  */
++  struct new_cpio_header file_hdr = {0};	/* Output header information.  */
+   int in_file_des;		/* Input file descriptor.  */
+   char skip_file;		/* Flag for use with patterns.  */
+   int i;			/* Loop index variable.  */

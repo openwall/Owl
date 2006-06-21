@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/cpio/cpio.spec,v 1.23 2006/04/04 00:15:07 ldv Exp $
+# $Owl: Owl/packages/cpio/cpio.spec,v 1.24 2006/06/21 16:00:30 ldv Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
 Version: 2.6
-Release: owl3
+Release: owl4
 License: GPL
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/cpio/
@@ -29,6 +29,7 @@ Patch24: cpio-2.6-deb-owl-mt-scsi.diff
 Patch25: cpio-2.6-deb-owl-rmt.diff
 Patch26: cpio-2.6-cvs-20051112-copyout.diff
 Patch27: cpio-2.6-up-savedir.diff
+Patch28: cpio-2.6-rh-header-init.diff
 PreReq: /sbin/install-info
 Provides: mt-st, rmt
 Prefix: %_prefix
@@ -70,6 +71,7 @@ install -m644 %_sourcedir/rmt.8 .
 %patch25 -p1
 %patch26 -p1
 %patch27 -p1
+%patch28 -p1
 
 %build
 # Several patches modify configure.ac
@@ -116,6 +118,10 @@ fi
 %_datadir/locale/*/LC_MESSAGES/cpio.mo
 
 %changelog
+* Wed Jun 21 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.6-owl4
+- Imported FC patch to initialize header structure in copyin mode properly.
+- Fixed build with gcc-4.x.
+
 * Wed Nov 16 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.6-owl3
 - Backported fixes for write_out_header() and read_for_checksum()
   from cpio CVS.
