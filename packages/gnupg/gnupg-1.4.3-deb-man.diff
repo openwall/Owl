@@ -8,9 +8,8 @@
 +This program is a stripped-down version of \fBgpg\fR which is able 
  only 
 -to check signatures.  It is somewhat smaller than the fully blown 
--\fBgpg\fR and uses a different (and simpler) way to check that 
 +to check signatures.  It is somewhat smaller than the fully-blown 
-+\fBgpg\fR and uses a different (and simpler)) way to check that 
+ \fBgpg\fR and uses a different (and simpler) way to check that 
  the public keys used to make the signature are trustworthy.  There are 
 -no options files and only very few options are implemented. 
 +no options files and only a very few options are implemented. 
