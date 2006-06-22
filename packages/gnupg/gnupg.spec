@@ -1,20 +1,23 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.34 2006/05/21 00:06:50 ldv Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.35 2006/06/22 00:51:54 ldv Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
-Version: 1.4.2.2
-Release: owl2
+Version: 1.4.3
+Release: owl1
 License: GPL
 Group: Applications/Cryptography
 URL: http://www.gnupg.org
-Source: ftp://ftp.gnupg.org/gcrypt/gnupg/%name-%version.tar.bz2
-Patch0: gnupg-1.4.2-alt-always-trust.diff
-Patch1: gnupg-1.4.2-alt-cp1251.diff
-Patch2: gnupg-1.4.2-alt-getkey-i18n.diff
-Patch3: gnupg-1.4.2-up-zero-length-mpi-fix.diff
-Patch4: gnupg-1.4.2-fw-secret-key-checks.diff
-Patch5: gnupg-1.4.2-rh-keygen.diff
-Patch6: gnupg-1.4.2.2-alt-checks.diff
+Source0: ftp://ftp.gnupg.org/gcrypt/gnupg/%name-%version.tar.bz2
+Source1: gpgsplit.1
+Source2: lspgpot.1
+Patch0: gnupg-1.4.3-svn-20060609-parse-packet.diff
+Patch1: gnupg-1.4.3-alt-ru.po.diff
+Patch2: gnupg-1.4.3-alt-always-trust.diff
+Patch3: gnupg-1.4.2-alt-cp1251.diff
+Patch4: gnupg-1.4.3-alt-getkey-i18n.diff
+Patch5: gnupg-1.4.2-fw-secret-key-checks.diff
+Patch6: gnupg-1.4.3-deb-man.diff
+Patch7: gnupg-1.4.2-alt-owl-info.diff
 PreReq: /sbin/install-info
 Provides: gpg, openpgp
 BuildRequires: zlib-devel, bzip2-devel, texinfo, readline-devel >= 0:5.1
@@ -38,55 +41,55 @@ only IDEA for symmetric-key encryption, which is patented worldwide).
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-bzip2 -9k NEWS
+%patch7 -p1
+bzip2 -9k NEWS doc/{DETAILS,FAQ}
 
 %build
 %configure \
 	--with-static-rnd=linux \
-	--with-mailprog=/usr/sbin/sendmail
+	--with-mailprog=/usr/sbin/sendmail \
+	--enable-noexecstack
 %__make
 
 %install
 mkdir -p %buildroot%_libdir/%name
 %makeinstall transform=
 sed 's,\.\./g[0-9\.]*/,,g' tools/lspgpot > lspgpot
-install -m 755 lspgpot %buildroot%_bindir/lspgpot
+install -m755 lspgpot %buildroot%_bindir/lspgpot
+
+install -pm644 %_sourcedir/{gpgsplit,lspgpot}.1 %buildroot%_mandir/man1/
 
 # Move localized manpages to FHS compliant locations
 mkdir -p %buildroot%_mandir/ru/man1
-mv %buildroot%_mandir/man1/gpg.ru.* %buildroot%_mandir/ru/man1/
+mv %buildroot%_mandir/man1/gpg.ru.1 %buildroot%_mandir/ru/man1/gpg.1
 
 # Remove unpackaged files
 rm %buildroot%_infodir/dir
 
 %post
-/sbin/install-info %_infodir/gpg.info %_infodir/dir \
-	--entry "* GnuPG: (gpg).                                 Encryption and signing tool."
-/sbin/install-info %_infodir/gpgv.info %_infodir/dir \
-	--entry "* gpgv: (gpgv).                                 GnuPG signature verification tool."
+/sbin/install-info %_infodir/gpg.info %_infodir/dir
+/sbin/install-info %_infodir/gpgv.info %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-        /sbin/install-info --delete %_infodir/gpg.info %_infodir/dir \
-		--entry "* GnuPG: (gpg).                                 Encryption and signing tool."
-        /sbin/install-info --delete %_infodir/gpgv.info %_infodir/dir \
-		--entry "* gpgv: (gpgv).                                 GnuPG signature verification tool."
+        /sbin/install-info --delete %_infodir/gpg.info %_infodir/dir
+        /sbin/install-info --delete %_infodir/gpgv.info %_infodir/dir
 fi
 
 %files
 %defattr(-,root,root)
 %doc AUTHORS COPYING NEWS.bz2 PROJECTS README THANKS TODO
-%doc doc/{DETAILS,FAQ,HACKING,OpenPGP,*.html}
+%doc doc/{DETAILS.bz2,FAQ.bz2,HACKING,OpenPGP,*.html}
 %doc tools/convert-from-106
 
 %_bindir/gpg
-%_bindir/gpgv
+%_bindir/gpg-zip
 %_bindir/gpgsplit
+%_bindir/gpgv
 %_bindir/lspgpot
 %_datadir/locale/*/*/*
 %_libdir/%name
-%_mandir/man1/gpg.*
-%_mandir/man1/gpgv.*
+%_mandir/man1/*
 %_mandir/ru/man1/gpg.*
 %_mandir/man7/gnupg.*
 %_infodir/gpg.*
@@ -98,6 +101,14 @@ fi
 %exclude %_datadir/gnupg/faq.html
 
 %changelog
+* Thu Jun 22 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.3-owl1
+- Updated to 1.4.3.
+- Applied upstream fix for crash bug in parse-packet.c (CVE-2006-3082).
+- Imported gpgsplit(1) and lspgpot(1) manual pages and gpgv(1) fixes
+from Debian gnupg package.
+- Imported Russian translation fixes from ALT gnupg package.
+- Simplified info files installation.
+
 * Sun May 21 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.2.2-owl2
 - Rebuilt with libreadline.so.5.
 
