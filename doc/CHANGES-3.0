@@ -12,6 +12,12 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2006/06/25	Package: nmap
+Updated to 4.11.
+
+2006/06/25	Package: coreutils
+Updated to 5.97.
+
 2006/06/22	Package: gnupg
 SECURITY FIX	Severity: medium, remote, passive
 Updated to 1.4.3.  Applied a fix for integer overflow vulnerability in
@@ -179,4 +185,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.38 2006/06/22 21:31:50 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.39 2006/06/25 12:22:00 ldv Exp $
