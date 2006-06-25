@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.23 2006/05/27 19:14:33 ldv Exp $
+# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.24 2006/06/25 12:04:16 ldv Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
-Version: 5.96
+Version: 5.97
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -27,7 +27,6 @@ Source21: usleep.1
 Patch0: coreutils-5.91-up-ls-usage.diff
 Patch1: coreutils-5.91-eggert-ls-time-style.diff
 Patch2: coreutils-5.91-alt-hostname.diff
-Patch3: coreutils-5.96-cvs-20060527-preserve-root.diff
 
 # Owl/ALT specific
 Patch10: coreutils-5.92-owl-info-true-false.diff
@@ -85,7 +84,6 @@ arbitrary limits.
 %patch0 -p0
 %patch1 -p0
 %patch2 -p1
-%patch3 -p0
 
 # ALT specific
 %patch10 -p1
@@ -113,6 +111,10 @@ rm -f doc/*.info* man/*.1
 # Docs should say /var/run/[uw]tmp, not /etc/[uw]tmp
 sed -i 's,/etc/utmp,/var/run/utmp,g;s,/etc/wtmp,/var/run/wtmp,g' \
 	doc/*.texi man/*
+
+# Stable autoconf is sufficient to build coreutils for GNU/Linux.
+grep -l 'AC_PREREQ(2\.59[^)]\+)' m4/*.m4 |
+	xargs -r sed -i 's/AC_PREREQ(2\.59[^)]\+)/AC_PREREQ(2.59)/' --
 
 %build
 # disable uptime build
@@ -231,6 +233,9 @@ fi
 %doc ChangeLog.bz2 NEWS.bz2 THANKS.bz2 AUTHORS README TODO
 
 %changelog
+* Sun Jun 25 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 5.97-owl1
+- Updated to 5.97.
+
 * Sat May 27 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 5.96-owl1
 - Updated to 5.96.
 - Rewritten assembler version of true and false in C to avoid
