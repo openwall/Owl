@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.24 2006/06/25 12:04:16 ldv Exp $
+# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.25 2006/06/25 16:58:47 ldv Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
@@ -113,8 +113,8 @@ sed -i 's,/etc/utmp,/var/run/utmp,g;s,/etc/wtmp,/var/run/wtmp,g' \
 	doc/*.texi man/*
 
 # Stable autoconf is sufficient to build coreutils for GNU/Linux.
-grep -l 'AC_PREREQ(2\.59[^)]\+)' m4/*.m4 |
-	xargs -r sed -i 's/AC_PREREQ(2\.59[^)]\+)/AC_PREREQ(2.59)/' --
+grep -lZ 'AC_PREREQ(2\.59[^)]\+)' m4/*.m4 |
+	xargs -r0 sed -i 's/AC_PREREQ(2\.59[^)]\+)/AC_PREREQ(2.59)/' --
 
 %build
 # disable uptime build
