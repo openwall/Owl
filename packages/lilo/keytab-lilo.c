@@ -31,7 +31,7 @@ static void usage(void)
 {
 	fprintf(stderr, "usage: %s [ -p old_code=new_code ] ...\n"
 	    "%*s[path]default_layout[.map] ] "
-	    "[path]kbd_layout[.map]\n", prog, strlen(prog) - 8, "");
+	    "[path]kbd_layout[.map]\n", prog, (int)strlen(prog) + 8, "");
 	exit(1);
 }
 
