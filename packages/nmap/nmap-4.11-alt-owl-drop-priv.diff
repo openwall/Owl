@@ -1,6 +1,6 @@
-diff -upk.orig nmap-4.02Alpha1.orig/MACLookup.cc nmap-4.02Alpha1/MACLookup.cc
---- nmap-4.02Alpha1.orig/MACLookup.cc	2006-03-05 01:10:19 +0000
-+++ nmap-4.02Alpha1/MACLookup.cc	2006-03-05 02:09:57 +0000
+diff -upk.orig nmap-4.11.orig/MACLookup.cc nmap-4.11/MACLookup.cc
+--- nmap-4.11.orig/MACLookup.cc	2006-03-06 00:00:03 +0000
++++ nmap-4.11/MACLookup.cc	2006-06-24 13:33:03 +0000
 @@ -105,6 +105,7 @@
  #include "MACLookup.h"
  #include "nmap.h"
@@ -9,28 +9,28 @@ diff -upk.orig nmap-4.02Alpha1.orig/MACLookup.cc nmap-4.02Alpha1/MACLookup.cc
  
  struct MAC_entry {
    int prefix; /* -1 means none set */
-diff -upk.orig nmap-4.02Alpha1.orig/Makefile.in nmap-4.02Alpha1/Makefile.in
---- nmap-4.02Alpha1.orig/Makefile.in	2006-02-17 01:23:58 +0000
-+++ nmap-4.02Alpha1/Makefile.in	2006-03-05 02:09:57 +0000
+diff -upk.orig nmap-4.11.orig/Makefile.in nmap-4.11/Makefile.in
+--- nmap-4.11.orig/Makefile.in	2006-06-24 04:25:58 +0000
++++ nmap-4.11/Makefile.in	2006-06-24 13:35:37 +0000
 @@ -46,11 +46,11 @@ TARGET = nmap
  TARGETNMAPFE=@TARGETNMAPFE@
  INSTALLNMAPFE=@INSTALLNMAPFE@
  
 -export SRCS = main.cc nmap.cc targets.cc tcpip.cc nmap_error.cc utils.cc idle_scan.cc osscan.cc output.cc scan_engine.cc timing.cc charpool.cc services.cc protocols.cc nmap_rpc.cc portlist.cc NmapOps.cc TargetGroup.cc Target.cc FingerPrintResults.cc service_scan.cc NmapOutputTable.cc MACLookup.cc nmap_tty.cc nmap_dns.cc @COMPAT_SRCS@
-+export SRCS = main.cc nmap.cc targets.cc tcpip.cc nmap_error.cc utils.cc idle_scan.cc osscan.cc output.cc scan_engine.cc timing.cc charpool.cc services.cc protocols.cc nmap_rpc.cc portlist.cc droppriv.cc NmapOps.cc TargetGroup.cc Target.cc FingerPrintResults.cc service_scan.cc NmapOutputTable.cc MACLookup.cc nmap_tty.cc nmap_dns.cc @COMPAT_SRCS@
++export SRCS = main.cc nmap.cc targets.cc tcpip.cc nmap_error.cc utils.cc idle_scan.cc osscan.cc output.cc scan_engine.cc timing.cc charpool.cc services.cc protocols.cc nmap_rpc.cc portlist.cc NmapOps.cc TargetGroup.cc Target.cc FingerPrintResults.cc service_scan.cc NmapOutputTable.cc MACLookup.cc nmap_tty.cc nmap_dns.cc droppriv.cc @COMPAT_SRCS@
+ 
+-export HDRS = charpool.h FingerPrintResults.h global_structures.h idle_scan.h MACLookup.h nmap_amigaos.h nmap_dns.h nmap_error.h nmap.h NmapOps.h NmapOutputTable.h nmap_rpc.h nmap_tty.h nmap_winconfig.h osscan.h output.h portlist.h protocols.h scan_engine.h service_scan.h services.h TargetGroup.h Target.h targets.h tcpip.h timing.h utils.h
++export HDRS = charpool.h FingerPrintResults.h global_structures.h idle_scan.h MACLookup.h nmap_amigaos.h nmap_dns.h nmap_error.h nmap.h NmapOps.h NmapOutputTable.h nmap_rpc.h nmap_tty.h nmap_winconfig.h osscan.h output.h portlist.h protocols.h scan_engine.h service_scan.h services.h TargetGroup.h Target.h targets.h tcpip.h timing.h utils.h droppriv.h
  
 -OBJS = main.o nmap.o targets.o tcpip.o nmap_error.o utils.o idle_scan.o osscan.o output.o scan_engine.o timing.o charpool.o services.o protocols.o nmap_rpc.o portlist.o NmapOps.o TargetGroup.o Target.o FingerPrintResults.o service_scan.o NmapOutputTable.o MACLookup.o nmap_tty.o nmap_dns.o @COMPAT_OBJS@
-+OBJS = main.o nmap.o targets.o tcpip.o nmap_error.o utils.o idle_scan.o osscan.o output.o scan_engine.o timing.o charpool.o services.o protocols.o nmap_rpc.o portlist.o droppriv.o NmapOps.o TargetGroup.o Target.o FingerPrintResults.o service_scan.o NmapOutputTable.o MACLookup.o nmap_tty.o nmap_dns.o @COMPAT_OBJS@
- 
--export DEPS = nmap.h nmap_amigaos.h nmap_error.h targets.h idle_scan.h osscan.h output.h scan_engine.h timing.h tcpip.h utils.h global_structures.h charpool.h services.h protocols.h nmap_rpc.h portlist.h NmapOps.h TargetGroup.h Target.h FingerPrintResults.h service_scan.h NmapOutputTable.h MACLookup.h nmap_tty.h nmap_dns.h
-+export DEPS = nmap.h nmap_amigaos.h nmap_error.h targets.h idle_scan.h osscan.h output.h scan_engine.h timing.h tcpip.h utils.h global_structures.h charpool.h services.h protocols.h nmap_rpc.h portlist.h droppriv.h NmapOps.h TargetGroup.h Target.h FingerPrintResults.h service_scan.h NmapOutputTable.h MACLookup.h nmap_tty.h nmap_dns.h
- 
++OBJS = main.o nmap.o targets.o tcpip.o nmap_error.o utils.o idle_scan.o osscan.o output.o scan_engine.o timing.o charpool.o services.o protocols.o nmap_rpc.o portlist.o NmapOps.o TargetGroup.o Target.o FingerPrintResults.o service_scan.o NmapOutputTable.o MACLookup.o nmap_tty.o nmap_dns.o droppriv.o @COMPAT_OBJS@
  
  # %.o : %.cc -- nope this is a GNU extension
-diff -upk.orig nmap-4.02Alpha1.orig/configure.ac nmap-4.02Alpha1/configure.ac
---- nmap-4.02Alpha1.orig/configure.ac	2006-03-05 01:10:19 +0000
-+++ nmap-4.02Alpha1/configure.ac	2006-03-05 12:58:44 +0000
-@@ -669,6 +669,51 @@ if test $ac_cv_ip_has_ip_sum = yes ; the
+ .cc.o:
+diff -upk.orig nmap-4.11.orig/configure.ac nmap-4.11/configure.ac
+--- nmap-4.11.orig/configure.ac	2006-06-24 13:32:23 +0000
++++ nmap-4.11/configure.ac	2006-06-24 13:33:03 +0000
+@@ -675,6 +675,51 @@ if test $ac_cv_ip_has_ip_sum = yes ; the
          AC_DEFINE(HAVE_IP_IP_SUM, 1, [Define to 1 for ip_sum member])
  fi
  
@@ -82,9 +82,9 @@ diff -upk.orig nmap-4.02Alpha1.orig/configure.ac nmap-4.02Alpha1/configure.ac
  
  dnl Checks for library functions.
  dnl AC_TYPE_SIGNAL
-diff -upk.orig nmap-4.02Alpha1.orig/droppriv.cc nmap-4.02Alpha1/droppriv.cc
---- nmap-4.02Alpha1.orig/droppriv.cc	1970-01-01 00:00:00 +0000
-+++ nmap-4.02Alpha1/droppriv.cc	2006-03-05 02:12:49 +0000
+diff -upk.orig nmap-4.11.orig/droppriv.cc nmap-4.11/droppriv.cc
+--- nmap-4.11.orig/droppriv.cc	1970-01-01 00:00:00 +0000
++++ nmap-4.11/droppriv.cc	2006-03-05 02:12:49 +0000
 @@ -0,0 +1,90 @@
 +#include "nmap.h"
 +#include "droppriv.h"
@@ -176,9 +176,9 @@ diff -upk.orig nmap-4.02Alpha1.orig/droppriv.cc nmap-4.02Alpha1/droppriv.cc
 +}
 +
 +#endif /* NMAP_USER */
-diff -upk.orig nmap-4.02Alpha1.orig/droppriv.h nmap-4.02Alpha1/droppriv.h
---- nmap-4.02Alpha1.orig/droppriv.h	1970-01-01 00:00:00 +0000
-+++ nmap-4.02Alpha1/droppriv.h	2006-03-05 02:09:57 +0000
+diff -upk.orig nmap-4.11.orig/droppriv.h nmap-4.11/droppriv.h
+--- nmap-4.11.orig/droppriv.h	1970-01-01 00:00:00 +0000
++++ nmap-4.11/droppriv.h	2006-03-05 02:09:57 +0000
 @@ -0,0 +1,16 @@
 +#ifndef NMAP_DROPPRIV_H__
 +#define NMAP_DROPPRIV_H__
@@ -196,9 +196,9 @@ diff -upk.orig nmap-4.02Alpha1.orig/droppriv.h nmap-4.02Alpha1/droppriv.h
 +
 +#endif /* NMAP_DROPPRIV_H__ */
 +
-diff -upk.orig nmap-4.02Alpha1.orig/nmap.cc nmap-4.02Alpha1/nmap.cc
---- nmap-4.02Alpha1.orig/nmap.cc	2006-03-04 04:17:39 +0000
-+++ nmap-4.02Alpha1/nmap.cc	2006-03-05 02:09:57 +0000
+diff -upk.orig nmap-4.11.orig/nmap.cc nmap-4.11/nmap.cc
+--- nmap-4.11.orig/nmap.cc	2006-05-27 09:01:37 +0000
++++ nmap-4.11/nmap.cc	2006-06-24 13:33:03 +0000
 @@ -105,6 +105,7 @@
  #include "scan_engine.h"
  #include "idle_scan.h"
@@ -207,7 +207,7 @@ diff -upk.orig nmap-4.02Alpha1.orig/nmap.cc nmap-4.02Alpha1/nmap.cc
  #include "NmapOps.h"
  #include "MACLookup.h"
  #include "nmap_tty.h"
-@@ -932,6 +933,8 @@ int nmap_main(int argc, char *argv[]) {
+@@ -1187,6 +1188,8 @@ int nmap_main(int argc, char *argv[]) {
        o.sendpref = PACKET_SEND_ETH_STRONG;
    }
  
@@ -216,10 +216,10 @@ diff -upk.orig nmap-4.02Alpha1.orig/nmap.cc nmap-4.02Alpha1/nmap.cc
    if (!ports) {
      if (o.ipprotscan) {
        ports = getdefaultprots();
-diff -upk.orig nmap-4.02Alpha1.orig/nmap_dns.cc nmap-4.02Alpha1/nmap_dns.cc
---- nmap-4.02Alpha1.orig/nmap_dns.cc	2006-03-05 01:10:19 +0000
-+++ nmap-4.02Alpha1/nmap_dns.cc	2006-03-05 02:09:57 +0000
-@@ -1002,7 +1002,7 @@ char *lookup_etchosts(u32 ip) {
+diff -upk.orig nmap-4.11.orig/nmap_dns.cc nmap-4.11/nmap_dns.cc
+--- nmap-4.11.orig/nmap_dns.cc	2006-06-10 21:04:23 +0000
++++ nmap-4.11/nmap_dns.cc	2006-06-24 13:33:03 +0000
+@@ -983,7 +983,7 @@ static char *lookup_etchosts(u32 ip) {
  }
  
  
@@ -228,9 +228,9 @@ diff -upk.orig nmap-4.02Alpha1.orig/nmap_dns.cc nmap-4.02Alpha1/nmap_dns.cc
    static int initialized = 0;
    if (initialized) return;
    initialized = 1;
-diff -upk.orig nmap-4.02Alpha1.orig/nmap_rpc.cc nmap-4.02Alpha1/nmap_rpc.cc
---- nmap-4.02Alpha1.orig/nmap_rpc.cc	2006-03-05 01:10:19 +0000
-+++ nmap-4.02Alpha1/nmap_rpc.cc	2006-03-05 02:09:57 +0000
+diff -upk.orig nmap-4.11.orig/nmap_rpc.cc nmap-4.11/nmap_rpc.cc
+--- nmap-4.11.orig/nmap_rpc.cc	2006-03-06 00:00:03 +0000
++++ nmap-4.11/nmap_rpc.cc	2006-06-24 13:33:03 +0000
 @@ -103,6 +103,7 @@
  
  
@@ -248,11 +248,11 @@ diff -upk.orig nmap-4.02Alpha1.orig/nmap_rpc.cc nmap-4.02Alpha1/nmap_rpc.cc
    static int services_initialized = 0;
    if (services_initialized) return;
    services_initialized = 1;
-diff -upk.orig nmap-4.02Alpha1.orig/protocols.cc nmap-4.02Alpha1/protocols.cc
---- nmap-4.02Alpha1.orig/protocols.cc	2006-03-05 01:10:19 +0000
-+++ nmap-4.02Alpha1/protocols.cc	2006-03-05 02:09:57 +0000
+diff -upk.orig nmap-4.11.orig/protocols.cc nmap-4.11/protocols.cc
+--- nmap-4.11.orig/protocols.cc	2006-03-06 00:00:03 +0000
++++ nmap-4.11/protocols.cc	2006-06-24 13:33:03 +0000
 @@ -100,13 +100,14 @@
- /* $Id: protocols.cc 2396 2004-08-29 09:12:05Z fyodor $ */
+ /* $Id: protocols.cc 3200 2006-03-05 23:59:46Z fyodor $ */
  
  #include "protocols.h"
 +#include "droppriv.h"
@@ -267,9 +267,9 @@ diff -upk.orig nmap-4.02Alpha1.orig/protocols.cc nmap-4.02Alpha1/protocols.cc
    static int protocols_initialized = 0;
    if (protocols_initialized) return 0;
  
-diff -upk.orig nmap-4.02Alpha1.orig/service_scan.cc nmap-4.02Alpha1/service_scan.cc
---- nmap-4.02Alpha1.orig/service_scan.cc	2006-03-05 01:10:19 +0000
-+++ nmap-4.02Alpha1/service_scan.cc	2006-03-05 02:09:57 +0000
+diff -upk.orig nmap-4.11.orig/service_scan.cc nmap-4.11/service_scan.cc
+--- nmap-4.11.orig/service_scan.cc	2006-06-19 04:20:02 +0000
++++ nmap-4.11/service_scan.cc	2006-06-24 13:33:03 +0000
 @@ -105,6 +105,7 @@
  #include "timing.h"
  #include "NmapOps.h"
@@ -278,7 +278,7 @@ diff -upk.orig nmap-4.02Alpha1.orig/service_scan.cc nmap-4.02Alpha1/service_scan
  
  #include "nmap_tty.h"
  
-@@ -1137,7 +1138,7 @@ void parse_nmap_service_probes(AllProbes
+@@ -1133,7 +1134,7 @@ void parse_nmap_service_probes(AllProbes
    parse_nmap_service_probe_file(AP, filename);
  }
  
@@ -287,11 +287,11 @@ diff -upk.orig nmap-4.02Alpha1.orig/service_scan.cc nmap-4.02Alpha1/service_scan
  {
    static AllProbes *AP;
  
-diff -upk.orig nmap-4.02Alpha1.orig/services.cc nmap-4.02Alpha1/services.cc
---- nmap-4.02Alpha1.orig/services.cc	2006-03-05 01:10:19 +0000
-+++ nmap-4.02Alpha1/services.cc	2006-03-05 02:09:57 +0000
+diff -upk.orig nmap-4.11.orig/services.cc nmap-4.11/services.cc
+--- nmap-4.11.orig/services.cc	2006-03-06 00:00:03 +0000
++++ nmap-4.11/services.cc	2006-06-24 13:33:03 +0000
 @@ -100,6 +100,7 @@
- /* $Id: services.cc 2396 2004-08-29 09:12:05Z fyodor $ */
+ /* $Id: services.cc 3200 2006-03-05 23:59:46Z fyodor $ */
  
  #include "services.h"
 +#include "droppriv.h"
@@ -307,18 +307,18 @@ diff -upk.orig nmap-4.02Alpha1.orig/services.cc nmap-4.02Alpha1/services.cc
    static int services_initialized = 0;
    if (services_initialized) return 0;
  
-diff -upk.orig nmap-4.02Alpha1.orig/tcpip.cc nmap-4.02Alpha1/tcpip.cc
---- nmap-4.02Alpha1.orig/tcpip.cc	2006-03-03 23:12:21 +0000
-+++ nmap-4.02Alpha1/tcpip.cc	2006-03-05 02:09:57 +0000
-@@ -102,6 +102,7 @@
- 
+diff -upk.orig nmap-4.11.orig/tcpip.cc nmap-4.11/tcpip.cc
+--- nmap-4.11.orig/tcpip.cc	2006-06-19 04:20:02 +0000
++++ nmap-4.11/tcpip.cc	2006-06-24 13:33:03 +0000
+@@ -104,6 +104,7 @@
+ #endif
  #include <dnet.h>
  #include "tcpip.h"
 +#include "droppriv.h"
  #include "NmapOps.h"
  
  #if HAVE_SYS_TIME_H
-@@ -2039,6 +2040,14 @@ void set_pcap_filter(const char *device,
+@@ -2087,6 +2088,14 @@ void set_pcap_filter(const char *device,
      fatal("Failed to set the pcap filter: %s\n", pcap_geterr(pd));
  }
  
@@ -333,7 +333,7 @@ diff -upk.orig nmap-4.02Alpha1.orig/tcpip.cc nmap-4.02Alpha1/tcpip.cc
  /* The 'dev' passed in must be at least 32 bytes long */
  int ipaddr2devname( char *dev, const struct in_addr *addr ) {
  struct interface_info *mydevs;
-@@ -2415,7 +2424,6 @@ struct sys_route *getsysroutes(int *howm
+@@ -2465,7 +2474,6 @@ struct sys_route *getsysroutes(int *howm
    int route_capacity = 128;
    static struct sys_route *routes = NULL;
    static int numroutes = 0;
@@ -341,7 +341,7 @@ diff -upk.orig nmap-4.02Alpha1.orig/tcpip.cc nmap-4.02Alpha1/tcpip.cc
    char buf[1024];
    char iface[16];
    char *p, *endptr;
-@@ -2430,7 +2438,7 @@ struct sys_route *getsysroutes(int *howm
+@@ -2480,7 +2488,7 @@ struct sys_route *getsysroutes(int *howm
      routes = (struct sys_route *) safe_zalloc(route_capacity * sizeof(struct sys_route));
      ifaces = getinterfaces(&numifaces);
      /* First let us try Linux-style /proc/net/route */
@@ -350,7 +350,7 @@ diff -upk.orig nmap-4.02Alpha1.orig/tcpip.cc nmap-4.02Alpha1/tcpip.cc
      if (routefp) {
        fgets(buf, sizeof(buf), routefp); /* Kill the first line (column headers) */
        while(fgets(buf,sizeof(buf), routefp)) {
-@@ -2513,6 +2521,8 @@ struct sys_route *getsysroutes(int *howm
+@@ -2563,6 +2571,8 @@ struct sys_route *getsysroutes(int *howm
  	  routes = (struct sys_route *) realloc(routes, route_capacity * sizeof(struct sys_route));
  	}
        }
