@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/crontabs/crontabs.spec,v 1.16 2005/11/16 12:19:21 solar Exp $
+# $Owl: Owl/packages/crontabs/crontabs.spec,v 1.17 2006/06/26 16:58:02 ldv Exp $
 
 Summary: System crontab files used to schedule the execution of programs.
 Name: crontabs
 Version: 2.0
-Release: owl6
+Release: owl7
 License: GPL
 Group: System Environment/Base
 Source0: run-parts-1.15.tar.gz
@@ -46,12 +46,12 @@ mkdir -p %buildroot/etc/cron.{hourly,daily,weekly,monthly}
 mkdir -p %buildroot%_bindir
 mkdir -p %buildroot%_mandir/man8/
 
-install -m 644 %_sourcedir/crontab %buildroot/etc/
+install -m 600 %_sourcedir/crontab %buildroot/etc/
 install -m 755 run-parts %buildroot%_bindir/
 install -m 644 run-parts.8 %buildroot%_mandir/man8/
 
 %files
-%defattr(-,root,root)
+%defattr(-,root,root,700)
 %config /etc/crontab
 %_bindir/run-parts
 %_mandir/man8/*
@@ -61,6 +61,10 @@ install -m 644 run-parts.8 %buildroot%_mandir/man8/
 %dir /etc/cron.monthly
 
 %changelog
+* Mon Jun 26 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.0-owl7
+- Changed /etc/cron.* access permissions to 0700.
+- Changed /etc/crontab access permissions to 0600.
+
 * Sat Sep 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.0-owl6
 - Added crond to the package requirements.
 
