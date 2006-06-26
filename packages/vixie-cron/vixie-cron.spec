@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/vixie-cron/vixie-cron.spec,v 1.46 2006/05/01 13:52:16 ldv Exp $
+# $Owl: Owl/packages/vixie-cron/vixie-cron.spec,v 1.47 2006/06/26 13:17:58 ldv Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
 Version: 4.1.20060426
-Release: owl1
+Release: owl2
 License: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%version.tar.bz2
@@ -141,7 +141,7 @@ fi
 %_mandir/man?/*
 %dir %attr(3730,root,crontab) /var/spool/cron
 %dir %attr(1770,root,crontab) /var/spool/at
-%dir /etc/cron.d
+%dir %attr(700,root,root) /etc/cron.d
 %config(noreplace) /etc/pam.d/crond
 %config /etc/rc.d/init.d/crond
 /etc/control.d/facilities/crontab
@@ -150,6 +150,9 @@ fi
 %attr(640,root,crontab) %config(noreplace) /etc/*.deny
 
 %changelog
+* Mon Jun 26 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.1.20060426-owl2
+- Changed /etc/cron.d access permissions to 0700.
+
 * Mon May 01 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.1.20060426-owl1
 - Updated to OpenBSD CVS snapshot dated 2006/04/26.
 - Changed crontab to use $TMPDIR for creating temporary file.
