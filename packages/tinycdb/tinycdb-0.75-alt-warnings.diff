@@ -1,6 +1,62 @@
---- tinycdb-0.75.orig/cdb.c	2005-04-18 00:26:40 +0000
-+++ tinycdb-0.75/cdb.c	2005-11-04 20:27:53 +0000
-@@ -299,7 +299,7 @@ dofile_cdb(struct cdb_make *cdbmp, FILE 
+diff -upk.orig tinycdb-0.75.orig/cdb.c tinycdb-0.75/cdb.c
+--- tinycdb-0.75.orig/cdb.c	2006-05-22 13:23:35 +0000
++++ tinycdb-0.75/cdb.c	2006-05-22 13:50:20 +0000
+@@ -99,7 +99,7 @@ static int qmode(char *dbname, char *key
+ }
+ 
+ static void
+-fget(FILE *f, unsigned char *b, unsigned len, unsigned *posp, unsigned limit)
++fget(FILE *f, char *b, unsigned len, unsigned *posp, unsigned limit)
+ {
+   if (posp && limit - *posp < len)
+     error(EPROTO, "invalid database format");
+@@ -138,11 +138,11 @@ dmode(char *dbname, char mode, int flags
+     error(errno, "open %s", dbname);
+   allocbuf(2048);
+   fget(f, buf, 2048, &pos, 2048);
+-  eod = cdb_unpack(buf);
++  eod = cdb_unpack((const unsigned char *)buf);
+   while(pos < eod) {
+     fget(f, buf, 8, &pos, eod);
+-    klen = cdb_unpack(buf);
+-    vlen = cdb_unpack(buf + 4);
++    klen = cdb_unpack((const unsigned char *)buf);
++    vlen = cdb_unpack((const unsigned char *)buf + 4);
+     if (!(flags & F_MAP))
+       if (printf(mode == 'd' ? "+%u,%u:" : "+%u:", klen, vlen) < 0) return -1;
+     if (fcpy(f, stdout, klen, &pos, eod) != 0) return -1;
+@@ -180,7 +180,7 @@ static int smode(char *dbname) {
+     error(errno, "open %s", dbname);
+ 
+   pos = 0;
+-  fget(f, toc, 2048, &pos, 2048);
++  fget(f, (char *)toc, 2048, &pos, 2048);
+ 
+   allocbuf(2048);
+ 
+@@ -188,8 +188,8 @@ static int smode(char *dbname) {
+   while(pos < eod) {
+     unsigned klen, vlen;
+     fget(f, buf, 8, &pos, eod);
+-    klen = cdb_unpack(buf);
+-    vlen = cdb_unpack(buf + 4);
++    klen = cdb_unpack((const unsigned char *)buf);
++    vlen = cdb_unpack((const unsigned char *)buf + 4);
+     fcpy(f, NULL, klen, &pos, eod);
+     fcpy(f, NULL, vlen, &pos, eod);
+     ++cnt;
+@@ -213,8 +213,8 @@ static int smode(char *dbname) {
+     for (i = 0; i < hlen; ++i) {
+       unsigned h;
+       fget(f, buf, 8, &pos, 0xffffffff);
+-      if (!cdb_unpack(buf + 4)) continue;
+-      h = (cdb_unpack(buf) >> 8) % hlen;
++      if (!cdb_unpack((const unsigned char *)buf + 4)) continue;
++      h = (cdb_unpack((const unsigned char *)buf) >> 8) % hlen;
+       if (h == i) h = 0;
+       else {
+         if (h < i) h = i - h;
+@@ -303,7 +303,7 @@ dofile_cdb(struct cdb_make *cdbmp, FILE 
  }
  
  static void
@@ -9,7 +65,7 @@
  {
    char *k, *v;
    while(fgets(buf, blen, f) != NULL) {
-@@ -332,7 +332,7 @@ static void
+@@ -336,7 +336,7 @@ static void
  dofile(struct cdb_make *cdbmp, FILE *f, const char *fn, int flags)
  {
    if (flags & F_MAP)
@@ -18,3 +74,69 @@
    else
      dofile_cdb(cdbmp, f, fn, flags);
    if (ferror(f))
+diff -upk.orig tinycdb-0.75.orig/cdb_make.c tinycdb-0.75/cdb_make.c
+--- tinycdb-0.75.orig/cdb_make.c	2005-04-18 00:18:19 +0000
++++ tinycdb-0.75/cdb_make.c	2006-05-22 13:50:03 +0000
+@@ -138,7 +138,7 @@ cdb_make_finish_internal(struct cdb_make
+       cdb_pack(htab[i].hval, p + (i << 3));
+       cdb_pack(htab[i].rpos, p + (i << 3) + 4);
+     }
+-    if (_cdb_make_write(cdbmp, p, len << 3) < 0) {
++    if (_cdb_make_write(cdbmp, (const char *)p, len << 3) < 0) {
+       free(p);
+       return -1;
+     }
+@@ -146,13 +146,13 @@ cdb_make_finish_internal(struct cdb_make
+   free(p);
+   if (_cdb_make_flush(cdbmp) < 0)
+     return -1;
+-  p = cdbmp->cdb_buf;
++  p = (unsigned char *)cdbmp->cdb_buf;
+   for (t = 0; t < 256; ++t) {
+     cdb_pack(hpos[t], p + (t << 3));
+     cdb_pack(hcnt[t], p + (t << 3) + 4);
+   }
+   if (lseek(cdbmp->cdb_fd, 0, 0) != 0 ||
+-      _cdb_make_fullwrite(cdbmp->cdb_fd, p, 2048) != 0)
++      _cdb_make_fullwrite(cdbmp->cdb_fd, (const char *)p, 2048) != 0)
+     return -1;
+ 
+   return 0;
+diff -upk.orig tinycdb-0.75.orig/cdb_make_add.c tinycdb-0.75/cdb_make_add.c
+--- tinycdb-0.75.orig/cdb_make_add.c	2005-04-18 00:19:12 +0000
++++ tinycdb-0.75/cdb_make_add.c	2006-05-22 13:50:03 +0000
+@@ -35,7 +35,7 @@ _cdb_make_add(struct cdb_make *cdbmp, un
+   ++cdbmp->cdb_rcnt;
+   cdb_pack(klen, rlen);
+   cdb_pack(vlen, rlen + 4);
+-  if (_cdb_make_write(cdbmp, rlen, 8) < 0 ||
++  if (_cdb_make_write(cdbmp, (const char *)rlen, 8) < 0 ||
+       _cdb_make_write(cdbmp, key, klen) < 0 ||
+       _cdb_make_write(cdbmp, val, vlen) < 0)
+     return -1;
+diff -upk.orig tinycdb-0.75.orig/cdb_make_put.c tinycdb-0.75/cdb_make_put.c
+--- tinycdb-0.75.orig/cdb_make_put.c	2005-04-18 09:46:50 +0000
++++ tinycdb-0.75/cdb_make_put.c	2006-05-22 13:50:03 +0000
+@@ -60,7 +60,7 @@ zerofill_record(struct cdb_make *cdbmp, 
+   if (lseek(cdbmp->cdb_fd, rpos, SEEK_SET) < 0)
+     return -1;
+   memset(cdbmp->cdb_buf, 0, sizeof(cdbmp->cdb_buf));
+-  cdb_pack(rlen - 8, cdbmp->cdb_buf + 4);
++  cdb_pack(rlen - 8, (unsigned char *)cdbmp->cdb_buf + 4);
+   for(;;) {
+     rpos = rlen > sizeof(cdbmp->cdb_buf) ? sizeof(cdbmp->cdb_buf) : rlen;
+     if (_cdb_make_fullwrite(cdbmp->cdb_fd, cdbmp->cdb_buf, rpos) < 0)
+@@ -81,11 +81,11 @@ match(struct cdb_make *cdbmp, unsigned p
+     return 1;
+   if (read(cdbmp->cdb_fd, cdbmp->cdb_buf, 8) != 8)
+     return 1;
+-  if (cdb_unpack(cdbmp->cdb_buf) != klen)
++  if (cdb_unpack((const unsigned char *)cdbmp->cdb_buf) != klen)
+     return 0;
+ 
+   /* record length; check its validity */
+-  rlen = cdb_unpack(cdbmp->cdb_buf + 4);
++  rlen = cdb_unpack((const unsigned char *)cdbmp->cdb_buf + 4);
+   if (rlen > cdbmp->cdb_dpos - pos - klen - 8)
+     return errno = EPROTO, 1;	/* someone changed our file? */
+   rlen += klen + 8;
