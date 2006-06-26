@@ -1,0 +1,69 @@
+--- autoconf-2.59/lib/autoconf/c.m4.vns	2004-05-14 11:40:48 +0400
++++ autoconf-2.59/lib/autoconf/c.m4	2004-05-14 12:06:51 +0400
+@@ -226,6 +226,25 @@
+ ], [return f != $1;])])
+ 
+ 
++# AC_LANG_FUNC_LINK_TRY_GCC_BUILTIN(C)(FUNCTION)
++# ----------------------------------
++# This will test if function is available as
++# gcc3 builtin.
++#
++m4_define([AC_LANG_FUNC_LINK_TRY_GCC_BUILTIN(C)],
++[AC_LANG_PROGRAM(
++[#ifndef __GNUC__
++choke me
++#else
++#undef $1
++/* Declare this function with same prototype as __builtin_$1.
++  This removes warning about conflicting type with builtin */
++__typeof__(__builtin_$1) $1;
++
++__typeof__(__builtin_$1) *f = $1;
++#endif
++], [return f != __builtin_$1;])])
++
+ # AC_LANG_BOOL_COMPILE_TRY(C)(PROLOGUE, EXPRESSION)
+ # -------------------------------------------------
+ # Be sure to use this array to avoid `unused' warnings, which are even
+@@ -292,6 +311,11 @@
+ m4_copy([AC_LANG_FUNC_LINK_TRY(C)], [AC_LANG_FUNC_LINK_TRY(C++)])
+ 
+ 
++# AC_LANG_FUNC_LINK_TRY_GCC_BUILTIN(C++)(FUNCTION)
++# ------------------------------------
++m4_copy([AC_LANG_FUNC_LINK_TRY_GCC_BUILTIN(C)], [AC_LANG_FUNC_LINK_TRY_GCC_BUILTIN(C++)])
++
++
+ # AC_LANG_BOOL_COMPILE_TRY(C++)(PROLOGUE, EXPRESSION)
+ # ---------------------------------------------------
+ m4_copy([AC_LANG_BOOL_COMPILE_TRY(C)], [AC_LANG_BOOL_COMPILE_TRY(C++)])
+--- autoconf-2.59/lib/autoconf/lang.m4.vns	2003-10-23 11:45:07 +0400
++++ autoconf-2.59/lib/autoconf/lang.m4	2004-05-14 11:40:48 +0400
+@@ -250,6 +250,13 @@
+ _AC_LANG_DISPATCH([$0], _AC_LANG, $@)])
+ 
+ 
++# AC_LANG_FUNC_LINK_TRY_GCC_BUILTIN(FUNCTION, TYPE)
++# -------------------------------
++AC_DEFUN([AC_LANG_FUNC_LINK_TRY_GCC_BUILTIN],
++[m4_ifval([$1], [], [m4_warn([syntax], [$0: no function given])])dnl
++_AC_LANG_DISPATCH([$0], _AC_LANG, $@)])
++
++
+ # AC_LANG_BOOL_COMPILE_TRY(PROLOGUE, EXPRESSION)
+ # ----------------------------------------------
+ # Produce a program that compiles with success iff the boolean EXPRESSION
+--- autoconf-2.59/lib/autoconf/functions.m4.vns	2004-05-14 11:40:48 +0400
++++ autoconf-2.59/lib/autoconf/functions.m4	2004-05-14 11:40:48 +0400
+@@ -68,7 +68,9 @@
+ AC_CACHE_CHECK([for $1], ac_var,
+ [AC_LINK_IFELSE([AC_LANG_FUNC_LINK_TRY([$1])],
+ 		[AS_VAR_SET(ac_var, yes)],
+-		[AS_VAR_SET(ac_var, no)])])
++		[AC_LINK_IFELSE([AC_LANG_FUNC_LINK_TRY_GCC_BUILTIN([$1])],
++				[AS_VAR_SET(ac_var, yes)],
++				[AS_VAR_SET(ac_var, no)])])])
+ AS_IF([test AS_VAR_GET(ac_var) = yes], [$2], [$3])dnl
+ AS_VAR_POPDEF([ac_var])dnl
+ ])# AC_CHECK_FUNC

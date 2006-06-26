@@ -1,0 +1,41 @@
+diff -uprk.orig autoconf-2.59.orig/lib/autoconf/c.m4 autoconf-2.59/lib/autoconf/c.m4
+--- autoconf-2.59.orig/lib/autoconf/c.m4	2004-01-06 17:22:47 +0300
++++ autoconf-2.59/lib/autoconf/c.m4	2004-01-06 19:06:05 +0300
+@@ -624,23 +624,33 @@ AC_ARG_VAR([CXXCPP],   [C++ preprocessor
+ _AC_ARG_VAR_CPPFLAGS()dnl
+ AC_LANG_PUSH(C++)dnl
+ AC_MSG_CHECKING([how to run the C++ preprocessor])
++found_CXXCPP=
+ if test -z "$CXXCPP"; then
+   AC_CACHE_VAL(ac_cv_prog_CXXCPP,
+   [dnl
+     # Double quotes because CXXCPP needs to be expanded
+     for CXXCPP in "$CXX -E" "/lib/cpp"
+     do
+-      _AC_PROG_PREPROC_WORKS_IFELSE([break])
++      _AC_PROG_PREPROC_WORKS_IFELSE([found_CXXCPP="$CXXCPP"; break])
+     done
+-    ac_cv_prog_CXXCPP=$CXXCPP
++    if test -n "$found_CXXCPP"; then
++      ac_cv_prog_CXXCPP="$found_CXXCPP"
++    else
++      ac_cv_prog_CXXCPP="$CXX -E"
++    fi
+   ])dnl
+   CXXCPP=$ac_cv_prog_CXXCPP
+ else
++  found_CXXCPP=$CXXCPP
+   ac_cv_prog_CXXCPP=$CXXCPP
+ fi
+-AC_MSG_RESULT([$CXXCPP])
+-_AC_PROG_PREPROC_WORKS_IFELSE([],
++if test -n "$found_CXXCPP"; then
++  AC_MSG_RESULT([$CXXCPP])
++  _AC_PROG_PREPROC_WORKS_IFELSE([],
+ 	  [AC_MSG_FAILURE([C++ preprocessor "$CXXCPP" fails sanity check])])
++else
++  AC_MSG_RESULT([no])
++fi
+ AC_SUBST(CXXCPP)dnl
+ AC_LANG_POP(C++)dnl
+ ])# AC_PROG_CXXCPP

@@ -1,14 +1,19 @@
-# $Owl: Owl/packages/autoconf/autoconf.spec,v 1.14 2006/02/03 22:31:14 ldv Exp $
+# $Owl: Owl/packages/autoconf/autoconf.spec,v 1.15 2006/06/26 22:13:35 ldv Exp $
 
 Summary: A GNU tool for automatically configuring source code.
 Name: autoconf
 Version: 2.59
-Release: owl2
+Release: owl3
 License: GPL
 Group: Development/Tools
 Source: ftp://ftp.gnu.org/gnu/autoconf/autoconf-%version.tar.bz2
 Patch0: autoconf-2.59-owl-awk.diff
 Patch1: autoconf-2.59-owl-tmp.diff
+Patch2: autoconf-2.59-alt-warnings.diff
+Patch3: autoconf-2.59-alt-_AC_PATH_X_XMKMF.diff
+Patch4: autoconf-2.59-alt-AC_PROG_CXXCPP.diff
+Patch5: autoconf-2.59-alt-AC_LANG_FUNC_LINK_TRY_GCC_BUILTIN.diff
+Patch6: autoconf-2.59-rh-_AC_PATH_X_DIRECT.diff
 PreReq: /sbin/install-info
 Requires: gawk, m4, mktemp, perl, textutils
 Requires: mktemp >= 1:1.3.1
@@ -28,10 +33,15 @@ portable and configurable software.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
 
 %build
 %configure
-make
+%__make
 
 %install
 rm -rf %buildroot
@@ -62,6 +72,9 @@ fi
 %_mandir/man1/*
 
 %changelog
+* Mon Jun 26 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.59-owl3
+- Imported autoconf macros patches from autoconf-2.59-alt5 package.
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.59-owl2
 - Corrected info files installation.
 

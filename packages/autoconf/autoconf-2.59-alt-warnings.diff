@@ -1,0 +1,87 @@
+diff -upk.orig autoconf-2.59.orig/lib/autoconf/c.m4 autoconf-2.59/lib/autoconf/c.m4
+--- autoconf-2.59.orig/lib/autoconf/c.m4	2003-09-25 07:28:51 +0000
++++ autoconf-2.59/lib/autoconf/c.m4	2006-06-20 17:09:34 +0000
+@@ -1086,10 +1086,11 @@ AC_DEFUN([AC_C_CONST],
+   p = (char**) ccp;
+   ccp = (char const *const *) p;
+   { /* SCO 3.2v4 cc rejects this.  */
+-    char *t;
++    char *t = (char *) 0;
+     char const *s = 0 ? (char *) 0 : (char const *) 0;
+ 
+     *t++ = 0;
++    (void) s;
+   }
+   { /* Someone thinks the Sun supposedly-ANSI compiler will reject this.  */
+     int x[] = {25, 17};
+@@ -1104,11 +1105,14 @@ AC_DEFUN([AC_C_CONST],
+   { /* AIX XL C 1.02.0.0 rejects this saying
+        "k.c", line 2.27: 1506-025 (S) Operand must be a modifiable lvalue. */
+     struct s { int j; const int *ap[3]; };
+-    struct s *b; b->j = 5;
++    struct s *b = (struct s *)0; b->j = 5;
+   }
+   { /* ULTRIX-32 V3.1 (Rev 9) vcc rejects this */
+     const int foo = 10;
++    (void) foo;
+   }
++  (void) x;
++  (void) zero;
+ #endif
+ ]])],
+ 		   [ac_cv_c_const=yes],
+diff -upk.orig autoconf-2.59.orig/lib/autoconf/functions.m4 autoconf-2.59/lib/autoconf/functions.m4
+--- autoconf-2.59.orig/lib/autoconf/functions.m4	2003-10-27 11:13:42 +0000
++++ autoconf-2.59/lib/autoconf/functions.m4	2004-05-12 13:57:30 +0000
+@@ -323,7 +323,7 @@ AC_DEFUN([AC_FUNC_ALLOCA],
+ AC_CACHE_CHECK([for working alloca.h], ac_cv_working_alloca_h,
+ [AC_LINK_IFELSE(
+        [AC_LANG_PROGRAM([[@%:@include <alloca.h>]],
+-			[[char *p = (char *) alloca (2 * sizeof (int));]])],
++			[[char *p = (char *) alloca (2 * sizeof (int)); (void) p;]])],
+ 		[ac_cv_working_alloca_h=yes],
+ 		[ac_cv_working_alloca_h=no])])
+ if test $ac_cv_working_alloca_h = yes; then
+@@ -354,7 +354,7 @@ char *alloca ();
+ #  endif
+ # endif
+ #endif
+-]],                               [[char *p = (char *) alloca (1);]])],
++]],                               [[char *p = (char *) alloca (1); (void) p;]])],
+ 		[ac_cv_func_alloca_works=yes],
+ 		[ac_cv_func_alloca_works=no])])
+ 
+diff -upk.orig autoconf-2.59.orig/lib/autoconf/general.m4 autoconf-2.59/lib/autoconf/general.m4
+--- autoconf-2.59.orig/lib/autoconf/general.m4	2003-10-27 11:10:56 +0000
++++ autoconf-2.59/lib/autoconf/general.m4	2006-06-20 17:09:34 +0000
+@@ -2343,6 +2343,7 @@ AC_CACHE_CHECK([whether $1 is declared],
+ [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([AC_INCLUDES_DEFAULT([$4])],
+ [#ifndef $1
+   char *p = (char *) $1;
++  (void) p;
+ #endif
+ ])],
+ 		   [AS_VAR_SET(ac_Symbol, yes)],
+diff -upk.orig autoconf-2.59.orig/lib/autoconf/headers.m4 autoconf-2.59/lib/autoconf/headers.m4
+--- autoconf-2.59.orig/lib/autoconf/headers.m4	2003-09-25 07:28:51 +0000
++++ autoconf-2.59/lib/autoconf/headers.m4	2006-06-20 17:09:34 +0000
+@@ -590,6 +590,7 @@ if test $ac_cv_header_stdc = yes; then
+   # /bin/cc in Irix-4.0.5 gets non-ANSI ctype macros unless using -ansi.
+   AC_RUN_IFELSE([AC_LANG_SOURCE(
+ [[#include <ctype.h>
++#include <stdlib.h>
+ #if ((' ' & 0x0FF) == 0x020)
+ # define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
+ # define TOUPPER(c) (ISLOWER(c) ? 'A' + ((c) - 'a') : (c))
+diff -upk.orig autoconf-2.59.orig/lib/autoconf/types.m4 autoconf-2.59/lib/autoconf/types.m4
+--- autoconf-2.59.orig/lib/autoconf/types.m4	2003-05-22 12:05:14 +0000
++++ autoconf-2.59/lib/autoconf/types.m4	2004-05-12 16:58:21 +0000
+@@ -363,7 +363,7 @@ extern "C" void (*signal (int, void (*)(
+ void (*signal ()) ();
+ #endif
+ ],
+-		 [int i;])],
++		 [int i; (void) i;])],
+ 		   [ac_cv_type_signal=void],
+ 		   [ac_cv_type_signal=int])])
+ AC_DEFINE_UNQUOTED(RETSIGTYPE, $ac_cv_type_signal,

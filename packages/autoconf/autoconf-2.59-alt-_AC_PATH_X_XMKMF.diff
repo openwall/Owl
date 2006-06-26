@@ -1,0 +1,21 @@
+diff -upk.orig autoconf-2.59.orig/lib/autoconf/libs.m4 autoconf-2.59/lib/autoconf/libs.m4
+--- autoconf-2.59.orig/lib/autoconf/libs.m4	2003-05-22 12:05:13 +0000
++++ autoconf-2.59/lib/autoconf/libs.m4	2006-06-20 17:19:28 +0000
+@@ -192,7 +192,7 @@ _ACEOF
+     # GNU make sometimes prints "make[1]: Entering...", which would confuse us.
+     eval `${MAKE-make} acfindx 2>/dev/null | grep -v make`
+     # Open Windows xmkmf reportedly sets LIBDIR instead of USRLIBDIR.
+-    for ac_extension in a so sl; do
++    for ac_extension in so sl a; do
+       if test ! -f $ac_im_usrlibdir/libX11.$ac_extension &&
+ 	 test -f $ac_im_libdir/libX11.$ac_extension; then
+ 	ac_im_usrlibdir=$ac_im_libdir; break
+@@ -287,7 +287,7 @@ ac_x_libraries=],
+ for ac_dir in `echo "$ac_x_includes $ac_x_header_dirs" | sed s/include/lib/g`
+ do
+   # Don't even attempt the hair of trying to link an X program!
+-  for ac_extension in a so sl; do
++  for ac_extension in so sl a; do
+     if test -r $ac_dir/libXt.$ac_extension; then
+       ac_x_libraries=$ac_dir
+       break 2
