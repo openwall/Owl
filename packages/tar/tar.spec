@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.29 2006/04/04 00:15:08 ldv Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.30 2006/06/26 17:30:12 ldv Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
 Version: 1.15.1
-Release: owl5
+Release: owl6
 License: GPL
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/tar/
@@ -121,6 +121,9 @@ fi
 %doc AUTHORS NEWS THANKS
 
 %changelog
+* Mon Jun 26 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.15.1-owl6
+- Fixed build with gcc-4.x.
+
 * Mon Feb 20 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.15.1-owl5
 - Backported upstream fix for potential heap buffer overrun in handling
 extended headers (CVE-2006-0300).
