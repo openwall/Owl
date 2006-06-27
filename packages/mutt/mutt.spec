@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/mutt/mutt.spec,v 1.24 2005/11/16 13:16:56 solar Exp $
+# $Owl: Owl/packages/mutt/mutt.spec,v 1.25 2006/06/27 12:59:26 ldv Exp $
 
 Summary: A feature-rich text-based mail user agent.
 Name: mutt
 Version: 1.4.2.1
-Release: owl5
+Release: owl6
 License: GPL
 Group: Applications/Internet
 URL: http://www.mutt.org
@@ -14,6 +14,8 @@ Patch1: mutt-1.4-owl-muttbug-tmp.diff
 Patch2: mutt-1.4.2.1-owl-tmp.diff
 Patch3: mutt-1.4.2.1-owl-bound.diff
 Patch4: mutt-1.4.2.1-owl-man.diff
+Patch5: mutt-1.4.2.1-alt-gcc4.diff
+Patch6: mutt-1.4.2.1-git-20060619-bound.diff
 Requires: mktemp >= 1:1.3.1
 Conflicts: mutt-us
 Provides: mutt-i
@@ -36,6 +38,8 @@ and more.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
+%patch6 -p1
 
 %{expand:%%define optflags %optflags -fno-strict-aliasing}
 
@@ -80,6 +84,11 @@ cat contrib/gpg.rc %_sourcedir/Muttrc-color >> %buildroot/%_sysconfdir/Muttrc
 %exclude %_mandir/man1/mutt_dotlock.*
 
 %changelog
+* Tue Jun 27 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.2.1-owl6
+- Applied upstream fix for potential stack-based buffer overflow
+when processing an overly long namespace from IMAP server.
+- Fixed build with new gcc compiler.
+
 * Thu Aug 25 2005 Solar Designer <solar-at-owl.openwall.com> 1.4.2.1-owl5
 - Introduced the buffer non-overflow hardening into convert_to_state() itself
 rather than into only one of its callers.

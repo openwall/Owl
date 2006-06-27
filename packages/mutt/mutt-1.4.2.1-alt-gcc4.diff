@@ -1,0 +1,10 @@
+--- mutt/keymap.h~	2006-05-24 21:50:37 +0000
++++ mutt/keymap.h	2006-05-24 22:19:13 +0000
+@@ -80,6 +80,7 @@ extern struct keymap_t *Keymaps[];
+ /* dokey() records the last real key pressed  */
+ extern int LastKey;
+ 
++#include "mapping.h"
+ extern struct mapping_t Menus[];
+ 
+ struct binding_t
