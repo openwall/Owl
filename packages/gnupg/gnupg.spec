@@ -1,20 +1,21 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.31.2.1 2006/03/25 14:59:18 solar Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.31.2.2 2006/06/29 00:47:03 ldv Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
-Version: 1.4.2.2
-Release: owl1
+Version: 1.4.4
+Release: owl0.2.0.1
 License: GPL
 Group: Applications/Cryptography
 URL: http://www.gnupg.org
-Source: ftp://ftp.gnupg.org/gcrypt/gnupg/%name-%version.tar.bz2
-Patch0: gnupg-1.4.2-alt-always-trust.diff
-Patch1: gnupg-1.4.2-alt-cp1251.diff
-Patch2: gnupg-1.4.2-alt-getkey-i18n.diff
-Patch3: gnupg-1.4.2-up-zero-length-mpi-fix.diff
-Patch4: gnupg-1.4.2-fw-secret-key-checks.diff
-Patch5: gnupg-1.4.2-rh-keygen.diff
-Patch6: gnupg-1.4.2.2-alt-checks.diff
+Source0: ftp://ftp.gnupg.org/gcrypt/gnupg/%name-%version.tar.bz2
+Source1: gpgsplit.1
+Source2: lspgpot.1
+Patch0: gnupg-1.4.3-alt-ru.po.diff
+Patch1: gnupg-1.4.3-alt-always-trust.diff
+Patch2: gnupg-1.4.2-alt-cp1251.diff
+Patch3: gnupg-1.4.2-fw-secret-key-checks.diff
+Patch4: gnupg-1.4.3-deb-man.diff
+Patch5: gnupg-1.4.2-alt-owl-info.diff
 PreReq: /sbin/install-info
 Provides: gpg, openpgp
 BuildRequires: zlib-devel, bzip2-devel, texinfo, readline-devel
@@ -37,53 +38,54 @@ only IDEA for symmetric-key encryption, which is patented worldwide).
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
-bzip2 -9k NEWS
+bzip2 -9k NEWS doc/{DETAILS,FAQ}
 
 %build
 %configure \
 	--with-static-rnd=linux \
-	--with-mailprog=/usr/sbin/sendmail
+	--with-mailprog=/usr/sbin/sendmail \
+	--enable-noexecstack
 %__make
 
 %install
 mkdir -p %buildroot%_libdir/%name
 %makeinstall transform=
 sed 's,\.\./g[0-9\.]*/,,g' tools/lspgpot > lspgpot
-install -m 755 lspgpot %buildroot%_bindir/lspgpot
+install -m755 lspgpot %buildroot%_bindir/lspgpot
+
+install -pm644 %_sourcedir/{gpgsplit,lspgpot}.1 %buildroot%_mandir/man1/
 
 # Move localized manpages to FHS compliant locations
 mkdir -p %buildroot%_mandir/ru/man1
-mv %buildroot%_mandir/man1/gpg.ru.* %buildroot%_mandir/ru/man1/
+mv %buildroot%_mandir/man1/gpg.ru.1 %buildroot%_mandir/ru/man1/gpg.1
+
+# Remove unpackaged files
+rm %buildroot%_infodir/dir
 
 %post
-/sbin/install-info %_infodir/gpg.info %_infodir/dir \
-	--entry "* GnuPG: (gpg).                                 Encryption and signing tool."
-/sbin/install-info %_infodir/gpgv.info %_infodir/dir \
-	--entry "* gpgv: (gpgv).                                 GnuPG signature verification tool."
+/sbin/install-info %_infodir/gpg.info %_infodir/dir
+/sbin/install-info %_infodir/gpgv.info %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-        /sbin/install-info --delete %_infodir/gpg.info %_infodir/dir \
-		--entry "* GnuPG: (gpg).                                 Encryption and signing tool."
-        /sbin/install-info --delete %_infodir/gpgv.info %_infodir/dir \
-		--entry "* gpgv: (gpgv).                                 GnuPG signature verification tool."
+        /sbin/install-info --delete %_infodir/gpg.info %_infodir/dir
+        /sbin/install-info --delete %_infodir/gpgv.info %_infodir/dir
 fi
 
 %files
 %defattr(-,root,root)
 %doc AUTHORS COPYING NEWS.bz2 PROJECTS README THANKS TODO
-%doc doc/{DETAILS,FAQ,HACKING,OpenPGP,*.html}
+%doc doc/{DETAILS.bz2,FAQ.bz2,HACKING,OpenPGP,*.html}
 %doc tools/convert-from-106
 
 %_bindir/gpg
-%_bindir/gpgv
+%_bindir/gpg-zip
 %_bindir/gpgsplit
+%_bindir/gpgv
 %_bindir/lspgpot
 %_datadir/locale/*/*/*
 %_libdir/%name
-%_mandir/man1/gpg.*
-%_mandir/man1/gpgv.*
+%_mandir/man1/*
 %_mandir/ru/man1/gpg.*
 %_mandir/man7/gnupg.*
 %_infodir/gpg.*
@@ -93,9 +95,18 @@ fi
 %config(noreplace) %_datadir/gnupg/options.skel
 %exclude %_datadir/gnupg/FAQ
 %exclude %_datadir/gnupg/faq.html
-%exclude %_infodir/dir
 
 %changelog
+* Wed Jun 28 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.4-owl0.2.0.1
+- Updated to 1.4.4.  This release includes fix for integer overflow
+vulnerability in packet processing that could allow a remote attacker
+to cause gpg to crash and possibly overwrite memory via a message packet
+with a large length (CVE-2006-3082).
+- Imported gpgsplit(1) and lspgpot(1) manual pages and gpgv(1) fixes
+from Debian gnupg package.
+- Imported Russian translation fixes from ALT gnupg package.
+- Simplified info files installation.
+
 * Sat Mar 11 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.2.2-owl1
 - Updated to 1.4.2.2.
 

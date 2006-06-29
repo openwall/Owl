@@ -1,0 +1,52 @@
+--- gnupg-1.4.3.orig/doc/gpgv.1	2005-10-18 12:47:48 +0100
++++ gnupg-1.4.3/doc/gpgv.1	2006-04-05 02:14:37 +0100
+@@ -11,12 +11,12 @@
+ \fBgpgv\fR is the OpenPGP signature checking tool. 
+  
+ .PP 
+-This program is a stripped down version of \fBgpg\fR which is able 
++This program is a stripped-down version of \fBgpg\fR which is able 
+ only 
+-to check signatures.  It is somewhat smaller than the fully blown 
++to check signatures.  It is somewhat smaller than the fully-blown 
+ \fBgpg\fR and uses a different (and simpler) way to check that 
+ the public keys used to make the signature are trustworthy.  There are 
+-no options files and only very few options are implemented. 
++no options files and only a very few options are implemented. 
+ .PP 
+ \fBgpgv\fR assumes that all keys in the keyring are trustworthy. 
+ By default it uses a keyring named \fBtrustedkeys.gpg\fP which is 
+@@ -41,7 +41,7 @@
+ .IP "" 10 
+ "gnupg-ring:" is the default one. 
+ .IP "\-\-homedir \fBdirectory\fR" 10 
+-Set the name of the home directory to \fBdirectory\fR If this 
++Set the name of the home directory to \fBdirectory\fR. If this 
+ option is not used, it defaults to "~/.gnupg". It does 
+ not make sense to use this in an options file. This 
+ also overrides the environment variable "GNUPGHOME". 
+@@ -57,7 +57,7 @@
+ checks just warnings. 
+ .SH "RETURN VALUE" 
+ .PP 
+-The program returns 0 if everything was fine, 1 if at least 
++The program returns 0 if everything is fine, 1 if at least 
+ one signature was bad, and other error codes for fatal errors. 
+  
+ .SH "EXAMPLES" 
+@@ -65,7 +65,7 @@
+ .IP "gpgv \fBsigfile\fR [\fBfiles\fR]" 10 
+ Verify the signature of the file. The second form 
+ is used for detached signatures, where \fBsigfile\fR is the detached 
+-signature (either ASCII armored or binary) and [\fBfiles\fR] are the signed 
++signature (either ASCII-armored or binary) and [\fBfiles\fR] are the signed 
+ data; if this is not given the name of the file holding the signed data is 
+ constructed by cutting off the extension (".asc", ".sig" or ".sign") from 
+ \fBsigfile\fR. 
+@@ -76,5 +76,5 @@
+ If set directory used instead of "~/.gnupg". 
+ .SH "FILES" 
+ .IP "~/.gnupg/trustedkeys.gpg" 10 
+-The default keyring with the allowed keys 
++The default keyring with the allowed keys. 
+ .\" created by instant / docbook-to-man, Tue 18 Oct 2005, 13:47 

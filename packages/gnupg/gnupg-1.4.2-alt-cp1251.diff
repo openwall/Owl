@@ -1,6 +1,32 @@
---- gnupg-1.4.2/util/strgutil.c.orig	2005-05-31 06:30:16.000000000 +0000
-+++ gnupg-1.4.2/util/strgutil.c	2005-11-18 22:53:42.000000000 +0000
-@@ -71,6 +71,25 @@
+diff -upk.orig gnupg-1.4.2.orig/doc/gpg.1 gnupg-1.4.2/doc/gpg.1
+--- gnupg-1.4.2.orig/doc/gpg.1	2005-07-22 20:30:52 +0000
++++ gnupg-1.4.2/doc/gpg.1	2005-11-18 22:53:42 +0000
+@@ -960,6 +960,8 @@ This is currently an alias for 
+ the Latin 1 set. 
+ .IP "koi8-r" 10 
+ The usual Russian set (rfc1489). 
++.IP "cp1251" 10 
++The cp1251 aka windows-1251 Cyrillic set.
+ .IP "utf-8" 10 
+ Bypass all translations and assume 
+ that the OS uses native UTF-8 encoding. 
+diff -upk.orig gnupg-1.4.2.orig/doc/gpg.texi gnupg-1.4.2/doc/gpg.texi
+--- gnupg-1.4.2.orig/doc/gpg.texi	2005-07-26 18:44:12 +0000
++++ gnupg-1.4.2/doc/gpg.texi	2005-11-18 22:53:42 +0000
+@@ -1180,6 +1180,9 @@ the Latin 1 set.
+ @item koi8-r
+ The usual Russian set (rfc1489).
+ 
++@item cp1251
++The cp1251 aka windows-1251 Cyrillic set.
++
+ @item utf-8
+ Bypass all translations and assume
+ that the OS uses native UTF-8 encoding.
+diff -upk.orig gnupg-1.4.2.orig/util/strgutil.c gnupg-1.4.2/util/strgutil.c
+--- gnupg-1.4.2.orig/util/strgutil.c	2005-05-31 06:30:16 +0000
++++ gnupg-1.4.2/util/strgutil.c	2005-11-18 22:53:42 +0000
+@@ -71,6 +71,25 @@ static ushort koi8_unicode[128] = {
      0x042c,0x042b,0x0417,0x0428,0x042d,0x0429,0x0427,0x042a
  };
  
@@ -26,7 +52,7 @@
  static ushort latin2_unicode[128] = {
      0x0080,0x0081,0x0082,0x0083,0x0084,0x0085,0x0086,0x0087,
      0x0088,0x0089,0x008A,0x008B,0x008C,0x008D,0x008E,0x008F,
-@@ -651,6 +670,13 @@
+@@ -651,6 +670,13 @@ set_native_charset( const char *newset )
  	active_charset = koi8_unicode;
          use_iconv = 0;
      }
@@ -40,26 +66,3 @@
      else
  	return G10ERR_GENERAL;
  #endif /*!USE_GNUPG_ICONV*/
---- gnupg-1.4.2/doc/gpg.1.orig	2005-07-22 20:30:52.000000000 +0000
-+++ gnupg-1.4.2/doc/gpg.1	2005-11-18 22:53:42.000000000 +0000
-@@ -960,6 +960,8 @@
- the Latin 1 set. 
- .IP "koi8-r" 10 
- The usual Russian set (rfc1489). 
-+.IP "cp1251" 10 
-+The cp1251 aka windows-1251 Cyrillic set.
- .IP "utf-8" 10 
- Bypass all translations and assume 
- that the OS uses native UTF-8 encoding. 
---- gnupg-1.4.2/doc/gpg.texi.orig	2005-07-26 18:44:12.000000000 +0000
-+++ gnupg-1.4.2/doc/gpg.texi	2005-11-18 22:53:42.000000000 +0000
-@@ -1180,6 +1180,9 @@
- @item koi8-r
- The usual Russian set (rfc1489).
- 
-+@item cp1251
-+The cp1251 aka windows-1251 Cyrillic set.
-+
- @item utf-8
- Bypass all translations and assume
- that the OS uses native UTF-8 encoding.
