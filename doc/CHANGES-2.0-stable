@@ -5,6 +5,7 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 2.0 and Owl 2.0-stable.
 
+(2006/06/27)
 2006/06/28	Package: mutt
 SECURITY FIX	Severity: high, remote, passive
 Applied an upstream fix for potential stack-based buffer overflow when
@@ -40,4 +41,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.5 2006/06/28 23:57:47 ldv Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.6 2006/06/29 00:15:25 solar Exp $
