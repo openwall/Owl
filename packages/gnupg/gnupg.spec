@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.35 2006/06/22 00:51:54 ldv Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.36 2006/06/29 00:24:59 ldv Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
-Version: 1.4.3
+Version: 1.4.4
 Release: owl1
 License: GPL
 Group: Applications/Cryptography
@@ -10,14 +10,12 @@ URL: http://www.gnupg.org
 Source0: ftp://ftp.gnupg.org/gcrypt/gnupg/%name-%version.tar.bz2
 Source1: gpgsplit.1
 Source2: lspgpot.1
-Patch0: gnupg-1.4.3-svn-20060609-parse-packet.diff
-Patch1: gnupg-1.4.3-alt-ru.po.diff
-Patch2: gnupg-1.4.3-alt-always-trust.diff
-Patch3: gnupg-1.4.2-alt-cp1251.diff
-Patch4: gnupg-1.4.3-alt-getkey-i18n.diff
-Patch5: gnupg-1.4.2-fw-secret-key-checks.diff
-Patch6: gnupg-1.4.3-deb-man.diff
-Patch7: gnupg-1.4.2-alt-owl-info.diff
+Patch0: gnupg-1.4.3-alt-ru.po.diff
+Patch1: gnupg-1.4.3-alt-always-trust.diff
+Patch2: gnupg-1.4.2-alt-cp1251.diff
+Patch3: gnupg-1.4.2-fw-secret-key-checks.diff
+Patch4: gnupg-1.4.3-deb-man.diff
+Patch5: gnupg-1.4.2-alt-owl-info.diff
 PreReq: /sbin/install-info
 Provides: gpg, openpgp
 BuildRequires: zlib-devel, bzip2-devel, texinfo, readline-devel >= 0:5.1
@@ -40,8 +38,6 @@ only IDEA for symmetric-key encryption, which is patented worldwide).
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
-%patch7 -p1
 bzip2 -9k NEWS doc/{DETAILS,FAQ}
 
 %build
@@ -101,6 +97,9 @@ fi
 %exclude %_datadir/gnupg/faq.html
 
 %changelog
+* Wed Jun 28 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.4-owl1
+- Updated to 1.4.4.
+
 * Thu Jun 22 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.3-owl1
 - Updated to 1.4.3.
 - Applied upstream fix for crash bug in parse-packet.c (CVE-2006-3082).
