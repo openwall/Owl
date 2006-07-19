@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.46 2006/05/05 22:51:56 ldv Exp $
+# $Owl: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.47 2006/07/19 22:48:16 solar Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
 Version: 0.60
-Release: owl29
+Release: owl30
 License: BSD or GPL
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
@@ -90,7 +90,6 @@ if [ $1 -ge 2 ]; then
 	fi
 else
 	%_sbindir/control passwd tcb
-	%_sbindir/control su wheelonly
 fi
 
 %files
@@ -106,6 +105,10 @@ fi
 /etc/control.d/facilities/*
 
 %changelog
+* Thu Jul 20 2006 Solar Designer <solar-at-owl.openwall.com> 0.60-owl30
+- Changed the default control(8) setting for su from "wheelonly" to
+"restricted" (this change affects new installs only).
+
 * Fri May 05 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.60-owl29
 - In su, do not ignore pam_acct_mgmt() return values except PAM_ACCT_EXPIRED
 and PAM_NEW_AUTHTOK_REQD even if executed by root.
