@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/xinetd/xinetd.spec,v 1.37 2006/03/30 02:43:54 galaxy Exp $
+# $Owl: Owl/packages/xinetd/xinetd.spec,v 1.38 2006/07/19 22:59:47 solar Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
 Version: 2.3.13
-Release: owl3
+Release: owl4
 License: BSD with minor restrictions
 Group: System Environment/Daemons
 URL: http://www.xinetd.org
@@ -67,15 +67,16 @@ mkdir -p %buildroot/etc/{rc.d/init.d,xinetd.d}
 cd %buildroot
 
 install -m 755 %_sourcedir/xinetd.init etc/rc.d/init.d/xinetd
-install -m 644 %_sourcedir/xinetd.conf etc/
-install -m 644 %_sourcedir/xinetd-ttime etc/xinetd.d/time
-install -m 644 %_sourcedir/xinetd-utime etc/xinetd.d/time-udp
-install -m 644 %_sourcedir/xinetd-tdtime etc/xinetd.d/daytime
-install -m 644 %_sourcedir/xinetd-udtime etc/xinetd.d/daytime-udp
-install -m 644 %_sourcedir/xinetd-echo etc/xinetd.d/echo
-install -m 644 %_sourcedir/xinetd-uecho etc/xinetd.d/echo-udp
-install -m 644 %_sourcedir/xinetd-chargen etc/xinetd.d/chargen
-install -m 644 %_sourcedir/xinetd-uchargen etc/xinetd.d/chargen-udp
+
+install %_sourcedir/xinetd.conf etc/
+install %_sourcedir/xinetd-ttime etc/xinetd.d/time
+install %_sourcedir/xinetd-utime etc/xinetd.d/time-udp
+install %_sourcedir/xinetd-tdtime etc/xinetd.d/daytime
+install %_sourcedir/xinetd-udtime etc/xinetd.d/daytime-udp
+install %_sourcedir/xinetd-echo etc/xinetd.d/echo
+install %_sourcedir/xinetd-uecho etc/xinetd.d/echo-udp
+install %_sourcedir/xinetd-chargen etc/xinetd.d/chargen
+install %_sourcedir/xinetd-uchargen etc/xinetd.d/chargen-udp
 
 rm .%_sbindir/{itox,xconv.pl} .%_mandir/man8/{itox,xconv.pl}.8*
 
@@ -104,14 +105,18 @@ fi
 %files
 %defattr(-,root,root)
 %doc AUDIT CHANGELOG.bz2 COPYRIGHT README xinetd/sample.conf
-%config(noreplace) /etc/xinetd.conf
-%dir /etc/xinetd.d
-%config(noreplace) /etc/xinetd.d/*
+%attr(640,root,wheel) %config(noreplace) /etc/xinetd.conf
+%attr(750,root,wheel) %dir /etc/xinetd.d
+%attr(640,root,wheel) %config(noreplace) /etc/xinetd.d/*
 %config /etc/rc.d/init.d/xinetd
 %_sbindir/*
 %_mandir/*/*
 
 %changelog
+* Thu Jul 20 2006 Solar Designer <solar-at-owl.openwall.com> 2.3.13-owl4
+- Changed the permissions on /etc/xinetd.d to 750 root:wheel, and on
+/etc/xinetd.conf and /etc/xinetd.d/* to 640 root:wheel.
+
 * Thu Mar 30 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.13-owl3
 - Replaced make with %%__make.
 - Added /etc/xinetd.d to the filelist.
