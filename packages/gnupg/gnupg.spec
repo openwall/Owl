@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.31.2.2 2006/06/29 00:47:03 ldv Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.31.2.3 2006/08/03 23:26:55 ldv Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
-Version: 1.4.4
+Version: 1.4.5
 Release: owl0.2.0.1
 License: GPL
 Group: Applications/Cryptography
@@ -97,6 +97,10 @@ fi
 %exclude %_datadir/gnupg/faq.html
 
 %changelog
+* Fri Aug 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.5-owl0.2.0.1
+- Updated to 1.4.5.  This includes fixes for two more possible memory
+allocation bugs (CVE-2006-3746), similar to the problem fixed in 1.4.4.
+
 * Wed Jun 28 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.4-owl0.2.0.1
 - Updated to 1.4.4.  This release includes fix for integer overflow
 vulnerability in packet processing that could allow a remote attacker
