@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/postfix/postfix.spec,v 1.38 2006/04/07 00:53:24 ldv Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.39 2006/08/03 23:01:33 ldv Exp $
 
 Summary: Postfix mail system.
 Name: postfix
-Version: 2.2.10
+Version: 2.2.11
 Release: owl1
 Epoch: 1
 License: IBM Public License
@@ -20,7 +20,7 @@ Source8: postqueue.control
 Patch0: postfix-2.2.4-owl-sparse-hack.diff
 Patch1: postfix-2.2.4-mjt-var_command_maxtime.diff
 Patch2: postfix-2.2.4-alt-check-warn.diff
-Patch3: postfix-2.2.4-alt-install.diff
+Patch3: postfix-2.2.11-alt-install.diff
 Patch4: postfix-2.2.4-alt-owl-defaults.diff
 Patch5: postfix-2.2.4-alt-owl-filelist.diff
 Patch6: postfix-2.2.4-alt-post-install.diff
@@ -328,6 +328,11 @@ fi
 %attr(644,root,root) %verify(not md5 mtime size) %ghost %queue_directory/etc/*
 
 %changelog
+* Fri Aug 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.2.11-owl1
+- Updated to 2.2.11.
+- Changed postfix-install script to avoid adding default installation
+parameters to main.cf and therethrough avoid potential upgrade problems.
+
 * Fri Apr 07 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.2.10-owl1
 - Updated to 2.2.10.
 - Rebuilt with libdb-4.3.so.

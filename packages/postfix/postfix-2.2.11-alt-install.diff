@@ -1,6 +1,5 @@
-diff -upk.orig postfix-2.2.4.orig/postfix-install postfix-2.2.4/postfix-install
---- postfix-2.2.4.orig/postfix-install	2005-02-02 21:39:36 +0000
-+++ postfix-2.2.4/postfix-install	2005-06-23 12:36:10 +0000
+--- postfix-2.2.11/postfix-install.orig	2005-02-02 21:39:36 +0000
++++ postfix-2.2.11/postfix-install	2006-08-03 20:31:59 +0000
 @@ -602,7 +602,17 @@ do
      # Skip over files that must be preserved.
  
@@ -64,3 +63,59 @@ diff -upk.orig postfix-2.2.4.orig/postfix-install postfix-2.2.4/postfix-install
  	case $prefix in
  	'$daemon_directory')
  	    compare_or_replace $mode "$owner" "$group" libexec/$file \
+@@ -703,25 +730,36 @@ do
+ 
+     done
+ 
+-# Save the installation parameters to main.cf even when they haven't
+-# changed from their current default. Defaults can change between
+-# Postfix releases, and software should not suddenly be installed in
+-# the wrong place when Postfix is being upgraded.
+-
+-bin/postconf -c $CONFIG_DIRECTORY -e \
+-    "daemon_directory = $daemon_directory" \
+-    "command_directory = $command_directory" \
+-    "queue_directory = $queue_directory" \
+-    "mail_owner = $mail_owner" \
+-    "setgid_group = $setgid_group" \
+-    "sendmail_path = $sendmail_path" \
+-    "mailq_path = $mailq_path" \
+-    "newaliases_path = $newaliases_path" \
+-    "html_directory = $html_directory" \
+-    "manpage_directory = $manpage_directory" \
+-    "sample_directory = $sample_directory" \
+-    "readme_directory = $readme_directory" \
+-|| exit 1
++# Save the installation parameters to main.cf when they change from
++# their current default.
++
++override=
++for name in daemon_directory command_directory queue_directory mail_owner \
++    setgid_group sendmail_path mailq_path newaliases_path html_directory \
++    manpage_directory sample_directory readme_directory
++do
++    eval test \"\$$name\" = \"`bin/postconf -c $CONFIG_DIRECTORY -h $name`\" || {
++	override=1
++	break
++    }
++done
++
++test -n "$override" && {
++    bin/postconf -c $CONFIG_DIRECTORY -e \
++	"daemon_directory = $daemon_directory" \
++	"command_directory = $command_directory" \
++	"queue_directory = $queue_directory" \
++	"mail_owner = $mail_owner" \
++	"setgid_group = $setgid_group" \
++	"sendmail_path = $sendmail_path" \
++	"mailq_path = $mailq_path" \
++	"newaliases_path = $newaliases_path" \
++	"html_directory = $html_directory" \
++	"manpage_directory = $manpage_directory" \
++	"sample_directory = $sample_directory" \
++	"readme_directory = $readme_directory" \
++    || exit 1
++}
+ 
+ # If Postfix is being installed locally from source code, do the
+ # post-install processing now.
