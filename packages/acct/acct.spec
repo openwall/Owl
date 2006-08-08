@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/acct/acct.spec,v 1.35 2006/06/16 00:17:01 galaxy Exp $
+# $Owl: Owl/packages/acct/acct.spec,v 1.36 2006/08/08 15:09:36 ldv Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
 Version: 6.4
-Release: owl0.3
+Release: owl0.4
 License: GPL
 Group: Applications/System
 Source0: http://www.physik3.uni-rostock.de/tim/kernel/utils/acct/%name-%version-pre1.tar.gz
@@ -111,6 +111,9 @@ fi
 %_infodir/*
 
 %changelog
+* Tue Aug 08 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 6.4-owl0.4
+- Fixed "/etc/rc.d/init.d/acct stop" to really turn off accounting.
+
 * Fri Jun 16 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.4-owl0.3
 - Adjusted the logrotate configuration file to redirect stdout to /dev/null.
 

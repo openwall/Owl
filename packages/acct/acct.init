@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/acct/acct.init,v 1.5 2005/11/16 12:19:20 solar Exp $
+# $Owl: Owl/packages/acct/acct.init,v 1.6 2006/08/08 15:09:36 ldv Exp $
 #
 # chkconfig: 2345 35 65
 # description: \
@@ -16,7 +16,7 @@ start)
 	;;
 stop)
 	echo "Stopping process accounting"
-	$ACCTON
+	$ACCTON off
 	;;
 restart)
 	$0 stop
