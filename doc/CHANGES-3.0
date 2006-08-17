@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2006/08/17	kernel
+Updated to Linux 2.4.33-ow1.
+
 2006/08/04	Package: postfix
 Updated to 2.2.11.
 
@@ -206,4 +209,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.44 2006/08/07 07:56:57 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.45 2006/08/17 00:30:38 solar Exp $
