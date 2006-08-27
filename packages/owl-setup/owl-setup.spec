@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.67 2006/04/19 21:10:56 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.68 2006/08/27 11:44:58 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -34,6 +34,9 @@ rm -rf %buildroot
 %_mandir/man8/settle.8*
 
 %changelog
+* Sun Aug 27 2006 Croco <croco-at-owl.openwall.com> 1.1.3-owl1
+- fixed the 'blind interface name request' bug
+
 * Wed Apr 20 2006 Croco <croco-at-owl.openwall.com> 1.1.2-owl1
 - quick search string displaying added to ncurses item lists
 

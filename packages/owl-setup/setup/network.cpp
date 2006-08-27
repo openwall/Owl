@@ -571,7 +571,7 @@ static bool query_ip_and_mask(OwlInstallInterface *the_iface,
                             ScriptVariable &ip, ScriptVariable &mask)
 {
     ScriptVariable newip =
-        the_iface->QueryString("Enter IP address", ip);
+        the_iface->QueryString("Enter IP address", ip, false);
     if(newip == OwlInstallInterface::qs_cancel) return false;
     if(IP4IpAddress(newip.c_str()).IsInvalid()) {
         the_iface->Message("Invalid IP address");
@@ -580,7 +580,7 @@ static bool query_ip_and_mask(OwlInstallInterface *the_iface,
 
     ScriptVariable newmask =
         the_iface->QueryString("Enter netmask (e.g., /24 or 255.255.255.0)",
-                               mask);
+                               mask, false);
     if(newmask == OwlInstallInterface::qs_cancel) return false;
     if(IP4Mask(newmask.c_str()).IsInvalid()) {
         the_iface->Message("Invalid netmask");
@@ -645,7 +645,8 @@ static void edit_interfaces(OwlInstallInterface* the_iface,
         }
         else if(choice=="a") {
             ScriptVariable name =
-                the_iface->QueryString("Enter the interface name", "eth0");
+                the_iface->QueryString("Enter the interface name",
+                                       "eth0", false);
             if(name == OwlInstallInterface::qs_eof) return;
             if(name == OwlInstallInterface::qs_cancel) continue;
             if(name == "" || name.Strchr(' ').Valid()) {
@@ -707,7 +708,8 @@ static void edit_nameservers(OwlInstallInterface* the_iface,
         }
         else if(choice=="a") {
             ScriptVariable serv =
-                the_iface->QueryString("Enter the DNS server's IP address");
+                the_iface->QueryString("Enter the DNS server's IP address",
+                                       false);
             if(serv == OwlInstallInterface::qs_eof)
                 break;
             if(serv == OwlInstallInterface::qs_cancel)
@@ -757,7 +759,7 @@ void configure_network(OwlInstallInterface *the_iface)
         else if(choice=="h") {
             ScriptVariable res =
                 the_iface->QueryString("Enter the fully-qualified hostname",
-                                       info.GetFullHostname());
+                                       info.GetFullHostname(), false);
             if(res == OwlInstallInterface::qs_eof) {
                 return;
             }
@@ -771,7 +773,7 @@ void configure_network(OwlInstallInterface *the_iface)
         else if(choice=="g") {
             ScriptVariable res =
                 the_iface->QueryString("Enter your gateway IP address",
-                                       info.GuessGateway());
+                                       info.GuessGateway(), false);
             if(res == OwlInstallInterface::qs_eof) {
                 return;
             }

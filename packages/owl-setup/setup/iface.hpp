@@ -130,11 +130,11 @@ public:
 
 
     ScriptVariable QueryString(const ScriptVariable &prompt,
-                               bool blind = false);
+                               bool blind);
 
     virtual ScriptVariable QueryString(const ScriptVariable &prompt,
                                        const ScriptVariable &defval,
-                                       bool blind = false) = 0;
+                                       bool blind) = 0;
 
     static const char *qs_cancel;
     static const char *qs_escape;

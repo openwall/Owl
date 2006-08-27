@@ -102,7 +102,7 @@ static void add_mount(OwlInstallInterface *the_iface,
             "Please enter the mount point for %s "
             "(e.g., /var or /home)",
             part.c_str());
-        mp = the_iface->QueryString(prompt);
+        mp = the_iface->QueryString(prompt, false);
         if(mp == "" ||
            mp == OwlInstallInterface::qs_cancel ||
            mp == OwlInstallInterface::qs_escape ||
@@ -217,7 +217,7 @@ static void mount_unlisted(OwlInstallInterface *the_iface,
         ScriptVariable prompt(
             "Please enter the device path \n"
             "(e.g., /dev/hda1 or /dev/sdb2)");
-        part = the_iface->QueryString(prompt);
+        part = the_iface->QueryString(prompt, false);
         if(part == "" ||
            part == OwlInstallInterface::qs_cancel ||
            part == OwlInstallInterface::qs_escape ||
