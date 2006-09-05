@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/bc/bc.spec,v 1.16 2006/05/21 00:06:50 ldv Exp $
+# $Owl: Owl/packages/bc/bc.spec,v 1.17 2006/09/05 19:58:21 galaxy Exp $
 
 Summary: GNU's bc (a numeric processing language) and dc (a calculator).
 Name: bc
 Version: 1.06
-Release: owl7
+Release: owl8
 License: GPL
 Group: Applications/Engineering
 Source: ftp://ftp.gnu.org/gnu/bc/bc-%version.tar.gz
@@ -12,7 +12,7 @@ Patch1: bc-1.06-owl-functions-fix.diff
 Patch2: bc-1.06-owl-readline.diff
 PreReq: /sbin/install-info, grep
 Prefix: %_prefix
-BuildRequires: texinfo, readline-devel >= 0:5.1
+BuildRequires: texinfo, readline-devel >= 0:4.3
 BuildRequires: rpm-build >= 0:4
 BuildRoot: /override/%name-%version
 
@@ -59,6 +59,9 @@ fi
 %_infodir/*.info*
 
 %changelog
+* Sun Sep 03 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.06-owl8
+- Relaxed the build dependency on readline-devel.
+
 * Sun May 21 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.06-owl7
 - Rebuilt with libreadline.so.5.
 

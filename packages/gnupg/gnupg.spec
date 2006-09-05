@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.37 2006/08/03 23:00:44 ldv Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.38 2006/09/05 19:59:41 galaxy Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
 Version: 1.4.5
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Cryptography
 URL: http://www.gnupg.org
@@ -18,7 +18,7 @@ Patch4: gnupg-1.4.3-deb-man.diff
 Patch5: gnupg-1.4.2-alt-owl-info.diff
 PreReq: /sbin/install-info
 Provides: gpg, openpgp
-BuildRequires: zlib-devel, bzip2-devel, texinfo, readline-devel >= 0:5.1
+BuildRequires: zlib-devel, bzip2-devel, texinfo, readline-devel >= 0:4.3
 BuildRequires: rpm-build >= 0:4
 BuildRoot: /override/%name-%version
 
@@ -97,6 +97,9 @@ fi
 %exclude %_datadir/gnupg/faq.html
 
 %changelog
+* Sun Sep 03 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.4.5-owl2
+- Relaxed the build dependency on readline-devel.
+
 * Fri Aug 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.5-owl1
 - Updated to 1.4.5.
 
