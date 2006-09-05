@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.52 2006/06/07 01:38:06 galaxy Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.53 2006/09/05 20:01:48 galaxy Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -27,7 +27,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.8.8
-Release: owl3
+Release: owl4
 Epoch: 4
 License: GPL
 Group: Development/Languages
@@ -65,7 +65,7 @@ Provides: perl(:WITHOUT_LARGEFILES)
 # self requirements which were not detected by our find-provides
 Provides: perl(Carp::Heavy), perl(getopts.pl)
 Obsoletes: perl-MD5
-BuildRequires: gdbm-devel, db4-devel >= 4.3.29, gawk, grep
+BuildRequires: gdbm-devel, db4-devel >= 4.2, gawk, grep
 BuildRequires: rpm >= 4.0.5
 BuildRoot: /override/%name-%version
 
@@ -289,6 +289,9 @@ chmod -R u+w %buildroot
 %endif
 
 %changelog
+* Sun Sep 03 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4:5.8.8-owl4
+- Relaxed the build dependency on db4-devel.
+
 * Tue Jun 06 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4:5.8.8-owl3
 - Added Config_heavy.pl to the fix-config section.
 Thanks goes to Bernhard Fischer who has reported the problem.

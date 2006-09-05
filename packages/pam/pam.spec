@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/pam/pam.spec,v 1.50 2006/06/06 12:36:51 ldv Exp $
+# $Owl: Owl/packages/pam/pam.spec,v 1.51 2006/09/05 20:01:13 galaxy Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
 Version: 0.99.4.0
-Release: owl1
+Release: owl2
 %define rh_version 0.80-1
 License: GPL or BSD
 Group: System Environment/Base
@@ -29,7 +29,7 @@ Requires: glibc-crypt_blowfish
 Requires: tcb >= 0.9.9
 BuildRequires: glibc-crypt_blowfish-devel
 BuildRequires: automake, autoconf, bison, flex
-BuildRequires: sed >= 4.1, db4-devel >= 4.3.29
+BuildRequires: sed >= 4.1, db4-devel >= 4.2
 BuildRoot: /override/%name-%version
 
 %description
@@ -265,6 +265,9 @@ find %buildroot%docdir/ -type f -size +4k \( -iname changelog -or -name \*.txt -
 %docdir/[hpst]*
 
 %changelog
+* Sun Sep 03 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.99.4.0-owl2
+- Relaxed the build dependency on db4-devel.
+
 * Tue Jun 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.99.4.0-owl1
 - Updated Linux-PAM to post-0.99.4.0 snapshot 20060523.
 

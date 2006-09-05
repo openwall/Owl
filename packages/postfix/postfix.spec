@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/postfix/postfix.spec,v 1.39 2006/08/03 23:01:33 ldv Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.40 2006/09/05 20:01:30 galaxy Exp $
 
 Summary: Postfix mail system.
 Name: postfix
 Version: 2.2.11
-Release: owl1
+Release: owl2
 Epoch: 1
 License: IBM Public License
 Group: System Environment/Daemons
@@ -32,7 +32,7 @@ Patch11: postfix-2.2.5-alt-mailbox_unpriv_delivery.diff
 Patch12: postfix-2.2.5-deb-man.diff
 PreReq: /sbin/chkconfig, grep, shadow-utils
 Requires: owl-control >= 0.4, owl-control < 2.0
-BuildRequires: db4-devel >= 4.3.29, pcre-devel, tinycdb-devel, sed >= 4.1.1
+BuildRequires: db4-devel >= 4.2, pcre-devel, tinycdb-devel, sed >= 4.1.1
 Conflicts: sendmail, qmail
 Provides: MTA, smtpd, smtpdaemon
 Obsoletes: sendmail-cf, sendmail-doc
@@ -328,6 +328,9 @@ fi
 %attr(644,root,root) %verify(not md5 mtime size) %ghost %queue_directory/etc/*
 
 %changelog
+* Sun Sep 03 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:2.2.11-owl2
+- Relaxed the build dependency on db4-devel.
+
 * Fri Aug 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.2.11-owl1
 - Updated to 2.2.11.
 - Changed postfix-install script to avoid adding default installation
