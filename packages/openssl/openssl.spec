@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.59 2006/05/30 23:30:09 ldv Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.60 2006/09/06 11:40:20 ldv Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
 Version: 0.9.7g
-Release: owl5
+Release: owl6
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
@@ -16,6 +16,7 @@ Patch4: openssl-0.9.7g-rh-version-engines.diff
 Patch5: openssl-0.9.7g-up-rh-fixes.diff
 Patch6: openssl-0.9.7g-rh-consttime.diff
 Patch7: openssl-0.9.7g-up-SSL_OP_MSIE_SSLV2_RSA_PADDING.diff
+Patch8: openssl-0.9.7g-cvs-20060904-CVE-2006-4339.diff
 Provides: SSL
 %ifnarch x86_64
 # For backwards compatibility.
@@ -98,6 +99,7 @@ This package contains some miscellaneous Perl scripts.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p0
+%patch8 -p0
 
 bzip2 -9k CHANGES CHANGES.SSLeay
 
@@ -245,6 +247,9 @@ ln -sf libssl.so.5 /%_lib/libssl.so.4
 %attr(0644,root,root) %_mandir/man1/CA.pl.1*
 
 %changelog
+* Wed Sep 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.9.7g-owl6
+- Applied upstream patch to avoid RSA signature forgery (CVE-2006-4339).
+
 * Sun Apr 30 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.9.7g-owl5
 - Introduced the openssl-perl sub-package and moved Perl scripts there.
 
