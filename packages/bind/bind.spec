@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bind/bind.spec,v 1.16 2006/06/06 01:04:08 ldv Exp $
+# $Owl: Owl/packages/bind/bind.spec,v 1.17 2006/09/06 11:21:15 ldv Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -7,7 +7,7 @@
 Summary: ISC BIND - DNS server.
 Name: bind
 Version: 9.3.2
-Release: owl1
+Release: owl2
 License: BSD-like
 URL: http://www.isc.org/products/BIND/
 Group: System Environment/Daemons
@@ -42,6 +42,7 @@ Patch7: bind-9.3.1-alt-isc-config.diff
 Patch8: bind-9.3.2-alt-man.diff
 Patch9: bind-9.3.1-alt-owl-rndc-confgen.diff
 Patch10: bind-9.3.1-owl-rfc-index.diff
+Patch11: bind-9.3.2-cvs-20060817-P1.diff
 
 Requires: %name-libs = %version-%release
 Requires: owl-startup
@@ -119,6 +120,7 @@ for building applications with ISC BIND libraries.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 
 install -pm644 %_sourcedir/rfc1912.txt.bz2 doc/rfc/
 find doc -type f -name '*.txt' -print0 |
@@ -344,6 +346,9 @@ fi
 %_mandir/man8/nsupdate.8*
 
 %changelog
+* Wed Sep 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.2-owl2
+- Updated to 9.3.2-P1.
+
 * Tue Jun 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.2-owl1
 - Updated to 9.3.2.
 
