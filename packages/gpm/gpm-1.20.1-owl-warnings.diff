@@ -1,0 +1,125 @@
+diff -puNr gpm-1.20.1.orig/src/headers/gpmInt.h gpm-1.20.1/src/headers/gpmInt.h
+--- gpm-1.20.1.orig/src/headers/gpmInt.h	2002-12-24 22:57:16 +0000
++++ gpm-1.20.1/src/headers/gpmInt.h	2006-09-05 04:12:15 +0000
+@@ -163,8 +163,9 @@ struct mouse_features {
+ 
+ extern struct mouse_features mouse_table[3], *which_mouse; /*the current one*/
+ 
+-// looks unused; delete
+-//typedef struct Opt_struct_type {int a,B,d,i,p,r,V,A;} Opt_struct_type;
++/* looks unused; delete
++typedef struct Opt_struct_type {int a,B,d,i,p,r,V,A;} Opt_struct_type;
++*/
+ 
+ /* this is not very clean, actually, but it works fine */
+ #define opt_type     (which_mouse->opt_type)
+diff -puNr gpm-1.20.1.orig/src/mice.c gpm-1.20.1/src/mice.c
+--- gpm-1.20.1.orig/src/mice.c	2002-12-24 22:57:16 +0000
++++ gpm-1.20.1/src/mice.c	2006-09-05 04:25:52 +0000
+@@ -636,7 +636,7 @@ static int M_imps2(Gpm_Event *state,  un
+    state->buttons= ((data[0] & 1) << 2)   /* left              */
+       | ((data[0] & 6) >> 1);             /* middle and right  */
+    
+-   if (data[0]==0 && opt_glidepoint_tap) // by default this is false
++   if (data[0]==0 && opt_glidepoint_tap) /* by default this is false */
+       state->buttons = tap_active = opt_glidepoint_tap;
+    else if (tap_active) {
+       if (data[0]==8)
+diff -puNr gpm-1.20.1.orig/src/prog/hltest.c gpm-1.20.1/src/prog/hltest.c
+--- gpm-1.20.1.orig/src/prog/hltest.c	2002-12-24 22:57:16 +0000
++++ gpm-1.20.1/src/prog/hltest.c	2006-09-05 04:40:39 +0000
+@@ -140,8 +140,8 @@ void killed(int signo)
+    exit(0);
+ }
+ 
+-char *dumpbuf;
+-char *dumpbuf_clean;
++unsigned char *dumpbuf;
++unsigned char *dumpbuf_clean;
+ #define DUMPCHAR(x,y) (dumpbuf+4+2*((y)*wid+(x)))
+ #define DUMPATTR(x,y) (dumpbuf+5+2*((y)*wid+(x)))
+ 
+@@ -151,7 +151,7 @@ char *dumpbuf_clean;
+ 
+ static inline int drawwin(Gpm_Roi *which)
+ {
+-char *curr;
++unsigned char *curr;
+ char name[5];
+ 
+ #define GOTO(x,y)     (curr=DUMPCHAR(x,y))
+diff -puNr gpm-1.20.1.orig/src/prog/mev.c gpm-1.20.1/src/prog/mev.c
+--- gpm-1.20.1.orig/src/prog/mev.c	2002-12-24 22:57:16 +0000
++++ gpm-1.20.1/src/prog/mev.c	2006-09-05 04:36:25 +0000
+@@ -231,7 +231,7 @@ int emacs_handler(Gpm_Event *event, void
+ /*===================================================================*/
+ int usage(void)
+ {
+-   //printf( "(" GPM_NAME ") " GPM_RELEASE ", " GPM_DATE "\n"
++   /* printf( "(" GPM_NAME ") " GPM_RELEASE ", " GPM_DATE "\n" */
+    printf( "(" GPM_NAME ") , " GPM_DATE "\n"
+           "Usage: %s [options]\n",prgname);
+    printf("  Valid options are\n"
+diff -puNr gpm-1.20.1.orig/src/server_tools.c gpm-1.20.1/src/server_tools.c
+--- gpm-1.20.1.orig/src/server_tools.c	2002-12-24 22:57:16 +0000
++++ gpm-1.20.1/src/server_tools.c	2006-09-05 04:33:10 +0000
+@@ -74,8 +74,8 @@ void add_mouse(int type, char *value)
+             return;
+          } else gpm_report(GPM_PR_OOPS,GPM_MESS_FIRST_DEV);
+          
+-         //} else if(tmp->device != NULL && tmp->protocol == NULL)
+-         // gpm_report(GPM_PR_OOPS,GPM_MESS_FIRST_DEV); /* -m -m */
++         /* } else if(tmp->device != NULL && tmp->protocol == NULL)
++         gpm_report(GPM_PR_OOPS,GPM_MESS_FIRST_DEV); */ /* -m -m */
+ 
+          
+          break;
+diff -puNr gpm-1.20.1.orig/src/startup.c gpm-1.20.1/src/startup.c
+--- gpm-1.20.1.orig/src/startup.c	2002-12-24 22:57:16 +0000
++++ gpm-1.20.1/src/startup.c	2006-09-05 04:32:21 +0000
+@@ -154,7 +154,7 @@ void startup(int argc, char **argv)
+    if (chdir("/") < 0) gpm_report(GPM_PR_OOPS,GPM_MESS_CHDIR_FAILED);
+ 
+    
+-   //return mouse_table[1].fd; /* the second is handled in the main() */
++   /* return mouse_table[1].fd; */ /* the second is handled in the main() */
+ 
+    /****************** OLD CODE from gpn.c  END ***********************/
+ 
+diff -puNr gpm-1.20.1.orig/src/synaptics.c gpm-1.20.1/src/synaptics.c
+--- gpm-1.20.1.orig/src/synaptics.c	2002-12-24 22:57:16 +0000
++++ gpm-1.20.1/src/synaptics.c	2006-09-05 04:31:39 +0000
+@@ -440,7 +440,7 @@ typedef enum {
+   Toggle_Four_Way_Button_Action,
+   Toggle_Stick_Pressure_Action,
+   Toggle_Scrolling_Action,
+-  Left_Double_Click_Action,
++  Left_Double_Click_Action
+ } action_type;
+ 
+ 
+@@ -875,6 +875,7 @@ static int           scrolling_amount_le
+ **
+ ****************************************************************************/
+ 
++#if 0
+ /*
+ ** Dump the report data for debugging.
+ **
+@@ -934,6 +935,7 @@ static void tp_dump_report_data (report_
+ 	      (multi_finger_pressure>4500 && multi_finger_xy>50000? 'f':' '));
+ 
+ }
++#endif
+ 
+ 
+ /* syn_dump_info
+@@ -2228,7 +2230,7 @@ static unsigned char tp_hextoint (unsign
+ 				  unsigned char byte2) 
+ {
+   unsigned char bytes [3];
+-  int result;
++  unsigned int result;
+ 
+   bytes [0] = byte1;
+   bytes [1] = byte2;

@@ -1,0 +1,27 @@
+diff -puNr gpm-1.20.1.orig/src/lib/liblow.c gpm-1.20.1/src/lib/liblow.c
+--- gpm-1.20.1.orig/src/lib/liblow.c	2002-12-24 22:57:16 +0000
++++ gpm-1.20.1/src/lib/liblow.c	2006-09-05 03:05:49 +0000
+@@ -435,7 +435,9 @@ int Gpm_GetEvent(Gpm_Event *event)
+           Gpm_Close();
+           return 0;
+         }
+-      gpm_report(GPM_PR_INFO,"Read too few bytes (%i) at %s:%d",count,__FILE__,__LINE__);
++      if (count!=-1)
++        gpm_report(GPM_PR_INFO,"Read too few bytes (%i) at %s:%d",
++                   count,__FILE__,__LINE__);
+       return -1;
+     }
+ #endif
+@@ -452,10 +454,10 @@ int Gpm_GetEvent(Gpm_Event *event)
+ #endif
+       /*
+        * avoid to send the message if there is no data; sometimes it makes
+-       * sense to poll the mouse descriptor any now an then using a
++       * sense to poll the mouse descriptor every now an then using a
+        * non-blocking descriptor
+        */
+-      if (count != -1 || errno != EAGAIN)
++      if (count != -1)
+ 	  gpm_report(GPM_PR_INFO,"Read too few bytes (%i) at %s:%d",
+ 			count,__FILE__,__LINE__);
+       return -1;

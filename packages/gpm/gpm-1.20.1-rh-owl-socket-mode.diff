@@ -1,0 +1,13 @@
+--- gpm-1.20.1.orig/src/gpm.c	2002-12-24 22:57:16 +0000
++++ gpm-1.20.1/src/gpm.c	2006-09-04 02:50:22 +0000
+@@ -974,8 +974,8 @@ int old_main()
+       gpm_report(GPM_PR_OOPS,GPM_MESS_BIND_PROB,ctladdr.sun_path);
+    maxfd=max(maxfd,ctlfd);
+ 
+-   /* needs to be 0777, so all users can _try_ to access gpm */
+-   chmod(GPM_NODE_CTL,0777);
++   if (chmod(GPM_NODE_CTL,0600)==-1)
++      gpm_report(GPM_PR_OOPS,"cannot chmod() failed for '" GPM_NODE_CTL "' (%s)",strerror(errno));
+ 
+    get_console_size(&event); /* get screen dimensions */
+ 

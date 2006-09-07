@@ -1,0 +1,22 @@
+--- gpm-1.20.1.orig/configure.in	2002-12-24 22:57:16 +0000
++++ gpm-1.20.1/configure.in	2006-09-04 02:27:05 +0000
+@@ -9,8 +9,8 @@
+ 
+ release=1.20.1
+ release_date="Decembre 2002"
+-AC_DEFINE_UNQUOTED(GPM_RELEASE,"$release")
+-AC_DEFINE_UNQUOTED(GPM_RELEASE_DATE,"$release_date")
++AC_DEFINE_UNQUOTED(GPM_RELEASE,"$release",[GPM release number as a string.])
++AC_DEFINE_UNQUOTED(GPM_RELEASE_DATE,"$release_date",[release date as a string.])
+ 
+ dnl These are chosen so that we can switch to the libtool scheme
+ dnl transparently.
+@@ -78,7 +78,7 @@
+ 
+ ITZ_CHECK_TYPE(__u32,linux/types.h)
+ if test ${itz_cv_type___u32} = yes || test ${ac_cv_type___u32} = yes ; then
+-    AC_DEFINE(HAVE___U32)
++    AC_DEFINE(HAVE___U32,,[Define if the __u32 type exists either in sys/types.h or in linux/types.h])
+ fi
+ 
+ ITZ_SYS_ELF

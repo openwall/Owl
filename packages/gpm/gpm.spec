@@ -1,27 +1,23 @@
-# $Owl: Owl/packages/gpm/gpm.spec,v 1.26 2006/02/03 22:31:15 ldv Exp $
+# $Owl: Owl/packages/gpm/gpm.spec,v 1.27 2006/09/07 07:29:34 galaxy Exp $
 
-# This defines the library version that this package builds.
-%define LIBVER 1.18.0
 %define BUILD_GPM_ROOT 0
 
 Summary: A mouse server for the Linux console.
 Name: gpm
-Version: 1.19.6
-Release: owl6
+Version: 1.20.1
+Release: owl1
 License: GPL
 Group: System Environment/Daemons
-Source0: ftp://arcana.linux.it/pub/gpm/%name-%version.tar.bz2
+Source0: http://ftp.schottelius.org/pub/linux/gpm/%name-%version.tar.bz2
 Source1: gpm.init
-Patch0: gpm-1.19.6-rh-no-ps.diff
-Patch1: gpm-1.19.6-rh-owl-socket-mode.diff
-Patch2: gpm-1.19.6-rh-gpm-root.diff
-Patch3: gpm-1.19.6-owl-gpm-root.diff
-Patch4: gpm-1.19.6-owl-liblow.diff
-Patch5: gpm-1.19.6-owl-tmp.diff
-Patch6: gpm-1.19.6-owl-warnings.diff
-Patch7: gpm-1.19.6-owl-doc-mkinstalldirs.diff
-Patch8: gpm-1.19.6-owl-info.diff
-Patch9: gpm-1.19.6-owl-fixes.diff
+Patch0: gpm-1.20.1-rh-owl-socket-mode.diff
+Patch1: gpm-1.20.1-owl-gpm-root.diff
+Patch2: gpm-1.20.1-owl-liblow.diff
+Patch3: gpm-1.20.1-owl-tmp.diff
+Patch4: gpm-1.20.1-owl-warnings.diff
+Patch5: gpm-1.19.6-owl-info.diff
+Patch6: gpm-1.20.1-owl-autoconf.diff
+Patch7: gpm-1.20.1-owl-broken-headers.diff
 PreReq: /sbin/chkconfig, /sbin/ldconfig, /sbin/install-info
 BuildRequires: sed, gawk, texinfo, bison, ncurses-devel, automake, autoconf
 BuildRoot: /override/%name-%version
@@ -60,36 +56,38 @@ at the click of a mouse button.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
-%patch8 -p1
-%patch9 -p1
 
 %build
-autoreconf
+rm acconfig.h
+autoreconf -fis
 %configure
-%__make CFLAGS="" CXXFLAGS=""
+%__make
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot/etc
+mkdir -p %buildroot%_sysconfdir
 
 %makeinstall
 
 install -m 644 doc/gpm-root.1 %buildroot%_mandir/man1/
-install -m 644 conf/gpm-root.conf %buildroot/etc/
+install -m 644 conf/gpm-root.conf %buildroot%_sysconfdir
 
 cd %buildroot
 
-chmod +x .%_libdir/libgpm.so.%LIBVER
-ln -sf libgpm.so.%LIBVER .%_libdir/libgpm.so
-# XXX: (GM): We have to create .so.1 ourselves, but this is a dirty hack.
-# It needs to be re-implemented to reflect major version changes.
-ln -sf libgpm.so.%LIBVER .%_libdir/libgpm.so.1
+chmod +x .%_libdir/libgpm.so.*
+ldconfig -n .%_libdir
 
-mkdir -p etc/rc.d/init.d
-install -m 755 %_sourcedir/gpm.init etc/rc.d/init.d/gpm
+mkdir -p .%_sysconfdir/rc.d/init.d
+install -m 755 %_sourcedir/gpm.init .%_sysconfdir/rc.d/init.d/gpm
+
+# create ghost files
+touch %buildroot%_sysconfdir/gpm-{syn,twiddler}.conf
+chmod 0644 %buildroot%_sysconfdir/gpm-{syn,twiddler}.conf
 
 # Remove unpackaged files
 rm %buildroot%_bindir/disable-paste
+rm %buildroot%_bindir/hltest
+rm %buildroot%_bindir/mouse-test
 rm %buildroot%_mandir/man1/mouse-test.1*
 rm %buildroot%_mandir/man7/gpm-types.7*
 %if !%BUILD_GPM_ROOT
@@ -101,8 +99,8 @@ rm %buildroot%_mandir/man1/gpm-root.1*
 %pre
 rm -f /var/run/gpm.restart
 if [ $1 -ge 2 ]; then
-	/etc/rc.d/init.d/gpm status && touch /var/run/gpm.restart || :
-	/etc/rc.d/init.d/gpm stop || :
+	%_sysconfdir/rc.d/init.d/gpm status && touch /var/run/gpm.restart || :
+	%_sysconfdir/rc.d/init.d/gpm stop || :
 fi
 
 %post
@@ -110,7 +108,7 @@ if [ $1 -eq 1 ]; then
 	/sbin/chkconfig --add gpm
 fi
 if [ -f /var/run/gpm.restart ]; then
-	/etc/rc.d/init.d/gpm start
+	%_sysconfdir/rc.d/init.d/gpm start
 fi
 rm -f /var/run/gpm.restart
 /sbin/ldconfig
@@ -119,21 +117,24 @@ rm -f /var/run/gpm.restart
 %preun
 if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %_infodir/gpm.info %_infodir/dir
-	/etc/rc.d/init.d/gpm stop || :
+	%_sysconfdir/rc.d/init.d/gpm stop || :
 	/sbin/chkconfig --del gpm
 fi
 
 %postun -p /sbin/ldconfig
 
 %files
-%defattr(-,root,root)
+%defattr(-,root,root,0755)
+%doc doc/FAQ doc/README.* conf/gpm-syn.conf conf/gpm-twiddler.conf
 %_sbindir/gpm
 %_bindir/mev
 %_infodir/gpm.info*
 %_mandir/man1/mev.1*
 %_mandir/man8/gpm.8*
 %_libdir/libgpm.so.*
-%config /etc/rc.d/init.d/gpm
+%config %_sysconfdir/rc.d/init.d/gpm
+%config %ghost %_sysconfdir/gpm-syn.conf
+%config %ghost %_sysconfdir/gpm-twiddler.conf
 
 %files devel
 %defattr(-,root,root)
@@ -143,13 +144,21 @@ fi
 
 %if %BUILD_GPM_ROOT
 %files root
-%defattr(-,root,root)
-%config /etc/gpm-root.conf
+%defattr(-,root,root,0755)
+%config %_sysconfdir/gpm-root.conf
 %_sbindir/gpm-root
 %_mandir/man1/gpm-root.1*
 %endif
 
 %changelog
+* Sun Aug 03 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.20.1-owl1
+- Updated to 1.20.1.
+- Re-generated patches.
+- Added sample config files for Synaptics and Twiddler (although Syn/PS2
+seems to be broken).
+- Used %%_sysconfdir instead /etc in the spec file since GPM honors
+the --sysconfdir configure option.
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.19.6-owl6
 - Corrected info files installation.
 

@@ -1,0 +1,479 @@
+diff -puNr gpm-1.20.1.orig/conf/gpm-root.conf gpm-1.20.1/conf/gpm-root.conf
+--- gpm-1.20.1.orig/conf/gpm-root.conf	2002-12-24 22:57:16 +0000
++++ gpm-1.20.1/conf/gpm-root.conf	2006-09-05 00:51:12 +0000
+@@ -18,7 +18,7 @@ button 1 {
+   "tty  8"  f.jptty   "8"
+   ""        f.nop
+   "more of them..." {
+-    
++
+     "tty  9"  f.jptty  "9"
+     "tty 10"  f.jptty  "10"
+     "tty 11"  f.jptty  "11"
+@@ -33,7 +33,6 @@ button 1 {
+ 	  "tty 17" f.jptty  "17"
+       }
+   }
+-    
+ }
+ 
+ button 2 {
+@@ -47,12 +46,10 @@ button 2 {
+   "%b %d %Y"  f.time
+   "%H:%M"     f.time
+   ""          f.nop
+-  "load: "    f.load 
++  "load: "    f.load
+   "free:"     f.free
+   "" f.nop
+-  "report disk usage to ~/du" f.bgcmd  "du ~ | sort -rn > ~/du"
+-  "print mail headers to tty" f.bgcmd
+-	 "grep '^From ' /var/spool/mail/$USER | tail"
++  "report disk usage to ~/du" f.bgcmd "du ~ | sort -rn > ~/du"
+ }
+ 
+ button 3 {
+diff -puNr gpm-1.20.1.orig/doc/doc.gpm.in gpm-1.20.1/doc/doc.gpm.in
+--- gpm-1.20.1.orig/doc/doc.gpm.in	2002-12-24 22:57:16 +0000
++++ gpm-1.20.1/doc/doc.gpm.in	2006-09-05 00:51:12 +0000
+@@ -137,7 +137,6 @@ mouse from within Emacs. @xref{Emacs Sup
+ 
+ As of release 0.96, a default-handler is released with gpm, and can be
+ used to handle Control-Mouse events to draw menus on the screen.
+-The @code{gpm-root} program, however, needs kernel 1.1.73 or newer.
+ @xref{gpm-root}.
+ 
+ Release 1.00 has been an incompatible one (is is incompatible with
+@@ -1958,17 +1957,9 @@ t-mouse-run}' to restart mouse responsiv
+ 
+ The program @code{gpm-root} is designed to handle Control-Mouse events to
+ draw menus on the background of the current tty. The actual menus
+-are described by a configuration file in the user's home directory.
+-
+-Please note that @code{gpm-root} needs to run with Linux 1.1.73 or
+-newer, because previous kernels lack some screen handling capabilities
+-required by the program.
++are described by the configuration file, @file{/etc/gpm-root.conf}.
+ 
+ The program uses the files @file{/dev/vcs*} to draw to the console screen.
+-These are available only from kernel 1.1.81 onward. If you miss those
+-device nodes, you should create them using @code{create_vcs} in the
+-distribution directory. The tool won't run with kernels older than 1.1.81,
+-because they lacked a full screen dump/restore capability.
+ 
+ Available command line options are the following:
+ 
+@@ -1979,14 +1970,6 @@ Available command line options are the f
+         Allowed strings are @samp{shift}, @samp{anyAlt}, @samp{leftAlt},
+         @samp{rightAlt}, @samp{control}.
+ 
+-@item -u
+-        Deny using user-specific configuration files. With this
+-        option on, only @file{/etc/gpm-root.conf} will be used as a source
+-        of configuration information. This option
+-        is intended for those system administrators who fear security could
+-        be broken by this daemon. Things should be sufficiently secure, but
+-        if you find a hole please tell me about it.
+-
+ @item -D
+         Do not automatically enter background operation when started,
+         and log messages to the standard error stream, not the syslog
+@@ -2185,9 +2168,8 @@ process (@code{f.bgcmd}, @code{f.pipe}).
+ 
+ %M .SH BUGS
+ 
+-Known bugs have been fixed. In particular, if you invoke @code{gpm-root}
+-right after @code{gpm}, it will delay a few seconds before trying to connect
+-to the daemon.
++Anyone with access to the console may cause @code{gpm-root} to run any of
++the commands given in @file{/etc/gpm-root.conf} as root.
+ 
+ @ignore
+ .SH AUTHOR
+@@ -2197,7 +2179,6 @@ Alessandro Rubini <rubini@linux.it>
+ .nf
+ /dev/gpmctl     The socket used to connect to gpm.
+ /etc/gpm-root.conf  The default configuration file.
+-$(HOME)/.gpm-root   The user configuration file.
+ /dev/vcs*           Virtual Console Screens
+ .fi
+ 
+diff -puNr gpm-1.20.1.orig/src/Makefile.in gpm-1.20.1/src/Makefile.in
+--- gpm-1.20.1.orig/src/Makefile.in	2002-12-24 22:57:16 +0000
++++ gpm-1.20.1/src/Makefile.in	2006-09-05 02:42:39 +0000
+@@ -14,7 +14,7 @@ include $(top_builddir)/Makefile.include
+ # Main portion: regular build rules
+ 
+ GSRC = main.c gpm.c gpn.c mice.c special.c twiddler.c synaptics.c \
+-       startup.c server_tools.c
++       startup.c server_tools.c closeall.c
+ 
+ GOBJ = $(GSRC:.c=.o) report.o tools.o
+ 
+@@ -90,8 +90,9 @@ $(DEPFILE) dep: prog/gpm-root.c
+ check:	all
+ installdirs:
+ 
+-install:	check 
++install:	check
+ 	$(INSTALL_PROGRAM) gpm $(sbindir)/gpm
++	$(INSTALL_PROGRAM) prog/gpm-root $(sbindir)/gpm-root
+ 	$(INSTALL_DATA) -m 644 lib/libgpm.a $(libdir)/libgpm.a
+ 	$(INSTALL_DATA) -m 644 $(srcdir)/headers/gpm.h $(includedir)/gpm.h
+ 	# POSIX requires the range of a for loop be nonempty and Bash
+@@ -107,6 +108,7 @@ install:	check 
+ 
+    # prog/
+ 	for i in $(PROG); do \
++		test "$$i" == "prog/gpm-root" && continue ; \
+ 		$(INSTALL_PROGRAM) $$i $(bindir)/`echo $$i | sed 's,prog/,,'` ;\
+ 	done
+ 
+@@ -139,9 +141,9 @@ prog/gpm-root.c:	$(srcdir)/prog/gpm-root
+ 	$(YACC) $(YFLAGS) $< && mv y.tab.c prog/gpm-root.c
+ 
+ # gpm-root needs an own rule, because gpm-root.c is not in $(srcdir)
+-prog/gpm-root: prog/gpm-root.c
++prog/gpm-root: prog/gpm-root.c closeall.o
+ 	$(CC) -I. @CPPFLAGS@ $(CPPFLAGS) @CFLAGS@ $(CFLAGS) -c -o $@.o $<
+-	$(CC) @LDFLAGS@ $(LDFLAGS) -o $@ $@.o @LIBS@ $(LIBS) lib/libgpm.a
++	$(CC) @LDFLAGS@ $(LDFLAGS) -o $@ $@.o @LIBS@ $(LIBS) closeall.o lib/libgpm.a
+ 
+ prog/mouse-test:	mice.o twiddler.o synaptics.o
+ 
+diff -puNr gpm-1.20.1.orig/src/closeall.c gpm-1.20.1/src/closeall.c
+--- gpm-1.20.1.orig/src/closeall.c	1970-01-01 00:00:00 +0000
++++ gpm-1.20.1/src/closeall.c	2006-09-05 00:51:12 +0000
+@@ -0,0 +1,27 @@
++#include <unistd.h>
++#include <errno.h>
++
++#ifdef __linux__
++#include <linux/limits.h>
++#endif
++
++int close_all(void)
++{
++	int fd, max;
++
++	max = sysconf(_SC_OPEN_MAX);
++	if (max <= 0)
++		return -1;
++
++#ifdef __linux__
++	if (max < NR_OPEN)
++		max = NR_OPEN;
++#endif
++
++	for (fd = 3; fd < max; fd++) {
++		if (close(fd) && errno != EBADF)
++			return -1;
++	}
++
++	return 0;
++}
+diff -puNr gpm-1.20.1.orig/src/prog/gpm-root.y gpm-1.20.1/src/prog/gpm-root.y
+--- gpm-1.20.1.orig/src/prog/gpm-root.y	2002-12-24 22:57:16 +0000
++++ gpm-1.20.1/src/prog/gpm-root.y	2006-09-05 02:34:29 +0000
+@@ -66,6 +66,8 @@
+ #define VCS_MAJOR	7
+ #endif
+ 
++extern int close_all(void);
++
+ #define MAX_NR_USER_CONSOLES 63 /* <linux/tty.h> needs __KERNEL__ */
+ 
+ #include "headers/message.h"
+@@ -78,6 +80,7 @@
+ #endif
+ 
+ #define USER_CFG   ".gpm-root"
++#undef USER_CFG
+ #define SYSTEM_CFG SYSCONFDIR "/gpm-root.conf"
+ 
+ #define DEFAULT_FORE 7
+@@ -119,7 +122,9 @@ struct node  tableMod[]= {
+    /* provide defaults */
+ int opt_mod     =  4;           /* control */
+ int opt_buf     =  0;           /* ask the kernel about it */
++#ifdef USER_CFG
+ int opt_user    =  1;           /* allow user cfg files */
++#endif
+ 
+ 
+ 
+@@ -136,7 +141,7 @@ typedef struct DrawItem {
+ typedef struct Draw {
+    short width;               /* length of longest item */
+    short height;              /* the number of items */
+-   short uid;                 /* owner */
++   int uid;                   /* owner */
+    short buttons;             /* which button */
+    short fore,back,bord,head; /* colors */
+    char *title;               /* name */
+@@ -323,7 +328,17 @@ int yylex(void)
+                   cfglineno++;
+                }
+                if (s[i]=='\\') s[i]=getc(cfgfile);
+-            } /* get '"' as '\"' */ while (s[i++]!='\"' && s[i-2] !='\\') ;
++               if (i>=sizeof(s)-1)
++                 {
++                   yyerror("line too long");
++                   if (s[i]!='\n')
++                     while ((c=getc(cfgfile))!='\n' && c!=EOF);
++                   cfglineno++;
++                   break;
++                 }
++               i++;
++            } /* get '"' as '\"' */
++            while (s[i-1]!='\"' && (i<2 || s[i-2]!='\\'));
+             s[i-1]=0;
+             yylval.string=(char *)strdup(s);
+             return T_STRING;
+@@ -336,6 +351,14 @@ int yylex(void)
+       }
+       /* get a single word and convert it */
+       do {
++         if (i>=sizeof(s)-1)
++           {
++             yyerror("line too long");
++             if (s[i]!='\n')
++               while ((c=getc(cfgfile))!='\n' && c!=EOF);
++               cfglineno++;
++               break;
++           }
+          s[i++]=c;
+       } while (isalnum(c=getc(cfgfile)) || c=='.');
+       ungetc(c,cfgfile);
+@@ -434,9 +457,10 @@ DrawItem *cfg_cat(DrawItem *d1, DrawItem
+ /*====================================================================*/
+ void f__fix(struct passwd *pass)
+ {
+-   setgid(pass->pw_gid);
+-   initgroups(pass->pw_name, pass->pw_gid);
+-   setuid(pass->pw_uid);
++   if (setgid(pass->pw_gid) < 0 ||
++       initgroups(pass->pw_name, pass->pw_gid) < 0 ||
++       setuid(pass->pw_uid) < 0)
++     exit(1);
+    setenv("HOME",    pass->pw_dir, 1);
+    setenv("LOGNAME", pass->pw_name,1);
+    setenv("USER",    pass->pw_name,1);
+@@ -506,7 +530,6 @@ int f_fgcmd(int mode, DrawItem *self, in
+ /*---------------------------------------------------------------------*/
+ int f_bgcmd(int mode, DrawItem *self, int uid)
+ {
+-   int i;
+    struct passwd *pass;
+ 
+    switch (mode) {
+@@ -522,10 +545,11 @@ int f_bgcmd(int mode, DrawItem *self, in
+ 	            if (!pass) exit(1);
+ 	            f__fix(pass); /* setgid(), setuid(), setenv(), ... */
+ 	            close(0); close(1); close(2);
+-	            open("/dev/null",O_RDONLY); /* stdin  */
+-	            open(consolename,O_WRONLY); /* stdout */
+-	            dup(1);                     /* stderr */  
+-	            for (i=3;i<OPEN_MAX; i++) close(i);
++	            if (open(GPM_NULL_DEV,O_RDONLY)!=0 || /* stdin  */
++	                open(consolename,O_WRONLY)!=1 ||  /* stdout */
++	                dup(1)!=2)                        /* stderr */
++	              exit(1);
++	            if (close_all()) exit(1);
+ 	            execl("/bin/sh","sh","-c",self->arg,(char *)NULL);
+ 	            exit(1); /* shouldn't happen */
+ 	         default: return 0;
+@@ -641,21 +665,17 @@ int f_load(int mode, DrawItem *self, int
+    FILE *f;
+    double l1,l2,l3;
+ 
+-   l1=l2=l3=0.0;
+-
+    switch (mode) {
+       case F_CREATE: /* modify name, just to fake its length */
+-         self->clientdata=malloc(strlen(self->name)+20);
+-         self->name=realloc(self->name,strlen(self->name)+20);
+-         strcpy(self->clientdata,self->name);
+-         strcat(self->clientdata," %5.2f %5.2f %5.2f");
+-         sprintf(self->name,self->clientdata,l1,l2,l3);
+-         break;
++         /* XXX: no failure checks */
++         self->clientdata=strdup(self->name);
++         self->name=realloc(self->name,strlen(self->name)+3*20);
+ 
+       case F_POST:
+          if (!(f=fopen("/proc/loadavg","r"))) return 1;
+          fscanf(f,"%lf %lf %lf",&l1,&l2,&l3);
+-         sprintf(self->name,self->clientdata,l1,l2,l3);
++         sprintf(self->name,"%s %5.2f %5.2f %5.2f",
++             (char *)self->clientdata,l1,l2,l3);
+          fclose(f);
+ 
+       case F_INVOKE: break;
+@@ -673,20 +693,17 @@ int f_free(int mode, DrawItem *self, int
+    l1=l2=0;
+    switch (mode) {
+       case F_CREATE: /* modify name, just to fake its length */
+-         self->clientdata=malloc(strlen(self->name)+30);
+-         self->name=realloc(self->name,strlen(self->name)+30);
+-         strcpy(self->clientdata,self->name);
+-         strcat(self->clientdata," %5.2fM mem + %5.2fM swap");
+-         sprintf(self->name,self->clientdata,(double)l1,(double)l2);
+-         break;
++         /* XXX: no failure checks */
++         self->clientdata=strdup(self->name);
++         self->name=realloc(self->name,strlen(self->name)+2*30);
+ 
+       case F_POST:
+          if (!(f=fopen("/proc/meminfo","r"))) return 1;
+-         fgets(s,80,f);
+-         fgets(s,80,f); sscanf(s,"%*s %*s %*s %li",&l1);
+-         fgets(s,80,f); sscanf(s,"%*s %*s %*s %li",&l2);
+-         sprintf(self->name,self->clientdata,
+-	      (double)l1/1024/1024,(double)l2/1024/1024);
++         fgets(s,sizeof(s),f);
++         fgets(s,sizeof(s),f); sscanf(s,"%*s %*s %*s %ld",&l1);
++         fgets(s,sizeof(s),f); sscanf(s,"%*s %*s %*s %ld",&l2);
++         sprintf(self->name,"%s %5.2fM mem + %5.2fM swap",
++	      (char *)self->clientdata,(double)l1/1024/1024,(double)l2/1024/1024);
+          fclose(f);
+ 
+       case F_INVOKE: break;
+@@ -704,6 +721,7 @@ int f_time(int mode, DrawItem *self, int
+    switch (mode) {
+       case F_CREATE: /* modify name, just to fake its length */
+          self->clientdata=self->name;
++         /* XXX: "format features" */
+          strftime(s,110,self->clientdata,broken);
+          strcat(s,"1234567890"); /* names can change length */       
+          self->name=(char *)strdup(s);
+@@ -779,24 +797,30 @@ Draw *cfg_read(int uid)
+ /* the return value tells whether it has been newly loaded or not */
+ int getdraw(int uid, int buttons, time_t mtime1, time_t mtime2)
+ {
++#ifdef USER_CFG
+    struct passwd *pass;
++#endif
+    struct stat buf;
+    Draw *new, *np, *op, *pp;
+    int retval=0;
+    time_t mtime;
+ 
+    gpm_report(GPM_PR_DEBUG,"getdraw: %i %i %li %li",uid,buttons,mtime1,mtime2);
++#ifdef USER_CFG
+    pass=getpwuid(uid);
+ 
+    /* deny personal cfg to root for security reasons */
+    if (pass==NULL || !uid || !opt_user) {
++#endif
+       mtime=mtime2; uid=-1;
+       strcpy(cfgname,SYSTEM_CFG);
++#ifdef USER_CFG
+    } else {
+       mtime=mtime1;
+       strcpy(cfgname,pass->pw_dir);
+       strcat(cfgname,"/" USER_CFG);
+    }
++#endif
+ 
+    if (stat(cfgname,&buf)==-1) {
+       gpm_report(GPM_PR_DEBUG,"stat (%s) failed",cfgname);
+@@ -866,7 +890,9 @@ int usage(void)
+          "Usage: %s [options]\n",prgname);
+    printf("  Valid options are\n"
+          "    -m <number-or-name>   modifier to use\n"
++#ifdef USER_CFG
+          "    -u                    inhibit user configuration files\n"
++#endif
+          "    -D                    don't auto-background and run as daemon\n"
+          "    -V <verbosity-delta>  increase amount of logged messages\n"
+          );
+@@ -909,10 +935,16 @@ int cmdline(int argc, char **argv)
+    int opt;
+   
+    run_status = GPM_RUN_STARTUP;
++#ifdef USER_CFG
+    while ((opt = getopt(argc, argv,"m:uDV::")) != -1) {
++#else
++   while ((opt = getopt(argc, argv,"m:DV::")) != -1) {
++#endif
+          switch (opt) {
+             case 'm':  opt_mod=getmask(optarg, tableMod); break;
++#ifdef USER_CFG
+             case 'u':  opt_user=0; break;
++#endif
+             case 'D':  run_status = GPM_RUN_DEBUG; break;
+             case 'V':
+                /*gpm_debug_level += (0==optarg ? 1 : strtol(optarg,0,0)); */
+@@ -1143,11 +1175,10 @@ int main(int argc, char **argv)
+    int evflag;
+    int recursenow=0; /* not on first iteration */
+ 
+-   prgname=argv[0];
++   prgname=argv[0] ?: "gpm-root";
+    consolename = Gpm_get_console();
+-   setuid(0); /* if we're setuid, force it */
+ 
+-   if (getuid()) {
++   if (getuid()!=0 || getuid()!=geteuid()) {
+          fprintf(stderr,"%s: Must be root\n", prgname);
+          exit(1);
+    }
+@@ -1222,6 +1253,12 @@ int main(int argc, char **argv)
+    if (!vc)
+       {
+          gpm_report(GPM_PR_OOPS,"can't open mouse connection");
++         exit(1);
++      }
++   if (gpm_fd==-2)
++      {
++         gpm_report(GPM_PR_OOPS,"can't run in xterm or rxvt");
++         exit(2);
+       }
+ 
+    conn.eventMask=~0; /* grab everything away form selection */
+@@ -1256,6 +1293,7 @@ int main(int argc, char **argv)
+ 
+    /*....................................... Loop */
+ 
++   posty=0;
+    while((evflag=Gpm_GetEvent(&ev))!=0)
+       {
+          if (do_resize) {get_winsize(); do_resize--;}
+diff -puNr gpm-1.20.1.orig/src/special.c gpm-1.20.1/src/special.c
+--- gpm-1.20.1.orig/src/special.c	2002-12-24 22:57:16 +0000
++++ gpm-1.20.1/src/special.c	2006-09-05 02:39:02 +0000
+@@ -38,6 +38,8 @@
+ 
+ #include "headers/gpmInt.h"
+ 
++extern int close_all(void);
++
+ /*
+  * This function is only called at button press, to avoid unnecessary
+  * overhead due to function call at every mouse event
+@@ -67,7 +69,7 @@ static char *commandR="shutdown -r now";
+  */
+ int processSpecial(Gpm_Event *event)
+ {
+-  char *command=NULL; int i;
++  char *command=NULL;
+   FILE *consolef;
+ 
+   if ((event->type & GPM_TRIPLE)
+@@ -152,10 +154,11 @@ int processSpecial(Gpm_Event *event)
+     
+     case 0: /* child */
+       close(0); close(1); close(2);
+-      open(GPM_NULL_DEV,O_RDONLY); /* stdin  */
+-      open(option.consolename,O_WRONLY); /* stdout */
+-      dup(1);                     /* stderr */
+-      for (i=3;i<OPEN_MAX; i++) close(i);
++      if (open(GPM_NULL_DEV,O_RDONLY)!=0 ||       /* stdin  */
++          open(option.consolename,O_WRONLY)!=1 || /* stdout */
++          dup(1)!=2)                              /* stderr */
++        exit(1);
++      if (close_all()) exit(1);
+       execl("/bin/sh","sh","-c",command,(char *)NULL);
+       exit(1); /* shouldn't happen */
+       

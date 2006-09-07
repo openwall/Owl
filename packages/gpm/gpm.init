@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/gpm/gpm.init,v 1.9 2005/11/16 13:09:47 solar Exp $
+# $Owl: Owl/packages/gpm/gpm.init,v 1.10 2006/09/07 07:29:34 galaxy Exp $
 #
 # chkconfig: 2345 85 15
 # description: \
@@ -15,6 +15,7 @@
 
 OWL_STARTUP_ENABLE=1
 
+MOUSEDEV=/dev/mouse
 MOUSECFG=/etc/sysconfig/mouse
 
 case "$1" in
@@ -25,7 +26,7 @@ start)
 		MOUSETYPE="none"
 	fi
 
-	if [ "$MOUSETYPE" = "none" ]; then
+	if [ -z "$MOUSETYPE" -o "$MOUSETYPE" = "none" ]; then
 		echo "Not starting gpm (no mouse is configured)"
 		exit 0
 	fi
@@ -34,10 +35,9 @@ start)
 		MOUSETYPE=ms
 	fi
 
+	GPM_ARG="-m $MOUSEDEV "
 	if [ -n "$MOUSETYPE" ]; then
 		GPM_ARG="-t $MOUSETYPE"
-	else
-		GPM_ARG=""
 	fi
 
 	if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then

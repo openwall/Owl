@@ -1,0 +1,39 @@
+diff -puNr gpm-1.20.1.orig/README gpm-1.20.1/README
+--- gpm-1.20.1.orig/README	2002-12-24 22:57:16 +0000
++++ gpm-1.20.1/README	2006-09-05 03:09:42 +0000
+@@ -158,9 +158,9 @@ compiler version ("gcc -v") and the libr
+ better "ldd /usr/sbin/gpm").  And the compiler messages, obviously.
+ 
+ * When a program hangs or segfaults, please reinvoke the program under strace:
+-	strace -tf -o /tmp/trace.gpm gpm -t msc
++	strace -tf -o /var/run/trace.gpm gpm -t msc
+                                      ^^^^^^^^^^ put your true cmdline here.
+-Then send me /tmp/trace.gpm* (they may be one or two files, according
++Then send me /var/run/trace.gpm* (they may be one or two files, according
+ to the strace version), and a description of how you reproduce the problem.
+ 
+ The last resort is a core dump, but I'll ask it personally if I have real
+diff -puNr gpm-1.20.1.orig/doc/doc.gpm.in gpm-1.20.1/doc/doc.gpm.in
+--- gpm-1.20.1.orig/doc/doc.gpm.in	2006-09-05 03:07:05 +0000
++++ gpm-1.20.1/doc/doc.gpm.in	2006-09-05 03:09:42 +0000
+@@ -2013,7 +2013,7 @@ button 2 @{
+   "load: "    f.load
+   "free:"     f.free
+   "---------" f.nop
+-  "disk usage" f.bgcmd  "du | sort -rn > /tmp/du"
++  "disk usage" f.bgcmd  "du | sort -rn > /var/run/du"
+ @}
+ 
+ button 3 @{
+diff -puNr gpm-1.20.1.orig/doc/gpm.info gpm-1.20.1/doc/gpm.info
+--- gpm-1.20.1.orig/doc/gpm.info	2002-12-24 22:57:16 +0000
++++ gpm-1.20.1/doc/gpm.info	2006-09-05 03:09:42 +0000
+@@ -1645,7 +1645,7 @@ reinvoking the daemon.
+        "load: "    f.load
+        "free:"     f.free
+        "---------" f.nop
+-       "disk usage" f.bgcmd  "du | sort -rn > /tmp/du"
++       "disk usage" f.bgcmd  "du | sort -rn > /var/run/du"
+      }
+      
+      button 3 {
