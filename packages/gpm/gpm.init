@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/gpm/gpm.init,v 1.10 2006/09/07 07:29:34 galaxy Exp $
+# $Owl: Owl/packages/gpm/gpm.init,v 1.11 2006/09/07 19:16:37 galaxy Exp $
 #
 # chkconfig: 2345 85 15
 # description: \
@@ -35,9 +35,9 @@ start)
 		MOUSETYPE=ms
 	fi
 
-	GPM_ARG="-m $MOUSEDEV "
+	GPM_ARG="-m $MOUSEDEV"
 	if [ -n "$MOUSETYPE" ]; then
-		GPM_ARG="-t $MOUSETYPE"
+		GPM_ARG="$GPM_ARG -t $MOUSETYPE"
 	fi
 
 	if [ "0$OWL_STARTUP_VERSION" -ge 3 ]; then
