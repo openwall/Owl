@@ -7,7 +7,7 @@
 -   /* needs to be 0777, so all users can _try_ to access gpm */
 -   chmod(GPM_NODE_CTL,0777);
 +   if (chmod(GPM_NODE_CTL,0600)==-1)
-+      gpm_report(GPM_PR_OOPS,"cannot chmod() failed for '" GPM_NODE_CTL "' (%s)",strerror(errno));
++      gpm_report(GPM_PR_OOPS,"chmod() failed for '" GPM_NODE_CTL "' (%s)",strerror(errno));
  
     get_console_size(&event); /* get screen dimensions */
  
