@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/gpm/gpm.spec,v 1.27 2006/09/07 07:29:34 galaxy Exp $
+# $Owl: Owl/packages/gpm/gpm.spec,v 1.28 2006/09/08 12:44:20 galaxy Exp $
 
 %define BUILD_GPM_ROOT 0
 
 Summary: A mouse server for the Linux console.
 Name: gpm
 Version: 1.20.1
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Daemons
 Source0: http://ftp.schottelius.org/pub/linux/gpm/%name-%version.tar.bz2
@@ -61,7 +61,7 @@ at the click of a mouse button.
 rm acconfig.h
 autoreconf -fis
 %configure
-%__make
+%__make CFLAGS="" CXXFLAGS=""
 
 %install
 rm -rf %buildroot
@@ -151,6 +151,10 @@ fi
 %endif
 
 %changelog
+* Sun Aug 03 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.20.1-owl2
+- Reverted back the change to %%__make since Makefile uses CFLAGS and
+CXXFLAGS from the environment and RPM's %%configure exports these variables.
+
 * Sun Aug 03 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.20.1-owl1
 - Updated to 1.20.1.
 - Re-generated patches.
