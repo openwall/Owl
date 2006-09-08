@@ -15,6 +15,17 @@ change logs for the packages themselves.
 2006/09/07	Package: gpm
 Updated to 1.20.1.
 
+2006/09/06	Package: openssl
+SECURITY FIX	Severity: none to medium, remote, passive to active
+Applied upstream patch to avoid RSA signature forgery.
+References:
+http://www.openssl.org/news/secadv_20060905.txt
+http://www.imc.org/ietf-openpgp/mail-archive/msg14307.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4339
+
+2006/09/06	Package: bind
+Updated to 9.3.2-P1.
+
 2006/08/17	kernel
 Updated to Linux 2.4.33-ow1.
 
@@ -212,4 +223,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.46 2006/09/08 05:11:23 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.47 2006/09/08 05:28:41 solar Exp $
