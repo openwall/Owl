@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gpm/gpm.spec,v 1.28 2006/09/08 12:44:20 galaxy Exp $
+# $Owl: Owl/packages/gpm/gpm.spec,v 1.29 2006/09/08 12:45:53 galaxy Exp $
 
 %define BUILD_GPM_ROOT 0
 
@@ -151,7 +151,7 @@ fi
 %endif
 
 %changelog
-* Sun Aug 03 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.20.1-owl2
+* Fri Aug 08 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.20.1-owl2
 - Reverted back the change to %%__make since Makefile uses CFLAGS and
 CXXFLAGS from the environment and RPM's %%configure exports these variables.
 
