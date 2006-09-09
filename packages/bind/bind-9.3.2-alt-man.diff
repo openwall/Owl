@@ -1,0 +1,75 @@
+--- bind-9.3.2/bin/named/named.8.orig	2006-03-30 13:44:07 +0000
++++ bind-9.3.2/bin/named/named.8	2006-03-30 13:47:04 +0000
+@@ -164,9 +164,24 @@ The
+ \fBnamed\fR
+ configuration file is too complex to describe in detail here. A complete description is provided in the
+ BIND 9 Administrator Reference Manual.
++.PP
++By default, \fBnamed\fR is configured to run in readonly chroot jail
++\fI@ROOT@\fR with no extra privileges.
++.PP
++To configure \fBnamed\fR as master or caching-only DNS, you don't need
++to create files and/or directories writable by \fBnamed\fR.
++.PP
++To configure \fBnamed\fR as slave DNS in chroot jail,
++use \fBcontrol\fR(8) for the \fBbind\-slave\fR facility.
++.PP
++To debug \fBnamed\fR with \fBrndc\fR(8),
++use \fBcontrol\fR(8) for the \fBbind\-debug\fR facility.
+ .SH "FILES"
+ .TP
+-\fI/etc/named.conf\fR
++\fI@ROOT@\fR
++The \fBnamed\fR chroot jail.
++.TP
++\fI@ROOT@/etc/named.conf\fR
+ The default configuration file.
+ .TP
+ \fI/var/run/named.pid\fR
+@@ -178,7 +193,8 @@ RFC 1034,
+ RFC 1035,
+ \fBrndc\fR(8),
+ \fBlwresd\fR(8),
+-BIND 9 Administrator Reference Manual.
++BIND 9 Administrator Reference Manual
++(\fB\fI@DOCDIR@/arm/Bv9ARM.html\fR).
+ .SH "AUTHOR"
+ .PP
+ Internet Systems Consortium
+--- bind-9.3.2/bin/rndc/rndc.8.orig	2005-10-13 02:33:49 +0000
++++ bind-9.3.2/bin/rndc/rndc.8	2006-03-30 13:50:17 +0000
+@@ -45,7 +45,7 @@ communicates with the name server over a
+ \fBrndc\fR
+ and
+ \fBnamed\fR
+-named the only supported authentication algorithm is HMAC\-MD5, which uses a shared secret on each end of the connection. This provides TSIG\-style authentication for the command request and the name server's response. All commands sent over the channel must be signed by a key_id known to the server.
++the only supported authentication algorithm is HMAC\-MD5, which uses a shared secret on each end of the connection. This provides TSIG\-style authentication for the command request and the name server's response. All commands sent over the channel must be signed by a key_id known to the server.
+ .PP
+ \fBrndc\fR
+ reads a configuration file to determine how to contact the name server and decide what algorithm and key it should use.
+@@ -95,6 +95,10 @@ For the complete set of commands support
+ \fBrndc\fR, see the BIND 9 Administrator Reference Manual or run
+ \fBrndc\fR
+ without arguments to see its help message.
++.PP
++To debug \fBnamed\fR with \fBrndc\fR(8),
++use \fBcontrol\fR(8) for the \fBbind\-debug\fR facility.
++.PP
+ .SH "LIMITATIONS"
+ .PP
+ \fBrndc\fR
+@@ -109,10 +113,12 @@ without using the configuration file.
+ Several error messages could be clearer.
+ .SH "SEE ALSO"
+ .PP
++\fBnamed.conf\fR(5),
+ \fBrndc.conf\fR(5),
+ \fBnamed\fR(8),
+-\fBnamed.conf\fR(5)\fBndc\fR(8),
+-BIND 9 Administrator Reference Manual.
++\fBrndc\fR(8),
++BIND 9 Administrator Reference Manual
++(\fB\fI@DOCDIR@/arm/Bv9ARM.html\fR).
+ .SH "AUTHOR"
+ .PP
+ Internet Systems Consortium

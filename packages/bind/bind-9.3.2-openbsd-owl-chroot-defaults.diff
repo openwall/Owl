@@ -1,0 +1,56 @@
+--- bind-9.3.2/bin/named/include/named/globals.h.orig	2006-03-30 13:25:46 +0000
++++ bind-9.3.2/bin/named/include/named/globals.h	2006-03-30 13:25:46 +0000
+@@ -100,7 +100,7 @@ EXTERN isc_resourcevalue_t	ns_g_initopen
+  * Misc.
+  */
+ EXTERN isc_boolean_t		ns_g_coreok		INIT(ISC_TRUE);
+-EXTERN const char *		ns_g_chrootdir		INIT(NULL);
++EXTERN const char *		ns_g_chrootdir		INIT("@ROOT@");
+ EXTERN isc_boolean_t		ns_g_foreground		INIT(ISC_FALSE);
+ EXTERN isc_boolean_t		ns_g_logstderr		INIT(ISC_FALSE);
+ 
+@@ -110,7 +110,7 @@ EXTERN const char *		lwresd_g_defaultpid
+ 							    "/run/lwresd.pid");
+ EXTERN const char *		ns_g_pidfile		INIT(NS_LOCALSTATEDIR
+ 							    "/run/named.pid");
+-EXTERN const char *		ns_g_username		INIT(NULL);
++EXTERN const char *		ns_g_username		INIT("named");
+ 
+ EXTERN int			ns_g_listen		INIT(3);
+ 
+--- bind-9.3.2/bin/named/named.8.orig	2005-10-13 02:33:46 +0000
++++ bind-9.3.2/bin/named/named.8	2006-03-30 13:32:13 +0000
+@@ -38,7 +38,7 @@ is a Domain Name System (DNS) server, pa
+ .PP
+ When invoked without arguments,
+ \fBnamed\fR
+-will read the default configuration file
++will \fBchroot()\fR to \fI@ROOT@\fR, read the default configuration file
+ \fI/etc/named.conf\fR, read any initial data, and listen for queries.
+ .SH "OPTIONS"
+ .TP
+@@ -60,7 +60,7 @@ are mutually exclusive.
+ Use
+ \fIconfig\-file\fR
+ as the configuration file instead of the default,
+-\fI/etc/named.conf\fR. To ensure that reloading the configuration file continues to work after the server has changed its working directory due to to a possible
++\fI@ROOT@/etc/named.conf\fR. To ensure that reloading the configuration file continues to work after the server has changed its working directory due to a possible
+ \fBdirectory\fR
+ option in the configuration file,
+ \fIconfig\-file\fR
+@@ -104,6 +104,7 @@ This option is mainly of interest to BIN
+ to
+ \fIdirectory\fR
+ after processing the command line arguments, but before reading the configuration file.
++By default, \fBnamed\fR \fBchroot()\fR's to \fI@ROOT@\fR.
+ .RS
+ .B "Warning:"
+ This option should be used in conjunction with the
+@@ -118,6 +119,7 @@ is defined allows a process with root pr
+ to
+ \fIuser\fR
+ after completing privileged operations, such as creating sockets that listen on privileged ports.
++By default, \fBnamed\fR will run as user \fInamed\fR.
+ .RS
+ .B "Note:"
+ On Linux,
