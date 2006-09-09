@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.52 2006/02/03 22:14:04 ldv Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.52.2.1 2006/09/09 22:47:56 ldv Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
 Version: 0.9.7g
-Release: owl3
+Release: owl3.2.0.1
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
@@ -16,9 +16,10 @@ Patch4: openssl-0.9.7g-rh-version-engines.diff
 Patch5: openssl-0.9.7g-up-rh-fixes.diff
 Patch6: openssl-0.9.7g-rh-consttime.diff
 Patch7: openssl-0.9.7g-up-SSL_OP_MSIE_SSLV2_RSA_PADDING.diff
+Patch8: openssl-0.9.7g-cvs-20060904-CVE-2006-4339.diff
 Provides: SSL
 # For backwards compatibility.
-Provides: libcrypto.so.4, libssl.so.4  
+Provides: libcrypto.so.4, libssl.so.4
 BuildRequires: perl, diffutils
 # Due to sed -i.
 BuildRequires: sed >= 4.1.1
@@ -73,6 +74,7 @@ libraries and header files required when developing applications.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p0
+%patch8 -p0
 
 bzip2 -9k CHANGES CHANGES.SSLeay
 
@@ -124,7 +126,7 @@ LD_LIBRARY_PATH=`pwd` make test
 
 %install
 rm -rf %buildroot
-make install SLIB=%_lib MANDIR=%_mandir INSTALL_PREFIX="%buildroot"
+%__make install SLIB=%_lib MANDIR=%_mandir INSTALL_PREFIX="%buildroot"
 
 # Fail if one of shared libraries was rebuit.
 if [ libcrypto.so.%version -nt libcrypto-stamp -o \
@@ -205,6 +207,9 @@ ln -sf libssl.so.5 /%_lib/libssl.so.4
 %attr(0644,root,root) %_mandir/man3/*
 
 %changelog
+* Sat Sep 09 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.9.7g-owl3.2.0.1
+- Applied upstream patch to avoid RSA signature forgery (CVE-2006-4339).
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.9.7g-owl3
 - Compressed ssleay.txt and CHANGES* files.
 
