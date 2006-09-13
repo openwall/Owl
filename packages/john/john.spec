@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.95 2006/05/15 16:59:15 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.96 2006/09/13 00:07:56 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.2
+Version: 1.7.2.1
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -85,6 +85,11 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Wed Sep 13 2006 Solar Designer <solar-at-owl.openwall.com> 1.7.2.1-owl1
+- Corrected the error message reported when "Extra = ..." contains characters
+that are outside of the compile-time specified range (thanks to Radim Horak
+for the bug report).
+
 * Mon May 15 2006 Solar Designer <solar-at-owl.openwall.com> 1.7.2-owl1
 - Added bitslice DES assembly code for x86-64 making use of the 64-bit mode
 extended SSE2 with 16 XMM registers.
