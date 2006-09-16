@@ -1,9 +1,6 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.68 2006/04/04 13:50:52 ldv Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.69 2006/09/16 01:58:29 galaxy Exp $
 
 %define WITH_PYTHON 0
-%define WITH_API_DOCS 0
-%define WITH_BZIP2 0
-%define WITH_INCLUDED_GETTEXT 0
 
 %define rpm_version 4.2
 %define popt_version 1.8
@@ -11,7 +8,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl15
+Release: owl16
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -92,6 +89,7 @@ to function.
 Summary: Scripts and executable programs used to build packages.
 Group: Development/Tools
 Requires: %name = %version-%release
+Requires: file
 
 %description build
 This package contains scripts and executable programs that are used to
@@ -490,6 +488,11 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Sun May 07 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl16
+- Removed unused macros: WITH_INCLUDED_GETTEXT, WITH_API_DOCS, and WITH_BZIP2.
+- Added a dependency on the file package to rpm-build (find-provides is
+using the file utility).
+
 * Tue Apr 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl15
 - Backported upstream fix to check-prereqs script.
 - Corrected specfile to make it build on x86_64.
