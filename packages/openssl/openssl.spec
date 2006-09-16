@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.60 2006/09/06 11:40:20 ldv Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.61 2006/09/16 01:56:13 galaxy Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
 Version: 0.9.7g
-Release: owl6
+Release: owl7
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
@@ -26,6 +26,7 @@ BuildRequires: perl, diffutils
 # Due to sed -i.
 BuildRequires: sed >= 4.1.1
 BuildRequires: /bin/awk
+BuildRequires: glibc-utils
 BuildRoot: /override/%name-%version
 
 %description
@@ -247,6 +248,9 @@ ln -sf libssl.so.5 /%_lib/libssl.so.4
 %attr(0644,root,root) %_mandir/man1/CA.pl.1*
 
 %changelog
+* Thu Sep 07 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.9.7g-owl7
+- Added glibc-utils to BuildRequires.
+
 * Wed Sep 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.9.7g-owl6
 - Applied upstream patch to avoid RSA signature forgery (CVE-2006-4339).
 
