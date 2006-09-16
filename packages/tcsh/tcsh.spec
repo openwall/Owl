@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/tcsh/tcsh.spec,v 1.21 2006/01/05 09:16:53 gremlin Exp $
+# $Owl: Owl/packages/tcsh/tcsh.spec,v 1.22 2006/09/16 02:06:15 galaxy Exp $
 
 Summary: An enhanced version of csh, the C shell.
 Name: tcsh
 Version: 6.14.00
-Release: owl4
+Release: owl5
 License: BSD
 Group: System Environment/Shells
 URL: http://www.tcsh.org/Home
@@ -12,7 +12,7 @@ Patch0: tcsh-6.14.00-suse-owl-tmp.diff
 Patch1: tcsh-6.14.00-owl-config.diff
 PreReq: fileutils, grep
 Requires(postun): sed >= 4.0.9
-BuildRequires: perl, groff, libtermcap-devel
+BuildRequires: perl, groff, libtermcap-devel, glibc-utils
 Provides: csh = %version
 BuildRoot: /override/%name-%version
 
@@ -95,6 +95,9 @@ fi
 %_datadir/locale/*/LC_MESSAGES/tcsh*
 
 %changelog
+* Thu May 04 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.14.00-owl5
+- Added glibc-utils to BuildRequires due to gencat.
+
 * Wed Jan 04 2006 Gremlin from Kremlin <gremlin-at-owl.openwall.com> 6.14.00-owl4
 - Disabled color output for built-in "ls-F" command, as it caused choke on
 newer LS_COLORS options.
