@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/db4/db4.spec,v 1.18 2006/05/30 23:31:07 ldv Exp $
+# $Owl: Owl/packages/db4/db4.spec,v 1.19 2006/09/16 01:54:58 galaxy Exp $
 
 %define __soversion	4.3
 %define _libdb_a	libdb-%__soversion.a
@@ -9,7 +9,7 @@
 Summary: The Berkeley DB database library (version 4) for C.
 Name: db4
 Version: 4.3.29
-Release: owl1
+Release: owl2
 License: Sleepycat
 Group: System Environment/Libraries
 URL: http://www.sleepycat.com
@@ -20,7 +20,7 @@ Patch1: db-1.85-rh-errno.diff
 Patch2: db-4.3.29-cvs-20051006-db185.diff
 Patch3: db-4.3.29-alt-configure.diff
 Obsoletes: db1, db1-devel
-BuildRequires: perl, libtool, ed, gcc-c++
+BuildRequires: perl, libtool, ed, gcc-c++, glibc-utils
 BuildRoot: /override/%name-%version
 
 %description
@@ -202,6 +202,9 @@ chmod -R u+w %buildroot
 %endif
 
 %changelog
+* Thu May 04 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.3.29-owl2
+- Added glibc-utils to BuildRequires due to rpcgen.
+
 * Thu Apr 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.3.29-owl1
 - Updated to 4.3.29.
 - Backported db185 fixes from db-4.4.20.
