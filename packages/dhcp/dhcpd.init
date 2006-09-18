@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/dhcp/dhcpd.init,v 1.10 2005/11/16 12:21:03 solar Exp $
+# $Owl: Owl/packages/dhcp/dhcpd.init,v 1.11 2006/09/18 23:36:27 ldv Exp $
 #
 # chkconfig: - 60 40
 # description: \
@@ -16,41 +16,40 @@
 # Source function library.
 . /etc/rc.d/init.d/functions
 
+DHCPDARGS=
 # Source local dhcpd configuration.
 . /etc/sysconfig/dhcpd
 
 OWL_STARTUP_ENABLE=1
 
+PIDFILE=/var/run/dhcpd.pid
 DHCPD_CONF=/etc/dhcpd.conf
 DHCPD_CONF_SAMPLE=/etc/dhcpd.conf.sample
 
 case "$1" in
 start)
-	daemon --pidfile /var/run/dhcpd.pid --expect-user dhcp \
+	daemon --pidfile "$PIDFILE" --expect-user dhcp -- \
 		dhcpd -u dhcp -j /var/lib/dhcp/dhcpd $DHCPDARGS
 	STATUS=$?
-	if [ $STATUS -ne 0 -a ! -e $DHCPD_CONF -a -e $DHCPD_CONF_SAMPLE ]; then
+	if [ $STATUS -ne 0 -a ! -e "$DHCPD_CONF" -a -e "$DHCPD_CONF_SAMPLE" ]; then
 		echo
-		echo -n "There's a sample configuration file under "
-		echo $DHCPD_CONF_SAMPLE
+		echo -n "There is a sample configuration file under "
+		echo "$DHCPD_CONF_SAMPLE"
 	fi
 	exit $STATUS
 	;;
 stop)
-	killproc --pidfile /var/run/dhcpd.pid --expect-user dhcp dhcpd
+	killproc --pidfile "$PIDFILE" --expect-user dhcp dhcpd
 	;;
 status)
-	status --pidfile /var/run/dhcpd.pid --expect-user dhcp dhcpd
+	status --pidfile "$PIDFILE" --expect-user dhcp dhcpd
 	;;
-restart)
+reload|restart)
 	$0 stop
 	$0 start
 	;;
-reload)
-	killproc --pidfile /var/run/dhcpd.pid --expect-user dhcp -HUP dhcpd
-	;;
 *)
-	echo "Usage: dhcpd {start|stop|status|restart|reload}"
+	echo "Usage: ${0##*/} {start|stop|status|restart}"
 	exit 1
 esac
 

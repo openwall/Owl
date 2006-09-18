@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.46 2006/04/04 01:02:00 ldv Exp $
+# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.47 2006/09/18 23:36:26 ldv Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
 Summary: Dynamic Host Configuration Protocol (DHCP) distribution.
 Name: dhcp
 Version: 3.0pl2
-Release: owl11
+Release: owl12
 License: ISC License
 Group: System Environment/Daemons
 URL: http://www.isc.org/products/DHCP/
@@ -97,7 +97,7 @@ subnet.  The DHCP relay takes care of this for the client.
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot/etc/{rc.d/init.d}
+mkdir -p %buildroot/etc/sysconfig
 %__make install \
 	DESTDIR="%buildroot" \
 	ADMMANDIR="%_mandir/man8" \
@@ -107,10 +107,9 @@ mkdir -p %buildroot/etc/{rc.d/init.d}
 
 cd %buildroot
 
-mkdir -p etc/{rc.d/init.d,sysconfig}
 mkdir -p var/lib/dhcp/{dhcpd,dhclient}/state
 
-install -m 700 %_sourcedir/dhcpd.init etc/rc.d/init.d/dhcpd
+install -pD -m700 %_sourcedir/dhcpd.init .%_initrddir/dhcpd
 install -m 600 %_sourcedir/dhcpd.conf.sample etc/
 
 touch var/lib/dhcp/dhcpd/state/dhcpd.leases
@@ -158,20 +157,20 @@ grep -q ^dhcp: /etc/passwd ||
 %pre server
 rm -f /var/run/dhcp.restart
 if [ $1 -ge 2 ]; then
-	/etc/rc.d/init.d/dhcpd status && touch /var/run/dhcp.restart || :
-	/etc/rc.d/init.d/dhcpd stop || :
+	%_initrddir/dhcpd status && touch /var/run/dhcp.restart || :
+	%_initrddir/dhcpd stop || :
 fi
 
 %post server
 /sbin/chkconfig --add dhcpd
 if [ -f /var/run/dhcp.restart ]; then
-	/etc/rc.d/init.d/dhcpd start
+	%_initrddir/dhcpd start
 fi
 rm -f /var/run/dhcp.restart
 
 %preun server
 if [ $1 -eq 0 ]; then
-	/etc/rc.d/init.d/dhcpd stop || :
+	%_initrddir/dhcpd stop || :
 	/sbin/chkconfig --del dhcpd
 fi
 
@@ -199,8 +198,8 @@ fi
 
 %files server
 %defattr(-,root,root)
-%config /etc/sysconfig/dhcpd
-%config /etc/rc.d/init.d/dhcpd
+%config(noreplace) /etc/sysconfig/dhcpd
+%config %_initrddir/dhcpd
 /etc/dhcpd.conf.sample
 %_sbindir/dhcpd
 %_mandir/man5/dhcpd.conf.5*
@@ -216,6 +215,11 @@ fi
 %_mandir/man8/dhcrelay.8*
 
 %changelog
+* Tue Sep 19 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.0pl2-owl12
+- Fixed init script to properly handle "reload" mode.
+- Updated init script to new conventions.
+- Use the %%_initrddir macro.
+
 * Fri Apr 29 2005 Solar Designer <solar-at-owl.openwall.com> 3.0pl2-owl11
 - Do register dhcpd with chkconfig, but don't enable it for any runlevels
 by default.
