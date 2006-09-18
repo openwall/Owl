@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# ntpd		Time synchronization daemon 
+# ntpd		Time synchronization daemon
 #
 # chkconfig: - 90 60
 # description: ntpd is a time synchronization daemon
@@ -8,7 +8,7 @@
 # config: /etc/ntpd.conf
 
 # Source function library.
-. /etc/init.d/functions
+. /etc/rc.d/init.d/functions
 
 OWL_STARTUP_ENABLE=1
 
@@ -41,11 +41,11 @@ status)
 	fi
 	;;
 restart)
-  	$0 stop
+	$0 stop
 	$0 start
 	;;
 *)
-	echo $"Usage: $0 {start|stop|status|reload|restart}"
+	echo "Usage: ntpd {start|stop|status|reload|restart}"
 	exit 1
 esac
 
