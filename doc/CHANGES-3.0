@@ -12,6 +12,20 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2006/09/19	Package: gzip
+SECURITY FIX	Severity: high, remote, passive
+Fixed multiple vulnerabilities (stack buffer overflow, heap buffer
+underflow, heap buffer overflow, infinite loop) discovered by Tavis
+Ormandy of Google Security Team.
+References:
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4335
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4336
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4337
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4338
+
+2006/09/19	Package: bison
+Updated to 2.3.
+
 2006/09/07	Package: gpm
 Updated to 1.20.1.
 
@@ -230,4 +244,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.48 2006/09/08 05:40:08 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.49 2006/09/18 23:54:11 ldv Exp $
