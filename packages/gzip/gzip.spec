@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/gzip/gzip.spec,v 1.26 2006/04/04 00:15:07 ldv Exp $
+# $Owl: Owl/packages/gzip/gzip.spec,v 1.27 2006/09/18 23:33:07 ldv Exp $
 
 Summary: The GNU data compression program.
 Name: gzip
 Version: 1.3.5
-Release: owl3
+Release: owl4
 License: GPL
 Group: Applications/File
 URL: http://www.gnu.org/software/%name/
@@ -18,6 +18,7 @@ Patch6: gzip-1.3.5-deb-alt-original-filename.diff
 Patch7: gzip-1.3.5-alt-copy_stat.diff
 Patch8: gzip-1.3.5-alt-bzip2.diff
 Patch9: gzip-1.3.5-gentoo-huft_build-return.diff
+Patch10: gzip-1.3.5-google-owl-bound.diff
 BuildRequires: rpm-build >= 0:4
 BuildRoot: /override/%name-%version
 
@@ -46,6 +47,7 @@ GNU gzip and bzip2 data compression programs.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p0
+%patch10 -p1
 
 %build
 %configure --bindir=/bin
@@ -131,6 +133,10 @@ fi
 %exclude %_mandir/*/zcat.*
 
 %changelog
+* Tue Sep 19 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.3.5-owl4
+- Fixed several bugs (CVE-2006-433[5678]) based on patch from Tavis Ormandy.
+- Changed zgrep to exit when pipeline is interrupted by signal.
+
 * Wed Jan 04 2006 Michail Litvak <mci-at-owl.openwall.com> 1.3.5-owl3
 - Fixed path to bzcat.
 
