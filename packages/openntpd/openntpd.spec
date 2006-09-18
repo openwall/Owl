@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openntpd/openntpd.spec,v 1.12 2006/02/03 22:02:14 ldv Exp $
+# $Owl: Owl/packages/openntpd/openntpd.spec,v 1.13 2006/09/18 01:15:40 solar Exp $
 
 Summary: NTP time synchronization server and client.
 Name: openntpd
 Version: 3.7p1
-Release: owl4
+Release: owl5
 License: BSD License
 Group: System Environment/Daemons
 URL: http://www.openntpd.org
@@ -49,10 +49,11 @@ autoreconf -f
 %install
 rm -rf %buildroot
 %__make install DESTDIR=%buildroot INSTALL="install -p"
-mkdir -p %buildroot%_sysconfdir/init.d
-install -p -m755 %_sourcedir/openntpd.init %buildroot%_sysconfdir/init.d/ntpd
+mkdir -p %buildroot%_initrddir
+install -p -m755 %_sourcedir/openntpd.init %buildroot%_initrddir/ntpd
 mkdir -p %buildroot%_sysconfdir/control.d/facilities
-install -p -m755 %_sourcedir/openntpd.control %buildroot%_sysconfdir/control.d/facilities/ntpd
+install -p -m755 %_sourcedir/openntpd.control \
+	%buildroot%_sysconfdir/control.d/facilities/ntpd
 
 %pre
 if [ \
@@ -96,12 +97,17 @@ fi
 %defattr(-,root,root,0755)
 %doc CREDITS ChangeLog.bz2 LICENCE README
 %config(noreplace) %_sysconfdir/ntpd.conf
-%config %_sysconfdir/init.d/ntpd
+%config %_initrddir/ntpd
 %_sysconfdir/control.d/facilities/ntpd
 %_sbindir/*
 %_mandir/man?/*
 
 %changelog
+* Mon Sep 18 2006 Solar Designer <solar-at-owl.openwall.com> 3.7p1-owl5
+- Use the %%_initrddir macro.
+- Adjusted the init script for consistency with the majority of other ones
+in Owl.
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.7p1-owl4
 - Compressed ChangeLog file.
 
