@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/bison/bison.spec,v 1.28 2006/06/06 01:04:42 ldv Exp $
+# $Owl: Owl/packages/bison/bison.spec,v 1.29 2006/09/18 23:30:54 ldv Exp $
 
 %define BUILD_TEST 0
 
 Summary: A GNU general-purpose parser generator.
 Name: bison
-Version: 2.1
+Version: 2.3
 Release: owl1
 License: GPL
 Group: Development/Tools
@@ -36,7 +36,6 @@ bzip2 -9k NEWS
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-autoreconf
 %configure
 %__make
 %if %BUILD_TEST
@@ -60,7 +59,7 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS NEWS.bz2 THANKS doc/FAQ
+%doc AUTHORS NEWS.bz2 THANKS
 %_mandir/*/*
 %_datadir/aclocal/*
 %_datadir/bison
@@ -70,6 +69,9 @@ fi
 %_libdir/liby.a
 
 %changelog
+* Tue Sep 19 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3-owl1
+- Updated to 2.3.
+
 * Tue Jun 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.1-owl1
 - Updated to 2.1.
 
