@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/gpm/gpm.spec,v 1.30 2006/09/08 12:48:14 galaxy Exp $
+# $Owl: Owl/packages/gpm/gpm.spec,v 1.31 2006/09/18 23:34:47 ldv Exp $
 
 %define BUILD_GPM_ROOT 0
 
 Summary: A mouse server for the Linux console.
 Name: gpm
 Version: 1.20.1
-Release: owl2
+Release: owl3
 License: GPL
 Group: System Environment/Daemons
 Source0: http://ftp.schottelius.org/pub/linux/gpm/%name-%version.tar.bz2
@@ -77,8 +77,7 @@ cd %buildroot
 chmod +x .%_libdir/libgpm.so.*
 ldconfig -n .%_libdir
 
-mkdir -p .%_sysconfdir/rc.d/init.d
-install -m 755 %_sourcedir/gpm.init .%_sysconfdir/rc.d/init.d/gpm
+install -pD -m755 %_sourcedir/gpm.init .%_initrddir/gpm
 
 # create ghost files
 touch %buildroot%_sysconfdir/gpm-{syn,twiddler}.conf
@@ -99,8 +98,8 @@ rm %buildroot%_mandir/man1/gpm-root.1*
 %pre
 rm -f /var/run/gpm.restart
 if [ $1 -ge 2 ]; then
-	%_sysconfdir/rc.d/init.d/gpm status && touch /var/run/gpm.restart || :
-	%_sysconfdir/rc.d/init.d/gpm stop || :
+	%_initrddir/gpm status && touch /var/run/gpm.restart || :
+	%_initrddir/gpm stop || :
 fi
 
 %post
@@ -108,7 +107,7 @@ if [ $1 -eq 1 ]; then
 	/sbin/chkconfig --add gpm
 fi
 if [ -f /var/run/gpm.restart ]; then
-	%_sysconfdir/rc.d/init.d/gpm start
+	%_initrddir/gpm start
 fi
 rm -f /var/run/gpm.restart
 /sbin/ldconfig
@@ -117,7 +116,7 @@ rm -f /var/run/gpm.restart
 %preun
 if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %_infodir/gpm.info %_infodir/dir
-	%_sysconfdir/rc.d/init.d/gpm stop || :
+	%_initrddir/gpm stop || :
 	/sbin/chkconfig --del gpm
 fi
 
@@ -132,7 +131,7 @@ fi
 %_mandir/man1/mev.1*
 %_mandir/man8/gpm.8*
 %_libdir/libgpm.so.*
-%config %_sysconfdir/rc.d/init.d/gpm
+%config %_initrddir/gpm
 %config %ghost %_sysconfdir/gpm-syn.conf
 %config %ghost %_sysconfdir/gpm-twiddler.conf
 
@@ -151,6 +150,11 @@ fi
 %endif
 
 %changelog
+* Tue Sep 19 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.20.1-owl3
+- Fixed build on x86-64 platform.
+- Updated init script to new conventions.
+- Use the %%_initrddir macro.
+
 * Fri Sep 08 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.20.1-owl2
 - Reverted back the change to %%__make since Makefile uses CFLAGS and
 CXXFLAGS from the environment and RPM's %%configure exports these variables.

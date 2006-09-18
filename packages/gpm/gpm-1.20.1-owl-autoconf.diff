@@ -20,3 +20,12 @@
  fi
  
  ITZ_SYS_ELF
+@@ -91,6 +91,8 @@
+ AC_CHECK_FUNCS(vsyslog syslog)
+ AC_FUNC_ALLOCA
+ 
++AC_CHECK_LIB(m, ceilf)
++
+ case $with_curses in
+ No|no|N|n) SHARED_LIBS=-lc ;;
+ *)
