@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/openntpd/openntpd.spec,v 1.13 2006/09/18 01:15:40 solar Exp $
+# $Owl: Owl/packages/openntpd/openntpd.spec,v 1.14 2006/09/18 01:17:17 solar Exp $
 
 Summary: NTP time synchronization server and client.
 Name: openntpd
@@ -17,7 +17,7 @@ PreReq: /var/empty
 PreReq: shadow-utils
 PreReq: coreutils
 PreReq: grep
-PreReq: owl-control >= 0.4, owl-control <= 2.0
+PreReq: owl-control >= 0.4, owl-control < 2.0
 Requires: chkconfig
 Requires: openssl
 BuildRequires: openssl-devel
