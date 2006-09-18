@@ -1,4 +1,5 @@
 #!/bin/sh
+# $Owl: Owl/packages/openntpd/openntpd.init,v 1.7 2006/09/18 01:53:01 solar Exp $
 #
 # ntpd		Time synchronization daemon
 #
