@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/gzip/gzip.spec,v 1.25 2006/01/04 13:56:01 ldv Exp $
+# $Owl: Owl/packages/gzip/gzip.spec,v 1.25.2.1 2006/09/19 00:29:57 ldv Exp $
 
 Summary: The GNU data compression program.
 Name: gzip
 Version: 1.3.5
-Release: owl3
+Release: owl4
 License: GPL
 Group: Applications/File
 URL: http://www.gnu.org/software/%name/
@@ -18,6 +18,7 @@ Patch6: gzip-1.3.5-deb-alt-original-filename.diff
 Patch7: gzip-1.3.5-alt-copy_stat.diff
 Patch8: gzip-1.3.5-alt-bzip2.diff
 Patch9: gzip-1.3.5-gentoo-huft_build-return.diff
+Patch10: gzip-1.3.5-google-owl-bound.diff
 BuildRequires: rpm-build >= 0:4
 BuildRoot: /override/%name-%version
 
@@ -46,6 +47,7 @@ GNU gzip and bzip2 data compression programs.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p0
+%patch10 -p1
 
 %build
 %configure --bindir=/bin
@@ -102,8 +104,8 @@ cat > %buildroot%_bindir/bzless <<EOF
 EOF
 chmod 755 %buildroot%_bindir/{,b}zless
 
-# Remove unpackaged files if any
-rm -f %buildroot%_infodir/dir
+# Remove unpackaged files
+rm %buildroot%_infodir/dir
 
 %triggerin -- info
 /sbin/install-info %_infodir/gzip.info %_infodir/dir
@@ -131,6 +133,11 @@ fi
 %exclude %_mandir/*/zcat.*
 
 %changelog
+* Tue Sep 19 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.3.5-owl4
+- Fixed multiple vulnerabilities (CVE-2006-433[5678]) based on patch
+from Tavis Ormandy.
+- Changed zgrep to exit when pipeline is interrupted by signal.
+
 * Wed Jan 04 2006 Michail Litvak <mci-at-owl.openwall.com> 1.3.5-owl3
 - Fixed path to bzcat.
 

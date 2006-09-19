@@ -27,8 +27,8 @@
      fi
    r=$?
    test $res -lt $r && res=$r
-+  # SIGPIPE + 128
-+  test "$r" -eq 141 && exit $res
++  # signo + 128
++  test "$r" -gt 128 && exit $res
  done
 +trap - PIPE
  exit $res
