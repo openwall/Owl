@@ -5,6 +5,18 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 2.0 and Owl 2.0-stable.
 
+(2006/09/19)
+2006/09/19	Package: gzip
+SECURITY FIX	Severity: high, remote, passive
+Fixed multiple vulnerabilities (stack buffer overflow, heap buffer
+underflow, heap buffer overflow, infinite loop) discovered by Tavis
+Ormandy of Google Security Team.
+References:
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4335
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4336
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4337
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4338
+
 (2006/09/06)
 2006/09/09	Package: openssl
 SECURITY FIX	Severity: none to medium, remote, passive to active
@@ -80,4 +92,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.9 2006/09/09 22:51:11 ldv Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.10 2006/09/19 00:32:43 ldv Exp $
