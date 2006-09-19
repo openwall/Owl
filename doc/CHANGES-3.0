@@ -13,7 +13,7 @@ change logs for the packages themselves.
 	Changes made between Owl 2.0 and Owl-current.
 
 2006/09/19	Package: gzip
-SECURITY FIX	Severity: high, remote, passive
+SECURITY FIX	Severity: high, indirect, passive
 Fixed multiple vulnerabilities (stack buffer overflow, heap buffer
 underflow, heap buffer overflow, infinite loop) discovered by Tavis
 Ormandy of Google Security Team.
@@ -244,4 +244,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.49 2006/09/18 23:54:11 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.50 2006/09/19 00:48:48 ldv Exp $
