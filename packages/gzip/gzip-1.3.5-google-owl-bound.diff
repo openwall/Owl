@@ -7,7 +7,7 @@
 -    for (i = 0; i < (unsigned)nchar; i++) count[bitlen[i]]++;
 +    for (i = 0; i < (unsigned)nchar; i++) {
 +	if (bitlen[i] > 16)
-+	    error("Bad table\n");
++	    error("Bad table");
 +	else
 +	    count[bitlen[i]]++;
 +    }
@@ -28,7 +28,7 @@
  	nextcode = start[len] + weight[len];
  	if (len <= (unsigned)tablebits) {
 +	    if (nextcode > 1 << tablebits)
-+		error("Bad table\n");
++		error("Bad table");
  	    for (i = start[len]; i < nextcode; i++) table[i] = ch;
  	} else {
  	    k = start[len];
