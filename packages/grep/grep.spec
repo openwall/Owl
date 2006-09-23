@@ -1,13 +1,14 @@
-# $Owl: Owl/packages/grep/grep.spec,v 1.19 2006/04/04 00:15:07 ldv Exp $
+# $Owl: Owl/packages/grep/grep.spec,v 1.20 2006/09/23 22:48:06 ldv Exp $
 
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
 Version: 2.5.1a
-Release: owl2
+Release: owl3
 Epoch: 1
 License: GPL
 Group: Applications/Text
 Source: ftp://ftp.gnu.org/gnu/grep/grep-%version.tar.bz2
+Patch9: grep-2.5.1a-cvs-20040919-skip.diff
 Patch10: grep-2.5.1a-rh-fgrep.diff
 Patch11: grep-2.5.1a-rh-owl-i18n.diff
 Patch12: grep-2.5.1a-rh-oi.diff
@@ -19,6 +20,7 @@ Patch24: grep-2.5.1a-deb-owl-man.diff
 Patch30: grep-2.5.1a-owl-info.diff
 Patch31: grep-2.5.1a-owl-fixes.diff
 Patch32: grep-2.5.1a-owl-program_name.diff
+Patch33: grep-2.5.1a-alt-bound.diff
 PreReq: /sbin/install-info
 BuildRequires: pcre-devel
 BuildRequires: texinfo, gettext, sed
@@ -32,6 +34,7 @@ include grep, egrep, and fgrep.
 
 %prep
 %setup -q
+%patch9 -p1
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
@@ -43,6 +46,7 @@ include grep, egrep, and fgrep.
 %patch30 -p1
 %patch31 -p1
 %patch32 -p1
+%patch33 -p1
 bzip2 -9k ChangeLog
 
 %{expand:%%define optflags %optflags -Wall}
@@ -86,6 +90,11 @@ fi
 %_prefix/share/locale/*/*/grep.*
 
 %changelog
+* Sun Sep 24 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.5.1a-owl3
+- Applied upstream fix for "-D skip".
+- Fixed several potential NULL dereferences and reads beyond end of buffer
+due to incorrect bound checks.
+
 * Mon Dec 05 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.5.1a-owl2
 - Packaged pcregrep.
 
