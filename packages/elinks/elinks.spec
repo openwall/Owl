@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/elinks/elinks.spec,v 1.21 2005/11/16 12:21:36 solar Exp $
+# $Owl: Owl/packages/elinks/elinks.spec,v 1.22 2006/09/24 01:27:29 galaxy Exp $
 
 Summary: Lynx-like text WWW browser with many features.
 Name: elinks
 Version: 0.9.1
-Release: owl6
+Release: owl7
 License: GPL
 Group: Applications/Internet
 URL: http://elinks.or.cz
@@ -16,6 +16,8 @@ Patch4: elinks-0.9.1-owl-no-xterm-title.diff
 Patch5: elinks-0.9.1-owl-no-uname-leak.diff
 Patch6: elinks-0.9.1-owl-external-programs.diff
 Patch7: elinks-0.9.1-owl-typeahead.diff
+Patch8: elinks-0.9.1-owl-page-scrolling.diff
+Patch9: elinks-0.9.1-owl-document-height.diff
 Patch10: elinks-0.9.1-owl-man.diff
 Requires: gpm, zlib, bzip2, openssl
 Provides: links
@@ -45,6 +47,8 @@ It is in no way associated with Twibright Labs and their Links version.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
+%patch9 -p1
 %patch10 -p1
 
 %build
@@ -53,11 +57,11 @@ export ac_cv_header_expat_h=no \
 	--with-gpm --with-zlib --with-bzlib --with-openssl \
 	--without-guile --without-lua --without-gnutls --without-x \
 	--enable-ipv6
-make
+%__make
 
 %install
 rm -rf %buildroot
-make install DESTDIR=%buildroot
+%__make install DESTDIR=%buildroot
 
 pushd %buildroot
 ln -sf elinks .%_bindir/links
@@ -78,6 +82,10 @@ rm %buildroot%_datadir/locale/locale.alias
 %_mandir/man?/*
 
 %changelog
+* Sat Sep 23 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.9.1-owl7
+- Fixed an issue with page scrolling.
+- Fixed a bug with the document height calculations.
+
 * Sun Sep 25 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.9.1-owl6
 - Fixed a segmentation fault inside the typeahead routine.
 
