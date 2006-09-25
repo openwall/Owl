@@ -41,18 +41,18 @@ SBINDIR = $(PREFIX)/sbin
 PROJ = settle setup
 
 SETTLE_OBJS = settle.o iface.o iface_dumb.o $(CURSES_OBJ) \
-	cmd.o \
+	cmd.o parmfile.o\
 	state.o repartition.o \
 	select_partitions.o \
 	swap.o installworld.o root_passwd_settle.o pam_root_passwd.o \
 	installkernel.o installkernheaders.o \
 	mkfstab.o shellout.o network.o \
-	timezone.o keyboard.o config.o reboot.o
+	timezone.o i18n.o config.o reboot.o
 
 SETUP_OBJS = setup.o iface.o iface_dumb.o $(CURSES_OBJ) \
-	cmd.o \
+	cmd.o parmfile.o\
 	root_passwd_setup.o pam_root_passwd.o shellout.o \
-	network.o timezone.o keyboard.o config.o
+	network.o timezone.o i18n.o config.o
 
 SRCS = $(wildcard [^_]*.cpp)
 

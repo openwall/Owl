@@ -21,7 +21,7 @@ extern void activate_swap(OwlInstallInterface *);
 extern void install_packages(OwlInstallInterface *);
 extern void run_shell(OwlInstallInterface *);
 
-extern void select_keyboard_layout(OwlInstallInterface *);
+extern void i18n_settings(OwlInstallInterface *);
 extern void set_root_password(OwlInstallInterface *);
 extern void create_fstab(OwlInstallInterface *);
 extern void select_timezone(OwlInstallInterface *);
@@ -68,7 +68,7 @@ int main(int argc, char **argv)
             linux_partition_exists, owl_dir_mounted  },
         { "s", "Activate swap space", always_true, active_swap_exists },
         { "i", "Install packages", owl_dir_mounted, packages_installed },
-        { "k", "Select keyboard layout",
+        { "l", "Configure localization (i18n)",
             packages_installed, keyboard_selected },
         { "p", "Set root password", packages_installed, root_password_set },
         { "t", "Create /etc/fstab", fstab_exists, fstab_contains_root },
@@ -143,8 +143,8 @@ int main(int argc, char **argv)
         if(choice == "i") {
             install_packages(the_interface);
         } else
-        if(choice == "k") {
-            select_keyboard_layout(the_interface);
+        if(choice == "l") {
+            i18n_settings(the_interface);
         } else
         if(choice == "p") {
             set_root_password(the_interface);

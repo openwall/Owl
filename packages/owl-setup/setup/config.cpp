@@ -92,7 +92,7 @@ ScriptVariable OwlInstallConfig::MkfsPath(const ScriptVariable& fst) const
 
 
 ScriptVariable OwlInstallConfig::KeymapFileSuffix() const
-{ return "map.gz"; }
+{ return ".map.gz"; }
 
 ScriptVariable OwlInstallConfig::KeymapDbPath() const
 #ifdef __sparc__
@@ -106,6 +106,27 @@ ScriptVariable OwlInstallConfig::KeymapSysconf() const
 
 ScriptVariable OwlInstallConfig::LoadkeysPath() const
 { return "/bin/loadkeys"; }
+
+ScriptVariable OwlInstallConfig::ConsolefontsDbPath() const
+{ return "/lib/kbd/consolefonts"; }
+
+ScriptVariable OwlInstallConfig::ConsolefontsSuffix() const
+{ return ".gz"; }
+
+ScriptVariable OwlInstallConfig::UnimapsDbPath() const
+{ return "/lib/kbd/unimaps"; }
+
+ScriptVariable OwlInstallConfig::UnimapsSuffix() const
+{ return ".uni"; }
+
+ScriptVariable OwlInstallConfig::SetfontPath() const
+{ return "/bin/setfont"; }
+
+ScriptVariable OwlInstallConfig::LocalePath() const
+{ return "/usr/bin/locale"; }
+
+ScriptVariable OwlInstallConfig::I18nSysconf() const
+{ return root+"/etc/sysconfig/i18n"; }
 
 
 

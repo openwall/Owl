@@ -50,6 +50,15 @@ public:
     ScriptVariable KeymapFileSuffix() const;
     ScriptVariable KeymapSysconf() const;
     ScriptVariable LoadkeysPath() const;
+        // screen font
+    ScriptVariable ConsolefontsDbPath() const;
+    ScriptVariable ConsolefontsSuffix() const;
+    ScriptVariable UnimapsDbPath() const;
+    ScriptVariable UnimapsSuffix() const;
+    ScriptVariable SetfontPath() const;
+        // locale
+    ScriptVariable LocalePath() const;
+    ScriptVariable I18nSysconf() const;
 
         // time zone
     ScriptVariable ZoneinfoDbPath() const;

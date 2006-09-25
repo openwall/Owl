@@ -68,6 +68,7 @@ public:
 
     virtual bool Run(ScriptVector &result) = 0;
 
+    void SetSorting(bool sorting) { sorted = sorting; }
     void SetCaseSensitivity(bool sensitive) { ignore_case = !sensitive; }
 private:
     void RmTree(Item *t);

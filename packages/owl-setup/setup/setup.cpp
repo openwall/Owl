@@ -15,7 +15,7 @@
 #include "command_line.hpp"
 
 extern void run_shell(OwlInstallInterface *);
-extern void select_keyboard_layout(OwlInstallInterface *);
+extern void i18n_settings(OwlInstallInterface *);
 extern void set_root_password(OwlInstallInterface *);
 extern void select_timezone(OwlInstallInterface *);
 extern void configure_network(OwlInstallInterface *);
@@ -45,7 +45,7 @@ int main(int argc, char **argv)
         const char *comment;
     };
     MainMenuItem main_menu[] = {
-        { "k", "Select keyboard layout" },
+        { "l", "Configure localization (i18n)" },
         { "p", "Set root password" },
         { "z", "Select timezone" },
         { "n", "Configure network" },
@@ -85,8 +85,8 @@ int main(int argc, char **argv)
             the_interface->Notice("Got EOF, exiting...");
             return 1;
         } else
-        if(choice == "k") {
-            select_keyboard_layout(the_interface);
+        if(choice == "l") {
+            i18n_settings(the_interface);
         } else
         if(choice == "p") {
             set_root_password(the_interface);
