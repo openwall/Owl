@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.69 2006/08/27 18:52:31 solar Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.70 2006/09/25 16:41:42 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 1.1.3
+Version: 1.1.4
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -34,6 +34,9 @@ rm -rf %buildroot
 %_mandir/man8/settle.8*
 
 %changelog
+* Mon Sep 25 2006 Croco <croco-at-owl.openwall.com> 1.1.4-owl1
+- fixed the bug with 'up arrow' in selection boxes
+
 * Sun Aug 27 2006 Croco <croco-at-owl.openwall.com> 1.1.3-owl1
 - fixed the 'blind interface name request' bug
 
