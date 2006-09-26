@@ -20,7 +20,6 @@ public:
     public:
         ScriptVariable& Value() { return value; }
         ScriptVariable GetName() { return name; }
-        
     };
 private:
     Parameter *first;

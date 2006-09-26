@@ -319,7 +319,7 @@ static int run_scroll(CDKSCREEN *screen,
         if(quick_search != "") {
             int maxy, maxx;
             getmaxyx(stdscr, maxy, maxx);
-            int x = (maxx - maxlen) / 2 + maxlen - quick_search.Length() - 2; 
+            int x = (maxx - maxlen) / 2 + maxlen - quick_search.Length() - 2;
             int y = maxy - 4;
             mvprintw(y, x, "[%s]", quick_search.c_str());
             refresh();

@@ -17,7 +17,7 @@ ParametersFile::~ParametersFile()
     }
 }
 
-ParametersFile::Parameter& 
+ParametersFile::Parameter&
 ParametersFile::operator[](const ScriptVariable &name) const
 {
     Parameter **res;

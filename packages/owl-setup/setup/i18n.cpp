@@ -73,7 +73,7 @@ public:
     bool Save()
     {
         return
-            file_keyboard.SaveAs(the_config->KeymapSysconf()) && 
+            file_keyboard.SaveAs(the_config->KeymapSysconf()) &&
             file_i18n.SaveAs(the_config->I18nSysconf());
     }
 
