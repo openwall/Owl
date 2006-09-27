@@ -1,24 +1,21 @@
-# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.47 2006/09/18 23:36:26 ldv Exp $
+# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.48 2006/09/27 13:33:38 jmbr Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
 Summary: Dynamic Host Configuration Protocol (DHCP) distribution.
 Name: dhcp
-Version: 3.0pl2
-Release: owl12
+Version: 3.0.4
+Release: owl1
 License: ISC License
 Group: System Environment/Daemons
 URL: http://www.isc.org/products/DHCP/
 Source0: ftp://ftp.isc.org/isc/dhcp/dhcp-%version.tar.gz
 Source1: dhcpd.init
 Source2: dhcpd.conf.sample
-Patch0: dhcp-3.0pl2-owl-man.diff
-Patch1: dhcp-3.0pl2-owl-drop-root.diff
-Patch2: dhcp-3.0pl2-rh-owl-script.diff
-Patch3: dhcp-3.0pl2-owl-warnings.diff
-Patch4: dhcp-3.0pl2-owl-bound.diff
-Patch5: dhcp-3.0pl2-owl-fixes.diff
-Patch6: dhcp-3.0pl2-owl-support-contact.diff
+Patch0: dhcp-3.0.4-owl-drop-root.diff
+Patch1: dhcp-3.0.4-rh-owl-script.diff
+Patch2: dhcp-3.0.4-owl-bound.diff
+Patch3: dhcp-3.0.4-owl-support-contact.diff
 PreReq: grep, shadow-utils
 BuildRequires: groff
 BuildRoot: /override/%name-%version
@@ -81,9 +78,6 @@ subnet.  The DHCP relay takes care of this for the client.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
 
 %{expand:%%define optflags %optflags -fno-strict-aliasing -Wall -Wno-unused}
 
@@ -176,7 +170,7 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc README RELNOTES CHANGES COPYRIGHT
+%doc README RELNOTES LICENSE
 %_bindir/omshell
 %_mandir/man1/omshell.1*
 %_mandir/man5/dhcp-eval.5*
@@ -215,6 +209,9 @@ fi
 %_mandir/man8/dhcrelay.8*
 
 %changelog
+* Tue Sep 26 2006 Juan M. Bello Rivas <jmbr-at-owl.openwall.com> 3.0.4-owl1
+- Updated to version 3.0.4.
+
 * Tue Sep 19 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.0pl2-owl12
 - Fixed init script to properly handle "reload" mode.
 - Updated init script to new conventions.

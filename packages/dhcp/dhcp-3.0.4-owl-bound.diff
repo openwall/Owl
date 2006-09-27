@@ -1,0 +1,253 @@
+diff -urpN dhcp-3.0.4.orig/client/dhclient.c dhcp-3.0.4/client/dhclient.c
+--- dhcp-3.0.4.orig/client/dhclient.c	2006-04-27 21:38:29.000000000 +0000
++++ dhcp-3.0.4/client/dhclient.c	2006-09-26 20:40:29.000000000 +0000
+@@ -1094,7 +1094,8 @@ void dhcpoffer (packet)
+ 		return;
+ 	}
+ 
+-	sprintf (obuf, "%s from %s", name, piaddr (packet -> client_addr));
++	snprintf (obuf, sizeof(obuf),
++		"%s from %s", name, piaddr (packet -> client_addr));
+ 
+ 
+ 	/* If this lease doesn't supply the minimum required parameters,
+@@ -2624,7 +2625,7 @@ void client_envadd (struct client_state 
+ {
+ 	char spbuf [1024];
+ 	char *s;
+-	unsigned len, i;
++	int len;
+ 	struct string_list *val;
+ 	va_list list;
+ 
+@@ -2632,6 +2633,11 @@ void client_envadd (struct client_state 
+ 	len = vsnprintf (spbuf, sizeof spbuf, fmt, list);
+ 	va_end (list);
+ 
++/* Handle truncation on glibc 2.0.x or possible unexpected errors on others;
++ * avoid integer overflow in the addition below. */
++	if (len < 0 || len > 0x3fffffff)
++		return;
++
+ 	val = dmalloc (strlen (prefix) + strlen (name) + 1 /* = */ +
+ 		       len + sizeof *val, MDL);
+ 	if (!val)
+diff -urpN dhcp-3.0.4.orig/common/bpf.c dhcp-3.0.4/common/bpf.c
+--- dhcp-3.0.4.orig/common/bpf.c	2004-11-24 17:39:15.000000000 +0000
++++ dhcp-3.0.4/common/bpf.c	2006-09-26 20:40:53.000000000 +0000
+@@ -91,7 +91,7 @@ int if_register_bpf (info)
+ 	/* Open a BPF device */
+ 	for (b = 0; 1; b++) {
+ 		/* %Audit% 31 bytes max. %2004.06.17,Safe% */
+-		sprintf(filename, BPF_FORMAT, b);
++		snprintf(filename, sizeof(filename), BPF_FORMAT, b);
+ 		sock = open (filename, O_RDWR, 0);
+ 		if (sock < 0) {
+ 			if (errno == EBUSY) {
+diff -urpN dhcp-3.0.4.orig/common/dns.c dhcp-3.0.4/common/dns.c
+--- dhcp-3.0.4.orig/common/dns.c	2006-02-22 22:43:27.000000000 +0000
++++ dhcp-3.0.4/common/dns.c	2006-09-26 20:41:35.000000000 +0000
+@@ -533,7 +533,7 @@ isc_result_t ddns_update_a (struct data_
+ 		return ISC_R_INVALIDARG;
+ 
+ 	/* %Audit% Cannot exceed 16 bytes. %2004.06.17,Safe% */
+-	sprintf (ddns_address, "%u.%u.%u.%u",
++	snprintf (ddns_address, sizeof(ddns_address), "%u.%u.%u.%u",
+ 		  ddns_addr.iabuf[0], ddns_addr.iabuf[1],
+ 		  ddns_addr.iabuf[2], ddns_addr.iabuf[3]);
+ 
+@@ -794,7 +794,7 @@ isc_result_t ddns_remove_a (struct data_
+ 		return ISC_R_INVALIDARG;
+ 
+ 	/* %Audit% Cannot exceed 16 bytes. %2004.06.17,Safe% */
+-	sprintf (ddns_address, "%u.%u.%u.%u",
++	snprintf (ddns_address, sizeof(ddns_address), "%u.%u.%u.%u",
+ 		  ddns_addr.iabuf[0], ddns_addr.iabuf[1],
+ 		  ddns_addr.iabuf[2], ddns_addr.iabuf[3]);
+ 
+diff -urpN dhcp-3.0.4.orig/common/print.c dhcp-3.0.4/common/print.c
+--- dhcp-3.0.4.orig/common/print.c	2006-02-22 22:43:27.000000000 +0000
++++ dhcp-3.0.4/common/print.c	2006-09-26 20:29:58.000000000 +0000
+@@ -478,7 +478,7 @@ static unsigned print_subexpression (exp
+ 	      case expr_check:
+ 		rv = 10 + strlen (expr -> data.check -> name);
+ 		if (len > rv) {
+-			sprintf (buf, "(check %s)",
++			snprintf (buf, len, "(check %s)",
+ 				 expr -> data.check -> name);
+ 			return rv;
+ 		}
+@@ -585,7 +585,7 @@ static unsigned print_subexpression (exp
+ 	      case expr_host_lookup:
+ 		rv = 15 + strlen (expr -> data.host_lookup -> hostname);
+ 		if (len > rv) {
+-			sprintf (buf, "(dns-lookup %s)",
++			snprintf (buf, len, "(dns-lookup %s)",
+ 				 expr -> data.host_lookup -> hostname);
+ 			return rv;
+ 		}
+@@ -669,7 +669,7 @@ static unsigned print_subexpression (exp
+ 		rv = strlen (s) + 2 + (strlen (expr -> data.option -> name) +
+ 			   strlen (expr -> data.option -> universe -> name));
+ 		if (len > rv) {
+-			sprintf (buf, "(option %s.%s)",
++			snprintf (buf, len, "(option %s.%s)",
+ 				 expr -> data.option -> universe -> name,
+ 				 expr -> data.option -> name);
+ 			return rv;
+@@ -805,7 +805,7 @@ static unsigned print_subexpression (exp
+ 		rv = 10 + (strlen (expr -> data.option -> name) +
+ 			   strlen (expr -> data.option -> universe -> name));
+ 		if (len > rv) {
+-			sprintf (buf, "(exists %s.%s)",
++			snprintf (buf, len, "(exists %s.%s)",
+ 				 expr -> data.option -> universe -> name,
+ 				 expr -> data.option -> name);
+ 			return rv;
+@@ -815,7 +815,8 @@ static unsigned print_subexpression (exp
+ 	      case expr_variable_exists:
+ 		rv = 10 + strlen (expr -> data.variable);
+ 		if (len > rv) {
+-			sprintf (buf, "(defined %s)", expr -> data.variable);
++			snprintf (buf, len,
++				"(defined %s)", expr -> data.variable);
+ 			return rv;
+ 		}
+ 		break;
+@@ -823,7 +824,7 @@ static unsigned print_subexpression (exp
+ 	      case expr_variable_reference:
+ 		rv = strlen (expr -> data.variable);
+ 		if (len > rv) {
+-			sprintf (buf, "%s", expr -> data.variable);
++			snprintf (buf, len, "%s", expr -> data.variable);
+ 			return rv;
+ 		}
+ 		break;
+diff -urpN dhcp-3.0.4.orig/common/upf.c dhcp-3.0.4/common/upf.c
+--- dhcp-3.0.4.orig/common/upf.c	2004-11-24 17:39:16.000000000 +0000
++++ dhcp-3.0.4/common/upf.c	2006-09-26 20:43:13.000000000 +0000
+@@ -80,7 +80,7 @@ int if_register_upf (info)
+ 	/* Open a UPF device */
+ 	for (b = 0; 1; b++) {
+ 		/* %Audit% Cannot exceed 36 bytes. %2004.06.17,Safe% */
+-		sprintf(filename, "/dev/pf/pfilt%d", b);
++		snprintf(filename, sizeof(filename), "/dev/pf/pfilt%d", b);
+ 
+ 		sock = open (filename, O_RDWR, 0);
+ 		if (sock < 0) {
+diff -urpN dhcp-3.0.4.orig/dst/dst_support.c dhcp-3.0.4/dst/dst_support.c
+--- dhcp-3.0.4.orig/dst/dst_support.c	2001-02-22 07:22:08.000000000 +0000
++++ dhcp-3.0.4/dst/dst_support.c	2006-09-26 16:49:31.000000000 +0000
+@@ -396,8 +396,8 @@ dst_s_build_filename(char *filename, con
+ 	if (filename_length < 1 + strlen(name) + 4 + 6 + 1 + strlen(suffix))
+ 		return (-1);
+ 	my_id = id;
+-	sprintf(filename, "K%s+%03d+%05d.%s", name, alg, my_id,
+-		(const char *) suffix);
++	snprintf(filename, filename_length, "K%s+%03d+%05d.%s",
++		name, alg, my_id, (const char *) suffix);
+ 	if (strrchr(filename, '/'))
+ 		return (-1);
+ 	if (strrchr(filename, '\\'))
+diff -urpN dhcp-3.0.4.orig/minires/res_query.c dhcp-3.0.4/minires/res_query.c
+--- dhcp-3.0.4.orig/minires/res_query.c	2004-06-10 17:59:44.000000000 +0000
++++ dhcp-3.0.4/minires/res_query.c	2006-09-26 20:34:48.000000000 +0000
+@@ -375,7 +375,7 @@ res_nquerydomain(res_state statp,
+ 			RES_SET_H_ERRNO(statp, NO_RECOVERY);
+ 			return ISC_R_NOSPACE;
+ 		}
+-		sprintf(nbuf, "%s.%s", name, domain);
++		snprintf(nbuf, sizeof(nbuf), "%s.%s", name, domain);
+ 	}
+ 	return res_nquery(statp,
+ 			  longname, class, type, answer, anslen, ansret);
+diff -urpN dhcp-3.0.4.orig/server/ddns.c dhcp-3.0.4/server/ddns.c
+--- dhcp-3.0.4.orig/server/ddns.c	2005-03-03 16:55:24.000000000 +0000
++++ dhcp-3.0.4/server/ddns.c	2006-09-26 16:53:59.000000000 +0000
+@@ -501,7 +501,7 @@ int ddns_updates (struct packet *packet,
+ 			ddns_rev_name.data = ddns_rev_name.buffer -> data;
+ 
+ 			/* %Audit% Cannot exceed 17 bytes. %2004.06.17,Safe% */
+-			sprintf ((char *)ddns_rev_name.buffer -> data,
++			snprintf ((char *)ddns_rev_name.buffer -> data, 17,
+ 				  "%u.%u.%u.%u.",
+ 				  lease -> ip_addr . iabuf[3] & 0xff,
+ 				  lease -> ip_addr . iabuf[2] & 0xff,
+diff -urpN dhcp-3.0.4.orig/server/dhcp.c dhcp-3.0.4/server/dhcp.c
+--- dhcp-3.0.4.orig/server/dhcp.c	2006-02-22 22:43:27.000000000 +0000
++++ dhcp-3.0.4/server/dhcp.c	2006-09-26 20:49:24.000000000 +0000
+@@ -81,7 +81,7 @@ void dhcp (packet)
+ 			s = dhcp_type_names [packet -> packet_type - 1];
+ 		} else {
+ 			/* %Audit% Cannot exceed 28 bytes. %2004.06.17,Safe% */
+-			sprintf (typebuf, "type %d", packet -> packet_type);
++			snprintf (typebuf, sizeof(typebuf), "type %d", packet -> packet_type);
+ 			s = typebuf;
+ 		}
+ 		
+@@ -448,7 +448,7 @@ void dhcprequest (packet, ms_nulltp, ip_
+ 		/* piaddr() should not return more than a 15 byte string.
+ 		 * safe.
+ 		 */
+-		sprintf (smbuf, " (%s)", piaddr (sip));
++		snprintf (smbuf, sizeof(smbuf), " (%s)", piaddr (sip));
+ 		have_server_identifier = 1;
+ 	} else
+ 		smbuf [0] = 0;
+diff -urpN dhcp-3.0.4.orig/server/failover.c dhcp-3.0.4/server/failover.c
+--- dhcp-3.0.4.orig/server/failover.c	2006-02-22 22:43:27.000000000 +0000
++++ dhcp-3.0.4/server/failover.c	2006-09-26 21:02:02.000000000 +0000
+@@ -3569,7 +3569,7 @@ failover_option_t *dhcp_failover_make_op
+ 			val = va_arg (va, unsigned);
+ #if defined (DEBUG_FAILOVER_MESSAGES)
+ 			/* %Audit% Cannot exceed 24 bytes. %2004.06.17,Safe% */
+-			sprintf (tbuf, " %d", val);
++			snprintf (tbuf, sizeof(tbuf), " %d", val);
+ 			failover_print (obuf, obufix, obufmax, tbuf);
+ #endif
+ 			option.data [i + 4] = val;
+@@ -3589,7 +3589,7 @@ failover_option_t *dhcp_failover_make_op
+ 				
+ #if defined (DEBUG_FAILOVER_MESSAGES)
+ 			/*%Audit% Cannot exceed 17 bytes.  %2004.06.17,Safe%*/
+-			sprintf (tbuf, " %u.%u.%u.%u",
++			snprintf (tbuf, sizeof(tbuf), " %u.%u.%u.%u",
+ 				  iaddr [0], iaddr [1], iaddr [2], iaddr [3]);
+ 			failover_print (obuf, obufix, obufmax, tbuf);
+ #endif
+@@ -3602,7 +3602,7 @@ failover_option_t *dhcp_failover_make_op
+ 			val = va_arg (va, unsigned);
+ #if defined (DEBUG_FAILOVER_MESSAGES)
+ 			/*%Audit% Cannot exceed 24 bytes.  %2004.06.17,Safe%*/
+-			sprintf (tbuf, " %d", val);
++			snprintf (tbuf, sizeof(tbuf), " %d", val);
+ 			failover_print (obuf, obufix, obufmax, tbuf);
+ #endif
+ 			putULong (&option.data [4 + i * 4], val);
+@@ -3615,7 +3615,7 @@ failover_option_t *dhcp_failover_make_op
+ #if defined (DEBUG_FAILOVER_MESSAGES)
+ 		for (i = 0; i < count; i++) {
+ 			/* 23 bytes plus nul, safe. */
+-			sprintf (tbuf, " %d", bval [i]);
++			snprintf (tbuf, sizeof(tbuf), " %d", bval [i]);
+ 			failover_print (obuf, obufix, obufmax, tbuf);
+ 		}
+ #endif
+@@ -3653,7 +3653,7 @@ failover_option_t *dhcp_failover_make_op
+ #if defined (DEBUG_FAILOVER_MESSAGES)
+ 		for (i = 4; i < size; i++) {
+ 			/*%Audit% Cannot exceed 24 bytes. %2004.06.17,Safe%*/
+-			sprintf (tbuf, " %d", option.data [i]);
++			snprintf (tbuf, sizeof(tbuf), " %d", option.data [i]);
+ 			failover_print (obuf, obufix, obufmax, tbuf);
+ 		}
+ #endif
+@@ -3664,7 +3664,7 @@ failover_option_t *dhcp_failover_make_op
+ 			val = va_arg (va, u_int32_t);
+ #if defined (DEBUG_FAILOVER_MESSAGES)
+ 			/*%Audit% Cannot exceed 24 bytes. %2004.06.17,Safe%*/
+-			sprintf (tbuf, " %d", val);
++			snprintf (tbuf, sizeof(tbuf), " %d", val);
+ 			failover_print (obuf, obufix, obufmax, tbuf);
+ #endif
+ 			putUShort (&option.data [4 + i * 2], val);

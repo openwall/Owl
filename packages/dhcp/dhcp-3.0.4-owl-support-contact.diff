@@ -1,0 +1,79 @@
+diff -urpN dhcp-3.0.4.orig/omapip/errwarn.c dhcp-3.0.4/omapip/errwarn.c
+--- dhcp-3.0.4.orig/omapip/errwarn.c	2004-09-30 20:38:32.000000000 +0000
++++ dhcp-3.0.4/omapip/errwarn.c	2006-09-26 21:34:12.000000000 +0000
+@@ -67,7 +67,8 @@ void log_fatal (const char * fmt, ... )
+   va_end (list);
+ 
+ #ifndef DEBUG
+-  syslog (log_priority | LOG_ERR, "%s", mbuf);
++  if (mbuf[0])
++	 syslog (log_priority | LOG_ERR, "%s", mbuf);
+ #endif
+ 
+   /* Also log it to stderr? */
+@@ -78,20 +79,20 @@ void log_fatal (const char * fmt, ... )
+ 
+ #if !defined (NOMINUM)
+   log_error ("%s", "");
+-  log_error ("If you did not get this software from ftp.isc.org, please");
+-  log_error ("get the latest from ftp.isc.org and install that before");
+-  log_error ("requesting help.");
++  log_error ("Please note the following before requesting help:");
+   log_error ("%s", "");
+-  log_error ("If you did get this software from ftp.isc.org and have not");
+-  log_error ("yet read the README, please read it before requesting help.");
+-  log_error ("If you intend to request help from the dhcp-server@isc.org");
+-  log_error ("mailing list, please read the section on the README about");
+-  log_error ("submitting bug reports and requests for help.");
++  log_error ("This software is a part of the Internet Software Consortium's");
++  log_error ("DHCP suite with modifications for Openwall GNU/*/Linux.");
+   log_error ("%s", "");
+-  log_error ("Please do not under any circumstances send requests for");
+-  log_error ("help directly to the authors of this software - please");
+-  log_error ("send them to the appropriate mailing list as described in");
+-  log_error ("the README file.");
++  log_error ("The ISC folks quite reasonably require that you do not bother");
++  log_error ("them with questions on software that includes third-party");
++  log_error ("modifications and might not be based off their latest code.");
++  log_error ("Hence, please direct any questions to the owl-users mailing");
++  log_error ("list instead; the subscription instructions are given at");
++  log_error ("http://www.openwall.com/Owl/");
++  log_error ("%s", "");
++  log_error ("Please also read the SUPPORT section on the README about");
++  log_error ("submitting bug reports and requests for help.");
+   log_error ("%s", "");
+   log_error ("exiting.");
+ #endif
+diff -urpN dhcp-3.0.4.orig/README dhcp-3.0.4/README
+--- dhcp-3.0.4.orig/README	2006-04-27 21:46:01.000000000 +0000
++++ dhcp-3.0.4/README	2006-09-26 21:34:00.000000000 +0000
+@@ -1,6 +1,7 @@
+ 	       Internet Systems Consortium DHCP Distribution
+ 			      Version 3.0.4
+ 			      April 27, 2006
++	    (with modifications for Openwall GNU/*/Linux)
+ 
+ 			      README FILE
+ 
+@@ -502,6 +503,21 @@ for AIX would be welcome.
+ 
+ 			       SUPPORT
+ 
++Please note the following before requesting help:
++
++This software is a part of the Internet Software Consortium's DHCP
++suite with modifications for Openwall GNU/*/Linux.  The ISC folks
++quite reasonably require that you do not bother them with questions on
++software that includes third-party modifications and might not be
++based off their latest code.  Hence, please direct any questions to
++the owl-users mailing list instead; the subscription instructions are
++given at http://www.openwall.com/Owl/.
++
++The rest of this section describes the ISC's original guidelines on
++requesting support and/or reporting bugs.  These will only apply to
++you if you reproduce your problem on the latest version of ISC's DHCP
++suite as available from ftp://ftp.isc.org.
++
+ The Internet Systems Consortium DHCP server is developed and distributed
+ by ISC in the public trust, thanks to the generous donations of its
+ sponsors.  ISC now also fofers commercial quality support contracts for
