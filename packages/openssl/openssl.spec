@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.62 2006/09/28 22:47:47 solar Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.63 2006/09/28 23:31:05 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
@@ -225,6 +225,7 @@ ln -sf libssl.so.5 /%_lib/libssl.so.4
 %defattr(0644,root,root,0755)
 %attr(-,root,root) %_libdir/*.so
 %attr(0644,root,root) %_libdir/*.a
+%attr(0644,root,root) %_libdir/fips_premain.c*
 %dir %attr(0755,root,root) /usr/include/openssl
 %attr(0644,root,root) /usr/include/openssl/*
 # XXX: we don't have a package providing %_libdir/pkgconfig directory
