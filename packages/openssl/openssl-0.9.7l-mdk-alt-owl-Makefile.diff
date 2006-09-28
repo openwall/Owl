@@ -1,7 +1,7 @@
-diff -upk.orig openssl-0.9.7g.orig/Makefile.org openssl-0.9.7g/Makefile.org
---- openssl-0.9.7g.orig/Makefile.org	2005-03-15 09:46:13 +0000
-+++ openssl-0.9.7g/Makefile.org	2005-06-17 13:55:28 +0000
-@@ -25,6 +25,7 @@ HERE=.
+diff -ur openssl-0.9.7l.orig/Makefile.org openssl-0.9.7l/Makefile.org
+--- openssl-0.9.7l.orig/Makefile.org	2006-04-24 13:32:57 +0000
++++ openssl-0.9.7l/Makefile.org	2006-09-28 21:52:27 +0000
+@@ -25,6 +25,7 @@
  # Normally it is left empty.
  INSTALL_PREFIX=
  INSTALLTOP=/usr/local/ssl
@@ -9,8 +9,8 @@ diff -upk.orig openssl-0.9.7g.orig/Makefile.org openssl-0.9.7g/Makefile.org
  
  # Do not edit this manually. Use Configure --openssldir=DIR do change this!
  OPENSSLDIR=/usr/local/ssl
-@@ -324,7 +325,7 @@ do_darwin-shared: 
- 	( set -x; ${CC} --verbose -dynamiclib -o lib$$i${SHLIB_EXT} \
+@@ -336,7 +337,7 @@
+ 		--verbose -dynamiclib -o lib$$i${SHLIB_EXT} \
  		lib$$i.a $$libs -all_load -current_version ${SHLIB_MAJOR}.${SHLIB_MINOR} \
  		-compatibility_version ${SHLIB_MAJOR}.`echo ${SHLIB_MINOR} | cut -d. -f1` \
 -		-install_name ${INSTALLTOP}/lib/lib$$i${SHLIB_EXT} ) || exit 1; \
@@ -18,16 +18,16 @@ diff -upk.orig openssl-0.9.7g.orig/Makefile.org openssl-0.9.7g/Makefile.org
  	libs="-l`basename $$i${SHLIB_EXT} .dylib` $$libs"; \
  	echo "" ; \
  	done
-@@ -398,7 +399,7 @@ do_tru64-shared-rpath:
+@@ -411,7 +412,7 @@
  		fi; \
- 		( set -x; ${CC} ${SHARED_LDFLAGS} \
+ 		( set -x; $${FIPSLD:-${CC}} ${SHARED_LDFLAGS} \
  			-shared -msym -o lib$$i.so \
 -			-rpath  ${INSTALLTOP}/lib \
 +			-rpath  ${INSTALLTOP}/$(SLIB) \
  			-set_version "${SHLIB_VERSION_HISTORY}${SHLIB_VERSION_NUMBER}" \
- 			-all lib$$i.a -none $$libs ${EX_LIBS} -lc ) || exit 1; \
+ 			-all lib$$i.a -none $$libs ${EX_LIBS} ) || exit 1; \
  		libs="-l$$i $$libs"; \
-@@ -622,7 +623,7 @@ do_reliantunix-shared:
+@@ -599,7 +600,7 @@
  openssl.pc: Makefile
  	@ ( echo 'prefix=$(INSTALLTOP)'; \
  	    echo 'exec_prefix=$${prefix}'; \
@@ -36,7 +36,7 @@ diff -upk.orig openssl-0.9.7g.orig/Makefile.org openssl-0.9.7g/Makefile.org
  	    echo 'includedir=$${prefix}/include'; \
  	    echo ''; \
  	    echo 'Name: OpenSSL'; \
-@@ -802,8 +803,8 @@ install: all install_docs install_sw
+@@ -783,8 +784,8 @@
  
  install_sw:
  	@$(PERL) $(TOP)/util/mkdir-p.pl $(INSTALL_PREFIX)$(INSTALLTOP)/bin \
@@ -47,7 +47,7 @@ diff -upk.orig openssl-0.9.7g.orig/Makefile.org openssl-0.9.7g/Makefile.org
  		$(INSTALL_PREFIX)$(INSTALLTOP)/include/openssl \
  		$(INSTALL_PREFIX)$(OPENSSLDIR)/misc \
  		$(INSTALL_PREFIX)$(OPENSSLDIR)/certs \
-@@ -824,14 +825,14 @@ install_sw:
+@@ -805,14 +806,14 @@
  	do \
  		if [ -f "$$i" ]; then \
  		(       echo installing $$i; \
@@ -66,7 +66,7 @@ diff -upk.orig openssl-0.9.7g.orig/Makefile.org openssl-0.9.7g/Makefile.org
  		fi; \
  	done;
  	@if [ -n "$(SHARED_LIBS)" ]; then \
-@@ -841,22 +842,22 @@ install_sw:
+@@ -822,22 +823,22 @@
  			if [ -f "$$i" -o -f "$$i.a" ]; then \
  			(       echo installing $$i; \
  				if [ "$(PLATFORM)" != "Cygwin" ]; then \
@@ -96,18 +96,10 @@ diff -upk.orig openssl-0.9.7g.orig/Makefile.org openssl-0.9.7g/Makefile.org
  			set $(MAKE); \
  			$$1 -f $$here/Makefile link-shared ); \
  		if [ "$(INSTALLTOP)" != "/usr" ]; then \
-@@ -870,13 +871,13 @@ install_sw:
- 	do \
- 		if [ -f "$$i" ]; then \
- 		(       echo installing $$i; \
--			cp $$i $(INSTALL_PREFIX)$(INSTALLTOP)/lib/$$i.new; \
--			chmod 644 $(INSTALL_PREFIX)$(INSTALLTOP)/lib/$$i.new; \
--			mv -f $(INSTALL_PREFIX)$(INSTALLTOP)/lib/$$i.new $(INSTALL_PREFIX)$(INSTALLTOP)/lib/$$i ); \
-+			cp $$i $(INSTALL_PREFIX)$(INSTALLTOP)/$(SLIB)/$$i.new; \
-+			chmod 644 $(INSTALL_PREFIX)$(INSTALLTOP)/$(SLIB)/$$i.new; \
-+			mv -f $(INSTALL_PREFIX)$(INSTALLTOP)/$(SLIB)/$$i.new $(INSTALL_PREFIX)$(INSTALLTOP)/$(SLIB)/$$i ); \
+@@ -847,8 +848,8 @@
+ 			sed -e '1,/^$$/d' doc/openssl-shared.txt; \
  		fi; \
- 	done;
+ 	fi
 -	cp openssl.pc $(INSTALL_PREFIX)$(INSTALLTOP)/lib/pkgconfig
 -	chmod 644 $(INSTALL_PREFIX)$(INSTALLTOP)/lib/pkgconfig/openssl.pc
 +	cp openssl.pc $(INSTALL_PREFIX)$(INSTALLTOP)/$(SLIB)/pkgconfig

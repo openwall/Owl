@@ -1,22 +1,18 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.61 2006/09/16 01:56:13 galaxy Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.62 2006/09/28 22:47:47 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
-Version: 0.9.7g
-Release: owl7
+Version: 0.9.7l
+Release: owl1
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
 Source: ftp://ftp.openssl.org/source/%name-%version.tar.gz
 Patch0: openssl-0.9.7g-owl-alt-issetugid.diff
-Patch1: openssl-0.9.7g-mdk-alt-Makefile.diff
-Patch2: openssl-0.9.7g-rh-alt-soversion.diff
+Patch1: openssl-0.9.7l-mdk-alt-owl-Makefile.diff
+Patch2: openssl-0.9.7l-rh-alt-owl-soversion.diff
 Patch3: openssl-0.9.7g-rh-mdk-ia64-asm.diff
 Patch4: openssl-0.9.7g-rh-version-engines.diff
-Patch5: openssl-0.9.7g-up-rh-fixes.diff
-Patch6: openssl-0.9.7g-rh-consttime.diff
-Patch7: openssl-0.9.7g-up-SSL_OP_MSIE_SSLV2_RSA_PADDING.diff
-Patch8: openssl-0.9.7g-cvs-20060904-CVE-2006-4339.diff
 Provides: SSL
 %ifnarch x86_64
 # For backwards compatibility.
@@ -97,10 +93,6 @@ This package contains some miscellaneous Perl scripts.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p0
-%patch8 -p0
 
 bzip2 -9k CHANGES CHANGES.SSLeay
 
@@ -185,9 +177,6 @@ ln -s libcrypto.so.5 %buildroot/%_lib/libcrypto.so.4
 ln -s libssl.so.5 %buildroot/%_lib/libssl.so.4
 %endif
 
-# Remove fips fingerprint script.
-rm %buildroot%_bindir/openssl_fips_fingerprint
-
 # Rename man pages.
 mv %buildroot%_mandir/man1/{,ssl}passwd.1
 mv %buildroot%_mandir/man3/{,ssl}err.3
@@ -218,6 +207,7 @@ ln -sf libssl.so.5 /%_lib/libssl.so.4
 %doc CHANGES*.bz2 LICENSE NEWS README
 %doc docs/doc
 %attr(0755,root,root) %_bindir/*
+%exclude %_bindir/fipsld
 %exclude %_bindir/c_rehash
 %attr(-,root,root) /%_lib/*.so.?
 %attr(0755,root,root) /%_lib/*.so.?.*
@@ -240,6 +230,7 @@ ln -sf libssl.so.5 /%_lib/libssl.so.4
 # XXX: we don't have a package providing %_libdir/pkgconfig directory
 %attr(0644,root,root) %_libdir/pkgconfig/openssl.pc
 %attr(0644,root,root) %_mandir/man3/*
+%attr(0755,root,root) %_bindir/fipsld
 
 %files perl
 %defattr(0644,root,root,0755)
@@ -248,6 +239,9 @@ ln -sf libssl.so.5 /%_lib/libssl.so.4
 %attr(0644,root,root) %_mandir/man1/CA.pl.1*
 
 %changelog
+* Fri Sep 29 2006 Solar Designer <solar-at-owl.openwall.com> 0.9.7l-owl1
+- Updated to 0.9.7l.
+
 * Thu Sep 07 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.9.7g-owl7
 - Added glibc-utils to BuildRequires.
 

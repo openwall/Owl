@@ -1,7 +1,7 @@
-diff -upk.orig openssl-0.9.7g.orig/Configure openssl-0.9.7g/Configure
---- openssl-0.9.7g.orig/Configure	2005-04-07 16:06:01 +0000
-+++ openssl-0.9.7g/Configure	2005-06-17 14:05:18 +0000
-@@ -1307,7 +1307,7 @@ while (<IN>)
+diff -ur openssl-0.9.7l.orig/Configure openssl-0.9.7l/Configure
+--- openssl-0.9.7l.orig/Configure	2006-04-24 13:32:55 +0000
++++ openssl-0.9.7l/Configure	2006-09-28 21:55:33 +0000
+@@ -1352,7 +1352,7 @@
  	if ($shared_extension ne "" && $shared_extension =~ /^\.s([ol])\.[^\.]*$/)
  		{
  		my $sotmp = $1;
@@ -10,7 +10,7 @@ diff -upk.orig openssl-0.9.7g.orig/Configure openssl-0.9.7g/Configure
  		}
  	elsif ($shared_extension ne "" && $shared_extension =~ /^\.[^\.]*\.dylib$/)
  		{
-@@ -1316,7 +1316,7 @@ while (<IN>)
+@@ -1361,7 +1361,7 @@
  	elsif ($shared_extension ne "" && $shared_extension =~ /^\.s([ol])\.[^\.]*\.[^\.]*$/)
  		{
  		my $sotmp = $1;
@@ -19,10 +19,10 @@ diff -upk.orig openssl-0.9.7g.orig/Configure openssl-0.9.7g/Configure
  		}
  	elsif ($shared_extension ne "" && $shared_extension =~ /^\.[^\.]*\.[^\.]*\.dylib$/)
  		{
-diff -upk.orig openssl-0.9.7g.orig/Makefile.org openssl-0.9.7g/Makefile.org
---- openssl-0.9.7g.orig/Makefile.org	2005-06-17 14:04:28 +0000
-+++ openssl-0.9.7g/Makefile.org	2005-06-17 14:05:18 +0000
-@@ -10,6 +10,7 @@ SHLIB_VERSION_HISTORY=
+diff -ur openssl-0.9.7l.orig/Makefile.org openssl-0.9.7l/Makefile.org
+--- openssl-0.9.7l.orig/Makefile.org	2006-04-24 13:32:57 +0000
++++ openssl-0.9.7l/Makefile.org	2006-09-28 21:59:59 +0000
+@@ -10,6 +10,7 @@
  SHLIB_MAJOR=
  SHLIB_MINOR=
  SHLIB_EXT=
@@ -30,15 +30,15 @@ diff -upk.orig openssl-0.9.7g.orig/Makefile.org openssl-0.9.7g/Makefile.org
  PLATFORM=dist
  OPTIONS=
  CONFIGURE_ARGS=
-@@ -307,11 +308,11 @@ do_gnu-shared:
+@@ -317,11 +318,11 @@
  	fi; \
- 	( set -x; ${CC} ${SHARED_LDFLAGS} \
+ 	( set -x; $${FIPSLD:-${CC}} ${SHARED_LDFLAGS} \
  		-shared -o lib$$i.so.${SHLIB_MAJOR}.${SHLIB_MINOR} \
 -		-Wl,-soname=lib$$i.so.${SHLIB_MAJOR}.${SHLIB_MINOR} \
 +		-Wl,-soname=lib$$i.so.${SHLIB_SOVERSION} \
  		-Wl,-Bsymbolic \
  		-Wl,--whole-archive lib$$i.a \
- 		-Wl,--no-whole-archive $$libs ${EX_LIBS} -lc ) || exit 1; \
+ 		-Wl,--no-whole-archive $$libs ${EX_LIBS} ) || exit 1; \
 -	libs="-l$$i $$libs"; \
 +	libs="lib$$i.so.${SHLIB_MAJOR}.${SHLIB_MINOR} $$libs"; \
  	done
