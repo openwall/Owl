@@ -107,3 +107,28 @@ diff -ur openssl-0.9.7l.orig/Makefile.org openssl-0.9.7l/Makefile.org
  
  install_docs:
  	@$(PERL) $(TOP)/util/mkdir-p.pl \
+diff -ur openssl-0.9.7l.orig/fips-1.0/Makefile openssl-0.9.7l/fips-1.0/Makefile
+--- openssl-0.9.7l.orig/fips-1.0/Makefile	2006-03-28 12:10:37 +0000
++++ openssl-0.9.7l/fips-1.0/Makefile	2006-09-28 23:25:51 +0000
+@@ -11,6 +11,7 @@
+ INSTALL_PREFIX=
+ OPENSSLDIR=     /usr/local/ssl
+ INSTALLTOP=	/usr/local/ssl
++SLIB=		lib
+ MAKEFILE=       Makefile
+ MAKEDEPPROG=	makedepend
+ MAKEDEPEND=	$(TOP)/util/domd $(TOP) -MD $(MAKEDEPPROG)
+@@ -177,10 +178,10 @@
+ 		mv -f $(INSTALL_PREFIX)$(INSTALLTOP)/bin/$$i.new $(INSTALL_PREFIX)$(INSTALLTOP)/bin/$$i; \
+ 	done
+ 	@cp -p -f fipscanister.o fipscanister.o.sha1 fips_premain.c \
+-		$(INSTALL_PREFIX)$(INSTALLTOP)/lib/; \
++		$(INSTALL_PREFIX)$(INSTALLTOP)/$(SLIB)/; \
+ 	strings fipscanister.o | grep "HMAC-SHA1(fips_premain\\.c)" > \
+-		$(INSTALL_PREFIX)$(INSTALLTOP)/lib/fips_premain.c.sha1; \
+-	chmod 0444 $(INSTALL_PREFIX)$(INSTALLTOP)/lib/fips*
++		$(INSTALL_PREFIX)$(INSTALLTOP)/$(SLIB)/fips_premain.c.sha1; \
++	chmod 0444 $(INSTALL_PREFIX)$(INSTALLTOP)/$(SLIB)/fips*
+ 
+ lint:
+ 	@for i in $(FDIRS) ;\
