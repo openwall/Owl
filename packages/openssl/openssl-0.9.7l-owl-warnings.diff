@@ -1,0 +1,39 @@
+diff -urp openssl-0.9.7l.orig/crypto/bn/bn_div.c openssl-0.9.7l/crypto/bn/bn_div.c
+--- openssl-0.9.7l.orig/crypto/bn/bn_div.c	Fri Dec 20 16:38:09 2002
++++ openssl-0.9.7l/crypto/bn/bn_div.c	Thu Sep 28 23:43:09 2006
+@@ -308,7 +308,10 @@ X) -> 0x%08X\n",
+ 				t2 -= d1;
+ 				}
+ #else /* !BN_LLONG */
+-			BN_ULONG t2l,t2h,ql,qh;
++			BN_ULONG t2l,t2h;
++#if !defined(BN_UMULT_LOHI) && !defined(BN_UMULT_HIGH)
++			BN_ULONG ql,qh;
++#endif
+ 
+ 			q=bn_div_words(n0,n1,d0);
+ #ifdef BN_DEBUG_LEVITTE
+diff -urp openssl-0.9.7l.orig/crypto/dh/dh_key.c openssl-0.9.7l/crypto/dh/dh_key.c
+--- openssl-0.9.7l.orig/crypto/dh/dh_key.c	Thu Sep 28 11:53:49 2006
++++ openssl-0.9.7l/crypto/dh/dh_key.c	Thu Sep 28 23:40:55 2006
+@@ -175,7 +175,7 @@ err:
+ 
+ static int compute_key(unsigned char *key, const BIGNUM *pub_key, DH *dh)
+ 	{
+-	BN_CTX *ctx;
++	BN_CTX *ctx = NULL;
+ 	BN_MONT_CTX *mont=NULL;
+ 	BIGNUM *tmp;
+ 	int ret= -1;
+diff -urp openssl-0.9.7l.orig/crypto/mem_clr.c openssl-0.9.7l/crypto/mem_clr.c
+--- openssl-0.9.7l.orig/crypto/mem_clr.c	Tue Dec  3 16:07:03 2002
++++ openssl-0.9.7l/crypto/mem_clr.c	Thu Sep 28 23:41:37 2006
+@@ -68,7 +68,7 @@ void OPENSSL_cleanse(void *ptr, size_t l
+ 	while(loop--)
+ 		{
+ 		*(p++) = cleanse_ctr;
+-		cleanse_ctr += (17 + (unsigned char)((int)p & 0xF));
++		cleanse_ctr += (17 + (unsigned char)((unsigned long)p & 0xF));
+ 		}
+ 	if(memchr(ptr, cleanse_ctr, len))
+ 		cleanse_ctr += 63;

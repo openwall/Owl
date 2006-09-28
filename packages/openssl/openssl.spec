@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.63 2006/09/28 23:31:05 solar Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.64 2006/09/28 23:51:36 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
@@ -13,6 +13,7 @@ Patch1: openssl-0.9.7l-mdk-alt-owl-Makefile.diff
 Patch2: openssl-0.9.7l-rh-alt-owl-soversion.diff
 Patch3: openssl-0.9.7g-rh-mdk-ia64-asm.diff
 Patch4: openssl-0.9.7g-rh-version-engines.diff
+Patch5: openssl-0.9.7l-owl-warnings.diff
 Provides: SSL
 %ifnarch x86_64
 # For backwards compatibility.
@@ -93,6 +94,7 @@ This package contains some miscellaneous Perl scripts.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 bzip2 -9k CHANGES CHANGES.SSLeay
 
