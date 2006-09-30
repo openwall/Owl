@@ -13,7 +13,7 @@ change logs for the packages themselves.
 	Changes made between Owl 2.0 and Owl-current.
 
 2006/09/29	Package: openssl
-SECURITY FIX	Severity: high/none to low, remote, passive/active
+SECURITY FIX	Severity: none to low/high, remote, active/passive
 Updated to 0.9.7l, which includes fixes for four security issues.
 References:
 http://www.openssl.org/news/secadv_20060928.txt
@@ -257,4 +257,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.53 2006/09/29 05:13:15 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.54 2006/09/30 20:45:49 solar Exp $
