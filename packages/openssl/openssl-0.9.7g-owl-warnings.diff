@@ -1,0 +1,36 @@
+--- openssl-0.9.7g/crypto/bn/bn_div.c
++++ openssl-0.9.7g/crypto/bn/bn_div.c
+@@ -308,7 +308,10 @@ #endif
+ 				t2 -= d1;
+ 				}
+ #else /* !BN_LLONG */
+-			BN_ULONG t2l,t2h,ql,qh;
++			BN_ULONG t2l,t2h;
++#if !defined(BN_UMULT_LOHI) && !defined(BN_UMULT_HIGH)
++			BN_ULONG ql,qh;
++#endif
+ 
+ 			q=bn_div_words(n0,n1,d0);
+ #ifdef BN_DEBUG_LEVITTE
+--- openssl-0.9.7g/crypto/dh/dh_key.c
++++ openssl-0.9.7g/crypto/dh/dh_key.c
+@@ -159,7 +159,7 @@ err:
+ 
+ static int compute_key(unsigned char *key, const BIGNUM *pub_key, DH *dh)
+ 	{
+-	BN_CTX *ctx;
++	BN_CTX *ctx = NULL;
+ 	BN_MONT_CTX *mont=NULL;
+ 	BIGNUM *tmp;
+ 	int ret= -1;
+--- openssl-0.9.7g/crypto/mem_clr.c
++++ openssl-0.9.7g/crypto/mem_clr.c
+@@ -68,7 +68,7 @@ void OPENSSL_cleanse(void *ptr, size_t l
+ 	while(loop--)
+ 		{
+ 		*(p++) = cleanse_ctr;
+-		cleanse_ctr += (17 + (unsigned char)((int)p & 0xF));
++		cleanse_ctr += (17 + (unsigned char)((unsigned long)p & 0xF));
+ 		}
+ 	if(memchr(ptr, cleanse_ctr, len))
+ 		cleanse_ctr += 63;

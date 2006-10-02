@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.52.2.1 2006/09/09 22:47:56 ldv Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.52.2.2 2006/10/02 10:46:13 ldv Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
 Version: 0.9.7g
-Release: owl3.2.0.1
+Release: owl3.2.0.2
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
@@ -17,6 +17,11 @@ Patch5: openssl-0.9.7g-up-rh-fixes.diff
 Patch6: openssl-0.9.7g-rh-consttime.diff
 Patch7: openssl-0.9.7g-up-SSL_OP_MSIE_SSLV2_RSA_PADDING.diff
 Patch8: openssl-0.9.7g-cvs-20060904-CVE-2006-4339.diff
+Patch9: openssl-0.9.7g-owl-warnings.diff
+Patch10: openssl-0.9.7g-up-CVE-2006-2937.diff
+Patch11: openssl-0.9.7g-up-suse-CVE-2006-2940.diff
+Patch12: openssl-0.9.7g-google-CVE-2006-3738.diff
+Patch13: openssl-0.9.7g-google-CVE-2006-4343.diff
 Provides: SSL
 # For backwards compatibility.
 Provides: libcrypto.so.4, libssl.so.4
@@ -75,6 +80,11 @@ libraries and header files required when developing applications.
 %patch6 -p1
 %patch7 -p0
 %patch8 -p0
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
 
 bzip2 -9k CHANGES CHANGES.SSLeay
 
@@ -207,6 +217,16 @@ ln -sf libssl.so.5 /%_lib/libssl.so.4
 %attr(0644,root,root) %_mandir/man3/*
 
 %changelog
+* Sun Oct 01 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.9.7g-owl3.2.0.2
+- Applied upstream fixes for DoS bugs in ASN1 parser (CVE-2006-2937,
+CVE-2006-2940).
+- Applied fix for buffer overflow in SSL_get_shared_ciphers(), discovery
+and patch from Tavis Ormandy and Will Drewry of the Google Security Team
+(CVE-2006-3738).
+- Applied fix for possible DoS in the sslv2 client code, discovery and
+patch from Tavis Ormandy and Will Drewry of the Google Security Team
+(CVE-2006-4343).
+
 * Sat Sep 09 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.9.7g-owl3.2.0.1
 - Applied upstream patch to avoid RSA signature forgery (CVE-2006-4339).
 
