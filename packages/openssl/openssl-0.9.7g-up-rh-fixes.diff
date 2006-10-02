@@ -8,13 +8,13 @@ Various fixes backported from upstream:
 openssl/crypto/bio/bss_conn.c     1.22.2.2 -> 1.22.2.3
 
 --- openssl/crypto/bio/bss_conn.c 2003/12/27 14:40:49 1.22.2.2
-+++ openssl/crypto/bio/bss_conn.c 2005/04/27 07:59:17 1.22.2.3
++++ openssl/crypto/bio/bss_conn.c 2006/02/02 22:29:55 1.22.2.4
 @@ -469,7 +469,7 @@
  		break;
  	case BIO_C_DO_STATE_MACHINE:
  		/* use this one to start the connection */
 -		if (!data->state != BIO_CONN_S_OK)
-+		if (!(data->state != BIO_CONN_S_OK))
++		if (data->state != BIO_CONN_S_OK)
  			ret=(long)conn_state(b,data);
  		else
  			ret=1;

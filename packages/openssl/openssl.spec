@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.52.2.2 2006/10/02 10:46:13 ldv Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.52.2.3 2006/10/02 13:40:02 ldv Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
@@ -218,14 +218,12 @@ ln -sf libssl.so.5 /%_lib/libssl.so.4
 
 %changelog
 * Sun Oct 01 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.9.7g-owl3.2.0.2
-- Applied upstream fixes for DoS bugs in ASN1 parser (CVE-2006-2937,
+- Applied upstream fixes for DoS bugs in the ASN.1 parser (CVE-2006-2937,
 CVE-2006-2940).
-- Applied fix for buffer overflow in SSL_get_shared_ciphers(), discovery
-and patch from Tavis Ormandy and Will Drewry of the Google Security Team
-(CVE-2006-3738).
-- Applied fix for possible DoS in the sslv2 client code, discovery and
-patch from Tavis Ormandy and Will Drewry of the Google Security Team
-(CVE-2006-4343).
+- Applied fixes for a buffer overflow in SSL_get_shared_ciphers()
+and a DoS bug in the SSLv2 client code, both discovered and patched by
+Tavis Ormandy and Will Drewry of Google Security Team (CVE-2006-3738,
+CVE-2006-4343).
 
 * Sat Sep 09 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.9.7g-owl3.2.0.1
 - Applied upstream patch to avoid RSA signature forgery (CVE-2006-4339).
