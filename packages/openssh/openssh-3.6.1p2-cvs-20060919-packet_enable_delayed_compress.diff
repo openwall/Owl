@@ -1,0 +1,15 @@
+client NULL deref on protocol error; Tavis Ormandy, Google Security Team
+CVE-2006-4925
+
+--- packet.c	16 Sep 2006 19:53:37 -0000	1.144
++++ packet.c	19 Sep 2006 21:14:08 -0000	1.145
+@@ -682,6 +682,9 @@ packet_enable_delayed_compress(void)
+ 	 */
+ 	after_authentication = 1;
+ 	for (mode = 0; mode < MODE_MAX; mode++) {
++		/* protocol error: USERAUTH_SUCCESS received before NEWKEYS */
++		if (newkeys[mode] == NULL)
++			continue;
+ 		comp = &newkeys[mode]->comp;
+ 		if (comp && !comp->enabled && comp->type == COMP_DELAYED) {
+ 			packet_init_compression();

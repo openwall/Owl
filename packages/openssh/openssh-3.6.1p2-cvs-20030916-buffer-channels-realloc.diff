@@ -1,11 +1,18 @@
-Index: buffer.c
-===================================================================
-RCS file: /cvs/src/usr.bin/ssh/buffer.c,v
-retrieving revision 1.16
-retrieving revision 1.18
-diff -u -r1.16 -r1.18
+revision 1.19
+date: 2003/09/18 07:54:48;  author: markus;  state: Exp;  lines: +2 -1
+protect against double free; #660;  zardoz at users.sf.net
+----------------------------
+revision 1.18
+date: 2003/09/16 21:02:39;  author: markus;  state: Exp;  lines: +10 -5
+branches:  1.18.2;
+more malloc/fatal fixes; ok millert/deraadt; ghudson at MIT.EDU
+----------------------------
+revision 1.17
+date: 2003/09/16 03:03:47;  author: deraadt;  state: Exp;  lines: +8 -5
+do not expand buffer before attempting to reallocate it; markus ok
+
 --- buffer.c	26 Jun 2002 08:54:18 -0000	1.16
-+++ buffer.c	16 Sep 2003 21:02:39 -0000	1.18
++++ buffer.c	18 Sep 2003 07:54:48 -0000	1.19
 @@ -23,8 +23,11 @@
  void
  buffer_init(Buffer *buffer)
@@ -20,7 +27,7 @@ diff -u -r1.16 -r1.18
  	buffer->offset = 0;
  	buffer->end = 0;
  }
-@@ -34,8 +37,10 @@
+@@ -34,8 +37,11 @@
  void
  buffer_free(Buffer *buffer)
  {
@@ -28,12 +35,13 @@ diff -u -r1.16 -r1.18
 -	xfree(buffer->buf);
 +	if (buffer->alloc > 0) {
 +		memset(buffer->buf, 0, buffer->alloc);
++		buffer->alloc = 0;
 +		xfree(buffer->buf);
 +	}
  }
  
  /*
-@@ -69,6 +74,7 @@
+@@ -69,6 +75,7 @@
  void *
  buffer_append_space(Buffer *buffer, u_int len)
  {
@@ -41,7 +49,7 @@ diff -u -r1.16 -r1.18
  	void *p;
  
  	if (len > 0x100000)
-@@ -98,11 +104,13 @@
+@@ -98,11 +105,13 @@
  		goto restart;
  	}
  	/* Increase the size of the buffer and retry. */
@@ -59,12 +67,11 @@ diff -u -r1.16 -r1.18
  	goto restart;
  	/* NOTREACHED */
  }
-Index: channels.c
-===================================================================
-RCS file: /cvs/src/usr.bin/ssh/channels.c,v
-retrieving revision 1.194
-retrieving revision 1.195
-diff -u -r1.194 -r1.195
+
+revision 1.195
+date: 2003/09/16 21:02:40;  author: markus;  state: Exp;  lines: +4 -3
+more malloc/fatal fixes; ok millert/deraadt; ghudson at MIT.EDU
+
 --- channels.c	29 Aug 2003 10:04:36 -0000	1.194
 +++ channels.c	16 Sep 2003 21:02:40 -0000	1.195
 @@ -228,12 +228,13 @@

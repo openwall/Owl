@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openssh/openssh.spec,v 1.90 2006/03/30 03:25:13 galaxy Exp $
+# $Owl: Owl/packages/openssh/openssh.spec,v 1.91 2006/10/04 01:54:06 ldv Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl18
+Release: owl19
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -28,11 +28,17 @@ Patch11: openssh-3.6.1p1-owl-ssh-agent-dumpable.diff
 Patch12: openssh-3.6.1p2-cvs-20030603-UseDNS.diff
 Patch13: openssh-3.6.1p2-cvs-20030916-buffer-channels-realloc.diff
 Patch14: openssh-3.6.1p2-owl-realloc.diff
-Patch15: openssh-3.6.1p2-cvs-20040401-scp-fix.diff
+Patch15: openssh-3.6.1p2-cvs-20050727-scp-fixes.diff
 Patch16: openssh-3.6.1p2-owl-sanitize-packet-types.diff
 Patch17: openssh-3.6.1p2-cvs-20050725-ssh2-delayed-compression.diff
 Patch18: openssh-3.6.1p2-owl-ssh2-delayed-compression-fix.diff
 Patch19: openssh-3.6.1p2-cvs-20050921-ssh2-delayed-compression-root.diff
+Patch20: openssh-3.6.1p2-cvs-20040205-grace_alarm_handler.diff
+Patch21: openssh-3.6.1p2-cvs-20060131-scp-CVE-2006-0225.diff
+Patch22: openssh-3.6.1p2-cvs-20060818-sigdie.diff
+Patch23: openssh-3.6.1p2-cvs-20060916-deattack.diff
+Patch24: openssh-3.6.1p2-cvs-20060919-packet_enable_delayed_compress.diff
+Patch25: openssh-3.6.1p2-rh-sftp-memleaks.diff
 PreReq: openssl >= 0.9.7, openssl < 0.9.8
 Requires: pam >= 0:0.80-owl2
 Obsoletes: ssh
@@ -120,11 +126,17 @@ rm -r autom4te.cache
 %patch12 -p1
 %patch13 -p0
 %patch14 -p1
-%patch15 -p1
+%patch15 -p0
 %patch16 -p1
 %patch17 -p1
 %patch18 -p1
 %patch19 -p1
+%patch20 -p1
+%patch21 -p0
+%patch22 -p1
+%patch23 -p1
+%patch24 -p0
+%patch25 -p1
 bzip2 -9k ChangeLog
 
 %{expand:%%define _sysconfdir %_sysconfdir/ssh}
@@ -247,6 +259,20 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Tue Oct 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.6.1p2-owl19
+- Backported upstream fixes for:
+sshd connection consumption vulnerability
+(CVE-2004-2069: none to low, remote, active),
+scp local arbitrary command execution vulnerability
+(CVE-2006-0225: none to high, remote, passive),
+sshd signal handler race condition
+(CVE-2006-5051: none?, remote, active),
+CRC compensation attack detector DoS
+(CVE-2006-4924: none to low, remote, active),
+client NULL dereference on protocol error
+(CVE-2006-4925: low, remote, passive).
+- Applied RH patch to plug several sftp memory leaks.
+
 * Thu Mar 30 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.6.1p2-owl18
 - Added /etc/ssh/ssh_host_* to the server filelist as ghosts.
 

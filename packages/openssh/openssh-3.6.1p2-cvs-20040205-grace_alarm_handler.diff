@@ -1,0 +1,42 @@
+Pass SIGALRM through to privsep child if LoginGraceTime expires.  ok markus@
+CAN-2004-2069
+
+--- openssh-3.6.1p2.orig/monitor.c
++++ openssh-3.6.1p2/monitor.c
+@@ -1621,6 +1621,7 @@ monitor_init(void)
+ 
+ 	mon = xmalloc(sizeof(*mon));
+ 
++	mon->m_pid = 0;
+ 	monitor_socketpair(pair);
+ 
+ 	mon->m_recvfd = pair[0];
+--- openssh-3.6.1p2.orig/sshd.c
++++ openssh-3.6.1p2/sshd.c
+@@ -203,7 +203,7 @@ int startup_pipe;		/* in child */
+ 
+ /* variables used for privilege separation */
+ int use_privsep;
+-struct monitor *pmonitor;
++struct monitor *pmonitor = NULL;
+ 
+ /* Prototypes for various functions defined later in this file. */
+ void destroy_sensitive_data(void);
+@@ -303,6 +303,9 @@ grace_alarm_handler(int sig)
+ {
+ 	/* XXX no idea how fix this signal handler */
+ 
++	if (use_privsep && pmonitor != NULL && pmonitor->m_pid > 0)
++		kill(pmonitor->m_pid, SIGALRM);
++
+ 	/* Log error and exit. */
+ 	fatal("Timeout before authentication for %s", get_remote_ipaddr());
+ }
+@@ -597,6 +600,7 @@ privsep_preauth(void)
+ 		debug2("Network child is on pid %ld", (long)pid);
+ 
+ 		close(pmonitor->m_recvfd);
++		pmonitor->m_pid = pid;
+ 		authctxt = monitor_child_preauth(pmonitor);
+ 		close(pmonitor->m_sendfd);
+ 
