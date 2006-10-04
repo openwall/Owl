@@ -12,6 +12,17 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2006/10/03	Package: openssh
+SECURITY FIX	Severity: none to low/high, local/remote, active/passive
+Backported upstream fixes for scp local arbitrary command execution
+vulnerability (severity: high, local, active), CRC compensation attack
+detector DoS (severity: low, remote, active), client NULL dereference
+on protocol error (severity: low, remote, passive).
+References:
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0225
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4924
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4925
+
 2006/09/29	Package: openssl
 SECURITY FIX	Severity: none to low/high, remote, active/passive
 Updated to 0.9.7l, which includes fixes for four security issues.
@@ -257,4 +268,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.54 2006/09/30 20:45:49 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.55 2006/10/04 21:16:58 ldv Exp $
