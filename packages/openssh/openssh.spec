@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/openssh/openssh.spec,v 1.92 2006/10/04 21:07:26 ldv Exp $
+# $Owl: Owl/packages/openssh/openssh.spec,v 1.93 2006/10/04 21:36:21 ldv Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
@@ -262,9 +262,9 @@ fi
 * Tue Oct 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.6.1p2-owl19
 - Backported upstream fixes for:
 sshd connection consumption vulnerability
-(CVE-2004-2069: none to low, remote, active),
+(CVE-2004-2069: low, remote, active),
 scp local arbitrary command execution vulnerability
-(CVE-2006-0225: high, local, active),
+(CVE-2006-0225: high, local, passive),
 sshd signal handler race condition
 (CVE-2006-5051: none, remote, active),
 CRC compensation attack detector DoS
