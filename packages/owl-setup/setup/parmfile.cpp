@@ -21,7 +21,7 @@ ParametersFile::Parameter&
 ParametersFile::operator[](const ScriptVariable &name) const
 {
     Parameter **res;
-    for(res = &const_cast<Parameter*>(first); *res; res = &((*res)->next)) {
+    for(res = const_cast<Parameter**>(&first); *res; res = &((*res)->next)) {
         if((*res)->name == name) return **res;
     }
     *res = new Parameter;
