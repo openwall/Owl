@@ -301,7 +301,7 @@ static int run_scroll(CDKSCREEN *screen,
                 quick_search.Range(-1,1).Erase();
                 break;
             default:
-                if(c<255 && (isprint(c) || c == ' ')) {
+                if(c>0 && c<255 && isprint(c)) {
                     quick_search += (char)c;
                     //quick_search.Toupper();
                 } else {
