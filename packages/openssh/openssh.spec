@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/openssh/openssh.spec,v 1.93 2006/10/04 21:36:21 ldv Exp $
+# $Owl: Owl/packages/openssh/openssh.spec,v 1.94 2006/10/05 04:13:43 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
@@ -264,7 +264,7 @@ fi
 sshd connection consumption vulnerability
 (CVE-2004-2069: low, remote, active),
 scp local arbitrary command execution vulnerability
-(CVE-2006-0225: high, local, passive),
+(CVE-2006-0225: none to high, local, active),
 sshd signal handler race condition
 (CVE-2006-5051: none, remote, active),
 CRC compensation attack detector DoS
