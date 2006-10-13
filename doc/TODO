@@ -90,7 +90,7 @@ source of randomness.  The resolver should be either corrected to use
 unpredictable query IDs, or dropped in favor of the one in glibc.
 
 [PRIORITY: low]
-[ASSIGNED: ldv@]
+[ASSIGNED: jmbr@]
 The DHCP client should be modified to run as a dedicated pseudo-user
 and in a chroot jail.  This requires privilege separation within the
 client (not easy).
@@ -479,4 +479,4 @@ Fix installworld.sh to always pick the latest version of a package when
 multiple versions are available (please refer to the appropriate XXX
 comment in the script).
 
-$Owl: Owl/doc/TODO,v 1.168 2006/06/12 21:17:57 ldv Exp $
+$Owl: Owl/doc/TODO,v 1.169 2006/10/13 16:05:35 solar Exp $
